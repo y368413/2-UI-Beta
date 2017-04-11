@@ -1,0 +1,18 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+	<Include file="DamageExm\DamageExm.xml"/>
+	<Include file="WhoPulled\WhoPulled.xml"/>
+	<Include file="CurrencyTracking\CurrencyTracking.xml"/>
+	<Include file="QuestNotifier\QuestNotifier.xml"/>
+	<Include file="zTip\zTip.xml"/>
+	<Include file="TinyInspect\TinyInspect.xml"/>
+	<Include file="HKDisplay\HKDisplay.xml"/>
+	<Include file="InboxMailBag\InboxMailBag.xml"/>
+	<Include file="TOTxp\TOTxp.xml"/>
+	<Include file="SoraAuraWatch\SoraAuraWatch.xml"/>
+	<Include file="ClassicQuestLog\ClassicQuestLog.xml"/>
+	<Include file="Diminfo\Diminfo.xml"/>
+	<Include file="GridClickSets\GridClickSets.xml"/>
+	<Include file="EncounterJournalPlusInstanceInfo\EncounterJournalPlusInstanceInfo.xml"/>
+	<Script file="ColorFrames.lua"/>
+</Ui>

@@ -1,0 +1,12 @@
+﻿## Title: MaxDps_Paladin
+## Title-zhCN:|CFFD74DE1[输出]|rMax-QS
+## Title-zhTW:|CFFD74DE1[输出]|rMax-QS
+## Version: 7.1.0
+## Author: Kaminaris
+## Interface: 70200
+## Dependencies: MaxDps
+## LoadOnDemand: 1
+
+## X-Repple: DPS
+
+main.lua

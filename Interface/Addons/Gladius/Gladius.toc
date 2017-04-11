@@ -1,0 +1,41 @@
+## Interface: 70200
+## Title: |cFF99CC01Gladius |r+|cFFFF0000GladiatorlosSA|r
+## Title-zhCN: |cFF99CC01[PVP]|r框体+语音
+## Title-zhTW: |cFF99CC01[PVP]|r框体+語音
+## Version: 5.1.3 & 1.14.3a
+## Notes: Arena enemy unit frames.+ PVP Spell Sound Alert.
+## Notes-zhCN: 改善拙劣的默认JJC敌对框架+PVP技能語音提示
+## Notes-zhTW: 改善拙劣的默认JJC敌对框架+PVP技能語音提示
+## Author: Resike and Firebunny. Original author: Proditor + Abatorlos(of Spinebreaker), DuskAshes, superk521, zuhligan, Grit (Legion Update)
+## SavedVariables: Gladius2DB, GladiatorlosSADB
+## Dependencies: _ShiGuang
+## DefaultState: disabled
+
+## X-Repple: PVP
+
+DRData-1.0.lua
+Gladius.lua
+Localizations.lua
+Options.lua
+
+Modules\HealthBar.lua
+Modules\PowerBar.lua
+Modules\CastBar.lua
+Modules\Auras.lua
+Modules\ClassIcon.lua
+Modules\Trinket.lua
+Modules\Highlight.lua
+Modules\Clicks.lua
+Modules\TargetBar.lua
+Modules\Tags.lua
+Modules\Announcements.lua
+Modules\DRTracker.lua
+Modules\Timer.lua
+Modules\Layout.lua
+Modules\Dispel.lua
+
+
+Locales\locales.xml
+GladiatorlosSA\GladiatorlosSA2.lua
+GladiatorlosSA\spelllist.lua
+GladiatorlosSA\options.lua

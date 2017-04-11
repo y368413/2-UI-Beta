@@ -1,0 +1,22 @@
+## Interface: 70200
+## Title: Angry Keystones
+## Title-zhCN:|cff8000ff[战斗]|r秘境助手
+## Title-zhTW:|cff8000ff[戰鬥]|r秘境助手
+## Notes: Displays additional information for Mythic Keystone dungeons
+## Author: Ermad
+## SavedVariables: AngryKeystones_Config, AngryKeystones_Data
+## SavedVariablesPerCharacter: AngryKeystones_CharacterConfig
+## X-Packaged-Version: v0.11.1
+
+## X-Repple: 战斗
+
+Core.lua
+Locale.lua
+Config.lua
+
+Persist.lua
+ObjectiveTracker.lua
+ProgressTracker.lua
+Keystone.lua
+Gossip.lua
+Splits.lua

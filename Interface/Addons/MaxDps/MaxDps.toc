@@ -1,0 +1,16 @@
+﻿## Title: MaxDps
+## Title-zhCN:|CFFD74DE1[输出]|rMax-Core
+## Title-zhTW:|CFFD74DE1[输出]|rMax-Core
+## Notes: Rotation helper framework.
+## Version: 7.1.4.3
+## Author: Kaminaris
+## Interface: 70200
+## SavedVariables: MaxDpsOptions
+## OptionalDependencies: Bartender4, ButtonForge
+
+## X-Repple: DPS
+
+core.lua
+buttons.lua
+helper.lua
+timetodie.lua

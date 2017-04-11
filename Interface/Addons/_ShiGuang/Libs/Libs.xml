@@ -1,0 +1,16 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+  <Script file="GnomeSequencer.lua"/>
+	<Include file="BlizzardFix\BlizzardFix.xml"/>
+	<Include file="LibDataBroker-1.1\LibDataBroker-1.1.xml"/>
+	<Include file="LibDBIcon-1.0\LibDBIcon-1.0.xml"/>
+	<Include file="LibSharedMedia-3.0\LibSharedMedia-3.0.xml"/>
+	<Include file="LibQTip-1.0\LibQTip-1.0.xml"/>
+	<Include file="LibMovable-1.0\LibMovable-1.0.xml"/>
+	<Include file="HereBeDragons-1.0\HereBeDragons-1.0.xml"/>
+	<Include file="AceGUI-3.0-SharedMediaWidgets\widget.xml"/>
+	<Include file="DropDownMenu\DropDownMenu.xml"/>
+	<Include file="Wasabi\Wasabi.xml"/>
+	<Script file="LibProcessable\LibProcessable.lua"/>
+	<Include file="ACP\ACP.xml"/>
+</Ui>

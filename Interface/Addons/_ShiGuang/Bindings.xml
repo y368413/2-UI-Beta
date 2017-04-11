@@ -1,0 +1,14 @@
+﻿<Bindings>
+	<Binding name="RELOADUI" description="Reloads the UI." header="ACE3" category="BINDING_MAORUI_BUTTONCLICK">
+		ReloadUI()
+	</Binding>
+	<Binding name="FAMILYFAMILIARHELPER_TOGGLE" header="FAMILYFAMILIARHELPER" category="BINDING_MAORUI_BUTTONCLICK">
+		if FamilyFamiliarHelper then
+			FamilyFamiliarHelper:SetShown(not FamilyFamiliarHelper:IsVisible())
+		end
+	</Binding>
+	<Binding name="CLASSIC_QUEST_LOG_TOGGLE" header="CLASSIC_QUEST_LOG" category="BINDING_MAORUI_BUTTONCLICK">
+		ClassicQuestLog:ToggleWindow()
+	</Binding>
+	<Binding name="CLICK EasyObliterate:LeftButton" header="EASYOBLITERATEHEAD" category="BINDING_MAORUI_BUTTONCLICK"/>
+</Bindings>

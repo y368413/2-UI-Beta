@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- $Id: CurrencyTracking.xml 50 2017-03-01 16:00:24Z arith $ -->
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+  <Script file="CurrencyTracking.lua"/>
+	<Frame>
+		<Frames>
+			<Button name="CurrencyTrackingFrame" movable="true" enableMouse="true" parent="UIParent"> 
+				<Size>
+					<AbsDimension x="210" y="21" />
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" relativeTo="UIParent">
+						<Offset>
+							<AbsDimension x="0" y="0" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture name="$parentTexture" parentKey="Texture" />
+					</Layer>
+					<Layer level="OVERLAY">
+						<FontString name="CurrencyTrackingText" parentKey="Text" inherits="GameFontNormal" Text="CT_TITLE" />
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnMouseDown>
+						CurrencyTracking_OnMouseDown(self, button);
+					</OnMouseDown>
+					<OnMouseUp>
+						CurrencyTracking_OnMouseUp(self, button);
+					</OnMouseUp>
+					<OnEnter>
+						CurrencyTracking_OnEnter(self);
+					</OnEnter>
+					<OnLeave>
+						CurrencyTracking_OnLeave(self);
+					</OnLeave>
+				</Scripts>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				CurrencyTracking_OnLoad(self);
+			</OnLoad>
+			<OnEvent>
+				CurrencyTracking_OnEvent(self, event, ...);
+			</OnEvent>
+			<OnUpdate>
+				CurrencyTracking_OnUpdate(self);						
+			</OnUpdate>
+		</Scripts>
+	</Frame>
+	<Include file= "CurrencyTracking_Options.xml"/>
+</Ui>

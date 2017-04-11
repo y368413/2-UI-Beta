@@ -1,0 +1,18 @@
+﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+	<Include file="Welcome\Welcome.xml"/>
+	<Include file="UFs\UFs.xml"/>
+	<Include file="Achieve\Achieve.xml"/>
+	<Include file="Notice\Notice.xml"/>
+	<Include file="Gear\Gear.xml"/>
+	<Include file="Charms\Charms.xml"/>
+	<Include file="Chat\Chat.xml"/>
+	<Include file="Loot\Loot.xml"/>
+	<Include file="Maps\Maps.xml"/>
+	<Include file="Pet\Pet.xml"/>
+	<Include file="Quest\Quest.xml"/>
+	<Include file="Raid\Raid.xml"/>
+	<Include file="Role\Role.xml"/>
+	<Include file="Tooltip\Tooltip.xml"/>	
+	<Include file="ActionBar\ActionBar.xml"/>
+</Ui>

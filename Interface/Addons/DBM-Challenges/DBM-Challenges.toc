@@ -1,0 +1,35 @@
+﻿## Interface: 70200
+## X-Min-Interface: 50400
+## Title:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r --Main-- |cff69ccf0Challenges|r
+## Title-zhTW:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r --Main-- |cff69ccf0試練場|r
+## Title-zhCN:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r --Main-- |cff69ccf0试练场|r
+## Author: MysticalOS
+## LoadOnDemand: 1
+## RequiredDeps: DBM-Core
+## SavedVariables: DBMChallenges_AllSavedVars
+## SavedVariablesPerCharacter: DBMChallenges_SavedStats
+## X-DBM-Mod: 1
+## X-DBM-Mod-Type: SCENARIO
+## X-DBM-Mod-Category: LEG
+## X-DBM-Mod-No-Statistics: 1
+## X-DBM-Mod-SubCategories: Proving Grounds,Legion Artifacts
+## X-DBM-Mod-Name: Challenges
+## X-DBM-Mod-Name-zhTW: 白虎試練場
+## X-DBM-Mod-Name-zhCN: 白虎试练场
+## X-DBM-Mod-Sort: 140
+## X-DBM-Mod-MapID: 1148, 1698, 1710, 1703, 1702
+## X-DBM-Mod-MinCoreRevision: 16130
+
+## X-Repple: DBM
+
+localization.en.lua
+localization.tw.lua
+localization.cn.lua
+PGWhiteTiger.lua
+LegionArtifacts\DPSFelTotem.lua
+LegionArtifacts\DPSImpossibleFoe.lua
+LegionArtifacts\DPSQueen.lua
+LegionArtifacts\DPSTwins.lua
+LegionArtifacts\DPSXylem.lua
+LegionArtifacts\Healer.lua
+LegionArtifacts\Tank.lua

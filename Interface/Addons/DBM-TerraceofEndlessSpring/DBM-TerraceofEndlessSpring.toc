@@ -1,0 +1,27 @@
+## Interface: 70200
+## X-Min-Interface: 50001
+## Title:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r -MoP- |cff69ccf0Terrace of Endless Spring|r
+## Title-zhCN:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r -MoP- |cff69ccf0永春台|r
+## Title-zhTW:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r -MoP- |cff69ccf0豐泉台|r
+## Author: MysticalOS
+## LoadOnDemand: 1
+## RequiredDeps: DBM-Core
+## SavedVariables: DBMTerraceofEndlessSpring_AllSavedVars
+## SavedVariablesPerCharacter: DBMTerraceofEndlessSpring_SavedStats
+## X-DBM-Mod: 1
+## X-DBM-Mod-Type: RAID
+## X-DBM-Mod-Category: MOP
+## X-DBM-Mod-Has-LFR : 1
+## X-DBM-Mod-Sort: 203
+## X-DBM-Mod-MapID: 996
+## X-DBM-Mod-MinCoreRevision: 14002
+
+## X-Repple: DBM
+
+localization.en.lua
+localization.tw.lua
+localization.cn.lua
+ProtectorsofEndless.lua
+Tsulong.lua
+LeiShi.lua
+ShaofFear.lua

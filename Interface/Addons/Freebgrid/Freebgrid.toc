@@ -1,0 +1,19 @@
+## Interface: 70200
+## Title: |cff70C0F5Freebgrid|r
+## Title-zhCN:|cff8000ff[治疗]|r团队框架
+## Title-zhTW:|cff0080ff[治療]|r团队框架
+## Author: Freebaser
+## Version: 7.1
+## SavedVariables: FreebgridDB
+## Dependencies: _ShiGuang
+## X-LoadOn-Slash: /freeb
+## DefaultState: disabled
+
+## X-Repple: 战斗
+
+Localization.lua
+db.lua
+clickset\clickset.lua
+aura_list.lua
+freebgrid.lua
+Resurrection.lua

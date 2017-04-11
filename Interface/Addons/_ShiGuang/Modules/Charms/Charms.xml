@@ -1,0 +1,12 @@
+﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+	<Script file="AlreadyKnown.lua"/>
+	<Script file="Charms.lua"/>
+	<Script file="xMerchant.lua"/>
+	<Script file="DragEmAll.lua"/>
+	<Script file="rlTools.lua"/>
+	<Script file="Exonumist.lua"/>
+	<Script file="StatPriority.lua"/>
+	<Script file="RightClickMenu.lua"/>
+	<Script file="kAutoOpen.lua"/>
+</Ui>

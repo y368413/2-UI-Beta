@@ -1,0 +1,27 @@
+## Interface: 70200
+## Title: TransMog Master
+## Title-zhCN: |cff02F78E[幻化]|r功能增强
+## Title-zhTW: |cff02F78E[幻化]|r功能增强
+## Notes: Makes Your TransMog Work Easier.
+## Notes-zhCN: 出售物品界面和鼠标提示界面，使你幻化时便捷。
+## Notes-zhTW: 出售物品界面和鼠标提示界面，使你幻化时便捷。
+## Author: TorelTwiddler, Ami Yuy + Elvador + Kruithne + Kemayo
+## SavedVariables: TransmogCleanupDB, AppearanceTooltipDB
+## SavedVariablesPerCharacter: AppearanceTooltipDBPC
+## RequiredDeps: _ShiGuang
+## Version: 0.8(MaoR UI-DIY)
+## DefaultState: disabled
+
+## X-Repple: 幻化
+
+#@no-lib-strip@
+LibStub.lua
+LibArmorToken-1.0.lua
+LibAppropriateItems-1.0.lua
+LibItemUpgradeInfo-1.0.lua
+#@end-no-lib-strip@
+AppearanceTooltip.lua
+
+TransmogCleanup.lua
+
+TransmogTokens.lua

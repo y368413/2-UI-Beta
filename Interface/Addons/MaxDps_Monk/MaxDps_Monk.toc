@@ -1,0 +1,12 @@
+﻿## Title: MaxDps_Monk
+## Title-zhCN:|CFFD74DE1[输出]|rMax-WS
+## Title-zhTW:|CFFD74DE1[输出]|rMax-WS
+## Version: 7.1.0.1
+## Author: Kaminaris
+## Interface: 70200
+## Dependencies: MaxDps
+## LoadOnDemand: 1
+
+## X-Repple: DPS
+
+main.lua

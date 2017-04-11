@@ -1,0 +1,12 @@
+﻿## Title: MaxDps_Shaman
+## Title-zhCN:|CFFD74DE1[输出]|rMax-SM
+## Title-zhTW:|CFFD74DE1[输出]|rMax-SM
+## Version: 7.1.5
+## Author: Kaminaris
+## Interface: 70200
+## Dependencies: MaxDps
+## LoadOnDemand: 1
+
+## X-Repple: DPS
+
+main.lua

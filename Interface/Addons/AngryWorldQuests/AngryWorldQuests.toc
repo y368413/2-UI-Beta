@@ -1,0 +1,22 @@
+## Interface: 70200
+## Title: Angry World Quests + World Quest Tips & Timers
+## Title-zhCN:|cff0080ff[地图]|r世界任务
+## Title-zhTW:|cff0080ff[地圖]|r世界任务
+## Notes: Adds World Quests to the quest list + Adds information to World Quest tooltips including custom notes, tracks completion times and adds TomTom arrows and more!
+## Author: Ermad + Salty Suggestions of Shadowsong(US)
+## SavedVariables: AngryWorldQuests_Config, WorldQuestTipsData
+## SavedVariablesPerCharacter: AngryWorldQuests_CharacterConfig
+## X-Packaged-Version: v0.17.4a + 1.25(7.1.0)
+
+## X-Repple: 地图
+
+Core.lua
+
+Config.lua
+Locale.lua
+
+QuestFrame.lua
+Data.lua
+FlightMap.lua
+
+BarrelsOEasy.lua

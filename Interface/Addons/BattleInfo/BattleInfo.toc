@@ -1,0 +1,26 @@
+## Interface: 70200
+## Title: BattleInfo
+## Title-zhCN: |cFF99CC01[战场]|r讯息增强
+## Title-zhTW: |cFF99CC01[戰場]|r訊息增强
+## Notes: Display more battle infomation
+## Notes-zhCN: 显示更多的战场信息
+## Notes-zhTW: 顯示更多的戰場資訊
+
+## SavedVariablesPerCharacter: BattleInfoDB
+## DefaultState: disabled
+
+## X-Repple: PVP
+
+localization.lua
+
+BattleInfo.xml
+
+mod\common.lua
+mod\server.lua
+#@mod\newbattle.lua
+mod\quest.lua
+mod\auto.lua
+mod\option.lua
+mod\av.lua
+mod\binding.lua
+BattleInfo.lua

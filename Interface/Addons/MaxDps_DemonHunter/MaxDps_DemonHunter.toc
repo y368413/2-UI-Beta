@@ -1,0 +1,12 @@
+﻿## Title: MaxDps_DemonHunter
+## Title-zhCN:|CFFD74DE1[输出]|rMax-DH
+## Title-zhTW:|CFFD74DE1[输出]|rMax-DH
+## Version: 7.1.0.1
+## Author: Kaminaris
+## Interface: 70200
+## Dependencies: MaxDps
+## LoadOnDemand: 1
+
+## X-Repple: DPS
+
+main.lua

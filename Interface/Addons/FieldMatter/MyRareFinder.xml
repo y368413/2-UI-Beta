@@ -1,0 +1,124 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ 
+..\..\FrameXML\UI.xsd"> 
+	<script file="MyRareFinderloc.lua"/>
+	<script file="MyRareFinder.lua"/>
+<Frame name="MyRareFinderFrame" hidden="false" parent="WorldMapButton" toplevel="true" enableMouse="true">
+	<Size>
+		<AbsDimension x="12" y="12" />
+	</Size>
+	<Anchors>
+		<Anchor point="TOPLEFT">
+			<Offset x="0" y="0" />
+		</Anchor>
+	</Anchors>
+	<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+		<BackgroundInsets>
+			<AbsInset left="11" right="12" top="12" bottom="11" />
+		</BackgroundInsets>
+		<TileSize>
+			<AbsValue val="32" />
+		</TileSize>
+		<EdgeSize>
+			<AbsValue val="32" />
+		</EdgeSize>
+	</Backdrop>
+	<Frames>
+		<Button name="MyRareFinderVisible" inherits="UIPanelButtonTemplate" text="">
+			<Size>
+				<AbsDimension x="30" y="30" />
+			</Size>
+			<Anchors>
+				<Anchor point="TOPLEFT">
+					<Offset x="0" y="0" />
+				</Anchor>
+			</Anchors>
+			<Backdrop />
+			<Scripts>
+				<OnClick>MyRareFinder_OnClick();</OnClick>
+				<OnEnter>MyRareFinder_OnEnter(self);</OnEnter>
+				<OnLeave>GameTooltip:Hide();</OnLeave>
+			</Scripts>
+			<NormalTexture file="Interface\AddOns\FieldMatter\textures\RareIcon.tga" />
+		</Button>
+		<Frame name="MyRareFinderSMOverlay" hidden="true" parent="WorldMapButton" toplevel="true" enableMouse="true">
+			<Size>
+				<AbsDimension x="1" y="1" />
+			</Size>
+			<Anchors>
+				<Anchor point="TOPLEFT">
+					<Offset x="0" y="0" />
+				</Anchor>
+			</Anchors>
+		</Frame>
+		<Frame name="MyRareFinderGorOverlay" hidden="true" parent="WorldMapButton" toplevel="true" enableMouse="true">
+			<Size>
+				<AbsDimension x="1" y="1" />
+			</Size>
+			<Anchors>
+				<Anchor point="TOPLEFT">
+					<Offset x="0" y="0" />
+				</Anchor>
+			</Anchors>
+		</Frame>
+		<Frame name="MyRareFinderSpireOverlay" hidden="true" parent="WorldMapButton" toplevel="true" enableMouse="true">
+			<Size>
+				<AbsDimension x="1" y="1" />
+			</Size>
+			<Anchors>
+				<Anchor point="TOPLEFT">
+					<Offset x="0" y="0" />
+				</Anchor>
+			</Anchors>
+		</Frame>
+		<Frame name="MyRareFinderTaladorOverlay" hidden="true" parent="WorldMapButton" toplevel="true" enableMouse="true">
+			<Size>
+				<AbsDimension x="1" y="1" />
+			</Size>
+			<Anchors>
+				<Anchor point="TOPLEFT">
+					<Offset x="0" y="0" />
+				</Anchor>
+			</Anchors>
+		</Frame>
+		<Frame name="MyRareFinderNagrandOverlay" hidden="true" parent="WorldMapButton" toplevel="true" enableMouse="true">
+			<Size>
+				<AbsDimension x="1" y="1" />
+			</Size>
+			<Anchors>
+				<Anchor point="TOPLEFT">
+					<Offset x="0" y="0" />
+				</Anchor>
+			</Anchors>
+		</Frame>
+		<Frame name="MyRareFinderFrostfireOverlay" hidden="true" parent="WorldMapButton" toplevel="true" enableMouse="true">
+			<Size>
+				<AbsDimension x="1" y="1" />
+			</Size>
+			<Anchors>
+				<Anchor point="TOPLEFT">
+					<Offset x="0" y="0" />
+				</Anchor>
+			</Anchors>
+		</Frame>
+		<Frame name="MyRareFinderTanaanOverlay" hidden="true" parent="WorldMapButton" toplevel="true" enableMouse="true">
+			<Size>
+				<AbsDimension x="1" y="1" />
+			</Size>
+			<Anchors>
+				<Anchor point="TOPLEFT">
+					<Offset x="0" y="0" />
+				</Anchor>
+			</Anchors>
+		</Frame>
+	</Frames>
+	<Scripts>
+		<OnLoad>
+			MyRareFinderLoad(self);
+		</OnLoad>
+		<OnEvent>
+			MyRareFinderEvent( event, self );
+		</OnEvent>
+	</Scripts>
+</Frame>
+
+</Ui> 

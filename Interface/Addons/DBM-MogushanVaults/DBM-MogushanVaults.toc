@@ -1,0 +1,29 @@
+## Interface: 70200
+## X-Min-Interface: 50001
+## Title:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r -MoP- |cff69ccf0Mogu'shan Vaults|r
+## Title-zhCN:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r -MoP- |cff69ccf0魔古山宝库|r
+## Title-zhTW:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r -MoP- |cff69ccf0魔古山寶庫|r
+## Author: MysticalOS
+## LoadOnDemand: 1
+## RequiredDeps: DBM-Core
+## SavedVariables: DBMMogushanVaults_AllSavedVars
+## SavedVariablesPerCharacter: DBMMogushanVaults_SavedStats
+## X-DBM-Mod: 1
+## X-DBM-Mod-Type: RAID
+## X-DBM-Mod-Category: MOP
+## X-DBM-Mod-Has-LFR : 1
+## X-DBM-Mod-Sort: 205
+## X-DBM-Mod-MapID: 1008
+## X-DBM-Mod-MinCoreRevision: 14002
+
+## X-Repple: DBM
+
+localization.en.lua
+localization.tw.lua
+localization.cn.lua
+StoneGuard.lua
+Feng.lua
+GarajalTheSpiritbinder.lua
+SpiritKings.lua
+Elegon.lua
+WillofEmperor.lua

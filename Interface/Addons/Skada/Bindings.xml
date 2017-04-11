@@ -1,0 +1,18 @@
+﻿<Bindings>
+	<Binding name="SKADA_TOGGLE" header="Skada" category="BINDING_MAORUI_BUTTONCLICK">
+		Skada:ToggleWindow()
+	</Binding>
+	<Binding name="SKADA_RESET" category="BINDING_MAORUI_BUTTONCLICK">
+		Skada:Reset()
+	</Binding>
+	<Binding name="SKADA_NEWSEGMENT" category="BINDING_MAORUI_BUTTONCLICK">
+		Skada:NewSegment()
+	</Binding>
+	<Binding name="SKADA_STOP" category="BINDING_MAORUI_BUTTONCLICK">
+        if Skada.current and Skada.current.stopped then
+            Skada:ResumeSegment();
+        elseif Skada.current then
+            Skada:StopSegment()
+        end
+	</Binding>
+</Bindings>

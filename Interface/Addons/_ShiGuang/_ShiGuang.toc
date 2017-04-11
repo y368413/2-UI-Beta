@@ -1,0 +1,29 @@
+## Interface: 70200
+## Title:- |cFFBF00FFMao|r|cFF00DDFFR|r|cffff8800UI|r -
+## Title-zhCN:- |cFFBF00FFMao|r|cFF00DDFFR|r|cffff8800UI|r -
+## Title-zhTW:- |cFFBF00FFMao|r|cFF00DDFFR|r|cffff8800UI|r -
+## Author: 火柴、图图
+## Credits: abin, ape47, Coolkid, Elv, Freebaser, Haleth, Haste, Loshine, Monolit, Neal, Neavo, p3lim, Qulight, Ray, superk, Tukz, Tuller, Warbaby, yleaf, Zork, siweia & "不高兴"...
+## Notes: Time Flies
+## Notes-zhCN: 时光 稍纵即逝
+## Notes-zhTW: 時光 稍縱即逝
+## Version:2.1.9
+## SavedVariables: MaoRUIDB,ShiGuangDB,ShiGuangSettingDB,LS_TOASTS_CFG_GLOBAL,diminfo,FriendGroups_SavedVars,RelicHelper_SV,EasyObliterate_Data,CurrencyTrackingDB,DruidFrenzyRegenDB,QuestListDB,zTipSaves,AdiCastBarDB,FoglightMode,TinyRosterDB
+## SavedVariablesPerCharacter: MaoRUISettingDB,ShiGuangPerDB,StableHelperPerChar,EasyObliterate_IgnoreList,LS_TOASTS_CFG
+
+## X-StatsVersion: 03-21-2011
+## X-Repple: MaoR UI
+## X-Website: https://git.coding.net/MaoRUI/MaoR-UI.git
+## X-Date: 2017-03-21T00:00:00Z
+
+## LoadManagers: AddonLoader
+## X-LoadOn-Always: Delayed
+## DefaultState: enabled
+
+Init.lua
+Locales\Locales.xml
+Core\Core.xml
+Ace3\Ace3.xml
+Libs\Libs.xml
+Modules\Modules.xml
+Plugins\Plugins.xml

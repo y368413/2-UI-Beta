@@ -1,0 +1,10 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+	<Include file="LibInspect\LibInspect.xml"/>
+	<Script file="Inspect.lua"/>
+	<Script file="InspectStats.lua"/>
+	<Script file="InspectGemAndEnchant.lua"/>
+	<Script file="ItemLevelForParty.lua"/>
+	<Script file="ItemLevelForPaperDoll.lua"/>
+	<Script file="CharacterStats.lua"/>
+</Ui>
