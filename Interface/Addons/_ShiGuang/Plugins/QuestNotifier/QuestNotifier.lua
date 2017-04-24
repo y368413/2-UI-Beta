@@ -10,8 +10,8 @@ local RGBStr = {
 }
 
 local function UpdateChk()
-	QNOchk_Switch:SetChecked(ShiGuangSettingDB.Switch)
-	if ShiGuangSettingDB.Switch == true then
+	QNOchk_Switch:SetChecked(ShiGuangDB.Switch)
+	if ShiGuangDB.Switch == true then
 		QNOchk_Instance:Enable()
 		QNOchk_Raid:Enable()
 		QNOchk_Party:Enable()
@@ -30,14 +30,14 @@ local function UpdateChk()
 		QNOchk_NoDetail:Disable()
 		QNOchk_CompleteX:Disable()
 	end
-	QNOchk_Instance:SetChecked(ShiGuangSettingDB.Instance)
-	QNOchk_Raid:SetChecked(ShiGuangSettingDB.Raid)
-	QNOchk_Party:SetChecked(ShiGuangSettingDB.Party)
-	QNOchk_Solo:SetChecked(ShiGuangSettingDB.Solo)
-	QNOchk_Sound:SetChecked(ShiGuangSettingDB.Sound)
-	QNOchk_Debug:SetChecked(ShiGuangSettingDB.Debug)
-	QNOchk_NoDetail:SetChecked(ShiGuangSettingDB.NoDetail)
-	QNOchk_CompleteX:SetChecked(ShiGuangSettingDB.CompleteX)
+	QNOchk_Instance:SetChecked(ShiGuangDB.Instance)
+	QNOchk_Raid:SetChecked(ShiGuangDB.Raid)
+	QNOchk_Party:SetChecked(ShiGuangDB.Party)
+	QNOchk_Solo:SetChecked(ShiGuangDB.Solo)
+	QNOchk_Sound:SetChecked(ShiGuangDB.Sound)
+	QNOchk_Debug:SetChecked(ShiGuangDB.Debug)
+	QNOchk_NoDetail:SetChecked(ShiGuangDB.NoDetail)
+	QNOchk_CompleteX:SetChecked(ShiGuangDB.CompleteX)
 end
 
 local function RScanQuests()
@@ -59,7 +59,7 @@ local function RScanQuests()
 				QuestID  	= qID,          	-- Integer
 				Link     	= qLink
 			}
-			if qisComplete == 1 and (IsQuestWatched(qIndex)) and ShiGuangSettingDB.CompleteX == true then
+			if qisComplete == 1 and (IsQuestWatched(qIndex)) and ShiGuangDB.CompleteX == true then
 				RemoveQuestWatch(qIndex)
 			end
 			for i = 1, GetNumQuestLeaderBoards(qIndex) do
@@ -82,19 +82,19 @@ end
 
 local function PrtChatMsg(msg)
 	if IsPartyLFG() then
-		if ShiGuangSettingDB.Instance == true then
+		if ShiGuangDB.Instance == true then
 			SendChatMessage(msg, "instance_chat", nil)
 		end
 	elseif IsInRaid() then
-		if ShiGuangSettingDB.Raid == true then
+		if ShiGuangDB.Raid == true then
 			SendChatMessage(msg, "raid", nil)
 		end
 	elseif IsInGroup() and not IsInRaid() then
-		if ShiGuangSettingDB.Party == true then
+		if ShiGuangDB.Party == true then
 			SendChatMessage(msg, "party", nil)
 		end
 	else
-		if ShiGuangSettingDB.Solo == true then
+		if ShiGuangDB.Solo == true then
 			SendChatMessage(msg, "say", nil)
 		end
 	end
@@ -109,7 +109,7 @@ function QN_OnEvent(event)
 		QuestNotifierOptionFrame:RegisterEvent("QUEST_LOG_UPDATE")
 		UpdateChk()
 	end
-	if ShiGuangSettingDB.Switch == false then return end
+	if ShiGuangDB.Switch == false then return end
 	if event == "QUEST_LOG_UPDATE" then
 		local QN_Progress = QN_Progress
 		local QN_ItemMsg, QN_ItemColorMsg = " ", " "
@@ -127,11 +127,11 @@ function QN_OnEvent(event)
 								if currList[i][j].DoneNum > QuestListDB[i][j].DoneNum then
 									QN_ItemMsg = currList[i].Link..QN_Progress..": "..currList[i][j].NeedItem..": "..currList[i][j].DoneNum.."/"..currList[i][j].NeedNum
 									QN_ItemColorMsg = ""..RGBStr.G..QN_Quest.."|r"..RGBStr.P.."["..currList[i].Level.."]|r "..currList[i].Link..RGBStr.G..QN_Progress..":|r"..RGBStr.K..currList[i][j].NeedItem..":|r"..RGBStr.Y..currList[i][j].DoneNum.."/"..currList[i][j].NeedNum.."|r"
-									if ShiGuangSettingDB.NoDetail == false then
+									if ShiGuangDB.NoDetail == false then
 										PrtChatMsg(QN_ItemMsg)
 									end
 									if not IsInGroup() then
-										if ShiGuangSettingDB.Debug == true then
+										if ShiGuangDB.Debug == true then
 											DebugMsg(QN_ItemColorMsg)
 										end
 									end
@@ -146,11 +146,11 @@ function QN_OnEvent(event)
 						QN_ItemColorMsg = ""..RGBStr.G..QN_Quest.."|r"..RGBStr.P.."["..currList[i].Level.."]|r "..currList[i].Link..RGBStr.K..QN_Complete.."|r"
 						PrtChatMsg(QN_ItemMsg)
 						if not IsInGroup() then
-							if ShiGuangSettingDB.Debug == true then
+							if ShiGuangDB.Debug == true then
 								DebugMsg(QN_ItemColorMsg)
 							end
 						end
-						if ShiGuangSettingDB.Sound == true then
+						if ShiGuangDB.Sound == true then
 							PlaySoundFile("Interface\\AddOns\\_ShiGuang\\Media\\Sounds\\QuestNotifier.ogg", "Master")
 						end
 						UIErrorsFrame:AddMessage(QN_ItemColorMsg)
@@ -166,7 +166,7 @@ function QN_OnEvent(event)
 				QN_ItemColorMsg = ""..RGBStr.K .. QN_Accept..": |r" .. RGBStr.P .."["..currList[i].Level.."]|r"..currList[i].Link
 				PrtChatMsg(QN_ItemMsg)
 				if not IsInGroup() then
-					if ShiGuangSettingDB.Debug == true then
+					if ShiGuangDB.Debug == true then
 						DebugMsg(QN_ItemColorMsg)
 					end
 				end

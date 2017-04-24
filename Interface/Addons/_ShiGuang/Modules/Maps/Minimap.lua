@@ -213,6 +213,7 @@ function module:OnLogin()
 	Minimap:SetBackdropColor(0,0,0,1)
 	Minimap:SetBackdropBorderColor(0,0,0,1)
 	--MinimapCluster:SetScale(MaoRUISettingDB["Map"]["MinmapScale"])
+	DropDownList1:SetClampedToScreen(true)
 
 	-- ClockFrame
 	if MaoRUISettingDB["Map"]["Clock"] then

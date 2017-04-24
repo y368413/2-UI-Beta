@@ -1,4 +1,4 @@
-﻿-----------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------
 --------- Isle of Thunder Weekly Check---------------------------------------------------
 -- by Fluffies
 -- EU-Well of Eternity
@@ -21,7 +21,7 @@ local COORD_GREY  = "|cffBBBBBB"
 local GOLD        = "|cffffcc00"
 local WHITE       = "|cffffffff"
 local PINK        = "|cffFFaaaa"
-local function AddColor(str,color) return color..(str or "获取中...").."|r" end
+local function AddColor(str,color) return color..(str or " ^-^ ").."|r" end
 
 local function completedstring(arg)
  if IsQuestFlaggedCompleted(arg) then return AddColor(COMPLETE,LIGHT_GREEN)
@@ -67,8 +67,8 @@ local function DrawMainframe(frame, istooltip)
  frame:AddLine(" ")
  frame:AddDoubleLine(quest_icon..AddColor("[|cffFFaaaa"..GetCurrencyInfo(1273).."|r] ",GOLD), CheckCurrency())
  frame:AddDoubleLine(quest_icon..AddColor(GetItemInfo(138019),LIGHT_BLUE), completedstring(44554))            --史诗钥石
- frame:AddDoubleLine(quest_icon..AddColor("要塞入侵",LIGHT_BLUE), GarrisonInvade())
- frame:AddDoubleLine(quest_icon..AddColor("时空漫游",LIGHT_BLUE), TimeTravelFB())   --TBC--WLK--CTM 
+ frame:AddDoubleLine(quest_icon..AddColor(GARRISON_LANDING_INVASION,LIGHT_BLUE), GarrisonInvade())
+ frame:AddDoubleLine(quest_icon..AddColor(PLAYER_DIFFICULTY_TIMEWALKER,LIGHT_BLUE), TimeTravelFB())   --TBC--WLK--CTM 
  frame:AddDoubleLine(quest_icon..AddColor(GetCurrencyInfo(1149),LIGHT_BLUE), completedstring(43478))  --盲目之眼
  frame:AddDoubleLine(quest_icon..AddColor(GetItemInfo(111821),LIGHT_BLUE), completedstring(34774))            --布林顿
  frame:AddLine(" ")
@@ -83,7 +83,7 @@ local function DrawMainframe(frame, istooltip)
  frame:AddDoubleLine(rare_icon..AddColor("MOP-纳拉克",ZONE_BLUE), completedstring(32518))
  frame:AddDoubleLine(rare_icon..AddColor("MOP-乌达斯塔",ZONE_BLUE), completedstring(32519))
  frame:AddLine(" ")
- frame:AddLine(chest_icon..AddColor("副本CD",GOLD))
+ frame:AddLine(chest_icon..AddColor(BOSS_DEAD,GOLD))
 for i = 1, GetNumSavedInstances() do
 	local name, id, _, difficulty, locked, extended, instanceIDMostSig, isRaid, maxPlayers, level, total, progress = GetSavedInstanceInfo(i)
 	frame:AddDoubleLine(AddColor(name.."("..level..")",WHITE), locked and AddColor(progress.."/"..total, LIGHT_GREEN) or AddColor("已过期", LIGHT_RED))

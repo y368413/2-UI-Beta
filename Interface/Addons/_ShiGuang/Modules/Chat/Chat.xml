@@ -2,7 +2,6 @@
 ..\FrameXML\UI.xsd">
 	<Script file="Chat.lua"/>
 	<Script file="FriendGroups.lua"/>
-	<Script file="FontStyle.lua"/>
 	<Script file="EnhancedChatFilter.lua"/>
 	<Script file="WhisperPop.lua"/>
 </Ui>

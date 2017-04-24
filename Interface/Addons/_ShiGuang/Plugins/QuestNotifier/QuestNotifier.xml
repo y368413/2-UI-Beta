@@ -116,7 +116,7 @@
 				<Scripts>
 					<OnClick>
 						if ( self:GetChecked() ) then
-							ShiGuangSettingDB.Switch = true;
+							ShiGuangDB.Switch = true;
 							QNOchk_Instance:Enable();
 							QNOchk_Raid:Enable();
 							QNOchk_Party:Enable();
@@ -126,7 +126,7 @@
 							QNOchk_NoDetail:Enable();
 							QNOchk_CompleteX:Enable();
 						else
-							ShiGuangSettingDB.Switch = false;
+							ShiGuangDB.Switch = false;
 							QNOchk_Instance:Disable();
 							QNOchk_Raid:Disable();
 							QNOchk_Party:Disable();
@@ -150,9 +150,9 @@
 				<Scripts>
 					<OnClick>
 						if ( self:GetChecked() ) then
-							ShiGuangSettingDB.Instance = true;
+							ShiGuangDB.Instance = true;
 						else
-							ShiGuangSettingDB.Instance = false;
+							ShiGuangDB.Instance = false;
 						end
 					</OnClick>
 				</Scripts>
@@ -168,9 +168,9 @@
 				<Scripts>
 					<OnClick>
 						if ( self:GetChecked() ) then
-							ShiGuangSettingDB.Raid = true;
+							ShiGuangDB.Raid = true;
 						else
-							ShiGuangSettingDB.Raid = false;
+							ShiGuangDB.Raid = false;
 						end
 					</OnClick>
 				</Scripts>
@@ -186,9 +186,9 @@
 				<Scripts>
 					<OnClick>
 						if ( self:GetChecked() ) then
-							ShiGuangSettingDB.Party = true;
+							ShiGuangDB.Party = true;
 						else
-							ShiGuangSettingDB.Party = false;
+							ShiGuangDB.Party = false;
 						end
 					</OnClick>
 				</Scripts>
@@ -204,9 +204,9 @@
 				<Scripts>
 					<OnClick>
 						if ( self:GetChecked() ) then
-							ShiGuangSettingDB.Solo = true;
+							ShiGuangDB.Solo = true;
 						else
-							ShiGuangSettingDB.Solo = false;
+							ShiGuangDB.Solo = false;
 						end
 					</OnClick>
 				</Scripts>
@@ -222,9 +222,9 @@
 				<Scripts>
 					<OnClick>
 						if ( self:GetChecked() ) then
-							ShiGuangSettingDB.Sound = true;
+							ShiGuangDB.Sound = true;
 						else
-							ShiGuangSettingDB.Sound = false;
+							ShiGuangDB.Sound = false;
 						end
 					</OnClick>
 				</Scripts>
@@ -240,9 +240,9 @@
 				<Scripts>
 					<OnClick>
 						if ( self:GetChecked() ) then
-							ShiGuangSettingDB.Debug = true;
+							ShiGuangDB.Debug = true;
 						else
-							ShiGuangSettingDB.Debug = false;
+							ShiGuangDB.Debug = false;
 						end
 					</OnClick>
 				</Scripts>
@@ -258,9 +258,9 @@
 				<Scripts>
 					<OnClick>
 						if ( self:GetChecked() ) then
-							ShiGuangSettingDB.NoDetail = true;
+							ShiGuangDB.NoDetail = true;
 						else
-							ShiGuangSettingDB.NoDetail = false;
+							ShiGuangDB.NoDetail = false;
 						end
 					</OnClick>
 				</Scripts>
@@ -276,9 +276,9 @@
 				<Scripts>
 					<OnClick>
 						if ( self:GetChecked() ) then
-							ShiGuangSettingDB.CompleteX = true;
+							ShiGuangDB.CompleteX = true;
 						else
-							ShiGuangSettingDB.CompleteX = false;
+							ShiGuangDB.CompleteX = false;
 						end
 					</OnClick>
 				</Scripts>

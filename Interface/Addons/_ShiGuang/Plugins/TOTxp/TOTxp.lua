@@ -6,7 +6,7 @@ local lastTarget = nil;
 local SHOW_INFO = 0;
 local manualShowHideMoving = nil;
 
---ShiGuangSettingDB = {};
+--ShiGuangDB = {};
 --TOTxpIgnoreWarriorOT = 1;
 --TOTxp_SHOW_TOTOT = 1;
 
@@ -37,21 +37,21 @@ function TOTxp_Command(cmd)
 	if (cmd) then
 		cmd = string.lower(cmd);
         if cmd == "1" then
-            cmd = "m" ShiGuangSettingDB[PlayerName] = 0;
+            cmd = "m" ShiGuangDB[PlayerName] = 0;
         elseif cmd == "2" then
-            cmd = "m" ShiGuangSettingDB[PlayerName] = 1;
+            cmd = "m" ShiGuangDB[PlayerName] = 1;
         elseif cmd == "0" then
-            cmd = "m" ShiGuangSettingDB[PlayerName] = 2;
+            cmd = "m" ShiGuangDB[PlayerName] = 2;
         end
         if (cmd == "mode" or cmd == "m") then
-			if (ShiGuangSettingDB[PlayerName] == 0) then       -- DPS Mode
-				ShiGuangSettingDB[PlayerName] = 1;
+			if (ShiGuangDB[PlayerName] == 0) then       -- DPS Mode
+				ShiGuangDB[PlayerName] = 1;
 				DEFAULT_CHAT_FRAME:AddMessage("TOTxp 已切换至 Tanker 模式",1,0.5,0.5);    
-			elseif (ShiGuangSettingDB[PlayerName] == 1) then   -- Tank Mode
-				ShiGuangSettingDB[PlayerName] = 2;
+			elseif (ShiGuangDB[PlayerName] == 1) then   -- Tank Mode
+				ShiGuangDB[PlayerName] = 2;
 				DEFAULT_CHAT_FRAME:AddMessage("TOTxp 已切换至 Healer 模式",0,1,0);    
-			elseif (ShiGuangSettingDB[PlayerName] == 2) then
-				ShiGuangSettingDB[PlayerName] = 0;
+			elseif (ShiGuangDB[PlayerName] == 2) then
+				ShiGuangDB[PlayerName] = 0;
 				DEFAULT_CHAT_FRAME:AddMessage("TOTxp 已切换至 DPSer 模式",0.5,0.5,1);
 			end
 		elseif(cmd == "info" or cmd == "i") then
@@ -108,8 +108,8 @@ function TOTxpFrame_OnEvent(self, event, ...)
 		end
 	elseif ( event == "VARIABLES_LOADED" ) then
 		
-		if (ShiGuangSettingDB[PlayerName] == nil) then
-            ShiGuangSettingDB[PlayerName] = 1;
+		if (ShiGuangDB[PlayerName] == nil) then
+            ShiGuangDB[PlayerName] = 1;
 		end
 
 		SLASH_TOTXP1 = "/totxp";
@@ -131,14 +131,14 @@ function TOTxpFrame_OnEvent(self, event, ...)
         else
             role = "TANK"
         end
-        ShiGuangSettingDB[PlayerName] = (role=="TANK" and 1) or (role=="HEALER" and 2) or (role=="DAMAGER" and 0)
+        ShiGuangDB[PlayerName] = (role=="TANK" and 1) or (role=="HEALER" and 2) or (role=="DAMAGER" and 0)
 
         --[[
-		if (ShiGuangSettingDB[PlayerName] == 0) then
+		if (ShiGuangDB[PlayerName] == 0) then
 			DEFAULT_CHAT_FRAME:AddMessage("仇恨警告已设置为|cFFFF80FF伤害输出者(DPSer)|r模式. /tot mode 切换模式");
-		elseif (ShiGuangSettingDB[PlayerName] == 1) then
+		elseif (ShiGuangDB[PlayerName] == 1) then
 			DEFAULT_CHAT_FRAME:AddMessage("仇恨警告已设置为|cFFFF80FF坦克(Tanker)|r模式. /tot mode 切换模式");
-		elseif (ShiGuangSettingDB[PlayerName] == 2) then
+		elseif (ShiGuangDB[PlayerName] == 2) then
 			DEFAULT_CHAT_FRAME:AddMessage("仇恨警告已设置为|cFFFF80FF治疗者(Healer)|r模式. /tot mode 切换模式");
 		end
 		--]]
@@ -158,7 +158,7 @@ function TOTxp_AnalyseAggro()
 	end		
 
 	if ( UnitPlayerControlled("target") ) then
-		if (ShiGuangSettingDB[PlayerName] == 2) then 
+		if (ShiGuangDB[PlayerName] == 2) then 
 			if ( not UnitIsUnit("player","target") and UnitIsFriend("player","target") and UnitExists("targettargettarget") ) then
 				--治疗的在瞄准自己的队友
 				if ( not UnitPlayerControlled("targettarget") and UnitCanAttack("targettarget", "player") ) then
@@ -192,7 +192,7 @@ function TOTxp_AnalyseAggro()
 		end
 	end
 
-	if (ShiGuangSettingDB[PlayerName] == 0 or ShiGuangSettingDB[PlayerName] == 2) then  -- DPS Mode
+	if (ShiGuangDB[PlayerName] == 0 or ShiGuangDB[PlayerName] == 2) then  -- DPS Mode
 
 		if ( UnitIsUnit("targettarget", "player") and UnitCanAttack("player", "target") ) then
 			-- DPSer挨打,危险
@@ -206,7 +206,7 @@ function TOTxp_AnalyseAggro()
 			TOTxp_SafeInfo("仇恨消退 ("..UnitName("targettarget")..")");
 		end
 
-	elseif (ShiGuangSettingDB[PlayerName] == 1) then  -- Tank mode
+	elseif (ShiGuangDB[PlayerName] == 1) then  -- Tank mode
 
 		if ( UnitIsUnit("targettarget", "player") ) then
 			-- 坦克挨打,安全

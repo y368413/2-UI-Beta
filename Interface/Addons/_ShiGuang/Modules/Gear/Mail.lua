@@ -307,7 +307,7 @@ local function update()
  --canDelete = InboxItemCanDelete(i)
  --if canDelete then
  local packageIcon, stationeryIcon, sender, subject, money, CODAmount, daysLeft, itemCount, wasRead, wasReturned, textCreated, canReply, isGM, itemQuantity = GetInboxHeaderInfo(i)
- if (ShiGuangSettingDB["read"] or wasRead) and not isGM and (not snd or (snd and (snd == low(sender)))) and
+ if (ShiGuangDB["read"] or wasRead) and not isGM and (not snd or (snd and (snd == low(sender)))) and
   (not itemCount or itemCount == 0) and (not money or money == 0) then
   DeleteInboxItem(i)
   timeout = t + 1
@@ -325,16 +325,16 @@ f:SetScript("OnUpdate", update)
 f:Hide()
 
 local function printOptionMsg(arg, help)
- if ShiGuangSettingDB[arg] == nil then return end
+ if ShiGuangDB[arg] == nil then return end
 
- print(title.." - "..(options_desc[arg] or "<unknown>").." = |cff69CCF0"..tostring(ShiGuangSettingDB[arg]).."|r"..
+ print(title.." - "..(options_desc[arg] or "<unknown>").." = |cff69CCF0"..tostring(ShiGuangDB[arg]).."|r"..
       (help and " (|cffCCCCCC/mbclean "..arg.."|r)" or ""))
 end
 
 local function start(arg)
 
  if arg == "read" then
-  ShiGuangSettingDB["read"] = not ShiGuangSettingDB["read"]
+  ShiGuangDB["read"] = not ShiGuangDB["read"]
   printOptionMsg(arg)
   return
  end

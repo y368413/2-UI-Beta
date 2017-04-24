@@ -1,4 +1,4 @@
--- SavedVariables:ShiGuangSettingDB
+-- SavedVariables:ShiGuangDB
 -- ShiGuang\\Media\\sound\\lubdub.wav
 
 local fadeInTime, fadeOutTime, maxAlpha, animScale, iconSize, holdTime, ignoredSpells
@@ -27,12 +27,12 @@ DCP:SetPoint("CENTER",UIParent,"CENTER",0,-155)
 DCP:SetScript("OnDragStart", function(self) self:StartMoving() end)
 DCP:SetScript("OnDragStop", function(self) 
     self:StopMovingOrSizing() 
-    --ShiGuangSettingDB.x = self:GetLeft()
-    --ShiGuangSettingDB.x = GetRight()
-    --ShiGuangSettingDB.y = self:GetBottom()
-    --ShiGuangSettingDB.y = GetTop()
+    --ShiGuangDB.x = self:GetLeft()
+    --ShiGuangDB.x = GetRight()
+    --ShiGuangDB.y = self:GetBottom()
+    --ShiGuangDB.y = GetTop()
     --self:ClearAllPoints() 
-    --self:SetPoint("CENTER",UIParent,"CENTER",ShiGuangSettingDB.x,ShiGuangSettingDB.y)
+    --self:SetPoint("CENTER",UIParent,"CENTER",ShiGuangDB.x,ShiGuangDB.y)
 end)
 DCP.TextFrame = DCP:CreateFontString(nil, "ARTWORK")
 DCP.TextFrame:SetFont(STANDARD_TEXT_FONT, 16, "OUTLINE")
@@ -66,16 +66,16 @@ local function GetPetActionIndexByName(name)
 end
 
 local function RefreshLocals()
-    fadeInTime = ShiGuangSettingDB.fadeInTime
-    fadeOutTime = ShiGuangSettingDB.fadeOutTime
-    maxAlpha = ShiGuangSettingDB.maxAlpha
-    animScale = ShiGuangSettingDB.animScale
-    iconSize = ShiGuangSettingDB.iconSize
-    holdTime = ShiGuangSettingDB.holdTime
-	  showSpellName = ShiGuangSettingDB.showSpellName
+    fadeInTime = ShiGuangDB.fadeInTime
+    fadeOutTime = ShiGuangDB.fadeOutTime
+    maxAlpha = ShiGuangDB.maxAlpha
+    animScale = ShiGuangDB.animScale
+    iconSize = ShiGuangDB.iconSize
+    holdTime = ShiGuangDB.holdTime
+	  showSpellName = ShiGuangDB.showSpellName
 
     ignoredSpells = { }
-    for _,v in ipairs({strsplit(",",ShiGuangSettingDB.ignoredSpells)}) do
+    for _,v in ipairs({strsplit(",",ShiGuangDB.ignoredSpells)}) do
         ignoredSpells[strtrim(v)] = true
     end
 end
@@ -148,7 +148,7 @@ local function OnUpdate(_,update)
 				end
                 DCPT:SetTexture(animating[1][1])
                 if animating[1][2] then
-                    DCPT:SetVertexColor(unpack(ShiGuangSettingDB.petOverlay))
+                    DCPT:SetVertexColor(unpack(ShiGuangDB.petOverlay))
                 end
                 --PlaySoundFile("Interface\\AddOns\\Doom_CooldownPulse\\lubdub.wav")
             end
@@ -171,12 +171,12 @@ end
 --------------------
 function DCP:ADDON_LOADED()
         for i,v in pairs(defaultsettings) do
-            if (not ShiGuangSettingDB[i]) then
-                ShiGuangSettingDB[i] = v
+            if (not ShiGuangDB[i]) then
+                ShiGuangDB[i] = v
             end
         end
     RefreshLocals()
-    --self:SetPoint("CENTER",UIParent,"CENTER",ShiGuangSettingDB.x,ShiGuangSettingDB.y)
+    --self:SetPoint("CENTER",UIParent,"CENTER",ShiGuangDB.x,ShiGuangDB.y)
     self:UnregisterEvent("ADDON_LOADED")
 end
 DCP:RegisterEvent("ADDON_LOADED")
@@ -290,12 +290,12 @@ function DCP:CreateOptionsFrame()
             end end },
         { text = "默认", func = function(self) 
             for i,v in pairs(defaultsettings) do 
-                ShiGuangSettingDB[i] = v 
+                ShiGuangDB[i] = v 
             end 
             for i,v in pairs(sliders) do 
-                getglobal("DCP_OptionsFrameSlider"..i):SetValue(ShiGuangSettingDB[v.value]) 
+                getglobal("DCP_OptionsFrameSlider"..i):SetValue(ShiGuangDB[v.value]) 
             end
-            DCP_OptionsFramePetColorBox:GetNormalTexture():SetVertexColor(unpack(ShiGuangSettingDB.petOverlay))
+            DCP_OptionsFramePetColorBox:GetNormalTexture():SetVertexColor(unpack(ShiGuangDB.petOverlay))
             DCP_OptionsFrameIgnoreBox:SetText("")
             DCP:ClearAllPoints()
             DCP:SetPoint("CENTER",UIParent,"CENTER",0,-155) 
@@ -340,19 +340,19 @@ function DCP:CreateOptionsFrame()
         end
         local valuetext = slider:CreateFontString(nil,"ARTWORK","GameFontNormalSmall")
         valuetext:SetPoint("TOP",slider,"BOTTOM",0,-1)
-        valuetext:SetText(format("%.1f",ShiGuangSettingDB[v.value]))
+        valuetext:SetText(format("%.1f",ShiGuangDB[v.value]))
         getglobal("DCP_OptionsFrameSlider"..i.."Text"):SetText(v.text)
         getglobal("DCP_OptionsFrameSlider"..i.."Low"):SetText(v.min)
         getglobal("DCP_OptionsFrameSlider"..i.."High"):SetText(v.max)
         slider:SetMinMaxValues(v.min,v.max)
         slider:SetValueStep(v.step)
-        slider:SetValue(ShiGuangSettingDB[v.value])
+        slider:SetValue(ShiGuangDB[v.value])
         slider:SetScript("OnValueChanged",function() 
-            local val=slider:GetValue() ShiGuangSettingDB[v.value]=val 
+            local val=slider:GetValue() ShiGuangDB[v.value]=val 
             valuetext:SetText(format("%.1f",val)) 
             if (DCP:IsMouseEnabled()) then 
-                DCP:SetWidth(ShiGuangSettingDB.iconSize) 
-                DCP:SetHeight(ShiGuangSettingDB.iconSize) 
+                DCP:SetWidth(ShiGuangDB.iconSize) 
+                DCP:SetHeight(ShiGuangDB.iconSize) 
             end end)
     end
 	
@@ -362,11 +362,11 @@ function DCP:CreateOptionsFrame()
 	
 	local spellnamecbt = CreateFrame("CheckButton","DCP_OptionsFrameSpellNameCheckButton",optionsframe,"OptionsCheckButtonTemplate")
     spellnamecbt:SetPoint("LEFT",spellnametext,"RIGHT",6,0)
-	spellnamecbt:SetChecked(ShiGuangSettingDB.showSpellName)
+	spellnamecbt:SetChecked(ShiGuangDB.showSpellName)
 	spellnamecbt:SetScript("OnClick", function(self) 
 		local newState = (self:GetChecked() == 1) or nil
 		self:SetChecked(newState)
-		ShiGuangSettingDB.showSpellName = newState
+		ShiGuangDB.showSpellName = newState
 		RefreshLocals()
 	end)
 	
@@ -379,12 +379,12 @@ function DCP:CreateOptionsFrame()
     ignorebox:SetPoint("TOPLEFT",ignoretext,"BOTTOMLEFT",0,3)
     ignorebox:SetWidth(180)
     ignorebox:SetHeight(32)
-    ignorebox:SetText(ShiGuangSettingDB.ignoredSpells)
+    ignorebox:SetText(ShiGuangDB.ignoredSpells)
     ignorebox:SetScript("OnEnter",function(self) GameTooltip:SetOwner(self, "ANCHOR_CURSOR") GameTooltip:SetText("提示：用逗号分隔多个法术，注意要小写") end)
     ignorebox:SetScript("OnLeave",function(self) GameTooltip:Hide() end)
     ignorebox:SetScript("OnEnterPressed", function(self) self:ClearFocus() end)
     ignorebox:SetScript("OnEditFocusLost",function(self)
-        ShiGuangSettingDB.ignoredSpells = ignorebox:GetText()
+        ShiGuangDB.ignoredSpells = ignorebox:GetText()
         RefreshLocals()
     end)
     
@@ -397,16 +397,16 @@ function DCP:CreateOptionsFrame()
     petcolorselect:SetWidth(20)
     petcolorselect:SetHeight(20)
 	petcolorselect:SetNormalTexture('Interface/ChatFrame/ChatFrameColorSwatch')
-    petcolorselect:GetNormalTexture():SetVertexColor(unpack(ShiGuangSettingDB.petOverlay))
+    petcolorselect:GetNormalTexture():SetVertexColor(unpack(ShiGuangDB.petOverlay))
     petcolorselect:SetScript("OnEnter",function(self) GameTooltip:SetOwner(self, "ANCHOR_CURSOR") GameTooltip:SetText("提示:使用白色不进行宠物技能颜色覆盖") end)
     petcolorselect:SetScript("OnLeave",function(self) GameTooltip:Hide() end)
     petcolorselect:SetScript('OnClick', function(self) 
-        self.r,self.g,self.b = unpack(ShiGuangSettingDB.petOverlay) 
+        self.r,self.g,self.b = unpack(ShiGuangDB.petOverlay) 
         OpenColorPicker(self) 
         ColorPickerFrame:SetPoint("TOPLEFT",optionsframe,"TOPRIGHT")
         end)
-    petcolorselect.swatchFunc = function(self) ShiGuangSettingDB.petOverlay={ColorPickerFrame:GetColorRGB()} petcolorselect:GetNormalTexture():SetVertexColor(ColorPickerFrame:GetColorRGB()) end
-    petcolorselect.cancelFunc = function(self) ShiGuangSettingDB.petOverlay={self.r,self.g,self.b} petcolorselect:GetNormalTexture():SetVertexColor(unpack(ShiGuangSettingDB.petOverlay)) end
+    petcolorselect.swatchFunc = function(self) ShiGuangDB.petOverlay={ColorPickerFrame:GetColorRGB()} petcolorselect:GetNormalTexture():SetVertexColor(ColorPickerFrame:GetColorRGB()) end
+    petcolorselect.cancelFunc = function(self) ShiGuangDB.petOverlay={self.r,self.g,self.b} petcolorselect:GetNormalTexture():SetVertexColor(unpack(ShiGuangDB.petOverlay)) end
 	
 	local petcolorselectbg = petcolorselect:CreateTexture(nil, 'BACKGROUND')
 	petcolorselectbg:SetWidth(17)

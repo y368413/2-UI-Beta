@@ -30,7 +30,7 @@ ChatFrame_AddMessageEventFilter("CHAT_MSG_INSTANCE_CHAT", filter)
 
 --報告隊伍裝等
 local function BroadcastItemLevelToParty()
-    if (GetTime() - lastBroadcastTimer < 5) then
+    if (GetTime() - lastBroadcastTimer < 6) then
         return table.wipe(members)
     end
     local total = select(2, GetAverageItemLevel())
@@ -54,26 +54,31 @@ local function BroadcastItemLevelToParty()
 end
 
 --(隊列)讀取隊友裝備等級
-function GetPartyItemLevel(id)
+function GetPartyItemLevel(id, final)
     local unit = "party" .. id
     local guid = UnitGUID(unit)
-    if (not guid or members[guid] or not CanInspect(unit)) then return end
+    if (not guid or not CanInspect(unit)) then return end
     NotifyInspect(unit)
     LibSchedule:AddTask({
+        final     = final,
         unit      = unit,
         name      = UnitName(unit),
         class     = select(2,UnitClass(unit)),
         identity  = guid,
-        elasped   = 0.5,
-        expired   = GetTime() + 4,
+        elasped   = 0.6,
+        expired   = GetTime() + 3,
         onTimeout = function(self) table.wipe(members) end,
         onExecute = function(self)
             local unknownCount, equippedLevel = LibItemInfo:GetUnitItemLevel(unit)
             if (unknownCount == 0 and equippedLevel > 0) then
                 members[self.identity] = {name=self.name or UnitName(self.unit),class=self.class,level=equippedLevel}
                 if (UnitExists("party"..(id+1))) then
-                    GetPartyItemLevel(id+1)
+                    GetPartyItemLevel(id+1, self.final)
                 else
+                    if (not self.final) then
+                        C_Timer.After(3, function() GetPartyItemLevel(1, true) end) --2秒后再次重新獲取
+                        return true
+                    end
                         PrintPartyItemLevel() --僅自己看
                         --BroadcastItemLevelToParty() --隊頻報告
                     table.wipe(members)

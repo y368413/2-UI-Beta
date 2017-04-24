@@ -10,7 +10,6 @@ function Talentless:PLAYER_LEVEL_UP(level)
 		table.remove(self.Items[2].items, 1)
 		self:UnregisterEvent('PLAYER_LEVEL_UP')
 	end
-
 	if(self:IsShown()) then
 		self:UpdateItems()
 	end
@@ -56,9 +55,11 @@ function Talentless:CreateItemButtons()
 	self.Items = {}
 
 	local OnEnter = function(self)
-		GameTooltip:SetOwner(self, 'ANCHOR_RIGHT')
-		GameTooltip:SetItemByID(self.itemID)
-		GameTooltip:Show()
+		if(self.itemID) then
+			GameTooltip:SetOwner(self, 'ANCHOR_RIGHT')
+			GameTooltip:SetItemByID(self.itemID)
+			GameTooltip:Show()
+		end
 	end
 
 	local OnEvent = function(self, event)

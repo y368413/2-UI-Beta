@@ -350,11 +350,7 @@ M.FormatTime = function(s)
 	elseif s >= minute then
 		return format("%d"..I.MyColor.."m", s/minute), s % minute
 	elseif s < 3 then
-		--if MaoRUISettingDB["Actionbar"]["DecimalCD"] then
-			return format("|cffff0000%.1f|r", s), s - format("%.1f", s)
-		--else
-			--return format("|cffff0000%d|r", s + .5), s - floor(s)
-		--end
+	        return format("|cffff0000%d|r", s + .5), s - floor(s)
 	elseif s < 10 then
 		return format("|cffffff00%d|r", s), s - floor(s)
 	end

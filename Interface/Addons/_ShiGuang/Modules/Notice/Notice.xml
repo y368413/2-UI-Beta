@@ -10,7 +10,6 @@
 	<Script file="IncentiveProgram.lua"/>
 	<Script file="Artifact.lua"/>	
 	<Script file="RelicInspector.lua"/>
-	<Script file="Relichelper.lua"/>
 	<Script file="CombatNotification.lua"/>
 	<Script file="CrazyCatLady.lua"/>
 </Ui>

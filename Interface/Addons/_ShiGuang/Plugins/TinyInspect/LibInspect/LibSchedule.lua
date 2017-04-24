@@ -86,3 +86,18 @@ function lib:AwakeTask(identity, useLike)
         end
     end
 end
+
+--查找Task
+function lib:SearchTask(identity, useLike)
+    local identities = {}
+    for i, v in ipairs(frame.schedules) do
+        if (useLike) then
+            if (string.find(v.identity,identity) and not v.stopped) then
+                tinsert(identities, v.identity)
+            end
+        elseif (v.identity == identity and not v.stopped) then
+            tinsert(identities, v.identity)
+        end
+    end
+    return #identities==0 and nil or identities
+end

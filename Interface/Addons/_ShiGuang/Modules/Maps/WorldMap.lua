@@ -3,14 +3,15 @@ local module = MaoRUI:RegisterModule("Maps")
 
 function module:OnLogin()
 	local WorldMapDetailFrame, WorldMapTitleButton, WorldMapFrame, WorldMapFrameTutorialButton = _G.WorldMapDetailFrame, _G.WorldMapTitleButton, _G.WorldMapFrame, _G.WorldMapFrameTutorialButton
+	local GetEffectiveScale, GetCursorPosition, GetPlayerMapPosition, hooksecurefunc = _G.GetEffectiveScale, _G.GetCursorPosition, _G.GetPlayerMapPosition, _G.hooksecurefunc
 	local formattext = I.MyColor..": %.1f, %.1f"
 
 	-- Default Settings
 	SetCVar("lockedWorldMap", 0)
 	WorldMapFrameTutorialButton:SetPoint("TOPLEFT", WorldMapFrame, "TOPLEFT", -12, -12)
 	WorldMapFrame:SetScale(MaoRUISettingDB["Map"]["MapScale"])
-	hooksecurefunc("WorldMap_ToggleSizeUp", function() WorldMapFrame:SetScale(1) end)
-	hooksecurefunc("WorldMap_ToggleSizeDown", function() WorldMapFrame:SetScale(MaoRUISettingDB["Map"]["MapScale"]) end)
+	hooksecurefunc("WorldMap_ToggleSizeUp", function() if InCombatLockdown() then return end WorldMapFrame:SetScale(1) end)
+	hooksecurefunc("WorldMap_ToggleSizeDown", function() if InCombatLockdown() then return end WorldMapFrame:SetScale(MaoRUISettingDB["Map"]["MapScale"]) end)
 
 	-- Generate Coords
 	if not MaoRUISettingDB["Map"]["Coord"] then return end
@@ -28,7 +29,7 @@ function module:OnLogin()
 		return cx, cy
 	end
 
-	local function OnUpdate(player, cursor)
+	local function CoordsUpdate(player, cursor)
 		local cx, cy = CursorCoords()
 		local px, py = GetPlayerMapPosition("player")
 		if cx and cy then
@@ -47,7 +48,7 @@ function module:OnLogin()
 		self.elapsed = self.elapsed - elapsed
 		if self.elapsed <= 0 then
 			self.elapsed = .1
-			OnUpdate(player, cursor)
+			CoordsUpdate(player, cursor)
 		end
 	end
 

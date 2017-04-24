@@ -89,7 +89,7 @@ frame:SetScript("OnEvent", function(self, event, arg1)
     end
 end)
 
---[[ ALT --
+-- ALT --
 if (EquipmentFlyout_DisplayButton) then
     local function ShowEquipmentFlyoutItemLevel(self, level)
         if (not self.levelString) then
@@ -108,12 +108,16 @@ if (EquipmentFlyout_DisplayButton) then
     hooksecurefunc("EquipmentFlyout_DisplayButton", function(button, paperDollItemSlot)
         local location = button.location
         if (not location) then return end
-        if (button.setTooltip) then
-            GameTooltip:SetOwner(UIParent, "ANCHOR_NONE")
-            button.setTooltip()
-            local ItemLink = select(2, GameTooltip:GetItem())
-            local _, level = LibItemInfo:GetItemInfo(ItemLink)
-            ShowEquipmentFlyoutItemLevel(button, level)
+        local player, bank, bags, voidStorage, slot, bag, tab, voidSlot = EquipmentManager_UnpackLocation(location)
+        if (not player and not bank and not bags and not voidStorage) then return end
+        if (voidStorage) then return end
+        local ItemLink, level
+        if (bags) then
+            ItemLink = GetContainerItemLink(bag, slot)
+        else
+            ItemLink = GetInventoryItemLink("player", slot)
         end
+        level = select(2, LibItemInfo:GetItemInfo(ItemLink))
+        ShowEquipmentFlyoutItemLevel(button, level)
     end)
-end]]
+end

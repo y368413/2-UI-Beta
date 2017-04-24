@@ -50,7 +50,7 @@ local options = {
 						LibStub("AceConsole-3.0"):Print(enabled and InboxMailBag_ADVANCED_MODE_ENABLED or InboxMailBag_ADVANCED_MODE_DISABLED);
 					end
 				 end,
-			get = function(info) return ShiGuangSettingDB["ADVANCED"] end,
+			get = function(info) return ShiGuangDB["ADVANCED"] end,
 		},
 		quality_colors = {
 			type = 'toggle',
@@ -59,7 +59,7 @@ local options = {
 			descStyle = "inline",
 			width = "full",
 			set = function(info, enabled)
-					ShiGuangSettingDB["QUALITY_COLORS"] = enabled;
+					ShiGuangDB["QUALITY_COLORS"] = enabled;
 					if ( InboxMailbagFrame:IsVisible() ) then
 						InboxMailbag_Update();
 					end
@@ -67,7 +67,7 @@ local options = {
 						LibStub("AceConsole-3.0"):Print(enabled and InboxMailBag_QUALITY_COLORS_MODE_ENABLED or InboxMailBag_QUALITY_COLORS_MODE_DISABLED);
 					end
 				 end,
-			get = function(info) return ShiGuangSettingDB["QUALITY_COLORS"] end,
+			get = function(info) return ShiGuangDB["QUALITY_COLORS"] end,
 		},
 		mail_default = {
 			type = 'toggle',
@@ -76,12 +76,12 @@ local options = {
 			descStyle = "inline",
 			width = "full",
 			set = function(info, enabled)
-					ShiGuangSettingDB["MAIL_DEFAULT"] = enabled;
+					ShiGuangDB["MAIL_DEFAULT"] = enabled;
 					if (info[0]) then
 						LibStub("AceConsole-3.0"):Print(enabled and InboxMailBag_MAIL_DEFAULT_ENABLED or string.format(InboxMailBag_MAIL_DEFAULT_DISABLED, INBOX));
 					end
 				 end,
-			get = function(info) return ShiGuangSettingDB["MAIL_DEFAULT"] end,
+			get = function(info) return ShiGuangDB["MAIL_DEFAULT"] end,
 		},
 	},
 };
@@ -156,7 +156,7 @@ function InboxMailbag_OnPlayerLogin(self, event, ...)
 	end
 
 	-- Last tweaks for advanced mode
-	InboxMailbag_ToggleAdvanced( ShiGuangSettingDB["ADVANCED"] );
+	InboxMailbag_ToggleAdvanced( ShiGuangDB["ADVANCED"] );
 end
 
 function InboxMailbag_OnShow(self)
@@ -194,7 +194,7 @@ function InboxMailbag_OnEvent(self, event, ...)
 		-- Assume it's our fault, stop the queue
 		InboxMailbag_ResetQueue();
 	elseif( event == "MAIL_SHOW" ) then
-		if ShiGuangSettingDB["MAIL_DEFAULT"] then
+		if ShiGuangDB["MAIL_DEFAULT"] then
 			InboxMailbagTab_OnClick(MB_Tab);
 		end
 	elseif( event == "PLAYER_LOGIN" ) then
@@ -254,8 +254,8 @@ function InboxMailbag_Consolidate()
 	
 	local counter = 0;
 	local index = "";
-	local bGroupStacks = ShiGuangSettingDB["GROUP_STACKS"];
-	local bAdvanced    = ShiGuangSettingDB["ADVANCED"];
+	local bGroupStacks = ShiGuangDB["GROUP_STACKS"];
+	local bAdvanced    = ShiGuangDB["ADVANCED"];
 	
 	for i=1, GetInboxNumItems() do
 		local packageIcon, stationeryIcon, sender, subject, money, CODAmount, daysLeft, itemCount, wasRead, wasReturned, textCreated, canReply, isGM = GetInboxHeaderInfo(i);
@@ -392,7 +392,7 @@ function InboxMailbag_Update()
 		InboxMailbagFrameTotalMessages:SetText( format(InboxMailBag_TOTAL, numItems) );
 	end
 	
-	local bQualityColors = ShiGuangSettingDB["QUALITY_COLORS"];
+	local bQualityColors = ShiGuangDB["QUALITY_COLORS"];
 	local itemName, itemTexture, count, quality, canUse, _, itemLink;
 	for i=1, BAGITEMS_ICON_DISPLAYED do
 		local currentIndex = i + offset;
@@ -539,7 +539,7 @@ function InboxMailbagItem_OnEnter(self, index)
 			else
 				BattlePetTooltip:Hide();
 			end
-		elseif ( ShiGuangSettingDB["GROUP_STACKS"] ) then
+		elseif ( ShiGuangDB["GROUP_STACKS"] ) then
 			GameTooltip:AddLine( ENCLOSED_MONEY );
 			GameTooltip:AddLine( GetCoinTextureString(item.money), 1, 1, 1 );
 		else
@@ -570,7 +570,7 @@ function InboxMailbagItem_OnEnter(self, index)
 				else
 					strAmount = ( link.money and link.money > 0 ) and format( "|cffFFFFFF%s|r ", GetCoinTextureString(link.money) );
 
-					if ( ShiGuangSettingDB["GROUP_STACKS"] ) then
+					if ( ShiGuangDB["GROUP_STACKS"] ) then
 						local invoiceType, itemName, playerName, bid, buyout, deposit, consignment = GetInboxInvoiceInfo( link.mailID );
 						if ( invoiceType == "seller" ) then
 							sender = subject;
@@ -711,12 +711,12 @@ end
 
 function InboxMailbag_ToggleAdvanced(...)
 	if ( select("#", ...) >= 1 ) then
-		ShiGuangSettingDB["ADVANCED"] = select(1, ...);
+		ShiGuangDB["ADVANCED"] = select(1, ...);
 	else
-		ShiGuangSettingDB["ADVANCED"] = not ShiGuangSettingDB["ADVANCED"];
+		ShiGuangDB["ADVANCED"] = not ShiGuangDB["ADVANCED"];
 	end
 	
-	if ( ShiGuangSettingDB["ADVANCED"] ) then
+	if ( ShiGuangDB["ADVANCED"] ) then
 		InboxMailbagFrameTotalMessages:Show();
 	else
 		InboxMailbagFrameTotalMessages:Hide();
@@ -739,7 +739,7 @@ end
 -- Respond to BeanCounter hiding its GUI by showing ours if appropriate
 function InboxMailbag_BeanCounter_OnHide()
 	MB_Tab:Show();
-	if ShiGuangSettingDB["MAIL_DEFAULT"] then
+	if ShiGuangDB["MAIL_DEFAULT"] then
 		InboxMailbagTab_OnClick(MB_Tab);
 	end
 end

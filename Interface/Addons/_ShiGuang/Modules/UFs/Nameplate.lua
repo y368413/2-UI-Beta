@@ -79,7 +79,7 @@ do
 	local bars = {}
 	for i = 1, Resourcebar.__max do
 		bars[i] = CreateFrame("StatusBar", nil, Resourcebar)
-		bars[i]:SetSize(15, 4)
+		bars[i]:SetSize(16, 4)
 		bars[i]:SetStatusBarTexture(I.normTex)
 		bars[i]:SetStatusBarColor(unpack(colorTable[I.MyClass] or {1, 1, 1}))
 		M.CreateSD(bars[i], 3, 3)
@@ -886,8 +886,8 @@ local function OnNamePlateCreated(namePlate)
 	end
 
 	local icons = CreateFrame("Frame", nil, unitFrame)
-	icons:SetPoint("BOTTOM", unitFrame, "TOP")
-	icons:SetSize(140, 25)
+	icons:SetPoint("BOTTOM", unitFrame, "TOP", 3, 0)
+	icons:SetSize(126, 25)
 	icons:SetFrameLevel(unitFrame:GetFrameLevel() + 2)
 	unitFrame.iconsFrame = icons
 	unitFrame.icons = {}

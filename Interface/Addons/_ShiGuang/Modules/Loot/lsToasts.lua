@@ -92,7 +92,7 @@ local CFG = {}
 local DEFAULTS = {
 	growth_direction = "DOWN",
 	point = {"TOP", "UIParent", "TOP", 0, -21},
-	max_active_toasts = 11,
+	max_active_toasts = 12,
 	sfx_enabled = true,
 	fadeout_delay = 2.6,
 	scale = 1,
@@ -148,7 +148,7 @@ local DEFAULTS = {
 }
 
 local F = {} -- F for Functions
-_G[...] = { [1] = F, }
+_G["_ShiGuang"] = { [1] = F, }
 
 ----------------
 -- DISPATCHER --
@@ -2170,7 +2170,6 @@ do
 			end
 
 			if quality >= CFG.type.loot_common.threshold and quality <= 4 then
-				local toast = GetToast("item")
 				local color = _G.ITEM_QUALITY_COLORS[quality or 4]
 
 			toast.Title:SetText(_G.YOU_RECEIVED_LABEL)

@@ -1,5 +1,6 @@
 local _, _, U, I = unpack(select(2, ...))
 I.Version = GetAddOnMetadata("_ShiGuang", "Version")
+I.Client = GetLocale()
 
 -- Colors
 I.MyClass = select(2, UnitClass("player"))

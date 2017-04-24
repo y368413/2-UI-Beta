@@ -1,4 +1,4 @@
-﻿--怕我自己忘记，写个备注：
+--怕我自己忘记，写个备注：
 --1、名字不是2个字的，就是未写好、没测试过的
 --2、2个字的，X单为单体、X群为群体+T为X拉、奶为X奶、DPS为X攻；
 ------------------------------------------------------------------------Macro-----------------------------------------------------------
@@ -1062,22 +1062,25 @@ end
 local ModifiedMacros = {} -- [macroName] = true if we've already modified this macro
 local IgnoreMacroUpdates = false
 local SequencesFrame = CreateFrame('Frame')
-SequencesFrame:SetScript('OnEvent', function(self, event)
+SequencesFrame:SetScript('OnEvent', function(self, event, ...)
 	if (event == 'UPDATE_MACROS' or event == 'PLAYER_LOGIN') and not IgnoreMacroUpdates then
-		if not InCombatLockdown() then IgnoreMacroUpdates = true
-for name, sequence in pairs(Sequences) do 
-   local macroIndex = GetMacroIndexByName(name) 
-   if macroIndex and macroIndex ~= 0 then 
-      if not ModifiedMacros[name] then 
-         ModifiedMacros[name] = true  
-         EditMacro(macroIndex, nil, nil, '#showtooltip\n/click ' .. name)
-      end 
-      _G[name]:UpdateIcon() 
-   elseif ModifiedMacros[name] then 
-      ModifiedMacros[name] = nil 
-   end 
-end
+		if not InCombatLockdown() then
+			IgnoreMacroUpdates = true
+			--self:UnregisterEvent('UPDATE_MACROS')
+			for name, sequence in pairs(Sequences) do
+				local macroIndex = GetMacroIndexByName(name)
+				if macroIndex and macroIndex ~= 0 then
+					if not ModifiedMacros[name] then
+						ModifiedMacros[name] = true
+						EditMacro(macroIndex, nil, nil, '#showtooltip\n/click ' .. name)
+					end
+					_G[name]:UpdateIcon()
+				elseif ModifiedMacros[name] then
+					ModifiedMacros[name] = nil
+				end
+			end
 			IgnoreMacroUpdates = false
+			--self:RegisterEvent('UPDATE_MACROS')
 		else
 			self:RegisterEvent('PLAYER_REGEN_ENABLED')
 		end
@@ -1086,5 +1089,50 @@ end
 		self:GetScript('OnEvent')(self, 'UPDATE_MACROS')
 	end
 end)
+
+do -- temporary? fix for bug clearing the icon when zoning in 7.2
+	local SequencesFrame72 = CreateFrame('frame')
+	SequencesFrame72:Hide()
+	local DoUpdate = false
+	local IgnoreIconUpdates = false
+	SequencesFrame72:SetScript('OnUpdate', function(self, elapsed)
+		if DoUpdate then	
+			DoUpdate = false
+			self:Hide()
+			for name, sequence in pairs(Sequences) do
+				local macroIndex = GetMacroIndexByName(name)
+				if macroIndex and macroIndex ~= 0 and _G[name] then
+					_G[name]:UpdateIcon()
+				end
+			end
+			-- print(GetTime(), 'Done updating all icons')
+			IgnoreIconUpdates = false
+		else
+			DoUpdate = true
+		end
+	end)
+	SequencesFrame72:SetScript('OnEvent', function(self, event, slot)
+		if not IgnoreIconUpdates then
+			if slot == 0 then
+				IgnoreIconUpdates = true
+				self:Show() -- we have to set the icon on the next frame or it won't take
+				-- print(GetTime(), 'Start updating all icons')
+			else
+				IgnoreIconUpdates = true
+				local actionType, macroSlot = GetActionInfo(slot)
+				if actionType == 'macro' then
+					local macroName = GetMacroInfo(macroSlot)
+					if Sequences[macroName] and _G[macroName] then
+						_G[macroName]:UpdateIcon()
+						-- print(GetTime(), 'Updating specific icon', macroName)
+					end
+				end
+				IgnoreIconUpdates = false
+			end
+		end
+	end)
+	SequencesFrame72:RegisterEvent('ACTIONBAR_SLOT_CHANGED')
+end
+
 SequencesFrame:RegisterEvent('UPDATE_MACROS')
 SequencesFrame:RegisterEvent('PLAYER_LOGIN')

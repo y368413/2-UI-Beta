@@ -92,15 +92,6 @@ local function lovewow()
 	close:SetScript("OnClick", function(self) f:Hide() end)
 end
 
-MaoRUI:EventFrame("PLAYER_ENTERING_WORLD"):SetScript("OnEvent", function(self)
-	self:UnregisterAllEvents()
-	MaoRUIDB["Changelog"] = MaoRUIDB["Changelog"] or {}
-	if (not HelloWorld) and MaoRUIDB["Changelog"].Version ~= I.Version then
-		changelog()
-		MaoRUIDB["Changelog"].Version = I.Version
-	end
-end)
-
 SlashCmdList["NDUICHANGELOG"] = function()
 	if not NDuiChangeLog then changelog() else NDuiChangeLog:Show() end
 end

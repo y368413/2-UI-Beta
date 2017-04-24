@@ -82,10 +82,10 @@
 						_G[self:GetName() .. "Text"]:SetText(MB_GROUP_STACKS);
 					</OnLoad>
 					<OnShow>
-						self:SetChecked(ShiGuangSettingDB["GROUP_STACKS"]);
+						self:SetChecked(ShiGuangDB["GROUP_STACKS"]);
 					</OnShow>
 					<OnClick>
-						ShiGuangSettingDB["GROUP_STACKS"] = self:GetChecked();
+						ShiGuangDB["GROUP_STACKS"] = self:GetChecked();
 						InboxMailbag_Consolidate();
 					</OnClick>
 				</Scripts>

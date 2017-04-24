@@ -6,9 +6,7 @@
         <Layers>
             <Layer level="ARTWORK">
                 <FontString name="$parentTitle" inherits="GameFontNormal" justifyH="RIGHT" text="Ctrl+Shift">
-					<Size>
-						<AbsDimension x="90" y="0"/>
-					</Size>
+                    <Size> <AbsDimension x="90"/> </Size>
                     <Anchors>
                         <Anchor point="TOPLEFT">
                             <Offset> <AbsDimension x="0" y="-10"/> </Offset>
@@ -65,14 +63,10 @@
                 <TextInsets>
                     <AbsInset left="6" right="6" top="6" bottom="6"/>
                 </TextInsets>
-				<!--TODO Error:(69, 18) Invalid content was found starting with element 'Backdrop'. One of '{"http://www.blizzard.com/wow/ui/":FontString, "http://www.blizzard.com/wow/ui/":HighlightColor, "http://www.blizzard.com/wow/ui/":TextInsets}' is expected.-->
-				<Backdrop edgeFile="Interface\Tooltips\UI-Tooltip-Border" bgFile="" tile="true">
-					<EdgeSize>
-						<AbsValue val="16"/>
-					</EdgeSize>
-					<TileSize>
-						<AbsValue val="16"/>
-					</TileSize>
+
+                <Backdrop edgeFile="Interface\Tooltips\UI-Tooltip-Border" bgFile = "" tile="true">
+                    <EdgeSize><AbsValue val="16"/></EdgeSize>
+                    <TileSize><AbsValue val="16"/></TileSize>
                     <BackgroundInsets>
                         <AbsInset left="3" right="3" top="3" bottom="3"/>
                     </BackgroundInsets>
@@ -82,9 +76,7 @@
                     <OnLoad>
                         --self:SetBackdropColor(0,0,0)
                     </OnLoad>
-					<OnTabPressed>
-
-					</OnTabPressed>
+                    <OnTabPressed></OnTabPressed>
                     <OnEnterPressed>
                         if IsShiftKeyDown() or IsControlKeyDown() or IsAltKeyDown() then
                             self:Insert("\n")
@@ -394,13 +386,11 @@
                     </OnClick>
                 </Scripts>
             </Button>
-			<!--TODO ID:无效的属性 Error:(407, 91) Attribute 'ID' is not allowed to appear in element 'Frame'.-->
+
             <Frame name="GridClickSetButton1" inherits="GridClickSetButtonOptionTemplate" ID="1">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeTo="GridClickSetsFramePanelContainer">
-						<Offset>
-							<AbsDimension x="10" y="0"/>
-						</Offset>
+                        <Offset> <AbsDimension x="10" y="0"/>	</Offset>
                     </Anchor>
                 </Anchors>
             </Frame>

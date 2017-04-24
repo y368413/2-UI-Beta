@@ -1,4 +1,4 @@
-﻿local M, R, U, I = unpack(select(2, ...))
+local M, R, U, I = unpack(select(2, ...))
 local module = MaoRUI:GetModule("Misc")
 ---------------------------------------------------------------------PlayerFrame
 --[[--------------------------------------头像渐隐---------------------------------------
@@ -23,9 +23,7 @@ hooksecurefunc("UnitFramePortrait_Update",function(self)
                         self.portrait:SetTexCoord(0,1,0,1) 
                 end 
         end 
-end)]]
-
-local colorbyclass = true  --血条按职业着色
+end)]] 
 -----------------------------------------	    BloodW--万位显示数值   -----------------------------------------
 local function HealthBarText(statusFrame, textString, value, valueMin, valueMax)    --if string.find(textString:GetName(), "Health") or string.find then
       if valueMax ~= 0 then 
@@ -56,7 +54,7 @@ function HealthBarText_CapDisplayOfNumericValue(value)
   return retString; 
 end
 
------------------------------------------	  血条按职业着色&百分比    -----------------------------------------
+-----------------------------------------	  血条按职业着色    -----------------------------------------
 --Frame
 local function textUpdate(bar)
 	local value = bar:GetValue()
@@ -93,7 +91,7 @@ local function colorHPBar(bar, unit)
 			r, g, b = 1, 2*value, 0
 		end
 		if not bar.disconnected and not bar.lockColor then
-			if colorbyclass and UnitIsPlayer(unit) and UnitClass(unit) then
+			if UnitIsPlayer(unit) and UnitClass(unit) then  --血条按职业着色
 				local color = RAID_CLASS_COLORS[select(2, UnitClass(unit))]
 				bar:SetStatusBarColor(color.r, color.g, color.b)
 			else
@@ -108,7 +106,7 @@ hooksecurefunc("TextStatusBar_UpdateTextString", textUpdate)
 hooksecurefunc("UnitFrameHealthBar_Update", colorHPBar)
 hooksecurefunc("HealthBar_OnValueChanged", function(self) colorHPBar(self, self.unit) end)
 
-
+---------------------------------------	  血条百分比    -----------------------------------------
 function CreateBarPctText(frame, ap, rp, x, y, font, manabar)
 	local bar = ( manabar and frame.manabar ) or (not manabar and frame.healthbar )
 	if bar then
@@ -128,7 +126,6 @@ end
 local function getClassColor(unit)
 	return UnitIsPlayer(unit) and RAID_CLASS_COLORS[select(2, UnitClass(unit))] or NORMAL_FONT_COLOR, UnitIsPlayer(unit)
 end
-
 function SetNameColor(frame)
 	if frame:IsShown() and frame.name then
 		local color = getClassColor(frame.unit)
@@ -140,7 +137,6 @@ function SetNameColor(frame)
 		end
 	end
 end
-
 CreateBarPctText(PlayerFrame, "RIGHT", "LEFT", -92, -8, "NumberFontNormalLarge")
 CreateBarPctText(TargetFrame, "LEFT", "RIGHT", 92, -6, "NumberFontNormalLarge")
 CreateBarPctText(FocusFrame, "RIGHT", "LEFT", -3, -8, "NumberFontNormalLarge")
@@ -151,12 +147,9 @@ for i = 1, MAX_BOSS_FRAMES do
 	--CreateBarPctText(bossFrame, "BOTTOMLEFT", "TOPRIGHT", 17, 19, "NumberFontNormalLarge")
 	CreateBarPctText(bossFrame, "LEFT", "RIGHT", 8, 30, "NumberFontNormal")
 end
-
 TargetFrame:HookScript("OnUpdate", SetNameColor)
 --TargetFrameToT:HookScript("OnUpdate", SetNameColor)
 FocusFrameToT:HookScript("OnUpdate", SetNameColor)
-
-
 --SetNameColor(PlayerFrame)
 
 
@@ -386,8 +379,8 @@ do
 		FocusFrameHealthBar:ClearAllPoints()
 		FocusFrameHealthBar:SetHeight(28)
 		FocusFrameHealthBar:SetPoint("CENTER", FocusFrameManaBar, "CENTER", 0, 22) 
-		FocusFrameTextureFrameHealthBarText:ClearAllPoints()
-		FocusFrameTextureFrameHealthBarText:SetPoint("CENTER", FocusFrameHealthBar, "CENTER", 0, -3)
+		--FocusFrameTextureFrameHealthBarText:ClearAllPoints()
+		--FocusFrameTextureFrameHealthBarText:SetPoint("CENTER", FocusFrameHealthBar, "CENTER", 0, -3)
 		--目标
 		TargetFrame.Background:SetPoint("TOPLEFT",6,-22);
 		TargetFrame.deadText:ClearAllPoints()
@@ -490,9 +483,7 @@ local function PartyCastingBar_OnEvent(self, event, ...)
 	end
     CastingBarFrame_OnEvent(self, event, arg1, select(2, ...))
 end
-
 -- 創建施法條
-
 local partycastframe
 for i = 1, MAX_PARTY_MEMBERS do
 	partycastframe = CreateFrame("STATUSBAR", "PartyCastingBar"..i, _G["PartyMemberFrame"..i], "SmallCastingBarFrameTemplate")
@@ -651,6 +642,144 @@ hooksecurefunc("PartyMemberFrame_UpdateMember", function(self)
 		SetNameColor(self)
 	end
 end)
+
+-----------------------------------------------------------------castbar
+------------------施法条位置&增强----感谢泡泡帮忙修复-------------------------------------
+--[[ 玩家施法条 ]]
+CastingBarFrame:ClearAllPoints()
+CastingBarFrame:SetPoint("BOTTOMRIGHT", PlayerFrame, "TOPRIGHT", -3, -5) --0, 100
+CastingBarFrame.SetPoint = function() end
+CastingBarFrame:SetSize(333, 12)
+CastingBarFrame:SetToplevel(false)
+CastingBarFrame:SetFrameStrata("LOW")
+CastingBarFrame:SetParent(PlayerFrame)
+CastingBarFrame.Border:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\backdrop")
+CastingBarFrame.Flash:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\backdrop")
+CastingBarFrame.Text = CastingBarFrame:CreateFontString(nil)
+CastingBarFrame.Text:SetFont(STANDARD_TEXT_FONT, 16, "OUTLINE")
+CastingBarFrame.Text:SetPoint("TOPLEFT", CastingBarFrame, "BOTTOMLEFT", 0, -2)
+CastingBarFrame.Icon:Show()
+CastingBarFrame.Icon:SetSize(PlayerPortrait:GetSize())
+    -- Hacky way to set spellicon
+    local function setSpell(frame, event)
+        if event == "UNIT_SPELLCAST_START" or event == "UNIT_SPELLCAST_CHANNEL_START" then
+            SetPortraitToTexture(CastingBarFrame.Icon, CastingBarFrame.Icon:GetTexture())
+        end
+    end
+    CastingBarFrame:HookScript("OnEvent", setSpell)
+CastingBarFrame.Icon:ClearAllPoints()
+CastingBarFrame.Icon:SetPoint("CENTER", PlayerPortrait, "CENTER", 0, 0)  --_G[cbf.."Text"]
+--[[ 目标施法条 ]]
+TargetFrameSpellBar:ClearAllPoints()
+TargetFrameSpellBar:SetPoint("BOTTOMLEFT", TargetFrame, "TOPLEFT", 3, -5) --0, 100
+TargetFrameSpellBar.SetPoint = function() end
+TargetFrameSpellBar:SetSize(310, 12)
+TargetFrameSpellBar:SetToplevel(false)
+TargetFrameSpellBar:SetFrameStrata("LOW")
+TargetFrameSpellBar:SetParent(TargetFrame)
+TargetFrameSpellBar.Border:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\backdrop")
+TargetFrameSpellBar.Flash:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\backdrop")
+TargetFrameSpellBar.Text = TargetFrameSpellBar:CreateFontString(nil)
+TargetFrameSpellBar.Text:SetFont(STANDARD_TEXT_FONT, 16, "OUTLINE")
+TargetFrameSpellBar.Text:SetPoint("TOPRIGHT", TargetFrameSpellBar, "BOTTOMRIGHT", 0, -2)
+TargetFrameSpellBar.Icon:Show()
+TargetFrameSpellBar.Icon:SetSize(PlayerPortrait:GetSize())
+    local function setSpell(frame, event)
+        if event == "UNIT_SPELLCAST_START" or event == "UNIT_SPELLCAST_CHANNEL_START" then
+            SetPortraitToTexture(TargetFrameSpellBar.Icon, TargetFrameSpellBar.Icon:GetTexture())
+        end
+    end
+TargetFrameSpellBar:HookScript("OnEvent", setSpell)
+TargetFrameSpellBar.Icon:ClearAllPoints()
+TargetFrameSpellBar.Icon:SetPoint("CENTER", TargetFramePortrait, "CENTER", 0, 0)  --_G[cbf.."Text"]
+
+--[[施法计时]]
+CastingBarFrame.Time = CastingBarFrame:CreateFontString(nil)
+CastingBarFrame.Time:SetFont("Interface\\Addons\\_ShiGuang\\Media\\Fonts\\Pixel.ttf", 18, "OUTLINE")
+CastingBarFrame.Time:SetPoint("RIGHT", CastingBarFrame, "RIGHT", -6, 0)
+CastingBarFrame.update = .1
+
+TargetFrameSpellBar.Time = TargetFrameSpellBar:CreateFontString(nil)
+TargetFrameSpellBar.Time:SetFont("Interface\\Addons\\_ShiGuang\\Media\\Fonts\\Pixel.ttf", 18, "OUTLINE")
+TargetFrameSpellBar.Time:SetPoint("LEFT", TargetFrameSpellBar, "LEFT", 6, 0)
+TargetFrameSpellBar.update = .1
+
+FocusFrameSpellBar.Time = FocusFrameSpellBar:CreateFontString(nil)
+FocusFrameSpellBar.Time:SetFont("Interface\\Addons\\_ShiGuang\\Media\\Fonts\\Pixel.ttf", 18, "OUTLINE")
+FocusFrameSpellBar.Time:SetPoint("RIGHT", FocusFrameSpellBar, "RIGHT", 24, 0)
+FocusFrameSpellBar.update = .1
+
+CastingBarFrame:HookScript("OnUpdate", function(self, elapsed)
+	if not self.Time then return end
+	if self.update and self.update < elapsed then
+		if self.casting then
+			self.Time:SetText(format("%.1f", max(self.maxValue, 0)).." / "..format("%.1f", max(self.maxValue - self.value, 0)))
+		elseif self.channeling then
+			self.Time:SetText(format("%.1f", max(self.value, 0)))
+		else
+			self.Time:SetText("")
+		end
+		self.update = .1
+	else
+		self.update = self.update - elapsed
+	end
+end)
+TargetFrameSpellBar:HookScript("OnUpdate", function(self, elapsed)
+	if not self.Time then return end
+	if self.update and self.update < elapsed then
+		if self.casting then
+			self.Time:SetText(format("%.1f", max(self.maxValue - self.value, 0)).." / "..format("%.1f", max(self.maxValue, 0)))
+		elseif self.channeling then
+			self.Time:SetText(format("%.1f", max(self.value, 0)))
+		else
+			self.Time:SetText("")
+		end
+		self.update = .1
+	else
+		self.update = self.update - elapsed
+	end
+end)
+FocusFrameSpellBar:HookScript("OnUpdate", function(self, elapsed)
+	if not self.Time then return end
+	if self.update and self.update < elapsed then
+		if self.casting then
+			self.Time:SetText(format("%.1f", max(self.maxValue, 0)).." / "..format("%.1f", max(self.maxValue - self.value, 0)))
+		elseif self.channeling then
+			self.Time:SetText(format("%.1f", max(self.value, 0)))
+		else
+			self.Time:SetText("")
+		end
+		self.update = .1
+	else
+		self.update = self.update - elapsed
+	end
+end)
+--[[施法延时显示]]
+local  playertimer, targettimer, lagmeter
+lagmeter = CastingBarFrame:CreateTexture(nil, "BACKGROUND");
+lagmeter:SetHeight(CastingBarFrame:GetHeight());
+lagmeter:SetWidth(0);
+lagmeter:SetPoint("RIGHT", CastingBarFrame, "RIGHT", 0, 0);
+lagmeter:SetColorTexture(1, 0, 0, 1); -- red color
+hooksecurefunc(CastingBarFrame, "Show", function()
+	down, up, lag = GetNetStats();
+	local castingmin, castingmax = CastingBarFrame:GetMinMaxValues();
+	local lagvalue = ( lag / 1000 ) / ( castingmax - castingmin );
+	
+	if ( lagvalue < 0 ) then
+		lagvalue = 0; 
+	elseif ( lagvalue > 1 ) then 
+		lagvalue = 1; 
+	end;
+	
+	lagmeter:SetWidth(CastingBarFrame:GetWidth() * lagvalue);
+end);
+--[[焦点施法条]]
+hooksecurefunc(FocusFrameSpellBar, "Show", function()
+    FocusFrameSpellBar:SetScale("1.1")
+end)
+FocusFrameSpellBar:SetStatusBarColor(0,0.45,0.9); FocusFrameSpellBar.SetStatusBarColor = function() end
+
 
 ---------------------------------------------------------------------------------------------------------------------------------------------
 MaoRUI:EventFrame("ADDON_LOADED"):SetScript('OnEvent', function(self, event, name)

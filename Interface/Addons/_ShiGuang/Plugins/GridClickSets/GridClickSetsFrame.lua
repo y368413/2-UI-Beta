@@ -40,6 +40,12 @@ function GridClickSetsFrame_OnEvent(self, event, arg1)
             GridClickSetsFrame_UpdateAll()
             queue = false
         end
+    elseif(event=="VARIABLES_LOADED") then
+        if U1 then
+            if _G.ClassMods and _G.ClassMods.Options.DB.clicktocast.enabled then
+                U1Message("ClassMods的ClickToCast模块和有爱点击施法冲突，请关闭")
+            end
+        end
     end
 
     if(event=="VARIABLES_LOADED" or (event=="PLAYER_SPECIALIZATION_CHANGED" and arg1=="player") or event=="PLAYER_ALIVE") then

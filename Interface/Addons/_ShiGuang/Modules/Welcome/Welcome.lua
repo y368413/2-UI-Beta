@@ -1,5 +1,19 @@
 local M, R, U, I = unpack(select(2, ...))
 
+local function MrOnLogin()
+		MaoRUISettingDB.load = true
+		ReloadUI()
+		Welcome:Hide()
+		ForceDefaultSettings()
+		ForceUIScale()
+		ForceChatSettings()
+		ForceAddonSkins()
+		if MaoRUISettingDB["Chat"]["Lock"] then ForceChatSettings() end
+		if MaoRUISettingDB["Settings"]["DBMRequest"] then ForceDBMOptions() end
+	  if tonumber(GetCVar("cameraDistanceMaxZoomFactor")) ~= 2.6 then SetCVar("cameraDistanceMaxZoomFactor", 2.6) end
+	  sendCmd("/console missingTransmogSourceInItemTooltips 1")
+end
+------------------------------------
 --------------------------Config--------------------------------------
 local BackDropFile = "Interface\\Addons\\_ShiGuang\\Media\\Modules\\Raid\\solid"
 local Media = "Interface\\AddOns\\_ShiGuang\\Media\\Modules\\BlinkHealthText\\" 	
@@ -8,7 +22,7 @@ local Large1 = Media.."LargePic.tga"
 local Pic = Media.."Pic.tga"
 local ClassColor = RAID_CLASS_COLORS[select(2, UnitClass("player"))] 
 --Welcome--
-local Welcome = CreateFrame("Frame", nil, WorldFrame) 
+local Welcome = CreateFrame("Frame", nil, UIParent) 
 Welcome:SetPoint("TOPLEFT",0,0)
 Welcome:SetPoint("BOTTOMRIGHT",0,0)
 Welcome:SetFrameStrata("HIGH")
@@ -21,14 +35,11 @@ Welcome:SetBackdrop({
 })
 Welcome:SetBackdropColor(0.2, 0.2, 0.2, 1) 
 Welcome:SetBackdropBorderColor(0,0,0,0) 
-Welcome:SetScale(0.8)
 --------------------------------------------------second----------------------------------------------------------
 --TopBlack--
 local TopBlack = CreateFrame("Frame", nil, Welcome) 
-TopBlack:SetFrameStrata("HIGH")
 TopBlack:SetPoint("TOPLEFT",Welcome,0,0)
 TopBlack:SetPoint("BOTTOMRIGHT",Welcome,"TOPRIGHT",0,-43)
-TopBlack:SetFrameLevel(0)
 TopBlack:SetBackdrop({ 
    bgFile = BackDropFile, 
    insets = 0, 
@@ -39,10 +50,8 @@ TopBlack:SetBackdropColor(0.08, 0.08, 0.08, 1)
 TopBlack:SetBackdropBorderColor(0,0,0,0) 
 --BottomBlack--
 local BottomBlack = CreateFrame("Frame", nil, Welcome) 
-BottomBlack:SetFrameStrata("HIGH")
 BottomBlack:SetPoint("TOPLEFT",Welcome,"BOTTOMLEFT",0,43)
 BottomBlack:SetPoint("BOTTOMRIGHT",0,0)
-BottomBlack:SetFrameLevel(0)
 BottomBlack:SetBackdrop({ 
    bgFile = BackDropFile, 
    insets = 0, 
@@ -100,8 +109,6 @@ MadeBy.Text3:SetTextColor(1, 1, 1,1)
 local Small = CreateFrame("Frame", nil, Welcome) 
 Small:SetWidth(960)
 Small:SetHeight(210)
-Small:SetFrameStrata("HIGH")
-Small:SetFrameLevel(0)
 Small:SetBackdrop({ 
    bgFile = BackDropFile, 
    insets = {left = 1,right = 1,top = 1,bottom = 1}, 
@@ -133,8 +140,6 @@ local function Sc(alpha)  --按钮特效--
 local SmallText = CreateFrame("Frame", nil, Welcome) 
 SmallText:SetWidth(430)
 SmallText:SetHeight(186)
-SmallText:SetFrameStrata("HIGH")
-SmallText:SetFrameLevel(0)
 SmallText:SetPoint("RIGHT",SmallPic,"LEFT",88,0)
 --SmallText.Icon = SmallText:CreateTexture(nil,"ARTWORK")
 --SmallText.Icon:SetTexture(Pic)
@@ -166,8 +171,6 @@ SmallText.Text4:SetTextColor(ClassColor.r, ClassColor.g, ClassColor.b,1)
 local Large = CreateFrame("Frame", nil, Welcome) 
 Large:SetWidth(960)
 Large:SetHeight(210)
-Large:SetFrameStrata("HIGH")
-Large:SetFrameLevel(0)
 Large:SetBackdrop({ 
    bgFile = BackDropFile, 
    insets = {left = 1,right = 1,top = 1,bottom = 1}, 
@@ -198,8 +201,6 @@ local function Sc(alpha)  --按钮特效--
 local LargeText = CreateFrame("Frame", nil, Welcome) 
 LargeText:SetWidth(430)
 LargeText:SetHeight(186)
-LargeText:SetFrameStrata("HIGH")
-LargeText:SetFrameLevel(0)
 LargeText:SetPoint("LEFT",LargePic,"RIGHT",-80,0)
 --LargeText.Icon = LargeText:CreateTexture(nil,"ARTWORK")
 --LargeText.Icon:SetTexture(Pic)
@@ -240,7 +241,7 @@ LargeText.Text5:SetTextColor(ClassColor.r, ClassColor.g, ClassColor.b,1)
 local NPCModel = CreateFrame("PlayerModel", "NPCModel", Welcome)
 NPCModel:SetSize(UIParent:GetWidth(), UIParent:GetHeight()*0.8)
 NPCModel:SetPoint("BOTTOM",Small,"TOPRIGHT",-43,0) --"CENTER",0,210
-NPCModel:SetDisplayInfo(ShiGuangSettingDB.DisplayInfo)
+NPCModel:SetDisplayInfo(ShiGuangDB.DisplayInfo)
 NPCModel:SetParent(Welcome)
 NPCModel:SetCamDistanceScale(0.21)
 NPCModel:SetPosition(0,0,0.36)
@@ -327,55 +328,28 @@ MaoRUI:EventFrame("ADDON_LOADED"):SetScript("OnEvent", function(self, event, add
   if addon ~= "_ShiGuang" then return end
 	self:UnregisterEvent("ADDON_LOADED")
 	SLASH_ShiGuang1 = '/loadmr'
-	SlashCmdList["ShiGuang"] = function() Welcome:Show() UIParent:Hide() end
+	SlashCmdList["ShiGuang"] = function() Welcome:Show() end
 end)
 
 Welcome:Hide()
-UIParent:Show()
 
 ------------------按钮动作-------------------------
-	MadeBy:SetScript("OnClick", function(self,Button)
-		Welcome:Hide()
-		UIParent:Show()
-	end)
-
-	SmallPic:SetScript("OnClick", function(self,Button)
-		--ShiGuangSettingDB.Solo = false
-		MaoRUISettingDB.load = true
+MadeBy:SetScript("OnClick", function(self,Button) Welcome:Hide() end)
+SmallPic:SetScript("OnClick", function(self,Button)
 		MaoRUISettingDB.Small = true
 		MaoRUISettingDB.Large = false
-		ReloadUI()
-		Welcome:Hide()
-		UIParent:Show()
-		ForceDefaultSettings()
-		ForceUIScale()
-		ForceChatSettings()
-		ForceAddonSkins()
-		if MaoRUISettingDB["Chat"]["Lock"] then ForceChatSettings() end
-	end)
-	LargePic:SetScript("OnClick", function(self,Button)
-		--ShiGuangSettingDB.Solo = false
-		MaoRUISettingDB.load = true
+		MrOnLogin()
+end)
+LargePic:SetScript("OnClick", function(self,Button)
 		MaoRUISettingDB.Small = false
 		MaoRUISettingDB.Large = true
-		ReloadUI()
-		Welcome:Hide()
-		UIParent:Show()
-		ForceDefaultSettings()
-		ForceUIScale()
-		ForceChatSettings()
-		ForceAddonSkins()
-		if MaoRUISettingDB["Chat"]["Lock"] then ForceChatSettings() end
+		MrOnLogin()
 	end)
 
 MaoRUI:EventFrame("PLAYER_ENTERING_WORLD"):SetScript("OnEvent", function(self, event)
 	self:UnregisterEvent(event)
 	if not MaoRUISettingDB.load then
-		if event == "PLAYER_ENTERING_WORLD" then
-			Welcome:Hide()
-			UIParent:Hide()
-		end
+		if event == "PLAYER_ENTERING_WORLD" then Welcome:Hide() end
 	Welcome:Show()
-	UIParent:Hide()
 	end
 end)

@@ -1,4 +1,4 @@
-﻿local M, R, U, I = unpack(select(2, ...))
+local M, R, U, I = unpack(select(2, ...))
 local statPriorityStats = {}
 statPriorityStats["WARRIORArms"] = "Mastery > Haste > Versatility > Strength > CriticalStrike"
 statPriorityStats["WARRIORFury"] = "[Haste 27%]  Mastery(40%) > Haste(33%) > Strength > Versatility > CriticalStrike"
@@ -11,7 +11,7 @@ statPriorityStats["HUNTERMarksmanship"] = "Haste(9%) > Mastery > Agility > Criti
 statPriorityStats["HUNTERSurvival"] = "Haste > Mastery > CriticalStrike > Versatility > Mastery"
 statPriorityStats["ROGUEAssassination"] = "Agility > Mastery > CriticalStrike = Versatility > Haste"
 statPriorityStats["ROGUEExsanguinate"] = "Agility > Versatility = CriticalStrike > Mastery > Haste"
-statPriorityStats["ROGUEOutlaw"] = "Agility > Versatility > CriticalStrike > Mastery > Haste"
+statPriorityStats["ROGUEOutlaw"] = "Agility > Versatility > CriticalStrike > Haste > Mastery"
 statPriorityStats["ROGUESubtlety"] = "Agility > Mastery > Versatility > CriticalStrike > Haste"
 statPriorityStats["PRIESTDiscipline"] = "Intellect > Haste > CriticalStrike > Mastery > Versatility"
 statPriorityStats["PRIESTHoly"] = "Intellect > Mastery(30-45) > CriticalStrike = Haste > Versatility"
@@ -163,15 +163,7 @@ function statPriorityFrameUpdate(frame, frameText, parent, unit)
 			spec = GetSpecializationInfo(GetSpecialization())
 			spec = GetSpecializationName(spec)
 			text = statPriorityStats[class .. spec];
-			 if text then
-            text = gsub(text,"Strength",STRENGTH)
-            text = gsub(text,"Agility",AGILITY)
-            text = gsub(text,"Intellect",INTELLECT)
-            text = gsub(text,"Versatility",VERSATILITY)
-            text = gsub(text,"Armor",ARMOR)
-            text = gsub(text,"Haste",HASTE)
-            text = gsub(text,"Mastery",MASTERY)
-            text = gsub(text,"CriticalStrike",CRIT) 
+		if text then
 			if class == "ROGUE" then
 				if IsSpellKnown(200806) then
 					text = statPriorityStats[class .. "Exsanguinate"]
@@ -194,6 +186,14 @@ function statPriorityFrameUpdate(frame, frameText, parent, unit)
 			if statPriorityStats[name..spec] ~= nil then
 				text = statPriorityStats[name..spec]
 			end
+			      text = gsub(text,"Strength",STRENGTH)
+            text = gsub(text,"Agility",AGILITY)
+            text = gsub(text,"Intellect",INTELLECT)
+            text = gsub(text,"Versatility",VERSATILITY)
+            text = gsub(text,"Armor",ARMOR)
+            text = gsub(text,"Haste",HASTE)
+            text = gsub(text,"Mastery",MASTERY)
+            text = gsub(text,"CriticalStrike",CRIT) 
 		else
 			spec = GetSpecializationName(GetInspectSpecialization(unit))
 			text = statPriorityStats[class .. spec];

@@ -81,6 +81,7 @@ local function GetInspectItemListFrame(parent)
             itemframe.levelString = itemframe:CreateFontString(nil, "ARTWORK", ItemFont)
             itemframe.levelString:SetPoint("LEFT", itemframe.label, "RIGHT", 3, 0)
             itemframe.itemString = itemframe:CreateFontString(nil, "ARTWORK", ItemFont)
+            itemframe.itemString:SetHeight(16)
             itemframe.itemString:SetPoint("LEFT", itemframe.levelString, "RIGHT", 2, 0)
             itemframe:SetScript("OnEnter", function(self)
                 self.label:SetBackdropColor(0, 0.9, 0.9, 1)
@@ -133,7 +134,7 @@ function ShowInspectItemListFrame(unit, parent, itemLevel)
     frame.level:SetText(format(ItemLevelPattern, itemLevel))
     frame.level:SetTextColor(1, 0.82, 0)
     local _, name, level, link, quality
-    local itemframe, mframe, oframe
+    local itemframe, mframe, oframe, itemwidth
     local width = 160
     for i, v in ipairs(slots) do
         _, level, name, link, quality = LibItemInfo:GetUnitItemInfo(unit, v.index)
@@ -142,6 +143,7 @@ function ShowInspectItemListFrame(unit, parent, itemLevel)
         itemframe.link = link
         itemframe.level = level
         itemframe.quality = quality
+        itemframe.itemString:SetWidth(0)
         if (level > 0) then
             itemframe.levelString:SetText(format("%3s",level))
             itemframe.itemString:SetText(link or name)
@@ -149,7 +151,12 @@ function ShowInspectItemListFrame(unit, parent, itemLevel)
             itemframe.levelString:SetText(format("%3s",""))
             itemframe.itemString:SetText("")
         end
-        itemframe.width = itemframe.itemString:GetWidth() + 64
+        itemwidth = itemframe.itemString:GetWidth()
+        if (itemwidth > 200) then
+            itemwidth = 200
+            itemframe.itemString:SetWidth(itemwidth)
+        end
+        itemframe.width = itemwidth + 64
         itemframe:SetWidth(itemframe.width)
         if (width < itemframe.width) then
             width = itemframe.width
@@ -162,14 +169,14 @@ function ShowInspectItemListFrame(unit, parent, itemLevel)
             oframe:SetAlpha(1)
         end
     end
-    if (mframe and mframe.quality == 6 and oframe and oframe.link) then
+    if (mframe and oframe and (mframe.quality == 6 or oframe.quality == 6)) then
         level = max(mframe.level, oframe.level)
-        mframe.levelString:SetText(format("%3s",level))
-        oframe.levelString:SetText(format("%3s",level))
-    elseif (mframe.level > 0 and oframe.level > 0 and (mframe.quality == 6 or oframe.quality == 6)) then
-        level = max(mframe.level, oframe.level)
-        mframe.levelString:SetText(format("%3s",level))
-        oframe.levelString:SetText(format("%3s",level))
+        if mframe.link then
+            mframe.levelString:SetText(format("%3s",level))
+        end
+        if oframe.link then
+            oframe.levelString:SetText(format("%3s",level))
+        end
     end
     if (mframe and mframe.level <= 0) then
         mframe:SetAlpha(0.4)
@@ -229,8 +236,8 @@ local function AppendToBlizzardInspectUI()
     LibSchedule:AddTask({
         identity  = UnitGUID(InspectFrame.unit),
         timer     = 0.64,
-        elasped   = 0.72,
-        expired   = GetTime() + 4,
+        elasped   = 1,
+        expired   = GetTime() + 5,
         onStart   = onStart,
         onTimeout = onTimeout,
         onExecute = onExecute,

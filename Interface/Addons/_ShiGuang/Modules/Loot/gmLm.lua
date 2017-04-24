@@ -9,8 +9,8 @@ local BUTTON_HEIGHT = fontHeight + 4
 local BUTTON_SPACING = 0
 local MENU_BUFFER = 10
 local MENU_SPACING = 1
-local MENU_WIDTH_EMPTY = 190
-local MENU_WIDTH = 350
+local MENU_WIDTH_EMPTY = 210
+local MENU_WIDTH = 430
 
 local GMLM_REPORT = {}
 local GMLM_CFG = {
@@ -20,11 +20,11 @@ local GMLM_CFG = {
 		equiponly = true, -- only show armour, gem (relics) and weapons
 }
 
-local header_desc_string = "cfg: "
-if GMLM_CFG["maxloots"] then header_desc_string = header_desc_string .. "loots="..GMLM_CFG["maxloots"] end
-if GMLM_CFG["myself"] == true then header_desc_string = header_desc_string .. " myself=true" else header_desc_string = header_desc_string .." myself=false" end
-if GMLM_CFG["minquality"] then header_desc_string = header_desc_string .. " minqlt="..GMLM_CFG["minquality"] end
-if GMLM_CFG["equiponly"] == true then header_desc_string = header_desc_string .." equiponly=true" else header_desc_string = header_desc_string .." equiponly=false" end
+local header_desc_string = "设置: "
+if GMLM_CFG["maxloots"] then header_desc_string = header_desc_string .. "最大拾取数="..GMLM_CFG["maxloots"] end
+if GMLM_CFG["myself"] == true then header_desc_string = header_desc_string .. " 包括自己" else header_desc_string = header_desc_string .." 不包括自己" end
+if GMLM_CFG["minquality"] then header_desc_string = header_desc_string .. " 品质="..GMLM_CFG["minquality"] end
+if GMLM_CFG["equiponly"] == true then header_desc_string = header_desc_string .." 仅装备" else header_desc_string = header_desc_string .." 全部" end
 
 --
 -- minquality values from: 	http://wowprogramming.com/docs/api_types#itemQuality

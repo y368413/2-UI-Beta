@@ -1,6 +1,6 @@
---==============## SavedVariables: ShiGuangSettingDB
+--==============## SavedVariables: ShiGuangDB
 --  Addon Control Panel 在系统选项按「插件管理」按钮管理插件。ACP 以 rMCP（MCP，由 Rophy 修改）为基础。
---  Version: 3.4.24    SavedVariables: ShiGuangSettingDB
+--  Version: 3.4.24    SavedVariables: ShiGuangDB
 --==============
 ACP = {}
 
@@ -424,7 +424,7 @@ function ACP:OnLoad(this)
             ReloadUI()
         end,
         OnCancel = function(this, data, reason)
-            ShiGuangSettingDB.reloadRequired = nil
+            ShiGuangDB.reloadRequired = nil
         end,
         timeout = 10,
         hideOnEscape = 1,
@@ -510,7 +510,7 @@ local eventLibrary, bugeventreged
 
 function ACP:OnEvent(this, event, arg1, arg2, arg3)
     if event == "VARIABLES_LOADED" then
-        savedVar = ShiGuangSettingDB
+        savedVar = ShiGuangDB
 
         savedVar.ProtectedAddons = savedVar.ProtectedAddons or {
             ["_ShiGuang"] = true,
@@ -1076,10 +1076,10 @@ function ACP:ReloadAddonList()
 end
 
 function ACP:EnableAddon(addon, shift, ctrl)
-    local norecurse = ShiGuangSettingDB.NoRecurse
+    local norecurse = ShiGuangDB.NoRecurse
     if shift then norecurse = not norecurse end
 
-    local nochildren = ShiGuangSettingDB.NoChildren
+    local nochildren = ShiGuangDB.NoChildren
     if ctrl then nochildren = not nochildren end
 
     if norecurse then

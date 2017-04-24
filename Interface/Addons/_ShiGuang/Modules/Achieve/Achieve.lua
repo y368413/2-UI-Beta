@@ -65,7 +65,9 @@ local function TakeScreen(delay, func, ...)
 	end)
 	tinsert(waitTable, {delay, func, {...}})
 end
-MaoRUI:EventFrame("ACHIEVEMENT_EARNED"):SetScript("OnEvent", function()
-	if not MaoRUISettingDB["Misc"]["Screenshot"] then return end
-	TakeScreen(1, Screenshot)
+local AchScreen = CreateFrame("Frame") 
+AchScreen:RegisterEvent("ACHIEVEMENT_EARNED") 
+AchScreen:SetScript("OnEvent", function()
+  if not MaoRUISettingDB["Misc"]["AchievementPrintScreen"] then self:UnregisterAllEvents() return end
+    TakeScreen(1, Screenshot)
 end)

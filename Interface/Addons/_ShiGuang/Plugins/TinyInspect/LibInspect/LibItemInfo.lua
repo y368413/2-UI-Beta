@@ -86,7 +86,7 @@ function lib:GetUnitItemInfo(unit, index, stats)
     if (not UnitExists(unit)) then return 1, 0 end
     unittip:SetOwner(UIParent, "ANCHOR_NONE")
     unittip:SetInventoryItem(unit, index)
-    local ItemLink = select(2, unittip:GetItem())
+    local ItemLink = GetInventoryItemLink(unit, index) or select(2, unittip:GetItem())
     if (not ItemLink or ItemLink == "") then
         return 0, 0
     end
@@ -94,19 +94,20 @@ function lib:GetUnitItemInfo(unit, index, stats)
         return 1, 0
     end
     local text, level
-    local name = _G[unittip:GetName().."TextLeft1"]:GetText() or ""
     for i = 2, 5 do
         text = _G[unittip:GetName().."TextLeft" .. i]:GetText() or ""
         level = string.match(text, ItemLevelPattern)
         if (level) then break end
     end
     self:GetStatsViaTooltip(unittip, stats)
-    --7.2版本出現了能讀到裝等但讀不到正確的ItemLink
+    --7.2版本能讀到裝等但讀不到正確的ItemLink
     if (string.match(ItemLink, "item:(%d+):")) then
         return 0, tonumber(level) or 0, GetItemInfo(ItemLink)
     else
-        ItemLink = GetInventoryItemLink(unit, index)
-        return 0, tonumber(level) or 0, name, select(2, GetItemInfo(ItemLink or name))
+        local line = _G[unittip:GetName().."TextLeft1"]
+        local r, g, b = line:GetTextColor()
+        local name = WrapTextInColorCode(line:GetText() or "", ("ff%.2x%.2x%.2x"):format((r or 1)*255, (g or 1)*255, (b or 1)*255))
+        return 0, tonumber(level) or 0, name
     end
 end
 
@@ -125,10 +126,7 @@ function lib:GetUnitItemLevel(unit, stats)
     mcount, mlevel, _, _, mquality, _, _, _, _, _, mslot = self:GetUnitItemInfo(unit, 16, stats)
     ocount, olevel, _, _, oquality, _, _, _, _, _, oslot = self:GetUnitItemInfo(unit, 17, stats)
     counts = counts + mcount + ocount
-    --[神器]最高x2 [雙-雙 雙-X X-雙]最高x2
-    if (mquality == 6 or oslot == "INVTYPE_2HWEAPON" or mslot == "INVTYPE_2HWEAPON" or mslot == "INVTYPE_RANGED" or mslot == "INVTYPE_RANGEDRIGHT") then 
-        total = total + max(mlevel, olevel) * 2
-    elseif ((mquality == 6 or oquality == 6) and mlevel > 0 and olevel > 0) then
+    if (mquality == 6 or oquality == 6) then
         total = total + max(mlevel, olevel) * 2
     else
         total = total + mlevel + olevel

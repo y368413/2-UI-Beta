@@ -7,14 +7,14 @@
 ## Notes: Time Flies
 ## Notes-zhCN: 时光 稍纵即逝
 ## Notes-zhTW: 時光 稍縱即逝
-## Version:2.1.9
-## SavedVariables: MaoRUIDB,ShiGuangDB,ShiGuangSettingDB,LS_TOASTS_CFG_GLOBAL,diminfo,FriendGroups_SavedVars,RelicHelper_SV,EasyObliterate_Data,CurrencyTrackingDB,DruidFrenzyRegenDB,QuestListDB,zTipSaves,AdiCastBarDB,FoglightMode,TinyRosterDB
+## Version:2.2.0
+## SavedVariables: MaoRUIDB,ShiGuangDB,ShiGuangSettingDB,LS_TOASTS_CFG_GLOBAL,diminfo,FriendGroups_SavedVars,RelicHelper_SV,EasyObliterate_Data,CurrencyTrackingDB,DruidFrenzyRegenDB,QuestListDB,zTipSaves,AdiCastBarDB,TinyRosterDB
 ## SavedVariablesPerCharacter: MaoRUISettingDB,ShiGuangPerDB,StableHelperPerChar,EasyObliterate_IgnoreList,LS_TOASTS_CFG
 
-## X-StatsVersion: 03-21-2011
+## X-StatsVersion: 04-21-2011
 ## X-Repple: MaoR UI
 ## X-Website: https://git.coding.net/MaoRUI/MaoR-UI.git
-## X-Date: 2017-03-21T00:00:00Z
+## X-Date: 2017-04-21T00:00:00Z
 
 ## LoadManagers: AddonLoader
 ## X-LoadOn-Always: Delayed
@@ -22,6 +22,7 @@
 
 Init.lua
 Locales\Locales.xml
+Config\Config.xml
 Core\Core.xml
 Ace3\Ace3.xml
 Libs\Libs.xml

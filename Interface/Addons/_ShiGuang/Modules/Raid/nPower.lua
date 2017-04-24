@@ -29,7 +29,7 @@ local nPower_Config = {
     sizeWidth = 280,
     scale = 1.0,
 
-    showCombatRegen = true,
+    showCombatRegen = false,
 
     activeAlpha = 1,
     inactiveAlpha = 0.3,

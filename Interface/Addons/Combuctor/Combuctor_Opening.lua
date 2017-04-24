@@ -1,17 +1,15 @@
-﻿-----------------------Author:y368413-----------------------
+-----------------------Author:y368413-----------------------
 local CombuctorSet = Combuctor:GetModule("Sets")
 Combuctor_Cool_Open = {
 --------T_SPELL_BY_NAME
+  7973, -- Open the clam!, Big-Mouth Clam
+  113355, -- Flip Card, Card of Omens
   112023, -- Recipe: Draenic Philosopher's Stone, all learnable, it should replace most items in table T_RECIPES
   114171, -- Crate Restored Artifact, common for all
   113271, -- Giant Kaliri Egg, Gain xxx Garrison Resources, common for all
   128316, -- Bulging Barrel of Oil, Convert to Oil
-  138865, -- Gladiator's Triumph, Grants 50 Artifact Power to your currently equipped Artifact.
   139669, -- Toss the fish back into the water, granting 50 Artifact Power to your fishing artifact.
-  133742, -- Toss the fish back into the water, increasing Fishing skill by 5, up to a max of 800.
-  139390, -- Artifact Research Notes, Use: Read to gain new knowledge about your artifact, increasing the rate at which you earn Artifact Power.
   129097, -- 30 Ancient Mana
-  140243, -- 50 Ancient Mana
   140401, -- 75 Ancient Mana
   140236, -- 100 Ancient Mana
   140240, -- 150 Ancient Mana
@@ -19,7 +17,10 @@ Combuctor_Cool_Open = {
   140239, -- 300 Ancient Mana
   140526, -- Eredar Signet, Use: Provides a significant increase to character experience.
   141028, -- Grimoire of Knowledge, Use: Open your Followers page and use this item to grant 4000 XP directly to a Champion.
+  146663, -- Empowering, Soggy Tapestry, 150 artifact power
 --------T_SPELL_BY_USE_TEXT
+  243074, -- Create a Broken Isles relic appropriate for your loot specialization. Relinquished Relic
+  242864, -- Create a Broken Isles item appropriate for your loot specialization. Relinquished Trinket
   168701, -- Create a soulbound item appropriate for your loot specialization, Tormented Trinket
   168178, -- Salvage, Bag of Salvaged Goods, can be used only in salvage-yard shown on button only in garrison even if disabled zone-lock
   58165,  -- Open the clam!, Big-Mouth Clam
@@ -34,12 +35,15 @@ Combuctor_Cool_Open = {
   222950, -- 200 mana
   222945, -- 300 mana
 -----------T_RECIPES
+  82800, -- Pet Cage
+  140744, -- Treasure Map: Azsuna
   122219, -- Music Roll: Way of the Monk
   122594, -- Rush Order: Tailoring Emporium
   100865, -- Plans: Balanced Trillium Ingot and Its Uses
   118592, -- Partial Receipt: Gizmothingies
   128440, -- Contract: Dowser Goodwell
   100863, -- Pattern: Celestial Cloth and Its Uses, some old recipes has no leraning spell
+  138865, -- Gladiator's Triumph 2nd line contains "Artifact Power"
   138883, -- 4th line contains Use: Target one of your troops to restore 1 vitality.
   111972, -- Enchanter's Study, Level 2, 2nd line contains "Garrison Blueprint"
   128315, -- Medallion of the Legion, 2nd line contains "Use: Crush the medallion, increasing reputation with the denizens of Draenor by 1,000. (1 Sec Cooldown)"
@@ -48,8 +52,31 @@ Combuctor_Cool_Open = {
   104165, -- Kovok, 3rd line contains "Use: Teaches you how to summon and dismiss this companion."
   118427, -- Autographed Hearthstone Card, 3rd line contains "Use: Adds this toy to your toy box."
   127413, -- Jeweled Arakkoa Effigy, 3rd line contains "Use: Pry out the eyes of the statue."
-  146748, 
+  146748, -- Highmountain Tribute open containers
+  139023, -- Court of Farondis Insignia 
+  139021, -- Dreamweaver Insignia 
+  139024, -- Highmountain Tribe Insignia 
+  139026, -- Nightfallen Insignia 
+  139020, -- Valarjar Insignia 
+  141340, -- Court of Farondis Insignia BoA
+  141339, -- Dreamweaver Insignia BoA
+  141341, -- Highmountain Tribe Insignia BoA
+  141343, -- Nightfallen Insignia BoA
+  141338, -- Valarjar Insignia BoA
+  141342, -- Wardens Insignia BoA
+  141989, -- Greater Court of Farondis Insignia 
+  141988, -- Greater Dreamweaver Insignia 
+  141990, -- Greater Highmountain Tribe Insignia 
+  141992, -- Greater Nightfallen Insignia 
+  141987, -- Greater Valarjar Insignia 
+  141991, -- Greater Wardens Insignia
+  147727, -- Greater Legionfall Insignia
 ----------------------------------------------------------------T_ITEMS---------------------------------
+  128373, -- Rush Order: Shipyard, special handling for sub-zone
+  136806, -- Glass of Arcwine
+  147729, -- Netherchunk
+  136342,-- Obliterum Ash
+  146757,-- Prepared Ingredients
   146949, -- Legionfall Insignia
   147350, -- Invincible Armor Set
   147349, -- Spiked Armor Set
@@ -67,8 +94,17 @@ Combuctor_Cool_Open = {
    16885, -- Heavy Junkbox
    78890, -- Crystalline Geode
    78891, -- Elementium-Coated Geode
-   98134, 98546, -- Scenario - Push Loot
-   93146, 93147, 93148, 93149, 94207, 118697, 98095, 91085, 91086, -- Pet Supplies
+  98134, -- Scenario Loot
+  98546, -- Scenario Loot
+  93146, -- Pet Supplies
+  93147, -- Pet Supplies
+  93148, -- Pet Supplies
+  93149, -- Pet Supplies
+  94207, -- Pet Supplies
+  118697, -- Pet Supplies
+  98095, -- Pet Supplies
+  91085, -- Pet Supplies
+  91086, -- Pet Supplies
   89112, -- Motes of Harmony祥和微粒
   2934,  -- Ruined Leather Scraps
   25649,  -- Knothide Leather Scraps
@@ -122,9 +158,21 @@ Combuctor_Cool_Open = {
   115981, -- Abrogator Stone Cluster
   118897, -- Miner's Coffee
   118903, -- Preserved Mining Pick
-  128373, -- Rush Order: Shipyard
-  111356, 111364, 111387, 111350, 111349, 111351, 115357, 109558, -- Draenor 700 skills
-  111923, 115358, 115356, 115359, 111921, 111922, 109586, -- Draenor 700 skills
+  111356,
+  111364,
+  111387,
+  111350,
+  111349,
+  111351,
+  115357,
+  109558, -- Draenor 700 skills
+  111923,
+  115358,
+  115356,
+  115359,
+  111921,
+  111922,
+  109586, -- Draenor 700 skills
   120321, -- Mystery Bag
   122535, -- Traveler's Pet Supplies
   97619, -- Torn Green Tea Leaf
@@ -207,26 +255,10 @@ Combuctor_Cool_Open = {
   140439, -- Sunblossom Pollen
   140260, -- Arcane Remnant of Falanaar
   141870, -- Arcane Tablet of Falanaar
-  139023, -- Court of Farondis Insignia 
-  139021, -- Dreamweaver Insignia 
-  139024, -- Highmountain Tribe Insignia 
-  139026, -- Nightfallen Insignia 
-  139020, -- Valarjar Insignia 
-  141340, -- Court of Farondis Insignia BoA
-  141339, -- Dreamweaver Insignia BoA
-  141341, -- Highmountain Tribe Insignia BoA
-  141343, -- Nightfallen Insignia BoA
-  141338, -- Valarjar Insignia BoA
-  141342, -- Wardens Insignia BoA
-  141989, -- Greater Court of Farondis Insignia 
-  141988, -- Greater Dreamweaver Insignia 
-  141990, -- Greater Highmountain Tribe Insignia 
-  141992, -- Greater Nightfallen Insignia 
-  141987, -- Greater Valarjar Insignia 
-  141991, -- Greater Wardens Insignia
+  147418, -- Arcane Remnant of Falanaar
+  147416, -- Arcane Tablet of Falanaar
   139010, -- Petrified Silkweave
   139017, -- Soothing Leystone Shard
-  139376, -- Healing Well
   136412, -- Heavy Armor Set
   137207, -- Fortified Armor Set
   137208, -- Indestructible Armor Set
@@ -238,7 +270,11 @@ Combuctor_Cool_Open = {
   140450, -- Berserking Helm of Taenna
   142447, -- Torn Sack of Pet Supplies
   142156, -- Order Resources Cache
-  20565,
+  140326, -- Enchanted Burial Urn
+  140328, -- Volatile Leyline Crystal
+  139018, -- Box of Calming Whispers
+  140156, -- Blessing of the Order
+  139019, -- Spellmask of Alla'onus
 };
 
 Combuctor_Cool_Garrison = {
@@ -939,6 +975,7 @@ Combuctor_Cool_Garrison = {
 	139667, --Axefish,
 	139668, --Seabottom Squid,
 	139669, --Ancient Black Barracuda,
+--Reputation 
 	139020, -- Valarjar Insignia
 	139021, -- Dreamweaver Insignia
 	139023, -- Court of Farondis Insignia
@@ -982,6 +1019,7 @@ Combuctor_Cool_Garrison = {
 	147416,
 	147418,
 	147727,
+--BrokenShore 
 	--manual overrides
 	142452, --Lingering Wyrmtongue Essence
 	143559, --Wyrmtongue's Cache Key

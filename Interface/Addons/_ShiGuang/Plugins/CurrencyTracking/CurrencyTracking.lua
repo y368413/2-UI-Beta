@@ -92,6 +92,7 @@ local function CurrencyTracking_CurrencyString_Update()
 		-- // GetCurrencyListInfo() syntax:
 		-- // name, isHeader, isExpanded, isUnused, isWatched, count, icon = GetCurrencyListInfo(index);
 		name, isHeader, _, _, _, count, icon = GetCurrencyListInfo(i);
+		if not icon then icon = "" end -- somehow Legionfall War Supplies' icon is not available in 7.2.5.23959, this should temporary resolve the blocking issue
 		if ((not isHeader) and options["currencies"][name] == true) then
 			if (count >= 0) then
 				if (count == 0) then 

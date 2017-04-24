@@ -196,7 +196,6 @@ QN_Accept      = "接受任務";
 	EnhancedChatFilter_RaidAlertFilterTooltip = "过滤各类技能/打断喊话提示"
 	EnhancedChatFilter_QuestReport = "任務組隊"
 	EnhancedChatFilter_QuestReportFilterTooltip = "过滤各类组队任务喊话提醒"
-	
 	EnhancedChatFilter_SpecSpell = "天赋技能"
 	EnhancedChatFilter_SpecSpellFilterTooltip = "如果你已满级则过滤你及宠物的技能/天赋学习信息"
 	EnhancedChatFilter_MonsterSay = "怪物说话"
@@ -204,13 +203,10 @@ QN_Accept      = "接受任務";
 	EnhancedChatFilter_RepeatOptions = "重复信息设置"
 	EnhancedChatFilter_chatLinesLimit = "重复信息缓存行数"
 	EnhancedChatFilter_chatLinesLimitTooltips = "重复信息的行数设定。请根据聊天频道的聊天量调整数值。增加数值会提高内存占用。设为0以关闭重复过滤。默认值20"
-	EnhancedChatFilter_stringDifferenceLimit = "重复信息区分度"
-	EnhancedChatFilter_stringDifferenceLimitTooltips = "重复信息判定标准，范围0%至100%。对于同一个人的发言，0%为只过滤完全相同的内容，100%为过滤任意内容。提高设定值会提高相似信息的过滤效果但会提高误处理几率。默认值10%"
 	EnhancedChatFilter_MultiLines = "多行喊话过滤"
 	EnhancedChatFilter_MultiLinesTooltip = "重复过滤器现在也会过滤同一个人在短时间内的多行信息，这有助于减少各类宏的刷屏但同时也会过滤掉诸如dps统计的各插件通告"
 	EnhancedChatFilter_AlsoFilterGroup = "同时过滤小队团队"
 	EnhancedChatFilter_AlsoFilterGroupTooltips = "过滤器现在也会过滤小队团队中的发言，启用后你可能错过团队中有用的信息"
-	EnhancedChatFilter_UseWithCare = "危险设置"
 	EnhancedChatFilter_EnableAdvancedConfig = "启用高级选项"
 	EnhancedChatFilter_AdvancedWarningText = "不要随意更改任何你不清楚的设置，不然你很有可能会把ECF玩坏！如果你只是点着玩请取消。如果你已经知道危险性，请继续..."
 	EnhancedChatFilter_WhisperWhitelistMode = "密語白名單模式"
@@ -241,20 +237,6 @@ QN_Accept      = "接受任務";
 	EnhancedChatFilter_LootFilterList = "拾取屏蔽列表"
 	EnhancedChatFilter_LootQualityFilter = "拾取物品质量"
 	EnhancedChatFilter_LootQualityFilterTooltips = "显示拾取物品所需要的最低质量，低于此质量的物品将被过滤"
---FAQ
-	EnhancedChatFilter_FAQ = "FAQ"
-	EnhancedChatFilter_FAQText = [[这里列出常见的几个问题
-
-1. 如何共享不同账号下的关键词列表和开关设置
-    同一账户(如wow1)下的不同角色共享设置，不同账户的无法直接共享。
-    你可以用字符串导入导出的方法复制关键词列表，然后人工进行设置。或者手动复制设置/设置硬链接。
-
-2. 为何我添加关键词时总是会有"包含会被自动过滤的字符，将忽略该关键词！"这一错误？
-    不要加入标点符号，这些字符会被自动忽略，只需要添加那些汉字。
-
-3. 正则是什么？
-    不知道的请不要用。不知道的请不要用。不知道的请不要用。
-    如果你想学习请自行百度/谷歌。]]
 --AchievementFilter
 	EnhancedChatFilter_GotAchievement = "[%s]獲得了成就%s！"
 	EnhancedChatFilter_And = "、"	

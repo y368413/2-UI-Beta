@@ -448,7 +448,7 @@ nss.slot_removals = {
     INVTYPE_LEGS = {nss.SLOT_TABARD, nss.SLOT_WAIST, nss.SLOT_FEET, nss.SLOT_ROBE, nss.SLOT_MAINHAND, nss.SLOT_OFFHAND},
     INVTYPE_WAIST = {nss.SLOT_MAINHAND, nss.SLOT_OFFHAND},
     INVTYPE_FEET = {nss.SLOT_ROBE},
-    INVTYPE_WRIST = {nss.SLOT_HANDS, nss.SLOT_CHEST, nss.SLOT_ROBE, nss.SLOT_SHIRT},
+    INVTYPE_WRIST = {nss.SLOT_HANDS, nss.SLOT_CHEST, nss.SLOT_ROBE, nss.SLOT_SHIRT, nss.SLOT_OFFHAND},
     INVTYPE_HAND = {nss.SLOT_OFFHAND},
     INVTYPE_TABARD = {nss.SLOT_WAIST, nss.SLOT_OFFHAND},
 }
@@ -1416,6 +1416,7 @@ local anchor = newDropdown(panel, 'anchor', "Side of the tooltip to attach to, d
     horizontal = "左 / 右",
 })
 UIDropDownMenu_SetWidth(anchor, 100)
+
 local modelBox = newBox(panel, "自定义模型种族", 48)
 local customModel = newCheckbox(modelBox, 'customModel', '使用不同的模型', "Instead of your current character, use a specific race/gender")
 local customRaceDropdown = newDropdown(modelBox, 'modelRace', "选择你要的种族模型", {

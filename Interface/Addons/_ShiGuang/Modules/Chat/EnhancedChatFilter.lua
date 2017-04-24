@@ -15,29 +15,7 @@ local QuestReportTagList = {"任务进度提示%s?[:：]", "%(任务完成%)", "
 local filterCharList = "[|@!/<>\"`'_#&;:~\\]" -- work on any blackWord
 local filterCharListRegex = "[%(%)%.%%%+%-%*%?%[%]%$%^={}]" -- won't work on regex blackWord, but works on others
 
-local strbyte, strsub, tconcat = strbyte, strsub, table.concat
-local function utf8charbytes(s, i)
-	local c = strbyte(s, i or 1)
-	if c > 0 and c <= 127 then return 1
-	elseif c >= 194 and c <= 223 then return 2
-	elseif c >= 224 and c <= 239 then return 3
-	elseif c >= 240 and c <= 244 then return 4
-end
-end
-
-local utf8replace = function(s, mapping)
-	local pos = 1
-	local t = {}
-
-	while pos <= #s do
-		local charbytes = utf8charbytes(s, pos)
-		local c = strsub(s, pos, pos + charbytes - 1)
-		t[#t+1] = (mapping[c] or c)
-		pos = pos + charbytes
-	end
-	return tconcat(t)
-end
-
+-- ECF
 local config
 
 local _G = _G
@@ -45,7 +23,7 @@ local gsub, select, ipairs, pairs, next, strsub, format, tonumber, strmatch, tco
 local Ambiguate, band, BNGetNumFriends, BNGetNumFriendGameAccounts, BNGetFriendGameAccountInfo, ChatTypeInfo, GetCurrencyLink, GetFriendInfo, GetGuildInfo, GetItemInfo, GetNumFriends, GetPlayerInfoByGUID, GetTime = Ambiguate, bit.band, BNGetNumFriends, BNGetNumFriendGameAccounts, BNGetFriendGameAccountInfo, ChatTypeInfo, GetCurrencyLink, GetFriendInfo, GetGuildInfo, GetItemInfo, GetNumFriends, GetPlayerInfoByGUID, GetTime -- BLZ
 
 local ECF = LibStub("AceAddon-3.0"):NewAddon("EnhancedChatFilter", "AceConsole-3.0")
-local ecfVersioin = "7.2.0-0"
+local ecfVersioin = "7.2.0-1"
 
 --Bit Mask for blackword type
 local regexBit, lesserBit = 1, 2
@@ -91,6 +69,44 @@ local defaults = {
 		debugMode = false,
 	}
 }
+--------------- Common Functions from Elsewhere ---------------
+-- utf8 functions are taken from utf8replace from @Phanx @Pastamancer
+local function utf8charbytes(s, i)
+	local c = strbyte(s, i or 1)
+	-- determine bytes needed for character, based on RFC 3629
+	if c > 0 and c <= 127 then return 1
+	elseif c >= 194 and c <= 223 then return 2
+	elseif c >= 224 and c <= 239 then return 3
+	elseif c >= 240 and c <= 244 then return 4
+	end
+end
+
+-- replace UTF-8 characters based on a mapping table
+local function utf8replace(s, mapping)
+	local pos = 1
+	local t = {}
+
+	while pos <= #s do
+		local charbytes = utf8charbytes(s, pos)
+		local c = strsub(s, pos, pos + charbytes - 1)
+		t[#t+1] = (mapping[c] or c)
+		pos = pos + charbytes
+	end
+
+	return tconcat(t)
+end
+
+--http://www.wowwiki.com/USERAPI_StringHash
+local function StringHash(text)
+	local counter, len = 1, #text
+	for i = 1, len, 3 do
+		counter = fmod(counter*8161, 4294967279) +  -- 2^32 - 17: Prime!
+			(strbyte(text,i)*16776193) +
+			((strbyte(text,i+1) or (len-i+256))*8372226) +
+			((strbyte(text,i+2) or (len-i+256))*3932164)
+	end
+	return fmod(counter, 4294967291) -- 2^32 - 5: Prime (and different from the prime in the loop)
+end
 
 --------------- Common Functions in ECF ---------------
 --确保关键词自身不会被预处理干扰
@@ -111,28 +127,9 @@ local function SendMessage(event, msg)
 	end
 end
 
---http://www.wowwiki.com/USERAPI_StringHash
-local function StringHash(text)
-	local counter, len = 1, #text
-	for i = 1, len, 3 do
-		counter = fmod(counter*8161, 4294967279) +  -- 2^32 - 17: Prime!
-			(strbyte(text,i)*16776193) +
-			((strbyte(text,i+1) or (len-i+256))*8372226) +
-			((strbyte(text,i+2) or (len-i+256))*3932164)
-	end
-	return fmod(counter, 4294967291) -- 2^32 - 5: Prime (and different from the prime in the loop)
-end
 
 --旧配置文件转化成新的
 function ECF:convert()
-	for key,v in pairs(config.blackWordList) do
-		if(type(v) ~= "table") then
-			config.blackWordList[key] = {
-				regex = v == "regex",
-				lesser = false,
-			}
-		end
-	end
 	for key,v in pairs(config.blackWordList) do
 		for key2 in pairs(config.blackWordList) do
 			if key ~= key2 and strfind(key,key2) then config.blackWordList[key] = nil;break end
@@ -222,6 +219,22 @@ local options = {
 			order = 2,
 			disabled = false,
 		},
+		debugMode = {
+			type = "toggle",
+			name = "DebugMode",
+			desc = "For test only",
+			order = 3,
+			hidden = function() return not config.advancedConfig end,
+		},
+		AdvancedWarning = {
+			type = "execute",
+			name = EnhancedChatFilter_EnableAdvancedConfig,
+			confirm = true,
+			confirmText = EnhancedChatFilter_AdvancedWarningText,
+			func = function() config.advancedConfig = true end,
+			hidden = function() return config.advancedConfig end,
+			order = 9,
+		},
 		ToggleTab = {
 			type = "group",
 			name = EnhancedChatFilter_General,
@@ -274,6 +287,13 @@ local options = {
 					desc = EnhancedChatFilter_AggressiveTooltip,
 					order = 17,
 				},
+				enableWisper = {
+					type = "toggle",
+					name = EnhancedChatFilter_WhisperWhitelistMode,
+					desc = EnhancedChatFilter_WhisperWhitelistModeTooltip,
+					order = 18,
+					hidden = function() return not config.advancedConfig end,
+				},
 				line2 = {
 					type = "header",
 					name = EnhancedChatFilter_RepeatOptions,
@@ -293,50 +313,22 @@ local options = {
 					type = "toggle",
 					name = EnhancedChatFilter_MultiLines,
 					desc = EnhancedChatFilter_MultiLinesTooltip,
-					order = 43,
+					order = 42,
 					disabled = function() return config.chatLinesLimit == 0 end,
 				},
 				repeatFilterGroup = {
 					type = "toggle",
 					name = EnhancedChatFilter_AlsoFilterGroup,
 					desc = EnhancedChatFilter_AlsoFilterGroupTooltips,
-					order = 44,
+					order = 43,
 					disabled = function() return config.chatLinesLimit == 0 end,
-				},
-				line3 = {
-					type = "header",
-					name = EnhancedChatFilter_UseWithCare,
-					order = 60,
-				},
-				AdvancedWarning = {
-					type = "execute",
-					name = EnhancedChatFilter_EnableAdvancedConfig,
-					confirm = true,
-					confirmText = EnhancedChatFilter_AdvancedWarningText,
-					func = function() config.advancedConfig = true end,
-					hidden = function() return config.advancedConfig end,
-					order = -1,
-				},
-				enableWisper = {
-					type = "toggle",
-					name = EnhancedChatFilter_WhisperWhitelistMode,
-					desc = EnhancedChatFilter_WhisperWhitelistModeTooltip,
-					order = 61,
-					hidden = function() return not config.advancedConfig end,
-				},
-				debugMode = {
-					type = "toggle",
-					name = "DebugMode",
-					desc = "For test only",
-					order = 62,
-					hidden = function() return not config.advancedConfig end,
 				},
 			},
 		},
 		blackListTab = {
 			type = "group",
 			name = EnhancedChatFilter_BlackwordList,
-			order = 4,
+			order = 11,
 			args = {
 				blackword = {
 					type = "input",
@@ -467,6 +459,7 @@ local options = {
 						for key,v in pairs(config.blackWordList) do if v.lesser then blacklistname[key] = key end end
 						return blacklistname
 					end,
+					hidden = function() return not config.advancedConfig end,
 				},
 				DeleteButton = {
 					type = "execute",
@@ -492,7 +485,7 @@ local options = {
 		lootFilter = {
 			type = "group",
 			name = EnhancedChatFilter_LootFilter,
-			order = 5,
+			order = 12,
 			args = {
 				addItem = {
 					type = "input",
@@ -520,7 +513,7 @@ local options = {
 					type = "select",
 					name = _G["TYPE"],
 					order = 2,
-					values = {["ITEMS"] = ITEMS, ["CURRENCY"] = CURRENCY},
+					values = {["ITEMS"] = _G["ITEMS"], ["CURRENCY"] = _G["CURRENCY"]},
 				},
 				DeleteButton = {
 					type = "execute",
@@ -571,17 +564,6 @@ local options = {
 					desc = EnhancedChatFilter_LootQualityFilterTooltips,
 					order = 11,
 					values = colorT,
-				},
-			},
-		},
-		FAQTab = {
-			type = "group",
-			name = EnhancedChatFilter_FAQ,
-			order = 6,
-			args = {
-				FAQText = {
-					type = "description",
-					name = EnhancedChatFilter_FAQText,
 				},
 			},
 		},
@@ -766,10 +748,25 @@ end
 for event in pairs(chatChannel) do ChatFrame_AddMessageEventFilter(event, ECFfilter) end
 
 --MonsterSayFilter
+local MSFOffQuestT = {[42880] = true} -- 42880: Meeting their Quota
+local MSFOffQuestFlag = false
+
+local QuestAf = CreateFrame("Frame")
+QuestAf:RegisterEvent("QUEST_ACCEPTED")
+QuestAf:SetScript("OnEvent", function(self,_,_,questId)
+	if MSFOffQuestT[questId] then MSFOffQuestFlag = true end
+end)
+
+local QuestRf = CreateFrame("Frame")
+QuestRf:RegisterEvent("QUEST_REMOVED") -- Fires when turn in or leave quest zone, but cant get questId when turn in
+QuestRf:SetScript("OnEvent", function(self,_,questId)
+	if MSFOffQuestT[questId] then MSFOffQuestFlag = false end
+end)
+
 local monsterLines = {}
 
 local function monsterFilter(self,_,msg)
-	if (not config.enableFilter or not config.enableMSF) then return end
+	if (not config.enableFilter or not config.enableMSF or MSFOffQuestFlag) then return end
 
 	local monsterLinesSize = #monsterLines
 	monsterLines[monsterLinesSize+1] = msg
@@ -854,7 +851,6 @@ local function achievementFilter(self, event, msg, _, _, _, _, _, _, _, _, _, _,
 	local _,class,_,_,_,name,server = GetPlayerInfoByGUID(guid)
 	if (not name) then return end -- check nil
 	if (server ~= "" and server ~= GetRealmName()) then name = name.."-"..server end
-	if config.debugMode then print(format("Achievement: event:%s, name:%s, class:%s",event,name,class)) end
 	achievements[achievementID] = achievements[achievementID] or {timeout = GetTime() + 0.5}
 	achievements[achievementID][event] = achievements[achievementID][event] or {}
 	achievements[achievementID][event][name] = class

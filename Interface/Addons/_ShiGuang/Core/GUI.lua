@@ -1,6 +1,6 @@
 ﻿local M, R, U, I = unpack(select(2, ...))
 
-ShiGuangSettingDB = {
+ShiGuangDB = {
 	DisplayInfo = 71057,			--68323   --35908   --65636
 	["read"] = false,
 	["GROUP_STACKS"] = true,
@@ -61,7 +61,6 @@ local defaultSettings = {
 		Clock = false,
 		MapScale = 1.1,
 		MinmapScale = 1.4,
-		ShowRecycleBin = true,
 	},
 	Nameplate = {
 		Enable = true,
@@ -80,13 +79,15 @@ local defaultSettings = {
 		Width = 88,
 		Height = 6,
 	},
+	Skins = {
+		DBM = true,
+	},
 	Misc = {
 		Mail = true,
 		HideErrors = true,
 		SoloInfo = true,
 		RareAlerter = true,
 		AlertinChat = false,
-		FontFlag = false,
 		Focuser = true,
 		Autoequip = true,
 		Screenshot = false,
@@ -208,8 +209,7 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "Misc", "HideTalking", "干掉NPC BB的框", true},
 		{1, "Misc", "HideBanner", "关闭副本掉落通知提示", true, true},
 		{1, "Misc", "FriendGroups", "好友分组功能"},
-		{1, "Misc", "FontFlag", "字体阴影描边(有bug)", true},
-		{4, "Settings", "Format", nil, true, true, {"标准模式：b/m/k", "中式：亿/万", "显示具体数值"}},
+		{4, "Settings", "Format", nil, true, true, {"标准模式：b/m/k", "中式：亿/万", "显示具体数值"}, true},
 		{},--blank
 		{1, "Chat", "GuildInvite", "只邀请公会成员"},
 		{1, "Chat", "Invite", "启用密语自动邀请", true},
@@ -233,8 +233,9 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 	  {1, "Misc", "Saycast", "大技能喊话", true},
 	  {1, "Misc", "AutoReagentBank", "材料自动存银行", true, true},
 	  {},--blank
-	  {1, "Misc", "nPower", "职业能量条(2选1)"},
-	  {1, "Misc", "ClassRecourePlace", "职业资源居中(2选1)", true},
+	  {1, "Misc", "nPower", "职业能量条"},
+	  {1, "Misc", "ClassRecourePlace", "职业资源居中", true},
+	  {1, "Skins", "DBM", "DBM Skin", true, true},
 	},
 	[5] = {
 	},
@@ -548,6 +549,18 @@ local function OpenGUI()
 			self:UnregisterEvent("PLAYER_REGEN_ENABLED")
 		end
 	end)
+
+	--[[ Toggle AuraWatch Console
+	local aura = CreateFrame("Button", nil, guiPage[5])
+	aura:SetSize(150, 30)
+	aura:SetPoint("TOPLEFT", 340, -50)
+	M.CreateBD(aura, .3)
+	M.CreateBC(aura)
+	M.CreateFS(aura, 14, "Add AuraWatch", true)
+	aura:SetScript("OnClick", function()
+		f:Hide()
+		SlashCmdList["NDUI_AWCONFIG"]()
+	end)]]
 
 	SelectTab(4)
 end

@@ -20,7 +20,7 @@ WallpaperKitcfg.color = {
 -- PLAYER MODEL SETTING
 WallpaperKitcfg.playermodel = {
 	animation = 4, rotation = -21, camdistance = 1.5,   --动画 、旋转、缩放
-	pos = { Y = 1.25, Z = -0.1, },
+	pos = { Y = 1, Z = -0.1, },
 }
 -- PET MODEL SETTINGS
 WallpaperKitcfg.petmodel = {
@@ -45,25 +45,25 @@ WallpaperKitcfg.background = {
 }
 -- TEXT
 WallpaperKitcfg.text ={
-	name = { size = 36, flag = "OUTLINE",
-		pos = { point = "TOP", X = -0.25, Y = -0.05, },
+	name = { size = 43, flag = "OUTLINE",
+		pos = { point = "TOP", X = -0.21, Y = -0.08, },
 	},
-	guild = { size = 28, flag = "OUTLINE", },
+	guild = { size = 36, flag = "OUTLINE", },
 }
---[[ CENTER AURA
+-- CENTER AURA
 WallpaperKitcfg.aura = {
 	classcolor = true, size = 0.15, texture = "Interface\\AddOns\\_ShiGuang\\Media\\Modules\\Wallpaper\\AuraWings", color = {1,1,1,1},
 	pos = { point = "CENTER", X = 0, Y = 0, },
-}]]
+}
 -- CENTER CLASSICON
 WallpaperKitcfg.classicon = { size = 21,
   font = "Interface\\Addons\\_ShiGuang\\Media\\Fonts\\RedCircl.ttf",
 	text = "--- |cFFBF00FFMao|r|cFF00DDFFR|r|cffff8800 UI|r ---",
-	pos = { point = "BOTTOM", X = 0, Y = 21, },
+	pos = { point = "BOTTOM", X = 0, Y = 43, },
 }
 -- FACTION ICON
 WallpaperKitcfg.factionicon = { size = 0.8,
-	pos = { point = "CENTER", X = -310, Y = -21, },
+	pos = { point = "CENTER", X = -430, Y = -21, },
 }
 ------------------------------- FUNCTIONS-----------------------------
 local function OnEvent(self)
@@ -71,8 +71,10 @@ local function OnEvent(self)
 	if UnitIsAFK("player") then self:Enable() end
 end
 --canvas frame
-local WallpaperKit = CreateFrame("Frame",nil,WorldFrame)
+local WallpaperKit = CreateFrame("Frame",nil,UIParent)
 WallpaperKit:SetAllPoints()
+WallpaperKit:SetFrameStrata("HIGH")
+WallpaperKit:SetFrameLevel(0)
 WallpaperKit:EnableMouse(true)
 WallpaperKit:SetAlpha(0)
 WallpaperKit:Hide()
@@ -81,21 +83,21 @@ WallpaperKit.w,WallpaperKit.h = WallpaperKit:GetSize()
 if WallpaperKitcfg.show.background then
 WallpaperKit.bg = WallpaperKit:CreateTexture(nil,"BACKGROUND",nil,-8)
 --WallpaperKit.bg:SetTexture("Interface\\AddOns\\_ShiGuang\\Media\\Modules\\Wallpaper\\bg")
-WallpaperKit.bg:SetColorTexture(0.85, 0.3, 0.27, 0.6)
+WallpaperKit.bg:SetColorTexture(0.85, 0.3, 0.27, 0.8)
 WallpaperKit.bg:SetVertexColor(WallpaperKitcfg.color.class.r, WallpaperKitcfg.color.class.g, WallpaperKitcfg.color.class.b, 1)
 WallpaperKit.bg:SetPoint("CENTER")
 WallpaperKit.bg:SetSize(WallpaperKit.w,WallpaperKit.w)
 else
 end
---[[ AURA TEXTURE
+-- AURA TEXTURE
 if WallpaperKitcfg.show.auratexture then
 WallpaperKit.bg2 = WallpaperKit:CreateTexture(nil,"BACKGROUND",nil,-7)
-WallpaperKit.bg2:SetTexture("Interface\\AddOns\\_ShiGuang\\Media\\Modules\\Wallpaper\\AuraWings")
+WallpaperKit.bg2:SetTexture("") --Interface\\AddOns\\_ShiGuang\\Media\\Modules\\Wallpaper\\AuraWings
 if WallpaperKitcfg.aura.classcolor then WallpaperKit.bg2:SetVertexColor(WallpaperKitcfg.color.class.r, WallpaperKitcfg.color.class.g, WallpaperKitcfg.color.class.b, 1)
 else WallpaperKit.bg2:SetVertexColor(unpack(WallpaperKitcfg.aura.color)) end
 WallpaperKit.bg2:SetPoint(WallpaperKitcfg.aura.pos.point, WallpaperKitcfg.aura.pos.X, WallpaperKitcfg.aura.pos.Y)
 WallpaperKit.bg2:SetSize(WallpaperKit.w*WallpaperKitcfg.aura.size,WallpaperKit.w*WallpaperKitcfg.aura.size)
-else return end]]
+else return end
 
 -- TOP SHADE
 if WallpaperKitcfg.show.toptexture then
@@ -233,7 +235,7 @@ hidebutton.t = hidebutton:CreateTexture(nil,"BACKGROUND",nil,0)
 hidebutton:SetScript("OnClick", button_OnClick)
 -----------------------------------------------------------------------
 -- canvas enable func
-function WallpaperKit:Enable() self:Show() self:UpdateModel() UIParent:Hide() self.fadeIn:Play() end
+function WallpaperKit:Enable() self:Show() self:UpdateModel() self.fadeIn:Play() end  --UIParent:Hide()
 -- canvas disable func
 function WallpaperKit:Disable() UIParent:Show() self.fadeOut:Play() end
 

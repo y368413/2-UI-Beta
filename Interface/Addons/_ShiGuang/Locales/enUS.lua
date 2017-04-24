@@ -1,4 +1,4 @@
-﻿local _, _, U, _ = unpack(select(2, ...))
+local _, _, U, _ = unpack(select(2, ...))
 --if GetLocale() ~= "enUS" then return end
 FACTION_BAR_COLORS = {
 	[1] = { r= .54, g= 0,   b= 0   }, -- hated
@@ -50,14 +50,14 @@ CHAT_YOU_LEFT_NOTICE = "-|Hchannel:%d|h[%s]|h";
 CHAT_YOU_LEFT_NOTICE_BN = "-|Hchannel:CHANNEL:%d|h[%s]|h";
 
 Welcome_loginChatText1 = "<<<-------------- 有你们的魔兽，才是世界 ----";
-Welcome_loginChatText2 = "|cFFBF00FFMao|r|cFF00DDFFR|r|cffff8800 UI|r|cff3399ff By Shiguang + TuTu v.170408|r";
+Welcome_loginChatText2 = "|cFFBF00FFMao|r|cFF00DDFFR|r|cffff8800 UI|r|cff3399ff By Shiguang + TuTu v.170421|r";
 Welcome_loginChatText3 = "|cff02F78E大大大的感谢|r|cffC495DDSiweia|r|cff02F78E大大,向他学到了好多.|r";
-Welcome_loginChatText4 = "------  v2.1.9 For 7.2  ------------------->>>";
+Welcome_loginChatText4 = "------  v2.2.0 For 7.2  ------------------->>>";
 Welcome_SmallText1 = "[ 微美化界面 ]";
 Welcome_SmallText2 = "[ 全职业适用无障碍 ]";
 Welcome_SmallText3 = "[ 开袋即食 轻优化 无需设置 ]";
 Welcome_SmallText4 = "[ 插件每月21日UI官网 准时更新发布 ]";
-Welcome_Large1 = "[ V 2.1.9 ]";
+Welcome_Large1 = "[ V 2.2.0 ]";
 Welcome_Large2 = "[ Hi Legion 7.2 ]";
 Welcome_Large3 = "[ 右键小地图便捷设置 ]";
 Welcome_Large4 = "[ 系统自带功能，插件有针对性删减 ]";
@@ -251,13 +251,10 @@ xMerchant_Tobrowseitemtooltipstoo = "To browse item tooltips, too";
 	EnhancedChatFilter_RepeatOptions = "Repeat Options"
 	EnhancedChatFilter_chatLinesLimit = "Repeat message cache lines"
 	EnhancedChatFilter_chatLinesLimitTooltips = "Repeat message lines. Please change it to suit your message amount. Increase it will consume more memory. Set 0 to disable Repeat Filter. Default 20."
-	EnhancedChatFilter_stringDifferenceLimit = "Repeat message Difference"
-	EnhancedChatFilter_stringDifferenceLimitTooltips = "Message difference limit. Ranging from 0% to 100%. For the same sender, 0% will only filter the same message while 100% will filter any message. Increase it will filter more similar messages but also some unwanted ones. Default 10%."
 	EnhancedChatFilter_MultiLines = "MultiLines"
 	EnhancedChatFilter_MultiLinesTooltip = "Filtered msg that is sent from the same person and in less than 1 sec. This may reduce chat spam but also remove report from addons."
 	EnhancedChatFilter_AlsoFilterGroup = "Also FilterGroup"
 	EnhancedChatFilter_AlsoFilterGroupTooltips = "Filter will also work on group and raid. This may filter some useful messages."
-	EnhancedChatFilter_UseWithCare = "UseWithCare"
 	EnhancedChatFilter_EnableAdvancedConfig = "Enable Advanced Config"
 	EnhancedChatFilter_AdvancedWarningText = "Please do NOT change any options that you don't understand, or you may mess ECF up. If you DO know the risk, you may continue..."
 	EnhancedChatFilter_WhisperWhitelistMode = "Whisper Whitelist Mode"
@@ -274,7 +271,7 @@ xMerchant_Tobrowseitemtooltipstoo = "To browse item tooltips, too";
 	EnhancedChatFilter_LesserBlackWordTooltip = "Blackword that will be added should be a lesser blackword. Only works for this blackword.|nA message will be filtered when contains multiple lesser blackwords.|n|nYou should only add words which are used by everyone, but the spam will have much more at the same time.|nDon't add words that are too short."
 	EnhancedChatFilter_LesserBlackwordList = "LesserBlackwordList"
 	EnhancedChatFilter_LesserBlackWordThreshold = "LesserBlackWordThreshold"
-	EnhancedChatFilter_LesserBlackWordThreshold = "Filter msgs contained many lesser blackwords"
+	EnhancedChatFilter_LesserBlackWordThresholdTooltips = "Filter msgs contained many lesser blackwords"
 	EnhancedChatFilter_BlackList = "BlackList"
 	EnhancedChatFilter_StringIO = "Import/Export"
 	EnhancedChatFilter_Import = "Import"
@@ -288,20 +285,6 @@ xMerchant_Tobrowseitemtooltipstoo = "To browse item tooltips, too";
 	EnhancedChatFilter_LootFilterList = "LootFilterList"
 	EnhancedChatFilter_LootQualityFilter = "LootItemQuality"
 	EnhancedChatFilter_LootQualityFilterTooltips = "Filter any loot that is poorer than you choose"
---FAQ
-	EnhancedChatFilter_FAQ = "FAQ"
-	EnhancedChatFilter_FAQText = [[这里列出常见的几个问题
-
-1. 如何共享不同账号下的关键词列表和开关设置
-    同一账户(如wow1)下的不同角色共享设置，不同账户的无法直接共享。
-    你可以用字符串导入导出的方法复制关键词列表，然后人工进行设置。或者手动复制设置/设置硬链接。
-
-2. 为何我添加关键词时总是会有"包含会被自动过滤的字符，将忽略该关键词！"这一错误？
-    不要加入标点符号，这些字符会被自动忽略，只需要添加那些汉字。
-
-3. 正则是什么？
-    不知道的请不要用。不知道的请不要用。不知道的请不要用。
-    如果你想学习请自行百度/谷歌。]]
 --AchievementFilter
 	EnhancedChatFilter_GotAchievement = "[%s]have earned the achievement%s!"
 	EnhancedChatFilter_And = ", "

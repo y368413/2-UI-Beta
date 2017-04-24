@@ -1,95 +1,6 @@
 ﻿local M, R, U, I = unpack(select(2, ...))
 local module = MaoRUI:RegisterModule("Settings")
 
--- 小地图
-R.Minimap = {
-	Pos				= {"TOPRIGHT", UIParent, "TOPRIGHT", 0, 0},	-- 小地图位置
-}
-
--- BUFF/DEBUFF相关
-R.Auras = {
-	IconSize		= 32,											-- BUFF图标大小
-	IconsPerRow		= 16,											-- BUFF每行个数
-	Spacing			= 6,											-- BUFF图标间距
-	BHPos			= {"CENTER", UIParent, "CENTER", 0, -260},		-- 血DK助手默认位置
-	StaggerPos		= {"CENTER", UIParent, "CENTER", 0, -290},		-- 坦僧工具默认位置
-	TotemsPos		= {"CENTER", UIParent, "CENTER", 0, -260},		-- 图腾助手默认位置
-	MarksmanPos		= {"CENTER", UIParent, "CENTER", 0, -310},		-- 射击猎助手默认位置
-	StatuePos		= {"BOTTOMLEFT", UIParent, 520, 260},			-- 武僧雕像默认位置
-}
-
--- 控制技能列表
-R.WhiteList = {
-	-- 死亡骑士
-	[108194]	= true,		-- 窒息
-	[221562]	= true,		-- 窒息
-	[207171]	= true,		-- 凛冬将至
-	-- 德鲁伊
-	[33786] 	= true,		-- 旋风
-	[339]		= true,		-- 纠缠根须
-	[102359]	= true,		-- 群体缠绕
-	[5211]		= true,		-- 蛮力猛击
-	[127797]	= true,		-- 乌索尔旋风
-	[81261]		= true,		-- 日光术
-	-- 猎人
-	[3355]		= true,		-- 冰冻陷阱
-	[19386] 	= true,		-- 翼龙钉刺
-	[213691] 	= true,		-- 驱散射击
-	[224729] 	= true,		-- 爆裂射击
-	[202797] 	= true,		-- 蝰蛇钉刺
-	[202900] 	= true,		-- 毒蝎钉刺
-	[117526]	= true,		-- 束缚射击
-	-- 法师
-	[118] 		= true,		-- 变形术
-	-- 圣骑士
-	[20066] 	= true,		-- 忏悔
-	[853] 		= true,		-- 制裁之锤
-	-- 牧师
-	[8122] 		= true,		-- 心灵尖啸
-	[9484] 		= true,		-- 束缚亡灵
-	[15487] 	= true,		-- 沉默
-	[605] 		= true,		-- 心控
-	[205369] 	= true,		-- 心灵炸弹
-	-- 盗贼
-	[2094] 		= true,		-- 致盲
-	[6770] 		= true,		-- 闷棍
-	-- 萨满
-	[51514] 	= true,		-- 妖术
-	[118905] 	= true,		-- 静电充能
-	-- 术士
-	[710] 		= true,		-- 放逐术
-	[118699] 	= true,		-- 恐惧
-	[5484] 		= true,		-- 恐惧嚎叫
-	[6358]		= true,		-- 诱惑
-	[30283] 	= true,		-- 暗影之怒
-	-- 战士
-	[132168] 	= true,		-- 震荡波
-	[132169] 	= true,		-- 风暴之锤
-	-- 武僧
-	[115078] 	= true,		-- 分筋错骨
-	[119381] 	= true,		-- 扫堂腿
-	-- 恶魔猎手
-	[217832] 	= true,		-- 禁锢
-	[179057] 	= true,		-- 混乱新星
-	-- 种族技能
-	[25046] 	= true,		-- 奥术洪流
-	[20549] 	= true,		-- 战争践踏
-	[107079] 	= true,		-- 震山掌
-	-- 其他
-	[226510]	= true,		-- 血池
-	[207327]	= true,		-- M3净化毁灭
-}
--- 法术黑名单
-R.BlackList = {
-	[15407]		= true,		-- 精神鞭笞
-}
--- 显示能量值的单位
-R.ShowPowerUnit = {
-	["Scrubber"] = true,
-	["清扫器"] = true,
-	["清掃者"] = true,
-}
---------------------------------------------------------------------------------------
 -- Tuitorial
 local function ForceDefaultSettings()
 	SetCVar("scriptErrors", 1)     --0是屏蔽错误1是不屏蔽错误
@@ -159,7 +70,7 @@ end
 local function ForceRaidFrame()
 	if not CompactUnitFrameProfiles.selectedProfile then return end
 	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "useClassColors", true)
-	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "displayPowerBar", true)
+	--SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "displayPowerBar", true)
 	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "displayBorder", false)
 	CompactUnitFrameProfiles_ApplyCurrentSettings()
 	CompactUnitFrameProfiles_UpdateCurrentPanel()
@@ -182,6 +93,9 @@ local function ForceUIScale()
 	MaoRUI:EventFrame("UI_SCALE_CHANGED"):SetScript("OnEvent", function()
 		if scale < .65 then
 			UIParent:SetScale(scale)
+			if MaoRUISettingDB["Chat"]["Lock"] then
+				ChatFrame1:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", -2, 21)
+			end
 		end
 	end)
 end
@@ -219,13 +133,75 @@ StaticPopupDialogs["RELOAD_NDUI"] = {
 	end,
 }
 
-function sendCmd(cmd) ChatFrame1EditBox:SetText(""); ChatFrame1EditBox:Insert(cmd); ChatEdit_SendText(ChatFrame1EditBox); end
+-- DBM bars	
+local function ForceDBMOptions()
+	if not IsAddOnLoaded("DBM-Core") then return end
+	if DBT_AllPersistentOptions then table.wipe(DBT_AllPersistentOptions) end
+	DBT_AllPersistentOptions = {
+		["Default"] = {
+			["DBM"] = {
+				["Scale"] = 0.9,
+				["HugeScale"] = 1.2,
+				["ExpandUpwards"] = true,
+				["BarXOffset"] = 0,
+				["BarYOffset"] = 1,
+				["TimerPoint"] = "BOTTOMLEFT",
+				["TimerX"] = 100,
+				["TimerY"] = 210,
+				["Width"] = 200,
+				["Heigh"] = 14,
+				["HugeWidth"] = 280,
+				["HugeBarXOffset"] = 0,
+				["HugeBarYOffset"] = 3,
+				["HugeTimerPoint"] = "CENTER",
+				["HugeTimerX"] = -12,
+				["HugeTimerY"] = -143,
+				["FontSize"] = 15,
+				["StartColorR"] = 1,
+				["StartColorG"] = .7,
+				["StartColorB"] = 0,
+				["EndColorR"] = 1,
+				["EndColorG"] = 0,
+				["EndColorB"] = 0,
+				["Texture"] = I.normTex,
+			},
+		},
+	}
 
-function module:OnLogin()
-	ForceUIScale()
-	if MaoRUISettingDB["Chat"]["Lock"] then ForceChatSettings() end
-	if tonumber(GetCVar("cameraDistanceMaxZoomFactor")) ~= 2.6 then SetCVar("cameraDistanceMaxZoomFactor", 2.6) end
-	sendCmd("/console missingTransmogSourceInItemTooltips 1")
+	if not DBM_AllSavedOptions["Default"] then DBM_AllSavedOptions["Default"] = {} end
+	DBM_AllSavedOptions["Default"]["ChosenVoicePack"] = "Yike"
+	DBM_AllSavedOptions["Default"]["RangeFrameRadarPoint"] = "RIGHT"
+	DBM_AllSavedOptions["Default"]["RangeFrameRadarX"] = -90
+	DBM_AllSavedOptions["Default"]["RangeFrameRadarY"] = -180
+	DBM_AllSavedOptions["Default"]["InfoFrameX"] = 300
+	DBM_AllSavedOptions["Default"]["InfoFrameY"] = 210
+	DBM_AllSavedOptions["Default"]["HPFramePoint"] = "RIGHT"
+	DBM_AllSavedOptions["Default"]["HPFrameX"] = -160
+	DBM_AllSavedOptions["Default"]["WarningY"] = 260
+	DBM_AllSavedOptions["Default"]["WarningX"] = 0
+	DBM_AllSavedOptions["Default"]["WarningFontStyle"] = "OUTLINE"
+	DBM_AllSavedOptions["Default"]["SpecialWarningPoint"] = "TOP"
+	DBM_AllSavedOptions["Default"]["SpecialWarningFontCol"] = {1.0, 0.3, 0.0}
+	DBM_AllSavedOptions["Default"]["SpecialWarningX"] = 0
+	DBM_AllSavedOptions["Default"]["SpecialWarningY"] = -210
+	DBM_AllSavedOptions["Default"]["SpecialWarningFontStyle"] = "OUTLINE"
+	DBM_AllSavedOptions["Default"]["HideObjectivesFrame"] = false
+	DBM_AllSavedOptions["Default"]["WarningFontSize"] = 20
+	DBM_AllSavedOptions["Default"]["SpecialWarningFontSize2"] = 36
+
+	MaoRUISettingDB["Settings"]["DBMRequest"] = false
 end
 
+-----------------------------------------
+function sendCmd(cmd) ChatFrame1EditBox:SetText(""); ChatFrame1EditBox:Insert(cmd); ChatEdit_SendText(ChatFrame1EditBox); end
 print(Welcome_loginChatText1) print(Welcome_loginChatText2) print(Welcome_loginChatText3) print(Welcome_loginChatText4)
+function module:OnLogin()
+
+	ForceUIScale()
+	if MaoRUISettingDB["Settings"]["DBMRequest"] then ForceDBMOptions() end
+	if MaoRUISettingDB["Chat"]["Lock"] then ForceChatSettings() end
+
+	if tonumber(GetCVar("cameraDistanceMaxZoomFactor")) ~= 2.6 then
+		SetCVar("cameraDistanceMaxZoomFactor", 2.6)
+	end
+end

@@ -12,7 +12,6 @@ local version = "v7.0.3-12"
 
 local _G = _G
 local orgPrint = print
-local cimi = CanIMogIt
 local ItemUpgradeInfo = LibStub("LibItemUpgradeInfo-1.0")
 local C_Timer = C_Timer
 local CreateFrame = CreateFrame
@@ -77,28 +76,28 @@ local learnedTypes = {
 -- Functions
 
 local function isTransmogable(link)
-	return link and cimi:IsTransmogable(link)
+	return link and CanIMogIt:IsTransmogable(link)
 end
 local function getTransmogStatus(link)
-	local mogStatus = cimi:GetTooltipText(link)
+	local mogStatus = CanIMogIt:GetTooltipText(link)
 
 	if not mogStatus or type(mogStatus) ~= "string" then
 		print(("Couldn't determine status of item %s."):format(link))
 		return
 	end
 
-	-- if cimi:TextIsKnown(mogStatus) then -- < Could just use this, but let's be independent
-	if mogStatus == cimi.KNOWN or
-		 mogStatus == cimi.KNOWN_FROM_ANOTHER_ITEM or
-		 mogStatus == cimi.KNOWN_BY_ANOTHER_CHARACTER or
-		 mogStatus == cimi.KNOWN_BUT_TOO_LOW_LEVEL or
-		 mogStatus == cimi.KNOWN_FROM_ANOTHER_ITEM_BUT_TOO_LOW_LEVEL or
-		 mogStatus == cimi.KNOWN_FROM_ANOTHER_ITEM_AND_CHARACTER then
+	-- if CanIMogIt:TextIsKnown(mogStatus) then -- < Could just use this, but let's be independent
+	if mogStatus == CanIMogIt.KNOWN or
+		 mogStatus == CanIMogIt.KNOWN_FROM_ANOTHER_ITEM or
+		 mogStatus == CanIMogIt.KNOWN_BY_ANOTHER_CHARACTER or
+		 mogStatus == CanIMogIt.KNOWN_BUT_TOO_LOW_LEVEL or
+		 mogStatus == CanIMogIt.KNOWN_FROM_ANOTHER_ITEM_BUT_TOO_LOW_LEVEL or
+		 mogStatus == CanIMogIt.KNOWN_FROM_ANOTHER_ITEM_AND_CHARACTER then
 		return 1
-	elseif mogStatus == cimi.NOT_TRANSMOGABLE or
-				 mogStatus == cimi.UNKNOWABLE_SOULBOUND then
+	elseif mogStatus == CanIMogIt.NOT_TRANSMOGABLE or
+				 mogStatus == CanIMogIt.UNKNOWABLE_SOULBOUND then
 		return 2
-	elseif mogStatus:find(cimi.UNKNOWABLE_BY_CHARACTER) then
+	elseif mogStatus:find(CanIMogIt.UNKNOWABLE_BY_CHARACTER) then
 		return 3
 	end
 	return nil
