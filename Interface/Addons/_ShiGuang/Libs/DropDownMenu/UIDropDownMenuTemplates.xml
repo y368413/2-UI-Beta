@@ -1,3 +1,4 @@
+<!-- $Id: UIDropDownMenuTemplates.xml 20 2017-05-19 15:59:28Z arith-179865 $ -->
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 	<Button name="Lib_UIDropDownMenuButtonTemplate" virtual="true">
@@ -241,6 +242,22 @@
 			<Button name="$parentButton6" inherits="Lib_UIDropDownMenuButtonTemplate" id="6"/>
 			<Button name="$parentButton7" inherits="Lib_UIDropDownMenuButtonTemplate" id="7"/>
 			<Button name="$parentButton8" inherits="Lib_UIDropDownMenuButtonTemplate" id="8"/>
+			<Button name="$parentButton9" inherits="Lib_UIDropDownMenuButtonTemplate" id="9"/>
+			<Button name="$parentButton10" inherits="Lib_UIDropDownMenuButtonTemplate" id="10"/>
+			<Button name="$parentButton11" inherits="Lib_UIDropDownMenuButtonTemplate" id="11"/>
+			<Button name="$parentButton12" inherits="Lib_UIDropDownMenuButtonTemplate" id="12"/>
+			<Button name="$parentButton13" inherits="Lib_UIDropDownMenuButtonTemplate" id="13"/>
+			<Button name="$parentButton14" inherits="Lib_UIDropDownMenuButtonTemplate" id="14"/>
+			<Button name="$parentButton15" inherits="Lib_UIDropDownMenuButtonTemplate" id="15"/>
+			<Button name="$parentButton16" inherits="Lib_UIDropDownMenuButtonTemplate" id="16"/>
+			<Button name="$parentButton17" inherits="Lib_UIDropDownMenuButtonTemplate" id="17"/>
+			<Button name="$parentButton18" inherits="Lib_UIDropDownMenuButtonTemplate" id="18"/>
+			<Button name="$parentButton19" inherits="Lib_UIDropDownMenuButtonTemplate" id="19"/>
+			<Button name="$parentButton20" inherits="Lib_UIDropDownMenuButtonTemplate" id="20"/>
+			<Button name="$parentButton21" inherits="Lib_UIDropDownMenuButtonTemplate" id="21"/>
+			<Button name="$parentButton22" inherits="Lib_UIDropDownMenuButtonTemplate" id="22"/>
+			<Button name="$parentButton23" inherits="Lib_UIDropDownMenuButtonTemplate" id="23"/>
+			<Button name="$parentButton24" inherits="Lib_UIDropDownMenuButtonTemplate" id="24"/>
 		</Frames>
 		<Scripts>
 			<OnClick>

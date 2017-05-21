@@ -234,7 +234,8 @@ LFDParentFrame:HookScript("OnShow",function()
    if(isHoliday and not GetLFGDungeonRewards(id)) then LFDQueueFrame_SetType(id) end
   end
  end)
- 
+--------------------------------------Hide the left/right end cap------------------------
+MainMenuBarLeftEndCap:Hide()  MainMenuBarRightEndCap:Hide()
 --------------------------Class recoure Place ---by y368413 ----
 local function yInvertTexture(Texture)
 	local Left, Top, _, Bottom, Right = Texture:GetTexCoord()

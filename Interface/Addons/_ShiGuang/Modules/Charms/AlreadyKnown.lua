@@ -8,8 +8,8 @@ tooltip:SetOwner(WorldFrame, "ANCHOR_NONE")
 local IsAlreadyKnown
 do
 	local knowns = {}
-	local consumable, glyph, recipe, miscallaneous = AUCTION_CATEGORY_CONSUMABLES, AUCTION_CATEGORY_GLYPHS, AUCTION_CATEGORY_RECIPES, AUCTION_CATEGORY_MISCELLANEOUS
-	local knowables = { [consumable] = true, [glyph] = true, [recipe] = true, [miscallaneous] = true }
+	local consumable, recipe, misc = LE_ITEM_CLASS_CONSUMABLE, LE_ITEM_CLASS_RECIPE, LE_ITEM_CLASS_MISCELLANEOUS
+	local knowables = { [consumable] = true, [recipe] = true, [misc] = true }
 
 	local lines = {}
 	for i = 1, 40 do
@@ -21,8 +21,8 @@ do
 		if not itemLink then return end
 		local itemID = itemLink:match("item:(%d+):")
 		if knowns[itemID] then return true end
-		local _, _, _, _, _, itemType = GetItemInfo(itemLink)
-		if not knowables[itemType] then return end
+		local name, _, _, _, _, _, _, _, _, _, _, itemClassID = GetItemInfo(itemLink)
+		if not name or not knowables[itemClassID] then return end
 		tooltip:ClearLines()
 		tooltip:SetHyperlink(itemLink)
 		for i = 1, tooltip:NumLines() do
@@ -44,7 +44,7 @@ local function MerchantFrame_UpdateMerchantInfo()
 		local button = _G["MerchantItem"..i.."ItemButton"]
 		if button and button:IsShown() then
 			local _, _, _, _, numAvailable, isUsable = GetMerchantItemInfo(index)
-			if (isUsable and IsAlreadyKnown(GetMerchantItemLink(index))) then
+			if isUsable and IsAlreadyKnown(GetMerchantItemLink(index)) then
 				local r, g, b = COLOR.r, COLOR.g, COLOR.b
 				if numAvailable == 0 then
 					r, g, b = r * 0.5, g * 0.5, b * 0.5

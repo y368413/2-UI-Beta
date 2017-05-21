@@ -1,6 +1,5 @@
 ﻿--Easy Obliterate by Motig
 LoadAddOn("Blizzard_ObliterumUI")
-
 local currentPage = 1
 local selectedButton = nil
 local previousSelectedButton = nil
@@ -17,13 +16,7 @@ local lastItem = {itemID = 0, itemLevel = 0, ashAamount = 0}
 local currentItem = {itemID = 0, itemLevel = 0}
 local currentLineID = nil
 local saveData = {}
-
-local defaultSettings = {
-    showTooltip = true,
-    showAshStats = true,
-}
-
-
+local defaultSettings = { showAshStats = true, }      --showTooltip = true,
 local backupAshText = 'Obliterum Ash'
 local textColor = {r='0.99999779462814', g='0.12548992037773', b='0.12548992037773', a='0.99999779462814'}
 local function dprint(text) if _eadebug then print(text) end end
@@ -454,7 +447,7 @@ contentFrame:SetBackdropBorderColor(1, 1, 0, 1)
 
 local ignoreTip = contentFrame:CreateFontString()
 ignoreTip:SetFontObject("GameFonthighlight")
-ignoreTip:SetText("Right click an item to ignore it")
+ignoreTip:SetText("右击忽略装备")
 ignoreTip:SetTextColor(0.9, 0.9, 0.9, 1)
 ignoreTip:SetPoint('TOP', 0, -8)
 
@@ -752,21 +745,26 @@ mainFrame:SetScript('OnEvent', function(self, event, ...)
         populateFrame()       
     elseif event == 'LOOT_OPENED' then
         local lootIcon, _, lootQuantity = GetLootSlotInfo(1)
-        if lootIcon == 1341655 then
+        if lootIcon == 1341655 or lootIcon == 1455891 or lootIcon == 1455894 then --pvp tokens
             lastItem.ashAmount = lootQuantity
             if mainFrame.autoLootCheck:GetChecked() then
                 LootSlot(1)
                 --CloseLoot()
-            end
+            end  
         end    
-    elseif event == 'CHAT_MSG_LOOT' then
+    elseif event == 'CHAT_MSG_LOOT' or event == 'CHAT_MSG_CURRENCY' then
         local lootstring = ...
-        local itemID = string.match(lootstring, "Hitem:(%d+):")
-        --local ashAmount = string.match(lootstring, "x(%d+).") or 1
-        if itemID == '136342' and not ashLooted then
-            ashLooted = true
-            updateAshStats(lastItem.itemID, lastItem.itemLevel, lastItem.ashAmount)
-            --Add to statistics
+        if event == 'CHAT_MSG_LOOT' then
+            local itemID = string.match(lootstring, "Hitem:(%d+):")
+            if itemID == '136342' and not ashLooted then
+                ashLooted = true
+                updateAshStats(lastItem.itemID, lastItem.itemLevel, lastItem.ashAmount)
+            end
+        elseif event == 'CHAT_MSG_CURRENCY' then
+            local currencyID = string.match(lootstring, "Hcurrency:(%d+)")
+            if (currencyID == '1356' or currencyID == '1357') and not ashLooted then
+                ashLooted = true
+            end
         end
     elseif event == 'OBLITERUM_FORGE_PENDING_ITEM_CHANGED' then
         if C_TradeSkillUI.GetPendingObliterateItemLink() then
@@ -851,6 +849,7 @@ ObliterumForgeFrame:SetScript('OnShow', function(self)
     mainFrame:RegisterEvent('BAG_UPDATE_DELAYED')
     mainFrame:RegisterEvent('LOOT_OPENED')
     mainFrame:RegisterEvent('CHAT_MSG_LOOT')
+    mainFrame:RegisterEvent('CHAT_MSG_CURRENCY')
     mainFrame:RegisterEvent('OBLITERUM_FORGE_PENDING_ITEM_CHANGED')
     mainFrame:RegisterUnitEvent('UNIT_SPELLCAST_SUCCEEDED', 'player')
     mainFrame:RegisterUnitEvent('UNIT_SPELLCAST_START', 'player')
@@ -884,14 +883,15 @@ ObliterumForgeFrame:SetScript('OnHide', function(self)
       mainFrame:UnregisterEvent('BAG_UPDATE_DELAYED')
       mainFrame:UnregisterEvent('LOOT_OPENED')
       mainFrame:UnregisterEvent('CHAT_MSG_LOOT')
+      mainFrame:UnregisterEvent('CHAT_MSG_CURRENCY')
       mainFrame:UnregisterEvent('OBLITERUM_FORGE_PENDING_ITEM_CHANGED')
       mainFrame:UnregisterEvent('UNIT_SPELLCAST_SUCCEEDED')
       mainFrame:UnregisterEvent('UNIT_SPELLCAST_START')
       mainFrame:UnregisterEvent('UNIT_SPELLCAST_INTERRUPTED')
 end)
 
-BINDING_HEADER_EASYOBLITERATEHEAD = "Easy Obliterate"
-_G["BINDING_NAME_CLICK EasyObliterate:LeftButton"] = "Obliterate Item"
+BINDING_HEADER_EASYOBLITERATEHEAD = "|cff02F78E[装备]|r抑魔金"
+_G["BINDING_NAME_CLICK EasyObliterate:LeftButton"] = "    拆解物品"
 
 local b = CreateFrame('Button', 'EasyObliterate', nil, 'SecureActionButtonTemplate')
 b:SetAttribute('type', 'click')
@@ -917,7 +917,7 @@ StaticPopupDialogs["EasyObliterate_AshStatsWiped"] = {
 }
 
 local function tooltipText(tooltip)
-    if saveData.addonSettings.showTooltip then
+    --if saveData.addonSettings.showTooltip then
         local itemName, hyperLink = tooltip:GetItem()
         if hyperLink then
             local itemID = string.match(hyperLink, "Hitem:(%d+):")
@@ -943,48 +943,8 @@ local function tooltipText(tooltip)
                 end
             end
         end
-    end
+    --end
 end
 
 GameTooltip:HookScript("OnTooltipSetItem", function(self) tooltipText(self) end)
 ItemRefTooltip:HookScript("OnTooltipSetItem", function(self) tooltipText(self) end)
-
-
-local optionsFrame = CreateFrame('Frame', nil, InterfaceOptionsFramePanelContainer)
-optionsFrame.name = '|cff02F78E[装备]|r抑魔金'
-
-optionsFrame.title = optionsFrame:CreateFontString()
-optionsFrame.title:SetPoint('TOPLEFT', 16, -16)
-optionsFrame.title:SetFontObject('GameFontNormalLarge')
-optionsFrame.title:SetText('Easy Obliterate')
-
-optionsFrame.subText = optionsFrame:CreateFontString()
-optionsFrame.subText:SetFontObject('GameFontHighlightSmall')
-optionsFrame.subText:SetText('Settings for Easy Obliterate')
-optionsFrame.subText:SetPoint('TOPLEFT', optionsFrame.title, 'BOTTOMLEFT', 0, -12)
-
-optionsFrame.showTooltip = CreateFrame('CheckButton', nil, optionsFrame, 'UICheckButtonTemplate')
-optionsFrame.showTooltip:SetSize(32, 32)
-optionsFrame.showTooltip:SetPoint('TOPLEFT', optionsFrame.subText, 'BOTTOMLEFT', 0, -24)
-
-optionsFrame.showTooltip.text = optionsFrame.showTooltip:CreateFontString()
-optionsFrame.showTooltip.text:SetFontObject('GameFontNormal')
-optionsFrame.showTooltip.text:SetText('Show Obliterum Ash information in tooltips.')
-optionsFrame.showTooltip.text:SetPoint('LEFT', 36, 0)
-
-optionsFrame.showTooltip:SetScript('OnClick', function()
-    saveData.addonSettings.showTooltip = not saveData.addonSettings.showTooltip
-end)
-    
-optionsFrame:SetScript("OnShow", function()
-    if saveData.addonSettings.showTooltip then
-        optionsFrame.showTooltip:SetChecked(true)
-    else
-        optionsFrame.showTooltip:SetChecked(false)
-    end
-end)
-
-InterfaceOptions_AddCategory(optionsFrame)
-
-SLASH_EASYOBLITERATE1 = '/easyobliterate'
-SlashCmdList['EASYOBLITERATE'] = function() InterfaceOptionsFrame_OpenToCategory(optionsFrame) InterfaceOptionsFrame_OpenToCategory(optionsFrame) end

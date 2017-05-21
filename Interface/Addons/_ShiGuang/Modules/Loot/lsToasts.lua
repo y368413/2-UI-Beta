@@ -4,12 +4,12 @@ local math = _G.math
 local string = _G.string
 local table = _G.table
 local hooksecurefunc = _G.hooksecurefunc
--- local issecurevariable = _G.issecurevariable
 local next = _G.next
 local pairs = _G.pairs
 local pcall = _G.pcall
 local print = _G.print
 local select = _G.select
+local setmetatable = _G.setmetatable
 local tonumber = _G.tonumber
 local type = _G.type
 local unpack = _G.unpack
@@ -34,7 +34,6 @@ local queuedToasts = {}
 local scenarioToasts = {}
 local textsToAnimate = {}
 local toastCounter = 0
-
 
 local EQUIP_SLOTS = {
 	["INVTYPE_HEAD"] = {_G.INVSLOT_HEAD},
@@ -89,8 +88,9 @@ local BLACKLISTED_EVENTS = {
 ------------
 
 local CFG = {}
-local DEFAULTS = {
+local lsToastsDEFAULTS = {
 	growth_direction = "DOWN",
+	skin = "Default",
 	point = {"TOP", "UIParent", "TOP", 0, -21},
 	max_active_toasts = 12,
 	sfx_enabled = true,
@@ -147,8 +147,36 @@ local DEFAULTS = {
 	}
 }
 
-local F = {} -- F for Functions
-_G["_ShiGuang"] = { [1] = F, }
+local SKINS = {
+	Default = {
+		func = function() end
+	},
+	num = 1,
+}
+
+SKINS.handler = SKINS.Default.func
+
+local _F, F = {}, {} -- private, proxy
+setmetatable(F, {
+	__index = function(_, k)
+		return _F[k]
+	end,
+	__newindex = function(_, k, v)
+		if type(v) ~= "function" then
+			return
+		end
+
+		if k ~= "SkinToast" then
+			if not _F[k] then
+				_F[k] = v
+			end
+		else
+			_F:CreateSkin(name, function(...) v(_, ...) end)
+		end
+	end,
+})
+
+--_G["_ShiGuang"] = { [1] = F, }
 
 ----------------
 -- DISPATCHER --
@@ -297,17 +325,37 @@ end
 -- UTILS --
 -----------
 
+local function FlushToastsCache()
+	table.wipe(queuedToasts)
+
+	for _ = 1, #activeToasts do
+		activeToasts[1]:Click("RightButton")
+	end
+
+	table.wipe(abilityToasts)
+	table.wipe(achievementToasts)
+	table.wipe(followerToasts)
+	table.wipe(itemToasts)
+	table.wipe(miscToasts)
+	table.wipe(missonToasts)
+	table.wipe(scenarioToasts)
+	table.wipe(textsToAnimate)
+
+	toastCounter = 0
+end
+
 local function ParseLink(link)
 	if not link or link == "[]" or link == "" then
 		return
 	end
 
-	local name
-	link, name = string.match(link, "|H(.+)|h%[(.+)%]|h")
+	local temp, name = string.match(link, "|H(.+)|h%[(.+)%]|h")
+	link = temp or link
+
 	local linkTable = {string.split(":", link)}
 
 	if linkTable[1] ~= "item" then
-		return link, linkTable[1], name
+		return linkTable[1], link, link, name
 	end
 
 	if linkTable[12] ~= "" then
@@ -316,7 +364,7 @@ local function ParseLink(link)
 		table.remove(linkTable, 15 + (tonumber(linkTable[14]) or 0))
 	end
 
-	return table.concat(linkTable, ":"), linkTable[1], name
+	return linkTable[1], table.concat(linkTable, ":"), link, name
 end
 
 local function DumpToasts()
@@ -337,39 +385,41 @@ local function IsItemAnUpgrade(itemLink)
 	local itemLevel = _G.GetDetailedItemLevelInfo(itemLink)
 	local slot1, slot2 = unpack(EQUIP_SLOTS[itemEquipLoc] or {})
 
-	if slot1 then
-		local itemLinkInSlot1 = _G.GetInventoryItemLink("player", slot1)
+	if itemLevel then
+		if slot1 then
+			local itemLinkInSlot1 = _G.GetInventoryItemLink("player", slot1)
 
-		if itemLinkInSlot1 then
-			local itemLevelInSlot1 = _G.GetDetailedItemLevelInfo(itemLinkInSlot1)
+			if itemLinkInSlot1 then
+				local itemLevelInSlot1 = _G.GetDetailedItemLevelInfo(itemLinkInSlot1)
 
-			if itemLevel > itemLevelInSlot1 then
-				return true
-			end
-		else
-			-- Make sure that slot is empty
-			if not _G.GetInventoryItemID("player", slot1) then
-				return true
-			end
-		end
-	end
-
-	if slot2 then
-		local isSlot2Equippable = itemEquipLoc ~= "INVTYPE_WEAPON" and true or _G.CanDualWield()
-
-		if isSlot2Equippable then
-			local itemLinkInSlot2 = _G.GetInventoryItemLink("player", slot2)
-
-			if itemLinkInSlot2 then
-				local itemLevelInSlot2 = _G.GetDetailedItemLevelInfo(itemLinkInSlot2)
-
-				if itemLevel > itemLevelInSlot2 then
+				if itemLevelInSlot1 and itemLevel > itemLevelInSlot1 then
 					return true
 				end
 			else
 				-- Make sure that slot is empty
-				if not _G.GetInventoryItemID("player", slot2) then
+				if not _G.GetInventoryItemID("player", slot1) then
 					return true
+				end
+			end
+		end
+
+		if slot2 then
+			local isSlot2Equippable = itemEquipLoc ~= "INVTYPE_WEAPON" and true or _G.CanDualWield()
+
+			if isSlot2Equippable then
+				local itemLinkInSlot2 = _G.GetInventoryItemLink("player", slot2)
+
+				if itemLinkInSlot2 then
+					local itemLevelInSlot2 = _G.GetDetailedItemLevelInfo(itemLinkInSlot2)
+
+					if itemLevelInSlot2 and itemLevel > itemLevelInSlot2 then
+						return true
+					end
+				else
+					-- Make sure that slot is empty
+					if not _G.GetInventoryItemID("player", slot2) then
+						return true
+					end
 				end
 			end
 		end
@@ -467,7 +517,7 @@ local function SpawnToast(toast, isDND)
 
 	table.insert(activeToasts, toast)
 
-	F:SkinToast(toast, toast.type)
+	SKINS.handler(toast, toast.type)
 
 	toast:Show()
 
@@ -515,6 +565,7 @@ local function ResetToast(toast)
 	toast.dnd = nil
 	toast.chat = nil
 	toast.link = nil
+	toast.tooltipLink = nil
 	toast.event = nil
 	toast.itemCount = nil
 	toast.soundFile = nil
@@ -709,7 +760,7 @@ local function ToastButton_OnClick(self, button)
 				end
 			elseif self.type == "misc" then
 				if self.link then
-					if string.sub(self.link, 1, 18) == "transmogappearance" then
+					if string.find(self.link, "transmog") then
 						if not _G.CollectionsJournal then
 							_G.CollectionsJournal_LoadUI()
 						end
@@ -791,7 +842,7 @@ local function ToastButton_OnEnter(self)
 			else
 				_G.GameTooltip:SetOwner(self, "ANCHOR_NONE")
 				_G.GameTooltip:SetPoint(p, self, rP, x, y)
-				_G.GameTooltip:SetHyperlink(self.link)
+				_G.GameTooltip:SetHyperlink(self.tooltipLink or self.link)
 				_G.GameTooltip:Show()
 			end
 		end
@@ -1854,9 +1905,9 @@ do
 	local function Toast_SetUp(event, link, quantity, rollType, roll, factionGroup, isItem, isMoney, isHonor, isPersonal, lessAwesome, isUpgraded, baseQuality, isLegendary, isStorePurchase)
 		if isItem then
 			if link then
-				link = ParseLink(link)
+				local _, sanitizedLink, originalLink = ParseLink(link)
 
-				local toast, isQueued = GetToastToUpdate(link, "item", event)
+				local toast, isQueued = GetToastToUpdate(sanitizedLink, "item", event)
 				local isUpdated = true
 
 				if not toast then
@@ -1865,7 +1916,7 @@ do
 				end
 
 				if not isUpdated then
-					local name, _, quality, _, _, _, _, _, _, icon = _G.GetItemInfo(link)
+					local name, _, quality, _, _, _, _, _, _, icon = _G.GetItemInfo(originalLink)
 
 				if quality >= CFG.type.loot_special.threshold and quality <= 5 then
 				local color = _G.ITEM_QUALITY_COLORS[quality] or _G.ITEM_QUALITY_COLORS[1]
@@ -1927,16 +1978,17 @@ do
 					toast.BG:SetTexture("Interface\\AddOns\\_ShiGuang\\Media\\Modules\\IsToasts\\toast-bg-store")
 				end
 
-				toast.Title:SetText(title)
-				toast.Text:SetText(name)
-				toast.Count:SetText(quantity > 1 and quantity or "")
-				toast.Border:SetVertexColor(color.r, color.g, color.b)
-				toast.IconBorder:SetVertexColor(color.r, color.g, color.b)
-				toast.Icon:SetTexture(icon)
-				toast.UpgradeIcon:SetShown(IsItemAnUpgrade(link))
+						toast.Title:SetText(title)
+						toast.Text:SetText(name)
+						toast.Count:SetText(quantity > 1 and quantity or "")
+						toast.Border:SetVertexColor(color.r, color.g, color.b)
+						toast.IconBorder:SetVertexColor(color.r, color.g, color.b)
+						toast.Icon:SetTexture(icon)
+						toast.UpgradeIcon:SetShown(IsItemAnUpgrade(originalLink))
 						toast.itemCount = quantity
-				toast.link = link
-				toast.soundFile = soundFile
+						toast.tooltipLink = originalLink
+						toast.link = sanitizedLink
+						toast.soundFile = soundFile
 						toast.event = event
 
 				if CFG.colored_names_enabled then
@@ -2146,11 +2198,13 @@ end
 
 do
 	local function Toast_SetUp(event, link, quantity)
-		if GetToastToUpdate(link, "item") then
+		local linkType, sanitizedLink, originalLink = ParseLink(link)
+
+		if GetToastToUpdate(sanitizedLink, "item") then
 			return
 		end
 
-		local toast, isQueued = GetToastToUpdate(link, "item", event)
+		local toast, isQueued = GetToastToUpdate(sanitizedLink, "item", event)
 		local isUpdated = true
 
 		if not toast then
@@ -2161,12 +2215,12 @@ do
 		if not isUpdated then
 			local name, quality, icon, _
 
-			if string.find(link, "battlepet:") then
-				local _, speciesID, _, breedQuality, _ = string.split(":", link)
+			if linkType == "battlepet" then
+				local _, speciesID, _, breedQuality, _ = string.split(":", originalLink)
 				name, icon = _G.C_PetJournal.GetPetInfoBySpeciesID(speciesID)
 				quality = tonumber(breedQuality)
 			else
-				name, _, quality, _, _, _, _, _, _, icon = _G.GetItemInfo(link)
+				name, _, quality, _, _, _, _, _, _, icon = _G.GetItemInfo(originalLink)
 			end
 
 			if quality >= CFG.type.loot_common.threshold and quality <= 4 then
@@ -2179,7 +2233,8 @@ do
 			toast.IconBorder:SetVertexColor(color.r, color.g, color.b)
 			toast.Icon:SetTexture(icon)
 				toast.itemCount = quantity
-				toast.link = link
+				toast.tooltipLink = originalLink
+				toast.link = sanitizedLink
 				toast.event = event
 				toast.chat = true
 
@@ -2237,7 +2292,6 @@ do
 			end
 		end
 
-		link = ParseLink(link)
 		quantity = tonumber(quantity) or 0
 
 		_G.C_Timer.After(0.125, function() Toast_SetUp("CHAT_MSG_LOOT", link, quantity) end)
@@ -2327,6 +2381,7 @@ do
 
 	function dispatcher:CHAT_MSG_CURRENCY(message)
 		local link, quantity = message:match(CURRENCY_GAINED_MULTIPLE_PATTERN)
+		local _
 
 		if not link then
 			quantity, link = 1, message:match(CURRENCY_GAINED_PATTERN)
@@ -2336,7 +2391,7 @@ do
 			end
 		end
 
-		link = ParseLink(link)
+		_, link = ParseLink(link)
 		quantity = tonumber(quantity) or 0
 
 		Toast_SetUp(link, quantity)
@@ -2638,13 +2693,13 @@ do
 		return false
 	end
 
-	local function Toast_SetUp(sourceID, isAdded)
-		local _, _, _, icon, _, _, transmogLink = _G.C_TransmogCollection.GetAppearanceSourceInfo(sourceID)
+	local function Toast_SetUp(sourceID, isAdded, attempt)
+		local _, _, _, icon, _, _, link = _G.C_TransmogCollection.GetAppearanceSourceInfo(sourceID)
 		local name
-		transmogLink, _, name = ParseLink(transmogLink)
+		_, link, _, name = ParseLink(link)
 
-		if not transmogLink then
-			return _G.C_Timer.After(0.25, function() Toast_SetUp(sourceID, isAdded) end)
+		if not link then
+			return attempt < 4 and _G.C_Timer.After(0.25, function() Toast_SetUp(sourceID, isAdded, attempt + 1) end)
 		end
 
 		local toast = GetToast("misc")
@@ -2661,29 +2716,35 @@ do
 		toast.IconBorder:SetVertexColor(1, 128 / 255, 1)
 		toast.Icon:SetTexture(icon)
 		toast.id = sourceID
-		toast.link = transmogLink
+		toast.link = link
 		toast.soundFile = "UI_DigsiteCompletion_Toast"
 
 		SpawnToast(toast, CFG.type.transmog.dnd)
 	end
 
-	function dispatcher:TRANSMOG_COLLECTION_SOURCE_ADDED(sourceID)
+	function dispatcher:TRANSMOG_COLLECTION_SOURCE_ADDED(sourceID, attempt)
 		local isKnown = IsAppearanceKnown(sourceID)
+		attempt = attempt or 1
 
-		if isKnown == false then
-			Toast_SetUp(sourceID, true)
-		elseif isKnown == nil then
-			_G.C_Timer.After(0.25, function() self:TRANSMOG_COLLECTION_SOURCE_ADDED(sourceID) end)
+		if attempt < 4 then
+			if isKnown == false then
+				Toast_SetUp(sourceID, true, 1)
+			elseif isKnown == nil then
+				_G.C_Timer.After(0.25, function() self:TRANSMOG_COLLECTION_SOURCE_ADDED(sourceID, attempt + 1) end)
+			end
 		end
 	end
 
-	function dispatcher:TRANSMOG_COLLECTION_SOURCE_REMOVED(sourceID)
-		local isKnown = IsAppearanceKnown(sourceID)
+	function dispatcher:TRANSMOG_COLLECTION_SOURCE_REMOVED(sourceID, attempt)
+		local isKnown = IsAppearanceKnown(sourceID, true)
+		attempt = attempt or 1
 
-		if isKnown == false then
-			Toast_SetUp(sourceID)
-		elseif isKnown == nil then
-			_G.C_Timer.After(0.25, function() self:TRANSMOG_COLLECTION_SOURCE_REMOVED(sourceID) end)
+		if attempt < 4 then
+			if isKnown == false then
+				Toast_SetUp(sourceID, nil, 1)
+			elseif isKnown == nil then
+				_G.C_Timer.After(0.25, function() self:TRANSMOG_COLLECTION_SOURCE_REMOVED(sourceID, attempt + 1) end)
+			end
 		end
 	end
 
@@ -2704,10 +2765,10 @@ do
 		local source = _G.C_TransmogCollection.GetAppearanceSources(appearance.visualID) and _G.C_TransmogCollection.GetAppearanceSources(appearance.visualID)[1]
 
 		-- added
-		Toast_SetUp(source.sourceID, true)
+		Toast_SetUp(source.sourceID, true, 1)
 
 		-- removed
-		Toast_SetUp(source.sourceID)
+		Toast_SetUp(source.sourceID, nil, 1)
 	end
 end
 
@@ -3236,90 +3297,25 @@ local function LootDropDown_Initialize(self)
 	info.notCheckable = 1
 	_G.UIDropDownMenu_AddButton(info)
 end
-
 ------
 
-local function CreateProfile(name, base)
+local function SetSkin(name)
 	if not name then
 		return false, "no_name"
-	elseif name and _G.LS_TOASTS_CFG_GLOBAL[name] then
-		return false, "name_taken"
+	elseif not SKINS[name] then
+		return false, "no_skin"
+	elseif name == "handler" or name == "num" then
+		return false, "invalid"
 	end
 
-	_G.LS_TOASTS_CFG_GLOBAL[_G.LS_TOASTS_CFG.profile] = DiffTable(DEFAULTS, CFG)
+	CFG.skin = name
 
-	_G.LS_TOASTS_CFG.profile = name
+	SKINS.handler = SKINS[name].func
 
-	if base and type(base) == "table" then
-		_G.LS_TOASTS_CFG_GLOBAL[name] = CopyTable(base)
-	elseif base and type(base) == "string" and _G.LS_TOASTS_CFG_GLOBAL[base] then
-		_G.LS_TOASTS_CFG_GLOBAL[name] = CopyTable(_G.LS_TOASTS_CFG_GLOBAL[base])
-	else
-		_G.LS_TOASTS_CFG_GLOBAL[name] = CopyTable(DEFAULTS)
-	end
-
-	ReplaceTable(CopyTable(DEFAULTS, _G.LS_TOASTS_CFG_GLOBAL[name]), CFG)
-
-	RefreshAllOptions()
-
-	return true
+	FlushToastsCache()
 end
 
-local function DeleteProfile(name)
-	if not name then
-		return false, "no_name"
-	elseif name and name == "Default" then
-		return false, "default"
-	end
-
-	_G.LS_TOASTS_CFG_GLOBAL[name] = nil
-
-	_G.LS_TOASTS_CFG.profile = "Default"
-
-	ReplaceTable(CopyTable(DEFAULTS, _G.LS_TOASTS_CFG_GLOBAL.Default), CFG)
-
-	RefreshAllOptions()
-
-	return true
-end
-
-local function SetProfile(name)
-	if not name then
-		return false, "no_name"
-	elseif name and not _G.LS_TOASTS_CFG_GLOBAL[name] then
-		return false, "missing"
-	elseif name and  name == _G.LS_TOASTS_CFG.profile then
-		return false, "current"
-	end
-
-	_G.LS_TOASTS_CFG_GLOBAL[_G.LS_TOASTS_CFG.profile] = DiffTable(DEFAULTS, CFG)
-
-	_G.LS_TOASTS_CFG.profile = name
-
-	ReplaceTable(CopyTable(DEFAULTS, _G.LS_TOASTS_CFG_GLOBAL[_G.LS_TOASTS_CFG.profile]), CFG)
-
-	RefreshAllOptions()
-
-	return true
-end
-
-local function ResetProfile(name)
-	if not name then
-		return false, "no_name"
-	elseif name and not _G.LS_TOASTS_CFG_GLOBAL[name] then
-		return false, "missing"
-	end
-
-	_G.LS_TOASTS_CFG_GLOBAL[name] = CopyTable(DEFAULTS)
-
-	ReplaceTable(CopyTable(DEFAULTS, _G.LS_TOASTS_CFG_GLOBAL[name]), CFG)
-
-	RefreshAllOptions()
-
-	return true
-end
-
-local function ProfileDropDownButton_OnClick(self)
+local function SkinDropDownButton_OnClick(self)
 	self.owner:SetValue(self.value)
 end
 
@@ -3334,15 +3330,6 @@ local function PopulateConfigPanels()
 	title:SetJustifyH("LEFT")
 	title:SetJustifyV("TOP")
 	title:SetText("美化各类形的提示框体")  --_G.GENERAL_LABEL
-	local profileTag = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
-	profileTag:SetPoint("LEFT", title, "RIGHT", 2, 0)
-	profileTag:SetJustifyH("LEFT")
-	profileTag:SetJustifyV("TOP")
-	profileTag.RefreshValue = function(self)
-		self:SetFormattedText("[|cffffffff%s|r]", _G.LS_TOASTS_CFG.profile)
-	end
-
-	RegisterControlForRefresh(panel, profileTag)
 
 	local subtext = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
 	subtext:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -8)
@@ -3471,279 +3458,34 @@ local function PopulateConfigPanels()
 		text = "提醒框体"
 	})
 	divider:SetPoint("TOP", growthDropdown, "BOTTOM", 0, -10)
-
-	local createProfileDialog = CreateConfigDialog(panel, {
-		name = "$parentNewProfileDialog",
-		on_show = function(self)
-			self.OkayButton:Disable()
-			self.EditBox:SetFocus()
-		end,
-		on_hide = function(self)
-			self.EditBox:SetText("")
-			self:Hide()
-		end,
-	})
-	createProfileDialog:SetSize(384, 160)
-
-	local header = createProfileDialog:CreateFontString(nil, "ARTWORK", "GameFontNormalMed2")
-	header:SetHeight(18)
-	header:SetPoint("TOP", 0, -14)
-	header:SetPoint("LEFT", 14, 0)
-	header:SetPoint("RIGHT", -14, 0)
-	header:SetJustifyH("CENTER")
-	header:SetJustifyV("MIDDLE")
-	header:SetText("Create New Profile")
-	createProfileDialog.Header = header
-
-	local editbox = _G.CreateFrame("EditBox", nil, createProfileDialog, "InputBoxTemplate")
-	editbox:SetSize(256, 32)
-	editbox:SetPoint("TOP", header, "BOTTOM", 0, -2)
-	editbox:SetAutoFocus(false)
-	editbox:SetMaxLetters(31)
-	editbox:SetScript("OnTextChanged", function(self, isUserInput)
-		if isUserInput then
-			local name = self:GetText()
-			name = string.trim(name)
-			name = string.gsub(name, "[,\\%^%$%(%)%%%.%[%]%*%+%?]", "")
-
-			if name == "" or _G.LS_TOASTS_CFG_GLOBAL[name] then
-				createProfileDialog.OkayButton:Disable()
-			else
-				createProfileDialog.OkayButton:Enable()
-			end
-		end
-	end)
-	editbox:SetScript("OnEnterPressed", function()
-		createProfileDialog.OkayButton:Click()
-	end)
-	createProfileDialog.EditBox = editbox
-
-	header = createProfileDialog:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-	header:SetHeight(16)
-	header:SetPoint("TOP", editbox, "BOTTOM", 0, -2)
-	header:SetPoint("LEFT", 14, 0)
-	header:SetPoint("RIGHT", -14, 0)
-	header:SetJustifyH("CENTER")
-	header:SetJustifyV("MIDDLE")
-	header:SetText("Copy from:")
-	createProfileDialog.Header = header
-
-	local profileSelector = CreateConfigDropDownMenu(panel, {
-		parent = createProfileDialog,
-		name = "$parentSelectorDropDown",
-		init = function(self)
-			local info = _G.UIDropDownMenu_CreateInfo()
-
-			for k in pairs(_G.LS_TOASTS_CFG_GLOBAL) do
-				info.text = k
-				info.func = ProfileDropDownButton_OnClick
-				info.value = k
-				info.owner = self
-				info.checked = nil
-				_G.UIDropDownMenu_AddButton(info)
-			end
-
-			_G.UIDropDownMenu_SetSelectedValue(self, "Default")
-		end,
-		get = function(self)
-			return _G.UIDropDownMenu_GetSelectedValue(self)
-		end,
-		set = function(self, value)
-			_G.UIDropDownMenu_SetSelectedValue(self, value)
-		end
-	})
-	profileSelector:SetPoint("TOP", header, "BOTTOM", 0, -2)
-	createProfileDialog.DropDown = profileSelector
-
-	local okayButton = CreateConfigButton(panel, {
-		parent = createProfileDialog,
-		text = _G.OKAY,
-		func = function()
-			local name = editbox:GetText()
-			name = string.trim(name)
-			name = string.gsub(name, "[,\\%^%$%(%)%%%.%[%]%*%+%?]", "")
-
-			if name ~= "" and not _G.LS_TOASTS_CFG_GLOBAL[name] then
-				editbox:SetText("")
-				editbox:ClearFocus()
-
-				CreateProfile(name, profileSelector:GetValue())
-
-				createProfileDialog:Hide()
-			end
-		end,
-	})
-	okayButton:SetWidth(116)
-	okayButton:SetPoint("BOTTOMRIGHT", createProfileDialog, "BOTTOM", -6, 14)
-	createProfileDialog.OkayButton = okayButton
-
-	local cancelButton = CreateConfigButton(panel, {
-		parent = createProfileDialog,
-		text = _G.CANCEL,
-		func = function()
-			editbox:SetText("")
-			editbox:ClearFocus()
-
-			createProfileDialog:Hide()
-		end
-	})
-	cancelButton:SetWidth(116)
-	cancelButton:SetPoint("BOTTOMLEFT", createProfileDialog, "BOTTOM", 6, 14)
-	createProfileDialog.CancelButton = cancelButton
-
-	local deleteProfileDialog = CreateConfigDialog(panel, {
-		name = "$parentDeleteProfileDialog",
-		on_show = function(self)
-			self.Header:SetFormattedText("Are you sure you want to delete |cffffffff%s|r profile?", self.profile)
-		end,
-		on_hide = function(self)
-			self:Hide()
-		end,
-	})
-	deleteProfileDialog:SetSize(384, 96)
-
-	header = deleteProfileDialog:CreateFontString(nil, "ARTWORK", "GameFontNormalMed2")
-	header:SetHeight(36)
-	header:SetPoint("TOP", 0, -14)
-	header:SetPoint("LEFT", 14, 0)
-	header:SetPoint("RIGHT", -14, 0)
-	header:SetJustifyH("CENTER")
-	header:SetJustifyV("MIDDLE")
-	deleteProfileDialog.Header = header
-
-	okayButton = CreateConfigButton(panel, {
-		parent = deleteProfileDialog,
-		text = _G.OKAY,
-		func = function()
-			DeleteProfile(deleteProfileDialog.profile)
-
-			deleteProfileDialog:Hide()
-		end,
-	})
-	okayButton:SetWidth(116)
-	okayButton:SetPoint("BOTTOMRIGHT", deleteProfileDialog, "BOTTOM", -6, 14)
-	deleteProfileDialog.OkayButton = okayButton
-
-	cancelButton = CreateConfigButton(panel, {
-		parent = deleteProfileDialog,
-		text = _G.CANCEL,
-		func = function()
-			deleteProfileDialog:Hide()
-		end
-	})
-	cancelButton:SetWidth(116)
-	cancelButton:SetPoint("BOTTOMLEFT", deleteProfileDialog, "BOTTOM", 6, 14)
-	deleteProfileDialog.CancelButton = cancelButton
-
-	local resetProfileDialog = CreateConfigDialog(panel, {
-		name = "$parentResetProfileDialog",
-		on_show = function(self)
-			self.Header:SetFormattedText("Are you sure you want to reset |cffffffff%s|r profile?", self.profile)
-		end,
-		on_hide = function(self)
-			self:Hide()
-		end,
-	})
-	resetProfileDialog:SetSize(384, 96)
-
-	header = resetProfileDialog:CreateFontString(nil, "ARTWORK", "GameFontNormalMed2")
-	header:SetHeight(36)
-	header:SetPoint("TOP", 0, -14)
-	header:SetPoint("LEFT", 14, 0)
-	header:SetPoint("RIGHT", -14, 0)
-	header:SetJustifyH("CENTER")
-	header:SetJustifyV("MIDDLE")
-	resetProfileDialog.Header = header
-
-	okayButton = CreateConfigButton(panel, {
-		parent = resetProfileDialog,
-		text = _G.OKAY,
-		func = function()
-			ResetProfile(resetProfileDialog.profile)
-
-			resetProfileDialog:Hide()
-		end,
-	})
-	okayButton:SetWidth(116)
-	okayButton:SetPoint("BOTTOMRIGHT", resetProfileDialog, "BOTTOM", -6, 14)
-	resetProfileDialog.OkayButton = okayButton
-
-	cancelButton = CreateConfigButton(panel, {
-		parent = resetProfileDialog,
-		text = _G.CANCEL,
-		func = function()
-			resetProfileDialog:Hide()
-		end
-	})
-	cancelButton:SetWidth(116)
-	cancelButton:SetPoint("BOTTOMLEFT", resetProfileDialog, "BOTTOM", 6, 14)
-	resetProfileDialog.CancelButton = cancelButton
-
-	local profileDropdown = CreateConfigDropDownMenu(panel, {
-		name = "$parentProfileDropDown",
-		text = "Profile",
-		init = function(self)
-			local info = _G.UIDropDownMenu_CreateInfo()
-
-			for k in pairs(_G.LS_TOASTS_CFG_GLOBAL) do
-				info.text = k
-				info.func = ProfileDropDownButton_OnClick
-				info.value = k
-				info.owner = self
-				info.checked = nil
-				_G.UIDropDownMenu_AddButton(info)
-			end
-
-			info.text = "New Profile"
-			info.func = function()
-				createProfileDialog:Show()
-			end
-			info.value = nil
-			info.checked = nil
-			info.owner = self
-			info.notCheckable = true
-			_G.UIDropDownMenu_AddButton(info)
-		end,
-		get = function() return _G.LS_TOASTS_CFG.profile end,
-		set = function(self, value)
-			_G.UIDropDownMenu_SetSelectedValue(self, value)
-
-			SetProfile(value)
-		end
-	})
-	profileDropdown:SetPoint("TOPLEFT", divider, "BOTTOMLEFT", 3, -24)
-
-	local deleteProfileButton = CreateConfigButton(panel, {
-		text = _G.DELETE,
-		func = function()
-			local name = profileDropdown:GetValue()
-
-			if name and name ~= "Default" then
-				_G.CloseDropDownMenus()
-
-				deleteProfileDialog.profile = name
-				deleteProfileDialog:Show()
-			end
-		end
-	})
-	deleteProfileButton:SetPoint("TOPRIGHT", profileDropdown, "BOTTOMRIGHT", -16, 2)
-
-	local resetProfileButton = CreateConfigButton(panel, {
-		text = _G.RESET,
-		func = function()
-			local name = profileDropdown:GetValue()
-
-			if name then
-				_G.CloseDropDownMenus()
-
-				resetProfileDialog.profile = name
-				resetProfileDialog:Show()
-			end
-		end
-	})
-	resetProfileButton:SetPoint("RIGHT", deleteProfileButton, "LEFT", -4, 0)
-
 	panel.refresh = RefreshOptions
+
+	local skinDropdown = CreateConfigDropDownMenu(panel, {
+		name = "$parentSkinDropDown",
+		text = "皮肤",
+		init = function(self)
+			local info = _G.UIDropDownMenu_CreateInfo()
+
+			for k in pairs(SKINS) do
+				if k ~= "handler" and k ~= "num" then
+					info.text = k
+					info.func = SkinDropDownButton_OnClick
+					info.value = k
+					info.owner = self
+					info.checked = nil
+					_G.UIDropDownMenu_AddButton(info)
+				end
+			end
+		end,
+		get = function() return CFG.skin end,
+		set = function(self, value)
+			_G.UIDropDownMenu_SetSelectedValue(self, value)
+
+			SetSkin(value)
+		end
+	})
+	skinDropdown:SetPoint("TOPLEFT", divider, "BOTTOMLEFT", 3, -24)
+	
 
 	-- Toast Types Panel
 	panel = _G.CreateFrame("Frame", "LSToastsTypesConfigPanel", _G.InterfaceOptionsFramePanelContainer)
@@ -3764,15 +3506,6 @@ local function PopulateConfigPanels()
 	title:SetJustifyH("LEFT")
 	title:SetJustifyV("TOP")
 	title:SetText("各种不同类型提示（开/关）")
-	profileTag = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
-	profileTag:SetPoint("LEFT", title, "RIGHT", 2, 0)
-	profileTag:SetJustifyH("LEFT")
-	profileTag:SetJustifyV("TOP")
-	profileTag.RefreshValue = function(self)
-		self:SetFormattedText("[|cffffffff%s|r]", _G.LS_TOASTS_CFG.profile)
-	end
-
-	RegisterControlForRefresh(panel, profileTag)
 
 	subtext = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
 	subtext:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -8)
@@ -3993,21 +3726,29 @@ end
 -- PUBLIC --
 ------------
 
-function F:SkinToast() end
 
-function F:CreateProfile(name, base)
-	return CreateProfile(name, base)
-end
-function F:DeleteProfile(name)
-	return DeleteProfile(name)
-end
-function F:SetProfile(name)
-	return SetProfile(name)
-end
-function F:ResetProfile(name)
-	return ResetProfile(name)
-end
+function F:CreateSkin(name, func)
+	if not name then
+		return false, "no_name"
+	elseif not func then
+		return false, "no_func"
+	elseif type(func) ~= "function" then
+		return false, "func_invalid"
+	elseif SKINS[name] then
+		return false, "name_taken"
+	elseif name == "handler" or name == "num" then
+		return false, "name_prohibited"
+	end
 
+	SKINS[name] = {
+		func = func
+	}
+
+	SKINS.num = SKINS.num + 1
+end
+function F:SetSkin(name)
+	return SetSkin(name)
+end
 -------------
 -- LOADING --
 -------------
@@ -4027,11 +3768,11 @@ function dispatcher:ADDON_LOADED(arg)
 
 	if not _G.LS_TOASTS_CFG_GLOBAL then
 		_G.LS_TOASTS_CFG_GLOBAL = {
-			["Default"] = CopyTable(DEFAULTS)
+			["Default"] = CopyTable(lsToastsDEFAULTS)
 		}
 	else
 		if not _G.LS_TOASTS_CFG_GLOBAL.Default then
-			_G.LS_TOASTS_CFG_GLOBAL.Default = CopyTable(DEFAULTS)
+			_G.LS_TOASTS_CFG_GLOBAL.Default = CopyTable(lsToastsDEFAULTS)
 		end
 	end
 
@@ -4041,11 +3782,11 @@ function dispatcher:ADDON_LOADED(arg)
 
 	for k, v in pairs(_G.LS_TOASTS_CFG_GLOBAL) do
 		if not v.version then
-			_G.LS_TOASTS_CFG_GLOBAL[k] = CopyTable(DEFAULTS)
+			_G.LS_TOASTS_CFG_GLOBAL[k] = CopyTable(lsToastsDEFAULTS)
 		end
 	end
 
-	ReplaceTable(CopyTable(DEFAULTS, _G.LS_TOASTS_CFG_GLOBAL[_G.LS_TOASTS_CFG.profile]), CFG)
+	ReplaceTable(CopyTable(lsToastsDEFAULTS, _G.LS_TOASTS_CFG_GLOBAL[_G.LS_TOASTS_CFG.profile]), CFG)
 
 	self:RegisterEvent("PLAYER_LOGIN")
 	self:RegisterEvent("PLAYER_LOGOUT")
@@ -4075,6 +3816,12 @@ function dispatcher:PLAYER_LOGIN()
 			self:UnregisterEvent(event)
 		end
 	end)
+
+	if not SKINS[CFG.skin] then
+		CFG.skin = "Default"
+	end
+
+	SetSkin(CFG.skin)
 
 	local panel = _G.CreateFrame("Frame", "LSToastsConfigPanel", _G.InterfaceOptionsFramePanelContainer)
 	panel.name = "|cff8080ff[美化]|r提示框体"
@@ -4120,11 +3867,11 @@ end
 
 function dispatcher:PLAYER_LOGOUT()
 
-	_G.LS_TOASTS_CFG_GLOBAL[_G.LS_TOASTS_CFG.profile] = DiffTable(DEFAULTS, CFG)
+	_G.LS_TOASTS_CFG_GLOBAL[_G.LS_TOASTS_CFG.profile] = DiffTable(lsToastsDEFAULTS, CFG)
 
 	for k, v in pairs(_G.LS_TOASTS_CFG_GLOBAL) do
 		if k ~= _G.LS_TOASTS_CFG.profile then
-			_G.LS_TOASTS_CFG_GLOBAL[k] = DiffTable(DEFAULTS, v)
+			_G.LS_TOASTS_CFG_GLOBAL[k] = DiffTable(lsToastsDEFAULTS, v)
 		end
 	end
 end

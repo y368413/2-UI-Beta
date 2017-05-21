@@ -14,11 +14,11 @@ cfg.SpecPoint = {"topleft", UIParent,"topleft",0, 0}
 cfg.Time = true
 cfg.TimePoint = {"topleft", UIParent, "topleft", 22, 2}
 
-cfg.Friends = true
-cfg.FriendsPoint = {"topleft", UIParent, "topleft", 90, -3}
-
 cfg.Guild = true
-cfg.GuildPoint = {"topleft", UIParent, "topleft", 135, -3}
+cfg.GuildPoint = {"topleft", UIParent, "topleft", 95, -3}
+
+cfg.Friends = true
+cfg.FriendsPoint = {"topleft", UIParent, "topleft", 135, -3}
 
 cfg.Durability = true
 cfg.DurabilityPoint = {"topleft", UIParent, "topleft", 185, -3}
@@ -41,7 +41,7 @@ cfg.Mail = false
 cfg.MailPoint = {"topleft", Minimap, "bottomleft", 0, -5}
 
 cfg.Gold = true
-cfg.GoldPoint = {"bottomleft", Minimap, "bottomleft", 1, 2}
+cfg.GoldPoint = {"bottomleft", Minimap, "bottomleft", 2, 2}
 
 cfg.Positions = true
 --cfg.PositionsPoint = {"topright", Minimap,"topleft",-18, -1}

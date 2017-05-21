@@ -277,7 +277,7 @@ StableHelperPerChar = StableHelperPerChar or {}
 -- stores known talent trees for pets to return through GetStablePetInfo
 StableHelperPerChar.knownPetTalentTrees = StableHelperPerChar.knownPetTalentTrees or {}
 -- code to fix old versions (run once SavedVariables have been loaded)
-function EventFrame:ADDON_LOADED(event, arg1)
+function EventFrame:ADDON_LOADED(event)
   
   if not StableHelperPerChar.fixedSavedTalentsToDualSpec then
     for i = 1, #StableHelperPerChar.knownPetTalentTrees do
@@ -295,57 +295,57 @@ end
 
 -- maps pet family icons to english pet family names (eliminates need for translations)
 local petIconMap = {
-  ["Interface\\Icons\\inv_pet_ basilisk"] = "蜥蜴",  --Basilisk
-  ["Interface\\Icons\\Ability_Hunter_Pet_Bat"] = "蝙蝠",  --Bat
-  ["Interface\\Icons\\Ability_Hunter_Pet_Bear"] = "熊",  --Bear
-  ["Interface\\Icons\\inv_misc_ahnqirajtrinket_01"] = "甲虫",  --Beetle
-  ["Interface\\Icons\\Ability_Hunter_Pet_Owl"] = "猛禽",  --Bird of Prey
-  ["Interface\\Icons\\Ability_Hunter_Pet_Boar"] = "野猪",  --Boar
-  ["Interface\\Icons\\Ability_Hunter_Pet_Vulture"] = "食腐鸟",  --Carrion Bird
-  ["Interface\\Icons\\Ability_Hunter_Pet_Cat"] = "豹",  --Cat
-  ["Interface\\Icons\\Ability_Hunter_Pet_Chimera"] = "奇美拉",  --Chimaera
-  ["Interface\\Icons\\inv_clefthoofdraenormount_blue"] = "裂蹄牛",  --Clefthoof
-  ["Interface\\Icons\\Ability_Hunter_Pet_CoreHound"] = "熔岩犬",  --Core Hound
-  ["Interface\\Icons\\Ability_Hunter_Pet_Crab"] = "螃蟹",  --Crab
-  ["Interface\\Icons\\inv_pet_crane"] = "鹤",  --Crane
-  ["Interface\\Icons\\Ability_Hunter_Pet_Crocolisk"] = "鳄鱼",  --Crocolisk
-  ["Interface\\Icons\\Ability_Hunter_Pet_Devilsaur"] = "魔暴龙",  --Devilsaur
-  ["Interface\\Icons\\inv_pet_direhorn"] = "恐角龙",  --Direhorn
-  ["Interface\\Icons\\inv_pet_mastiff"] = "狗",  --Dog
-  ["Interface\\Icons\\Ability_Hunter_Pet_DragonHawk"] = "龙鹰",  --Dragonhawk
-  ["Interface\\Icons\\ability_hunter_aspectofthefox"] = "狐狸",  --Fox
-  ["Interface\\Icons\\inv_pet_ goat"] = "山羊",  --Goat
-  ["Interface\\Icons\\Ability_Hunter_Pet_Gorilla"] = "大猩猩",  --Gorilla
-  ["Interface\\Icons\\trade_archaeology_whitehydrafigurine"] = "九头蛇",  --Hydra
-  ["Interface\\Icons\\Ability_Hunter_Pet_Hyena"] = "鬣狗",  --Hyena
-  ["Interface\\Icons\\Ability_Mount_MechaStrider"] = "机械",  --Mechanical
-  ["Interface\\Icons\\inv_pet_monkey"] = "猴子",  --Monkey
-  ["Interface\\Icons\\Ability_Hunter_Pet_Moth"] = "蛾子",  --Moth
-  ["Interface\\Icons\\Ability_Hunter_Pet_NetherRay"] = "虚空鳐",  --Nether Ray
-  ["Interface\\Icons\\ability_mount_yakmount"] = "公牛",  --Oxen
-  ["Interface\\Icons\\inv_pet_porcupine"] = "箭猪",  --Porcupine
-  ["Interface\\Icons\\achievement_moguraid_01"] = "魁麟",  --Quilen
-  ["Interface\\Icons\\Ability_Hunter_Pet_Raptor"] = "猛禽",  --Raptor
-  ["Interface\\Icons\\Ability_Hunter_Pet_Ravager"] = "掠食者",  --Ravager
-  ["Interface\\Icons\\inv_hippo_green"] = "淡水兽",  --Riverbeast
-  ["Interface\\Icons\\ability_mount_ironchimera"] = "双头飞龙",  --Rylak
-  ["Interface\\Icons\\inv_mushanbeastmount"] = "穆山兽",  --Scalehide
-  ["Interface\\Icons\\Ability_Hunter_Pet_Scorpid"] = "蝎子",  --Scorpid
-  ["Interface\\Icons\\Spell_Nature_GuardianWard"] = "蛇",  --Serpent
-  ["Interface\\Icons\\inv_pet_ shalespider"] = "页岩蛛",  --Shale Spider
-  ["Interface\\Icons\\Ability_Hunter_Pet_Silithid"] = "异种虫",  --Silithid
-  ["Interface\\Icons\\Ability_Hunter_Pet_Spider"] = "蜘蛛",  --Spider
-  ["Interface\\Icons\\Ability_Druid_PrimalPrecision"] = "灵魂兽",  --Spirit Beast
-  ["Interface\\Icons\\Ability_Hunter_Pet_Sporebat"] = "孢子蝠",  --Sporebat
-  ["Interface\\Icons\\inv_talbukdraenor_white"] = "雄鹿",  --Stag
-  ["Interface\\Icons\\Ability_Hunter_Pet_TallStrider"] = "陆行鸟",  --Tallstrider
-  ["Interface\\Icons\\Ability_Hunter_Pet_Turtle"] = "乌龟",  --Turtle
-  ["Interface\\Icons\\Ability_Hunter_Pet_WarpStalker"] = "跃迁兽",  --Warp Stalker
-  ["Interface\\Icons\\Ability_Hunter_Pet_Wasp"] = "巨蜂",   --Wasp
-  ["Interface\\Icons\\inv_pet_waterstrider"] = "水黾",  --Water Strider
-  ["Interface\\Icons\\Ability_Hunter_Pet_WindSerpent"] = "风蛇",  --Wind Serpent
-  ["Interface\\Icons\\Ability_Hunter_Pet_Wolf"] = "狼",  --Wolf
-  ["Interface\\Icons\\Ability_Hunter_Pet_Worm"] = "蠕虫",  --Worm
+  [877476] = "蜥蜴",  --Basilisk
+  [132182] = "蝙蝠",  --Bat
+  [132183] = "熊",  --Bear
+  [133570] = "甲虫",  --Beetle
+  [132192] = "猛禽",  --Bird of Prey
+  [132184] = "野猪",  --Boar
+  [132200] = "食腐鸟",  --Carrion Bird
+  [132185] = "豹",  --Cat
+  [236190] = "奇美拉",  --Chimaera
+  [1044794] = "裂蹄牛",  --Clefthoof
+  [236191] = "熔岩犬",  --Core Hound
+  [132186] = "螃蟹",  --Crab
+  [877479] = "鹤",  --Crane
+  [132187] = "鳄鱼",  --Crocolisk
+  [236192] = "魔暴龙",  --Devilsaur
+  [877480] = "恐角龙",  --Direhorn
+  [877481] = "狗",  --Dog
+  [132188] = "龙鹰",  --Dragonhawk
+  [45822] = "狐狸",  --Fox
+  [877477] = "山羊",  --Goat
+  [132189] = "大猩猩",  --Gorilla
+  [463493] = "九头蛇",  --Hydra
+  [132190] = "鬣狗",  --Hyena
+  [132247] = "机械",  --Mechanical
+  [877482] = "猴子",  --Monkey
+  [236193] = "蛾子",  --Moth
+  [132191] = "虚空鳐",  --Nether Ray
+  [616693] = "公牛",  --Oxen
+  [644001] = "箭猪",  --Porcupine
+  [625905] = "魁麟",  --Quilen
+  [132193] = "猛禽",  --Raptor
+  [132194] = "掠食者",  --Ravager
+  [1044490] = "淡水兽",  --Riverbeast
+  [943739] = "双头飞龙",  --Rylak
+  [646378] = "穆山兽",  --Scalehide
+  [132195] = "蝎子",  --Scorpid
+  [136040] = "蛇",  --Serpent
+  [877478] = "页岩蛛",  --Shale Spider
+  [236195] = "异种虫",  --Silithid
+  [132196] = "蜘蛛",  --Spider
+  [236165] = "灵魂兽",  --Spirit Beast
+  [132197] = "孢子蝠",  --Sporebat
+  [1044501] = "雄鹿",  --Stag
+  [132198] = "陆行鸟",  --Tallstrider
+  [132199] = "乌龟",  --Turtle
+  [132201] = "跃迁兽",  --Warp Stalker
+  [236196] = "巨蜂",   --Wasp
+  [643423] = "水黾",  --Water Strider
+  [132202] = "风蛇",  --Wind Serpent
+  [132203] = "狼",  --Wolf
+  [236197] = "蠕虫",  --Worm
 }
 -- which classes are exotic-only
 local exotics = {

@@ -2,13 +2,14 @@
 -------------------------------------
 -- 顯示寶石和附魔信息
 -- @Author: M
--- @DepandsOn: Inspect.lua
+-- @DepandsOn: InspectUnit.lua
 -------------------------------------
 
 local LibItemGem = LibStub:GetLibrary("LibItemGem.7000")
 local LibSchedule = LibStub:GetLibrary("LibSchedule.7000")
 local LibItemEnchant = LibStub:GetLibrary("LibItemEnchant.7000")
 
+--創建圖標框架
 local function CreateIconFrame(frame, index)
     local icon = CreateFrame("Button", nil, frame)
     icon.index = index
@@ -32,13 +33,6 @@ local function CreateIconFrame(frame, index)
     icon:SetScript("OnLeave", function(self)
         GameTooltip:Hide()
     end)
-    icon:SetScript("OnClick", function(self)
-        if (IsShiftKeyDown()) then
-            if (self.itemLink) then
-                ChatEdit_InsertLink(self.itemLink)
-            end
-        end
-    end)
     icon:SetScript("OnDoubleClick", function(self)
         if (self.itemLink) then
             ChatEdit_ActivateChat(ChatEdit_ChooseBoxForSend())
@@ -58,6 +52,7 @@ local function CreateIconFrame(frame, index)
     return frame["xicon"..index]
 end
 
+--隱藏所有圖標框架
 local function HideAllIconFrame(frame)
     local index = 1 
     while (frame["xicon"..index]) do
@@ -70,6 +65,7 @@ local function HideAllIconFrame(frame)
     LibSchedule:RemoveTask("InspectGemAndEnchant", true)
 end
 
+--獲取可用的圖標框架
 local function GetIconFrame(frame)
     local index = 1
     while (frame["xicon"..index]) do
@@ -81,6 +77,7 @@ local function GetIconFrame(frame)
     return CreateIconFrame(frame, index)
 end
 
+--執行圖標更新
 local function onExecute(self)
     if (self.dataType == "item") then
         local _, itemLink, quality, _, _, _, _, _, _, texture = GetItemInfo(self.data)
@@ -102,13 +99,14 @@ local function onExecute(self)
     end
 end
 
+--Schedule模式更新圖標
 local function UpdateIconTexture(icon, texture, data, dataType)
     if (not texture) then
         LibSchedule:AddTask({
             identity  = "InspectGemAndEnchant" .. icon.index,
-            timer     = 0,
+            timer     = 0.1,
             elasped   = 0.5,
-            expired   = GetTime() + 2,
+            expired   = GetTime() + 3,
             onExecute = onExecute,
             icon      = icon,
             data      = data,
@@ -117,6 +115,7 @@ local function UpdateIconTexture(icon, texture, data, dataType)
     end
 end
 
+--讀取並顯示圖標
 local function ShowGemAndEnchant(frame, ItemLink, anchorFrame)
     if (not ItemLink) then return 0 end
     local num, info = LibItemGem:GetItemGemInfo(ItemLink)
@@ -171,6 +170,7 @@ local function ShowGemAndEnchant(frame, ItemLink, anchorFrame)
     return num * 18
 end
 
+--功能附着
 hooksecurefunc("ShowInspectItemListFrame", function(unit, parent, itemLevel)
     local frame = parent.inspectFrame
     if (not frame) then return end

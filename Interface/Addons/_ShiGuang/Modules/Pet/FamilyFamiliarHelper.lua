@@ -6,7 +6,7 @@ if select(4,GetBuildInfo())<=60200 then
 	return -- this is for Legion only, don't do anything on WoD clients
 end
 
---ShiGuangDB = {} -- savedvariable
+FamilyFamiliarHelperSettings = {} -- savedvariable
 
 local ffh = CreateFrame("Frame","FamilyFamiliarHelper",UIParent,"BasicFrameTemplateWithInset")
 ffh:Hide()
@@ -183,7 +183,7 @@ SLASH_FFH1 = "/ffh"
 ffh:SetScript("OnShow",ffh.OnShow)
 ffh:SetScript("OnHide",ffh.OnHide)
 ffh:SetScript("OnMouseDown",function(self)
-	if not ShiGuangDB.Locked or IsShiftKeyDown() then
+	if not FamilyFamiliarHelperSettings.Locked or IsShiftKeyDown() then
 		self:StartMoving()
 	end
 end)
@@ -197,8 +197,8 @@ end)
 
 function ffh:PLAYER_LOGIN()
 	for var,default in pairs({AutoShow=true,JustOnce=true}) do
-		if ShiGuangDB[var]==nil then
-			ShiGuangDB[var] = default
+		if FamilyFamiliarHelperSettings[var]==nil then
+			FamilyFamiliarHelperSettings[var] = default
 		end
 	end
 	ffh:UpdateOptions()
@@ -216,7 +216,7 @@ function ffh:PLAYER_TARGET_CHANGED()
 		local guid = UnitGUID("target")
 		if guid then
 			npcID = guid:match(".-%-%d+%-%d+%-%d+%-%d+%-(%d+)")
-			if ffh.notableNPCs[npcID] and (not ShiGuangDB.JustOnce or npcID~=ffh.lastInteracted) then
+			if ffh.notableNPCs[npcID] and (not FamilyFamiliarHelperSettings.JustOnce or npcID~=ffh.lastInteracted) then
 				ffh.lastInteracted = npcID
 				ffh:Show()
 			end
@@ -243,7 +243,7 @@ end
 -- run at PLAYER_LOGIN and checkOnClick: registers/unregisters for the targeting event based on AutoShow
 -- and whether the frame is in UISpecialFrames
 function ffh:UpdateOptions()
-	local settings = ShiGuangDB
+	local settings = FamilyFamiliarHelperSettings
 	local registered = ffh:IsEventRegistered("PLAYER_TARGET_CHANGED")
 	if settings.AutoShow and not registered then
 		ffh:RegisterEvent("PLAYER_TARGET_CHANGED")
@@ -274,7 +274,7 @@ end
 
 -- OnClick will toggle the settings and update
 local function checkOnClick(self)
-	ShiGuangDB[self.var] = self:GetChecked() and true -- make sure it's true/false
+	FamilyFamiliarHelperSettings[self.var] = self:GetChecked() and true -- make sure it's true/false
 	ffh:UpdateOptions()
 end
 
@@ -292,7 +292,7 @@ end
 
 -- while Locked is unchecked, the frame only exists in UISpecialFrames while it's on screen
 function ffh:UpdateESCability(hide)
-	if ShiGuangDB.Locked or not ffh:IsVisible() or hide then
+	if FamilyFamiliarHelperSettings.Locked or not ffh:IsVisible() or hide then
 		for i=#UISpecialFrames,1,-1 do
 			if UISpecialFrames[i]=="FamilyFamiliarHelper" then
 				tremove(UISpecialFrames,i)

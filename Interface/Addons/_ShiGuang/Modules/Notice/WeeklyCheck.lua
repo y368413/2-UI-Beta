@@ -56,7 +56,7 @@ local function GarrisonInvade()
  else return AddColor(INCOMPLETE,LIGHT_RED) end
 end
 local function LegionWolrdBoss()
- if IsQuestFlaggedCompleted(43193) or IsQuestFlaggedCompleted(43448) or IsQuestFlaggedCompleted(43985) or IsQuestFlaggedCompleted(43192) or IsQuestFlaggedCompleted(42270) or IsQuestFlaggedCompleted(42779) or IsQuestFlaggedCompleted(42269) or IsQuestFlaggedCompleted(44287) then return AddColor(COMPLETE,LIGHT_GREEN)
+ if IsQuestFlaggedCompleted(42270) or IsQuestFlaggedCompleted(42269) or IsQuestFlaggedCompleted(422779) or IsQuestFlaggedCompleted(43192) or IsQuestFlaggedCompleted(42819) or IsQuestFlaggedCompleted(43193) or IsQuestFlaggedCompleted(43513) or IsQuestFlaggedCompleted(43448) or IsQuestFlaggedCompleted(43512) or IsQuestFlaggedCompleted(43985) or IsQuestFlaggedCompleted(44287) then return AddColor(COMPLETE,LIGHT_GREEN)
  else return AddColor(INCOMPLETE,LIGHT_RED) end
 end
 	-------------------------------------------------------------
@@ -72,7 +72,7 @@ local function DrawMainframe(frame, istooltip)
  frame:AddDoubleLine(quest_icon..AddColor(GetCurrencyInfo(1149),LIGHT_BLUE), completedstring(43478))  --盲目之眼
  frame:AddDoubleLine(quest_icon..AddColor(GetItemInfo(111821),LIGHT_BLUE), completedstring(34774))            --布林顿
  frame:AddLine(" ")
- frame:AddDoubleLine(rare_icon..AddColor("Legion  1/8 ",PINK), LegionWolrdBoss())
+ frame:AddDoubleLine(rare_icon..AddColor("Legion  1/11 ",PINK), LegionWolrdBoss())
  frame:AddDoubleLine(rare_icon..AddColor("WOD-暗影领主艾斯卡|cffffddFF(死爪)|r",ZONE_BLUE), completedstring(39287))
  frame:AddDoubleLine(rare_icon..AddColor("WOD-游侠将军|cffffddFF(泰罗菲斯特)|r",ZONE_BLUE), completedstring(39288))
  frame:AddDoubleLine(rare_icon..AddColor("WOD-攻城大师玛塔克|cffffddFF(末日之轮)|r",ZONE_BLUE), completedstring(39289))

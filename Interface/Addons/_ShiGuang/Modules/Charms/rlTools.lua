@@ -14,7 +14,7 @@ local MAF=CreateFrame("Frame","MyParent",UIParent)
 	
 ---------------------------------------------------- MARKS & FLARES
 local MF=CreateFrame("Frame","MyParent",MAF)
-	MF:SetSize(21,230)
+	MF:SetSize(21,210)
 	MF:SetPoint("TOP")
 
 --Skull Marks Raid Marker 8 NO World Marker
@@ -156,7 +156,7 @@ local WMStar = CreateFrame("BUTTON", "WorldMarker5Star",MF, "SecureActionButtonT
 	--Clear Marks Raid Marker 0 World Marker 6
 local WMClear = CreateFrame("BUTTON", "WorldMarker6Clear",MF, "SecureActionButtonTemplate")
      	WMClear:SetSize(21,21)
-     	WMClear:SetPoint("TOP",0,-285)
+     	WMClear:SetPoint("TOP",0,-310)
      	WMClear:SetNormalTexture("Interface\\BUTTONS\\UI-GroupLoot-Pass-Up")
 	WMClear:SetAlpha(0.5)
     	WMClear:SetScript("OnEnter", function(self)
@@ -176,12 +176,12 @@ local RC = CreateFrame("Button", "READY CHECK", MAF, "SecureActionButtonTemplate
 	RC:SetSize(21,21)
 	RC:SetNormalTexture("Interface\\Addons\\_ShiGuang\\Media\\Emotes\\okay")
 	
-	RC:SetAlpha(0.2)
+	RC:SetAlpha(0.43)
     	RC:SetScript("OnEnter", function(self)
 		RC:SetAlpha(1)
 	end)
     	RC:SetScript("OnLeave", function(self)
-		RC:SetAlpha(0.2)
+		RC:SetAlpha(0.43)
 	end)
 	RC:RegisterForClicks("LeftButtonUp")
 	
@@ -194,32 +194,47 @@ local RP = CreateFrame("Button", "ROLE POLL", MAF, "SecureActionButtonTemplate")
 	RP:SetSize(21,21)
   RP:SetNormalTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\Role\\DAMAGER")
 	
-	--RP:SetText("※")
-	
-	RP:SetAlpha(0.2)
+	RP:SetAlpha(0.43)
     	RP:SetScript("OnEnter", function(self)
 		RP:SetAlpha(1)
 	end)
     	RP:SetScript("OnLeave", function(self)
-		RP:SetAlpha(0.2)
+		RP:SetAlpha(0.43)
 	end)
 	RP:RegisterForClicks("LeftButtonUp")
 	
 	RP:SetAttribute("type","macro")
 	RP:SetAttribute("macrotext",'/script InitiateRolePoll()')
 	
+	---------------------------------------------------- FlaskFood
+local FF = CreateFrame("Button", "FLASK FODOD", MAF, "SecureActionButtonTemplate")
+	FF:SetPoint("TOP",0,-262)
+	FF:SetSize(21,21)
+	FF:SetNormalTexture("Interface\\GossipFrame\\TaxiGossipIcon")
+		--RP:SetText("※")
+	FF:SetAlpha(0.43)
+    	FF:SetScript("OnEnter", function(self)
+		FF:SetAlpha(1)
+	end)
+    	FF:SetScript("OnLeave", function(self)
+		FF:SetAlpha(0.43)
+	end)
+	FF:RegisterForClicks("LeftButtonUp")
+	
+	FF:SetAttribute("type","macro")
+	FF:SetAttribute("macrotext",'/hj')
 	---------------------------------------------------- PullTimer
 local PT = CreateFrame("Button", "PULL TIMER", MAF, "SecureActionButtonTemplate")
-	PT:SetPoint("TOP",0,-262)
+	PT:SetPoint("TOP",0,-282)
 	PT:SetSize(21,21)
 	PT:SetNormalTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\Role\\bubbleTex")
 	
-	PT:SetAlpha(0.2)
+	PT:SetAlpha(0.43)
     	PT:SetScript("OnEnter", function(self)
 		PT:SetAlpha(1)
 	end)
     	PT:SetScript("OnLeave", function(self)
-		PT:SetAlpha(0.2)
+		PT:SetAlpha(0.43)
 	end)
 	PT:RegisterForClicks("LeftButtonUp")
 	

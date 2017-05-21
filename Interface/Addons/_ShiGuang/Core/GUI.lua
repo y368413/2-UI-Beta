@@ -1,7 +1,7 @@
 ﻿local M, R, U, I = unpack(select(2, ...))
 
 ShiGuangDB = {
-	DisplayInfo = 71057,			--68323   --35908   --65636
+	DisplayInfo = 74504,		--71057 	--68323   --35908   --65636
 	["read"] = false,
 	["GROUP_STACKS"] = true,
 	["ADVANCED"] = true,
@@ -81,6 +81,7 @@ local defaultSettings = {
 	},
 	Skins = {
 		DBM = true,
+		CastBar = false,
 	},
 	Misc = {
 		Mail = true,
@@ -108,7 +109,7 @@ local defaultSettings = {
 		SpellNotReadyYet = true,
 		DoomCooldownPulse = true,
 		nPower = true,
-		ClassRecourePlace = false,
+		ClassRecourePlace = true,
 		WallpaperKit = true,
 		AutoReagentBank = true,
 		kAutoOpen = false,
@@ -122,6 +123,8 @@ local defaultSettings = {
 		GUIScale = 0.9,
 		PlayerFrameScale = 0.9,
 		Format = 2,
+		UFClassIcon = false,
+		UFFade = false,
 	},
 }
 
@@ -177,6 +180,7 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{},--blank
 		{1, "Misc", "kAutoOpen", "自动打开宝箱"},
 		{1, "Misc", "QuickQueue", "自动确认排本职责", true},
+		{1, "Misc", "AutoConfirmRoll", "自动Roll", true, true},
 	},
 	[2] = {
 		{1, "Nameplate", "Enable", "启用姓名板(血条)"},
@@ -209,22 +213,21 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "Misc", "HideTalking", "干掉NPC BB的框", true},
 		{1, "Misc", "HideBanner", "关闭副本掉落通知提示", true, true},
 		{1, "Misc", "FriendGroups", "好友分组功能"},
-		{4, "Settings", "Format", nil, true, true, {"标准模式：b/m/k", "中式：亿/万", "显示具体数值"}, true},
-		{},--blank
-		{1, "Chat", "GuildInvite", "只邀请公会成员"},
-		{1, "Chat", "Invite", "启用密语自动邀请", true},
-		{2, "Chat", "Keyword", "密语关键词（空格隔开）", true, true},
+		{1, "Chat", "GuildInvite", "只邀请公会成员", true},
+		{1, "Chat", "Invite", "启用密语自动邀请", true, true},
+		--{4, "Settings", "Format", "数字缩写格式", false, false, {"标准模式：b/m/k", "中式：亿/万", "显示具体数值"}},
+		{2, "Chat", "Keyword", "密语关键词（空格隔开）"},
 	},
 	[4] = {
 		{1, "AuraWatch", "Enable", "启用技能监视"},
 		{1, "AuraWatch", "Hint", "显示技能监视鼠标提示框", true},
-		{1, "Misc", "WallpaperKit", "屏保", true, true},
-		{1, "Misc", "SpellNotReadyYet", "技能CD中提醒"},
-	  {1, "Misc", "DoomCooldownPulse", "技能CD完成提示", true},
-	  {1, "Misc", "AchievementPrintScreen", "跳成就时候截图", true, true},
-	  {1, "Misc", "TuBar", "技能栏"},
-	  {1, "Misc", "OmniCC", "技能栏CD计时数字", true},
-	  {1, "Misc", "AutoConfirmRoll", "自动Roll", true, true},
+		{1, "Misc", "AchievementPrintScreen", "跳成就时候截图", true, true},
+		{1, "Misc", "TuBar", "技能栏"},
+		{1, "Misc", "SpellNotReadyYet", "技能CD中提醒", true},
+	  {1, "Misc", "DoomCooldownPulse", "技能CD完成提示", true, true},
+	  {1, "Misc", "OmniCC", "技能栏CD计时数字"},
+	  {1, "Misc", "nPower", "职业能量条", true},
+	  {1, "Misc", "ClassRecourePlace", "职业资源居中", true, true},
 	  {},--blank
 	  {1, "Misc", "Interrupt", "通报打断\偷取\驱散"},
 	  {1, "Misc", "InterruptSound", "打断音效", true,},
@@ -232,10 +235,11 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 	  {1, "Misc", "AltTabLfgNotification", "M语自己提醒"},
 	  {1, "Misc", "Saycast", "大技能喊话", true},
 	  {1, "Misc", "AutoReagentBank", "材料自动存银行", true, true},
-	  {},--blank
-	  {1, "Misc", "nPower", "职业能量条"},
-	  {1, "Misc", "ClassRecourePlace", "职业资源居中", true},
-	  {1, "Skins", "DBM", "DBM Skin", true, true},
+	  {1, "Misc", "WallpaperKit", "屏保"},
+	  {1, "Skins", "DBM", "DBM Skin", true},
+	  {1, "Skins", "CastBar", "使用系统默认施法条", true, true},
+	  {1, "Settings", "UFClassIcon", "使用职业头像"},
+		--{1, "Settings", "UFFade", "头像渐隐", true},
 	},
 	[5] = {
 	},

@@ -10,7 +10,7 @@ if not lib then return end
 
 local frame = CreateFrame("Frame", nil, UIParent)
 
-frame.schedules = {}
+frame.schedules, frame.timer = {}, 0
 
 frame:SetScript("OnUpdate", function(self, elasped)
     if (self.paused) then return end
@@ -43,22 +43,32 @@ local metatable = {
     elasped   = 1,  --执行的周期
     begined   = 0,  --开始时间点
     expired   = 0,  --过期时间点
+    override  = false, --是否覆蓋
     onStart   = function(self) end, --添加后执行
     onTimeout = function(self) end, --超时后执行
     onExecute = function(self) return true end, --定時執行,直到返回true才停止
 }
 
 --添加Task
-function lib:AddTask(item)
-    for i, v in ipairs(frame.schedules) do
-        if (v.identity == item.identity) then
-            return
+function lib:AddTask(item, override)
+    if (override or item.override) then
+        for i, v in ipairs(frame.schedules) do
+            if (v.identity == item.identity) then
+                v.stopped = true
+            end
+        end
+    else
+        for i, v in ipairs(frame.schedules) do
+            if (v.identity == item.identity) then
+                return self
+            end
         end
     end
     setmetatable(item, {__index = metatable})
     item.onStart(item)
     tinsert(frame.schedules, item)
     frame.paused = false
+    return self
 end
 
 --刪除Task
@@ -72,6 +82,7 @@ function lib:RemoveTask(identity, useLike)
             v.stopped = true
         end
     end
+    return self
 end
 
 --執行Task
@@ -85,6 +96,7 @@ function lib:AwakeTask(identity, useLike)
             v.stopped = true
         end
     end
+    return self
 end
 
 --查找Task

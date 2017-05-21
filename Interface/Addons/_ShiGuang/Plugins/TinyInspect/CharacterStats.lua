@@ -78,17 +78,14 @@ local ShownData = {
     "AttributesCategory",
         "ALTERNATEMANA", "STRENGTH", "AGILITY", "INTELLECT", "STAMINA",
         "ARMOR", "DODGE", "PARRY", "BLOCK", "MOVESPEED",
-        "GCD", "REPAIR_COST",  --"HEALTH", "POWER", 
+        "GCD", --"REPAIR_COST", "HEALTH", "POWER", 
         
     "EnhancementsCategory",
         "CRITCHANCE", "HASTE", "MASTERY", "VERSATILITY", "LIFESTEAL", "AVOIDANCE",
-        "ATTACK_DAMAGE", "ATTACK_AP", "ENERGY_REGEN", "RUNE_REGEN", "FOCUS_REGEN", "ATTACK_ATTACKSPEED", "SPELLPOWER", "MANAREGEN",
+        "ATTACK_DAMAGE", "ATTACK_AP", "RUNE_REGEN", "ATTACK_ATTACKSPEED", --"SPELLPOWER", "FOCUS_REGEN", "ENERGY_REGEN", "MANAREGEN",
 }
 
-----------
--- VIEWS
-----------
-
+------------ VIEWS----------
 local StatScrollFrame = CreateFrame("ScrollFrame", nil, CharacterFrameInsetRight, "UIPanelScrollFrameTemplate")
 StatScrollFrame:SetPoint("TOPLEFT", CharacterFrameInsetRight, "TOPLEFT", 3, -4)
 StatScrollFrame:SetPoint("BOTTOMRIGHT", CharacterFrameInsetRight, "BOTTOMRIGHT", -3, 2)

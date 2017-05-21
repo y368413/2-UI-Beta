@@ -37,6 +37,7 @@ function module:OnLogin()
 	-- Add Skins
 	self:QuestTracker()
 	self:DBMSkin()
+	self:CastBarSkin()
 end
 
 function module:LoadWithAddOn(addonName, value, func)

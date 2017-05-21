@@ -243,8 +243,8 @@ NPCModel:SetSize(UIParent:GetWidth(), UIParent:GetHeight()*0.8)
 NPCModel:SetPoint("BOTTOM",Small,"TOPRIGHT",-43,0) --"CENTER",0,210
 NPCModel:SetDisplayInfo(ShiGuangDB.DisplayInfo)
 NPCModel:SetParent(Welcome)
-NPCModel:SetCamDistanceScale(0.21)
-NPCModel:SetPosition(0,0,0.36)
+NPCModel:SetCamDistanceScale(0.65)
+NPCModel:SetPosition(0,-0.1,-0.5)
 NPCModel:SetRotation(0.3)
 NPCModel.rotation = 0.1
 local function RotateModel(self, button)
@@ -261,8 +261,9 @@ NPCModel:SetScript("OnMouseDown", function(self, button) RotateModel(self, butto
 --[[PlayerModel--------------------
 local PlayerModel = CreateFrame("PlayerModel", "PlayerModel", Welcome)
 PlayerModel:SetSize(256, 256)
-PlayerModel:SetPoint("BOTTOM",MadeBy,"TOP",0,0)
-PlayerModel:SetUnit("player") --NPCmodel:SetDisplayInfo(35909)--(28192)
+PlayerModel:SetPoint("BOTTOM",MadeBy,"TOP",0,120)
+--PlayerModel:SetUnit("player")
+PlayerModel:SetDisplayInfo(74878)
 PlayerModel:SetParent(Welcome)
 PlayerModel:SetCamDistanceScale(1)
 PlayerModel:SetPosition(-1.6,0,0)

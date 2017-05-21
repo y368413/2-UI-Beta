@@ -81,17 +81,6 @@ local BarUpdate = function(self, elapsed)
 	self.right:SetText(FormatTime(self.endTime - curTime))
 end
 
-local OnEnter = function(self)
-	GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-	GameTooltip:AddLine(self.spell)
-	GameTooltip:SetClampedToScreen(true)
-	GameTooltip:Show()
-end
-
-local OnLeave = function(self)
-	GameTooltip:Hide()
-end
-
 local OnMouseDown = function(self, button)
 	if button == "LeftButton" then
 		SendChatMessage(sformat("战复剩: %d次 充能: %s", currentNumResses, self.right:GetText()), "RAID")
@@ -156,8 +145,6 @@ local StartTimer = function(name, spellId)
 	bar.status:SetStatusBarColor(color.r, color.g, color.b)
 	bar:SetScript("OnUpdate", BarUpdate)
 	bar:EnableMouse(true)
-	bar:SetScript("OnEnter", OnEnter)
-	bar:SetScript("OnLeave", OnLeave)
 	bar:SetScript("OnMouseDown", OnMouseDown)
 	tinsert(Ressesbars, bar)
 end

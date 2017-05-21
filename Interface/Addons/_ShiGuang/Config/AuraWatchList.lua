@@ -1,4 +1,4 @@
-﻿local _, R, U, _ = unpack(select(2, ...))
+local _, R, U, _ = unpack(select(2, ...))
 --[[
 	>>>自定义添加时，要注意格式，注意逗号，注意字母大小写<<<
 	ALL下面是对全职业通用的设置，其他情况请在自己职业下添加。当你添加时，要注意是否重复。
@@ -50,7 +50,7 @@ R.InternalCD = {
 	Pos = {"BOTTOMRIGHT", UIParent, "BOTTOM", -425, 125},
 	List = {
 		--塞弗斯的秘密
-		--{IntID = 208052, Duration = 30, ItemID = 132452},
+		{IntID = 208052, Duration = 30, ItemID = 132452},
 	},
 }
 
@@ -132,6 +132,8 @@ R.AuraWatchList = {
 				    {AuraID =  11426, UnitID = "player", Value = true},
 				    --烈焰护体
 				    {AuraID = 235313, UnitID = "player", Value = true},
+				    --暴雨图腾
+				    {AuraID = 157504, UnitID = "player", Value = true},
 			},
 		},	
 		{ Name = "盾", Direction = "RIGHT", Interval = 1, Mode = "TEXT", IconSize = 21, Pos = {"CENTER", UIParent, "CENTER",45, -80},
@@ -482,6 +484,8 @@ R.AuraWatchList = {
 				{AuraID = 200657, UnitID = "player", Value = true},
 				 --术士牺牲盾
 				{AuraID =  108416, UnitID = "player", Value = true},
+				--抗魔联军调和
+				{AuraID = 242586, UnitID = "player"},
     ------>LEG药水附魔
 				--致命优雅，远程
 				{AuraID = 188027, UnitID = "player"},

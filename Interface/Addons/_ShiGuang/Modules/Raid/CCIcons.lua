@@ -61,7 +61,7 @@ local OnMouseUp = function(self, button)
 	
 	if (button == "RightButton") then
 		self:ClearAllPoints()
-		self:SetPoint("CENTER", UIParent, "CENTER", 0, 120)
+		self:SetPoint("CENTER", UIParent, "CENTER", 0, -120)
 	end
 end
 

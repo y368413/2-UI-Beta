@@ -54,9 +54,19 @@ BlinkHealth.powerColor = {
 	RUNES = {0.55, 0.57, 0.61},
 	RUNIC_POWER = {0, 0.82, 1},
 	FURY = { 0.5, 0.5, 0.25 },
-	PAIN = { 0.5, 0.5, 0.25 },
+	PAIN = { 0, 0.82, 1 }, --0.5, 0.5, 0.25
 };
 
+
+BlinkHealth['classMaxResourceBar'] = {
+	['DEATHKNIGHT'] = 6,
+	['PALADIN'] = 5,
+	['WARLOCK'] = 5,
+	['MONK'] = 6,
+	['MAGE'] = 4,
+	['ROGUE'] = 8,
+	["DRUID"] = 5
+}
 BlinkHealth.classColor = {};
 do
 for k, v in pairs(RAID_CLASS_COLORS) do BlinkHealth.classColor[k] = {v.r, v.g, v.b}; end
@@ -68,7 +78,7 @@ function BlinkHealth:OnEnable()
 	self:RegisterEvent("PLAYER_REGEN_DISABLED");
 	self:RegisterEvent("PLAYER_REGEN_ENABLED");		
 	
-	if (select(2, UnitClass("player"))  == "ROGUE" or select(2, UnitClass("player"))  == "DRUID") then	
+	if (select(2, UnitClass("player")) == "ROGUE" or select(2, UnitClass("player")) == "DRUID" or select(2, UnitClass("player")) == "MONK") then	
 		self:RegisterEvent("UNIT_POWER");		
 	end
 
@@ -85,7 +95,7 @@ end
 
 function BlinkHealth:PLAYER_TARGET_CHANGED()
 	self:UpdateUnitFrame();
-	if (select(2, UnitClass("player"))  == "ROGUE" or select(2, UnitClass("player"))  == "DRUID") then
+	if (select(2, UnitClass("player")) == "ROGUE" or select(2, UnitClass("player")) == "DRUID") then
 		self:UpdateComboPoints();
 	end
 end
@@ -168,22 +178,26 @@ function BlinkHealth:UpdateUnitFrame()
 end
 
 function BlinkHealth:UpdateComboPoints()
-	local comboPoints = UnitPower("player", SPELL_POWER_COMBO_POINTS)
-	if (comboPoints and comboPoints > 0) then
-		self.Combo:Show();
-		for i=1, MAX_COMBO_POINTS do
-			self.Combo[i]:Hide();
+	if select(2, UnitClass("player")) == "MONK" then
+		local cur = UnitPower("player", SPELL_POWER_CHI)
+		local max = BlinkHealth['classMaxResourceBar'][select(2, UnitClass("player"))]
+
+		if cur and cur > 0 then
+			self.Combo:Show();
+			for i = 1, max do self.Combo[i]:Hide(); end		
+			for i = 1, cur do self.Combo[i]:Show(); end
+		else
+			self.Combo:Hide();
 		end
-
-		--for i=1, comboPoints do
-			--self.Combo[i]:Show();
-		--end
 	else
-		self.Combo:Hide();
-	end
-
-	if (self.castBar and self.castBar:IsShown()) then
-		self:CastingBarAdjustPosition();
+	  local comboPoints = UnitPower("player", SPELL_POWER_COMBO_POINTS)
+	  if (comboPoints and comboPoints > 0) then
+		  self.Combo:Show();
+		  for i=1, MAX_COMBO_POINTS do self.Combo[i]:Hide(); end
+		  for i=1, comboPoints do self.Combo[i]:Show(); end
+	  else
+		  self.Combo:Hide();
+	  end
 	end
 end
 
@@ -419,13 +433,18 @@ end
 --------------
 -- 连击点
 function BlinkHealth:ConstructCombo()
-	local this = self.frame["target"];
+	local this
+	if select(2, UnitClass("player")) == "MONK" then
+		this = self.frame["player"]
+	else
+		this = self.frame["target"]
+	end
 	self.Combo = CreateFrame("Frame", nil, this);
 	self.Combo:SetWidth(80)
 	self.Combo:SetHeight(16)
 	self.Combo:SetPoint("TOPLEFT", this.heal, "BOTTOMLEFT", 0, 0);
 	local bg, fill = {}, {};
-	for i = 1, MAX_COMBO_POINTS do
+	for i = 1, BlinkHealth['classMaxResourceBar'][select(2, UnitClass("player"))] do
 		self.Combo[i] = CreateFrame("Frame", nil, self.Combo)
 		self.Combo[i]:SetWidth(16)
 		self.Combo[i]:SetHeight(16)
@@ -450,94 +469,6 @@ function BlinkHealth:ConstructCombo()
 end
 
 ----------------------
--- 施法条
-do
-local function OnEvent(self, event, ...)
-	local arg1 = ...;
-	if ( event == "PLAYER_TARGET_CHANGED" ) then
-		-- check if the new target is casting a spell
-		local nameChannel  = UnitChannelInfo("target");
-		local nameSpell  = UnitCastingInfo("target");
-		if ( nameChannel ) then
-			event = "UNIT_SPELLCAST_CHANNEL_START";
-			arg1 = "target";
-		elseif ( nameSpell ) then
-			event = "UNIT_SPELLCAST_START";
-			arg1 = "target";
-		else
-			self.casting = nil;
-			self.channeling = nil;
-			self:SetMinMaxValues(0, 0);
-			self:SetValue(0);
-			self:Hide();
-			return;
-		end		
-	end
-
-	BlinkHealth:CastingBarAdjustPosition();
-	CastingBarFrame_OnEvent(self, event, arg1, select(2, ...));
-end
-
-function BlinkHealth:CastingBarAdjustPosition()
-	if (self.Combo) then
-		self.castBar:ClearAllPoints();
-		if (self.Combo[1]:IsVisible()) then
-			self.castBar:SetPoint("TOPLEFT", self.Combo, "BOTTOMLEFT", 24, -5);
-		else
-			self.castBar:SetPoint("TOPLEFT", self.frame["target"].heal, "BOTTOMLEFT", 26, -5);
-		end
-	end
-end
-
-function BlinkHealth:ConstructCastingBar()	
-	self.castBar = CreateFrame("StatusBar", "SimpleInfoTargetCastingBar", UIParent, "CastingBarFrameTemplate");
-	self.castBar:SetWidth(160);
-	self.castBar:SetHeight(6);
-	self.castBar:Hide();
-	self.castBar:SetPoint("TOPLEFT", self.frame["target"], "TOPLEFT", 8, 0);  --"CENTER", UIParent, "CENTER", 0, -80
-	
-	local name = self.castBar
-	self.castBar:SetStatusBarTexture("Interface\\AddOns\\_ShiGuang\\Media\\Modules\\BlinkHealthText\\flat");
-	name.Border:SetAlpha(0);
-	name.BorderShield:SetAlpha(0);
-	name.Flash:SetTexture("");
-	self.castBar.bg = CreateFrame("Frame", nil, self.castBar);
-	self.castBar.bg:SetFrameStrata("BACKGROUND");
-	self.castBar.bg:SetPoint("TOPLEFT", self.castBar, "TOPLEFT", -2, 2);
-	self.castBar.bg:SetPoint("BOTTOMRIGHT", self.castBar, "BOTTOMRIGHT", 2, -2);
-		
-	local backdrop = {
-		bgFile = "Interface\\AddOns\\_ShiGuang\\Media\\Modules\\BlinkHealthText\\flat",
-		edgeFile = "Interface\\AddOns\\_ShiGuang\\Media\\Modules\\BlinkHealthText\\2px_glow",
-		tileSize = 16, edgeSize = 16, tile = true,
-		insets = {left = 4, right = 4, top = 4, bottom = 4}
-	};
-		
-	self.castBar.bg:SetBackdrop(backdrop);
-	self.castBar.bg:SetBackdropColor(0.22, 0.22, 0.19);
-	self.castBar.bg:SetBackdropBorderColor(0, 0, 0, 1);
-	self.castBar.bg:SetAlpha(0.6);
-
-	self.castBar:RegisterEvent("PLAYER_TARGET_CHANGED");
-	CastingBarFrame_OnLoad(self.castBar, "target", false, true);
-	self.castBar:SetScript("OnEvent", OnEvent);
-	
-	
-
-	local barIcon = name.Icon
-	barIcon:SetWidth(16);
-	barIcon:SetHeight(16);
-	barIcon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
-	barIcon:Show();
-
-	name.Text:SetFontObject(SystemFont_Shadow_Small);	
-	name.Text:ClearAllPoints();
-	name.Text:SetPoint("RIGHT", self.castBar, "RIGHT", -6, 3);
-	name.Text:SetJustifyH("RIGHT");
-	name.Text:SetWidth(120);
-end
-end
-
 function BlinkHealth:ConstructFrame(unit)
 	self.frame[unit] = CreateFrame("Frame", "SimpleInfoPlayerFrame", UIParent);
 	self.frame[unit]:SetWidth(200);
@@ -595,7 +526,7 @@ function BlinkHealth:CreateHitAnchor()
 	self.HitAnchor:SetSize(100, 80);
 	self.HitAnchor:EnableMouse(true);
 	self.HitAnchor:SetMovable(true);
-	self.HitAnchor:SetPoint("CENTER", UIParent, "CENTER", 210, -70);
+	self.HitAnchor:SetPoint("CENTER", UIParent, "CENTER", 121, -43);
 	local backdrop = {
 		bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
 		edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
@@ -614,13 +545,7 @@ function BlinkHealth:CreateHitAnchor()
 	self.HitAnchor.text:SetPoint("LEFT", self.HitAnchor, "LEFT", 20, -5);
 	self.HitAnchor.text:SetJustifyH("RIGHT");
 	self.HitAnchor.text:SetTextColor(1.0, 0.69, 0.0);
-	self.HitAnchor.text:SetText("5");
-
-	self.HitAnchor.hit = self.HitAnchor:CreateFontString(nil, "OVERLAY");
-	self.HitAnchor.hit:SetFont("Interface\\Addons\\_ShiGuang\\Media\\Fonts\\REDCIRCL.ttf", 43, "OUTLINE");
-	self.HitAnchor.hit:SetPoint("BOTTOMLEFT", self.HitAnchor.text, "BOTTOMRIGHT", 5, 16);
-	self.HitAnchor.hit:SetTextColor(1.0, 0.69, 0.0);
-	self.HitAnchor.hit:SetText("hit");
+	self.HitAnchor.text:SetText("5 hit");
 
 	self.HitAnchor:RegisterForClicks("LeftButtonDown", "RightButtonDown");
 	self.HitAnchor:SetScript("OnMouseDown", function(self, button)
@@ -662,9 +587,16 @@ function BlinkHealth:ConstructHitPoints()
 		self.hitPoint.hit:SetPoint("BOTTOMLEFT", self.hitPoint.text, "BOTTOMRIGHT", 5, 16);
 		self.hitPoint.hit:SetTextColor(1.0, 0.69, 0.0);
 
+		self.hitPoint.class = select(2, UnitClass("player"))
+
 		self.hitPoint:SetScript("OnEvent", function(frame, event, unit, ...)
 			if ( event == "PLAYER_TARGET_CHANGED" or (event == "UNIT_POWER" and unit == PlayerFrame.unit)) then
-				local point = UnitPower("player", SPELL_POWER_COMBO_POINTS)
+				local point
+				if select(2, UnitClass("player")) == "MONK" then
+					point = UnitPower("player", SPELL_POWER_CHI)
+				else
+					point = UnitPower("player", SPELL_POWER_COMBO_POINTS)
+				end
 				if (point > 0) then			
 					self.hitPoint.text:SetText(point);
 					self.hitPoint.hit:SetText("hit");
@@ -677,54 +609,55 @@ function BlinkHealth:ConstructHitPoints()
 	end	
 end
 
-function BlinkHealth:ToggleCastingBar(switch)
-	if (switch) then
-		self.castBar.showCastbar = false;  --true
-	else
-		self.castBar.showCastbar = false;
-		self.castBar:Hide();
-	end
-end
-
--- BlinkHealth:ToggleCastingBar();
 function BlinkHealth:ShowAnchor()
 	self.anchor:Show();
 end
-
-function BlinkHealth:ToggleNameVisible(switch)
+function BlinkHealth:ToggleHitPoint(switch)
+	self:ConstructHitPoints();
 	if (switch) then
-		self.frame["target"].name:Show();
+		self.hitPoint:RegisterEvent("PLAYER_TARGET_CHANGED");
+		self.hitPoint:RegisterEvent("UNIT_POWER");
+		self.hitPoint:Show();
+		self.Combo:SetAlpha(0);
 	else
-		self.frame["target"].name:Hide();
+		self.hitPoint:UnregisterEvent("PLAYER_TARGET_CHANGED");
+		self.hitPoint:UnregisterEvent("UNIT_POWER");
+		self.hitPoint:Hide();
+		self.Combo:SetAlpha(1);
 	end
 end
 
+function BlinkHealth:ShowHitAnchor()
+	self.HitAnchor:Show();
+end
 
 function BlinkHealth_SlashHandler(msg)
 	local BHT_1 = "输入 /bht on 或 /bht off 开关插件\n";
-	local BHT_2 = "输入 /bht move 或 /bht m 调整位置\n";
-	local BHT_3 = "输入 /bht nameon 或 /bht nameoff 是否显示目标的名字\n";
-	local BHT_4 = "输入 /bht caston 或 /bht castoff 是否显示目标施法条\n";
+	local BHT_2 = "输入 /bht m 调整位置\n";
+	local BHT_3 = "输入 /bht hiton 或 /bht hitoff 是否显示数字连击点数\n";
 	msg = string.lower(msg);
 	local cmdtype, para1 = strsplit(" ", msg)
 	local listSec = 0;
 	if para1 ~= nil then
 		listSec = tonumber(para1);
 	end
-	if (cmdtype == "on") then
-		BlinkHealth:OnEnable();
-	elseif (cmdtype == "off") then
-			BlinkHealth:OnDisable();
+	if (cmdtype == "on") then BlinkHealth:OnEnable();
+	elseif (cmdtype == "off") then BlinkHealth:OnDisable();
 	elseif (cmdtype == "move" or cmdtype == "m") then
 			BlinkHealth:ShowAnchor();
-	elseif (cmdtype == "nameon") then
-			BlinkHealth:ToggleNameVisible(true);
-	elseif (cmdtype == "nameoff") then
-			BlinkHealth:ToggleNameVisible(false);
-	elseif (cmdtype == "caston") then	
-			BlinkHealth:ToggleCastingBar(true);
-	elseif (cmdtype == "castoff") then
-			BlinkHealth:ToggleCastingBar(false);	
+			BlinkHealth:ShowHitAnchor();
+  elseif (cmdtype == "hiton") then
+		if (select(2, UnitClass("player")) == "ROGUE" or select(2, UnitClass("player")) == "DRUID" or select(2, UnitClass("player"))  == "MONK")then	
+			BlinkHealth:ToggleHitPoint(true);
+		--else
+			--print"此功能只对盗贼、德鲁伊和武僧开放";
+		end			
+	elseif (cmdtype == "hitoff") then
+		if (select(2, UnitClass("player")) == "ROGUE" or select(2, UnitClass("player")) == "DRUID" or select(2, UnitClass("player"))  == "MONK") then	
+			BlinkHealth:ToggleHitPoint(false);
+		--else
+			--print"此功能只对盗贼、德鲁伊和武僧开放";
+		end
 	else 
 		DEFAULT_CHAT_FRAME:AddMessage(BHT_1..BHT_2..BHT_3..BHT_4);
 	end
@@ -735,15 +668,11 @@ function BlinkHealth:OnInitialize()
 	self:CreateAnchorFrame()
 	self:ConstructFrame("player");
 	self:ConstructFrame("target");
-	if (select(2, UnitClass("player"))  == "ROGUE" or select(2, UnitClass("player"))  == "DRUID") then		
+	if (select(2, UnitClass("player"))  == "ROGUE" or select(2, UnitClass("player"))  == "DRUID" or select(2, UnitClass("player"))  == "MONK") then		
 		self:ConstructCombo();
 		self:CreateHitAnchor();	-- 构建连击点
 	end	
-	self:ConstructCastingBar();
 	self:UpdateUnitFrame();
-	if (select(2, UnitClass("player"))  == "MONK") then	
-	self:Chi();
-	end
 	SlashCmdList["BLINKHEALTH"] = BlinkHealth_SlashHandler;
 	SLASH_BLINKHEALTH1 = "/bht";
 	--DEFAULT_CHAT_FRAME:AddMessage("BlinkHealthText已加载，配置命令/bht");
@@ -871,55 +800,6 @@ function FiveCombo_Toggle(switch)
 		enaleAlert = false;
 	end
 end
-------------------------------------------------------Chi---------------------------------------
---code from BMHelper
-if select(2, UnitClass("player")) == "MONK" then
-function BlinkHealth:Chi()
-local this = self.frame["player"];
-self.bmh = CreateFrame("frame", "BMHelperCHIFrame",  this)
-self.bmh:SetPoint("TOPRIGHT", this.heal, "BOTTOMRIGHT", 0, -1)
-self.bmh:SetSize(250,70)
-self:RegisterEvent("UNIT_POWER")
-self:RegisterEvent("PLAYER_ENTERING_WORLD")
-self:UpdateChiType()
-end
-function BlinkHealth:Chiupdate()
-	local chitext, chicolor
-	local chip = UnitPower("player", 12)
-	if chip == 1 then
-		chitext = "1"
-		chicolor = {r = 1, g = 0, b = 0}
-	elseif chip == 2 then
-		chitext = "1 2"
-		chicolor = {r = 1, g = .65, b = .15}
-	elseif chip == 3 then
-		chitext = "1 2 3"
-		chicolor = {r = 1, g = 1, b = .3}
-	elseif chip == 4 then
-		chitext = "1 2 3 4"
-		chicolor = {r = 0.2, g = 1, b = 0.5}
-	elseif chip == 5 then
-		chitext = "1 2 3 4 5"
-		chicolor = {r = 0.3, g = 1, b = 0.9}	
-  elseif chip == 6 then
-		chitext = "1 2 3 4 5 6"
-		chicolor = {r = 0.3, g = 1, b = 0.9}
-	else
-		chitext = ""
-		chicolor = {r = 0, g = 0, b = 0}
-	end		
-	self.bmhtext:SetTextColor(chicolor.r, chicolor.g, chicolor.b)	
-	self.bmhtext:SetText(chitext)	
-end
-function BlinkHealth:UpdateChiType()
-self.bmhtext = self.bmh:CreateFontString(nil, "OVERLAY")
-self.bmhtext:SetPoint("TOPRIGHT")
-self.bmhtext:SetFont("Interface\\Addons\\_ShiGuang\\Media\\Fonts\\RedCircl.ttf", 26, "OUTLINE")
-end
-function BlinkHealth:PLAYER_ENTERING_WORLD() self:Chiupdate() end
-function BlinkHealth:UNIT_POWER() self:Chiupdate() end
-end
-
 ---------------------------------------------------Function-------------------------------------------------
 -- 定义配置
 local Simple_Frames,sf = {},{};

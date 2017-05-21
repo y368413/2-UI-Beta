@@ -919,45 +919,45 @@ SlashCmdList["DRTS"] = function(msg, editBox)
     if msg:lower() == "on" then
         frame:SetScript("OnUpdate", onUpdate)
         DRTSOptions.enabled = true
-        DEFAULT_CHAT_FRAME:AddMessage("|cff0080ff[宝藏]|r德拉诺: 开启~")
+        DEFAULT_CHAT_FRAME:AddMessage("|cff0080ff[地图]|r宝藏: 开启~")
     elseif msg:lower() == "off" then
         frame:SetScript("OnUpdate", nil)
         DRTSOptions.enabled = false
         HideArrow()
-        DEFAULT_CHAT_FRAME:AddMessage("|cff0080ff[宝藏]|r德拉诺： 关闭~")
+        DEFAULT_CHAT_FRAME:AddMessage("|cff0080ff[地图]|r宝藏： 关闭~")
     elseif msg:lower() == "toggle" then
         DRTSOptions.enabled = not DRTSOptions.enabled
         frame:SetScript("OnUpdate", (DRTSOptions.enabled and onUpdate or nil))
         if not DRTSOptions.enabled then HideArrow() end
-        DEFAULT_CHAT_FRAME:AddMessage("|cff0080ff[宝藏]|r德拉诺 "..(DRTSOptions.enabled and "enabled" or "disabled"))
+        DEFAULT_CHAT_FRAME:AddMessage("|cff0080ff[地图]|r宝藏 "..(DRTSOptions.enabled and "enabled" or "disabled"))
     elseif msg:lower() == "arrow" then
         if not arrowAvailable then
-            DEFAULT_CHAT_FRAME:AddMessage("|cff0080ff[宝藏]|r德拉诺： 指示箭头不可用，请安装DBM以启用此功能！")
+            DEFAULT_CHAT_FRAME:AddMessage("|cff0080ff[地图]|r宝藏： 指示箭头不可用，请安装DBM以启用此功能！")
             return
         end
         DRTSOptions.arrowEnabled = not DRTSOptions.arrowEnabled
-        DEFAULT_CHAT_FRAME:AddMessage("|cff0080ff[宝藏]|r德拉诺： 指示箭头 "..(DRTSOptions.arrowEnabled and "开启" or "关闭"))
+        DEFAULT_CHAT_FRAME:AddMessage("|cff0080ff[地图]|r宝藏： 指示箭头 "..(DRTSOptions.arrowEnabled and "开启" or "关闭"))
         if not DRTSOptions.arrowEnabled then
             HideArrow()
         end
     elseif msg:lower() == "debug" then
         DRTSOptions.debug = not DRTSOptions.debug
-        DEFAULT_CHAT_FRAME:AddMessage("|cff0080ff[宝藏]|r德拉诺: 调试模式 "..(DRTSOptions.debug and "开启" or "关闭"))
+        DEFAULT_CHAT_FRAME:AddMessage("|cff0080ff[地图]|r宝藏: 调试模式 "..(DRTSOptions.debug and "开启" or "关闭"))
     elseif msg:lower() == "surprise" then
         DRTSOptions.surprise = not DRTSOptions.surprise
         if DRTSOptions.enabled == true then
             frame:SetScript("OnUpdate", onUpdate)
             --DRTSOptions.enabled = true
-            DEFAULT_CHAT_FRAME:AddMessage("|cff0080ff[宝藏]|r德拉诺 惊喜模式~")
+            DEFAULT_CHAT_FRAME:AddMessage("|cff0080ff[地图]|r宝藏 惊喜模式~")
         else
-	    DEFAULT_CHAT_FRAME:AddMessage("|cff0080ff[宝藏]|r德拉诺 惊喜模式开启，当看见屏幕中间的箭头，就说明你离宝藏挺近的喽~~~")
+	    DEFAULT_CHAT_FRAME:AddMessage("|cff0080ff[地图]|r宝藏 惊喜模式开启，当看见屏幕中间的箭头，就说明你离宝藏挺近的喽~~~")
         end
    elseif msg:lower() == "closest" then
         local closest, dist = GetClosestTreasure()
         if closest then
-        DEFAULT_CHAT_FRAME:AddMessage("|cff0080ff[宝藏]|r德拉诺: "..closest.id.." ("..closest.name..") "..dist.." 码外")
+        DEFAULT_CHAT_FRAME:AddMessage("|cff0080ff[地图]|r宝藏: "..closest.id.." ("..closest.name..") "..dist.." 码外")
         else
-            DEFAULT_CHAT_FRAME:AddMessage("|cff0080ff[宝藏]|r德拉诺: 附近没有啥宝藏~")
+            DEFAULT_CHAT_FRAME:AddMessage("|cff0080ff[地图]|r宝藏: 附近没有啥宝藏~")
         end
     elseif msg:lower() == "minimap" then
         DRTSOptions.minimap = not DRTSOptions.minimap
@@ -966,26 +966,26 @@ SlashCmdList["DRTS"] = function(msg, editBox)
         else
             MinimapPOIHandler:Disable()
         end
-        DEFAULT_CHAT_FRAME:AddMessage("|cff0080ff[宝藏]|r德拉诺:小地图按钮"..(DRTSOptions.minimap and "enabled" or "disabled"))
+        DEFAULT_CHAT_FRAME:AddMessage("|cff0080ff[地图]|r宝藏:小地图按钮"..(DRTSOptions.minimap and "enabled" or "disabled"))
     elseif msg:lower() == "hidepoi" then
         local closest, dist = GetClosestTreasure()
         if closest then
             DRTSOptions.hidden[closest.id] = true
-            DEFAULT_CHAT_FRAME:AddMessage("|cff0080ff[宝藏]|r德拉诺: POI "..closest.name.." ("..closest.id..") 隐藏模式")
+            DEFAULT_CHAT_FRAME:AddMessage("|cff0080ff[地图]|r宝藏: POI "..closest.name.." ("..closest.id..") 隐藏模式")
         else
-            DEFAULT_CHAT_FRAME:AddMessage("|cff0080ff[宝藏]|r德拉诺: 附近没有啥宝藏")
+            DEFAULT_CHAT_FRAME:AddMessage("|cff0080ff[地图]|r宝藏: 附近没有啥宝藏")
         end
     elseif msg:lower() == "clearhidden" then
     	table.wipe(DRTSOptions.hidden)
-    	DEFAULT_CHAT_FRAME:AddMessage("|cff0080ff[宝藏]|r德拉诺: hidden treasures cleared")
+    	DEFAULT_CHAT_FRAME:AddMessage("|cff0080ff[地图]|r宝藏: hidden treasures cleared")
     elseif msg:lower() == "itm" then
         DRTSOptions.ignoretm = not DRTSOptions.ignoretm
-        DEFAULT_CHAT_FRAME:AddMessage("|cff0080ff[宝藏]|r德拉诺: treasure map quests now "..(DRTSOptions.ignoretm and "忽略" or "used"))
+        DEFAULT_CHAT_FRAME:AddMessage("|cff0080ff[地图]|r宝藏: treasure map quests now "..(DRTSOptions.ignoretm and "忽略" or "used"))
     else
-        DEFAULT_CHAT_FRAME:AddMessage("命令: /drts on|off   (开启/关闭)|cff0080ff[宝藏]|r德拉诺")
-        DEFAULT_CHAT_FRAME:AddMessage("命令: /drts arrow (toggle)    (开启/关闭)|cff0080ff[宝藏]|r德拉诺 指示箭头")
-        DEFAULT_CHAT_FRAME:AddMessage("命令: /drts surprise (开启/关闭)|cff0080ff<惊喜模式>|r")
-        DEFAULT_CHAT_FRAME:AddMessage("命令: /drts debug (toggle)    (开启/关闭)|cff0080ff[宝藏]|r德拉诺 调试模式")
+        DEFAULT_CHAT_FRAME:AddMessage("命令: /drts on|off   (开启/关闭)|cff0080ff[地图]|r宝藏")
+        DEFAULT_CHAT_FRAME:AddMessage("命令: /drts arrow (toggle)    (开启/关闭)|cff0080ff[地图]|r宝藏 指示箭头")
+        DEFAULT_CHAT_FRAME:AddMessage("命令: /drts surprise    (开启/关闭)|cff0080ff[地图]|r宝藏 近距模式")
+        --DEFAULT_CHAT_FRAME:AddMessage("命令: /drts debug (toggle)    (开启/关闭)|cff0080ff[地图]|r宝藏 调试模式")
     end
 end
 
@@ -1117,8 +1117,8 @@ local function DrawTreasurePOI()
 end
 
 local function MyWorldMapFrame_OnUpdate(self, e)
-    WorldMapFrame_OnUpdate(self, e)
+    --WorldMapFrame_OnUpdate(self, e)
     DrawTreasurePOI()
 end
 
-WorldMapFrame:SetScript("OnUpdate", MyWorldMapFrame_OnUpdate)
+WorldMapFrame:HookScript("OnUpdate", MyWorldMapFrame_OnUpdate)

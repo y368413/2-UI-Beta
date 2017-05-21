@@ -12,4 +12,5 @@
 	<Script file="RelicInspector.lua"/>
 	<Script file="CombatNotification.lua"/>
 	<Script file="CrazyCatLady.lua"/>
+	<Script file="BarrelsOEasy.lua"/>
 </Ui>

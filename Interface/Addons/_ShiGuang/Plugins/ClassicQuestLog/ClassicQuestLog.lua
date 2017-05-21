@@ -28,6 +28,7 @@ function cql:OnEvent(event)
 		else
 			cql:HandleObjectiveTracker()
 		end
+		hooksecurefunc("SelectQuestLogEntry",cql.UpdateLogList)
 	elseif event=="UPDATE_BINDINGS" then
 		cql:UpdateOverrides()
 	elseif event=="QUEST_DETAIL" then
@@ -40,7 +41,7 @@ function cql:OnEvent(event)
 			cql:SelectFirstQuest()
 		else
 			cql:UpdateLogList()
-			cql:SelectQuestIndex(selected)
+			-- cql:SelectQuestIndex(selected)
 		end
 	end
 end
@@ -228,11 +229,7 @@ function cql:UpdateLog()
 				button.tag:Hide()
 				button.groupMates:Hide()
 			else
-				--if ShiGuangDB.ShowLevels then
 					button:SetText(format("  [%d] %s",level,questTitle))
-				--else
-					--button:SetText(format("  %s",questTitle))
-				--end
 				button:SetNormalTexture("")
 				button:SetHighlightTexture("")
 				-- if quest is tracked, show check and shorted max normalText width
@@ -319,6 +316,28 @@ function cql:UpdateLog()
 	cql:UpdateControlButtons()
 
 	HybridScrollFrame_Update(scrollFrame, 16*numEntries, 16)
+
+	cql:UpdateQuestDetail()
+end
+
+-- this updates the detail pane of the currently selected quest
+function cql:UpdateQuestDetail()
+	local index = GetQuestLogSelection()
+	if ( index == 0 ) then
+		cql.selectedIndex = nil
+		ClassicQuestLogDetailScrollFrame:Hide()
+	elseif index>0 and index<=GetNumQuestLogEntries() then
+		local _,_,_,isHeader,_,_,_,questID = GetQuestLogTitle(index)
+		if not isHeader then
+			ClassicQuestLogDetailScrollFrame:Show()
+			QuestInfo_Display(QUEST_TEMPLATE_LOG, ClassicQuestLogDetailScrollChildFrame)
+			-- if a different questID being viewed, scroll to top of detail pane
+			if questID ~= cql.lastViewedQuestID then
+				ClassicQuestLogDetailScrollFrameScrollBar:SetValue(0)
+				cql.lastViewedQuestID = questID
+			end
+		end
+	end
 end
 
 --[[ list entry handling ]]
@@ -468,15 +487,6 @@ function cql:SelectQuestIndex(index)
 	StaticPopup_Hide("ABANDON_QUEST_WITH_ITEMS")
 	SetAbandonQuest()
 
-	if ( index == 0 ) then
-		cql.selectedIndex = nil
-		ClassicQuestLogDetailScrollFrame:Hide()
-	elseif index>0 and index<=GetNumQuestLogEntries() and not select(4,GetQuestLogTitle(index)) then
-		ClassicQuestLogDetailScrollFrame:Show()
-		QuestInfo_Display(QUEST_TEMPLATE_LOG, ClassicQuestLogDetailScrollChildFrame)
-		ClassicQuestLogDetailScrollFrameScrollBar:SetValue(0) -- scroll to top
-	end
-
 	cql:UpdateLogList()
 end
 
@@ -593,6 +603,9 @@ function cql:HandleObjectiveTracker()
 			return -- user was linking quest to chat
 		end
 		if mouseButton~="RightButton" then
+			if IsModifiedClick("QUESTWATCHTOGGLE") then
+				return -- user was untracking a quest
+			end
 			local questLogIndex = GetQuestLogIndexByID(block.id)
 			if not (IsQuestComplete(block.id) and GetQuestLogIsAutoComplete(questLogIndex)) then
 				HideUIPanel(WorldMapFrame)

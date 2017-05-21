@@ -116,7 +116,7 @@ local function getDefaultInventorySets(class)
 	sets, exclude = addSet(sets, exclude, L.Misc)
 	sets, exclude = addSet(sets, exclude, L.Usable)
 	sets, exclude = addSet(sets, exclude, L.Quest)
-	sets, exclude = addSet(sets, exclude, "收藏")
+	sets, exclude = addSet(sets, exclude, "Cool")
 	return sets, exclude
 end
 
@@ -127,7 +127,7 @@ local function getDefaultBankSets(class)
 	sets, exclude = addSet(sets, exclude, L.Misc)
 	sets, exclude = addSet(sets, exclude, L.Usable)	
 	sets, exclude = addSet(sets, exclude, L.Quest)
-	sets, exclude = addSet(sets, exclude, "收藏")
+	sets, exclude = addSet(sets, exclude, "Cool")
 	return sets, exclude
 end
 

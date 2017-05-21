@@ -88,7 +88,7 @@
 		</Anchors>
 		<Layers>
 			<Layer level="OVERLAY" textureSubLevel="-1">
-				<Texture file="Interface\QuestFrame\UI-QuestLog-BookIcon">
+				<Texture parentKey="portraitIcon" file="Interface\QuestFrame\UI-QuestLog-BookIcon">
 					<Size x="64" y="64"/>
 					<Anchors>
 						<Anchor point="TOPLEFT" x="-9" y="9"/>
@@ -115,7 +115,7 @@
 				</Scripts>
 			</Frame>
 			<!-- close button in bottomright -->
-			<Button inherits="MagicButtonTemplate" text="CLOSE">
+			<Button parentKey="close" inherits="MagicButtonTemplate" text="CLOSE">
 				<Size x="110" y="22"/>
 				<Anchors>
 					<Anchor point="BOTTOMRIGHT" x="-6" y="4"/>
@@ -296,7 +296,7 @@
 							</Anchors>
 							<TexCoords left="0.515625" right="0.960625" top="0" bottom="0.4140625"/>
 						</Texture>
-						<Texture file="Interface\PaperDollInfoFrame\UI-Character-ScrollBar">
+						<Texture parentKey="middle" file="Interface\PaperDollInfoFrame\UI-Character-ScrollBar">
 							<Size x="29" y="1"/>
 							<Anchors>
 								<Anchor point="TOP" relativeKey="$parent.top" relativePoint="BOTTOM"/>

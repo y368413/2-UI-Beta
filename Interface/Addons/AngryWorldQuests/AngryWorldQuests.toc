@@ -6,7 +6,7 @@
 ## Author: Ermad + Salty Suggestions of Shadowsong(US)
 ## SavedVariables: AngryWorldQuests_Config, WorldQuestTipsData
 ## SavedVariablesPerCharacter: AngryWorldQuests_CharacterConfig
-## X-Packaged-Version: v0.17.4a + 1.25(7.1.0)
+## X-Packaged-Version: v0.17.6 + 1.25(7.1.0)
 
 ## X-Repple: 地图
 
@@ -18,5 +18,3 @@ Locale.lua
 QuestFrame.lua
 Data.lua
 FlightMap.lua
-
-BarrelsOEasy.lua

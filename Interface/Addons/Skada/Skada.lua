@@ -2040,7 +2040,7 @@ function Skada:UpdateDisplay(force)
 
 					d.id = mode:GetName()
 					d.label = mode:GetName()
-					d.value = 1
+					d.value = 1    
 					if set and mode.GetSetSummary ~= nil then
 						d.valuetext = mode:GetSetSummary(set)
 					end

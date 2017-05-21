@@ -63,6 +63,7 @@ end
 AdiCastBar.eventFrame:RegisterEvent('ADDON_LOADED')
 function AdiCastBar.eventFrame:ADDON_LOADED(_, name)
 	if name ~= addonName then return end
+	if MaoRUISettingDB["Skins"]["CastBar"] then return end
 	self:UnregisterEvent('ADDON_LOADED')
 
 	_G.AdiCastBarDB = _G.AdiCastBarDB or {}

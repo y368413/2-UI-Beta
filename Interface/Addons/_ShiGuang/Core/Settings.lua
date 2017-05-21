@@ -5,7 +5,7 @@ local module = MaoRUI:RegisterModule("Settings")
 local function ForceDefaultSettings()
 	SetCVar("scriptErrors", 1)     --0是屏蔽错误1是不屏蔽错误
 	SetCVar("autoLootDefault", 1)
-	SetCVar("alwaysCompareItems", 0)
+	SetCVar("alwaysCompareItems", 1)
 	SetCVar("lootUnderMouse", 1)
 	SetCVar("autoSelfCast", 1)
 	SetCVar("synchronizeSettings", 1)

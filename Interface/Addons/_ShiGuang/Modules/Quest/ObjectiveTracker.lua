@@ -91,12 +91,12 @@ function f.PLAYER_LOGIN()
 					else tinsert(mainlist,l) end
 				end
 			end
-			if #other>0 then print("== Active quests NOT counted:")
-			for k,v in next,other do print("-  "..v) end end
-			if #tasks>0 then print("== Active quests COUNTED but not in log:")
-			for k,v in next,tasks do print(k..". "..v) end end
-			print("== Active quests visible in log:")
-			for k,v in next,mainlist do print(k+#tasks..". "..v) end
+			--if #other>0 then print("== Active quests NOT counted:")
+			--for k,v in next,other do print("-  "..v) end end
+			--if #tasks>0 then print("== Active quests COUNTED but not in log:")
+			--for k,v in next,tasks do print(k..". "..v) end end
+			--print("== Active quests visible in log:")
+			--for k,v in next,mainlist do print(k+#tasks..". "..v) end
 		end
 	end)
 end

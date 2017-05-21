@@ -6,7 +6,7 @@ local _G, Minimap = _G, Minimap
 function module:ReskinRegions()
 	-- QueueStatus Button
 	QueueStatusMinimapButton:ClearAllPoints()
-	QueueStatusMinimapButton:SetPoint("BOTTOMLEFT", -8, 6)
+	QueueStatusMinimapButton:SetPoint("BOTTOMLEFT", -8, 3)
 	QueueStatusMinimapButtonBorder:Hide()
 	QueueStatusMinimapButtonIconTexture:SetTexture(nil)
 
@@ -31,7 +31,7 @@ function module:ReskinRegions()
 	for k, v in pairs(flags) do
 		local flag = _G[v]
 		flag:ClearAllPoints()
-		flag:SetPoint("TOPLEFT", 12, 6)
+		flag:SetPoint("TOPLEFT", 6, 6)
 		flag:SetScale(.8)
 	end
 	--Tracking
@@ -72,41 +72,6 @@ function module:ReskinRegions()
 		Invt:Hide()
 		if btn == "LeftButton" then ToggleCalendar() end
 	end)
-
-	-- Micro Button Alerts
-	if TalentMicroButtonAlert then
-		TalentMicroButtonAlert:ClearAllPoints()
-		TalentMicroButtonAlert:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", -220, 40)
-		TalentMicroButtonAlert:SetScript("OnMouseUp", function()
-			if not PlayerTalentFrame then LoadAddOn("Blizzard_TalentUI") end
-			ToggleFrame(PlayerTalentFrame)
-		end)
-	end
-
-	if EJMicroButtonAlert then
-		EJMicroButtonAlert:ClearAllPoints()
-		EJMicroButtonAlert:SetPoint("BOTTOM", UIParent, "BOTTOM", 40, 40)
-		EJMicroButtonAlert:SetScript("OnMouseUp", function()
-			if not EncounterJournal then LoadAddOn("Blizzard_EncounterJournal") end
-			ToggleFrame(EncounterJournal)
-		end)
-	end
-
-	if CollectionsMicroButtonAlert then
-		CollectionsMicroButtonAlert:ClearAllPoints()
-		CollectionsMicroButtonAlert:SetPoint("BOTTOM", UIParent, "BOTTOM", 65, 40)
-		CollectionsMicroButtonAlert:SetScript("OnMouseUp", function()
-			if not CollectionsJournal then LoadAddOn("Blizzard_Collections") end
-			ToggleFrame(CollectionsJournal)
-			CollectionsJournal_SetTab(CollectionsJournal, 2)
-		end)
-	end
-
-	if TicketStatusFrame then
-		TicketStatusFrame:ClearAllPoints()
-		TicketStatusFrame:SetPoint("TOP", UIParent, "TOP", -400, -20)
-		TicketStatusFrame.SetPoint = M.Dummy
-	end
 end
 
 ----------------------------------------------------------------------------	右键菜单--------------------------------------------------------------------------
@@ -165,6 +130,8 @@ local SetMrbarMicromenu = {
         func = function() sendCmd("/ztip"); end, notCheckable = true, },
     --{ text = "按键绑定", icon = 'Interface\\MacroFrame\\MacroFrame-Icon.blp',
         --func = function() sendCmd("/hb"); end, notCheckable = true, },
+    { text = "求装助手", icon = 'Interface\\MacroFrame\\MacroFrame-Icon.blp',
+        func = function() sendCmd("/gmlm show"); end, notCheckable = true, },
     { text = "提示框", icon = 'Interface\\Icons\\INV_Inscription_RunescrollOfFortitude_Red',
         func = function() sendCmd("/lstoasts"); end, notCheckable = true, },
     {text = "距离助手", hasArrow = true, notCheckable = true,
@@ -184,11 +151,10 @@ local SetMrbarMicromenu = {
         func = function() sendCmd("/loadmr"); end, notCheckable = true, },
     { text = "屏保(AFK)", icon = 'Interface\\Icons\\Spell_Holy_Crusade',
         func = function() sendCmd("/wallpaperkit"); end, notCheckable = true, },
-    { text = "|cFF00DDFF ------- 战 斗 -------|r", isTitle = true, notCheckable = true },
-    { text = "吃喝检查", icon = 'Interface\\MINIMAP\\TRACKING\\Reagents',
-        func = function() sendCmd("/hj"); end, notCheckable = true,   },
+    --{ text = "吃喝检查", icon = 'Interface\\MINIMAP\\TRACKING\\Reagents',
+        --func = function() sendCmd("/hj"); end, notCheckable = true,   },
+    { text = "|cFF00DDFF ------- 一键宏 -------|r", func = function() sendCmd("/MacroHelp"); end, notCheckable = true, },
     { text = "|cffff8800 ----------------------|r", isTitle = true, notCheckable = true  },
-    --{ text = "       一键宏", func = function() sendCmd("/MacroHelp"); end, notCheckable = true, },
     { text = "  |cFFBF00FF常见问题|r", func = function() sendCmd("/MrHelp"); end, notCheckable = true, },
     { text = "             |cFFBF00FF更多设置|r", func = function() sendCmd("/mr"); end, notCheckable = true, },
     { text = "|cffff8800 ----------------------|r", isTitle = true, notCheckable = true  },
@@ -204,7 +170,7 @@ function module:OnLogin()
 	Minimap:SetPoint(unpack(R.Minimap.Pos))
 	Minimap:SetFrameLevel(10)
 	Minimap:SetMaskTexture("Interface\\Buttons\\WHITE8X8")
-	Minimap:SetSize(180, 180)
+	Minimap:SetSize(186, 186)
 	Minimap:SetBackdrop({
 		bgFile =  [=[Interface\ChatFrame\ChatFrameBackground]=],
     edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 2, 

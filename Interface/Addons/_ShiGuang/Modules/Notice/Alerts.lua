@@ -54,9 +54,9 @@ function module:RareAlert()
 			local left, right, top, bottom = GetObjectIconTextureCoords(icon)
 			local tex = "|TInterface\\Minimap\\ObjectIconsAtlas:0:0:0:0:256:256:"..(left*256)..":"..(right*256)..":"..(top*256)..":"..(bottom*256).."|t"
 			--UIErrorsFrame:AddMessage("----------   "..I.InfoColor..tex..(name or "").."   ----------")
-			RaidNotice_AddMessage(RaidWarningFrame, "----------   "..tex..(name or "").."   ----------", ChatTypeInfo["RAID_WARNING"])
+			RaidNotice_AddMessage(RaidWarningFrame, "----------   "..(name or "").."   ----------", ChatTypeInfo["RAID_WARNING"])  --..tex
 			if MaoRUISettingDB["Misc"]["AlertinChat"] then
-				print("  -> "..I.InfoColor.."发现稀有！"..tex..(name or ""))
+				print("  -> "..I.InfoColor.."发现稀有！"..(name or ""))  --..tex
 			end
 			PlaySoundFile("Interface\\Addons\\_ShiGuang\\Media\\Sounds\\Dadongda.ogg", "Master")
 			cache[id] = true

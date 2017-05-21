@@ -1,172 +1,5 @@
 local M, R, U, I = unpack(select(2, ...))
 
-local tab = I.ReminderBuffs[I.MyClass]
-if not tab then tab = {} end
-local function OnEvent(self)
-	if UnitLevel("player") < 10 then return end
-	local group = tab[self.id]
-	if not group.spells and not group.stance then return end
-	if not GetActiveSpecGroup() then return end
-	if group.level and UnitLevel("player") < group.level then return end
-
-	self.icon:SetTexture(nil)
-	self:Hide()
-	if group.negate_spells then
-		for buff, value in pairs(group.negate_spells) do
-			if value == true then
-				local name = GetSpellInfo(buff)
-				if (name and UnitBuff("player", name)) then
-					return
-				end
-			end
-		end
-	end
-
-	if group.spells then
-		for buff, value in pairs(group.spells) do
-			if value == true then
-				local usable, nomana = IsUsableSpell(buff)
-				if (usable or nomana) then
-					self.icon:SetTexture(GetSpellTexture(buff))
-					break
-				end
-			end
-		end
-	end
-
-	local role = group.role
-	local tree = group.tree
-	local requirespell = group.requirespell
-	local combat = group.combat
-	local personal = group.personal
-	local instance = group.instance
-	local pvp = group.pvp
-	local reversecheck = group.reversecheck
-	local negate_reversecheck = group.negate_reversecheck
-	local rolepass, treepass, combatpass, instancepass, pvppass, requirepass
-	local inInstance, instanceType = IsInInstance()
-
-	if role and role ~= I.Role then
-		rolepass = false
-	else
-		rolepass = true
-	end
-
-	if tree and tree ~= GetSpecialization() then
-		treepass = false
-	else
-		treepass = true
-	end
-
-	if requirespell and not IsPlayerSpell(requirespell) then
-		requirepass = false
-	else
-		requirepass = true
-	end
-
-	if combat and UnitAffectingCombat("player") then
-		combatpass = true
-	else
-		combatpass = false
-	end
-
-	if instance and inInstance and (instanceType == "scenario" or instanceType == "party" or instanceType == "raid") then
-		instancepass = true
-	else
-		instancepass = false
-	end
-
-	if pvp and (instanceType == "arena" or instanceType == "pvp" or GetZonePVPInfo() == "combat") then
-		pvppass = true
-	else
-		pvppass = false
-	end
-
-	if not instance and not pvp then
-		instancepass = true
-		pvppass = true
-	end
-	--Prevent user error
-	if reversecheck ~= nil and (role == nil and tree == nil) then reversecheck = nil end
-
-	if group.spells then
-		if treepass and rolepass and requirepass and (combatpass or instancepass or pvppass) and not (UnitInVehicle("player") and self.icon:GetTexture()) then	
-			for buff, value in pairs(group.spells) do
-				if value == true then
-					local name = GetSpellInfo(buff)
-					local _, _, icon, _, _, _, _, unitCaster, _, _, _ = UnitBuff("player", name)
-					if personal and personal == true then
-						if (name and icon and unitCaster == "player") then
-							self:Hide()
-							return
-						end
-					else
-						if (name and icon) then
-							self:Hide()
-							return
-						end
-					end
-				end
-			end
-			self:Show()
-			M.CreateFS(self, 14, "缺少".." "..self.id, true, "BOTTOM", 0, -18)
-		elseif (combatpass or instancepass or pvppass) and reversecheck and not (UnitInVehicle("player") and self.icon:GetTexture()) then
-			if negate_reversecheck and negate_reversecheck == GetSpecialization() then self:Hide() return end
-			for buff, value in pairs(group.spells) do
-				if value == true then
-					local name = GetSpellInfo(buff)
-					local _, _, icon, _, _, _, _, unitCaster, _, _, _ = UnitBuff("player", name)
-					if (name and icon and unitCaster == "player") then
-						self:Show()
-						M.CreateFS(self, 14, CANCEL.." "..self.id, true, "BOTTOM", 0, -18)
-						return
-					end	
-				end
-			end
-		end
-	end
-end
-
-local i = 0
-for groupName, _ in pairs(tab) do
-	i = i + 1
-	local frame = CreateFrame("Frame", "ReminderFrame"..i, UIParent)
-	frame:SetSize(42,42)
-	frame:SetPoint("CENTER", UIParent, "CENTER", -220, 130)
-	frame:SetFrameLevel(1)
-	frame.id = groupName
-	frame.icon = frame:CreateTexture(nil, "OVERLAY")
-	frame.icon:SetTexCoord(unpack(I.TexCoord))
-	frame.icon:SetAllPoints()
-	frame:Hide()
-	M.CreateSD(frame, 4, 4)
-
-	frame:RegisterUnitEvent("UNIT_AURA", "player")
-	frame:RegisterEvent("PLAYER_TALENT_UPDATE")
-	frame:RegisterEvent("PLAYER_ENTERING_WORLD")
-	frame:RegisterEvent("PLAYER_REGEN_ENABLED")
-	frame:RegisterEvent("PLAYER_REGEN_DISABLED")
-	frame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-	frame:RegisterEvent("UNIT_ENTERING_VEHICLE")
-	frame:RegisterEvent("UNIT_ENTERED_VEHICLE")
-	frame:RegisterEvent("UNIT_EXITING_VEHICLE")
-	frame:RegisterEvent("UNIT_EXITED_VEHICLE")
-	frame:SetScript("OnEvent", function(self)
-		if not MaoRUISettingDB["Auras"]["Reminder"] then return end
-		OnEvent(self)
-	end)
-	frame:SetScript("OnUpdate", function(self, elapsed)
-		if not self.icon:GetTexture() then
-			self:Hide()
-		end
-	end)
-	frame:SetScript("OnShow", function(self)
-		if not self.icon:GetTexture() then
-			self:Hide()
-		end
-	end)
-end
-
 ----SonicReputation
 local rep = {};
 local function SR_Update()
@@ -203,13 +36,12 @@ SonicReputation:SetScript("OnEvent", SR_Update);
 ChatFrame_AddMessageEventFilter("CHAT_MSG_COMBAT_FACTION_CHANGE", function() return true; end);
 --------------ExaltedPlus
 local rpt,f=ReputationParagonTooltip,CreateFrame('frame') f.a=0
-f:RegisterEvent('QUEST_LOG_UPDATE') f:RegisterEvent('UPDATE_FACTION')
-f:SetScript('OnEvent',function()
+local function update()
 	for k in ReputationFrame.paragonFramesPool:EnumerateActive() do if k.factionID then
 		local id,n=k.factionID,GetFactionInfoByID(k.factionID) f[n]=k
 		if not f[id] or f[id].n~=n then f[id]={n=n,v=C_Reputation.GetFactionParagonInfo(id)} end
 	end end
-end)
+end
 f:SetScript('OnUpdate',function(s,e)
 	if s.b then s.a=s.a-e else s.a=s.a+e end
 	if s.a>=1 then s.a=1 s.b=true elseif s.a<=0 then s.a=0 s.b=false end
@@ -227,7 +59,7 @@ ChatFrame_AddMessageEventFilter('CHAT_MSG_COMBAT_FACTION_CHANGE',function(_,_,ms
 	end
 	return false,msg,...
 end)
-hooksecurefunc('EmbeddedItemTooltip_SetItemByQuestReward',function(t)
+hooksecurefunc('EmbeddedItemTooltip_SetItemByQuestReward',function(t) update()
 	if t==rpt.ItemTooltip and rpt.factionID and f[rpt.factionID] and f[rpt.factionID].c then
 		local c=format(ARCHAEOLOGY_COMPLETION,f[rpt.factionID].c)
 		rpt:AddLine(c) t.Tooltip:AddLine('\n') t.Tooltip:Show()
@@ -236,7 +68,7 @@ hooksecurefunc('EmbeddedItemTooltip_SetItemByQuestReward',function(t)
 		end end
 	end
 end)
-hooksecurefunc('MainMenuBar_UpdateExperienceBars',function()
+hooksecurefunc('MainMenuBar_UpdateExperienceBars',function() update()
 	local n,r,_,m,v,id,c=GetWatchedFactionInfo()
 	if n and id and ReputationWatchBar:IsShown() then
 		if (GetFriendshipReputation(id)) then r=5 end c=FACTION_BAR_COLORS[r]
@@ -246,7 +78,7 @@ hooksecurefunc('MainMenuBar_UpdateExperienceBars',function()
 		if not f.w then ReputationWatchBar.StatusBar:SetStatusBarColor(c.r,c.g,c.b,1) end
 	end
 end)
-hooksecurefunc('ReputationFrame_Update',function()
+hooksecurefunc('ReputationFrame_Update',function() update()
 	for i=1,NUM_FACTIONS_DISPLAYED do
 		local n,x,r,_,m,v,row,bar,_,_,_,_,_,id=GetFactionInfo(ReputationListScrollFrame.offset+i)
 		if id and f[n] and f[id] then

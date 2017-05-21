@@ -1417,6 +1417,264 @@ Combuctor_Cool_Garrison = {
       -1
 };
 
+Combuctor_Cool_FishingThings = {
+--FishingPoles
+	6256,	-- Fishing Pole
+	6365,	-- Strong Fishing Pole
+	6366,	-- Darkwood Fishing Pole
+	6367,	-- Big Iron Fishing Pole
+	19022,	-- Nat Pagle's Extreme Angler FC-5000
+	19970,	-- Arcanite Fishing Pole
+	25978,	-- Seth's Graphite Fishing Pole
+	44050,	-- Mastercraft Kalu'ak Fishing Pole
+	45858,	-- Nat's Lucky Fishing Pole
+	45991,	-- Bone Fishing Pole
+	45992,	-- Jeweled Fishing Pole	
+	46337,	-- Staats' Fishing Pole
+	84660,	-- Pandaren Fishing Pole
+	84661,	-- Dragon Fishing Pole
+	88535,	-- Sharpened Tuskarr Spear
+	116825,	-- Savage Fishing Pole
+	116826,	-- Draenic Fishing Pole
+	118381,	-- Ephemeral Fishing Pole
+	120163,	-- Thruk's Fishing Rod
+	133755,	-- Underlight Angler
+--FishingBags
+	60218,	-- Lure Master Tackle Box
+--FishingAttire
+	19969,	-- Nat Pagle's Extreme Anglin' Boots
+	19972,	-- Lucky Fishing Hat
+	33820,	-- Weather-Beaten Fishing Hat
+	50287,	-- Boots of the Bay
+	88710,	-- Nat's Hat
+	93732,	-- Darkmoon Fishing Cap
+	117405,	-- Nat's Drinking Hat
+	118380,	-- Hightfish Cap
+	118393,	-- Tentacled Hat
+--MiscAttire
+	7052,	-- Azure Silk Belt
+	10506,	-- Deepdive Helmet
+	57429,	-- Fisherman's Belt
+	57481,	-- Fisherman's Gloves
+--FishingHooks
+	122742,	-- Bladebone Hook
+--FishingLines
+	19971,	-- High Test Eternium Fishing Line
+	34836,	-- Spun Truesilver Fishing Line
+	68796,	-- Reinforced Fishing Line
+	116117,	-- Rook's Lucky Fishin' Line
+--FishingLures
+	6529,	-- Shiny Bauble
+	6530,	-- Nightcrawlers
+	6532,	-- Bright Baubles
+	6533,	-- Aquadynamic Fish Attractor
+	6811,	-- Aquadynamic Fish Lens
+	7307,	-- Flesh Eating Worm
+	34861,	-- Sharpened Fish Hook
+	46006,	-- Glow Worm
+	62673,	-- Feathered Lure
+	67404,	-- Glass Fishing Bobber
+	68049,	-- Heat-Treated Spinning Lure
+	118391,	-- Worm Supreme
+	124674,	-- Day-Old Darkmoon Doughnut
+	138956,	-- Hypermagnetic Lure
+	139175,	-- Arcane Lure
+--FishingSmears
+	138961,	-- Alchemical Bonding Agent
+--FishingBobbers
+	136373,	-- Can O' Worms Bobber
+	136374,	-- Toy Cat Head Bobber
+	136375,	-- Squeaky Duck Bobber
+	136376,	-- Murloc Bobber
+	136377,	-- Oversized Bobber
+	133688,	-- Tugboat Bobber
+	142528,	-- Crate of Bobbers: Can of Worms
+	142529,	-- Crate of Bobbers: Cat Head
+	142530,	-- Crate of Bobbers: Tugboat
+	142531,	-- Crate of Bobbers: Squeaky Duck
+	142532,	-- Crate of Bobbers: Murloc Head
+	143662,	-- Crate of Bobbers: Wooden Pepe
+--DraenorBait
+	110274,	-- Jawless Skulker Bait
+	110289,	-- Fat Sleeper Bait
+	110290,	-- Blind Lake Sturgeon Bait
+	110291,	-- Fire Ammonite Bait
+	110292,	-- Sea Scorpion Bait
+	110293,	-- Abyssal Gulper Eel Bait
+	110294,	-- Blackwater Whiptail Bait
+	128229,	-- Felmouth Frenzy Bait
+--LegionBait
+	133701, -- Skrog Toenail
+	133702, -- Aromatic Murloc Slime
+	133703, -- Pearlescent Conch
+	133704, -- Rusty Queenfish Brooch
+	133705,	-- Rotten Fishbone
+	133706,	-- Mossgill Bait
+	133707,	-- Nightmare Nightcrawler
+	133708,	-- Drowned Thistleleaf
+	133709, -- Funky Sea Snail
+	133710, -- Salmon Lure
+	133711, -- Swollen Murloc Egg
+	133712, -- Frost Worm
+	133713, -- Moosehorn Hook
+	133714, -- Silverscale Minnow
+	133715, -- Ancient Vrykul Ring
+	133716, -- Soggy Drakescale
+	133717, -- Enchanted Lure
+	133719, -- Sleeping Murloc
+	133720, -- Demonic Detritus
+	133721, -- Message in a Beer Bottle
+	133722, -- Axefish Lure
+	133723, -- Stunned, Angry Shark
+	133724, -- Decayed Whale Blubber
+	
+--FishingProvisions
+	34832,	-- Captain Rumsey's Lager
+	110508,	-- "Fragrant" Pheromone Fish
+--FishingPotions
+	5996,	-- Elixir of Water Breathing
+	6372,	-- Swim Speed Potion
+	8827,	-- Elixir of Water Walking
+	18294,	-- Elixir of Greater Water Breathing
+	44012,	-- Underbelly Elixir
+	76096,	-- Darkwater Potion
+	116271,	-- Draenic Water Breathing Elixir
+	118711,	-- Draenic Water Walking Elixir
+--FishingChairs
+	33223,	-- Fishing Chair
+	70161,	-- Mushroom Chair
+	85500,	-- Anglers Fishing Raft
+	86596,	-- Nat's Fishing Chair
+--FishingCharms
+	19979,	-- Hook of the Master Angler
+	85973,	-- Ancient Pandaren Fishing Charm
+--FishingToys
+	44430,	-- Titanium Seal of Dalaran
+	86582,	-- Aqua Jewel
+--FishingBooks
+	18229,	-- Nat Pagle's Guide to Extreme Anglin'
+	18365,	-- A Thoroughly Read Copy of "Nat Pagle's Guide to Extreme Anglin'."
+	34109,	-- Weather-Beaten Journal
+	88563,	-- Nat's Fishing Journal
+	117401,	-- Nat's Draenic Fishing Journal
+	139620,	-- A Complete Copy of "Nat Pagle's Guide to Extreme Anglin'."
+--DalaranCoins
+	-- Copper
+	43702, 	-- Alonsus Faol's Copper Coin
+	43703, 	-- Ansirem's Copper Coin
+	43704, 	-- Attumen's Copper Coin
+	43705, 	-- Danath's Copper Coin
+	43706, 	-- Dornaa's Shiny Copper Coin
+	43707, 	-- Eitrigg's Copper Coin
+	43708, 	-- Elling Trias' Copper Coin
+	43709, 	-- Falstad Wildhammer's Copper Coin
+	43710, 	-- Genn's Copper Coin
+	43711, 	-- Inigo's Copper Coin
+	43712, 	-- Krasus' Copper Coin
+	43713, 	-- Kryll's Copper Coin
+	43714, 	-- Landro Longshot's Copper Coin
+	43715, 	-- Molok's Copper Coin
+	43716, 	-- Murky's Copper Coin
+	43717, 	-- Princess Calia Menethil's Copper Coin
+	43718, 	-- Private Marcus Jonathan's Copper Coin
+	43719, 	-- Salandria's Shiny Copper Coin
+	43720, 	-- Squire Rowe's Copper Coin
+	43721, 	-- Stalvan's Copper Coin
+	43722, 	-- Vareesa's Copper Coin
+	43723, 	-- Vargoth's Copper Coin
+	-- Silver
+	43643, 	-- Prince Magni Bronzebeard's Silver Coin
+	43644, 	-- A Peasant's Silver Coin
+	43675, 	-- Fandral Staghelm's Silver Coin
+	43676,	-- Arcanist Doan's Silver Coin
+	43677, 	-- High Tinker Mekkatorque's Silver Coin
+	43678, 	-- Antonidas' Silver Coin
+	43679, 	-- Muradin Bronzebeard's Silver Coin
+	43680, 	-- King Varian Wrynn's Silver Coin
+	43681,	-- King Terenas Menethil's Silver Coin
+	43682, 	-- King Anasterian Sunstrider's Silver Coin
+	43683, 	-- Khadgar's Silver Coin
+	43684, 	-- Medivh's Silver Coin
+	43685,	-- Maiev Shadowsong's Silver Coin
+	43686, 	-- Alleria's Silver Coin
+	43687, 	-- Aegwynn's Silver Coin
+	-- Gold
+	43627, 	-- Thrall's Gold Coin
+	43628, 	-- Lady Jaina Proudmoore's Gold Coin
+	43629, 	-- Uther Lightbringer's Gold Coin
+	43630, 	-- Tirion Fordring's Gold Coin
+	43631, 	-- Teron's Gold Coin
+	43632, 	-- Sylvanas Windrunner's Gold Coin
+	43633, 	-- Prince Kael'thas Sunstrider's Gold Coin
+	43634, 	-- Lady Katrana Prestor's Gold Coin
+	43635, 	-- Kel'Thuzad's Gold Coin
+	43636, 	-- Chromie's Gold Coin
+	43637, 	-- Brann Bronzebeard's Gold Coin
+	43638, 	-- Arugal's Gold Coin
+	43639, 	-- Arthas' Gold Coin
+	43640, 	-- Archimonde's Gold Coin
+	43641, 	-- Anduin Wrynn's Gold Coin
+	-- Broken Isles
+	138892, -- Prince Farondis' Royal Seal
+	138893, -- Runas' Last Copper
+	138894, -- Stellagosa's Silver Coin
+	138895, -- Senegos' Ancient Coin
+	138896, -- Okuna Longtusk's Doubloon
+	138897, -- Ooker's Dookat
+	138898, -- Coin of Golk the Rumble
+	138899, -- Daglop's Infernal Copper Coin
+	138901, -- Tyrande's Coin
+	138902, -- Malfurion's Coin
+	138903, -- Kur'talos Ravencrest's Spectral Coin
+	138904, -- Jarod Shadowsong's Coin
+	138905, -- Penelope Heathrow's Allowance
+	138906, -- Remulos' Sigil
+	138907, -- Elothir's Golden Leaf
+	138908, -- Koda's Sigil
+	138909, -- King Mrgl-Mrgl's Coin
+	138910, -- Hemet Nesingwary's Bullet
+	138911, -- Murky's Coin
+	138912, -- Spiritwalker Ebonhorn's Coin
+	138913, -- Addie Fizzlebog's Coin
+	138914, -- Boomboom Brullingsworth's Coin
+	138915, -- The Candleking's Candlecoin
+	138916, -- Torok Bloodtotem's Coin
+	138917, -- God-King Skovald's Fel-Tainted Coin
+	138918, -- Genn Greymane's Coin
+	138919, -- Nathanos Blightcaller's Coin
+	138920, -- Helya's Coin
+	138921, -- Sir Finley Mrrgglton's Coin
+	138922, -- Havi's Coin
+	138923, -- Vydhar's Wooden Nickel
+	138924, -- Rax Sixtrigger's Gold-Painted Copper Coin
+	138925, -- First Arcanist Thalyssra's Coin
+	138926, -- Magistrix Elisande's Coin
+	138927, -- Oculeth's Vanishing Coin
+	138928, -- Ly'leth Lunastre's Family Crest
+	138929, -- Pearlhunter Phin's Soggy Coin
+	138930, -- Advisor Vandros' Coin
+	138931, -- Gul'dan's Coin
+	138932, -- Yowlon's Mark
+	138933, -- Allari the Souleater's Coin
+	138934, -- Altruis the Sufferer's Coin
+	138935, -- Cyana Nightglaive's Coin
+	138936, -- Falara Nightsong's Coin
+	138937, -- Izal Whitemoon's Coin
+	138938, -- Jace Darkweaver's Coin
+	138939, -- Kayn Sunfury's Coin
+	138940, -- Korvas Bloodthorn's Coin
+	138941, -- The Coin
+	138942, -- Blingtron's Botcoin
+	138943, -- Lady Liadrin's Coin
+	138944, -- Lunara's Coin
+	138945, -- Illidan's Coin
+	138946, -- Queen Azshara's Royal Seal
+	138947, -- Gallywix's Coin-on-a-String
+	138948, -- Li Li's Coin
+--LuckyCoin
+	117397,	-- Nat's Lucky Coin
+};
+
 local function extractItemId(link)
 	local tbl = { strsplit(":", strtrim(link, "|")) };
 	return tonumber(tbl[2]);
@@ -1429,6 +1687,13 @@ local function isInTable(table, itemId)
 	end return false;
 end
 
+------------------------fish
+local function FishingThings(player, bagType, name, link, quality, level, ilvl, type, subType, stackCount, equipLoc)
+    if ( name == nil or link == nil ) then
+		return false;
+	end
+	return isInTable(Combuctor_Cool_FishingThings, extractItemId(link));
+end
 local function Garrison(player, bagType, name, link, quality, level, ilvl, type, subType, stackCount, equipLoc)
     if ( name == nil or link == nil ) then
 		return false;
@@ -1442,10 +1707,11 @@ local function Open(player, bagType, name, link, quality, level, ilvl, type, sub
 	return isInTable(Combuctor_Cool_Open, extractItemId(link));
 end
 local function Cool(...)
-	return (Garrison(...) or Open(...));
+	return (Garrison(...) or Open(...) or FishingThings(...));
 end
 
-CombuctorSet:Register("收藏", "Interface/Icons/inv_crate_08", Cool);
-CombuctorSet:RegisterSubSet("All", "收藏", nil, Cool);
-CombuctorSet:RegisterSubSet("Garrison", "收藏", nil, Garrison);
-CombuctorSet:RegisterSubSet("Open", "收藏", nil, Open);
+CombuctorSet:Register("Cool", "Interface\\Addons\\_ShiGuang\\Media\\Modules\\Wallpaper\\MaoR-UI", Cool);
+CombuctorSet:RegisterSubSet("All", "Cool", nil, Cool);
+CombuctorSet:RegisterSubSet("Open", "Cool", nil, Open);
+CombuctorSet:RegisterSubSet("Garrison", "Cool", nil, Garrison);
+CombuctorSet:RegisterSubSet("Fish", "Cool", nil, FishingThings);

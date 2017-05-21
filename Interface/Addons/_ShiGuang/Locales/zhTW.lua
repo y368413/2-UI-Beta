@@ -257,4 +257,20 @@ QN_Accept      = "接受任務";
   CurrencyTracking_CT_OPT_ALWAYSLOCK_TIP = "啟用則將不僅限於戰鬥中才鎖定。停用則僅會於戰鬥中才鎖定。";
 	CurrencyTracking_CT_CURRENCY_TO_TRACK = "在遊戲畫面上要追蹤的通貨：";
 	CurrencyTracking_CT_CAT_TRACKED_CURRENCY = "追蹤的通貨";
+	
+	TinyInspectL = {
+    ShowItemBorder              = "物品直角邊框",
+    EnableItemLevel             = "物品等級顯示",
+    ShowColoredItemLevelString  = "裝等文字隨物品品質",
+    ShowItemSlotString          = "顯示背包装备部位文字",
+    ShowInspectAngularBorder    = "觀察面板直角邊框",
+    ShowInspectColoredLabel     = "觀察面板高亮橙裝武器標簽",
+    ShowOwnFrameWhenInspecting  = "觀察同時顯示自己裝備列表",
+    DisplayPercentageStats      = "裝備屬性換算成百分比數值",
+    EnablePartyItemLevel        = "小隊隊友裝等",
+    SendPartyItemLevelToSelf    = "發送隊友裝等到自己面板",
+    SendPartyItemLevelToParty   = "發送隊友裝等到隊伍頻道",
+    EnableRaidItemLevel         = "團隊成員裝等",
+  };
+
 end

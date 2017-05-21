@@ -59,6 +59,8 @@ local EmpowermentcastingTime = 1.5 --1.5 seconds is the default amount of time
 local DemonicTable = {
     --Regular warlock pet codes
     ["1863"] = "Succubus",  --Warlockbox_Succubus
+    ["120527"] = "Succubus",
+    ["120526"] = "Succubus",
     ["416"] = "Imp",        --Warlockbox_Imp
     ["58959"] = "Imp",
     ["1860"] = "Voidwalker",  

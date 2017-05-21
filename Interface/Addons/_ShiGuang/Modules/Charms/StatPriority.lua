@@ -1,7 +1,7 @@
 local M, R, U, I = unpack(select(2, ...))
 local statPriorityStats = {}
 statPriorityStats["WARRIORArms"] = "Mastery > Haste > Versatility > Strength > CriticalStrike"
-statPriorityStats["WARRIORFury"] = "[Haste 27%]  Mastery(40%) > Haste(33%) > Strength > Versatility > CriticalStrike"
+statPriorityStats["WARRIORFury"] = "[Haste 22%]  Mastery(40%) > Haste(25%) > Strength > Versatility(3-5%) > CriticalStrike(20%)"
 statPriorityStats["WARRIORProtection"] = "Strength > Haste(30%) > Mastery > Versatility > CriticalStrike"
 statPriorityStats["PALADINHoly"] = "Intellect > CriticalStrike > Versatility > Mastery > Haste"
 statPriorityStats["PALADINProtection"] = "Haste > Versatility > Mastery > CriticalStrike"

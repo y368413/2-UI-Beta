@@ -100,12 +100,12 @@ function onEvent(self, evt)
     --print("---onEvent---")
     if GetWatchedFactionInfo() then--追踪了声望
         SetVisible(Tu_Rep, true)
-        TuXP_Box.repText:Show()
+        --TuXP_Box.repText:Show()
         local name, rank, min, max, value, color = GetRealFactionInfo()
         --print("v/min/max = "..value.."/"..min.."/"..max)
         SetValue(Tu_Rep, value-min, max-min)
         Tu_Rep:SetVertexColor(color.r, color.g, color.b)
-        TuXP_Box.repText:SetText(cfg.showText and string.format('%s: %s/%s (%d%%)', name, value-min, max-min, (value-min)/(max-min)*100) or "")
+        --TuXP_Box.repText:SetText(cfg.showText and string.format('%s: %s/%s (%d%%)', name, value-min, max-min, (value-min)/(max-min)*100) or "")
         --Tu_Rep:SetPoint("BOTTOMLEFT", TuXP_Box, 1,1)    --显示声望条
         if isMaxLevel then
             TuXP_Box:Show()
@@ -120,8 +120,8 @@ function onEvent(self, evt)
                 else
                    TuXP_Box.ArtifactText:SetText("")
                 end
-             TuXP_Box.ArtifactText:SetPoint("topright", Minimap,"topleft",-21, -1)
-             TuXP_Box.repText:SetPoint("topright", TuXP_Box.ArtifactText,"topleft",-8, -1)
+             TuXP_Box.ArtifactText:SetPoint("topright", Minimap,"topleft",-12, -1)
+             --TuXP_Box.repText:SetPoint("topright", TuXP_Box.ArtifactText,"topleft",-8, -1)
         else
             local XP,maxXP,restXP,perXP,perRest = GetXP()
             SetVisible(Tu_XP, true)
@@ -138,14 +138,14 @@ function onEvent(self, evt)
                 end
             TuXP_Box.ArtifactText:SetPoint("topright", Minimap,"topleft",-21, -1)
             TuXP_Box.expText:SetPoint("topright", TuXP_Box.ArtifactText,"topleft",-8, -1)      --"RIGHT",TuXP_Box,"LEFT",-6,0
-            TuXP_Box.repText:SetPoint("topright", TuXP_Box.expText,"topleft",-8, -1)
+            --TuXP_Box.repText:SetPoint("topright", TuXP_Box.expText,"topleft",-8, -1)
             Tu_XP:SetHeight((barHeight-3)/2)
             Tu_RestXP:SetHeight((barHeight-3)/2)
             Tu_Rep:SetHeight((barHeight-3)/2)
         end
     else    
         SetVisible(Tu_Rep, false)
-        TuXP_Box.repText:SetText("")
+        --TuXP_Box.repText:SetText("")
             if HasArtifactEquipped() then
                 local _, _, _, _, totalArtifactXP, pointsSpent, _, _, _, _,_, _, Artifacttier = C_ArtifactUI.GetEquippedArtifactInfo()
 		            local _, Artifactxp, ArtifactxpForNextPoint = MainMenuBar_GetNumArtifactTraitsPurchasableFromXP(pointsSpent, totalArtifactXP, Artifacttier)
@@ -155,7 +155,7 @@ function onEvent(self, evt)
             else
                    TuXP_Box.ArtifactText:SetText("")
             end
-            TuXP_Box.ArtifactText:SetPoint("topright", Minimap,"topleft",-21, -1)
+            TuXP_Box.ArtifactText:SetPoint("topright", Minimap,"topleft",-12, -1)
         if isMaxLevel then
             --TuXP_Box:Hide()
             TuXP_Box.expText:SetText("")
@@ -207,10 +207,10 @@ TuXP_Box.expText=TuXP_Box:CreateFontString("TuXP_expText", "OVERLAY")
 TuXP_Box.expText:SetFont(STANDARD_TEXT_FONT, 10, "OUTLINE")
 TuXP_Box.expText:SetShadowColor(0, 0, 0)
 TuXP_Box.expText:SetShadowOffset(1, -1)
-TuXP_Box.repText=TuXP_Box:CreateFontString("TuXP_repText", "OVERLAY")
-TuXP_Box.repText:SetFont(STANDARD_TEXT_FONT, 10, "OUTLINE")
-TuXP_Box.repText:SetShadowColor(0, 0, 0)
-TuXP_Box.repText:SetShadowOffset(1, -1)
+--TuXP_Box.repText=TuXP_Box:CreateFontString("TuXP_repText", "OVERLAY")
+--TuXP_Box.repText:SetFont(STANDARD_TEXT_FONT, 10, "OUTLINE")
+--TuXP_Box.repText:SetShadowColor(0, 0, 0)
+--TuXP_Box.repText:SetShadowOffset(1, -1)
 TuXP_Box.ArtifactText=TuXP_Box:CreateFontString("TuXP_ArtifactText", "OVERLAY")
 TuXP_Box.ArtifactText:SetFont(STANDARD_TEXT_FONT, 11, "OUTLINE")
 TuXP_Box.ArtifactText:SetShadowColor(0, 0, 0)
@@ -238,14 +238,14 @@ TuXP_Box:SetScript("OnEnter", function()
             GameTooltip:AddLine(string.format('|cffb3e1ff双倍经验: %s (%d%%)', restXP, perRest))
         end
     end
-    if GetRealFactionInfo() then
-        local name, rank, min, max, value,color = GetRealFactionInfo()
+    --if GetRealFactionInfo() then
+        --local name, rank, min, max, value,color = GetRealFactionInfo()
         --GameTooltip:AddLine(" ")
         --GameTooltip:AddLine(string.format('当前声望: %s', name))
         --GameTooltip:AddLine(string.format('声望等级: |cff%s%s|r',formatColor(color), rank))
-        GameTooltip:AddLine(string.format('%s - |cff%s%s -|r %s/%s (%d%%)', name, formatColor(color), rank, value-min, max-min, (value-min)/(max-min)*100))
+        --GameTooltip:AddLine(string.format('%s - |cff%s%s -|r %s/%s (%d%%)', name, formatColor(color), rank, value-min, max-min, (value-min)/(max-min)*100))
         --GameTooltip:AddLine(string.format('剩余: %s', max-value))
-    end
+    --end
      if HasArtifactEquipped() then
         local _, _, _, _, totalArtifactXP, pointsSpent, _, _, _, _,_, _, Artifacttier = C_ArtifactUI.GetEquippedArtifactInfo()
 		            local _, Artifactxp, ArtifactxpForNextPoint = MainMenuBar_GetNumArtifactTraitsPurchasableFromXP(pointsSpent, totalArtifactXP, Artifacttier)

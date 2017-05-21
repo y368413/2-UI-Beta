@@ -1,11 +1,5 @@
 --[[TidyMinimap 0.8 - Tidy up the buttons around the minimap!--]]
 
-local g = getfenv(0)
-
-local strfind = strfind
-local strlower = strlower
-local strsplit = strsplit
-
 local anchors = {
 	topleft	 = 'TOPLEFT#TOPLEFT#9#0',
 	topright = 'TOPRIGHT#TOPRIGHT#-9#0',
@@ -61,8 +55,8 @@ end
 
 function TidyMinimap:findSpecialButtons()
 	for button, get in pairs(self.settings.special) do
-		if g[button] and get == true then
-			self:addButton(g[button])
+		if getfenv(0)[button] and get == true then
+			self:addButton(getfenv(0)[button])
 		end
 	end
 end
@@ -155,7 +149,7 @@ end
 
 TidyMinimap:enable({
 	layout = {
-		pos = 'TOPRIGHT#MinimapCluster#BOTTOMRIGHT#32#12',    --pos = 'TOPRIGHT#GameMenuFrame#BOTTOMRIGHT#30#12',
+		pos = 'TOPRIGHT#MinimapCluster#BOTTOMRIGHT#32#6',    --pos = 'TOPRIGHT#GameMenuFrame#BOTTOMRIGHT#30#12',
 		--pos = 'TOPRIGHT#MinimapCluster#TOPLEFT#26#26',
 		anchor = 'topright',
 		grow = 'left',  

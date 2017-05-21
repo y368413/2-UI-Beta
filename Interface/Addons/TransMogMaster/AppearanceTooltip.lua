@@ -43,7 +43,6 @@ function tooltip:ADDON_LOADED(addon)
         currentClass = false, -- only show for items the current class can transmog
         anchor = "vertical", -- vertical / horizontal
         byComparison = true, -- whether to show by the comparison, or fall back to vertical if needed
-        tokens = true, -- try to preview tokens?
     })
     db = _G["AppearanceTooltipDB"]
     nss.db = db
@@ -136,15 +135,14 @@ end)
 local positioner = CreateFrame("Frame")
 positioner:Hide()
 positioner:SetScript("OnShow", function(self)
-    -- always run immediately
-    self.elapsed = TOOLTIP_UPDATE_TIME
+    self.updateTooltip = 0
 end)
 positioner:SetScript("OnUpdate", function(self, elapsed)
-    self.elapsed = self.elapsed + elapsed
-    if self.elapsed < TOOLTIP_UPDATE_TIME then
+    self.updateTooltip = self.updateTooltip - elapsed
+    if self.updateTooltip > 0 then
         return
     end
-    self.elapsed = 0
+    self.updateTooltip = TOOLTIP_UPDATE_TIME
 
     local owner, our_point, owner_point = nss:ComputeTooltipAnchors(tooltip.owner, tooltip, db.anchor)
     if our_point and owner_point then
@@ -182,63 +180,33 @@ do
         if not (x and y) then
             return
         end
-        x = x * owner:GetEffectiveScale()
-        -- the y comparison doesn't need this:
-        -- y = y * owner:GetEffectiveScale()
-
-        local biasLeft, biasDown
-        -- we want to follow the direction the tooltip is going, relative to the cursor
-        biasLeft = x < GetCursorPosition()
-        biasDown = y > GetScreenHeight() / 2
-
-        local outermostComparisonShown
-        if owner.shoppingTooltips then
-            local comparisonTooltip1, comparisonTooltip2 = unpack( owner.shoppingTooltips )
-            if comparisonTooltip1:IsShown() or comparisonTooltip2:IsShown() then
-                if comparisonTooltip1:IsShown() and comparisonTooltip2:IsShown() then
-                    if comparisonTooltip1:GetCenter() > comparisonTooltip2:GetCenter() then
-                        -- 1 is right of 2
-                        outermostComparisonShown = biasLeft and comparisonTooltip2 or comparisonTooltip1
-                    else
-                        -- 1 is left of 2
-                        outermostComparisonShown = biasLeft and comparisonTooltip1 or comparisonTooltip2
-                    end
-                else
-                    outermostComparisonShown = comparisonTooltip1:IsShown() and comparisonTooltip1 or comparisonTooltip2
-                end
-                if
-                    -- outermost is right of owner while we're biasing left
-                    (biasLeft and outermostComparisonShown:GetCenter() > owner:GetCenter())
-                    or
-                    -- outermost is left of owner while we're biasing right
-                    ((not biasLeft) and outermostComparisonShown:GetCenter() < owner:GetCenter())
-                then
-                    -- the comparison won't be in the way, so ignore it
-                    outermostComparisonShown = nil
-                end
-            end
-        end
-
+        -- Screen into quadrants: UL, UR, BL, BR
+        -- What side of the screen are we on
+        local ownerIsUp = y > GetScreenHeight() / 2
+        local ownerIsLeft = x < GetScreenWidth() / 2
+        local comparisonShown = ShoppingTooltip1:IsVisible()
+        local comparisonOnRight = comparisonShown and ((ShoppingTooltip1:GetCenter()) > x)
+        --
         local primary, secondary
         if anchor == "vertical" then
-            -- attaching to the top/bottom of the tooltip
-            -- only care about comparisons to avoid overlapping them
-            primary = biasDown and "bottom" or "top"
-            if outermostComparisonShown then
-                secondary = biasLeft and "right" or "left"
+            primary = ownerIsUp and "bottom" or "top"
+            if comparisonShown then
+                secondary = comparisonOnRight and "left" or "right"
             else
-                secondary = biasLeft and "left" or "right"
+                secondary = ownerIsLeft and "right" or "left"
             end
         else -- horizontal
-            primary = biasLeft and "left" or "right"
-            secondary = biasDown and "bottom" or "top"
-            if outermostComparisonShown then
+            if comparisonShown then
                 if db.byComparison then
-                    owner = outermostComparisonShown
+                    primary = ownerIsLeft and "right" or "left"
+                    owner = (not ownerIsLeft) and ShoppingTooltip2:IsVisible() and ShoppingTooltip2 or ShoppingTooltip1
                 else
-                    primary = biasLeft and "right" or "left"
+                    primary = comparisonOnRight and "left" or "right"
                 end
+            else
+                primary = ownerIsLeft and "right" or "left"
             end
+            secondary = ownerIsUp and "bottom" or "top"
         end
         if
             -- would we be pushing against the edge of the screen?
@@ -279,14 +247,14 @@ function nss:ShowItem(link)
     if not link then return end
     local id = tonumber(link:match("item:(%d+)"))
     if not id or id == 0 then return end
-    local token = db.tokens and LAT:ItemIsToken(id)
-    local maybelink, _
+    local token = LAT:ItemIsToken(id)
+    local maybelink
 
     if token then
         -- It's a set token! Replace the id.
         local found
         for _, itemid in LAT:IterateItemsForTokenAndClass(id, class) do
-            _, maybelink = GetItemInfo(itemid)
+            _, maybelink = GetItemInfo(id)
             if maybelink then
                 id = itemid
                 link = maybelink
@@ -445,10 +413,10 @@ nss.slot_removals = {
     INVTYPE_BODY = {nss.SLOT_TABARD, nss.SLOT_CHEST, nss.SLOT_SHOULDER, nss.SLOT_OFFHAND, nss.SLOT_WAIST},
     INVTYPE_CHEST = {nss.SLOT_TABARD, nss.SLOT_OFFHAND, nss.SLOT_WAIST, nss.SLOT_SHIRT},
     INVTYPE_ROBE = {nss.SLOT_TABARD, nss.SLOT_WAIST, nss.SLOT_SHOULDER, nss.SLOT_OFFHAND},
-    INVTYPE_LEGS = {nss.SLOT_TABARD, nss.SLOT_WAIST, nss.SLOT_FEET, nss.SLOT_ROBE, nss.SLOT_MAINHAND, nss.SLOT_OFFHAND},
-    INVTYPE_WAIST = {nss.SLOT_MAINHAND, nss.SLOT_OFFHAND},
+    INVTYPE_LEGS = {nss.SLOT_TABARD, nss.SLOT_WAIST, nss.SLOT_FEET, nss.SLOT_ROBE, nss.SLOT_OFFHAND},
+    INVTYPE_WAIST = {nss.SLOT_OFFHAND},
     INVTYPE_FEET = {nss.SLOT_ROBE},
-    INVTYPE_WRIST = {nss.SLOT_HANDS, nss.SLOT_CHEST, nss.SLOT_ROBE, nss.SLOT_SHIRT, nss.SLOT_OFFHAND},
+    INVTYPE_WRIST = {nss.SLOT_HANDS, nss.SLOT_CHEST, nss.SLOT_ROBE, nss.SLOT_SHIRT},
     INVTYPE_HAND = {nss.SLOT_OFFHAND},
     INVTYPE_TABARD = {nss.SLOT_WAIST, nss.SLOT_OFFHAND},
 }
@@ -799,7 +767,7 @@ local races = {
     [7] = "Gnome",
     [24] = "Pandaren",
     [2] = "Orc",
-    [5] = "Scourge",
+    [5] = "Undead",
     [10] = "BloodElf",
     [8] = "Troll",
     [6] = "Tauren",
@@ -1204,32 +1172,32 @@ slots_to_cameraids = {
     ["Troll-Male-Tabard"] = 525,
     ["Troll-Male-Waist"] = 528,
     ["Troll-Male-Wrist"] = 526,
-    ["Scourge-Female-Back"] = 555,
-    ["Scourge-Female-Feet"] = 563,
-    ["Scourge-Female-Hands"] = 560,
-    ["Scourge-Female-Head"] = 553,
-    ["Scourge-Female-Legs"] = 562,
-    ["Scourge-Female-Robe"] = 556,
-    ["Scourge-Female-Chest"] = 557,
-    ["Scourge-Female-Shirt"] = 557,
-    ["Scourge-Female-Shoulder"] = 554,
-    ["Scourge-Female-Shoulder-Alt"] = 747,
-    ["Scourge-Female-Tabard"] = 558,
-    ["Scourge-Female-Waist"] = 561,
-    ["Scourge-Female-Wrist"] = 559,
-    ["Scourge-Male-Back"] = 544,
-    ["Scourge-Male-Chest"] = 690,
-    ["Scourge-Male-Feet"] = 552,
-    ["Scourge-Male-Hands"] = 549,
-    ["Scourge-Male-Head"] = 542,
-    ["Scourge-Male-Legs"] = 551,
-    ["Scourge-Male-Robe"] = 545,
-    ["Scourge-Male-Shirt"] = 546,
-    ["Scourge-Male-Shoulder"] = 543,
-    ["Scourge-Male-Shoulder-Alt"] = 746,
-    ["Scourge-Male-Tabard"] = 547,
-    ["Scourge-Male-Waist"] = 550,
-    ["Scourge-Male-Wrist"] = 548,
+    ["Undead-Female-Back"] = 555,
+    ["Undead-Female-Feet"] = 563,
+    ["Undead-Female-Hands"] = 560,
+    ["Undead-Female-Head"] = 553,
+    ["Undead-Female-Legs"] = 562,
+    ["Undead-Female-Robe"] = 556,
+    ["Undead-Female-Chest"] = 557,
+    ["Undead-Female-Shirt"] = 557,
+    ["Undead-Female-Shoulder"] = 554,
+    ["Undead-Female-Shoulder-Alt"] = 747,
+    ["Undead-Female-Tabard"] = 558,
+    ["Undead-Female-Waist"] = 561,
+    ["Undead-Female-Wrist"] = 559,
+    ["Undead-Male-Back"] = 544,
+    ["Undead-Male-Chest"] = 690,
+    ["Undead-Male-Feet"] = 552,
+    ["Undead-Male-Hands"] = 549,
+    ["Undead-Male-Head"] = 542,
+    ["Undead-Male-Legs"] = 551,
+    ["Undead-Male-Robe"] = 545,
+    ["Undead-Male-Shirt"] = 546,
+    ["Undead-Male-Shoulder"] = 543,
+    ["Undead-Male-Shoulder-Alt"] = 746,
+    ["Undead-Male-Tabard"] = 547,
+    ["Undead-Male-Waist"] = 550,
+    ["Undead-Male-Wrist"] = 548,
     ["Worgen-Female-Back"] = 322,
     ["Worgen-Female-Feet"] = 330,
     ["Worgen-Female-Hands"] = 327,
@@ -1397,7 +1365,6 @@ local spin = newCheckbox(panel, 'spin', '旋转模型', "Constantly spin the mod
 local notifyKnown = newCheckbox(panel, 'notifyKnown', '提示是否已收藏', "Display a label showing whether you know the item appearance already")
 local currentClass = newCheckbox(panel, 'currentClass', '仅限当前角色', "Only show previews on items that the current character can collect")
 local byComparison = newCheckbox(panel, 'byComparison', '在对比框显示', "If the comparison tooltip is shown where the preview would want to be, show next to it (this makes it *much* less likely you'll have the preview overlap your cursor)")
-local tokens = newCheckbox(panel, 'tokens', 'Previews for tokens', "Show previews for the items which various tokens can be turned in for when mousing over the token")
 
 local zoomWorn = newCheckbox(panel, 'zoomWorn', '仅显示该装备部位', "Zoom in on the part of your model which wears the item")
 local zoomHeld = newCheckbox(panel, 'zoomHeld', '不保持手持状态', "Zoom in on the held item being previewed, without seeing your character")
@@ -1416,7 +1383,6 @@ local anchor = newDropdown(panel, 'anchor', "Side of the tooltip to attach to, d
     horizontal = "左 / 右",
 })
 UIDropDownMenu_SetWidth(anchor, 100)
-
 local modelBox = newBox(panel, "自定义模型种族", 48)
 local customModel = newCheckbox(modelBox, 'customModel', '使用不同的模型', "Instead of your current character, use a specific race/gender")
 local customRaceDropdown = newDropdown(modelBox, 'modelRace', "选择你要的种族模型", {
@@ -1449,8 +1415,7 @@ zoomMasked:SetPoint("TOPLEFT", zoomHeld, "BOTTOMLEFT", 0, -4)
 
 dressed:SetPoint("TOPLEFT", zoomMasked, "BOTTOMLEFT", 0, -4)
 uncover:SetPoint("TOPLEFT", dressed, "BOTTOMLEFT", 0, -4)
-tokens:SetPoint("TOPLEFT", uncover, "BOTTOMLEFT", 0, -4)
-notifyKnown:SetPoint("TOPLEFT", tokens, "BOTTOMLEFT", 0, -4)
+notifyKnown:SetPoint("TOPLEFT", uncover, "BOTTOMLEFT", 0, -4)
 currentClass:SetPoint("TOPLEFT", notifyKnown, "BOTTOMLEFT", 0, -4)
 mousescroll:SetPoint("TOPLEFT", currentClass, "BOTTOMLEFT", 0, -4)
 spin:SetPoint("TOPLEFT", mousescroll, "BOTTOMLEFT", 0, -4)

@@ -44,8 +44,8 @@ local nPower_Config = {
 
     showSoulshards = true,
     showHolypower = true,
-    showComboPoints = true,
-    showChi = true,
+    showComboPoints = false,
+    showChi = false,
     showRunes = false,
     showArcaneCharges = true,
 

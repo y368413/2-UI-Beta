@@ -3,6 +3,7 @@ local module = MaoRUI:GetModule("Misc")
 ---------------------------------------------------------------------PlayerFrame
 --[[--------------------------------------头像渐隐---------------------------------------
 hooksecurefunc("PlayerFrame_UpdateStatus", function()
+    if not MaoRUISettingDB["Settings"]["UFFade"] then return end
     local _, instanceType = IsInInstance()
     if (PlayerFrame.inCombat or PlayerFrame.onHateList or instanceType == "arena") then
         PlayerFrame:SetAlpha(1)
@@ -10,8 +11,9 @@ hooksecurefunc("PlayerFrame_UpdateStatus", function()
         PlayerFrame:SetAlpha(0.43)
     end
 end)]]
---[[----------------------------------------Class icon---------------------------------------
+------------------------------------------Class icon---------------------------------------
 hooksecurefunc("UnitFramePortrait_Update",function(self) 
+   if not MaoRUISettingDB["Settings"]["UFClassIcon"] then return end
         if self.portrait then 
                 if UnitIsPlayer(self.unit) then                 
                         local t = CLASS_ICON_TCOORDS[select(2, UnitClass(self.unit))] 
@@ -23,7 +25,7 @@ hooksecurefunc("UnitFramePortrait_Update",function(self)
                         self.portrait:SetTexCoord(0,1,0,1) 
                 end 
         end 
-end)]] 
+end)
 -----------------------------------------	    BloodW--万位显示数值   -----------------------------------------
 local function HealthBarText(statusFrame, textString, value, valueMin, valueMax)    --if string.find(textString:GetName(), "Health") or string.find then
       if valueMax ~= 0 then 
@@ -379,8 +381,8 @@ do
 		FocusFrameHealthBar:ClearAllPoints()
 		FocusFrameHealthBar:SetHeight(28)
 		FocusFrameHealthBar:SetPoint("CENTER", FocusFrameManaBar, "CENTER", 0, 22) 
-		--FocusFrameTextureFrameHealthBarText:ClearAllPoints()
-		--FocusFrameTextureFrameHealthBarText:SetPoint("CENTER", FocusFrameHealthBar, "CENTER", 0, -3)
+		FocusFrameTextureFrameHealthBarText:ClearAllPoints()
+		FocusFrameTextureFrameHealthBarText:SetPoint("CENTER", FocusFrameHealthBar, "CENTER", 0, -3)
 		--目标
 		TargetFrame.Background:SetPoint("TOPLEFT",6,-22);
 		TargetFrame.deadText:ClearAllPoints()
@@ -398,20 +400,33 @@ do
 		TargetFrameTextureFrameHealthBarTextRight:SetPoint("Right", TargetFrameHealthBar, "Right", -4, -2)
     TargetFrameNameBackground:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\Role\\bubbleTex")
 		TargetFrameNameBackground:ClearAllPoints()
-		TargetFrameNameBackground:SetHeight(12)
-		TargetFrameNameBackground:SetWidth(12)
-		TargetFrameNameBackground:SetPoint("BOTTOMLEFT", TargetFrameHealthBar, "TOPLEFT", 2, 2)
+		TargetFrameNameBackground:SetHeight(16)
+		TargetFrameNameBackground:SetWidth(16)
+		TargetFrameNameBackground:SetPoint("BOTTOMLEFT", TargetFrameHealthBar, "TOPLEFT", -8, -2)
 end
 function UpdateTargetFrameTexture()
 	--TargetFrame.threatIndicator:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Flash");
 	if ( UnitClassification("target") == "minus" ) then
 		TargetFrameTextureFrameTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame-Minus");
+		FocusFrameTextureFrameTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame-Minus");
 	elseif ( UnitClassification("target") == "worldboss" or UnitClassification("target") == "elite" ) then
 		TargetFrameTextureFrameTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame-Elite");
+		FocusFrameTextureFrameTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame-Elite");
 	elseif ( UnitClassification("target") == "rareelite" ) then
 		TargetFrameTextureFrameTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame-Rare-Elite");
+		FocusFrameTextureFrameTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame-Rare-Elite");
 	elseif ( UnitClassification("target") == "rare" ) then
 		TargetFrameTextureFrameTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame-Rare");
+		FocusFrameTextureFrameTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame-Rare");
+	elseif ( UnitClassification("target") == "org" ) then
+		TargetFrameTextureFrameTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame-org");
+		FocusFrameTextureFrameTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame-org");
+	elseif ( UnitClassification("target") == "PlusMob" ) then
+		TargetFrameTextureFrameTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame-PlusMob");
+		FocusFrameTextureFrameTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame-PlusMob");
+	elseif ( UnitClassification("target") == "RareMob" ) then
+		TargetFrameTextureFrameTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame-RareMob");
+		FocusFrameTextureFrameTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame-RareMob");
 	else
 		TargetFrameTextureFrameTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame");
 	end
@@ -643,144 +658,6 @@ hooksecurefunc("PartyMemberFrame_UpdateMember", function(self)
 	end
 end)
 
------------------------------------------------------------------castbar
-------------------施法条位置&增强----感谢泡泡帮忙修复-------------------------------------
---[[ 玩家施法条 ]]
-CastingBarFrame:ClearAllPoints()
-CastingBarFrame:SetPoint("BOTTOMRIGHT", PlayerFrame, "TOPRIGHT", -3, -5) --0, 100
-CastingBarFrame.SetPoint = function() end
-CastingBarFrame:SetSize(333, 12)
-CastingBarFrame:SetToplevel(false)
-CastingBarFrame:SetFrameStrata("LOW")
-CastingBarFrame:SetParent(PlayerFrame)
-CastingBarFrame.Border:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\backdrop")
-CastingBarFrame.Flash:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\backdrop")
-CastingBarFrame.Text = CastingBarFrame:CreateFontString(nil)
-CastingBarFrame.Text:SetFont(STANDARD_TEXT_FONT, 16, "OUTLINE")
-CastingBarFrame.Text:SetPoint("TOPLEFT", CastingBarFrame, "BOTTOMLEFT", 0, -2)
-CastingBarFrame.Icon:Show()
-CastingBarFrame.Icon:SetSize(PlayerPortrait:GetSize())
-    -- Hacky way to set spellicon
-    local function setSpell(frame, event)
-        if event == "UNIT_SPELLCAST_START" or event == "UNIT_SPELLCAST_CHANNEL_START" then
-            SetPortraitToTexture(CastingBarFrame.Icon, CastingBarFrame.Icon:GetTexture())
-        end
-    end
-    CastingBarFrame:HookScript("OnEvent", setSpell)
-CastingBarFrame.Icon:ClearAllPoints()
-CastingBarFrame.Icon:SetPoint("CENTER", PlayerPortrait, "CENTER", 0, 0)  --_G[cbf.."Text"]
---[[ 目标施法条 ]]
-TargetFrameSpellBar:ClearAllPoints()
-TargetFrameSpellBar:SetPoint("BOTTOMLEFT", TargetFrame, "TOPLEFT", 3, -5) --0, 100
-TargetFrameSpellBar.SetPoint = function() end
-TargetFrameSpellBar:SetSize(310, 12)
-TargetFrameSpellBar:SetToplevel(false)
-TargetFrameSpellBar:SetFrameStrata("LOW")
-TargetFrameSpellBar:SetParent(TargetFrame)
-TargetFrameSpellBar.Border:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\backdrop")
-TargetFrameSpellBar.Flash:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\backdrop")
-TargetFrameSpellBar.Text = TargetFrameSpellBar:CreateFontString(nil)
-TargetFrameSpellBar.Text:SetFont(STANDARD_TEXT_FONT, 16, "OUTLINE")
-TargetFrameSpellBar.Text:SetPoint("TOPRIGHT", TargetFrameSpellBar, "BOTTOMRIGHT", 0, -2)
-TargetFrameSpellBar.Icon:Show()
-TargetFrameSpellBar.Icon:SetSize(PlayerPortrait:GetSize())
-    local function setSpell(frame, event)
-        if event == "UNIT_SPELLCAST_START" or event == "UNIT_SPELLCAST_CHANNEL_START" then
-            SetPortraitToTexture(TargetFrameSpellBar.Icon, TargetFrameSpellBar.Icon:GetTexture())
-        end
-    end
-TargetFrameSpellBar:HookScript("OnEvent", setSpell)
-TargetFrameSpellBar.Icon:ClearAllPoints()
-TargetFrameSpellBar.Icon:SetPoint("CENTER", TargetFramePortrait, "CENTER", 0, 0)  --_G[cbf.."Text"]
-
---[[施法计时]]
-CastingBarFrame.Time = CastingBarFrame:CreateFontString(nil)
-CastingBarFrame.Time:SetFont("Interface\\Addons\\_ShiGuang\\Media\\Fonts\\Pixel.ttf", 18, "OUTLINE")
-CastingBarFrame.Time:SetPoint("RIGHT", CastingBarFrame, "RIGHT", -6, 0)
-CastingBarFrame.update = .1
-
-TargetFrameSpellBar.Time = TargetFrameSpellBar:CreateFontString(nil)
-TargetFrameSpellBar.Time:SetFont("Interface\\Addons\\_ShiGuang\\Media\\Fonts\\Pixel.ttf", 18, "OUTLINE")
-TargetFrameSpellBar.Time:SetPoint("LEFT", TargetFrameSpellBar, "LEFT", 6, 0)
-TargetFrameSpellBar.update = .1
-
-FocusFrameSpellBar.Time = FocusFrameSpellBar:CreateFontString(nil)
-FocusFrameSpellBar.Time:SetFont("Interface\\Addons\\_ShiGuang\\Media\\Fonts\\Pixel.ttf", 18, "OUTLINE")
-FocusFrameSpellBar.Time:SetPoint("RIGHT", FocusFrameSpellBar, "RIGHT", 24, 0)
-FocusFrameSpellBar.update = .1
-
-CastingBarFrame:HookScript("OnUpdate", function(self, elapsed)
-	if not self.Time then return end
-	if self.update and self.update < elapsed then
-		if self.casting then
-			self.Time:SetText(format("%.1f", max(self.maxValue, 0)).." / "..format("%.1f", max(self.maxValue - self.value, 0)))
-		elseif self.channeling then
-			self.Time:SetText(format("%.1f", max(self.value, 0)))
-		else
-			self.Time:SetText("")
-		end
-		self.update = .1
-	else
-		self.update = self.update - elapsed
-	end
-end)
-TargetFrameSpellBar:HookScript("OnUpdate", function(self, elapsed)
-	if not self.Time then return end
-	if self.update and self.update < elapsed then
-		if self.casting then
-			self.Time:SetText(format("%.1f", max(self.maxValue - self.value, 0)).." / "..format("%.1f", max(self.maxValue, 0)))
-		elseif self.channeling then
-			self.Time:SetText(format("%.1f", max(self.value, 0)))
-		else
-			self.Time:SetText("")
-		end
-		self.update = .1
-	else
-		self.update = self.update - elapsed
-	end
-end)
-FocusFrameSpellBar:HookScript("OnUpdate", function(self, elapsed)
-	if not self.Time then return end
-	if self.update and self.update < elapsed then
-		if self.casting then
-			self.Time:SetText(format("%.1f", max(self.maxValue, 0)).." / "..format("%.1f", max(self.maxValue - self.value, 0)))
-		elseif self.channeling then
-			self.Time:SetText(format("%.1f", max(self.value, 0)))
-		else
-			self.Time:SetText("")
-		end
-		self.update = .1
-	else
-		self.update = self.update - elapsed
-	end
-end)
---[[施法延时显示]]
-local  playertimer, targettimer, lagmeter
-lagmeter = CastingBarFrame:CreateTexture(nil, "BACKGROUND");
-lagmeter:SetHeight(CastingBarFrame:GetHeight());
-lagmeter:SetWidth(0);
-lagmeter:SetPoint("RIGHT", CastingBarFrame, "RIGHT", 0, 0);
-lagmeter:SetColorTexture(1, 0, 0, 1); -- red color
-hooksecurefunc(CastingBarFrame, "Show", function()
-	down, up, lag = GetNetStats();
-	local castingmin, castingmax = CastingBarFrame:GetMinMaxValues();
-	local lagvalue = ( lag / 1000 ) / ( castingmax - castingmin );
-	
-	if ( lagvalue < 0 ) then
-		lagvalue = 0; 
-	elseif ( lagvalue > 1 ) then 
-		lagvalue = 1; 
-	end;
-	
-	lagmeter:SetWidth(CastingBarFrame:GetWidth() * lagvalue);
-end);
---[[焦点施法条]]
-hooksecurefunc(FocusFrameSpellBar, "Show", function()
-    FocusFrameSpellBar:SetScale("1.1")
-end)
-FocusFrameSpellBar:SetStatusBarColor(0,0.45,0.9); FocusFrameSpellBar.SetStatusBarColor = function() end
-
-
 ---------------------------------------------------------------------------------------------------------------------------------------------
 MaoRUI:EventFrame("ADDON_LOADED"):SetScript('OnEvent', function(self, event, name)
   if(name ~= "_ShiGuang") then return end
@@ -794,16 +671,15 @@ Me:SetScript("OnEvent", function(self,event)
  if event == "PLAYER_LOGIN" then 
 	  if (MaoRUISettingDB.Small or false) then
 	      sendCmd("/bht on")
-	      sendCmd("/bht caston")
 	      PlayerFrame:SetAlpha(0)
 	      TargetFrame:SetAlpha(0)  	      
     end         
 	  if (MaoRUISettingDB.Large or false) then
 	      sendCmd("/bht off")
-	      sendCmd("/bht castoff")
 	      PlayerFrame:SetAlpha(1)
         TargetFrame:SetAlpha(1)
 	  end
+	  sendCmd("/bht hiton")
  end
 end)
 end)

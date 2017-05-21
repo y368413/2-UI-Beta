@@ -75,6 +75,12 @@ local function FriendGroups_GetTopButton(offset)
 end
 
 local function FriendGroups_UpdateFriendButton(button)
+	local function CampIcon(CampGroup)                   ---DIY by y368413
+		if ( CampGroup == "Alliance" ) then return "Interface\\TargetingFrame\\UI-PVP-ALLIANCE";
+		elseif ( CampGroup == "Horde" ) then return "Interface\\TargetingFrame\\UI-PVP-HORDE";
+		else return "";
+		end
+	end
 	local index = button.index;
 	button.buttonType = FriendButtons[index].buttonType;
 	button.id = FriendButtons[index].id;
@@ -151,6 +157,9 @@ local function FriendGroups_UpdateFriendButton(button)
 		if ( isOnline ) then
 			local _, _, _, realmName, realmID, faction, _, _, _, zoneName, _, gameText, _, _, _, _, _, isGameAFK, isGameBusy, guid = BNGetGameAccountInfo(bnetIDGameAccount);
 			button.background:SetColorTexture(FRIENDS_BNET_BACKGROUND_COLOR.r, FRIENDS_BNET_BACKGROUND_COLOR.g, FRIENDS_BNET_BACKGROUND_COLOR.b, FRIENDS_BNET_BACKGROUND_COLOR.a);
+			if faction == "Alliance" then button.background:SetColorTexture(0.2, 0.2, 0.7, 0.2);   --DIY by y368413
+				elseif faction == "Horde" then button.background:SetColorTexture(0.7, 0.2, 0.2, 0.2);
+				end
 			if ( isBnetAFK or isGameAFK ) then
 				button.status:SetTexture(FRIENDS_TEXTURE_AFK);
 			elseif ( isBnetDND or isGameBusy ) then
@@ -167,6 +176,13 @@ local function FriendGroups_UpdateFriendButton(button)
 			else
 				infoText = gameText;
 			end
+			if not button.facIcon then button.facIcon = button:CreateTexture("facIcon"); end   --DIY by y368413
+				button.facIcon:ClearAllPoints();
+				button.facIcon:SetPoint("RIGHT", button.gameIcon, "LEFT", 7, -5);
+				button.facIcon:SetWidth(button.gameIcon:GetWidth())
+				button.facIcon:SetHeight(button.gameIcon:GetHeight())
+				button.facIcon:SetTexture(CampIcon(faction));
+				button.facIcon:Show()
 			button.gameIcon:SetTexture(BNet_GetClientTexture(client));
 			nameColor = FRIENDS_BNET_NAME_COLOR;
 

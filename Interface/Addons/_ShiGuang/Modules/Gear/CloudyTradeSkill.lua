@@ -1,4 +1,4 @@
-LoadAddOn("Blizzard_TradeSkillUI")
+﻿LoadAddOn("Blizzard_TradeSkillUI")
 --[[ Cloudy TradeSkill Copyright (c) 2016, Cloudyfa All rights reserved. ]]
 local numTabs = 0
 --- Create Frame ---
@@ -438,14 +438,17 @@ local mapSpellToItem = {
     [158914] = 110638, -- Enchant Ring - Gift of Critical Strike
     [158915] = 110639, -- Enchant Ring - Gift of Haste
     [158916] = 110640, -- Enchant Ring - Gift of Mastery
+    [158917] = 110641, -- Enchant Ring - Gift of Multistrike (now Mastery)
     [158918] = 110642, -- Enchant Ring - Gift of Versatility
     [158899] = 110645, -- Enchant Neck - Gift of Critical Strike
     [158900] = 110646, -- Enchant Neck - Gift of Haste
     [158901] = 110647, -- Enchant Neck - Gift of Mastery
+    [158902] = 110648, -- Enchant Neck - Gift of Multistrike (now Haste)
     [158903] = 110649, -- Enchant Neck - Gift of Versatility
     [158884] = 110652, -- Enchant Cloak - Gift of Critical Strike
     [158885] = 110653, -- Enchant Cloak - Gift of Haste
     [158886] = 110654, -- Enchant Cloak - Gift of Mastery
+    [158887] = 110655, -- Enchant Cloak - Gift of Multistrike (now Critical Strike)
     [158889] = 110656, -- Enchant Cloak - Gift of Versatility
     [159235] = 110682, -- Enchant Weapon - Mark of the Thunderlord
     [159236] = 112093, -- Enchant Weapon - Mark of the Shattered Hand
@@ -457,14 +460,17 @@ local mapSpellToItem = {
     [158907] = 110617, -- Enchant Ring - Breath of Critical Strike
     [158908] = 110618, -- Enchant Ring - Breath of Haste
     [158909] = 110619, -- Enchant Ring - Breath of Mastery
+    [158910] = 110620, -- Enchant Ring - Breath of Multistrike (now Mastery)
     [158911] = 110621, -- Enchant Ring - Breath of Versatility
     [158892] = 110624, -- Enchant Neck - Breath of Critical Strike
     [158893] = 110625, -- Enchant Neck - Breath of Haste
     [158894] = 110626, -- Enchant Neck - Breath of Mastery
+    [158895] = 110627, -- Enchant Neck - Breath of Multistrike (now Haste)
     [158896] = 110628, -- Enchant Neck - Breath of Versatility
     [158877] = 110631, -- Enchant Cloak - Breath of Critical Strike
     [158878] = 110632, -- Enchant Cloak - Breath of Haste
     [158879] = 110633, -- Enchant Cloak - Breath of Mastery
+    [158880] = 110634, -- Enchant Cloak - Breath of Multistrike (now Critical Strike)
     [158881] = 110635, -- Enchant Cloak - Breath of Versatility
     [190866] = 128537, -- Enchant Ring - Word of Critical Strike
     [190992] = 128537, -- Enchant Ring - Word of Critical Strike
@@ -581,6 +587,9 @@ local function OCES_RefreshButtons(self)
             local tradeSkillName = select(2, C_TradeSkillUI.GetTradeSkillLine());
             if tradeSkillName == GetSpellInfo(7411) then
                 OCES.itemID = mapSpellToItem[recipeInfo.recipeID];
+                if (not f.itemID) then
+                    print(string.format("！！！！！:  %d .", recipeInfo.recipeID));
+                end;
                 OCES:Show();
                 local numCreateable = recipeInfo.numAvailable;
                 local numScrollsAvailable = GetItemCount(38682);

@@ -1,4 +1,4 @@
-﻿local M, R, U, I = unpack(select(2, ...))
+local M, R, U, I = unpack(select(2, ...))
 ----------------------------- -- 特别感谢 zork 的 rChat
 ------- CONFIG
 local hide_chatframe_backgrounds = true   -- 隐藏聊天框背景 (true/false) (隐藏/显示)
@@ -15,8 +15,8 @@ ChatTypeInfo["INSTANCE_CHAT"].sticky 	= 1;-- 副本
 ChatTypeInfo["RAID"].sticky 	= 1;        -- 团队
 ChatTypeInfo["GUILD"].sticky 	= 1;        -- 公会
 ChatTypeInfo["OFFICER"].sticky 	= 1;      -- 官员
-ChatTypeInfo["WHISPER"].sticky 	= 0;      -- 密语
-ChatTypeInfo["BN_WHISPER"].sticky   = 0;  -- 战网好友密语
+ChatTypeInfo["WHISPER"].sticky 	= 1;      -- 密语
+ChatTypeInfo["BN_WHISPER"].sticky   = 1;  -- 战网好友密语
 ChatTypeInfo["CHANNEL"].sticky 	= 1;      -- 频道
 
 -- 聊天标签
@@ -1272,7 +1272,7 @@ local function GetItemLevelAndTexture(ItemLink)
         slotText = RELICSLOT
     end
     if (level and slotText) then
-        level = level .. "(" .. slotText .. ")"
+        level = slotText .. " <" .. level .. "> " 
     end
     return level, texture
 end
@@ -1282,7 +1282,7 @@ local function SetChatLinkLevel(Hyperlink)
     local link = string.match(Hyperlink, "|H(.-)|h")
     local level, texture = GetItemLevelAndTexture(link)
     if (level) then
-        Hyperlink = Hyperlink:gsub("|h%[(.-)%]|h", "|h["..level..":%1]|h")
+        Hyperlink = Hyperlink:gsub("|h%[(.-)%]|h", "|h["..level.."%1]|h")
     end
     return Hyperlink
 end

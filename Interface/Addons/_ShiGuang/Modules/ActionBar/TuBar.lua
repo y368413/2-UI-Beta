@@ -1,11 +1,9 @@
 ﻿local M, R, U, I = unpack(select(2, ...))
---------------------------------------Hide the left/right end cap------------------------
-MainMenuBarLeftEndCap:Hide()  MainMenuBarRightEndCap:Hide()
 ---------------------------------------------------------------------------------------------   
 if not IsAddOnLoaded('rActionBarStyler') or not IsAddOnLoaded('Bartender4') or not IsAddOnLoaded('Dominos') then --return; end
 --加载设置
 local _G = _G
-ShiGuangPerDB = {}
+--ShiGuangPerDB = {}
 local TuBar = CreateFrame("Frame","tubarLoader")
 TuBar:RegisterEvent("ADDON_LOADED")
 local cfg = ShiGuangPerDB
@@ -89,13 +87,9 @@ function initVars()
     end
 end
 --根据缩写的按钮名称获得按钮
-function getBtn(btnName)
-    return gBtn[btnName]
-end
+function getBtn(btnName) return gBtn[btnName] end
 --从（A1B2C3D4E5P6S3）获取第N个按钮的缩写
-function getBtnName(nameString, N)
-    return nameString:sub(N*2-1,N*2)
-end
+function getBtnName(nameString, N) return nameString:sub(N*2-1,N*2) end
 --定位btn到tar
 function setAnchor(btn, tar, anchor, tarAnchor, xOff, yOff)
     btn:ClearAllPoints()
@@ -557,50 +551,40 @@ for i=1,12 do
         btn:GetNormalTexture():SetAllPoints()
     end
 end
+--==================================================== hide the artwork from blz ============================================================--
+local Empty_Art = CreateFrame("frame", nil)
+Empty_Art:Hide()
 
+for i = 0,3 do _G["MainMenuBarTexture"..i]:SetParent(Empty_Art)	 	end				--Art of Exp Bar(include Keys&Bags)
+for i = 0,3 do _G["MainMenuMaxLevelBar"..i]:SetParent(Empty_Art)	end				--Art of Exp Bar(When Exp & Rep hide)
+for i = 1,2 do _G["PossessBackground"..i]:SetParent(Empty_Art)	 	end				--Art of Possess(When Bar Bottomleft)
+for i = 0,1 do _G["SlidingActionBarTexture"..i]:SetParent(Empty_Art)end				--Art of Pet 	(When Bar Bottomleft)
+for i = 1,19 do _G["MainMenuXPBarDiv"..i]:SetParent(Empty_Art)		end				--Art of Exp. Bar Grid
 
---[[------------------------------X   HotSpotMicroMenu by Sojik X ------------------------------]]--
-local Mainmenu = true
+for i = 0,3 do ReputationWatchBar.StatusBar["WatchBarTexture"..i]:SetParent(Empty_Art)  end 	--Grid of Rep.
+for i = 0,3 do ArtifactWatchBar.StatusBar["WatchBarTexture"..i]:SetParent(Empty_Art)  end		--Grid of Arti.
+for i = 0,3 do HonorWatchBar.StatusBar["WatchBarTexture"..i]:SetParent(Empty_Art)  end			--Grid of Hor.
+for i = 0,3 do ReputationWatchBar.StatusBar["XPBarTexture"..i]:SetParent(Empty_Art)  end		--Grid of Rep.  ( when self show only )
+for i = 0,3 do ArtifactWatchBar.StatusBar["XPBarTexture"..i]:SetParent(Empty_Art)  end			--Grid of Arti. ( when self show only )
+for i = 0,3 do HonorWatchBar.StatusBar["XPBarTexture"..i]:SetParent(Empty_Art) end				--Grid of Hor. 	( when self show only )
 
-if Mainmenu then
-local fmicro = CreateFrame("Frame","MicroMenuHolder",UIParent)
-
-local MicroButtons = {
-CharacterMicroButton, SpellbookMicroButton, TalentMicroButton,  -- Here's the names of the buttons.
-AchievementMicroButton, QuestLogMicroButton, GuildMicroButton,            -- You can use them for lines 19 - 22.
-LFDMicroButton, CollectionsMicroButton, EJMicroButton,  -- Don't change anything in this list though unless you
-StoreMicroButton, MainMenuMicroButton,              -- don't want the WatchFrameCollapseExpandButton moved.
-}
-
-local function MoveMicroButtons(skinName)
-	for _, menu in pairs(MicroButtons) do
-		menu:SetParent(fmicro)
-		menu:ClearAllPoints()
-		menu:SetScale(0.75)
-		menu:SetAlpha(0.8)
+for _, texture in next, {
+	MainMenuBarPageNumber,ActionBarUpButton,ActionBarDownButton, 							--Art of Bar Number
+	MainMenuXPBarTextureLeftCap,MainMenuXPBarTextureRightCap,MainMenuXPBarTextureMid,  		--the background of xp bar bottom
+	StanceBarLeft, StanceBarMiddle, StanceBarRight, } 										--Art of StanceBar when BL hide
+do	texture:SetParent(Empty_Art)  end
+------------------------------------- micro menu bar Form lucidity_plus by [original]villiv / [modify]smaltore@foxmail.com  DIY:y368413 ----------------------------------
+local ButtonContainer = CreateFrame("Frame", "MICRO_BUTTONS_BOX", MainMenuBarArtFrame)
+ButtonContainer:SetSize(65, 210)
+ButtonContainer:SetScale(0.85)
+ButtonContainer:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", 3, -5); 
+hooksecurefunc("UpdateMicroButtons",function()
+  UpdateMicroButtonsParent(ButtonContainer)
+  for m = 1, #MICRO_BUTTONS do
+  _G[MICRO_BUTTONS[m]]:ClearAllPoints()
+	_G[MICRO_BUTTONS[m]]:SetPoint("BOTTOMRIGHT", ButtonContainer, "BOTTOMRIGHT", 3, 31 * (m-1))  --CharacterMicroButton
 	end
-	
-	CharacterMicroButton:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", 3, -5)
-	EJMicroButton:SetPoint("BOTTOMRIGHT", CharacterMicroButton, "TOPRIGHT", 0, -25) 
-	CollectionsMicroButton:SetPoint("BOTTOMRIGHT", CharacterMicroButton, "TOPRIGHT", 0, 5)
-	TalentMicroButton:SetPoint("BOTTOMRIGHT", CharacterMicroButton, "TOPRIGHT", 0, 25+10) 
-	LFDMicroButton:SetPoint("BOTTOMRIGHT", CharacterMicroButton, "TOPRIGHT", 0, 50+15) 
-	AchievementMicroButton:SetPoint("BOTTOMRIGHT", CharacterMicroButton, "TOPRIGHT", 0, 75+20)
-	SpellbookMicroButton:SetPoint("BOTTOMRIGHT", CharacterMicroButton, "TOPRIGHT", 0, 100+25)
-	GuildMicroButton:SetPoint("BOTTOMRIGHT", CharacterMicroButton, "TOPRIGHT", 0, 125+30)
-	QuestLogMicroButton:SetPoint("BOTTOMRIGHT", CharacterMicroButton, "TOPRIGHT", 0, 175+35)
-	StoreMicroButton:SetPoint("BOTTOMRIGHT", CharacterMicroButton, "TOPRIGHT", 0, 200+40)
-	MainMenuMicroButton:SetPoint("BOTTOMRIGHT", CharacterMicroButton, "TOPRIGHT", 0, 225+45)
-	
-end
-
-fmicro:RegisterEvent("PLAYER_ENTERING_WORLD")
-fmicro:SetScript("OnEvent", function()
-	hooksecurefunc("UpdateMicroButtons", MoveMicroButtons)
-	MoveMicroButtons()
 end)
-end
-
 --------------------------------------CleanHotKey------------------------
 NumberFontNormalSmallGray:SetFont(STANDARD_TEXT_FONT, 18, 'OUTLINE')
 NumberFontNormalSmallGray:SetShadowColor(1, 1, 0, 1)

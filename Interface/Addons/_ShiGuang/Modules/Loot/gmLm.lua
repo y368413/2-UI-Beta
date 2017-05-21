@@ -94,37 +94,19 @@ local mclick_desc = Menu:CreateFontString()
 mclick_desc:SetPoint("BOTTOMLEFT", Menu, "BOTTOMLEFT", MENU_BUFFER, MENU_BUFFER)
 mclick_desc:SetFont(fontName, fontHeight)
 mclick_desc:SetTextColor(0, 1, 0, 1)
-mclick_desc:SetText("中键点击")
-
-local mclick_value = Menu:CreateFontString()
-mclick_value:SetPoint("BOTTOMRIGHT", Menu, "BOTTOMRIGHT", -MENU_BUFFER, MENU_BUFFER)
-mclick_value:SetFont(fontName, fontHeight)
-mclick_value:SetTextColor(1, 0.8, 0, 1)
-mclick_value:SetText("重置")
+mclick_desc:SetText("中键点击:重置")
 
 local rclick_desc = Menu:CreateFontString()
-rclick_desc:SetPoint("BOTTOMLEFT", mclick_desc, "TOPLEFT", 0, MENU_SPACING)
+rclick_desc:SetPoint("TOPLEFT", mclick_desc, "TOPRIGHT", MENU_BUFFER, 0)
 rclick_desc:SetFont(fontName, fontHeight)
 rclick_desc:SetTextColor(0, 1, 0, 1)
-rclick_desc:SetText("右键点击")
-
-local rclick_value = Menu:CreateFontString()
-rclick_value:SetPoint("BOTTOMRIGHT", mclick_value, "TOPRIGHT", 0, MENU_SPACING)
-rclick_value:SetFont(fontName, fontHeight)
-rclick_value:SetTextColor(1, 0.8, 0, 1)
-rclick_value:SetText("密语")
+rclick_desc:SetText("右键点击:密语")
 
 local lclick_desc = Menu:CreateFontString()
-lclick_desc:SetPoint("BOTTOMLEFT", rclick_desc, "TOPLEFT", 0, MENU_SPACING)
+lclick_desc:SetPoint("TOPLEFT", rclick_desc, "TOPRIGHT", MENU_BUFFER, 0)
 lclick_desc:SetFont(fontName, fontHeight)
 lclick_desc:SetTextColor(0, 1, 0, 1)
-lclick_desc:SetText("左键点击")
-
-local lclick_value = Menu:CreateFontString()
-lclick_value:SetPoint("BOTTOMRIGHT", rclick_value, "TOPRIGHT", 0, MENU_SPACING)
-lclick_value:SetFont(fontName, fontHeight)
-lclick_value:SetTextColor(1, 0.8, 0, 1)
-lclick_value:SetText("显示物品信息")
+lclick_desc:SetText("左键点击:显示物品信息")
 
 
 local dataobj = LibStub:GetLibrary("LibDataBroker-1.1"):NewDataObject(ADDON, {

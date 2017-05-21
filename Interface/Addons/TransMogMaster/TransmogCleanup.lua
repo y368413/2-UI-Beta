@@ -4,7 +4,7 @@ local TransmogCleanup = TransmogCleanup
 TransmogCleanupDB = {}
 TransmogCleanup.db = TransmogCleanupDB
 
-local version = "v7.0.3-12"
+local version = "v7.2.0-1"
 
 --------------------------------------------------------------------------------
 -- Upvalues
@@ -95,7 +95,7 @@ local function getTransmogStatus(link)
 		 mogStatus == CanIMogIt.KNOWN_FROM_ANOTHER_ITEM_AND_CHARACTER then
 		return 1
 	elseif mogStatus == CanIMogIt.NOT_TRANSMOGABLE or
-				 mogStatus == CanIMogIt.UNKNOWABLE_SOULBOUND then
+		   mogStatus:find(CanIMogIt.UNKNOWABLE_SOULBOUND) then
 		return 2
 	elseif mogStatus:find(CanIMogIt.UNKNOWABLE_BY_CHARACTER) then
 		return 3
@@ -141,14 +141,14 @@ local function iterateBagItems()
 			local link = GetContainerItemLink(bag, slot)
 			if link then
 				local ilvl = ItemUpgradeInfo:GetUpgradedItemLevel(link)
-				local transmoggable = isTransmogable(link)
+				--local transmoggable = isTransmogable(link)
 				local bind = getItemBind(bag, slot)
 				local _, _, quality = GetItemInfo(link)
 				local vendorPrice = select(11, GetItemInfo(link))
 				local hasOnUseEffect = GetItemSpell(link)
-
-				if transmoggable then
 					local status = getTransmogStatus(link)
+
+				if status ~= nil then
 				if status and status > 0 then -- check if Can I Mog It checks the itemList
 						if TransmogCleanup.db.filters.onuse or not hasOnUseEffect then -- not (not addon.db.filters.onuse and hasOnUseEffect)
 					if ilvl <= TransmogCleanup.db.filters.ilvl then
@@ -791,6 +791,12 @@ end)
 for k,_ in pairs(events) do
 	TransmogCleanup:RegisterEvent(k)
 end
+
+
+
+--------------------------------------------------------------------------------
+-- TransmogCleanup by Elvador
+--
 function TransmogCleanup:getDefaultIgnoredItems()
 	return {
 		-- List from http://www.wowhead.com/item=65274/cloak-of-coordination#comments

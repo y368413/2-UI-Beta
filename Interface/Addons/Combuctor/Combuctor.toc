@@ -6,8 +6,8 @@
 ## Notes: Pants are a dangerous foe
 ## Notes-zhCN: 可以按照类型过滤的背包&银行整合插件，标签风格。可按任务物品，装备，消耗品、物品品质等分类查看，让你查询物品更直观方便。
 ## Version: 7.0.0
-## Dependencies: _ShiGuang
-## SavedVariables: BrotherBags, CombuctorDB2, CaerdonWardrobeConfig
+## Dependencies: Blizzard_ArtifactUI, _ShiGuang
+## SavedVariables: BrotherBags, CombuctorDB2, CaerdonWardrobeConfig, RelicHelper_SV
 
 ## X-Repple: 菜单
 
@@ -16,7 +16,7 @@ BagBrother.lua
 libs\libs.xml
 localization\localization.xml
 
-main.lua
+Combuctor.lua
 
 api\api.xml
 sets\sets.xml
@@ -34,5 +34,5 @@ Combuctor_Config\panel.lua
 Combuctor_Config\sets.lua
 
 Combuctor_Opening.lua
-BagItemLevel.lua
 CaerdonWardrobe.lua
+Relichelper.lua

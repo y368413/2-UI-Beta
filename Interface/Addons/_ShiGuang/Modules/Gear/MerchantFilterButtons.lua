@@ -321,7 +321,6 @@ local function BuildButtons()
 		button.Flash:Show()
 		button:SetScript("OnClick",function(self,button)
 			MerchantFrame_SetFilter(MerchantFrame,v.filter)
-			ShiGuangPerDB.filter = GetMerchantFilter()
 			PlaySound("SPELLBOOKCHANGEPAGE")
 			SetPushed(GetMerchantFilter())			
 		end)
@@ -334,11 +333,7 @@ f:RegisterEvent("MERCHANT_FILTER_ITEM_UPDATE")
 f:SetScript("OnEvent", function(self,event,...)
 	local arg1, arg2 = ...
 	if event == "PLAYER_ENTERING_WORLD" then
-		if not ShiGuangPerDB then
-			ShiGuangPerDB = {}
-			ShiGuangPerDB.filter = GetMerchantFilter()
-		end
-		MerchantFrame_SetFilter(MerchantFrame, ShiGuangPerDB.filter)
+		MerchantFrame_SetFilter(MerchantFrame, GetMerchantFilter())
 		self:UnregisterEvent(event)
 		MerchantFrameLootFilter:Hide()
 		BuildButtons()
@@ -348,6 +343,6 @@ f:SetScript("OnEvent", function(self,event,...)
 end)
 
 MerchantFrame:HookScript("OnShow", function()
-	MerchantFrame_SetFilter(MerchantFrame, ShiGuangPerDB.filter)
+	MerchantFrame_SetFilter(MerchantFrame, GetMerchantFilter())
 	SetPushed(GetMerchantFilter())	
 end)

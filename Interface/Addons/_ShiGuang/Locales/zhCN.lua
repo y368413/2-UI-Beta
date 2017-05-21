@@ -282,4 +282,20 @@ xMerchant_Tobrowseitemtooltipstoo = "对物品详细提示信息也进行搜索"
   CurrencyTracking_CT_OPT_ALWAYSLOCK_TIP = "启用则将不仅限于战斗中才锁定。停用则仅会于战斗中才锁定。";
 	CurrencyTracking_CT_CURRENCY_TO_TRACK = "在游戏画面上要追踪的货币：";
 	CurrencyTracking_CT_CAT_TRACKED_CURRENCY = "追踪的货币";
+	
+	TinyInspectL = {
+    ShowItemBorder              = "物品直角边框",
+    EnableItemLevel             = "物品等级显示",
+    ShowColoredItemLevelString  = "装等文字随物品品质",
+    ShowItemSlotString          = "显示背包装备部位文字",
+    ShowInspectAngularBorder    = "观察面板直角边框",
+    ShowInspectColoredLabel     = "观察面板高亮橙装武器标签",
+    ShowOwnFrameWhenInspecting  = "观察同时显示自己装备列表",
+    DisplayPercentageStats      = "装备属性换算成百分比数值",
+    EnablePartyItemLevel        = "开启小队队友装等",
+    SendPartyItemLevelToSelf    = "发送队友装等到自己面板",
+    SendPartyItemLevelToParty   = "发送队友装等到队伍频道",
+    EnableRaidItemLevel         = "开启团队装等",
+  };
+
 end

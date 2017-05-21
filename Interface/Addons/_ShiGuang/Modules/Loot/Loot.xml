@@ -2,6 +2,7 @@
 ..\FrameXML\UI.xsd">
 	<Script file="Loot.lua"/>
 	<Script file="gmLm.lua"/>
+	<Script file="PersonalLootHelper.lua"/>
 	<Script file="BonusRollPreview.lua"/>
 	<Script file="lsToasts.lua"/>
 </Ui>

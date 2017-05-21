@@ -50,14 +50,14 @@ CHAT_YOU_LEFT_NOTICE = "-|Hchannel:%d|h[%s]|h";
 CHAT_YOU_LEFT_NOTICE_BN = "-|Hchannel:CHANNEL:%d|h[%s]|h";
 
 Welcome_loginChatText1 = "<<<-------------- 有你们的魔兽，才是世界 ----";
-Welcome_loginChatText2 = "|cFFBF00FFMao|r|cFF00DDFFR|r|cffff8800 UI|r|cff3399ff By Shiguang + TuTu v.170421|r";
+Welcome_loginChatText2 = "|cFFBF00FFMao|r|cFF00DDFFR|r|cffff8800 UI|r|cff3399ff By Shiguang + TuTu v.170521|r";
 Welcome_loginChatText3 = "|cff02F78E大大大的感谢|r|cffC495DDSiweia|r|cff02F78E大大,向他学到了好多.|r";
-Welcome_loginChatText4 = "------  v2.2.0 For 7.2  ------------------->>>";
+Welcome_loginChatText4 = "------  v2.2.1 For 7.2  ------------------->>>";
 Welcome_SmallText1 = "[ 微美化界面 ]";
 Welcome_SmallText2 = "[ 全职业适用无障碍 ]";
 Welcome_SmallText3 = "[ 开袋即食 轻优化 无需设置 ]";
 Welcome_SmallText4 = "[ 插件每月21日UI官网 准时更新发布 ]";
-Welcome_Large1 = "[ V 2.2.0 ]";
+Welcome_Large1 = "[ V 2.2.1 ]";
 Welcome_Large2 = "[ Hi Legion 7.2 ]";
 Welcome_Large3 = "[ 右键小地图便捷设置 ]";
 Welcome_Large4 = "[ 系统自带功能，插件有针对性删减 ]";
