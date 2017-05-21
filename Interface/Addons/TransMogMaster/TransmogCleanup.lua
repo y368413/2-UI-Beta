@@ -82,7 +82,7 @@ local function getTransmogStatus(link)
 	local mogStatus = CanIMogIt:GetTooltipText(link)
 
 	if not mogStatus or type(mogStatus) ~= "string" then
-		print(("Couldn't determine status of item %s."):format(link))
+		--print(("|cff02F78E[幻化]|r忽略: %s."):format(link))  --Couldn't determine status of item
 		return
 	end
 

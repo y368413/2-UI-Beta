@@ -1,4 +1,4 @@
-local M, R, U, I = unpack(select(2, ...))
+﻿local M, R, U, I = unpack(select(2, ...))
 ----------------------------- -- 特别感谢 zork 的 rChat
 ------- CONFIG
 local hide_chatframe_backgrounds = true   -- 隐藏聊天框背景 (true/false) (隐藏/显示)
