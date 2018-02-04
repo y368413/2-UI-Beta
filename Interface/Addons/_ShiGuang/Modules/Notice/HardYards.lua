@@ -1,21 +1,17 @@
-﻿-- Localisation Optimisation - Lua
+﻿-- Globals
+----------
+HardYards_min, HardYards_max = 0, 0
+
+-- Localisation Optimisation - Lua
 ----------------------------------
+local modf = math.modf
+local random = random
 local gmatch = string.gmatch
 local lower = string.lower
 local match = string.match
-local modf = math.modf
 local sub = string.sub
 local tonumber = tonumber
 local tostring = tostring
-
--- Localisation Optimisation - API
-----------------------------------
-local CheckInteractDistance = CheckInteractDistance
-local IsControlKeyDown = IsControlKeyDown
-local IsItemInRange = IsItemInRange
-local UnitCanAssist = UnitCanAssist
-local UnitExists = UnitExists
-local UnitIsUnit = UnitIsUnit
 
 -- Preset Ranges
 ----------------
@@ -133,28 +129,23 @@ end
 
 local between, missed, furthest = "", 0, 0
 
-local function DoTheHardYards( unitID )
+local function DoTheHardYards( unitID, actualTarget )
 
 	between, missed, furthest, result = hy_colour_arrows.. " - ".. hy_colour_numbers, 0, 0, false
 
 	for i=1,#hy_rangeItems do
 		result = false
-		if hy_rangeItems[i] < 0 then
-			if UnitCanAssist( "player", unitID ) then
-				result = IsItemInRange( (-hy_rangeItems[i]), unitID )
-			else
-				result = nil
-			end
-		elseif hy_rangeItems[i] < 10 then
+		if hy_rangeItems[i] < 10 then
 			result = CheckInteractDistance( unitID, hy_rangeItems[i] ) or 0
-			if ( result == nil ) and ( hy_rangeItems[i] == 1 ) then
-				result = CheckInteractDistance( unitID, 4 ) or 0
-			end
 		else
 			result = IsItemInRange( hy_rangeItems[i], unitID )
-			if result == nil then
-				local v = tostring( hy_rangeItems[i] )
-				if hy_rangeAlt[v] then
+		end
+		if ( result == nil ) then
+			local v = tostring( hy_rangeItems[i] )
+			if hy_rangeAlt[v] then
+				if hy_rangeAlt[v] < 10 then
+					result = CheckInteractDistance( unitID, hy_rangeAlt[v] ) or 0
+				else
 					result = IsItemInRange( hy_rangeAlt[v], unitID )
 				end
 			end
@@ -168,38 +159,39 @@ local function DoTheHardYards( unitID )
 			break
 		end
 	end
-	
-	if tonumber(hy_rangeMin[furthest]) then
-		if tonumber(hy_rangeMin[furthest]) > 40 then
-		hy_colour_numbers = "|cffff0000" 
-		elseif tonumber(hy_rangeMin[furthest]) >30 and tonumber(hy_rangeMin[furthest]) <40 then
-		hy_colour_numbers = "|c00ff6622"
-		else
-		hy_colour_numbers = "|c00ffff00"
-		end
-	end
-	
+
 	if furthest == #hy_rangeMax then
 		hy_range = hy_colour_numbers.. ""
-		hy_rangeClosest = tonumber(hy_rangeMin[furthest])
-		hy_rangeFurthest = tonumber(hy_rangeMax[furthest])
+		if ( actualTarget == true ) then
+			HardYards_min = 0
+			HardYards_max = 5
+		end
 	elseif furthest > 0 then
 		if missed > 0 then
 			hy_range = hy_colour_numbers.. hy_rangeMin[ missed ].. between.. hy_rangeMax[ furthest ]
-			hy_rangeClosest = tonumber(hy_rangeMin[missed])
+			if ( actualTarget == true ) then
+				HardYards_min = tonumber( hy_rangeMin[ missed ] )
+				HardYards_max = tonumber( hy_rangeMax[ furthest ] )
+			end
 		else
 			hy_range = hy_colour_numbers.. hy_rangeMin[ furthest ].. between.. hy_rangeMax[ furthest ]
-			hy_rangeClosest = tonumber(hy_rangeMin[furthest])
+			if ( actualTarget == true ) then
+				HardYards_min = tonumber( hy_rangeMin[ furthest ] )
+				HardYards_max = tonumber( hy_rangeMax[ furthest ] )
+			end
 		end
-		hy_rangeFurthest = tonumber(hy_rangeMax[furthest])
 	elseif missed > 0 then
 		hy_range = hy_colour_numbers.. hy_rangeMin[ missed ].. between.. "80+"
-		hy_rangeClosest = tonumber(hy_rangeMin[missed])
-		hy_rangeFurthest = 100
+		if ( actualTarget == true ) then
+			HardYards_min = tonumber( hy_rangeMin[ missed ] )
+			HardYards_max = -1
+		end
 	else
 		hy_range = hy_colour_numbers.. "80+"
-		hy_rangeClosest = 80.1
-		hy_rangeFurthest = 100
+		if ( actualTarget == true ) then
+			HardYards_min = -1
+			HardYards_max = -1
+		end
 	end
 end
 
@@ -207,16 +199,16 @@ local function ShowTheHardYards()
 	HardYards.rangeText:SetText( hy_range )
 	HardYards.rangeText:SetTextColor( nil,nil,nil,1 )
 	local width, height = HardYards.rangeText:GetWidth(), HardYards.rangeText:GetHeight()
-	HardYards:SetSize( width*1.05, height*1.3 )
+	HardYards:SetSize( width*1.2, height*1.3 )
 end
 
 local function HardYards_OnUpdate()
 
-	if not hy_on then return end
-
 	if UnitExists( "target" ) then
-		DoTheHardYards( "target" )
-		ShowTheHardYards()
+		DoTheHardYards( "target", true )
+		if ( ShiGuangPerDB.show == true ) then
+			ShowTheHardYards()
+		end
 	else
 		HardYards.rangeText:SetTextColor( nil,nil,nil,0 )
 	end
@@ -224,9 +216,6 @@ local function HardYards_OnUpdate()
 end
 
 local function PlayerLogin( self )
-
-	hy_on = false
-
 	if ( ShiGuangPerDB == nil )		then	ShiGuangPerDB 		=	{}	end
 	if ( ShiGuangPerDB.show == nil )		then 	ShiGuangPerDB.show	=	true 	end
 	if ( ShiGuangPerDB.arrows == nil )	then 	ShiGuangPerDB.arrows	=	{} 	end	-- X11BurlyWood DEB887
@@ -273,15 +262,14 @@ local function PlayerLogin( self )
 	HardYards.rangeText:SetFont("Interface\\AddOns\\_ShiGuang\\Media\\Fonts\\Pixel.ttf", 36, "THICKOUTLINE")  -- "Fonts\\FRIZQT__.TTF", 42, "THICKOUTLINE" 
 	HardYards_SetSize()
 
-	if ( ShiGuangPerDB.show == true ) then
-		hy_on = true
-	end
+
+	faction = UnitFactionGroup( "player" )
 end
 
 --------------------------------------------------------------------------------------------------------------------------------------------
 
 local function HardYards_OnEvent( self, event, parm1 )
-	if not hy_on then return end
+
 	if ( event == "PLAYER_LOGIN" ) then
 		PlayerLogin( self )
 	end
@@ -294,7 +282,10 @@ HardYards:SetScript( "OnUpdate", HardYards_OnUpdate )
 --------------------------------------------------------------------------------------------------------------------------------------------
 SLASH_HardYards1, SLASH_HardYards2, SLASH_HardYards3, SLASH_HardYards4 = "/hardyards", "/hard", "/yards", "/hy"
 --------------------------------------------------------------------------------------------------------------------------------------------
-local function Slash( options )
+
+local soundkitHandle = nil
+
+SlashCmdList[ "HardYards" ] = function( options )
 
 	local firstParm, firstParm3, secondParm, secondParm3, thirdParm, thirdParm3, fourthParm, fourthParm3
 
@@ -337,14 +328,12 @@ local function Slash( options )
 			printHY( hy_colour_X11SandyBrown.. "<错误>: ".. hy_colour_X11BurlyWood.. "设置数值必须是0-100之间任意数值" )
 		end
 	elseif ( firstParm3 == "hid" ) then
-		hy_on = false
+
 		ShiGuangPerDB.show = false
-		HardYards:Hide()
-		HardYards:SetScript('OnUpdate', nil)
+		HardYards.rangeText:SetTextColor( nil,nil,nil,0 )
+
 	elseif ( firstParm3 == "sho" ) then
-		hy_on = true
 		ShiGuangPerDB.show = true
-		HardYards:Show()
+
 	end
 end
-SlashCmdList[ "HardYards" ] = function( options ) Slash( options ) end

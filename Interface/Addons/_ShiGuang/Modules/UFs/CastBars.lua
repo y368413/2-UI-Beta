@@ -73,7 +73,7 @@ function AdiCastBar.eventFrame:ADDON_LOADED(_, name)
 end
 
 _G.SLASH_ADICASTBAR1 = "/adicastbar"
-_G.SLASH_ADICASTBAR2 = "/acb"
+_G.SLASH_ADICASTBAR2 = "/adicb"
 SlashCmdList.ADICASTBAR = function()
 	if Movable.IsLocked(addonName) then
 		Movable.Unlock(addonName)

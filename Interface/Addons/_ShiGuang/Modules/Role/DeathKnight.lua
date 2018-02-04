@@ -1,4 +1,4 @@
-local M, R, U, I = unpack(select(2, ...))
+ï»¿local M, R, U, I = unpack(select(2, ...))
 if I.MyClass ~= "DEATHKNIGHT" then return end
 
 -- BloodyHell, not really handy
@@ -58,7 +58,7 @@ local function BloodyHell()
 	end
 	bar.icons = icons
 
-	M.Mover(bar, "ÑªDKÖúÊÖ", "BloodyHell", R.Auras.BHPos, bar:GetWidth(), 30)
+	M.Mover(bar, "è¡€DKåŠ©æ‰‹", "BloodyHell", R.Auras.BHPos, bar:GetWidth(), 30)
 end
 
 local f = MaoRUI:EventFrame({"PLAYER_LOGIN", "PLAYER_TALENT_UPDATE"})

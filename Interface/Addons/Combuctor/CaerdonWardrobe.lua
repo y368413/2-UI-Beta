@@ -1676,7 +1676,7 @@ end
 function configFrame:CreateComponents()
 	components = {}
 	components.title = self:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
-	components.title:SetText("|cff02F78E[装备]|r幻化提示")
+	components.title:SetText("|cff00ff00[背包]|r幻化提示")
 	components.title:SetPoint("TOPLEFT", 16, -16)
 
 	components.titleSeparator = self:CreateTexture(nil, "ARTWORK")
@@ -1958,7 +1958,7 @@ end
 function configFrame:OnConfigLoaded()
 	self:ApplyConfig(CaerdonWardrobeConfig)
 
-	self.name = "|cff02F78E[装备]|r幻化提示"
+	self.name = "|cff00ff00[背包]|r幻化提示"
 	self.okay = PropagateErrors(self.OnSave)
 	self.cancel = PropagateErrors(self.OnCancel)
 	self.default = PropagateErrors(self.OnResetToDefaults)

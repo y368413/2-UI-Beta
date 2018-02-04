@@ -3,7 +3,6 @@ local module = MaoRUI:RegisterModule("Maps")
 
 function module:OnLogin()
 	local WorldMapDetailFrame, WorldMapTitleButton, WorldMapFrame, WorldMapFrameTutorialButton = _G.WorldMapDetailFrame, _G.WorldMapTitleButton, _G.WorldMapFrame, _G.WorldMapFrameTutorialButton
-	local GetEffectiveScale, GetCursorPosition, GetPlayerMapPosition, hooksecurefunc = _G.GetEffectiveScale, _G.GetCursorPosition, _G.GetPlayerMapPosition, _G.hooksecurefunc
 	local formattext = I.MyColor..": %.1f, %.1f"
 
 	-- Default Settings
@@ -15,13 +14,13 @@ function module:OnLogin()
 
 	-- Generate Coords
 	if not MaoRUISettingDB["Map"]["Coord"] then return end
-	local player = M.CreateFS(WorldMapFrame.UIElementsFrame, 14, "", false, "BOTTOM", -72, 2)
-	local cursor = M.CreateFS(WorldMapFrame.UIElementsFrame, 14, "", false, "BOTTOM", 72, 2)
+	local player = M.CreateFS(WorldMapFrame.UIElementsFrame, 14, "", false, "BOTTOMLEFT", 99, 2)
+	local cursor = M.CreateFS(WorldMapFrame.UIElementsFrame, 14, "", false, "BOTTOMLEFT", 268, 2)
+	local width, height = WorldMapDetailFrame:GetWidth(), WorldMapDetailFrame:GetHeight()
+	local scale = WorldMapDetailFrame:GetEffectiveScale()
 
 	local function CursorCoords()
 		local left, top = WorldMapDetailFrame:GetLeft() or 0, WorldMapDetailFrame:GetTop() or 0
-		local width, height = WorldMapDetailFrame:GetWidth(), WorldMapDetailFrame:GetHeight()
-		local scale = WorldMapDetailFrame:GetEffectiveScale()
 		local x, y = GetCursorPosition()
 		local cx = (x/scale - left) / width
 		local cy = (top - y/scale) / height
@@ -66,7 +65,7 @@ end
 --ToggleTreasures 
 local function click(self)
 	local checked = self.checked
-	PlaySound(checked and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")
+	PlaySound(checked and SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON or SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
 	ShiGuangDB.ToggleTreasuresSettings = checked
 	WorldMapFrame_Update()
 end
@@ -78,17 +77,17 @@ hooksecurefunc("WorldMapTrackingOptionsDropDown_Initialize",function(self,level,
 			ShiGuangDB.ToggleTreasuresSettings = true
 		end
 		-- add the "Show Treasures" option
-		local info = Lib_UIDropDownMenu_CreateInfo()
-		info.text = "显示宝藏"
+		local info = L_UIDropDownMenu_CreateInfo()
+		info.text = MAPTREASURES_SHOW
 		info.func = click
 		info.checked = ShiGuangDB.ToggleTreasuresSettings and true
 		info.isNotRadio = true
 		info.keepShownOnClick = 1
-		UIDropDownMenu_AddButton(info)
+		L_UIDropDownMenu_AddButton(info)
 	end
 end)
 -- need to re-initialize to pick up our hooked version of the function
-Lib_UIDropDownMenu_Initialize(WorldMapFrameDropDown, WorldMapTrackingOptionsDropDown_Initialize, "MENU")
+L_UIDropDownMenu_Initialize(WorldMapFrameDropDown, WorldMapTrackingOptionsDropDown_Initialize, "MENU")
 
 -- the heart of the addon; if ShiGuangDB.ToggleTreasuresSettings is unchecked, then hide all "197" POIs
 hooksecurefunc("WorldMapFrame_Update",function()

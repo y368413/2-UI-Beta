@@ -46,6 +46,39 @@ local _VolatileShielding = 207188;
 local _BreathofSindragosa = 152279;
 local _CrystallineSwords = 189186;
 
+-- Unholy
+local _SoulReaper = 130736;
+local _VirulentPlague = 191587;
+local _Outbreak = 77575;
+local _DarkTransformation = 63560;
+local _FesteringStrike = 85948;
+local _FesteringWound = 197147;
+local _Castigator = 207305;
+local _Apocalypse = 220143;
+local _ScourgeStrike = 55090;
+local _ClawingShadows = 207311;
+local _DeathCoil = 47541;
+local _ShadowInfusion = 198943;
+local _ScourgeofWorlds = 191747;
+local _DeathandDecay = 43265;
+local _Defile = 152280;
+local _Epidemic = 207317;
+local _ArmyoftheDead = 42650;
+local _PortaltotheUnderworld = 191637;
+local _ArmiesoftheDamned = 191731;
+local _SummonGargoyle = 49206;
+local _Heroism = 32182;
+local _Bloodlust = 2825;
+local _TimeWarp = 80353;
+local _DarkArbiter = 207349;
+local _AntiMagicShell = 48707;
+local _SpellEater = 207321;
+local _Necrosis = 207346;
+local _EbonFever = 207269;
+local _ArcaneTorrent = 28730;
+local _SuddenDoom = 49530;
+local _DeathStrike = 49998;
+
 -- Talents
 local _isDefile = false;
 local _isRapidDecomposition = false;
@@ -77,8 +110,7 @@ function MaxDps:EnableRotationModule(mode)
 	end;
 end
 
-function MaxDps.DeathKnight.Blood()
-	local timeShift, currentSpell, gcd = MaxDps:EndCast();
+function MaxDps.DeathKnight.Blood(_, timeShift, currentSpell, gcd, talents)
 
 	local runic = UnitPower('player', SPELL_POWER_RUNIC_POWER);
 	local runicMax = UnitPowerMax('player', SPELL_POWER_RUNIC_POWER);
@@ -128,14 +160,88 @@ function MaxDps.DeathKnight.Blood()
 	return _BloodBoil;
 end
 
-function MaxDps.DeathKnight.Unholy()
-	local timeShift, currentSpell, gcd = MaxDps:EndCast();
+function MaxDps.DeathKnight.Unholy(_, timeShift, currentSpell, gcd, talents)
+	--Get runic power and runes
+	local runic = UnitPower('player', SPELL_POWER_RUNIC_POWER);
+	local runicMax = UnitPowerMax('player',SPELL_POWER_RUNIC_POWER);
 
-	return nil;
+	local runes, runeCd = MaxDps.DeathKnight.Runes();
+
+	--Get wounds on target.
+	local festering, festeringCd, festeringCharges = MaxDps:TargetAura(_FesteringWound, timeShift);
+
+	MaxDps:GlowCooldown(_ArmyoftheDead, MaxDps:SpellAvailable(_ArmyoftheDead , timeShift) and runes >= 3);
+	MaxDps:GlowCooldown(_SummonGargoyle, MaxDps:SpellAvailable(_SummonGargoyle , timeShift));
+
+	--Check if Necrosis is active
+	if MaxDps:Aura(_Necrosis, timeShift) then
+		-- If more then 2 wounds
+		if festeringCharges > 2 then
+			return  _ScourgeStrike;
+		end
+	end
+
+	--Check if Plague is on
+	if not MaxDps:TargetAura(_VirulentPlague, timeShift) then
+		return _Outbreak;
+	end
+
+	--Dark transformation ready
+	if MaxDps:SpellAvailable(_DarkTransformation , timeShift) then
+		return _DarkTransformation ;
+	end
+
+	-- If less then 3 charges use festering wound
+	if festeringCharges < 4 then
+		if runes >=2 then
+			return _FesteringStrike;
+		end
+	end
+
+	--Check for use of apocalypse and soulreaper.
+	if MaxDps:SpellAvailable(_Apocalypse , timeShift) then
+		if talents[_SoulReaper] and MaxDps:SpellAvailable(_SoulReaper, timeShift) then
+			if festeringCharges >= 3 then
+				return _SoulReaper;
+			end
+		end
+		if festeringCharges <=4 then
+			if runes >= 2 then
+				return _FesteringStrike;
+			end
+		end
+		if festeringCharges >= 6 then
+			return _Apocalypse;
+		end
+	end
+
+	if talents[_SoulReaper] and MaxDps:SpellAvailable(_SoulReaper, timeShift) then
+		if festeringCharges >= 3 then
+			return _SoulReaper;
+		end
+	end
+
+	--Check to run other and stuff
+	if runes <= 2 then
+		if MaxDps:SpellAvailable(_DeathandDecay , timeShift) then
+			return _DeathandDecay;
+		end
+		if MaxDps:SpellAvailable(_DeathStrike , timeShift) then
+			if runic > 85 then
+				return _DeathStrike;
+			end
+		end
+	end
+
+	--Check power and run DeathCoil
+	if runic > 50 then
+		return _DeathCoil;
+	end
+
+	return _FesteringStrike;
 end
 
-function MaxDps.DeathKnight.Frost()
-	local timeShift, currentSpell, gcd = MaxDps:EndCast();
+function MaxDps.DeathKnight.Frost(_, timeShift, currentSpell, gcd, talents)
 
 	local runic = UnitPower('player', SPELL_POWER_RUNIC_POWER);
 	local runicMax = UnitPowerMax('player', SPELL_POWER_RUNIC_POWER);

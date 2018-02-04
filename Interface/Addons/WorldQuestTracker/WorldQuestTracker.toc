@@ -1,0 +1,19 @@
+﻿## Interface: 70300
+## Title: World Quest Tracker
+## Title-zhCN:|cff0080ff[组队]|r世界任务
+## Title-zhTW:|cff0080ff[组队]|r世界任务
+## Notes: Make more easy to see world quests
+## SavedVariables: WQTrackerDB
+## SavedVariablesPerCharacter: WQTrackerDBChr
+
+## X-Repple: 地图
+
+#@no-lib-strip@
+libs\libs.xml
+#@end-no-lib-strip@
+
+locales\enUS.lua
+locales\zhCN.lua
+locales\zhTW.lua
+
+WorldQuestTracker.lua

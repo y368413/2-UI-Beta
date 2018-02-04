@@ -1,5 +1,6 @@
 local _, _, U, I = unpack(select(2, ...))
 I.Version = GetAddOnMetadata("_ShiGuang", "Version")
+I.Support = GetAddOnMetadata("_ShiGuang", "Support")
 I.Client = GetLocale()
 
 -- Colors
@@ -19,6 +20,7 @@ I.bdTex = "Interface\\ChatFrame\\ChatFrameBackground"
 I.glowTex = Media.."glowTex"
 I.normTex = Media.."normTex"
 I.bgTex = Media.."bgTex"
+I.EnergyTex = Media.."Modules\\Raid\\Skullflower3.tga"
 I.arrowTex = Media.."Modules\\Raid\\textureArrowAbove"
 I.mailTex = "Interface\\Minimap\\Tracking\\Mailbox"
 I.gearTex = Media.."Modules\\Raid\\ArrowLarge"  --"Interface\\WorldMap\\Gear_64"
@@ -26,7 +28,18 @@ I.eyeTex = "Interface\\Minimap\\Raid_Icon"		-- blue: \\Dungeon_Icon
 I.garrTex = "Interface\\HelpFrame\\HelpIcon-ReportLag"
 I.copyTex = "Interface\\Buttons\\UI-GuildButton-PublicNote-Up"
 I.binTex = "Interface\\HelpFrame\\ReportLagIcon-Loot"
+I.questTex = "Interface\\BUTTONS\\AdventureGuideMicrobuttonAlert"
+I.creditTex = "Interface\\HelpFrame\\HelpIcon-KnowledgeBase"
+I.newItemFlash = "Interface\\Cooldown\\star4"
+I.sparkTex = "Interface\\CastingBar\\UI-CastingBar-Spark"
 I.TexCoord = {.08, .92, .08, .92}
+I.textures = {
+	normal		= Media.."ActionBar\\gloss",
+	flash		= Media.."ActionBar\\flash",
+	pushed		= Media.."ActionBar\\pushed",
+	checked		= Media.."ActionBar\\checked",
+	equipped	= Media.."ActionBar\\gloss",
+}
 I.LeftButton = " |TInterface\\TUTORIALFRAME\\UI-TUTORIAL-FRAME:14:12:0:-1:512:512:12:66:230:307|t "
 I.RightButton = " |TInterface\\TUTORIALFRAME\\UI-TUTORIAL-FRAME:14:12:0:-1:512:512:12:66:333:411|t "
 I.ScrollButton = " |TInterface\\TUTORIALFRAME\\UI-TUTORIAL-FRAME:14:12:0:-1:512:512:12:66:127:204|t "
@@ -46,3 +59,6 @@ I.BuffList = {
 		224001,
 	},
 }
+
+-- Filter Chat symbols
+I.Symbols = {"`", "～", "＠", "＃", "^", "＊", "！", "？", "。", "|", " ", "—", "——", "￥", "’", "‘", "“", "”", "【", "】", "『", "』", "《", "》", "〈", "〉", "（", "）", "〔", "〕", "、", "，", "：", ",", "_", "/"}

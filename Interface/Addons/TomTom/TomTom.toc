@@ -1,9 +1,9 @@
-## Interface: 70200
+## Interface: 70300
 ## Title:TomTom
 ## Title-zhCN:|cff0080ff[任务]|r任务箭头
 ## Title-zhTW:|cff0080ff[任務]|r任務箭頭
 ## Author: jnwhiteh
-## Version: v70200-1.0.0
+## Version: v70300-1.0.0-17dabc9
 ## License: All Rights Reserved
 ## Notes: Acts as your portable navigation assistant
 ## Notes-zhCN:一个简单的导航助手。
@@ -14,7 +14,6 @@
 
 ## X-Localizations: enUS, enGB, deDE, frFR, zhCN, ruRU, zhTW
 ## X-CompatibleLocales: enUS, zhCN, zhTW
-## RequiredDeps: _ShiGuang
 ## DefaultState: disabled
 
 ## X-Repple: 地图

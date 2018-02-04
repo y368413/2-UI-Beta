@@ -27,7 +27,7 @@ T._LoadedFiles["zhCN.lua"] = false;
 local L = LibStub("AceLocale-3.0"):NewLocale("Decursive", "zhCN");
 
 if not L then
-    T._LoadedFiles["zhCN.lua"] = "2.7.5.2";
+    T._LoadedFiles["zhCN.lua"] = "2.7.5.7";
     return;
 end;
 
@@ -445,4 +445,5 @@ L["UNITSTATUS"] = "单位状态："
 L["UNSTABLERELEASE"] = "不稳定版本"
 
 
-T._LoadedFiles["zhCN.lua"] = "2.7.5.2";
+
+T._LoadedFiles["zhCN.lua"] = "2.7.5.7";

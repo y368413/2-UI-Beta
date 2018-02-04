@@ -1,4 +1,4 @@
-local M, R, U, I = unpack(select(2, ...))
+Ôªølocal M, R, U, I = unpack(select(2, ...))
 if I.MyClass ~= "MONK" then return end
 
 -- Stagger Master
@@ -31,7 +31,7 @@ local function StaggerGo()
 			bu[i]:SetPoint("LEFT", bu[i-1], "RIGHT", 5, 0)
 		end
 	end
-	M.Mover(bar, "Ãπ…Æ÷˙ ÷", "Stagger", R.Auras.StaggerPos, bar:GetWidth(), 20)
+	M.Mover(bar, "Âù¶ÂÉßÂä©Êâã", "Stagger", R.Auras.StaggerPos, bar:GetWidth(), 20)
 end
 
 local f = MaoRUI:EventFrame({"PLAYER_LOGIN", "PLAYER_TALENT_UPDATE"})

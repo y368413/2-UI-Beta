@@ -2,15 +2,16 @@
 ## Title-zhCN:|CFFD74DE1[输出]|rMax-Core
 ## Title-zhTW:|CFFD74DE1[输出]|rMax-Core
 ## Notes: Rotation helper framework.
-## Version: 7.1.4.3
+## Version: 7.3.0.1
 ## Author: Kaminaris
-## Interface: 70200
+## Interface: 70300
 ## SavedVariables: MaxDpsOptions
-## OptionalDependencies: Bartender4, ButtonForge
 
 ## X-Repple: DPS
 
+ForAllIndentsAndPurposes.lua
 core.lua
 buttons.lua
 helper.lua
 timetodie.lua
+custom.lua

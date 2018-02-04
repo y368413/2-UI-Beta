@@ -65,6 +65,16 @@ local function createcheckbutton(parent, name, icon, arg1, arg2, ...)
 	end
 	bu:SetScript("OnShow", function(self) self:SetChecked(RDCDDB[arg1][arg2]) end)
 	bu:SetScript("OnClick", function(self) RDCDDB[arg1][arg2] = self:GetChecked() or false end)
+	
+	if GetSpellInfo(arg2) then
+		bu:SetScript("OnEnter", function(self) 
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT",  -20, 10)
+			GameTooltip:SetSpellByID(arg2)
+			GameTooltip:Show()
+		end)
+		bu:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
+	end
+	
 	return bu
 end
 
@@ -113,7 +123,7 @@ RDCD.maxlineslider = createslider(gui, RDCD.L["框架高度"], RDCD.L["框架高
 local onlyactive = CreateFrame("CheckButton", "rdcd onlyactive", gui, "InterfaceOptionsCheckButtonTemplate")
 onlyactive:SetPoint("TOPLEFT", 20, -135)
 onlyactive.text = onlyactive:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
-onlyactive.text:SetText(RDCD.L["在团队时只检测1-5队"])
+onlyactive.text:SetText(RDCD.L["在团队时只检测1-4队"])
 onlyactive.text:SetPoint("LEFT", onlyactive, "RIGHT", 1, 1)
 onlyactive:SetScript("OnShow", function(self) self:SetChecked(RDCDDB["onlyactive"]) end)
 onlyactive:SetScript("OnClick", function(self) RDCDDB["onlyactive"] = self:GetChecked() or false end)
@@ -628,6 +638,7 @@ MinimapButton:SetScript('OnClick', function(self, button)
 	elseif button == "RightButton" then
 		EasyMenu(OptionList, OptionMenu, "cursor", 0, 0, "MENU", 2)
 		DropDownList1:ClearAllPoints()
+		DropDownList1:SetClampedToScreen(true)
 		DropDownList1:SetPoint("TOPLEFT", self, "BOTTOMLEFT", 0, -5)
 	end
 end)
@@ -651,7 +662,8 @@ MinimapButton:SetScript('OnDragStop', function(self, button)
 end)
 
 MinimapButton:SetScript('OnEnter', function(self)
-	GameTooltip:SetOwner(self, "ANCHOR_LEFT")
+	GameTooltip:SetClampedToScreen(true)
+	GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 	GameTooltip:AddLine("Garan-RaidCooldown")
 	GameTooltip:AddLine(RDCD.L["左键：显示/隐藏"])
 	GameTooltip:AddLine(RDCD.L["右键：打开菜单"])

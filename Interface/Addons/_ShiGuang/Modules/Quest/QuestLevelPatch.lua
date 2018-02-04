@@ -1,6 +1,6 @@
 ﻿--                                    QuestLevelPatch variables                                       --
 local QuestLevelPatch = {}
---                                QuestLevelPatch hooked funcitons                                    --
+--                                QuestLevelPatch hooked functions                                    --
 -- Hook gossip frame
 function GossipFrameUpdate_hook()
 	local buttonIndex = 1

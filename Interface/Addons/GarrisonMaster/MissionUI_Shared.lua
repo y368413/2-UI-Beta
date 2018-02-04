@@ -218,8 +218,8 @@ function addon_env.MissionPage_ButtonsInit(button_prefix, parent_frame)
                set_followers_button.method_base = GarrisonMissionFrame
             end
             set_followers_button:SetText(idx)
-            set_followers_button:SetWidth(56)
-            set_followers_button:SetHeight(43)
+            set_followers_button:SetWidth(50)
+            set_followers_button:SetHeight(40)
             if not prev then
                set_followers_button:SetPoint("TOPLEFT", parent_frame, "TOPRIGHT", 0, 0)
             else
@@ -292,9 +292,9 @@ function addon_env.MissionList_ButtonsInit(blizzard_mission_list, frame_prefix)
 
          local set_followers_button = CreateFrame("Button", nil, blizzard_button, "UIPanelButtonTemplate")
          set_followers_button:SetText(idx)
-         set_followers_button:SetWidth(56)
-         set_followers_button:SetHeight(43)
-         set_followers_button:SetPoint("LEFT", blizzard_button, "RIGHT", -65, 0)
+         set_followers_button:SetWidth(50)
+         set_followers_button:SetHeight(40)
+         set_followers_button:SetPoint("LEFT", blizzard_button, "RIGHT", -55, 0)
          set_followers_button:SetScript("OnClick", MissionList_PartyButtonOnClick)
          gmm_buttons[frame_prefix .. idx] = set_followers_button
       end

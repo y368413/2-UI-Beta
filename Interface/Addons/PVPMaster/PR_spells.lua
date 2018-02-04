@@ -98,13 +98,32 @@ addon.spellDB = {
     
     -- Silence
     "47476",		    -- Strangulate
-    "114238",	    	-- Fae Silence (Glyph of Fae Silence)
 	"81261",		    -- Solar Beam
     "137460",   		-- Silenced (Ring of Peace)
     "15487",		    -- Silence
     "1330" ,		    -- Garrote - Silence
     --"31117",		    -- Unstable Affliction
-	
+    
+	-- Kick Lock Outs (in testing)
+    "6552",   			-- [Warrior] Pummel
+    "96231",  			-- [Paladin] Rebuke
+    "231665", 			-- [Paladin] Avengers Shield
+    "147362", 			-- [Hunter] Countershot
+    "187707",			-- [Hunter] Muzzle
+    "1766",  			-- [Rogue] Kick
+    "183752",			-- [DH] Consume Magic
+    "47528",  			-- [DK] Mind Freeze
+    "91802",  			-- [DK] Shambling Rush
+    "57994",  			-- [Shaman] Wind Shear
+    "115781", 			-- [Warlock] Optical Blast
+    "19647",  			-- [Warlock] Spell Lock
+    "212619", 			-- [Warlock] Call Felhunter
+    "132409", 			-- [Warlock] Spell Lock (Old)
+    "171138", 			-- [Warlock] Shadow Lock
+    "2139",   			-- [Mage] Counterspell
+    "116705", 			-- [Feral] Skull Bash
+	"93985",			-- [Feral] Skull Bash	
+
 	-- Buffs	
 	"203727",			-- Thorns
 	"122470",           -- Touch of Karma

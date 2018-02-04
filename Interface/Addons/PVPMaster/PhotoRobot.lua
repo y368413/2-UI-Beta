@@ -228,7 +228,7 @@ function addon:UNIT_AURA(event, unit)
 			if addon.XPerl_loaded or addon.SUF_loaded then
 				addon.CheckAuras(unit)
 			else
-				if  (unit == "party1" and (PartyMemberFrame1:IsVisible())) or
+				if (unit == "party1" and (PartyMemberFrame1:IsVisible())) or
 					(unit == "party2" and (PartyMemberFrame2:IsVisible())) or
 					(unit == "party3" and (PartyMemberFrame3:IsVisible())) or
 					(unit == "party4" and (PartyMemberFrame4:IsVisible())) then
@@ -518,14 +518,14 @@ function addon.ListAuras(unit)
 
 	--[[for i = 1, #auras do	
 		print(auras[i].name)
-	end ]]
+	end	]]
 
 	return auras
 end
 
 -- Checks trackable and adds new auras
 function addon.CheckAuras(unit)
-	-- print("check aura " .. unit)
+	--print("check aura " .. unit)
 	local auras = {}
 	local auCheck = addon.ListAuras(unit)
 

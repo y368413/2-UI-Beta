@@ -336,9 +336,9 @@ end
 function HPetOption:OnCheckButtonClicked()
 	isChecked = self:GetChecked()
 	if isChecked then
-		PlaySound("igMainMenuOptionCheckBoxOn")
+		PlaySound(856)
 	else
-		PlaySound("igMainMenuOptionCheckBoxOff")
+		PlaySound(857)
 	end
 	value = HPetOption.Buttons[self:GetID()]
 	if value.var then

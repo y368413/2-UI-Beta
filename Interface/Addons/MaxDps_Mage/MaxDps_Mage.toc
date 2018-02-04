@@ -1,9 +1,9 @@
 ﻿## Title: MaxDps_Mage
 ## Title-zhCN:|CFFD74DE1[输出]|rMax-FS
 ## Title-zhTW:|CFFD74DE1[输出]|rMax-FS
-## Version: 7.1.5
+## Version: 7.3.0
 ## Author: Kaminaris
-## Interface: 70200
+## Interface: 70300
 ## Dependencies: MaxDps
 ## LoadOnDemand: 1
 

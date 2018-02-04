@@ -1,4 +1,4 @@
-﻿--FrenzyRegen
+﻿--FrenzyRegen  --DruidFrenzyRegenDB
 if select(2, UnitClass("player")) == "DRUID" then
 local damageTable = {}
 local updateInterval = 0.1
@@ -340,24 +340,24 @@ frenzyRegenFrame:SetScript("OnUpdate", function(self, elapsed)
   end
 end)
 
-local DruiddropDownFrame = CreateFrame("Frame", "FRContextMenu", frenzyRegenFrame, "UIDropDownMenuTemplate")
-Lib_UIDropDownMenu_Initialize(DruiddropDownFrame, function(self, level, menuList)
- local info = Lib_UIDropDownMenu_CreateInfo()
+local DruiddropDownFrame = CreateFrame("Frame", "FRContextMenu", frenzyRegenFrame, "L_UIDropDownMenuTemplate")
+L_UIDropDownMenu_Initialize(DruiddropDownFrame, function(self, level, menuList)
+ local info = L_UIDropDownMenu_CreateInfo()
  if (level or 1) == 1 then
   info.text = " 设置"
   info.notCheckable = true
   info.hasArrow = true
   info.value = "position_submenu"
-  UIDropDownMenu_AddButton(info)
+  L_UIDropDownMenu_AddButton(info)
   info.text = " 透明度"
   info.value = "position_submenu2"
-  UIDropDownMenu_AddButton(info)
+  L_UIDropDownMenu_AddButton(info)
   info.text = " 状态栏显示..."
   info.value = "position_submenu3"
-  UIDropDownMenu_AddButton(info)
+  L_UIDropDownMenu_AddButton(info)
   info.text = " 通报回复量..."
   info.value = "position_submenu4"
-  UIDropDownMenu_AddButton(info)
+  L_UIDropDownMenu_AddButton(info)
   info.hasArrow = false  
   info.isTitle = true  
   info.icon = "Interface\\Common\\UI-TooltipDivider-Transparent"
@@ -366,37 +366,37 @@ Lib_UIDropDownMenu_Initialize(DruiddropDownFrame, function(self, level, menuList
   info.text = ""
   info.iconOnly = true
   info.iconInfo = {tFitDropDownSizeX = true}
-  UIDropDownMenu_AddButton(info)
-  info = UIDropDownMenu_CreateInfo()
+  L_UIDropDownMenu_AddButton(info)
+  info = L_UIDropDownMenu_CreateInfo()
   info.notCheckable = false
   info.hasArrow = false
   info.text = "显示总的回复量"   
   info.func = function() DruidFrenzyRegenDB.displayFlag = 0 end
   info.checked = function() return DruidFrenzyRegenDB.displayFlag == 0 end
-  UIDropDownMenu_AddButton(info)
+  L_UIDropDownMenu_AddButton(info)
   info.text = "显示每秒的回复量"
   info.func = function() DruidFrenzyRegenDB.displayFlag = 1 end
   info.checked = function() return DruidFrenzyRegenDB.displayFlag == 1 end
-  UIDropDownMenu_AddButton(info)
+  L_UIDropDownMenu_AddButton(info)
   info.text = "显示占总血量百分比 "  
   info.func = function() DruidFrenzyRegenDB.displayFlag = 2 end     
   info.checked = function() return DruidFrenzyRegenDB.displayFlag == 2 end
-  UIDropDownMenu_AddButton(info)
+  L_UIDropDownMenu_AddButton(info)
  elseif level == 2 then
-  if UIDROPDOWNMENU_MENU_VALUE == "position_submenu" then
+  if L_UIDROPDOWNMENU_MENU_VALUE == "position_submenu" then
     info.text = "框位置"
     info.func = function() frenzyRegenFrame:SetMovable(not frenzyRegenFrame:IsMovable()) DruidFrenzyRegenDB.movableFlag=frenzyRegenFrame:IsMovable() end
     info.checked = function() return not frenzyRegenFrame:IsMovable() end
     info.isNotRadio = true
-    UIDropDownMenu_AddButton(info, level)
+    L_UIDropDownMenu_AddButton(info, level)
   end
-  if UIDROPDOWNMENU_MENU_VALUE == "position_submenu" then
+  if L_UIDROPDOWNMENU_MENU_VALUE == "position_submenu" then
     info.text = "战斗中锁定"
     info.func = function() DruidFrenzyRegenDB.ignoreMouseFlag = not DruidFrenzyRegenDB.ignoreMouseFlag frenzyRegenFrame:updateVisibility() end
     info.checked = function() return DruidFrenzyRegenDB.ignoreMouseFlag end    
-    UIDropDownMenu_AddButton(info, level)
+    L_UIDropDownMenu_AddButton(info, level)
   end
-  if UIDROPDOWNMENU_MENU_VALUE == "position_submenu" then
+  if L_UIDROPDOWNMENU_MENU_VALUE == "position_submenu" then
     info.hasArrow = false  
     info.isTitle = true
     info.notCheckable = true
@@ -406,24 +406,24 @@ Lib_UIDropDownMenu_Initialize(DruiddropDownFrame, function(self, level, menuList
     info.text = ""
     info.iconOnly = true
     info.iconInfo = {tFitDropDownSizeX = true}
-    UIDropDownMenu_AddButton(info, level)
+    L_UIDropDownMenu_AddButton(info, level)
   end
-  if UIDROPDOWNMENU_MENU_VALUE == "position_submenu" then
-    info = UIDropDownMenu_CreateInfo()
+  if L_UIDROPDOWNMENU_MENU_VALUE == "position_submenu" then
+    info = L_UIDropDownMenu_CreateInfo()
     info.notCheckable = false
     info.isNotRadio = true
     info.text = "Grey-out if FR's on cd"
     info.func = function() DruidFrenzyRegenDB.greyOutFlag = not DruidFrenzyRegenDB.greyOutFlag end
     info.checked = function() return DruidFrenzyRegenDB.greyOutFlag end
-    UIDropDownMenu_AddButton(info, level)
+    L_UIDropDownMenu_AddButton(info, level)
   end
-  if UIDROPDOWNMENU_MENU_VALUE == "position_submenu" then
+  if L_UIDROPDOWNMENU_MENU_VALUE == "position_submenu" then
     info.text = "数字略缩格式"
     info.func = function() DruidFrenzyRegenDB.shortNumFlag = not DruidFrenzyRegenDB.shortNumFlag end
     info.checked = function() return DruidFrenzyRegenDB.shortNumFlag end
-    UIDropDownMenu_AddButton(info, level)
+    L_UIDropDownMenu_AddButton(info, level)
   end
-  if UIDROPDOWNMENU_MENU_VALUE == "position_submenu" then
+  if L_UIDROPDOWNMENU_MENU_VALUE == "position_submenu" then
     info.hasArrow = false  
     info.isTitle = true
     info.notCheckable = true
@@ -433,24 +433,24 @@ Lib_UIDropDownMenu_Initialize(DruiddropDownFrame, function(self, level, menuList
     info.text = ""
     info.iconOnly = true
     info.iconInfo = {tFitDropDownSizeX = true}
-    UIDropDownMenu_AddButton(info, level)
+    L_UIDropDownMenu_AddButton(info, level)
   end
-  if UIDROPDOWNMENU_MENU_VALUE == "position_submenu" then
-    info = UIDropDownMenu_CreateInfo()
+  if L_UIDROPDOWNMENU_MENU_VALUE == "position_submenu" then
+    info = L_UIDropDownMenu_CreateInfo()
     info.notCheckable = false
     info.isNotRadio = true
     info.text = "包含精通的加成"
     info.func = function() DruidFrenzyRegenDB.masteryFlag = not DruidFrenzyRegenDB.masteryFlag end
     info.checked = function() return DruidFrenzyRegenDB.masteryFlag end
-    UIDropDownMenu_AddButton(info, level)
+    L_UIDropDownMenu_AddButton(info, level)
   end
-  if UIDROPDOWNMENU_MENU_VALUE == "position_submenu" then
+  if L_UIDROPDOWNMENU_MENU_VALUE == "position_submenu" then
     info.text = "包含橙戒特效"
     info.func = function() DruidFrenzyRegenDB.legendaryFlag = not DruidFrenzyRegenDB.legendaryFlag end
     info.checked = function() return DruidFrenzyRegenDB.legendaryFlag end
-    UIDropDownMenu_AddButton(info, level)
+    L_UIDropDownMenu_AddButton(info, level)
   end  
-  if UIDROPDOWNMENU_MENU_VALUE == "position_submenu" then
+  if L_UIDROPDOWNMENU_MENU_VALUE == "position_submenu" then
     info.hasArrow = false  
     info.isTitle = true
     info.notCheckable = true
@@ -460,31 +460,31 @@ Lib_UIDropDownMenu_Initialize(DruiddropDownFrame, function(self, level, menuList
     info.text = ""
     info.iconOnly = true
     info.iconInfo = {tFitDropDownSizeX = true}
-    UIDropDownMenu_AddButton(info, level)
+    L_UIDropDownMenu_AddButton(info, level)
   end
-  if UIDROPDOWNMENU_MENU_VALUE == "position_submenu" then
+  if L_UIDROPDOWNMENU_MENU_VALUE == "position_submenu" then
     info = UIDropDownMenu_CreateInfo()
     info.notCheckable = false
     info.text = "不在熊形态时隐藏"
     info.func = function() DruidFrenzyRegenDB.hideOutOfBearFlag = not DruidFrenzyRegenDB.hideOutOfBearFlag frenzyRegenFrame:updateVisibility() print("To turn off this setting type '/frshow bear'") end
     info.checked = function() return DruidFrenzyRegenDB.hideOutOfBearFlag end
     info.isNotRadio = true
-    UIDropDownMenu_AddButton(info, level)
+    L_UIDropDownMenu_AddButton(info, level)
   end
-  if UIDROPDOWNMENU_MENU_VALUE == "position_submenu" then
+  if L_UIDROPDOWNMENU_MENU_VALUE == "position_submenu" then
     info.text = "脱战隐藏"
     info.func = function() DruidFrenzyRegenDB.hideOutOfCombatFlag = not DruidFrenzyRegenDB.hideOutOfCombatFlag frenzyRegenFrame:updateVisibility() print("To turn off this setting type '/frshow combat'") end
     info.checked = function() return DruidFrenzyRegenDB.hideOutOfCombatFlag end
-    UIDropDownMenu_AddButton(info, level)
+    L_UIDropDownMenu_AddButton(info, level)
   end
-  if UIDROPDOWNMENU_MENU_VALUE == "position_submenu2" then
+  if L_UIDROPDOWNMENU_MENU_VALUE == "position_submenu2" then
     info.text = "仅显示数值"
     info.func = function() DruidFrenzyRegenDB.showValueOnlyFlag = not DruidFrenzyRegenDB.showValueOnlyFlag end
     info.checked = function() return DruidFrenzyRegenDB.showValueOnlyFlag end
     info.isNotRadio = true
-    UIDropDownMenu_AddButton(info, level)
+    L_UIDropDownMenu_AddButton(info, level)
   end
-  if UIDROPDOWNMENU_MENU_VALUE == "position_submenu2" then
+  if L_UIDROPDOWNMENU_MENU_VALUE == "position_submenu2" then
     info.hasArrow = false  
     info.isTitle = true
     info.notCheckable = true
@@ -494,83 +494,84 @@ Lib_UIDropDownMenu_Initialize(DruiddropDownFrame, function(self, level, menuList
     info.text = ""
     info.iconOnly = true
     info.iconInfo = {tFitDropDownSizeX = true}
-    UIDropDownMenu_AddButton(info, level)
+    L_UIDropDownMenu_AddButton(info, level)
   end
-  if UIDROPDOWNMENU_MENU_VALUE == "position_submenu2" then
-    info = UIDropDownMenu_CreateInfo()
+  if L_UIDROPDOWNMENU_MENU_VALUE == "position_submenu2" then
+    info = L_UIDropDownMenu_CreateInfo()
     info.text = "OFF"
     info.notCheckable = false
     info.func = function() DruidFrenzyRegenDB.transparencyFlag = 1 end
     info.checked = function() return DruidFrenzyRegenDB.transparencyFlag == 1 end
     info.isNotRadio = false
-    UIDropDownMenu_AddButton(info, level)
+    L_UIDropDownMenu_AddButton(info, level)
   end
-  if UIDROPDOWNMENU_MENU_VALUE == "position_submenu2" then
+  if L_UIDROPDOWNMENU_MENU_VALUE == "position_submenu2" then
     info.text = "低"
     info.func = function() DruidFrenzyRegenDB.transparencyFlag = lowTransparency end
     info.checked = function() return DruidFrenzyRegenDB.transparencyFlag == lowTransparency end
-    UIDropDownMenu_AddButton(info, level)
+    L_UIDropDownMenu_AddButton(info, level)
   end
-  if UIDROPDOWNMENU_MENU_VALUE == "position_submenu2" then
+  if L_UIDROPDOWNMENU_MENU_VALUE == "position_submenu2" then
     info.text = "中"
     info.func = function() DruidFrenzyRegenDB.transparencyFlag = mediumTransparency end
     info.checked = function() return DruidFrenzyRegenDB.transparencyFlag == mediumTransparency  end
-    UIDropDownMenu_AddButton(info, level)
+    L_UIDropDownMenu_AddButton(info, level)
   end
-  if UIDROPDOWNMENU_MENU_VALUE == "position_submenu2" then
+  if L_UIDROPDOWNMENU_MENU_VALUE == "position_submenu2" then
     info.text = "高"
     info.func = function() DruidFrenzyRegenDB.transparencyFlag = highTransparency end
     info.checked = function() return DruidFrenzyRegenDB.transparencyFlag == highTransparency end
-    UIDropDownMenu_AddButton(info, level)
+    L_UIDropDownMenu_AddButton(info, level)
   end
-  if UIDROPDOWNMENU_MENU_VALUE == "position_submenu3" then
+  if L_UIDROPDOWNMENU_MENU_VALUE == "position_submenu3" then
     info.text = "%总血量"
     info.func = function() DruidFrenzyRegenDB.statusTypeFlag = 0 end
     info.checked = function() return DruidFrenzyRegenDB.statusTypeFlag == 0 end
-    UIDropDownMenu_AddButton(info, level)
+    L_UIDropDownMenu_AddButton(info, level)
   end
-  if UIDROPDOWNMENU_MENU_VALUE == "position_submenu3" then
+  if L_UIDROPDOWNMENU_MENU_VALUE == "position_submenu3" then
     info.text = "充能数值"
     info.func = function() DruidFrenzyRegenDB.statusTypeFlag = 1 end
     info.checked = function() return DruidFrenzyRegenDB.statusTypeFlag == 1  end
-    UIDropDownMenu_AddButton(info, level)
+    L_UIDropDownMenu_AddButton(info, level)
   end
-    if UIDROPDOWNMENU_MENU_VALUE == "position_submenu4" then
+    if L_UIDROPDOWNMENU_MENU_VALUE == "position_submenu4" then
     info.text = "关"
     info.func = function() DruidFrenzyRegenDB.announceFlag = false end
     info.checked = function() return not DruidFrenzyRegenDB.announceFlag end
-    UIDropDownMenu_AddButton(info, level)
+    L_UIDropDownMenu_AddButton(info, level)
   end
-  if UIDROPDOWNMENU_MENU_VALUE == "position_submenu4" then
+  if L_UIDROPDOWNMENU_MENU_VALUE == "position_submenu4" then
     info.text = "说话"
     info.func = function() DruidFrenzyRegenDB.announceChannel = "SAY" DruidFrenzyRegenDB.announceFlag = true end
     info.checked = function() return DruidFrenzyRegenDB.announceFlag and DruidFrenzyRegenDB.announceChannel == "SAY" end
-    UIDropDownMenu_AddButton(info, level)
+    L_UIDropDownMenu_AddButton(info, level)
   end
-  if UIDROPDOWNMENU_MENU_VALUE == "position_submenu4" then
+  if L_UIDROPDOWNMENU_MENU_VALUE == "position_submenu4" then
     info.text = "喊话"
     info.func = function() DruidFrenzyRegenDB.announceChannel = "YELL" DruidFrenzyRegenDB.announceFlag = true end
     info.checked = function() return DruidFrenzyRegenDB.announceFlag and DruidFrenzyRegenDB.announceChannel == "YELL" end
-    UIDropDownMenu_AddButton(info, level)
+    L_UIDropDownMenu_AddButton(info, level)
   end
-  if UIDROPDOWNMENU_MENU_VALUE == "position_submenu4" then
+  if L_UIDROPDOWNMENU_MENU_VALUE == "position_submenu4" then
     info.text = "队伍"
     info.func = function() DruidFrenzyRegenDB.announceChannel = "PARTY" DruidFrenzyRegenDB.announceFlag = true end
     info.checked = function() return DruidFrenzyRegenDB.announceFlag and DruidFrenzyRegenDB.announceChannel == "PARTY" end
-    UIDropDownMenu_AddButton(info, level)
+    L_UIDropDownMenu_AddButton(info, level)
   end
-  if UIDROPDOWNMENU_MENU_VALUE == "position_submenu4" then
+  if L_UIDROPDOWNMENU_MENU_VALUE == "position_submenu4" then
     info.text = "团队"
     info.func = function() DruidFrenzyRegenDB.announceChannel = "RAID" DruidFrenzyRegenDB.announceFlag = true end
     info.checked = function() return DruidFrenzyRegenDB.announceFlag and DruidFrenzyRegenDB.announceChannel == "RAID" end
-    UIDropDownMenu_AddButton(info, level)
+    L_UIDropDownMenu_AddButton(info, level)
   end
  end
 end)
 
 frenzyRegenFrame:SetScript("OnMouseDown", function(self, button)
 	if button == "RightButton" then
-		ToggleDropDownMenu(1, nil, DruiddropDownFrame, "cursor", 3, -3)
+		L_ToggleDropDownMenu(1, nil, DruiddropDownFrame, "cursor", 3, -3)
+		--L_ToggleDropDownMenu(1, nil, DruiddropDownFrame, "cursor", 3, -3)
 	end
 end)
 

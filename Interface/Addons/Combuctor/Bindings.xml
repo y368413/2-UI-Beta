@@ -1,8 +1,8 @@
-﻿<Bindings>
-	<Binding name="COMBUCTOR_TOGGLE_INVENTORY" header="COMBUCTOR" category="BINDING_MAORUI_BUTTONCLICK">
-		Combuctor:Toggle(0)
+<Bindings>
+	<Binding name="COMBUCTOR_TOGGLE" header="COMBUCTOR" category="BINDING_MAORUI_BUTTONCLICK">
+		Combuctor:ToggleFrame('inventory')
 	</Binding>
-	<Binding name="COMBUCTOR_TOGGLE_BANK" header="COMBUCTOR" category="BINDING_MAORUI_BUTTONCLICK">
-		Combuctor:Toggle(-1)
+	<Binding name="COMBUCTOR_BANK_TOGGLE" header="COMBUCTOR" category="BINDING_MAORUI_BUTTONCLICK">
+		Combuctor:ToggleFrame('bank')
 	</Binding>
 </Bindings>

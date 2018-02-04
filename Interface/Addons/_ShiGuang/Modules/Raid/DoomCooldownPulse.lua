@@ -1,41 +1,35 @@
--- SavedVariables:ShiGuangDB
--- ShiGuang\\Media\\sound\\lubdub.wav
-
-local fadeInTime, fadeOutTime, maxAlpha, animScale, iconSize, holdTime, ignoredSpells
-local cooldowns, animating, watching = {}, {}, {}
+local DoomfadeInTime, DoomfadeOutTime, DoommaxAlpha, DoomanimScale, DoomiconSize, DoomholdTime, DoomignoredSpells
+local cooldowns, animating, watching = { }, { }, { }
 local GetTime = GetTime
 
-local defaultsettings = { 
-    fadeInTime = 0.3, 
-    fadeOutTime = 0.7, 
-    maxAlpha = 0.7, 
-    animScale = 1.5, 
-    iconSize = 1, 
-    holdTime = 0.25,
-    petOverlay = {1,1,1},
-    ignoredSpells = "",
-	  showSpellName = true,
+local Doomdefaultsettings = { 
+    DoomfadeInTime = 0.2, 
+    DoomfadeOutTime = 0.6, 
+    DoommaxAlpha = 0.8, 
+    DoomanimScale = 1.6, 
+    DoomiconSize = 1, 
+    DoomholdTime = 0.25,
+    DoompetOverlay = {1,1,1},
+    DoomignoredSpells = "",
+    DoomshowSpellName = true,
+    Doomx = UIParent:GetWidth()/2 * 0.8, 
+    Doomy = UIParent:GetHeight()/3 * 0.8
 }
 
-local DCP = CreateFrame("frame", "DCP", UIParent)
-DCP:SetScript("OnEvent", function(self, event, ...) if not MaoRUISettingDB["Misc"]["DoomCooldownPulse"] then self:UnregisterAllEvents() return end self[event](self, ...) end)
+local DCP = CreateFrame("frame")
+DCP:SetScript("OnEvent", function(self, event, ...) self[event](self, ...) end)
 DCP:SetMovable(true)
-DCP:EnableMouse(true)
 DCP:RegisterForDrag("LeftButton")
-DCP:ClearAllPoints()
-DCP:SetPoint("CENTER",UIParent,"CENTER",0,-155)
 DCP:SetScript("OnDragStart", function(self) self:StartMoving() end)
 DCP:SetScript("OnDragStop", function(self) 
     self:StopMovingOrSizing() 
-    --ShiGuangDB.x = self:GetLeft()
-    --ShiGuangDB.x = GetRight()
-    --ShiGuangDB.y = self:GetBottom()
-    --ShiGuangDB.y = GetTop()
-    --self:ClearAllPoints() 
-    --self:SetPoint("CENTER",UIParent,"CENTER",ShiGuangDB.x,ShiGuangDB.y)
+    ShiGuangDB.Doomx = self:GetLeft()+self:GetWidth()/2 
+    ShiGuangDB.Doomy = self:GetBottom()+self:GetHeight()/2 
+    self:ClearAllPoints() 
+    self:SetPoint("CENTER",UIParent,"BOTTOMLEFT",ShiGuangDB.Doomx,ShiGuangDB.Doomy)
 end)
 DCP.TextFrame = DCP:CreateFontString(nil, "ARTWORK")
-DCP.TextFrame:SetFont(STANDARD_TEXT_FONT, 16, "OUTLINE")
+DCP.TextFrame:SetFont(STANDARD_TEXT_FONT, 14, "OUTLINE")
 DCP.TextFrame:SetShadowOffset(2,-2)
 DCP.TextFrame:SetPoint("CENTER",DCP,"CENTER")
 DCP.TextFrame:SetWidth(185)
@@ -66,17 +60,17 @@ local function GetPetActionIndexByName(name)
 end
 
 local function RefreshLocals()
-    fadeInTime = ShiGuangDB.fadeInTime
-    fadeOutTime = ShiGuangDB.fadeOutTime
-    maxAlpha = ShiGuangDB.maxAlpha
-    animScale = ShiGuangDB.animScale
-    iconSize = ShiGuangDB.iconSize
-    holdTime = ShiGuangDB.holdTime
-	  showSpellName = ShiGuangDB.showSpellName
+    DoomfadeInTime = ShiGuangDB.DoomfadeInTime
+    DoomfadeOutTime = ShiGuangDB.DoomfadeOutTime
+    DoommaxAlpha = ShiGuangDB.DoommaxAlpha
+    DoomanimScale = ShiGuangDB.DoomanimScale
+    DoomiconSize = ShiGuangDB.DoomiconSize
+    DoomholdTime = ShiGuangDB.DoomholdTime
+    DoomshowSpellName = ShiGuangDB.DoomshowSpellName
 
-    ignoredSpells = { }
-    for _,v in ipairs({strsplit(",",ShiGuangDB.ignoredSpells)}) do
-        ignoredSpells[strtrim(v)] = true
+    DoomignoredSpells = { }
+    for _,v in ipairs({strsplit(",",ShiGuangDB.DoomignoredSpells)}) do
+        DoomignoredSpells[strtrim(v)] = true
     end
 end
 
@@ -90,23 +84,24 @@ local function OnUpdate(_,update)
     if (elapsed > 0.05) then
         for i,v in pairs(watching) do
             if (GetTime() >= v[1] + 0.5) then
-                if ignoredSpells[i] then
+                local start, duration, enabled, texture, isPet, name
+                if (v[2] == "spell") then
+                    name = GetSpellInfo(v[3])
+                    texture = GetSpellTexture(v[3])
+                    start, duration, enabled = GetSpellCooldown(v[3])
+                elseif (v[2] == "item") then
+                    name = GetItemInfo(i)
+                    texture = v[3]
+                    start, duration, enabled = GetItemCooldown(i)
+                elseif (v[2] == "pet") then
+                    name, _, texture = GetPetActionInfo(v[3])
+                    start, duration, enabled = GetPetActionCooldown(v[3])
+                    isPet = true
+                end
+
+                if DoomignoredSpells[name] then
                     watching[i] = nil
                 else
-                    local start, duration, enabled, texture, isPet, name
-                    if (v[2] == "spell") then
-						name = GetSpellInfo(v[3])
-                        texture = GetSpellTexture(v[3])
-                        start, duration, enabled = GetSpellCooldown(v[3])
-                    elseif (v[2] == "item") then
-						name = GetItemInfo(i)
-                        texture = v[3]
-                        start, duration, enabled = GetItemCooldown(i)
-                    elseif (v[2] == "pet") then
-                        texture = select(3,GetPetActionInfo(v[3]))
-                        start, duration, enabled = GetPetActionCooldown(v[3])
-                        isPet = true
-                    end
                     if (enabled ~= 0) then
                         if (duration and duration > 2.0 and texture) then
                             cooldowns[i] = { start, duration, texture, isPet, name }
@@ -135,31 +130,31 @@ local function OnUpdate(_,update)
     
     if (#animating > 0) then
         runtimer = runtimer + update
-        if (runtimer > (fadeInTime + holdTime + fadeOutTime)) then
+        if (runtimer > (DoomfadeInTime + DoomholdTime + DoomfadeOutTime)) then
             tremove(animating,1)
             runtimer = 0
-			DCP.TextFrame:SetText(nil)
+            DCP.TextFrame:SetText(nil)
             DCPT:SetTexture(nil)
             DCPT:SetVertexColor(1,1,1)
         else
             if (not DCPT:GetTexture()) then
-				if (animating[1][3] ~= nil and showSpellName) then
-					DCP.TextFrame:SetText(animating[1][3])
-				end
+                if (animating[1][3] ~= nil and DoomshowSpellName) then
+                    DCP.TextFrame:SetText(animating[1][3])
+                end
                 DCPT:SetTexture(animating[1][1])
                 if animating[1][2] then
-                    DCPT:SetVertexColor(unpack(ShiGuangDB.petOverlay))
+                    DCPT:SetVertexColor(unpack(ShiGuangDB.DoompetOverlay))
                 end
                 --PlaySoundFile("Interface\\AddOns\\Doom_CooldownPulse\\lubdub.wav")
             end
-            local alpha = maxAlpha
-            if (runtimer < fadeInTime) then
-                alpha = maxAlpha * (runtimer / fadeInTime)
-            elseif (runtimer >= fadeInTime + holdTime) then
-                alpha = maxAlpha - ( maxAlpha * ((runtimer - holdTime - fadeInTime) / fadeOutTime))
+            local alpha = DoommaxAlpha
+            if (runtimer < DoomfadeInTime) then
+                alpha = DoommaxAlpha * (runtimer / DoomfadeInTime)
+            elseif (runtimer >= DoomfadeInTime + DoomholdTime) then
+                alpha = DoommaxAlpha - ( DoommaxAlpha * ((runtimer - DoomholdTime - DoomfadeInTime) / DoomfadeOutTime))
             end
             DCP:SetAlpha(alpha)
-            local scale = iconSize+(iconSize*((animScale-1)*(runtimer/(fadeInTime+holdTime+fadeOutTime))))
+            local scale = DoomiconSize+(DoomiconSize*((DoomanimScale-1)*(runtimer/(DoomfadeInTime+DoomholdTime+DoomfadeOutTime))))
             DCP:SetWidth(scale)
             DCP:SetHeight(scale)
         end
@@ -169,21 +164,27 @@ end
 --------------------
 -- Event Handlers --
 --------------------
-function DCP:ADDON_LOADED()
-        for i,v in pairs(defaultsettings) do
+function DCP:ADDON_LOADED(addon)
+if not MaoRUISettingDB["Misc"]["DoomCooldownPulse"] then return end
+    if (not ShiGuangDB) then
+        ShiGuangDB = Doomdefaultsettings
+    else
+        for i,v in pairs(Doomdefaultsettings) do
             if (not ShiGuangDB[i]) then
                 ShiGuangDB[i] = v
             end
         end
+    end
     RefreshLocals()
-    --self:SetPoint("CENTER",UIParent,"CENTER",ShiGuangDB.x,ShiGuangDB.y)
+    self:SetPoint("CENTER",UIParent,"BOTTOMLEFT",ShiGuangDB.Doomx,ShiGuangDB.Doomy)
     self:UnregisterEvent("ADDON_LOADED")
 end
 DCP:RegisterEvent("ADDON_LOADED")
 
 function DCP:UNIT_SPELLCAST_SUCCEEDED(unit,spell,rank,lineID,spellID)
+if not MaoRUISettingDB["Misc"]["DoomCooldownPulse"] then return end
     if (unit == "player") then
-        watching[spell] = {GetTime(),"spell",spellID}
+        watching[spellID] = {GetTime(),"spell",spellID}
         if (not self:IsMouseEnabled()) then
             self:SetScript("OnUpdate", OnUpdate)
         end
@@ -192,15 +193,16 @@ end
 DCP:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 
 function DCP:COMBAT_LOG_EVENT_UNFILTERED(...)
+if not MaoRUISettingDB["Misc"]["DoomCooldownPulse"] then return end
     local _,event,_,_,_,sourceFlags,_,_,_,_,_,spellID = ...
     if (event == "SPELL_CAST_SUCCESS") then
         if (bit.band(sourceFlags,COMBATLOG_OBJECT_TYPE_PET) == COMBATLOG_OBJECT_TYPE_PET and bit.band(sourceFlags,COMBATLOG_OBJECT_AFFILIATION_MINE) == COMBATLOG_OBJECT_AFFILIATION_MINE) then
             local name = GetSpellInfo(spellID)
             local index = GetPetActionIndexByName(name)
             if (index and not select(7,GetPetActionInfo(index))) then
-                watching[name] = {GetTime(),"pet",index}
-            elseif (not index and name) then
-                watching[name] = {GetTime(),"spell",spellID}
+                watching[spellID] = {GetTime(),"pet",index}
+            elseif (not index and spellID) then
+                watching[spellID] = {GetTime(),"spell",spellID}
             else
                 return
             end
@@ -213,6 +215,7 @@ end
 DCP:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 
 function DCP:PLAYER_ENTERING_WORLD()
+if not MaoRUISettingDB["Misc"]["DoomCooldownPulse"] then return end
     local inInstance,instanceType = IsInInstance()
     if (inInstance and instanceType == "arena") then
         self:SetScript("OnUpdate", nil)
@@ -256,12 +259,12 @@ SLASH_DOOMCOOLDOWNPULSE3 = "/doomcooldownpulse"
 
 function DCP:CreateOptionsFrame()
     local sliders = {
-        { text = "图标大小", value = "iconSize", min = 1, max = 125, step = 5 },
-        { text = "淡入时间", value = "fadeInTime", min = 0, max = 1.5, step = 0.1 },
-        { text = "淡出时间", value = "fadeOutTime", min = 0, max = 1.5, step = 0.1 },
-        { text = "图标透明度", value = "maxAlpha", min = 0, max = 1, step = 0.1 },
-        { text = "图标持续时间", value = "holdTime", min = 0, max = 1.5, step = 0.1 },
-        { text = "动画缩放", value = "animScale", min = 0, max = 2, step = 0.1 },
+        { text = "图标大小", value = "DoomiconSize", min = 1, max = 125, step = 5 },
+        { text = "淡入时间", value = "DoomfadeInTime", min = 0, max = 1.5, step = 0.1 },
+        { text = "淡出时间", value = "DoomfadeOutTime", min = 0, max = 1.5, step = 0.1 },
+        { text = "图标透明度", value = "DoommaxAlpha", min = 0, max = 1, step = 0.1 },
+        { text = "图标持续时间", value = "DoomholdTime", min = 0, max = 1.5, step = 0.1 },
+        { text = "动画缩放", value = "DoomanimScale", min = 0, max = 2, step = 0.1 },
     }
     
     local buttons = {
@@ -276,8 +279,8 @@ function DCP:CreateOptionsFrame()
         { text = "解锁", func = function(self) 
             if (self:GetText() == "解锁") then
                 RefreshLocals()
-                DCP:SetWidth(iconSize) 
-                DCP:SetHeight(iconSize) 
+                DCP:SetWidth(DoomiconSize) 
+                DCP:SetHeight(DoomiconSize) 
                 self:SetText("锁定") 
                 DCP:SetScript("OnUpdate", nil) 
                 DCP:SetAlpha(1) 
@@ -289,20 +292,20 @@ function DCP:CreateOptionsFrame()
                 DCP:EnableMouse(false) 
             end end },
         { text = "默认", func = function(self) 
-            for i,v in pairs(defaultsettings) do 
+            for i,v in pairs(Doomdefaultsettings) do 
                 ShiGuangDB[i] = v 
             end 
             for i,v in pairs(sliders) do 
                 getglobal("DCP_OptionsFrameSlider"..i):SetValue(ShiGuangDB[v.value]) 
             end
-            DCP_OptionsFramePetColorBox:GetNormalTexture():SetVertexColor(unpack(ShiGuangDB.petOverlay))
+            DCP_OptionsFramePetColorBox:GetNormalTexture():SetVertexColor(unpack(ShiGuangDB.DoompetOverlay))
             DCP_OptionsFrameIgnoreBox:SetText("")
             DCP:ClearAllPoints()
-            DCP:SetPoint("CENTER",UIParent,"CENTER",0,-155) 
+            DCP:SetPoint("CENTER",UIParent,"BOTTOMLEFT",ShiGuangDB.Doomx,ShiGuangDB.Doomy) 
             end },
     }
 
-    local optionsframe = CreateFrame("frame","DCP_OptionsFrame", UIParent)
+    local optionsframe = CreateFrame("frame","DCP_OptionsFrame")
     optionsframe:SetBackdrop({
       bgFile="Interface\\DialogFrame\\UI-DialogBox-Background", 
       edgeFile="Interface\\DialogFrame\\UI-DialogBox-Border", 
@@ -311,7 +314,7 @@ function DCP:CreateOptionsFrame()
     })
     optionsframe:SetWidth(220)
     optionsframe:SetHeight(500)
-    optionsframe:SetPoint("CENTER",UIParent)
+    optionsframe:SetPoint("LEFT",UIParent,"CENTER",310,0)
     optionsframe:EnableMouse(true)
     optionsframe:SetMovable(true)
     optionsframe:RegisterForDrag("LeftButton")
@@ -351,25 +354,25 @@ function DCP:CreateOptionsFrame()
             local val=slider:GetValue() ShiGuangDB[v.value]=val 
             valuetext:SetText(format("%.1f",val)) 
             if (DCP:IsMouseEnabled()) then 
-                DCP:SetWidth(ShiGuangDB.iconSize) 
-                DCP:SetHeight(ShiGuangDB.iconSize) 
+                DCP:SetWidth(ShiGuangDB.DoomiconSize) 
+                DCP:SetHeight(ShiGuangDB.DoomiconSize) 
             end end)
     end
-	
-	local spellnametext = optionsframe:CreateFontString(nil,"ARTWORK","GameFontNormalSmall")
+    
+    local spellnametext = optionsframe:CreateFontString(nil,"ARTWORK","GameFontNormalSmall")
     spellnametext:SetPoint("TOPLEFT","DCP_OptionsFrameSlider"..#sliders,"BOTTOMLEFT",-15,-25)
     spellnametext:SetText("显示技能名称:")
-	
-	local spellnamecbt = CreateFrame("CheckButton","DCP_OptionsFrameSpellNameCheckButton",optionsframe,"OptionsCheckButtonTemplate")
+    
+    local spellnamecbt = CreateFrame("CheckButton","DCP_OptionsFrameSpellNameCheckButton",optionsframe,"OptionsCheckButtonTemplate")
     spellnamecbt:SetPoint("LEFT",spellnametext,"RIGHT",6,0)
-	spellnamecbt:SetChecked(ShiGuangDB.showSpellName)
-	spellnamecbt:SetScript("OnClick", function(self) 
-		local newState = (self:GetChecked() == 1) or nil
-		self:SetChecked(newState)
-		ShiGuangDB.showSpellName = newState
-		RefreshLocals()
-	end)
-	
+    spellnamecbt:SetChecked(ShiGuangDB.DoomshowSpellName)
+    spellnamecbt:SetScript("OnClick", function(self) 
+        local newState = self:GetChecked()   --(self:GetChecked() == 1) or nil
+        self:SetChecked(newState)
+        ShiGuangDB.DoomshowSpellName = newState
+        RefreshLocals()
+    end)
+    
     local ignoretext = optionsframe:CreateFontString(nil,"ARTWORK","GameFontNormalSmall")
     ignoretext:SetPoint("TOPLEFT",spellnametext,"BOTTOMLEFT",0,-10)
     ignoretext:SetText("屏蔽的技能:")
@@ -379,12 +382,12 @@ function DCP:CreateOptionsFrame()
     ignorebox:SetPoint("TOPLEFT",ignoretext,"BOTTOMLEFT",0,3)
     ignorebox:SetWidth(180)
     ignorebox:SetHeight(32)
-    ignorebox:SetText(ShiGuangDB.ignoredSpells)
+    ignorebox:SetText(ShiGuangDB.DoomignoredSpells)
     ignorebox:SetScript("OnEnter",function(self) GameTooltip:SetOwner(self, "ANCHOR_CURSOR") GameTooltip:SetText("提示：用逗号分隔多个法术，注意要小写") end)
     ignorebox:SetScript("OnLeave",function(self) GameTooltip:Hide() end)
     ignorebox:SetScript("OnEnterPressed", function(self) self:ClearFocus() end)
     ignorebox:SetScript("OnEditFocusLost",function(self)
-        ShiGuangDB.ignoredSpells = ignorebox:GetText()
+        ShiGuangDB.DoomignoredSpells = ignorebox:GetText()
         RefreshLocals()
     end)
     
@@ -396,23 +399,23 @@ function DCP:CreateOptionsFrame()
     petcolorselect:SetPoint("LEFT",pettext,"RIGHT",5,-2)
     petcolorselect:SetWidth(20)
     petcolorselect:SetHeight(20)
-	petcolorselect:SetNormalTexture('Interface/ChatFrame/ChatFrameColorSwatch')
-    petcolorselect:GetNormalTexture():SetVertexColor(unpack(ShiGuangDB.petOverlay))
+    petcolorselect:SetNormalTexture('Interface/ChatFrame/ChatFrameColorSwatch')
+    petcolorselect:GetNormalTexture():SetVertexColor(unpack(ShiGuangDB.DoompetOverlay))
     petcolorselect:SetScript("OnEnter",function(self) GameTooltip:SetOwner(self, "ANCHOR_CURSOR") GameTooltip:SetText("提示:使用白色不进行宠物技能颜色覆盖") end)
     petcolorselect:SetScript("OnLeave",function(self) GameTooltip:Hide() end)
     petcolorselect:SetScript('OnClick', function(self) 
-        self.r,self.g,self.b = unpack(ShiGuangDB.petOverlay) 
+        self.r,self.g,self.b = unpack(ShiGuangDB.DoompetOverlay) 
         OpenColorPicker(self) 
         ColorPickerFrame:SetPoint("TOPLEFT",optionsframe,"TOPRIGHT")
         end)
-    petcolorselect.swatchFunc = function(self) ShiGuangDB.petOverlay={ColorPickerFrame:GetColorRGB()} petcolorselect:GetNormalTexture():SetVertexColor(ColorPickerFrame:GetColorRGB()) end
-    petcolorselect.cancelFunc = function(self) ShiGuangDB.petOverlay={self.r,self.g,self.b} petcolorselect:GetNormalTexture():SetVertexColor(unpack(ShiGuangDB.petOverlay)) end
-	
-	local petcolorselectbg = petcolorselect:CreateTexture(nil, 'BACKGROUND')
-	petcolorselectbg:SetWidth(17)
+    petcolorselect.swatchFunc = function(self) ShiGuangDB.DoompetOverlay={ColorPickerFrame:GetColorRGB()} petcolorselect:GetNormalTexture():SetVertexColor(ColorPickerFrame:GetColorRGB()) end
+    petcolorselect.cancelFunc = function(self) ShiGuangDB.DoompetOverlay={self.r,self.g,self.b} petcolorselect:GetNormalTexture():SetVertexColor(unpack(ShiGuangDB.DoompetOverlay)) end
+    
+    local petcolorselectbg = petcolorselect:CreateTexture(nil, 'BACKGROUND')
+    petcolorselectbg:SetWidth(17)
     petcolorselectbg:SetHeight(17)
-	petcolorselectbg:SetTexture(1,1,1)
-	petcolorselectbg:SetPoint('CENTER')
+    petcolorselectbg:SetTexture(1,1,1)
+    petcolorselectbg:SetPoint('CENTER')
     
     for i,v in pairs(buttons) do
         local button = CreateFrame("Button", "DCP_OptionsFrameButton"..i, optionsframe, "UIPanelButtonTemplate")
@@ -420,6 +423,6 @@ function DCP:CreateOptionsFrame()
         button:SetWidth(75)
         button:SetPoint("BOTTOM", optionsframe, "BOTTOM", ((i%2==0 and -1) or 1)*45, ceil(i/2)*15 + (ceil(i/2)-1)*15)
         button:SetText(v.text)
-        button:SetScript("OnClick", function(self) PlaySound("igMainMenuOption") v.func(self) end)
+        button:SetScript("OnClick", function(self) PlaySound(852) v.func(self) end)
     end
 end

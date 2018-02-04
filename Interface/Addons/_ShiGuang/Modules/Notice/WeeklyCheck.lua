@@ -56,10 +56,19 @@ local function GarrisonInvade()
  else return AddColor(INCOMPLETE,LIGHT_RED) end
 end
 local function LegionWolrdBoss()
- if IsQuestFlaggedCompleted(42270) or IsQuestFlaggedCompleted(42269) or IsQuestFlaggedCompleted(422779) or IsQuestFlaggedCompleted(43192) or IsQuestFlaggedCompleted(42819) or IsQuestFlaggedCompleted(43193) or IsQuestFlaggedCompleted(43513) or IsQuestFlaggedCompleted(43448) or IsQuestFlaggedCompleted(43512) or IsQuestFlaggedCompleted(43985) or IsQuestFlaggedCompleted(44287) then return AddColor(COMPLETE,LIGHT_GREEN)
+ if IsQuestFlaggedCompleted(42270) or IsQuestFlaggedCompleted(42269) or IsQuestFlaggedCompleted(42779) or IsQuestFlaggedCompleted(43192) or IsQuestFlaggedCompleted(42819) or IsQuestFlaggedCompleted(43193) or IsQuestFlaggedCompleted(43513) or IsQuestFlaggedCompleted(43448) or IsQuestFlaggedCompleted(43512) or IsQuestFlaggedCompleted(43985) or IsQuestFlaggedCompleted(44287) then return AddColor(COMPLETE,LIGHT_GREEN)
  else return AddColor(INCOMPLETE,LIGHT_RED) end
 end
-	-------------------------------------------------------------
+local function TombWolrdBoss()
+ if IsQuestFlaggedCompleted(46947) or IsQuestFlaggedCompleted(46948) or IsQuestFlaggedCompleted(46945) or IsQuestFlaggedCompleted(47061) then return AddColor(COMPLETE,LIGHT_GREEN)
+ else return AddColor(INCOMPLETE,LIGHT_RED) end
+end
+local function ArgusWolrdBoss()
+ if IsQuestFlaggedCompleted(38276) or IsQuestFlaggedCompleted(47461) or IsQuestFlaggedCompleted(47462) or IsQuestFlaggedCompleted(47463) then return AddColor(COMPLETE,LIGHT_GREEN)
+ else return AddColor(INCOMPLETE,LIGHT_RED) end
+end
+
+ 	-------------------------------------------------------------
 local function DrawMainframe(frame, istooltip)
 -- title  --select(8,GetAchievementInfo(xxx) or GetAchievementCriteriaInfo(8105,1) or 
  frame:ClearLines()
@@ -69,16 +78,18 @@ local function DrawMainframe(frame, istooltip)
  frame:AddDoubleLine(quest_icon..AddColor(GetItemInfo(138019),LIGHT_BLUE), completedstring(44554))            --史诗钥石
  frame:AddDoubleLine(quest_icon..AddColor(GARRISON_LANDING_INVASION,LIGHT_BLUE), GarrisonInvade())
  frame:AddDoubleLine(quest_icon..AddColor(PLAYER_DIFFICULTY_TIMEWALKER,LIGHT_BLUE), TimeTravelFB())   --TBC--WLK--CTM 
- frame:AddDoubleLine(quest_icon..AddColor(GetCurrencyInfo(1149),LIGHT_BLUE), completedstring(43478))  --盲目之眼
+ --frame:AddDoubleLine(quest_icon..AddColor(GetCurrencyInfo(1149),LIGHT_BLUE), completedstring(43478))  --盲目之眼
  frame:AddDoubleLine(quest_icon..AddColor(GetItemInfo(111821),LIGHT_BLUE), completedstring(34774))            --布林顿
  frame:AddLine(" ")
  frame:AddDoubleLine(rare_icon..AddColor("Legion  1/11 ",PINK), LegionWolrdBoss())
+ frame:AddDoubleLine(rare_icon..AddColor("Tomb  1/4 ",PINK), TombWolrdBoss())
+ frame:AddDoubleLine(rare_icon..AddColor("Argus  1/4 ",PINK), ArgusWolrdBoss())
  frame:AddDoubleLine(rare_icon..AddColor("WOD-暗影领主艾斯卡|cffffddFF(死爪)|r",ZONE_BLUE), completedstring(39287))
  frame:AddDoubleLine(rare_icon..AddColor("WOD-游侠将军|cffffddFF(泰罗菲斯特)|r",ZONE_BLUE), completedstring(39288))
  frame:AddDoubleLine(rare_icon..AddColor("WOD-攻城大师玛塔克|cffffddFF(末日之轮)|r",ZONE_BLUE), completedstring(39289))
  frame:AddDoubleLine(rare_icon..AddColor("WOD-暴君维哈里|cffffddFF(维金斯)|r",ZONE_BLUE), completedstring(39290)) 
  frame:AddDoubleLine(rare_icon..AddColor("WOD-鲁克玛",ZONE_BLUE), completedstring(37464)) 
- frame:AddDoubleLine(rare_icon..AddColor("MOP-怒之煞",ZONE_BLUE), completedstring(32009))
+ frame:AddDoubleLine(rare_icon..AddColor("MOP-怒之煞",ZONE_BLUE), completedstring(32099))
  frame:AddDoubleLine(rare_icon..AddColor("MOP-炮舰",ZONE_BLUE), completedstring(32098))
  frame:AddDoubleLine(rare_icon..AddColor("MOP-纳拉克",ZONE_BLUE), completedstring(32518))
  frame:AddDoubleLine(rare_icon..AddColor("MOP-乌达斯塔",ZONE_BLUE), completedstring(32519))
@@ -127,10 +138,10 @@ local function eventhandler(self, event, ...)
 	--label = "Weekly Check",
 OnClick = function(self,button)
   --if button == "LeftButton" then 
-  PlaySound("igSpellBookOpen");
+  --PlaySound(PlaySoundKitID and "igSpellBookOpen");
   sendCmd("/mr");
   --elseif button == "RightButton" then
-  --securecall(EasyMenu, SetMrMicromenu, SetMrMenuFrame, "cursor", 0, 0, 'MENU', 2)
+  --securecall(L_EasyMenu, SetMrMicromenu, SetMrMenuFrame, "cursor", 0, 0, 'MENU', 2)
   --end
   end,
 	OnTooltipShow = function(tooltip)

@@ -1,9 +1,9 @@
 ﻿## Title: MaxDps_Druid
 ## Title-zhCN:|CFFD74DE1[输出]|rMax-XD
 ## Title-zhTW:|CFFD74DE1[输出]|rMax-XD
-## Version: 7.1.0.1
+## Version: 7.3.0
 ## Author: Kaminari
-## Interface: 70200
+## Interface: 70300
 ## Dependencies: MaxDps
 ## LoadOnDemand: 1
 

@@ -50,8 +50,11 @@ Overachiever.DefaultSettings = {
   ToastCalendar_microholiday = false;
   ToastCalendar_bonusevent = false;
   ToastCalendar_dungeonevent = false;
-  ToastCalendar_noautofade = true;
-  ToastCalendar_onlyclickfade = true;
+  ToastCalendar_pvpbrawl = false;
+  ToastCalendar_misc = false;
+  ToastCalendar_noautofade = false;
+  ToastCalendar_onlyclickfade = false;
+  Throttle_AchLookup = true;
   Version = THIS_VERSION;
 };
 
@@ -103,6 +106,8 @@ function Overachiever.CreateOptions(THIS_TITLE, BuildCriteriaLookupTab_check, Au
 	{ variable = "ToastCalendar_microholiday", text = L.OPT_STARTTOAST_MICROHOLIDAY, tooltip = L.OPT_STARTTOAST_MICROHOLIDAY_TIP, column = 2 },
 	{ variable = "ToastCalendar_bonusevent", text = L.OPT_STARTTOAST_BONUS, tooltip = L.OPT_STARTTOAST_BONUS_TIP },
 	{ variable = "ToastCalendar_dungeonevent", text = L.OPT_STARTTOAST_DUNGEON, tooltip = L.OPT_STARTTOAST_DUNGEON_TIP, column = 2 },
+	{ variable = "ToastCalendar_pvpbrawl", text = L.OPT_STARTTOAST_PVPBRAWL, tooltip = L.OPT_STARTTOAST_PVPBRAWL_TIP },
+	{ variable = "ToastCalendar_misc", text = L.OPT_STARTTOAST_MISC, tooltip = L.OPT_STARTTOAST_MISC_TIP, tooltip2 = L.OPT_STARTTOAST_MISC_TIP2, column = 2 },
 	{ variable = "ToastCalendar_noautofade", text = L.OPT_STARTTOAST_TIMEFADE, tooltip = L.OPT_STARTTOAST_TIMEFADE_TIP, OnChange = updateEnabled,
 	  name = "Overachiever_Options_ToastCalendar_noautofade" },
 	{ variable = "ToastCalendar_onlyclickfade", xOffset = 15, text = L.OPT_STARTTOAST_ONLYCLICKFADE, tooltip = L.OPT_STARTTOAST_ONLYCLICKFADE_TIP,
@@ -118,6 +123,9 @@ function Overachiever.CreateOptions(THIS_TITLE, BuildCriteriaLookupTab_check, Au
 	  tooltip = L.OPT_SELECTSOUND_ANGLERCHECKPOLE_TIP, xOffset = 15 },
 	{ variable = "SoundAchIncomplete_KillCheckCombat", text = L.OPT_SELECTSOUND_CHECKCOMBAT,
 	  tooltip = L.OPT_SELECTSOUND_CHECKCOMBAT_TIP, xOffset = 15 },
+
+	{ type = "labelwrap", text = L.OPT_LABEL_MISC, topBuffer = 4, xOffset = 0 },
+	{ variable = "Throttle_AchLookup", text = L.OPT_THROTTLE_ACHLOOKUP, tooltip = L.OPT_THROTTLE_ACHLOOKUP_TIP },
   }
 
   local items_reminders = {

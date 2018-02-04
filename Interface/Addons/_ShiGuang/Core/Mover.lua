@@ -85,22 +85,18 @@ local function CreateConsole()
 	lable:SetTextColor(1, .8, 0)
 	local bu, text = {}, {LOCK, CANCEL, "网格", RESET}
 	for i = 1, 4 do
-		bu[i] = CreateFrame("Button", nil, f)
-		bu[i]:SetSize(70, 30)
+		bu[i] = M.CreateButton(f, 70, 30, text[i])
 		if i == 1 then
 			bu[i]:SetPoint("BOTTOMLEFT", 5, 5)
 		else
 			bu[i]:SetPoint("LEFT", bu[i-1], "RIGHT", 2, 0)
 		end
-		M.CreateBD(bu[i], .3, 2)
-		M.CreateBC(bu[i])
-		M.CreateFS(bu[i], 14, text[i], true)
 	end
 	-- Lock
 	bu[1]:SetScript("OnClick", function()
 		f:Hide()
 		LockElements()
-		SlashCmdList["TOGGLEGRID"]("1")
+		--SlashCmdList["TOGGLEGRID"]("1")
 	end)
 	-- Cancel
 	bu[2]:SetScript("OnClick", function()
@@ -108,7 +104,7 @@ local function CreateConsole()
 	end)
 	-- Grids
 	bu[3]:SetScript("OnClick", function()
-		SlashCmdList["TOGGLEGRID"]("32")
+		sendCmd("/align") --SlashCmdList["TOGGLEGRID"]("32")
 	end)
 	-- Reset
 	bu[4]:SetScript("OnClick", function()
@@ -132,7 +128,7 @@ end
 
 SlashCmdList["NDUI_MOVER"] = function(msg)
 	if InCombatLockdown() then
-		UIErrorsFrame:AddMessage(DM.InfoColor..ERR_NOT_IN_COMBAT)
+		UIErrorsFrame:AddMessage(I.InfoColor..ERR_NOT_IN_COMBAT)
 		return
 	end
 	CreateConsole()

@@ -1,5 +1,4 @@
-local M, R, U, I = unpack(select(2, ...))
-
+﻿local M, R, U, I = unpack(select(2, ...))
 local function MrOnLogin()
 		MaoRUISettingDB.load = true
 		ReloadUI()
@@ -13,8 +12,8 @@ local function MrOnLogin()
 	  if tonumber(GetCVar("cameraDistanceMaxZoomFactor")) ~= 2.6 then SetCVar("cameraDistanceMaxZoomFactor", 2.6) end
 	  sendCmd("/console missingTransmogSourceInItemTooltips 1")
 end
-------------------------------------
---------------------------Config--------------------------------------
+------------------------------------LogIn Welcome Pic----------------------------------------------
+--Config
 local BackDropFile = "Interface\\Addons\\_ShiGuang\\Media\\Modules\\Raid\\solid"
 local Media = "Interface\\AddOns\\_ShiGuang\\Media\\Modules\\BlinkHealthText\\" 	
 local Small1 = Media.."SmallPic.tga" 	
@@ -104,6 +103,17 @@ MadeBy.Text3:SetFont("Interface\\addons\\_ShiGuang\\Media\\Fonts\\Edo.TTF", 52, 
 MadeBy.Text3:SetText("Burn it to ash")
 MadeBy.Text3:SetPoint("TOPRIGHT",Welcome,"TOPRIGHT",-43,-180)
 MadeBy.Text3:SetTextColor(1, 1, 1,1)
+
+--[[MadeBy.Text4 = MadeBy:CreateFontString(nil, "OVERLAY")
+MadeBy.Text4:SetFont(STANDARD_TEXT_FONT, 88, "THICKOUTLINE") 
+MadeBy.Text4:SetText("祖宗们，你们知道吗？.")
+MadeBy.Text4:SetPoint("TOP",Welcome,"CENTER",-160,-20)
+MadeBy.Text4:SetTextColor(1, 1, 1,1)
+MadeBy.Text5 = MadeBy:CreateFontString(nil, "OVERLAY")
+MadeBy.Text5:SetFont(STANDARD_TEXT_FONT, 88, "THICKOUTLINE") 
+MadeBy.Text5:SetText("右键小地图能解决80%问题")
+MadeBy.Text5:SetPoint("TOP",Welcome,"CENTER",80,-120)
+MadeBy.Text5:SetTextColor(1, 1, 1,1)]]
 --------------------------------------------------Frame----------------------------------------------------------
 --Small-
 local Small = CreateFrame("Frame", nil, Welcome) 
@@ -240,13 +250,13 @@ LargeText.Text5:SetTextColor(ClassColor.r, ClassColor.g, ClassColor.b,1)
 --NPCModel--------------------
 local NPCModel = CreateFrame("PlayerModel", "NPCModel", Welcome)
 NPCModel:SetSize(UIParent:GetWidth(), UIParent:GetHeight()*0.8)
-NPCModel:SetPoint("BOTTOM",Small,"TOPRIGHT",-43,0) --"CENTER",0,210
+NPCModel:SetPoint("BOTTOM",Small,"TOPRIGHT",0,0) --"CENTER",0,210
 NPCModel:SetDisplayInfo(ShiGuangDB.DisplayInfo)
 NPCModel:SetParent(Welcome)
-NPCModel:SetCamDistanceScale(0.65)
-NPCModel:SetPosition(0,-0.1,-0.5)
-NPCModel:SetRotation(0.3)
-NPCModel.rotation = 0.1
+NPCModel:SetCamDistanceScale(0.8)
+NPCModel:SetPosition(0,-0.21,-0.43)
+NPCModel:SetRotation(0.66)
+NPCModel.rotation = 0.12
 local function RotateModel(self, button)
     local rotationIncrement = 0.2
     if button == "LeftButton" then

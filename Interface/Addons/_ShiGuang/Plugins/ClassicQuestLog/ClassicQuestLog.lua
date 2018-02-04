@@ -1,6 +1,9 @@
 ﻿local cql = ClassicQuestLog
---[[ settings: ShowTooltips, ShowLevels, UndockWindow, LockWindow, ShowResizeGrip, Height ]]
-local settings
+
+-- settings: ShowTooltips, ShowLevels, UndockWindow, LockWindow, ShowResizeGrip, Height, SolidBackground
+
+ClassicQuestLogSettings = {}
+ClassicQuestLogCollapsedHeaders = {}
 
 cql.quests = {}
 
@@ -90,7 +93,7 @@ function cql:OnShow()
 	end
 	cql.detail:ClearAllPoints()
 	cql.detail:SetPoint("TOPRIGHT",-32,-63)
-	PlaySound("igQuestLogOpen")
+	PlaySound(PlaySoundKitID and "igQuestLogOpen" or SOUNDKIT.IG_QUEST_LOG_OPEN)
 end
 
 -- no need to watch these events while log isn't on screen
@@ -122,7 +125,7 @@ function cql:OnHide()
 		end
 		index = index + 1
 	end
-	PlaySound("igQuestLogClose")
+	PlaySound(PlaySoundKitID and "igQuestLogClose" or SOUNDKIT.IG_QUEST_LOG_CLOSE)
 end
 
 -- this shows the update frame whose purpose is to run UpdateLog below on the next frame
@@ -133,7 +136,6 @@ end
 
 -- called from the OnUpdate of cql.update
 function cql:UpdateLog()
-
 	cql.update:Hide() -- immediately stop the OnUpdate
 	-- gather quests into a working table (cql.quests) to skip over collapsed headers
 	wipe(cql.quests)
@@ -337,6 +339,17 @@ function cql:UpdateQuestDetail()
 				cql.lastViewedQuestID = questID
 			end
 		end
+	end
+	-- show portrait off to side of window if one is available
+	local questPortrait, questPortraitText, questPortraitName = GetQuestLogPortraitGiver()
+	if (questPortrait and questPortrait ~= 0 and QuestLogShouldShowPortrait()) then
+		-- only show quest portrait if it's not already shown
+		if QuestNPCModel:GetParent()~=ClassicQuestLog or not QuestNPCModel:IsVisible() or cql.questPortrait~=questPortrait then
+			QuestFrame_ShowQuestPortrait(ClassicQuestLog, questPortrait, questPortraitText, questPortraitName, -3, -42)
+			cql.questPortrait = questPortrait
+		end
+	else
+		QuestFrame_HideQuestPortrait()
 	end
 end
 

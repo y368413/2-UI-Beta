@@ -1,18 +1,14 @@
-local Talentless = CreateFrame('Frame', (...), UIParent, 'Lib_UIDropDownMenuTemplate')
+local Talentless = CreateFrame('Frame', 'Talentless', UIParent)
 Talentless:RegisterEvent('ADDON_LOADED')
 Talentless:SetScript('OnEvent', function(self, event, ...)
 	self[event](self, ...)
 end)
 function Talentless:PLAYER_LEVEL_UP(level)
-	if(level == 101) then
-		table.remove(self.Items[1].items, 1)
-	elseif(level == 110) then
-		table.remove(self.Items[2].items, 1)
+	if(level == 101) then table.remove(self.Items[1].items, 1)
+	elseif(level == 110) then table.remove(self.Items[2].items, 1)
 		self:UnregisterEvent('PLAYER_LEVEL_UP')
 	end
-	if(self:IsShown()) then
-		self:UpdateItems()
-	end
+	if(self:IsShown()) then self:UpdateItems() end
 end
 
 function Talentless:UNIT_AURA()
@@ -89,12 +85,8 @@ function Talentless:CreateItemButtons()
 	}
 
 	local playerLevel = UnitLevel('player')
-	if(playerLevel > 100) then
-		table.remove(items[1], 1)
-
-		if(playerLevel > 109) then
-			table.remove(items[2], 1)
-		end
+	if(playerLevel > 100) then table.remove(items[1], 1)
+	if(playerLevel > 109) then table.remove(items[2], 1) end
 	end
 
 	for index, items in next, items do
@@ -192,9 +184,7 @@ function Talentless:ADDON_LOADED(addon)
 		PlayerTalentFrameTalents.unspentText:ClearAllPoints()
 		PlayerTalentFrameTalents.unspentText:SetPoint('TOP', 0, 24)
 		self:CreateItemButtons()
-		if(UnitLevel('player') < 110 and not (IsTrialAccount() or IsVeteranTrialAccount())) then
-			self:RegisterEvent('PLAYER_LEVEL_UP')
-		end
+		if(UnitLevel('player') < 110 and not (IsTrialAccount() or IsVeteranTrialAccount())) then self:RegisterEvent('PLAYER_LEVEL_UP') end
 		self:UnregisterEvent('ADDON_LOADED')
 		self:OnShow()
 	end

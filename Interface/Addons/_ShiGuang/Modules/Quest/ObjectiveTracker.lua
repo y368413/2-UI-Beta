@@ -1,17 +1,13 @@
-local M, R, U, I = unpack(select(2, ...))
+﻿local M, R, U, I = unpack(select(2, ...))
 local module = MaoRUI:GetModule("Skins")
 local r, g, b = I.ClassColor.r, I.ClassColor.g, I.ClassColor.b
-local QuestsHeader = true
-local ObjectivesHeader = true
---local WorldMapTitle = true
+
 function module:QuestTracker()
 	-- Questblock click enhant
 	local function QuestHook(id)
 		local questLogIndex = GetQuestLogIndexByID(id)
-		if IsControlKeyDown() and CanAbandonQuest(id) then
-			QuestMapQuestOptions_AbandonQuest(id)
-		elseif IsAltKeyDown() and GetQuestLogPushable(questLogIndex) then
-			QuestMapQuestOptions_ShareQuest(id)
+		if IsControlKeyDown() and CanAbandonQuest(id) then QuestMapQuestOptions_AbandonQuest(id)
+		elseif IsAltKeyDown() and GetQuestLogPushable(questLogIndex) then QuestMapQuestOptions_ShareQuest(id)
 		end
 	end
 	hooksecurefunc(QUEST_TRACKER_MODULE, "OnBlockHeaderClick", function(self, block) QuestHook(block.id) end)
@@ -54,28 +50,52 @@ function module:QuestTracker()
 		bg:SetSize(250, 30)
 	end
   -- Move Headers 
-  local function Moveit(mf) 
-    mf:EnableMouse(true)	
-	  mf:RegisterForDrag("LeftButton")
-    mf:SetHitRectInsets(-15, -15, -5, -5)
- 	  mf:HookScript("OnDragStart", function(s) 
+  local function Moveit(header) 
+    header:EnableMouse(true)	
+	  header:RegisterForDrag("LeftButton")
+    header:SetHitRectInsets(-15, -15, -5, -5)
+ 	  header:HookScript("OnDragStart", function(s) 
        ObjectiveTrackerFrame:StartMoving() 
     end) 
-	  mf:HookScript("OnDragStop", function(s)
+	  header:HookScript("OnDragStop", function(s)
 	  ObjectiveTrackerFrame:StopMovingOrSizing()
 	 end)
   end
 	local headers = {
-	ObjectiveTrackerBlocksFrame.QuestHeader,
-	ObjectiveTrackerBlocksFrame.AchievementHeader,
-	ObjectiveTrackerBlocksFrame.ScenarioHeader,
-	BONUS_OBJECTIVE_TRACKER_MODULE.Header,
-	WORLD_QUEST_TRACKER_MODULE.Header,
+		ObjectiveTrackerBlocksFrame.QuestHeader,
+		ObjectiveTrackerBlocksFrame.AchievementHeader,
+		ObjectiveTrackerBlocksFrame.ScenarioHeader,
+		BONUS_OBJECTIVE_TRACKER_MODULE.Header,
+		WORLD_QUEST_TRACKER_MODULE.Header,
 	}
 	for _, header in pairs(headers) do reskinHeader(header) Moveit(header) end
 end
 
- -- numQuests.lua
+-- 任务名称职业着色 -------------------------------------------------------
+function module:QuestTrackerSkinTitle()
+ if not MaoRUISettingDB["Skins"]["QuestTrackerSkinTitle"] then return end
+ hooksecurefunc(QUEST_TRACKER_MODULE, "Update", function(self)
+        for i = 1, GetNumQuestWatches() do
+		    local questID = GetQuestWatchInfo(i)
+	        if not questID then break end
+            local block = QUEST_TRACKER_MODULE:GetBlock(questID)
+	          block.HeaderText:SetFont(STANDARD_TEXT_FONT, 12, 'nil')
+            block.HeaderText:SetTextColor(r, g, b)
+            block.HeaderText:SetJustifyH("LEFT")
+        end
+    end)
+     local function hoverquest()
+     for i = 1, GetNumQuestWatches() do
+		    local id = GetQuestWatchInfo(i)
+	        if not id then break end
+	        QUEST_TRACKER_MODULE:GetBlock(id).HeaderText:SetTextColor(r, g, b)
+        end
+    end
+    hooksecurefunc(QUEST_TRACKER_MODULE, "OnBlockHeaderEnter", hoverquest)  
+    hooksecurefunc(QUEST_TRACKER_MODULE, "OnBlockHeaderLeave", hoverquest)
+ end   
+    
+ -- numQuests -------------------------------------------------------
 local InCombat,a,f,_,id,cns,ncns,l,n,q,o,w=false,...
 local nQ=CreateFrame('frame',a)
 function f.PLAYER_LOGIN()
@@ -108,9 +128,9 @@ function f.QUEST_LOG_UPDATE()
 		q=n.."/"..MAX_QUESTS.." "..TRACKER_HEADER_QUESTS
 		o=n.."/"..MAX_QUESTS.." "..OBJECTIVES_TRACKER_LABEL
 		--w=MAP_AND_QUEST_LOG.." ("..n.."/"..MAX_QUESTS..")"
-		if QuestsHeader then ObjectiveTrackerBlocksFrame.QuestHeader.Text:SetText(q) end
-		if ObjectivesHeader then ObjectiveTrackerFrame.HeaderMenu.Title:SetText(o) end
-		--if WorldMapTitle then WorldMapFrame.BorderFrame.TitleText:SetText(w) end
+		ObjectiveTrackerBlocksFrame.QuestHeader.Text:SetText(q)
+		ObjectiveTrackerFrame.HeaderMenu.Title:SetText(o)
+		WorldMapFrame.BorderFrame.TitleText:SetText(w)
 	end
 end
 nQ:RegisterEvent('PLAYER_LOGIN')

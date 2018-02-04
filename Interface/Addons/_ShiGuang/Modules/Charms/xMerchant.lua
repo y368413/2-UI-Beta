@@ -1,5 +1,6 @@
 ﻿--[[ xMerchant Copyright (c) 2010-2014, Nils Ruesch All rights reserved. ]]
 
+local xMerchant = {};
 local buttons = {};
 local knowns = {};
 local errors = {};
@@ -34,7 +35,7 @@ XMERCHANT_DEBUG_TAGS["[Faction]"] = 0;
 XMERCHANT_DEBUG_TAGS["[MerchantItemInfo]"] = 0;
 
 -- DONEY
-local function XMERCHANT_LOG_DEBUG(msg)
+local function XMERCHANT_LOGD(msg)
 	if (ENABLE_DEBUG_DONEY) then
 		local pos = strfind(msg, " ");
 		local tag = pos and pos > 0 and strsub(msg, 0, pos-1) or "";
@@ -54,7 +55,7 @@ local function GetError(link, isRecipe)
 	
 	local id = link:match("item:(%d+)");
 	if ( errors[id] ) then
-		XMERCHANT_LOG_DEBUG("[GetError]  "..link.."  @return errors[id]: "..errors[id]);
+		XMERCHANT_LOGD("[GetError]  "..link.."  @return errors[id]: "..errors[id]);
 		return errors[id];
 	end
 	
@@ -89,7 +90,7 @@ local function GetError(link, isRecipe)
 						errormsg = errormsg.." ("..factionName..")";
 					end
 				end
-				XMERCHANT_LOG_DEBUG("RequireFaction  ".."  : "..(reputation or "").."  : "..(factionName or ""));
+				XMERCHANT_LOGD("RequireFaction  ".."  : "..(reputation or "").."  : "..(factionName or ""));
 			end
 			
 			local skill, slevel = gettext:match(REQUIRES_SKILL);
@@ -99,7 +100,7 @@ local function GetError(link, isRecipe)
 			
 			local requires = gettext:match(REQUIRES);
 			if ( not level and not reputation and not skill and requires ) then
-				XMERCHANT_LOG_DEBUG("[GetError]  Line: "..i.."   REQUIRES: "..(requires or ""));
+				XMERCHANT_LOGD("[GetError]  Line: "..i.."   REQUIRES: "..(requires or ""));
 				errormsg = errormsg..requires;
 			end
 			
@@ -122,11 +123,11 @@ local function GetError(link, isRecipe)
 			errormsg = errormsg..gettext;
 		end
 		
-		XMERCHANT_LOG_DEBUG("[GetError]  Line: "..i.."   TooltipTextLeft: "..(_G["NuuhMerchantTooltipTextLeft"..i]:GetText() or ""));
-		XMERCHANT_LOG_DEBUG("[GetError]  Line: "..i.."   TooltipTextRight: "..(_G["NuuhMerchantTooltipTextRight"..i]:GetText() or ""));
+		XMERCHANT_LOGD("[GetError]  Line: "..i.."   TooltipTextLeft: "..(_G["NuuhMerchantTooltipTextLeft"..i]:GetText() or ""));
+		XMERCHANT_LOGD("[GetError]  Line: "..i.."   TooltipTextRight: "..(_G["NuuhMerchantTooltipTextRight"..i]:GetText() or ""));
 		
 		if ( isRecipe and i == 5 ) then
-			XMERCHANT_LOG_DEBUG("[GetError]  Line: "..i.."   isRecipe detail line");
+			XMERCHANT_LOGD("[GetError]  Line: "..i.."   isRecipe detail line");
 			break;
 		end
 	end
@@ -146,7 +147,7 @@ local function GetKnown(link)
 	
 	local id = link:match("item:(%d+)");
 	if ( knowns[id] ) then
-		XMERCHANT_LOG_DEBUG("[GetKnown]  "..link.."  @return true");
+		XMERCHANT_LOGD("[GetKnown]  "..link.."  @return true");
 		return true;
 	end
 	
@@ -186,10 +187,10 @@ local function FactionsUpdate()
 				factions[name] = standingLabel
 
 				if friendID ~= nil then
-					XMERCHANT_LOG_DEBUG("[FactionsUpdate]  " .. name .. " - " .. earnedValue .. " - " .. bottomValue .. " - " .. topValue .. " - " .. tostring(standingId) .. " " .. standingLabel);
+					XMERCHANT_LOGD("[FactionsUpdate]  " .. name .. " - " .. earnedValue .. " - " .. bottomValue .. " - " .. topValue .. " - " .. tostring(standingId) .. " " .. standingLabel);
 				end
 			end
-	  end
+		end
 	end
 end
 
@@ -197,13 +198,13 @@ local function CurrencyUpdate()
 	wipe(currencies);
 	
 	local limit = GetCurrencyListSize();
-	XMERCHANT_LOG_DEBUG("[CurrencyUpdate] GetCurrencyListSize  limit: "..limit);
+	XMERCHANT_LOGD("[CurrencyUpdate] GetCurrencyListSize  limit: "..limit);
 	
 	for i=1, limit do
 		-- DONEY note for 6.0   the itemID seemes not avail any more, while the http://wowpedia.org/API_GetCurrencyListInfo is out-dated, 2014-10-25
 		local name, isHeader, _, _, _, count, icon, maximum, hasWeeklyLimit, currentWeeklyAmount, _, itemID = GetCurrencyListInfo(i);
 		if ( not isHeader ) then
-			XMERCHANT_LOG_DEBUG("[CurrencyUpdate]  ".."  name: "..(name or "nil").."  count: "..(count or "nil").."  maxi: "..(maximum or "nil")
+			XMERCHANT_LOGD("[CurrencyUpdate]  ".."  name: "..(name or "nil").."  count: "..(count or "nil").."  maxi: "..(maximum or "nil")
 				.."  itemID: "..(itemID or "nil"));
 		end
 		if ( not isHeader and itemID ) then
@@ -214,7 +215,7 @@ local function CurrencyUpdate()
 			end
 		elseif ( not isHeader and not itemID ) then
 			currencies[name] = count;
-			XMERCHANT_LOG_DEBUG("[CurrencyUpdate]  ".."  name: "..(name or "nil").."  not itemID");
+			XMERCHANT_LOGD("[CurrencyUpdate]  ".."  name: "..(name or "nil").."  not itemID");
 		end
 	end
 	
@@ -250,7 +251,7 @@ local function AltCurrencyFrame_Update(item, texture, cost, itemID, currencyName
 		local currency = currencies[itemID] or currencies[currencyName];
 		if ( currency and currency < cost or not currency ) then
 			-- DONEY
-			XMERCHANT_LOG_DEBUG("[AltCurrency]  currency: "..(currency or "nil").."  cost: "..(cost or "nil").."  itemID: "..(itemID or "nil").."  currencyName: "..(currencyName or "nil"));
+			XMERCHANT_LOGD("[AltCurrency]  currency: "..(currency or "nil").."  cost: "..(cost or "nil").."  itemID: "..(itemID or "nil").."  currencyName: "..(currencyName or "nil"));
 			item.count:SetTextColor(1, 0, 0);
 		else
 			item.count:SetTextColor(1, 1, 1);
@@ -274,7 +275,7 @@ local function AltCurrencyFrame_Update(item, texture, cost, itemID, currencyName
 end
 
 local function UpdateAltCurrency(button, index, i)
-	XMERCHANT_LOG_DEBUG("[CurrencyFrames] UpdateAltCurrency  ".." index: "..index.." i: "..i);
+	XMERCHANT_LOGD("[CurrencyFrames] UpdateAltCurrency  ".." index: "..index.." i: "..i);
 	local currency_frames = {};
 	local lastFrame;
 	local honorPoints, arenaPoints, itemCount = GetMerchantItemCostInfo(index);
@@ -299,7 +300,7 @@ local function UpdateAltCurrency(button, index, i)
 			
 			-- DONEY
 			if i == 1 then
-				XMERCHANT_LOG_DEBUG("[AltCurrency]  ".."  index: "..(index or "nil").."  itemLink: "..(itemLink or "nil").."  i: "..(i or "nil"));
+				XMERCHANT_LOGD("[AltCurrency]  ".."  index: "..(index or "nil").."  itemLink: "..(itemLink or "nil").."  i: "..(i or "nil"));
 			end
 			local itemID = tonumber((itemLink or "item:0"):match("item:(%d+)"));
 			AltCurrencyFrame_Update(item, itemTexture, itemValue, itemID, currencyName);
@@ -372,15 +373,15 @@ local function UpdateAltCurrency(button, index, i)
 	lastFrame = nil
 	for i,frame in ipairs(currency_frames) do
 		if i == 1 then
-			XMERCHANT_LOG_DEBUG("[CurrencyFrames]  i: "..i.."  "..frame._dbg_name.."  RIGHT +");
+			XMERCHANT_LOGD("[CurrencyFrames]  i: "..i.."  "..frame._dbg_name.."  RIGHT +");
 			frame:SetPoint("RIGHT", -2, 6);
 		else
 			if lastFrame then
-				XMERCHANT_LOG_DEBUG("[CurrencyFrames]  i: "..i.."  "..frame._dbg_name.."  RIGHT to "..lastFrame._dbg_name);
+				XMERCHANT_LOGD("[CurrencyFrames]  i: "..i.."  "..frame._dbg_name.."  RIGHT to "..lastFrame._dbg_name);
 				frame:SetPoint("RIGHT", lastFrame, "LEFT", -2, 0);
 			else
 				-- warning, lastFrame nil unexpected
-				XMERCHANT_LOG_DEBUG("[CurrencyFrames]  i: "..i.."  "..frame._dbg_name.."  lastFrame nil unexpected!");
+				XMERCHANT_LOGD("[CurrencyFrames]  i: "..i.."  "..frame._dbg_name.."  lastFrame nil unexpected!");
 				frame:SetPoint("RIGHT", -2, 0);
 			end
 		end
@@ -388,13 +389,15 @@ local function UpdateAltCurrency(button, index, i)
 	end
 end
 
+xMerchant.kItemButtonHeight = 29.4
+
 local function MerchantUpdate()
-	XMERCHANT_LOG_DEBUG("[xMerchant][Debug] MerchantUpdate");
+	XMERCHANT_LOGD("[xMerchant][Debug] MerchantUpdate");
 	local self = NuuhMerchantFrame;
 	local numMerchantItems = GetMerchantNumItems();
 
 	
-	FauxScrollFrame_Update(self.scrollframe, numMerchantItems, 10, 29.4, nil, nil, nil, nil, nil, nil, 1);
+	FauxScrollFrame_Update(self.scrollframe, numMerchantItems, 10, xMerchant.kItemButtonHeight, nil, nil, nil, nil, nil, nil, 1);
 	for i=1, 10, 1 do
 		local offset = i+FauxScrollFrame_GetOffset(self.scrollframe);
 		local button = buttons[i];
@@ -526,9 +529,12 @@ local function MerchantUpdate()
 	end
 end
 
-local function OnVerticalScroll(self, offset)
-	XMERCHANT_LOG_DEBUG("[xMerchant][Debug] OnVerticalScroll");
-	FauxScrollFrame_OnVerticalScroll(self, offset, 29.4, MerchantUpdate);
+local function xScrollFrame_OnShow(self)
+	XMERCHANT_LOGD("[xMerchant][Debug] xScrollFrame_OnShow");
+end
+local function xScrollFrame_OnVerticalScroll(self, offset)
+	XMERCHANT_LOGD("[xMerchant][Debug] OnVerticalScroll");
+	FauxScrollFrame_OnVerticalScroll(self, offset, xMerchant.kItemButtonHeight, MerchantUpdate);
 end
 
 local function OnClick(self, button)
@@ -630,16 +636,20 @@ local function OnEvent(self, event)
 end
 
 local frame = CreateFrame("Frame", "NuuhMerchantFrame", MerchantFrame);
-frame:RegisterEvent("ADDON_LOADED");
-frame:SetScript("OnEvent", OnEvent);
-frame:SetWidth(295);
-frame:SetHeight(294);
--- DONEY
--- frame:SetPoint("TOPLEFT", 21, -76);
-frame:SetPoint("TOPLEFT", 10, -65);
+local function xMerchant_InitFrame(frame)
+	frame:RegisterEvent("ADDON_LOADED");
+	frame:SetScript("OnEvent", OnEvent);
+	frame:SetWidth(295);
+	frame:SetHeight(294);
+	-- DONEY
+	-- frame:SetPoint("TOPLEFT", 21, -76);
+	frame:SetPoint("TOPLEFT", 10, -65);
 
+	xMerchant.merchantFrame = frame
+end
+xMerchant_InitFrame(frame)
 local function OnTextChanged(self)
-	XMERCHANT_LOG_DEBUG("[xMerchant][Debug] OnTextChanged");
+	XMERCHANT_LOGD("[xMerchant][Debug] OnTextChanged");
 	searching = self:GetText():trim():lower();
 	MerchantUpdate();
 end
@@ -668,7 +678,7 @@ local function OnEditFocusLost(self)
 end
 
 local function OnEditFocusGained(self)
-	XMERCHANT_LOG_DEBUG("[xMerchant][Debug] OnEditFocusGained");
+	XMERCHANT_LOGD("[xMerchant][Debug] OnEditFocusGained");
 	self:HighlightText();
 	if ( self:GetText():trim():lower() == SEARCH:lower() ) then
 		self:SetText("");
@@ -677,13 +687,11 @@ end
 
 local search = CreateFrame("EditBox", "$parentSearch", frame, "InputBoxTemplate");
 frame.search = search;
--- DONEY
 search:SetWidth(230);
 search:SetHeight(24);
--- DONEY
 search:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", 60, 9);
 search:SetAutoFocus(false);
-search:SetFontObject(ChatFontSmall);
+search:SetFontObject("ChatFontNormal");
 search:SetScript("OnTextChanged", OnTextChanged);
 search:SetScript("OnShow", OnShow);
 search:SetScript("OnEnterPressed", OnEnterPressed);
@@ -694,14 +702,14 @@ search:SetText(SEARCH);
 
 local function Search_OnClick(self)
 	if ( self:GetChecked() ) then
-		PlaySound("igMainMenuOptionCheckBoxOn");
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
 		frame.tooltipsearching = 1;
 	else
-		PlaySound("igMainMenuOptionCheckBoxOff");
+		PlaySound(857); -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF
 		frame.tooltipsearching = nil;
 	end
 	if ( searching ~= "" and searching ~= SEARCH:lower() ) then
-		XMERCHANT_LOG_DEBUG("[xMerchant][Debug] Search_OnClick");
+		XMERCHANT_LOGD("[xMerchant][Debug] Search_OnClick");
 		MerchantUpdate();
 	end
 end
@@ -731,7 +739,8 @@ scrollframe:SetHeight(298);
 -- DONEY
 -- scrollframe:SetPoint("TOPLEFT", MerchantFrame, 22, -74);
 scrollframe:SetPoint("TOPLEFT", MerchantFrame, 22, -65);
-scrollframe:SetScript("OnVerticalScroll", OnVerticalScroll);
+scrollframe:SetScript("OnShow", xScrollFrame_OnShow);
+scrollframe:SetScript("OnVerticalScroll", xScrollFrame_OnVerticalScroll);
 
 local top = frame:CreateTexture("$parentTop", "ARTWORK");
 frame.top = top
@@ -749,48 +758,53 @@ bottom:SetPoint("BOTTOMRIGHT", 30, -6);
 bottom:SetTexture("Interface\\PaperDollInfoFrame\\UI-Character-ScrollBar");
 bottom:SetTexCoord(0.515625, 1, 0, 0.421875);
 
-for i=1, 10, 1 do
-	local button = CreateFrame("Button", "NuuhMerchantFrame"..i, frame);
-	button:SetWidth(frame:GetWidth());
-	button:SetHeight(29.4);
-	if ( i == 1 ) then
-		button:SetPoint("TOPLEFT", 0, -1);
-	else
-		button:SetPoint("TOP", buttons[i-1], "BOTTOM");
-	end
-	button:RegisterForClicks("LeftButtonUp","RightButtonUp");
-	button:RegisterForDrag("LeftButton");
-	button.UpdateTooltip = OnEnter;
-	button.SplitStack = SplitStack;
-	button:SetScript("OnClick", OnClick);
-	button:SetScript("OnDragStart", MerchantItemButton_OnClick);
-	button:SetScript("OnEnter", OnEnter);
-	button:SetScript("OnLeave", OnLeave);
-	button:SetScript("OnHide", OnHide);
-	
-	local highlight = button:CreateTexture("$parentHighlight", "BACKGROUND"); -- better highlight
-	button.highlight = highlight;
-	highlight:SetAllPoints();
-	highlight:SetBlendMode("ADD");
-	highlight:SetTexture("Interface\\Buttons\\UI-Listbox-Highlight2");
-	highlight:Hide();
-	
+xMerchant.merchantFrameButtons = {}
+local function xMerchant_InitItemsButtons()
+	for i=1, 10, 1 do
+		local button = CreateFrame("Button", "NuuhMerchantFrame"..i, frame);
+		button:SetWidth(frame:GetWidth());
+		button:SetHeight(xMerchant.kItemButtonHeight);
+		if ( i == 1 ) then
+			button:SetPoint("TOPLEFT", 0, -1);
+		else
+			button:SetPoint("TOP", buttons[i-1], "BOTTOM");
+		end
+		button:RegisterForClicks("LeftButtonUp","RightButtonUp");
+		button:RegisterForDrag("LeftButton");
+		button.UpdateTooltip = OnEnter;
+		button.SplitStack = SplitStack;
+		button:SetScript("OnClick", OnClick);
+		button:SetScript("OnDragStart", MerchantItemButton_OnClick);
+		button:SetScript("OnEnter", OnEnter);
+		button:SetScript("OnLeave", OnLeave);
+		button:SetScript("OnHide", OnHide);
+		
+		local highlight = button:CreateTexture("$parentHighlight", "BACKGROUND"); -- better highlight
+		button.highlight = highlight;
+		highlight:SetAllPoints();
+		highlight:SetBlendMode("ADD");
+		highlight:SetTexture("Interface\\Buttons\\UI-Listbox-Highlight2");
+		highlight:Hide();
+		
 	local itemname_fontsize = 16
 	local iteminfo_fontsize = 14
 
 	local itemname = button:CreateFontString("ARTWORK", "$parentItemName");
 	button.itemname = itemname;
 	itemname:SetFont(GameFontHighlight:GetFont(), itemname_fontsize)
-	itemname:SetPoint("TOPLEFT", 30.4, 0);
+		itemname:SetPoint("TOPLEFT", 30.4, -1);
 	itemname:SetJustifyH("LEFT");
+		itemname:SetJustifyV("TOP");
 	itemname:SetWordWrap(false) 
 	
 	local iteminfo = button:CreateFontString("ARTWORK", "$parentItemInfo");
 	button.iteminfo = iteminfo;
 	iteminfo:SetFont(GameFontNormal:GetFont(), iteminfo_fontsize)
-	iteminfo:SetPoint("BOTTOMLEFT", 35.4, 0);
+		iteminfo:SetPoint("TOPLEFT", itemname, "BOTTOMLEFT", 10, 0);
 	iteminfo:SetJustifyH("LEFT");
+		iteminfo:SetJustifyV("TOP");
 	iteminfo:SetTextColor(0.5, 0.5, 0.5);
+		iteminfo:SetWordWrap(false)
 	
 	local icon = button:CreateTexture("$parentIcon", "BORDER");
 	button.icon = icon;
@@ -805,6 +819,7 @@ for i=1, 10, 1 do
 	money:SetPoint("RIGHT", -2, 0);
 	money:SetJustifyH("RIGHT");
 	itemname:SetPoint("RIGHT", money, "LEFT", -2, 0);
+		iteminfo:SetPoint("RIGHT", money, "RIGHT", -2, 0);
 	
 	button.item = {};
 	for j=1, MAX_ITEM_COST, 1 do
@@ -881,8 +896,11 @@ for i=1, 10, 1 do
 	arena.count = count;
 	count:SetPoint("RIGHT", icon, "LEFT", -2, 0);
 	
-	buttons[i] = button;
+		xMerchant.merchantFrameButtons[i] = button
+		buttons[i] = button;
+	end
 end
+xMerchant_InitItemsButtons()
 
 local function Update()
 	if ( MerchantFrame.selectedTab == 1 ) then
@@ -890,11 +908,11 @@ local function Update()
 			_G["MerchantItem"..i]:Hide();
 		end
 		frame:Show();
-		XMERCHANT_LOG_DEBUG("[xMerchant][Debug] Update:  CurrencyUpdate");
+		XMERCHANT_LOGD("[xMerchant][Debug] Update:  CurrencyUpdate");
 		CurrencyUpdate();
 		-- DONEY
 		FactionsUpdate();
-		XMERCHANT_LOG_DEBUG("[xMerchant][Debug] Update:  MerchantUpdate");
+		XMERCHANT_LOGD("[xMerchant][Debug] Update:  MerchantUpdate");
 		MerchantUpdate();
 	else
 		frame:Hide();

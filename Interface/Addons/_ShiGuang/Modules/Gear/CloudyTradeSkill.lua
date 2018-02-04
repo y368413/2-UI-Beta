@@ -54,10 +54,8 @@ f:RegisterEvent('TRADE_SKILL_LIST_UPDATE')
 		local mainTabs, subTabs = {}, {}
 
 		local _, class = UnitClass('player')
-		if class == 'DEATHKNIGHT' and isUseable(53428) then
-			mainTabs[1] = 53428 --RuneForging
-		elseif class == 'ROGUE' and isUseable(1804) then
-			subTabs[1] = 1804 --PickLock
+		if class == 'DEATHKNIGHT' and isUseable(53428) then mainTabs[1] = 53428 --RuneForging
+		elseif class == 'ROGUE' and isUseable(1804) then subTabs[1] = 1804 --PickLock
 		end
 
 		local prof1, prof2, arch, fishing, cooking, firstaid = GetProfessions()
@@ -548,7 +546,7 @@ local mapSpellToItem = {
     [228407] = 141909, -- Enchant Neck - Mark of the Trained Soldier
     [228408] = 141910, -- Enchant Neck - Mark of the Ancient Priestess
     [228409] = 141910, -- Enchant Neck - Mark of the Ancient Priestess
-    [228410] = 141910, -- Enchant Neck - Mark of the Ancient Priestess
+    --[228410] = 141910, -- Enchant Neck - Mark of the Ancient Priestess
 }
 
 local OCES = CreateFrame("Button", "TradeSkillCreateScrollButton", TradeSkillFrame, "MagicButtonTemplate");
@@ -578,7 +576,8 @@ end);
 OCES:SetMotionScriptsWhileDisabled(true);
 OCES:Hide();
 
-local function OCES_RefreshButtons(self)
+
+hooksecurefunc(TradeSkillFrame.DetailsFrame, "RefreshButtons", function(self)
 	if C_TradeSkillUI.IsTradeSkillGuild() or C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsTradeSkillLinked() then
 		OCES:Hide();
 	else
@@ -588,7 +587,7 @@ local function OCES_RefreshButtons(self)
             if tradeSkillName == GetSpellInfo(7411) then
                 OCES.itemID = mapSpellToItem[recipeInfo.recipeID];
                 if (not f.itemID) then
-                    print(string.format("！！！！！:  %d .", recipeInfo.recipeID));
+                    --print(string.format("！！！！！:  %d .", recipeInfo.recipeID));
                 end;
                 OCES:Show();
                 local numCreateable = recipeInfo.numAvailable;
@@ -609,6 +608,4 @@ local function OCES_RefreshButtons(self)
             OCES:Hide();
         end
     end
-end
-
-hooksecurefunc(TradeSkillFrame.DetailsFrame, "RefreshButtons", OCES_RefreshButtons);
+end)

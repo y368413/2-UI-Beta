@@ -115,9 +115,8 @@ addonTable.CDs = {
 		[11876] = 120,				--"War Stomp",
 		[69041] = 120,				--"Rocket Barrage",
 		[42292] = 120,				--"PvP Trinket",
-		[195710] = 180,				-- // Почетный медальон
-		[214027] = 60,				-- // Адаптация
-		[208683] = 120,				-- // Медальон гладиатора
+		[195710] = 180,				-- // �������� ��������
+		[208683] = 120,				-- // �������� ����������
 	},
 	[L["HUNTER"]] = { -- // OK
 		[186257] = 180,					-- // Aspect of the Cheetah
@@ -443,7 +442,6 @@ addonTable.Trinkets = {
 	59752,
 	7744,
 	195710,				-- // Почетный медальон
-	214027,				-- // Адаптация
 	208683,				-- // Медальон гладиатора
 };
 ------------------------------
@@ -460,24 +458,19 @@ local Trinkets = addonTable.Trinkets;
 local SML = LibStub("LibSharedMedia-3.0");
 SML:Register("font", "NC_TeenBold", STANDARD_TEXT_FONT, 255);
 
+local SPELL_PVPADAPTATION = 195901;
+local SPELL_PVPTRINKET = 42292;
+
 NameplateCooldownsDB = {};
 local charactersDB = {};
 local CDTimeCache = {};
 local CDEnabledCache = {};
-local SpellTextureByID = setmetatable({}, {
+local SpellTextureByID = setmetatable({
+	[SPELL_PVPTRINKET] =	1322720,
+	[200166] =				1247262,
+}, {
 	__index = function(t, key)
-		local texture;
-		if (key == 42292) then
-			if (UnitFactionGroup("player") == "Alliance") then
-				texture = "Interface\\Icons\\INV_Jewelry_TrinketPVP_01";
-			else
-				texture = "Interface\\Icons\\INV_Jewelry_TrinketPVP_02";
-			end
-		elseif (key == 200166) then
-			texture = 1247262;
-		else
-			texture = GetSpellTexture(key);
-		end
+		local texture = GetSpellTexture(key);
 		t[key] = texture;
 		return texture;
 	end
@@ -491,7 +484,7 @@ local GUIFrame, EventFrame, TestFrame, db;
 
 local _G, pairs, select, WorldFrame, string_match, string_gsub, string_find, bit_band, GetTime, table_contains_value, math_ceil =
 	  _G, pairs, select, WorldFrame, strmatch,	   gsub,		strfind,	 bit.band, GetTime, tContains,			  ceil;
-
+	  
 local OnStartup, InitializeDB, AddButtonToBlizzOptions;
 local AllocateIcon, ReallocateAllIcons, InitializeFrame, UpdateOnlyOneNameplate, Nameplate_SetBorder, Nameplate_SetCooldown, Nameplate_SortAuras, HideCDIcon, ShowCDIcon;
 local OnUpdate;
@@ -550,7 +543,7 @@ do
 		EventFrame:SetScript("OnUpdate", function(self, elapsed)
 			ElapsedTimer = ElapsedTimer + elapsed;
 			if (ElapsedTimer >= 1) then
-				OnUpdate();				
+				OnUpdate();
 				ElapsedTimer = 0;
 			end
 		end);
@@ -595,6 +588,7 @@ do
 			BorderTrinketsColor = {1, 0.843, 0},
 			Font = "NC_TeenBold",
 			IconSortMode = CONST_SORT_MODES[1],
+			AddonEnabled = true,
 		};
 		for key, value in pairs(defaults) do
 			if (NameplateCooldownsDB[LocalPlayerFullName][key] == nil) then
@@ -920,6 +914,19 @@ do
 						end
 					end
 				end
+			elseif (spellID == SPELL_PVPADAPTATION) then -- // pvptier 1/2 used, correcting cd of PvP trinket
+				if (CDEnabledCache[SPELL_PVPTRINKET] and eventType == "SPELL_AURA_APPLIED") then
+					local Name = string_match(srcName, "[%P]+");
+					if (charactersDB[Name]) then
+						charactersDB[Name][SPELL_PVPTRINKET] = { ["spellID"] = SPELL_PVPTRINKET, ["duration"] = 60, ["expires"] = cTime + 60 };
+						for frame, charName in pairs(NameplatesVisible) do
+							if (charName == Name) then
+								UpdateOnlyOneNameplate(frame, charName);
+								break;
+							end
+						end
+					end
+				end
 			end
 		end
 	end
@@ -966,7 +973,7 @@ do
 			if (not charactersDB[unitName]) then
 				charactersDB[unitName] = {};
 			end
-			charactersDB[unitName][42292] = { ["spellID"] = 42292, ["duration"] = CDTimeCache[42292], ["expires"] = cTime + CDTimeCache[42292] }; -- // 2m test
+			charactersDB[unitName][SPELL_PVPTRINKET] = { ["spellID"] = SPELL_PVPTRINKET, ["duration"] = CDTimeCache[SPELL_PVPTRINKET], ["expires"] = cTime + CDTimeCache[SPELL_PVPTRINKET] }; -- // 2m test
 			for _, spellID in pairs(_spellIDs) do
 				if (not charactersDB[unitName][spellID]) then
 					charactersDB[unitName][spellID] = { ["spellID"] = spellID, ["duration"] = CDTimeCache[spellID], ["expires"] = cTime + CDTimeCache[spellID] };
@@ -1171,10 +1178,28 @@ do
 	end
 
 	function GUICategory_1(index, value)
+		local buttonEnableDisableAddon = GUICreateButton("test123", GUIFrame, db.AddonEnabled and L["options:general:disable-addon-btn"] or L["options:general:enable-addon-btn"]);
+		buttonEnableDisableAddon:SetWidth(340);
+		buttonEnableDisableAddon:SetHeight(20);
+		buttonEnableDisableAddon:SetPoint("TOPLEFT", GUIFrame, "TOPLEFT", 130, -15);
+		buttonEnableDisableAddon:SetScript("OnClick", function(self, ...)
+			if (db.AddonEnabled) then
+				EventFrame:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED");
+				wipe(charactersDB);
+			else
+				EventFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED");
+			end
+			OnUpdate();
+			db.AddonEnabled = not db.AddonEnabled;
+			buttonEnableDisableAddon.Text:SetText(db.AddonEnabled and L["options:general:disable-addon-btn"] or L["options:general:enable-addon-btn"]);
+			Print(db.AddonEnabled and L["chat:addon-is-enabled"] or L["chat:addon-is-disabled"]);
+		end);
+		table.insert(GUIFrame.Categories[index], buttonEnableDisableAddon);
+	
 		local buttonSwitchTestMode = GUICreateButton("NC_GUIGeneralButtonSwitchTestMode", GUIFrame, L["Enable test mode (need at least one visible nameplate)"]);
 		buttonSwitchTestMode:SetWidth(340);
-		buttonSwitchTestMode:SetHeight(40);
-		buttonSwitchTestMode:SetPoint("TOPLEFT", GUIFrame, "TOPLEFT", 130, -20);
+		buttonSwitchTestMode:SetHeight(20);
+		buttonSwitchTestMode:SetPoint("TOPLEFT", GUIFrame, "TOPLEFT", 130, -40);
 		buttonSwitchTestMode:SetScript("OnClick", function(self, ...)
 			if (not TestFrame or not TestFrame:GetScript("OnUpdate")) then
 				EnableTestMode();
@@ -1550,7 +1575,7 @@ do
 		GUIFrame.ActiveCategory = self.index;
 		self.text:SetTextColor(1, 1, 1);
 		self:LockHighlight();
-		PlaySound("igMainMenuOptionCheckBoxOn");
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
 		ShowGUICategory(GUIFrame.ActiveCategory);
 	end
 	

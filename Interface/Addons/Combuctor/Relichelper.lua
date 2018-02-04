@@ -43,59 +43,8 @@ local dataArriveButNotProcessed = false
 
 RelicHelper_SV = RelicHelper_SV or {}
 
-local MAX_RELIC_NUM = 3 
+local MAX_RELIC_NUM = 3
 local currChar = UnitName("player").."-"..GetRealmName()-- Unique name-realm identifier for database storage
-local specToRelics = {
-	[250] = {RELIC_SLOT_TYPE_BLOOD, RELIC_SLOT_TYPE_SHADOW, RELIC_SLOT_TYPE_IRON}, -- Blood DK
-	[251] = {RELIC_SLOT_TYPE_FROST, RELIC_SLOT_TYPE_SHADOW, RELIC_SLOT_TYPE_FROST}, -- Frost DK
-	[252] = {RELIC_SLOT_TYPE_FIRE, RELIC_SLOT_TYPE_SHADOW, RELIC_SLOT_TYPE_BLOOD}, -- Unholy DK
-
-	[577] = {RELIC_SLOT_TYPE_FEL, RELIC_SLOT_TYPE_SHADOW, RELIC_SLOT_TYPE_FEL}, -- Havoc DH
-	[581] = {RELIC_SLOT_TYPE_IRON, RELIC_SLOT_TYPE_ARCANE, RELIC_SLOT_TYPE_FEL}, -- Vengeance DH
-
-	[102] = {RELIC_SLOT_TYPE_ARCANE, RELIC_SLOT_TYPE_LIFE, RELIC_SLOT_TYPE_ARCANE}, -- Balance Druid
-	[103] = {RELIC_SLOT_TYPE_FROST, RELIC_SLOT_TYPE_BLOOD, RELIC_SLOT_TYPE_LIFE}, -- Feral Druid
-	[104] = {RELIC_SLOT_TYPE_FIRE, RELIC_SLOT_TYPE_BLOOD, RELIC_SLOT_TYPE_LIFE}, -- Guardian Druid
-	[105] = {RELIC_SLOT_TYPE_LIFE, RELIC_SLOT_TYPE_FROST, RELIC_SLOT_TYPE_LIFE}, -- Restoration Druid
-
-	[253] = {RELIC_SLOT_TYPE_WIND, RELIC_SLOT_TYPE_ARCANE, RELIC_SLOT_TYPE_IRON}, -- Beast Mastery Hunter
-	[254] = {RELIC_SLOT_TYPE_WIND, RELIC_SLOT_TYPE_BLOOD, RELIC_SLOT_TYPE_LIFE}, -- Marksmanship Hunter
-	[255] = {RELIC_SLOT_TYPE_WIND, RELIC_SLOT_TYPE_IRON, RELIC_SLOT_TYPE_BLOOD}, -- Survival Hunter
-
-	[62] = {RELIC_SLOT_TYPE_ARCANE, RELIC_SLOT_TYPE_FROST, RELIC_SLOT_TYPE_ARCANE}, -- Arcane Mage
-	[63] = {RELIC_SLOT_TYPE_FIRE, RELIC_SLOT_TYPE_ARCANE, RELIC_SLOT_TYPE_FIRE}, -- Fire Mage
-	[64] = {RELIC_SLOT_TYPE_FROST, RELIC_SLOT_TYPE_ARCANE, RELIC_SLOT_TYPE_FROST}, -- Frost Mage
-
-	[268] = {RELIC_SLOT_TYPE_LIFE, RELIC_SLOT_TYPE_WIND, RELIC_SLOT_TYPE_IRON}, -- Brewmaster Monk
-	[270] = {RELIC_SLOT_TYPE_FROST, RELIC_SLOT_TYPE_LIFE, RELIC_SLOT_TYPE_WIND}, -- Mistweaver Monk
-	[269] = {RELIC_SLOT_TYPE_WIND, RELIC_SLOT_TYPE_IRON, RELIC_SLOT_TYPE_WIND}, -- Windwalker Monk
-
-	[65] = {RELIC_SLOT_TYPE_HOLY, RELIC_SLOT_TYPE_LIFE, RELIC_SLOT_TYPE_HOLY}, -- Holy Paladin
-	[66] = {RELIC_SLOT_TYPE_HOLY, RELIC_SLOT_TYPE_IRON, RELIC_SLOT_TYPE_ARCANE}, -- Protection Paladin
-	[70] = {RELIC_SLOT_TYPE_HOLY, RELIC_SLOT_TYPE_FIRE, RELIC_SLOT_TYPE_HOLY}, -- Retribution Paladin
-
-	[256] = {RELIC_SLOT_TYPE_HOLY, RELIC_SLOT_TYPE_SHADOW, RELIC_SLOT_TYPE_HOLY}, -- Discipline Priest
-	[257] = {RELIC_SLOT_TYPE_HOLY, RELIC_SLOT_TYPE_LIFE, RELIC_SLOT_TYPE_HOLY}, -- Holy Priest
-	[258] = {RELIC_SLOT_TYPE_SHADOW, RELIC_SLOT_TYPE_BLOOD, RELIC_SLOT_TYPE_SHADOW}, -- Shadow Priest
-
-	[259] = {RELIC_SLOT_TYPE_SHADOW, RELIC_SLOT_TYPE_IRON, RELIC_SLOT_TYPE_BLOOD}, -- Assassination Rogue
-	[260] = {RELIC_SLOT_TYPE_BLOOD, RELIC_SLOT_TYPE_IRON, RELIC_SLOT_TYPE_WIND}, -- Outlaw Rogue
-	[261] = {RELIC_SLOT_TYPE_FEL, RELIC_SLOT_TYPE_SHADOW, RELIC_SLOT_TYPE_FEL}, -- Subtlety Rogue
-
-	[262] = {RELIC_SLOT_TYPE_WIND, RELIC_SLOT_TYPE_FROST, RELIC_SLOT_TYPE_WIND}, -- Elemental Shaman
-	[263] = {RELIC_SLOT_TYPE_FIRE, RELIC_SLOT_TYPE_IRON, RELIC_SLOT_TYPE_WIND}, -- Enhancement Shaman
-	[264] = {RELIC_SLOT_TYPE_LIFE, RELIC_SLOT_TYPE_FROST, RELIC_SLOT_TYPE_LIFE}, -- Restoration Shaman
-
-	[265] = {RELIC_SLOT_TYPE_SHADOW, RELIC_SLOT_TYPE_BLOOD, RELIC_SLOT_TYPE_SHADOW}, -- Affliction Warlock
-	[266] = {RELIC_SLOT_TYPE_SHADOW, RELIC_SLOT_TYPE_FIRE, RELIC_SLOT_TYPE_FEL}, -- Demonology Warlock
-	[267] = {RELIC_SLOT_TYPE_FEL, RELIC_SLOT_TYPE_FIRE, RELIC_SLOT_TYPE_FEL}, -- Destruction Warlock
-
-	[71] = {RELIC_SLOT_TYPE_IRON, RELIC_SLOT_TYPE_BLOOD, RELIC_SLOT_TYPE_SHADOW}, -- Arms Warrior
-	[72] = {RELIC_SLOT_TYPE_FIRE, RELIC_SLOT_TYPE_WIND, RELIC_SLOT_TYPE_IRON}, -- Fury Warrior
-	[73] = {RELIC_SLOT_TYPE_IRON, RELIC_SLOT_TYPE_BLOOD, RELIC_SLOT_TYPE_FIRE}, -- Protection Warrior
-}
-
-
 
 local RH = CreateFrame("Frame")
 
@@ -107,7 +56,8 @@ RH:SetScript("OnEvent",function( self, event, ...)
 end)
 
 
-RH.Events["ADDON_LOADED"] = function( self )
+RH.Events["ADDON_LOADED"] = function( self, loadedAddon )
+  if loadedAddon ~= "Combuctor" then return end
   self:UnregisterEvent("ADDON_LOADED")
 end
 
@@ -159,7 +109,7 @@ end)
 
 function RH:UpdateDB(artifactName)
   if not artifactName then
-	artifactName = "Somethingwenthorriblywrong"
+    artifactName = "Somethingwenthorriblywrong"
   end
   RelicHelper_SV[currChar] = RelicHelper_SV[currChar] or {}
   RelicHelper_SV[currChar][artifactName] = RelicHelper_SV[currChar][artifactName] or {}
@@ -168,10 +118,31 @@ function RH:UpdateDB(artifactName)
   end
 end
 
+
+local relinquishedRelicItemID2Relic = {
+  [153059] = RELIC_SLOT_TYPE_ARCANE,
+  [153060] = RELIC_SLOT_TYPE_BLOOD,
+  [153061] = RELIC_SLOT_TYPE_FEL,
+  [153062] = RELIC_SLOT_TYPE_FIRE,
+  [153063] = RELIC_SLOT_TYPE_FROST,
+  [153064] = RELIC_SLOT_TYPE_HOLY,
+  [153065] = RELIC_SLOT_TYPE_IRON,
+  [153066] = RELIC_SLOT_TYPE_LIFE,
+  [153067] = RELIC_SLOT_TYPE_SHADOW,
+  [153068] = RELIC_SLOT_TYPE_WIND,
+}
+
 function RH.manageTooltip(tooltip, ... )
-  local name, link = tooltip:GetItem()
+  local _, link = tooltip:GetItem()
   if not link then return end
   local ilvlBonus = GetILVLIncByRelic(link) or 0
+  local _, itemId = strsplit(":", link)
+  itemId = tonumber(itemId)
+  if relinquishedRelicItemID2Relic[itemId] then
+	-- Hard code the +61 ilvls here
+    RH.manageRelinquishedRelicTooltip(tooltip, relinquishedRelicItemID2Relic[itemId], 61)
+	return
+  end
   if select(7, GetItemInfo(link)) == EJ_LOOT_SLOT_FILTER_ARTIFACT_RELIC then
     local relicType, t, i, j
     for i=1,tooltip:NumLines() do
@@ -187,6 +158,7 @@ function RH.manageTooltip(tooltip, ... )
         local currLineText = currLine:GetText()
         if data and data[currLineText] then
           for j=1,MAX_RELIC_NUM do
+            --if relicType == data[currLineText][j]["type"] and ilvlBonus > data[currLineText][j]["ilvlBonus"] then
             if relicType == data[currLineText][j]["type"] then
               local relBonus = ilvlBonus - data[currLineText][j]["ilvlBonus"]
               currLine:SetText(currLine:GetText() .. ( relBonus > 0 and " (|cFF00FF00+" or  " (|cFFFF0000").. relBonus.."|r)")
@@ -197,6 +169,23 @@ function RH.manageTooltip(tooltip, ... )
     end
   end
   tooltip:Show()
+end
+
+function RH.manageRelinquishedRelicTooltip(tooltip, relicType, iLVLBonus)
+  local data = RelicHelper_SV[currChar]
+  for currArtifactName, currArtifactData in pairs(data) do
+	local lineToAdd, found = currArtifactName..":", false
+	for j=1,MAX_RELIC_NUM do
+	  if relicType == currArtifactData[j]["type"] then
+	    local relBonus = iLVLBonus - currArtifactData[j]["ilvlBonus"]
+	    lineToAdd = lineToAdd .. ( relBonus > 0 and " (|cFF00FF00+" or  " (|cFFFF0000").. relBonus.."|r)"
+	    found = true
+	  end
+    end
+	if found then
+	  tooltip:AddLine(lineToAdd)
+	end
+  end
 end
 
 -- overload the base function for ItemRefTooltip with a custom routine
@@ -225,12 +214,7 @@ function RH:ScanEJForRelics()
   -- Select Legion
   EJ_SelectTier(7)
 
-  -- Loops within loops within loops yay
-
-  local i, j, k, creatIndex = 1, 1, 1, 1
-
-  -- What are we currently doing
-  local instanceID, instanceName, encounterID, encounterName
+  local i, instanceID, instanceName = 1
 
   -- Iterate all the instances
   instanceID, instanceName = EJ_GetInstanceByIndex(i, false)
@@ -241,7 +225,7 @@ function RH:ScanEJForRelics()
   end
 
   -- Do the same for raids
-  i, j, k, creatIndex = 1, 1, 1, 1
+  i = 1
 
   instanceID, instanceName = EJ_GetInstanceByIndex(i, true)
   while instanceID do
@@ -301,7 +285,7 @@ GameTooltip:HookScript("OnTooltipSetUnit", function(tooltip, ...)
     relicsString = table.concat(RH.relicsDropsByEncouter[name], ", ")
   end
   if relicsString then
-    tooltip:AddLine("RelicHelper: ".. relicsString)
+    tooltip:AddLine(BUTTON_LAG_LOOT .."(".. RELICSLOT .."): ".. relicsString)
   end
 end)
 

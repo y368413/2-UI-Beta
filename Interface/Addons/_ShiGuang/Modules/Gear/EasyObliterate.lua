@@ -12,11 +12,19 @@ local ashLooted = false
 local failedItems = {}
 local itemIgnoreList = {}
 local showGetItemError = false
-local lastItem = {itemID = 0, itemLevel = 0, ashAamount = 0}
+local lastItem = {itemID = 0, itemLevel = 0, ashAmount = 0}
 local currentItem = {itemID = 0, itemLevel = 0}
 local currentLineID = nil
 local saveData = {}
-local defaultSettings = { showAshStats = true, }      --showTooltip = true,
+local first0AshMessage = true
+
+local defaultSettings = {
+    showTooltip = true,
+    showAshStats = true,
+    ignoreWardrobeItems = false,
+    show0AshMessage = true
+}
+
 local backupAshText = 'Obliterum Ash'
 local textColor = {r='0.99999779462814', g='0.12548992037773', b='0.12548992037773', a='0.99999779462814'}
 local function dprint(text) if _eadebug then print(text) end end
@@ -65,6 +73,25 @@ local function getEligibleAshTotal()
     return totalA
 end
 
+local function itemInWardrobeSet(itemID, bag, slot)
+    for i = 1, GetNumEquipmentSets() do
+        local setName = GetEquipmentSetInfo(i)
+        local items = GetEquipmentSetItemIDs(setName)
+        for z = 1, 19 do --would be nicer to get the slot id beforehand so we don't have to loop over all the items in a set
+            if items[z] then
+                if itemID == items[z] then
+                    local equipmentSetInfo = GetEquipmentSetLocations(setName)
+                    local onPlayer, inBank, inBags, inVoidStorage, slotNumber, bagNumber = EquipmentManager_UnpackLocation(equipmentSetInfo[z])
+                    if bag == bagNumber and slot == slotNumber then
+                        return true
+                    end
+                end
+            end
+        end
+    end
+    return false
+end
+
 --This is gross but is done to not have to maintain a list of items that can be obliterated.
 local function itemEligible(itemID)
     if itemCache[itemID] ~= nil then
@@ -98,6 +125,8 @@ local function getEligibleItems()
    failedItems = {}
    C_TradeSkillUI.ClearPendingObliterateItem()
    
+   local setItemsIgnored = 0
+   
    for bag = 0, 4 do
       for i = 1, GetContainerNumSlots(bag) do
          local itemID = GetContainerItemID(bag, i)
@@ -105,7 +134,16 @@ local function getEligibleItems()
          --if itemID and itemEligible(itemLink, itemID) then
          if itemID and itemEligible(itemID) then
             local texture, itemCount, locked, quality, readable, lootable, itemLink, isFiltered = GetContainerItemInfo(bag, i)
-            table.insert(eligibleItems, {bag = bag, index = i, itemLink = itemLink, itemTexture = texture, itemCount = itemCount, itemID = itemID, itemQuality = quality, itemName = string.match(itemLink, "%[(.+)%]")})
+            
+            if saveData.addonSettings.ignoreWardrobeItems then
+                if not itemInWardrobeSet(itemID, bag, i) then
+                    table.insert(eligibleItems, {bag = bag, index = i, itemLink = itemLink, itemTexture = texture, itemCount = itemCount, itemID = itemID, itemQuality = quality, itemName = string.match(itemLink, "%[(.+)%]")})
+                else
+                    setItemsIgnored = setItemsIgnored + 1
+                end
+            else
+                table.insert(eligibleItems, {bag = bag, index = i, itemLink = itemLink, itemTexture = texture, itemCount = itemCount, itemID = itemID, itemQuality = quality, itemName = string.match(itemLink, "%[(.+)%]")})           
+            end
          end
       end
    end
@@ -144,6 +182,10 @@ local function getEligibleItems()
         showGetItemError = false
         if _eadebug then for i = 1, #failedItems do print(failedItems[i]) end end
         DEFAULT_CHAT_FRAME:AddMessage('Easy Obliterate: Failed to retrieve item info for some items. Usually this happens if you open the forge too soon after logging in. They will appear as you obliterate items or if you open the forge at a later time if they can be obliterated.')
+    end
+    
+    if saveData.addonSettings.ignoreWardrobeItems and setItemsIgnored > 0 then
+        DEFAULT_CHAT_FRAME:AddMessage('Easy Obliterate: Ignored '..setItemsIgnored..' item(s) that are used in a saved equipment set.')
     end
 end
 
@@ -497,10 +539,10 @@ local function addItemToForge(self, button)
                     UseContainerItem(eligibleItems[self.itemRef].bag, eligibleItems[self.itemRef].index)
                 end
                 hideTooltip(self)
-                PlaySound("igMainMenuOptionCheckBoxOn")
+                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON) 
             end               
         elseif button == 'RightButton' then
-            PlaySound("igMainMenuOptionCheckBoxOn")
+            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
             if not eligibleItems[self.itemRef].ignore then
                 --itemIgnoreList[eligibleItems[self.itemRef].itemLink] = true
                 table.insert(itemIgnoreList, eligibleItems[self.itemRef].itemLink)
@@ -706,12 +748,64 @@ local function showSelection()
     end
 end
 
+local function cleanMinAsh100Stats()
+    if not saveData.ashStats then return end
+
+    EA_itemsRemoved = {}
+    for itemID, itemLevels in pairs(saveData.ashStats) do
+        for itemLevel, ashStats in pairs(saveData.ashStats[itemID]) do
+            if ashStats.minAsh == 100 then
+                table.insert(EA_itemsRemoved, {itemID = itemID, itemLevel = itemLevel})
+                saveData.ashStats[itemID][itemLevel] = nil
+                GetItemInfo(itemID)
+            end
+        end
+    end
+    
+    --Removed items that may have bugged stats if none then user was unnafected and doesn't need to know.
+    if #EA_itemsRemoved > 0 then
+        StaticPopup_Show("EasyObliterate_MinAsh100Bug")
+    end
+end
+
+local function cleanMinAsh0Stats()
+    if not saveData.ashStats then return end
+
+    EA_itemsRemoved = {}
+    for itemID, itemLevels in pairs(saveData.ashStats) do
+        for itemLevel, ashStats in pairs(saveData.ashStats[itemID]) do
+            if ashStats.minAsh == 0 then
+                table.insert(EA_itemsRemoved, {itemID = itemID, itemLevel = itemLevel})
+                saveData.ashStats[itemID][itemLevel] = nil
+                GetItemInfo(itemID)
+            end
+        end
+    end
+    
+    --Removed items that may have bugged stats if none then user was unnafected and doesn't need to know.
+    if #EA_itemsRemoved > 0 then
+        StaticPopup_Show("EasyObliterate_MinAsh0Bug")
+    end
+end
+
 local function updateAshStats(itemID, itemLevel, ashCount)
-    if not itemID or not itemLevel then return end
+    if not itemID or not itemLevel or not ashCount then return end
     ashCount = tonumber(ashCount)
     
+    if ashCount <= 0 then 
+        if saveData.addonSettings.show0AshMessage then
+            if first0AshMessage then
+                DEFAULT_CHAT_FRAME:AddMessage('Easy Obliterate: Unable to determine amount of ash looted. Are you using an addon that affects the looting process? You can |cFFFF0000disable|r these messages in Easy Obliterate settings.')
+                first0AshMessage = false
+            else
+                 DEFAULT_CHAT_FRAME:AddMessage('Easy Obliterate: Unable to determine amount of ash looted, stats not updated.')           
+            end
+        end
+        return 
+    end
+    
     if not saveData.ashStats[itemID] then saveData.ashStats[itemID] = {} end
-    if not saveData.ashStats[itemID][itemLevel] then saveData.ashStats[itemID][itemLevel] = {minAsh = 100, maxAsh = 0, averageAsh = 0, obliterateCount = 0} end
+    if not saveData.ashStats[itemID][itemLevel] then saveData.ashStats[itemID][itemLevel] = {minAsh = ashCount, maxAsh = ashCount, averageAsh = 0, obliterateCount = 0} end
     
     if ashCount < saveData.ashStats[itemID][itemLevel].minAsh then saveData.ashStats[itemID][itemLevel].minAsh = ashCount end
     if ashCount > saveData.ashStats[itemID][itemLevel].maxAsh then saveData.ashStats[itemID][itemLevel].maxAsh = ashCount end
@@ -811,9 +905,9 @@ mainFrame:SetScript('OnEvent', function(self, event, ...)
     elseif event == 'ADDON_LOADED' then
         local name = ...
         if name == '_ShiGuang' then
-            if EasyObliterate_Data then
+            if ShiGuangDB.EasyObliterate_Data then
                 dprint('Easy Obliterate: Loaded _DATA')
-                saveData = EasyObliterate_Data
+                saveData = ShiGuangDB.EasyObliterate_Data
                 
                 if not saveData.addonSettings then
                     createDefaultSettings()
@@ -823,9 +917,9 @@ mainFrame:SetScript('OnEvent', function(self, event, ...)
                 createSaveData()        
             end
             
-           if EasyObliterate_IgnoreList then 
+           if ShiGuangPerDB.EasyObliterate_IgnoreList then 
                 dprint('Easy Obliterate: IgnoreList found')
-                itemIgnoreList = EasyObliterate_IgnoreList
+                itemIgnoreList = ShiGuangPerDB.EasyObliterate_IgnoreList
             else
                 dprint('Easy Obliterate: IgnoreList CREATED')
                 itemIgnoreList = {}
@@ -834,8 +928,8 @@ mainFrame:SetScript('OnEvent', function(self, event, ...)
             mainFrame:UnregisterEvent('ADDON_LOADED')
         end
     elseif event == 'PLAYER_LOGOUT' then
-        EasyObliterate_Data = saveData
-        EasyObliterate_IgnoreList = itemIgnoreList
+        ShiGuangDB.EasyObliterate_Data = saveData
+        ShiGuangPerDB.EasyObliterate_IgnoreList = itemIgnoreList
     end
 end)
 

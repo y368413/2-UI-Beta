@@ -1,13 +1,17 @@
 ﻿local M, R, U, I = unpack(select(2, ...))
 local cr, cg, cb = I.ClassColor.r, I.ClassColor.g, I.ClassColor.b
 
+M.UIParent = CreateFrame("Frame", "MaoRuiParent", UIParent)
+M.UIParent:SetFrameLevel(UIParent:GetFrameLevel())
+M.UIParent:SetAllPoints()
+M.UIParent.origHeight = M.UIParent:GetHeight()
+
 -- Gradient Frame
 M.CreateGF = function(f, w, h, o, r, g, b, a1, a2)
 	f:SetSize(w, h)
 	f:SetFrameStrata("BACKGROUND")
 	local gf = f:CreateTexture(nil, "BACKGROUND")
-	gf:SetPoint("TOPLEFT", f, -1, 1)
-	gf:SetPoint("BOTTOMRIGHT", f, 1, -1)
+	gf:SetAllPoints()
 	gf:SetTexture(I.normTex)
 	gf:SetVertexColor(r, g, b)
 	gf:SetGradientAlpha(o, r, g, b, a1, r, g, b, a2)
@@ -20,7 +24,7 @@ M.CreateBD = function(f, a, s)
 		insets = {left = s or 3, right = s or 3, top = s or 3, bottom = s or 3},
 	})
 	f:SetBackdropColor(0, 0, 0, a or .85)
-	f:SetBackdropBorderColor(cr, cg, cb)
+	f:SetBackdropBorderColor(0, 0, 0)
 end
 
 -- Create Shadow
@@ -119,9 +123,10 @@ M.CreateGT = function(f, anchor, text, color)
 	end)
 	f:SetScript("OnLeave", GameTooltip_Hide)
 end
-M.CreateAT = function(f, value)
+
+M.CreateAT = function(f, anchor, value)
 	f:SetScript("OnEnter", function(self)
-		GameTooltip:SetOwner(self, "ANCHOR_BOTTOM", 0, -5)
+		GameTooltip:SetOwner(self, anchor)
 		GameTooltip:ClearLines()
 		if type(value) == "string" then
 			GameTooltip:SetUnitAura("player", value)
@@ -226,7 +231,31 @@ M.CreateSB = function(f, spark, r, g, b)
 	M.CreateTex(f.BG)
 	if spark then
 		f.Spark = f:CreateTexture(nil, "OVERLAY")
-		f.Spark:SetTexture("Interface\\CastingBar\\UI-CastingBar-Spark")
+		f.Spark:SetTexture(I.sparkTex)
+		f.Spark:SetBlendMode("ADD")
+		f.Spark:SetAlpha(.8)
+		f.Spark:SetPoint("TOPLEFT", f:GetStatusBarTexture(), "TOPRIGHT", -10, 10)
+		f.Spark:SetPoint("BOTTOMRIGHT", f:GetStatusBarTexture(), "BOTTOMRIGHT", 10, -10)
+	end
+end
+
+-- StatusbarEnergy
+M.CreateSBC = function(f, spark, r, g, b)
+	f:SetStatusBarTexture(I.EnergyTex)
+	if r and g and b then
+		f:SetStatusBarColor(r, g, b)
+	else
+		f:SetStatusBarColor(cr, cg, cb)
+	end
+	M.CreateSD(f, 3, 3)
+	f.BG = f:CreateTexture(nil, "BACKGROUND")
+	f.BG:SetAllPoints()
+	f.BG:SetTexture(I.EnergyTex)
+	f.BG:SetVertexColor(0, 0, 0, .5)
+	M.CreateTex(f.BG)
+	if spark then
+		f.Spark = f:CreateTexture(nil, "OVERLAY")
+		f.Spark:SetTexture(I.sparkTex)
 		f.Spark:SetBlendMode("ADD")
 		f.Spark:SetAlpha(.8)
 		f.Spark:SetPoint("TOPLEFT", f:GetStatusBarTexture(), "TOPRIGHT", -10, 10)
@@ -248,9 +277,9 @@ M.Numb = function(n)
 		end
 	elseif MaoRUISettingDB["Settings"]["Format"] == 2 then
 		if n >= 1e8 then
-			return (DANWEI_YI):format(n / 1e8)
+			return ("%0.1f"..DANWEI_YI):format(n / 1e8)
 		elseif n >= 1e4 then
-			return (DANWEI_WAN):format(n / 1e4)
+			return ("%0.1f"..DANWEI_WAN):format(n / 1e4)
 		else
 			return ("%.0f"):format(n)
 		end
@@ -350,18 +379,39 @@ M.FormatTime = function(s)
 	elseif s >= minute then
 		return format("%d"..I.MyColor.."m", s/minute), s % minute
 	elseif s < 3 then
-	        return format("|cffff0000%d|r", s + .5), s - floor(s)
+		if MaoRUISettingDB["Actionbar"]["DecimalCD"] then
+			return format("|cffff0000%.1f|r", s), s - format("%.1f", s)
+		else
+			return format("|cffff0000%d|r", s + .5), s - floor(s)
+		end
 	elseif s < 10 then
 		return format("|cffffff00%d|r", s), s - floor(s)
 	end
 	return format("|cffcccc33%d|r", s), s - floor(s)
 end
 
+M.FormatBuffTime = function(button, time)
+	if( time <= 0 ) then
+		button:SetText("");
+	elseif( time < 60 ) then
+		local d, h, m, s = ChatFrame_TimeBreakDown(time);
+		button:SetFormattedText("|c00FF0000%.1f|r", s);
+	elseif( time < 600 ) then
+		local d, h, m, s = ChatFrame_TimeBreakDown(time);
+		button:SetFormattedText("|c00FF9B00%d:%02d|r", m, s);
+	elseif( time <= 3600 ) then
+		local d, h, m, s = ChatFrame_TimeBreakDown(time);
+		button:SetFormattedText("|c0000FF00%dm|r", m);
+	else
+		button:SetText("|c0000FF001 h+|r");
+	end
+end
+
 -- Table Backup
 M.CopyTable = function(source, target)
 	for key, value in pairs(source) do
 		if type(value) == "table" then
-			target[key] = {}
+			if not target[key] then target[key] = {} end
 			for k, v in pairs(value) do
 				target[key][k] = value[k]
 			end
@@ -369,4 +419,106 @@ M.CopyTable = function(source, target)
 			target[key] = value
 		end
 	end
+end
+
+-- GUI APIs
+M.CreateButton = function(parent, width, height, text, fontSize)
+	local bu = CreateFrame("Button", nil, parent)
+	bu:SetSize(width, height)
+	M.CreateBD(bu, .3)
+	M.CreateBC(bu)
+	M.CreateFS(bu, fontSize or 14, text, true)
+
+	return bu
+end
+
+M.CreateCheckBox = function(parent)
+	local cb = CreateFrame("CheckButton", nil, parent, "InterfaceOptionsCheckButtonTemplate")
+	M.CreateCB(cb)
+
+	cb.Type = "CheckBox"
+	return cb
+end
+
+M.CreateEditBox = function(parent, width, height)
+	local eb = CreateFrame("EditBox", nil, parent)
+	eb:SetSize(width, height)
+	eb:SetAutoFocus(false)
+	eb:SetTextInsets(10, 10, 0, 0)
+	eb:SetFontObject(GameFontHighlight)
+	M.CreateBD(eb, .3)
+	eb:SetScript("OnEscapePressed", function()
+		eb:ClearFocus()
+	end)
+	eb:SetScript("OnEnterPressed", function()
+		eb:ClearFocus()
+	end)
+
+	eb.Type = "EditBox"
+	return eb
+end
+
+M.CreateDropDown = function(parent, width, height, data)
+	local dd = CreateFrame("Frame", nil, parent)
+	dd:SetSize(width, height)
+	M.CreateBD(dd, .3)
+	dd.Text = M.CreateFS(dd, 14, "")
+	dd.options = {}
+
+	local bu = CreateFrame("Button", nil, dd)
+	bu:SetPoint("LEFT", dd, "RIGHT", -6, 0)
+	bu:SetSize(21, 21)
+	bu.Icon = bu:CreateTexture(nil, "ARTWORK")
+	bu.Icon:SetAllPoints()
+	bu.Icon:SetTexture(I.gearTex)
+	--bu.Icon:SetTexCoord(0, .5, 0, .5)
+	bu:SetHighlightTexture(I.gearTex)
+	--bu:GetHighlightTexture():SetTexCoord(0, .5, 0, .5)
+	local list = CreateFrame("Frame", nil, dd)
+	list:SetPoint("TOP", dd, "BOTTOM")
+	M.CreateBD(list, .7)
+	bu:SetScript("OnShow", function() list:Hide() end)
+	bu:SetScript("OnClick", function()
+		PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK)
+		ToggleFrame(list)
+	end)
+	dd.button = bu
+
+	local opt, index = {}, 0
+	for i, j in pairs(data) do
+		opt[i] = CreateFrame("Button", nil, list)
+		opt[i]:SetPoint("TOPLEFT", 5, -5 - (i-1)*height)
+		opt[i]:SetSize(width - 10, height)
+		M.CreateBD(opt[i], .3)
+		M.CreateFS(opt[i], 14, j, false, "LEFT", 5, 0)
+		opt[i]:SetScript("OnClick", function(self)
+			PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK)
+			for num = 1, #opt do
+				if num == i then
+					opt[num]:SetBackdropColor(1, .8, 0, .3)
+					opt[num].selected = true
+				else
+					opt[num]:SetBackdropColor(0, 0, 0, .3)
+					opt[num].selected = false
+				end
+			end
+			dd.Text:SetText(j)
+			list:Hide()
+		end)
+		opt[i]:SetScript("OnEnter", function(self)
+			if self.selected then return end
+			self:SetBackdropColor(1, 1, 1, .3)
+		end)
+		opt[i]:SetScript("OnLeave", function(self)
+			if self.selected then return end
+			self:SetBackdropColor(0, 0, 0, .3)
+		end)
+
+		dd.options[i] = opt[i]
+		index = index + 1
+	end
+	list:SetSize(width, index*height + 10)
+
+	dd.Type = "DropDown"
+	return dd
 end

@@ -1,7 +1,7 @@
 --[[
     This file is part of Decursive.
     
-    Decursive (v 2.7.5.2) add-on for World of Warcraft UI
+    Decursive (v 2.7.5.7) add-on for World of Warcraft UI
     Copyright (C) 2006-2014 John Wellesz (archarodim AT teaser.fr) ( http://www.2072productions.com/to/decursive.php )
 
     Starting from 2009-10-31 and until said otherwise by its author, Decursive
@@ -17,7 +17,7 @@
     Decursive is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY.
     
-    This file was last updated on 2017-01-09T1:40:57Z
+    This file was last updated on 2017-06-25T22:07:27Z
 --]]
 -------------------------------------------------------------------------------
 
@@ -735,7 +735,7 @@ local function GetStaticOptions ()
                         desc = L["DECURSIVE_DEBUG_REPORT_SHOW_DESC"],
                         func = function ()
                             LibStub("AceConfigDialog-3.0"):Close(D.name);
-                            GameTooltip:Hide();
+                            if GameTooltip:IsShown() then GameTooltip:Hide(); end
                             T._ShowDebugReport();
                         end,
                         hidden = function() return  #T._DebugTextTable < 1 end,
@@ -750,7 +750,7 @@ local function GetStaticOptions ()
 
                         -- {{{
                             LibStub("AceConfigDialog-3.0"):Close(D.name);
-                            GameTooltip:Hide();
+                            if GameTooltip:IsShown() then GameTooltip:Hide(); end
                             if not D.MemoriumFrame then
                                 D.MemoriumFrame = CreateFrame("Frame", nil, UIParent);
                                 local f = D.MemoriumFrame;
@@ -1723,7 +1723,7 @@ local function GetStaticOptions ()
                                     "\n\n|cFFDDDD00 %s|r:\n   %s"..
                                     "\n\n|cFFDDDD00 %s|r:\n   %s\n\n   %s"
                                 ):format(
-                                    "2.7.5.2", "John Wellesz", ("2017-03-28T13:27:16Z"):sub(1,10),
+                                    "2.7.5.7", "John Wellesz", ("2017-11-05T21:31:45Z"):sub(1,10),
                                     L["ABOUT_NOTES"],
                                     L["ABOUT_LICENSE"],         GetAddOnMetadata("Decursive", "X-License") or 'All Rights Reserved',
                                     L["ABOUT_SHAREDLIBS"],      GetAddOnMetadata("Decursive", "X-Embeds")  or 'GetAddOnMetadata() failure',
@@ -1745,7 +1745,10 @@ local function GetStaticOptions ()
                         name = L["OPT_CHECKOTHERPLAYERS"],
                         desc = L["OPT_CHECKOTHERPLAYERS_DESC"],
                         disabled = function () return InCombatLockdown() or GetTime() - T.LastVCheck < 60; end,
-                        func = function () if D:AskVersion() then D.versions = false; end GameTooltip:Hide(); end,
+                        func = function ()
+                            if D:AskVersion() then D.versions = false; end
+                            if GameTooltip:IsShown() then GameTooltip:Hide(); end
+                        end,
                         order = 10,
                     },
                     VersionsDisplay = {
@@ -3087,6 +3090,6 @@ function D:QuickAccess (CallingObject, button) -- {{{
 end -- }}}
 
 
-T._LoadedFiles["Dcr_opt.lua"] = "2.7.5.2";
+T._LoadedFiles["Dcr_opt.lua"] = "2.7.5.7";
 
 -- Closer

@@ -1,14 +1,14 @@
-## Interface: 70200
+## Interface: 70300
 ## Title: Overachiever
 ## Title-zhCN:|cffff88CC[成就]|r成就增强
 ## Title-zhTW:|cffff88CC[成就]|r成就增強
-## Version: 0.99.6
-## Author: Tuhljin
-## Notes: Tools and tweaks to make the lives of players seeking Achievements a little bit easier.
+## Version: 0.99.10
+## Author: Tuhljin + Shurshik
+## Notes: Tools and tweaks to make the lives of players seeking Achievements a little bit easier. + Shows list of achieves that are avaible in a zone and tactics for them
 ## Notes-zhTW: 使玩家尋求成就可以稍微輕鬆點的微調工具。
 ## Notes-zhCN: 使玩家寻求成就可以稍微轻松点的微调工具。
-## SavedVariables: Overachiever_Settings, Overachiever_CharVars_Default
-## SavedVariablesPerCharacter: Overachiever_CharVars, Overachiever_CharVars_Consumed
+## SavedVariables: Overachiever_Settings, Overachiever_CharVars_Default, ralllocationnames,ralltactics,ralltacticsver,ralltacticsdif
+## SavedVariablesPerCharacter: Overachiever_CharVars, Overachiever_CharVars_Consumed, ralloptions,ralloptionsmanual,rallbosstooltip,rallbosschaton,ralloptionsmanual3,ralloptionTrackCharAchieves
 ## OptionalDeps: LibBabble-SubZone-3.0, LibBabble-Inventory-3.0
 ## X-WoWI-ID: 11361
 ## DefaultState: disabled
@@ -16,7 +16,6 @@
 ## X-Repple: 成就
 
 #@no-lib-strip@
-libs\LibBabble-SubZone-3.0\LibStub\LibStub.lua
 libs\LibBabble-SubZone-3.0\lib.xml
 libs\LibBabble-Inventory-3.0\lib.xml
 #@end-no-lib-strip@
@@ -25,6 +24,8 @@ libs\TjOptions.lua
 libs\TjSharedMediaDropDown\lib.xml
 libs\TjDragIt.lua
 libs\TjBagWatch.lua
+libs\TjThreads.lua
+libs\TjAchieve.lua
 libs\TjCalendar.lua
 
 localization.lua
@@ -35,3 +36,7 @@ AchieveTip.lua
 GameTip.lua
 Options.lua
 Calendar.lua
+
+
+AchievementsReminder.lua
+AchievementsReminder.xml

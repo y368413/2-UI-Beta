@@ -95,7 +95,7 @@ T.InterestPool = {
 	{132, 107, 175,  3, s={100, 2, 21600, 824, 15, 4, 6}}, -- The Basilisk's Stare
 	{209, 105, 150,  3, s={94, 3, 5400, 824, 11, 1, 3, 10}}, -- Lending a Hand
 	{208, 103, 125,  3, s={93, 3, 5400, 824, 12, 6, 6, 7}}, -- Elements of Surprise
-	{103, 103, 110,  3, s={92, 3, 5400, 824, 20, 1, 2, 9}}, -- Environmental Hazard
+	{207, 103, 110,  3, s={92, 3, 5400, 824, 20, 1, 2, 9}}, -- Environmental Hazard
 	{289, 106, 100, 35, s={100, 2, 21600, 824, 26, 1, 2}}, -- Profitable Machinations
 	{287, 103, 100, 35, s={100, 2, 21600, 824, 22, 2, 6}}, -- Blackrock Munitions
 	{286, 103, 100, 35, s={100, 2, 21600, 824, 11, 2, 9}}, -- Lost in the Foundry
@@ -129,7 +129,6 @@ T.InterestPool = {
 	{678, 103,   1,  3, s={675, 3, 43200, 127748, 27, 2, 3, 7, 8, 9, 10}}, -- Fiery Friends
 	{682, 101,   1,  3, s={675, 3, 43200, 128313, 23, 1, 1, 2, 9, 9, 10}}, -- Ogrecoming Adversity
 	{685, 102,   1,  3, s={675, 3, 43200, 128316, 25, 1, 2, 7, 8, 9, 10}}, -- Monstrous Menagerie
-	{681, 107,   1,  3, s={675, 3, 43200, 128312, 28, 2, 3, 4, 6, 7, 8}}, -- Arakkoa Ancestry
 	{358, 103,   1,  3, s={100, 3, 36000, 994, 22, 2, 3, 6}}, -- Drov the Ruiner
 	{359, 107,   1,  3, s={100, 3, 36000, 994, 21, 1, 3, 7}}, -- Rukhmar
 }
@@ -201,6 +200,7 @@ T.TrackedMissionSets = {
 }
 
 T.TraitStack = {[824]=79, [1101]=314, [823]=326}
+T.MoreTraitStack = {[824]=256}
 T.ShipTraitStack = {}
 T.UniqueTraits = {[326]=1}
 T.MaxTraitStack = {[824]=3}

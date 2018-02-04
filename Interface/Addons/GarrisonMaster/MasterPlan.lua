@@ -35,9 +35,7 @@ local EV, G, conf, api, aconf = T.Evie, T.Garrison, setmetatable({}, {__index={
 T.config, api, aconf = conf, setmetatable({}, {__index={GarrisonAPI=G}}), MasterPlanA.data
 
 function EV:ADDON_LOADED(addon)
-	if addon ~= addonName then
-		return
-	end
+	--if addon ~= addonName then return end
 	function EV:PLAYER_LOGOUT()
 		MasterPlanPC, conf.ignore, conf.rIgnore = conf, next(conf.ignore) and conf.ignore, next(conf.rIgnore) and conf.rIgnore
 		conf.complete = securecall(T._GetMissionSeenTable)
@@ -105,19 +103,19 @@ do -- Completion stats
 	end
 end
 
-function EV:GARRISON_RECRUITMENT_NPC_OPENED()
-	if C_Garrison.CanGenerateRecruits() then
-		aconf.recruitTime = GetServerTime()-604801
-	else
+--[[function EV:GARRISON_RECRUITMENT_NPC_OPENED()
+	--if C_Garrison.CanGenerateRecruits() then
+		--aconf.recruitTime = GetServerTime()-604801
+	--else
 		local dt = type(aconf.recruitTime) == "number" and GetServerTime() - aconf.recruitTime or 604801
 		if dt > 604800 then
 			aconf.recruitTime = GetServerTime()
 		end
-	end
+	--end
 end
 function EV:GARRISON_RECRUITMENT_FOLLOWERS_GENERATED()
 	aconf.recruitTime = GetServerTime()
-end
+end]]
 
 function api:GetSortFollowers()
 	return conf.sortFollowers

@@ -3,9 +3,7 @@ local module = MaoRUI:GetModule("Skins")
 
 function module:CastBarSkin()
 	if MaoRUISettingDB["Skins"]["CastBar"] then return end
-
------------------------------------------------------------------castbar
-------------------施法条位置&增强----感谢泡泡帮忙修复-------------------------------------
+---------------------------castbar------------------施法条位置&增强----感谢泡泡帮忙修复-------------------------------------
 --[[ 玩家施法条 ]]
 CastingBarFrame:ClearAllPoints()
 CastingBarFrame:SetPoint("BOTTOMRIGHT", PlayerFrame, "TOPRIGHT", -3, -5) --0, 100

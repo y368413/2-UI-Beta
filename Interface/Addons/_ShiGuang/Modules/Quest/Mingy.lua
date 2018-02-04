@@ -98,7 +98,7 @@ function Mingy:ScanRewards(event)
 			Mingy.RewardIndex = Mingy.HighestIndex;
 			--Mingy.RewardButton:Show();	
 			local rewardTextFrame = QuestInfoRewardsFrame.ItemChooseText;		
-			rewardTextFrame:SetText("最值钱的是: " .. Mingy.HighestItemLink .. " " .. Mingy:FormatGoldText(Mingy.HighestGold) .. "|n|n" .. rewardTextFrame:GetText());
+			rewardTextFrame:SetText(Mingy.HighestItemLink .. " " .. Mingy:FormatGoldText(Mingy.HighestGold) .. "|n|n" .. rewardTextFrame:GetText());
 			-- if(ShiGuangDB.MingyDB.AutoComplete == true) then				
 			-- 	Mingy:ChooseReward();			
 			-- 	button	= _G["QuestFrameCompleteQuestButton"];

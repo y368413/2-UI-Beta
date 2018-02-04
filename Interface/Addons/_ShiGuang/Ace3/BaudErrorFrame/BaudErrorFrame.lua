@@ -1,4 +1,4 @@
-local SelectedError = 1
+﻿local SelectedError = 1
 local ErrorList = {}
 local SoundTime = 0
 local QueueError = {}
@@ -7,9 +7,9 @@ local EnableSound = false
 function BaudErrorFrame_OnLoad(self)
 	self:RegisterEvent("VARIABLES_LOADED")
 	self:RegisterEvent("ADDON_ACTION_BLOCKED")
-	UIParent:UnregisterEvent("ADDON_ACTION_BLOCKED")
+	--UIParent:UnregisterEvent("ADDON_ACTION_BLOCKED")
 	self:RegisterEvent("MACRO_ACTION_BLOCKED")
-	UIParent:UnregisterEvent("MACRO_ACTION_BLOCKED")
+	--UIParent:UnregisterEvent("MACRO_ACTION_BLOCKED")
 	self:RegisterEvent("ADDON_ACTION_FORBIDDEN")
 	UIParent:UnregisterEvent("ADDON_ACTION_FORBIDDEN")
 	self:RegisterEvent("MACRO_ACTION_FORBIDDEN")
@@ -70,7 +70,7 @@ end
 
 function BaudErrorFrameShowError(Error)
 	if (GetTime() > SoundTime) and EnableSound then
-		PlaySoundFile("Sound\\Creature\\Crone\\OzCroneAttack02");
+		PlaySoundFile("Sound\\Creature\\Crone\\OzCroneAttack02.ogg")
 		SoundTime = GetTime() + 1
 	end
 end
@@ -89,6 +89,7 @@ function BaudErrorFrameAdd(Error, Retrace)
 		BaudErrorFrameShowError(Error)
 	else
 		if Error:match("script ran too long") then return end
+		if Error:match("插件导致界面行为失效") then return end
 		tinsert(QueueError, Error)
 	end
 	tinsert(ErrorList, {Error = Error, Count = 1, Stack = debugstack(Retrace)})

@@ -1890,6 +1890,10 @@ function Skada:AssignPet(ownerguid, ownername, petguid)
 	pets[petguid] = {id = ownerguid, name = ownername}
 end
 
+function Skada:GetPetOwner(petguid)
+	return pets[petguid]
+end
+
 function Skada:ENCOUNTER_START(encounterId, encounterName)
 	self:Debug("ENCOUNTER_START", encounterId, encounterName)
 	if not disabled then
@@ -2783,24 +2787,29 @@ do
 		--media:Register("statusbar", "Aluminium",		[[Interface\Addons\Skada\statusbar\Aluminium]])
 		--media:Register("statusbar", "Armory",			[[Interface\Addons\Skada\statusbar\Armory]])
 		media:Register("statusbar", "ShiGuang",		[[Interface\Addons\_ShiGuang\Media\Modules\Raid\ColorBar]])
-		media:Register("statusbar", "HalfStyle",		[[Interface\Addons\_ShiGuang\Media\Modules\Skada]])
+		media:Register("statusbar", "HalfStyle",		[[Interface\Addons\_ShiGuang\Media\Modules\Skada\YaSkada05]])
+		media:Register("statusbar", "AtlzSkada",		[[Interface\Addons\_ShiGuang\Media\Modules\Skada\AtlzSkada]])
+		media:Register("statusbar", "Yaskada",		[[Interface\Addons\_ShiGuang\Media\Modules\Skada\Yaskada]])
+		media:Register("statusbar", "Yaskada02",		[[Interface\Addons\_ShiGuang\Media\Modules\Skada\Yaskada02]])
+		media:Register("statusbar", "Yaskada03",		[[Interface\Addons\_ShiGuang\Media\Modules\Skada\Yaskada03]])
+		media:Register("statusbar", "Yaskada04",		[[Interface\Addons\_ShiGuang\Media\Modules\Skada\Yaskada04]])
 		media:Register("statusbar", "None",		[[Interface\Addons\_ShiGuang\Media\backdrop]])
 		--media:Register("statusbar", "TukTex",			[[Interface\Addons\Skada\statusbar\normTex]])
 
 		-- Some sounds (copied from Omen).
-		media:Register("sound", "Rubber Ducky", [[Sound\Doodad\Goblin_Lottery_Open01.ogg]])
-		media:Register("sound", "Cartoon FX", [[Sound\Doodad\Goblin_Lottery_Open03.ogg]])
-		media:Register("sound", "Explosion", [[Sound\Doodad\Hellfire_Raid_FX_Explosion05.ogg]])
-		media:Register("sound", "Shing!", [[Sound\Doodad\PortcullisActive_Closed.ogg]])
-		media:Register("sound", "Wham!", [[Sound\Doodad\PVP_Lordaeron_Door_Open.ogg]])
-		media:Register("sound", "Simon Chime", [[Sound\Doodad\SimonGame_LargeBlueTree.ogg]])
-		media:Register("sound", "War Drums", [[Sound\Event Sounds\Event_wardrum_ogre.ogg]])
-		media:Register("sound", "Cheer", [[Sound\Event Sounds\OgreEventCheerUnique.ogg]])
-		media:Register("sound", "Humm", [[Sound\Spells\SimonGame_Visual_GameStart.ogg]])
-		media:Register("sound", "Short Circuit", [[Sound\Spells\SimonGame_Visual_BadPress.ogg]])
-		media:Register("sound", "Fel Portal", [[Sound\Spells\Sunwell_Fel_PortalStand.ogg]])
-		media:Register("sound", "Fel Nova", [[Sound\Spells\SeepingGaseous_Fel_Nova.ogg]])
-		media:Register("sound", "You Will Die!", [[Sound\Creature\CThun\CThunYouWillDie.ogg]])
+		media:Register("sound", "Rubber Ducky",       [[Sound\Doodad\Goblin_Lottery_Open01.ogg]])
+		media:Register("sound", "Cartoon FX",         [[Sound\Doodad\Goblin_Lottery_Open03.ogg]])
+		media:Register("sound", "Explosion",          [[Sound\Doodad\Hellfire_Raid_FX_Explosion05.ogg]])
+		media:Register("sound", "Shing!",             [[Sound\Doodad\PortcullisActive_Closed.ogg]])
+		media:Register("sound", "Wham!",              [[Sound\Doodad\PVP_Lordaeron_Door_Open.ogg]])
+		media:Register("sound", "Simon Chime",        [[Sound\Doodad\SimonGame_LargeBlueTree.ogg]])
+		media:Register("sound", "War Drums",          [[Sound\Event Sounds\Event_wardrum_ogre.ogg]])
+		media:Register("sound", "Cheer",              [[Sound\Event Sounds\OgreEventCheerUnique.ogg]])
+		media:Register("sound", "Humm",               [[Sound\Spells\SimonGame_Visual_GameStart.ogg]])
+		media:Register("sound", "Short Circuit",      [[Sound\Spells\SimonGame_Visual_BadPress.ogg]])
+		media:Register("sound", "Fel Portal",         [[Sound\Spells\Sunwell_Fel_PortalStand.ogg]])
+		media:Register("sound", "Fel Nova",           [[Sound\Spells\SeepingGaseous_Fel_Nova.ogg]])
+		media:Register("sound", "You Will Die!",      [[Sound\Creature\CThun\CThunYouWillDie.ogg]])
 
 		-- DB
 		self.db = LibStub("AceDB-3.0"):New("SkadaDB", self.defaults, "Default")

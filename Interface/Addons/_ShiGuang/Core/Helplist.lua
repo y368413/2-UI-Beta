@@ -3,27 +3,27 @@ if GetLocale() ~= "zhCN" then return end
 
 local hx = {
 	 "任何你不喜欢的，请你控制台关了它.|cff3399FF       自己去下载自己喜欢的",
-	 "职业(SM、DK、WS)技能栏被挡住了.|cff3399FF         /moveit",
-	 "我缩放完了UI头像位置变了.|cff3399FF                   右键解锁挪回去",
+	 "SM、DK、WS 职业监控栏被挡住了.|cff3399FF          /moveit",
+	 "我缩放完了UI，系统头像位置变了.|cff3399FF               右键解锁挪回去",
 	 "我用的简易头像,右键解锁挪不动啊.|cff3399FF         /bht m",
 	 "我还是喜欢默认样式的NPC购买列表.|cff3399FF       搜索删除xMerchant.lua",
    "5人小队的框架位置很不习惯.|cff3399FF      按着Shift拖小队的第一个队友框",
    "有些技能头像上没追踪显示啊.|cff3399FF     按着Alt获取到技能ID，回帖告诉我",
    "不论你无聊还是闲得慌.|cff3399FF           千万别打这个命令  |cffC495DD /welovewow",
-   "更多设置请|cFF00DDFF右键小地图|r 或 |cFF00DDFFEsc-界面-插件|r设置",
+   "更多设置请|cFF00DDFF右键小地图|r",
    "|cffC495DD如需改进和反馈，可以回帖告诉我，谢谢。",
 }
 local story = {
-  "1、|cFF00DDFF我见过一个指挥，在午夜11点钟在教授面前的时候，他说我们休息一下吧，有人问为什么，他说：<你们记不得了？昨天这个时候，MT的小孩要睡觉了。>",
+  "1、|cFF00DDFF我见过一个指挥，在午夜11点钟在教授面前的时候，他说我们休息一下吧，有人问为什么，他说：<你们记不得了？昨天这个时候，MT的小孩要睡觉了>",
   "2、|cFF00DDFF我听说过一个矿工，AFK前一周，他每天挖8小时的矿，最后很潇洒地放在公会银行。那以后他再也没上线，那一天公会银行多了3万金。|r",
-  "3、|cFF00DDFF我见过一个RL，中午2点钟的时候她强制踢了一个奶德，我们问她为什么，她说：<奶德是个学生，2点半他要上课。>",
-  "4、|cFF00DDFF还有一个盗贼，拿到了双刀之后他每天6个小时在线打工，我只知道他的主手是一个朋友帮他飙到6万|r",
+  "3、|cFF00DDFF我见过一个RL，中午2点钟的时候她强制踢了一个奶德，我们问她为什么，她说：<奶德是个学生，2点半他要上课>",
+  "4、|cFF00DDFF还有一个盗贼，拿到了双刀之后他每天6个小时在线打工，我只知道他的主手是一个朋友帮他飙到6万。|r",
   "5、|cFF00DDFF我见过一个放弃了橙弓的猎人，那天他和另一个猎人ROLL，点数低的是他，可是另一个猎人掉线了，他等了5分钟，他给那个猎人打了8个电话，",
   "|cFF00DDFF他始终没有把橙弓捡起来。然后他也掉线了，所有人都掉线了。",
   "6、|cFF00DDFF我还见过，一个小白没人陪他做怒炎的任务，他只是在综合说了一句，我看到了十多个人说：组我。|r",
-  "7、|cFF00DDFF我70级的fs带血色的时候，一个小号说：boss的装备你捡去修装备吧，谢谢你。我带他刷了一个通宵。",
+  "7、|cFF00DDFF我70级的FS带血色的时候，一个小号说：boss的装备你捡去修装备吧，谢谢你。我带他刷了一个通宵。",
   "8、|cFF00DDFF或许是巧合，一个小德对我说，我卖了3张卡，只有你不骗我。我默然，只是淡淡地在世界频道说，这个小德是个新手，不要让他灰心。|r", 
-  "|cFF00DDFF1个人密我，<对不起，我不知道是新手，已经u给他了>另一个人没有动静，我宁愿相信他是下了。|r",
+  "|cFF00DDFF1个人密我，<对不起，我不知道是新手，已经U给他了>另一个人没有动静，我宁愿相信他是下了。|r",
   "9、|cFF00DDFF有人在带SL刷刷，说黑旗子，结果出的黑心，那个QS自己给自己了，同队的DK哑口无言，法师问他，你不是要旗子吗？我帮DK买吧，我给你卖店价。", 
   "|cFF00DDFF骑士没回答，只是说你们要不要我带的。说完这句话，4个小号不约而同，直接退队。",
   "10、|cFF00DDFF剑柄，听说鬼雾锋的剑柄是贪婪，但是我们是需求。于是那次鬼雾锋的人贪婪以后打了几个句号。拿到剑柄的T 没说话。开箱子，|r",  
@@ -41,7 +41,7 @@ local story = {
   "#至少，你拥有的关于这个世界的记忆，那是在别的地方任何方法也无法获得的。",
 }
 local function changelog()
-	local f = CreateFrame("Frame", "NDuiChangeLog", UIParent)
+	local f = CreateFrame("Frame", "ChangeLog", UIParent)
 		 local bgTexture = f:CreateTexture("name", "BACKGROUND")
     bgTexture:SetTexture("Interface\\PETBATTLES\\Weather-StaticField");
     bgTexture:SetAllPoints();
@@ -92,9 +92,9 @@ local function lovewow()
 	close:SetScript("OnClick", function(self) f:Hide() end)
 end
 
-SlashCmdList["NDUICHANGELOG"] = function()
-	if not NDuiChangeLog then changelog() else NDuiChangeLog:Show() end
+SlashCmdList["CHANGELOGS"] = function()
+	if not ChangeLogs then changelog() else ChangeLogs:Show() end
 end
-SLASH_NDUICHANGELOG1 = '/MrHelp'
+SLASH_CHANGELOGS1 = '/MrHelp'
 SlashCmdList["WELOVEWOW"] = function() lovewow() end
 SLASH_WELOVEWOW1 = '/welovewow'

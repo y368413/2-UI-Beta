@@ -2,16 +2,16 @@
 	modifier = 'ALT',
 }
 
-local Options = LibStub('Wasabi'):New('|cff8080ff[专业]|r分解研磨', 'MolinariDB', defaults)
+local Options = LibStub('Wasabi'):New(GEAR_MOLINARI_TITLE, 'MolinariDB', defaults)
 Options:AddSlash('/molinari')
 Options:Initialize(function(self)
 	local Title = self:CreateTitle()
 	Title:SetPoint('TOPLEFT', 16, -16)
-	Title:SetText('|cff8080ff[专业]|r分解研磨')
+	Title:SetText(GEAR_MOLINARI_TITLE)
 
 	local Modifier = self:CreateDropDown('modifier')
 	Modifier:SetPoint('TOPLEFT', Title, 'BOTTOMLEFT', 0, -8)
-	Modifier:SetFormattedText('来启用快速 %s', '|cff8080ff[专业]|r分解研磨 插件')
+	Modifier:SetFormattedText('→ %s', GEAR_MOLINARI_TITLE)
 	Modifier:SetValues({
 		ALT = ALT_KEY,
 		CTRL = ALT_KEY_TEXT .. ' + ' .. CTRL_KEY,
@@ -40,22 +40,22 @@ local function tLength(t)
 	return count
 end
 
-local Blacklist = Options:CreateChild('黑名单', 'ShiGuangPerDB', defaultBlacklist)
+local Blacklist = Options:CreateChild(MOLINARI_BLACKLIST, 'ShiGuangPerDB', defaultBlacklist)
 Blacklist:Initialize(function(self)
 	local Title = self:CreateTitle()
 	Title:SetPoint('TOPLEFT', 20, -16)
 	Title:SetFontObject('GameFontNormalMed1')
-	Title:SetText("請將要避免不小心被處理掉的物品加入忽略清單。")
+	Title:SetText(MOLINARI_POTENTIALLYpotentially)
 
 	local Description = self:CreateDescription()
 	Description:SetPoint('TOPLEFT', Title, 'BOTTOMLEFT', 0, -6)
-	Description:SetText("將物品拖曳到下方的視窗內，加入到忽略清單。")
+	Description:SetText(MOLINARI_DRAGTOADD)
 
 	local OnItemEnter = function(self)
 		GameTooltip:SetOwner(self, 'ANCHOR_TOPLEFT')
 		GameTooltip:SetItemByID(self.key)
 		GameTooltip:AddLine(' ')
-		GameTooltip:AddLine("點一下右鍵移除物品", 0, 1, 0)
+		GameTooltip:AddLine(MOLINARI_REMOVEITEM, 0, 1, 0)
 		GameTooltip:Show()
 	end
 
@@ -167,7 +167,11 @@ local function OnEnter(self)
 		GameTooltip:SetOwner(self, 'ANCHOR_RIGHT')
 	end
 
-	GameTooltip:SetBagItem(self:GetAttribute('target-bag'), self:GetAttribute('target-slot'))
+	if(self.itemLink) then
+		GameTooltip:SetHyperlink(self.itemLink)
+	else
+		GameTooltip:SetBagItem(self:GetAttribute('target-bag'), self:GetAttribute('target-slot'))
+	end
 end
 
 function Molinari:Apply(itemLink, spell, r, g, b, isItem)
@@ -182,8 +186,10 @@ function Molinari:Apply(itemLink, spell, r, g, b, isItem)
 			return
 		else
 			self:SetAttribute(modifier .. '-type1', 'macro')
-			self:SetAttribute('macrotext', string.format('/cast %s\n/run ClickTargetTradeButton(7)', spell))
+			self:SetAttribute('macrotext', string.format('/cast %s\n/run ClickTargetTradeButton(7)', (GetSpellInfo(spell))))
 		end
+
+		self.itemLink = itemLink
 	elseif(GetContainerItemLink(bag, slot) == itemLink) then
 		if(isItem) then
 			self:SetAttribute(modifier .. '-type1', 'item')
@@ -193,6 +199,7 @@ function Molinari:Apply(itemLink, spell, r, g, b, isItem)
 			self:SetAttribute('spell', spell)
 		end
 
+		self.itemLink = nil
 		self:SetAttribute('target-bag', bag)
 		self:SetAttribute('target-slot', slot)
 	else

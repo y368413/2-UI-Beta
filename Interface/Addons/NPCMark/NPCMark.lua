@@ -1,3 +1,6 @@
+--*Fix WorldFlightMap by *k99k5 2017/10/31
+
+
 NPCMark = LibStub('AceAddon-3.0'):NewAddon('NPCMark', 'AceEvent-3.0', 'AceConsole-3.0', 'AceTimer-3.0')
 MAP_ADJACENT_DISTANCE = 20
 local _, node_index;
@@ -458,6 +461,12 @@ function NPCMark_WorldMapFrameOnUpdate(self)
 	if MapMarkHide then
 		return
 	end
+	if WorldFlightMapFrame and WorldFlightMapFrame:GetChildren()~=nil and WorldFlightMapFrame:IsVisible()  then
+		return
+	end
+	
+	
+	
 	local mapID = GetCurrentMapAreaID();
 	local currLevel = GetCurrentMapDungeonLevel();
 	local mapName;
@@ -469,6 +478,10 @@ function NPCMark_WorldMapFrameOnUpdate(self)
 		mapName = MAP_MARK_ShadowmoonValleyDRAENOR; -- 影月谷德拉诺
 	elseif mapID == 950 then
 		mapName = MAP_MARK_NagrandDRAENOR; -- 纳格兰德拉诺
+	elseif mapID == 504 then
+		mapName = "诺森德达拉然";
+	elseif mapID == 1014 then
+		mapName = "破碎群岛达拉然"; 
 	else
 		mapName = GetMapNameByID(mapID);
 	end

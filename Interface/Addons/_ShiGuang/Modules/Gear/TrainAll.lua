@@ -33,7 +33,7 @@ end
 
 local function createit()
 	local Button = CreateFrame("Button", "TrainAllButton",ClassTrainerFrame, "MagicButtonTemplate")
-	Button:SetText("全 学")
+	Button:SetText(TRAINALL_ALLLEARN)
 	Button:SetPoint("BOTTOMRIGHT",-96,4)
 	Button:SetScript("OnEnter", function()
 	end)

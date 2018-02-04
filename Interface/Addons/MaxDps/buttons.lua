@@ -4,17 +4,24 @@ MaxDps.SpellsGlowing = {};
 MaxDps.FramePool = {};
 MaxDps.Frames = {};
 
-function MaxDps:CreateOverlay(parent, id, texture, r, g, b)
+--- Creates frame overlay over a specific frame, it doesn't need to be a button.
+-- @param parent - frame that is suppose to be attached to
+-- @param id - string id of overlay because frame can have multiple overlays
+-- @param texture - optional custom texture
+-- @param type - optional type of overlay, standard types are 'normal' and 'cooldown' - used to select overlay color
+-- @param color - optional custom color in standard structure {r = 1, g = 1, b = 1, a = 1}
+function MaxDps:CreateOverlay(parent, id, texture, type, color)
 	local frame = tremove(self.FramePool);
 	if not frame then
 		frame = CreateFrame('Frame', 'MaxDps_Overlay_' .. id, parent);
 	end
 
+	local sizeMult = self.db.global.sizeMult or 1.4;
 	frame:SetParent(parent);
 	frame:SetFrameStrata('HIGH');
 	frame:SetPoint('CENTER', 0, 0);
-	frame:SetWidth(parent:GetWidth() * 1.4);
-	frame:SetHeight(parent:GetHeight() * 1.4);
+	frame:SetWidth(parent:GetWidth() * sizeMult);
+	frame:SetHeight(parent:GetHeight() * sizeMult);
 
 	local t = frame.texture;
 	if not t then
@@ -25,12 +32,21 @@ function MaxDps:CreateOverlay(parent, id, texture, r, g, b)
 	end
 
 	t:SetAllPoints(frame);
-	t:SetVertexColor(
-		r or self.db.global.highlightColor.r,
-		g or self.db.global.highlightColor.g,
-		b or self.db.global.highlightColor.b,
-		self.db.global.highlightColor.a
-	);
+
+	if type then
+		frame.ovType = type;
+		if type == 'normal' then
+			local c = self.db.global.highlightColor;
+			t:SetVertexColor(c.r, c.g, c.b, c.a);
+		elseif type == 'cooldown' then
+			local c = self.db.global.cooldownColor;
+			t:SetVertexColor(c.r, c.g, c.b, c.a);
+		else
+			t:SetVertexColor(color.r, color.r, color.r, color.r);
+		end
+	else
+		t:SetVertexColor(color.r, color.g, color.b, color.a);
+	end
 
 	tinsert(self.Frames, frame);
 	return frame;
@@ -52,13 +68,35 @@ function MaxDps:DestroyAllOverlays()
 	end
 end
 
+function MaxDps:ApplyOverlayChanges()
+	for key, frame in pairs(self.Frames) do
+		local sizeMult = self.db.global.sizeMult or 1.4;
+		frame:SetWidth(frame:GetParent():GetWidth() * sizeMult);
+		frame:SetHeight(frame:GetParent():GetHeight() * sizeMult);
+		frame.texture:SetTexture(MaxDps:GetTexture());
+		frame.texture:SetAllPoints(frame);
+
+		if frame.ovType == 'normal' then
+			local c = self.db.global.highlightColor;
+			frame.texture:SetVertexColor(c.r, c.g, c.b, c.a);
+		elseif frame.ovType == 'cooldown' then
+			local c = self.db.global.cooldownColor;
+			frame.texture:SetVertexColor(c.r, c.g, c.b, c.a);
+		end
+	end
+end
+
 function MaxDps:UpdateButtonGlow()
 	local LAB;
 	local LBG;
 	local origShow;
 	local noFunction = function() end;
 
-	if IsAddOnLoaded('Bartender4') then
+	if IsAddOnLoaded('ElvUI') then
+		LAB = LibStub:GetLibrary('LibActionButton-1.0-ElvUI');
+		LBG = LibStub:GetLibrary('LibButtonGlow-1.0');
+		origShow = LBG.ShowOverlayGlow;
+	elseif IsAddOnLoaded('Bartender4') then
 		LAB = LibStub:GetLibrary('LibActionButton-1.0');
 	end
 
@@ -83,7 +121,7 @@ function MaxDps:UpdateButtonGlow()
 	end
 end
 
-function MaxDps:Glow(button, id, r, g, b, texture)
+function MaxDps:Glow(button, id, texture, type, color)
 	if button.MaxDpsOverlays and button.MaxDpsOverlays[id] then
 		button.MaxDpsOverlays[id]:Show();
 	else
@@ -91,7 +129,7 @@ function MaxDps:Glow(button, id, r, g, b, texture)
 			button.MaxDpsOverlays = {};
 		end
 
-		button.MaxDpsOverlays[id] = self:CreateOverlay(button, id, texture, r, g, b);
+		button.MaxDpsOverlays[id] = self:CreateOverlay(button, id, texture, type, color);
 		button.MaxDpsOverlays[id]:Show();
 	end
 end
@@ -99,6 +137,50 @@ end
 function MaxDps:HideGlow(button, id)
 	if button.MaxDpsOverlays and button.MaxDpsOverlays[id] then
 		button.MaxDpsOverlays[id]:Hide();
+	end
+end
+
+function MaxDps:AddButton(actionName, button)
+	if actionName then
+		if self.Spells[actionName] == nil then
+			self.Spells[actionName] = {};
+		end
+		tinsert(self.Spells[actionName], button);
+	end
+end
+
+function MaxDps:AddStandardButton(button)
+	local type = button:GetAttribute('type');
+	if type then
+		local actionType = button:GetAttribute(type);
+		local id;
+		local actionName;
+
+		if type == 'action' then
+			local slot = ActionButton_GetPagedID(button) or ActionButton_CalculateAction(button)
+					or button:GetAttribute('action') or 0;
+
+			if HasAction(slot) then
+				type, actionType = GetActionInfo(slot);
+			else
+				return;
+			end
+		end
+
+		if type == 'macro' then
+			local name, rank, spellId = GetMacroSpell(actionType);
+			if spellId then
+				actionName = GetSpellInfo(spellId);
+			else
+				return;
+			end
+		elseif type == 'item' then
+			actionName = GetItemInfo(actionType);
+		elseif type == 'spell' then
+			actionName = GetSpellInfo(actionType);
+		end
+
+		self:AddButton(actionName, button)
 	end
 end
 
@@ -114,15 +196,16 @@ function MaxDps:Fetch()
 	self.Flags = {};
 	self.SpellsGlowing = {};
 
-	if IsAddOnLoaded('Bartender4') then
-		self:FetchBartender4();
-	else
-		self:FetchBlizzard();
-	end
+	self:FetchLibActionButton();
+	self:FetchBlizzard();
 
 	-- It does not alter original button frames so it needs to be fetched too
 	if IsAddOnLoaded('ButtonForge') then
 		self:FetchButtonForge();
+	end
+
+	if IsAddOnLoaded('G15Buttons') then
+		self:FetchG15Buttons();
 	end
 
 	if self.rotationEnabled then
@@ -131,30 +214,45 @@ function MaxDps:Fetch()
 	end
 end
 
-function MaxDps:FetchBlizzard()
-	local TDActionBarsBlizzard = {'Action', 'MultiBarBottomLeft', 'MultiBarBottomRight', 'MultiBarRight', 'MultiBarLeft'};
-	for _, barName in pairs(TDActionBarsBlizzard) do
-		for i = 1, 12 do
-			local button = _G[barName .. 'Button' .. i];
-			local slot = ActionButton_GetPagedID(button) or ActionButton_CalculateAction(button) or button:GetAttribute('action') or 0;
-			if HasAction(slot) then
-				local actionName, _;
-				local actionType, id = GetActionInfo(slot);
-				if actionType == 'macro' then _, _ , id = GetMacroSpell(id) end
-				if actionType == 'item' then
-					actionName = GetItemInfo(id);
-				elseif actionType == 'spell' or (actionType == 'macro' and id) then
-					actionName = GetSpellInfo(id);
-				end
-				if actionName then
-					if self.Spells[actionName] == nil then
-						self.Spells[actionName] = {};
-					end
+function MaxDps:FetchLibActionButton()
+	local LAB = {
+		original = LibStub:GetLibrary('LibActionButton-1.0', true),
+		elvui = LibStub:GetLibrary('LibActionButton-1.0-ElvUI', true),
+	}
 
-					tinsert(self.Spells[actionName], button);
+	for _, lib in pairs(LAB) do
+		if lib and lib.GetAllButtons then
+			for button in pairs(lib:GetAllButtons()) do
+				local spellId = button:GetSpellId();
+				if spellId then
+					local actionName, _ = GetSpellInfo(spellId);
+					self:AddButton(actionName, button);
 				end
 			end
 		end
+	end
+end
+
+function MaxDps:FetchBlizzard()
+	local BlizzardBars = {'Action', 'MultiBarBottomLeft', 'MultiBarBottomRight', 'MultiBarRight', 'MultiBarLeft'};
+	for _, barName in pairs(BlizzardBars) do
+		for i = 1, 12 do
+			local button = _G[barName .. 'Button' .. i];
+			self:AddStandardButton(button);
+		end
+	end
+end
+
+function MaxDps:FetchG15Buttons()
+	local i = 2; -- it starts from 2
+	while true do
+		local button = _G['objG15_btn_' .. i];
+		if not button then
+			break;
+		end
+		i = i + 1;
+
+		self:AddStandardButton(button);
 	end
 end
 
@@ -167,59 +265,15 @@ function MaxDps:FetchButtonForge()
 		end
 		i = i + 1;
 
-		local type = button:GetAttribute('type');
-		if type then
-			local actionType = button:GetAttribute(type);
-			local id;
-			local actionName;
-			if type == 'macro' then
-				local id = GetMacroSpell(actionType);
-				if id then
-					actionName = GetSpellInfo(id);
-				end
-			elseif type == 'item' then
-				actionName = GetItemInfo(actionType);
-			elseif type == 'spell' then
-				actionName = GetSpellInfo(actionType);
-			end
-			if actionName then
-				if self.Spells[actionName] == nil then
-					self.Spells[actionName] = {};
-				end
-
-				tinsert(self.Spells[actionName], button);
-			end
-		end
+		MaxDps:AddStandardButton(button)
 	end
-end
-
-function MaxDps:FetchBartender4()
-	local ret = false;
-	for i = 1, 120 do
-		local button = _G['BT4Button' .. i];
-		if button then
-			local spellId = button:GetSpellId();
-			if spellId then
-				local actionName, _ = GetSpellInfo(spellId);
-				if actionName then
-					if self.Spells[actionName] == nil then
-						self.Spells[actionName] = {};
-					end
-					ret = true;
-					tinsert(self.Spells[actionName], button);
-				end
-			end
-		end
-	end
-	return ret;
 end
 
 function MaxDps:Dump()
 	local s = '';
 	for k, v in pairs(self.Spells) do
-		s = s .. ', ' .. k;
+		print(k);
 	end
-	print(s);
 end
 
 function MaxDps:FindSpell(spellName)
@@ -227,11 +281,11 @@ function MaxDps:FindSpell(spellName)
 	return self.Spells[name];
 end
 
-function MaxDps:GlowIndependent(spellName, id, r, g, b, texture)
+function MaxDps:GlowIndependent(spellName, id, texture, color)
 	local name = GetSpellInfo(spellName) or spellName;
 	if self.Spells[name] ~= nil then
 		for k, button in pairs(self.Spells[name]) do
-			self:Glow(button, id, r, g, b, texture);
+			self:Glow(button, id, texture, 'cooldown', color);
 		end
 	end
 end
@@ -251,7 +305,7 @@ function MaxDps:GlowCooldown(spell, condition)
 	end
 	if condition and not self.Flags[spell] then
 		self.Flags[spell] = true;
-		self:GlowIndependent(spell, spell, 0, 1, 0);
+		self:GlowIndependent(spell, spell);
 	end
 	if not condition and self.Flags[spell] then
 		self.Flags[spell] = false;
@@ -262,11 +316,11 @@ end
 function MaxDps:GlowSpell(spellName)
 	if self.Spells[spellName] ~= nil then
 		for k, button in pairs(self.Spells[spellName]) do
-			self:Glow(button, 'next');
+			self:Glow(button, 'next', nil, 'normal');
 		end
 		self.SpellsGlowing[spellName] = 1;
 	else
-		--self:Print(self.Colors.Error .. 'Spell not found on action bars: ' .. spellName);
+		self:Print(self.Colors.Error .. 'Spell not found on action bars: ' .. spellName);
 	end
 end
 

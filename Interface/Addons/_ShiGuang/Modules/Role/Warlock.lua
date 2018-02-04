@@ -4,8 +4,11 @@ WarlockFrame:RegisterEvent("PLAYER_LOGOUT"); -- Fired when about to log out
 
 local Settings_HighestDemonCount = 0
 local Settings_HighestEmpoweredCount = 0
+local Settings_HighestConsumptionCount = 0
+local Settings_HighestEmpoweredConsumptionCount = 0
 local Settings_HideOutOfCombat = false
 local Settings_HideOutOfDemonology = true
+
 -------------------------------------------------------------------------------------------------v1.2
 
 function ZapLib_FrameMoveable(unlock, movframe)
@@ -442,6 +445,16 @@ function WarlockboxGUI:COMBAT_LOG_EVENT_UNFILTERED(self, event, ...)
     if(Settings_HighestEmpoweredCount < (empowered_demonCount + petEmpowered)) then
         Settings_HighestEmpoweredCount = empowered_demonCount + petEmpowered
     end
+	
+	--Thal'kiel's Consumption highscore
+	if combatEvent == "SPELL_CAST_SUCCESS" and sourceGUID == UnitGUID("player") and spellId == 211714 then
+		if(Settings_HighestEmpoweredConsumptionCount < (empowered_demonCount + petEmpowered)) then
+			Settings_HighestEmpoweredConsumptionCount = empowered_demonCount + petEmpowered
+		end
+		if(Settings_HighestConsumptionCount < (demonCount + petActive)) then
+			Settings_HighestConsumptionCount = demonCount + petActive
+		end
+	end
 end
 
 WarlockboxGUI:SetScript("OnEvent", function(self, event, ...)

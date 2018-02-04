@@ -1,4 +1,4 @@
-## Interface: 70200
+## Interface: 70300
 ## Title: PVP Master
 ## Title-zhCN: |cFF99CC01[PVP]|r小工具合集
 ## Title-zhTW: |cFF99CC01[PVP]|r小工具合集

@@ -1,4 +1,4 @@
-## Interface: 70200
+## Interface: 70300
 ## Title: LegionTreasures + MyRareFinder
 ## Version: 7.1.5.23420 & 1.3
 ## Title-zhCN:|cff0080ff[地图]|r宝藏稀有

@@ -116,11 +116,11 @@ function onEvent(self, evt)
                 if HasArtifactEquipped() then
                 local _, _, _, _, totalArtifactXP, pointsSpent, _, _, _, _,_, _, Artifacttier = C_ArtifactUI.GetEquippedArtifactInfo()
 		            local _, Artifactxp, ArtifactxpForNextPoint = MainMenuBar_GetNumArtifactTraitsPurchasableFromXP(pointsSpent, totalArtifactXP, Artifacttier)
-                   TuXP_Box.ArtifactText:SetText(ARTIFACT_POWER..":"..M.Numb(Artifactxp).."/"..M.Numb(ArtifactxpForNextPoint) or "")
+                   TuXP_Box.ArtifactText:SetText(string.format('|c00FF68CC%d%%|r',(Artifactxp)/(ArtifactxpForNextPoint)*100).." "..ARTIFACT_POWER..":"..M.Numb(Artifactxp).."/"..M.Numb(ArtifactxpForNextPoint) or "")
                 else
                    TuXP_Box.ArtifactText:SetText("")
                 end
-             TuXP_Box.ArtifactText:SetPoint("topright", Minimap,"topleft",-12, -1)
+             TuXP_Box.ArtifactText:SetPoint("topright", Minimap,"topleft",-16, -1)
              --TuXP_Box.repText:SetPoint("topright", TuXP_Box.ArtifactText,"topleft",-8, -1)
         else
             local XP,maxXP,restXP,perXP,perRest = GetXP()
@@ -132,11 +132,11 @@ function onEvent(self, evt)
                 if HasArtifactEquipped() then
                 local _, _, _, _, totalArtifactXP, pointsSpent, _, _, _, _,_, _, Artifacttier  = C_ArtifactUI.GetEquippedArtifactInfo()
 		            local _, Artifactxp, ArtifactxpForNextPoint = MainMenuBar_GetNumArtifactTraitsPurchasableFromXP(pointsSpent, totalArtifactXP, Artifacttier)
-                   TuXP_Box.ArtifactText:SetText(ARTIFACT_POWER..":"..M.Numb(Artifactxp).."/"..M.Numb(ArtifactxpForNextPoint) or "")
+                   TuXP_Box.ArtifactText:SetText(ARTIFACT_POWER..":"..M.Numb(Artifactxp).."/"..M.Numb(ArtifactxpForNextPoint)..string.format('|cFFBF00FF(%d%%)|r',(Artifactxp)/(ArtifactxpForNextPoint)*100) or "")
                 else
                    TuXP_Box.ArtifactText:SetText("")
                 end
-            TuXP_Box.ArtifactText:SetPoint("topright", Minimap,"topleft",-21, -1)
+            TuXP_Box.ArtifactText:SetPoint("topright", Minimap,"topleft",-16, -1)
             TuXP_Box.expText:SetPoint("topright", TuXP_Box.ArtifactText,"topleft",-8, -1)      --"RIGHT",TuXP_Box,"LEFT",-6,0
             --TuXP_Box.repText:SetPoint("topright", TuXP_Box.expText,"topleft",-8, -1)
             Tu_XP:SetHeight((barHeight-3)/2)
@@ -145,17 +145,7 @@ function onEvent(self, evt)
         end
     else    
         SetVisible(Tu_Rep, false)
-        --TuXP_Box.repText:SetText("")
-            if HasArtifactEquipped() then
-                local _, _, _, _, totalArtifactXP, pointsSpent, _, _, _, _,_, _, Artifacttier = C_ArtifactUI.GetEquippedArtifactInfo()
-		            local _, Artifactxp, ArtifactxpForNextPoint = MainMenuBar_GetNumArtifactTraitsPurchasableFromXP(pointsSpent, totalArtifactXP, Artifacttier)
-                   TuXP_Box.ArtifactText:SetText(ARTIFACT_POWER..":"..M.Numb(Artifactxp).."/"..M.Numb(ArtifactxpForNextPoint) or "")
-                SetVisible(Tu_Rep, true)
-                SetValue(Tu_Rep, Artifactxp, ArtifactxpForNextPoint)  --, value-min, max-min
-            else
-                   TuXP_Box.ArtifactText:SetText("")
-            end
-            TuXP_Box.ArtifactText:SetPoint("topright", Minimap,"topleft",-12, -1)
+        TuXP_Box.ArtifactText:SetPoint("topright", Minimap,"topleft",-16, -1)
         if isMaxLevel then
             --TuXP_Box:Hide()
             TuXP_Box.expText:SetText("")
@@ -172,11 +162,11 @@ function onEvent(self, evt)
                 if HasArtifactEquipped() then
                 local _, _, _, _, totalArtifactXP, pointsSpent, _, _, _, _,_, _, Artifacttier = C_ArtifactUI.GetEquippedArtifactInfo()
 		            local _, Artifactxp, ArtifactxpForNextPoint = MainMenuBar_GetNumArtifactTraitsPurchasableFromXP(pointsSpent, totalArtifactXP, Artifacttier)
-                   TuXP_Box.ArtifactText:SetText(ARTIFACT_POWER..":"..M.Numb(Artifactxp).."/"..M.Numb(ArtifactxpForNextPoint) or "")
+                   TuXP_Box.ArtifactText:SetText(ARTIFACT_POWER..":"..M.Numb(Artifactxp).."/"..M.Numb(ArtifactxpForNextPoint)..string.format('|cFFBF00FF(%d%%)|r',(Artifactxp)/(ArtifactxpForNextPoint)*100) or "")
                 else
                    TuXP_Box.ArtifactText:SetText("")
                 end
-            TuXP_Box.ArtifactText:SetPoint("topright", Minimap,"topleft",-21, -1)
+            TuXP_Box.ArtifactText:SetPoint("topright", Minimap,"topleft",-16, -1)
             TuXP_Box.expText:SetPoint("topright", TuXP_Box.ArtifactText,"topleft",-8, -1)
             Tu_XP:SetHeight(barHeight-2)
             Tu_RestXP:SetHeight(barHeight-2)
@@ -259,46 +249,42 @@ function sendReport(isExp, target)
     if isExp then 
         local XP,maxXP,restXP,perXP,perRest = GetXP()
         SendChatMessage("当前等级："..UnitLevel("player").."，当前经验值: "..XP.."/"..maxXP.." ("..perXP.."%)"..(restXP and (", 双倍经验"..perRest.."%.") or ", 无双倍经验."), target, nil, target == "whisper" and UnitName("target") or nil)
-    else
-        local name, rank, min, max, value = GetRealFactionInfo()
-        SendChatMessage(name.." 声望: "..rank..", "..(value-min).."/"..(max-min).." ("..floor((value-min)/(max-min)*100).."%).", target, nil, target == "whisper" and UnitName("target") or nil)
+    --else
+        --local name, rank, min, max, value = GetRealFactionInfo()
+        --SendChatMessage(name.." 声望: "..rank..", "..(value-min).."/"..(max-min).." ("..floor((value-min)/(max-min)*100).."%).", target, nil, target == "whisper" and UnitName("target") or nil)
     end
 end
 local reportFrame = CreateFrame("Frame", "TuXP_ReportMenu", UIParent)
 TuXP_Box:SetScript("OnMouseUp", function(self, btn)
     local index = 2
-    local menu = {{ text = "发送", isTitle = true,notCheckable = true}}
+    --local menu = {{ text = "TuExp", isTitle = true,notCheckable = true}}
+    local menu={{text="提示文字", checked = cfg.showText, func=function() cfg.showText = not cfg.showText;onEvent() end}} --menu[index]
     local inParty = (GetNumSubgroupMembers() > 0)
-    local inGuild = IsInGuild()
     local inRaid = (GetNumGroupMembers()>0)
     local hasTarget = (UnitIsPlayer("target") and not UnitIsEnemy("player", "target"))
     if (UnitLevel("player") ~= MAX_PLAYER_LEVEL) then
-        menu[index]={ text = "经验到", hasArrow = true, notCheckable = true,
+        menu[index]={ text = "发送经验到", hasArrow = true, notCheckable = true,
             menuList = {
                 { text = "队伍", notCheckable = true, func = function()sendReport(true, "PARTY")end ,disabled = not inParty},
-                { text = "公会", notCheckable = true, func = function()sendReport(true, "guild")end ,disabled = not inGuild},
+                { text = "公会", notCheckable = true, func = function()sendReport(true, "guild")end ,disabled = not IsInGuild()},
                 { text = "团队", notCheckable = true, func = function()sendReport(true, "raid")end ,disabled = not inRaid},
                 { text = "目标", notCheckable = true, func = function()sendReport(true, "whisper")end ,disabled = not hasTarget}
             } 
         }
         index = index + 1
     end
-    if GetWatchedFactionInfo() then
-        menu[index]={ text = "声望到", hasArrow = true, notCheckable = true,
-            menuList = {
-                { text = "队伍", notCheckable = true, func = function()sendReport(false, "party")end ,disabled = not inParty},
-                { text = "公会", notCheckable = true, func = function()sendReport(false, "guild")end ,disabled = not inGuild},
-                { text = "团队", notCheckable = true, func = function()sendReport(false, "raid")end ,disabled = not inRaid},
-                { text = "目标", notCheckable = true, func = function()sendReport(false, "whisper")end ,disabled = not hasTarget}
-            } 
-        }
-        index = index + 1
-    end 
-    menu[index]={text="提示文字", checked = cfg.showText, func=function() cfg.showText = not cfg.showText;onEvent() end}
-    if btn == "RightButton" then
-        Lib_EasyMenu(menu, reportFrame, "cursor", 0, 0, "menu", 2)
-    end
+    --if GetWatchedFactionInfo() then
+        --menu[index]={ text = "声望到", hasArrow = true, notCheckable = true,
+            --menuList = {
+                --{ text = "队伍", notCheckable = true, func = function()sendReport(false, "party")end ,disabled = not inParty},
+                --{ text = "公会", notCheckable = true, func = function()sendReport(false, "guild")end ,disabled = not IsInGuild()},
+                --{ text = "团队", notCheckable = true, func = function()sendReport(false, "raid")end ,disabled = not inRaid},
+                --{ text = "目标", notCheckable = true, func = function()sendReport(false, "whisper")end ,disabled = not hasTarget}
+            --} 
+        --}
+        --index = index + 1
+    --end 
+    if btn == "RightButton" then L_EasyMenu(menu, reportFrame, "cursor", 0, 0, "menu", 2) end
 end)
 --print("-----------|cffff3333Tutu的经验条加载结束|r-----------")
-
 end

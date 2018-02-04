@@ -1,37 +1,24 @@
-## Interface: 70200
+## Interface: 70300
 ## Title: |cff5FC412Combuctor|r
 ## Title-zhCN: |cff00ff00[背包]|r背包整合
 ## Title-zhTW: |cff00ff00[背包]|r背包整合
-## Author: Tuller and Jaliborc (João Cardoso)
+## Author: Tuller & Jaliborc (João Cardoso)
 ## Notes: Pants are a dangerous foe
 ## Notes-zhCN: 可以按照类型过滤的背包&银行整合插件，标签风格。可按任务物品，装备，消耗品、物品品质等分类查看，让你查询物品更直观方便。
-## Version: 7.0.0
+## Notes-zhTW: 可以按照类型过滤的背包&银行整合插件，标签风格。可按任务物品，装备，消耗品、物品品质等分类查看，让你查询物品更直观方便。
+## SavedVariables: Combuctor_Sets, BrotherBags, CaerdonWardrobeConfig, RelicHelper_SV
 ## Dependencies: Blizzard_ArtifactUI, _ShiGuang
-## SavedVariables: BrotherBags, CombuctorDB2, CaerdonWardrobeConfig, RelicHelper_SV
+## Version: 7.3
 
 ## X-Repple: 菜单
 
 BagBrother.lua
 
-libs\libs.xml
-localization\localization.xml
-
-Combuctor.lua
-
-api\api.xml
-sets\sets.xml
-events\events.xml
-
-templates\templates.xml
+main.lua
+common\Wildpants.xml
 components\components.xml
-
-
-Combuctor_Sets.lua
-
-Combuctor_Config\panel.lua
-Combuctor_Config\main.lua
-Combuctor_Config\panel.lua
-Combuctor_Config\sets.lua
+style.xml
+legacy.lua
 
 Combuctor_Opening.lua
 CaerdonWardrobe.lua

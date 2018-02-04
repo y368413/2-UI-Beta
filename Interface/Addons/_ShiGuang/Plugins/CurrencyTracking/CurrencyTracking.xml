@@ -1,56 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: CurrencyTracking.xml 50 2017-03-01 16:00:24Z arith $ -->
-<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
-..\FrameXML\UI.xsd">
-  <Script file="CurrencyTracking.lua"/>
-	<Frame>
+<!--
+$Id: CurrencyTracking_Options.xml 60 2017-04-05 15:50:17Z arith $
+-->
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
+   <Script file="LibCurrencyInfo.lua"/>
+   <Script file="Core.lua"/>
+	<Button name="CurrencyTrackingButtonTemplate" movable="true" enableMouse="true" virtual="true">
+		<Size>
+			<AbsDimension x="50" y="20"/>
+		</Size>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="$parentTexture" parentKey="Texture" />
+			</Layer>
+			<Layer level="BORDER">
+				<FontString name="$parentCount" parentKey="Count" inherits="GameFontHighlightRight" text="100">
+					<Anchors>
+						<Anchor point="LEFT" >
+							<Offset x="0" y="0"/>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<Texture name="$parentIcon">
+					<Size>
+						<AbsDimension x="15" y="15"/>
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parentCount" relativePoint="RIGHT">
+							<Offset x="2" y="0"/>
+						</Anchor>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
 		<Frames>
-			<Button name="CurrencyTrackingFrame" movable="true" enableMouse="true" parent="UIParent"> 
-				<Size>
-					<AbsDimension x="210" y="21" />
-				</Size>
+			<Button enableMouse="true" parentKey="LinkButton">
 				<Anchors>
-					<Anchor point="BOTTOMRIGHT" relativeTo="UIParent">
-						<Offset>
-							<AbsDimension x="0" y="0" />
-						</Offset>
+					<Anchor point="TOPLEFT" relativeTo="$parentIcon">
+						<Offset x="0" y="0"/>
+					</Anchor>
+					<Anchor point="BOTTOMRIGHT" relativeTo="$parentIcon">
+						<Offset x="0" y="0"/>
 					</Anchor>
 				</Anchors>
-				<Layers>
-					<Layer level="BACKGROUND">
-						<Texture name="$parentTexture" parentKey="Texture" />
-					</Layer>
-					<Layer level="OVERLAY">
-						<FontString name="CurrencyTrackingText" parentKey="Text" inherits="GameFontNormal" Text="CT_TITLE" />
-					</Layer>
-				</Layers>
 				<Scripts>
-					<OnMouseDown>
-						CurrencyTracking_OnMouseDown(self, button);
-					</OnMouseDown>
-					<OnMouseUp>
-						CurrencyTracking_OnMouseUp(self, button);
-					</OnMouseUp>
+					<OnLoad>
+						self:RegisterForClicks("LeftButtonDown", "RightButtonDown");
+					</OnLoad>
 					<OnEnter>
-						CurrencyTracking_OnEnter(self);
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						if (self.tooltipText) then
+							GameTooltip:SetText(self.tooltipText);
+						elseif (self:GetParent().isItem) then
+							local name = self:GetParent().itemName;
+							GameTooltip:SetText(name, 1, 1, 1, nil, false);
+						end
 					</OnEnter>
+					<OnClick>
+						if (button == "RightButton") then
+							CurrencyTracking:OpenOptions(self:GetParent().isItem)
+							GameTooltip_Hide()
+						else
+							if (self:GetParent().isCurrency) then
+								if (self:GetParent().index) then
+									HandleModifiedItemClick(GetCurrencyListLink(self:GetParent().index));
+								elseif (self:GetParent().currencyID) then
+									HandleModifiedItemClick(GetCurrencyLink(self:GetParent().currencyID));
+								end
+							end
+						end
+					</OnClick>
 					<OnLeave>
-						CurrencyTracking_OnLeave(self);
+						GameTooltip:Hide();
 					</OnLeave>
 				</Scripts>
 			</Button>
 		</Frames>
 		<Scripts>
 			<OnLoad>
-				CurrencyTracking_OnLoad(self);
+				local name = self:GetName();
+				self.count = _G[name.."Count"];
+				self.icon = _G[name.."Icon"];
+				self.highlight = _G[name.."Highlight"];
+				self:RegisterForDrag("LeftButton");
+				self:RegisterForClicks("LeftButtonDown", "RightButtonDown");
 			</OnLoad>
-			<OnEvent>
-				CurrencyTracking_OnEvent(self, event, ...);
-			</OnEvent>
-			<OnUpdate>
-				CurrencyTracking_OnUpdate(self);						
-			</OnUpdate>
 		</Scripts>
-	</Frame>
-	<Include file= "CurrencyTracking_Options.xml"/>
+		<ButtonText>
+			<Anchors>
+				<Anchor point="CENTER">
+					<Offset>
+						<AbsDimension x="0" y="0"/>
+					</Offset>
+				</Anchor>
+			</Anchors>
+		</ButtonText>
+		<NormalFont style="GameFontNormal"/>
+		<HighlightTexture name="$parentHighlight" file="Interface\QuestFrame\UI-QuestTitleHighlight" alphaMode="ADD">
+			<Anchors>
+				<Anchor point="TOPLEFT">
+					<Offset x="0" y="0"/>
+				</Anchor>
+				<Anchor point="BOTTOMRIGHT">
+					<Offset x="0" y="0"/>
+				</Anchor>
+			</Anchors>
+		</HighlightTexture>
+	</Button>
+	<Script file="Config.lua"/>
 </Ui>

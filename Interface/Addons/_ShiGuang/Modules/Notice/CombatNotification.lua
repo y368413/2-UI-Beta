@@ -227,74 +227,9 @@ CheckChat = function(warning)
 end
 
 local CombatNotification = CreateFrame ("Frame")
-local L = {}
 local _,localizedName1 = GetWorldPVPAreaInfo(1)
 local _,localizedName2 = GetWorldPVPAreaInfo(2)
 
-if(GetLocale()=="zhCN") then
-	L.INFO_WOWTIME_TIP = "即将在15分钟内开始"
-	L.need = " 有奖励包包了!"
-	L.Tank = "|cffEE3A8C<坦克>|r"
-	L.Healer = "|cff009300<治疗>|r"
-	L.DPS = "|cffEE3A8C<输出>|r"
-	L.combat_enter = "- 进 入 战 斗 -"
-	L.combat_leav = "- 离 开 战 斗 -"
-				L.Tank_G = "<坦克>"
-				L.Healer_G = "<治疗>"
-				L.DPS_G = "<输出>"
-	L.STAT = "<%s> → %s - [%s]."
-	L.PRE = "<%s> → %s"
-	L.PUT = "<%s> → %s"
-	L.CAST = "<%s> 开了 %s"
-	L.CLICK = "<%s> → %s... 点门拉人！"
-	L.USE = "<%s> 用了 %s."
-	L.NOFOOD = "木吃甜点: "
-	L.NOFLASK = "木喝合剂: "
-	L.NORUNE = "木吃符文: "
-	L.ALLBUFFED = "已获得所有增益!妥妥的了~"
-elseif (GetLocale()=="zhTW") then
-	L.INFO_WOWTIME_TIP = "即將在15分鐘內開始"
-	L.need = " 有獎勵包包了!"
-	L.Tank = "|cffA52A00<坦克>|r"
-	L.Healer = "|cff009300<治療>|r"
-	L.DPS = "|cffEE3A8C<輸出>|r"
-	L.combat_enter = "- 進 入 戰 鬥 -"
-	L.combat_leav = "- 離 開 戰 鬥 -"	
-				L.Tank_G = "<坦克>"
-				L.Healer_G = "<治療>"
-				L.DPS_G = "<輸出>"
-	L.STAT = "<%s> → %s - [%s]."
-	L.PRE = "<%s> → %s"
-	L.PUT = "<%s> → %s"
-	L.CAST = "<%s> 開了 %s"
-	L.CLICK = "<%s> 正在開啟 %s... 請點擊！"
-	L.USE = "<%s> 使用了 %s."
-	L.NOFOOD = "缺少食物Buff: "
-	L.NOFLASK = "缺少精煉藥劑: "
-	L.NORUNE = "缺少符文: "
-	L.ALLBUFFED = "已獲得所有增益!"
-elseif (GetLocale()=="enUS") then
-	L.INFO_WOWTIME_TIP = "will start within 15 minute"
-	L.need = " reward bags!"
-	L.Tank = "|cffA52A00<Tank>|r"
-	L.Healer = "|cff009300<Healer>|r"
-	L.DPS = "|cffEE3A8C<DPS>|r"
-	L.combat_enter = "- ENTERING COMBAT -"
-	L.combat_leav = "- LEAVING COMBAT -"
-				L.Tank_G = "<Tank>"
-				L.Healer_G = "<Healer>"
-				L.DPS_G = "<DPS>"
-	L.STAT = "<%s> has prepared a %s - [%s]."
-	L.PRE = "<%s> has prepared a %s."
-	L.PUT = "<%s> has put down a %s."
-	L.CAST = "<%s> is casting %s."
-	L.CLICK = "<%s> is casting %s. Click!"
-	L.USE = "<%s> used a %s."
-	L.NOFOOD = "No Food: "
-	L.NOFLASK = "No Flask: "
-	L.NORUNE = "No Rune: "
-	L.ALLBUFFED = "All Buffed!"
-end
 
 -- 进战/脱战
 if E.HideCombat == true then
@@ -304,9 +239,9 @@ if E.HideCombat == true then
 	CombatNotification:SetScript("OnEvent", function (self,event)
 		if (UnitIsDead("player")) then return end
 		if event == "PLAYER_REGEN_ENABLED" then
-			ElvUIAlertRun(L.combat_leav,0.1,1,0.1)
+			ElvUIAlertRun(COMBATNOTIFICATIONINFO_combat_leav,0.1,1,0.1)
 		elseif event == "PLAYER_REGEN_DISABLED" then
-			ElvUIAlertRun(L.combat_enter,1,0.1,0.1)
+			ElvUIAlertRun(COMBATNOTIFICATIONINFO_combat_enter,1,0.1,0.1)
 		end	
 	end)
 end
@@ -317,7 +252,7 @@ local clocks_update = function(self,t)
 	if E.wgtimenoti ~= true then return end
 	int = int - t
 	if int > 0 then return end
-	local INFO_WOWTIME_TIP = L.INFO_WOWTIME_TIP
+	local INFO_WOWTIME_TIP = COMBATNOTIFICATIONINFO_INFO_WOWTIME_TIP
 	
 	int = 1
 	local _,_,_,canQueue1,wgtime1 = GetWorldPVPAreaInfo(1)
@@ -353,49 +288,49 @@ Announces:SetScript("OnEvent", function(self, event, _, subEvent, _, _, srcName,
 	if subEvent == "SPELL_CAST_SUCCESS" then
 		-- 6.0 德拉诺: 千水鱼宴, 红肉盛宴, 狂野大餐, 
 	  if E.Feasts and (spellID == 160914 or spellID == 160740 or spellID == 175215) then
-			ElvUIAlertRun(string.format(L.PRE, srcName, GetSpellLink(spellID)))
-			if E.SendDefault then DEFAULT_CHAT_FRAME:AddMessage(string.format('|cffff3333=>|r·'.. L.PRE, srcName, GetSpellLink(spellID))) end
+			ElvUIAlertRun(string.format("<%s> → %s", srcName, GetSpellLink(spellID)))
+			if E.SendDefault then DEFAULT_CHAT_FRAME:AddMessage(string.format('|cffff3333=>|r·'.. "<%s> → %s", srcName, GetSpellLink(spellID))) end
 		-- 法师召唤餐桌
 		elseif E.Feasts and spellID == 43987 then			
-			ElvUIAlertRun(string.format(L.PRE, srcName, GetSpellLink(spellID)))
-			if E.SendDefault then DEFAULT_CHAT_FRAME:AddMessage(string.format('|cffff3333=>|r·'.. L.PRE, srcName, GetSpellLink(spellID))) end
+			ElvUIAlertRun(string.format("<%s> → %s", srcName, GetSpellLink(spellID)))
+			if E.SendDefault then DEFAULT_CHAT_FRAME:AddMessage(string.format('|cffff3333=>|r·'.. "<%s> → %s", srcName, GetSpellLink(spellID))) end
 		-- 召唤仪式
 		elseif E.SummonRitual and spellID == 698 then		
-			ElvUIAlertRun(string.format(L.CLICK, srcName, GetSpellLink(spellID)))
-			if E.SendDefault then DEFAULT_CHAT_FRAME:AddMessage(string.format('|cffff3333=>|r·'.. L.CLICK, srcName, GetSpellLink(spellID))) end
+			ElvUIAlertRun(string.format(COMBATNOTIFICATIONINFO_CLICK, srcName, GetSpellLink(spellID)))
+			if E.SendDefault then DEFAULT_CHAT_FRAME:AddMessage(string.format('|cffff3333=>|r·'.. COMBATNOTIFICATIONINFO_CLICK, srcName, GetSpellLink(spellID))) end
 		end
 		
 	elseif subEvent == "SPELL_SUMMON" then
 		-- Repair Bots 修理机器人, 布林顿4000&5000
 		if E.Bots and IDtable.Bots[spellID] then
-			ElvUIAlertRun(string.format(L.PUT, srcName, GetSpellLink(spellID)))
-			if E.SendDefault then DEFAULT_CHAT_FRAME:AddMessage(string.format('|cffff3333=>|r·'.. L.PUT, srcName, GetSpellLink(spellID))) end
+			ElvUIAlertRun(string.format("<%s> → %s", srcName, GetSpellLink(spellID)))
+			if E.SendDefault then DEFAULT_CHAT_FRAME:AddMessage(string.format('|cffff3333=>|r·'.. "<%s> → %s", srcName, GetSpellLink(spellID))) end
 		end
 		
 	elseif subEvent == "SPELL_CREATE" then
 		-- Soulwell   灵魂之井
 		if E.Soulwell and spellID == 29893 then
-			ElvUIAlertRun(string.format(L.PUT, srcName, GetSpellLink(spellID)))
-			if E.SendDefault then DEFAULT_CHAT_FRAME:AddMessage(string.format('|cffff3333=>|r·'.. L.PUT, srcName, GetSpellLink(spellID))) end
+			ElvUIAlertRun(string.format("<%s> → %s", srcName, GetSpellLink(spellID)))
+			if E.SendDefault then DEFAULT_CHAT_FRAME:AddMessage(string.format('|cffff3333=>|r·'.. "<%s> → %s", srcName, GetSpellLink(spellID))) end
 		-- MOLL-E 随身邮箱
 		elseif E.Bots and spellID == 54710 then
-			ElvUIAlertRun(string.format(L.PUT, srcName, GetSpellLink(spellID)))
-			if E.SendDefault then DEFAULT_CHAT_FRAME:AddMessage(string.format('|cffff3333=>|r·'.. L.PUT, srcName, GetSpellLink(spellID))) end
+			ElvUIAlertRun(string.format("<%s> → %s", srcName, GetSpellLink(spellID)))
+			if E.SendDefault then DEFAULT_CHAT_FRAME:AddMessage(string.format('|cffff3333=>|r·'.. "<%s> → %s", srcName, GetSpellLink(spellID))) end
 		-- Toys 玩具火车
 		elseif E.toys and spellID == 61031 then
-			ElvUIAlertRun(string.format(L.PUT, srcName, GetSpellLink(spellID)))
-			if E.SendDefault then DEFAULT_CHAT_FRAME:AddMessage(string.format('|cffff3333=>|r·'.. L.PUT, srcName, GetSpellLink(spellID))) end
+			ElvUIAlertRun(string.format("<%s> → %s", srcName, GetSpellLink(spellID)))
+			if E.SendDefault then DEFAULT_CHAT_FRAME:AddMessage(string.format('|cffff3333=>|r·'.. "<%s> → %s", srcName, GetSpellLink(spellID))) end
 		-- Portals 法师传送门,烈酒遥控器
 		elseif E.Portals and IDtable.Portals[spellID] then
-			ElvUIAlertRun(string.format(L.CAST, srcName, GetSpellLink(spellID)))
-			if E.SendDefault then DEFAULT_CHAT_FRAME:AddMessage(string.format('|cffff3333=>|r·'.. L.CAST, srcName, GetSpellLink(spellID))) end
+			ElvUIAlertRun(string.format("<%s> # %s", srcName, GetSpellLink(spellID)))
+			if E.SendDefault then DEFAULT_CHAT_FRAME:AddMessage(string.format('|cffff3333=>|r·'.. "<%s> # %s", srcName, GetSpellLink(spellID))) end
 		end
 		
 	elseif subEvent == "SPELL_AURA_APPLIED" then
 		-- Turkey Feathers and Party G.R.E.N.A.D.E. 火鸡的羽毛, 自动跳舞信号发射器
 		if E.Toys and (spellID == 61781 or ((spellID == 51508 or spellID == 51510) and destName == select(1, UnitName("player")))) then		
-			ElvUIAlertRun(string.format(L.USE, srcName, GetSpellLink(spellID)))
-			if E.SendDefault then DEFAULT_CHAT_FRAME:AddMessage(string.format('|cffff3333=>|r·'.. L.USE, srcName, GetSpellLink(spellID))) end
+			ElvUIAlertRun(string.format("<%s> # %s", srcName, GetSpellLink(spellID)))
+			if E.SendDefault then DEFAULT_CHAT_FRAME:AddMessage(string.format('|cffff3333=>|r·'.. "<%s> # %s", srcName, GetSpellLink(spellID))) end
 		end
 	end
 end)
@@ -494,24 +429,24 @@ if E.FlaskFood == true then
 
 		if #noFlask > 0 then
 			table.sort(noFlask)
-			output = L.NOFLASK..table.concat(noFlask, ", ")
+			output = COMBATNOTIFICATIONINFO_NOFLASK..table.concat(noFlask, ", ")
 			SendChatMessage(output, CheckChat())
 		end
 
 		if #noFood > 0 then
 			table.sort(noFood)
-			output = L.NOFOOD..table.concat(noFood, ", ")
+			output = COMBATNOTIFICATIONINFO_NOFOOD..table.concat(noFood, ", ")
 			SendChatMessage(output, CheckChat())
 		end
 		
 		if #noRune > 0 then
 			table.sort(noRune)
-			output = L.NORUNE..table.concat(noRune, ", ")
+			output = COMBATNOTIFICATIONINFO_NORUNE..table.concat(noRune, ", ")
 			SendChatMessage(output, CheckChat())
 		end
 
 		if #noFood == 0 and #noFlask == 0 and #noRune == 0 then
-			SendChatMessage(L.ALLBUFFED, CheckChat())
+			SendChatMessage(COMBATNOTIFICATIONINFO_ALLBUFFED, CheckChat())
 		end
 	end
 	
@@ -574,7 +509,7 @@ if E.FlaskFood == true then
 		end
 
 		if #NoBuff[1] == 0 and #NoBuff[2] == 0 and #NoBuff[3] == 0 then
-			SendChatMessage(L.ALLBUFFED)
+			SendChatMessage(COMBATNOTIFICATIONINFO_ALLBUFFED)
 		else
 			SendChatMessage("Raid Buff Check")
 			for i = 1, 2 do SendResult(i) end

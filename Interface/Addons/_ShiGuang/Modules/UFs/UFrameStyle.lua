@@ -1,6 +1,5 @@
 local M, R, U, I = unpack(select(2, ...))
 local module = MaoRUI:GetModule("Misc")
----------------------------------------------------------------------PlayerFrame
 --[[--------------------------------------头像渐隐---------------------------------------
 hooksecurefunc("PlayerFrame_UpdateStatus", function()
     if not MaoRUISettingDB["Settings"]["UFFade"] then return end
@@ -16,69 +15,296 @@ hooksecurefunc("UnitFramePortrait_Update",function(self)
    if not MaoRUISettingDB["Settings"]["UFClassIcon"] then return end
         if self.portrait then 
                 if UnitIsPlayer(self.unit) then                 
-                        local t = CLASS_ICON_TCOORDS[select(2, UnitClass(self.unit))] 
-                        if t then 
+                        if CLASS_ICON_TCOORDS[select(2, UnitClass(self.unit))] then 
                                 self.portrait:SetTexture("Interface\\TargetingFrame\\UI-Classes-Circles") 
-                                self.portrait:SetTexCoord(unpack(t)) 
+                                self.portrait:SetTexCoord(unpack(CLASS_ICON_TCOORDS[select(2, UnitClass(self.unit))])) 
                         end 
                 else 
                         self.portrait:SetTexCoord(0,1,0,1) 
                 end 
         end 
 end)
------------------------------------------	    BloodW--万位显示数值   -----------------------------------------
-local function HealthBarText(statusFrame, textString, value, valueMin, valueMax)    --if string.find(textString:GetName(), "Health") or string.find then
-      if valueMax ~= 0 then 
-         local percent = tostring(math.ceil((value / valueMax) * 100)) 
-         value = HealthBarText_CapDisplayOfNumericValue(value) 
-         valueMax = HealthBarText_CapDisplayOfNumericValue(valueMax)
-         if valueMax == value then 
-         textString:SetText(valueMax)
-         else
-         textString:SetText(value.." / "..valueMax)  --textString:SetText(percent.."% "..valueMax.." ")   --百分比/血量 
+-----------------------------------------	  满血时候不显示X/X   -----------------------------------------
+hooksecurefunc("TextStatusBar_UpdateTextStringWithValues", function(statusFrame, textString, value, valueMin, valueMax)
+      if valueMax ~= 0 and GetCVar("statusTextDisplay")=="NUMERIC" then 
+         --local percent = tostring(math.ceil((value / valueMax) * 100)) 
+         if valueMax == value then textString:SetText(M.Numb(valueMax))
+         else textString:SetText(M.Numb(value) .." / "..M.Numb(valueMax))  --textString:SetText(percent.."% "..valueMax.." ")   --百分比/血量 
          end 
       end 
-end 
-hooksecurefunc("TextStatusBar_UpdateTextStringWithValues", HealthBarText) 
+end)
+-----------------------------------------	  血条按职业着色  -----------------------------------------
+local function ClassColor(statusbar, unit)
+		local _, class, c
+		if UnitIsPlayer(unit) and UnitIsConnected(unit) and unit == statusbar.unit and UnitClass(unit) then
+				_, class = UnitClass(unit);
+				c = CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[class] or RAID_CLASS_COLORS[class];
+				statusbar:SetStatusBarColor(c.r, c.g, c.b);
+		end
+		if not UnitIsPlayer("target") then
+			color = FACTION_BAR_COLORS[UnitReaction("target", "player")]
+			if ( not UnitPlayerControlled("target") and UnitIsTapDenied("target") ) then
+				TargetFrameHealthBar:SetStatusBarColor(0.5, 0.5, 0.5)
+			else
+				if color then
+					TargetFrameHealthBar:SetStatusBarColor(color.r, color.g, color.b)
+					TargetFrameHealthBar.lockColor = true
+				end
+			end
+		end
+		if not UnitIsPlayer("focus") then
+			color = FACTION_BAR_COLORS[UnitReaction("focus", "player")]
+			if ( not UnitPlayerControlled("focus") and UnitIsTapDenied("focus") ) then
+				FocusFrameHealthBar:SetStatusBarColor(0.5, 0.5, 0.5)
+			else
+				if color then
+					FocusFrameHealthBar:SetStatusBarColor(color.r, color.g, color.b)
+					FocusFrameHealthBar.lockColor = true
+				end
+			end
+		end
+		if not UnitIsPlayer("targettarget") then
+			color = FACTION_BAR_COLORS[UnitReaction("targettarget", "player")]
+			if ( not UnitPlayerControlled("targettarget") and UnitIsTapDenied("targettarget") ) then
+				TargetFrameToTHealthBar:SetStatusBarColor(0.5, 0.5, 0.5)
+			else
+				if color then
+					TargetFrameToTHealthBar:SetStatusBarColor(color.r, color.g, color.b)
+					TargetFrameToTHealthBar.lockColor = true
+				end
+			end
+		end
+		if not UnitIsPlayer("focustarget") then
+			color = FACTION_BAR_COLORS[UnitReaction("focustarget", "player")]
+			if ( not UnitPlayerControlled("focustarget") and UnitIsTapDenied("focustarget") ) then
+				FocusFrameToTHealthBar:SetStatusBarColor(0.5, 0.5, 0.5)
+			else
+				if color then
+					FocusFrameToTHealthBar:SetStatusBarColor(color.r, color.g, color.b)
+					FocusFrameToTHealthBar.lockColor = true
+				end
+			end
+		end
+	end
+hooksecurefunc("UnitFrameHealthBar_Update", ClassColor)
+hooksecurefunc("HealthBar_OnValueChanged", function(self) ClassColor(self, self.unit) end)
+--[[---------------------------------------	  头像在载具时的调整  -----------------------------------------
+hooksecurefunc("PlayerFrame_ToVehicleArt", function(self, vehicleType)	
+	PlayerFrame.state = "vehicle";
 
-function HealthBarText_CapDisplayOfNumericValue(value) 
-  local strLen = strlen(value); 
-  local retString = value; 
-    if ( strLen > 11 ) then 
-      retString = string.sub(value, 1, -12).."."..string.sub(value, -11, -11)..SECOND_NUMBER_CAP; 
-    elseif ( strLen > 8 ) then 
-      retString = string.sub(value, 1, -9).."."..string.sub(value, -8, -8).."亿"; 
-    elseif ( strLen > 7 ) then 
-      retString = string.sub(value, 1, -8).."."..string.sub(value, -7, -7).."千万"; 
-    elseif ( strLen > 4 ) then 
-      retString = string.sub(value, 1, -5).."."..string.sub(value, -4, -4).."万"; --FIRST_NUMBER_CAP
-    end 
-  return retString; 
-end
+	UnitFrame_SetUnit(self, "vehicle", PlayerFrameHealthBar, PlayerFrameManaBar);
+	UnitFrame_SetUnit(PetFrame, "player", PetFrameHealthBar, PetFrameManaBar);
+	PetFrame_Update(PetFrame);
+	PlayerFrame_Update();
+	BuffFrame_Update();
+	ComboFrame_Update(ComboFrame);
 
------------------------------------------	  血条按职业着色    -----------------------------------------
---Frame
-local function textUpdate(bar)
+	PlayerFrameTexture:Hide();
+	if ( vehicleType == "Natural" ) then
+		PlayerFrameVehicleTexture:SetTexture("Interface\\Vehicles\\UI-Vehicle-Frame-Organic");
+		PlayerFrameFlash:SetTexture("Interface\\Vehicles\\UI-Vehicle-Frame-Organic-Flash");
+		PlayerFrameFlash:SetTexCoord(-0.02, 1, 0.07, 0.86);
+		PlayerFrameHealthBar:SetSize(103,12);
+		PlayerFrameHealthBar:SetPoint("TOPLEFT",116,-41);
+		PlayerFrameManaBar:SetSize(103,12);
+		PlayerFrameManaBar:SetPoint("TOPLEFT",116,-52);
+	else
+		PlayerFrameVehicleTexture:SetTexture("Interface\\Vehicles\\UI-Vehicle-Frame");
+		PlayerFrameFlash:SetTexture("Interface\\Vehicles\\UI-Vehicle-Frame-Flash");
+		PlayerFrameFlash:SetTexCoord(-0.02, 1, 0.07, 0.86);
+		PlayerFrameHealthBar:SetSize(100,12);
+		PlayerFrameHealthBar:SetPoint("TOPLEFT",119,-41);
+		PlayerFrameManaBar:SetSize(100,12);
+		PlayerFrameManaBar:SetPoint("TOPLEFT",119,-52);
+	end
+	PlayerFrame_ShowVehicleTexture();
+
+	PlayerName:SetPoint("CENTER",50,23);
+	PlayerLeaderIcon:SetPoint("TOPLEFT",40,-12);
+	PlayerMasterIcon:SetPoint("TOPLEFT",86,0);
+	PlayerFrameGroupIndicator:SetPoint("BOTTOMLEFT", PlayerFrame, "TOPLEFT", 97, -13);
+
+	PlayerFrameBackground:SetWidth(114);
+	PlayerLevelText:Hide();
+end)]]
+---------------------------------------	  Player    -----------------------------------------
+hooksecurefunc("PlayerFrame_ToPlayerArt", function(self)
+		PlayerFrameTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame");
+		PlayerStatusTexture:SetTexture("Interface\\AddOns\\_ShiGuang\\Media\\Modules\\UFs\\UI-Player-Status");
+		PlayerName:Hide();
+		--PlayerFrameGroupIndicatorText:ClearAllPoints();
+		--PlayerFrameGroupIndicatorText:SetPoint("BOTTOMLEFT", PlayerFrame,"TOP",0,-20);
+		--PlayerFrameGroupIndicatorLeft:Hide();
+		--PlayerFrameGroupIndicatorMiddle:Hide();
+		--PlayerFrameGroupIndicatorRight:Hide();
+		PlayerFrameHealthBar:SetPoint("TOPLEFT",106,-24);
+		PlayerFrameHealthBar:SetHeight(28);
+		PlayerFrameHealthBar.LeftText:ClearAllPoints();
+		PlayerFrameHealthBar.LeftText:SetPoint("LEFT",PlayerFrameHealthBar,"LEFT",5,0);	
+		PlayerFrameHealthBar.RightText:ClearAllPoints();
+		PlayerFrameHealthBar.RightText:SetPoint("RIGHT",PlayerFrameHealthBar,"RIGHT",-5,0);
+		PlayerFrameHealthBarText:SetPoint("CENTER", PlayerFrameHealthBar, "CENTER", 0, 0);
+		PlayerFrameManaBar:SetPoint("TOPLEFT",106,-55);
+		PlayerFrameManaBar:SetHeight(8);
+		PlayerFrameManaBar.LeftText:ClearAllPoints();
+		PlayerFrameManaBar.LeftText:SetPoint("LEFT",PlayerFrameManaBar,"LEFT",5,0)		;
+		PlayerFrameManaBar.RightText:ClearAllPoints();
+		PlayerFrameManaBar.RightText:SetPoint("RIGHT",PlayerFrameManaBar,"RIGHT",-5,0);
+		PlayerFrameManaBarText:SetPoint("CENTER",PlayerFrameManaBar,"CENTER",0,0);
+		PlayerFrameManaBar.FeedbackFrame:ClearAllPoints();
+		PlayerFrameManaBar.FeedbackFrame:SetPoint("CENTER",PlayerFrameManaBar,"CENTER",0,0);
+		PlayerFrameManaBar.FeedbackFrame:SetHeight(8);
+		PlayerFrameManaBar.FullPowerFrame.SpikeFrame.AlertSpikeStay:ClearAllPoints();
+		PlayerFrameManaBar.FullPowerFrame.SpikeFrame.AlertSpikeStay:SetPoint("CENTER", PlayerFrameManaBar.FullPowerFrame, "RIGHT", -6, -3);
+		PlayerFrameManaBar.FullPowerFrame.SpikeFrame.AlertSpikeStay:SetSize(30,29);
+		PlayerFrameManaBar.FullPowerFrame.PulseFrame:ClearAllPoints();
+		PlayerFrameManaBar.FullPowerFrame.PulseFrame:SetPoint("CENTER", PlayerFrameManaBar.FullPowerFrame,"CENTER",-6,-2);
+		PlayerFrameManaBar.FullPowerFrame.SpikeFrame.BigSpikeGlow:ClearAllPoints();
+		PlayerFrameManaBar.FullPowerFrame.SpikeFrame.BigSpikeGlow:SetPoint("CENTER",PlayerFrameManaBar.FullPowerFrame,"RIGHT",5,-4);
+		PlayerFrameManaBar.FullPowerFrame.SpikeFrame.BigSpikeGlow:SetSize(30,50);
+end)
+---------------------------------------	  Target    -----------------------------------------
+hooksecurefunc("TargetFrame_CheckClassification", function(self, forceNormalTexture)
+	self.deadText:ClearAllPoints();
+	self.deadText:SetFont(STANDARD_TEXT_FONT,21,"OUTLINE")
+	self.deadText:SetPoint("TOPLEFT", self.healthbar, "TOPRIGHT", 12, -8) --("CENTER", self.healthbar, "CENTER",0,0);
+	self.nameBackground:Hide();
+	self.Background:SetSize(119,42);
+
+	self.manabar.pauseUpdates = false;
+	self.manabar:Show();
+	TextStatusBar_UpdateTextString(self.manabar);
+	self.threatIndicator:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Flash");
+
+	self.name:SetPoint("LEFT", self, 15, 36);
+	self.healthbar:SetSize(119, 28);
+	self.healthbar:ClearAllPoints();
+	self.healthbar:SetPoint("TOPLEFT", 5, -24);
+	
+	self.healthbar.LeftText:ClearAllPoints();
+	self.healthbar.LeftText:SetPoint("LEFT", self.healthbar, "LEFT", 5, 0);
+	self.healthbar.RightText:ClearAllPoints();
+	self.healthbar.RightText:SetPoint("RIGHT", self.healthbar, "RIGHT", -3, 0);
+	self.healthbar.TextString:SetPoint("CENTER", self.healthbar, "CENTER", 0, 0);
+		
+	self.manabar:ClearAllPoints();
+	self.manabar:SetPoint("TOPLEFT", 5, -55);
+	self.manabar:SetSize(119, 8);
+		
+	self.manabar.LeftText:ClearAllPoints();
+	self.manabar.LeftText:SetPoint("LEFT", self.manabar, "LEFT", 5, 0);	
+	self.manabar.RightText:ClearAllPoints();
+	self.manabar.RightText:SetPoint("RIGHT", self.manabar, "RIGHT", -5, 0);
+	self.manabar.TextString:SetPoint("CENTER", self.manabar, "CENTER", 0, 0);
+
+	if ( forceNormalTexture ) then
+		self.borderTexture:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame");
+	elseif ( UnitClassification(self.unit) == "minus" ) then
+		self.borderTexture:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Minus");
+		self.nameBackground:Hide();
+		self.manabar.pauseUpdates = true;
+		self.manabar:Hide();
+		self.manabar.TextString:Hide();
+		self.manabar.LeftText:Hide();
+		self.manabar.RightText:Hide();
+		forceNormalTexture = true;
+	elseif ( UnitClassification(self.unit) == "worldboss" or UnitClassification(self.unit) == "elite" ) then
+		self.borderTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame-Elite");
+	elseif ( UnitClassification(self.unit) == "rareelite" ) then
+		self.borderTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame-Rare-Elite");
+	elseif ( UnitClassification(self.unit) == "rare" ) then
+		self.borderTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame-Rare");
+	else
+		self.borderTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame");
+		forceNormalTexture = true;
+	end
+		
+	if ( forceNormalTexture ) then
+		self.haveElite = nil;
+		if ( UnitClassification(self.unit) == "minus" ) then
+			self.Background:SetSize(119,12);
+			self.Background:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", 7, 47);
+			--
+			self.name:SetPoint("LEFT", self, 15, 16);
+			self.healthbar:ClearAllPoints();
+			self.healthbar:SetPoint("LEFT", 5, 3);
+		else
+			self.Background:SetSize(119,42);
+			self.Background:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", 7, 35);
+			
+		end
+		if ( self.threatIndicator ) then
+			if ( UnitClassification(self.unit) == "minus" ) then
+				self.threatIndicator:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Minus-Flash");
+				self.threatIndicator:SetTexCoord(0, 1, 0, 1);
+				self.threatIndicator:SetWidth(256);
+				self.threatIndicator:SetHeight(128);
+				self.threatIndicator:SetPoint("TOPLEFT", self, "TOPLEFT", -24, 0);
+			else
+				self.threatIndicator:SetTexCoord(0, 0.9453125, 0, 0.181640625);
+				self.threatIndicator:SetWidth(242);
+				self.threatIndicator:SetHeight(93);
+				self.threatIndicator:SetPoint("TOPLEFT", self, "TOPLEFT", -24, 0);
+				self.threatNumericIndicator:SetPoint("TOPRIGHT", TargetFrame, "TOPRIGHT", -66, -3); --"BOTTOM", PlayerFrame, "TOP", 75, -22
+			end
+		end	
+	else
+		self.haveElite = true;
+		TargetFrameBackground:SetSize(119,42);
+		self.Background:SetSize(119,42);
+		self.Background:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", 7, 35);
+		if ( self.threatIndicator ) then
+			self.threatIndicator:SetTexCoord(0, 0.9453125, 0.181640625, 0.400390625);
+			self.threatIndicator:SetWidth(242);
+			self.threatIndicator:SetHeight(112);
+			self.threatIndicator:SetPoint("TOPLEFT", self, "TOPLEFT", -22, 9);
+		end		
+	end
+	if (self.questIcon) then
+		if (UnitIsQuestBoss(self.unit)) then
+			self.questIcon:Show();
+		else
+			self.questIcon:Hide();
+		end
+	end
+end)
+		-----------------------------------------	  宠物    -----------------------------------------
+  PetFrameHealthBarText:SetPoint("BOTTOMRIGHT", PetFrame, "LEFT", 3,-6)
+  PetFrameManaBarText:SetPoint("TOPRIGHT", PetFrame, "LEFT", 3, -6)
+  PetFrameManaBarText:SetTextColor(0, 1, 1)
+-------------------------------------------	  队友    -----------------------------------------
+		 --[[for i = 1, 4 do
+		  local PFrame = "PartyMemberFrame"..i
+		  _G[PFrame.."ManaBarText"]:SetTextColor(0, 1, 1)
+		  _G[PFrame.."ManaBarText"]:SetPoint("LEFT", PFrame.."ManaBar", "LEFT", 3, 0)
+		  _G[PFrame.."HealthBarText"]:SetPoint("BOTTOMLEFT", PFrame.."ManaBarText", "TOPLEFT", 0, -2)
+		 end]]
+--[[-----------------------------------------	  焦点    -----------------------------------------
+		FocusFrameNameBackground:SetTexture()
+		FocusFrame.Background:SetPoint("TOPLEFT",7,-22);
+		FocusFrameTextureFrameName:SetPoint("CENTER", FocusFrameHealthBar, "CENTER", 0, 25)
+		FocusFrameHealthBar:ClearAllPoints()
+		FocusFrameHealthBar:SetHeight(28)
+		FocusFrameHealthBar:SetPoint("CENTER", FocusFrameManaBar, "CENTER", 0, 22) 
+		FocusFrameTextureFrameHealthBarText:ClearAllPoints()
+		FocusFrameTextureFrameHealthBarText:SetPoint("CENTER", FocusFrameHealthBar, "CENTER", 0, -3)]]
+---------------------------------------	  血量百分比数字    -----------------------------------------
+hooksecurefunc("TextStatusBar_UpdateTextString", function(bar)
 	local value = bar:GetValue()
 	local _, max = bar:GetMinMaxValues()
 	if bar.pctText then
-		bar.pctText:SetText(value==0 and "" or tostring(math.ceil((value / max) * 100)))
-		--bar.pctText:SetText(value==0 and "" or tostring(math.ceil((value / max) * 100)) .. "%")
-		if GetCVarBool("statusTextPercentage") and ( bar.unit == PlayerFrame.unit or bar.unit == "target" or bar.unit == "focus" ) then
-			bar.pctText:Hide()
-		elseif value == max then
-		  bar.pctText:Hide()
-		else
-			bar.pctText:Show()
+		bar.pctText:SetText(value==0 and "" or tostring(math.ceil((value / max) * 100)))  --(value==0 and "" or tostring(math.ceil((value / max) * 100)) .. "%")
+		if not MaoRUISettingDB["Settings"]["UFPctText"] or value == max then bar.pctText:Hide()
+		elseif GetCVarBool("statusTextPercentage") and ( bar.unit == PlayerFrame.unit or bar.unit == "target" or bar.unit == "focus" ) then bar.pctText:Hide()
+		else bar.pctText:Show()
 		end
 	end
-	if ValueandPct and bar.TextString and bar.TextString:IsShown() and GetCVarBool("statusTextPercentage") then
-		bar.TextString:SetText(value==0 and "" or TextStatusBar_CapDisplayOfNumericValue(value).." ("..tostring(math.ceil((value / max) * 100)).."%)")
-	end
-end
-
+	--if ValueandPct and bar.TextString and bar.TextString:IsShown() and GetCVarBool("statusTextPercentage") then
+		--bar.TextString:SetText(value==0 and "" or TextStatusBar_CapDisplayOfNumericValue(value).." ("..tostring(math.ceil((value / max) * 100)).."%)")
+	--end
+end)
 local function colorHPBar(bar, unit)
-	if bar and not bar.lockValues and unit == bar.unit then
+	if bar and unit == bar.unit then
 		local r, g, b
 		local min, max = bar:GetMinMaxValues()
 		local value = bar:GetValue()
@@ -92,23 +318,18 @@ local function colorHPBar(bar, unit)
 		else
 			r, g, b = 1, 2*value, 0
 		end
-		if not bar.disconnected and not bar.lockColor then
-			if UnitIsPlayer(unit) and UnitClass(unit) then  --血条按职业着色
-				local color = RAID_CLASS_COLORS[select(2, UnitClass(unit))]
-				bar:SetStatusBarColor(color.r, color.g, color.b)
-			else
-				bar:SetStatusBarColor(r, g, b)
-			end
-		end
+			--if UnitIsPlayer(unit) and UnitClass(unit) then  --按职业着色
+				--local color = RAID_CLASS_COLORS[select(2, UnitClass(unit))]
+				--bar:SetStatusBarColor(color.r, color.g, color.b)
+			--else
+				--bar:SetStatusBarColor(r, g, b)
+			--end
 		if bar.pctText then	bar.pctText:SetTextColor(r, g, b) end
 	end
 end
-
-hooksecurefunc("TextStatusBar_UpdateTextString", textUpdate)
 hooksecurefunc("UnitFrameHealthBar_Update", colorHPBar)
 hooksecurefunc("HealthBar_OnValueChanged", function(self) colorHPBar(self, self.unit) end)
 
----------------------------------------	  血条百分比    -----------------------------------------
 function CreateBarPctText(frame, ap, rp, x, y, font, manabar)
 	local bar = ( manabar and frame.manabar ) or (not manabar and frame.healthbar )
 	if bar then
@@ -116,7 +337,6 @@ function CreateBarPctText(frame, ap, rp, x, y, font, manabar)
 			bar.pctText:ClearAllPoints()
 			bar.pctText:SetPoint(ap, bar, rp, x, y)
 		else
-			font = font or "NumberFontNormal"
 			bar.pctText = frame:CreateFontString(nil, "OVERLAY", font)
 			bar.pctText:SetPoint(ap, bar, rp, x, y)
 			bar.pctText:SetFont("Interface\\addons\\_ShiGuang\\Media\\Fonts\\Pixel.TTF",60,"OUTLINE")
@@ -124,13 +344,18 @@ function CreateBarPctText(frame, ap, rp, x, y, font, manabar)
       bar.pctText:SetShadowOffset(1, -1)
 		end
 	end
-end			
-local function getClassColor(unit)
-	return UnitIsPlayer(unit) and RAID_CLASS_COLORS[select(2, UnitClass(unit))] or NORMAL_FONT_COLOR, UnitIsPlayer(unit)
 end
+CreateBarPctText(PlayerFrame, "RIGHT", "LEFT", -92, -8, "NumberFontNormalLarge")
+CreateBarPctText(TargetFrame, "LEFT", "RIGHT", 92, -6, "NumberFontNormalLarge")
+CreateBarPctText(FocusFrame, "RIGHT", "LEFT", -3, -8, "NumberFontNormalLarge")
+CreateBarPctText(FocusFrameToT, "BOTTOMLEFT", "TOP", 24, 10)  --TargetFrameToT, "BOTTOMLEFT", "TOPRIGHT", 0, 5
+for i = 1, MAX_BOSS_FRAMES do
+	CreateBarPctText(_G["Boss"..i.."TargetFrame"], "LEFT", "RIGHT", 8, 30, "NumberFontNormal")  --"BOTTOMLEFT", "TOPRIGHT", 17, 19, "NumberFontNormalLarge"
+end			
+---------------------------------------	  头像框名称职业染色    -----------------------------------------
 function SetNameColor(frame)
 	if frame:IsShown() and frame.name then
-		local color = getClassColor(frame.unit)
+		local color = UnitIsPlayer(frame.unit) and RAID_CLASS_COLORS[select(2, UnitClass(frame.unit))] or NORMAL_FONT_COLOR, UnitIsPlayer(frame.unit)
 		frame.name:SetTextColor(color.r, color.g, color.b)  --(1,1,0)
 		if UnitIsEnemy("player", "target") then 
 		   frame.name:SetTextColor(1,0,0) 
@@ -139,87 +364,36 @@ function SetNameColor(frame)
 		end
 	end
 end
-CreateBarPctText(PlayerFrame, "RIGHT", "LEFT", -92, -8, "NumberFontNormalLarge")
-CreateBarPctText(TargetFrame, "LEFT", "RIGHT", 92, -6, "NumberFontNormalLarge")
-CreateBarPctText(FocusFrame, "RIGHT", "LEFT", -3, -8, "NumberFontNormalLarge")
---CreateBarPctText(TargetFrameToT, "BOTTOMLEFT", "TOPRIGHT", 0, 5)
-CreateBarPctText(FocusFrameToT, "BOTTOMLEFT", "TOP", 24, 10)
-for i = 1, MAX_BOSS_FRAMES do
-	local bossFrame = _G["Boss"..i.."TargetFrame"]
-	--CreateBarPctText(bossFrame, "BOTTOMLEFT", "TOPRIGHT", 17, 19, "NumberFontNormalLarge")
-	CreateBarPctText(bossFrame, "LEFT", "RIGHT", 8, 30, "NumberFontNormal")
-end
+SetNameColor(PlayerFrame)
 TargetFrame:HookScript("OnUpdate", SetNameColor)
---TargetFrameToT:HookScript("OnUpdate", SetNameColor)
+TargetFrameToT:HookScript("OnUpdate", SetNameColor)
 FocusFrameToT:HookScript("OnUpdate", SetNameColor)
---SetNameColor(PlayerFrame)
-
-
 -----------------------------------------	     隐藏头像动态伤害      -----------------------------------------
 local p=PlayerHitIndicator;p.Show=p.Hide;p:Hide() 
 local p=PetHitIndicator;p.Show=p.Hide;p:Hide() 
-
 -----------------------------------------	     显示BUFF是谁加的      -----------------------------------------
-local cc = {}
-local CUSTOM_CLASS_COLORS = CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS
-do
-	for class, c in pairs(CUSTOM_CLASS_COLORS) do
-		cc[class] = format("|cff%02x%02x%02x", c.r*255, c.g*255, c.b*255)
-	end
-end
-local function SetCaster(self, unit, index, filter)
+hooksecurefunc(GameTooltip, 'SetUnitAura', function(self, unit, index, filter)
 	local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable = UnitAura(unit, index, filter)
-	if unitCaster then
-		local uname, urealm = UnitName(unitCaster)
-		local _, uclass = UnitClass(unitCaster)
-		if urealm then uname = uname.."-"..urealm end
-		self:AddLine("".. (cc[uclass] or "|cffffffff") .. uname .. "|r (" .. unitCaster .. ")")
+	if unitCaster and UnitName(unitCaster) then
+		self:AddLine("".. (I.MyColor or "|cffffffff") .. UnitName(unitCaster) .. "|r (" .. unitCaster .. ")")
 		self:Show()
 	end
-end
-hooksecurefunc(GameTooltip, 'SetUnitAura', SetCaster)
-
---[[hooksecurefunc(GameTooltip, "SetUnitAura", function(self, unit, index, filter)
-	local _, _, _, _, _, _, _, caster = UnitAura(unit, index, filter)
-	local name = caster and UnitName(caster)
-	if name then
-		GameTooltip:AddDoubleLine("Cast by:", name, nil, nil, nil, 1, 1, 1)
-		GameTooltip:Show()
-	end
-end)]]
-
-------------------------------------------------------------------------------------------------------------------	TargetFrame
---目标种族、职业和其它信息
+end)
+-------------------------------	  目标种族、职业和其它信息   ----------------------------------------
 	TargetFrame:CreateFontString("TargetFrameType", "OVERLAY", "GameFontNormalSmall")
 	TargetFrameType:SetPoint("BOTTOMRIGHT", TargetFrame, "BOTTOMRIGHT", -43, -8)
 	TargetFrameType:SetTextColor(1, 0.75, 0)
 	TargetFrame:CreateFontString("TargetFrameRace", "OVERLAY", "GameFontNormalSmall")
 	TargetFrameRace:SetPoint("BOTTOMRIGHT", TargetFrame, "BOTTOMRIGHT", -43, 3)   --种族
 	TargetFrameRace:SetTextColor(1, 0.75, 0)
-
 hooksecurefunc("TargetFrame_Update", function(self)
   if not UnitExists(self.unit) then return end
 		local typeText = ""
 		local raceText = ""
-		local color = RAID_CLASS_COLORS[UnitClass("target")] or NORMAL_FONT_COLOR
-		local tcolor
-	if UnitIsPlayer(unit) then
-		if UnitFactionGroup(self.unit) == UnitFactionGroup("player") then	----如果目标是友方阵营
-			tcolor = GREEN_FONT_COLOR		----血条绿色
-		else
-			tcolor = RED_FONT_COLOR			----中立的是黄色
-		end
-	else
-		if UnitCanAttack(self.unit, "player") then	----如果目标为敌对阵营
-			tcolor = UnitPlayerControlled(self.unit) and ORANGE_FONT_COLOR or YELLOW_FONT_COLOR
-		else
-			tcolor = HIGHLIGHT_FONT_COLOR
-		end
-	end
     self.nameBackground:SetAlpha(UnitIsPlayer(unit) and 0.2 or 1.0)
 		if UnitIsPlayer("target") then
 			raceText = UnitRace("target")
-			TargetFrameRace:SetTextColor(color.r,color.g,color.b)
+			TargetFrameRace:SetTextColor(NORMAL_FONT_COLOR.r,NORMAL_FONT_COLOR.g,NORMAL_FONT_COLOR.b)
 		else
 			typeText = UnitCreatureType("target") or ""
 			if typeText == "非战斗宠物" or typeText == "未指定" or typeText == "小动物" then
@@ -231,7 +405,6 @@ hooksecurefunc("TargetFrame_Update", function(self)
 		TargetFrameType:SetText(typeText)
 		TargetFrameRace:SetText(raceText)
 	end)
-
 -----------------------------------------	  目标及焦点战斗状态指示   -----------------------------------------
 local TargetCombat = CreateFrame("Frame", UIParent) 
 TargetCombat:SetParent(TargetFrame)
@@ -278,7 +451,6 @@ local duf = {
 }
 for i,frame in pairs(duf) do SetFocusHotkey(frame) end
 end
-
 --------  TargetClassButton by 狂飙@cwdg(networm@qq.com) 20120119     DIY by y368413    ----
 --左键查看目标装备、右键与目标交易、中键密语、鼠标按键4跟随、鼠标按键5比较成就、到可观察装备距离时职业图标由灰白变彩色。
 local targeticon = CreateFrame("Button", "TargetClass", TargetFrame)
@@ -338,25 +510,54 @@ hooksecurefunc("TargetFrame_Update", function()
 		targeticon:Hide()
 	end
 end)
-
------------------------------------------	     玩家/焦点/目标框体血条加粗      -----------------------------------------
+-----------------------------------------	     Buff时间      -----------------------------------------
+function BT_AuraButton_Update(buttonName, index, filter)
+	local unit = PlayerFrame.unit;
+	local name, rank, texture, count, debuffType, duration, expirationTime = UnitAura(unit, index, filter); 
+	local buffName = buttonName..index;
+	local buffDuration = getglobal(buffName.."Duration");
+	if ( duration == 0 ) then
+		buffDuration:SetText("|cff00ff00^-^|r");
+		buffDuration:Show();
+	end
+end
+function BT_AuraButton_UpdateDuration(buffButton, timeLeft)
+	if( SHOW_BUFF_DURATIONS == "1" ) then
+		local duration = getglobal(buffButton:GetName().."Duration");
+		if( timeLeft ) then
+			M.FormatBuffTime(duration, timeLeft);
+			duration:Show();
+		else
+			duration:Hide();
+		end
+	end
+end
+function BuffTimers_OnLoad(self)                              -- Hook the functions we need to override
+	hooksecurefunc("AuraButton_Update", BT_AuraButton_Update);
+	hooksecurefunc("AuraButton_UpdateDuration", BT_AuraButton_UpdateDuration);
+end
+BuffTimers_OnLoad(self);
+--[[---------------------------------------	     玩家/焦点/目标框体血条加粗      -----------------------------------------
 local function UpdatePlayerFrame()
 	if not UnitHasVehicleUI("player") then
-		PlayerName:SetPoint("CENTER", PlayerFrameHealthBar, "CENTER", -100000, 12) 
- 		--PlayerName:SetFont(STANDARD_TEXT_FONT, 12, "OUTLINE") 
-		PlayerFrameHealthBar:ClearAllPoints()
+		PlayerName:SetPoint("CENTER", PlayerFrameHealthBar, "CENTER", -100000, 12); 
+ 		--PlayerName:SetFont(STANDARD_TEXT_FONT, 12, "OUTLINE"); 
+		--PlayerFrameHealthBar:ClearAllPoints();
+		PlayerFrameHealthBar:SetWidth(119);
+		PlayerFrameHealthBar:SetHeight(28);
+		--PlayerFrameHealthBar:SetPoint("CENTER", PlayerFrameManaBar, "CENTER", 0, 22); 
+    --PlayerFrameHealthBarText:ClearAllPoints();
+    --PlayerFrameHealthBarText:SetPoint("CENTER", PlayerFrameHealthBar, "CENTER", 1, -3);
+    PlayerFrameHealthBar:SetPoint("TOPLEFT",106,-22);
+		PlayerFrameHealthBarText:SetPoint("CENTER",50,12);
+    -----------------------------------	
 		PlayerFrameTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame");
 		PlayerStatusTexture:SetTexture("Interface\\AddOns\\_ShiGuang\\Media\\Modules\\UFs\\UI-Player-Status");
-		PlayerFrameHealthBar:SetHeight(28)
 		------百分比 数值都显示 的模式下--------------------
-		PlayerFrameHealthBarTextLeft:ClearAllPoints()
-		PlayerFrameHealthBarTextLeft:SetPoint("left", PlayerFrameHealthBar, "left", 6, -3)
-		PlayerFrameHealthBarTextRight:ClearAllPoints()
-		PlayerFrameHealthBarTextRight:SetPoint("Right", PlayerFrameHealthBar, "Right", -2, -3)
-    -----------------------------------
-		PlayerFrameHealthBar:SetPoint("CENTER", PlayerFrameManaBar, "CENTER", 0, 22) 
-    PlayerFrameHealthBarText:ClearAllPoints()
-    PlayerFrameHealthBarText:SetPoint("CENTER", PlayerFrameHealthBar, "CENTER", 1, -3)	
+		PlayerFrameHealthBarTextLeft:ClearAllPoints();
+		PlayerFrameHealthBarTextLeft:SetPoint("left", PlayerFrameHealthBar, "left", 6, -3);
+		PlayerFrameHealthBarTextRight:ClearAllPoints();
+		PlayerFrameHealthBarTextRight:SetPoint("Right", PlayerFrameHealthBar, "Right", -2, -3);
 	end
 end
 hooksecurefunc("PlayerFrame_UpdateArt", UpdatePlayerFrame)
@@ -364,34 +565,26 @@ PlayerFrame:HookScript("OnEvent", function(self, event)
    if event=="PLAYER_ENTERING_WORLD" then UpdatePlayerFrame() end
 end)
 do
-		--宠物
-		PetFrameManaBarText:SetTextColor(0, 1, 1)
-		PetFrameHealthBarText:SetPoint("BOTTOMRIGHT", PetFrame, "LEFT", 3,-6)
-		PetFrameManaBarText:SetPoint("TOPRIGHT", PetFrame, "LEFT", 3, -6)
-		 for i = 1, 4 do
-		  local PFrame = "PartyMemberFrame"..i
-		  _G[PFrame.."ManaBarText"]:SetTextColor(0, 1, 1)
-		  _G[PFrame.."ManaBarText"]:SetPoint("LEFT", PFrame.."ManaBar", "LEFT", 3, 0)
-		  _G[PFrame.."HealthBarText"]:SetPoint("BOTTOMLEFT", PFrame.."ManaBarText", "TOPLEFT", 0, -2)
-		 end
-		--焦点
-		FocusFrameNameBackground:SetTexture()
-		FocusFrame.Background:SetPoint("TOPLEFT",7,-22);
-		FocusFrameTextureFrameName:SetPoint("CENTER", FocusFrameHealthBar, "CENTER", 0, 25)
-		FocusFrameHealthBar:ClearAllPoints()
-		FocusFrameHealthBar:SetHeight(28)
-		FocusFrameHealthBar:SetPoint("CENTER", FocusFrameManaBar, "CENTER", 0, 22) 
-		FocusFrameTextureFrameHealthBarText:ClearAllPoints()
-		FocusFrameTextureFrameHealthBarText:SetPoint("CENTER", FocusFrameHealthBar, "CENTER", 0, -3)
 		--目标
-		TargetFrame.Background:SetPoint("TOPLEFT",6,-22);
+		if ( UnitClassification("target") == "minus" ) then
+		TargetFrameHealthBar:SetHeight(12)
+		TargetFrameHealthBar:SetPoint("TOPLEFT",7,-41) 
+		TargetFrame.healthbar.TextString:SetPoint("CENTER",-50,4);
+		TargetFrame.Background:SetPoint("TOPLEFT",7,-41);
+		else
+		TargetFrameHealthBar:SetHeight(28)
+		TargetFrameHealthBar:SetPoint("TOPLEFT",7,-22) 
+		TargetFrame.healthbar.TextString:SetPoint("CENTER",-50,6);
+		TargetFrame.Background:SetPoint("TOPLEFT",7,-22);
+		end
+		--TargetFrame.Background:SetPoint("TOPLEFT",6,-22);
 		TargetFrame.deadText:ClearAllPoints()
 		TargetFrame.deadText:SetPoint("TOPRIGHT", TargetFrame, "TOPRIGHT", -21, -12)		
 		TargetFrame.threatNumericIndicator:ClearAllPoints()
 		TargetFrame.threatNumericIndicator:SetPoint("TOPRIGHT", TargetFrame, "TOPRIGHT", -66, -3)	
-		TargetFrameHealthBar:ClearAllPoints()
-		TargetFrameHealthBar:SetHeight(28)
-		TargetFrameHealthBar:SetPoint("CENTER", TargetFrameManaBar, "CENTER", 0, 22) 		
+		--TargetFrameHealthBar:ClearAllPoints()
+		--TargetFrameHealthBar:SetHeight(28)
+		--TargetFrameHealthBar:SetPoint("CENTER", TargetFrameManaBar, "CENTER", 0, 22) 		
 		TargetFrameTextureFrameName:SetPoint("CENTER", TargetFrameHealthBar, "CENTER", 0, 22)
 		TargetFrameTextureFrameName:SetFont(STANDARD_TEXT_FONT, 14, "OUTLINE")		
 		TargetFrameTextureFrameHealthBarText:ClearAllPoints()
@@ -431,10 +624,9 @@ function UpdateTargetFrameTexture()
 		TargetFrameTextureFrameTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame");
 	end
 end
-hooksecurefunc("TargetFrame_CheckClassification", UpdateTargetFrameTexture)
+hooksecurefunc("TargetFrame_CheckClassification", UpdateTargetFrameTexture)]]
 
--------------------------------------------------------------------------------------------------------------------------------------	PartyFrame
---------------------------------------- 隊友框架: 隱藏HP/MP  Hide Party HP/MP -------------------------------------
+---------------------------- 隊友框架: 隱藏HP/MP  Hide Party HP/MP -------------------------------------
 hooksecurefunc("TextStatusBar_UpdateTextString", function(textStatusBar)
 	local name = textStatusBar:GetName()
     if (name == "PartyMemberFrame1HealthBar"
@@ -464,9 +656,8 @@ local function PartyCastingBar_OnShow(self)
     local parentFrame = self:GetParent()
     local petFrame = _G[parentFrame:GetName() .. "PetFrame"]
     if (self.PartyId and petFrame:IsShown()) then self:SetPoint("BOTTOM", parentFrame, "BOTTOM", 0, -36)
-	else self:SetPoint("BOTTOM", parentFrame, "BOTTOM", 0, -12) end
+	  else self:SetPoint("BOTTOM", parentFrame, "BOTTOM", 0, -12) end
 end
-
 --事件監聽
 local function PartyCastingBar_OnEvent(self, event, ...)
     local arg1 = ...
@@ -478,12 +669,10 @@ local function PartyCastingBar_OnEvent(self, event, ...)
         or event == "PARTY_MEMBER_ENABLE"
         or event == "PARTY_MEMBER_DISABLE"
         or event == "PARTY_LEADER_CHANGED") then
-		local nameChannel  = UnitChannelInfo(self.unit)
-		local nameSpell  = UnitCastingInfo(self.unit)
-		if (nameChannel) then
+		if (UnitChannelInfo(self.unit)) then
 			event = "UNIT_SPELLCAST_CHANNEL_START"
 			arg1 = self.unit
-		elseif (nameSpell) then
+		elseif (UnitCastingInfo(self.unit)) then
 			event = "UNIT_SPELLCAST_START"
 			arg1 = self.unit
 		else
@@ -517,17 +706,13 @@ for i = 1, MAX_PARTY_MEMBERS do
     local prev = "PartyMemberFrame"..(i-1) .. "PetFrame"
     if (_G[prev]) then _G["PartyMemberFrame"..i]:SetPoint("TOPLEFT", _G[prev], "BOTTOMLEFT", -21, -30) end
 end
-
 ------------------------------------- -- 隊友目標框架 -------------------------------------
 local function PartyTarget_UpdateName(self, unit)
-    local name = UnitName(unit)
     local color = RAID_CLASS_COLORS[select(2,UnitClass(unit))] or NORMAL_FONT_COLOR
-    local fontFile = self.Name:GetFont()
-    self.Name:SetFont(fontFile, 9, "OUTLINE")
-    self.Name:SetText(name)
+    self.Name:SetFont(self.Name:GetFont(), 9, "OUTLINE")
+    self.Name:SetText(UnitName(unit))
     self.Name:SetTextColor(color.r, color.g, color.b)
 end
-
 --更新HP
 local function PartyTarget_UpdateHealth(self, unit)
     if (UnitIsGhost(unit)) then
@@ -545,7 +730,6 @@ local function PartyTarget_UpdateHealth(self, unit)
     self.HealthBar:SetValue(perc)
     self.HealthBar.Text:SetText(perc .. "%")
 end
-
 --更新颜色
 local function PartyTarget_UpdateColor(self, unit)
     if UnitIsEnemy("player", unit) then
@@ -559,12 +743,10 @@ local function PartyTarget_UpdateColor(self, unit)
         self.HealthBar:SetStatusBarColor(0.65, 0.9, 0.85)
     end
 end
-
 --更新透明度
 local function PartyTarget_UpdateAlpha(self, unit)
-    if (UnitInRange(unit)) then self:SetAlpha(1) else self:SetAlpha(0.8) end
+    if (UnitInRange(unit)) then self:SetAlpha(1) else self:SetAlpha(0.6) end
 end
-
 --隊友目標框架更新
 local function PartyTarget_OnUpdate(self, elapsed)
 	self.timer = (self.timer or 0) + elapsed
@@ -582,7 +764,6 @@ local function PartyTarget_OnUpdate(self, elapsed)
 		end
 	end
 end
-
 --創建隊友目標框架
 local function PartyTarget_CreateButton(index)
     local parent = _G["PartyMemberFrame"..index]
@@ -596,6 +777,7 @@ local function PartyTarget_CreateButton(index)
 	  button:SetAttribute("unit", "party"..index.."target")
 	  button:SetAttribute("type1", "target")
     button:SetPoint("TOPRIGHT", parent, "TOPLEFT", -8, -8)
+    --button:SetScript("OnUpdate", PartyTargetDebuff_OnUpdate) --這裡是註冊隊友目標的debuff顯示
     
   button.Name = button:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 	button.Name:SetPoint("TOPRIGHT", button, "TOPRIGHT", 8, 3)
@@ -679,7 +861,6 @@ Me:SetScript("OnEvent", function(self,event)
 	      PlayerFrame:SetAlpha(1)
         TargetFrame:SetAlpha(1)
 	  end
-	  sendCmd("/bht hiton")
  end
 end)
 end)

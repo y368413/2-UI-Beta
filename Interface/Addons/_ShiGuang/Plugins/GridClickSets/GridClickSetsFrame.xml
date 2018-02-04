@@ -17,7 +17,7 @@
         </Layers>
 
         <Frames>
-            <Frame name="$parentType" inherits="Lib_UIDropDownMenuTemplate">
+            <Frame name="$parentType" inherits="L_UIDropDownMenuTemplate">
                 <Anchors>
                     <Anchor point="TOPRIGHT">
                         <Offset> <AbsDimension x="0" y="-5"/> </Offset>
@@ -25,13 +25,13 @@
                 </Anchors>
                 <Scripts>
                     <OnLoad>
-                        Lib_UIDropDownMenu_SetWidth(self, 270);
-                        Lib_UIDropDownMenu_Initialize(self, GridClickSetButton_TypeDropDown_Initialize)
-                        Lib_UIDropDownMenu_SetSelectedValue(self, "NONE");
-                        Lib_UIDropDownMenu_JustifyText(self, "LEFT");
+                        L_UIDropDownMenu_SetWidth(self, 270);
+                        L_UIDropDownMenu_Initialize(self, GridClickSetButton_TypeDropDown_Initialize)
+                        L_UIDropDownMenu_SetSelectedValue(self, "NONE");
+                        L_UIDropDownMenu_JustifyText(self, "LEFT");
                     </OnLoad>
                     <OnEnter>
-                        local value = Lib_UIDropDownMenu_GetSelectedValue(self)
+                        local value = L_UIDropDownMenu_GetSelectedValue(self)
                         if type(value)=="string" then
                             local _, _, spellId = value:find("spellId:([0-9]+)")
                             if spellId then
@@ -89,7 +89,7 @@
                         self:ClearFocus()
                     </OnEscapePressed>
                     <OnTextChanged>
-                        if Lib_UIDropDownMenu_GetSelectedValue(getglobal(self:GetParent():GetName().."Type")) == "spell" then
+                        if L_UIDropDownMenu_GetSelectedValue(getglobal(self:GetParent():GetName().."Type")) == "spell" then
                         local p = string.find(self:GetText(), "\n")
                         if p then
                         self:ClearFocus();
@@ -170,9 +170,6 @@
                     <AbsDimension x="76" y="22"/>
                 </Size>
                 <Anchors>
-                    <!--
-                         <Anchor point="BOTTOMRIGHT" relativeTo="$parentApply" relativePoint="BOTTOMLEFT"/>
-                         -->
                     <Anchor point="BOTTOMRIGHT">
                         <Offset>
                             <AbsDimension x="-16" y="16"/>
@@ -270,7 +267,7 @@
                 </Anchors>
                 <Scripts>
                     <OnClick>
-                        PlaySound("igCharacterInfoTab");
+                        PlaySound(841);    -- SOUNDKIT.IG_CHARACTER_INFO_TAB
                         GridClickSetsFrame_SaveOnClick()
                         PanelTemplates_Tab_OnClick(self, GridClickSetsFrame);
                         PanelTemplates_UpdateTabs(GridClickSetsFrame);
@@ -288,7 +285,7 @@
                 </Anchors>
                 <Scripts>
                     <OnClick>
-                        PlaySound("igCharacterInfoTab");
+                        PlaySound(841);    -- SOUNDKIT.IG_CHARACTER_INFO_TAB
                         GridClickSetsFrame_SaveOnClick()
                         PanelTemplates_Tab_OnClick(self, GridClickSetsFrame);
                         PanelTemplates_UpdateTabs(GridClickSetsFrame);
@@ -306,7 +303,7 @@
                 </Anchors>
                 <Scripts>
                     <OnClick>
-                        PlaySound("igCharacterInfoTab");
+                        PlaySound(841);    -- SOUNDKIT.IG_CHARACTER_INFO_TAB
                         GridClickSetsFrame_SaveOnClick()
                         PanelTemplates_Tab_OnClick(self, GridClickSetsFrame);
                         PanelTemplates_UpdateTabs(GridClickSetsFrame);
@@ -324,7 +321,7 @@
                 </Anchors>
                 <Scripts>
                     <OnClick>
-                        PlaySound("igCharacterInfoTab");
+                        PlaySound(841);    -- SOUNDKIT.IG_CHARACTER_INFO_TAB
                         GridClickSetsFrame_SaveOnClick()
                         PanelTemplates_Tab_OnClick(self, GridClickSetsFrame);
                         PanelTemplates_UpdateTabs(GridClickSetsFrame);
@@ -342,7 +339,7 @@
                 </Anchors>
                 <Scripts>
                     <OnClick>
-                        PlaySound("igCharacterInfoTab");
+                        PlaySound(841);    -- SOUNDKIT.IG_CHARACTER_INFO_TAB
                         GridClickSetsFrame_SaveOnClick()
                         PanelTemplates_Tab_OnClick(self, GridClickSetsFrame);
                         PanelTemplates_UpdateTabs(GridClickSetsFrame);
@@ -350,41 +347,11 @@
                     </OnClick>
                 </Scripts>
             </Button>
-            <Button name="$parentTab6" inherits="OptionsFrameTabButtonTemplate" text="GRIDCLICKSETS_SET_WHEEL_UP" id="6" hidden="false">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeTo="$parentTab5" relativePoint="TOPRIGHT">
-                        <Offset>
-                            <AbsDimension x="-16" y="0"/>
-                        </Offset>
-                    </Anchor>
-                </Anchors>
-                <Scripts>
-                    <OnClick>
-                        PlaySound("igCharacterInfoTab");
-                        GridClickSetsFrame_SaveOnClick()
-                        PanelTemplates_Tab_OnClick(self, GridClickSetsFrame);
-                        PanelTemplates_UpdateTabs(GridClickSetsFrame);
-                        GridClickSetsFrame_TabOnClick();
-                    </OnClick>
-                </Scripts>
+            <Button name="$parentTab6" inherits="OptionsFrameTabButtonTemplate" text="" id="6" hidden="false">
+
             </Button>
-            <Button name="$parentTab7" inherits="OptionsFrameTabButtonTemplate" text="GRIDCLICKSETS_SET_WHEEL_DOWN" id="7" hidden="false">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeTo="$parentTab6" relativePoint="TOPRIGHT">
-                        <Offset>
-                            <AbsDimension x="-16" y="0"/>
-                        </Offset>
-                    </Anchor>
-                </Anchors>
-                <Scripts>
-                    <OnClick>
-                        PlaySound("igCharacterInfoTab");
-                        GridClickSetsFrame_SaveOnClick()
-                        PanelTemplates_Tab_OnClick(self, GridClickSetsFrame);
-                        PanelTemplates_UpdateTabs(GridClickSetsFrame);
-                        GridClickSetsFrame_TabOnClick();
-                    </OnClick>
-                </Scripts>
+            <Button name="$parentTab7" inherits="OptionsFrameTabButtonTemplate" text="" id="7" hidden="false">
+
             </Button>
 
             <Frame name="GridClickSetButton1" inherits="GridClickSetButtonOptionTemplate" ID="1">

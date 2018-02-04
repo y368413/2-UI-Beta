@@ -1,4 +1,6 @@
 ﻿-- Battle Pet Counter by Jadya - EU-Well of Eternity
+-- constants
+local MaxPetLevel = 25
 
 -- string colors
 local LIGHT_BLUE  = "|cff00ccff"
@@ -23,31 +25,31 @@ local function CountPetsbyLevel(arg)
   local last_sources = {}
   
     local flags_cleared = {
-        [LE_PET_JOURNAL_FLAG_COLLECTED] = true,
-        [LE_PET_JOURNAL_FLAG_NOT_COLLECTED] = true,
+        [LE_PET_JOURNAL_FILTER_COLLECTED] = true,
+        [LE_PET_JOURNAL_FILTER_NOT_COLLECTED] = true,
         --[LE_PET_JOURNAL_FLAG_FAVORITES] = false
     }
-  
+
   local function ClearFilters()
    for k,v in pairs(flags_cleared) do
-    last_flags[k] = not C_PetJournal.IsFlagFiltered(k)
+    last_flags[k] = not C_PetJournal.IsFilterChecked(k)
 	if not last_flags[k] then
-	 C_PetJournal.SetFlagFilter(k, v)
+	 C_PetJournal.SetFilterChecked(k, v)
 	end
    end
    
    local s = ""
    for i = 1,C_PetJournal.GetNumPetTypes() do
-    last_types[i] = not C_PetJournal.IsPetTypeFiltered(i)
+    last_types[i] = not C_PetJournal.IsPetTypeChecked(i)
 	if not last_types[i] then
 	 C_PetJournal.SetPetTypeFilter(i, true)
 	end
    end
 
    for i = 1,C_PetJournal.GetNumPetSources() do
-    last_sources[i] = not C_PetJournal.IsPetSourceFiltered(i)
+    last_sources[i] = not C_PetJournal.IsPetSourceChecked(i)
 	if not last_sources[i] then
-	 C_PetJournal.SetPetSourceFilter(i, true)
+	 C_PetJournal.SetPetSourceChecked(i, true)
 	end
    end
    
@@ -61,18 +63,18 @@ local function CountPetsbyLevel(arg)
 
   local function RestoreFilters()
    for k,v in pairs(last_flags) do
-    C_PetJournal.SetFlagFilter(k, v)
+    C_PetJournal.SetFilterChecked(k, v)
    end
    
    for k,v in pairs(last_types) do
-    if C_PetJournal.IsPetTypeFiltered(k) == v then
+    if C_PetJournal.IsPetTypeChecked(k) == v then
      C_PetJournal.SetPetTypeFilter(k, v)
 	end
    end
 
    for k,v in pairs(last_sources) do
-    if C_PetJournal.IsPetSourceFiltered(k) == v then
-     C_PetJournal.SetPetSourceFilter(k, v)
+    if C_PetJournal.IsPetSourceChecked(k) == v then
+     C_PetJournal.SetPetSourceChecked(k, v)
 	end
    end
    
@@ -91,7 +93,7 @@ local function CountPetsbyLevel(arg)
  -----------
  local inputlev = tonumber(arg)
  DEFAULT_CHAT_FRAME:AddMessage(topheader)
- if type(inputlev) == "number" and inputlev > 0 and inputlev <= 25 then
+ if type(inputlev) == "number" and inputlev > 0 and inputlev <= MaxPetLevel then
 
   local counter = {} -- this will contain the top rarity for each possessed pet
  -- counters
@@ -170,7 +172,7 @@ local function CountPetsbyLevel(arg)
  end
  DEFAULT_CHAT_FRAME:AddMessage(bottomheader)
  
- RestoreFilters()
+ --RestoreFilters()
 end
 
 -- slash command

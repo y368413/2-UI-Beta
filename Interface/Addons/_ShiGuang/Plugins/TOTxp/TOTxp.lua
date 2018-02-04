@@ -249,7 +249,7 @@ function TOTxp_VeryDangerInfo(msg)
 	if (alreadyOT == "no" or alreadyOT == "?") then
 		TOTxpFrame_Info:AddMessage(msg, 1, 0.2, 0);
 		LowHealthFrame:Show();
-		PlaySound("igQuestFailed");
+		PlaySound(PlaySoundKitID and "igQuestFailed");
 	end
 	alreadyOT = "yes";
 end

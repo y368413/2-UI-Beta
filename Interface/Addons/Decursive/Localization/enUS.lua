@@ -444,4 +444,5 @@ L["UNSTABLERELEASE"] = "Unstable release"
 
 
 
-T._LoadedFiles["enUS.lua"] = "2.7.5.2";
+
+T._LoadedFiles["enUS.lua"] = "2.7.5.7";

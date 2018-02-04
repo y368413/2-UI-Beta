@@ -65,13 +65,13 @@ local function RScanQuests()
 			for i = 1, GetNumQuestLeaderBoards(qIndex) do
 				local description, itemType, isComplete = GetQuestLogLeaderBoard(i, qIndex)
 				if description then
-				local numstr, itemName = strsplit(" ", description)
-				local numItems, numNeeded = strsplit("/", numstr)
-				QuestList[qID][i]={
-					NeedItem = itemName,			-- String
-					NeedNum  = numNeeded,			-- Integer
-					DoneNum  = numItems				-- Integer
-				}
+					local numstr, itemName = strsplit(" ", description)
+					local numItems, numNeeded = strsplit("/", numstr)
+					QuestList[qID][i]={
+						NeedItem = itemName,			-- String
+						NeedNum  = numNeeded,			-- Integer
+						DoneNum  = numItems				-- Integer
+					}
 				end
 			end
 		end
@@ -178,6 +178,6 @@ end
 
 function QN_OPtionPrePanel(self)
 	self:RegisterEvent("VARIABLES_LOADED")
-	self.name = "|cff0080ff[任务]|r任务通报"
+	self.name = QuestNotifier_TITLE
 	InterfaceOptions_AddCategory(self)
 end

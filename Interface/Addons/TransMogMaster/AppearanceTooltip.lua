@@ -43,6 +43,7 @@ function tooltip:ADDON_LOADED(addon)
         currentClass = false, -- only show for items the current class can transmog
         anchor = "vertical", -- vertical / horizontal
         byComparison = true, -- whether to show by the comparison, or fall back to vertical if needed
+        tokens = true, -- try to preview tokens?
     })
     db = _G["AppearanceTooltipDB"]
     nss.db = db
@@ -135,14 +136,15 @@ end)
 local positioner = CreateFrame("Frame")
 positioner:Hide()
 positioner:SetScript("OnShow", function(self)
-    self.updateTooltip = 0
+    -- always run immediately
+    self.elapsed = TOOLTIP_UPDATE_TIME
 end)
 positioner:SetScript("OnUpdate", function(self, elapsed)
-    self.updateTooltip = self.updateTooltip - elapsed
-    if self.updateTooltip > 0 then
+    self.elapsed = self.elapsed + elapsed
+    if self.elapsed < TOOLTIP_UPDATE_TIME then
         return
     end
-    self.updateTooltip = TOOLTIP_UPDATE_TIME
+    self.elapsed = 0
 
     local owner, our_point, owner_point = nss:ComputeTooltipAnchors(tooltip.owner, tooltip, db.anchor)
     if our_point and owner_point then
@@ -175,38 +177,74 @@ do
     function nss:ComputeTooltipAnchors(owner, tooltip, anchor)
         -- Because I always forget: x is left-right, y is bottom-top
         -- Logic here: our tooltip should trend towards the center of the screen, unless something is stopping it.
+        -- If comparison tooltips are shown, we shouldn't overlap them
         local originalOwner = owner
         local x, y = owner:GetCenter()
         if not (x and y) then
             return
         end
-        -- Screen into quadrants: UL, UR, BL, BR
-        -- What side of the screen are we on
-        local ownerIsUp = y > GetScreenHeight() / 2
-        local ownerIsLeft = x < GetScreenWidth() / 2
-        local comparisonShown = ShoppingTooltip1:IsVisible()
-        local comparisonOnRight = comparisonShown and ((ShoppingTooltip1:GetCenter()) > x)
-        --
+        x = x * owner:GetEffectiveScale()
+        -- the y comparison doesn't need this:
+        -- y = y * owner:GetEffectiveScale()
+
+        local biasLeft, biasDown
+        -- we want to follow the direction the tooltip is going, relative to the cursor
+        -- print("biasLeft check", x ,"<", GetCursorPosition())
+        -- print("biasDown check", y, ">", GetScreenHeight() / 2)
+        biasLeft = x < GetCursorPosition()
+        biasDown = y > GetScreenHeight() / 2
+
+        local outermostComparisonShown
+        if owner.shoppingTooltips then
+            local comparisonTooltip1, comparisonTooltip2 = unpack( owner.shoppingTooltips )
+            if comparisonTooltip1:IsShown() or comparisonTooltip2:IsShown() then
+                if comparisonTooltip1:IsShown() and comparisonTooltip2:IsShown() then
+                    if comparisonTooltip1:GetCenter() > comparisonTooltip2:GetCenter() then
+                        -- 1 is right of 2
+                        outermostComparisonShown = biasLeft and comparisonTooltip2 or comparisonTooltip1
+                    else
+                        -- 1 is left of 2
+                        outermostComparisonShown = biasLeft and comparisonTooltip1 or comparisonTooltip2
+                    end
+                else
+                    outermostComparisonShown = comparisonTooltip1:IsShown() and comparisonTooltip1 or comparisonTooltip2
+                end
+                if
+                    -- outermost is right of owner while we're biasing left
+                    (biasLeft and outermostComparisonShown:GetCenter() > owner:GetCenter())
+                    or
+                    -- outermost is left of owner while we're biasing right
+                    ((not biasLeft) and outermostComparisonShown:GetCenter() < owner:GetCenter())
+                then
+                    -- the comparison won't be in the way, so ignore it
+                    outermostComparisonShown = nil
+                end
+            end
+        end
+
+        -- print("ApTip bias", biasLeft and "left" or "right", biasDown and "down" or "up")
+
         local primary, secondary
         if anchor == "vertical" then
-            primary = ownerIsUp and "bottom" or "top"
-            if comparisonShown then
-                secondary = comparisonOnRight and "left" or "right"
+            -- attaching to the top/bottom of the tooltip
+            -- only care about comparisons to avoid overlapping them
+            primary = biasDown and "bottom" or "top"
+            if outermostComparisonShown then
+                secondary = biasLeft and "right" or "left"
             else
-                secondary = ownerIsLeft and "right" or "left"
+                secondary = biasLeft and "left" or "right"
             end
         else -- horizontal
-            if comparisonShown then
+            primary = biasLeft and "left" or "right"
+            secondary = biasDown and "bottom" or "top"
+            if outermostComparisonShown then
                 if db.byComparison then
-                    primary = ownerIsLeft and "right" or "left"
-                    owner = (not ownerIsLeft) and ShoppingTooltip2:IsVisible() and ShoppingTooltip2 or ShoppingTooltip1
+                    owner = outermostComparisonShown
                 else
-                    primary = comparisonOnRight and "left" or "right"
+                    -- show on the opposite side of the bias, probably overlapping the cursor, since that's better than overlapping the comparison
+                    primary = biasLeft and "right" or "left"
                 end
-            else
-                primary = ownerIsLeft and "right" or "left"
             end
-            secondary = ownerIsUp and "bottom" or "top"
         end
         if
             -- would we be pushing against the edge of the screen?
@@ -247,14 +285,14 @@ function nss:ShowItem(link)
     if not link then return end
     local id = tonumber(link:match("item:(%d+)"))
     if not id or id == 0 then return end
-    local token = LAT:ItemIsToken(id)
-    local maybelink
+    local token = db.tokens and LAT:ItemIsToken(id)
+    local maybelink, _
 
     if token then
         -- It's a set token! Replace the id.
         local found
         for _, itemid in LAT:IterateItemsForTokenAndClass(id, class) do
-            _, maybelink = GetItemInfo(id)
+            _, maybelink = GetItemInfo(itemid)
             if maybelink then
                 id = itemid
                 link = maybelink
@@ -385,6 +423,9 @@ function nss:HideItem()
 end
 
 function nss:ResetModel(model)
+    -- This sort of works, but with a custom model it keeps some items (shoulders, belt...)
+    -- model:SetAutoDress(db.dressed)
+    -- So instead, more complicated:
     if db.customModel then
         model:SetCustomRace(db.modelRace, db.modelGender)
     else
@@ -413,10 +454,10 @@ nss.slot_removals = {
     INVTYPE_BODY = {nss.SLOT_TABARD, nss.SLOT_CHEST, nss.SLOT_SHOULDER, nss.SLOT_OFFHAND, nss.SLOT_WAIST},
     INVTYPE_CHEST = {nss.SLOT_TABARD, nss.SLOT_OFFHAND, nss.SLOT_WAIST, nss.SLOT_SHIRT},
     INVTYPE_ROBE = {nss.SLOT_TABARD, nss.SLOT_WAIST, nss.SLOT_SHOULDER, nss.SLOT_OFFHAND},
-    INVTYPE_LEGS = {nss.SLOT_TABARD, nss.SLOT_WAIST, nss.SLOT_FEET, nss.SLOT_ROBE, nss.SLOT_OFFHAND},
-    INVTYPE_WAIST = {nss.SLOT_OFFHAND},
+    INVTYPE_LEGS = {nss.SLOT_TABARD, nss.SLOT_WAIST, nss.SLOT_FEET, nss.SLOT_ROBE, nss.SLOT_MAINHAND, nss.SLOT_OFFHAND},
+    INVTYPE_WAIST = {nss.SLOT_MAINHAND, nss.SLOT_OFFHAND},
     INVTYPE_FEET = {nss.SLOT_ROBE},
-    INVTYPE_WRIST = {nss.SLOT_HANDS, nss.SLOT_CHEST, nss.SLOT_ROBE, nss.SLOT_SHIRT},
+    INVTYPE_WRIST = {nss.SLOT_HANDS, nss.SLOT_CHEST, nss.SLOT_ROBE, nss.SLOT_SHIRT, nss.SLOT_OFFHAND},
     INVTYPE_HAND = {nss.SLOT_OFFHAND},
     INVTYPE_TABARD = {nss.SLOT_WAIST, nss.SLOT_OFFHAND},
 }
@@ -527,236 +568,6 @@ function setDefaults(options, defaults)
 end
 
 
-local valid_classes = {
-    ALL = {
-        [LE_ITEM_CLASS_WEAPON] = {
-            [LE_ITEM_WEAPON_GENERIC] = true,
-            [LE_ITEM_WEAPON_FISHINGPOLE] = true,
-        },
-        [LE_ITEM_CLASS_ARMOR] = {
-            [LE_ITEM_ARMOR_GENERIC] = true, -- includes things like trinkets and rings
-            [LE_ITEM_ARMOR_COSMETIC] = true,
-        },
-    },
-    DEATHKNIGHT = {
-        [LE_ITEM_CLASS_WEAPON] = {
-            [LE_ITEM_WEAPON_AXE1H] = true,
-            [LE_ITEM_WEAPON_MACE1H] = true,
-            [LE_ITEM_WEAPON_SWORD1H] = true,
-            [LE_ITEM_WEAPON_AXE2H] = true,
-            [LE_ITEM_WEAPON_MACE2H] = true,
-            [LE_ITEM_WEAPON_SWORD2H] = true,
-            [LE_ITEM_WEAPON_POLEARM] = true,
-            -- [LE_ITEM_WEAPON_WARGLAIVE] = true,
-        },
-        [LE_ITEM_CLASS_ARMOR] = {
-            [LE_ITEM_ARMOR_PLATE] = true,
-            [LE_ITEM_ARMOR_MAIL] = false,
-            [LE_ITEM_ARMOR_LEATHER] = false,
-            [LE_ITEM_ARMOR_CLOTH] = false,
-        },
-    },
-    WARRIOR = {
-        [LE_ITEM_CLASS_WEAPON] = {
-            [LE_ITEM_WEAPON_DAGGER] = true,
-            [LE_ITEM_WEAPON_UNARMED] = true,
-            [LE_ITEM_WEAPON_AXE1H] = true,
-            [LE_ITEM_WEAPON_MACE1H] = true,
-            [LE_ITEM_WEAPON_SWORD1H] = true,
-            [LE_ITEM_WEAPON_AXE2H] = true,
-            [LE_ITEM_WEAPON_MACE2H] = true,
-            [LE_ITEM_WEAPON_SWORD2H] = true,
-            [LE_ITEM_WEAPON_POLEARM] = true,
-            [LE_ITEM_WEAPON_STAFF] = true,
-            -- [LE_ITEM_WEAPON_WARGLAIVE] = true,
-            [LE_ITEM_WEAPON_BOWS] = true,
-            [LE_ITEM_WEAPON_CROSSBOW] = true,
-            [LE_ITEM_WEAPON_GUNS] = true,
-        },
-        [LE_ITEM_CLASS_ARMOR] = {
-            [LE_ITEM_ARMOR_SHIELD] = true,
-            [LE_ITEM_ARMOR_PLATE] = true,
-            [LE_ITEM_ARMOR_MAIL] = false,
-            [LE_ITEM_ARMOR_LEATHER] = false,
-            [LE_ITEM_ARMOR_CLOTH] = false,
-        },
-    },
-    PALADIN = {
-        [LE_ITEM_CLASS_WEAPON] = {
-            [LE_ITEM_WEAPON_AXE1H] = true,
-            [LE_ITEM_WEAPON_MACE1H] = true,
-            [LE_ITEM_WEAPON_SWORD1H] = true,
-            [LE_ITEM_WEAPON_AXE2H] = true,
-            [LE_ITEM_WEAPON_MACE2H] = true,
-            [LE_ITEM_WEAPON_SWORD2H] = true,
-            [LE_ITEM_WEAPON_POLEARM] = true,
-        },
-        [LE_ITEM_CLASS_ARMOR] = {
-            [LE_ITEM_ARMOR_SHIELD] = true,
-            [LE_ITEM_ARMOR_PLATE] = true,
-            [LE_ITEM_ARMOR_MAIL] = false,
-            [LE_ITEM_ARMOR_LEATHER] = false,
-            [LE_ITEM_ARMOR_CLOTH] = false,
-        },
-    },
-    HUNTER = {
-        [LE_ITEM_CLASS_WEAPON] = {
-            [LE_ITEM_WEAPON_BOWS] = true,
-            [LE_ITEM_WEAPON_CROSSBOW] = true,
-            [LE_ITEM_WEAPON_GUNS] = true,
-            -- verify the 2h below...
-            [LE_ITEM_WEAPON_DAGGER] = true,
-            [LE_ITEM_WEAPON_UNARMED] = true,
-            [LE_ITEM_WEAPON_AXE1H] = true,
-            [LE_ITEM_WEAPON_MACE1H] = true,
-            [LE_ITEM_WEAPON_SWORD1H] = true,
-            [LE_ITEM_WEAPON_AXE2H] = true,
-            [LE_ITEM_WEAPON_MACE2H] = true,
-            [LE_ITEM_WEAPON_SWORD2H] = true,
-            [LE_ITEM_WEAPON_POLEARM] = true,
-            [LE_ITEM_WEAPON_STAFF] = true,
-        },
-        [LE_ITEM_CLASS_ARMOR] = {
-            [LE_ITEM_ARMOR_MAIL] = true,
-            [LE_ITEM_ARMOR_LEATHER] = false,
-            [LE_ITEM_ARMOR_CLOTH] = false,
-        },
-    },
-    SHAMAN = {
-        [LE_ITEM_CLASS_WEAPON] = {
-            [LE_ITEM_WEAPON_DAGGER] = true,
-            [LE_ITEM_WEAPON_UNARMED] = true,
-            [LE_ITEM_WEAPON_AXE1H] = true,
-            [LE_ITEM_WEAPON_MACE1H] = true,
-            [LE_ITEM_WEAPON_STAFF] = true,
-            [LE_ITEM_WEAPON_AXE2H] = true,
-            [LE_ITEM_WEAPON_MACE2H] = true,
-        },
-        [LE_ITEM_CLASS_ARMOR] = {
-            [LE_ITEM_ARMOR_SHIELD] = true,
-            [LE_ITEM_ARMOR_MAIL] = true,
-            [LE_ITEM_ARMOR_LEATHER] = false,
-            [LE_ITEM_ARMOR_CLOTH] = false,
-        },
-    },
-    DEMONHUNTER = {
-        [LE_ITEM_CLASS_WEAPON] = {
-            [LE_ITEM_WEAPON_WARGLAIVE] = true,
-            [LE_ITEM_WEAPON_DAGGER] = true,
-            [LE_ITEM_WEAPON_UNARMED] = true,
-            [LE_ITEM_WEAPON_AXE1H] = true,
-            [LE_ITEM_WEAPON_MACE1H] = true,
-            [LE_ITEM_WEAPON_SWORD1H] = true,
-        },
-        [LE_ITEM_CLASS_ARMOR] = {
-            [LE_ITEM_ARMOR_LEATHER] = true,
-            [LE_ITEM_ARMOR_CLOTH] = false,
-        },
-    },
-    ROGUE = {
-        [LE_ITEM_CLASS_WEAPON] = {
-            [LE_ITEM_WEAPON_DAGGER] = true,
-            [LE_ITEM_WEAPON_UNARMED] = true,
-            [LE_ITEM_WEAPON_AXE1H] = true,
-            [LE_ITEM_WEAPON_MACE1H] = true,
-            [LE_ITEM_WEAPON_SWORD1H] = true,
-            [LE_ITEM_WEAPON_BOWS] = true,
-            [LE_ITEM_WEAPON_CROSSBOW] = true,
-            [LE_ITEM_WEAPON_GUNS] = true,
-        },
-        [LE_ITEM_CLASS_ARMOR] = {
-            [LE_ITEM_ARMOR_LEATHER] = true,
-            [LE_ITEM_ARMOR_CLOTH] = false,
-        },
-    },
-    MONK = {
-        [LE_ITEM_CLASS_WEAPON] = {
-            [LE_ITEM_WEAPON_UNARMED] = true,
-            [LE_ITEM_WEAPON_AXE1H] = true,
-            [LE_ITEM_WEAPON_MACE1H] = true,
-            [LE_ITEM_WEAPON_SWORD1H] = true,
-            [LE_ITEM_WEAPON_POLEARM] = true,
-            [LE_ITEM_WEAPON_STAFF] = true,
-        },
-        [LE_ITEM_CLASS_ARMOR] = {
-            [LE_ITEM_ARMOR_LEATHER] = true,
-            [LE_ITEM_ARMOR_CLOTH] = false,
-        },
-    },
-    DRUID = {
-        [LE_ITEM_CLASS_WEAPON] = {
-            [LE_ITEM_WEAPON_DAGGER] = true,
-            [LE_ITEM_WEAPON_UNARMED] = true,
-            [LE_ITEM_WEAPON_MACE1H] = true,
-            [LE_ITEM_WEAPON_POLEARM] = true,
-            [LE_ITEM_WEAPON_STAFF] = true,
-            [LE_ITEM_WEAPON_MACE2H] = true,
-        },
-        [LE_ITEM_CLASS_ARMOR] = {
-            [LE_ITEM_ARMOR_LEATHER] = true,
-            [LE_ITEM_ARMOR_CLOTH] = false,
-        },
-    },
-    PRIEST = {
-        [LE_ITEM_CLASS_WEAPON] = {
-            [LE_ITEM_WEAPON_DAGGER] = true,
-            [LE_ITEM_WEAPON_WAND] = true,
-            [LE_ITEM_WEAPON_STAFF] = true,
-            [LE_ITEM_WEAPON_MACE1H] = true,
-        },
-        [LE_ITEM_CLASS_ARMOR] = {
-            [LE_ITEM_ARMOR_CLOTH] = true,
-        },
-    },
-    MAGE = {
-        [LE_ITEM_CLASS_WEAPON] = {
-            [LE_ITEM_WEAPON_DAGGER] = true,
-            [LE_ITEM_WEAPON_WAND] = true,
-            [LE_ITEM_WEAPON_STAFF] = true,
-            [LE_ITEM_WEAPON_SWORD1H] = true,
-        },
-        [LE_ITEM_CLASS_ARMOR] = {
-            [LE_ITEM_ARMOR_CLOTH] = true,
-        },
-    },
-    WARLOCK = {
-        [LE_ITEM_CLASS_WEAPON] = {
-            [LE_ITEM_WEAPON_DAGGER] = true,
-            [LE_ITEM_WEAPON_WAND] = true,
-            [LE_ITEM_WEAPON_STAFF] = true,
-            [LE_ITEM_WEAPON_SWORD1H] = true,
-        },
-        [LE_ITEM_CLASS_ARMOR] = {
-            [LE_ITEM_ARMOR_CLOTH] = true,
-        },
-    },
-
-}
-local _, class = UnitClass("player")
-
--- Can the player equip this at all?
-function nss.PlayerCanEquipItem(item)
-    return nss.ItemIsAppropriateForPlayer(item) ~= nil
-end
-
--- Is the item "appropriate", per transmog rules -- i.e. is it equipable and of the primary armor-type
-function nss.ItemIsAppropriateForPlayer(item)
-    local slot, _, itemclass, itemsubclass = select(4, GetItemInfoInstant(item))
-    if not (class and valid_classes[class] and itemclass and itemsubclass) then
-        return
-    end
-    if valid_classes[class][itemclass] and valid_classes[class][itemclass][itemsubclass] then
-        return valid_classes[class][itemclass][itemsubclass]
-    end
-    if valid_classes.ALL[itemclass] and valid_classes.ALL[itemclass][itemsubclass] then
-        return valid_classes.ALL[itemclass][itemsubclass]
-    end
-    if slot == 'INVTYPE_CLOAK' then
-        -- Cloaks are cloth, technically. But everyone can wear them.
-        return true
-    end
-end
--- PlayerCanEquipItem = nss.PlayerCanEquipItem
 
 local races = {
     [1] = "Human",
@@ -767,7 +578,7 @@ local races = {
     [7] = "Gnome",
     [24] = "Pandaren",
     [2] = "Orc",
-    [5] = "Undead",
+    [5] = "Scourge",
     [10] = "BloodElf",
     [8] = "Troll",
     [6] = "Tauren",
@@ -1172,32 +983,32 @@ slots_to_cameraids = {
     ["Troll-Male-Tabard"] = 525,
     ["Troll-Male-Waist"] = 528,
     ["Troll-Male-Wrist"] = 526,
-    ["Undead-Female-Back"] = 555,
-    ["Undead-Female-Feet"] = 563,
-    ["Undead-Female-Hands"] = 560,
-    ["Undead-Female-Head"] = 553,
-    ["Undead-Female-Legs"] = 562,
-    ["Undead-Female-Robe"] = 556,
-    ["Undead-Female-Chest"] = 557,
-    ["Undead-Female-Shirt"] = 557,
-    ["Undead-Female-Shoulder"] = 554,
-    ["Undead-Female-Shoulder-Alt"] = 747,
-    ["Undead-Female-Tabard"] = 558,
-    ["Undead-Female-Waist"] = 561,
-    ["Undead-Female-Wrist"] = 559,
-    ["Undead-Male-Back"] = 544,
-    ["Undead-Male-Chest"] = 690,
-    ["Undead-Male-Feet"] = 552,
-    ["Undead-Male-Hands"] = 549,
-    ["Undead-Male-Head"] = 542,
-    ["Undead-Male-Legs"] = 551,
-    ["Undead-Male-Robe"] = 545,
-    ["Undead-Male-Shirt"] = 546,
-    ["Undead-Male-Shoulder"] = 543,
-    ["Undead-Male-Shoulder-Alt"] = 746,
-    ["Undead-Male-Tabard"] = 547,
-    ["Undead-Male-Waist"] = 550,
-    ["Undead-Male-Wrist"] = 548,
+    ["Scourge-Female-Back"] = 555,
+    ["Scourge-Female-Feet"] = 563,
+    ["Scourge-Female-Hands"] = 560,
+    ["Scourge-Female-Head"] = 553,
+    ["Scourge-Female-Legs"] = 562,
+    ["Scourge-Female-Robe"] = 556,
+    ["Scourge-Female-Chest"] = 557,
+    ["Scourge-Female-Shirt"] = 557,
+    ["Scourge-Female-Shoulder"] = 554,
+    ["Scourge-Female-Shoulder-Alt"] = 747,
+    ["Scourge-Female-Tabard"] = 558,
+    ["Scourge-Female-Waist"] = 561,
+    ["Scourge-Female-Wrist"] = 559,
+    ["Scourge-Male-Back"] = 544,
+    ["Scourge-Male-Chest"] = 690,
+    ["Scourge-Male-Feet"] = 552,
+    ["Scourge-Male-Hands"] = 549,
+    ["Scourge-Male-Head"] = 542,
+    ["Scourge-Male-Legs"] = 551,
+    ["Scourge-Male-Robe"] = 545,
+    ["Scourge-Male-Shirt"] = 546,
+    ["Scourge-Male-Shoulder"] = 543,
+    ["Scourge-Male-Shoulder-Alt"] = 746,
+    ["Scourge-Male-Tabard"] = 547,
+    ["Scourge-Male-Waist"] = 550,
+    ["Scourge-Male-Wrist"] = 548,
     ["Worgen-Female-Back"] = 322,
     ["Worgen-Female-Feet"] = 330,
     ["Worgen-Female-Hands"] = 327,
@@ -1258,7 +1069,7 @@ local function checkboxSetChecked(self) self:SetChecked(self:GetValue()) end
 local function checkboxSetValue(self, checked) nss.db[self.key] = checked end
 local function checkboxOnClick(self)
     local checked = self:GetChecked()
-    PlaySound(checked and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")
+    PlaySound(checked and SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON or SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
     self:SetValue(checked)
 end
 
@@ -1343,7 +1154,7 @@ end
 local panel = CreateFrame("Frame", nil, InterfaceOptionsFramePanelContainer)
 panel:Hide()
 panel:SetAllPoints()
-panel.name = "|cff02F78E[幻化]|r功能增强"
+panel.name = "|cff8080ff[幻化]|r预览增强"
 
 local title = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
 title:SetPoint("TOPLEFT", 16, -16)
@@ -1365,6 +1176,7 @@ local spin = newCheckbox(panel, 'spin', '旋转模型', "Constantly spin the mod
 local notifyKnown = newCheckbox(panel, 'notifyKnown', '提示是否已收藏', "Display a label showing whether you know the item appearance already")
 local currentClass = newCheckbox(panel, 'currentClass', '仅限当前角色', "Only show previews on items that the current character can collect")
 local byComparison = newCheckbox(panel, 'byComparison', '在对比框显示', "If the comparison tooltip is shown where the preview would want to be, show next to it (this makes it *much* less likely you'll have the preview overlap your cursor)")
+local tokens = newCheckbox(panel, 'tokens', 'Previews for tokens', "Show previews for the items which various tokens can be turned in for when mousing over the token")
 
 local zoomWorn = newCheckbox(panel, 'zoomWorn', '仅显示该装备部位', "Zoom in on the part of your model which wears the item")
 local zoomHeld = newCheckbox(panel, 'zoomHeld', '不保持手持状态', "Zoom in on the held item being previewed, without seeing your character")
@@ -1415,7 +1227,8 @@ zoomMasked:SetPoint("TOPLEFT", zoomHeld, "BOTTOMLEFT", 0, -4)
 
 dressed:SetPoint("TOPLEFT", zoomMasked, "BOTTOMLEFT", 0, -4)
 uncover:SetPoint("TOPLEFT", dressed, "BOTTOMLEFT", 0, -4)
-notifyKnown:SetPoint("TOPLEFT", uncover, "BOTTOMLEFT", 0, -4)
+tokens:SetPoint("TOPLEFT", uncover, "BOTTOMLEFT", 0, -4)
+notifyKnown:SetPoint("TOPLEFT", tokens, "BOTTOMLEFT", 0, -4)
 currentClass:SetPoint("TOPLEFT", notifyKnown, "BOTTOMLEFT", 0, -4)
 mousescroll:SetPoint("TOPLEFT", currentClass, "BOTTOMLEFT", 0, -4)
 spin:SetPoint("TOPLEFT", mousescroll, "BOTTOMLEFT", 0, -4)
@@ -1437,8 +1250,8 @@ InterfaceOptions_AddCategory(panel)
 
 -- Slash handler
 SlashCmdList.APPEARANCETOOLTIP = function(msg)
-    InterfaceOptionsFrame_OpenToCategory("|cff02F78E[幻化]|r功能增强")
-    InterfaceOptionsFrame_OpenToCategory("|cff02F78E[幻化]|r功能增强")
+    InterfaceOptionsFrame_OpenToCategory("|cff8080ff[幻化]|r预览增强")
+    InterfaceOptionsFrame_OpenToCategory("|cff8080ff[幻化]|r预览增强")
 end
 SLASH_APPEARANCETOOLTIP1 = "/appearancetooltip"
 SLASH_APPEARANCETOOLTIP2 = "/aptip"

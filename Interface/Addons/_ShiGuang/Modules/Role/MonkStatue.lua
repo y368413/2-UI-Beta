@@ -1,4 +1,4 @@
-local M, R, U, I = unpack(select(2, ...))
+Ôªølocal M, R, U, I = unpack(select(2, ...))
 if I.MyClass ~= "MONK" then return end
 
 -- Monk Statue
@@ -13,7 +13,7 @@ local function StatueGo()
 	bu:SetAttribute("*type*", "macro")
 	bu:SetAttribute("macrotext", "/click TotemFrameTotem1 RightButton")
 
-	M.Mover(bu, "µÒœÒ", "Statue", R.Auras.StatuePos, IconSize, IconSize)
+	M.Mover(bu, "ÈõïÂÉè", "Statue", R.Auras.StatuePos, IconSize, IconSize)
 end
 
 local f = MaoRUI:EventFrame({"PLAYER_LOGIN", "PLAYER_TALENT_UPDATE"})

@@ -54,22 +54,22 @@ do
 
 	local ClassPowerID, ClassPowerType, RequireSpec
 	if(I.MyClass == "MONK") then
-		ClassPowerID = SPELL_POWER_CHI
+		ClassPowerID = Enum.PowerType.Chi
 		ClassPowerType = "CHI"
 		RequireSpec = SPEC_MONK_WINDWALKER
 	elseif(I.MyClass == "PALADIN") then
-		ClassPowerID = SPELL_POWER_HOLY_POWER
+		ClassPowerID = Enum.PowerType.HolyPower
 		ClassPowerType = "HOLY_POWER"
 		RequireSpec = SPEC_PALADIN_RETRIBUTION
 	elseif(I.MyClass == "MAGE") then
-		ClassPowerID = SPELL_POWER_ARCANE_CHARGES
+		ClassPowerID = Enum.PowerType.ArcaneCharges
 		ClassPowerType = "ARCANE_CHARGES"
 		RequireSpec = SPEC_MAGE_ARCANE
 	elseif(I.MyClass == "WARLOCK") then
-		ClassPowerID = SPELL_POWER_SOUL_SHARDS
+		ClassPowerID = Enum.PowerType.SoulShards
 		ClassPowerType = "SOUL_SHARDS"
 	elseif(I.MyClass == "ROGUE" or I.MyClass == "DRUID") then
-		ClassPowerID = SPELL_POWER_COMBO_POINTS
+		ClassPowerID = Enum.PowerType.ComboPoints
 		ClassPowerType = "COMBO_POINTS"
 	end
 
@@ -396,10 +396,10 @@ end
 
 -- Unitframe
 local classtex = {
-	rare = {"Interface\\MINIMAP\\ObjectIconsAtlas", .4, .46, .73, .79},
+	rare = {"Interface\\MINIMAP\\ObjectIcons", .391, .487, .644, .74},
 	--elite = {"Interface\\MINIMAP\\Minimap_skull_elite", 0, 1, 0, 1},
-	rareelite = {"Interface\\MINIMAP\\ObjectIconsAtlas", .4, .46, .93, 1},
-	worldboss = {"Interface\\MINIMAP\\ObjectIconsAtlas", .07, .13, .27, .33},
+	rareelite = {"Interface\\MINIMAP\\ObjectIcons", .754, .875, .624, .749},
+	worldboss = {"Interface\\MINIMAP\\ObjectIcons", .879, 1, .754, .879},
 }
 
 local function UpdateName(unitFrame)
@@ -487,7 +487,7 @@ end
 
 local function UpdateHealthColor(unitFrame)
 	local hp = unitFrame.healthBar
-	local unit = unitFrame.displayedUnit or unitFrame.unit
+	local unit = unitFrame.displayedUnit or false
 	local status = UnitThreatSituation("player", unit)
 	local r, g, b
 
@@ -622,15 +622,15 @@ local function UpdateNamePlateEvents(unitFrame)
 end
 
 local function UpdateInVehicle(unitFrame)
-	if UnitHasVehicleUI(unitFrame.unit) then
-		if not unitFrame.inVehicle then
+	if ( UnitHasVehicleUI(unitFrame.unit) ) then
+		if ( not unitFrame.inVehicle ) then
 			unitFrame.inVehicle = true
 			local prefix, id, suffix = string.match(unitFrame.unit, "([^%d]+)([%d]*)(.*)")
 			unitFrame.displayedUnit = prefix.."pet"..id..suffix
 			UpdateNamePlateEvents(unitFrame)
 		end
 	else
-		if unitFrame.inVehicle then
+		if ( unitFrame.inVehicle ) then
 			unitFrame.inVehicle = false
 			unitFrame.displayedUnit = unitFrame.unit
 			UpdateNamePlateEvents(unitFrame)
@@ -757,6 +757,10 @@ local function HideBlizzard()
 		SetCVar("nameplateOtherTopInset", -1)
 		SetCVar("nameplateOtherBottomInset", -1)
 	end
+	--fix fps drop(距離縮放與描邊功能會引起掉幀)
+	SetCVar("namePlateMinScale", 1)  --default is 0.8
+	SetCVar("namePlateMaxScale", 1)
+	
 	SetCVar("nameplateMaxDistance", 43)
 	SetCVar("nameplateOverlapH", .5)
 	SetCVar("nameplateOverlapV", .7)

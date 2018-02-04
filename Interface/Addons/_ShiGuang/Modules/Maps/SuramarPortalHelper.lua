@@ -39,12 +39,12 @@ function SPH_createLoc(x, y, position, questId)
 	portal.Texture = portal:CreateTexture()
     if questId and IsQuestFlaggedCompleted(questId) then
         portal.Texture:SetTexture("Interface\\MINIMAP\\Vehicle-AllianceMagePortal")
-        portal:SetWidth(21)
-        portal:SetHeight(21)
+        portal:SetWidth(26)
+        portal:SetHeight(26)
     else
         portal.Texture:SetTexture("Interface\\MINIMAP\\Vehicle-HordeMagePortal")  --Icons\\spell_arcane_teleportdarnassus
-        portal:SetWidth(16)
-        portal:SetHeight(16)
+        portal:SetWidth(21)
+        portal:SetHeight(21)
     end
 	portal.Texture:SetAllPoints()
 	portal:EnableMouse(true)

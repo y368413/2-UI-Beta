@@ -1,9 +1,9 @@
 ﻿## Title: MaxDps_Priest
 ## Title-zhCN:|CFFD74DE1[输出]|rMax-MS
 ## Title-zhTW:|CFFD74DE1[输出]|rMax-MS
-## Version: 7.1.0.1
+## Version: 7.3.0
 ## Author: Kaminaris
-## Interface: 70200
+## Interface: 70300
 ## Dependencies: MaxDps
 ## LoadOnDemand: 1
 

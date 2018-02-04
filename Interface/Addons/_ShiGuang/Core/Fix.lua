@@ -1,27 +1,25 @@
-local M, R, U, I = unpack(select(2, ...))
+﻿local M, R, U, I = unpack(select(2, ...))
 -- Drag AltPowerbar
-PlayerPowerBarAlt:SetMovable(true)
-PlayerPowerBarAlt:SetClampedToScreen(true)
-PlayerPowerBarAlt:SetScript("OnMouseDown", function(self)
-	if IsShiftKeyDown() then self:StartMoving() end
-end)
-PlayerPowerBarAlt:SetScript("OnMouseUp", function(self)
-	self:StopMovingOrSizing()
-end)
-function UnitPowerBarAlt_OnEnter(self)
-	local statusFrame = self.statusFrame
-	if statusFrame.enabled then
-		statusFrame:Show()
-		UnitPowerBarAltStatus_UpdateText(statusFrame)
-	end
+do
+	local bar = _G.PlayerPowerBarAlt
+	local mover = CreateFrame("Frame", "NDuiAltBarMover", bar)
+	mover:SetPoint("CENTER", UIParent, 0, -200)
+	mover:SetSize(20, 20)
+	M.CreateMF(bar, mover)
+	hooksecurefunc(bar, "SetPoint", function(_, _, parent)
+		if parent ~= mover then
+			bar:ClearAllPoints()
+			bar:SetPoint("CENTER", mover)
+		end
+	end)
+	hooksecurefunc("UnitPowerBarAlt_SetUp", function(self)
+		local statusFrame = self.statusFrame
+		if statusFrame.enabled then
+			statusFrame:Show()
+			statusFrame.Hide = statusFrame.Show
+		end
+	end)
 end
-hooksecurefunc("UnitPowerBarAlt_SetUp", function(self)
-	local statusFrame = self.statusFrame
-	if statusFrame.enabled then
-		statusFrame:Show()
-		statusFrame.Hide = statusFrame.Show
-	end
-end)
 
 -- Fix Drag Collections taint
 MaoRUI:EventFrame("ADDON_LOADED"):SetScript("OnEvent", function(self, event, addon)
@@ -56,3 +54,12 @@ end)
 InterfaceOptionsFrameCancel:SetScript("OnClick", function()
     InterfaceOptionsFrameOkay:Click()
 end)
+
+if GetLocale() == "zhCN" then
+	StaticPopupDialogs["LFG_LIST_ENTRY_EXPIRED_TOO_MANY_PLAYERS"] = {
+		text = "针对此项活动，你的队伍人数已满，将被移出列表。",
+		button1 = OKAY,
+		timeout = 0,
+		whileDead = 1,
+	}
+end

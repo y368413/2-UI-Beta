@@ -52,7 +52,7 @@ local function GetInspectItemListFrame(parent)
         frame.title:SetPoint("TOPLEFT", frame, "TOPLEFT", 66, -18)
         frame.level = frame:CreateFontString(nil, "ARTWORK", itemfont)
         frame.level:SetPoint("TOPLEFT", frame, "TOPLEFT", 66, -42)
-        frame.level:SetFont(frame.level:GetFont(), 14, "THINOUTLINE")
+        frame.level:SetFont(frame.level:GetFont(), 14, "OUTLINE")
         
         local itemframe
         local fontsize = GetLocale():sub(1,2) == "zh" and 12 or 9
@@ -74,13 +74,13 @@ local function GetInspectItemListFrame(parent)
                 itemframe:SetPoint("TOPLEFT", frame["item"..(i-1)], "BOTTOMLEFT")
             end
             itemframe.label = CreateFrame("Frame", nil, itemframe)
-            itemframe.label:SetSize(36, 16)
+            itemframe.label:SetSize(38, 16)
             itemframe.label:SetPoint("LEFT")
             itemframe.label:SetBackdrop(backdrop)
             itemframe.label:SetBackdropBorderColor(0, 0.9, 0.9, 0.2)
             itemframe.label:SetBackdropColor(0, 0.9, 0.9, 0.2)
             itemframe.label.text = itemframe.label:CreateFontString(nil, "ARTWORK")
-            itemframe.label.text:SetFont(UNIT_NAME_FONT, fontsize, "THINOUTLINE")
+            itemframe.label.text:SetFont(UNIT_NAME_FONT, fontsize, "OUTLINE")
             itemframe.label.text:SetSize(34, 14)
             itemframe.label.text:SetPoint("CENTER", 1, 0)
             itemframe.label.text:SetText(v.name)
@@ -288,11 +288,12 @@ end)
 ----------------
 
 PaperDollFrame:HookScript("OnShow", function(self)
+    if (TinyInspectDB and not TinyInspectDB.ShowCharacterItemSheet) then return end
     ShowInspectItemListFrame("player", self, select(2,GetAverageItemLevel()))
 end)
 
 LibEvent:attachEvent("PLAYER_EQUIPMENT_CHANGED", function(self)
-    if (CharacterFrame:IsShown()) then
+    if (CharacterFrame:IsShown() and TinyInspectDB and TinyInspectDB.ShowCharacterItemSheet) then
         ShowInspectItemListFrame("player", PaperDollFrame, select(2,GetAverageItemLevel()))
     end
 end)

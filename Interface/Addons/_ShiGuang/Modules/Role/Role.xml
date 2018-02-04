@@ -8,5 +8,5 @@
 	<Script file="MonkStatue.lua"/>
 	<Script file="DeathKnight.lua"/>
 	<Script file="PvPPP.lua"/>
-	<Script file="DuelCountdown.lua"/>
+	<Script file="AuraWatch.lua"/>
 </Ui>

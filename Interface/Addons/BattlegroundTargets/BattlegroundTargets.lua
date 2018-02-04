@@ -550,6 +550,7 @@ for classID = 1, MAX_CLASSES do
 	classes[classTag].fixname = {}
 	classes[classTag].fix = false
 	for i = 1, numTabs do
+		--local id, name, _, icon, _, role = GetSpecializationInfoForClassID(classID, i)
 		local id, name, _, icon, role = GetSpecializationInfoForClassID(classID, i)
 		--print(role, id, classID, i, name, icon, "#", GetSpecializationInfoForClassID(classID, i))
 		if     role == "DAMAGER" then classes[classTag].spec[i] = {role = 3, specID = id, specName = name, icon = icon} tinsert(classROLES.DAMAGER, {classTag = classTag, specIndex = i}) -- DAMAGER: total = 23
@@ -5367,7 +5368,7 @@ end
 
 -- ---------------------------------------------------------------------------------------------------------------------
 function BattlegroundTargets:OptionsFrameHide()
-	PlaySound("igQuestListClose")
+	--PlaySound("igQuestListClose")
 	isConfig = false
 	BattlegroundTargets:EventRegister()
 	TEMPLATE.EnableTextButton(GVAR.InterfaceOptions.CONFIG)
@@ -5390,7 +5391,7 @@ end
 function BattlegroundTargets:OptionsFrameShow()
 	local BattlegroundTargets_Options = BattlegroundTargets_Options
 
-	PlaySound("igQuestListOpen")
+	--PlaySound("igQuestListOpen")
 	isConfig = true
 	BattlegroundTargets:EventUnregister()
 	TEMPLATE.DisableTextButton(GVAR.InterfaceOptions.CONFIG)

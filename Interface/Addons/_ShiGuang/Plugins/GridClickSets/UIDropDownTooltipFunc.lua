@@ -24,8 +24,8 @@ local function dropDownButtonInvisibleOnEnter(self)
     end
 end
 local hookDropDownOnEnter = function()
-    for i = 1, LIB_UIDROPDOWNMENU_MAXLEVELS do
-        for j = 1, LIB_UIDROPDOWNMENU_MAXBUTTONS do
+    for i = 1, L_UIDROPDOWNMENU_MAXLEVELS do
+        for j = 1, L_UIDROPDOWNMENU_MAXBUTTONS do
             local btn = _G["DropDownList" .. i .. "Button" .. j]
             if btn and btn.invisibleButton and not btn.invisibleButton._163ui_tip_done then
                 btn:HookScript("OnEnter", dropDownButtonOnEnter)

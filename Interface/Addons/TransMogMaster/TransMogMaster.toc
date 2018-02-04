@@ -1,18 +1,19 @@
-## Interface: 70200
+## Interface: 70300
 ## Title: TransMog Master
-## Title-zhCN: |cff02F78E[幻化]|r功能增强
-## Title-zhTW: |cff02F78E[幻化]|r功能增强
+## Title-zhCN: |cff8080ff[幻化]|r功能增强
+## Title-zhTW: |cff8080ff[幻化]|r功能增强
+## Version: 0.8 + 7.3.2v1.4 (MaoR UI-DIY)
 ## Notes: Makes Your TransMog Work Easier.
-## Notes-zhCN: 出售物品界面和鼠标提示界面，使你幻化时便捷。
-## Notes-zhTW: 出售物品界面和鼠标提示界面，使你幻化时便捷。
+## Notes-zhCN: 当你解锁幻化外观时，将添加一个提示到物品信息 + 出售物品界面和鼠标提示界面，使你幻化时便捷。
+## Notes-zhTW: 加入到物品提示顯示你已經收藏一個塑形外觀 + 出售物品界面和鼠标提示界面，使你幻化时便捷。
+## X-Category: Transmogrify
 ## Author: TorelTwiddler, Ami Yuy + Elvador + Kruithne + Kemayo
 ## SavedVariables: CanIMogItOptions, CanIMogItDatabase, TransmogCleanupDB, AppearanceTooltipDB
 ## SavedVariablesPerCharacter: AppearanceTooltipDBPC
 ## RequiredDeps: _ShiGuang
-## Version: 0.8(MaoR UI-DIY)
 ## DefaultState: disabled
 
-## X-Repple: 幻化
+## X-Repple: 菜单
 
 #@no-lib-strip@
 LibStub.lua
@@ -20,10 +21,14 @@ LibArmorToken-1.0.lua
 LibAppropriateItems-1.0.lua
 LibItemUpgradeInfo-1.0.lua
 #@end-no-lib-strip@
-AppearanceTooltip.lua
 
+Locale\_locales.xml
 CanIMogIt.lua
+Overlay\_overlays.xml
 
+AppearanceTooltip.lua
 TransmogCleanup.lua
-
 TransmogTokens.lua
+TransmogTokensen.lua
+TransmogTokenszh.lua
+TransmogTokensItemData.lua

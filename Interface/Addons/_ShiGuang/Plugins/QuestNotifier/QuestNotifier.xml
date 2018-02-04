@@ -1,5 +1,4 @@
-﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
-..\FrameXML\UI.xsd">
+﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/">
 	<Script file="QuestNotifier.lua"/>
 	<Frame name="QuestNotifierOptionFrame">
 		<Scripts>
@@ -157,6 +156,7 @@
 					</OnClick>
 				</Scripts>
 			</CheckButton>
+
 			<CheckButton name="QNOchk_Raid" inherits="OptionsCheckButtonTemplate">
 				<Anchors>
 					<Anchor point="TOPLEFT">
@@ -175,6 +175,7 @@
 					</OnClick>
 				</Scripts>
 			</CheckButton>
+
 			<CheckButton name="QNOchk_Party" inherits="OptionsCheckButtonTemplate">
 				<Anchors>
 					<Anchor point="TOPLEFT">
@@ -193,6 +194,7 @@
 					</OnClick>
 				</Scripts>
 			</CheckButton>
+
 			<CheckButton name="QNOchk_Solo" inherits="OptionsCheckButtonTemplate">
 				<Anchors>
 					<Anchor point="TOPLEFT">
@@ -211,6 +213,7 @@
 					</OnClick>
 				</Scripts>
 			</CheckButton>
+
 			<CheckButton name="QNOchk_Sound" inherits="OptionsCheckButtonTemplate">
 				<Anchors>
 					<Anchor point="TOPLEFT">
@@ -229,6 +232,7 @@
 					</OnClick>
 				</Scripts>
 			</CheckButton>
+
 			<CheckButton name="QNOchk_Debug" inherits="OptionsCheckButtonTemplate">
 				<Anchors>
 					<Anchor point="TOPLEFT">
@@ -247,6 +251,7 @@
 					</OnClick>
 				</Scripts>
 			</CheckButton>
+
 			<CheckButton name="QNOchk_NoDetail" inherits="OptionsCheckButtonTemplate">
 				<Anchors>
 					<Anchor point="TOPLEFT">
@@ -265,6 +270,7 @@
 					</OnClick>
 				</Scripts>
 			</CheckButton>
+
 			<CheckButton name="QNOchk_CompleteX" inherits="OptionsCheckButtonTemplate">
 				<Anchors>
 					<Anchor point="TOPLEFT">

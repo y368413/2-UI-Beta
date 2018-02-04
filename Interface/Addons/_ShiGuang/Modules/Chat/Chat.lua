@@ -1,23 +1,8 @@
 ﻿local M, R, U, I = unpack(select(2, ...))
------------------------------ -- 特别感谢 zork 的 rChat
-------- CONFIG
-local hide_chatframe_backgrounds = true   -- 隐藏聊天框背景 (true/false) (隐藏/显示)
-local hide_chattab_backgrounds = true     -- 隐藏聊天标签背景 (true/false) (隐藏/显示)
-local ShortChannel = true                 -- 精简公共频道 (true/false) (精简/不精简)
+local module = MaoRUI:RegisterModule("Chat")
 
 -- add more chat font sizes
-  for i = 1, 23 do  CHAT_FONT_HEIGHTS[i] = i+7  end
-
--- 打开输入框回到上次对话 (1/0 = On/Off)
-ChatTypeInfo["SAY"].sticky  = 1;          -- 说
-ChatTypeInfo["PARTY"].sticky 	= 1;        -- 小队
-ChatTypeInfo["INSTANCE_CHAT"].sticky 	= 1;-- 副本
-ChatTypeInfo["RAID"].sticky 	= 1;        -- 团队
-ChatTypeInfo["GUILD"].sticky 	= 1;        -- 公会
-ChatTypeInfo["OFFICER"].sticky 	= 1;      -- 官员
-ChatTypeInfo["WHISPER"].sticky 	= 1;      -- 密语
-ChatTypeInfo["BN_WHISPER"].sticky   = 1;  -- 战网好友密语
-ChatTypeInfo["CHANNEL"].sticky 	= 1;      -- 频道
+for i = 1, 23 do  CHAT_FONT_HEIGHTS[i] = i+7  end
 
 -- 聊天标签
 CHAT_FRAME_FADE_OUT_TIME = 0                  -- 聊天窗口褪色时间
@@ -29,347 +14,34 @@ CHAT_FRAME_TAB_SELECTED_NOMOUSE_ALPHA = 0     -- 鼠标离开时,选择标签时
 CHAT_FRAME_TAB_ALERTING_MOUSEOVER_ALPHA = 0.6 -- 鼠标停留时,标签闪动时透明度
 CHAT_FRAME_TAB_ALERTING_NOMOUSE_ALPHA = 0     -- 鼠标离开时,标签闪动时透明度
 
---------------------------------------- 支持上下箭頭選取历史-- Author:M-------------------------------------
-local chatHistory = {}
-local function AddHistoryLine(self, text)
-    if (not text or text == "") then return end
-    local type = self:GetAttribute("chatType")
-    if (type == "WHISPER") then text = text:gsub("^/%w+%s*%S+%s*", "")
-    elseif (string.find(text, "^/script")) then
-    else text = text:gsub("^/%w+%s*", "") end
-    if (text == "") then return end
-    for i, v in ipairs(chatHistory[self]) do
-        if (v == text) then
-            table.remove(chatHistory[self], i)
-            break
-        end
-    end
-    table.insert(chatHistory[self], 1, text)
-end
-local function GetHistoryLine(self, keyPress)
-    local increment
-    if (keyPress == "UP") then increment = 1
-    elseif (keyPress == "DOWN") then increment = -1
-    else return end
-    chatHistory[self].index = chatHistory[self].index + increment
-    local text = chatHistory[self][chatHistory[self].index]
-    if (text) then self:SetText(text)
-		self:SetCursorPosition(strlen(text))
-    else chatHistory[self].index = chatHistory[self].index - increment end
-end
-local function ResetHistoryIndex(self) chatHistory[self].index = 0 end
-
-------- FUNCTIONS
-  local function skinChat(self)
-    if not self or (self and self.skinApplied) then return end
-
-    self:SetClampRectInsets(0, 0, 0, 0)    --chat frame resizing
-    self:SetMaxResize(UIParent:GetWidth(), UIParent:GetHeight())
-    self:SetMinResize(80, 43)
-
-    self:SetFading(true)    --chat fading      --set font, outline and shadow for chat text
-    --self:SetFont(STANDARD_TEXT_FONT, 12, "OUTLINE")
-    --self:SetShadowOffset(1,-1)
-    --self:SetShadowColor(0,0,0,0.6)
- 
-    _G[self:GetName().."ButtonFrame"]:Hide()   --fix the buttonframe
-    _G[self:GetName().."ButtonFrame"]:HookScript("OnShow", _G[self:GetName().."ButtonFrame"].Hide)
-    _G[self:GetName().."EditBoxLeft"]:Hide()    --editbox skinning
-    _G[self:GetName().."EditBoxMid"]:Hide()
-    _G[self:GetName().."EditBoxRight"]:Hide()
-
-    _G[self:GetName().."EditBox"]:SetAltArrowKeyMode(false)
-    _G[self:GetName().."EditBox"]:ClearAllPoints()
-    _G[self:GetName().."EditBox"]:SetPoint("BOTTOM",_G[self:GetName().."Tab"],"TOP",0,-21)
-    _G[self:GetName().."EditBox"]:SetPoint("LEFT",self,-5,0)
-    _G[self:GetName().."EditBox"]:SetPoint("RIGHT",self,10,0)
-    
-    local editboxmod = _G[self:GetName().."EditBox"]
-    chatHistory[editboxmod] = { index = 0 }
-    _G[self:GetName().."EditBox"]:HookScript("OnEditFocusLost", ResetHistoryIndex)
-    _G[self:GetName().."EditBox"]:HookScript("OnArrowPressed", GetHistoryLine)
-    hooksecurefunc(editboxmod, "AddHistoryLine", AddHistoryLine)
-    ChatFrame1EditBoxLanguage:SetPoint('LEFT', ChatFrame1EditBox, 'RIGHT', -5, 0) --输入框语言按钮位置
-
-    self.skinApplied = true
-  end
-
-------- CALL
-local tabs = {"Left", "Middle", "Right", "SelectedLeft", "SelectedRight", "SelectedMiddle",}--, "Glow"
-    
-  --chat skinning
-  for i = 1, NUM_CHAT_WINDOWS do
-if hide_chattab_backgrounds then     -- 聊天标签背景
-    for index, value in pairs(tabs) do _G['ChatFrame'..i..'Tab'..value]:SetTexture(nil) end
-end
-if hide_chatframe_backgrounds then    -- 聊天框背景
-    for g = 1, #CHAT_FRAME_TEXTURES do _G["ChatFrame"..i..CHAT_FRAME_TEXTURES[g]]:SetTexture(nil) end
-end
-    skinChat(_G["ChatFrame"..i])
-  end
-
-  --skin temporary chats
-  hooksecurefunc("FCF_OpenTemporaryWindow", function()
-    for _, chatFrameName in pairs(CHAT_FRAMES) do if (_G[chatFrameName].isTemporary) then skinChat(_G[chatFrameName]) end end
-  end)
-  hooksecurefunc("FCF_SetTemporaryWindowType", function(chatFrame, chatType, chatTarget)
-        skinChat(chatFrame)
-        chatFrame:ScrollToTop()
-        _G[chatFrame:GetName().."Tab"]:SetScript("OnDoubleClick", function(self)
-          if (chatType == "WHISPER" or chatType == "BN_WHISPER") then
-              local editBoxsed = ChatEdit_ChooseBoxForSend()
-              editBoxsed:SetAttribute("chatType", chatType)
-              editBoxsed:SetAttribute("tellTarget", chatTarget)
-              ChatEdit_ActivateChat(editBoxsed)
-              editBoxsed:SetText(editBoxsed:GetText())
-          end
-      end)
-  end)
-  --[[combat log custom hider
-  local function fixStuffOnLogin()
-    for i = 1, NUM_CHAT_WINDOWS do
-      local name = "ChatFrame"..i
-      local tab = _G[name.."Tab"]
-    end
-    CombatLogQuickButtonFrame_Custom:HookScript("OnShow", CombatLogQuickButtonFrame_Custom.Hide)
-    CombatLogQuickButtonFrame_Custom:Hide()
-    CombatLogQuickButtonFrame_Custom:SetHeight(0)
-  end
-
-  local a = CreateFrame("Frame")
-  a:RegisterEvent("PLAYER_LOGIN")
-  a:SetScript("OnEvent", fixStuffOnLogin)]]
-  
-  ----Shift至底部/顶部
-FloatingChatFrame_OnMouseScroll = function(self, dir)
-  if(dir > 0) then if(IsShiftKeyDown()) then self:ScrollToTop() else self:ScrollUp() end
-  else if(IsShiftKeyDown()) then self:ScrollToBottom() else self:ScrollDown() end
-  end
-end
-
---================================公共频道和自定义频道精简================================--
-local gsub = _G.string.gsub
-local newAddMsg = {}
-local chn, rplc
-  if (GetLocale() == "zhCN") then  ---国服
-	rplc = { "[%1综合]", "[%1交易]", "[%1防务]", "[%1组队]", "[%1世界]", "[%1招募]", "[%1大脚]", "[%1自定义]", } 
-  elseif (GetLocale() == "zhTW") then  ---台服
-	rplc = { "[%1綜合]", "[%1貿易]", "[%1防務]", "[%1組隊]", "[%1世界]", "[%1招募]", "[%1自定义]", } 
-	else       
-	rplc = { "[GEN]", "[TR]", "[WD]", "[LD]", "[LFG]", "[GR]", "[BFC]", "[CL]", }      -- 英文缩写
- end
-        
-	chn = { "%[%d+%. General.-%]", "%[%d+%. Trade.-%]", "%[%d+%. LocalDefense.-%]", "%[%d+%. LookingForGroup%]", "%[%d+%. WorldDefense%]", "%[%d+%. GuildRecruitment.-%]", "%[%d+%. CustomChannel.-%]", }
-
-	if (GetLocale() == "zhCN") then
-		chn[1] = "%[%d+%. 综合.-%]"
-		chn[2] = "%[%d+%. 交易.-%]"
-		chn[3] = "%[%d+%. 本地防务.-%]"
-		chn[4] = "%[%d+%. 寻求组队%]"
-    chn[5] = "%[%d+%. 世界防务%]"	
-		chn[6] = "%[%d+%. 公会招募.-%]"
-    chn[7] = "%[%d+%. 大脚世界频道.-%]"
-    chn[8] = "%[%d+%. 自定义频道.-%]"
-  elseif (GetLocale() == "zhTW") then
-		chn[1] = "%[%d+%. 綜合.-%]"
-		chn[2] = "%[%d+%. 貿易.-%]"
-	  chn[3] = "%[%d+%. 本地防務.-%]"
-		chn[4] = "%[%d+%. 尋求組隊%]"
-    chn[5] = "%[%d+%. 世界防務%]"	
-		chn[6] = "%[%d+%. 公會招募.-%]"
-    chn[7] = "%[%d+%. 自定义频道.-%]"
-	else
-		chn[1] = "%[%d+%. General.-%]"
-		chn[2] = "%[%d+%. Trade.-%]"
-		chn[3] = "%[%d+%. LocalDefense.-%]"
-		chn[4] = "%[%d+%. LookingForGroup%]"
-		chn[5] = "%[%d+%. WorldDefense%]"
-		chn[6] = "%[%d+%. GuildRecruitment.-%]"
-    chn[7] = "%[%d+%. CustomChannel.-%]"
-	end
-	
-local function AddMessage(frame, text, ...)
-	for i = 1, 7 do text = gsub(text, chn[i], rplc[i]) end	 -- 对应上面几个频道
-	text = gsub(text, "%[(%d0?)%. .-%]", "%1.") 
-	return newAddMsg[frame:GetName()](frame, text, ...)
-end
-
-if ShortChannel then
-	for i = 1, 5 do
-		if i ~= 2 then newAddMsg[format("%s%d", "ChatFrame", i)] = _G[format("%s%d", "ChatFrame", i)].AddMessage
-			_G[format("%s%d", "ChatFrame", i)].AddMessage = AddMessage
-		end
-	end
-end
-
-local origSetItemRef = SetItemRef
-SetItemRef = function(link, text, button)
-  if IsAltKeyDown() and string.sub(link, 1, 6) == "player" then InviteUnit(string.match(link, "player:([^:]+)")) return nil end
-  return origSetItemRef(link,text,button)
-end
-
---TabChangeChannel 按TAB切換頻道--
-hooksecurefunc("ChatEdit_CustomTabPressed", function(self)
-	if strsub(tostring(self:GetText()), 1, 1) == '/' then return end
-	local chatType = self:GetAttribute('chatType')
-	local inParty = GetNumSubgroupMembers() > 0
-	local inInstance = IsInGroup(LE_PARTY_CATEGORY_INSTANCE) and IsInInstance()
-	local inRaid = GetNumGroupMembers() > 0 and IsInRaid()
-	local inGuild = IsInGuild()
-	local isOfficer = CanEditOfficerNote()
-	local SetTabType
-	if chatType == 'SAY' then
-		SetTabType = inParty and 'PARTY' or inInstance and 'INSTANCE_CHAT' or inRaid and 'RAID' or inGuild and 'GUILD' or isOfficer and 'OFFICER'
-	elseif chatType == 'PARTY' then
-		SetTabType = inInstance and 'INSTANCE_CHAT' or inRaid and 'RAID' or inGuild and 'GUILD' or isOfficer and 'OFFICER' or 'SAY'
-	elseif chatType == 'INSTANCE_CHAT' then
-		SetTabType = inGuild and 'GUILD' or isOfficer and 'OFFICER' or 'SAY'
-	elseif chatType == 'RAID' then
-		SetTabType = inGuild and 'GUILD' or isOfficer and 'OFFICER' or 'SAY'
-	elseif chatType == 'GUILD' then
-		SetTabType = isOfficer and 'OFFICER' or 'SAY'
-	elseif chatType == 'OFFICER' then
-		SetTabType = 'SAY'
-	elseif chatType == 'CHANNEL' then
-		SetTabType = inParty and 'PARTY' or inInstance and 'INSTANCE_CHAT' or inRaid and 'RAID' or inGuild and 'GUILD' or isOfficer and 'OFFICER' or 'SAY'
-	end
-	if SetTabType then self:SetAttribute('chatType', SetTabType) ChatEdit_UpdateHeader(self) else return end
-end)
-
---------------------------------------- 聊天信息複製-- Author:M-------------------------------------
-
---注意規則順序, button(LeftButton/RightButton)可以指定鼠標左右鍵使用不同的邏輯
-local rules = {
-    --!!这两条不要更改
-    { pat = "|c%x+|HChatCopy|h.-|h|r",      repl = "" },   --去掉本插件定義的鏈接
-    { pat = "|c%x%x%x%x%x%x%x%x(.-)|r",     repl = "%1" }, --替換所有顔色值
-    --以下為左鍵特有
-      { pat = CHAT_WHISPER_GET:gsub("%%s",".-"), repl = "", button = "LeftButton" }, --密語
-      { pat = CHAT_WHISPER_INFORM_GET:gsub("%%s",".-"), repl = "", button = "LeftButton" }, --密語
-    { pat = "|Hchannel:.-|h.-|h",           repl = "", button = "LeftButton" }, --(L)去掉頻道文字
-    { pat = "|Hplayer:.-|h.-|h" .. ":",     repl = "", button = "LeftButton" }, --(L)去掉發言玩家名字
-    { pat = "|Hplayer:.-|h.-|h" .. "：",    repl = "", button = "LeftButton" }, --(L)去掉發言玩家名字
-    { pat = "|HBNplayer:.-|h.-|h" .. ":",   repl = "", button = "LeftButton" }, --(L)去掉戰網發言玩家名字
-    { pat = "|HBNplayer:.-|h.-|h" .. "：",  repl = "", button = "LeftButton" }, --(L)去掉戰網發言玩家名字
-    --以下為右鍵特有
-    { pat = "|Hchannel:.-|h(.-)|h",         repl = "%1", button = "RightButton" }, --(R)留下頻道文字
-    { pat = "|Hplayer:.-|h(.-)|h",          repl = "%1", button = "RightButton" }, --(R)留下發言玩家名字
-    { pat = "|HBNplayer:.-|h(.-)|h",        repl = "%1", button = "RightButton" }, --(R)留下戰網發言玩家名字
-    --!!这幾條不要更改
-    { pat = "|H.-|h(.-)|h",                 repl = "%1" },  --替換所有超連接
-    { pat = "|TInterface\\TargetingFrame\\UI%-RaidTargetingIcon_(%d):0|t", repl = "{rt%1}" },
-    { pat = "|T.-|t",                       repl = "" },    --替換所有素材
-    { pat = "%|[rcTtHhkK]",                 repl = "" },    --去掉單獨的|r|c|K
-    { pat = "^%s+",                         repl = "" },    --去掉空格
-}
-
---替換字符
-local function clearMessage(msg, button)
-    for _, rule in ipairs(rules) do
-        if (not rule.button or rule.button == button) then
-            msg = msg:gsub(rule.pat, rule.repl)
-        end
-    end
-    return msg
-end
-
---顯示信息
-local function showMessage(msg, button)
-    local editBox = ChatEdit_ChooseBoxForSend()
-    msg = clearMessage(msg, button)
-    ChatEdit_ActivateChat(editBox)
-    editBox:SetText(editBox:GetText() .. msg)
-    editBox:HighlightText()
-end
-
---獲取複製的信息
-local function getMessage(...)
-    local object
-    for i = 1, select("#", ...) do
-        object = select(i, ...)
-        if (object:IsObjectType("FontString") and MouseIsOver(object)) then
-            return object:GetText()
-        end
-    end
-    return ""
-end
-
---HACK
-local _SetItemRef = SetItemRef
-
-SetItemRef = function(link, text, button, chatFrame)
-    if (link:sub(1,8) == "ChatCopy") then
-        local msg = getMessage(chatFrame.FontStringContainer:GetRegions())
-        return showMessage(msg, button)
-    end
-    _SetItemRef(link, text, button, chatFrame)
-end
-
---HACK
-if (CHAT_TIMESTAMP_FORMAT) then
-    if (not string.find(CHAT_TIMESTAMP_FORMAT, "ChatCopy")) then
-        CHAT_TIMESTAMP_FORMAT = "|cff68ccef|HChatCopy|h"..CHAT_TIMESTAMP_FORMAT.."|h|r"
-    end
-end
-local function AddMessage(self, text, ...)
-    if (type(text) ~= "string") then
-        text = tostring(text)
-    end
-    if (CHAT_TIMESTAMP_FORMAT) then
-        if (not string.find(CHAT_TIMESTAMP_FORMAT, "ChatCopy")) then
-            CHAT_TIMESTAMP_FORMAT = "|cff68ccef|HChatCopy|h"..CHAT_TIMESTAMP_FORMAT.."|h|r"
-        end
-        if (not string.find(text, "%|HChatCopy%|h")) then
-            text = format("|cff68ccef|HChatCopy|h%s|h|r%s", BetterDate(CHAT_TIMESTAMP_FORMAT, time()), text)
-        end
-    else
-        text = format("|cff68ccef|HChatCopy|h%s|h|r %s", "-", text)
-    end
-    self.OrigAddMessage(self, text, ...)
-end
-
-local chatFrame
-
-for i = 1, NUM_CHAT_WINDOWS do
-    chatFrame = _G["ChatFrame" .. i]
-    if (chatFrame) then
-        chatFrame.OrigAddMessage = chatFrame.AddMessage
-        chatFrame.AddMessage = AddMessage
-    end
-end
-
 ---------------好友上线----------------------self:SetPoint("TOP",MinimapCluster,"BOTTOM",0,-21)
 BNToastFrame:HookScript("OnShow", function(self)	self:SetScale(0.9) self:ClearAllPoints() self:SetPoint("BOTTOMLEFT", ChatFrame1Tab, "TOPLEFT", 0, 3)	end)
 ---------------------------------密语语音提示---------------------------
 local WhisperSoundTip = CreateFrame("Frame")
 function WhisperSoundTip:CHAT_MSG_WHISPER() PlaySoundFile("Interface\\AddOns\\_ShiGuang\\Media\\Sounds\\Whisper.ogg", "Master") end
 WhisperSoundTip:SetScript("OnEvent",function(self, event, ...)
-	if self[event] then self[event](self, ...)
-	else self:UnregisterEvent(event) end
-end
-)
+	if self[event] then self[event](self, ...) else self:UnregisterEvent(event) end
+end)
 WhisperSoundTip:RegisterEvent("CHAT_MSG_WHISPER")
 
 -- 隐藏聊天菜单按钮(鼠标划过右上角显示)
---ChatFrameMenuButton:Hide()
---ChatFrameMenuButton:SetScript("OnShow", kill)
  ChatFrameMenuButton:SetScale(0.8)  --按钮缩放
  ChatFrameMenuButton:SetParent(ChatFrame1EditBoxLanguage)
- --ChatFrameMenuButton:SetAlpha(0.001)  --刚进游戏时按钮透明度(鼠标经过1次后显示鼠标离开时透明度)
  ChatFrameMenuButton:ClearAllPoints()
  ChatFrameMenuButton:SetPoint("RIGHT",ChatFrame1EditBoxLanguage,"LEFT",8,0) --位置  X15
+ --ChatFrameMenuButton:SetAlpha(0.001)  --刚进游戏时按钮透明度(鼠标经过1次后显示鼠标离开时透明度)
  --ChatFrameMenuButton:SetScript('OnEnter', function(self) self:SetAlpha(1) end) --鼠标进入时透明度
  --ChatFrameMenuButton:SetScript('OnLeave', function(self) self:SetAlpha(0.001) end) --鼠标离开时透明度
  
 -- 社交按钮(鼠标划过左上角显示)
+QuickJoinToastButton.Show = M.Dummy
 QuickJoinToastButton:Hide()
-QuickJoinToastButton:SetScript("OnShow", kill)
- --[[QuickJoinToastButton:SetScale(0.8) --按钮缩放
- QuickJoinToastButton:SetAlpha(0.001) --刚进游戏时按钮透明度(鼠标经过1次后显示鼠标离开时透明度)
- QuickJoinToastButton:ClearAllPoints()
- QuickJoinToastButton:SetPoint("BOTTOMLEFT",ChatFrame1,"BOTTOMLEFT",-11138,-32) --位置
- QuickJoinToastButton:SetScript('OnEnter', function(self) self:SetAlpha(1) end) --鼠标进入时透明度
- QuickJoinToastButton:SetScript('OnLeave', function(self) self:SetAlpha(0.001) end) --鼠标离开时透明度]]
+--QuickJoinToastButton:SetScale(0.8) --按钮缩放
+--QuickJoinToastButton:ClearAllPoints()
+--QuickJoinToastButton:SetPoint("BOTTOMLEFT",ChatFrame1,"BOTTOMLEFT",-11138,-32) --位置
+--QuickJoinToastButton:SetAlpha(0.001) --刚进游戏时按钮透明度(鼠标经过1次后显示鼠标离开时透明度)
+--QuickJoinToastButton:SetScript('OnEnter', function(self) self:SetAlpha(1) end) --鼠标进入时透明度
+--QuickJoinToastButton:SetScript('OnLeave', function(self) self:SetAlpha(0.001) end) --鼠标离开时透明度
 
 -- 隐藏翻页按钮(不在最后一行右下角显示翻页至底按钮)
 local updateBottomButton = function(frame)
@@ -383,7 +55,6 @@ local bottomButtonClick = function(button)
 end
 	for i = 1, NUM_CHAT_WINDOWS do
 		local frame = _G["ChatFrame" .. i]
-		ChatFrame_RemoveMessageGroup(frame, "CHANNEL")  ----------关闭进出频道提示
 		frame:HookScript("OnShow", updateBottomButton)
 		frame.buttonFrame:Hide()
 		frame.buttonFrame.bottomButton:SetParent(frame)
@@ -403,8 +74,56 @@ end
     frame.buttonFrame.minimizeButton:SetScript('OnLeave', function(self) self:SetAlpha(0) end)
 	end
 	hooksecurefunc("FloatingChatFrame_OnMouseScroll", updateBottomButton)
-	
-	
+
+
+
+
+-- Swith channels by Tab
+local cycles = {
+	  { chatType = "SAY", use = function(self, editbox) return 1 end },
+    { chatType = "PARTY", use = function(self, editbox) return IsInGroup() end },
+    { chatType = "RAID", use = function(self, editbox) return IsInRaid() end },
+    { chatType = "INSTANCE_CHAT", use = function(self, editbox) return IsPartyLFG() end },
+    { chatType = "GUILD", use = function(self, editbox) return IsInGuild() end },
+	  { chatType = "CHANNEL", use = function(self, editbox)
+	  if I.Client ~= "zhCN" then return false end
+		local channels, inWorldChannel, number = {GetChannelList()}
+		for i = 1, #channels do
+			if channels[i] == "大脚世界频道" then
+				inWorldChannel = true
+				number = channels[i-1]
+				break
+			end
+		end
+		if inWorldChannel then
+			editbox:SetAttribute("channelTarget", number)
+			return true
+		else
+			return false
+		end
+	end },
+    { chatType = "SAY", use = function(self, editbox) return 1 end },
+}
+
+hooksecurefunc("ChatEdit_CustomTabPressed", function(self)
+	if strsub(tostring(self:GetText()), 1, 1) == "/" then return end
+    local currChatType = self:GetAttribute("chatType")
+    for i, curr in ipairs(cycles) do
+        if curr.chatType == currChatType then
+            local h, r, step = i+1, #cycles, 1
+            if IsShiftKeyDown() then h, r, step = i-1, 1, -1 end
+            for j = h, r, step do
+                if cycles[j]:use(self, currChatType) then
+                    self:SetAttribute("chatType", cycles[j].chatType)
+                    ChatEdit_UpdateHeader(self)
+                    return
+                end
+            end
+        end
+    end
+end)
+
+
 -----------------Chatchannelbar----- 属性通报 ----------------------------------------
 -- 本地化专精
 function Talent()
@@ -424,6 +143,14 @@ function BaseInfo()
 		--BaseStat = BaseStat..("%s "):format(UnitClass("player"))
 		BaseStat = BaseStat..("< %.1f/%.1f > "):format(GetAverageItemLevel())
 		BaseStat = BaseStat..("血量:%s "):format(HealText())
+		  if C_ArtifactUI.GetEquippedArtifactInfo() then 
+ 				local pointsSpent = select(6,C_ArtifactUI.GetEquippedArtifactInfo()); 
+ 				  if pointsSpent <= 51 then 
+ 				     BaseStat = BaseStat..(ARCHAEOLOGY_CURRENT..":%s "):format(pointsSpent); 
+ 				  else 
+ 				     BaseStat = BaseStat..(ARCHAEOLOGY_CURRENT..":%d(%d)"):format(pointsSpent,pointsSpent-51); 
+ 				  end 
+ 			end 
 	return BaseStat
 end
 -- 输出属性(9 = 暴击 12 = 溅射 17 = 吸血 18 = 急速 21 = 闪避 26 = 精通 29 = 装备+自身全能 31 = 装备全能)
@@ -474,13 +201,12 @@ end
 -- 增强属性
 function MoreInfo()
 	local MoreStat = ""
-		MoreStat = MoreStat..(HASTE..":%.2f%% "):format(GetMeleeHaste())
+		MoreStat = MoreStat..(STAT_HASTE..":%.2f%% "):format(GetHaste())
 		MoreStat = MoreStat..(CRIT..":%.2f%% "):format(GetCritChance())
-		MoreStat = MoreStat..(MASTERY..":%.2f%% "):format(GetMasteryEffect())
-		--MoreStat = MoreStat..("溅射:%.2f%% "):format(GetMultistrike())
-		MoreStat = MoreStat..("吸血:%s "):format(GetCombatRating(17))
-		--MoreStat = MoreStat..("溅射:%.2f%% "):format(GetCombatRating(12))
-		--MoreStat = MoreStat..("全能:%.2f%% "):format(GetCombatRating(29))
+		MoreStat = MoreStat..(STAT_MASTERY..":%.2f%% "):format(GetMasteryEffect())
+		--MoreStat = MoreStat..("溅射:%.2f%% "):format(GetMultistrike()) -- GetCombatRating(12)
+		MoreStat = MoreStat..(STAT_LIFESTEAL..":%.2f%% "):format(GetLifesteal())
+		MoreStat = MoreStat..(STAT_VERSATILITY..":%.2f%% "):format(GetCombatRatingBonus(CR_VERSATILITY_DAMAGE_DONE) + GetVersatilityBonus(CR_VERSATILITY_DAMAGE_DONE))  --GetVersatility()
 	return MoreStat
 end
 -- 属性收集
@@ -551,183 +277,86 @@ chatbar:SetWidth(300) -- 主框体宽度
 chatbar:SetHeight(21) -- 主框体高度
 chatbar:SetPoint("TOPLEFT", _G["ChatFrame1"], "BOTTOMLEFT", 9, 12) -- 锚点,想移动位置的改这里
 
+local function CreatChatButton(id, parent, w, h, ap, frame, rp, x, y, alpha)
+		local ChatButton = CreateFrame("Button", id, parent, "SecureActionButtonTemplate")
+		ChatButton:SetParent(chatbar)
+		ChatButton:SetWidth(w)
+		ChatButton:SetHeight(h)
+		ChatButton:SetPoint(ap, frame, rp, x, y)
+		ChatButton:SetAlpha(alpha)
+		--ChatButton:SetNormalTexture(Texture)
+		return ChatButton
+end
+local function CreatChatText(f, font, fontsize, fontmod, w, h, text, rp, x, y, r, g, b)
+    local ChatText = f:CreateFontString(nil, "OVERLAY")
+		ChatText:SetFont(font, fontsize, fontmod)
+		ChatText:SetJustifyH("CENTER")
+		ChatText:SetWidth(w)
+		ChatText:SetHeight(h)
+		ChatText:SetText(text)
+		ChatText:SetPoint(rp, x, y)
+		ChatText:SetTextColor(r, g, b)
+		return ChatText
+end
 -- Roll --
-local roll = CreateFrame("Button", "rollMacro", UIParent, "SecureActionButtonTemplate")
-roll:SetParent(chatbar)
+roll = CreatChatButton("rollMacro", UIParent, 21, 21, "LEFT", chatbar, "LEFT", 23, -12, 1)
 roll:SetAttribute("type", "macro")
 roll:SetAttribute("macrotext", "/roll")
-roll:SetWidth(21)
-roll:SetHeight(21)
-roll:SetPoint("LEFT",chatbar,"LEFT",23,-12)
-rollText = roll:CreateFontString("roll", "OVERLAY")
-rollText:SetFont(STANDARD_TEXT_FONT, 15, "OUTLINE")
-rollText:SetJustifyH("CENTER")
-rollText:SetWidth(25)
-rollText:SetHeight(25)
-rollText:SetText(Chatbar_rollText)
-rollText:SetPoint("CENTER", 0, 0)
-rollText:SetTextColor(210/255, 225/255, 30/255)
---roll.t = roll:CreateTexture()
---roll.t:SetAllPoints()
---roll.t:SetWidth(25)
---roll.t:SetHeight(25)
+rollText = CreatChatText(roll, STANDARD_TEXT_FONT, 15, "OUTLINE", 25, 25, Chatbar_rollText, "CENTER", 0, 0, 210/255, 225/255, 30/255)
 --roll.t:SetTexture("Interface\\Buttons\\UI-GroupLoot-Dice-Up")
 
 -- StatReport --
-local StatReportOut = CreateFrame("Button", "StatReportOutMacro", UIParent, "SecureActionButtonTemplate")
-StatReportOut:SetParent(chatbar)
+StatReportOut = CreatChatButton("StatReportOutMacro", UIParent, 21, 21, "LEFT", roll, "RIGHT", 0, 0, 1)
 StatReportOut:SetAttribute("type", "macro")
 StatReportOut:SetAttribute("macrotext", "/run ChatFrame_OpenChat(StatReport())")
-StatReportOut:SetWidth(21)
-StatReportOut:SetHeight(21)
-StatReportOut:SetPoint("LEFT",roll,"LEFT",21,0)
-StatReportOutText = StatReportOut:CreateFontString("StatReportOut", "OVERLAY")
-StatReportOutText:SetFont(STANDARD_TEXT_FONT, 15, "OUTLINE")
-StatReportOutText:SetJustifyH("CENTER")
-StatReportOutText:SetWidth(25)
-StatReportOutText:SetHeight(25)
-StatReportOutText:SetText(Chatbar_StatReport)
-StatReportOutText:SetPoint("CENTER", 0, 0)
-StatReportOutText:SetTextColor(30/255, 144/255, 255/255)
---StatReportOut.t = StatReportOut:CreateTexture()
---StatReportOut.t:SetAllPoints()
---StatReportOut.t:SetWidth(25)
---StatReportOut.t:SetHeight(25)
+StatReportOutText = CreatChatText(StatReportOut, STANDARD_TEXT_FONT, 15, "OUTLINE", 25, 25, Chatbar_StatReport, "CENTER", 0, 0, 30/255, 144/255, 255/255)
 --StatReportOut.t:SetTexture("Interface\\Buttons\\UI-GroupLoot-Dice-Up")
 
 -- "喊(/y)" --
-local ChannelYell = CreateFrame("Button", "ChannelYell", UIParent)
-ChannelYell:SetParent(chatbar)
-ChannelYell:SetWidth(21) 
-ChannelYell:SetHeight(21) 
-ChannelYell:SetPoint("LEFT",StatReportOut,"RIGHT",0,0) 
+ChannelYell = CreatChatButton("ChannelYell", UIParent, 21, 21, "LEFT", StatReportOut, "RIGHT", 0, 0, 1)
 ChannelYell:RegisterForClicks("AnyUp")
-ChannelYell:SetScript("OnClick", function() ChannelYell_OnClick() end)
-ChannelYellText = ChannelYell:CreateFontString("ChannelYellText", "OVERLAY")
-ChannelYellText:SetFont(STANDARD_TEXT_FONT, 15, "OUTLINE")
-ChannelYellText:SetJustifyH("CENTER")
-ChannelYellText:SetWidth(25)
-ChannelYellText:SetHeight(25)
-ChannelYellText:SetText(Chatbar_ChannelYell)
-ChannelYellText:SetPoint("CENTER", 0, 0)
-ChannelYellText:SetTextColor(255/255, 64/255, 64/255)
-function ChannelYell_OnClick() ChatFrame_OpenChat("/y ", chatFrame) end
+ChannelYell:SetScript("OnClick", function() ChatFrame_OpenChat("/y ", chatFrame) end)
+ChannelYellText = CreatChatText(ChannelYell, STANDARD_TEXT_FONT, 15, "OUTLINE", 25, 25, Chatbar_ChannelYell, "CENTER", 0, 0, 255/255, 64/255, 64/255)
 
 -- "说(/s)" --
-local ChannelSay = CreateFrame("Button", "ChannelSay", UIParent)
-ChannelSay:SetParent(chatbar)
-ChannelSay:SetWidth(21)  -- 按钮宽度
-ChannelSay:SetHeight(21)  -- 按钮高度
-ChannelSay:SetPoint("LEFT",ChannelYell,"RIGHT",0,0)   -- 锚点
+ChannelSay = CreatChatButton("ChannelSay", UIParent, 21, 21, "LEFT", ChannelYell, "RIGHT", 0, 0, 1)
 ChannelSay:RegisterForClicks("AnyUp")
-ChannelSay:SetScript("OnClick", function() ChannelSay_OnClick() end)
-ChannelSayText = ChannelSay:CreateFontString("ChannelSayText", "OVERLAY")
-ChannelSayText:SetFont(STANDARD_TEXT_FONT, 15, "OUTLINE") -- 字体设置
-ChannelSayText:SetJustifyH("CENTER")
-ChannelSayText:SetWidth(25)
-ChannelSayText:SetHeight(25)
-ChannelSayText:SetText(Chatbar_ChannelSay) -- 显示的文字
-ChannelSayText:SetPoint("CENTER", 0, 0)
-ChannelSayText:SetTextColor(1,1,1) -- 颜色
-function ChannelSay_OnClick() ChatFrame_OpenChat("/s ", chatFrame) end
+ChannelSay:SetScript("OnClick", function() ChatFrame_OpenChat("/s ", chatFrame) end)
+ChannelSayText = CreatChatText(ChannelSay, STANDARD_TEXT_FONT, 15, "OUTLINE", 25, 25, Chatbar_ChannelSay, "CENTER", 0, 0, 1,1,1)
 
 -- "队伍(/p)" --
-local ChannelParty = CreateFrame("Button", "ChannelParty", UIParent)
-ChannelParty:SetParent(chatbar)
-ChannelParty:SetWidth(21) 
-ChannelParty:SetHeight(21) 
-ChannelParty:SetPoint("LEFT",ChannelSay,"RIGHT",0,0) 
+ChannelParty = CreatChatButton("ChannelParty", UIParent, 21, 21, "LEFT", ChannelSay, "RIGHT", 0, 0, 1)
 ChannelParty:RegisterForClicks("AnyUp")
-ChannelParty:SetScript("OnClick", function() ChannelParty_OnClick() end)
-ChannelPartyText = ChannelParty:CreateFontString("ChannelPartyText", "OVERLAY")
-ChannelPartyText:SetFont(STANDARD_TEXT_FONT, 15, "OUTLINE")
-ChannelPartyText:SetJustifyH("CENTER")
-ChannelPartyText:SetWidth(25)
-ChannelPartyText:SetHeight(25)
-ChannelPartyText:SetText(Chatbar_ChannelParty)
-ChannelPartyText:SetPoint("CENTER", 0, 0)
-ChannelPartyText:SetTextColor(170/255, 170/255, 255/255)
-function ChannelParty_OnClick() ChatFrame_OpenChat("/p ", chatFrame) end
+ChannelParty:SetScript("OnClick", function() ChatFrame_OpenChat("/p ", chatFrame) end)
+ChannelPartyText = CreatChatText(ChannelParty, STANDARD_TEXT_FONT, 15, "OUTLINE", 25, 25, Chatbar_ChannelParty, "CENTER", 0, 0, 170/255, 170/255, 255/255)
 
 -- "团队通告(/rw)" --
-local ChannelRaidWarns = CreateFrame("Button", "ChannelRaidWarns", UIParent)
-ChannelRaidWarns:SetParent(chatbar)
-ChannelRaidWarns:SetWidth(21) 
-ChannelRaidWarns:SetHeight(21) 
-ChannelRaidWarns:SetPoint("LEFT",ChannelParty,"RIGHT",0,0) 
+ChannelRaidWarns = CreatChatButton("ChannelRaidWarns", UIParent, 21, 21, "LEFT", ChannelParty, "RIGHT", 0, 0, 1)
 ChannelRaidWarns:RegisterForClicks("AnyUp")
-ChannelRaidWarns:SetScript("OnClick", function() ChannelRaidWarns_OnClick() end)
-ChannelRaidWarnsText = ChannelRaidWarns:CreateFontString("ChannelRaidWarnsText", "OVERLAY")
-ChannelRaidWarnsText:SetFont(STANDARD_TEXT_FONT, 15, "OUTLINE")
-ChannelRaidWarnsText:SetJustifyH("CENTER")
-ChannelRaidWarnsText:SetWidth(25)
-ChannelRaidWarnsText:SetHeight(25)
-ChannelRaidWarnsText:SetText(Chatbar_ChannelRaidWarns)
-ChannelRaidWarnsText:SetPoint("CENTER", 0, 0)
-ChannelRaidWarnsText:SetTextColor(255/255, 69/255, 0) 
-function ChannelRaidWarns_OnClick() ChatFrame_OpenChat("/rw ", chatFrame) end
+ChannelRaidWarns:SetScript("OnClick", function() ChatFrame_OpenChat("/rw ", chatFrame) end)
+ChannelRaidWarnsText = CreatChatText(ChannelRaidWarns, STANDARD_TEXT_FONT, 15, "OUTLINE", 25, 25, Chatbar_ChannelRaidWarns, "CENTER", 0, 0, 255/255, 69/255, 05)
 
 -- "团队(/raid)" --
-local ChannelRaid = CreateFrame("Button", "ChannelRaid", UIParent)
-ChannelRaid:SetParent(chatbar)
-ChannelRaid:SetWidth(21) 
-ChannelRaid:SetHeight(21) 
-ChannelRaid:SetPoint("LEFT",ChannelRaidWarns,"RIGHT",0,0) 
+ChannelRaid = CreatChatButton("ChannelRaid", UIParent, 21, 21, "LEFT", ChannelRaidWarns, "RIGHT", 0, 0, 1)
 ChannelRaid:RegisterForClicks("AnyUp")
-ChannelRaid:SetScript("OnClick", function() ChannelRaid_OnClick() end)
-ChannelRaidText = ChannelRaid:CreateFontString("ChannelRaidText", "OVERLAY")
-ChannelRaidText:SetFont(STANDARD_TEXT_FONT, 15, "OUTLINE")
-ChannelRaidText:SetJustifyH("CENTER")
-ChannelRaidText:SetWidth(25)
-ChannelRaidText:SetHeight(25)
-ChannelRaidText:SetText(Chatbar_ChannelRaid)
-ChannelRaidText:SetPoint("CENTER", 0, 0)
-ChannelRaidText:SetTextColor(255/255, 127/255, 0)
-function ChannelRaid_OnClick() ChatFrame_OpenChat("/raid ", chatFrame) end
+ChannelRaid:SetScript("OnClick", function() ChatFrame_OpenChat("/raid ", chatFrame) end)
+ChannelRaidWarnsText = CreatChatText(ChannelRaid, STANDARD_TEXT_FONT, 15, "OUTLINE", 25, 25, Chatbar_ChannelRaid, "CENTER", 0, 0, 255/255, 127/255, 0)
 
 -- "副本(/i)" --
-local ChannelBattleGround = CreateFrame("Button", "ChannelBattleGround", UIParent)
-ChannelBattleGround:SetParent(chatbar)
-ChannelBattleGround:SetWidth(21) 
-ChannelBattleGround:SetHeight(21) 
-ChannelBattleGround:SetPoint("LEFT",ChannelRaid,"RIGHT",0,0) 
+ChannelBattleGround = CreatChatButton("ChannelBattleGround", UIParent, 21, 21, "LEFT", ChannelRaid, "RIGHT", 0, 0, 1)
 ChannelBattleGround:RegisterForClicks("AnyUp")
-ChannelBattleGround:SetScript("OnClick", function() ChannelBattleGround_OnClick() end)
-ChannelBattleGroundText = ChannelBattleGround:CreateFontString("ChannelBattleGroundText", "OVERLAY")
-ChannelBattleGroundText:SetFont(STANDARD_TEXT_FONT, 15, "OUTLINE")
-ChannelBattleGroundText:SetJustifyH("CENTER")
-ChannelBattleGroundText:SetWidth(25)
-ChannelBattleGroundText:SetHeight(25)
-ChannelBattleGroundText:SetText(Chatbar_ChannelBattleGround)
-ChannelBattleGroundText:SetPoint("CENTER", 0, 0)
-ChannelBattleGroundText:SetTextColor(255/255, 127/255, 0)
-function ChannelBattleGround_OnClick() ChatFrame_OpenChat("/i ", chatFrame) end
+ChannelBattleGround:SetScript("OnClick", function() ChatFrame_OpenChat("/i ", chatFrame) end)
+ChannelBattleGroundText = CreatChatText(ChannelBattleGround, STANDARD_TEXT_FONT, 15, "OUTLINE", 25, 25, Chatbar_ChannelBattleGround, "CENTER", 0, 0, 255/255, 127/255, 0)
 
 -- "公会(/g)" --
-local ChannelGuild = CreateFrame("Button", "ChannelGuild", UIParent)
-ChannelGuild:SetParent(chatbar)
-ChannelGuild:SetWidth(21) 
-ChannelGuild:SetHeight(21) 
-ChannelGuild:SetPoint("LEFT",ChannelBattleGround,"RIGHT",0,0) 
+ChannelGuild = CreatChatButton("ChannelGuild", UIParent, 21, 21, "LEFT", ChannelBattleGround, "RIGHT", 0, 0, 1)
 ChannelGuild:RegisterForClicks("AnyUp")
-ChannelGuild:SetScript("OnClick", function() ChannelGuild_OnClick() end)
-ChannelGuildText = ChannelGuild:CreateFontString("ChannelGuildText", "OVERLAY")
-ChannelGuildText:SetFont(STANDARD_TEXT_FONT, 15, "OUTLINE")
-ChannelGuildText:SetJustifyH("CENTER")
-ChannelGuildText:SetWidth(25)
-ChannelGuildText:SetHeight(25)
-ChannelGuildText:SetText(Chatbar_ChannelGuild)
-ChannelGuildText:SetPoint("CENTER", 0, 0)
-ChannelGuildText:SetTextColor(64/255, 255/255, 64/255)
-function ChannelGuild_OnClick() ChatFrame_OpenChat("/g ", chatFrame) end
+ChannelGuild:SetScript("OnClick", function() ChatFrame_OpenChat("/g ", chatFrame) end)
+ChannelBattleGroundText = CreatChatText(ChannelGuild, STANDARD_TEXT_FONT, 15, "OUTLINE", 25, 25, Chatbar_ChannelGuild, "CENTER", 0, 0, 64/255, 255/255, 64/255)
 
 -- 加入/离开大脚世界频道
 if GetLocale() == "zhCN" then
-local BF = CreateFrame("Button", "BF", UIParent)
-BF:SetParent(chatbar)
-BF:SetWidth(21) 
-BF:SetHeight(21) 
-BF:SetPoint("LEFT",ChannelGuild,"RIGHT",0,0)
+BF = CreatChatButton("BF", UIParent, 21, 21, "LEFT", ChannelGuild, "RIGHT", 0, 0, 1)
 BF:RegisterForClicks("AnyUp")
 BF:RegisterEvent("PLAYER_LOGIN")
 BF:RegisterEvent("CHANNEL_UI_UPDATE") 
@@ -757,25 +386,10 @@ BF:SetScript("OnEvent", function()
 	end)
 end)
 
-BFText = BF:CreateFontString("BFText", "OVERLAY")
-BFText:SetFont(STANDARD_TEXT_FONT, 15, "OUTLINE")
-BFText:SetJustifyH("CENTER")
-BFText:SetWidth(25)
-BFText:SetHeight(25)
-BFText:SetText("世")
-BFText:SetPoint("CENTER", 0, 0)
-BFText:SetTextColor(255/255, 200/255, 150/255)
+BFText = CreatChatText(BF, STANDARD_TEXT_FONT, 15, "OUTLINE", 25, 25, "世", "CENTER", 0, 0, 255/255, 200/255, 150/255)
 end
 
 ------------------------------------------------------     ChatEmote     -----------------------------------------------------
-local math,table,string,pairs,type,select,tonumber,floor,unpack=math,table,string,pairs,type,select,tonumber,floor,unpack
-local _
-
-local GameTooltip=GameTooltip
-local GetCurrentResolution=GetCurrentResolution
-local GetScreenResolutions=GetScreenResolutions
-local ChatEdit_ChooseBoxForSend=ChatEdit_ChooseBoxForSend
-
 local Emote_Panel_STRING_1="表情面板"
 local Emote_Panel_STRING_2="<按住Ctrl拖动>"
 local Locale={
@@ -1099,33 +713,61 @@ local _xBNSendConversationMessage=BNSendConversationMessage
 --[[--------------------------------------------------------------------
 	ChatLinkTooltips	Written by Junxx EU-Khaz'goroth <addons@colordesigns.de>
 ----------------------------------------------------------------------]]
-local supportedType = { item = true, achievement = true, spell = true, quest = true, enchant = true, glyph = true, unit = true, talent = true, }
-local CompareShowing
+local showLinkType = {
+    -- 1 Normal tooltip things:
+    achievement = 1, enchant = 1, glyph = 1, item = 1, instancelock = 1, quest = 1, spell = 1, talent = 1, unit = 1, currency = 1, instancelock  = 1, ptalent = 1,
+    -- 2 Special tooltip things:
+    battlepet = 2, battlePetAbil = 2, garrfollowerability = 2, garrfollower = 2, garrmission = 2,
+}
+local CompareShowing, currentLinkType, itemRefLink, itemRefText, itemRefFrame
+
+local function OnHyperlinkEnter(frame, link, text)
+    currentLinkType = showLinkType[link:match("(%a+):%d+")]
+    if currentLinkType == 1 then
+        GameTooltip:SetOwner(ChatFrame1Tab, "ANCHOR_TOPLEFT", 20, 20)
+        GameTooltip:SetHyperlink(link)
+        GameTooltip:Show()
+        CompareShowing = true
+    elseif currentLinkType == 2 then
+        -- Uses a special tooltip, just let the default function handle it.
+        -- Postitione
+        ItemRefTooltip:SetPoint("BOTTOMLEFT",ChatFrame1Tab,"TOPLEFT", 20, 20)
+        FloatingGarrisonMissionTooltip:SetPoint("BOTTOMLEFT",ChatFrame1Tab,"TOPLEFT", 20, 20)
+        FloatingGarrisonFollowerTooltip:SetPoint("BOTTOMLEFT",ChatFrame1Tab,"TOPLEFT", 20, 20)
+        FloatingGarrisonFollowerAbilityTooltip:SetPoint("BOTTOMLEFT",ChatFrame1Tab,"TOPLEFT", 20, 20)
+        SetItemRef(link, text, "LeftButton", frame)
+        itemRefLink, itemRefText, itemRefFrame = link, text, frame
+        CompareShowing = nil
+    end
+end
+
+local function OnHyperlinkLeave(frame, link, text)
+    if currentLinkType == 1 then
+        GameTooltip:Hide()
+        CompareShowing = nil
+    elseif currentLinkType == 2 then
+        -- Uses a special tooltip, just let the default function handle it.
+        SetItemRef(itemRefLink, itemRefText, "LeftButton", itemRefFrame)
+        itemRefLink, itemRefText, itemRefFrame = nil,nil,nil
+        CompareShowing = nil
+    end
+    currentLinkType = nil
+end
 
 local ChatLinkTooltips = CreateFrame("Frame")
 ChatLinkTooltips:RegisterEvent("MODIFIER_STATE_CHANGED")
 ChatLinkTooltips:SetScript("OnEvent", function(self, event, key, state)
 	if CompareShowing and (key == "LSHIFT" or key == "RSHIFT") and not GameTooltip:IsEquippedItem() then
 		if state == 1 then
-			GameTooltip_ShowCompareItem(GameTooltip)
+				GameTooltip_ShowCompareItem(GameTooltip)
 		else
 			ShoppingTooltip1:Hide()
 			ShoppingTooltip2:Hide()
+			--ShoppingTooltip3:Hide()
 		end
 	end
 end)
-local function OnHyperlinkEnter(self, linkData, link)
-	local linkType = strmatch(linkData, "^([^:]+)")
-	if linkType and supportedType[linkType] then
-		GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT")
-		GameTooltip:SetHyperlink(linkData)
-		CompareShowing = true
-	end
-end
-local function OnHyperlinkLeave(self, linkData, link)
-	GameTooltip:Hide()
-	CompareShowing = nil
-end
+
 for i = 1, NUM_CHAT_WINDOWS do
 	local frame = _G["ChatFrame"..i]
 	frame:SetScript("OnHyperlinkEnter", OnHyperlinkEnter)
@@ -1166,7 +808,7 @@ end
 --[[--------------------------------------------------------------------
 SlashIn
 ----------------------------------------------------------------------]]
-local addonName, SlashIn = ...
+local _, SlashIn = ...
 LibStub("AceTimer-3.0"):Embed(SlashIn)
 
 local print = print
@@ -1183,8 +825,9 @@ function SlashCmdList.SLASHIN_IN(msg)
 	local secs, command = msg:match("^([^%s]+)%s+(.*)$")
 	secs = tonumber(secs)
 	if (not secs) or (#command == 0) then
-		print("usage:\n /in <seconds> <command>")
-		print("example:\n /in 1.5 /say hi")
+		print("|cff33ff99SlashIn:|r")
+		print("|cff33ff99Usage:|r /in <seconds> <command>")
+		print("|cff33ff99Example:|r /in 1.5 /say hi")
 	else
 		SlashIn:ScheduleTimer(OnCallback, secs, command)
 	end
@@ -1205,7 +848,7 @@ Autoinvite:SetScript("OnEvent", function(self, event, ...)
 				end
 			else
 				if not MaoRUISettingDB["Chat"]["GuildInvite"] or B.UnitInGuild(arg2) then
-					InviteUnit(arg2)
+					InviteToGroup(arg2)
 				end
 			end
 		end
@@ -1221,14 +864,189 @@ local function AddLootIcons(self, event, message, ...)
 	return false, message, ...
 end
 ChatFrame_AddMessageEventFilter("CHAT_MSG_LOOT", AddLootIcons)]]
+
+	
+	
+--------------------------------------- 支持上下箭頭選取历史-- Author:M-------------------------------------
+local chatHistory = {}
+local function AddHistoryLine(self, text)
+    if (not text or text == "") then return end
+    local type = self:GetAttribute("chatType")
+    if (type == "WHISPER") then text = text:gsub("^/%w+%s*%S+%s*", "")
+    elseif (string.find(text, "^/script")) then
+    else text = text:gsub("^/%w+%s*", "") end
+    if (text == "") then return end
+    for i, v in ipairs(chatHistory[self]) do
+        if (v == text) then
+            table.remove(chatHistory[self], i)
+            break
+        end
+    end
+    table.insert(chatHistory[self], 1, text)
+end
+local function GetHistoryLine(self, keyPress)
+    local increment
+    if (keyPress == "UP") then increment = 1
+    elseif (keyPress == "DOWN") then increment = -1
+    else return end
+    chatHistory[self].index = chatHistory[self].index + increment
+    local text = chatHistory[self][chatHistory[self].index]
+    if (text) then self:SetText(text)
+		self:SetCursorPosition(strlen(text))
+    else chatHistory[self].index = chatHistory[self].index - increment end
+end
+local function ResetHistoryIndex(self) chatHistory[self].index = 0 end
+
+local function simplify(self)
+    if not self or self.hasSimplified then return end
+    local name = self:GetName()
+    self.hasSimplified = true
+    self:SetClampRectInsets(0, 0, 0, 0)
+    self:SetMaxResize(UIParent:GetWidth(), UIParent:GetHeight())
+    self:SetMinResize(80, 43)
+    --_G[name.."ButtonFrame"]:Hide()
+    --_G[name.."ButtonFrame"]:HookScript("OnShow", _G[name.."ButtonFrame"].Hide)
+    _G[name.."EditBoxLeft"]:Hide()
+    _G[name.."EditBoxMid"]:Hide()
+    _G[name.."EditBoxRight"]:Hide()
+    local editbox = _G[name.."EditBox"]
+    editbox:ClearAllPoints()
+    editbox:SetPoint("BOTTOM",_G[self:GetName().."Tab"],"TOP",0,-21) --調整輸入框的位置
+    editbox:SetPoint("LEFT", self, -5, 0)
+    editbox:SetPoint("RIGHT", self, 10, 0)
+    editbox:SetAltArrowKeyMode(false)
+    
+    chatHistory[editbox] = { index = 0 }
+    editbox:HookScript("OnEditFocusLost", ResetHistoryIndex)
+    editbox:HookScript("OnArrowPressed", GetHistoryLine)
+    hooksecurefunc(editbox, "AddHistoryLine", AddHistoryLine)
+    
+    local chatTab = _G[name.."Tab"]
+    local tabFont = chatTab:GetFontString()
+    tabFont:SetFont(tabFont:GetFont(), 12, "NORMAL")
+end
+do
+    ChatFontNormal:SetShadowOffset(1, -1)
+    ChatFontNormal:SetShadowColor(0, 0, 0, 0.9)
+    --所有聊天框簡化一下
+    for i = 1, NUM_CHAT_WINDOWS do
+        simplify(_G["ChatFrame"..i])
+    end
+
+      --动态创建的聊天框也要处理,並且讓密語窗口支持雙擊回復
+    hooksecurefunc("FCF_SetTemporaryWindowType", function(chatFrame, chatType, chatTarget)
+        simplify(chatFrame)
+        chatFrame:ScrollToBottom()
+        _G[chatFrame:GetName().."Tab"]:SetScript("OnDoubleClick", function(self)
+            if (chatType == "WHISPER" or chatType == "BN_WHISPER") then
+                local editBox = ChatEdit_ChooseBoxForSend()
+                editBox:SetAttribute("chatType", chatType)
+                editBox:SetAttribute("tellTarget", chatTarget)
+                ChatEdit_ActivateChat(editBox)
+                editBox:SetText(editBox:GetText())
+            end
+        end)
+    end)
+end
+
+--------------------------------------- 聊天信息複製-- Author:M-------------------------------------
+--注意規則順序, button(LeftButton/RightButton)可以指定鼠標左右鍵使用不同的邏輯
+local rules = {
+    --!!这两条不要更改
+    { pat = "|c%x+|HChatCopy|h.-|h|r",      repl = "" },   --去掉本插件定義的鏈接
+    { pat = "|c%x%x%x%x%x%x%x%x(.-)|r",     repl = "%1" }, --替換所有顔色值
+    --以下為左鍵特有
+    { pat = CHAT_WHISPER_GET:gsub("%%s",".-"), repl = "", button = "LeftButton" }, --密語
+    { pat = CHAT_WHISPER_INFORM_GET:gsub("%%s",".-"), repl = "", button = "LeftButton" }, --密語
+    { pat = "|Hchannel:.-|h.-|h",           repl = "", button = "LeftButton" }, --(L)去掉頻道文字
+    { pat = "|Hplayer:.-|h.-|h" .. ":",     repl = "", button = "LeftButton" }, --(L)去掉發言玩家名字
+    { pat = "|Hplayer:.-|h.-|h" .. "：",    repl = "", button = "LeftButton" }, --(L)去掉發言玩家名字
+    { pat = "|HBNplayer:.-|h.-|h" .. ":",   repl = "", button = "LeftButton" }, --(L)去掉戰網發言玩家名字
+    { pat = "|HBNplayer:.-|h.-|h" .. "：",  repl = "", button = "LeftButton" }, --(L)去掉戰網發言玩家名字
+    --以下為右鍵特有
+    { pat = "|Hchannel:.-|h(.-)|h",         repl = "%1", button = "RightButton" }, --(R)留下頻道文字
+    { pat = "|Hplayer:.-|h(.-)|h",          repl = "%1", button = "RightButton" }, --(R)留下發言玩家名字
+    { pat = "|HBNplayer:.-|h(.-)|h",        repl = "%1", button = "RightButton" }, --(R)留下戰網發言玩家名字
+    --!!这幾條不要更改
+    { pat = "|H.-|h(.-)|h",                 repl = "%1" },  --替換所有超連接
+    { pat = "|TInterface\\TargetingFrame\\UI%-RaidTargetingIcon_(%d):0|t", repl = "{rt%1}" },
+    { pat = "|T.-|t",                       repl = "" },    --替換所有素材
+    { pat = "%|[rcTtHhkK]",                 repl = "" },    --去掉單獨的|r|c|K
+    { pat = "^%s+",                         repl = "" },    --去掉空格
+}
+--替換字符
+local function clearMessage(msg, button)
+    for _, rule in ipairs(rules) do
+        if (not rule.button or rule.button == button) then
+            msg = msg:gsub(rule.pat, rule.repl)
+        end
+    end
+    return msg
+end
+--顯示信息
+local function showMessage(msg, button)
+    local editBox = ChatEdit_ChooseBoxForSend()
+    msg = clearMessage(msg, button)
+    ChatEdit_ActivateChat(editBox)
+    editBox:SetText(editBox:GetText() .. msg)
+    editBox:HighlightText()
+end
+--獲取複製的信息
+local function getMessage(...)
+    local object
+    for i = 1, select("#", ...) do
+        object = select(i, ...)
+        if (object:IsObjectType("FontString") and MouseIsOver(object)) then
+            return object:GetText()
+        end
+    end
+    return ""
+end
+--HACK
+local _SetItemRef = SetItemRef
+SetItemRef = function(link, text, button, chatFrame)
+    if (link:sub(1,8) == "ChatCopy") then
+        local msg = getMessage(chatFrame.FontStringContainer:GetRegions())
+        return showMessage(msg, button)
+    end
+    _SetItemRef(link, text, button, chatFrame)
+end
+--HACK
+if (CHAT_TIMESTAMP_FORMAT) then
+    if (not string.find(CHAT_TIMESTAMP_FORMAT, "ChatCopy")) then
+        CHAT_TIMESTAMP_FORMAT = "|cff68ccef|HChatCopy|h"..CHAT_TIMESTAMP_FORMAT.."|h|r"
+    end
+end
+local function AddMessage(self, text, ...)
+    if (type(text) ~= "string") then
+        text = tostring(text)
+    end
+    if (CHAT_TIMESTAMP_FORMAT) then
+        if (not string.find(CHAT_TIMESTAMP_FORMAT, "ChatCopy")) then
+            CHAT_TIMESTAMP_FORMAT = "|cff68ccef|HChatCopy|h"..CHAT_TIMESTAMP_FORMAT.."|h|r"
+        end
+        if (not string.find(text, "%|HChatCopy%|h")) then
+            text = format("|cff68ccef|HChatCopy|h%s|h|r%s", BetterDate(CHAT_TIMESTAMP_FORMAT, time()), text)
+        end
+    else
+        text = format("|cff68ccef|HChatCopy|h%s|h|r %s", "-", text)
+    end
+    self.OrigAddMessage(self, text, ...)
+end
+local chatFrame
+for i = 1, NUM_CHAT_WINDOWS do
+    chatFrame = _G["ChatFrame" .. i]
+    if (chatFrame) then
+        chatFrame.OrigAddMessage = chatFrame.AddMessage
+        chatFrame.AddMessage = AddMessage
+    end
+end
+
 --------------------------------------- 聊天超鏈接增加ICON-- @Author:M
 --生成新的ICON超链接
 local function GetHyperlink(Hyperlink, texture)
-    if not texture then
-        return Hyperlink
-    else
-        return "|HChatLinkIcon|h|T"..texture..":0|t|h" .. Hyperlink
-    end
+    if not texture then return Hyperlink
+    else return "|HChatLinkIcon|h|T"..texture..":0|t|h" .. Hyperlink end
 end
 --等级图标显示
 local function SetChatLinkIcon(Hyperlink)
@@ -1243,82 +1061,102 @@ local function SetChatLinkIcon(Hyperlink)
     end
     return GetHyperlink(Hyperlink, texture)
 end
-
 ------------------------------------------------ 聊天超鏈接增加物品等級 (支持大祕境鑰匙等級)-- @Author:M
-local tooltip = CreateFrame("GameTooltip", "ChatLinkLevelTooltip", UIParent, "GameTooltipTemplate")
-local ItemLevelPattern = gsub(ITEM_LEVEL, "%%d", "(%%d+)")
-local ARMOR = ARMOR or "Armor"
-local WEAPON = WEAPON or "Weapon"
-local RELICSLOT = RELICSLOT or "Relic"
-
---获取物品实际等级
-local function GetItemLevelAndTexture(ItemLink)
-    local _, _, _, _, _, class, subclass, _, equipSlot, texture = GetItemInfo(ItemLink)
-    if (not texture) then return end
-    local text, level, slotText
-    tooltip:SetOwner(UIParent, "ANCHOR_NONE")
-    tooltip:ClearLines()
-    tooltip:SetHyperlink(ItemLink)
-    for i = 2, 4 do
-        text = _G[tooltip:GetName().."TextLeft"..i]:GetText() or ""
-        level = string.match(text, ItemLevelPattern)
-        if (level) then break end
-    end
-    if (equipSlot and string.find(equipSlot, "INVTYPE_")) then
-        slotText = _G[equipSlot]
-    elseif (class == ARMOR) then
-        slotText = class
-    elseif (subclass and string.find(subclass, RELICSLOT)) then
-        slotText = RELICSLOT
-    end
-    if (level and slotText) then
-        level = slotText .. " <" .. level .. "> " 
-    end
-    return level, texture
-end
-
---等级图标显示
-local function SetChatLinkLevel(Hyperlink)
+--等级显示
+local function ChatItemLevel(Hyperlink)
     local link = string.match(Hyperlink, "|H(.-)|h")
-    local level, texture = GetItemLevelAndTexture(link)
+    local name, _, _, _, _, class, subclass, _, equipSlot = GetItemInfo(link)
+    local level = GetDetailedItemLevelInfo(link)
+    local yes = true
     if (level) then
-        Hyperlink = Hyperlink:gsub("|h%[(.-)%]|h", "|h["..level.."%1]|h")
+        if (equipSlot and string.find(equipSlot, "INVTYPE_")) then
+            level = format("%s(%s)", level, _G[equipSlot] or equipSlot)
+        elseif (class == ARMOR) then
+            level = format("%s(%s)", level, class)
+        elseif (subclass and string.find(subclass, RELICSLOT)) then
+            level = format("%s(%s)", level, RELICSLOT)
+        else
+            yes = false
+        end
+        if (yes) then
+            Hyperlink = Hyperlink:gsub("|h%[(.-)%]|h", "|h "..level.." ["..name.."]|h")
+        end
     end
     return Hyperlink
 end
 
 --鑰匙等級
-local function SetChatLinkKeystoneLevel(Hyperlink)
+local function KeystoneLevel(Hyperlink)
     local map, level, name = string.match(Hyperlink, "|Hkeystone:(%d+):(%d+):.-|h(.-)|h")
-    if (map and level and not string.find(name, level)) then
-        local name = C_ChallengeMode.GetMapInfo(map)
-        Hyperlink = Hyperlink:gsub("|h%[(.-)%]|h", "|h["..level..":"..name.."]|h")
+    if (map and level and name and not string.find(name, level)) then
+        name = C_ChallengeMode.GetMapInfo(map)
+        Hyperlink = Hyperlink:gsub("|h%[(.-)%]|h", "|h-"..level.."- ["..name.."]|h")
     end
     return Hyperlink
 end
 
+
+------------------------------------------------ ChatLinkIcon + ChatLinkLevel
 --过滤器
 local function filter(self, event, msg, ...)
     msg = msg:gsub("(|H%w+:%d+:.-|h.-|h)", SetChatLinkIcon)
-    msg = msg:gsub("(|Hitem:%d+:.-|h.-|h)", SetChatLinkLevel)
+    msg = msg:gsub("(|Hitem:%d+:.-|h.-|h)", ChatItemLevel)
+    msg = msg:gsub("(|Hkeystone:%d+:%d+:.-|h.-|h)", KeystoneLevel)
     return false, msg, ...
 end
 
-    ChatFrame_AddMessageEventFilter("CHAT_MSG_LOOT", filter)
-		ChatFrame_AddMessageEventFilter("CHAT_MSG_BATTLEGROUND", filter);
-		ChatFrame_AddMessageEventFilter("CHAT_MSG_BATTLEGROUND_LEADER", filter);
-		ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", filter);
-		ChatFrame_AddMessageEventFilter("CHAT_MSG_EMOTE", filter);
-		ChatFrame_AddMessageEventFilter("CHAT_MSG_GUILD", filter);
-		ChatFrame_AddMessageEventFilter("CHAT_MSG_INSTANCE_CHAT", filter);
-		ChatFrame_AddMessageEventFilter("CHAT_MSG_INSTANCE_CHAT_LEADER", filter);
-		ChatFrame_AddMessageEventFilter("CHAT_MSG_OFFICER", filter);
-		ChatFrame_AddMessageEventFilter("CHAT_MSG_PARTY", filter);
-		ChatFrame_AddMessageEventFilter("CHAT_MSG_PARTY_LEADER", filter);
-		ChatFrame_AddMessageEventFilter("CHAT_MSG_RAID", filter);
-		ChatFrame_AddMessageEventFilter("CHAT_MSG_RAID_LEADER", filter);
-		ChatFrame_AddMessageEventFilter("CHAT_MSG_RAID_WARNING", filter);
-		ChatFrame_AddMessageEventFilter("CHAT_MSG_SAY", filter);
-		ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", filter);
+    
+		
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", filter)
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_SAY", filter)
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_YELL", filter)
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", filter)
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_BN_WHISPER", filter)
 		ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", filter)
-		ChatFrame_AddMessageEventFilter("CHAT_MSG_YELL", filter);
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_RAID", filter)
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_RAID_LEADER", filter)
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_PARTY", filter)
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_PARTY_LEADER", filter)
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_GUILD", filter)
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_BATTLEGROUND", filter)
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_BATTLEGROUND_LEADER", filter)
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_INSTANCE_CHAT", filter)
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_INSTANCE_CHAT_LEADER", filter)
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_LOOT", filter)
+			
+		
+		
+		
+
+
+function module:OnLogin()
+	-- Default
+	SetCVar("chatStyle", "classic")
+	InterfaceOptionsSocialPanelChatStyle:Hide()
+	if not MaoRUISettingDB["Chat"]["Sticky"] then
+		ChatTypeInfo["WHISPER"].sticky = 0    -- 密语
+		ChatTypeInfo["BN_WHISPER"].sticky = 0  -- 战网好友密语
+	end
+	-- ChannelRename
+	local gsub = _G.string.gsub
+	for i = 1, NUM_CHAT_WINDOWS do
+		if ( i ~= 2 ) then
+			local f = _G["ChatFrame"..i]
+			local am = f.AddMessage
+			f.AddMessage = function(frame, text, ...)
+					text = text:gsub("|h%[(%d+)%. 大脚世界频道%]|h", "|h%[%1%.世界%]|h")
+					text = text:gsub("|h%[(%d+)%. 大腳世界頻道%]|h", "|h%[%1%.世界%]|h")
+					return am(frame, text, ...)  --return am(frame, text:gsub("|h%[(%d+)%..-%]|h", "|h[%1]|h"), ...)
+			end
+		end
+	end
+  --chat skinning
+  for i = 1, NUM_CHAT_WINDOWS do
+   if not MaoRUISettingDB["Chat"]["Chatbg"] then     -- 聊天标签背景
+    for index, value in pairs({"Left", "Middle", "Right", "Glow", "SelectedLeft", "SelectedRight", "SelectedMiddle",}) do _G['ChatFrame'..i..'Tab'..value]:SetTexture(nil) end
+   end
+   if not MaoRUISettingDB["Chat"]["Chattabbg"] then    -- 聊天框背景
+    for g = 1, #CHAT_FRAME_TEXTURES do _G["ChatFrame"..i..CHAT_FRAME_TEXTURES[g]]:SetTexture(nil) end
+   end
+  end
+end

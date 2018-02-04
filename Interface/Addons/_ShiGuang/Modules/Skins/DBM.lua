@@ -147,107 +147,24 @@ function module:DBMSkin()
 			end
 		end
 	end
-
-	local SkinBossTitle = function()
-		if not DBMBossHealthDropdown then return end
-		local anchor = DBMBossHealthDropdown:GetParent()
-		if not anchor.styled then
-			local header={anchor:GetRegions()}
-				if header[1]:IsObjectType("FontString") then
-					header[1]:SetFont(I.Font[1], 14, "OUTLINE")
-					header[1]:SetTextColor(1, 1, 1)
-					header[1]:SetShadowColor(0, 0, 0, 0)
-					anchor.styled = true	
-				end
-			header = nil
-		end
-		anchor = nil
-	end
-
-	local SkinBoss = function()
-		local count = 1
-		while (_G[format("DBM_BossHealth_Bar_%d", count)]) do
-			local bar			= _G[format("DBM_BossHealth_Bar_%d", count)]
-			local background	= _G[bar:GetName().."BarBorder"]
-			local progress   	= _G[bar:GetName().."Bar"]
-			local name 		 	= _G[bar:GetName().."BarName"]
-			local timer  	 	= _G[bar:GetName().."BarTimer"]
-			local prev		 	= _G[format("DBM_BossHealth_Bar_%d", count-1)]	
-
-			if (count == 1) then
-				local	_, anch, _ ,_, _ = bar:GetPoint()
-				bar:ClearAllPoints()
-				if DBM_AllSavedOptions.HealthFrameGrowUp then
-					bar:SetPoint("BOTTOM", anch, "TOP" , 0 , 12)
-				else
-					bar:SetPoint("TOP", anch, "BOTTOM" , 0, -buttonsize)
-				end
-			else
-				bar:ClearAllPoints()
-				if DBM_AllSavedOptions.HealthFrameGrowUp then
-					bar:SetPoint("TOPLEFT", prev, "TOPLEFT", 0, buttonsize+4)
-				else
-					bar:SetPoint("TOPLEFT", prev, "TOPLEFT", 0, -(buttonsize+4))
-				end
-			end
-
-			if not bar.styled then
-				bar:SetHeight(buttonsize)
-				if not bar.bg then
-					bar.bg = CreateFrame("Frame", nil, bar)
-					bar.bg:SetPoint("TOPLEFT", 0, 0)
-					bar.bg:SetPoint("BOTTOMRIGHT", 0, 0)
-				end
-				M.CreateSD(bar.bg, 2, 4)
-				background:SetNormalTexture(nil)
-				bar.styled = true
-			end	
-	
-			if not progress.styled then
-				progress:SetStatusBarTexture(I.normTex)
-				progress.styled = true
-			end				
-			progress:ClearAllPoints()
-			progress:SetPoint("TOPLEFT", bar, "TOPLEFT", 2, -2)
-			progress:SetPoint("BOTTOMRIGHT", bar, "BOTTOMRIGHT", -2, 2)
-
-			if not name.styled then
-				name:ClearAllPoints()
-				name:SetPoint("LEFT", bar, "LEFT", 4, 2)
-				name:SetFont(I.Font[1], 14, "OUTLINE")
-				name:SetJustifyH("LEFT")
-				name:SetShadowColor(0, 0, 0, 0)
-				name.styled = true
-			end
-	
-			if not timer.styled then
-				timer:ClearAllPoints()
-				timer:SetPoint("RIGHT", bar, "RIGHT", -4, 2)
-				timer:SetFont(I.Font[1], 14, "OUTLINE")
-				timer:SetJustifyH("RIGHT")
-				timer:SetShadowColor(0, 0, 0, 0)
-				timer.styled = true
-			end
-			count = count + 1
-		end
-	end
-
-	-- mwahahahah, eat this ugly DBM.
 	hooksecurefunc(DBT, "CreateBar", SkinBars)
-	hooksecurefunc(DBM.BossHealth, "Show", SkinBossTitle)
-	hooksecurefunc(DBM.BossHealth, "AddBoss", SkinBoss)
-	hooksecurefunc(DBM.BossHealth, "UpdateSettings", SkinBoss)
 
 	local function SkinRange(self)
-		if not self.styled and DBMRangeCheckRadar then
-			local bg = CreateFrame("Frame", nil, DBMRangeCheckRadar)
-			bg:SetPoint("TOPLEFT", DBMRangeCheckRadar, "TOPLEFT", -2, 2)
-			bg:SetPoint("BOTTOMRIGHT", DBMRangeCheckRadar, "BOTTOMRIGHT", 2, -2)
-			bg:SetFrameLevel(0)
-			M.CreateBD(bg)
-			M.CreateTex(DBMRangeCheckRadar)
-			DBMRangeCheckRadar.text:SetFont(DBMRangeCheckRadar.text:GetFont(), 16, "OUTLINE")
-			self.styled = true
+		if DBMRangeCheckRadar and not DBMRangeCheckRadar.styled then
+			local bg = M.CreateBG(DBMRangeCheckRadar, 2)
+			M.CreateBD(bg, .3)
+			M.CreateTex(bg)
+
+			DBMRangeCheckRadar.styled = true
+		end
+
+		if DBMRangeCheck and not DBMRangeCheck.styled then
+			M.CreateBD(DBMRangeCheck)
+			M.CreateTex(DBMRangeCheck)
+			DBMRangeCheck.SetBackdropColor = M.Dummy
+			DBMRangeCheck.SetBackdropBorderColor = M.Dummy
+
+			DBMRangeCheck.styled = true
 		end
 	end
 	hooksecurefunc(DBM.RangeCheck, "Show", SkinRange)
@@ -255,9 +172,13 @@ function module:DBMSkin()
 	if DBM.InfoFrame then
 		DBM.InfoFrame:Show(5, "test")
 		DBM.InfoFrame:Hide()
-		DBMInfoFrame:HookScript("OnShow",function(self)
-			M.CreateBD(DBMInfoFrame, .6, 3)
-			M.CreateTex(DBMInfoFrame)
+		DBMInfoFrame:HookScript("OnShow", function(self)
+			if not self.Tex then
+				M.CreateBD(self, .6, 3)
+				M.CreateTex(self)
+				self.SetBackdropColor = M.Dummy
+				self.SetBackdropBorderColor = M.Dummy
+			end
 		end)
 	end
 
@@ -280,8 +201,8 @@ function module:DBMSkin()
 	-- Force Settings
 	if not DBM_AllSavedOptions["Default"] then DBM_AllSavedOptions["Default"] = {} end
 	DBM_AllSavedOptions["Default"]["BlockVersionUpdateNotice"] = true
-	DBT_AllPersistentOptions["Default"]["DBM"].BarYOffset = 15
-	DBT_AllPersistentOptions["Default"]["DBM"].HugeBarYOffset = 15
+	DBT_AllPersistentOptions["Default"]["DBM"].BarYOffset = 12
+	DBT_AllPersistentOptions["Default"]["DBM"].HugeBarYOffset = 12
 	if IsAddOnLoaded("DBM-VPYike") then
 		DBM_AllSavedOptions["Default"]["CountdownVoice"] = "VP:Yike"
 		DBM_AllSavedOptions["Default"]["ChosenVoicePack"] = "Yike"

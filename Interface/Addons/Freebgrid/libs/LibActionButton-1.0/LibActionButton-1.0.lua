@@ -29,7 +29,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ]]
 local MAJOR_VERSION = "LibActionButton-1.0"
-local MINOR_VERSION = 69
+local MINOR_VERSION = 71
 
 if not LibStub then error(MAJOR_VERSION .. " requires LibStub.") end
 local lib, oldversion = LibStub:NewLibrary(MAJOR_VERSION, MINOR_VERSION)
@@ -117,6 +117,13 @@ local ShowOverlayGlow, HideOverlayGlow
 local EndChargeCooldown
 
 local InitializeEventHandler, OnEvent, ForAllButtons, OnUpdate
+
+local function GameTooltip_GetOwnerForbidden()
+	if GameTooltip:IsForbidden() then
+		return nil
+	end
+	return GameTooltip:GetOwner()
+end
 
 local DefaultConfig = {
 	outOfRangeColoring = "button",
@@ -536,6 +543,7 @@ function Generic:OnEnter()
 end
 
 function Generic:OnLeave()
+	if GameTooltip:IsForbidden() then return end
 	GameTooltip:Hide()
 end
 
@@ -663,6 +671,7 @@ function InitializeEventHandler()
 	lib.eventFrame:RegisterEvent("UPDATE_BINDINGS")
 	lib.eventFrame:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
 	lib.eventFrame:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
+	lib.eventFrame:RegisterEvent("PLAYER_MOUNT_DISPLAY_CHANGED")
 
 	lib.eventFrame:RegisterEvent("ACTIONBAR_UPDATE_STATE")
 	lib.eventFrame:RegisterEvent("ACTIONBAR_UPDATE_USABLE")
@@ -702,8 +711,8 @@ end
 
 function OnEvent(frame, event, arg1, ...)
 	if (event == "UNIT_INVENTORY_CHANGED" and arg1 == "player") or event == "LEARNED_SPELL_IN_TAB" then
-		local tooltipOwner = GameTooltip:GetOwner()
-		if ButtonRegistry[tooltipOwner] then
+		local tooltipOwner = GameTooltip_GetOwnerForbidden()
+		if tooltipOwner and ButtonRegistry[tooltipOwner] then
 			tooltipOwner:SetTooltip()
 		end
 	elseif event == "ACTIONBAR_SLOT_CHANGED" then
@@ -737,24 +746,28 @@ function OnEvent(frame, event, arg1, ...)
 		for button in next, NonActionButtons do
 			UpdateUsable(button)
 		end
+	elseif event == "PLAYER_MOUNT_DISPLAY_CHANGED" then
+		for button in next, ActiveButtons do
+			UpdateUsable(button)
+		end
 	elseif event == "ACTIONBAR_UPDATE_COOLDOWN" then
 		for button in next, ActionButtons do
 			UpdateCooldown(button)
-			if GameTooltip:GetOwner() == button then
+			if GameTooltip_GetOwnerForbidden() == button then
 				UpdateTooltip(button)
 			end
 		end
 	elseif event == "SPELL_UPDATE_COOLDOWN" then
 		for button in next, NonActionButtons do
 			UpdateCooldown(button)
-			if GameTooltip:GetOwner() == button then
+			if GameTooltip_GetOwnerForbidden() == button then
 				UpdateTooltip(button)
 			end
 		end
 	elseif event == "LOSS_OF_CONTROL_ADDED" then
 		for button in next, ActiveButtons do
 			UpdateCooldown(button)
-			if GameTooltip:GetOwner() == button then
+			if GameTooltip_GetOwnerForbidden() == button then
 				UpdateTooltip(button)
 			end
 		end
@@ -1109,7 +1122,7 @@ function Update(self)
 
 	UpdateNewAction(self)
 
-	if GameTooltip:GetOwner() == self then
+	if GameTooltip_GetOwnerForbidden() == self then
 		UpdateTooltip(self)
 	end
 
@@ -1283,6 +1296,7 @@ function UpdateFlash(self)
 end
 
 function UpdateTooltip(self)
+	if GameTooltip:IsForbidden() then return end
 	if (GetCVar("UberTooltips") == "1") then
 		GameTooltip_SetDefaultAnchor(GameTooltip, self);
 	else

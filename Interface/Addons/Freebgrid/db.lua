@@ -165,18 +165,24 @@ local Indicators_class_default = {
 				color	= {r = 1, g = 0.0, b = 0.0},
 			},
 			["2"] = {
-				id	= {157007},		--"洞察道标"
+				id	= {200025},		--"美德道标"
 				isbuff	= true,
 				mine	= true,
 				lack	= false,
 				etime	= false,
 			},
 		},
-        ["TR"] = {},
-        ["BL"] = {
+    ["TR"] = {},
+    ["BL"] = {
 			["1"] = {
 				id 		= {53563, 156910},		--"圣光道标, 信仰道标"
 				isbuff	= true,
+				mine	= true,
+				lack	= false,
+			},
+			["2"] = {
+				id 		= {243174},		--"神圣黎明"
+				isbuff	= false,
 				mine	= true,
 				lack	= false,
 			},
@@ -184,7 +190,7 @@ local Indicators_class_default = {
 		["RC"] = {},
 		["BR"] = {
 			["1"] = {
-				id 		= {157007},		--"洞察道标"
+				id 		= {200025},		--"美德道标"
 				isbuff	= true,
 				mine	= false,
 				lack	= false,

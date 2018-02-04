@@ -1,8 +1,8 @@
-local B, C, L, DB = unpack(select(2, ...))
-local module = NDui:GetModule("Skins")
+local M, R, U, I = unpack(select(2, ...))
+local module = MaoRUI:GetModule("Skins")
 
 function module:SkadaSkin()
-	if not NDuiDB["Skins"]["Skada"] then return end
+	if not MaoRUISettingDB["Skins"]["Skada"] then return end
 	if not IsAddOnLoaded("Skada") then return end
 
 	local Skada = Skada
@@ -54,20 +54,12 @@ function module:SkadaSkin()
 			B.CreateBD(skada.shadow, .5, 3)
 			B.CreateTex(skada.shadow)
 
-			local Cskada = CreateFrame("Button", nil, skada)
+			local Cskada = M.CreateButton(skada, 20, 100, ">", 18)
 			Cskada:SetPoint("RIGHT", skada, "LEFT", 0, 0)
-			Cskada:SetSize(20, 100)
-			B.CreateBD(Cskada, .5, 3)
-			B.CreateFS(Cskada, 18, ">", true)
-			B.CreateBC(Cskada, .5)
 			B.CreateTex(Cskada)
-			local Oskada = CreateFrame("Button", nil, UIParent)
+			local Oskada = M.CreateButton(UIParent, 20, 100, "<", 18)
 			Oskada:Hide()
 			Oskada:SetPoint("RIGHT", skada, "RIGHT", 5, 0)
-			Oskada:SetSize(20, 100)
-			B.CreateBD(Oskada, .5, 3)
-			B.CreateFS(Oskada, 18, "<", true)
-			B.CreateBC(Oskada, .5)
 			B.CreateTex(Oskada)
 			Cskada:SetScript("OnClick", function()
 				Oskada:Show()
@@ -138,14 +130,10 @@ function module:SkadaSkin()
 		EmbedSkada()
 	end
 
-	NDui:EventFrame("PLAYER_ENTERING_WORLD"):SetScript("OnEvent", function(self)
-		self:UnregisterAllEvents()
-		self = nil
-		EmbedSkada()
-	end)
+	EmbedSkada()
 
 	-- Change Skada Default Settings
-	LibStub("LibSharedMedia-3.0"):Register("statusbar", "normTex", DB.normTex)
+	LibStub("LibSharedMedia-3.0"):Register("statusbar", "normTex", I.normTex)
 	Skada.windowdefaults.bartexture = "normTex"
 	Skada.windowdefaults.classicons = false
 	Skada.windowdefaults.title.fontflags = "OUTLINE"
@@ -160,7 +148,7 @@ function module:SkadaSkin()
 
 	function Skada:FormatNumber(number)
 		if number then
-			if NDuiDB["Settings"]["Format"] == 1 then
+			if MaoRUISettingDB["Settings"]["Format"] == 1 then
 				if number >= 1e9 then
 					return ("%02.2fb"):format(number / 1e9)
 				elseif number > 1e6 then
@@ -170,11 +158,11 @@ function module:SkadaSkin()
 				else
 					return math.floor(number)
 				end
-			elseif NDuiDB["Settings"]["Format"] == 2 then
+			elseif MaoRUISettingDB["Settings"]["Format"] == 2 then
 				if number > 1e8 then
-					return ("%02.2f"..L["NumberCap2"]):format(number / 1e8)
+					return ("%02.2f"..DANWEI_YI):format(number / 1e8)
 				elseif number > 1e4 then
-					return ("%02.1f"..L["NumberCap1"]):format(number / 1e4)
+					return ("%02.1f"..DANWEI_WAN):format(number / 1e4)
 				else
 					return math.floor(number)
 				end

@@ -3,7 +3,7 @@
     <!--
     This file is part of Decursive.
     
-    Decursive (v 2.7.5.2) add-on for World of Warcraft UI
+    Decursive (v 2.7.5.7) add-on for World of Warcraft UI
     Copyright (C) 2006-2014 John Wellesz (archarodim AT teaser.fr) ( http://www.2072productions.com/to/decursive.php )
 
     Starting from 2009-10-31 and until said otherwise by its author, Decursive
@@ -19,7 +19,7 @@
     Decursive is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY.
     
-    This file was last updated on 2014-10-13T14:20:46Z
+    This file was last updated on 2017-06-25T19:35:37Z
     -->
     <Script>
 
@@ -117,10 +117,7 @@
                     </OnEnter>
                     <OnLeave>
                         DecursiveRootTable.Dcr.Status.MouseOveringCorner = false;
-
-                        if (DecursiveRootTable.Dcr.profile.DebuffsFrameShowHelp) then
-                        GameTooltip:Hide();
-                        end;
+                        DecursiveRootTable.Dcr.MicroUnitF:OnCornerLeave(self);
                     </OnLeave>
                 </Scripts>
             </Button>
@@ -155,7 +152,7 @@
                 DecursiveRootTable.Dcr.MicroUnitF:OnEnter(self);
             </OnEnter>
             <OnLeave>
-                DecursiveRootTable.Dcr.MicroUnitF:OnLeave();
+                DecursiveRootTable.Dcr.MicroUnitF:OnLeave(self);
             </OnLeave>
         </Scripts>
     </Button>
@@ -172,6 +169,6 @@
     <Script>
         local T = DecursiveRootTable or {};
 
-        T._LoadedFiles["Dcr_DebuffsFrame.xml"] = "2.7.5.2";
+        T._LoadedFiles["Dcr_DebuffsFrame.xml"] = "2.7.5.7";
     </Script>
 </Ui>

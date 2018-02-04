@@ -12,7 +12,7 @@ function module:SoloInfo()
 		[556] = 2,		-- 塞塔克大厅，乌鸦
 		[575] = 2,		-- 乌特加德之巅，蓝龙
 		[585] = 2,		-- 魔导师平台，白鸡
-		[603] = 4,		-- 奥杜尔，飞机头
+		--[603] = 4,		-- 奥杜尔，飞机头
 		[631] = 6,		-- 冰冠堡垒，无敌
 	}
 
@@ -30,7 +30,7 @@ function module:SoloInfo()
 		if IsInInstance() and instType ~= 24 then
 			if instList[id] and instList[id] ~= instType then
 				f:Show()
-				f.Text:SetText(I.InfoColor..name..I.MyColor.."\n( "..diffname.." )\n\n"..I.InfoColor.."选错副本难度了？")
+				f.Text:SetText(I.InfoColor..name..I.MyColor.."\n( "..diffname.." )\n\n"..I.InfoColor.."^-^")
 			else
 				f:Hide()
 			end
@@ -56,66 +56,10 @@ function module:RareAlert()
 			--UIErrorsFrame:AddMessage("----------   "..I.InfoColor..tex..(name or "").."   ----------")
 			RaidNotice_AddMessage(RaidWarningFrame, "----------   "..(name or "").."   ----------", ChatTypeInfo["RAID_WARNING"])  --..tex
 			if MaoRUISettingDB["Misc"]["AlertinChat"] then
-				print("  -> "..I.InfoColor.."发现稀有！"..(name or ""))  --..tex
+				print("  -> "..I.InfoColor.." → "..(name or ""))  --..tex
 			end
 			PlaySoundFile("Interface\\Addons\\_ShiGuang\\Media\\Sounds\\Dadongda.ogg", "Master")
 			cache[id] = true
 		end
 	end)
-end
-
---[[
-	A tool for Krosus, need reveiwed.
-]]
-function module:BeamTool()
-	if GetGuildInfo("player") ~= "The Carnival" then return end
-
-	local f
-	local function KrosusGo()
-		if f then f:Show() return end
-		f = CreateFrame("Frame", "NDui_BeamTool", UIParent)
-		f:SetSize(100, 100)
-		f:SetPoint("BOTTOMRIGHT", -350, 50)
-		M.CreateBD(f)
-		M.CreateTex(f)
-		M.CreateMF(f)
-		M.CreateFS(f, 14, "First Beam:", false, "TOP", 0, -5)
-		f.text = M.CreateFS(f, 20, "", false, "TOP", 0, -25)
-
-		local close = CreateFrame("Button", nil, f)
-		close:SetPoint("BOTTOM")
-		close:SetSize(20, 20)
-		M.CreateFS(close, 14, "X")
-		M.CreateGT(close, "ANCHOR_TOP", "Close", "system")
-		close:SetScript("OnClick", function()
-			f:Hide()
-			f.text:SetText("")
-		end)
-
-		local function CreateBu(anchor, text)
-			local bu = CreateFrame("Button", nil, f)
-			bu:SetSize(40, 40)
-			bu:SetPoint(anchor)
-			M.CreateFS(bu, 20, text)
-			M.CreateBD(bu, .3)
-			M.CreateBC(bu)
-			bu:SetScript("OnClick", function()
-				f.text:SetText(text)
-				if text == "左" then
-					if DBMUpdateKrosusBeam then DBMUpdateKrosusBeam(true) end
-					if BigWigsKrosusFirstBeamWasLeft then BigWigsKrosusFirstBeamWasLeft(true) end
-					print("First beam on LEFT")
-				else
-					if DBMUpdateKrosusBeam then DBMUpdateKrosusBeam(false) end
-					if BigWigsKrosusFirstBeamWasLeft then BigWigsKrosusFirstBeamWasLeft(false) end
-					print("First beam on RIGHT")
-				end
-			end)
-		end
-		CreateBu("BOTTOMLEFT", "左")
-		CreateBu("BOTTOMRIGHT", "右")
-	end
-
-	SlashCmdList["NDUI_BEAMTOOL"] = function() KrosusGo() end
-	SLASH_NDUI_BEAMTOOL1 = "/kro"
 end

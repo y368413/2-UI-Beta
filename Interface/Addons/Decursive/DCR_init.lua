@@ -1,7 +1,7 @@
 --[[
     This file is part of Decursive.
 
-    Decursive (v 2.7.5.2) add-on for World of Warcraft UI
+    Decursive (v 2.7.5.7) add-on for World of Warcraft UI
     Copyright (C) 2006-2014 John Wellesz (archarodim AT teaser.fr) ( http://www.2072productions.com/to/decursive.php )
 
     Starting from 2009-10-31 and until said otherwise by its author, Decursive
@@ -17,7 +17,7 @@
     Decursive is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY.
 
-    This file was last updated on 2017-01-08T23:38:24Z
+    This file was last updated on 2017-10-01T8:32:24Z
 --]]
 -------------------------------------------------------------------------------
 
@@ -66,7 +66,7 @@ local function RegisterDecursive_Once() -- {{{
     --@end-debug@]===]
 
     D.name = "Decursive";
-    D.version = "2.7.5.2";
+    D.version = "2.7.5.7";
     D.author = "John Wellesz";
 
     D.DcrFullyInitialized = false;
@@ -254,8 +254,13 @@ local function SetRuntimeConstants_Once () -- {{{
             Better = 0,
             Pet = false,
         },
+        -- Hunters http://www.wowhead.com/?spell=212640
+        [DSI["SPELL_MENDINGBANDAGE"]] = { -- PVP
+            Types = {DC.DISEASE, DC.POISON},
+            Better = 0,
+            Pet = false,
+        },
         --[=[ -- LEGION GONE
-        -- Hunters http://www.wowhead.com/?spell=19801
         [DSI["SPELL_TRANQUILIZING_SHOT"]] = {
             Types = {DC.ENEMYMAGIC},
             Better = 0,
@@ -325,6 +330,11 @@ local function SetRuntimeConstants_Once () -- {{{
             Better = 0,
             Pet = true,
         },
+        [DSI["PET_SINGE_MAGIC_PVP"]] = { -- PVP
+            Types = {DC.MAGIC},
+            Better = 0,
+            Pet = true,
+        },
          -- Warlocks (Fel-Imp)
         [DSI["PET_SEAR_MAGIC"]] = {
             Types = {DC.MAGIC},
@@ -357,7 +367,7 @@ local function SetRuntimeConstants_Once () -- {{{
             Better = 0,
             Pet = true,
         },
-        [DSI["PET_CLONE_MAGIC"]] = {
+        [DSI["PET_DEVOUR_MAGIC"]] = {
             Types = {DC.ENEMYMAGIC},
             Better = 0,
             Pet = true,
@@ -398,6 +408,12 @@ local function SetRuntimeConstants_Once () -- {{{
             Better = 0,
             Pet = false,
         },
+        -- Demon hunters
+        [DSI["SPELL_REVERSEMAGIC"]] = { -- PVP
+            Types = {DC.MAGIC},
+            Better = 1,
+            Pet = false,
+        },
     };
 
     -- }}}
@@ -421,12 +437,12 @@ local function InitVariables_Once() -- {{{
     -- A table UnitID=>IsDebuffed (boolean)
     D.UnitDebuffed = {};
 
-    D.Revision = "97e9eaf"; -- not used here but some other add-on may request it from outside
-    D.date = "2017-03-28T13:27:16Z";
-    D.version = "2.7.5.2";
+    D.Revision = "16350ca"; -- not used here but some other add-on may request it from outside
+    D.date = "2017-11-05T21:31:45Z";
+    D.version = "2.7.5.7";
 
     if D.date ~= "@project".."-date-iso@" then
-        -- 1490689636 doesn't work
+        -- 1509895905 doesn't work
 
         --local example =  "2008-05-01T12:34:56Z";
 
@@ -492,7 +508,7 @@ function D:VersionWarnings(forceDisplay) -- {{{
 
             if time() - self.db.global.LastExpirationAlert > 48 * 3600 or forceDisplay then
 
-                T._ShowNotice ("|cff00ff00Decursive version: 2.7.5.2|r\n\n" .. "|cFFFFAA66" .. L["TOC_VERSION_EXPIRED"] .. "|r");
+                T._ShowNotice ("|cff00ff00Decursive version: 2.7.5.7|r\n\n" .. "|cFFFFAA66" .. L["TOC_VERSION_EXPIRED"] .. "|r");
 
                 self.db.global.LastExpirationAlert = time();
             end
@@ -501,7 +517,7 @@ function D:VersionWarnings(forceDisplay) -- {{{
         self.db.global.TocExpiredDetection = false;
     end
 
-    if (("2.7.5.2"):lower()):find("beta") or ("2.7.5.2"):find("RC") or ("2.7.5.2"):find("Candidate") or alpha then
+    if (("2.7.5.7"):lower()):find("beta") or ("2.7.5.7"):find("RC") or ("2.7.5.7"):find("Candidate") or alpha then
 
         D.RunningADevVersion = true;
 
@@ -514,7 +530,7 @@ function D:VersionWarnings(forceDisplay) -- {{{
                 DC.DevVersionExpired = true;
                 -- Display the expiration notice only once evry 48 hours
                 if time() - self.db.global.LastExpirationAlert > 48 * 3600 or forceDisplay then
-                    T._ShowNotice ("|cff00ff00Decursive version: 2.7.5.2|r\n\n" .. "|cFFFFAA66" .. L["DEV_VERSION_EXPIRED"] .. "|r");
+                    T._ShowNotice ("|cff00ff00Decursive version: 2.7.5.7|r\n\n" .. "|cFFFFAA66" .. L["DEV_VERSION_EXPIRED"] .. "|r");
 
                     self.db.global.LastExpirationAlert = time();
                 end
@@ -525,16 +541,16 @@ function D:VersionWarnings(forceDisplay) -- {{{
         end
 
         -- display a warning if this is a developpment version (avoid insults from people who don't know what they're doing)
-        if self.db.global.NonRelease ~= "2.7.5.2" then
-            self.db.global.NonRelease = "2.7.5.2";
-            T._ShowNotice ("|cff00ff00Decursive version: 2.7.5.2|r\n\n" .. "|cFFFFAA66" .. L["DEV_VERSION_ALERT"] .. "|r");
+        if self.db.global.NonRelease ~= "2.7.5.7" then
+            self.db.global.NonRelease = "2.7.5.7";
+            T._ShowNotice ("|cff00ff00Decursive version: 2.7.5.7|r\n\n" .. "|cFFFFAA66" .. L["DEV_VERSION_ALERT"] .. "|r");
         end
     end
 
     --[===[@debug@
     fromCheckOut = true;
     if time() - self.db.global.LastUnpackagedAlert > 24 * 3600  then
-        T._ShowNotice ("|cff00ff00Decursive version: 2.7.5.2|r\n\n" .. "|cFFFFAA66" ..
+        T._ShowNotice ("|cff00ff00Decursive version: 2.7.5.7|r\n\n" .. "|cFFFFAA66" ..
         [[
         |cFFFF0000You're using an unpackaged version of Decursive.|r
         Decursive is not meant to be used this way.
@@ -572,7 +588,7 @@ function D:VersionWarnings(forceDisplay) -- {{{
         if D.db.global.NewerVersionDetected > D.VersionTimeStamp and D.db.global.NewerVersionName ~= D.version then -- it's still newer than this one
             if time() - D.db.global.NewerVersionAlert > 3600 * 24 * 4 then -- it's been more than 4 days since the new version alert was shown
                 if not D.db.global.NewVersionsBugMeNot then -- the user did not disable new version alerts
-                    T._ShowNotice ("|cff55ff55Decursive version: 2.7.5.2|r\n\n" .. "|cFF55FFFF" .. (L["NEW_VERSION_ALERT"]):format(D.db.global.NewerVersionName or "none", date("%Y-%m-%d", D.db.global.NewerVersionDetected)) .. "|r");
+                    T._ShowNotice ("|cff55ff55Decursive version: 2.7.5.7|r\n\n" .. "|cFF55FFFF" .. (L["NEW_VERSION_ALERT"]):format(D.db.global.NewerVersionName or "none", date("%Y-%m-%d", D.db.global.NewerVersionDetected)) .. "|r");
                     D.db.global.NewerVersionAlert = time();
                 end
             end
@@ -1313,7 +1329,8 @@ function D:SetSpellsTranslations(FromDIAG) -- {{{
             ["CLEANSE_SPIRIT"]              =  51886,
             ["SPELL_PURGE"]                 =  370,
             ["PET_TORCH_MAGIC"]             =  171021,
-            ["PET_CLONE_MAGIC"]             =  115284,
+          --["PET_CLONE_MAGIC"]             =  115284, -- XXX disappeared in 7.2.5, devour magic seems to have returned...
+            ["PET_DEVOUR_MAGIC"]            =  19505,
             ["SPELL_FEAR"]                  =  5782,
             ["DCR_LOC_SILENCE"]             =  15487,
             ["DCR_LOC_MINDVISION"]          =  2096,
@@ -1343,6 +1360,7 @@ function D:SetSpellsTranslations(FromDIAG) -- {{{
             ['Vampiric Touch']              =  34914,
             ["SPELL_REMOVE_CORRUPTION"]     =  2782,
             ["PET_SINGE_MAGIC"]             =  89808, -- Warlock imp
+            ["PET_SINGE_MAGIC_PVP"]         =  212623, -- Warlock imp PVP
             ["PET_SEAR_MAGIC"]              =  115276, -- Warlock Fel imp
             ["SPELL_PURIFY"]                =  527,
             ["SPELL_PURIFY_DISEASE"]        =  213634,
@@ -1354,6 +1372,8 @@ function D:SetSpellsTranslations(FromDIAG) -- {{{
             ["SPELL_DIFFUSEMAGIC"]          =  122783, -- monk
             ["SPELL_COMMAND_DEMON"]         =  119898, -- warlock
             ['Greater Invisibility']        =  110959,
+            ['SPELL_MENDINGBANDAGE']        =  212640,
+            ['SPELL_REVERSEMAGIC']          =  205604,
         };
     end
 
@@ -1505,7 +1525,7 @@ end -- }}}
 
 
 
-T._LoadedFiles["DCR_init.lua"] = "2.7.5.2";
+T._LoadedFiles["DCR_init.lua"] = "2.7.5.7";
 
 -------------------------------------------------------------------------------
 
@@ -1514,42 +1534,42 @@ TEST to see what keyword substitutions are actually working....
 
 Simple replacements
 
-427bc6f261e8da10c73dc633c6fb44740d160878
+0a6c31b90fbc6b5a45243ce631e418dcf3a6de0b
     Turns into the current revision of the file in integer form. e.g. 1234
     Note: does not work for git
-97e9eafd47987abd674f30d1365d6a7fe59f5671
+16350cadfaa4c6cd553929b846db0fb15169ccd3
     Turns into the highest revision of the entire project in integer form. e.g. 1234
     Note: does not work for git
-427bc6f261e8da10c73dc633c6fb44740d160878
+0a6c31b90fbc6b5a45243ce631e418dcf3a6de0b
     Turns into the hash of the file in hex form. e.g. 106c634df4b3dd4691bf24e148a23e9af35165ea
     Note: does not work for svn
-97e9eafd47987abd674f30d1365d6a7fe59f5671
+16350cadfaa4c6cd553929b846db0fb15169ccd3
     Turns into the hash of the entire project in hex form. e.g. 106c634df4b3dd4691bf24e148a23e9af35165ea
     Note: does not work for svn
-427bc6f
+0a6c31b
     Turns into the abbreviated hash of the file in hex form. e.g. 106c63 Note: does not work for svn
-97e9eaf
+16350ca
     Turns into the abbreviated hash of the entire project in hex form. e.g. 106c63
     Note: does not work for svn
 Archarodim
     Turns into the last author of the file. e.g. ckknight
 Archarodim
     Turns into the last author of the entire project. e.g. ckknight
-2017-01-08T23:38:24Z
+2017-10-01T8:32:24Z
     Turns into the last changed date (by UTC) of the file in ISO 8601. e.g. 2008-05-01T12:34:56Z
-2017-03-28T13:27:16Z
+2017-11-05T21:31:45Z
     Turns into the last changed date (by UTC) of the entire project in ISO 8601. e.g. 2008-05-01T12:34:56Z
-20170108233824
+2017100183224
     Turns into the last changed date (by UTC) of the file in a readable integer fashion. e.g. 20080501123456
-20170328132716
+20171105213145
     Turns into the last changed date (by UTC) of the entire project in a readable integer fashion. e.g. 2008050123456
-1483897104
+1506828744
     Turns into the last changed date (by UTC) of the file in POSIX timestamp. e.g. 1209663296
     Note: does not work for git
-1490689636
+1509895905
     Turns into the last changed date (by UTC) of the entire project in POSIX timestamp. e.g. 1209663296
     Note: does not work for git
-2.7.5.2
+2.7.5.7
     Turns into an approximate version of the project. The tag name if on a tag, otherwise it's up to the repo.
     :SVN returns something like "r1234"
     :Git returns something like "v0.1-873fc1"

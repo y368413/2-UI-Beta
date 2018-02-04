@@ -10,7 +10,6 @@ local function ForceDefaultSettings()
 	SetCVar("autoSelfCast", 1)
 	SetCVar("synchronizeSettings", 1)
   SetCVar("synchronizeMacros", 1)
-	SetCVar("SpellTooltip_DisplayAvgValues", 1)
 	SetCVar("nameplateShowEnemies", 1)
 	SetCVar("nameplateShowSelf", 0)
 	SetCVar("nameplateShowAll", 1)
@@ -66,11 +65,16 @@ local function ForceDefaultSettings()
 	SetCVar("ffxGlow", 0)
 	SetCVar("autoQuestWatch", 1)
 	SetCVar("overrideArchive", 0)
+	SetCVar("WorldTextScale", 1.5)
+	SetCVar("enableMouseSpeed", 0);
+	--	SetCVar("mouseSpeed", 5); -- Maximum in-game: 1.4
+	--	SetCVar("cameraPitchMoveSpeed", 135);
+	SetCVar("cameraYawMoveSpeed", 360); -- Maximum in-game: 270
 end
 local function ForceRaidFrame()
 	if not CompactUnitFrameProfiles.selectedProfile then return end
 	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "useClassColors", true)
-	--SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "displayPowerBar", true)
+	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "displayPowerBar", true)
 	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "displayBorder", false)
 	CompactUnitFrameProfiles_ApplyCurrentSettings()
 	CompactUnitFrameProfiles_UpdateCurrentPanel()
@@ -88,15 +92,27 @@ local function ForceUIScale()
 		if scale < .5 then scale = .5 end
 		MaoRUISettingDB["Settings"]["SetScale"] = scale
 	end
-	if scale < .65 then UIParent:SetScale(scale) else SetCVar("uiScale", scale) end
-	-- Prevent Auto-scaling
-	MaoRUI:EventFrame("UI_SCALE_CHANGED"):SetScript("OnEvent", function()
-		if scale < .65 then
-			UIParent:SetScale(scale)
-			if MaoRUISettingDB["Chat"]["Lock"] then
+
+	if scale < .65 then UIParent:SetScale(scale)
+	else SetCVar("uiScale", scale)
+	end
+
+	-- Restore from Auto-scaling
+	local function RestoreUIScale(scale)
+		UIParent:SetScale(scale)
+		if MaoRUISettingDB["Chat"]["Lock"] then
 				ChatFrame1:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", -2, 21)
-			end
 		end
+	end
+
+	MaoRUI:EventFrame("UI_SCALE_CHANGED"):SetScript("OnEvent", function()
+		if scale < .65 then RestoreUIScale(scale) end
+
+		C_Timer.After(1, function()
+			if scale < .65 and UIParent:GetScale() ~= scale then
+				RestoreUIScale(scale)
+			end
+		end)
 	end)
 end
 
@@ -143,6 +159,7 @@ local function ForceDBMOptions()
 				["Scale"] = 0.9,
 				["HugeScale"] = 1.2,
 				["ExpandUpwards"] = true,
+				["ExpandUpwardsLarge"] = true,
 				["BarXOffset"] = 0,
 				["BarYOffset"] = 1,
 				["TimerPoint"] = "BOTTOMLEFT",
@@ -183,7 +200,7 @@ local function ForceDBMOptions()
 	DBM_AllSavedOptions["Default"]["SpecialWarningPoint"] = "TOP"
 	DBM_AllSavedOptions["Default"]["SpecialWarningFontCol"] = {1.0, 0.3, 0.0}
 	DBM_AllSavedOptions["Default"]["SpecialWarningX"] = 0
-	DBM_AllSavedOptions["Default"]["SpecialWarningY"] = -210
+	DBM_AllSavedOptions["Default"]["SpecialWarningY"] = -195
 	DBM_AllSavedOptions["Default"]["SpecialWarningFontStyle"] = "OUTLINE"
 	DBM_AllSavedOptions["Default"]["HideObjectivesFrame"] = false
 	DBM_AllSavedOptions["Default"]["WarningFontSize"] = 20
@@ -191,14 +208,163 @@ local function ForceDBMOptions()
 
 	MaoRUISettingDB["Settings"]["DBMRequest"] = false
 end
+-- Skada
+local function ForceSkadaOptions()
+	if not IsAddOnLoaded("Skada") then return end
+	if SkadaDB then table.wipe(SkadaDB) end
+	SkadaDB = {
+		["hasUpgraded"] = true,
+		["profiles"] = {
+			["Default"] = {
+				["windows"] = {
+					{
+						["barheight"] = 18,
+						["classicons"] = false,
+						["barslocked"] = true,
+						["y"] = 24,
+						["x"] = -5,
+						["title"] = {
+							["color"] = {
+								["a"] = 0.3,
+								["b"] = 0,
+								["g"] = 0,
+								["r"] = 0,
+							},
+							["font"] = "",
+							["borderthickness"] = 0,
+							["fontflags"] = "OUTLINE",
+							["fontsize"] = 14,
+							["texture"] = "normTex",
+						},
+						["barfontflags"] = "OUTLINE",
+						["point"] = "BOTTOMRIGHT",
+						["mode"] = "",
+						["barwidth"] = 300,
+						["barbgcolor"] = {
+							["a"] = 0,
+							["b"] = 0,
+							["g"] = 0,
+							["r"] = 0,
+						},
+						["barfontsize"] = 15,
+						["background"] = {
+							["height"] = 180,
+							["texture"] = "None",
+							["bordercolor"] = {
+								["a"] = 0,
+							},
+						},
+						["bartexture"] = "normTex",
+					}, -- [1]
+				},
+				["tooltiprows"] = 10,
+				["setstokeep"] = 30,
+				["tooltippos"] = "topleft",
+				["reset"] = {
+					["instance"] = 3,
+					["join"] = 1,
+				},
+			},
+		},
+	}
+	MaoRUISettingDB["Settings"]["SkadaRequest"] = false
+end
 
+-- BigWigs
+local function ForceBigwigs()
+	if not IsAddOnLoaded("BigWigs") then return end
+	if BigWigs3DB then table.wipe(BigWigs3DB) end
+	BigWigs3DB = {
+		["namespaces"] = {
+			["BigWigs_Plugins_Bars"] = {
+				["profiles"] = {
+					["Default"] = {
+						["outline"] = "OUTLINE",
+						["fontSize"] = 12,
+						["BigWigsAnchor_y"] = 336,
+						["BigWigsAnchor_x"] = 20,
+						["BigWigsAnchor_width"] = 175,
+						["growup"] = true, 
+						["interceptMouse"] = false,
+						["barStyle"] = "NDui",
+						["LeftButton"] = {
+							["emphasize"] = false,
+						},
+						["font"] = I.Font[1],
+						["onlyInterceptOnKeypress"] = true,
+						["emphasizeScale"] = 1,
+						["BigWigsEmphasizeAnchor_x"] = 836,
+						["BigWigsEmphasizeAnchor_y"] = 350,
+						["BigWigsEmphasizeAnchor_width"] = 220,
+						["emphasizeGrowup"] = true,
+					},
+				},
+			},
+			["BigWigs_Plugins_Super Emphasize"] = {
+				["profiles"] = {
+					["Default"] = {
+						["fontSize"] = 28,
+						["font"] = I.Font[1],
+					},
+				},
+			},
+			["BigWigs_Plugins_Messages"] = {
+				["profiles"] = {
+					["Default"] = {
+						["fontSize"] = 18,
+						["font"] = I.Font[1],
+						["BWEmphasizeCountdownMessageAnchor_x"] = 665,
+						["BWMessageAnchor_x"] = 616,
+						["BWEmphasizeCountdownMessageAnchor_y"] = 530,
+						["BWMessageAnchor_y"] = 305,
+					},
+				},
+			},
+			["BigWigs_Plugins_Proximity"] = {
+				["profiles"] = {
+					["Default"] = {
+						["fontSize"] = 18,
+						["font"] = I.Font[1],
+						["posy"] = 346,
+						["width"] = 140,
+						["posx"] = 1024,
+						["height"] = 120,
+					},
+				},
+			},
+			["BigWigs_Plugins_Alt Power"] = {
+				["profiles"] = {
+					["Default"] = {
+						["posx"] = 1002,
+						["fontSize"] = 14,
+						["font"] = I.Font[1],
+						["fontOutline"] = "OUTLINE",
+						["posy"] = 490,
+					},
+				},
+			},
+		},
+		["profiles"] = {
+			["Default"] = {
+				["fakeDBMVersion"] = true,
+			},
+		},
+	}
+	MaoRUISettingDB["Settings"]["BWRequest"] = false
+end
+
+local function ForceAddonSkins()
+	if MaoRUISettingDB["Settings"]["DBMRequest"] then ForceDBMOptions() end
+	if MaoRUISettingDB["Settings"]["SkadaRequest"] then ForceSkadaOptions() end
+	if MaoRUISettingDB["Settings"]["BWRequest"] then ForceBigwigs() end
+end
 -----------------------------------------
 function sendCmd(cmd) ChatFrame1EditBox:SetText(""); ChatFrame1EditBox:Insert(cmd); ChatEdit_SendText(ChatFrame1EditBox); end
 print(Welcome_loginChatText1) print(Welcome_loginChatText2) print(Welcome_loginChatText3) print(Welcome_loginChatText4)
 function module:OnLogin()
 
 	ForceUIScale()
-	if MaoRUISettingDB["Settings"]["DBMRequest"] then ForceDBMOptions() end
+	ForceAddonSkins()
 	if MaoRUISettingDB["Chat"]["Lock"] then ForceChatSettings() end
 
 	if tonumber(GetCVar("cameraDistanceMaxZoomFactor")) ~= 2.6 then

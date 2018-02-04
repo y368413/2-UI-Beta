@@ -1,4 +1,4 @@
----------------------------- QuickQuest, by P3lim  -- NDui MOD  -- y368413 DIY --------------------------
+﻿---------------------------- QuickQuest, by P3lim  -- NDui MOD  -- y368413 DIY --------------------------
 local M, R, U, I = unpack(select(2, ...))
 local QuickQuestCheckButton = CreateFrame("CheckButton", nil, ObjectiveTrackerBlocksFrame.QuestHeader, "OptionsCheckButtonTemplate")
 QuickQuestCheckButton:SetPoint("TOPRIGHT", ObjectiveTrackerBlocksFrame.QuestHeader, -6, 0)
@@ -12,7 +12,8 @@ QuickQuestCheckButton:SetScript("OnClick", function(self) MaoRUISettingDB["Misc"
 local QuickQuest = CreateFrame("Frame")
 QuickQuest:SetScript("OnEvent", function(self, event, ...) self[event](...) end)
 
-local atBank, atMail, atMerchant, choiceQueue, autoCompleteIndex, autoCompleteTicker
+local choiceQueue
+
 function QuickQuest:Register(event, func)
 	self:RegisterEvent(event)
 	self[event] = function(...)
@@ -38,15 +39,24 @@ local function IsTrackingHidden()
 end
 
 local ignoreQuestNPC = {
+	[14847] = true,		-- DarkMoon
+	[43929] = true,		-- 4000
 	[88570] = true, -- Fate-Twister Tiklal
 	[87391] = true, -- Fate-Twister Seress
 	[99180] = true, -- Legendary Ring
 	[99183] = true, -- Legendary Ring
-	[108868] = true, -- Hunter's order hall
+
 	[101462] = true, -- Engineering
-	[111243] = true, -- Archmage Lan'dalock
-	[43929] = true,		-- 4000
+	[103792] = true, 	-- 格里伏塔 -- Griftah (one of his quests is a scam)
 	[106655] = true,	-- Legendary Item Upgrade
+	[108868] = true, -- Hunter's order hall	
+	[111243] = true, -- Archmage Lan'dalock
+
+	[114719] = true,	-- 商人塞林
+	[119388] = true,	-- 酋长哈顿
+	[121263] = true,	-- 大技师罗姆尔
+	[124312] = true,	-- 图拉扬
+	[126954] = true,	-- 图拉扬
 }
 
 local function GetQuestLogQuests(onlyComplete)
@@ -137,6 +147,7 @@ local ignoreGossipNPC = {
 	[84268] = true, -- Lieutenant Thorn (Alliance)
 	[84511] = true, -- Lieutenant Thorn (Alliance)
 	[84684] = true, -- Lieutenant Thorn (Alliance)
+	[117871] = true, -- War Councilor Victoria (Class Challenges @ Broken Shore)
 }
 
 local rogueClassHallInsignia = {
@@ -296,6 +307,8 @@ QuickQuest:Register("QUEST_PROGRESS", function()
 	if(IsQuestCompletable()) then
 		local _, _, worldQuest = GetQuestTagInfo(GetQuestID())
 		if worldQuest then return end
+		-- 阿古斯的随从兑换
+		if GetNPCID() == 119388 or GetNPCID() == 127037 or GetNPCID() == 126954 or GetNPCID() == 124312 then return end
 
 		local requiredItems = GetNumQuestItems()
 		if(requiredItems > 0) then

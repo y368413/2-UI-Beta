@@ -1,0 +1,5 @@
+<Bindings>
+  <Binding name="SAVEDINSTANCES" header="SAVEDINSTANCES" category="BINDING_MAORUI_BUTTONCLICK">
+    SavedInstances:ToggleDetached();
+  </Binding>
+</Bindings>

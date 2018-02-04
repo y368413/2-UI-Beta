@@ -1,4 +1,4 @@
-## Interface: 70200
+## Interface: 70300
 ## Title: NPCMark
 ## Title-zhCN: |cff0080ff[地图]|rNPC位置
 ## Title-zhTW: |cff0080ff[地圖]|rNPC位置

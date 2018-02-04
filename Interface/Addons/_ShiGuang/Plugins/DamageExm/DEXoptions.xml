@@ -450,7 +450,7 @@
 					</Anchor>
 				</Anchors>
 			</Frame>
-			<Button name="$ParentDropDownCats" inherits="Lib_UIDropDownMenuTemplate">
+			<Button name="$ParentDropDownCats" inherits="L_UIDropDownMenuTemplate">
 				<Layers>
 					<Layer level="BACKGROUND">
 						<FontString name="$parentLabel" inherits="GameFontNormalSmall" text="DEXColorMode_T">
@@ -581,7 +581,7 @@
 				</Size>
 				<Scripts>
 					<OnClick>
-						PlaySound("igMainMenuOptionCheckBoxOn");
+						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
 						DEX_Reset();
 					</OnClick>
 					<OnEnter>

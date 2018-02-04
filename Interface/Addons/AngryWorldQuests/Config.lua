@@ -1,28 +1,28 @@
 local ADDON, Addon = ...
 local Config = Addon:NewModule('Config')
 
-local configVersion = 11
+local configVersion = 12
 local configDefaults = {
 	collapsed = false,
 	showAtTop = true,
-	showHoveredPOI = false,
+	showHoveredPOI = true,
 	onlyCurrentZone = true,
 	showEverywhere = false,
 	selectedFilters = 0,
-	disabledFilters = bit.bor(2^(8-1), 2^(9-1), 2^(10-1), 2^(11-1), 2^(12-1), 2^(13-1), 2^(14-1), 2^(15-1), 2^(16-1), 2^(17-1), 2^(18-1)),
+	disabledFilters = bit.bor(2^(8-1), 2^(9-1), 2^(10-1), 2^(11-1), 2^(12-1), 2^(13-1), 2^(14-1), 2^(15-1), 2^(16-1), 2^(17-1), 2^(18-1), 2^(19-1)),
 	filterEmissary = 0,
 	filterLoot = 0,
 	filterFaction = 0,
 	filterZone = 0,
 	filterTime = 0,
-	lootFilterUpgrades = false,
+	lootFilterUpgrades = true,
 	lootUpgradesLevel = -1,
 	timeFilterDuration = 6,
 	hideUntrackedPOI = false,
 	hideFilteredPOI = false,
 	showContinentPOI = false,
 	showComparisonRight = false,
-	sortMethod = 1,
+	sortMethod = 2,
 	extendedInfo = false,
 	saveFilters = false,
 }
@@ -500,6 +500,12 @@ function Config:BeforeStartup()
 	end
 	if AngryWorldQuests_CharacterConfig['__version'] <= 10 and AngryWorldQuests_CharacterConfig['disabledFilters'] then
 		AngryWorldQuests_CharacterConfig['disabledFilters'] = bit.bor(2^(18-1), AngryWorldQuests_CharacterConfig['disabledFilters'])
+	end
+	if AngryWorldQuests_Config['__version'] <= 11 and AngryWorldQuests_Config['disabledFilters'] then
+		AngryWorldQuests_Config['disabledFilters'] = bit.bor(2^(19-1), AngryWorldQuests_Config['disabledFilters'])
+	end
+	if AngryWorldQuests_CharacterConfig['__version'] <= 11 and AngryWorldQuests_CharacterConfig['disabledFilters'] then
+		AngryWorldQuests_CharacterConfig['disabledFilters'] = bit.bor(2^(19-1), AngryWorldQuests_CharacterConfig['disabledFilters'])
 	end
 
 	AngryWorldQuests_Config['__version'] = configVersion

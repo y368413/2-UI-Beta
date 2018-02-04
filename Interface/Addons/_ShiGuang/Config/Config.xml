@@ -1,5 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="Actionbar.lua"/>
 	<Script file="Modules.lua"/>
 	<Script file="AuraWatchList.lua"/>
 	<Script file="Nameplate.lua"/>
+	<Script file="GnomeSequencer.lua"/>
 </Ui>

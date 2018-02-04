@@ -38,6 +38,7 @@ local function GetMembers(num)
             members[guid].name = UnitName(unit)
             members[guid].class = select(2, UnitClass(unit))
             members[guid].role  = UnitGroupRolesAssigned(unit)
+            members[guid].done  = GetInspectInfo(unit, 0, true)
         else
             members[guid] = {
                 done   = false,
@@ -200,7 +201,7 @@ local function GetButton(parent, index)
         button.name:SetFont(UNIT_NAME_FONT, 13, "OUTLINE")
         button.name:SetPoint("LEFT", 66, 0)
         button.spec = button:CreateFontString(nil, "ARTWORK")
-        button.spec:SetFont(GameFontNormal:GetFont(), 11, "THINOUTLINE")
+        button.spec:SetFont(GameFontNormal:GetFont(), 11, "OUTLINE")
         button.spec:SetPoint("RIGHT", button, "RIGHT", -8, 0)
         button.spec:SetJustifyH("RIGHT")
         button.spec:SetTextColor(0.8, 0.9, 0.9)

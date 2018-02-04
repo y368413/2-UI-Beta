@@ -30,7 +30,6 @@ function GridClickSetsFrame_OnLoad(self)
         getglobal("GridClickSetButton"..i.."Title"):SetText(GridClickSets_Titles[i])
     end
 
-    --GridClickSetsFrame_TabOnClick();
     table.insert(UISpecialFrames, self:GetName())
 end
 
@@ -40,12 +39,7 @@ function GridClickSetsFrame_OnEvent(self, event, arg1)
             GridClickSetsFrame_UpdateAll()
             queue = false
         end
-    elseif(event=="VARIABLES_LOADED") then
-        if U1 then
-            if _G.ClassMods and _G.ClassMods.Options.DB.clicktocast.enabled then
-                U1Message("ClassMods的ClickToCast模块和有爱点击施法冲突，请关闭")
-            end
-        end
+
     end
 
     if(event=="VARIABLES_LOADED" or (event=="PLAYER_SPECIALIZATION_CHANGED" and arg1=="player") or event=="PLAYER_ALIVE") then
@@ -56,7 +50,7 @@ end
 function GridClickSetsFrame_TypeUpdate(id)
     local argF = getglobal("GridClickSetButton"..id.."Arg")
     local typeDD = getglobal("GridClickSetButton"..id.."Type")
-    local value = Lib_UIDropDownMenu_GetSelectedValue(typeDD)
+    local value = L_UIDropDownMenu_GetSelectedValue(typeDD)
     if (not value) then value = "NONE" end
 
     if( value=="spell" or value=="macro" ) then
@@ -101,7 +95,7 @@ function GridClickSetsFrame_TypeUpdateAll()
 end
 
 function GridClickSets_Type_OnClick(self)
-    Lib_UIDropDownMenu_SetSelectedValue(self.owner, self.value);
+    L_UIDropDownMenu_SetSelectedValue(self.owner, self.value);
     local id=self.owner:GetParent():GetID()
     GridClickSetsFrame_TypeUpdate(id)
     GridClickSetsFrame_Resize()
@@ -131,7 +125,7 @@ function GridClickSetButton_TypeDropDown_Initialize(self)
                     info.value = "spellId:"..spellId
                     info.tooltipFunc = function(self, tip, arg1) tip:SetSpellByID(arg1) end
                     info.tooltipFuncArg1 = spellId
-                    Lib_UIDropDownMenu_AddButton(info);
+                    L_UIDropDownMenu_AddButton(info);
                 end
             end
         end
@@ -142,42 +136,35 @@ function GridClickSetButton_TypeDropDown_Initialize(self)
     info.owner = self;
     info.func = GridClickSets_Type_OnClick;
     info.value = "target"
-    Lib_UIDropDownMenu_AddButton(info);
+    L_UIDropDownMenu_AddButton(info);
 
     info = {};
     info.text = ddname(BINDING_NAME_ASSISTTARGET);
     info.owner = self;
     info.func = GridClickSets_Type_OnClick;
     info.value = "assist"
-    Lib_UIDropDownMenu_AddButton(info);
+    L_UIDropDownMenu_AddButton(info);
 
     info = {};
     info.text = ddname(SKILL..NAME);
     info.owner = self;
     info.func = GridClickSets_Type_OnClick;
     info.value = "spell"
-    Lib_UIDropDownMenu_AddButton(info);
-
-    --	info = {};
-    --	info.text = ddname(SOCIAL_LABEL);
-    --	info.owner = self;
-    --	info.func = GridClickSets_Type_OnClick;
-    --	info.value = "menu"
-    --	Lib_UIDropDownMenu_AddButton(info);
+    L_UIDropDownMenu_AddButton(info);
 
     info = {};
     info.text = ddname(MACRO);
     info.owner = self;
     info.func = GridClickSets_Type_OnClick;
     info.value = "macro"
-    Lib_UIDropDownMenu_AddButton(info);
+    L_UIDropDownMenu_AddButton(info);
 
     info = {};
     info.text = NONE; --ddname(NONE);
     info.owner = self;
     info.func = GridClickSets_Type_OnClick;
     info.value = "NONE"
-    Lib_UIDropDownMenu_AddButton(info);
+    L_UIDropDownMenu_AddButton(info);
 end
 
 function GridClickSetsFrame_GetTabSet(btn)
@@ -189,8 +176,8 @@ function GridClickSetsFrame_LoadSet(set)
     for i = 1, 8 do
         local dd = getglobal("GridClickSetButton"..i.."Type")
         local atts = set and set[GridClickSets_Modifiers[i]] or {}
-        Lib_UIDropDownMenu_Initialize(dd, GridClickSetButton_TypeDropDown_Initialize);
-        Lib_UIDropDownMenu_SetSelectedValue(dd, atts.type or "NONE")
+        L_UIDropDownMenu_Initialize(dd, GridClickSetButton_TypeDropDown_Initialize);
+        L_UIDropDownMenu_SetSelectedValue(dd, atts.type or "NONE")
         if(atts.arg) then
             getglobal("GridClickSetButton"..i.."Arg"):SetText(atts.arg)
         else
@@ -204,10 +191,10 @@ end
 function GridClickSetsFrame_TabOnClick()
     GridClickSetsFrame_LoadSet( GridClickSetsFrame_GetTabSet(GridClickSetsFrame.selectedTab) );
     if ( false and GridClickSetsFrame.selectedTab == 1 ) then
-        Lib_UIDropDownMenu_SetSelectedValue(GridClickSetButton1Type, "target");
-        Lib_UIDropDownMenu_DisableDropDown(GridClickSetButton1Type)
+        L_UIDropDownMenu_SetSelectedValue(GridClickSetButton1Type, "target");
+        L_UIDropDownMenu_DisableDropDown(GridClickSetButton1Type)
     else
-        Lib_UIDropDownMenu_EnableDropDown(GridClickSetButton1Type)
+        L_UIDropDownMenu_EnableDropDown(GridClickSetButton1Type)
     end
 end
 
@@ -226,7 +213,7 @@ function GridClickSetsFrame_SaveOnClick()
     local set = GridClickSetsFrame_GetCurrentSet()
     for i=1,8 do
         set[tostring(GridClickSetsFrame.selectedTab)][GridClickSets_Modifiers[i]] = {
-            type = Lib_UIDropDownMenu_GetSelectedValue( getglobal("GridClickSetButton"..i.."Type") ),
+            type = L_UIDropDownMenu_GetSelectedValue( getglobal("GridClickSetButton"..i.."Type") ),
             arg = getglobal("GridClickSetButton"..i.."Arg"):GetText()
         }
 

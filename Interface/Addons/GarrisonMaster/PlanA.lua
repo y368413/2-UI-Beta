@@ -102,14 +102,14 @@ hooksecurefunc("ShowGarrisonLandingPage", function(pg)
 end)
 
 function E:ADDON_LOADED(addon)
-	if addon == addonName then
+	--if addon == addonName then
 		cdata = gett(_G, "MasterPlanAG", GetRealmName(), UnitName("player"))
 		cdata.class, cdata.faction, cdata.cacheSize = select(2,UnitClass("player")), UnitFactionGroup("player"), cdata.cacheSize ~= 750 and cdata.cacheSize or nil
 		setmetatable(api, {__index={data=cdata}})
 		CheckCacheWarning()
 		gett(_G, "MasterPlanAG", "IgnoreRewards")
 		return "remove"
-	end
+	--end
 end
 function E:ADDON_LOADED(addon)
 	if addon == "Blizzard_GarrisonUI" then

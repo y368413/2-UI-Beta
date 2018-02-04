@@ -26,7 +26,7 @@ local function TooltipAppend(tip, item)
       for i, player2 in ipairs(temp) do
         list = list..player2..(i == #temp - 1 and " and " or ", ")
       end
-      tip:AddLine("需求 "..list:sub(0, list:trim():len()-1)..".", 0, 1, 1, true)
+      tip:AddLine(NEED..list:sub(0, list:trim():len()-1)..".", 0, 1, 1, true)
     end
   end
 end
@@ -38,9 +38,9 @@ local function TooltipSetItem(tip)
       item = tonumber(item:match("item:(%d+)"))
       if item and quests[item] then
         if DarkmoonFaireQuestsDB[realm][faction][player][item] then
-          tip:AddLine("任务已完成!", 1, 0, 0, false)
+          tip:AddLine(ERR_QUEST_ALREADY_DONE, 1, 0, 0, false)
         else
-          tip:AddLine("任务未完成.", 0, 1, 0, false)
+          tip:AddLine(ITEM_STARTS_QUEST, 0, 1, 0, false)
         end
         TooltipAppend(tip, item)
       end

@@ -1,17 +1,17 @@
-## Interface: 70200
+## Interface: 70300
 ## Title: Garrison Master
 ## Title-zhCN: |cff00ff00[大厅]|r任务大师
 ## Title-zhTW: |cff00ff00[大厅]|r任务大师
 ## Notes: Garrision missions UI tweaks.
 ## Notes-zhCN: 修改职业大厅&德拉诺要塞控制台任务界面，让其更加易用
 ## Notes-zhTW: 修改职业大厅&德拉诺要塞控制台任务界面，让其更加易用
-## Author: foxlit+Oleg "Rowaa[SR13]" Volkov+Razor_Storm@NGACN
+## Author: foxlit+Oleg "Rowaa[SR13]" Volkov + Razor_Storm@NGACN + lteke
 ## LoadOnDemand: 1
 ## LoadWith: Blizzard_GarrisonUI, Blizzard_OrderHallUI
 ## RequiredDeps: Blizzard_GarrisonUI, Blizzard_OrderHallUI
-## SavedVariables: MasterPlanAG, SV_GarrisonMissionManager
+## SavedVariables: MasterPlanAG, SV_GarrisonMissionManager, IPMDB
 ## SavedVariablesPerCharacter: MasterPlanPC, SVPC_GarrisonMissionManager
-## Version: 0.107 + V55 + 1.4.0.2
+## Version: 0.109.1 + V55 + 1.4.0.2 + 7.3.20
 
 ## X-Repple: 菜单
 
@@ -49,3 +49,6 @@ Broker.lua
 #Misc\Override.lua
 #SmartRecruiter.lua
 #FollowerTooltip.lua
+
+MoreRewardsFormOrderHall.lua
+InProgressMissions.lua

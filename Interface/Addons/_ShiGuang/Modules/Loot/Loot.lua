@@ -1,6 +1,5 @@
 ------------------------------------------------------------ImprovedLootFrame
 local LovelyLootLoaded = IsAddOnLoaded("LovelyLoot") 
-local ISMOP = select(4, GetBuildInfo()) >= 50000 
 
    LOOTFRAME_AUTOLOOT_DELAY = 0.5; 
    LOOTFRAME_AUTOLOOT_RATE = 0.1; 
@@ -17,31 +16,11 @@ if not LovelyLootLoaded then
       if not r then break end 
       if r.GetText and r:GetText() == ITEMS then 
          r:ClearAllPoints() 
-         r:SetPoint("TOP", ISMOP and 12 or -12, ISMOP and -5 or -19.5) 
-      elseif not ISMOP and r.GetTexture and r:GetTexture() == t then 
+         r:SetPoint("TOP", -12, -19.5) 
+      elseif r.GetTexture and r:GetTexture() == t then 
          r:Hide() 
       end 
       i = i + 1 
-   end 
-
-   if not ISMOP then 
-      local top = LootFrame:CreateTexture("LootFrameBackdropTop") 
-      top:SetTexture(t) 
-      top:SetTexCoord(0, 1, 0, 0.3046875) 
-      top:SetPoint("TOP") 
-      top:SetHeight(78) 
-
-      local bottom = LootFrame:CreateTexture("LootFrameBackdropBottom") 
-      bottom:SetTexture(t) 
-      bottom:SetTexCoord(0, 1, 0.9296875, 1) 
-      bottom:SetPoint("BOTTOM") 
-      bottom:SetHeight(18) 
-
-      local mid = LootFrame:CreateTexture("LootFrameBackdropMiddle") 
-      mid:SetTexture(t) 
-      mid:SetTexCoord(0, 1, 0.3046875, 0.9296875) 
-      mid:SetPoint("TOP", top, "BOTTOM") 
-      mid:SetPoint("BOTTOM", bottom, "TOP") 
    end 
 end 
 
@@ -49,7 +28,7 @@ end
 local p, r, x, y = "TOP", "BOTTOM", 0, -4 
 local buttonHeight = LootButton1:GetHeight() + abs(y) 
 local baseHeight = LootFrame:GetHeight() - (buttonHeight * LOOTFRAME_NUMBUTTONS) 
-if ISMOP and not LovelyLootLoaded then 
+if not LovelyLootLoaded then 
    baseHeight = baseHeight - 5 
 end 
 
@@ -190,7 +169,7 @@ for i = 1, t do
 			end
 			for k = 1, #sockets do															--Socket
 				if bonus[j] == sockets[k] then
-					loot[i]["upgrade"] = loot[i]["upgrade"].."<-插槽呦~"
+					loot[i]["upgrade"] = loot[i]["upgrade"].."<- *** "
 				end
 			end
 			if bonus[j] == 40 then loot[i]["upgrade"] = loot[i]["upgrade"].." +"..STAT_AVOIDANCE end						--Avoidance
@@ -241,5 +220,34 @@ LootAnnouncerbutton:RegisterEvent("LOOT_OPENED")
 LootAnnouncerbutton:SetPoint('TOPRIGHT', -3, -21)
 LootAnnouncerbutton:SetWidth(110)
 LootAnnouncerbutton:SetHeight(21)
-LootAnnouncerbutton:SetText("团队通报拾取")
+LootAnnouncerbutton:SetText(LOOT_ANNOUNCERBUTTON_TITLE)
 LootAnnouncerbutton:SetScript("OnClick", function() Announce() end)
+
+
+-------BGRoll----------------
+local NeedList = {
+[18231] = true,
+[71951] = true,
+[71952] = true,
+[71953] = true,
+}
+local BGRoll = CreateFrame("Frame")
+BGRoll:RegisterEvent("START_LOOT_ROLL")
+BGRoll:RegisterEvent("CONFIRM_LOOT_ROLL")
+BGRoll:SetScript("OnEvent", function(self, event, id, rt)
+if event == 'START_LOOT_ROLL' then
+	local _, Name, _, _, _, Need, Greed, _ = GetLootRollItemInfo(id)
+	local Link = GetLootRollItemLink(id)
+	local ItemID = tonumber(strmatch(Link, 'item:(%d+)'))
+	if NeedList[ItemID] then
+		if Need then
+			print("��: ", (Name))
+			RollOnLoot(id, 1)
+		elseif Greed then
+			print("��: ", (Name))
+			RollOnLoot(id, 2)
+		end
+	end
+end
+if event == 'CONFIRM_LOOT_ROLL' then ConfirmLootRoll(id, rt) end
+end)

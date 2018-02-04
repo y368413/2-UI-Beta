@@ -2516,6 +2516,207 @@ ns.auras_instances_debuffs = {
 			 [GetSpellInfo(227781)] = 8,
 			 [GetSpellInfo(228007)] = 7,
 		},
+		[1147] = {--"萨格拉斯之墓"
+			-- Tomb of Sargeras
+
+			-- 格罗斯
+			 [GetSpellInfo(234264)] = 5,  --熔化护甲
+			 [GetSpellInfo(231363)] = 7,  --燃烧护甲
+			 [GetSpellInfo(233272)] = 4,  --碎裂星辰
+			 [GetSpellInfo(230348)] = 6,  --邪能之池
+			
+			-- 恶魔审判庭
+			 [GetSpellInfo(236283)] = 1,
+			 [GetSpellInfo(248741)] = 6,
+			 [GetSpellInfo(233983)] = 7,
+			 [GetSpellInfo(233430)] = 7,
+			 [GetSpellInfo(233901)] = 4,
+			 [GetSpellInfo(233431)] = 8,
+			 [GetSpellInfo(248713)] = 3,		 
+
+			-- 哈亚坦
+			 [GetSpellInfo(234016)] = 6,  --强制突袭/小怪盯人
+			 [GetSpellInfo(241573)] = 4,
+			 [GetSpellInfo(231998)] = 5,
+			 [GetSpellInfo(231770)] = 3,
+			 [GetSpellInfo(231729)] = 6,
+			 [GetSpellInfo(231768)] = 5,
+			 [GetSpellInfo(241600)] = 7,
+			 [GetSpellInfo(207631)] = 5,
+			 [GetSpellInfo(206645)] = 5,
+			 
+			-- 主母萨丝琳
+			 [GetSpellInfo(230362)] = 7,
+			 [GetSpellInfo(230384)] = 6,
+			 [GetSpellInfo(230201)] = 5,
+			 [GetSpellInfo(232732)] = 3,
+			 [GetSpellInfo(230276)] = 3,
+			 [GetSpellInfo(230959)] = 5,
+			 [GetSpellInfo(230139)] = 8,
+			 [GetSpellInfo(232754)] = 3,
+			 [GetSpellInfo(232913)] = 4,
+			 
+			-- 月之姐妹
+			 [GetSpellInfo(233263)] = 5,
+			 [GetSpellInfo(236596)] = 6,
+			 [GetSpellInfo(236712)] = 8, 
+			 [GetSpellInfo(239264)] = 7,
+			 [GetSpellInfo(236519)] = 4,
+			 [GetSpellInfo(236550)] = 7,
+			 [GetSpellInfo(237561)] = 6,
+			 [GetSpellInfo(236305)] = 8,
+			 [GetSpellInfo(216040)] = 7,
+
+			-- 绝望的聚合体
+			 [GetSpellInfo(236361)] = 6,
+			 [GetSpellInfo(236340)] = 6,
+			 [GetSpellInfo(236241)] = 5,
+			 [GetSpellInfo(236459)] = 7,  --灵魂束缚
+			 [GetSpellInfo(235907)] = 5,
+			 [GetSpellInfo(238018)] = 7,
+			 [GetSpellInfo(236135)] = 8,
+			 [GetSpellInfo(242796)] = 7,
+
+			-- 戒卫侍女
+			 [GetSpellInfo(235213)] = 4,
+			 [GetSpellInfo(235240)] = 4,
+			 [GetSpellInfo(243276)] = 7,
+			 [GetSpellInfo(239408)] = 5,
+			 [GetSpellInfo(238028)] = 5,
+			 [GetSpellInfo(248812)] = 2,
+             [GetSpellInfo(248801)] = 3,
+             [GetSpellInfo(241729)] = 3,			 
+
+			-- 堕落的化身
+			 [GetSpellInfo(234059)] = 6,
+			 [GetSpellInfo(239212)] = 6,
+			 [GetSpellInfo(236494)] = 5,
+			 [GetSpellInfo(239739)] = 7,
+			 [GetSpellInfo(242017)] = 4,
+			 [GetSpellInfo(240249)] = 4,
+			 [GetSpellInfo(240746)] = 5,
+			 [GetSpellInfo(206398)] = 4,
+			 [GetSpellInfo(240728)] = 5,
+			 
+			-- 基尔加丹
+			 [GetSpellInfo(234310)] = 4,
+			 [GetSpellInfo(245509)] = 4,
+			 [GetSpellInfo(240916)] = 5,
+             [GetSpellInfo(241822)] = 6,
+             [GetSpellInfo(241712)] = 3,
+             [GetSpellInfo(236710)] = 5,
+             [GetSpellInfo(236378)] = 9,
+             [GetSpellInfo(239216)] = 6,
+             [GetSpellInfo(240908)] = 7,
+             [GetSpellInfo(240262)] = 4,	
+             [GetSpellInfo(243624)] = 8,		 
+		},
+		[1188] = {--"安托鲁斯·燃烧王座"
+			-- Antorus, the Burning Throne
+
+			-- 加洛斯
+			 [GetSpellInfo(246220)] = 5,  --邪能轰炸
+			 [GetSpellInfo(244590)] = 7,  --炽熔邪能
+			 [GetSpellInfo(247159)] = 4,  --引力毁灭
+			 [GetSpellInfo(246919)] = 6,  --错乱屠戮
+			 [GetSpellInfo(246920)] = 6,  --错乱屠戮
+			
+			-- 双狗
+			 [GetSpellInfo(248818)] = 7,
+			 [GetSpellInfo(248815)] = 6,
+			 [GetSpellInfo(244679)] = 8,
+			 [GetSpellInfo(254429)] = 7, 
+
+			-- 议会
+			 [GetSpellInfo(253037)] = 6,  --
+			 [GetSpellInfo(253290)] = 7,
+			 [GetSpellInfo(244172)] = 8,
+			 [GetSpellInfo(244388)] = 9,
+			 [GetSpellInfo(253306)] = 9,
+			 [GetSpellInfo(244737)] = 8,
+			 [GetSpellInfo(244748)] = 8,
+			 			 
+			-- 传送门
+			 [GetSpellInfo(246208)] = 7,
+			 [GetSpellInfo(244949)] = 6,
+			 [GetSpellInfo(246316)] = 5,
+			 [GetSpellInfo(244849)] = 4,
+			 [GetSpellInfo(244613)] = 4,
+						 
+			-- 艾欧娜
+			 [GetSpellInfo(248795)] = 5,
+			 [GetSpellInfo(249016)] = 6,
+			 [GetSpellInfo(249017)] = 8, 
+			 [GetSpellInfo(249014)] = 7,
+			 [GetSpellInfo(250693)] = 4,
+			 [GetSpellInfo(250691)] = 7,
+			 [GetSpellInfo(250140)] = 6,
+			 [GetSpellInfo(250693)] = 8,
+			
+			-- 猎魂者
+			 [GetSpellInfo(247367)] = 6,
+			 [GetSpellInfo(255029)] = 7,
+			 [GetSpellInfo(247565)] = 5,
+			 [GetSpellInfo(250224)] = 7,  --
+			 [GetSpellInfo(247687)] = 5,
+			 [GetSpellInfo(247716)] = 7,
+			 [GetSpellInfo(247641)] = 8,
+			 [GetSpellInfo(254183)] = 7,
+			 [GetSpellInfo(250006)] = 7,
+			
+			-- 金加洛斯
+			 [GetSpellInfo(246840)] = 4,
+			 [GetSpellInfo(246698)] = 6,
+			 [GetSpellInfo(258070)] = 7,
+			 [GetSpellInfo(246637)] = 5,
+			
+			-- 瓦里玛萨斯
+			 [GetSpellInfo(243961)] = 6,
+			 [GetSpellInfo(244094)] = 8,
+			 [GetSpellInfo(244042)] = 7,
+			 [GetSpellInfo(244005)] = 7,
+			 [GetSpellInfo(248732)] = 6,
+						 
+			-- 破坏魔
+			 [GetSpellInfo(245586)] = 5,
+			 [GetSpellInfo(256356)] = 5,
+			 [GetSpellInfo(253020)] = 5,
+             [GetSpellInfo(241822)] = 6,
+             [GetSpellInfo(253520)] = 3,
+             [GetSpellInfo(253697)] = 5,
+             [GetSpellInfo(245671)] = 9,
+             [GetSpellInfo(245921)] = 6,
+             [GetSpellInfo(250097)] = 7,
+             [GetSpellInfo(246763)] = 4,	
+             [GetSpellInfo(250757)] = 8,	
+
+            -- 阿格拉玛
+			 [GetSpellInfo(244291)] = 5,
+			 [GetSpellInfo(245990)] = 5,
+			 [GetSpellInfo(245994)] = 5,
+             [GetSpellInfo(245916)] = 6,
+             [GetSpellInfo(246014)] = 3,
+             [GetSpellInfo(244912)] = 5,
+             [GetSpellInfo(244736)] = 9,
+             [GetSpellInfo(247079)] = 6,
+             [GetSpellInfo(254452)] = 7,
+            
+            -- 阿古斯
+			 [GetSpellInfo(248499)] = 5,
+			 [GetSpellInfo(248167)] = 5,
+			 [GetSpellInfo(248396)] = 7,
+             [GetSpellInfo(258646)] = 6,
+             [GetSpellInfo(258647)] = 5,
+             [GetSpellInfo(253903)] = 5,
+             [GetSpellInfo(253901)] = 5,
+             [GetSpellInfo(255199)] = 6,
+             [GetSpellInfo(255200)] = 7,
+             [GetSpellInfo(250669)] = 4,	
+             [GetSpellInfo(251570)] = 4,	
+             [GetSpellInfo(251815)] = 7,
+             [GetSpellInfo(257869)] = 6,
+             [GetSpellInfo(257911)] = 7,	 
+		},
 	},
 	second = {
 		[767] = {--"潮汐王座"

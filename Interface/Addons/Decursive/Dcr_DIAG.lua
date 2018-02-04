@@ -1,7 +1,7 @@
 --[[
     This file is part of Decursive.
 
-    Decursive (v 2.7.5.2) add-on for World of Warcraft UI
+    Decursive (v 2.7.5.7) add-on for World of Warcraft UI
     Copyright (C) 2006-2014 John Wellesz (archarodim AT teaser.fr) ( http://www.2072productions.com/to/decursive.php )
 
     Starting from 2009-10-31 and until said otherwise by its author, Decursive
@@ -17,7 +17,7 @@
     Decursive is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY.
 
-    This file was last updated on 2017-01-16T2:09:54Z
+    This file was last updated on 2017-09-04T4:35:32Z
 --]]
 -------------------------------------------------------------------------------
 
@@ -38,6 +38,7 @@ local time              = _G.time;
 local pcall             = _G.pcall;
 local pairs             = _G.pairs;
 local ipairs            = _G.ipairs;
+local InCombatLockdown  = _G.InCombatLockdown;
 
 local addonName, T = ...;
 DecursiveRootTable = T; -- needed until we get rid of the xml based UI. -- Also used by HHTD from 2013-04-05
@@ -88,7 +89,7 @@ local DebugTextTable    = T._DebugTextTable;
 local Reported          = {};
 
 local UNPACKAGED = "@pro" .. "ject-version@";
-local VERSION = "2.7.5.2";
+local VERSION = "2.7.5.7";
 
 T._LoadedFiles = {};
 T._LoadedFiles["Dcr_DIAG.lua"] = false; -- here for consistency but useless in this particular file
@@ -190,7 +191,17 @@ function T._AddDebugText(a1, ...) -- {{{
     local zone = GetRealZoneText() or "none";
 
     if not Reported[text] then
-        table.insert (DebugTextTable,  ("\n\n|cffff0000*****************|r\n\n%.4f (tr:'%s' ca:'%s' h%d_w%d-%dfps-%s): %s -|count: "):format(NiceTime(), tostring(T._DebugTimerRefName), tostring(T._CatchAllErrors), select(3, GetNetStats()), select(4, GetNetStats()), GetFramerate(), zone, text) );
+        table.insert (DebugTextTable,  ("\n\n|cffff0000*****************|r\n\n%.4f (tr:'%s' ca:'%s' icl:'%s' h%d_w%d-%dfps-%s): %s -|count: "):format(
+        NiceTime(), -- %.4f
+        tostring(T._DebugTimerRefName), -- tr:'%s'
+        tostring(T._CatchAllErrors), -- ca:'%s'
+        tostring(InCombatLockdown()), -- icl:'%s'
+        select(3, GetNetStats()), -- h%d
+        select(4, GetNetStats()), -- w%d
+        GetFramerate(), -- %dfps
+        zone, -- -%s
+        text -- %s
+        ));
         table.insert (DebugTextTable, 1);
         Reported[text] = #DebugTextTable;
     else
@@ -273,7 +284,7 @@ do
         _Debug(unpack(TIandBI));
 
 
-        DebugHeader = ("%s\n2.7.5.2  %s(%s)  CT: %0.4f D: %s %s %s BDTHFAd: %s nDrE: %d Embeded: %s W: %d (LA: %d TAMU: %d) TA: %d NDRTA: %d BUIE: %d TI: [dc:%d, lc:%d, y:%d, LEBY:%d, LB:%d, TTE:%u] (%s, %s, %s, %s)"):format(instructionsHeader, -- "%s\n
+        DebugHeader = ("%s\n2.7.5.7  %s(%s)  CT: %0.4f D: %s %s %s BDTHFAd: %s nDrE: %d Embeded: %s W: %d (LA: %d TAMU: %d) TA: %d NDRTA: %d BUIE: %d TI: [dc:%d, lc:%d, y:%d, LEBY:%d, LB:%d, TTE:%u] (%s, %s, %s, %s)"):format(instructionsHeader, -- "%s\n
         tostring(DC.MyClass), tostring(UnitLevel("player") or "??"), NiceTime(), date(), GetLocale(), -- %s(%s)  CT: %0.4f D: %s %s
         BugGrabber and "BG" .. (T.BugGrabber and "e" or "") or "NBG", -- %s
         tostring(T._BDT_HotFix1_applyed), -- BDTHFAd: %s
@@ -387,7 +398,6 @@ T._BlizzardUIErrors = 0;
 T._ErrorLimitStripped = false;
 T._HHTDErrors = 0;
 
-local InCombatLockdown  = _G.InCombatLockdown;
 local LastErrorMessage = "!NotSet!";
 
 -- a special handler for these random "Script ran too long" error
@@ -396,10 +406,16 @@ local function continueErrorReporting (lowerCaseErrorMsg)
     local isSRTLE = lowerCaseErrorMsg:find("script ran too long")
 
     if not isSRTLE then
+        -- continue as usual when this error is not a SRTL one
+        return true;
+    elseif T._CatchAllErrors or not T.Dcr.DcrFullyInitialized then
+        -- However we do want to catch SRTL errors when these flags are active as it
+        -- explains why subsequent "impossible" errors are happening...
+        -- (several reports were received where DCR init did not complete for no apparent reason)
         return true;
     end
 
-    -- these tests appear redundant but this function must never crash...
+    -- these tests appear to be redundant but this function must never crash...
     if not T.Dcr.db or not T.Dcr.db.global or not T.Dcr.db.global.SRTLerrors then
         return false;
     end
@@ -514,39 +530,26 @@ function T._onError(event, errorObject)
 
     LastErrorMessage = errorm;
 
-    if not mine and not T._BugSackLoaded and GetCVarBool("scriptErrors") then
-        if not _G.DEBUGLOCALS_LEVEL then
-            if not InCombatLockdown() then
-                _G.LoadAddOn("Blizzard_DebugTools");
-            else
-                if T.Dcr.AddDelayedFunctionCall then
-                    T.Dcr:AddDelayedFunctionCall('Load_Blizzard_DebugTools', _G.LoadAddOn, 'Blizzard_DebugTools');
+    if not mine and not T._BugSackLoaded then
 
-                    _Debug("Blizzard_DebugTools load has been delayed because InCombatLockdown");
-                else
-                    _Debug("Blizzard_DebugTools load has been cancelled because InCombatLockdown");
-                end
-                return;
+        --/console scriptErrors 1 to check it
+        if _G.DEBUGLOCALS_LEVEL then
+
+            -- Fix Blizzard's own code... (2017-09-04: it's set to 5 while it should be 4)
+            if _G.DEBUGLOCALS_LEVEL == 5 then
+                _G.DEBUGLOCALS_LEVEL = 4
             end
+
+            _G.DEBUGLOCALS_LEVEL = _G.DEBUGLOCALS_LEVEL + 9
         end
-        _G.DEBUGLOCALS_LEVEL = 11 -- XXX must be set to the right value to get the correct stack and locals. This is why we need to load Blizzard_DebugTools ourselves... That sucks...
 
         -- forward the error to the default Blizzad error displayer
-        if _G._ERRORMESSAGE then
+        if _G.HandleLuaError then
             local errorm = errorObject.message;
-
-            -- if the error happened inside blizzard_debugtools, use Blizzards's BasicScriptErrorsText
-            if (errorm:lower()):find("blizzard_debugtools") then
-                --[===[@alpha@
-                _G.BasicScriptErrorsText:SetText(errorm);
-                _G.BasicScriptErrors:Show();
-                --@end-alpha@]===]
-                return;
-            end
 
             _Debug("Lua error forwarded");
 
-            _G._ERRORMESSAGE( errorm );
+            return _G.HandleLuaError( errorm );
         end
     else
         _Debug("Lua error NOT forwarded, mine=", mine);
@@ -569,16 +572,6 @@ function T._DecursiveErrorHandler(err, ...)
 
     err = tostring(err);
     local errl = err:lower();
-
-    --A check to see if the error is happening inside the Blizzard 'debug' tool himself...
-    if errl:find("blizzard_debugtools") then
-        --[===[@alpha@
-        if ( GetCVarBool("scriptErrors") ) then
-            print (("|cFFFF0000%s|r"):format(err));
-        end
-        --@end-alpha@]===]
-        return;
-    end
 
     if PlaySoundFile_RanTooLongheck(err) then
         return;
@@ -637,7 +630,15 @@ function T._DecursiveErrorHandler(err, ...)
     LastErrorMessage = err;
 
     if ProperErrorHandler and not mine then
-        _G.DEBUGLOCALS_LEVEL = 5; -- necessary for Blizzard error handler
+        if _G.DEBUGLOCALS_LEVEL then
+
+            -- Fix Blizzard's own code... (2017-09-04: it's set to 5 while it should be 4)
+            if _G.DEBUGLOCALS_LEVEL == 5 then
+                _G.DEBUGLOCALS_LEVEL = 4
+            end
+
+            _G.DEBUGLOCALS_LEVEL = _G.DEBUGLOCALS_LEVEL + 3;
+        end
         return ProperErrorHandler( err, ... ); -- returning this way prevents this function from appearing in the stack
     end
 end
@@ -841,20 +842,20 @@ do
         --LibStub:GetLibrary
         local UseLibStub = {
             ["AceAddon-3.0"] = 12,
-            ["AceComm-3.0"] = 9,
+            ["AceComm-3.0"] = 10,
             ["AceConsole-3.0"] = 7,
             ["AceDB-3.0"] = 26,
             ["AceDBOptions-3.0"] = 15,
-            ["AceEvent-3.0"] = 3,
+            ["AceEvent-3.0"] = 4,
             ["AceHook-3.0"] = 8,
             ["AceLocale-3.0"] = 6,
             ["AceTimer-3.0"] = 17,
 
             ["AceGUI-3.0"] = 34,
-            ["AceConfig-3.0"] = 2,
-            ["AceConfigCmd-3.0"] = 13,
-            ["AceConfigDialog-3.0"] = 61,
-            ["AceConfigRegistry-3.0"] = 16,
+            ["AceConfig-3.0"] = 3,
+            ["AceConfigCmd-3.0"] = 14,
+            ["AceConfigDialog-3.0"] = 64,
+            ["AceConfigRegistry-3.0"] = 17,
 
             ["LibDataBroker-1.1"] = 4,
             ["LibDBIcon-1.0"] = 34,
@@ -961,8 +962,12 @@ do
             T._DiagStatus = FatalOccured and 2 or 1;
         end
 
-        -- if the diagnostic was requested by the user, we also test AceEvent functionalities {{{ -
+        -- if the diagnostic was requested by the user, we also test AceEvent functionalities among a few other things {{{ -
         if force and FromCommand and T._DiagStatus == 0 then
+
+            if not _G.HandleLuaError then
+                AddDebugText("|cFFFF0000WARNING Blizzard default error handler is no longer available...|r");
+            end
 
             PrintMessage("|cFF00FF00No problem found in shared libraries or Decursive files!|r");
 
@@ -1052,4 +1057,4 @@ do
     end
 end
 
-T._LoadedFiles["Dcr_DIAG.lua"] = "2.7.5.2";
+T._LoadedFiles["Dcr_DIAG.lua"] = "2.7.5.7";

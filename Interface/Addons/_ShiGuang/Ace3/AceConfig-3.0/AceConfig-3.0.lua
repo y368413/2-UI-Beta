@@ -1,11 +1,11 @@
-local MAJOR, MINOR = "AceConfig-3.0", 2
-local AceConfig = LibStub:NewLibrary(MAJOR, MINOR)
-
-if not AceConfig then return end
 
 local cfgreg = LibStub("AceConfigRegistry-3.0")
 local cfgcmd = LibStub("AceConfigCmd-3.0")
 
+local MAJOR, MINOR = "AceConfig-3.0", 3
+local AceConfig = LibStub:NewLibrary(MAJOR, MINOR)
+
+if not AceConfig then return end
 local pcall, error, type, pairs = pcall, error, type, pairs
 
 function AceConfig:RegisterOptionsTable(appName, options, slashcmd)

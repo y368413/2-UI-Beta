@@ -1,13 +1,454 @@
---## SavedVariables: PLH_NOTIFY_MODE, PLH_INCLUDE_BOE, PLH_MIN_QUALITY, PLH_MIN_ILVL, PLH_DEBUG, PLH_CURRENT_SPEC_ONLY, PLH_CHECK_CHARACTER_LEVEL, PLH_COORDINATE_ROLLS, PLH_NOTIFY_GROUP, PLH_HIGHLIGHT_RAID_FRAMES, PLH_HIGHLIGHT_SIZE
-
-PLH_LONG_ADDON_NAME = '|cff02F78E[装备]|r分配助手'
-PLH_SHORT_ADDON_NAME = '^-^'
-PLH_AUTHOR_NAME = 'Madone-Zul\'Jin'
+﻿--## SavedVariables: PLH_NOTIFY_MODE, PLH_INCLUDE_BOE, PLH_MIN_QUALITY, PLH_MIN_ILVL, PLH_DEBUG, PLH_CURRENT_SPEC_ONLY, PLH_CHECK_CHARACTER_LEVEL, PLH_COORDINATE_ROLLS, PLH_NOTIFY_GROUP, PLH_HIGHLIGHT_RAID_FRAMES, PLH_HIGHLIGHT_SIZE
 
 
---------------------------------------------------------------------------------
+--[[
+to easily populate these arrays:
+	wowhead search trinkets -> usable by "whichever" -> added in expansion/patch; also ID > 0
+	paste into OpenOffice
+	=concatenate(b1;", -- ";d1)
+	ensure curly quotes are off in tools -> autocorrect options -> localized options
+	to obtain IDs: http://www.wowhead.com/items/armor/trinkets/role:1?filter=166:151;7:1;0:0#0-3+2
+]]--	
+local PLH_TRINKET_AGILITY_DPS = {
+	-- 7.3 trinkets
+	152288, -- 7.3 Raid - Antorus - Boss 11 - Trinket Ranged WS
+	152285, -- 7.3 Raid - Antorus - Boss 11 - Trinket Melee Str WS
+	152701, -- 7.3 Raid - Antorus - Boss 11 - Trinket Melee Agi WS
+	151970, -- Vitality Resonator
+	151969, -- Terminus Signaling Beacon
+	151971, -- Sheath of Asara
+	151968, -- Shadow-Singed Fang
+	151964, -- Seeping Scourgewing
+	151962, -- Prototype Personnel Decimator
+	151961, -- Legionsteel Flywheel
+	152093, -- Gorshalach's Legacy
+	151963, -- Forgefiend's Fabricator
+	151967, -- Electrostatic Lasso
+	152782, -- Venerable Triad Statuette
+	152781, -- Unblemished Sigil of Argus
+	152783, -- Mac'aree Focusing Amethyst
+	153172, -- Doomed Exarch's Memento
+	
+	-- 7.2.5 trinkets
+	151190, -- Specter of Betrayal
+	150526,	-- Shadowmoon Insignia
+	150527,	-- Madness of the Betrayer
+
+	-- 7.2 trinkets
+	147275, -- Beguiler's Talisman
+	144477, -- Splinters of Agronax
+	147011, -- Vial of Ceaseless Toxins
+	147012, -- Umbral Moonglaives
+	147016, -- Terror From Below
+	147017, -- Tarnished Sentinel Medallion
+	147018, -- Spectral Thurible
+	147009, -- Infernal Cinders
+	147015, -- Engine of Eradication
+	147010, -- Cradle of Anguish
+	
+	-- 7.1.5 and previously missed 7.1 trinkets
+	142506, -- Eye of Guarm
+	142166, -- Ethereal Urn
+	
+	-- 7.1 trinkets
+	140027, -- Ley Spark
+	142164, -- Toe Knee's Promise
+	142160, -- Mrrgria's Favor
+	142167, -- Eye of Command
+	142165, -- Deteriorated Construct Core
+	142159, -- Bloodstained Handkerchief
+	142157, -- Aran's Relaxing Ruby
+
+	137419, -- Chrono Shard
+	133642, -- Horn of Valor
+	141537, -- Thrice-Accursed Compass
+	141482, -- Unstable Arcanocrystal
+	140794, -- Arcanogolem Digit
+	140806, -- Convergence of Fates
+	140808, -- Draught of Souls
+	140796, -- Entwined Elemental Foci
+	140801, -- Fury of the Burning Sky
+	140798, -- Icon of Rot
+	140802, -- Nightblooming Frond
+	136258, -- Legion Season 1 EliteVindictive Gladiator's Insignia of Conquest
+	136145, -- Legion Season 1 EliteVindictive Gladiator's Insignia of Conquest
+	139329, -- Bloodthirsty Instinct
+	139334, -- Nature's Call
+	139320, -- Ravaged Seed Pod
+	139325, -- Spontaneous Appendages
+	139323, -- Twisting Wind
+	138224, -- Unstable Horrorslime
+	135806, -- Legion Season 1Vindictive Gladiator's Insignia of Conquest
+	135693, -- Legion Season 1Vindictive Gladiator's Insignia of Conquest
+	136716, -- Caged Horror
+	137459, -- Chaos Talisman
+	137446, -- Elementium Bomb Squirrel Generator
+	133641, -- Eye of Skovald
+	137539, -- Faulty Countermeasure
+	137329, -- Figurehead of the Naglfar
+	137369, -- Giant Ornamental Pearl
+	136975, -- Hunger of the Pack
+	137357, -- Mark of Dargrul
+	133644, -- Memento of Angerboda
+	137541, -- Moonlit Prism
+	137349, -- Naraxas' Spiked Tongue
+	137312, -- Nightmare Egg Shell
+	137306, -- Oakheart's Gnarled Root
+	137433, -- Obelisk of the Void
+	136715, -- Spiked Counterweight
+	137367, -- Stormsinger Fulmination Charge
+	137373, -- Tempered Egg of Serpentrix
+	137406, -- Terrorbound Nexus
+	140026, -- The Devilsaur's Bite
+	137439, -- Tiny Oozeling in a Jar
+	137537, -- Tirathon's Betrayal
+	137486, -- Windscar Whetstone
+	135919, -- Legion Season 1Vindictive Combatant's Insignia of Conquest
+	136032, -- Legion Season 1Vindictive Combatant's Insignia of Conquest
+	139630, -- Etching of SargerasDemon Hunter
+	128958, -- Lekos' LeashDemon Hunter
+	129044, -- Frothing Helhound's Fury
+	131803 -- Spine of Barax
+}
+
+local PLH_TRINKET_INTELLECT_DPS = {
+	-- 7.3 trinkets
+	152288, -- 7.3 Raid - Antorus - Boss 11 - Trinket Ranged WS
+	151970, -- Vitality Resonator
+	151969, -- Terminus Signaling Beacon
+	151971, -- Sheath of Asara
+	151962, -- Prototype Personnel Decimator
+	151955, -- Acrid Catalyst Injector
+	152782, -- Venerable Triad Statuette
+	152781, -- Unblemished Sigil of Argus
+	152783, -- Mac'aree Focusing Amethyst
+	153172, -- Doomed Exarch's Memento
+	151310, -- Reality Breacher
+	
+	-- 7.2.5 trinkets
+	150522,	-- The Skull of Gul'dan
+	150388,	-- Hibernation Crystal
+	
+	-- 7.2 trinkets
+	147276, -- Spellbinder's Seal
+	144480, -- Dreadstone of Endless Shadows
+	147019, -- Tome of Unraveling Sanity
+	147016, -- Terror From Below
+	147017, -- Tarnished Sentinel Medallion
+	147018, -- Spectral Thurible
+	147002, -- Charm of the Rising Tide
+	
+	-- 7.1.5 and previously missed 7.1 trinkets
+	142166, -- Ethereal Urn
+
+	-- 7.1 trinkets
+	140031, -- Mana Spark
+	142160, -- Mrrgria's Favor
+	142165, -- Deteriorated Construct Core
+	142157, -- Aran's Relaxing Ruby
+	
+	137419, -- Chrono Shard
+	133642, -- Horn of Valor
+	141482, -- Unstable Arcanocrystal
+	141536, -- Padawsen's Unlucky Charm
+	132970, -- Runas' Nearly Depleted Ley Crystal
+	136038, -- Legion Season 1Vindictive Combatant's Insignia of Dominance
+	135925, -- Legion Season 1Vindictive Combatant's Insignia of Dominance
+	132895, -- The Watcher's Divine Inspiration
+	137367, -- Stormsinger Fulmination Charge
+	137398, -- Portable Manacracker
+	121810, -- Pocket Void Portal
+	137433, -- Obelisk of the Void
+	137306, -- Oakheart's Gnarled Root
+	137349, -- Naraxas' Spiked Tongue
+	137541, -- Moonlit Prism
+	137485, -- Infernal Writ
+	137329, -- Figurehead of the Naglfar
+	133641, -- Eye of Skovald
+	137446, -- Elementium Bomb Squirrel Generator
+	140030, -- Devilsaur Shock-Baton
+	137301, -- Corrupted Starlight
+	136716, -- Caged Horror
+	121652, -- Ancient Leaf
+	139326, -- Wriggling Sinew
+	140809, -- Whispers in the Dark
+	135699, -- Legion Season 1Vindictive Gladiator's Insignia of Dominance
+	136151, -- Legion Season 1 EliteVindictive Gladiator's Insignia of Dominance
+	135812, -- Legion Season 1Vindictive Gladiator's Insignia of Dominance
+	136264, -- Legion Season 1 EliteVindictive Gladiator's Insignia of Dominance
+	138224, -- Unstable Horrorslime
+	139323, -- Twisting Wind
+	139321, -- Swarming Plaguehive
+	140804, -- Star Gate
+	140800, -- Pharamere's Forbidden Grimore
+	140798, -- Icon of Rot
+	140801, -- Fury of the Burning Sky
+	140792, -- Erratic Metronome
+	139336 -- Bough of Corruption
+}
+
+local PLH_TRINKET_STRENGTH_DPS = {
+	-- 7.3 trinkets
+	152285, -- 7.3 Raid - Antorus - Boss 11 - Trinket Melee Str WS
+	152701, -- 7.3 Raid - Antorus - Boss 11 - Trinket Melee Agi WS
+	151968, -- Shadow-Singed Fang
+	151964, -- Seeping Scourgewing
+	151961, -- Legionsteel Flywheel
+	152093, -- Gorshalach's Legacy
+	151963, -- Forgefiend's Fabricator
+	151967, -- Electrostatic Lasso
+	152782, -- Venerable Triad Statuette
+	152781, -- Unblemished Sigil of Argus
+	152783, -- Mac'aree Focusing Amethyst
+	153172, -- Doomed Exarch's Memento
+	151307, -- Void Stalker's Contract
+	
+	-- 7.2.5 trinkets
+	151190, -- Specter of Betrayal
+	150526,	-- Shadowmoon Insignia
+	150527,	-- Madness of the Betrayer
+
+	-- 7.2 trinkets
+	147278, -- Stalwart Crest
+	144482, -- Fel-Oiled Infernal Machine
+	147011, -- Vial of Ceaseless Toxins
+	147012, -- Umbral Moonglaives
+	147009, -- Infernal Cinders
+	147015, -- Engine of Eradication
+	147010, -- Cradle of Anguish
+	
+	-- 7.1.5 and previously missed 7.1 trinkets
+	142166, -- Ethereal Urn
+	142508, -- Chains of the Valorous
+
+	-- 7.1 trinkets
+	140035, -- Fluctuating Arc Capacitor
+	142164, -- Toe Knee's Promise
+	142167, -- Eye of Command
+	142159, -- Bloodstained Handkerchief
+	
+	137419, -- Chrono Shard
+	133642, -- Horn of Valor
+	141482, -- Unstable Arcanocrystal
+	141535, -- Ettin Fingernail
+	137486, -- Windscar Whetstone
+	136041, -- Legion Season 1Vindictive Combatant's Insignia of Victory
+	135928, -- Legion Season 1Vindictive Combatant's Insignia of Victory
+	137439, -- Tiny Oozeling in a Jar
+	137406, -- Terrorbound Nexus
+	129260, -- Tenacity of Cursed Blood
+	136715, -- Spiked Counterweight
+	137312, -- Nightmare Egg Shell
+	121806, -- Mountain Rage Shaker
+	121570, -- Might of the Forsaken
+	133644, -- Memento of Angerboda
+	137357, -- Mark of Dargrul
+	140034, -- Impact Tremor
+	136975, -- Hunger of the Pack
+	137369, -- Giant Ornamental Pearl
+	137539, -- Faulty Countermeasure
+	137459, -- Chaos Talisman
+	135815, -- Legion Season 1Vindictive Gladiator's Insignia of Victory
+	135702, -- Legion Season 1Vindictive Gladiator's Insignia of Victory
+	136154, -- Legion Season 1 EliteVindictive Gladiator's Insignia of Victory
+	136267, -- Legion Season 1 EliteVindictive Gladiator's Insignia of Victory
+	139328, -- Ursoc's Rending Paw
+	139325, -- Spontaneous Appendages
+	139320, -- Ravaged Seed Pod
+	139334, -- Nature's Call
+	140799, -- Might of Krosus
+	140796, -- Entwined Elemental Foci
+	140808, -- Draught of Souls
+	140806, -- Convergence of Fates
+	140790 -- Claw of the Crystalline Scorpid
+}
+
+local PLH_TRINKET_HEALER = {
+	-- 7.3 trinkets
+	152288, -- 7.3 Raid - Antorus - Boss 11 - Trinket Ranged WS
+	151959, -- 7.3 Raid - Antorus - Boss 11 - Trinket Healer WS
+	152702, -- 7.3 Raid - Antorus - Boss 11 - Trinket All WS
+	151970, -- Vitality Resonator
+	151969, -- Terminus Signaling Beacon
+	151958, -- Tarratus Keystone
+	151971, -- Sheath of Asara
+	151962, -- Prototype Personnel Decimator
+	151957, -- Ishkar's Felshield Emitter
+	152289, -- Highfather's Machination
+	151956, -- Garothi Feedback Conduit
+	151960, -- Carafe of Searing Light
+	151955, -- Acrid Catalyst Injector
+	152782, -- Venerable Triad Statuette
+	152781, -- Unblemished Sigil of Argus
+	152783, -- Mac'aree Focusing Amethyst
+	153172, -- Doomed Exarch's Memento
+	
+	-- 7.2.5 trinkets
+	150523,	-- Memento of Tyrande
+	150388,	-- Hibernation Crystal
+
+	-- 7.2 trinkets
+	147276, -- Spellbinder's Seal
+	144480, -- Dreadstone of Endless Shadows
+	147019, -- Tome of Unraveling Sanity
+	147007, -- The Deceiver's Grand Design
+	147016, -- Terror From Below
+	147017, -- Tarnished Sentinel Medallion
+	147018, -- Spectral Thurible
+	147004, -- Sea Star of the Depthmother
+	147002, -- Charm of the Rising Tide
+	147005, -- Chalice of Moonlight
+	147003, -- Barbaric Mindslaver
+	147006, -- Archive of Faith
+	
+	-- 7.1.5 and previously missed 7.1 trinkets
+	142166, -- Ethereal Urn
+	142507, -- Brinewater Slime in a Bottle
+
+	-- 7.1 trinkets
+	140031, -- Mana Spark
+	142160, -- Mrrgria's Favor
+	142162, -- Fluctuating Energy
+	142158, -- Faith's Crucible
+	142165, -- Deteriorated Construct Core
+	142157, -- Aran's Relaxing Ruby
+	
+	137419, -- Chrono Shard
+	133642, -- Horn of Valor
+	141482, -- Unstable Arcanocrystal
+	141536, -- Padawsen's Unlucky Charm
+	132970, -- Runas' Nearly Depleted Ley Crystal
+	136038, -- Legion Season 1Vindictive Combatant's Insignia of Dominance
+	135925, -- Legion Season 1Vindictive Combatant's Insignia of Dominance
+	137452, -- Thrumming Gossamer
+	132895, -- The Watcher's Divine Inspiration
+	137367, -- Stormsinger Fulmination Charge
+	137398, -- Portable Manacracker
+	121810, -- Pocket Void Portal
+	137433, -- Obelisk of the Void
+	137306, -- Oakheart's Gnarled Root
+	133766, -- Nether Anti-Toxin
+	137349, -- Naraxas' Spiked Tongue
+	133645, -- Naglfar Fare
+	133646, -- Mote of Sanctification
+	137541, -- Moonlit Prism
+	137462, -- Jewel of Insatiable Desire
+	137485, -- Infernal Writ
+	137484, -- Flask of the Solemn Night
+	137329, -- Figurehead of the Naglfar
+	133641, -- Eye of Skovald
+	137446, -- Elementium Bomb Squirrel Generator
+	140030, -- Devilsaur Shock-Baton
+	137301, -- Corrupted Starlight
+	137540, -- Concave Reflecting Lens
+	136716, -- Caged Horror
+	137378, -- Bottled Hurricane
+	121652, -- Ancient Leaf
+	136714, -- Amalgam's Seventh Spine
+	139326, -- Wriggling Sinew
+	135812, -- Legion Season 1Vindictive Gladiator's Insignia of Dominance
+	136264, -- Legion Season 1 EliteVindictive Gladiator's Insignia of Dominance
+	135699, -- Legion Season 1Vindictive Gladiator's Insignia of Dominance
+	136151, -- Legion Season 1 EliteVindictive Gladiator's Insignia of Dominance
+	138222, -- Vial of Nightmare Fog
+	138224, -- Unstable Horrorslime
+	139323, -- Twisting Wind
+	139321, -- Swarming Plaguehive
+	140793, -- Perfectly Preserved Cake
+	139333, -- Horn of Cenarius
+	139330, -- Heightened Senses
+	140803, -- Etraeus' Celestial Map
+	140805, -- Ephemeral Paradox
+	139322, -- Cocoon of Enforced Solitude
+	139336, -- Bough of Corruption
+	140795 -- Aluriel's Mirror
+}
+
+local PLH_TRINKET_TANK = {
+	-- 7.3 trinkets
+	152287, -- 7.3 Raid - Antorus - Boss 11 - Trinket Tank WS
+	151976, -- Riftworld Codex
+	151978, -- Foe-Breaker Titanguard
+	152645, -- Eye of
+	151974, -- Eye of
+	151977, -- Diima's Glacial Aegis
+	151975, -- Apocalypse Drive
+	152782, -- Venerable Triad Statuette
+	152781, -- Unblemished Sigil of Argus
+	152783, -- Mac'aree Focusing Amethyst
+	153172, -- Doomed Exarch's Memento
+	
+	-- 7.2.5 trinkets
+	150526,	-- Shadowmoon Insignia
+	150527,	-- Madness of the Betrayer	
+	
+	-- 7.2 trinkets
+	147278, -- Stalwart Crest
+	147275, -- Beguiler's Talisman
+	144477, -- Splinters of Agronax
+	144482, -- Fel-Oiled Infernal Machine
+	147026, -- Shifting Cosmic Sliver
+	147024, -- Reliquary of the Damned
+	147025, -- Recompiled Guardian Module
+	147023, -- Leviathan's Hunger
+	147022, -- Feverish Carapace
+	
+	-- 7.1.5 and previously missed 7.1 trinkets
+	142506, -- Eye of Guarm
+	142166, -- Ethereal Urn
+
+	-- 7.1 trinkets
+	140027, -- Ley Spark
+	140035, -- Fluctuating Arc Capacitor
+	142169, -- Raven Eidolon
+	142168, -- Majordomo's Dinner Bell
+	142161, -- Inescapable Dread
+	
+	137419, -- Chrono Shard
+	133642, -- Horn of Valor
+	141482, -- Unstable Arcanocrystal
+	137315, -- Writhing Heart of Darkness
+	136041, -- Legion Season 1Vindictive Combatant's Insignia of Victory
+	135928, -- Legion Season 1Vindictive Combatant's Insignia of Victory
+	136032, -- Legion Season 1Vindictive Combatant's Insignia of Conquest
+	135919, -- Legion Season 1Vindictive Combatant's Insignia of Conquest
+	140026, -- The Devilsaur's Bite
+	129260, -- Tenacity of Cursed Blood
+	137344, -- Talisman of the Cragshaper
+	131803, -- Spine of Barax
+	137440, -- Shivermaw's Jawbone
+	137338, -- Shard of Rokmora
+	137362, -- Parjesh's Medallion
+	137538, -- Orb of Torment
+	121806, -- Mountain Rage Shaker
+	121570, -- Might of the Forsaken
+	128958, -- Lekos' LeashDemon Hunter
+	137430, -- Impenetrable Nerubian Husk
+	140034, -- Impact Tremor
+	133647, -- Gift of Radiance
+	129044, -- Frothing Helhound's Fury
+	136978, -- Ember of Nullification
+	137400, -- Coagulated Nightwell Residue
+	135702, -- Legion Season 1Vindictive Gladiator's Insignia of Victory
+	136267, -- Legion Season 1 EliteVindictive Gladiator's Insignia of Victory
+	135815, -- Legion Season 1Vindictive Gladiator's Insignia of Victory
+	136154, -- Legion Season 1 EliteVindictive Gladiator's Insignia of Victory
+	135693, -- Legion Season 1Vindictive Gladiator's Insignia of Conquest
+	136258, -- Legion Season 1 EliteVindictive Gladiator's Insignia of Conquest
+	135806, -- Legion Season 1Vindictive Gladiator's Insignia of Conquest
+	136145, -- Legion Season 1 EliteVindictive Gladiator's Insignia of Conquest
+	139327, -- Unbridled Fury
+	140791, -- Royal Dagger Haft
+	138225, -- Phantasmal Echo
+	140807, -- Infernal Contract
+	139335, -- Grotesque Statuette
+	139324, -- Goblet of Nightmarish Ichor
+	140797, -- Fang of Tichcondrius
+	139630, -- Etching of SargerasDemon Hunter
+	140789 -- Animated Exoskeleton
+}
 local PLH_LONG_ADDON_NAME_PREFIX = '<' .. PLH_LONG_ADDON_NAME .. '> '
-local PLH_SHORT_ADDON_NAME_PREFIX = '<' .. PLH_SHORT_ADDON_NAME .. '> '
+local PLH_SHORT_ADDON_NAME_PREFIX = '<PLH> '
 PLH_ITEM_LEVEL_PATTERN = _G.ITEM_LEVEL
 PLH_ITEM_LEVEL_PATTERN = PLH_ITEM_LEVEL_PATTERN:gsub('%%d', '(%%d+)')  -- 'Item Level (%d+)'
 PLH_RELIC_TOOLTIP_TYPE_PATTERN = _G.RELIC_TOOLTIP_TYPE
@@ -24,55 +465,6 @@ local waitFrame2 = nil;    -- used by PLH_wait
 local waitTable3 = {};     -- used by PLH_wait
 local waitFrame3 = nil;    -- used by PLH_wait
 
---[[
-informational - possible tooltip item type row arrangements
-
-Ranged				Bow
-Ranged				Crossbow
-Ranged				Gun
-Ranged				Wand
-
-One-Hand			Dagger
-One-Hand			Fist Weapon
-One-Hand			Axe
-One-Hand			Mace
-One-Hand			Sword
-
-Two-Hand			Polearm
-Two-Hand			Staff
-Two-Hand			Axe
-Two-Hand			Mace
-Two-Hand			Sword
-
-Off Hand			Shield
-
-Held In Off-hand	nil
-
-Head				[Cloth/Leather/Mail/Plate]
-Neck				nil
-Shoulder			[Cloth/Leather/Mail/Plate]
-Back				nil
-Chest				[Cloth/Leather/Mail/Plate]
-ALSO SHIRT AND TABARAD
-Wrist				[Cloth/Leather/Mail/Plate]
-Hands				[Cloth/Leather/Mail/Plate]
-Waist				[Cloth/Leather/Mail/Plate]
-Legs				[Cloth/Leather/Mail/Plate]
-Feet				[Cloth/Leather/Mail/Plate]
-Finger				nil
-Trinket				nil
-]]--
-
---[[
-creates an empty tooltip that is ready to be populated with the information from an item
--- note: a complicated tooltip could have the following lines (ex):
-	1 - Oathclaw Helm, nil
-	2 - Mythic, nil
-	3 - Item Level 735
-	4 - Upgrade Level: 2/2, nil
-	5 - Binds when picked up, nil
-	6 - Head, Leather
-]]--
 local function CreateEmptyTooltip()
     local tip = CreateFrame('GameTooltip')
 	local leftside = {}
@@ -250,12 +642,6 @@ function PLH_SendUserMessage(message)
 	print(GetColoredMessage(PLH_SHORT_ADDON_NAME_PREFIX, _G.YELLOW_FONT_COLOR_CODE) .. GetColoredMessage(message, _G.LIGHTYELLOW_FONT_COLOR_CODE))
 end	
 
-function PLH_SendDebugMessage(message)
-	if PLH_DEBUG then
-		print(GetColoredMessage(PLH_SHORT_ADDON_NAME_PREFIX, _G.YELLOW_FONT_COLOR_CODE) .. GetColoredMessage(message, _G.GRAY_FONT_COLOR_CODE))
-	end		
-end	
-
 -- having 3 of the same function is very much a hack...multiple waits can happen during inspect loop, so we need different global vars to track separate timers
 -- I could consolidate to a single function with a param determining which globals to use, but I'm not even sure this will
 -- solve the inspect issues, hence the quick-and-dirty approach
@@ -331,7 +717,7 @@ function PLH_CreateOptionsPanel()
 	--[[ Title ]]--
 	local TitleLabel = PLHConfigFrame:CreateFontString(nil, 'ARTWORK', 'GameFontNormalLarge')
 	TitleLabel:SetPoint('TOPLEFT', PLHConfigFrame, 'TOPLEFT', 16, -16)
-	TitleLabel:SetText("拾取装备可交易提示助手")
+	TitleLabel:SetText(PLH_ADDON_NOTE)
 
 	-- [[ Version ]] --
 	--local AddonVersion = GetAddOnMetadata("PersonalLootHelper", "Version")
@@ -342,7 +728,7 @@ function PLH_CreateOptionsPanel()
 	--[[ Author ]]--
 	local AuthorLabel = PLHConfigFrame:CreateFontString(nil, 'ARTWORK', 'GameFontNormalSmall')
 	AuthorLabel:SetPoint('TOPRIGHT', PLHConfigFrame, 'TOPRIGHT', -16, -24)
-	AuthorLabel:SetText('作者：' .. PLH_AUTHOR_NAME)
+	AuthorLabel:SetText(PLH_AUTHOR_NAME)
 
 	--[[ PLH_INCLUDE_BOE ]]--
 	PLH_IncludeBOECheckbox = CreateFrame('CheckButton', 'PLHIncludeBOE', PLHConfigFrame, 'InterfaceOptionsCheckButtonTemplate')
@@ -351,7 +737,7 @@ function PLH_CreateOptionsPanel()
 
 	local IncludeBOELabel = PLH_IncludeBOECheckbox:CreateFontString(nil, 'ARTWORK', 'GameFontHighlight')
 	IncludeBOELabel:SetPoint('LEFT', PLH_IncludeBOECheckbox, 'RIGHT', 0, 0)
-	IncludeBOELabel:SetText('包含 装绑 物品')
+	IncludeBOELabel:SetText(PLH_INCLUDE_BOEITEM)
 
 	--[[ PLH_CURRENT_SPEC_ONLY ]]--
 	PLH_CurrentSpecOnlyCheckbox = CreateFrame('CheckButton', 'PLHCurrentSpecOnly', PLHConfigFrame, 'InterfaceOptionsCheckButtonTemplate')
@@ -360,7 +746,7 @@ function PLH_CreateOptionsPanel()
 
 	local CurrentSpecOnlyLabel = PLH_CurrentSpecOnlyCheckbox:CreateFontString(nil, 'ARTWORK', 'GameFontHighlight')
 	CurrentSpecOnlyLabel:SetPoint('LEFT', PLH_CurrentSpecOnlyCheckbox, 'RIGHT', 0, 0)
-	CurrentSpecOnlyLabel:SetText('只适配当前专精')
+	CurrentSpecOnlyLabel:SetText(PLH_SPEC_ONLY)
 
 	--[[ PLH_NOTIFY_GROUP ]]--
 	PLH_NotifyGroupCheckbox = CreateFrame('CheckButton', 'PLHNotifyGroup', PLHConfigFrame, 'InterfaceOptionsCheckButtonTemplate')
@@ -369,7 +755,7 @@ function PLH_CreateOptionsPanel()
 
 	local NotifyGroupLabel = PLH_NotifyGroupCheckbox:CreateFontString(nil, 'ARTWORK', 'GameFontHighlight')
 	NotifyGroupLabel:SetPoint('LEFT', PLH_NotifyGroupCheckbox, 'RIGHT', 0, 0)
-	NotifyGroupLabel:SetText('通报到队伍/团队')
+	NotifyGroupLabel:SetText(PLH_NOTIFY_GROUPS)
 
 	--[[ PLH_COORDINATE_ROLLS ]]--
 	PLH_CoordinateRollsCheckbox = CreateFrame('CheckButton', 'PLHCoordinateRolls', PLHConfigFrame, 'InterfaceOptionsCheckButtonTemplate')
@@ -378,11 +764,11 @@ function PLH_CreateOptionsPanel()
 
 	PLH_CoordinateRollsLabel1 = PLH_CoordinateRollsCheckbox:CreateFontString(nil, 'ARTWORK', 'GameFontHighlight')
 	PLH_CoordinateRollsLabel1:SetPoint('LEFT', PLH_CoordinateRollsCheckbox, 'RIGHT', 0, 0)
-	PLH_CoordinateRollsLabel1:SetText('发起R点需求 (有A才行)')
+	PLH_CoordinateRollsLabel1:SetText(PLH_COORDINATE_ROLL)
 
 	PLH_CoordinateRollsLabel2 = PLH_CoordinateRollsCheckbox:CreateFontString(nil, 'ARTWORK', 'GameFontHighlight')
 	PLH_CoordinateRollsLabel2:SetPoint('TOPLEFT', PLH_CoordinateRollsLabel1, 'BOTTOMLEFT', 20, -10)
-	PLH_CoordinateRollsLabel2:SetText('需求装备的人密团长 "交易" 或 "交易 [装备链接]" 來R。')
+	PLH_CoordinateRollsLabel2:SetText(PLH_MANAGE_ROLLS)
 	PLH_CoordinateRollsLabel2:SetWordWrap(true)
 	PLH_CoordinateRollsLabel2:SetJustifyH('LEFT')
 	PLH_CoordinateRollsLabel2:SetWidth(450)
@@ -394,7 +780,7 @@ function PLH_CreateOptionsPanel()
 
 	local CheckCharacterLevelLabel = PLH_CheckCharacterLevelCheckbox:CreateFontString(nil, 'ARTWORK', 'GameFontHighlight')
 	CheckCharacterLevelLabel:SetPoint('LEFT', PLH_CheckCharacterLevelCheckbox, 'RIGHT', 0, 0)
-	CheckCharacterLevelLabel:SetText('不包含低等级角色')
+	CheckCharacterLevelLabel:SetText(PLH_NO_LOWLEVEL)
 
 	--[[ PLH_HIGHLIGHT_RAID_FRAMES ]]--
 	PLH_HighlightRaidFramesCheckbox = CreateFrame('CheckButton', 'PLHHighlightRaidFrames', PLHConfigFrame, 'InterfaceOptionsCheckButtonTemplate')
@@ -403,7 +789,7 @@ function PLH_CreateOptionsPanel()
 
 	local HighlightRaidFramesLabel = PLH_HighlightRaidFramesCheckbox:CreateFontString(nil, 'ARTWORK', 'GameFontHighlight')
 	HighlightRaidFramesLabel:SetPoint('LEFT', PLH_HighlightRaidFramesCheckbox, 'RIGHT', 0, 0)
-	HighlightRaidFramesLabel:SetText('在团框中显示可交易的装备')
+	HighlightRaidFramesLabel:SetText(PLH_SHOW_INRAID)
 
 	--[[ PLH_HIGHLIGHT_SIZE ]]--
 	PLH_HighlightSizeSlider = CreateFrame("Slider", "PLHHighlightSize", PLHConfigFrame, "OptionsSliderTemplate")
@@ -415,15 +801,15 @@ function PLH_CreateOptionsPanel()
 	PLH_HighlightSizeSlider:SetWidth(180)
 	PLH_HighlightSizeSlider:SetHeight(16)
 	PLH_HighlightSizeSlider:SetPoint("LEFT", HighlightRaidFramesLabel, "RIGHT", 20, 0)
-	_G[PLH_HighlightSizeSlider:GetName().."High"]:SetText("大")
-	_G[PLH_HighlightSizeSlider:GetName().."Low"]:SetText("小")
-	_G[PLH_HighlightSizeSlider:GetName().."Text"]:SetText("图标大小")
+	_G[PLH_HighlightSizeSlider:GetName().."High"]:SetText(BINDING_NAME_CAMERAZOOMIN)
+	_G[PLH_HighlightSizeSlider:GetName().."Low"]:SetText(BINDING_NAME_CAMERAZOOMOUT)
+	_G[PLH_HighlightSizeSlider:GetName().."Text"]:SetText(EMBLEM_SYMBOL)
 	PLH_HighlightSizeSlider:SetValue(PLH_HIGHLIGHT_SIZE)
 	
 	--[[ Thank you message ]] --
 	local ThankYouLabel = PLHConfigFrame:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')
 	ThankYouLabel:SetPoint('BOTTOM', PLHConfigFrame, 'BOTTOM', 0, 48)
-	ThankYouLabel:SetText('感谢所有愿意把装备分享给最需要的人的玩家！\n毕竟要有爱，哪来那么多魔兽争霸。')
+	ThankYouLabel:SetText(PLH_THANKS_ALL)
 	ThankYouLabel:SetWidth(400)
 	ThankYouLabel:SetWordWrap(true)
 
@@ -463,11 +849,10 @@ local DEFAULT_NOTIFY_MODE = NOTIFY_MODE_SELF
 local DEFAULT_INCLUDE_BOE = false
 local DEFAULT_MIN_ILVL = 528  -- personal loot was introduced with Siege of Orgrimmar, which started at ilvl 528
 local DEFAULT_MIN_QUALITY = 3  -- Rare
-local DEFAULT_DEBUG = false
 local DEFAULT_CURRENT_SPEC_ONLY = false
 local DEFAULT_CHECK_CHARACTER_LEVEL = true
 local DEFAULT_HIGHLIGHT_RAID_FRAMES = true
-local DEFAULT_HIGHLIGHT_SIZE = 20
+local DEFAULT_HIGHLIGHT_SIZE = 21
 
 local TRADE_MESSAGE = 'TRADE'  -- added some hardcording in ProcessWhisper for various way people may offer to trade items; customize text there if needed (ex: foreign languages)
 local DELAY_BETWEEN_ROLLS = 4 -- in seconds
@@ -796,353 +1181,6 @@ local ExpectedItemCount = {			-- number of items expected by spec, assuming pers
 	{ WARRIOR, 73, 16 }					-- protection
 }
 
---[[
-to easily populate these arrays:
-	wowhead search trinkets -> usable by "whichever" -> added in expansion/patch; also ID > 0
-	paste into OpenOffice
-	=concatenate(b1;", -- ";d1)
-	ensure curly quotes are off in tools -> autocorrect options -> localized options
-	to obtain IDs: http://www.wowhead.com/items/armor/trinkets/role:1?filter=166:151;7:1;0:0#0-3+2
-]]--	
-local TRINKET_AGILITY_DPS = {
-
-	-- 7.2 trinkets
-	147275, -- Beguiler's Talisman
-	144477, -- Splinters of Agronax
-	147011, -- Vial of Ceaseless Toxins
-	147012, -- Umbral Moonglaives
-	147016, -- Terror From Below
-	147017, -- Tarnished Sentinel Medallion
-	147018, -- Spectral Thurible
-	147009, -- Infernal Cinders
-	147015, -- Engine of Eradication
-	147010, -- Cradle of Anguish
-	
-	-- 7.1.5 and previously missed 7.1 trinkets
-	142506, -- Eye of Guarm
-	142166, -- Ethereal Urn
-	
-	-- 7.1 trinkets
-	140027, -- Ley Spark
-	142164, -- Toe Knee's Promise
-	142160, -- Mrrgria's Favor
-	142167, -- Eye of Command
-	142165, -- Deteriorated Construct Core
-	142159, -- Bloodstained Handkerchief
-	142157, -- Aran's Relaxing Ruby
-
-	137419, -- Chrono Shard
-	133642, -- Horn of Valor
-	141537, -- Thrice-Accursed Compass
-	141482, -- Unstable Arcanocrystal
-	140794, -- Arcanogolem Digit
-	140806, -- Convergence of Fates
-	140808, -- Draught of Souls
-	140796, -- Entwined Elemental Foci
-	140801, -- Fury of the Burning Sky
-	140798, -- Icon of Rot
-	140802, -- Nightblooming Frond
-	136258, -- Legion Season 1 EliteVindictive Gladiator's Insignia of Conquest
-	136145, -- Legion Season 1 EliteVindictive Gladiator's Insignia of Conquest
-	139329, -- Bloodthirsty Instinct
-	139334, -- Nature's Call
-	139320, -- Ravaged Seed Pod
-	139325, -- Spontaneous Appendages
-	139323, -- Twisting Wind
-	138224, -- Unstable Horrorslime
-	135806, -- Legion Season 1Vindictive Gladiator's Insignia of Conquest
-	135693, -- Legion Season 1Vindictive Gladiator's Insignia of Conquest
-	136716, -- Caged Horror
-	137459, -- Chaos Talisman
-	137446, -- Elementium Bomb Squirrel Generator
-	133641, -- Eye of Skovald
-	137539, -- Faulty Countermeasure
-	137329, -- Figurehead of the Naglfar
-	137369, -- Giant Ornamental Pearl
-	136975, -- Hunger of the Pack
-	137357, -- Mark of Dargrul
-	133644, -- Memento of Angerboda
-	137541, -- Moonlit Prism
-	137349, -- Naraxas' Spiked Tongue
-	137312, -- Nightmare Egg Shell
-	137306, -- Oakheart's Gnarled Root
-	137433, -- Obelisk of the Void
-	136715, -- Spiked Counterweight
-	137367, -- Stormsinger Fulmination Charge
-	137373, -- Tempered Egg of Serpentrix
-	137406, -- Terrorbound Nexus
-	140026, -- The Devilsaur's Bite
-	137439, -- Tiny Oozeling in a Jar
-	137537, -- Tirathon's Betrayal
-	137486, -- Windscar Whetstone
-	135919, -- Legion Season 1Vindictive Combatant's Insignia of Conquest
-	136032, -- Legion Season 1Vindictive Combatant's Insignia of Conquest
-	139630, -- Etching of SargerasDemon Hunter
-	128958, -- Lekos' LeashDemon Hunter
-	129044, -- Frothing Helhound's Fury
-	131803 -- Spine of Barax
-}
-
-local TRINKET_INTELLECT_DPS = {
-	-- 7.2 trinkets
-	147276, -- Spellbinder's Seal
-	144480, -- Dreadstone of Endless Shadows
-	147019, -- Tome of Unraveling Sanity
-	147016, -- Terror From Below
-	147017, -- Tarnished Sentinel Medallion
-	147018, -- Spectral Thurible
-	147002, -- Charm of the Rising Tide
-	
-	-- 7.1.5 and previously missed 7.1 trinkets
-	142166, -- Ethereal Urn
-
-	-- 7.1 trinkets
-	140031, -- Mana Spark
-	142160, -- Mrrgria's Favor
-	142165, -- Deteriorated Construct Core
-	142157, -- Aran's Relaxing Ruby
-	
-	137419, -- Chrono Shard
-	133642, -- Horn of Valor
-	141482, -- Unstable Arcanocrystal
-	141536, -- Padawsen's Unlucky Charm
-	132970, -- Runas' Nearly Depleted Ley Crystal
-	136038, -- Legion Season 1Vindictive Combatant's Insignia of Dominance
-	135925, -- Legion Season 1Vindictive Combatant's Insignia of Dominance
-	132895, -- The Watcher's Divine Inspiration
-	137367, -- Stormsinger Fulmination Charge
-	137398, -- Portable Manacracker
-	121810, -- Pocket Void Portal
-	137433, -- Obelisk of the Void
-	137306, -- Oakheart's Gnarled Root
-	137349, -- Naraxas' Spiked Tongue
-	137541, -- Moonlit Prism
-	137485, -- Infernal Writ
-	137329, -- Figurehead of the Naglfar
-	133641, -- Eye of Skovald
-	137446, -- Elementium Bomb Squirrel Generator
-	140030, -- Devilsaur Shock-Baton
-	137301, -- Corrupted Starlight
-	136716, -- Caged Horror
-	121652, -- Ancient Leaf
-	139326, -- Wriggling Sinew
-	140809, -- Whispers in the Dark
-	135699, -- Legion Season 1Vindictive Gladiator's Insignia of Dominance
-	136151, -- Legion Season 1 EliteVindictive Gladiator's Insignia of Dominance
-	135812, -- Legion Season 1Vindictive Gladiator's Insignia of Dominance
-	136264, -- Legion Season 1 EliteVindictive Gladiator's Insignia of Dominance
-	138224, -- Unstable Horrorslime
-	139323, -- Twisting Wind
-	139321, -- Swarming Plaguehive
-	140804, -- Star Gate
-	140800, -- Pharamere's Forbidden Grimore
-	140798, -- Icon of Rot
-	140801, -- Fury of the Burning Sky
-	140792, -- Erratic Metronome
-	139336 -- Bough of Corruption
-}
-
-local TRINKET_STRENGTH_DPS = {
-	-- 7.2 trinkets
-	147278, -- Stalwart Crest
-	144482, -- Fel-Oiled Infernal Machine
-	147011, -- Vial of Ceaseless Toxins
-	147012, -- Umbral Moonglaives
-	147009, -- Infernal Cinders
-	147015, -- Engine of Eradication
-	147010, -- Cradle of Anguish
-	
-	-- 7.1.5 and previously missed 7.1 trinkets
-	142166, -- Ethereal Urn
-	142508, -- Chains of the Valorous
-
-	-- 7.1 trinkets
-	140035, -- Fluctuating Arc Capacitor
-	142164, -- Toe Knee's Promise
-	142167, -- Eye of Command
-	142159, -- Bloodstained Handkerchief
-	
-	137419, -- Chrono Shard
-	133642, -- Horn of Valor
-	141482, -- Unstable Arcanocrystal
-	141535, -- Ettin Fingernail
-	137486, -- Windscar Whetstone
-	136041, -- Legion Season 1Vindictive Combatant's Insignia of Victory
-	135928, -- Legion Season 1Vindictive Combatant's Insignia of Victory
-	137439, -- Tiny Oozeling in a Jar
-	137406, -- Terrorbound Nexus
-	129260, -- Tenacity of Cursed Blood
-	136715, -- Spiked Counterweight
-	137312, -- Nightmare Egg Shell
-	121806, -- Mountain Rage Shaker
-	121570, -- Might of the Forsaken
-	133644, -- Memento of Angerboda
-	137357, -- Mark of Dargrul
-	140034, -- Impact Tremor
-	136975, -- Hunger of the Pack
-	137369, -- Giant Ornamental Pearl
-	137539, -- Faulty Countermeasure
-	137459, -- Chaos Talisman
-	135815, -- Legion Season 1Vindictive Gladiator's Insignia of Victory
-	135702, -- Legion Season 1Vindictive Gladiator's Insignia of Victory
-	136154, -- Legion Season 1 EliteVindictive Gladiator's Insignia of Victory
-	136267, -- Legion Season 1 EliteVindictive Gladiator's Insignia of Victory
-	139328, -- Ursoc's Rending Paw
-	139325, -- Spontaneous Appendages
-	139320, -- Ravaged Seed Pod
-	139334, -- Nature's Call
-	140799, -- Might of Krosus
-	140796, -- Entwined Elemental Foci
-	140808, -- Draught of Souls
-	140806, -- Convergence of Fates
-	140790 -- Claw of the Crystalline Scorpid
-}
-
-local TRINKET_HEALER = {
-	-- 7.2 trinkets
-	147276, -- Spellbinder's Seal
-	144480, -- Dreadstone of Endless Shadows
-	147019, -- Tome of Unraveling Sanity
-	147007, -- The Deceiver's Grand Design
-	147016, -- Terror From Below
-	147017, -- Tarnished Sentinel Medallion
-	147018, -- Spectral Thurible
-	147004, -- Sea Star of the Depthmother
-	147002, -- Charm of the Rising Tide
-	147005, -- Chalice of Moonlight
-	147003, -- Barbaric Mindslaver
-	147006, -- Archive of Faith
-	
-	-- 7.1.5 and previously missed 7.1 trinkets
-	142166, -- Ethereal Urn
-	142507, -- Brinewater Slime in a Bottle
-
-	-- 7.1 trinkets
-	140031, -- Mana Spark
-	142160, -- Mrrgria's Favor
-	142162, -- Fluctuating Energy
-	142158, -- Faith's Crucible
-	142165, -- Deteriorated Construct Core
-	142157, -- Aran's Relaxing Ruby
-	
-	137419, -- Chrono Shard
-	133642, -- Horn of Valor
-	141482, -- Unstable Arcanocrystal
-	141536, -- Padawsen's Unlucky Charm
-	132970, -- Runas' Nearly Depleted Ley Crystal
-	136038, -- Legion Season 1Vindictive Combatant's Insignia of Dominance
-	135925, -- Legion Season 1Vindictive Combatant's Insignia of Dominance
-	137452, -- Thrumming Gossamer
-	132895, -- The Watcher's Divine Inspiration
-	137367, -- Stormsinger Fulmination Charge
-	137398, -- Portable Manacracker
-	121810, -- Pocket Void Portal
-	137433, -- Obelisk of the Void
-	137306, -- Oakheart's Gnarled Root
-	133766, -- Nether Anti-Toxin
-	137349, -- Naraxas' Spiked Tongue
-	133645, -- Naglfar Fare
-	133646, -- Mote of Sanctification
-	137541, -- Moonlit Prism
-	137462, -- Jewel of Insatiable Desire
-	137485, -- Infernal Writ
-	137484, -- Flask of the Solemn Night
-	137329, -- Figurehead of the Naglfar
-	133641, -- Eye of Skovald
-	137446, -- Elementium Bomb Squirrel Generator
-	140030, -- Devilsaur Shock-Baton
-	137301, -- Corrupted Starlight
-	137540, -- Concave Reflecting Lens
-	136716, -- Caged Horror
-	137378, -- Bottled Hurricane
-	121652, -- Ancient Leaf
-	136714, -- Amalgam's Seventh Spine
-	139326, -- Wriggling Sinew
-	135812, -- Legion Season 1Vindictive Gladiator's Insignia of Dominance
-	136264, -- Legion Season 1 EliteVindictive Gladiator's Insignia of Dominance
-	135699, -- Legion Season 1Vindictive Gladiator's Insignia of Dominance
-	136151, -- Legion Season 1 EliteVindictive Gladiator's Insignia of Dominance
-	138222, -- Vial of Nightmare Fog
-	138224, -- Unstable Horrorslime
-	139323, -- Twisting Wind
-	139321, -- Swarming Plaguehive
-	140793, -- Perfectly Preserved Cake
-	139333, -- Horn of Cenarius
-	139330, -- Heightened Senses
-	140803, -- Etraeus' Celestial Map
-	140805, -- Ephemeral Paradox
-	139322, -- Cocoon of Enforced Solitude
-	139336, -- Bough of Corruption
-	140795 -- Aluriel's Mirror
-}
-
-local TRINKET_TANK = {
-	-- 7.2 trinkets
-	147278, -- Stalwart Crest
-	147275, -- Beguiler's Talisman
-	144477, -- Splinters of Agronax
-	144482, -- Fel-Oiled Infernal Machine
-	147026, -- Shifting Cosmic Sliver
-	147024, -- Reliquary of the Damned
-	147025, -- Recompiled Guardian Module
-	147023, -- Leviathan's Hunger
-	147022, -- Feverish Carapace
-	
-	-- 7.1.5 and previously missed 7.1 trinkets
-	142506, -- Eye of Guarm
-	142166, -- Ethereal Urn
-
-	-- 7.1 trinkets
-	140027, -- Ley Spark
-	140035, -- Fluctuating Arc Capacitor
-	142169, -- Raven Eidolon
-	142168, -- Majordomo's Dinner Bell
-	142161, -- Inescapable Dread
-	
-	137419, -- Chrono Shard
-	133642, -- Horn of Valor
-	141482, -- Unstable Arcanocrystal
-	137315, -- Writhing Heart of Darkness
-	136041, -- Legion Season 1Vindictive Combatant's Insignia of Victory
-	135928, -- Legion Season 1Vindictive Combatant's Insignia of Victory
-	136032, -- Legion Season 1Vindictive Combatant's Insignia of Conquest
-	135919, -- Legion Season 1Vindictive Combatant's Insignia of Conquest
-	140026, -- The Devilsaur's Bite
-	129260, -- Tenacity of Cursed Blood
-	137344, -- Talisman of the Cragshaper
-	131803, -- Spine of Barax
-	137440, -- Shivermaw's Jawbone
-	137338, -- Shard of Rokmora
-	137362, -- Parjesh's Medallion
-	137538, -- Orb of Torment
-	121806, -- Mountain Rage Shaker
-	121570, -- Might of the Forsaken
-	128958, -- Lekos' LeashDemon Hunter
-	137430, -- Impenetrable Nerubian Husk
-	140034, -- Impact Tremor
-	133647, -- Gift of Radiance
-	129044, -- Frothing Helhound's Fury
-	136978, -- Ember of Nullification
-	137400, -- Coagulated Nightwell Residue
-	135702, -- Legion Season 1Vindictive Gladiator's Insignia of Victory
-	136267, -- Legion Season 1 EliteVindictive Gladiator's Insignia of Victory
-	135815, -- Legion Season 1Vindictive Gladiator's Insignia of Victory
-	136154, -- Legion Season 1 EliteVindictive Gladiator's Insignia of Victory
-	135693, -- Legion Season 1Vindictive Gladiator's Insignia of Conquest
-	136258, -- Legion Season 1 EliteVindictive Gladiator's Insignia of Conquest
-	135806, -- Legion Season 1Vindictive Gladiator's Insignia of Conquest
-	136145, -- Legion Season 1 EliteVindictive Gladiator's Insignia of Conquest
-	139327, -- Unbridled Fury
-	140791, -- Royal Dagger Haft
-	138225, -- Phantasmal Echo
-	140807, -- Infernal Contract
-	139335, -- Grotesque Statuette
-	139324, -- Goblet of Nightmarish Ichor
-	140797, -- Fang of Tichcondrius
-	139630, -- Etching of SargerasDemon Hunter
-	140789 -- Animated Exoskeleton
-}
-
 -- set up Frames that will listen for events
 local addonLoadedFrame
 local lootReceivedEventFrame
@@ -1405,8 +1443,6 @@ function PLH_GetItemCountFromCache(name)
 		end
 		itemCount = itemCount - 4 -- subtract 3 since everyone has ClassName and Spec and Level and InspectCount elements
 		itemCount = itemCount - PLH_GetRelicCountFromCache(name)
-	else
-		PLH_SendDebugMessage('groupInfoCache[name] is nil for ', name)	
 	end
 	return itemCount
 end
@@ -1477,15 +1513,15 @@ local function IsTrinketUsable(item, role)
 
 	local trinketList = nil
 	if role == 'AgilityDPS' then
-		trinketList = TRINKET_AGILITY_DPS
+		trinketList = PLH_TRINKET_AGILITY_DPS
 	elseif role == 'IntellectDPS' then
-		trinketList = TRINKET_INTELLECT_DPS
+		trinketList = PLH_TRINKET_INTELLECT_DPS
 	elseif role == 'StrengthDPS' then
-		trinketList = TRINKET_STRENGTH_DPS
+		trinketList = PLH_TRINKET_STRENGTH_DPS
 	elseif role == 'Healer' then
-		trinketList = TRINKET_HEALER
+		trinketList = PLH_TRINKET_HEALER
 	elseif role == 'Tank' then
-		trinketList = TRINKET_TANK
+		trinketList = PLH_TRINKET_TANK
 	end
 	
 	local i
@@ -1537,7 +1573,7 @@ local function IsEquippableItemForCharacter(fullItemInfo, characterName, current
 				spec = groupInfoCache[characterName]['Spec']
 				characterLevel = groupInfoCache[characterName]['Level']
 			else
-				PLH_SendDebugMessage('Unable to determine class and spec in InEquippableItemForCharacter()!!!! for ' .. characterName)
+				--PLH_SendDebugMessage('Unable to determine class and spec in InEquippableItemForCharacter()!!!! for ' .. characterName)
 				return false  -- should never reach here, but if we do it means we're not looking up the player or anyone in cache
 			end
 			
@@ -1858,12 +1894,12 @@ local function GetNames(namelist, limit)
 					names = names .. ', '
 				end
 				if i == #sortedNamelist then -- last person
-					names = names .. '和 '
+					names = names .. '& '
 				end
 				names = names .. sortedNamelist[i]
 			end
 			if #sortedNamelist > limit then
-				names = names .. ' 和其他人'
+				names = names .. ' & ...'
 			end
 		end
 	end
@@ -1992,13 +2028,15 @@ local function PerformNotify(fullItemInfo, characterName)
 			end
 
 			if characterName == PLH_GetUnitNameWithRealm('player') then  -- player can trade an item
-				--PLH_SendAlert('你的 ' .. item .. ' 可以交易给 ' .. names)
-				UIErrorsFrame:AddMessage('你的 ' .. item .. ' 可以交易给 ' .. names,1,0,0,5)
-				PlaySound('GLUECREATECHARACTERBUTTON')
+				PLH_SendAlert('^-^ ' .. item .. ' → ' .. names)
+				--UIErrorsFrame:AddMessage('你的 ' .. item .. ' 可以交易给 ' .. names,1,0,0,5)
+				RaidNotice_AddMessage(RaidWarningFrame, '^-^ ' .. item .. ' → ' .. names, ChatTypeInfo["SYSTEM"]);
+				PlaySound(600)  -- 'GLUECREATECHARACTERBUTTON'
 			elseif IsPlayerInUpgradeList(isAnUpgradeForAnyCharacterNames) then  -- player can receive an item
-				--PLH_SendAlert(PLH_GetNameWithoutRealm(characterName) .. ' 的 ' .. item .. ' 可交易，对你有用！')
-				UIErrorsFrame:AddMessage(PLH_GetNameWithoutRealm(characterName) .. ' 的 ' .. item .. ' 可交易，对你有用！',1,0,0,5)
-				PlaySound('LEVELUP')
+				--PLH_SendAlert(PLH_GetNameWithoutRealm(characterName) .. ' → ' .. item .. ' ^-^ ')
+				--UIErrorsFrame:AddMessage(PLH_GetNameWithoutRealm(characterName) .. ' 的 ' .. item .. ' 可交易，对你有用！',1,0,0,5)
+				RaidNotice_AddMessage(RaidWarningFrame, PLH_GetNameWithoutRealm(characterName) .. ' → ' .. item .. ' ^-^ ', ChatTypeInfo["SYSTEM"]);
+				PlaySound(888)  -- 'LEVELUP'
 				HighlightRaidFrames(characterName, item)
 			end
 		end
@@ -2083,7 +2121,7 @@ local function AskForRolls()
 			
 		end
 		description = description .. ")"
-		PLH_SendBroadcast('需要 ' .. currentRollItem .. description .. ' 的请开始R (由  ' .. PLH_GetNameWithoutRealm(currentRollOwner) .. ' 发起)', true)
+		PLH_SendBroadcast('Roll ' .. currentRollItem .. description .. ' ←  ' .. PLH_GetNameWithoutRealm(currentRollOwner), true)
 
 		local FiveSecondWarningDisplayed = false
 		local FifteenSecondWarningDisplayed = false
@@ -2094,10 +2132,10 @@ local function AskForRolls()
 				-- that means the user forced rolls to end, so we can stop the countdown; relying on PLH_EndRolls() to clean us up
 --			elseif delay >= 15 and not FifteenSecondWarningDisplayed then
 			if delay >= 15 and not FifteenSecondWarningDisplayed then
-				PLH_SendBroadcast(currentRollItem .. ' 剩 15 秒...', false)
+				PLH_SendBroadcast('15s →' .. currentRollItem, false)
 				FifteenSecondWarningDisplayed = true
 			elseif delay >= 25 and not FiveSecondWarningDisplayed then
-				PLH_SendBroadcast(currentRollItem .. ' 剩 5 秒...', false)
+				PLH_SendBroadcast('5s →' .. currentRollItem, false)
 				FiveSecondWarningDisplayed = true
 			elseif delay >= 30 then
 				-- force an end to the rolls
@@ -2137,12 +2175,12 @@ function PLH_EndRolls()
 	-- notify everyone of the results of the rolls
 	if winners ~= nil then
 		if #winners > 1 then
-			PLH_SendBroadcast(GetNames(winners) .. ' 以 ' .. highRoll .. ' 点赢得 ' .. currentRollItem .. '，请找 ' .. PLH_GetNameWithoutRealm(currentRollOwner) .. '交易。', true)
+			PLH_SendBroadcast(GetNames(winners) .. ' *-* ' .. currentRollItem .. ' ← ' .. PLH_GetNameWithoutRealm(currentRollOwner) .. ' - ' .. highRoll, true)
 		else
-			PLH_SendBroadcast(winners[1] .. ' 以 ' .. highRoll .. ' 点赢得 ' .. currentRollItem .. '，请找 ' .. PLH_GetNameWithoutRealm(currentRollOwner) .. '交易。', true)
+			PLH_SendBroadcast(winners[1] .. ' ^-^ ' .. currentRollItem .. ' ← ' .. PLH_GetNameWithoutRealm(currentRollOwner) .. ' - ' .. highRoll, true)
 		end
 	else
-		PLH_SendBroadcast(PLH_GetNameWithoutRealm(currentRollOwner) .. ' 的 ' .. currentRollItem .. ' 沒有要。', true)
+		PLH_SendBroadcast('GG： ' .. currentRollItem .. ' ← ' .. PLH_GetNameWithoutRealm(currentRollOwner), true)
 	end
 
 	-- if there's another roll to do, let's delay a few seconds before starting the next roll
@@ -2176,18 +2214,12 @@ local function ProcessWhisper(message, sender)
 			sender = PLH_GetUnitNameWithRealm(sender)
 		end
 		-- if the person whispered 'trade [item]' or '[item] trade', then add the item to the array so we can process it
-		local _, _, whisperedItem = string.find(message, '交易 (|.+|r)')
-		if whisperedItem == nil then
-			_, _, whisperedItem = string.find(message, 'trade (|.+|r)')
-		end
+		local _, _, whisperedItem = string.find(message, 'trade (|.+|r)')
 		if whisperedItem == nil then
 			_, _, whisperedItem = string.find(message, 'Trade (|.+|r)')
 		end
 		if whisperedItem == nil then
 			_, _, whisperedItem = string.find(message, 'TRADE (|.+|r)')
-		end
-		if whisperedItem == nil then
-			_, _, whisperedItem = string.find(message, '(|.+|r) 交易')
 		end
 		if whisperedItem == nil then
 			_, _, whisperedItem = string.find(message, '(|.+|r) trade')
@@ -2209,16 +2241,16 @@ local function ProcessWhisper(message, sender)
 				QueueItem(sender, item)
 				-- if we're still rolling for another item, let the person know their item is queued
 				if currentRollItem ~= nil then
-					PLH_SendWhisper('感謝大大！ ' .. item .. ' 会在目前R往后开始R。', sender)
+					PLH_SendWhisper('Thank you! ' .. item .. ' Roll', sender)
 				else 
 					AskForRolls()
 				end
 			elseif currentRollOwner == sender then
-				PLH_SendWhisper('你的 ' .. currentRollItem .. ' 已开始R了。', sender)
+				PLH_SendWhisper( currentRollItem .. ' Roll', sender)
 			else
 				local item = GetItemFromQueueByPlayer(sender)
 				if item then
-					PLH_SendWhisper('你的 ' .. item .. ' 已加入等待。', sender)
+					PLH_SendWhisper(item .. ' Rolling', sender)
 				else
 					PLH_SendWhisper('沒有你拾取装备记录！如果你仍然想要交易装备，可以密 ' .. UnitName('player') .. ' \'交易 [装备链接結]\' ', sender)
 				end
@@ -2300,7 +2332,6 @@ local function UpdateGroupInfoCache(unit)
 	local name = PLH_GetUnitNameWithRealm(unit)
 
 	if name ~= nil then
-		PLH_SendDebugMessage('   Updating GroupInfoCache for ' .. name .. ', inspectIndex = ' .. inspectIndex)
 		local characterDetails
 		if groupInfoCache[name] == nil then
 			characterDetails = {}
@@ -2358,7 +2389,6 @@ local function UpdateGroupInfoCache(unit)
 			groupInfoCache[name] = nil  -- remove any existing entry first
 			groupInfoCache[name] = characterDetails
 		end
-		PLH_SendDebugMessage('   Updated ' .. updatedItemCount .. ' items for ' .. name .. '; loop ' .. inspectLoop .. '; char ' .. (inspectIndex - 1))
 	end
 end
 
@@ -2390,11 +2420,7 @@ local function InspectGroupMember(characterName)
 				notifyInspectName = characterName
 				PLH_wait2(DELAY_BETWEEN_INSPECTIONS, PLH_InspectNextGroupMember)
 				return true
-			else
-				PLH_SendDebugMessage('   ' .. characterName .. ' out of range for inspect')
 			end
-		else
-			PLH_SendDebugMessage('   Unable to inspect ' .. characterName)
 		end
 	end
 	return false
@@ -2523,7 +2549,6 @@ local function PopulateGroupInfoCache()
 		-- remove characters from the cache if they're no long in the raid/party
 		for name, details in pairs (groupInfoCache) do
 			if not IsCharacterInGroup(name) then
-				PLH_SendDebugMessage('Removing entry for ' .. name .. ' from cache')
 				groupInfoCache[name] = nil
 			end
 		end
@@ -2571,17 +2596,16 @@ local function Disable()
 end
 
 local function EnableOrDisable()
-	PLH_SendDebugMessage('Entering EnableOrDisable()')
 	local shouldBeEnabled = IsPersonalLoot()
 	if not isEnabled and shouldBeEnabled then	
-		PLH_SendDebugMessage('...Enabling PLH')
+		--PLH_SendDebugMessage('...Enabling PLH')
 		Enable()
 	elseif isEnabled and not shouldBeEnabled then
-		PLH_SendDebugMessage('...Disabling PLH')
+		--PLH_SendDebugMessage('...Disabling PLH')
 		Disable()
 	end
 	if isEnabled then 
-		PLH_SendDebugMessage('...Calling PopulateGroupInfoCache()')
+		--PLH_SendDebugMessage('...Calling PopulateGroupInfoCache()')
 		PopulateGroupInfoCache()
 	end
 end
@@ -2649,15 +2673,14 @@ end
 
 local function Initialize(self, event, addonName, ...)
 	if addonName == '_ShiGuang' then
-	
-		PLH_SendDebugMessage('PLH Initializing')
+		--PLH_SendDebugMessage('PLH Initializing')
 		
 		if PLH_MIN_QUALITY == nil then
 			PLH_NOTIFY_MODE = DEFAULT_NOTIFY_MODE
 			PLH_INCLUDE_BOE = DEFAULT_INCLUDE_BOE
 			PLH_MIN_ILVL = DEFAULT_MIN_ILVL
 			PLH_MIN_QUALITY = DEFAULT_MIN_QUALITY
-			PLH_DEBUG = DEFAULT_DEBUG
+			--PLH_DEBUG = DEFAULT_DEBUG
 			PLH_CURRENT_SPEC_ONLY = DEFAULT_CURRENT_SPEC_ONLY
 		end
 		
@@ -2716,64 +2739,3 @@ addonLoadedFrame = CreateFrame('Frame')
 addonLoadedFrame:SetScript('OnEvent', Initialize)
 addonLoadedFrame:RegisterEvent('ADDON_LOADED')
 
---[[
-*********************************************************
-Debug/Testing functions
-*********************************************************
-]]--
-
-function PLH_PrintCache(showDetails, characterName)
-	if PLH_DEBUG then
-		local num_characters = 0
-		local item_msg = ''
-		for name, characterDetails in pairs(groupInfoCache) do
-			num_characters = num_characters + 1
-			item_msg = item_msg .. PLH_GetItemCountFromCache(name) .. '/' .. PLH_GetRelicCountFromCache(name) .. ' ' 
---			item_msg = item_msg .. (#groupInfoCache[name] -1) .. ' '  -- subtracting 1 since everyone will have a ClassName element
-		end
-		PLH_SendDebugMessage('Cache contains ' .. num_characters .. ' member(s). Item count per member: ' .. item_msg)
-
-		if (showDetails) then
-			for name, details in pairs (groupInfoCache) do
-				if name == nil or name == characterName then
-					PLH_SendDebugMessage('Cache information for ' .. name)
-					if details == nil then	
-						PLH_SendDebugMessage('   details is nil')
-					else
-						for slotID, item in pairs(details) do
-							PLH_SendDebugMessage('   ' .. slotID .. ' = ' .. item)
-						end
-					end
-				end
-			end
-		end
-	end
-end
-
-function PLH_EnableDebug()
-	PLH_DEBUG = true
-end
-
-function PLH_DisableDebug()
-	PLH_DEBUG = false
-end
-
-function PLH_RefreshCache()
-	groupInfoCache = {}
-	PopulateGroupInfoCache()
-end
-
-
-function PLH_TestHighlight(item)
-	HighlightRaidFrames("Madone-Zul'jin", item)
-end
-
-function PLH_Test(item)
-	print("IsEquippableItemForCharacter = ", IsEquippableItemForCharacter(GetFullItemInfo(item), "Madone-Zul'jin", PLH_CURRENT_SPEC_ONLY))
-	print("IsAnUpgradeForCharacter = ", IsAnUpgradeForCharacter(GetFullItemInfo(item), "Madone-Zul'jin"))
-	print("IsAnUpgradeForAnyCharacter = ", IsAnUpgradeForAnyCharacter(GetFullItemInfo(item)))
-
-	print("IsEquippableItemForCharacter = ", IsEquippableItemForCharacter(GetFullItemInfo(item), "Madknight-Zul'jin", PLH_CURRENT_SPEC_ONLY))
-	print("IsAnUpgradeForCharacter = ", IsAnUpgradeForCharacter(GetFullItemInfo(item), "Madknight-Zul'jin"))
-
-end

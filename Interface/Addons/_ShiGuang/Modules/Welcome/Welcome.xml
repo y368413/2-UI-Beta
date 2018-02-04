@@ -4,5 +4,6 @@
 	<Script file="BlinkHealthText.lua"/>
 	<Script file="ShiGuang.lua"/>
 	<Script file="WallpaperKit.lua"/>
+	<Script file="FreeMountCD.lua"/>
 	<Script file="MacroMr.lua"/>
 </Ui>

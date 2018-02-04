@@ -1,8 +1,12 @@
 -----------------------Author:y368413-----------------------
 local CombuctorSet = Combuctor:GetModule("Sets")
 Combuctor_Cool_Open = {
+--------T_INSTA_WQ
+  221602, -- Might of Dalaran
+  221587, -- Vanguard of the Silver Hand
+  221561, -- Rift Cannon
 --------T_SPELL_BY_NAME
-  7973, -- Open the clam!, Big-Mouth Clam
+  99726, -- Create Item, Leggings of the Cursed Vanquisher
   113355, -- Flip Card, Card of Omens
   112023, -- Recipe: Draenic Philosopher's Stone, all learnable, it should replace most items in table T_RECIPES
   114171, -- Crate Restored Artifact, common for all
@@ -12,29 +16,38 @@ Combuctor_Cool_Open = {
   129097, -- 30 Ancient Mana
   140401, -- 75 Ancient Mana
   140236, -- 100 Ancient Mana
+  143733, -- Ancient Mana Shards
+  143734, -- Ancient Mana Crystal Cluster
+  141655, -- Shimmering Ancient Mana Cluster
   140240, -- 150 Ancient Mana
   140242, -- 200 Ancient Mana
   140239, -- 300 Ancient Mana
   140526, -- Eredar Signet, Use: Provides a significant increase to character experience.
   141028, -- Grimoire of Knowledge, Use: Open your Followers page and use this item to grant 4000 XP directly to a Champion.
   146663, -- Empowering, Soggy Tapestry, 150 artifact power
+  147837, -- Create Relic, Relinquished Life Relic
+  114116, -- Create Relic, Relinquished Life Relic
+  116158, -- Toss Fish, Lunarfall Carp, can be used only in garrison shown on button only in garrison.
 --------T_SPELL_BY_USE_TEXT
-  243074, -- Create a Broken Isles relic appropriate for your loot specialization. Relinquished Relic
-  242864, -- Create a Broken Isles item appropriate for your loot specialization. Relinquished Trinket
-  168701, -- Create a soulbound item appropriate for your loot specialization, Tormented Trinket
+
   168178, -- Salvage, Bag of Salvaged Goods, can be used only in salvage-yard shown on button only in garrison even if disabled zone-lock
-  58165,  -- Open the clam!, Big-Mouth Clam
-  166550,  -- Flip Card, Card of Omens
+  --58165,  -- Open the clam!, Big-Mouth Clam
+  --166550,  -- Flip Card, Card of Omens
   163769, -- Toss Fish, Lunarfall Carp, can be used only in garrison shown on button only in garrison.
   233232, -- 25 mana
-  193080, -- 30 mana
   222333, -- 50 mana
-  223677, -- 75 mana
-  222942, -- 100 mana
-  222947, -- 150 mana
-  222950, -- 200 mana
-  222945, -- 300 mana
+  --223677, -- 75 mana
+  --222942, -- 100 mana
+  --222947, -- 150 mana
+  --222950, -- 200 mana
+  --222945, -- 300 mana
 -----------T_RECIPES
+  153135, -- Unsullied Cloth Robes, why Blizzard did put in type of armor?
+  153143, -- Unsullied Plate Breastplate, why Blizzard did put in type of armor?
+  152741, -- Unsullied Mail Chestguard, why Blizzard did put in type of armor?
+  153151, -- Unsullied Leather Tunic, why Blizzard did put in type of armor?
+  127799, -- Baleful Pendant, for another slots than armor.
+  139879, -- Crate of Champion Equipment, <Right Click to Open>
   82800, -- Pet Cage
   140744, -- Treasure Map: Azsuna
   122219, -- Music Roll: Way of the Monk
@@ -43,6 +56,7 @@ Combuctor_Cool_Open = {
   118592, -- Partial Receipt: Gizmothingies
   128440, -- Contract: Dowser Goodwell
   100863, -- Pattern: Celestial Cloth and Its Uses, some old recipes has no leraning spell
+  141064, -- Technique: Glyph of the Shivarra
   138865, -- Gladiator's Triumph 2nd line contains "Artifact Power"
   138883, -- 4th line contains Use: Target one of your troops to restore 1 vitality.
   111972, -- Enchanter's Study, Level 2, 2nd line contains "Garrison Blueprint"
@@ -53,228 +67,157 @@ Combuctor_Cool_Open = {
   118427, -- Autographed Hearthstone Card, 3rd line contains "Use: Adds this toy to your toy box."
   127413, -- Jeweled Arakkoa Effigy, 3rd line contains "Use: Pry out the eyes of the statue."
   146748, -- Highmountain Tribute open containers
-  139023, -- Court of Farondis Insignia 
-  139021, -- Dreamweaver Insignia 
-  139024, -- Highmountain Tribe Insignia 
-  139026, -- Nightfallen Insignia 
-  139020, -- Valarjar Insignia 
+  152958, -- Army of the Light Insignia
+  152955, -- Greater Army of the Light Insignia
+  152959, -- Argussian Reach Insignia
+  152961, -- Greater Argussian Reach Insignia
   141340, -- Court of Farondis Insignia BoA
-  141339, -- Dreamweaver Insignia BoA
-  141341, -- Highmountain Tribe Insignia BoA
-  141343, -- Nightfallen Insignia BoA
-  141338, -- Valarjar Insignia BoA
-  141342, -- Wardens Insignia BoA
   141989, -- Greater Court of Farondis Insignia 
+  139021, -- Dreamweaver Insignia 
   141988, -- Greater Dreamweaver Insignia 
+  139024, -- Highmountain Tribe Insignia
   141990, -- Greater Highmountain Tribe Insignia 
-  141992, -- Greater Nightfallen Insignia 
-  141987, -- Greater Valarjar Insignia 
-  141991, -- Greater Wardens Insignia
-  147727, -- Greater Legionfall Insignia
-----------------------------------------------------------------T_ITEMS---------------------------------
-  128373, -- Rush Order: Shipyard, special handling for sub-zone
-  136806, -- Glass of Arcwine
-  147729, -- Netherchunk
-  136342,-- Obliterum Ash
-  146757,-- Prepared Ingredients
   146949, -- Legionfall Insignia
-  147350, -- Invincible Armor Set
-  147349, -- Spiked Armor Set
-  147348, -- Bulky Armor Set
-  147384, -- Legionfall Recompense
-  147860, -- Empowered Elven Tome
-  146745, -- Artifacet Research Notes
-  140327, -- Kyrtos's Research Notes
-  136269, -- Kel'danath's Manaflask
-  140448, -- Lens of Qin'dera
-  139025, -- Wardens Insignia
-  139028, -- Disc of the Starcaller
-   69838, -- Chirping Box
-   89125, -- Sack of Pet Supplies
+  147727, -- Greater Legionfall Insignia
+  139026, -- Nightfallen Insignia 
+  141992, -- Greater Nightfallen Insignia 
+  139020, -- Valarjar Insignia 
+  141987, -- Greater Valarjar Insignia 
+  141342, -- Wardens Insignia
+  141991, -- Greater Wardens Insignia
+----------------------------------------------------------------T_ITEMS---------------------------------
+  154879, -- Awoken Titan Essence
+    7973, -- Big-Mouth Clam
    16885, -- Heavy Junkbox
+   32971, -- Water Bucket
+   69838, -- Chirping Box
    78890, -- Crystalline Geode
    78891, -- Elementium-Coated Geode
-  98134, -- Scenario Loot
-  98546, -- Scenario Loot
-  93146, -- Pet Supplies
-  93147, -- Pet Supplies
-  93148, -- Pet Supplies
-  93149, -- Pet Supplies
-  94207, -- Pet Supplies
-  118697, -- Pet Supplies
-  98095, -- Pet Supplies
-  91085, -- Pet Supplies
-  91086, -- Pet Supplies
-  89112, -- Motes of Harmony祥和微粒
-  2934,  -- Ruined Leather Scraps
-  25649,  -- Knothide Leather Scraps
-  33567,  -- Borean Leather Scraps
-  52977,  -- Savage Leather Scraps
-  72162,  -- Sha-Touched Leather
-  97512, -- Ghost Iron Nugget
-  97546, -- Kyparite Fragment
-  115504, -- Fractured Temporal Crystal碎裂的时光水晶
-  108294,-- Silver Ore Nugget
-  108295, -- Tin Ore Nugget
-  108296, -- Gold Ore Nugget
-  108297, -- Iron Ore Nugget
-  108298, -- Thorium Ore Nugget
-  108299, -- Truesilver Ore Nugget
-  108300, -- Mithril Ore Nugget
-  108301, -- Fel Iron Ore Nugget
-  108302, -- Adamantite Ore Nugget
-  108303, -- Eternium Ore Nugget
-  108304, -- Khorium Ore Nugget
-  108305, -- Cobalt Ore Nugget
-  108306, -- Saronite Ore Nugget
-  108307, -- Obsidium Ore Nugget
-  108308, -- Elementium Ore Nugget
-  108309, -- Pyrite Ore Nugget
-  108391, -- Titanium Ore Nugget  
-  109991, -- True Iron Nugget真铁矿块
-  109992, -- Blackrock Fragment黑石碎片
-  110610, -- Raw Beast Hide Scraps
-  112158, -- Icy Dragonscale Fragment
-  112177, -- Nerubian Chitin Fragment
-  112178, -- Jormungar Scale Fragment
-  112179, -- Patch of Thick Clefthoof Leather
-  112180, -- Patch of Crystal Infused Leather
-  112181, -- Fel Scale Fragment
-  112182, -- Patch of Fel Hide
-  112183, -- Nether Dragonscale Fragment
-  112184, -- Cobra Scale Fragment
-  112185, -- Wind Scale Fragment
-  111589, 111595, 111601, -- Crescent Saberfish新月剑齿鱼
-  111659, 111664, 111671, -- Abyssal Gulper Eel深渊大嘴鳗
-  111652, 111667, 111674, -- Blind Lake Sturgeon盲眼湖鲟
-  111662, 111663, 111670, -- Blackwater Whiptail黑水鞭尾鱼
-  111658, 111665, 111672, -- Sea Scorpion海蝎子
-  111651, 111668, 111675, -- Fat Sleeper塘鲈
-  111656, 111666, 111673, -- Fire Ammonite熔火鱿鱼
-  111650, 111669, 111676, -- Jawless Skulker无颚潜鱼
-  118267, -- Ravenmother Offering
-  120301, 120302, -- Create Armor Enhancement, Weapon Boost
-  113992, -- Scribe's Research Notes
-  115981, -- Abrogator Stone Cluster
-  118897, -- Miner's Coffee
-  118903, -- Preserved Mining Pick
+   89125, -- Sack of Pet Supplies
+   91085, -- Pet Supplies
+   91086, -- Pet Supplies
+   93146, -- Pet Supplies
+   93147, -- Pet Supplies
+   93148, -- Pet Supplies
+   93149, -- Pet Supplies
+   94207, -- Pet Supplies
+   94223, -- Stolen Shado-Pan Insignia
+   98095, -- Pet Supplies
+   98134, -- Scenario Loot
+   98546, -- Scenario Loot
+  103641, -- Singing Crystal 147055
+  103642, -- Book of the Ages 147226
+  103643, -- Dew of Eternal Morning 147476
+  104287, -- Windfeather Plume 148521
+  109558, -- Draenor 700 skills
+  109586, -- Draenor 700 skills
+  110508, -- "Fragrant" Pheromone Fish
+  111349,
+  111350,
+  111351,
   111356,
   111364,
   111387,
-  111350,
-  111349,
-  111351,
-  115357,
-  109558, -- Draenor 700 skills
-  111923,
-  115358,
-  115356,
-  115359,
   111921,
   111922,
-  109586, -- Draenor 700 skills
-  120321, -- Mystery Bag
-  122535, -- Traveler's Pet Supplies
-  97619, -- Torn Green Tea Leaf
-  97620, -- Rain Poppy Petal
-  97621, -- Silkweed Stem
-  97622, -- Snow Lily Petal
-  97623, -- Fool's Cap Spores
-  108318, -- Mageroyal Petal
-  108319, -- Earthroot Stem
-  108320, -- Briarthorn Bramble
-  108321, -- Swiftthistle Leaf
-  108322, -- Bruiseweed Stem
-  108323, -- Wild Steelbloom Petal
-  108324, -- Kingsblood Petal
-  108325, -- Liferoot Stem
-  108326, -- Khadgar's Whisker Stem
-  108327, -- Grave Moss Leaf
-  108328, -- Fadeleaf Petal
-  108329, -- Dragon's Teeth Stem
-  108330, -- Stranglekelp Blade
-  108331, -- Goldthorn Bramble
-  108332, -- Firebloom Petal
-  108333, -- Purple Lotus Petal
-  108334, -- Arthas' Tears Petal
-  108335, -- Sungrass Stalk
-  108336, -- Blindweed Stem
-  108337, -- Ghost Mushroom Cap
-  108338, -- Gromsblood Leaf
-  108339, -- Dreamfoil Blade
-  108340, -- Golden Sansam Leaf
-  108341, -- Mountain Silversage Stalk
-  108342, -- Sorrowmoss Leaf
-  108343, -- Icecap Petal
-  108344, -- Felweed Stalk
-  108345, -- Dreaming Glory Petal
-  108346, -- Ragveil Cap
-  108347, -- Terocone Leaf
-  108348, -- Ancient Lichen Petal
-  108349, -- Netherbloom Leaf
-  108350, -- Nightmare Vine Stem
-  108351, -- Mana Thistle Leaf
-  108352, -- Goldclover Leaf
-  108353, -- Adder's Tongue Stem
-  108354, -- Tiger Lily Petal
-  108355, -- Lichbloom Stalk
-  108356, -- Icethorn Bramble
-  108357, -- Talandra's Rose Petal
-  108358, -- Deadnettle Bramble
-  108359, -- Fire Leaf Bramble
-  108360, -- Cinderbloom Petal
-  108361, -- Stormvine Stalk
-  108362, -- Azshara's Veil Stem
-  108363, -- Heartblossom Petal
-  108364, -- Twilight Jasmine Petal
-  108365, -- Whiptail Stem
-  109624, -- Broken Frostweed Stem
-  109625, -- Broken Fireweed Stem
-  109626, -- Gorgrond Flytrap Ichor
-  109627, -- Starflower Petal
-  109628, -- Nagrand Arrowbloom Petal
-  109629, -- Talador Orchid Petal
-  115510, -- Elemental Rune
-  128490, -- Blueprint: Oil Rig
-  128446, -- Saberstalker Teachings: Trailblazer
-  122514, -- Mission Completion Orders
+  111923,
   112087, -- Obsidian Frostwolf Petroglyph
-  128488, -- Ship: The Awakener
-  128225, -- Empowered Apexis Fragment
-  110508, -- "Fragrant" Pheromone Fish
-  32971, -- Water Bucket
-  128294, -- Trade Agreement: Arakkoa Outcasts
+  113992, -- Scribe's Research Notes
   114002, -- Encoded Message
-  103641, -- Singing Crystal
-  103642, -- Book of the Ages
-  103643, -- Dew of Eternal Morning
-  104287, -- Windfeather Plume
+  115356,
+  115357,
+  115358,
+  115359,
+  115981, -- Abrogator Stone Cluster
+  118267, -- Ravenmother Offering
+  118697, -- Pet Supplies
+  118897, -- Miner's Coffee 176049
+  118903, -- Preserved Mining Pick 176061
+  120301, -- Create Armor Enhancement, Weapon Boost
+  120302, -- Create Armor Enhancement, Weapon Boost
+  120321, -- Mystery Bag
+  122514, -- Mission Completion Orders
+  122535, -- Traveler's Pet Supplies
   122599, -- Tome of Sorcerous Elements
   122605, -- Tome of the Stones
-  140397, -- G'Hanir's Blossom
-  140439, -- Sunblossom Pollen
-  140260, -- Arcane Remnant of Falanaar
-  141870, -- Arcane Tablet of Falanaar
-  147418, -- Arcane Remnant of Falanaar
-  147416, -- Arcane Tablet of Falanaar
-  139010, -- Petrified Silkweave
-  139017, -- Soothing Leystone Shard
+  128225, -- Empowered Apexis Fragment
+  128294, -- Trade Agreement: Arakkoa Outcasts
+  128373, -- Rush Order: Shipyard, special handling for sub-zone
+  128446, -- Saberstalker Teachings: Trailblazer
+  128488, -- Ship: The Awakener
+  128490, -- Blueprint: Oil Rig
+  128980, -- Scroll of Forgotten Knowledge
+  132523, -- Reaves Battery
+  136269, -- Kel'danath's Manaflask
   136412, -- Heavy Armor Set
+  136806, -- Glass of Arcwine
   137207, -- Fortified Armor Set
   137208, -- Indestructible Armor Set
-  142156, -- Order Resources Cache
-  140451, -- Spellmask of Azsylla
-  140329, -- Infinite Stone
-  139027, -- Lenses of Spellseer Dellian
+  138410, -- Summoning Portal
+  139010, -- Petrified Silkweave
   139011, -- Berserking Helm of Ondry'el
-  140450, -- Berserking Helm of Taenna
-  142447, -- Torn Sack of Pet Supplies
-  142156, -- Order Resources Cache
-  140326, -- Enchanted Burial Urn
-  140328, -- Volatile Leyline Crystal
+  139017, -- Soothing Leystone Shard
   139018, -- Box of Calming Whispers
-  140156, -- Blessing of the Order
   139019, -- Spellmask of Alla'onus
+  139027, -- Lenses of Spellseer Dellian
+  139028, -- Disc of the Starcaller
+  139177, -- Shattered Soul
+  139419, -- Golden Banana
+  139428, -- A Master Plan
+  139591, -- Stolen Tome of Artifact Lore
+  139670, -- Scream of the Dead
+  139786, -- 25 mana
+  140156, -- Blessing of the Order
+  140260, -- Arcane Remnant of Falanaar
+  140326, -- Enchanted Burial Urn
+  140327, -- Kyrtos's Research Notes
+  140328, -- Volatile Leyline Crystal
+  140329, -- Infinite Stone
+  140397, -- G'Hanir's Blossom 223670
+  140439, -- Sunblossom Pollen 223722
+  140448, -- Lens of Qin'dera
+  140450, -- Berserking Helm of Taenna
+  140451, -- Spellmask of Azsylla
+  140749, -- Horn of Winter
+  140760, -- Libram of Truth
+  140922, -- Imp Pact
+  140924, -- Ashtongue Beacon
+  140925, -- Enchanted Bark
+  140926, -- Bowmen's Orders
+  140927, -- Water Globe
+  140928, -- Ox Initiate's Pledge
+  140929, -- Squire's Oath
+  140932, -- Earthen Mark
+  140933, -- Runed Aspirant's Band
+  141870, -- Arcane Tablet of Falanaar
+  142156, -- Order Resources Cache
+  142156, -- Order Resources Cache
+  142363, -- Mark of Prey
+  142447, -- Torn Sack of Pet Supplies
+  143748, -- Ancient Mana Crystal
+  143849, -- Summon Royal Guard
+  143850, -- Summon Grimtotem Warrior
+  143852, -- Lucky Rabbit's Foot
+  147348, -- Bulky Armor Set
+  147349, -- Spiked Armor Set
+  147350, -- Invincible Armor Set
+  147351, -- Fel Armor Enhancement Token
+  147384, -- Legionfall Recompense
+  147416, -- Arcane Tablet of Falanaar
+  147418, -- Arcane Remnant of Falanaar
+  147729, -- Netherchunk
+  147860, -- Empowered Elven Tome
+  150737, -- Abundant Order Resources Cache
+  151423, -- Stabilized Titan Essence
+  151842, -- Krokul Armor Set
+  151843, -- Mac'Aree Armor Set
+  151844, -- Xenedar Armor Set
+  152095, -- Krokul Ridgestalker
+  152096, -- Void-Purged Krokul
+  152097, -- Lightforged Bulwark
+  152998, -- Carefully Hidden Muffin
+  153113, -- Demon's Soulstone, usable on Argus maps
+  153114, -- Nathrezim Tome of Manipulation
 };
 
 Combuctor_Cool_Garrison = {
@@ -1673,8 +1616,141 @@ Combuctor_Cool_FishingThings = {
 	138948, -- Li Li's Coin
 --LuckyCoin
 	117397,	-- Nat's Lucky Coin
+--emissary	
+	146747,		-- Dreamweaver 7.2
+	151464,		-- Dreamweaver 7.2.5
+	146750,		-- Farondis 7.2
+	151467,		-- Farondis 7.2.5
+	146748,		-- Highmountain 7.2
+	151465,		-- Highmountain 7.2.5
+	146753,		-- Kirin Tor 7.2
+	151470,		-- Kirin Tor 7.2.5
+	146751,		-- Nightfallen 7.2
+	151468,		-- Nightfallen 7.2.5
+	146749,		-- Valarjar 7.2
+	151466,		-- Valarjar 7.2.5
+	146752,		-- Warden 7.2
+	151469,		-- Warden 7.2.5
+--legionfall
+	147384,		-- Legionfall 7.2
+	151471,		-- Legionfall 7.2.5
+--paragon
+	146897,		-- Farondis 7.2
+	152102,		-- Farondis 7.2.5
+	146900,		-- Nightfallen 7.2
+	152105,		-- Nightfallen 7.2.5
+	147361,		-- Legionfall 7.2
+	152108,		-- Legionfall 7.2.5
+	146902,		-- Warden 7.2
+	152107,		-- Warden 7.2.5
+	146901,		-- Valarjar 7.2
+	152106,		-- Valarjar 7.2.5
+	146899,		-- Highmountain 7.2
+	152104,		-- Highmountain 7.2.5
+	146898,		-- Dreamweaver 7.2
+	152103,		-- Dreamweaver 7.2.5
 };
 
+ArtifactPowerThings = {
+
+	[130152] = "",
+	[131763] = "",
+	[131795] = "",
+	[131802] = "",
+	[131808] = "",
+	[132897] = "",
+	[138480] = "",
+	[138781] = "",
+	[138783] = "",
+	[138785] = "",
+	[138786] = "",
+	[138839] = "",
+	[138885] = "",
+	[139507] = "",
+	[139508] = "",
+	[139509] = "",
+	[139510] = "",
+	[139511] = "",
+	[139608] = "",
+	[139611] = "",
+	[139612] = "",
+	[139613] = "",
+	[139614] = "",
+	[139615] = "",
+	[139617] = "",
+	[140176] = "",
+	[140251] = "",
+	[140252] = "",
+	[140255] = "",
+	[140310] = "",
+	[140349] = "",
+	[140388] = "",
+	[140517] = "",
+	[141023] = "",
+	[141024] = "",
+	[141310] = "",
+	[141313] = "",
+	[141383] = "",
+	[141384] = "",
+	[141387] = "",
+	[141390] = "",
+	[141391] = "",
+	[141393] = "",
+	[141394] = "",
+	[141395] = "",
+	[141396] = "",
+	[141397] = "",
+	[141398] = "",
+	[141399] = "",
+	[141400] = "",
+	[141401] = "",
+	[141402] = "",
+	[141404] = "",
+	[141639] = "",
+	[141667] = "",
+	[141668] = "",
+	[141670] = "",
+	[141673] = "",
+	[141677] = "",
+	[141689] = "",
+	[141690] = "",
+	[141703] = "",
+	[141705] = "",
+	[141706] = "",
+	[141859] = "",
+	[141863] = "",
+	[141888] = "",
+	[141889] = "",
+	[141896] = "",
+	[141921] = "",
+	[141924] = "",
+	[141926] = "",
+	[141927] = "",
+	[141928] = "",
+	[141931] = "",
+	[141933] = "",
+	[141934] = "",
+	[141936] = "",
+	[141941] = "",
+	[141942] = "",
+	[141944] = "",
+	[141945] = "",
+	[141947] = "",
+	[141950] = "",
+	[141951] = "",
+	[141956] = "",
+	[142001] = "",
+	[142002] = "",
+	[142003] = "",
+	[142004] = "",
+	[142005] = "",
+	[142006] = "",
+	[142007] = "",
+	[142054] = "",
+
+}
+
+-----------------------------------------------------------------------------------------------------------------------
 local function extractItemId(link)
 	local tbl = { strsplit(":", strtrim(link, "|")) };
 	return tonumber(tbl[2]);
@@ -1687,12 +1763,25 @@ local function isInTable(table, itemId)
 	end return false;
 end
 
-------------------------fish
-local function FishingThings(player, bagType, name, link, quality, level, ilvl, type, subType, stackCount, equipLoc)
-    if ( name == nil or link == nil ) then
-		return false;
+local function GetItemIDFromLink(itemLink)
+	if not itemLink or itemLink=="" then return nil end
+
+	local itemString = string.match(itemLink, "item[%-?%d:]+")
+	local linkType, itemId, enchantId,jewelId1, jewelId2, jewelId3, jewelId4,suffixId, uniqueId = strsplit(":", itemString)
+	if (linkType == 'item') then
+		return itemId
 	end
-	return isInTable(Combuctor_Cool_FishingThings, extractItemId(link));
+
+end
+------------------------
+function IsArtifactPower(player, bagType, name, link, quality, level, ilvl, type, subType, stackCount, equipLoc)
+	if not subType then return false end
+	if not link then return false end
+
+	local ItemID=GetItemIDFromLink(link)
+	if not ItemID then return false end
+
+	return ArtifactPowerThings[tonumber(ItemID)];
 end
 local function Garrison(player, bagType, name, link, quality, level, ilvl, type, subType, stackCount, equipLoc)
     if ( name == nil or link == nil ) then
@@ -1706,12 +1795,20 @@ local function Open(player, bagType, name, link, quality, level, ilvl, type, sub
 	end
 	return isInTable(Combuctor_Cool_Open, extractItemId(link));
 end
+local function FishingThings(player, bagType, name, link, quality, level, ilvl, type, subType, stackCount, equipLoc)
+    if ( name == nil or link == nil ) then
+		return false;
+	end
+	return isInTable(Combuctor_Cool_FishingThings, extractItemId(link));
+end
 local function Cool(...)
-	return (Garrison(...) or Open(...) or FishingThings(...));
+	return (Garrison(...) or Open(...) or FishingThings(...) or IsArtifactPower(...));
 end
 
 CombuctorSet:Register("Cool", "Interface\\Addons\\_ShiGuang\\Media\\Modules\\Wallpaper\\MaoR-UI", Cool);
+--CombuctorSet:Register("ArtifactPower", "Interface/Icons/inv_sword_2h_ashbringercorrupt", IsArtifactPower)
 CombuctorSet:RegisterSubSet("All", "Cool", nil, Cool);
+CombuctorSet:RegisterSubSet("Artifact", "Cool", nil, IsArtifactPower);
 CombuctorSet:RegisterSubSet("Open", "Cool", nil, Open);
 CombuctorSet:RegisterSubSet("Garrison", "Cool", nil, Garrison);
 CombuctorSet:RegisterSubSet("Fish", "Cool", nil, FishingThings);

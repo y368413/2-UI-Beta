@@ -6,12 +6,9 @@ function module:OnLogin()
 	self:RareAlert()
 	self:Focuser()
 	self:Mailbox()
-	self:BeamTool()
 	self:WallpaperKit()
 	-- Hide Bossbanner
-	if MaoRUISettingDB["Misc"]["HideBanner"] then
-		BossBanner:UnregisterAllEvents()
-	end
+	if MaoRUISettingDB["Misc"]["HideBanner"] then BossBanner:UnregisterAllEvents() end
 	PlayerFrame:SetScale(MaoRUISettingDB["Settings"]["PlayerFrameScale"]) 
 	TargetFrame:SetScale(MaoRUISettingDB["Settings"]["PlayerFrameScale"])
 	----------------QuickQueue.lua----------------------
@@ -109,7 +106,6 @@ end)
 HideTalkingHead:RegisterEvent("ADDON_LOADED")
 HideTalkingHead:RegisterEvent("MODIFIER_STATE_CHANGED")
 HideTalkingHead:SetScript("OnEvent", HideTalkingHead.OnEvent)
-
 ---------------团队---RaidFrameReSizer-------------------
 CompactRaidFrameContainer:SetScale(0.85)
 local n,w,h="CompactUnitFrameProfilesGeneralOptionsFrame" h,w= _G[n.."HeightSlider"], _G[n.."WidthSlider"] h:SetMinMaxValues(21,210) w:SetMinMaxValues(21,310)
@@ -149,13 +145,13 @@ ZoneAbilityFrame:SetScale(0.6)
 --[[ 缩放/移动设置 ]]
 ------------- 玩家框体固定 -------------
 --local function ScrewYouPlayerFrame()
-    PlayerFrame:ClearAllPoints() PlayerFrame:SetPoint("RIGHT",UIParent,"CENTER", -180, -250) PlayerFrame:SetUserPlaced(true)
+    PlayerFrame:ClearAllPoints() PlayerFrame:SetPoint("RIGHT",M.UIParent,"CENTER", -180, -250) PlayerFrame:SetUserPlaced(true)
 -- end
 --hooksecurefunc("PlayerFrame_AnimateOut", function() PlayerFrame:SetAlpha(0); ScrewYouPlayerFrame() end)
 --hooksecurefunc("PlayerFrame_SequenceFinished", function() PlayerFrame:SetAlpha(1); ScrewYouPlayerFrame() end)
 --hooksecurefunc("PlayerFrame_UpdateStatus", ScrewYouPlayerFrame)
 ------------- 目标框体固定 -------------
-TargetFrame:ClearAllPoints()  TargetFrame:SetPoint("LEFT",UIParent,"CENTER", 180, -250) TargetFrame:SetUserPlaced(true)
+TargetFrame:ClearAllPoints()  TargetFrame:SetPoint("LEFT",M.UIParent,"CENTER", 180, -250) TargetFrame:SetUserPlaced(true)
 ------------- 目标的目标框体固定 -------------
 TargetFrameToT:ClearAllPoints() TargetFrameToT:SetPoint("LEFT",TargetFrame,"BOTTOMRIGHT", -43, 21)
 ------------- 目标的目标框体的名字 -------------
@@ -167,17 +163,15 @@ FocusFrame:SetScale(1.1)
 ------------- 按shift移动焦点框体  -------------
 FocusFrame:SetScript("OnMouseDown", function()	if(IsShiftKeyDown()) then	FocusFrame:ClearAllPoints()	FocusFrame:StartMoving()	end end)
 FocusFrame:SetScript("OnMouseUp", function()	FocusFrame:StopMovingOrSizing() end)
-------------boss框体用鼠标移动-- BossFrames ---------------------------------------------------					
+-------------- BossFrames ---------------------------------------------------			
 for i = 1, MAX_BOSS_FRAMES do
  local bossFrame = _G["Boss"..i.."TargetFrame"]
-   bossFrame:SetScale(0.8)   bossFrame:SetMovable(true)   bossFrame:SetClampedToScreen(true)
-   bossFrame:SetScript("OnMouseDown", function() if IsShiftKeyDown() then bossFrame:ClearAllPoints() bossFrame:StartMoving() end end)
-   bossFrame:SetScript('OnMouseUp', function() bossFrame:StopMovingOrSizing() end)
+   bossFrame:SetScale(0.8)
    bossFrame.nameBackground:Hide()
-   bossFrame:SetUserPlaced(true)
  local bossHealthBarFrame = _G["Boss"..i.."TargetFrameHealthBar"]
    bossHealthBarFrame:ClearAllPoints() bossHealthBarFrame:SetHeight(29) bossHealthBarFrame:SetPoint("TOPLEFT", 5, -24)
 end
+Boss1TargetFrame:ClearAllPoints()  Boss1TargetFrame:SetPoint("TOPRIGHT", Minimap,"BOTTOMRIGHT", -21, -80) Boss1TargetFrame.SetPoint=function()end
 ----------------------------------------------------- PARTYFRAMES ---------------------------------------------------
 for i = 1, MAX_PARTY_MEMBERS do
     _G["PartyMemberFrame"..i]:SetScale(0.9)
@@ -251,14 +245,14 @@ if select(2, UnitClass('player')) == "DRUID" or select(2, UnitClass('player')) =
 ComboPointPlayerFrame:SetAlpha(1)
 ComboPointPlayerFrame.Background:Hide()
 ComboPointPlayerFrame:ClearAllPoints() 
-ComboPointPlayerFrame:SetPoint('BOTTOM', UIParent, "CENTER", 8, -143) 
+ComboPointPlayerFrame:SetPoint('BOTTOM', M.UIParent, "CENTER", 8, -143) 
 ComboPointPlayerFrame.SetPoint = function() end
 ComboPointPlayerFrame:SetScale(1.5)
 elseif select(2, UnitClass('player')) == "WARLOCK" then
 --yInvertAllTextures(WarlockPowerFrame)
 WarlockPowerFrame:SetAlpha(1)
 WarlockPowerFrame:ClearAllPoints()
-WarlockPowerFrame:SetPoint('BOTTOM', UIParent, "CENTER", 0, -180)
+WarlockPowerFrame:SetPoint('BOTTOM', M.UIParent, "CENTER", 0, -180)
 WarlockPowerFrame.SetPoint = function() end
 WarlockPowerFrame:SetScale(1.2)
 --WarlockPowerFrame:SetAlpha(1)
@@ -267,32 +261,32 @@ PaladinPowerBarFrame:SetAlpha(1)
 PaladinPowerBarFrameBG:Hide()
 PaladinPowerBarFrameGlowBG:Hide()
 PaladinPowerBarFrame:ClearAllPoints()
-PaladinPowerBarFrame:SetPoint('BOTTOM', UIParent, "CENTER", 0, -143) 
+PaladinPowerBarFrame:SetPoint('BOTTOM', M.UIParent, "CENTER", 0, -143) 
 PaladinPowerBarFrame.SetPoint = function() end
 PaladinPowerBarFrame:SetScale(1.5)
-elseif select(2, UnitClass('player')) == "DEATHKNIGHT" then
+elseif select(2, UnitClass('player')) == "DEATHKNIGHT"  and GetSpecialization() ~= 1 then
 RuneFrame:SetAlpha(1)
 RuneFrame:ClearAllPoints()
-RuneFrame:SetPoint('BOTTOM', UIParent, "CENTER", 0, -143) 
+RuneFrame:SetPoint('BOTTOM', M.UIParent, "CENTER", 0, -143) 
 RuneFrame.SetPoint = function() end
 RuneFrame:SetScale(1.5)
 elseif select(2, UnitClass('player')) == "MONK" then
 MonkHarmonyBarFrame:SetAlpha(1)
 yInvertAllTextures(MonkHarmonyBarFrame)
 MonkHarmonyBarFrame:ClearAllPoints()
-MonkHarmonyBarFrame:SetPoint('BOTTOM', UIParent, "CENTER", 0, -195) 
+MonkHarmonyBarFrame:SetPoint('BOTTOM', M.UIParent, "CENTER", 0, -195) 
 MonkHarmonyBarFrame.SetPoint = function() end
 MonkHarmonyBarFrame:SetScale(1.2)
 MonkStaggerBar:SetAlpha(1)
 MonkStaggerBar:ClearAllPoints()
-MonkStaggerBar:SetPoint('BOTTOM', UIParent, "CENTER", 0, -143) 
+MonkStaggerBar:SetPoint('BOTTOM', M.UIParent, "CENTER", 0, -143) 
 MonkStaggerBar.SetPoint = function() end
 MonkStaggerBar:SetScale(1.5)
 elseif select(2, UnitClass('player')) == "MAGE" then
 MageArcaneChargesFrame:SetAlpha(1)
 MageArcaneChargesFrame.Background:Hide()
 MageArcaneChargesFrame:ClearAllPoints()
-MageArcaneChargesFrame:SetPoint('BOTTOM', UIParent, "CENTER", 0, -160)
+MageArcaneChargesFrame:SetPoint('BOTTOM', M.UIParent, "CENTER", 0, -160)
 MageArcaneChargesFrame.SetPoint = function() end 
 MageArcaneChargesFrame:SetScale(1.5)
 end

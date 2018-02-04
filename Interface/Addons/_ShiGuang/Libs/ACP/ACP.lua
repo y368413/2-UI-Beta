@@ -1,3 +1,4 @@
+local M, R, U, I = unpack(select(2, ...))
 --==============## SavedVariables: ShiGuangDB
 --  Addon Control Panel 在系统选项按「插件管理」按钮管理插件。ACP 以 rMCP（MCP，由 Rophy 修改）为基础。
 --  Version: 3.4.24    SavedVariables: ShiGuangDB
@@ -72,15 +73,7 @@ elseif (GetLocale() == "zhTW") then
 	Repple= "MaoR UI"
 end
 
---==============
--- Locale
---==============
-local L = setmetatable({}, {
-    __index = function(t, k)
-        error("Locale key " .. tostring(k) .. " is not provided.")
-    end
-})
-
+--==============-- Locale--==============
 local masterAddonList = {}
 ACP.masterAddonList = masterAddonList
 
@@ -219,8 +212,8 @@ function ACP:GetAddonStatus(addon)
     if reason == "DISABLED" then color, note = "9d9d9d", getreason(reason) -- Grey
     elseif reason == "NOT_DEMAND_LOADED" then color, note = "0070dd", getreason(reason) -- Blue
     elseif reason and not loaded then color, note = "ff8000", getreason(reason) -- Orange
-    elseif loadable and isondemand and not loaded and enabled then color, note = "1eff00", L["Loadable OnDemand"] -- Green
-    elseif loaded and not enabled then color, note = "a335ee", L["Disabled on reloadUI"] -- Purple
+    elseif loadable and isondemand and not loaded and enabled then color, note = "1eff00", ACP_Loadedondemand -- Green
+    elseif loaded and not enabled then color, note = "a335ee", ACP_DisabledonreloadUI -- Purple
     elseif reason == "MISSING" then color, note = "ff0000", getreason(reason)
     else
         color = CLR.COLOR_NONE
@@ -377,7 +370,6 @@ end
 
 function ACP:OnLoad(this)
 
-    self.L = L
     self.frame = _G[ACP_FRAME_NAME]
 
     self.frame:SetMovable(true)
@@ -387,14 +379,14 @@ function ACP:OnLoad(this)
 
     for i=1,ACP_MAXADDONS do
         local button = _G[ACP_FRAME_NAME .. "Entry" .. i .. "LoadNow"]
-        button:SetText(L["Load"])
+        button:SetText(ACP_Load)
     end
 
-    _G[ACP_FRAME_NAME .. "DisableAll"]:SetText(L["Disable All"])
-    _G[ACP_FRAME_NAME .. "EnableAll"]:SetText(L["Enable All"])
-    _G[ACP_FRAME_NAME .. "SetButton"]:SetText(L["Sets"])
-    _G[ACP_FRAME_NAME .. "_ReloadUI"]:SetText(L["ReloadUI"])
-    _G[ACP_FRAME_NAME .. "BottomClose"]:SetText(L["Close"])
+    _G[ACP_FRAME_NAME .. "DisableAll"]:SetText(ACP_DisableAll)
+    _G[ACP_FRAME_NAME .. "EnableAll"]:SetText(ACP_EnableAll)
+    _G[ACP_FRAME_NAME .. "SetButton"]:SetText(ACP_Sets)
+    _G[ACP_FRAME_NAME .. "_ReloadUI"]:SetText(ACP_ReloadUI)
+    _G[ACP_FRAME_NAME .. "BottomClose"]:SetText(ACP_Close)
 
 
     UIPanelWindows[ACP_FRAME_NAME] = {
@@ -403,7 +395,7 @@ function ACP:OnLoad(this)
         whileDead = 1
     }
     StaticPopupDialogs["ACP_RELOADUI"] = {
-        text = L["Reload your User Interface?"],
+        text = ACP_ReloadyourUserInterface,
         button1 = TEXT(ACCEPT),
         button2 = TEXT(CANCEL),
         OnAccept = function()
@@ -417,7 +409,7 @@ function ACP:OnLoad(this)
     }
 
     StaticPopupDialogs["ACP_RELOADUI_START"] = {
-        text = L["ACP: Some protected addons aren't loaded. Reload now?"],
+        text = ACP_SomeprotectedaddonsarenloadedReloadnow,
         button1 = TEXT(ACCEPT),
         button2 = TEXT(CANCEL),
         OnAccept = function(this)
@@ -434,12 +426,12 @@ function ACP:OnLoad(this)
     }
 
     StaticPopupDialogs["ACP_SAVESET"] = {
-        text = L["Save the current addon list to [%s]?"],
+        text = ACP_Savethecurrentaddonlistto,
         button1 = TEXT(YES),
         button2 = TEXT(CANCEL),
         OnAccept = function(this)
             self:SaveSet(self.savingSet)
-            CloseDropDownMenus(1)
+            L_CloseDropDownMenus(1)
         end,
         timeout = 0,
         hideOnEscape = 1,
@@ -464,7 +456,7 @@ function ACP:OnLoad(this)
     end
 
     StaticPopupDialogs["ACP_RENAMESET"] = {
-        text = L["Enter the new name for [%s]:"],
+        text = ACP_Enterthenewnamefor,
         button1 = TEXT(YES),
         button2 = TEXT(CANCEL),
         OnAccept = OnRenameSet,
@@ -484,7 +476,7 @@ function ACP:OnLoad(this)
         ACP_BLIZZARD_ADDONS[v] = i
     end
 
-    local title = L["Addon Control Panel"]
+    local title = ACP_AddonControlPanel
     local version = GetAddOnMetadata(ACP_ADDON_NAME, "Version")
     if version then
         version = ParseVersion(version)
@@ -541,8 +533,12 @@ function ACP:OnEvent(this, event, arg1, arg2, arg3)
             end
         end
 
+        if savedVar.scale then self.frame:SetScale(savedVar.scale) end
+
+        self:MakeFrameScalable(self.frame, -46, 16)
+
         self:ToggleRecursion(not savedVar.NoRecurse)
-        _G[ACP_FRAME_NAME .. "_NoRecurseText"]:SetText(L["Recursive"])
+        _G[ACP_FRAME_NAME .. "_NoRecurseText"]:SetText(ACP_Recursive)
 
 
         this:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -584,7 +580,7 @@ function ACP:OnEvent(this, event, arg1, arg2, arg3)
         this:RegisterEvent("PLAYER_ALIVE")
 
         GameMenuButtonAddons:SetScript("OnClick", function()
-            PlaySound("igMainMenuOption");
+            PlaySound(852); -- SOUNDKIT.IG_MAINMENU_OPTION
             HideUIPanel(GameMenuFrame);
             ShowUIPanel(ACP_AddonList);
         end)
@@ -626,13 +622,13 @@ function ACP.SlashHandler(msg)
     if type(msg) == "string" and msg:len() > 0 then
         if msg == ACP_NOCHILDREN then
             savedVar.NoChildren = not savedVar.NoChildren
-            ACP:Print(L["LoD Child Enable is now %s"]:format(CLR:Bool(not savedVar.NoChildren, tostring(not savedVar.NoChildren))))
+            ACP:Print(ACP_LoDChildEnableisnow:format(CLR:Bool(not savedVar.NoChildren, tostring(not savedVar.NoChildren))))
             return
         end
 
         if msg == ACP_NORECURSE then
             ACP:ToggleRecursion()
-            ACP:Print(L["Recursive Enable is now %s"]:format(CLR:Bool(not savedVar.NoRecurse, tostring(not savedVar.NoRecurse))))
+            ACP:Print(ACP_RecursiveEnableisnow:format(CLR:Bool(not savedVar.NoRecurse, tostring(not savedVar.NoRecurse))))
             return
         end
 
@@ -1071,7 +1067,7 @@ function ACP:ReloadAddonList()
 
     ACP_AddonListSortDropDownText:SetText(builder)
     local button = _G[ACP_FRAME_NAME .. "SortDropDown"]
-    UIDropDownMenu_SetSelectedValue(button, builder)
+    L_UIDropDownMenu_SetSelectedValue(button, builder)
 
 end
 
@@ -1184,19 +1180,19 @@ function ACP:SaveSet(set)
         end
     end
 
-    self:Print(L["Addons [%s] Saved."]:format(self:GetSetName(set)))
+    self:Print(ACP_AddonsSaved:format(self:GetSetName(set)))
 
 end
 
 function ACP:GetSetName(set)
     if set == ACP_DEFAULT_SET then
-        return L["Default"]
+        return ACP_Default
     elseif set == playerClass then
         return playerClass
     elseif savedVar and savedVar.AddonSet and savedVar.AddonSet[set] and savedVar.AddonSet[set].name then
         return savedVar.AddonSet[set].name
     else
-        return L["Set "] .. set
+        return ACP_Set .. set
     end
 end
 
@@ -1219,7 +1215,7 @@ function ACP:UnloadSet(set)
         end
     end
 
-    self:Print(L["Addons [%s] Unloaded."]:format(self:GetSetName(set)))
+    self:Print(ACP_AddonsUnloaded:format(self:GetSetName(set)))
     ACP:AddonList_OnShow()
 end
 
@@ -1251,7 +1247,7 @@ function ACP:LoadSet(set)
     reclaim(enabledList)
     enabledList = nil
 
-    self:Print(L["Addons [%s] Loaded."]:format(self:GetSetName(set)))
+    self:Print(ACP_AddonsLoaded:format(self:GetSetName(set)))
     ACP:AddonList_OnShow()
 
 end
@@ -1285,8 +1281,8 @@ end
 function ACP:ShowSecurityTooltip(this)
     GameTooltip:SetOwner(this, "ANCHOR_BOTTOMLEFT")
 
-    GameTooltip:AddLine(L["Click to enable protect mode. Protected addons will not be disabled"])
-    GameTooltip:AddLine(L["when performing a reloadui."])
+    GameTooltip:AddLine(ACP_ClicktoenableprotectmodeProtectedaddonswillnotbedisabled)
+    GameTooltip:AddLine(ACP_whenperformingareloadui)
 
     GameTooltip:Show()
 end
@@ -1300,7 +1296,7 @@ function ACP:RenameSet(set, name)
     if not savedVar.AddonSet[set] then savedVar.AddonSet[set] = {} end
     savedVar.AddonSet[set].name = name
 
-    self:Print(L["Addons [%s] renamed to [%s]."]:format(oldName, name))
+    self:Print(ACP_Addonsrenamedto:format(oldName, name))
 
 end
 
@@ -1337,21 +1333,11 @@ function ACP:SetMasterAddonBuilder(sorter)
     self:ReloadAddonList()
 end
 
-function ACP:UpdateLocale(loc)
-    for k,v in pairs(loc) do
-        if v == true then
-            L[k] = k
-        else
-            L[k] = v
-        end
-    end
-end
-
 
 -- UI Controllers.
 function ACP:SortDropDown_OnShow(this)
     if not self.initSortDropDown then
-        UIDropDownMenu_Initialize(this, function() self:SortDropDown_Populate() end)
+        L_UIDropDownMenu_Initialize(this, function() self:SortDropDown_Populate() end)
         self.initSortDropDown = true
     end
 end
@@ -1359,10 +1345,10 @@ end
 function ACP:SortDropDown_Populate()
     local info
     for name,func in pairs(addonListBuilders) do
-        info = UIDropDownMenu_CreateInfo()
+        info = L_UIDropDownMenu_CreateInfo()
         info.text = name
         info.func = function() self:SetMasterAddonBuilder(name) end
-        UIDropDownMenu_AddButton(info)
+        L_UIDropDownMenu_AddButton(info)
     end
 end
 
@@ -1665,11 +1651,11 @@ end
 
 function ACP:SetButton_OnClick(this)
     if not self.dropDownFrame then
-        local frame = CreateFrame("Frame", "ACP_SetDropDown", nil, "UIDropDownMenuTemplate")
-        UIDropDownMenu_Initialize(frame, ACP.SetDropDown_Populate, "MENU") -- wotlk temp hack fixing the UIDropDown menu not displayed after pressing "Sets" button
+        local frame = CreateFrame("Frame", "ACP_SetDropDown", nil, "L_UIDropDownMenuTemplate")
+        L_UIDropDownMenu_Initialize(frame, ACP.SetDropDown_Populate, "MENU") -- wotlk temp hack fixing the UIDropDown menu not displayed after pressing "Sets" button
         self.dropDownFrame = frame
     end
-    ToggleDropDownMenu(1, nil, self.dropDownFrame, this, 0, 0)
+    L_ToggleDropDownMenu(1, nil, self.dropDownFrame, this, 0, 0)
 end
 
 
@@ -1683,7 +1669,7 @@ function ACP:SetDropDown_Populate(level)
         for i=1,ACP_SET_SIZE do
             local name = nil
 
-            info = UIDropDownMenu_CreateInfo()
+            info = L_UIDropDownMenu_CreateInfo()
             if savedVar.AddonSet and savedVar.AddonSet[i] then
                 count = table.getn(savedVar.AddonSet[i])
             else
@@ -1692,12 +1678,12 @@ function ACP:SetDropDown_Populate(level)
 
             name = self:GetSetName(i)
 
-            info = UIDropDownMenu_CreateInfo()
+            info = L_UIDropDownMenu_CreateInfo()
             info.text = string.format("%s (%d)", name, count)
             info.value = i
             info.hasArrow = 1
             info.notCheckable = 1
-            UIDropDownMenu_AddButton(info)
+            L_UIDropDownMenu_AddButton(info)
         end
 
         -- Class set.
@@ -1706,72 +1692,72 @@ function ACP:SetDropDown_Populate(level)
         else
             count = 0
         end
-        info = UIDropDownMenu_CreateInfo()
+        info = L_UIDropDownMenu_CreateInfo()
         info.text = string.format("%s (%d)", playerClass, count)
         info.value = playerClass
         info.hasArrow = 1
         info.notCheckable = 1
-        UIDropDownMenu_AddButton(info)
+        L_UIDropDownMenu_AddButton(info)
 
         -- Default set.
-        info = UIDropDownMenu_CreateInfo()
-        info.text = string.format("%s (%d)", L["Default"], table.getn(ACP_DefaultSet))
+        info = L_UIDropDownMenu_CreateInfo()
+        info.text = string.format("%s (%d)", ACP_Default, table.getn(ACP_DefaultSet))
         info.value = ACP_DEFAULT_SET
         info.hasArrow = 1
         info.notCheckable = 1
-        UIDropDownMenu_AddButton(info)
+        L_UIDropDownMenu_AddButton(info)
 
     elseif level == 2 then
         local info
-        local setName = self:GetSetName(UIDROPDOWNMENU_MENU_VALUE)
-        info = UIDropDownMenu_CreateInfo()
+        local setName = self:GetSetName(L_UIDROPDOWNMENU_MENU_VALUE)
+        info = L_UIDropDownMenu_CreateInfo()
         info.text = setName
         info.isTitle = 1
         info.notCheckable = 1
-        UIDropDownMenu_AddButton(info, level)
+        L_UIDropDownMenu_AddButton(info, level)
 
 
-        if UIDROPDOWNMENU_MENU_VALUE ~= ACP_DEFAULT_SET then
-            info = UIDropDownMenu_CreateInfo()
-            info.text = L["Save"]
+        if L_UIDROPDOWNMENU_MENU_VALUE ~= ACP_DEFAULT_SET then
+            info = L_UIDropDownMenu_CreateInfo()
+            info.text = ACP_Save
             info.func = function()
-                self.savingSet = UIDROPDOWNMENU_MENU_VALUE
+                self.savingSet = L_UIDROPDOWNMENU_MENU_VALUE
                 StaticPopup_Show("ACP_SAVESET", setName)
             end
             info.notCheckable = 1
-            UIDropDownMenu_AddButton(info, level)
+            L_UIDropDownMenu_AddButton(info, level)
         end
 
-        info = UIDropDownMenu_CreateInfo()
-        info.text = L["Load"]
-        info.func = function() self:ClearSelectionAndLoadSet(UIDROPDOWNMENU_MENU_VALUE) end
+        info = L_UIDropDownMenu_CreateInfo()
+        info.text = ACP_Load
+        info.func = function() self:ClearSelectionAndLoadSet(L_UIDROPDOWNMENU_MENU_VALUE) end
         info.notCheckable = 1
-        UIDropDownMenu_AddButton(info, level)
+        L_UIDropDownMenu_AddButton(info, level)
 
 
-        info = UIDropDownMenu_CreateInfo()
-        info.text = L["Add to current selection"]
-        info.func = function() self:LoadSet(UIDROPDOWNMENU_MENU_VALUE) end
+        info = L_UIDropDownMenu_CreateInfo()
+        info.text = ACP_Addtocurrentselection
+        info.func = function() self:LoadSet(L_UIDROPDOWNMENU_MENU_VALUE) end
         info.notCheckable = 1
-        UIDropDownMenu_AddButton(info, level)
+        L_UIDropDownMenu_AddButton(info, level)
 
 
-        info = UIDropDownMenu_CreateInfo()
-        info.text = L["Remove from current selection"]
-        info.func = function() self:UnloadSet(UIDROPDOWNMENU_MENU_VALUE) end
+        info = L_UIDropDownMenu_CreateInfo()
+        info.text = ACP_Removefromcurrentselection
+        info.func = function() self:UnloadSet(L_UIDROPDOWNMENU_MENU_VALUE) end
         info.notCheckable = 1
-        UIDropDownMenu_AddButton(info, level)
+        L_UIDropDownMenu_AddButton(info, level)
 
-        if UIDROPDOWNMENU_MENU_VALUE ~= ACP_DEFAULT_SET and UIDROPDOWNMENU_MENU_VALUE ~= playerClass then
-            info = UIDropDownMenu_CreateInfo()
-            info.text = L["Rename"]
+        if L_UIDROPDOWNMENU_MENU_VALUE ~= ACP_DEFAULT_SET and L_UIDROPDOWNMENU_MENU_VALUE ~= playerClass then
+            info = L_UIDropDownMenu_CreateInfo()
+            info.text = ACP_Rename
             info.func = function()
-                self.renamingSet = UIDROPDOWNMENU_MENU_VALUE
+                self.renamingSet = L_UIDROPDOWNMENU_MENU_VALUE
                 StaticPopup_Show("ACP_RENAMESET", setName)
-                CloseDropDownMenus(1)
+                L_CloseDropDownMenus(1)
             end
             info.notCheckable = 1
-            UIDropDownMenu_AddButton(info, level)
+            L_UIDropDownMenu_AddButton(info, level)
         end
 
     end
@@ -1792,9 +1778,7 @@ do
         if not LibStub then return end
         self:LocateEmbeds()
 
-        if name == "ACP" or name:sub(9) == "Blizzard_" then
-            name = "???"
-        end
+        if name == "_ShiGuang" or name:sub(9) == "Blizzard_" then name = "???" end
 
         for k,v in pairs(ACP.embedded_libs_owners) do
             if type(v) == "boolean" then
@@ -1840,10 +1824,10 @@ function ACP:ShowTooltip(this, index)
         GameTooltip:AddLine(name, 1, 0.78, 0, 1)
     end
     if author then
-        GameTooltip:AddLine(string.format("%s: %s", CLR:Label(L["Author"]), author), 1, 1, 1, 1)
+        GameTooltip:AddLine(string.format("%s: %s", CLR:Label(ACP_Author), author), 1, 1, 1, 1)
     end
     if version then
-        GameTooltip:AddLine(string.format("%s: %s", CLR:Label(L["Version"]), version), 1, 1, 1, 1)
+        GameTooltip:AddLine(string.format("%s: %s", CLR:Label(ACP_Version), version), 1, 1, 1, 1)
     end
 
 
@@ -1851,13 +1835,13 @@ function ACP:ShowTooltip(this, index)
     if notes then
         GameTooltip:AddLine(notes, 1, 1, 1, 1)
     else
-        GameTooltip:AddLine(L["No information available."], 1, 1, 1)
+        GameTooltip:AddLine(ACP_Noinformationavailable, 1, 1, 1)
     end
 
     local depLine
     local dep = deps[1]
     if dep then
-        depLine = CLR:Label(L["Dependencies"]) .. ": " .. CLR:AddonStatus(dep, dep)
+        depLine = CLR:Label(ACP_Dependencies) .. ": " .. CLR:AddonStatus(dep, dep)
         for i=2,#deps do
             dep = deps[i]
             if dep and dep:len() > 0 then
@@ -1872,7 +1856,7 @@ function ACP:ShowTooltip(this, index)
         if #optionalDeps > 0 then
             local dep = optionalDeps[1]
             if dep then
-                depLine = CLR:Label(L["Embeds"]) .. ": " .. CLR:AddonStatus(dep, dep)
+                depLine = CLR:Label(ACP_Embeds) .. ": " .. CLR:AddonStatus(dep, dep)
                 for i=2,#optionalDeps do
                     dep = optionalDeps[i]
                     if dep and dep:len() > 0 then
@@ -1888,7 +1872,7 @@ function ACP:ShowTooltip(this, index)
     for k,v in pairs(self.embedded_libs_owners) do
         if v == name then
             if actives == nil then
-                actives = CLR:Label(L["Active Embeds"]) .. ": " .. CLR:ActiveEmbed(k)
+                actives = CLR:Label(ACP_ActiveEmbeds) .. ": " .. CLR:ActiveEmbed(k)
             else
                 actives = actives .. ", " .. CLR:ActiveEmbed(k)
             end
@@ -1907,7 +1891,7 @@ function ACP:ShowTooltip(this, index)
         text2 = ("|cff8080ff%.0f|r KiB"):format(mem)
     end
 
-    GameTooltip:AddLine(CLR:Label(L["Memory Usage"]) .. ": " .. text2, 1, 0.78, 0, 1)
+    GameTooltip:AddLine(CLR:Label(ACP_MemoryUsage) .. ": " .. text2, 1, 0.78, 0, 1)
 
 
 
@@ -1931,7 +1915,7 @@ end
 function ACP:ShowHintTooltip(this, index)
     GameTooltip:SetOwner(this, "ANCHOR_BOTTOMLEFT")
 
-    GameTooltip:AddLine(L["Use SHIFT to override the current enabling of dependancies behaviour."])
+    GameTooltip:AddLine(ACP_UseSHIFTtooverridethecurrentenablingofdependanciesbehaviour)
 
     GameTooltip:Show()
 end
@@ -1980,9 +1964,7 @@ local function enable_lod_dependants(addon)
     local addon_name, title, notes, loadable, reason, security, newVersion = GetAddOnInfo(addon)
 
     -- dont do this for FuBar, its annoying
-    if addon_name == "FuBar" then
-        return
-    end
+    if addon_name == "FuBar" then return end
 
     for i=1,GetNumAddOns() do
         local name, title, notes, loadable, reason, security, newVersion = GetAddOnInfo(i)
@@ -2023,6 +2005,63 @@ function ACP_EnableRecurse(name, skip_children)
 --            recursive_iterate_over(enableIfLodFunc, GetAddOnOptionalDependencies(name))
         end
     else
-    --    self:Print(L["Addon <%s> not valid"]:format(tostring(name)))
+    --    self:Print(ACP_Addonnotvalid:format(tostring(name)))
     end
+end
+
+local HandleBase = {}
+function HandleBase:OnUpdate()
+    local uiScale = UIParent:GetScale()
+    local frame = self:GetParent()
+    local cursorX, cursorY = GetCursorPosition(UIParent)
+
+    -- calculate new scale
+    local newXScale = frame.oldScale * (cursorX/uiScale - frame.oldX*frame.oldScale) / (self.oldCursorX/uiScale - frame.oldX*frame.oldScale)
+    local newYScale = frame.oldScale * (cursorY/uiScale - frame.oldY*frame.oldScale) / (self.oldCursorY/uiScale - frame.oldY*frame.oldScale)
+    local newScale = min(2, max(0.4, newXScale, newYScale))
+    frame:SetScale(newScale)
+    savedVar.scale = newScale
+
+    -- calculate new frame position
+    local newX = frame.oldX * frame.oldScale / newScale
+    local newY = frame.oldY * frame.oldScale / newScale
+    frame:ClearAllPoints()
+    frame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", newX, newY)
+end
+function HandleBase:OnMouseDown()
+    local frame = self:GetParent()
+    frame.oldScale = frame:GetScale()
+    self.oldCursorX, self.oldCursorY = GetCursorPosition(UIParent)
+    frame.oldX = frame:GetLeft()
+    frame.oldY = frame:GetTop()
+    self:SetScript("OnUpdate", HandleBase.OnUpdate)
+end
+function HandleBase:OnMouseUp()
+    self:SetScript("OnUpdate", nil)
+end
+function HandleBase:OnEnter()
+    self.tex:SetVertexColor(1, 1, 1)
+end
+function HandleBase:OnLeave()
+    self.tex:SetVertexColor(0.6, 0.6, 0.6)
+end
+
+local frame = CreateFrame("Frame")
+
+function ACP:MakeFrameScalable(parent, x, y)
+    local handle = CreateFrame("Frame", nil, parent)
+    handle:EnableMouse(true)
+    handle:SetSize(25, 25)
+    handle:SetPoint("BOTTOMRIGHT", parent, x, y)
+    frame.SetScale = handle.SetScale
+
+    handle.tex = handle:CreateTexture()
+    handle.tex:SetTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight")
+    handle.tex:SetVertexColor(0.6, 0.6, 0.6)
+    handle.tex:SetAllPoints()
+
+    for k, v in pairs(HandleBase) do
+        handle:SetScript(k, v)
+    end
+    handle:SetScript("OnUpdate", nil)
 end

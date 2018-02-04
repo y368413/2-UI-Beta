@@ -729,7 +729,7 @@ kAutoOpen:Register('BAG_UPDATE_DELAYED', function(bag)
 		for slot = 0, GetContainerNumSlots(bag) do
 			local id = GetContainerItemID(bag, slot)
 			if id and autoOpenItems[id] then
-				DEFAULT_CHAT_FRAME:AddMessage("|cffff0000自动开启 : " .. GetContainerItemLink(bag, slot))
+				DEFAULT_CHAT_FRAME:AddMessage("|cffff0000[Auto Open]: " .. GetContainerItemLink(bag, slot))
 				UseContainerItem(bag, slot)
 				return
 			end

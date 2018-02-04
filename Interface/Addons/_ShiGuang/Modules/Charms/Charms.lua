@@ -11,7 +11,7 @@ function MerchantItemButton_OnModifiedClick(self, ...)
 		if ( maxStack and maxStack > 1 ) then
 			if not cache[itemLink] then
 				StaticPopupDialogs["BUY_STACK"] = {
-					text = "你确定购买|cffff0000一组|r下列物品吗？",
+					text = CHARMS_BUY_STACK,
 					button1 = YES,
 					button2 = NO,
 					OnAccept = function()
@@ -112,22 +112,21 @@ local _backgroundList = {
 local DRF_button1 = CreateFrame("Button","DRF_UndressButton",DressUpFrame,"UIPanelButtonTemplate");
 local DRF_button2 = CreateFrame("Button","DRF_TargetButton",DressUpFrame,"UIPanelButtonTemplate");
 local DRF_button3 = CreateFrame("Button","DRF_RaceButton",DressUpFrame,"UIPanelButtonTemplate");
-local DRF_menu1 = CreateFrame("FRAME","DRF_RaceMenu",DRF_button3,"Lib_UIDropDownMenuTemplate");
+local DRF_menu1 = CreateFrame("FRAME","DRF_RaceMenu",DRF_button3,"L_UIDropDownMenuTemplate");
 
 
-DRF_button1:SetPoint("Center",DressUpFrame,"TopLeft",50,-421);
+DRF_button1:SetPoint("BOTTOMLEFT",DressUpFrame,"BOTTOMLEFT",6,4);
 DRF_button1:SetSize(70,22);
 DRF_button1.text = _G["DRF_UndressButton"];
-DRF_button1.text:SetText("脱光光");
+DRF_button1.text:SetText(CHARMS_NAKEDIZE);
 DRF_button1:SetScript("OnClick",function(self,event,arg1)
 	DressUpModel:Undress();
-	PlaySound("gsTitleOptionOK");
 end);
 
 DRF_button2:SetPoint("Center",DRF_UndressButton,"Center",62,0);
 DRF_button2:SetSize(60,22);
 DRF_button2.text = _G["DRF_TargetButton"];
-DRF_button2.text:SetText("目标");
+DRF_button2.text:SetText(CHARMS_TARGET);
 DRF_button2:SetScript("OnClick",function(self,event,arg1)
 	local race, fileName = UnitRace("target");
 
@@ -139,7 +138,6 @@ DRF_button2:SetScript("OnClick",function(self,event,arg1)
 		DressUpModel:SetUnit("player");
 		SetDressUpBackground(DressUpFrame, fileName);
 	end
-	PlaySound("gsTitleOptionOK");
 end);
 
 DRF_button3:SetPoint("Center",DRF_TargetButton,"Center",42,0);
@@ -158,46 +156,46 @@ local function DRF_menu1_OnClick(self, arg1, arg2, checked)
 end
 
 DRF_menu1:SetPoint("CENTER");
-UIDropDownMenu_Initialize(DRF_menu1, function(self, level, menuList)
-	local info = UIDropDownMenu_CreateInfo()
+L_UIDropDownMenu_Initialize(DRF_menu1, function(self, level, menuList)
+	local info = L_UIDropDownMenu_CreateInfo()
 	if level == 1 then
 		info.checked = false;
-		info.text = "男性";
+		info.text = CHARMS_MALE;
 		info.menuList, info.hasArrow = 0, true;
-		UIDropDownMenu_AddButton(info, level);
-		info.text = "女性";
+		L_UIDropDownMenu_AddButton(info, level);
+		info.text = CHARMS_FEMALE;
 		info.menuList, info.hasArrow = 1, true;
-		UIDropDownMenu_AddButton(info, level);
+		L_UIDropDownMenu_AddButton(info, level);
 	else
 		info.checked = false;
 		info.func = DRF_menu1_OnClick;
 		info.arg2 = menuList;
-		info.text, info.arg1 = "人类", 1;
-		UIDropDownMenu_AddButton(info, level);
-		info.text, info.arg1 = "兽人", 2;
-		UIDropDownMenu_AddButton(info, level);
-		info.text, info.arg1 = "矮人", 3;
-		UIDropDownMenu_AddButton(info, level);
-		info.text, info.arg1 = "暗夜精灵", 4;
-		UIDropDownMenu_AddButton(info, level);
-		info.text, info.arg1 = "亡灵", 5;
-		UIDropDownMenu_AddButton(info, level);
-		info.text, info.arg1 = "牛头人", 6;
-		UIDropDownMenu_AddButton(info, level);
-		info.text, info.arg1 = "侏儒", 7;
-		UIDropDownMenu_AddButton(info, level);
-		info.text, info.arg1 = "巨魔", 8;
-		UIDropDownMenu_AddButton(info, level);
-		info.text, info.arg1 = "地精", 9;
-		UIDropDownMenu_AddButton(info, level);
-		info.text, info.arg1 = "血精灵", 10;
-		UIDropDownMenu_AddButton(info, level);
-		info.text, info.arg1 = "德莱尼", 11;
-		UIDropDownMenu_AddButton(info, level);
-		info.text, info.arg1 = "狼人", 22;
-		UIDropDownMenu_AddButton(info, level);
-		info.text, info.arg1 = "熊猫人", 24;
-		UIDropDownMenu_AddButton(info, level);
+		info.text, info.arg1 = CHARMS_HUMAN, 1;
+		L_UIDropDownMenu_AddButton(info, level);
+		info.text, info.arg1 = CHARMS_ORC, 2;
+		L_UIDropDownMenu_AddButton(info, level);
+		info.text, info.arg1 = CHARMS_DWARF, 3;
+		L_UIDropDownMenu_AddButton(info, level);
+		info.text, info.arg1 = CHARMS_NIGHTELF, 4;
+		L_UIDropDownMenu_AddButton(info, level);
+		info.text, info.arg1 = CHARMS_SCOURGE, 5;
+		L_UIDropDownMenu_AddButton(info, level);
+		info.text, info.arg1 = CHARMS_TAUREN, 6;
+		L_UIDropDownMenu_AddButton(info, level);
+		info.text, info.arg1 = CHARMS_GNOME, 7;
+		L_UIDropDownMenu_AddButton(info, level);
+		info.text, info.arg1 = CHARMS_TROLL, 8;
+		L_UIDropDownMenu_AddButton(info, level);
+		info.text, info.arg1 = CHARMS_GOBLIN, 9;
+		L_UIDropDownMenu_AddButton(info, level);
+		info.text, info.arg1 = CHARMS_BLOODELF, 10;
+		L_UIDropDownMenu_AddButton(info, level);
+		info.text, info.arg1 = CHARMS_DRAENEI, 11;
+		L_UIDropDownMenu_AddButton(info, level);
+		info.text, info.arg1 = CHARMS_WORGEN, 22;
+		L_UIDropDownMenu_AddButton(info, level);
+		info.text, info.arg1 = CHARMS_PANDAREN, 24;
+		L_UIDropDownMenu_AddButton(info, level);
 	end
 end, "MENU");
 
@@ -207,15 +205,16 @@ DressUpFrameResetButton:SetScript("OnClick",function(self,event,arg1)
 	DressUpModel:SetUnit("player");
 	DressUpModel:Dress();
 	SetDressUpBackground(DressUpFrame, fileName);
-	PlaySound("gsTitleOptionOK");
+	--PlaySound("gsTitleOptionOK");
 end);
 
 DRF_button3:SetScript("OnClick",function(self,event,arg1)
-	ToggleDropDownMenu(1, nil, DRF_menu1, "cursor", 3, -3);
+	--ToggleDropDownMenu(1, nil, DRF_menu1, "cursor", 3, -3);
+	L_ToggleDropDownMenu(1, nil, DRF_menu1, "cursor", 3, -3);
 end);
 
----------------------------------------------------------------daftDressUp
-local daftDressUp_Scale = 2;
+--[[-------------------------------------------------------------daftDressUp
+local daftDressUp_Scale = 1.6;
 local daftDressUp_Hide = true;
 local daftDressUp_Center = true;
 local daftDressUp = CreateFrame("Frame");
@@ -239,7 +238,7 @@ end;
 function daftDressUp:setPosition()
 	if daftDressUp_Center then
 		DressUpFrame:ClearAllPoints();
-		DressUpFrame:SetPoint("TOPLEFT", WorldFrame, "TOPLEFT", 21, -12);
+		DressUpFrame:SetPoint("TOPLEFT", WorldFrame, "TOPLEFT", 12, -27);
 		-- Fix Character frame pushing
 		UIPanelWindows["CharacterFrame"] =	{ area = "left", pushable = 0, whileDead = 1};
 	end;
@@ -252,10 +251,12 @@ function daftDressUp:setHidden()
 		DressUpFrameCancelButton:Hide();
 		DressUpFrameResetButton:Hide();
 		DressUpFrameOutfitDropDown:Hide();
+		MaximizeMinimizeFrame:Hide();
+		DressUpFrameInset:Hide();
 		DRF_button1:Hide();
 		DRF_button2:Hide();
 		DRF_button3:Hide();
-		DRF_menu1:Hide()
+		--DRF_menu1:Hide()
 	end);
 	DressUpModel:HookScript("OnEnter", function()
 		daftDressUp:ShowFrameTextures(DressUpFrame);
@@ -263,10 +264,12 @@ function daftDressUp:setHidden()
 		DressUpFrameCancelButton:Show();
 		DressUpFrameResetButton:Show();
 		DressUpFrameOutfitDropDown:Show();
+		MaximizeMinimizeFrame:Show();
+		DressUpFrameInset:Show();
 		DRF_button1:Show();
 		DRF_button2:Show();
 		DRF_button3:Show();
-		DRF_menu1:Show()
+		--DRF_menu1:Show()
 	end);
 	WorldFrame:HookScript("OnEnter", function()
 		daftDressUp:HideFrameTextures(DressUpFrame);	
@@ -274,11 +277,13 @@ function daftDressUp:setHidden()
 		DressUpFrameTitleText:Hide();
 		DressUpFrameCancelButton:Hide();
 		DressUpFrameResetButton:Hide();
-		DressUpFrameOutfitDropDown:Hide()
+		DressUpFrameOutfitDropDown:Hide();
+		MaximizeMinimizeFrame:Hide();
+		DressUpFrameInset:Hide();
 		DRF_button1:Hide();
 		DRF_button2:Hide();
 		DRF_button3:Hide();
-		DRF_menu1:Hide()
+		--DRF_menu1:Hide()
 	end);
 end;
 --Events
@@ -291,7 +296,7 @@ end);
 --Hooks
 CharacterFrame:HookScript("OnShow", function() daftDressUp:setPosition(); end);
 DressUpFrame:HookScript("OnShow", function() daftDressUp:setPosition(); end);
-hooksecurefunc("UpdateUIPanelPositions", function() daftDressUp:setPosition(); end);
+hooksecurefunc("UpdateUIPanelPositions", function() daftDressUp:setPosition(); end);]]
 
 -----------------------------------------	     随机队列倒计时    -----------------------------------------
 local TIMEOUT = 40
@@ -389,30 +394,36 @@ MaoRUI:EventFrame({"ADDON_LOADED", "PLAYER_ENTERING_WORLD"}):SetScript("OnEvent"
 end)
 
 -- Extend Instance
-local extend = CreateFrame("Button", nil, RaidInfoFrame)
-extend:SetPoint("TOPRIGHT", -35, -5)
-extend:SetSize(80, 26)
-extend:SetText("全部延长")
-extend:SetScript("OnMouseUp", function(_, btn)
-	for i = 1, GetNumSavedInstances() do
-		local _, _, _, _, _, extended, _, isRaid = GetSavedInstanceInfo(i)
-		if isRaid then
-			if btn == "LeftButton" then
-				if not extended then
-					SetSavedInstanceExtend(i, true)		-- extend
-				end
-			else
-				if extended then
-					SetSavedInstanceExtend(i, false)	-- cancel
+do
+	local RaidInfoFrame = _G.RaidInfoFrame
+	local bu = CreateFrame("Button", nil, RaidInfoFrame)
+	bu:SetPoint("TOPRIGHT", -35, -5)
+	bu:SetSize(25, 25)
+	M.CreateIF(bu, true)
+	bu.Icon:SetTexture(GetSpellTexture(80353))
+	M.CreateGT(bu, "ANCHOR_RIGHT", CHARMS_EXTEND, "system")
+
+	bu:SetScript("OnMouseUp", function(_, btn)
+		for i = 1, GetNumSavedInstances() do
+			local _, _, _, _, _, extended, _, isRaid = GetSavedInstanceInfo(i)
+			if isRaid then
+				if btn == "LeftButton" then
+					if not extended then
+						SetSavedInstanceExtend(i, true)		-- extend
+					end
+				else
+					if extended then
+						SetSavedInstanceExtend(i, false)	-- cancel
+					end
 				end
 			end
 		end
-	end
-	RequestRaidInfo()
-	RaidInfoFrame_Update()
-end)
+		RequestRaidInfo()
+		RaidInfoFrame_Update()
+	end)
+end
 
--- Auto Reagent Bank
+-------------------------------------------------------------------------------  Auto Reagent Bank
 local AutoReagentBank = CreateFrame("Frame")
 AutoReagentBank:RegisterEvent("BANKFRAME_OPENED")
 AutoReagentBank:SetScript("OnEvent", function(self, event, ...)
@@ -432,3 +443,74 @@ AutoReagentBank:SetScript("OnEvent", function(self, event, ...)
 	BankFrameItemButton_Update_PASS = true
 	DepositReagentBank()
 end)
+
+------------------------------------------------------------------------------- Auto screenshot when achieved
+local function TakeScreen(delay, func, ...)
+	local waitTable = {}
+	local waitFrame = _G["TakeScreenWaitFrame"] or CreateFrame("Frame", "TakeScreenWaitFrame", UIParent)
+	waitFrame:SetScript("OnUpdate", function(self, elapse)
+		local count = #waitTable
+		local i = 1
+		while (i <= count) do
+			local waitRecord = tremove(waitTable, i)
+			local d = tremove(waitRecord, 1)
+			local f = tremove(waitRecord, 1)
+			local p = tremove(waitRecord, 1)
+			if (d > elapse) then
+				tinsert(waitTable, i, {d-elapse, f, p})
+				i = i + 1
+			else
+				count = count - 1
+				f(unpack(p))
+			end
+		end
+	end)
+	tinsert(waitTable, {delay, func, {...}})
+end
+local AchScreen = CreateFrame("Frame") 
+AchScreen:RegisterEvent("ACHIEVEMENT_EARNED") 
+AchScreen:SetScript("OnEvent", function()
+  if not MaoRUISettingDB["Misc"]["AchievementPrintScreen"] then AchScreen:UnregisterAllEvents() return end
+    TakeScreen(1, Screenshot)
+end)
+
+--[[----------------------------------------------------------------------------- ItemQualityIcons
+hooksecurefunc("SetItemButtonQuality", function(button, quality, itemIDOrLink)
+	button.IconBorder:Hide()
+
+	local qualityIcon = button.qualityIcon
+	if not qualityIcon then
+		qualityIcon = CreateFrame("Frame", nil, button)
+		qualityIcon:SetAllPoints()
+		button.qualityIcon = qualityIcon
+	end
+
+	local iconColor = button.iconColor
+	if not iconColor then
+		iconColor = qualityIcon:CreateTexture("iconColor", "OVERLAY")
+		iconColor:SetTexture("Interface\\AddOns\\_ShiGuang\\Media\\Modules\\Role\\bubbleTex")
+		iconColor:ClearAllPoints()
+		iconColor:SetPoint("TOPRIGHT", -5, -5)
+		iconColor:SetSize(9, 9)
+	end
+
+	if quality then
+		if BAG_ITEM_QUALITY_COLORS[quality] and quality ~= 1 then
+			iconColor:SetVertexColor(BAG_ITEM_QUALITY_COLORS[quality].r, BAG_ITEM_QUALITY_COLORS[quality].g, BAG_ITEM_QUALITY_COLORS[quality].b)
+		elseif quality == 1 then
+			iconColor:SetVertexColor(1, 1, 1)
+		elseif quality == 0 then
+			iconColor:SetVertexColor(0.61568, 0.61568, 0.61568)
+		end
+
+		button.qualityIcon:Show()
+	else
+		button.qualityIcon:Hide()
+	end
+end)]]
+------------------------------------------------------------------------------- NiceDamage
+--Local NiceDamage = CreateFrame("Frame", "NiceDamage");
+--function NiceDamage:ApplySystemDamageFonts() DAMAGE_TEXT_FONT = "Interface\\AddOns\\_ShiGuang\\Media\\Fonts\\RedCircl.ttf"; end
+--NiceDamage:SetScript("OnEvent", function() if (event == "ADDON_LOADED") then NiceDamage:ApplySystemDamageFonts() end end);
+--NiceDamage:RegisterEvent("ADDON_LOADED");
+--NiceDamage:ApplySystemDamageFonts()

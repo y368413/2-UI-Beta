@@ -1,9 +1,9 @@
 ﻿## Title: MaxDps_Warlock
 ## Title-zhCN:|CFFD74DE1[输出]|rMax-SS
 ## Title-zhTW:|CFFD74DE1[输出]|rMax-SS
-## Version: 7.1.5
+## Version: 7.3.0
 ## Author: Kaminaris
-## Interface: 70200
+## Interface: 70300
 ## Dependencies: MaxDps
 ## LoadOnDemand: 1
 

@@ -1,10 +1,10 @@
+--local M, R, U, I = unpack(select(2, ...))
 -------------------------------------------------------------------------------
 -- 文件: SimpleInfo.lua ver 1.0  日期: 2010-12-11  作者: dugu@wowbox
 -- 描述: 在屏幕中下方显示玩家(宠物)和目标(ToT)的基本信息  版权所有@多玩游戏网
 -- Notes-zhCN: 在屏幕中心显示玩家和目标的简易状态信息  Author: Kill & dugu from duowan
 -- Modified: 冰灵曦晓&七曜   Fix and DIY by y368413 for WOD、LEG
 -------------------------------------------------------------------------------
-local M, R, U, I = unpack(select(2, ...))
 BlinkHealth = LibStub("AceAddon-3.0"):NewAddon("SimpleInfo",  "AceEvent-3.0", "AceTimer-3.0");
 
 -- Target name
@@ -112,6 +112,7 @@ function BlinkHealth:UNIT_POWER(event, unit)
 	if (unit == "player") then self:UpdateComboPoints(); end
 end
 
+
 function BlinkHealth:CreateAnchorFrame()
 	if (self.anchor) then return end
 
@@ -138,7 +139,7 @@ function BlinkHealth:CreateAnchorFrame()
 	self.anchor.text:SetFontObject("SIFontSmall");
 	self.anchor.text:SetJustifyH("CENTER");
 	self.anchor.text:SetPoint("CENTER");
-	self.anchor.text:SetText("左键-拖动位置\n右键-锁定位置");
+	self.anchor.text:SetText(UFRAMESTYLE_BLINKHEALTHTEXT_ANCHOR);
 	self.anchor.text:SetTextColor(1, 1, 1);
 
 	self.anchor:RegisterForClicks("LeftButtonDown", "RightButtonDown");
@@ -207,16 +208,16 @@ function BlinkHealth:UpdateUnitValues()
 	-- player
 	if (UnitHasVehicleUI("player")) then
 		heal, maxheal = UnitHealth("pet"), UnitHealthMax("pet");
-		power, maxpower = UnitMana("pet"), UnitManaMax("pet");
+		local pType, powertype = UnitPowerType("pet")
+		power, maxpower = UnitPower("pet", pType), UnitPowerMax("pet", pType);
 		petheal, petmax = UnitHealth("player"), UnitHealthMax("player");
 		name = UnitName("player");	-- petName
-		_, powertype = UnitPowerType("pet");
 	else
 		heal, maxheal = UnitHealth("player"), UnitHealthMax("player");
-		power, maxpower = UnitMana("player"), UnitManaMax("player");
+		local pType, powertype = UnitPowerType("player")
+		power, maxpower = UnitPower("player", pType), UnitPowerMax("player", pType);
 		petheal, petmax = UnitHealth("pet"), UnitHealthMax("pet");
 		name = UnitName("pet");
-		_, powertype = UnitPowerType("player");
 	end
 	
 	perh = heal/maxheal * 100 + 0.5;
@@ -254,8 +255,8 @@ function BlinkHealth:UpdateUnitValues()
 	local hexH, hexP;
 	if (UnitExists("target")) then
 		heal, maxheal = UnitHealth("target"), UnitHealthMax("target");
-		power, maxpower = UnitMana("target"), UnitManaMax("target");
-		_, powertype = UnitPowerType("target");
+		local pType, powertype = UnitPowerType("target")
+		power, maxpower = UnitPower("target", pType), UnitPowerMax("target", pType);
 		name = UnitName("target");
 		perh = heal/maxheal * 100 + 0.5;
 		self:SetPercentText("target", perh);		
@@ -345,9 +346,9 @@ end
 
 function BlinkHealth:FormatDigit(digit)
 	if (digit >= 1e8) then
-		return DANWEI_YI:format(digit / 1e8);
+		return ("%0.1f"..DANWEI_YI):format(digit / 1e8);
 	elseif (digit >= 1e4) then
-		return DANWEI_WAN:format(digit / 1e4);
+		return ("%0.1f"..DANWEI_WAN):format(digit / 1e4);
 	end
 	return digit;
 end
@@ -783,7 +784,7 @@ local function comboEventFrame_OnEvent(self, event, ...)
 		ActionButton_HideOverlayGlow(parent);
 	end	
 end
-local function myActionButton_OnUpdate(self, elapsed)
+hooksecurefunc("ActionButton_OnUpdate", function(self, elapsed)
 	if (self.comboAlert) then return end
 	self.comboAlert = true;
 	self.comboEventFrame = CreateFrame("Frame", nil, self);
@@ -791,8 +792,8 @@ local function myActionButton_OnUpdate(self, elapsed)
 	self.comboEventFrame:RegisterEvent("UNIT_COMBO_POINTS");
 	self.comboEventFrame:RegisterEvent("PLAYER_TARGET_CHANGED");
 	self.comboEventFrame:SetScript("OnEvent", comboEventFrame_OnEvent);
-end
-hooksecurefunc("ActionButton_OnUpdate", myActionButton_OnUpdate);
+end)
+
 function FiveCombo_Toggle(switch)
 	if (switch) then
 		enaleAlert = true;

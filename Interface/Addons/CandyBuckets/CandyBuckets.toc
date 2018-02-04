@@ -1,4 +1,4 @@
-## Interface: 70200
+## Interface: 70300
 ## Title: CandyBuckets
 ## Title-zhCN: |cff0080ff[地图]|r节日助手
 ## Title-zhTW: |cff0080ff[地圖]|r節日助手
@@ -6,7 +6,7 @@
 ## Notes-zhCN: 在地图上标记出春节长者、仲夏火焰节稻草人、万圣节南瓜的位置!
 ## Notes-zhTW: 在地圖上標記出春節長者、仲夏火焰節稻草人、萬聖節南瓜的位置。
 ## Author: Vladinator
-## Version: 7.1.5.170127
+## Version: 7.2.5.170621
 ## RequiredDeps: _ShiGuang
 ## DefaultState: disabled
 

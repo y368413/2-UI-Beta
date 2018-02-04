@@ -9,4 +9,5 @@
 	<Script file="StatPriority.lua"/>
 	<Script file="RightClickMenu.lua"/>
 	<Script file="kAutoOpen.lua"/>
+	<Script file="CrucibleWeight.lua"/>
 </Ui>

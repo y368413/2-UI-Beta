@@ -1,7 +1,7 @@
 --[[
     This file is part of Decursive.
     
-    Decursive (v 2.7.5.2) add-on for World of Warcraft UI
+    Decursive (v 2.7.5.7) add-on for World of Warcraft UI
     Copyright (C) 2006-2014 John Wellesz (archarodim AT teaser.fr) ( http://www.2072productions.com/to/decursive.php )
 
     Starting from 2009-10-31 and until said otherwise by its author, Decursive
@@ -18,7 +18,7 @@
     but WITHOUT ANY WARRANTY.
 
     
-    This file was last updated on 2016-10-07T2:19:47Z
+    This file was last updated on 2017-06-30T1:45:54Z
 --]]
 -------------------------------------------------------------------------------
 
@@ -729,11 +729,15 @@ end
 do
     local UnitGUID = _G.UnitGUID;
     local GetSpellInfo = _G.GetSpellInfo;
-    local TooltipButtonsInfo = ""; -- help tooltip text
+    local ttHelpLines = {}; -- help tooltip text
     local TooltipUpdate = 0; -- help tooltip change update check
-    local DcrDisplay_Tooltip = _G.DcrDisplay_Tooltip;
-    local GameTooltip_SetDefaultAnchor = _G.GameTooltip_SetDefaultAnchor;
-    local GameTooltip = _G.GameTooltip;
+
+    T._CatchAllErrors = 'LibQTip';
+    local LibQTip = LibStub('LibQTip-1.0');
+    T._CatchAllErrors = false;
+
+    local MUFtoolTip = nil;
+
     -- This function is responsible for showing the tooltip when the mouse pointer is over a MUF
     -- it also handles Unstable Affliction detection and warning.
     function MicroUnitF:OnEnter(frame) -- {{{
@@ -785,21 +789,23 @@ do
         end
 
         if D.profile.AfflictionTooltips then
+            MUFtoolTip = LibQTip:Acquire("DecursiveMUFToolTip", 1, "LEFT");
+            MUFtoolTip:SetAutoHideDelay(.3, frame, function() MUFtoolTip = nil end)
+            MUFtoolTip:Clear()
 
-            DcrDisplay_Tooltip:SetOwner(self.Frame, "ANCHOR_TOPLEFT");
             -- removes the CHARMED_STATUS bit from Status, we don't need it
             Status = bit.band(MF.UnitStatus,  bit.bnot(CHARMED_STATUS));
 
             -- First, write the name of the unit in its class color
             if UnitExists(MF.CurrUnit) then
-            DcrDisplay_Tooltip:AddLine(
+            MUFtoolTip:AddLine(
                 ((DC.RAID_ICON_LIST[GetRaidTargetIndex(Unit)]) and (DC.RAID_ICON_LIST[GetRaidTargetIndex(Unit)] .. "0:0:0:0|t ") or "")
                 -- Colored unit name
                 .. D:ColorTextNA((D:PetUnitName(Unit, true)), ((UnitClass(Unit)) and DC.HexClassColor[ (select(2, UnitClass(Unit))) ] or "AAAAAA"))
                 .. "  |cFF3F3F3F(".. Unit .. ")|r"
                 );
             else
-                DcrDisplay_Tooltip:AddLine(MF.CurrUnit);
+                MUFtoolTip:AddLine(MF.CurrUnit);
             end
 
 
@@ -828,27 +834,28 @@ do
             end
 
             -- Unit Status
-            DcrDisplay_Tooltip:AddLine(StatusText);
+            MUFtoolTip:AddLine(StatusText);
 
             -- list the debuff(s) names
             if MF.Debuffs[1] then
                 for i, Debuff in ipairs(MF.Debuffs) do
                     if Debuff.Type then
                         local DebuffApps = Debuff.Applications;
-                        DcrDisplay_Tooltip:AddLine(D:ColorTextNA(Debuff.Name, DC.TypeColors[Debuff.Type]) .. (DebuffApps > 0 and (" (%d)"):format(DebuffApps) or ""));
+                        MUFtoolTip:AddLine(D:ColorTextNA(Debuff.Name, DC.TypeColors[Debuff.Type]) .. (DebuffApps > 0 and (" (%d)"):format(DebuffApps) or ""));
                     end
                 end
             end
 
             -- Display the tooltip
-            DcrDisplay_Tooltip:ClearAllPoints();
-            DcrDisplay_Tooltip:SetPoint(self:GetHelperAnchor());
-            DcrDisplay_Tooltip:Show();
+            MUFtoolTip:ClearAllPoints();
+            MUFtoolTip:SetClampedToScreen(true)
+            MUFtoolTip:SetPoint(self:GetHelperAnchor());
+            MUFtoolTip:Show();
 
             -- if the tooltip is at the top of the screen it means it's overlaping the MUF, let's move the tooltip beneath the first MUF.
-            if floor(DcrDisplay_Tooltip:GetTop() + 0.5) == floor(UIParent:GetTop() + 0.5) then -- if at top
-                DcrDisplay_Tooltip:ClearAllPoints();
-                DcrDisplay_Tooltip:SetPoint(self:GetHelperAnchor(true));
+            if floor(MUFtoolTip:GetTop() + 0.5) >= floor(UIParent:GetTop() + 0.5) then -- if at top
+                MUFtoolTip:ClearAllPoints();
+                MUFtoolTip:SetPoint(self:GetHelperAnchor(true));
             end
         end
 
@@ -856,68 +863,59 @@ do
         if D.profile.DebuffsFrameShowHelp then
             -- if necessary we will update the help tooltip text
             if (D.Status.SpellsChanged ~= TooltipUpdate and not D.Status.Combat) then
-                local ttHelpLines = {};
+                ttHelpLines = {};
                 local MouseButtons = D.db.global.MouseButtons;
 
                 for Spell, Prio in pairs(D.Status.CuringSpellsPrio) do
-                    ttHelpLines[Prio] =
-                    ("%s: %s%s"):format(D:ColorText(DC.MouseButtonsReadable[MouseButtons[Prio]], D:NumToHexColor(MF_colors[Prio])), (GetSpellInfo(Spell)) or Spell, (D.Status.FoundSpells[Spell] and D.Status.FoundSpells[Spell][5]) and "|cFFFF0000*|r" or "");
+                    ttHelpLines[Prio] = {[D:ColorText(DC.MouseButtonsReadable[MouseButtons[Prio]], D:NumToHexColor(MF_colors[Prio]))] =
+
+                    ("%s%s"):format((GetSpellInfo(Spell)) or Spell, (D.Status.FoundSpells[Spell] and D.Status.FoundSpells[Spell][5]) and "|cFFFF0000*|r" or "")}
                 end
 
-                t_insert(ttHelpLines, ("%s: %s"):format(DC.MouseButtonsReadable[MouseButtons[#MouseButtons - 1]], L["TARGETUNIT"]));
-                t_insert(ttHelpLines, ("%s: %s"):format(DC.MouseButtonsReadable[MouseButtons[#MouseButtons    ]], L["FOCUSUNIT"]));
-                TooltipButtonsInfo = table.concat(ttHelpLines, "\n");
+                t_insert(ttHelpLines, {[DC.MouseButtonsReadable[MouseButtons[#MouseButtons - 1]]] = ("%s"):format(L["TARGETUNIT"])});
+                t_insert(ttHelpLines, {[DC.MouseButtonsReadable[MouseButtons[#MouseButtons    ]]] = ("%s"):format(L["FOCUSUNIT"])});
+
                 TooltipUpdate = D.Status.SpellsChanged;
             end
 
-            if TooltipButtonsInfo ~= "" then
-                GameTooltip_SetDefaultAnchor(GameTooltip, frame);
-                GameTooltip:SetText(TooltipButtonsInfo);
-                GameTooltip:Show();
-            end
-
+            D:DisplayLQTGameTooltip(ttHelpLines, frame)
         end
 
     end -- }}}
 
-    function MicroUnitF:OnLeave() -- {{{
+    function MicroUnitF:OnLeave(frame) -- {{{
         D.Status.MouseOveringMUF = false;
-        --D:Debug("Micro unit Hidden");
-        DcrDisplay_Tooltip:Hide();
-
-        if (D.profile.DebuffsFrameShowHelp) then
-            GameTooltip:Hide();
-        end
     end -- }}}
-end
 
-do
-    local keyTemplate = "|cFF11FF11%s|r-|cFF11FF11%s|r: %s\n\n"
-    .. "|cFF11FF11%s|r-|cFF11FF11%s|r: %s\n\n"
-    .. "|cFF11FF11%s|r-|cFF11FF11%s|r: %s\n"
-    .. "|cFF11FF11%s|r-|cFF11FF11%s|r: %s\n\n"
-    .. "|cFF11FF11%s|r-|cFF11FF11%s|r: %s";
+    local keyTemplate = "|cFF11FF11%s|r-|cFF11FF11%s|r";
 
     local keyHelp;
 
+    function D.MicroUnitF:OnCornerLeave(frame)
+    end
+
     function D.MicroUnitF:OnCornerEnter(frame)
 
+        if MUFtoolTip then
+            MUFtoolTip:Release();
+            MUFtoolTip = nil;
+        end
+
         if not keyHelp then
-            keyHelp = keyTemplate:format(
-            D.L["ALT"],             D.L["HLP_LEFTCLICK"],   D.L["HANDLEHELP"],
-
-            --D.L["HLP_RIGHTCLICK"],  D.L["STR_OPTIONS"],
-            D.L["ALT"],             D.L["HLP_RIGHTCLICK"],  D.L["BINDING_NAME_DCRSHOWOPTION"],
-
-            D.L["CTRL"],            D.L["HLP_LEFTCLICK"],   D.L["BINDING_NAME_DCRPRSHOW"], 
-            D.L["SHIFT"],           D.L["HLP_LEFTCLICK"],   D.L["BINDING_NAME_DCRSKSHOW"],
-
-            D.L["SHIFT"],           D.L["HLP_RIGHTCLICK"],  D.L["BINDING_NAME_DCRSHOW"]
-            )
+            keyHelp = {
+                {[keyTemplate:format(D.L["ALT"],   D.L["HLP_LEFTCLICK"]) ] = D.L["HANDLEHELP"]},
+                {[-1] =  -1},
+                {[keyTemplate:format(D.L["ALT"],   D.L["HLP_RIGHTCLICK"])] = D.L["BINDING_NAME_DCRSHOWOPTION"]},
+                {[-1] =  -1},
+                {[keyTemplate:format(D.L["CTRL"],  D.L["HLP_LEFTCLICK"]) ] = D.L["BINDING_NAME_DCRPRSHOW"] },
+                {[keyTemplate:format(D.L["SHIFT"], D.L["HLP_LEFTCLICK"]) ] = D.L["BINDING_NAME_DCRSKSHOW"] },
+                {[-1] =  -1},
+                {[keyTemplate:format(D.L["SHIFT"], D.L["HLP_RIGHTCLICK"])] = D.L["BINDING_NAME_DCRSHOW"] },
+            }
         end
 
         if D.profile.DebuffsFrameShowHelp then
-            D:DisplayGameTooltip(frame, keyHelp);
+            D:DisplayLQTGameTooltip(keyHelp, frame);            
         end;
     end
 end
@@ -1631,7 +1629,7 @@ do
             D:Debug('Setting MUF texture color...');
             --@end-debug@]===]
             -- Set the main texture
-            self.Texture:SetColorTexture(self.Color[1], self.Color[2], self.Color[3], Alpha); -- XXX reported to cause rare "script ran too long" errors" on 2016-09-25
+            self.Texture:SetColorTexture(self.Color[1], self.Color[2], self.Color[3], Alpha); -- XXX reported to cause rare "script ran too long" errors" on 2016-09-25 and 2016-12-30
             --self.Texture:SetAlpha(Alpha);
             --[===[@debug@
             D:Debug('Setting MUF texture color... done');
@@ -1862,6 +1860,6 @@ local MF_Textures = { -- unused
 
 -- }}}
 
-T._LoadedFiles["Dcr_DebuffsFrame.lua"] = "2.7.5.2";
+T._LoadedFiles["Dcr_DebuffsFrame.lua"] = "2.7.5.7";
 
 -- Heresy

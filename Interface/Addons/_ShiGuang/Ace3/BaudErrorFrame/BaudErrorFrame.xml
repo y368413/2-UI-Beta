@@ -1,5 +1,4 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
-..\FrameXML\UI.xsd">
+<Ui xmlns="http://www.blizzard.com/wow/ui/"   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"   xsi:schemaLocation="http://www.blizzard.com/wow/ui/">
 	<Script file="BaudErrorFrame.lua"/>
 	<Button name="BaudErrorFrameEntryTemplate" virtual="true">
 		<Size>
@@ -8,12 +7,12 @@
 		<Anchors>
 			<Anchor point="LEFT">
 				<Offset>
-					<AbsDimension x="13" y="0"/>
+					<AbsDimension x="13"/>
 				</Offset>
 			</Anchor>
 			<Anchor point="RIGHT">
 				<Offset>
-					<AbsDimension x="-13" y="0"/>
+					<AbsDimension x="-13"/>
 				</Offset>
 			</Anchor>
 		</Anchors>
@@ -48,7 +47,7 @@
 				</Texture>
 			</Layer>
 			<Layer level="BORDER">
-				<FontString name="BaudErrorFrameMinimapCount" font="fonts\ARKai_T.TTF" text="">
+				<FontString name="BaudErrorFrameMinimapCount" font="fonts\ARKai_T.TTF" outline="false" monochrome="false" text="">
 					<Color r="0.39" g="0.58" b="0.92" a="0.8"/>
 					<FontHeight>
 						<AbsValue val="18"/>
@@ -56,7 +55,7 @@
 					<Anchors>
 						<Anchor point="CENTER" relativeTo="$parentIcon">
 							<Offset>
-								<AbsDimension x="0" y="1"/>
+								<AbsDimension y="1"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -110,7 +109,7 @@
 					<Anchors>
 						<Anchor point="TOP">
 							<Offset>
-								<AbsDimension x="0" y="5"/>
+								<AbsDimension y="5"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -119,7 +118,7 @@
 					<Anchors>
 						<Anchor point="TOP" relativeTo="$parentHeader">
 							<Offset>
-								<AbsDimension x="0" y="-14"/>
+								<AbsDimension y="-14"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -139,7 +138,7 @@
 					</Anchor>
 					<Anchor point="RIGHT">
 						<Offset>
-							<AbsDimension x="-40" y="0"/>
+							<AbsDimension x="-40"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -191,12 +190,12 @@
 						<Anchors>
 							<Anchor point="LEFT">
 								<Offset>
-									<AbsDimension x="8" y="0"/>
+									<AbsDimension x="8"/>
 								</Offset>
 							</Anchor>
 							<Anchor point="RIGHT">
 								<Offset>
-									<AbsDimension x="-8" y="0"/>
+									<AbsDimension x="-8"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -234,7 +233,7 @@
 					</Anchor>
 					<Anchor point="RIGHT">
 						<Offset>
-							<AbsDimension x="-40" y="0"/>
+							<AbsDimension x="-40"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -354,7 +353,7 @@
 				<Anchors>
 					<Anchor point="RIGHT" relativeTo="$parentCloseButton" relativePoint="LEFT">
 						<Offset>
-							<AbsDimension x="-5" y="0"/>
+							<AbsDimension x="-5"/>
 						</Offset>
 					</Anchor>
 				</Anchors>

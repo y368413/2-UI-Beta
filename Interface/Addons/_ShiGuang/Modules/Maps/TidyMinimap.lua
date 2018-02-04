@@ -19,6 +19,8 @@ local notbuttons = {
 	['GarrisonLandingPageMinimapButton'] = false,
 	['QueueStatusMinimapButton'] = true,
 	['QueueStatusMinimapButtonDropDownButton'] = true,
+	['COHCMinimapButton'] = true,
+	['BaudErrorFrameMinimapButton'] = true,
 	--['LibDBIcon10_BaudErrorFrame'] = true,
 }
 

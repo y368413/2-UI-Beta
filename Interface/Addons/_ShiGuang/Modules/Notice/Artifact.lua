@@ -4,6 +4,78 @@
 GarrisonLandingPageMinimapButton:SetScale(0.8)
 --GarrisonLandingPageMinimapButton.SetPoint = function() end
 
+--------------------------------------- APTokenPercent+ArtifactPowerTip-------------------------------------
+--Scan the tooltip for the artifact power amount of the item
+local function ArtifactPowerScan(self)
+local HasArtifactEquip = HasArtifactEquipped()    
+    if not (HasArtifactEquip) then return end
+
+--Get points spent in equipped artifact
+local points = select(6, C_ArtifactUI.GetEquippedArtifactInfo())
+local tier = select(13, C_ArtifactUI.GetEquippedArtifactInfo())
+local maxpower = C_ArtifactUI.GetCostForPointAtRank(points,tier)
+local appower = 0
+local appercent = 0
+	--Loop through the tooltip
+	for i=1, self:NumLines() do			
+		--Check for the Artifact Power line
+		if(string.find(_G[self:GetName().."TextLeft"..i]:GetText(), _G["ARTIFACT_POWER"])) then
+			--If found loop again to find the amount
+			for i=1, self:NumLines() do
+				if(string.find(_G[self:GetName().."TextLeft"..i]:GetText(), _G["USE"])) then
+					if(string.find(_G[self:GetName().."TextLeft"..i]:GetText(), _G["SECOND_NUMBER"])) then
+						appower = string.match(_G[self:GetName().."TextLeft"..i]:GetText(), "%d+%,?%.?%s?%d*");												
+						appower = tonumber(appower)						
+						appower = appower * 1000000
+						break
+					elseif(string.find(_G[self:GetName().."TextLeft"..i]:GetText(), _G["THIRD_NUMBER"])) then	
+						appower = string.match(_G[self:GetName().."TextLeft"..i]:GetText(), "%d+%,?%.?%s?%d*");												
+						appower = tonumber(appower)						
+						appower = appower * 1000000000
+						break
+					elseif(string.find(_G[self:GetName().."TextLeft"..i]:GetText(), _G["FOURTH_NUMBER"])) then	
+						appower = string.match(_G[self:GetName().."TextLeft"..i]:GetText(), "%d+%,?%.?%s?%d*");												
+						appower = tonumber(appower)						
+						appower = appower * 1000000000000
+						break	
+					else
+						appower = string.match(_G[self:GetName().."TextLeft"..i]:GetText(), "%d+%,?%.?%s?%d*");						
+						appower = string.gsub(string.gsub(appower, "%,", ""), "%.", "");						
+						break
+					end
+				end
+			end
+		end
+	end
+	--Check to see if we found an amount
+	if appower ~= 0 then
+		
+		--Determine the progress amount
+		appercent = appower / maxpower
+		appercent = appercent * 100
+		
+		--Add that shit to the tooltip
+			local _, link = self:GetItem()
+	if type(link) == 'string' then
+		if IsArtifactPowerItem(link) then
+			local artifactID, _, artifactName = C_ArtifactUI.GetEquippedArtifactInfo()
+			if artifactName then
+				local spec = GetSpecialization()
+				if spec then
+					local _, _, _, specIcon = GetSpecializationInfo(spec)
+					if specIcon then
+						self:AddLine(string.format('|T%s:16|t [%s] - %3.5f', specIcon, artifactName, appercent) .. "%", 230/255, 204/255, 128/255)
+						self:Show()
+					end
+				end
+			end
+		end
+	end			
+ end	
+end
+--Hook it, hook it real good
+GameTooltip:HookScript("OnTooltipSetItem", ArtifactPowerScan);
+
 ------------------------------- Order Hall Resources Tooltip
 local categoryInfo = {}
 do

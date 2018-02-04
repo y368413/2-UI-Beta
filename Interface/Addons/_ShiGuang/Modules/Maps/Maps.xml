@@ -2,7 +2,7 @@
 	<Script file="Minimap.lua"/>
 	<Script file="TidyMinimap.lua"/>
 	<Script file="WorldMap.lua"/>
-	<Script file="WorldMapFog.lua"/>
+	<Script file="Foglight.lua"/>
 	<Script file="WorldFlightMap.lua"/>
 	<Script file="SuramarPortalHelper.lua"/>
 </Ui>

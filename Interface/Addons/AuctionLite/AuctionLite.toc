@@ -1,13 +1,14 @@
-## Interface: 70200
-## Title: AuctionLite
-## Title-zhCN: |cff69ccf0[拍卖]|rAH助手
-## Title-zhTW: |cff69ccf0[拍賣]|rAH增強
-## Notes: A lightweight addon that tracks auction house data and improves the auction house interface.
+## Interface: 70300
+## Title: AuctionLite + CollectionShop
+## Title-zhCN: |cff69ccf0[AH]|r售卖助手
+## Title-zhTW: |cff69ccf0[AH]|r售賣助手
+## Notes: A lightweight addon that tracks auction house data and improves the auction house interface. + Find and buy the lowest buyout Mounts, Pets, Toys, and Appearances.
 ## Notes-zhCN: 拍卖助手插件，是一款类似于Auctioneer的插件，让你更方便更容易的使用拍卖行
-## Author: merial.kilrogg@gmail.com
-## Version: 1.8.16
+## Author: merial.kilrogg@gmail.com + Clinton Caldwell
+## Version: 1.8.16 + 2.05
 ## Dependencies: _ShiGuang
-## SavedVariables: AuctionLiteDB
+## SavedVariables: AuctionLiteDB, COLLECTIONSHOP_SAVEDVARIABLES
+## SavedVariablesPerCharacter: COLLECTIONSHOP_SAVEDVARIABLESPERCHARACTER
 ## X-Category: Interface Enhancements
 ## X-Curse-Packaged-Version: r274
 ## X-Curse-Project-Name: AuctionLite
@@ -50,3 +51,9 @@ Util.lua
 
 AdvSearch.xml
 AdvSearch.lua
+
+CollectionShopTemplates.xml
+Base.lua
+CollectionShop.lua
+OptionsConfig.lua
+OptionsCreate.lua

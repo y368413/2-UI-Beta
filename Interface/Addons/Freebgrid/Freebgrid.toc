@@ -1,4 +1,4 @@
-## Interface: 70200
+## Interface: 70300
 ## Title: |cff70C0F5Freebgrid|r
 ## Title-zhCN:|cff8000ff[治疗]|r团队框架
 ## Title-zhTW:|cff0080ff[治療]|r团队框架

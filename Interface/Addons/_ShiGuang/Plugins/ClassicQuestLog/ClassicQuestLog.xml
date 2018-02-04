@@ -98,7 +98,7 @@
 			<Layer level="BACKGROUND">
 				<!-- temporary fix for lua error in QuestInfo.lua:45 (questFrame.SealMaterialBG is nil) -->
 				<Texture parentKey="SealMaterialBG" hidden="true"/>
-				<FontString parentKey="title" inherits="GameFontNormal" text=" 任务列表 ">
+				<FontString parentKey="title" inherits="GameFontNormal" text="QUEST_LOG">
 					<Anchors>
 						<Anchor point="TOP" x="0" y="-5"/>
 					</Anchors>
@@ -158,7 +158,7 @@
 				<Scripts>
 					<OnClick>
 						QuestLogPushQuest()
-						PlaySound("igQuestLogOpen")
+						PlaySound(PlaySoundKitID and "igQuestLogOpen" or SOUNDKIT.IG_QUEST_LOG_OPEN)
 					</OnClick>
 					<OnEnter>
 						GameTooltip_AddNewbieTip(self, SHARE_QUEST, 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_SHAREQUEST, 1)

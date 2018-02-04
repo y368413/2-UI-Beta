@@ -74,7 +74,7 @@ end
 --- Toggles the module when its checkbox is clicked.
 function panel:ModuleEnabledOnClick()
 	local Enable = self:GetChecked() == true
-	PlaySound(Enable and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")
+	PlaySound(Enable and 856 or 857)
 	private.Modules[Enable and "Enable" or "Disable"](self:GetParent().Module.Name)
 end
 

@@ -34,60 +34,6 @@ local MB_SearchField = _G["BagItemSearchBox"];
 local MB_Tab; -- The tab for our frame.
 local MB_BattlePetTooltipLines;
 
-local options = {
-	name = InboxMailBag_FRAMENAME,
-	type = 'group',
-	args = {
-		advanced = {
-			type = 'toggle',
-			name = InboxMailBag_Advanced,
-			desc = InboxMailBag_ADVANCED_MODE_DESC,
-			descStyle = "inline",
-			width = "full",
-			set = function(info, enabled)
-					InboxMailbag_ToggleAdvanced(enabled);
-					if (info[0]) then
-						LibStub("AceConsole-3.0"):Print(enabled and InboxMailBag_ADVANCED_MODE_ENABLED or InboxMailBag_ADVANCED_MODE_DISABLED);
-					end
-				 end,
-			get = function(info) return ShiGuangDB["ADVANCED"] end,
-		},
-		quality_colors = {
-			type = 'toggle',
-			name = InboxMailBag_Quality_Colors,
-			desc = InboxMailBag_QUALITY_COLOR_MODE_DESC,
-			descStyle = "inline",
-			width = "full",
-			set = function(info, enabled)
-					ShiGuangDB["QUALITY_COLORS"] = enabled;
-					if ( InboxMailbagFrame:IsVisible() ) then
-						InboxMailbag_Update();
-					end
-					if (info[0]) then
-						LibStub("AceConsole-3.0"):Print(enabled and InboxMailBag_QUALITY_COLORS_MODE_ENABLED or InboxMailBag_QUALITY_COLORS_MODE_DISABLED);
-					end
-				 end,
-			get = function(info) return ShiGuangDB["QUALITY_COLORS"] end,
-		},
-		mail_default = {
-			type = 'toggle',
-			name = InboxMailBag_MAIL_DEFAULT,
-			desc = string.format( InboxMailBag_MAIL_DEFAULT_DESC, INBOX ),
-			descStyle = "inline",
-			width = "full",
-			set = function(info, enabled)
-					ShiGuangDB["MAIL_DEFAULT"] = enabled;
-					if (info[0]) then
-						LibStub("AceConsole-3.0"):Print(enabled and InboxMailBag_MAIL_DEFAULT_ENABLED or string.format(InboxMailBag_MAIL_DEFAULT_DISABLED, INBOX));
-					end
-				 end,
-			get = function(info) return ShiGuangDB["MAIL_DEFAULT"] end,
-		},
-	},
-};
-LibStub("AceConfig-3.0"):RegisterOptionsTable("InboxMailbag", options, {"mailbag"});
-LibStub("AceConfigDialog-3.0"):AddToBlizOptions("InboxMailbag", InboxMailBag_FRAMENAME);
-
 function InboxMailbagSearch_OnEditFocusGained(self, ...)
 	MB_SearchField = self;
 end
@@ -156,7 +102,7 @@ function InboxMailbag_OnPlayerLogin(self, event, ...)
 	end
 
 	-- Last tweaks for advanced mode
-	InboxMailbag_ToggleAdvanced( ShiGuangDB["ADVANCED"] );
+	InboxMailbagFrameTotalMessages:Show();
 end
 
 function InboxMailbag_OnShow(self)
@@ -194,9 +140,7 @@ function InboxMailbag_OnEvent(self, event, ...)
 		-- Assume it's our fault, stop the queue
 		InboxMailbag_ResetQueue();
 	elseif( event == "MAIL_SHOW" ) then
-		if ShiGuangDB["MAIL_DEFAULT"] then
 			InboxMailbagTab_OnClick(MB_Tab);
-		end
 	elseif( event == "PLAYER_LOGIN" ) then
 		InboxMailbag_OnPlayerLogin(self, event, ...);
 	end
@@ -254,8 +198,8 @@ function InboxMailbag_Consolidate()
 	
 	local counter = 0;
 	local index = "";
-	local bGroupStacks = ShiGuangDB["GROUP_STACKS"];
-	local bAdvanced    = ShiGuangDB["ADVANCED"];
+	local bGroupStacks = true;
+	local bAdvanced    = true;
 	
 	for i=1, GetInboxNumItems() do
 		local packageIcon, stationeryIcon, sender, subject, money, CODAmount, daysLeft, itemCount, wasRead, wasReturned, textCreated, canReply, isGM = GetInboxHeaderInfo(i);
@@ -314,12 +258,12 @@ end
 function InboxMailbag_GetInboxItemID( mailID, attachment, name)
 	local itemLink = GetInboxItemLink( mailID, attachment );
 	if ( itemLink and string.find(itemLink, "item:82800") ) then
-		local cageName = GetItemInfo( itemLink );
+		--local cageName = GetItemInfo( itemLink );
 		if ( name ) then
-			itemLink = name.." "..cageName;
+			itemLink = name  --.." "..cageName;
 		else
 			local itemName, _, itemTexture, count, quality, canUse = GetInboxItem( mailID, attachment );
-			itemLink = itemName.." "..cageName;
+			itemLink = itemName --.." "..cageName;
 		end
 	end
 	return itemLink;
@@ -392,7 +336,7 @@ function InboxMailbag_Update()
 		InboxMailbagFrameTotalMessages:SetText( format(InboxMailBag_TOTAL, numItems) );
 	end
 	
-	local bQualityColors = ShiGuangDB["QUALITY_COLORS"];
+	local bQualityColors = true;
 	local itemName, itemTexture, count, quality, canUse, _, itemLink;
 	for i=1, BAGITEMS_ICON_DISPLAYED do
 		local currentIndex = i + offset;
@@ -539,7 +483,7 @@ function InboxMailbagItem_OnEnter(self, index)
 			else
 				BattlePetTooltip:Hide();
 			end
-		elseif ( ShiGuangDB["GROUP_STACKS"] ) then
+		elseif GroupStacks then
 			GameTooltip:AddLine( ENCLOSED_MONEY );
 			GameTooltip:AddLine( GetCoinTextureString(item.money), 1, 1, 1 );
 		else
@@ -557,6 +501,7 @@ function InboxMailbagItem_OnEnter(self, index)
 		end
 
 		local addSeparator = true;
+		local GroupStacks = true;
 
 		for i, link in ipairs(links) do
 			local packageIcon, stationeryIcon, sender, subject, money, CODAmount, daysLeft, itemCount, wasRead, wasReturned, textCreated, canReply, isGM = GetInboxHeaderInfo(link.mailID);
@@ -570,7 +515,7 @@ function InboxMailbagItem_OnEnter(self, index)
 				else
 					strAmount = ( link.money and link.money > 0 ) and format( "|cffFFFFFF%s|r ", GetCoinTextureString(link.money) );
 
-					if ( ShiGuangDB["GROUP_STACKS"] ) then
+					if GroupStacks then
 						local invoiceType, itemName, playerName, bid, buyout, deposit, consignment = GetInboxInvoiceInfo( link.mailID );
 						if ( invoiceType == "seller" ) then
 							sender = subject;
@@ -619,7 +564,7 @@ function InboxMailbagItem_OnClick(self)
 		end
 
 		InboxMailbag_FetchNext();
-		PlaySound("igMainMenuOptionCheckBoxOn");
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
 	end
 end
 
@@ -701,7 +646,7 @@ function InboxMailbagTab_OnClick(self)
 
 	InboxMailbagFrame:Show()
 
-	PlaySound("igSpellBookOpen");
+	--PlaySound(PlaySoundKitID and "igSpellBookOpen");
 end
 
 function InboxMailbagTab_DeselectTab()
@@ -739,9 +684,7 @@ end
 -- Respond to BeanCounter hiding its GUI by showing ours if appropriate
 function InboxMailbag_BeanCounter_OnHide()
 	MB_Tab:Show();
-	if ShiGuangDB["MAIL_DEFAULT"] then
 		InboxMailbagTab_OnClick(MB_Tab);
-	end
 end
 
 function InboxMailbag_BattlePetToolTip_OnHide()

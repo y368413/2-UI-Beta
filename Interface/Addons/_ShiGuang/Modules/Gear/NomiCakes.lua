@@ -1,4 +1,5 @@
-﻿NomiCakesGossipButtonName = 'GossipTitleButton'
+﻿--## Author: Semlar ## Version: 7.2.5.2
+NomiCakesGossipButtonName = 'GossipTitleButton' -- Allow other addons to override the buttons we hook, if needed
 local HookedButtons = {} -- [button] = true
 local Undiscoverable = { -- List of rank 1 recipes that can't be obtained from nomi
 	-- [recipeID] = recipeName,
@@ -30,13 +31,6 @@ local Requisites = { -- List of recipes you must (probably) already know in orde
 	[201505] = {201500}, -- The Hungry Magister: Leybeque Ribs
 	[201511] = {201504}, -- Fishbrul Special: Drogbar-Style Salmon
 	
-	[201515] = {201413, 201496, 201497, 201498, 201499}, -- Hearty Feast
-	[201542] = {201515}, -- Hearty Feast
-	[201562] = {201515}, -- Hearty Feast
-	[201516] = {201500, 201501, 201502, 201503, 201504}, -- Lavish Suramar Feast
-	[201543] = {201516}, -- Lavish Suramar Feast
-	[201563] = {201516}, -- Lavish Suramar Feast
-	
 	[201538] = {201511}, -- Fishbrul Special
 	[201558] = {201511}, -- Fishbrul Special
 	[201534] = {201505}, -- The Hungry Magister
@@ -48,6 +42,14 @@ local Requisites = { -- List of recipes you must (probably) already know in orde
 	[201537] = {201508}, -- Seed-Battered Fish Plate
 	[201557] = {201508}, -- Seed-Battered Fish Plate
 	--]]
+	
+	[201515] = {201413, 201496, 201497, 201498, 201499}, -- Hearty Feast
+	[201542] = {201515}, -- Hearty Feast
+	[201562] = {201515}, -- Hearty Feast
+	[201516] = {201500, 201501, 201502, 201503, 201504}, -- Lavish Suramar Feast
+	[201543] = {201516}, -- Lavish Suramar Feast
+	[201563] = {201516}, -- Lavish Suramar Feast
+	
 	[201531] = {201502}, -- Barracuda Mrglgagh
 	[201551] = {201502}, -- Barracuda Mrglgagh
 	[201533] = {201504}, -- Drogbar-Style Salmon
@@ -166,15 +168,25 @@ local function DecorateNomi()
 	local activeWorkOrders = {}
 	if WorkOrders then -- count number of pending work orders to display on their buttons
 		local now = time()
-		for i = 1, #WorkOrders do
-			local workOrder = WorkOrders[i]
-			local ingredientItemID = workOrder[1]
-			local endTime = workOrder[3]
-			if endTime > now then -- still active
-				if not activeWorkOrders[ingredientItemID] then
-					activeWorkOrders[ingredientItemID] = 1
-				else
-					activeWorkOrders[ingredientItemID] = activeWorkOrders[ingredientItemID] + 1
+		local name, texture, shipmentCapacity, shipmentsReady, shipmentsTotal, creationTime, duration, timeleftString, _, _, _, _, followerID = C_Garrison.GetLandingPageShipmentInfoByContainerID(122) -- can return nil if no active shipments
+		local startIndex = shipmentsTotal and (#WorkOrders - shipmentsTotal + 1) or 1
+		--local startIndex = not shipmentsTotal and 1 or (#WorkOrders - shipmentsTotal + shipmentsReady + 1)
+		if startIndex >= 1 and shipmentsTotal then -- this can be called before WorkOrders has been populated, so account for that
+			local currentIndex = startIndex + shipmentsReady
+			if WorkOrders[currentIndex] then
+				local timeOffset = creationTime + duration - WorkOrders[currentIndex][3] - (GetServerTime() - time())
+				for i = startIndex, #WorkOrders do
+					local workOrder = WorkOrders[i]
+					local ingredientItemID = workOrder[1]
+					local endTime = workOrder[3]
+					local timeLeft = endTime - now + timeOffset
+					if timeLeft > 0 and i >= currentIndex then -- still active
+						if not activeWorkOrders[ingredientItemID] then
+							activeWorkOrders[ingredientItemID] = 1
+						else
+							activeWorkOrders[ingredientItemID] = activeWorkOrders[ingredientItemID] + 1
+						end
+					end
 				end
 			end
 		end
@@ -196,7 +208,7 @@ local function DecorateNomi()
 						if not IsNomi then return end
 						if TooltipInfo[self] and #TooltipInfo[self] > 0 then
 							GameTooltip:SetOwner(self, 'ANCHOR_RIGHT')
-							GameTooltip:AddLine('潜在的食谱')
+							GameTooltip:AddLine(NOMICAKES_POTENTIAL)
 							table.sort(TooltipInfo[self])
 							for _, name in pairs(TooltipInfo[self]) do
 								GameTooltip:AddLine(name)
@@ -311,6 +323,7 @@ f:SetScript('OnEvent', function(self, event, ...)
 			LocalizedIngredientList[itemID] = {itemName, itemLink}
 		end
 	elseif event == 'PLAYER_LOGIN' then
+		C_Garrison.RequestLandingPageShipmentInfo()
 		for itemID, recipes in pairs(IngredientList) do
 			local itemName, itemLink = GetItemInfo(itemID)
 			if itemName and itemLink then
@@ -464,7 +477,8 @@ do -- Experimental work order stuff
 						local orderPlaced = now - startDelta -- time the work order was placed, not when the work order will start
 						local endTime = now + timeRemaining
 						-- local startTime = endTime - 14400 -- start time is end time of previous recipe, or endTime - 14400, which makes recording it kind of pointless
-						WorkOrders[i] = {ingredientItemID, orderPlaced, endTime}
+						-- WorkOrders[i] = {ingredientItemID, orderPlaced, endTime}
+						tinsert(WorkOrders, {ingredientItemID, orderPlaced, endTime})
 					else
 						-- we're missing information for whatever this is supposed to be?
 					end
@@ -480,10 +494,12 @@ do -- Experimental work order stuff
 					local orderPlaced = time()
 					local startTime = numWorkOrders > 0 and WorkOrders[numWorkOrders][3] or orderPlaced
 					local endTime = startTime + duration
-					WorkOrders[ #WorkOrders + 1 ] = {ingredientItemID, orderPlaced, endTime}
+					--WorkOrders[ #WorkOrders + 1 ] = {ingredientItemID, orderPlaced, endTime}
+					tinsert(WorkOrders, {ingredientItemID, orderPlaced, endTime})
 					WorkOrderType = ingredientItemID
 					NumWorkOrdersOrdered = NumWorkOrdersOrdered + 1
 					-- print(GetTime(), 'SHIPMENT_UPDATE', name, itemID, duration, 'started')
+					C_Garrison.RequestLandingPageShipmentInfo() -- request update for shipment info
 				else
 					-- missing ingredient item information for this shipment somehow
 					--print('NomiCakes missing ingredient information for itemID', itemID)
@@ -523,29 +539,18 @@ do -- Experimental work order stuff
 		if IgnoreShow then return end
 		local owner = self:GetOwner()
 		if owner and owner.containerID == 122 and WorkOrders then -- probably should add a better check for the tooltip owner than this
-			local numWorkOrders = #WorkOrders
-			
 			local name, texture, shipmentCapacity, shipmentsReady, shipmentsTotal, creationTime, duration, timeleftString, _, _, _, _, followerID = C_Garrison.GetLandingPageShipmentInfoByContainerID(122)
+			if not shipmentsTotal then return end
+			local numWorkOrders = #WorkOrders
+			local startIndex = numWorkOrders - shipmentsTotal + 1
+			if startIndex <= 0 then return end
+			if numWorkOrders == 0 then return end
 			
-			local startIndex = 1
-			for i = numWorkOrders, 1, -1 do
-				local endTime = WorkOrders[i][3]
-				local timeLeft = endTime - time()
-				if timeLeft <= 0 then -- shipment ready
-					startIndex = i - shipmentsReady + 1
-					break
-				end
-			end
-			
-			if numWorkOrders > 0 then
-				--local endTime = WorkOrders[numWorkOrders][3]
-				--local timeLeft = endTime - time()
+			local currentIndex = startIndex + shipmentsReady -- currentIndex will be greater than numWorkOrders if all of our shipments are ready
+			local timeOffset = WorkOrders[currentIndex] and (creationTime + duration - WorkOrders[currentIndex][3] - (GetServerTime() - time())) or 0
+			if numWorkOrders - startIndex > 0 then
 				self:AddLine(' ')
-				--if timeLeft > 0 then
-					--self:AddLine(format(CAPACITANCE_ALL_COMPLETE, SecondsToTime(timeLeft)))
-				--end
 			end
-			
 			for i = startIndex, numWorkOrders do
 				local workOrder = WorkOrders[i]
 				local itemID, orderPlaced, endTime = workOrder[1], workOrder[2], workOrder[3]
@@ -554,8 +559,8 @@ do -- Experimental work order stuff
 				if ingredientIcon then
 					name = format('|T%d:16|t %s', ingredientIcon, name)
 				end
-				local timeLeft = endTime - time()
-				if timeLeft > 0 then
+				local timeLeft = endTime - time() + timeOffset
+				if timeLeft > 0 and i >= currentIndex then
 					self:AddDoubleLine(name, SecondsToTime(timeLeft), 1, 1, 0.4, 1, 1, 0.4)
 				elseif shipmentsReady > 0 then
 					self:AddDoubleLine(name, READY_FOR_PICKUP, 0.4, 1, 0.4, 0.4, 1, 0.4)

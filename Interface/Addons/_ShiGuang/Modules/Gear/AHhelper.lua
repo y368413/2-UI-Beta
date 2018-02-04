@@ -30,7 +30,7 @@ AHT:SetScript('OnEvent', function(self, event, name)
         AHTEXT = CreateFrame('Button', 'SomeRandomButton123', AuctionFrame, 'UIPanelButtonTemplate')
         AHTEXT:SetPoint('TOPLEFT', AuctionFrame, 'TOPLEFT', 180, -26)
         AHTEXT:SetSize(1, 1)
-        AHTEXT:SetText('-- |cFF00DDFFAlt+右键 |r直接上货/出价--')
+        AHTEXT:SetText(GEAR_AHHELPER_AUTOSELL)
     end
 end)
 
@@ -85,140 +85,171 @@ end)
 
 
 -- daftAuction
-local undercutPercent = .965
---local duration = 3 -- 1, 2, 3 for 12h, 24h, 48h
-local PRICE_BY = "VENDOR" -- QUALITY or VENDOR
--- PRICE BY QUALITY, where 1000 = 1 gold
-	local POOR_PRICE = 100000
-	local COMMON_PRICE = 200000
-	local UNCOMMON_PRICE = 2500000
-	local RARE_PRICE = 5000000
-	local EPIC_PRICE = 10000000
--- PRICE BY VENDOR, where formula is vendor price * number
-	local POOR_MULTIPLIER = 20
-	local COMMON_MULTIPLIER = 30
-	local UNCOMMMON_MULTIPLIER = 40
-	local RARE_MULTIPLIER = 50
-	local EPIC_MULTIPLIER = 60
-local STARTING_MULTIPLIER = 0.9
----------END CONFIG---------
-local daftAuction = CreateFrame("Frame", "daftAuction", UIParent)
-daftAuction:RegisterEvent("AUCTION_HOUSE_SHOW")
-daftAuction:RegisterEvent("AUCTION_ITEM_LIST_UPDATE")
+local daftAuction =  CreateFrame("Frame");
+daftAuction:RegisterEvent("AUCTION_HOUSE_SHOW");
+daftAuction:RegisterEvent("AUCTION_ITEM_LIST_UPDATE");
 
-local selectedItem
-local selectedItemVendorPrice
-local selectedItemQuality
-local currentPage = 0
-local myBuyoutPrice, myStartPrice
-local myName = UnitName("player")
+local selectedItem;
+local selectedItemVendorPrice;
+local selectedItemQuality;
+local currentPage = 0;
+local myBuyoutPrice, myStartPrice;
+local myName = UnitName("player");
 
 daftAuction:SetScript("OnEvent", function(self, event)
 	
 	if event == "AUCTION_HOUSE_SHOW" and not IsAddOnLoaded("AuctionLite") then		
 		AuctionsItemButton:HookScript("OnEvent", function(self, event)			
 			if event=="NEW_AUCTION_UPDATE" then -- user placed an item into auction item box
-				self:SetScript("OnUpdate", nil)
-				myBuyoutPrice = nil
-				myStartPrice = nil
-				currentPage = 0
-				selectedItem = nil
+				self:SetScript("OnUpdate", nil);
+				myBuyoutPrice = nil;
+				myStartPrice = nil;
+				currentPage = 0;
+				selectedItem = nil;
 				selectedItem, texture, count, quality, canUse, price, _, stackCount, totalCount, selectedItemID = GetAuctionSellItemInfo();
-				local canQuery = CanSendAuctionQuery()
+				local canQuery = CanSendAuctionQuery();
 				
 				if canQuery and selectedItem then -- query auction house based on item name
-					ResetCursor()
-					QueryAuctionItems(selectedItem)
-				end
-			end
-		end)
+					ResetCursor();
+					QueryAuctionItems(selectedItem);
+				end;
+			end;
+		end);
 
 	elseif event == "AUCTION_ITEM_LIST_UPDATE" and not IsAddOnLoaded("AuctionLite") then -- the auction list was updated or sorted
 		if (selectedItem ~= nil) then -- an item was placed in the auction item box
-			local batch, totalAuctions = GetNumAuctionItems("list")
+			local batch, totalAuctions = GetNumAuctionItems("list");
 			
 			if totalAuctions == 0 then -- No matches
-				_, _, selectedItemQuality, selectedItemLevel, _, _, _, _, _, _, selectedItemVendorPrice = GetItemInfo(selectedItem)
+				_, _, selectedItemQuality, selectedItemLevel, _, _, _, _, _, _, selectedItemVendorPrice = GetItemInfo(selectedItem);
 							
-				if PRICE_BY == "QUALITY" then			
-					if selectedItemQuality == 0 then myBuyoutPrice = POOR_PRICE end
-					if selectedItemQuality == 1 then myBuyoutPrice = COMMON_PRICE end
-					if selectedItemQuality == 2 then myBuyoutPrice = UNCOMMON_PRICE end
-					if selectedItemQuality == 3 then myBuyoutPrice = RARE_PRICE end
-					if selectedItemQuality == 4 then myBuyoutPrice = EPIC_PRICE end			
-				elseif PRICE_BY == "VENDOR" then			
-					if selectedItemQuality == 0 then myBuyoutPrice = selectedItemVendorPrice * POOR_MULTIPLIER end
-					if selectedItemQuality == 1 then myBuyoutPrice = selectedItemVendorPrice * COMMON_MULTIPLIER end
-					if selectedItemQuality == 2 then myBuyoutPrice = selectedItemVendorPrice * UNCOMMMON_MULTIPLIER end
-					if selectedItemQuality == 3 then myBuyoutPrice = selectedItemVendorPrice * RARE_MULTIPLIER end
-					if selectedItemQuality == 4 then myBuyoutPrice = selectedItemVendorPrice * EPIC_MULTIPLIER end
-				end
+				--if PRICE_BY == "QUALITY" then			
+					if selectedItemQuality == 0 then myBuyoutPrice = 100000 end;
+					if selectedItemQuality == 1 then myBuyoutPrice = 200000 end;
+					if selectedItemQuality == 2 then myBuyoutPrice = 2000000 end;
+					if selectedItemQuality == 3 then myBuyoutPrice = 5000000 end;
+					if selectedItemQuality == 4 then myBuyoutPrice = 10000000 end;
+				--elseif PRICE_BY == "VENDOR" then			
+					--if selectedItemQuality == 0 then myBuyoutPrice = selectedItemVendorPrice * 20 end;
+					--if selectedItemQuality == 1 then myBuyoutPrice = selectedItemVendorPrice * 30 end;
+					--if selectedItemQuality == 2 then myBuyoutPrice = selectedItemVendorPrice * 40 end;
+					--if selectedItemQuality == 3 then myBuyoutPrice = selectedItemVendorPrice * 50 end;
+					--if selectedItemQuality == 4 then myBuyoutPrice = selectedItemVendorPrice * 60 end;
+				--end;
 				
-				myStartPrice = myBuyoutPrice * STARTING_MULTIPLIER
-			end
+				myStartPrice = myBuyoutPrice;
+			end;
 			
-			local currentPageCount = floor(totalAuctions/50)			
+			local currentPageCount = floor(totalAuctions/50);
+			
 			for i=1, batch do -- SCAN CURRENT PAGE
-				local postedItem, _, count, _, _, _, _, minBid, _, buyoutPrice, _, _, _, owner = GetAuctionItemInfo("list",i)			
-				if postedItem == selectedItem and owner ~= myName then -- selected item matches the one found on auction list		
+				local postedItem, _, count, _, _, _, _, minBid, _, buyoutPrice, _, _, _, owner = GetAuctionItemInfo("list",i);
+				
+				if postedItem == selectedItem and owner ~= myName and buyoutPrice ~= nil then -- selected item matches the one found on auction list
+					
 					if myBuyoutPrice == nil and myStartPrice == nil then
-						myBuyoutPrice = (buyoutPrice/count) * undercutPercent
-						myStartPrice = (minBid/count) * undercutPercent					
+						myBuyoutPrice = (buyoutPrice/count) * .97;
+						myStartPrice = (minBid/count) * .97;
+					
 					elseif myBuyoutPrice > (buyoutPrice/count) then
-						myBuyoutPrice = (buyoutPrice/count) * undercutPercent
-						myStartPrice = (minBid/count) * undercutPercent
-					end
-				end
-			end
+						myBuyoutPrice = (buyoutPrice/count) * .97;
+						myStartPrice = (minBid/count) * .97;
+					end;
+				end;
+			end;
 			
 			if currentPage < currentPageCount then -- GO TO NEXT PAGES			
 				self:SetScript("OnUpdate", function(self, elapsed)			
 					if not self.timeSinceLastUpdate then 
-						self.timeSinceLastUpdate = 0 
-					end
-					self.timeSinceLastUpdate = self.timeSinceLastUpdate + elapsed
+						self.timeSinceLastUpdate = 0 ;
+					end;
+					self.timeSinceLastUpdate = self.timeSinceLastUpdate + elapsed;
 					
 					if self.timeSinceLastUpdate > .1 then -- a cycle has passed, run this
-						selectedItem = GetAuctionSellItemInfo()
-						local canQuery = CanSendAuctionQuery()
+						selectedItem = GetAuctionSellItemInfo();
+						local canQuery = CanSendAuctionQuery();
 						
 						if canQuery then -- check the next page of auctions
-							currentPage = currentPage + 1
-							QueryAuctionItems(selectedItem, nil, nil, currentPage)
-							self:SetScript("OnUpdate", nil)
-						end
-						self.timeSinceLastUpdate = 0
-					end
-				end)
+							currentPage = currentPage + 1;
+							QueryAuctionItems(selectedItem, nil, nil, currentPage);
+							self:SetScript("OnUpdate", nil);
+						end;
+						self.timeSinceLastUpdate = 0;
+					end;
+				end);
 			
 			else -- ALL PAGES SCANNED
-				self:SetScript("OnUpdate", nil)
-				local stackSize = AuctionsStackSizeEntry:GetNumber()			
+				self:SetScript("OnUpdate", nil);
+				local stackSize = AuctionsStackSizeEntry:GetNumber();
 				if myStartPrice ~= nil then				
 					if stackSize > 1 then -- this is a stack of items				
-						if Lib_UIDropDownMenu_GetSelectedValue(PriceDropDown) == PRICE_TYPE_UNIT then -- input price per item
-							MoneyInputFrame_SetCopper(StartPrice, myStartPrice)
-							MoneyInputFrame_SetCopper(BuyoutPrice, myBuyoutPrice)		
+						if L_UIDropDownMenu_GetSelectedValue(PriceDropDown) == 1 then -- input price per item
+							MoneyInputFrame_SetCopper(StartPrice, myStartPrice);
+							MoneyInputFrame_SetCopper(BuyoutPrice, myBuyoutPrice);
 						else -- input price for entire stack
-							MoneyInputFrame_SetCopper(StartPrice, myStartPrice*stackSize)
-							MoneyInputFrame_SetCopper(BuyoutPrice, myBuyoutPrice*stackSize)
-						end
+							MoneyInputFrame_SetCopper(StartPrice, myStartPrice*stackSize);
+							MoneyInputFrame_SetCopper(BuyoutPrice, myBuyoutPrice*stackSize);
+						end;
 						
 					else -- this is not a stack
-						MoneyInputFrame_SetCopper(StartPrice, myStartPrice) 
-						MoneyInputFrame_SetCopper(BuyoutPrice, myBuyoutPrice)
-					end
-					if Lib_UIDropDownMenu_GetSelectedValue(DurationDropDown) ~= 3 then 
-						Lib_UIDropDownMenu_SetSelectedValue(DurationDropDown, 3); -- set duration to 3 (48h)
-						DurationDropDownText:SetText("48 Hours"); -- set duration text since it keeps bugging to "Custom"
+						MoneyInputFrame_SetCopper(StartPrice, myStartPrice);
+						MoneyInputFrame_SetCopper(BuyoutPrice, myBuyoutPrice);
+					end;
+					if L_UIDropDownMenu_GetSelectedValue(DurationDropDown) ~= 3 then 
+						L_UIDropDownMenu_SetSelectedValue(DurationDropDown, 3); -- set duration to 3 (48h)
+						DurationDropDownText:SetText("48 H"); -- set duration text since it keeps bugging to "Custom"  48 Hours
 					end;
 				end;
 					
-				myBuyoutPrice = nil
-				myStartPrice = nil
-				currentPage = 0
-				selectedItem = nil
+				myBuyoutPrice = nil;
+				myStartPrice = nil;
+				currentPage = 0;
+				selectedItem = nil;
+				stackSize = nil;
+			end;
+		end;
+	end;
+end);
+
+-------------------------------------------------------------Tipachu v1.2 by Tuller
+--add icon to the tooltip
+local function setTooltipIcon(self, icon)
+	local title = icon and _G[self:GetName() .. 'TextLeft1']
+	if title then
+		title:SetFormattedText('|T%s:21|t %s', icon, title:GetText())
+	end
+end
+--tooltip hooking generator
+local function newTooltipHooker(method, func)
+	return function(tooltip)
+		local modified = false
+
+		tooltip:HookScript('OnTooltipCleared', function(self, ...)
+			modified = false
+		end)
+
+		tooltip:HookScript(method, function(self, ...)
+			if not modified  then
+				modified = true
+				func(self, ...)
 			end
-		end
+		end)
+	end
+end
+--local hookItem = newTooltipHooker('OnTooltipSetItem', function(self, ...)
+	--local name, link = self:GetItem()
+	--if link then
+		--setTooltipIcon(self, GetItemIcon(link))
+	--end
+--end)
+local hookSpell = newTooltipHooker('OnTooltipSetSpell', function(self, ...)
+	local name, rank, id = self:GetSpell()
+	if id then
+		setTooltipIcon(self, GetSpellTexture(id))
 	end
 end)
+--hook tooltips
+for _, tooltip in pairs{GameTooltip, ItemRefTooltip} do
+	--hookItem(tooltip)
+	hookSpell(tooltip)
+end

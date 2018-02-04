@@ -126,7 +126,7 @@ end)
 ----◊÷ÃÂ√Ë±ﬂ
 for i = 1, 7 do
    local m, r = _G["ChatFrame"..i]:GetFont()
-   _G["ChatFrame"..i]:SetFont(m, r, "THINOUTLINE")
+   _G["ChatFrame"..i]:SetFont(m, r, "OUTLINE")
    _G["ChatFrame"..i]:SetShadowOffset(0, 0)
    _G["ChatFrame"..i]:SetShadowColor(0, 0, 0, 0)
 end]]

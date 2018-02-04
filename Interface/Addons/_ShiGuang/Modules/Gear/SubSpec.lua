@@ -322,7 +322,7 @@ local function CreateUi()
 	mainFrame.createButton:SetText("+")
 	mainFrame.createButton:SetPoint("TOPLEFT", 26, -16)
 	mainFrame.createButton:SetSize(21, 21)
-	mainFrame.createButton:SetScript("OnClick", function() AddProfileButton("[新配置]", GetCurrentTalents()); end)
+	mainFrame.createButton:SetScript("OnClick", function() AddProfileButton(SUBSPEC_NEWSET, GetCurrentTalents()); end)
 
 	--scroll:
 	local scroll = CreateFrame("ScrollFrame", "SubSpec_Scroll", mainFrame)
@@ -375,32 +375,32 @@ local function CreateUi()
 		self:SetPoint("TOPLEFT", profileFrame.button, "TOPRIGHT", -3, -8)
 		if self.index ~= profileFrame.index then
 			self.index = profileFrame.index
-			if LIB_UIDROPDOWNMENU_OPEN_MENU == mainFrame.menuFrame then DropDownList1:Hide(); end
+			if L_UIDROPDOWNMENU_OPEN_MENU == mainFrame.menuFrame then DropDownList1:Hide(); end
 		end
 		self:Show()
 	end
 	mainFrame.menuButton = menuButton
 
-	mainFrame.menuFrame = CreateFrame("Frame", "SubSpec_MenuFrame", menuButton, "UIDropDownMenuTemplate")
+	mainFrame.menuFrame = CreateFrame("Frame", "SubSpec_MenuFrame", menuButton, "L_UIDropDownMenuTemplate")
 	mainFrame.menuFrame:Hide()
 	mainFrame.menuFrame.displayMode = "MENU"
 	menuTexts = {
-		{text = "保存", notCheckable = true, func = MenuSave},
-		{text = "重命名", notCheckable = true, func = MenuRename},
-		{text = "左移", notCheckable = true, func = MenuMoveLeft},
-		{text = "右移", notCheckable = true, func = MenuMoveRight},
-		{text = "删除", notCheckable = true, func = MenuRemove}
+		{text = SAVE, notCheckable = true, func = MenuSave},
+		{text = GARRISON_SHIP_RENAME, notCheckable = true, func = MenuRename},
+		{text = SUBSPEC_LEFTSHIFT, notCheckable = true, func = MenuMoveLeft},
+		{text = SUBSPEC_RIGHTSHIFT, notCheckable = true, func = MenuMoveRight},
+		{text = CALENDAR_DELETE_EVENT, notCheckable = true, func = MenuRemove}
 	}
-	Lib_UIDropDownMenu_Initialize(mainFrame.menuFrame, EasyMenu_Initialize, "MENU", nil, menuTexts)  --Lib_EasyMenu_Initialize
-	menuButton:SetScript("OnClick", function() ToggleDropDownMenu(1, nil, mainFrame.menuFrame, menuButton, 0, 0, menuTexts, nil, nil); end)
+	L_UIDropDownMenu_Initialize(mainFrame.menuFrame, L_EasyMenu_Initialize, "MENU", nil, menuTexts)  --Lib_EasyMenu_Initialize
+	menuButton:SetScript("OnClick", function() L_ToggleDropDownMenu(1, nil, mainFrame.menuFrame, menuButton, 0, 0, menuTexts, nil, nil); end)
 	menuButton:SetScript("OnHide", function(self)
 		self.index = 0
-		if LIB_UIDROPDOWNMENU_OPEN_MENU == mainFrame.menuFrame then DropDownList1:Hide(); end
+		if L_UIDROPDOWNMENU_OPEN_MENU == mainFrame.menuFrame then DropDownList1:Hide(); end
 	end)
 	StaticPopupDialogs["SubSpec_RenameDialog"] = {
-		text = "输入新的配置文件名称",
-		button1 = "重命名",
-		button2 = "取消",
+		text = SUBSPEC_NEWPROFILENAME,
+		button1 = GARRISON_SHIP_RENAME,
+		button2 = BLIZZARD_CHALLENGE_CANCEL,
 		OnAccept = MenuRenameApply,
 		timeout = 0,
 		whileDead = true,
@@ -411,7 +411,7 @@ local function CreateUi()
 	}
 
 	mainFrame:SetScript("OnHide", function(self)
-		if LIB_UIDROPDOWNMENU_OPEN_MENU == mainFrame.menuFrame then DropDownList1:Hide(); end
+		if L_UIDROPDOWNMENU_OPEN_MENU == mainFrame.menuFrame then DropDownList1:Hide(); end
 		self.menuButton:Hide()
 		StaticPopup_Hide("SubSpec_RenameDialog")
 	end)

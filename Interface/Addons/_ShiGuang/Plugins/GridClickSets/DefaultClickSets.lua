@@ -448,7 +448,7 @@ function GridClickSets_SetAttributes(frame, set)
         end
     end
 
-    -- for wheel up/down bindings (new on 11.02.22)
+    --[[ for wheel up/down bindings (new on 11.02.22)
     local binded = 0
     local script = "self:ClearBindings()";
     for i=1,2 do
@@ -462,16 +462,15 @@ function GridClickSets_SetAttributes(frame, set)
                 GridClickSets_SetAttribute(frame, GRID_CLICK_SETS_BUTTONS+binded, "", set.type, set.arg)
             end
         end
-    end
+    end]]
 
     secureHeader:UnwrapScript(frame, "OnEnter")
-    secureHeader:WrapScript(frame, "OnEnter", script);
+    secureHeader:WrapScript(frame, "OnEnter", "self:ClearBindings()"); --script
     secureHeader:UnwrapScript(frame, "OnLeave")
     secureHeader:WrapScript(frame, "OnLeave", "self:ClearBindings()");
 end
 
 function GridClickSets_SetAttribute(frame, button, modi, type, arg)
-    --if InCombatLockdown() then return end
 
     if(type==nil or type=="NONE") then
         frame:SetAttribute(modi.."type"..button, nil)

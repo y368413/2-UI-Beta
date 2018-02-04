@@ -25,34 +25,9 @@ local _EyeforanEye = 205191;
 local _Consecration = 26573;
 local _DivineHammer = 198034;
 
--- Talents
-local _isFinalVerdict = false;
-local _isSeraphim = false;
-local _isSanctifiedWrath = false;
-local _isExecutionSentence = false;
-local _isLightsHammer = false;
-local _isHolyPrism = false;
-local _isZeal = false;
-local _isSacredShield = false;
-local _isBlindingLight = false;
-local _isEyeforanEye = false;
-local _isConsecration = false;
-local _isCrusade = false;
-local _isDivineHammer = false;
-
 MaxDps.Paladin = {};
 
 function MaxDps.Paladin.CheckTalents()
-	MaxDps:CheckTalents();
-	_isFinalVerdict = MaxDps:HasTalent(_FinalVerdict);
-	_isExecutionSentence = MaxDps:HasTalent(_ExecutionSentence);
-	_isZeal = MaxDps:HasTalent(_Zeal);
-	_isCrusade = MaxDps:HasTalent(_Crusade);
-	_isBlindingLight = MaxDps:HasTalent(_BlindingLight);
-	_isEyeforanEye = MaxDps:HasTalent(_EyeforanEye);
-	_isConsecration = MaxDps:HasTalent(_Consecration);
-	_isDivineHammer = MaxDps:HasTalent(_DivineHammer);
-	-- other checking functions
 end
 
 function MaxDps:EnableRotationModule(mode)
@@ -70,28 +45,22 @@ function MaxDps:EnableRotationModule(mode)
 	end;
 end
 
-function MaxDps.Paladin.Holy()
-	local timeShift, currentSpell = MaxDps:EndCast();
-
+function MaxDps.Paladin.Holy(_, timeShift, currentSpell, gcd, talents)
 	return nil;
 end
 
-function MaxDps.Paladin.Protection()
-	local timeShift, currentSpell = MaxDps:EndCast();
-
+function MaxDps.Paladin.Protection(_, timeShift, currentSpell, gcd, talents)
 	return nil;
 end
 
-function MaxDps.Paladin.Retribution()
-	local timeShift, currentSpell, gcd = MaxDps:EndCast();
-
+function MaxDps.Paladin.Retribution(_, timeShift, currentSpell, gcd, talents)
 	local crusStrike = _CrusaderStrike;
-	if _isZeal then
+	if talents[_Zeal] then
 		crusStrike = _Zeal;
 	end
 
 	local bladeOfJustice = _BladeofJustice;
-	if _isDivineHammer then
+	if talents[_DivineHammer] then
 		bladeOfJustice = _DivineHammer;
 	end
 
@@ -103,18 +72,29 @@ function MaxDps.Paladin.Retribution()
 	local crus, crusCD = MaxDps:SpellAvailable(crusStrike, timeShift);
 	local boj, bojCD = MaxDps:SpellAvailable(bladeOfJustice, timeShift);
 
-	local targetPh = MaxDps:TargetPercentHealth();
-
 	MaxDps:GlowCooldown(_AvengingWrath, MaxDps:SpellAvailable(_AvengingWrath, timeShift));
 	MaxDps:GlowCooldown(_ShieldofVengeance, MaxDps:SpellAvailable(_ShieldofVengeance, timeShift));
-	MaxDps:GlowCooldown(_BlindingLight, _isBlindingLight and MaxDps:SpellAvailable(_BlindingLight, timeShift));
-	MaxDps:GlowCooldown(_EyeforanEye, _isEyeforanEye and MaxDps:SpellAvailable(_EyeforanEye, timeShift));
-	MaxDps:GlowCooldown(_Crusade, _isCrusade and MaxDps:SpellAvailable(_Crusade, timeShift));
 
-	if _isExecutionSentence and MaxDps:SpellAvailable(_ExecutionSentence, timeShift) and holyPower >= 3 and (
-		(jCD < gcd * 4.5) or (jAuraCD > gcd * 4.67)) and
-		(not _isCrusade or (crusadeCD > gcd * 2)
-	)
+	if talents[_BlindingLight] then
+		MaxDps:GlowCooldown(_BlindingLight, MaxDps:SpellAvailable(_BlindingLight, timeShift));
+	end
+
+	if talents[_EyeforanEye] then
+		MaxDps:GlowCooldown(_EyeforanEye, MaxDps:SpellAvailable(_EyeforanEye, timeShift));
+	end
+
+	if talents[_Crusade] then
+		MaxDps:GlowCooldown(_Crusade, MaxDps:SpellAvailable(_Crusade, timeShift));
+	end
+
+	if talents[_ExecutionSentence]
+		and MaxDps:SpellAvailable(_ExecutionSentence, timeShift)
+		and holyPower >= 3
+		and (
+			(jCD < gcd * 4.5) or (jAuraCD > gcd * 4.67)
+		) and (
+			not talents[_Crusade] or (crusadeCD > gcd * 2)
+		)
 	then
 		return _ExecutionSentence;
 	end
@@ -139,7 +119,7 @@ function MaxDps.Paladin.Retribution()
 		return _Judgment;
 	end
 
-	if _isConsecration and MaxDps:SpellAvailable(_Consecration, timeShift) then
+	if talents[_Consecration] and MaxDps:SpellAvailable(_Consecration, timeShift) then
 		return _Consecration;
 	end
 

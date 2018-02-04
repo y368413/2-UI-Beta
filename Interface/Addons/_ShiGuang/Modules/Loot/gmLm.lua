@@ -1,10 +1,6 @@
 -- Thanks Lombra for his inputs:
 -- http://www.wowinterface.com/forums/showthread.php?t=55021
-
-local ADDON = ...
-
 local fontName, fontHeight, fontFlags = GameFontNormal:GetFont()
-
 local BUTTON_HEIGHT = fontHeight + 4
 local BUTTON_SPACING = 0
 local MENU_BUFFER = 10
@@ -64,6 +60,14 @@ Menu:SetBackdrop({
 Menu:Hide()
 
 
+
+Close = CreateFrame("Button", "BarrelsOEasyClose", Menu, "UIPanelCloseButton")
+Close:SetWidth(25)
+Close:SetHeight(25)
+Close:SetPoint("TOPRIGHT", -3, -3)
+--Close:SetScript("OnClick", function(self) ToggleFrame() end)
+
+
 local function initMenu()
 
 		GMLM_REPORT = {}
@@ -82,7 +86,7 @@ local function Menu_OnLeave()
 		Menu:Hide()
 	end
 end
-Menu:SetScript('OnLeave', Menu_OnLeave)
+--Menu:SetScript('OnLeave', Menu_OnLeave)
 
 local header_desc = Menu:CreateFontString()
 header_desc:SetPoint("TOPLEFT", Menu, "TOPLEFT", MENU_BUFFER, -MENU_BUFFER)
@@ -109,10 +113,10 @@ lclick_desc:SetTextColor(0, 1, 0, 1)
 lclick_desc:SetText("左键点击:显示物品信息")
 
 
-local dataobj = LibStub:GetLibrary("LibDataBroker-1.1"):NewDataObject(ADDON, {
+local dataobj = LibStub:GetLibrary("LibDataBroker-1.1"):NewDataObject("gmLm", {
 	type = "data source",
 	icon = "Interface\\Addons\\_ShiGuang\\Media\\Emotes\\evil",
-	text = ADDON,
+	text = "gmLm",
 	OnClick = function(self, button)
 		if button == "LeftButton" then
 			Menu:SetShown(not Menu:IsShown())
@@ -136,7 +140,7 @@ local dataobj = LibStub:GetLibrary("LibDataBroker-1.1"):NewDataObject(ADDON, {
 			Menu:Show()
 		end
 	end,
-	OnLeave = Menu_OnLeave
+	--OnLeave = Menu_OnLeave
 })
 
 local function Button_OnClick(self, button, down)
@@ -194,9 +198,9 @@ Menu:SetScript("OnEvent", function(self, event, ...)
 			button.index = index
 			button:RegisterForClicks("AnyDown")
 			button:SetScript("OnClick", Button_OnClick)
-			button:SetScript("OnLeave", Menu_OnLeave)
+			--button:SetScript("OnLeave", Menu_OnLeave)
 
-			local text = button:CreateFontString(ADDON .. "btn_font", nil, "GameFontNormal")
+			local text = button:CreateFontString("gmLmbtn_font", nil, "GameFontNormal")
 			text:SetAllPoints()
 			text:SetJustifyH("LEFT")
 			text:SetJustifyV("MIDDLE")
@@ -266,7 +270,7 @@ SlashCmdList["GMLM"] = function(args)
 	param=param:lower()
 	
 	if param=="" then
-		print(ADDON .. ":")
+		print("gmLm:")
 		print("/gmlm  - This help")
 		print("/gmlm show - Show")
 		return

@@ -1,8 +1,7 @@
 <!-- edited with XMLSpy v2007 (http://www.altova.com) by jon (n/a) -->
-<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
-..\FrameXML\UI.xsd">
-	<Script file="ACP.lua"/>
-	<Script file="localization.lua"/>
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.blizzard.com/wow/ui/ W:\WORLDO~1\BLIZZA~1\FrameXML\UI.xsd">
+    <Script file="ACP.lua"/>
     <Button name="ACP_AddonListEntryTemplate" virtual="true">
         <Size>
             <AbsDimension x="520" y="16"/>
@@ -236,7 +235,7 @@
                     </Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentSortDropDown" inherits="UIDropDownMenuTemplate">
+            <Button name="$parentSortDropDown" inherits="L_UIDropDownMenuTemplate">
                 <Anchors>
                     <Anchor point="RIGHT" relativeTo="ACPAddonListForceLoad" relativePoint="LEFT" x="-120" y="0"/>
 
@@ -352,7 +351,7 @@
                     </OnClick>
                     <OnEnter>
                         GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-                        GameTooltip:SetText(ACP.L["Resurse-ToolTip"], nil, nil, nil, nil, 1);
+                        GameTooltip:SetText(ACP_ResurseToolTip, nil, nil, nil, nil, 1);
                     </OnEnter>
                     <OnLeave>
                         GameTooltip:Hide();

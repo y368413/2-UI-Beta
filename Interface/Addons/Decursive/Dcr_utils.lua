@@ -1,7 +1,7 @@
 --[[
     This file is part of Decursive.
     
-    Decursive (v 2.7.5.2) add-on for World of Warcraft UI
+    Decursive (v 2.7.5.7) add-on for World of Warcraft UI
     Copyright (C) 2006-2014 John Wellesz (archarodim AT teaser.fr) ( http://www.2072productions.com/to/decursive.php )
 
     Starting from 2009-10-31 and until said otherwise by its author, Decursive
@@ -17,7 +17,7 @@
     Decursive is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY.
 
-    This file was last updated on 2017-01-09T1:40:57Z
+    This file was last updated on 2017-06-25T19:35:37Z
 --]]
 -------------------------------------------------------------------------------
 
@@ -52,6 +52,11 @@ local D = T.Dcr;
 local L = D.L;
 local LC = D.LC;
 local DC = T._C;
+
+T._CatchAllErrors = 'LibQTip';
+local LibQTip = LibStub('LibQTip-1.0');
+T._CatchAllErrors = false;
+
 local _G                = _G;
 local pairs             = _G.pairs;
 local ipairs            = _G.ipairs;
@@ -370,6 +375,11 @@ function D:tSwap(t, i1, i2)
     return true;
 end
 
+function D:tCall(t, f)
+    for k,v in pairs(t) do
+        f(k,v)
+    end
+end
 
 function D:ThisSetText(frame, text) --{{{
     _G[frame:GetName().."Text"]:SetText(text);
@@ -385,12 +395,61 @@ function D:DisplayTooltip(Message, RelativeTo, AnchorType, x, y) --{{{
         DcrDisplay_Tooltip:Show();
 end --}}}
 
-function D:DisplayGameTooltip(frame, Message) --{{{
-    GameTooltip_SetDefaultAnchor(GameTooltip, frame);
-    GameTooltip:SetText(Message);
-    GameTooltip:Show();
-end --}}}
+do
+    local HeadFont
+    function D:CreateLQTHFonts()
 
+        if HeadFont then
+            return HeadFont;
+        end
+
+        D:Debug("CreateLQTHFonts called");
+
+        -- Create the fonts objects we'll use in the tooltip:
+        -- New font looking like GameTooltipText
+        HeadFont = CreateFont("DCR_QT_HeadFont")
+        HeadFont:SetFont(GameTooltipText:GetFont(), 16)
+        HeadFont:SetTextColor(0.8,0.8,0.3)
+
+        return HeadFont;
+    end
+end
+
+do --{{{
+    local LastMessageTable = nil
+    function D:DisplayLQTGameTooltip(messageTable, ownerFrame)
+        if not messageTable then
+            return
+        end
+
+        local LQTtoolTip = LibQTip:Acquire("DecursiveDebuffFrameHelp", 2, "LEFT", "RIGHT");
+
+        LQTtoolTip:SetAutoHideDelay(.3, ownerFrame, function() LastMessageTable = nil end)
+
+        -- if it's still being displayed due to autohide delay...
+        if LastMessageTable ~= messageTable and LQTtoolTip:GetLineCount() > 0 then
+            LQTtoolTip:Clear()
+        elseif LastMessageTable == messageTable then
+            return LQTtoolTip
+        end
+
+        LastMessageTable = messageTable;
+
+        self:tCall(messageTable, function (_,v) self:tCall(v, function (k,v)
+            if v ~= -1 then
+                LQTtoolTip:AddLine(k,v)
+            else
+                LQTtoolTip:AddSeparator()
+            end
+        end ) end);
+
+        -- code from Blizzard's GameTooltip_SetDefaultAnchor
+        LQTtoolTip:SetPoint("BOTTOMRIGHT", "UIParent", "BOTTOMRIGHT", -CONTAINER_OFFSET_X - 13, CONTAINER_OFFSET_Y);
+        LQTtoolTip:Show();
+
+        return LQTtoolTip;
+    end
+end --}}}
 
 
 function D:NumToHexColor(ColorTable)
@@ -841,4 +900,4 @@ do
 end
 
 
-T._LoadedFiles["Dcr_utils.lua"] = "2.7.5.2";
+T._LoadedFiles["Dcr_utils.lua"] = "2.7.5.7";

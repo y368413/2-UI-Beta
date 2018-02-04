@@ -27,7 +27,7 @@ T._LoadedFiles["zhTW.lua"] = false;
 local L = LibStub("AceLocale-3.0"):NewLocale("Decursive", "zhTW");
 
 if not L then
-    T._LoadedFiles["zhTW.lua"] = "2.7.5.2";
+    T._LoadedFiles["zhTW.lua"] = "2.7.5.7";
     return;
 end;
 
@@ -438,4 +438,5 @@ L["UNITSTATUS"] = "玩家狀態: "
 L["UNSTABLERELEASE"] = "不穩定釋出版"
 
 
-T._LoadedFiles["zhTW.lua"] = "2.7.5.2";
+
+T._LoadedFiles["zhTW.lua"] = "2.7.5.7";

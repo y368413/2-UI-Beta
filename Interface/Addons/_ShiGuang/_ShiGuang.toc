@@ -1,20 +1,21 @@
-## Interface: 70200
+## Interface: 70300
 ## Title:- |cFFBF00FFMao|r|cFF00DDFFR|r|cffff8800UI|r -
 ## Title-zhCN:- |cFFBF00FFMao|r|cFF00DDFFR|r|cffff8800UI|r -
 ## Title-zhTW:- |cFFBF00FFMao|r|cFF00DDFFR|r|cffff8800UI|r -
-## Author: 火柴、图图
+## Author: 火柴、图图、Siweia
 ## Credits: abin, ape47, Coolkid, Elv, Freebaser, Haleth, Haste, Loshine, Monolit, Neal, Neavo, p3lim, Qulight, Ray, superk, Tukz, Tuller, Warbaby, yleaf, Zork, siweia & "不高兴"...
 ## Notes: Time Flies
 ## Notes-zhCN: 时光 稍纵即逝
 ## Notes-zhTW: 時光 稍縱即逝
-## Version:2.2.1
-## SavedVariables: MaoRUIDB,ShiGuangDB,ShiGuangSettingDB,diminfo,FriendGroups_SavedVars,EasyObliterate_Data,CurrencyTrackingDB,DruidFrenzyRegenDB,QuestListDB,zTipSaves,AdiCastBarDB,FamilyFamiliarHelperSettings,TinyInspectDB,TinyRosterDB,LS_TOASTS_CFG_GLOBAL
-## SavedVariablesPerCharacter: MaoRUISettingDB,ShiGuangPerDB,StableHelperPerChar,EasyObliterate_IgnoreList,LS_TOASTS_CFG
+## Version:2.3.0
+## Support: 7.3
+## SavedVariables: MaoRUIDB,ShiGuangDB,ShiGuangSettingDB,diminfo,FriendGroups_SavedVars,CurrencyTrackingDB,DruidFrenzyRegenDB,QuestListDB,AdiCastBarDB,FamilyFamiliarHelperSettings,TinyInspectDB,BigTipDB,TinyRosterDB,FoglightMode,BonusRollPreviewDB,RelicInspectorDB,VLegionToDo
+## SavedVariablesPerCharacter: MaoRUISettingDB,ShiGuangPerDB,StableHelperPerChar,RelicInspectorCharDB
 
-## X-StatsVersion: 05-21-2011
+## X-StatsVersion: 01-21-2018
 ## X-Repple: MaoR UI
 ## X-Website: https://git.coding.net/MaoRUI/MaoR-UI.git
-## X-Date: 2017-05-21T00:00:00Z
+## X-Date: 2018-01-21T00:00:00Z
 
 ## LoadManagers: AddonLoader
 ## X-LoadOn-Always: Delayed

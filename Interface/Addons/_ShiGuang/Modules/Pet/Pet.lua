@@ -1,14 +1,12 @@
-﻿--[[ Battle Pet Ability Tooltips]]
+﻿--[[ Battle Pet Ability Tooltips ## Auhtor: Gello ## Version: 1.0.8 ]]
 
 local tooltips = {}
-
 local function init()
 	for i=1,3 do
 		table.insert(tooltips,CreateFrame("Frame",nil,PetBattlePrimaryUnitTooltip,"SharedPetBattleAbilityTooltipTemplate"))
 	end
 	PetBattlePrimaryUnitTooltip:HookScript("OnHide",function() for i=1,3 do tooltips[i]:Hide() end end)
 end
-
 local function list(self,owner,pet)
 	local anchorTo = self
 	local tooltip
@@ -48,9 +46,7 @@ frame:RegisterEvent("ADDON_LOADED")
 
 
 
---[[Battle Pet Battle Stats## Author: Gello## Version: 1.0.7]]
-
-
+--[[ Battle Pet Battle Stats ## Author: Gell o## Version: 1.0.10 ]]
 local frame = CreateFrame("Frame")
 frame.notSetUp = true
 frame.texCoords = {Power={0,.5,0,.5}, Speed={0,.5,.5,1}, Health={.5,1,.5,1}}
@@ -86,7 +82,11 @@ end)
 frame:RegisterEvent("ADDON_LOADED")
 frame:RegisterEvent("PLAYER_LOGIN")
 
-
+-- sets up a icon+text widget
+-- parent: PetBattleFrame.ActiveAlly or PetBattleFrame.ActiveEnemy
+-- widgetType: "Health" "Power" or "Speed"
+-- anchor: the corner of the parent to anchor the top of the widget's icon
+-- xoff: x-offset from the anchor
 function frame:CreateWidget(parent,widgetType,anchor,xoff)
   local widget = CreateFrame("Frame",nil,parent)
   widget:SetSize(16,16)
@@ -139,6 +139,7 @@ function frame:SetUpWidgets()
     self.widgets[i].Health = self:CreateWidget(parent,"Health",anchor,offset)
     self.widgets[i].Power = self:CreateWidget(parent,"Power",anchor,offset+60)
     self.widgets[i].Speed = self:CreateWidget(parent,"Speed",anchor,offset+121)
+
 		self.ticks[i] = CreateFrame("Frame",nil,parent)
 		self.ticks[i]:Hide()
 		self.ticks[i]:SetID(i)
@@ -219,9 +220,7 @@ function frame:HideTickTooltip()
 end
 
 
---[[Cloudy Pet Collected]]
-
-
+--[[ Cloudy Pet Collected ## Author: Cloudyfa ## Version: 1.7 ]]
 --- Pet String Calculation ---
 local function GetPetString(name)
 	if (not name) or (name == '') then return end
@@ -236,7 +235,7 @@ local function GetPetString(name)
 			local quality = select(5, C_PetJournal.GetPetStats(petID))
 
 			local color = ITEM_QUALITY_COLORS[quality - 1].hex
-			petString = color .. COLLECTED .. ' -' .. level .. '级-|r'
+			petString = color .. COLLECTED .. ' -' .. level .. '-|r'
 		else
 			local color = ITEM_QUALITY_COLORS[5].hex
 			petString = color .. NOT_COLLECTED .. '|r'
@@ -245,8 +244,6 @@ local function GetPetString(name)
 
 	return petString
 end
-
-
 --- Set Pet Info ---
 local function SetPetInfo(tooltip, name)
 	local petString = GetPetString(name)
@@ -273,8 +270,6 @@ local function SetPetInfo(tooltip, name)
 
 	tooltip:Show()
 end
-
-
 --- Pet Battle Tooltip ---
 hooksecurefunc('PetBattleUnitTooltip_UpdateForUnit', function(self, owner, index)
 	if (owner == LE_BATTLE_PET_ENEMY) and C_PetBattles.IsWildBattle() then
@@ -284,8 +279,6 @@ hooksecurefunc('PetBattleUnitTooltip_UpdateForUnit', function(self, owner, index
 		self.CollectedText:SetText(petString)
 	end
 end)
-
-
 --- Pet Cage Tooltip ---
 local function PetCageOnShow(self)
 	local petName = self.Name and self.Name:GetText()
@@ -306,8 +299,6 @@ local function PetCageOnShow(self)
 end
 BattlePetTooltip:HookScript('OnUpdate', PetCageOnShow)
 FloatingBattlePetTooltip:HookScript('OnUpdate', PetCageOnShow)
-
-
 --- Pet Item Tooltip ---
 local function OnTooltipSetItem(self)
 	local name = self:GetItem()
@@ -318,18 +309,15 @@ local function OnTooltipSetItem(self)
 end
 GameTooltip:HookScript('OnTooltipSetItem', OnTooltipSetItem)
 ItemRefTooltip:HookScript('OnTooltipSetItem', OnTooltipSetItem)
-
-
 --- Pet Unit Tooltip ---
 GameTooltip:HookScript('OnTooltipSetUnit', function(self)
-	local name, unit = self:GetUnit()
+	local _, unit = self:GetUnit()
 
 	if unit and UnitIsWildBattlePet(unit) then
+		local name = GetUnitName(unit)
 		SetPetInfo(self, name)
 	end
 end)
-
-
 --- Pet Minimap Tooltip ---
 GameTooltip:HookScript('OnUpdate', function(self)
 	if self:IsOwned(Minimap) then
@@ -361,14 +349,6 @@ end)
 
 
 --[[Pet Battle Announcer]]
-
-
-local EventFrame = CreateFrame("Frame")
-EventFrame:RegisterEvent("PLAYER_LOGIN")
-EventFrame:SetScript("OnEvent", function(self,event,...) 
-     	--ChatFrame1:AddMessage("PetBattleAnnouncer is ready, you will hear pet battle queue sound even if your sound is disabled ingame!")
-end)
-
 -- This is the main function of the addon that will hook into pet battle event and play a sound
 hooksecurefunc("StaticPopupSpecial_Show",function(f)
     if f == PetBattleQueueReadyFrame then
@@ -377,35 +357,10 @@ hooksecurefunc("StaticPopupSpecial_Show",function(f)
 end)
 
 --[[Pet map show]]
-
-local cfg = {
-	classportrait = false,			-- 将玩家头像显示为职业图标
-	petbattleshowmap = true, 		-- 在宠物对战中依然显示小地图和任务追踪
-}
----------->> show class portrait
-local function ShowClassPortrait(s)
-	if s.portrait then
-		if UnitIsPlayer(s.unit) then
-			local t = CLASS_ICON_TCOORDS[select(2,UnitClass(s.unit))]
-			if t then
-				s.portrait:SetTexture("Interface\\TargetingFrame\\UI-Classes-Circles")
-				s.portrait:SetTexCoord(unpack(t))
-			end
-		else
-			s.portrait:SetTexCoord(0, 1, 0, 1)
-		end
-	end
-end
----------->> main event frame
 local Petmapshow = CreateFrame("Frame", nil, UIParent)
 Petmapshow:RegisterEvent("PLAYER_ENTERING_WORLD")
 Petmapshow:SetScript("OnEvent", function(self, event, ...)
 	self:UnregisterEvent("PLAYER_ENTERING_WORLD")
-	if cfg.classportrait then
-		hooksecurefunc("UnitFramePortrait_Update", ShowClassPortrait)
-	end
-	if cfg.petbattleshowmap then
 		FRAMELOCK_STATES["PETBATTLES"]["MinimapCluster"]=""
 		FRAMELOCK_STATES["PETBATTLES"]["WatchFrame"]=""
-	end
 end)

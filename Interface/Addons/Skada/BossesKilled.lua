@@ -141,13 +141,23 @@ function BossesKilled:UpdateButtonsAndTooltips(parentFrame)
 				if ENABLE_COLORBLIND_MODE == "0" then -- TODO: figure out if it's 0/false/null when not set
 					encounterLine.color = {RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b}
 				end
-				encounterLine.text = "已击杀 - "..bossName
-				numKilled = numKilled + 1
+                if bossName == nil then
+                    bossName = "bossname"
+                    encounterLine.text = "X - "..bossName
+                else 
+				    encounterLine.text = "O - "..bossName
+                    numKilled = numKilled + 1
+                end
 			else
 				if ENABLE_COLORBLIND_MODE == "0" then
 					encounterLine.color = {GREEN_FONT_COLOR.r, GREEN_FONT_COLOR.g, GREEN_FONT_COLOR.b}
 				end
-				encounterLine.text = "未击杀 - "..bossName
+                if bossName == nil then
+                    bossName = "bossname"
+                    encounterLine.text = "X - "..bossName
+                else 
+				    encounterLine.text = "X - "..bossName
+                end
 			end
 			table.insert(tooltip, encounterLine)
 		end
@@ -311,4 +321,16 @@ BossesKilled.raidData = {
   [1291] = { numEncounters = 3, startFrom =  1 }, -- Royal Athenaeum 4
   [1292] = { numEncounters = 3, startFrom =  1 }, -- Nightspire 7
   [1293] = { numEncounters = 1, startFrom =  1 }, -- Betrayers Rise 10
+	
+	-- Tomb of Sargeras
+	[1494] = { numEncounters = 3, startFrom =  1 }, -- The Gates of Hell
+	[1495] = { numEncounters = 3, startFrom =  1 }, -- Wailing Halls
+	[1496] = { numEncounters = 2, startFrom =  1 }, -- Chamber of the Avatar
+	[1497] = { numEncounters = 1, startFrom =  1 }, -- Deceiver¡¯s Fall
+	
+	-- Antorus, the Burning Throne
+	[1610] = { numEncounters = 3, startFrom =  1 }, -- Light's Breach
+	[1612] = { numEncounters = 3, startFrom =  1 }, -- Hope's End
+	[1611] = { numEncounters = 3, startFrom =  1 }, -- Forbidden Descent
+	[1613] = { numEncounters = 2, startFrom =  1 }, -- Seat of the Pantheon
 }

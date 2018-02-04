@@ -109,7 +109,7 @@ CharacterStatsPane.ItemLevelFrame:SetParent(StatFrame)
 CharacterStatsPane.AttributesCategory:SetParent(StatFrame)
 CharacterStatsPane.EnhancementsCategory:SetParent(StatFrame)
 CharacterStatsPane.ItemLevelFrame.Value:SetFont(CharacterStatsPane.ItemLevelFrame.Value:GetFont(), 21, "OUTLINE")
-CharacterStatsPane.ItemLevelFrame.Value:SetPoint("CENTER",CharacterStatsPane.ItemLevelFrame.Background, "CENTER", 0, 1)
+CharacterStatsPane.ItemLevelFrame.Value:SetPoint("CENTER",CharacterStatsPane.ItemLevelFrame.Background, "CENTER", 0, 0)
 
 local function UpdateStatFrameWidth(width)
     for _, key in ipairs(ShownData) do

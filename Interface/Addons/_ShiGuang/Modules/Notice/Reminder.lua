@@ -1,94 +1,174 @@
 local M, R, U, I = unpack(select(2, ...))
 
-----SonicReputation
+----SonicReputation by 小刺猬(updata for 7.2 by 灰原哀709@NGA)
 local rep = {};
-local function SR_Update()
-	local numFactions = GetNumFactions(self);
-	for i = 1, numFactions, 1 do
-		local name, _, standingID, barMin, barMax, barValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild = GetFactionInfo(i);
-		if name and (not isHeader) or (hasRep) then
-			if not rep[name] then
-				rep[name] = barValue;
-			end
-			
-			local change = barValue - rep[name];
-			if (change > 0) then
-				rep[name] = barValue;
-				local msg = string.format("%s: %+d (%d/%d)", name, change, barValue - barMin, barMax - barMin);
-				
-				local info = ChatTypeInfo["COMBAT_FACTION_CHANGE"];
-				for j = 1, 4, 1 do
-					local chatfrm = getglobal("ChatFrame"..j);
-					for k,v in pairs(chatfrm.messageTypeList) do
-						if v == "COMBAT_FACTION_CHANGE" then
-							chatfrm:AddMessage(msg, info.r, info.g, info.b, info.id);
-							break;
-						end
-					end
-				end
-			end
-		end
+local extraRep = {};  --额外声望
+local C_Reputation_IsFactionParagon = C_Reputation.IsFactionParagon
+
+function createMessage(msg)
+  local info = ChatTypeInfo["COMBAT_FACTION_CHANGE"];
+	for j = 1, 4, 1 do
+    local chatfrm = getglobal("ChatFrame"..j);
+    for k,v in pairs(chatfrm.messageTypeList) do
+      if v == "COMBAT_FACTION_CHANGE" then
+        chatfrm:AddMessage(msg, info.r, info.g, info.b, info.id);
+        break;
+      end
+    end
+  end
+end
+function initExtraRep(factionID, name)
+  local currentValue, threshold, _, hasRewardPending = C_Reputation.GetFactionParagonInfo(factionID);
+  if not extraRep[name] then
+		extraRep[name] = currentValue % threshold
+		if hasRewardPending then
+      extraRep[name] = extraRep[name] + threshold
+    end
+    if extraRep[name] > threshold and (not hasRewardPending) then
+      extraRep[name] = extraRep[name] - threshold
+    end
 	end
 end
+
 local SonicReputation = CreateFrame("Frame");
 SonicReputation:RegisterEvent("UPDATE_FACTION");
-SonicReputation:SetScript("OnEvent", SR_Update);
-ChatFrame_AddMessageEventFilter("CHAT_MSG_COMBAT_FACTION_CHANGE", function() return true; end);
---------------ExaltedPlus
-local rpt,f=ReputationParagonTooltip,CreateFrame('frame') f.a=0
-local function update()
-	for k in ReputationFrame.paragonFramesPool:EnumerateActive() do if k.factionID then
-		local id,n=k.factionID,GetFactionInfoByID(k.factionID) f[n]=k
-		if not f[id] or f[id].n~=n then f[id]={n=n,v=C_Reputation.GetFactionParagonInfo(id)} end
-	end end
-end
-f:SetScript('OnUpdate',function(s,e)
-	if s.b then s.a=s.a-e else s.a=s.a+e end
-	if s.a>=1 then s.a=1 s.b=true elseif s.a<=0 then s.a=0 s.b=false end
-	if ReputationFrame:IsVisible() then for i=1,NUM_FACTIONS_DISPLAYED do
-		if s[i] then _G['ReputationBar'..i..'ReputationBar']:SetStatusBarColor(0,1,0,s.a) end
-	end end
-	if s.w then ReputationWatchBar.StatusBar:SetStatusBarColor(0,1,0,s.a) end
-end)
-ChatFrame_AddMessageEventFilter('CHAT_MSG_COMBAT_FACTION_CHANGE',function(_,_,msg,...)
-	local n,id,v=strmatch(msg,gsub(FACTION_STANDING_INCREASED_GENERIC,"%%%d?$?s","(.+)"))
-	if f[n] then
-		id,v=f[n].factionID,C_Reputation.GetFactionParagonInfo(f[n].factionID)
-		if f[id] then if v-f[id].v~=0 then f[id].d=v-f[id].v f[id].v=v end
-		msg=format(FACTION_STANDING_INCREASED,n.." +",f[id].d) end
+SonicReputation:SetScript("OnEvent", function()
+	local numFactions = GetNumFactions(self);
+	for i = 1, numFactions, 1 do
+		local name, _, standingID, barMin, barMax, barValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild, factionID = GetFactionInfo(i);
+		local min, max, value = 0;
+		--7.2额外声望
+		if barValue >= 42000 then
+      if C_Reputation_IsFactionParagon(factionID) then
+        initExtraRep(factionID,name)
+        local currentValue, threshold, _, hasRewardPending = C_Reputation.GetFactionParagonInfo(factionID)
+        min, max = 0, threshold
+        value = currentValue % threshold
+        if hasRewardPending then 
+          value = value + threshold
+        end
+        local extraChange = value - extraRep[name];
+        if(extraChange > 0) then 
+          extraRep[name] = value
+          local extra_msg = string.format("%s: %+d (%d/%d)", name, extraChange, value, threshold)
+          createMessage(extra_msg);
+        end
+      end
+    elseif name and (not isHeader) or (hasRep) then
+      if not rep[name] then
+        rep[name] = barValue;
+      end
+      local change = barValue - rep[name];
+      if (change > 0) then
+        rep[name] = barValue
+				local msg = string.format("%s: %+d (%d/%d)", name, change, barValue - barMin, barMax - barMin);
+        createMessage(msg)
+      end
+    end
 	end
-	return false,msg,...
+end);
+ChatFrame_AddMessageEventFilter("CHAT_MSG_COMBAT_FACTION_CHANGE", function() return true; end);
+--------------------nReputation--------------------------------------------------------------------
+-- Proccess tracking changes. Will ignore guild and anything set to inactive.
+local SetWatched = function(newFaction)
+    if running then return end
+    running = true
+    local i = 1
+    local wasCollapsed = {}
+    local watchedFaction = select(1,GetWatchedFactionInfo())
+    while i <= GetNumFactions() do
+        local name, _, _, _, _, _, _, _, isHeader, isCollapsed, _, _, _, _, _, _ = GetFactionInfo(i)
+        if isHeader then
+            if name == FACTION_INACTIVE then break end
+            if isCollapsed then
+                ExpandFactionHeader(i)
+                wasCollapsed[name] = true
+            end
+        end
+        if (name == newFaction) then
+            if (watchedFaction ~= newFaction) then
+                SetWatchedFactionIndex(i)
+            end
+            break
+        end
+        i = i + 1
+    end
+    i = 1
+    while i <= GetNumFactions() do
+        local name, _, _, _, _, _, _, _, isHeader, isCollapsed, _, _, _, _, _, _ = GetFactionInfo(i)
+        if isHeader and not isCollapsed and wasCollapsed[name] then
+            CollapseFactionHeader(i)
+            wasCollapsed[name] = nil
+        end
+        i = i + 1
+    end
+    running = nil
+end
+-- Reads faction change line and sets watched reputation.
+local listener = CreateFrame("Frame")
+listener:SetScript("OnEvent", function(self, event, ...)
+    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11 = ...
+    local pattern_standing_inc = string.gsub(string.gsub(FACTION_STANDING_INCREASED, "(%%s)", "(.+)"), "(%%d)", "(%%d+)")
+    if ( event == "CHAT_MSG_COMBAT_FACTION_CHANGE" ) then
+        local s1, e1, faction, amount = string.find(arg1, pattern_standing_inc)
+        if ( s1 ~= nil and amount ~= nil ) then
+            if ( faction ~= GUILD ) then
+                SetWatched(faction)
+            end
+        end
+    end
 end)
-hooksecurefunc('EmbeddedItemTooltip_SetItemByQuestReward',function(t) update()
-	if t==rpt.ItemTooltip and rpt.factionID and f[rpt.factionID] and f[rpt.factionID].c then
-		local c=format(ARCHAEOLOGY_COMPLETION,f[rpt.factionID].c)
-		rpt:AddLine(c) t.Tooltip:AddLine('\n') t.Tooltip:Show()
-		for i=1,rpt:NumLines() do if _G[rpt:GetName()..'TextLeft'..i]:GetText()==c then
-			_G[rpt:GetName()..'TextLeft'..i]:SetPoint('BOTTOMLEFT',0,-70)
+-- Listen for faction change events.
+listener:RegisterEvent("CHAT_MSG_COMBAT_FACTION_CHANGE")
+-----------------------------------ExaltedPlus------------------------------------------
+local buln,rpt,f=BreakUpLargeNumbers,ReputationParagonTooltip,CreateFrame("frame") f.c=FACTION_BAR_COLORS
+function f.update(_,id,v)
+	for k in ReputationFrame.paragonFramesPool:EnumerateActive() do if k.factionID then
+		id=k.factionID if not f[id] then f[id]={} end f[id].fr=k
+		v,f[id].m,_,f[id].rw=C_Reputation.GetFactionParagonInfo(id)
+		f[id].t=f[id].rw and math.modf(v/f[id].m)-1 or math.modf(v/f[id].m)
+		f[id].v=mod(v,f[id].m)
+	end end f.rfv=ReputationFrame:IsVisible()
+end
+f:SetScript("OnUpdate",function(s,e)
+	if not s.a then s.a=0.3 end if s.b then s.a=s.a-e else s.a=s.a+e end
+	if s.a>=1 then s.a=1 s.b=true elseif s.a<=0.3 then s.a=0.3 s.b=false end
+	if s.rfv then for i=1,NUM_FACTIONS_DISPLAYED do
+		if s[i] then _G["ReputationBar"..i.."ReputationBar"]:SetStatusBarColor(f.c[8].r,f.c[8].g,f.c[8].b,s.a) end
+	end end
+	if s.wrw then ReputationWatchBar.StatusBar:SetStatusBarColor(f.c[8].r,f.c[8].g,f.c[8].b,s.a) end
+end)
+hooksecurefunc("EmbeddedItemTooltip_SetItemByQuestReward",function(tt,t) f.update()
+	if tt==rpt.ItemTooltip and rpt.factionID and f[rpt.factionID] and f[rpt.factionID].t then
+		t=format(ARCHAEOLOGY_COMPLETION,f[rpt.factionID].t)
+		rpt:AddLine(t) tt.Tooltip:AddLine("\n") tt.Tooltip:Show()
+		for i=1,rpt:NumLines() do if _G[rpt:GetName().."TextLeft"..i]:GetText()==t then
+			_G[rpt:GetName().."TextLeft"..i]:SetPoint("BOTTOMLEFT",0,-70)
 		end end
 	end
 end)
-hooksecurefunc('MainMenuBar_UpdateExperienceBars',function() update()
-	local n,r,_,m,v,id,c=GetWatchedFactionInfo()
-	if n and id and ReputationWatchBar:IsShown() then
-		if (GetFriendshipReputation(id)) then r=5 end c=FACTION_BAR_COLORS[r]
-		v,m,_,f.w=C_Reputation.GetFactionParagonInfo(id)
-		if v and m then ReputationWatchBar.StatusBar:SetAnimatedValues(f.w and mod(v,m)+m or mod(v,m),0,m,r)
-		ReputationWatchBar.OverlayFrame.Text:SetText(n.." "..(f.w and mod(v,m)+m or mod(v,m)).." / "..m) end
-		if not f.w then ReputationWatchBar.StatusBar:SetStatusBarColor(c.r,c.g,c.b,1) end
+hooksecurefunc("MainMenuBar_UpdateExperienceBars",function(_,n,r,id) f.update()
+	if ReputationWatchBar:IsShown() then
+		n,r,_,_,_,id=GetWatchedFactionInfo()
+		if f[id] and f[id].rw then
+			ReputationWatchBar.OverlayFrame.Text:SetText(n.." "..f[id].v.." / "..f[id].m)
+			ReputationWatchBar.StatusBar:SetAnimatedValues(f[id].v,0,f[id].m,r) f.wrw=true
+		elseif id then
+			r=(GetFriendshipReputation(id)) and 5 or r f.wrw=nil
+			ReputationWatchBar.StatusBar:SetStatusBarColor(f.c[r].r,f.c[r].g,f.c[r].b,1)
+		end
 	end
 end)
-hooksecurefunc('ReputationFrame_Update',function() update()
+hooksecurefunc("ReputationFrame_Update",function(_,id,x,bar,row) f.update()
 	for i=1,NUM_FACTIONS_DISPLAYED do
-		local n,x,r,_,m,v,row,bar,_,_,_,_,_,id=GetFactionInfo(ReputationListScrollFrame.offset+i)
-		if id and f[n] and f[id] then
-			v,m,_,f[i]=C_Reputation.GetFactionParagonInfo(id)
-			f[id].c=f[i] and math.modf(v/m)-1 or math.modf(v/m) v=f[i] and mod(v,m)+m or mod(v,m)
-			x=f[i] and CONTRIBUTION_REWARD_TOOLTIP_TITLE or GetText("FACTION_STANDING_LABEL"..r,(UnitSex('player'))).." +"
-			f[n].Check:SetShown(false)f[n].Glow:SetShown(false)f[n].Highlight:SetShown(false)f[n].Icon:SetAlpha(f[i] and 1 or .4)
-			row=_G['ReputationBar'..i] row.rolloverText=' '..format(REPUTATION_PROGRESS_FORMAT,v,m) row.standingText=x
-			bar=_G['ReputationBar'..i..'ReputationBar'] bar:SetMinMaxValues(0,m) bar:SetValue(v)
-			_G['ReputationBar'..i..'ReputationBarFactionStanding']:SetText(x)
+		_,_,_,_,_,_,_,_,_,_,_,_,_,id=GetFactionInfo(ReputationListScrollFrame.offset+i)
+		if f[id] and f[id].fr then
+			f[i]=f[id].rw or nil
+			bar=_G["ReputationBar"..i.."ReputationBar"] row=_G["ReputationBar"..i]
+			bar:SetMinMaxValues(0,f[id].m) bar:SetValue(f[id].v)
+			row.rolloverText=" "..format(REPUTATION_PROGRESS_FORMAT,buln(f[id].v),buln(f[id].m))
+			f[id].fr.Check:SetShown(false) f[id].fr.Glow:SetShown(false)
+			f[id].fr.Highlight:SetShown(false) f[id].fr.Icon:SetAlpha(f[i] and 1 or 0.3)
 		else f[i]=nil end
 	end
 end)
@@ -286,7 +366,7 @@ BattleResAlert:SetScript("OnEvent",function(a,b,c,event, d,e,sourceName, f,g,h,d
 	and (event == "SPELL_CAST_SUCCESS") and (destName == UnitName("player")))
 	then
 		DEFAULT_CHAT_FRAME:AddMessage("战复 "..sourceName..".")
-		PlaySound("ReadyCheck", "Master")
+		--PlaySound("ReadyCheck", "Master")
 	end
 end)
 BattleResAlert:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
@@ -338,7 +418,7 @@ function frameBSC:OnEvent(event,arg1)
       BSCSpace = BSCSpace + GetContainerNumFreeSlots(i)
     end
     if BSCSpace <= 8 then
-      UIErrorsFrame:AddMessage("背包空间只剩  "..BSCSpace.."  格了.",1,0,0,5)
+      UIErrorsFrame:AddMessage(REMINDER_BAGS_SPACE..BSCSpace,1,0,0,5)
       PlaySoundFile("Sound/SPELLS/SPELL_Treasure_Goblin_Coin_Toss_09.OGG")
     end
   end
@@ -440,3 +520,111 @@ AltTabLfgNotification:SetScript("OnEvent", function(self, event, ...)
  Flashevents[event](self, ...);
 end);
 for k, v in pairs(Flashevents) do AltTabLfgNotification:RegisterEvent(k);  end
+
+
+
+--------------------------------------------------------------------------- BarrelsOEasy
+local BarrelsFrame = CreateFrame("Frame");
+local SkullMarker = 8;
+local CurrentMarker = SkullMarker;
+local UsedMarkers = {};
+local IsOnWorldQuest = false;
+local BarrelQuests = {[45068]=true,[45069]=true,[45070]=true,[45071]=true,[45072]=true,};
+
+BarrelsFrame:RegisterEvent("PLAYER_ENTERING_WORLD");
+BarrelsFrame:RegisterEvent("QUEST_ACCEPTED");
+BarrelsFrame:RegisterEvent("QUEST_REMOVED");
+
+BarrelsFrame:SetScript("OnEvent", function(self,event,arg1,arg2)
+	if event == "PLAYER_ENTERING_WORLD" then
+		if BarrelsOEasyShowMessageCount == nil then
+			BarrelsOEasyShowMessageCount = 0;
+		end
+		local questLogCount = GetNumQuestLogEntries();
+		for i = 1, questLogCount do
+			local title, _, _, _, _, _, _, questID  = GetQuestLogTitle(i);
+			if BarrelQuests[questID] then
+				self:RegisterEvent("UPDATE_MOUSEOVER_UNIT");
+				CurrentMarker = SkullMarker;
+				IsOnWorldQuest = true;				
+			end
+		end
+	elseif event == "QUEST_ACCEPTED" then
+		if (arg1 and BarrelQuests[arg1]) or (arg2 and BarrelQuests[arg2]) then
+			IsOnWorldQuest = true;
+			
+			if IsInGroup() then
+				RaidNotice_AddMessage(RaidWarningFrame, "啊噢.你在队伍里会导致欢乐桶插件抽风", ChatTypeInfo["SYSTEM"]);
+				DEFAULT_CHAT_FRAME:AddMessage("Sorry，在队伍你会导致每次点击欢乐桶后，标记都会因为刷新而消失.", 1.0, 0.0, 0.0, ChatTypeInfo["RAID_WARNING"], 6);
+			end
+			
+			if BarrelsOEasyShowMessageCount < 5 then
+				RaidNotice_AddMessage(RaidWarningFrame, "请开始第一轮,小桶子运动完才能开始标记。", ChatTypeInfo["RAID_WARNING"])
+				BarrelsOEasyShowMessageCount = BarrelsOEasyShowMessageCount + 1;
+			end
+			self:RegisterEvent("UPDATE_MOUSEOVER_UNIT");
+			CurrentMarker = SkullMarker;
+		end
+	elseif event == "QUEST_REMOVED" then
+		if (arg1 and BarrelQuests[arg1]) or (arg2 and BarrelQuests[arg2]) then
+			IsOnWorldQuest = false;
+			self:UnregisterEvent("UPDATE_MOUSEOVER_UNIT");
+			CurrentMarker = SkullMarker;
+		end
+	elseif event == "UPDATE_MOUSEOVER_UNIT" then
+		local guid = UnitGUID("mouseover");	
+		if guid ~= nil then
+			local _,_,_,_,_,id,_ = strsplit("-", guid)
+			if id == "115947" then
+				if not UsedMarkers[guid] then
+					UsedMarkers[guid] = CurrentMarker;
+					CurrentMarker = CurrentMarker - 1;
+					if CurrentMarker == 0 then CurrentMarker = SkullMarker; end end
+					if GetRaidTargetIndex("mouseover") ~= UsedMarkers[guid] then
+					SetRaidTarget("mouseover", UsedMarkers[guid]);
+				end
+			end
+		end
+	end
+end)
+
+--  CtrlIndicator    Author: 图图   --用途: 用于检测Ctrl是否卡住,Ctrl按下4.5秒之后就会提示
+UIParent:CreateTexture("CtrlIndicatorBG");
+CtrlIndicatorBG:SetPoint("TOP", 18, -100);
+CtrlIndicatorBG:SetAtlas("OBJFX-BarGlow", true)
+UIParent:CreateFontString("CtrlIndicatorText", "OVERLAY");
+CtrlIndicatorText:SetPoint("TOP", 15, -112);
+CtrlIndicatorText:SetFont(STANDARD_TEXT_FONT, 21,"OUTLINE")
+CtrlIndicatorText:SetText("|cffffffff亲，你的Ctrl可能卡啦！检查下输入法。|r")
+local ctrlCnt = 0;
+C_Timer.NewTicker(0.1, function()
+    if(IsControlKeyDown())then
+        ctrlCnt=ctrlCnt+1
+    else    
+        ctrlCnt = 0
+        CtrlIndicatorText:Hide();
+    end
+    if ctrlCnt==45 then
+        print("|cffff0000亲，你的Ctrl可能卡啦！检查下输入法。|r")
+        CtrlIndicatorText:Show();
+    end
+    if ctrlCnt > 45 then
+        CtrlIndicatorBG:SetAlpha(0.69+math.sin((ctrlCnt%20)/20*2*3.1415926535898)/3.3333333);
+    else
+        CtrlIndicatorBG:SetAlpha(0);
+    end
+end)
+
+local CrazyCatLady = CreateFrame("Frame") 
+CrazyCatLady:RegisterEvent("UNIT_AURA") 
+CrazyCatLady:RegisterEvent("PLAYER_DEAD")
+CrazyCatLady:RegisterEvent("PLAYER_UNGHOST")
+
+CrazyCatLady:SetScript("OnEvent", function(self, event, ...) 
+  if not MaoRUISettingDB["Misc"]["CrazyCatLady"] then self:UnregisterAllEvents() return end
+	if event == "PLAYER_DEAD" then
+		PlaySoundFile("Sound/creature/Auriaya/UR_Auriaya_Death01.ogg", "Master")
+	elseif event == "PLAYER_UNGHOST" then
+		StopMusic()
+	end
+end)

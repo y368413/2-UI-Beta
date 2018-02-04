@@ -181,6 +181,7 @@ function ExtraQuestButton:PLAYER_LOGIN()
 	Cooldown:ClearAllPoints()
 	Cooldown:SetPoint("TOPRIGHT", -1, -1)
 	Cooldown:SetPoint("BOTTOMLEFT", 1, 1)
+	Cooldown:SetReverse(false)
 	Cooldown:Hide()
 	self.Cooldown = Cooldown
 
@@ -326,6 +327,7 @@ function ExtraQuestButton:SetItem(itemLink, texture)
 	else
 		HotKey:Hide()
 	end
+	if MaoRUISettingDB["Actionbar"]["Enable"] then MaoRUI.UpdateHotkey(self) end
 
 	if(InCombatLockdown()) then
 		self.attribute = self.itemName
@@ -461,7 +463,7 @@ function ExtraQuestButton:Update()
 	end
 end
 
-local Drag = CreateFrame('Frame', nil, ExtraQuestButton)
+--[[local Drag = CreateFrame('Frame', nil, ExtraQuestButton)
 Drag:SetAllPoints()
 Drag:SetFrameStrata('HIGH')
 Drag:EnableMouse(true)
@@ -511,4 +513,4 @@ SlashCmdList.ExtraQuestButton = function(message)
 		Drag:Show()
 		ExtraQuestButton:Show()
 	end
-end
+end]]

@@ -143,30 +143,26 @@ function module:Mailbox()
 		return button
 	end
 
-	button1 = CreatButton("OpenAllButton1", InboxFrame, "收信", 60, 26, "TOPLEFT", "InboxFrame", "TOPLEFT", 60, -28)
+	button1 = CreatButton("OpenAllButton1", InboxFrame, MAIL_RECEIVELETTERS, 80, 26, "TOPLEFT", "InboxFrame", "TOPLEFT", 60, -28)
 	button1:RegisterEvent("MAIL_CLOSED")
 	button1:SetScript("OnClick", OpenAll)
 	button1:SetScript("OnEvent", OpenAll_OnEvent)
 
-	button2 = CreatButton("OpenAllButton2", InboxFrame, "收G", 60, 26, "LEFT", button1, "RIGHT", 2, 0)
+	button2 = CreatButton("OpenAllButton2", InboxFrame, MAIL_RECEIVECOINS, 80, 26, "LEFT", button1, "RIGHT", 2, 0)
 	button2:SetScript("OnClick", function() takingOnlyCash = true OpenAll() end)
 	button2:SetScript("OnEnter", TotalCash_OnEnter)
 	button2:SetScript("OnUpdate", function(self) if GameTooltip:IsOwned(self) then TotalCash_OnEnter(self) end end)
 	button2:SetScript("OnLeave", GameTooltip_Hide)
 
-	button3 = CreatButton("OpenAllButton3", OpenMailFrame, "收信", 60, 26, "RIGHT", "OpenMailReplyButton", "LEFT", 0, 0)
+	button3 = CreatButton("OpenAllButton3", OpenMailFrame, MAIL_RECEIVELETTERS, 80, 22, "RIGHT", "OpenMailReplyButton", "LEFT", -2, 0)
 	button3:SetScript("OnClick", function() onlyCurrentMail = true OpenAll() end)
 	button3:SetScript("OnEvent", OpenAll_OnEvent)
 
-	button4 = CreatButton("OpenAllButton4", InboxFrame, REFRESH, 60, 26, "LEFT", button2, "RIGHT", 2, 0)
-	button4:SetScript("OnClick", function() CheckInbox() end)
+	--button4 = CreatButton("OpenAllButton4", InboxFrame, REFRESH, 60, 26, "LEFT", button2, "RIGHT", 2, 0)
+	--button4:SetScript("OnClick", function() CheckInbox() end)
 	
 	-------DelMailbutton----------------
-local DelMailbutton = CreateFrame("Button","DelMailButton",InboxFrame,"UIPanelButtonTemplate");
-DelMailbutton:SetPoint("LEFT", button4, "RIGHT", 2, 0)
-DelMailbutton:SetWidth(80)
-DelMailbutton:SetHeight(26)
-DelMailbutton:SetText("删空邮件")
+local DelMailbutton = CreatButton("OpenAllButton5", InboxFrame, MAIL_DELETEEMPTYMAILS, 100, 26, "LEFT", button2, "RIGHT", 2, 0)
 DelMailbutton:SetScript("OnClick", function() DelMailbutton_OnClick() end)
 function DelMailbutton_OnClick() sendCmd("/mbclean") end
 
@@ -210,28 +206,29 @@ function DelMailbutton_OnClick() sendCmd("/mbclean") end
 	end)
 
 	hooksecurefunc("InboxFrameItem_OnEnter", function(self)
-		local tooltip = GameTooltip
 		local items = {}
-		wipe(items)
+
 		local itemAttached = select(8, GetInboxHeaderInfo(self.index))
 		if itemAttached then
-			local itemName, itemTexture, itemCount, itemQuality, itemid, r, g, b
 			for attachID = 1, 12 do
-				itemName, _, _, itemCount = GetInboxItem(self.index, attachID)
+				local _, _, _, itemCount = GetInboxItem(self.index, attachID)
 				if itemCount and itemCount > 0 then
-					_, itemid = strsplit(":", GetInboxItemLink(self.index, attachID))
+					local _, itemid = strsplit(":", GetInboxItemLink(self.index, attachID))
 					itemid = tonumber(itemid)
 					items[itemid] = (items[itemid] or 0) + itemCount
 				end
 			end
+
 			if itemAttached > 1 then
-				tooltip:AddLine("附件清单:")
+				--GameTooltip:AddLine("附件清单:")
 				for key, value in pairs(items) do
-					itemName, _, itemQuality, _, _, _, _, _, _, itemTexture = GetItemInfo(key)
-					r, g, b = GetItemQualityColor(itemQuality)
-					tooltip:AddDoubleLine(" |T"..itemTexture..":12:12:0:0:50:50:4:46:4:46|t "..itemName, value, r, g, b)
+					local itemName, _, itemQuality, _, _, _, _, _, _, itemTexture = GetItemInfo(key)
+					if itemName then
+						local r, g, b = GetItemQualityColor(itemQuality)
+						GameTooltip:AddDoubleLine(" |T"..itemTexture..":12:12:0:0:50:50:4:46:4:46|t "..itemName, value, r, g, b)
+					end
 				end
-				tooltip:Show()
+				GameTooltip:Show()
 			end
 		end
 	end)
@@ -267,7 +264,7 @@ m:SetPoint("RIGHT",r,"RIGHT",-8,0)
 
 -- Mailbox Cleaner-------- by Jadya - EU-Well of Eternity---------------------------------
 local min, low = math.min, string.lower
-local title = "|cffFFFFFF[邮件]|r删除空邮件"
+local title = GEAR_DELETEEMPTYMAILS_TITLE
 local snd
 local em_enabled = false
 local i
@@ -280,7 +277,7 @@ local options_desc = { ["read"] = "Delete unread mails" }
 local function endloop()
  em_enabled = false
  f:Hide()
- print(title.." - 完成清理.")
+ print(title.." - Done.")
 end
 
 local function update()
@@ -340,7 +337,7 @@ local function start(arg)
  end
 
  if not InboxFrame or not InboxFrame:IsVisible() then
-  print(title.." - 你得先打开收件箱啊~")
+  print(title..MAIL_OPENMAILBOX)
   return
  end
  if arg and arg ~= "" then
@@ -349,7 +346,7 @@ local function start(arg)
   snd = nil
  end
  i = GetInboxNumItems()
- print(title.." - 正在删除空邮件"..(snd and " from "..snd or "").."...")
+ print(title.." - Doing"..(snd and " from "..snd or "").."...")
  em_enabled = true
  f:Show()
 end
@@ -357,7 +354,7 @@ end
 local eventframe = CreateFrame("Frame")
 eventframe:RegisterEvent("PLAYER_ENTERING_WORLD")
 local function eventhandler()
- printOptionMsg("读取", true)
+ printOptionMsg("...", true)
  eventframe:SetScript("OnEvent", nil)
 end
 eventframe:SetScript("OnEvent", eventhandler)
@@ -616,8 +613,8 @@ end
 
 --## Author: @hjg719-NGA 
 local SendList = {  
-   ["烂柯人"] = {"奢华兽毛","真铁矿石","黑石矿石","时光水晶","碎裂的时光水晶","天然兽皮"}, 
-   ["电闪电离电"] = {"炼金催化剂","烁星花","塔拉多幽兰","寒霜草","炎火草","戈尔隆德捕蝇草","纳格兰箭叶花"}, 
+   ["暗影戒律"] = {"暗影微粒","阿卡纳精华","辉光碎片","德拉诺之尘","碎裂的时光水晶","邪煞水晶","飘渺碎片","神秘精华","灵魂尘","漩涡水晶","天界碎片","小块天界碎片","强效天界精华","催眠之尘","小块梦境碎片","深渊水晶","梦境碎片","强效宇宙精华","次级宇宙精华","大块棱光碎片","虚空水晶","源生之土","源生之水"}, 
+   ["狂怒武器"] = {"炼金催化剂","烁星花","塔拉多幽兰","寒霜草","炎火草","戈尔隆德捕蝇草","纳格兰箭叶花"}, 
 } 
 
 function InList(i, v, bag, slot) 
@@ -654,16 +651,17 @@ local function AutoSend()
 end 
 
 SLASH_AutoSend1 = "/autosend" 
+SLASH_AutoSend1 = "/mrsoso"
 SlashCmdList["AutoSend"] = function () AutoSend() end 
 
 --[[local SendButton = CreateFrame("BUTTON", "SendMailButton", MailFrame, "SecureActionButtonTemplate") 
-SendButton:SetWidth(26) 
-SendButton:SetHeight(26) 
-SendButton:SetPoint("TOPLEFT", MailFrame, "BOTTOMRIGHT", -36, 3)
---SendButton:SetText("自动邮寄") 
+SendButton:SetWidth(43) 
+SendButton:SetHeight(43) 
+SendButton:SetPoint("TOPLEFT", MailFrame, "TOPRIGHT", 2, -21)
+SendButton:SetText("自动邮寄材料") 
 SendButton.icon = SendButton:CreateTexture(nil, "ARTWORK") 
 SendButton.icon:SetAllPoints() 
-SendButton.icon:SetTexture("Interface\\Icons\\SOR-mail") 
+SendButton.icon:SetTexture("Interface\\Icons\\Garrison_Build")   --SOR-mail
 SendButton:SetAttribute("*type*", "macro") 
 SendButton:SetAttribute("macrotext", 
    "/click MailFrameTab2\n".. 

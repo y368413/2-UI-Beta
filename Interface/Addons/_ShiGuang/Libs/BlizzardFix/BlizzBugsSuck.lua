@@ -1,4 +1,4 @@
--- Fix error when shift-clicking header rows in the tradeskill UI.-- This is caused by the TradeSkillRowButtonTemplate's OnClick script-- failing to account for some rows being headers. Fix by ignoring-- modifiers when clicking header rows.-- New in 7.0
+--[[ Fix error when shift-clicking header rows in the tradeskill UI.-- This is caused by the TradeSkillRowButtonTemplate's OnClick script-- failing to account for some rows being headers. Fix by ignoring-- modifiers when clicking header rows.-- New in 7.0
 do
 	local frame = CreateFrame("Frame")
 	frame:RegisterEvent("ADDON_LOADED")
@@ -57,9 +57,9 @@ local GetCursorPosition = GetCursorPosition
 local hooksecurefunc = hooksecurefunc
 local GetCurrentMapContinent = GetCurrentMapContinent
 
-f:SetScript ("OnEvent", function (self, event)
+f:SetScript ("OnEvent", function (self, event, addonName)
 
-	if event == "ADDON_LOADED" then
+	if (event == "ADDON_LOADED" and addonName == "WorldMapZoom") then
 	
 		WorldMapScrollFrame:HookScript ("OnMouseWheel", function()
 			
@@ -158,7 +158,7 @@ f:SetScript ("OnEvent", function (self, event)
 			end
 		end)
 	end
-end)
+end)]]
 
 
 ----------------------------------------------------------------------------------------

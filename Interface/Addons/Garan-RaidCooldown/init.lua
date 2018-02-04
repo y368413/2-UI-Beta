@@ -39,7 +39,7 @@ RDCD.L = {}
 RDCD.cooldowns = {
 	--[[
 	[115151] = {	-- 复苏之雾
-		index = 901, -- GUI排列序号
+		index = 1, -- GUI排列序号 1 团队减伤 2 单体减伤 3 其他
 		succ = "SPELL_CAST_SUCCESS", -- 触发事件
 		name = "FUWEI", -- 名字
 		CD = 8, -- 持续时间
@@ -54,7 +54,7 @@ RDCD.cooldowns = {
 	},]]
 -- Paladin
 	[31821] = { -- Devotion Aura 虔诚光环
-		index = 101,
+		index = 1,
 		succ = "SPELL_CAST_SUCCESS",
 		CD = 180,
 		cast = 6,
@@ -62,7 +62,7 @@ RDCD.cooldowns = {
 		spec = 65,
 	},
 	[6940] = { -- Hand of Sacrifice 牺牲之手
-		index = 201,
+		index = 2,
 		name = "HOS",
 		succ = "SPELL_CAST_SUCCESS",
 		CD = 150,
@@ -71,16 +71,35 @@ RDCD.cooldowns = {
 		nospec = 70,
 	},
 	[1022] = { -- 保护之手
-		index = 202,
+		index = 2,
 		name = "HOP",
 		succ = "SPELL_CAST_SUCCESS",
 		CD = 300,
 		cast = 10,
 		class = "PALADIN",
 	},
+	[31842] = { -- 复仇之怒
+		index = 1,
+		name = "FCZN",
+		succ = "SPELL_CAST_SUCCESS",
+		CD = 120,
+		cast = 30,
+		class = "PALADIN",
+		spec = 65,		
+	},
 -- Priest
+	[10060] = { -- 能量灌注
+		index = 1,
+		name = "NLGZ",
+		succ = "SPELL_CAST_SUCCESS",
+		CD = 120,
+		cast = 20,
+		class = "PRIEST",
+		spec = 256,
+		talent = 19765,
+	},
 	[62618] = { -- Power Word: Barrier 真言术：障
-		index = 102,
+		index = 1,
 		name = "PWB",
 		succ = "SPELL_CAST_SUCCESS",
 		CD = 180,
@@ -89,7 +108,7 @@ RDCD.cooldowns = {
 		spec = 256,
 	},
 	[33206] = { -- Pain Suppression 痛苦压制
-		index = 204,
+		index = 2,
 		name = "PS",
 		succ = "SPELL_CAST_SUCCESS",
 		CD = 240,
@@ -97,8 +116,28 @@ RDCD.cooldowns = {
 		class = "PRIEST", 
 		spec = 256,
 	},
+	[64901] = { -- 希望象征
+		index = 1,
+		name = "XWXZ",
+		succ = "SPELL_CAST_SUCCESS",
+		CD = 360,
+		cast = 10,
+		class = "PRIEST",
+		spec = 257,
+		talent = 21752,
+	},
+	[200183] = { -- 神圣化身
+		index = 1,
+		name = "SSHS",
+		succ = "SPELL_CAST_SUCCESS",
+		CD = 180,
+		cast = 30,
+		class = "PRIEST",
+		spec = 257,
+		talent = 21636,
+	},
 	[64843] = { -- Divine Hymn 神圣赞美诗
-		index = 103,
+		index = 1,
 		name = "DH",
 		succ = "SPELL_CAST_SUCCESS",
 		CD = 180, 
@@ -107,7 +146,7 @@ RDCD.cooldowns = {
 		spec = 257,
 	},	
 	[47788] = { -- Guardian Spirit 守护之魂
-		index = 205,
+		index = 2,
 		succ = "SPELL_CAST_SUCCESS",
 		name = "GS",
 		CD = 240,
@@ -116,8 +155,17 @@ RDCD.cooldowns = {
 		spec = 257,
 	},	
 -- Druid
+	[33891] = { -- 化身：生命之树
+		index = 1,
+		succ = "SPELL_CAST_SUCCESS",
+		name = "HS",
+		CD = 180,
+		cast = 30,
+		class = "DRUID",
+		spec = 105,
+	},
 	[740] = { -- Tranquility 宁静
-		index = 105,
+		index = 1,
 		succ = "SPELL_CAST_SUCCESS",
 		name = "T",
 		CD = 180,
@@ -126,7 +174,7 @@ RDCD.cooldowns = {
 		spec = 105,
 	},
 	[102342] = { -- Ironbark 铁木树皮
-		index = 206,
+		index = 2,
 		succ = "SPELL_CAST_SUCCESS",
 		name = "FE",
 		CD = 90,
@@ -135,16 +183,24 @@ RDCD.cooldowns = {
 		spec = 105,
 	},
 	[20484] = { -- Rebirth 复生
-		index = 401,
+		index = 3,
 		succ = "SPELL_RESURRECT",
 		name = "R",
 		CD = 600,
 		class = "DRUID",
 	},
+	[29166] = { -- 激活
+		index = 3,
+		succ = "SPELL_CAST_SUCCESS",
+		name = "JH",
+		CD = 180,
+		class = "DRUID",
+		spec = 102,
+	},
 	
 -- Shaman
 	[98008] = { -- Spirit Link Totem 灵魂链接图腾
-		index = 106,
+		index = 1,
 		succ = "SPELL_CAST_SUCCESS",
 		name = "SLT",
 		CD = 180,
@@ -153,7 +209,7 @@ RDCD.cooldowns = {
 		spec = 264,
 	},
 	[108280] = { -- Healing Tide Totem 治疗之潮图腾
-		index = 107,
+		index = 1,
 		succ = "SPELL_CAST_SUCCESS",
 		name = "HTT",
 		CD = 180,
@@ -162,17 +218,18 @@ RDCD.cooldowns = {
 		spec = 264,
 	},
 	[114052] = { -- Ascendance 升腾
-		index = 112,
+		index = 1,
 		succ = "SPELL_CAST_SUCCESS",
 		name = "ASC",
 		CD = 180,
 		cast = 15,
 		class = "SHAMAN",
 		spec = 264,
+		talent = 21970,
 	},
  -- Monk
 	[116849] = {	-- Life Cocoon 作茧缚命
-		index = 207,
+		index = 2,
 		succ = "SPELL_CAST_SUCCESS",
 		name = "LIFE",
 		CD = 180,
@@ -181,16 +238,26 @@ RDCD.cooldowns = {
 		spec = 270,
 	},
 	[115310] = {	-- Revival 还魂术
-		index = 108,
+		index = 1,
 		succ = "SPELL_CAST_SUCCESS",
 		name = "REV",
 		CD = 180,
 		class = "MONK",
 		spec = 270,
 	},
+	[198664] = {	-- 朱鹤赤精
+		index = 1,
+		succ = "SPELL_CAST_SUCCESS",
+		name = "ZHCJ",
+		CD = 180,
+		cast = 45,
+		class = "MONK",
+		spec = 270,
+		talent = 22217,
+	},
 -- Warlock
 	[20707] = { -- Soulstone Resurrection 灵魂石复活
-		index = 302,
+		index = 3,
 		succ = "SPELL_RESURRECT",
 		name = "SR",
 		CD = 600,
@@ -198,7 +265,7 @@ RDCD.cooldowns = {
 	},
 -- Death Knight
 	[61999] = { -- Raise Ally 复活盟友
-		index = 502,
+		index = 3,
 		succ = "SPELL_RESURRECT", 
 		name = "RA",
 		CD = 600,
@@ -206,7 +273,7 @@ RDCD.cooldowns = {
 	},
 -- Warrior
 	[97462] = { -- Rallying Cry 命令怒吼
-		index = 110,
+		index = 1,
 		name = "RC",
 		succ = "SPELL_CAST_SUCCESS",
 		CD = 180,
@@ -227,6 +294,23 @@ RDCD.cooldownReduction = {
 				talent = 21651,
 			},
 }
+
+local i = 1
+local index1, index2, index3 = 1, 1, 1
+for k, v in pairs(RDCD.cooldowns) do
+	if v.index == 1 then
+		v.index = v.index*100 + index1
+		index1 = index1 + 1
+	elseif v.index == 2 then
+		v.index = v.index*100 + index2
+		index2 = index2 + 1
+	elseif v.index == 3 then
+		v.index = v.index*100 + index3
+		index3 = index3 + 1
+	end
+	--print(i,GetSpellInfo(k), v.index, k)
+	--i = i + 1
+end
 
 RDCD.CDSpells = {}
 
