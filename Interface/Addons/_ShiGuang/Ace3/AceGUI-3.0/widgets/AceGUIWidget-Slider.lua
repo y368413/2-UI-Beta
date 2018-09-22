@@ -1,7 +1,3 @@
---[[-----------------------------------------------------------------------------
-Slider Widget
-Graphical Slider, like, for Range values.
--------------------------------------------------------------------------------]]
 local Type, Version = "Slider", 22
 local AceGUI = LibStub and LibStub("AceGUI-3.0", true)
 if not AceGUI or (AceGUI:GetWidgetVersion(Type) or 0) >= Version then return end
@@ -14,13 +10,6 @@ local tonumber, pairs = tonumber, pairs
 local PlaySound = PlaySound
 local CreateFrame, UIParent = CreateFrame, UIParent
 
--- Global vars/functions that we don't upvalue since they might get hooked, or upgraded
--- List them here for Mikk's FindGlobals script
--- GLOBALS: GameFontHighlightSmall
-
---[[-----------------------------------------------------------------------------
-Support functions
--------------------------------------------------------------------------------]]
 local function UpdateText(self)
 	local value = self.value or 0
 	if self.ispercent then
@@ -41,9 +30,7 @@ local function UpdateLabels(self)
 	end
 end
 
---[[-----------------------------------------------------------------------------
-Scripts
--------------------------------------------------------------------------------]]
+
 local function Control_OnEnter(frame)
 	frame.obj:Fire("OnEnter")
 end
@@ -57,10 +44,9 @@ local function Frame_OnMouseDown(frame)
 	AceGUI:ClearFocus()
 end
 
-local function Slider_OnValueChanged(frame)
+local function Slider_OnValueChanged(frame, newvalue)
 	local self = frame.obj
 	if not frame.setup then
-		local newvalue = frame:GetValue()
 		if self.step and self.step > 0 then
 			local min_value = self.min or 0
 			newvalue = floor((newvalue - min_value) / self.step + 0.5) * self.step + min_value
@@ -122,9 +108,7 @@ local function EditBox_OnLeave(frame)
 	frame:SetBackdropBorderColor(0.3, 0.3, 0.3, 0.8)
 end
 
---[[-----------------------------------------------------------------------------
-Methods
--------------------------------------------------------------------------------]]
+
 local methods = {
 	["OnAcquire"] = function(self)
 		self:SetWidth(200)
@@ -135,8 +119,6 @@ local methods = {
 		self:SetValue(0)
 		self.slider:EnableMouseWheel(false)
 	end,
-
-	-- ["OnRelease"] = nil,
 
 	["SetDisabled"] = function(self, disabled)
 		self.disabled = disabled
@@ -198,9 +180,7 @@ local methods = {
 	end
 }
 
---[[-----------------------------------------------------------------------------
-Constructor
--------------------------------------------------------------------------------]]
+
 local SliderBackdrop  = {
 	bgFile = "Interface\\Buttons\\UI-SliderBar-Background",
 	edgeFile = "Interface\\Buttons\\UI-SliderBar-Border",

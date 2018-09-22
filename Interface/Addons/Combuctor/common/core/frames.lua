@@ -24,10 +24,6 @@ function Addon:IterateFrames()
 	return pairs(self.frames)
 end
 
-function Addon:AreBasicFramesEnabled()
-	return self:IsFrameEnabled('inventory') and self:IsFrameEnabled('bank')
-end
-
 function Addon:IsFrameEnabled(id)
 	return self.profile[id].enabled
 end
@@ -36,7 +32,7 @@ end
 --[[ Frame Control ]]--
 
 function Addon:UpdateFrames()
-	self:SendMessage('UPDATE_ALL')
+	self:SendSignal('UPDATE_ALL')
 end
 
 function Addon:ToggleFrame(id)

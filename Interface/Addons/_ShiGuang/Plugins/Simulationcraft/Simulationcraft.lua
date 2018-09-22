@@ -1,58 +1,6 @@
--- Title: Simulationcraft   Notes: Constructs SimC export strings   Author: Theck, navv_   Version: 1.8.4
+-- Author: Theck, navv_, seriallos  Version: 1.10.7
 
 local Simulationcraft = {}
-
--- Artifact lookup
-local Simulationcraft_ArtifactTable = {
-  -- Death Knight
-  [128402] = 15,
-  [128292] = 12,
-  [128403] = 16,
-  -- Demon Hunter
-  [127829] = 3,
-  [128832] = 60,
-  -- Druid
-  [128858] = 59,
-  [128860] = 58,
-  [128821] = 57,
-  [128306] = 13,
-  -- Hunter
-  [128861] = 56,
-  [128826] = 55,
-  [128808] = 34,
-  -- Mage
-  [127857] = 4,
-  [128820] = 54,
-  [128862] = 53,
-  -- Monk
-  [128938] = 52,
-  [128937] = 51,
-  [128940] = 50,
-  -- Paladin
-  [128823] = 48,
-  [128866] = 49,
-  [120978] = 2,
-  -- Priest
-  [128868] = 46,
-  [128825] = 45,
-  [128827] = 47,
-  -- Rogue
-  [128870] = 43,
-  [128872] = 44,
-  [128476] = 17,
-  -- Shaman
-  [128935] = 40,
-  [128819] = 41,
-  [128911] = 42,
-  -- Warlock
-  [128942] = 39,
-  [128943] = 37,
-  [128941] = 38,
-  -- Warrior
-  [128910] = 36,
-  [128908] = 35,
-  [128289] = 11
-}
 
 local Simulationcraft_RoleTable = {
   -- Death Knight
@@ -66,7 +14,7 @@ local Simulationcraft_RoleTable = {
   [102] = 'spell',
   [103] = 'attack',
   [104] = 'tank',
-  [105] = 'heal',
+  [105] = 'attack',
   -- Hunter
   [253] = 'attack',
   [254] = 'attack',
@@ -80,12 +28,12 @@ local Simulationcraft_RoleTable = {
   [269] = 'attack',
   [270] = 'hybrid',
   -- Paladin
-  [65] = 'heal',
+  [65] = 'attack',
   [66] = 'tank',
   [70] = 'attack',
   -- Priest
   [256] = 'spell',
-  [257] = 'heal',
+  [257] = 'attack',
   [258] = 'spell',
   -- Rogue
   [259] = 'attack',
@@ -94,7 +42,7 @@ local Simulationcraft_RoleTable = {
   -- Shaman
   [262] = 'spell',
   [263] = 'attack',
-  [264] = 'heal',
+  [264] = 'attack',
   -- Warlock
   [265] = 'spell',
   [266] = 'spell',
@@ -261,14 +209,14 @@ local OFFSET_GEM_ID_4 = 6
 local OFFSET_GEM_BASE = OFFSET_GEM_ID_1
 local OFFSET_SUFFIX_ID = 7
 local OFFSET_FLAGS = 11
+local OFFSET_CONTEXT = 12
 local OFFSET_BONUS_ID = 13
 local OFFSET_UPGRADE_ID = 14 -- Flags = 0x4
 
--- Artifact stuff (adapted from LibArtifactData [https://www.wowace.com/addons/libartifactdata-1-0/], thanks!)
-local ArtifactUI          = _G.C_ArtifactUI
-local HasArtifactEquipped = _G.HasArtifactEquipped
-local SocketInventoryItem = _G.SocketInventoryItem
-local Timer               = _G.C_Timer
+local SocketInventoryItem   = _G.SocketInventoryItem
+local Timer                 = _G.C_Timer
+local AzeriteEmpoweredItem  = _G.C_AzeriteEmpoweredItem
+local AzeriteItem           = _G.C_AzeriteItem
 
 -- load stuff from extras.lua
 local upgradeTable  = Simulationcraft_upgradeTable
@@ -277,7 +225,6 @@ local simcSlotNames = Simulationcraft_simcSlotNames
 local specNames     = Simulationcraft_SpecNames
 local profNames     = Simulationcraft_ProfNames
 local regionString  = Simulationcraft_RegionString
-local artifactTable = Simulationcraft_ArtifactTable
 
 -- Most of the guts of this addon were based on a variety of other ones, including
 -- Statslog, AskMrRobot, and BonusScanner. And a bunch of hacking around with AceGUI.
@@ -330,7 +277,7 @@ local function GetItemSplit(itemLink)
 end
 
 -- char size for utf8 strings
-local function chsize(char)
+local function ChrSize(char)
   if not char then
       return 0
   elseif char > 240 then
@@ -345,7 +292,7 @@ local function chsize(char)
 end
 
 -- SimC tokenize function
-local function tokenize(str)
+local function Tokenize(str)
   str = str or ""
   -- convert to lowercase and remove spaces
   str = string.lower(str)
@@ -365,8 +312,8 @@ local function tokenize(str)
     elseif b == 37 or b == 43 or b == 46 or b == 95 then
       s = s .. str:sub(i,i)
       -- save all multibyte chars
-    elseif chsize(b) > 1 then
-      local offset = chsize(b) - 1
+    elseif ChrSize(b) > 1 then
+      local offset = ChrSize(b) - 1
       s = s .. str:sub(i, i + offset)
       i = i + offset
     end
@@ -376,6 +323,16 @@ local function tokenize(str)
     s = string.sub(s, 0, s:len()-1)
   end
   return s
+end
+
+-- method to add spaces to UnitRace names for proper tokenization
+local function FormatRace(str)
+  str = str or ""
+  local matches = {}
+  for match, _ in string.gmatch(str, '([%u][%l]*)') do
+    matches[#matches+1] = match
+  end
+  return string.join(' ', unpack(matches))
 end
 
 -- method for constructing the talent string
@@ -405,7 +362,7 @@ local function CreateSimcTalentString()
 end
 
 -- function that translates between the game's role values and ours
-local function translateRole(spec_id, str)
+local function TranslateRole(spec_id, str)
   local spec_role = Simulationcraft_RoleTable[spec_id]
   if spec_role ~= nil then
     return spec_role
@@ -416,177 +373,10 @@ local function translateRole(spec_id, str)
   elseif str == 'DAMAGER' then
     return 'attack'
   elseif str == 'HEALER' then
-    return 'heal'
+    return 'attack'
   else
     return ''
   end
-end
-
--- ================= Artifact Information =======================
-
-local function IsArtifactFrameOpen()
-  local ArtifactFrame = _G.ArtifactFrame
-  return ArtifactFrame and ArtifactFrame:IsShown() or false
-end
-
-local function GetPowerData(powerId)
-  if not powerId then
-    return 0, 0
-  end
-
-  local powerInfo = ArtifactUI.GetPowerInfo(powerId)
-  if powerInfo == nil then
-    return powerId, 0
-  end
-
-  return powerId, powerInfo.currentRank - powerInfo.bonusRanks
-end
-
-function Simulationcraft:OpenArtifact()
-  if not HasArtifactEquipped() then
-    return false, false, 0
-  end
-
-  local artifactFrameOpen = IsArtifactFrameOpen()
-  if not artifactFrameOpen then
-    SocketInventoryItem(INVSLOT_MAINHAND)
-  end
-
-  local ArtifactFrame = _G.ArtifactFrame
-
-  local itemId = select(1, ArtifactUI.GetArtifactInfo())
-  if itemId == nil or itemId == 0 then
-    if not artifactFrameOpen then
-      HideUIPanel(ArtifactFrame)
-    end
-    return false, false, 0
-  end
-
-  -- if not select(1, IsUsableItem(itemId)) then
-  --   if not artifactFrameOpen then
-  --     HideUIPanel(ArtifactFrame)
-  --   end
-  --   return false, false, 0
-  -- end
-
-  local mhId = select(1, GetInventoryItemID("player", GetInventorySlotInfo("MainHandSlot")))
-  local ohId = select(1, GetInventoryItemID("player", GetInventorySlotInfo("SecondaryHandSlot")))
-  local correctArtifactOpen = (mhId ~= nil and mhId == itemId) or (ohId ~= nil and ohId == itemId)
-
-  if not correctArtifactOpen then
-    print("|cFFFF0000Warning, attempting to generate Simulationcraft artifact output for the wrong item (expected "
-      .. (mhId or 0) .. " or " .. (ohId or 0) .. ", got " .. itemId .. ")")
-    HideUIPanel(ArtifactFrame)
-    SocketInventoryItem(INVSLOT_MAINHAND)
-    itemId = select(1, ArtifactUI.GetArtifactInfo())
-  end
-
-  return artifactFrameOpen, correctArtifactOpen, itemId
-end
-
-function Simulationcraft:CloseArtifactFrame(wasOpen, correctOpen)
-  local ArtifactFrame = _G.ArtifactFrame
-
-  if ArtifactFrame and (not wasOpen or not correctOpen) then
-    HideUIPanel(ArtifactFrame)
-  end
-end
-
-function Simulationcraft:GetCrucibleString()
-  local artifactFrameOpen, correctArtifactOpen, itemId = self:OpenArtifact()
-
-  if not itemId then
-    self:CloseArtifactFrame(artifactFrameOpen, correctArtifactOpen)
-    return nil
-  end
-
-  local artifactId = artifactTable[itemId]
-  if artifactId == nil then
-    self:CloseArtifactFrame(artifactFrameOpen, correctArtifactOpen)
-    return nil
-  end
-
-  local crucibleData = {}
-  for ridx = 1, ArtifactUI.GetNumRelicSlots() do
-    local link = select(4, ArtifactUI.GetRelicInfo(ridx))
-    if link ~= nil then
-      local relicSplit     = GetItemSplit(link)
-      local baseLink       = select(2, GetItemInfo(relicSplit[1]))
-      local basePowers     = { ArtifactUI.GetPowersAffectedByRelicItemLink(baseLink) }
-      local relicPowers    = { ArtifactUI.GetPowersAffectedByRelic(ridx) }
-      local cruciblePowers = {}
-
-      for rpidx = 1, #relicPowers do
-        local found = false
-        for bpidx = 1, #basePowers do
-          if relicPowers[rpidx] == basePowers[bpidx] then
-            found = true
-            break
-          end
-        end
-
-        if not found then
-          cruciblePowers[#cruciblePowers + 1] = relicPowers[rpidx]
-        end
-      end
-
-      if #cruciblePowers == 0 then
-        crucibleData[ridx] = { 0 }
-      else
-        crucibleData[ridx] = cruciblePowers
-      end
-    else
-      crucibleData[ridx] = { 0 }
-    end
-  end
-
-  local crucibleStrings = {}
-  for ridx = 1, #crucibleData do
-    crucibleStrings[ridx] = table.concat(crucibleData[ridx], ':')
-  end
-
-  self:CloseArtifactFrame(artifactFrameOpen, correctArtifactOpen)
-
-  return 'crucible=' .. table.concat(crucibleStrings, '/')
-end
-
-function Simulationcraft:GetArtifactString()
-  local artifactFrameOpen, correctArtifactOpen, itemId = self:OpenArtifact()
-
-  if not itemId then
-    self:CloseArtifactFrame(artifactFrameOpen, correctArtifactOpen)
-    return nil
-  end
-
-  local artifactId = artifactTable[itemId]
-  if artifactId == nil then
-    self:CloseArtifactFrame(artifactFrameOpen, correctArtifactOpen)
-    return nil
-  end
-
-  -- Note, relics are handled by the item string
-  local str = 'artifact=' .. artifactId .. ':0:0:0:0'
-
-  local baseRanks = {}
-  local crucibleRanks = {}
-
-  local powers = ArtifactUI.GetPowers()
-  for i = 1, #powers do
-    local powerId, powerRank = GetPowerData(powers[i])
-
-    if powerRank > 0 then
-      baseRanks[#baseRanks + 1] = powerId
-      baseRanks[#baseRanks + 1] = powerRank
-    end
-  end
-
-  if #baseRanks > 0 then
-    str = str .. ':' .. table.concat(baseRanks, ':')
-  end
-
-  self:CloseArtifactFrame(artifactFrameOpen, correctArtifactOpen)
-
-  return str
 end
 
 -- =================== Item Information =========================
@@ -602,7 +392,7 @@ local function GetGemItemID(itemLink, index)
   return 0
 end
 
-local function GetItemStringFromItemLink(slotNum, itemLink, debugOutput)
+local function GetItemStringFromItemLink(slotNum, itemLink, itemLoc, debugOutput)
   local itemSplit = GetItemSplit(itemLink)
   local simcItemOptions = {}
   local gems = {}
@@ -666,51 +456,40 @@ local function GetItemStringFromItemLink(slotNum, itemLink, debugOutput)
     linkOffset = linkOffset + 1
   end
 
-  -- Artifacts use this
-  if bit.band(flags, 0x100) == 0x100 then
-    linkOffset = linkOffset + 1 -- An unknown field
-    -- 7.2 added a new field to the item string if additional trait ranks are attained
-    -- for the artifact.
-    if bit.band(flags, 0x1000000) == 0x1000000 then
-      linkOffset = linkOffset + 1
-    end
-
-    -- Relic bonus ids, relic item ids handled by gems
-    local relicStrs = {}
-    local relicIndex = 1
-    while linkOffset < #itemSplit do
-      local nBonusIds = itemSplit[linkOffset]
-      linkOffset = linkOffset + 1
-
-      if nBonusIds == 0 then
-        relicStrs[relicIndex] = "0"
-      else
-        local relicBonusIds = {}
-        for rbid = 1, nBonusIds do
-          relicBonusIds[#relicBonusIds + 1] = itemSplit[linkOffset]
-          linkOffset = linkOffset + 1
-        end
-
-        relicStrs[relicIndex] = table.concat(relicBonusIds, ':')
-      end
-
-      relicIndex = relicIndex + 1
-    end
-
-    -- Remove any trailing zeros from the relic ids array
-    while #relicStrs > 0 and relicStrs[#relicStrs] == "0" do
-      table.remove(relicStrs, #relicStrs)
-    end
-
-    if #relicStrs > 0 then
-      simcItemOptions[#simcItemOptions + 1] = 'relic_id=' .. table.concat(relicStrs, '/')
-    end
-  end
-
   -- Some leveling quest items seem to use this, it'll include the drop level of the item
   if bit.band(flags, 0x200) == 0x200 then
     simcItemOptions[#simcItemOptions + 1] = 'drop_level=' .. itemSplit[linkOffset]
     linkOffset = linkOffset + 1
+  end
+
+  -- Get item creation context. Can be used to determine unlock/availability of azerite tiers for 3rd parties
+  -- To reduce issues with SimC, use reforge= for now
+  -- context= will be supported by simc soon and we can switch over for 8.1
+  if itemSplit[OFFSET_CONTEXT] ~= 0 then
+    simcItemOptions[#simcItemOptions + 1] = 'reforge=' .. itemSplit[OFFSET_CONTEXT]
+  end
+
+  -- Azerite powers - only run in BfA client
+  if itemLoc and AzeriteEmpoweredItem then
+    if AzeriteEmpoweredItem.IsAzeriteEmpoweredItem(itemLoc) then
+      -- C_AzeriteEmpoweredItem.GetAllTierInfo(ItemLocation:CreateFromEquipmentSlot(5))
+      -- C_AzeriteEmpoweredItem.GetPowerInfo(ItemLocation:CreateFromEquipmentSlot(5), 111)
+      local azeritePowers = {}
+      local powerIndex = 1
+      local tierInfo = AzeriteEmpoweredItem.GetAllTierInfo(itemLoc)
+      for azeriteTier, tierInfo in pairs(tierInfo) do
+        for _, powerId in pairs(tierInfo.azeritePowerIDs) do
+          if AzeriteEmpoweredItem.IsPowerSelected(itemLoc, powerId) then
+            azeritePowers[powerIndex] = powerId
+            powerIndex = powerIndex + 1
+          end
+        end
+      end
+      simcItemOptions[#simcItemOptions + 1] = 'azerite_powers=' .. table.concat(azeritePowers, '/')
+    end
+    if AzeriteItem.IsAzeriteItem(itemLoc) then
+      simcItemOptions[#simcItemOptions + 1] = 'azerite_level=' .. AzeriteItem.GetPowerLevel(itemLoc)
+    end
   end
 
   local itemStr = ''
@@ -730,7 +509,12 @@ function Simulationcraft:GetItemStrings(debugOutput)
 
     -- if we don't have an item link, we don't care
     if itemLink then
-      items[slotNum] = GetItemStringFromItemLink(slotNum, itemLink, debugOutput)
+      local itemLoc
+      if ItemLocation then
+        itemLoc = ItemLocation:CreateFromEquipmentSlot(slotId)        
+      end
+      items[slotNum] = GetItemStringFromItemLink(slotNum, itemLink, itemLoc, debugOutput)
+
     end
   end
 
@@ -749,6 +533,15 @@ function Simulationcraft:GetBagItemStrings()
       GetInventoryItemsForSlot(slotId, slotItems)
       for locationBitstring, itemID in pairs(slotItems) do
         local player, bank, bags, voidstorage, slot, bag = EquipmentManager_UnpackLocation(locationBitstring)
+        local itemLoc
+        if ItemLocation then
+          if bag == nil then
+            -- this is a default bank slot (not a bank bag). these exist on the character equipment, not a bag
+            itemLoc = ItemLocation:CreateFromEquipmentSlot(slot)
+          else
+            itemLoc = ItemLocation:CreateFromBagAndSlot(bag, slot)
+          end
+        end
         if bags or bank then
           local container
           if bags then
@@ -773,7 +566,7 @@ function Simulationcraft:GetBagItemStrings()
             -- find all equippable, non-artifact items
             if IsEquippableItem(itemLink) and quality ~= 6 then
               bagItems[#bagItems + 1] = {
-                string = GetItemStringFromItemLink(slotNum, itemLink, false),
+                string = GetItemStringFromItemLink(slotNum, itemLink, itemLoc, false),
                 name = name .. ' (' .. level .. ')'
               }
             end
@@ -786,10 +579,25 @@ function Simulationcraft:GetBagItemStrings()
   return bagItems
 end
 
+function Simulationcraft:GetReoriginationArrayStacks()
+  local questStart = 53571
+  local questEnd = 53580
+  local stacks = 0
+
+  for questId = questStart, questEnd do
+    if IsQuestFlaggedCompleted(questId) then
+      stacks = stacks + 1
+    end
+  end
+
+  return stacks
+end
+
 -- This is the workhorse function that constructs the profile
 function Simulationcraft:PrintSimcProfile(debugOutput, noBags)
   -- addon metadata
-  local versionComment = '# SimC Addon ' .. '1.9.1'
+  local versionComment = '# SimC Addon ' .. '1.10.7'
+  local reforgeWarning = '# 8.0 Note: reforge= is being used as a hacky way to capture item context. This will be changed in 8.1'
 
   -- Basic player info
   local _, realmName, _, _, _, _, region, _, _, realmLatinName, _ = LibRealmInfo:GetRealmInfoByUnit('player')
@@ -809,12 +617,10 @@ function Simulationcraft:PrintSimcProfile(debugOutput, noBags)
   -- Race info
   local _, playerRace = UnitRace('player')
   -- fix some races to match SimC format
-  if playerRace == 'BloodElf' then
-    playerRace = 'Blood Elf'
-  elseif playerRace == 'NightElf' then
-    playerRace = 'Night Elf'
-  elseif playerRace == 'Scourge' then --lulz
+  if playerRace == 'Scourge' then --lulz
     playerRace = 'Undead'
+  else
+    playerRace = FormatRace(playerRace)
   end
 
   -- Spec info
@@ -842,31 +648,30 @@ function Simulationcraft:PrintSimcProfile(debugOutput, noBags)
   if pid1 or pid2 then
     playerProfessions = 'professions='
     if pid1 then
-      playerProfessions = playerProfessions..tokenize(firstProf)..'='..tostring(firstProfRank)..'/'
+      playerProfessions = playerProfessions..Tokenize(firstProf)..'='..tostring(firstProfRank)..'/'
     end
     if pid2 then
-      playerProfessions = playerProfessions..tokenize(secondProf)..'='..tostring(secondProfRank)
+      playerProfessions = playerProfessions..Tokenize(secondProf)..'='..tostring(secondProfRank)
     end
   else
     playerProfessions = ''
   end
 
   -- Construct SimC-compatible strings from the basic information
-  local player = tokenize(playerClass) .. '="' .. playerName .. '"'
+  local player = Tokenize(playerClass) .. '="' .. playerName .. '"'
   playerLevel = 'level=' .. playerLevel
-  playerRace = 'race=' .. tokenize(playerRace)
-  playerRole = 'role=' .. translateRole(globalSpecID, role)
-  playerSpec = 'spec=' .. tokenize(playerSpec)
-  playerRealm = 'server=' .. tokenize(playerRealm)
-  playerRegion = 'region=' .. tokenize(playerRegion)
+  playerRace = 'race=' .. Tokenize(playerRace)
+  playerRole = 'role=' .. TranslateRole(globalSpecID, role)
+  playerSpec = 'spec=' .. Tokenize(playerSpec)
+  playerRealm = 'server=' .. Tokenize(playerRealm)
+  playerRegion = 'region=' .. Tokenize(playerRegion)
 
   -- Talents are more involved - method to handle them
   local playerTalents = CreateSimcTalentString()
-  local playerArtifact = self:GetArtifactString()
-  local playerCrucible = self:GetCrucibleString()
 
   -- Build the output string for the player (not including gear)
   local simulationcraftProfile = versionComment .. '\n'
+  simulationcraftProfile = simulationcraftProfile .. reforgeWarning .. '\n'
   simulationcraftProfile = simulationcraftProfile .. '\n'
   simulationcraftProfile = simulationcraftProfile .. player .. '\n'
   simulationcraftProfile = simulationcraftProfile .. playerLevel .. '\n'
@@ -877,12 +682,6 @@ function Simulationcraft:PrintSimcProfile(debugOutput, noBags)
   simulationcraftProfile = simulationcraftProfile .. playerProfessions .. '\n'
   simulationcraftProfile = simulationcraftProfile .. playerTalents .. '\n'
   simulationcraftProfile = simulationcraftProfile .. playerSpec .. '\n'
-  if playerArtifact ~= nil then
-    simulationcraftProfile = simulationcraftProfile .. playerArtifact .. '\n'
-  end
-  if playerCrucible ~= nil then
-    simulationcraftProfile = simulationcraftProfile .. playerCrucible .. '\n'
-  end
   simulationcraftProfile = simulationcraftProfile .. '\n'
 
   -- Method that gets gear information
@@ -902,12 +701,19 @@ function Simulationcraft:PrintSimcProfile(debugOutput, noBags)
     local bagItems = Simulationcraft:GetBagItemStrings()
 
     simulationcraftProfile = simulationcraftProfile .. '### Gear from Bags\n'
-    simulationcraftProfile = simulationcraftProfile .. '#\n'
     for i=1, #bagItems do
+      simulationcraftProfile = simulationcraftProfile .. '#\n'
       simulationcraftProfile = simulationcraftProfile .. '# ' .. bagItems[i].name .. '\n'
       simulationcraftProfile = simulationcraftProfile .. '# ' .. bagItems[i].string .. '\n'
-      simulationcraftProfile = simulationcraftProfile .. '#\n'
     end
+  end
+
+  -- collect additional info and output in comments
+  local reoriginationArrayStacks = Simulationcraft:GetReoriginationArrayStacks()
+  if reoriginationArrayStacks > 0 then
+    simulationcraftProfile = simulationcraftProfile .. '\n'
+    simulationcraftProfile = simulationcraftProfile .. '# Stacks of reorigination array based on hidden quest completion\n'
+    simulationcraftProfile = simulationcraftProfile .. '# bfa.reorigination_array_stacks=' .. reoriginationArrayStacks .. '\n'
   end
 
   -- sanity checks - if there's anything that makes the output completely invalid, punt!

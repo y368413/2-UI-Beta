@@ -1,9 +1,10 @@
-local M, R, U, I = unpack(select(2, ...))
-local Bar = MaoRUI:GetModule("Actionbar")
+local _, ns = ...
+local M, R, U, I = unpack(ns)
+local Bar = M:GetModule("Actionbar")
 local cfg = R.bars.extrabar
-local padding, margin = 10, 5
 
 function Bar:CreateExtrabar()
+	local padding, margin = 10, 5
 	local num = 1
 	local buttonList = {}
 
@@ -11,8 +12,8 @@ function Bar:CreateExtrabar()
 	local frame = CreateFrame("Frame", "NDui_ExtraActionBar", UIParent, "SecureHandlerStateTemplate")
 	frame:SetWidth(num*cfg.size + (num-1)*margin + 2*padding)
 	frame:SetHeight(cfg.size + 2*padding)
-	frame.Pos = {"BOTTOM", UIParent, "BOTTOM", 0, 160}
-	frame:SetScale(cfg.scale)
+	frame.Pos = {"BOTTOM", UIParent, "BOTTOM", 0, 130}
+	frame:SetScale(MaoRUISettingDB["Actionbar"]["ActionbarScale"])
 
 	--move the buttons into position and reparent them
 	ExtraActionBarFrame:SetParent(frame)
@@ -22,7 +23,7 @@ function Bar:CreateExtrabar()
 	ExtraActionBarFrame.ignoreFramePositionManager = true
 
 	--the extra button
-	local button = _G.ExtraActionButton1
+	local button = ExtraActionButton1
 	table.insert(buttonList, button) --add the button object to the list
 	button:SetSize(cfg.size,cfg.size)
 
@@ -37,6 +38,19 @@ function Bar:CreateExtrabar()
 
 	--create the mouseover functionality
 	if cfg.fader then
-		MaoRUI.CreateButtonFrameFader(frame, buttonList, cfg.fader)
+		M:CreateButtonFrameFader(frame, buttonList, cfg.fader)
 	end
+
+	--zone ability
+	ZoneAbilityFrame:SetScale(0.6)
+	ZoneAbilityFrame:ClearAllPoints()
+	ZoneAbilityFrame.ignoreFramePositionManager = true
+	ZoneAbilityFrameNormalTexture:SetAlpha(0)
+	M.Mover(ZoneAbilityFrame, "Zone Ability", "ZoneAbility", {"BOTTOM", UIParent, "BOTTOM", -360, 100}, 64, 64)
+
+	local spellButton = ZoneAbilityFrame.SpellButton
+	spellButton.Style:SetAlpha(0)
+	spellButton.Icon:SetTexCoord(.08, .92, .08, .92)
+	spellButton:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
+	M.CreateSD(spellButton.Icon, 3, 3)
 end

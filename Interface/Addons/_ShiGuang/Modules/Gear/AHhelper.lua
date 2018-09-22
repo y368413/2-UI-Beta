@@ -97,8 +97,7 @@ local myBuyoutPrice, myStartPrice;
 local myName = UnitName("player");
 
 daftAuction:SetScript("OnEvent", function(self, event)
-	
-	if event == "AUCTION_HOUSE_SHOW" and not IsAddOnLoaded("AuctionLite") then		
+	if event == "AUCTION_HOUSE_SHOW" and not IsAddOnLoaded("AuctionsMaster") then		
 		AuctionsItemButton:HookScript("OnEvent", function(self, event)			
 			if event=="NEW_AUCTION_UPDATE" then -- user placed an item into auction item box
 				self:SetScript("OnUpdate", nil);
@@ -108,7 +107,6 @@ daftAuction:SetScript("OnEvent", function(self, event)
 				selectedItem = nil;
 				selectedItem, texture, count, quality, canUse, price, _, stackCount, totalCount, selectedItemID = GetAuctionSellItemInfo();
 				local canQuery = CanSendAuctionQuery();
-				
 				if canQuery and selectedItem then -- query auction house based on item name
 					ResetCursor();
 					QueryAuctionItems(selectedItem);
@@ -119,7 +117,6 @@ daftAuction:SetScript("OnEvent", function(self, event)
 	elseif event == "AUCTION_ITEM_LIST_UPDATE" and not IsAddOnLoaded("AuctionLite") then -- the auction list was updated or sorted
 		if (selectedItem ~= nil) then -- an item was placed in the auction item box
 			local batch, totalAuctions = GetNumAuctionItems("list");
-			
 			if totalAuctions == 0 then -- No matches
 				_, _, selectedItemQuality, selectedItemLevel, _, _, _, _, _, _, selectedItemVendorPrice = GetItemInfo(selectedItem);
 							
@@ -183,7 +180,7 @@ daftAuction:SetScript("OnEvent", function(self, event)
 				local stackSize = AuctionsStackSizeEntry:GetNumber();
 				if myStartPrice ~= nil then				
 					if stackSize > 1 then -- this is a stack of items				
-						if L_UIDropDownMenu_GetSelectedValue(PriceDropDown) == 1 then -- input price per item
+						if MSA_DropDownMenu_GetSelectedValue(PriceDropDown) == 1 then -- input price per item
 							MoneyInputFrame_SetCopper(StartPrice, myStartPrice);
 							MoneyInputFrame_SetCopper(BuyoutPrice, myBuyoutPrice);
 						else -- input price for entire stack
@@ -195,8 +192,8 @@ daftAuction:SetScript("OnEvent", function(self, event)
 						MoneyInputFrame_SetCopper(StartPrice, myStartPrice);
 						MoneyInputFrame_SetCopper(BuyoutPrice, myBuyoutPrice);
 					end;
-					if L_UIDropDownMenu_GetSelectedValue(DurationDropDown) ~= 3 then 
-						L_UIDropDownMenu_SetSelectedValue(DurationDropDown, 3); -- set duration to 3 (48h)
+					if MSA_DropDownMenu_GetSelectedValue(DurationDropDown) ~= 3 then 
+						MSA_DropDownMenu_SetSelectedValue(DurationDropDown, 3); -- set duration to 3 (48h)
 						DurationDropDownText:SetText("48 H"); -- set duration text since it keeps bugging to "Custom"  48 Hours
 					end;
 				end;
@@ -223,11 +220,7 @@ end
 local function newTooltipHooker(method, func)
 	return function(tooltip)
 		local modified = false
-
-		tooltip:HookScript('OnTooltipCleared', function(self, ...)
-			modified = false
-		end)
-
+		tooltip:HookScript('OnTooltipCleared', function(self, ...) modified = false end)
 		tooltip:HookScript(method, function(self, ...)
 			if not modified  then
 				modified = true

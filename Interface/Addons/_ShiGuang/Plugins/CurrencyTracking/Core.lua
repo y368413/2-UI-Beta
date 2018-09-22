@@ -1,4 +1,5 @@
-﻿-- $Id: Constants.lua 107 2018-01-23 13:12:35Z arith $
+﻿-- $Id: Constants.lua 154 2018-09-18 15:18:12Z arith $
+local _G = getfenv(0)
 local constants = {}
 
 constants.defaults = {
@@ -21,143 +22,18 @@ constants.defaults = {
 		tooltip_alpha = 0.9,
 		tooltip_scale = 1,
 		currencies = {
-	  ["虚空碎片"] = true,
-	  ["职业大厅资源"] = true,
-	  ["破碎命运印记"] = true,
-	  ["暗淡的阿古尼特水晶"] = true,
 	  ["觉醒精华"] = true,
+	  ["覺醒精華"] = true,
+	  ["艾泽里特"] = true,
+	  ["战争物资"] = true,
+	  ["海员达布隆币"] = true,
+	  ["战痕命运印记"] = true,
 	  },
 		items = {},
 		maxItems = 0, -- 0 means un-limited
 		--optionsCopied = false,
-	},
-}
-
-constants.currencyCategories = {
-	["MISC"] = { enUS="Miscellaneous",deDE="Verschiedenes",esES="Miscelánea",esMX="Miscelánea",frFR="Divers",itIT="Varie",koKR="기타",ptBR="Diversos",ruRU="Разное",zhCN="其它",zhTW="雜項" },
-	["PVP"] = { enUS="Player vs. Player",deDE="Spieler gegen Spieler",esES="Jugador contra Jugador",esMX="Jugador contra Jugador",frFR="JcJ",itIT="Personaggio vs Personaggio",koKR="플레이어 대 플레이어",ptBR="Jogador x Jogador",ruRU="PvP",zhCN="PvP",zhTW="玩家對玩家" },
-	["CLASSIC"] = { enUS="Classic",deDE="Classic",esES="Clásico",esMX="Clásico",frFR="Classique",itIT="Classico",koKR="오리지널",ptBR="Clássico",ruRU="World of Warcraft",zhCN="经典旧世",zhTW="艾澤拉斯" },
-	["WOLTK"] = { enUS="Wrath of the Lich King",deDE="Wrath of the Lich King",esES="Wrath of the Lich King",esMX="Wrath of the Lich King",frFR="Wrath of the Lich King",itIT="Wrath of the Lich King",koKR="리치 왕의 분노",ptBR="Wrath of the Lich King",ruRU="Wrath of the Lich King",zhCN="巫妖王之怒",zhTW="巫妖王之怒" },
-	["INSTANCE"] = { enUS="Dungeon and Raid",deDE="Dungeon und Schlachtzug",esES="Mazmorra y banda",esMX="Calabozo y banda",frFR="Donjons & Raids",itIT="Spedizioni e Incursioni",koKR="던전 및 공격대",ptBR="Masmorras e Raides",ruRU="Подземелья и рейды",zhCN="地下城与团队",zhTW="地城與團隊" },
-	["BC"] = { enUS="Burning Crusade",deDE="Burning Crusade",esES="Burning Crusade",esMX="Burning Crusade",frFR="Burning Crusade",itIT="Burning Crusade",koKR="불타는 성전",ptBR="Burning Crusade",ruRU="Burning Crusade",zhCN="燃烧的远征",zhTW="燃燒的遠征" },
-	["CATA"] = { enUS="Cataclysm",deDE="Cataclysm",esES="Cataclysm",esMX="Cataclysm",frFR="Cataclysm",itIT="Cataclysm",koKR="대격변",ptBR="Cataclysm",ruRU="Cataclysm",zhCN="大地的裂变",zhTW="浩劫與重生" },
-	["ARCH"] = { enUS="Archaeology",deDE="Archäologie",esES="Arqueología",esMX="Arqueología",frFR="Archéologie",itIT="Archeologia",koKR="고고학",ptBR="Arqueologia",ruRU="Археология",zhCN="考古学",zhTW="考古學" },
-	["MOP"] = { enUS="Mists of Pandaria",deDE="Mists of Pandaria",esES="Mists of Pandaria",esMX="Mists of Pandaria",frFR="Mists of Pandaria",itIT="Mists of Pandaria",koKR="판다리아의 안개",ptBR="Mists of Pandaria",ruRU="Mists of Pandaria",zhCN="熊猫人之谜",zhTW="潘達利亞之謎" },
-	["WOD"] = { enUS="Warlords of Draenor",deDE="Warlords of Draenor",esES="Warlords of Draenor",esMX="Warlords of Draenor",frFR="Warlords of Draenor",itIT="Warlords of Draenor",koKR="드레노어의 전쟁군주",ptBR="Warlords of Draenor",ruRU="Warlords of Draenor",zhCN="德拉诺之王",zhTW="德拉諾之霸" },
-	["LEGION"] = { enUS="Legion",deDE="Legion",esES="Legion",esMX="Legion",frFR="Legion",itIT="Legion",koKR="군단",ptBR="Legion",ruRU="Legion",zhCN="军团再临",zhTW="軍團" },
-}
-
-constants.currencies = {
-	["MISC"] = {
---		42, -- Badge of Justice
-		81, -- Epicurean's Award
-		402, -- Ironpaw Token
-		515, -- Darkmoon Prize Ticket
-		1379, -- Trial of Style Token
-	},
-	["PVP"] = {
-		103, -- Arena Points
---		104, -- Honor Points DEPRECATED
-		121, -- Alterac Valley Mark of Honor
-		122, -- Arathi Basin Mark of Honor
-		123, -- Eye of the Storm Mark of Honor
-		124, -- Strand of the Ancients Mark of Honor
-		125, -- Warsong Gulch Mark of Honor
-		126, -- Wintergrasp Mark of Honor
-		161, -- Stone Keeper's Shard
---		181, -- Honor Points DEPRECATED2
-		201, -- Venture Coin
-		321, -- Isle of Conquest Mark of Honor
-		391, -- Tol Barad Commendation
-	},
---	["CLASSIC"] = {
---	},
-	["WOLTK"] = {
-		61, -- Dalaran Jewelcrafter's Token
-		241, -- Champion's Seal
-	},
-	["INSTANCE"] = {
-		101, -- Emblem of Heroism
-		102, -- Emblem of Valor
-		221, -- Emblem of Conquest
-		301, -- Emblem of Triumph
-		341, -- Emblem of Frost
-		1166, -- Timewarped Badge
-		1191, -- Valor
-	},
---	["BC"] = {
---	},
-	["CATA"] = {
-		361, -- Illustrious Jewelcrafter's Token
-		416, -- Mark of the World Tree
-		614, -- Mote of Darkness
-		615, -- Essence of Corrupted Deathwing
-	},
-	["ARCH"] = {
-		1174, -- Demonic Archaeology Fragment
-		1173, -- Highmountain Tauren Archaeology Fragment
-		1172, -- Highborne Archaeology Fragment
-		829, -- Arakkoa Archaeology Fragment
-		828, -- Ogre Archaeology Fragment
-		821, -- Draenor Clans Archaeology Fragment
-		754, -- Mantid Archaeology Fragment
-		677, -- Mogu Archaeology Fragment
-		676, -- Pandaren Archaeology Fragment
-		401, -- Tol'vir Archaeology Fragment
-		400, -- Nerubian Archaeology Fragment
-		399, -- Vrykul Archaeology Fragment
-		398, -- Draenei Archaeology Fragment
-		397, -- Orc Archaeology Fragment
-		394, -- Night Elf Archaeology Fragment
-		393, -- Fossil Archaeology Fragment
-		385, -- Troll Archaeology Fragment
-		384, -- Dwarf Archaeology Fragment
-	},
-	["MOP"] = {
-		697, -- Elder Charm of Good Fortune
-		698, -- Zen Jewelcrafter's Token
-		738, -- Lesser Charm of Good Fortune
-		752, -- Mogu Rune of Fate
-		776, -- Warforged Seal
-		777, -- Timeless Coin
-		789, -- Bloody Coin
-		810, -- Black Iron Fragment
-	},
-	["WOD"] = {
-		823, -- Apexis Crystal
-		824, -- Garrison Resources
-		910, -- Secret of Draenor Alchemy
-		944, -- Artifact Fragment
-		980, -- Dingy Iron Coins
-		994, -- Seal of Tempered Fate
-		999, -- Secret of Draenor Tailoring
-		1008, -- Secret of Draenor Jewelcrafting
-		1017, -- Secret of Draenor Leatherworking
-		1020, -- Secret of Draenor Blacksmithing
-		1101, -- Oil
-		1129, -- Seal of Inevitable Fate
-	},
-	["LEGION"] = {
-		1149, -- Sightless Eye
-		1154, -- Shadowy Coins
-		1155, -- Ancient Mana
-		1220, -- Order Resources
-		1226, -- Nethershard
-		1268, -- Timeworn Artifact
-		1273, -- Seal of Broken Fate
-		1275, -- Curious Coin
-		1299, -- Brawler's Gold
-		1314, -- Lingering Soul Fragment
-		1342, -- Legionfall War Supplies
-		1355, -- Felessence
-		1356, -- Echoes of Battle
-		1357, -- Echoes of Domination
-		1416, -- Coins of Air
-		1171, -- Artifact Knowledge
-		1501, -- Writhing Essence
-		1506, -- Argus Waystone
-		1508, -- Veiled Argunite
-		1533, -- Wakening Essence
+		currencyFormatConverted = false,
+		showLowerDenominations = true,
 	},
 }
 
@@ -177,8 +53,9 @@ constants.items = {
 		26044, -- HALAA_RESEARCH_TOKEN 
 	},
 	others = {
+		162461, -- Sanguicell
 		157796, -- Purified Titan Essence, added in 7.3.5.25807
-		113578, -- Hearty Soup Bone
+		151568, -- Primal Sargerite, added in patch 7.3.0.24484
 		124124, -- Blood of Sargeras
 		124099, -- Blackfang Claw
 		120945, -- Primal Spirit
@@ -189,13 +66,19 @@ constants.items = {
 		119813, -- Furry Caged Beast
 		119810, -- Meaty Caged Beast
 		118100, -- Highmaul Relic
-		117397, -- NATS_LUCKY_COIN
-		116415, -- PET_CHARM
-		76061, -- SPIRIT_HARMONY
+		117397, -- Nats Lucky Coin
+		116415, -- Pet Charm
+		113578, -- Hearty Soup Bone
+		76061, -- Spirit of Harmony
 		43089, -- Vrykul Bones
+		28558, -- Spirit Shard, currency tokens dropped by bosses in the Auchindoun
 	},
 	professions = {
 		[3908] = { -- Tailoring
+			158378, -- Embroidered Deep Sea Satin
+			152577, -- Deep Sea Satin
+			152576, -- Tidespray Linen
+			151567, -- Lightweave Cloth
 			146711, -- Bolt of Starweave
 			146710, -- Bolt of Shadowcloth
 			127681, -- Sharp Spritethorn
@@ -251,6 +134,10 @@ constants.items = {
 			2320, -- Coarse Thread
 		},
 		[2575] = { -- Mining
+			152513, -- Platinum Ore
+			152512, -- Monelite Ore
+			152579, -- Storm Silver Ore
+			151564, -- Empyrium
 			124444, -- Infernal Brimstone
 			123919, -- Felslate
 			123918, -- Leystone Ore
@@ -308,6 +195,14 @@ constants.items = {
 			2770, -- Copper Ore
 		},
 		[2108] = { -- Leatherworking
+			152542, -- Hardened Tempest Hide
+			153051, -- Mistscale
+			154165, -- Calcified Bone
+			154722, -- Tempest Hide
+			152541, -- Coarse Leather
+			153050, -- Shimmerscale
+			154164, -- Blood-Stained Bone
+			151566, -- Fiendish Leather
 			124116, -- Felhide
 			124115, -- Stormscale
 			124113, -- Stonehide Leather
@@ -354,6 +249,9 @@ constants.items = {
 			783, -- Light Hide
 		},
 		[7411] = { -- Enchanting
+			152875, -- Gloom Dust
+			152876, -- Umbra Shard
+			152877, -- Veiled Crystal
 			124442, -- Chaos Crystal
 			124441, -- Leylight Shard
 			124440, -- Arkhana
@@ -418,6 +316,14 @@ constants.items = {
 			6217, -- Copper Rod
 		},
 		[2366] = { -- Herbalism
+			152505, -- Riverbud
+			152506, -- Star Moss
+			152507, -- Akunda's Bite
+			152508, -- Winter's Kiss
+			152509, -- Siren's Pollen
+			152510, -- Anchor Weed
+			152511, -- Sea Stalk
+			151565, -- Astral Glory
 			129289, -- Felwort Seed
 			129288, -- Starlight Rose Seed
 			129287, -- Fjarnskaggl Seed
@@ -575,27 +481,6 @@ constants.itemCategories = {
 	["professions"] = TRADE_SKILLS,
 }
 
-constants.archaeology = {
-	1174, -- Demonic Archaeology Fragment
-	1173, -- Highmountain Tauren Archaeology Fragment
-	1172, -- Highborne Archaeology Fragment
-	829, -- Arakkoa Archaeology Fragment
-	828, -- Ogre Archaeology Fragment
-	821, -- Draenor Clans Archaeology Fragment
-	754, -- Mantid Archaeology Fragment
-	677, -- Mogu Archaeology Fragment
-	676, -- Pandaren Archaeology Fragment
-	401, -- Tol'vir Archaeology Fragment
-	400, -- Nerubian Archaeology Fragment
-	399, -- Vrykul Archaeology Fragment
-	398, -- Draenei Archaeology Fragment
-	397, -- Orc Archaeology Fragment
-	394, -- Night Elf Archaeology Fragment
-	393, -- Fossil Archaeology Fragment
-	385, -- Troll Archaeology Fragment
-	384, -- Dwarf Archaeology Fragment
-}
-
 constants.events = {
 	"PLAYER_REGEN_ENABLED",
 	"PLAYER_REGEN_DISABLED",
@@ -603,13 +488,30 @@ constants.events = {
 	"PET_BATTLE_CLOSE",
 	"BATTLEFIELDS_SHOW",
 	"BATTLEFIELDS_CLOSED",
+	"BAG_UPDATE",
+	"TRADE_CURRENCY_CHANGED",
+	"ARTIFACT_UPDATE",
+	"ARTIFACT_XP_UPDATE",
+	"TRADE_PLAYER_ITEM_CHANGED",
+	"PLAYER_TRADE_CURRENCY",
+	"CHAT_MSG_CURRENCY",
+	"SHIPMENT_CRAFTER_REAGENT_UPDATE",
+	"CURRENCY_DISPLAY_UPDATE",
+	-- Money
+	"PLAYER_MONEY",
+	"PLAYER_TRADE_MONEY",
+	"TRADE_MONEY_CHANGED",
+	"SEND_MAIL_MONEY_CHANGED",
+	"SEND_MAIL_COD_CHANGED",
+	"TRIAL_STATUS_UPDATE",
+	"CHAT_MSG_MONEY",
 }
 
 
 
 
 
--- $Id: Core.lua 104 2017-11-14 12:29:56Z arith $
+-- $Id: Core.lua 139 2018-04-26 08:51:25Z arith $
 -----------------------------------------------------------------------
 -- Upvalued Lua API.
 -----------------------------------------------------------------------
@@ -618,11 +520,15 @@ local _G = getfenv(0)
 local pairs, ipairs, select, unpack, type = _G.pairs, _G.ipairs, _G.select, _G.unpack, _G.type
 local string, tonumber = _G.string, _G.tonumber
 -- Libraries
-local GameTooltip = _G.GameTooltip
-local BreakUpLargeNumbers = _G.BreakUpLargeNumbers
-local GetItemInfoInstant, GetItemCount, GetItemInfo = _G.GetItemInfoInstant, _G.GetItemCount, _G.GetItemInfo
 local format, strsub, strlen, strgmatch = string.format, string.sub, string.len, string.gmatch
 local floor, fmod = math.floor, math.fmod
+-- WoW
+local GameTooltip = _G.GameTooltip
+local BreakUpLargeNumbers = _G.BreakUpLargeNumbers
+local GetCurrencyListSize, GetCurrencyListInfo, GetCurrencyInfo = _G.GetCurrencyListSize, _G.GetCurrencyListInfo, _G.GetCurrencyInfo
+local GetItemInfoInstant, GetItemCount, GetItemInfo = _G.GetItemInfoInstant, _G.GetItemCount, _G.GetItemInfo
+local GetMoney = _G.GetMoney
+
 -- ----------------------------------------------------------------------------
 -- AddOn namespace.
 -- ----------------------------------------------------------------------------
@@ -633,7 +539,6 @@ local LDB_CurrencyTracking = LibStub:GetLibrary("LibDataBroker-1.1"):NewDataObje
 	type = "data source",
 	text = CurrencyTracking_TITLE,
 	label = CurrencyTracking_TITLE,
-	icon = "Interface\\Icons\\timelesscoin",
 })
 
 local CurrencyTracking = LibStub("AceAddon-3.0"):NewAddon("CurrencyTracking", "AceEvent-3.0")
@@ -641,56 +546,60 @@ CurrencyTracking.constants = constants
 _G.CurrencyTracking = CurrencyTracking
 local profile
 
-local CurrencyTracking_Player = UnitName("player")
-local CurrencyTracking_Server = GetRealmName()
-
-local isInLockdown = false
-local isInBattleGround = false
-local CT_ORIG_GAMPTOOLTIP_SCALE = GameTooltip:GetScale()
+-- local booleans, constants, and arrays
+local isInLockdown = false		-- boolean to check if player is in combat
+local isInBattleGround = false	-- boolean to check if player is in battleground
+local CT_ORIG_GAMPTOOLTIP_SCALE = GameTooltip:GetScale()	-- to get the original GameTooltip's scaling value
 local CT_CURRSTR = nil
-local CURRENCIESLIST = {}
-local numCurrencies = 0
+local CURRENCIESLIST = {}		-- initialize currency list array
+local numCurrencies = 0			-- initialize the number of currencies
 
 -- codes adopted from Accountant_Classic
 local function getFormattedValue(amount)
-	local gold = floor(amount / (COPPER_PER_SILVER * SILVER_PER_GOLD))
-	local goldDisplay = profile.breakupnumbers and BreakUpLargeNumbers(gold) or gold
-	local silver = floor((amount - (gold * COPPER_PER_SILVER * SILVER_PER_GOLD)) / COPPER_PER_SILVER)
-	local copper = fmod(amount, COPPER_PER_SILVER)
-	
-	local TMP_GOLD_AMOUNT_TEXTURE
-	local TMP_SILVER_AMOUNT_TEXTURE
-	local TMP_COPPER_AMOUNT_TEXTURE
+	if (amount and type(amount) == "number") then 
+		local gold = floor(amount / (COPPER_PER_SILVER * SILVER_PER_GOLD))
+		local goldDisplay = profile.breakupnumbers and BreakUpLargeNumbers(gold) or gold
+		local silver = floor((amount - (gold * COPPER_PER_SILVER * SILVER_PER_GOLD)) / COPPER_PER_SILVER)
+		local copper = fmod(amount, COPPER_PER_SILVER)
+		
+		local TMP_GOLD_AMOUNT_TEXTURE, TMP_SILVER_AMOUNT_TEXTURE, TMP_COPPER_AMOUNT_TEXTURE
 
-	if (profile.icon_first) then
-		TMP_GOLD_AMOUNT_TEXTURE 	= "|TInterface\\MoneyFrame\\UI-GoldIcon:%d:%d:2:0|t %s"
-		TMP_SILVER_AMOUNT_TEXTURE 	= "|TInterface\\MoneyFrame\\UI-SilverIcon:%d:%d:2:0|t %02d"
-		TMP_COPPER_AMOUNT_TEXTURE 	= "|TInterface\\MoneyFrame\\UI-CopperIcon:%d:%d:2:0|t %02d"
-	else
-		TMP_GOLD_AMOUNT_TEXTURE 	= "%s|TInterface\\MoneyFrame\\UI-GoldIcon:%d:%d:2:0|t"
-		TMP_SILVER_AMOUNT_TEXTURE 	= "%02d|TInterface\\MoneyFrame\\UI-SilverIcon:%d:%d:2:0|t"
-		TMP_COPPER_AMOUNT_TEXTURE 	= "%02d|TInterface\\MoneyFrame\\UI-CopperIcon:%d:%d:2:0|t"
-	end
+		if (profile.icon_first) then
+			TMP_GOLD_AMOUNT_TEXTURE 	= "|TInterface\\MoneyFrame\\UI-GoldIcon:%d:%d:2:0|t %s"
+			TMP_SILVER_AMOUNT_TEXTURE 	= "|TInterface\\MoneyFrame\\UI-SilverIcon:%d:%d:2:0|t %02d"
+			TMP_COPPER_AMOUNT_TEXTURE 	= "|TInterface\\MoneyFrame\\UI-CopperIcon:%d:%d:2:0|t %02d"
 
-	if (profile.icon_first) then
-		if (gold >0) then
-			return format("|cffffffff"..TMP_GOLD_AMOUNT_TEXTURE.." "..TMP_SILVER_AMOUNT_TEXTURE.." "..TMP_COPPER_AMOUNT_TEXTURE.."|r", 0, 0, goldDisplay, 0, 0, silver, 0, 0, copper)
-		elseif (silver >0) then 
-			return format("|cffffffff"..TMP_SILVER_AMOUNT_TEXTURE.." "..TMP_COPPER_AMOUNT_TEXTURE.."|r", 0, 0, silver, 0, 0, copper)
-		elseif (copper >0) then
-			return format("|cffffffff"..TMP_COPPER_AMOUNT_TEXTURE.."|r", 0, 0, copper)
+			if (profile.showLowerDenominations) then
+				if (gold >0) then
+					return format("|cffffffff"..TMP_GOLD_AMOUNT_TEXTURE.." "..TMP_SILVER_AMOUNT_TEXTURE.." "..TMP_COPPER_AMOUNT_TEXTURE.."|r", 0, 0, goldDisplay, 0, 0, silver, 0, 0, copper)
+				elseif (silver >0) then 
+					return format("|cffffffff"..TMP_SILVER_AMOUNT_TEXTURE.." "..TMP_COPPER_AMOUNT_TEXTURE.."|r", 0, 0, silver, 0, 0, copper)
+				elseif (copper >0) then
+					return format("|cffffffff"..TMP_COPPER_AMOUNT_TEXTURE.."|r", 0, 0, copper)
+				else
+					return ""
+				end
+			else
+				return format("|cffffffff"..TMP_GOLD_AMOUNT_TEXTURE.."|r", 0, 0, goldDisplay)
+			end
 		else
-			return ""
-		end
-	else
-		if (gold >0) then
-			return format(" |cffffffff"..TMP_GOLD_AMOUNT_TEXTURE.." "..TMP_SILVER_AMOUNT_TEXTURE.." "..TMP_COPPER_AMOUNT_TEXTURE.."|r", goldDisplay, 0, 0, silver, 0, 0, copper, 0, 0)
-		elseif (silver >0) then 
-			return format(" |cffffffff"..SILVER_AMOUNT_TEXTURE.." "..TMP_COPPER_AMOUNT_TEXTURE.."|r", silver, 0, 0, copper, 0, 0)
-		elseif (copper >0) then
-			return format(" |cffffffff"..COPPER_AMOUNT_TEXTURE.."|r", copper, 0, 0)
-		else
-			return ""
+			TMP_GOLD_AMOUNT_TEXTURE 	= "%s|TInterface\\MoneyFrame\\UI-GoldIcon:%d:%d:2:0|t"
+			TMP_SILVER_AMOUNT_TEXTURE 	= "%02d|TInterface\\MoneyFrame\\UI-SilverIcon:%d:%d:2:0|t"
+			TMP_COPPER_AMOUNT_TEXTURE 	= "%02d|TInterface\\MoneyFrame\\UI-CopperIcon:%d:%d:2:0|t"
+
+			if (profile.showLowerDenominations) then
+				if (gold >0) then
+					return format(" |cffffffff"..TMP_GOLD_AMOUNT_TEXTURE.." "..TMP_SILVER_AMOUNT_TEXTURE.." "..TMP_COPPER_AMOUNT_TEXTURE.."|r", goldDisplay, 0, 0, silver, 0, 0, copper, 0, 0)
+				elseif (silver >0) then 
+					return format(" |cffffffff"..SILVER_AMOUNT_TEXTURE.." "..TMP_COPPER_AMOUNT_TEXTURE.."|r", silver, 0, 0, copper, 0, 0)
+				elseif (copper >0) then
+					return format(" |cffffffff"..COPPER_AMOUNT_TEXTURE.."|r", copper, 0, 0)
+				else
+					return ""
+				end
+			else
+				return format(" |cffffffff"..TMP_GOLD_AMOUNT_TEXTURE.."|r", goldDisplay, 0, 0)
+			end
 		end
 	end
 end
@@ -723,17 +632,18 @@ end
 local function getTooltipText()
 	local display = ""
 	local tooltip = ""
-	local name, isHeader, isUnused, count, icount, icon, cCount, _
+	local cCount
 	cCount = GetCurrencyListSize()
 	for i = 1, cCount do 
 		-- // GetCurrencyListInfo() syntax:
 		-- // name, isHeader, isExpanded, isUnused, isWatched, count, icon = GetCurrencyListInfo(index)
+		local name, isHeader, isUnused, count, icon, _
 		name, isHeader, _, isUnused, _, count, icon = GetCurrencyListInfo(i)
 		if ( isHeader ) then
 			tooltip = tooltip..name.."\n"
 		elseif ( (count >= 0) and not isUnused ) then
 			if (icon ~= nil) then
-				icount = profile.breakupnumbers and BreakUpLargeNumbers(count) or count
+				local icount = profile.breakupnumbers and BreakUpLargeNumbers(count) or count
 				if (count == 0) then
 					if (not profile.hide_zero) then
 						display = " - "..name.."\t|cffff0000"..icount.." |r|T"..icon..":16|t"
@@ -773,8 +683,8 @@ local function button_OnMouseUp(self, buttonName)
 	end
 	if(CurrencyTracking.frame:IsVisible()) then
 		CurrencyTracking.frame:StopMovingOrSizing()
-		local a, b, c, d, e = CurrencyTracking.frame:GetPoint()
-		profile.point = { a, b, c, d, e }
+		local point, relativeTo, relativePoint, xOfs, yOfs = CurrencyTracking.frame:GetPoint()
+		profile.point = { point, relativeTo, relativePoint, xOfs, yOfs }
 	end
 end
 
@@ -860,8 +770,7 @@ local function handleTrackedButtons(button, currencyID, itemID)
 				end
 			end
 		end
-		
-	else
+	else -- money
 		button.icon:SetTexture(nil)
 		button.count:SetText(getFormattedValue(GetMoney()))
 		width = button.count:GetStringWidth()
@@ -915,11 +824,11 @@ local function currencyButton_Update()
 	local gwidth = 0
 	local bi = 1
 
-	for i=1, numCurrencies do
-		local currencyID = CURRENCIESLIST[i].id
-		local name, count
-		if (currencyID) then name, count = GetCurrencyInfo(currencyID) end
-		if (name and profile["currencies"][name] == true) then
+	-- tracked currencies
+	for currencyID, v in pairs(profile["currencies"]) do
+		if (currencyID and type(currencyID) == "number" and profile["currencies"][currencyID] == true) then
+			local _, count = GetCurrencyInfo(currencyID)
+
 			if (count >= 0) then
 				if (profile.hide_zero and count == 0) then
 					-- do nothing
@@ -934,47 +843,25 @@ local function currencyButton_Update()
 		end
 	end
 	-- tracked items
-	for k, v in pairs(CurrencyTracking.constants.items) do
-		if k == "professions" then
-			for ka, profs in pairs(v) do
-				for kb, itemID in ipairs(profs) do
-					if (profile["items"][itemID] == true) then
-						local count = GetItemCount(itemID, true)
-						if (profile.hide_zero and count == 0) then
-							-- do nothing
-						else
-							button = _G["CurrencyTrackingButton"..bi]
-							if not button then button = CreateFrame("Button", "CurrencyTrackingButton"..bi, nf, "CurrencyTrackingButtonTemplate") end
-							handleTrackedButtons(button, nil, itemID)
-							gwidth = gwidth + button:GetWidth()
-							bi = bi + 1
-						end
-					end
-				end
-			end
-		else
-			for ka, itemID in ipairs(v) do
-				if (profile["items"][itemID] == true) then
-					local count = GetItemCount(itemID, true)
-					if (profile.hide_zero and count == 0) then
-						-- do nothing
-					else
-						button = _G["CurrencyTrackingButton"..bi]
-						if not button then button = CreateFrame("Button", "CurrencyTrackingButton"..bi, nf, "CurrencyTrackingButtonTemplate") end
-						handleTrackedButtons(button, nil, itemID)
-						gwidth = gwidth + button:GetWidth()
-						bi = bi + 1
-					end
-				end
+	for itemID, v in pairs(profile["items"]) do
+		if (itemID and profile["items"][itemID] == true) then
+			local count = GetItemCount(itemID, true)
+			if (profile.hide_zero and count == 0) then
+				-- do nothing
+			else
+				button = _G["CurrencyTrackingButton"..bi]
+				if not button then button = CreateFrame("Button", "CurrencyTrackingButton"..bi, nf, "CurrencyTrackingButtonTemplate") end
+				handleTrackedButtons(button, nil, itemID)
+				gwidth = gwidth + button:GetWidth()
+				bi = bi + 1
 			end
 		end
 	end
-	-- end of tracked items
 	-- handle money
 	if (profile.show_money) then
 		button = _G["CurrencyTrackingButton"..bi]
 		if not button then button = CreateFrame("Button", "CurrencyTrackingButton"..bi, nf, "CurrencyTrackingButtonTemplate") end
-		handleTrackedButtons(button, nil, itemID)
+		handleTrackedButtons(button)
 		gwidth = gwidth + button:GetWidth()
 		bi = bi + 1
 	end
@@ -1003,7 +890,6 @@ local function currencyButton_Update()
 		bi = bi + 1
 		button = _G["CurrencyTrackingButton"..bi]
 	end
-
 end
 
 local function currencyString_Update()
@@ -1011,12 +897,12 @@ local function currencyString_Update()
 
 	local CT_CURRENCY_TEXTURE
 
-	for i=1, numCurrencies do
-		local currencyID = CURRENCIESLIST[i].id
-		local name, count, icon
-		if (currencyID) then name, count, icon = GetCurrencyInfo(currencyID) end
-		if not icon then icon = 0 end -- somehow Legionfall War Supplies' icon is not available in 7.2.5.23959, this should temporary resolve the blocking issue
-		if (name and profile["currencies"][name] == true) then
+	-- tracked currencies
+	for currencyID, v in pairs(profile["currencies"]) do
+		if (currencyID and type(currencyID) == "number" and profile["currencies"][currencyID] == true) then
+			local _, count, icon = GetCurrencyInfo(currencyID)
+			if not icon then icon = 0 end -- somehow Legionfall War Supplies' icon is not available in 7.2.5.23959, this should temporary resolve the blocking issue
+			
 			if (count >= 0) then
 				if (profile.hide_zero and count == 0) then
 					-- do nothing
@@ -1044,52 +930,23 @@ local function currencyString_Update()
 			end
 		end
 	end
-
 	-- tracked items
-	for k, v in pairs(CurrencyTracking.constants.items) do
-		if k == "professions" then
-			for ka, profs in pairs(v) do
-				for kb, itemID in ipairs(profs) do
-					if (profile["items"][itemID] == true) then
-						local icon, _
-						_, _, _, _, _, _, _, _, _, icon = GetItemInfo(itemID)
-						local count = GetItemCount(itemID, true)
-						
-						if (profile.hide_zero and count == 0) then
-							-- do nothing
-						else
-							local displayString
-							if (profile.icon_first) then
-								displayString = format("|T%d:%d:%d:2:0|t |cffffffff%d|r", icon, 16, 16, count)
-							else
-								displayString = format("|cffffffff%d|r|T%d:%d:%d:2:0|t ", count, icon, 16, 16)
-							end
-							
-							currencystr = currencystr..displayString
-						end
-					end
+	for itemID, v in pairs(profile["items"]) do
+		if (itemID and profile["items"][itemID] == true) then
+			local count = GetItemCount(itemID, true)
+			local icon = select(10, GetItemInfo(itemID))
+
+			if (profile.hide_zero and count == 0) then
+				-- do nothing
+			else
+				local displayString
+				if (profile.icon_first) then
+					displayString = format("|T%d:%d:%d:2:0|t |cffffffff%d|r", icon, 16, 16, count)
+				else
+					displayString = format("|cffffffff%d|r|T%d:%d:%d:2:0|t ", count, icon, 16, 16)
 				end
-			end
-		else
-			for ka, itemID in ipairs(v) do
-				if (profile["items"][itemID] == true) then
-					local icon, _
-					_, _, _, _, _, _, _, _, _, icon = GetItemInfo(itemID)
-					local count = GetItemCount(itemID, true)
-					
-					if (profile.hide_zero and count == 0) then
-						-- do nothing
-					else
-						local displayString
-						if (profile.icon_first) then
-							displayString = format("|T%d:%d:%d:2:0|t |cffffffff%d|r", icon, 16, 16, count)
-						else
-							displayString = format("|cffffffff%d|r|T%d:%d:%d:2:0|t ", count, icon, 16, 16)
-						end
-						
-						currencystr = currencystr..displayString
-					end
-				end
+				
+				currencystr = currencystr..displayString
 			end
 		end
 	end
@@ -1115,18 +972,23 @@ local function getButtonText()
 	return currencystr
 end
 
-local function frame_OnUpdate(self)
+local function currencyUpdate()
+	if (profile.show_currency) then currencyButton_Update() end
+
 	local currencystr = getButtonText()
-	currencyButton_Update()
 	if (currencystr ~= CT_CURRSTR) then
 		LDB_CurrencyTracking.text = currencystr
 		CT_CURRSTR = currencystr
 	end
 end
 
+local function frame_OnUpdate(self)
+	--currencyUpdate()
+end
+
 local function createCurrencyFrame()
 	local f = CreateFrame("Frame")
-	f:SetScript("OnUpdate", frame_OnUpdate)
+	--f:SetScript("OnUpdate", frame_OnUpdate)
 	
 	local nf = _G["CurrencyTrackingFrame"]
 	if not nf then nf = CreateFrame("Frame", "CurrencyTrackingFrame") end
@@ -1163,6 +1025,7 @@ end
 
 local function setupLDB()
 	-- LDB object setting up
+	LDB_CurrencyTracking.icon = "Interface\\Icons\\timelesscoin"
 	LDB_CurrencyTracking.OnClick = (function(self, button)
 		if button == "LeftButton" then
 			CurrencyTracking:OpenOptions()
@@ -1219,7 +1082,7 @@ end
 
 local function getNumberOfCurrencies()
 	local n = 0
-	for k,v in pairs(CurrencyTracking.constants.currencies) do
+	for k,v in pairs(LibCurrencyInfo.data.CurrencyByCategory) do
 		n = n + 1 + #v
 	end
 	
@@ -1231,7 +1094,7 @@ local function populateCurrencyList()
 
 	local i = 1
 	local lang = GetLocale()
-	for k,v in pairs(CurrencyTracking.constants.currencies) do
+	for k,v in pairs(LibCurrencyInfo.data.CurrencyByCategory) do
 		CURRENCIESLIST[i] = { isHeader = true, headerKey = k }
 		i = i + 1
 		for ka,id in ipairs(v) do
@@ -1239,6 +1102,29 @@ local function populateCurrencyList()
 			i = i + 1
 		end
 	end
+end
+
+-- temp function to convert the tracked currencies from recorded name to recorded the currency ID
+local function convertTrackedCurrencies()
+	if (profile.currencyFormatConverted) then
+		return
+	end
+	for k, v in pairs(LibCurrencyInfo.data.Currencies) do
+		local name = LibCurrencyInfo:GetCurrencyByID(k)
+		
+		if (profile["currencies"][name]) then
+			profile["currencies"][k] = profile["currencies"][name]
+			profile["currencies"][name] = nil
+		end
+	end
+	
+	-- further cleaning up
+	for k, v in pairs(profile["currencies"]) do
+		if (type(k) ~= "number") then
+			profile["currencies"][k] = nil
+		end
+	end
+	profile.currencyFormatConverted = true
 end
 
 function CurrencyTracking:OnInitialize()
@@ -1250,6 +1136,7 @@ function CurrencyTracking:OnInitialize()
 	self.db.RegisterCallback(self, "OnProfileReset", "Refresh")
 
 	--copyOptions()
+	convertTrackedCurrencies()
 	self:SetupOptions()
 	self.frame = createCurrencyFrame()
 	numCurrencies = getNumberOfCurrencies()
@@ -1263,13 +1150,24 @@ function CurrencyTracking:OnEnable()
 
 	setupLDB()
 	scanItems() -- pre-scan items so that they will properly showed in option panel
+	currencyUpdate()
 	self:Refresh()
 end
 
 function CurrencyTracking:Refresh()
 	profile = self.db.profile
-	
+	currencyUpdate()
 	frameRefresh()
+end
+
+-- ///////////////////////////////////////////////////
+-- Event handling
+-- ///////////////////////////////////////////////////
+local function hideFrame(key)
+	if (profile.show_currency and profile[key]) then
+		local nf = _G["CurrencyTrackingFrame"]
+		nf:Hide()
+	end
 end
 
 -- ///////////////////////////////////////////////////
@@ -1277,10 +1175,7 @@ end
 -- Event fired whenever you enter combat
 function CurrencyTracking:PLAYER_REGEN_DISABLED()
 	isInLockdown = true
-	if (profile.show_currency and profile.hide_in_combat) then
-		local nf = _G["CurrencyTrackingFrame"]
-		nf:Hide()
-	end
+	hideFrame("hide_in_combat")
 end
 
 -- Event fired after ending combat
@@ -1303,10 +1198,7 @@ end
 -- Event fired when the battlegrounds signup window is opened.
 function CurrencyTracking:BATTLEFIELDS_SHOW()
 	isInBattleGround = true
-	if (profile.show_currency and profile.hide_in_battleground) then
-		local nf = _G["CurrencyTrackingFrame"]
-		nf:Hide()
-	end
+	hideFrame("hide_in_battleground")
 end
 
 -- Event fired when the battlegrounds signup window is closed.
@@ -1322,10 +1214,7 @@ end
 -- ///////////////////////////////////////////////////
 -- Pet battle
 function CurrencyTracking:PET_BATTLE_OPENING_START()
-	if (profile.show_currency and profile.hide_in_petbattle) then
-		local nf = _G["CurrencyTrackingFrame"]
-		nf:Hide()
-	end
+	hideFrame("hide_in_petbattle")
 end
 
 function CurrencyTracking:PET_BATTLE_CLOSE()
@@ -1338,4 +1227,68 @@ function CurrencyTracking:PET_BATTLE_CLOSE()
 			nf:Show()
 		end
 	end
+end
+
+-- Fired when a bags inventory changes.
+function CurrencyTracking:BAG_UPDATE()
+	currencyUpdate()
+end
+
+function CurrencyTracking:TRADE_CURRENCY_CHANGED()
+	currencyUpdate()
+end
+
+-- This event fires whenever the data for an artifact has been updated, such as after completing a new one. 
+function CurrencyTracking:ARTIFACT_UPDATE()
+	currencyUpdate()
+end
+
+-- Event fired when gaining artifact power for the current equipped artifact weapon.
+function CurrencyTracking:ARTIFACT_XP_UPDATE()
+	currencyUpdate()
+end
+
+-- Fired when an item in the target's trade window is changed (items added or removed from trade).
+function CurrencyTracking:TRADE_PLAYER_ITEM_CHANGED()
+	currencyUpdate()
+end
+
+function CurrencyTracking:PLAYER_TRADE_CURRENCY()
+	currencyUpdate()
+end
+
+-- Fires when you gain currency other than money (for example Chef's Awards or Champion's Seals). 
+function CurrencyTracking:CHAT_MSG_CURRENCY()
+	currencyUpdate()
+end
+
+function CurrencyTracking:SHIPMENT_CRAFTER_REAGENT_UPDATE()
+	currencyUpdate()
+end
+
+-- Fired every time the UI need to draw the currencies list. 
+function CurrencyTracking:CURRENCY_DISPLAY_UPDATE()
+	currencyUpdate()
+end
+
+function CurrencyTracking:PLAYER_MONEY()
+	currencyUpdate()
+end
+function CurrencyTracking:PLAYER_TRADE_MONEY()
+	currencyUpdate()
+end
+function CurrencyTracking:TRADE_MONEY_CHANGED()
+	currencyUpdate()
+end
+function CurrencyTracking:SEND_MAIL_MONEY_CHANGED()
+	currencyUpdate()
+end
+function CurrencyTracking:SEND_MAIL_COD_CHANGED()
+	currencyUpdate()
+end
+function CurrencyTracking:TRIAL_STATUS_UPDATE()
+	currencyUpdate()
+end
+function CurrencyTracking:CHAT_MSG_MONEY()
+	currencyUpdate()
 end

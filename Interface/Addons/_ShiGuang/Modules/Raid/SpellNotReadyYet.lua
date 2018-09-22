@@ -1,5 +1,6 @@
 -- SpellNotReadyYet v1.2. Created by Shadowmage - Stormrage EU
-local M, R, U, I = unpack(select(2, ...))
+local _, ns = ...
+local M, R, U, I = unpack(ns)
 -- Default values on load in
 local iconsize = 43
 local xoff = 45
@@ -180,7 +181,7 @@ frame:RegisterEvent("ADDON_LOADED");
 frame:RegisterEvent("UI_ERROR_MESSAGE");
 
 -- Function that handles any events captured by the above frame
-local function eventHandler(self, event, ...)
+frame:SetScript("OnEvent", function(self, event, ...)
 if not MaoRUISettingDB["Misc"]["SpellNotReadyYet"] then self:UnregisterAllEvents() return end
 	if event == "ADDON_LOADED" then
 				if SpellNotReadyYetSaved then -- if the saved table exists then load settings
@@ -194,15 +195,15 @@ if not MaoRUISettingDB["Misc"]["SpellNotReadyYet"] then self:UnregisterAllEvents
 	end
 	if event == "UNIT_SPELLCAST_FAILED" then -- Event that triggers when something is on CD
 		local unit, spellname, spellrank, spellidcounter, id = ...;
-		local start, duration, enabled = GetSpellCooldown(id);
+		--local start, duration, enabled = GetSpellCooldown(id);
 		local name, rank, fileID, castTime, minRange, maxRange, spellID = GetSpellInfo(id)
 		local seconds = GetTime();
-		local timeleft = (start + duration - seconds);
+		--local timeleft = (start + duration - seconds);
 		local icon = GetSpellTexture(spellID)
 		
         if name == "Synapse Springs" then else -- add blacklist for loop check here?
 			if unit == "player"  then
-				if duration > 1.5 then
+				--if duration > 1.5 then
                     local iconframe = CreateFrame("frame", nil, UIParent) -- Draw all this now inside the function so each frame overwrites
                     iconframe:SetPoint("LEFT",PlayerFrame,"LEFT", xoff, yoff)					  -- eachother and doesnt appear in a bit jumbled mess
                     iconframe:SetSize(iconsize, iconsize)
@@ -217,14 +218,14 @@ if not MaoRUISettingDB["Misc"]["SpellNotReadyYet"] then self:UnregisterAllEvents
                     tr:SetFont(tfont, fontsize, "OUTLINE")
                     tr:SetTextColor(1,0.7,0.7)	
 					
-					if timeleft < 0 then
-						tr:SetText("ERR")	
-                    else			
-                        tr:SetText(M.FormatTime(timeleft))
-                    end	
+					--if timeleft < 0 then
+						--tr:SetText("ERR")	
+                    --else			
+                        --tr:SetText(M.FormatTime(timeleft))
+                    --end	
 					--iconframe:SetFrameStrata("BACKGROUND")
                 end
-			end
+			--end
          end      
 	elseif event == "UI_ERROR_MESSAGE" then -- Shows a X for when you have no target or the current target is invalid. Event doesnt fire all the time however
 		local message = ...
@@ -240,5 +241,4 @@ if not MaoRUISettingDB["Misc"]["SpellNotReadyYet"] then self:UnregisterAllEvents
 				UIFrameFlash(iconframe2, 0, fdur, fdur, false, 0, 0)
             end
 	end
-end
-frame:SetScript("OnEvent", eventHandler); -- Script that runs the function when an event happens
+end); -- Script that runs the function when an event happens

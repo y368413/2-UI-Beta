@@ -1,0 +1,32 @@
+﻿## Interface: 80000
+## Author: Xinhuan
+## Version: v1.5.3
+## Title: HandyNotes
+## Title-zhCN:|cff0080ff[地图]|r宝藏稀有
+## Title-zhTW:|cff0080ff[地图]|r寶藏稀有
+## Notes: Handynotes with(BfA-Achievments+BattleForAzerothTreasures)
+## Notes-zhCN: 宝藏将会在地图上标记出，概览所有稀有，判定你是否击杀了一次性稀有。
+## Notes-zhTW: 宝藏将会在地图上标记出，概覽所有稀有，并判定時候已擊殺過。
+## SavedVariables: HandyNotesDB, HandyNotes_HandyNotesDB, HandyNotesArathiDB, HandyNotes_WarfrontTreasuresDB, HandyNotes_BfA-AchievmentsDB, HandyNotes_BattleForAzerothTreasuresDB, HandyNotes_BFA_HF_TrackerDB, NPC_Name_CacheDB, Item_Name_CacheDB, HNMoleMachineConfig
+## Dependencies: _ShiGuang
+
+## X-Repple: 地图
+
+HereBeDragons\HereBeDragons.xml
+
+# Locale files
+Locales\Locales.xml
+
+# Core files
+HandyNotes.lua
+HandyNotes.xml
+HandyNotes_HandyNotes.lua
+HandyNotes_EditFrame.lua
+
+# More files
+HandyNotes_Arathi.lua
+HandyNotes_BFA_HF_Tracker.lua
+#HandyNotes_BFA_Treasures.lua
+#HandyNotes_BFA_Achievments.lua
+#HandyNotes_WarfrontTreasures.lua
+#HandyNotes_MoleMachine.lua

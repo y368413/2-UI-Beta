@@ -5,6 +5,7 @@ local EV, G, L = T.Evie, T.Garrison, T.L
 local roamingParty, easyDrop = T.MissionsUI.roamingParty, T.MissionsUI.easyDrop
 local MISSION_PAGE_FRAME = GarrisonMissionFrame.MissionTab.MissionPage
 local SHIP_MISSION_PAGE = GarrisonShipyardFrame.MissionTab.MissionPage
+local GameTooltip = AltGameTooltip or GameTooltip
 
 local function HideOwnedGameTooltip(self)
 	if GameTooltip:IsOwned(self) then
@@ -304,7 +305,7 @@ local function FollowerButton_OnEnter(self)
 		local GetAbility = C_Garrison[info.garrFollowerID and "GetFollowerAbilityAtIndex" or "GetFollowerAbilityAtIndexByID"]
 		local GetTrait = C_Garrison[info.garrFollowerID and "GetFollowerTraitAtIndex" or "GetFollowerTraitAtIndexByID"]
 
-		GarrisonFollowerTooltip_Owner, id = self, info.followerID
+		id = info.followerID
 		GarrisonFollowerTooltip:ClearAllPoints()
 		GarrisonFollowerTooltip:SetPoint("TOPLEFT", self, "TOPRIGHT", 0, 4)
 		GarrisonFollowerTooltip_Show(info.garrFollowerID or info.followerID,
@@ -333,10 +334,7 @@ local function FollowerButton_OnEnter(self)
 	end
 end
 local function FollowerButton_OnLeave(self)
-	if GarrisonFollowerTooltip_Owner == self then
-		GarrisonFollowerTooltip:Hide()
-		GarrisonFollowerTooltip_Owner = nil
-	end
+	GarrisonFollowerTooltip:Hide()
 	if GameTooltip:IsOwned(self) then
 		GameTooltip:Hide()
 	end
@@ -460,6 +458,7 @@ local lfgButton do
 	border:SetPoint("TOPLEFT", 1, -1.5)
 	border:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
 	local ico = lfgButton:CreateTexture(nil, "ARTWORK")
+	ico:SetNonBlocking(false)
 	ico:SetTexture("Interface\\LFGFrame\\BattlenetWorking28")
 	ico:SetAllPoints()
 	local curIco, nextSwap = 28, 0.08

@@ -1,7 +1,9 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="Actionbar.lua"/>
 	<Script file="Modules.lua"/>
-	<Script file="AuraWatchList.lua"/>
 	<Script file="Nameplate.lua"/>
-	<Script file="GnomeSequencer.lua"/>
+	<!--Script file="GnomeSequencer.lua"/-->
+	<Script file="AurasTable.lua"/>
+	<Include file="AuraWatchList\AuraWatchList.xml"/>
+	<Include file="RaidFrameAuras\RaidFrameAuras.xml"/>
 </Ui>

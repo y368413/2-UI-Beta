@@ -17,10 +17,12 @@ ns.PowerBarColor = {
 	["RAGE"] = { r = 1.00, g = 0.00, b = 0.00 },
 	["FOCUS"] = { r = 1.00, g = 0.50, b = 0.25 },
 	["ENERGY"] = { r = 1.00, g = 1.00, b = 0.00 },
+	["UNUSED"] = { r = 0.00, g = 1.00, b = 1.00 },
 	["COMBO_POINTS"] = { r = 1.00, g = 0.96, b = 0.41 },
 	["RUNES"] = { r = 0.50, g = 0.50, b = 0.50 },
 	["RUNIC_POWER"] = { r = 0.00, g = 0.82, b = 1.00 },
 	["SOUL_SHARDS"] = { r = 0.50, g = 0.32, b = 0.55 },
+	["ECLIPSE"] = { negative = { r = 0.30, g = 0.52, b = 0.90 },  positive = { r = 0.80, g = 0.82, b = 0.60 }},
 	["LUNAR_POWER"] = { r = 0.30, g = 0.52, b = 0.90 },
 	["HOLY_POWER"] = { r = 0.95, g = 0.90, b = 0.60 },
 	["MAELSTROM"] = { r = 0.00, g = 0.50, b = 1.00 },
@@ -49,11 +51,18 @@ ns.RaidClassColors = {
 }
 
 local Gcd_class_spells = {
-	["PALADIN"]      	= 19750,
-   	["SHAMAN"]       	= 77472,
-   	["PRIEST"]       	= 139,
-   	["DRUID"]       	= 5185,  
-   	["MONK"]       		= 116694,	
+	["DEATHKNIGHT"]		= 45902,		
+	["HUNTER"]		= 1978,			
+	["PRIEST"] 		= 21562,		
+	["PALADIN"]		= 635,			
+	["WARLOCK"]		= 686,			
+	["MAGE"]		= 133,			
+	["WARRIOR"]		= 7386,			
+	["SHAMAN"] 		= 331,			
+	["ROGUE"]		= 1752,			
+	["DRUID"] 		= 1126,		
+	["MONK"] 		= 115921,
+	["DEMONHUNTER"] 	= 203782,	
 }
 
 local Indicators_class_default = {
@@ -147,7 +156,7 @@ local Indicators_class_default = {
 		},
 		["Cen"] = {
 			["1"] = {
-				id 		= {139},		--"恢复"
+				id 		= {139, 194384},		--"恢复"
 				isbuff	= true,
 				mine	= true,
 				lack	= false,
@@ -165,7 +174,7 @@ local Indicators_class_default = {
 				color	= {r = 1, g = 0.0, b = 0.0},
 			},
 			["2"] = {
-				id	= {200025},		--"美德道标"
+				id	= {157007},		--"洞察道标"
 				isbuff	= true,
 				mine	= true,
 				lack	= false,
@@ -175,14 +184,8 @@ local Indicators_class_default = {
     ["TR"] = {},
     ["BL"] = {
 			["1"] = {
-				id 		= {53563, 156910},		--"圣光道标, 信仰道标"
+				id 		= {53563, 156910, 200025},		--"圣光道标, 信仰道标"
 				isbuff	= true,
-				mine	= true,
-				lack	= false,
-			},
-			["2"] = {
-				id 		= {243174},		--"神圣黎明"
-				isbuff	= false,
 				mine	= true,
 				lack	= false,
 			},
@@ -190,7 +193,7 @@ local Indicators_class_default = {
 		["RC"] = {},
 		["BR"] = {
 			["1"] = {
-				id 		= {200025},		--"美德道标"
+				id 		= {157007},		--"洞察道标"
 				isbuff	= true,
 				mine	= false,
 				lack	= false,
@@ -198,7 +201,7 @@ local Indicators_class_default = {
 		},
 		["Cen"] = {
 			["1"] = {
-				id 		= {1022, 1038, 1044, 6940, 114039},	--祝福之手
+				id 		= {1022, 1038, 1044, 6940, 223306, 114039},	--祝福之手
 				isbuff	= true,
 				mine	= true,
 				lack	= false,
@@ -270,9 +273,25 @@ local Indicators_class_default = {
 				color	= {r = .8, g = 1, b = 0.0},
 			},
 		},
-        ["BL"] = {},
+        ["BL"] = {
+			["1"] = {
+				id 		= {974},		--"大地之盾"
+				isbuff	= true,
+				mine	= true,
+				lack	= false,
+			},
+		},
 	["RC"] = {},
-        ["BR"] = {},
+        ["BR"] = {
+			["1"] = {
+				id 		= {974},		--"大地之盾"
+				isbuff	= true,
+				mine	= false,
+				lack	= false,
+				count	= true,
+				etime	= false,
+			},
+		},
         ["Cen"] = {
 			["1"] = {
 				id 		= {61295},		--"激流"
@@ -308,13 +327,13 @@ local Indicators_class_default = {
 			},
 		},
         ["TR"] = {
+		},
+        ["BL"] = {
 			["1"] = {
-				id 		= {191840},		--"精华之泉"
+				id 		= {132120},		--"氤氲之雾"
 				isbuff	= true,
-				mine	= true,
 			},
 		},
-        ["BL"] = {},
 	["RC"] = {},
         ["BR"] = {},
         ["Cen"] = {
@@ -387,9 +406,9 @@ ns.defaults = {
     onlymana = true,
     powerbarsize = .16,
     outsideRange = .40,
-    arrow = true,
-    arrowscale = 1.0,
-    arrowmouseover = true,
+    --arrow = true,
+    --arrowscale = 1.0,
+    --arrowmouseover = true,
     healtext = false,
     healbar = true,
     healoverflow = true,
@@ -493,7 +512,6 @@ function ns:UpdatePlayerData()
 	ns.general.isHealer = self:IsHealer(ns.general.class)
 	ns.general.realmname = GetRealmName()
 	ns.general.playerDBKey = ns.general.playername.." - "..ns.general.realmname
-	ns.general.MapID = self:GetMapID()  
 	ns.general.GcdSpellID = Gcd_class_spells[ns.general.class]
 	ns.general.IndicatorsSet = Indicators_class_default[ns.general.class]
 	ns.general.dispellist = self:GetDispelClass()

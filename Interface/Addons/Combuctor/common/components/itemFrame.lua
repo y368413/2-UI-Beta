@@ -4,7 +4,6 @@
 --]]
 
 local ADDON, Addon = ...
-local Cache = LibStub('LibItemCache-1.1')
 local ItemFrame = Addon:NewClass('ItemFrame', 'Frame')
 ItemFrame.Button = Addon.ItemSlot
 
@@ -14,7 +13,7 @@ ItemFrame.Button = Addon.ItemSlot
 function ItemFrame:New(parent, bags)
 	local f = self:Bind(CreateFrame('Frame', nil, parent))
 	f.bags, f.buttons, self.bagSlots = bags, {}, {}
-	f:SetScript('OnHide', f.UnregisterEvents)
+	f:SetScript('OnHide', f.UnregisterSignals)
 	f:SetScript('OnShow', f.Update)
 	f:SetSize(1,1)
 
@@ -34,15 +33,15 @@ end
 --[[ Events ]]--
 
 function ItemFrame:RegisterEvents()
-	self:UnregisterEvents()
-	self:RegisterFrameMessage('PLAYER_CHANGED', 'Update')
-	self:RegisterFrameMessage('FILTERS_CHANGED', 'RequestLayout')
-	self:RegisterMessage('UPDATE_ALL', 'RequestLayout')
+	self:UnregisterSignals()
+	self:RegisterFrameSignal('OWNER_CHANGED', 'Update')
+	self:RegisterFrameSignal('FILTERS_CHANGED', 'RequestLayout')
+	self:RegisterSignal('UPDATE_ALL', 'RequestLayout')
 	self:RegisterEvent('GET_ITEM_INFO_RECEIVED')
 
 	if not self:IsCached() then
-		self:RegisterMessage('BAG_UPDATE_SIZE')
-		self:RegisterMessage('BAG_UPDATE_CONTENT')
+		self:RegisterSignal('BAG_UPDATE_SIZE')
+		self:RegisterSignal('BAG_UPDATE_CONTENT')
 		self:RegisterEvent('UNIT_QUEST_LOG_CHANGED')
 		self:RegisterEvent('ITEM_LOCK_CHANGED')
 
@@ -54,7 +53,7 @@ function ItemFrame:RegisterEvents()
 		self:RegisterEvent('PLAYER_SPECIALIZATION_CHANGED', 'ForAll', 'UpdateUpgradeIcon')
 		self:RegisterEvent('UNIT_INVENTORY_CHANGED', 'ForAll', 'UpdateUpgradeIcon')
 	else
-		self:RegisterMessage('BANK_OPENED', 'RegisterEvents')
+		self:RegisterMessage('CACHE_BANK_OPENED', 'RegisterEvents')
 	end
 end
 
@@ -82,7 +81,7 @@ end
 function ItemFrame:GET_ITEM_INFO_RECEIVED(_,itemID)
 	if not self:PendingLayout() then
 		for i, button in ipairs(self.buttons) do
-			if button:GetItemID() == itemID then
+			if button.info.id == itemID then
 				button:Update()
 			end
 		end
@@ -171,7 +170,7 @@ function ItemFrame:Layout()
 
 	local width, height = max(columns * size * scale, 1), max(y * size * scale, 1)
 	self:SetSize(self.Transposed and height or width, self.Transposed and width or height)
-	self:SendFrameMessage('ITEM_FRAME_RESIZED')
+	self:SendFrameSignal('ITEM_FRAME_RESIZED')
 end
 
 function ItemFrame:ForAll(method, ...)
@@ -206,7 +205,7 @@ function ItemFrame:IsShowingBag(bag)
 end
 
 function ItemFrame:NumSlots(bag)
-	return Addon:GetBagSize(self:GetPlayer(), bag)
+	return Addon:GetBagInfo(self:GetOwner(), bag).count or 0
 end
 
 function ItemFrame:NumButtons()

@@ -1,5 +1,8 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="Skins.lua"/>
+	<Script file="PetBattleUI.lua"/>
 	<Script file="DBM.lua"/>
-	<Script file="CastBar.lua"/>
+	<Script file="Skada.lua"/>
+	<Script file="TMW.lua"/>
+	<Script file="WeakAuras.lua"/>
 </Ui>

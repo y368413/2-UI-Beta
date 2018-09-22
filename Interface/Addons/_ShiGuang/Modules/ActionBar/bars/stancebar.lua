@@ -1,9 +1,10 @@
-local M, R, U, I = unpack(select(2, ...))
-local Bar = MaoRUI:GetModule("Actionbar")
+local _, ns = ...
+local M, R, U, I = unpack(ns)
+local Bar = M:GetModule("Actionbar")
 local cfg = R.bars.stancebar
-local padding, margin = 2, 5
 
 function Bar:CreateStancebar()
+	local padding, margin = 2, 5
 	local num = NUM_STANCE_SLOTS
 	local NUM_POSSESS_SLOTS = NUM_POSSESS_SLOTS
 	local buttonList = {}
@@ -21,7 +22,7 @@ function Bar:CreateStancebar()
 	else
 		frame.Pos = {"BOTTOM", UIParent, "BOTTOM", -62, 85}
 	end
-	frame:SetScale(cfg.scale)
+	frame:SetScale(MaoRUISettingDB["Actionbar"]["ActionbarScale"])
 
 	--STANCE BAR
 
@@ -77,6 +78,6 @@ function Bar:CreateStancebar()
 
 	--create the mouseover functionality
 	if cfg.fader then
-		MaoRUI.CreateButtonFrameFader(frame, buttonList, cfg.fader)
+		M:CreateButtonFrameFader(frame, buttonList, cfg.fader)
 	end
 end

@@ -1,4 +1,5 @@
-﻿local M, R, U, I = unpack(select(2, ...))
+﻿local _, ns = ...
+local M, R, U, I = unpack(ns)
 -- ALT+RightClick to buy a stack
 local old_MerchantItemButton_OnModifiedClick = MerchantItemButton_OnModifiedClick
 local cache = {}
@@ -8,7 +9,7 @@ function MerchantItemButton_OnModifiedClick(self, ...)
 		local itemLink = GetMerchantItemLink(id)
 		if not itemLink then return end
 		local name, _, quality, _, _, _, _, maxStack, _, texture = GetItemInfo(itemLink)
-		if ( maxStack and maxStack > 1 ) then
+			if maxStack and maxStack > 1 then
 			if not cache[itemLink] then
 				StaticPopupDialogs["BUY_STACK"] = {
 					text = CHARMS_BUY_STACK,
@@ -106,13 +107,17 @@ local _backgroundList = {
 	[10] = "BloodElf",
 	[11] = "Draenei",  --德莱尼
 	[22] = "Worgen",  --狼人
-	[24] = "Pandaren"  --熊猫
+	[24] = "Pandaren",  --熊猫
+  [27] = "Nightborne",  --夜之子
+  [28] = "HighmountainTauren",  --至高岭牛头人
+  [29] = "VoidElf",   --虚空精灵
+  [30] = "LightforgedDraenei"   --光铸德莱尼
 };
 
 local DRF_button1 = CreateFrame("Button","DRF_UndressButton",DressUpFrame,"UIPanelButtonTemplate");
 local DRF_button2 = CreateFrame("Button","DRF_TargetButton",DressUpFrame,"UIPanelButtonTemplate");
 local DRF_button3 = CreateFrame("Button","DRF_RaceButton",DressUpFrame,"UIPanelButtonTemplate");
-local DRF_menu1 = CreateFrame("FRAME","DRF_RaceMenu",DRF_button3,"L_UIDropDownMenuTemplate");
+local DRF_menu1 = CreateFrame("FRAME","DRF_RaceMenu",DRF_button3,"UIDropDownMenuTemplate");
 
 
 DRF_button1:SetPoint("BOTTOMLEFT",DressUpFrame,"BOTTOMLEFT",6,4);
@@ -156,46 +161,54 @@ local function DRF_menu1_OnClick(self, arg1, arg2, checked)
 end
 
 DRF_menu1:SetPoint("CENTER");
-L_UIDropDownMenu_Initialize(DRF_menu1, function(self, level, menuList)
-	local info = L_UIDropDownMenu_CreateInfo()
+MSA_DropDownMenu_Initialize(DRF_menu1, function(self, level, menuList)
+	local info = MSA_DropDownMenu_CreateInfo()
 	if level == 1 then
 		info.checked = false;
 		info.text = CHARMS_MALE;
 		info.menuList, info.hasArrow = 0, true;
-		L_UIDropDownMenu_AddButton(info, level);
+		MSA_DropDownMenu_AddButton(info, level);
 		info.text = CHARMS_FEMALE;
 		info.menuList, info.hasArrow = 1, true;
-		L_UIDropDownMenu_AddButton(info, level);
+		MSA_DropDownMenu_AddButton(info, level);
 	else
 		info.checked = false;
 		info.func = DRF_menu1_OnClick;
 		info.arg2 = menuList;
 		info.text, info.arg1 = CHARMS_HUMAN, 1;
-		L_UIDropDownMenu_AddButton(info, level);
+		MSA_DropDownMenu_AddButton(info, level);
 		info.text, info.arg1 = CHARMS_ORC, 2;
-		L_UIDropDownMenu_AddButton(info, level);
+		MSA_DropDownMenu_AddButton(info, level);
 		info.text, info.arg1 = CHARMS_DWARF, 3;
-		L_UIDropDownMenu_AddButton(info, level);
+		MSA_DropDownMenu_AddButton(info, level);
 		info.text, info.arg1 = CHARMS_NIGHTELF, 4;
-		L_UIDropDownMenu_AddButton(info, level);
+		MSA_DropDownMenu_AddButton(info, level);
 		info.text, info.arg1 = CHARMS_SCOURGE, 5;
-		L_UIDropDownMenu_AddButton(info, level);
+		MSA_DropDownMenu_AddButton(info, level);
 		info.text, info.arg1 = CHARMS_TAUREN, 6;
-		L_UIDropDownMenu_AddButton(info, level);
+		MSA_DropDownMenu_AddButton(info, level);
 		info.text, info.arg1 = CHARMS_GNOME, 7;
-		L_UIDropDownMenu_AddButton(info, level);
+		MSA_DropDownMenu_AddButton(info, level);
 		info.text, info.arg1 = CHARMS_TROLL, 8;
-		L_UIDropDownMenu_AddButton(info, level);
+		MSA_DropDownMenu_AddButton(info, level);
 		info.text, info.arg1 = CHARMS_GOBLIN, 9;
-		L_UIDropDownMenu_AddButton(info, level);
+		MSA_DropDownMenu_AddButton(info, level);
 		info.text, info.arg1 = CHARMS_BLOODELF, 10;
-		L_UIDropDownMenu_AddButton(info, level);
+		MSA_DropDownMenu_AddButton(info, level);
 		info.text, info.arg1 = CHARMS_DRAENEI, 11;
-		L_UIDropDownMenu_AddButton(info, level);
+		MSA_DropDownMenu_AddButton(info, level);
 		info.text, info.arg1 = CHARMS_WORGEN, 22;
-		L_UIDropDownMenu_AddButton(info, level);
+		MSA_DropDownMenu_AddButton(info, level);
 		info.text, info.arg1 = CHARMS_PANDAREN, 24;
-		L_UIDropDownMenu_AddButton(info, level);
+		MSA_DropDownMenu_AddButton(info, level);
+    info.text, info.arg1 = CHARMS_NIGHTBORNE, 27; 
+    MSA_DropDownMenu_AddButton(info, level); 
+    info.text, info.arg1 = CHARMS_HIGHMOUNTAINTAUREN, 28; 
+    MSA_DropDownMenu_AddButton(info, level); 
+    info.text, info.arg1 = CHARMS_VOIDELF, 29; 
+    MSA_DropDownMenu_AddButton(info, level); 
+    info.text, info.arg1 = CHARMS_LIGHTFORGEDDRAENEI, 30; 
+    MSA_DropDownMenu_AddButton(info, level); 
 	end
 end, "MENU");
 
@@ -209,8 +222,7 @@ DressUpFrameResetButton:SetScript("OnClick",function(self,event,arg1)
 end);
 
 DRF_button3:SetScript("OnClick",function(self,event,arg1)
-	--ToggleDropDownMenu(1, nil, DRF_menu1, "cursor", 3, -3);
-	L_ToggleDropDownMenu(1, nil, DRF_menu1, "cursor", 3, -3);
+	MSA_ToggleDropDownMenu(1, nil, DRF_menu1, "cursor", 3, -3);
 end);
 
 --[[-------------------------------------------------------------daftDressUp
@@ -296,24 +308,20 @@ end);
 --Hooks
 CharacterFrame:HookScript("OnShow", function() daftDressUp:setPosition(); end);
 DressUpFrame:HookScript("OnShow", function() daftDressUp:setPosition(); end);
-hooksecurefunc("UpdateUIPanelPositions", function() daftDressUp:setPosition(); end);]]
-
+hooksecurefunc("UpdateUIPanelPositions", function() daftDressUp:setPosition(); end);
+]]
 -----------------------------------------	     随机队列倒计时    -----------------------------------------
-local TIMEOUT = 40
-
-local BD = {
-	bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-	tile = true,
-	tileSize = 32,
-	insets = {left = -1, right = -1, top = -1, bottom = -1},
-}
-
 local timerBar = CreateFrame("StatusBar", nil, LFGDungeonReadyPopup)
 timerBar:SetPoint("TOP", LFGDungeonReadyPopup, "BOTTOM", 0, -5)
 timerBar:SetSize(190, 9)
 timerBar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar", "BORDER")
 timerBar:SetStatusBarColor(1,.1,0)
-timerBar:SetBackdrop(BD)
+timerBar:SetBackdrop({
+	bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+	tile = true,
+	tileSize = 32,
+	insets = {left = -1, right = -1, top = -1, bottom = -1},
+})
 timerBar:Hide()
 
 timerBar.Spark = timerBar:CreateTexture(nil, "OVERLAY")
@@ -332,76 +340,60 @@ timerBar.Text:SetFontObject(GameFontHighlight)
 timerBar.Text:SetPoint("CENTER", timerBar, "CENTER")
 
 local timeLeft = 0
-local function barUpdate(self, elapsed)
+timerBar:SetScript("OnUpdate", function(self, elapsed)
 	timeLeft = (timeLeft or 0) - elapsed
 	if(timeLeft <= 0) then return self:Hide() end
-
 	self:SetValue(timeLeft)
 	self.Text:SetFormattedText("%.1f", timeLeft)
-end
-timerBar:SetScript("OnUpdate", barUpdate)
-
-local function OnEvent(self, event, ...)
-	local BWL = _G["BigWigsLoader"]
-	if(BWL) then return end
-
-	timerBar:SetMinMaxValues(0, TIMEOUT)
-	timeLeft = TIMEOUT
-	timerBar:Show()
-end
+end)
 
 local eventFrame = CreateFrame"Frame"
-eventFrame:RegisterEvent"LFG_PROPOSAL_SHOW"
-eventFrame:SetScript("OnEvent", OnEvent)
-
------------------------------------------------------- Faster Looting
-local tDelay = 0
-local function FastLoot()
-	if not MaoRUISettingDB["Misc"]["FasterLoot"] then return end
-	if GetTime() - tDelay >= .3 then
-		tDelay = GetTime()
-		if GetCVarBool("autoLootDefault") ~= IsModifiedClick("AUTOLOOTTOGGLE") then
-			for i = GetNumLootItems(), 1, -1 do
-				LootSlot(i)
-			end
-			tDelay = GetTime()
-		end
-	end
-end
-MaoRUI:EventFrame("LOOT_READY"):SetScript("OnEvent", FastLoot)
+eventFrame:RegisterEvent("LFG_PROPOSAL_SHOW") 
+eventFrame:SetScript("OnEvent", function(self, event, ...)
+	if (_G["BigWigsLoader"]) then return end
+	timerBar:SetMinMaxValues(0, 40)
+	timeLeft = 40
+	timerBar:Show()
+end)
 
 -- Hide TalkingFrame
-local function NoTalkingHeads(self)
-	hooksecurefunc(TalkingHeadFrame, "Show", function(self)
-		self:Hide()
-	end)
-	TalkingHeadFrame.ignoreFramePositionManager = true
-	self:UnregisterAllEvents()
-end
-MaoRUI:EventFrame({"ADDON_LOADED", "PLAYER_ENTERING_WORLD"}):SetScript("OnEvent", function(self, event, addon)
-	if not MaoRUISettingDB["Misc"]["HideTalking"] then
-		self:UnregisterAllEvents()
-		return
+do
+	local function NoTalkingHeads()
+		hooksecurefunc(TalkingHeadFrame, "Show", function(self)
+			self:Hide()
+		end)
+		TalkingHeadFrame.ignoreFramePositionManager = true
 	end
 
+local function NoTalkingHead(event, addon)
+	if not MaoRUISettingDB["Misc"]["HideTalking"] then
+			M:UnregisterEvent(event, NoTalkingHead)
+		return
+	end
 	if event == "PLAYER_ENTERING_WORLD" then
+			M:UnregisterEvent(event, NoTalkingHead)
 		if IsAddOnLoaded("Blizzard_TalkingHeadUI") then
-			NoTalkingHeads(self)
+				NoTalkingHeads()
+				M:UnregisterEvent("ADDON_LOADED", NoTalkingHead)
 		end
 	elseif event == "ADDON_LOADED" and addon == "Blizzard_TalkingHeadUI" then
-		NoTalkingHeads(self)
+			NoTalkingHeads()
+			M:UnregisterEvent(event, NoTalkingHead)
+		end
 	end
-end)
+
+	M:RegisterEvent("PLAYER_ENTERING_WORLD", NoTalkingHead)
+	M:RegisterEvent("ADDON_LOADED", NoTalkingHead)
+end
 
 -- Extend Instance
 do
-	local RaidInfoFrame = _G.RaidInfoFrame
 	local bu = CreateFrame("Button", nil, RaidInfoFrame)
 	bu:SetPoint("TOPRIGHT", -35, -5)
 	bu:SetSize(25, 25)
 	M.CreateIF(bu, true)
 	bu.Icon:SetTexture(GetSpellTexture(80353))
-	M.CreateGT(bu, "ANCHOR_RIGHT", CHARMS_EXTEND, "system")
+	M.AddTooltip(bu, "ANCHOR_RIGHT", CHARMS_EXTEND, "system")
 
 	bu:SetScript("OnMouseUp", function(_, btn)
 		for i = 1, GetNumSavedInstances() do
@@ -508,9 +500,72 @@ hooksecurefunc("SetItemButtonQuality", function(button, quality, itemIDOrLink)
 		button.qualityIcon:Hide()
 	end
 end)]]
+
 ------------------------------------------------------------------------------- NiceDamage
 --Local NiceDamage = CreateFrame("Frame", "NiceDamage");
 --function NiceDamage:ApplySystemDamageFonts() DAMAGE_TEXT_FONT = "Interface\\AddOns\\_ShiGuang\\Media\\Fonts\\RedCircl.ttf"; end
 --NiceDamage:SetScript("OnEvent", function() if (event == "ADDON_LOADED") then NiceDamage:ApplySystemDamageFonts() end end);
 --NiceDamage:RegisterEvent("ADDON_LOADED");
 --NiceDamage:ApplySystemDamageFonts()
+
+
+--## Title: Extended Transmog UI  ## Author: Germbread ## Version: 1.1.0
+function ExtTransmog_RebuildFrame()
+    WardrobeFrame:SetWidth(1200);
+    --WardrobeFrame:SetScale(0.82);
+    WardrobeTransmogFrame:SetWidth(535);
+    WardrobeTransmogFrame.Model:ClearAllPoints();
+    WardrobeTransmogFrame.Model:SetPoint("TOP", WardrobeTransmogFrame, "TOP", 0, -4);
+    WardrobeTransmogFrame.Model:SetWidth(420);
+    WardrobeTransmogFrame.Model:SetHeight(420);
+    WardrobeTransmogFrame.Inset.BG:SetWidth(529);
+
+    WardrobeTransmogFrame.Model.HeadButton:ClearAllPoints();
+    WardrobeTransmogFrame.Model.HeadButton:SetPoint("TOP", WardrobeTransmogFrame.Model, "TOP", -238, -41);
+    WardrobeTransmogFrame.Model.HandsButton:ClearAllPoints();
+    WardrobeTransmogFrame.Model.HandsButton:SetPoint("TOP", WardrobeTransmogFrame.Model, "TOP", 235, -118);
+
+    WardrobeTransmogFrame.Model.MainHandButton:ClearAllPoints();
+    WardrobeTransmogFrame.Model.MainHandButton:SetPoint("TOP", WardrobeTransmogFrame.Model, "BOTTOM", -26, -5);
+    WardrobeTransmogFrame.Model.SecondaryHandButton:ClearAllPoints();
+    WardrobeTransmogFrame.Model.SecondaryHandButton:SetPoint("TOP", WardrobeTransmogFrame.Model, "BOTTOM", 27, -5);
+    WardrobeTransmogFrame.Model.MainHandEnchantButton:ClearAllPoints();
+    WardrobeTransmogFrame.Model.MainHandEnchantButton:SetPoint("BOTTOM", WardrobeTransmogFrame.Model.MainHandButton, "BOTTOM", 0, -20);
+    WardrobeTransmogFrame.Model.SecondaryHandEnchantButton:ClearAllPoints();
+    WardrobeTransmogFrame.Model.SecondaryHandEnchantButton:SetPoint("BOTTOM", WardrobeTransmogFrame.Model.SecondaryHandButton, "BOTTOM", 0, -20);    
+end
+local ExtTransmogUI = CreateFrame("Frame")
+ExtTransmogUI:SetScript("OnEvent",function(self,event,addon)
+    if addon=="Blizzard_Collections" then
+		ExtTransmog_RebuildFrame()
+		ExtTransmogUI:UnregisterEvent("ADDON_LOADED")
+	end
+end)
+ExtTransmogUI:RegisterEvent("ADDON_LOADED")
+
+------------------------------ ## Notes: Automatically destroys items in the pre-defined list    ## Author: Tim @ WoW Interface    ## Version: 1.0
+local itemList = {
+	[2287] = true,		-- haunch of meat (tested in RFC)  肉排
+	[1179] = true,		-- ice cold milk (tested in RFC)   冰镇牛奶
+}
+local DESTROY = CreateFrame("Frame", "AutoItemDestroyer")
+DESTROY:RegisterEvent("BAG_UPDATE")
+DESTROY:RegisterEvent("BAG_UPDATE_DELAYED")
+DESTROY:RegisterEvent("CHAT_MSG_LOOT")
+DESTROY:SetScript("OnEvent", function(_, event, ...)
+   for bags = 0, 4 do
+      for slots = 1, GetContainerNumSlots(bags) do
+         local itemLink, linkID = GetContainerItemLink(bags, slots), GetContainerItemID(bags, slots)
+         if (itemLink and linkID) then
+            if (select(11, GetItemInfo(itemLink)) ~= nil and select(2, GetContainerItemInfo(bags, slots)) ~= nil) then
+               local itemName, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _ = GetItemInfo(linkID) 
+               if itemList[linkID] then
+                  PickupContainerItem(bags, slots)
+                  DeleteCursorItem()
+                  --print("Searched bags... FOUND & DESTROYED: |cff6699dd", itemName.." [ID: "..linkID.."]")
+               end
+            end
+         end
+      end
+   end
+end)

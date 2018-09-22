@@ -1,4 +1,4 @@
-local activeSetID, currSetID, updateElapsed
+local activeIndex, currIndex, updateElapsed
 local DURASLOTS = { 16, 17, 18, 5, 7, 1, 3, 8, 10, 6, 9 }
 
 local function IsEquippableSlot(slot)
@@ -33,12 +33,6 @@ local function GetFirstAvailableBag(bags)
 	end
 end
 
-local function GetNameandIcon(SetID)
-	local setName, iconPath = GetEquipmentSetInfo(SetID)
-	if setName and not iconPath then iconPath = 134400 end
-	return setName, iconPath
-end
-
 local function QuickStripOff()
 	if UnitIsDeadOrGhost("player") or not HasFullControl() or GetItemLocked() then
 		UIErrorsFrame:AddMessage(ERR_CLIENT_LOCKED_OUT, 1, 0, 0)
@@ -70,77 +64,64 @@ local function QuickStripOff()
 		end
 	end
 	if count == 0 then return end
-	if activeSetID then
-		_G["EquipSetsButton"..activeSetID]:UnlockHighlight()
-		DEFAULT_CHAT_FRAME:AddMessage(format(IEQUIP_STRIPSET, activeSetID, count), 1, 0.3, 0.3)
-		activeSetID = nil
+	if activeIndex then
+		_G["EquipSetsButton"..activeIndex]:UnlockHighlight()
+		DEFAULT_CHAT_FRAME:AddMessage(format(IEQUIP_STRIPSET, activeIndex, count), 1, 0.3, 0.3)
+		activeIndex = nil
 	else
 		DEFAULT_CHAT_FRAME:AddMessage(format(IEQUIP_STRIP, count), 1, 0.3, 0.3)
 	end
 end
 
-local function GetItemId(bag, slot)
-	local lnk
-	if slot then
-		lnk = GetContainerItemLink(bag, slot)
-	else
-		lnk = GetInventoryItemLink("player", bag)
+local function GetSetInfoByIndex(index)
+	local setName, iconPath
+	local ids = C_EquipmentSet.GetEquipmentSetIDs()
+	local setID = ids[index]
+	if setID then
+		setName, iconPath = C_EquipmentSet.GetEquipmentSetInfo(setID)
 	end
-	if lnk then
-		local _, _, id = string.find(lnk, "item:(%d+).+%[(.+)%]")
-		return tonumber(id or "")
-	end
+	return setName, iconPath, setID
 end
 
-local function CheckSetWorn(equipped, name)
-	if not name then return end
-	local ids = GetEquipmentSetItemIDs(name)
-	for k, v in pairs(ids) do
-		if v and v > 1 and equipped[k] ~= v then
-			return
-		end
-	end
-	return 1
-end
-
-local function GetActiveSet()
-	local equipped = {}
-	for i = 0, 19 do
-		equipped[i] = GetItemId(i) or 0
-	end
-	for i = 1, GetNumEquipmentSets() do
-		local setName = GetNameandIcon(i)
-		if CheckSetWorn(equipped, setName) then
-			return i
+local function GetActiveSetInfo()
+	local index, setID, setName, iconPath, isEquipped
+	local ids = C_EquipmentSet.GetEquipmentSetIDs()
+	for index, setID in ipairs(ids) do
+		setName, iconPath, _, isEquipped = C_EquipmentSet.GetEquipmentSetInfo(setID)
+		if isEquipped then
+			return setName, iconPath, index, setID
 		end
 	end
 end
 
 local function CheckButtonsHighlight()
-	currSetID = GetActiveSet()
-	if activeSetID == currSetID then return end
 	local setName, iconPath
-	if activeSetID then
-		_G["EquipSetsButton"..activeSetID]:UnlockHighlight()
-		if not currSetID then
-			setName, iconPath = GetNameandIcon(activeSetID)
+	setName, iconPath, currIndex = GetActiveSetInfo()
+
+	if (not activeIndex and not currIndex) or (activeIndex and currIndex and activeIndex == currIndex) then return end
+
+	if currIndex then
+		_G["EquipSetsButton"..currIndex]:LockHighlight()
+		DEFAULT_CHAT_FRAME:AddMessage(format(IEQUIP_WEARSET, currIndex, iconPath, setName))
+	end
+
+	if activeIndex then
+		_G["EquipSetsButton"..activeIndex]:UnlockHighlight()
+		if not currIndex then
+			setName, iconPath = GetSetInfoByIndex(activeIndex)
 			if setName then
-				DEFAULT_CHAT_FRAME:AddMessage(format(IEQUIP_CHANGED, activeSetID, iconPath, setName), 1, 0.3, 0.3)
+				DEFAULT_CHAT_FRAME:AddMessage(format(IEQUIP_CHANGED, activeIndex, iconPath, setName), 1, 0.3, 0.3)
 			else
 				DEFAULT_CHAT_FRAME:AddMessage(IEQUIP_NOTASET, 1, 0.3, 0.3)
 			end
 		end
 	end
-	if currSetID then
-		_G["EquipSetsButton"..currSetID]:LockHighlight()
-		setName, iconPath = GetNameandIcon(currSetID)
-		DEFAULT_CHAT_FRAME:AddMessage(format(IEQUIP_WEARSET, currSetID, iconPath, setName))
-	end
-	activeSetID = currSetID
+
+	activeIndex = currIndex
 end
 
 local function UpdateButtonsNum(self)
-	local num = GetNumEquipmentSets()
+	local num = C_EquipmentSet.GetNumEquipmentSets()
 	for i = 1, 10 do
 		if i > num then
 			_G["EquipSetsButton"..i]:Hide()
@@ -150,26 +131,26 @@ local function UpdateButtonsNum(self)
 	end
 	--_G["StripButton"]:ClearAllPoints()
 	--_G["StripButton"]:SetPoint("BOTTOMLEFT", PlayerFrame, "TOPLEFT", 66+16*(curNumSets+1), -21)
-	self.SetsNum = num
+	self.setsNum = num
 end
 
 local function buttonOnEnter(self)
 	GameTooltip:SetOwner(_G["StripButton"], "ANCHOR_RIGHT")
-	local id = self:GetID()
-	if id == 0 then
+	local index = self:GetID()
+	if index == 0 then
 		--GameTooltip:AddLine(IEQUIP_OPEN)
-	--elseif id == 11 then
+	--elseif index == 11 then
 		GameTooltip:AddLine(IEQUIP_QUICKSTRIP)
 	else
-		local setName, iconPath = GetNameandIcon(id)
-		GameTooltip:AddLine(format(IEQUIP_GEARSET, id, iconPath, setName))
+		local setName, iconPath = GetSetInfoByIndex(index)
+		GameTooltip:AddLine(format(IEQUIP_GEARSET, index, iconPath, setName))
 	end
 	GameTooltip:Show()
 end
 
 local function buttonOnClick(self)
-	local id = self:GetID()
-	if id == 0 then
+	local index = self:GetID()
+	if index == 0 then
 		--if PaperDollEquipmentManagerPane:IsVisible() then
 			--ToggleCharacter("PaperDollFrame")
 		--else
@@ -177,10 +158,11 @@ local function buttonOnClick(self)
 			--if not CharacterFrame.Expanded then CharacterFrame_Expand()	end
 			--PaperDollFrame_SetSidebar(PaperDollSidebarTab3, PaperDollSidebarTab3:GetID())
 		--end
-	--elseif id == 11 then
+	--elseif index == 11 then
 		QuickStripOff()
-	elseif id ~= activeSetID then
-		UseEquipmentSet(GetNameandIcon(id))    --Fix For 7.2 by y368413
+	elseif index ~= activeIndex then
+		local setID = select(3, GetSetInfoByIndex(index))
+		if setID then EquipmentManager_EquipSet(setID) end
 	end
 end
 
@@ -192,13 +174,13 @@ iEquip:RegisterEvent("UNIT_ENTERED_VEHICLE")
 iEquip:RegisterEvent("UNIT_EXITED_VEHICLE")
 iEquip:Show()
 
-local function makeButton(name, text, id)
+local function makeButton(name, text, index)
 	local button = CreateFrame("Button", name, PlayerFrame, "UIPanelButtonTemplate")
 	button:SetWidth(16)
 	button:SetHeight(16)
 	button:SetText(text)
-	button:SetID(id)
-	button:SetPoint("TOPLEFT", PlayerFrame, "TOPLEFT", 88+16*id, -6)
+	button:SetID(index)
+	button:SetPoint("TOPLEFT", PlayerFrame, "TOPLEFT", 88+16*index, -6)
 	button:SetScript("OnEnter", buttonOnEnter)
 	button:SetScript("OnLeave", function() GameTooltip:Hide() end)
 	button:SetScript("OnClick", buttonOnClick)
@@ -212,7 +194,8 @@ for i = 1, 10 do
 end
 --makeButton("StripButton", IEQUIP_SYMBOL,, 11)
 
-iEquip:SetScript("OnEvent", function(self, event)
+iEquip:SetScript("OnEvent", function(self, event, ...)
+	local arg1 = ...
 	if event == "PLAYER_ENTERING_WORLD" then
 		self:UnregisterEvent("PLAYER_ENTERING_WORLD")
 		PlayerFrameGroupIndicatorLeft:SetAlpha(0)
@@ -220,15 +203,25 @@ iEquip:SetScript("OnEvent", function(self, event)
 		PlayerFrameGroupIndicatorMiddle:SetAlpha(0)
 		PlayerFrameGroupIndicatorText:ClearAllPoints()
 		PlayerFrameGroupIndicatorText:SetPoint("BOTTOMLEFT", PlayerFrame, "BOTTOMLEFT", -8, 19)
+		PlayerFrameRoleIcon:ClearAllPoints()
+		PlayerFrameRoleIcon:SetPoint("TOPLEFT", PlayerFrame, "TOPLEFT", 80, -5)
 		UpdateButtonsNum(self)
 		self.needCheck = 1
 	elseif event == "PLAYER_EQUIPMENT_CHANGED" then
-		self.needCheck = 1
+		if self.setsNum ~= 0 then
+			self.needCheck = 1
+		end
 	elseif event == "EQUIPMENT_SETS_CHANGED" then
-		if self.SetsNum ~= GetNumEquipmentSets() then
+		if self.setsNum ~= C_EquipmentSet.GetNumEquipmentSets() then
 			UpdateButtonsNum(self)
 		end
 		self.needCheck = 1
+	elseif arg1 == "player" then
+		if event == "UNIT_ENTERED_VEHICLE" then
+			self:Hide()
+		elseif event == "UNIT_EXITED_VEHICLE" then
+			self:Show()
+		end
 	end
 end)
 
@@ -243,7 +236,7 @@ iEquip:SetScript("OnUpdate", function(self, elapsed)
 	end
 end)
 
--- Autoequip in Spec-changing
+--[[ Autoequip in Spec-changing
 local au = CreateFrame("Frame")
 au:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 au:SetScript("OnEvent", function(self, event, arg1, _, _, _, arg2)
@@ -261,12 +254,12 @@ au:SetScript("OnEvent", function(self, event, arg1, _, _, _, arg2)
 		print("--已根据天赋和预设套装换装--")
 		end
 	else
-		for i = 1, GetNumEquipmentSets() do
-			local name, _, _, isEquipped = GetEquipmentSetInfo(i)
+		for i = 0, C_EquipmentSet.GetNumEquipmentSets()-1 do
+			local name, _, _, isEquipped = C_EquipmentSet.GetEquipmentSetInfo(i)
 			if isEquipped then
 				print("|cFFBF00FF已是当前天赋套装")
 				break
 			end
 		end
 	end
-end)
+end)]]

@@ -1,24 +1,12 @@
-﻿local M, R, U, I = unpack(select(2, ...))
-local function MrOnLogin()
-		MaoRUISettingDB.load = true
-		ReloadUI()
-		Welcome:Hide()
-		ForceDefaultSettings()
-		ForceUIScale()
-		ForceChatSettings()
-		ForceAddonSkins()
-		if MaoRUISettingDB["Chat"]["Lock"] then ForceChatSettings() end
-		if MaoRUISettingDB["Settings"]["DBMRequest"] then ForceDBMOptions() end
-	  if tonumber(GetCVar("cameraDistanceMaxZoomFactor")) ~= 2.6 then SetCVar("cameraDistanceMaxZoomFactor", 2.6) end
-	  sendCmd("/console missingTransmogSourceInItemTooltips 1")
-end
+﻿local _, ns = ...
+local M, R, U, I = unpack(ns)
 ------------------------------------LogIn Welcome Pic----------------------------------------------
 --Config
 local BackDropFile = "Interface\\Addons\\_ShiGuang\\Media\\Modules\\Raid\\solid"
 local Media = "Interface\\AddOns\\_ShiGuang\\Media\\Modules\\BlinkHealthText\\" 	
 local Small1 = Media.."SmallPic.tga" 	
 local Large1 = Media.."LargePic.tga" 
-local Pic = Media.."Pic.tga"
+--local Pic = Media.."Pic.tga"
 local ClassColor = RAID_CLASS_COLORS[select(2, UnitClass("player"))] 
 --Welcome--
 local Welcome = CreateFrame("Frame", nil, UIParent) 
@@ -38,7 +26,7 @@ Welcome:SetBackdropBorderColor(0,0,0,0)
 --TopBlack--
 local TopBlack = CreateFrame("Frame", nil, Welcome) 
 TopBlack:SetPoint("TOPLEFT",Welcome,0,0)
-TopBlack:SetPoint("BOTTOMRIGHT",Welcome,"TOPRIGHT",0,-43)
+TopBlack:SetPoint("BOTTOMRIGHT",Welcome,"TOPRIGHT",0,-21)
 TopBlack:SetBackdrop({ 
    bgFile = BackDropFile, 
    insets = 0, 
@@ -47,6 +35,7 @@ TopBlack:SetBackdrop({
 })
 TopBlack:SetBackdropColor(0.08, 0.08, 0.08, 1) 
 TopBlack:SetBackdropBorderColor(0,0,0,0) 
+
 --BottomBlack--
 local BottomBlack = CreateFrame("Frame", nil, Welcome) 
 BottomBlack:SetPoint("TOPLEFT",Welcome,"BOTTOMLEFT",0,43)
@@ -59,17 +48,29 @@ BottomBlack:SetBackdrop({
 })
 BottomBlack:SetBackdropColor(0.06, 0.06, 0.06, 1) 
 BottomBlack:SetBackdropBorderColor(0,0,0,0) 
+
 ----------WelcomeTitle----------
-local WelcomeTitle = CreateFrame("Button", nil, Welcome) 
-WelcomeTitle:SetSize(210,43)
-WelcomeTitle:SetPoint("TOPLEFT",Welcome,"TOPLEFT",66,-28)
-WelcomeTitle:SetFrameStrata("HIGH")
-WelcomeTitle:SetFrameLevel(1)
-WelcomeTitle.Text = WelcomeTitle:CreateFontString(nil, "OVERLAY")
-WelcomeTitle.Text:SetFont("Interface\\addons\\_ShiGuang\\Media\\Fonts\\Infinity.TTF", 43, "OUTLINE") 
-WelcomeTitle.Text:SetText(" - |cFFBF00FFMao|r|cFF00DDFFR|r|cffff8800 UI|r - ")
-WelcomeTitle.Text:SetPoint("CENTER",WelcomeTitle,0,3)
-WelcomeTitle.Text:SetTextColor(1,1,1,1)
+local WelcomeTitle1 = CreateFrame("Button", nil, Welcome) 
+WelcomeTitle1:SetSize(60,60)
+WelcomeTitle1:SetPoint("BOTTOM",Welcome,"CENTER",0,12)
+WelcomeTitle1:SetFrameStrata("HIGH")
+WelcomeTitle1:SetFrameLevel(1)
+WelcomeTitle1.Text = WelcomeTitle1:CreateFontString(nil, "OVERLAY")
+WelcomeTitle1.Text:SetFont("Interface\\addons\\_ShiGuang\\Media\\Fonts\\RedCircl.TTF", 120, "OUTLINE") 
+WelcomeTitle1.Text:SetText("|cFFFFFF00 2 |r")
+WelcomeTitle1.Text:SetPoint("CENTER",WelcomeTitle1,0,3)
+WelcomeTitle1.Text:SetTextColor(1,0,0,1)
+
+local WelcomeTitle2 = CreateFrame("Button", nil, Welcome) 
+WelcomeTitle2:SetSize(43,43)
+WelcomeTitle2:SetPoint("BOTTOMRIGHT",WelcomeTitle1,"BOTTOMRIGHT",21,-8)
+WelcomeTitle2:SetFrameStrata("HIGH")
+WelcomeTitle2:SetFrameLevel(1)
+WelcomeTitle2.Text = WelcomeTitle2:CreateFontString(nil, "OVERLAY")
+WelcomeTitle2.Text:SetFont("Interface\\addons\\_ShiGuang\\Media\\Fonts\\RedCircl.TTF", 23, "OUTLINE") 
+WelcomeTitle2.Text:SetText("|cFFFF0000 UI|r")
+WelcomeTitle2.Text:SetPoint("CENTER",WelcomeTitle2,0,3)
+WelcomeTitle2.Text:SetTextColor(1,1,0,1)
 --------------------WelcomeAbstract--------------------
 local WelcomeAbstract= CreateFrame("Button", nil, Welcome) 
 WelcomeAbstract:SetPoint("TOPLEFT",Welcome,"BOTTOMLEFT",-1,43+43)
@@ -87,33 +88,22 @@ MadeBy:SetFrameLevel(10)
 MadeBy:SetWidth(210)
 MadeBy:SetHeight(21)
 MadeBy:SetPoint("BOTTOMRIGHT",BottomBlack,"BOTTOMRIGHT",-8,31)
-MadeBy.Text = MadeBy:CreateFontString(nil, "OVERLAY")
-MadeBy.Text:SetFont("Interface\\addons\\_ShiGuang\\Media\\Fonts\\Pixel.TTF", 12, "THICKOUTLINE") 
-MadeBy.Text:SetText("- www.maorui.org -") --■ ■
-MadeBy.Text:SetPoint("CENTER",MadeBy,0,0)
-MadeBy.Text:SetTextColor(0.66,0.66,0.66,1)
-
+--MadeBy.Text = MadeBy:CreateFontString(nil, "OVERLAY")
+--MadeBy.Text:SetFont("Interface\\addons\\_ShiGuang\\Media\\Fonts\\Pixel.TTF", 12, "THICKOUTLINE") 
+--MadeBy.Text:SetText("- www.maorui.org -") --■ ■
+--MadeBy.Text:SetPoint("CENTER",MadeBy,0,0)
+--MadeBy.Text:SetTextColor(0.66,0.66,0.66,1)
+MadeBy.Text1 = MadeBy:CreateFontString(nil, "OVERLAY")
+MadeBy.Text1:SetFont("Interface\\addons\\_ShiGuang\\Media\\Fonts\\Edo.TTF", 52, "THICKOUTLINE") 
+MadeBy.Text1:SetText("ALLIANCE OR HORDE ?")
+MadeBy.Text1:SetPoint("TOP",Welcome,"TOP",0,-43)
+MadeBy.Text1:SetTextColor(1, 1, 1,1)
 MadeBy.Text2 = MadeBy:CreateFontString(nil, "OVERLAY")
 MadeBy.Text2:SetFont("Interface\\addons\\_ShiGuang\\Media\\Fonts\\Edo.TTF", 43, "THICKOUTLINE") 
-MadeBy.Text2:SetText("Time is come to see it done.")
-MadeBy.Text2:SetPoint("TOPRIGHT",Welcome,"TOPRIGHT",-120,-120)
+MadeBy.Text2:SetText("MAKE DECISION !")
+MadeBy.Text2:SetPoint("TOP",Welcome,"TOP",0,-120)
 MadeBy.Text2:SetTextColor(1, 1, 1,1)
-MadeBy.Text3 = MadeBy:CreateFontString(nil, "OVERLAY")
-MadeBy.Text3:SetFont("Interface\\addons\\_ShiGuang\\Media\\Fonts\\Edo.TTF", 52, "THICKOUTLINE") 
-MadeBy.Text3:SetText("Burn it to ash")
-MadeBy.Text3:SetPoint("TOPRIGHT",Welcome,"TOPRIGHT",-43,-180)
-MadeBy.Text3:SetTextColor(1, 1, 1,1)
 
---[[MadeBy.Text4 = MadeBy:CreateFontString(nil, "OVERLAY")
-MadeBy.Text4:SetFont(STANDARD_TEXT_FONT, 88, "THICKOUTLINE") 
-MadeBy.Text4:SetText("祖宗们，你们知道吗？.")
-MadeBy.Text4:SetPoint("TOP",Welcome,"CENTER",-160,-20)
-MadeBy.Text4:SetTextColor(1, 1, 1,1)
-MadeBy.Text5 = MadeBy:CreateFontString(nil, "OVERLAY")
-MadeBy.Text5:SetFont(STANDARD_TEXT_FONT, 88, "THICKOUTLINE") 
-MadeBy.Text5:SetText("右键小地图能解决80%问题")
-MadeBy.Text5:SetPoint("TOP",Welcome,"CENTER",80,-120)
-MadeBy.Text5:SetTextColor(1, 1, 1,1)]]
 --------------------------------------------------Frame----------------------------------------------------------
 --Small-
 local Small = CreateFrame("Frame", nil, Welcome) 
@@ -158,22 +148,22 @@ SmallText:SetPoint("RIGHT",SmallPic,"LEFT",88,0)
 --SmallText.Icon:SetAllPoints(SmallText)
 SmallText.Text1 = SmallText:CreateFontString(nil, "OVERLAY")
 SmallText.Text1:SetFont(STANDARD_TEXT_FONT, 16, "THICKOUTLINE") 
-SmallText.Text1:SetText(Welcome_SmallText1)
+SmallText.Text1:SetText("[ 微美化界面 ]")
 SmallText.Text1:SetPoint("RIGHT",SmallText,"CENTER",160,60)
 SmallText.Text1:SetTextColor(ClassColor.r, ClassColor.g, ClassColor.b,1)
 SmallText.Text2 = SmallText:CreateFontString(nil, "OVERLAY")
 SmallText.Text2:SetFont(STANDARD_TEXT_FONT, 16, "THICKOUTLINE") 
-SmallText.Text2:SetText(Welcome_SmallText2)
+SmallText.Text2:SetText("[ 全职业适用无障碍 ]")
 SmallText.Text2:SetPoint("RIGHT",SmallText,"CENTER",160,20)
 SmallText.Text2:SetTextColor(ClassColor.r, ClassColor.g, ClassColor.b,1)
 SmallText.Text3 = SmallText:CreateFontString(nil, "OVERLAY")
 SmallText.Text3:SetFont(STANDARD_TEXT_FONT, 16, "THICKOUTLINE") 
-SmallText.Text3:SetText(Welcome_SmallText3)
+SmallText.Text3:SetText("[ 开袋即食 轻优化 无需设置 ]")
 SmallText.Text3:SetPoint("RIGHT",SmallText,"CENTER",160,-20)
 SmallText.Text3:SetTextColor(ClassColor.r, ClassColor.g, ClassColor.b,1)
 SmallText.Text4 = SmallText:CreateFontString(nil, "OVERLAY")
 SmallText.Text4:SetFont(STANDARD_TEXT_FONT, 16, "THICKOUTLINE") 
-SmallText.Text4:SetText(Welcome_SmallText4)
+SmallText.Text4:SetText("[ 插件适配更新器 更加便捷及时和高效 ]")
 SmallText.Text4:SetPoint("RIGHT",SmallText,"CENTER",160,-60)
 SmallText.Text4:SetTextColor(ClassColor.r, ClassColor.g, ClassColor.b,1)
 
@@ -219,40 +209,82 @@ LargeText:SetPoint("LEFT",LargePic,"RIGHT",-80,0)
 --LargeText.Icon:SetAllPoints(LargeText)
 LargeText.Text1 = LargeText:CreateFontString(nil, "OVERLAY")
 LargeText.Text1:SetFont(STANDARD_TEXT_FONT, 16, "THICKOUTLINE") 
-LargeText.Text1:SetText(Welcome_Large1)
+LargeText.Text1:SetText("[ v "..GetAddOnMetadata("_ShiGuang", "Version").." ]")
 LargeText.Text1:SetPoint("LEFT",LargeText,"CENTER",-160,60)
 LargeText.Text1:SetTextColor(ClassColor.r, ClassColor.g, ClassColor.b, 1)  --0.97,0.75,0,1
 LargeText.Text2 = LargeText:CreateFontString(nil, "OVERLAY")
 LargeText.Text2:SetFont(STANDARD_TEXT_FONT, 16, "THICKOUTLINE") 
-LargeText.Text2:SetText(Welcome_Large2)
+LargeText.Text2:SetText("[ Hi BFA 8.0.1 ]")
 LargeText.Text2:SetPoint("LEFT",LargeText,"CENTER",-160,30)
 LargeText.Text2:SetTextColor(ClassColor.r, ClassColor.g, ClassColor.b, 1)  --0.97,0.75,0,1
 LargeText.Text3 = LargeText:CreateFontString(nil, "OVERLAY")
 LargeText.Text3:SetFont(STANDARD_TEXT_FONT, 16, "THICKOUTLINE") 
-LargeText.Text3:SetText(Welcome_Large3)
+LargeText.Text3:SetText("[ 右键小地图便捷设置 ]")
 LargeText.Text3:SetPoint("LEFT",LargeText,"CENTER",-160,-0)
 LargeText.Text3:SetTextColor(ClassColor.r, ClassColor.g, ClassColor.b, 1)  --0.97,0.75,0,1
 LargeText.Text4 = LargeText:CreateFontString(nil, "OVERLAY")
 LargeText.Text4:SetFont(STANDARD_TEXT_FONT, 16, "THICKOUTLINE") 
-LargeText.Text4:SetText(Welcome_Large4)
+LargeText.Text4:SetText("[ 系统自带功能，插件有针对性删减 ]")
 LargeText.Text4:SetPoint("LEFT",LargeText,"CENTER",-160,-30)
 LargeText.Text4:SetTextColor(ClassColor.r, ClassColor.g, ClassColor.b, 1)  --0.97,0.75,0,1
 LargeText.Text5 = LargeText:CreateFontString(nil, "OVERLAY")
-LargeText.Text5:SetFont(STANDARD_TEXT_FONT, 12, "THICKOUTLINE") 
-LargeText.Text5:SetText(Welcome_Large5)
+LargeText.Text5:SetFont(STANDARD_TEXT_FONT, 16, "THICKOUTLINE") 
+LargeText.Text5:SetText("[ https://www.maorui.net ]")
 LargeText.Text5:SetPoint("LEFT",LargeText,"CENTER",-160,-60)
 LargeText.Text5:SetTextColor(ClassColor.r, ClassColor.g, ClassColor.b,1)
 
 -------------------模 型---------------------------
---local IntroOptions = CreateFrame("Frame", "IntroFrame", Welcome)
---IntroOptions:SetAllPoints(Welcome)
---IntroOptions:SetParent(Welcome)
+
+local LeftRed = CreateFrame("Frame", nil, Welcome) 
+LeftRed:SetPoint("TOPLEFT",TopBlack,"BOTTOMLEFT",0,0)
+LeftRed:SetPoint("BOTTOMRIGHT",Small,"TOPRIGHT",0,0)
+LeftRed:SetBackdrop({ 
+   bgFile = BackDropFile, 
+   insets = 0, 
+   edgeFile = BackDropFile, 
+   edgeSize = 1, 
+})
+LeftRed:SetBackdropColor(0, 0, 1, 0.3) 
+LeftRed:SetBackdropBorderColor(0,0,0,0) 
+
+local RightBlue = CreateFrame("Frame", nil, Welcome) 
+RightBlue:SetPoint("TOPRIGHT",TopBlack,"BOTTOMRIGHT",0,0)
+RightBlue:SetPoint("BOTTOMLEFT",Large,"TOPLEFT",0,0)
+RightBlue:SetBackdrop({ 
+   bgFile = BackDropFile, 
+   insets = 0, 
+   edgeFile = BackDropFile, 
+   edgeSize = 1, 
+})
+RightBlue:SetBackdropColor(1, 0, 0, 0.3) 
+RightBlue:SetBackdropBorderColor(0,0,0,0) 
+--NPCMode2--------------------
+local NPCMode2 = CreateFrame("PlayerModel", "NPCMode2", Welcome)
+NPCMode2:SetSize(UIParent:GetWidth(), UIParent:GetHeight()*0.8)
+NPCMode2:SetPoint("BOTTOM",Large,"TOPRIGHT",0,0) --"CENTER",0,210
+NPCMode2:SetDisplayInfo(28213)  --ShiGuangDB.DisplayInfo
+NPCMode2:SetParent(Welcome) 
+NPCMode2:SetCamDistanceScale(0.6)
+NPCMode2:SetPosition(0,-0.21,-0.43)
+NPCMode2:SetRotation(-0.26)
+NPCMode2.rotation = 0.22
+local function RotateModel(self, button)
+    local rotationIncrement = 0.2
+    if button == "LeftButton" then
+		self.rotation = self.rotation - rotationIncrement
+    else
+		self.rotation = self.rotation + rotationIncrement
+    end
+    self.rotation = floor((self.rotation)*10)/10
+    self:SetRotation(self.rotation)
+end
+NPCMode2:SetScript("OnMouseDown", function(self, button) RotateModel(self, button) end)
 --NPCModel--------------------
 local NPCModel = CreateFrame("PlayerModel", "NPCModel", Welcome)
 NPCModel:SetSize(UIParent:GetWidth(), UIParent:GetHeight()*0.8)
-NPCModel:SetPoint("BOTTOM",Small,"TOPRIGHT",0,0) --"CENTER",0,210
-NPCModel:SetDisplayInfo(ShiGuangDB.DisplayInfo)
-NPCModel:SetParent(Welcome)
+NPCModel:SetPoint("BOTTOM",Small,"TOPRIGHT",-210,0) --"CENTER",0,210
+NPCModel:SetDisplayInfo(82047)  --54860  --74504   --71057 	--68323   --35908   --65636 
+NPCModel:SetParent(Welcome) 
 NPCModel:SetCamDistanceScale(0.8)
 NPCModel:SetPosition(0,-0.21,-0.43)
 NPCModel:SetRotation(0.66)
@@ -268,17 +300,16 @@ local function RotateModel(self, button)
     self:SetRotation(self.rotation)
 end
 NPCModel:SetScript("OnMouseDown", function(self, button) RotateModel(self, button) end)
---[[PlayerModel--------------------
+--PlayerModel--------------------
 local PlayerModel = CreateFrame("PlayerModel", "PlayerModel", Welcome)
 PlayerModel:SetSize(256, 256)
-PlayerModel:SetPoint("BOTTOM",MadeBy,"TOP",0,120)
---PlayerModel:SetUnit("player")
-PlayerModel:SetDisplayInfo(74878)
+PlayerModel:SetPoint("BOTTOM",Small,"TOPRIGHT",0,-60) --"BOTTOM",MadeBy,"TOP",0,120
+PlayerModel:SetUnit("player")
 PlayerModel:SetParent(Welcome)
 PlayerModel:SetCamDistanceScale(1)
 PlayerModel:SetPosition(-1.6,0,0)
-PlayerModel:SetRotation(-0.4)
-PlayerModel.rotation = -0.3]]
+PlayerModel:SetRotation(0)
+PlayerModel.rotation = 0
 --[[----------------GuiMenuBar-------------------------
 local MainMenu = CreateFrame("Button", nil, UIParent) 
 MainMenu:SetWidth(88)
@@ -298,7 +329,7 @@ MainMenu:SetFrameLevel(0)
 MainMenu:SetPoint("TOP",UIParent,"TOP",0,0)
 MainMenu.Text = MainMenu:CreateFontString(nil, "OVERLAY")
 MainMenu.Text:SetFont(STANDARD_TEXT_FONT, 16, "OUTLINE") 
-MainMenu.Text:SetText("--|cFFBF00FFMao|r|cFF00DDFFR|r|cffff8800 UI|r--")
+MainMenu.Text:SetText("---|cFFB22222 2 |r|cFF1E90FF UI |r---")
 MainMenu.Text:SetPoint("CENTER",MainMenu,0,3)
 
 MainMenu:SetScript("OnMouseDown", function(self, button)
@@ -335,32 +366,48 @@ local WelComeMainMenu = CreateFrame("Frame")
 end)]]
 
 -- Menu Slash--  
-MaoRUI:EventFrame("ADDON_LOADED"):SetScript("OnEvent", function(self, event, addon)
+local function WelcomeMenuSlash(event, addon)
   if addon ~= "_ShiGuang" then return end
-	self:UnregisterEvent("ADDON_LOADED")
-	SLASH_ShiGuang1 = '/loadmr'
-	SlashCmdList["ShiGuang"] = function() Welcome:Show() end
-end)
-
+	  M:UnregisterEvent(event, WelcomeMenuSlash)
+	  SLASH_ShiGuang1 = '/loadmr'
+	  SlashCmdList["ShiGuang"] = function() Welcome:Show()
+  end
+end
+M:RegisterEvent("ADDON_LOADED", WelcomeMenuSlash)
 Welcome:Hide()
+
+local function MrOnLogin()
+		MaoRUISettingDB.loaded = true
+		ReloadUI()
+		Welcome:Hide()
+end
 
 ------------------按钮动作-------------------------
 MadeBy:SetScript("OnClick", function(self,Button) Welcome:Hide() end)
 SmallPic:SetScript("OnClick", function(self,Button)
-		MaoRUISettingDB.Small = true
-		MaoRUISettingDB.Large = false
+		MaoRUISettingDB.BHT = true
 		MrOnLogin()
 end)
 LargePic:SetScript("OnClick", function(self,Button)
-		MaoRUISettingDB.Small = false
-		MaoRUISettingDB.Large = true
+		MaoRUISettingDB.BHT = false
 		MrOnLogin()
-	end)
-
-MaoRUI:EventFrame("PLAYER_ENTERING_WORLD"):SetScript("OnEvent", function(self, event)
-	self:UnregisterEvent(event)
-	if not MaoRUISettingDB.load then
-		if event == "PLAYER_ENTERING_WORLD" then Welcome:Hide() end
-	Welcome:Show()
-	end
 end)
+
+local function Welcomeload(self, event)
+	M:UnregisterEvent(event, Welcomeload)
+	if not MaoRUISettingDB.loaded then
+		if event == "PLAYER_ENTERING_WORLD" then Welcome:Hide() end
+	  Welcome:Show()
+	end
+	if (MaoRUISettingDB.BHT == true) then
+	    sendCmd("/bht on")
+	    PlayerFrame:SetAlpha(0)
+	    TargetFrame:SetAlpha(0)               
+	else
+	    sendCmd("/bht off")
+	    PlayerFrame:SetAlpha(1)
+	    TargetFrame:SetAlpha(1)  
+	end
+	if (MaoRUISettingDB["BHTHit"] == true) then sendCmd("/bht hiton") else sendCmd("/bht hitoff") end
+end
+M:RegisterEvent("PLAYER_ENTERING_WORLD", Welcomeload)

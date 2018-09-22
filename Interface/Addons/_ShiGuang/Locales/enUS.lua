@@ -1,63 +1,16 @@
 local _, _, U, _ = unpack(select(2, ...))
 --if GetLocale() ~= "enUS" then return end
-FACTION_BAR_COLORS = {
-	[1] = { r= .54, g= 0,   b= 0   }, -- hated
-	[2] = { r= 1,   g= .10, b= .1  }, -- hostile
-	[3] = { r= 1,   g= .55, b= 0   }, -- unfriendly
-	[4] = { r= .87, g= .87, b= .87 }, -- neutral
-	[5] = { r= 1,   g= 1,   b= 0   }, -- friendly
-	[6] = { r= .1,  g= .9,  b= .1  }, -- honored
-	[7] = { r= .25, g= .41, b= .88 }, -- revered
-	[8] = { r= .6,  g= .2,  b= .8  }, -- exalted
-	[9] = { r= .4,  g= 0,   b= .6  }, -- past exalted
-};
-GOLD_AMOUNT = "|c00ffd700%d●|r";--GOLD_AMOUNT = "%d\124TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0\124t"
-SILVER_AMOUNT = "|c00c7c7cf%d●|r";--SILVER_AMOUNT = "%d\124TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0\124t"
-COPPER_AMOUNT = "|c00eda55f%d●|r";--COPPER_AMOUNT = "%d\124TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0\124t"
-ENTERING_COMBAT = "";
-LEAVING_COMBAT = "";
+CHAT_GUILD_GET = "|Hchannel:GUILD|h[G]|h %s ";
+CHAT_OFFICER_GET = "|Hchannel:OFFICER|h[O]|h %s ";
+CHAT_RAID_GET = "|Hchannel:RAID|h[R]|h %s ";
+CHAT_RAID_WARNING_GET = "[RW] %s ";
+CHAT_RAID_LEADER_GET = "|Hchannel:RAID|h[RL]|h %s ";
+CHAT_PARTY_GET = "|Hchannel:PARTY|h[P]|h %s ";
+CHAT_PARTY_LEADER_GET =  "|Hchannel:PARTY|h[PL]|h %s ";
+CHAT_PARTY_GUIDE_GET =  "|Hchannel:PARTY|h[PG]|h %s ";
+CHAT_INSTANCE_CHAT_GET = "|Hchannel:INSTANCE|h[I]|h %s ";
+CHAT_INSTANCE_CHAT_LEADER_GET = "|Hchannel:INSTANCE|h[IL]|h %s ";
 
-	CHAT_GUILD_GET = "|Hchannel:GUILD|h[G]|h %s ";
-	CHAT_OFFICER_GET = "|Hchannel:OFFICER|h[O]|h %s ";
-	CHAT_RAID_GET = "|Hchannel:RAID|h[R]|h %s ";
-	CHAT_RAID_WARNING_GET = "[RW] %s ";
-	CHAT_RAID_LEADER_GET = "|Hchannel:RAID|h[RL]|h %s ";
-	CHAT_PARTY_GET = "|Hchannel:PARTY|h[P]|h %s ";
-	CHAT_PARTY_LEADER_GET =  "|Hchannel:PARTY|h[PL]|h %s ";
-	CHAT_PARTY_GUIDE_GET =  "|Hchannel:PARTY|h[PG]|h %s ";
-	CHAT_INSTANCE_CHAT_GET = "|Hchannel:INSTANCE|h[I]|h %s ";
-	CHAT_INSTANCE_CHAT_LEADER_GET = "|Hchannel:INSTANCE|h[IL]|h %s ";
-  CHAT_WHISPER_INFORM_GET = "<%s:";
-  CHAT_WHISPER_GET = ">>%s:";
-  CHAT_BN_WHISPER_INFORM_GET = "<%s:";
-  CHAT_BN_WHISPER_GET = ">>%s:";
-  CHAT_SAY_GET = "%s:";
-  CHAT_YELL_GET = "%s:"  ;
-  CHAT_FLAG_AFK = "[AFK]";
-  CHAT_FLAG_DND = "[Busy]";
-  CHAT_FLAG_GM = "[GM]";
-ITEM_CREATED_BY="|cFF00DDFF<Thanks For Using MaoR UI>|r";
---- 改變頻道提示 [加入頻道→+][離開頻道→-][改變頻道→=]
-CHAT_YOU_CHANGED_NOTICE = "=|Hchannel:%d|h[%s]|h";
-CHAT_YOU_CHANGED_NOTICE_BN = "=|Hchannel:CHANNEL:%d|h[%s]|h";
-CHAT_YOU_JOINED_NOTICE = "+|Hchannel:%d|h[%s]|h";
-CHAT_YOU_JOINED_NOTICE_BN = "+|Hchannel:CHANNEL:%d|h[%s]|h";
-CHAT_YOU_LEFT_NOTICE = "-|Hchannel:%d|h[%s]|h";
-CHAT_YOU_LEFT_NOTICE_BN = "-|Hchannel:CHANNEL:%d|h[%s]|h";
-
-Welcome_loginChatText1 = "<<<-------------- 有你们的魔兽，才是世界 ----";
-Welcome_loginChatText2 = "|cFFBF00FFMao|r|cFF00DDFFR|r|cffff8800 UI|r|cff3399ff By Shiguang + TuTu v.180121|r";
-Welcome_loginChatText3 = "|cff02F78E大大大的感谢|r|cffC495DDSiweia|r|cff02F78E大大,向他学到了好多.|r";
-Welcome_loginChatText4 = "-------  v2.3.0 For 7.3.5  --------------->>>";
-Welcome_SmallText1 = "[ 微美化界面 ]";
-Welcome_SmallText2 = "[ 全职业适用无障碍 ]";
-Welcome_SmallText3 = "[ 开袋即食 轻优化 无需设置 ]";
-Welcome_SmallText4 = "[ 插件每月21日UI官网 准时更新发布 ]";
-Welcome_Large1 = "[ V 2.3.0 ]";
-Welcome_Large2 = "[ Hi Legion 7.3.5 ]";
-Welcome_Large3 = "[ 右键小地图便捷设置 ]";
-Welcome_Large4 = "[ 系统自带功能，插件有针对性删减 ]";
-Welcome_Large5 = "更多内容详见官网· · ·";
 
 DANWEI_WAN = "W";
 DANWEI_YI = "Y";
@@ -68,11 +21,13 @@ GEAR_DELETEEMPTYMAILS_TITLE="|cffFFFFFF[Mail]|rMailboxCleaner";
 GEAR_MOLINARI_TITLE="|cff8080ff[Profession]|rMolinari";
 NOTICE_INCENTIVEPROGRAM_PANEL_TITLE="|cff8080ffIncentiveProgram|r";
 NOTICE_INCENTIVEPROGRAM_TITLE="(|cFF69CCF0IncentiveProgram|r)";
-LOOT_ANNOUNCERBUTTON_TITLE="Notify loot(Riad)";
 CurrencyTracking_TITLE = "|cFF00FF00[Currency]|rTracking";
 RelicInspector_TITLE = "|cff8080ff[Tips]|rRelicInspector";
 Savedinstances_TITLE = "|c00FF68CC[Tips]|rSavedinstances";
 QuestNotifier_TITLE = "|cff0080ff[Quest]|rQuestNotifier";
+Boomkinator_TITLE = "|cff0080ff[Spell]|rBoomkinator";
+PORTALMAGETITLE = "|cff0080ff[Mage]|rPortal Mage";
+FARMERTITLE = '|cff8080ff[Loot]|rFarmer'
 ----------------Charms----------------------
 CHARMS_BUY_STACK="You sure buy|cffff0000 a stack |rthis item？"  ;
 CHARMS_NAKEDIZE="Nakedize";
@@ -92,6 +47,10 @@ CHARMS_BLOODELF="BloodElf";
 CHARMS_DRAENEI="Draenei";
 CHARMS_WORGEN="Worgen";
 CHARMS_PANDAREN="Pandaren";
+CHARMS_NIGHTBORNE="Nightborne";
+CHARMS_HIGHMOUNTAINTAUREN="HighmountainTauren";
+CHARMS_VOIDELF="VoidElf";
+CHARMS_LIGHTFORGEDDRAENEI="LightforgedDraenei";
 CHARMS_EXTEND="extend";
 ----------------Gear----------------------
 GEAR_AHHELPER_AUTOSELL="-- |cFF00DDFFAlt&RightClick |rto selling with auto price--";
@@ -109,18 +68,6 @@ SUBSPEC_LEFTSHIFT="Left Shift";
 SUBSPEC_RIGHTSHIFT="Right Shift";
 SUBSPEC_NEWPROFILENAME="Enter the new configuration file name";
 TRAINALL_ALLLEARN="Train All";
-----------------Loot----------------------
-PLH_LONG_ADDON_NAME = 'Personal Loot Helper';
-PLH_AUTHOR_NAME = 'Author:Madone-Zul\'Jin';
-PLH_ADDON_NOTE = "Personal Loot Helper";
-PLH_INCLUDE_BOEITEM = "Include Bind on Equip items";
-PLH_SPEC_ONLY = "Evaluate based on current spec only";
-PLH_NOTIFY_GROUPS = "Notify group (automatically disabled in LFR)";
-PLH_COORDINATE_ROLL = "Coordinate rolls (group leaders or assistants only)";
-PLH_MANAGE_ROLLS = "Manage loot rolls. Players can whisper the roll coordinator with <trade> or <trade [item]> to initiate rolls.";
-PLH_NO_LOWLEVEL = "Exclude notifications if character is too low level to equip item";
-PLH_SHOW_INRAID = "Show tradeable items in raid frames";
-PLH_THANKS_ALL = "Thank you to all of the players who trade loot to others who can use it! Your generosity is part of what makes the WoW community great.\nYou rock!!!";
 ----------------Map----------------------
 FOGLIGHT_HYBIRD = "Hybrid";
 FOGLIGHT_DISABLE = "Disabled";
@@ -131,14 +78,14 @@ MINIMAP_MENU_BARSTYLE = "Actionbar style";
 MINIMAP_MENU_KEYBIND = "Key BindPad";
 MINIMAP_MENU_QUESTBUTTON = "Actionbar Button";
 MINIMAP_MENU_SPECIALBUTTON = "Special Button";
-MINIMAP_MENU_AURACONFIG = "AURA Config";
+MINIMAP_MENU_AURACONFIG = "Move UI";
 MINIMAP_MENU_AURADIY = "   --AURA Setting";
 MINIMAP_MENU_CONTROLNOTICE = "Control Notice";
 MINIMAP_MENU_CASTBAR = "Castbar";
 MINIMAP_MENU_ONOFF = "on-off";
 MINIMAP_MENU_Click = "Click2Cast";
 MINIMAP_MENU_DAMAGESTYLE = "Damage style";
-MINIMAP_MENU_GRIDTOOL = "Grid tool";
+MINIMAP_MENU_INTERRUPT = "Party interrupt";
 MINIMAP_MENU_lOOTHELPER = "Loot helper";
 MINIMAP_MENU_DISTANCE = "Show distance";
 MINIMAP_MENU_COMBOPOINTS = "Combo points";
@@ -149,6 +96,45 @@ MINIMAP_MENU_CHECKFOODSSS = "Check food/drink";
 MINIMAP_MENU_QUSETIONANSWER = "Question/Answer";
 MINIMAP_MENU_UISETTING = " Setting";
 MINIMAP_MENU_MORE = "      More...";
+  -- Paku_Totems
+  PakuTotems_TheSliverNorth = "The Sliver (North)";
+  PakuTotems_EastZanchul = "East Zanchul";
+  PakuTotems_TopofZanchul = "Top of Zanchul";
+  PakuTotems_TheSliverSouth = "The Sliver (South)";
+  PakuTotems_TerraceoftheChosen = "Terrace of the Chosen";
+  PakuTotems_AltarofPaku = "Altar of Pa'ku";
+  PakuTotems_TheGreatSealLedge = "The Great Seal Ledge";
+  PakuTotems_TheGoldenThrone = "The Golden Throne";
+  PakuTotems_BeastcallerInn = "Beastcaller Inn (Warbeast Kraal)";
+  PakuTotems_GrandBazaar = "Grand Bazaar";
+  PakuTotems_TerraceofCrafters = "Terrace of Crafters";
+  PakuTotems_WestZanchul = "West Zanchul";
+  PakuTotems_TheZocalo = "The Zocalo";
+----------------Loot----------------------
+FARMER_Poor = "Poor";
+FARMER_Common = "Common";
+FARMER_Uncommon = "Uncommon";
+FARMER_Rare = "Rare";
+FARMER_Epic = "Epic";
+FARMER_Legendary = "Legendary";
+FARMER_Artifact = "Artifact";
+FARMER_Heirloom = "Heirloom";
+FARMER_WoWToken = "WoW Token";
+FARMER_ENABLEFASTAUTOLOOT = "enable fast autoloot";
+FARMER_HIDELOOTANDITEMROLLTOASTS = "hide loot and item roll toasts";
+FARMER_DONTDISPLAYITEMSINARENA = "don't display items in arena";
+FARMER_SHOWTOTALCOUNTFORSTACKABLEITEMS = "show total count for stackable items";
+FARMER_SHOWBAGCOUNTFORSTACKABLEITEMS = "show bag count for stackable items";
+FARMER_SHOWITEMSBASEDONRARITY = "show items based on rarity";
+FARMER_MINIMUMRARITY = "minimum rarity";
+FARMER_ALWAYSSHOWFARMINGITEMS = "always show farming items";
+FARMER_ALWAYSSHOWREAGENTS = "always show reagents";
+FARMER_SHOWCURRENCIES = "show currencies";
+FARMER_SHOWMONEY = "show money";
+FARMER_MOVEFRAME = "move frame";
+FARMER_RESETPOSITION = "reset position";
+FARMER_FONTSIZE = "font size";
+FARMER_DISPLAYTIME = "display time";
 ----------------Notice----------------------
 COMBATNOTIFICATIONINFO_INFO_WOWTIME_TIP = "will start within 15 minute";
 COMBATNOTIFICATIONINFO_need = " reward bags!";
@@ -207,28 +193,38 @@ BARRELSOEASY_START_FIRST = "Please start the first round, so that the barrels ca
 PVPPP_KILL_MSG = "Honorable kills:%s/%s";
 PVPPP_KILL_AVG = "You've get %s 's honorable kills in last hour";
 ----------------UFs----------------------
+CASTBARS_STYLE_TITLE = "|cff8000ff[Menu]|rCastbars";
 UFRAMESTYLE_BLINKHEALTHTEXT_ANCHOR = "LeftClick - Move\nRightClick - Lock";
-
 ----------------BRP----------------------
 BRP_Description="Lock/unlock movement with /brp lock, and reset the position with /brp reset.";
 BRP_AlwaysShow="Always unfold the loot list";
 BRP_FillDirection="Direction the loot list should appear";
+----------------Shiguang----------------------
+SHIGUANG_Loot="Loot";
+SHIGUANG_Gets="Gets";
+SHIGUANG_Refund="Refund";
 
 U["Lock UIScale"] = "Lock UIScale"
 U["Lock Chat"] = "Lock Chat"
 U["Minimap Clock"] = "Minimap Clock"
 U["Setup UIScale"] = "Setup UIScale"
+U["Setup GUIScale"] = "Setup GUIScale"
 U["PlayerFrame Scale"] = "PlayerFrame Scale"
 U["Map Scale"] = "WorldMap Scale"
 U["Map Coords"] = "WorldMap Coords"
+U["Map Reveal"] = "Map Reveal"
 U["Enable Reminder"] = "Enable Class Reminder"
-U["Enable Familiar"] = "Enable Familiar"
 U["Enable Stagger"] = "Enable Stagger"
 U["Enable Statue"] = "Enable Statue"
-U["Enable Totems"] = "Enable Totems"
-U["Destroy Totems"] = "Destroy Totems"
-U["Enable Marksman"] = "Enable Marksman"
 U["Enable BloodyHell"] = "Enable BloodyHell"
+U["Enable Totems"] = "Enable Totems"
+U["Enable Familiar"] = "Enable Familiar"
+U["Enable Marksman"] = "Enable Marksman"
+U["Enable BlinkComboHelper"] = "Enable BlinkComboHelper"
+U["Destroy Totems"] = "Destroy Totems"
+U["WorldQusetRewardIcon"] = "WorldQuset Reward Icon"
+U["Class EnergyBar"] = "Class EnergyBar"
+U["Class Recoure Center"] = "Class Recoure Center"
 U["kAutoOpen"] = "keep Auto Open Items"
 U["QuickQueue"] = "Quick Queue"
 U["AutoConfirmRoll"] = "Auto Confirm Roll"
@@ -250,15 +246,37 @@ U["Hide Error"] = "Hide Error"
 U["SoloInfo"] = "SoloInfo Notice"
 U["Rare Alert"] = "Rare Alert"
 U["Alert In Chat"] = "Alert In Chat"
+U["Yell Interrupt"] = "Yell Interrupt"
+U["Interrupt Alarm"] = "Interrupt Alarm"
+U["Death Alarm"] = "Death Alarm"
 U["Easy Focus"] = "Easy Focus(Shift click)"
 U["No Talking"] = "No NPC Talking"
+U["Numberize"] = "Numberize"
+U["Number Type1"] = "Type1：b/m/k"
+U["Number Type2"] = "Type2：亿/万"
+U["Number Type3"] = "Type3"
 U["Hide Bossbanner"] = "Hide Bossbanner"
 U["FriendGroups"] = "Friends Groups"
 U["Whisper Invite"] = "Whisper Invite"
 U["Guild Invite Only"] = "Guild Invite Only"
 U["Whisper Keyword"] = "Whisper Keyword"
 U["Enable AuraWatch"] = "Enable AuraWatch"
-U["AuraWatch Tooltip"] = "AuraWatch Tooltip"
+U["AuraWatch Tooltip"] = "Hide AuraWatch Tooltip"
+U["Achievement PrintScreen"] = "Achievement PrintScreen"
+U["Spell Not Ready"] = "Spell Not Ready Notice"
+U["Doom Cooldown"] = "Cooldown Notice"
+U["OmniCC"] = "OmniCC"
+U["WallpaperKit"] = "Wallpaper(AFK)"
+U["xMerchant"] = "xMerchant"
+U["UFClassIcon"] = "UF Class Icon"
+U["UFPctText"] = "UF Pct Text"
+U["Enable Bags"] = "Enable Bags plus"
+U["Chat Sticky"] = "Chat Sticky"
+U["Chat bg"] = "Chat bg"
+U["Chat tab bg"] = "Chat tab bg"
+U["QuestTrackerSkinTitle"] = "QuestTracker Skin Title"
+U["Auto Reagent Bank"] = "Auto Reagent Bank"
+U["Auto Mark"] = "Auto Mark T N"
 U["Enable Actionbar"] = "Enable Actionbar"
 U["Actionbar Style"] = "Actionbar Style"
 U["Bar4 Fade"] = "Bar4 Fade"
@@ -269,6 +287,13 @@ U["Actionbar Item Counts"] = "Actionbar Item Counts"
 U["Show Cooldown"] = "Show Cooldown"
 U["Decimal Cooldown"] = "Decimal Cooldown"
 U["ClassColor BG"] = "ClassColor BG"
+U["CombatHide"] = "Tooltip Combat Hide"
+U["TargetBy"] = "Tooltip TargetBy"
+U["Cursor"] = "Tooltip Cursor"
+U["QuestNotifier"] = "Quest Notifier"
+U["QuestSchedule"] = "Quest Schedule"
+U["Actionbar Scale"] = "Actionbar Scale"
+U["Tooltip Scale"] = "Tooltip Scale"
 
 	U["NFG"] = "Not From Guild"
 	U["New"] = "New"
@@ -279,6 +304,7 @@ U["ClassColor BG"] = "ClassColor BG"
 	U["Used"] = "Used"
 	U["CurrencyPanel"] = "<Left Key>Open Currency"
 	U["AutoSell Junk"] = "<Ctrl Click>Autosell Junk"
+	U["Selljunk Calculate"] = "Selljunk Calculate"
 	U["Your vendor trash has been sold and you earned"] = "Your vendor trash has been sold and you earned"
 	U["D"] = "D"
 	U["Low Durability"] = "You got low durabilty slots！"
@@ -292,16 +318,18 @@ U["ClassColor BG"] = "ClassColor BG"
 	
 	U["Friends list:"] = "Friends list:"
 	U["Friends"] = "Friends"
-	U["Earned:"] = "Earned:"
-	U["Spent:"] = "Spent:"
-	U["Deficit:"] = "Deficit:"
-	U["Profit:"] = "Profit:"
+	U["Earned"] = "Earned:"
+	U["Spent"] = "Spent:"
+	U["Deficit"] = "Deficit:"
+	U["Profit"] = "Profit:"
 	U["Session"] = "Session"
 	U["Server"] = "Server"
 	U["Character"] = "Character"
 	
 	U["Guild"] = "Guild"
 	U["No Guild"] = "No Guild"
+	U["Current"] = "Current"
+	U["Daily"] = "Daily"
 	U["Sorting"] = "Sorting"
 	U["Sorting by:"] = "Sorting by:"
 	U["Excessive"] = "Excessive !"
@@ -313,13 +341,6 @@ U["ClassColor BG"] = "ClassColor BG"
 	U["Garbage collected"] = "Garbage collected"
 	U["ManulCollect"] = "<Left Key>Collect Memory"
 	U["AutoCollect"] = "<Right Key>AutoCollect Memory"
-	
-	U["No Talents"] = "No Talents"
-	U["Active Talent"] = "Active Talent : "
-	U["Talent"] = "Talent : "
-	U["Primary Talent"] = "PTalent : "
-	U["Secondary Talent"] = "STalent : "
-	
 	U["My Position"] = "My Position"
 	U["System"] = "System"
 	U["Home"] = "Home"
@@ -349,6 +370,7 @@ U["ClassColor BG"] = "ClassColor BG"
 	U["Show Guild"] = "<Left Key>Toggle GuildFrame"
 	U["Unknown"] = "Location Unknown"
 	U["Timewarped"] = "Timewarped Badge Reward"
+	U["Mean One"] = "Mean One"
 	U["Deathtalon"] = "Deathtalon"
 	U["Terrorfist"] = "Terrorfist"
 	U["Doomroller"] = "Doomroller"
@@ -358,6 +380,210 @@ U["ClassColor BG"] = "ClassColor BG"
 	U["Gold Invasion"] = "Gold Invasion"
 	U["Silver Invasion"] = "Silver Invasion"
 	U["Bronze Invasion"] = "Bronze Invasion"
+	U["Blingtron"] = "Blingtron"
+  U["Legion Invasion"] = "Legion Invasion"
+  U["Next Invasion"] = "Next Invasion"
+  
+	U["DefaultScaleName_Default"] = "Default";
+	U["DefaultScaleName_Defensive"] = "Defensive";
+	U["DefaultScaleName_Offensive"] = "Offensive";
+	U["ScaleWeightEditor_Title"] = "%s Scale Weight Editor"; -- %s = ADDON_NAME
+	U["ScalesList_CustomGroupName"] = "Custom Scales";
+	U["ScalesList_DefaultGroupName"] = "Default Scales";
+	U["ScalesList_CreateImportText"] = "Create New / Import";
+	U["ScaleName_Unnamed"] = "Unnamed";
+	U["ScaleName_Unknown"] = "Unknown";
+	U["ExportPopup_Title"] = "Export Scale"
+	U["ExportPopup_Desc"] = "Exporting scale %1$s\nPress %2$sCtrl+C%3$s to copy the string and %4$sCtrl+V%5$s to paste it somewhere" -- %1$s = scaleName, rest are color codes
+	U["ImportPopup_Title"] = "Import Scale"
+	U["ImportPopup_Desc"] = "Importing scale from string\nPress %1$sCtrl+V%2$s to paste string to the editbox and press %3$s" -- %1$s and %2$s are color codes and %3$s = _G.ACCEPT
+	U["ImportPopup_Error_OldStringVersion"] = "ERROR: \"Import string\" -version is too old or malformed import string!"
+	U["ImportPopup_Error_MalformedString"] = "ERROR: Malformed import string!"
+	U["ImportPopup_UpdatedScale"] = "Updated existing scale \"%s\"" -- %s = scaleName
+	U["ImportPopup_CreatedNewScale"] = "Imported new scale \"%s\"" -- %s = scaleName
+	U["CreatePopup_Title"] = "Create Scale"
+	U["CreatePopup_Desc"] = "Creating new scale. Select class and specialization from dropdown and then enter name for the new scale and press %1$s" -- %s = _G.ACCEPT
+	U["CreatePopup_Error_UnknownError"] = "ERROR: Something went wrong creating new scale \"%s\"!" -- %s = scaleName
+	U["CreatePopup_Error_CreatedNewScale"] = "Created new scale \"%s\"" -- %s = scaleName
+	U["RenamePopup_Title"] = "Rename Scale"
+	U["RenamePopup_Desc"] = "Renaming scale %1$s\nEnter new name to the editbox and press %2$s" -- %1$s = old (current) scaleName, %2$s = _G.ACCEPT
+	U["RenamePopup_RenamedScale"] = "Renamed scale \"%1$s\" to \"%2$s\"" -- %1$s = old scaleName, %2$s = new scaleName
+	U["DeletePopup_Title"] = "Delete Scale"
+	U["DeletePopup_Desc"] = "Deleting scale %1$s\nPress %2$s to confirm.\nAll characters using this scale for their specialization will be reverted back to Default scale." -- %1$s = scaleName, %2$s = _G.ACCEPT
+	U["DeletePopup_Warning"] = " ! This action is permanent and cannot be reversed ! "
+	U["DeletePopup_DeletedScale"] = "Deleted scale \"%s\"" -- %s = scaleName
+	U["DeletePopup_DeletedDefaultScale"] = "Deleted scale was in use, reverting back to Default-option for your class and specialization!"
+	U["WeightEditor_VersionText"] = "Version %s" -- %s = version
+	U["WeightEditor_CreateNewText"] = "Create New"
+	U["WeightEditor_ImportText"] = "Import"
+	U["WeightEditor_EnableScaleText"] = "Use this Scale"
+	U["WeightEditor_ExportText"] = "Export"
+	U["WeightEditor_RenameText"] = "Rename"
+	U["WeightEditor_DeleteText"] = "Delete"
+	U["WeightEditor_TooltipText"] = "Show in Tooltips"
+	U["WeightEditor_CurrentScale"] = "Current scale: %s" -- %s current scaleName
+	U["PowersTitles_Class"] = "Class Powers"
+	U["PowersTitles_Defensive"] = "Defensive Powers"
+	U["PowersTitles_Role"] = "Role Powers"
+	U["PowersTitles_Zone"] = "Raid and Zone Powers"
+	U["PowersTitles_Profession"] = "Profession Powers"
+	U["PowersTitles_PvP"] = "PvP Powers"
+	U["PowersScoreString"] = "Score: %1$s/%2$s\nMax: %3$s\nlevel: %4$s/%5$s" -- %1$d = currentScore, %2$d = currentPotential, %3$d = maximumScore, %4$d = currentLevel, %5$d = maxLevel
+	U["ItemToolTip_AzeriteLevel"] = "Azerite level: %1$d / %2$d" -- %1$d = currentLevel, %2$d = maxLevel
+	U["Config_SettingsSavedPerChar"] = "All these settings here are saved per character.\nCustom scales are shared between all characters."
+	U["Config_Scales_Title"] = "Scales list"
+	U["Config_Scales_Desc"] = "Following settings only affects the list of Default scales. All Custom scales will be always listed to every class."
+	U["Config_Scales_OwnClassDefaultsOnly"] = "List own class Default-scales only"
+	U["Config_Scales_OwnClassDefaultsOnly_Desc"] = "List Default-scales for your own class only, instead of listing all of them."
+	U["Config_Importing_Title"] = "Importing"
+	U["Config_Importing_ImportingCanUpdate"] = "Importing can update existing scales"
+	U["Config_Importing_ImportingCanUpdate_Desc"] = "When importing scale with same name, class and specialization as pre-existing scale, existing scale will be updated with the new weights instead of creating new scale."
+	U["Config_Importing_ImportingCanUpdate_Desc_Clarification"] = "There can be multiple scales with same name as long as they are for different specializations or classes."
+	U["Config_WeightEditor_Title"] = "Scales weight editor"
+	U["Config_WeightEditor_Desc"] = "Following settings only affects the powers shown in the scale weight editor. Even if you disable them, all and any Azerite powers will be still scored if they have weight set to them in the active scale."
+	U["Config_WeightEditor_ShowDefensive"] = "Show Defensive powers"
+	U["Config_WeightEditor_ShowDefensive_Desc"] = "Show common and class specific Defensive powers in the scale weight editor."
+	U["Config_WeightEditor_ShowRole"] = "Show Role specific powers"
+	U["Config_WeightEditor_ShowRole_Desc"] = "Show Role specific powers in the scale weight editor."
+	U["Config_WeightEditor_ShowRolesOnlyForOwnSpec"] = "Show Role specific powers only for my own specializations role"
+	U["Config_WeightEditor_ShowRolesOnlyForOwnSpec_Desc"] = "Show common and current specialization related specific Role specific powers in the scale weight editor. Enabling this setting e.g. hides healer only specific powers from damagers and tanks etc."
+	U["Config_WeightEditor_ShowZone"] = "Show Zone specific powers"
+	U["Config_WeightEditor_ShowZone_Desc"] = "Show Zone specific powers in the scale weight editor. These powers can only appear in items acquired in particular zones related to the power."
+	U["Config_WeightEditor_ShowZone_Desc_Proc"] = "Normal zone specific powers can activate/proc everywhere, but raid powers will do so only while inside their related raid instance (e.g. Uldir powers will only proc while inside Uldir raid instance).\nRaid powers are marked with an asterisk (*) next to their name in the scale weight editor."
+	U["Config_WeightEditor_ShowProfession"] = "Show Profession specific powers"
+	U["Config_WeightEditor_ShowProfession_Desc"] = "Show Profession specific powers in the scale weight editor. These powers can only appear in items created with professions. Currently these can only appear in Engineering headgear."
+	U["Config_WeightEditor_ShowPvP"] = "Show PvP specific powers"
+	U["Config_WeightEditor_ShowPvP_Desc"] = "Show PvP specific powers in the scale weight editor. You'll only see your own factions powers, but changes made to them will be mirrored to both factions."
+	U["Config_WeightEditor_ShowPvP_Desc_Import"] = "When Exporting, the resulting export-string will only include your own factions pvp powers, but they are interchangeable with opposing factions pvp-powerIDs.\nWhen Importing import-string with pvp powers only from one faction, powers will get their weights mirrored to both factions on Import."
+	U["Config_Score_Title"] = "Score"
+	U["Config_Score_AddItemLevelToScore"] = "Add itemlevel to all scores"
+	U["Config_Score_AddItemLevelToScore_Desc"] = "Add Azerite items itemlevel to all current score, current potential and maximum score calculations."
+	U["Slash_Command"] = "/azerite" -- If you need localized slash-command, this doesn't replace the existing /azerite
+	U["Slash_RemindConfig"] = "Check ESC -> Interface -> AddOns -> %s for settings." -- %s = ADDON_NAME
+	U["Slash_Error_Unkown"] = "ERROR: Something went wrong!"
+	U["Weights"] = "Weights"
+	
+U["BTN_CHECK_ENCHANTS"] = "Check"
+U["BTN_INVITE"] = "Invite"
+U["UI_ITEMS_TITLE"] = "Gear"
+U["UI_GEMS_TITLE"] = "Gems"
+U["UI_ENCHANTS_TITLE"] = "Enchants"
+U["ENCHANT_REPORT_HEADER"] = "|cff00FF00!!!|cffFFFFFF for %s (L%d %s):" -- name, level, class
+U["AVG_ITEM_LEVEL"] = "Average item level: %d (%d to %d)"
+U["MISSING_ITEMS"] = "Missing items:"
+U["MISSING_GEMS"] = "Missing gems:"
+U["MISSING_ENCHANTS"] = "Missing enchants:"
+U["LOW_ITEM_LEVEL"] = "Low item level:"
+U["MISSING_BELT_BUCKLE"] = "Missing belt buckle?"
+U["MISSING_BS_SOCKETS"] = "Missing blacksmith sockets (?):"
+U["PROPER_GEMS"] = "All sockets have gems."
+U["PROPER_ENCHANTS"] = "All items are enchanted."
+U["SCAN"] = "Scanning..."
+U["RESCAN"] = "Re-scanning..."
+U["SCAN_INCOMPLETE"] = "Scan incomplete, please try again later."
+U["INVSLOT_"..INVSLOT_HEAD] = "Head"
+U["INVSLOT_"..INVSLOT_NECK] = "Neck"
+U["INVSLOT_"..INVSLOT_SHOULDER] = "Shoulder"
+U["INVSLOT_"..INVSLOT_BACK] = "Back"
+U["INVSLOT_"..INVSLOT_CHEST] = "Chest"
+U["INVSLOT_"..INVSLOT_BODY] = "Shirt"
+U["INVSLOT_"..INVSLOT_TABARD] = "Tabard"
+U["INVSLOT_"..INVSLOT_WRIST] = "Wrist"
+U["INVSLOT_"..INVSLOT_HAND] = "Hand"
+U["INVSLOT_"..INVSLOT_WAIST] = "Waist"
+U["INVSLOT_"..INVSLOT_LEGS] = "Legs"
+U["INVSLOT_"..INVSLOT_FEET] = "Feet"
+U["INVSLOT_"..INVSLOT_FINGER1] = "Ring 1"
+U["INVSLOT_"..INVSLOT_FINGER2] = "Ring 2"
+U["INVSLOT_"..INVSLOT_TRINKET1] = "Trinket 1"
+U["INVSLOT_"..INVSLOT_TRINKET2] = "Trinket 2"
+U["INVSLOT_"..INVSLOT_MAINHAND] = "Main-Hand"
+U["INVSLOT_"..INVSLOT_OFFHAND] = "Off-Hand"
+
+U["Shield Wall"] = "Shield Wall"
+U[" (auto)"] =  "(auto)"    
+U[" (toggle)"] =  "(toggle)"
+U["Dodge"] = "Dodge"
+U["Snare"] = "Snare"
+U["Tranq/Dispel"] = "Tranq/Dispel"
+U["Mortal Wounds"] = "Mortal Wounds" 
+-- exotic ABILITIES          
+U["Water Walking"] = "Water Walking"
+U["Magic Resistance"] = "Magic Resistance" 
+U["Physical Resistance"] = "Physical Resistance"
+U["Tanky"] = "Tanky"
+U["Thorns"] = "Thorns"       
+U["Heal"] = "Heal" 
+U["Prowl"] = "Prowl"    
+U[" with Self-Heal"] = " with Self-Heal"
+U["Reincarnation"] = "Reincarnation" 
+U["Slowfall"] = "Slowfall"   
+U[" (ranged)"] = "  (ranged)"
+U["Fast"] = "Fast"
+U["Cannibalize"] = "Cannibalize" 
+-- MISC
+U["Ferocity"] = "Ferocity"
+U["Cunning"] = "Cunning"
+U["Tenacity"] = "Tenacity"
+U["(Exotic)"] = "(Exotic)"
+-- leave an entry commented out to use the default (enUS) translation
+U["Beast"] = "Beast"
+U["Mechanical"] = "Mechanical"
+U["Basilisk"] = "Basilisk"
+U["Bat"] = "Bat"
+U["Bear"] = "Bear"
+U["Beetle"] = "Beetle"
+U["Bird of Prey"] = "Bird of Prey"
+U["Boar"] = "Boar"
+U["Carrion Bird"] = "Carrion Bird"
+U["Cat"] = "Cat"
+U["Chimaera"] = "Chimaera"
+U["Clefthoof"] = "Clefthoof"
+U["Core Hound"] = "Core Hound"
+U["Crab"] = "Crab"
+U["Crane"] = "Crane"
+U["Crocolisk"] = "Crocolisk"
+U["Devilsaur"] = "Devilsaur"
+U["Direhorn"] = "Direhorn"
+U["Dog"] = "Dog"
+U["Dragonhawk"] = "Dragonhawk"
+U["Feathermane"] = "Feathermane"
+U["Fox"] = "Fox"
+U["Goat"] = "Goat"
+U["Gorilla"] = "Gorilla"
+U["Hydra"] = "Hydra"
+U["Hyena"] = "Hyena"
+U["Krolusk"] = "Krolusk" -- guess
+U["Lizard"] = "Lizard"
+U["Mechanical"] = "Mechanical"
+U["Monkey"] = "Monkey"
+U["Moth"] = "Moth"
+U["Nether Ray"] = "Nether Ray"
+U["Oxen"] = "Oxen"
+U["Pterrordax"] = "Pterrordax"
+U["Quilen"] = "Quilen"
+U["Raptor"] = "Raptor"
+U["Ravager"] = "Ravager"
+U["Riverbeast"] = "Riverbeast"
+U["Rodent"] = "Rodent"
+U["Scalehide"] = "Scalehide"
+U["Scorpid"] = "Scorpid"
+U["Serpent"] = "Serpent"
+U["Shale Spider"] = "Shale Spider"
+U["Silithid"] = "Silithid"
+U["Spider"] = "Spider"
+U["Spirit Beast"] = "Spirit Beast"
+U["Sporebat"] = "Sporebat"
+U["Stag"] = "Stag"
+U["Tallstrider"] = "Tallstrider"
+U["Toad"] = "Toad"
+U["Turtle"] = "Turtle"
+U["Warp Stalker"] = "Warp Stalker"
+U["Wasp"] = "Wasp"
+U["Water Strider"] = "Water Strider"
+U["Wind Serpent"] = "Wind Serpent"
+U["Wolf"] = "Wolf"
+U["Worm"] = "Worm"
 
 Announcer_Sap = ">>>Sapped<<<";
 Announcer_RocketPP = "Rocket Fuel Leak!!!Help me~";
@@ -367,68 +593,8 @@ Announcer_Disperse = "Disperse→";
 Announcer_Stole = "Stole→";
 Announcer_SpellIDnof = "<Spelllink(ID) not found>";
 
-STRENGTH = "Strength";
-AGILITY = "Agility";
-STAMINA = "Stamina";
-VERSATILITY = "Versatility";
-MULTISTRIKE = "Multistrike";
-BONUSARMOR = "BonusArmor";
-ARMOR = "Armor";
-HASTE = "Haste";
-MASTERY = "Mastery";
-CRIT = "Crit";
-INTELLECT = "Intellect";
-SPIRIT = "Spirit";	
-REPAIR_COST = "repair：";
 
-
-  ACP_AddonControlPanel = "Addon Control Panel";
-			ACP_SomeprotectedaddonsarenloadedReloadnow = "ACP: Some protected addons aren't loaded. Reload now?";
-			ACP_ActiveEmbeds = "Active Embeds";
-			ACP_AddOns = "AddOns";
-			ACP_Addonnotvalid = "Addon <%s> not valid";
-			ACP_AddonsLoaded = "Addons [%s] Loaded.";
-			ACP_Addonsrenamedto = "Addons [%s] renamed to [%s].";
-			ACP_AddonsSaved = "Addons [%s] Saved.";
-			ACP_AddonsUnloaded = "Addons [%s] Unloaded.";
-			ACP_Addtocurrentselection = "Add to current selection";
-			ACP_Author = "Author";
-			ACP_ClicktoenableprotectmodeProtectedaddonswillnotbedisabled = "Click to enable protect mode. Protected addons will not be disabled";
-			ACP_Close = "Close";
-			ACP_Default = "Default";
-			ACP_Dependencies = "Dependencies";
-			ACP_DisableAll = "Disable All";
-			ACP_DisabledonreloadUI = "Disabled on reloadUI";
-			ACP_Embeds = "Optional Deps";
-			ACP_EnableAll = "Enable All";
-			ACP_EnablingyourUI = "*** Enabling <%s> %s your UI ***";
-			ACP_Enterthenewnamefor = "Enter the new name for [%s]:";
-			ACP_Load = "Load";
-			ACP_LoadableOnDemand = "Loadable OnDemand";
-			ACP_Loaded = "Loaded";
-			ACP_Loadedondemand = "Loaded on demand.";
-			ACP_LoDChildEnableisnow = "LoD Child Enable is now %s";
-			ACP_MemoryUsage = "Memory Usage";
-			ACP_Noinformationavailable = "No information available.";
-			ACP_Recursive = "Recursive";
-			ACP_RecursiveEnableisnow = "Recursive Enable is now %s";
-			ACP_Reload = "Reload";
-			ACP_ReloadUI = "ReloadUI";
-			ACP_ReloadyourUserInterface = "Reload your User Interface?";
-			ACP_Removefromcurrentselection = "Remove from current selection";
-			ACP_Rename = "Rename";
-			ACP_ResurseToolTip = "When enabling an addon, attempt to enable any addons the addon depends on";
-			ACP_Save = "Save";
-			ACP_Savethecurrentaddonlistto = "Save the current addon list to [%s]?";
-			ACP_Set = "Set ";
-			ACP_Sets = "Sets";
-			ACP_Status = "Status";
-			ACP_UnknownAddonRequired = "*** Unknown Addon <%s> Required ***";
-			ACP_UseSHIFTtooverridethecurrentenablingofdependanciesbehaviour = "Use SHIFT to override the current enabling of dependancies behaviour.";
-			ACP_Version = "Version";
-			ACP_whenperformingareloadui = "when performing a reloadui.";
-			
-			
+REPAIR_COST = "repair：";			
 Chatbar_ChatMiniMizeButtonText = "-";
 Chatbar_rollText = "R";
 Chatbar_StatReport = "M";
@@ -497,7 +663,7 @@ DEXOptionsFrameCheckButtons = {
 	["DEX_ShowDamageWoW"] = { title = "Enable system combat texts", tooltipText = "Enable system default floating combat texts"},
 	["DEX_ShowOwnHealth"] = { title = "Self healing", tooltipText = "Display healings apply to yourself"},
 	["DEX_UniteSpell"] = { title = "Combine damages", tooltipText = "Combine simutaneous damages against same target"},
-	["DEX_NumberFormat"] = { title = "Display digit separator", tooltipText = "Display the number of sub digital separation"},	
+	--["DEX_NumberFormat"] = { title = "Display digit separator", tooltipText = "Display the number of sub digital separation"},	
 	["DEX_NumberFormat"] = { title = "W/Y", tooltipText = "Shot number style"},
 	["DEX_ShowSpellIcon"] = { title = "Show Spell Icon", tooltipText = "Display Spell Icon,Choosen to replace the spell name"},
 	["DEX_ShowInterrupt"] = { title = "Show Interrupt", tooltipText = "Display Interrupt texts"},	
@@ -539,26 +705,6 @@ GRIDCLICKSETS_LOCKWARNING = "Can't set attributes during combat, settings will b
 GRIDCLICKSETS_SET = "Click Sets has been applied.";
 GRIDCLICKSETS_SET_WHEEL_UP = "W.Up";
 GRIDCLICKSETS_SET_WHEEL_DOWN = "Down";
-GRIDCLICKSETS_SET_RESET_WARNING = "All clickset for current specialization will lost!";
-
-xMerchant_Tobrowseitemtooltipstoo = "To browse item tooltips, too";
-
-	QN_Title    = "|cff0080ff[Quest]|rQuestNotifier Options";
-	QN_Switch   = "Notifier On/Off";
-	QN_InstanceMode = "Instance Mode";
-	QN_RaidMode = "Raid Mode";
-	QN_PartyMode= "Party Mode";
-	QN_SoloMode = "Sole Mode";
-	QN_Sound    = "Play Sound on Completed";
-	QN_Debug    = "|CFF00FF00Print Color QuestInfo|r|CFF00FFFF(inactive when in a Party or Raid)|r";
-	QN_NoDetail = "|CFF00FFFFDon't Notify Detail|r";
-	QN_CompleteX = "|CFF00F000Auto Remove Completed Quest from quest watch frame|r";
-	QN_Colon       = "：";
-	QN_Quest       = "Quest";
-	QN_Progress    = "Progress";
-	QN_Complete    = "Completed!";
-	QN_Accept      = "AcceptQuest";
-
 
 WHISPERPOP_LOCALE = {
 	["title"] = "WhisperPop",
@@ -615,39 +761,3 @@ WHISPERPOP_LOCALE = {
   CurrencyTracking_TRACKED_CURRENCY = "Tracked Currencies";
   CurrencyTracking_TRACKED_ITEMS = "Tracked Items";
   CurrencyTracking_PROFILE_OPTIONS = "Profile Options";
-
-	
-	TinyInspectL = {
-    ShowItemBorder              = "物品直角邊框",
-    EnableItemLevel             = "物品等級顯示",
-    ShowColoredItemLevelString  = "裝等文字隨物品品質",
-    ShowItemSlotString          = "顯示背包装备部位文字",
-    ShowInspectAngularBorder    = "觀察面板直角邊框",
-    ShowInspectColoredLabel     = "觀察面板高亮橙裝武器標簽",
-    ShowOwnFrameWhenInspecting  = "觀察同時顯示自己裝備列表",
-    DisplayPercentageStats      = "裝備屬性換算成百分比數值",
-    EnablePartyItemLevel        = "小隊隊友裝等",
-    SendPartyItemLevelToSelf    = "發送隊友裝等到自己面板",
-    SendPartyItemLevelToParty   = "發送隊友裝等到隊伍頻道",
-    EnableRaidItemLevel         = "團隊成員裝等",
-    ["general.statusbarOffsetX"] = "Statusbar Margin-X (0:Default)",
-    ["general.statusbarOffsetY"] = "Statusbar Offset Y (0:Default)",
-    ["general.alwaysShowIdInfo"] = "Always Show Id Info (Otherwise hold down SHIFT/ALT)",
-    ["general.skinMoreFrames"]   = "Skin More Frames |cffcccc33(need to /reload)|r",
-    ["dropdown.inherit"]        = "|cffffee00inherit|r",
-    ["dropdown.default"]        = "|cffaaaaaadefault|r",
-    ["dropdown.cursor"]         = "|cff33ccffcursor|r",
-    ["dropdown.static"]         = "|cff33ccffstatic|r",
-    ["dropdown.none"]           = "|cffaaaaaanone|r",
-    ["dropdown.not reaction5"]      = "|cffff3333not|r reaction5",
-    ["dropdown.not reaction6"]      = "|cffff3333not|r reaction6",
-    ["dropdown.not inraid"]         = "|cffff3333not|r inraid",
-    ["dropdown.not incombat"]       = "|cffff3333not|r incombat",
-    ["dropdown.not inpvp"]          = "|cffff3333not|r inpvp",
-    ["dropdown.not inarena"]        = "|cffff3333not|r inarena",
-    ["dropdown.not ininstance"]     = "|cffff3333not|r ininstance",
-    ["dropdown.not samerealm"]      = "|cffff3333not|r samerealm",
-    ["dropdown.not samecrossrealm"]  = "|cffff3333not|rsameCrossrealm",
-    ["TargetBy"]                    = "Targeted By",
-    ["showTargetBy"]                = "Show Targeted By",
-  };

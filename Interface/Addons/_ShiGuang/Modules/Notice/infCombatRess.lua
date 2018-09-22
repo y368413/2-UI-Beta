@@ -83,7 +83,7 @@ end
 
 local OnMouseDown = function(self, button)
 	if button == "LeftButton" then
-		SendChatMessage(sformat("战复剩: %d次 充能: %s", currentNumResses, self.right:GetText()), "RAID")
+		SendChatMessage(sformat("战复剩: %d次 充能: %s", currentNumResses, self.right:GetText()), "YELL")
 	elseif button == "RightButton" then
 		StopTimer(self)
 	end
@@ -153,6 +153,8 @@ local OnEvent = function(self, event, ...)
 	if event == "PLAYER_ENTERING_WORLD" or event == "ZONE_CHANGED_NEW_AREA" then
 		if select(2, IsInInstance()) == "raid" then
 			self:RegisterEvent("SPELL_UPDATE_CHARGES")
+		elseif select(3, IsInInstance()) == 8 then
+			bar:Show()
 		else
 			self:UnregisterEvent("SPELL_UPDATE_CHARGES")
 			charges = nil
@@ -183,3 +185,4 @@ end
 local addon = CreateFrame("frame")
 addon:SetScript('OnEvent', OnEvent)
 addon:RegisterEvent("PLAYER_ENTERING_WORLD")
+addon:RegisterEvent("CHALLENGE_MODE_START")

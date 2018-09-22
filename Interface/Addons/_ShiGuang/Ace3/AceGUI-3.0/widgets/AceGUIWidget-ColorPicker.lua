@@ -11,13 +11,6 @@ local pairs = pairs
 -- WoW APIs
 local CreateFrame, UIParent = CreateFrame, UIParent
 
--- Global vars/functions that we don't upvalue since they might get hooked, or upgraded
--- List them here for Mikk's FindGlobals script
--- GLOBALS: ShowUIPanel, HideUIPanel, ColorPickerFrame, OpacitySliderFrame
-
---[[-----------------------------------------------------------------------------
-Support functions
--------------------------------------------------------------------------------]]
 local function ColorCallback(self, r, g, b, a, isAlpha)
 	if not self.HasAlpha then
 		a = 1
@@ -140,7 +133,7 @@ local function Constructor()
 	local colorSwatch = frame:CreateTexture(nil, "OVERLAY")
 	colorSwatch:SetWidth(19)
 	colorSwatch:SetHeight(19)
-	colorSwatch:SetTexture("Interface\\ChatFrame\\ChatFrameColorSwatch")
+	colorSwatch:SetTexture(130939) -- Interface\\ChatFrame\\ChatFrameColorSwatch
 	colorSwatch:SetPoint("LEFT")
 
 	local texture = frame:CreateTexture(nil, "BACKGROUND")
@@ -153,7 +146,7 @@ local function Constructor()
 	local checkers = frame:CreateTexture(nil, "BACKGROUND")
 	checkers:SetWidth(14)
 	checkers:SetHeight(14)
-	checkers:SetTexture("Tileset\\Generic\\Checkers")
+	checkers:SetTexture(188523) -- Tileset\\Generic\\Checkers
 	checkers:SetTexCoord(.25, 0, 0.5, .25)
 	checkers:SetDesaturated(true)
 	checkers:SetVertexColor(1, 1, 1, 0.75)
@@ -167,10 +160,6 @@ local function Constructor()
 	text:SetPoint("LEFT", colorSwatch, "RIGHT", 2, 0)
 	text:SetPoint("RIGHT")
 
-	--local highlight = frame:CreateTexture(nil, "HIGHLIGHT")
-	--highlight:SetTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight")
-	--highlight:SetBlendMode("ADD")
-	--highlight:SetAllPoints(frame)
 
 	local widget = {
 		colorSwatch = colorSwatch,

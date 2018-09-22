@@ -1,5 +1,6 @@
-local M, R, U, I = unpack(select(2, ...))
-local module = MaoRUI:GetModule("Skins")
+local _, ns = ...
+local M, R, U, I = unpack(ns)
+local module = M:GetModule("Skins")
 
 function module:DBMSkin()
 	if not IsAddOnLoaded("DBM-Core") then return end
@@ -149,7 +150,7 @@ function module:DBMSkin()
 	end
 	hooksecurefunc(DBT, "CreateBar", SkinBars)
 
-	local function SkinRange(self)
+	local function SkinRange()
 		if DBMRangeCheckRadar and not DBMRangeCheckRadar.styled then
 			local bg = M.CreateBG(DBMRangeCheckRadar, 2)
 			M.CreateBD(bg, .3)
@@ -159,10 +160,10 @@ function module:DBMSkin()
 		end
 
 		if DBMRangeCheck and not DBMRangeCheck.styled then
-			M.CreateBD(DBMRangeCheck)
-			M.CreateTex(DBMRangeCheck)
-			DBMRangeCheck.SetBackdropColor = M.Dummy
-			DBMRangeCheck.SetBackdropBorderColor = M.Dummy
+			DBMRangeCheck:SetBackdrop(nil)
+			local bg = M.CreateBG(DBMRangeCheck, 0)
+			M.CreateBD(bg)
+			M.CreateTex(bg)
 
 			DBMRangeCheck.styled = true
 		end
@@ -173,11 +174,11 @@ function module:DBMSkin()
 		DBM.InfoFrame:Show(5, "test")
 		DBM.InfoFrame:Hide()
 		DBMInfoFrame:HookScript("OnShow", function(self)
-			if not self.Tex then
-				M.CreateBD(self, .6, 3)
-				M.CreateTex(self)
-				self.SetBackdropColor = M.Dummy
-				self.SetBackdropBorderColor = M.Dummy
+			if not self.bg then
+				self:SetBackdrop(nil)
+				self.bg = M.CreateBG(self, 0)
+				M.CreateBD(self.bg, .6, 3)
+				M.CreateTex(self.bg)
 			end
 		end)
 	end
@@ -201,6 +202,7 @@ function module:DBMSkin()
 	-- Force Settings
 	if not DBM_AllSavedOptions["Default"] then DBM_AllSavedOptions["Default"] = {} end
 	DBM_AllSavedOptions["Default"]["BlockVersionUpdateNotice"] = true
+	DBM_AllSavedOptions["Default"]["EventSoundVictory"] = "None"
 	DBT_AllPersistentOptions["Default"]["DBM"].BarYOffset = 12
 	DBT_AllPersistentOptions["Default"]["DBM"].HugeBarYOffset = 12
 	if IsAddOnLoaded("DBM-VPYike") then

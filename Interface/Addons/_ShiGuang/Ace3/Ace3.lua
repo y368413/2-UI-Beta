@@ -1,8 +1,6 @@
 ﻿-- BINDINGs labels
-BINDING_HEADER_ACE3 = "--|cFFBF00FFMao|r|cFF00DDFFR|r|cffff8800UI|r--"
+BINDING_HEADER_ACE3 = "-|cFFFFFF00 2|r|cFFFF0000 UI |r-"
 BINDING_NAME_RELOADUI = "    重载UI / ReloadUI"
-BINDING_MAORUI_BUTTONCLICK= "|cFFBF00FFMao|r|cFF00DDFFR|r|cffff8800 UI|r"
---
 
 local gui = LibStub("AceGUI-3.0")
 local reg = LibStub("AceConfigRegistry-3.0")

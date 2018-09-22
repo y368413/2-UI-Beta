@@ -1,5 +1,6 @@
-local M, R, U, I = unpack(select(2, ...))
-local module = MaoRUI:RegisterModule("Skins")
+local _, ns = ...
+local M, R, U, I = unpack(ns)
+local module = M:RegisterModule("Skins")
 
 function module:OnLogin()
 	local cr, cg, cb = 0, 0, 0
@@ -77,28 +78,29 @@ function module:OnLogin()
 
 	-- Add Skins
 	self:QuestTracker()
-	self:DBMSkin()
-	self:CastBarSkin()
 	self:QuestTrackerSkinTitle()
+	self:PetBattleUI()
+	self:DBMSkin()
+	self:SkadaSkin()
+	self:CastBarSkin()
 end
 
 function module:LoadWithAddOn(addonName, value, func)
-	MaoRUI:EventFrame({"ADDON_LOADED", "PLAYER_ENTERING_WORLD"}):SetScript("OnEvent", function(self, event, addon)
-		if not MaoRUISettingDB["Skins"][value] then
-			self:UnregisterAllEvents()
-			return
-		end
+	local function loadFunc(event, addon)
+		if not MaoRUISettingDB["Skins"][value] then return end
 
 		if event == "PLAYER_ENTERING_WORLD" then
-			if not IsAddOnLoaded(addonName) then
-				self:UnregisterAllEvents()
-				return
+			M:UnregisterEvent(event, loadFunc)
+			if IsAddOnLoaded(addonName) then
+				func()
+				M:UnregisterEvent("ADDON_LOADED", loadFunc)
 			end
-			func()
-			self:UnregisterEvent(event)
 		elseif event == "ADDON_LOADED" and addon == addonName then
 			func()
-			self:UnregisterAllEvents()
+			M:UnregisterEvent(event, loadFunc)
 		end
-	end)
+	end
+
+	M:RegisterEvent("PLAYER_ENTERING_WORLD", loadFunc)
+	M:RegisterEvent("ADDON_LOADED", loadFunc)
 end

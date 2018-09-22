@@ -4,7 +4,7 @@ local TransmogCleanup = TransmogCleanup
 TransmogCleanupDB = {}
 TransmogCleanup.db = TransmogCleanupDB
 
-local version = "v7.2.0-1"
+local version = "v7.2.0-1-2-gdaadf42"
 
 --------------------------------------------------------------------------------
 -- Upvalues
@@ -146,7 +146,7 @@ local function iterateBagItems()
 				local _, _, quality = GetItemInfo(link)
 				local vendorPrice = select(11, GetItemInfo(link))
 				local hasOnUseEffect = GetItemSpell(link)
-					local status = getTransmogStatus(link)
+				local status = getTransmogStatus(link)
 
 				if status ~= nil then
 				if status and status > 0 then -- check if Can I Mog It checks the itemList
@@ -487,8 +487,8 @@ local function createSellWindow()
 	ilvlSlider:SetWidth(190)
 	_G["TCSellWindowIlvlSliderText"]:SetText("最高出售装等")
 	_G["TCSellWindowIlvlSliderLow"]:SetText("1")
-	_G["TCSellWindowIlvlSliderHigh"]:SetText("987")
-	ilvlSlider:SetMinMaxValues(1, 987)
+	_G["TCSellWindowIlvlSliderHigh"]:SetText("512")
+	ilvlSlider:SetMinMaxValues(1, 512)
  	ilvlSlider:SetValue(821)
 	ilvlSlider:SetValueStep(1)
 	ilvlSlider:SetHitRectInsets(0, 0, 0, 0) -- default from OptionsSliderTemplate: 0,0,-10,-10
@@ -704,7 +704,6 @@ end
 
 -- Event Handler
 local events = {}
-
 function events:ADDON_LOADED(...)
 	if select(1, ...) == "TransMogMaster" then
 		TransmogCleanup:UnregisterEvent("ADDON_LOADED")
@@ -728,7 +727,7 @@ function events:ADDON_LOADED(...)
 					[1] = true,
 					[2] = true,
 				},
-				["ilvl"] = 700,
+				["ilvl"] = 430,
 			}
 		end
 		if not db.filters.onuse and db.filters.onuse ~= false then
@@ -793,6 +792,8 @@ for k,_ in pairs(events) do
 end
 
 
+SlashCmdList['TRANSMOGCLEANUP_SLASHCMD'] = slashCmdHandler
+SLASH_TRANSMOGCLEANUP_SLASHCMD1 = '/transmogcleanup'
 
 --------------------------------------------------------------------------------
 -- TransmogCleanup by Elvador
@@ -875,5 +876,23 @@ function TransmogCleanup:getDefaultIgnoredItems()
 		[127842] = true, -- Infernal Alchemist Stone
 		[128023] = true, -- Stone of the Wilds
 		[128024] = true, -- Stone of the Elements
+		
+		[44050] = true, --Mastercraft Kalu'ak Fishing Pole
+		[84661] = true, --dragon-fishing-pole
+		[45858] = true, --nats-lucky-fishing-pole
+		[19970] = true, --arcanite-fishing-pole
+		
+		[44935] = true, --Ring of the Kirin Tor
+		[40586] = true, --Band of the Kirin Tor
+		[44934] = true, --Loop of the Kirin Tor
+		[45688] = true, --Inscribed Band of the Kirin Tor
+		[45689] = true, --Inscribed Loop of the Kirin Tor
+		[45690] = true, --Inscribed Ring of the Kirin Tor
+		[48954] = true, --Etched Band of the Kirin Tor
+		[48955] = true, --Etched Loop of the Kirin Tor
+		[48956] = true, --Etched Ring of the Kirin Tor
+		[51558] = true, --Runed Loop of the Kirin Tor
+		[51559] = true, --Runed Ring of the Kirin Tor
+		[51560] = true, --Runed Band of the Kirin Tor
 	}
 end

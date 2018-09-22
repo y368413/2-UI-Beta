@@ -1,14 +1,19 @@
-﻿-- $Id: Config.lua 104 2017-11-14 12:29:56Z arith $
+﻿-- $Id: Config.lua 136 2018-04-25 08:04:30Z arith $
 -----------------------------------------------------------------------
 -- Upvalued Lua API.
 -----------------------------------------------------------------------
 -- Functions
 local _G = getfenv(0)
-local pairs = _G.pairs
+local pairs, ipairs, type = _G.pairs, _G.ipairs, _G.type
 local math = _G.math
 local table = _G.table
 local tsort = table.sort
+local string = _G.string
 -- Libraries
+local format = string.format
+-- WoW
+local GetSpellTexture, GetSpellInfo, GetItemInfo, GetItemCount = _G.GetSpellTexture, _G.GetSpellInfo, _G.GetItemInfo, _G.GetItemCount
+local GetLocale = _G.GetLocale
 -- ----------------------------------------------------------------------------
 -- AddOn namespace.
 -- ----------------------------------------------------------------------------
@@ -21,6 +26,25 @@ local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 local AceDBOptions = LibStub("AceDBOptions-3.0")
 
 local profile
+
+local function orderednext(t, n)
+	local key = t[t.__next]
+	
+	if not key then return end
+	t.__next = t.__next + 1
+	return key, t.__source[key]
+end
+
+local function orderedpairs(t, f)
+	local keys, kn = {__source = t, __next = 1}, 1
+	
+	for k in pairs(t) do
+		keys[kn], kn = k, kn + 1
+	end
+	tsort(keys, f)
+	return orderednext, keys
+end
+
 
 -- /////////////////////////////////////////////////////////
 -- Options
@@ -139,42 +163,50 @@ local function getOptions()
 									desc = CurrencyTracking_ENABLE_SHOW_MONEY_WITH_CURRENCIES,
 									width = "double",
 								},
-								breakupnumbers = {
+								showLowerDenominations = {
 									order = 22,
+									type = "toggle",
+									name = "Show Lower Denominations",
+									desc = "Enable to show all the lower denominations, disable to only show money in gold.",
+									width = "double",
+									disabled = function() return not CurrencyTracking.db.profile.show_money end,
+								},
+								breakupnumbers = {
+									order = 23,
 									type = "toggle",
 									name = CurrencyTracking_BREAKUP_NUMBERS,
 									desc = CurrencyTracking_OPT_BREAKUP_NUMBERS,
 									width = "double",
 								},
 								hide_zero = {
-									order = 23,
+									order = 24,
 									type = "toggle",
 									name = CurrencyTracking_HIDEZERO,
 									desc = CurrencyTracking_AUTOHIDEITEMS,
 									width = "double",
 								},
 								show_iconOnly = {
-									order = 24,
+									order = 25,
 									type = "toggle",
 									name = CurrencyTracking_SHOW_ICON,
 									desc = CurrencyTracking_SHOW_ICONINFO,
 									width = "double",
 								},
 								icon_first = {
-									order = 25,
+									order = 26,
 									type = "toggle",
 									name = CurrencyTracking_ICON_FIRST,
 									desc = CurrencyTracking_OPT_ICON_PRIORTO_NUMBER,
-									width = "full",
+									width = "double",
 									disabled = function() return CurrencyTracking.db.profile.show_iconOnly end,
 								},
 								maxItems = {
-									order = 26,
+									order = 27,
 									type = "range",
 									name = CurrencyTracking_MAXITEMS,
 									desc = CurrencyTracking_MAXITEMSINFO,
 									width = "double",
-									min = 1, max = 60, bigStep = 1,
+									min = 0, max = 60, bigStep = 1,
 								},
 							},
 						},
@@ -252,11 +284,15 @@ end
 -- Currencies
 -- /////////////////////////////////////////////////////////
 local currenciesOptions = nil
-local function tokenButton_ToggleTrack(name)
+local function tokenButton_ToggleTrack(id)
 	profile = CurrencyTracking.db.profile
-	if (not profile["currencies"][name]) then profile["currencies"][name] = false end
-
-	profile["currencies"][name] = not profile["currencies"][name]
+	if (not profile["currencies"][id]) then 
+		profile["currencies"][id] = true
+	else
+		profile["currencies"][id] = nil
+	end
+	
+	CurrencyTracking:Refresh()
 end
 
 local function getCurrenciesOptions()
@@ -270,11 +306,11 @@ local function getCurrenciesOptions()
 		}
 		local t = currenciesOptions.args
 		local i = 1
-		for k,v in pairs(CurrencyTracking.constants.currencies) do
+		for k,v in orderedpairs(LibCurrencyInfo.data.CurrencyByCategory) do
 			t["group"..i] = {}
 			t["group"..i].order = i
 			t["group"..i].type = "group"
-			t["group"..i].name = CurrencyTracking.constants.currencyCategories[k][lang]
+			t["group"..i].name = LibCurrencyInfo:GetCurrencyCategoryNameByCategoryID(k, lang)
 			t["group"..i].args = { }
 			local j = 1
 			local tg = t["group"..i].args
@@ -299,8 +335,8 @@ local function getCurrenciesOptions()
 					else
 						tg["currency"..index].desc = NORMAL_FONT_COLOR_CODE..currencyDesc..format(CURRENCY_TOTAL, HIGHLIGHT_FONT_COLOR_CODE, count)
 					end
-					tg["currency"..index].get = (function() return profile["currencies"][name] end)
-					tg["currency"..index].set = (function() tokenButton_ToggleTrack(name); CurrencyTracking:Refresh() end)
+					tg["currency"..index].get = (function() return profile["currencies"][id] end)
+					tg["currency"..index].set = (function() tokenButton_ToggleTrack(id) end)
 				end
 				j = j + 1
 			end
@@ -317,9 +353,12 @@ end
 local itemOptions = nil
 local function itemButton_ToggleTrack(itemID)
 	if not profile then profile = CurrencyTracking.db.profile end
-	if (not profile["items"][itemID]) then profile["items"][itemID] = false end
+	if (not profile["items"][itemID]) then 
+		profile["items"][itemID] = true 
+	else
+		profile["items"][itemID] = nil
+	end
 
-	profile["items"][itemID] = not profile["items"][itemID]
 	CurrencyTracking:Refresh()
 end
 
@@ -398,8 +437,8 @@ end
 
 local function openOptions(openItems)
 	-- open the profiles tab before, so the menu expands
-	InterfaceOptionsFrame_OpenToCategory(CurrencyTracking.optionsFrames.Profiles)
-	InterfaceOptionsFrame_OpenToCategory(CurrencyTracking.optionsFrames.Profiles) -- yes, run twice to force the tre get expanded
+	--InterfaceOptionsFrame_OpenToCategory(CurrencyTracking.optionsFrames.Profiles)
+	--InterfaceOptionsFrame_OpenToCategory(CurrencyTracking.optionsFrames.Profiles) -- yes, run twice to force the tre get expanded
 	if (openItems) then
 		InterfaceOptionsFrame_OpenToCategory(CurrencyTracking.optionsFrames.Items)
 	else
@@ -413,9 +452,9 @@ function CurrencyTracking:OpenOptions(openItems)
 	openOptions(openItems)
 end
 
-local function giveProfiles()
-	return AceDBOptions:GetOptionsTable(CurrencyTracking.db)
-end
+--local function giveProfiles()
+	--return AceDBOptions:GetOptionsTable(CurrencyTracking.db)
+--end
 
 function CurrencyTracking:SetupOptions()
 	self.optionsFrames = {}
@@ -426,7 +465,7 @@ function CurrencyTracking:SetupOptions()
 	self:RegisterModuleOptions("Items", getItemOptions, CurrencyTracking_TRACKED_ITEMS)
 	--addTokenOptionFrame()
 	self:RegisterModuleOptions("Currencies", getCurrenciesOptions, CurrencyTracking_TRACKED_CURRENCY)
-	self:RegisterModuleOptions("Profiles", giveProfiles, CurrencyTracking_PROFILE_OPTIONS)
+	--self:RegisterModuleOptions("Profiles", giveProfiles, CurrencyTracking_PROFILE_OPTIONS)
 end
 
 -- Description: Function which extends our options table in a modular way

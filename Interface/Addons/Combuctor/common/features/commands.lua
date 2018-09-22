@@ -22,7 +22,7 @@ end
 
 --[[ Slash Commands ]]--
 
-function Addon:AddSlashCommands(...)
+function Addon:CreateSlashCommands(...)
 	for i = 1, select('#', ...) do
 		local command = select(i, ...)
 		SlashCmdList[command] = function(...) self:OnSlashCommand(...) end
@@ -69,9 +69,7 @@ end
 --[[ Options ]]--
 
 function Addon:CreateOptionsLoader()
-	local f = CreateFrame('Frame', nil, InterfaceOptionsFrame)
-	f:SetScript('OnShow', function(self)
-		self:SetScript('OnShow', nil)
+	CreateFrame('Frame', nil, InterfaceOptionsFrame):SetScript('OnShow', function(self)
 		LoadAddOn(ADDON .. '_Config')
 	end)
 end

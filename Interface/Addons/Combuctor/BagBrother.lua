@@ -1,3 +1,5 @@
+
+
 local Brother = CreateFrame('Frame', 'BagBrother')
 Brother:SetScript('OnEvent', function(self, event, ...) self[event](self, ...) end)
 Brother:RegisterEvent('ADDON_LOADED')
@@ -90,7 +92,7 @@ local Reagents = REAGENTBANK_CONTAINER
 
 function BagBrother:BAG_UPDATE(bag)
 	local isBag = bag > Bank and bag <= BagSlots
-	
+
 	if isBag then
   		self:SaveBag(bag, bag == Backpack)
 	end
@@ -167,16 +169,17 @@ end
 function BagBrother:GUILDBANKBAGSLOTS_CHANGED()
 	if self.atGuild then
 		local id = GetGuildInfo('player') .. '*'
-		local tab = GetCurrentGuildBankTab()
-		local tabs = self.Realm[id] or {}
+		local guild = self.Realm[id] or {}
+		guild.faction = UnitFactionGroup('player') == 'Alliance'
 
 		for i = 1, GetNumGuildBankTabs() do
-			tabs[i] = tabs[i] or {}
-			tabs[i].name, tabs[i].icon, tabs[i].view, tabs[i].deposit, tabs[i].withdraw = GetGuildBankTabInfo(i)
-			tabs[i].info = nil
+			guild[i] = guild[i] or {}
+			guild[i].name, guild[i].icon, guild[i].view, guild[i].deposit, guild[i].withdraw = GetGuildBankTabInfo(i)
+			guild[i].info = nil
 		end
 
-		local items = tabs[tab]
+		local tab = GetCurrentGuildBankTab()
+		local items = guild[tab]
 		if items then
 			for i = 1, 98 do
 				local link = GetGuildBankItemLink(tab, i)
@@ -186,7 +189,7 @@ function BagBrother:GUILDBANKBAGSLOTS_CHANGED()
 			end
 		end
 
-		self.Realm[id] = tabs
+		self.Realm[id] = guild
 	end
 end
 
@@ -246,4 +249,115 @@ function BagBrother:ParseItem(link, count)
 
 		return link
 	end
+end
+
+
+
+local Interface = LibStub:NewLibrary('BagBrotherInterface', 0)
+Interface.IsItemCache = true
+
+
+--[[ Realms ]]--
+
+function Interface:GetPlayers(realm)
+  local realm = BrotherBags[realm] or {}
+  local owner
+
+  return function()
+    while true do
+      owner = next(realm, owner)
+
+      if not owner or not owner:find('*$') then
+        return owner
+      end
+    end
+  end
+end
+
+function Interface:GetGuilds(realm)
+  local realm = BrotherBags[realm] or {}
+  local owner
+
+  return function()
+    while true do
+      owner = next(realm, owner)
+
+      if not owner or owner:find('*$') then
+        return owner and owner:sub(1,-2)
+      end
+    end
+  end
+end
+
+
+--[[ Owners ]]--
+
+function Interface:GetPlayer(realm, owner)
+  realm = BrotherBags[realm]
+  owner = realm and realm[owner]
+
+  return owner and {
+    money = owner.money,
+    class = owner.class,
+    race = owner.race,
+    guild = owner.guild,
+    gender = owner.sex,
+    faction = owner.faction and 'Alliance' or 'Horde' }
+end
+
+function Interface:DeletePlayer(realm, name)
+    realm = BrotherBags[realm]
+    if realm then
+      realm[name] = nil
+    end
+end
+
+function Interface:GetGuild(realm, name)
+  return Interface:GetPlayer(realm, name .. '*')
+end
+
+function Interface:DeleteGuild(realm, name)
+  return Interface:DeletePlayer(realm, name .. '*')
+end
+
+
+--[[ Bags ]]--
+
+function Interface:GetBag(realm, player, bag)
+  local slot = tonumber(bag) and bag > 0 and bag < 12 and ContainerIDToInventoryID(bag)
+  if slot then
+    return Interface:GetItem(realm, player, 'equip', slot)
+  end
+end
+
+function Interface:GetGuildTab(realm, guild, tab)
+  realm = BrotherBags[realm]
+  guild = realm and realm[guild .. '*']
+  tab = guild and guild[tab]
+
+  return tab and {
+    name = tab.name,
+    icon = tab.icon,
+    viewable = tab.view,
+    canDeposit = tab.deposit,
+    numWithdrawals = tab.withdraw }
+end
+
+
+--[[ Items ]]--
+
+function Interface:GetItem(realm, owner, bag, slot)
+  realm = BrotherBags[realm]
+  owner = realm and realm[owner]
+  bag = owner and owner[bag]
+
+  local item = bag and bag[slot]
+  if item then
+    local link, count = strsplit(';', item)
+    return {link = link, count = tonumber(count)}
+  end
+end
+
+function Interface:GetGuildItem(realm, name, tab, slot)
+  return Interface:GetItem(realm, name .. '*', tab, slot)
 end

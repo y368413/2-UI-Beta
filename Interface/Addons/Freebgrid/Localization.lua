@@ -16,10 +16,11 @@ ns.Locale = (GetLocale() == "zhCN") and {
 	
 	texture = "材质",
 	defaultfont = "默认",
-	Offline = "离线",
-	Dead = "死亡",
-	Ghost = "幽灵",
-	AFK = "离开",
+	AFK = "|cFFFF8000[暂离]|r",
+	DND = "|cFFE066FF[忙碌]|r",
+	Dead = "|cFFFF0000[死亡]|r",
+	Ghost = "|cFF00FFFF[幽灵]|r",
+	Offline = "|cFF00EE00[离线]|r",
 	default = "默认",
 	target	= "目标",
 	menu	= "菜单",
@@ -193,8 +194,10 @@ ns.Locale = (GetLocale() == "zhCN") and {
 	optionsreloaddesc = "多数的选项更改需要重载UI后才能生效.",
 	optionsdefault = "恢复默认设置",
 	optionsdefaultdesc = "还原所有设置为默认选项,可能需要重载UI以使设定生效.",
-	Rezing = "正在复活  ",
-	MassRez = "正在释放群体复活...",
+	revive = "正在复活", 
+  grouprevive = "正在施放群体复活......", 
+  bindstone = "正在给[%s]绑定灵魂石......", 
+  castrevive = "正在施放",
 } 
 or (GetLocale() == "zhTW") and {
 	downclick = "鼠標按下時釋放法術",
@@ -204,10 +207,11 @@ or (GetLocale() == "zhTW") and {
 	
 	texture = "材質",
 	defaultfont = "預設",
-	Offline = "離綫",
-	Dead = "死亡",
-	Ghost = "幽靈",
-	AFK = "離開",
+	AFK = "|cFFFF8000[暫離]|r",
+	DND = "|cFFE066FF[忙碌]|r",
+	Dead = "|cFFFF0000[死亡]|r",
+	Ghost = "|cFF00FFFF[幽靈]|r",
+	Offline = "|cFF00EE00[離線]|r",
 	default = "默認",
 	target	= "目標",
 	menu	= "菜單",
@@ -380,8 +384,10 @@ or (GetLocale() == "zhTW") and {
 	optionsreloaddesc = "多數的選項更改需要重載UI後才能生效.",
 	optionsdefault = "恢復默認設置",
 	optionsdefaultdesc = "還原所有設置為默認選項,可能需要重載UI從而使設定生效.",
-	Rezing = "正在復活  ",
-	MassRez = "正在施放群體復活...",
+	revive = "正在复活", 
+  grouprevive = "正在施放群体复活......", 
+  bindstone = "正在给[%s]绑定灵魂石......", 
+  castrevive = "正在施放",
 }
 or{}
 

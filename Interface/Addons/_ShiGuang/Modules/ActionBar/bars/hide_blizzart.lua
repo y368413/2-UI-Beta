@@ -1,8 +1,6 @@
-local M, R, U, I = unpack(select(2, ...))
-local Bar = MaoRUI:GetModule("Actionbar")
-
-local hiddenFrame = CreateFrame("Frame")
-hiddenFrame:Hide()
+local _, ns = ...
+local M, R, U, I = unpack(ns)
+local Bar = M:GetModule("Actionbar")
 
 local scripts = {
 	"OnShow", "OnHide", "OnEvent", "OnEnter", "OnLeave", "OnUpdate", "OnValueChanged", "OnClick", "OnMouseDown", "OnMouseUp",
@@ -14,26 +12,31 @@ local framesToHide = {
 
 local framesToDisable = {
 	MainMenuBar,
-	ActionBarDownButton, ActionBarUpButton, MainMenuBarVehicleLeaveButton, ExhaustionTick,
-	ReputationWatchBar, ArtifactWatchBar, HonorWatchBar, MainMenuExpBar, MainMenuBarMaxLevelBar,
+	MicroButtonAndBagsBar, MainMenuBarArtFrame, StatusTrackingBarManager,
+	ActionBarDownButton, ActionBarUpButton, MainMenuBarVehicleLeaveButton,
 	OverrideActionBar,
 	OverrideActionBarExpBar, OverrideActionBarHealthBar, OverrideActionBarPowerBar, OverrideActionBarPitchFrame,
 }
 
 local function DisableAllScripts(frame)
-	for i, script in next, scripts do
+	for _, script in next, scripts do
 		if frame:HasScript(script) then
-			frame:SetScript(script,nil)
+			frame:SetScript(script, nil)
 		end
 	end
 end
 
 function Bar:HideBlizz()
-	for i, frame in next, framesToHide do
-		frame:SetParent(hiddenFrame)
+	MainMenuBar:SetMovable(true)
+	MainMenuBar:SetUserPlaced(true)
+	MainMenuBar.ignoreFramePositionManager = true
+	MainMenuBar:SetAttribute("ignoreFramePositionManager", true)
+
+	for _, frame in next, framesToHide do
+		frame:SetParent(M.HiddenFrame)
 	end
 
-	for i, frame in next, framesToDisable do
+	for _, frame in next, framesToDisable do
 		frame:UnregisterAllEvents()
 		DisableAllScripts(frame)
 	end

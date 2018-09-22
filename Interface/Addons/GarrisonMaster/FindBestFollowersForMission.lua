@@ -69,7 +69,7 @@ local function FindBestFollowersForMission(mission, followers, mode)
    end
 
    local mission_frame = _G[GarrisonFollowerOptions[followers.type].missionFrame]
-   local type70 = followers.type == LE_FOLLOWER_TYPE_GARRISON_7_0
+   local type70 = (followers.type == LE_FOLLOWER_TYPE_GARRISON_7_0 or followers.type == LE_FOLLOWER_TYPE_GARRISON_8_0)
 
    local slots = mission.numFollowers
    if (slots > followers_count and not type70) or addon_env.b then return end
@@ -97,6 +97,7 @@ local function FindBestFollowersForMission(mission, followers, mode)
 
    local baseCost, cost = GetMissionCost(mission_id)
    local increased_cost = cost > baseCost
+   local _, base_totalTimeSeconds = GetPartyMissionInfo(mission_id)
 
    for idx = 1, slots do
       max[idx] = followers_count - slots + idx
@@ -167,6 +168,7 @@ local function FindBestFollowersForMission(mission, followers, mode)
       local follower1_busy = follower1.is_busy_for_mission and 1 or 0
       local follower1_is_troop = follower1.isTroop and 1 or 0
       local follower1_not_maxed = (follower1_is_troop == 0 and follower1_maxed == 0) and 1 or 0
+      local follower1_quality = follower1.quality
       local prev_follower2_troop_uniq
       for i2 = min[2] or (i1 + 1), max[2] do
          local follower2_maxed = 0
@@ -177,6 +179,7 @@ local function FindBestFollowersForMission(mission, followers, mode)
          local follower2_is_troop = 0
          local follower2_troop_uniq
          local follower2_not_maxed = 0
+         local follower2_quality = 0
          if follower2 then
             follower2_id = follower2.followerID
             if follower2.levelXP == 0 then follower2_maxed = 1 end
@@ -188,6 +191,7 @@ local function FindBestFollowersForMission(mission, followers, mode)
                follower2_troop_uniq = follower2.troop_uniq .. (follower2_busy == 1 and 'b' or '')
             end
             follower2_not_maxed = (follower2_is_troop == 0 and follower2_maxed == 0) and 1 or 0
+            follower2_quality = follower2.quality
          end
          -- Special handling to calculate precisely one team for 1 filled slot in 3 members missions.
          local i3_start = min[3] or (i2 + 1)
@@ -204,6 +208,7 @@ local function FindBestFollowersForMission(mission, followers, mode)
             local follower3_is_troop = 0
             local follower3_troop_uniq
             local follower3_not_maxed = 0
+            local follower3_quality = 0
             if follower3 then
                follower3_id = follower3.followerID
                if follower3.levelXP == 0 then follower3_maxed = 1 end
@@ -215,6 +220,7 @@ local function FindBestFollowersForMission(mission, followers, mode)
                   follower3_troop_uniq = follower3.troop_uniq .. (follower3_busy == 1 and 'b' or '')
                end
                follower3_not_maxed = (follower3_is_troop == 0 and follower3_maxed == 0) and 1 or 0
+               follower3_quality = follower3.quality
             end
 
             local followers_maxed = follower1_maxed + follower2_maxed + follower3_maxed
@@ -270,6 +276,8 @@ local function FindBestFollowersForMission(mission, followers, mode)
 
                -- Calculate result
                local follower_level_total = follower1_level + follower2_level + follower3_level
+               local follower_quality_total = follower1_quality + follower2_quality + follower3_quality
+
                local totalTimeString, totalTimeSeconds, isMissionTimeImproved, successChance, partyBuffs, isEnvMechanicCountered, xpBonus, materialMultiplier, goldMultiplier = GetPartyMissionInfo(mission_id)
                local cost = 0
                if type70 then
@@ -443,6 +451,10 @@ local function FindBestFollowersForMission(mission, followers, mode)
                            if c_gold_yield > gold_yield then break end
                         end
 
+                        local prev_follower_quality_total = prev_top.follower_quality_total
+                        if prev_follower_quality_total > follower_quality_total then found = true break end
+                        if prev_follower_quality_total < follower_quality_total then break end
+
                         -- Minimize XP bonus if all followers are maxed, because it indicates either overkill or XP-bonus traits better used elsewhere
                         -- but only if there are unmaxed followers. Otherwise minimize it after other optimizations.
                         if not all_followers_maxed then
@@ -494,7 +506,7 @@ local function FindBestFollowersForMission(mission, followers, mode)
                         new.gold_rewards = gold_rewards
                         new.xpBonus = xpBonus
                         new.totalTimeSeconds = totalTimeSeconds
-                        new.isMissionTimeImproved = isMissionTimeImproved
+                        new.isMissionTimeImproved = isMissionTimeImproved or (base_totalTimeSeconds > totalTimeSeconds)
                         new.followers_maxed = followers_maxed
                         new.buffCount = buffCount
                         new.isEnvMechanicCountered = isEnvMechanicCountered
@@ -503,6 +515,7 @@ local function FindBestFollowersForMission(mission, followers, mode)
                         new.xp_reward_wasted = xp_only_rewards and all_followers_maxed_on_mission
                         new.all_followers_maxed = all_followers_maxed_on_mission
                         new.follower_level_total = follower_level_total
+                        new.follower_quality_total = follower_quality_total
                         new.mission_level = mission.level
                         new.followers_troop = followers_troop
                         new.cost = cost

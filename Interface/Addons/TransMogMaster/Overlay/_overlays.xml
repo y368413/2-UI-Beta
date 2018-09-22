@@ -2,10 +2,14 @@
 ..\FrameXML\UI.xsd">
     <!-- Overlay Modules -->
     <Script file="overlay.lua"/>
-
+    <Script file="AuctionHouse.lua"/>
     <Script file="BlackMarketAuctionHouse.lua"/>
     <Script file="Containers.lua"/>
     <Script file="EncounterJournal.lua"/>
+    <Script file="Loot.lua"/>
     <Script file="Mail.lua"/>
+    <Script file="Merchant.lua"/>
+    <Script file="Quests.lua"/>
     <Script file="Sets.lua"/>
+    <Script file="Tradeskill.lua"/>
 </Ui>

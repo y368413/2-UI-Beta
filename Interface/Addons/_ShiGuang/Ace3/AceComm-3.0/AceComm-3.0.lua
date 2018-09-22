@@ -1,8 +1,7 @@
 local CallbackHandler = LibStub("CallbackHandler-1.0")
 local CTL = assert(ChatThrottleLib, "AceComm-3.0 requires ChatThrottleLib")
 
-local MAJOR, MINOR = "AceComm-3.0", 10
-
+local MAJOR, MINOR = "AceComm-3.0", 12
 local AceComm,oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not AceComm then return end
@@ -40,7 +39,11 @@ function AceComm:RegisterComm(prefix, method)
 	if #prefix > 16 then -- TODO: 15?
 		error("AceComm:RegisterComm(prefix,method): prefix length is limited to 16 characters")
 	end
-	RegisterAddonMessagePrefix(prefix)
+	if C_ChatInfo then
+		C_ChatInfo.RegisterAddonMessagePrefix(prefix)
+	else
+		RegisterAddonMessagePrefix(prefix)
+	end
 
 	return AceComm._RegisterComm(self, prefix, method)	-- created by CallbackHandler
 end
@@ -52,7 +55,7 @@ function AceComm:SendCommMessage(prefix, text, distribution, target, prio, callb
 	if not( type(prefix)=="string" and
 			type(text)=="string" and
 			type(distribution)=="string" and
-			(target==nil or type(target)=="string") and
+			(target==nil or type(target)=="string" or type(target)=="number") and
 			(prio=="BULK" or prio=="NORMAL" or prio=="ALERT") 
 		) then
 		error('Usage: SendCommMessage(addon, "prefix", "text", "distribution"[, "target"[, "prio"[, callbackFn, callbackarg]]])', 2)

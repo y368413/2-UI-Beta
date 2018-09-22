@@ -4,6 +4,12 @@ assert(LibStub, MAJOR .. ' requires LibStub')
 local lib, oldMinor = LibStub:NewLibrary(MAJOR, MINOR)
 if(not lib) then return end
 
+local defaults = {
+	--anchor = {'CENTER', 'UIParent', 'CENTER', 0, 0},
+	alwaysShow = false,
+	fillDirection = 'DOWN'
+}
+
 local journalIDs = {
 	-- 5.0 Pandaria
 	[132205] = {322, 691}, -- Sha of Anger
@@ -157,9 +163,6 @@ local journalIDs = {
 	[190139] = {385, 888}, -- Slave Watcher Crushto
 	[190140] = {385, 887}, -- Roltall
 	[190141] = {385, 889}, -- Gug'rokk
-
-	-- 7.0 The Nighthold
-	-- Grand Magistrix Elisande needs special handling
 }
 
 -- the following encounters present different IDs based on client randomness (not entirely sure)
@@ -238,6 +241,26 @@ local difficulties = {
 	[726] = 23, -- Dungeon: The Arcway
 	[707] = 23, -- Dungeon: Vault of the Wardens
 	[945] = 13, -- Dungeon: The Seat of the Triumvirate
+
+	-- 8.0
+	[1028] = 14, -- World: Azeroth
+	[1031] = 14, -- Raid: Uldir
+	[968] = 23, -- Dungeon: Atal'Dazar
+	[1001] = 23, -- Dungeon: Freehold
+	[1041] = 23, -- Dungeon: King's Rest
+	[1036] = 23, -- Dungeon: Shrine of the Storm
+	[1023] = 23, -- Dungeon: Siege of Boralus
+	[1030] = 23, -- Dungeon: Temple of Sethraliss
+	[1012] = 23, -- Dungeon: The MOTHERLODE!!
+	[1022] = 23, -- Dungeon: The Underrot
+	[1002] = 23, -- Dungeon: Tol Dagor
+	[1021] = 23, -- Dungeon: Waycrest Manor
+}
+
+local encounterDifficulties = {
+	[1452] = 15, -- 6.0: Supreme Lord Kazzak
+	[2212] = 15, -- 8.0: The Lion's Roar
+	[2213] = 15, -- 8.0: Doom's Howl
 }
 
 function lib:GetBonusRollEncounterJournalLinkDifficulty(encounterID, instanceID)
@@ -246,16 +269,9 @@ function lib:GetBonusRollEncounterJournalLinkDifficulty(encounterID, instanceID)
 	if(difficultyID ~= 0) then
 		return difficultyID
 	else
-		if(encounterID == 1452) then
-			-- Supreme Lord Kazzak thinks he's special
-			return 15
-		else
-			return difficulties[instanceID] or 0
-		end
+		return encounterDifficulties[encounterID] or difficulties[instanceID] or 0
 	end
 end
-
-
 
 
 local EJ = LibStub('EJ_Ext')
@@ -342,7 +358,7 @@ function BonusRollPreviewMixin:OnEvent(event, ...)
 		-- has used the EncounterJournal before changing loot specializations.
 		self:StartEncounter()
 	elseif(event == 'SPELL_CONFIRMATION_PROMPT') then
-		local spellID, confirmType, _, _, currencyID, difficultyID = ...
+		local spellID, confirmType, _, _, currencyID = ...
 		if(confirmType ~= LE_SPELL_CONFIRMATION_PROMPT_TYPE_BONUS_ROLL) then
 			return
 		end
@@ -350,12 +366,7 @@ function BonusRollPreviewMixin:OnEvent(event, ...)
 		if(not ignoredSpells[spellID]) then -- ignore blacklisted encounters
 			local instanceID, encounterID = EJ:GetJournalInfoForSpellConfirmation(spellID)
 			if(encounterID and select(2, GetCurrencyInfo(currencyID)) > 0) then
-				if(not difficultyID) then
-					-- get a fallback difficulty (should only happen with login prompts)
-					difficultyID = EJ:GetBonusRollEncounterJournalLinkDifficulty(encounterID, instanceID)
-				end
-
-				self.difficultyID = difficultyID
+				self.difficultyID = EJ:GetBonusRollEncounterJournalLinkDifficulty(encounterID, instanceID)
 				self.encounterID = encounterID
 				self.instanceID = instanceID
 
@@ -363,7 +374,7 @@ function BonusRollPreviewMixin:OnEvent(event, ...)
 				self:StartEncounter()
 
 				-- show/hide list and handle
-				self:SetShown(BonusRollPreviewDB.alwaysShow)
+				self:SetShown(defaults.alwaysShow)
 				self:UpdatePosition()
 				BonusRollPreviewHandle:Show()
 			end
@@ -383,7 +394,7 @@ function BonusRollPreviewMixin:OnEvent(event, ...)
 	elseif(event == 'PLAYER_LOGIN') then
 		-- update anchor position and frame positions
 		--BonusRollPreviewAnchor:ClearAllPoints()
-		--BonusRollPreviewAnchor:SetPoint(unpack(BonusRollPreviewDB.anchor))
+		--BonusRollPreviewAnchor:SetPoint(unpack(defaults.anchor))
 	end
 end
 
@@ -491,7 +502,7 @@ function BonusRollPreviewMixin:UpdateHandlePosition(collapsed)
 	local Handle = BonusRollPreviewHandle
 	Handle:ClearAllPoints()
 
-	local downwards = BonusRollPreviewDB.fillDirection == 'DOWN'
+	local downwards = defaults.fillDirection == 'DOWN'
 	if(collapsed) then
 		if(downwards) then
 			Handle:SetPoint('TOP', BonusRollFrame, 'BOTTOM', 0, 2)
@@ -520,7 +531,7 @@ end
 
 function BonusRollPreviewMixin:UpdatePosition()
 	self:ClearAllPoints()
-	if(BonusRollPreviewDB.fillDirection == 'DOWN') then
+	if(defaults.fillDirection == 'DOWN') then
 		self:SetPoint('TOP', self:GetParent(), 'BOTTOM')
 	else
 		self:SetPoint('BOTTOM', self:GetParent(), 'TOP')
@@ -658,18 +669,12 @@ end)
 
 
 
-------------------------------------------------------------------------------------------------------
-local defaults = {
-	--anchor = {'CENTER', 'UIParent', 'CENTER', 0, 0},
-	alwaysShow = false,
-	fillDirection = 'UP'
-}
-
-local Options = LibStub('Wasabi'):New('|cff8080ff[拾取]|r拾取提示', 'BonusRollPreviewDB', defaults)
+--[[----------------------------------------------------------------------------------------------------
+local Options = LibStub('Wasabi'):New('|cff8080ff[拾取]|r掉落提示', 'BonusRollPreviewDB', defaults)
 Options:Initialize(function(self)
 	local Title = self:CreateTitle()
 	Title:SetPoint('TOPLEFT', 16, -16)
-	Title:SetText('|cff8080ff[拾取]|r拾取提示')
+	Title:SetText('|cff8080ff[拾取]|r掉落提示')
 
 	local Description = self:CreateDescription()
 	Description:SetPoint('TOPLEFT', Title, 'BOTTOMLEFT', 0, -8)
@@ -686,20 +691,17 @@ Options:Initialize(function(self)
 		UP = '↑',
 		DOWN = '↓',
 	})
-end)
+end)]]
 
-_G['SLASH_' .. '|cff8080ff[拾取]|r拾取提示' .. '1'] = '/brp'
-SlashCmdList['|cff8080ff[拾取]|r拾取提示'] = function(msg)
-	msg = msg:lower()
-
-	if(msg == 'unlock' or msg == 'lock') then
-		BonusRollPreview:ToggleLock()
-	elseif(msg == 'reset') then
+--_G['SLASH_' .. '|cff8080ff[拾取]|r掉落提示' .. '1'] = '/brp'
+--SlashCmdList['|cff8080ff[拾取]|r掉落提示'] = function(msg)
+	--msg = msg:lower()
+	--if(msg == 'unlock' or msg == 'lock') then
+		--BonusRollPreview:ToggleLock()
+	--elseif(msg == 'reset') then
 		--BonusRollPreviewDB.anchor = CopyTable(defaults.anchor)
-		BonusRollPreview:OnEvent('PLAYER_LOGIN')
-	else
-		Options:ShowOptions()
-	end
-end
-
-
+		--BonusRollPreview:OnEvent('PLAYER_LOGIN')
+	--else
+		--Options:ShowOptions()
+	--end
+--end

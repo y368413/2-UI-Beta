@@ -1,4 +1,5 @@
-﻿SubSpecGlobal = {}
+﻿--## Author: Demonist  ## Version: 2.1.5.0
+SubSpecGlobal = {}
 local mainFrame = nil
 
 local eventFrame = CreateFrame("Frame", "SubSpec_EventFrame", UIParent)
@@ -311,24 +312,24 @@ local function CreateUi()
 	SubSpecGlobal._mainFrame = mainFrame
 	
 	mainFrame.texture = mainFrame:CreateTexture(nil, "ARTWORK")
-	mainFrame.texture:SetPoint("TOPLEFT")
-		mainFrame:SetSize(590, 60)
-		mainFrame:SetPoint("TOPLEFT", PlayerTalentFrame, "TOPLEFT", 30, -15)
+	mainFrame.texture:SetPoint("BOTTOMLEFT")
+		mainFrame:SetSize(612, 26)
+		mainFrame:SetPoint("BOTTOMLEFT", PlayerTalentFrame, "BOTTOMLEFT", 16, 2)
 		--mainFrame.texture:SetTexture("Interface\\AddOns\\SubSpec\\Images\\BackgroundStandard.tga")
 	mainFrame:Show()
 
 	--create button:
 	mainFrame.createButton = CreateFrame("Button", nil, mainFrame, "UIPanelButtonTemplate")
 	mainFrame.createButton:SetText("+")
-	mainFrame.createButton:SetPoint("TOPLEFT", 26, -16)
+	mainFrame.createButton:SetPoint("LEFT", 3, -1)
 	mainFrame.createButton:SetSize(21, 21)
 	mainFrame.createButton:SetScript("OnClick", function() AddProfileButton(SUBSPEC_NEWSET, GetCurrentTalents()); end)
 
 	--scroll:
 	local scroll = CreateFrame("ScrollFrame", "SubSpec_Scroll", mainFrame)
 	scroll:Show()
-	scroll:SetPoint("TOPLEFT", 46, -10)
-	scroll:SetPoint("BOTTOMRIGHT", 6, 15)
+	scroll:SetPoint("TOPLEFT", 31, -1)
+	scroll:SetPoint("BOTTOMRIGHT", 0, 0)
 	scroll:EnableMouseWheel(true)
 	scroll:SetScript("OnMouseWheel", function(self, delta)
 		local range = self:GetHorizontalScrollRange()
@@ -375,13 +376,13 @@ local function CreateUi()
 		self:SetPoint("TOPLEFT", profileFrame.button, "TOPRIGHT", -3, -8)
 		if self.index ~= profileFrame.index then
 			self.index = profileFrame.index
-			if L_UIDROPDOWNMENU_OPEN_MENU == mainFrame.menuFrame then DropDownList1:Hide(); end
+			if UIDROPDOWNMENU_OPEN_MENU == mainFrame.menuFrame then DropDownList1:Hide(); end
 		end
 		self:Show()
 	end
 	mainFrame.menuButton = menuButton
 
-	mainFrame.menuFrame = CreateFrame("Frame", "SubSpec_MenuFrame", menuButton, "L_UIDropDownMenuTemplate")
+	mainFrame.menuFrame = CreateFrame("Frame", "SubSpec_MenuFrame", menuButton, "UIDropDownMenuTemplate")
 	mainFrame.menuFrame:Hide()
 	mainFrame.menuFrame.displayMode = "MENU"
 	menuTexts = {
@@ -391,11 +392,11 @@ local function CreateUi()
 		{text = SUBSPEC_RIGHTSHIFT, notCheckable = true, func = MenuMoveRight},
 		{text = CALENDAR_DELETE_EVENT, notCheckable = true, func = MenuRemove}
 	}
-	L_UIDropDownMenu_Initialize(mainFrame.menuFrame, L_EasyMenu_Initialize, "MENU", nil, menuTexts)  --Lib_EasyMenu_Initialize
-	menuButton:SetScript("OnClick", function() L_ToggleDropDownMenu(1, nil, mainFrame.menuFrame, menuButton, 0, 0, menuTexts, nil, nil); end)
+	UIDropDownMenu_Initialize(mainFrame.menuFrame, EasyMenu_Initialize, "MENU", nil, menuTexts)
+	menuButton:SetScript("OnClick", function() ToggleDropDownMenu(1, nil, mainFrame.menuFrame, menuButton, 0, 0, menuTexts, nil, nil); end)
 	menuButton:SetScript("OnHide", function(self)
 		self.index = 0
-		if L_UIDROPDOWNMENU_OPEN_MENU == mainFrame.menuFrame then DropDownList1:Hide(); end
+		if UIDROPDOWNMENU_OPEN_MENU == mainFrame.menuFrame then DropDownList1:Hide(); end
 	end)
 	StaticPopupDialogs["SubSpec_RenameDialog"] = {
 		text = SUBSPEC_NEWPROFILENAME,
@@ -411,7 +412,7 @@ local function CreateUi()
 	}
 
 	mainFrame:SetScript("OnHide", function(self)
-		if L_UIDROPDOWNMENU_OPEN_MENU == mainFrame.menuFrame then DropDownList1:Hide(); end
+		if UIDROPDOWNMENU_OPEN_MENU == mainFrame.menuFrame then DropDownList1:Hide(); end
 		self.menuButton:Hide()
 		StaticPopup_Hide("SubSpec_RenameDialog")
 	end)

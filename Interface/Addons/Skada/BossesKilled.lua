@@ -1,4 +1,5 @@
-﻿local _, BossesKilled = ...
+﻿--## Author: wT  ## Version: 1.5.2
+local _, BossesKilled = ...
 if not BossesKilled.RegisterEvent and not BossesKilled.UnregisterEvent and not BossesKilled.UnregisterAllEvents then
 	local f = CreateFrame("frame")
 	f:SetScript("OnEvent", function(self, event, ...) BossesKilled[event](BossesKilled, ...) end)
@@ -145,7 +146,7 @@ function BossesKilled:UpdateButtonsAndTooltips(parentFrame)
                     bossName = "bossname"
                     encounterLine.text = "X - "..bossName
                 else 
-				    encounterLine.text = "O - "..bossName
+				    encounterLine.text = "X - "..bossName
                     numKilled = numKilled + 1
                 end
 			else
@@ -154,9 +155,9 @@ function BossesKilled:UpdateButtonsAndTooltips(parentFrame)
 				end
                 if bossName == nil then
                     bossName = "bossname"
-                    encounterLine.text = "X - "..bossName
+                    encounterLine.text = "O - "..bossName
                 else 
-				    encounterLine.text = "X - "..bossName
+				    encounterLine.text = "O - "..bossName
                 end
 			end
 			table.insert(tooltip, encounterLine)
@@ -330,7 +331,12 @@ BossesKilled.raidData = {
 	
 	-- Antorus, the Burning Throne
 	[1610] = { numEncounters = 3, startFrom =  1 }, -- Light's Breach
-	[1612] = { numEncounters = 3, startFrom =  1 }, -- Hope's End
 	[1611] = { numEncounters = 3, startFrom =  1 }, -- Forbidden Descent
+	[1612] = { numEncounters = 3, startFrom =  1 }, -- Hope's End
 	[1613] = { numEncounters = 2, startFrom =  1 }, -- Seat of the Pantheon
+
+  -- Uldir
+  [1731] = { numEncounters = 3, startFrom =  1 }, -- Halls of Containment
+  [1732] = { numEncounters = 3, startFrom =  1 }, -- Crimson Descent
+  [1733] = { numEncounters = 2, startFrom =  1 }, -- Heart of Corruption
 }

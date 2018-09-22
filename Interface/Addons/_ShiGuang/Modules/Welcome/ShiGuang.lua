@@ -1,22 +1,30 @@
-local M, R, U, I = unpack(select(2, ...))
-local module = MaoRUI:RegisterModule("Misc")
+local _, ns = ...
+local M, R, U, I = unpack(ns)
+local module = M:RegisterModule("Misc")
 
 function module:OnLogin()
-	self:SoloInfo()
 	self:RareAlert()
+	self:Expbar()
 	self:Focuser()
 	self:Mailbox()
+	self:QuickJoin()
+	self:QuestNotifier()
+	self:SoloInfo()
+	self:EXPTracker()
 	self:WallpaperKit()
+	self:FreeMountCD()
 	-- Hide Bossbanner
 	if MaoRUISettingDB["Misc"]["HideBanner"] then BossBanner:UnregisterAllEvents() end
 	PlayerFrame:SetScale(MaoRUISettingDB["Settings"]["PlayerFrameScale"]) 
 	TargetFrame:SetScale(MaoRUISettingDB["Settings"]["PlayerFrameScale"])
 	----------------QuickQueue.lua----------------------
 	if MaoRUISettingDB["Misc"]["QuickQueue"] then
-	local QuickQueue = CreateFrame("Frame")
-	QuickQueue:RegisterEvent("LFG_ROLE_CHECK_SHOW")
-	QuickQueue:SetScript("OnEvent", function(self, event, ...) CompleteLFGRoleCheck(true) end)
-	end
+	  local QuickQueue = CreateFrame("Frame")
+	    QuickQueue:RegisterEvent("LFG_ROLE_CHECK_SHOW")
+	    QuickQueue:SetScript("OnEvent", function(self, event, ...) CompleteLFGRoleCheck(true) end)
+	  end
+	-- Fix patch 27326
+ 	GuildControlUIRankSettingsFrameRosterLabel = CreateFrame("Frame", nil, M.HiddenFrame)
 end
 --MoreBuffs
 hooksecurefunc("DefaultCompactUnitFrameSetup", function(frame)
@@ -79,20 +87,81 @@ ShiGuangLoadAdddon:SetScript("OnEvent", function(self, event, addon)
 	end
 end)
 
---------------------------------------TalkingHeadFrame Scale------------------------
-local HideTalkingHead = CreateFrame("Frame")
-function HideTalkingHead:OnEvent(event, addon)
-	if addon == "Blizzard_TalkingHeadUI" then
-		hooksecurefunc("TalkingHeadFrame_PlayCurrent", function()
-			--TalkingHeadFrame:Hide()
-			TalkingHeadFrame:ClearAllPoints()
-			TalkingHeadFrame:SetPoint("BOTTOM", UIParent, "TOP", 0, -210)
-			TalkingHeadFrame:SetScale(0.65)
-		end)
-		self:UnregisterEvent(event)
+-----------------------------------------------------------------------------------AlertFrame ReStyle
+local AlertFrameReStyle = CreateFrame('Frame', 'AlertFrameReStyle', UIParent)
+AlertFrameReStyle:SetSize(66, 21)
+AlertFrameReStyle:SetPoint('TOP', UIParent, 'TOP', 0, 0)
+
+local function MoveGroupLootContainerReStyle(self)
+	local lastIdx = nil
+	for i = 1, self.maxIndex do
+		if self.rollFrames[i] then self.rollFrames[i]:ClearAllPoints()
+			if prevFrame then
+				self.rollFrames[i]:SetPoint('TOP', self.rollFrames[i-1] or self, 'BOTTOM', 0, -8)
+			else
+				self.rollFrames[i]:SetPoint('CENTER', self, 'BOTTOM', 0, self.reservedSize * (i-1 + 0.5))
+			end
+			lastIdx = i
+		end
+	end
+	if lastIdx then
+		self:SetHeight(self.reservedSize * lastIdx)
+		self:Show()
+	else
+		self:Hide()
 	end
 end
--- 將對話框錨點與alertframe分離
+
+local function MoveAlertReStyle()
+	AlertFrame:ClearAllPoints()
+	AlertFrame:SetScale(0.85)
+	AlertFrame:SetAllPoints(AlertFrameReStyle)
+	GroupLootContainer:ClearAllPoints()
+	GroupLootContainer:SetPoint('TOP', AlertFrameReStyle, 'BOTTOM', 0, -8)
+	if GroupLootContainer:IsShown() then MoveGroupLootContainerReStyle(GroupLootContainer) end
+end
+
+local function MoveAnchorsReStyle(self, relativeAlert)
+	for alertFrame in self.alertFramePool:EnumerateActive() do
+		alertFrame:SetScale(0.85)
+		alertFrame:ClearAllPoints()
+		alertFrame:SetPoint('TOP', relativeAlert, 'BOTTOM', 0, -8);
+		relativeAlert = alertFrame
+	end
+end
+
+UIPARENT_MANAGED_FRAME_POSITIONS['GroupLootContainer'] = nil
+hooksecurefunc('GroupLootContainer_Update', MoveGroupLootContainerReStyle)
+
+hooksecurefunc(AlertFrame, 'UpdateAnchors', MoveAlertReStyle)
+hooksecurefunc(AchievementAlertSystem, 'AdjustAnchors', MoveAnchorsReStyle) 		
+hooksecurefunc(CriteriaAlertSystem, 'AdjustAnchors', MoveAnchorsReStyle) 			
+hooksecurefunc(LootAlertSystem, 'AdjustAnchors', MoveAnchorsReStyle) 				
+hooksecurefunc(LootUpgradeAlertSystem, 'AdjustAnchors', MoveAnchorsReStyle) 		
+hooksecurefunc(MoneyWonAlertSystem, 'AdjustAnchors', MoveAnchorsReStyle) 		
+hooksecurefunc(HonorAwardedAlertSystem, 'AdjustAnchors', MoveAnchorsReStyle)
+hooksecurefunc(NewRecipeLearnedAlertSystem, 'AdjustAnchors', MoveAnchorsReStyle)	
+
+hooksecurefunc(GuildChallengeAlertSystem, 'AdjustAnchors', MoveAnchorsReStyle)
+hooksecurefunc(DungeonCompletionAlertSystem, 'AdjustAnchors', MoveAnchorsReStyle)
+hooksecurefunc(ScenarioAlertSystem, 'AdjustAnchors',  MoveAnchorsReStyle)	
+hooksecurefunc(InvasionAlertSystem, 'AdjustAnchors', MoveAnchorsReStyle) 				
+hooksecurefunc(DigsiteCompleteAlertSystem, 'AdjustAnchors', MoveAnchorsReStyle)
+hooksecurefunc(StorePurchaseAlertSystem, 'AdjustAnchors', MoveAnchorsReStyle)
+hooksecurefunc(GarrisonBuildingAlertSystem, 'AdjustAnchors',  MoveAnchorsReStyle)
+hooksecurefunc(GarrisonMissionAlertSystem, 'AdjustAnchors', MoveAnchorsReStyle) 			
+hooksecurefunc(GarrisonShipMissionAlertSystem, 'AdjustAnchors', MoveAnchorsReStyle)
+hooksecurefunc(GarrisonRandomMissionAlertSystem, 'AdjustAnchors', MoveAnchorsReStyle)
+hooksecurefunc(GarrisonFollowerAlertSystem, 'AdjustAnchors',  MoveAnchorsReStyle) 		
+hooksecurefunc(GarrisonShipFollowerAlertSystem, 'AdjustAnchors', MoveAnchorsReStyle)	
+hooksecurefunc(GarrisonTalentAlertSystem, 'AdjustAnchors',  MoveAnchorsReStyle) 	
+hooksecurefunc(WorldQuestCompleteAlertSystem, 'AdjustAnchors', MoveAnchorsReStyle)
+hooksecurefunc(LegendaryItemAlertSystem, 'AdjustAnchors',  MoveAnchorsReStyle) 	
+hooksecurefunc(NewPetAlertSystem, 'AdjustAnchors',  MoveAnchorsReStyle)
+hooksecurefunc(NewMountAlertSystem, 'AdjustAnchors',  MoveAnchorsReStyle)
+
+--------------------------------------TalkingHeadFrame Scale------------------------
+--[[ 將對話框錨點與alertframe分離
 hooksecurefunc(AlertFrame, "AddAlertFrameSubSystem", function(self, alertFrameSubSystem)
 	if alertFrameSubSystem.anchorFrame == TalkingHeadFrame then
 		for i, alertSubSystem in pairs(AlertFrame.alertFrameSubSystems) do
@@ -102,10 +171,46 @@ hooksecurefunc(AlertFrame, "AddAlertFrameSubSystem", function(self, alertFrameSu
 			end
 		end
 	end
+end)]]
+
+--[[hooksecurefunc(AlertFrame,"UpdateAnchors", function()
+AlertFrame:ClearAllPoints()
+AlertFrame:SetPoint("TOP",UIParent,"TOP",0,-180)
+AlertFrame:SetScale(0.8)
 end)
+
+local mode = 3
+local HideTalkingHead = CreateFrame("Frame")
 HideTalkingHead:RegisterEvent("ADDON_LOADED")
 HideTalkingHead:RegisterEvent("MODIFIER_STATE_CHANGED")
-HideTalkingHead:SetScript("OnEvent", HideTalkingHead.OnEvent)
+HideTalkingHead:SetScript("OnEvent", function(event, addon)
+	if addon == "Blizzard_TalkingHeadUI" then
+		hooksecurefunc("TalkingHeadFrame_PlayCurrent", function()
+			if mode == 1 then
+				TalkingHeadFrame_CloseImmediately()	-- 隱藏框體與聲音
+			elseif mode == 2 then
+				TalkingHeadFrame:Hide()	-- 只隱藏框體
+			elseif mode == 3 then
+				TalkingHeadFrame:SetScale(0.65)	-- 縮放和位置
+				TalkingHeadFrame:SetClampedToScreen(true)
+				TalkingHeadFrame.ignoreFramePositionManager = true
+				TalkingHeadFrame:ClearAllPoints()
+				TalkingHeadFrame:SetPoint("TOP", UIParent, "TOP", 0, -80)
+				--TalkingHeadFrame.TextFrame.Text:SetFont(GameFontNormal:GetFont(), 20, "THINOUTLINE")
+				--TalkingHeadFrame.NameFrame.Name:SetFont(GameFontNormal:GetFont(), 20, "THINOUTLINE")
+				-- 非隱藏時，將對話框錨點與alertframe分離
+				if alertFrameSubSystem == alertSubSystem then
+					tremove(AlertFrame.alertFrameSubSystems, i)
+					return 
+				end
+			end
+		end)
+		self:UnregisterEvent(event)
+	end
+end)]]
+---------------海岛冒险----------------------
+UIWidgetTopCenterContainerFrame:ClearAllPoints()
+UIWidgetTopCenterContainerFrame:SetPoint("TOP", 0, -21)
 ---------------团队---RaidFrameReSizer-------------------
 CompactRaidFrameContainer:SetScale(0.85)
 local n,w,h="CompactUnitFrameProfilesGeneralOptionsFrame" h,w= _G[n.."HeightSlider"], _G[n.."WidthSlider"] h:SetMinMaxValues(21,210) w:SetMinMaxValues(21,310)
@@ -138,20 +243,16 @@ FBGF:RegisterEvent("ADDON_LOADED")
     ObjectiveTrackerFrame:SetPoint("TOPLEFT","UIParent","TOPLEFT",26,-21)
     ObjectiveTrackerFrame.SetPoint = function() end
     ObjectiveTrackerFrame:SetHeight(666)
--------------ZoneAbilityFrame-------------
-ZoneAbilityFrame:SetScale(0.6) 
---ZoneAbilityFrame:ClearAllPoints()
---ZoneAbilityFrame:SetPoint("RIGHT",PlayerFrame,"LEFT",-100,0)
 --[[ 缩放/移动设置 ]]
 ------------- 玩家框体固定 -------------
 --local function ScrewYouPlayerFrame()
-    PlayerFrame:ClearAllPoints() PlayerFrame:SetPoint("RIGHT",M.UIParent,"CENTER", -180, -250) PlayerFrame:SetUserPlaced(true)
+    PlayerFrame:ClearAllPoints() PlayerFrame:SetPoint("RIGHT",M.UIParent,"CENTER", -150, -250) PlayerFrame:SetUserPlaced(true)
 -- end
 --hooksecurefunc("PlayerFrame_AnimateOut", function() PlayerFrame:SetAlpha(0); ScrewYouPlayerFrame() end)
 --hooksecurefunc("PlayerFrame_SequenceFinished", function() PlayerFrame:SetAlpha(1); ScrewYouPlayerFrame() end)
 --hooksecurefunc("PlayerFrame_UpdateStatus", ScrewYouPlayerFrame)
 ------------- 目标框体固定 -------------
-TargetFrame:ClearAllPoints()  TargetFrame:SetPoint("LEFT",M.UIParent,"CENTER", 180, -250) TargetFrame:SetUserPlaced(true)
+TargetFrame:ClearAllPoints()  TargetFrame:SetPoint("LEFT",M.UIParent,"CENTER", 150, -250) TargetFrame:SetUserPlaced(true)
 ------------- 目标的目标框体固定 -------------
 TargetFrameToT:ClearAllPoints() TargetFrameToT:SetPoint("LEFT",TargetFrame,"BOTTOMRIGHT", -43, 21)
 ------------- 目标的目标框体的名字 -------------
@@ -164,14 +265,14 @@ FocusFrame:SetScale(1.1)
 FocusFrame:SetScript("OnMouseDown", function()	if(IsShiftKeyDown()) then	FocusFrame:ClearAllPoints()	FocusFrame:StartMoving()	end end)
 FocusFrame:SetScript("OnMouseUp", function()	FocusFrame:StopMovingOrSizing() end)
 -------------- BossFrames ---------------------------------------------------			
-for i = 1, MAX_BOSS_FRAMES do
- local bossFrame = _G["Boss"..i.."TargetFrame"]
-   bossFrame:SetScale(0.8)
-   bossFrame.nameBackground:Hide()
- local bossHealthBarFrame = _G["Boss"..i.."TargetFrameHealthBar"]
-   bossHealthBarFrame:ClearAllPoints() bossHealthBarFrame:SetHeight(29) bossHealthBarFrame:SetPoint("TOPLEFT", 5, -24)
-end
-Boss1TargetFrame:ClearAllPoints()  Boss1TargetFrame:SetPoint("TOPRIGHT", Minimap,"BOTTOMRIGHT", -21, -80) Boss1TargetFrame.SetPoint=function()end
+--for i = 1, MAX_BOSS_FRAMES do
+ --local bossFrame = _G["Boss"..i.."TargetFrame"]
+   --bossFrame:SetScale(0.8)
+   --bossFrame.nameBackground:Hide()
+ --local bossHealthBarFrame = _G["Boss"..i.."TargetFrameHealthBar"]
+   --bossHealthBarFrame:ClearAllPoints() bossHealthBarFrame:SetHeight(29) bossHealthBarFrame:SetPoint("TOPLEFT", 5, -24)
+--end
+Boss1TargetFrame:ClearAllPoints()  Boss1TargetFrame:SetPoint("TOPRIGHT", Minimap,"BOTTOMRIGHT", 0, -20) Boss1TargetFrame.SetPoint=function()end
 ----------------------------------------------------- PARTYFRAMES ---------------------------------------------------
 for i = 1, MAX_PARTY_MEMBERS do
     _G["PartyMemberFrame"..i]:SetScale(0.9)
@@ -184,7 +285,7 @@ end)
 PartyMemberFrame1:SetScript("OnMouseUp", function()
 		PartyMemberFrame1:StopMovingOrSizing()
 end)
-----------------公会等级显示不全Fix------------------------by nj55top
+--[[--------------公会等级显示不全Fix------------------------by nj55top
 local _VIEW
 local function setView(view) _VIEW = view end
 
@@ -209,7 +310,7 @@ hooksecurefunc("GuildFrame_LoadUI", function()
 		hooksecurefunc("GuildRoster_Update", updateGuild)
 		hooksecurefunc(GuildRosterContainer, "update", updateGuild)
 	end
-end)
+end)]]
 ----------------EasyDelete## Author: Lerith----------------------
 hooksecurefunc(StaticPopupDialogs["DELETE_GOOD_ITEM"],"OnShow",function(EasyDelete) EasyDelete.editBox:SetText(DELETE_ITEM_CONFIRM_STRING) end)
 ----------------Item Selling## Author: Spencer Sohn----------------------
@@ -224,74 +325,72 @@ end)
 LFDParentFrame:HookScript("OnShow",function()
   for i=1,GetNumRandomDungeons() do
    local id,name=GetLFGRandomDungeonInfo(i)
-   local isHoliday=select(15,GetLFGDungeonInfo(id))
-   if(isHoliday and not GetLFGDungeonRewards(id)) then LFDQueueFrame_SetType(id) end
+   if(select(15,GetLFGDungeonInfo(id)) and not GetLFGDungeonRewards(id)) then LFDQueueFrame_SetType(id) end
   end
  end)
 --------------------------------------Hide the left/right end cap------------------------
-MainMenuBarLeftEndCap:Hide()  MainMenuBarRightEndCap:Hide()
---------------------------Class recoure Place ---by y368413 ----
-local function yInvertTexture(Texture)
-	local Left, Top, _, Bottom, Right = Texture:GetTexCoord()
-	Texture:SetTexCoord(Left, Right, Bottom, Top) -- Swapping parameters 3 & 4 (top & bottom)
-end
-local function yInvertAllTextures(Frame)
-	for _, Region in pairs({ Frame:GetRegions() }) do
-		if Region:IsObjectType("Texture") then yInvertTexture(Region) end
-	end
-end
-local function ClassRecourePlace()
-if select(2, UnitClass('player')) == "DRUID" or select(2, UnitClass('player')) == "ROGUE" then
-ComboPointPlayerFrame:SetAlpha(1)
-ComboPointPlayerFrame.Background:Hide()
-ComboPointPlayerFrame:ClearAllPoints() 
-ComboPointPlayerFrame:SetPoint('BOTTOM', M.UIParent, "CENTER", 8, -143) 
-ComboPointPlayerFrame.SetPoint = function() end
-ComboPointPlayerFrame:SetScale(1.5)
-elseif select(2, UnitClass('player')) == "WARLOCK" then
---yInvertAllTextures(WarlockPowerFrame)
-WarlockPowerFrame:SetAlpha(1)
-WarlockPowerFrame:ClearAllPoints()
-WarlockPowerFrame:SetPoint('BOTTOM', M.UIParent, "CENTER", 0, -180)
-WarlockPowerFrame.SetPoint = function() end
-WarlockPowerFrame:SetScale(1.2)
---WarlockPowerFrame:SetAlpha(1)
-elseif select(2, UnitClass('player')) == "PALADIN" then
-PaladinPowerBarFrame:SetAlpha(1)
-PaladinPowerBarFrameBG:Hide()
-PaladinPowerBarFrameGlowBG:Hide()
-PaladinPowerBarFrame:ClearAllPoints()
-PaladinPowerBarFrame:SetPoint('BOTTOM', M.UIParent, "CENTER", 0, -143) 
-PaladinPowerBarFrame.SetPoint = function() end
-PaladinPowerBarFrame:SetScale(1.5)
-elseif select(2, UnitClass('player')) == "DEATHKNIGHT"  and GetSpecialization() ~= 1 then
-RuneFrame:SetAlpha(1)
-RuneFrame:ClearAllPoints()
-RuneFrame:SetPoint('BOTTOM', M.UIParent, "CENTER", 0, -143) 
-RuneFrame.SetPoint = function() end
-RuneFrame:SetScale(1.5)
-elseif select(2, UnitClass('player')) == "MONK" then
-MonkHarmonyBarFrame:SetAlpha(1)
-yInvertAllTextures(MonkHarmonyBarFrame)
-MonkHarmonyBarFrame:ClearAllPoints()
-MonkHarmonyBarFrame:SetPoint('BOTTOM', M.UIParent, "CENTER", 0, -195) 
-MonkHarmonyBarFrame.SetPoint = function() end
-MonkHarmonyBarFrame:SetScale(1.2)
-MonkStaggerBar:SetAlpha(1)
-MonkStaggerBar:ClearAllPoints()
-MonkStaggerBar:SetPoint('BOTTOM', M.UIParent, "CENTER", 0, -143) 
-MonkStaggerBar.SetPoint = function() end
-MonkStaggerBar:SetScale(1.5)
-elseif select(2, UnitClass('player')) == "MAGE" then
-MageArcaneChargesFrame:SetAlpha(1)
-MageArcaneChargesFrame.Background:Hide()
-MageArcaneChargesFrame:ClearAllPoints()
-MageArcaneChargesFrame:SetPoint('BOTTOM', M.UIParent, "CENTER", 0, -160)
-MageArcaneChargesFrame.SetPoint = function() end 
-MageArcaneChargesFrame:SetScale(1.5)
-end
-end
+MainMenuBarArtFrame.LeftEndCap:Hide()  MainMenuBarArtFrame.RightEndCap:Hide()
 
-MaoRUI:EventFrame("PLAYER_ENTERING_WORLD"):SetScript("OnEvent", function()
-if MaoRUISettingDB["Misc"]["ClassRecourePlace"] then ClassRecourePlace() end
-end)
+
+FACTION_BAR_COLORS = {
+	[1] = { r= .54, g= 0,   b= 0   }, -- hated      {r = 0.63, g = 0, b = 0},
+	[2] = { r= 1,   g= .10, b= .1  }, -- hostile    {r = 0.63, g = 0, b = 0},
+	[3] = { r= 1,   g= .55, b= 0   }, -- unfriendly {r = 0.63, g = 0, b = 0},
+	[4] = { r= .87, g= .87, b= .87 }, -- neutral    {r = 0.82, g = 0.67, b = 0},
+	[5] = { r= 1,   g= 1,   b= 0   }, -- friendly   {r = 0.32, g = 0.67, b = 0},
+	[6] = { r= .1,  g= .9,  b= .1  }, -- honored    {r = 0.32, g = 0.67, b = 0},
+	[7] = { r= .25, g= .41, b= .88 }, -- revered    {r = 0.32, g = 0.67, b = 0},
+	[8] = { r= .6,  g= .2,  b= .8  }, -- exalted    {r = 0, g = 0.75, b = 0.44},
+	[9] = { r= .4,  g= 0,   b= .6  }, -- past exalted
+};
+
+GOLD_AMOUNT = "|c00ffd700%d●|r";--GOLD_AMOUNT = "%d\124TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0\124t"
+SILVER_AMOUNT = "|c00c7c7cf%d●|r";--SILVER_AMOUNT = "%d\124TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0\124t"
+COPPER_AMOUNT = "|c00eda55f%d●|r";--COPPER_AMOUNT = "%d\124TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0\124t"
+ENTERING_COMBAT = "";
+LEAVING_COMBAT = "";
+
+CHAT_WHISPER_INFORM_GET = "<<%s:";
+CHAT_WHISPER_GET = ">>%s:";
+CHAT_BN_WHISPER_INFORM_GET = "<<%s:";
+CHAT_BN_WHISPER_GET = ">>%s:";
+CHAT_SAY_GET = "%s:";
+CHAT_YELL_GET = "%s:"  ;
+CHAT_FLAG_AFK = "[AFK]";
+CHAT_FLAG_DND = "[Busy]";
+CHAT_FLAG_GM = "[GM]";
+  
+ITEM_CREATED_BY="|cFF00DDFF<Thanks For Using 2 UI>|r";
+CHAT_YOU_CHANGED_NOTICE = "=|Hchannel:%d|h[%s]|h";
+CHAT_YOU_CHANGED_NOTICE_BN = "=|Hchannel:CHANNEL:%d|h[%s]|h";
+CHAT_YOU_JOINED_NOTICE = "+|Hchannel:%d|h[%s]|h";
+CHAT_YOU_JOINED_NOTICE_BN = "+|Hchannel:CHANNEL:%d|h[%s]|h";
+CHAT_YOU_LEFT_NOTICE = "-|Hchannel:%d|h[%s]|h";
+CHAT_YOU_LEFT_NOTICE_BN = "-|Hchannel:CHANNEL:%d|h[%s]|h";
+
+--[[Self
+YOU_LOOT_MONEY = "["..SHIGUANG_Loot.."]: %s";
+
+CURRENCY_GAINED = "["..BONUS_ROLL_REWARD_CURRENCY.."]: %s";
+CURRENCY_GAINED_MULTIPLE = "["..BONUS_ROLL_REWARD_CURRENCY.."]: %s x%d";
+CURRENCY_GAINED_MULTIPLE_BONUS = "["..BONUS_ROLL_REWARD_CURRENCY.."]: %s x%d ("..SCENARIO_BONUS_OBJECTIVES..")"; 
+LOOT_ITEM_BONUS_ROLL_SELF = "["..BONUS_REWARDS.."]: %s  ("..SCENARIO_BONUS_OBJECTIVES..")";
+LOOT_ITEM_BONUS_ROLL_SELF_MULTIPLE = "["..BONUS_REWARDS.."]: %sx%d ("..SCENARIO_BONUS_OBJECTIVES..")";
+LOOT_ITEM_CREATED_SELF = "["..CREATE_PROFESSION.."]: %s";
+LOOT_ITEM_CREATED_SELF_MULTIPLE = "["..CREATE_PROFESSION.."]: %sx%d";
+LOOT_ITEM_PUSHED_SELF = "["..SHIGUANG_Loot.."]: %s";
+LOOT_ITEM_PUSHED_SELF_MULTIPLE = "["..SHIGUANG_Loot.."]: %sx%d";
+LOOT_ITEM_REFUND = "["..SHIGUANG_Refund.."]: %s";
+LOOT_ITEM_REFUND_MULTIPLE = "["..SHIGUANG_Refund.."]: %sx%d";
+LOOT_ITEM_SELF = "["..SHIGUANG_Loot.."]: %s";
+LOOT_ITEM_SELF_MULTIPLE = "["..SHIGUANG_Loot.."]: %sx%d";
+
+--Other players
+LOOT_ITEM = "["..SHIGUANG_Gets.."]: %s %s";
+LOOT_ITEM_BONUS_ROLL = "["..SHIGUANG_Gets.."]: %s %s ("..SCENARIO_BONUS_OBJECTIVES..")";
+LOOT_ITEM_BONUS_ROLL_MULTIPLE = "["..SHIGUANG_Gets.."]: %s %sx%d";
+LOOT_ITEM_MULTIPLE = "["..SHIGUANG_Gets.."]: %s %sx%d";
+LOOT_ITEM_PUSHED = "["..SHIGUANG_Gets.."]: %s %s";
+LOOT_ITEM_PUSHED_MULTIPLE = "["..SHIGUANG_Gets.."]: %s %sx%d";
+LOOT_ITEM_WHILE_PLAYER_INELIGIBLE = "["..SHIGUANG_Gets.."]: %s |TInterface\\Common\\Icon-NoLoot:13:13:0:0|t%s";
+]]

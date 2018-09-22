@@ -57,3 +57,11 @@ L.TipDelimiter = '|'
 L.TipShowInventory = '<左鍵點擊>切換背包。'
 L.TipShowBank = '<右鍵點擊>切換銀行。'
 L.TipShowOptions = '<Shift-左鍵點擊>開啟設定選單。'
+
+--item tooltips
+L.TipCountEquip = '装备: %d'
+L.TipCountBags = '背包: %d'
+L.TipCountBank = '银行: %d'
+L.TipCountVault = '仓库: %d'
+L.TipCountGuild = '工会银行: %d'
+L.TipDelimiter = '|'

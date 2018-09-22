@@ -274,7 +274,7 @@ function DEX_preSavePosition(self)
 end
 
 function DEX_showMenu()
-	PlaySound(850); --"igMainMenuOpen"
+	PlaySound(850);
 	ShowUIPanel(DEXOptions);
 	local pre = getglobal("DEX_PreBox");
 	pre:ClearAllPoints();
@@ -286,7 +286,7 @@ end
 
 --Hide the Option Menu
 function DEX_hideMenu()
-	--PlaySound(PlaySoundKitID and "igMainMenuClose");
+	PlaySound(851);
 	HideUIPanel(DEXOptions);
 	local pre = getglobal("DEX_PreBox");
 	pre:Hide();
@@ -305,26 +305,26 @@ function DEXOptionsFrameDropDownCats_Initialize()
 			text = DEXOptionsDropDown[i];
 			func = DEXOptionsFrameDropDownCats_OnClick;
 		};
-		L_UIDropDownMenu_AddButton(info);
+		MSA_DropDownMenu_AddButton(info);
 	end
 end
 
 
 function DEXOptionsFrameDropDownCats_OnShow()
-	L_UIDropDownMenu_Initialize(DEXOptionsDropDownCats, DEXOptionsFrameDropDownCats_Initialize)
-	L_UIDropDownMenu_SetSelectedID(DEXOptionsDropDownCats, DEX_Get("DEX_ColorMode"))
-	L_UIDropDownMenu_SetWidth(DEXOptionsDropDownCats,100)
+	MSA_DropDownMenu_Initialize(DEXOptionsDropDownCats, DEXOptionsFrameDropDownCats_Initialize)
+	MSA_DropDownMenu_SetSelectedID(DEXOptionsDropDownCats, DEX_Get("DEX_ColorMode"))
+	MSA_DropDownMenu_SetWidth(DEXOptionsDropDownCats,100)
 end
 
 
 function DEXOptionsFrameDropDownCats_OnClick(self)
 	local thisID = self:GetID()
-	L_UIDropDownMenu_SetSelectedID(DEXOptionsDropDownCats, thisID)
+	MSA_DropDownMenu_SetSelectedID(DEXOptionsDropDownCats, thisID)
 	DEX_Set("DEX_ColorMode",thisID)
 end
 
 function DEX_CloseOptions()
-	--PlaySound(PlaySoundKitID and "gsTitleOptionOK");
+	PlaySound(798);
 	if ( ColorPickerFrame:IsVisible() ) then
 		ColorPickerFrame:Hide();
 	end

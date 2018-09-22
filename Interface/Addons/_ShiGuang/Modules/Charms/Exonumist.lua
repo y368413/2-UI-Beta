@@ -97,12 +97,12 @@ Exonumist:SetScript("OnEvent", function(self, event)
 		local realm   = GetRealmName()
 		local player  = UnitName("player")
 
-		--ShiGuangDB = ShiGuangDB or { }
-		ShiGuangDB[realm] = ShiGuangDB[realm] or { }
-		ShiGuangDB[realm][faction] = ShiGuangDB[realm][faction] or { }
-		ShiGuangDB[realm][faction][player] = ShiGuangDB[realm][faction][player] or { }
+		ShiGuangDB["Exonumist"] = ShiGuangDB["Exonumist"] or { }
+		ShiGuangDB["Exonumist"][realm] = ShiGuangDB["Exonumist"][realm] or { }
+		ShiGuangDB["Exonumist"][realm][faction] = ShiGuangDB["Exonumist"][realm][faction] or { }
+		ShiGuangDB["Exonumist"][realm][faction][player] = ShiGuangDB["Exonumist"][realm][faction][player] or { }
 
-		realmDB = ShiGuangDB[realm][faction]
+		realmDB = ShiGuangDB["Exonumist"][realm][faction]
 		if not realmDB then return end -- probably low level Pandaren
 
 		charDB = realmDB[player]

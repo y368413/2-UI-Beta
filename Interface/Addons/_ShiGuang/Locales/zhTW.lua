@@ -1,22 +1,5 @@
 local _, _, U, _ = unpack(select(2, ...))
 if GetLocale() == "zhTW" then
-FACTION_BAR_COLORS = {
-	[1] = { r= .54, g= 0,   b= 0   }, -- hated
-	[2] = { r= 1,   g= .10, b= .1  }, -- hostile
-	[3] = { r= 1,   g= .55, b= 0   }, -- unfriendly
-	[4] = { r= .87, g= .87, b= .87 }, -- neutral
-	[5] = { r= 1,   g= 1,   b= 0   }, -- friendly
-	[6] = { r= .1,  g= .9,  b= .1  }, -- honored
-	[7] = { r= .25, g= .41, b= .88 }, -- revered
-	[8] = { r= .6,  g= .2,  b= .8  }, -- exalted
-	[9] = { r= .4,  g= 0,   b= .6  }, -- past exalted
-};
-GOLD_AMOUNT = "|c00ffd700%d●|r";--GOLD_AMOUNT = "%d\124TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0\124t"
-SILVER_AMOUNT = "|c00c7c7cf%d●|r";--SILVER_AMOUNT = "%d\124TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0\124t"
-COPPER_AMOUNT = "|c00eda55f%d●|r";--COPPER_AMOUNT = "%d\124TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0\124t"
-ENTERING_COMBAT = "";
-LEAVING_COMBAT = "";
-
   CHAT_GUILD_GET = "|Hchannel:GUILD|h[公會]|h %s:";
   CHAT_OFFICER_GET = "|Hchannel:OFFICER|h[官員]|h %s:"  ;
   CHAT_RAID_GET = "|Hchannel:RAID|h[團隊]|h %s:";
@@ -27,23 +10,6 @@ LEAVING_COMBAT = "";
   CHAT_PARTY_GUIDE_GET =  "|Hchannel:PARTY|h[向導]|h %s:";
   CHAT_INSTANCE_CHAT_GET = "|Hchannel:INSTANCE|h[副本]|h %s:";
   CHAT_INSTANCE_CHAT_LEADER_GET = "|Hchannel:INSTANCE|h[向導]|h %s:";
-  CHAT_WHISPER_INFORM_GET = "<%s:";
-  CHAT_WHISPER_GET = ">>%s:";
-  CHAT_BN_WHISPER_INFORM_GET = "<%s:";
-  CHAT_BN_WHISPER_GET = ">>%s:";
-  CHAT_SAY_GET = "%s:";
-  CHAT_YELL_GET = "%s:"  ;
-  CHAT_FLAG_AFK = "[AFK]";
-  CHAT_FLAG_DND = "[Busy]";
-  CHAT_FLAG_GM = "[GM]";
-ITEM_CREATED_BY="|cFF00DDFF<Thanks For Using MaoR UI>|r";
---- 改變頻道提示 [加入頻道→+][離開頻道→-][改變頻道→=]
-CHAT_YOU_CHANGED_NOTICE = "=|Hchannel:%d|h[%s]|h";
-CHAT_YOU_CHANGED_NOTICE_BN = "=|Hchannel:CHANNEL:%d|h[%s]|h";
-CHAT_YOU_JOINED_NOTICE = "+|Hchannel:%d|h[%s]|h";
-CHAT_YOU_JOINED_NOTICE_BN = "+|Hchannel:CHANNEL:%d|h[%s]|h";
-CHAT_YOU_LEFT_NOTICE = "-|Hchannel:%d|h[%s]|h";
-CHAT_YOU_LEFT_NOTICE_BN = "-|Hchannel:CHANNEL:%d|h[%s]|h";
 
 ACHIEVEMENT_BROADCAST = "%s獲得%s!";
 HEALTH_LOW = "<<<生命危急>>>";
@@ -61,20 +27,6 @@ TRANSMOGRIFY_TOOLTIP_ITEM_UNKNOWN_APPEARANCE_KNOWN = "|cff6060ff你擁有此外�
 WORLD_CHANNEL = "世界頻道";
 WORLD_CHANNEL_NAME = "世界頻道";
 
-Welcome_loginChatText1 = "<<<-------------- 有你們的魔獸，才是世界 ----";
-Welcome_loginChatText2 = "|cFFBF00FFMao|r|cFF00DDFFR|r|cffff8800 UI|r|cff3399ff By Shiguang + TuTu v.180121|r";
-Welcome_loginChatText3 = "|cff02F78E大大大的感謝|r|cffC495DDSiweia|r|cff02F78E大大,向他學到了好多.|r";
-Welcome_loginChatText4 = "-------  v2.3.0 For 7.3.5  --------------->>>";
-Welcome_SmallText1 = "[ 微美化介面 ]";
-Welcome_SmallText2 = "[ 全職業適用無障礙 ]";
-Welcome_SmallText3 = "[ 開袋即食 輕優化 無需設置 ]";
-Welcome_SmallText4 = "[ 插件每月21日UI官網 準時更新發佈 ]";
-Welcome_Large1 = "[ V 2.3.0 ]";
-Welcome_Large2 = "[ Hi Legion 7.3.5 ]";
-Welcome_Large3 = "[ 右鍵小地圖便捷設置 ]";
-Welcome_Large4 = "[ 系統自帶功能，插件有針對性刪減 ]";
-Welcome_Large5 = "更多內容詳見官網· · ·";
-
 DANWEI_WAN = "萬";
 DANWEI_YI = "億";
 
@@ -84,11 +36,13 @@ GEAR_DELETEEMPTYMAILS_TITLE="|cffFFFFFF[郵件]|r刪除空郵件";
 GEAR_MOLINARI_TITLE="|cff8080ff[專業]|r分解研磨";
 NOTICE_INCENTIVEPROGRAM_PANEL_TITLE="|cff8080ff[提醒]|r隨機獎勵";
 NOTICE_INCENTIVEPROGRAM_TITLE="(|cFF69CCF0隨機T和N獎勵提醒|r)";
-LOOT_ANNOUNCERBUTTON_TITLE="拾取通報團隊";
 CurrencyTracking_TITLE = "|cFF00FF00[信息]|r通貨追蹤";
 RelicInspector_TITLE = "|cff8080ff[提示]|r聖物屬性";
 Savedinstances_TITLE = "|c00FF68CC[小号]|r管理助手";
 QuestNotifier_TITLE = "|cff0080ff[任务]|r任务通报";
+Boomkinator_TITLE = "|cff0080ff[输出]|r技能监控";
+PORTALMAGETITLE = "|cff0080ff[法师]|r职业条";
+FARMERTITLE = '|cff8080ff[拾取]|r拾取提示'
 ----------------Charms----------------------
 CHARMS_BUY_STACK="你確定購買|cffff0000一組|r下列物品嗎？";
 CHARMS_NAKEDIZE="脫光光" ;
@@ -108,6 +62,10 @@ CHARMS_BLOODELF="血精靈";
 CHARMS_DRAENEI="德萊尼";
 CHARMS_WORGEN="狼人";
 CHARMS_PANDAREN="熊貓人";
+CHARMS_NIGHTBORNE="夜之子";
+CHARMS_HIGHMOUNTAINTAUREN="至高岭牛头人";
+CHARMS_VOIDELF="虚空精灵";
+CHARMS_LIGHTFORGEDDRAENEI="光铸德莱尼";
 CHARMS_EXTEND="全都延長";
 ----------------Gear----------------------
 GEAR_AHHELPER_AUTOSELL="-- |cFF00DDFFAlt+右鍵 |r直接上貨/出價--";
@@ -125,18 +83,6 @@ SUBSPEC_LEFTSHIFT="左移";
 SUBSPEC_RIGHTSHIFT="右移";
 SUBSPEC_NEWPROFILENAME="輸入新的設定檔名稱";
 TRAINALL_ALLLEARN="全 學";
-----------------Loot----------------------
-PLH_LONG_ADDON_NAME = "|cff02F78E[裝備]|r交易助手";
-PLH_AUTHOR_NAME = 'Author:Madone-Zul\'Jin';
-PLH_ADDON_NOTE = "拾取裝備可交易提示助手";
-PLH_INCLUDE_BOEITEM = "包含<裝綁>物品";
-PLH_SPEC_ONLY = "只適配當前專精";
-PLH_NOTIFY_GROUPS = "通報到隊伍/團隊";
-PLH_COORDINATE_ROLL = "發起R點需求 (有A才行)";
-PLH_MANAGE_ROLLS = "需求裝備的人密團長 <交易> 或 <交易 [裝備連結]> 來R。";
-PLH_NO_LOWLEVEL = "不包含低等級角色";
-PLH_SHOW_INRAID = "在團框中顯示可交易的裝備";
-PLH_THANKS_ALL = "感謝所有願意把裝備分享給最需要的人的玩家！\n畢竟要有愛，哪來那麼多魔獸爭霸。";
 ----------------Map----------------------
 FOGLIGHT_HYBIRD = "混合";
 FOGLIGHT_DISABLE = "禁用";
@@ -147,14 +93,14 @@ MINIMAP_MENU_BARSTYLE = "動作條樣式";
 MINIMAP_MENU_KEYBIND = "按键绑定";
 MINIMAP_MENU_QUESTBUTTON = "任務按鈕";
 MINIMAP_MENU_SPECIALBUTTON = "特殊按鈕";
-MINIMAP_MENU_AURACONFIG = "技能監控";
+MINIMAP_MENU_AURACONFIG = "界面调整";
 MINIMAP_MENU_AURADIY = "  --自添加技能";
 MINIMAP_MENU_CONTROLNOTICE = "控制提示";
 MINIMAP_MENU_CASTBAR = "施法條";
 MINIMAP_MENU_ONOFF = "開 關";
 MINIMAP_MENU_Click = "点击施法";
 MINIMAP_MENU_DAMAGESTYLE = "傷害顯示";
-MINIMAP_MENU_GRIDTOOL = "網格工具";
+MINIMAP_MENU_INTERRUPT = "小队打断";
 MINIMAP_MENU_lOOTHELPER = "求裝助手";
 MINIMAP_MENU_DISTANCE = "距離助手";
 MINIMAP_MENU_COMBOPOINTS = "简易连击点";
@@ -165,6 +111,45 @@ MINIMAP_MENU_CHECKFOODSSS = "吃喝檢查";
 MINIMAP_MENU_QUSETIONANSWER = "常見問題";
 MINIMAP_MENU_UISETTING = "設置";
 MINIMAP_MENU_MORE = "    更多設置...";
+  -- Paku_Totems
+  PakuTotems_TheSliverNorth = "碎枝林地(北)";
+  PakuTotems_EastZanchul = "東贊樞爾";
+  PakuTotems_TopofZanchul = "贊樞爾頂部";
+  PakuTotems_TheSliverSouth = "碎枝林地(南)";
+  PakuTotems_TerraceoftheChosen = "選民之台";
+  PakuTotems_AltarofPaku = "帕庫祭壇";
+  PakuTotems_TheGreatSealLedge = "巨擘封印";
+  PakuTotems_TheGoldenThrone = "黃金王座";
+  PakuTotems_BeastcallerInn = "馭獸師旅店(戰獸欄)";
+  PakuTotems_GrandBazaar = "百商集市";
+  PakuTotems_TerraceofCrafters = "工匠平臺";
+  PakuTotems_WestZanchul = "西贊樞爾";
+  PakuTotems_TheZocalo = "佐卡羅廣場";
+----------------Loot----------------------
+FARMER_Poor = "垃圾";
+FARMER_Common = "普通";
+FARMER_Uncommon = "优秀";
+FARMER_Rare = "稀有";
+FARMER_Epic = "精良";
+FARMER_Legendary = "史诗";
+FARMER_Artifact = "神器";
+FARMER_Heirloom = "传说";
+FARMER_WoWToken = "传家宝";
+FARMER_ENABLEFASTAUTOLOOT = "快速拾取";
+FARMER_HIDELOOTANDITEMROLLTOASTS = "隐藏拾取和roll点框";
+FARMER_DONTDISPLAYITEMSINARENA = "战场中不显示拾取信息";
+FARMER_SHOWTOTALCOUNTFORSTACKABLEITEMS = "显示堆叠道具总数";
+FARMER_SHOWBAGCOUNTFORSTACKABLEITEMS = "显示堆叠道具背包数";
+FARMER_SHOWITEMSBASEDONRARITY = "品质标准显示";
+FARMER_MINIMUMRARITY = "可显示最低品质";
+FARMER_ALWAYSSHOWFARMINGITEMS = "总是显示拾取物品";
+FARMER_ALWAYSSHOWREAGENTS = "总是显示药剂";
+FARMER_SHOWCURRENCIES = "显示货币";
+FARMER_SHOWMONEY = "显示金钱";
+FARMER_MOVEFRAME = "移动框架";
+FARMER_RESETPOSITION = "重置位置";
+FARMER_FONTSIZE = "字体大小";
+FARMER_DISPLAYTIME = "显示持续时间";
 ----------------Notice----------------------
 COMBATNOTIFICATIONINFO_INFO_WOWTIME_TIP = "即將在15分鐘內開始";
 COMBATNOTIFICATIONINFO_need = " 有獎勵包包了!";
@@ -223,28 +208,39 @@ BARRELSOEASY_START_FIRST = "請開始第一輪,小桶子運動完才能開始標
 PVPPP_KILL_MSG = "榮譽擊殺:%s/%s";
 PVPPP_KILL_AVG = "過去的一小時中一共獲取了 %s 個榮譽擊殺";
 ----------------UFs----------------------
+CASTBARS_STYLE_TITLE = "|cff8000ff[菜单]|r施法条";
 UFRAMESTYLE_BLINKHEALTHTEXT_ANCHOR = "左鍵-拖動位置\n右鍵-鎖定位置";
-
 ----------------BRP----------------------
 BRP_Description="使用 /brp 解鎖和鎖定位置，同時 /brp 也可復位位置。";
 BRP_AlwaysShow="總是展開戰利品列表";
 BRP_FillDirection="戰利品清單排序方式";
+----------------Shiguang----------------------
+SHIGUANG_Loot="拾取";
+SHIGUANG_Gets="獲得";
+SHIGUANG_Refund="退款";
 
 U["Lock UIScale"] = "鎖定推薦UI縮放值"
 U["Lock Chat"] = "鎖定聊天視窗設置"
 U["Minimap Clock"] = "小地圖時間"
 U["Setup UIScale"] = "調整UI縮放"
+U["Setup GUIScale"] = "设置面板缩放"
 U["PlayerFrame Scale"] = "頭像縮放"
 U["Map Scale"] = "世界地圖縮放"
 U["Map Coords"] = "顯示世界地圖座標"
+U["Map Reveal"] = "地图去迷雾"
 U["Enable Reminder"] = "啟用職業技能缺失提示"
-U["Enable Familiar"] = "啟用職業監控-FS"
+
 U["Enable Stagger"] = "啟用職業監控-WST"
 U["Enable Statue"] = "啟用職業監控-雕像"
-U["Enable Totems"] = "啟用職業監控-SM"
-U["Destroy Totems"] = "左鍵點擊摧毀圖騰"
-U["Enable Marksman"] = "啟用職業監控-LR"
 U["Enable BloodyHell"] = "啟用職業監控-DK"
+U["Enable Totems"] = "啟用職業監控-SM"
+U["Enable Familiar"] = "啟用職業監控-FS"
+U["Enable Marksman"] = "啟用職業監控-LR"
+U["Enable BlinkComboHelper"] = "启用浮动连击点"
+U["Destroy Totems"] = "左鍵點擊摧毀圖騰"
+U["WorldQusetRewardIcon"] = "大地图奖励图标"
+U["Class EnergyBar"] = "职业能量条"
+U["Class Recoure Center"] = "职业资源居中"
 U["kAutoOpen"] = "自動打開寶箱"
 U["QuickQueue"] = "自動確認排本職責"
 U["AutoConfirmRoll"] = "自動Roll"
@@ -266,25 +262,54 @@ U["Hide Error"] = "戰鬥中遮罩紅字錯誤"
 U["SoloInfo"] = "單刷難度提醒"
 U["Rare Alert"] = "稀有 or 寶藏提示"
 U["Alert In Chat"] = "同時通報在聊天框"
+U["Yell Interrupt"] = "通报打断\偷取\驱散"
+U["Interrupt Alarm"] = "打断音效"
+U["Death Alarm"] = "!死亡爽翻天惨叫!"
 U["Easy Focus"] = "啟用Shift+左鍵快速焦點"
 U["No Talking"] = "幹掉NPC BB的框"
+U["Numberize"] = "数字缩写格式"
+U["Number Type1"] = "标准模式：b/m/k"
+U["Number Type2"] = "中式：亿/万"
+U["Number Type3"] = "显示具体数值"
 U["Hide Bossbanner"] = "關閉副本掉落通知提示"
 U["FriendGroups"] = "好友分組功能"
 U["Whisper Invite"] = "啟用密語自動邀請"
 U["Guild Invite Only"] = "只邀請公會成員"
 U["Whisper Keyword"] = "密語關鍵字(空格隔開)"
 U["Enable AuraWatch"] = "啟用技能監視"
-U["AuraWatch Tooltip"] = "顯示技能監視滑鼠提示框"
-U["Enable Actionbar"] = "启用动作条"
-U["Actionbar Style"] = "动作条样式"
-U["Bar4 Fade"] = "渐隐右侧动作条1"
-U["Bar5 Fade"] = "渐隐右侧动作条2"
-U["Actionbar Hotkey"] = "快捷键"
-U["Actionbar Macro"] = "宏名称"
-U["Actionbar Item Counts"] = "物品堆叠计算"
-U["Show Cooldown"] = "技能冷却"
-U["Decimal Cooldown"] = "冷却低于3秒时显示小数点"
-U["ClassColor BG"] = "技能栏边框职业染色"
+U["AuraWatch Tooltip"] = "隐藏技能監視滑鼠提示框"
+U["Achievement PrintScreen"] = "跳成就时候截图"
+U["Spell Not Ready"] = "技能CD中提醒"
+U["Doom Cooldown"] = "技能CD完成提示"
+U["OmniCC"] = "技能栏CD计时数字"
+U["WallpaperKit"] = "屏保"
+U["xMerchant"] = "商人购买列表美化"
+U["UFClassIcon"] = "使用职业头像"
+U["UFPctText"] = "使用大血量百分比"
+U["Enable Bags"] = "系统自带背包增强"
+U["Chat Sticky"] = "启用密语粘滞"
+U["Chat bg"] = "聊天框背景"
+U["Chat tab bg"] = "聊天框标签背景"
+U["QuestTrackerSkinTitle"] = "任务栏职业染色"
+U["Auto Reagent Bank"] = "材料自动存银行"
+U["Auto Mark"] = "自动标记 T N"
+U["Enable Actionbar"] = "啟用動作條"
+U["Actionbar Style"] = "動作條樣式"
+U["Bar4 Fade"] = "漸隱右側動作條1"
+U["Bar5 Fade"] = "漸隱右側動作條2"
+U["Actionbar Hotkey"] = "快捷鍵"
+U["Actionbar Macro"] = "宏名稱"
+U["Actionbar Item Counts"] = "物品堆疊計算"
+U["Show Cooldown"] = "技能冷卻"
+U["Decimal Cooldown"] = "冷卻低於3秒時顯示小數點"
+U["ClassColor BG"] = "技能欄邊框職業染色"
+U["CombatHide"] = "战斗中隐藏鼠标提示"
+U["TargetBy"] = "显示选中目标数"
+U["Cursor"] = "提示框跟随鼠标"
+U["QuestNotifier"] = "通报任务"
+U["QuestSchedule"] = "通报任务进度"
+U["Actionbar Scale"] = "技能栏缩放"
+U["Tooltip Scale"] = "鼠标提示框缩放"
 
 	U["NFG"] = "不使用公修"
 	U["New"] = "新"
@@ -309,10 +334,10 @@ U["ClassColor BG"] = "技能栏边框职业染色"
 
 	U["Friends list:"] = "好友列表:"
 	U["Friends"] = "好友"
-	U["Earned:"] = "獲得:"
-	U["Spent:"] = "花費:"
-	U["Deficit:"] = "虧損:"
-	U["Profit:"] = "盈利:"
+	U["Earned"] = "獲得:"
+	U["Spent"] = "花費:"
+	U["Deficit"] = "虧損:"
+	U["Profit"] = "盈利:"
 	U["Session"] = "本次登錄"
 	U["Server"] = "伺服器"
 	U["Character"] = "當前角色"
@@ -332,13 +357,6 @@ U["ClassColor BG"] = "技能栏边框职业染色"
 	U["Garbage collected"] = "釋放內存"
 	U["ManulCollect"] = "整理內存"
 	U["AutoCollect"] = "自動整理內存(右鍵)"
-
-	U["No Talents"] = "無天賦"
-	U["Active Talent"] = "當前天賦 : "
-	U["Talent"] = "天賦 : "
-	U["Primary Talent"] = "主天賦 : "
-	U["Secondary Talent"] = "副天賦 : "
-	
 	U["My Position"] = "我的位置"
 	U["System"] = "系統"
 	U["Home"] = "本地"
@@ -347,10 +365,7 @@ U["ClassColor BG"] = "技能栏边框职业染色"
 	U["Toggle CPU Usage"] = "你需要重载界面来启用这个功能。"
 	U["Reload UI(on)"] = "|cff777777dim|rinfo[|cff00ff00System|r]:你可以在重載介面之後查看插件的CPU佔用，請重載介面！"
 	U["Reload UI(off)"] = "|cff777777dim|rinfo[|cff00ff00System|r]:你可以在重載介面之後隱藏插件的CPU佔用顯示模塊，請重載介面！"
-	U["BossInfo"] = "世界首領"
 	U["Are you sure to reset the gold count?"] = "你確定要重置金幣統計嗎？"
-	U["year"] = "年"
-	U["day"] = "日"
 	U["WoW"] = "<魔獸世界>"
 	U["BN"] = "<戰網好友>"
 	U["SpecPanel"] = "天賦面板"
@@ -384,7 +399,213 @@ U["ClassColor BG"] = "技能栏边框职业染色"
 	U["Blingtron"] = "布林顿每日礼包"
   U["Legion Invasion"] = "军团突袭"
   U["Next Invasion"] = "下一次突袭"
-  U["Search Invasion Group"] = "搜索侵入点队伍"
+
+U["Config_Importing_ImportingCanUpdate"] = "導入可以更新現有比例"
+U["Config_Importing_ImportingCanUpdate_Desc"] = "當導入具有相同名稱，職業和專精的比例作為預先存在的比例時，現有比例將使用新權值更新，而不是建立新比例。"
+U["Config_Importing_ImportingCanUpdate_Desc_Clarification"] = "可以有多個具有相同名稱的比例，只要它們用於不同的專精或職業。"
+U["Config_Importing_Title"] = "導入"
+U["Config_Scales_Desc"] = "以下設置僅影響清單的預設比例。所有自訂比例將在每個職業列出。"
+U["Config_Scales_OwnClassDefaultsOnly"] = "只列出自己職業的預設比例"
+U["Config_Scales_OwnClassDefaultsOnly_Desc"] = "只列出你自己職業的預設比例，而非列出所有。"
+U["Config_Scales_Title"] = "比例清單"
+U["Config_SettingsSavedPerChar"] = [=[這裡所有設置都是每個角色分開儲存。
+自訂比例則為所有角色共享。]=]
+U["Config_WeightEditor_Desc"] = [=[以下設置只適用於顯示在比例權值編輯器的特質。
+即使你停用了它們，如果它們在啟用比例中設置了權值，所有的艾澤萊特質仍會計算分數。]=]
+U["Config_WeightEditor_ShowDefensive"] = "顯示防禦性特質"
+U["Config_WeightEditor_ShowDefensive_Desc"] = "在比例權值編輯器中顯示通用與職業特定的防禦性特質。"
+U["Config_WeightEditor_ShowProfession"] = "顯示專業技能專有特質"
+U["Config_WeightEditor_ShowProfession_Desc"] = "在比例權值編輯器中顯示專業技能專有特質。這些特質只會出現在專業技能製作物品中。目前只有出現在工程學頭部裝備。"
+U["Config_WeightEditor_ShowPvP"] = "顯示PvP專有特質"
+U["Config_WeightEditor_ShowPvP_Desc"] = "在比例權值編輯器中顯示PvP專有特質。你只會看到自己的陣營特質，但對它們做的變動會反映到雙方陣營。"
+U["Config_WeightEditor_ShowPvP_Desc_Import"] = [=[當導出生成的字串時，只包含你自己陣營的PvP特質，但它們可以與對立的陣營pvp-powerID互換。
+當從一個陣營導入具有pvp特質的字串時，特質會將其權值鏡像導入到雙方陣營。]=]
+U["Config_WeightEditor_ShowRole"] = "顯示角色類型專有特質"
+U["Config_WeightEditor_ShowRole_Desc"] = "在比例權值編輯器中顯示角色類型專有特質。"
+U["Config_WeightEditor_ShowRolesOnlyForOwnSpec"] = "只顯示我自己專精職責的角色類型專有特質"
+U["Config_WeightEditor_ShowRolesOnlyForOwnSpec_Desc"] = "在比例權值編輯器中顯示共通與當前專精相關的角色類型專有特質。啟用此設置的話像是治療專有專精將會在傷害與坦克上隱藏等等。"
+U["Config_WeightEditor_ShowZone"] = "顯示區域專有特質"
+U["Config_WeightEditor_ShowZone_Desc"] = "在比例權值編輯器中顯示區域專有特質。這些特質只會出現在與特質相關特定區域中獲得的物品上。"
+U["Config_WeightEditor_ShowZone_Desc_Proc"] = [=[正常區域專有特質可以在任何地方啟動/觸發，但團隊特質只會在與它們相關的團隊副本中進行(例如：奧杜爾特質只會在奧杜爾團隊副本中觸發)。
+團隊特質在比例權值編輯器中的名稱旁標有星號(*)。]=]
+U["Config_WeightEditor_Title"] = "比例權值編輯器"
+U["CreatePopup_Desc"] = "建立新的比例。從下拉選單選擇職業與專精並輸入新比例的名稱然後按下 %1$s"
+U["CreatePopup_Error_CreatedNewScale"] = "已建立新比例 \"%s\""
+U["CreatePopup_Error_UnknownError"] = "錯誤：建立新比例“％s”出了點問題！"
+U["CreatePopup_Title"] = "建立比例"
+U["DefaultScaleName_Default"] = "預設"
+U["DefaultScaleName_Defensive"] = "防禦性"
+U["DefaultScaleName_Offensive"] = "攻擊性"
+U["DeletePopup_DeletedDefaultScale"] = "刪除的比例正在使用中，恢復為您的職業和專精的預設選項！"
+U["DeletePopup_DeletedScale"] = "已刪除比例 \"%s\""
+U["DeletePopup_Desc"] = [=[正刪除比例 %1$s
+按下 %2$s 以確認。
+所有使用此專精比例的角色將恢復為預設比例。]=]
+U["DeletePopup_Title"] = "刪除比例"
+U["DeletePopup_Warning"] = "！ 這個動作是永久性的，無法逆轉！"
+U["ExportPopup_Desc"] = [=[正導出比例 %1$s
+按下 %2$sCtrl+C%3$s 來複製字串並且 %4$sCtrl+V%5$s 來貼上到某處]=]
+U["ExportPopup_Title"] = "導出比例"
+U["ImportPopup_CreatedNewScale"] = "導入新的比例 \"%s\""
+U["ImportPopup_Desc"] = [=[正從字串導入比例
+按下 %1$sCtrl+V%2$s 來貼上字串到編輯框並按下 %3$s]=]
+U["ImportPopup_Error_MalformedString"] = "錯誤：導入的字串格式錯誤"
+U["ImportPopup_Error_OldStringVersion"] = "錯誤：\"導入字串\" -版本太舊或是導入字串格式錯誤！"
+U["ImportPopup_Title"] = "導入比例"
+U["ImportPopup_UpdatedScale"] = "更新現有的比例 \"%s\""
+U["ItemToolTip_AzeriteLevel"] = "艾澤萊等級: %1$d / %2$d"
+U["PowersScoreString"] = "當前: %1$s/%2$s\n最大: %3$s\n等級: %4$s/%5$s"
+U["PowersTitles_Class"] = "職業特質"
+U["PowersTitles_Defensive"] = "防禦性特質"
+U["PowersTitles_Profession"] = "專業技能特質"
+U["PowersTitles_PvP"] = "PvP特質"
+U["PowersTitles_Role"] = "角色類型特質"
+U["PowersTitles_Zone"] = "團隊與區域特質"
+U["RenamePopup_Desc"] = [=[正重新命名比例 %1$s
+在編輯框中輸入新名稱並按下 %2$s]=]
+U["RenamePopup_RenamedScale"] = "已重命名比例 \"%1$s\" 為 \"%2$s\""
+U["RenamePopup_Title"] = "重命名比例"
+U["ScaleName_Unknown"] = "未知"
+U["ScaleName_Unnamed"] = "未命名"
+U["ScalesList_CreateImportText"] = "建立新的 / 導入"
+U["ScalesList_CustomGroupName"] = "自訂比例"
+U["ScalesList_DefaultGroupName"] = "預設比例"
+U["ScaleWeightEditor_Title"] = "%s 比例權值編輯器"
+U["Slash_Command"] = "/azerite"
+U["Slash_Error_Unkown"] = "錯誤：出了些問題了！"
+U["Slash_RemindConfig"] = "到ESC -> 介面 -> 插件 -> %s來設置"
+U["WeightEditor_CreateNewText"] = "建立新的"
+U["WeightEditor_CurrentScale"] = "當前比例: %s"
+U["WeightEditor_DeleteText"] = "刪除"
+U["WeightEditor_EnableScaleText"] = "使用此比例"
+U["WeightEditor_ExportText"] = "導出"
+U["WeightEditor_ImportText"] = "導入"
+U["WeightEditor_RenameText"] = "重命名"
+U["WeightEditor_TooltipText"] = "在提示中顯示"
+U["WeightEditor_VersionText"] = "版本 %s"
+U["Weights"] = "自定义"
+
+U["BTN_CHECK_ENCHANTS"] = "检查"
+U["BTN_INVITE"] = "邀请"
+U["UI_ITEMS_TITLE"] = ""
+U["UI_GEMS_TITLE"] = "宝石"
+U["UI_ENCHANTS_TITLE"] = "附魔"
+U["ENCHANT_REPORT_HEADER"] = "|cff00FF00!!!|cffFFFFFF → %s (%d %s):" -- name, level, class
+U["AVG_ITEM_LEVEL"] = "平均装等: %d (%d to %d)"
+U["MISSING_ITEMS"] = "缺少装备:"
+U["MISSING_GEMS"] = "无宝石:"
+U["MISSING_ENCHANTS"] = "未附魔:"
+U["LOW_ITEM_LEVEL"] = "过低装等:"
+U["MISSING_BELT_BUCKLE"] = "Missing belt buckle?"
+U["MISSING_BS_SOCKETS"] = "Missing blacksmith sockets (?):"
+U["PROPER_GEMS"] = "均插了宝石."
+U["PROPER_ENCHANTS"] = "均已附魔."
+U["SCAN"] = "扫描..."
+U["RESCAN"] = "再次扫描..."
+U["SCAN_INCOMPLETE"] = "扫描结束，请稍后再试..."
+U["INVSLOT_"..INVSLOT_HEAD] = "头部"
+U["INVSLOT_"..INVSLOT_NECK] = "项链"
+U["INVSLOT_"..INVSLOT_SHOULDER] = "肩膀"
+U["INVSLOT_"..INVSLOT_BACK] = "披风"
+U["INVSLOT_"..INVSLOT_CHEST] = "胸甲"
+U["INVSLOT_"..INVSLOT_BODY] = "衬衣"
+U["INVSLOT_"..INVSLOT_TABARD] = "战袍"
+U["INVSLOT_"..INVSLOT_WRIST] = "护腕"
+U["INVSLOT_"..INVSLOT_HAND] = "手甲"
+U["INVSLOT_"..INVSLOT_WAIST] = "护腰"
+U["INVSLOT_"..INVSLOT_LEGS] = "腿甲"
+U["INVSLOT_"..INVSLOT_FEET] = "脚部"
+U["INVSLOT_"..INVSLOT_FINGER1] = "戒指1"
+U["INVSLOT_"..INVSLOT_FINGER2] = "戒指2"
+U["INVSLOT_"..INVSLOT_TRINKET1] = "饰品1"
+U["INVSLOT_"..INVSLOT_TRINKET2] = "饰品2"
+U["INVSLOT_"..INVSLOT_MAINHAND] = "主手"
+U["INVSLOT_"..INVSLOT_OFFHAND] = "副手"
+
+U["Shield Wall"] = "盾牆"
+U[" (auto)"] =  "(自动)"    
+U[" (toggle)"] =  "(手动)"
+U["Dodge"] = "閃躲"
+U["Snare"] = "誘捕"
+U["Tranq/Dispel"] = "寧神"
+U["Mortal Wounds"] = "致死" 
+-- exotic ABILITIES          
+U["Water Walking"] = "水上行走"
+U["Magic Resistance"] = "魔法抗性" 
+U["Physical Resistance"] = "物理抗性"
+U["Tanky"] = "坦克"
+U["Thorns"] = "荊棘術"       
+U["Heal"] = "治療術" 
+U["Prowl"] = "潛行"    
+U[" with Self-Heal"] = "  自我治療"
+U["Reincarnation"] = "復生" 
+U["Slowfall"] = "緩落術"   
+U[" (ranged)"] = " 遠程"
+U["Fast"] = "快"
+U["Cannibalize"] = "食屍" 
+-- MISC
+U["Ferocity"] = "狂野"
+U["Cunning"] = "狡詐"
+U["Tenacity"] = "堅韌"
+U["(Exotic)"] = "(野獸控制)"
+-- leave an entry commented out to use the default (enUS) translation
+U["Beast"] = "野獸"
+U["Mechanical"] = "機械"
+U["蜥蜴"] = "Basilisk"
+U["蝙蝠"] = "Bat"
+U["熊"] = "Bear"
+U["甲蟲"] = "Beetle"
+U["猛禽"] = "Bird of Prey"
+U["野豬"] = "Boar"
+U["食腐鳥"] = "Carrion Bird"
+U["大貓"] = "Cat"
+U["奇美拉"] = "Chimaera"
+U["裂蹄"] = "Clefthoof"
+U["熔核犬"] = "Core Hound"
+U["螃蟹"] = "Crab"
+U["鶴"] = "Crane"
+U["鱷魚"] = "Crocolisk"
+U["魔暴龍"] = "Devilsaur"
+U["恐角龍"] = "Direhorn"
+U["狗"] = "Dog"
+U["龍鷹"] = "Dragonhawk"
+U["羽鬃"] = "Feathermane"
+U["狐狸"] = "Fox"
+U["山羊"] = "Goat"
+U["猩猩"] = "Gorilla"
+U["多頭蛇"] = "Hydra"
+U["土狼"] = "Hyena"
+U["三葉蟲"] = "Krolusk" -- guess
+U["蜥蜴"] = "Lizard"
+U["機械"] = "Mechanical"
+U["猴子"] = "Monkey"
+U["蛾"] = "Moth"
+U["虛空鰭刺"] = "Nether Ray"
+U["玄牛"] = "Oxen"
+U["翼手龍"] = "Pterrordax"
+U["麒麟獸"] = "Quilen"
+U["迅猛龍"] = "Raptor"
+U["劫毀者"] = "Ravager"
+U["河獸"] = "Riverbeast"
+U["齧齒類"] = "Rodent"
+U["鱗皮"] = "Scalehide"
+U["蠍子"] = "Scorpid"
+U["毒蛇"] = "Serpent"
+U["岩蛛"] = "Shale Spider"
+U["異種蟲族"] = "Silithid"
+U["蜘蛛"] = "Spider"
+U["靈獸"] = "Spirit Beast"
+U["孢子蝙蝠"] = "Sporebat"
+U["雄鹿"] = "Stag"
+U["陸行鳥"] = "Tallstrider"
+U["青蛙"] = "Toad"
+U["海龜"] = "Turtle"
+U["扭曲巡者"] = "Warp Stalker"
+U["黃蜂"] = "Wasp"
+U["水黽"] = "Water Strider"
+U["風蛇"] = "Wind Serpent"
+U["狼"] = "Wolf"
+U["蟲"] = "Worm"
 
 Announcer_Sap = ">>>被悶棍<<<";
 Announcer_RocketPP = "漏油!!!救命啊~";
@@ -394,68 +615,7 @@ Announcer_Disperse = "驅散→";
 Announcer_Stole = "偷取→";
 Announcer_SpellIDnof = "<法術鏈接(ID)沒有找到>";
 	
-STRENGTH = "力量";
-AGILITY = "敏捷";
-STAMINA = "耐力";
-VERSATILITY = "全能";
-MULTISTRIKE = "雙擊";
-BONUSARMOR = "額外護甲";
-ARMOR = "護甲";
-HASTE = "加速";
-MASTERY = "精通";
-CRIT = "致命一擊";
-INTELLECT = "智力";
-SPIRIT = "精神";	
 REPAIR_COST = "修理：";
-
-
-  ACP_AddonControlPanel = "插件管理";
-			ACP_SomeprotectedaddonsarenloadedReloadnow = "ACP: 部分受保護的插件沒有被載入。現在重載介面?";
-			ACP_ActiveEmbeds = "運行中的程式集";
-			ACP_AddOns = "插件";
-			ACP_Addonnotvalid = "無效的插件: <%s>";
-			ACP_AddonsLoaded = "插件清單[%s]已載入。";
-			ACP_Addonsrenamedto = "插件清單[%s]重新命名為[%s]。";
-			ACP_AddonsSaved = "插件清單[%s]存檔完畢。";
-			ACP_AddonsUnloaded = "插件清單[%s]已卸載。";
-			ACP_Addtocurrentselection = "新增到現在的選擇";
-			ACP_Author = "作者";
-			ACP_ClicktoenableprotectmodeProtectedaddonswillnotbedisabled = "點擊啟用保護模式。受保護的插件";
-			ACP_Close = "關閉";
-			ACP_Default = "預設";
-			ACP_Dependencies = "依賴插件";
-			ACP_DisableAll = "全部停用";
-			ACP_DisabledonreloadUI = "重載介面後停用";
-			ACP_Embeds = "函數庫";
-			ACP_EnableAll = "全部啟用";
-			ACP_EnablingyourUI = "*** 啟用<%s>，%s你的使用者介面 ***";
-			ACP_Enterthenewnamefor = "替[%s]重新取名:";
-			ACP_Load = "載入";
-			ACP_LoadableOnDemand = "可隨需求載入";
-			ACP_Loaded = "已載入";
-			ACP_Loadedondemand = "隨需求載入。";
-			ACP_LoDChildEnableisnow = "隨需求載入子插件: %s";
-			ACP_MemoryUsage = "記憶體用量";
-			ACP_Noinformationavailable = "無可用的資訊。";
-			ACP_Recursive = "遞迴";
-			ACP_RecursiveEnableisnow = "遞迴載入插件: %s";
-			ACP_Reload = "重載";
-			ACP_ReloadUI = "重載介面";
-			ACP_ReloadyourUserInterface = "重載你的使用者介面?";
-			ACP_Removefromcurrentselection = "從現在的選擇中移除";
-			ACP_Rename = "重新命名";
-			ACP_ResurseToolTip = "當啟用一個插件時，嘗試啟用此插件所依賴的插件。";
-			ACP_Save = "存檔";
-			ACP_Savethecurrentaddonlistto = "儲存目前的插件清單為[%s]?";
-			ACP_Set = "設定:";
-			ACP_Sets = "設定";
-			ACP_Status = "狀態";
-			ACP_UnknownAddonRequired = "*** 需要未知的插件<%s> ***";
-			ACP_UseSHIFTtooverridethecurrentenablingofdependanciesbehaviour = "使用Shift鍵來重寫目前啟用的依賴行為。";
-			ACP_Version = "版本";
-			ACP_whenperformingareloadui = "重載介面後不會被停用";
-
-    
 Chatbar_ChatMiniMizeButtonText = "縮";
 Chatbar_rollText = "骰";
 Chatbar_StatReport = "報";
@@ -524,7 +684,7 @@ DEXOptionsFrameCheckButtons = {
 	["DEX_ShowDamageWoW"] = { title = "顯示系統默認傷害", tooltipText = "顯示系統原有的傷害"},
 	["DEX_ShowOwnHealth"] = { title = "顯示自身治療", tooltipText = "當目標為自己的時候也顯示治療量"},
 	["DEX_UniteSpell"] = { title = "合併瞬間多次同技能傷害", tooltipText = "如風怒武器,毀傷等瞬間對同一目標造成多次傷害的技能將被合併為一個傷害顯示"},
-	["DEX_NumberFormat"] = { title = "顯示分隔符號", tooltipText = "是否顯示千分位傷害數字分隔符號"},
+	--["DEX_NumberFormat"] = { title = "顯示分隔符號", tooltipText = "是否顯示千分位傷害數字分隔符號"},
 	["DEX_NumberFormat"] = { title = "萬進制顯示", tooltipText = "是否以萬為單位顯示"},	
 	["DEX_ShowSpellIcon"] = { title = "顯示技能圖標", tooltipText = "是否顯示技能圖標，選中則替換顯示技能名稱"},		
 	["DEX_ShowInterrupt"] = { title = "是否顯示中斷", tooltipText = "是否顯示中斷提示"},	
@@ -567,24 +727,6 @@ GRIDCLICKSETS_SET = "團框點擊施法已更新設置。";
 GRIDCLICKSETS_SET_WHEEL_UP = "上滾";
 GRIDCLICKSETS_SET_WHEEL_DOWN = "下滾";
 GRIDCLICKSETS_SET_RESET_WARNING = "當前專精的設置將全部重置且無法恢復！";
-
-xMerchant_Tobrowseitemtooltipstoo = "對物品詳細提示訊息也進行檢索";
-
-QN_Title    = "|cff0080ff[任務]|r任務通報功能設置";
-QN_Switch   = "|CFF00FF00通告功能 打開/關閉|r";
-QN_InstanceMode = "|CFFFF7D00在副本中時通報|r";
-QN_RaidMode = "|CFFFF7D00在團隊中時通報|r";
-QN_PartyMode= "|CFF30A0C8在小隊中時通報|r";
-QN_SoloMode = "單人的時候通報(慎用,老說話BL/LM老遠看到來揍你)";
-QN_Sound    = "|CFF00FF00完成時播放提示音|r";
-QN_Debug    = "|CFF00F000任務進度彩色提示|r(|CF000FFF0僅自己可見,組隊時此選項自動失效|r)" ;
-QN_NoDetail = "|CFF00FFFF不通報詳細進度|r";
-QN_CompleteX = "|CFF00F000任務追蹤自動移除已完成任務|r";
-QN_Colon       = "：";
-QN_Quest       = "任務";
-QN_Progress    = "進度";
-QN_Complete    = "已完成!";
-QN_Accept      = "接受任務";
 
 	
 	WHISPERPOP_LOCALE = {
@@ -642,7 +784,6 @@ QN_Accept      = "接受任務";
   CurrencyTracking_TRACKED_CURRENCY = "追蹤的通貨";
   CurrencyTracking_TRACKED_ITEMS = "追蹤的物品";
   CurrencyTracking_PROFILE_OPTIONS = "設定檔選項";
-	
 
 	TinyInspectL = {
     ShowItemBorder              = "物品直角邊框",
@@ -663,6 +804,7 @@ QN_Accept      = "接受任務";
     EnableMouseItemLevel        = "鼠標目標裝等",
     EnableMouseSpecialization   = "顯示鼠標天賦",
     EnableMouseWeaponLevel      = "顯示武器等級",
+    ShowPluginGreenState        = "顯示綠字屬性前綴 |cffcccc33(重載生效)|r",
     Bag                         = "背包",
     Bank                        = "銀行",
     Merchant                    = "商人",
@@ -673,144 +815,7 @@ QN_Accept      = "接受任務";
     GuildNews                   = "公會新聞",
     PaperDoll                   = "人物面板",
     Chat                        = "聊天",
-    ["general.mask"]                        = "頂部遮罩",
-    ["general.statusbarText"]               = "HP文字",
-    ["general.background"]                  = "背景顔色",
-    ["general.borderColor"]                 = "邊框顔色",
-    ["general.scale"]                       = "框架縮放",
-    ["general.borderSize"]                  = "邊框大小",
-    ["general.statusbarHeight"]             = "HP高度",
-    ["general.borderCorner"]                = "邊框樣式",
-    ["general.bgfile"]                      = "背景材質",
-    ["general.statusbarPosition"]           = "HP位置",
-    ["general.statusbarOffsetX"]            = "HP位置X邊距",
-    ["general.statusbarOffsetY"]            = "HP位置Y偏移",
-    ["general.statusbarFontSize"]           = "HP文字大小",
-    ["general.statusbarFont"]               = "HP文字字體",
-    ["general.statusbarFontFlag"]           = "HP字體描邊",
-    ["general.statusbarTexture"]            = "HP背景材質",
-    ["general.statusbarColor"]              = "HP顔色",
-    ["general.anchor.position"]             = "框架錨點",
-    ["general.anchor.returnInCombat"]       = "戰鬥時復位",
-    ["general.anchor.returnOnUnitFrame"]    = "UnitFrame上時復位",
-    ["general.alwaysShowIdInfo"]            = "始終顯示id信息(關閉後按住alt/shift顯示)",
-    ["general.skinMoreFrames"]              = "樣式應用於更多框架 |cffcccc33(重載生效)|r",
-    
-    ["item.coloredItemBorder"]              = "物品邊框染色",
-    ["item.showItemIcon"]                   = "顯示物品圖標",
-    ["quest.coloredQuestBorder"]            = "任務邊框染色",
-    
-    ["unit.player.anchor.position"]         = "框架錨點",
-    ["unit.player.anchor.returnInCombat"]   = "戰鬥時復位",
-    ["unit.player.anchor.returnOnUnitFrame"] = "UnitFrame上時復位",
-    ["unit.player.background"]              = "背景染色",
-    ["unit.player.coloredBorder"]           = "邊框染色",
-    ["unit.player.showTarget"]              = "顯示目標",
-    ["unit.player.showTargetBy"]            = "顯示被關注",
-    ["unit.player.showModel"]               = "顯示模型",
-    ["unit.player.grayForDead"]             = "死亡目標灰度染色",
-    ["unit.player.elements.roleIcon"]       = "角色圖標",
-    ["unit.player.elements.raidIcon"]       = "標記圖標",
-    ["unit.player.elements.pvpIcon"]        = "PVP狀態",
-    ["unit.player.elements.factionIcon"]    = "陣營圖標",
-    ["unit.player.elements.classIcon"]      = "職業圖標",
-    ["unit.player.elements.title"]          = "頭銜",
-    ["unit.player.elements.name"]           = "名稱",
-    ["unit.player.elements.realm"]          = "伺服器",
-    ["unit.player.elements.statusAFK"]      = "AFK",
-    ["unit.player.elements.statusDND"]      = "DND",
-    ["unit.player.elements.statusDC"]       = "OFFLINE",
-    ["unit.player.elements.guildName"]      = "公會名稱",
-    ["unit.player.elements.guildIndex"]     = "公會階級數字",
-    ["unit.player.elements.guildRank"]      = "公會階級名稱",
-    ["unit.player.elements.guildRealm"]     = "公會伺服器",
-    ["unit.player.elements.levelValue"]     = "等級",
-    ["unit.player.elements.factionName"]    = "陣營",
-    ["unit.player.elements.gender"]         = "性別",
-    ["unit.player.elements.raceName"]       = "種族",
-    ["unit.player.elements.className"]      = "職業",
-    ["unit.player.elements.isPlayer"]       = "玩家",
-    ["unit.player.elements.role"]           = "角色",
-    ["unit.player.elements.moveSpeed"]      = "移動速度",
-    ["unit.player.elements.zone"]           = "地區",
-    
-    ["unit.npc.anchor.position"]            = "框架錨點",
-    ["unit.npc.anchor.returnInCombat"]      = "戰鬥時復位",
-    ["unit.npc.anchor.returnOnUnitFrame"]   = "UnitFrame上時復位",
-    ["unit.npc.background"]                 = "背景染色",
-    ["unit.npc.coloredBorder"]              = "邊框染色",
-    ["unit.npc.showTarget"]                 = "顯示目標",
-    ["unit.npc.showTargetBy"]               = "顯示被關注數",
-    ["unit.npc.grayForDead"]                = "死亡目標灰度染色",
-    ["unit.npc.elements.raidIcon"]          = "標記圖標",
-    ["unit.npc.elements.classIcon"]         = "職業圖標",
-    ["unit.npc.elements.questIcon"]         = "任務圖標",
-    ["unit.npc.elements.npcTitle"]          = "頭銜",
-    ["unit.npc.elements.name"]              = "名稱",
-    ["unit.npc.elements.levelValue"]        = "等級",
-    ["unit.npc.elements.classifBoss"]       = "首領",
-    ["unit.npc.elements.classifElite"]      = "精英",
-    ["unit.npc.elements.classifRare"]       = "稀有",
-    ["unit.npc.elements.creature"]          = "類型",
-    ["unit.npc.elements.reactionName"]      = "聲望",
-    ["unit.npc.elements.moveSpeed"]         = "移動速度",
-    
-    ["spell.background"]                    = "背景顔色",
-    ["spell.borderColor"]                   = "邊框顔色",
-    ["spell.showIcon"]                      = "法術圖標",
-    
-    ["dropdown.inherit"]        = "|cffffee00繼承全域|r",
-    ["dropdown.default"]        = "|cffaaaaaa系統默認|r",
-    ["dropdown.angular"]        = "直角邊框",
-    ["dropdown.bottom"]         = "底部",
-    ["dropdown.top"]            = "頂部",
-    ["dropdown.auto"]           = "智能匹配",
-    ["dropdown.smooth"]         = "百分比動態",
-    ["dropdown.cursorRight"]    = "鼠標右側",
-    ["dropdown.cursor"]         = "|cff33ccff鼠標|r",
-    ["dropdown.static"]         = "|cff33ccff固定位置|r",
-    ["dropdown.class"]          = "職業染色",
-    ["dropdown.level"]          = "等差染色",
-    ["dropdown.reaction"]       = "聲望染色",
-    ["dropdown.itemQuality"]    = "物品品質染色",
-    ["dropdown.selection"]      = "類型染色",
-    ["dropdown.faction"]        = "陣營染色",
-    ["dropdown.dark"]           = "深黑",
-    ["dropdown.alpha"]          = "透明",
-    ["dropdown.gradual"]        = "漸變",
-    ["dropdown.rock"]           = "岩石",
-    ["dropdown.marble"]         = "大理石",
-
-    ["dropdown.none"]           = "|cffaaaaaa(無)|r",
-    ["dropdown.reaction5"]      = "聲望友好以上",
-    ["dropdown.reaction6"]      = "聲望尊敬以上",
-    ["dropdown.inraid"]         = "團隊時",
-    ["dropdown.incombat"]       = "戰鬥中",
-    ["dropdown.inpvp"]          = "戰場裏",
-    ["dropdown.inarena"]        = "競技場",
-    ["dropdown.ininstance"]     = "副本時",
-    ["dropdown.samerealm"]      = "同伺服",
-    ["dropdown.samecrossrealm"]     = "同跨伺服",
-    ["dropdown.not reaction5"]      = "|cffff3333非|r聲望友好以上",
-    ["dropdown.not reaction6"]      = "|cffff3333非|r聲望尊敬以上",
-    ["dropdown.not inraid"]         = "|cffff3333非|r團隊時",
-    ["dropdown.not incombat"]       = "|cffff3333非|r戰鬥中",
-    ["dropdown.not inpvp"]          = "|cffff3333非|r戰場裏",
-    ["dropdown.not inarena"]        = "|cffff3333非|r競技場",
-    ["dropdown.not ininstance"]     = "|cffff3333非|r副本時",
-    ["dropdown.not samerealm"]      = "|cffff3333非|r同伺服",
-    ["dropdown.not samecrossrealm"]  = "|cffff3333非|r同跨伺服",
-    
-    ["headerFont"]        = "標頭字體",
-    ["headerFontSize"]    = "標頭字體大小",
-    ["headerFontFlag"]    = "標頭字體描邊",
-    ["bodyFont"]          = "內容字體",
-    ["bodyFontSize"]      = "內容字體大小",
-    ["bodyFontFlag"]      = "內容字體描邊",
-    
-    ["Anchor"]   = "錨點器",
-    
-    ["TargetBy"] = "被關注",
+    Loot                        = "拾取",
   };
-BINDING_NAME_InspectRaidFrame = "顯示團隊觀察面板"
+BINDING_NAME_InspectRaidFrame = "    顯示團隊觀察面板"
 end

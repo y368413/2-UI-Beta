@@ -1,5 +1,4 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
-..\FrameXML\UI.xsd">
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="Options.lua"/>
 	<Script file="ItemBorder.lua"/>
 	<Script file="ItemLevel.lua"/>
@@ -12,4 +11,5 @@
 	<Script file="InspectMouse.lua"/>
 	<Script file="CharacterStats.lua"/>
 	<Script file="CharacterExpand.lua"/>
+	<Script file="PluginGreenState.lua"/>
 </Ui>

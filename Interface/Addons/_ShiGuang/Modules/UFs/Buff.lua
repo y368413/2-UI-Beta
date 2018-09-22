@@ -56,7 +56,7 @@ hooksecurefunc("RefreshBuffs", function(frame, unit, numBuffs, suffix, checkCVar
 			needShowCD = false
 		end
 		if _G[buffName]:IsShown() then
-			_, _, _, count, _, duration, expirationTime, caster = UnitBuff(unit, i, filter)
+			_, _, count, _, duration, expirationTime, caster = UnitBuff(unit, i, filter)
 			if count > 1 then
 				buffCount:SetText(count)
 				buffCount:Show()
@@ -114,7 +114,7 @@ hooksecurefunc("RefreshDebuffs", function(frame, unit, numDebuffs, suffix, check
 			needShowCD = false
 		end
 		if _G[debuffName]:IsShown() then
-			_, _, _, count, _, duration, expirationTime, caster = UnitDebuff(unit, i, filter)
+			_, _, count, _, duration, expirationTime, caster = UnitDebuff(unit, i, filter)
 			if count > 1 then
 				debuffCount:SetText(count)
 				debuffCount:Show()
@@ -145,7 +145,7 @@ hooksecurefunc("TargetFrame_UpdateAuras", function(self)
 
 	for i = 1, MAX_TARGET_BUFFS do
 		frameName = self:GetName().."Buff"..(i)
-		caster = select(8, UnitBuff(self.unit, i, nil))
+		caster = select(7, UnitBuff(self.unit, i, nil))
 		if _G[frameName] and _G[frameName]:IsShown() then
 			if canAssist and not PLAYER_UNITS[caster] then
 				_G[frameName.."Icon"]:SetDesaturated(true)

@@ -1,21 +1,23 @@
-## Interface: 70300
+## Interface: 80000
 ## Title: Garrison Master
-## Title-zhCN: |cff00ff00[大厅]|r任务大师
-## Title-zhTW: |cff00ff00[大厅]|r任务大师
+## Title-zhCN: |cff00ff00[任务]|r指挥台大师
+## Title-zhTW: |cff00ff00[任务]|r指挥台大师
 ## Notes: Garrision missions UI tweaks.
-## Notes-zhCN: 修改职业大厅&德拉诺要塞控制台任务界面，让其更加易用
-## Notes-zhTW: 修改职业大厅&德拉诺要塞控制台任务界面，让其更加易用
+## Notes-zhCN: 修改德拉诺要塞&职业大厅&海军指挥台控制台任务界面，让其更加易用。
+## Notes-zhTW: 修改德拉诺要塞&职业大厅&海军指挥台控制台任务界面，让其更加易用。
 ## Author: foxlit+Oleg "Rowaa[SR13]" Volkov + Razor_Storm@NGACN + lteke
 ## LoadOnDemand: 1
 ## LoadWith: Blizzard_GarrisonUI, Blizzard_OrderHallUI
 ## RequiredDeps: Blizzard_GarrisonUI, Blizzard_OrderHallUI
 ## SavedVariables: MasterPlanAG, SV_GarrisonMissionManager, IPMDB
 ## SavedVariablesPerCharacter: MasterPlanPC, SVPC_GarrisonMissionManager
-## Version: 0.109.1 + V55 + 1.4.0.2 + 7.3.20
+## Version: 0.115 + V58 + 1.4.0.2 + 8.0.24
+## X-Version-Key: canary
 
 ## X-Repple: 菜单
 
 Libs/Evie.lua
+Libs/AltGameTooltip.xml
 Libs/Reframe.lua
 PlanA.lua
 Locale.lua
@@ -40,15 +42,9 @@ MissionUI_Shared_UpgradeItems.lua
 MissionUI_Garrison.lua
 MissionUI_Shipyard.lua
 MissionUI_OrderHall.lua
+MissionUI_BFA.lua
 GarrisonBuilding.lua
 Broker.lua
-
-#Misc\Data.lua
-#Misc\DataAPI.lua
-#Misc\LoadWithGarrisonUI.lua
-#Misc\Override.lua
-#SmartRecruiter.lua
-#FollowerTooltip.lua
 
 MoreRewardsFormOrderHall.lua
 InProgressMissions.lua

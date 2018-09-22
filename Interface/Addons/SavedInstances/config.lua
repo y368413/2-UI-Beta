@@ -186,13 +186,13 @@ function module:BuildOptions()
       General = {
         order = 1,
         type = "group",
-        name = L["General settings"],
+        name = SavedInstances.version, --L["General settings"]..
         args = {
-          ver = {
-            order = 0.5,
-            type = "description",
-            name = function() return "Version: SavedInstances "..SavedInstances.version end,
-          },
+         -- ver = {
+            --order = 0.5,
+            --type = "description",
+            --name = function() return "Version: SavedInstances "..SavedInstances.version end,
+          --},
           GeneralHeader = {
             order = 2,
             type = "header",
@@ -853,7 +853,7 @@ end
 
 function module:SetupOptions()
   local ACD = LibStub("AceConfigDialog-3.0")
-  local namespace = Savedinstances_TITLE
+  local namespace = "SavedInstances"
   module:BuildOptions()
   LibStub("AceConfig-3.0"):RegisterOptionsTable(namespace, core.Options, { "si", "savedinstances" })
   local fgen = ACD:AddToBlizOptions(namespace, nil, nil, "General")

@@ -33,7 +33,7 @@ function BaudErrorFrame_OnEvent(self, event, ...)
 		if type(ShiGuangDB.BaudErrorFrameConfig) ~= "table" then
 			ShiGuangDB.BaudErrorFrameConfig = {}
 		end
-		for Key, Value in ipairs(QueueError)do
+		for Key, Value in ipairs(QueueError) do
 			BaudErrorFrameShowError(Value)
 		end
 		QueueError = nil
@@ -88,6 +88,8 @@ function BaudErrorFrameAdd(Error, Retrace)
 	if ShiGuangDB.BaudErrorFrameConfig then
 		BaudErrorFrameShowError(Error)
 	else
+		if Error:match(INTERFACE_ACTION_BLOCKED) then return end
+		if Error:find(INTERFACE_ACTION_BLOCKED) then return end
 		if Error:match("script ran too long") then return end
 		if Error:match("插件导致界面行为失效") then return end
 		tinsert(QueueError, Error)

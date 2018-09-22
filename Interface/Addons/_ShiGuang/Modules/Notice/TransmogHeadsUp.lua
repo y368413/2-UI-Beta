@@ -1,4 +1,4 @@
---## Author: Kalief   ## Version: 1.3   ## Notes: Writes a chat message if you pick up a BoE item with transmog that you havent collected yet
+--## Author: Kalief   ## Version: 1.7   ## Notes: Writes a chat message if you pick up a BoE item with transmog that you havent collected yet
 local TransmogHeadsUp = CreateFrame("FRAME", "TransmogHeadsUp");
 TransmogHeadsUp:RegisterEvent("CHAT_MSG_LOOT");
 

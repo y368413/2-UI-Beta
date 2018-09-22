@@ -2,7 +2,7 @@
 <!--
 $Id: CurrencyTracking_Options.xml 60 2017-04-05 15:50:17Z arith $
 -->
-<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
    <Script file="LibCurrencyInfo.lua"/>
    <Script file="Core.lua"/>
 	<Button name="CurrencyTrackingButtonTemplate" movable="true" enableMouse="true" virtual="true">
@@ -46,9 +46,12 @@ $Id: CurrencyTracking_Options.xml 60 2017-04-05 15:50:17Z arith $
 				<Scripts>
 					<OnLoad>
 						self:RegisterForClicks("LeftButtonDown", "RightButtonDown");
+						self.orig_tooltipScale = GameTooltip:GetScale();
 					</OnLoad>
 					<OnEnter>
 						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						GameTooltip:SetScale(CurrencyTracking.db.profile.tooltip_scale);
+						GameTooltip:SetBackdropColor(0, 0, 0, CurrencyTracking.db.profile.tooltip_alpha);
 						if (self.tooltipText) then
 							GameTooltip:SetText(self.tooltipText);
 						elseif (self:GetParent().isItem) then
@@ -71,6 +74,7 @@ $Id: CurrencyTracking_Options.xml 60 2017-04-05 15:50:17Z arith $
 						end
 					</OnClick>
 					<OnLeave>
+						GameTooltip:SetScale(self.orig_tooltipScale);
 						GameTooltip:Hide();
 					</OnLeave>
 				</Scripts>

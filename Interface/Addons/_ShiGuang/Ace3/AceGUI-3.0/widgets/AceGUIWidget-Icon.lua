@@ -1,6 +1,4 @@
---[[-----------------------------------------------------------------------------
-Icon Widget
--------------------------------------------------------------------------------]]
+
 local Type, Version = "Icon", 21
 local AceGUI = LibStub and LibStub("AceGUI-3.0", true)
 if not AceGUI or (AceGUI:GetWidgetVersion(Type) or 0) >= Version then return end
@@ -11,9 +9,7 @@ local select, pairs, print = select, pairs, print
 -- WoW APIs
 local CreateFrame, UIParent = CreateFrame, UIParent
 
---[[-----------------------------------------------------------------------------
-Scripts
--------------------------------------------------------------------------------]]
+
 local function Control_OnEnter(frame)
 	frame.obj:Fire("OnEnter")
 end
@@ -27,9 +23,6 @@ local function Button_OnClick(frame, button)
 	AceGUI:ClearFocus()
 end
 
---[[-----------------------------------------------------------------------------
-Methods
--------------------------------------------------------------------------------]]
 local methods = {
 	["OnAcquire"] = function(self)
 		self:SetHeight(110)
@@ -92,9 +85,6 @@ local methods = {
 	end
 }
 
---[[-----------------------------------------------------------------------------
-Constructor
--------------------------------------------------------------------------------]]
 local function Constructor()
 	local frame = CreateFrame("Button", nil, UIParent)
 	frame:Hide()
@@ -118,7 +108,7 @@ local function Constructor()
 
 	local highlight = frame:CreateTexture(nil, "HIGHLIGHT")
 	highlight:SetAllPoints(image)
-	highlight:SetTexture("Interface\\PaperDollInfoFrame\\UI-Character-Tab-Highlight")
+	highlight:SetTexture(136580) -- Interface\\PaperDollInfoFrame\\UI-Character-Tab-Highlight
 	highlight:SetTexCoord(0, 1, 0.23, 0.77)
 	highlight:SetBlendMode("ADD")
 

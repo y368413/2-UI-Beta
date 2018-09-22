@@ -1,7 +1,5 @@
 <Ui>
-	<!-- Project -->
 	<Script file='Wasabi.lua'/>
-
 	<Script file='Base.lua'/>
 	<Script file='FontStrings.lua'/>
 	<Script file='CheckButton.lua'/>

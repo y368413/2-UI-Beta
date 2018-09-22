@@ -1,5 +1,11 @@
-﻿local M, R, U, I = unpack(select(2, ...))
-local module = MaoRUI:RegisterModule("Settings")
+﻿local _, ns = ...
+local M, R, U, I = unpack(ns)
+local module = M:RegisterModule("Settings")
+
+-- Addon Info
+print("<<<---|cFFFFFF00 2|r|cFFFF0000 UI |r v"..GetAddOnMetadata("_ShiGuang", "Version").." ("..GetAddOnMetadata("_ShiGuang", "X-StatsVersion")..")" .." For "..GetAddOnMetadata("_ShiGuang", "X-Support").." --")
+print("  ---|cffC495DD 特别感谢|r|cff3399ffSiweia|r|cffC495DD,向他学到了好多.|r---  ")
+print("--------------- 有你们的魔兽,才是世界 -->>>")
 
 -- Tuitorial
 local function ForceDefaultSettings()
@@ -21,56 +27,38 @@ local function ForceDefaultSettings()
 	SetCVar("alwaysShowActionBars", 1)
 	SetCVar("lockActionBars", 1)
 	SetActionBarToggles(1, 1, 1, 1)
-	SetCVar("enableFloatingCombatText", 1)
+	SetCVar("enableFloatingCombatText", 0)
 	SetCVar("floatingCombatTextCombatDamage", 0)
 	SetCVar("floatingCombatTextCombatHealing", 0)
 	SetCVar("floatingCombatTextCombatDamageDirectionalScale", 1)
-	SetCVar("floatingCombatTextFloatMode", 3)
-	 --寵物對目標傷害 
-   SetCVar("floatingCombatTextPetMeleeDamage", 0) 
-   SetCVar("floatingCombatTextPetSpellDamage", 0) 
-   --目標盾提示 
-   SetCVar("floatingCombatTextCombatHealingAbsorbTarget", 0) 
-   --自身得盾/護甲提示 
-   SetCVar("floatingCombatTextCombatHealingAbsorbSelf", 0) 
-   --閃招 
-   SetCVar("floatingCombatTextDodgeParryMiss", 0) 
-   --傷害減免   
-   SetCVar("floatingCombatTextDamageReduction", 0) 
-   --周期性傷害 
-   SetCVar("floatingCombatTextCombatLogPeriodicSpells", 0) 
-   --法術警示 
-   SetCVar("floatingCombatTextReactives", 0) 
-   --他人的糾纏效果(例如 誘補(xxxx-xxxx)) 
-   SetCVar("floatingCombatTextSpellMechanics", 0) 
-   --聲望變化 
-   SetCVar("floatingCombatTextRepChanges", 1) 
-   --友方治療者名稱 
-   SetCVar("floatingCombatTextFriendlyHealers", 1) 
-   --進入/離開戰鬥文字提示 
-   SetCVar("floatingCombatTextCombatState", 1) 
-   --低MP/低HP文字提示 
-   SetCVar("floatingCombatTextLowManaHealth", 1)   
-   --連擊點 
-   SetCVar("floatingCombatTextComboPoints", 0) 
-   --能量獲得 
-   SetCVar("floatingCombatTextEnergyGains", 0) 
-   --周期性能量   
-   SetCVar("floatingCombatTextPeriodicEnergyGains", 0) 
-   --榮譽擊殺 
-   SetCVar("floatingCombatTextHonorGains", 0) 
-   --光環 
-   SetCVar("floatingCombatTextAuras", 0)
+	SetCVar("floatingCombatTextFloatMode", 3) 
+  SetCVar("floatingCombatTextPetMeleeDamage", 0)   	 --寵物對目標傷害
+  SetCVar("floatingCombatTextPetSpellDamage", 0)   	 --寵物對目標傷害
+  SetCVar("floatingCombatTextCombatHealingAbsorbTarget", 0)    --目標盾提示 
+  SetCVar("floatingCombatTextCombatHealingAbsorbSelf", 0)    --自身得盾/護甲提示 
+  SetCVar("floatingCombatTextDodgeParryMiss", 0)    --閃招 
+  SetCVar("floatingCombatTextDamageReduction", 0)    --傷害減免 
+  SetCVar("floatingCombatTextCombatLogPeriodicSpells", 0)    --周期性傷害 
+  SetCVar("floatingCombatTextReactives", 0)    --法術警示
+  SetCVar("floatingCombatTextSpellMechanics", 0)    --他人的糾纏效果(例如 誘補(xxxx-xxxx)) 
+  SetCVar("floatingCombatTextRepChanges", 1)    --聲望變化 
+  SetCVar("floatingCombatTextFriendlyHealers", 0)    --友方治療者名稱 
+  SetCVar("floatingCombatTextCombatState", 1)    --進入/離開戰鬥文字提示 
+  SetCVar("floatingCombatTextLowManaHealth", 1)      --低MP/低HP文字提示 
+  SetCVar("floatingCombatTextComboPoints", 0)    --連擊點 
+  SetCVar("floatingCombatTextEnergyGains", 0)    --能量獲得
+  SetCVar("floatingCombatTextPeriodicEnergyGains", 0)    --周期性能量   
+  SetCVar("floatingCombatTextHonorGains", 0)    --榮譽擊殺 
+  SetCVar("floatingCombatTextAuras", 0)   --光環 
 	SetCVar("doNotFlashLowHealthWarning", 1)
 	SetCVar("ffxGlow", 0)
 	SetCVar("autoQuestWatch", 1)
 	SetCVar("overrideArchive", 0)
 	SetCVar("WorldTextScale", 1.5)
 	SetCVar("enableMouseSpeed", 0);
-	--	SetCVar("mouseSpeed", 5); -- Maximum in-game: 1.4
-	--	SetCVar("cameraPitchMoveSpeed", 135);
 	SetCVar("cameraYawMoveSpeed", 360); -- Maximum in-game: 270
 end
+
 local function ForceRaidFrame()
 	if not CompactUnitFrameProfiles.selectedProfile then return end
 	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "useClassColors", true)
@@ -81,39 +69,23 @@ local function ForceRaidFrame()
 end
 
 local function ForceUIScale()
-	Advanced_UseUIScale:Hide()
-	Advanced_UIScaleSlider:Hide()
-	SetCVar("useUiScale", 1)
-	local scale = MaoRUISettingDB["Settings"]["SetScale"]
+	M.HideOption(Advanced_UseUIScale)
+	M.HideOption(Advanced_UIScaleSlider)
+
+	local scale = MaoRUISettingDB["Settings"]["UIScale"]
 	if MaoRUISettingDB["Settings"]["LockUIScale"] then
-		if GetCurrentResolution() ~= 0 then
-			scale = .8*768/string.match(({GetScreenResolutions()})[GetCurrentResolution()], "%d+x(%d+)")
-		end
-		if scale < .5 then scale = .5 end
-		MaoRUISettingDB["Settings"]["SetScale"] = scale
+		scale = 768/I.ScreenHeight * .8
+		local minScale = .64
+		if I.ScreenHeight > 1080 then minScale = .5 end
+		if scale < minScale then scale = minScale end
+		MaoRUISettingDB["Settings"]["UIScale"] = scale
 	end
 
-	if scale < .65 then UIParent:SetScale(scale)
+	SetCVar("useUiScale", 1)
+	if scale < .64 then UIParent:SetScale(scale)
 	else SetCVar("uiScale", scale)
 	end
 
-	-- Restore from Auto-scaling
-	local function RestoreUIScale(scale)
-		UIParent:SetScale(scale)
-		if MaoRUISettingDB["Chat"]["Lock"] then
-				ChatFrame1:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", -2, 21)
-		end
-	end
-
-	MaoRUI:EventFrame("UI_SCALE_CHANGED"):SetScript("OnEvent", function()
-		if scale < .65 then RestoreUIScale(scale) end
-
-		C_Timer.After(1, function()
-			if scale < .65 and UIParent:GetScale() ~= scale then
-				RestoreUIScale(scale)
-			end
-		end)
-	end)
 end
 
 local function ForceChatSettings()
@@ -123,17 +95,9 @@ local function ForceChatSettings()
 	ChatFrame1:SetWidth(360)
 	ChatFrame1:SetHeight(121)
   ChatFrame1:SetUserPlaced(true)
-	for i = 1, 10 do
+	for i = 1, NUM_CHAT_WINDOWS do
 		local cf = _G["ChatFrame"..i]
-		FCF_SetWindowAlpha(cf, 0)
-		ChatFrame_RemoveMessageGroup(cf,"CHANNEL")
-	end
-	local channels = {"SAY","EMOTE","YELL","GUILD","OFFICER","GUILD_ACHIEVEMENT","ACHIEVEMENT",
-	"WHISPER","PARTY","PARTY_LEADER","RAID","RAID_LEADER","RAID_WARNING","INSTANCE_CHAT",
-	"INSTANCE_CHAT_LEADER","CHANNEL1","CHANNEL2","CHANNEL3","CHANNEL4","CHANNEL5","CHANNEL6","CHANNEL7",
-	}	
-	for i, v in ipairs(channels) do
-		ToggleChatColorNamesByClassGroup(true, v)
+		ChatFrame_RemoveMessageGroup(cf, "CHANNEL")
 	end
 	FCF_SavePositionAndDimensions(ChatFrame1)
 	FCF_SetLocked(ChatFrame1, true)
@@ -218,11 +182,11 @@ local function ForceSkadaOptions()
 			["Default"] = {
 				["windows"] = {
 					{
-						["barheight"] = 18,
-						["classicons"] = false,
+						["barheight"] = 16,
+						["classicons"] = true,
 						["barslocked"] = true,
-						["y"] = 24,
-						["x"] = -5,
+						["y"] = 21,
+						["x"] = 0,
 						["title"] = {
 							["color"] = {
 								["a"] = 0.3,
@@ -231,34 +195,34 @@ local function ForceSkadaOptions()
 								["r"] = 0,
 							},
 							["font"] = "",
-							["borderthickness"] = 0,
+							["borderthickness"] = 2,
 							["fontflags"] = "OUTLINE",
-							["fontsize"] = 14,
-							["texture"] = "normTex",
+							["fontsize"] = 11,
+							["texture"] = "HalfStyle",
 						},
 						["barfontflags"] = "OUTLINE",
 						["point"] = "BOTTOMRIGHT",
-						["mode"] = "",
-						["barwidth"] = 300,
+						["mode"] = "伤害",
+						["barwidth"] = 285,
 						["barbgcolor"] = {
 							["a"] = 0,
 							["b"] = 0,
 							["g"] = 0,
 							["r"] = 0,
 						},
-						["barfontsize"] = 15,
+						["barfontsize"] = 11,
 						["background"] = {
-							["height"] = 180,
+							["height"] = 165,
 							["texture"] = "None",
 							["bordercolor"] = {
 								["a"] = 0,
 							},
 						},
-						["bartexture"] = "normTex",
+						["bartexture"] = "None",
 					}, -- [1]
 				},
 				["tooltiprows"] = 10,
-				["setstokeep"] = 30,
+				["setstokeep"] = 10,
 				["tooltippos"] = "topleft",
 				["reset"] = {
 					["instance"] = 3,
@@ -360,14 +324,15 @@ local function ForceAddonSkins()
 end
 -----------------------------------------
 function sendCmd(cmd) ChatFrame1EditBox:SetText(""); ChatFrame1EditBox:Insert(cmd); ChatEdit_SendText(ChatFrame1EditBox); end
-print(Welcome_loginChatText1) print(Welcome_loginChatText2) print(Welcome_loginChatText3) print(Welcome_loginChatText4)
 function module:OnLogin()
-
+	if not MaoRUISettingDB["Tutorial"]["Complete"] then
+		ForceDefaultSettings()
+	  ForceRaidFrame()
+		MaoRUISettingDB["Tutorial"]["Complete"] = true
+	end
 	ForceUIScale()
 	ForceAddonSkins()
 	if MaoRUISettingDB["Chat"]["Lock"] then ForceChatSettings() end
-
-	if tonumber(GetCVar("cameraDistanceMaxZoomFactor")) ~= 2.6 then
-		SetCVar("cameraDistanceMaxZoomFactor", 2.6)
-	end
+	if tonumber(GetCVar("cameraDistanceMaxZoomFactor")) ~= 2.6 then SetCVar("cameraDistanceMaxZoomFactor", 2.6) end
+	sendCmd("/console missingTransmogSourceInItemTooltips 1")
 end

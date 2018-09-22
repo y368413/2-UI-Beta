@@ -1,4 +1,5 @@
-local M, R, U, I = unpack(select(2, ...))
+local _, ns = ...
+local M, R, U, I = unpack(ns)
 --------------------------------------- Pet Quick Filter, by Windrunner-- NDui MOD-------------------------------------
 local function PetJournalQuickFilter()
 	PetJournalListScrollFrame:SetPoint("TOPLEFT", PetJournalLeftInset, 3, -60)
@@ -6,43 +7,43 @@ local function PetJournalQuickFilter()
 		PetJournalEnhancedListScrollFrame:SetPoint("TOPLEFT", PetJournalLeftInset, 3, -60)
 	end
 
-local QuickFilter_Function = function(self, button)
-    local activeCount = 0
-    for petType, _ in ipairs(PET_TYPE_SUFFIX) do
-        local btn = _G["PetJournalQuickFilterButton"..petType]
+	local QuickFilter_Function = function(self, button)
+		local activeCount = 0
+		for petType, _ in ipairs(PET_TYPE_SUFFIX) do
+			local btn = _G["PetJournalQuickFilterButton"..petType]
 			if button == "LeftButton" then
-            if self == btn then
-                btn.isActive = not btn.isActive
-            elseif not IsShiftKeyDown() then
-                btn.isActive = false
-            end
+				if self == btn then
+					btn.isActive = not btn.isActive
+				elseif not IsShiftKeyDown() then
+					btn.isActive = false
+				end
 			elseif button == "RightButton" and (self == btn) then
-            btn.isActive = not btn.isActive
-        end
-        
-        if btn.isActive then
+				btn.isActive = not btn.isActive
+			end
+
+			if btn.isActive then
 				btn.Shadow:SetBackdropBorderColor(1, 1, 0)
-            activeCount = activeCount + 1
-        else
+				activeCount = activeCount + 1
+			else
 				btn.Shadow:SetBackdropBorderColor(0, 0, 0)
-        end
-        C_PetJournal.SetPetTypeFilter(btn.petType, btn.isActive)
-    end
-    
-    if 0 == activeCount then
-        C_PetJournal.SetAllPetTypesChecked(true)
-    end
-    
-    -- PetJournalEnhanced support
-    if PetJournalEnhanced then
-        local PJE = PetJournalEnhanced
-        if PJE.modules and PJE.modules.Sorting then
-            PJE.modules.Sorting:UpdatePets()
-        elseif PJE.UpdatePets then
-            PJE:UpdatePets()
-        end
-    end
-end
+			end
+			C_PetJournal.SetPetTypeFilter(btn.petType, btn.isActive)
+		end
+
+		if 0 == activeCount then
+			C_PetJournal.SetAllPetTypesChecked(true)
+		end
+
+		-- PetJournalEnhanced support
+		if PetJournalEnhanced then
+			local PJE = PetJournalEnhanced
+			if PJE.modules and PJE.modules.Sorting then
+				PJE.modules.Sorting:UpdatePets()
+			elseif PJE.UpdatePets then
+				PJE:UpdatePets()
+			end
+		end
+	end
 
 	-- Create the pet type buttons, sorted according weakness
 	-- Humanoid > Dragonkin > Magic > Flying > Aquatic > Elemental > Mechanical > Beast > Critter > Undead
@@ -66,6 +67,12 @@ end
 		end
 		btn.petType = petType
 
+		btn:SetHighlightTexture(I.bdTex)
+		local hl = btn:GetHighlightTexture()
+		hl:SetVertexColor(1, 1, 1, .25)
+		hl:SetPoint("TOPLEFT", 2, -2)
+		hl:SetPoint("BOTTOMRIGHT", -2, 2)
+
 		btn:SetScript("OnMouseUp", QuickFilter_Function)
 	end
 
@@ -78,12 +85,12 @@ end
 	end
 end
 
-MaoRUI:EventFrame("ADDON_LOADED"):SetScript("OnEvent", function(self, event, addon)
+local function setupPetFilter(event, addon)
 	if not MaoRUISettingDB["Misc"]["PetFilter"] then
-		self:UnregisterAllEvents()
-		return
+		M:UnregisterEvent(event, setupPetFilter)
 	elseif addon == "Blizzard_Collections" then
 		PetJournalQuickFilter()
-		self:UnregisterAllEvents()
+		M:UnregisterEvent(event, setupPetFilter)
 	end
-end)
+end
+M:RegisterEvent("ADDON_LOADED", setupPetFilter)

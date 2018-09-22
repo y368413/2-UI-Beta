@@ -1,4 +1,5 @@
-﻿local cql = ClassicQuestLog
+﻿--## Author: Gello  ## Version: 1.4.1
+local cql = ClassicQuestLog
 
 -- settings: ShowTooltips, ShowLevels, UndockWindow, LockWindow, ShowResizeGrip, Height, SolidBackground
 
@@ -319,38 +320,40 @@ function cql:UpdateLog()
 
 	HybridScrollFrame_Update(scrollFrame, 16*numEntries, 16)
 
-	cql:UpdateQuestDetail()
+   cql:UpdateQuestDetail()
 end
 
 -- this updates the detail pane of the currently selected quest
 function cql:UpdateQuestDetail()
-	local index = GetQuestLogSelection()
-	if ( index == 0 ) then
-		cql.selectedIndex = nil
-		ClassicQuestLogDetailScrollFrame:Hide()
-	elseif index>0 and index<=GetNumQuestLogEntries() then
-		local _,_,_,isHeader,_,_,_,questID = GetQuestLogTitle(index)
-		if not isHeader then
-			ClassicQuestLogDetailScrollFrame:Show()
-			QuestInfo_Display(QUEST_TEMPLATE_LOG, ClassicQuestLogDetailScrollChildFrame)
-			-- if a different questID being viewed, scroll to top of detail pane
-			if questID ~= cql.lastViewedQuestID then
-				ClassicQuestLogDetailScrollFrameScrollBar:SetValue(0)
-				cql.lastViewedQuestID = questID
-			end
-		end
-	end
-	-- show portrait off to side of window if one is available
-	local questPortrait, questPortraitText, questPortraitName = GetQuestLogPortraitGiver()
-	if (questPortrait and questPortrait ~= 0 and QuestLogShouldShowPortrait()) then
-		-- only show quest portrait if it's not already shown
-		if QuestNPCModel:GetParent()~=ClassicQuestLog or not QuestNPCModel:IsVisible() or cql.questPortrait~=questPortrait then
-			QuestFrame_ShowQuestPortrait(ClassicQuestLog, questPortrait, questPortraitText, questPortraitName, -3, -42)
-			cql.questPortrait = questPortrait
-		end
-	else
-		QuestFrame_HideQuestPortrait()
-	end
+   local index = GetQuestLogSelection()
+   if ( index == 0 ) then
+      cql.selectedIndex = nil
+      ClassicQuestLogDetailScrollFrame:Hide()
+   elseif index>0 and index<=GetNumQuestLogEntries() then
+      local _,_,_,isHeader,_,_,_,questID = GetQuestLogTitle(index)
+      if not isHeader then
+         ClassicQuestLogDetailScrollFrame:Show()
+         ClassicQuestLog.questID = questID
+         QuestInfo_Display(QUEST_TEMPLATE_LOG, ClassicQuestLogDetailScrollChildFrame)
+         ClassicQuestLog.SealMaterialBG:Hide()
+         -- if a different questID being viewed, scroll to top of detail pane
+         if questID ~= cql.lastViewedQuestID then
+            ClassicQuestLogDetailScrollFrameScrollBar:SetValue(0)
+            cql.lastViewedQuestID = questID
+         end
+      end
+   end
+   -- show portrait off to side of window if one is available
+   local questPortrait, questPortraitText, questPortraitName, questPortraitMount = GetQuestLogPortraitGiver();
+   if (questPortrait and questPortrait ~= 0 and QuestLogShouldShowPortrait()) then
+      -- only show quest portrait if it's not already shown
+	  if QuestNPCModel:GetParent()~=ClassicQuestLog or not QuestNPCModel:IsVisible() or cql.questPortrait~=questPortrait then
+		QuestFrame_ShowQuestPortrait(ClassicQuestLog, questPortrait, questPortraitMount, questPortraitText, questPortraitName, -3, -42)
+         cql.questPortrait = questPortrait
+      end
+   else
+      QuestFrame_HideQuestPortrait()
+   end
 end
 
 --[[ list entry handling ]]
@@ -531,16 +534,16 @@ function cql:UpdateControlButtons()
 end
 
 function cql:ExpandAllOnClick()
-	if not cql.expanded then
-		wipe(ShiGuangPerDB)
-	else
+	--if not cql.expanded then
+		--wipe(ShiGuangPerDB)
+	--else
 		for i=1,GetNumQuestLogEntries() do
 			local questTitle,_,_,isHeader = GetQuestLogTitle(i)
 			if isHeader then
 				ShiGuangPerDB[questTitle] = true
 			end
 		end
-	end
+	--end
 	cql:UpdateLogList()
 end
 

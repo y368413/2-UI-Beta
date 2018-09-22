@@ -1,17 +1,16 @@
-local M, R, U, I = unpack(select(2, ...))
-if GetLocale() ~= "zhCN" then return end
+local _, ns = ...
+local M, R, U, I = unpack(ns)
+--if GetLocale() ~= "zhCN" then return end
 
 local hx = {
-	 "任何你不喜欢的，请你控制台关了它.|cff3399FF       自己去下载自己喜欢的",
-	 "SM、DK、WS 职业监控栏被挡住了.|cff3399FF          /moveit",
-	 "我缩放完了UI，系统头像位置变了.|cff3399FF               右键解锁挪回去",
-	 "我用的简易头像,右键解锁挪不动啊.|cff3399FF         /bht m",
-	 "我还是喜欢默认样式的NPC购买列表.|cff3399FF       搜索删除xMerchant.lua",
-   "5人小队的框架位置很不习惯.|cff3399FF      按着Shift拖小队的第一个队友框",
-   "有些技能头像上没追踪显示啊.|cff3399FF     按着Alt获取到技能ID，回帖告诉我",
-   "不论你无聊还是闲得慌.|cff3399FF           千万别打这个命令  |cffC495DD /welovewow",
    "更多设置请|cFF00DDFF右键小地图|r",
-   "|cffC495DD如需改进和反馈，可以回帖告诉我，谢谢。",
+ 	 "任何你不喜欢的，请你控制台关了它.|cff3399FF        自己去下载自己喜欢的",
+ 	 "我不想要技能栏上的白圈.|cff3399FF                ESC-插件-别打勾[输出]MaxDps",
+	 "我找不到在哪关闭自动交接任务. |cff3399FF            左上任务追踪栏上 框里的勾",
+	 "我缩放完了UI，系统头像位置变了.|cff3399FF          右键解锁挪回去",
+	 "我用的简易头像,右键解锁挪不动啊.|cff3399FF         /bht m",
+   "5人小队的框架位置很不习惯.|cff3399FF        按着Shift拖小队的第一个队友框",
+   "|cFF00DDFF如需改进和反馈，可以回帖或者在讨论组(n9PnFl0o)告诉我，谢谢。",
 }
 local story = {
   "1、|cFF00DDFF我见过一个指挥，在午夜11点钟在教授面前的时候，他说我们休息一下吧，有人问为什么，他说：<你们记不得了？昨天这个时候，MT的小孩要睡觉了>",
@@ -52,7 +51,7 @@ local function changelog()
 	M.CreateMF(f)
 	M.CreateBD(f)
 	--M.CreateTex(f)
-	M.CreateFS(f, 30, "MaoR UI", true, "TOPLEFT", 21, 16)
+	M.CreateFS(f, 30, "2 UI", true, "TOPLEFT", 21, 16)
 	M.CreateFS(f, 16, I.Version, true, "TOPLEFT", 152, 9)
 	local offset = 0
 	for n, t in pairs(hx) do

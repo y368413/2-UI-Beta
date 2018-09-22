@@ -1,10 +1,80 @@
-local M, R, U, I = unpack(select(2, ...))
+local _, ns = ...
+local M, R, U, I = unpack(ns)
 
+---------------要塞按钮---------------------
+--GarrisonLandingPageMinimapButton:ClearAllPoints()
+--GarrisonLandingPageMinimapButton:SetPoint("CENTER",ObjectiveTrackerFrame,"TOPRIGHT",-43,0)
+GarrisonLandingPageMinimapButton:SetScale(0.8)
+--GarrisonLandingPageMinimapButton.SetPoint = function() end
+------------------------------- Order Hall Resources Tooltip
+local categoryInfo = {}
+do
+	local frame = CreateFrame("Frame")
+	frame:SetScript("OnEvent", function(self, event)
+		if C_Garrison.GetLandingPageGarrisonType() ~= LE_GARRISON_TYPE_7_0 then return end
+
+		if event == "GARRISON_FOLLOWER_CATEGORIES_UPDATED" then
+			categoryInfo = C_Garrison.GetClassSpecCategoryInfo(LE_FOLLOWER_TYPE_GARRISON_7_0)
+		else
+			C_Garrison.RequestClassSpecCategoryInfo(LE_FOLLOWER_TYPE_GARRISON_7_0)
+		end
+	end)
+	frame:RegisterEvent("GARRISON_FOLLOWER_CATEGORIES_UPDATED")
+	frame:RegisterEvent("GARRISON_FOLLOWER_ADDED")
+	frame:RegisterEvent("GARRISON_FOLLOWER_REMOVED")
+	frame:RegisterEvent("GARRISON_TALENT_COMPLETE")
+	frame:RegisterEvent("GARRISON_TALENT_UPDATE")
+	frame:RegisterEvent("GARRISON_SHOW_LANDING_PAGE")
+end
+
+-- from LibLDBIcon-1.0
+local function getAnchors(frame)
+	local x, y = frame:GetCenter()
+	if not x or not y then return "CENTER" end
+	local hhalf = (x > UIParent:GetWidth()*2/3) and "RIGHT" or (x < UIParent:GetWidth()/3) and "LEFT" or ""
+	local vhalf = (y > UIParent:GetHeight()/2) and "TOP" or "BOTTOM"
+	return vhalf..hhalf, frame, (vhalf == "TOP" and "BOTTOM" or "TOP")..hhalf
+end
+
+GarrisonLandingPageMinimapButton:HookScript("OnEnter", function(self)
+	if C_Garrison.GetLandingPageGarrisonType() ~= LE_GARRISON_TYPE_7_0 then return end
+
+	GameTooltip:SetOwner(self, "ANCHOR_NONE")
+	GameTooltip:SetPoint(getAnchors(self))
+	GameTooltip:SetText(self.title, 1, 1, 1)
+	GameTooltip:AddLine(self.description, nil, nil, nil, true)
+	GameTooltip:AddLine(" ")
+
+	local currency, amount, icon = GetCurrencyInfo(C_Garrison.GetCurrencyTypes(LE_GARRISON_TYPE_7_0))
+	GameTooltip:AddDoubleLine(currency, ("%s |T%s:0:0:0:2:64:64:4:60:4:60|t"):format(BreakUpLargeNumbers(amount), icon), 1, 1, 1, 1, 1, 1)
+
+	if #categoryInfo > 0 then
+		GameTooltip:AddLine(" ")
+		for _, info in ipairs(categoryInfo) do
+			GameTooltip:AddDoubleLine(info.name, ("%d/%d |T%d:0|t"):format(info.count, info.limit, info.icon), 1, 1, 1, 1, 1, 1)
+		end
+	end
+
+	GameTooltip:Show()
+end)
+
+----RepSwitch by Ne0nguy(## Version: 7.3.5.9 ## X-Website: Ne0nguy.com)
+RepSwitch = {};
+RepSwitch.frame = CreateFrame("Frame", nil, UIParent);
+RepSwitch.frame:RegisterEvent("COMBAT_TEXT_UPDATE");
+RepSwitch.frame:SetScript("OnEvent", function(_, event, arg1, arg2)
+	if(event == "COMBAT_TEXT_UPDATE" and arg1 == "FACTION" and arg2 ~= "Guild") then
+		for i=1,GetNumFactions() do
+			if arg2 == GetFactionInfo(i) then
+				SetWatchedFactionIndex(i);
+			end
+		end
+	end
+end);
 ----SonicReputation by 小刺猬(updata for 7.2 by 灰原哀709@NGA)
 local rep = {};
 local extraRep = {};  --额外声望
 local C_Reputation_IsFactionParagon = C_Reputation.IsFactionParagon
-
 function createMessage(msg)
   local info = ChatTypeInfo["COMBAT_FACTION_CHANGE"];
 	for j = 1, 4, 1 do
@@ -29,7 +99,6 @@ function initExtraRep(factionID, name)
     end
 	end
 end
-
 local SonicReputation = CreateFrame("Frame");
 SonicReputation:RegisterEvent("UPDATE_FACTION");
 SonicReputation:SetScript("OnEvent", function()
@@ -68,107 +137,64 @@ SonicReputation:SetScript("OnEvent", function()
 	end
 end);
 ChatFrame_AddMessageEventFilter("CHAT_MSG_COMBAT_FACTION_CHANGE", function() return true; end);
---------------------nReputation--------------------------------------------------------------------
--- Proccess tracking changes. Will ignore guild and anything set to inactive.
-local SetWatched = function(newFaction)
-    if running then return end
-    running = true
-    local i = 1
-    local wasCollapsed = {}
-    local watchedFaction = select(1,GetWatchedFactionInfo())
-    while i <= GetNumFactions() do
-        local name, _, _, _, _, _, _, _, isHeader, isCollapsed, _, _, _, _, _, _ = GetFactionInfo(i)
-        if isHeader then
-            if name == FACTION_INACTIVE then break end
-            if isCollapsed then
-                ExpandFactionHeader(i)
-                wasCollapsed[name] = true
-            end
-        end
-        if (name == newFaction) then
-            if (watchedFaction ~= newFaction) then
-                SetWatchedFactionIndex(i)
-            end
-            break
-        end
-        i = i + 1
-    end
-    i = 1
-    while i <= GetNumFactions() do
-        local name, _, _, _, _, _, _, _, isHeader, isCollapsed, _, _, _, _, _, _ = GetFactionInfo(i)
-        if isHeader and not isCollapsed and wasCollapsed[name] then
-            CollapseFactionHeader(i)
-            wasCollapsed[name] = nil
-        end
-        i = i + 1
-    end
-    running = nil
-end
--- Reads faction change line and sets watched reputation.
-local listener = CreateFrame("Frame")
-listener:SetScript("OnEvent", function(self, event, ...)
-    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11 = ...
-    local pattern_standing_inc = string.gsub(string.gsub(FACTION_STANDING_INCREASED, "(%%s)", "(.+)"), "(%%d)", "(%%d+)")
-    if ( event == "CHAT_MSG_COMBAT_FACTION_CHANGE" ) then
-        local s1, e1, faction, amount = string.find(arg1, pattern_standing_inc)
-        if ( s1 ~= nil and amount ~= nil ) then
-            if ( faction ~= GUILD ) then
-                SetWatched(faction)
-            end
-        end
-    end
-end)
--- Listen for faction change events.
-listener:RegisterEvent("CHAT_MSG_COMBAT_FACTION_CHANGE")
 -----------------------------------ExaltedPlus------------------------------------------
-local buln,rpt,f=BreakUpLargeNumbers,ReputationParagonTooltip,CreateFrame("frame") f.c=FACTION_BAR_COLORS
+local faction,ExaltedPlusFactions,buln,rpt,f={},{},BreakUpLargeNumbers,EmbeddedItemTooltip,CreateFrame("frame")
+function f.enumfactions()
+	if not f.load then for id in next,ExaltedPlusFactions do if not faction[id] then faction[id]={} end end f.load=true end
+	for id in next,faction do
+		v,faction[id].m,_,faction[id].rw=C_Reputation.GetFactionParagonInfo(id)
+		if v then faction[id].t=faction[id].rw and math.modf(v/faction[id].m)-1 or math.modf(v/faction[id].m)
+		faction[id].v=mod(v,faction[id].m) end
+	end
+end
 function f.update(_,id,v)
 	for k in ReputationFrame.paragonFramesPool:EnumerateActive() do if k.factionID then
-		id=k.factionID if not f[id] then f[id]={} end f[id].fr=k
-		v,f[id].m,_,f[id].rw=C_Reputation.GetFactionParagonInfo(id)
-		f[id].t=f[id].rw and math.modf(v/f[id].m)-1 or math.modf(v/f[id].m)
-		f[id].v=mod(v,f[id].m)
-	end end f.rfv=ReputationFrame:IsVisible()
+		id=k.factionID if not faction[id] then faction[id]={} end faction[id].fr=k
+		if not ExaltedPlusFactions[id] then ExaltedPlusFactions[id]=true end
+	end end f.enumfactions() f.rfv=ReputationFrame:IsVisible()
+	for k,v in next,StatusTrackingBarManager.bars do if v.factionID then f.wb=v end end
 end
 f:SetScript("OnUpdate",function(s,e)
 	if not s.a then s.a=0.3 end if s.b then s.a=s.a-e else s.a=s.a+e end
 	if s.a>=1 then s.a=1 s.b=true elseif s.a<=0.3 then s.a=0.3 s.b=false end
 	if s.rfv then for i=1,NUM_FACTIONS_DISPLAYED do
-		if s[i] then _G["ReputationBar"..i.."ReputationBar"]:SetStatusBarColor(f.c[8].r,f.c[8].g,f.c[8].b,s.a) end
+		if s[i] then _G["ReputationBar"..i.."ReputationBar"]:SetStatusBarColor(FACTION_BAR_COLORS[8].r,FACTION_BAR_COLORS[8].g,FACTION_BAR_COLORS[8].b,s.a) end
 	end end
-	if s.wrw then ReputationWatchBar.StatusBar:SetStatusBarColor(f.c[8].r,f.c[8].g,f.c[8].b,s.a) end
+	if s.wrw then f.wb.StatusBar:SetStatusBarColor(FACTION_BAR_COLORS[8].r,FACTION_BAR_COLORS[8].g,FACTION_BAR_COLORS[8].b,s.a) end
 end)
 hooksecurefunc("EmbeddedItemTooltip_SetItemByQuestReward",function(tt,t) f.update()
-	if tt==rpt.ItemTooltip and rpt.factionID and f[rpt.factionID] and f[rpt.factionID].t then
-		t=format(ARCHAEOLOGY_COMPLETION,f[rpt.factionID].t)
+	if tt==rpt.ItemTooltip and rpt.factionID and faction[rpt.factionID] and faction[rpt.factionID].t then
+		t=format(ARCHAEOLOGY_COMPLETION,faction[rpt.factionID].t)
 		rpt:AddLine(t) tt.Tooltip:AddLine("\n") tt.Tooltip:Show()
 		for i=1,rpt:NumLines() do if _G[rpt:GetName().."TextLeft"..i]:GetText()==t then
 			_G[rpt:GetName().."TextLeft"..i]:SetPoint("BOTTOMLEFT",0,-70)
 		end end
 	end
 end)
-hooksecurefunc("MainMenuBar_UpdateExperienceBars",function(_,n,r,id) f.update()
-	if ReputationWatchBar:IsShown() then
+hooksecurefunc(StatusTrackingBarManager,"UpdateBarsShown",function(_,n,r,id) f.update()
+	if f.wb and f.wb:IsShown() then
 		n,r,_,_,_,id=GetWatchedFactionInfo()
-		if f[id] and f[id].rw then
-			ReputationWatchBar.OverlayFrame.Text:SetText(n.." "..f[id].v.." / "..f[id].m)
-			ReputationWatchBar.StatusBar:SetAnimatedValues(f[id].v,0,f[id].m,r) f.wrw=true
-		elseif id then
-			r=(GetFriendshipReputation(id)) and 5 or r f.wrw=nil
-			ReputationWatchBar.StatusBar:SetStatusBarColor(f.c[r].r,f.c[r].g,f.c[r].b,1)
-		end
+		if faction[id] and faction[id].rw then f.wrw=true
+			f.wb.name=n.." "..faction[id].v.." / "..faction[id].m
+			f.wb.StatusBar:SetAnimatedValues(faction[id].v,0,faction[id].m,r)
+			f.wb.OverlayFrame.Text:SetText(n.." "..faction[id].v.." / "..faction[id].m)
+		elseif id then f.wrw=nil
+			r=(GetFriendshipReputation(id)) and 5 or r
+			f.wb.StatusBar:SetStatusBarColor(FACTION_BAR_COLORS[r].r,FACTION_BAR_COLORS[r].g,FACTION_BAR_COLORS[r].b,1)
+		else f.wrw=nil end
 	end
 end)
-hooksecurefunc("ReputationFrame_Update",function(_,id,x,bar,row) f.update()
+hooksecurefunc("ReputationFrame_Update",function(_,n,id,x,bar,row) f.update()
 	for i=1,NUM_FACTIONS_DISPLAYED do
-		_,_,_,_,_,_,_,_,_,_,_,_,_,id=GetFactionInfo(ReputationListScrollFrame.offset+i)
-		if f[id] and f[id].fr then
-			f[i]=f[id].rw or nil
+		n,_,_,_,_,_,_,_,_,_,_,_,_,id=GetFactionInfo(ReputationListScrollFrame.offset+i)
+		if ExaltedPlusFactions[id] then ExaltedPlusFactions[id]=n end
+		if faction[id] and faction[id].v and faction[id].fr then
+			f[i]=faction[id].rw or nil
 			bar=_G["ReputationBar"..i.."ReputationBar"] row=_G["ReputationBar"..i]
-			bar:SetMinMaxValues(0,f[id].m) bar:SetValue(f[id].v)
-			row.rolloverText=" "..format(REPUTATION_PROGRESS_FORMAT,buln(f[id].v),buln(f[id].m))
-			f[id].fr.Check:SetShown(false) f[id].fr.Glow:SetShown(false)
-			f[id].fr.Highlight:SetShown(false) f[id].fr.Icon:SetAlpha(f[i] and 1 or 0.3)
+			bar:SetMinMaxValues(0,faction[id].m) bar:SetValue(faction[id].v)
+			row.rolloverText=" "..format(REPUTATION_PROGRESS_FORMAT,buln(faction[id].v),buln(faction[id].m))
+			faction[id].fr.Check:SetShown(false) faction[id].fr.Glow:SetShown(false)
+			faction[id].fr.Highlight:SetShown(false) faction[id].fr.Icon:SetAlpha(f[i] and 1 or 0.3)
 		else f[i]=nil end
 	end
 end)
@@ -185,13 +211,13 @@ local SAOF = SpellActivationOverlayFrame
 
 local function SAO_GetTimeLeft(spellID, onwho)
 	local i = 1
-	local name, _, icon, count, _, _, buff_expiretime, _, _, _, buff_spellid = UnitBuff(onwho, i)
+	local name, icon, count, _, _, buff_expiretime, _, _, _, buff_spellid = UnitBuff(onwho, i)
 	while name do
 		i = i + 1
 		if buff_spellid == spellID then
 			return floor(buff_expiretime-GetTime()), name, count, icon
 		end
-		name, _, icon, count, _, _, buff_expiretime, _, _, _, buff_spellid = UnitBuff(onwho, i)
+		name, icon, count, _, _, buff_expiretime, _, _, _, buff_spellid = UnitBuff(onwho, i)
 	end
 	return false, false
 end
@@ -302,7 +328,7 @@ function Tracker:UNIT_AURA(unit)
 	if unit ~= "player" then return end
 
 	local i = 1
-	local name, _, icon, _, _, _, _, _, _, _, id = UnitAura(unit, i, "HELPFUL")
+	local name, icon, _, _, _, _, _, _, _, id = UnitAura(unit, i, "HELPFUL")
 	while name do
 		local buff = classBuffs[id]  --classBuffs[class][id]
 		if buff then
@@ -315,7 +341,7 @@ function Tracker:UNIT_AURA(unit)
 			buff.showing = true
 		end
 		i = i + 1
-		name, _, icon, _, _, _, _, _, _, _, id = UnitAura(unit, i, "HELPFUL")
+		name, icon, _, _, _, _, _, _, _, id = UnitAura(unit, i, "HELPFUL")
 	end
 
 	for index, value in pairs(classBuffs) do   --classBuffs[class]
@@ -389,31 +415,26 @@ local failed = gsub(INSTANCE_RESET_FAILED, ".*%%s", "")
 local fail_offline = gsub(INSTANCE_RESET_FAILED_OFFLINE, ".*%%s", "")
 local fail_zone = gsub(INSTANCE_RESET_FAILED_ZONING, ".*%%s", "")
 
-local function Echo(self, event, ...)
-	local instance = ...
 
+local Echof = CreateFrame("Frame")
+Echof:RegisterEvent("CHAT_MSG_SYSTEM")
+Echof:SetScript("OnEvent", function(self, event, ...)
+	local instance = ...
 	if event == "CHAT_MSG_SYSTEM" then
 		if UnitIsGroupLeader("player") and (strfind(instance, success) or strfind(instance, failed) or strfind(instance, fail_offline) or strfind(instance, fail_zone)) then
 			SendChatMessage("  ^ - ^  "..instance, "PARTY")
 		end
 	end
-end
-
-local Echof = CreateFrame("Frame")
-Echof:RegisterEvent("CHAT_MSG_SYSTEM")
-Echof:SetScript("OnEvent", Echo)
+end)
 
 ---------------------[[ Bag Space Checker Created by BrknSoul on 17th January 2014 --]]
 --Frame creation and event registration
 local frameBSC=CreateFrame("FRAME")
-local BSCSpace
 frameBSC:RegisterEvent("BAG_UPDATE_DELAYED")
 frameBSC:RegisterEvent("BAG_UPDATE")
-
---Event Handlers
-function frameBSC:OnEvent(event,arg1)
+frameBSC:SetScript("OnEvent",function(event,arg1)  --Event Handlers
 	if event == "BAG_UPDATE_DELAYED" then
-    BSCSpace = 0
+    local BSCSpace = 0
     for i=0,NUM_BAG_SLOTS do 
       BSCSpace = BSCSpace + GetContainerNumFreeSlots(i)
     end
@@ -422,11 +443,11 @@ function frameBSC:OnEvent(event,arg1)
       PlaySoundFile("Sound/SPELLS/SPELL_Treasure_Goblin_Coin_Toss_09.OGG")
     end
   end
-end
-frameBSC:SetScript("OnEvent",frameBSC.OnEvent)
+end)
 
 
 ---------------- Hide errors in combat --------------
+do
 local erList = {
 	[ERR_ABILITY_COOLDOWN] = true,
 	[ERR_ATTACK_MOUNTED] = true,
@@ -468,16 +489,17 @@ local erList = {
 	[SPELL_FAILED_TOO_CLOSE] = true,
 	[ERR_NO_ATTACK_TARGET] = true,
 }
-MaoRUI:EventFrame("UI_ERROR_MESSAGE"):SetScript("OnEvent", function(self, event, _, error)
-	if not MaoRUISettingDB["Misc"]["HideErrors"] then return end
-	if InCombatLockdown() and erList[error] then
-		UIErrorsFrame:UnregisterEvent("UI_ERROR_MESSAGE")
-	else
-		UIErrorsFrame:RegisterEvent("UI_ERROR_MESSAGE")
+	local function setupMisc(event, ...)
+		if MaoRUISettingDB["Misc"]["HideErrors"] then
+			if InCombatLockdown() and erList[select(2, ...)] then UIErrorsFrame:UnregisterEvent(event) else UIErrorsFrame:RegisterEvent(event) end
+		else
+			M:UnregisterEvent(event, setupMisc)
+		end
 	end
-end)
+	M:RegisterEvent("UI_ERROR_MESSAGE", setupMisc)
+end
 
-------------------------------------------------------------------------------AltTabLfgNotification
+--[[----------------------------------------------------------------------------AltTabLfgNotification
 local AltTabLfgNotification, Flashevents = CreateFrame("Frame", "AltTabLfgNotification"), {};
 ------------------------------------------------------- start of events
 -- party invite
@@ -519,11 +541,11 @@ AltTabLfgNotification:SetScript("OnEvent", function(self, event, ...)
  if not MaoRUISettingDB["Misc"]["AltTabLfgNotification"] then return end
  Flashevents[event](self, ...);
 end);
-for k, v in pairs(Flashevents) do AltTabLfgNotification:RegisterEvent(k);  end
+for k, v in pairs(Flashevents) do AltTabLfgNotification:RegisterEvent(k);  end]]
 
 
 
---------------------------------------------------------------------------- BarrelsOEasy
+--[[------------------------------------------------------------------------- BarrelsOEasy
 local BarrelsFrame = CreateFrame("Frame");
 local SkullMarker = 8;
 local CurrentMarker = SkullMarker;
@@ -586,7 +608,7 @@ BarrelsFrame:SetScript("OnEvent", function(self,event,arg1,arg2)
 			end
 		end
 	end
-end)
+end)]]
 
 --  CtrlIndicator    Author: 图图   --用途: 用于检测Ctrl是否卡住,Ctrl按下4.5秒之后就会提示
 UIParent:CreateTexture("CtrlIndicatorBG");
@@ -615,16 +637,66 @@ C_Timer.NewTicker(0.1, function()
     end
 end)
 
+--------------------------------------------------------------------------- CrazyCatLady
 local CrazyCatLady = CreateFrame("Frame") 
 CrazyCatLady:RegisterEvent("UNIT_AURA") 
 CrazyCatLady:RegisterEvent("PLAYER_DEAD")
 CrazyCatLady:RegisterEvent("PLAYER_UNGHOST")
-
 CrazyCatLady:SetScript("OnEvent", function(self, event, ...) 
   if not MaoRUISettingDB["Misc"]["CrazyCatLady"] then self:UnregisterAllEvents() return end
-	if event == "PLAYER_DEAD" then
-		PlaySoundFile("Sound/creature/Auriaya/UR_Auriaya_Death01.ogg", "Master")
-	elseif event == "PLAYER_UNGHOST" then
-		StopMusic()
-	end
+	if event == "PLAYER_DEAD" then PlaySoundFile("Sound/creature/Auriaya/UR_Auriaya_Death01.ogg", "Master")
+	elseif event == "PLAYER_UNGHOST" then StopMusic() end
 end)
+
+--------------------------------------------------------------------------- m4xLegendary
+local m4xLegendary = CreateFrame("Frame")
+m4xLegendary:RegisterEvent("SHOW_LOOT_TOAST_LEGENDARY_LOOTED")
+m4xLegendary:SetScript("OnEvent", function(self) PlaySoundFile("Interface\\AddOns\\_ShiGuang\\Media\\Sounds\\Legendary.ogg", "Master") end)
+
+--------------------------------------------------------------------------- MythicTracker--## Author: Dagarian  ## Version: 0.1
+MythicTracker = LibStub("AceAddon-3.0"):NewAddon("MythicTracker", "AceConsole-3.0")
+MythicTracker:RegisterChatCommand("mythics", "MythicTracker")
+function MythicTracker:MythicTracker()
+	for i=1,GetNumSavedInstances() 
+		do local n,_,_,d,l = GetSavedInstanceInfo(i) 
+		if d==23 then print(n,l and "\124cff00ff00√" or "\124cffff0000X") end 	
+	end
+end
+
+--[[---------------------------------- 	Digital_Utopia -- 	Last updated: 6/26/2013----------------------------------
+local HKDisplayFrame = CreateFrame("FRAME","hkFrame");
+HKDisplayFrame:RegisterEvent("PVPQUEUE_ANYWHERE_SHOW");
+HKDisplayFrame:RegisterEvent("PLAYER_PVP_KILLS_CHANGED");
+HKDisplayFrame:SetScript("OnEvent",function(self, event, ...)
+	if(event=="PVPQUEUE_ANYWHERE_SHOW")then
+		PVPT1 = PVPQueueFrame:CreateFontString(nil, 'ARTWORK',"GameFontNormal")
+		PVPT1:SetPoint("TOPLEFT",60,-40);
+		PVPT1:SetText(KILLS);  --"击杀人头"
+		PVPT1:SetTextColor(.9, .5, 0)
+		PVPT2 = PVPQueueFrame:CreateFontString(nil,'ARTWORK',"GameFontNormalLarge")
+		PVPT2:SetPoint("TOPLEFT",136,-40);
+	    PVPT2:SetText(GetStatistic(588));
+	end
+	if(event=="PLAYER_PVP_KILLS_CHANGED")then
+		if(PVPUIFrame ~= nil)then
+		    if(PVPUIFrame:IsVisible()==true)then PVPT2:SetText(GetStatistic(588)); end
+		end
+	end
+end);
+-- 	Show HK heading
+	--local PVPT1 = PVPUIFrame:CreateFontString(nil, 'ARTWORK', "GameFontNormal")
+	--PVPT1:SetPoint("TOPRIGHT",-80,-38)
+	--PVPT1:SetText("HKs")
+-- 	Show HK placeholder for stat
+	--local PVPT2 = PVPUIFrame:CreateFontString(nil, 'ARTWORK', "GameFontHighlight")
+	--PVPT2:SetPoint("LEFT",PVPT1,"LEFT",30,0)
+-- 	Run code when PVP frame is shown
+	--PVPUIFrame:HookScript("OnShow", function()
+-- Get current number of honorable kills from stats
+		--hks = GetStatistic(588)
+-- Move honor text to the left
+		--PVPFrameCurrency:ClearAllPoints();
+		--PVPFrameCurrency:SetPoint("TOPLEFT",PVPUIFrame,"TOPLEFT",110,-20)
+-- Show HKs to the right
+		--PVPT2:SetText(hks)
+--end)]]

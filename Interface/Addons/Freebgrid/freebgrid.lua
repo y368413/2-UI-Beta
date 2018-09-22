@@ -6,6 +6,7 @@ ns._Objects = {}
 ns._Headers = {}
 
 local media = LibStub("LibSharedMedia-3.0", true)
+--local HBD = LibStub("HereBeDragons-2.0")
 if media then
 	media:Register("statusbar", "gradient",				[[Interface\Addons\Freebgrid\media\gradient]])
 	media:Register("statusbar", "Cabaret",				[[Interface\Addons\Freebgrid\media\Cabaret]])
@@ -63,7 +64,7 @@ end
 local Freebgrid_OnEnter = function(self)
 
 	ns.GcdMouseoverUnit = self.displayedUnit
-	self.ArrowMouseoverUnit = true
+	--self.ArrowMouseoverUnit = true
     if ns.db.tooltip and InCombatLockdown() then	
 		GameTooltip:Hide()       
     else
@@ -76,14 +77,14 @@ local Freebgrid_OnEnter = function(self)
 end
 
 local Freebgrid_OnLeave = function(self)
-	self.ArrowMouseoverUnit = nil
+	--self.ArrowMouseoverUnit = nil
 
     if not ns.db.tooltip then UnitFrame_OnLeave(self) end
     self.Highlight:Hide()
 
-    if self.Freebarrow:IsShown() and ns.db.arrowmouseover then
-       self.Freebarrow:Hide()
-    end
+    --if self.Freebarrow:IsShown() and ns.db.arrowmouseover then
+       --self.Freebarrow:Hide()
+    --end
 end
 
 local function OnUpdateUnitFrame(self, elapsed)
@@ -94,7 +95,7 @@ local function OnUpdateUnitFrame(self, elapsed)
 	
 	ns:UpdateInRange(self)
 	ns:CheckReadyCheckDecay(self, elapsed)
-	ns:UpdateArrow(self)
+	--ns:UpdateArrow(self)
 	ns:UpdateIndicatorTimer(self)
 	self.elapsed = 0
 end
@@ -143,7 +144,7 @@ local Freebgrid_OnEvent = function(self, event, ...)
 			ns:UpdateHealth(self)
 			ns:UpdateStatusText(self)
 			ns:UpdateHealthColor(self)
-		elseif ( event == "UNIT_MAXPOWER" or  event == "UNIT_POWER" ) then
+		elseif ( event == "UNIT_MAXPOWER" or  event == "UNIT_POWER_UPDATE" ) then
 			ns:UpdatePower(self)
 			ns:UpdateThreatBorder(self)
 		elseif (event == "UNIT_DISPLAYPOWER" or event == "UNIT_POWER_BAR_SHOW" or event == "UNIT_POWER_BAR_HIDE" )then
@@ -185,7 +186,7 @@ function ns:RegisterEvents(button)
 	button:RegisterEvent("UNIT_FLAGS" )
 	button:RegisterEvent("UNIT_HEALTH" )
 	button:RegisterEvent("UNIT_MAXHEALTH" )
-	button:RegisterEvent("UNIT_POWER" )
+	button:RegisterEvent("UNIT_POWER_UPDATE" )
 	button:RegisterEvent("UNIT_MAXPOWER" )
 	button:RegisterEvent("UNIT_DISPLAYPOWER" )
 	button:RegisterEvent("UNIT_POWER_BAR_SHOW" )
@@ -282,9 +283,9 @@ function ns:IsHealer(class )
 end
 
 function ns:GetMapID()
-	SetMapToCurrentZone()
-    local zone = GetCurrentMapAreaID()
-	return zone
+	--SetMapToCurrentZone()
+    local MapID = C_Map.GetBestMapForUnit("player");
+	return MapID;
 end
 
 function ns:GetDispelClass()
@@ -344,10 +345,10 @@ function ns:UpdateBlizzardPartyFrameDisplayStatus()
 			frame:RegisterEvent("UNIT_FACTION")
 			frame:RegisterEvent("UNIT_AURA")
 			frame:RegisterEvent("UNIT_PET")
-			frame:RegisterEvent("VOICE_START")
-			frame:RegisterEvent("VOICE_STOP")
+			--frame:RegisterEvent("VOICE_START")
+			--frame:RegisterEvent("VOICE_STOP")
 			frame:RegisterEvent("VARIABLES_LOADED")
-			frame:RegisterEvent("VOICE_STATUS_UPDATE")
+			--frame:RegisterEvent("VOICE_STATUS_UPDATE")
 			frame:RegisterEvent("READY_CHECK")
 			frame:RegisterEvent("READY_CHECK_CONFIRM")
 			frame:RegisterEvent("READY_CHECK_FINISHED")
@@ -662,15 +663,15 @@ local function unitFrameStyleSetup(button)
     Power.bg:SetAllPoints(Power)
 	button.PowerBar = Power
 	
-	local frame = CreateFrame("Frame")
-	frame:SetAllPoints(button)
-	frame:SetFrameStrata("HIGH")
-	frame.arrow = frame:CreateTexture(nil, "OVERLAY")
-	frame.arrow:SetTexture([[Interface\Addons\Freebgrid\Media\Arrow]])
-	frame.arrow:SetPoint("TOPRIGHT", frame, "TOPRIGHT")
-	frame.arrow:SetSize(16, 16)
-	frame:Hide()
-	button.Freebarrow = frame
+	--local frame = CreateFrame("Frame")
+	--frame:SetAllPoints(button)
+	--frame:SetFrameStrata("HIGH")
+	--frame.arrow = frame:CreateTexture(nil, "OVERLAY")
+	--frame.arrow:SetTexture([[Interface\Addons\Freebgrid\Media\Arrow]])
+	--frame.arrow:SetPoint("TOPRIGHT", frame, "TOPRIGHT")
+	--frame.arrow:SetSize(16, 16)
+	--frame:Hide()
+	--button.Freebarrow = frame
 		
     local threat = CreateFrame("Frame", nil, button)
     threat:SetPoint("TOPLEFT", button, "TOPLEFT", -5, 5)
@@ -1677,29 +1678,27 @@ local function RotateTexture(frame, angle)
     local column = cell % 9
     local row = floor(cell / 9)
 
-    ColorTexture(frame.arrow, angle)
-    local xstart = (column * 56) / 512
-    local ystart = (row * 42) / 512
-    local xend = ((column + 1) * 56) / 512
-    local yend = ((row + 1) * 42) / 512
-    frame.arrow:SetTexCoord(xstart,xend,ystart,yend)
+    --ColorTexture(frame.arrow, angle)
+    --local xstart = (column * 56) / 512
+    --local ystart = (row * 42) / 512
+    --local xend = ((column + 1) * 56) / 512
+    --local yend = ((row + 1) * 42) / 512
+    --frame.arrow:SetTexCoord(xstart,xend,ystart,yend)
 end
 
-local px, py, tx, ty
-local function GetBearing(unit)
-
-    px, py = GetPlayerMapPosition("player")
-    if((px or 0)+(py or 0) <= 0) then
-        if WorldMapFrame:IsVisible() then return end
-        SetMapToCurrentZone()
-        px, py = GetPlayerMapPosition("player")
-        if((px or 0)+(py or 0) <= 0) then return end
-    end
-
-    tx, ty = GetPlayerMapPosition(unit)
-    if((tx or 0)+(ty or 0) <= 0) then return end
-
-    return pi - math.atan2(px-tx,ty-py)
+--[[local px, py, tx, ty
+local function GetBearing(unit) 
+   local px, py, pid = HBD:GetPlayerWorldPosition(); 
+   if((px or 0)+(py or 0) <= 0) then 
+      if WorldMapFrame:IsVisible() then return; end 
+      --SetMapToCurrentZone() 
+      px, py, pid = HBD:GetPlayerWorldPosition(); 
+      if((px or 0)+(py or 0) <= 0) then return end 
+   end 
+   local tx, ty, tid = HBD:GetUnitWorldPosition(unit); 
+   if pid ~= tid then return; end 
+   if((tx or 0) + (ty or 0) <= 0) then return; end; 
+   return pi - math.atan2(px - tx, ty - py); 
 end
 
 function ns:UpdateArrow(self)	
@@ -1721,7 +1720,7 @@ function ns:UpdateArrow(self)
 			RotateTexture(freebarrow, bearing)
 		end
 	end
-end
+end]]
 
 function ns:UpdateInRange(self)
 	local inRange, checkedRange = UnitInRange(self.displayedUnit)
@@ -1784,7 +1783,7 @@ function ns:UpdateDispelIcon(self)
 	
     local index = 1
     while true do
-        local name,_,_,_, dtype = UnitAura(unit, index, 'HARMFUL')
+        local name,_,_, dtype = UnitAura(unit, index, 'HARMFUL')
         if not name then break end
 		if ns.general.dispellist[dtype] then
 			self.DispelIcon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Debuff"..dtype)
@@ -1854,6 +1853,14 @@ function ns:UpdateIndicatorTimer(self, elapsed)
 	end
 end
 
+local function is_include(value, tab)
+	for k,v in ipairs(tab) do
+		if v == value then
+			return true
+		end
+    end
+    return false
+end
 local function UpdateIndicatorsAura(self, spell, isbuff)
 	local unit = self.displayedUnit or self.unit
 	if not UnitExists(unit) then return end
@@ -1861,19 +1868,24 @@ local function UpdateIndicatorsAura(self, spell, isbuff)
 	if string.match(unit, "pet") or not UnitIsConnected(unit) or UnitIsDeadOrGhost(unit) then return end
 	
 	local getUnitAura = isbuff and UnitBuff or UnitDebuff
-	local name, rank, texture, count, dtype, duration, expires, caster
-	
-	for i = 1, #spell do
-		
-		local spellname = GetSpellInfo(spell[i])
-		if spellname then
-			name, rank, texture, count, dtype, duration, expires, caster = getUnitAura(unit, spellname)
-			if name then 
+	local rname, rtexture, rcount, rdtype, rduration, rexpires, rcaster
+	for index = 1, 40 do
+		local name, texture, count, dtype, duration, expires, caster, _, _, spellID = getUnitAura(unit, index)
+		if name then
+			if is_include(spellID, spell) then
+				rname = name
+				rtexture = texture
+				rcount = count
+				rdtype = dtype
+				rduration = duration
+				rexpires = expires
+				rcaster = caster
 				break
 			end
 		end
 	end
-	return name, rank, texture, count, dtype, duration, expires, caster
+	return rname, rtexture, rcount, rdtype, rduration, rexpires, rcaster
+
 end
 
 
@@ -1897,7 +1909,7 @@ function ns:UpdateIndicators(self)
 						r, g, b = 0.0, 1, 0.0
 					end
 
-					local name, rank, texture, count, dtype, duration, expires, caster = UpdateIndicatorsAura(self, v.id, v.isbuff)																	
+					local name, texture, count, dtype, duration, expires, caster = UpdateIndicatorsAura(self, v.id, v.isbuff)																	
 					if not name then	
 						if v.lack then
 							text = text..ns:hex(r, g, b)..i.."|r"
@@ -2050,13 +2062,11 @@ local dispelPriority = {
     Disease = 1,
 }
 
-local CustomFilter = function(...)
-    local key, isbuff, name, _, _, _, dtype = ...	
-
+local CustomFilter = function(key, isbuff, spellID, dtype)
 	if isbuff then
 		if type(ns.auras_buffs[key]) == "table" then
 			for k, v in pairs(ns.auras_buffs[key]) do
-				if k == name then
+				if k == spellID then
 					return true, v
 				end
 			end
@@ -2064,18 +2074,17 @@ local CustomFilter = function(...)
 	else
 		if type(ns.auras_debuffs[key]) == "table" then
 			for k, v in pairs(ns.auras_debuffs[key]) do
-				if k == name then
+				if k == spellID then
 					return true, v
 				end
 			end
 		end
-		if type(ns.auras_instances_debuffs[key]) == "table" then
-			for k, v in pairs(ns.auras_instances_debuffs[key]) do
-				if type(v) == "table" and (k == ns.general.MapID or (type(k) == "string" and k == GetMapNameByID(ns.general.MapID))) then
-					for i, var in pairs(v) do
-						if i == name then
-							return true, var
-						end
+		local InstanceAura = ns.general.InstanceAura;
+		if InstanceAura then
+			if type(InstanceAura[key]) == "table" then
+				for k, v in pairs(InstanceAura[key]) do
+					if k == spellID then
+						return true, v
 					end
 				end
 			end
@@ -2127,11 +2136,11 @@ function ns:UpdateAuras(self)
 	
 		local index = 1
 		while true do
-			local name, rank, texture, count, dtype, duration, expires, caster = UnitDebuff(unit, index)
+			local name, texture, count, dtype, duration, expires, caster, _, _, spellID = UnitDebuff(unit, index)
 
 			if not name then break end
 
-			show , priority = CustomFilter(k, false, name, rank, texture, count, dtype, duration, expires, caster)
+			show , priority = CustomFilter(k, false, spellID, dtype)
 			if(show) then
 				if (priority > self.Auras[k].Button.cur) or (priority ~= 0 and priority == self.Auras[k].Button.cur and count > self.Auras[k].Button.Count) then
 					self.Auras[k].Button.cur		= priority
@@ -2150,10 +2159,10 @@ function ns:UpdateAuras(self)
 
 		index = 1
 		while true do
-			local name, rank, texture, count, dtype, duration, expires, caster = UnitBuff(unit, index)
+			local name, texture, count, dtype, duration, expires, caster, _, _, spellID = UnitBuff(unit, index)
 			if not name then break end
 
-			show, priority = CustomFilter(k, true, name, rank, texture, count, dtype, duration, expires, caster)
+			show, priority = CustomFilter(k, true, spellID, dtype)
 			
 			if show then
 				if (priority > self.Auras[k].Button.cur) then
@@ -2239,16 +2248,37 @@ function ns:UpdateAllElements(self)
 	end
 end
 
-local updateZoneAndMapid = function(self, elapsed)
-	self.elapsed = (self.elapsed or 0) + elapsed
-    if self.elapsed < 5 then return end	
+function ns:GetInstanceID()
+	--SetMapToCurrentZone()
+	local mapId = C_Map.GetBestMapForUnit("player");
+	local InstanceId = mapId and EJ_GetInstanceForMap(mapId) or 0;
+	return InstanceId;
+end
 
+local updateZoneAndMapid = function(self, elapsed)
+	self.elapsed = (self.elapsed or 0) + elapsed;
+    if self.elapsed < 5 then
+		return;
+	end	
+
+	local InstanceAura;
+	--进入副本预加载要处理的DEBUFF列表；
     if IsInInstance() then       		 
-		ns.general.difficulty = ns:Getdifficulty()
+		--ns.general.difficulty = ns:Getdifficulty()
+		local InstanceId = ns:GetInstanceID();
+		InstanceAura = {};
+		InstanceAura.first = ns.auras_instances_debuffs.first[InstanceId];
+		InstanceAura.second = ns.auras_instances_debuffs.second[InstanceId];
+		--if InstanceAura.first or InstanceAura.second then
+			--此处可打印消息提醒加载完成；
+		--end
+	else
+		--离开副本清空；
+		InstanceAura = nil;
     end
-	ns.general.MapID = ns:GetMapID()
-    self:SetScript("OnUpdate", nil)
-    self.elapsed = 0
+	ns.general.InstanceAura = InstanceAura;
+    self:SetScript("OnUpdate", nil);
+    self.elapsed = 0;
 end
 
 local OnEvent = function(self, event, ...)

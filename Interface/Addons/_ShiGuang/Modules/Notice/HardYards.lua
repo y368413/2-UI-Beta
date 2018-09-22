@@ -77,22 +77,22 @@ local function printHY( message )
 end
 
 local function HardYards_SetSize()
-	HardYards.rangeText:SetTextHeight( ShiGuangPerDB.size )
+	HardYards.rangeText:SetTextHeight( ShiGuangPerDB.HardYardssize )
 	HardYards.rangeText:ClearAllPoints()
-	HardYards.rangeText:SetPoint( "CENTER", ShiGuangPerDB.size/30, -( ShiGuangPerDB.size/10 ) )
+	HardYards.rangeText:SetPoint( "CENTER", ShiGuangPerDB.HardYardssize/30, -( ShiGuangPerDB.HardYardssize/10 ) )
 end
 
 local function SetLocalsFromDB( databaseEntity )
 
 	if ( databaseEntity == "arrows" ) then
-		hy_colour_arrows = "\124c".. format( "FF%02x%02x%02x",  ShiGuangPerDB.arrows.r * 255, ShiGuangPerDB.arrows.g * 255,
-						ShiGuangPerDB.arrows.b * 255 )
+		hy_colour_arrows = "\124c".. format( "FF%02x%02x%02x",  ShiGuangPerDB.HardYardsarrows.r * 255, ShiGuangPerDB.HardYardsarrows.g * 255,
+						ShiGuangPerDB.HardYardsarrows.b * 255 )
 	elseif ( databaseEntity == "numbers" ) then
-		hy_colour_numbers = "\124c".. format( "FF%02x%02x%02x",  ShiGuangPerDB.numbers.r * 255, ShiGuangPerDB.numbers.g * 255,
-						ShiGuangPerDB.numbers.b * 255 )
+		hy_colour_numbers = "\124c".. format( "FF%02x%02x%02x",  ShiGuangPerDB.HardYardsnumbers.r * 255, ShiGuangPerDB.HardYardsnumbers.g * 255,
+						ShiGuangPerDB.HardYardsnumbers.b * 255 )
 	elseif ( databaseEntity == "label" ) then
-		hy_colour_label = "\124c".. format( "FF%02x%02x%02x",  ShiGuangPerDB.label.r * 255, ShiGuangPerDB.label.g * 255,
-						ShiGuangPerDB.label.b * 255 )
+		hy_colour_label = "\124c".. format( "FF%02x%02x%02x",  ShiGuangPerDB.HardYardslabel.r * 255, ShiGuangPerDB.HardYardslabel.g * 255,
+						ShiGuangPerDB.HardYardslabel.b * 255 )
 	end
 end
 
@@ -206,7 +206,7 @@ local function HardYards_OnUpdate()
 
 	if UnitExists( "target" ) then
 		DoTheHardYards( "target", true )
-		if ( ShiGuangPerDB.show == true ) then
+		if ( ShiGuangPerDB.HardYardsshow == true ) then
 			ShowTheHardYards()
 		end
 	else
@@ -217,20 +217,20 @@ end
 
 local function PlayerLogin( self )
 	if ( ShiGuangPerDB == nil )		then	ShiGuangPerDB 		=	{}	end
-	if ( ShiGuangPerDB.show == nil )		then 	ShiGuangPerDB.show	=	true 	end
-	if ( ShiGuangPerDB.arrows == nil )	then 	ShiGuangPerDB.arrows	=	{} 	end	-- X11BurlyWood DEB887
-	if ( ShiGuangPerDB.arrows.r == nil )	then 	ShiGuangPerDB.arrows.r	=	0.87 	end
-	if ( ShiGuangPerDB.arrows.g == nil )	then 	ShiGuangPerDB.arrows.g	=	0.72 	end
-	if ( ShiGuangPerDB.arrows.b == nil )	then 	ShiGuangPerDB.arrows.b	=	0.53 	end
-	if ( ShiGuangPerDB.numbers == nil )	then 	ShiGuangPerDB.numbers	=	{} 	end	-- X11SandyBrown F4A460
-	if ( ShiGuangPerDB.numbers.r == nil )	then 	ShiGuangPerDB.numbers.r	=	0.96 	end
-	if ( ShiGuangPerDB.numbers.g == nil )	then 	ShiGuangPerDB.numbers.g	=	0.64 	end
-	if ( ShiGuangPerDB.numbers.b == nil )	then 	ShiGuangPerDB.numbers.b	=	0.38 	end
-	if ( ShiGuangPerDB.label == nil )		then 	ShiGuangPerDB.label	=	{} 	end	-- X11Chocolate D2691E
-	if ( ShiGuangPerDB.label.r == nil )	then 	ShiGuangPerDB.label.r	=	0.82 	end
-	if ( ShiGuangPerDB.label.g == nil )	then 	ShiGuangPerDB.label.g	=	0.41 	end
-	if ( ShiGuangPerDB.label.b == nil )	then 	ShiGuangPerDB.label.b	=	0.12 	end
-	if ( ShiGuangPerDB.size == nil )		then 	ShiGuangPerDB.size	=	26 	end
+	if ( ShiGuangPerDB.HardYardsshow == nil )		then 	ShiGuangPerDB.HardYardsshow	=	true 	end
+	if ( ShiGuangPerDB.HardYardsarrows == nil )	then 	ShiGuangPerDB.HardYardsarrows	=	{} 	end	-- X11BurlyWood DEB887
+	if ( ShiGuangPerDB.HardYardsarrows.r == nil )	then 	ShiGuangPerDB.HardYardsarrows.r	=	0.87 	end
+	if ( ShiGuangPerDB.HardYardsarrows.g == nil )	then 	ShiGuangPerDB.HardYardsarrows.g	=	0.72 	end
+	if ( ShiGuangPerDB.HardYardsarrows.b == nil )	then 	ShiGuangPerDB.HardYardsarrows.b	=	0.53 	end
+	if ( ShiGuangPerDB.HardYardsnumbers == nil )	then 	ShiGuangPerDB.HardYardsnumbers	=	{} 	end	-- X11SandyBrown F4A460
+	if ( ShiGuangPerDB.HardYardsnumbers.r == nil )	then 	ShiGuangPerDB.HardYardsnumbers.r	=	0.96 	end
+	if ( ShiGuangPerDB.HardYardsnumbers.g == nil )	then 	ShiGuangPerDB.HardYardsnumbers.g	=	0.64 	end
+	if ( ShiGuangPerDB.HardYardsnumbers.b == nil )	then 	ShiGuangPerDB.HardYardsnumbers.b	=	0.38 	end
+	if ( ShiGuangPerDB.HardYardslabel == nil )		then 	ShiGuangPerDB.HardYardslabel	=	{} 	end	-- X11Chocolate D2691E
+	if ( ShiGuangPerDB.HardYardslabel.r == nil )	then 	ShiGuangPerDB.HardYardslabel.r	=	0.82 	end
+	if ( ShiGuangPerDB.HardYardslabel.g == nil )	then 	ShiGuangPerDB.HardYardslabel.g	=	0.41 	end
+	if ( ShiGuangPerDB.HardYardslabel.b == nil )	then 	ShiGuangPerDB.HardYardslabel.b	=	0.12 	end
+	if ( ShiGuangPerDB.HardYardssize == nil )		then 	ShiGuangPerDB.HardYardssize	=	26 	end
 
 	SetLocalsFromDB( "arrows" )
 	SetLocalsFromDB( "numbers" )
@@ -241,8 +241,8 @@ local function PlayerLogin( self )
 	HardYards:EnableMouse( false )
 	HardYards:SetMovable( true )
 	HardYards:ClearAllPoints()
-	if ShiGuangPerDB.x and ShiGuangPerDB.y then
-		HardYards:SetPoint( "TOPLEFT", ShiGuangPerDB.x, -( UIParent:GetHeight() - ShiGuangPerDB.y ) )
+	if ShiGuangPerDB.HardYardsx and ShiGuangPerDB.HardYardsy then
+		HardYards:SetPoint( "TOPLEFT", ShiGuangPerDB.HardYardsx, -( UIParent:GetHeight() - ShiGuangPerDB.HardYardsy ) )
 	else
 		HardYards:SetPoint( "CENTER", 0, -( UIParent:GetHeight() / 3 ) )
 	end
@@ -254,8 +254,8 @@ local function PlayerLogin( self )
 	end)
 	HardYards:SetScript( "OnMouseUp", function( self )
 		self:StopMovingOrSizing()
-		ShiGuangPerDB.x = HardYards:GetLeft()
-		ShiGuangPerDB.y = HardYards:GetTop()
+		ShiGuangPerDB.HardYardsx = HardYards:GetLeft()
+		ShiGuangPerDB.HardYardsy = HardYards:GetTop()
 	end)
 
 	HardYards.rangeText = HardYards:CreateFontString( nil, "OVERLAY" )
@@ -314,7 +314,7 @@ SlashCmdList[ "HardYards" ] = function( options )
 			hy_colour_X11SandyBrown.."show / hide\124r  = 开关距离显示\n")
 	elseif ( firstParm3 == "arr" ) then
 		if ( secondParm3 == "def" ) then
-			ShiGuangPerDB.arrows.r, ShiGuangPerDB.arrows.g, ShiGuangPerDB.arrows.b = 0.87, 0.72, 0.53
+			ShiGuangPerDB.HardYardsarrows.r, ShiGuangPerDB.HardYardsarrows.g, ShiGuangPerDB.HardYardsarrows.b = 0.87, 0.72, 0.53
 			SetLocalsFromDB( "arrows" )
 		else
 			ColourPicker( "arrows" )
@@ -322,18 +322,18 @@ SlashCmdList[ "HardYards" ] = function( options )
 	elseif ( firstParm3 == "siz" ) then
 		local size = tonumber( secondParm3 ) or 0
 		if ( size >= 5 ) and ( size <= 100 ) then
-			ShiGuangPerDB.size = size
+			ShiGuangPerDB.HardYardssize = size
 			HardYards_SetSize()
 		else
 			printHY( hy_colour_X11SandyBrown.. "<错误>: ".. hy_colour_X11BurlyWood.. "设置数值必须是0-100之间任意数值" )
 		end
 	elseif ( firstParm3 == "hid" ) then
 
-		ShiGuangPerDB.show = false
+		ShiGuangPerDB.HardYardsshow = false
 		HardYards.rangeText:SetTextColor( nil,nil,nil,0 )
 
 	elseif ( firstParm3 == "sho" ) then
-		ShiGuangPerDB.show = true
+		ShiGuangPerDB.HardYardsshow = true
 
 	end
 end

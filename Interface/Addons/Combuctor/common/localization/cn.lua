@@ -7,9 +7,9 @@ local L = LibStub('AceLocale-3.0'):NewLocale(ADDON, 'zhCN')
 if not L then return end
 
 --keybinding text
-L.ToggleBags = '开关 背包'
-L.ToggleBank = '开关 银行'
-L.ToggleVault = '开关 虚空仓库'
+L.ToggleBags = '    开关 背包'
+L.ToggleBank = '    开关 银行'
+L.ToggleVault = '    开关 虚空仓库'
 
 
 --system messages
@@ -62,3 +62,11 @@ L.TipDelimiter = '|'
 L.TipShowBank = 'Shift-单击 开关银行'
 L.TipShowInventory = '单击 开关背包'
 L.TipShowOptions = '右击 打开设置菜单'
+
+--item tooltips
+L.TipCountEquip = '装备: %d'
+L.TipCountBags = '背包: %d'
+L.TipCountBank = '银行: %d'
+L.TipCountVault = '仓库: %d'
+L.TipCountGuild = '工会银行: %d'
+L.TipDelimiter = '|'

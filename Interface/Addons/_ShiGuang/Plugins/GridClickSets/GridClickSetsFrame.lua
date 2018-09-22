@@ -50,7 +50,7 @@ end
 function GridClickSetsFrame_TypeUpdate(id)
     local argF = getglobal("GridClickSetButton"..id.."Arg")
     local typeDD = getglobal("GridClickSetButton"..id.."Type")
-    local value = L_UIDropDownMenu_GetSelectedValue(typeDD)
+    local value = UIDropDownMenu_GetSelectedValue(typeDD)
     if (not value) then value = "NONE" end
 
     if( value=="spell" or value=="macro" ) then
@@ -95,7 +95,7 @@ function GridClickSetsFrame_TypeUpdateAll()
 end
 
 function GridClickSets_Type_OnClick(self)
-    L_UIDropDownMenu_SetSelectedValue(self.owner, self.value);
+    UIDropDownMenu_SetSelectedValue(self.owner, self.value);
     local id=self.owner:GetParent():GetID()
     GridClickSetsFrame_TypeUpdate(id)
     GridClickSetsFrame_Resize()
@@ -125,7 +125,7 @@ function GridClickSetButton_TypeDropDown_Initialize(self)
                     info.value = "spellId:"..spellId
                     info.tooltipFunc = function(self, tip, arg1) tip:SetSpellByID(arg1) end
                     info.tooltipFuncArg1 = spellId
-                    L_UIDropDownMenu_AddButton(info);
+                    UIDropDownMenu_AddButton(info);
                 end
             end
         end
@@ -136,35 +136,35 @@ function GridClickSetButton_TypeDropDown_Initialize(self)
     info.owner = self;
     info.func = GridClickSets_Type_OnClick;
     info.value = "target"
-    L_UIDropDownMenu_AddButton(info);
+    UIDropDownMenu_AddButton(info);
 
     info = {};
     info.text = ddname(BINDING_NAME_ASSISTTARGET);
     info.owner = self;
     info.func = GridClickSets_Type_OnClick;
     info.value = "assist"
-    L_UIDropDownMenu_AddButton(info);
+    UIDropDownMenu_AddButton(info);
 
     info = {};
     info.text = ddname(SKILL..NAME);
     info.owner = self;
     info.func = GridClickSets_Type_OnClick;
     info.value = "spell"
-    L_UIDropDownMenu_AddButton(info);
+    UIDropDownMenu_AddButton(info);
 
     info = {};
     info.text = ddname(MACRO);
     info.owner = self;
     info.func = GridClickSets_Type_OnClick;
     info.value = "macro"
-    L_UIDropDownMenu_AddButton(info);
+    UIDropDownMenu_AddButton(info);
 
     info = {};
     info.text = NONE; --ddname(NONE);
     info.owner = self;
     info.func = GridClickSets_Type_OnClick;
     info.value = "NONE"
-    L_UIDropDownMenu_AddButton(info);
+    UIDropDownMenu_AddButton(info);
 end
 
 function GridClickSetsFrame_GetTabSet(btn)
@@ -176,8 +176,8 @@ function GridClickSetsFrame_LoadSet(set)
     for i = 1, 8 do
         local dd = getglobal("GridClickSetButton"..i.."Type")
         local atts = set and set[GridClickSets_Modifiers[i]] or {}
-        L_UIDropDownMenu_Initialize(dd, GridClickSetButton_TypeDropDown_Initialize);
-        L_UIDropDownMenu_SetSelectedValue(dd, atts.type or "NONE")
+        UIDropDownMenu_Initialize(dd, GridClickSetButton_TypeDropDown_Initialize);
+        UIDropDownMenu_SetSelectedValue(dd, atts.type or "NONE")
         if(atts.arg) then
             getglobal("GridClickSetButton"..i.."Arg"):SetText(atts.arg)
         else
@@ -191,17 +191,17 @@ end
 function GridClickSetsFrame_TabOnClick()
     GridClickSetsFrame_LoadSet( GridClickSetsFrame_GetTabSet(GridClickSetsFrame.selectedTab) );
     if ( false and GridClickSetsFrame.selectedTab == 1 ) then
-        L_UIDropDownMenu_SetSelectedValue(GridClickSetButton1Type, "target");
-        L_UIDropDownMenu_DisableDropDown(GridClickSetButton1Type)
+        UIDropDownMenu_SetSelectedValue(GridClickSetButton1Type, "target");
+        UIDropDownMenu_DisableDropDown(GridClickSetButton1Type)
     else
-        L_UIDropDownMenu_EnableDropDown(GridClickSetButton1Type)
+        UIDropDownMenu_EnableDropDown(GridClickSetButton1Type)
     end
 end
 
 function GridClickSetsFrame_DefaultsOnClick(fromDialog)
     if fromDialog == "YES" then
-        local talent = GetSpecialization() or 1
-        ShiGuangPerDB[talent] = nil
+        local GridClickSetstalent = GetSpecialization() or 1
+        ShiGuangPerDB[GridClickSetstalent] = nil
         GridClickSetsFrame_LoadSet( GridClickSetsFrame_GetTabSet(GridClickSetsFrame.selectedTab) )
         GridClickSetsFrame_ApplyOnClick()
     else
@@ -213,7 +213,7 @@ function GridClickSetsFrame_SaveOnClick()
     local set = GridClickSetsFrame_GetCurrentSet()
     for i=1,8 do
         set[tostring(GridClickSetsFrame.selectedTab)][GridClickSets_Modifiers[i]] = {
-            type = L_UIDropDownMenu_GetSelectedValue( getglobal("GridClickSetButton"..i.."Type") ),
+            type = UIDropDownMenu_GetSelectedValue( getglobal("GridClickSetButton"..i.."Type") ),
             arg = getglobal("GridClickSetButton"..i.."Arg"):GetText()
         }
 
@@ -250,18 +250,18 @@ function GridClickSetsFrame_ApplyOnClick()
     --GridClickSetsFrame:Hide()
 end
 
-ShiGuangPerDB={}
+--ShiGuangPerDB = ShiGuangPerDB or {}
 GridClickSetsFrame_Updates = {} --for other module insert
 
 function GridClickSetsFrame_GetCurrentSet()
-    local spec = GetSpecialization() or 0;
+    local GridClickSetsspec = GetSpecialization() or 0;
     if GridClickSetsFrame:IsVisible() then
-        GridClickSetsFrameTalentText:SetFormattedText("%s: %s", SPECIALIZATION, select(2, GetSpecializationInfo(spec)) or UNKNOWN)
+        GridClickSetsFrameTalentText:SetFormattedText("%s: %s", SPECIALIZATION, select(2, GetSpecializationInfo(GridClickSetsspec)) or UNKNOWN)
     end
-    if ShiGuangPerDB[spec]==nil then
-        ShiGuangPerDB[spec] = GridClickSets_GetDefault(spec);
+    if ShiGuangPerDB[GridClickSetsspec]==nil then
+        ShiGuangPerDB[GridClickSetsspec] = GridClickSets_GetDefault(GridClickSetsspec);
     end
-    local set = ShiGuangPerDB[spec]
+    local set = ShiGuangPerDB[GridClickSetsspec]
     for i=1, GRID_CLICK_SETS_BUTTONS+2 do set[tostring(i)] = set[tostring(i)] or {} end
     return set
 end

@@ -5,34 +5,7 @@ local library,previous = _G.LibStub:NewLibrary(MAJOR, MINOR)
 local lib=library --#lib Needed to keep Eclipse LDT happy
 if not lib then return end
 local pp=print
---@debug@
-LoadAddOn("Blizzard_DebugTools")
-LoadAddOn("LibDebug")
-if LibDebug then LibDebug() end
---@end-debug@
---[===[@non-debug@
 local print=function() end
---@end-non-debug@]===]
---[[
-Caching system
-1	itemName	String	The name of the item.
-2	itemLink	String	The item link of the item.
-3	itemRarity	Number	The quality of the item. The value is 0 to 7, which represents Poor to Heirloom. This appears to include gains from upgrades/bonuses.
-4	itemLevel	Number	The item level of this item, not including item levels gained from upgrades. There is currently no API to get the item level including upgrades/bonuses.
-5	itemMinLevel	Number	The minimum level required to use the item, 0 meaning no level requirement.
-6	itemType	String	The type of the item: Armor, Weapon, Quest, Key, etc.
-7	itemSubType	String	The sub-type of the item: Enchanting, Cloth, Sword, etc. See itemType.
-8	itemStackCount	Number	How many of the item per stack: 20 for Runecloth, 1 for weapon, 100 for Alterac Ram Hide, etc.
-9	itemEquipLoc	String	The type of inventory equipment location in which the item may be equipped, or "" if it can't be equippable. The string returned is also the name of a global string variable e.g. if "INVTYPE_WEAPONMAINHAND" is returned, _G["INVTYPE_WEAPONMAINHAND"] will be the localized, displayable name of the location.
-10	iconFileDataID	Number	The FileDataID for the icon texture for the item.
-11	itemSellPrice	Number	The price, in copper, a vendor is willing to pay for this item, 0 for items that cannot be sold.
-12	itemClassID	Number	This is the numerical value that determines the string to display for 'itemType'.
-13	itemSubClassID	Number	This is the numerical value that determines the string to display for 'itemSubType'
-14	bindType	Number	Item binding type: 0 - none; 1 - on pickup; 2 - on equip; 3 - on use; 4 - quest.
-15	expacID	Number
-16	itemSetID	Number
-17	isCraftingReagent bool
---]]
 -- ItemLink Constants
 local i_Name=1
 local i_Link=2
@@ -462,41 +435,17 @@ function lib:IsArtifact(itemString)
 	return CachedGetItemInfo(itemString,i_Quality)==LE_ITEM_QUALITY_ARTIFACT
 end
 
--- GetClassInfoIsHeirloom(itemString)
---
--- Retrieve class and subclass
---
--- Arguments:
---   itemString - String - An itemLink or itemString denoting the item
---
--- Returns:
---   class,subclass
-
-
 function lib:GetClassInfo(itemString)
 	local rc=ScantTip(itemString)
 	return rc.class,rc.subclass
 end
 
 
--- IsHeirloom(itemString)
---
--- Check an item for  Heirloom
---
--- Arguments:
---   itemString - String - An itemLink or itemString denoting the item
---
--- Returns:
---   Boolean - True if Heirloom
 
 function lib:IsHeirloom(itemString)
 	return CachedGetItemInfo(itemString,i_Quality) ==LE_ITEM_QUALITY_HEIRLOOM
 end
----
--- Parses an itemlink and returns itemId without calling API again
--- @param #lib self
--- @param #string itemlink
--- @return #number itemId or 0
+
 function lib:GetItemID(itemlink)
 	if (type(itemlink)=="string") then
 			local itemid,context=GetItemInfoFromHyperlink(itemlink)
@@ -507,17 +456,6 @@ function lib:GetItemID(itemlink)
 	end
 end
 
----
---
--- Returns a caching version of GetItemInfo. Can be used to override the original one.
--- Adds a second parameter to directly retrieving a specific value
--- (Note: internally uses select so it's actually like calling select(n,GetItemInfo(itemID))
---
--- Arguments:
---   self #lib self
---
--- Returns:
---   #function The new function
 
 --@do-not-package--
 local slots={
@@ -612,8 +550,6 @@ local function compareTables(t1, t2)
 	return true
 end
 
--- prints the table rows in red and green
--- omits the lead { and the trailing }
 local function printDiffTable(t1, t2)
 	local keys, seen = {}, {}
 	for k in pairs(t1) do
@@ -720,6 +656,3 @@ do
 		debugFrame:Show()
 	end
 end
---@end-do-not-package--
-
--- vim: set noet sw=4 ts=4:

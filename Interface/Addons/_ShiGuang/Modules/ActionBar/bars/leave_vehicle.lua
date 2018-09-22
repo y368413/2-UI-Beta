@@ -1,9 +1,10 @@
-local M, R, U, I = unpack(select(2, ...))
-local Bar = MaoRUI:GetModule("Actionbar")
+local _, ns = ...
+local M, R, U, I = unpack(ns)
+local Bar = M:GetModule("Actionbar")
 local cfg = R.bars.leave_vehicle
-local padding, margin = 10, 5
 
 function Bar:CreateLeaveVehicle()
+	local padding, margin = 10, 5
 	local num = 1
 	local buttonList = {}
 
@@ -16,17 +17,20 @@ function Bar:CreateLeaveVehicle()
 	else
 		frame.Pos = {"BOTTOM", UIParent, "BOTTOM", 320, 100}
 	end
-	frame:SetScale(cfg.scale)
+	frame:SetScale(MaoRUISettingDB["Actionbar"]["ActionbarScale"])
 
 	--the button
-	local button = CreateFrame("CheckButton", "NDui_LeaveVehicleButton", frame, "ActionButtonTemplate, SecureHandlerClickTemplate")
+	local button = CreateFrame("CheckButton", "LeaveVehicleButton", frame, "ActionButtonTemplate, SecureHandlerClickTemplate")
 	table.insert(buttonList, button) --add the button object to the list
 	button:SetSize(cfg.size, cfg.size)
 	button:SetPoint("BOTTOMLEFT", frame, padding, padding)
 	button:RegisterForClicks("AnyUp")
 	button.icon:SetTexture("INTERFACE\\PLAYERACTIONBARALT\\NATURAL")
-	button.icon:SetTexCoord(.0859375, .1679688, .359375, .4414063)
+	button.icon:SetTexCoord(.086, .168, .360, .441)
 	button:SetNormalTexture(nil)
+	button:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
+	button:GetPushedTexture():SetTexture(I.textures.pushed)
+	M.CreateSD(button, 3, 3)
 
 	local function onClick(self)
 		if UnitOnTaxi("player") then TaxiRequestEarlyLanding() else VehicleExit() end
@@ -50,6 +54,6 @@ function Bar:CreateLeaveVehicle()
 
 	--create the mouseover functionality
 	if cfg.fader then
-		MaoRUI.CreateButtonFrameFader(frame, buttonList, cfg.fader)
+		M:CreateButtonFrameFader(frame, buttonList, cfg.fader)
 	end
 end

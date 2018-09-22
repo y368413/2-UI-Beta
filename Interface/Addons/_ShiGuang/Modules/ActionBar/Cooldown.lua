@@ -1,5 +1,6 @@
-local M, R, U, I = unpack(select(2, ...))
-local module = MaoRUI:RegisterModule("Cooldown")
+local _, ns = ...
+local M, R, U, I = unpack(ns)
+local module = M:RegisterModule("Cooldown")
 
 function module:OnLogin()
 	if not MaoRUISettingDB["Actionbar"]["Cooldown"] then return end
@@ -8,15 +9,7 @@ function module:OnLogin()
 	local MIN_DURATION = 2.5                    -- the minimum duration to show cooldown text for
 	local MIN_SCALE = 0.5                       -- the minimum scale we want to show cooldown counts at, anything below this will be hidden
 	local ICON_SIZE = 36
-
-	local GetTime = GetTime
-	local min = math.min
-	local floor = math.floor
-	local format = string.format
-
-	local round = function(x)
-		return floor(x + 0.5)
-	end
+	local hideNumbers = {}
 
 	-- stops the timer
 	local function Timer_Stop(self)
@@ -31,18 +24,18 @@ function module:OnLogin()
 	end
 
 	-- adjust font size whenever the timer's parent size changes, hide if it gets too tiny
-	local function Timer_OnSizeChanged(self, width, height)
-		local fontScale = round(width) / ICON_SIZE
-		if (fontScale == self.fontScale) then return end
+	local function Timer_OnSizeChanged(self, width)
+		local fontScale = floor(width + 0.5) / ICON_SIZE
+		if fontScale == self.fontScale then return end
 		self.fontScale = fontScale
 
-		if (fontScale < MIN_SCALE) then
+		if fontScale < MIN_SCALE then
 			self:Hide()
 		else
 			self.text:SetFont(I.Font[1], fontScale * FONT_SIZE, I.Font[3])
 			self.text:SetShadowColor(0, 0, 0, 0)
 
-			if (self.enabled) then
+			if self.enabled then
 				Timer_ForceUpdate(self)
 			end
 		end
@@ -50,11 +43,11 @@ function module:OnLogin()
 
 	-- update timer text, if it needs to be, hide the timer if done
 	local function Timer_OnUpdate(self, elapsed)
-		if (self.nextUpdate > 0) then
+		if self.nextUpdate > 0 then
 			self.nextUpdate = self.nextUpdate - elapsed
 		else
 			local remain = self.duration - (GetTime() - self.start)
-			if (remain > 0) then
+			if remain > 0 then
 				local time, nextUpdate = M.FormatTime(remain)
 				self.text:SetText(time)
 				self.nextUpdate = nextUpdate
@@ -80,7 +73,7 @@ function module:OnLogin()
 		timer.text = text
 
 		Timer_OnSizeChanged(timer, scaler:GetSize())
-		scaler:SetScript("OnSizeChanged", function(self, ...) 
+		scaler:SetScript("OnSizeChanged", function(_, ...) 
 			Timer_OnSizeChanged(timer, ...) 
 		end)
 
@@ -89,26 +82,57 @@ function module:OnLogin()
 	end
 
 	local function Timer_Start(self, start, duration)
-		if self:IsForbidden() then return end
-		if (self.noOCC) then return end
+		if self:IsForbidden() or self.noOCC or hideNumbers[self] then return end
 
-		if (start > 0 and duration > MIN_DURATION) then
+		if start > 0 and duration > MIN_DURATION then
 			local timer = self.timer or Timer_Create(self)
 			timer.start = start
 			timer.duration = duration
 			timer.enabled = true
 			timer.nextUpdate = 0
 
-			if (timer.fontScale >= MIN_SCALE) then 
-				timer:Show() 
+			-- wait for blizz to fix itself
+			local parent = self:GetParent()
+			local charge = parent and parent.chargeCooldown
+			local chargeTimer = charge and charge.timer
+			if chargeTimer and chargeTimer ~= timer then
+				Timer_Stop(chargeTimer)
 			end
+
+			if timer.fontScale >= MIN_SCALE then 
+				timer:Show()
+			end
+		elseif self.timer then
+			Timer_Stop(self.timer)
+		end
+
+		-- hide cooldown flash if not visible
+		local parent = self:GetParent()
+		if parent and parent.isAuraWatch then return end
+		if self:GetEffectiveAlpha() > 0 then
+			self:Show()
 		else
-			local timer = self.timer
-			if timer then Timer_Stop(timer) end
+			self:Hide()
 		end
 	end
-	hooksecurefunc(getmetatable(ActionButton1Cooldown).__index, "SetCooldown", Timer_Start)
 
+	local function hideCooldownNumbers(self, hide)
+		if hide then
+			hideNumbers[self] = true
+			if self.timer then Timer_Stop(self.timer) end
+		else
+			hideNumbers[self] = nil
+		end
+	end
+
+	local cooldownIndex = getmetatable(ActionButton1Cooldown).__index
+	hooksecurefunc(cooldownIndex, "SetCooldown", Timer_Start)
+	--hooksecurefunc(cooldownIndex, "SetHideCountdownNumbers", hideCooldownNumbers)
+	hooksecurefunc("CooldownFrame_SetDisplayAsPercentage", function(self)
+		hideCooldownNumbers(self, true)
+	end)
+
+	-- action buttons hook
 	local active, hooked = {}, {}
 
 	local function Cooldown_OnShow(self)
@@ -119,7 +143,7 @@ function module:OnLogin()
 		active[self] = nil
 	end
 
-	local function Cooldown_ShouldUpdateTimer(self, start, duration)
+	local function Cooldown_ShouldUpdateTimer(self, start)
 		local timer = self.timer
 		if not timer then
 			return true
@@ -129,14 +153,14 @@ function module:OnLogin()
 
 	local function Cooldown_Update(self)
 		local button = self:GetParent()
-		local start, duration, enable = GetActionCooldown(button.action)
+		local start, duration = GetActionCooldown(button.action)
 
-		if Cooldown_ShouldUpdateTimer(self, start, duration) then
+		if Cooldown_ShouldUpdateTimer(self, start) then
 			Timer_Start(self, start, duration)
 		end
 	end
 
-	MaoRUI:EventFrame("ACTIONBAR_UPDATE_COOLDOWN"):SetScript("OnEvent", function()
+	M:RegisterEvent("ACTIONBAR_UPDATE_COOLDOWN", function()
 		for cooldown in pairs(active) do
 			Cooldown_Update(cooldown)
 		end
@@ -152,7 +176,7 @@ function module:OnLogin()
 	end
 
 	if _G["ActionBarButtonEventsFrame"].frames then
-		for i, frame in pairs(_G["ActionBarButtonEventsFrame"].frames) do
+		for _, frame in pairs(_G["ActionBarButtonEventsFrame"].frames) do
 			ActionButton_Register(frame)
 		end
 	end
@@ -160,5 +184,5 @@ function module:OnLogin()
 
 	-- Hide Default Cooldown
 	SetCVar("countdownForCooldowns", 0)
-	InterfaceOptionsActionBarsPanelCountdownCooldowns:Hide()
+	M.HideOption(InterfaceOptionsActionBarsPanelCountdownCooldowns)
 end

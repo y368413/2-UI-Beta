@@ -1,7 +1,7 @@
 -------------------------------------Auther：NDui siweia
-local M, R, U, I = unpack(select(2, ...))
-local module = MaoRUI:RegisterModule("Minimap")
-local _G, Minimap = _G, Minimap
+local _, ns = ...
+local M, R, U, I = unpack(ns)
+local module = M:GetModule("Maps")
 
 function module:ReskinRegions()
 	-- QueueStatus Button
@@ -27,24 +27,24 @@ function module:ReskinRegions()
 
 	-- Difficulty Flags
 	local flags = {"MiniMapInstanceDifficulty", "GuildInstanceDifficulty", "MiniMapChallengeMode"}
-	for k, v in pairs(flags) do
+	for _, v in pairs(flags) do
 		local flag = _G[v]
 		flag:ClearAllPoints()
 		flag:SetPoint("TOPLEFT", 6, 6)
 		flag:SetScale(.8)
 	end
+	
 	--Tracking
 	MiniMapTrackingBackground:SetAlpha(0)
 	MiniMapTrackingButton:SetAlpha(0)
 	MiniMapTracking:ClearAllPoints()
 	MiniMapTracking:SetPoint("TOPRIGHT", Minimap, 6, 5)
 	MiniMapTracking:SetScale(.85)
+	
 	-- Mail icon
 	MiniMapMailFrame:ClearAllPoints()
-	MiniMapMailFrame:SetPoint("BOTTOMRIGHT", Minimap, 8,-8)
+	MiniMapMailFrame:SetPoint("BOTTOMLEFT", Minimap, -6,-6)
 	MiniMapMailIcon:SetTexture(I.mailTex)
-	--MiniMapMailIcon:SetSize(21, 21)
-	--MiniMapMailIcon:SetVertexColor(1, 1, 0)
 	MiniMapMailBorder:Hide()
 
 	-- Invites Icon
@@ -55,94 +55,142 @@ function module:ReskinRegions()
 	Invt:SetPoint("TOPRIGHT", Minimap, "BOTTOMLEFT", -20, -20)
 	Invt:SetSize(300, 80)
 	M.CreateBD(Invt)
+	M.CreateSD(Invt)
 	M.CreateTex(Invt)
 	M.CreateFS(Invt, 16, I.InfoColor..GAMETIME_TOOLTIP_CALENDAR_INVITES)
 
-	local f = MaoRUI:EventFrame({"CALENDAR_UPDATE_PENDING_INVITES", "PLAYER_ENTERING_WORLD"})
-	f:SetScript("OnEvent", function()
-		if MaoRUISettingDB["Map"]["Invite"] and CalendarGetNumPendingInvites() > 0 then
+	local function updateInviteVisibility()
+		if MaoRUISettingDB["Map"]["Invite"] and C_Calendar.GetNumPendingInvites() > 0 then
 			Invt:Show()
 		else
 			Invt:Hide()
 		end
-	end)
+	end
+	M:RegisterEvent("CALENDAR_UPDATE_PENDING_INVITES", updateInviteVisibility)
+	M:RegisterEvent("PLAYER_ENTERING_WORLD", updateInviteVisibility)
+
 	Invt:SetScript("OnClick", function(_, btn)
-		Invt:UnregisterAllEvents()
 		Invt:Hide()
 		if btn == "LeftButton" then ToggleCalendar() end
+		M:UnregisterEvent("CALENDAR_UPDATE_PENDING_INVITES", updateInviteVisibility)
+		M:UnregisterEvent("PLAYER_ENTERING_WORLD", updateInviteVisibility)
 	end)
 end
 
 ----------------------------------------------------------------------------	右键菜单--------------------------------------------------------------------------
 --动作条样式
-local SetMrbarMenuFrame = CreateFrame("Frame", "ClickMenu", UIParent, "L_UIDropDownMenuTemplate")
+local SetMrbarMenuFrame = CreateFrame("Frame", "ClickMenu", UIParent, "UIDropDownMenuTemplate")
 local SetMrbarMicromenu = {  
-	  { text = "       |cFFBF00FFMao|r|cFF00DDFFR|r|cffff8800 UI|r ", isTitle = true, notCheckable = true},
     { text = "|cffff8800 ------------------------|r", notCheckable = true },
-    { text = MINIMAP_MENU_BARSTYLE,  icon = 'Interface\\Addons\\_ShiGuang\\Media\\Modules\\Wallpaper\\MaoR-UI',
-         func = function() sendCmd("/mr");  end, notCheckable = true, },
+    { text = "           "..MAINMENU_BUTTON.."", isTitle = true, notCheckable = true},
+    { text = "|cffff8800 ------------------------|r", notCheckable = true },
+    { text = CHARACTER, icon = 'Interface\\PaperDollInfoFrame\\UI-EquipmentManager-Toggle',
+        func = function() securecall(ToggleCharacter, 'PaperDollFrame') end, notCheckable = true},
+    { text = SPELLBOOK, icon = 'Interface\\MINIMAP\\TRACKING\\Class',
+        func = function() securecall(ToggleSpellBook, BOOKTYPE_SPELL) end, notCheckable = true},
+    { text = TALENTS, icon = 'Interface\\MINIMAP\\TRACKING\\Ammunition',
+        func = function() if (not PlayerTalentFrame) then LoadAddOn('Blizzard_TalentUI') end
+        if (not GlyphFrame) then LoadAddOn('Blizzard_GlyphUI') end
+        securecall(ToggleTalentFrame) end, notCheckable = true},
+    { text = INVENTORY_TOOLTIP,  icon = 'Interface\\MINIMAP\\TRACKING\\Banker',
+        func = function() securecall(ToggleAllBags) end, notCheckable = true},
+    { text = ACHIEVEMENTS, icon = 'Interface\\ACHIEVEMENTFRAME\\UI-Achievement-Shield',
+        func = function() securecall(ToggleAchievementFrame) end, notCheckable = true},
+    { text = QUEST_LOG, icon = 'Interface\\GossipFrame\\ActiveQuestIcon',
+        func = function() ToggleQuestLog() end, notCheckable = true},
+    { text = FRIENDS, icon = 'Interface\\FriendsFrame\\PlusManz-BattleNet',
+        func = function() securecall(ToggleFriendsFrame, 1) end, notCheckable = true},
+    { text = GUILD, icon = 'Interface\\GossipFrame\\TabardGossipIcon',
+        func = function() if (IsTrialAccount()) then UIErrorsFrame:AddMessage(ERR_RESTRICTED_ACCOUNT, 1, 0, 0)
+        else securecall(ToggleGuildFrame) end end, notCheckable = true},
+    { text = GROUP_FINDER, icon = 'Interface\\LFGFRAME\\BattleNetWorking0',
+        func = function() securecall(PVEFrame_ToggleFrame, 'GroupFinderFrame', LFDParentFrame) end, notCheckable = true},
+    { text = ENCOUNTER_JOURNAL, icon = 'Interface\\MINIMAP\\TRACKING\\Profession',
+        func = function() securecall(ToggleEncounterJournal) end, notCheckable = true},
+    --{ text = PLAYER_V_PLAYER, icon = 'Interface\\MINIMAP\\TRACKING\\BattleMaster', --broke
+	     --func = function() securecall(PVEFrame_ToggleFrame, 'PVPUIFrame', HonorFrame) end, notCheckable = true},
+    --{ text = MOUNTS, icon = 'Interface\\MINIMAP\\TRACKING\\StableMaster',  --broke
+	  --func = function() securecall(ToggleCollectionsJournal, 1) end, tooltipTitle = securecall(MicroButtonTooltipText, MOUNTS_AND_PETS, 'TOGGLEPETJOURNAL'), notCheckable = true},
+   -- { text = PETS, icon = 'Interface\\MINIMAP\\TRACKING\\StableMaster',  --broke
+	  --func = function() securecall(ToggleCollectionsJournal, 2) end, tooltipTitle = securecall(MicroButtonTooltipText, MOUNTS_AND_PETS, 'TOGGLEPETJOURNAL'), notCheckable = true},
+    --{ text = TOY_BOX, icon = 'Interface\\MINIMAP\\TRACKING\\Reagents',  --broke 
+	  --func = function() securecall(ToggleCollectionsJournal, 3) end, tooltipTitle = securecall(MicroButtonTooltipText, TOY_BOX, 'TOGGLETOYBOX'), notCheckable = true},
+    --{ text = 'Heirlooms', icon = 'Interface\\MINIMAP\\TRACKING\\Reagents',  --broke
+	  --func = function() securecall(ToggleCollectionsJournal, 4) end, tooltipTitle = securecall(MicroButtonTooltipText, TOY_BOX, 'TOGGLETOYBOX'), notCheckable = true},
+    --{ text = "Calender",icon = 'Interface\\Calendar\\UI-Calendar-Button',  --broke 
+         --func = function() LoadAddOn('Blizzard_Calendar') Calendar_Toggle() end, notCheckable = true},
+    --{ text = BLIZZARD_STORE, icon = 'Interface\\MINIMAP\\TRACKING\\BattleMaster',
+         --func = function() LoadAddOn('Blizzard_StoreUI') securecall(ToggleStoreUI) end, notCheckable = true},
+    { text = GAMEMENU_HELP, icon = 'Interface\\CHATFRAME\\UI-ChatIcon-Blizz',
+         func = function() securecall(ToggleHelpFrame) end, notCheckable = true},
+    { text = BATTLEFIELD_MINIMAP,
+         func = function() securecall(ToggleBattlefieldMinimap) end, notCheckable = true},
+    { text = "|cffff8800 ------------------------|r", notCheckable = true },
+    { text = "           -|cFFFFFF00 2|r|cFFFF0000 UI |r- ", isTitle = true, notCheckable = true},
+    { text = "|cffff8800 ------------------------|r", notCheckable = true },
+    { text = MINIMAP_MENU_BARSTYLE,  icon = 'Interface\\Addons\\_ShiGuang\\Media\\Modules\\MaoR-UI',
+         func = function() sendCmd("/mr");  end, notCheckable = true},
     { text = MINIMAP_MENU_KEYBIND, icon = 'Interface\\MacroFrame\\MacroFrame-Icon.blp',
-        func = function() sendCmd("/hb"); end, notCheckable = true, },
+        func = function() sendCmd("/hb"); end, notCheckable = true},
     { text = "|cFF00DDFF ----- "..BINDING_NAME_MOVEANDSTEER.." -----|r", isTitle = true, notCheckable = true },
-    { text = MINIMAP_MENU_QUESTBUTTON, icon = 'Interface\\GossipFrame\\ActiveQuestIcon',
-        func = function() sendCmd("/eqb"); end, notCheckable = true, },
     { text = MINIMAP_MENU_SPECIALBUTTON, icon = 'Interface\\Icons\\INV_Inscription_RunescrollOfFortitude_Red',
-        func = function() sendCmd("/moveit"); end, notCheckable = true, },
-    { text = MINIMAP_MENU_AURACONFIG, icon = 'Interface\\ACHIEVEMENTFRAME\\UI-Achievement-Shield',
-        func = function() sendCmd("/sraw test"); end, notCheckable = true, },
+        func = function() sendCmd("/moveit"); end, notCheckable = true},
     { text = MINIMAP_MENU_AURADIY, icon = 'Interface\\ACHIEVEMENTFRAME\\UI-Achievement-Shield',
-        func = function() sendCmd("/awc"); end, notCheckable = true, },
+        func = function() sendCmd("/awc"); end, notCheckable = true},
+    --{ text = MINIMAP_MENU_QUESTBUTTON, icon = 'Interface\\GossipFrame\\ActiveQuestIcon',
+        --func = function() sendCmd("/eqb"); end, notCheckable = true},
     { text = MINIMAP_MENU_CONTROLNOTICE, icon = 'Interface\\Calendar\\UI-Calendar-Button',
-        func = function() sendCmd("/cci move"); end, notCheckable = true, },
+        func = function() sendCmd("/cci move"); end, notCheckable = true},
     { text = MINIMAP_MENU_CASTBAR, icon = 'Interface\\Icons\\Spell_Nature_Sentinal',
-        func = function() sendCmd("/adicb"); end, notCheckable = true, },
+        func = function() sendCmd("/cbs"); end, notCheckable = true},
     --{ text = "聊天屏蔽", icon = 'Interface\\Calendar\\UI-Calendar-Button',
-        --func = function() sendCmd("/ecf"); end, notCheckable = true, },
-    { text = "|cFF00DDFF ------- "..MINIMAP_MENU_ONOFF.." -------|r", isTitle = true, notCheckable = true    },
+        --func = function() sendCmd("/ecf"); end, notCheckable = true},
+    { text = "|cFF00DDFF ------- "..MINIMAP_MENU_ONOFF.." -------|r", isTitle = true, notCheckable = true},
     { text = MINIMAP_MENU_Click, icon = 'Interface\\MINIMAP\\TRACKING\\QuestBlob',
-        func = function() sendCmd("/gcs"); end, notCheckable = true, },
+        func = function() sendCmd("/gcs"); end, notCheckable = true},
     { text = MINIMAP_MENU_DAMAGESTYLE, icon = 'Interface\\PaperDollInfoFrame\\UI-EquipmentManager-Toggle',
-        func = function() sendCmd("/dex"); end, notCheckable = true,  },
-    { text = MINIMAP_MENU_GRIDTOOL, icon = 'Interface\\MINIMAP\\TRACKING\\BattleMaster',
-        func = function() sendCmd("/align"); end, notCheckable = true, },
+        func = function() sendCmd("/dex"); end, notCheckable = true },
+    { text = MINIMAP_MENU_INTERRUPT, icon = 'Interface\\MINIMAP\\TRACKING\\BattleMaster',
+        func = function() sendCmd("/esi"); end, notCheckable = true},
     { text = MINIMAP_MENU_lOOTHELPER, icon = 'Interface\\Icons\\INV_Misc_Idol_05',
-        func = function() sendCmd("/gmlm show"); end, notCheckable = true, },
+        func = function() sendCmd("/plh"); end, notCheckable = true},
     {text = MINIMAP_MENU_DISTANCE, hasArrow = true, notCheckable = true,
         menuList={  
-            { text = YES, func = function() sendCmd("/hardyards sho") end, notCheckable = true, },
-            { text = NO, func = function() sendCmd("/hardyards hid") end, notCheckable = true, }
+            { text = YES, func = function() sendCmd("/hardyards sho") end, notCheckable = true},
+            { text = NO, func = function() sendCmd("/hardyards hid") end, notCheckable = true}
         }
     },
     {text = MINIMAP_MENU_COMBOPOINTS, hasArrow = true, notCheckable = true,
         menuList={  
-            { text = YES, func = function() sendCmd("/bht hiton") end, notCheckable = true, },
-            { text = NO, func = function() sendCmd("/bht hitoff") end, notCheckable = true, }
+            { text = YES, func = function() sendCmd("/bht hiton") end, notCheckable = true},
+            { text = NO, func = function() sendCmd("/bht hitoff") end, notCheckable = true}
         }
     },
     {text = MINIMAP_MENU_COMPAREITEMS, hasArrow = true, notCheckable = true,
         menuList={  
-            { text = YES, func = function() sendCmd("/run SetCVar('alwaysCompareItems', 1)") end, notCheckable = true, },
-            { text = NO, func = function() sendCmd("/run SetCVar('alwaysCompareItems', 0)") end, notCheckable = true, }
+            { text = YES, func = function() sendCmd("/run SetCVar('alwaysCompareItems', 1)") end, notCheckable = true},
+            { text = NO, func = function() sendCmd("/run SetCVar('alwaysCompareItems', 0)") end, notCheckable = true}
         }
     },
     { text = "|cFF00DDFF ------- Style -------|r", isTitle = true, notCheckable = true },
     { text = MINIMAP_MENU_SWITCHUF, icon = 'Interface\\Icons\\INV_Misc_Bone_HumanSkull_02',
-        func = function() sendCmd("/loadmr"); end, notCheckable = true, },
+        func = function() sendCmd("/loadmr"); end, notCheckable = true},
     { text = MINIMAP_MENU_AFKSCREEN, icon = 'Interface\\Icons\\Spell_Holy_Crusade',
-        func = function() sendCmd("/wallpaperkit"); end, notCheckable = true, },
+        func = function() sendCmd("/wallpaperkit"); end, notCheckable = true},
     { text = MINIMAP_MENU_CHECKFOODSSS, icon = 'Interface\\MINIMAP\\TRACKING\\Reagents',
-        func = function() sendCmd("/hj"); end, notCheckable = true,   },
-    { text = "|cFF00DDFF -- OneKeyMacro --|r", func = function() sendCmd("/MacroHelp"); end, notCheckable = true, },
-    { text = "  |cFFBF00FFSimc|r", func = function() sendCmd("/simc"); end, notCheckable = true, },
+        func = function() sendCmd("/hj"); end, notCheckable = true  },
+    --{ text = "|cFF00DDFF -- OneKeyMacro --|r", func = function() sendCmd("/MacroHelp"); end, notCheckable = true},
+    { text = "  |cFFBF00FFSimc|r", func = function() sendCmd("/simc"); end, notCheckable = true},
+    { text = "  |cFFBF00FFWe Love WOW|r", func = function() sendCmd("/welovewow"); end, notCheckable = true},
     { text = "|cffff8800 --------------------------|r", isTitle = true, notCheckable = true  },
-    { text = "  |cFFBF00FF"..MINIMAP_MENU_QUSETIONANSWER.."|r", func = function() sendCmd("/MrHelp"); end, notCheckable = true, },
-    { text = "  |cFFBF00FFMaoR UI"..MINIMAP_MENU_UISETTING.."|r", func = function() sendCmd("/mr"); end, notCheckable = true, },
+    { text = "  |cFFBF00FF"..MINIMAP_MENU_QUSETIONANSWER.."|r", func = function() sendCmd("/MrHelp"); end, notCheckable = true},
+    { text = "  |cFFBF00FF2 UI"..MINIMAP_MENU_UISETTING.."|r", func = function() sendCmd("/mr"); end, notCheckable = true},
     { text = "|cffff8800 --------------------------|r", isTitle = true, notCheckable = true  },
-    { text = "            |cFFBF00FF"..MINIMAP_MENU_MORE.."|r", func = function() sendCmd("/tinytooltip"); end, notCheckable = true, },
-    --{ text = "ESC菜单", func = function() ToggleFrame(GameMenuFrame) end, notCheckable = true, },
+    { text = "            |cFFBF00FF"..MINIMAP_MENU_MORE.."|r", func = function() sendCmd("/farmer"); end, notCheckable = true},
+    --{ text = "ESC菜单", func = function() ToggleFrame(GameMenuFrame) end, notCheckable = true},
     --{ text = "                       ", isTitle = true, notCheckable = true  },
-    --{ text = LOGOUT, func = function() Logout() end, notCheckable = true, },
-    --{ text = QUIT, func = function() ForceQuit() end, notCheckable = true, },
+    --{ text = LOGOUT, func = function() Logout() end, notCheckable = true},
+    --{ text = QUIT, func = function() ForceQuit() end, notCheckable = true},
 }
 
 
@@ -160,7 +208,8 @@ function module:WhoPingsMyMap()
 	anim.fader:SetDuration(3)
 	anim.fader:SetSmoothing("OUT")
 	anim.fader:SetStartDelay(3)
-	MaoRUI:EventFrame("MINIMAP_PING"):SetScript("OnEvent", function(_, _, unit)
+
+	M:RegisterEvent("MINIMAP_PING", function(_, unit)
 		anim:Stop()
 		f.text:SetText(GetUnitName(unit))
 		f.text:SetTextColor(M.ClassColor(select(2, UnitClass(unit))))
@@ -168,9 +217,9 @@ function module:WhoPingsMyMap()
 	end)
 end
 
-function module:OnLogin()
+function module:SetupMinimap()
 	-- Shape and Position
-	function GetMinimapShape() return "SQUARE" end
+	--function GetMinimapShape() return "SQUARE" end
 	Minimap:ClearAllPoints()
 	Minimap:SetPoint(unpack(R.Minimap.Pos))
 	Minimap:SetFrameLevel(10)
@@ -184,7 +233,7 @@ function module:OnLogin()
 	Minimap:SetBackdropColor(0,0,0,1)
 	Minimap:SetBackdropBorderColor(0,0,0,1)
 	--MinimapCluster:SetScale(MaoRUISettingDB["Map"]["MinmapScale"])
-	DropDownList1:SetClampedToScreen(true)
+	MSA_DropDownList1:SetClampedToScreen(true)
 
 	-- ClockFrame
 	if MaoRUISettingDB["Map"]["Clock"] then
@@ -218,8 +267,8 @@ function module:OnLogin()
      else Minimap_OnClick(self) --鼠标左键点击小地图显示Ping位置提示
      end
     elseif btn == "MiddleButton" then ToggleFrame(ObjectiveTrackerFrame)  --M:DropDown(MapMicromenu, MapMenuFrame, 0, 0) --鼠标中键显示系统菜单
-    elseif btn == "RightButton" then  securecall(L_EasyMenu, SetMrbarMicromenu, SetMrbarMenuFrame, "cursor", 0, 0, "MENU", 2) --鼠标右键显示增强菜单
-    --else L_ToggleDropDownMenu(1, nil, MiniMapTrackingDropDown, self)
+    elseif btn == "RightButton" then EasyMenu(SetMrbarMicromenu, SetMrbarMenuFrame, "cursor", 0, 0, "MENU", 2) --鼠标右键显示增强菜单
+    --else MSA_ToggleDropDownMenu(1, nil, MiniMapTrackingDropDown, self)
     end
 	end)
 
@@ -232,15 +281,13 @@ function module:OnLogin()
 		"MinimapZoneTextButton",
 		"MinimapZoomOut",
 		"MinimapZoomIn",
-		"MiniMapVoiceChatFrame",
 		"MiniMapWorldMapButton",
 		"MiniMapMailBorder",
 		--"MiniMapTracking",
 	}
 
 	for _, v in pairs(frames) do
-		_G[v]:Hide()
-		_G[v].Show = M.Dummy
+		M.HideObject(_G[v])
 	end
 	MinimapCluster:EnableMouse(false)
 	Minimap:SetArchBlobRingScalar(0)

@@ -14,11 +14,6 @@ local PlaySound = PlaySound
 local CreateFrame, UIParent = CreateFrame, UIParent
 local _G = _G
 
--- Global vars/functions that we don't upvalue since they might get hooked, or upgraded
--- List them here for Mikk's FindGlobals script
--- GLOBALS: PanelTemplates_TabResize, PanelTemplates_SetDisabledTabState, PanelTemplates_SelectTab, PanelTemplates_DeselectTab
-
--- local upvalue storage used by BuildTabs
 local widths = {}
 local rowwidths = {}
 local rowends = {}
@@ -165,7 +160,6 @@ local methods = {
 
 	["BuildTabs"] = function(self)
 		local hastitle = (self.titletext:GetText() and self.titletext:GetText() ~= "")
-		local status = self.status or self.localstatus
 		local tablist = self.tablist
 		local tabs = self.tabs
 		
@@ -245,11 +239,7 @@ local methods = {
 					tab:SetPoint("LEFT", tabs[tabno-1], "RIGHT", -10, 0)
 				end
 			end
-			
-			-- equal padding for each tab to fill the available width,
-			-- if the used space is above 75% already
-			-- the 18 pixel is the typical width of a scrollbar, so we can have a tab group inside a scrolling frame, 
-			-- and not have the tabs jump around funny when switching between tabs that need scrolling and those that don't
+
 			local padding = 0
 			if not (numrows == 1 and rowwidths[1] < width*0.75 - 18) then
 				padding = (width - rowwidths[row]) / (endtab - starttab+1)

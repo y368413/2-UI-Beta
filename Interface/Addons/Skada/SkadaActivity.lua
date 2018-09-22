@@ -1,8 +1,13 @@
+﻿if (GAME_LOCALE or GetLocale()) == "zhCN" then SKADAACTIVITY = "活跃度" SKADAACTIVITYLOG = "活跃度记录" SKADAACTIVITYDEATHS = "死亡排名"
+elseif (GAME_LOCALE or GetLocale()) == "zhTW" then SKADAACTIVITY = "活躍度" SKADAACTIVITYLOG = "活躍度記錄" SKADAACTIVITYDEATHS = "死亡排名"
+else SKADAACTIVITY = "Activity" SKADAACTIVITYLOG = "Activity Log" SKADAACTIVITYDEATHS = "Activity_Deaths"
+end
+
 local L = LibStub("AceLocale-3.0"):GetLocale("Skada", false)
 local Skada = Skada
-local mod = Skada:NewModule("Activity")
-local activitylog = Skada:NewModule("Activity Log")
-local deathlog = Skada:NewModule("Activity_Deaths")
+local mod = Skada:NewModule(SKADAACTIVITY)
+local activitylog = Skada:NewModule(SKADAACTIVITYLOG)
+local deathlog = Skada:NewModule(SKADAACTIVITYDEATHS)
 
 
 local function Activity_tooltip(win, id, label, tooltip)

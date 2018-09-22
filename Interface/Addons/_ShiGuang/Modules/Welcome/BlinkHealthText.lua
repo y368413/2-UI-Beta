@@ -1,25 +1,51 @@
---local M, R, U, I = unpack(select(2, ...))
+local _, ns = ...
+local M, R, U, I = unpack(ns)
 -------------------------------------------------------------------------------
 -- 文件: SimpleInfo.lua ver 1.0  日期: 2010-12-11  作者: dugu@wowbox
 -- 描述: 在屏幕中下方显示玩家(宠物)和目标(ToT)的基本信息  版权所有@多玩游戏网
--- Notes-zhCN: 在屏幕中心显示玩家和目标的简易状态信息  Author: Kill & dugu from duowan
--- Modified: 冰灵曦晓&七曜   Fix and DIY by y368413 for WOD、LEG
+-- Author: Kill & dugu from duowan  Thanks warbaby
 -------------------------------------------------------------------------------
 BlinkHealth = LibStub("AceAddon-3.0"):NewAddon("SimpleInfo",  "AceEvent-3.0", "AceTimer-3.0");
 
--- Target name
-local fntBig = CreateFont("SIFontBig");
-fntBig:SetFont(STANDARD_TEXT_FONT, 22, "THICKOUTLINE");
--- Power, absolute health
-local fntMedium = CreateFont("SIFontMedium");
+local WARRIOR       = 1
+local PALADIN       = 2
+local HUNTER        = 3
+local ROGUE         = 4
+local PRIEST        = 5
+local DEATHKNIGHT   = 6
+local SHAMAN        = 7
+local MAGE          = 8
+local WARLOCK       = 9
+local MONK          = 10
+local DRUID         = 11
+local DEMONHUNTER   = 12
+local function GetPowerType()
+    local _, _, class = UnitClass("player") 
+    if (class == MONK and GetSpecialization() == 3) then
+        return Enum.PowerType.Chi
+    elseif (class == PALADIN) then
+        return GetSpecialization() == 3 and Enum.PowerType.HolyPower
+    elseif (class == WARLOCK) then
+        return Enum.PowerType.SoulShards
+    elseif (class == MAGE) then
+        return GetSpecialization() == 1 and Enum.PowerType.ArcaneCharges
+    elseif (class == ROGUE) then
+        return Enum.PowerType.ComboPoints
+    elseif (class == DRUID) then
+        return UnitPowerType("player") == Enum.PowerType.Energy and Enum.PowerType.ComboPoints or nil
+    --elseif (class == DEATHKNIGHT) then
+    end
+end
+
+local fntMedium = CreateFont("SIFontMedium");  -- Power, absolute health
 fntMedium:SetFont(STANDARD_TEXT_FONT, 16, "OUTLINE");
-fntMedium:SetTextColor(1, 0.65, 0.16); --(0.49,0.99,0)
+fntMedium:SetTextColor(1, 0.65, 0.16);
 fntMedium:SetShadowColor(0.25, 0.25, 0.25, 0.5);
 fntMedium:SetShadowOffset(1, -1);
--- ToT, pet
-local fntSmall = CreateFont("SIFontSmall");
+
+local fntSmall = CreateFont("SIFontSmall");  -- ToT, pet
 fntSmall:SetFont(STANDARD_TEXT_FONT, 14, "OUTLINE");
-fntSmall:SetTextColor(1, 0.65, 0.16);  --0.49,0.99,0
+fntSmall:SetTextColor(1, 0.65, 0.16);
 fntSmall:SetShadowColor(0.25, 0.25, 0.25, 0.5);
 fntSmall:SetShadowOffset(1, -1);
 
@@ -53,35 +79,27 @@ BlinkHealth.powerColor = {
 	RAGE = {0.69, 0.31, 0.31},
 	RUNES = {0.55, 0.57, 0.61},
 	RUNIC_POWER = {0, 0.82, 1},
-	FURY = { 0.5, 0.5, 0.25 },
-	PAIN = { 0, 0.82, 1 }, --0.5, 0.5, 0.25
+  FURY = {0.788, 0.259, 0.992},
+  PAIN = {255/255, 156/255, 0},
+  INSANITY = {0.40, 0, 0.80}, -- PowerBarColor
 };
 
-
-BlinkHealth['classMaxResourceBar'] = {
-	['DEATHKNIGHT'] = 6,
-	['PALADIN'] = 5,
-	['WARLOCK'] = 5,
-	['MONK'] = 6,
-	['MAGE'] = 4,
-	['ROGUE'] = 8,
-	["DRUID"] = 5
+BlinkHealth.runeColors = {
+	{1, 0, 0};
+	{0, .5, 0};
+	{0, 1, 1};
+	{.9, .1, 1};
 }
 BlinkHealth.classColor = {};
-do
-for k, v in pairs(RAID_CLASS_COLORS) do BlinkHealth.classColor[k] = {v.r, v.g, v.b}; end
-end
-
+do for k, v in pairs(RAID_CLASS_COLORS) do BlinkHealth.classColor[k] = {v.r, v.g, v.b}; end end
 
 function BlinkHealth:OnEnable()
 	self:RegisterEvent("PLAYER_TARGET_CHANGED");
+  self:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED");
+  self:RegisterEvent("PLAYER_ENTERING_WORLD");
 	self:RegisterEvent("PLAYER_REGEN_DISABLED");
-	self:RegisterEvent("PLAYER_REGEN_ENABLED");		
-	
-	if (select(2, UnitClass("player")) == "ROGUE" or select(2, UnitClass("player")) == "DRUID" or select(2, UnitClass("player")) == "MONK") then	
-		self:RegisterEvent("UNIT_POWER");		
-	end
-
+	self:RegisterEvent("PLAYER_REGEN_ENABLED");
+  self:RegisterEvent("UNIT_POWER_UPDATE");
 	self.frame["player"]:Show();
 	self.handle = self:ScheduleRepeatingTimer("UpdateUnitValues", 0.05);
 end
@@ -95,9 +113,14 @@ end
 
 function BlinkHealth:PLAYER_TARGET_CHANGED()
 	self:UpdateUnitFrame();
-	if (select(2, UnitClass("player")) == "ROGUE" or select(2, UnitClass("player")) == "DRUID") then
-		self:UpdateComboPoints();
-	end
+end
+
+function BlinkHealth:PLAYER_SPECIALIZATION_CHANGED()
+    BlinkHealthTextPowerType = GetPowerType()
+end
+
+function BlinkHealth:PLAYER_ENTERING_WORLD()
+    BlinkHealthTextPowerType = GetPowerType()
 end
 
 function BlinkHealth:PLAYER_REGEN_DISABLED()
@@ -108,10 +131,11 @@ function BlinkHealth:PLAYER_REGEN_ENABLED()
 	self:UpdateUnitFrame();
 end
 
-function BlinkHealth:UNIT_POWER(event, unit)
-	if (unit == "player") then self:UpdateComboPoints(); end
+function BlinkHealth:UNIT_POWER_UPDATE(event, unit)
+	if (unit == "player") then
+        if BlinkHealthTextPowerType then self:UpdateComboPoints(); end
+	end
 end
-
 
 function BlinkHealth:CreateAnchorFrame()
 	if (self.anchor) then return end
@@ -121,7 +145,7 @@ function BlinkHealth:CreateAnchorFrame()
 	self.anchor:SetHeight(80);
 	self.anchor:EnableMouse(true);
 	self.anchor:SetMovable(true);
-	self.anchor:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 236);
+	self.anchor:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 235);
 	local backdrop = {
 		bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
 		edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
@@ -158,12 +182,17 @@ function BlinkHealth:CreateAnchorFrame()
 		end		
 	end);
 
-	RegisterForSaveFrame(self.anchor);
+	--self.anchor.originalStopMovingOrSizing = self.anchor.StopMovingOrSizing;
+	self.anchor.duration = 1;  	--RegisterForSaveFrame(self.anchor);
 	self.anchor:Hide();
 end
 
 function BlinkHealth:ToHexColor(r, g, b)
 	return format("%02x%02x%02x", r*255, g*255, b*255);
+end
+
+function BlinkHealth:ToHexColorRGB(color)
+	return format("%02x%02x%02x", color.r*255, color.g*255, color.b*255);
 end
 
 function BlinkHealth:UpdateUnitFrame()
@@ -179,56 +208,33 @@ function BlinkHealth:UpdateUnitFrame()
 end
 
 function BlinkHealth:UpdateComboPoints()
-	if select(2, UnitClass("player")) == "MONK" then
-		local cur = UnitPower("player", SPELL_POWER_CHI)
-		local max = BlinkHealth['classMaxResourceBar'][select(2, UnitClass("player"))]
-
-		if cur and cur > 0 then
-			self.Combo:Show();
-			for i = 1, max do self.Combo[i]:Hide(); end		
-			for i = 1, cur do self.Combo[i]:Show(); end
-		else
-			self.Combo:Hide();
-		end
-	else
-	  local comboPoints = UnitPower("player", SPELL_POWER_COMBO_POINTS)
+	local comboPoints = UnitPower(PlayerFrame.unit, BlinkHealthTextPowerType);
 	  if (comboPoints and comboPoints > 0) then
-		  self.Combo:Show();
-		  for i=1, MAX_COMBO_POINTS do self.Combo[i]:Hide(); end
-		  for i=1, comboPoints do self.Combo[i]:Show(); end
+        self.hitPoint.text:SetText(comboPoints);
 	  else
-		  self.Combo:Hide();
+        self.hitPoint.text:SetText("");
+        self.hitPoint.hit:SetText("");
 	  end
-	end
 end
 
 function BlinkHealth:UpdateUnitValues()
 	local heal, maxheal, perh, petheal, petmax, name;
 	local power, maxpower, powertype, _;
-	-- player
-	if (UnitHasVehicleUI("player")) then
-		heal, maxheal = UnitHealth("pet"), UnitHealthMax("pet");
-		local pType, powertype = UnitPowerType("pet")
-		power, maxpower = UnitPower("pet", pType), UnitPowerMax("pet", pType);
-		petheal, petmax = UnitHealth("player"), UnitHealthMax("player");
-		name = UnitName("player");	-- petName
-	else
 		heal, maxheal = UnitHealth("player"), UnitHealthMax("player");
-		local pType, powertype = UnitPowerType("player")
-		power, maxpower = UnitPower("player", pType), UnitPowerMax("player", pType);
+		local _, powertype = UnitPowerType("player")
+		power, maxpower = UnitPower("player"), UnitPowerMax("player");
 		petheal, petmax = UnitHealth("pet"), UnitHealthMax("pet");
 		name = UnitName("pet");
-	end
 	
 	perh = heal/maxheal * 100 + 0.5;
 	self:SetPercentText("player", perh);
 	local hexColor = self:ToHexColor(1, 0.65, 0.16);  --0.49,0.99,0
 	heal, maxheal = self:FormatDigit(heal), self:FormatDigit(maxheal);
 	self.frame["player"].heal:SetFormattedText("|cff%s%s/%s|r", hexColor, heal, maxheal);	
-	if (type(maxpower) == "number" and maxpower > 0 and self.powerColor[powertype]) then		
-		heaxColor = self:ToHexColor(unpack(self.powerColor[powertype]));
+	if (type(maxpower) == "number" and maxpower > 0 and PowerBarColor[powertype]) then		
+        hexColor = self:ToHexColorRGB(PowerBarColor[powertype]);
 		power, maxpower = self:FormatDigit(power), self:FormatDigit(maxpower);
-		self.frame["player"].power:SetFormattedText("|cff%s%s/%s|r", heaxColor, power, maxpower);
+		self.frame["player"].power:SetFormattedText("|cff%s%s/%s|r", hexColor, power, maxpower);
 		self.frame["player"].power:Show();
 	else
 		self.frame["player"].power:Hide();
@@ -255,15 +261,15 @@ function BlinkHealth:UpdateUnitValues()
 	local hexH, hexP;
 	if (UnitExists("target")) then
 		heal, maxheal = UnitHealth("target"), UnitHealthMax("target");
-		local pType, powertype = UnitPowerType("target")
-		power, maxpower = UnitPower("target", pType), UnitPowerMax("target", pType);
+		local _, powertype = UnitPowerType("target")
+		power, maxpower = UnitPower("target"), UnitPowerMax("target");
 		name = UnitName("target");
 		perh = heal/maxheal * 100 + 0.5;
 		self:SetPercentText("target", perh);		
 		heal, maxheal = self:FormatDigit(heal), self:FormatDigit(maxheal);
 		local hexH = self:ToHexColor(1, 0.65, 0.16);   --0.49,0.99,0
-		if (powertype and self.powerColor[powertype] and type(maxpower) == "number" and maxpower > 0) then
-			hexP = self:ToHexColor(unpack(self.powerColor[powertype]));
+		if (powertype and PowerBarColor[powertype] and type(maxpower) == "number" and maxpower > 0) then
+			hexP = self:ToHexColorRGB(PowerBarColor[powertype]);
 			power, maxpower = self:FormatDigit(power), self:FormatDigit(maxpower);
 			--self.frame["target"].heal:SetFormattedText("|cff%s%s/%s|r | |cff%s%s/%s|r", hexH, heal, maxheal, hexP, power, maxpower);
 			self.frame["target"].heal:SetFormattedText("|cff%s%s/%s|r", hexH, heal, maxheal);
@@ -288,7 +294,7 @@ function BlinkHealth:UpdateUnitValues()
 			hexColor = self:ToHexColor(1, 0.65, 0.16);
 			name = UnitName("targettarget");
 			if (UnitIsUnit("targettarget", "player")) then
-				name = " 你 <";
+				name = " "..YOU.." <";
 			end
 			self.frame["target"].tot:SetFormattedText("|cff%s>%s★%d%%|r", hexColor, name, perh);
 			self.frame["target"].tot:Show();
@@ -398,7 +404,6 @@ function BlinkHealth:ConstructHealth(unit)
 		heal:SetPoint("TOPRIGHT", health[4], "BOTTOMRIGHT", 0, -2);
 		power:SetPoint("BOTTOMRIGHT", this, "BOTTOMRIGHT", -80, 6);
 	else
-		--heal:SetPoint("BOTTOMLEFT", health[1], "BOTTOMRIGHT", 5, 0);
 		heal:SetPoint("TOPLEFT", health[4], "BOTTOMLEFT", 6, -2);
 		power:SetPoint("BOTTOMLEFT", this, "BOTTOMLEFT", 85, 6);
 	end
@@ -431,88 +436,199 @@ function BlinkHealth:ConstructHealth(unit)
 
 	this.name = name;
 end
---------------
--- 连击点
-function BlinkHealth:ConstructCombo()
-	local this
-	if select(2, UnitClass("player")) == "MONK" then
-		this = self.frame["player"]
-	else
-		this = self.frame["target"]
-	end
-	self.Combo = CreateFrame("Frame", nil, this);
-	self.Combo:SetWidth(80)
-	self.Combo:SetHeight(16)
-	self.Combo:SetPoint("TOPLEFT", this.heal, "BOTTOMLEFT", 0, 0);
-	local bg, fill = {}, {};
-	for i = 1, BlinkHealth['classMaxResourceBar'][select(2, UnitClass("player"))] do
-		self.Combo[i] = CreateFrame("Frame", nil, self.Combo)
-		self.Combo[i]:SetWidth(16)
-		self.Combo[i]:SetHeight(16)
-		if i == 1 then 
-			self.Combo[i]:SetPoint("LEFT", self.Combo, "LEFT")
+---------------------- 符文条
+do
+function BlinkHealth:ConstructRunes()
+	local this = self.frame["player"];
+	self.Runes = CreateFrame("Frame", nil, this)	
+	self.Runes:SetWidth(96)
+	self.Runes:SetHeight(16)
+	self.Runes:SetPoint("TOPRIGHT", this.heal, "BOTTOMRIGHT", 0, -1);
+	self.Runes:Hide();
+
+	for i = 1, 6 do
+		self.Runes[i] = CreateFrame("StatusBar", nil, self.Runes)
+		self.Runes[i]:SetStatusBarTexture("Interface\\AddOns\\_ShiGuang\\Media\\Modules\\BlinkHealthText\\blank.blp")
+		self.Runes[i]:SetWidth(16)
+		self.Runes[i]:SetHeight(16)
+
+		if i == 1 then
+			self.Runes[i]:SetPoint("TOPLEFT", self.Runes, "TOPLEFT")
 		else
-			self.Combo[i]:SetPoint("LEFT", self.Combo[i - 1], "RIGHT") 
+			self.Runes[i]:SetPoint("LEFT", self.Runes[i - 1], "RIGHT")
 		end
-		bg[i] = self.Combo[i]:CreateTexture(nil, "ARTWORK")
-		bg[i]:SetTexture("Interface\\AddOns\\_ShiGuang\\Media\\Modules\\BlinkHealthText\\combo.blp")
-		bg[i]:SetTexCoord(0, 16 / 64, 0, 1)
-		bg[i]:SetAllPoints(self.Combo[i])
-		fill[i] = self.Combo[i]:CreateTexture(nil, "OVERLAY")
-		fill[i]:SetTexture("Interface\\AddOns\\_ShiGuang\\Media\\Modules\\BlinkHealthText\\combo.blp")
-		fill[i]:SetTexCoord(0.5, 0.75, 0, 1)
-		fill[i]:SetVertexColor(1, 1, 0)
-		fill[i]:SetAllPoints(self.Combo[i])
+
+		local backdrop = self.Runes[i]:CreateTexture(nil, "ARTWORK")
+		backdrop:SetWidth(16)
+		backdrop:SetHeight(16)
+		backdrop:SetAllPoints()
+		backdrop:SetTexture("Interface\\AddOns\\_ShiGuang\\Media\\Modules\\BlinkHealthText\\combo.blp")
+		backdrop:SetTexCoord(0, 16 / 64, 0, 1)
+				
+		-- This is actually the fill layer, but "bg" gets automatically vertex-colored by the runebar module. So let's make use of that!
+		self.Runes[i].bg = self.Runes[i]:CreateTexture(nil, "OVERLAY")
+		self.Runes[i].bg:SetWidth(16)
+		self.Runes[i].bg:SetHeight(16)
+		self.Runes[i].bg:SetPoint("BOTTOM")
+		self.Runes[i].bg:SetTexture("Interface\\AddOns\\_ShiGuang\\Media\\Modules\\BlinkHealthText\\combo.blp")
+		self.Runes[i].bg:SetTexCoord(0.5, 0.75, 0, 1)
+				
+		-- Shine effect
+		local shinywheee = CreateFrame("Frame", nil, self.Runes[i])
+		shinywheee:SetAllPoints()
+		shinywheee:SetAlpha(0)
+		shinywheee:Hide()
+				
+		local shine = shinywheee:CreateTexture(nil, "OVERLAY")
+		shine:SetAllPoints()
+		shine:SetPoint("CENTER")
+		shine:SetTexture("Interface\\Cooldown\\star4.blp")
+		shine:SetBlendMode("ADD")
+
+		local anim = shinywheee:CreateAnimationGroup()
+		local alphaIn = anim:CreateAnimation("Alpha")
+	--	alphaIn:SetChange(0.3)
+		alphaIn:SetFromAlpha(0)
+		alphaIn:SetToAlpha(0.3)		
+		alphaIn:SetDuration(0.4)
+		alphaIn:SetOrder(1)
+		local rotateIn = anim:CreateAnimation("Rotation")
+		rotateIn:SetDegrees(-90)
+		rotateIn:SetDuration(0.4)
+		rotateIn:SetOrder(1)
+		local scaleIn = anim:CreateAnimation("Scale")
+		scaleIn:SetScale(2, 2)
+		scaleIn:SetOrigin("CENTER", 0, 0)
+		scaleIn:SetDuration(0.4)
+		scaleIn:SetOrder(1)
+		local alphaOut = anim:CreateAnimation("Alpha")
+	--	alphaOut:SetChange(-0.5)
+		alphaOut:SetFromAlpha(0.5)
+		alphaOut:SetToAlpha(0)			
+		alphaOut:SetDuration(0.4)
+		alphaOut:SetOrder(2)
+		local rotateOut = anim:CreateAnimation("Rotation")
+		rotateOut:SetDegrees(-90)
+		rotateOut:SetDuration(0.3)
+		rotateOut:SetOrder(2)
+		local scaleOut = anim:CreateAnimation("Scale")
+		scaleOut:SetScale(-2, -2)
+		scaleOut:SetOrigin("CENTER", 0, 0)
+		scaleOut:SetDuration(0.4)
+		scaleOut:SetOrder(2)
+				
+		anim:SetScript("OnFinished", function() shinywheee:Hide() end)
+		shinywheee:SetScript("OnShow", function() anim:Play() end)
+				
+		-- Fill the dots
+		self.Runes[i]:SetScript("OnValueChanged", function(self, val)
+			-- Resize round overlay texture when hidden statusbar changes
+			if (({GetRuneCooldown(self:GetID())})[3]) then
+				-- Rune ready: show all 16x16px, play animation
+				self.bg:SetWidth(16)
+				self.bg:SetHeight(16)
+				self.bg:SetTexCoord(0.5, 0.75, 0, 1)
+				shinywheee:Show()
+			else
+				-- Dot distance from top & bottom of texture: 4px
+				self.bg:SetWidth(16)
+				self.bg:SetHeight(4 + 8 * val / 10)
+				self.bg:SetTexCoord(0.25, 0.5, 12 / 16 - 8 * val / 10 / 16, 1)
+			end
+		end)
 	end
-	self.Combo:Hide();
-	self.Combo.bg = bg;
-	self.Combo.fill = fill;	
 end
 
+local OnUpdate = function(self, elapsed)
+	local duration = self.duration + elapsed
+	if(duration >= self.max) then
+		return self:SetScript("OnUpdate", nil)
+	else
+		self.duration = duration
+		return self:SetValue(duration)
+	end
+end
+
+function BlinkHealth:UpdateRuneType(event, rid)	
+	local runeType = 3; --GetRuneType(rid)
+	local colors = self.runeColors[runeType]
+	local rune = self.Runes[rid];
+	local r, g, b = colors[1], colors[2], colors[3];
+	rune:SetStatusBarColor(r, g, b);
+	if(rune.bg) then
+		rune.bg:SetVertexColor(r, g, b);
+	end
+end
+
+function BlinkHealth:UpdateRune(event, rid)
+	local rune = self.Runes[rid]
+	if(rune) then
+		local start, duration, runeReady = GetRuneCooldown(rune:GetID())
+		if(runeReady) then
+			rune:SetMinMaxValues(0, 1)
+			rune:SetValue(1)
+			rune:SetScript("OnUpdate", nil)
+		else
+			rune.duration = GetTime() - start
+			rune.max = duration
+			rune:SetMinMaxValues(1, duration)
+			rune:SetScript("OnUpdate", OnUpdate)
+		end
+	end
+end
+
+function BlinkHealth:EnableRune()
+	local runes = self.Runes;
+	for i=1, 6 do
+		local rune = runes[i];
+		rune:SetID(i);
+		self:UpdateRuneType(nil, i);
+	end
+	self:RegisterEvent("RUNE_POWER_UPDATE", "UpdateRune");
+	--self:RegisterEvent("RUNE_TYPE_UPDATE", "UpdateRuneType"); --aby8
+	runes:Show();
+end
+
+function BlinkHealth:DisableRune()
+	self.Runes:Hide();
+	self:UnregisterEvent("RUNE_POWER_UPDATE");
+	--self:UnregisterEvent("RUNE_TYPE_UPDATE"); --aby8
+end
+end
 ----------------------
 function BlinkHealth:ConstructFrame(unit)
-	self.frame[unit] = CreateFrame("Frame", "SimpleInfoPlayerFrame", UIParent);
+	self.frame[unit] = CreateFrame("Frame", "SimpleInfoPlayerFrame" .. unit, UIParent);
 	self.frame[unit]:SetWidth(200);
 	self.frame[unit]:SetHeight(50);
 	if (unit == "player") then
-		self.frame[unit]:SetPoint("BOTTOMRIGHT", self.anchor, "BOTTOM", -160, 0);
+		self.frame[unit]:SetPoint("BOTTOMRIGHT", self.anchor, "BOTTOM", -143, 0);
 ------------------RightClickMenu-Player-------------------------
     local RightClickPlayer = CreateFrame("Button", nil, self.frame[unit]) 
      RightClickPlayer:SetPoint("TOPLEFT",0,0)
      RightClickPlayer:SetPoint("BOTTOMRIGHT",0,-16)
      RightClickPlayer:SetScript("OnMouseDown", function(self, button)
-		    if button == "LeftButton" then
-		      sendCmd("/click PlayerFrame LeftButton")
-		    elseif button == "RightButton" then
-          sendCmd("/click PlayerFrame RightButton") 
+		    if button == "LeftButton" then sendCmd("/click PlayerFrame LeftButton")
+		    elseif button == "RightButton" then sendCmd("/click PlayerFrame RightButton") 
 		    end
     end)
 -------------------------------------------------------------
 	else
-		self.frame[unit]:SetPoint("BOTTOMLEFT", self.anchor, "BOTTOM", 160, 0);
-		------------------RightClickMenu-Target------------------------
+		self.frame[unit]:SetPoint("BOTTOMLEFT", self.anchor, "BOTTOM", 143, 0);
+------------------RightClickMenu-Target------------------------
     local RightClickTarget = CreateFrame("Button", nil, self.frame[unit]) 
       RightClickTarget:SetPoint("TOPLEFT",0,0)
       RightClickTarget:SetPoint("BOTTOMRIGHT",0,-16)
       RightClickTarget:SetScript("OnMouseDown", function(self, button)
     if button == "LeftButton" then
-			if CheckInteractDistance("target",1) then
-				InspectUnit("target")
-			end
+		if CheckInteractDistance("target",1) then InspectUnit("target") end
 		elseif button == "RightButton" then
         sendCmd("/click TargetFrame RightButton")
 		elseif button == "MiddleButton" then
-			if CheckInteractDistance("target",2) then
-				InitiateTrade("target")
-			end
+			if CheckInteractDistance("target",2) then InitiateTrade("target") end
 		elseif button == "Button4" then
-			if CheckInteractDistance("target",4) then
-				FollowUnit(fullname, 1);
-			end
+			if CheckInteractDistance("target",4) then FollowUnit(fullname, 1); end
 		else
-			if CheckInteractDistance("target",1) then
-				InspectAchievements("target")
-			end
+			if CheckInteractDistance("target",1) then InspectAchievements("target") end
 		end
 end)
 -------------------------------------------------------------
@@ -559,12 +675,11 @@ function BlinkHealth:CreateHitAnchor()
 		
 	end);
 	self.HitAnchor:SetScript("OnMouseUp", function(self)
-		if (self.isMoving) then
-			self:StopMovingOrSizing();
-		end		
+		if (self.isMoving) then self:StopMovingOrSizing(); end		
 	end);
-
-	RegisterForSaveFrame(self.HitAnchor);
+	
+	--self.HitAnchor.originalStopMovingOrSizing = self.HitAnchor.StopMovingOrSizing;
+	self.HitAnchor.duration = 1;
 	self.HitAnchor:Hide();
 end
 
@@ -575,69 +690,43 @@ function BlinkHealth:ConstructHitPoints()
 		self.hitPoint:SetWidth(100);
 		self.hitPoint:SetHeight(80);
 		self.hitPoint:SetPoint("CENTER", self.HitAnchor, "CENTER", 0, 0);
-		
 		self.hitPoint.text = self.hitPoint:CreateFontString(nil, "OVERLAY");
 		self.hitPoint.text:SetFont("Interface\\Addons\\_ShiGuang\\Media\\Fonts\\REDCIRCL.ttf", 43, "OUTLINE");
 		self.hitPoint.text:SetPoint("LEFT", self.HitAnchor, "LEFT", 20, -5);
 		self.hitPoint.text:SetJustifyH("RIGHT");
 		self.hitPoint.text:SetTextColor(1.0, 0.69, 0.0);
 		self.hitPoint.text:SetText("");
-
 		self.hitPoint.hit = self.hitPoint:CreateFontString(nil, "OVERLAY");
 		self.hitPoint.hit:SetFont("Interface\\Addons\\_ShiGuang\\Media\\Fonts\\REDCIRCL.ttf", 14, "OUTLINE");
 		self.hitPoint.hit:SetPoint("BOTTOMLEFT", self.hitPoint.text, "BOTTOMRIGHT", 5, 16);
 		self.hitPoint.hit:SetTextColor(1.0, 0.69, 0.0);
-
-		self.hitPoint.class = select(2, UnitClass("player"))
-
-		self.hitPoint:SetScript("OnEvent", function(frame, event, unit, ...)
-			if ( event == "PLAYER_TARGET_CHANGED" or (event == "UNIT_POWER" and unit == PlayerFrame.unit)) then
-				local point
-				if select(2, UnitClass("player")) == "MONK" then
-					point = UnitPower("player", SPELL_POWER_CHI)
-				else
-					point = UnitPower("player", SPELL_POWER_COMBO_POINTS)
-				end
-				if (point > 0) then			
-					self.hitPoint.text:SetText(point);
-					self.hitPoint.hit:SetText("hit");
-				else
-					self.hitPoint.text:SetText("");
-					self.hitPoint.hit:SetText("");
-				end
-			end
-		end);
 	end	
 end
 
-function BlinkHealth:ShowAnchor()
-	self.anchor:Show();
-end
-function BlinkHealth:ToggleHitPoint(switch)
-	self:ConstructHitPoints();
-	if (switch) then
-		self.hitPoint:RegisterEvent("PLAYER_TARGET_CHANGED");
-		self.hitPoint:RegisterEvent("UNIT_POWER");
-		self.hitPoint:Show();
-		self.Combo:SetAlpha(0);
+function BlinkHealth:ToggleRuneFrameVisible(switch)
+	if (switch) then	
+		self:EnableRune();
+		self:ScheduleTimer("EnableRune", 1);
 	else
-		self.hitPoint:UnregisterEvent("PLAYER_TARGET_CHANGED");
-		self.hitPoint:UnregisterEvent("UNIT_POWER");
-		self.hitPoint:Hide();
-		self.Combo:SetAlpha(1);
+		self:DisableRune();
 	end
 end
 
-function BlinkHealth:ShowHitAnchor()
-	self.HitAnchor:Show();
+function BlinkHealth:ToggleHitPoint(switch)
+	if (switch) then
+		self.hitPoint:Show();
+	else
+		self.hitPoint:Hide();
+	end
 end
+function BlinkHealth:ShowAnchor() self.anchor:Show(); end
+function BlinkHealth:ShowHitAnchor() self.HitAnchor:Show(); end
 
 function BlinkHealth_SlashHandler(msg)
 	local BHT_1 = "输入 /bht on 或 /bht off 开关插件\n";
 	local BHT_2 = "输入 /bht m 调整位置\n";
 	local BHT_3 = "输入 /bht hiton 或 /bht hitoff 是否显示数字连击点数\n";
-	msg = string.lower(msg);
-	local cmdtype, para1 = strsplit(" ", msg)
+	local cmdtype, para1 = strsplit(" ", string.lower(msg))
 	local listSec = 0;
 	if para1 ~= nil then
 		listSec = tonumber(para1);
@@ -648,19 +737,17 @@ function BlinkHealth_SlashHandler(msg)
 			BlinkHealth:ShowAnchor();
 			BlinkHealth:ShowHitAnchor();
   elseif (cmdtype == "hiton") then
-		if (select(2, UnitClass("player")) == "ROGUE" or select(2, UnitClass("player")) == "DRUID" or select(2, UnitClass("player"))  == "MONK")then	
+		if (I.MyClass == "MONK") or (I.MyClass == "PALADIN") or (I.MyClass == "WARLOCK") or (I.MyClass == "MAGE") or (I.MyClass == "ROGUE") or (I.MyClass == "DRUID") then	
 			BlinkHealth:ToggleHitPoint(true);
-		--else
-			--print"此功能只对盗贼、德鲁伊和武僧开放";
 		end			
+		MaoRUISettingDB["BHTHit"] = true;		
 	elseif (cmdtype == "hitoff") then
-		if (select(2, UnitClass("player")) == "ROGUE" or select(2, UnitClass("player")) == "DRUID" or select(2, UnitClass("player"))  == "MONK") then	
+		if (I.MyClass == "MONK") or (I.MyClass == "PALADIN") or (I.MyClass == "WARLOCK") or (I.MyClass == "MAGE") or (I.MyClass == "ROGUE") or (I.MyClass == "DRUID") then
 			BlinkHealth:ToggleHitPoint(false);
-		--else
-			--print"此功能只对盗贼、德鲁伊和武僧开放";
 		end
+		MaoRUISettingDB["BHTHit"] = false;
 	else 
-		DEFAULT_CHAT_FRAME:AddMessage(BHT_1..BHT_2..BHT_3..BHT_4);
+		DEFAULT_CHAT_FRAME:AddMessage(BHT_1..BHT_2..BHT_3);
 	end
 end
 
@@ -669,207 +756,11 @@ function BlinkHealth:OnInitialize()
 	self:CreateAnchorFrame()
 	self:ConstructFrame("player");
 	self:ConstructFrame("target");
-	if (select(2, UnitClass("player"))  == "ROGUE" or select(2, UnitClass("player"))  == "DRUID" or select(2, UnitClass("player"))  == "MONK") then		
-		self:ConstructCombo();
-		self:CreateHitAnchor();	-- 构建连击点
+	if (I.MyClass == "DEATHKNIGHT") then self:ConstructRunes(); BlinkHealth:ToggleRuneFrameVisible(true); end	
+	if (I.MyClass == "MONK") or (I.MyClass == "PALADIN") or (I.MyClass == "WARLOCK") or (I.MyClass == "MAGE") or (I.MyClass == "ROGUE") or (I.MyClass == "DRUID") then		
+		self:ConstructHitPoints();	-- 构建连击点
 	end	
 	self:UpdateUnitFrame();
 	SlashCmdList["BLINKHEALTH"] = BlinkHealth_SlashHandler;
 	SLASH_BLINKHEALTH1 = "/bht";
-	--DEFAULT_CHAT_FRAME:AddMessage("BlinkHealthText已加载，配置命令/bht");
-end
-
---------------Fivecombo-----------------------------------------------
-local enaleAlert = true;
-local OverlayedSpellID = {};
--- 盗贼
-OverlayedSpellID["ROGUE"] = {
-	2098,  --刺骨
-	32645, --毒伤
-	8647,  --破甲
-	5171,  --切割
-	408,   --肾击
-	26679, --致命投掷
-	1943,  --割裂
-	73651, --恢复
-	193316,
-	199804,
-	196819,
-	195452,
-	206237
-};
--- 德鲁伊
-OverlayedSpellID["DRUID"] = {
-	52610,  --野蛮咆哮
-	1079,   --割裂
-	22568,  --割碎
-	22570,  --凶猛撕咬
-};
-local function GetMaxPoints()
-	local MAX_POINTS
-	local _, _, classID = UnitClass("player")
-	if classID == 4 then
-		if IsPlayerSpell(193531) then
-			MAX_POINTS = 6
-		elseif IsPlayerSpell(14983) then
-			MAX_POINTS = 5
-		else
-			MAX_POINTS = 5
-		end
-	elseif classID == 11 then
-		if IsPlayerSpell(202157) or IsPlayerSpell(197490) or IsPlayerSpell(202155) or GetSpecialization() == 2 then
-			MAX_POINTS = 5
-		else
-			MAX_POINTS = 0
-		end
-	else
-		MAX_POINTS = 0
-	end
-	return MAX_POINTS
-end
-local function IsOverlayedSpell(spellID)
-	local _, class = UnitClass("player");
-	if (not OverlayedSpellID[class]) then return false end
-	for i, id in ipairs(OverlayedSpellID[class]) do
-		if (id == spellID) then
-			return true;
-		end
-	end
-	return false;
-end
-local function comboEventFrame_OnUpdate(self, elapsed)
-	local countTime = self.countTime - elapsed;
-	if (countTime <= 0) then
-		local parent = self:GetParent();
-		local points = UnitPower("player", SPELL_POWER_COMBO_POINTS)
-		if (self.isAlert and points ~= GetMaxPoints()) then
-			self:SetScript("OnUpdate", nil);
-			ActionButton_HideOverlayGlow(parent);
-			self.countTime = 0;
-		end
-		self.countTime = TOOLTIP_UPDATE_TIME;
-	end
-end
-local function comboEventFrame_OnEvent(self, event, ...)
-	local parent = self:GetParent();
-	local points = UnitPower("player", SPELL_POWER_COMBO_POINTS)
-	local spellType, id, subType  = GetActionInfo(parent.action);
-	-- 如果是系统自身的提示，就不再处理
-	if ( spellType == "spell" and IsSpellOverlayed(id) ) then
-		return;
-	elseif (spellType == "macro") then
-		local _, _, spellId = GetMacroSpell(id);
-		if ( spellId and IsSpellOverlayed(spellId) ) then
-			return;
-		end		
-	end
-	if (points == 5 and enaleAlert) then		
-		if ( spellType == "spell" and IsOverlayedSpell(id) ) then
-			ActionButton_ShowOverlayGlow(parent);
-			self.isAlert = true;
-			self:SetScript("OnUpdate", comboEventFrame_OnUpdate);
-		elseif ( spellType == "macro" ) then
-			local _, _, spellId = GetMacroSpell(id);
-			if ( spellId and IsOverlayedSpell(spellId) ) then
-				ActionButton_ShowOverlayGlow(parent);
-				self.isAlert = true;
-				self:SetScript("OnUpdate", comboEventFrame_OnUpdate);
-			else
-				ActionButton_HideOverlayGlow(parent);
-			end
-		else
-			ActionButton_HideOverlayGlow(parent);
-		end
-	else
-		ActionButton_HideOverlayGlow(parent);
-	end	
-end
-hooksecurefunc("ActionButton_OnUpdate", function(self, elapsed)
-	if (self.comboAlert) then return end
-	self.comboAlert = true;
-	self.comboEventFrame = CreateFrame("Frame", nil, self);
-	self.comboEventFrame.countTime = 0;
-	self.comboEventFrame:RegisterEvent("UNIT_COMBO_POINTS");
-	self.comboEventFrame:RegisterEvent("PLAYER_TARGET_CHANGED");
-	self.comboEventFrame:SetScript("OnEvent", comboEventFrame_OnEvent);
-end)
-
-function FiveCombo_Toggle(switch)
-	if (switch) then
-		enaleAlert = true;
-	else
-		enaleAlert = false;
-	end
-end
----------------------------------------------------Function-------------------------------------------------
--- 定义配置
-local Simple_Frames,sf = {},{};
--- 框架保存
-local f = CreateFrame("Frame", nil, UIParent);
-f:SetScript("OnUpdate", function(self, elapsed)
-	for frame, _ in pairs(sf) do
-		frame.duration = frame.duration - elapsed;
-		if (frame.duration <= 0) then			
-			Frame_Save(frame, frame.layout_id);
-			sf[frame] = nil;
-		end
-	end
-end);
-function Frame_Save(frame, id)	
-	if (frame and id) then
-		local left = frame:GetLeft();
-		local top = frame:GetTop();
-		local width = frame:GetWidth();
-		local height = frame:GetHeight();	
-		
-		if (left and top and width and height) then
-			Simple_Frames[id] = {};
-			Simple_Frames[id].X = math.floor(left + 0.5);
-			Simple_Frames[id].Y = math.floor(top + 0.5);
-			Simple_Frames[id].W = math.floor(width + 0.5);
-			Simple_Frames[id].H = math.floor(height + 0.5);
-		end
-	end
-end
-
--- 框架读取
-function Frame_Load(frame, id)
-	if (frame and Simple_Frames[id]) then
-		frame:ClearAllPoints();
-		frame:SetPoint("TOPLEFT", "UIParent", "BOTTOMLEFT", Simple_Frames[id].X, Simple_Frames[id].Y);
-		frame:SetWidth(Simple_Frames[id].W);
-		frame:SetHeight(Simple_Frames[id].H);		
-	end
-end
--- 框架悬停大小
-function Frame_StopMovingOrSizing(self)
-	if (self.originalStopMovingOrSizing) then
-		self.originalStopMovingOrSizing(self);
-	end
-	self.duration = 1;
-	sf[self] = true;	
-end
-
--- 框架注册
-function RegisterForSaveFrame(frame, id, no_load)
-	assert(frame ~= nil, "frame must be assigned.");
-	assert(type(frame) == "table", "RegisterForSaveFrame: the first parameter must be frame object.");
-
-	if (not id) then
-		id = frame:GetName();
-	end
-
-	assert(id ~= nil, "The frame has no name, can not be used as default id.");
-
-	frame.layout_id = id;
-
-	if (not frame.rfsf_hooked) then
-		frame.rfsf_hooked = true;
-		frame.originalStopMovingOrSizing = frame.StopMovingOrSizing;
-		frame.StopMovingOrSizing = Frame_StopMovingOrSizing;
-	end
-
-	if (not no_load) then
-		Frame_Load(frame, id);
-	end
 end

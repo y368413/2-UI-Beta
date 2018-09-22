@@ -1,4 +1,4 @@
---[[ $Id: AceGUIWidget-DropDown-Items.lua 1167 2017-08-29 22:08:48Z funkydude $ ]]--
+--[[ $Id: AceGUIWidget-DropDown-Items.lua 1192 2018-07-30 18:03:51Z funkydude $ ]]--
 
 local AceGUI = LibStub("AceGUI-3.0")
 
@@ -31,16 +31,8 @@ local function fixstrata(strata, parent, ...)
 	end
 end
 
--- ItemBase is the base "class" for all dropdown items.
--- Each item has to use ItemBase.Create(widgetType) to
--- create an initial 'self' value. 
--- ItemBase will add common functions and ui event handlers.
--- Be sure to keep basic usage when you override functions.
 
 local ItemBase = {
-	-- NOTE: The ItemBase version is added to each item's version number
-	--       to ensure proper updates on ItemBase changes.
-	--       Use at least 1000er steps.
 	version = 1000,
 	counter = 0,
 }
@@ -84,9 +76,6 @@ function ItemBase.OnRelease(self)
 	self.frame:Hide()
 end
 
--- exported
--- NOTE: this is called by a Dropdown-Pullout.
---       Do not call this method directly
 function ItemBase.SetPullout(self, pullout)
 	self.pullout = pullout
 	
@@ -133,16 +122,10 @@ function ItemBase.SetDisabled(self, disabled)
 	end
 end
 
--- exported
--- NOTE: this is called by a Dropdown-Pullout.
---       Do not call this method directly
 function ItemBase.SetOnLeave(self, func)
 	self.specialOnLeave = func
 end
 
--- exported
--- NOTE: this is called by a Dropdown-Pullout.
---       Do not call this method directly
 function ItemBase.SetOnEnter(self, func)
 	self.specialOnEnter = func
 end
@@ -169,7 +152,7 @@ function ItemBase.Create(type)
 	self.text = text
 
 	local highlight = frame:CreateTexture(nil, "OVERLAY")
-	highlight:SetTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight")
+	highlight:SetTexture(136810) -- Interface\\QuestFrame\\UI-QuestTitleHighlight
 	highlight:SetBlendMode("ADD")
 	highlight:SetHeight(14)
 	highlight:ClearAllPoints()
@@ -182,7 +165,7 @@ function ItemBase.Create(type)
 	check:SetWidth(16)
 	check:SetHeight(16)
 	check:SetPoint("LEFT",frame,"LEFT",3,-1)
-	check:SetTexture("Interface\\Buttons\\UI-CheckBox-Check")
+	check:SetTexture(130751) -- Interface\\Buttons\\UI-CheckBox-Check
 	check:Hide()
 	self.check = check
 
@@ -190,7 +173,7 @@ function ItemBase.Create(type)
 	sub:SetWidth(16)
 	sub:SetHeight(16)
 	sub:SetPoint("RIGHT",frame,"RIGHT",-3,-1)
-	sub:SetTexture("Interface\\ChatFrame\\ChatFrameExpandArrow")
+	sub:SetTexture(130940) -- Interface\\ChatFrame\\ChatFrameExpandArrow
 	sub:Hide()
 	self.sub = sub	
 	
@@ -221,29 +204,6 @@ if IBLib then
 	IBLib.GetItemBase = function() return ItemBase end
 end
 
---[[
-	Template for items:
-	
--- Item:
---
-do
-	local widgetType = "Dropdown-Item-"
-	local widgetVersion = 1
-	
-	local function Constructor()
-		local self = ItemBase.Create(widgetType)
-		
-		AceGUI:RegisterAsWidget(self)
-		return self
-	end
-	
-	AceGUI:RegisterWidgetType(widgetType, Constructor, widgetVersion + ItemBase.version)
-end
---]]
-
--- Item: Header
--- A single text entry.
--- Special: Different text color and no highlight
 do
 	local widgetType = "Dropdown-Item-Header"
 	local widgetVersion = 1
@@ -318,9 +278,6 @@ do
 	AceGUI:RegisterWidgetType(widgetType, Constructor, widgetVersion + ItemBase.version)
 end
 
--- Item: Toggle
--- Some sort of checkbox for dropdown menus.
--- Does not close the pullout on click.
 do
 	local widgetType = "Dropdown-Item-Toggle"
 	local widgetVersion = 4
@@ -378,9 +335,6 @@ do
 	AceGUI:RegisterWidgetType(widgetType, Constructor, widgetVersion + ItemBase.version)
 end
 
--- Item: Menu
--- Shows a submenu on mouse over
--- Does not close the pullout on click
 do
 	local widgetType = "Dropdown-Item-Menu"
 	local widgetVersion = 2

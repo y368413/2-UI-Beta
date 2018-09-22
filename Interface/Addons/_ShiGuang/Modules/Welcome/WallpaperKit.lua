@@ -1,7 +1,8 @@
 ﻿----- Configuration file for Wallpaper_Kit Version 0.3 -----
 --object container
-local M, R, U, I = unpack(select(2, ...))
-local module = MaoRUI:GetModule("Misc")
+local _, ns = ...
+local M, R, U, I = unpack(ns)
+local module = M:GetModule("Misc")
 function module:WallpaperKit()
 if not MaoRUISettingDB["Misc"]["WallpaperKit"] then return end
 local WallpaperKitcfg = {}
@@ -58,7 +59,7 @@ WallpaperKitcfg.aura = {
 -- CENTER CLASSICON
 WallpaperKitcfg.classicon = { size = 21,
   font = "Interface\\Addons\\_ShiGuang\\Media\\Fonts\\RedCircl.ttf",
-	text = "--- |cFFBF00FFMao|r|cFF00DDFFR|r|cffff8800 UI|r ---",
+	text = "--- |cFFFFFF00 2 |r|cFFFF0000 UI|r ---",
 	pos = { point = "BOTTOM", X = 0, Y = 43, },
 }
 -- FACTION ICON
@@ -92,7 +93,7 @@ end
 -- AURA TEXTURE
 if WallpaperKitcfg.show.auratexture then
 WallpaperKit.bg2 = WallpaperKit:CreateTexture(nil,"BACKGROUND",nil,-7)
-WallpaperKit.bg2:SetTexture("") --Interface\\AddOns\\_ShiGuang\\Media\\Modules\\Wallpaper\\AuraWings
+WallpaperKit.bg2:SetTexture("") --WallpaperKitcfg.aura.texture
 if WallpaperKitcfg.aura.classcolor then WallpaperKit.bg2:SetVertexColor(WallpaperKitcfg.color.class.r, WallpaperKitcfg.color.class.g, WallpaperKitcfg.color.class.b, 1)
 else WallpaperKit.bg2:SetVertexColor(unpack(WallpaperKitcfg.aura.color)) end
 WallpaperKit.bg2:SetPoint(WallpaperKitcfg.aura.pos.point, WallpaperKitcfg.aura.pos.X, WallpaperKitcfg.aura.pos.Y)
@@ -112,7 +113,7 @@ end
 -- BOTTOM SHADE
 if WallpaperKitcfg.show.bottomtexture then
 WallpaperKit.bottombg = WallpaperKit:CreateTexture(nil,"BACKGROUND",nil,-5)
-WallpaperKit.bottombg:SetTexture(1,1,1,1)
+WallpaperKit.bottombg:SetColorTexture(1,1,1,1)
 WallpaperKit.bottombg:SetPoint("BOTTOMLEFT")
 WallpaperKit.bottombg:SetPoint("BOTTOMRIGHT")
 WallpaperKit.bottombg:SetHeight(WallpaperKit.h*WallpaperKitcfg.background.bottom.size)

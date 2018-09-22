@@ -1,0 +1,679 @@
+﻿--## Author: nyyr, bsmorgan  ## Version: 8.0.1.2--------------------------------------------
+local M, R, U, I = unpack(select(2, ...))
+-- Module
+----------------------------------------------
+EnchantCheck = LibStub("AceAddon-3.0"):NewAddon("[!]", "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0", "AceTimer-3.0");
+
+----------------------------------------------
+-- Other libs
+----------------------------------------------
+local libItemUpgrade = LibStub("LibItemUpgradeInfo-1.0")
+
+----------------------------------------------
+-- Version
+----------------------------------------------
+EnchantCheck.version = "8.0.1.3"
+EnchantCheck.authors = "nyyr, bsmorgan"
+
+-- Current max level for automated self-checks
+local MAX_LEVEL = 110
+
+-- Setup class colors
+local ClassColor = {
+	["MAGE"] =		"69CCF0",
+	["WARLOCK"] =	"9482C9",
+	["PRIEST"] =	"FFFFFF",
+	["DRUID"] =		"FF7D0A",
+	["SHAMAN"] =	"0070DE",
+	["PALADIN"] =	"F58CBA",
+	["ROGUE"] =		"FFF569",
+	["HUNTER"] =	"ABD473",
+	["WARRIOR"] =	"C79C6E",
+	["DEATHKNIGHT"] = "C41F3B",
+	["MONK"] = 		"00FF96",
+	["DEMONHUNTER"] = "A330C9",
+}
+
+-- What slots need enchants?
+local CheckSlotEnchant = {
+	[INVSLOT_HEAD] = false,
+	[INVSLOT_NECK] = false,
+	[INVSLOT_SHOULDER] = false,
+	[INVSLOT_BACK] = false,
+	[INVSLOT_CHEST] = false,
+	[INVSLOT_BODY] = false, -- shirt
+	[INVSLOT_TABARD] = false,
+	[INVSLOT_WRIST] = false,
+	[INVSLOT_HAND] = false,
+	[INVSLOT_WAIST] = false,
+	[INVSLOT_LEGS] = false,
+	[INVSLOT_FEET] = false,
+	[INVSLOT_FINGER1] = true,
+	[INVSLOT_FINGER2] = true,
+	[INVSLOT_TRINKET1] = false,
+	[INVSLOT_TRINKET2] = false,
+	[INVSLOT_MAINHAND] = true,
+	[INVSLOT_OFFHAND] = true,
+}
+
+-- What slots must have an item?
+local CheckSlotMissing = {
+	[INVSLOT_HEAD] = true,
+	[INVSLOT_NECK] = true,
+	[INVSLOT_SHOULDER] = true,
+	[INVSLOT_BACK] = true,
+	[INVSLOT_CHEST] = true,
+	[INVSLOT_BODY] = false, -- shirt
+	[INVSLOT_TABARD] = false,
+	[INVSLOT_WRIST] = true,
+	[INVSLOT_HAND] = true,
+	[INVSLOT_WAIST] = true,
+	[INVSLOT_LEGS] = true,
+	[INVSLOT_FEET] = true,
+	[INVSLOT_FINGER1] = true,
+	[INVSLOT_FINGER2] = true,
+	[INVSLOT_TRINKET1] = true,
+	[INVSLOT_TRINKET2] = true,
+	[INVSLOT_MAINHAND] = true,
+	[INVSLOT_OFFHAND] = true,
+}
+
+-- Which main-hand weapons require an off-hand item?
+local CheckOffHand = {
+	["Bows"] = false,
+	["弓"] = false,
+	["Crossbows"] = false,
+	["弩"] = false,
+	["Daggers"] = true,
+	["匕首"] = true,
+	["Guns"] = false,
+	["枪械"] = false,
+	["槍械"] = false,
+	["Fishing Poles"] = false,
+	["鱼竿"] = false,
+	["魚竿"] = false,
+	["Fist Weapons"] = true,
+	["拳套"] = true,
+	["Miscellaneous"] = true,
+	["其它"] = true,
+	["其他"] = true,
+	["One-Handed Axes"] = true,
+	["单手斧"] = true,
+	["單手斧"] = true,
+	["One-Handed Maces"] = true,
+	["单手锤"] = true,
+	["單手錘"] = true,
+	["One-Handed Swords"] = true,
+	["单手剑"] = true,
+	["單手劍"] = true,
+	["Polearms"] = false,
+	["长柄武器"] = false,
+	["長柄武器"] = false,
+	["Staves"] = false,
+	["法杖"] = false,
+	["Thrown"] = false,
+	["投掷武器"] = false,
+	["投擲武器"] = false,
+	["Two-Handed Axes"] = false,
+	["双手斧"] = false,
+	["雙手斧"] = false,
+	["Two-Handed Maces"] = false,
+	["双手锤"] = false,
+	["雙手錘"] = false,
+	["Two-Handed Swords"] = false,
+	["双手剑"] = false,
+	["雙手劍"] = false,
+	["Wands"] = true,
+	["魔杖"] = true,
+}
+
+----------------------------------------------
+-- Config options
+----------------------------------------------
+EnchantCheck.defaults = {
+	profile = {
+		enable = true,
+		rescanTimer = 1,
+		rescanCount = 2,
+	},
+}
+
+----------------------------------------------
+-- Debugging levels
+--   0 Off
+--   1 Warning
+--   2 Info
+--   3 Notice
+----------------------------------------------
+local d_warn = 1
+local d_info = 2
+local d_notice = 3
+local debugLevel = d_notice
+
+----------------------------------------------
+--- Init
+----------------------------------------------
+function EnchantCheck:OnInitialize()
+	-- Load our database
+	self.db = LibStub("AceDB-3.0"):New("EnchantCheckDB", EnchantCheck.defaults, "profile")
+
+	--EnchantCheckFrameTitle:SetText("Enchant Check v"..self.version)
+
+	CharacterFrameEnchantCheckButton:SetText(U["BTN_CHECK_ENCHANTS"])
+	InspectFrameEnchantCheckButton:SetText(U["BTN_CHECK_ENCHANTS"])
+	InspectFrameInviteButton:SetText(U["BTN_INVITE"])
+
+	EnchantCheckItemsFrame.titleFont:SetText(U["UI_ITEMS_TITLE"])
+	EnchantCheckGemsFrame.titleFont:SetText(U["UI_GEMS_TITLE"])
+	EnchantCheckEnchantsFrame.titleFont:SetText(U["UI_ENCHANTS_TITLE"])
+
+	if self.db.profile.enable then self:Enable() end
+end
+
+----------------------------------------------
+-- OnEnable()
+----------------------------------------------
+function EnchantCheck:OnEnable()
+	self:RegisterEvent("INSPECT_READY")
+	self:RegisterEvent("UNIT_INVENTORY_CHANGED")
+	self:RegisterEvent("PLAYER_ENTERING_WORLD")
+end
+
+----------------------------------------------
+-- OnDisable()
+----------------------------------------------
+function EnchantCheck:OnDisable()
+	self:UnregisterEvent("INSPECT_READY")
+	self:UnregisterEvent("UNIT_INVENTORY_CHANGED")
+	self:UnregisterEvent("PLAYER_ENTERING_WORLD")
+end
+
+----------------------------------------------
+-- OnConfigUpdate()
+----------------------------------------------
+function EnchantCheck:OnConfigUpdate()
+	-- Enable
+	if (self.db.profile.enable) then
+		if not EnchantCheck:IsEnabled() then EnchantCheck:Enable() end
+	else
+		if EnchantCheck:IsEnabled() then EnchantCheck:Disable() end
+	end
+end
+
+----------------------------------------------
+-- Item link functions
+----------------------------------------------
+function EnchantCheck:GetActualItemLevel(link)
+	if (link) then
+		return libItemUpgrade:GetUpgradedItemLevel(link)
+	else
+		return 0
+	end
+end
+
+function EnchantCheck:GetItemLinkInfo(link)
+	local itemColor, itemString, itemName;
+	if ( link ) then
+		itemColor, itemString, itemName = link:match("(|c%x+)|Hitem:([-%d:]+)|h%[(.-)%]|h|r");
+	end
+	return itemName, itemString, itemColor;
+end
+
+function EnchantCheck:GetItemId(link)
+	local itemId, suffixId;
+	if ( link ) then
+		itemId, suffixId = link:match("item:([-%d]+):[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:([-%d]+)");
+		if ( not itemId ) then
+			itemId = link:match("item:([-%d]+)");
+		end
+	end
+	return itemId, suffixId;
+end
+
+----------------------------------------------
+-- Item string functions
+----------------------------------------------
+function EnchantCheck:StringSplit(separator, value)
+	local fields = {};
+	gsub(value..separator, separator, function(v) table.insert(fields, v) end);
+	return fields;
+end
+
+function EnchantCheck:SplitValue(value)
+	if ( value == "" ) then value = "0" end
+	return tonumber(value)
+end
+
+local gemIds = {};
+function EnchantCheck:GetItemGemString(link)  
+	local _, itemString = self:GetItemLinkInfo(link);
+	local gemString;
+	-- itemId:enchantId:jewelId1:jewelId2:jewelId3:jewelId4:suffixId:uniqueId:linkLevel
+	if ( itemString ) then
+		local ids = self:StringSplit("", itemString);
+		local gemLink, hasGems;
+		for i = 1, 4 do
+			gemIds[i] = "0";
+			if ( ids[i + 2] ~= "0" and ids[i + 2] ~= "" ) then
+				_, gemLink = _G.GetItemGem(link, i);
+				if ( gemLink ) then
+					hasGems = true;
+					gemIds[i] = self:GetItemId(gemLink);
+				end
+			end
+		end
+		if ( hasGems ) then
+			gemString = table.concat(gemIds, "");
+		end
+	end
+	return gemString;
+end
+
+----------------------------------------------
+-- CheckGear(unit)
+----------------------------------------------
+function EnchantCheck:CheckGear(unit, items, iter, printWarnings)
+	local report = {}
+	local warnings = {}
+	local missingItems = {}
+	local missingGems = {}
+	local missingEnchants = {}
+	local missingBlacksmithGems = {}
+	local hasMissingItems, hasMissingEnchants, hasMissingGems, hasMissingBlacksmithGems
+	local hasMissingBeltGem
+	local twoHanded
+	local itemLevelMin = 0
+	local itemLevelMax = 0
+	local itemLevelSum = 0
+	local avgItemLevel = 0
+	local doRescan
+
+	if not items then items = {} end
+	if not iter then iter = 0 end
+
+	self.scanInProgress = true
+	libItemUpgrade:CleanCache()
+
+	-- iterate over equipment slots
+	for i = 1,18 do
+		local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice
+		local item = {}
+		item.id = GetInventoryItemID(unit, i)
+		item.link = GetInventoryItemLink(unit, i)
+		if item.link then
+			itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice = GetItemInfo(item.link)
+		end
+
+		if item.link and itemLink then
+--			print("slot= "..tostring(i)..", itemName= "..tostring(itemName))
+			local printable = gsub(itemLink, "\124", "\124\124");
+--			print("itemLink: \""..printable.."\"")
+			local _, itemString = self:GetItemLinkInfo(item.link)
+--			print("itemString: \""..itemString.."\"")
+			local ids = self:StringSplit("", itemString)
+--			print("#ids= "..tostring(#ids))
+	-- itemId:enchantId:jewelId1:jewelId2:jewelId3:jewelId4:suffixId:uniqueId:linkLevel
+			Enchant = self:SplitValue(ids[2])
+			Gem1 = self:SplitValue(ids[3])
+			Gem2 = self:SplitValue(ids[4])
+			Gem3 = self:SplitValue(ids[5])
+			Gem4 = self:SplitValue(ids[6])
+			LinkLvl= self:SplitValue(ids[9])
+--			print("Enchant= "..tostring(Enchant)..", Gem1= "..tostring(Gem1)..", Gem2= "..tostring(Gem2)..", Gem3= "..tostring(Gem3)..", Gem4= "..tostring(Gem4)..", LinkLvl= "..tostring(LinkLvl))
+
+			-- gems
+			item.gems = 0
+			if Gem1 > 0 then item.gems = item.gems + 1 end
+			if Gem2 > 0  then item.gems = item.gems + 1 end
+			if Gem3 > 0  then item.gems = item.gems + 1 end
+			if Gem4 > 0  then item.gems = item.gems + 1 end
+
+			-- misc
+			item.rarity = itemRarity
+			item.stats = GetItemStats(item.link)
+
+			-- sockets
+			item.sockets =
+				(item.stats['EMPTY_SOCKET_RED'] or 0) +
+				(item.stats['EMPTY_SOCKET_YELLOW'] or 0) +
+				(item.stats['EMPTY_SOCKET_BLUE'] or 0) +
+				(item.stats['EMPTY_SOCKET_META'] or 0) +
+				(item.stats['EMPTY_SOCKET_PRISMATIC'] or 0)
+
+			-- missing gems
+			if item.gems < item.sockets then
+				table.insert(missingGems, i)
+				hasMissingGems = true
+			end
+
+			-- enchant
+			item.enchant = Enchant -- enchant ID
+			if (item.enchant == 0) and CheckSlotEnchant[i] then
+				if (not (libItemUpgrade:IsArtifact(item.link) or (i == INVSLOT_OFFHAND and itemType ~= WEAPON))) then
+					table.insert(missingEnchants, i)
+					hasMissingEnchants = true
+				end
+			end
+
+			-- item level
+			item.level = self:GetActualItemLevel(item.link)
+--			print("slot= "..tostring(i)..", item.level= "..tostring(item.level))
+			if (i ~= INVSLOT_BODY) and (i ~= INVSLOT_TABARD) then
+				if item.level < itemLevelMin or itemLevelMin == 0 then
+					itemLevelMin = item.level
+				end
+				if item.level > itemLevelMax then
+					itemLevelMax = item.level
+				end
+				itemLevelSum = itemLevelSum + item.level
+			end
+
+			-- two-hander?
+			if i == INVSLOT_MAINHAND then
+				twoHanded = not CheckOffHand[itemSubType]
+			end
+
+		elseif item.id then
+			--self:Debug(d_warn, "Item link for ID "..tostring(item.id).." not ready yet!")
+			doRescan = true
+
+		else
+			if CheckSlotMissing[i] and ((i ~= INVSLOT_OFFHAND) or not twoHanded) then
+				table.insert(missingItems, i)
+				hasMissingItems = true
+			end
+
+		end
+
+		items[i] = item
+	end
+
+	if doRescan then
+		if iter < self.db.profile.rescanCount then
+			self.rescanTimer = self:ScheduleTimer("CheckGear", self.db.profile.rescanTimer, unit, items, iter+1)
+			return
+		else
+			self.scanInProgress = nil
+			return
+		end
+	end
+
+	local items_state = true
+	local gems_state = true
+	local enchants_state = true
+
+	-- header
+	table.insert(report, "------------")
+	local displayClass, class = UnitClass(unit)
+	table.insert(report, string.format("|cff00FF00!!!|cffFFFFFF → %s (%d %s):", "|cff"..ClassColor[class]..UnitName(unit).."|cffFFFFFF", UnitLevel(unit), "|cff"..ClassColor[class]..displayClass.."|cffFFFFFF"))
+
+	-- average item level
+	if twoHanded then
+		avgItemLevel = itemLevelSum / 15
+	else
+		avgItemLevel = itemLevelSum / 16
+	end
+	table.insert(report, string.format(U["AVG_ITEM_LEVEL"], floor(avgItemLevel), itemLevelMin, itemLevelMax))
+	EnchantCheckItemsFrame.titleInfoFont:SetText(string.format("%d (%d -> %d)", floor(avgItemLevel), itemLevelMin, itemLevelMax))
+
+	-- check for extremely low item levels
+	for i = 1,18 do
+		if items[i].link then
+			if (items[i].level < avgItemLevel*0.8) and
+				(i ~= INVSLOT_BODY) and (i ~= INVSLOT_TABARD) and
+				(items[i].rarity ~= 7) -- heirloom
+			then
+				table.insert(report, "|cffFF0000"..U["LOW_ITEM_LEVEL"].."|cffFFFFFF "..items[i].link)
+				table.insert(warnings, report[#report])
+				EnchantCheckItemsFrame.messages:AddMessage(report[#report])
+				items_state = false
+			end
+		end
+	end
+
+	-- check for missing items
+	if hasMissingItems then
+		local s = ""
+		for k,i in ipairs(missingItems) do
+			s = s .. U["INVSLOT_"..i]
+			if k < #missingItems then
+				s = s .. ", "
+			end
+		end
+		table.insert(report, "|cffFF0000" .. U["MISSING_ITEMS"] .. "|cffFFFFFF " .. s)
+		table.insert(warnings, report[#report])
+		EnchantCheckItemsFrame.messages:AddMessage(report[#report])
+		items_state = false
+	end
+
+	-- check for missing gems
+	if hasMissingGems then
+		local s = ""
+		for k,i in ipairs(missingGems) do
+			s = s .. U["INVSLOT_"..i]
+			if k < #missingGems then
+				s = s .. ", "
+			end
+		end
+		table.insert(report, "|cffFF0000" .. U["MISSING_GEMS"] .. "|cffFFFFFF " .. s)
+		table.insert(warnings, report[#report])
+		EnchantCheckGemsFrame.messages:AddMessage(report[#report])
+		gems_state = false
+	else
+		table.insert(report, "|cff00FF00" .. U["PROPER_GEMS"] .. "|cffFFFFFF ")
+		EnchantCheckGemsFrame.messages:AddMessage(report[#report])
+	end
+
+	--[[ belt buckle (no longer available in at level 100)
+	if hasMissingBeltGem then
+		table.insert(report, "|cffFFFF00" .. U["MISSING_BELT_BUCKLE"] .. "|cffFFFFFF")
+		table.insert(warnings, report[#report])
+		EnchantCheckGemsFrame.messages:AddMessage(report[#report])
+	end
+	]]
+
+	--[[ check for missing blacksmith gems (no longer available in at level 100)
+	if hasMissingBlacksmithGems then
+		local s = ""
+		for k,i in ipairs(missingBlacksmithGems) do
+			s = s .. U["INVSLOT_"..i]
+			if k < #missingBlacksmithGems then
+				s = s .. ", "
+			end
+		end
+		table.insert(report, "|cffFFFF00" .. U["MISSING_BS_SOCKETS"] .. "|cffFFFFFF " .. s)
+		table.insert(warnings, report[#report])
+		EnchantCheckGemsFrame.messages:AddMessage(report[#report])
+	end
+	]]
+
+	-- check for missing enchants
+	if hasMissingEnchants then
+		local s = ""
+		for k,i in ipairs(missingEnchants) do
+			s = s .. U["INVSLOT_"..i]
+			if k < #missingEnchants then
+				s = s .. ", "
+			end
+		end
+		table.insert(report, "|cffFF0000" .. U["MISSING_ENCHANTS"] .. "|cffFFFFFF " .. s)
+		table.insert(warnings, report[#report])
+		EnchantCheckEnchantsFrame.messages:AddMessage(report[#report])
+		enchants_state = false
+	else
+		table.insert(report, "|cff00FF00" .. U["PROPER_ENCHANTS"] .. "|cffFFFFFF ")
+		EnchantCheckEnchantsFrame.messages:AddMessage(report[#report])
+	end
+
+	-- footer
+	table.insert(report, "------------")
+
+	self:SetCheckFrame(EnchantCheckItemsFrame, items_state)
+	self:SetCheckFrame(EnchantCheckGemsFrame, gems_state)
+	self:SetCheckFrame(EnchantCheckEnchantsFrame, enchants_state)
+
+	-- print to self
+	if printWarnings then
+		for i,v in ipairs(warnings) do self:Print(v) end
+	end
+
+	self.scanInProgress = nil
+end
+
+----------------------------------------------
+-- CheckCharacter()
+----------------------------------------------
+function EnchantCheck:CheckCharacter()
+	if not self.scanInProgress then
+		if EnchantCheckFrame:GetParent() ~= CharacterModelFrame then
+			EnchantCheckFrame:Hide()
+			EnchantCheckFrame:SetParent(CharacterModelFrame)
+			EnchantCheckFrame:ClearAllPoints()
+			EnchantCheckFrame:SetAllPoints()
+		elseif EnchantCheckFrame:IsShown() then
+			EnchantCheckFrame:Hide()
+			return
+		end
+		EnchantCheck:ClearCheckFrame(EnchantCheckItemsFrame)
+		EnchantCheck:ClearCheckFrame(EnchantCheckGemsFrame)
+		EnchantCheck:ClearCheckFrame(EnchantCheckEnchantsFrame)
+		EnchantCheckFrame:Show()
+
+		self:CheckGear("player")
+	end
+end
+
+----------------------------------------------
+-- CheckInspected()
+----------------------------------------------
+function EnchantCheck:CheckInspected()
+	if InspectFrame.unit and CanInspect(InspectFrame.unit) then
+		if not self.scanInProgress then
+			if EnchantCheckFrame:GetParent() ~= InspectModelFrame then
+				EnchantCheckFrame:Hide()
+				EnchantCheckFrame:SetParent(InspectModelFrame)
+				EnchantCheckFrame:ClearAllPoints()
+				EnchantCheckFrame:SetAllPoints()
+			elseif EnchantCheckFrame:IsShown() then
+				EnchantCheckFrame:Hide()
+				return
+			end
+			EnchantCheck:ClearCheckFrame(EnchantCheckItemsFrame)
+			EnchantCheck:ClearCheckFrame(EnchantCheckGemsFrame)
+			EnchantCheck:ClearCheckFrame(EnchantCheckEnchantsFrame)
+			EnchantCheckFrame:Show()
+			NotifyInspect(InspectFrame.unit)
+			self.pendingInspection = true
+		end
+	end
+end
+
+----------------------------------------------
+-- InviteInspected()
+----------------------------------------------
+function EnchantCheck:InviteInspected()
+	if InspectFrame.unit then
+		InviteUnit(UnitName(InspectFrame.unit))
+	end
+end
+
+----------------------------------------------
+-- ClearCheckFrame(frame)
+----------------------------------------------
+function EnchantCheck:ClearCheckFrame(frame)
+	-- clean up
+	frame.titleFont:SetTextColor(1, 1, 0)
+	frame.titleInfoFont:SetText("")
+	frame.readyTex:Hide()
+	frame.notReadyTex:Hide()
+	frame.waitingTex:Show()
+	frame.messages:Clear()
+end
+
+----------------------------------------------
+-- SetCheckFrame(frame, value)
+-- value: nil/false - red, 1/true - green, anything else - yellow
+----------------------------------------------
+function EnchantCheck:SetCheckFrame(frame, value)
+	if value == 1 or value == true then
+		frame.titleFont:SetTextColor(0, 1, 0)
+		frame.readyTex:Show()
+		frame.notReadyTex:Hide()
+		frame.waitingTex:Hide()
+	elseif not value then
+		frame.titleFont:SetTextColor(1, 0, 0)
+		frame.readyTex:Hide()
+		frame.notReadyTex:Show()
+		frame.waitingTex:Hide()
+	else
+		frame.titleFont:SetTextColor(1, 1, 0)
+		frame.readyTex:Hide()
+		frame.notReadyTex:Hide()
+		frame.waitingTex:Show()
+	end
+end
+
+----------------------------------------------
+-- INSPECT_READY()
+----------------------------------------------
+function EnchantCheck:INSPECT_READY(event, guid)
+	-- inspect frame is load-on-demand, add buttons once it is loaded
+	if not InspectFrameEnchantCheckButton:GetParent() and InspectPaperDollFrame then
+		InspectFrameEnchantCheckButton:SetParent(InspectPaperDollFrame)
+		InspectFrameEnchantCheckButton:ClearAllPoints()
+		InspectFrameEnchantCheckButton:SetPoint("LEFT", InspectPaperDollFrame, "BOTTOMLEFT", 10, 20)
+		InspectFrameEnchantCheckButton:Show()
+
+		InspectFrameInviteButton:SetParent(InspectPaperDollFrame)
+		InspectFrameInviteButton:ClearAllPoints()
+		InspectFrameInviteButton:SetPoint("RIGHT", InspectPaperDollFrame, "BOTTOMRIGHT", -12, 20)
+		InspectFrameInviteButton:Show()
+
+		self:HookScript(InspectFrame, "OnHide", "InspectFrame_OnHide")
+
+		--self:Debug(d_notice, "Added inspect buttons")
+	end
+
+	--self:Debug(d_notice, "INSPECT_READY")
+
+	if self.pendingInspection and (UnitGUID(InspectFrame.unit) == guid) then
+		if EnchantCheckFrame:IsShown() then
+			self:CheckGear(InspectFrame.unit)
+		end
+		self.pendingInspection = nil
+	end
+end
+
+----------------------------------------------
+-- UNIT_INVENTORY_CHANGED()
+----------------------------------------------
+function EnchantCheck:UNIT_INVENTORY_CHANGED(event, unit)
+	if EnchantCheckFrame:IsShown() then
+		EnchantCheckFrame:Hide()
+		EnchantCheck:ClearCheckFrame(EnchantCheckItemsFrame)
+		EnchantCheck:ClearCheckFrame(EnchantCheckGemsFrame)
+		EnchantCheck:ClearCheckFrame(EnchantCheckEnchantsFrame)
+	end
+end
+
+----------------------------------------------
+-- InspectFrame_OnHide()
+----------------------------------------------
+function EnchantCheck:InspectFrame_OnHide()
+	if EnchantCheckFrame:IsShown() then
+		EnchantCheckFrame:Hide()
+		EnchantCheck:ClearCheckFrame(EnchantCheckItemsFrame)
+		EnchantCheck:ClearCheckFrame(EnchantCheckGemsFrame)
+		EnchantCheck:ClearCheckFrame(EnchantCheckEnchantsFrame)
+	end
+end
+
+----------------------------------------------
+-- PLAYER_ENTERING_WORLD()
+----------------------------------------------
+function EnchantCheck:PLAYER_ENTERING_WORLD(event)
+	local inInstance, instanceType = IsInInstance()
+	if inInstance and (instanceType ~= "none") and (UnitLevel("player") == MAX_LEVEL) then
+		self:CheckGear("player", nil, nil, true)
+	end
+end

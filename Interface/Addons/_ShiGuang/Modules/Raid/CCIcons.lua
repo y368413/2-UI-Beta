@@ -1,12 +1,5 @@
-local select = select
-local GetTime = GetTime
-local GetSpellInfo = GetSpellInfo
-local IsInInstance = IsInInstance
-local EventFrame = CreateFrame("Frame")
 
--- Dump debuffs on target
--- /run for i = 1, 40 do local n, _, _, _, _,_, _, _, _, _, id = UnitDebuff("target", i); if n then print(n, id) end end
-
+local CCIconsFrame = CreateFrame("Frame")
 local Database = {
 	-- Death Knight
 	[115001] = 6, -- Remorseless Winter
@@ -46,7 +39,6 @@ local Backdrop = {
 
 local CheckInstance = function(self)
 	local InInstance, InstanceType = IsInInstance()
-	
 	if (InInstance and InstanceType == "party") then
 		self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 	else
@@ -55,10 +47,7 @@ local CheckInstance = function(self)
 end
 
 local OnMouseUp = function(self, button)
-	if self.Locked then
-		return
-	end
-	
+	if self.Locked then return end	
 	if (button == "RightButton") then
 		self:ClearAllPoints()
 		self:SetPoint("CENTER", UIParent, "CENTER", 0, -120)
@@ -86,7 +75,7 @@ IconFrame.Icon:SetPoint("BOTTOMRIGHT", IconFrame, -1, 1)
 IconFrame.Icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 
 IconFrame.Text = IconFrame:CreateFontString(nil, "OVERLAY")
-IconFrame.Text:SetFont("Interface\\Addons\\_ShiGuang\\Media\\Fonts\\Loli.ttf", 14, "OUTLINE")
+IconFrame.Text:SetFont("Interface\\Addons\\_ShiGuang\\Media\\Fonts\\Loli.ttf", 16, "OUTLINE")
 IconFrame.Text:SetPoint("TOP", IconFrame, "BOTTOM", 0, -5)
 
 IconFrame.CD = CreateFrame("Cooldown", "CCIconsCooldown", IconFrame, "CooldownFrameTemplate")
@@ -97,7 +86,6 @@ local NumRegions = IconFrame.CD:GetNumRegions()
 
 for i = 1, NumRegions do
 	local Region = select(i, IconFrame.CD:GetRegions())
-	
 	if Region.GetText then
 		Region:SetFont("Interface\\Addons\\_ShiGuang\\Media\\Fonts\\Loli.ttf", 18, "OUTLINE")
 		Region:SetPoint("CENTER", 1, 0)
@@ -107,9 +95,7 @@ end
 
 local OnUpdate = function(self, elapsed)
 	self.Alpha = (self.Alpha - elapsed * 1.8)
-	
 	self:SetAlpha(self.Alpha)
-	
 	if (self.Alpha <= 0) then
 		self:SetScript("OnUpdate", nil)
 		self:Hide()
@@ -118,20 +104,16 @@ local OnUpdate = function(self, elapsed)
 	end
 end
 
-function EventFrame:PLAYER_ENTERING_WORLD()
+function CCIconsFrame:PLAYER_ENTERING_WORLD()
 	CheckInstance(self)
 end
 
-function EventFrame:COMBAT_LOG_EVENT_UNFILTERED(timestamp, event, hide, sourceguid, sourcename, sourceflags, sourcerf, destguid, destname, destflags, destrf, id, name)
+function CCIconsFrame:COMBAT_LOG_EVENT_UNFILTERED(timestamp, event, hide, sourceguid, sourcename, sourceflags, sourcerf, destguid, destname, destflags, destrf, id, name)
 	if (event == "SPELL_AURA_APPLIED") and Database[id] then
 		IconFrame.Icon:SetTexture(GetSpellTexture(id))
 		IconFrame.Text:SetText(name)
 		IconFrame.CD:SetCooldown(GetTime(), Database[id])
-		
-		if (not IconFrame:IsVisible()) then
-			IconFrame:Show()
-		end
-		
+		if (not IconFrame:IsVisible()) then IconFrame:Show() end
 		if IconFrame:GetScript("OnUpdate") then
 			IconFrame:SetScript("OnUpdate", nil)
 			IconFrame:SetAlpha(1)
@@ -144,8 +126,8 @@ function EventFrame:COMBAT_LOG_EVENT_UNFILTERED(timestamp, event, hide, sourcegu
 	end
 end
 
-EventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-EventFrame:SetScript("OnEvent", function(self, event, ...)
+CCIconsFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+CCIconsFrame:SetScript("OnEvent", function(self, event, ...)
 	self[event](self, ...)
 end)
 

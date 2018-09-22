@@ -1,8 +1,7 @@
 ﻿<Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="WorldMap.lua"/>
+	<Script file="MapReveal.lua"/>
 	<Script file="Minimap.lua"/>
 	<Script file="TidyMinimap.lua"/>
-	<Script file="WorldMap.lua"/>
-	<Script file="Foglight.lua"/>
-	<Script file="WorldFlightMap.lua"/>
-	<Script file="SuramarPortalHelper.lua"/>
+	<Script file="DazarAlorTotems.lua"/>
 </Ui>

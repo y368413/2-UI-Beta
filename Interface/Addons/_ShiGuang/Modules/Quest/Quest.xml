@@ -1,11 +1,9 @@
-﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
-..\FrameXML\UI.xsd">
-	<Script file="Mingy.lua"/>
-	<Script file="CompletedTip.lua"/>
-	<Script file="QuestLevelPatch.lua"/>
+﻿<Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="OneChoice.lua"/>
 	<Script file="DarkmoonFaire.lua"/>
 	<Script file="ExtraQuestButton.lua"/>
 	<Script file="QuickQuest.lua"/>
+	<Script file="QuestNotifier.lua"/>
 	<Script file="QuestPlates.lua"/>
 	<Script file="ObjectiveTracker.lua"/>
 </Ui>

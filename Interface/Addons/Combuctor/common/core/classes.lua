@@ -4,44 +4,33 @@
 --]]
 
 local ADDON, Addon = ...
-local Mixins = {'RegisterEvent', 'UnregisterEvent', 'UnregisterEvents', 'RegisterMessage', 'UnregisterMessage', 'UnregisterMessages', 'SendMessage'}
-local Messages = {}
+local Mixins = {
+	'RegisterEvent', 'UnregisterEvent', 'UnregisterAllEvents',
+	'RegisterMessage', 'UnregisterMessage', 'UnregisterAllMessages', 'SendMessage',
+	'RegisterSignal', 'UnregisterSignal', 'UnregisterSignals', 'SendSignal'
+}
 
-LibStub('AceEvent-3.0'):Embed(Messages)
-LibStub('AceAddon-3.0'):NewAddon(Addon, ADDON)
-Addon.Cache = LibStub('LibItemCache-1.1')
+LibStub('AceAddon-3.0'):NewAddon(Addon, ADDON, 'AceEvent-3.0')
 _G[ADDON] = Addon
 
 
 --[[ Messaging ]]--
 
-function Addon:RegisterMessage(msg, call, ...)
-	Messages.RegisterMessage(self, 'BAGNON_' .. msg, call or msg, ...)
+function Addon:RegisterSignal(msg, call, ...)
+	self:RegisterMessage(ADDON .. msg, call or msg, ...)
 end
 
-function Addon:UnregisterMessage(msg)
-	Messages.UnregisterMessage(self, 'BAGNON_' .. msg)
+function Addon:UnregisterSignal(msg)
+	self:UnregisterMessage(ADDON .. msg)
 end
 
-function Addon:SendMessage(msg, ...)
-	Messages.SendMessage(self, 'BAGNON_' .. msg, ...)
+function Addon:SendSignal(msg, ...)
+	self:SendMessage(ADDON .. msg, ...)
 end
 
-function Addon:RegisterEvent(...)
-	Messages.RegisterEvent(self, ...)
-end
-
-function Addon:UnregisterEvent(...)
-	Messages.UnregisterEvent(self, ...)
-end
-
-function Addon:UnregisterMessages()
-	Messages.UnregisterAllMessages(self)
-end
-
-function Addon:UnregisterEvents()
-	Messages.UnregisterAllEvents(self)
-	Messages.UnregisterAllMessages(self)
+function Addon:UnregisterSignals()
+	self:UnregisterAllMessages()
+	self:UnregisterAllEvents()
 end
 
 
@@ -61,16 +50,16 @@ function Addon:NewClass(name, type, parent)
 			return setmetatable(obj, self)
 		end
 
-		class.RegisterFrameMessage = function(self, msg, ...)
-			self:RegisterMessage(self:GetFrameID() .. msg, ...)
+		class.RegisterFrameSignal = function(self, msg, ...)
+			self:RegisterSignal(self:GetFrameID() .. msg, ...)
 		end
 
-		class.UnregisterFrameMessage = function(self, msg, ...)
-			self:UnregisterMessage(self:GetFrameID() .. msg, ...)
+		class.UnregisterFrameSignal = function(self, msg, ...)
+			self:UnregisterSignal(self:GetFrameID() .. msg, ...)
 		end
 
-		class.SendFrameMessage = function(self, msg, ...)
-			self:SendMessage(self:GetFrameID() .. msg, ...)
+		class.SendFrameSignal = function(self, msg, ...)
+			self:SendSignal(self:GetFrameID() .. msg, ...)
 		end
 
 		class.GetFrameID = function(self)
@@ -83,9 +72,18 @@ function Addon:NewClass(name, type, parent)
 			return frame and frame:GetProfile()
 		end
 
-		class.GetPlayer = function(self)
+		class.GetBaseProfile = function(self)
 			local frame = self:GetFrame()
-			return frame and frame:GetPlayer()
+			return frame and frame:GetBaseProfile()
+		end
+
+		class.GetOwner = function(self)
+			local frame = self:GetFrame()
+			return frame and frame:GetOwner()
+		end
+
+		class.GetOwnerInfo = function(self)
+			return LibStub('LibItemCache-2.0'):GetOwnerInfo(self:GetOwner())
 		end
 
 		class.IsCached = function(self)

@@ -1,12 +1,9 @@
 local Talentless = CreateFrame('Frame', 'Talentless', UIParent)
 Talentless:RegisterEvent('ADDON_LOADED')
-Talentless:SetScript('OnEvent', function(self, event, ...)
-	self[event](self, ...)
-end)
+Talentless:SetScript('OnEvent', function(self, event, ...) self[event](self, ...) end)
 function Talentless:PLAYER_LEVEL_UP(level)
 	if(level == 101) then table.remove(self.Items[1].items, 1)
-	elseif(level == 110) then table.remove(self.Items[2].items, 1)
-		self:UnregisterEvent('PLAYER_LEVEL_UP')
+	elseif(level == 110) then table.remove(self.Items[2].items, 1) self:UnregisterEvent('PLAYER_LEVEL_UP')
 	end
 	if(self:IsShown()) then self:UpdateItems() end
 end
@@ -16,7 +13,15 @@ function Talentless:UNIT_AURA()
 		for _, Button in next, self.Items do
 			local itemName = Button.itemName
 			if(itemName) then
-				local exists, _, _, _, _, duration, expiration = UnitAura('player', itemName)
+				local exists, name, duration, expiration, _
+				for index = 1, 40 do
+					name, _, _, _, duration, expiration = UnitAura('player', index)
+					exists = name == itemName
+					if(not name or exists) then
+						break
+					end
+				end
+
 				if(exists) then
 					if(expiration > 0) then
 						Button.Cooldown:SetCooldown(expiration - duration, duration)
@@ -32,9 +37,7 @@ function Talentless:UNIT_AURA()
 	end
 end
 
-function Talentless:BAG_UPDATE_DELAYED()
-	self:UpdateItems()
-end
+function Talentless:BAG_UPDATE_DELAYED() self:UpdateItems() end
 
 function Talentless.OnShow()
 	Talentless:RegisterUnitEvent('UNIT_AURA', 'player')
@@ -74,25 +77,22 @@ function Talentless:CreateItemButtons()
 	end
 
 	local items = {
-		{
-			141641, -- Codex of the Clear Mind
+		{ 141641, -- Codex of the Clear Mind
 			141333, -- Codex of the Tranquil Mind
-		}, {
-			141640, -- Tome of the Clear Mind
+		}, { 141640, -- Tome of the Clear Mind
 			143785, -- Tome of the Tranquil Mind (BoP version)
 			141446, -- Tome of the Tranquil Mind
 		}
 	}
 
-	local playerLevel = UnitLevel('player')
-	if(playerLevel > 100) then table.remove(items[1], 1)
-	if(playerLevel > 109) then table.remove(items[2], 1) end
+	if(UnitLevel('player') > 100) then table.remove(items[1], 1)
+	if(UnitLevel('player') > 109) then table.remove(items[2], 1) end
 	end
 
 	for index, items in next, items do
 		local Button = CreateFrame('Button', '$parentItemButton' .. index, self, 'SecureActionButtonTemplate, ActionBarButtonSpellActivationAlert')
-		Button:SetPoint('TOPRIGHT', PlayerTalentFrame, -10 - (40 * (index - 1)), -25)
-		Button:SetSize(34, 34)
+		Button:SetPoint('TOPLEFT', PlayerTalentFrame, -20 + (40 * (index + 1)), -23.5)
+		Button:SetSize(35, 35)
 		Button:SetAttribute('type', 'item')
 		Button:SetScript('OnEnter', OnEnter)
 		Button:SetScript('OnEvent', OnEvent)

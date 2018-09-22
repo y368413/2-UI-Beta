@@ -1,5 +1,5 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
-..\FrameXML\UI.xsd">
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+
 	<Script file="DEXoptions.lua"/>
 	<!-- CHECKBUTTON TEMPLATE -->
 	<CheckButton name="DEXCheckTemplate" inherits="UICheckButtonTemplate" virtual="true">
@@ -450,7 +450,7 @@
 					</Anchor>
 				</Anchors>
 			</Frame>
-			<Button name="$ParentDropDownCats" inherits="L_UIDropDownMenuTemplate">
+			<Button name="$ParentDropDownCats" inherits="UIDropDownMenuTemplate">
 				<Layers>
 					<Layer level="BACKGROUND">
 						<FontString name="$parentLabel" inherits="GameFontNormalSmall" text="DEXColorMode_T">

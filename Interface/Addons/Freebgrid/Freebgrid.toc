@@ -1,9 +1,12 @@
-## Interface: 70300
+## Interface: 80000
 ## Title: |cff70C0F5Freebgrid|r
 ## Title-zhCN:|cff8000ff[治疗]|r团队框架
 ## Title-zhTW:|cff0080ff[治療]|r团队框架
+## Notes: Fix by monkey5206 (Truly Thanks) 
+## Notes-zhCN: Freebgrid团队框架插件，小而强悍。
+## Notes-zhTW: Freebgrid團隊框架外掛程式，小而強悍。
 ## Author: Freebaser
-## Version: 7.1
+## Version: 8.0
 ## SavedVariables: FreebgridDB
 ## Dependencies: _ShiGuang
 ## X-LoadOn-Slash: /freeb

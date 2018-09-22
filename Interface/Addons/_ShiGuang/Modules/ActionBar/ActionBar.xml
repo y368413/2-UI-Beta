@@ -1,5 +1,4 @@
-﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
-..\FrameXML\UI.xsd">
+﻿<Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="bars\fader.lua"/>
 	<Script file="bars\bar1.lua"/>
 	<Script file="bars\bar2.lua"/>
@@ -14,9 +13,12 @@
 
 	<Script file="ButtonRange.lua"/>
 	<Script file="Keybind.lua"/>
-	<Script file="Style.lua"/>
+	<Script file="ButtonStyle.lua"/>
 	<Script file="Cooldown.lua"/>
 	
-	<Script file="TuExp.lua"/>
+	<Script file="ExpRep.lua"/>
 	<Script file="FlyoutBindings.lua"/>
+	
+	<Script file="Bags.lua"/>
+	<Script file="BagsFilters.lua"/>
 </Ui>

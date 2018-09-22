@@ -1,9 +1,10 @@
-local M, R, U, I = unpack(select(2, ...))
-local Bar = MaoRUI:GetModule("Actionbar")
+local _, ns = ...
+local M, R, U, I = unpack(ns)
+local Bar = M:GetModule("Actionbar")
 local cfg = R.bars.petbar
-local padding, margin = 2, 3
 
 function Bar:CreatePetbar()
+	local padding, margin = 2, 3
 	local num = NUM_PET_ACTION_SLOTS
 	local buttonList = {}
 
@@ -18,7 +19,7 @@ function Bar:CreatePetbar()
 	else
 		frame.Pos = {"BOTTOM", UIParent, "BOTTOM", 100, 90}
 	end
-	frame:SetScale(cfg.scale)
+	frame:SetScale(MaoRUISettingDB["Actionbar"]["ActionbarScale"])
 
 	--move the buttons into position and reparent them
 	PetActionBarFrame:SetParent(frame)
@@ -53,6 +54,6 @@ function Bar:CreatePetbar()
 
 	--create the mouseover functionality
 	if cfg.fader then
-		MaoRUI.CreateButtonFrameFader(frame, buttonList, cfg.fader)
+		M:CreateButtonFrameFader(frame, buttonList, cfg.fader)
 	end
 end

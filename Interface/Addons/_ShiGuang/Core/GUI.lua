@@ -1,4 +1,5 @@
-﻿local M, R, U, I = unpack(select(2, ...))
+﻿local _, ns = ...
+local M, R, U, I = unpack(ns)
 
 -- Default Settings
 local defaultSettings = {
@@ -11,21 +12,41 @@ local defaultSettings = {
 		Cooldown = true,
 		DecimalCD = true,
 		Styles = 6,
-		Bar4Fade = false,
-		Bar5Fade = false,
+		Bar4Fades = false,
+		Bar5Fades = false,
+		ActionbarScale = 1,
+	},
+	Bags = {
+		Enable = true,
+		BagsScale = 0.9,
+		IconSize = 34,
+		BagsWidth = 10,
+		BankWidth = 16,
+		BagsiLvl = true,
+		BagsiLvlcolor = false,
+		Artifact = true,
+		NewItemGlow = true,
+		ReverseSort = true,
+		ItemFilter = true,
+		ItemSetFilter = false,
 	},
 	Auras = {
 		Reminder = true,
 		Stagger = true,
 		BloodyHell = true,
 		Totems = true,
+		PortalMage = true,
 		DestroyTotems = true,
-		Marksman = true,
+		HunterTool = true,
 		Statue = true,
+		BlinkComboHelper = true,
+		EnergyBar = true,
+		ClassRecourePlace = true,
 	},
 	AuraWatch = {
 		Enable = true,
-		Hint = true,
+		ClickThrough = false,
+		IconScale = 1,
 	},
 	Chat = {
 		Sticky = false,
@@ -35,7 +56,9 @@ local defaultSettings = {
 		Invite = true,
 		Keyword = "2",
 		GuildInvite = false,
+		EnableFilter = true,
 		Matches = 1,
+		BlockAddonAlert = true,
 	},
 	Map = {
 		Coord = true,
@@ -43,6 +66,7 @@ local defaultSettings = {
 		MapScale = 1.1,
 		MinmapScale = 1.4,
 		WhoPings = true,
+		MapReveal = false,
 	},
 	Nameplate = {
 		Enable = true,
@@ -64,9 +88,18 @@ local defaultSettings = {
 	Skins = {
 		DBM = true,
 		Skada = false,
-		Bigwigs = false,
-		CastBar = false,
+		Bigwigs = true,
+		TMW = true,
+		PetBattle = true,
+		CastBarstyle = true,
 		QuestTrackerSkinTitle = true,
+		WeakAuras = true,
+	},
+	Tooltip = {
+		CombatHide = true,
+		Cursor = true,
+		TargetBy = true,
+		TooltipScale = 1,
 	},
 	Misc = {
 		Mail = true,
@@ -88,38 +121,46 @@ local defaultSettings = {
 		PetFilter = true,
 		--FriendGroups = true,
 		AchievementPrintScreen = true,
-		TuBar = true,
 		AltTabLfgNotification = false,
 		CrazyCatLady = true,
 		SpellNotReadyYet = true,
 		DoomCooldownPulse = true,
-		nPower = true,
-		ClassRecourePlace = true,
 		WallpaperKit = true,
 		AutoReagentBank = true,
-		kAutoOpen = false,
+		kAutoOpen = true,
 		AutoConfirmRoll = false,
 		Saycast = true,
 		OmniCC = true,
+		AutoMark = true,
+		QuestNotifier = true,
+		QuestSchedule = false,
+		xMerchant = true,
+		FreeMountCD = true,
+		WorldQusetRewardIcon = false,
+		EXPTracker = true,
 	},
 	Settings = {
 		LockUIScale = false,
-		SetScale = .8,
-		GUIScale = 0.9,
+		UIScale = .8,
+		--GUIScale = 0.9,
 		PlayerFrameScale = 0.9,
 		Format = 2,
 		UFPctText = true,
 		UFClassIcon = false,
 		UFFade = false,
 	},
+	Tutorial = {
+		Complete = false,
+	},
 }
 
-MaoRUI:EventFrame("ADDON_LOADED"):SetScript("OnEvent", function(self, event, addon)
+local loader = CreateFrame("Frame")
+loader:RegisterEvent("ADDON_LOADED")
+loader:SetScript("OnEvent", function(self, _, addon)
 	if addon ~= "_ShiGuang" then return end
-	self:UnregisterEvent("ADDON_LOADED")
-	if not MaoRUISettingDB["LEGION"] then
+	if not MaoRUISettingDB["BFA"] then
 		MaoRUISettingDB = {}
-		MaoRUISettingDB["LEGION"] = true
+		MaoRUISettingDB["BFA"] = true
 	end
 
 	for i, j in pairs(defaultSettings) do
@@ -134,6 +175,7 @@ MaoRUI:EventFrame("ADDON_LOADED"):SetScript("OnEvent", function(self, event, add
 			if MaoRUISettingDB[i] == nil then MaoRUISettingDB[i] = j end
 		end
 	end
+	self:UnregisterAllEvents()
 end)
 
 -- Config
@@ -150,23 +192,26 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 	  {1, "Settings", "LockUIScale", U["Lock UIScale"]},
 	  {1, "Chat", "Lock", U["Lock Chat"], true},
 	  {1, "Map", "Clock", U["Minimap Clock"], true, true},
-		{3, "Settings", "SetScale", U["Setup UIScale"], false, false, {.6, 1.1, 2}},
-		{3, "Settings", "PlayerFrameScale", U["PlayerFrame Scale"], true, false, {0.6, 1.2, 1}}, --{3, "Settings", "GUIScale", "设置面板缩放", true, false, {.6, 1.2, 1}},
-		{3, "Map", "MapScale", U["Map Scale"], true, true, {0.8, 1.6, 1}},
+	  {3, "Settings", "UIScale", U["Setup UIScale"], false, false, {.6, 1.1, 2}},
+	  --{3, "Settings", "GUIScale", U["Setup GUIScale"], true, false, {.6, 1.2, 1}},
+	  {3, "Settings", "PlayerFrameScale", U["PlayerFrame Scale"], true, false, {0.6, 1.2, 1}},
+	  {3, "Map", "MapScale", U["Map Scale"], true, true, {0.8, 1.6, 1}},
 	  {},--blank
 	  {1, "Map", "Coord", U["Map Coords"]},
-		{1, "Auras", "Reminder", U["Enable Reminder"], true},
-		{1, "Auras", "Familiar", U["Enable Familiar"], true, true},
+	  {1, "Map", "MapReveal", U["Map Reveal"], true},
+		{1, "Auras", "Reminder", U["Enable Reminder"], true, true},
 		{1, "Auras", "Stagger", U["Enable Stagger"]},
 		{1, "Auras", "Statue", U["Enable Statue"], true},
 		{1, "Auras", "BloodyHell", U["Enable BloodyHell"], true, true},
 		{1, "Auras", "Totems", U["Enable Totems"]},
+		{1, "Auras", "PortalMage", U["Enable Familiar"], true},
+		{1, "Auras", "HunterTool", U["Enable Marksman"], true, true},
+		{1, "Auras", "BlinkComboHelper", U["Enable BlinkComboHelper"]},
 		{1, "Auras", "DestroyTotems", U["Destroy Totems"], true},
-		{1, "Auras", "Marksman", U["Enable Marksman"], true, true},
-		{},--blank
-		{1, "Misc", "kAutoOpen", U["kAutoOpen"]},
-		{1, "Misc", "QuickQueue", U["QuickQueue"], true},
-		{1, "Misc", "AutoConfirmRoll", U["AutoConfirmRoll"], true, true},
+		{1, "Misc", "WorldQusetRewardIcon", U["WorldQusetRewardIcon"], true, true},
+	  {1, "Auras", "EnergyBar", U["Class EnergyBar"]},
+	  {1, "Auras", "ClassRecourePlace", U["Class Recoure Center"], true},
+	  {1, "Misc", "FreeMountCD", "CD君(CN only)", true, true},
 	},
 	[2] = {
 		{1, "Nameplate", "Enable", U["Enable Nameplate"]},
@@ -194,13 +239,13 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "Misc", "SoloInfo", U["SoloInfo"]},
 		{1, "Misc", "RareAlerter", U["Rare Alert"], true},
 		{1, "Misc", "AlertinChat", U["Alert In Chat"], true, true},
-		{1, "Misc", "Interrupt", "通报打断\偷取\驱散"},
-	  {1, "Misc", "InterruptSound", "打断音效", true,},
-	  {1, "Misc", "CrazyCatLady", "!死亡爽翻天惨叫!", true, true},
+		{1, "Misc", "Interrupt", U["Yell Interrupt"]},
+	  {1, "Misc", "InterruptSound", U["Interrupt Alarm"], true,},
+	  {1, "Misc", "CrazyCatLady", U["Death Alarm"], true, true},
 		{},--blank
 		{1, "Misc", "Focuser", U["Easy Focus"]},
 		{1, "Misc", "HideTalking", U["No Talking"], true},
-		{4, "Settings", "Format", "数字缩写格式", true, true, {"标准模式：b/m/k", "中式：亿/万", "显示具体数值"}},
+		{4, "Settings", "Format", U["Numberize"], true, true, {U["Number Type1"], U["Number Type2"], U["Number Type3"]}},
 				--{1, "Misc", "FriendGroups", U["FriendGroups"]},
 		{1, "Chat", "Invite", U["Whisper Invite"]},
 		{1, "Chat", "GuildInvite", U["Guild Invite Only"], true},	
@@ -210,48 +255,59 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 	},
 	[4] = {
 		{1, "AuraWatch", "Enable", U["Enable AuraWatch"]},
-		{1, "AuraWatch", "Hint", U["AuraWatch Tooltip"], true},
-		{1, "Misc", "AchievementPrintScreen", "跳成就时候截图", true, true},
-		{1, "Misc", "TuBar", "技能栏"},
-		{1, "Misc", "SpellNotReadyYet", "技能CD中提醒", true},
-	  {1, "Misc", "DoomCooldownPulse", "技能CD完成提示", true, true},
-	  {1, "Misc", "nPower", "职业能量条"},
-	  {1, "Misc", "ClassRecourePlace", "职业资源居中", true, true},
-	  {1, "Misc", "OmniCC", "技能栏CD计时数字", true},
-	  	  {},--blank
-	  {1, "Misc", "AltTabLfgNotification", "M语自己提醒"},
-	  {1, "Misc", "Saycast", "大技能喊话", true},
-	  {1, "Misc", "AutoReagentBank", "材料自动存银行", true, true},
+		{1, "AuraWatch", "ClickThrough", U["AuraWatch Tooltip"], true},
+		{1, "Misc", "AchievementPrintScreen", U["Achievement PrintScreen"], true, true},
+		{1, "Misc", "SpellNotReadyYet", U["Spell Not Ready"]},
+	  {1, "Misc", "DoomCooldownPulse", U["Doom Cooldown"], true},
+	  {1, "Misc", "OmniCC", U["OmniCC"], true, true},
+	  {1, "Misc", "WallpaperKit", U["WallpaperKit"]},
+	  {1, "Misc", "xMerchant", U["xMerchant"], true},
+	  {},--blank
+	  --{1, "Misc", "AltTabLfgNotification", "M语自己提醒"},
+	  --{1, "Misc", "Saycast", "大技能喊话", true},
 	  --{1, "Skins", "Skada", "Skada Skin", true},
 	  --{1, "Skins", "Bigwigs", "Bigwigs Skin", true, true},
-	  {1, "Settings", "UFClassIcon", "使用职业头像"},
-	  {1, "Settings", "UFPctText", "使用大血量百分比", true},
-	  {1, "Skins", "CastBar", "使用系统默认施法条", true, true},
-	  {1, "Chat", "Sticky", "启用密语粘滞"},
-	  {1, "Chat", "Chatbg", "聊天框背景", true},
-	  {1, "Chat", "Chattabbg", "聊天框标签背景", true, true},
-	  {1, "Skins", "QuestTrackerSkinTitle", "任务栏职业染色"},
-	  {1, "Misc", "WallpaperKit", "屏保", true},
-		--{1, "Chat", "Timestamp", "Timestamp", true, true},
+	  {1, "Settings", "UFClassIcon", U["UFClassIcon"]},
+	  {1, "Settings", "UFPctText", U["UFPctText"], true},
+	  {1, "Bags", "Enable", U["Enable Bags"], true, true},
+	  {1, "Chat", "Sticky", U["Chat Sticky"]},
+	  {1, "Chat", "Chatbg", U["Chat bg"], true},
+	  {1, "Chat", "Chattabbg", U["Chat tab bg"], true, true},
+	  {1, "Skins", "QuestTrackerSkinTitle", U["QuestTrackerSkinTitle"]},
+	  {1, "Misc", "AutoReagentBank", U["Auto Reagent Bank"], true},
+	  {1, "Misc", "AutoMark", U["Auto Mark"], true, true},
 		--{3, "Chat", "Matches", "Keyword Match", true, true, {1, 3, 0}},
+				--{},--blank
+		{1, "Misc", "kAutoOpen", U["kAutoOpen"]},
+		{1, "Misc", "QuickQueue", U["QuickQueue"], true},
+		{1, "Misc", "AutoConfirmRoll", U["AutoConfirmRoll"], true, true},
 	},
 	[5] = {
     {1, "Actionbar", "Enable", U["Enable Actionbar"]},
+    {1, "Actionbar", "Hotkeys", U["Actionbar Hotkey"], true},
     {4, "Actionbar", "Styles", U["Actionbar Style"], true, true, {"-- 2*(3+12+3) --", "-- 2*(6+12+6) --", "-- 2*6+3*12+2*6 --", "-- 3*12 --", "-- 2*(12+6) --", "-- MR --", "-- PVP --", "-- 3*(4+12+4) --", "-- PVP2 --", "-- JK --"}},
-    {1, "Actionbar", "Hotkeys", U["Actionbar Hotkey"]},
-		{1, "Actionbar", "Macro", U["Actionbar Macro"], true,},
-		{1, "Actionbar", "Bar4Fade", U["Bar4 Fade"]},
-		{1, "Actionbar", "Bar5Fade", U["Bar5 Fade"], true},
-		{1, "Actionbar", "Count", U["Actionbar Item Counts"]},		
-		{1, "Actionbar", "Cooldown", U["Show Cooldown"], true},
-		{1, "Actionbar", "Classcolor", U["ClassColor BG"]},
+    {1, "Actionbar", "Macro", U["Actionbar Macro"]},
+    {1, "Actionbar", "Count", U["Actionbar Item Counts"], true},
+		{1, "Actionbar", "Classcolor", U["ClassColor BG"]},	
+		--{1, "Actionbar", "Bar4Fades", U["Bar4 Fade"]},
+		--{1, "Actionbar", "Bar5Fades", U["Bar5 Fade"], true},	
+		{1, "Actionbar", "Cooldown", U["Show Cooldown"]},		
 		{1, "Actionbar", "DecimalCD", U["Decimal Cooldown"], true},
-	--{2, "Chat", "FilterList", "Filter List"},
+		--{2, "Chat", "FilterList", "Filter List", false, false, function() M.genFilterList() end},
+		--{3, "Chat", "Matches", "Keyword Match", true, false, {1, 3, 0}},
+		--{1, "Chat", "BlockAddonAlert", "Block Addon Alert"},
+		{1, "Tooltip", "CombatHide", U["CombatHide"]},
+		{1, "Tooltip", "TargetBy", U["TargetBy"], true},
+		{1, "Tooltip", "Cursor", U["Cursor"]},
+		{1, "Misc", "QuestNotifier", U["QuestNotifier"]},
+		{1, "Misc", "QuestSchedule", U["QuestSchedule"], true},
+		{3, "Actionbar", "ActionbarScale", U["Actionbar Scale"], false, false, {.8, 1.5, 1}},
+		{3, "Tooltip", "TooltipScale", U["Tooltip Scale"], true, false, {.5, 1.5, 1}},
 	},
 }
 
 local r, g, b = I.ClassColor.r, I.ClassColor.g, I.ClassColor.b
-local guiTab, guiPage, f, x, y = {}, {}
+local guiTab, guiPage, f = {}, {}
 
 local function SelectTab(i)
 	for num = 1, #tabList do
@@ -267,15 +323,15 @@ local function SelectTab(i)
 	end
 end
 
-local function CreateTab(i, name)
-	local tab = CreateFrame("Button", nil, NDuiGUI)
+local function CreateTab(parent, i, name)
+	local tab = CreateFrame("Button", nil, parent)
 	tab:SetPoint("TOP", -222 + 111*(i-1), -128)
 	tab:SetSize(111, 30)
 	M.CreateBD(tab, .3)
 	local label = M.CreateFS(tab, 15, name, false, "CENTER", 0, 0)
 	label:SetTextColor(1, .8, 0)
 
-	tab:SetScript("OnClick", function(self)
+	tab:SetScript("OnClick", function()
 		PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK)
 		SelectTab(i)
 	end)
@@ -294,7 +350,7 @@ local function CreateOption(i)
 	local parent, offset = guiPage[i].child, 20
 
 	for _, option in pairs(optionList[i]) do
-		local type, key, value, name, horizon, horizon2, data = unpack(option)
+		local type, key, value, name, horizon, horizon2, data, callBack = unpack(option)
 		-- Checkboxes
 		if type == 1 then
 			local cb = M.CreateCheckBox(parent)
@@ -329,6 +385,7 @@ local function CreateOption(i)
 			end)
 			eb:HookScript("OnEnterPressed", function()
 				MaoRUISettingDB[key][value] = eb:GetText()
+				if callBack then callBack() end
 			end)
 			eb:SetScript("OnEnter", function(self)
 				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
@@ -356,7 +413,7 @@ local function CreateOption(i)
 			s:SetWidth(160)
 			s:SetMinMaxValues(min, max)
 			s:SetValue(MaoRUISettingDB[key][value])
-			s:SetScript("OnValueChanged", function(self, v)
+			s:SetScript("OnValueChanged", function(_, v)
 				local current = tonumber(format("%."..step.."f", v))
 				MaoRUISettingDB[key][value] = current
 				_G[s:GetName().."Text"]:SetText(current)
@@ -370,18 +427,17 @@ local function CreateOption(i)
 			_G[s:GetName().."Text"]:SetPoint("TOP", s, "BOTTOM", 0, 3)
 			_G[s:GetName().."Text"]:SetText(format("%."..step.."f", MaoRUISettingDB[key][value]))
 			s:SetBackdrop(nil)
-			s.SetBackdrop = M.Dummy
 			local bd = CreateFrame("Frame", nil, s)
 			bd:SetPoint("TOPLEFT", 14, -2)
 			bd:SetPoint("BOTTOMRIGHT", -15, 3)
 			bd:SetFrameStrata("BACKGROUND")
 			M.CreateBD(bd, .3)
-			local slider = select(4, s:GetRegions())
-			slider:SetTexture("Interface\\CastingBar\\UI-CastingBar-Spark")
-			slider:SetBlendMode("ADD")
+			local thumb = _G[s:GetName().."Thumb"]
+			thumb:SetTexture(I.sparkTex)
+			thumb:SetBlendMode("ADD")
 		-- Dropdown
 		elseif type == 4 then
-			local dd = M.CreateDropDown(parent, 160, 30, data)
+			local dd = M.CreateDropDown(parent, 143, 26, data)
 			if horizon2 then
 				dd:SetPoint("TOPLEFT", 480, -offset + 35)
 			elseif horizon then
@@ -397,10 +453,10 @@ local function CreateOption(i)
 				for num = 1, #data do
 					if num == MaoRUISettingDB[key][value] then
 						opt[num]:SetBackdropColor(1, .8, 0, .3)
-						opt[num].checked = true
+						opt[num].selected = true
 					else
 						opt[num]:SetBackdropColor(0, 0, 0, .3)
-						opt[num].checked = false
+						opt[num].selected = false
 					end
 				end
 			end)
@@ -451,41 +507,36 @@ local function OpenGUI()
 	f:SetPoint("CENTER")
 	f:SetFrameStrata("HIGH")
 	M.CreateMF(f)
-	--M.CreateBD(f)
+	--M.CreateBD(f, .5, 1)
+	--M.CreateSD(f)
 	--M.CreateTex(f)
-	M.CreateFS(f, 43, "MaoR UI", true, "TOP", -43, -88)
+	M.CreateFS(f, 43, "2 UI", true, "TOP", -43, -88)
 	M.CreateFS(f, 21, I.Version, false, "TOP", 80, -88)
 
-	local close = M.CreateButton(f, 66, 6, CLOSE)
+	local close = M.CreateButton(f, 21, 21, "X")
 	close:SetPoint("TOP", 280, -88)
 	close:SetFrameLevel(3)
 	close:SetScript("OnClick", function() f:Hide() end)
 
+	local scaleOld = MaoRUISettingDB["Settings"]["UIScale"]
 	local ok = M.CreateButton(f, 88, 21, OKAY)
 	ok:SetPoint("BOTTOMRIGHT", -260, 66)
 	ok:SetFrameLevel(3)
 	ok:SetScript("OnClick", function()
-		local scale = MaoRUISettingDB["Settings"]["SetScale"]
-		if scale < .65 then UIParent:SetScale(scale)
+		local scale = MaoRUISettingDB["Settings"]["UIScale"]
+		if scale ~= scaleOld then
+		if scale < .64 then UIParent:SetScale(scale)
 		else SetCVar("uiScale", scale) end
+			if MaoRUISettingDB["Chat"]["Lock"] then
+				ChatFrame1:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 0, 28)
+			end
+		end
 		f:Hide()
 		StaticPopup_Show("RELOAD_NDUI")
 	end)
 
-	-- PreUpdate Power Preference
-	do
-		local specList = optionList[2][8][7]
-		tinsert(specList, NONE)
-		for i = 1, 4 do
-			local spec, name = GetSpecializationInfo(i)
-			if spec then
-				tinsert(specList, name)
-			end
-		end
-	end
-
 	for i, name in pairs(tabList) do
-		guiTab[i] = CreateTab(i, name)
+		guiTab[i] = CreateTab(f, i, name)
 		guiPage[i] = CreateFrame("ScrollFrame", nil, f)
 		guiPage[i]:SetPoint("TOPLEFT", 300, -160)
 		guiPage[i]:SetSize(680, 400)
@@ -496,17 +547,10 @@ local function OpenGUI()
 		guiPage[i]:SetScrollChild(guiPage[i].child)
 		CreateOption(i)
 	end
-	--------------------------------------------------------------------------------
-	local Siweia = CreateFrame("Button", nil, f)
-	Siweia:SetPoint("BOTTOM", 0, 66)
-	Siweia:SetSize(360, 21)
-	Siweia:SetFrameLevel(3)
-	M.CreateFS(Siweia, 16, "控制台是基于Si大大的NDui控制台魔改的，诚挚感激！", true)
-	--------------------------------------------------------------------------------
 	local reset = M.CreateButton(f, 88, 21, "Reset?")
 	reset:SetPoint("BOTTOMLEFT", 260, 66)
 	StaticPopupDialogs["RESET_NDUI"] = {
-		text = "确定初始化插件设置？",
+		text = CONFIRM_RESET_SETTINGS,
 		button1 = YES,
 		button2 = NO,
 		OnAccept = function()
@@ -520,47 +564,48 @@ local function OpenGUI()
 		StaticPopup_Show("RESET_NDUI")
 	end)
 
-	--[[local credit = CreateFrame("Button", nil, f)
-	credit:SetPoint("TOPRIGHT", -20, -15)
-	credit:SetSize(35, 35)
-	credit.Icon = credit:CreateTexture(nil, "ARTWORK")
-	credit.Icon:SetAllPoints()
-	credit.Icon:SetTexture(I.creditTex)
-	credit:SetHighlightTexture(I.creditTex)
-	credit:SetScript("OnEnter", function()
-		GameTooltip:ClearLines()
-		GameTooltip:SetOwner(f, "ANCHOR_TOPRIGHT", 0, 3)
-		GameTooltip:AddLine("Credits:")
-		GameTooltip:AddLine(GetAddOnMetadata("_ShiGuang", "Credits"), .6,.8,1, 1)
-		GameTooltip:Show()
-	end)
-	credit:SetScript("OnLeave", GameTooltip_Hide)]]
+	local credit = CreateFrame("Button", nil, f)
+	credit:SetPoint("BOTTOM", 0, 66)
+	credit:SetSize(360, 21)
+	M.CreateFS(credit, 16, "This GUI learn form Siweia·s NDui，Sincere Gratitude！", true)
 
-	MaoRUI:EventFrame("PLAYER_REGEN_DISABLED"):SetScript("OnEvent", function(self, event)
+	local function showLater(event)
 		if event == "PLAYER_REGEN_DISABLED" then
 			if f:IsShown() then
 				f:Hide()
-				self:RegisterEvent("PLAYER_REGEN_ENABLED")
+				M:RegisterEvent("PLAYER_REGEN_ENABLED", showLater)
 			end
 		else
 			f:Show()
-			self:UnregisterEvent("PLAYER_REGEN_ENABLED")
+			M:UnregisterEvent(event, showLater)
 		end
+	end
+	M:RegisterEvent("PLAYER_REGEN_DISABLED", showLater)
+
+	--[[  Toggle RaidFrame ClickSets
+	local clickSet = M.CreateButton(guiPage[4], 150, 30, "Add ClickSets")
+	clickSet:SetPoint("TOPLEFT", 40, -440)
+	clickSet.text:SetTextColor(1, .8, 0)
+	clickSet:SetScript("OnClick", function()
+		f:Hide()
+		SlashCmdList["AWCONFIG"]()
+		AWConfigTab12:Click()
 	end)
 
-	--[[ Toggle AuraWatch Console
+	-- Toggle AuraWatch Console
 	local aura = M.CreateButton(guiPage[6], 150, 30, "Add AuraWatch")
 	aura:SetPoint("TOPLEFT", 340, -50)
+	aura.text:SetTextColor(1, .8, 0)
 	aura:SetScript("OnClick", function()
 		f:Hide()
-		SlashCmdList["NDUI_AWCONFIG"]()
+		SlashCmdList["AWCONFIG"]()
 	end)]]
 
 	SelectTab(5)
 end
 
 local gui = CreateFrame("Button", "GameMenuFrameNDui", GameMenuFrame, "GameMenuButtonTemplate")
-gui:SetText("MaoR UI")
+gui:SetText("2 UI")
 gui:SetPoint("TOP", GameMenuButtonAddons, "BOTTOM", 0, -2)
 GameMenuFrame:HookScript("OnShow", function(self)
 	GameMenuButtonLogout:SetPoint("TOP", gui, "BOTTOM", 0, -12)

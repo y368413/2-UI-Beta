@@ -1,16 +1,12 @@
-﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
-..\FrameXML\UI.xsd">
-	<Script file="Diminfo.lua"/>
+﻿<Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="Alerts.lua"/>
-	<Script file="LoveAnnouncer.lua"/>
 	<Script file="Reminder.lua"/>
 	<Script file="HardYards.lua"/>
-	<Script file="WeeklyCheck.lua"/>
 	<Script file="LegionToDo.lua"/>
+	<Script file="LoveAnnouncer.lua"/>
 	<Script file="infCombatRess.lua"/>
-	<Script file="IncentiveProgram.lua"/>
-	<Script file="Artifact.lua"/>	
-	<Script file="RelicInspector.lua"/>
-	<Script file="CombatNotification.lua"/>
 	<Script file="TransmogHeadsUp.lua"/>
+	<Script file="IncentiveProgram.lua"/>
+	<Script file="CombatNotification.lua"/>
+	<Script file="TomeOfIllusionsCheck.lua"/>
 </Ui>

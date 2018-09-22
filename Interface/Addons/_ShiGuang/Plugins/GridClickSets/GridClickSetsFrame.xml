@@ -1,5 +1,5 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
-..\FrameXML\UI.xsd">
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+
     <Script file="GridClickSetsFrame.lua"/>
     <Frame name="GridClickSetButtonOptionTemplate" parent="GridClickSetsFramePanelContainer" virtual="true">
         <Size> <AbsDimension x="450" y="25"/> </Size>
@@ -17,7 +17,7 @@
         </Layers>
 
         <Frames>
-            <Frame name="$parentType" inherits="L_UIDropDownMenuTemplate">
+            <Frame name="$parentType" inherits="UIDropDownMenuTemplate">
                 <Anchors>
                     <Anchor point="TOPRIGHT">
                         <Offset> <AbsDimension x="0" y="-5"/> </Offset>
@@ -25,13 +25,13 @@
                 </Anchors>
                 <Scripts>
                     <OnLoad>
-                        L_UIDropDownMenu_SetWidth(self, 270);
-                        L_UIDropDownMenu_Initialize(self, GridClickSetButton_TypeDropDown_Initialize)
-                        L_UIDropDownMenu_SetSelectedValue(self, "NONE");
-                        L_UIDropDownMenu_JustifyText(self, "LEFT");
+                        UIDropDownMenu_SetWidth(self, 270);
+                        UIDropDownMenu_Initialize(self, GridClickSetButton_TypeDropDown_Initialize)
+                        UIDropDownMenu_SetSelectedValue(self, "NONE");
+                        UIDropDownMenu_JustifyText(self, "LEFT");
                     </OnLoad>
                     <OnEnter>
-                        local value = L_UIDropDownMenu_GetSelectedValue(self)
+                        local value = UIDropDownMenu_GetSelectedValue(self)
                         if type(value)=="string" then
                             local _, _, spellId = value:find("spellId:([0-9]+)")
                             if spellId then
@@ -89,7 +89,7 @@
                         self:ClearFocus()
                     </OnEscapePressed>
                     <OnTextChanged>
-                        if L_UIDropDownMenu_GetSelectedValue(getglobal(self:GetParent():GetName().."Type")) == "spell" then
+                        if UIDropDownMenu_GetSelectedValue(getglobal(self:GetParent():GetName().."Type")) == "spell" then
                         local p = string.find(self:GetText(), "\n")
                         if p then
                         self:ClearFocus();
@@ -267,7 +267,7 @@
                 </Anchors>
                 <Scripts>
                     <OnClick>
-                        PlaySound(841);    -- SOUNDKIT.IG_CHARACTER_INFO_TAB
+                        PlaySound(841);
                         GridClickSetsFrame_SaveOnClick()
                         PanelTemplates_Tab_OnClick(self, GridClickSetsFrame);
                         PanelTemplates_UpdateTabs(GridClickSetsFrame);
@@ -285,7 +285,7 @@
                 </Anchors>
                 <Scripts>
                     <OnClick>
-                        PlaySound(841);    -- SOUNDKIT.IG_CHARACTER_INFO_TAB
+                        PlaySound(841);
                         GridClickSetsFrame_SaveOnClick()
                         PanelTemplates_Tab_OnClick(self, GridClickSetsFrame);
                         PanelTemplates_UpdateTabs(GridClickSetsFrame);
@@ -303,7 +303,7 @@
                 </Anchors>
                 <Scripts>
                     <OnClick>
-                        PlaySound(841);    -- SOUNDKIT.IG_CHARACTER_INFO_TAB
+                        PlaySound(841);
                         GridClickSetsFrame_SaveOnClick()
                         PanelTemplates_Tab_OnClick(self, GridClickSetsFrame);
                         PanelTemplates_UpdateTabs(GridClickSetsFrame);
@@ -321,7 +321,7 @@
                 </Anchors>
                 <Scripts>
                     <OnClick>
-                        PlaySound(841);    -- SOUNDKIT.IG_CHARACTER_INFO_TAB
+                        PlaySound(841);
                         GridClickSetsFrame_SaveOnClick()
                         PanelTemplates_Tab_OnClick(self, GridClickSetsFrame);
                         PanelTemplates_UpdateTabs(GridClickSetsFrame);
@@ -339,7 +339,7 @@
                 </Anchors>
                 <Scripts>
                     <OnClick>
-                        PlaySound(841);    -- SOUNDKIT.IG_CHARACTER_INFO_TAB
+                        PlaySound(841);
                         GridClickSetsFrame_SaveOnClick()
                         PanelTemplates_Tab_OnClick(self, GridClickSetsFrame);
                         PanelTemplates_UpdateTabs(GridClickSetsFrame);
@@ -347,11 +347,41 @@
                     </OnClick>
                 </Scripts>
             </Button>
-            <Button name="$parentTab6" inherits="OptionsFrameTabButtonTemplate" text="" id="6" hidden="false">
-
+            <Button name="$parentTab6" inherits="OptionsFrameTabButtonTemplate" text="GRIDCLICKSETS_SET_WHEEL_UP" id="6" hidden="false">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="$parentTab5" relativePoint="TOPRIGHT">
+                        <Offset>
+                            <AbsDimension x="-16" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                        PlaySound(841);
+                        GridClickSetsFrame_SaveOnClick()
+                        PanelTemplates_Tab_OnClick(self, GridClickSetsFrame);
+                        PanelTemplates_UpdateTabs(GridClickSetsFrame);
+                        GridClickSetsFrame_TabOnClick();
+                    </OnClick>
+                </Scripts>
             </Button>
-            <Button name="$parentTab7" inherits="OptionsFrameTabButtonTemplate" text="" id="7" hidden="false">
-
+            <Button name="$parentTab7" inherits="OptionsFrameTabButtonTemplate" text="GRIDCLICKSETS_SET_WHEEL_DOWN" id="7" hidden="false">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="$parentTab6" relativePoint="TOPRIGHT">
+                        <Offset>
+                            <AbsDimension x="-16" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                        PlaySound(841);
+                        GridClickSetsFrame_SaveOnClick()
+                        PanelTemplates_Tab_OnClick(self, GridClickSetsFrame);
+                        PanelTemplates_UpdateTabs(GridClickSetsFrame);
+                        GridClickSetsFrame_TabOnClick();
+                    </OnClick>
+                </Scripts>
             </Button>
 
             <Frame name="GridClickSetButton1" inherits="GridClickSetButtonOptionTemplate" ID="1">

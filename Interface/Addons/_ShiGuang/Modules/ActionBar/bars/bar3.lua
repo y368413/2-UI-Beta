@@ -1,9 +1,10 @@
-local M, R, U, I = unpack(select(2, ...))
-local Bar = MaoRUI:GetModule("Actionbar")
+local _, ns = ...
+local M, R, U, I = unpack(ns)
+local Bar = M:GetModule("Actionbar")
 local cfg = R.bars.bar3
-local padding, margin = 2, 2
 
 function Bar:CreateBar3()
+	local padding, margin = 2, 2
 	local num = NUM_ACTIONBAR_BUTTONS
 	local buttonList = {}
 	local layout = MaoRUISettingDB["Actionbar"]["Styles"]
@@ -32,7 +33,7 @@ function Bar:CreateBar3()
 		frame:SetHeight(2*cfg.size + margin + 2*padding)
 		frame.Pos = {"BOTTOM", UIParent, "BOTTOM", 0, 2}
 	end
-	frame:SetScale(cfg.scale)
+	frame:SetScale(MaoRUISettingDB["Actionbar"]["ActionbarScale"])
 
 	--move the buttons into position and reparent them
 	MultiBarBottomRight:SetParent(frame)
@@ -80,6 +81,17 @@ function Bar:CreateBar3()
 
 	--create the mouseover functionality
 	if cfg.fader then
-		MaoRUI.CreateButtonFrameFader(frame, buttonList, cfg.fader)
+		M:CreateButtonFrameFader(frame, buttonList, cfg.fader)
 	end
+
+	--fix stupid blizzard
+	local function ToggleButtonGrid()
+		if InCombatLockdown() then return end
+		local showgrid = tonumber(GetCVar("alwaysShowActionBars"))
+		for _, button in next, buttonList do
+			button:SetAttribute("showgrid", showgrid)
+			ActionButton_ShowGrid(button)
+		end
+	end
+	hooksecurefunc("MultiActionBar_UpdateGrid", ToggleButtonGrid)
 end

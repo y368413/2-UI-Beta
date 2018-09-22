@@ -10,13 +10,6 @@ local GetCursorInfo, GetSpellInfo, ClearCursor = GetCursorInfo, GetSpellInfo, Cl
 local CreateFrame, UIParent = CreateFrame, UIParent
 local _G = _G
 
--- Global vars/functions that we don't upvalue since they might get hooked, or upgraded
--- List them here for Mikk's FindGlobals script
--- GLOBALS: ACCEPT, ChatFontNormal
-
---[[-----------------------------------------------------------------------------
-Support functions
--------------------------------------------------------------------------------]]
 
 if not AceGUIMultiLineEditBoxInsertLink then
 	-- upgradeable hook
@@ -52,9 +45,6 @@ local function Layout(self)
 	end
 end
 
---[[-----------------------------------------------------------------------------
-Scripts
--------------------------------------------------------------------------------]]
 local function OnClick(self)                                                     -- Button
 	self = self.obj
 	self.editBox:ClearFocus()
@@ -155,9 +145,6 @@ local function OnEditFocusGained(frame)
 	frame.obj:Fire("OnEditFocusGained")
 end
 
---[[-----------------------------------------------------------------------------
-Methods
--------------------------------------------------------------------------------]]
 local methods = {
 	["OnAcquire"] = function(self)
 		self.editBox:SetText("")
@@ -261,9 +248,7 @@ local methods = {
 	
 }
 
---[[-----------------------------------------------------------------------------
-Constructor
--------------------------------------------------------------------------------]]
+
 local backdrop = {
 	bgFile = [[Interface\Tooltips\UI-Tooltip-Background]],
 	edgeFile = [[Interface\Tooltips\UI-Tooltip-Border]], edgeSize = 16,

@@ -1,11 +1,9 @@
-﻿local _, nss = ...
-
+﻿--## Version: v18  ## Author: Kemayo
+local AppearanceTooltip = {}    --local _, AppearanceTooltip = ...
 local GetScreenWidth = GetScreenWidth
 local GetScreenHeight = GetScreenHeight
 local IsDressableItem = IsDressableItem
-
 local setDefaults, db
-
 local LAT = LibStub("LibArmorToken-1.0")
 local LAI = LibStub("LibAppropriateItems-1.0")
 
@@ -15,9 +13,7 @@ tooltip:SetFrameStrata("TOOLTIP")
 tooltip:SetSize(280, 380)
 tooltip:Hide()
 
-tooltip:SetScript("OnEvent", function(self, event, ...)
-    self[event](self, ...)
-end)
+tooltip:SetScript("OnEvent", function(self, event, ...) self[event](self, ...) end)
 tooltip:RegisterEvent("ADDON_LOADED")
 tooltip:RegisterEvent("PLAYER_LOGIN")
 tooltip:RegisterEvent("PLAYER_REGEN_DISABLED")
@@ -46,7 +42,7 @@ function tooltip:ADDON_LOADED(addon)
         tokens = true, -- try to preview tokens?
     })
     db = _G["AppearanceTooltipDB"]
-    nss.db = db
+    AppearanceTooltip.db = db
 
     self:UnregisterEvent("ADDON_LOADED")
 end
@@ -104,7 +100,7 @@ tooltip.modelZoomed = makeModel()
 tooltip.modelWeapon = makeModel()
 
 tooltip.model:SetScript("OnShow", function(self)
-    nss:ResetModel(self)
+    AppearanceTooltip:ResetModel(self)
 end)
 
 local known = tooltip:CreateFontString(nil, "OVERLAY", "GameFontNormal")
@@ -120,15 +116,15 @@ classwarning:SetPoint("TOPLEFT", tooltip, "TOPLEFT", 6, -12)
 classwarning:SetPoint("TOPRIGHT", tooltip, "TOPRIGHT", -6, -12)
 -- ITEM_WRONG_CLASS = "That item can't be used by players of your class!"
 -- STAT_USELESS_TOOLTIP = "|cff808080Provides no benefit for your class|r"
-classwarning:SetText("这件装备你的职业是不能幻化滴~")
+classwarning:SetText(ITEM_WRONG_CLASS)
 classwarning:Show()
 
 -- Ye showing:
 GameTooltip:HookScript("OnTooltipSetItem", function(self)
-    nss:ShowItem(select(2, self:GetItem()))
+    AppearanceTooltip:ShowItem(select(2, self:GetItem()))
 end)
 GameTooltip:HookScript("OnHide", function()
-    nss:HideItem()
+    AppearanceTooltip:HideItem()
 end)
 
 ----
@@ -146,7 +142,7 @@ positioner:SetScript("OnUpdate", function(self, elapsed)
     end
     self.elapsed = 0
 
-    local owner, our_point, owner_point = nss:ComputeTooltipAnchors(tooltip.owner, tooltip, db.anchor)
+    local owner, our_point, owner_point = AppearanceTooltip:ComputeTooltipAnchors(tooltip.owner, tooltip, db.anchor)
     if our_point and owner_point then
         tooltip:ClearAllPoints()
         tooltip:SetPoint(our_point, owner, owner_point)
@@ -174,7 +170,7 @@ do
             bottom = {"TOPLEFT", "TOPRIGHT"},
         },
     }
-    function nss:ComputeTooltipAnchors(owner, tooltip, anchor)
+    function AppearanceTooltip:ComputeTooltipAnchors(owner, tooltip, anchor)
         -- Because I always forget: x is left-right, y is bottom-top
         -- Logic here: our tooltip should trend towards the center of the screen, unless something is stopping it.
         -- If comparison tooltips are shown, we shouldn't overlap them
@@ -281,7 +277,7 @@ end)
 ----
 
 local _, class = UnitClass("player")
-function nss:ShowItem(link)
+function AppearanceTooltip:ShowItem(link)
     if not link then return end
     local id = tonumber(link:match("item:(%d+)"))
     if not id or id == 0 then return end
@@ -370,15 +366,15 @@ function nss:ShowItem(link)
             positioner:Show()
             spinner:SetShown(db.spin)
 
-            if nss.slot_removals[slot] and (nss.always_remove[slot] or db.uncover) then
+            if AppearanceTooltip.slot_removals[slot] and (AppearanceTooltip.always_remove[slot] or db.uncover) then
                 -- 1. If this is a weapon, force-remove the item in the main-hand slot! Otherwise it'll get dressed into the
                 --    off-hand, maybe, depending on things which are more hassle than it's worth to work out.
                 -- 2. Other slots will be entirely covered, making for a useless preview. e.g. shirts.
-                for _, slotid in ipairs(nss.slot_removals[slot]) do
-                    if slotid == nss.SLOT_ROBE then
-                        local chest_itemid = GetInventoryItemID("player", nss.SLOT_CHEST)
+                for _, slotid in ipairs(AppearanceTooltip.slot_removals[slot]) do
+                    if slotid == AppearanceTooltip.SLOT_ROBE then
+                        local chest_itemid = GetInventoryItemID("player", AppearanceTooltip.SLOT_CHEST)
                         if chest_itemid and select(4, GetItemInfoInstant(chest_itemid)) == 'INVTYPE_ROBE' then
-                            slotid = nss.SLOT_CHEST
+                            slotid = AppearanceTooltip.SLOT_CHEST
                         end
                     end
                     if slotid > 0 then
@@ -395,7 +391,7 @@ function nss:ShowItem(link)
         known:Hide()
 
         if db.notifyKnown then
-            local hasAppearance, appearanceFromOtherItem, notTransmoggable = nss.PlayerHasAppearance(link)
+            local hasAppearance, appearanceFromOtherItem, notTransmoggable = AppearanceTooltip.PlayerHasAppearance(link)
 
             local label
             if notTransmoggable then
@@ -418,11 +414,11 @@ function nss:ShowItem(link)
     end
 end
 
-function nss:HideItem()
+function AppearanceTooltip:HideItem()
     hider:Show()
 end
 
-function nss:ResetModel(model)
+function AppearanceTooltip:ResetModel(model)
     -- This sort of works, but with a custom model it keeps some items (shoulders, belt...)
     -- model:SetAutoDress(db.dressed)
     -- So instead, more complicated:
@@ -437,36 +433,36 @@ function nss:ResetModel(model)
     end
 end
 
-nss.SLOT_MAINHAND = GetInventorySlotInfo("MainHandSlot")
-nss.SLOT_OFFHAND = GetInventorySlotInfo("SecondaryHandSlot")
-nss.SLOT_TABARD = GetInventorySlotInfo("TabardSlot")
-nss.SLOT_CHEST = GetInventorySlotInfo("ChestSlot")
-nss.SLOT_SHIRT = GetInventorySlotInfo("ShirtSlot")
-nss.SLOT_HANDS = GetInventorySlotInfo("HandsSlot")
-nss.SLOT_WAIST = GetInventorySlotInfo("WaistSlot")
-nss.SLOT_SHOULDER = GetInventorySlotInfo("ShoulderSlot")
-nss.SLOT_FEET = GetInventorySlotInfo("FeetSlot")
-nss.SLOT_ROBE = -99 -- Magic!
+AppearanceTooltip.SLOT_MAINHAND = GetInventorySlotInfo("MainHandSlot")
+AppearanceTooltip.SLOT_OFFHAND = GetInventorySlotInfo("SecondaryHandSlot")
+AppearanceTooltip.SLOT_TABARD = GetInventorySlotInfo("TabardSlot")
+AppearanceTooltip.SLOT_CHEST = GetInventorySlotInfo("ChestSlot")
+AppearanceTooltip.SLOT_SHIRT = GetInventorySlotInfo("ShirtSlot")
+AppearanceTooltip.SLOT_HANDS = GetInventorySlotInfo("HandsSlot")
+AppearanceTooltip.SLOT_WAIST = GetInventorySlotInfo("WaistSlot")
+AppearanceTooltip.SLOT_SHOULDER = GetInventorySlotInfo("ShoulderSlot")
+AppearanceTooltip.SLOT_FEET = GetInventorySlotInfo("FeetSlot")
+AppearanceTooltip.SLOT_ROBE = -99 -- Magic!
 
-nss.slot_removals = {
-    INVTYPE_WEAPON = {nss.SLOT_MAINHAND},
-    INVTYPE_2HWEAPON = {nss.SLOT_MAINHAND},
-    INVTYPE_BODY = {nss.SLOT_TABARD, nss.SLOT_CHEST, nss.SLOT_SHOULDER, nss.SLOT_OFFHAND, nss.SLOT_WAIST},
-    INVTYPE_CHEST = {nss.SLOT_TABARD, nss.SLOT_OFFHAND, nss.SLOT_WAIST, nss.SLOT_SHIRT},
-    INVTYPE_ROBE = {nss.SLOT_TABARD, nss.SLOT_WAIST, nss.SLOT_SHOULDER, nss.SLOT_OFFHAND},
-    INVTYPE_LEGS = {nss.SLOT_TABARD, nss.SLOT_WAIST, nss.SLOT_FEET, nss.SLOT_ROBE, nss.SLOT_MAINHAND, nss.SLOT_OFFHAND},
-    INVTYPE_WAIST = {nss.SLOT_MAINHAND, nss.SLOT_OFFHAND},
-    INVTYPE_FEET = {nss.SLOT_ROBE},
-    INVTYPE_WRIST = {nss.SLOT_HANDS, nss.SLOT_CHEST, nss.SLOT_ROBE, nss.SLOT_SHIRT, nss.SLOT_OFFHAND},
-    INVTYPE_HAND = {nss.SLOT_OFFHAND},
-    INVTYPE_TABARD = {nss.SLOT_WAIST, nss.SLOT_OFFHAND},
+AppearanceTooltip.slot_removals = {
+    INVTYPE_WEAPON = {AppearanceTooltip.SLOT_MAINHAND},
+    INVTYPE_2HWEAPON = {AppearanceTooltip.SLOT_MAINHAND},
+    INVTYPE_BODY = {AppearanceTooltip.SLOT_TABARD, AppearanceTooltip.SLOT_CHEST, AppearanceTooltip.SLOT_SHOULDER, AppearanceTooltip.SLOT_OFFHAND, AppearanceTooltip.SLOT_WAIST},
+    INVTYPE_CHEST = {AppearanceTooltip.SLOT_TABARD, AppearanceTooltip.SLOT_OFFHAND, AppearanceTooltip.SLOT_WAIST, AppearanceTooltip.SLOT_SHIRT},
+    INVTYPE_ROBE = {AppearanceTooltip.SLOT_TABARD, AppearanceTooltip.SLOT_WAIST, AppearanceTooltip.SLOT_SHOULDER, AppearanceTooltip.SLOT_OFFHAND},
+    INVTYPE_LEGS = {AppearanceTooltip.SLOT_TABARD, AppearanceTooltip.SLOT_WAIST, AppearanceTooltip.SLOT_FEET, AppearanceTooltip.SLOT_ROBE, AppearanceTooltip.SLOT_MAINHAND, AppearanceTooltip.SLOT_OFFHAND},
+    INVTYPE_WAIST = {AppearanceTooltip.SLOT_MAINHAND, AppearanceTooltip.SLOT_OFFHAND},
+    INVTYPE_FEET = {AppearanceTooltip.SLOT_ROBE},
+    INVTYPE_WRIST = {AppearanceTooltip.SLOT_HANDS, AppearanceTooltip.SLOT_CHEST, AppearanceTooltip.SLOT_ROBE, AppearanceTooltip.SLOT_SHIRT, AppearanceTooltip.SLOT_OFFHAND},
+    INVTYPE_HAND = {AppearanceTooltip.SLOT_OFFHAND},
+    INVTYPE_TABARD = {AppearanceTooltip.SLOT_WAIST, AppearanceTooltip.SLOT_OFFHAND},
 }
-nss.always_remove = {
+AppearanceTooltip.always_remove = {
     INVTYPE_WEAPON = true,
     INVTYPE_2HWEAPON = true,
 }
 
-nss.slot_facings = {
+AppearanceTooltip.slot_facings = {
     INVTYPE_HEAD = 0,
     INVTYPE_SHOULDER = 0,
     INVTYPE_CLOAK = 3.4,
@@ -490,7 +486,7 @@ nss.slot_facings = {
     INVTYPE_BODY = 0,
 }
 
-nss.modifiers = {
+AppearanceTooltip.modifiers = {
     Shift = IsShiftKeyDown,
     Ctrl = IsControlKeyDown,
     Alt = IsAltKeyDown,
@@ -500,7 +496,7 @@ nss.modifiers = {
 -- Utility fun
 
 --/dump C_Transmog.GetItemInfo(GetItemInfoInstant(""))
-function nss.CanTransmogItem(itemLink)
+function AppearanceTooltip.CanTransmogItem(itemLink)
     local itemID = GetItemInfoInstant(itemLink)
     if itemID then
         local canBeChanged, noChangeReason, canBeSource, noSourceReason = C_Transmog.GetItemInfo(itemID)
@@ -508,11 +504,11 @@ function nss.CanTransmogItem(itemLink)
     end
 end
 
-function nss.PlayerHasAppearance(item)
-    if not nss.CanTransmogItem(item) then
+function AppearanceTooltip.PlayerHasAppearance(item)
+    if not AppearanceTooltip.CanTransmogItem(item) then
         return false, false, true
     end
-    local state = nss.CheckTooltipFor(item, TRANSMOGRIFY_TOOLTIP_APPEARANCE_UNKNOWN, TRANSMOGRIFY_TOOLTIP_ITEM_UNKNOWN_APPEARANCE_KNOWN)
+    local state = AppearanceTooltip.CheckTooltipFor(item, TRANSMOGRIFY_TOOLTIP_APPEARANCE_UNKNOWN, TRANSMOGRIFY_TOOLTIP_ITEM_UNKNOWN_APPEARANCE_KNOWN)
     if state == TRANSMOGRIFY_TOOLTIP_APPEARANCE_UNKNOWN then
         return
     end
@@ -521,7 +517,7 @@ end
 
 do
     local tooltip
-    function nss.CheckTooltipFor(link, ...)
+    function AppearanceTooltip.CheckTooltipFor(link, ...)
         if not tooltip then
             tooltip = CreateFrame("GameTooltip", "AppearanceTooltipScanningTooltip", nil, "GameTooltipTemplate")
             tooltip:SetOwner(WorldFrame, "ANCHOR_NONE")
@@ -553,8 +549,8 @@ do
     end
 end
 
-local debugf = tekDebug and tekDebug:GetFrame(myname)
-function nss.Debug(...) if debugf then debugf:AddMessage(string.join(", ", tostringall(...))) end end
+--local debugf = tekDebug and tekDebug:GetFrame(myname)
+--function AppearanceTooltip.Debug(...) if debugf then debugf:AddMessage(string.join(", ", tostringall(...))) end end
 
 function setDefaults(options, defaults)
     setmetatable(options, { __index = function(t, k)
@@ -583,10 +579,22 @@ local races = {
     [8] = "Troll",
     [6] = "Tauren",
     [9] = "Goblin",
+    -- Allied!
+    [27] = "BloodElf", -- "Nightborne",
+    [28] = "Tauren", -- "HighmountainTauren",
+    [29] = "BloodElf", -- "VoidElf",
+    [30] = "Draenei", -- "LightforgedDraenei",
 }
 local genders = {
     [0] = "Male",
     [1] = "Female",
+}
+
+local raceMap = {
+    ["Nightborne"] = "BloodElf",
+    ["HighmountainTauren"] = "Tauren",
+    ["VoidElf"] = "BloodElf",
+    ["LightforgedDraenei"] = "Draenei",
 }
 
 local slots = {
@@ -649,7 +657,7 @@ local slots_to_cameraids, slot_override
 -- itemid: number/string Anything that GetItemInfoInstant will accept
 -- race: number raceid
 -- gender: number genderid (0: male, 1: female)
-function nss:GetCameraID(itemid, race, gender)
+function AppearanceTooltip:GetCameraID(itemid, race, gender)
     local key, itemcamera
     local itemid, _, _, slot, _, class, subclass = GetItemInfoInstant(itemid)
     if item_slots[slot] then
@@ -671,9 +679,12 @@ function nss:GetCameraID(itemid, race, gender)
         if not gender then
             gender = playerSex
         end
+        if raceMap[race] then
+            race = raceMap[race]
+        end
         key = ("%s-%s-%s"):format(race, gender, slot_override[itemid] or slots[slot] or "Default")
     end
-    -- nss.Debug("GetCameraID", key, slots_to_cameraids[key], itemcamera)
+    -- AppearanceTooltip.Debug("GetCameraID", key, slots_to_cameraids[key], itemcamera)
     return slots_to_cameraids[key], itemcamera
 end
 
@@ -1064,9 +1075,9 @@ slot_override = {
     [140617] = "Shoulder-Alt", -- Rakeesh's Pauldron
 }
 
-local function checkboxGetValue(self) return nss.db[self.key] end
+local function checkboxGetValue(self) return AppearanceTooltip.db[self.key] end
 local function checkboxSetChecked(self) self:SetChecked(self:GetValue()) end
-local function checkboxSetValue(self, checked) nss.db[self.key] = checked end
+local function checkboxSetValue(self, checked) AppearanceTooltip.db[self.key] = checked end
 local function checkboxOnClick(self)
     local checked = self:GetChecked()
     PlaySound(checked and SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON or SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
@@ -1099,13 +1110,13 @@ local function newDropdown(parent, key, description, values)
                     info.text = v
                     info.value = k
                     info.func = function(self)
-                        nss.db[key] = self.value
+                        AppearanceTooltip.db[key] = self.value
                         UIDropDownMenu_SetSelectedValue(dropdown, self.value)
                     end
                     UIDropDownMenu_AddButton(info)
                 end
             end)
-            UIDropDownMenu_SetSelectedValue(dropdown, nss.db[key])
+            UIDropDownMenu_SetSelectedValue(dropdown, AppearanceTooltip.db[key])
         end
     end)
     dropdown:HookScript("OnEnter", function(self)
@@ -1186,13 +1197,13 @@ local modifier = newDropdown(panel, 'modifier', "设置组合功能键", {
     Alt = "Alt",
     Ctrl = "Ctrl",
     Shift = "Shift",
-    None = "无",
+    None = " X ",
 })
 UIDropDownMenu_SetWidth(modifier, 100)
 
 local anchor = newDropdown(panel, 'anchor', "Side of the tooltip to attach to, depending on where on the screen it's showing", {
-    vertical = "上 / 下",
-    horizontal = "左 / 右",
+    vertical = "↑ / ↓",
+    horizontal = "← / →",
 })
 UIDropDownMenu_SetWidth(anchor, 100)
 local modelBox = newBox(panel, "自定义模型种族", 48)
@@ -1211,6 +1222,11 @@ local customRaceDropdown = newDropdown(modelBox, 'modelRace', "选择你要的�
     [8] = "巨魔",
     [6] = "牛头人",
     [9] = "地精",
+    -- Allied!
+    [27] = "夜之子",
+    [28] = "至高岭牛头人",
+    [29] = "虚空精灵",
+    [30] = "光铸德莱尼",
 })
 UIDropDownMenu_SetWidth(customRaceDropdown, 100)
 local customGenderDropdown = newDropdown(modelBox, 'modelGender', "选择你要的性别", {

@@ -1,5 +1,6 @@
-local M, R, U, I = unpack(select(2, ...))
-local module = MaoRUI:GetModule("Skins")
+local _, ns = ...
+local M, R, U, I = unpack(ns)
+local module = M:GetModule("Skins")
 
 function module:SkadaSkin()
 	if not MaoRUISettingDB["Skins"]["Skada"] then return end
@@ -26,7 +27,7 @@ function module:SkadaSkin()
 		StripOptions(options)
 	end
 
-	for k, options in pairs(Skada.options.args.windows.args) do
+	for _, options in pairs(Skada.options.args.windows.args) do
 		if options.type == "group" then
 			StripOptions(options.args)
 		end
@@ -41,26 +42,25 @@ function module:SkadaSkin()
 		end
 		skada:SetSpacing(barSpacing)
 		skada:SetFrameLevel(5)
-		skada.SetFrameLevel = B.Dummy
+		skada.SetFrameLevel = M.Dummy
 		skada:SetBackdrop(nil)
 
-		local color = win.db.title.color
 		win.bargroup.button:SetBackdropColor(1, 1, 1, 0)
 
 		if not skada.shadow then
-			skada.shadow = B.CreateBG(skada)
+			skada.shadow = M.CreateBG(skada)
 			skada.shadow:SetAllPoints()
 			skada.shadow:SetFrameLevel(1)
-			B.CreateBD(skada.shadow, .5, 3)
-			B.CreateTex(skada.shadow)
+			M.CreateBD(skada.shadow, .5, 3)
+			M.CreateTex(skada.shadow)
 
-			local Cskada = M.CreateButton(skada, 20, 100, ">", 18)
+			local Cskada = M.CreateButton(skada, 20, 80, ">", 18)
 			Cskada:SetPoint("RIGHT", skada, "LEFT", 0, 0)
-			B.CreateTex(Cskada)
-			local Oskada = M.CreateButton(UIParent, 20, 100, "<", 18)
+			M.CreateTex(Cskada)
+			local Oskada = M.CreateButton(UIParent, 20, 80, "<", 18)
 			Oskada:Hide()
 			Oskada:SetPoint("RIGHT", skada, "RIGHT", 5, 0)
-			B.CreateTex(Oskada)
+			M.CreateTex(Oskada)
 			Cskada:SetScript("OnClick", function()
 				Oskada:Show()
 				skada:Hide()
@@ -99,10 +99,10 @@ function module:SkadaSkin()
 	local windows = {}
 	local function EmbedSkada()
 		if #windows == 1 then
-			EmbedWindow(windows[1], 300, 18, 198, "BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", -5, 24)
+			EmbedWindow(windows[1], 285, 16, 165, "BOTTOMRIGHT", M.UIParent, "BOTTOMRIGHT", 0, 21)
 		elseif #windows == 2 then
-			EmbedWindow(windows[1], 200, 18, 198,  "BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", -5, 24)
-			EmbedWindow(windows[2], 200, 18, 198,  "BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", -210, 24)
+			EmbedWindow(windows[1], 285, 16, 165,  "BOTTOMRIGHT", M.UIParent, "BOTTOMRIGHT", 0, 21)
+			EmbedWindow(windows[2], 285, 16, 165,  "BOTTOMRIGHT", M.UIParent, "BOTTOMRIGHT", -310, 21)
 		end
 	end
 
@@ -113,7 +113,7 @@ function module:SkadaSkin()
 	Skada.CreateWindow_ = Skada.CreateWindow
 	function Skada:CreateWindow(name, db)
 		Skada:CreateWindow_(name, db)
-		windows = {}
+		wipe(windows)
 		for _, window in ipairs(Skada:GetWindows()) do
 			tinsert(windows, window)
 		end
@@ -123,7 +123,7 @@ function module:SkadaSkin()
 	Skada.DeleteWindow_ = Skada.DeleteWindow
 	function Skada:DeleteWindow(name)
 		Skada:DeleteWindow_(name)
-		windows = {}
+		wipe(windows)
 		for _, window in ipairs(Skada:GetWindows()) do
 			tinsert(windows, window)
 		end
@@ -134,41 +134,31 @@ function module:SkadaSkin()
 
 	-- Change Skada Default Settings
 	LibStub("LibSharedMedia-3.0"):Register("statusbar", "normTex", I.normTex)
-	Skada.windowdefaults.bartexture = "normTex"
+	LibStub("LibSharedMedia-3.0"):Register("statusbar", "ShiGuang", "Interface\Addons\_ShiGuang\Media\Modules\Raid\ColorBar")
+	LibStub("LibSharedMedia-3.0"):Register("statusbar", "HalfStyle", "Interface\Addons\_ShiGuang\Media\Modules\Skada\YaSkada05")
+	LibStub("LibSharedMedia-3.0"):Register("statusbar", "AtlzSkada", "Interface\Addons\_ShiGuang\Media\Modules\Skada\AtlzSkada")
+	LibStub("LibSharedMedia-3.0"):Register("statusbar", "Yaskada", "Interface\Addons\_ShiGuang\Media\Modules\Skada\Yaskada")
+	LibStub("LibSharedMedia-3.0"):Register("statusbar", "Yaskada02", "Interface\Addons\_ShiGuang\Media\Modules\Skada\Yaskada02")
+	LibStub("LibSharedMedia-3.0"):Register("statusbar", "Yaskada03", "Interface\Addons\_ShiGuang\Media\Modules\Skada\Yaskada03")
+	LibStub("LibSharedMedia-3.0"):Register("statusbar", "Yaskada04", "Interface\Addons\_ShiGuang\Media\Modules\Skada\Yaskada04")
+	LibStub("LibSharedMedia-3.0"):Register("statusbar", "None", "Interface\Addons\_ShiGuang\Media\backdrop")
+	Skada.windowdefaults.bartexture = "HalfStyle"
 	Skada.windowdefaults.classicons = false
+	Skada.windowdefaults.title.height = 16
+	Skada.windowdefaults.title.texture = "None"
 	Skada.windowdefaults.title.fontflags = "OUTLINE"
-	Skada.windowdefaults.title.fontsize = 14
+	Skada.windowdefaults.title.fontsize = 11
 	Skada.windowdefaults.title.color = {r=0,g=0,b=0,a=.3}
 	Skada.windowdefaults.barfontflags = "OUTLINE"
-	Skada.windowdefaults.barfontsize = 15
+	Skada.windowdefaults.barfontsize = 11
 	Skada.windowdefaults.barbgcolor = {r=0,g=0,b=0,a=0}
+	Skada.windowdefaults.reversegrowth = true
+	Skada.windowdefaults.enabletitle = false
 
 	-- Change Skada NumberFormat
 	Skada.options.args.generaloptions.args.numberformat = nil
 
 	function Skada:FormatNumber(number)
-		if number then
-			if MaoRUISettingDB["Settings"]["Format"] == 1 then
-				if number >= 1e9 then
-					return ("%02.2fb"):format(number / 1e9)
-				elseif number > 1e6 then
-					return ("%02.2fm"):format(number / 1e6)
-				elseif number > 1e3 then
-					return ("%02.1fk"):format(number / 1e3)
-				else
-					return math.floor(number)
-				end
-			elseif MaoRUISettingDB["Settings"]["Format"] == 2 then
-				if number > 1e8 then
-					return ("%02.2f"..DANWEI_YI):format(number / 1e8)
-				elseif number > 1e4 then
-					return ("%02.1f"..DANWEI_WAN):format(number / 1e4)
-				else
-					return math.floor(number)
-				end
-			else
-				return math.floor(number)
-			end
-		end
+		if number then return M.Numb(number) end
 	end
 end

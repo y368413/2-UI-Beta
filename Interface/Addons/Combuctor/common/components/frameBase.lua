@@ -5,6 +5,7 @@
 
 
 local ADDON, Addon = ...
+local Cache = LibStub('LibItemCache-2.0')
 local L = LibStub('AceLocale-3.0'):GetLocale(ADDON)
 local Frame = Addon:NewClass('Frame', 'Frame')
 Frame.OpenSound = SOUNDKIT.IG_BACKPACK_OPEN
@@ -14,15 +15,15 @@ Frame.CloseSound = SOUNDKIT.IG_BACKPACK_CLOSE
 
 function Frame:OnShow()
 	PlaySound(self.OpenSound)
-	self:RegisterMessages()
+	self:RegisterSignals()
 end
 
 function Frame:OnHide()
 	PlaySound(self.CloseSound)
-	self:UnregisterMessages()
+	self:UnregisterSignals()
 
 	if Addon.sets.resetPlayer then
-		self.player = nil
+		self.owner = nil
 	end
 end
 
@@ -86,7 +87,7 @@ function Frame:GetPosition()
 	return self.profile.point or 'CENTER', self.profile.x, self.profile.y
 end
 
-function Frame:UpdateRules()
+function Frame:FindRules()
 	local sorted = {}
 	for i, id in ipairs(self.profile.rules) do
 		sorted[id] = true
@@ -100,7 +101,7 @@ function Frame:UpdateRules()
 	end
 
 	if #self.profile.rules > count then
-		self:SendFrameMessage('RULES_UPDATED')
+		self:SendFrameSignal('RULES_UPDATED')
 	end
 end
 
@@ -116,17 +117,16 @@ function Frame:IsShowingBag(bag)
 end
 
 function Frame:IsShowingItem(bag, slot)
-	local icon, count, locked, quality, readable, lootable, itemLink = self:GetItemInfo(bag, slot)
+	local info = self:GetItemInfo(bag, slot)
 	local rule = Addon.Rules:Get(self.subrule or self.rule)
 
 	if rule and rule.func then
-		local bagLink = self:GetBagInfo(bag)
-		if not rule.func(player, bag, slot, bagLink, itemLink, count) then
+		if not rule.func(self.owner, bag, slot, self:GetBagInfo(bag), info) then
 			return
 		end
 	end
 
-	return self:IsShowingQuality(quality)
+	return self:IsShowingQuality(info.quality)
 end
 
 function Frame:IsShowingQuality(quality)
@@ -134,28 +134,32 @@ function Frame:IsShowingQuality(quality)
 end
 
 function Frame:IsCached()
-	return Addon:IsBagCached(self.player, self.Bags[1])
+	return Cache:GetBagInfo(self:GetOwner(), self.Bags[1]).cached
 end
 
 function Frame:GetBagInfo(bag)
-	return Addon.Cache:GetBagInfo(self.player, bag)
+	return Cache:GetBagInfo(self:GetOwner(), bag)
 end
 
 function Frame:GetItemInfo(bag, slot)
-	return Addon.Cache:GetItemInfo(self.player, bag, slot)
+	return Cache:GetItemInfo(self:GetOwner(), bag, slot)
 end
 
 function Frame:GetProfile()
-	return Addon:GetProfile(self.player)[self.frameID]
+	return Addon:GetProfile(self:GetOwner())[self.frameID]
 end
 
-function Frame:SetPlayer(player)
-	self.player = player
-  self:SendFrameMessage('PLAYER_CHANGED', player)
+function Frame:GetBaseProfile()
+	return Addon.profile[self.frameID]
 end
 
-function Frame:GetPlayer()
-	return self.player or UnitName('player')
+function Frame:SetOwner(owner)
+	self.owner = owner
+  self:SendFrameSignal('OWNER_CHANGED', owner)
+end
+
+function Frame:GetOwner()
+	return self.owner or UnitName('player')
 end
 
 function Frame:GetFrameID()

@@ -168,10 +168,18 @@ ns.options.args.general = {
             step = 1,
             set = function(info,val) ns.db.spacing = val; ns:UpdateHeadersLayout();end,
         }, 
+        outsideRange = {
+            name = L.fontoptsoor,
+            type = "range",
+            order = 5,
+            min = 0,
+            max = 1,
+            step = .1,
+        },
         raid = {
             name = L.generalraid,
             type = "group",
-            order = 5,
+            order = 6,
             inline = true,
             args = {
                 horizontal = {
@@ -207,7 +215,7 @@ ns.options.args.general = {
         pets = {
             name = L.generalpetsname,
             type = "group",
-            order = 11,
+            order = 12,
             inline = true,
             args = {
                 pethorizontal = {
@@ -231,7 +239,7 @@ ns.options.args.general = {
             name = L.miscoptsMT,
             type = "group",
             inline = true,
-            order = 16,
+            order = 17,
             args= {
                 MThorizontal = {
                     name = L.generalpethorizontal,
@@ -429,45 +437,6 @@ ns.options.args.font = {
     },
 }
 
-ns.options.args.range = {
-    type = "group", name = L.rangeoptsname, order = 4,
-    args = {
-        outsideRange = {
-            name = L.fontoptsoor,
-            type = "range",
-            order = 1,
-            min = 0,
-            max = 1,
-            step = .1,
-        },
-        arrow = {
-            name = L.fontoptsarrow,
-            type = "toggle",
-            order = 2,
-			desc = L.fontoptsarrowdesc,
-            set = function(info,val) ns.db.arrow = val;
-			if val == false then
-				ns.db.arrowmouseover = false
-			end	    
-	    end,
-        },
-	arrowscale = {
-            name = L.generalscale,
-            type = "range",
-            order = 3,
-            min = 0.5,
-            max = 2.0,
-            step = 0.5,
-			desc = L.fontoptsscaledesc,
-        },
-    arrowmouseover = {
-            name = L.fontoptsmouseover,
-            type = "toggle",
-            order = 4,
-            disabled = function(info) return not ns.db.arrow end,
-		},
-    },
-}
 --[[
 ns.options.args.Indicators = {
     type = "group",
@@ -546,7 +515,7 @@ ns.options.args.Indicators = {
 }
 --]]
 ns.options.args.heal = {
-    type = "group", name = L.healoptsname, order = 5,
+    type = "group", name = L.healoptsname, order = 4,
     args = {
         text = {
             type = "group",
@@ -637,7 +606,7 @@ ns.options.args.heal = {
 }
 
 ns.options.args.misc = {
-    type = "group", name = L.miscoptsname, order = 6,
+    type = "group", name = L.miscoptsname, order = 5,
     args = {
 		hideblzraid = {
             name = L.miscoptshideraid,
@@ -792,7 +761,7 @@ ns.options.args.misc = {
 }
 
 ns.options.args.color = {
-    type = "group", name = L.coloropts, order = 7,
+    type = "group", name = L.coloropts, order = 6,
 	get = function(info) return ns.db[info[#info]].r,ns.db[info[#info]].g,ns.db[info[#info]].b,ns.db[info[#info]].a; end,
 	set = function(info, r,g,b,a) ns.db[info[#info]].r,ns.db[info[#info]].g,ns.db[info[#info]].b,ns.db[info[#info]].a = r,g,b,a; ns:UpdateObjectColor(); end,
     args = {

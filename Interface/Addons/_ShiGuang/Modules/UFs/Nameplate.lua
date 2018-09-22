@@ -1,4 +1,5 @@
-﻿local M, R, U, I = unpack(select(2, ...))
+﻿local _, ns = ...
+local M, R, U, I = unpack(ns)
 ------------------------------- Nameplate, by paopao001-- NDui MOD-----------------------------
 -- Class Nameplate
 local function RedrawManaBar()
@@ -12,10 +13,8 @@ local function RedrawManaBar()
 	manaBar.FeedbackFrame.BarTexture:SetTexture(I.normTex)
 	manaBar.ManaCostPredictionBar:SetTexture(I.normTex)
 
-	local f = MaoRUI:EventFrame({"NAME_PLATE_UNIT_ADDED", "NAME_PLATE_UNIT_REMOVED"})
-	f:SetScript("OnEvent", function(self, event, unit)
+	local function EKplate(self, event, unit)
 		if GetCVar("nameplateShowSelf") == "0" then return end
-
 		if event == "NAME_PLATE_UNIT_ADDED" and UnitIsUnit(unit, "player") then
 			local namePlatePlayer = C_NamePlate.GetNamePlateForUnit("player")
 			if namePlatePlayer then
@@ -30,7 +29,9 @@ local function RedrawManaBar()
 		elseif event == "NAME_PLATE_UNIT_REMOVED" and UnitIsUnit(unit, "player") then
 			manaBar:Hide()
 		end
-	end)
+	end
+	M:RegisterEvent("NAME_PLATE_UNIT_ADDED", EKplate)
+	M:RegisterEvent("NAME_PLATE_UNIT_REMOVED", EKplate)
 end
 
 -- Class Resourcebar
@@ -262,7 +263,7 @@ local function CreateAuraIcon(parent)
 end
 
 local function UpdateAuraIcon(button, unit, index, filter, customIcon)
-	local name, _, icon, count, debuffType, duration, expirationTime, _, _, _, spellID = UnitAura(unit, index, filter)
+	local name, icon, count, debuffType, duration, expirationTime, _, _, _, spellID = UnitAura(unit, index, filter)
 
 	button.expirationTime = expirationTime
 	button.duration = duration
@@ -346,7 +347,7 @@ local function UpdateBuffs(unitFrame)
 	local i = 1
 	for index = 1, 15 do
 		if i <= MaoRUISettingDB["Nameplate"]["maxAuras"] then
-			local name, _, _, _, _, _, _, caster, _, _, spellID = UnitAura(unit, index, "HELPFUL")
+			local name, _, _, _, _, _, caster, _, _, spellID = UnitAura(unit, index, "HELPFUL")
 			local matchbuff, customIcon = AuraFilter(caster, spellID, unit)
 			if name and matchbuff then
 				if not unitFrame.icons[i] then
@@ -367,7 +368,7 @@ local function UpdateBuffs(unitFrame)
 
 	for index = 1, 20 do
 		if i <= MaoRUISettingDB["Nameplate"]["maxAuras"] then
-			local name, _, _, _, _, _, _, caster, _, _, spellID = UnitAura(unit, index, "HARMFUL")
+			local name, _, _, _, _, _, caster, _, _, spellID = UnitAura(unit, index, "HARMFUL")
 			local matchdebuff, customIcon = AuraFilter(caster, spellID, unit)
 			if name and matchdebuff then
 				if not unitFrame.icons[i] then
@@ -425,8 +426,8 @@ local function UpdateName(unitFrame)
 			unitFrame.name:SetText(level..name)
 		end
 	end
-
-	if name and name == '邪能炸药' then
+  
+	if name and name == ("Fel Explosive" or "邪能炸药" or "魔化炸彈" or "Spawn of G'huun" or "戈霍恩之嗣" or "古翰幼體" or "爆炸物" or "炸彈") then
 		unitFrame.creatureBoomIcon:SetTexture("Interface\\MINIMAP\\Minimap_skull_elite")
 		unitFrame.creatureBoomIcon:SetTexCoord(0, 1, 0, 1)
 	else
@@ -582,7 +583,7 @@ local function UpdateSelectionHighlight(unitFrame)
 				--arrow:SetPoint("BOTTOM", unitFrame.name, "TOP", 0, MaoRUISettingDB["Nameplate"]["AuraSize"]*unitFrame.iconsFrame:GetScale() + 3)
 			--end
 		--else
-			arrow:SetPoint("LEFT", unitFrame.healthBar, "LEFT", -8, 10)
+			arrow:SetPoint("LEFT", unitFrame.healthBar, "RIGHT", -12, 12)
 		--end
 	end
 end
@@ -622,15 +623,15 @@ local function UpdateNamePlateEvents(unitFrame)
 end
 
 local function UpdateInVehicle(unitFrame)
-	if ( UnitHasVehicleUI(unitFrame.unit) ) then
-		if ( not unitFrame.inVehicle ) then
+	if UnitHasVehicleUI(unitFrame.unit) then
+		if not unitFrame.inVehicle then
 			unitFrame.inVehicle = true
 			local prefix, id, suffix = string.match(unitFrame.unit, "([^%d]+)([%d]*)(.*)")
 			unitFrame.displayedUnit = prefix.."pet"..id..suffix
 			UpdateNamePlateEvents(unitFrame)
 		end
 	else
-		if ( unitFrame.inVehicle ) then
+		if unitFrame.inVehicle then
 			unitFrame.inVehicle = false
 			unitFrame.displayedUnit = unitFrame.unit
 			UpdateNamePlateEvents(unitFrame)
@@ -767,7 +768,7 @@ local function HideBlizzard()
 	SetCVar("nameplateMinAlpha", MaoRUISettingDB["Nameplate"]["MinAlpha"])
 
 	C_NamePlate.SetNamePlateFriendlyClickThrough(false)
-	SetCVar("nameplateSelectedScale", 1.25)
+	SetCVar("nameplateSelectedScale", 1.43)
 
    
 	-- No more smallplates

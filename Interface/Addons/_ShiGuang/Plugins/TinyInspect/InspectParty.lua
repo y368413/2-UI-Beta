@@ -65,11 +65,14 @@ local function SendInspect()
     end
 end
 
+local SendAddonMessage = SendAddonMessage or function() end
+
 --发送自己的信息
 local function SendPlayerInfo()
     local ilvl = select(2, GetAverageItemLevel())
     local spec = select(2, GetSpecializationInfo(GetSpecialization()))
-    SendAddonMessage("TinyInspect", format("%s|%s|%s", "LV", ilvl, spec), "PARTY")
+    C_ChatInfo.SendAddonMessage("TinyInspect", format("%s|%s|%s", "LV", ilvl, spec), "PARTY")
+    --SendAddonMessage("TinyInspect", format("%s|%s|%s", "LV", ilvl, spec), "PARTY")
 end
 
 --解析发送的信息

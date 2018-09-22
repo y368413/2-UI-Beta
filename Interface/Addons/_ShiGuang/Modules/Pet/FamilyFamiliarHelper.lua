@@ -1,8 +1,12 @@
-﻿-- key binding globals for Bindings.xml
+﻿if (ShiGuangDB.FamilyFamiliarHelper_JustOnce == nil) then ShiGuangDB.FamilyFamiliarHelper_JustOnce = true end
+if (ShiGuangDB.FamilyFamiliarHelper_AutoShow == nil) then ShiGuangDB.FamilyFamiliarHelper_AutoShow = true end
+if (ShiGuangDB.FamilyFamiliarHelper_ActiveTab == nil) then ShiGuangDB.FamilyFamiliarHelper_ActiveTab = 1 end
+	
+	-- key binding globals for Bindings.xml
 BINDING_HEADER_FAMILYFAMILIARHELPER = "|cFFBF00FF[宠物]|rLEG成就"
 BINDING_NAME_FAMILYFAMILIARHELPER_TOGGLE = "    查看"
 
-FamilyFamiliarHelperSettings = {} -- savedvariable
+--FamilyFamiliarHelperSettings = {} -- savedvariable
 
 local ffh = CreateFrame("Frame","FamilyFamiliarHelper",UIParent,"BasicFrameTemplateWithInset")
 ffh:Hide()
@@ -93,7 +97,7 @@ function ffh:UpdateUI()
 
    if ffh:IsVisible() then
 
-      local tab = FamilyFamiliarHelperSettings.ActiveTab
+      local tab = ShiGuangDB.FamilyFamiliarHelper_ActiveTab
 
       ffh:UpdateProgress() -- update ffh.progress with how far along each achievement is
       ffh:UpdateOptions() -- update checkbutton options and ESCability
@@ -133,7 +137,7 @@ end
 -- mouseover of header will show the achievement's tooltip
 local function headerOnEnter(self)
    GameTooltip:SetOwner(self,"ANCHOR_LEFT")
-   GameTooltip:SetHyperlink(GetAchievementLink(ffh.achievementIDs[FamilyFamiliarHelperSettings.ActiveTab][self:GetID()]))
+   GameTooltip:SetHyperlink(GetAchievementLink(ffh.achievementIDs[ShiGuangDB.FamilyFamiliarHelper_ActiveTab][self:GetID()]))
    GameTooltip:Show()
    GameTooltip:ClearAllPoints()
    GameTooltip:SetPoint("BOTTOMRIGHT",ffh,"BOTTOMRIGHT",-6,32)
@@ -151,7 +155,7 @@ end
 function ffh:SetupUI()
    if ffh.firstRun then
       ffh.firstRun = nil
-      ffh.TitleText:SetText("Family Familiar Helper \124cffa0a0a01.2.0")
+      ffh.TitleText:SetText("Family Familiar Helper \124cffa0a0a01.2.2")
       ffh.TitleText:SetPoint("TOP",-6,-5)
       ffh.InsetBg:SetPoint("BOTTOMRIGHT",-6,32)
       -- first go through and remove any achievements that don't exist (in case running on live client and new achievements added on PTR)
@@ -210,10 +214,10 @@ function ffh:SetupUI()
       -- option checkboxes
       local lock = ffh:CreateCheck("Locked","Lock Window","While checked, this window cannot be dismissed with the ESCape key, nor can it be dragged around the screen unless [Shift] is held.")
       lock:SetPoint("BOTTOMLEFT",8,4)
-      local autoShow = ffh:CreateCheck("AutoShow","Auto Show","While checked, anytime you target one of the Family Familiar tamers, this window will show.\n\nIf this is unchecked you can still summon the window with the \124cffffffff/ffh\124r command or key binding.")
-      autoShow:SetPoint("LEFT",lock,"RIGHT",-4,0)
-      local justOnce = ffh:CreateCheck("JustOnce","Just Once","While checked, Auto Show will summon the window only the first time you target a Family Familiar tamer, until you've moved on to another tamer.")
-      justOnce:SetPoint("LEFT",autoShow,"RIGHT",-4,0)
+      local FamilyFamiliarHelper_AutoShow = ffh:CreateCheck("FamilyFamiliarHelper_AutoShow","Auto Show","While checked, anytime you target one of the Family Familiar tamers, this window will show.\n\nIf this is unchecked you can still summon the window with the \124cffffffff/ffh\124r command or key binding.")
+      FamilyFamiliarHelper_AutoShow:SetPoint("LEFT",lock,"RIGHT",-4,0)
+      local FamilyFamiliarHelper_JustOnce = ffh:CreateCheck("FamilyFamiliarHelper_JustOnce","Just Once","While checked, Auto Show will summon the window only the first time you target a Family Familiar tamer, until you've moved on to another tamer.")
+      FamilyFamiliarHelper_JustOnce:SetPoint("LEFT",FamilyFamiliarHelper_AutoShow,"RIGHT",-4,0)
       -- tabs across bottom of window
       ffh.Tabs = {}
       ffh.maxTabWidth = 128 -- default max width is 88; 128 gives some room for localization
@@ -237,19 +241,18 @@ function ffh:SetupUI()
             break -- and stop trying other achievements (if they exist)
          end
       end
-      local settings = FamilyFamiliarHelperSettings
-      PanelTemplates_SetTab(ffh,settings.ActiveTab) -- start at first tab (unless one saved in settings)
+      PanelTemplates_SetTab(ffh,ShiGuangDB.FamilyFamiliarHelper_ActiveTab) -- start at first tab (unless one saved in settings)
       if ffh.numTabs==1 then -- if a single tab exists (7.2.x client) hide the lone tab
          ffh.Tabs[1]:Hide()
       end
       -- position parent window
-      if not settings.XPos then -- if coordinates not saved yet, get BOTTOMLEFT of default position
-         settings.XPos = ffh:GetLeft()
-         settings.YPos = ffh:GetBottom()
+      if not ShiGuangDB.FamilyFamiliarHelper_XPos then -- if coordinates not saved yet, get BOTTOMLEFT of default position
+         ShiGuangDB.FamilyFamiliarHelper_XPos = ffh:GetLeft()
+         ShiGuangDB.FamilyFamiliarHelper_YPos = ffh:GetBottom()
       end
       -- and anchor it to saved position
       ffh:ClearAllPoints()
-      ffh:SetPoint("BOTTOMLEFT",settings.XPos,settings.YPos)
+      ffh:SetPoint("BOTTOMLEFT",ShiGuangDB.FamilyFamiliarHelper_XPos,ShiGuangDB.FamilyFamiliarHelper_YPos)
    end
 end
 
@@ -298,36 +301,32 @@ SLASH_FFH1 = "/ffh"
 ffh:SetScript("OnShow",ffh.OnShow)
 ffh:SetScript("OnHide",ffh.OnHide)
 ffh:SetScript("OnMouseDown",function(self)
-   if not FamilyFamiliarHelperSettings.Locked or IsShiftKeyDown() then
-      self:StartMoving()
-   end
+   if not ShiGuangDB.FamilyFamiliarHelper_Locked or IsShiftKeyDown() then self:StartMoving() end
 end)
 ffh:SetScript("OnMouseUp",function(self)
    self:StopMovingOrSizing()
    -- save anchor positions (with frame changing height, want to keep bottom of frame stationary)
-   local settings = FamilyFamiliarHelperSettings
-   settings.XPos = ffh:GetLeft()
-   settings.YPos = ffh:GetBottom()
+   ShiGuangDB.FamilyFamiliarHelper_XPos = ffh:GetLeft()
+   ShiGuangDB.FamilyFamiliarHelper_YPos = ffh:GetBottom()
    ffh:ClearAllPoints()
-   ffh:SetPoint("BOTTOMLEFT",settings.XPos,settings.YPos) -- re-anchor from potential "CENTER" imposed by StartMoving()
+   ffh:SetPoint("BOTTOMLEFT",ShiGuangDB.FamilyFamiliarHelper_XPos,ShiGuangDB.FamilyFamiliarHelper_YPos) -- re-anchor from potential "CENTER" imposed by StartMoving()
 end)
 
-ffh:SetScript("OnEvent",function(self,event,...)
-   ffh[event](self,...)
-end)
+ffh:SetScript("OnEvent",function(self,event,...) ffh[event](self,...) end)
 
 function ffh:PLAYER_LOGIN()
    -- set up defaults
-   for var,default in pairs({AutoShow=true,JustOnce=true,ActiveTab=1}) do
-      if FamilyFamiliarHelperSettings[var]==nil then
-         FamilyFamiliarHelperSettings[var] = default
-      end
-   end
+   --for var,default in pairs({AutoShow=true,JustOnce=true,ActiveTab=1}) do
+      --if FamilyFamiliarHelperSettings[var]==nil then
+         --FamilyFamiliarHelperSettings[var] = default
+      --end
+   --end
    ffh:UpdateOptions()
    ffh.oldTooltipBackdrop = GameTooltip:GetBackdrop()
-   ffh.newTooltipBackdrop = CopyTable(ffh.oldTooltipBackdrop)
-   ffh.newTooltipBackdrop.bgFile = "Interface\\ChatFrame\\ChatFrameBackground"
-
+   if ffh.oldTooltipBackdrop then
+     ffh.newTooltipBackdrop = CopyTable(ffh.oldTooltipBackdrop)
+     ffh.newTooltipBackdrop.bgFile = "Interface\\ChatFrame\\ChatFrameBackground"
+   end
    -- add launcher button for LDB if it exists
 	local ldb = LibStub and LibStub:GetLibrary("LibDataBroker-1.1",true)
    if ldb then
@@ -344,16 +343,15 @@ function ffh:PLAYER_TARGET_CHANGED()
    if UnitExists("target") then
       local guid = UnitGUID("target")
       if guid then
-         local settings = FamilyFamiliarHelperSettings
          npcID = guid:match(".-%-%d+%-%d+%-%d+%-%d+%-(%d+)")
          local npcTab = ffh.notableNPCs[npcID]
-         if npcTab and (not settings.JustOnce or npcID~=ffh.lastInteracted) then
+         if npcTab and (not ShiGuangDB.FamilyFamiliarHelper_JustOnce or npcID~=ffh.lastInteracted) then
             ffh.lastInteracted = npcID
             ffh:Show()
          end
          -- if frame is on screen and we're on the wrong tab for the target, switch to the right tab
-         if ffh:IsVisible() and npcTab and settings.ActiveTab~=npcTab then -- this npcID is in a different tab than the one we're presently in
-            settings.ActiveTab = npcTab -- switch tab to this npc's tab
+         if ffh:IsVisible() and npcTab and ShiGuangDB.FamilyFamiliarHelper_ActiveTab~=npcTab then -- this npcID is in a different tab than the one we're presently in
+            ShiGuangDB.FamilyFamiliarHelper_ActiveTab = npcTab -- switch tab to this npc's tab
             PanelTemplates_SetTab(ffh,npcTab)
             ffh:UpdateUI() -- and update now that we're on right tab
          end
@@ -375,7 +373,7 @@ end
 
 -- click of any of the tabs across the bottom. As of 7.3, either Family Familiar or Family Fighter
 function ffh:PanelTabOnClick()
-   FamilyFamiliarHelperSettings.ActiveTab = self:GetID() -- remember this tab so we return to it in future sessions
+   ShiGuangDB.FamilyFamiliarHelper_ActiveTab = self:GetID() -- remember this tab so we return to it in future sessions
    PanelTemplates_SetTab(ffh,self:GetID())
    ffh:UpdateUI()
 end
@@ -387,18 +385,17 @@ end
 -- run at PLAYER_LOGIN and checkOnClick: registers/unregisters for the targeting event based on AutoShow
 -- and whether the frame is in UISpecialFrames
 function ffh:UpdateOptions()
-   local settings = FamilyFamiliarHelperSettings
    local registered = ffh:IsEventRegistered("PLAYER_TARGET_CHANGED")
-   if settings.AutoShow and not registered then
+   if ShiGuangDB.FamilyFamiliarHelper_AutoShow and not registered then
       ffh:RegisterEvent("PLAYER_TARGET_CHANGED")
-   elseif not settings.AutoShow and registered then
+   elseif not ShiGuangDB.FamilyFamiliarHelper_AutoShow and registered then
       ffh:UnregisterEvent("PLAYER_TARGET_CHANGED")
    end
    if ffh:IsVisible() then
-      ffh.Locked:SetChecked(settings.Locked)
-      ffh.AutoShow:SetChecked(settings.AutoShow)
-      ffh.JustOnce:SetChecked(settings.JustOnce)
-      ffh.JustOnce:SetShown(settings.AutoShow)
+      ffh.Locked:SetChecked(ShiGuangDB.FamilyFamiliarHelper_Locked)
+      ffh.FamilyFamiliarHelper_AutoShow:SetChecked(ShiGuangDB.FamilyFamiliarHelper_AutoShow)
+      ffh.FamilyFamiliarHelper_JustOnce:SetChecked(ShiGuangDB.FamilyFamiliarHelper_JustOnce)
+      ffh.FamilyFamiliarHelper_JustOnce:SetShown(ShiGuangDB.FamilyFamiliarHelper_AutoShow)
       ffh:UpdateESCability()
       ffh:UpdateHighlight()
    end
@@ -418,7 +415,7 @@ end
 
 -- OnClick will toggle the settings and update
 local function checkOnClick(self)
-   FamilyFamiliarHelperSettings[self.var] = self:GetChecked() and true -- make sure it's true/false
+   ShiGuangDB[self.var] = self:GetChecked() and true -- make sure it's true/false
    ffh:UpdateOptions()
 end
 
@@ -436,7 +433,7 @@ end
 
 -- while Locked is unchecked, the frame only exists in UISpecialFrames while it's on screen
 function ffh:UpdateESCability(hide)
-   if FamilyFamiliarHelperSettings.Locked or not ffh:IsVisible() or hide then
+   if ShiGuangDB.FamilyFamiliarHelper_Locked or not ffh:IsVisible() or hide then
       for i=#UISpecialFrames,1,-1 do
          if UISpecialFrames[i]=="FamilyFamiliarHelper" then
             tremove(UISpecialFrames,i)

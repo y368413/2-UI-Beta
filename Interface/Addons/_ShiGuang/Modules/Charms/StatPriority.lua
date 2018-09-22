@@ -1,68 +1,91 @@
-﻿--## Author: Vampyr78  ## Version: 1.1.10
-local M, R, U, I = unpack(select(2, ...))
+﻿--## Author: Vampyr78  ## Version: 1.2
 local statPriorityStats = {}
-statPriorityStats["WARRIORArms"] = "Mastery > Haste = Versatility = CriticalStrike > Strength"
-statPriorityStats["WARRIORFury"] = "Haste(30%) > Mastery(40+%) > Versatility(3%) > CriticalStrike(25%) > Strength"
-statPriorityStats["WARRIORProtection"] = "Strength > Haste(30%) > Mastery > Versatility > CriticalStrike"
-statPriorityStats["PALADINHoly"] = "Intellect > CriticalStrike > Mastery > Versatility > Haste"
-statPriorityStats["PALADINProtection"] = "Haste > Versatility(9%) > Mastery > CriticalStrike"
-statPriorityStats["PALADINRetribution"] = "Mastery > Haste > Versatility > CriticalStrike = Strength"
-statPriorityStats["HUNTERBeast Mastery"] = "CriticalStrike(50%) > Haste(18%) > Mastery(85%) > Versatility"
-statPriorityStats["HUNTERMarksmanship"] = "Mastery > CriticalStrike > Haste > Versatility"
-statPriorityStats["HUNTERSurvival"] = "Haste > CriticalStrike = Versatility > Mastery"
-statPriorityStats["ROGUEAssassination"] = "Agility > Mastery > Versatility > CriticalStrike > Haste"
-statPriorityStats["ROGUEExsanguinate"] = "Agility > Versatility > CriticalStrike > Mastery > Haste"
-statPriorityStats["ROGUEOutlaw"] = "Versatility > Haste(20%) > Agility > CriticalStrike > Mastery"
-statPriorityStats["ROGUESubtlety"] = "Agility > Mastery > Versatility > CriticalStrike > Haste"
-statPriorityStats["PRIESTDiscipline"] = "Intellect > Haste > CriticalStrike > Mastery > Versatility"
-statPriorityStats["PRIESTHoly"] = "Intellect > Mastery > CriticalStrike > Haste > Versatility"
-statPriorityStats["PRIESTShadow"] = "Haste > CriticalStrike > Mastery > Versatility > Intellect"
-statPriorityStats["SHAMANElemental"] = "Intellect > CriticalStrike > Mastery > Haste > Versatility"
-statPriorityStats["SHAMANIcefury"] = "Intellect > CriticalStrike > Haste > Mastery = Versatility"
-statPriorityStats["SHAMANLightning"] = "Intellect > CriticalStrike > Haste > Mastery = Versatility"
-statPriorityStats["SHAMANEnhancement"] = "Haste = Mastery > Versatility > CriticalStrike > Agility"
-statPriorityStats["SHAMANRestoration"] = "CriticalStrike > Versatility = Mastery = Haste > Intellect"
-statPriorityStats["MAGEArcane"] = "Haste > Versatility > CriticalStrike > Mastery > Intellect"
-statPriorityStats["MAGEFire"] = "Mastery > Haste = Versatility > Intellect > CriticalStrike"
-statPriorityStats["MAGEFrost"] = "Versatility = Haste > CriticalStrike(33.34%) > Intellect > Mastery"
-statPriorityStats["WARLOCKAffliction"] = "Mastery > Haste > CriticalStrike > Versatility > Intellect"
-statPriorityStats["WARLOCKDemonology"] = "Haste(36%) > CriticalStrike = Mastery(50%) > Intellect > Versatility"
-statPriorityStats["WARLOCKDestruction"] = "Haste > CriticalStrike > Intellect > Versatility > Mastery"
-statPriorityStats["DRUIDBalance"] = "Mastery = Haste > CriticalStrike = Versatility > Intellect"
-statPriorityStats["DRUIDFeral"] = "Versatility > CriticalStrike > Haste > Agility > Mastery"
-statPriorityStats["DRUIDJagged"] = "Mastery > Versatility > CriticalStrike > Haste > Agility"
-statPriorityStats["DRUIDGuardian"] = "Armor > Stamina > Versatility > Mastery > Haste > CriticalStrike > Agility"
-statPriorityStats["DRUIDRestoration"] = "Haste(25%) > CriticalStrike(20%) > Mastery(20%) > Versatility > Intellect"
-statPriorityStats["MONKBrewmaster"] = "Mastery = CriticalStrike = Versatility > Haste(14.3%)"
-statPriorityStats["MONKMistweaver"] = "Intellect > CriticalStrike > Versatility > Haste > Mastery"
-statPriorityStats["MONKFistweaver"] = "Intellect > Versatility > Haste > CriticalStrike > Mastery"
-statPriorityStats["MONKWindwalker"] = "Agility > Mastery > Haste > CriticalStrike > Versatility"
-statPriorityStats["DEATHKNIGHTBlood"] = "Haste(25%) > Versatility > CriticalStrike > Mastery"
-statPriorityStats["DEATHKNIGHTFrost"] = "Strength > Mastery(40%) > Haste(30%) = CriticalStrike(30%) > Versatility"
-statPriorityStats["DEATHKNIGHTUnholy"] = "Strength > Haste(26%) > Mastery > CriticalStrike = Versatility"
-statPriorityStats["DEMONHUNTERHavoc"] = "CriticalStrike > Haste > Versatility > Agility > Mastery"
-statPriorityStats["DEMONHUNTERVengeance"] = "Agility > Haste(20%) > Mastery > Versatility > CriticalStrike"
-
-function statPriorityFrameOnEvent(self, event)
-	if event == "ADDON_LOADED" then
-		self:UnregisterEvent("ADDON_LOADED")
-		PaperDollFrame:HookScript("OnShow", function() statPriorityFrameUpdate(self, statPriorityText, PaperDollFrame, "player") end)
-	elseif event == "SPELLS_CHANGED" then
-		statPriorityFrameUpdate(self, statPriorityText, PaperDollFrame, "player")
-	elseif event == "INSPECT_READY" then
-		statPriorityFrameUpdate(statPriorityInspectFrame, statPriorityInspectText, InspectPaperDollFrame, "target")
-	end
+if GetLocale() == "zhCN" then
+STRENGTH = "力量"; AGILITY = "敏捷"; INTELLECT = "智力"; VERSATILITY = "全能"; ARMOR = "护甲"; HASTE = "急速"; MASTERY = "精通"; CRITICALSTRIKE = "爆击"; STAMINA = "耐力"; SPIRIT = "精神";
+elseif GetLocale() == "zhTW" then
+STRENGTH = "力量"; AGILITY = "敏捷"; INTELLECT = "智力"; VERSATILITY = "臨機應變"; ARMOR = "護甲"; HASTE = "加速"; MASTERY = "精通"; CRITICALSTRIKE = "致命一擊"; STAMINA = "耐力"; SPIRIT = "精神";
+else
+STRENGTH = "Strength"; AGILITY = "Agility"; INTELLECT = "Intellect"; VERSATILITY = "Versatility"; ARMOR = "Armor"; HASTE = "Haste"; MASTERY = "Mastery"; CRITICALSTRIKE = "Critical Strike"; STAMINA = "Stamina"; SPIRIT = "Spirit";	
 end
+--WARRIORArms
+statPriorityStats[71] = "Strength > Haste > Critical Strike > Mastery > Versatility"
+--WARRIORFury
+statPriorityStats[72] = "Strength > Haste > Mastery > Versatility > Critical Strike"
+--WARRIORProtection
+statPriorityStats[73] = "Haste > Versatility = Mastery > Critical Strike > Strength"
+--PALADINHoly
+statPriorityStats[65] = "Intellect > Critical Strike > Mastery > Haste > Versatility"
+statPriorityStats["Avenger"] = "Intellect > Critical Strike > Haste > Versatility > Mastery"
+--PALADINProtection
+statPriorityStats[66] = "Haste > Mastery > Versatility > Critical Strike"
+--PALADINRetribution
+statPriorityStats[70] = "Strength > Haste > Critical Strike = Versatility = Mastery"
+--HUNTERBeast Mastery
+statPriorityStats[253] = "Mastery > Haste > Critical Strike > Versatility"
+--HUNTERMarksmanship
+statPriorityStats[254] = "Mastery > Haste > Critical Strike > Versatility"
+--HUNTERSurvival
+statPriorityStats[255] = "Haste > Critical Strike > Versatility > Mastery"
+--ROGUEAssassination
+statPriorityStats[259] = "Agility > Haste > Critical Strike > Mastery > Versatility"
+--ROGUEOutlaw
+statPriorityStats[260] = "Agility > Haste > Versatility > Critical Strike > Mastery"
+--ROGUESubtlety
+statPriorityStats[261] = "Mastery > Critical Strike > Versatility > Haste"
+--PRIESTDiscipline
+statPriorityStats[256] = "Intellect > Haste > Critical Strike > Mastery > Versatility"
+--PRIESTHoly
+statPriorityStats[257] = "Intellect > Mastery > Critical Strike > Haste > Versatility"
+--PRIESTShadow
+statPriorityStats[258] = "Intellect > Critical Strike > Versatility > Haste = Mastery"
+--SHAMANElemental
+statPriorityStats[262] = "Intellect > Haste > Versatility > Critical Strike > Mastery"
+--SHAMANEnhancement
+statPriorityStats[263] = "Agility > Haste > Critical Strike = Versatility > Mastery"
+--SHAMANRestoration
+statPriorityStats[264] = "Intellect > Critical Strike > Versatility > Haste = Mastery"
+--MAGEArcane
+statPriorityStats[62] = "Intellect > Critical Strike > Haste > Mastery > Versatility"
+--MAGEFire
+statPriorityStats[63] = "Intellect > Mastery > Versatility > Haste > Critical Strike"
+--MAGEFrost
+statPriorityStats[64] = "Intellect > Critical Strike to 33.34% > Haste > Versatility > Mastery"
+--WARLOCKAffliction
+statPriorityStats[265] = "Mastery > Intellect > Haste > Critical Strike = Versatility"
+--WARLOCKDemonology
+statPriorityStats[266] = "Intellect > Haste > Critical Strike = Mastery > Versatility"
+--WARLOCKDestruction
+statPriorityStats[267] = "Intellect > Haste > Critical Strike = Mastery > Versatility"
+--DRUIDBalance
+statPriorityStats[102] = "Intellect > Haste > Critical Strike > Versatility > Mastery"
+--DRUIDFeral
+statPriorityStats[103] = "Agility > Haste > Critical Strike > Versatility > Mastery"
+--DRUIDGuardian
+statPriorityStats[104] = "Armor = Agility = Stamina > Mastery > Versatility > Haste > Critical Strike"
+--DRUIDRestoration
+statPriorityStats[105] = "Mastery = Haste > Intellect > Versatility > Critical Strike"
+--MONKBrewmaster
+statPriorityStats[268] = "Agility > Critical Strike = Versatility = Mastery > Haste"
+--MONKMistweaver
+statPriorityStats[270] = "Intellect > Critical Strike > Versatility > Haste > Mastery"
+--MONKWindwalker
+statPriorityStats[269] = "Agility > Versatility > Mastery > Critical Strike > Haste"
+--DEATHKNIGHTBlood
+statPriorityStats[250] = "Haste > Versatility > Mastery > Critical Strike"
+--DEATHKNIGHTFrost
+statPriorityStats[251] = "Mastery > Critical Strike > Versatility > Haste"
+--DEATHKNIGHTUnholy
+statPriorityStats[252] = "Haste > Critical Strike = Versatility > Mastery"
+--DEMONHUNTERHavoc
+statPriorityStats[577] = "Agility > Haste = Versatility > Critical Strike > Mastery"
+--DEMONHUNTERVengeance
+statPriorityStats[581] = "Agility > Haste > Versatility > Mastery > Critical Strike"
 
 function statPriorityFrameCreate(frame, text, parent)
 	if parent:IsVisible() and UnitLevel("player") >= 55 then
 		frame:SetFrameStrata("TOOLTIP")
 		frame:SetWidth(parent:GetWidth() - 21)
-		if parent == PaperDollFrame then
-			frame:SetHeight(21)
-		else
-			frame:SetHeight(50)
-		end
+		if parent == PaperDollFrame then frame:SetHeight(21) else frame:SetHeight(50) end
 		text:ClearAllPoints()
 		text:SetAllPoints(frame) 
 		text:SetJustifyH("CENTER")
@@ -76,132 +99,25 @@ function statPriorityFrameCreate(frame, text, parent)
 	return false
 end
 
-function GetSpecializationName(id)
-	local spec = ""
-	if id == 62 then 
-		spec = "Arcane"
-	elseif id == 63 then 
-		spec = "Fire"
-	elseif id == 64 then 
-		spec = "Frost"
-	elseif id == 65 then 
-		spec = "Holy"
-	elseif id == 66 then 
-		spec = "Protection"
-	elseif id == 70 then 
-		spec = "Retribution"
-	elseif id == 71 then 
-		spec = "Arms"
-	elseif id == 72 then 
-		spec = "Fury"
-	elseif id == 73 then 
-		spec = "Protection"
-	elseif id == 102 then 
-		spec = "Balance"
-	elseif id == 103 then 
-		spec = "Feral"
-	elseif id == 104 then 
-		spec = "Guardian"
-	elseif id == 105 then 
-		spec = "Restoration"
-	elseif id == 250 then 
-		spec = "Blood"
-	elseif id == 251 then 
-		spec = "Frost"
-	elseif id == 252 then 
-		spec = "Unholy"
-	elseif id == 253 then 
-		spec = "Beast Mastery"
-	elseif id == 254 then 
-		spec = "Marksmanship"
-	elseif id == 255 then 
-		spec = "Survival"
-	elseif id == 256 then 
-		spec = "Discipline"
-	elseif id == 257 then 
-		spec = "Holy"
-	elseif id == 258 then 
-		spec = "Shadow"
-	elseif id == 259 then 
-		spec = "Assassination"
-	elseif id == 260 then 
-		spec = "Outlaw"  --Combat
-	elseif id == 261 then 
-		spec = "Subtlety"
-	elseif id == 262 then 
-		spec = "Elemental"
-	elseif id == 263 then 
-		spec = "Enhancement"
-	elseif id == 264 then 
-		spec = "Restoration"
-	elseif id == 265 then 
-		spec = "Affliction"
-	elseif id == 266 then 
-		spec = "Demonology"
-	elseif id == 267 then 
-		spec = "Destruction"
-	elseif id == 268 then 
-		spec = "Brewmaster"
-	elseif id == 269 then 
-		spec = "Windwalker"
-	elseif id == 270 then 
-		spec = "Mistweaver"
-	elseif id == 577 then 
-		spec = "Havoc"
-	elseif id == 581 then 
-		spec = "Vengeance"
-	end
-	return spec
-end
-
 function statPriorityFrameUpdate(frame, frameText, parent, unit)
 	if parent ~= nil and statPriorityFrameCreate(frame, frameText, parent) then
-		local name = UnitName("player")
 		local temp, class = UnitClass(unit)
-		local spec
 		local text
-		if parent == PaperDollFrame then
-			spec = GetSpecializationInfo(GetSpecialization())
-			spec = GetSpecializationName(spec)
-			text = statPriorityStats[class .. spec];
-			if class == "ROGUE" then
-				if IsSpellKnown(200806) then
-					text = statPriorityStats[class .. "Exsanguinate"]
-				end
-			elseif class == "SHAMAN" then
-				if IsSpellKnown(210714) then
-					text = statPriorityStats[class .. "Icefury"]
-				elseif IsSpellKnown(210689) then
-					text = statPriorityStats[class .. "Lightning"]
-				end
-			elseif class == "DRUID" then
-				if IsSpellKnown(202032) then
-					text = statPriorityStats[class .. "Jagged"]
-				end
-			elseif class == "MONK" then
-				if IsSpellKnown(210802) then
-					text = statPriorityStats[class .. "Fistweaver"]
+			if class == "PALADIN" then
+				if IsSpellKnown(216331) then
+					text = statPriorityStats["Avenger"]
 				end
 			end
-			if statPriorityStats[name..spec] ~= nil then
-				text = statPriorityStats[name..spec]
-			end
-			      text = gsub(text,"Strength",STRENGTH)
+			text = statPriorityStats[select(1,GetSpecializationInfo(GetSpecialization()))];
+			text = gsub(text,"Strength",STRENGTH)
             text = gsub(text,"Agility",AGILITY)
             text = gsub(text,"Intellect",INTELLECT)
             text = gsub(text,"Versatility",VERSATILITY)
             text = gsub(text,"Armor",ARMOR)
             text = gsub(text,"Haste",HASTE)
             text = gsub(text,"Mastery",MASTERY)
-            text = gsub(text,"CriticalStrike",CRIT) 
+            text = gsub(text,"Critical Strike",CRITICALSTRIKE) 
             text = gsub(text,"Stamina",STAMINA)
-		else
-			spec = GetSpecializationName(GetInspectSpecialization(unit))
-			text = statPriorityStats[class .. spec];
-			if statPriorityStats[name..spec] ~= nil and class == UnitClass("player") then
-				text = statPriorityStats[name..spec]
-			end
-		end
 		frameText:SetText(text)
 	end
 end
@@ -213,4 +129,13 @@ statPriorityInspectText = statPriorityInspectFrame:CreateFontString(nil, "OVERLA
 statPriorityFrame:RegisterEvent("ADDON_LOADED")
 statPriorityFrame:RegisterEvent("SPELLS_CHANGED")
 statPriorityFrame:RegisterEvent("INSPECT_READY");
-statPriorityFrame:SetScript("OnEvent", statPriorityFrameOnEvent)
+statPriorityFrame:SetScript("OnEvent", function(self, event)
+	if event == "ADDON_LOADED" then
+		self:UnregisterEvent("ADDON_LOADED")
+		PaperDollFrame:HookScript("OnShow", function() statPriorityFrameUpdate(self, statPriorityText, PaperDollFrame, "player") end)
+	elseif event == "SPELLS_CHANGED" then
+		statPriorityFrameUpdate(self, statPriorityText, PaperDollFrame, "player")
+	elseif event == "INSPECT_READY" then
+		statPriorityFrameUpdate(statPriorityInspectFrame, statPriorityInspectText, InspectPaperDollFrame, "target")
+	end
+end)

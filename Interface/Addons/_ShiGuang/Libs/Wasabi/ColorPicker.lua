@@ -1,4 +1,4 @@
-local widgetType, widgetVersion = 'ColorPicker', 1
+local widgetType, widgetVersion = 'ColorPicker', 2
 local Wasabi = LibStub and LibStub('Wasabi', true)
 if(not Wasabi or (Wasabi:GetWidgetVersion(widgetType) or 0) >= widgetVersion) then
 	return
@@ -21,14 +21,24 @@ local function ToRGBA(hex)
 end
 
 function methods:Update(value)
-	local r, g, b, a = ToRGBA(value)
+	local r, g, b, a
+	if(type(value) == 'table' and r.GetRGB) then
+		r, g, b, a = value:GetRGBA()
+	else
+		r, g, b, a = ToRGBA(value)
+	end
+
 	self.Swatch:SetVertexColor(r, g, b, a)
 	self.panel:SetVariable(self.key, value)
 	self:Fire('Update', r, g, b, a, value)
 end
 
 function methods:SetColor(r, g, b, a)
-	self:Update(ToHex(r, g, b, a or 1))
+	if(type(r) == 'table' and r.GetRGB) then
+		self:Update(r:GenerateHexColor())
+	else
+		self:Update(ToHex(r, g, b, a or 1))
+	end
 end
 
 local function OnClick(self)
@@ -54,11 +64,11 @@ local function OnClick(self)
 end
 
 local function OnEnter(self)
-	self:GetParent().Background:SetTexture(1, 1, 0)
+	self:GetParent().Background:SetColorTexture(1, 1, 0)
 end
 
 local function OnLeave(self)
-	self:GetParent().Background:SetTexture(1, 1, 1)
+	self:GetParent().Background:SetColorTexture(1, 1, 1)
 end
 
 local function OnClickPass(self, ...)
@@ -91,7 +101,7 @@ Wasabi:RegisterWidget(widgetType, widgetVersion, function(panel, key)
 	local Background = Button:CreateTexture(nil, 'BACKGROUND', nil, 1)
 	Background:SetPoint('CENTER', Swatch)
 	Background:SetSize(16, 16)
-	Background:SetTexture(1, 1, 1)
+	Background:SetColorTexture(1, 1, 1)
 	Button.Background = Background
 
 	local Checkers = Button:CreateTexture(nil, 'BACKGROUND', nil, 2)

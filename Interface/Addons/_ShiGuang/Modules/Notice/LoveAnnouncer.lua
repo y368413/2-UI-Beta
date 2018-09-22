@@ -1,4 +1,5 @@
-﻿local M, R, U, I = unpack(select(2, ...))
+﻿local _, ns = ...
+local M, R, U, I = unpack(ns)
 -------------------------------------------
 -----     SpellAnnouncer+AuraSpell     ----
 -------------------------------------------
@@ -20,7 +21,7 @@ local SoundList = {
   --PlaySoundFile("Sound\\Creature\\ElderIronbranch\\UR_Ironbranch_Aggro01.wav", "Master")	     凡人不许进入这里
   --PlaySoundFile("Sound\\Creature\\XT002Deconstructor\\UR_XT002_Special01.wav", "Master")     不不不，不要这样
   --PlaySoundFile("Sound\\Creature\\Hodir\\UR_Hodir_Aggro01.wav", "Master")         擅闯此地就要付出代价
-  --PlaySoundFile("Interface\\addons\\_ShiGuang\\Media\\beep.ogg", "Master")  哔哔
+  --PlaySoundFile("Interface\\addons\\_ShiGuang\\Media\\Beep.ogg", "Master")  哔哔
   
 	[42650] = "Sound\\Creature\\LordMarrowgar\\IC_Marrowgar_Aggro01.ogg",  --大军-ICC老一台词
 	[12042] = "Sound\\creature\\GlubtokBoth\\VO_DM_GlubtokBoth_Spell03.ogg",  --奥术强化-台词
@@ -46,21 +47,15 @@ local MessageList = {
 	--[48743] = "老子儿子都吃了，你还不奶我一口!",
 }
 
--- 默认信息
-function ShowSpellLink(SpellID)
-	local spellLink = GetSpellLink(SpellID or 0) or Announcer_SpellIDnof
-	DEFAULT_CHAT_FRAME:AddMessage(spellLink)
-end
-
-local function SpellAnnouncerOnEvent(self, event, ...)
+local function SpellAnnouncerOnEvent(self, event)
 if not MaoRUISettingDB["Misc"]["Interrupt"] then return end
 local ZoneInfo = select(2, IsInInstance())
 if (event == "PLAYER_LOGIN") then
 		self:UnregisterEvent("PLAYER_LOGIN")
 		self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")	
 elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
-		local EventType, SourceGUID, SourceName, DestGUID, DestName, SpellID, ExtraskillID = select(2, ...), select(4, ...), select(5, ...), select(8, ...), select(9, ...), select(12, ...), select(15, ...)
-		--local _, eventType, _, sourceGUID, _, _, _, _, destName, _, _, sourceID, _, _, spellID, spellName, spellSchool = ...
+		local _, EventType, _, _, SourceName, _, _, DestGUID, DestName, _, _, SpellID, _, _, ExtraskillID = CombatLogGetCurrentEventInfo()
+		--timeStamp, subEvent, _, sourceGUID, sourceName, sourceFlags, _, _, destName, _, destRaidFlags, spellID, _, _, extraSpellID = CombatLogGetCurrentEventInfo()
 	if ZoneInfo == "pvp" or UnitInBattleground("player") then end
 	if SourceName == UnitName("player") then
 			if EventType == "SPELL_INTERRUPT" then Message = (Announcer_Interrupted .. GetSpellLink(ExtraskillID))
@@ -104,7 +99,7 @@ elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
 			end
 		end
 	  elseif event == "UNIT_SPELLCAST_SUCCEEDED" then
-		  local unitID, _, _, _, spellID = ...
+		  local unitID, _, _, _, spellID = CombatLogGetCurrentEventInfo()
 		  if unitID == "player" then
 			if MessageList[spellID] then
 				local Message = (">>> "..GetSpellLink(spellID).." → "..MessageList[spellID].." <<<")
@@ -213,9 +208,10 @@ local function Initialize()
 	eventFrame = CreateFrame("Frame")
 	eventFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 	eventFrame.playerName = UnitName("player")
-	eventFrame:SetScript("OnEvent",function(self, event, ...)
+	eventFrame:SetScript("OnEvent",function(self, event)
 	  if not MaoRUISettingDB["Misc"]["Saycast"] then return end
-		local timestamp, eventType, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId = select(1, ...)
+		--local timestamp, eventType, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId = select(1, ...)
+		local _, eventType, _, _, sourceName, _, _, _, destName, _, _, spellID, _, _, extraskillID = CombatLogGetCurrentEventInfo()
 		if not self[spellId] then return end
 		if type(self[spellId]) ~= "table" then return end
 		local x = self[spellId][eventType]
@@ -246,9 +242,7 @@ Initialize()
 local tFrame = CreateFrame("Frame")
 tFrame:RegisterUnitEvent("UNIT_SPELLCAST_START", "player")
 --local lastTime = GetTime()
-tFrame:SetScript("OnEvent",function(self, event, unit, spell, rank, lineID, spellId)
-
-end)
+tFrame:SetScript("OnEvent",function(self, event, unit, spell, rank, lineID, spellId) end)
 
 --RegiserSpell(技能ID,"施放成功的喊话","效果开始的时候的喊话","效果结束时候的喊话",延时,"延时结束时的喊话",true)--如果不需要则用nil代替
 RegisterSpell(62618,"<player> 真言术：障 已放，持续10秒",nil,nil,10,"<player> 真言术：障已消失", true)

@@ -1,10 +1,23 @@
+--[[local M, R, U, I = unpack(select(2, ...))
+------------------------------------------------------ Faster Looting
+local tDelay = 0
+local function FastLoot()
+	if not MaoRUISettingDB["Misc"]["FasterLoot"] then return end
+	if GetTime() - tDelay >= .3 then
+		tDelay = GetTime()
+		if GetCVarBool("autoLootDefault") ~= IsModifiedClick("AUTOLOOTTOGGLE") then
+			for i = GetNumLootItems(), 1, -1 do
+				LootSlot(i)
+			end
+			tDelay = GetTime()
+		end
+	end
+end
+MaoRUI:EventFrame{"LOOT_READY"}:SetScript("OnEvent", FastLoot)]]
+
 ------------------------------------------------------------ImprovedLootFrame
-local LovelyLootLoaded = IsAddOnLoaded("LovelyLoot") 
-
-   LOOTFRAME_AUTOLOOT_DELAY = 0.5; 
-   LOOTFRAME_AUTOLOOT_RATE = 0.1; 
-
-if not LovelyLootLoaded then 
+   --LOOTFRAME_AUTOLOOT_DELAY = 0.5; 
+   --LOOTFRAME_AUTOLOOT_RATE = 0.1; 
 
    -- Woah, nice coding, blizz. 
    -- Anchor something positioned at the top of the frame to the center of the frame instead, 
@@ -22,36 +35,24 @@ if not LovelyLootLoaded then
       end 
       i = i + 1 
    end 
-end 
 
 -- Calculate base height of the loot frame 
 local p, r, x, y = "TOP", "BOTTOM", 0, -4 
 local buttonHeight = LootButton1:GetHeight() + abs(y) 
-local baseHeight = LootFrame:GetHeight() - (buttonHeight * LOOTFRAME_NUMBUTTONS) 
-if not LovelyLootLoaded then 
-   baseHeight = baseHeight - 5 
-end 
+local baseHeight = LootFrame:GetHeight() - (buttonHeight * LOOTFRAME_NUMBUTTONS) - 5 
 
-LootFrame.OverflowText = LootFrame:CreateFontString(nil, "OVERLAY", "GameFontRedSmall") 
-local OverflowText = LootFrame.OverflowText 
-
+LootFrame.OverflowText = LootFrame:CreateFontString(nil, "OVERLAY", "GameFontRedSmall")
+local OverflowText = LootFrame.OverflowText
 OverflowText:SetPoint("TOP", LootFrame, "TOP", 0, -26) 
 OverflowText:SetPoint("LEFT", LootFrame, "LEFT", 60, 0) 
 OverflowText:SetPoint("RIGHT", LootFrame, "RIGHT", -8, 0) 
 OverflowText:SetPoint("BOTTOM", LootFrame, "TOP", 0, -65) 
-
-if LovelyLootLoaded then 
-   OverflowText:SetPoint("LEFT", LootFrame, "RIGHT", 10, 0) 
-   OverflowText:SetPoint("RIGHT", LootFrame, "RIGHT", -10 + LootFrame:GetWidth(), 0) 
-end 
-
+OverflowText:SetPoint("LEFT", LootFrame, "RIGHT", 10, 0) 
+OverflowText:SetPoint("RIGHT", LootFrame, "RIGHT", -10 + LootFrame:GetWidth(), 0)  
 OverflowText:SetSize(1, 1) 
-
 OverflowText:SetJustifyH("LEFT") 
 OverflowText:SetJustifyV("TOP") 
-
 OverflowText:SetText("Hit 50-mob limit! Take some, then re-loot for more.") 
-
 OverflowText:Hide() 
 
 local t = {} 
@@ -114,116 +115,6 @@ function LootFrame_Show(self, ...)
    return old_LootFrame_Show(self, ...) 
 end
 
-------------------------------------------------------------simplelootannouncer
-local t = 1
-local loottemp = {}
-local sockets = {3, 497, 523, 563, 564, 565, 572} --564 only?
-local warforged = {44, 448, 499, 546, 547, 560, 561, 562, 571} -- only 561 and 754-766?
---titanforged 1372-1672
-
-local function Announce()
-local masterlooterRaidID = select(3, GetLootMethod())
-if (masterlooterRaidID ~= nil and UnitName("raid"..masterlooterRaidID) == UnitName("player")) or IsLeftControlKeyDown() then
-local n = 0
-local check = false
-local loot = GetLootInfo()
-
-for i = 1, GetNumLootItems() do
-	if GetLootSlotType(i) == 1 then
-		for j = 1, t do
-			if GetLootSourceInfo(i) == loottemp[j] then 
-				check = true
-			break
-			end
-		end
-	end
-end
-
-
-if check == false or IsLeftControlKeyDown() then
-
-t = GetNumLootItems()
-for i = 1, t do
-	loot[i]["check"] = 0
-	if GetLootSlotType(i) == 1 and loot[i]["quality"] >= 4 and not (bit.band(GetItemFamily(loot[i]["item"] or '') or 0, 0x0040) > 0) then
-		local link = GetLootSlotLink(i)
-		local ilvl = select(4, GetItemInfo(link))
-		loot[i]["upgrade"] = ""
-		local itemstring = string.match(link, "item[%-?%d:]+")
-		local numbonuses = select(14, strsplit(":", itemstring))
-		numbonuses = tonumber(numbonuses) or 0
-		local bonus = {}
-		for j = 1, numbonuses do
-			bonus[j] = select(14 + j, strsplit(":", itemstring))
-			bonus[j] = tonumber(bonus[j])
-			for k = 1, #warforged do														--Warforged
-				if bonus[j] == warforged[k] then
-					loot[i]["upgrade"] = loot[i]["upgrade"]..":"..ilvl
-				end
-			end
-			if 766 >= bonus[j] and bonus[j] >= 754 then														--Warforged
-					loot[i]["upgrade"] = loot[i]["upgrade"]..":"..ilvl
-			end												
-			if 1672 >= bonus[j] and bonus[j] >= 1372 then													--Titanforged
-					loot[i]["upgrade"] = loot[i]["upgrade"]..":"..ilvl
-			end
-			for k = 1, #sockets do															--Socket
-				if bonus[j] == sockets[k] then
-					loot[i]["upgrade"] = loot[i]["upgrade"].."<- *** "
-				end
-			end
-			if bonus[j] == 40 then loot[i]["upgrade"] = loot[i]["upgrade"].." +"..STAT_AVOIDANCE end						--Avoidance
-			if bonus[j] == 41 then loot[i]["upgrade"] = loot[i]["upgrade"].." +"..STAT_LIFESTEAL end						--Leech
-			if bonus[j] == 42 then loot[i]["upgrade"] = loot[i]["upgrade"].." +"..STAT_SPEED end							--Speed
-			if bonus[j] == 43 then loot[i]["upgrade"] = loot[i]["upgrade"].." +"..STAT_STURDINESS end						--Indestructible
-		end
-		loot[i]["check"] = 1
-		for k = 1, i-1 do
-			if loot[k]["item"] == loot[i]["item"] and loot[k]["upgrade"] == loot[i]["upgrade"] then
-				loot[i]["check"] = 0
-				loot[k]["quantity"] = loot[i]["quantity"] + loot[k]["quantity"]
-			end
-		end
-	end
-end
-
-for i = 1, t do
-	loot[i]["item"] = GetLootSlotLink(i)
-	if loot[i]["check"] == 1 then
-		n = n + 1
-		if loot[i]["quantity"] == 1 then
-			SendChatMessage(n..". "..loot[i]["item"]..loot[i]["upgrade"], "RAID")
-		else
-			SendChatMessage(n..". "..loot[i]["item"].."x"..loot[i]["quantity"].."  "..loot[i]["upgrade"], "RAID")
-		end
-	end
-end
-
-end
-
-for i = 1, t do
-	loottemp[i] = GetLootSourceInfo(i)
-end
-
-end
-end
-
-local SimpleLootAnnouncer = CreateFrame("Frame")
-SimpleLootAnnouncer:RegisterEvent("LOOT_OPENED")
-SimpleLootAnnouncer:SetScript("OnEvent", function(self, event)
-	Announce()
-end)
-
--------LootAnnouncerbutton----------------
-local LootAnnouncerbutton = CreateFrame("Button","LootAnnouncerbutton",LootFrame,"UIPanelButtonTemplate")
-LootAnnouncerbutton:RegisterEvent("LOOT_OPENED")
-LootAnnouncerbutton:SetPoint('TOPRIGHT', -3, -21)
-LootAnnouncerbutton:SetWidth(110)
-LootAnnouncerbutton:SetHeight(21)
-LootAnnouncerbutton:SetText(LOOT_ANNOUNCERBUTTON_TITLE)
-LootAnnouncerbutton:SetScript("OnClick", function() Announce() end)
-
-
 -------BGRoll----------------
 local NeedList = {
 [18231] = true,
@@ -241,10 +132,10 @@ if event == 'START_LOOT_ROLL' then
 	local ItemID = tonumber(strmatch(Link, 'item:(%d+)'))
 	if NeedList[ItemID] then
 		if Need then
-			print("¡ú: ", (Name))
+			print("â†’: ", (Name))
 			RollOnLoot(id, 1)
 		elseif Greed then
-			print("¡ú: ", (Name))
+			print("â†’: ", (Name))
 			RollOnLoot(id, 2)
 		end
 	end

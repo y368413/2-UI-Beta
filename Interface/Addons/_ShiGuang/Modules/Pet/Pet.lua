@@ -34,15 +34,15 @@ local function list(self,owner,pet)
 	end
 end
 
-local frame = CreateFrame("Frame")
-frame:SetScript("OnEvent",function(self,event,addon)
+local BattlePetAbilityTooltips = CreateFrame("Frame")
+BattlePetAbilityTooltips:SetScript("OnEvent",function(self,event,addon)
 	if IsAddOnLoaded("Blizzard_PetBattleUI") then
 		init()
 		hooksecurefunc("PetBattleUnitTooltip_UpdateForUnit",list)
 		self:UnregisterEvent("ADDON_LOADED")
 	end
 end)
-frame:RegisterEvent("ADDON_LOADED")
+BattlePetAbilityTooltips:RegisterEvent("ADDON_LOADED")
 
 
 
@@ -57,17 +57,15 @@ frame:SetScript("OnEvent",function(self,event,...)
   if self.notSetUp and IsAddOnLoaded("Blizzard_PetBattleUI") then
     self:SetUpWidgets() -- runs once when PetBattleUI known to be loaded
 	elseif event=="PET_BATTLE_CLOSE" then
-		PetBattleFrame.TopVersusText:SetPoint("TOP",PetBattleFrame,"TOP",0,-6)
+		PetBattleFrame.TopVersusText:SetPoint("TOP",PetBattleFrame,"TOP",0,-26)
 		PetBattleFrame.TopVersusText:SetFontObject("GameFont_Gigantic")
 		PetBattleFrame.TopVersusText:SetText(PET_BATTLE_UI_VS)
-		if self.widgets.RoundTitle then
-			self.widgets.RoundTitle:Hide()
-		end
+		if self.widgets.RoundTitle then self.widgets.RoundTitle:Hide() end
 	else
 		if event=="PET_BATTLE_PET_ROUND_PLAYBACK_COMPLETE" then
 			local round = select(1,...)
 			PetBattleFrame.TopVersusText:SetFontObject("Game36Font")
-			PetBattleFrame.TopVersusText:SetPoint("TOP",PetBattleFrame,"TOP",0,-3)
+			PetBattleFrame.TopVersusText:SetPoint("TOP",PetBattleFrame,"TOP",0,-45)
 			PetBattleFrame.TopVersusText:SetText(round+1)
 			if not self.widgets.RoundTitle then
 				self.widgets.RoundTitle = PetBattleFrame:CreateFontString(nil,"ARTWORK","GameFontNormal")
@@ -224,7 +222,7 @@ end
 --- Pet String Calculation ---
 local function GetPetString(name)
 	if (not name) or (name == '') then return end
-	if (not CollectionsJournal) then CollectionsJournal_LoadUI() end
+	--if (not CollectionsJournal) then CollectionsJournal_LoadUI() end
 
 	local petString, petID, speciesID
 	speciesID, petID = C_PetJournal.FindPetIDByName(name)
@@ -350,11 +348,11 @@ end)
 
 --[[Pet Battle Announcer]]
 -- This is the main function of the addon that will hook into pet battle event and play a sound
-hooksecurefunc("StaticPopupSpecial_Show",function(f)
-    if f == PetBattleQueueReadyFrame then
-        PlaySound("ReadyCheck") -- Here is the sound, it can be changed to any sound in wow.
-    end
-end)
+--hooksecurefunc("StaticPopupSpecial_Show",function(f)
+    --if f == PetBattleQueueReadyFrame then
+        --PlaySound("ReadyCheck") -- Here is the sound, it can be changed to any sound in wow.
+    --end
+--end)
 
 --[[Pet map show]]
 local Petmapshow = CreateFrame("Frame", nil, UIParent)

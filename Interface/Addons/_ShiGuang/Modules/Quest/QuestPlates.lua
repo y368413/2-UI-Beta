@@ -1,5 +1,5 @@
--- setmetatable({}, {__index = function(self, event) self[event] = {} return self[event] end})
-local F, Events, A, T = CreateFrame('frame'), {}, ...
+-- ## Version: 8.0.0.2 ## Author: Semlar
+local FQP, Events, A, T = CreateFrame('frame'), {}, ...
 
 local function Raise(_, event, ...)
 	if Events[event] then
@@ -19,7 +19,7 @@ local function RegisterEvent(module, event, func)
 	end
 	Events[event][module] = true
 	if strmatch(event, '^[%u_]+$') then
-		F:RegisterEvent(event)
+		FQP:RegisterEvent(event)
 	end
 	return module
 end
@@ -29,7 +29,7 @@ local function UnregisterEvent(module, event)
 	if Events[event] then
 		Events[event][module] = nil
 		if not next(Events[event]) and strmatch(event, '^[%u_]+$') then -- don't unregister unless the event table is empty
-			F:UnregisterEvent(event)
+			FQP:UnregisterEvent(event)
 		end
 	end
 	return module
@@ -53,7 +53,7 @@ T.Eve = setmetatable({}, {
 	end,
 })
 
-F:SetScript('OnEvent', Raise)
+FQP:SetScript('OnEvent', Raise)
 
 -------------------------------------
 -- Stripped core from SemlarPlates
@@ -125,15 +125,6 @@ function E:NAME_PLATE_UNIT_REMOVED(unitID)
 	
 	E('OnPlateHide', f, plate, unitID)
 end
---------------------
--- ICON SETTINGS
-
-local AnchorPoint = 'RIGHT' -- Point of icon to anchor to nameplate (CENTER, LEFT, RIGHT, TOP, BOTTOM)
-local RelativeTo = 'LEFT' -- Point of nameplate to anchor icon to (CENTER, LEFT, RIGHT, TOP, BOTTOM)
-local OffsetX = 9 -- Horizontal offset for icon (from anchor point)
-local OffsetY = 9 -- Vertical offset for icon
-local IconScale = 0.8 -- Scale for icon
---------------------
 
 SetCVar('showQuestTrackingTooltips', '1') -- Required for this addon to function, don't turn this off
 
@@ -149,9 +140,9 @@ local ActiveWorldQuests = {
 
 do
 	function E:PLAYER_LOGIN()
-		local areaID = GetCurrentMapAreaID()
-		if areaID then
-			for k, task in pairs(C_TaskQuest.GetQuestsForPlayerByMapID(areaID)) do
+		local uiMapID = C_Map.GetBestMapForUnit('player')
+		if uiMapID then
+			for k, task in pairs(C_TaskQuest.GetQuestsForPlayerByMapID(uiMapID) or {}) do
 				if task.inProgress then
 					-- track active world quests
 					local questID = task.questId
@@ -212,17 +203,6 @@ local function GetQuestProgress(unitID)
 		questID = questID or ActiveWorldQuests[ text ]
 		local playerName, progressText = strmatch(text, '^ ([^ ]-) ?%- (.+)$') -- nil or '' if 1 is missing but 2 is there
 
-		local x, y
-		if progressText then
-			x, y = strmatch(progressText, '(%d+)/(%d+)')
-			if x and y then
-				local numLeft = y - x
-				if numLeft > objectiveCount then -- track highest number of objectives
-					objectiveCount = numLeft
-				end
-			end
-		end
-
 		if playerName and playerName ~= '' and playerName ~= OurName then -- quest is for another group member
 			if not questType then
 				questType = 2
@@ -230,6 +210,13 @@ local function GetQuestProgress(unitID)
 		else
 		
 			if progressText then
+				local x, y = strmatch(progressText, '(%d+)/(%d+)')
+				if x and y then
+					local numLeft = y - x
+					if numLeft > objectiveCount then -- track highest number of objectives
+						objectiveCount = numLeft
+					end
+				end
 				--local x, y = strmatch(progressText, '(%d+)/(%d+)$')
 				if not x or (x and y and x ~= y) then
 					progressGlob = progressGlob and progressGlob .. '\n' .. progressText or progressText
@@ -263,15 +250,15 @@ function E:OnNewPlate(f, plate)
 	QuestPlates[plate] = frame
 	
 	local icon = frame:CreateTexture(nil, nil, nil, 0)
-	icon:SetSize(28, 22)
+	icon:SetSize(26, 26)
 	--icon:SetTexture('Interface/QuestFrame/AutoQuest-Parts')
 	--icon:SetTexCoord(0.30273438, 0.41992188, 0.015625, 0.953125)
-	icon:SetPoint(AnchorPoint, frame, RelativeTo, OffsetX / IconScale, OffsetY / IconScale)
-	frame:SetScale(IconScale)
+	icon:SetPoint('RIGHT', frame, 'LEFT', 0, 0)
+	frame:SetScale(0.85)
 	frame.jellybean = icon
 	
 	local itemTexture = frame:CreateTexture(nil, nil, nil, 1)
-	itemTexture:SetPoint('TOPRIGHT', icon, 'BOTTOMLEFT', 12, 12)
+	itemTexture:SetPoint('LEFT', icon, 'RIGHT', -8, 0)
 	itemTexture:SetSize(16, 16)
 	itemTexture:SetMask('Interface/CharacterFrame/TempPortraitAlphaMask')
 	itemTexture:Hide()
@@ -281,20 +268,22 @@ function E:OnNewPlate(f, plate)
 	local lootIcon = frame:CreateTexture(nil, nil, nil, 1)
 	lootIcon:SetAtlas('Banker')
 	lootIcon:SetSize(16, 16)
-	lootIcon:SetPoint('TOPLEFT', icon, 'BOTTOMRIGHT', -12, 12)
+	lootIcon:SetPoint('LEFT', icon, 'RIGHT', -8, -3)
 	lootIcon:Hide()
 	frame.lootIcon = lootIcon
 	
-	local iconText = frame:CreateFontString(nil, 'OVERLAY', 'SystemFont_Outline')
+	local iconText = frame:CreateFontString(nil, 'OVERLAY')
 	iconText:SetPoint('CENTER', icon, 0.8, 0)
 	iconText:SetShadowOffset(1, -1)
+	iconText:SetFont("Interface\\AddOns\\_ShiGuang\\Media\\Fonts\\Infinity.ttf", 16, "OUTLINE")
 	--iconText:SetText(math.random(22))
 	iconText:SetTextColor(1,.82,0)
 	frame.iconText = iconText
 	
 	-- todo: add setting for displaying quest text again
-	local questText = frame:CreateFontString(nil, 'BACKGROUND', 'GameFontWhite')
+	local questText = frame:CreateFontString(nil, 'BACKGROUND')
 	questText:SetPoint('TOP', frame, 'BOTTOM')
+	questText:SetFont("Interface\\AddOns\\_ShiGuang\\Media\\Fonts\\Pixel.ttf", 12, "OUTLINE")
 	questText:SetShadowOffset(1, -1)
 	questText:Hide()
 	frame.questText = questText
@@ -340,8 +329,15 @@ local function UpdateQuestIcon(plate, unitID)
 	local unitID = unitID or QuestPlatesSet:GetUnitForPlate(plate)
 	if not Q then return end
 	
+	local scenarioName, currentStage, numStages, flags, _, _, _, xp, money, scenarioType, _, textureKitID = C_Scenario.GetInfo()
+	local inChallengeMode = (scenarioType == LE_SCENARIO_TYPE_CHALLENGE_MODE)
+	if inChallengeMode then
+		Q:Hide()
+		return
+	end
+	
 	local progressGlob, questType, objectiveCount, questLogIndex, questID = GetQuestProgress(unitID)
-	if progressGlob then
+	if progressGlob and questType ~= 2 then
 		Q.questText:SetText(progressGlob or '')
 		
 		if questType == 3 then -- todo: progress bar

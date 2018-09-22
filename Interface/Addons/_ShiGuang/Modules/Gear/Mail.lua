@@ -1,12 +1,13 @@
-﻿local M, R, U, I = unpack(select(2, ...))
-local module = MaoRUI:GetModule("Misc")
+﻿local _, ns = ...
+local M, R, U, I = unpack(ns)
+local module = M:GetModule("Misc")
 
 --[[	一个简易的邮箱插件，修改自OpenAll]]
 function module:Mailbox()
 	if not MaoRUISettingDB["Misc"]["Mail"] then return end
 
-	local deletedelay, t, mailIndex, mailItemIndex = .5, 0, 1, 0
-	local button1, button2, button3, lastopened, imOrig_InboxFrame_OnClick, hasNewMail, takingOnlyCash, onlyCurrentMail, needsToWait, skipMail
+	local deletedelay, t, mailIndex, mailItemIndex, inboxItems = .5, 0, 1, 0, {}
+	local button1, button2, button3, button4, lastopened, imOrig_InboxFrame_OnClick, hasNewMail, takingOnlyCash, onlyCurrentMail, needsToWait, skipMail, OpenMail, StopOpening
 
 	InboxNextPageButton:SetScript("OnClick", function()
 		mailIndex = mailIndex + 1
@@ -109,11 +110,11 @@ function module:Mailbox()
 		skipMail = false
 	end
 
-	local function OpenAll_OnEvent(frame, event, arg1, arg2)
+	local function OpenAll_OnEvent(_, event, _, arg)
 		if event == "UI_ERROR_MESSAGE" then
-			if arg2 == ERR_INV_FULL then
+			if arg == ERR_INV_FULL then
 				StopOpening()
-			elseif arg2 == ERR_ITEM_MAX_COUNT then
+			elseif arg == ERR_ITEM_MAX_COUNT then
 				skipMail = true
 			end
 		elseif event == "MAIL_CLOSED" then
@@ -166,8 +167,8 @@ local DelMailbutton = CreatButton("OpenAllButton5", InboxFrame, MAIL_DELETEEMPTY
 DelMailbutton:SetScript("OnClick", function() DelMailbutton_OnClick() end)
 function DelMailbutton_OnClick() sendCmd("/mbclean") end
 
-	local function deleteClick(self, button, down)
-		selectedID = self.id + (InboxFrame.pageNum-1)*7
+	local function deleteClick(self)
+		local selectedID = self.id + (InboxFrame.pageNum-1)*7
 		if InboxItemCanDelete(selectedID) then
 			DeleteInboxItem(selectedID)
 		else
@@ -200,13 +201,13 @@ function DelMailbutton_OnClick() sendCmd("/mbclean") end
 				b.delete.texture:SetTexCoord(1, 0, 0, 1)
 				b.delete.id = i
 				b.delete:SetScript("OnClick", deleteClick)
-				M.CreateGT(b.delete, "ANCHOR_RIGHT", DELETE, "system")
+				M.AddTooltip(b.delete, "ANCHOR_RIGHT", DELETE, "system")
 			end
 		end
 	end)
 
 	hooksecurefunc("InboxFrameItem_OnEnter", function(self)
-		local items = {}
+		wipe(inboxItems)
 
 		local itemAttached = select(8, GetInboxHeaderInfo(self.index))
 		if itemAttached then
@@ -215,13 +216,13 @@ function DelMailbutton_OnClick() sendCmd("/mbclean") end
 				if itemCount and itemCount > 0 then
 					local _, itemid = strsplit(":", GetInboxItemLink(self.index, attachID))
 					itemid = tonumber(itemid)
-					items[itemid] = (items[itemid] or 0) + itemCount
+					inboxItems[itemid] = (inboxItems[itemid] or 0) + itemCount
 				end
 			end
 
 			if itemAttached > 1 then
 				--GameTooltip:AddLine("附件清单:")
-				for key, value in pairs(items) do
+				for key, value in pairs(inboxItems) do
 					local itemName, _, itemQuality, _, _, _, _, _, _, itemTexture = GetItemInfo(key)
 					if itemName then
 						local r, g, b = GetItemQualityColor(itemQuality)
@@ -245,7 +246,7 @@ function DelMailbutton_OnClick() sendCmd("/mbclean") end
 end
 
 -------MailinputboxResizer---------------------------------------------------------------
-	local editbox_width = 222		--EditBox width				--default: 224
+	local editbox_width = 230		--EditBox width				--default: 224
 	local moneyframe_pos = {"TOPLEFT","SendMailFrame","TOPLEFT",82,-70,}	--Money display position
 
 local c = SendMailCostMoneyFrame
@@ -304,7 +305,7 @@ local function update()
  --canDelete = InboxItemCanDelete(i)
  --if canDelete then
  local packageIcon, stationeryIcon, sender, subject, money, CODAmount, daysLeft, itemCount, wasRead, wasReturned, textCreated, canReply, isGM, itemQuantity = GetInboxHeaderInfo(i)
- if (ShiGuangDB["read"] or wasRead) and not isGM and (not snd or (snd and (snd == low(sender)))) and
+ if (ShiGuangDB["MailRead"] or wasRead) and not isGM and (not snd or (snd and (snd == low(sender)))) and
   (not itemCount or itemCount == 0) and (not money or money == 0) then
   DeleteInboxItem(i)
   timeout = t + 1
@@ -323,15 +324,13 @@ f:Hide()
 
 local function printOptionMsg(arg, help)
  if ShiGuangDB[arg] == nil then return end
-
- print(title.." - "..(options_desc[arg] or "<unknown>").." = |cff69CCF0"..tostring(ShiGuangDB[arg]).."|r"..
-      (help and " (|cffCCCCCC/mbclean "..arg.."|r)" or ""))
+ print(title.." - "..(options_desc[arg] or "<unknown>").." = |cff69CCF0"..tostring(ShiGuangDB[arg]).."|r".. (help and " (|cffCCCCCC/mbclean "..arg.."|r)" or ""))
 end
 
 local function start(arg)
 
- if arg == "read" then
-  ShiGuangDB["read"] = not ShiGuangDB["read"]
+ if arg == "MailRead" then
+  ShiGuangDB["MailRead"] = not ShiGuangDB["MailRead"]
   printOptionMsg(arg)
   return
  end
@@ -365,10 +364,10 @@ SlashCmdList["MAILBOXCLEANER"] = start
 
 ------------------------------------ 輸入框名冊-- Author:M----------------------------------
 --此表會被重載
-TinyRosterDB = {
+TinyRostersDB = {
     SendMailNameEditBox = {},                                                   --發郵件
-    --BankItemSearchBox = {},                                                     --銀行查找
-    --BagItemSearchBox = {},                                                      --背包查找
+    BankItemSearchBox = {},                                                     --銀行查找
+    BagItemSearchBox = {},                                                      --背包查找
     BrowseName = { depands = "Blizzard_AuctionUI" },                            --拍賣場
     MountJournalSearchBox = { depands = "Blizzard_Collections" },               --坐騎
     HeirloomsJournalSearchBox = { depands = "Blizzard_Collections" },           --傳家寶
@@ -376,13 +375,11 @@ TinyRosterDB = {
     GuildItemSearchBox = { depands = "Blizzard_GuildBankUI" },                  --公會銀行
     WardrobeCollectionFrameSearchBox = { depands = "Blizzard_Collections" },    --衣櫃
     ["TradeSkillFrame.SearchBox"] = { depands = "Blizzard_TradeSkillUI" },      --專業技能
-    --["GlyphFrame.SearchBox"] = { depands = "Blizzard_GlyphUI" },                --雕紋
     ["ToyBox.searchBox"] = { depands = "Blizzard_Collections" },                --玩具
-    ["LFGListFrame.SearchPanel.SearchBox"] = {},                                --找團
     ["AchievementFrame.searchBox"] = { depands="Blizzard_AchievementUI" },      --成就
     EncounterJournalSearchBox = { depands = "Blizzard_EncounterJournal" },      --指南
 }
-
+    --["LFGListFrame.SearchPanel.SearchBox"] = {},                                --找團
 --按鈕數量和高度
 local numButton, btnHeight = 12, 18
 
@@ -516,12 +513,9 @@ end
 --獲取框架
 local function getEditBox(name)
     local frame, subframe, thirdframe = strsplit(".", name)
-    if (thirdframe) then
-        return _G[frame][subframe][thirdframe]
-    elseif (subframe) then
-        return _G[frame][subframe]
-    else
-        return _G[frame]
+    if (thirdframe) then return _G[frame][subframe][thirdframe]
+    elseif (subframe) then return _G[frame][subframe]
+    else return _G[frame]
     end
 end
 
@@ -564,14 +558,14 @@ do
         local arg1 = ...
         if (event == "VARIABLES_LOADED") then
             self:UnregisterEvent("VARIABLES_LOADED")
-            for editboxName, v in pairs(TinyRosterDB) do
+            for editboxName, v in pairs(TinyRostersDB) do
                 if (not v.depands or (v.depands and IsAddOnLoaded(v.depands))) then
                     fn(editboxName, v)
                 end
             end
         end
         if (event == "ADDON_LOADED") then
-            for editboxName, v in pairs(TinyRosterDB) do
+            for editboxName, v in pairs(TinyRostersDB) do
                 if (v.depands and v.depands == arg1 and not getEditBox(editboxName).rosterMark) then
                     fn(editboxName, v)
                 end

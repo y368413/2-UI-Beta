@@ -1,9 +1,11 @@
 ﻿---------------------------- QuickQuest, by P3lim  -- NDui MOD  -- y368413 DIY --------------------------
-local M, R, U, I = unpack(select(2, ...))
+local _, ns = ...
+local M, R, U, I = unpack(ns)
 local QuickQuestCheckButton = CreateFrame("CheckButton", nil, ObjectiveTrackerBlocksFrame.QuestHeader, "OptionsCheckButtonTemplate")
 QuickQuestCheckButton:SetPoint("TOPRIGHT", ObjectiveTrackerBlocksFrame.QuestHeader, -6, 0)
 QuickQuestCheckButton:SetSize(21, 21)
-M.CreateCB(QuickQuestCheckButton)
+QuickQuestCheckButton:SetHitRectInsets(0, -10, 0, 0)
+M.CreateCB(QuickQuestCheckButton, .25)
 QuickQuestCheckButton:RegisterEvent("PLAYER_LOGIN")
 QuickQuestCheckButton:SetScript("OnEvent", function(self) self:SetChecked(MaoRUISettingDB["Misc"].AutoQuest) end)
 QuickQuestCheckButton:SetScript("OnClick", function(self) MaoRUISettingDB["Misc"].AutoQuest = self:GetChecked() end)
@@ -12,7 +14,7 @@ QuickQuestCheckButton:SetScript("OnClick", function(self) MaoRUISettingDB["Misc"
 local QuickQuest = CreateFrame("Frame")
 QuickQuest:SetScript("OnEvent", function(self, event, ...) self[event](...) end)
 
-local choiceQueue
+local quests, choiceQueue = {}
 
 function QuickQuest:Register(event, func)
 	self:RegisterEvent(event)
@@ -47,6 +49,7 @@ local ignoreQuestNPC = {
 	[99183] = true, -- Legendary Ring
 
 	[101462] = true, -- Engineering
+	[101880] = true,	-- 泰克泰克
 	[103792] = true, 	-- 格里伏塔 -- Griftah (one of his quests is a scam)
 	[106655] = true,	-- Legendary Item Upgrade
 	[108868] = true, -- Hunter's order hall	
@@ -57,10 +60,15 @@ local ignoreQuestNPC = {
 	[121263] = true,	-- 大技师罗姆尔
 	[124312] = true,	-- 图拉扬
 	[126954] = true,	-- 图拉扬
+	[127037] = true, -- Nabiru (repeatable resource quest)
+	[141584] = true,	-- 祖尔温
+	[142063] = true,	-- 特兹兰
+	[143388] = true,	-- 德鲁扎
 }
 
 local function GetQuestLogQuests(onlyComplete)
-	local quests = {}
+	wipe(quests)
+
 	for index = 1, GetNumQuestLogEntries() do
 		local title, _, _, isHeader, _, isComplete, _, questID = GetQuestLogTitle(index)
 		if(not isHeader) then
@@ -235,7 +243,7 @@ end)
 
 QuickQuest:Register("QUEST_ACCEPT_CONFIRM", AcceptQuest)
 
-QuickQuest:Register("QUEST_ACCEPTED", function(id)
+QuickQuest:Register("QUEST_ACCEPTED", function()
 	if(QuestFrame:IsShown() and QuestGetAutoAccept()) then
 		CloseQuest()
 	end
@@ -305,8 +313,8 @@ local itemBlacklist = {
 
 QuickQuest:Register("QUEST_PROGRESS", function()
 	if(IsQuestCompletable()) then
-		local _, _, worldQuest = GetQuestTagInfo(GetQuestID())
-		if worldQuest then return end
+		local id, _, worldQuest = GetQuestTagInfo(GetQuestID())
+		if id == 153 or worldQuest then return end
 		-- 阿古斯的随从兑换
 		if GetNPCID() == 119388 or GetNPCID() == 127037 or GetNPCID() == 126954 or GetNPCID() == 124312 then return end
 

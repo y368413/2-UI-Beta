@@ -7,6 +7,7 @@ local ADDON, Addon = ...
 local SETS = ADDON .. '_Sets'
 local CURRENT_VERSION = GetAddOnMetadata(ADDON, 'Version')
 local L = LibStub('AceLocale-3.0'):GetLocale(ADDON)
+local Cache = LibStub('LibItemCache-2.0')
 
 local function AsArray(table)
 	return setmetatable(table, {__metatable = 1})
@@ -47,11 +48,13 @@ local FrameDefaults = {
 	hiddenBags = {},
 
 	rules = AsArray({
-		'all', 'all/all', 'all/normal', 'all/trade', 'all/reagent',
+		'all', 'all/all', 'all/normal', 'all/reagent',
 		'equip', 'equip/all', 'equip/armor', 'equip/weapon', 'equip/trinket',
+		'binding', 'binding/account', 'binding/equip', 'binding/use', 'binding/all', "binding/soulbound",
 		'use', 'use/all', 'use/consume', 'use/enhance',
 		'trade', 'trade/all', 'trade/goods', 'trade/gem', 'trade/glyph', 'trade/recipe',
-		'quest', 'quest/all', 'misc', 'misc/all', --'contain', 'contain/all',
+		'quest', 'quest/all',
+		'misc', 'misc/all', --'contain', 'contain/all',
 		'Cool', 'Cool/All', 'Cool/Artifact', 'Cool/Open', 'Cool/Garrison', 'Cool/Fish',
 	}),
 }
@@ -61,32 +64,32 @@ local ProfileDefaults = {
 		reversedTabs = true,
 		borderColor = {1, 1, 1, 1},
 		point = 'BOTTOMRIGHT',
-		x = -21, y = 210,
-		columns = 8,
-		width = 384,
-		height = 200,
+		x = -43, y = 120,
+		columns = 10,
+		width = 430,
+		height = 600,
 	}, FrameDefaults),
 
 	bank = SetDefaults({
 		borderColor = {1, 1, 0, 1},
 		point = 'LEFT',
-		columns = 12,
+		x = 21, y = 43,
+		columns = 20,
 		width = 821,
-		height = 666,
-		x = 95
+		height = 800,
 	}, FrameDefaults),
 
 	vault = SetDefaults({
 		borderColor = {1, 0, 0.98, 1},
 		point = 'LEFT',
-		columns = 8,
+		columns = 10,
 		x = 95
 	}, FrameDefaults),
 
 	guild = SetDefaults({
 		borderColor = {0, 1, 0, 1},
 		point = 'CENTER',
-		columns = 7,
+		columns = 10,
 	}, FrameDefaults)
 }
 
@@ -97,10 +100,10 @@ function Addon:StartupSettings()
 	_G[SETS] = SetDefaults(_G[SETS] or {}, {
 		version = CURRENT_VERSION,
 		global = SetDefaults({}, ProfileDefaults),
-		players = {},
+		profiles = {},
 
 		resetPlayer = true,
-		displayBank = true, closeBank = true, displayAuction = true, displayGuild = true, displayMail = true, displayTrade = true, displayCraft = true,
+		displayBank = true, closeBank = true, displayAuction = true, displayGuild = true, displayMail = true, displayTrade = true, displayCraft = true, displayScrapping = true,
 		flashFind = true, tipCount = true, fading = true,
 
 		glowAlpha = 0.5,
@@ -123,17 +126,14 @@ function Addon:StartupSettings()
 	self.sets = _G[SETS]
 	self:UpdateSettings()
 
-	for _, player in self.Cache:IteratePlayers() do
-		self:StartupProfile(player)
+	for owner, profile in pairs(self.sets.profiles) do
+		SetDefaults(profile, ProfileDefaults)
 	end
 
 	self.profile = self:GetProfile()
 end
 
 function Addon:UpdateSettings()
-	local expansion, patch, release = strsplit('.', self.sets.version)
-	local version = tonumber(expansion) * 10000 + tonumber(patch or 0) * 100 + tonumber(release or 0)
-
 	if self.sets.frames then
 		for frame, sets in pairs(self.sets.frames) do
 			self.sets.global[frame] = SetDefaults(sets, self.sets.global[frame])
@@ -142,6 +142,7 @@ function Addon:UpdateSettings()
 		self.sets.frames = nil
 	end
 
+	self.sets.players, self.sets.owners = nil
 	if self.sets.version ~= CURRENT_VERSION then
 		self.sets.version = CURRENT_VERSION
 		self:Print(format(L.Updated, self.sets.version))
@@ -151,22 +152,11 @@ end
 
 --[[ Profiles ]]--
 
-function Addon:StartupProfile(player)
-	local realm, name = self.Cache:GetPlayerAddress(player)
-	self.sets.players[realm]  = self.sets.players[realm] or {}
-	self:SetProfile(self.sets.players[realm][name], player)
+function Addon:SetCurrentProfile(profile)
+	self.sets.profiles[Cache:GetOwnerID()] = profile and SetDefaults(profile, ProfileDefaults)
+	self.profile = self:GetProfile()
 end
 
-function Addon:SetProfile(profile, player)
-	local realm, name = self.Cache:GetPlayerAddress(player)
-	self.sets.players[realm][name] = profile and SetDefaults(profile, ProfileDefaults)
-end
-
-function Addon:GetProfile(player)
-	return self:GetSpecificProfile(player) or self.sets.global
-end
-
-function Addon:GetSpecificProfile(player)
-	local realm, name = self.Cache:GetPlayerAddress(player)
-	return self.sets.players[realm][name]
+function Addon:GetProfile(owner)
+	return self.sets.profiles[Cache:GetOwnerID(owner)] or self.sets.global
 end

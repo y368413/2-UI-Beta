@@ -1,5 +1,5 @@
-local M, R, U, I = unpack(select(2, ...))
-local module = MaoRUI:GetModule("Misc")
+local _, ns = ...
+local M, R, U, I = unpack(ns)
 --[[--------------------------------------头像渐隐---------------------------------------
 hooksecurefunc("PlayerFrame_UpdateStatus", function()
     if not MaoRUISettingDB["Settings"]["UFFade"] then return end
@@ -10,6 +10,37 @@ hooksecurefunc("PlayerFrame_UpdateStatus", function()
         PlayerFrame:SetAlpha(0.43)
     end
 end)]]
+
+local Event = CreateFrame("Frame") 
+Event:RegisterEvent("PLAYER_ENTERING_WORLD",Update) 
+Event:RegisterEvent("PLAYER_REGEN_DISABLED",Update) 
+Event:RegisterEvent("PLAYER_REGEN_ENABLED",Update) 
+Event:RegisterEvent("UNIT_TARGET",Update) 
+Event:RegisterEvent("UNIT_HEALTH",Update) 
+--Event:RegisterEvent("UNIT_POWER",Update) 
+Event:SetScript("OnEvent",function(self, event, ...) 
+   if not MaoRUISettingDB["Settings"]["UFFade"] then return end
+   local FrameFadeOut, FrameFadeIn = UIFrameFadeOut, UIFrameFadeIn 
+   local InCombat, Target, IsDead = InCombatLockdown(), UnitExists("target"), UnitIsDeadOrGhost("player") 
+   local PlayerMaxHp, PlayerMaxMp = UnitHealth("player") == UnitHealthMax("player"), UnitPower("player") == UnitPowerMax("player") 
+   local PlayerNoMaxHp, PlayerNoMaxMp = UnitHealth("player") ~= UnitHealthMax("player"), {} 
+      local _, powerTypeString = UnitPowerType("player") 
+      if powerTypeString == "RAGE" or powerTypeString == "RUNIC_POWER" then 
+         PlayerNoMaxMp = UnitPower("player") == UnitPowerMax("player") 
+      else 
+         PlayerNoMaxMp = UnitPower("player") ~= UnitPowerMax("player") 
+      end 
+   if event == "PLAYER_REGEN_ENABLED" or not Target or not IsDead and PlayerMaxHp or not IsDead and  PlayerMaxMp then 
+      FrameFadeOut(PlayerFrame, 2.0, PlayerFrame:GetAlpha(), 0) 
+   end 
+   if event == "PLAYER_REGEN_DISABLED" or Target or not IsDead and PlayerNoMaxHp or not IsDead and  PlayerNoMaxMp then 
+      FrameFadeIn(PlayerFrame, 0.1, PlayerFrame:GetAlpha(), 1) 
+   end 
+   if (InCombat and not Target) or (not InCombat and Target) then 
+      FrameFadeIn(PlayerFrame, 0.1, PlayerFrame:GetAlpha(), 1) 
+   end 
+end)
+
 ------------------------------------------Class icon---------------------------------------
 hooksecurefunc("UnitFramePortrait_Update",function(self) 
    if not MaoRUISettingDB["Settings"]["UFClassIcon"] then return end
@@ -308,16 +339,8 @@ local function colorHPBar(bar, unit)
 		local r, g, b
 		local min, max = bar:GetMinMaxValues()
 		local value = bar:GetValue()
-		if max > min then
-			value = (value - min) / (max - min)
-		else
-			value = 0
-		end
-		if value > 0.5 then
-			r, g, b = 2*(1-value), 1, 0
-		else
-			r, g, b = 1, 2*value, 0
-		end
+		if max > min then value = (value - min) / (max - min) else value = 0 end
+		if value > 0.5 then r, g, b = 2*(1-value), 1, 0 else r, g, b = 1, 2*value, 0 end
 			--if UnitIsPlayer(unit) and UnitClass(unit) then  --按职业着色
 				--local color = RAID_CLASS_COLORS[select(2, UnitClass(unit))]
 				--bar:SetStatusBarColor(color.r, color.g, color.b)
@@ -339,19 +362,19 @@ function CreateBarPctText(frame, ap, rp, x, y, font, manabar)
 		else
 			bar.pctText = frame:CreateFontString(nil, "OVERLAY", font)
 			bar.pctText:SetPoint(ap, bar, rp, x, y)
-			bar.pctText:SetFont("Interface\\addons\\_ShiGuang\\Media\\Fonts\\Pixel.TTF",60,"OUTLINE")
+			bar.pctText:SetFont("Interface\\addons\\_ShiGuang\\Media\\Fonts\\Pixel.TTF",52,"OUTLINE")
 			bar.pctText:SetShadowColor(0, 0, 0)
       bar.pctText:SetShadowOffset(1, -1)
 		end
 	end
 end
-CreateBarPctText(PlayerFrame, "RIGHT", "LEFT", -92, -8, "NumberFontNormalLarge")
-CreateBarPctText(TargetFrame, "LEFT", "RIGHT", 92, -6, "NumberFontNormalLarge")
+CreateBarPctText(PlayerFrame, "RIGHT", "LEFT", -88, -8, "NumberFontNormalLarge")
+CreateBarPctText(TargetFrame, "LEFT", "RIGHT", 88, -6, "NumberFontNormalLarge")
 CreateBarPctText(FocusFrame, "RIGHT", "LEFT", -3, -8, "NumberFontNormalLarge")
 CreateBarPctText(FocusFrameToT, "BOTTOMLEFT", "TOP", 24, 10)  --TargetFrameToT, "BOTTOMLEFT", "TOPRIGHT", 0, 5
-for i = 1, MAX_BOSS_FRAMES do
-	CreateBarPctText(_G["Boss"..i.."TargetFrame"], "LEFT", "RIGHT", 8, 30, "NumberFontNormal")  --"BOTTOMLEFT", "TOPRIGHT", 17, 19, "NumberFontNormalLarge"
-end			
+--for i = 1, MAX_BOSS_FRAMES do
+	--CreateBarPctText(_G["Boss"..i.."TargetFrame"], "LEFT", "RIGHT", 8, 30, "NumberFontNormal")  --"BOTTOMLEFT", "TOPRIGHT", 17, 19, "NumberFontNormalLarge"
+--end			
 ---------------------------------------	  头像框名称职业染色    -----------------------------------------
 function SetNameColor(frame)
 	if frame:IsShown() and frame.name then
@@ -371,14 +394,14 @@ FocusFrameToT:HookScript("OnUpdate", SetNameColor)
 -----------------------------------------	     隐藏头像动态伤害      -----------------------------------------
 local p=PlayerHitIndicator;p.Show=p.Hide;p:Hide() 
 local p=PetHitIndicator;p.Show=p.Hide;p:Hide() 
------------------------------------------	     显示BUFF是谁加的      -----------------------------------------
+--[[---------------------------------------	     显示BUFF是谁加的      -----------------------------------------
 hooksecurefunc(GameTooltip, 'SetUnitAura', function(self, unit, index, filter)
-	local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable = UnitAura(unit, index, filter)
+	local name, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable = UnitAura(unit, index, filter)
 	if unitCaster and UnitName(unitCaster) then
 		self:AddLine("".. (I.MyColor or "|cffffffff") .. UnitName(unitCaster) .. "|r (" .. unitCaster .. ")")
 		self:Show()
 	end
-end)
+end)]]
 -------------------------------	  目标种族、职业和其它信息   ----------------------------------------
 	TargetFrame:CreateFontString("TargetFrameType", "OVERLAY", "GameFontNormalSmall")
 	TargetFrameType:SetPoint("BOTTOMRIGHT", TargetFrame, "BOTTOMRIGHT", -43, -8)
@@ -405,52 +428,6 @@ hooksecurefunc("TargetFrame_Update", function(self)
 		TargetFrameType:SetText(typeText)
 		TargetFrameRace:SetText(raceText)
 	end)
------------------------------------------	  目标及焦点战斗状态指示   -----------------------------------------
-local TargetCombat = CreateFrame("Frame", UIParent) 
-TargetCombat:SetParent(TargetFrame)
-TargetCombat.target = TargetCombat:CreateTexture() 
-TargetCombat.target:SetTexture("Interface\\CHARACTERFRAME\\UI-StateIcon.blp") 
-TargetCombat.target:SetTexCoord(0.5,1,0,0.49); 
-TargetCombat.target:SetAllPoints() 
-TargetCombat:SetSize(21,21)
-TargetCombat:SetPoint("CENTER", TargetFrame, "LEFT", 6, -6)-----目标位置 
-TargetCombat:Hide()
-local function FrameOnUpdate(self) if UnitAffectingCombat("target") then self:Show() else self:Hide() end end 
-local TargetCombatUpdate = CreateFrame("Frame") 
-TargetCombatUpdate:SetScript("OnUpdate", function(self) FrameOnUpdate(TargetCombat) end) 
-function module:Focuser()
-	if not MaoRUISettingDB["Misc"]["Focuser"] then return end
-local modifier = "shift" -- shift, alt or ctrl
-local mouseButton = "1" -- 1 = left, 2 = right, 3 = middle, 4 and 5 = thumb buttons if there are any
-local function SetFocusHotkey(frame)
-	frame:SetAttribute(modifier.."-type"..mouseButton,"focus")
-end
-local function CreateFrame_Hook(type, name, parent, template)
-	if template == "SecureUnitButtonTemplate" then SetFocusHotkey(_G[name]) end
-end
-hooksecurefunc("CreateFrame", CreateFrame_Hook)
--- Keybinding override so that models can be shift/alt/ctrl+clicked
-local Keybindings = CreateFrame("CheckButton", "FocuserButton", UIParent, "SecureActionButtonTemplate")
-Keybindings:SetAttribute("type1","macro")
-Keybindings:SetAttribute("macrotext","/focus mouseover")
-SetOverrideBindingClick(FocuserButton,true,modifier.."-BUTTON"..mouseButton,"FocuserButton")
--- Set the keybindings on the default unit frames since we won't get any CreateFrame notification about them
-local duf = {
-	PlayerFrame,
-	PetFrame,
-	PartyMemberFrame1,
-	PartyMemberFrame2,
-	PartyMemberFrame3,
-	PartyMemberFrame4,
-	PartyMemberFrame1PetFrame,
-	PartyMemberFrame2PetFrame,
-	PartyMemberFrame3PetFrame,
-	PartyMemberFrame4PetFrame,
-	TargetFrame,
-	TargetofTargetFrame,
-}
-for i,frame in pairs(duf) do SetFocusHotkey(frame) end
-end
 --------  TargetClassButton by 狂飙@cwdg(networm@qq.com) 20120119     DIY by y368413    ----
 --左键查看目标装备、右键与目标交易、中键密语、鼠标按键4跟随、鼠标按键5比较成就、到可观察装备距离时职业图标由灰白变彩色。
 local targeticon = CreateFrame("Button", "TargetClass", TargetFrame)
@@ -513,7 +490,7 @@ end)
 -----------------------------------------	     Buff时间      -----------------------------------------
 function BT_AuraButton_Update(buttonName, index, filter)
 	local unit = PlayerFrame.unit;
-	local name, rank, texture, count, debuffType, duration, expirationTime = UnitAura(unit, index, filter); 
+	local name, texture, count, debuffType, duration, expirationTime = UnitAura(unit, index, filter); 
 	local buffName = buttonName..index;
 	local buffDuration = getglobal(buffName.."Duration");
 	if ( duration == 0 ) then
@@ -696,7 +673,7 @@ for i = 1, MAX_PARTY_MEMBERS do
     partycastframe:SetScale(0.75)
     partycastframe:SetScript("OnShow", PartyCastingBar_OnShow)
     partycastframe:SetScript("OnEvent", PartyCastingBar_OnEvent)
-    partycastframe:RegisterEvent("PARTY_MEMBERS_CHANGED")
+    --partycastframe:RegisterEvent("PARTY_MEMBERS_CHANGED")
 	partycastframe:RegisterEvent("PARTY_MEMBER_ENABLE")
 	partycastframe:RegisterEvent("PARTY_MEMBER_DISABLE")
 	partycastframe:RegisterEvent("PARTY_LEADER_CHANGED")
@@ -840,27 +817,32 @@ hooksecurefunc("PartyMemberFrame_UpdateMember", function(self)
 	end
 end)
 
----------------------------------------------------------------------------------------------------------------------------------------------
-MaoRUI:EventFrame("ADDON_LOADED"):SetScript('OnEvent', function(self, event, name)
-  if(name ~= "_ShiGuang") then return end
-	self:UnregisterEvent('ADDON_LOADED')        
+--[[local HideFrameTexture = CreateFrame("Frame",nil,UIParent) 
+HideFrameTexture:RegisterEvent("PLAYER_ENTERING_WORLD") 
+HideFrameTexture:SetScript("OnUpdate",function(self,event,...) 
+PlayerFrameTexture:Hide() 
+TargetFrameTextureFrameTexture:Hide() 
+TargetFrameToTTextureFrameTexture:Hide() 
+FocusFrameTextureFrameTexture:Hide() 
+FocusFrameToTTextureFrameTexture:Hide() 
+PetFrameTexture:Hide() 
 
-local Me = CreateFrame("Frame") 
-Me:RegisterEvent("PLAYER_LOGIN") 
-Me:RegisterEvent("ADDON_LOADED") 
-Me:RegisterEvent("PLAYER_ENTERING_WORLD") 
-Me:SetScript("OnEvent", function(self,event)
- if event == "PLAYER_LOGIN" then 
-	  if (MaoRUISettingDB.Small or false) then
-	      sendCmd("/bht on")
-	      PlayerFrame:SetAlpha(0)
-	      TargetFrame:SetAlpha(0)  	      
-    end         
-	  if (MaoRUISettingDB.Large or false) then
-	      sendCmd("/bht off")
-	      PlayerFrame:SetAlpha(1)
-        TargetFrame:SetAlpha(1)
-	  end
- end
-end)
-end)
+PlayerPortrait:SetTexCoord(0.14, 0.84, 0.14, 0.84) 
+TargetFramePortrait:SetTexCoord(0.14, 0.84, 0.14, 0.84) 
+TargetFrameToTPortrait:SetTexCoord(0.14, 0.84, 0.14, 0.84) 
+TargetFrameToTPortrait:SetWidth(38) 
+TargetFrameToTPortrait:SetHeight(38) 
+FocusFramePortrait:SetTexCoord(0.14, 0.84, 0.14, 0.84) 
+FocusFrameToTPortrait:SetTexCoord(0.14, 0.84, 0.14, 0.84) 
+FocusFrameToTPortrait:SetWidth(38) 
+FocusFrameToTPortrait:SetHeight(38) 
+PetPortrait:SetTexCoord(0.14, 0.84, 0.14, 0.84) 
+PartyMemberFrame1Portrait:SetTexCoord(0.14, 0.84, 0.14, 0.84) 
+PartyMemberFrame1PetFramePortrait:SetTexCoord(0.14, 0.84, 0.14, 0.84) 
+PartyMemberFrame2Portrait:SetTexCoord(0.14, 0.84, 0.14, 0.84) 
+PartyMemberFrame2PetFramePortrait:SetTexCoord(0.14, 0.84, 0.14, 0.84) 
+PartyMemberFrame3Portrait:SetTexCoord(0.14, 0.84, 0.14, 0.84) 
+PartyMemberFrame3PetFramePortrait:SetTexCoord(0.14, 0.84, 0.14, 0.84) 
+PartyMemberFrame4Portrait:SetTexCoord(0.14, 0.84, 0.14, 0.84) 
+PartyMemberFrame4PetFramePortrait:SetTexCoord(0.14, 0.84, 0.14, 0.84)
+end)]]

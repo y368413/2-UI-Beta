@@ -1,4 +1,5 @@
-local M, R, U, I = unpack(select(2, ...))
+local _, ns = ...
+local M, R, U, I = unpack(ns)
 ----------------------------
 -- rLib: framefader, zork
 ----------------------------
@@ -8,14 +9,22 @@ local function FaderOnFinished(self)
 	self.__owner:SetAlpha(self.finAlpha)
 end
 
+local function FaderOnUpdate(self)
+	self.__owner:SetAlpha(self.__animFrame:GetAlpha())
+end
+
 local function CreateFaderAnimation(frame)
 	if frame.fader then return end
-	frame.fader = frame:CreateAnimationGroup()
+	local animFrame = CreateFrame("Frame", nil, frame)
+	animFrame.__owner = frame
+	frame.fader = animFrame:CreateAnimationGroup()
 	frame.fader.__owner = frame
+	frame.fader.__animFrame = animFrame
 	frame.fader.direction = nil
 	frame.fader.setToFinalAlpha = false --test if this will NOT apply the alpha to all regions
 	frame.fader.anim = frame.fader:CreateAnimation("Alpha")
 	frame.fader:HookScript("OnFinished", FaderOnFinished)
+	frame.fader:HookScript("OnUpdate", FaderOnUpdate)
 end
 
 local function StartFadeIn(frame)
@@ -100,14 +109,13 @@ local function CreateFrameFader(frame, faderConfig)
 	FrameHandler(frame)
 end
 
-local function CreateButtonFrameFader(frame, buttonList, faderConfig)
-	CreateFrameFader(frame, faderConfig)
-	for i, button in next, buttonList do
+function M:CreateButtonFrameFader(buttonList, faderConfig)
+	CreateFrameFader(self, faderConfig)
+	for _, button in next, buttonList do
 		if not button.__faderParent then
-			button.__faderParent = frame
+			button.__faderParent = self
 			button:HookScript("OnEnter", OffFrameHandler)
 			button:HookScript("OnLeave", OffFrameHandler)
 		end
 	end
 end
-MaoRUI.CreateButtonFrameFader = CreateButtonFrameFader

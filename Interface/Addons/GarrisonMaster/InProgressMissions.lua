@@ -1,3 +1,5 @@
+﻿--## Version: 8.0.24 ## Author: lteke
+
 local InProgressMissions, addon = ...
 
 addon.frame = addon.frame or CreateFrame("Frame", nil, _G.WorldFrame)
@@ -98,22 +100,6 @@ function addon:InitDB()
 	-- end
 end
 
-function addon:SaveArtifactResearchInfo()
-	if C_Garrison.GetLandingPageGarrisonType() < LE_GARRISON_TYPE_7_0 then return end
-	self:InitDB()
-	local profile = IPMDB.profiles[self.profileName]
-	if profile[1] and profile[1].isArtifact then
-		tremove(profile, 1)
-	end
-	local info = self:UpdateArtifactResearchInfo()
-	if info then
-		tinsert(profile, 1, info)
-	end
-	if not next(profile) then
-		IPMDB.profiles[self.profileName] = nil
-	end
-end
-
 function addon:SaveInProgressMissions()
 	self.saved = true
 	self:InitDB()
@@ -122,69 +108,12 @@ function addon:SaveInProgressMissions()
 		return
 	end
 	local profile = wipe(IPMDB.profiles[self.profileName])
-	-- self:GetArtifactResearchInfo(profile)
+	self:GetMissions(LE_FOLLOWER_TYPE_GARRISON_8_0, profile)
 	self:GetMissions(LE_FOLLOWER_TYPE_GARRISON_7_0, profile)
 	self:GetMissions(LE_FOLLOWER_TYPE_SHIPYARD_6_2, profile)
 	self:GetMissions(LE_FOLLOWER_TYPE_GARRISON_6_0, profile)
 	if not next(profile) then
 		IPMDB.profiles[self.profileName] = nil
-	end
-end
-
-do
-	local info = {}
-	local rewards = {
-		{
-			-- itemID = 146745,
-			quantity = 1,
-		}
-	}
-
-	function addon:GetArtifactResearchInfo(dest)
-		if info.isArtifact then
-			if dest then
-				tinsert(dest, 1, info)
-			else
-				return info
-			end
-		end
-	end
-
-	function addon:UpdateArtifactResearchInfo()
-		if C_Garrison.GetLandingPageGarrisonType() < LE_GARRISON_TYPE_7_0 then return end
-		wipe(info)
-		local name, texture, shipmentCapacity, shipmentsReady, shipmentsTotal, creationTime, duration, timeleftString, itemName, itemTexture, _, itemID
-		for k, v in pairs(C_Garrison.GetLooseShipments(3) or {}) do
-			name, texture, shipmentCapacity, shipmentsReady, shipmentsTotal, creationTime, duration, timeleftString, itemName, itemTexture, _, itemID = C_Garrison.GetLandingPageShipmentInfoByContainerID(v)
-			if (itemID == 139390 or itemID == 146745) and creationTime and duration and name then
-				info.isArtifact = true
-				info.name = name
-				info.charText = self.playerNameText.."-"..GetRealmName()
-				info.missionEndTime = creationTime + duration
-				if GetServerTime() >= info.missionEndTime then
-					info.isComplete = true
-					info.missionEndTime = nil
-					shipmentsReady = shipmentsReady + 1
-					if shipmentsReady > shipmentsTotal then
-						shipmentsReady = shipmentsTotal
-					end
-				elseif shipmentsReady > 0 then
-					info.isComplete = true
-					info.missionEndTime = nil
-				else
-					info.isComplete = nil
-				end
-				info.artifactReady = shipmentsReady
-				info.artifactTotal = shipmentsTotal
-				info.followerTypeID = LE_FOLLOWER_TYPE_GARRISON_7_0
-				info.typeIcon = texture
-				info.rewards = rewards
-				info.rewards[1].itemID = itemID
-				-- info.rewards[1].quantity = 1
-				-- break
-				return info
-			end
-		end
 	end
 end
 
@@ -213,7 +142,13 @@ do
 	end
 
 	local function CompareMissionTime(m1, m2)
-		if (m1.followerTypeID == LE_FOLLOWER_TYPE_GARRISON_7_0) == (m2.followerTypeID == LE_FOLLOWER_TYPE_GARRISON_7_0) then
+		if (m1.followerTypeID == LE_FOLLOWER_TYPE_GARRISON_8_0) == (m2.followerTypeID == LE_FOLLOWER_TYPE_GARRISON_8_0) then
+			if (m1.missionEndTime or 0) == (m2.missionEndTime or 0) then
+				return CompareMissionName(m1, m2)
+			else
+				return (m1.missionEndTime or 0) < (m2.missionEndTime or 0)
+			end
+		elseif (m1.followerTypeID == LE_FOLLOWER_TYPE_GARRISON_7_0) == (m2.followerTypeID == LE_FOLLOWER_TYPE_GARRISON_7_0) then
 			if (m1.missionEndTime or 0) == (m2.missionEndTime or 0) then
 				return CompareMissionName(m1, m2)
 			else
@@ -227,8 +162,10 @@ do
 	function addon:UpdateMissions()
 		local garrisonType = C_Garrison.GetLandingPageGarrisonType()
 		wipe(self.missions)
-		if garrisonType == LE_GARRISON_TYPE_7_0 then
-			-- self:GetArtifactResearchInfo(self.missions)
+		if garrisonType == LE_GARRISON_TYPE_8_0 then
+			self:GetMissions(LE_FOLLOWER_TYPE_GARRISON_8_0, self.missions, true)
+		end
+		if garrisonType == LE_GARRISON_TYPE_7_0 or IPMDB.enableGarrisonMissions or C_Garrison.IsPlayerInGarrison(LE_GARRISON_TYPE_7_0) then
 			self:GetMissions(LE_FOLLOWER_TYPE_GARRISON_7_0, self.missions, true)
 		end
 		if garrisonType == LE_GARRISON_TYPE_6_0 or IPMDB.enableGarrisonMissions or C_Garrison.IsPlayerInGarrison(LE_GARRISON_TYPE_6_0) then
@@ -244,7 +181,7 @@ do
 			if name ~= self.profileName and not IPMDB.ignores[name] then
 				for i, mission in ipairs(missions) do
 					mission.followerTypeID = mission.followerTypeID or 0
-					if mission.followerTypeID >= LE_FOLLOWER_TYPE_GARRISON_7_0 or IPMDB.enableGarrisonMissions then
+					if mission.followerTypeID >= LE_FOLLOWER_TYPE_GARRISON_8_0 or IPMDB.enableGarrisonMissions then
 						if type(mission) == "table" and type(mission.charText) == "string" then
 							tinsert(self.altMissions, mission)
 						end
@@ -277,9 +214,6 @@ do
 				mission.successChance = C_Garrison.GetMissionSuccessChance(mission.missionID)
 			end
 		end
-		if followerType == LE_FOLLOWER_TYPE_GARRISON_7_0 then
-			self:GetArtifactResearchInfo(temp)
-		end
 		if sort then
 			table.sort(temp, type(sort) == "function" and sort or CompareMissionTime)
 		end
@@ -290,7 +224,17 @@ do
 end
 
 local function FormatRewardNumbers(value)
-	if value > 999 then
+	if GetLocale() == "zhCN" or GetLocale() == "zhTW"  then
+	if value > 9999 then
+		value = FORMAT_REWARDNUMS:format(value / 10000)
+		if string.sub(value, -3) == ".0" then
+			value = string.sub(value, 1, -4)
+		end
+		value = value.."万"
+	end
+	return value
+	else
+		if value > 999 then
 		value = FORMAT_REWARDNUMS:format(value / 1000)
 		if string.sub(value, -2) == ".0" then
 			value = string.sub(value, 1, -3)
@@ -298,6 +242,7 @@ local function FormatRewardNumbers(value)
 		value = value.."k"
 	end
 	return value
+	end
 	--return BreakUpLargeNumbers(value)
 end
 
@@ -499,7 +444,11 @@ local function GarrisonLandingPageReportList_Update(...)
 				button.Title:SetWidth(322 - button.TimeLeft:GetWidth())
 				stopUpdate = false
 			end
-			button.Level:SetText(item.iLevel and item.iLevel > 0 and item.iLevel or item.followerTypeID ~= LE_FOLLOWER_TYPE_SHIPYARD_6_2 and item.level or nil)
+			if item.followerTypeID == LE_FOLLOWER_TYPE_GARRISON_8_0 then
+				button.Level:SetText(item.level)
+			else
+				button.Level:SetText(item.iLevel and item.iLevel > 0 and item.iLevel or item.followerTypeID ~= LE_FOLLOWER_TYPE_SHIPYARD_6_2 and item.level or nil)
+			end
 			if item.typeAtlas then
 				button.MissionTypeIcon:SetAtlas(item.typeAtlas)
 			elseif item.typeIcon then
@@ -554,7 +503,11 @@ local function ScrollFrame_UpdateAvailable(...)
 			button.MissionTypeIcon:SetPoint("LEFT", button, 2, 0)
 			button.MissionTypeIcon:SetSize(MISSION_ICON_SIZE, MISSION_ICON_SIZE)
 			button.BG:SetVertexColor(1, 1, 1)
-			button.Level:SetText(item.iLevel and item.iLevel > 0 and item.iLevel or item.followerTypeID ~= LE_FOLLOWER_TYPE_SHIPYARD_6_2 and item.level or nil)
+			if item.followerTypeID == LE_FOLLOWER_TYPE_GARRISON_8_0 then
+				button.Level:SetText(item.level)
+			else
+				button.Level:SetText(item.iLevel and item.iLevel > 0 and item.iLevel or item.followerTypeID ~= LE_FOLLOWER_TYPE_SHIPYARD_6_2 and item.level or nil)
+			end
 			button.NumFollowers:SetText(item.numFollowers and string.rep(RANGE_INDICATOR, item.numFollowers) or nil)
 			rewardIndex = Rewards_Update(button, item) or 1
 			if rewardIndex < 0 then
@@ -736,7 +689,7 @@ local function SetupMissionInfoTooltip(item, isAltMission, anchorFrame)
 			if type(info) == "table" then
 				leftText = nil
 				rightText = nil
-				if info.followerTypeID == LE_FOLLOWER_TYPE_GARRISON_7_0 and info.abilities then
+				if (info.followerTypeID == LE_FOLLOWER_TYPE_GARRISON_7_0 or info.followerTypeID == LE_FOLLOWER_TYPE_GARRISON_8_0) and info.abilities then
 					leftText = MakeIcon(info.portraitIconID)
 					if info.isTroop then
 						leftText = leftText.." "..QualityColorText(info.name, info.quality)
@@ -847,17 +800,6 @@ local function FlipTexture(texture, horizontal)
     end
 end
 
---local function ListScroll_OnScroll(self)
---	if GameTooltip:IsVisible() then
---		GameTooltip:Hide()
---		for k, button in pairs(addon.listScroll.buttons) do
---			if button:IsVisible() and button:IsMouseOver() then
---				GarrisonLandingPageReportMission_OnEnter(button)
---				break
---			end
---		end
---	end
---end
 
 local function CreateQuantityFont()
 	if not _G.GarrisonReportFontRewardQuantity then
@@ -1176,46 +1118,6 @@ function addon:Init()
 	self.Init = function() end
 end
 
---local buttonText = {}
-
---[[local function CreateButtonText(button)
-	local text = button:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-	text:SetPoint("BOTTOMRIGHT", -70, 9)
-	text:SetJustifyH("RIGHT")
-	buttonText[button] = text
-	return text
-end]]
-
---[[function addon:HookOrderHallMissionFrame()
-	if _G.OrderHallMissionFrameMissionsListScrollFrame and not self.OrderHallMissionsScrollFrame then
-		self.OrderHallMissionsScrollFrame = _G.OrderHallMissionFrameMissionsListScrollFrame
-		hooksecurefunc(_G.OrderHallMissionFrame.MissionTab.MissionList, "Update", function()
-			if addon.OrderHallMissionsScrollFrame:IsVisible() and not addon:OrderHallAddonExists() then
-				-- print(GetTime(), #addon.OrderHallMissionsScrollFrame.buttons)
-				local info, text
-				for i, button in ipairs(addon.OrderHallMissionsScrollFrame.buttons) do
-					info = button.info
-					text = buttonText[button] or CreateButtonText(button)
-					if info and not info.inProgress then
-						-- print("    ", info.missionID, info.offerTimeRemaining)
-						text:SetText(info.offerEndTime and RAID_INSTANCE_EXPIRES:format(info.offerTimeRemaining) or nil)
-						text:Show()
-					else
-						text:Hide()
-					end
-				end
-			end
-		end)
-	end
-end]]
-
---[[function addon:OrderHallAddonExists()
-	for k, v in pairs(ORDERHALL_ADDONS) do
-		if v then
-			return true
-		end
-	end
-end]]
 
 function events:ADDON_LOADED(event, name, ...)
 	if name == "Blizzard_GarrisonUI" then
@@ -1244,10 +1146,6 @@ function addon:QueueSaveInProgressMissions()
 		C_Timer.After(0.5, OnMissionUpdate)
 	end
 end
-
--- function events:GARRISON_MISSION_NPC_CLOSED(event, ...)
--- 	self:QueueSaveInProgressMissions()
--- end
 
 function events:GARRISON_MISSION_STARTED(event, ...)
 	self:QueueSaveInProgressMissions()
@@ -1279,61 +1177,15 @@ function events:SHIPMENT_CRAFTER_CLOSED(event, ...)
 end
 
 function events:GARRISON_LANDINGPAGE_SHIPMENTS(event, ...)
-	self:SaveArtifactResearchInfo()
 	self:Refresh()
 	if not self.saved then
 		self:SaveInProgressMissions()
 	end
 end
 
-function addon:CHAT_MSG_LOOT(event, msg)
-	local itemID = msg and tonumber(msg:match("Hitem:(%d+):"))
-	if itemID == 139390 or itemID == 146745 then
-		C_Garrison.RequestLandingPageShipmentInfo()
-	end
-end
-
-function events:ZONE_CHANGED_NEW_AREA(event, ...)
-	if GetZonePVPInfo() == "sanctuary" then
-		self:RegisterEvent("CHAT_MSG_LOOT")
-	else
-		self:UnregisterEvent("CHAT_MSG_LOOT")
-	end
-end
-
-do
-	local function Check_ArtifactAlert()
-		if IsEncounterInProgress() or InCombatLockdown() then return end
-		local info = addon:GetArtifactResearchInfo()
-		if info and info.isComplete then
-			GarrisonMissionAlertSystem:AddAlert(info)
-			return true
-		end
-	end
-
-	local function OnEnteringWorld_Delay()
-		if Check_ArtifactAlert() then
-
-		elseif not addon.artifactAlertScheduled then
-			local info = addon:GetArtifactResearchInfo()
-			if info and info.missionEndTime then
-				addon.artifactAlertScheduled = true
-				local duration = info.missionEndTime - (GetServerTime() or 0)
-				if duration < (60 * 60 * 20) then
-					C_Timer.After(duration + 5, Check_ArtifactAlert)
-				end
-			end
-		end
-	end
-
-	function events:PLAYER_ENTERING_WORLD(event, ...)
-		for k, v in pairs(ORDERHALL_ADDONS) do
-			ORDERHALL_ADDONS[k] = IsAddOnLoaded(k)
-		end
-
-		events.ZONE_CHANGED_NEW_AREA(self, event)
-		if IsEncounterInProgress() or InCombatLockdown() then return end
-		C_Timer.After(4, OnEnteringWorld_Delay)
+function events:PLAYER_ENTERING_WORLD(event, ...)
+	for k, v in pairs(ORDERHALL_ADDONS) do
+		ORDERHALL_ADDONS[k] = IsAddOnLoaded(k)
 	end
 end
 
@@ -1416,7 +1268,7 @@ do
 
 	local function AlertFrameReward_OnEnter(frame, ...)
 		if InCombatLockdown() then return end
-		AlertFrame_StopOutAnimation(frame:GetParent())
+		-- AlertFrame_StopOutAnimation(frame:GetParent())
 		if frame.info then
 			GameTooltip:SetOwner(frame, "ANCHOR_RIGHT")
 			if frame.info.itemID then

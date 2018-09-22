@@ -1,15 +1,16 @@
-﻿local M, R, U, I = unpack(select(2, ...))
+﻿local _, ns = ...
+local M, R, U, I = unpack(ns)
+
 -- Drag AltPowerbar
 do
-	local bar = _G.PlayerPowerBarAlt
-	local mover = CreateFrame("Frame", "NDuiAltBarMover", bar)
+	local mover = CreateFrame("Frame", "NDuiAltBarMover", PlayerPowerBarAlt)
 	mover:SetPoint("CENTER", UIParent, 0, -200)
 	mover:SetSize(20, 20)
-	M.CreateMF(bar, mover)
-	hooksecurefunc(bar, "SetPoint", function(_, _, parent)
+	M.CreateMF(PlayerPowerBarAlt, mover)
+	hooksecurefunc(PlayerPowerBarAlt, "SetPoint", function(_, _, parent)
 		if parent ~= mover then
-			bar:ClearAllPoints()
-			bar:SetPoint("CENTER", mover)
+			PlayerPowerBarAlt:ClearAllPoints()
+			PlayerPowerBarAlt:SetPoint("CENTER", mover)
 		end
 	end)
 	hooksecurefunc("UnitPowerBarAlt_SetUp", function(self)
@@ -22,44 +23,70 @@ do
 end
 
 -- Fix Drag Collections taint
-MaoRUI:EventFrame("ADDON_LOADED"):SetScript("OnEvent", function(self, event, addon)
-	if event == "ADDON_LOADED" and addon == "Blizzard_Collections" then
-		CollectionsJournal:HookScript("OnShow", function()
-			if not self.init then
-				if InCombatLockdown() then
-					self:RegisterEvent("PLAYER_REGEN_ENABLED")
-				else
-					M.CreateMF(CollectionsJournal)
-					self:UnregisterAllEvents()
+
+do
+	local done
+	local function setupMisc(event, addon)
+		if event == "ADDON_LOADED" and addon == "Blizzard_Collections" then
+			CollectionsJournal:HookScript("OnShow", function()
+				if not done then
+					if InCombatLockdown() then
+						M:RegisterEvent("PLAYER_REGEN_ENABLED", setupMisc)
+					else
+						M.CreateMF(CollectionsJournal)
+					end
+					done = true
 				end
-				self.init = true
+			end)
+			M:UnregisterEvent(event, setupMisc)
+		elseif event == "PLAYER_REGEN_ENABLED" then
+			M.CreateMF(CollectionsJournal)
+			M:UnregisterEvent(event, setupMisc)
+		end
+	end
+
+	M:RegisterEvent("ADDON_LOADED", setupMisc)
+end
+
+-- Temporary taint fix
+do
+	InterfaceOptionsFrameCancel:SetScript("OnClick", function()
+		InterfaceOptionsFrameOkay:Click()
+	end)
+
+	-- https://www.townlong-yak.com/bugs/Kjq4hm-DisplayModeCommunitiesTaint
+	if (UIDROPDOWNMENU_OPEN_PATCH_VERSION or 0) < 1 then
+		UIDROPDOWNMENU_OPEN_PATCH_VERSION = 1
+		hooksecurefunc("UIDropDownMenu_InitializeHelper", function(frame)
+			if UIDROPDOWNMENU_OPEN_PATCH_VERSION ~= 1 then return end
+
+			if UIDROPDOWNMENU_OPEN_MENU and UIDROPDOWNMENU_OPEN_MENU ~= frame and not issecurevariable(UIDROPDOWNMENU_OPEN_MENU, "displayMode") then
+				UIDROPDOWNMENU_OPEN_MENU = nil
+				local t, f, prefix, i = _G, issecurevariable, " \0", 1
+				repeat
+					i, t[prefix .. i] = i+1
+				until f("UIDROPDOWNMENU_OPEN_MENU")
 			end
 		end)
-		if name == "Blizzard_Collections" then
-			for i = 1, 3 do
-				local button = _G["PetJournalLoadoutPet"..i]
-				if button and button.dragButton then
-					button.dragButton:RegisterForClicks("LeftButtonUp")
+	end
+
+	-- https://www.townlong-yak.com/bugs/afKy4k-HonorFrameLoadTaint
+	if (UIDROPDOWNMENU_VALUE_PATCH_VERSION or 0) < 2 then
+		UIDROPDOWNMENU_VALUE_PATCH_VERSION = 2
+		hooksecurefunc("UIDropDownMenu_InitializeHelper", function()
+			if UIDROPDOWNMENU_VALUE_PATCH_VERSION ~= 2 then return end
+
+			for i = 1, UIDROPDOWNMENU_MAXLEVELS do
+				for j = 1, UIDROPDOWNMENU_MAXBUTTONS do
+					local b = _G["DropDownList"..i.."Button"..j]
+					if not (issecurevariable(b, "value") or b:IsShown()) then
+						b.value = nil
+						repeat
+							j, b["fx" .. j] = j+1
+						until issecurevariable(b, "value")
+					end
 				end
 			end
-			self:UnregisterAllEvents()
-		end
-	elseif event == "PLAYER_REGEN_ENABLED" then
-		M.CreateMF(CollectionsJournal)
-		self:UnregisterAllEvents()
+		end)
 	end
-end)
-
--- Temporary PVP queue taint fix
-InterfaceOptionsFrameCancel:SetScript("OnClick", function()
-    InterfaceOptionsFrameOkay:Click()
-end)
-
-if GetLocale() == "zhCN" then
-	StaticPopupDialogs["LFG_LIST_ENTRY_EXPIRED_TOO_MANY_PLAYERS"] = {
-		text = "针对此项活动，你的队伍人数已满，将被移出列表。",
-		button1 = OKAY,
-		timeout = 0,
-		whileDead = 1,
-	}
 end

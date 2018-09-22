@@ -1,6 +1,7 @@
-﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
-..\FrameXML\UI.xsd">
+﻿<Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="Loot.lua"/>
-	<Script file="gmLm.lua"/>
-	<Script file="PersonalLootHelper.lua"/>
+	<Script file="Farmer.lua"/>
+	<Script file="ChatLoot.lua"/>
+	<Script file="EasyConfirm.lua"/>
+	<Script file="EncounterJournalPlusInstanceInfo.lua"/>
 </Ui>

@@ -2,7 +2,8 @@
 --  ... finer detail for how long items may stay in the inbox
 --  ... PUSH_ITEM event based queue operation
 
-local M, R, U, I = unpack(select(2, ...))
+local _, ns = ...
+local M, R, U, I = unpack(ns)
 
 NUM_BAGITEMS_PER_ROW = 6;
 NUM_BAGITEMS_ROWS = 7;
@@ -370,9 +371,9 @@ function InboxMailbag_Update()
 			
 			if ( item.daysLeft < 7 ) then
 				if ( item.daysLeft < 1 ) then
-					itemButton.deleteOverlay:SetTexture(1, 0.125, 0.125);
+					itemButton.deleteOverlay:SetColorTexture(1, 0.125, 0.125);
 				else
-					itemButton.deleteOverlay:SetTexture(1, 0.5, 0);
+					itemButton.deleteOverlay:SetColorTexture(1, 0.5, 0);
 				end
 				itemButton.deleteOverlay:Show();
 			else

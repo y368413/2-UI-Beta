@@ -5,6 +5,8 @@ L["Adds tooltips to items showing if you have learned a transmog appearance."] =
 L["Also shows a summary in the Appearance Sets UI of how many pieces of a transmog set you have collected."] = "在外观套装界面上显示有多少部分幻化套装已被收集。"
 L["Another class can learn this item."] = "其他职业可以解锁"
 L["Appearances updated: "] = "外观已更新："
+--[[Translation missing --]]
+--[[ L["Ask me later"] = ""--]] 
 L["Can be learned by:"] = "可以解锁通过："
 L["Can I Mog It? Important Message: Please log into all of your characters to compile complete transmog appearance data."] = "重要提示：请登录所有角色以生成插件的幻化外观数据库"
 L["CanIMogItOptions not found, loading defaults!"] = "CanIMogIt插件配置未找到，加载默认配置！"

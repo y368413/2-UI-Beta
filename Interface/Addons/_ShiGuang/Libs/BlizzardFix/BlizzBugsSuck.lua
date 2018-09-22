@@ -126,7 +126,7 @@ f:SetScript ("OnEvent", function (self, event, addonName)
 					scrollFrame.maxY = QUEST_POI_FRAME_HEIGHT - 668 * WORLDMAP_SETTINGS.size;
 					scrollFrame.zoomedIn = abs(WorldMapDetailFrame:GetScale() - WORLDMAP_SETTINGS.size) > 0.05;
 					scrollFrame.continent = GetCurrentMapContinent();
-					scrollFrame.mapID = GetCurrentMapAreaID();
+					scrollFrame.mapID = WorldMapFrame:GetMapID();
 
 					-- figure out new scroll values
 					local scaleChange = newScale / oldScale;

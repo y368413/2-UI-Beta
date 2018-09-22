@@ -1,5 +1,5 @@
 ﻿function OrderHallMissionFrame_MissionTab_MissionList_Update_MoreRewardsHook(self)
-	if (not OrderHallMissionFrame or not self:IsShown()) then return; end
+	if (not OrderHallMissionFrame or not self:IsShown()) or (not BFAMissionFrame or not self:IsShown()) then return; end
 	local MoreRewardsmissions = self.showInProgress and self.inProgressMissions or self.availableMissions;
 	local MoreRewardsbuttons = self.listScroll.buttons;
 		for i = 1, #MoreRewardsbuttons do
@@ -54,10 +54,15 @@ local MoreRewardsFormOrderHall = CreateFrame("Frame");
 MoreRewardsFormOrderHall:RegisterEvent("ADDON_LOADED");
 MoreRewardsFormOrderHall:SetScript("OnEvent", function(self, event)
 		if (event == "ADDON_LOADED") then
-		  if (not OrderHallMissionFrame or not OrderHallMissionFrame.MissionTab.MissionList:IsShown()) then return; end
+		  if (not OrderHallMissionFrame or not OrderHallMissionFrame.MissionTab.MissionList:IsShown()) or (not BFAMissionFrame or not BFAMissionFrame.MissionTab.MissionList:IsShown()) then return; end
 			local OrderHallMissionFrame_MissionTab_MissionList_Update = OrderHallMissionFrame.MissionTab.MissionList.Update;
+			local BFAMissionFrame_MissionTab_MissionList_Update = BFAMissionFrame.MissionTab.MissionList.Update;
 			function OrderHallMissionFrame.MissionTab.MissionList:Update()
 				OrderHallMissionFrame_MissionTab_MissionList_Update(self);
+				OrderHallMissionFrame_MissionTab_MissionList_Update_MoreRewardsHook(self);
+			end
+			function BFAMissionFrame.MissionTab.MissionList:Update()
+				BFAMissionFrame_MissionTab_MissionList_Update(self);
 				OrderHallMissionFrame_MissionTab_MissionList_Update_MoreRewardsHook(self);
 			end
 		end

@@ -66,18 +66,24 @@ IDtable = {
 		--156064,	-- 德拉诺强效敏捷合剂
 		--156079,	-- 德拉诺强效智力合剂
 		--156084,	-- 德拉诺强效耐力合剂
-		188031,	-- 1300智力-- 耳语契约
-		188033,	-- 1300敏捷-- 第七恶魔
-		188034,	-- 1300力量-- 千万战痕
-		188035,	-- 1950耐力-- 无尽大军
+		--188031,	-- 1300智力-- 耳语契约
+		--188033,	-- 1300敏捷-- 第七恶魔
+		--188034,	-- 1300力量-- 千万战痕
+		--188035,	-- 1950耐力-- 无尽大军
+		188116, -- flask from cauldron
+		251836,-- agility
+		251837,-- intellect
+		251838,-- 357 stamina
+		251839,-- strength
 	},
 	Food = {
 		104280,	-- Well Fed 充分进食
 		104273, -- 充分进食
-		188534, -- 魔口狂鱼
+		--188534, -- 魔口狂鱼
 	},
 	Rune = {     -- 符文
 		224001,
+		270058,
 	},
 }
 
@@ -501,9 +507,9 @@ if E.FlaskFood == true then
 	local function SendResult(i)
 			if #NoBuff[i] > 0 then
 				if #NoBuff[i] >= numPlayer then
-					SendChatMessage("Lack"..BuffName[i]..": "..ALL..PLAYER)
+					SendChatMessage(ADDON_MISSING..BuffName[i]..": "..ALL..PLAYER)
 				else
-					SendChatMessage("Lack"..BuffName[i]..": "..table.concat(NoBuff[i], ", "))
+					SendChatMessage(ADDON_MISSING..BuffName[i]..": "..table.concat(NoBuff[i], ", "))
 				end
 			end
 		end

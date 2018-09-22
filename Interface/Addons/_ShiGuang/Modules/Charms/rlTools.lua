@@ -162,11 +162,11 @@ local function CheckRaidStatus()
 	local inInstance, instanceType = IsInInstance()
 	if ((IsInGroup() and not IsInRaid()) or UnitIsGroupLeader('player') or UnitIsGroupAssistant("player")) and not (inInstance and (instanceType == "pvp" or instanceType == "arena")) then return true else return false end
 end
-local function eventHandler(self, event, ...)
+
+MAF:RegisterEvent("GROUP_ROSTER_UPDATE")
+MAF:RegisterEvent("PLAYER_ENTERING_WORLD")
+MAF:SetScript("OnEvent", function(self, event, ...)
 if InCombatLockdown() then MAF:RegisterEvent("PLAYER_REGEN_ENABLED") return end
 if CheckRaidStatus() then MAF:Show() else MAF:Hide() end
 if event == "PLAYER_REGEN_ENABLED" then MAF:UnregisterEvent("PLAYER_REGEN_ENABLED") end
-end
-MAF:RegisterEvent("GROUP_ROSTER_UPDATE")
-MAF:RegisterEvent("PLAYER_ENTERING_WORLD")
-MAF:SetScript("OnEvent", eventHandler);
+end);

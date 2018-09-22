@@ -4,6 +4,7 @@
 --]]
 
 local ADDON, Addon = ...
+local Cache = LibStub('LibItemCache-2.0')
 local L = LibStub('AceLocale-3.0'):GetLocale(ADDON)
 local MoneyFrame = Addon:NewClass('MoneyFrame', 'Frame')
 MoneyFrame.Type = 'PLAYER'
@@ -14,7 +15,7 @@ MoneyFrame.Type = 'PLAYER'
 function MoneyFrame:New(parent)
 	local f = self:Bind(CreateFrame('Button', parent:GetName() .. 'MoneyFrame', parent, 'SmallMoneyFrameTemplate'))
 	f.trialErrorButton:SetPoint('LEFT', -14, 0)
-	f:SetScript('OnHide', f.UnregisterEvents)
+	f:SetScript('OnHide', f.UnregisterSignals)
 	f:SetScript('OnShow', f.RegisterEvents)
 	f:SetScript('OnEvent', nil)
 	f:UnregisterAllEvents()
@@ -62,28 +63,28 @@ function MoneyFrame:OnClick()
 end
 
 function MoneyFrame:OnEnter()
-	if not Addon.Cache:HasCache() then
-    return
-  end
-
 	-- Total
 	local total = 0
-	for i, player in Addon.Cache:IteratePlayers() do
-		total = total + Addon.Cache:GetPlayerMoney(player)
+	for name in Cache:IterateOwners() do
+		local player = Cache:GetOwnerInfo(name)
+		if not player.isguild and player.money then
+			total = total + player.money
+		end
 	end
 
 	GameTooltip:SetOwner(self, self:GetTop() > (GetScreenHeight() / 2) and 'ANCHOR_BOTTOM' or 'ANCHOR_TOP')
-	GameTooltip:AddDoubleLine(L.Total, GetCoinTextureString(total), nil,nil,nil, 1,1,1)
+	GameTooltip:AddDoubleLine(L.Total, GetMoneyString(total, true), nil,nil,nil, 1,1,1)
 	GameTooltip:AddLine(' ')
 
 	-- Each player
-	for i, player in Addon.Cache:IteratePlayers() do
-		local money = Addon.Cache:GetPlayerMoney(player)
-		if money > 0 then
-			local color = Addon:GetPlayerColor(player)
-			local coins = self:GetCoinsText(money)
+	for name in Cache:IterateOwners() do
+		local player = Cache:GetOwnerInfo(name)
+		if not player.isguild and player.money then
+			local icon = format('|T%s:12:12|t ', Addon:GetOwnerIcon(player))
+			local coins = GetMoneyString(player.money, true)
+			local color = Addon:GetOwnerColor(player)
 
-			GameTooltip:AddDoubleLine(player, coins, color.r, color.g, color.b, 1,1,1)
+			GameTooltip:AddDoubleLine(icon .. player.name, coins, color.r, color.g, color.b, 1,1,1)
 		end
 	end
 
@@ -98,7 +99,7 @@ end
 --[[ Update ]]--
 
 function MoneyFrame:RegisterEvents()
-	self:RegisterFrameMessage('PLAYER_CHANGED', 'Update')
+	self:RegisterFrameSignal('OWNER_CHANGED', 'Update')
 	self:RegisterEvent('PLAYER_MONEY', 'Update')
 	self:Update()
 end
@@ -112,32 +113,7 @@ end
 --[[ API ]]--
 
 function MoneyFrame:GetMoney()
-	return Addon.Cache:GetPlayerMoney(self:GetPlayer())
-end
-
-function MoneyFrame:GetCoinsText(money)
-	local gold, silver, copper = self:GetCoins(money)
-	local text = ''
-
-	if gold > 0 then
-		local separated = ''
-		while gold > 1 do
-			separated = tostring(gold):sub(-3,-1) .. LARGE_NUMBER_SEPERATOR .. separated
-			gold = floor(gold / 1000)
-		end
-
-		text = format('%s|cffffd700%s|r', separated:sub(1,-2), GOLD_AMOUNT_SYMBOL)
-	end
-
-	if silver > 0 then
-		text = text .. format(' %d|cffc7c7cf%s|r', silver, SILVER_AMOUNT_SYMBOL)
-	end
-
-	if copper > 0 or money == 0 then
-		text = text .. format(' %d|cffeda55f%s|r', copper, COPPER_AMOUNT_SYMBOL)
-	end
-
-	return text
+	return self:GetOwnerInfo().money or 0
 end
 
 function MoneyFrame:GetCoins(money)

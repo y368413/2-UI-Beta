@@ -323,7 +323,7 @@ function DEX_OnEvent(self, event, ...)
 	elseif event == "PLAYER_TARGET_CHANGED" then
 		targetGUID = UnitGUID("target")
 	elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
-		DEX_ProcessCombatLog(...)
+		DEX_ProcessCombatLog(CombatLogGetCurrentEventInfo())
 	end
 end
 
@@ -1121,11 +1121,32 @@ end
 
 function DEX_Set_WOWDamage()
 	if (DEX_Get("DEX_ShowDamageWoW") == 0) then
-	  SetCVar("floatingCombatTextCombatState", 0)
-		SetCVar("floatingCombatTextCombatDamage", 0);
-		SetCVar("floatingCombatTextCombatHealing", 0);
+	--SetCVar("enableFloatingCombatText", 0)
+	SetCVar("floatingCombatTextCombatDamage", 0);
+	SetCVar("floatingCombatTextCombatHealing", 0);
+	--SetCVar("floatingCombatTextCombatDamageDirectionalScale", 1);
+	--SetCVar("floatingCombatTextFloatMode", 3);
+  --SetCVar("floatingCombatTextPetMeleeDamage", 0);   	 --寵物對目標傷害
+  --SetCVar("floatingCombatTextPetSpellDamage", 0);   	 --寵物對目標傷害
+  --SetCVar("floatingCombatTextCombatHealingAbsorbTarget", 0);    --目標盾提示 
+  --SetCVar("floatingCombatTextCombatHealingAbsorbSelf", 0);    --自身得盾/護甲提示 
+  --SetCVar("floatingCombatTextDodgeParryMiss", 0);    --閃招 
+  --SetCVar("floatingCombatTextDamageReduction", 0);    --傷害減免 
+  --SetCVar("floatingCombatTextCombatLogPeriodicSpells", 0);    --周期性傷害 
+  --SetCVar("floatingCombatTextReactives", 0);    --法術警示
+  --SetCVar("floatingCombatTextSpellMechanics", 0);    --他人的糾纏效果(例如 誘補(xxxx-xxxx)) 
+  --SetCVar("floatingCombatTextRepChanges", 1);    --聲望變化 
+  --SetCVar("floatingCombatTextFriendlyHealers", 0);    --友方治療者名稱 
+  --SetCVar("floatingCombatTextCombatState", 1);    --進入/離開戰鬥文字提示 
+  --SetCVar("floatingCombatTextLowManaHealth", 1);      --低MP/低HP文字提示 
+  --SetCVar("floatingCombatTextComboPoints", 0);    --連擊點 
+  --SetCVar("floatingCombatTextEnergyGains", 0);    --能量獲得
+  --SetCVar("floatingCombatTextPeriodicEnergyGains", 0);    --周期性能量   
+  --SetCVar("floatingCombatTextHonorGains", 0);    --榮譽擊殺 
+  --SetCVar("floatingCombatTextAuras", 0);   --光環 
 	else
-	  SetCVar("floatingCombatTextCombatState", 1)
+	  --SetCVar("enableFloatingCombatText", 1)
+	  --SetCVar("floatingCombatTextCombatState", 1);
 		SetCVar("floatingCombatTextCombatDamage", 1);
 		SetCVar("floatingCombatTextCombatHealing", 1);
 	end

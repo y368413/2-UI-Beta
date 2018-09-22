@@ -1,9 +1,10 @@
-local M, R, U, I = unpack(select(2, ...))
-local Bar = MaoRUI:GetModule("Actionbar")
+local _, ns = ...
+local M, R, U, I = unpack(ns)
+local Bar = M:GetModule("Actionbar")
 local cfg = R.bars.bar4
-local padding, margin = 2, 2
 
 function Bar:CreateBar4()
+	local padding, margin = 2, 2
 	local num = NUM_ACTIONBAR_BUTTONS
 	local buttonList = {}
 	local layout = MaoRUISettingDB["Actionbar"]["Styles"]
@@ -32,11 +33,14 @@ function Bar:CreateBar4()
 		frame:SetHeight(num*cfg.size + (num-1)*margin + 2*padding)
 		frame.Pos = {"RIGHT", UIParent, "RIGHT", -1, -88}
 	end
-	frame:SetScale(cfg.scale)
+	frame:SetScale(MaoRUISettingDB["Actionbar"]["ActionbarScale"])
 
 	--move the buttons into position and reparent them
 	MultiBarRight:SetParent(frame)
 	MultiBarRight:EnableMouse(false)
+	hooksecurefunc(MultiBarRight, "SetScale", function(self, scale)
+		if scale < 1 then self:SetScale(1) end
+	end)
 
 	for i = 1, num do
 		local button = _G["MultiBarRightButton"..i]
@@ -59,7 +63,26 @@ function Bar:CreateBar4()
 				local previous = _G["MultiBarRightButton"..i-1]
 				button:SetPoint("LEFT", previous, "RIGHT", margin, 0)
 			end
-		elseif (layout == 6) or (layout == 9) or (layout == 10) then
+		elseif layout == 6 then
+			if i == 1 then
+				button:SetPoint("TOPLEFT", frame, 5*cfg.size + 12*margin + 4*padding, -padding)
+			elseif i == 2 then
+				button:SetPoint("RIGHT", _G["MultiBarRightButton1"], "LEFT", -margin, 0)
+			elseif i == 3 then
+				button:SetPoint("TOP", _G["MultiBarRightButton1"], "BOTTOM", 0, -margin)
+			elseif i == 4 or i == 5 or i == 6 then
+				button:SetPoint("RIGHT", _G["MultiBarRightButton"..i-1], "LEFT", -margin, 0)
+			elseif i == 7 then
+				local previous = _G["MultiBarRightButton1"]
+				button:SetPoint("LEFT", previous, "RIGHT", 12*cfg.size + 12*margin + 2*padding, 0)
+			elseif i == 8 then
+				button:SetPoint("LEFT", _G["MultiBarRightButton7"], "RIGHT", margin, 0)
+			elseif i == 9 then
+				button:SetPoint("TOP", _G["MultiBarRightButton7"], "BOTTOM", 0, -margin)
+			else
+				button:SetPoint("LEFT", _G["MultiBarRightButton"..i-1], "RIGHT", margin, 0)
+			end
+		elseif (layout == 9) or (layout == 10) then
 			if i == 1 then
 				button:SetPoint("TOPLEFT", frame, 3*cfg.size + 12*margin + 1*padding, -padding)
 			elseif i == 4 then
@@ -127,25 +150,21 @@ function Bar:CreateBar4()
 	end
 
 	--create the mouseover functionality
-	if MaoRUISettingDB["Actionbar"]["Bar4Fade"] then
-		MaoRUI.CreateButtonFrameFader(frame, buttonList, cfg.fader)
+	if MaoRUISettingDB["Actionbar"]["Bar4Fades"] and cfg.fader then
+		M:CreateButtonFrameFader(frame, buttonList, cfg.fader)
 	end
 
 	--fix annoying visibility
-	local f = MaoRUI:EventFrame({"UNIT_EXITING_VEHICLE", "PET_BATTLE_CLOSE"})
-	f:SetScript("OnEvent", function(self, event)
-		if event == "PLAYER_REGEN_ENABLED" then
-			InterfaceOptions_UpdateMultiActionBars()
-			self:UnregisterEvent("PLAYER_REGEN_ENABLED")
-			self:UnregisterEvent(f.savedEvent)
+	local function updateVisibility(event)
+		if InCombatLockdown() then
+			M:RegisterEvent("PLAYER_REGEN_ENABLED", updateVisibility)
 		else
-			if InCombatLockdown() then
-				self:RegisterEvent("PLAYER_REGEN_ENABLED")
-				f.savedEvent = event
-			else
-				InterfaceOptions_UpdateMultiActionBars()
-				self:UnregisterEvent(event)
-			end
+			InterfaceOptions_UpdateMultiActionBars()
+			M:UnregisterEvent(event, updateVisibility)
 		end
-	end)
+	end
+	M:RegisterEvent("UNIT_EXITING_VEHICLE", updateVisibility)
+	M:RegisterEvent("UNIT_EXITED_VEHICLE", updateVisibility)
+	M:RegisterEvent("PET_BATTLE_CLOSE", updateVisibility)
+	M:RegisterEvent("PET_BATTLE_OVER", updateVisibility)
 end

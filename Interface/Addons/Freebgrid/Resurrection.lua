@@ -1,67 +1,63 @@
-local _, ns = ...
+local _, ns = ... 
 
-local L = ns.Locale
+local L = ns.Locale 
 
-local spellcache = setmetatable({}, {__index=function(t,v) local a = {GetSpellInfo(v)} if GetSpellInfo(v) then t[v] = a end return a end})
-local function GetSpellInfo(a)
-    return unpack(spellcache[a])
-end
+--群体复活； 
+local GroupResurrectionSpells = { 
+	[212036] = true,	--群体复活
+	[212056] = true,	--宽恕
+} 
 
-local ResurrectionSpells = {
-	[GetSpellInfo(7328)] = true, 	--救赎
-	[GetSpellInfo(2008)] = true, 	--先祖之魂
-	[GetSpellInfo(50769)] = true, 	--起死回生
-	[GetSpellInfo(20484)] = true, 	--复生
-	[GetSpellInfo(2006)] = true, 	--复活术
-	[GetSpellInfo(61999)] = true, 	--复活盟友
-	[GetSpellInfo(115178)] = true, --轮回转世
-	[GetSpellInfo(20707)] = true, 	--灵魂石复活
-	[GetSpellInfo(126393)] = true, 	--永恒守护者
-}
+--单体复活； 
+local SingleResurrectionSpells = { 
+	[7328] = true,		--救赎
+	[2008] = true,		--先祖之魂
+	[50769] = true, 	--起死回生
+	[2048] = true,		--复生
+	[2006] = true,		--复活术
+	[61999] = true,		--复活盟友
+	[115178] = true,	--轮回转世
+	[20707] = true,		--灵魂石复活
+	[267922] = true,	--永恒守护者
+} 
 
-local Resurrection = function(self, event,...)
+local function NoticeOthers(Text) 
+  if IsInRaid(LE_PARTY_CATEGORY_HOME) then
+    SendChatMessage(Text, "RAID", nil, nil) 
+  elseif IsInGroup(LE_PARTY_CATEGORY_HOME) then
+    SendChatMessage(Text, "PARTY", nil, nil) 
+  elseif IsInRaid(LE_PARTY_CATEGORY_INSTANCE) or IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then 
+    SendChatMessage(Text, "INSTANCE_CHAT", nil, nil) 
+  else 
+    SendChatMessage(Text, "SAY", nil, nil) 
+  end 
+end 
 
-	if not ns.db.Resurrection then return end
-	if event == "UNIT_SPELLCAST_SENT" then
-		local cast, spellname, rank, unit = ...
-		
-		if cast ~= "player" then return end
+local Resurrection = function(self, event, unit, target, castID, spellID)
+  if not ns.db.Resurrection then return end
+  if unit ~= "player" then return end
+  --群活
+  if GroupResurrectionSpells[spellID] then 
+    local Text = L.grouprevive; 
+    NoticeOthers(Text); 
+  end 
+  --单活
+  if SingleResurrectionSpells[spellID] then 
+    local Text; 
+    if target then 
+      if UnitIsDeadOrGhost(target) then 
+         Text = L.revive.."["..target.."]......"; 
+      else 
+         Text = string.format(L.bindstone, target); 
+      end 
+    else 
+      local name = GetSpellInfo(spellID); 
+         Text = L.castrevive.."["..name.."]......"; 
+    end 
+       NoticeOthers(Text); 
+   end 
+end 
 
-		local _, instanceType, difficultyID = GetInstanceInfo()
-		if difficultyID == 0 then
-			return
-		end
-		
-		if IsInGroup(LE_PARTY_CATEGORY_INSTANCE) and IsInInstance() then
-			instanceType = "INSTANCE_CHAT"
-		end
-		
-		if spellname == GetSpellInfo(212036) then	--群体复活
-			SendChatMessage("正在释放群体复活...", instanceType, nil, nil)
-			return
-		end
-
-		if spellname == GetSpellInfo(212040) then	--新生
-			SendChatMessage("正在释放群体复活...", instanceType, nil, nil)
-			return
-		end
-		
-		if spellname == GetSpellInfo(212051) then	--死而复生
-			SendChatMessage("正在释放群体复活...", instanceType, nil, nil)
-			return
-		end
-
-		if ResurrectionSpells[spellname] and unit ~="unknown" and UnitIsDeadOrGhost(unit) then 
-			local Text = L.Rezing..unit.." ...."
-			SendChatMessage(Text, instanceType, nil, nil);	
-		end	
-    end
-end
-
-local OnResFrame = CreateFrame"Frame"
-OnResFrame:RegisterEvent('UNIT_SPELLCAST_SENT')
-OnResFrame:SetScript('OnEvent', Resurrection)
-
-
-
-
+local OnResFrame = CreateFrame("Frame"); 
+OnResFrame:RegisterEvent("UNIT_SPELLCAST_SENT"); 
+OnResFrame:SetScript("OnEvent", Resurrection);

@@ -1,6 +1,4 @@
---[[-----------------------------------------------------------------------------
-InteractiveLabel Widget
--------------------------------------------------------------------------------]]
+
 local Type, Version = "InteractiveLabel", 21
 local AceGUI = LibStub and LibStub("AceGUI-3.0", true)
 if not AceGUI or (AceGUI:GetWidgetVersion(Type) or 0) >= Version then return end
@@ -11,13 +9,6 @@ local select, pairs = select, pairs
 -- WoW APIs
 local CreateFrame, UIParent = CreateFrame, UIParent
 
--- Global vars/functions that we don't upvalue since they might get hooked, or upgraded
--- List them here for Mikk's FindGlobals script
--- GLOBALS: GameFontHighlightSmall
-
---[[-----------------------------------------------------------------------------
-Scripts
--------------------------------------------------------------------------------]]
 local function Control_OnEnter(frame)
 	frame.obj:Fire("OnEnter")
 end
@@ -31,9 +22,6 @@ local function Label_OnClick(frame, button)
 	AceGUI:ClearFocus()
 end
 
---[[-----------------------------------------------------------------------------
-Methods
--------------------------------------------------------------------------------]]
 local methods = {
 	["OnAcquire"] = function(self)
 		self:LabelOnAcquire()
@@ -69,9 +57,6 @@ local methods = {
 	end
 }
 
---[[-----------------------------------------------------------------------------
-Constructor
--------------------------------------------------------------------------------]]
 local function Constructor()
 	-- create a Label type that we will hijack
 	local label = AceGUI:Create("Label")

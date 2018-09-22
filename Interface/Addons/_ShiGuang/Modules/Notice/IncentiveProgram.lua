@@ -3,7 +3,7 @@
 local IncentiveProgram = {}
 
 --Core
-local IncentiveProgram_ADDON_DISPLAY_NAME = NOTICE_INCENTIVEPROGRAM_TITLE.." (|cFF69CCF0 r16 |r)"
+local IncentiveProgram_ADDON_DISPLAY_NAME = NOTICE_INCENTIVEPROGRAM_TITLE.." (|cFF69CCF0 r17 |r)"
 
 local IncentiveProgram_Flair = {
     [849] = "HM1 - ",
@@ -29,7 +29,14 @@ local IncentiveProgram_Flair = {
 	[1494] = "TS1 - ",
 	[1495] = "TS2 - ",
 	[1496] = "TS3 - ",
-	[1497] = "TS4 - "
+	[1497] = "TS4 - ",
+	[1610] = "ANT1 - ",
+	[1611] = "ANT2 - ",
+	[1612] = "ANT3 - ",
+	[1613] = "ANT4 - ",
+	[1731] = "ULD1 - ",
+	[1732] = "ULD2 - ",
+	[1733] = "ULD3 - "
     
 }
 
@@ -54,12 +61,12 @@ local IncentiveProgram_Settings = {
     DUNGEON_TYPE = "dungeonType",
     HIDE_IN_PARTY = "hideInParty",
     HIDE_ALWAYS = "hideAlways", --still shows in databroker
-	  HIDE_EMPTY = "hideEmpty",
+	HIDE_EMPTY = "hideEmpty",
     ALERT = "alert",
     ALERT_TOAST = "toastAlert",
     COUNT_EVEN_IF_NOT_SELECTED = "countEvenIfNotSelected",
     COUNT_EVEN_IF_NOT_ROLE_ELIGIBLE = "countEvenIfNotRoleEligible",
-	  IGNORE_COMPLETED_LFR = "ignoreCompletedLFR",
+	IGNORE_COMPLETED_LFR = "ignoreCompletedLFR",
     
     ROLE_TANK = "roleTank",
     ROLE_HEALER = "roleHealer",
@@ -291,29 +298,29 @@ local menuData = {
 
  
 local function createTitleInfo(level)
-    local info = L_UIDropDownMenu_CreateInfo()
+    local info = MSA_DropDownMenu_CreateInfo()
     
     --Add title
     info.text = IncentiveProgram_ADDON_DISPLAY_NAME
     info.isTitle = true
     info.notCheckable = true
     
-    L_UIDropDownMenu_AddButton(info, level)
+    MSA_DropDownMenu_AddButton(info, level)
 end
 
 local function createSettingsMenu(level, level2Table)
     if ( level == 1 ) then
         for i=1, #menuData do
-            local info = L_UIDropDownMenu_CreateInfo();
+            local info = MSA_DropDownMenu_CreateInfo();
             for key,value in pairs(menuData[i]) do
                 info[key] = value
             end
             info.func = menu.MenuOnClick
-            L_UIDropDownMenu_AddButton(info, level)
+            MSA_DropDownMenu_AddButton(info, level)
         end
     elseif ( level == 2 ) then
         for i=1, #level2Table do
-            local info = L_UIDropDownMenu_CreateInfo();
+            local info = MSA_DropDownMenu_CreateInfo();
             for key,value in pairs(level2Table[i]) do
                 info[key] = value
             end
@@ -324,7 +331,7 @@ local function createSettingsMenu(level, level2Table)
             end
             
             info.func = menu.MenuOnClick
-            L_UIDropDownMenu_AddButton(info, level)
+            MSA_DropDownMenu_AddButton(info, level)
         end
     end
 end
@@ -333,7 +340,7 @@ local function createSettingsIgnoreList(level)
     local count = 0
     for key, value in pairs (IncentiveProgram:GetSettings().db.dungeonSettings) do
         if ( IncentiveProgram:GetSettings():GetDungeonSetting(key, IncentiveProgram_Settings["IGNORE"]) ) then
-            local info = L_UIDropDownMenu_CreateInfo()
+            local info = MSA_DropDownMenu_CreateInfo()
             info.text = value[IncentiveProgram_Settings["DUNGEON_NAME"]]
             info.notCheckable = true
             info.func = menu.MenuOnClick
@@ -343,24 +350,24 @@ local function createSettingsIgnoreList(level)
             info.icon = IncentiveProgram_Icons["CONTEXT_MENU_RED_X"]
             info.padding = 8
             
-            L_UIDropDownMenu_AddButton(info, level)
+            MSA_DropDownMenu_AddButton(info, level)
             count = count + 1
             if ( count >= 10 ) then break end
         end
     end
     
     if ( count == 0 ) then
-        local info = L_UIDropDownMenu_CreateInfo()
+        local info = MSA_DropDownMenu_CreateInfo()
         info.text = IncentiveProgram_ContextLabels["NO_IGNORED"]
         info.notCheckable = true
         info.disabled = true
         
-        L_UIDropDownMenu_AddButton(info, level)
+        MSA_DropDownMenu_AddButton(info, level)
     end
 end
 
 local function createDungeonEntry(dungeonID, name, level, isShortage, showAll)
-    local info = L_UIDropDownMenu_CreateInfo()
+    local info = MSA_DropDownMenu_CreateInfo()
     local isAvailble, isAvaibleToPlayer = IsLFGDungeonJoinable(dungeonID)
 
     if not ( isAvailble and isAvaibleToPlayer ) then
@@ -395,16 +402,16 @@ local function createDungeonEntry(dungeonID, name, level, isShortage, showAll)
     --Color gray if not in the shortage list but still showing all.
     if ( not isShortage and showAll ) then
         info.colorCode = "|cFF666666"
-        L_UIDropDownMenu_AddButton(info, level)
+        MSA_DropDownMenu_AddButton(info, level)
 	elseif ( ignored and showAll ) then
-        L_UIDropDownMenu_AddButton(info, level)
+        MSA_DropDownMenu_AddButton(info, level)
     elseif ( isShortage and not ignored ) then
-        L_UIDropDownMenu_AddButton(info, level)
+        MSA_DropDownMenu_AddButton(info, level)
     end  
 end
   
 local function createIgnoreButton(dungeonID, level)
-    local info = L_UIDropDownMenu_CreateInfo()
+    local info = MSA_DropDownMenu_CreateInfo()
     
     if ( IncentiveProgram:GetSettings():GetDungeonSetting(dungeonID, IncentiveProgram_Settings["IGNORE"]) ) then
         info.text = IncentiveProgram_ContextLabels["UNIGNORE"]
@@ -417,7 +424,7 @@ local function createIgnoreButton(dungeonID, level)
     info.value = dungeonID
     info.func = menu.MenuOnClick
     info.notCheckable = true
-    L_UIDropDownMenu_AddButton(info, level)
+    MSA_DropDownMenu_AddButton(info, level)
 end
 
 local function createRoleButtons(dungeonID, level, showAll)
@@ -426,7 +433,7 @@ local function createRoleButtons(dungeonID, level, showAll)
     
     --Tank
     if ( tank and ( shortageTank or showAll ) ) then
-        local info = L_UIDropDownMenu_CreateInfo()
+        local info = MSA_DropDownMenu_CreateInfo()
         info.text = IncentiveProgram_ContextLabels["TANK"]
         info.arg1 = IncentiveProgram_ContextMenu["QUEUE"]
         info.arg2 = IncentiveProgram_Settings["QA_TANK"]
@@ -440,12 +447,12 @@ local function createRoleButtons(dungeonID, level, showAll)
             info.colorCode = "|CFF666666"
         end
         
-        L_UIDropDownMenu_AddButton(info, level)
+        MSA_DropDownMenu_AddButton(info, level)
     end
     
     --Healer
     if ( healer and ( shortageHealer or showAll ) ) then
-        local info = L_UIDropDownMenu_CreateInfo()
+        local info = MSA_DropDownMenu_CreateInfo()
         info.text = IncentiveProgram_ContextLabels["HEALER"]
         info.arg1 = IncentiveProgram_ContextMenu["QUEUE"]
         info.arg2 = IncentiveProgram_Settings["QA_HEALER"]
@@ -459,12 +466,12 @@ local function createRoleButtons(dungeonID, level, showAll)
             info.colorCode = "|CFF666666"
         end
         
-        L_UIDropDownMenu_AddButton(info, level)
+        MSA_DropDownMenu_AddButton(info, level)
     end
     
     --Damage
     if ( damage and ( shortageDamage or showAll ) ) then
-        local info = L_UIDropDownMenu_CreateInfo()
+        local info = MSA_DropDownMenu_CreateInfo()
         info.text = IncentiveProgram_ContextLabels["DAMAGE"]
         info.arg1 = IncentiveProgram_ContextMenu["QUEUE"]
         info.arg2 = IncentiveProgram_Settings["QA_DAMAGE"]
@@ -478,7 +485,7 @@ local function createRoleButtons(dungeonID, level, showAll)
             info.colorCode = "|CFF666666"
         end
         
-        L_UIDropDownMenu_AddButton(info, level)
+        MSA_DropDownMenu_AddButton(info, level)
     end
         
 end
@@ -487,7 +494,7 @@ end
 -- createJoinButton is a helper function that adds Join Queue button to the dungeon context menu
 ---------------------------------------   
 local function createJoinButton(dungeonID, level)
-    local info = L_UIDropDownMenu_CreateInfo()
+    local info = MSA_DropDownMenu_CreateInfo()
     info.text = IncentiveProgram_ContextLabels["JOIN_QUEUE"]
     info.arg1 = IncentiveProgram_ContextMenu["QUEUE"]
     info.arg2 = IncentiveProgram_ContextMenu["JOIN"]
@@ -504,7 +511,7 @@ local function createJoinButton(dungeonID, level)
         info.disabled = true
     end
     
-    L_UIDropDownMenu_AddButton(info, level)
+    MSA_DropDownMenu_AddButton(info, level)
 end
 
 local IncentiveProgramMenu = {
@@ -513,7 +520,7 @@ local IncentiveProgramMenu = {
         setmetatable(obj, self)
         self.__index = self
     
-        local frame = CreateFrame("Frame", "IncentiveProgramFrameMenu", parent, "L_UIDropDownMenuTemplate", 1)
+        local frame = CreateFrame("Frame", "IncentiveProgramFrameMenu", parent, "UIDropDownMenuTemplate", 1)
         obj.frame = frame
         return obj
     end,
@@ -537,7 +544,7 @@ local IncentiveProgramMenu = {
                     end
                 end
             elseif ( level == 2 ) then
-                local dungeonID = L_UIDROPDOWNMENU_MENU_VALUE
+                local dungeonID = MSA_DROPDOWNMENU_MENU_VALUE
                 local showAll = IsShiftKeyDown()
                 
                 createIgnoreButton(dungeonID, level)
@@ -549,7 +556,7 @@ local IncentiveProgramMenu = {
                 createTitleInfo(level)
                 createSettingsMenu(level)
             elseif ( level == 2 ) then
-                local level2Table = L_UIDROPDOWNMENU_MENU_VALUE
+                local level2Table = MSA_DROPDOWNMENU_MENU_VALUE
                 if ( level2Table == IncentiveProgram_ContextMenu["IGNORE"] ) then
                     createSettingsIgnoreList(level)
                 else
@@ -579,7 +586,7 @@ local IncentiveProgramMenu = {
             IncentiveProgram:GetFrame():UpdatedSettings() --In case new settings now hide frame
             
         elseif ( arg1 == IncentiveProgram_ContextMenu["QUEUE"] ) then
-            local dungeonID = L_UIDROPDOWNMENU_MENU_VALUE
+            local dungeonID = MSA_DROPDOWNMENU_MENU_VALUE
             if ( arg2 == IncentiveProgram_Settings["IGNORE"] ) then
                 local ignoreSetting = IncentiveProgram:GetSettings():GetDungeonSetting(dungeonID, arg2)
                 IncentiveProgram:GetSettings():SetDungeonSetting(dungeonID, arg2, not ignoreSetting)
@@ -626,7 +633,7 @@ local IncentiveProgramMenu = {
         end
         
         if ( fromDropDownMenu ) then
-            L_ToggleDropDownMenu(1, nil, IncentiveProgram:GetFrame():GetUIMenuFrame(), IncentiveProgram:GetFrame():GetAnchorFrame() or IncentiveProgram:GetFrame():GetUIFrame(), 0, 0) --Close context menu and lock until LFGRoles reset
+            MSA_ToggleDropDownMenu(1, nil, IncentiveProgram:GetFrame():GetUIMenuFrame(), IncentiveProgram:GetFrame():GetAnchorFrame() or IncentiveProgram:GetFrame():GetUIFrame(), 0, 0) --Close context menu and lock until LFGRoles reset
         end
     end
 }
@@ -858,14 +865,14 @@ local IncentiveProgramFrame = {
         ipFrame.leftGradiant:SetWidth(16)
         ipFrame.leftGradiant:SetHeight(14)
         ipFrame.leftGradiant:SetPoint("LEFT", 0, -5)
-        ipFrame.leftGradiant:SetTexture(1,0,0,1)
+        ipFrame.leftGradiant:SetColorTexture(1,0,0,1)
         ipFrame.leftGradiant:SetGradientAlpha("Horizontal", 0, 0, 0, 0.2, 0, 0, 0, 1)
         
         ipFrame.rightGradiant = ipFrame:CreateTexture(nil, "BORDER")
         ipFrame.rightGradiant:SetWidth(16)
         ipFrame.rightGradiant:SetHeight(14)
         ipFrame.rightGradiant:SetPoint("RIGHT", 0, -5)
-        ipFrame.rightGradiant:SetTexture(1,0,0,1)
+        ipFrame.rightGradiant:SetColorTexture(1,0,0,1)
         ipFrame.rightGradiant:SetGradientAlpha("Horizontal", 0, 0, 0, 1, 0, 0, 0, 0.2)
         
         ipFrame.text = ipFrame:CreateFontString(nil, "ARTWORK", "GameFontWhite")
@@ -877,7 +884,7 @@ local IncentiveProgramFrame = {
         ipFrame.text:SetNonSpaceWrap(false)
         
         ipFrame.menu = IncentiveProgram:CreateMenu(ipFrame)
-        L_UIDropDownMenu_Initialize(ipFrame.menu.frame, ipFrame.menu.MenuOnLoad, "MENU")
+        MSA_DropDownMenu_Initialize(ipFrame.menu.frame, ipFrame.menu.MenuOnLoad, "MENU")
         
         self.ipFrame = ipFrame
     end,
@@ -891,12 +898,12 @@ local IncentiveProgramFrame = {
             self:GetUIMenuFrame().point = "BOTTOMLEFT"
             self:GetUIMenuFrame().relativeTo = anchorFrame
             self:GetUIMenuFrame().relativePoint = "TOPRIGHT"
-            L_ToggleDropDownMenu(1, nil, self:GetUIMenuFrame(), anchorFrame, 0, 0)
+            MSA_ToggleDropDownMenu(1, nil, self:GetUIMenuFrame(), anchorFrame, 0, 0)
         elseif ( button == "RightButton" ) then
             self:GetUIMenuFrame().point = "BOTTOMLEFT"
             self:GetUIMenuFrame().relativeTo = anchorFrame
             self:GetUIMenuFrame().relativePoint = "TOPRIGHT"
-            L_ToggleDropDownMenu(1, nil, self:GetUIMenuFrame(), anchorFrame, 0, 0)
+            MSA_ToggleDropDownMenu(1, nil, self:GetUIMenuFrame(), anchorFrame, 0, 0)
         end
     end,
 

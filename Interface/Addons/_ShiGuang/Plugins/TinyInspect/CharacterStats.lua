@@ -45,7 +45,7 @@ StatData.GCD = {
     end
 }
 
---Add RepairCost
+--[[Add RepairCost
 StatData.REPAIR_COST = {
     updateFunc = function(statFrame, unit)
         if (not statFrame.scanTooltip) then
@@ -68,7 +68,7 @@ StatData.REPAIR_COST = {
         statFrame.Label:SetText(REPAIR_COST)
         MoneyFrame_Update(statFrame.MoneyFrame, totalCost)
     end
-}
+}]]
 
 
 --Set Shown Data

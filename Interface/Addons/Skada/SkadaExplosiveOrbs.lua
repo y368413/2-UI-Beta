@@ -1,8 +1,7 @@
 --## Author: warbaby
-if (GAME_LOCALE or GetLocale()) == "zhCN" then
-  SKADAEXPLOSIVEORBS = "邪能炸药"
-else
-  SKADAEXPLOSIVEORBS = "Fel Explosive"
+if (GAME_LOCALE or GetLocale()) == "zhCN" then SKADAEXPLOSIVEORBS = "邪能炸药"
+elseif (GAME_LOCALE or GetLocale()) == "zhTW" then SKADAEXPLOSIVEORBS = "魔化炸彈"
+else SKADAEXPLOSIVEORBS = "Fel Explosive"
 end
 
 local Skada = Skada

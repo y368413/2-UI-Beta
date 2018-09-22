@@ -1,5 +1,6 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("Skada", "enUS", true)
 
+L["SkadaTitle"] = "|cff8000ff[Combat]|rSkada"
 L["Include set"] = true
 L["Include set name in title bar"] = true
 L["Disable"] = true

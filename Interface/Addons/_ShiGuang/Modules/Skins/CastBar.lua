@@ -1,8 +1,16 @@
-local M, R, U, I = unpack(select(2, ...))
-local module = MaoRUI:GetModule("Skins")
+local _, ns = ...
+local M, R, U, I = unpack(ns)
+local module = M:GetModule("Skins")
 
 function module:CastBarSkin()
-	if MaoRUISettingDB["Skins"]["CastBar"] then return end
+  local function noop() end
+    local function DisableBlizzardFrame(frame)
+	     frame.RegisterEvent = noop
+	     frame.Show = noop
+	     frame:UnregisterAllEvents()
+	     frame:Hide()
+    end
+	if MaoRUISettingDB["Skins"]["CastBarstyle"] then DisableBlizzardFrame(CastingBarFrame) DisableBlizzardFrame(TargetFrameSpellBar) DisableBlizzardFrame(FocusFrameSpellBar) DisableBlizzardFrame(PetCastingBarFrame) return end
 ---------------------------castbar------------------施法条位置&增强----感谢泡泡帮忙修复-------------------------------------
 --[[ 玩家施法条 ]]
 CastingBarFrame:ClearAllPoints()

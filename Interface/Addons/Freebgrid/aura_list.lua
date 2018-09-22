@@ -1,22 +1,5 @@
 local _, ns = ...
 
-local foo = {""}
-local spellcache = setmetatable({}, 
-{__index=function(t,id) 
-	local a = {GetSpellInfo(id)} 
-
-	if GetSpellInfo(id) then
-	    t[id] = a
-	    return a
-	end
-
-   t[id] = foo
-	return foo
-end
-})
-local function GetSpellInfo(a)
-    return unpack(spellcache[a])
-end
 --优先级别设置最小为1,数字越大优先级越高.
 --first = 主要图标里显示 
 --second = 次要图标里显示
@@ -28,11 +11,11 @@ end
 
 --buffs 要监视的buff,任何地图.
 
---instances 副本地图里的debuff,可以使用地图的MapID(使用GetCurrentMapAreaID()获得)或者使用地图名称分类.
+--instances 副本地图里的debuff,可以使用地图的副本ID获得.
 
 ns.auras_ascending = {
-	[GetSpellInfo(89435)]= true,
-	[GetSpellInfo(89421)]= true,
+	[89435]= true,
+	[89421]= true,
 }
 
 ns.auras_buffs = {
@@ -40,165 +23,184 @@ ns.auras_buffs = {
 	},
 	second = {	
 		----------------------恶魔猎手---------------
-		[GetSpellInfo(187827)] = 3,	--恶魔变形
-		[GetSpellInfo(218256)] = 1,	--强化结界
-		[GetSpellInfo(227225)] = 2,	--灵魂壁垒
+		[187827] = 3,	--恶魔变形
+		[218256] = 1,	--强化结界
+		[227225] = 2,	--灵魂壁垒
 		--------------------------战士---------------
-		[GetSpellInfo(871)] = 2,	--盾墙
-		[GetSpellInfo(12975)] = 2,	--破釜沉舟
-		[GetSpellInfo(23920)] = 1,	--法术反射
-		[GetSpellInfo(97463)] = 2,	--命令怒吼
-		[GetSpellInfo(125565)] = 2,	--挫志怒吼
-		[GetSpellInfo(228920)] = 1,	--破坏者
+		[871] = 2,	--盾墙
+		[12975] = 2,	--破釜沉舟
+		[97463] = 2,	--命令怒吼
+		[125565] = 2,	--挫志怒吼
+		[132404] = 1,	--盾牌格挡
+		[118038] = 2,	--剑在人在
+		[97463] = 3,	--集结呐喊
 		--------------------------骑士---------------		
-		[GetSpellInfo(498)] = 2,	--圣佑术
-		[GetSpellInfo(642)] = 2,	--圣盾术
-		[GetSpellInfo(1022)] = 2,	--保护之手
-		[GetSpellInfo(6940)] = 2,	--牺牲之手
-		[GetSpellInfo(86659)] = 2,	--远古列王守卫
-		[GetSpellInfo(31821)] = 2,	--虔诚光环
-		[GetSpellInfo(31850)] = 2,	--炽热防御者	
-		[GetSpellInfo(114039)] = 2,	--纯净之手
-		[GetSpellInfo(152262)] = 2,	--炽天使
+		[53600] = 2,	--盾击
+		[498] = 2,	--圣佑术
+		[642] = 2,	--圣盾术
+		[1022] = 2,	--保护之手
+		[6940] = 2,	--牺牲之手
+		[86659] = 2,	--远古列王守卫
+		[31821] = 2,	--虔诚光环
+		[31850] = 2,	--炽热防御者	
+		[114039] = 2,	--纯净之手
+		[152262] = 2,	--炽天使
 		-----------------------死亡骑士---------------
-		[GetSpellInfo(48707)] = 2,	--反魔法护罩
-		[GetSpellInfo(145629)] = 2,	--反魔法领域
-		[GetSpellInfo(49222)] = 1,	--白骨之盾
-		[GetSpellInfo(48792)] = 2,	--冰封之韧
-		[GetSpellInfo(171049)] = 2,	--符文分流
-		[GetSpellInfo(55233)] = 2,	--吸血鬼之血
-		[GetSpellInfo(81256)] = 2,	--符文刃舞
+		[48707] = 2,	--反魔法护罩
+		[145629] = 2,	--反魔法领域
+		[49222] = 1,	--白骨之盾
+		[48792] = 2,	--冰封之韧
+		[171049] = 2,	--符文分流
+		[55233] = 2,	--吸血鬼之血
+		[81256] = 2,	--符文刃舞
 		------------------------德鲁伊---------------
-		[GetSpellInfo(22812)] = 1,	--树皮术
-		[GetSpellInfo(61336)] = 2,	--生存本能
-		[GetSpellInfo(132402)] = 1,	--野蛮防御
-		[GetSpellInfo(102342)] = 2,	--铁木树皮
-		[GetSpellInfo(192083)] = 1,	--乌索尔的印记
-		[GetSpellInfo(200851)] = 1,	--沉睡者之怒
+		[22812] = 1,	--树皮术
+		[61336] = 2,	--生存本能
+		[132402] = 1,	--野蛮防御
+		[102342] = 2,	--铁木树皮
+		[192083] = 1,	--乌索尔的印记
+		[200851] = 1,	--沉睡者之怒
 		------------------------牧师--------------------
-		[GetSpellInfo(33206)] = 2, 	--痛苦压制
-		[GetSpellInfo(47788)] = 2, 	--守护之魂
-		[GetSpellInfo(81782)] = 2, 	--真言术:障
+		[33206] = 2, 	--痛苦压制
+		[47788] = 2, 	--守护之魂
+		[62618] = 2, 	--真言术:障
+		[17]   = 2,	-- 真言术:盾
 		------------------------武僧--------------------
-		[GetSpellInfo(116849)] = 2, 	--作茧缚命
-		[GetSpellInfo(115176)] = 2, 	--禅悟冥想
-		[GetSpellInfo(122278)] = 1,	--躯不坏
-		[GetSpellInfo(122783)] = 2, 	--散魔功
-		[GetSpellInfo(115295)] = 2, 	--金钟罩
-		[GetSpellInfo(115203)] = 2, 	--壮胆酒
+		[116849] = 2, 	--作茧缚命
+		[115176] = 2, 	--禅悟冥想
+		[122278] = 1,	--躯不坏
+		[122783] = 2, 	--散魔功
+		[115308] = 1, 	--飘渺酒
+		[115295] = 2, 	--金钟罩
+		[115203] = 2, 	--壮胆酒
 		------------------------法师--------------------
-		[GetSpellInfo(45438)] = 1, 	--寒冰屏障
-		------------------------猎人--------------------
-		[GetSpellInfo(186265)] = 1, 	--灵龟守护
+		[45438] = 3, 	--冰箱
+		[110960] = 3,  --强隐
+		[157913] = 3,  --隐没
+                ------------------------DH--------------------
+		[196555] = 3, 	--冰箱
+		[212800] = 3,  --强隐
+		[188499] = 3,  --隐没
+                ------------------------SS--------------------
+		[104773] = 3, 	--冰箱
+                ------------------------LR--------------------
+		[186265] = 3, 	--威慑
+		------------------------SM--------------------
+		[30823] = 3, 	--萨满之怒
+		[108271] = 3,  --星界转移
+        ------------------------DZ-------------------
+		[76577] = 3, 	--烟雾弹
+		[1966] = 3,  --佯攻
+		[31224] = 3, 	--斗篷
 		------------------------raid-------------------
-		[GetSpellInfo(106213)] = 71, 	--奈萨里奥的血液 DS7#
-		[GetSpellInfo(115856)] = 71,    --废灵壁垒 MV2#     
+		[106213] = 71, 	--奈萨里奥的血液 DS7#
+		[115856] = 71,    --废灵壁垒 MV2#     
 	},	
 }
 
 ns.auras_debuffs = {
 	first = {
-		[GetSpellInfo(39171)] =  8, -- Mortal Strike
-		[GetSpellInfo(76622)] =  8, -- Sunder Armor
-		[GetSpellInfo(145263)] =  8, --
-		[GetSpellInfo(61385)] =  8, --定身
-		[GetSpellInfo(209858)] =  9, --死疽
+		[39171] =  9, -- Mortal Strike
+		[76622] =  9, -- Sunder Armor
+		[145263] =  9, --
+		[61385] =  9, --定身 
+		[209858] =  9, --死疽
 
 		--Sha of Anger 怒之煞
-		[GetSpellInfo(119626)] = 11, --Aggressive Behavior
-		[GetSpellInfo(119488)] = 12, --Unleashed Wrath
-		[GetSpellInfo(119610)] = 13, --Bitter Thoughts
-		[GetSpellInfo(119601)] = 14, --Bitter Thoughts
+		[119626] = 11, --Aggressive Behavior
+		[119488] = 12, --Unleashed Wrath
+		[119610] = 13, --Bitter Thoughts
+		[119601] = 14, --Bitter Thoughts
 
 		--Nalak, The Storm Lord 暴风领主纳拉克
-		[GetSpellInfo(136339)] = 12,
-		[GetSpellInfo(136340)] = 13,
+		[136339] = 12,
+		[136340] = 13,
 
 		--Oondasta 乌达斯塔
-		[GetSpellInfo(137504)] = 12, --Crush
+		[137504] = 12, --Crush
 		
 		--Ordos, Fire-God of the Yaungol 野牛人火神斡耳朵斯
-		[GetSpellInfo(144689)] = 12, --Burning Soul
+		[144689] = 12, --Burning Soul
 		
 		--Chi-Ji, The Red Crane 朱鹤赤精
 		
 		--Yu'lon, The Jade Serpent 青龙玉珑
-		[GetSpellInfo(144630)] = 12, --Jadeflame Buffet
+		[144630] = 12, --Jadeflame Buffet
 		
 		--Niuzao, The Black Ox 玄牛砮皂
-		[GetSpellInfo(144607)] = 12, --Oxen Fortitude
+		[144607] = 12, --Oxen Fortitude
 		
 		--Xuen, The White Tiger 白虎雪怒
-		[GetSpellInfo(144638)] = 12, --Spectral Swipe
+		[144638] = 12, --Spectral Swipe
 
 		--Drov the Ruiner 毁灭者多弗
-                [GetSpellInfo(175915)] = 12,
+                [175915] = 12,
 
 		--Tarlna the Ageless 永恒的塔尔纳
-		[GetSpellInfo(175973)] = 12, 
-		[GetSpellInfo(176001)] = 13, 
-                [GetSpellInfo(176037)] = 14,
+		[175973] = 12, 
+		[176001] = 13, 
+                [176037] = 14,
 
 		--Rukhmar 鲁克玛
-		[GetSpellInfo(167615)] = 12, 
+		[167615] = 12, 
 
 		--"破碎群岛"
 		-- Broken Isles
 		-- Ana-Mouz
-		[GetSpellInfo(219045)] = 4,
-		[GetSpellInfo(218823)] = 5,
+		[219045] = 4,
+		[218823] = 5,
 
 		-- Calamir
-		[GetSpellInfo(218888)] = 5,
-		[GetSpellInfo(217925)] = 5,
-		[GetSpellInfo(217966)] = 5,
-		[GetSpellInfo(217877)] = 6,
-		[GetSpellInfo(218012)] = 6,
-		[GetSpellInfo(217907)] = 5,
+		[218888] = 5,
+		[217925] = 5,
+		[217966] = 5,
+		[217877] = 6,
+		[218012] = 6,
+		[217907] = 5,
 
 		-- Drugon the Frostblood
-		[GetSpellInfo(219602)] = 5,
-		[GetSpellInfo(219812)] = 5,
-		[GetSpellInfo(219610)] = 4,
+		[219602] = 5,
+		[219812] = 5,
+		[219610] = 4,
 
 		-- Flotsam
-		[GetSpellInfo(223373)] = 5,
-		[GetSpellInfo(223355)] = 5,
+		[223373] = 5,
+		[223355] = 5,
 
 		-- Humongris
-		[GetSpellInfo(216430)] = 5,
-		[GetSpellInfo(216476)] = 5,
-		[GetSpellInfo(227177)] = 6,
-		[GetSpellInfo(216817)] = 7,
+		[216430] = 5,
+		[216476] = 5,
+		[227177] = 6,
+		[216817] = 7,
 
 		-- Levantus
-		[GetSpellInfo(170196)] = 5,
-		[GetSpellInfo(217362)] = 5,
-		[GetSpellInfo(217235)] = 6,
-		[GetSpellInfo(217352)] = 4,
-		[GetSpellInfo(217206)] = 3,
-		[GetSpellInfo(222706)] = 4,
+		[170196] = 5,
+		[217362] = 5,
+		[217235] = 6,
+		[217352] = 4,
+		[217206] = 3,
+		[222706] = 4,
 
 		-- Na'zak the Fiend
-		[GetSpellInfo(219349)] = 5,
-		[GetSpellInfo(219861)] = 5,
+		[219349] = 5,
+		[219861] = 5,
 
 		-- Nithogg
-		[GetSpellInfo(212867)] = 5,
-		[GetSpellInfo(212852)] = 5,
-		[GetSpellInfo(212948)] = 5,
+		[212867] = 5,
+		[212852] = 5,
+		[212948] = 5,
 
 		-- Shar'thos
-		[GetSpellInfo(215876)] = 5,
-		[GetSpellInfo(216044)] = 5,
-		[GetSpellInfo(215821)] = 6,
+		[215876] = 5,
+		[216044] = 5,
+		[215821] = 6,
 
 		-- The Soultakers
-		[GetSpellInfo(213625)] = 6,
-		[GetSpellInfo(213590)] = 4,
+		[213625] = 6,
+		[213590] = 4,
 
 		-- Reaver Jdorn
-		[GetSpellInfo(213665)] = 5,
+		[213665] = 5,
 
 		-- Withered J'im
 	},
@@ -208,2555 +210,2705 @@ ns.auras_debuffs = {
 
 ns.auras_instances_debuffs = {
 	first = {
-		[733] = {--"黑色沼泽"
-			[GetSpellInfo(31464)] =  4,
-			[GetSpellInfo(31422)] =  4,
-			[GetSpellInfo(35054)] =  3,
-			[GetSpellInfo(38534)] =  3,
-			[GetSpellInfo(12542)] =  4,
-			[GetSpellInfo(39049)] =  4,
-			[GetSpellInfo(36276)] =  3,
-			[GetSpellInfo(34366)] =  3,
-			[GetSpellInfo(31467)] =  3,
-			[GetSpellInfo(9080)] =  3,
+		[262] = {--"黑色沼泽"
+			[31464] =  4,
+			[31422] =  4,
+			[35054] =  3,
+			[38534] =  3,
+			[12542] =  4,
+			[39049] =  4,
+			[36276] =  3,
+			[34366] =  3,
+			[31467] =  3,
+			[9080] =  3,
 		},
-		[799] = {--"卡拉赞"
-			[GetSpellInfo(37066)] =  4,
-			[GetSpellInfo(29522)] =  4,
-			[GetSpellInfo(29511)] =  4,
-			[GetSpellInfo(30115)] =  4,
-			[GetSpellInfo(30753)] =  4,
-			[GetSpellInfo(30843)] =  4,
+		[745] = {--"卡拉赞"
+			[37066] =  4,
+			[29522] =  4,
+			[29511] =  4,
+			[30115] =  4,
+			[30753] =  4,
+			[30843] =  4,
 		},
-		[780] = {--"毒蛇神殿"
-			[GetSpellInfo(39042)] =  4,
-			[GetSpellInfo(39044)] =  4, 
-			[GetSpellInfo(38235)] =  4, 
-			[GetSpellInfo(38246)] =  4, 
-			[GetSpellInfo(37850)] =  4, 
-			[GetSpellInfo(38023)] =  4, 
-			[GetSpellInfo(38024)] =  4, 
-			[GetSpellInfo(38025)] =  4, 
-			[GetSpellInfo(37676)] =  4, 
-			[GetSpellInfo(37641)] =  4, 
-			[GetSpellInfo(37749)] =  4, 
-			[GetSpellInfo(38280)] =  4,
+		[748] = {--"毒蛇神殿"
+			[39042] =  4,
+			[39044] =  4, 
+			[38235] =  4, 
+			[38246] =  4, 
+			[37850] =  4, 
+			[38023] =  4, 
+			[38024] =  4, 
+			[38025] =  4, 
+			[37676] =  4, 
+			[37641] =  4, 
+			[37749] =  4, 
+			[38280] =  4,
 		},
-		[775] = {--"海加尔山之战"
-			[GetSpellInfo(31249)] =  4,
-			[GetSpellInfo(31306)] =  4, 
-			[GetSpellInfo(31347)] =  4, 
-			[GetSpellInfo(31341)] =  4, 
-			[GetSpellInfo(31344)] =  4, 
-			[GetSpellInfo(31944)] =  4, 
-			[GetSpellInfo(31972)] =  4,
+		[750] = {--"海加尔山之战"
+			[31249] =  4,
+			[31306] =  4, 
+			[31347] =  4, 
+			[31341] =  4, 
+			[31344] =  4, 
+			[31944] =  4, 
+			[31972] =  4,
 		},
-		[796] = {--"黑暗神庙"
-			[GetSpellInfo(34654)] =  4,
-			[GetSpellInfo(39674)] =  4, 
-			[GetSpellInfo(41150)] =  4, 
-			[GetSpellInfo(41168)] =  4, 
-			[GetSpellInfo(39837)] =  4, 
-			[GetSpellInfo(40239)] =  4, 
-			[GetSpellInfo(40251)] =  4, 
-			[GetSpellInfo(40604)] =  4, 
-			[GetSpellInfo(40481)] =  4, 
-			[GetSpellInfo(40508)] =  4, 
-			[GetSpellInfo(42005)] =  4, 
-			[GetSpellInfo(41303)] =  4, 
-			[GetSpellInfo(41410)] =  4, 
-			[GetSpellInfo(41376)] =  4, 
-			[GetSpellInfo(40860)] =  4, 
-			[GetSpellInfo(41001)] =  4, 
-			[GetSpellInfo(41485)] =  4, 
-			[GetSpellInfo(41472)] =  4, 
-			[GetSpellInfo(41914)] =  4, 
-			[GetSpellInfo(41917)] =  4, 
-			[GetSpellInfo(40585)] =  4, 
-			[GetSpellInfo(40932)] =  4,
+		[751] = {--"黑暗神庙"
+			[34654] =  4,
+			[39674] =  4, 
+			[41150] =  4, 
+			[41168] =  4, 
+			[39837] =  4, 
+			[40239] =  4, 
+			[40251] =  4, 
+			[40604] =  4, 
+			[40481] =  4, 
+			[40508] =  4, 
+			[42005] =  4, 
+			[41303] =  4, 
+			[41410] =  4, 
+			[41376] =  4, 
+			[40860] =  4, 
+			[41001] =  4, 
+			[41485] =  4, 
+			[41472] =  4, 
+			[41914] =  4, 
+			[41917] =  4, 
+			[40585] =  4, 
+			[40932] =  4,
 		},
-		[789] = {--"太阳井"
-			[GetSpellInfo(46561)] =  4,
-			[GetSpellInfo(46562)] =  4, 
-			[GetSpellInfo(46266)] =  4, 
-			[GetSpellInfo(46557)] =  4, 
-			[GetSpellInfo(46560)] =  4, 
-			[GetSpellInfo(46543)] =  4, 
-			[GetSpellInfo(46427)] =  4, 
-			[GetSpellInfo(45032)] =  4, 
-			[GetSpellInfo(45034)] =  4, 
-			[GetSpellInfo(45018)] =  4, 
-			[GetSpellInfo(46384)] =  4, 
-			[GetSpellInfo(45150)] =  4, 
-			[GetSpellInfo(45855)] =  4, 
-			[GetSpellInfo(45662)] =  4, 
-			[GetSpellInfo(45402)] =  4, 
-			[GetSpellInfo(45717)] =  4, 
-			[GetSpellInfo(45256)] =  4, 
-			[GetSpellInfo(45333)] =  4, 
-			[GetSpellInfo(46771)] =  4, 
-			[GetSpellInfo(45270)] =  4, 
-			[GetSpellInfo(45347)] =  4, 
-			[GetSpellInfo(45348)] =  4, 
-			[GetSpellInfo(45996)] =  4, 
-			[GetSpellInfo(45442)] =  4, 
-			[GetSpellInfo(45641)] =  4, 
-			[GetSpellInfo(45885)] =  4, 
-			[GetSpellInfo(45737)] =  4, 
-			[GetSpellInfo(45740)] =  4, 
-			[GetSpellInfo(45741)] =  4, 
+		[752] = {--"太阳井"
+			[46561] =  4,
+			[46562] =  4, 
+			[46266] =  4, 
+			[46557] =  4, 
+			[46560] =  4, 
+			[46543] =  4, 
+			[46427] =  4, 
+			[45032] =  4, 
+			[45034] =  4, 
+			[45018] =  4, 
+			[46384] =  4, 
+			[45150] =  4, 
+			[45855] =  4, 
+			[45662] =  4, 
+			[45402] =  4, 
+			[45717] =  4, 
+			[45256] =  4, 
+			[45333] =  4, 
+			[46771] =  4, 
+			[45270] =  4, 
+			[45347] =  4, 
+			[45348] =  4, 
+			[45996] =  4, 
+			[45442] =  4, 
+			[45641] =  4, 
+			[45885] =  4, 
+			[45737] =  4, 
+			[45740] =  4, 
+			[45741] =  4, 
 		},
-		[527] = {--"永恒之眼"
+		[756] = {--"永恒之眼"
 			--Malygos
-			[GetSpellInfo(56272)] =  4, -- Arcane Breath
-			[GetSpellInfo(57407)] =  4, -- Surge of Power
+			[56272] =  4, -- Arcane Breath
+			[57407] =  4, -- Surge of Power
 		},
-		[529] = {--奥杜尔
+		[759] = {--奥杜尔
 			--Trash
-			[GetSpellInfo(62310)] =  4, --Impale  
-			[GetSpellInfo(63612)] =  4, --Lightning Brand  
-			[GetSpellInfo(63615)] =  4, --Ravage Armor  
-			[GetSpellInfo(62283)] =  4, --Iron Roots  
-			[GetSpellInfo(63169)] =  4, --Petrify Joints  
+			[62310] =  4, --Impale  
+			[63612] =  4, --Lightning Brand  
+			[63615] =  4, --Ravage Armor  
+			[62283] =  4, --Iron Roots  
+			[63169] =  4, --Petrify Joints  
 			--Razorscale
-			[GetSpellInfo(64771)] =  4,--Fuse Armor  
+			[64771] =  4,--Fuse Armor  
 			--Ignis the Furnace Master
-			[GetSpellInfo(62548)] =  4, --Scorch  
-			[GetSpellInfo(62680)] =  4, --Flame Jet  
-			[GetSpellInfo(62717)] =  4, --Slag Pot  
+			[62548] =  4, --Scorch  
+			[62680] =  4, --Flame Jet  
+			[62717] =  4, --Slag Pot  
 			--XT-002
-			[GetSpellInfo(63024)] =  4, --Gravity Bomb  
-			[GetSpellInfo(63018)] =  4, --Light Bomb  
+			[63024] =  4, --Gravity Bomb  
+			[63018] =  4, --Light Bomb  
 			--The Assembly of Iron
-			[GetSpellInfo(61888)] =  4, --Overwhelming Power  
-			[GetSpellInfo(62269)] =  4, --Rune of Death  
-			[GetSpellInfo(61903)] =  4, --Fusion Punch  
-			[GetSpellInfo(61912)] =  4, --Static Disruption 
+			[61888] =  4, --Overwhelming Power  
+			[62269] =  4, --Rune of Death  
+			[61903] =  4, --Fusion Punch  
+			[61912] =  4, --Static Disruption 
 			--Kologarn
-			[GetSpellInfo(64290)] =  4, --Stone Grip  
-			[GetSpellInfo(63355)] =  4, --Crunch Armor  
-			[GetSpellInfo(62055)] =  4, --Brittle Skin  
+			[64290] =  4, --Stone Grip  
+			[63355] =  4, --Crunch Armor  
+			[62055] =  4, --Brittle Skin  
 			--]Hodir
-			[GetSpellInfo(62469)] =  4, --Freeze  
-			[GetSpellInfo(61969)] =  4, --Flash Freeze  
-			[GetSpellInfo(62188)] =  4, --Biting Cold  
+			[62469] =  4, --Freeze  
+			[61969] =  4, --Flash Freeze  
+			[62188] =  4, --Biting Cold  
 			--Thorim
-			[GetSpellInfo(62042)] =  4, --Stormhammer  
-			[GetSpellInfo(62130)] =  4, --Unbalancing Strike  
-			[GetSpellInfo(62526)] =  4, --Rune Detonation  
-			[GetSpellInfo(62470)] =  4, --Deafening Thunder  
-			[GetSpellInfo(62331)] =  4, --Impale  
+			[62042] =  4, --Stormhammer  
+			[62130] =  4, --Unbalancing Strike  
+			[62526] =  4, --Rune Detonation  
+			[62470] =  4, --Deafening Thunder  
+			[62331] =  4, --Impale  
 			--Freya
-			[GetSpellInfo(62532)] =  4, --Conservator's Grip  
-			[GetSpellInfo(62589)] =  4, --Nature's Fury  
-			[GetSpellInfo(62861)] =  4, --Iron Roots  
+			[62532] =  4, --Conservator's Grip  
+			[62589] =  4, --Nature's Fury  
+			[62861] =  4, --Iron Roots  
 			--Mimiron
-			[GetSpellInfo(63666)] =  4,--Napalm Shell  
-			[GetSpellInfo(62997)] =  4,--Plasma Blast  
-			[GetSpellInfo(64668)] =  4,--Magnetic Field  
+			[63666] =  4,--Napalm Shell  
+			[62997] =  4,--Plasma Blast  
+			[64668] =  4,--Magnetic Field  
 			--General Vezax
-			[GetSpellInfo(63276)] =  4,--Mark of the Faceless  
-			[GetSpellInfo(63322)] =  4,--Saronite Vapors  
+			[63276] =  4,--Mark of the Faceless  
+			[63322] =  4,--Saronite Vapors  
 			--Yogg-Saron
-			[GetSpellInfo(63147)] =  4,--Sara's Anger 
-			[GetSpellInfo(63134)] =  4,--Sara's Blessing 
-			[GetSpellInfo(63138)] =  4,--Sara's Fervor 
-			[GetSpellInfo(63830)] =  4,--Malady of the Mind  
-			[GetSpellInfo(63802)] =  4,--Brain Link 
-			[GetSpellInfo(63042)] =  4,--Dominate Mind  
-			[GetSpellInfo(64152)] =  4,--Draining Poison  
-			[GetSpellInfo(64153)] =  4,--Black Plague  
-			[GetSpellInfo(64125)] =  4,--Squeeze  
-			[GetSpellInfo(64156)] =  4,--Apathy  
-			[GetSpellInfo(64157)] =  4,--Curse of Doom  
+			[63147] =  4,--Sara's Anger 
+			[63134] =  4,--Sara's Blessing 
+			[63138] =  4,--Sara's Fervor 
+			[63830] =  4,--Malady of the Mind  
+			[63802] =  4,--Brain Link 
+			[63042] =  4,--Dominate Mind  
+			[64152] =  4,--Draining Poison  
+			[64153] =  4,--Black Plague  
+			[64125] =  4,--Squeeze  
+			[64156] =  4,--Apathy  
+			[64157] =  4,--Curse of Doom  
 			--Algalon
-			[GetSpellInfo(64412)] =  4,--Phase Punch		
+			[64412] =  4,--Phase Punch		
 		},
-		[531] = {--"黑曜石圣殿"
+		[755] = {--"黑曜石圣殿"
 			--Trash
-			[GetSpellInfo(39647)] =  4, -- Curse of Mending
-			[GetSpellInfo(58936)] =  4, -- Rain of Fire
+			[39647] =  4, -- Curse of Mending
+			[58936] =  4, -- Rain of Fire
 			--Sartharion
-			[GetSpellInfo(60708)] =  4, -- Fade Armor
-			[GetSpellInfo(57491)] =  4, -- Flame Tsunami
+			[60708] =  4, -- Fade Armor
+			[57491] =  4, -- Flame Tsunami
 		},
-		[532] = {--"阿尔卡冯的宝库"
+		[753] = {--"阿尔卡冯的宝库"
 			--Koralon the Flame Watcher
-			[GetSpellInfo(66684)] =  4, -- Flaming Cinder
+			[66684] =  4, -- Flaming Cinder
 			--Toravon the Ice Watcher
-			[GetSpellInfo(72004)] =  4, -- Frostbite
+			[72004] =  4, -- Frostbite
 		},
-		[535] = { --Naxxramas
+		[754] = { --Naxxramas
 			--Trash
-			[GetSpellInfo(55314)] =  4,--Strangulate
+			[55314] =  4,--Strangulate
 			--Anub'Rekhan
-			[GetSpellInfo(28786)] =  4,--Locust Swarm 
+			[28786] =  4,--Locust Swarm 
 			--Grand Widow Faerlina--
-			[GetSpellInfo(28796)] =  4,--Poison Bolt Volley
-			[GetSpellInfo(28794)] =  4,--Rain of Fire
+			[28796] =  4,--Poison Bolt Volley
+			[28794] =  4,--Rain of Fire
 			--Maexxna
-			[GetSpellInfo(28622)] =  4,--Web Wrap
-			[GetSpellInfo(54121)] =  4,--Necrotic Poison
+			[28622] =  4,--Web Wrap
+			[54121] =  4,--Necrotic Poison
 			--Noth the Plaguebringer
-			[GetSpellInfo(29213)] =  4,--Curse of the Plaguebringer
-			[GetSpellInfo(29214)] =  4,--Wrath of the Plaguebringer 
-			[GetSpellInfo(29212)] =  4,--Cripple 
+			[29213] =  4,--Curse of the Plaguebringer
+			[29214] =  4,--Wrath of the Plaguebringer 
+			[29212] =  4,--Cripple 
 			--Heigan the Unclean
-			[GetSpellInfo(29998)] =  4,--Decrepit Fever 
-			[GetSpellInfo(29310)] =  4,--Spell Disruption 
+			[29998] =  4,--Decrepit Fever 
+			[29310] =  4,--Spell Disruption 
 			--Grobbulus
-			[GetSpellInfo(28169)] =  4,--Mutating Injection 
+			[28169] =  4,--Mutating Injection 
 			--Gluth
-			[GetSpellInfo(54378)] =  4,--Mortal Wound 
-			[GetSpellInfo(29306)] =  4,--Infected Wound 
+			[54378] =  4,--Mortal Wound 
+			[29306] =  4,--Infected Wound 
 			--Thaddius
-			[GetSpellInfo(28084)] =  4,--Negative Charge 
-			[GetSpellInfo(28059)] =  4,--Positive Charge 
+			[28084] =  4,--Negative Charge 
+			[28059] =  4,--Positive Charge 
 			--Instructor Razuvious
-			[GetSpellInfo(55550)] =  4,--Jagged Knife 
+			[55550] =  4,--Jagged Knife 
 			--Sapphiron
-			[GetSpellInfo(28522)] =  4,--Icebolt 
-			[GetSpellInfo(28542)] =  4,--Life Drain
+			[28522] =  4,--Icebolt 
+			[28542] =  4,--Life Drain
 			--Kel'Thuzad
-			[GetSpellInfo(28410)] =  4,--Chains of Kel'Thuzad
-			[GetSpellInfo(27819)] =  4,--Detonate Mana
-			[GetSpellInfo(27808)] =  4,--Frost Blast 		
+			[28410] =  4,--Chains of Kel'Thuzad
+			[27819] =  4,--Detonate Mana
+			[27808] =  4,--Frost Blast 		
 			},
-		[543] = {--"十字军的试炼"
+		[757] = {--"十字军的试炼"
 			--Gormok the Impaler
-			[GetSpellInfo(66331)] =  5, -- Impale
-			[GetSpellInfo(67475)] =  5, -- Fire Bomb
-			[GetSpellInfo(66406)] =  5, -- Snowbolled!
+			[66331] =  5, -- Impale
+			[67475] =  5, -- Fire Bomb
+			[66406] =  5, -- Snowbolled!
 			--Acidmaw --Dreadscale
-			[GetSpellInfo(67618)] =  5, -- Paralytic Toxin
-			[GetSpellInfo(66869)] =  5, -- Burning Bile
+			[67618] =  5, -- Paralytic Toxin
+			[66869] =  5, -- Burning Bile
 			--Icehowl
-			[GetSpellInfo(67654)] =  5, -- Ferocious Butt
-			[GetSpellInfo(66689)] =  5, -- Arctic Breathe
-			[GetSpellInfo(66683)] =  5, -- Massive Crash
+			[67654] =  5, -- Ferocious Butt
+			[66689] =  5, -- Arctic Breathe
+			[66683] =  5, -- Massive Crash
 			--Lord Jaraxxus
-			[GetSpellInfo(66532)] =  5, -- Fel Fireball
-			[GetSpellInfo(66237)] =  9, -- 血肉成灰
-			[GetSpellInfo(66242)] =  7, -- Burning Inferno
-			[GetSpellInfo(66197)] =  5, -- Legion Flame
-			[GetSpellInfo(66283)] =  9, -- Spinning Pain Spike
-			[GetSpellInfo(66209)] =  5, -- Touch of Jaraxxus(hard)
-			[GetSpellInfo(66211)] =  5, -- Curse of the Nether(hard)
-			[GetSpellInfo(67906)] =  5, -- Mistress's Kiss 10H
+			[66532] =  5, -- Fel Fireball
+			[66237] =  9, -- 血肉成灰
+			[66242] =  7, -- Burning Inferno
+			[66197] =  5, -- Legion Flame
+			[66283] =  9, -- Spinning Pain Spike
+			[66209] =  5, -- Touch of Jaraxxus(hard)
+			[66211] =  5, -- Curse of the Nether(hard)
+			[67906] =  5, -- Mistress's Kiss 10H
 			--Faction Champions
-			[GetSpellInfo(65812)] =  9, -- Unstable Affliction
-			[GetSpellInfo(65960)] =  5, -- Blind
-			[GetSpellInfo(65801)] =  5, -- Polymorph
-			[GetSpellInfo(65543)] =  5, -- Psychic Scream
-			[GetSpellInfo(66054)] =  5, -- Hex
-			[GetSpellInfo(65809)] =  5, -- Fear
+			[65812] =  9, -- Unstable Affliction
+			[65960] =  5, -- Blind
+			[65801] =  5, -- Polymorph
+			[65543] =  5, -- Psychic Scream
+			[66054] =  5, -- Hex
+			[65809] =  5, -- Fear
 			--The Twin Val'kyr
-			[GetSpellInfo(67176)] =  5, -- Dark Essence
-			[GetSpellInfo(67222)] =  5, -- Light Essence
-			[GetSpellInfo(67283)] =  7, -- Dark Touch
-			[GetSpellInfo(67298)] =  7, -- Ligth Touch
-			[GetSpellInfo(67309)] =  5, -- Twin Spike
+			[67176] =  5, -- Dark Essence
+			[67222] =  5, -- Light Essence
+			[67283] =  7, -- Dark Touch
+			[67298] =  7, -- Ligth Touch
+			[67309] =  5, -- Twin Spike
 			--Anub'arak
-			[GetSpellInfo(67574)] =  9, -- Pursued by Anub'arak
-			[GetSpellInfo(66013)] =  7, -- Penetrating Cold
-			[GetSpellInfo(67847)] =  5, -- Expose Weakness
-			[GetSpellInfo(66012)] =  5, -- Freezing Slash
-			[GetSpellInfo(67863)] =  5, -- Acid-Drenched Mandibles(25H)
+			[67574] =  9, -- Pursued by Anub'arak
+			[66013] =  7, -- Penetrating Cold
+			[67847] =  5, -- Expose Weakness
+			[66012] =  5, -- Freezing Slash
+			[67863] =  5, -- Acid-Drenched Mandibles(25H)
 		},
-		[604] = {--"冰冠堡垒"
+		[758] = {--"冰冠堡垒"
 			--The Lower Spire
-			[GetSpellInfo(70980)] =  7, -- Web Wrap
-			[GetSpellInfo(69483)] =  6, -- Dark Reckoning
-			[GetSpellInfo(69969)] =  5, -- Curse of Doom
+			[70980] =  7, -- Web Wrap
+			[69483] =  6, -- Dark Reckoning
+			[69969] =  5, -- Curse of Doom
 			--The Plagueworks
-			[GetSpellInfo(71089)] =  5, -- Bubbling Pus
-			[GetSpellInfo(71127)] =  7, -- Mortal Wound
-			[GetSpellInfo(71163)] =  6, -- Devour Humanoid
-			[GetSpellInfo(71103)] =  6, -- Combobulating Spray
-			[GetSpellInfo(71157)] =  5, -- Infested Wound
+			[71089] =  5, -- Bubbling Pus
+			[71127] =  7, -- Mortal Wound
+			[71163] =  6, -- Devour Humanoid
+			[71103] =  6, -- Combobulating Spray
+			[71157] =  5, -- Infested Wound
 			--The Crimson Hall
-			[GetSpellInfo(70645)] =  9, -- Chains of Shadow
-			[GetSpellInfo(70671)] =  5, -- Leeching Rot
-			[GetSpellInfo(70432)] =  6, -- Blood Sap
-			[GetSpellInfo(70435)] =  7, -- Rend Flesh
+			[70645] =  9, -- Chains of Shadow
+			[70671] =  5, -- Leeching Rot
+			[70432] =  6, -- Blood Sap
+			[70435] =  7, -- Rend Flesh
 			--Frostwing Hall
-			[GetSpellInfo(71257)] =  6, -- Barbaric Strike
-			[GetSpellInfo(71252)] =  5, -- Volley
-			[GetSpellInfo(71327)] =  6, -- Web
-			[GetSpellInfo(36922)] =  5, -- Bellowing Roar
+			[71257] =  6, -- Barbaric Strike
+			[71252] =  5, -- Volley
+			[71327] =  6, -- Web
+			[36922] =  5, -- Bellowing Roar
 			--Lord Marrowgar
-			[GetSpellInfo(70823)] =  5, -- Coldflame
-			[GetSpellInfo(69065)] =  8, -- Impaled
-			[GetSpellInfo(70835)] =  5, -- Bone Storm
+			[70823] =  5, -- Coldflame
+			[69065] =  8, -- Impaled
+			[70835] =  5, -- Bone Storm
 			--Lady Deathwhisper
-			[GetSpellInfo(72109)] =  5, -- Death and Decay
-			[GetSpellInfo(71289)] =  9, -- Dominate Mind
-			[GetSpellInfo(71204)] =  4, -- Touch of Insignificance
-			[GetSpellInfo(67934)] =  5, -- Frost Fever
-			[GetSpellInfo(71237)] =  5, -- Curse of Torpor
-			[GetSpellInfo(72491)] =  5, -- Necrotic Strike
+			[72109] =  5, -- Death and Decay
+			[71289] =  9, -- Dominate Mind
+			[71204] =  4, -- Touch of Insignificance
+			[67934] =  5, -- Frost Fever
+			[71237] =  5, -- Curse of Torpor
+			[72491] =  5, -- Necrotic Strike
 			--Gunship Battle
-			[GetSpellInfo(69651)] =  5, -- Wounding Strike
+			[69651] =  5, -- Wounding Strike
 			--Deathbringer Saurfang
-			[GetSpellInfo(72293)] =  6, -- Mark of the Fallen Champion
-			[GetSpellInfo(72442)] =  8, -- Boiling Blood
-			[GetSpellInfo(72449)] =  5, -- Rune of Blood
-			[GetSpellInfo(72769)] =  5, -- Scent of Blood (heroic)
+			[72293] =  6, -- Mark of the Fallen Champion
+			[72442] =  8, -- Boiling Blood
+			[72449] =  5, -- Rune of Blood
+			[72769] =  5, -- Scent of Blood (heroic)
 			--Rotface
-			[GetSpellInfo(71224)] =  5, -- Mutated Infection
-			[GetSpellInfo(71215)] =  5, -- Ooze Flood
-			[GetSpellInfo(69774)] =  5, -- Sticky Ooze
+			[71224] =  5, -- Mutated Infection
+			[71215] =  5, -- Ooze Flood
+			[69774] =  5, -- Sticky Ooze
 			--Festergut
-			[GetSpellInfo(69279)] =  5, -- Gas Spore
-			[GetSpellInfo(71218)] =  5, -- Vile Gas
-			[GetSpellInfo(72219)] =  5, -- Gastric Bloat
+			[69279] =  5, -- Gas Spore
+			[71218] =  5, -- Vile Gas
+			[72219] =  5, -- Gastric Bloat
 			--Proffessor
-			[GetSpellInfo(70341)] =  5, -- Slime Puddle
-			[GetSpellInfo(72549)] =  5, -- Malleable Goo
-			[GetSpellInfo(71278)] =  5, -- Choking Gas Bomb
-			[GetSpellInfo(70215)] =  5, -- Gaseous Bloat
-			[GetSpellInfo(70447)] =  5, -- Volatile Ooze Adhesive
-			[GetSpellInfo(72454)] =  5, -- Mutated Plague
-			[GetSpellInfo(70405)] =  5, -- Mutated Transformation
-			[GetSpellInfo(72856)] =  6, -- Unbound Plague
-			[GetSpellInfo(70953)] =  4, -- Plague Sickness
+			[70341] =  5, -- Slime Puddle
+			[72549] =  5, -- Malleable Goo
+			[71278] =  5, -- Choking Gas Bomb
+			[70215] =  5, -- Gaseous Bloat
+			[70447] =  5, -- Volatile Ooze Adhesive
+			[72454] =  5, -- Mutated Plague
+			[70405] =  5, -- Mutated Transformation
+			[72856] =  6, -- Unbound Plague
+			[70953] =  4, -- Plague Sickness
 			--Blood Princes
-			[GetSpellInfo(72796)] =  7, -- Glittering Sparks
-			[GetSpellInfo(71822)] =  5, -- Shadow Resonance
+			[72796] =  7, -- Glittering Sparks
+			[71822] =  5, -- Shadow Resonance
 			--Blood-Queen Lana'thel
-			[GetSpellInfo(70867)] =  8, -- 鲜血女王的精华
-			[GetSpellInfo(70838)] =  5, -- Blood Mirror
-			[GetSpellInfo(72265)] =  6, -- Delirious Slash
-			[GetSpellInfo(71473)] =  5, -- Essence of the Blood Queen
-			[GetSpellInfo(71474)] =  6, -- Frenzied Bloodthirst
-			[GetSpellInfo(73070)] =  5, -- Incite Terror
-			[GetSpellInfo(71340)] =  7, -- Pact of the Darkfallen
-			[GetSpellInfo(71265)] =  6, -- Swarming Shadows
-			[GetSpellInfo(70923)] =  9, -- Uncontrollable Frenzy
+			[70867] =  8, -- 鲜血女王的精华
+			[70838] =  5, -- Blood Mirror
+			[72265] =  6, -- Delirious Slash
+			[71473] =  5, -- Essence of the Blood Queen
+			[71474] =  6, -- Frenzied Bloodthirst
+			[73070] =  5, -- Incite Terror
+			[71340] =  7, -- Pact of the Darkfallen
+			[71265] =  6, -- Swarming Shadows
+			[70923] =  9, -- Uncontrollable Frenzy
 			--Valithria Dreamwalker
-			[GetSpellInfo(70873)] =  1, -- Emerald Vigor
-			[GetSpellInfo(71746)] =  5, -- Column of Frost
-			[GetSpellInfo(71741)] =  4, -- Mana Void
-			[GetSpellInfo(71738)] =  7, -- Corrosion
-			[GetSpellInfo(71733)] =  6, -- Acid Burst
-			[GetSpellInfo(71283)] =  6, -- Gut Spray
-			[GetSpellInfo(71941)] =  1, -- Twisted Nightmares
+			[70873] =  1, -- Emerald Vigor
+			[71746] =  5, -- Column of Frost
+			[71741] =  4, -- Mana Void
+			[71738] =  7, -- Corrosion
+			[71733] =  6, -- Acid Burst
+			[71283] =  6, -- Gut Spray
+			[71941] =  1, -- Twisted Nightmares
 			--Sindragosa
-			[GetSpellInfo(69762)] =  5, -- Unchained Magic
-			[GetSpellInfo(70106)] =  6, -- Chlled to the Bone
-			[GetSpellInfo(69766)] =  6, -- Instability
-			[GetSpellInfo(70126)] =  9, -- Frost Beacon
-			[GetSpellInfo(70157)] =  8, -- Ice Tomb
-			[GetSpellInfo(70127)] =  7, -- Mystic Buffet
+			[69762] =  5, -- Unchained Magic
+			[70106] =  6, -- Chlled to the Bone
+			[69766] =  6, -- Instability
+			[70126] =  9, -- Frost Beacon
+			[70157] =  8, -- Ice Tomb
+			[70127] =  7, -- Mystic Buffet
 			--The Lich King
-			[GetSpellInfo(70337)] =  8, -- Necrotic plague
-			[GetSpellInfo(72149)] =  5, -- Shockwave
-			[GetSpellInfo(70541)] =  7, -- Infest
-			[GetSpellInfo(69242)] =  5, -- Soul Shriek
-			[GetSpellInfo(69409)] =  9, -- Soul Reaper
-			[GetSpellInfo(72762)] =  5, -- Defile
-			[GetSpellInfo(68980)] =  8, --Harvest Soul
+			[70337] =  8, -- Necrotic plague
+			[72149] =  5, -- Shockwave
+			[70541] =  7, -- Infest
+			[69242] =  5, -- Soul Shriek
+			[69409] =  9, -- Soul Reaper
+			[72762] =  5, -- Defile
+			[68980] =  8, --Harvest Soul
 		},
-		[609] = {--“晶红龙殿”
+		[761] = {--“晶红龙殿”
 			--Baltharus the Warborn
-			[GetSpellInfo(74502)] =  4, -- Enervating Brand
+			[74502] =  4, -- Enervating Brand
 			--General Zarithrian
-			[GetSpellInfo(74367)] =  4, -- Cleave Armor
+			[74367] =  4, -- Cleave Armor
 			--Saviana Ragefire
-			[GetSpellInfo(74452)] =  4, -- Conflagration
+			[74452] =  4, -- Conflagration
 			--Halion
-			[GetSpellInfo(74562)] =  7, -- Fiery Combustion
-			[GetSpellInfo(74567)] =  5, -- Combustion
-			[GetSpellInfo(74792)] =  6, -- Soul Consumption
-			[GetSpellInfo(74795)] =  4, -- Consumption
+			[74562] =  7, -- Fiery Combustion
+			[74567] =  5, -- Combustion
+			[74792] =  6, -- Soul Consumption
+			[74795] =  4, -- Consumption
 		},		
-		[769] = {--旋云之巅
-			[GetSpellInfo(87923)] =  7, 
-			[GetSpellInfo(87930)] =  8, 
-			[GetSpellInfo(88075)] =  7, 
-			[GetSpellInfo(86292)] =  7, 
-			[GetSpellInfo(88171)] =  8, 
-			[GetSpellInfo(88182)] =  7, 
-			[GetSpellInfo(88314)] =  7, 
-			[GetSpellInfo(76622)] =  8, 
-			[GetSpellInfo(87771)] =  7, 
-			[GetSpellInfo(87618)] =  8, 
+		[68] = {--旋云之巅
+			[87923] =  7, 
+			[87930] =  8, 
+			[88075] =  7, 
+			[86292] =  7, 
+			[88171] =  8, 
+			[88182] =  7, 
+			[88314] =  7, 
+			[76622] =  8, 
+			[87771] =  7, 
+			[87618] =  8, 
 		},
-		[747] = {--托维尔失落之城
-			[GetSpellInfo(82764)] =  7, 
-			[GetSpellInfo(89212)] =  8, 
-			[GetSpellInfo(73976)] =  7, 
-			[GetSpellInfo(82794)] =  7, 
-			[GetSpellInfo(83776)] =  8, 
-			[GetSpellInfo(81690)] =  7, 
-			[GetSpellInfo(81677)] =  7, 
-			[GetSpellInfo(81673)] =  8, 
-			[GetSpellInfo(82760)] =  7, 
-			[GetSpellInfo(81947)] =  8, 
-			[GetSpellInfo(91871)] =  8, 
+		[69] = {--托维尔失落之城
+			[82764] =  7, 
+			[89212] =  8, 
+			[73976] =  7, 
+			[82794] =  7, 
+			[83776] =  8, 
+			[81690] =  7, 
+			[81677] =  7, 
+			[81673] =  8, 
+			[82760] =  7, 
+			[81947] =  8, 
+			[91871] =  8, 
 		},
-		[759] = {--起源大厅
-
+		[63] = {--"死亡矿井"
+			[91016] =  7, -- 劈头斧
+			[88352] =  8, -- 放置炸弹
+			[91830] =  7, -- 注视
 		},
-
-		[756] = {--"死亡矿井"
-			[GetSpellInfo(91016)] =  7, -- 劈头斧
-			[GetSpellInfo(88352)] =  8, -- 放置炸弹
-			[GetSpellInfo(91830)] =  7, -- 注视
+		[71] = {--"格瑞姆巴托"
+			[76720] =  7, 
+			[76335] =  8, 
+			[74837] =  7, 		
+			[76507] =  7, 
+			[74634] =  8, 
+			[74846] =  7, 
+			[76679] =  7, 
+			[76715] =  8, 
+			[76703] =  7,
+			[74909] =  8, 
+			[90764] =  7,
+			[76394] =  7,	
+			[76792] =  7, 
+			[82850] =  8, 
+			[75317] =  7,
+			[76797] =  8, 
+			[75861] =  7,
+			[75792] =  7,
+			[75755] =  6,
+			[75694] =  6,
 		},
-		[757] = {--"格瑞姆巴托"
-			[GetSpellInfo(76720)] =  7, 
-			[GetSpellInfo(76335)] =  8, 
-			[GetSpellInfo(74837)] =  7, 		
-			[GetSpellInfo(76507)] =  7, 
-			[GetSpellInfo(74634)] =  8, 
-			[GetSpellInfo(74846)] =  7, 
-			[GetSpellInfo(76679)] =  7, 
-			[GetSpellInfo(76715)] =  8, 
-			[GetSpellInfo(76703)] =  7,
-			[GetSpellInfo(74909)] =  8, 
-			[GetSpellInfo(90764)] =  7,
-			[GetSpellInfo(76394)] =  7,	
-			[GetSpellInfo(76792)] =  7, 
-			[GetSpellInfo(82850)] =  8, 
-			[GetSpellInfo(75317)] =  7,
-			[GetSpellInfo(76797)] =  8, 
-			[GetSpellInfo(75861)] =  7,
-			[GetSpellInfo(75792)] =  7,
-			[GetSpellInfo(75755)] =  6,
-			[GetSpellInfo(75694)] =  6,
+		[65] = {--"潮汐王座"
+			[76807] =  7, 
+			[76721] =  8, 
+			[76820] =  7, 		
+			[84507] =  7, 
+			[90479] =  8, 
+			[80564] =  7, 
+			[76026] =  7, 
+			[76094] =  8,
 		},
-		[767] = {--"潮汐王座"
-			[GetSpellInfo(76807)] =  7, 
-			[GetSpellInfo(76721)] =  8, 
-			[GetSpellInfo(76820)] =  7, 		
-			[GetSpellInfo(84507)] =  7, 
-			[GetSpellInfo(90479)] =  8, 
-			[GetSpellInfo(80564)] =  7, 
-			[GetSpellInfo(76026)] =  7, 
-			[GetSpellInfo(76094)] =  8,
-		},
-		[820] = {--"时光之末"
-			[GetSpellInfo(102066)] =  7, 
-			[GetSpellInfo(109952)] =  8, 
-			[GetSpellInfo(101411)] =  7, 		
-			[GetSpellInfo(101412)] =  7, 
-			[GetSpellInfo(103171)] =  8, 
-			[GetSpellInfo(102149)] =  7, 
-			[GetSpellInfo(102183)] =  7, 
-			[GetSpellInfo(102381)] =  8,
+		[184] = {--"时光之末"
+			[102066] =  7, 
+			[109952] =  8, 
+			[101411] =  7, 		
+			[101412] =  7, 
+			[103171] =  8, 
+			[102149] =  7, 
+			[102183] =  7, 
+			[102381] =  8,
 		},		
-		[781] = {--"祖阿曼(5人)"
-			[GetSpellInfo(43150)] =  8, -- 利爪之怒
-			[GetSpellInfo(43648)] =  8, -- 电能风暴
-			[GetSpellInfo(43501)] =  8, -- 灵魂虹吸
-			[GetSpellInfo(43093)] =  10, -- 重伤投掷
-			[GetSpellInfo(43095)] =  10, -- 麻痹蔓延
-			[GetSpellInfo(42402)] =  10, -- 澎湃
+		[77] = {--"祖阿曼(5人)"
+			[43150] =  8, -- 利爪之怒
+			[43648] =  8, -- 电能风暴
+			[43501] =  8, -- 灵魂虹吸
+			[43093] =  10, -- 重伤投掷
+			[43095] =  10, -- 麻痹蔓延
+			[42402] =  10, -- 澎湃
 		},
-		[793] = {--"祖尔格拉布(5人)"
-			[GetSpellInfo(96477)] =  10, -- 剧毒连接
-			[GetSpellInfo(96466)] =  8, -- 赫希斯之耳语
-			[GetSpellInfo(96776)] =  12, -- 血祭
-			[GetSpellInfo(96423)] =  10, -- 痛苦鞭笞
-			[GetSpellInfo(96342)] =  10, -- 扑杀
+		[76] = {--"祖尔格拉布(5人)"
+			[96477] =  10, -- 剧毒连接
+			[96466] =  8, -- 赫希斯之耳语
+			[96776] =  12, -- 血祭
+			[96423] =  10, -- 痛苦鞭笞
+			[96342] =  10, -- 扑杀
 		},
-		[800] = { -- 火源
+		[78] = { -- 火源
 			--Trash 
 			--Flamewaker Forward Guard 
-			[GetSpellInfo(76622)] =  4, -- Sunder Armor 
-			[GetSpellInfo(99610)] =  5, -- Shockwave 
+			[76622] =  4, -- Sunder Armor 
+			[99610] =  5, -- Shockwave 
 			--Flamewaker Pathfinder 
-			[GetSpellInfo(99695)] =  4, -- Flaming Spear 
-			[GetSpellInfo(99800)] =  4, -- Ensnare 
+			[99695] =  4, -- Flaming Spear 
+			[99800] =  4, -- Ensnare 
 			--Flamewaker Cauterizer 
-			[GetSpellInfo(99625)] =  4, -- Conflagration (Magic/dispellable) 
+			[99625] =  4, -- Conflagration (Magic/dispellable) 
 			--Fire Scorpion 
-			[GetSpellInfo(99993)] =  4, -- Fiery Blood 
+			[99993] =  4, -- Fiery Blood 
 			--Molten Lord 
-			[GetSpellInfo(100767)] =  4, -- Melt Armor 
+			[100767] =  4, -- Melt Armor 
 			--Ancient Core Hound 
-			[GetSpellInfo(99692)] =  4, -- Terrifying Roar (Magic/dispellable) 
-			[GetSpellInfo(99693)] =  4, -- Dinner Time 
+			[99692] =  4, -- Terrifying Roar (Magic/dispellable) 
+			[99693] =  4, -- Dinner Time 
 			--Magma 
-			[GetSpellInfo(97151)] =  4, -- Magma 
+			[97151] =  4, -- Magma 
 
 			--Beth'tilac 
-			[GetSpellInfo(99506)] =  5, -- The Widow's Kiss 
+			[99506] =  5, -- The Widow's Kiss 
 			--Cinderweb Drone 
-			[GetSpellInfo(49026)] =  6, -- Fixate 
+			[49026] =  6, -- Fixate 
 			--Cinderweb Spinner 
-			[GetSpellInfo(97202)] =  5, -- Fiery Web Spin 
+			[97202] =  5, -- Fiery Web Spin 
 			--Cinderweb Spiderling 
-			[GetSpellInfo(97079)] =  4, -- Seeping Venom 
+			[97079] =  4, -- Seeping Venom 
 			--Cinderweb Broodling 
 
-			[GetSpellInfo(100048)] =  4, --Fiery Web 
+			[100048] =  4, --Fiery Web 
 
 			--Lord Rhyolith 
-			[GetSpellInfo(98492)] =  5, --Eruption 
+			[98492] =  5, --Eruption 
 
 			--Alysrazor 
-			[GetSpellInfo(101729)] =  5, -- Blazing Claw 
-			[GetSpellInfo(100094)] =  4, -- Fieroblast 
-			[GetSpellInfo(99389)] =  5, -- Imprinted 
-			[GetSpellInfo(99308)] =  4, -- Gushing Wound 
-			[GetSpellInfo(100640)] =  6, -- Harsh Winds 
-			[GetSpellInfo(100555)] =  6, -- Smouldering Roots 
+			[101729] =  5, -- Blazing Claw 
+			[100094] =  4, -- Fieroblast 
+			[99389] =  5, -- Imprinted 
+			[99308] =  4, -- Gushing Wound 
+			[100640] =  6, -- Harsh Winds 
+			[100555] =  6, -- Smouldering Roots 
 			--Do we want to show these? 
-			[GetSpellInfo(99461)] =  4, -- Blazing Power 
-			--[GetSpellInfo(98734)] =  4, -- Molten Feather 
-			--[GetSpellInfo(98619)] =  4, -- Wings of Flame 
-			--[GetSpellInfo(100029)] =  4, -- Alysra's Razor 
+			[99461] =  4, -- Blazing Power 
+			--[98734] =  4, -- Molten Feather 
+			--[98619] =  4, -- Wings of Flame 
+			--[100029] =  4, -- Alysra's Razor 
 
 			--Shannox 
-			[GetSpellInfo(99936)] =  5, -- Jagged Tear 
-			[GetSpellInfo(99837)] =  7, -- Crystal Prison Trap Effect 
-			[GetSpellInfo(101208)] =  4, -- Immolation Trap 
-			[GetSpellInfo(99840)] =  4, -- Magma Rupture 
+			[99936] =  5, -- Jagged Tear 
+			[99837] =  7, -- Crystal Prison Trap Effect 
+			[101208] =  4, -- Immolation Trap 
+			[99840] =  4, -- Magma Rupture 
 			-- Riplimp 
-			[GetSpellInfo(99937)] =  5, -- Jagged Tear 
+			[99937] =  5, -- Jagged Tear 
 			-- Rageface 
-			[GetSpellInfo(99947)] =  6, -- Face Rage 
-			[GetSpellInfo(100415)] =  5, -- Rage  
+			[99947] =  6, -- Face Rage 
+			[100415] =  5, -- Rage  
 
 			--守门人贝尔洛克 
-			[GetSpellInfo(99252)] =  4, -- Blaze of Glory 
-			[GetSpellInfo(99256)] =  15, -- 饱受磨难 
-			[GetSpellInfo(99403)] =  6, -- Tormented 
-			[GetSpellInfo(99262)] =  4, -- 活力火花
-			[GetSpellInfo(99263)] =  4, -- 生命之焰
-			[GetSpellInfo(99516)] =  7, -- Countdown 
-			[GetSpellInfo(99353)] =  7, -- Decimating Strike 
-			[GetSpellInfo(100908)] =  6, -- Fiery Torment 
+			[99252] =  4, -- Blaze of Glory 
+			[99256] =  15, -- 饱受磨难 
+			[99403] =  6, -- Tormented 
+			[99262] =  4, -- 活力火花
+			[99263] =  4, -- 生命之焰
+			[99516] =  7, -- Countdown 
+			[99353] =  7, -- Decimating Strike 
+			[100908] =  6, -- Fiery Torment 
 
 			--Majordomo Staghelm 
-			[GetSpellInfo(98535)] =  5, -- Leaping Flames 
-			[GetSpellInfo(98443)] =  6, -- Fiery Cyclone 
-			[GetSpellInfo(98450)] =  5, -- Searing Seeds 
+			[98535] =  5, -- Leaping Flames 
+			[98443] =  6, -- Fiery Cyclone 
+			[98450] =  5, -- Searing Seeds 
 			--Burning Orbs 
-			[GetSpellInfo(100210)] =  6, -- Burning Orb 
-			[GetSpellInfo(96993)] =  5, -- Stay Withdrawn? 
+			[100210] =  6, -- Burning Orb 
+			[96993] =  5, -- Stay Withdrawn? 
 
 			--Ragnaros 
-			[GetSpellInfo(99399)] =  5, -- Burning Wound 
-			[GetSpellInfo(100293)] =  5, -- Lava Wave 
-			[GetSpellInfo(100238)] =  4, -- Magma Trap Vulnerability 
-			[GetSpellInfo(98313)] =  4, -- Magma Blast 
+			[99399] =  5, -- Burning Wound 
+			[100293] =  5, -- Lava Wave 
+			[100238] =  4, -- Magma Trap Vulnerability 
+			[98313] =  4, -- Magma Blast 
 			--Lava Scion 
-			[GetSpellInfo(100460)] =  7, -- Blazing Heat 
+			[100460] =  7, -- Blazing Heat 
 			--Dreadflame? 
 			--Son of Flame 
 			--Lava 
-			[GetSpellInfo(98981)] =  5, -- Lava Bolt 
+			[98981] =  5, -- Lava Bolt 
 			--Molten Elemental 
 			--Living Meteor 
-			[GetSpellInfo(100249)] =  5, -- Combustion 
+			[100249] =  5, -- Combustion 
 			--Molten Wyrms 
-			[GetSpellInfo(99613)] =  6, -- Molten Blast   
+			[99613] =  6, -- Molten Blast   
 
 		},
 
-		[752] = { --巴拉丁
+		[75] = { --[[ 巴拉丁 ]]--	
 			-- Demon Containment Unit
-			[GetSpellInfo(89354)] =  10,
+			[89354] =  10,
 			-- Argaloth
-			[GetSpellInfo(88942)] =  8, -- Meteor Slash
-			[GetSpellInfo(88954)] =  12, -- Consuming Darkness
+			[88942] =  8, -- Meteor Slash
+			[88954] =  12, -- Consuming Darkness
 			-- Occu'thar
-			[GetSpellInfo(96913)] =  10, -- 灼热暗影
-			[GetSpellInfo(96884)] =  7, 	-- 集火
+			[96913] =  10, -- 灼热暗影
+			[96884] =  7, 	-- 集火
 			-- Eye of Occu'thar
-			[GetSpellInfo(105069)] =  11, -- 沸腾之怨
-			[GetSpellInfo(104936)] =  12, -- 刺穿
+			[105069] =  11, -- 沸腾之怨
+			[104936] =  12, -- 刺穿
 		},
 		
-		[754] = { --黑翼
+		[73] = { --[[ 黑翼]]--
 			--熔喉
-			[GetSpellInfo(78941)] =  6, -- 寄生感染
-			[GetSpellInfo(89773)] =  7, -- 裂伤
+			[78941] =  6, -- 寄生感染
+			[89773] =  7, -- 裂伤
 
 			--全能金刚
-			[GetSpellInfo(79888)] =  6, -- 闪电导体
-			[GetSpellInfo(79505)] =  8, -- 火焰喷射器
-			[GetSpellInfo(80161)] =  7, -- 化学云雾
-			[GetSpellInfo(79501)] =  8, -- 获取目标
-			[GetSpellInfo(80011)] =  7, -- 浸透毒液
-			[GetSpellInfo(80094)] =  7, -- 锁定
-			[GetSpellInfo(92023)] =  9, -- 暗影包围
-			[GetSpellInfo(92048)] =  9, -- 暗影灌注
-			[GetSpellInfo(92053)] =  9, -- 暗影导体
-			--[GetSpellInfo(91858)] =  6, -- 超载的能量发生器
+			[79888] =  6, -- 闪电导体
+			[79505] =  8, -- 火焰喷射器
+			[80161] =  7, -- 化学云雾
+			[79501] =  8, -- 获取目标
+			[80011] =  7, -- 浸透毒液
+			[80094] =  7, -- 锁定
+			[92023] =  9, -- 暗影包围
+			[92048] =  9, -- 暗影灌注
+			[92053] =  9, -- 暗影导体
+			--[91858] =  6, -- 超载的能量发生器
 			
 			--马洛拉克 教授龙
-			[GetSpellInfo(92973)] =  8, -- 消蚀烈焰
-			[GetSpellInfo(92978)] =  8, -- 快速冻结
-			[GetSpellInfo(92976)] =  7, -- 酷寒
-			[GetSpellInfo(91829)] =  7, -- 注视
-			[GetSpellInfo(92787)] =  9, -- 黑暗吞噬
+			[92973] =  8, -- 消蚀烈焰
+			[92978] =  8, -- 快速冻结
+			[92976] =  7, -- 酷寒
+			[91829] =  7, -- 注视
+			[92787] =  9, -- 黑暗吞噬
 
 			--音波龙
-			[GetSpellInfo(78092)] =  7, -- 追踪
-			[GetSpellInfo(78897)] =  8, -- 声音太大了
-			[GetSpellInfo(78023)] =  7, -- 咆哮烈焰
+			[78092] =  7, -- 追踪
+			[78897] =  8, -- 声音太大了
+			[78023] =  7, -- 咆哮烈焰
 
 			--奇美隆
-			[GetSpellInfo(89084)] =  8, -- 生命值过低
-			[GetSpellInfo(82881)] =  7, -- 突破
-			[GetSpellInfo(82890)] =  9, -- 至死方休
-			[GetSpellInfo(82935)] =  10, -- 腐蚀烂泥
+			[89084] =  8, -- 生命值过低
+			[82881] =  7, -- 突破
+			[82890] =  9, -- 至死方休
+			[82935] =  10, -- 腐蚀烂泥
 
 			--奈法利安
-			[GetSpellInfo(94128)] =  7, -- 扫尾
-			[GetSpellInfo(94075)] =  8, -- 熔岩
-			[GetSpellInfo(81118)] =  8, -- 熔岩
-			[GetSpellInfo(79339)] =  9, -- 爆裂灰烬
-			[GetSpellInfo(79318)] =  9, -- 统御
-			[GetSpellInfo(77827)] =  6, -- 龙尾扫击
+			[94128] =  7, -- 扫尾
+			[94075] =  8, -- 熔岩
+			[81118] =  8, -- 熔岩
+			[79339] =  9, -- 爆裂灰烬
+			[79318] =  9, -- 统御
+			[77827] =  6, -- 龙尾扫击
 		},
 
-		[758] = { --暮光
+		[72] = { --[[ 暮光]]--
 			--破龙
-			[GetSpellInfo(39171)] =  7, -- 致伤打击
-			[GetSpellInfo(86169)] =  8, -- 狂怒咆哮
+			[39171] =  7, -- 致伤打击
+			[86169] =  8, -- 狂怒咆哮
 
 			--双龙
-			[GetSpellInfo(86788)] =  8, -- 眩晕
-			[GetSpellInfo(86622)] =  7, -- 嗜体魔法
-			[GetSpellInfo(86202)] =  7, -- 暮光位移
+			[86788] =  8, -- 眩晕
+			[86622] =  7, -- 嗜体魔法
+			[86202] =  7, -- 暮光位移
 
 			--议会
-			[GetSpellInfo(82665)] =  7, -- 寒冰之心
-			[GetSpellInfo(82660)] =  7, -- 燃烧之血
-			[GetSpellInfo(82762)] =  7, -- 浸水
-			[GetSpellInfo(83099)] =  9, -- 闪电魔棒
-			[GetSpellInfo(82285)] =  8, -- 元素禁止
-			[GetSpellInfo(92488)] =  8, -- 重力碾压
+			[82665] =  7, -- 寒冰之心
+			[82660] =  7, -- 燃烧之血
+			[82762] =  7, -- 浸水
+			[83099] =  9, -- 闪电魔棒
+			[82285] =  8, -- 元素禁止
+			[92488] =  8, -- 重力碾压
 
 			--古加尔
-			[GetSpellInfo(86028)] =  6, -- 古加尔的冲击波
-			[GetSpellInfo(93189)] =  7, -- 堕落之血
-			[GetSpellInfo(93133)] =  7, -- 衰弱光线
-			[GetSpellInfo(81836)] =  8, -- 腐蚀:加速
-			[GetSpellInfo(81831)] =  8, -- 腐蚀:疫病
-			[GetSpellInfo(82125)] =  8, -- 腐蚀:畸变
-			[GetSpellInfo(82170)] =  8, -- 腐蚀:绝对
+			[86028] =  6, -- 古加尔的冲击波
+			[93189] =  7, -- 堕落之血
+			[93133] =  7, -- 衰弱光线
+			[81836] =  8, -- 腐蚀:加速
+			[81831] =  8, -- 腐蚀:疫病
+			[82125] =  8, -- 腐蚀:畸变
+			[82170] =  8, -- 腐蚀:绝对
 
 			--龙母
-			[GetSpellInfo(89435)] =  15, -- 毁坏
+			[89435] =  15, -- 毁坏
 		},
 
-		[773] = { --[GetSpellInfo([GetSpellInfo( 四风 )])]--
+		[74] = { --[[ 四风 ]]--
 			--风之议会
-			[GetSpellInfo(85576)] =  9, -- 枯萎之风
-			[GetSpellInfo(85573)] =  9, -- 呼啸狂风
-			[GetSpellInfo(93057)] =  7, -- 刺骨旋风
-			[GetSpellInfo(86481)] =  8, -- 飓风
-			[GetSpellInfo(93123)] =  7, -- 风寒
-			[GetSpellInfo(93121)] =  8, -- 剧毒孢子
+			[85576] =  9, -- 枯萎之风
+			[85573] =  9, -- 呼啸狂风
+			[93057] =  7, -- 刺骨旋风
+			[86481] =  8, -- 飓风
+			[93123] =  7, -- 风寒
+			[93121] =  8, -- 剧毒孢子
 
 			--奥拉基尔
-			--[GetSpellInfo(93281)] =  7, -- 酸雨
-			[GetSpellInfo(87873)] =  7, -- 静电震击
-			[GetSpellInfo(88427)] =  7, -- 通电
-			[GetSpellInfo(93294)] =  8, -- 闪电魔棒
-			[GetSpellInfo(93284)] =  9, -- 狂风
+			--[93281] =  7, -- 酸雨
+			[87873] =  7, -- 静电震击
+			[88427] =  7, -- 通电
+			[93294] =  8, -- 闪电魔棒
+			[93284] =  9, -- 狂风
 		},
 		
-		   [824] = {-- Dragon Soul
-			--Morchok
-		        [GetSpellInfo(103687)] =  11, --Crush Armor
-		        [GetSpellInfo(103821)] =  12, --Earthen Vortex
-		        [GetSpellInfo(103785)] =  13, --Black Blood of the Earth
-		        [GetSpellInfo(103534)] =  14, --Danger (Red)
-		        [GetSpellInfo(103536)] =  15, --Warning (Yellow)
-		        -- Don't need to show Safe people
-		        [GetSpellInfo(103541)] =  16, --Safe (Blue)
+	   [187] = {-- 巨龙之魂
+		--Morchok
+			[103687] =  11, --Crush Armor
+			[103821] =  12, --Earthen Vortex
+			[103785] =  13, --Black Blood of the Earth
+			[103534] =  14, --Danger (Red)
+			[103536] =  15, --Warning (Yellow)
+			-- Don't need to show Safe people
+			[103541] =  16, --Safe (Blue)
 
-		        --督军
-		        [GetSpellInfo(104378)] =  21, --Black Blood of Go'rath
-		        [GetSpellInfo(103434)] =  22, --干扰之影
-	
-		        --Yor'sahj the Unsleeping
-		        [GetSpellInfo(104849)] =  31, --虚空箭
-		        [GetSpellInfo(105171)] =  32, --深度腐蚀
+			--督军
+			[104378] =  21, --Black Blood of Go'rath
+			[103434] =  22, --干扰之影
 
-		        --Hagara the Stormbinder
-		        [GetSpellInfo(105316)] =  41, --Ice Lance
-		        [GetSpellInfo(105465)] =  42, --Lightning Storm
-		        [GetSpellInfo(105369)] =  43, --Lightning Conduit
-		        [GetSpellInfo(105289)] =  44, --Shattered Ice (dispellable)
-		        [GetSpellInfo(105285)] =  45, --Target (next Ice Lance)
-		        [GetSpellInfo(104451)] =  46, --Ice Tomb
-		        [GetSpellInfo(110317)] =  49, --水壕
-		        [GetSpellInfo(109325)] =  48, --霜冻				
+			--Yor'sahj the Unsleeping
+			[104849] =  31, --虚空箭
+			[105171] =  32, --深度腐蚀
 
-		        --Ultraxion
-		        [GetSpellInfo(105925)] =  55, --黯淡之光
-		        [GetSpellInfo(106108)] =  52, --Heroic Will
-		        [GetSpellInfo(105984)] =  53, --Timeloop
-		        [GetSpellInfo(105927)] =  54, --Faded Into Twilight
+			--Hagara the Stormbinder
+			[105316] =  41, --Ice Lance
+			[105465] =  42, --Lightning Storm
+			[105369] =  43, --Lightning Conduit
+			[105289] =  44, --Shattered Ice (dispellable)
+			[105285] =  45, --Target (next Ice Lance)
+			[104451] =  46, --Ice Tomb
+			[110317] =  49, --水壕
+			[109325] =  48, --霜冻				
 
-		        --Warmaster Blackhorn		        
-		        [GetSpellInfo(107558)] =  62, --溃变 
-		        [GetSpellInfo(108046)] =  63, --震荡波
-		        [GetSpellInfo(110214)] =  64, --吞噬遮幕
-		        [GetSpellInfo(107567)] =  65, --残忍打击
-		        [GetSpellInfo(108043)] =  66, --破甲
+			--Ultraxion
+			[105925] =  55, --黯淡之光
+			[106108] =  52, --Heroic Will
+			[105984] =  53, --Timeloop
+			[105927] =  54, --Faded Into Twilight
 
-		        --Spine of Deathwing
-		        [GetSpellInfo(105563)] =  71, --Grasping Tendrils
-		        [GetSpellInfo(105479)] =  72, --灼热血浆
-		        [GetSpellInfo(105490)] =  73, --灼热之握
-		        [GetSpellInfo(106200)] =  74, --血之腐蚀:大地
-		        [GetSpellInfo(106199)] =  75, --血之腐蚀:死亡
+			--Warmaster Blackhorn		        
+			[107558] =  62, --溃变 
+			[108046] =  63, --震荡波
+			[110214] =  64, --吞噬遮幕
+			[107567] =  65, --残忍打击
+			[108043] =  66, --破甲
 
-		        --Madness of Deathwing
-		        [GetSpellInfo(105445)] =  81, --炽热
-		        [GetSpellInfo(105841)] =  82, --突变撕咬
-		        [GetSpellInfo(106385)] =  83, --重碾
-		        [GetSpellInfo(106730)] =  84, --破伤风
-		        [GetSpellInfo(106444)] =  85, --刺穿
-		        [GetSpellInfo(106794)] =  86, --碎屑
-		        [GetSpellInfo(108649)] =  87, --腐蚀寄生虫
+			--Spine of Deathwing
+			[105563] =  71, --Grasping Tendrils
+			[105479] =  72, --灼热血浆
+			[105490] =  73, --灼热之握
+			[106200] =  74, --血之腐蚀:大地
+			[106199] =  75, --血之腐蚀:死亡
+
+			--Madness of Deathwing
+			[105445] =  81, --炽热
+			[105841] =  82, --突变撕咬
+			[106385] =  83, --重碾
+			[106730] =  84, --破伤风
+			[106444] =  85, --刺穿
+			[106794] =  86, --碎屑
+			[108649] =  87, --腐蚀寄生虫
 		},	
-		[875] = { --Gate of the Setting Sun 残阳关
-			[GetSpellInfo(107268)] = 7,
-			[GetSpellInfo(106933)] = 7,
-			[GetSpellInfo(115458)] = 7,
+		[303] = { --Gate of the Setting Sun 残阳关
+			[107268] = 7,
+			[106933] = 7,
+			[115458] = 7,
 			-- Raigonn 莱公
-			[GetSpellInfo(111644)] = 7, -- Screeching Swarm 111640 111643
-			[GetSpellInfo(111723)] = 7, --凝视
+			[111644] = 7, -- Screeching Swarm 111640 111643
+			[111723] = 7, --凝视
 		},
 
-		[885] = { --Mogu'shan Palace 魔古山神殿 
+		[321] = { --Mogu'shan Palace 魔古山神殿 
 			
 			-- Trial of the King 国王的试炼
-			[GetSpellInfo(119946)] = 7, -- Ravage
-			[GetSpellInfo(120167)] = 7, --焚烧
-			[GetSpellInfo(120195)] = 7, --陨石术
-			[GetSpellInfo(120160)] = 7, --陨石术
+			[119946] = 7, -- Ravage
+			[120167] = 7, --焚烧
+			[120195] = 7, --陨石术
+			[120160] = 7, --陨石术
 			-- Xin the Weaponmaster <King of the Clans> 武器大师席恩
-			[GetSpellInfo(119684)] = 7, --Ground Slam
+			[119684] = 7, --Ground Slam
 		},
       
-		[871] = { --Scarlet Halls 血色大厅
+		[311] = { --Scarlet Halls 血色大厅
 
 			-- Houndmaster Braun <PH Dressing>
-			[GetSpellInfo(114056)] = 7, -- Bloody Mess
+			[114056] = 7, -- Bloody Mess
         
 			-- Flameweaver Koegler
-			[GetSpellInfo(113653)] = 7, -- Greater Dragon's Breath
-			[GetSpellInfo(11366)] = 6,-- Pyroblast      
+			[113653] = 7, -- Greater Dragon's Breath
+			[11366] = 6,-- Pyroblast      
 		},
       
-		[874] = { --Scarlet Monastery 血色修道院 
+		[316] = { --Scarlet Monastery 血色修道院 
 
 			-- Thalnos the Soulrender
-			[GetSpellInfo(115144)] = 7, -- Mind Rot
-			[GetSpellInfo(115297)] = 6, -- Evict Soul
+			[115144] = 7, -- Mind Rot
+			[115297] = 6, -- Evict Soul
 		},
       
-		[763] = { --Scholomance 通灵学院 
+		[246] = { --Scholomance 通灵学院 
 
 			-- Instructor Chillheart
-			[GetSpellInfo(111631)] = 7, -- Wrack Soul
+			[111631] = 7, -- Wrack Soul
 			
 			-- Lilian Voss
-			[GetSpellInfo(111585)] = 7, -- Dark Blaze
-			[GetSpellInfo(115350)] = 7,--凝视
+			[111585] = 7, -- Dark Blaze
+			[115350] = 7,--凝视
 			
 			-- Darkmaster Gandling
-			[GetSpellInfo(108686)] = 7, -- Immolate
+			[108686] = 7, -- Immolate
 		},
             
-		[877] = { --Shado-Pan Monastery 影踪禅院 
-			[GetSpellInfo(107140)] = 7, --磁能障壁
+		[312] = { --Shado-Pan Monastery 影踪禅院 
+			[107140] = 7, --磁能障壁
 			-- Sha of Violence
-			[GetSpellInfo(106872)] = 7, -- Disorienting Smash
+			[106872] = 7, -- Disorienting Smash
 			
 			-- Taran Zhu <Lord of the Shado-Pan>
-			[GetSpellInfo(112932)] = 7, -- Ring of Malice
+			[112932] = 7, -- Ring of Malice
 		},
       
-		[887] = { --Siege of Niuzao Temple 围攻砮皂寺
+		[324] = { --Siege of Niuzao Temple 围攻砮皂寺
 
 			-- Wing Leader Ner'onok 
-			[GetSpellInfo(121447)] = 7, -- Quick-Dry Resin
+			[121447] = 7, -- Quick-Dry Resin
 		},
       
-		[867] = { --Temple of the Jade Serpent 青龙寺
+		[313] = { --Temple of the Jade Serpent 青龙寺
 			
-			[GetSpellInfo(114826)] = 7, --
+			[114826] = 7, --
 			-- Wise Mari <Waterspeaker>
-			[GetSpellInfo(106653)] = 7, -- Sha Residue
+			[106653] = 7, -- Sha Residue
          
 			-- Lorewalker Stonestep <The Keeper of Scrolls>
-			[GetSpellInfo(106653)] = 7, -- Agony
+			[106653] = 7, -- Agony
          
 			-- Liu Flameheart <Priestess of the Jade Serpent>
-			[GetSpellInfo(106823)] = 7, -- Serpent Strike
+			[106823] = 7, -- Serpent Strike
          
 			-- Sha of Doubt
-			[GetSpellInfo(106113)] = 7, --Touch of Nothingness
+			[106113] = 7, --Touch of Nothingness
 		},
       
-		[896] = { --Mogu'shan Vaults 魔古山宝库
+		[317] = { --Mogu'shan Vaults 魔古山宝库
          
 			--Trash
-			[GetSpellInfo(118562)] = 9, -- Petrified
-			[GetSpellInfo(118552)] = 9,  
-			[GetSpellInfo(116596)] = 10, -- Smoke Bomb
-			[GetSpellInfo(125091)] = 9,
-			[GetSpellInfo(125092)] = 9,
-			[GetSpellInfo(116970)] = 9,
+			[118562] = 9, -- Petrified
+			[118552] = 9,  
+			[116596] = 10, -- Smoke Bomb
+			[125091] = 9,
+			[125092] = 9,
+			[116970] = 9,
 
 			-- The Stone Guard
-			[GetSpellInfo(130395)] = 11, -- Jasper Chains: Stacks
-			[GetSpellInfo(130404)] = 12, -- Jasper Chains
-			[GetSpellInfo(130774)] = 13, -- Amethyst Pool
-			[GetSpellInfo(116038)] = 14, -- Jasper Petrification: stacks
-			[GetSpellInfo(115861)] = 15, -- Cobalt Petrification: stacks
-			[GetSpellInfo(116060)] = 16, -- Amethyst Petrification: stacks
-			[GetSpellInfo(116281)] = 17, -- Cobalt Mine Blast, Magic root
-			[GetSpellInfo(125206)] = 18, -- Rend Flesh: Tank only
-			[GetSpellInfo(116008)] = 19, -- Jade Petrification: stacks
+			[130395] = 11, -- Jasper Chains: Stacks
+			[130404] = 12, -- Jasper Chains
+			[130774] = 13, -- Amethyst Pool
+			[116038] = 14, -- Jasper Petrification: stacks
+			[115861] = 15, -- Cobalt Petrification: stacks
+			[116060] = 16, -- Amethyst Petrification: stacks
+			[116281] = 17, -- Cobalt Mine Blast, Magic root
+			[125206] = 18, -- Rend Flesh: Tank only
+			[116008] = 19, -- Jade Petrification: stacks
 
 			--Feng the Accursed
-			[GetSpellInfo(116040)] = 22, -- Epicenter, roomwide aoe.
-			[GetSpellInfo(116784)] = 24, -- Wildfire Spark, Debuff that explodes leaving fire on the ground after 5 sec.
-			[GetSpellInfo(116374)] = 29, -- Lightning Charge, Stun debuff.
-			[GetSpellInfo(116417)] = 27, -- Arcane Resonance, aoe-people-around-you-debuff.
-			[GetSpellInfo(116942)] = 23, -- Flaming Spear, fire damage dot.
-			[GetSpellInfo(131788)] = 21, -- Lightning Lash: Tank Only: Stacks
-			[GetSpellInfo(131790)] = 25, -- Arcane Shock: Stack : Tank Only
-			[GetSpellInfo(102464)] = 26, -- Arcane Shock: AOE
-			[GetSpellInfo(116364)] = 28, -- Arcane Velocity
-			[GetSpellInfo(131792)] = 30, -- Shadowburn: Tank only: Stacks: HEROIC ONLY
+			[116040] = 22, -- Epicenter, roomwide aoe.
+			[116784] = 24, -- Wildfire Spark, Debuff that explodes leaving fire on the ground after 5 sec.
+			[116374] = 29, -- Lightning Charge, Stun debuff.
+			[116417] = 27, -- Arcane Resonance, aoe-people-around-you-debuff.
+			[116942] = 23, -- Flaming Spear, fire damage dot.
+			[131788] = 21, -- Lightning Lash: Tank Only: Stacks
+			[131790] = 25, -- Arcane Shock: Stack : Tank Only
+			[102464] = 26, -- Arcane Shock: AOE
+			[116364] = 28, -- Arcane Velocity
+			[131792] = 30, -- Shadowburn: Tank only: Stacks: HEROIC ONLY
 
 			-- Gara'jal the Spiritbinder
-			[GetSpellInfo(122151)] = 44,   -- Voodoo Doll, shared damage with the tank.
-			[GetSpellInfo(117723)] = 43,   -- Frail Soul: HEROIC ONLY --虛弱靈魂
-			[GetSpellInfo(116161)] = 41,   -- Crossed Over, people in the spirit world.
-			[GetSpellInfo(122181)] = 42,	 -- 通往灵魂世界的通道
+			[122151] = 44,   -- Voodoo Doll, shared damage with the tank.
+			[117723] = 43,   -- Frail Soul: HEROIC ONLY --虛弱靈魂
+			[116161] = 41,   -- Crossed Over, people in the spirit world.
+			[122181] = 42,	 -- 通往灵魂世界的通道
 
 			-- The Spirit Kings
-			[GetSpellInfo(117708)] = 51, -- Meddening Shout, The mind control debuff.
-			[GetSpellInfo(118303)] = 52, -- Fixate, the once targeted by the shadows.
-			[GetSpellInfo(118048)] = 53, -- Pillaged, the healing/Armor/damage debuff.
-			[GetSpellInfo(118135)] = 54, -- Pinned Down, Najentus spine 2.0
-			[GetSpellInfo(118047)] = 55, -- Pillage: Target
-			[GetSpellInfo(118163)] = 56, -- Robbed Blind
+			[117708] = 51, -- Meddening Shout, The mind control debuff.
+			[118303] = 52, -- Fixate, the once targeted by the shadows.
+			[118048] = 53, -- Pillaged, the healing/Armor/damage debuff.
+			[118135] = 54, -- Pinned Down, Najentus spine 2.0
+			[118047] = 55, -- Pillage: Target
+			[118163] = 56, -- Robbed Blind
 
 			--Elegon
-			[GetSpellInfo(117878)] = 61, -- Overcharged, the stacking increased damage taken debuff.   
-			[GetSpellInfo(117945)] = 63, -- Arcing Energy
-			[GetSpellInfo(117949)] = 62, -- Closed Circuit, Magic Healing debuff.
+			[117878] = 61, -- Overcharged, the stacking increased damage taken debuff.   
+			[117945] = 63, -- Arcing Energy
+			[117949] = 62, -- Closed Circuit, Magic Healing debuff.
 
 			--Will of the Emperor
-			[GetSpellInfo(116969)] = 76, -- Stomp, Stun from the bosses.
-			[GetSpellInfo(116835)] = 77, -- Devestating Arc, Armor debuff from the boss.
-			[GetSpellInfo(116969)] = 75, -- Focused Energy.
-			[GetSpellInfo(116778)] = 72, -- Focused Defense, Fixate from the Emperors Courage.
-			[GetSpellInfo(117485)] = 73, -- Impending Thrust, Stacking slow from the Emperors Courage.
-			[GetSpellInfo(116525)] = 71, -- Focused Assault, Fixate from the Emperors Rage
-			[GetSpellInfo(116550)] = 74, -- Energizing Smash, Knockdown from the Emperors Strength
+			[116969] = 76, -- Stomp, Stun from the bosses.
+			[116835] = 77, -- Devestating Arc, Armor debuff from the boss.
+			[116969] = 75, -- Focused Energy.
+			[116778] = 72, -- Focused Defense, Fixate from the Emperors Courage.
+			[117485] = 73, -- Impending Thrust, Stacking slow from the Emperors Courage.
+			[116525] = 71, -- Focused Assault, Fixate from the Emperors Rage
+			[116550] = 74, -- Energizing Smash, Knockdown from the Emperors Strength
 		},
       
-		[897] = { --Heart of Fear 恐惧之心 
-			[GetSpellInfo(123417)] = 9,
-			[GetSpellInfo(123434)] = 9,
-			[GetSpellInfo(123436)] = 8, 
-			[GetSpellInfo(123497)] = 8,
-			[GetSpellInfo(123420)] = 8,
-			[GetSpellInfo(126901)] = 8,
-			[GetSpellInfo(125081)] = 8,
-			[GetSpellInfo(125758)] = 8,
-			[GetSpellInfo(125907)] = 8,
-			[GetSpellInfo(126912)] = 7,
+		[330] = { --Heart of Fear 恐惧之心 
+			[123417] = 9,
+			[123434] = 9,
+			[123436] = 8, 
+			[123497] = 8,
+			[123420] = 8,
+			[126901] = 8,
+			[125081] = 8,
+			[125758] = 8,
+			[125907] = 8,
+			[126912] = 7,
          
 			-- Imperial Vizier Zor'lok
-			[GetSpellInfo(122760)] = 11, -- Exhale, The person targeted for Exhale. 
-			[GetSpellInfo(123812)] = 12, -- Pheromones of Zeal, the gas in the middle of the room.
-			[GetSpellInfo(122706)] = 14, -- Noise Cancelling, The "safe zone" from the roomwide aoe.
-			[GetSpellInfo(122740)] = 13, -- Convert, The mindcontrol Debuff.
+			[122760] = 11, -- Exhale, The person targeted for Exhale. 
+			[123812] = 12, -- Pheromones of Zeal, the gas in the middle of the room.
+			[122706] = 14, -- Noise Cancelling, The "safe zone" from the roomwide aoe.
+			[122740] = 13, -- Convert, The mindcontrol Debuff.
 
 			-- Blade Lord Ta'yak
-			[GetSpellInfo(123180)] = 21, -- Wind Step, Bleeding Debuff from stealth.
-			[GetSpellInfo(123474)] = 23, -- Overwhelming Assault, stacking tank swap debuff. 
-			[GetSpellInfo(122949)] = 22, -- Unseen Strike
-			[GetSpellInfo(124783)] = 24, -- Storm Unleashed
-			[GetSpellInfo(123600)] = 25, -- Storm Unleashed?
+			[123180] = 21, -- Wind Step, Bleeding Debuff from stealth.
+			[123474] = 23, -- Overwhelming Assault, stacking tank swap debuff. 
+			[122949] = 22, -- Unseen Strike
+			[124783] = 24, -- Storm Unleashed
+			[123600] = 25, -- Storm Unleashed?
 
 			-- Garalon
-			[GetSpellInfo(122774)] = 31, -- Crush, stun from the crush ability.
-			[GetSpellInfo(123120)] = 34, --- Pheromone Trail
-			[GetSpellInfo(122835)] = 32, -- Pheromones, The buff indicating who is carrying the pheramone.
-			[GetSpellInfo(123081)] = 33, -- Punchency, The stacking debuff causing the raid damage.
+			[122774] = 31, -- Crush, stun from the crush ability.
+			[123120] = 34, --- Pheromone Trail
+			[122835] = 32, -- Pheromones, The buff indicating who is carrying the pheramone.
+			[123081] = 33, -- Punchency, The stacking debuff causing the raid damage.
 
 			--Wind Lord Mel'jarak
-			[GetSpellInfo(122055)] = 42, -- Residue, The debuff after breaking a prsion preventing further breaking.
-			[GetSpellInfo(121881)] = 41, -- Amber Prison, not sure what the differance is but both were used.
-			[GetSpellInfo(122064)] = 43, -- Corrosive Resin, the dot you clear by moving/jumping.
-			[GetSpellInfo(121885)] = 44, -- 监牢
+			[122055] = 42, -- Residue, The debuff after breaking a prsion preventing further breaking.
+			[121881] = 41, -- Amber Prison, not sure what the differance is but both were used.
+			[122064] = 43, -- Corrosive Resin, the dot you clear by moving/jumping.
+			[121885] = 44, -- 监牢
 
 			-- Amber-Shaper Un'sok 
-			[GetSpellInfo(122064)] = 54, -- Corrosive Resin
-			[GetSpellInfo(122784)] = 53, -- Reshape Life, Both were used.
-			[GetSpellInfo(122504)] = 55, -- Burning Amber.
-			[GetSpellInfo(121949)] = 52, -- Parasitic Growth, the dot that scales with healing taken.
-			[GetSpellInfo(122370)] = 51, -- 生命重塑
+			[122064] = 54, -- Corrosive Resin
+			[122784] = 53, -- Reshape Life, Both were used.
+			[122504] = 55, -- Burning Amber.
+			[121949] = 52, -- Parasitic Growth, the dot that scales with healing taken.
+			[122370] = 51, -- 生命重塑
 		
 			--Grand Empress Shek'zeer
-			[GetSpellInfo(125283)] = 60, 
-			[GetSpellInfo(124097)] = 61, --Sticky Resin.
-			[GetSpellInfo(125390)] = 62, --Fixate.
-			[GetSpellInfo(123707)] = 63, --Eyes of the Empress.
-			[GetSpellInfo(123788)] = 64, --Cry of Terror.
-			[GetSpellInfo(125824)] = 65, --Trapped!.
-			[GetSpellInfo(124777)] = 66, --Poison Bomb.
-			[GetSpellInfo(124821)] = 67, --Poison-Drenched Armor.
-			[GetSpellInfo(124827)] = 68, --Poison Fumes.
-			[GetSpellInfo(124849)] = 69, --Consuming Terror.
-			[GetSpellInfo(124863)] = 70, --Visions of Demise.
-			[GetSpellInfo(124862)] = 71, --Visions of Demise: Target.
-			[GetSpellInfo(123845)] = 72, --Heart of Fear: Chosen.
-			[GetSpellInfo(123846)] = 73, --Heart of Fear: Lure.
-			[GetSpellInfo(123184)] = 74,		
+			[125283] = 60, 
+			[124097] = 61, --Sticky Resin.
+			[125390] = 62, --Fixate.
+			[123707] = 63, --Eyes of the Empress.
+			[123788] = 64, --Cry of Terror.
+			[125824] = 65, --Trapped!.
+			[124777] = 66, --Poison Bomb.
+			[124821] = 67, --Poison-Drenched Armor.
+			[124827] = 68, --Poison Fumes.
+			[124849] = 69, --Consuming Terror.
+			[124863] = 70, --Visions of Demise.
+			[124862] = 71, --Visions of Demise: Target.
+			[123845] = 72, --Heart of Fear: Chosen.
+			[123846] = 73, --Heart of Fear: Lure.
+			[123184] = 74,		
 		},
       
-		[886] = { --Terrace of Endless Spring 永春台
+		[320] = { --Terrace of Endless Spring 永春台
 			
 			--Trash
-			[GetSpellInfo(125760)] = 10,
-			[GetSpellInfo(125758)] = 10,
+			[125760] = 10,
+			[125758] = 10,
 
 			--Protectors Of the Endless
-			[GetSpellInfo(117519)] = 11, -- Touch of Sha, Dot that lasts untill Kaolan is defeated.
-			[GetSpellInfo(111850)] = 12, -- Lightning Prison: Targeted
-			[GetSpellInfo(117986)] = 15, -- Defiled Ground: Stacks
-			[GetSpellInfo(118191)] = 14, -- Corrupted Essence
-			[GetSpellInfo(117436)] = 13, -- Lightning Prison, Magic stun.
+			[117519] = 11, -- Touch of Sha, Dot that lasts untill Kaolan is defeated.
+			[111850] = 12, -- Lightning Prison: Targeted
+			[117986] = 15, -- Defiled Ground: Stacks
+			[118191] = 14, -- Corrupted Essence
+			[117436] = 13, -- Lightning Prison, Magic stun.
 
 			--Tsulong
-			[GetSpellInfo(122768)] = 21, -- Dread Shadows, Stacking raid damage debuff (ragnaros superheated style) 
-			[GetSpellInfo(122789)] = 24, -- Sunbeam, standing in the sunbeam, used to clear dread shadows.
-			[GetSpellInfo(122858)] = 28, -- Bathed in Light, 500% increased healing done debuff.
-			[GetSpellInfo(122752)] = 23, -- Shadow Breath, increased shadow breath damage debuff.
-			[GetSpellInfo(123011)] = 26, -- Terrorize: 10%, Magical dot dealing % health.
-			[GetSpellInfo(123036)] = 27, -- Fright, 2 second fear.
-			[GetSpellInfo(122777)] = 22, -- Nightmares, 3 second fear.
-			[GetSpellInfo(123012)] = 25, -- Terrorize: 5% 
+			[122768] = 21, -- Dread Shadows, Stacking raid damage debuff (ragnaros superheated style) 
+			[122789] = 24, -- Sunbeam, standing in the sunbeam, used to clear dread shadows.
+			[122858] = 28, -- Bathed in Light, 500% increased healing done debuff.
+			[122752] = 23, -- Shadow Breath, increased shadow breath damage debuff.
+			[123011] = 26, -- Terrorize: 10%, Magical dot dealing % health.
+			[123036] = 27, -- Fright, 2 second fear.
+			[122777] = 22, -- Nightmares, 3 second fear.
+			[123012] = 25, -- Terrorize: 5% 
 			
 			--Lei Shi
-			[GetSpellInfo(123121)] = 31, -- Spray, Stacking frost damage taken debuff.
-			[GetSpellInfo(123705)] = 32, -- Scary Fog
+			[123121] = 31, -- Spray, Stacking frost damage taken debuff.
+			[123705] = 32, -- Scary Fog
 			
 			--Sha of Fear
-			[GetSpellInfo(129147)] = 42, -- Ominous Cackle, Debuff that sends players to the outer platforms.
-			[GetSpellInfo(119086)] = 49, -- Penetrating Bolt, Increased Shadow damage debuff.
-			[GetSpellInfo(119775)] = 50, -- Reaching Attack, Increased Shadow damage debuff.
-			[GetSpellInfo(120669)] = 44, -- Naked and Afraid.
-			[GetSpellInfo(119983)] = 43, -- Dread Spray, is also used.
-			[GetSpellInfo(119414)] = 41, -- Breath of Fear, Fear+Massiv damage.
-			[GetSpellInfo(75683)] = 45, -- Waterspout
-			[GetSpellInfo(120629)] = 46, -- Huddle in Terror
-			[GetSpellInfo(120394)] = 47, --Eternal Darkness
-			[GetSpellInfo(129189)] = 48, --Sha Globe
-			[GetSpellInfo(125786)] = 41, --Breath of Fear
+			[129147] = 42, -- Ominous Cackle, Debuff that sends players to the outer platforms.
+			[119086] = 49, -- Penetrating Bolt, Increased Shadow damage debuff.
+			[119775] = 50, -- Reaching Attack, Increased Shadow damage debuff.
+			[120669] = 44, -- Naked and Afraid.
+			[119983] = 43, -- Dread Spray, is also used.
+			[119414] = 41, -- Breath of Fear, Fear+Massiv damage.
+			[75683] = 45, -- Waterspout
+			[120629] = 46, -- Huddle in Terror
+			[120394] = 47, --Eternal Darkness
+			[129189] = 48, --Sha Globe
+			[125786] = 41, --Breath of Fear
 		},
 
-		[930] = { --5.2雷霆王座
+		[362] = { --5.2雷霆王座
 
-			[GetSpellInfo(138196)] = 5,
-			[GetSpellInfo(138687)] = 5,
-			[GetSpellInfo(139550)] = 5,
-			[GetSpellInfo(139317)] = 5,
-			[GetSpellInfo(140618)] = 5,
-			[GetSpellInfo(140686)] = 5,
-			[GetSpellInfo(140682)] = 5,
-			[GetSpellInfo(140629)] = 5,
-			[GetSpellInfo(122962)] = 5,
-			[GetSpellInfo(139310)] = 5,
-			[GetSpellInfo(140620)] = 5,
-			[GetSpellInfo(140616)] = 5,
-			[GetSpellInfo(140400)] = 5,
-			[GetSpellInfo(139470)] = 5,
-			[GetSpellInfo(139314)] = 5,
+			[138196] = 5,
+			[138687] = 5,
+			[139550] = 5,
+			[139317] = 5,
+			[140618] = 5,
+			[140686] = 5,
+			[140682] = 5,
+			[140629] = 5,
+			[122962] = 5,
+			[139310] = 5,
+			[140620] = 5,
+			[140616] = 5,
+			[140400] = 5,
+			[139470] = 5,
+			[139314] = 5,
 
 			--Jin'rokh the Breaker
-			[GetSpellInfo(138006)] = 5, --Electrified Waters
-			[GetSpellInfo(137399)] = 7, --Focused Lightning fixate
-			[GetSpellInfo(138732)] = 6, --Ionization
-			[GetSpellInfo(138349)] = 4, --Static Wound (tank only)
-			[GetSpellInfo(137371)] = 4, --Thundering Throw (tank only)
+			[138006] = 5, --Electrified Waters
+			[137399] = 7, --Focused Lightning fixate
+			[138732] = 6, --Ionization
+			[138349] = 4, --Static Wound (tank only)
+			[137371] = 4, --Thundering Throw (tank only)
 
 			--Horridon
-			[GetSpellInfo(136769)] = 6, --Charge
-			[GetSpellInfo(136767)] = 6, --Triple Puncture (tanks only)
-			[GetSpellInfo(136708)] = 3, --Stone Gaze
-			[GetSpellInfo(136723)] = 5, --Sand Trap
-			[GetSpellInfo(136587)] = 5, --Venom Bolt Volley (dispellable)
-			[GetSpellInfo(136710)] = 5, --Deadly Plague (disease)
-			[GetSpellInfo(136670)] = 4, --Mortal Strike
-			[GetSpellInfo(136573)] = 6, --Frozen Bolt (Debuff used by frozen orb)
-			[GetSpellInfo(136512)] = 5, --Hex of Confusion
-			[GetSpellInfo(136719)] = 6, --Blazing Sunlight
-			[GetSpellInfo(136654)] = 4, --Rending Charge
-			[GetSpellInfo(140946)] = 7, --Dire Fixation (Heroic Only)
+			[136769] = 6, --Charge
+			[136767] = 6, --Triple Puncture (tanks only)
+			[136708] = 3, --Stone Gaze
+			[136723] = 5, --Sand Trap
+			[136587] = 5, --Venom Bolt Volley (dispellable)
+			[136710] = 5, --Deadly Plague (disease)
+			[136670] = 4, --Mortal Strike
+			[136573] = 6, --Frozen Bolt (Debuff used by frozen orb)
+			[136512] = 5, --Hex of Confusion
+			[136719] = 6, --Blazing Sunlight
+			[136654] = 4, --Rending Charge
+			[140946] = 7, --Dire Fixation (Heroic Only)
 
 			--Council of Elders
-			[GetSpellInfo(136922)] = 6, --Frostbite
-			[GetSpellInfo(137084)] = 3, --Body Heat
-			[GetSpellInfo(137641)] = 6, --Soul Fragment (Heroic only)
-			[GetSpellInfo(136878)] = 5, --Ensnared
-			[GetSpellInfo(136857)] = 6, --Entrapped (Dispell)
-			[GetSpellInfo(137650)] = 5, --Shadowed Soul
-			[GetSpellInfo(137359)] = 6, --Shadowed Loa Spirit fixate target
-			[GetSpellInfo(137972)] = 6, --Twisted Fate (Heroic only)
-			[GetSpellInfo(136860)] = 5, --Quicksand
+			[136922] = 6, --Frostbite
+			[137084] = 3, --Body Heat
+			[137641] = 6, --Soul Fragment (Heroic only)
+			[136878] = 5, --Ensnared
+			[136857] = 6, --Entrapped (Dispell)
+			[137650] = 5, --Shadowed Soul
+			[137359] = 6, --Shadowed Loa Spirit fixate target
+			[137972] = 6, --Twisted Fate (Heroic only)
+			[136860] = 5, --Quicksand
 
 			--Tortos
-			[GetSpellInfo(134030)] = 6, --Kick Shell
-			[GetSpellInfo(134920)] = 6, --Quake Stomp
-			[GetSpellInfo(136751)] = 6, --Sonic Screech
-			[GetSpellInfo(136753)] = 4, --Slashing Talons (tank only)
-			[GetSpellInfo(137633)] = 5, --Crystal Shell (heroic only)
+			[134030] = 6, --Kick Shell
+			[134920] = 6, --Quake Stomp
+			[136751] = 6, --Sonic Screech
+			[136753] = 4, --Slashing Talons (tank only)
+			[137633] = 5, --Crystal Shell (heroic only)
 
 			--Megaera
-			[GetSpellInfo(139822)] = 6, --Cinder (Dispell)
-			[GetSpellInfo(134396)] = 6, --Consuming Flames (Dispell)
-			[GetSpellInfo(137731)] = 5, --Ignite Flesh
-			[GetSpellInfo(136892)] = 6, --Frozen Solid
-			[GetSpellInfo(139909)] = 5, --Icy Ground
-			[GetSpellInfo(137746)] = 6, --Consuming Magic
-			[GetSpellInfo(139843)] = 4, --Artic Freeze
-			[GetSpellInfo(139840)] = 4, --Rot Armor
-			[GetSpellInfo(140179)] = 6, --Suppression (stun)
+			[139822] = 6, --Cinder (Dispell)
+			[134396] = 6, --Consuming Flames (Dispell)
+			[137731] = 5, --Ignite Flesh
+			[136892] = 6, --Frozen Solid
+			[139909] = 5, --Icy Ground
+			[137746] = 6, --Consuming Magic
+			[139843] = 4, --Artic Freeze
+			[139840] = 4, --Rot Armor
+			[140179] = 6, --Suppression (stun)
 
 			--Ji-Kun
-			[GetSpellInfo(138309)] = 4, --Slimed
-			[GetSpellInfo(138319)] = 5, --Feed Pool
-			[GetSpellInfo(140571)] = 3, --Feed Pool
-			[GetSpellInfo(134372)] = 3, --Screech
+			[138309] = 4, --Slimed
+			[138319] = 5, --Feed Pool
+			[140571] = 3, --Feed Pool
+			[134372] = 3, --Screech
 
 			--Durumu the Forgotten
-			[GetSpellInfo(133768)] = 3, --Arterial Cut (tank only)
-			[GetSpellInfo(133767)] = 3, --Serious Wound (Tank only)
-			[GetSpellInfo(136932)] = 7, --Force of Will
-			[GetSpellInfo(134122)] = 6, --Blue Beam
-			[GetSpellInfo(134123)] = 6, --Red Beam
-			[GetSpellInfo(134124)] = 6, --Yellow Beam
-			[GetSpellInfo(133795)] = 4, --Life Drain
-			[GetSpellInfo(133597)] = 6, --Dark Parasite
-			[GetSpellInfo(133732)] = 5, --Infrared Light (the stacking red debuff)
-			[GetSpellInfo(133677)] = 5, --Blue Rays (the stacking blue debuff)
-			[GetSpellInfo(133738)] = 5, --Bright Light (the stacking yellow debuff)
-			[GetSpellInfo(133737)] = 6, --Bright Light (The one that says you are actually in a beam)
-			[GetSpellInfo(133675)] = 6, --Blue Rays (The one that says you are actually in a beam)
-			[GetSpellInfo(134626)] = 6, --Lingering Gaze
+			[133768] = 3, --Arterial Cut (tank only)
+			[133767] = 3, --Serious Wound (Tank only)
+			[136932] = 7, --Force of Will
+			[134122] = 6, --Blue Beam
+			[134123] = 6, --Red Beam
+			[134124] = 6, --Yellow Beam
+			[133795] = 4, --Life Drain
+			[133597] = 6, --Dark Parasite
+			[133732] = 5, --Infrared Light (the stacking red debuff)
+			[133677] = 5, --Blue Rays (the stacking blue debuff)
+			[133738] = 5, --Bright Light (the stacking yellow debuff)
+			[133737] = 6, --Bright Light (The one that says you are actually in a beam)
+			[133675] = 6, --Blue Rays (The one that says you are actually in a beam)
+			[134626] = 6, --Lingering Gaze
 
 			--Primordius
-			[GetSpellInfo(140546)] = 6, --Fully Mutated
-			[GetSpellInfo(136180)] = 3, --Keen Eyesight (Helpful)
-			[GetSpellInfo(136181)] = 4, --Impared Eyesight (Harmful)
-			[GetSpellInfo(136182)] = 3, --Improved Synapses (Helpful)
-			[GetSpellInfo(136183)] = 4, --Dulled Synapses (Harmful)
-			[GetSpellInfo(136184)] = 3, --Thick Bones (Helpful)
-			[GetSpellInfo(136185)] = 4, --Fragile Bones (Harmful)
-			[GetSpellInfo(136186)] = 3, --Clear Mind (Helpful)
-			[GetSpellInfo(136187)] = 4, --Clouded Mind (Harmful)
-			[GetSpellInfo(136050)] = 2, --Malformed Blood(Tank Only)
+			[140546] = 6, --Fully Mutated
+			[136180] = 3, --Keen Eyesight (Helpful)
+			[136181] = 4, --Impared Eyesight (Harmful)
+			[136182] = 3, --Improved Synapses (Helpful)
+			[136183] = 4, --Dulled Synapses (Harmful)
+			[136184] = 3, --Thick Bones (Helpful)
+			[136185] = 4, --Fragile Bones (Harmful)
+			[136186] = 3, --Clear Mind (Helpful)
+			[136187] = 4, --Clouded Mind (Harmful)
+			[136050] = 2, --Malformed Blood(Tank Only)
 
 			--Dark Animus
-			[GetSpellInfo(138569)] = 3, --Explosive Slam (tank only)
-			[GetSpellInfo(138659)] = 6, --Touch of the Animus
-			[GetSpellInfo(138609)] = 6, --Matter Swap
-			[GetSpellInfo(138691)] = 4, --Anima Font
-			[GetSpellInfo(136962)] = 5, --Anima Ring
-			[GetSpellInfo(138480)] = 6, --Crimson Wake Fixate
+			[138569] = 3, --Explosive Slam (tank only)
+			[138659] = 6, --Touch of the Animus
+			[138609] = 6, --Matter Swap
+			[138691] = 4, --Anima Font
+			[136962] = 5, --Anima Ring
+			[138480] = 6, --Crimson Wake Fixate
 
 			--Iron Qon
-			[GetSpellInfo(134647)] = 6, --Scorched
-			[GetSpellInfo(136193)] = 3, --Arcing Lightning
-			[GetSpellInfo(135147)] = 3, --Dead Zone
-			[GetSpellInfo(134691)] = 3, --Impale (tank only)
-			[GetSpellInfo(135145)] = 7, --Freeze
-			[GetSpellInfo(136520)] = 6, --Frozen Blood
-			[GetSpellInfo(137669)] = 7, --Storm Cloud
-			[GetSpellInfo(137668)] = 6, --Burning Cinders
-			[GetSpellInfo(137654)] = 6, --Rushing Winds 
-			[GetSpellInfo(136577)] = 5, --Wind Storm
-			[GetSpellInfo(136192)] = 5, --Lightning Storm
+			[134647] = 6, --Scorched
+			[136193] = 3, --Arcing Lightning
+			[135147] = 3, --Dead Zone
+			[134691] = 3, --Impale (tank only)
+			[135145] = 7, --Freeze
+			[136520] = 6, --Frozen Blood
+			[137669] = 7, --Storm Cloud
+			[137668] = 6, --Burning Cinders
+			[137654] = 6, --Rushing Winds 
+			[136577] = 5, --Wind Storm
+			[136192] = 5, --Lightning Storm
 
 			--Twin Consorts
-			[GetSpellInfo(137440)] = 6, --Icy Shadows (tank only)
-			[GetSpellInfo(137417)] = 6, --Flames of Passion
-			[GetSpellInfo(138306)] = 5, --Serpent's Vitality
-			[GetSpellInfo(137408)] = 3, --Fan of Flames (tank only)
-			[GetSpellInfo(137360)] = 6, --Corrupted Healing (tanks and healers only?)
-			[GetSpellInfo(137375)] = 4, --Beast of Nightmares
-			[GetSpellInfo(136722)] = 6, --Slumber Spores
+			[137440] = 6, --Icy Shadows (tank only)
+			[137417] = 6, --Flames of Passion
+			[138306] = 5, --Serpent's Vitality
+			[137408] = 3, --Fan of Flames (tank only)
+			[137360] = 6, --Corrupted Healing (tanks and healers only?)
+			[137375] = 4, --Beast of Nightmares
+			[136722] = 6, --Slumber Spores
 
 			--Lei Shen
-			[GetSpellInfo(135695)] = 6, --Static Shock
-			[GetSpellInfo(136295)] = 6, --Overcharged
-			[GetSpellInfo(135000)] = 4, --Decapitate (Tank only)
-			[GetSpellInfo(394514)] = 5, --Fusion Slash
-			[GetSpellInfo(136543)] = 6, --Ball Lightning
-			[GetSpellInfo(134821)] = 6, --Discharged Energy
-			[GetSpellInfo(136326)] = 6, --Overcharge
-			[GetSpellInfo(137176)] = 6, --Overloaded Circuits
-			[GetSpellInfo(136853)] = 6, --Lightning Bolt
-			[GetSpellInfo(135153)] = 6, --Crashing Thunder
-			[GetSpellInfo(136914)] = 4, --Electrical Shock
-			[GetSpellInfo(135001)] = 4, --Maim
+			[135695] = 6, --Static Shock
+			[136295] = 6, --Overcharged
+			[135000] = 4, --Decapitate (Tank only)
+			[394514] = 5, --Fusion Slash
+			[136543] = 6, --Ball Lightning
+			[134821] = 6, --Discharged Energy
+			[136326] = 6, --Overcharge
+			[137176] = 6, --Overloaded Circuits
+			[136853] = 6, --Lightning Bolt
+			[135153] = 6, --Crashing Thunder
+			[136914] = 4, --Electrical Shock
+			[135001] = 4, --Maim
 
 			--Ra-Den (Heroic only)
-			[GetSpellInfo(138308)] = 4,
-			[GetSpellInfo(138372)] = 5,
+			[138308] = 4,
+			[138372] = 5,
 
 		},
-		[953] = { --Siege of Orgrimmar
+		[369] = { --围攻奥格瑞玛
 
 			 --Trash
-			 [GetSpellInfo(149207)] = 1, --腐蚀之触 
-			 [GetSpellInfo(145553)] = 1, --贿赂 
-			 [GetSpellInfo(147554)] = 1, --亚煞极之血 
+			 [149207] = 1, --腐蚀之触 
+			 [145553] = 1, --贿赂 
+			 [147554] = 1, --亚煞极之血 
 
 			 --伊墨苏斯 
-			 [GetSpellInfo(143297)] = 5, --煞能喷溅 
-			 [GetSpellInfo(143459)] = 4, --煞能残渣 
-			 [GetSpellInfo(143524)] = 4, --净化残渣 
-			 [GetSpellInfo(143286)] = 4, --渗透煞能 
-			 [GetSpellInfo(143413)] = 3, --漩涡 
-			 [GetSpellInfo(143411)] = 3, --增速 
-			 [GetSpellInfo(143436)] = 2, --腐蚀冲击 (坦克) 
-			 [GetSpellInfo(143579)] = 3, --煞能腐蚀 (仅英雄模式) 
+			 [143297] = 5, --煞能喷溅 
+			 [143459] = 4, --煞能残渣 
+			 [143524] = 4, --净化残渣 
+			 [143286] = 4, --渗透煞能 
+			 [143413] = 3, --漩涡 
+			 [143411] = 3, --增速 
+			 [143436] = 2, --腐蚀冲击 (坦克) 
+			 [143579] = 3, --煞能腐蚀 (仅英雄模式) 
 
 			 --堕落的守护者 
-			 [GetSpellInfo(143239)] = 4, --致命剧毒 
-			 [GetSpellInfo(143198)] = 6, --锁喉 
-			 [GetSpellInfo(143301)] = 2, --凿击 
-			 [GetSpellInfo(143010)] = 3, --蚀骨回旋踢 
-			 [GetSpellInfo(143434)] = 6, --暗言术：蛊 (驱散) 
-			 [GetSpellInfo(143840)] = 6, --苦痛印记 
-			 [GetSpellInfo(143959)] = 4, --亵渎大地 
-			 [GetSpellInfo(143423)] = 6, --煞能灼烧 
-			 [GetSpellInfo(143292)] = 5, --锁定 
-			 [GetSpellInfo(147383)] = 4, --衰竭 (Heroic Only) 
+			 [143239] = 4, --致命剧毒 
+			 [143198] = 6, --锁喉 
+			 [143301] = 2, --凿击 
+			 [143010] = 3, --蚀骨回旋踢 
+			 [143434] = 6, --暗言术：蛊 (驱散) 
+			 [143840] = 6, --苦痛印记 
+			 [143959] = 4, --亵渎大地 
+			 [143423] = 6, --煞能灼烧 
+			 [143292] = 5, --锁定 
+			 [147383] = 4, --衰竭 (Heroic Only) 
 
 			 --诺鲁什 
-			 [GetSpellInfo(146124)] = 2, --自惑 (坦克) 
-			 [GetSpellInfo(146324)] = 4, --妒忌 
-			 [GetSpellInfo(144850)] = 5, --信赖的试炼 
-			 [GetSpellInfo(145861)] = 6, --自恋 (驱散) 
-			 [GetSpellInfo(144851)] = 2, --自信的试炼 (坦克) 
-			 [GetSpellInfo(146703)] = 3, --无底深渊 
-			 [GetSpellInfo(144514)] = 6, --纠缠腐蚀 
-			 [GetSpellInfo(144849)] = 4, --冷静的试炼 
+			 [146124] = 2, --自惑 (坦克) 
+			 [146324] = 4, --妒忌 
+			 [144850] = 5, --信赖的试炼 
+			 [145861] = 6, --自恋 (驱散) 
+			 [144851] = 2, --自信的试炼 (坦克) 
+			 [146703] = 3, --无底深渊 
+			 [144514] = 6, --纠缠腐蚀 
+			 [144849] = 4, --冷静的试炼 
 
 			 --傲之煞 
-			 [GetSpellInfo(144358)] = 2, --受损自尊 (坦克) 
-			 [GetSpellInfo(144843)] = 3, --压制 
-			 [GetSpellInfo(146594)] = 4, --泰坦之赐 
-			 [GetSpellInfo(144351)] = 6, --傲慢标记 
-			 [GetSpellInfo(144364)] = 4, --泰坦之力 
-			 [GetSpellInfo(146822)] = 6, --投影 
-			 [GetSpellInfo(146817)] = 5, --傲气光环 
-			 [GetSpellInfo(144774)] = 2, --伸展打击 (坦克) 
-			 [GetSpellInfo(144636)] = 5, --腐化囚笼 
-			 [GetSpellInfo(144574)] = 6, --腐化囚笼，随机 
-			 [GetSpellInfo(145215)] = 4, --放逐 (仅英雄模式) 
-			 [GetSpellInfo(147207)] = 4, --动摇的决心 (仅英雄模式) 
+			 [144358] = 2, --受损自尊 (坦克) 
+			 [144843] = 3, --压制 
+			 [146594] = 4, --泰坦之赐 
+			 [144351] = 6, --傲慢标记 
+			 [144364] = 4, --泰坦之力 
+			 [146822] = 6, --投影 
+			 [146817] = 5, --傲气光环 
+			 [144774] = 2, --伸展打击 (坦克) 
+			 [144636] = 5, --腐化囚笼 
+			 [144574] = 6, --腐化囚笼，随机 
+			 [145215] = 4, --放逐 (仅英雄模式) 
+			 [147207] = 4, --动摇的决心 (仅英雄模式) 
 
 			 --迦拉卡斯 
-			 [GetSpellInfo(146765)] = 5, --烈焰之箭 
-			 [GetSpellInfo(147705)] = 5, --毒性云雾 
-			 [GetSpellInfo(147029)] = 2, -- 
-			 [GetSpellInfo(146902)] = 2, --剧毒利刃 
+			 [146765] = 5, --烈焰之箭 
+			 [147705] = 5, --毒性云雾 
+			 [147029] = 2, -- 
+			 [146902] = 2, --剧毒利刃 
 
 			 --钢铁战蝎 
-			 [GetSpellInfo(144467)] = 2, --燃烧护甲 
-			 [GetSpellInfo(144459)] = 5, --激光灼烧 
-			 [GetSpellInfo(144498)] = 5, --切割激光 
-			 [GetSpellInfo(144918)] = 5, --切割激光 
-			 [GetSpellInfo(146325)] = 6, --切割激光瞄准(重点监控) 
+			 [144467] = 2, --燃烧护甲 
+			 [144459] = 5, --激光灼烧 
+			 [144498] = 5, --切割激光 
+			 [144918] = 5, --切割激光 
+			 [146325] = 6, --切割激光瞄准(重点监控) 
 
 			 --库卡隆黑暗萨满 
-			 [GetSpellInfo(144089)] = 6, --T剧毒之雾 
-			 [GetSpellInfo(144215)] = 2, --冰霜风暴打击(坦克) 
-			 [GetSpellInfo(143990)] = 2, --污水喷涌(坦克) 
-			 [GetSpellInfo(144304)] = 2, --撕裂 
-			 [GetSpellInfo(144330)] = 6, --钢铁囚笼(仅英雄模式) 
+			 [144089] = 6, --T剧毒之雾 
+			 [144215] = 2, --冰霜风暴打击(坦克) 
+			 [143990] = 2, --污水喷涌(坦克) 
+			 [144304] = 2, --撕裂 
+			 [144330] = 6, --钢铁囚笼(仅英雄模式) 
 
 			 --纳兹戈林将军 
-			 [GetSpellInfo(143638)] = 6, --碎骨重锤 
-			 [GetSpellInfo(143480)] = 5, --刺客印记 
-			 [GetSpellInfo(143431)] = 6, --魔法打击(驱散) 
-			 [GetSpellInfo(143494)] = 2, --碎甲重击(坦克) 
-			 [GetSpellInfo(143882)] = 5, --猎人印记 
+			 [143638] = 6, --碎骨重锤 
+			 [143480] = 5, --刺客印记 
+			 [143431] = 6, --魔法打击(驱散) 
+			 [143494] = 2, --碎甲重击(坦克) 
+			 [143882] = 5, --猎人印记 
 
 			 --马尔考罗克 
-			 [GetSpellInfo(142863)] = 5, --虚弱的上古屏障 
-			 [GetSpellInfo(142864)] = 5, --上古屏障 
-			 [GetSpellInfo(142865)] = 5, --强大的上古屏障 
-			 [GetSpellInfo(142990)] = 2, --致命打击(坦克) 
-			 [GetSpellInfo(142913)] = 6, --散逸能量 (驱散) 
-			 [GetSpellInfo(143919)] = 5, --受难 (仅英雄模式) 
+			 [142863] = 5, --虚弱的上古屏障 
+			 [142864] = 5, --上古屏障 
+			 [142865] = 5, --强大的上古屏障 
+			 [142990] = 2, --致命打击(坦克) 
+			 [142913] = 6, --散逸能量 (驱散) 
+			 [143919] = 5, --受难 (仅英雄模式) 
 
 			 --潘达利亚战利品 
-			 [GetSpellInfo(144853)] = 3, --血肉撕咬 
-			 [GetSpellInfo(145987)] = 5, --设置炸弹 
-			 [GetSpellInfo(145218)] = 4, --硬化血肉 
-			 [GetSpellInfo(145230)] = 1, --禁忌魔法 
-			 [GetSpellInfo(146217)] = 4, --投掷酒桶 
-			 [GetSpellInfo(146235)] = 4, --火焰之息 
-			 [GetSpellInfo(145523)] = 4, --活化打击 
-			 [GetSpellInfo(142983)] = 6, --折磨 (the new Wrack) 
-			 [GetSpellInfo(145715)] = 3, --疾风炸弹 
-			 [GetSpellInfo(145747)] = 5, --浓缩信息素 
-			 [GetSpellInfo(146289)] = 4, --严重瘫痪 
+			 [144853] = 3, --血肉撕咬 
+			 [145987] = 5, --设置炸弹 
+			 [145218] = 4, --硬化血肉 
+			 [145230] = 1, --禁忌魔法 
+			 [146217] = 4, --投掷酒桶 
+			 [146235] = 4, --火焰之息 
+			 [145523] = 4, --活化打击 
+			 [142983] = 6, --折磨 (the new Wrack) 
+			 [145715] = 3, --疾风炸弹 
+			 [145747] = 5, --浓缩信息素 
+			 [146289] = 4, --严重瘫痪 
 
 			 --嗜血的索克 
-			 [GetSpellInfo(143766)] = 2, --恐慌(坦克) 
-			 [GetSpellInfo(143773)] = 2, --冰冻吐息(坦克) 
-			 [GetSpellInfo(143452)] = 1, --鲜血淋漓 
-			 [GetSpellInfo(146589)] = 5, --万能钥匙(坦克) 
-			 [GetSpellInfo(143445)] = 6, --锁定 
-			 [GetSpellInfo(143791)] = 5, --腐蚀之血 
-			 [GetSpellInfo(143777)] = 3, --冻结(坦克) 
-			 [GetSpellInfo(143780)] = 4, --酸性吐息 
-			 [GetSpellInfo(143800)] = 5, --冰冻之血 
-			 [GetSpellInfo(143428)] = 4, --龙尾扫击 
+			 [143766] = 2, --恐慌(坦克) 
+			 [143773] = 2, --冰冻吐息(坦克) 
+			 [143452] = 1, --鲜血淋漓 
+			 [146589] = 5, --万能钥匙(坦克) 
+			 [143445] = 6, --锁定 
+			 [143791] = 5, --腐蚀之血 
+			 [143777] = 3, --冻结(坦克) 
+			 [143780] = 4, --酸性吐息 
+			 [143800] = 5, --冰冻之血 
+			 [143428] = 4, --龙尾扫击 
 
 			 --攻城匠师黑索 
-			 [GetSpellInfo(144236)] = 4, --图像识别 
-			 [GetSpellInfo(143385)] = 2, --电荷冲击(坦克) 
-			 [GetSpellInfo(143856)] = 6, --过热 
+			 [144236] = 4, --图像识别 
+			 [143385] = 2, --电荷冲击(坦克) 
+			 [143856] = 6, --过热 
 
 			 --卡拉克西英杰 
-			 [GetSpellInfo(143701)] = 5, --晕头转向 (stun) 
-			 [GetSpellInfo(143702)] = 5, --晕头转向 
-			 [GetSpellInfo(143572)] = 6, --紫色催化热罐燃料 
-			 [GetSpellInfo(142808)] = 6, --炎界 
-			 [GetSpellInfo(142931)] = 2, --血脉暴露 
-			 [GetSpellInfo(143735)] = 6, --腐蚀琥珀 
-			 [GetSpellInfo(146452)] = 5, --共鸣琥珀 
-			 [GetSpellInfo(142929)] = 2, --脆弱打击 
-			 [GetSpellInfo(142797)] = 5, --剧毒蒸汽 
-			 [GetSpellInfo(143939)] = 5, --凿击 
-			 [GetSpellInfo(143275)] = 2, --挥砍 
-			 [GetSpellInfo(143768)] = 2, --音波发射 
-			 [GetSpellInfo(143279)] = 2, --基因变异 
-			 [GetSpellInfo(143339)] = 6, --注射 
-			 [GetSpellInfo(142803)] = 6, --橙色催化爆炸之环 
-			 [GetSpellInfo(142649)] = 4, --吞噬 
-			 [GetSpellInfo(146556)] = 6, --穿刺 
-			 [GetSpellInfo(142671)] = 6, --催眠术 
-			 [GetSpellInfo(143979)] = 2, --恶意突袭 
-			 [GetSpellInfo(142547)] = 6, --毒素：橙色 
-			 [GetSpellInfo(142549)] = 6, --毒素：绿色 
-			 [GetSpellInfo(142550)] = 6, --毒素：白色 
-			 [GetSpellInfo(142948)] = 4, --瞄准 
-			 [GetSpellInfo(148589)] = 4, --变异缺陷 
-			 [GetSpellInfo(143570)] = 6, --热罐燃料准备(3S) 
-			 [GetSpellInfo(142945)] = 5, --绿色催化诡异之雾 
-			 [GetSpellInfo(143358)] = 4, --饥饿 
-			 [GetSpellInfo(142315)] = 5, --酸性血液 
+			 [143701] = 5, --晕头转向 (stun) 
+			 [143702] = 5, --晕头转向 
+			 [143572] = 6, --紫色催化热罐燃料 
+			 [142808] = 6, --炎界 
+			 [142931] = 2, --血脉暴露 
+			 [143735] = 6, --腐蚀琥珀 
+			 [146452] = 5, --共鸣琥珀 
+			 [142929] = 2, --脆弱打击 
+			 [142797] = 5, --剧毒蒸汽 
+			 [143939] = 5, --凿击 
+			 [143275] = 2, --挥砍 
+			 [143768] = 2, --音波发射 
+			 [143279] = 2, --基因变异 
+			 [143339] = 6, --注射 
+			 [142803] = 6, --橙色催化爆炸之环 
+			 [142649] = 4, --吞噬 
+			 [146556] = 6, --穿刺 
+			 [142671] = 6, --催眠术 
+			 [143979] = 2, --恶意突袭 
+			 [142547] = 6, --毒素：橙色 
+			 [142549] = 6, --毒素：绿色 
+			 [142550] = 6, --毒素：白色 
+			 [142948] = 4, --瞄准 
+			 [148589] = 4, --变异缺陷 
+			 [143570] = 6, --热罐燃料准备(3S) 
+			 [142945] = 5, --绿色催化诡异之雾 
+			 [143358] = 4, --饥饿 
+			 [142315] = 5, --酸性血液 
 
 			 --加尔鲁什·地狱咆哮 
-			 [GetSpellInfo(144582)] = 4, --断筋 
-			 [GetSpellInfo(145183)] = 2, --绝望之握(坦克) 
-			 [GetSpellInfo(144762)] = 4, --亵渎 
-			 [GetSpellInfo(145071)] = 5, --亚煞极之触 
-			 [GetSpellInfo(148718)] = 4, --火坑 
-			 [GetSpellInfo(148983)] = 4, --勇气永春台 
-			 [GetSpellInfo(147235)] = 6, --恶毒冲击 
-			 [GetSpellInfo(148994)] = 4, --信念青龙寺 
-			 [GetSpellInfo(149004)] = 4, --希望朱鹤寺 
-			 [GetSpellInfo(147324)] = 5, --毁灭之惧 
-			 [GetSpellInfo(145171)] = 5, --强化亚煞极之触(H) 
-			 [GetSpellInfo(145175)] = 5, --强化亚煞极之触(N) 
-			 [GetSpellInfo(145195)] = 6, --强化绝望之握 
-			 [GetSpellInfo(147665)] = 5, --P4钢铁之星锁定 
-			 [GetSpellInfo(144817)] = 4, --H强化亵渎 
-			 [GetSpellInfo(145065)] = 5, --H亚煞极之触 
+			 [144582] = 4, --断筋 
+			 [145183] = 2, --绝望之握(坦克) 
+			 [144762] = 4, --亵渎 
+			 [145071] = 5, --亚煞极之触 
+			 [148718] = 4, --火坑 
+			 [148983] = 4, --勇气永春台 
+			 [147235] = 6, --恶毒冲击 
+			 [148994] = 4, --信念青龙寺 
+			 [149004] = 4, --希望朱鹤寺 
+			 [147324] = 5, --毁灭之惧 
+			 [145171] = 5, --强化亚煞极之触(H) 
+			 [145175] = 5, --强化亚煞极之触(N) 
+			 [145195] = 6, --强化绝望之握 
+			 [147665] = 5, --P4钢铁之星锁定 
+			 [144817] = 4, --H强化亵渎 
+			 [145065] = 5, --H亚煞极之触 
 						
 		},
-		[995] = {--"黑石塔上层" Upper Blackrock Spire 
-			 [GetSpellInfo(161288)] = 4,
-			 [GetSpellInfo(155031)] = 4,
-			 [GetSpellInfo(153897)] = 4,
-			 [GetSpellInfo(153981)] = 4,
-			 [GetSpellInfo(167259)] = 5,
-			 [GetSpellInfo(154827)] = 5,
-			 [GetSpellInfo(155504)] = 4,
-			 [GetSpellInfo(155037)] = 4,
-			 [GetSpellInfo(155057)] = 4,
-			 [GetSpellInfo(155065)] = 4,
-			 [GetSpellInfo(163057)] = 4,
-			 [GetSpellInfo(165944)] = 4,
+		[559] = {--"黑石塔上层" Upper Blackrock Spire 
+			 [161288] = 4,
+			 [155031] = 4,
+			 [153897] = 4,
+			 [153981] = 4,
+			 [167259] = 5,
+			 [154827] = 5,
+			 [155504] = 4,
+			 [155037] = 4,
+			 [155057] = 4,
+			 [155065] = 4,
+			 [163057] = 4,
+			 [165944] = 4,
 		},
-		[969] = {--"影月墓地" Shadowmoon Burial Grounds 
-			 [GetSpellInfo(152979)] = 4,
-			 [GetSpellInfo(153524)] = 4,
-			 [GetSpellInfo(158061)] = 4,
-			 [GetSpellInfo(153692)] = 4,
-			 [GetSpellInfo(154442)] = 4,
+		[537] = {--"影月墓地" Shadowmoon Burial Grounds 
+			 [152979] = 4,
+			 [153524] = 4,
+			 [158061] = 4,
+			 [153692] = 4,
+			 [154442] = 4,
 		},
-		[1008] = {--"永茂林地" The Everbloom 
-			 [GetSpellInfo(164294)] = 4,
-			 [GetSpellInfo(168187)] = 4,
-			 [GetSpellInfo(169376)] = 5,
-			 [GetSpellInfo(169179)] = 4,
+		[556] = {--"永茂林地" The Everbloom 
+			 [164294] = 4,
+			 [168187] = 4,
+			 [169376] = 5,
+			 [169179] = 4,
 		},
-		[993] = {--"恐轨车站" Grimrail Depot 
-			 [GetSpellInfo(161089)] = 4,
-			 [GetSpellInfo(160681)] = 4,
-			 [GetSpellInfo(162058)] = 4,
-			 [GetSpellInfo(162066)] = 4,
-			 [GetSpellInfo(176147)] = 4,
-			 [GetSpellInfo(176033)] = 4,			 
+		[536] = {--"恐轨车站" Grimrail Depot 
+			 [161089] = 4,
+			 [160681] = 4,
+			 [162058] = 4,
+			 [162066] = 4,
+			 [176147] = 4,
+			 [176033] = 4,			 
 		},
-		[989] = {--"通天峰" Skyreach 
-			 [GetSpellInfo(154149)] = 4,
-			 [GetSpellInfo(153794)] = 4,
-			 [GetSpellInfo(153795)] = 4,
-			 [GetSpellInfo(154043)] = 4,
-			 [GetSpellInfo(153757)] = 4,
-			 [GetSpellInfo(152982)] = 4,
+		[476] = {--"通天峰" Skyreach 
+			 [154149] = 4,
+			 [153794] = 4,
+			 [153795] = 4,
+			 [154043] = 4,
+			 [153757] = 4,
+			 [152982] = 4,
 		},
-		[984] = {--"奥金顿" Auchindoun 
-			 [GetSpellInfo(153006)] = 4,
-			 [GetSpellInfo(153477)] = 4,
-			 [GetSpellInfo(154018)] = 4,
-			 [GetSpellInfo(153396)] = 5,
-			 [GetSpellInfo(156921)] = 5,
-			 [GetSpellInfo(156842)] = 4,
-			 [GetSpellInfo(156964)] = 4,
+		[547] = {--"奥金顿" Auchindoun 
+			 [153006] = 4,
+			 [153477] = 4,
+			 [154018] = 4,
+			 [153396] = 5,
+			 [156921] = 5,
+			 [156842] = 4,
+			 [156964] = 4,
 		},
-		[987] = {--"钢铁码头" Iron Docks 
-			 [GetSpellInfo(163390)] = 4,
-			 [GetSpellInfo(162418)] = 5,
-			 [GetSpellInfo(173307)] = 5,
-			 [GetSpellInfo(172771)] = 4,
-			 [GetSpellInfo(164837)] = 5,
-			 [GetSpellInfo(164504)] = 5,
-			 [GetSpellInfo(173105)] = 4,
-			 [GetSpellInfo(173113)] = 5,
-			 [GetSpellInfo(173149)] = 5,
-			 [GetSpellInfo(163740)] = 4,
-			 [GetSpellInfo(163276)] = 5,
-			 [GetSpellInfo(173324)] = 5,
+		[558] = {--"钢铁码头" Iron Docks 
+			 [163390] = 4,
+			 [162418] = 5,
+			 [173307] = 5,
+			 [172771] = 4,
+			 [164837] = 5,
+			 [164504] = 5,
+			 [173105] = 4,
+			 [173113] = 5,
+			 [173149] = 5,
+			 [163740] = 4,
+			 [163276] = 5,
+			 [173324] = 5,
 		},
-		[964] = {--"血槌炉渣矿井" Bloodmaul Slag Mines 
-			 [GetSpellInfo(149997)] = 4,
-			 [GetSpellInfo(149975)] = 5,
-			 [GetSpellInfo(150032)] = 5,
-			 [GetSpellInfo(149941)] = 4,
-			 [GetSpellInfo(150023)] = 4,
-			 [GetSpellInfo(150745)] = 4,
-			 [GetSpellInfo(152089)] = 4,
-			 [GetSpellInfo(151415)] = 4,
-			 [GetSpellInfo(151638)] = 4,
-			 [GetSpellInfo(152235)] = 4,
-			 [GetSpellInfo(151685)] = 4,
-			 [GetSpellInfo(151446)] = 5,
-			 [GetSpellInfo(151697)] = 4,
-			 [GetSpellInfo(150807)] = 4,
-			 [GetSpellInfo(151720)] = 4,
-			 [GetSpellInfo(153227)] = 4,
-			 [GetSpellInfo(164616)] = 4,
-			 [GetSpellInfo(163802)] = 5,
-			 [GetSpellInfo(153679)] = 4,
+		[385] = {--"血槌炉渣矿井" Bloodmaul Slag Mines 
+			 [149997] = 4,
+			 [149975] = 5,
+			 [150032] = 5,
+			 [149941] = 4,
+			 [150023] = 4,
+			 [150745] = 4,
+			 [152089] = 4,
+			 [151415] = 4,
+			 [151638] = 4,
+			 [152235] = 4,
+			 [151685] = 4,
+			 [151446] = 5,
+			 [151697] = 4,
+			 [150807] = 4,
+			 [151720] = 4,
+			 [153227] = 4,
+			 [164616] = 4,
+			 [163802] = 5,
+			 [153679] = 4,
 		},
-		[988] = {--"黑石铸造厂"
-			-- Gruul
-			 [GetSpellInfo(155326)] = 5,
-			-- Oregorger
-			 [GetSpellInfo(156324)] = 4,
-			-- Beastlord Darmac
-			 [GetSpellInfo(155365)] = 5,
-			 [GetSpellInfo(155399)] = 4,
-			 [GetSpellInfo(154989)] = 4,
-			 [GetSpellInfo(155499)] = 4,
-			-- Flamebender Ka'graz
-			 [GetSpellInfo(155277)] = 5,
-			-- Hans'gar and Franzok
-			 [GetSpellInfo(157139)] = 4,
-			-- Operator Thogar
-			 [GetSpellInfo(155921)] = 4,
-			-- The Blast Furnace
-			 [GetSpellInfo(155240)] = 4,
-			 [GetSpellInfo(155242)] = 4,
-			-- Kromog
-			 [GetSpellInfo(157060)] = 4,
-			-- The Iron Maidens
-			 [GetSpellInfo(158315)] = 4,
-			-- Blackhand
-			 [GetSpellInfo(156096)] = 4,
-		},
-		[994] = {--"悬槌堡"
+		[477] = {--"悬槌堡"
 			-- Trash
-			 [GetSpellInfo(175601)] = 5, -- Trash TAINTED CLAWS
-			 [GetSpellInfo(175599)] = 4, -- Trash DEVOUR
-			 [GetSpellInfo(172069)] = 5, -- Trash RADIATING POISON
-			 [GetSpellInfo(172066)] = 4, -- Trash RADIATING POISON
-		 	 [GetSpellInfo(166779)] = 5, -- Trash STAGGERING BLOW
-			 [GetSpellInfo(56037)] = 4, -- Trash RUNE OF DESTRUCTION
-			 [GetSpellInfo(175654)] = 5, -- Trash RUNE OF DISINTEGRATION
-			 [GetSpellInfo(166185)] = 5, -- Trash RENDING SLASH
-			 [GetSpellInfo(166175)] = 5, -- Trash EARTHDEVASTATING SLAM
-			 [GetSpellInfo(174404)] = 5, -- Trash FROZEN CORE
-			 [GetSpellInfo(173763)] = 5, -- Trash WILD FLAMES
-			 [GetSpellInfo(174500)] = 5, -- Trash RENDING THROW
-			 [GetSpellInfo(174939)] = 4, -- Trash Time Stop
-			 [GetSpellInfo(172115)] = 4, -- Trash Earthen Thrust
-			 [GetSpellInfo(166200)] = 4, -- Trash ARCANEVOLATILITY
-			 [GetSpellInfo(174473)] = 5, -- Trash Corrupted Blood
+			 [175601] = 5, -- Trash TAINTED CLAWS
+			 [175599] = 4, -- Trash DEVOUR
+			 [172069] = 5, -- Trash RADIATING POISON
+			 [172066] = 4, -- Trash RADIATING POISON
+		 	 [166779] = 5, -- Trash STAGGERING BLOW
+			 [56037] = 4, -- Trash RUNE OF DESTRUCTION
+			 [175654] = 5, -- Trash RUNE OF DISINTEGRATION
+			 [166185] = 5, -- Trash RENDING SLASH
+			 [166175] = 5, -- Trash EARTHDEVASTATING SLAM
+			 [174404] = 5, -- Trash FROZEN CORE
+			 [173763] = 5, -- Trash WILD FLAMES
+			 [174500] = 5, -- Trash RENDING THROW
+			 [174939] = 4, -- Trash Time Stop
+			 [172115] = 4, -- Trash Earthen Thrust
+			 [166200] = 4, -- Trash ARCANEVOLATILITY
+			 [174473] = 5, -- Trash Corrupted Blood
 			-- Kargath Bladefist
-			 [GetSpellInfo(159113)] = 5,
-			 [GetSpellInfo(159178)] = 6,
-			 [GetSpellInfo(159213)] = 7, --MONSTERS BRAWL
-			 [GetSpellInfo(158986)] = 4, --BERSERKER RUSH
-			 [GetSpellInfo(159410)] = 5, --MAULING BREW
-			 [GetSpellInfo(160521)] = 6, --VILE BREATH
-			 [GetSpellInfo(159386)] = 5, --IRON BOMB
-			 [GetSpellInfo(159188)] = 5, --GRAPPLE
-			 [GetSpellInfo(162497)] = 4, --ON THE HUNT
-			 [GetSpellInfo(159202)] = 5, --FLAME JET
+			 [159113] = 5,
+			 [159178] = 6,
+			 [159213] = 7, --MONSTERS BRAWL
+			 [158986] = 4, --BERSERKER RUSH
+			 [159410] = 5, --MAULING BREW
+			 [160521] = 6, --VILE BREATH
+			 [159386] = 5, --IRON BOMB
+			 [159188] = 5, --GRAPPLE
+			 [162497] = 4, --ON THE HUNT
+			 [159202] = 5, --FLAME JET
 			-- The Butcher
-			 [GetSpellInfo(156152)] = 5,
-			 [GetSpellInfo(156143)] = 4,
-			 [GetSpellInfo(156151)] = 6,	
-			 [GetSpellInfo(163046)] = 4,		 
+			 [156152] = 5,
+			 [156143] = 4,
+			 [156151] = 6,	
+			 [163046] = 4,		 
 			-- Tectus
-			 [GetSpellInfo(162346)] = 5, --CRYSTALLINE BARRAGE
-			 [GetSpellInfo(162892)] = 5, --PETRIFICATION
-			 [GetSpellInfo(162475)] = 5, --Tectonic Upheaval
+			 [162346] = 5, --CRYSTALLINE BARRAGE
+			 [162892] = 5, --PETRIFICATION
+			 [162475] = 5, --Tectonic Upheaval
 			-- Brackenspore
-			 [GetSpellInfo(163242)] = 5, --INFESTING SPORES
-			 [GetSpellInfo(163590)] = 5, --CREEPING MOSS
-			 [GetSpellInfo(163241)] = 5, --ROT
-			 [GetSpellInfo(159220)] = 6, --NECROTIC BREATH
-			 [GetSpellInfo(160179)] = 6, --MIND FUNGUS
-			 [GetSpellInfo(159972)] = 6, --FLESHEATER
+			 [163242] = 5, --INFESTING SPORES
+			 [163590] = 5, --CREEPING MOSS
+			 [163241] = 5, --ROT
+			 [159220] = 6, --NECROTIC BREATH
+			 [160179] = 6, --MIND FUNGUS
+			 [159972] = 6, --FLESHEATER
 			-- Twin Ogron
-			 [GetSpellInfo(158026)] = 6, --ENFEEBLING ROAR
-			 [GetSpellInfo(158241)] = 5, --BLAZE
-			 [GetSpellInfo(155569)] = 5, --INJURED
-			 [GetSpellInfo(167200)] = 5, --ARCANE WOUND
-			 [GetSpellInfo(159709)] = 6, --WEAKENED DEFENSES 159709 167179
-			 [GetSpellInfo(163374)] = 4, --ARCANE VOLATILITY
-			 [GetSpellInfo(158200)] = 4, --QUAKE
+			 [158026] = 6, --ENFEEBLING ROAR
+			 [158241] = 5, --BLAZE
+			 [155569] = 5, --INJURED
+			 [167200] = 5, --ARCANE WOUND
+			 [159709] = 6, --WEAKENED DEFENSES 159709 167179
+			 [163374] = 4, --ARCANE VOLATILITY
+			 [158200] = 4, --QUAKE
 			-- Ko'ragh
-			 [GetSpellInfo(161242)] = 4, --CAUSTIC ENERGY
-			 [GetSpellInfo(161358)] = 4, --SUPPRESSION FIELD
-			 [GetSpellInfo(162184)] = 6, --EXPEL MAGIC SHADOW
-			 [GetSpellInfo(162186)] = 6, --EXPEL MAGIC ARCANE
-			 [GetSpellInfo(161411)] = 6, --EXPEL MAGIC FROST
-			 [GetSpellInfo(163472)] = 4, --DOMINATING POWER
-			 [GetSpellInfo(162185)] = 7, --EXPEL MAGIC FEL
+			 [161242] = 4, --CAUSTIC ENERGY
+			 [161358] = 4, --SUPPRESSION FIELD
+			 [162184] = 6, --EXPEL MAGIC SHADOW
+			 [162186] = 6, --EXPEL MAGIC ARCANE
+			 [161411] = 6, --EXPEL MAGIC FROST
+			 [163472] = 4, --DOMINATING POWER
+			 [162185] = 7, --EXPEL MAGIC FEL
 			-- Imperator Mar'gok
-			 [GetSpellInfo(156238)] = 4, --BRANDED  156238 163990 163989 163988
-			 [GetSpellInfo(156467)] = 5, --DESTRUCTIVE RESONANCE  156467 164075 164076 164077
-			 [GetSpellInfo(158605)] = 4, --MARK OF CHAOS  158605 164176 164178 164191
-			 [GetSpellInfo(164004)] = 4, --BRANDED DISPLACEMENT
-			 [GetSpellInfo(164075)] = 4, --DESTRUCTIVE RESONANCE DISPLACEMENT
-			 [GetSpellInfo(164176)] = 4, --MARK OF CHAOS DISPLACEMENT
-			 [GetSpellInfo(164005)] = 4, --BRANDED FORTIFICATION
-			 [GetSpellInfo(164076)] = 4, --DESTRUCTIVE RESONANCE FORTIFICATION
-			 [GetSpellInfo(164178)] = 4, --MARK OF CHAOS FORTIFICATION
-			 [GetSpellInfo(164006)] = 4, --BRANDED REPLICATION
-			 [GetSpellInfo(164077)] = 4, --DESTRUCTIVE RESONANCE REPLICATION
-			 [GetSpellInfo(164191)] = 4, --MARK OF CHAOS REPLICATION
-			 [GetSpellInfo(157349)] = 5, --FORCE NOVA  157349 164232 164235 164240
-			 [GetSpellInfo(157763)] = 4, --FIXATE
-			 [GetSpellInfo(158553)] = 6, --CRUSH ARMOR
-			 [GetSpellInfo(165102)] = 7, --Infinite Darkness
-			 [GetSpellInfo(157801)] = 7, --Slow
+			 [156238] = 4, --BRANDED  156238 163990 163989 163988
+			 [156467] = 5, --DESTRUCTIVE RESONANCE  156467 164075 164076 164077
+			 [158605] = 4, --MARK OF CHAOS  158605 164176 164178 164191
+			 [164004] = 4, --BRANDED DISPLACEMENT
+			 [164075] = 4, --DESTRUCTIVE RESONANCE DISPLACEMENT
+			 [164176] = 4, --MARK OF CHAOS DISPLACEMENT
+			 [164005] = 4, --BRANDED FORTIFICATION
+			 [164076] = 4, --DESTRUCTIVE RESONANCE FORTIFICATION
+			 [164178] = 4, --MARK OF CHAOS FORTIFICATION
+			 [164006] = 4, --BRANDED REPLICATION
+			 [164077] = 4, --DESTRUCTIVE RESONANCE REPLICATION
+			 [164191] = 4, --MARK OF CHAOS REPLICATION
+			 [157349] = 5, --FORCE NOVA  157349 164232 164235 164240
+			 [157763] = 4, --FIXATE
+			 [158553] = 6, --CRUSH ARMOR
+			 [165102] = 7, --Infinite Darkness
+			 [157801] = 7, --Slow
 		},		
-		[998] = {--"黑石铸造厂"
+		[457] = {--"黑石铸造厂"
 			-- Blackrock Foundry
 			-- Trash
-			 [GetSpellInfo(175752)] = 5,
-			 [GetSpellInfo(175765)] = 6,
-			 [GetSpellInfo(175624)] = 7,
-			 [GetSpellInfo(175643)] = 6,
-			 [GetSpellInfo(175603)] = 6,
-			 [GetSpellInfo(175668)] = 5,
-			 [GetSpellInfo(175987)] = 5,
-			 [GetSpellInfo(159686)] = 6,
-			 [GetSpellInfo(159632)] = 7,
-			 [GetSpellInfo(159520)] = 4,
-			 [GetSpellInfo(159939)] = 5,
-			 [GetSpellInfo(160260)] = 6,
-			 [GetSpellInfo(160109)] = 4,
-			 [GetSpellInfo(162516)] = 6,
-			 [GetSpellInfo(162508)] = 4,
-			 [GetSpellInfo(162748)] = 4,
-			 [GetSpellInfo(162757)] = 4,
-			 [GetSpellInfo(162663)] = 6,
-			 [GetSpellInfo(162672)] = 6,
-			 [GetSpellInfo(188189)] = 8,
-			 [GetSpellInfo(163126)] = 8,
-			 [GetSpellInfo(177855)] = 6,
-			 [GetSpellInfo(177891)] = 4,
-			 [GetSpellInfo(174773)] = 8,
-			 [GetSpellInfo(156345)] = 8,
-			 [GetSpellInfo(171537)] = 6,
-			 [GetSpellInfo(175577)] = 6,
-			 [GetSpellInfo(175583)] = 7,
-			 [GetSpellInfo(174704)] = 4,
-   			 [GetSpellInfo(163714)] = 4,
+			 [175752] = 5,
+			 [175765] = 6,
+			 [175624] = 7,
+			 [175643] = 6,
+			 [175603] = 6,
+			 [175668] = 5,
+			 [175987] = 5,
+			 [159686] = 6,
+			 [159632] = 7,
+			 [159520] = 4,
+			 [159939] = 5,
+			 [160260] = 6,
+			 [160109] = 4,
+			 [162516] = 6,
+			 [162508] = 4,
+			 [162748] = 4,
+			 [162757] = 4,
+			 [162663] = 6,
+			 [162672] = 6,
+			 [188189] = 8,
+			 [163126] = 8,
+			 [177855] = 6,
+			 [177891] = 4,
+			 [174773] = 8,
+			 [156345] = 8,
+			 [171537] = 6,
+			 [175577] = 6,
+			 [175583] = 7,
+			 [174704] = 4,
+   			 [163714] = 4,
 			-- Oregorger
-			 [GetSpellInfo(173471)] = 5,
-			 [GetSpellInfo(156297)] = 6,
-			 [GetSpellInfo(156374)] = 2,
-			 [GetSpellInfo(155900)] = 2,
-			 [GetSpellInfo(156203)] = 5,
+			 [156324] = 4,
+			 [173471] = 5,
+			 [156297] = 6,
+			 [156374] = 2,
+			 [155900] = 2,
+			 [156203] = 5,
 			-- Hans'gar and Franzok 
-			 [GetSpellInfo(157853)] = 2,
-			 [GetSpellInfo(156938)] = 6,
-			 [GetSpellInfo(157139)] = 6,
-			 [GetSpellInfo(161570)] = 5,
-			 [GetSpellInfo(155818)] = 5,
+			 [157853] = 2,
+			 [156938] = 6,
+			 [157139] = 6,
+			 [161570] = 5,
+			 [155818] = 5,
 			-- Beastlord Darmac 
-			 [GetSpellInfo(154960)] = 6,
-			 [GetSpellInfo(155061)] = 4,
-			 [GetSpellInfo(154989)] = 5,
-			 [GetSpellInfo(154981)] = 6,
-			 [GetSpellInfo(155030)] = 4,
-			 [GetSpellInfo(155236)] = 4,
-			 [GetSpellInfo(155499)] = 5,
-			 [GetSpellInfo(155657)] = 6,
-			 [GetSpellInfo(159044)] = 2,
-			 [GetSpellInfo(162276)] = 1,
+			 [155365] = 5,
+			 [155399] = 4,
+			 [154960] = 6,
+			 [155061] = 4,
+			 [154989] = 5,
+			 [154981] = 6,
+			 [155030] = 4,
+			 [155236] = 4,
+			 [155499] = 5,
+			 [155657] = 6,
+			 [159044] = 2,
+			 [162276] = 1,
 			-- Gruul
-			 [GetSpellInfo(155080)] = 3,
-			 [GetSpellInfo(162322)] = 2,
-			 [GetSpellInfo(155078)] = 4,
-			 [GetSpellInfo(173192)] = 6,
-			 [GetSpellInfo(155323)] = 5,
-			 [GetSpellInfo(155330)] = 5,
-			 [GetSpellInfo(155506)] = 5,
-			 [GetSpellInfo(165298)] = 4,
+			 [155326] = 5,
+			 [155080] = 3,
+			 [162322] = 2,
+			 [155078] = 4,
+			 [173192] = 6,
+			 [155323] = 5,
+			 [155330] = 5,
+			 [155506] = 5,
+			 [165298] = 4,
 			-- Flamebender Ka'graz 
-			 [GetSpellInfo(155277)] = 5,
-			 [GetSpellInfo(163284)] = 4,
-			 [GetSpellInfo(154932)] = 6,
-			 [GetSpellInfo(155314)] = 3,
-			 [GetSpellInfo(154952)] = 5,
-			 [GetSpellInfo(155074)] = 3,
-			 [GetSpellInfo(155049)] = 4,
+			 [155277] = 5,
+			 [163284] = 4,
+			 [154932] = 6,
+			 [155314] = 3,
+			 [154952] = 5,
+			 [155074] = 3,
+			 [155049] = 4,
 			-- Operator Thogar
-			 [GetSpellInfo(155921)] = 3,
-			 [GetSpellInfo(165195)] = 6,
-			 [GetSpellInfo(164380)] = 5,
-			 [GetSpellInfo(155701)] = 2,
-			 [GetSpellInfo(156310)] = 4,
-			 [GetSpellInfo(159481)] = 6,
+			 [155921] = 3,
+			 [165195] = 6,
+			 [164380] = 5,
+			 [155701] = 2,
+			 [156310] = 4,
+			 [159481] = 6,
 			-- The Blast Furnace
-			 [GetSpellInfo(155240)] = 3,
-			 [GetSpellInfo(155242)] = 4,
-			 [GetSpellInfo(155225)] = 5,
-			 [GetSpellInfo(155192)] = 5,
-			 [GetSpellInfo(156934)] = 6,
-			 [GetSpellInfo(158246)] = 1,
-			 [GetSpellInfo(176121)] = 4,
-			 [GetSpellInfo(155196)] = 4,
-			 [GetSpellInfo(155743)] = 6,
-			 [GetSpellInfo(175104)] = 6,
+			 [155240] = 3,
+			 [155242] = 4,
+			 [155225] = 5,
+			 [155192] = 5,
+			 [156934] = 6,
+			 [158246] = 1,
+			 [176121] = 4,
+			 [155196] = 4,
+			 [155743] = 6,
+			 [175104] = 6,
 			-- Kromog
-			 [GetSpellInfo(157059)] = 2,
-			 [GetSpellInfo(156766)] = 4,
-			 [GetSpellInfo(161839)] = 3,
-			 [GetSpellInfo(156844)] = 6,
+			 [157060] = 4,
+			 [157059] = 2,
+			 [156766] = 4,
+			 [161839] = 3,
+			 [156844] = 6,
 			-- The Iron Maidens
-			 [GetSpellInfo(164271)] = 6,
-			 [GetSpellInfo(156631)] = 4,
-			 [GetSpellInfo(158315)] = 5,
-			 [GetSpellInfo(170395)] = 2,
-			 [GetSpellInfo(159724)] = 6,
-			 [GetSpellInfo(170405)] = 2,
-			 [GetSpellInfo(158010)] = 5,
-			 [GetSpellInfo(158692)] = 1,
-			 [GetSpellInfo(158702)] = 5,
-			 [GetSpellInfo(158686)] = 3,
-			 [GetSpellInfo(158683)] = 6,
-			 [GetSpellInfo(156214)] = 5,
-			 [GetSpellInfo(158601)] = 3,
-			 [GetSpellInfo(160436)] = 1,
+			 [164271] = 6,
+			 [156631] = 4,
+			 [158315] = 5,
+			 [170395] = 2,
+			 [159724] = 6,
+			 [170405] = 2,
+			 [158010] = 5,
+			 [158692] = 1,
+			 [158702] = 5,
+			 [158686] = 3,
+			 [158683] = 6,
+			 [156214] = 5,
+			 [158601] = 3,
+			 [160436] = 1,
 			-- Blackhand
-			 [GetSpellInfo(156096)] = 6,
-			 [GetSpellInfo(156743)] = 4,
-			 [GetSpellInfo(156047)] = 2,
-			 [GetSpellInfo(156401)] = 4,
-			 [GetSpellInfo(156404)] = 3,
-			 [GetSpellInfo(158054)] = 5,
-			 [GetSpellInfo(157354)] = 2,
-			 [GetSpellInfo(156888)] = 1,
-			 [GetSpellInfo(157000)] = 5,
-			 [GetSpellInfo(156999)] = 5,
-			 [GetSpellInfo(156653)] = 6,
-			 [GetSpellInfo(162490)] = 5,
-			 [GetSpellInfo(156604)] = 3,
-			 [GetSpellInfo(156772)] = 3,
-			 [GetSpellInfo(162498)] = 6,
+			 [156096] = 6,
+			 [156743] = 4,
+			 [156047] = 2,
+			 [156401] = 4,
+			 [156404] = 3,
+			 [158054] = 5,
+			 [157354] = 2,
+			 [156888] = 1,
+			 [157000] = 5,
+			 [156999] = 5,
+			 [156653] = 6,
+			 [162490] = 5,
+			 [156604] = 3,
+			 [156772] = 3,
+			 [162498] = 6,
 		},
-		[1026] = {--"地狱火堡垒"
+		[669] = {--"地狱火堡垒"
 			-- Hellfire Citadel
 			-- Trash
-			 [GetSpellInfo(185806)] = 5,
-			 [GetSpellInfo(187459)] = 4,
-			 [GetSpellInfo(190735)] = 6,
-			 [GetSpellInfo(188087)] = 6,
-			 [GetSpellInfo(188216)] = 5,
-			 [GetSpellInfo(188148)] = 1,
-			 [GetSpellInfo(188189)] = 4,
-			 [GetSpellInfo(187122)] = 5,
-			 [GetSpellInfo(188482)] = 3,
-			 [GetSpellInfo(188484)] = 1,
-			 [GetSpellInfo(188541)] = 1,
-			 [GetSpellInfo(188541)] = 6,
-			 [GetSpellInfo(187099)] = 5,
-			 [GetSpellInfo(187110)] = 6,
-			 [GetSpellInfo(188474)] = 6,
-			 [GetSpellInfo(188282)] = 1,
-			 [GetSpellInfo(188287)] = 2,
-			 [GetSpellInfo(188283)] = 2,
-			 [GetSpellInfo(188104)] = 6,
-			 [GetSpellInfo(188476)] = 4,
-			 [GetSpellInfo(188448)] = 2,
-			 [GetSpellInfo(188510)] = 5,
-			 [GetSpellInfo(182644)] = 6,
-			 [GetSpellInfo(184587)] = 5,
-			 [GetSpellInfo(184300)] = 2,
-			 [GetSpellInfo(184102)] = 2,
-			 [GetSpellInfo(186046)] = 5,
-			 [GetSpellInfo(186197)] = 5,
-			 [GetSpellInfo(186384)] = 2,
-			 [GetSpellInfo(184388)] = 2,
-			 [GetSpellInfo(190043)] = 2,
-			 [GetSpellInfo(190044)] = 6,
-			 [GetSpellInfo(190012)] = 1,
-			 [GetSpellInfo(189556)] = 4,
-			 [GetSpellInfo(189551)] = 5,
-			 [GetSpellInfo(189554)] = 6,
-			 [GetSpellInfo(189539)] = 1,
-			 [GetSpellInfo(189596)] = 3,
-			 [GetSpellInfo(189564)] = 5,
-			 [GetSpellInfo(189560)] = 2,
-			 [GetSpellInfo(189533)] = 4,
-			 [GetSpellInfo(189532)] = 5,
-			 [GetSpellInfo(189531)] = 2,
-			 [GetSpellInfo(184734)] = 5,
-			 [GetSpellInfo(181962)] = 1,
-			 [GetSpellInfo(184725)] = 4,
-			 [GetSpellInfo(184730)] = 3,
-			 [GetSpellInfo(184721)] = 1,
-			 [GetSpellInfo(184621)] = 1,
-			 [GetSpellInfo(189470)] = 3,
-			 [GetSpellInfo(189488)] = 1,
-			 [GetSpellInfo(189504)] = 1,
-			 [GetSpellInfo(189512)] = 4,
-			 [GetSpellInfo(189538)] = 1,
-			 [GetSpellInfo(189550)] = 5,
-			 [GetSpellInfo(189544)] = 1,
+			 [185806] = 5,
+			 [187459] = 4,
+			 [190735] = 6,
+			 [188087] = 6,
+			 [188216] = 5,
+			 [188148] = 1,
+			 [188189] = 4,
+			 [187122] = 5,
+			 [188482] = 3,
+			 [188484] = 1,
+			 [188541] = 1,
+			 [188541] = 6,
+			 [187099] = 5,
+			 [187110] = 6,
+			 [188474] = 6,
+			 [188282] = 1,
+			 [188287] = 2,
+			 [188283] = 2,
+			 [188104] = 6,
+			 [188476] = 4,
+			 [188448] = 2,
+			 [188510] = 5,
+			 [182644] = 6,
+			 [184587] = 5,
+			 [184300] = 2,
+			 [184102] = 2,
+			 [186046] = 5,
+			 [186197] = 5,
+			 [186384] = 2,
+			 [184388] = 2,
+			 [190043] = 2,
+			 [190044] = 6,
+			 [190012] = 1,
+			 [189556] = 4,
+			 [189551] = 5,
+			 [189554] = 6,
+			 [189539] = 1,
+			 [189596] = 3,
+			 [189564] = 5,
+			 [189560] = 2,
+			 [189533] = 4,
+			 [189532] = 5,
+			 [189531] = 2,
+			 [184734] = 5,
+			 [181962] = 1,
+			 [184725] = 4,
+			 [184730] = 3,
+			 [184721] = 1,
+			 [184621] = 1,
+			 [189470] = 3,
+			 [189488] = 1,
+			 [189504] = 1,
+			 [189512] = 4,
+			 [189538] = 1,
+			 [189550] = 5,
+			 [189544] = 1,
 
 			-- Hellfire Assault
-			 [GetSpellInfo(184369)] = 6,
-			 [GetSpellInfo(184243)] = 4,
-			 [GetSpellInfo(184238)] = 1,
-			 [GetSpellInfo(180022)] = 2,
-			 [GetSpellInfo(185157)] = 6,
-			 [GetSpellInfo(180079)] = 6,
+			 [184369] = 6,
+			 [184243] = 4,
+			 [184238] = 1,
+			 [180022] = 2,
+			 [185157] = 6,
+			 [180079] = 6,
 
 			-- Iron Reaver
-			 [GetSpellInfo(182280)] = 6,
-			 [GetSpellInfo(185242)] = 5,
-			 [GetSpellInfo(182003)] = 1,
-			 [GetSpellInfo(182074)] = 3,
-			 [GetSpellInfo(182001)] = 4,
-			 [GetSpellInfo(185978)] = 2,
+			 [182280] = 6,
+			 [185242] = 5,
+			 [182003] = 1,
+			 [182074] = 3,
+			 [182001] = 4,
+			 [185978] = 2,
 
 			-- Kormrok
-			 [GetSpellInfo(181306)] = 6,
-			 [GetSpellInfo(181321)] = 1,
-			 [GetSpellInfo(188081)] = 2,
-			 [GetSpellInfo(181345)] = 5,
-			 [GetSpellInfo(186559)] = 6,
-			 [GetSpellInfo(185519)] = 2,
-			 [GetSpellInfo(181082)] = 6,
-			 [GetSpellInfo(180270)] = 2,
-			 [GetSpellInfo(186560)] = 6,
-			 [GetSpellInfo(185521)] = 2,
+			 [181306] = 6,
+			 [181321] = 1,
+			 [188081] = 2,
+			 [181345] = 5,
+			 [186559] = 6,
+			 [185519] = 2,
+			 [181082] = 6,
+			 [180270] = 2,
+			 [186560] = 6,
+			 [185521] = 2,
 
 			-- Hellfire High Council
-			 [GetSpellInfo(184450)] = 5,
-			 [GetSpellInfo(184652)] = 6,
-			 [GetSpellInfo(184847)] = 4,
-			 [GetSpellInfo(184358)] = 5,
-			 [GetSpellInfo(184357)] = 1,
-			 [GetSpellInfo(184355)] = 4,
+			 [184450] = 5,
+			 [184652] = 6,
+			 [184847] = 4,
+			 [184358] = 5,
+			 [184357] = 1,
+			 [184355] = 4,
 
 			-- Kilrogg Deadeye
-			 [GetSpellInfo(188929)] = 6,
-			 [GetSpellInfo(188852)] = 5,
-			 [GetSpellInfo(182159)] = 2,
-			 [GetSpellInfo(180200)] = 4,
-			 [GetSpellInfo(181488)] = 3,
-			 [GetSpellInfo(185563)] = 1,
-			 [GetSpellInfo(180718)] = 1,
-			 [GetSpellInfo(187089)] = 1,
-			 [GetSpellInfo(189612)] = 3,
-			 [GetSpellInfo(180575)] = 5,
-			 [GetSpellInfo(180033)] = 3,
-			 [GetSpellInfo(184067)] = 5,
+			 [188929] = 6,
+			 [188852] = 5,
+			 [182159] = 2,
+			 [180200] = 4,
+			 [181488] = 3,
+			 [185563] = 1,
+			 [180718] = 1,
+			 [187089] = 1,
+			 [189612] = 3,
+			 [180575] = 5,
+			 [180033] = 3,
+			 [184067] = 5,
 
 			-- Gorefiend
-			 [GetSpellInfo(179864)] = 5,
-			 [GetSpellInfo(181295)] = 3,
-			 [GetSpellInfo(179867)] = 2,
-			 [GetSpellInfo(179978)] = 6,
-			 [GetSpellInfo(179995)] = 5,
-			 [GetSpellInfo(179909)] = 6,
-			 [GetSpellInfo(182601)] = 5,
-			 [GetSpellInfo(185189)] = 5,
-			 [GetSpellInfo(180148)] = 6,
-			 [GetSpellInfo(180093)] = 1,
-			 [GetSpellInfo(186770)] = 5,
+			 [179864] = 5,
+			 [181295] = 3,
+			 [179867] = 2,
+			 [179978] = 6,
+			 [179995] = 5,
+			 [179909] = 6,
+			 [182601] = 5,
+			 [185189] = 5,
+			 [180148] = 6,
+			 [180093] = 1,
+			 [186770] = 5,
 
 			-- Shadow-Lord Iskar
-			 [GetSpellInfo(179202)] = 5,
-			 [GetSpellInfo(185239)] = 6,
-			 [GetSpellInfo(181957)] = 5,
-			 [GetSpellInfo(182325)] = 2,
-			 [GetSpellInfo(182200)] = 3,
-			 [GetSpellInfo(185747)] = 3,
-			 [GetSpellInfo(182600)] = 2,
-			 [GetSpellInfo(179219)] = 4,
-			 [GetSpellInfo(181753)] = 7,
-			 [GetSpellInfo(187990)] = 4,
-			 [GetSpellInfo(187344)] = 1,
-			 [GetSpellInfo(185510)] = 2,
+			 [179202] = 5,
+			 [185239] = 6,
+			 [181957] = 5,
+			 [182325] = 2,
+			 [182200] = 3,
+			 [185747] = 3,
+			 [182600] = 2,
+			 [179219] = 4,
+			 [181753] = 7,
+			 [187990] = 4,
+			 [187344] = 1,
+			 [185510] = 2,
 
 			-- Socrethar the Eternal
-			 [GetSpellInfo(182038)] = 3,
-			 [GetSpellInfo(189627)] = 5,
-			 [GetSpellInfo(189540)] = 2,
-			 [GetSpellInfo(182218)] = 5,
-			 [GetSpellInfo(180415)] = 1,
-			 [GetSpellInfo(182769)] = 6,
-			 [GetSpellInfo(182900)] = 4,
-			 [GetSpellInfo(184124)] = 3,
-			 [GetSpellInfo(184239)] = 4,
-			 [GetSpellInfo(190922)] = 2,
+			 [182038] = 3,
+			 [189627] = 5,
+			 [189540] = 2,
+			 [182218] = 5,
+			 [180415] = 1,
+			 [182769] = 6,
+			 [182900] = 4,
+			 [184124] = 3,
+			 [184239] = 4,
+			 [190922] = 2,
 
 			-- Fel Lord Zakuun
-			 [GetSpellInfo(181508)] = 6,
-			 [GetSpellInfo(179428)] = 5,
-			 [GetSpellInfo(182008)] = 2,
-			 [GetSpellInfo(189260)] = 3,
-			 [GetSpellInfo(179407)] = 1,
-			 [GetSpellInfo(189030)] = 6,
-			 [GetSpellInfo(181653)] = 5,
-			 [GetSpellInfo(188998)] = 2,
+			 [181508] = 6,
+			 [179428] = 5,
+			 [182008] = 2,
+			 [189260] = 3,
+			 [179407] = 1,
+			 [189030] = 6,
+			 [181653] = 5,
+			 [188998] = 2,
 
 			-- Xhul'horac
-			 [GetSpellInfo(186134)] = 2,
-			 [GetSpellInfo(186135)] = 2,
-			 [GetSpellInfo(186407)] = 7,
-			 [GetSpellInfo(186333)] = 7,
-			 [GetSpellInfo(185656)] = 1,
-			 [GetSpellInfo(186500)] = 6,
-			 [GetSpellInfo(186448)] = 4,
-			 [GetSpellInfo(188208)] = 3,
-			 [GetSpellInfo(186547)] = 5,
-			 [GetSpellInfo(186785)] = 4,
-			 [GetSpellInfo(186073)] = 3,
-			 [GetSpellInfo(186063)] = 3,
+			 [186134] = 2,
+			 [186135] = 2,
+			 [186407] = 7,
+			 [186333] = 7,
+			 [185656] = 1,
+			 [186500] = 6,
+			 [186448] = 4,
+			 [188208] = 3,
+			 [186547] = 5,
+			 [186785] = 4,
+			 [186073] = 3,
+			 [186063] = 3,
 
 			-- Tyrant Velhari
-			 [GetSpellInfo(180166)] = 5,
-			 [GetSpellInfo(180128)] = 6,
-			 [GetSpellInfo(180526)] = 6,
-			 [GetSpellInfo(180000)] = 4,
-			 [GetSpellInfo(181683)] = 1,
-			 [GetSpellInfo(179987)] = 1,
-			 [GetSpellInfo(179993)] = 1,
-			 [GetSpellInfo(180604)] = 3,
+			 [180166] = 5,
+			 [180128] = 6,
+			 [180526] = 6,
+			 [180000] = 4,
+			 [181683] = 1,
+			 [179987] = 1,
+			 [179993] = 1,
+			 [180604] = 3,
 
 			-- Mannoroth
-			 [GetSpellInfo(181099)] = 6,
-			 [GetSpellInfo(181275)] = 3,
-			 [GetSpellInfo(181119)] = 4,
-			 [GetSpellInfo(182171)] = 2,
-			 [GetSpellInfo(181359)] = 5,
-			 [GetSpellInfo(184252)] = 3,
-			 [GetSpellInfo(181597)] = 4,
-			 [GetSpellInfo(181841)] = 6,
-			 [GetSpellInfo(182113)] = 1,
-			 [GetSpellInfo(182088)] = 6,
-			 [GetSpellInfo(182006)] = 4,
-			 [GetSpellInfo(182031)] = 3,
-			 [GetSpellInfo(186362)] = 6,
-			 [GetSpellInfo(190482)] = 2,
+			 [181099] = 6,
+			 [181275] = 3,
+			 [181119] = 4,
+			 [182171] = 2,
+			 [181359] = 5,
+			 [184252] = 3,
+			 [181597] = 4,
+			 [181841] = 6,
+			 [182113] = 1,
+			 [182088] = 6,
+			 [182006] = 4,
+			 [182031] = 3,
+			 [186362] = 6,
+			 [190482] = 2,
 
 			-- Archimonde
-			 [GetSpellInfo(183634)] = 6,
-			 [GetSpellInfo(183828)] = 4,
-			 [GetSpellInfo(183963)] = 1,
-			 [GetSpellInfo(182879)] = 6,
-			 [GetSpellInfo(182878)] = 2,
-			 [GetSpellInfo(183864)] = 3,
-			 [GetSpellInfo(184964)] = 6,
-			 [GetSpellInfo(186123)] = 5,
-			 [GetSpellInfo(185014)] = 5,
-			 [GetSpellInfo(186961)] = 6,
-			 [GetSpellInfo(189891)] = 3,
-			 [GetSpellInfo(187047)] = 2,
-			 [GetSpellInfo(190341)] = 2,
-			 [GetSpellInfo(187255)] = 3,
-			 [GetSpellInfo(189895)] = 5,
-			 [GetSpellInfo(190400)] = 3,
-			 [GetSpellInfo(187050)] = 6,
-			 [GetSpellInfo(190706)] = 2,
+			 [183634] = 6,
+			 [183828] = 4,
+			 [183963] = 1,
+			 [182879] = 6,
+			 [182878] = 2,
+			 [183864] = 3,
+			 [184964] = 6,
+			 [186123] = 5,
+			 [185014] = 5,
+			 [186961] = 6,
+			 [189891] = 3,
+			 [187047] = 2,
+			 [190341] = 2,
+			 [187255] = 3,
+			 [189895] = 5,
+			 [190400] = 3,
+			 [187050] = 6,
+			 [190706] = 2,
 		},
-		[1041] = {--"英灵殿"
+		[721] = {--"英灵殿"
 			-- Halls of Valor
-			 [GetSpellInfo(199050)] = 4,
-			 [GetSpellInfo(198944)] = 4,
-			 [GetSpellInfo(215429)] = 4,
-			 [GetSpellInfo(197556)] = 4,
-			 [GetSpellInfo(196497)] = 4,
-			 [GetSpellInfo(199818)] = 4,
-			 [GetSpellInfo(193686)] = 4,
-			 [GetSpellInfo(196838)] = 6,
-			 [GetSpellInfo(193092)] = 4,
-			 [GetSpellInfo(199652)] = 4,
-			 [GetSpellInfo(192048)] = 4,
-			 [GetSpellInfo(199674)] = 4,
+			 [199050] = 4,
+			 [198944] = 4,
+			 [215429] = 4,
+			 [197556] = 4,
+			 [196497] = 4,
+			 [199818] = 4,
+			 [193686] = 4,
+			 [196838] = 6,
+			 [193092] = 4,
+			 [199652] = 4,
+			 [192048] = 4,
+			 [199674] = 4,
 		},
-		[1042] = {--"噬魂之喉"
+		[727] = {--"噬魂之喉"
 			-- Maw of Souls
-			 [GetSpellInfo(198944)] = 4,
-			 [GetSpellInfo(199185)] = 4,
-			 [GetSpellInfo(194674)] = 4,
-			 [GetSpellInfo(195279)] = 4,
-			 [GetSpellInfo(198944)] = 4,
-			 [GetSpellInfo(115804)] = 4,
-			 [GetSpellInfo(194049)] = 4,
-			 [GetSpellInfo(194327)] = 4,
-			 [GetSpellInfo(195293)] = 4,
-			 [GetSpellInfo(185539)] = 4,
-			 [GetSpellInfo(197262)] = 6,
-			 [GetSpellInfo(198405)] = 5,
-			 [GetSpellInfo(194102)] = 4,
-			 [GetSpellInfo(200208)] = 4,
-			 [GetSpellInfo(201566)] = 3,
-			 [GetSpellInfo(215484)] = 3,
+			 [198944] = 4,
+			 [199185] = 4,
+			 [194674] = 4,
+			 [195279] = 4,
+			 [198944] = 4,
+			 [115804] = 4,
+			 [194049] = 4,
+			 [194327] = 4,
+			 [195293] = 4,
+			 [185539] = 4,
+			 [197262] = 6,
+			 [198405] = 5,
+			 [194102] = 4,
+			 [200208] = 4,
+			 [201566] = 3,
+			 [215484] = 3,
 		},
-		[1066] = {--"紫罗兰堡"
+		[777] = {--"紫罗兰堡"
 			-- Violet Hold
-			 [GetSpellInfo(205513)] = 4,
-			 [GetSpellInfo(202779)] = 4,
-			 [GetSpellInfo(202217)] = 4,
-			 [GetSpellInfo(202300)] = 4,
-			 [GetSpellInfo(224453)] = 4,
-			 [GetSpellInfo(202306)] = 4,
-			 [GetSpellInfo(205096)] = 4,
-			 [GetSpellInfo(204895)] = 4,
-			 [GetSpellInfo(201380)] = 4,
-			 [GetSpellInfo(224602)] = 4,
-			 [GetSpellInfo(204962)] = 4,
-			 [GetSpellInfo(210879)] = 4,
-			 [GetSpellInfo(201159)] = 4,
-			 [GetSpellInfo(204608)] = 4,
-			 [GetSpellInfo(202480)] = 5,
-			 [GetSpellInfo(201491)] = 4,
-			 [GetSpellInfo(202266)] = 4,
+			 [205513] = 4,
+			 [202779] = 4,
+			 [202217] = 4,
+			 [202300] = 4,
+			 [224453] = 4,
+			 [202306] = 4,
+			 [205096] = 4,
+			 [204895] = 4,
+			 [201380] = 4,
+			 [224602] = 4,
+			 [204962] = 4,
+			 [210879] = 4,
+			 [201159] = 4,
+			 [204608] = 4,
+			 [202480] = 5,
+			 [201491] = 4,
+			 [202266] = 4,
 		},
-		[1046] = {--"艾萨拉之眼"
+		[716] = {--"艾萨拉之眼"
 			-- Eye of Azshara
-			 [GetSpellInfo(195105)] = 4,
-			 [GetSpellInfo(195094)] = 4,
-			 [GetSpellInfo(193636)] = 4,
-			 [GetSpellInfo(196111)] = 4,
-			 [GetSpellInfo(195561)] = 5,--盲目啄击
-			 [GetSpellInfo(191855)] = 4,
-			 [GetSpellInfo(195473)] = 4,
-			 [GetSpellInfo(196064)] = 4,
-			 [GetSpellInfo(195944)] = 4,
-			 [GetSpellInfo(196515)] = 4,
-			 [GetSpellInfo(197144)] = 4,
-			 [GetSpellInfo(195473)] = 4,
-			 [GetSpellInfo(200037)] = 4,
-			 [GetSpellInfo(197105)] = 4,
-			 [GetSpellInfo(192053)] = 4,
-			 [GetSpellInfo(196058)] = 4,
-			 [GetSpellInfo(191977)] = 4,
-			 [GetSpellInfo(192131)] = 4,
-			 [GetSpellInfo(193018)] = 4,
-			 [GetSpellInfo(200100)] = 4,
-			 [GetSpellInfo(200626)] = 4,
-			 [GetSpellInfo(193597)] = 4,
-			 [GetSpellInfo(193698)] = 4,
-			 [GetSpellInfo(192706)] = 4,
+			 [195105] = 4,
+			 [195094] = 4,
+			 [193636] = 4,
+			 [196111] = 4,
+			 [195561] = 5,--盲目啄击
+			 [191855] = 4,
+			 [195473] = 4,
+			 [196064] = 4,
+			 [195944] = 4,
+			 [196515] = 4,
+			 [197144] = 4,
+			 [195473] = 4,
+			 [200037] = 4,
+			 [197105] = 4,
+			 [192053] = 4,
+			 [196058] = 4,
+			 [191977] = 4,
+			 [192131] = 4,
+			 [193018] = 4,
+			 [200100] = 4,
+			 [200626] = 4,
+			 [193597] = 4,
+			 [193698] = 4,
+			 [192706] = 4,
 
-			 [GetSpellInfo(215721)] = 4,
-			 [GetSpellInfo(215712)] = 4,
-			 [GetSpellInfo(196060)] = 4,
+			 [215721] = 4,
+			 [215712] = 4,
+			 [196060] = 4,
 		},
-		[1081] = {--"黑鸦堡垒"
+		[740] = {--"黑鸦堡垒"
 			-- Black Rook Hold
-			 [GetSpellInfo(200084)] = 4,
-			 [GetSpellInfo(194966)] = 4,
-			 [GetSpellInfo(225909)] = 4,
-			 [GetSpellInfo(200261)] = 4,
-			 [GetSpellInfo(221132)] = 4,
-			 [GetSpellInfo(197429)] = 4,
-			 [GetSpellInfo(198245)] = 4,
-			 [GetSpellInfo(198635)] = 4,
-			 [GetSpellInfo(214002)] = 4,
-			 [GetSpellInfo(197546)] = 4,
-			 [GetSpellInfo(221680)] = 4,
-			 [GetSpellInfo(224188)] = 4,
-			 [GetSpellInfo(221838)] = 4,
-			 [GetSpellInfo(198446)] = 4,
-			 [GetSpellInfo(199097)] = 6,
-			 [GetSpellInfo(201733)] = 5,
-			 [GetSpellInfo(198446)] = 3,
+			 [200084] = 4,
+			 [194966] = 4,
+			 [225909] = 4,
+			 [200261] = 4,
+			 [221132] = 4,
+			 [197429] = 4,
+			 [198245] = 4,
+			 [198635] = 4,
+			 [214002] = 4,
+			 [197546] = 4,
+			 [221680] = 4,
+			 [224188] = 4,
+			 [221838] = 4,
+			 [198446] = 4,
+			 [199097] = 6,
+			 [201733] = 5,
+			 [198446] = 3,
 		},
-		[1087] = {--"群星庭院"
+		[800] = {--"群星庭院"
 			-- Court of Stars
-			 [GetSpellInfo(211464)] = 4,
-			 [GetSpellInfo(269024)] = 4,
-			 [GetSpellInfo(211473)] = 4,
-			 [GetSpellInfo(211391)] = 4,
+			 [211464] = 4,
+			 [269024] = 4,
+			 [211473] = 4,
+			 [211391] = 4,
 
-			 [GetSpellInfo(209027)] = 4,
-			 [GetSpellInfo(207981)] = 4,
-			 [GetSpellInfo(208165)] = 4,
-			 [GetSpellInfo(216006)] = 4,
-			 [GetSpellInfo(214690)] = 4,
-			 [GetSpellInfo(214692)] = 4,
+			 [209027] = 4,
+			 [207981] = 4,
+			 [208165] = 4,
+			 [216006] = 4,
+			 [214690] = 4,
+			 [214692] = 4,
 		},
-		[1065] = {--"耐萨里奥的巢穴"
+		[767] = {--"耐萨里奥的巢穴"
 			-- Neltharion's Lair
-			 [GetSpellInfo(202231)] = 4,
-			 [GetSpellInfo(200154)] = 4,
+			 [202231] = 4,
+			 [200154] = 4,
 
-			 [GetSpellInfo(193941)] = 4,
-			 [GetSpellInfo(215898)] = 4,
-			 [GetSpellInfo(226296)] = 4,
-			 [GetSpellInfo(199705)] = 4,
-			 [GetSpellInfo(192800)] = 3,
-			 [GetSpellInfo(188494)] = 3,
+			 [193941] = 4,
+			 [215898] = 4,
+			 [226296] = 4,
+			 [199705] = 4,
+			 [192800] = 3,
+			 [188494] = 3,
 
-			 [GetSpellInfo(199108)] = 4,
-			 [GetSpellInfo(217851)] = 4,
+			 [199108] = 4,
+			 [217851] = 4,
 		},
-		[1079] = {--"魔法回廊"
+		[726] = {--"魔法回廊"
 			-- The Arcway
-			 [GetSpellInfo(226296)] = 4,
-			 [GetSpellInfo(210645)] = 4,
-			 [GetSpellInfo(211000)] = 4,
-			 [GetSpellInfo(211007)] = 4,
-			 [GetSpellInfo(211064)] = 3,
-			 [GetSpellInfo(194006)] = 3,
-			 [GetSpellInfo(193938)] = 4,
-			 [GetSpellInfo(202156)] = 4,
-			 [GetSpellInfo(211745)] = 3,
-			 [GetSpellInfo(211543)] = 4,
-			 [GetSpellInfo(210750)] = 3,
-			 [GetSpellInfo(226269)] = 3,
+			 [226296] = 4,
+			 [210645] = 4,
+			 [211000] = 4,
+			 [211007] = 4,
+			 [211064] = 3,
+			 [194006] = 3,
+			 [193938] = 4,
+			 [202156] = 4,
+			 [211745] = 3,
+			 [211543] = 4,
+			 [210750] = 3,
+			 [226269] = 3,
 		},
-		[1067] = {--"黑心林地"
+		[762] = {--"黑心林地"
 			-- Darkheart Thicket
-			 [GetSpellInfo(198477)] = 4,
-			 [GetSpellInfo(200642)] = 4,
-			 [GetSpellInfo(250980)] = 4,
-			 [GetSpellInfo(198408)] = 4,
-			 [GetSpellInfo(198904)] = 4,
-			 [GetSpellInfo(204667)] = 4,
-			 [GetSpellInfo(191326)] = 4,
-			 [GetSpellInfo(200289)] = 4,
-			 [GetSpellInfo(200243)] = 4,
-			 [GetSpellInfo(220855)] = 4,
-			 [GetSpellInfo(204968)] = 4,
-			 [GetSpellInfo(200631)] = 4,
-			 [GetSpellInfo(200684)] = 4,
-			 [GetSpellInfo(200182)] = 3,
-			 [GetSpellInfo(196376)] = 4,
-			 [GetSpellInfo(201365)] = 4,
-			 [GetSpellInfo(225568)] = 4,
-			 [GetSpellInfo(200580)] = 4,
-			 [GetSpellInfo(204246)] = 4,
-			 [GetSpellInfo(201365)] = 4,
-			 [GetSpellInfo(225484)] = 5,
-			 [GetSpellInfo(200620)] = 5,
-			 [GetSpellInfo(204611)] = 5,
-			 [GetSpellInfo(200329)] = 3,
-			 [GetSpellInfo(200238)] = 3,			 
+			 [198477] = 4,
+			 [200642] = 4,
+			 [250980] = 4,
+			 [198408] = 4,
+			 [198904] = 4,
+			 [204667] = 4,
+			 [191326] = 4,
+			 [200289] = 4,
+			 [200243] = 4,
+			 [220855] = 4,
+			 [204968] = 4,
+			 [200631] = 4,
+			 [200684] = 4,
+			 [200182] = 3,
+			 [196376] = 4,
+			 [201365] = 4,
+			 [225568] = 4,
+			 [200580] = 4,
+			 [204246] = 4,
+			 [201365] = 4,
+			 [225484] = 5,
+			 [200620] = 5,
+			 [204611] = 5,
+			 [200329] = 3,
+			 [200238] = 3,			 
 		},
-		[1045] = {--"守望者地窟"
+		[707] = {--"守望者地窟"
 			-- Vault of the Wardens
-			 [GetSpellInfo(194588)] = 4,
-			 [GetSpellInfo(193607)] = 4,
-			 [GetSpellInfo(191743)] = 4,
-			 [GetSpellInfo(210202)] = 4,
-			 [GetSpellInfo(206603)] = 4,
-			 [GetSpellInfo(196242)] = 4,
-			 [GetSpellInfo(202608)] = 4,
-			 [GetSpellInfo(193969)] = 4,
-			 [GetSpellInfo(193956)] = 7,
-			 [GetSpellInfo(193997)] = 7,
-			 [GetSpellInfo(202615)] = 7,
-			 [GetSpellInfo(202658)] = 5,
+			 [194588] = 4,
+			 [193607] = 4,
+			 [191743] = 4,
+			 [210202] = 4,
+			 [206603] = 4,
+			 [196242] = 4,
+			 [202608] = 4,
+			 [193969] = 4,
+			 [193956] = 7,
+			 [193997] = 7,
+			 [202615] = 7,
+			 [202658] = 5,
 		},
 		[1115] = {--"重返卡拉赞"
 			-- Return to Karazhan
-			 [GetSpellInfo(227405)] = 4,
-			 [GetSpellInfo(227480)] = 4,
-			 [GetSpellInfo(227568)] = 4,
-			 [GetSpellInfo(227325)] = 4,
-			 [GetSpellInfo(227780)] = 4,
-			 [GetSpellInfo(228200)] = 4,
-			 [GetSpellInfo(228013)] = 4,
-			 [GetSpellInfo(228215)] = 4,
-			 [GetSpellInfo(227985)] = 7,
-			 [GetSpellInfo(232135)] = 4,
-			 [GetSpellInfo(227800)] = 4,
-			 [GetSpellInfo(227508)] = 7,
-			 [GetSpellInfo(227848)] = 5,
-			 [GetSpellInfo(227823)] = 6,
-			 [GetSpellInfo(227404)] = 6,
-			 [GetSpellInfo(227493)] = 4,
-			 [GetSpellInfo(227742)] = 7,
-			 [GetSpellInfo(227909)] = 4,
-			 [GetSpellInfo(227832)] = 5,
-			 [GetSpellInfo(227545)] = 6,
-			 [GetSpellInfo(227473)] = 4,
-			 [GetSpellInfo(227465)] = 6,
-			 [GetSpellInfo(227644)] = 4,
-			 [GetSpellInfo(228958)] = 4,
-			 [GetSpellInfo(227592)] = 4,
-			 [GetSpellInfo(228261)] = 5,
-			 [GetSpellInfo(227806)] = 6,
-			 [GetSpellInfo(227502)] = 4,
-			 [GetSpellInfo(227524)] = 5,
-			 [GetSpellInfo(229159)] = 4,
-			 [GetSpellInfo(229083)] = 4,
-			 [GetSpellInfo(229161)] = 5,
-			 [GetSpellInfo(230002)] = 5,
+			 [227405] = 4,
+			 [227480] = 4,
+			 [227568] = 4,
+			 [227325] = 4,
+			 [227780] = 4,
+			 [228200] = 4,
+			 [228013] = 4,
+			 [228215] = 4,
+			 [227985] = 7,
+			 [232135] = 4,
+			 [227800] = 4,
+			 [227508] = 7,
+			 [227848] = 5,
+			 [227823] = 6,
+			 [227404] = 6,
+			 [227493] = 4,
+			 [227742] = 7,
+			 [227909] = 4,
+			 [227832] = 5,
+			 [227545] = 6,
+			 [227473] = 4,
+			 [227465] = 6,
+			 [227644] = 4,
+			 [228958] = 4,
+			 [227592] = 4,
+			 [228261] = 5,
+			 [227806] = 6,
+			 [227502] = 4,
+			 [227524] = 5,
+			 [229159] = 4,
+			 [229083] = 4,
+			 [229161] = 5,
+			 [230002] = 5,
 
-			 [GetSpellInfo(228796)] = 8,
-			 [GetSpellInfo(229307)] = 4,
-			 [GetSpellInfo(228829)] = 5,
-			 [GetSpellInfo(228833)] = 6,
-			 [GetSpellInfo(228834)] = 3,
-			 [GetSpellInfo(228835)] = 7,
+			 [228796] = 8,
+			 [229307] = 4,
+			 [228829] = 5,
+			 [228833] = 6,
+			 [228834] = 3,
+			 [228835] = 7,
 		},
-		[1094] = {--"翡翠梦魇"
+		[768] = {--"翡翠梦魇"
 			-- The Emerald Nightmare
-			 [GetSpellInfo(225263)] = 5,
-			 [GetSpellInfo(222771)] = 5,
-			 [GetSpellInfo(223912)] = 5,
-			 [GetSpellInfo(225073)] = 5,
-			 [GetSpellInfo(223572)] = 5,
-			 [GetSpellInfo(223946)] = 5,
-			 [GetSpellInfo(223914)] = 4,
-			 [GetSpellInfo(223596)] = 4,
+			 [225263] = 5,
+			 [222771] = 5,
+			 [223912] = 5,
+			 [225073] = 5,
+			 [223572] = 5,
+			 [223946] = 5,
+			 [223914] = 4,
+			 [223596] = 4,
 
 			-- Nythendra
-			 [GetSpellInfo(204504)] = 2,
-			 [GetSpellInfo(204463)] = 4,
-			 [GetSpellInfo(203045)] = 5,
-			 [GetSpellInfo(203096)] = 6,
-			 [GetSpellInfo(204463)] = 6,
-			 [GetSpellInfo(203646)] = 5,
-			 [GetSpellInfo(202978)] = 3,
-			 [GetSpellInfo(205043)] = 4,
+			 [204504] = 2,
+			 [204463] = 4,
+			 [203045] = 5,
+			 [203096] = 6,
+			 [204463] = 6,
+			 [203646] = 5,
+			 [202978] = 3,
+			 [205043] = 4,
 
 			-- Il'gynoth, Heart of Corruption
-			 [GetSpellInfo(212886)] = 4,
-			 [GetSpellInfo(215845)] = 2,
-			 [GetSpellInfo(210099)] = 7,
-			 [GetSpellInfo(209469)] = 8,
-			 [GetSpellInfo(209471)] = 2,
-			 [GetSpellInfo(210984)] = 4,
-			 [GetSpellInfo(208697)] = 3,
-			 [GetSpellInfo(208929)] = 5,
-			 [GetSpellInfo(215128)] = 5,
+			 [212886] = 4,
+			 [215845] = 2,
+			 [210099] = 7,
+			 [209469] = 8,
+			 [209471] = 2,
+			 [210984] = 4,
+			 [208697] = 3,
+			 [208929] = 5,
+			 [215128] = 5,
 
 			-- Elerethe Renferal
-			 [GetSpellInfo(215307)] = 6,
-			 [GetSpellInfo(215460)] = 5,
-			 [GetSpellInfo(213124)] = 4,
-			 [GetSpellInfo(210850)] = 3,
-			 [GetSpellInfo(215582)] = 3,
-			 [GetSpellInfo(218519)] = 1,
-			 [GetSpellInfo(210228)] = 2,
+			 [215307] = 6,
+			 [215460] = 5,
+			 [213124] = 4,
+			 [210850] = 3,
+			 [215582] = 3,
+			 [218519] = 1,
+			 [210228] = 2,
 
 			-- Ursoc
-			 [GetSpellInfo(197943)] = 5,
-			 [GetSpellInfo(204859)] = 3,
-			 [GetSpellInfo(198006)] = 7,
-			 [GetSpellInfo(198108)] = 1,
-			 [GetSpellInfo(197980)] = 2,
-			 [GetSpellInfo(205611)] = 4,
+			 [197943] = 5,
+			 [204859] = 3,
+			 [198006] = 7,
+			 [198108] = 1,
+			 [197980] = 2,
+			 [205611] = 4,
 
 			-- Dragons of Nightmare
-			 [GetSpellInfo(203110)] = 3,
-			 [GetSpellInfo(207681)] = 4,
-			 [GetSpellInfo(204731)] = 1,
-			 [GetSpellInfo(203770)] = 6,
-			 [GetSpellInfo(203787)] = 7,
-			 [GetSpellInfo(203086)] = 2,
-			 [GetSpellInfo(204044)] = 4,
-			 [GetSpellInfo(203121)] = 2,
-			 [GetSpellInfo(203124)] = 2,
-			 [GetSpellInfo(203125)] = 2,
-			 [GetSpellInfo(203102)] = 2,
-			 [GetSpellInfo(205341)] = 6,
-			 [GetSpellInfo(204078)] = 2,
-			 [GetSpellInfo(214543)] = 1,
+			 [203110] = 3,
+			 [207681] = 4,
+			 [204731] = 1,
+			 [203770] = 6,
+			 [203787] = 7,
+			 [203086] = 2,
+			 [204044] = 4,
+			 [203121] = 2,
+			 [203124] = 2,
+			 [203125] = 2,
+			 [203102] = 2,
+			 [205341] = 6,
+			 [204078] = 2,
+			 [214543] = 1,
 
 			-- Cenarius
-			 [GetSpellInfo(212681)] = 3,
-			 [GetSpellInfo(210279)] = 1,
-			 [GetSpellInfo(210315)] = 8,
-			 [GetSpellInfo(213162)] = 5,
-			 [GetSpellInfo(226821)] = 4,
-			 [GetSpellInfo(211507)] = 6,
-			 [GetSpellInfo(211471)] = 5,
-			 [GetSpellInfo(216516)] = 2,
-			 [GetSpellInfo(211989)] = 5,
-			 [GetSpellInfo(211990)] = 2,
-			 [GetSpellInfo(214529)] = 5,
+			 [212681] = 3,
+			 [210279] = 1,
+			 [210315] = 8,
+			 [213162] = 5,
+			 [226821] = 4,
+			 [211507] = 6,
+			 [211471] = 5,
+			 [216516] = 2,
+			 [211989] = 5,
+			 [211990] = 2,
+			 [214529] = 5,
 
 			-- Xavius
-			 [GetSpellInfo(206005)] = 1,
-			 [GetSpellInfo(206109)] = 2,
-			 [GetSpellInfo(208431)] = 3,
-			 [GetSpellInfo(207409)] = 6,
-			 [GetSpellInfo(206651)] = 8,
-			 [GetSpellInfo(211802)] = 7,
-			 [GetSpellInfo(205771)] = 7,
-			 [GetSpellInfo(209158)] = 8,
-			 [GetSpellInfo(205612)] = 2,
-			 [GetSpellInfo(210451)] = 6,
-			 [GetSpellInfo(208385)] = 4,
-			 [GetSpellInfo(211634)] = 4,
+			 [206005] = 1,
+			 [206109] = 2,
+			 [208431] = 3,
+			 [207409] = 6,
+			 [206651] = 8,
+			 [211802] = 7,
+			 [205771] = 7,
+			 [209158] = 8,
+			 [205612] = 2,
+			 [210451] = 6,
+			 [208385] = 4,
+			 [211634] = 4,
 		},
 		[1088] = {--"暗夜要塞"
 			-- The Nighthold
 
 			-- Skorpyron
-			 [GetSpellInfo(204766)] = 5,
-			 [GetSpellInfo(214657)] = 7,
-			 [GetSpellInfo(204744)] = 4,
-			 [GetSpellInfo(211659)] = 6,
-			 [GetSpellInfo(204471)] = 5,
+			 [204766] = 5,
+			 [214657] = 7,
+			 [204744] = 4,
+			 [211659] = 6,
+			 [204471] = 5,
 
 			-- Chronomatic Anomaly
-			 [GetSpellInfo(206607)] = 7,
-			 [GetSpellInfo(219966)] = 4,
-			 [GetSpellInfo(219965)] = 4,
-			 [GetSpellInfo(219964)] = 4,
-			 [GetSpellInfo(212099)] = 6,
-			 [GetSpellInfo(206617)] = 7,
-			 [GetSpellInfo(205707)] = 5,		 
+			 [206607] = 7,
+			 [219966] = 4,
+			 [219965] = 4,
+			 [219964] = 4,
+			 [212099] = 6,
+			 [206617] = 7,
+			 [205707] = 5,		 
 
 			-- Trilliax
-			 [GetSpellInfo(206641)] = 4,
-			 [GetSpellInfo(214573)] = 4,
-			 [GetSpellInfo(206488)] = 3,
-			 [GetSpellInfo(206798)] = 3,
-			 [GetSpellInfo(211615)] = 8,
-			 [GetSpellInfo(214583)] = 7,
-			 [GetSpellInfo(208915)] = 6,
-			 [GetSpellInfo(207631)] = 5,
-			 [GetSpellInfo(206645)] = 5,
+			 [206641] = 4,
+			 [214573] = 4,
+			 [206488] = 3,
+			 [206798] = 3,
+			 [211615] = 8,
+			 [214583] = 7,
+			 [208915] = 6,
+			 [207631] = 5,
+			 [206645] = 5,
 			 
 			-- Spellblade Aluriel
-			 [GetSpellInfo(212492)] = 7,
-			 [GetSpellInfo(212587)] = 6,
-			 [GetSpellInfo(212647)] = 4,
-			 [GetSpellInfo(212736)] = 3,
-			 [GetSpellInfo(213085)] = 3,
-			 [GetSpellInfo(213621)] = 7,
-			 [GetSpellInfo(213166)] = 8,
-			 [GetSpellInfo(213504)] = 3,
-			 [GetSpellInfo(213278)] = 3,
-			 [GetSpellInfo(213083)] = 4,
+			 [212492] = 7,
+			 [212587] = 6,
+			 [212647] = 4,
+			 [212736] = 3,
+			 [213085] = 3,
+			 [213621] = 7,
+			 [213166] = 8,
+			 [213504] = 3,
+			 [213278] = 3,
+			 [213083] = 4,
 
 			-- Tichondrius
-			 [GetSpellInfo(206480)] = 6,
-			 [GetSpellInfo(206311)] = 3,
-			 [GetSpellInfo(212794)] = 8, 
-			 [GetSpellInfo(208230)] = 7,
-			 [GetSpellInfo(215988)] = 4,
-			 [GetSpellInfo(216024)] = 7,
-			 [GetSpellInfo(216027)] = 3,
-			 [GetSpellInfo(216685)] = 5,
-			 [GetSpellInfo(216040)] = 7,
+			 [206480] = 6,
+			 [206311] = 3,
+			 [212794] = 8, 
+			 [208230] = 7,
+			 [215988] = 4,
+			 [216024] = 7,
+			 [216027] = 3,
+			 [216685] = 5,
+			 [216040] = 7,
 
 			-- Krosus
-			 [GetSpellInfo(206677)] = 5,
-			 [GetSpellInfo(205344)] = 6,
+			 [206677] = 5,
+			 [205344] = 6,
 
 			-- High Botanist Tel'arn
-			 [GetSpellInfo(218503)] = 7,
-			 [GetSpellInfo(218342)] = 6,
-			 [GetSpellInfo(219235)] = 4,
-			 [GetSpellInfo(218304)] = 5,
-			 [GetSpellInfo(218780)] = 3,
-			 [GetSpellInfo(218809)] = 5,	 
+			 [218503] = 7,
+			 [218342] = 6,
+			 [219235] = 4,
+			 [218304] = 5,
+			 [218780] = 3,
+			 [218809] = 5,	 
 
 			-- Star Augur Etraeus
-			 [GetSpellInfo(206464)] = 6,
-			 [GetSpellInfo(214335)] = 6,
-			 [GetSpellInfo(206936)] = 4,
-			 [GetSpellInfo(206585)] = 7,
-			 [GetSpellInfo(206603)] = 5,
-			 [GetSpellInfo(206589)] = 6,
-			 [GetSpellInfo(206388)] = 5,
-			 [GetSpellInfo(206398)] = 4,
-			 [GetSpellInfo(205649)] = 6,
-			 [GetSpellInfo(206965)] = 6,
-			 [GetSpellInfo(207143)] = 5,
-			 [GetSpellInfo(207831)] = 8,
-			 [GetSpellInfo(205445)] = 8,
-			 [GetSpellInfo(205429)] = 8,
-			 [GetSpellInfo(216345)] = 8,
-			 [GetSpellInfo(216344)] = 8,
-			 [GetSpellInfo(217046)] = 7,
+			 [206464] = 6,
+			 [214335] = 6,
+			 [206936] = 4,
+			 [206585] = 7,
+			 [206603] = 5,
+			 [206589] = 6,
+			 [206388] = 5,
+			 [206398] = 4,
+			 [205649] = 6,
+			 [206965] = 6,
+			 [207143] = 5,
+			 [207831] = 8,
+			 [205445] = 8,
+			 [205429] = 8,
+			 [216345] = 8,
+			 [216344] = 8,
+			 [217046] = 7,
 
 			-- Grand Magistrix Elisande
-			 [GetSpellInfo(209433)] = 4,
-			 [GetSpellInfo(208659)] = 4,
-			 [GetSpellInfo(211261)] = 5, --透心折磨
-			 [GetSpellInfo(209598)] = 7, --聚合爆破
-			 [GetSpellInfo(209244)] = 6,
-			 [GetSpellInfo(209615)] = 5,
-			 [GetSpellInfo(209973)] = 5,
-			 [GetSpellInfo(211887)] = 4,
-			 [GetSpellInfo(208944)] = 6,			 
+			 [209433] = 4,
+			 [208659] = 4,
+			 [211261] = 5, --透心折磨
+			 [209598] = 7, --聚合爆破
+			 [209244] = 6,
+			 [209615] = 5,
+			 [209973] = 5,
+			 [211887] = 4,
+			 [208944] = 6,			 
 
 			-- Gul'dan
-			 [GetSpellInfo(210339)] = 4,
-			 [GetSpellInfo(212568)] = 3,
-			 [GetSpellInfo(206896)] = 5,
-			 [GetSpellInfo(209011)] = 6,
-			 [GetSpellInfo(206384)] = 6,
-			 [GetSpellInfo(209454)] = 7,
-			 [GetSpellInfo(221728)] = 7,
-			 [GetSpellInfo(209191)] = 3,
-			 [GetSpellInfo(221781)] = 3,
-			 [GetSpellInfo(206985)] = 4,
-			 [GetSpellInfo(206515)] = 3,
-			 [GetSpellInfo(208802)] = 5,
-			 [GetSpellInfo(208536)] = 3,
-			 [GetSpellInfo(221891)] = 4,
-			 [GetSpellInfo(221606)] = 7,
-			 [GetSpellInfo(221603)] = 7, 
+			 [210339] = 4,
+			 [212568] = 3,
+			 [206896] = 5,
+			 [209011] = 6,
+			 [206384] = 6,
+			 [209454] = 7,
+			 [221728] = 7,
+			 [209191] = 3,
+			 [221781] = 3,
+			 [206985] = 4,
+			 [206515] = 3,
+			 [208802] = 5,
+			 [208536] = 3,
+			 [221891] = 4,
+			 [221606] = 7,
+			 [221603] = 7, 
 		},
-		[1114] = {--"勇气试练"
+		[861] = {--"勇气试练"
 			-- Trial of Valor
 			
 			--Trash
-			 [GetSpellInfo(232450)] = 5, 
+			 [228883] = 3,
+			 [228884] = 3,
+			 [228305] = 5,
+			 [228875] = 4,
+			 [232450] = 5, 
             
             		-- Guarm
-			 [GetSpellInfo(228228)] = 4, 
-			 [GetSpellInfo(228248)] = 5, 
-			 [GetSpellInfo(228253)] = 6, 
-			 [GetSpellInfo(227539)] = 3, 
-			 [GetSpellInfo(227566)] = 3, 
-			 [GetSpellInfo(227570)] = 3,
-			 [GetSpellInfo(228744)] = 7, 
-			 [GetSpellInfo(228818)] = 7, 
-			 [GetSpellInfo(228810)] = 7,
+			 [228228] = 4, 
+			 [228248] = 5, 
+			 [228253] = 6, 
+			 [227539] = 3, 
+			 [227566] = 3, 
+			 [227570] = 3,
+			 [228744] = 7, 
+			 [228818] = 7, 
+			 [228810] = 7,
             
             		-- Helya
-			 [GetSpellInfo(229119)] = 3,
-			 [GetSpellInfo(227998)] = 3,
-			 [GetSpellInfo(228058)] = 4, 
-			 [GetSpellInfo(228054)] = 5, 
-			 [GetSpellInfo(193367)] = 6, 
-			 [GetSpellInfo(227982)] = 7, 
-			 [GetSpellInfo(232488)] = 7,
-			 [GetSpellInfo(228519)] = 8, 
-			 [GetSpellInfo(202476)] = 9, 
-			 [GetSpellInfo(232450)] = 10, 
+			 [229119] = 3,
+			 [227998] = 3,
+			 [228058] = 4, 
+			 [228054] = 5, 
+			 [193367] = 6, 
+			 [227982] = 7, 
+			 [232488] = 7,
+			 [228519] = 8, 
+			 [202476] = 9, 
+			 [232450] = 10, 
             
            		-- Odyn
-			 [GetSpellInfo(228932)] = 7,
-			 [GetSpellInfo(227491)] = 3, --烙印红
-			 [GetSpellInfo(227490)] = 3, --烙印紫
-			 [GetSpellInfo(227500)] = 3, --烙印绿
-			 [GetSpellInfo(227498)] = 3, --烙印黄
-			 [GetSpellInfo(227499)] = 3, --烙印蓝
-			 [GetSpellInfo(229580)] = 3, --p1p2烙印红
-			 [GetSpellInfo(229579)] = 3, --p1p2烙印紫
-			 [GetSpellInfo(229583)] = 3, --p1p2烙印绿
-			 [GetSpellInfo(229581)] = 3, --p1p2烙印黄
-			 [GetSpellInfo(229582)] = 3, --p1p2烙印蓝
-			 [GetSpellInfo(231342)] = 3, --p3烙印红
-			 [GetSpellInfo(231311)] = 3, --p3烙印紫
-			 [GetSpellInfo(231346)] = 3, --p3烙印绿
-			 [GetSpellInfo(231344)] = 3, --p3烙印黄
-			 [GetSpellInfo(231345)] = 3, --p3烙印蓝
-			 [GetSpellInfo(227807)] = 5,
-			 [GetSpellInfo(227475)] = 6,
-			 [GetSpellInfo(228029)] = 7, 
-			 [GetSpellInfo(227781)] = 8,
-			 [GetSpellInfo(228007)] = 7,
+			 [228932] = 7,
+			 [227491] = 3, --烙印红
+			 [227490] = 3, --烙印紫
+			 [227500] = 3, --烙印绿
+			 [227498] = 3, --烙印黄
+			 [227499] = 3, --烙印蓝
+			 [229580] = 3, --p1p2烙印红
+			 [229579] = 3, --p1p2烙印紫
+			 [229583] = 3, --p1p2烙印绿
+			 [229581] = 3, --p1p2烙印黄
+			 [229582] = 3, --p1p2烙印蓝
+			 [231342] = 3, --p3烙印红
+			 [231311] = 3, --p3烙印紫
+			 [231346] = 3, --p3烙印绿
+			 [231344] = 3, --p3烙印黄
+			 [231345] = 3, --p3烙印蓝
+			 [227807] = 5,
+			 [227475] = 6,
+			 [228029] = 7, 
+			 [227781] = 8,
+			 [228007] = 7,
 		},
-		[1147] = {--"萨格拉斯之墓"
+		[786] = {--"暗夜要塞"
+			-- The Nighthold
+             
+			--Trash
+			 [225105] = 1, --
+			 [221344] = 1, --
+			 [224994] = 2, --
+			 [231174] = 1, --
+			 [221344] = 1, --
+			 [224982] = 3, --
+			 [230993] = 3, --
+			-- Skorpyron
+			 [204766] = 5,
+			 [214657] = 5,
+			 [214662] = 5,
+			 [211659] = 5,
+			 [214718] = 4,
+			 [204471] = 5,
+
+			-- Chronomatic Anomaly
+			 [206615] = 6,
+			 [206607] = 5,
+			 [206609] = 5,
+			 [212099] = 5,
+
+			-- Trilliax
+			 [206641] = 4,
+			 [206482] = 5,
+			 [206788] = 5,
+
+			-- Spellblade Aluriel
+			 [213166] = 5,
+			 [212492] = 5,
+			 [212587] = 5,
+			 [213083] = 5,
+
+			-- Tichondrius
+			 [206466] = 6,
+			 [206480] = 5,
+			 [213238] = 5,
+			 [212795] = 5,
+			 [208230] = 5,
+			 [216024] = 5,
+			 [216040] = 5,
+
+			-- Krosus
+			 [205344] = 4,
+			 [206677] = 4,
+			 [208203] = 5,
+
+			-- High Botanist Tel'arn
+			 [218342] = 5,
+			 [218502] = 5,
+			 [219049] = 5,
+			 [218809] = 6,
+			 [218424] = 5,
+
+			-- Star Augur Etraeus
+			 [214167] = 5,
+			 [205984] = 5,
+			 [214335] = 5,
+			 [206585] = 5,
+			 [206936] = 5,
+			 [206388] = 5,
+			 [205649] = 5,
+			 [206965] = 5,
+			 [206398] = 6,
+			 [207143] = 5,
+
+			-- Grand Magistrix Elisande
+             [211885] = 5,
+			 [209973] = 5,			
+			 [209615] = 5,
+			 [209244] = 5,
+			 [209433] = 5,
+			 [211261] = 5, --透心折磨
+			 [209598] = 5, --聚合爆破
+
+			-- Gul'dan
+             [221326] = 6,		    
+			 [206506] = 6,
+			 [206458] = 6,
+			 [206847] = 6,
+			 [221603] = 6,
+			 [221728] = 6,
+			 [209518] = 5,
+			 [209011] = 5,
+			 [206366] = 5,
+			 [212728] = 5,
+			 [209454] = 5,
+			 [229915] = 5,
+			 [212568] = 5,
+			 [206883] = 5,
+			 [206222] = 5,
+			 [206221] = 5,
+			 [208672] = 5,
+			 [208903] = 5,
+			 [208802] = 5,
+	    },
+		[875] = {--"萨格拉斯之墓"
 			-- Tomb of Sargeras
 
 			-- 格罗斯
-			 [GetSpellInfo(234264)] = 5,  --熔化护甲
-			 [GetSpellInfo(231363)] = 7,  --燃烧护甲
-			 [GetSpellInfo(233272)] = 4,  --碎裂星辰
-			 [GetSpellInfo(230348)] = 6,  --邪能之池
+			 [234264] = 5,  --熔化护甲
+			 [231363] = 7,  --燃烧护甲
+			 [233272] = 4,  --碎裂星辰
+			 [230348] = 6,  --邪能之池
 			
 			-- 恶魔审判庭
-			 [GetSpellInfo(236283)] = 1,
-			 [GetSpellInfo(248741)] = 6,
-			 [GetSpellInfo(233983)] = 7,
-			 [GetSpellInfo(233430)] = 7,
-			 [GetSpellInfo(233901)] = 4,
-			 [GetSpellInfo(233431)] = 8,
-			 [GetSpellInfo(248713)] = 3,		 
+			 [236283] = 1,
+			 [248741] = 6,
+			 [233983] = 7,
+			 [233430] = 7,
+			 [233901] = 4,
+			 [233431] = 8,
+			 [248713] = 3,		 
 
 			-- 哈亚坦
-			 [GetSpellInfo(234016)] = 6,  --强制突袭/小怪盯人
-			 [GetSpellInfo(241573)] = 4,
-			 [GetSpellInfo(231998)] = 5,
-			 [GetSpellInfo(231770)] = 3,
-			 [GetSpellInfo(231729)] = 6,
-			 [GetSpellInfo(231768)] = 5,
-			 [GetSpellInfo(241600)] = 7,
-			 [GetSpellInfo(207631)] = 5,
-			 [GetSpellInfo(206645)] = 5,
+			 [234016] = 6,  --强制突袭/小怪盯人
+			 [241573] = 4,
+			 [231998] = 5,
+			 [231770] = 3,
+			 [231729] = 6,
+			 [231768] = 5,
+			 [241600] = 7,
+			 [207631] = 5,
+			 [206645] = 5,
 			 
 			-- 主母萨丝琳
-			 [GetSpellInfo(230362)] = 7,
-			 [GetSpellInfo(230384)] = 6,
-			 [GetSpellInfo(230201)] = 5,
-			 [GetSpellInfo(232732)] = 3,
-			 [GetSpellInfo(230276)] = 3,
-			 [GetSpellInfo(230959)] = 5,
-			 [GetSpellInfo(230139)] = 8,
-			 [GetSpellInfo(232754)] = 3,
-			 [GetSpellInfo(232913)] = 4,
+			 [230362] = 7,
+			 [230384] = 6,
+			 [230201] = 5,
+			 [232732] = 3,
+			 [230276] = 3,
+			 [230959] = 5,
+			 [230139] = 8,
+			 [232754] = 3,
+			 [232913] = 4,
 			 
 			-- 月之姐妹
-			 [GetSpellInfo(233263)] = 5,
-			 [GetSpellInfo(236596)] = 6,
-			 [GetSpellInfo(236712)] = 8, 
-			 [GetSpellInfo(239264)] = 7,
-			 [GetSpellInfo(236519)] = 4,
-			 [GetSpellInfo(236550)] = 7,
-			 [GetSpellInfo(237561)] = 6,
-			 [GetSpellInfo(236305)] = 8,
-			 [GetSpellInfo(216040)] = 7,
+			 [233263] = 5,
+			 [236596] = 6,
+			 [236712] = 8, 
+			 [239264] = 7,
+			 [236519] = 4,
+			 [236550] = 7,
+			 [237561] = 6,
+			 [236305] = 8,
+			 [216040] = 7,
 
 			-- 绝望的聚合体
-			 [GetSpellInfo(236361)] = 6,
-			 [GetSpellInfo(236340)] = 6,
-			 [GetSpellInfo(236241)] = 5,
-			 [GetSpellInfo(236459)] = 7,  --灵魂束缚
-			 [GetSpellInfo(235907)] = 5,
-			 [GetSpellInfo(238018)] = 7,
-			 [GetSpellInfo(236135)] = 8,
-			 [GetSpellInfo(242796)] = 7,
+			 [236361] = 6,
+			 [236340] = 6,
+			 [236241] = 5,
+			 [236459] = 7,  --灵魂束缚
+			 [235907] = 5,
+			 [238018] = 7,
+			 [236135] = 8,
+			 [242796] = 7,
 
 			-- 戒卫侍女
-			 [GetSpellInfo(235213)] = 4,
-			 [GetSpellInfo(235240)] = 4,
-			 [GetSpellInfo(243276)] = 7,
-			 [GetSpellInfo(239408)] = 5,
-			 [GetSpellInfo(238028)] = 5,
-			 [GetSpellInfo(248812)] = 2,
-             [GetSpellInfo(248801)] = 3,
-             [GetSpellInfo(241729)] = 3,			 
+			 [235213] = 4,
+			 [235240] = 4,
+			 [243276] = 7,
+			 [239408] = 5,
+			 [238028] = 5,
+			 [248812] = 2,
+             [248801] = 3,
+             [241729] = 3,			 
 
 			-- 堕落的化身
-			 [GetSpellInfo(234059)] = 6,
-			 [GetSpellInfo(239212)] = 6,
-			 [GetSpellInfo(236494)] = 5,
-			 [GetSpellInfo(239739)] = 7,
-			 [GetSpellInfo(242017)] = 4,
-			 [GetSpellInfo(240249)] = 4,
-			 [GetSpellInfo(240746)] = 5,
-			 [GetSpellInfo(206398)] = 4,
-			 [GetSpellInfo(240728)] = 5,
+			 [234059] = 6,
+			 [239212] = 6,
+			 [236494] = 5,
+			 [239739] = 7,
+			 [242017] = 4,
+			 [240249] = 4,
+			 [240746] = 5,
+			 [206398] = 4,
+			 [240728] = 5,
 			 
 			-- 基尔加丹
-			 [GetSpellInfo(234310)] = 4,
-			 [GetSpellInfo(245509)] = 4,
-			 [GetSpellInfo(240916)] = 5,
-             [GetSpellInfo(241822)] = 6,
-             [GetSpellInfo(241712)] = 3,
-             [GetSpellInfo(236710)] = 5,
-             [GetSpellInfo(236378)] = 9,
-             [GetSpellInfo(239216)] = 6,
-             [GetSpellInfo(240908)] = 7,
-             [GetSpellInfo(240262)] = 4,	
-             [GetSpellInfo(243624)] = 8,		 
+			 [234310] = 4,
+			 [245509] = 4,
+			 [240916] = 5,
+             [241822] = 6,
+             [241712] = 3,
+             [236710] = 5,
+             [236378] = 9,
+             [239216] = 6,
+             [240908] = 7,
+             [240262] = 4,	
+             [243624] = 8,		 
 		},
-		[1188] = {--"安托鲁斯·燃烧王座"
+		[946] = {--"安托鲁斯·燃烧王座"
 			-- Antorus, the Burning Throne
 
 			-- 加洛斯
-			 [GetSpellInfo(246220)] = 5,  --邪能轰炸
-			 [GetSpellInfo(244590)] = 7,  --炽熔邪能
-			 [GetSpellInfo(247159)] = 4,  --引力毁灭
-			 [GetSpellInfo(246919)] = 6,  --错乱屠戮
-			 [GetSpellInfo(246920)] = 6,  --错乱屠戮
+			 [246220] = 5,  --邪能轰炸
+			 [244590] = 7,  --炽熔邪能
+			 [247159] = 4,  --引力毁灭
+			 [246919] = 6,  --错乱屠戮
+			 [246920] = 6,  --错乱屠戮
 			
 			-- 双狗
-			 [GetSpellInfo(248818)] = 7,
-			 [GetSpellInfo(248815)] = 6,
-			 [GetSpellInfo(244679)] = 8,
-			 [GetSpellInfo(254429)] = 7, 
+			 [248818] = 7,
+			 [248815] = 6,
+			 [244679] = 8,
+			 [254429] = 7, 
 
 			-- 议会
-			 [GetSpellInfo(253037)] = 6,  --
-			 [GetSpellInfo(253290)] = 7,
-			 [GetSpellInfo(244172)] = 8,
-			 [GetSpellInfo(244388)] = 9,
-			 [GetSpellInfo(253306)] = 9,
-			 [GetSpellInfo(244737)] = 8,
-			 [GetSpellInfo(244748)] = 8,
+			 [253037] = 6,  --
+			 [253290] = 7,
+			 [244172] = 8,
+			 [244388] = 9,
+			 [253306] = 9,
+			 [244737] = 8,
+			 [244748] = 8,
 			 			 
 			-- 传送门
-			 [GetSpellInfo(246208)] = 7,
-			 [GetSpellInfo(244949)] = 6,
-			 [GetSpellInfo(246316)] = 5,
-			 [GetSpellInfo(244849)] = 4,
-			 [GetSpellInfo(244613)] = 4,
+			 [246208] = 7,
+			 [244949] = 6,
+			 [246316] = 5,
+			 [244849] = 4,
+			 [244613] = 4,
 						 
 			-- 艾欧娜
-			 [GetSpellInfo(248795)] = 5,
-			 [GetSpellInfo(249016)] = 6,
-			 [GetSpellInfo(249017)] = 8, 
-			 [GetSpellInfo(249014)] = 7,
-			 [GetSpellInfo(250693)] = 4,
-			 [GetSpellInfo(250691)] = 7,
-			 [GetSpellInfo(250140)] = 6,
-			 [GetSpellInfo(250693)] = 8,
+			 [248795] = 5,
+			 [249016] = 6,
+			 [249017] = 8, 
+			 [249014] = 7,
+			 [250693] = 4,
+			 [250691] = 7,
+			 [250140] = 6,
+			 [250693] = 8,
 			
 			-- 猎魂者
-			 [GetSpellInfo(247367)] = 6,
-			 [GetSpellInfo(255029)] = 7,
-			 [GetSpellInfo(247565)] = 5,
-			 [GetSpellInfo(250224)] = 7,  --
-			 [GetSpellInfo(247687)] = 5,
-			 [GetSpellInfo(247716)] = 7,
-			 [GetSpellInfo(247641)] = 8,
-			 [GetSpellInfo(254183)] = 7,
-			 [GetSpellInfo(250006)] = 7,
+			 [247367] = 6,
+			 [255029] = 7,
+			 [247565] = 5,
+			 [250224] = 7,  --
+			 [247687] = 5,
+			 [247716] = 7,
+			 [247641] = 8,
+			 [254183] = 7,
+			 [250006] = 7,
 			
 			-- 金加洛斯
-			 [GetSpellInfo(246840)] = 4,
-			 [GetSpellInfo(246698)] = 6,
-			 [GetSpellInfo(258070)] = 7,
-			 [GetSpellInfo(246637)] = 5,
+			 [246840] = 4,
+			 [246698] = 6,
+			 [258070] = 7,
+			 [246637] = 5,
 			
 			-- 瓦里玛萨斯
-			 [GetSpellInfo(243961)] = 6,
-			 [GetSpellInfo(244094)] = 8,
-			 [GetSpellInfo(244042)] = 7,
-			 [GetSpellInfo(244005)] = 7,
-			 [GetSpellInfo(248732)] = 6,
+			 [243961] = 6,
+			 [244094] = 8,
+			 [244042] = 7,
+			 [244005] = 7,
+			 [248732] = 6,
 						 
 			-- 破坏魔
-			 [GetSpellInfo(245586)] = 5,
-			 [GetSpellInfo(256356)] = 5,
-			 [GetSpellInfo(253020)] = 5,
-             [GetSpellInfo(241822)] = 6,
-             [GetSpellInfo(253520)] = 3,
-             [GetSpellInfo(253697)] = 5,
-             [GetSpellInfo(245671)] = 9,
-             [GetSpellInfo(245921)] = 6,
-             [GetSpellInfo(250097)] = 7,
-             [GetSpellInfo(246763)] = 4,	
-             [GetSpellInfo(250757)] = 8,	
+			 [245586] = 5,
+			 [256356] = 5,
+			 [253020] = 5,
+             [241822] = 6,
+             [253520] = 3,
+             [253697] = 5,
+             [245671] = 9,
+             [245921] = 6,
+             [250097] = 7,
+             [246763] = 4,	
+             [250757] = 8,	
 
             -- 阿格拉玛
-			 [GetSpellInfo(244291)] = 5,
-			 [GetSpellInfo(245990)] = 5,
-			 [GetSpellInfo(245994)] = 5,
-             [GetSpellInfo(245916)] = 6,
-             [GetSpellInfo(246014)] = 3,
-             [GetSpellInfo(244912)] = 5,
-             [GetSpellInfo(244736)] = 9,
-             [GetSpellInfo(247079)] = 6,
-             [GetSpellInfo(254452)] = 7,
+			 [244291] = 5,
+			 [245990] = 5,
+			 [245994] = 5,
+             [245916] = 6,
+             [246014] = 3,
+             [244912] = 5,
+             [244736] = 9,
+             [247079] = 6,
+             [254452] = 7,
             
             -- 阿古斯
-			 [GetSpellInfo(248499)] = 5,
-			 [GetSpellInfo(248167)] = 5,
-			 [GetSpellInfo(248396)] = 7,
-             [GetSpellInfo(258646)] = 6,
-             [GetSpellInfo(258647)] = 5,
-             [GetSpellInfo(253903)] = 5,
-             [GetSpellInfo(253901)] = 5,
-             [GetSpellInfo(255199)] = 6,
-             [GetSpellInfo(255200)] = 7,
-             [GetSpellInfo(250669)] = 4,	
-             [GetSpellInfo(251570)] = 4,	
-             [GetSpellInfo(251815)] = 7,
-             [GetSpellInfo(257869)] = 6,
-             [GetSpellInfo(257911)] = 7,	 
+			 [248499] = 5,
+			 [248167] = 5,
+			 [248396] = 7,
+             [258646] = 6,
+             [258647] = 5,
+             [253903] = 5,
+             [253901] = 5,
+             [255199] = 6,
+             [257930] = 6,
+			 [255200] = 7,
+             [250669] = 4,	
+             [251570] = 4,	
+             [251815] = 7,
+             [257869] = 6,
+			 [257966] = 8,	
+             [258838] = 7,
+			 [257911] = 7,
+			 [258834] = 7,
+		},
+		[1031] = {--"奥迪尔"
+			-- Uldir
+             
+            -- 老一
+			 [271222] = 7, 
+			 [270296] = 6, 
+			 [278889] = 5, 
+			 [278888] = 4, 
+			 [271225] = 7, 
+			 [271224] = 6, 
+			 [275189] = 5, 
+			 [275205] = 5, 
+            -- 老二
+			 [267787] = 5, 
+			 [268198] = 7, 
+            -- 老三
+			 [262313] = 5, 
+			 [262314] = 5, 
+            -- 老四
+			 [265662] = 5, 
+			 [265264] = 5, 
+			 [265646] = 5, 
+			 [265360] = 5, 
+			 [270620] = 5, 
+			 [270589] = 5, 
+            -- 老五
+			 [265129] = 5, 
+			 [265127] = 5, 
+			 [265206] = 5, 
+			 [266948] = 5, 
+			 [265212] = 5, 
+			 [265174] = 5, 
+			 [267160] = 5, 
+			 [267161] = 5, 
+			 [274990] = 5, 
+			 [265178] = 5, 
+            -- 老六			 
+			 [274195] = 5, 
+			 [273365] = 5, 
+			 [274271] = 5, 
+			 [274358] = 5, 
+			 [272018] = 5, 
+			 [273434] = 5, 
+			 [276020] = 5, 
+			 [269936] = 5, 
+			 [278890] = 5, 
+            -- 老七
+			 [272336] = 5, 
+			 [272536] = 5, 
+			 [273282] = 5, 
+			 [272146] = 5, 
+			 [272407] = 5, 
+			 [274019] = 5, 
+            -- 老八
+			 [270287] = 5, 
+			 [272506] = 5, 
+			 [263372] = 5, 
+			 [263436] = 5, 
+			 [276834] = 5, 
+			 [263321] = 5, 
+			 [263372] = 5, 
+			 [263334] = 5, 
+			 [267700] = 5, 
+			 [267409] = 5, 
+			 [267659] = 5, 
+			 [263227] = 5, 
+			 [263235] = 7, 	 
 		},
 	},
 	second = {
-		[767] = {--"潮汐王座"
-			[GetSpellInfo(83608)] =  1, --厄祖玛特的枯萎
+		[65] = {--"潮汐王座"
+			[83608] =  1, --厄祖玛特的枯萎
 		},
-		[769] = {--"旋云之巅"
-			[GetSpellInfo(88286)] =  1, --逆风
-			[GetSpellInfo(88282)] =  1, --顺风
+		[68] = {--"旋云之巅"
+			[88286] =  1, --逆风
+			[88282] =  1, --顺风
 		},			
-		[824] = {-- "Dragon Soul"
+		[187] = {-- "Dragon Soul"
 			-- Hagara the Stormbinder
-			[GetSpellInfo(110317)] = 1, --水壕
+			[110317] = 1, --水壕
 		},
-		[969] = {--"影月墓地" 
+		[537] = {--"影月墓地" 
 			--Shadowmoon Burial Grounds 
-			[GetSpellInfo(162652)] = 1, --纯净之月
+			[162652] = 1, --纯净之月
 		},
-		[1041] ={-- "英灵殿"
+		[721] ={-- "英灵殿"
 			-- Halls of Valor
-			[GetSpellInfo(203963)] = 1, --风暴之眼
-			[GetSpellInfo(193743)] = 1, --阿格拉玛之盾 
-		},
-		[1079] = {--"魔法回廊"
+			[203963] =  1, --风暴之眼
+			[193743] =  1, --阿格拉玛之盾 
+        	},
+		[726] = {--"魔法回廊"
 			-- The Arcway
-			[GetSpellInfo(195362)] = 1, --暗夜井能量
+			[195362] = 1, --暗夜井能量
 		},
-		[1114] = {--"勇气试练"
+		[861] = {--"勇气试练"
 			-- Trial of Valor
-			[GetSpellInfo(229584)] = 1, --受到保护
+			[229584] = 1, --受到保护
 		},
-		[1088] = {--"暗夜要塞"
+		[786] = {--"暗夜要塞"
 			-- The Nighthold
-			[GetSpellInfo(204284)] = 1, --水晶碎片
+			[204284] = 1, --水晶碎片
 			-- Trilliax
-			[GetSpellInfo(206838)] = 1, --多汁盛宴
+			[206838] = 1, --多汁盛宴
 			-- Tichondrius
-			[GetSpellInfo(206466)] = 1, --夜之精华
+			[206466] = 1, --夜之精华
 			-- Grand Magistrix Elisande
-			[GetSpellInfo(209166)] = 1, --时间加速
-			[GetSpellInfo(209165)] = 1, --减缓时间
+			[209166] = 1, --时间加速
+			[209165] = 1, --减缓时间
 		},
 	},	
 }

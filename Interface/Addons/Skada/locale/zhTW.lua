@@ -4,6 +4,7 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("Skada", "zhTW", false)
 if not L then return end
 
+L["SkadaTitle"] = "|cff8000ff[战斗]|r伤害统计"
 L["%s dies"] = "%s已死亡"
 L["%s on %s removed by %s"] = "%s在%s被%s移除了"
 L["%s on %s removed by %s's %s"] = "%s在%s被%s的%s移除了"

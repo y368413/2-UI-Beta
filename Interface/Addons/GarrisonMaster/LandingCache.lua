@@ -1,6 +1,7 @@
 local _, T = ...
 if T.Mark ~= 50 then return end
 local G, L, E = T.Garrison, T.L, T.Evie
+local GameTooltip = AltGameTooltip or GameTooltip
 
 local function HookOnShow(self, OnShow)
 	self:HookScript("OnShow", OnShow)
@@ -110,7 +111,7 @@ local function Ship_SetRecruit(ship)
 	return true
 end
 hooksecurefunc("GarrisonLandingPageReport_GetShipments", function(self)
-	if GarrisonLandingPage.garrTypeID == 3 then return end
+	if GarrisonLandingPage.garrTypeID >= 3 then return end
 	local index, ship = self.shipmentsPool.numActiveObjects, self.shipmentsPool:Acquire()
 	ship:SetPoint("TOPLEFT", 60 + mod(index, 3) * 105, -105 - floor(index / 3) * 100)
 	if Ship_SetRecruit(ship) then
@@ -132,17 +133,19 @@ local function addCacheResources(self, id)
 		local cv, mv = G.GetResourceCacheInfo()
 		if cv and cv > 0 then
 			self:AddLine(GARRISON_CACHE .. ": |cffff" .. (cv < mv and "ffff" or "1010") .. BreakUpLargeNumbers(cv) .. "/" .. BreakUpLargeNumbers(mv))
-			return true
+			self:Show()
 		end
 	end
 end
-hooksecurefunc(GameTooltip, "SetCurrencyByID", addCacheResources)
-hooksecurefunc(GameTooltip, "SetCurrencyTokenByID", addCacheResources)
-hooksecurefunc(GameTooltip, "SetCurrencyToken", function(self, idx)
-	if addCacheResources(self, tonumber((GetCurrencyListLink(idx) or ""):match("currency:(%d+)") or 0)) then
-		self:Show()
-	end
-end)
+local function addCacheResourcesByLink(self, idx)
+	addCacheResources(self, tonumber((GetCurrencyListLink(idx) or ""):match("currency:(%d+)") or 0))
+end
+for i=1,GameTooltip ~= _G.GameTooltip and 2 or 1 do
+	local tip = i == 1 and GameTooltip or _G.GameTooltip
+	hooksecurefunc(tip, "SetCurrencyByID", addCacheResources)
+	hooksecurefunc(tip, "SetCurrencyTokenByID", addCacheResources)
+	hooksecurefunc(tip, "SetCurrencyToken", addCacheResourcesByLink)
+end
 hooksecurefunc(GarrisonLandingPage.Report.shipmentsPool, "ReleaseAll", function(self)
 	local o = self.inactiveObjects
 	for i=1,o and #o or 0 do
@@ -154,7 +157,7 @@ hooksecurefunc(GarrisonLandingPage.Report.shipmentsPool, "ReleaseAll", function(
 end)
 
 local function ShowReportMissionExpirationTime()
-	if GarrisonLandingPage.garrTypeID == 3 then return end
+	if GarrisonLandingPage.garrTypeID >= 3 then return end
 	local items, buttons = GarrisonLandingPageReport.List.AvailableItems, GarrisonLandingPageReport.List.listScroll.buttons
 	for i=1,#buttons do
 		local item = buttons[i]:IsShown() and items[buttons[i].id]
@@ -175,7 +178,7 @@ hs:SetSize(24, 24)
 hs:SetPoint("LEFT", GarrisonLandingPage, "TOPLEFT", 40, -63)
 hs.Count:Hide()
 HookOnShow(GarrisonLandingPageReport, function()
-	local show = GarrisonLandingPage.garrTypeID ~= 3
+	local show = GarrisonLandingPage.garrTypeID < 3
 	GarrisonLandingPageReport.Title:SetPoint("LEFT", GarrisonLandingPage.HeaderBar, "LEFT", show and 40 or 20, 0)
 	hs:SetShown(show)
 end)

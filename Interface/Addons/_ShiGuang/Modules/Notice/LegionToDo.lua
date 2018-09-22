@@ -1,6 +1,6 @@
---## Author: ykiigor  ## SavedVariables: VLegionToDo
-local LegionToDoVERSION = "2.7"
-local LegionToDoVERSION_NUMERIC = 27
+--## Author: ykiigor  ## Version: 32 ## SavedVariables: VLegionToDo
+local LegionToDoVERSION = "3.2"
+local LegionToDoVERSION_NUMERIC = 32
 
 local GetCurrentRegion
 do
@@ -112,9 +112,13 @@ end
 local ToDoFunc = {}
 _G.LegionToDo = {ToDoFunc = ToDoFunc,}
 
+local isLevel110 = UnitLevel'player' <= 110
+local isLevel120 = UnitLevel'player' > 110
+
 local coinsQuests = UnitLevel'player' <= 100 and {[36058]=1,[36055]=1,[37452]=1,[37453]=1,[36056]=1,[37457]=1,[37456]=1,[36054]=1,[37455]=1,[37454]=1,[36057]=1,[37458]=1,[37459]=1,[36060]=1,} or
-	{[43895]=1,[43897]=1,[43896]=1,[43892]=1,[43893]=1,[43894]=1,[47851]=1,[47864]=1,[47865]=1,[43510]=1,}
-local coinsCurrency = UnitLevel'player' <= 100 and 1129 or 1273
+	isLevel110 and {[43895]=1,[43897]=1,[43896]=1,[43892]=1,[43893]=1,[43894]=1,[47851]=1,[47864]=1,[47865]=1,[43510]=1,} or
+	{[52835]=1,[52834]=1,[52837]=1,[52840]=1,[52838]=1,[52839]=1,}
+local coinsCurrency = UnitLevel'player' <= 100 and 1129 or isLevel110 and 1273 or 1580
 	
 tinsert(ToDoFunc,function(self,collect)
 	local count = 0
@@ -125,7 +129,7 @@ tinsert(ToDoFunc,function(self,collect)
 	end
 	local name, amount, texturePath, earnedThisWeek, weeklyMax, totalMax, isDiscovered, quality = GetCurrencyInfo(coinsCurrency)
 	
-	local coinsStr = format("|cff%s%d/%d [%d%s]",count==3 and "00ff00" or (totalMax == amount and isDiscovered) and "ff8000" or "ff0000",count,3,amount or 0,totalMax == amount and isDiscovered and ",cap" or "")
+	local coinsStr = format("|cff%s%d/%d [%d%s]",count==3 and "00ff00" or (totalMax == amount and isDiscovered) and "ff8000" or "ff0000",count,weeklyMax or isLevel110 and 3 or 2,amount or 0,totalMax == amount and isDiscovered and ",cap" or "")
 	self:AddDoubleLine("Coins", coinsStr,1,1,1)
 	self:AddTexture("Interface/Icons/inv_misc_elvencoins")
 	
@@ -133,7 +137,9 @@ tinsert(ToDoFunc,function(self,collect)
 	collect.coinsNow = amount
 	collect.coinsMax = totalMax
 	collect.coinsWeek = count
+	collect.coinsWeekMax = weeklyMax
 	
+	--[[
 	if UnitAura("player",GetSpellInfo(239967),nil) then
 		count = 0
 		for _,id in pairs({47038,47044,47053}) do
@@ -143,42 +149,52 @@ tinsert(ToDoFunc,function(self,collect)
 		end
 		self:AddDoubleLine("Bonus coins", count,1,1,1)
 	end
+	]]
 end)
 
 tinsert(ToDoFunc,function(self,collect)
 	local name, amount, texturePath, earnedThisWeek, weeklyMax, totalMax, isDiscovered, quality = GetCurrencyInfo(1220)
-	self:AddDoubleLine(name, amount, 1,1,1)
-	self:AddTexture("Interface/Icons/inv_orderhall_orderresources")
-	
+	if isLevel110 then
+		self:AddDoubleLine(name, amount, 1,1,1)
+		self:AddTexture("Interface/Icons/inv_orderhall_orderresources")
+	end
 	collect.hallres = amount
 	
-	local name, amount, texturePath, earnedThisWeek, weeklyMax, totalMax, isDiscovered, quality = GetCurrencyInfo(1342)
-	self:AddDoubleLine(name, amount, 1,1,1)
-	self:AddTexture("Interface/Icons/inv_misc_summonable_boss_token")
+	local name, amount, texturePath, earnedThisWeek, weeklyMax, totalMax, isDiscovered, quality = GetCurrencyInfo(1560)
+	if not isLevel110 then
+		self:AddDoubleLine(name, amount, 1,1,1)
+		self:AddTexture("Interface/Icons/inv__faction_warresources")
+	end
+	collect.hallres_bfa = amount
+
 	
+	local name, amount, texturePath, earnedThisWeek, weeklyMax, totalMax, isDiscovered, quality = GetCurrencyInfo(1342)
+	if isLevel110 then
+		self:AddDoubleLine(name, amount, 1,1,1)
+		self:AddTexture("Interface/Icons/inv_misc_summonable_boss_token")
+	end
 	collect.warsuppl = amount
 	
 	local name, amount, texturePath, earnedThisWeek, weeklyMax, totalMax, isDiscovered, quality = GetCurrencyInfo(1226)
-	self:AddDoubleLine(name, amount, 1,1,1)
-	self:AddTexture("Interface/Icons/inv_datacrystal01")
-	
+	if isLevel110 then
+		self:AddDoubleLine(name, amount, 1,1,1)
+		self:AddTexture("Interface/Icons/inv_datacrystal01")
+	end
 	collect.nethershard = amount	
 
 	local name, amount, texturePath, earnedThisWeek, weeklyMax, totalMax, isDiscovered, quality = GetCurrencyInfo(1508)
-	if name and name ~= "" then
+	if isLevel110 then
 		self:AddDoubleLine(name, amount, 1,1,1)
 		self:AddTexture("Interface/Icons/oshugun_crystalfragments")	
-		
-		collect.argunite = amount	
 	end
+	collect.argunite = amount
 	
 	local name, amount, texturePath, earnedThisWeek, weeklyMax, totalMax, isDiscovered, quality = GetCurrencyInfo(1533)
-	if name and name ~= "" then
+	if isLevel110 then
 		self:AddDoubleLine(name, amount, 1,1,1)
 		self:AddTexture("Interface/Icons/achievement_dungeon_ulduar80_25man")	
-		
-		collect.essence = amount	
 	end
+	collect.essence = amount
 end)
 
 local days3val = 3 * 24 * 60 * 60
@@ -188,8 +204,10 @@ local witheredTrainingDay0 = 1468994400 + days1val * 2
 tinsert(ToDoFunc,function(self,collect)
 	local name, amount, texturePath, earnedThisWeek, weeklyMax, totalMax, isDiscovered, quality = GetCurrencyInfo(1155)
 	local amanaStr = format("|cff%s%d/%d",amount==totalMax and "00ff00" or amount >=1300 and "ff8000" or "ff0000",amount,totalMax)
-	self:AddDoubleLine(name, amanaStr,1,1,1)
-	self:AddTexture("Interface/Icons/inv_misc_ancient_mana")
+	if isLevel110 then
+		self:AddDoubleLine(name, amanaStr,1,1,1)
+		self:AddTexture("Interface/Icons/inv_misc_ancient_mana")
+	end
 	
 	collect.amana = amanaStr
 	collect.amanaNow = amount
@@ -221,14 +239,18 @@ tinsert(ToDoFunc,function(self,collect)
 		if isInLog and isInLog ~= 0 then
 			local objectiveText, objectiveType, finished, numFulfilled, numRequired = GetQuestObjectiveInfo(48799, 1, false)
 			if numFulfilled and numRequired then
-				collect.arguniteQuest = numFulfilled .. "/" .. numRequired		
-				self:AddDoubleLine("Argunite Quest:",collect.arguniteQuest,1,1,1)
+				collect.arguniteQuest = numFulfilled .. "/" .. numRequired
+				if isLevel110 then
+					self:AddDoubleLine("Argunite Quest:",collect.arguniteQuest,1,1,1)
+				end
 			end
 		else
 			collect.arguniteQuest = nil
 		end
 	else
-		self:AddDoubleLine("Argunite Quest:","|cff00ff00Done",1,1,1)
+		if isLevel110 then
+			self:AddDoubleLine("Argunite Quest:","|cff00ff00Done",1,1,1)
+		end
 		collect.arguniteQuest = true
 	end
 	
@@ -241,13 +263,17 @@ tinsert(ToDoFunc,function(self,collect)
 			local objectiveText, objectiveType, finished, numFulfilled, numRequired = GetQuestObjectiveInfo(49293, 1, false)
 			if numFulfilled and numRequired then
 				collect.riftQuest = numFulfilled .. "/" .. numRequired		
-				self:AddDoubleLine("Rift Quest:",collect.riftQuest,1,1,1)
+				if isLevel110 then
+					self:AddDoubleLine("Rift Quest:",collect.riftQuest,1,1,1)
+				end
 			end
 		else
 			collect.riftQuest = nil
 		end
 	else
-		self:AddDoubleLine("Rift Quest:","|cff00ff00Done",1,1,1)
+		if isLevel110 then
+			self:AddDoubleLine("Rift Quest:","|cff00ff00Done",1,1,1)
+		end
 		collect.riftQuest = true
 	end
 
@@ -255,8 +281,10 @@ tinsert(ToDoFunc,function(self,collect)
 	local recruitLvl2 = IsQuestFlaggedCompleted(48911)
 	local recruitLvl3 = IsQuestFlaggedCompleted(48912)
 	
-	self:AddDoubleLine("Argus recruits:", (recruitLvl1 and "|cff00ff00+|r" or "|cffff0000-|r").."/"..(recruitLvl2 and "|cff00ff00+|r" or "|cffff0000-|r").."/"..(recruitLvl3 and "|cff00ff00+|r" or "|cffff0000-|r"),1,1,1)
-
+	if isLevel110 then
+		self:AddDoubleLine("Argus recruits:", (recruitLvl1 and "|cff00ff00+|r" or "|cffff0000-|r").."/"..(recruitLvl2 and "|cff00ff00+|r" or "|cffff0000-|r").."/"..(recruitLvl3 and "|cff00ff00+|r" or "|cffff0000-|r"),1,1,1)
+	end
+	
 	collect.argusRecruit1 = recruitLvl1
 	collect.argusRecruit2 = recruitLvl2
 	collect.argusRecruit3 = recruitLvl3
@@ -265,6 +293,23 @@ end)
 
 tinsert(ToDoFunc,function(self,collect)
 	self:AddDoubleLine("Blingtron 6000", IsQuestFlaggedCompleted(40753) and "|cff00ff00Done" or "|cffff0000Not completed", 1,1,1)
+end)
+
+
+tinsert(ToDoFunc,function(self,collect)
+	local questID = C_IslandsQueue.GetIslandsWeeklyQuestID()
+	
+	collect.island = nil
+	if questID then
+		if IsQuestFlaggedCompleted(questID) then
+			self:AddDoubleLine("Islands", "|cff00ff00Done", 1,1,1)
+			collect.island = "|cff00ff00Done"
+		else
+			local objectiveText, objectiveType, finished, numFulfilled, numRequired = GetQuestObjectiveInfo(questID, 1, false)
+			self:AddDoubleLine("Islands", numFulfilled.."/"..numRequired, 1,1,1)
+			collect.island = numFulfilled.."/"..numRequired
+		end
+	end
 end)
 
 
@@ -439,7 +484,7 @@ tinsert(ToDoFunc,function(self,collect)
 			mission_tos = mission_tos + (13 * 24 * 60 * 60)
 		end
 	
-		self:AddDoubleLine("ToS Garrison Mission", date("%d.%m.%Y %H:%M",mission_tos), 1,1,1,active_tos and 0 or 1,1,active_tos and 0 or 1)
+		--self:AddDoubleLine("ToS Garrison Mission", date("%d.%m.%Y %H:%M",mission_tos), 1,1,1,active_tos and 0 or 1,1,active_tos and 0 or 1)
 	end
 	
 	local mission_abt = collect.s.mission_abt
@@ -448,7 +493,7 @@ tinsert(ToDoFunc,function(self,collect)
 			mission_abt = mission_abt + (13 * 24 * 60 * 60)
 		end
 	
-		self:AddDoubleLine("ABT Garrison Mission", date("%d.%m.%Y %H:%M",mission_abt), 1,1,1,active_abt and 0 or 1,1,active_abt and 0 or 1)
+		--self:AddDoubleLine("ABT Garrison Mission", date("%d.%m.%Y %H:%M",mission_abt), 1,1,1,active_abt and 0 or 1,1,active_abt and 0 or 1)
 	end
 	
 	--[[
@@ -460,19 +505,26 @@ tinsert(ToDoFunc,function(self,collect)
 	]]
 end)
 
-
+--ELib:Frame(UIParent):SetScript('OnUpdate',function()local q=GetMouseFocus()if not q or not q.link then DInfo'nil' return end DInfo(q.link:gsub("\124","I"))end)
 local instances = {
 	707,740,767,716,727,762,721,777,726,800,860,900,945,
+	968,1001,1041,1036,1023,1030,1012,1022,1002,1021,
 }
 local instancesInOptions = {
 	1,2,3,4,5,6,7,8,9,10,11,12,13,
+	14+0,14+1,14+2,14+3,14+4,14+5,14+6,14+7,14+8,14+9,
 }
-local instancesLastBoss = {
-	
-}
+local instancesLastBoss = {}
 local instancesAttune = {
 	--[10] = 44053,
 	--[9] = 44053,
+}
+local instancesShowStatus = {
+	isLevel110,isLevel110,isLevel110,isLevel110,isLevel110,isLevel110,isLevel110,isLevel110,isLevel110,isLevel110,isLevel110,isLevel110,isLevel110,
+	isLevel120,isLevel120,isLevel120,isLevel120,isLevel120,isLevel120,isLevel120,isLevel120,isLevel120,isLevel120,
+}
+local instancesMaxBossesFix = {
+	[18] = 4,
 }
 
 
@@ -497,6 +549,10 @@ tinsert(ToDoFunc,function(self,collect)
 			local inArr = IsInArray(instances,instanceName)
 			if inArr then
 				defeatedBosses = locked and defeatedBosses or 0
+
+				if instancesMaxBossesFix[inArr] then
+					totalBosses = instancesMaxBossesFix[inArr]
+				end
 				
 				local _,_,lastBossDefeated = GetSavedInstanceEncounterInfo(i, instancesLastBoss[i] or totalBosses)
 				if defeatedBosses == 0 and lastBossDefeated then
@@ -509,13 +565,14 @@ tinsert(ToDoFunc,function(self,collect)
 	end
 	self:AddLine("Mythic:")
 	for i=1,#instances do
-		
-		if instancesAttune[i] and not res[i] and not IsQuestFlaggedCompleted(instancesAttune[i]) then
-			self:AddDoubleLine(instances[i], "|cffff0000Locked",1,1,1)
-			collect["instance"..i] = "|cffff0000Locked"
-		else
-			self:AddDoubleLine(instances[i], res[i] or "|cffff0000---",1,1,1)
-			collect["instance"..i] = res[i] or "|cffff0000---"
+		if instancesShowStatus[i] then
+			if instancesAttune[i] and not res[i] and not IsQuestFlaggedCompleted(instancesAttune[i]) then
+				self:AddDoubleLine(instances[i], "|cffff0000Locked",1,1,1)
+				collect["instance"..i] = "|cffff0000Locked"
+			else
+				self:AddDoubleLine(instances[i], res[i] or "|cffff0000---",1,1,1)
+				collect["instance"..i] = res[i] or "|cffff0000---"
+			end
 		end
 	end
 end)
@@ -523,11 +580,12 @@ end)
 
 local mythicPlusMaps = C_ChallengeMode.GetMapTable()
 tinsert(ToDoFunc,function(self,collect)
-	C_ChallengeMode.RequestMapInfo()
-	C_ChallengeMode.RequestRewards()
+	C_MythicPlus.RequestMapInfo()
+	C_MythicPlus.RequestRewards()
 	local max = 0
 	for i=1,#mythicPlusMaps do
-		local _, _, level, affixes = C_ChallengeMode.GetMapPlayerStats(mythicPlusMaps[i])
+		--local _, _, level, affixes = C_ChallengeMode.GetMapPlayerStats(mythicPlusMaps[i])
+		local _, level = C_MythicPlus.GetWeeklyBestForMap(mythicPlusMaps[i])
 		if level and level > max then
 			max = level
 		end
@@ -539,9 +597,11 @@ end)
 
 local raids = {
 	768,861,786,875,946,
+	1031,
 }
 local raids_max_bosses = {
 	7,3,10,9,11,
+	8,
 }
 
 for i=1,#raids do
@@ -560,6 +620,11 @@ local LFRInstances = {
 	{ 1290,1291,1292,1293 }, -- NH
 	{ 1494,1495,1496,1497 }, --ToS
 	{ 1610,1611,1612,1613 }, --ABT
+	{ 1731,1732,1733 },	--Uldir
+}
+local LFRInstancesShowStatus = {
+	isLevel110, isLevel110, isLevel110, isLevel110, isLevel110, 
+	isLevel120,
 }
 
 tinsert(ToDoFunc,function(self,collect)
@@ -603,13 +668,17 @@ tinsert(ToDoFunc,function(self,collect)
 				
 				str = str .. (str ~= "" and "/" or "") .. (encountersCompleted == totalEncounters and "|cff00ff00" or encountersCompleted > 0 and "|cffffff00" or "|cffff0000") .. encountersCompleted .. "|r"
 			end
-			self:AddDoubleLine(raids[i].." "..PLAYER_DIFFICULTY3, str .. " ["..def.."]",1,1,1)
+			if LFRInstancesShowStatus[i] then
+				self:AddDoubleLine(raids[i].." "..PLAYER_DIFFICULTY3, str .. " ["..def.."]",1,1,1)
+			end
 			collect["raid"..i.."_lfr"] = def
 		end
 		for j=1,#raidsDiffs do
 			if res[i] and res[i][ raidsDiffs[j] ] then
 				local defeatedBosses = res[i][ raidsDiffs[j] ][1]
-				self:AddDoubleLine(raids[i].." "..raidsDiffsNames[j], format("|cff%s%d/%d",raids_max_bosses[i]==defeatedBosses and "00ff00" or "ff0000",defeatedBosses,raids_max_bosses[i]) ,1,1,1)
+				if LFRInstancesShowStatus[i] then
+					self:AddDoubleLine(raids[i].." "..raidsDiffsNames[j], format("|cff%s%d/%d",raids_max_bosses[i]==defeatedBosses and "00ff00" or "ff0000",defeatedBosses,raids_max_bosses[i]) ,1,1,1)
+				end
 				collect["raid"..i.."_"..j] = defeatedBosses
 				for k=1,raids_max_bosses[i] do
 					if defeatedBosses == 0 then
@@ -621,7 +690,9 @@ tinsert(ToDoFunc,function(self,collect)
 					end
 				end
 			else
-				self:AddDoubleLine(raids[i].." "..raidsDiffsNames[j], "|cffff0000---",1,1,1)
+				if LFRInstancesShowStatus[i] then
+					self:AddDoubleLine(raids[i].." "..raidsDiffsNames[j], "|cffff0000---",1,1,1)
+				end
 				collect["raid"..i.."_"..j] = 0
 				for k=1,raids_max_bosses[i] do
 					collect["raid"..i.."_"..j.."_b"..k.."_n"] = nil
@@ -634,7 +705,7 @@ end)
 
 
 tinsert(ToDoFunc,function(self,collect)
-	local bounties,_,lockedType = GetQuestBountyInfoForMapID(1007)
+	local bounties,_,lockedType = GetQuestBountyInfoForMapID(isLevel110 and 619 or 875)
 	
 	if lockedType then
 		self:AddDoubleLine("Bounty", "Quest not completed",nil,nil,nil,1,0,0)
@@ -686,16 +757,28 @@ tinsert(ToDoFunc,function(self,collect)
 	end
 end)
 
+local function formatAzeriteNum(num)
+	if num < 5000 then
+		return tostring(num)
+	elseif num < 1000000 then
+		return format("%.1fw",num/10000)
+	else
+		return format("%.2fm",num/1000000)
+	end
+end
+
 tinsert(ToDoFunc,function(self,collect)
-	local artifactItemID, _, _, _, artifactTotalXP, artifactPointsSpent, _, _, _, _, _, _, artifactTier = C_ArtifactUI.GetEquippedArtifactInfo()
-
 	collect.artifact = nil
-	if artifactItemID then
-		collect.artifact = artifactPointsSpent
-
-		local numPointsAvailableToSpend, xp, xpForNextPoint = MainMenuBar_GetNumArtifactTraitsPurchasableFromXP(artifactPointsSpent, artifactTotalXP, artifactTier)
-		if xpForNextPoint and xpForNextPoint ~= 0 then
-			collect.artifact = (numPointsAvailableToSpend == 0 and "|cffffffff" or "|cffff0000")..(artifactPointsSpent + numPointsAvailableToSpend) .. "|r |cff888888("..floor(xp / xpForNextPoint * 100).."%)"
+	
+	local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
+		
+	collect.azerite = nil
+	if azeriteItemLocation then 			
+		local xp, totalLevelXP = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
+		local currentLevel = C_AzeriteItem.GetPowerLevel(azeriteItemLocation); 
+		
+		if totalLevelXP and totalLevelXP ~= 0 then
+			collect.azerite = "|cffff0000"..currentLevel .. "|r|n|cff888888("..floor(xp / totalLevelXP * 100).."%, -"..formatAzeriteNum(totalLevelXP - xp)..")"
 		end
 	end
 end)
@@ -704,41 +787,38 @@ local inspectScantip = CreateFrame("GameTooltip", "LegToDoScanningTooltip", nil,
 inspectScantip:SetOwner(UIParent, "ANCHOR_NONE")
 
 tinsert(ToDoFunc,function(self,collect)
-	local keyInBags = GetItemCount(138019,true,false)
 
 	local key = nil
-	if keyInBags > 0 then
-		for bag=0,5 do
-			for slot=1,36 do
-				local texture, itemCount, locked, quality, readable, lootable, itemLink, isFiltered, noValue = GetContainerItemInfo(bag, slot)
-	
-				if itemLink and (itemLink:find("item:138019") or itemLink:find("keystone:")) then
-					local deep = false
-				
-					inspectScantip:SetBagItem(bag, slot)
-					if inspectScantip:NumLines() > 0 then
-						local name = _G["LegToDoScanningTooltipTextLeft1"]:GetText()
-						name = name:gsub("^[^:]+: ","")
-						if name:find("Каражан") then
-							name = name:gsub("^[^:]+: ","Кара: ")
-						end
-						local lvl = _G["LegToDoScanningTooltipTextLeft2"]:GetText()
-						if lvl and lvl:find("Израсходован") then
-							deep = true
-							lvl = _G["LegToDoScanningTooltipTextLeft3"]:GetText()
-						end
+	for bag=0,5 do
+		for slot=1,36 do
+			local texture, itemCount, locked, quality, readable, lootable, itemLink, isFiltered, noValue = GetContainerItemInfo(bag, slot)
+
+			if itemLink and (itemLink:find("item:138019") or itemLink:find("keystone:") or itemLink:find("item:158923")) then
+				local deep = false
+			
+				inspectScantip:SetBagItem(bag, slot)
+				if inspectScantip:NumLines() > 0 then
+					local name = _G["LegToDoScanningTooltipTextLeft1"]:GetText()
+					name = name:gsub("^[^:]+: ","")
+					if name:find("Каражан") then
+						name = name:gsub("^[^:]+: ","Кара: ")
+					end
+					local lvl = _G["LegToDoScanningTooltipTextLeft2"]:GetText()
+					if lvl and lvl:find("Израсходован") then
+						deep = true
+						lvl = _G["LegToDoScanningTooltipTextLeft3"]:GetText()
+					end
+					if lvl then
+						lvl = lvl:match(": (%d+)")
 						if lvl then
-							lvl = lvl:match(": (%d+)")
-							if lvl then
-								key = (deep and "|cffff0000" or "").. lvl .. ": " ..name
-							end
+							key = (deep and "|cffff0000" or "").. lvl .. ": " ..name
 						end
 					end
-					inspectScantip:ClearLines()
 				end
+				inspectScantip:ClearLines()
 			end
-		end	
-	end
+		end
+	end	
 	
 	self:AddDoubleLine("Key", key or "---")
 	collect.mkey = key
@@ -748,7 +828,7 @@ end)
 tinsert(ToDoFunc,function(self,collect)
 	local avgItemLevel, avgItemLevelEquipped = GetAverageItemLevel()
 	
-	local ilvlStr = format("|cff%s%.1f|r",avgItemLevelEquipped >= 950 and "00ff00" or avgItemLevelEquipped >= 930 and "ffff00" or "ff0000",avgItemLevelEquipped)
+	local ilvlStr = format("|cff%s%.1f|r",avgItemLevelEquipped >= 360 and "00ff00" or avgItemLevelEquipped >= 340 and "ffff00" or "ff0000",avgItemLevelEquipped)
 
 	collect.ilvl = ilvlStr
 	self:AddDoubleLine("iLvl", ilvlStr,nil,nil,nil,1,1,1)
@@ -764,8 +844,9 @@ tinsert(ToDoFunc,function(self,collect)
 	while curr > next do
 		next = next + 60 * 60 * 18.5
 	end
-
-	self:AddDoubleLine("Next Invasion", date("%d.%m.%Y %H:%M",next),nil,nil,nil,1,1,1)
+	if isLevel110 then 
+		self:AddDoubleLine("Next Invasion", date("%d.%m.%Y %H:%M",next),nil,nil,nil,1,1,1)
+	end
 end)
 
 tinsert(ToDoFunc,function(self,collect)
@@ -773,6 +854,8 @@ tinsert(ToDoFunc,function(self,collect)
 	
 	local blood = GetItemCount(124124,true)
 	collect.blood = blood or 0
+	
+	collect.warmode = C_PvP.IsWarModeDesired()
 end)
 
 
@@ -786,6 +869,18 @@ local factionsToWatch = {
 	1828,
 	1883,
 	1900,
+
+	2164,
+	2163,
+	2157,
+	2156,
+	2103,
+	2158,
+
+	2159,
+	2160,
+	2162,
+	2161,
 }
 
 tinsert(ToDoFunc,function(self,collect)
@@ -871,7 +966,7 @@ MiniMapIcon:SetScript("OnEnter",function(self)
 	RequestRaidInfo()
 
 	GameTooltip:SetOwner(self, "ANCHOR_LEFT") 
-	GameTooltip:AddLine("Legion ToDo") 
+	GameTooltip:AddLine("BfA ToDo") 
 	for _,func in pairs(ToDoFunc) do
 		pcall(func,GameTooltip,charData)
 	end
@@ -966,7 +1061,10 @@ local LegionToDo = CreateFrame("Frame","LegionToDoFrame",UIParent)
 LegionToDo:RegisterEvent("ADDON_LOADED")
 LegionToDo:RegisterEvent("PLAYER_ENTERING_WORLD")
 LegionToDo:RegisterEvent("UPDATE_INSTANCE_INFO")
-LegionToDo:SetScript("OnEvent",function(self,event)
+if UnitLevel'player' < 120 then
+	LegionToDo:RegisterEvent('PLAYER_LEVEL_UP')
+end
+LegionToDo:SetScript("OnEvent",function(self,event,...)
 	if event == "PLAYER_ENTERING_WORLD" then
 		RequestRaidInfo()
 		C_Garrison.RequestLandingPageShipmentInfo()
@@ -977,6 +1075,12 @@ LegionToDo:SetScript("OnEvent",function(self,event)
 			MiniMapIcon:GetScript("OnEnter")(MiniMapIcon)
 			MiniMapIcon:GetScript("OnLeave")(MiniMapIcon)
 		end)
+	elseif event == "PLAYER_LEVEL_UP" then
+		local level = ...
+		if level > 110 and not VLegionToDo.opt_type_auto[UnitGUID'player'] then
+			VLegionToDo.opt_type[UnitGUID'player'] = 2
+			VLegionToDo.opt_type_auto[UnitGUID'player'] = true			
+		end
 	elseif event == "ADDON_LOADED" then
 		self:UnregisterEvent("ADDON_LOADED")
 		
@@ -1013,7 +1117,33 @@ LegionToDo:SetScript("OnEvent",function(self,event)
 			raid4diff2 = true,
 			raid4diff3 = true,
 			raid5short = true,
+			orderres_bfa = true,
+			argusrecruits = true,
 		}
+		VLegionToDo.opt_bfa = VLegionToDo.opt_bfa or {
+			orderres = true,
+			amana = true,
+			warmy = true,
+			gold = true,
+			warsupp = true,
+			nethershard = true,
+			argunite = true,
+			essence = true,
+			argunitequest = true,
+			riftquest = true,
+			blood = true,
+			raid6short = true,
+			garmisstos = true,
+			garmissabt = true,
+			argusrecruits = true,
+			artlvl = true,
+		}
+		VLegionToDo.opt_type = VLegionToDo.opt_type or {}
+		VLegionToDo.opt_type_auto = VLegionToDo.opt_type_auto or {}
+		
+		if not VLegionToDo.opt_type[UnitGUID'player'] then
+			VLegionToDo.opt_type[UnitGUID'player'] = UnitLevel'player' <= 110 and 1 or 2
+		end
 		
 		if (tonumber(VLegionToDo.ver or "0") or 0) < 26 then
 			VLegionToDo.opt["argusrecruits"] = true
@@ -1028,7 +1158,39 @@ LegionToDo:SetScript("OnEvent",function(self,event)
 				VLegionToDo.opt[ "faction"..factionsToWatch[i] ] = true
 			end
 		end
-		
+		if (tonumber(VLegionToDo.ver or "0") or 0) < 30 then
+			for i=1,#factionsToWatch do
+				if i > 9 then
+					VLegionToDo.opt[ "faction"..factionsToWatch[i] ] = true
+				end
+				VLegionToDo.opt_bfa[ "faction"..factionsToWatch[i] ] = true
+			end
+			VLegionToDo.opt["orderres_bfa"] = true
+			VLegionToDo.opt["azeritelvl"] = true
+			for i=1,13 do
+				VLegionToDo.opt_bfa["instance"..i] = true
+			end
+			for i=14,#instances do
+				VLegionToDo.opt["instance"..i] = true
+			end
+			for i=1,5 do
+				VLegionToDo.opt_bfa["raid"..i.."short"] = true
+				VLegionToDo.opt_bfa["raid"..i.."difflfr"] = true
+				for j=1,#raidsDiffs do
+					VLegionToDo.opt_bfa["raid"..i.."diff"..j] = true
+				end
+			end
+			for i=6,6 do
+				VLegionToDo.opt["raid"..i.."short"] = true
+				VLegionToDo.opt["raid"..i.."difflfr"] = true
+				for j=1,#raidsDiffs do
+					VLegionToDo.opt["raid"..i.."diff"..j] = true
+				end
+			end
+		end
+		if (tonumber(VLegionToDo.ver or "0") or 0) < 31 then
+			VLegionToDo.opt_bfa.islands = true
+		end
 		VLegionToDo.ver = LegionToDoVERSION_NUMERIC
 		
 		if VLegionToDo.IconMiniMapLeft and VLegionToDo.IconMiniMapTop then
@@ -1226,6 +1388,72 @@ do
 	end
 end
 
+LegionToDo.modeSwitcherCheckLegion = CreateFrame("Button", nil, LegionToDo)
+LegionToDo.modeSwitcherCheckLegion:SetSize(20,20)
+LegionToDo.modeSwitcherCheckLegion:SetPoint("BOTTOMLEFT",LegionToDo,"TOPLEFT",20,1)
+
+LegionToDo.modeSwitcherCheckLegion.b = LegionToDo.modeSwitcherCheckLegion:CreateTexture(nil,"BACKGROUND",nil,1)
+LegionToDo.modeSwitcherCheckLegion.b:SetAllPoints()
+LegionToDo.modeSwitcherCheckLegion.b:SetColorTexture(0.04,0.04,0.04,.9)
+
+LegionToDo.modeSwitcherCheckLegion.icon = LegionToDo.modeSwitcherCheckLegion:CreateTexture(nil,"ARTWORK")
+LegionToDo.modeSwitcherCheckLegion.icon:SetPoint("CENTER")
+LegionToDo.modeSwitcherCheckLegion.icon:SetSize(16,16)
+
+LegionToDo.modeSwitcherCheckLegion.icon:SetTexture(1339312)
+LegionToDo.modeSwitcherCheckLegion.icon:SetTexCoord(246/512,262/512,111/128,126/128)
+
+LegionToDo.modeSwitcherCheckLegion:SetScript("OnEnter",function(self)
+	self.b:SetColorTexture(0.14,0.14,0.14,.9)
+end)
+
+LegionToDo.modeSwitcherCheckLegion:SetScript("OnLeave",function(self)
+	self.b:SetColorTexture(0.04,0.04,0.04,.9)
+end)
+
+LegionToDo.modeSwitcherCheckLegion:SetScript("OnClick",function(self)
+	VLegionToDo.opt_type[UnitGUID'player'] = 1
+	LegionToDo:Hide()
+	LegionToDo:Show()
+end)
+
+
+LegionToDo.modeSwitcherCheckBfa = CreateFrame("Button", nil, LegionToDo)
+LegionToDo.modeSwitcherCheckBfa:SetSize(20,20)
+LegionToDo.modeSwitcherCheckBfa:SetPoint("BOTTOMLEFT",LegionToDo.modeSwitcherCheckLegion,"BOTTOMRIGHT",2,0)
+
+LegionToDo.modeSwitcherCheckBfa.b = LegionToDo.modeSwitcherCheckBfa:CreateTexture(nil,"BACKGROUND",nil,1)
+LegionToDo.modeSwitcherCheckBfa.b:SetAllPoints()
+LegionToDo.modeSwitcherCheckBfa.b:SetColorTexture(0.04,0.04,0.04,.9)
+
+LegionToDo.modeSwitcherCheckBfa.icon = LegionToDo.modeSwitcherCheckBfa:CreateTexture(nil,"ARTWORK")
+LegionToDo.modeSwitcherCheckBfa.icon:SetPoint("CENTER")
+LegionToDo.modeSwitcherCheckBfa.icon:SetSize(16,16)
+
+if UnitFactionGroup("player") == "Alliance" then
+	LegionToDo.modeSwitcherCheckBfa.icon:SetTexture("Interface\\FriendsFrame\\PlusManz-Alliance")
+else
+	LegionToDo.modeSwitcherCheckBfa.icon:SetTexture("Interface\\FriendsFrame\\PlusManz-Horde")
+end
+
+LegionToDo.modeSwitcherCheckBfa:SetScript("OnEnter",function(self)
+	self.b:SetColorTexture(0.14,0.14,0.14,.9)
+end)
+
+LegionToDo.modeSwitcherCheckBfa:SetScript("OnLeave",function(self)
+	self.b:SetColorTexture(0.04,0.04,0.04,.9)
+end)
+
+LegionToDo.modeSwitcherCheckBfa:SetScript("OnClick",function(self)
+	VLegionToDo.opt_type[UnitGUID'player'] = 2
+	LegionToDo:Hide()
+	LegionToDo:Show()
+end)
+
+
+
+
+
 LegionToDo.leftScrollBar = CreateFrame("Slider", nil, LegionToDo)
 LegionToDo.leftScrollBar:SetPoint("TOPLEFT",LegionToDo,1,-10)
 LegionToDo.leftScrollBar:SetPoint("BOTTOMLEFT",LegionToDo,1,10)
@@ -1306,7 +1534,7 @@ LegionToDo.Close:SetPoint("TOPRIGHT",3,3)
 
 LegionToDo.title = LegionToDo:CreateFontString(nil,"ARTWORK","GameFontWhite")
 LegionToDo.title:SetPoint("TOPLEFT",30,-10)
-LegionToDo.title:SetText("|cffffff00Legion ToDo "..LegionToDoVERSION)
+LegionToDo.title:SetText("|cffffff00BFA ToDo "..LegionToDoVERSION)
 
 local OPTIONS_TOGGLED = false
 
@@ -1334,8 +1562,8 @@ local CharsListDropdown = CreateFrame("Frame", "LegionToDoCharsListMenuFrame", L
 LegionToDo.CharsList = CreateFrame("Button",nil,LegionToDo,"UIPanelButtonTemplate")
 LegionToDo.CharsList:SetPoint("TOPLEFT",160,-5)
 LegionToDo.CharsList:SetScript("OnClick",function(self)
-	if UIDROPDOWNMENU_OPEN_MENU then
-		CloseDropDownMenus()
+	if MSA_DROPDOWNMENU_OPEN_MENU then
+		MSA_CloseDropDownMenus()
 		return
 	end
 	local db = {}
@@ -1364,7 +1592,7 @@ LegionToDo.CharsList:SetScript("OnClick",function(self)
 				end,
 				func = function()
 					VLegionToDo.black[guid] = not VLegionToDo.black[guid] 
-					UIDropDownMenu_RefreshAll(CharsListDropdown)
+					MSA_DropDownMenu_RefreshAll(CharsListDropdown)
 				end,
 				--isNotRadio = true,
 			}
@@ -1381,7 +1609,7 @@ LegionToDo.CharsList:SetScript("OnClick",function(self)
 
 	menuTable[#menuTable + 1] = {
 		text = CLOSE, func = function() 
-			CloseDropDownMenus() 
+			MSA_CloseDropDownMenus() 
 			LegionToDo:Hide()
 			LegionToDo:Show()
 		end, notCheckable = true
@@ -1408,7 +1636,7 @@ local function LineCheckState(self,state)
 	end
 end
 local function LineCheckClick(self)
-	VLegionToDo.opt[self.label or "tmp"] = not self:GetChecked()
+	VLegionToDo[VLegionToDo.opt_type[UnitGUID'player'] == 1 and "opt" or "opt_bfa"][self.label or "tmp"] = not self:GetChecked()
 end
 
 local colNames = {}
@@ -1451,12 +1679,12 @@ local function GetOrCreateLine(i)
 end
 
 local function LineUpdate(pos,opt,text,icon,style)
-	if not VLegionToDo.opt[opt] or OPTIONS_TOGGLED then
+	if not VLegionToDo[VLegionToDo.opt_type[UnitGUID'player'] == 1 and "opt" or "opt_bfa"][opt] or OPTIONS_TOGGLED then
 		pos = pos + 1
 		local line = GetOrCreateLine(pos)
 		line.title:SetText(text)
 		line.check.label = opt
-		line.check:SetChecked(not VLegionToDo.opt[opt])
+		line.check:SetChecked(not VLegionToDo[VLegionToDo.opt_type[UnitGUID'player'] == 1 and "opt" or "opt_bfa"][opt])
 		line:UpdateCheck(OPTIONS_TOGGLED)
 		line.app = style
 		if icon then
@@ -1520,6 +1748,7 @@ LegionToDo:SetScript("OnShow",function(self)
 
 	count = LineUpdate(count,"coins","Coins","Interface/Icons/inv_misc_elvencoins")
 	count = LineUpdate(count,"orderres",GetCurrencyInfo(1220),"Interface/Icons/inv_orderhall_orderresources")
+	count = LineUpdate(count,"orderres_bfa",GetCurrencyInfo(1560),"Interface/Icons/inv__faction_warresources")
 
 	local name, _, texturePath = GetCurrencyInfo(1342)
 	count = LineUpdate(count,"warsupp",name,texturePath)
@@ -1543,6 +1772,8 @@ LegionToDo:SetScript("OnShow",function(self)
 	count = LineUpdate(count,"blood",GetItemInfo(124124) or "Blood of Sargeras",1417744)	
 
 	count = LineUpdate(count,"warmy","Withered Army Training")
+
+	count = LineUpdate(count,"islands","Islands weekly",nil,'small-left')
 	
 	count = LineUpdate(count,"gold","Gold",nil,'small-left')	
 	
@@ -1581,7 +1812,10 @@ LegionToDo:SetScript("OnShow",function(self)
 		count = LineUpdate(count,"faction"..factionID,FACTION.." "..(name or "#"..factionID),nil,'small')
 	end
 
+	count = LineUpdate(count,"warmode","War Mode",nil,'center')
+
 	count = LineUpdate(count,"artlvl","Aftifact LvL",nil,'center')
+	count = LineUpdate(count,"azeritelvl","Azerite LvL",nil,'small')
 	count = LineUpdate(count,"ilvl","Item Level",nil,'center')
 	count = LineUpdate(count,"lastupate","Last Update",nil,'small')
 	
@@ -1597,6 +1831,8 @@ LegionToDo:SetScript("OnShow",function(self)
 	
 	local curr = time()
 	local playerGUID = UnitGUID'player'
+	
+	local optData = VLegionToDo[VLegionToDo.opt_type[playerGUID] == 1 and "opt" or "opt_bfa"]
 
 	local col = 0
 	for _,db_sorted in pairs(sortedList) do
@@ -1714,46 +1950,51 @@ LegionToDo:SetScript("OnShow",function(self)
 			end
 	
 			local lineCount = 0
-			if not VLegionToDo.opt["coins"] or OPTIONS_TOGGLED then
+			if not optData["coins"] or OPTIONS_TOGGLED then
 				lineCount = lineCount + 1
 				if needReset then
-					lines[lineCount].cols[col]:SetText("|cffff00000/3"..(db.coinsNow and " ["..db.coinsNow.."]" or ""))
+					lines[lineCount].cols[col]:SetText("|cffff00000/"..(isLevel110 and 3 or 2)..(db.coinsNow and " ["..db.coinsNow.."]" or ""))
 				else
-					lines[lineCount].cols[col]:SetText(format("|cff%s%d/%d [%d%s]",db.coinsWeek==3 and "00ff00" or (db.coinsMax == db.coinsNow) and "ff8000" or "ff0000",db.coinsWeek or 0,3,db.coinsNow or 0,db.coinsMax == db.coinsNow and db.coinsMax and ",cap" or ""))
+					lines[lineCount].cols[col]:SetText(format("|cff%s%d/%d [%d%s]",db.coinsWeek==3 and "00ff00" or (db.coinsMax == db.coinsNow) and "ff8000" or "ff0000",db.coinsWeek or 0,isLevel110 and 3 or 2,db.coinsNow or 0,db.coinsMax == db.coinsNow and db.coinsMax and ",cap" or ""))
 				end
 			end
 			
-			if not VLegionToDo.opt["orderres"] or OPTIONS_TOGGLED then
+			if not optData["orderres"] or OPTIONS_TOGGLED then
 				lineCount = lineCount + 1
 				lines[lineCount].cols[col]:SetText(db.hallres or "0")
 			end
+
+			if not optData["orderres_bfa"] or OPTIONS_TOGGLED then
+				lineCount = lineCount + 1
+				lines[lineCount].cols[col]:SetText(db.hallres_bfa or "0")
+			end
 			
-			if not VLegionToDo.opt["warsupp"] or OPTIONS_TOGGLED  then
+			if not optData["warsupp"] or OPTIONS_TOGGLED  then
 				lineCount = lineCount + 1
 				lines[lineCount].cols[col]:SetText(db.warsuppl or "0")
 			end	
 			
-			if not VLegionToDo.opt["nethershard"] or OPTIONS_TOGGLED  then
+			if not optData["nethershard"] or OPTIONS_TOGGLED  then
 				lineCount = lineCount + 1
 				lines[lineCount].cols[col]:SetText(db.nethershard or "0")
 			end	
 			
-			if not VLegionToDo.opt["amana"] or OPTIONS_TOGGLED  then
+			if not optData["amana"] or OPTIONS_TOGGLED  then
 				lineCount = lineCount + 1
 				lines[lineCount].cols[col]:SetText(db.amana or "0")
 			end
 			
-			if not VLegionToDo.opt["argunite"] or OPTIONS_TOGGLED  then
+			if not optData["argunite"] or OPTIONS_TOGGLED  then
 				lineCount = lineCount + 1
 				lines[lineCount].cols[col]:SetText(db.argunite or "0")
 			end	
 			
-			if not VLegionToDo.opt["essence"] or OPTIONS_TOGGLED  then
+			if not optData["essence"] or OPTIONS_TOGGLED  then
 				lineCount = lineCount + 1
 				lines[lineCount].cols[col]:SetText(db.essence or "0")
 			end	
 			
-			if not VLegionToDo.opt["argunitequest"] or OPTIONS_TOGGLED  then
+			if not optData["argunitequest"] or OPTIONS_TOGGLED  then
 				lineCount = lineCount + 1
 				if needReset then
 					if db.arguniteQuest == true then
@@ -1770,7 +2011,7 @@ LegionToDo:SetScript("OnShow",function(self)
 				end
 			end	
 			
-			if not VLegionToDo.opt["riftquest"] or OPTIONS_TOGGLED  then
+			if not optData["riftquest"] or OPTIONS_TOGGLED  then
 				lineCount = lineCount + 1
 				if needReset then
 					if db.riftQuest == true then
@@ -1787,12 +2028,12 @@ LegionToDo:SetScript("OnShow",function(self)
 				end
 			end	
 			
-			if not VLegionToDo.opt["blood"] or OPTIONS_TOGGLED  then
+			if not optData["blood"] or OPTIONS_TOGGLED  then
 				lineCount = lineCount + 1
 				lines[lineCount].cols[col]:SetText(db.blood or "0")
 			end	
 								
-			if not VLegionToDo.opt["warmy"] or OPTIONS_TOGGLED  then
+			if not optData["warmy"] or OPTIONS_TOGGLED  then
 				lineCount = lineCount + 1
 				local wtraining = db.wtraining
 				if db.wtrainingweek ~= floor((time() - witheredTrainingDay0) / days3val) then
@@ -1801,7 +2042,17 @@ LegionToDo:SetScript("OnShow",function(self)
 				lines[lineCount].cols[col]:SetText(wtraining and "|cff00ff00Done" or "|cffff0000Not done")
 			end
 			
-			if not VLegionToDo.opt["gold"] or OPTIONS_TOGGLED  then
+			if not optData["islands"] or OPTIONS_TOGGLED  then
+				lineCount = lineCount + 1				
+				if needReset then
+					lines[lineCount].cols[col]:SetText("|cffff0000Not done")
+				else
+					lines[lineCount].cols[col]:SetText(db.island or "|cffff0000Not done")
+				end				
+				
+			end
+			
+			if not optData["gold"] or OPTIONS_TOGGLED  then
 				lineCount = lineCount + 1
 				if db.gold then
 					lines[lineCount].cols[col]:SetText(GetCoinTextureString(db.gold - db.gold % 10000))
@@ -1809,7 +2060,7 @@ LegionToDo:SetScript("OnShow",function(self)
 			end		
 			
 			for i=1,#instancesInOptions do
-				if not VLegionToDo.opt["instance"..i] or OPTIONS_TOGGLED  then
+				if not optData["instance"..i] or OPTIONS_TOGGLED  then
 					lineCount = lineCount + 1
 					if needReset then
 						lines[lineCount].cols[col]:SetText("|cffff0000---")
@@ -1819,7 +2070,7 @@ LegionToDo:SetScript("OnShow",function(self)
 				end
 			end
 			
-			if not VLegionToDo.opt["mplusmax"] or OPTIONS_TOGGLED  then
+			if not optData["mplusmax"] or OPTIONS_TOGGLED  then
 				lineCount = lineCount + 1
 				if needReset then
 					lines[lineCount].cols[col]:SetText("0")
@@ -1828,12 +2079,16 @@ LegionToDo:SetScript("OnShow",function(self)
 				end
 			end
 			
-			if not VLegionToDo.opt["mpluskey"] or OPTIONS_TOGGLED  then
+			if not optData["mpluskey"] or OPTIONS_TOGGLED  then
 				lineCount = lineCount + 1
-				lines[lineCount].cols[col]:SetText(db.mkey or "")
+				if needReset then
+					lines[lineCount].cols[col]:SetText("")
+				else
+					lines[lineCount].cols[col]:SetText(db.mkey or "")
+				end
 			end
 						
-			if not VLegionToDo.opt["garmisstos"] or OPTIONS_TOGGLED  then
+			if not optData["garmisstos"] or OPTIONS_TOGGLED  then
 				lineCount = lineCount + 1
 				local mission_tos = db.s and db.s.mission_tos
 				if mission_tos then
@@ -1844,7 +2099,7 @@ LegionToDo:SetScript("OnShow",function(self)
 				end
 			end	
 			
-			if not VLegionToDo.opt["garmissabt"] or OPTIONS_TOGGLED  then
+			if not optData["garmissabt"] or OPTIONS_TOGGLED  then
 				lineCount = lineCount + 1
 				local mission_abt = db.s and db.s.mission_abt
 				if mission_abt then
@@ -1855,7 +2110,7 @@ LegionToDo:SetScript("OnShow",function(self)
 				end	
 			end
 			
-			if not VLegionToDo.opt["argusrecruits"] or OPTIONS_TOGGLED  then
+			if not optData["argusrecruits"] or OPTIONS_TOGGLED  then
 				lineCount = lineCount + 1
 				if needReset then
 					lines[lineCount].cols[col]:SetText("|cffff0000-|r/|cffff0000-|r/|cffff0000-|r")
@@ -1865,7 +2120,7 @@ LegionToDo:SetScript("OnShow",function(self)
 			end
 			
 			for i=1,#raids do
-				if not VLegionToDo.opt["raid"..i.."short"] or OPTIONS_TOGGLED  then
+				if not optData["raid"..i.."short"] or OPTIONS_TOGGLED  then
 					lineCount = lineCount + 1
 					local r = ""
 					for j=1,#raidsDiffs do
@@ -1881,7 +2136,7 @@ LegionToDo:SetScript("OnShow",function(self)
 					end	
 					lines[lineCount].cols[col]:SetText(r)	
 				end
-				if LFRInstances[i] and (not VLegionToDo.opt["raid"..i.."difflfr"] or OPTIONS_TOGGLED) then
+				if LFRInstances[i] and (not optData["raid"..i.."difflfr"] or OPTIONS_TOGGLED) then
 					lineCount = lineCount + 1
 					local r = ""
 					for j=1,#LFRInstances[i] do
@@ -1906,7 +2161,7 @@ LegionToDo:SetScript("OnShow",function(self)
 					lines[lineCount].cols[col]:SetText(r)
 				end
 				for j=1,#raidsDiffs do
-					if not VLegionToDo.opt["raid"..i.."diff"..j] or OPTIONS_TOGGLED  then
+					if not optData["raid"..i.."diff"..j] or OPTIONS_TOGGLED  then
 						lineCount = lineCount + 1
 						if needReset then
 							lines[lineCount].cols[col]:SetText("|cffff00000/"..raids_max_bosses[i])
@@ -1937,7 +2192,7 @@ LegionToDo:SetScript("OnShow",function(self)
 			
 			local currTime = time()
 			for i=1,3 do
-				if not VLegionToDo.opt["bounty"..i] or OPTIONS_TOGGLED  then
+				if not optData["bounty"..i] or OPTIONS_TOGGLED  then
 					lineCount = lineCount + 1
 					local t = (db["bounty"..i] or ""):gsub(":0|t",":18|t")
 					lines[lineCount].cols[col]:SetText(t)
@@ -1950,11 +2205,11 @@ LegionToDo:SetScript("OnShow",function(self)
 			
 			for i=1,#factionsToWatch do
 				local factionID = factionsToWatch[i]			
-				if not VLegionToDo.opt["faction"..factionID] or OPTIONS_TOGGLED then
+				if not optData["faction"..factionID] or OPTIONS_TOGGLED then
 					lineCount = lineCount + 1
 					local r = ""
 					if db["reputation"..factionID.."c"] then
-						r = (db["reputation"..factionID.."p"] and (db["reputation"..factionID.."c"] > db["reputation"..factionID.."m"] and "|cff00ff00" or "") or "|cffffff00")..db["reputation"..factionID.."c"].."/"..db["reputation"..factionID.."m"]
+						r = (db["reputation"..factionID.."p"] and (db["reputation"..factionID.."c"] > db["reputation"..factionID.."m"] and "|cff00ff00" or "") or db["reputation"..factionID.."c"] == -36000 and "|cff666666" or "|cffffff00")..db["reputation"..factionID.."c"].."/"..db["reputation"..factionID.."m"]
 					
 					end
 					lines[lineCount].cols[col]:SetText(r)					
@@ -1962,17 +2217,27 @@ LegionToDo:SetScript("OnShow",function(self)
 				end
 			end
 			
-			if not VLegionToDo.opt["artlvl"] or OPTIONS_TOGGLED  then
+			if not optData["warmode"] or OPTIONS_TOGGLED  then
+				lineCount = lineCount + 1
+				lines[lineCount].cols[col]:SetText(db.warmode and "|cff00ff00"..PVP_WAR_MODE_ENABLED or "|cffffff00"..ADDON_DISABLED)
+			end	
+			
+			if not optData["artlvl"] or OPTIONS_TOGGLED  then
 				lineCount = lineCount + 1
 				lines[lineCount].cols[col]:SetText(db.artifact or "")
 			end	
+			
+			if not optData["azeritelvl"] or OPTIONS_TOGGLED  then
+				lineCount = lineCount + 1
+				lines[lineCount].cols[col]:SetText(db.azerite or "")
+			end	
 
-			if not VLegionToDo.opt["ilvl"] or OPTIONS_TOGGLED  then
+			if not optData["ilvl"] or OPTIONS_TOGGLED  then
 				lineCount = lineCount + 1
 				lines[lineCount].cols[col]:SetText(db.ilvl or "")
 			end	
 
-			if not VLegionToDo.opt["lastupate"] or OPTIONS_TOGGLED  then
+			if not optData["lastupate"] or OPTIONS_TOGGLED  then
 				lineCount = lineCount + 1
 				lines[lineCount].cols[col]:SetText((needReset and "|cffff0000" or "")..date("%d.%m.%Y %H:%M:%S",db.t))
 			end	
@@ -2031,18 +2296,18 @@ local MiniMapDropdown = CreateFrame("Frame", "LegionToDoMiniMapMenuFrame", nil, 
 
 local menuTable = {
 	{ text = "Legion ToDo", func = function() 
-		CloseDropDownMenus() 
+		MSA_CloseDropDownMenus() 
 		wipe(hidden)
 		LegionToDo:Hide()	
 		LegionToDo:Show()
 	end, notCheckable = true },
 	{ text = RESET, func = function() 
-		CloseDropDownMenus() 
+		MSA_CloseDropDownMenus() 
 		wipe(VLegionToDo.black)
 		LegionToDo:Hide()	
 		LegionToDo:Show()
 	end, notCheckable = true, tooltipOnButton = 1, tooltipTitle = GetLocale() == "ruRU" and "Вновь показать всех скрытых прежде персонажей" or "Show all hidden chars" },
-	{ text = CLOSE, func = function() CloseDropDownMenus() end, notCheckable = true },
+	{ text = CLOSE, func = function() MSA_CloseDropDownMenus() end, notCheckable = true },
 }
 
 MiniMapIcon:SetScript("OnMouseUp", function (self, button)
@@ -2070,9 +2335,8 @@ SlashCmdList["LTDSlash"] = function(arg)
 		LegionToDo:Show()		
 	end
 end
-SLASH_LTDSlash1 = "/ltd"
-SLASH_LTDSlash2 = "/legiontodo"
-
+SLASH_LTDSlash1 = "/btd"
+SLASH_LTDSlash2 = "/bfatodo"
 
 local function CreateDataBrokerPlugin(firstCall)
 	if not LibStub or not LibStub:GetLibrary('LibDataBroker-1.1') then

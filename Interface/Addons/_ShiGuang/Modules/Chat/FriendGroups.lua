@@ -1,4 +1,5 @@
---local M, R, U, I = unpack(select(2, ...))
+--local _, ns = ...
+--local M, R, U, I = unpack(ns)
 local hooks = {}
 
 local function Hook(source, target, secure)
@@ -7,7 +8,7 @@ local function Hook(source, target, secure)
 end
 
 local INVITE_RESTRICTION_NONE = 5;
-local ONE_YEAR = 12 * 30 * 24 * 60 * 60;
+--local ONE_YEAR = 12 * 30 * 24 * 60 * 60;
 local FriendButtons = { count = 0 }
 local GroupCount = 0
 local GroupTotal = {}
@@ -182,7 +183,7 @@ local function FriendGroups_UpdateFriendButton(button)
 			button.status:SetTexture(FRIENDS_TEXTURE_OFFLINE);
 			nameColor = FRIENDS_GRAY_COLOR;
 			button.gameIcon:Hide();
-			if ( not lastOnline or lastOnline == 0 or time() - lastOnline >= ONE_YEAR ) then
+			if ( not lastOnline or lastOnline == 0 ) then  --or time() - lastOnline >= ONE_YEAR 
 				infoText = FRIENDS_LIST_OFFLINE;
 			else
 				infoText = string.format(BNET_LAST_ONLINE_TIME, FriendsFrame_GetLastOnline(lastOnline));
@@ -195,7 +196,7 @@ local function FriendGroups_UpdateFriendButton(button)
 		local title;
 		local group = FriendButtons[index].text
 		if group == "" or not group then
-			title = "[ MaoR UI ]"
+			title = "[ 2 UI ]"
 		else
 			title = group
 		end
@@ -636,7 +637,7 @@ local function FriendGroups_OnClick(self, button)
     
     local group = self.info:GetText() or ""
     if button == "RightButton" then
-        L_ToggleDropDownMenu(1, group, FriendGroups_Menu, "cursor", 0, 0)
+        MSA_ToggleDropDownMenu(1, group, FriendGroups_Menu, "cursor", 0, 0)
     else
         FriendGroups_SavedVars.collapsed[group] = not FriendGroups_SavedVars.collapsed[group]
         FriendGroups_Update()
@@ -752,20 +753,20 @@ local menu_items = {
 		{ text = "|cff76ee00重新命名分组|r", notCheckable = true, func = function(self, menu, clickedgroup) StaticPopup_Show("FRIEND_GROUP_RENAME", nil, nil, clickedgroup) end },
 		{ text = "|cff76ee00删除分组|r", notCheckable = true, func = function(self, menu, clickedgroup) InviteOrGroup(clickedgroup, false) end },
 		--{ text = "|cff76ee00设置|r", notCheckable = true, hasArrow = true },
-		{ text = "|cff76ee00隐藏离线好友|r", checked = function() return FriendGroups_SavedVars.hide_offline end, func = function() L_CloseDropDownMenus() FriendGroups_SavedVars.hide_offline = not FriendGroups_SavedVars.hide_offline FriendGroups_Update() end },
+		{ text = "|cff76ee00隐藏离线好友|r", checked = function() return FriendGroups_SavedVars.hide_offline end, func = function() MSA_CloseDropDownMenus() FriendGroups_SavedVars.hide_offline = not FriendGroups_SavedVars.hide_offline FriendGroups_Update() end },
 	},
 }
  
 FriendGroups_Menu.initialize = function(self, level)
 	if not menu_items[level] then return end
     for _, items in ipairs(menu_items[level]) do
-		local info = L_UIDropDownMenu_CreateInfo()
+		local info = MSA_DropDownMenu_CreateInfo()
 		for prop, value in pairs(items) do
-			info[prop] = value ~= "" and value or L_UIDROPDOWNMENU_MENU_VALUE ~= "" and L_UIDropDownMenu_MENU_VALUE or "[ MaoR UI ]"
+			info[prop] = value ~= "" and value or MSA_DROPDOWNMENU_MENU_VALUE ~= "" and MSA_DropDownMenu_MENU_VALUE or "[ 2 UI ]"
 		end
 		info.arg1 = k
-		info.arg2 = L_UIDROPDOWNMENU_MENU_VALUE
-		L_UIDropDownMenu_AddButton(info, level)
+		info.arg2 = MSA_DROPDOWNMENU_MENU_VALUE
+		MSA_DropDownMenu_AddButton(info, level)
 	end
 end
 

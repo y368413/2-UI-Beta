@@ -6,7 +6,6 @@ local configDefaults = {
 	progressTooltip = false,
 	progressFormat = 3,
 	autoGossip = false,
-	cosRumors = false,
 	silverGoldTimer = false,
 	splitsFormat = 1,
 	completionMessage = true,
@@ -16,6 +15,7 @@ local configDefaults = {
 	showLevelModifier = false,
 	hideTalkingHead = false,
 	resetPopup = false,
+	announceKeystones = false,
 }
 local callbacks = {}
 
@@ -229,9 +229,9 @@ local function DropDown_Create(self)
 	local dropdown = CreateFrame("Frame", ADDON.."ConfigDropDown"..DropDown_Index, self, My_UIDropDownMenuTemplate)
 	_G[ADDON.."ConfigDropDown"..DropDown_Index.."Middle"]:SetWidth(200)
 	
-	local text = dropdown:CreateFontString(ADDON.."ConfigDropLabel"..DropDown_Index, "BACKGROUND", "GameFontNormal")
-	text:SetPoint("BOTTOMLEFT", dropdown, "TOPLEFT", 16, 3)
-	dropdown.Text = text
+	local label = dropdown:CreateFontString(ADDON.."ConfigDropLabel"..DropDown_Index, "BACKGROUND", "GameFontNormal")
+	label:SetPoint("BOTTOMLEFT", dropdown, "TOPLEFT", 16, 3)
+	dropdown.Label = label
 	
 	return dropdown
 end
@@ -259,8 +259,7 @@ Panel_OnRefresh = function(self)
 		checkboxes = {}
 		dropdowns = {}
 
-		local checkboxes_order = { "silverGoldTimer", "deathTracker", "autoGossip", "progressTooltip", "completionMessage", "hideTalkingHead", "resetPopup" }
-		if Addon.Locale:HasRumors() then table.insert(checkboxes_order, 5, "cosRumors") end
+		local checkboxes_order = { "silverGoldTimer", "autoGossip", "progressTooltip", "completionMessage", "hideTalkingHead", "resetPopup", "announceKeystones" }
 
 		for i,key in ipairs(checkboxes_order) do
 			checkboxes[i] = CreateFrame("CheckButton", nil, self, "InterfaceOptionsCheckButtonTemplate")
@@ -278,7 +277,7 @@ Panel_OnRefresh = function(self)
 
 		for i,key in ipairs(dropdowns_order) do
 			dropdowns[i] = DropDown_Create(self)
-			dropdowns[i].Text:SetText( Addon.Locale['config_'..key] )
+			dropdowns[i].Label:SetText( Addon.Locale['config_'..key] )
 			dropdowns[i].configKey = key		
 			if i == 1 then
 				dropdowns[i]:SetPoint("TOPLEFT", checkboxes[#checkboxes], "BOTTOMLEFT", -13, -24)

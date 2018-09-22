@@ -23,10 +23,10 @@ local UTF8Symbols = {
 	['〕']='',['〈']='',['〉']='',['＇']='',['＂']='',['’']='',['‘']='',['“']='',['”']='',
 	['≈']='',['︾']='',['．']='',["∴"]='',['灬']='',
 	['|']='',['@']='',['!']='',['/']='',['<']='',['>']='',['"']='',['`']='',['_']='',["'"]='',
-	['#']='',['&']='',[';']='',[':']='',['~']='',['\\']='',['=']='',
+	['#']='',['&']='',[';']='',[':']='',['~']='',['\\']='',['=']='',['插件导致界面行为失效']='',
 }
-local RaidAlertTagList = {"%*%*.+%*%*", "EUI[:_]", "PS 死亡: .+>", "|Hspell.+ [=%-]> ", "受伤源自 |Hspell ", "Fatality:.+> ", "已打断.*|Hspell", "打断：.+|Hspell", "成功打断>.+<的%-"}  -- RaidAlert Tag  --, "打断→|Hspell"
-local QuestReportTagList = {"任务进度提示", "%(任务完成%)", "<大脚组队提示>", "%[接受任务%]", "<大脚团队提示>", "进度:.+: %d+/%d+", "【网%.易%.有%.爱】"} -- QuestReport Tag  --, "任务.*%[%d+%].+ 已完成!" , "接受任务: ?%[%d+%]"
+local RaidAlertTagList = {"%*%*.+%*%*", "<iLvl>", "EUI_RaidCD", "<LFG>", "EUI[:_]", "PS 死亡: .+>", "|Hspell.+ [=%-]> ", "受伤源自 |Hspell ", "Fatality:.+> ", "已打断.*|Hspell", "打断：.+|Hspell", "成功打断>.+<的%-"}  -- RaidAlert Tag  --, "打断→|Hspell"
+local QuestReportTagList = {"<LFG>", "EUI:", "任务进度提示", "%(任务完成%)", "<大脚组队提示>", "%[接受任务%]", "<大脚团队提示>", "进度:.+: %d+/%d+", "【网%.易%.有%.爱】", "一起来做世界任务<", "一起做世界任务吧："} -- QuestReport Tag  --, "任务.*%[%d+%].+ 已完成!" , "接受任务: ?%[%d+%]"
 local RegexCharList = "[().%%%+%-%*?%[%]$^{}]" -- won't work on regex blackWord, but works on others
 
 --Options
@@ -34,8 +34,8 @@ local config = {
 	enableWisper = false, -- Wisper WhiteMode
 	enableDND = true, -- DND
 	enableCFA = true, -- Achievement Filter
-	enableRAF = false, -- RaidAlert Filter
-	enableQRF = false, -- Quest/Group Report Filter
+	enableRAF = true, -- RaidAlert Filter
+	enableQRF = true, -- Quest/Group Report Filter
 	enableDSS = true, -- Spec spell Filter
 	enableMSF = false, -- Monster Say Filter
 	enableAggressive = false, -- Aggressive Filter
