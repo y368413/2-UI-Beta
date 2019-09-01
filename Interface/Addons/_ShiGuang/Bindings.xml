@@ -1,9 +1,5 @@
 ﻿<Bindings>
 	<Binding name="RELOADUI" description="Reloads the UI." header="ACE3" category="BINDING_HEADER_ACE3"> ReloadUI() </Binding>
-	<Binding name="InspectRaidFrame" category="BINDING_HEADER_ACE3"> ToggleFrame(TinyInspectRaidFrame) </Binding>
-	<Binding name="FAMILYFAMILIARHELPER_TOGGLE" header="FAMILYFAMILIARHELPER" category="BINDING_HEADER_ACE3">
-		if FamilyFamiliarHelper then FamilyFamiliarHelper:SetShown(not FamilyFamiliarHelper:IsVisible()) end
-	</Binding>
 	<Binding name="CLASSIC_QUEST_LOG_TOGGLE" header="CLASSIC_QUEST_LOG" category="BINDING_HEADER_ACE3"> ClassicQuestLog:ToggleWindow() </Binding>
-	<Binding name="TOMEOFTELEPORTATIONSHOW" header="TOMEOFTELEPORTATION" category="BINDING_HEADER_ACE3"> TeleporterSlashCmdFunction() </Binding>
+	<Binding name="TOMEOFTELEPORTATIONSHOW" header="TOMEOFTELEPORTATION" category="BINDING_HEADER_ACE3"> TeleporterFunction() </Binding>
 </Bindings>

@@ -1,7 +1,0 @@
-﻿<Ui xmlns="http://www.blizzard.com/wow/ui/">
-	<Script file="Loot.lua"/>
-	<Script file="Farmer.lua"/>
-	<Script file="ChatLoot.lua"/>
-	<Script file="EasyConfirm.lua"/>
-	<Script file="EncounterJournalPlusInstanceInfo.lua"/>
-</Ui>

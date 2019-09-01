@@ -1,14 +1,33 @@
 local _, ns = ...
 local M, R, U, I = unpack(ns)
+I.Version = GetAddOnMetadata("_ShiGuang", "Version")
+I.Support = GetAddOnMetadata("_ShiGuang", "X-Support")
 I.Client = GetLocale()
 I.ScreenWidth, I.ScreenHeight = GetPhysicalScreenSize()
 
 -- Colors
+I.MyName = UnitName("player")
+I.MyRealm = GetRealmName()
 I.MyClass = select(2, UnitClass("player"))
-I.ClassColor = (CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS)[I.MyClass]
-I.MyColor = format("|cff%02x%02x%02x", I.ClassColor.r*255, I.ClassColor.g*255, I.ClassColor.b*255)
-I.InfoColor = "|cff70c0f5"
-I.GreyColor = "|cff808080"
+I.ClassList = {}
+for k, v in pairs(LOCALIZED_CLASS_NAMES_MALE) do
+	I.ClassList[v] = k
+end
+I.ClassColors = {}
+local colors = CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS
+for class in pairs(colors) do
+	I.ClassColors[class] = {}
+	I.ClassColors[class].r = colors[class].r
+	I.ClassColors[class].g = colors[class].g
+	I.ClassColors[class].b = colors[class].b
+	I.ClassColors[class].colorStr = colors[class].colorStr
+end
+I.r, I.g, I.b = I.ClassColors[I.MyClass].r, I.ClassColors[I.MyClass].g, I.ClassColors[I.MyClass].b
+I.MyColor = format("|cff%02x%02x%02x", I.r*255, I.g*255, I.b*255)
+I.InfoColor = "|cff99ccff"
+I.GreyColor = "|cff7b8489"  --cff808080
+BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_POOR] = {r = .61, g = .61, b = .61}
+BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON] = {r = 0, g = 0, b = 0}
 
 -- Fonts
 I.Font = {STANDARD_TEXT_FONT, 12, "OUTLINE"}
@@ -20,6 +39,8 @@ local Media = "Interface\\Addons\\_ShiGuang\\Media\\"
 I.bdTex = "Interface\\ChatFrame\\ChatFrameBackground"
 I.glowTex = Media.."glowTex"
 I.normTex = Media.."normTex"
+I.gradTex = Media.."gradTex"
+I.flatTex = Media.."flatTex"
 I.bgTex = Media.."bgTex"
 I.EnergyTex = Media.."Skullflower3"
 I.arrowTex = Media.."Modules\\Raid\\textureArrowAbove"
@@ -29,7 +50,8 @@ I.eyeTex = "Interface\\Minimap\\Raid_Icon"		-- blue: \\Dungeon_Icon
 I.garrTex = "Interface\\HelpFrame\\HelpIcon-ReportLag"
 I.copyTex = "Interface\\Buttons\\UI-GuildButton-PublicNote-Up"
 I.binTex = "Interface\\HelpFrame\\ReportLagIcon-Loot"
-I.questTex = "Interface\\BUTTONS\\AdventureGuideMicrobuttonAlert"
+I.questTex = "adventureguide-microbutton-alert"
+I.objectTex = "Warfronts-BaseMapIcons-Horde-Barracks-Minimap"
 I.creditTex = "Interface\\HelpFrame\\HelpIcon-KnowledgeBase"
 I.newItemFlash = "Interface\\Cooldown\\star4"
 I.sparkTex = "Interface\\CastingBar\\UI-CastingBar-Spark"
@@ -76,25 +98,31 @@ M:RegisterEvent("PLAYER_TALENT_UPDATE", CheckRole)
 -- Raidbuff Checklist
 I.BuffList = {
 	[1] = {		-- 合剂
-		251836,	-- 敏捷
-		251837,	-- 智力
-		251838,	-- 耐力
-		251839,	-- 力量
+		251836,	-- 敏捷238
+		251837,	-- 智力238
+		251838,	-- 耐力238
+		251839,	-- 力量238
+		298836,	-- 敏捷360
+		298837,	-- 智力360
+		298839,	-- 耐力360
+		298841,	-- 力量360
 	},
 	[2] = {     -- 进食充分
 		104273, -- 250敏捷，BUFF名一致
 	},
 	[3] = {     -- 10%智力
 		1459,
+		264760,
 	},
 	[4] = {     -- 10%耐力
 		21562,
+		264764,
 	},
 	[5] = {     -- 10%攻强
 		6673,
+		264761,
 	},
 	[6] = {     -- 符文
-		224001,
 		270058,
 	},
 }

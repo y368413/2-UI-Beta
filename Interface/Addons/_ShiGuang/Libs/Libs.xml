@@ -1,16 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-	<Script file="LibDataBroker-1.1.lua"/>
-	<Script file="LibDBIcon-1.0.lua"/>
-	<Script file="LibSharedMedia-3.0.lua"/>
-	<Script file="LibDualSpec-1.0.lua"/>
-	<!--Include file="LibMovable-1.0\LibMovable-1.0.xml"/-->
-	<Include file="LibInspect\LibInspect.xml"/>
-	<Include file="AceGUI-3.0-SharedMediaWidgets\widget.xml"/>
-	<Script file="LibProcessable.lua"/>
-	<Include file="Wasabi\Wasabi.xml"/>
-	<Script file="LibItemUpgradeInfo-1.0.lua"/>
-	<Script file="LibRealmInfo.lua"/>
-	<Script file="VirtualScrollList-1.0.lua"/>
-	<Include file="BlizzardFix\BlizzardFix.xml"/>
 	<Include file="cargBags\cargBags.xml"/>
+	<Script file="LibStub.lua"/>
+  <Script file="MSA-DropDownMenu-1.0.lua"/>
+	<Script file="LibButtonGlow.lua"/>
+	<Script file="LibBase64.lua"/>
 </Ui>

@@ -1,0 +1,22 @@
+﻿## Interface: 80200
+## Title: OmniCD
+## Title-zhCN: |cff8000ff[小队]|r技能监控
+## Title-zhTW: |cff8000ff[小队]|r技能监控
+## Version: 2.1.1
+## Author: Treebonker
+## Notes: Tracks party cooldowns. Use |cffffd700/oc|r or |cffffd700/omnicd|r to open options
+## X-Credits:
+## X-License: All Rights Reserved
+## X-Website: https://wow.curseforge.com/projects/omnicd
+## DefaultState: Enabled
+## SavedVariables: OmniCDDB
+## Dependencies: _ShiGuang
+
+LibDualSpec-1.0.lua
+
+locales\locales.xml
+
+OmniCD.xml
+OmniCD.lua
+options.lua
+modules\modules.xml

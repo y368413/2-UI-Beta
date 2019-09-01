@@ -3,54 +3,78 @@ local M, R, U, I = unpack(ns)
 if not R.Infobar.Memory then return end
 
 local module = M:GetModule("Infobar")
-local info = module:RegisterInfobar(R.Infobar.MemoryPos)
+local info = module:RegisterInfobar("Memory", R.Infobar.MemoryPos)
+local select, gcinfo, collectgarbage = select, gcinfo, collectgarbage
+local format, min, sort, wipe = string.format, math.min, table.sort, table.wipe
+local ADDONS, GetNumAddOns, GetAddOnInfo = ADDONS, GetNumAddOns, GetAddOnInfo
+local IsShiftKeyDown, IsAddOnLoaded = IsShiftKeyDown, IsAddOnLoaded
+local UpdateAddOnMemoryUsage, GetAddOnMemoryUsage = UpdateAddOnMemoryUsage, GetAddOnMemoryUsage
 
-local function formatMemory(value, color)
-	color = color and I.MyColor or " "
+local function formatMemory(value)
 	if value > 1024 then
-		return format("%.1f"..color.."mb", value / 1024)
+		return format("%.1fm", value / 1024)
 	else
-		return format("%.0f"..color.."kb", value)
+		return format("%.0fk", value)
 	end
 end
 
-local memoryTable = {}
-local function updateMemory()
+local function memoryColor(value, times)
+	if not times then times = 1 end
+
+	if value <= 1024*times then
+		return 0, 1, 0
+	elseif value <= 2048*times then
+		return .75, 1, 0
+	elseif value <= 4096*times then
+		return 1, 1, 0
+	elseif value <= 8192*times then
+		return 1, .75, 0
+	elseif value <= 16384*times then
+		return 1, .5, 0
+	else
+		return 1, .1, 0
+	end
+end
+
+local memoryTable, totalMemory, entered = {}, 0
+
+local function updateMemoryTable()
+	local numAddons = GetNumAddOns()
+	if numAddons == #memoryTable then return end
+
 	wipe(memoryTable)
+	for i = 1, numAddons do
+		memoryTable[i] = {i, select(2, GetAddOnInfo(i)), 0}
+	end
+end
+
+local function sortMemory(a, b)
+	if a and b then
+		return a[3] > b[3]
+	end
+end
+
+local function updateMemory()
 	UpdateAddOnMemoryUsage()
 
-	local total, count = 0, 0
-	for i = 1, GetNumAddOns() do
-		if IsAddOnLoaded(i) then
-			count = count + 1
-			local usage = GetAddOnMemoryUsage(i)
-			memoryTable[count] = {select(2, GetAddOnInfo(i)), usage}
-			total = total + usage
-		end
+	local total = 0
+	for i = 1, #memoryTable do
+		local value = memoryTable[i]
+		value[3] = GetAddOnMemoryUsage(value[1])
+		total = total + value[3]
 	end
-
-	sort(memoryTable, function(a, b)
-		if a and b then
-			return a[2] > b[2]
-		end
-	end)
+	sort(memoryTable, sortMemory)
 
 	return total
 end
 
 info.onUpdate = function(self, elapsed)
-	self.timer = (self.timer or 5) + elapsed
+	self.timer = (self.timer or 3) + elapsed
 	if self.timer > 5 then
-		UpdateAddOnMemoryUsage()
-
-		local total = 0
-		for i = 1, GetNumAddOns() do
-			if IsAddOnLoaded(i) then
-				local usage = GetAddOnMemoryUsage(i)
-				total = total + usage
-			end
-		end
-		self.text:SetText(formatMemory(total, true))
+		updateMemoryTable()
+		totalMemory = updateMemory()
+		self.text:SetText(M.HexRGB(memoryColor(totalMemory, 10))..format("%.1fm", totalMemory/1024))
+		if entered then self:onEnter() end
 
 		self.timer = 0
 	end
@@ -58,53 +82,53 @@ end
 
 info.onMouseUp = function(self, btn)
 		local before = gcinfo()
-		collectgarbage()
-		print(format("|cff66C6FF%s:|r %s", U["Garbage collected"], formatMemory(before - gcinfo())))
+		collectgarbage("collect")
+		print(format("|cff66C6FF%s:|r %s", U["Collect Memory"], formatMemory(before - gcinfo())))
 		updateMemory()
-	self:GetScript("OnEnter")(self)
+		self:onEnter()
 end
 
 info.onEnter = function(self)
-	local totalMemory = updateMemory()
-	GameTooltip:SetOwner(self, "ANCHOR_BOTTOM", 0, -21)
+	entered = true
+	GameTooltip:SetOwner(self, "ANCHOR_BOTTOM", 0, -15)
 	GameTooltip:ClearLines()
 	GameTooltip:AddDoubleLine(ADDONS, formatMemory(totalMemory), 0,.6,1, .6,.8,1)
 	GameTooltip:AddLine(" ")
 
-	local maxAddOns = IsShiftKeyDown() and #memoryTable or min(R.Infobar.MaxAddOns, #memoryTable)
-	for i = 1, maxAddOns do
-		local usage = memoryTable[i][2]
-		local color = usage <= 204.8 and {0,1} -- 0 - 200k
-		or usage <= 1024 and {.75,1} -- 100k - 1mb
-		or usage <= 2560 and {1,1} -- 1mb - 2.5mb
-		or usage <= 5120 and {1,.75} -- 2mb - 5mb
-		or usage <= 10240 and {1,.5} -- 4mb - 10mb
-		or {1,.1} -- 10mb +
-		GameTooltip:AddDoubleLine(memoryTable[i][1], formatMemory(usage), 1, 1, 1, color[1], color[2], 0)
+	local maxAddOns = R.Infobar.MaxAddOns
+	local isShiftKeyDown = IsShiftKeyDown()
+	local maxShown = isShiftKeyDown and #memoryTable or min(maxAddOns, #memoryTable)
+	local numEnabled = 0
+	for i = 1, #memoryTable do
+		local value = memoryTable[i]
+		if value and IsAddOnLoaded(value[1]) then
+			numEnabled = numEnabled + 1
+			if numEnabled <= maxShown then
+				GameTooltip:AddDoubleLine(value[2], formatMemory(value[3]), 1,1,1, memoryColor(value[3], 5))
+			end
+		end
 	end
 
-	local hiddenMemory = 0
-	if not IsShiftKeyDown() then
-		for i = (R.Infobar.MaxAddOns + 1), #memoryTable do
-			hiddenMemory = hiddenMemory + memoryTable[i][2]
+	if not isShiftKeyDown and (numEnabled > maxAddOns) then
+		local hiddenMemory = 0
+		for i = (maxAddOns + 1), numEnabled do
+			hiddenMemory = hiddenMemory + memoryTable[i][3]
 		end
-		if #memoryTable > R.Infobar.MaxAddOns then
-			local numHidden = #memoryTable - R.Infobar.MaxAddOns
-			GameTooltip:AddDoubleLine(format("%d %s (%s)", numHidden, U["Hidden"], U["Shift"]), formatMemory(hiddenMemory), .6,.8,1, .6,.8,1)
-		end
+		GameTooltip:AddDoubleLine(format("%d %s (%s)", numEnabled - maxAddOns, U["Hidden"], U["Hold Shift"]), formatMemory(hiddenMemory), .6,.8,1, .6,.8,1)
 	end
 
 	GameTooltip:AddLine(" ")
 	GameTooltip:AddDoubleLine(U["Default UI Memory Usage:"], formatMemory(gcinfo() - totalMemory), .6,.8,1, 1,1,1)
 	GameTooltip:AddDoubleLine(U["Total Memory Usage:"], formatMemory(collectgarbage("count")), .6,.8,1, 1,1,1)
-	--GameTooltip:AddDoubleLine(" ", "--------------", 1,1,1, .5,.5,.5)
-		--GameTooltip:AddDoubleLine(" ", U["AutoCollect"]..": "..(MaoRUIDB["AutoCollect"] and "|cff55ff55"..VIDEO_OPTIONS_ENABLED or "|cffff5555"..VIDEO_OPTIONS_DISABLED).." ", 1,1,1, .6,.8,1)
+	--GameTooltip:AddDoubleLine(" ", I.LineString)
+	--GameTooltip:AddDoubleLine(" ", U["Collect Memory"].." ", 1,1,1, .6,.8,1)
 	GameTooltip:Show()
 
 	self:RegisterEvent("MODIFIER_STATE_CHANGED")
 end
 
 info.onLeave = function(self)
+	entered = false
 	GameTooltip:Hide()
 	self:UnregisterEvent("MODIFIER_STATE_CHANGED")
 end
@@ -116,17 +140,6 @@ info.eventList = {
 info.onEvent = function(self, event, arg1)
 	self:UnregisterEvent("PLAYER_ENTERING_WORLD")
 	if event == "MODIFIER_STATE_CHANGED" and arg1 == "LSHIFT" then
-		self:GetScript("OnEnter")(self)
+		self:onEnter()
 	end
 end
-
-local f = CreateFrame("Frame")
-f:RegisterAllEvents()
-f:SetScript("OnEvent", function(_, event)
-	if InCombatLockdown() then return end
-	f.events = (f.events or 0) + 1
-	if f.events > 6000 or event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_REGEN_ENABLED" then
-		collectgarbage()
-		f.events = 0
-	end
-end)

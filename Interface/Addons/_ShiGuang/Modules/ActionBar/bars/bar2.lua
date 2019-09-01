@@ -7,7 +7,7 @@ function Bar:CreateBar2()
 	local padding, margin = 2, 2
 	local num = NUM_ACTIONBAR_BUTTONS
 	local buttonList = {}
-	local layout = MaoRUISettingDB["Actionbar"]["Styles"]
+	local layout = MaoRUISettingDB["Actionbar"]["Style"]
 
 	--create the frame to hold the buttons
 	local frame = CreateFrame("Frame", "NDui_ActionBar2", UIParent, "SecureHandlerStateTemplate")
@@ -20,7 +20,7 @@ function Bar:CreateBar2()
 	else
 		frame.Pos = {"BOTTOM", UIParent, "BOTTOM", 0, 42}
 	end
-	frame:SetScale(MaoRUISettingDB["Actionbar"]["ActionbarScale"])
+	frame:SetScale(MaoRUISettingDB["Actionbar"]["Scale"])
 
 	--move the buttons into position and reparent them
 	MultiBarBottomLeft:SetParent(frame)
@@ -50,6 +50,6 @@ function Bar:CreateBar2()
 
 	--create the mouseover functionality
 	if cfg.fader then
-		M:CreateButtonFrameFader(frame, buttonList, cfg.fader)
+		Bar.CreateButtonFrameFader(frame, buttonList, cfg.fader)
 	end
 end

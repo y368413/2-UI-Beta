@@ -1,8 +1,8 @@
 ﻿local _, ns = ...
 local M, R, U, I = unpack(ns)
-local module = M:GetModule("Auras")
+local A = M:GetModule("Auras")
 
-local cr, cg, cb = I.ClassColor.r, I.ClassColor.g, I.ClassColor.b
+local cr, cg, cb = I.r, I.g, I.b
 local IconSize = R.Auras.IconSize + 3
 local bar, cur, maxPower
 local function BloodyHell()
@@ -47,7 +47,7 @@ local function BloodyHell()
 	for i = 1, 5 do
 		icons[i] = CreateFrame("Frame", nil, bar)
 		icons[i]:SetSize(IconSize, IconSize)
-		M.CreateIF(icons[i], false, true)
+		M.AuraIcon(icons[i])
 		icons[i].Icon:SetTexture(GetSpellTexture(spells[i]))
 		icons[i].Count = M.CreateFS(icons[i], 16, "")
 		icons[i].Count:SetPoint("TOP", 0, 18)
@@ -227,7 +227,7 @@ local function checkSpec(event)
 	updateVisibility()
 end
 
-function module:BloodyHell()
+function A:BloodyHell()
 	if not MaoRUISettingDB["Auras"]["BloodyHell"] then return end
 
 	M:RegisterEvent("PLAYER_ENTERING_WORLD", checkSpec)

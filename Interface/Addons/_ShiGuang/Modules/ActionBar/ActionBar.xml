@@ -1,5 +1,4 @@
 ﻿<Ui xmlns="http://www.blizzard.com/wow/ui/">
-	<Script file="bars\fader.lua"/>
 	<Script file="bars\bar1.lua"/>
 	<Script file="bars\bar2.lua"/>
 	<Script file="bars\bar3.lua"/>
@@ -10,15 +9,10 @@
 	<Script file="bars\extrabar.lua"/>
 	<Script file="bars\leave_vehicle.lua"/>
 	<Script file="bars\hide_blizzart.lua"/>
+	<Script file="bars\fader.lua"/>
 
 	<Script file="ButtonRange.lua"/>
 	<Script file="Keybind.lua"/>
 	<Script file="ButtonStyle.lua"/>
 	<Script file="Cooldown.lua"/>
-	
-	<Script file="ExpRep.lua"/>
-	<Script file="FlyoutBindings.lua"/>
-	
-	<Script file="Bags.lua"/>
-	<Script file="BagsFilters.lua"/>
 </Ui>

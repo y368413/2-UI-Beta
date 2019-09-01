@@ -1,7 +1,7 @@
 --## Author: warbaby
-if (GAME_LOCALE or GetLocale()) == "zhCN" then SKADAEXPLOSIVEORBS = "邪能炸药"
-elseif (GAME_LOCALE or GetLocale()) == "zhTW" then SKADAEXPLOSIVEORBS = "魔化炸彈"
-else SKADAEXPLOSIVEORBS = "Fel Explosive"
+if GetLocale() == "zhCN" then SKADAEXPLOSIVEORBS = "爆炸物"
+elseif GetLocale() == "zhTW" then SKADAEXPLOSIVEORBS = "炸彈"
+else SKADAEXPLOSIVEORBS = "Explosive"
 end
 
 local Skada = Skada
@@ -9,8 +9,6 @@ local Skada = Skada
 local mod = Skada:NewModule(SKADAEXPLOSIVEORBS)
 local spellmod = Skada:NewModule(SKADAEXPLOSIVEORBS.." - "..ITEM_SPELL_CHARGES_NONE)
 
-local DEBUG = false
-local debug = function(...) if DEBUG then print(...) end end
 local ORB_NPC = "120651"
 local in_challenge_with_orb
 
@@ -21,11 +19,10 @@ local targets = {} --target[1]="party<1>"  target["party1"]="party1target"
 
 -- record target change event for set
 local function log_orb_click(set, playerid, id, orbs)
-    if not in_challenge_with_orb and not DEBUG then return end
+    if not in_challenge_with_orb then return end
     if not set or not set.players or not playerid or not id then return end
 	local player = Skada:get_player(set, playerid)
 	if not player then return end
-    debug("click", set.name, player.orb_click, player.orb_hit, set.orb_count)
 
     if not orbs[id] then
         set.orb_count = set.orb_count + 1
@@ -37,7 +34,6 @@ local function log_orb_click(set, playerid, id, orbs)
     if flag~=1 and flag~=3 then
         orbs[id][player.id] = flag + 1 -- mark as counted
         player.orb_click = player.orb_click + 1
-        debug("click", set.name, player.orb_click, player.orb_hit, set.orb_count)
     end
 end
 
@@ -45,7 +41,7 @@ local function TargetChange(self, event, unitid)
     local guid = UnitGUID(targets[unitid])
     if not guid then return end
     local type, zero, server_id, instance_id, zone_uid, npc_id, spawn_uid = strsplit("-", guid)
-    if not DEBUG and npc_id ~= ORB_NPC then return end
+    if npc_id ~= ORB_NPC then return end
     local playerid = UnitGUID(unitid)
     log_orb_click(Skada.current, playerid, guid, orbs_curr)
     log_orb_click(Skada.total, playerid, guid, orbs_total)
@@ -75,7 +71,7 @@ state_frame:RegisterEvent("CHALLENGE_MODE_START")
 state_frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 state_frame:SetScript("OnEvent", function()
     local level, affixes, wasEnergized = C_ChallengeMode.GetActiveKeystoneInfo();
-    if affixes and (affixes[1] == 13 or affixes[2] == 13) then
+    if affixes and (affixes[1] == 13 or affixes[2] == 13 or affixes[3] == 13) then
         RegisterOrUnregisterUnitTargetEvent(true)
         in_challenge_with_orb = true
     else
@@ -100,7 +96,6 @@ local function log_orb_hit(set, dmg, orbs)
     if flag~=2 and flag~=3 then
         orbs[id][player.id] = flag + 2 -- mark as counted
         player.orb_hit = player.orb_hit + 1
-        debug("hit", set.name, player.orb_click, player.orb_hit, set.orb_count)
     end
 
     -- Add spell to player if it does not exist.
@@ -116,11 +111,11 @@ end
 local dmg = {}
 
 local function SpellDamage(timestamp, eventtype, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, ...)
-    if not in_challenge_with_orb and not DEBUG then return end
+    if not in_challenge_with_orb then return end
 	local spellId, spellName, spellSchool, amount, overkill, school, resist, block, absorb = ...
     if not amount or amount <= 0 then return end
     local type, zero, server_id, instance_id, zone_uid, npc_id, spawn_uid = strsplit("-", dstGUID)
-    if not DEBUG and npc_id ~= ORB_NPC then return end
+    if npc_id ~= ORB_NPC then return end
 
 	dmg.playerid = srcGUID
 	dmg.playername = srcName
@@ -149,7 +144,7 @@ function mod:Update(win, set)
 
 			d.label = player.name
 			d.value = player.orb_hit
-			d.valuetext = "选:" .. Skada:FormatNumber(player.orb_click) .. " 击:" .. Skada:FormatNumber(player.orb_hit)..(" (%02.1f%%)"):format(player.orb_hit / set.orb_count * 100)
+			d.valuetext = "选:" .. player.orb_click .. " 击:" .. player.orb_hit..(" (%02.1f%%)"):format(player.orb_hit / set.orb_count * 100)
 			d.id = player.id
 			d.class = player.class
 			
@@ -223,7 +218,6 @@ end
 
 -- Called by Skada when a new player is added to a set.
 function mod:AddPlayerAttributes(player)
-    debug("new player", player.name, player.orb_hit)
 	if not player.orb_hit then
 		player.orb_hit = 0
         player.orb_click = 0
@@ -234,7 +228,6 @@ end
 
 -- Called by Skada when a new set is created.
 function mod:AddSetAttributes(set)
-    debug("new set", set.name, set.orb_count)
     wipe(orbs_curr)
     wipe(orbs_total)
 	if not set.orb_count then

@@ -1,5 +1,11 @@
-﻿local _, ns = ...
-local M, R, U, I = unpack(ns)
+﻿--[[------------------------------- 密语语音提示 ---------------------------
+local WhisperSoundTip = CreateFrame("Frame")
+function WhisperSoundTip:CHAT_MSG_WHISPER() PlaySoundFile("Interface\\AddOns\\_ShiGuang\\Media\\Sounds\\Whisper.ogg", "Master") end
+WhisperSoundTip:SetScript("OnEvent",function(self, event, ...)
+	if self[event] then self[event](self, ...) else self:UnregisterEvent(event) end
+end)
+WhisperSoundTip:RegisterEvent("CHAT_MSG_WHISPER")]]
+
 -------------------- WhisperPop.lua-- Abin--2010-9-28------------------------------------------------------------
 WhisperPop = {}
 WhisperPop.IGNORED_MESSAGES = { "<DBM>", "<BWS>", "<BigWigs>", "<BIGWIGS>" } -- Add your ignore tags
@@ -133,11 +139,11 @@ local function SetFrameMobile(frame)
 end
 
 -- Tip frame
-local tipFrame = CreateFrame("Button", "WhisperPopTipFrame", chatbar)
+local tipFrame = CreateFrame("Button", "WhisperPopTipFrame", UIParent)
 WhisperPop.tipFrame = tipFrame
 --SetFrameMobile(tipFrame)
-tipFrame:SetParent(chatbar)
-tipFrame:SetPoint("LEFT", BF, "RIGHT", 3, 1)
+--tipFrame:SetParent(chatbar)
+tipFrame:SetPoint("BOTTOMLEFT", UIParent,"BOTTOMLEFT",285, 0)
 tipFrame:SetWidth(16)
 tipFrame:SetHeight(16)
 tipFrame:RegisterForClicks("LeftButtonUp", "RightButtonUp")
@@ -147,8 +153,7 @@ tipFrame.icon:SetAllPoints(tipFrame)
 tipFrame.icon:SetTexture("Interface\\Icons\\INV_Letter_18")
 tipFrame.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 tipFrame.icon:SetDesaturated(true)
-
-tipFrame.text = tipFrame:CreateFontString(tipFrame:GetName().."Text", "ARTWORK", "GameFontGreenSmall")
+tipFrame.text = tipFrame:CreateFontString(tipFrame:GetName().."Text", "ARTWORK", "GameFontNormalSmall")
 tipFrame.text:SetPoint("LEFT", tipFrame, "RIGHT")
 
 local function TipFrame_OnUpdate(self, elapsed)

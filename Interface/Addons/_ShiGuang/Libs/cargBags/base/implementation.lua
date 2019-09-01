@@ -30,7 +30,8 @@ Implementation.instances = {}
 Implementation.itemKeys = {}
 
 local toBagSlot = cargBags.ToBagSlot
-local L
+local LE_ITEM_CLASS_MISCELLANEOUS = LE_ITEM_CLASS_MISCELLANEOUS or 15
+local LE_ITEM_MISCELLANEOUS_COMPANION_PET = LE_ITEM_MISCELLANEOUS_COMPANION_PET or 2
 
 --[[!
 	Creates a new instance of the class
@@ -57,7 +58,7 @@ function Implementation:New(name)
 	impl.events = {} -- @property events <table> Holds all event callbacks
 	impl.notInited = true -- @property notInited <bool>
 
-	tinsert(UISpecialFrames, name) 
+	tinsert(UISpecialFrames, name)
 
 	self.instances[name] = impl
 
@@ -196,7 +197,7 @@ local _isEventRegistered = UIParent.IsEventRegistered
 ]]
 function Implementation:RegisterEvent(event, key, func)
 	local events = self.events
-	
+
 	if(not events[event]) then
 		events[event] = {}
 	end
@@ -311,21 +312,19 @@ function Implementation:GetItemInfo(bagID, slotID, i)
 		i.id = GetContainerItemID(bagID, slotID)
 
 		local texture
-		i.name, i.link, i.rarity, i.level, i.minLevel, i.type, i.subType, i.stackCount, i.equipLoc, texture, i.sellPrice = GetItemInfo(clink)
+		i.name, i.link, i.rarity, i.level, i.minLevel, i.type, i.subType, i.stackCount, i.equipLoc, texture, i.sellPrice, i.classID, i.subClassID = GetItemInfo(clink)
 		i.texture = i.texture or texture
 		i.rarity = i.rarity or i.quality
 
 		if clink:find("battlepet") then
-			if not(L) then
-				L = cargBags:GetLocalizedTypes()
-			end
 			local data, name = strmatch(clink, "|H(.-)|h(.-)|h")
 			local _, _, level, rarity, _, _, _, id = strmatch(data, "(%w+):(%d+):(%d+):(%d+):(%d+):(%d+):(%d+):(%d+)")
-			i.type = L["Battle Pets"]
+			i.classID = LE_ITEM_CLASS_MISCELLANEOUS
+			i.subClassID = LE_ITEM_MISCELLANEOUS_COMPANION_PET
 			i.rarity = tonumber(rarity) or 0
 			i.id = tonumber(id) or 0
 			i.name = name
-			i.minLevel = level
+			i.level = level
 			i.link = clink
 		elseif clink:find("keystone") then
 			local data = strmatch(clink, "|H(.-)|h(.-)|h")
@@ -404,6 +403,8 @@ end
 	@callback Container:OnBagUpdate(bagID, slotID)
 ]]
 function Implementation:BAG_UPDATE(_, bagID, slotID)
+	if self.isSorting then return end
+
 	if(bagID and slotID) then
 		self:UpdateSlot(bagID, slotID)
 	elseif(bagID) then
@@ -453,6 +454,7 @@ end
 	@param slotID <number> [optional]
 ]]
 function Implementation:ITEM_LOCK_CHANGED(_, bagID, slotID)
+	if self.isSorting then return end
 	if(not slotID) then return end
 
 	local button = self:GetButton(bagID, slotID)

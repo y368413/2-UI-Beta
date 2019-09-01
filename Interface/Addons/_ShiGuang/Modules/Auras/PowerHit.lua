@@ -1,6 +1,6 @@
 ﻿local _, ns = ...
 local M, R, U, I = unpack(ns)
-local module = M:GetModule("Auras")
+local A = M:GetModule("Auras")
 
 --------------------------Class recoure Place ---by y368413 ----
 local function yInvertTexture(Texture)
@@ -14,11 +14,25 @@ local function yInvertAllTextures(Frame)
 end
 
 local function ClassRecourePlace()
-  if I.MyClass == "DRUID" or I.MyClass == "ROGUE" then
-    ComboPointPlayerFrame:SetAlpha(1)
+  if (I.MyClass == "DRUID" and GetSpecialization() == 2) then
+    ComboPointPlayerFrame.Combo1:SetAlpha(1)
     ComboPointPlayerFrame.Background:Hide()
-    ComboPointPlayerFrame:SetScale(1.5)
-    M.Mover(ComboPointPlayerFrame, "ComboPointPlayerFrame", "ComboPointPlayerFrame", R.Auras.ComboPointPos, 180, 43)
+    ComboPointPlayerFrame.Combo1:SetScale(1.4)
+    ComboPointPlayerFrame.Combo2:SetScale(1.4)
+    ComboPointPlayerFrame.Combo3:SetScale(1.4)
+    ComboPointPlayerFrame.Combo4:SetScale(1.4)
+    ComboPointPlayerFrame.Combo5:SetScale(1.6)
+    M.Mover(ComboPointPlayerFrame.Combo1, "ComboPointPlayerFrame", "ComboPointPlayerFrame", R.Auras.ComboPointPos, 180, 43)
+   elseif I.MyClass == "ROGUE" then
+    PlayerFrame.classPowerBar.Combo1:SetAlpha(1)
+    PlayerFrame.classPowerBar.Background:Hide()
+    PlayerFrame.classPowerBar.Combo1:SetScale(1.4)
+    PlayerFrame.classPowerBar.Combo2:SetScale(1.4)
+    PlayerFrame.classPowerBar.Combo3:SetScale(1.4)
+    PlayerFrame.classPowerBar.Combo4:SetScale(1.4)
+    PlayerFrame.classPowerBar.Combo5:SetScale(1.6)
+    PlayerFrame.classPowerBar.Combo6:SetScale(1.6)
+    M.Mover(PlayerFrame.classPowerBar.Combo1, "ComboPointPlayerFrame", "ComboPointPlayerFrame", R.Auras.ComboPointPos, 180, 43)
   elseif I.MyClass == "WARLOCK" then
     --yInvertAllTextures(WarlockPowerFrame)
     WarlockPowerFrame:SetAlpha(1)
@@ -46,7 +60,7 @@ local function ClassRecourePlace()
     M.Mover(MageArcaneChargesFrame, "MageArcaneChargesFrame", "MageArcaneChargesFrame", R.Auras.MageArcaneChargesPos, 170, 43)
   end
 end
-function module:ClassRecoure()
+function A:ClassRecoure()
 	if not MaoRUISettingDB["Auras"]["ClassRecourePlace"] then return end
 	ClassRecourePlace()
 end
@@ -54,19 +68,20 @@ end
 
 -------------------------------------------------------------------------------------------------- RiphieEnergy
 local function RiphieEnergy()
-  local EnergyBar = CreateFrame("StatusBar", "EnergyBar", M.UIParent)
+  local EnergyBar = CreateFrame("StatusBar", "EnergyBar", UIParent)
   EnergyBar:SetHeight(6)
-  EnergyBar:SetWidth(200)
-  M.CreateSBC(EnergyBar, true)
+  EnergyBar:SetWidth(180)
+  M.CreateSB(EnergyBar, true)
+  EnergyBar:SetStatusBarTexture(I.EnergyTex)
   EnergyBar:SetStatusBarColor(246/255, 222/255, 32/255, 1)    --黄红渐变
     --mana       = {   0/255, 190/255, 230/255, 1 },  --天蓝色
     --rage       = {  65/255,  65/255,  65/255, 1 },  --暗紫色
     --focus      = { 230/255, 140/255,  60/255, 1 },  --深红色
     --maelstrom  = {   0/255, 127/255, 255/255, 1 },  --深蓝色
-  EnergyBar.Count = M.CreateFS(EnergyBar, 14, "")
+  EnergyBar.Count = M.CreateFS(EnergyBar, 12, "")
   EnergyBar.Count:ClearAllPoints()
   EnergyBar.Count:SetPoint("CENTER", EnergyBar, "CENTER", 0, 3)
-  M.Mover(EnergyBar, "EnergyBar", "EnergyBar", R.Auras.EnergyPos, 200, 12)
+  M.Mover(EnergyBar, "EnergyBar", "EnergyBar", R.Auras.EnergyPos, 180, 8)
 end
 
 local function updateEnergy()
@@ -78,7 +93,7 @@ local function updateEnergy()
   if C_PetBattles.IsInBattle() then EnergyBar:Hide() return else EnergyBar:Show() end
 end
 
-function module:Energy()
+function A:Energy()
 	if not MaoRUISettingDB["Auras"]["EnergyBar"] then return end
 	RiphieEnergy()
 	M:RegisterEvent("UNIT_AURA", updateEnergy)
@@ -90,7 +105,7 @@ function module:Energy()
 	M:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED", updateEnergy)
 end
 
-----------------------------------------------------------------------  Mod Name : BlinkComboHelper 1.03 --  Author   : Blink
+--[[--------------------------------------------------------------------  Mod Name : BlinkComboHelper 1.03 --  Author   : Blink
 local BlinkComboHelper = {}
 local animations = {}
 local BASE_FONT_SIZE = 66
@@ -188,4 +203,100 @@ BlinkComboHelperFrame:SetScript("OnEvent", function(self, event, ...)
 		self:Hide();
 		self:SetScript("OnUpdate", nil)
 	end
+end)]]
+
+
+
+--------------Fivecombo-----------------------------------------------
+local OverlayedSpellID = {};
+
+-- 盗贼
+OverlayedSpellID["ROGUE"] = {
+	408,   --肾击
+	1943,  --割裂
+	2098,  --刺骨
+	5171,  --切割
+	8647,  --破甲
+	26679, --致命投掷
+	32645, --毒伤
+	73651, --恢复
+	193316,
+	195452,
+	196819,
+	199804,
+	206237,
+};
+-- 德鲁伊
+OverlayedSpellID["DRUID"] = {
+	1079,   --割裂
+	22568,  --割碎
+	22570,  --凶猛撕咬
+	52610,  --野蛮咆哮
+};
+
+local function IsOverlayedSpell(spellID)
+	local _, class = UnitClass("player");
+	if (not OverlayedSpellID[class]) then return false end
+	for i, id in ipairs(OverlayedSpellID[class]) do
+		if (id == spellID) then
+			return true;
+		end
+	end
+	return false;
+end
+local function comboEventFrame_OnUpdate(self, elapsed)
+	local countTime = self.countTime - elapsed;
+	if (countTime <= 0) then
+		local parent = self:GetParent();
+		local points = UnitPower("player", Enum.PowerType.ComboPoints)
+		local maxPoints = UnitPowerMax("player", Enum.PowerType.ComboPoints)
+		if (self.isAlert and points ~= maxPoints) then
+			self:SetScript("OnUpdate", nil);
+			ActionButton_HideOverlayGlow(parent);
+			self.countTime = 0;
+		end
+		self.countTime = TOOLTIP_UPDATE_TIME;
+	end
+end
+
+hooksecurefunc("ActionButton_OnUpdate", function(self, elapsed)
+	if (self.comboEventFrame) then return end
+	self.comboEventFrame = CreateFrame("Frame", nil, self);
+	self.comboEventFrame.countTime = 0;
+	self.comboEventFrame:RegisterEvent("UNIT_POWER_UPDATE");
+	self.comboEventFrame:RegisterEvent('UNIT_POWER_FREQUENT')
+	self.comboEventFrame:RegisterEvent('UNIT_MAXPOWER')
+	self.comboEventFrame:SetScript("OnEvent", function(self, event, ...)
+	local parent = self:GetParent();
+	local spellType, id, subType  = GetActionInfo(parent.action);
+	-- 如果是系统自身的提示，就不再处理
+	if ( spellType == "spell" and IsSpellOverlayed(id) ) then
+		return;
+	elseif (spellType == "macro") then
+		local _, _, spellId = GetMacroSpell(id);
+		if ( spellId and IsSpellOverlayed(spellId) ) then
+			return;
+		end		
+	end
+	if UnitPower("player", Enum.PowerType.ComboPoints) >= 5 then		
+		if ( spellType == "spell" and IsOverlayedSpell(id) ) then
+			ActionButton_ShowOverlayGlow(parent);
+			self.isAlert = true;
+			self:SetScript("OnUpdate", comboEventFrame_OnUpdate);
+		elseif ( spellType == "macro" ) then
+			local _, _, spellId = GetMacroSpell(id);
+			if ( spellId and IsOverlayedSpell(spellId) ) then
+				ActionButton_ShowOverlayGlow(parent);
+				self.isAlert = true;
+				self:SetScript("OnUpdate", comboEventFrame_OnUpdate);
+			else
+				ActionButton_HideOverlayGlow(parent);
+			end
+		else
+			ActionButton_HideOverlayGlow(parent);
+		end
+	else
+		ActionButton_HideOverlayGlow(parent);
+	end	
+  end);
 end)

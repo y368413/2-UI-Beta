@@ -12,12 +12,12 @@ function Bar:CreateLeaveVehicle()
 	local frame = CreateFrame("Frame", "NDui_LeaveVehicleBar", UIParent, "SecureHandlerStateTemplate")
 	frame:SetWidth(num*cfg.size + (num-1)*margin + 2*padding)
 	frame:SetHeight(cfg.size + 2*padding)
-	if MaoRUISettingDB["Actionbar"]["Styles"] == 3 then
+	if MaoRUISettingDB["Actionbar"]["Style"] == 3 then
 		frame.Pos = {"BOTTOM", UIParent, "BOTTOM", 0, 130}
 	else
 		frame.Pos = {"BOTTOM", UIParent, "BOTTOM", 320, 100}
 	end
-	frame:SetScale(MaoRUISettingDB["Actionbar"]["ActionbarScale"])
+	frame:SetScale(MaoRUISettingDB["Actionbar"]["Scale"])
 
 	--the button
 	local button = CreateFrame("CheckButton", "LeaveVehicleButton", frame, "ActionButtonTemplate, SecureHandlerClickTemplate")
@@ -38,7 +38,7 @@ function Bar:CreateLeaveVehicle()
 	end
 	button:SetScript("OnClick", onClick)
 	button:SetScript("OnEnter", MainMenuBarVehicleLeaveButton_OnEnter)
-	button:SetScript("OnLeave", GameTooltip_Hide)
+	button:SetScript("OnLeave", M.HideTooltip)
 
 	--frame visibility
 	frame.frameVisibility = "[canexitvehicle]c;[mounted]m;n"
@@ -49,11 +49,11 @@ function Bar:CreateLeaveVehicle()
 
 	--create drag frame and drag functionality
 	if R.bars.userplaced then
-		M.Mover(frame, "LeaveVehicle", "LeaveVehicle", frame.Pos)
+		M.Mover(frame, U["LeaveVehicle"], "LeaveVehicle", frame.Pos)
 	end
 
 	--create the mouseover functionality
 	if cfg.fader then
-		M:CreateButtonFrameFader(frame, buttonList, cfg.fader)
+		Bar.CreateButtonFrameFader(frame, buttonList, cfg.fader)
 	end
 end

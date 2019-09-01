@@ -7,8 +7,8 @@ function Bar:CreateBar5()
 	local padding, margin = 2, 2
 	local num = NUM_ACTIONBAR_BUTTONS
 	local buttonList = {}
-	local layout = MaoRUISettingDB["Actionbar"]["Styles"]
-	if (layout == 8) or (layout == 9) or (layout == 10) then cfg = R.bars.bar2 end
+	local layout = MaoRUISettingDB["Actionbar"]["Style"]
+	if (layout == 8) or (layout == 9) or (layout == 10) then cfg.size = 38 end
 
 	--create the frame to hold the buttons
 	local frame = CreateFrame("Frame", "NDui_ActionBar5", UIParent, "SecureHandlerStateTemplate")
@@ -33,14 +33,11 @@ function Bar:CreateBar5()
 	else
 		frame.Pos = {"RIGHT", UIParent, "RIGHT", -1, -88}
 	end
-	frame:SetScale(MaoRUISettingDB["Actionbar"]["ActionbarScale"])
+	frame:SetScale(MaoRUISettingDB["Actionbar"]["Scale"])
 
 	--move the buttons into position and reparent them
 	MultiBarLeft:SetParent(frame)
 	MultiBarLeft:EnableMouse(false)
-	hooksecurefunc(MultiBarLeft, "SetScale", function(self, scale)
-		if scale < 1 then self:SetScale(1) end
-	end)
 
 	for i = 1, num do
 		local button = _G["MultiBarLeftButton"..i]
@@ -122,7 +119,7 @@ function Bar:CreateBar5()
 	end
 
 	--create the mouseover functionality
-	if MaoRUISettingDB["Actionbar"]["Bar5Fades"] and cfg.fader then
-		M:CreateButtonFrameFader(frame, buttonList, cfg.fader)
+	if MaoRUISettingDB["Actionbar"]["Bar5Fade"] and cfg.fader then
+		Bar.CreateButtonFrameFader(frame, buttonList, cfg.fader)
 	end
 end

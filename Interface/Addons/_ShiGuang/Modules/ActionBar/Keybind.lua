@@ -1,9 +1,6 @@
 local _, ns = ...
 local M, R, U, I = unpack(ns)
----------------------------
--- ncHoverBind, by coote
--- NDui MOD
----------------------------
+----------------------------- ncHoverBind, by coote-- NDui MOD---------------------------
 local bind, localmacros, frame = CreateFrame("Frame", "ncHoverBind", UIParent), 0
 -- SLASH COMMAND
 SlashCmdList.MOUSEOVERBIND = function()
@@ -17,23 +14,6 @@ SlashCmdList.MOUSEOVERBIND = function()
 		bind.texture:SetAllPoints(bind)
 		bind.texture:SetColorTexture(0, 0, 0, .25)
 		bind:Hide()
-
-		GameTooltip:HookScript("OnUpdate", function(self, elapsed)
-			self.elapsed = (self.elapsed or 0) + elapsed
-			if self.elapsed > .2 then
-				if not self.comparing and IsModifiedClick("COMPAREITEMS") then
-					GameTooltip_ShowCompareItem(self)
-					self.comparing = true
-				elseif self.comparing and not IsModifiedClick("COMPAREITEMS") then
-					for _, frame in pairs(self.shoppingTooltips) do
-						frame:Hide()
-					end
-					self.comparing = false
-				end
-
-				self.elapsed = 0
-			end
-		end)
 
 		bind:SetScript("OnEvent", function(self) self:Deactivate(false) end)
 		bind:SetScript("OnLeave", function(self) self:HideFrame() end)
@@ -212,13 +192,12 @@ SlashCmdList.MOUSEOVERBIND = function()
 			self:RegisterEvent("PLAYER_REGEN_DISABLED")
 		end
 
-		local bindType = 1
 		function bind:Deactivate(save)
 			if save then
-				SaveBindings(bindType)
+				SaveBindings(MaoRUISettingDB["Actionbar"]["BindType"])
 				print("|cffffff00"..KEY_BOUND.."|r")
 			else
-				LoadBindings(bindType)
+				LoadBindings(MaoRUISettingDB["Actionbar"]["BindType"])
 				print("|cffffff00"..UNCHECK_ALL.."|r")
 			end
 			self.enabled = false
@@ -238,8 +217,7 @@ SlashCmdList.MOUSEOVERBIND = function()
 			M.CreateTex(frame)
 			M.CreateFS(frame, 14, KEY_BINDING, false, "TOP", 0, -15)
 
-			local text = M.CreateFS(frame, 14, CHARACTER_SPECIFIC_KEYBINDINGS, false, "TOP", 0, -40)
-			text:SetTextColor(1, .8, 0)
+			local text = M.CreateFS(frame, 14, CHARACTER_SPECIFIC_KEYBINDINGS, "system", "TOP", 0, -40)
 
 			local button1 = M.CreateButton(frame, 120, 25, APPLY, 14)
 			button1:SetPoint("BOTTOMLEFT", 25, 10)
@@ -252,12 +230,13 @@ SlashCmdList.MOUSEOVERBIND = function()
 				bind:Deactivate(false)
 			end)
 			local box = M.CreateCheckBox(frame)
+			box:SetChecked(MaoRUISettingDB["Actionbar"]["BindType"] == 2)
 			box:SetPoint("RIGHT", text, "LEFT", -5, -0)
 			box:SetScript("OnClick", function(self)
 				if self:GetChecked() == true then
-					bindType = 2
+					MaoRUISettingDB["Actionbar"]["BindType"] = 2
 				else
-					bindType = 1
+					MaoRUISettingDB["Actionbar"]["BindType"] = 1
 				end
 			end)
 		end
@@ -286,13 +265,13 @@ SlashCmdList.MOUSEOVERBIND = function()
 			val = EnumerateFrames(val)
 		end
 
-		for i = 1,12 do
+		for i = 1, 12 do
 			local b = _G["SpellButton"..i]
 			b:HookScript("OnEnter", function(self) bind:Update(self, "SPELL") end)
 		end
 
 		local function registermacro()
-			for i = 1,36 do
+			for i = 1, 36 do
 				local b = _G["MacroButton"..i]
 				b:HookScript("OnEnter", function(self) bind:Update(self, "MACRO") end)
 			end
@@ -320,3 +299,23 @@ end
 
 SLASH_MOUSEOVERBIND1 = "/hb"
 SLASH_MOUSEOVERBIND2 = "/hoverbind"
+
+
+-- ## Author: Gello## Version: 1.0.7
+
+local FlyoutBindings=CreateFrame("Button",nil,SpellFlyout,"SecureHandlerShowHideTemplate")
+FlyoutBindings:SetAttribute("_onshow",[[
+	for i=1,10 do
+		self:SetBindingClick(false,i<10 and tostring(i) or "0","SpellFlyoutButton"..i)
+	end
+]])
+FlyoutBindings:SetAttribute("_onhide",[[
+	self:ClearBindings()
+]])
+SpellFlyout:HookScript("OnShow",function()
+  local i=1
+  while _G["SpellFlyoutButton"..i] and i<=10 do
+    _G["SpellFlyoutButton"..i.."HotKey"]:SetText(i<10 and i or 0)
+    i=i+1
+  end
+end)

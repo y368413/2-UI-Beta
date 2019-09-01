@@ -1,15 +1,16 @@
 local _, ns = ...
 local M, R, U, I = unpack(ns)
---if GetLocale() ~= "zhCN" then return end
+if GetLocale() ~= "zhCN" then return end
 
-local hx = {
+local strsplit, pairs = string.split, pairs
+
+local quest = {
    "更多设置请|cFF00DDFF右键小地图|r",
  	 "任何你不喜欢的，请你控制台关了它.|cff3399FF        自己去下载自己喜欢的",
  	 "我不想要技能栏上的白圈.|cff3399FF                ESC-插件-别打勾[输出]MaxDps",
 	 "我找不到在哪关闭自动交接任务. |cff3399FF            左上任务追踪栏上 框里的勾",
 	 "我缩放完了UI，系统头像位置变了.|cff3399FF          右键解锁挪回去",
 	 "我用的简易头像,右键解锁挪不动啊.|cff3399FF         /bht m",
-   "5人小队的框架位置很不习惯.|cff3399FF        按着Shift拖小队的第一个队友框",
    "|cFF00DDFF如需改进和反馈，可以回帖或者在讨论组(n9PnFl0o)告诉我，谢谢。",
 }
 local story = {
@@ -39,9 +40,9 @@ local story = {
   "#魔兽也有很多不同，我们需要放下那些一直以来养成的思维定式来观察这个游戏，这个世界，带给我们的，是很多难以察觉也难以发觉的东西。",  
   "#至少，你拥有的关于这个世界的记忆，那是在别的地方任何方法也无法获得的。",
 }
-local function changelog()
-	local f = CreateFrame("Frame", "ChangeLog", UIParent)
-		 local bgTexture = f:CreateTexture("name", "BACKGROUND")
+local function Helplist()
+	local f = CreateFrame("Frame", "Helplist", UIParent)
+	local bgTexture = f:CreateTexture("name", "BACKGROUND")
     bgTexture:SetTexture("Interface\\PETBATTLES\\Weather-StaticField");
     bgTexture:SetAllPoints();
     bgTexture:SetAlpha(.6)
@@ -50,20 +51,17 @@ local function changelog()
 	f:SetFrameStrata("HIGH")
 	M.CreateMF(f)
 	M.CreateBD(f)
-	--M.CreateTex(f)
-	M.CreateFS(f, 30, "2 UI", true, "TOPLEFT", 21, 16)
-	M.CreateFS(f, 16, I.Version, true, "TOPLEFT", 152, 9)
+	M.CreateFS(f, 30, "2 UI", true, "TOPLEFT", 43, 16)
+	M.CreateFS(f, 16, I.Version, true, "TOPLEFT", 112, 6)
 	local offset = 0
-	for n, t in pairs(hx) do
+	for n, t in pairs(quest) do
 		M.CreateFS(f, 14, n..": "..t, false, "TOPLEFT", 21, -(21 + offset))
 		offset = offset + 21
 	end
 	f:SetSize(520, 36 + offset)
-	local close = CreateFrame("Button", nil, f)
+	local close = M.CreateButton(f, 21, 21, "X")
 	close:SetPoint("TOPRIGHT", -8, 8)
-	close:SetSize(21, 21)
-	M.CreateFS(close, 16, "X", true)
-	close:SetScript("OnClick", function(self) f:Hide() end)
+	close:SetScript("OnClick", function() f:Hide() end)
 end
 local function lovewow()
 	local f = CreateFrame("Frame", "welovewow", UIParent)
@@ -84,16 +82,12 @@ local function lovewow()
 		offset = offset + 21
 	end
 	f:SetSize(1024, 43 + offset)
-	local close = CreateFrame("Button", nil, f)
+	local close = M.CreateButton(f, 21, 21, "X")
 	close:SetPoint("TOPRIGHT", -8, 8)
-	close:SetSize(21, 21)
-	M.CreateFS(close, 16, "X", true)
-	close:SetScript("OnClick", function(self) f:Hide() end)
+	close:SetScript("OnClick", function() f:Hide() end)
 end
 
-SlashCmdList["CHANGELOGS"] = function()
-	if not ChangeLogs then changelog() else ChangeLogs:Show() end
-end
-SLASH_CHANGELOGS1 = '/MrHelp'
-SlashCmdList["WELOVEWOW"] = function() lovewow() end
+SlashCmdList["HELPLIST"] = Helplist
+SLASH_HELPLIST1 = '/MrHelp'
+SlashCmdList["WELOVEWOW"] = lovewow
 SLASH_WELOVEWOW1 = '/welovewow'

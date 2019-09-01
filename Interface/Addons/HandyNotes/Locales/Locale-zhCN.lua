@@ -43,35 +43,6 @@ L["Title"] = "标题"
 L["World Map Icon Alpha"] = "世界地图图标透明度"
 L["World Map Icon Scale"] = "世界地图图标缩放"
 
-----------------------------------MoleMachine
-L["Icon Scale"] = "图标缩放"
-L["The scale of the icons"] = "图标的缩放值"
-L["Icon Alpha"] = "图标透明度"
-L["The alpha transparency of the icons."] = "图标的透明度"
-
-L["Aerie Peak"] = "鹰巢峰"
-L["Stormstout Brewery"] = "风暴酿酒厂"
-L["The Masonary"] = true
-L["The Great Divide"] = "大灾变"
-L["Neltharion's Vault"] = "耐萨里奥的宝库"
-L["Ruby Dragonshrine"] = "红玉巨龙圣地"
-L["Blackrock Foundry Overlook"] = "黑石铸造厂瞭望台"
-L["Fel Pits"] = true
-L["Shadowforge City"] = "暗炉堡"
-L["Fire Plume Ridge"] = "烈焰峰"
-L["Throne of Flame"] = "火焰王座"
-L["One Keg"] = "酒坛集"
-L["Ironforge"] = "铁炉堡"
-L["Nethergarde Keep"] = "守望堡"
-L["Stormwind"] = "暴风城"
-L["Elemental Plateau"] = "元素高地"
-L["Broken Shore"] = "破碎海滩"
-L["Skald"] = true
-L["Argent Tournament Grounds"] = "银色锦标赛场地"
-L["Inside Blackrock Mountain"] = "黑石山内部"
-L["Undiscovered"] = "未探索"
-
-
 -------------------------------------------------------BFA-Achievments
 -- Settings
 L["Icon settings"] = "图标设置"
@@ -324,3 +295,423 @@ L["options_toggle_show_debug"] = "调试"
 L["options_toggle_show_debug_desc"] = "显示调试信息"
 L["Alliance only"] = "仅限联盟"
 L["Horde only"] = "仅限部落"
+
+L["Allow left click to open journal to dungeon or raid"] = "允许使用左键打开地下城或团队副本的冒险指南"
+L["Allow right click to create waypoints with TomTom"] = "允许使用右键建立 TomTom 的引导箭头"
+L["Continent Alpha"] = "世界地图图标透明度"
+L["Continent Scale"] = "世界地图图标缩放大小"
+L["Don't show discovered dungeons"] = "隐藏已被发现的地下城副本"
+L["Enable TomTom integration"] = "启用 TomTom 整合"
+L["Filter Options"] = "过滤选项"
+L["Hide all BfA nodes from the map"] = "隐藏地图上所有争霸艾泽拉斯的副本图标"
+L["Hide all Broken Isle nodes from the map"] = "隐藏地图上所有破碎群岛的副本图标"
+L["Hide all Cataclysm nodes from the map"] = "隐藏地图上所有大地的裂变的副本图标"
+L["Hide all Draenor nodes from the map"] = "隐藏地图上所有德拉诺的副本图标"
+L["Hide all Northrend nodes from the map"] = "隐藏地图上所有诺森德的副本图标"
+L["Hide all Outland nodes from the map"] = "隐藏地图上所有外域的副本图标"
+L["Hide all Pandaria nodes from the map"] = "隐藏地图上所有潘达利亚的副本图标"
+L["Hide all Vanilla nodes from the map"] = "隐藏地图上所有艾泽拉斯的副本图标"
+L["Hide Battle for Azeroth"] = "隐藏争霸艾泽拉斯"
+L["Hide Broken Isles"] = "隐藏破碎群岛"
+L["Hide Cataclysm"] = "隐藏大地的裂变"
+L["Hide Draenor"] = "隐藏德拉诺"
+L["Hide Instances"] = "隐藏副本"
+L["Hide Northrend"] = "隐藏诺森德"
+L["Hide Outland"] = "隐藏外域"
+L["Hide Pandaria"] = "隐藏潘达利亚"
+L["Hide Vanilla"] = "隐藏艾泽拉斯"
+L["Invert Lockout"] = "反向显示已击杀"
+L["Journal Integration"] = "启用冒险指南整合"
+L["Lockout Alpha"] = "已击杀透明度"
+L["Lockout Gray Icon"] = "已击杀灰色图标"
+L["Lockout Options"] = "首領已击杀选项"
+L["Lockout Tooltip"] = "鼠标提示已击杀"
+L["Show dungeon locations on the map"] = "在地图上显示5人地下城的位置"
+L["Show Dungeons"] = "显示地下城"
+L["Show icons on continent map"] = "在世界地图上显示图标"
+L["Show lockout information on tooltips"] = "在鼠标提示中显示首领已击杀的信息"
+L["Show Mixed"] = "都显示"
+L["Show mixed (dungeons + raids) locations on the map"] = "在地图上显示地下城和团队副本的位置"
+L["Show on Continent"] = "在世界地图上显示"
+L["Show raid locations on the map"] = "在地图上显示团队副本的位置"
+L["Show Raids"] = "显示团队"
+L["The alpha of dungeons and raids that are locked to any extent"] = "任何难度的地下城和团队副本首领已击杀的透明度"
+L["The alpha of the icons shown on the continent map"] = "世界地图上的图标透明度"
+L["The alpha of the icons shown on the zone map"] = "区域地图上的图标透明度"
+L["The scale of the icons shown on the continent map"] = "世界地图上的图标大小"
+L["The scale of the icons shown on the zone map"] = "区域地图上的图标大小"
+L["These settings control the look and feel of the icon."] = "这些设定控制图标的外观及风格。"
+L["This will check for legion and bfa dungeons that have already been discovered. THIS IS KNOWN TO CAUSE TAINT, ENABLE AT OWN RISK."] = "启用后将检测军团再临和争霸艾泽拉斯已被发现的地下城副本，这可能会造成污染，请慎用。"
+L["Turn mixed icons grey when ANY dungeon or raid listed is locked"] = "列出的任何地下城或团队已击杀时，将混合的图标显示为灰色。"
+L["Use a different alpha for dungeons and raids that are locked to any extent"] = "使用不同的透明度来显示首领已击杀的地下城和团队副本（任何难度）"
+L["Use gray icon for dungeons and raids that are locked to any extent"] = "使用灰色图标来显示首领已击杀的地下城和团队副本（任何难度）"
+L["Use Lockout Alpha"] = "使用已击杀透明度"
+L["Zone Alpha"] = "区域地图图标透明度"
+L["Zone Scale"] = "区域地图图标缩放大小"
+
+----------------------------------MoleMachine
+L["Aerie Peak"] = "鹰巢峰"
+L["Stormstout Brewery"] = "风暴酿酒厂"
+L["The Masonary"] = true
+L["The Great Divide"] = "大灾变"
+L["Neltharion's Vault"] = "耐萨里奥的宝库"
+L["Ruby Dragonshrine"] = "红玉巨龙圣地"
+L["Blackrock Foundry Overlook"] = "黑石铸造厂瞭望台"
+L["Fel Pits"] = true
+L["Shadowforge City"] = "暗炉堡"
+L["Fire Plume Ridge"] = "烈焰峰"
+L["Throne of Flame"] = "火焰王座"
+L["One Keg"] = "酒坛集"
+L["Ironforge"] = "铁炉堡"
+L["Nethergarde Keep"] = "守望堡"
+L["Stormwind"] = "暴风城"
+L["Elemental Plateau"] = "元素高地"
+L["Broken Shore"] = "破碎海滩"
+L["Skald"] = true
+L["Argent Tournament Grounds"] = "银色锦标赛场地"
+L["Inside Blackrock Mountain"] = "黑石山内部"
+L["Undiscovered"] = "未解锁"
+
+L["Astravar Harbor"] = "艾斯特瓦港"
+L["Evermoon Terrace"] = "永月露臺"
+L["Falanaar"] = "法拉納爾"
+L["Felsoul Hold"] = "魔魂堡"
+L["Lunastre Estate"] = "路納斯特莊園"
+L["Moon Guard (entrance)"] = "月之守衛 (入口)"
+L["Moon Guard Stronghold"] = "月之守衛要塞"
+L["Ruins of Elune'eth"] = "伊露恩斯遺址"
+L["Sanctum of Order"] = "秩序聖所"
+L["Sanctum of Order (entrance)"] = "秩序聖所 (入口)"
+L["Tel'anor"] = "泰爾亞諾"
+L["Twilight Vineyards"] = "暮光葡萄園"
+L["Waning Crescent"] = "弦月旅店"
+
+L["OptionsDescription"] = "永恒岛稀有精英位置显示"
+L["OptionsArgsDescription"] = "调整图标外观"
+L["OptionsIconScaleName"] = "图标大小"
+L["OptionsIconScaleDescription"] = "图标的大小"
+L["OptionsIconAlphaName"] = "图标透明度"
+L["OptionsIconAlphaDescription"] = "图标的透明度"
+L["EmeralGander"] = "翠羽公鹤"
+L["EmeralGanderDrop"] = "风翎鹤羽"
+L["EmeralGanderInfo"] = "在天神庭院周围有许多刷新点。"
+L["IronfurSteelhorn"] = "铁鬃铜角牛"
+L["IronfurSteelhornDrop"] = "一簇牦牛毛"
+L["ImperialPython"] = "帝王巨蟒"
+L["ImperialPythonDrop"] = "致死小蝰蛇"
+L["GreatTurtleFuryshell"] = "怒壳巨龟"
+L["GreatTurtleFuryshellDrop"] = "硬化之壳"
+L["GreatTurtleFuryshellInfo"] = "在西海岸巡逻。"
+L["GuchiSwarmbringer"] = "虫群先锋古赤"
+L["GuchiSwarmbringerDrop"] = "古赤的蚕宝宝"
+L["GuchiSwarmbringerInfo"] = "在老酒湾附近刷新。"
+L["Zesqua"] = "泽泉"
+L["ZesquaDrop"] = "降雨之石"
+L["ZesquaInfo"] = "在老酒湾的海岸东边。"
+L["ZhuGonSour"] = "泛酸的筑汞"
+L["ZhuGonSourDrop"] = "酒灵臭臭"
+L["ZhuGonSourInfo"] = "在老酒湾刷新的稀有事件，完成后可看见稀有精英泛酸的筑汞。"
+L["Karkanos"] = "卡卡诺斯"
+L["KarkanosDrop"] = "一大包永恒铸币"
+L["KarkanosInfo"] = "码头会刷新钓手，与之对话可召唤卡卡诺斯。"
+L["Chelon"] = "蛰龙"
+L["ChelonDrop"] = "硬化之壳"
+L["ChelonInfo"] = "蛰龙刷新时为龟壳，点击后即可召唤出蛰龙。"
+L["Spelurk"] = "斯普鲁克"
+L["SpelurkDrop"] = "被诅咒的护身符"
+L["SpelurkInfo"] = "秘密巢穴洞口被塌方覆盖，进入的玩家需要点击左边石头旁的巨锤以砸开塌方，同时斯普鲁克刷新。法师可以闪现进去用里面的巨锤砸开塌方。"
+L["Cranegnasher"] = "噬鹤者"
+L["CranegnasherDrop"] = "新鲜的追猎者之皮"
+L["CranegnasherInfo"] = "需要召唤。 地上出现可调查的嗜鱼鹤尸体时，从南边拉一只嗜鱼鹤过来它就会跳下来。"
+L["Rattleskew"] = "响骨"
+L["RattleskewDrop"] = "扎维兹坦船长的断腿"
+L["RattleskewInfo"] = "沉船会刷新触发事件：藤壶号之战，在水下帮助npc击败几波幽灵海盗后，响骨会刷新。"
+L["MonstrousSpineclaw"] = "凶暴钳爪蟹"
+L["MonstrousSpineclawDrop"] = "钳爪小螃蟹"
+L["MonstrousSpineclawInfo"] = "海边所有可能的钳爪蟹刷新点。"
+L["SpiritJadefire"] = "玉火之灵"
+L["SpiritJadefireDrop"] = "发光的绿色灰烬"
+L["SpiritJadefireDrop2"] = "玉火炎灵"
+L["SpiritJadefireInfo"] = "孤魂岩洞内刷新。"
+L["Leafmender"] = "剪叶者"
+L["LeafmenderDrop"] = "灰叶小林精"
+L["LeafmenderInfo"] = "永恒岛下方蹈火者上方精英野牛人区。"
+L["Bufo"] = "布佛"
+L["BufoDrop"] = "幼年巨口娃"
+L["BufoInfo"] = "在有很多巨口娃的区域刷新。"
+L["Garnia"] = "加尼亚"
+L["GarniaDrop"] = "红玉小水滴"
+L["GarniaInfo"] = "在红玉湖刷新，只能坐信天翁上去。"
+L["Tsavoka"] = "查沃卡"
+L["TsavokaDrop"] = "新鲜的追踪者之皮"
+L["TsavokaInfo"] = "在查沃卡巢穴中刷新。"
+L["Stinkbraid"] = "斯汀克布莱德"
+L["StinkbraidInfo"] = "右下海面上的海盗船上。"
+L["RockMoss"] = "石苔"
+L["RockMossDrop"] = "金苔藓"
+L["RockMossInfo"] = "孤魂岩洞深处。"
+L["WatcherOsu"] = "斥候奥苏"
+L["WatcherOsuDrop"] = "灰烬之石"
+L["WatcherOsuInfo"] = "蹈火者小径。"
+L["JakurOrdon"] = "神战士迦库尔"
+L["JakurOrdonDrop"] = "警告标志"
+L["JakurOrdonInfo"] = "蹈火者废墟悬崖边缘处。"
+L["ChampionBlackFlame"] = "黑火勇士"
+L["ChampionBlackFlameDrop"] = "黑火匕首"
+L["ChampionBlackFlameDrop2"] = "一大袋草药"
+L["ChampionBlackFlameInfo"] = "蹈火者小径，不停的沿着道路巡逻。黑火勇士是3个一组的野牛人。"
+L["Cinderfall"] = "落烬"
+L["CinderfallDrop"] = "坠焰"
+L["CinderfallInfo"] = "断桥处。"
+L["UrdurCauterizer"] = "烙印者乌都尔"
+L["UrdurCauterizerDrop"] = "日落之石"
+L["UrdurCauterizerInfo"] = "斡耳朵神殿外围墙边。"
+L["FlintlordGairan"] = "燧石领主铠兰"
+L["FlintlordGairanDrop"] = "斡耳朵死亡之钟"
+L["FlintlordGairanInfo"] = "斡耳朵神殿周围有很多刷新点。"
+L["Huolon"] = "惑龙"
+L["HuolonDrop"] = "雷霆玛瑙云端祥龙的缰绳"
+L["HuolonInfo"] = "在蹈火者之径附近的天空中飞翔。"
+L["Golganarr"] = "高戈纳尔"
+L["GolganarrDrop"] = "古怪的抛光石"
+L["GolganarrDrop2"] = "一堆闪亮的石头"
+L["GolganarrInfo"] = "就在这附近刷新。"
+L["Evermaw"] = "吞天"
+L["EvermawDrop"] = "雾气缭绕的幽魂灯笼"
+L["EvermawInfo"] = "此标记不是确切的位置，因为这货沿着海岸一直在游。"
+L["DreadShipVazuvius"] = "幽灵船瓦组维斯号"
+L["DreadShipVazuviusDrop"] = "迷时水手结晶"
+L["DreadShipVazuviusInfo"] = "需要在海边的墓碑处使用击杀稀有吞天后获得的物品雾气缭绕的幽魂灯笼才会出现。"
+L["ArchiereusFlame"] = "烈焰祭司阿克鲁斯"
+L["ArchiereusFlameDrop"] = "远古知识药剂"
+L["ArchiereusFlameInfo"] = "在斡耳朵圣殿内刷新，所以没有橙色披风的玩家只能在挑战者之石处使用挑战卷轴。"
+L["Rattleskew"] ="响骨 - 扎维兹坦船长"
+L["RattleskewDrop"] ="扎维兹坦船长遗失的小腿"
+L["RattleskewDrop2"] ="工艺图:骷髅雕文"
+L["RattleskewInfo"] ="随机事件“藤壶号之战”：东南部半艘沉船(60.6, 87.2)的甲板上出现扎维兹坦船长及其手下剑客时，击败围攻它们的亡灵水手后刷新。"
+-------------------------------------------------------------------------------
+----------------------------------- MECHAGON ----------------------------------
+-------------------------------------------------------------------------------
+
+L["avenger_note"] = "當奧格索普‧奧布諾提斯是訪客時，殺死OOX-Fleetfoot/MG (區域滿地跑)來重生。";
+L["beastbot_note"] = "在帕斯卡K1N6型製作一個［野獸機器人動力包］來啟動。";
+L["cogstar_note"] = "殺死區域內任何地方的升級版哨衛，直到他傳送進來加強小怪。";
+L["crazed_trogg_note"] = "在邦多的機械廠裡使用噴塗機，塗滿油漆的氣囊或機器人，用他大喊的顏色塗上自己。";
+L["deepwater_note"] = "在帕斯卡K1N6型製作一個［百噚誘餌］來召喚。";
+L["doppel_gang"] = "分身";
+L["doppel_note"] = '從每日任務＂輪狂的建造狂熱＂獲得［減壓閥］，與其他兩名玩家一起啟動。';
+L["drill_rig"] = "需要鑽探機 ";
+L["foul_manifest_note"] = "連接水中的電塔到外圍電塔通電，然後到旁邊山坡上找到開關按下就會出現。";
+L["furor_note"] = '在每日任務 "來自諾達希爾的協助" 期間，點擊小藍色蘑菇直到出現。';
+L["killsaw_note"] = "在飛逝森林的任何地方出現，似乎殺死鋸刃伐木機器人後比較容易出現。不會在風險投資公司在森林裡的時候出現，那時候沒有伐木機器人。"
+L["leachbeast_note"] = "使用［發熱蒸發器線圈］啟動天氣改變裝置，天氣轉為下雨後，擊殺一定數量的濾液怪出現。";
+L["nullifier_note"] = '使用藍色卡片－[遠距迴路旁通器] 或是DNT-碰撞轉移裝置駭入啟動。前者為廢料王掉落，後者為鑽探機JD41與JD99的小怪掉落。';
+L["scrapclaw_note"] = "離岸在水中。";
+L["sparkqueen_note"] = '當每日任務＂有蟲.好多蟲!＂期間，殺死一定數量蜘蛛出現。';
+L["rusty_note"] = "在帕斯卡K1N6型上製作一個［個人時光移轉裝置］，以進入不同的未來。只有當克羅米不是訪客時才會出現。";
+L["vaultbot_note"] = "風箏到邦多的機械廠的特斯拉線圈，或在帕斯卡K1N6型上製作一個保險庫機器人鑰匙來直接打開。";
+
+L["iron_chest"] = "鐵潮帶鎖箱";
+L["mech_chest"] = "機械箱";
+L["msup_chest"] = "機械補給箱";
+L["rust_chest"] = "老舊生鏽箱子";
+L["iron_chest_note"] = "開啟鐵潮帶鎖箱的鑰匙從西湧列島小怪掉落。";
+L["msup_chest_note"] = "開啟機械補給箱的鑰匙從西湧列島小怪掉落。";
+L["rust_chest_note"] = "開啟老舊生鏽箱子的鑰匙從西湧列島小怪掉落。";
+
+L["rec_rig"] = "廢料回收機"
+L["rec_rig_note"] = "要啟動困難模式，使用超級對撞機武器來將所有輻射元素轉換為不穩定輻射元素。寵物可以在兩種難度中獲得。"
+
+L["options_toggle_mech_chest"] = "機械化箱"
+L["options_toggle_mech_chest_desc"] = "顯示機械化箱子的位置。有10個獨特的箱子可以每天洗一次，每個箱子有4-5個產卵位置。位置按顏色分組。"
+L["options_toggle_locked_chest"] = "鎖定箱子"
+L["options_toggle_locked_chest_desc"] = "在西湧列島中顯示上鎖箱子的位置。"
+L["options_toggle_recrig"] = "廢料回收機"
+L["options_toggle_recrig_desc"] = "顯示廢料回收機的位置以及事件獎賞。"
+
+-------------------------------------------------------------------------------
+----------------------------------- NAZJATAR ----------------------------------
+-------------------------------------------------------------------------------
+
+L["naz_intro_note"] = "完成入門任務鏈，解鎖Nazjatar上的rares，寶藏和世界任務。"
+
+L["alga_note"] = "注意: 被四個小怪遮掩！";
+L["allseer_note"] = "在卡美伊爾低層的任何地方出現。";
+L["anemonar_note"] = "在它上方擊殺巨大的擎天魟來啟動。";
+L["avarius_note"] = "使用鹵石鎬收集並將彩色晶體放在基座上。 你不必是一個礦工！";
+L["banescale_note"] = "有很小的機率在殺死群母後立即出現。";
+L["elderunu_note"] = "在卡美伊爾高層的任何地方出現。";
+L["gakula_note"] = "驅趕血鳍蝌蚪直到它出現。";
+L["glimmershell_note"] = "有小機率出現在微光殼巨蟹的位置。";
+L["kelpwillow_note"] = "使用棱彩水晶魅惑［淤泥蛞蝓］後帶給它來啟動。";
+L["lasher_note"] = "在土壤中種植發芽的種子並餵養蒼蠅。";
+L["matriarch_note"] = "與另外兩位族母共享重生計時器。";
+L["needle_note"] = "通常出現在［女王之門］區域。";
+L["oronu_note"] = "到沉默市場找到NPC購買［溺水幼鷹獸］寵物帶著它靠近後就可啟動。";
+L["rockweed_note"] = "殺死整個區域的失落的Algan和Wayward Algan直到他出現。 建議使用團隊，因為這可能是一個長期的苦工作。";
+L["sandcastle_note"] = "使用顯現石在區域內的任何地方顯露寶箱直到它出現。";
+L["tidelord_note"] = "殺死三個艾薩利塑能師以及招喚的被釋放的狂潮直到浪潮領主被召喚出來。";
+L["tidemistress_note"] = "點擊未受干擾的樣本直到她出現。";
+L["urduu_note"] = "在它面前重疊擊殺［鹿角暗礁行者］後來啟動。";
+L["voice_deeps_notes"] = "使用脫下來的殼來衝破此岩石。";
+L["vorkoth_note"] = "把餌食扔進池中直到它出現。";
+L["area_spawn"] = "在周邊地區出現。";
+L["cora_spawn"] = "在珊瑚林的任何地方出現。";
+L["cave_spawn"] = "在洞穴中出現。";
+L["east_spawn"] = "在區域的東半邊任何地方出現。";
+L["ucav_spawn"] = "在水下的洞穴出現。";
+L["zone_spawn"] = "在整個區域出現。";
+
+L["supply_chest"] = "戰爭補給箱";
+L["assassin_looted"] = "當為刺客時可以拾取。"
+
+L["arcane_chest"] = "祕法寶箱";
+L["glowing_chest"] = "發光的祕法寶箱";
+L["arcane_chest_01"] = "在一些海藻下。";
+L["arcane_chest_02"] = "在建築內部的上層";
+L["arcane_chest_03"] = "在第二層。";
+L["arcane_chest_04"] = "在瀑布上方的水中。";
+L["arcane_chest_05"] = "在廢墟中。";
+L["arcane_chest_06"] = ""; -- in the open
+L["arcane_chest_07"] = "在洞穴的後面。入口位於贊季爾沙灘東邊。";
+L["arcane_chest_08"] = "藏在一些海星下面。";
+L["arcane_chest_09"] = "在珍珠殼爬行者(暫譯)後面的一個洞穴裡。";
+L["arcane_chest_10"] = "在一個脫下來的殼下面。";
+L["arcane_chest_11"] = "在山丘的頂部。";
+L["arcane_chest_12"] = "在瀑布的頂部。";
+L["arcane_chest_13"] = "在懸崖的頂部，在樹後面。";
+L["arcane_chest_14"] = "在伊露恩諾神殿內部。";
+L["arcane_chest_15"] = "在建築物的右側。";
+L["arcane_chest_16"] = "在水下的洞穴，入口在南方。";
+L["arcane_chest_17"] = "在瀑布的頂部。";
+L["arcane_chest_18"] = "在路徑下方的一個洞穴裡。";
+L["arcane_chest_19"] = "在岩石拱門的頂部。 使用滑翔翼（或是飛行）";
+L["arcane_chest_20"] = "在山的頂部。";
+L["glowing_chest_1"] = "在水下洞穴的後面，防衛鐵塔。";
+L["glowing_chest_2"] = "解開線條。";
+L["glowing_chest_3"] = "在洞穴的後面。防衛鐵塔。";
+L["glowing_chest_4"] = "消掉三個紅色符文。";
+L["glowing_chest_5"] = "在洞穴，防衛鐵塔。";
+L["glowing_chest_6"] = "解開線條。";
+L["glowing_chest_7"] = "消掉四個藍色符文。";
+L["glowing_chest_8"] = "在屋頂上。防衛鐵塔。";
+
+L["slimy_cocoon"] = "軟泥的卵";
+L["ravenous_slime_note"] = "使用棱彩水晶控制小動物餵養軟泥。重複五天，直到它產生一個帶有寵物的卵。軟泥將一直持續到下一周重置。";
+L["slimy_cocoon_note"] = "一隻寵物準備從卵中收集！ 如果在您的階段它沒有出現，那麼卵的冷卻時間就會消失。 更改階段或稍後再回來查看。";
+
+L["cat_figurine"] = "水晶貓雕像"
+L["cat_figurine_01"] = "在一個水下洞穴。雕像在露天的地板上。入口在東邊。"
+L["cat_figurine_02"] = "在附近瀑布下的一個洞穴裡。 雕像在牆上的海星下面。"
+L["cat_figurine_03"] = "在一個水下洞穴。雕像被藏在某些破碎的貝殼下。"
+L["cat_figurine_04"] = "在一個水下洞穴。雕像在露天的地板上。"
+L["cat_figurine_05"] = "在一個小洞穴。雕像隱藏在地板上的植物後面。"
+L["cat_figurine_06"] = "在一個充滿敵對的礁石行者的水下洞穴中。 小雕像在牆上。 入口在北方。"
+L["cat_figurine_07"] = "在一個小洞穴。雕像在一些珊瑚的牆上。"
+L["cat_figurine_08"] = "在一個小洞穴。躲避祕法圈。 小雕像在後面的高大的岩石上。"
+L["cat_figurine_09"] = "在一個水下洞穴。雕像位於天花板的岩石拱門上。"
+L["cat_figurine_10"] = "在路徑下方的一個洞穴裡。 雕像在三個桶之間。"
+
+
+L["mardivas_lab"] = "瑪爾迪瓦斯實驗室";
+L["no_reagent"] = "不使用水晶"
+L["swater"] = "小深海"
+L["gwater"] = "大深海"
+L["sfire"] = "小火炎"
+L["gfire"] = "大火炎"
+L["searth"] = "小土岩"
+L["gearth"] = "大土岩"
+L["murloco"] = "莫落哥";
+L["tentacle_taco"] = "出售 "..ITEM_QUALITY_COLORS[4].hex.."[飢餓使者的觸手捲]|r 如果你是穿著艾薩利怒濤者斗篷。";
+
+L["options_toggle_treasures_nazj"] = "顯示［尋寶追蹤者］成就的箱子位置。"
+L["options_toggle_slimes_nazj"] = "飢餓的軟泥"
+L["options_toggle_slimes_nazj_desc"] = "顯示已經餵養可以產出戰寵的四種飢餓軟泥的位置。"
+L["options_toggle_cats_nazj"] = "貓咪雕像"
+L["options_toggle_cats_nazj_desc"] = "顯示'喵出喵咪喵像'成就的水晶貓位置。"
+L["options_toggle_misc_nazj"] = "顯示莫洛哥的洞穴以及瑪爾迪瓦斯的實驗室的位置。"
+
+-------------------------------------------------------------------------------
+------------------------------------ CAVES ------------------------------------
+-------------------------------------------------------------------------------
+
+L["blindlight_cave"] = "盲光洞穴的入口。";
+L["caverndark_cave"] = "洞闇恐懼洞穴的入口。";
+L["chasmhaunt_cave"] = "裂谷追魂鰻洞穴的入口。";
+L["shassera_cave"] = "夏瑟菈洞穴的入口。";
+
+-------------------------------------------------------------------------------
+------------------------------------ GEAR -------------------------------------
+-------------------------------------------------------------------------------
+
+L["cloth"] = "布甲";
+L["leather"] = "皮甲";
+L["mail"] = "鎖甲";
+L["plate"] = "鎧甲";
+
+L["1h_mace"] = "單手錘";
+L["1h_sword"] = "單手劍";
+L["1h_axe"] = "單手斧";
+L["2h_mace"] = "雙手錘";
+L["2h_axe"] = "雙手斧";
+L["2h_sword"] = "雙手劍";
+L["shield"] = "盾牌";
+L["dagger"] = "匕首";
+L["staff"] = "法杖";
+L["fist"] = "拳套";
+L["polearm"] = "長柄";
+L["bow"] = "弓";
+L["gun"] = "槍";
+L["wand"] = "魔杖";
+L["crossbow"] = "弩";
+L["offhand"] = "副手";
+L["warglaives"] = "戰刃";
+
+L["ring"] = "戒指";
+L["amulet"] = "項鍊";
+L["cloak"] = "披風";
+L["trinket"] = "飾品";
+
+-------------------------------------------------------------------------------
+---------------------------------- TOOLTIPS -----------------------------------
+-------------------------------------------------------------------------------
+
+L["retrieving"] = "檢索物品連結 ...";
+L["in_cave"] = "在洞穴。";
+L["weekly"] = "每週";
+L["normal"] = "普通";
+L["hard"] = "困難";
+L["mount"] = "坐騎";
+L["pet"] = "寵物";
+L["toy"] = "玩具";
+L["completed"] = "已完成"
+L["incomplete"] = "未完成"
+L["known"] = "已收藏"
+L["missing"] = "缺少"
+L["unobtainable"] = "無法獲得"
+L["unlearnable"] = "未學習"
+---------------------------------- VISIBILITY ---------------------------------
+
+L["options_visibility_settings"] = "可見度";
+L["options_general_settings"] = "一般";
+L["options_toggle_looted_rares"] = "永遠顯示所有稀有";
+L["options_toggle_looted_rares_desc"] = "顯示所有稀有不論拾取狀態";
+L["options_toggle_looted_treasures"] = "已經拾取的寶藏";
+L["options_toggle_looted_treasures_desc"] = "顯示所有寶藏不論拾取狀態";
+L["options_toggle_hide_done_rare"] = "隱藏稀有，如果物品都已收藏";
+L["options_toggle_hide_done_rare_desc"] = "隱藏全部拾取物品都已收藏的稀有。";
+L["options_toggle_hide_minimap"] = "隱藏小地圖的所有圖示";
+L["options_toggle_hide_minimap_desc"] = "在小地圖上隱藏來自此插件的所有圖示，並且只顯示在大地圖上。";
+
+L["options_toggle_battle_pets_desc"] = "顯示戰寵訓練師與NPC的位置。";
+L["options_toggle_battle_pets"] = "戰寵";
+L["options_toggle_caves_desc"] = "顯示其他節點的洞穴入口。";
+L["options_toggle_caves"] = "洞穴";
+L["options_toggle_misc"] = "雜項";
+L["options_toggle_npcs"] = "NPC";
+L["options_toggle_rares_desc"] = "顯示稀有NPC的位置。";
+L["options_toggle_rares"] = "稀有";
+L["options_toggle_supplies_desc"] = "顯示所有戰爭補給箱可能的位置。";
+L["options_toggle_supplies"] = "戰爭補給掉落";
+L["options_toggle_treasures"] = "寶藏";
+

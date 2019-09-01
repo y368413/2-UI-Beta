@@ -1,5 +1,21 @@
 ﻿local _, ns = ...
 local M, R, U, I = unpack(ns)
+local TT = M:RegisterModule("Tooltip")
+
+local strfind, format, strupper, strlen, pairs, unpack = string.find, string.format, string.upper, string.len, pairs, unpack
+local ICON_LIST, BAG_ITEM_QUALITY_COLORS = ICON_LIST, BAG_ITEM_QUALITY_COLORS
+local PVP, LEVEL, FACTION_HORDE, FACTION_ALLIANCE = PVP, LEVEL, FACTION_HORDE, FACTION_ALLIANCE
+local YOU, TARGET, AFK, DND, DEAD, PLAYER_OFFLINE = YOU, TARGET, AFK, DND, DEAD, PLAYER_OFFLINE
+local FOREIGN_SERVER_LABEL, INTERACTIVE_SERVER_LABEL = FOREIGN_SERVER_LABEL, INTERACTIVE_SERVER_LABEL
+local LE_REALM_RELATION_COALESCED, LE_REALM_RELATION_VIRTUAL = LE_REALM_RELATION_COALESCED, LE_REALM_RELATION_VIRTUAL
+local UnitIsPVP, UnitFactionGroup, UnitRealmRelationship = UnitIsPVP, UnitFactionGroup, UnitRealmRelationship
+local UnitIsConnected, UnitIsDeadOrGhost, UnitIsAFK, UnitIsDND = UnitIsConnected, UnitIsDeadOrGhost, UnitIsAFK, UnitIsDND
+local InCombatLockdown, IsShiftKeyDown, GetMouseFocus, GetItemInfo = InCombatLockdown, IsShiftKeyDown, GetMouseFocus, GetItemInfo
+local GetCreatureDifficultyColor, UnitCreatureType, UnitClassification = GetCreatureDifficultyColor, UnitCreatureType, UnitClassification
+local UnitIsWildBattlePet, UnitIsBattlePetCompanion, UnitBattlePetLevel = UnitIsWildBattlePet, UnitIsBattlePetCompanion, UnitBattlePetLevel
+local UnitIsPlayer, UnitName, UnitPVPName, UnitClass, UnitRace, UnitLevel = UnitIsPlayer, UnitName, UnitPVPName, UnitClass, UnitRace, UnitLevel
+local GetRaidTargetIndex, UnitGroupRolesAssigned, GetGuildInfo, IsInGuild = GetRaidTargetIndex, UnitGroupRolesAssigned, GetGuildInfo, IsInGuild
+local C_PetBattles_GetNumAuras, C_PetBattles_GetAuraInfo = C_PetBattles.GetNumAuras, C_PetBattles.GetAuraInfo
 
 local classification = {
 	elite = " |cffcc8800"..ELITE.."|r",
@@ -7,57 +23,70 @@ local classification = {
 	rareelite = " |cffff99cc"..RARITY.."|r ".."|cffcc8800"..ELITE.."|r",
 	worldboss = " |cffff0000"..BOSS.."|r",
 }
-local COALESCED_REALM_TOOLTIP1 = string.split(FOREIGN_SERVER_LABEL, COALESCED_REALM_TOOLTIP)
-local INTERACTIVE_REALM_TOOLTIP1 = string.split(INTERACTIVE_SERVER_LABEL, INTERACTIVE_REALM_TOOLTIP)
 
-local function getUnit(self)
+function TT:GetUnit()
 	local _, unit = self and self:GetUnit()
-	if(not unit) then
+	if not unit then
 		local mFocus = GetMouseFocus()
 		unit = mFocus and (mFocus.unit or (mFocus.GetAttribute and mFocus:GetAttribute("unit"))) or "mouseover"
 	end
 	return unit
 end
 
-local function hideLines(self)
+function TT:HideLines()
     for i = 3, self:NumLines() do
         local tiptext = _G["GameTooltipTextLeft"..i]
 		local linetext = tiptext:GetText()
 		if linetext then
-			if linetext == PVP_ENABLED then  --NDuiDB["Tooltip"]["HidePVP"] 
+			if linetext == PVP then
 				tiptext:SetText(nil)
 				tiptext:Hide()
-			elseif linetext:find(COALESCED_REALM_TOOLTIP1) or linetext:find(INTERACTIVE_REALM_TOOLTIP1) then
-				tiptext:SetText(nil)
-				tiptext:Hide()
-				local pretiptext = _G["GameTooltipTextLeft"..i-1]
-				pretiptext:SetText(nil)
-				pretiptext:Hide()
-				self:Show()
-			elseif (linetext == FACTION_HORDE) or (linetext == FACTION_ALLIANCE) then
-					tiptext:SetText(nil)					--tiptext:SetText("|cffff5040"..linetext.."|r")
-					tiptext:Hide()					--tiptext:SetText("|cff4080ff"..linetext.."|r")
+			elseif linetext == FACTION_HORDE then
+				if MaoRUISettingDB["Tooltip"]["FactionIcon"] then
+					tiptext:SetText(nil)
+					tiptext:Hide()
+				else
+					tiptext:SetText("|cffff5040"..linetext.."|r")
+				end
+			elseif linetext == FACTION_ALLIANCE then
+				if MaoRUISettingDB["Tooltip"]["FactionIcon"] then
+					tiptext:SetText(nil)
+					tiptext:Hide()
+				else
+					tiptext:SetText("|cff4080ff"..linetext.."|r")
+				end
 			end
 		end
     end
 end
 
-local function getTarget(unit)
+function TT:GetLevelLine()
+	for i = 2, self:NumLines() do
+		local tiptext = _G["GameTooltipTextLeft"..i]
+		local linetext = tiptext:GetText()
+		if linetext and strfind(linetext, LEVEL) then
+			return tiptext
+		end
+	end
+end
+
+function TT:GetTarget(unit)
 	if UnitIsUnit(unit, "player") then
-		return ("|cffff0000%s|r"):format(">"..string.upper(YOU).."<")
+		return format("|cffff0000%s|r", ">"..strupper(YOU).."<")
 	else
 		return M.HexRGB(M.UnitColor(unit))..UnitName(unit).."|r"
 	end
 end
 
-local function InsertFactionFrame(self, faction)
+function TT:InsertFactionFrame(faction)
 	if not self.factionFrame then
 		local f = self:CreateTexture(nil, "OVERLAY")
-		f:SetPoint("TOPRIGHT", 0, -5)
+		f:SetPoint("TOPRIGHT", 0, -6)
 		f:SetBlendMode("ADD")
+		f:SetScale(.25)
 		self.factionFrame = f
 	end
-	self.factionFrame:SetTexture("Interface\\FriendsFrame\\PlusManz-"..faction)
+	self.factionFrame:SetTexture("Interface\\Timer\\"..faction.."-Logo")
 	self.factionFrame:SetAlpha(.5)
 end
 
@@ -67,7 +96,7 @@ local roleTex = {
 	["DAMAGER"] = {.66, .813, .133, .445},
 }
 
-local function InsertRoleFrame(self, role)
+function TT:InsertRoleFrame(role)
 	if not self.roleFrame then
 		local f = self:CreateTexture(nil, "OVERLAY")
 		f:SetPoint("TOPRIGHT", self, "TOPLEFT", -1, -4)
@@ -81,7 +110,7 @@ local function InsertRoleFrame(self, role)
 	self.roleFrame.Shadow:SetAlpha(1)
 end
 
-GameTooltip:HookScript("OnTooltipCleared", function(self)
+function TT:OnTooltipCleared()
 	if self.factionFrame and self.factionFrame:GetAlpha() ~= 0 then
 		self.factionFrame:SetAlpha(0)
 	end
@@ -89,75 +118,81 @@ GameTooltip:HookScript("OnTooltipCleared", function(self)
 		self.roleFrame:SetAlpha(0)
 		self.roleFrame.Shadow:SetAlpha(0)
 	end
-end)
+end
 
-GameTooltip:HookScript("OnTooltipSetUnit", function(self)
-	if MaoRUISettingDB["Tooltip"]["CombatHide"] and InCombatLockdown() then
-		return self:Hide()
-	end
-	hideLines(self)
+function TT:OnTooltipSetUnit()
+	if self:IsForbidden() then return end
+	if MaoRUISettingDB["Tooltip"]["CombatHide"] and InCombatLockdown() then self:Hide() return end
+	TT.HideLines(self)
 
-	local unit = getUnit(self)
+	local unit = TT.GetUnit(self)
+	local isShiftKeyDown = IsShiftKeyDown()
 	if UnitExists(unit) then
 		local hexColor = M.HexRGB(M.UnitColor(unit))
 		local ricon = GetRaidTargetIndex(unit)
+		local text = GameTooltipTextLeft1:GetText()
 		if ricon and ricon > 8 then ricon = nil end
-		if ricon then
-			local text = GameTooltipTextLeft1:GetText()
+		if ricon and text then
 			GameTooltipTextLeft1:SetFormattedText(("%s %s"), ICON_LIST[ricon].."18|t", text)
 		end
 
-		if UnitIsPlayer(unit) then
-			local unitName
-			--if NDuiDB["Tooltip"]["HideTitle"] and NDuiDB["Tooltip"]["HideRealm"] then
-				--unitName = UnitName(unit)
-			--elseif NDuiDB["Tooltip"]["HideTitle"] then
-				--unitName = GetUnitName(unit, true)
-			--elseif NDuiDB["Tooltip"]["HideRealm"] then
-				unitName = UnitPVPName(unit) or UnitName(unit)
-			--end
-			if unitName then GameTooltipTextLeft1:SetText(unitName) end
-
+		local isPlayer = UnitIsPlayer(unit)
+		if isPlayer then
+			local name, realm = UnitName(unit)
+			local pvpName = UnitPVPName(unit)
 			local relationship = UnitRealmRelationship(unit)
-			if(relationship == LE_REALM_RELATION_VIRTUAL) then
-				self:AppendText(("|cffcccccc%s|r"):format(INTERACTIVE_SERVER_LABEL))
+			if not MaoRUISettingDB["Tooltip"]["HideTitle"] and pvpName then
+				name = pvpName
+			end
+			if realm and realm ~= "" then
+				if isShiftKeyDown or not MaoRUISettingDB["Tooltip"]["HideRealm"] then
+					name = name.."-"..realm
+				elseif relationship == LE_REALM_RELATION_COALESCED then
+					name = name..FOREIGN_SERVER_LABEL
+				elseif relationship == LE_REALM_RELATION_VIRTUAL then
+					name = name..INTERACTIVE_SERVER_LABEL
+				end
 			end
 
 			local status = (UnitIsAFK(unit) and AFK) or (UnitIsDND(unit) and DND) or (not UnitIsConnected(unit) and PLAYER_OFFLINE)
 			if status then
-				self:AppendText((" |cff00cc00<%s>|r"):format(status))
+				status = format(" |cffffcc00[%s]|r", status)
 			end
+			GameTooltipTextLeft1:SetFormattedText("%s", name..(status or ""))
 
-			--if NDuiDB["Tooltip"]["FactionIcon"] then
+			if MaoRUISettingDB["Tooltip"]["FactionIcon"] then
 				local faction = UnitFactionGroup(unit)
 				if faction and faction ~= "Neutral" then
-					InsertFactionFrame(self, faction)
+					TT.InsertFactionFrame(self, faction)
 				end
-			--end
+			end
 
-			--if NDuiDB["Tooltip"]["LFDRole"] then
+			if MaoRUISettingDB["Tooltip"]["LFDRole"] then
 				local role = UnitGroupRolesAssigned(unit)
 				if role ~= "NONE" then
-					InsertRoleFrame(self, role)
+					TT.InsertRoleFrame(self, role)
 				end
-			--end
+			end
 
 			local guildName, rank, rankIndex, guildRealm = GetGuildInfo(unit)
-			local text = GameTooltipTextLeft2:GetText()
-			if rank and text then
-				rankIndex = rankIndex + 1
-				--if NDuiDB["Tooltip"]["HideRank"] then
-					--GameTooltipTextLeft2:SetText("<"..text..">")
-				--else
-					GameTooltipTextLeft2:SetText("<"..text..">  "..rank.."("..rankIndex..")")
-				--end
-
+			local hasText = GameTooltipTextLeft2:GetText()
+			if guildName and hasText then
 				local myGuild, _, _, myGuildRealm = GetGuildInfo("player")
 				if IsInGuild() and guildName == myGuild and guildRealm == myGuildRealm then
 					GameTooltipTextLeft2:SetTextColor(.25, 1, .25)
 				else
 					GameTooltipTextLeft2:SetTextColor(.6, .8, 1)
 				end
+
+				rankIndex = rankIndex + 1
+				if MaoRUISettingDB["Tooltip"]["HideRank"] then rank = "" end
+				if guildRealm and isShiftKeyDown then
+					guildName = guildName.."-"..guildRealm
+				end
+				if MaoRUISettingDB["Tooltip"]["HideJunkGuild"] and not isShiftKeyDown then
+					if strlen(guildName) > 31 then guildName = "..." end
+				end
+				GameTooltipTextLeft2:SetText("<"..guildName.."> "..rank.."("..rankIndex..")")
 			end
 		end
 
@@ -178,27 +213,19 @@ GameTooltip:HookScript("OnTooltipSetUnit", function(self)
 
 			local diff = GetCreatureDifficultyColor(level)
 			local classify = UnitClassification(unit)
-			local textLevel = ("%s%s%s|r"):format(M.HexRGB(diff), boss or ("%d"):format(level), classification[classify] or "")
-			local tiptextLevel
-			for i = 2, self:NumLines() do
-				local tiptext = _G["GameTooltipTextLeft"..i]
-				local linetext = tiptext:GetText()
-				if linetext and linetext:find(LEVEL) then
-					tiptextLevel = tiptext
-				end
-			end
-
-			local creature = not UnitIsPlayer(unit) and UnitCreatureType(unit) or ""
-			local unitClass = UnitIsPlayer(unit) and ("%s %s"):format(UnitRace(unit) or "", hexColor..(UnitClass(unit) or "").."|r") or ""
+			local textLevel = format("%s%s%s|r", M.HexRGB(diff), boss or format("%d", level), classification[classify] or "")
+			local tiptextLevel = TT.GetLevelLine(self)
 			if tiptextLevel then
-				tiptextLevel:SetFormattedText(("%s %s%s %s"), textLevel, creature, unitClass, (not alive and "|cffCCCCCC"..DEAD.."|r" or ""))
+				local pvpFlag = isPlayer and UnitIsPVP(unit) and format(" |cffff0000%s|r", PVP) or ""
+				local unitClass = isPlayer and format("%s %s", UnitRace(unit) or "", hexColor..(UnitClass(unit) or "").."|r") or UnitCreatureType(unit) or ""
+				tiptextLevel:SetFormattedText(("%s%s %s %s"), textLevel, pvpFlag, unitClass, (not alive and "|cffCCCCCC"..DEAD.."|r" or ""))
 			end
 		end
 
 		if UnitExists(unit.."target") then
 			local tarRicon = GetRaidTargetIndex(unit.."target")
 			if tarRicon and tarRicon > 8 then tarRicon = nil end
-			local tar = ("%s%s"):format((tarRicon and ICON_LIST[tarRicon].."10|t") or "", getTarget(unit.."target"))
+			local tar = format("%s%s", (tarRicon and ICON_LIST[tarRicon].."10|t") or "", TT:GetTarget(unit.."target"))
 			self:AddLine(TARGET..": "..tar)
 		end
 
@@ -211,91 +238,94 @@ GameTooltip:HookScript("OnTooltipSetUnit", function(self)
 		GameTooltipStatusBar:SetStatusBarColor(0, .9, 0)
 	end
 
-	if GameTooltipStatusBar:IsShown() then
-		GameTooltipStatusBar:ClearAllPoints()
-		GameTooltipStatusBar:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 2, 3)
-		GameTooltipStatusBar:SetPoint("BOTTOMRIGHT", self, "TOPRIGHT", -2, 3)
-	end
-end)
+	TT.InspectUnitSpecAndLevel(self)
+end
 
--- Tooltip statusbars
-do
+function TT:StatusBar_OnValueChanged(value)
+	if self:IsForbidden() or not value then return end
+	local min, max = self:GetMinMaxValues()
+	if (value < min) or (value > max) then return end
+
+	if not self.text then
+			self.text = M.CreateFS(self, 12, "")
+	end
+
+	if value > 0 and max == 1 then
+		self.text:SetFormattedText("%d%%", value*100)
+	else
+		self.text:SetText(M.Numb(value).." | "..M.Numb(max))
+	end
+end
+
+function TT:ReskinStatusBar()
+	GameTooltipStatusBar:ClearAllPoints()
+	GameTooltipStatusBar:SetPoint("BOTTOMLEFT", GameTooltip, "TOPLEFT", R.mult, 3)
+	GameTooltipStatusBar:SetPoint("BOTTOMRIGHT", GameTooltip, "TOPRIGHT", -R.mult, 3)
 	GameTooltipStatusBar:SetStatusBarTexture(I.normTex)
 	GameTooltipStatusBar:SetHeight(5)
-	M.CreateSD(GameTooltipStatusBar, 3, 3)
-	local bg = M.CreateBG(GameTooltipStatusBar, 1)
+	local bg = M.CreateBG(GameTooltipStatusBar)
 	M.CreateBD(bg, .7)
 	M.CreateSD(bg)
 	M.CreateTex(bg)
 end
 
-GameTooltipStatusBar:SetScript("OnValueChanged", function(self, value)
-	if not value then return end
-	local min, max = self:GetMinMaxValues()
-	if (value < min) or (value > max) then return end
-
-	local unit = getUnit(GameTooltip)
-	if UnitExists(unit) then
-		min, max = UnitHealth(unit), UnitHealthMax(unit)
-		if not self.text then
-			self.text = M.CreateFS(self, 12, "")
-		end
-		self.text:Show()
-		local hp = M.Numb(min).." / "..M.Numb(max)
-		self.text:SetText(hp)
-	end
-end)
-
-hooksecurefunc("GameTooltip_ShowStatusBar", function(self)
+function TT:GameTooltip_ShowStatusBar()
 	if self.statusBarPool then
 		local bar = self.statusBarPool:Acquire()
 		if bar and not bar.styled then
-			local _, bd, tex = bar:GetRegions()
+			M.StripTextures(bar)
+			local tex = select(3, bar:GetRegions())
 			tex:SetTexture(I.normTex)
-			bd:Hide()
-			local bg = M.CreateBG(bd, 0)
-			M.CreateBD(bg, .25)
+			M.CreateBD(M.CreateBG(bar), .25)
 
 			bar.styled = true
 		end
 	end
-end)
+end
 
-hooksecurefunc("GameTooltip_ShowProgressBar", function(self)
+function TT:GameTooltip_ShowProgressBar()
 	if self.progressBarPool then
 		local bar = self.progressBarPool:Acquire()
 		if bar and not bar.styled then
-			M.StripTextures(bar.Bar, true)
+			M.StripTextures(bar.Bar)
 			bar.Bar:SetStatusBarTexture(I.normTex)
-			M.CreateBD(bar, .25)
-			bar:SetSize(216, 18)
+			M.CreateBD(M.CreateBG(bar.Bar), .25)
 
 			bar.styled = true
 		end
 	end
-end)
+end
 
 -- Anchor and mover
 local mover
-hooksecurefunc("GameTooltip_SetDefaultAnchor", function(tooltip, parent)
+function TT:GameTooltip_SetDefaultAnchor(parent)
 	if MaoRUISettingDB["Tooltip"]["Cursor"] then
-		tooltip:SetOwner(parent, "ANCHOR_CURSOR_RIGHT")
+		self:SetOwner(parent, "ANCHOR_CURSOR_RIGHT")
 	else
 		if not mover then
-			mover = M.Mover(tooltip, "Tooltip", "GameTooltip", R.Tooltips.TipPos, 240, 120)
+			mover = M.Mover(self, U["Tooltip"], "GameTooltip", R.Tooltips.TipPos, 240, 120)
 		end
-		tooltip:SetOwner(parent, "ANCHOR_NONE")
-		tooltip:ClearAllPoints()
-		tooltip:SetPoint("BOTTOMRIGHT", mover)
+		self:SetOwner(parent, "ANCHOR_NONE")
+		self:ClearAllPoints()
+		self:SetPoint("BOTTOMRIGHT", mover)
 	end
-end)
+end
 
 -- Tooltip skin
-local function style(self)
-	self:SetScale(MaoRUISettingDB["Tooltip"]["TooltipScale"])
+local function getBackdrop(self) return self.bg:GetBackdrop() end
+local function getBackdropColor() return 0, 0, 0, .7 end
+local function getBackdropBorderColor() return 0, 0, 0 end
+
+function TT:ReskinTooltip()
+	if not self then
+		return
+	end
+	if self:IsForbidden() then return end
+	self:SetScale(MaoRUISettingDB["Tooltip"]["Scale"])
 
 	if not self.tipStyled then
 		self:SetBackdrop(nil)
+		self:DisableDrawLayer("BACKGROUND")
 		local bg = M.CreateBG(self, 0)
 		bg:SetFrameLevel(self:GetFrameLevel())
 		M.CreateBD(bg, .7)
@@ -304,21 +334,21 @@ local function style(self)
 		self.bg = bg
 
 		-- other gametooltip-like support
-		self.GetBackdrop = function() return bg:GetBackdrop() end
-		self.GetBackdropColor = function() return 0, 0, 0, .7 end
-		self.GetBackdropBorderColor = function() return 0, 0, 0 end
+		self.GetBackdrop = getBackdrop
+		self.GetBackdropColor = getBackdropColor
+		self.GetBackdropBorderColor = getBackdropBorderColor
 
 		self.tipStyled = true
 	end
 
-	self.bg:SetBackdropBorderColor(0, 0, 0)
-	if self.GetItem then  -- NDuiDB["Tooltip"]["ClassColor"] and
+	self.bg.Shadow:SetBackdropBorderColor(0, 0, 0)
+	if MaoRUISettingDB["Tooltip"]["ClassColor"] and self.GetItem then
 		local _, item = self:GetItem()
 		if item then
 			local quality = select(3, GetItemInfo(item))
 			local color = BAG_ITEM_QUALITY_COLORS[quality or 1]
 			if color then
-				self.bg:SetBackdropBorderColor(color.r, color.g, color.b)
+				self.bg.Shadow:SetBackdropBorderColor(color.r, color.g, color.b)
 			end
 		end
 	end
@@ -335,244 +365,228 @@ local function style(self)
 	end
 end
 
-local function extrastyle(self)
-	if not self.styled then
-		self:DisableDrawLayer("BACKGROUND")
-		style(self)
-		self.styled = true
-	end
-end
-
-hooksecurefunc("GameTooltip_SetBackdropStyle", function(self)
+function TT:GameTooltip_SetBackdropStyle()
 	if not self.tipStyled then return end
 	self:SetBackdrop(nil)
-end)
+end
 
-M:RegisterEvent("ADDON_LOADED", function(_, addon)
-	if addon == "Blizzard_DebugTools" then
-		local tooltips = {
-			FrameStackTooltip,
-			EventTraceTooltip
-		}
-		for _, tip in pairs(tooltips) do
-			tip:SetParent(UIParent)
-			tip:SetFrameStrata("TOOLTIP")
-			tip:HookScript("OnShow", style)
-		end
+function TT:OnLogin()
+	self:ReskinStatusBar()
+	GameTooltip:HookScript("OnTooltipCleared", self.OnTooltipCleared)
+	GameTooltip:HookScript("OnTooltipSetUnit", self.OnTooltipSetUnit)
+	GameTooltipStatusBar:SetScript("OnValueChanged", self.StatusBar_OnValueChanged)
+	hooksecurefunc("GameTooltip_ShowStatusBar", self.GameTooltip_ShowStatusBar)
+	hooksecurefunc("GameTooltip_ShowProgressBar", self.GameTooltip_ShowProgressBar)
+	hooksecurefunc("GameTooltip_SetDefaultAnchor", self.GameTooltip_SetDefaultAnchor)
+	hooksecurefunc("GameTooltip_SetBackdropStyle", self.GameTooltip_SetBackdropStyle)
 
-	elseif addon == "_ShiGuang" then
-		local tooltips = {
-			ChatMenu,
-			EmoteMenu,
-			LanguageMenu,
-			VoiceMacroMenu,
-			GameTooltip,
-			EmbeddedItemTooltip,
-			ItemRefTooltip,
-			ItemRefShoppingTooltip1,
-			ItemRefShoppingTooltip2,
-			ShoppingTooltip1,
-			ShoppingTooltip2,
-			AutoCompleteBox,
-			FriendsTooltip,
-			WorldMapTooltip,
-			WorldMapCompareTooltip1,
-			WorldMapCompareTooltip2,
-			QuestScrollFrame.StoryTooltip,
-			GeneralDockManagerOverflowButtonList,
-			ReputationParagonTooltip,
-			QuestScrollFrame.WarCampaignTooltip,
-			NamePlateTooltip,
-		}
-		for _, f in pairs(tooltips) do
-			if f then
-				f:HookScript("OnShow", style)
-			end
-		end
+	-- Elements
+	self:ReskinTooltipIcons()
+	self:SetupTooltipID()
+	self:TargetedInfo()
+	self:AzeriteArmor()
+end
 
-		local extra = {
-			QueueStatusFrame,
-			FloatingGarrisonFollowerTooltip,
-			FloatingGarrisonFollowerAbilityTooltip,
-			FloatingGarrisonMissionTooltip,
-			GarrisonFollowerAbilityTooltip,
-			GarrisonFollowerTooltip,
-			FloatingGarrisonShipyardFollowerTooltip,
-			GarrisonShipyardFollowerTooltip,
-			BattlePetTooltip,
-			PetBattlePrimaryAbilityTooltip,
-			PetBattlePrimaryUnitTooltip,
-			FloatingBattlePetTooltip,
-			FloatingPetBattleAbilityTooltip,
-			IMECandidatesFrame
-		}
-		for _, f in pairs(extra) do
-			if f then
-				f:HookScript("OnShow", extrastyle)
-			end
-		end
+-- Tooltip Skin Registration
+local tipTable = {}
+function TT:RegisterTooltips(addon, func)
+	tipTable[addon] = func
+end
+local function addonStyled(_, addon)
+	if tipTable[addon] then
+		tipTable[addon]()
+		tipTable[addon] = nil
+	end
+end
+M:RegisterEvent("ADDON_LOADED", addonStyled)
 
-		-- DropdownMenu
-		hooksecurefunc("MSA_DropDownMenu_CreateFrames", function()
-			for i = 1, MSA_DROPDOWNMENU_MAXLEVELS do
-				local menu = _G["MSA_DropDownList"..i.."MenuBackdrop"]
+TT:RegisterTooltips("_ShiGuang", function()
+	local tooltips = {
+		ChatMenu,
+		EmoteMenu,
+		LanguageMenu,
+		VoiceMacroMenu,
+		GameTooltip,
+		EmbeddedItemTooltip,
+		ItemRefTooltip,
+		ItemRefShoppingTooltip1,
+		ItemRefShoppingTooltip2,
+		ShoppingTooltip1,
+		ShoppingTooltip2,
+		AutoCompleteBox,
+		FriendsTooltip,
+		QuestScrollFrame.StoryTooltip,
+		GeneralDockManagerOverflowButtonList,
+		ReputationParagonTooltip,
+		QuestScrollFrame.WarCampaignTooltip,
+		NamePlateTooltip,
+		QueueStatusFrame,
+		FloatingGarrisonFollowerTooltip,
+		FloatingGarrisonFollowerAbilityTooltip,
+		FloatingGarrisonMissionTooltip,
+		GarrisonFollowerAbilityTooltip,
+		GarrisonFollowerTooltip,
+		FloatingGarrisonShipyardFollowerTooltip,
+		GarrisonShipyardFollowerTooltip,
+		BattlePetTooltip,
+		PetBattlePrimaryAbilityTooltip,
+		PetBattlePrimaryUnitTooltip,
+		FloatingBattlePetTooltip,
+		FloatingPetBattleAbilityTooltip,
+		IMECandidatesFrame
+	}
+	for _, f in pairs(tooltips) do
+		f:HookScript("OnShow", TT.ReskinTooltip)
+	end
+
+	-- DropdownMenu
+	local function reskinDropdown()
+		for _, name in pairs({"DropDownList", "L_DropDownList", "Lib_DropDownList"}) do
+			for i = 1, UIDROPDOWNMENU_MAXLEVELS do
+				local menu = _G[name..i.."MenuBackdrop"]
 				if menu and not menu.styled then
-					menu:HookScript("OnShow", style)
+					menu:HookScript("OnShow", TT.ReskinTooltip)
 					menu.styled = true
 				end
+			end
+		end
+	end
+	hooksecurefunc("UIDropDownMenu_CreateFrames", reskinDropdown)
 
-				local menu2 = _G["MSA_DropDownList"..i.."MenuBackdrop"]
-				if menu2 and not menu2.styled then
-					menu2:HookScript("OnShow", style)
-					menu2.styled = true
+	-- IME
+	local r, g, b = I.r, I.g, I.b
+	IMECandidatesFrame.selection:SetVertexColor(r, g, b)
+
+	-- Pet Tooltip
+	PetBattlePrimaryUnitTooltip:HookScript("OnShow", function(self)
+		self.Border:SetAlpha(0)
+		if not self.iconStyled then
+			if self.glow then self.glow:Hide() end
+			self.Icon:SetTexCoord(unpack(I.TexCoord))
+			self.iconStyled = true
+		end
+	end)
+
+	hooksecurefunc("PetBattleUnitTooltip_UpdateForUnit", function(self)
+		local nextBuff, nextDebuff = 1, 1
+		for i = 1, C_PetBattles_GetNumAuras(self.petOwner, self.petIndex) do
+			local _, _, _, isBuff = C_PetBattles_GetAuraInfo(self.petOwner, self.petIndex, i)
+			if isBuff and self.Buffs then
+				local frame = self.Buffs.frames[nextBuff]
+				if frame and frame.Icon then
+					frame.Icon:SetTexCoord(unpack(I.TexCoord))
 				end
-			end
-		end)
-
-		-- IME
-		local r, g, b = I.ClassColor.r, I.ClassColor.g, I.ClassColor.b
-		IMECandidatesFrame.selection:SetVertexColor(r, g, b)
-
-		-- Pet Tooltip
-		PetBattlePrimaryUnitTooltip.Delimiter:SetColorTexture(0, 0, 0)
-		PetBattlePrimaryUnitTooltip.Delimiter:SetHeight(1)
-		PetBattlePrimaryUnitTooltip.Delimiter2:SetColorTexture(0, 0, 0)
-		PetBattlePrimaryUnitTooltip.Delimiter2:SetHeight(1)
-		PetBattlePrimaryAbilityTooltip.Delimiter1:SetHeight(1)
-		PetBattlePrimaryAbilityTooltip.Delimiter1:SetColorTexture(0, 0, 0)
-		PetBattlePrimaryAbilityTooltip.Delimiter2:SetHeight(1)
-		PetBattlePrimaryAbilityTooltip.Delimiter2:SetColorTexture(0, 0, 0)
-		FloatingPetBattleAbilityTooltip.Delimiter1:SetHeight(1)
-		FloatingPetBattleAbilityTooltip.Delimiter1:SetColorTexture(0, 0, 0)
-		FloatingPetBattleAbilityTooltip.Delimiter2:SetHeight(1)
-		FloatingPetBattleAbilityTooltip.Delimiter2:SetColorTexture(0, 0, 0)
-		FloatingBattlePetTooltip.Delimiter:SetColorTexture(0, 0, 0)
-		FloatingBattlePetTooltip.Delimiter:SetHeight(1)
-
-		PetBattlePrimaryUnitTooltip:HookScript("OnShow", function(self)
-			if not self.tipStyled then
-				if self.glow then self.glow:Hide() end
-				self.Border:Hide()
-				self.Icon:SetTexCoord(unpack(I.TexCoord))
-				self.tipStyled = true
-			end
-		end)
-
-		hooksecurefunc("PetBattleUnitTooltip_UpdateForUnit", function(self)
-			local nextBuff, nextDebuff = 1, 1
-			for i = 1, C_PetBattles.GetNumAuras(self.petOwner, self.petIndex) do
-				local _, _, _, isBuff = C_PetBattles.GetAuraInfo(self.petOwner, self.petIndex, i)
-				if isBuff and self.Buffs then
-					local frame = self.Buffs.frames[nextBuff]
-					if frame and frame.Icon then
-						frame.Icon:SetTexCoord(unpack(I.TexCoord))
-					end
-					nextBuff = nextBuff + 1
-				elseif (not isBuff) and self.Debuffs then
-					local frame = self.Debuffs.frames[nextDebuff]
-					if frame and frame.Icon then
-						frame.DebuffBorder:Hide()
-						frame.Icon:SetTexCoord(unpack(I.TexCoord))
-					end
-					nextDebuff = nextDebuff + 1
+				nextBuff = nextBuff + 1
+			elseif (not isBuff) and self.Debuffs then
+				local frame = self.Debuffs.frames[nextDebuff]
+				if frame and frame.Icon then
+					frame.DebuffBorder:Hide()
+					frame.Icon:SetTexCoord(unpack(I.TexCoord))
 				end
+				nextDebuff = nextDebuff + 1
+			end
+		end
+	end)
+
+	-- Others
+	C_Timer.After(5, function()
+		-- Lib minimap icon
+		if LibDBIconTooltip then
+			TT.ReskinTooltip(LibDBIconTooltip)
+		end
+		-- TomTom
+		if TomTomTooltip then
+			TT.ReskinTooltip(TomTomTooltip)
+		end
+		-- RareScanner
+		if RSMapItemToolTip then
+			TT.ReskinTooltip(RSMapItemToolTip)
+		end
+		if LootBarToolTip then
+			TT.ReskinTooltip(LootBarToolTip)
+		end
+	end)
+
+	if IsAddOnLoaded("BattlePetBreedID") then
+		hooksecurefunc("BPBID_SetBreedTooltip", function(parent)
+			if parent == FloatingBattlePetTooltip then
+				TT.ReskinTooltip(BPBID_BreedTooltip2)
+			else
+				TT.ReskinTooltip(BPBID_BreedTooltip)
 			end
 		end)
+	end
 
-	elseif addon == "Blizzard_Collections" then
-		local pet = {
-			PetJournalPrimaryAbilityTooltip,
-			PetJournalSecondaryAbilityTooltip,
-		}
-		for _, f in pairs(pet) do
-			if f then
-				f:HookScript("OnShow", extrastyle)
+	if IsAddOnLoaded("MethodDungeonTools") then
+		local styledMDT
+		hooksecurefunc(MethodDungeonTools, "ShowInterface", function()
+			if not styledMDT then
+				TT.ReskinTooltip(MethodDungeonTools.tooltip)
+				TT.ReskinTooltip(MethodDungeonTools.pullTooltip)
+				styledMDT = true
 			end
-		end
-
-		PetJournalPrimaryAbilityTooltip.Delimiter1:SetHeight(1)
-		PetJournalPrimaryAbilityTooltip.Delimiter1:SetColorTexture(0, 0, 0)
-		PetJournalPrimaryAbilityTooltip.Delimiter2:SetHeight(1)
-		PetJournalPrimaryAbilityTooltip.Delimiter2:SetColorTexture(0, 0, 0)
-
-	elseif addon == "Blizzard_GarrisonUI" then
-		local gt = {
-			GarrisonMissionMechanicTooltip,
-			GarrisonMissionMechanicFollowerCounterTooltip,
-			GarrisonShipyardMapMissionTooltip,
-			GarrisonBonusAreaTooltip,
-			GarrisonBuildingFrame.BuildingLevelTooltip,
-			GarrisonFollowerAbilityWithoutCountersTooltip,
-			GarrisonFollowerMissionAbilityWithoutCountersTooltip
-		}
-		for _, f in pairs(gt) do
-			if f then
-				f:HookScript("OnShow", extrastyle)
-			end
-		end
-
-	elseif addon == "Blizzard_PVPUI" then
-		ConquestTooltip:HookScript("OnShow", style)
-
-	elseif addon == "Blizzard_Contribution" then
-		ContributionBuffTooltip:HookScript("OnShow", extrastyle)
-		ContributionBuffTooltip.Icon:SetTexCoord(unpack(I.TexCoord))
-		ContributionBuffTooltip.Border:SetAlpha(0)
-
-	elseif addon == "Blizzard_EncounterJournal" then
-		EncounterJournalTooltip:HookScript("OnShow", style)
-		EncounterJournalTooltip.Item1.icon:SetTexCoord(unpack(I.TexCoord))
-		EncounterJournalTooltip.Item2.icon:SetTexCoord(unpack(I.TexCoord))
-
-	elseif addon == "Blizzard_Calendar" then
-		local gt = {
-			CalendarContextMenu,
-			CalendarInviteStatusContextMenu,
-		}
-		for _, f in pairs(gt) do
-			if f then
-				f:HookScript("OnShow", style)
-			end
-		end
-
-	elseif addon == "Blizzard_IslandsQueueUI" then
-		local tip = IslandsQueueFrameTooltip
-		tip:GetParent():GetParent():HookScript("OnShow", style)
-		tip:GetParent().IconBorder:SetAlpha(0)
-		tip:GetParent().Icon:SetTexCoord(.08, .92, .08, .92)
+		end)
 	end
 end)
 
+TT:RegisterTooltips("Blizzard_DebugTools", function()
+	TT.ReskinTooltip(FrameStackTooltip)
+	TT.ReskinTooltip(EventTraceTooltip)
+	FrameStackTooltip:SetScale(UIParent:GetScale())
+	EventTraceTooltip:SetParent(UIParent)
+	EventTraceTooltip:SetFrameStrata("TOOLTIP")
+end)
 
+TT:RegisterTooltips("Blizzard_Collections", function()
+	PetJournalPrimaryAbilityTooltip:HookScript("OnShow", TT.ReskinTooltip)
+	PetJournalSecondaryAbilityTooltip:HookScript("OnShow", TT.ReskinTooltip)
+	PetJournalPrimaryAbilityTooltip.Delimiter1:SetHeight(1)
+	PetJournalPrimaryAbilityTooltip.Delimiter1:SetColorTexture(0, 0, 0)
+	PetJournalPrimaryAbilityTooltip.Delimiter2:SetHeight(1)
+	PetJournalPrimaryAbilityTooltip.Delimiter2:SetColorTexture(0, 0, 0)
+end)
 
--------------------------DarkmoonTicketTooltip-------------------------------------------
--- Database of turnin items
-local questItems = {
-	[71715] = { ["quest"] = 29451, ["tickets"] = 10, title = "The Master Strategist" }, -- A Treatise on Strategy
-	[71638] = { ["quest"] = 29446, ["tickets"] = 10, title = "A Wondrous Weapon" }, -- Ornate Weapon
-	[71637] = { ["quest"] = 29445, ["tickets"] = 10, title = "An Intriguing Grimoire" }, -- Mysterious Grimoire
-	[71636] = { ["quest"] = 29444, ["tickets"] = 10, title = "An Exotic Egg" }, -- Monstrous Egg
-	[71635] = { ["quest"] = 29443, ["tickets"] = 10, title = "A Curious Crystal" }, -- Imbued Crystal
-	[71716] = { ["quest"] = 29464, ["tickets"] = 10, title = "Tools of Divination" }, -- Soothsayer's Runes
-	[71952] = { ["quest"] = 29457, ["tickets"] = 5, title = "The Enemy's Insignia" }, -- Captured Insignia
-	[71951] = { ["quest"] = 29456, ["tickets"] = 5, title = "A Captured Banner" }, -- Banner of the Fallen
-	[71953] = { ["quest"] = 29458, ["tickets"] = 5, title = "The Captured Journal" }, -- Fallen Adventurer's Journal
-	[105891] = { quest = 33354, tickets = 10, title = "Den Mother's Demise" }, -- Moonfang's Pelt -> Den Mother's Demise (probably too expensive in almost all cases, but added for completion)
-	[124669] = { quest = 38934, tickets = 100, title = "Silas' Secret Stash", numRequiredItems = 100 }, -- Darkmoon Daggermaw -> Silas' Secret Stash (one-time only)
-}
-
--- Display tooltip information, but only on DMF quest items
-GameTooltip:HookScript("OnTooltipSetItem", function(self)
-local _, itemLink = self:GetItem()
-	if type(itemLink) == "string" then -- Is valid item string (i.e., not nil) -> Check if it's the right item
-		local itemID = GetItemInfoInstant(itemLink)
-			if questItems[itemID] then -- Is DMF turnin item -> Show tooltip info
-				local numRequiredItems = questItems[itemID]["numRequiredItems"] or 1 -- Only 1 is required of the regular quest items
-				if IsQuestFlaggedCompleted(questItems[itemID]["quest"]) then -- Is completed - > Show text in green
-					self:AddLine(format("✓\"%s\"--%s%d%s--", questItems[itemID]["title"], "|cFF8080FF", questItems[itemID]["tickets"], "|r"), 0xFF/255, 0x1A/255, 0x1A/255)
-				else -- Not yet completed -> Show text in red
-					self:AddLine(format("x\"%s\"--%s%d%s--", questItems[itemID]["title"], "|cFF8080FF", questItems[itemID]["tickets"], "|r"), 0x1E/255, 0xFF/255, 0x00/255)
-				end			
-			end
+TT:RegisterTooltips("Blizzard_GarrisonUI", function()
+	local gt = {
+		GarrisonMissionMechanicTooltip,
+		GarrisonMissionMechanicFollowerCounterTooltip,
+		GarrisonShipyardMapMissionTooltip,
+		GarrisonBonusAreaTooltip,
+		GarrisonBuildingFrame.BuildingLevelTooltip,
+		GarrisonFollowerAbilityWithoutCountersTooltip,
+		GarrisonFollowerMissionAbilityWithoutCountersTooltip
+	}
+	for _, f in pairs(gt) do
+		f:HookScript("OnShow", TT.ReskinTooltip)
 	end
+end)
+
+TT:RegisterTooltips("Blizzard_PVPUI", function()
+	ConquestTooltip:HookScript("OnShow", TT.ReskinTooltip)
+end)
+
+TT:RegisterTooltips("Blizzard_Contribution", function()
+	ContributionBuffTooltip:HookScript("OnShow", TT.ReskinTooltip)
+	ContributionBuffTooltip.Icon:SetTexCoord(unpack(I.TexCoord))
+	ContributionBuffTooltip.Border:SetAlpha(0)
+end)
+
+TT:RegisterTooltips("Blizzard_EncounterJournal", function()
+	EncounterJournalTooltip:HookScript("OnShow", TT.ReskinTooltip)
+	EncounterJournalTooltip.Item1.icon:SetTexCoord(unpack(I.TexCoord))
+	EncounterJournalTooltip.Item1.IconBorder:SetAlpha(0)
+	EncounterJournalTooltip.Item2.icon:SetTexCoord(unpack(I.TexCoord))
+	EncounterJournalTooltip.Item2.IconBorder:SetAlpha(0)
+end)
+
+TT:RegisterTooltips("Blizzard_Calendar", function()
+	CalendarContextMenu:HookScript("OnShow", TT.ReskinTooltip)
+	CalendarInviteStatusContextMenu:HookScript("OnShow", TT.ReskinTooltip)
+end)
+
+TT:RegisterTooltips("Blizzard_IslandsQueueUI", function()
+	local tooltip = IslandsQueueFrameTooltip:GetParent()
+	tooltip.IconBorder:SetAlpha(0)
+	tooltip.Icon:SetTexCoord(unpack(I.TexCoord))
+	tooltip:GetParent():HookScript("OnShow", TT.ReskinTooltip)
 end)

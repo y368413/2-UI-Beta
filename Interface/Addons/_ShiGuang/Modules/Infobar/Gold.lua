@@ -3,7 +3,13 @@ local M, R, U, I = unpack(ns)
 if not R.Infobar.Gold then return end
 
 local module = M:GetModule("Infobar")
-local info = module:RegisterInfobar(R.Infobar.GoldPos)
+local info = module:RegisterInfobar("Gold", R.Infobar.GoldPos)
+
+local format, pairs, wipe, unpack = string.format, pairs, table.wipe, unpack
+local GOLD_AMOUNT_SYMBOL, CLASS_ICON_TCOORDS = GOLD_AMOUNT_SYMBOL, CLASS_ICON_TCOORDS
+local GetMoney, GetMoneyString, GetNumWatchedTokens, GetBackpackCurrencyInfo, GetCurrencyInfo = GetMoney, GetMoneyString, GetNumWatchedTokens, GetBackpackCurrencyInfo, GetCurrencyInfo
+local GetContainerNumSlots, GetContainerItemLink, GetItemInfo, GetContainerItemInfo, UseContainerItem = GetContainerNumSlots, GetContainerItemLink, GetItemInfo, GetContainerItemInfo, UseContainerItem
+local C_Timer_After, IsControlKeyDown, IsShiftKeyDown = C_Timer.After, IsControlKeyDown, IsShiftKeyDown
 
 local profit, spent, oldMoney = 0, 0, 0
 local myName, myRealm = UnitName("player"), GetRealmName()
@@ -31,7 +37,6 @@ info.eventList = {
 
 info.onEvent = function(self, event)
 	if event == "PLAYER_ENTERING_WORLD" then
-		if MaoRUIDB["AutoSell"] == nil then MaoRUIDB["AutoSell"] = true end
 		oldMoney = GetMoney()
 		self:UnregisterEvent(event)
 	end
@@ -45,7 +50,6 @@ info.onEvent = function(self, event)
 	end
 	self.text:SetText(formatTextMoney(newMoney))
 
-	if not MaoRUIDB["totalGold"] then MaoRUIDB["totalGold"] = {} end
 	if not MaoRUIDB["totalGold"][myRealm] then MaoRUIDB["totalGold"][myRealm] = {} end
 	MaoRUIDB["totalGold"][myRealm][myName] = {GetMoney(), I.MyClass}
 
@@ -57,8 +61,7 @@ StaticPopupDialogs["RESETGOLD"] = {
 	button1 = YES,
 	button2 = NO,
 	OnAccept = function()
-		MaoRUIDB["totalGold"] = {}
-		MaoRUIDB["totalGold"][myRealm] = {}
+		wipe(MaoRUIDB["totalGold"][myRealm])
 		MaoRUIDB["totalGold"][myRealm][myName] = {GetMoney(), I.MyClass}
 	end,
 	whileDead = 1,
@@ -67,10 +70,11 @@ StaticPopupDialogs["RESETGOLD"] = {
 info.onMouseUp = function(self, btn)
 	if IsControlKeyDown() then
 		MaoRUIDB["AutoSell"] = not MaoRUIDB["AutoSell"]
-		self:GetScript("OnEnter")(self)
+		self:GetScript("OnEnter")
 	elseif btn == "RightButton" then
 		StaticPopup_Show("RESETGOLD")
 	else
+		if InCombatLockdown() then UIErrorsFrame:AddMessage(I.InfoColor..ERR_NOT_IN_COMBAT) return end
 		ToggleCharacter("TokenFrame")
 	end
 end
@@ -125,11 +129,11 @@ info.onEnter = function(self)
 		end
 	end
   GameTooltip:AddDoubleLine(" ","--------------",1,1,1,0.5,0.5,0.5)
-	GameTooltip:AddDoubleLine(" ",U["AutoSell Junk"]..": "..(MaoRUIDB.AutoSell and "|cff55ff55"..VIDEO_OPTIONS_ENABLED or "|cffff5555"..strupper(OFF)),1,1,1,.6,.8,1)
+	GameTooltip:AddDoubleLine(" ",U["AutoSell Junk"]..": "..(MaoRUIDB["AutoSell"] and "|cff55ff55"..VIDEO_OPTIONS_ENABLED or "|cffff5555"..VIDEO_OPTIONS_DISABLED),1,1,1,.6,.8,1)
 	GameTooltip:Show()
 end
 
-info.onLeave = function() GameTooltip:Hide() end
+info.onLeave = M.HideTooltip
 
 -- Auto selljunk
 local sellCount, stop, cache = 0, true, {}
@@ -138,7 +142,7 @@ local errorText = _G.ERR_VENDOR_DOESNT_BUY
 local function stopSelling(tell)
 	stop = true
 	if sellCount > 0 and tell then
-		print(format("|cff99CCFF%s|r %s", U["Your vendor trash has been sold and you earned"], GetMoneyString(sellCount)))
+		print(format("|cff99CCFF%s|r %s", U["Selljunk Calculate"], GetMoneyString(sellCount)))
 	end
 	sellCount = 0
 end
@@ -156,7 +160,8 @@ local function startSelling()
 					sellCount = sellCount + price*count
 					cache["b"..bag.."s"..slot] = true
 					UseContainerItem(bag, slot)
-					C_Timer.After(.2, startSelling)
+					--C_Timer_After(.2, startSelling)
+					startSelling()
 					return
 				end
 			end

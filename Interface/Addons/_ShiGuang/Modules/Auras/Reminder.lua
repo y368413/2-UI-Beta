@@ -1,29 +1,15 @@
 local _, ns = ...
 local M, R, U, I = unpack(ns)
-local module = M:RegisterModule("Auras")
+local A = M:GetModule("Auras")
 
 local groups = I.ReminderBuffs[I.MyClass]
 local iconSize = R.Auras.IconSize + 4
 local frames, parentFrame = {}
+local GetSpecialization, InCombatLockdown, GetZonePVPInfo, UnitInVehicle = GetSpecialization, InCombatLockdown, GetZonePVPInfo, UnitInVehicle
+local IsInInstance, IsPlayerSpell, UnitBuff, GetSpellTexture = IsInInstance, IsPlayerSpell, UnitBuff, GetSpellTexture
+local pairs, tinsert, next = pairs, table.insert, next
 
-function module:OnLogin()
-	-- Elements
-	if I.MyClass == "DEATHKNIGHT" then
-		self:BloodyHell()
-	elseif I.MyClass == "HUNTER" then
-		self:HunterTool()
-	elseif I.MyClass == "MONK" then
-		self:Stagger()
-		self:MonkStatue()
-	elseif I.MyClass == "SHAMAN" then
-		self:Totems()
-	end
-	self:InitReminder()
-	self:Energy()
-	self:ClassRecoure()
-end
-
-local function UpdateReminder(cfg)
+function A:Reminder_Update(cfg)
 	local frame = cfg.frame
 	local depend = cfg.depend
 	local spec = cfg.spec
@@ -44,6 +30,7 @@ local function UpdateReminder(cfg)
 	if isPlayerSpell and isRightSpec and (isInCombat or isInInst or isInPVP) and not UnitInVehicle("player") then
 		for i = 1, 32 do
 			local name, _, _, _, _, _, _, _, _, spellID = UnitBuff("player", i)
+			if not name then break end
 			if name and cfg.spells[spellID] then
 				frame:Hide()
 				return
@@ -53,10 +40,11 @@ local function UpdateReminder(cfg)
 	end
 end
 
-local function AddReminder(cfg)
+function A:Reminder_Create(cfg)
 	local frame = CreateFrame("Frame", nil, parentFrame)
 	frame:SetSize(iconSize, iconSize)
-	M.CreateIF(frame)
+	M.PixelIcon(frame)
+	M.CreateSD(frame)
 	for spell in pairs(cfg.spells) do
 		frame.Icon:SetTexture(GetSpellTexture(spell))
 		break
@@ -68,7 +56,7 @@ local function AddReminder(cfg)
 	tinsert(frames, frame)
 end
 
-local function UpdateAnchor()
+function A:Reminder_UpdateAnchor()
 	local index = 0
 	local offset = iconSize + 5
 	for _, frame in next, frames do
@@ -80,15 +68,15 @@ local function UpdateAnchor()
 	parentFrame:SetWidth(offset * index)
 end
 
-local function UpdateEvent()
+function A:Reminder_OnEvent()
 	for _, cfg in pairs(groups) do
-		if not cfg.frame then AddReminder(cfg) end
-		UpdateReminder(cfg)
+		if not cfg.frame then A:Reminder_Create(cfg) end
+		A:Reminder_Update(cfg)
 	end
-	UpdateAnchor()
+	A:Reminder_UpdateAnchor()
 end
 
-function module:InitReminder()
+function A:InitReminder()
 	if not groups then return end
 	if not MaoRUISettingDB["Auras"]["Reminder"] then return end
 
@@ -96,11 +84,11 @@ function module:InitReminder()
 	parentFrame:SetPoint("CENTER", -220, 130)
 	parentFrame:SetSize(iconSize, iconSize)
 
-	M:RegisterEvent("UNIT_AURA", UpdateEvent, "player")
-	M:RegisterEvent("PLAYER_ENTERING_WORLD", UpdateEvent)
-	M:RegisterEvent("PLAYER_REGEN_ENABLED", UpdateEvent)
-	M:RegisterEvent("PLAYER_REGEN_DISABLED", UpdateEvent)
-	M:RegisterEvent("ZONE_CHANGED_NEW_AREA", UpdateEvent)
-	M:RegisterEvent("UNIT_ENTERED_VEHICLE", UpdateEvent)
-	M:RegisterEvent("UNIT_EXITED_VEHICLE", UpdateEvent)
+	M:RegisterEvent("UNIT_AURA", A.Reminder_OnEvent, "player")
+	M:RegisterEvent("UNIT_EXITED_VEHICLE", A.Reminder_OnEvent)
+	M:RegisterEvent("UNIT_ENTERED_VEHICLE", A.Reminder_OnEvent)
+	M:RegisterEvent("PLAYER_REGEN_ENABLED", A.Reminder_OnEvent)
+	M:RegisterEvent("PLAYER_REGEN_DISABLED", A.Reminder_OnEvent)
+	M:RegisterEvent("ZONE_CHANGED_NEW_AREA", A.Reminder_OnEvent)
+	M:RegisterEvent("PLAYER_ENTERING_WORLD", A.Reminder_OnEvent)
 end

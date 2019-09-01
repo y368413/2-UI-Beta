@@ -3,14 +3,41 @@ local M, R, U, I = unpack(ns)
 if not R.Infobar.Time then return end
 
 local module = M:GetModule("Infobar")
-local info = module:RegisterInfobar(R.Infobar.TimePos)
-
+local info = module:RegisterInfobar("Time", R.Infobar.TimePos)
+local time, date = time, date
 info.text:SetFont(unpack(R.Infobar.TimeFonts))
+local strfind, format, floor = string.find, string.format, math.floor
+local mod, tonumber, pairs, ipairs, select = mod, tonumber, pairs, ipairs, select
+local C_Map_GetMapInfo = C_Map.GetMapInfo
+local C_Calendar_GetDate = C_Calendar.GetDate
+local C_Calendar_SetAbsMonth = C_Calendar.SetAbsMonth
+local C_Calendar_OpenCalendar = C_Calendar.OpenCalendar
+local C_Calendar_GetNumDayEvents = C_Calendar.GetNumDayEvents
+local C_Calendar_GetNumPendingInvites = C_Calendar.GetNumPendingInvites
+local C_AreaPoiInfo_GetAreaPOISecondsLeft = C_AreaPoiInfo.GetAreaPOISecondsLeft
+local C_IslandsQueue_GetIslandsWeeklyQuestID = C_IslandsQueue.GetIslandsWeeklyQuestID
+local TIMEMANAGER_TICKER_24HOUR, TIMEMANAGER_TICKER_12HOUR = TIMEMANAGER_TICKER_24HOUR, TIMEMANAGER_TICKER_12HOUR
+local FULLDATE, CALENDAR_WEEKDAY_NAMES, CALENDAR_FULLDATE_MONTH_NAMES = FULLDATE, CALENDAR_WEEKDAY_NAMES, CALENDAR_FULLDATE_MONTH_NAMES
+local PLAYER_DIFFICULTY_TIMEWALKER, RAID_INFO_WORLD_BOSS, DUNGEON_DIFFICULTY3 = PLAYER_DIFFICULTY_TIMEWALKER, RAID_INFO_WORLD_BOSS, DUNGEON_DIFFICULTY3
+local DUNGEONS, RAID_INFO, QUESTS_LABEL, ISLANDS_HEADER, QUEST_COMPLETE, LFG_LIST_LOADING, QUEUE_TIME_UNAVAILABLE = DUNGEONS, RAID_INFO, QUESTS_LABEL, ISLANDS_HEADER, QUEST_COMPLETE, LFG_LIST_LOADING, QUEUE_TIME_UNAVAILABLE
+local RequestRaidInfo, UnitLevel, GetNumSavedWorldBosses, GetSavedWorldBossInfo = RequestRaidInfo, UnitLevel, GetNumSavedWorldBosses, GetSavedWorldBossInfo
+local GetCVarBool, GetGameTime, GameTime_GetLocalTime, GameTime_GetGameTime, SecondsToTime = GetCVarBool, GetGameTime, GameTime_GetLocalTime, GameTime_GetGameTime, SecondsToTime
+local GetNumSavedInstances, GetSavedInstanceInfo, IsQuestFlaggedCompleted, GetQuestObjectiveInfo = GetNumSavedInstances, GetSavedInstanceInfo, IsQuestFlaggedCompleted, GetQuestObjectiveInfo
+
+local function updateTimerFormat(color, hour, minute)
+	if GetCVarBool("timeMgrUseMilitaryTime") then
+		return format(color..TIMEMANAGER_TICKER_24HOUR, hour, minute)
+	else
+		local timerUnit = I.MyColor..(hour < 12 and "|cffffffff^|r" or "|cffffffff.|")
+		if hour > 12 then hour = hour - 12 end
+		return format(color..TIMEMANAGER_TICKER_12HOUR..timerUnit, hour, minute)
+	end
+end
 
 info.onUpdate = function(self, elapsed)
-	self.timer = (self.timer or 0) + elapsed
-	if self.timer > 1 then
-		local color = C_Calendar.GetNumPendingInvites() > 0 and "|cffFF0000" or ""
+	self.timer = (self.timer or 3) + elapsed
+	if self.timer > 5 then
+		local color = C_Calendar_GetNumPendingInvites() > 0 and "|cffFF0000" or ""
 
 		local hour, minute
 		if GetCVarBool("timeMgrUseLocalTime") then
@@ -18,96 +45,149 @@ info.onUpdate = function(self, elapsed)
 		else
 			hour, minute = GetGameTime()
 		end
+		self.text:SetText(updateTimerFormat(color, hour, minute))
 
-		if GetCVarBool("timeMgrUseMilitaryTime") then
-			self.text:SetText(format(color..TIMEMANAGER_TICKER_24HOUR, hour, minute))
-		else
-			self.text:SetText(format(color..TIMEMANAGER_TICKER_12HOUR..I.MyColor..(hour < 12 and "|cffffffff^|r" or "|cffffffff.|r"), hour, minute))
-		end
-	
 		self.timer = 0
 	end
 end
 
 -- Data
 local bonus = {
-	43892, 43893, 43894,	-- Order Resources
-	43895, 43896, 43897,	-- Gold
-	47851, 47864, 47865,	-- Honor Coins
-	43510,					-- Orderhall
+	52834, 52838,	-- Gold
+	52835, 52839,	-- Honor
+	52837, 52840,	-- Resources
 }
-local bonusname = GetCurrencyInfo(1273)
+local bonusName = GetCurrencyInfo(1580)
 
-local keystone = GetItemInfo(138019)
+local isTimeWalker, walkerTexture
+local function checkTimeWalker(event)
+	local date = C_Calendar_GetDate()
+	C_Calendar_SetAbsMonth(date.month, date.year)
+	C_Calendar_OpenCalendar()
+
+	local today = date.monthDay
+	local numEvents = C_Calendar_GetNumDayEvents(0, today)
+	if numEvents <= 0 then return end
+
+	for i = 1, numEvents do
+		local info = C_Calendar.GetDayEvent(0, today, i)
+		if info and strfind(info.title, PLAYER_DIFFICULTY_TIMEWALKER) and info.sequenceType ~= "END" then
+			isTimeWalker = true
+			walkerTexture = info.iconTexture
+			break
+		end
+	end
+	M:UnregisterEvent(event, checkTimeWalker)
+end
+M:RegisterEvent("PLAYER_ENTERING_WORLD", checkTimeWalker)
+
+local function checkTexture(texture)
+	if not walkerTexture then return end
+	if walkerTexture == texture or walkerTexture == texture - 1 then
+		return true
+	end
+end
+
 local questlist = {
-	{name = keystone, id = 44554},
 	{name = U["Blingtron"], id = 34774},
 	{name = U["Mean One"], id = 6983},
-	{name = "TBC"..U["Timewarped"], id = 40168},
-	{name = "WLK"..U["Timewarped"], id = 40173},
-	{name = "CTM"..U["Timewarped"], id = 40786},
-	{name = "MOP"..U["Timewarped"], id = 45799},
-}
-
-local invas = {
-	{quest = 38482, name = U["Platinum Invasion"]},
-	{quest = 37640, name = U["Gold Invasion"]},
-	{quest = 37639, name = U["Silver Invasion"]},
-	{quest = 37638, name = U["Bronze Invasion"]},
-}
-
-local tanaan = {
-	{name = U["Deathtalon"], id = 39287},
-	{name = U["Terrorfist"], id = 39288},
-	{name = U["Doomroller"], id = 39289},
-	{name = U["Vengeance"], id = 39290},
+	{name = U["Timewarped"], id = 40168, texture = 1129674},	-- TBC
+	{name = U["Timewarped"], id = 40173, texture = 1129686},	-- WotLK
+	{name = U["Timewarped"], id = 40786, texture = 1304688},	-- Cata
+	{name = U["Timewarped"], id = 45799, texture = 1530590},	-- MoP
+	{name = U["Timewarped"], id = 55499, texture = 1129683},	-- WoD
 }
 
 -- Check Invasion Status
-local zonePOIIds = {5175, 5210, 5177, 5178}
-local zoneNames = {630, 641, 650, 634}
-local timeTable = {4, 3, 2, 1, 4, 2, 3, 1, 2, 4, 1, 3}
-local baseTime = 1517274000 -- 1/30 9:00 [1]
+local region = GetCVar("portal")
+local legionZoneTime = {
+	["EU"] = 1565168400, -- CN-16
+	["US"] = 1565197200, -- CN-8
+	["CN"] = 1565226000, -- CN time 8/8/2019 09:00 [1]
+}
+local bfaZoneTime = {
+	["CN"] = 1546743600, -- CN time 1/6/2019 11:00 [1]
+	["EU"] = 1546768800, -- CN+7
+	["US"] = 1546769340, -- CN+16
+}
 
-local function onInvasion()
-	for i = 1, #zonePOIIds do
-		local timeLeftMinutes = C_AreaPoiInfo.GetAreaPOITimeLeft(zonePOIIds[i])
-		if timeLeftMinutes and timeLeftMinutes > 0 and timeLeftMinutes < 361 then
-			local mapInfo = C_Map.GetMapInfo(zoneNames[i])
-			return timeLeftMinutes, mapInfo.name
+local invIndex = {
+	[1] = {title = "Legion Invasion", duration = 66600, maps = {630, 641, 650, 634}, timeTable = {}, baseTime = legionZoneTime[region] or legionZoneTime["CN"]}, -- need reviewed
+	[2] = {title = "BfA Invasion", duration = 68400, maps = {862, 863, 864, 896, 942, 895}, timeTable = {4, 1, 6, 2, 5, 3}, baseTime = bfaZoneTime[region] or bfaZoneTime["CN"]},
+}
+
+local mapAreaPoiIDs = {
+	[630] = 5175,
+	[641] = 5210,
+	[650] = 5177,
+	[634] = 5178,
+	[862] = 5973,
+	[863] = 5969,
+	[864] = 5970,
+	[896] = 5964,
+	[942] = 5966,
+	[895] = 5896,
+}
+
+local function getInvasionInfo(mapID)
+	local areaPoiID = mapAreaPoiIDs[mapID]
+	local seconds = C_AreaPoiInfo_GetAreaPOISecondsLeft(areaPoiID)
+	local mapInfo = C_Map_GetMapInfo(mapID)
+	return seconds, mapInfo.name
+end
+
+local function CheckInvasion(index)
+	for _, mapID in pairs(invIndex[index].maps) do
+		local timeLeft, name = getInvasionInfo(mapID)
+		if timeLeft and timeLeft > 0 then
+			return timeLeft, name
 		end
 	end
 end
 
-local function whereToGo(nextTime)
-	local elapsed = nextTime - baseTime
-	local round = mod(floor(elapsed / 66600) + 1, 12)
-	if round == 0 then round = 12 end
-	return C_Map.GetMapInfo(zoneNames[timeTable[round]]).name
+local function GetNextTime(baseTime, index)
+	local currentTime = time()
+	local duration = invIndex[index].duration
+	local elapsed = mod(currentTime - baseTime, duration)
+	return duration - elapsed + currentTime
+end
+
+local function GetNextLocation(nextTime, index)
+	local inv = invIndex[index]
+	local count = #inv.timeTable
+	if count == 0 then return QUEUE_TIME_UNAVAILABLE end
+
+	local elapsed = nextTime - inv.baseTime
+	local round = mod(floor(elapsed / inv.duration) + 1, count)
+	if round == 0 then round = count end
+	return C_Map_GetMapInfo(inv.maps[inv.timeTable[round]]).name
+end
+
+local title
+local function addTitle(text)
+	if not title then
+		GameTooltip:AddLine(" ")
+		GameTooltip:AddLine(text..":", .6,.8,1)
+		title = true
+	end
 end
 
 info.onEnter = function(self)
 	RequestRaidInfo()
 
+	local r,g,b
 	GameTooltip:SetOwner(self, "ANCHOR_TOP", -20, 6)
 	GameTooltip:ClearLines()
-	local today = C_Calendar.GetDate()
+	local today = C_Calendar_GetDate()
 	local w, m, d, y = today.weekday, today.month, today.monthDay, today.year
 	GameTooltip:AddLine(format(FULLDATE, CALENDAR_WEEKDAY_NAMES[w], CALENDAR_FULLDATE_MONTH_NAMES[m], d, y), 0,.6,1)
 	GameTooltip:AddLine(" ")
 	GameTooltip:AddDoubleLine(TIMEMANAGER_TOOLTIP_LOCALTIME, GameTime_GetLocalTime(true), .6,.8,1 ,1,1,1)
 	GameTooltip:AddDoubleLine(TIMEMANAGER_TOOLTIP_REALMTIME, GameTime_GetGameTime(true), .6,.8,1 ,1,1,1)
 
-	local title
-	local function addTitle(text)
-		if not title then
-			GameTooltip:AddLine(" ")
-			GameTooltip:AddLine(text, .6,.8,1)
-			title = true
-		end
-	end
 
 	-- World bosses
+	title = false
 	for i = 1, GetNumSavedWorldBosses() do
 		local name, id, reset = GetSavedWorldBossInfo(i)
 		if not (id == 11 or id == 12 or id == 13) then
@@ -122,7 +202,6 @@ info.onEnter = function(self)
 		local name, _, reset, diff, locked, extended = GetSavedInstanceInfo(i)
 		if diff == 23 and (locked or extended) then
 			addTitle(DUNGEON_DIFFICULTY3..DUNGEONS)
-			local r,g,b
 			if extended then r,g,b = .3,1,.3 else r,g,b = 1,1,1 end
 			GameTooltip:AddDoubleLine(name, SecondsToTime(reset, true, nil, 3), 1,1,1, r,g,b)
 		end
@@ -134,7 +213,6 @@ info.onEnter = function(self)
 		local name, _, reset, _, locked, extended, _, isRaid, _, diffName = GetSavedInstanceInfo(i)
 		if isRaid and (locked or extended) then
 			addTitle(RAID_INFO)
-			local r,g,b
 			if extended then r,g,b = .3,1,.3 else r,g,b = 1,1,1 end
 			GameTooltip:AddDoubleLine(name.." - "..diffName, SecondsToTime(reset, true, nil, 3), 1,1,1, r,g,b)
 		end
@@ -142,7 +220,7 @@ info.onEnter = function(self)
 
 	-- Quests
 	title = false
-	local count = 0
+	local count, maxCoins = 0, 2
 	for _, id in pairs(bonus) do
 		if IsQuestFlaggedCompleted(id) then
 			count = count + 1
@@ -150,61 +228,46 @@ info.onEnter = function(self)
 	end
 	if count > 0 then
 		addTitle(QUESTS_LABEL)
-		local r,g,b
-		if count == 3 then r,g,b = 1,0,0 else r,g,b = 0,1,0 end
-		GameTooltip:AddDoubleLine(bonusname, count.." / 3", 1,1,1, r,g,b)
+		if count == maxCoins then r,g,b = 1,0,0 else r,g,b = 0,1,0 end
+		GameTooltip:AddDoubleLine(bonusName, count.."/"..maxCoins, 1,1,1, r,g,b)
 	end
 
-	local iwqID = C_IslandsQueue.GetIslandsWeeklyQuestID()
+	local iwqID = C_IslandsQueue_GetIslandsWeeklyQuestID()
 	if iwqID and UnitLevel("player") == 120 then
 		addTitle(QUESTS_LABEL)
 		if IsQuestFlaggedCompleted(iwqID) then
 			GameTooltip:AddDoubleLine(ISLANDS_HEADER, QUEST_COMPLETE, 1,1,1, 1,0,0)
 		else
 			local cur, max = select(4, GetQuestObjectiveInfo(iwqID, 1, false))
-			local stautsText = cur.." / "..max
+			local stautsText = cur.."/"..max
 			if not cur or not max then stautsText = LFG_LIST_LOADING end
 			GameTooltip:AddDoubleLine(ISLANDS_HEADER, stautsText, 1,1,1, 0,1,0)
 		end
 	end
 
-	for _, index in pairs(questlist) do
-		if index.name and IsQuestFlaggedCompleted(index.id) then
-			addTitle(QUESTS_LABEL)
-			GameTooltip:AddDoubleLine(index.name, QUEST_COMPLETE, 1,1,1, 1,0,0)
+	for _, v in pairs(questlist) do
+		if v.name and IsQuestFlaggedCompleted(v.id) then
+			if v.name == U["Timewarped"] and isTimeWalker and checkTexture(v.texture) or v.name ~= U["Timewarped"] then
+				addTitle(QUESTS_LABEL)
+				GameTooltip:AddDoubleLine(v.name, QUEST_COMPLETE, 1,1,1, 1,0,0)
+			end
 		end
 	end
 
-	for _, v in pairs(invas) do
-		if v.quest and IsQuestFlaggedCompleted(v.quest) then
-			addTitle(QUESTS_LABEL)
-			GameTooltip:AddDoubleLine(v.name, QUEST_COMPLETE, 1,1,1, 1,0,0)
-			break
+	-- Invasions
+	for index, value in ipairs(invIndex) do
+		title = false
+		addTitle(value.title)
+		local timeLeft, zoneName = CheckInvasion(index)
+		local nextTime = GetNextTime(value.baseTime, index)
+		if timeLeft then
+			timeLeft = timeLeft/60
+			if timeLeft < 60 then r,g,b = 1,0,0 else r,g,b = 0,1,0 end
+			GameTooltip:AddDoubleLine(U["Current Invasion"]..zoneName, format("%.2d:%.2d", timeLeft/60, timeLeft%60), 1,1,1, r,g,b)
 		end
+		local nextLocation = GetNextLocation(nextTime, index)
+		GameTooltip:AddDoubleLine(U["Next Invasion"]..nextLocation, date("%m/%d %H:%M", nextTime), 1,1,1, 1,1,1)
 	end
-
-	-- Tanaan rares
-	title = false
-	for _, boss in pairs(tanaan) do
-		if boss.name and IsQuestFlaggedCompleted(boss.id) then
-			addTitle(U["Tanaan"])
-			GameTooltip:AddDoubleLine(boss.name, BOSS_DEAD, 1,1,1, 1,0,0)
-		end
-	end
-
-	-- Legion Invasion
-	title = false
-	addTitle(U["Legion Invasion"])
-
-	local elapsed = mod(time() - baseTime, 66600)
-	local nextTime = 66600 - elapsed + time()
-	if onInvasion() then
-		local timeLeft, zoneName = onInvasion()
-		local r,g,b
-		if timeLeft < 60 then r,g,b = 1,0,0 else r,g,b = 0,1,0 end
-		GameTooltip:AddDoubleLine(zoneName, format("%.2d:%.2d", timeLeft/60, timeLeft%60), 1,1,1, r,g,b)
-	end
-	GameTooltip:AddDoubleLine(U["Next Invasion"]..whereToGo(nextTime), date("%m/%d %H:%M", nextTime), 1,1,1, 1,1,1)
 
 	-- Help Info
 	GameTooltip:AddDoubleLine(" ", I.LineString)
@@ -212,12 +275,13 @@ info.onEnter = function(self)
 	GameTooltip:Show()
 end
 
-info.onLeave = function() GameTooltip:Hide() end
+info.onLeave = M.HideTooltip
 
 info.onMouseUp = function(_, btn)
-	if btn == "RightButton" then				
+	if btn == "RightButton" then
 		ToggleTimeManager()
 	else
+		if InCombatLockdown() then UIErrorsFrame:AddMessage(I.InfoColor..ERR_NOT_IN_COMBAT) return end
 		ToggleCalendar()
 	end
 end

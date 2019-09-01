@@ -1,4 +1,4 @@
-﻿--## Author: wT  ## Version: 1.5.2
+﻿--## Author: wT  ## Version: 1.5.6
 local _, BossesKilled = ...
 if not BossesKilled.RegisterEvent and not BossesKilled.UnregisterEvent and not BossesKilled.UnregisterAllEvents then
 	local f = CreateFrame("frame")
@@ -92,7 +92,7 @@ function BossesKilled:CreateButton(parent, scale)
 	return button
 end
 
-function BossesKilled:GetButtonScale(numDungeons) return min(480 / (numDungeons * 24), 1) end
+function BossesKilled:GetButtonScale(numDungeons) return min(480 / (numDungeons * 17), 1) end
 
 -- Must return a fontstring
 function BossesKilled:CreateNumberFontstring(parentButton)
@@ -327,8 +327,8 @@ BossesKilled.raidData = {
 	[1494] = { numEncounters = 3, startFrom =  1 }, -- The Gates of Hell
 	[1495] = { numEncounters = 3, startFrom =  1 }, -- Wailing Halls
 	[1496] = { numEncounters = 2, startFrom =  1 }, -- Chamber of the Avatar
-	[1497] = { numEncounters = 1, startFrom =  1 }, -- Deceiver¡¯s Fall
-	
+	[1497] = { numEncounters = 1, startFrom =  1 }, -- Deceiver’s Fall
+
 	-- Antorus, the Burning Throne
 	[1610] = { numEncounters = 3, startFrom =  1 }, -- Light's Breach
 	[1611] = { numEncounters = 3, startFrom =  1 }, -- Forbidden Descent
@@ -339,4 +339,20 @@ BossesKilled.raidData = {
   [1731] = { numEncounters = 3, startFrom =  1 }, -- Halls of Containment
   [1732] = { numEncounters = 3, startFrom =  1 }, -- Crimson Descent
   [1733] = { numEncounters = 2, startFrom =  1 }, -- Heart of Corruption
+	
+	-- Battle of Dazar'alor - coming soon
+	[1945] = { numEncounters = 3, startFrom =  1 },
+	[1946] = { numEncounters = 3, startFrom =  1 },
+	[1947] = { numEncounters = 3, startFrom =  1 },
+	[1948] = { numEncounters = 3, startFrom =  1 },
+	[1949] = { numEncounters = 3, startFrom =  1 },
+	[1950] = { numEncounters = 3, startFrom =  1 },
+	
+	-- Crucible of Storms
+	[1951] = { numEncounters = 2, startFrom =  1 }, -- Crucible of Storms
+		
+	-- The Eternal Palace
+	[2009] = { numEncounters = 3, startFrom =  1 }, -- The Grand Reception
+	[2010] = { numEncounters = 3, startFrom =  1 }, -- Depths of the Devoted
+	[2011] = { numEncounters = 2, startFrom =  1 }, -- The Circle of Stars
 }

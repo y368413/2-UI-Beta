@@ -1,15 +1,15 @@
 local _, ns = ...
 local M, R, U, I = unpack(ns)
-local module = M:RegisterModule("Actionbar")
+local Bar = M:RegisterModule("Actionbar")
 local cfg = R.bars.bar1
 
-function module:OnLogin()
+function Bar:OnLogin()
 	if not MaoRUISettingDB["Actionbar"]["Enable"] then return end
 
 	local padding, margin = 2, 2
 	local num = NUM_ACTIONBAR_BUTTONS
 	local buttonList = {}
-	local layout = MaoRUISettingDB["Actionbar"]["Styles"]
+	local layout = MaoRUISettingDB["Actionbar"]["Style"]
 
 	--create the frame to hold the buttons
 	local frame = CreateFrame("Frame", "NDui_ActionBar1", UIParent, "SecureHandlerStateTemplate")
@@ -28,7 +28,7 @@ function module:OnLogin()
 	else
 		frame.Pos = {"BOTTOM", UIParent, "BOTTOM", 0, 2}
 	end
-	frame:SetScale(MaoRUISettingDB["Actionbar"]["ActionbarScale"])
+	frame:SetScale(MaoRUISettingDB["Actionbar"]["Scale"])
 
 	for i = 1, num do
 		local button = _G["ActionButton"..i]
@@ -110,24 +110,13 @@ function module:OnLogin()
 
 	--create drag frame and drag functionality
 	if R.bars.userplaced then
-		M.Mover(frame, "Main Actionbar", "Bar1", frame.Pos)
+		M.Mover(frame, U["Main Actionbar"], "Bar1", frame.Pos)
 	end
 
 	--create the mouseover functionality
 	if cfg.fader then
-		M:CreateButtonFrameFader(frame, buttonList, cfg.fader)
+		Bar.CreateButtonFrameFader(frame, buttonList, cfg.fader)
 	end
-
-	--fix stupid blizzard
-	local function ToggleButtonGrid()
-		if InCombatLockdown() then return end
-		local showgrid = tonumber(GetCVar("alwaysShowActionBars"))
-		for _, button in next, buttonList do
-			button:SetAttribute("showgrid", showgrid)
-			ActionButton_ShowGrid(button)
-		end
-	end
-	hooksecurefunc("MultiActionBar_UpdateGridVisibility", ToggleButtonGrid)
 
 	--_onstate-page state driver
 	local actionPage = "[bar:6]6;[bar:5]5;[bar:4]4;[bar:3]3;[bar:2]2;[overridebar]14;[shapeshift]13;[vehicleui]12;[possessbar]12;[bonusbar:5]11;[bonusbar:4]10;[bonusbar:3]9;[bonusbar:2]8;[bonusbar:1]7;1"
@@ -144,7 +133,7 @@ function module:OnLogin()
 	]]):format(num, buttonName))
 
 	frame:SetAttribute("_onstate-page", [[
-		for i, button in next, buttons do
+		for _, button in next, buttons do
 			button:SetAttribute("actionpage", newstate)
 		end
 	]])
@@ -161,4 +150,22 @@ function module:OnLogin()
 	self:CreateStancebar()
 	self:HideBlizz()
 	self:ReskinBars()
+
+	--vehicle fix
+	local function getActionTexture(button)
+		return GetActionTexture(button.action)
+	end
+
+	M:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR", function()
+		for _, button in next, buttonList do
+			local icon = button.icon
+			local texture = getActionTexture(button)
+			if texture then
+				icon:SetTexture(texture)
+				icon:Show()
+			else
+				icon:Hide()
+			end
+		end
+	end)
 end

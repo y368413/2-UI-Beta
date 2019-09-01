@@ -3,40 +3,49 @@ local M, R, U, I = unpack(ns)
 if not R.Infobar.Friends then return end
 
 local module = M:GetModule("Infobar")
-local info = module:RegisterInfobar(R.Infobar.FriendsPos)
+local info = module:RegisterInfobar("Friends", R.Infobar.FriendsPos)
 
+local strfind, format, sort, wipe, unpack, tinsert = string.find, string.format, table.sort, table.wipe, unpack, table.insert
+local C_FriendList_GetNumFriends = C_FriendList.GetNumFriends
+local C_FriendList_GetNumOnlineFriends = C_FriendList.GetNumOnlineFriends
+local C_FriendList_GetFriendInfoByIndex = C_FriendList.GetFriendInfoByIndex
+local BNGetNumFriends, BNGetFriendInfo, BNGetGameAccountInfo, BNet_GetClientEmbeddedTexture, BNet_GetValidatedCharacterName = BNGetNumFriends, BNGetFriendInfo, BNGetGameAccountInfo, BNet_GetClientEmbeddedTexture, BNet_GetValidatedCharacterName
+local CanCooperateWithGameAccount, GetRealZoneText, GetQuestDifficultyColor, IsShiftKeyDown = CanCooperateWithGameAccount, GetRealZoneText, GetQuestDifficultyColor, IsShiftKeyDown
+local BNET_CLIENT_WOW, UNKNOWN, FRIENDS_LIST, GUILD_ONLINE_LABEL = BNET_CLIENT_WOW, UNKNOWN, FRIENDS_LIST, GUILD_ONLINE_LABEL
 local friendTable, bnetTable, updateRequest = {}, {}
 local wowString, bnetString = U["WoW"], U["BN"]
 local activeZone, inactiveZone = {r=.3, g=1, b=.3}, {r=.7, g=.7, b=.7}
-local classList = {}
-for k, v in pairs(LOCALIZED_CLASS_NAMES_MALE) do
-	classList[v] = k
+
+local function sortFriends(a, b)
+	if a[1] and b[1] then
+		return a[1] < b[1]
+	end
 end
 
 local function buildFriendTable(num)
 	wipe(friendTable)
 
 	for i = 1, num do
-		local name, level, class, area, connected, status = GetFriendInfo(i)
-		if connected then
-			if status == CHAT_FLAG_AFK then
+		local info = C_FriendList_GetFriendInfoByIndex(i)
+		if info and info.connected then
+			local status = ""
+			if info.afk then
 				status = I.AFKTex
-			elseif status == CHAT_FLAG_DND then
+			elseif info.dnd then
 				status = I.DNDTex
-			else
-				status = ""
 			end
-			class = classList[class]
-
-			friendTable[i] = {name, level, class, area, connected, status}
+			local class = I.ClassList[info.className]
+			tinsert(friendTable, {info.name, info.level, class, info.area, info.connected, status})
 		end
 	end
 
-	sort(friendTable, function(a, b)
-		if a[1] and b[1] then
-			return a[1] < b[1]
-		end
-	end)
+	sort(friendTable, sortFriends)
+end
+
+local function sortBNFriends(a, b)
+	if a[5] and b[5] then
+		return a[5] > b[5]
+	end
 end
 
 local function buildBNetTable(num)
@@ -49,7 +58,7 @@ local function buildBNetTable(num)
 			local _, _, _, realmName, _, _, _, class, _, zoneName, _, gameText, _, _, _, _, _, isGameAFK, isGameBusy = BNGetGameAccountInfo(gameID)
 
 			charName = BNet_GetValidatedCharacterName(charName, battleTag, client)
-			class = classList[class]
+			class = I.ClassList[class]
 			accountName = isBattleTagPresence and battleTag or accountName
 
 			local status, infoText = ""
@@ -70,15 +79,11 @@ local function buildBNetTable(num)
 				infoText = gameText
 			end
 
-			bnetTable[i] = {bnetID, accountName, charName, gameID, client, isOnline, status, realmName, class, infoText}
+			tinsert(bnetTable, {bnetID, accountName, charName, gameID, client, isOnline, status, realmName, class, infoText})
 		end
 	end
 
-	sort(bnetTable, function(a, b)
-		if a[5] and b[5] then
-			return a[5] > b[5]
-		end
-	end)
+	sort(bnetTable, sortBNFriends)
 end
 
 info.eventList = {
@@ -92,19 +97,19 @@ info.eventList = {
 
 info.onEvent = function(self, event, arg1)
 	if event == "CHAT_MSG_SYSTEM" then
-		if not string.find(arg1, ERR_FRIEND_ONLINE_SS) and not string.find(arg1, ERR_FRIEND_OFFLINE_S) then return end
+		if not strfind(arg1, ERR_FRIEND_ONLINE_SS) and not strfind(arg1, ERR_FRIEND_OFFLINE_S) then return end
 	elseif event == "MODIFIER_STATE_CHANGED" and arg1 == "LSHIFT" then
-		self:GetScript("OnEnter")(self)
+		self:onEnter()
 	end
 
-	local _, onlineFriends = GetNumFriends()
+	local onlineFriends = C_FriendList_GetNumOnlineFriends()
 	local _, onlineBNet = BNGetNumFriends()
 	self.text:SetText(format("%d"..I.MyColor.."%s" or "%d%s",onlineFriends + onlineBNet,"^-^"))
 	updateRequest = false
 end
 
 info.onEnter = function(self)
-	local numFriends, onlineFriends = GetNumFriends()
+	local numFriends, onlineFriends = C_FriendList_GetNumFriends(), C_FriendList_GetNumOnlineFriends()
 	local numBNet, onlineBNet = BNGetNumFriends()
 	local totalOnline = onlineFriends + onlineBNet
 	local totalFriends = numFriends + numBNet
@@ -132,7 +137,7 @@ info.onEnter = function(self)
 				if connected then
 					local zoneColor = GetRealZoneText() == area and activeZone or inactiveZone
 					local levelColor = M.HexRGB(GetQuestDifficultyColor(level))
-					local classColor = (CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS)[class] or levelColor
+					local classColor = I.ClassColors[class] or levelColor
 					GameTooltip:AddDoubleLine(levelColor..level.."|r "..name..status, area, classColor.r, classColor.g, classColor.b, zoneColor.r, zoneColor.g, zoneColor.b)
 				end
 			end
@@ -150,11 +155,11 @@ info.onEnter = function(self)
 
 					if client == BNET_CLIENT_WOW then
 						if CanCooperateWithGameAccount(gameID) then
-							local color = (CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS)[class] or GetQuestDifficultyColor(1)
+							local color = I.ClassColors[class] or GetQuestDifficultyColor(1)
 							name = M.HexRGB(color).." "..charName
 						end
 						zoneColor = GetRealZoneText() == infoText and activeZone or inactiveZone
-						realmColor = GetRealmName() == realmName and activeZone or inactiveZone
+						realmColor = I.MyRealm == realmName and activeZone or inactiveZone
 					end
 
 					local cicon = BNet_GetClientEmbeddedTexture(client, 14, 14, 0, -1)

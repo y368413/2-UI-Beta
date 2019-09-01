@@ -23,8 +23,9 @@ local list = {
 		{AuraID = 203924, UnitID = "player"},	-- 守护屏障
 		{AuraID = 197161, UnitID = "player"},	-- 灵龟守护回血
 		{AuraID = 160007, UnitID = "player"},	-- 上升气流（双头龙）
-		{AuraID = 231390, UnitID = "player"},	-- 开拓者
+		{AuraID = 231390, UnitID = "player", Combat = true},	-- 开拓者
 		{AuraID = 164273, UnitID = "player", Combat = true},	-- 独来独往
+		{AuraID = 209997, UnitID = "pet", Flash = true},		-- 装死
 	},
 	["Target Aura"] = {		-- 目标光环组
 		{AuraID = 3355, UnitID = "target", Caster = "player"},		-- 冰冻陷阱
@@ -51,6 +52,7 @@ local list = {
 		{AuraID = 270332, UnitID = "target", Caster = "player"},	-- 信息素炸弹
 		{AuraID = 259277, UnitID = "target", Caster = "pet"},		-- 杀戮命令
 		{AuraID = 277959, UnitID = "target", Caster = "player"},	-- 稳固瞄准
+		{AuraID = 217200, UnitID = "target", Caster = "player"},	-- 倒刺射击
 	},
 	["Special Aura"] = {	-- 玩家重要光环组
 		{AuraID = 19574, UnitID = "player"},	-- 狂野怒火
@@ -59,12 +61,11 @@ local list = {
 		{AuraID = 186265, UnitID = "player"},	-- 灵龟守护
 		{AuraID = 190515, UnitID = "player"},	-- 适者生存
 		{AuraID = 193534, UnitID = "player"},	-- 稳固集中
-		{AuraID = 194594, UnitID = "player"},	-- 荷枪实弹
+		{AuraID = 194594, UnitID = "player", Flash = true},	-- 荷枪实弹
 		{AuraID = 118455, UnitID = "pet"},		-- 野兽瞬劈斩
 		{AuraID = 207094, UnitID = "pet"},		-- 泰坦之雷
 		{AuraID = 217200, UnitID = "pet"},		-- 凶猛狂暴
 		{AuraID = 272790, UnitID = "pet"},		-- 狂暴
-		{AuraID = 193526, UnitID = "player"},	-- 百发百中
 		{AuraID = 193530, UnitID = "player"},	-- 野性守护
 		{AuraID = 185791, UnitID = "player"},	-- 荒野呼唤
 		{AuraID = 259388, UnitID = "player"},	-- 猫鼬之怒
@@ -92,6 +93,8 @@ local list = {
 		{AuraID = 268552, UnitID = "player"},	-- 蝰蛇毒液
 		{AuraID = 260249, UnitID = "player"},	-- 掠食者
 		{AuraID = 257622, UnitID = "player", Text = "A"},	-- 技巧射击
+		{AuraID = 288613, UnitID = "player"},	-- 百发百中
+		{AuraID = 274447, UnitID = "player"},	-- 千里之目
 	},
 	["Focus Aura"] = {		-- 焦点光环组
 		{AuraID = 3355, UnitID = "focus", Caster = "player"},	-- 冰冻陷阱
@@ -102,10 +105,10 @@ local list = {
 		{AuraID = 199803, UnitID = "focus", Caster = "player"},	-- 精确瞄准
 	},
 	["Spell Cooldown"] = {	-- 冷却计时组
-		{SlotID = 13, UnitID = "player"},		-- 饰品1
-		{SlotID = 14, UnitID = "player"},		-- 饰品2
-		{SpellID = 186265, UnitID = "player"},	-- 灵龟守护
-		{SpellID = 147362, UnitID = "player"},	-- 反制射击
+		{SlotID = 13},		-- 饰品1
+		{SlotID = 14},		-- 饰品2
+		{SpellID = 186265},	-- 灵龟守护
+		{SpellID = 147362},	-- 反制射击
 	},
 }
 

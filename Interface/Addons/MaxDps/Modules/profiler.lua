@@ -64,20 +64,23 @@ function Profiler:SanitizeSpellName(spellName)
 end
 
 function Profiler:GenerateLua()
-	local output = '-- Spells\n';
+	local output = '-- Spells\nlocal S = {\n';
 	for spellId, spellName in pairs(self.Spells) do
-		output = output .. 'local _' .. self:SanitizeSpellName(spellName) .. ' = ' .. spellId .. ';\n';
+		output = output .. '    ' .. self:SanitizeSpellName(spellName) .. ' = ' .. spellId .. ',\n';
 	end
+	output = output .. '};\n'
 
-	output = output .. '\n-- Player Auras\n';
+	output = output .. '\n-- Player Auras\nlocal A = {\n';
 	for auraId, auraName in pairs(self.PlayerAuras) do
-		output = output .. 'local _' .. self:SanitizeSpellName(auraName) .. ' = ' .. auraId .. ';\n';
+		output = output .. '    ' .. self:SanitizeSpellName(auraName) .. ' = ' .. auraId .. ',\n';
 	end
+	output = output .. '};\n'
 
-	output = output .. '\n-- Target Auras\n';
+	output = output .. '\n-- Target Auras\nlocal TA = {\n';
 	for auraId, auraName in pairs(self.TargetAuras) do
-		output = output .. 'local _' .. self:SanitizeSpellName(auraName) .. ' = ' .. auraId .. ';\n';
+		output = output .. '    ' .. self:SanitizeSpellName(auraName) .. ' = ' .. auraId .. ',\n';
 	end
+	output = output .. '};\n'
 
 	return output;
 end

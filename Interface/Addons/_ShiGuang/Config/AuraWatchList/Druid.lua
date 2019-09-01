@@ -49,7 +49,6 @@ local list = {
 	["Special Aura"] = {	-- 玩家重要光环组
 		{AuraID = 5217, UnitID = "player"},		-- 猛虎之怒
 		{AuraID = 52610, UnitID = "player"},	-- 野蛮咆哮
-		{AuraID = 69369, UnitID = "player"},	-- 掠食者的迅捷
 		{AuraID = 61336, UnitID = "player"},	-- 生存本能
 		{AuraID = 22842, UnitID = "player"},	-- 狂暴回复
 		{AuraID = 93622, UnitID = "player"},	-- 裂伤
@@ -72,7 +71,7 @@ local list = {
 		{AuraID = 213680, UnitID = "player"},	-- 艾露恩的卫士
 		{AuraID = 155835, UnitID = "player"},	-- 鬃毛倒竖
 		{AuraID = 114108, UnitID = "player"},	-- 丛林之魂
-		--{AuraID = 207640, UnitID = "player"},	-- 丰饶
+		{AuraID = 207640, UnitID = "player"},	-- 丰饶
 		{AuraID = 164545, UnitID = "player"},	-- 日光增效
 		{AuraID = 164547, UnitID = "player"},	-- 月光增效
 		{AuraID = 202425, UnitID = "player"},	-- 艾露恩的战士
@@ -105,10 +104,10 @@ local list = {
 	},
 	["Spell Cooldown"] = {	-- 冷却计时组
 		{AuraID = 5215, UnitID = "player"},		-- 潜行
-		{SlotID = 13, UnitID = "player"},		-- 饰品1
-		{SlotID = 14, UnitID = "player"},		-- 饰品2
-		{TotemID = 1, UnitID = "player"},		-- 蘑菇
-		{SpellID = 61336, UnitID = "player"},	-- 生存本能
+		{SlotID = 13},		-- 饰品1
+		{SlotID = 14},		-- 饰品2
+		{TotemID = 1},		-- 蘑菇
+		{SpellID = 61336},	-- 生存本能
 	},
 }
 

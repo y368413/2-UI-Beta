@@ -60,9 +60,9 @@ function AuctionLite:HookAuctionFrameUpdate()
 end
 
 -- Handle modified clicks on bag spaces.
-function AuctionLite:ContainerFrameItemButton_OnClick_Hook(widget, button)
+function AuctionLite:ContainerFrameItemButton_OnModifiedClick_Hook(widget, button)
   if AuctionFrame:IsShown() then
-    if button=="RightButton" then	
+    if IsAltKeyDown() and button=="RightButton" then	
       AuctionFrameTab_OnClick(_G["AuctionFrameTab" .. SellTabIndex]);
       self:BagClickSell(widget:GetParent():GetID(), widget:GetID());
     elseif IsControlKeyDown() and button == "RightButton" then
@@ -153,6 +153,7 @@ function AuctionLite:CreateTab(name, frame)
   PanelTemplates_SetNumTabs(AuctionFrame, tabIndex);
 
   frame:SetParent(AuctionFrame);
+  frame:ClearAllPoints();
   frame:SetPoint("TOPLEFT", AuctionFrame, "TOPLEFT", 0, 0);
 
   return tabIndex;

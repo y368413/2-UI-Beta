@@ -1,6 +1,6 @@
 ﻿local _, ns = ...
 local M, R, U, I = unpack(ns)
-local module = M:GetModule("Auras")
+local A = M:GetModule("Auras")
 
 -- Monk Statue
 local IconSize = R.Auras.IconSize - 2
@@ -10,7 +10,7 @@ local function StatueGo()
 
 	bu = CreateFrame("Button", nil, UIParent, "SecureActionButtonTemplate")
 	bu:SetSize(IconSize, IconSize)
-	M.CreateIF(bu, true, true)
+	M.AuraIcon(bu, true)
 	bu:RegisterForClicks("AnyUp")
 	bu:SetAttribute("type1", "macro")
 	bu:SetAttribute("type2", "macro")
@@ -22,9 +22,9 @@ local function StatueGo()
 		GameTooltip:SetTotem(1)
 		GameTooltip:Show()
 	end)
-	bu:SetScript("OnLeave", GameTooltip_Hide)
+	bu:SetScript("OnLeave", M.HideTooltip)
 
-	M.Mover(bu, "雕像", "Statue", R.Auras.StatuePos, IconSize, IconSize)
+	M.Mover(bu, U["Statue"], "Statue", R.Auras.StatuePos, IconSize, IconSize)
 end
 
 -- localizaed
@@ -33,7 +33,7 @@ local serpentStatueTex = GetSpellTexture(115313)
 local oxStatue = GetSpellInfo(115315)
 local oxStatueTex = GetSpellTexture(115315)
 
-local function updateStatue()
+function A:UpdateStatue()
 	local haveTotem, _, start, dur = GetTotemInfo(1)
 	if haveTotem then
 		bu.CD:SetCooldown(start, dur)
@@ -59,10 +59,10 @@ local function checkSpec(event)
 			statue = oxStatue
 		end
 		bu:SetAttribute("macrotext1", "/tar "..statue)
-		M:RegisterEvent("PLAYER_TOTEM_UPDATE", updateStatue)
+		M:RegisterEvent("PLAYER_TOTEM_UPDATE", A.UpdateStatue)
 	else
 		if bu then bu:Hide() end
-		M:UnregisterEvent("PLAYER_TOTEM_UPDATE", updateStatue)
+		M:UnregisterEvent("PLAYER_TOTEM_UPDATE", A.UpdateStatue)
 	end
 
 	if event == "PLAYER_ENTERING_WORLD" then
@@ -70,7 +70,7 @@ local function checkSpec(event)
 	end
 end
 
-function module:MonkStatue()
+function A:MonkStatue()
 	if not MaoRUISettingDB["Auras"]["Statue"] then return end
 
 	M:RegisterEvent("PLAYER_ENTERING_WORLD", checkSpec)

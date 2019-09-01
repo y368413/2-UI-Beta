@@ -36,7 +36,7 @@ local list = {
 	["Special Aura"] = {	-- 玩家重要光环组
 		{AuraID = 125174, UnitID = "player"},	-- 业报之触
 		{AuraID = 116768, UnitID = "player"},	-- 幻灭踢
-		--{AuraID = 137639, UnitID = "player"},	-- 风火雷电
+		{AuraID = 137639, UnitID = "player"},	-- 风火雷电
 		{AuraID = 122278, UnitID = "player"},	-- 躯不坏
 		{AuraID = 122783, UnitID = "player"},	-- 散魔功
 		{AuraID = 116844, UnitID = "player"},	-- 平心之环
@@ -68,9 +68,9 @@ local list = {
 		{AuraID = 119611, UnitID = "focus", Caster = "player"},	-- 复苏之雾
 	},
 	["Spell Cooldown"] = {	-- 冷却计时组
-		{SlotID = 13, UnitID = "player"},		-- 饰品1
-		{SlotID = 14, UnitID = "player"},		-- 饰品2
-		{SpellID = 115203, UnitID = "player"},	-- 壮胆酒
+		{SlotID = 13},		-- 饰品1
+		{SlotID = 14},		-- 饰品2
+		{SpellID = 115203},	-- 壮胆酒
 	},
 }
 

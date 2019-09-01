@@ -91,12 +91,12 @@ function TidyMinimap:delayedScan()
 end
 
 function TidyMinimap:nudgeMinimap()
-	if MinimapCluster:IsVisible() then
+	if Minimap:IsVisible() then
 		-- Only nudge if the minimap is in it's default pos
-		local p1, parent, p2, x, y = MinimapCluster:GetPoint(0)
+		local p1, parent, p2, x, y = Minimap:GetPoint(0)
 		if p1 == 'TOPRIGHT' and parent == UIParent and p2 == 'TOPRIGHT' and x == 0 and y ==0 then
-			MinimapCluster:ClearAllPoints()
-			MinimapCluster:SetPoint(p1, parent, p2, x, y-(self:GetHeight()*self.settings.layout.scale))
+			Minimap:ClearAllPoints()
+			Minimap:SetPoint(p1, parent, p2, x, y-(self:GetHeight()*self.settings.layout.scale))
 		end
 	end
 end
@@ -151,8 +151,8 @@ end
 
 TidyMinimap:enable({
 	layout = {
-		pos = 'TOPRIGHT#MinimapCluster#BOTTOMRIGHT#32#6',    --pos = 'TOPRIGHT#GameMenuFrame#BOTTOMRIGHT#30#12',
-		--pos = 'TOPRIGHT#MinimapCluster#TOPLEFT#26#26',
+		pos = 'TOPRIGHT#Minimap#BOTTOMRIGHT#32#-5',    --pos = 'TOPRIGHT#GameMenuFrame#BOTTOMRIGHT#30#12',
+		--pos = 'TOPRIGHT#Minimap#TOPLEFT#26#26',
 		anchor = 'topright',
 		grow = 'left',  
 		--grow = 'down',

@@ -1,6 +1,7 @@
 ﻿local L = LibStub("AceLocale-3.0"):NewLocale("AuctionLite", "zhTW");
 if not L then return end
 
+L["AuctionLite Options"] = "|cff69ccf0[拍卖]|r购售助手"
 L["%dh"] = "%d 小時"
 L["(none set)"] = "(沒有設定)"
 L["|cff00ff00Scanned %d listings.|r"] = "|cff00ff00搜尋到 %d 項.|r"
@@ -33,7 +34,7 @@ L["Auction"] = "拍賣"
 L["Auction creation is already in progress."] = "正在發佈拍賣中。"
 L["Auction house data cleared."] = "拍賣行資料已清除。"
 L["Auction scan skipped (control key is down)"] = "拍賣掃描被略過(控制鍵被按下)"
-L["AuctionLite"] = "AuctionLite"
+L["AuctionLite"] = "|cff69ccf0[拍卖]|r购售助手"
 L["AuctionLite - Buy"] = "AuctionLite - 購買"
 L["AuctionLite - Sell"] = "AuctionLite - 出售"
 L["AuctionLite Buy"] = "AuctionLite 購買"
@@ -179,8 +180,8 @@ L["Searching:"] = "搜索中："
 L["Select a Favorites List"] = "選擇我的最愛清單"
 L["Selected Stack Size"] = "已選擇堆疊大小"
 L["Sell Tab"] = "出售標籤"
---Translation missing 
--- L["Shift-click to search for the exact name. Normal click to perform a regular search."] = ""
+--[[Translation missing --]]
+--[[ L["Shift-click to search for the exact name. Normal click to perform a regular search."] = ""--]] 
 L["Show auction house value in tooltips."] = "在滑鼠提示中顯示拍賣行價格。"
 L["Show Auction Value"] = "顯示拍賣行價格"
 L["Show Deals"] = "顯示交易"

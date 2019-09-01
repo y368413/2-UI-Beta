@@ -1,6 +1,4 @@
-----------------------
--- 显示公会大米记录
-----------------------
+------------------------ 显示公会大米记录----------------------## Author: Siweia  ## Version: 2.2
 local frame
 
 local function AddFontString(self, fontSize, text, anchor)
@@ -91,8 +89,8 @@ local function UpdateGuildBest(self)
 		end
 	end
 
-	if not resize and IsAddOnLoaded("AngryKeystones") then
-		local scheduel = select(4, self:GetChildren())
+	if not resize then  -- and IsAddOnLoaded("AngryKeystones")
+		local scheduel = select(5, self:GetChildren())
 		frame:SetWidth(246)
 		frame:ClearAllPoints()
 		frame:SetPoint("BOTTOMLEFT", scheduel, "TOPLEFT", 0, 10)

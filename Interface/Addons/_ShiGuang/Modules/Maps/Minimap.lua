@@ -3,10 +3,35 @@ local _, ns = ...
 local M, R, U, I = unpack(ns)
 local module = M:GetModule("Maps")
 
+local strmatch, strfind, strupper = string.match, string.find, string.upper
+local pairs, ipairs = pairs, ipairs
 function module:ReskinRegions()
+	-- Garrison
+	--GarrisonLandingPageMinimapButton:ClearAllPoints()
+	--GarrisonLandingPageMinimapButton:SetPoint("BOTTOMRIGHT", Minimap, 6, -6)
+	GarrisonLandingPageMinimapButton:SetScale(0.75)
+	--hooksecurefunc("GarrisonLandingPageMinimapButton_UpdateIcon", function(self)
+		--self:GetNormalTexture():SetTexture(I.garrTex)
+		--self:GetPushedTexture():SetTexture(I.garrTex)
+		--self:GetHighlightTexture():SetTexture(I.garrTex)
+		--self:SetSize(30, 30)
+	--end)
+	--[[if not IsAddOnLoaded("GarrisonMaster") then
+		GarrisonLandingPageMinimapButton:RegisterForClicks("AnyUp")
+		GarrisonLandingPageMinimapButton:HookScript("OnClick", function(_, btn, down)
+			if btn == "MiddleButton" and not down then
+				HideUIPanel(GarrisonLandingPage)
+				ShowGarrisonLandingPage(LE_GARRISON_TYPE_7_0)
+			elseif btn == "RightButton" and not down then
+				HideUIPanel(GarrisonLandingPage)
+				ShowGarrisonLandingPage(LE_GARRISON_TYPE_6_0)
+			end
+		end)
+	end]]
+
 	-- QueueStatus Button
 	QueueStatusMinimapButton:ClearAllPoints()
-	QueueStatusMinimapButton:SetPoint("BOTTOMLEFT", -8, 3)
+	QueueStatusMinimapButton:SetPoint("BOTTOMLEFT", Minimap, "BOTTOMLEFT", -6, -6)
 	QueueStatusMinimapButtonBorder:Hide()
 	QueueStatusMinimapButtonIconTexture:SetTexture(nil)
 
@@ -30,20 +55,20 @@ function module:ReskinRegions()
 	for _, v in pairs(flags) do
 		local flag = _G[v]
 		flag:ClearAllPoints()
-		flag:SetPoint("TOPLEFT", 6, 6)
-		flag:SetScale(.8)
+		flag:SetPoint("TOPRIGHT" ,Minimap, "TOPRIGHT", 3, 3)
+		flag:SetScale(0.85)
 	end
 	
 	--Tracking
 	MiniMapTrackingBackground:SetAlpha(0)
 	MiniMapTrackingButton:SetAlpha(0)
 	MiniMapTracking:ClearAllPoints()
-	MiniMapTracking:SetPoint("TOPRIGHT", Minimap, 6, 5)
-	MiniMapTracking:SetScale(.85)
+	MiniMapTracking:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", 6, 5)
+	MiniMapTracking:SetScale(0.8)
 	
 	-- Mail icon
 	MiniMapMailFrame:ClearAllPoints()
-	MiniMapMailFrame:SetPoint("BOTTOMLEFT", Minimap, -6,-6)
+	MiniMapMailFrame:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMRIGHT", 6,-2)
 	MiniMapMailIcon:SetTexture(I.mailTex)
 	MiniMapMailBorder:Hide()
 
@@ -51,9 +76,10 @@ function module:ReskinRegions()
 	GameTimeCalendarInvitesTexture:ClearAllPoints()
 	GameTimeCalendarInvitesTexture:SetParent("Minimap")
 	GameTimeCalendarInvitesTexture:SetPoint("TOPRIGHT")
-	local Invt = CreateFrame("Button", "NDuiInvt", UIParent)
+	local Invt = CreateFrame("Button", nil, UIParent)
 	Invt:SetPoint("TOPRIGHT", Minimap, "BOTTOMLEFT", -20, -20)
 	Invt:SetSize(300, 80)
+	Invt:Hide()
 	M.CreateBD(Invt)
 	M.CreateSD(Invt)
 	M.CreateTex(Invt)
@@ -71,15 +97,23 @@ function module:ReskinRegions()
 
 	Invt:SetScript("OnClick", function(_, btn)
 		Invt:Hide()
-		if btn == "LeftButton" then ToggleCalendar() end
+		if btn == "LeftButton" and not InCombatLockdown() then
+			ToggleCalendar()
+		end
 		M:UnregisterEvent("CALENDAR_UPDATE_PENDING_INVITES", updateInviteVisibility)
 		M:UnregisterEvent("PLAYER_ENTERING_WORLD", updateInviteVisibility)
 	end)
+	if TicketStatusFrame then
+		TicketStatusFrame:ClearAllPoints()
+		TicketStatusFrame:SetPoint("TOP", UIParent, "TOP", -400, -20)
+		TicketStatusFrame.SetPoint = M.Dummy
+	end
 end
 
 ----------------------------------------------------------------------------	右键菜单--------------------------------------------------------------------------
 --动作条样式
-local SetMrbarMenuFrame = CreateFrame("Frame", "ClickMenu", UIParent, "UIDropDownMenuTemplate")
+--local SetMrbarMenuFrame = CreateFrame("Frame", "ClickMenu", UIParent, "UIDropDownMenuTemplate")
+local SetMrbarMenuFrame = MSA_DropDownMenu_Create("ClickMenu", UIParent)
 local SetMrbarMicromenu = {  
     { text = "|cffff8800 ------------------------|r", notCheckable = true },
     { text = "           "..MAINMENU_BUTTON.."", isTitle = true, notCheckable = true},
@@ -123,12 +157,12 @@ local SetMrbarMicromenu = {
          --func = function() LoadAddOn('Blizzard_StoreUI') securecall(ToggleStoreUI) end, notCheckable = true},
     { text = GAMEMENU_HELP, icon = 'Interface\\CHATFRAME\\UI-ChatIcon-Blizz',
          func = function() securecall(ToggleHelpFrame) end, notCheckable = true},
-    { text = BATTLEFIELD_MINIMAP,
-         func = function() securecall(ToggleBattlefieldMinimap) end, notCheckable = true},
+    --{ text = BATTLEFIELD_MINIMAP,
+         --func = function() securecall(ToggleBattlefieldMinimap) end, notCheckable = true},
     { text = "|cffff8800 ------------------------|r", notCheckable = true },
     { text = "           -|cFFFFFF00 2|r|cFFFF0000 UI |r- ", isTitle = true, notCheckable = true},
     { text = "|cffff8800 ------------------------|r", notCheckable = true },
-    { text = MINIMAP_MENU_BARSTYLE,  icon = 'Interface\\Addons\\_ShiGuang\\Media\\Modules\\MaoR-UI',
+    { text = MINIMAP_MENU_BARSTYLE,  icon = 'Interface\\MINIMAP\\TRACKING\\BattleMaster',
          func = function() sendCmd("/mr");  end, notCheckable = true},
     { text = MINIMAP_MENU_KEYBIND, icon = 'Interface\\MacroFrame\\MacroFrame-Icon.blp',
         func = function() sendCmd("/hb"); end, notCheckable = true},
@@ -141,19 +175,17 @@ local SetMrbarMicromenu = {
         --func = function() sendCmd("/eqb"); end, notCheckable = true},
     { text = MINIMAP_MENU_CONTROLNOTICE, icon = 'Interface\\Calendar\\UI-Calendar-Button',
         func = function() sendCmd("/cci move"); end, notCheckable = true},
-    { text = MINIMAP_MENU_CASTBAR, icon = 'Interface\\Icons\\Spell_Nature_Sentinal',
+    { text = MINIMAP_MENU_CASTBAR, icon = 'Interface\\Icons\\INV_Misc_Bone_HumanSkull_02',
         func = function() sendCmd("/cbs"); end, notCheckable = true},
+    { text = MINIMAP_MENU_BOSSFRAME, icon = 'Interface\\MINIMAP\\TRACKING\\QuestBlob',
+        func = function() sendCmd("/sb test"); end, notCheckable = true},
     --{ text = "聊天屏蔽", icon = 'Interface\\Calendar\\UI-Calendar-Button',
         --func = function() sendCmd("/ecf"); end, notCheckable = true},
     { text = "|cFF00DDFF ------- "..MINIMAP_MENU_ONOFF.." -------|r", isTitle = true, notCheckable = true},
-    { text = MINIMAP_MENU_Click, icon = 'Interface\\MINIMAP\\TRACKING\\QuestBlob',
-        func = function() sendCmd("/gcs"); end, notCheckable = true},
     { text = MINIMAP_MENU_DAMAGESTYLE, icon = 'Interface\\PaperDollInfoFrame\\UI-EquipmentManager-Toggle',
         func = function() sendCmd("/dex"); end, notCheckable = true },
-    { text = MINIMAP_MENU_INTERRUPT, icon = 'Interface\\MINIMAP\\TRACKING\\BattleMaster',
-        func = function() sendCmd("/esi"); end, notCheckable = true},
-    { text = MINIMAP_MENU_lOOTHELPER, icon = 'Interface\\Icons\\INV_Misc_Idol_05',
-        func = function() sendCmd("/plh"); end, notCheckable = true},
+    --{ text = MINIMAP_MENU_INTERRUPT, icon = 'Interface\\MINIMAP\\TRACKING\\BattleMaster',
+        --func = function() sendCmd("/esi"); end, notCheckable = true},
     {text = MINIMAP_MENU_DISTANCE, hasArrow = true, notCheckable = true,
         menuList={  
             { text = YES, func = function() sendCmd("/hardyards sho") end, notCheckable = true},
@@ -173,12 +205,14 @@ local SetMrbarMicromenu = {
         }
     },
     { text = "|cFF00DDFF ------- Style -------|r", isTitle = true, notCheckable = true },
-    { text = MINIMAP_MENU_SWITCHUF, icon = 'Interface\\Icons\\INV_Misc_Bone_HumanSkull_02',
+    { text = MINIMAP_MENU_SWITCHUF, icon = 'Interface\\Icons\\Spell_Holy_Crusade',
         func = function() sendCmd("/loadmr"); end, notCheckable = true},
-    { text = MINIMAP_MENU_AFKSCREEN, icon = 'Interface\\Icons\\Spell_Holy_Crusade',
+    { text = MINIMAP_MENU_AFKSCREEN, icon = 'Interface\\Icons\\Spell_Nature_Sentinal',
         func = function() sendCmd("/wallpaperkit"); end, notCheckable = true},
-    { text = MINIMAP_MENU_CHECKFOODSSS, icon = 'Interface\\MINIMAP\\TRACKING\\Reagents',
-        func = function() sendCmd("/hj"); end, notCheckable = true  },
+    --{ text = MINIMAP_MENU_CHECKFOODSSS, icon = 'Interface\\MINIMAP\\TRACKING\\Reagents',
+        --func = function() sendCmd("/hj"); end, notCheckable = true  },
+    { text = MINIMAP_MENU_KEYS, icon = 'Interface\\Icons\\inv_misc_treasurechest02b',
+        func = function() sendCmd("/iKeystones"); end, notCheckable = true},
     --{ text = "|cFF00DDFF -- OneKeyMacro --|r", func = function() sendCmd("/MacroHelp"); end, notCheckable = true},
     { text = "  |cFFBF00FFSimc|r", func = function() sendCmd("/simc"); end, notCheckable = true},
     { text = "  |cFFBF00FFWe Love WOW|r", func = function() sendCmd("/welovewow"); end, notCheckable = true},
@@ -186,7 +220,7 @@ local SetMrbarMicromenu = {
     { text = "  |cFFBF00FF"..MINIMAP_MENU_QUSETIONANSWER.."|r", func = function() sendCmd("/MrHelp"); end, notCheckable = true},
     { text = "  |cFFBF00FF2 UI"..MINIMAP_MENU_UISETTING.."|r", func = function() sendCmd("/mr"); end, notCheckable = true},
     { text = "|cffff8800 --------------------------|r", isTitle = true, notCheckable = true  },
-    { text = "            |cFFBF00FF"..MINIMAP_MENU_MORE.."|r", func = function() sendCmd("/farmer"); end, notCheckable = true},
+    { text = "            |cFFBF00FF"..MINIMAP_MENU_MORE.."|r", func = function() sendCmd("/ip"); end, notCheckable = true},
     --{ text = "ESC菜单", func = function() ToggleFrame(GameMenuFrame) end, notCheckable = true},
     --{ text = "                       ", isTitle = true, notCheckable = true  },
     --{ text = LOGOUT, func = function() Logout() end, notCheckable = true},
@@ -219,21 +253,18 @@ end
 
 function module:SetupMinimap()
 	-- Shape and Position
-	--function GetMinimapShape() return "SQUARE" end
+	--local scale = MaoRUISettingDB["Map"]["MinmapScale"]
 	Minimap:ClearAllPoints()
 	Minimap:SetPoint(unpack(R.Minimap.Pos))
+	Minimap:SetSize(186, 186)
 	Minimap:SetFrameLevel(10)
 	Minimap:SetMaskTexture("Interface\\Buttons\\WHITE8X8")
-	Minimap:SetSize(186, 186)
-	Minimap:SetBackdrop({
-		bgFile =  [=[Interface\ChatFrame\ChatFrameBackground]=],
-    edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 2, 
-		insets = {left = 3, right = 3, top = 3, bottom = 3} 
-					})
-	Minimap:SetBackdropColor(0,0,0,1)
-	Minimap:SetBackdropBorderColor(0,0,0,1)
-	--MinimapCluster:SetScale(MaoRUISettingDB["Map"]["MinmapScale"])
+	--MinimapCluster:SetScale(scale)
 	MSA_DropDownList1:SetClampedToScreen(true)
+
+	local mover = M.Mover(Minimap, U["Minimap"], "Minimap", R.Minimap.Pos, Minimap:GetWidth(), Minimap:GetHeight())
+	Minimap:ClearAllPoints()
+	Minimap:SetPoint("TOPRIGHT", mover)
 
 	-- ClockFrame
 	if MaoRUISettingDB["Map"]["Clock"] then
@@ -271,7 +302,7 @@ function module:SetupMinimap()
     --else MSA_ToggleDropDownMenu(1, nil, MiniMapTrackingDropDown, self)
     end
 	end)
-
+	
 	-- Hide Blizz
 	local frames = {
 		"GameTimeFrame",

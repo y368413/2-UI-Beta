@@ -2,7 +2,14 @@ local SharedMedia = LibStub('LibSharedMedia-3.0');
 ---@type StdUi
 --local StdUi = LibStub('StdUi');
 
-local Custom = MaxDps:NewModule('Custom');
+local Custom = MaxDps:NewModule('Custom', 'AceTimer-3.0');
+
+local IndentationLib = IndentationLib;
+local TableInsert = tinsert;
+local GetNumClasses = GetNumClasses;
+local GetClassInfo = GetClassInfo;
+local GetNumSpecializationsForClassID = GetNumSpecializationsForClassID;
+local GetSpecializationInfoForClassID = GetSpecializationInfoForClassID;
 
 function Custom:GetClassIcon(classTag)
 	local x1, x2, y1, y2 = unpack(CLASS_ICON_TCOORDS[classTag]);
@@ -21,21 +28,20 @@ function Custom:Enable()
 	self.classList = {};
 	self.specList = {};
 
-	local x = GetNumClasses();
-	for i = 1, x do
+	for i = 1, GetNumClasses() do
 		local classDisplayName, classTag, classId = GetClassInfo(i);
-		tinsert(self.classList, {text = self:GetClassIcon(classTag) .. ' ' .. classDisplayName, value = classId});
+		TableInsert(self.classList, {text = self:GetClassIcon(classTag) .. ' ' .. classDisplayName, value = classId});
 
 		local specNum = GetNumSpecializationsForClassID(classId);
 		for sI = 1, specNum do
-			local specId, specName, _ , specIcon = GetSpecializationInfoForClassID(classId, sI);
+			local _, specName, _ , specIcon = GetSpecializationInfoForClassID(classId, sI);
 
 			specName = '|T' .. specIcon .. ':0|t ' .. specName;
 			if not self.Specs[classId] then self.Specs[classId] = {}; end;
 			self.Specs[classId][sI] = specName;
 
 			if not self.specList[classId] then self.specList[classId] = {}; end
-			tinsert(self.specList[classId], {text = specName, value = sI});
+			TableInsert(self.specList[classId], {text = specName, value = sI});
 		end
 	end
 
@@ -55,113 +61,7 @@ StaticPopupDialogs['REMOVE_MAXDPS_ROTATION'] = {
 	hideOnEscape = true,
 }
 
---[[function Custom:ShowCustomWindow()
-	if self.CustomWindow then
-		self.CustomWindow:Show();
-		return;
-	end
 
-	self.CustomWindow = StdUi:Window(nil, 'MaxDps Custom Rotations', 700, 550);
-	self.CustomWindow:SetPoint('CENTER');
-	self.CustomWindow:SetScript('OnHide', function()
-		Custom:LoadCustomRotations();
-	end)
-
-	local btn = StdUi:Button(self.CustomWindow, 100, 24, 'Add Rotation');
-	btn:SetScript('OnClick', function()
-		Custom:AddCustomRotation();
-	end);
-
-	local rotations = StdUi:FauxScrollFrame(self.CustomWindow, 200, 500, 20, 24);
-
-	--		Rotation Name
-	local rotationName = StdUi:EditBox(self.CustomWindow, 140, 24);
-	StdUi:AddLabel(self.CustomWindow, rotationName, 'Rotation Name', 'TOP');
-	rotationName.OnValueChanged = function(self, text)
-		if not Custom.CurrentEditRotation then return end;
-		Custom.CurrentEditRotation.name = text;
-		Custom:UpdateCustomRotationButtons();
-	end;
-
-	--		Rotation Class
-	local rotationClass = StdUi:Dropdown(self.CustomWindow, 140, 24, self.classList);
-	StdUi:AddLabel(self.CustomWindow, rotationClass, 'Class', 'TOP');
-	rotationClass.OnValueChanged = function(self, value)
-		if not Custom.CurrentEditRotation or Custom.EditingRotation then return end;
-
-		Custom.CurrentEditRotation.class = value;
-
-		local specs = Custom.specList[value];
-		if specs then
-			--Custom.CustomWindow.rotationSpec:SetValue(Custom.CurrentEditRotation.spec);
-			Custom.CustomWindow.rotationSpec:SetOptions(Custom.specList[value]);
-		end
-	end;
-
-	--		Rotation Spec
-	local rotationSpec = StdUi:Dropdown(self.CustomWindow, 140, 24, self.classList);
-	StdUi:AddLabel(self.CustomWindow, rotationSpec, 'Specialization', 'TOP');
-	rotationSpec.OnValueChanged = function(self, value)
-		if not Custom.CurrentEditRotation or Custom.EditingRotation then return end;
-		print(Custom.CurrentEditRotation.spec);
-		print(value);
-		Custom.CurrentEditRotation.spec = value;
-	end;
-
-	--		Rotation Enabled
-	local rotationEnabled = StdUi:Checkbox(self.CustomWindow, 'Enabled', 140, 24);
-	rotationEnabled.OnValueChanged = function(self, flag)
-		if not Custom.CurrentEditRotation then return end;
-		Custom.CurrentEditRotation.enabled = flag;
-	end;
-
-	--		Rotation Delete
-	local rotationDelete = StdUi:Button(self.CustomWindow, 100, 24, 'Remove');
-	rotationDelete:SetScript('OnClick', function()
-		if not Custom.CurrentEditRotation then return end;
-		StaticPopup_Show('REMOVE_MAXDPS_ROTATION');
-	end);
-
-	--		Editor
-	local editor = StdUi:MultiLineBox(self.CustomWindow, 100, 200, 'adasda');
-	local fontPath = SharedMedia:Fetch('font', 'Inconsolata');
-
-	if fontPath then
-		editor:SetFont(fontPath, 14);
-	end
-	editor.OnValueChanged = function(self, value)
-		if not Custom.CurrentEditRotation then return end;
-
-		value = IndentationLib.decode(value);
-		if Custom.CurrentEditRotation then
-			Custom.CurrentEditRotation.fn = value;
-		end
-	end;
-
-	StdUi:GlueTop(btn, self.CustomWindow, 10, -30, 'LEFT');
-	StdUi:GlueAcross(rotations, self.CustomWindow, 10, -80, -500, 20);
-	StdUi:GlueAfter(rotationName, rotations, 20, -20);
-	StdUi:GlueRight(rotationClass, rotationName, 10, 0);
-	StdUi:GlueRight(rotationSpec, rotationClass, 10, 0);
-	StdUi:GlueBelow(rotationEnabled, rotationName, 0, -10, 'LEFT');
-	StdUi:GlueBelow(rotationDelete, rotationSpec, 0, -10, 'RIGHT');
-	StdUi:GlueAcross(editor.panel, self.CustomWindow, 220, -200, -10, 20);
-
-	self.CustomWindow.rotations = rotations;
-	self.CustomWindow.rotationName = rotationName;
-	self.CustomWindow.rotationClass = rotationClass;
-	self.CustomWindow.rotationSpec = rotationSpec;
-	self.CustomWindow.rotationEnabled = rotationEnabled;
-	self.CustomWindow.editor = editor;
-
-	IndentationLib.enable(editor, nil, 4);
-
-	self:UpdateCustomRotationButtons();
-	self:EnableDisableCustomFields(true, true);
-
-	MaxDps:DisableRotation();
-	self.CustomWindow:Show();
-end]]
 
 function Custom:UpdateCustomRotationButtons()
 	local scrollChild = self.CustomWindow.rotations.scrollChild;

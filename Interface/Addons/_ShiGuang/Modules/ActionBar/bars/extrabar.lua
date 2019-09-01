@@ -13,7 +13,7 @@ function Bar:CreateExtrabar()
 	frame:SetWidth(num*cfg.size + (num-1)*margin + 2*padding)
 	frame:SetHeight(cfg.size + 2*padding)
 	frame.Pos = {"BOTTOM", UIParent, "BOTTOM", 0, 130}
-	frame:SetScale(MaoRUISettingDB["Actionbar"]["ActionbarScale"])
+	frame:SetScale(MaoRUISettingDB["Actionbar"]["Scale"])
 
 	--move the buttons into position and reparent them
 	ExtraActionBarFrame:SetParent(frame)
@@ -25,7 +25,7 @@ function Bar:CreateExtrabar()
 	--the extra button
 	local button = ExtraActionButton1
 	table.insert(buttonList, button) --add the button object to the list
-	button:SetSize(cfg.size,cfg.size)
+	button:SetSize(cfg.size, cfg.size)
 
 	--show/hide the frame on a given state driver
 	frame.frameVisibility = "[extrabar] show; hide"
@@ -33,24 +33,23 @@ function Bar:CreateExtrabar()
 
 	--create drag frame and drag functionality
 	if R.bars.userplaced then
-		M.Mover(frame, "Extrabar", "Extrabar", frame.Pos)
+		M.Mover(frame, U["Extrabar"], "Extrabar", frame.Pos)
 	end
 
 	--create the mouseover functionality
 	if cfg.fader then
-		M:CreateButtonFrameFader(frame, buttonList, cfg.fader)
+		Bar.CreateButtonFrameFader(frame, buttonList, cfg.fader)
 	end
 
 	--zone ability
-	ZoneAbilityFrame:SetScale(0.6)
 	ZoneAbilityFrame:ClearAllPoints()
 	ZoneAbilityFrame.ignoreFramePositionManager = true
 	ZoneAbilityFrameNormalTexture:SetAlpha(0)
-	M.Mover(ZoneAbilityFrame, "Zone Ability", "ZoneAbility", {"BOTTOM", UIParent, "BOTTOM", -360, 100}, 64, 64)
+	M.Mover(ZoneAbilityFrame, U["Zone Ability"], "ZoneAbility", {"BOTTOM", UIParent, "BOTTOM", -360, 100}, 64, 64)
 
 	local spellButton = ZoneAbilityFrame.SpellButton
 	spellButton.Style:SetAlpha(0)
-	spellButton.Icon:SetTexCoord(.08, .92, .08, .92)
+	spellButton.Icon:SetTexCoord(unpack(I.TexCoord))
 	spellButton:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
 	M.CreateSD(spellButton.Icon, 3, 3)
 end

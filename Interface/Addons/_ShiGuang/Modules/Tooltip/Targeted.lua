@@ -1,11 +1,22 @@
 local _, ns = ...
 local M, R, U, I = unpack(ns)
+local TT = M:GetModule("Tooltip")
+
+local wipe, tinsert, tconcat = table.wipe, table.insert, table.concat
+local IsInGroup, IsInRaid, GetNumGroupMembers = IsInGroup, IsInRaid, GetNumGroupMembers
+local UnitExists, UnitIsUnit, UnitIsDeadOrGhost, UnitName = UnitExists, UnitIsUnit, UnitIsDeadOrGhost, UnitName
 
 local targetTable = {}
-local function ScanTargets(unit)
+
+function TT:ScanTargets()
+	if not MaoRUISettingDB["Tooltip"]["TargetBy"] then return end
 	if not IsInGroup() then return end
 
+	local _, unit = self:GetUnit()
+	if not UnitExists(unit) then return end
+
 	wipe(targetTable)
+
 	for i = 1, GetNumGroupMembers() do
 		local member = (IsInRaid() and "raid"..i or "party"..i)
 		if UnitIsUnit(unit, member.."target") and not UnitIsUnit("player", member) and not UnitIsDeadOrGhost(member) then
@@ -16,12 +27,10 @@ local function ScanTargets(unit)
 	end
 
 	if #targetTable > 0 then
-		GameTooltip:AddLine("Targeted By"..I.InfoColor.."("..#targetTable..")|r "..table.concat(targetTable, ", "), nil, nil, nil, 1)
+		GameTooltip:AddLine(U["Targeted By"]..I.InfoColor.."("..#targetTable..")|r "..tconcat(targetTable, ", "), nil, nil, nil, 1)
 	end
 end
 
-GameTooltip:HookScript("OnTooltipSetUnit", function()
-	if not MaoRUISettingDB["Tooltip"]["TargetBy"] then return end
-	local _, unit = GameTooltip:GetUnit()
-	if UnitExists(unit) then ScanTargets(unit) end
-end)
+function TT:TargetedInfo()
+	GameTooltip:HookScript("OnTooltipSetUnit", TT.ScanTargets)
+end

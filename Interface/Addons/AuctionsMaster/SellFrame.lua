@@ -92,6 +92,8 @@ function AuctionLite:GeneratePrice(value, allowUndercut)
   local bidUndercutFixed = self.db.profile.bidUndercutFixed;
   local buyoutUndercutFixed = self.db.profile.buyoutUndercutFixed;
 
+  if bidUndercutFixed > 0 or buyoutUndercutFixed > 0 then granularity = 1 end --163ui 2016.9
+
   if not allowUndercut then
     buyoutUndercut = 0;
     buyoutUndercutFixed = 0;
@@ -109,7 +111,7 @@ function AuctionLite:GeneratePrice(value, allowUndercut)
   local buyout =
     generate(value, buyoutUndercut, buyoutUndercutFixed, granularity);
 
-  return bid, buyout;
+  return bid, max(bid, buyout);
 end
 
 -- Generate price, and dump some data to the console.
@@ -408,11 +410,19 @@ function AuctionLite:ClickAuctionSellItemButton_Hook()
         local query = {
           link = link,
           exact = true,
-          update = function(pct) AuctionLite:UpdateProgressSell(pct) end,
+          update = function(pct, getAll, rawData)
+              AuctionLite:UpdateProgressSell(pct)
+              if rawData then
+                  local data = AuctionLite:AnalyzeData(rawData);
+                  AuctionLite:SetSellData(data, link, true)
+              end
+              AuctionLiteStopAuction:Show()
+          end,
           finish = function(data, link) AuctionLite:SetSellData(data, link) end,
         };
 
         self:StartQuery(query);
+        AuctionLiteStopAuction.query = query
       end
     end
   end
@@ -457,6 +467,7 @@ function AuctionLite:ClearSellFrame()
 
   SellCreateAuctionButton:Disable();
   SellRememberButton:Disable();
+  AuctionLiteStopAuction:Hide();
 
   StatusError = false;
   self:SetStatus("");
@@ -476,7 +487,7 @@ function AuctionLite:SetStatus(message)
 end
 
 -- Get our query results.
-function AuctionLite:SetSellData(results, link)
+function AuctionLite:SetSellData(results, link, updating)
   -- Set the competing auction display.
   local result = results[link];
   if result ~= nil then
@@ -508,11 +519,13 @@ function AuctionLite:SetSellData(results, link)
     if result.priceIsMine then
       allowUndercut = false;
     end
+    if not updating then
     if self.db.profile.printPriceData then
       self:ShowPriceData(link, itemValue, SellSize:GetNumber());
     end
     self:SetStatus(L["|cff00ff00Scanned %d listings.|r"]:
                    format(result.listings));
+    end
   else
     local hist = self:GetHistoricalPrice(link);
     if hist ~= nil and hist.price > 0 then
@@ -532,7 +545,7 @@ function AuctionLite:SetSellData(results, link)
   -- Load the user's saved price, if it exists.
   local saved = SavedPrices[link];
   if saved ~= nil then
-    self:SetStatus(L["|cff00ff00Using previous price.|r"]);
+    if not updating then self:SetStatus(L["|cff00ff00Using previous price.|r"]); end
     self:SetItemBidBuyout(saved.bid, saved.buyout);
   end
 
@@ -543,7 +556,10 @@ function AuctionLite:SetSellData(results, link)
   end
 
   -- Active the remember menu.
+  if not updating then
   SellRememberButton:Enable();
+  AuctionLiteStopAuction:Hide();
+  end
 
   -- Update the UI.
   self:UpdatePrices();

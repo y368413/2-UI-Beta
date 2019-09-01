@@ -5,6 +5,7 @@ local M, R, U, I = unpack(ns)
 ---------------------------
 local Bar = M:GetModule("Actionbar")
 local _G = getfenv(0)
+local pairs, gsub = pairs, string.gsub
 
 local function CallButtonFunctionByName(button, func, ...)
 	if button and func and button[func] then
@@ -122,7 +123,7 @@ local function SetupBackdrop(button)
 	M.CreateSD(bg)
 	M.CreateTex(bg)
 	if MaoRUISettingDB["Actionbar"]["Classcolor"] then
-		bg:SetBackdropColor(I.ClassColor.r, I.ClassColor.g, I.ClassColor.b, .25)
+		bg:SetBackdropColor(I.r, I.g, I.b, .25)
 	else
 		bg:SetBackdropColor(.2, .2, .2, .25)
 	end
@@ -143,14 +144,14 @@ end
 		{"(c%-)", "C"},
 		{"(s%-)", "S"},
 		{KEY_BUTTON3, "M3"},
-		{KEY_MOUSEWHEELUP, "MU"},
-		{KEY_MOUSEWHEELDOWN, "MD"},
-		{KEY_SPACE, "空"},
+		{KEY_MOUSEWHEELUP, "M↑"},
+		{KEY_MOUSEWHEELDOWN, "M↓"},
+		{KEY_SPACE, "■■"},
 		{CAPSLOCK_KEY_TEXT, "CL"},
-		{"(Num Pad )", "数"},
+		{"(Num Pad )", "Num"},
 		{"(Num Pad +)", "+"},
 		{"(数字键盘 +)", "+"},
-		{"(数字键盘 %-)", "数"},
+		{"(数字键盘 %-)", "Num"},
 		{"(Page Up)", "P↑"},
 		{"(Page Down)", "P↓"},
 		{"(Insert)", "Ins"},
@@ -159,7 +160,7 @@ end
 		{"(鼠标按键)", "M"},
 	}
 
-function M:UpdateHotKey()
+function Bar:UpdateHotKey()
 	local hotkey = _G[self:GetName().."HotKey"]
 	if hotkey and hotkey:IsShown() and not MaoRUISettingDB["Actionbar"]["Hotkeys"] then
 		hotkey:Hide()
@@ -180,7 +181,7 @@ function M:UpdateHotKey()
 	end
 end
 
-function M:StyleActionButton(button, cfg)
+function Bar:StyleActionButton(button, cfg)
 	if not button then return end
 	if button.__styled then return end
 
@@ -239,7 +240,7 @@ function M:StyleActionButton(button, cfg)
 	if hotkey then
 		if MaoRUISettingDB["Actionbar"]["Hotkeys"] then
 			hotkey:SetParent(overlay)
-			M.UpdateHotKey(button)
+			Bar.UpdateHotKey(button)
 			SetupFontString(hotkey, cfg.hotkey)
 		else
 			hotkey:Hide()
@@ -257,7 +258,7 @@ function M:StyleActionButton(button, cfg)
 	button.__styled = true
 end
 
-function M:StyleExtraActionButton(cfg)
+function Bar:StyleExtraActionButton(cfg)
 	local button = ExtraActionButton1
 	if button.__styled then return end
 
@@ -290,13 +291,19 @@ function M:StyleExtraActionButton(cfg)
 	SetupCooldown(cooldown, cfg.cooldown)
 
 	--hotkey, count
+	local overlay = CreateFrame("Frame", nil, button)
+	overlay:SetAllPoints()
 	if MaoRUISettingDB["Actionbar"]["Hotkeys"] then
-		M.UpdateHotKey(button)
+		hotkey:SetParent(overlay)
+		Bar.UpdateHotKey(button)
+		cfg.hotkey.font = {I.Font[1], 13, I.Font[3]}
 		SetupFontString(hotkey, cfg.hotkey)
 	else
 		hotkey:Hide()
 	end
 	if MaoRUISettingDB["Actionbar"]["Count"] then
+		count:SetParent(overlay)
+		cfg.count.font = {I.Font[1], 16, I.Font[3]}
 		SetupFontString(count, cfg.count)
 	else
 		count:Hide()
@@ -305,31 +312,31 @@ function M:StyleExtraActionButton(cfg)
 	button.__styled = true
 end
 
-function M:StyleAllActionButtons(cfg)
+function Bar:StyleAllActionButtons(cfg)
 	for i = 1, NUM_ACTIONBAR_BUTTONS do
-		M:StyleActionButton(_G["ActionButton"..i], cfg)
-		M:StyleActionButton(_G["MultiBarBottomLeftButton"..i], cfg)
-		M:StyleActionButton(_G["MultiBarBottomRightButton"..i], cfg)
-		M:StyleActionButton(_G["MultiBarRightButton"..i], cfg)
-		M:StyleActionButton(_G["MultiBarLeftButton"..i], cfg)
+		Bar:StyleActionButton(_G["ActionButton"..i], cfg)
+		Bar:StyleActionButton(_G["MultiBarBottomLeftButton"..i], cfg)
+		Bar:StyleActionButton(_G["MultiBarBottomRightButton"..i], cfg)
+		Bar:StyleActionButton(_G["MultiBarRightButton"..i], cfg)
+		Bar:StyleActionButton(_G["MultiBarLeftButton"..i], cfg)
 	end
 	for i = 1, 6 do
-		M:StyleActionButton(_G["OverrideActionBarButton"..i], cfg)
+		Bar:StyleActionButton(_G["OverrideActionBarButton"..i], cfg)
 	end
 	--petbar buttons
 	for i = 1, NUM_PET_ACTION_SLOTS do
-		M:StyleActionButton(_G["PetActionButton"..i], cfg)
+		Bar:StyleActionButton(_G["PetActionButton"..i], cfg)
 	end
 	--stancebar buttons
 	for i = 1, NUM_STANCE_SLOTS do
-		M:StyleActionButton(_G["StanceButton"..i], cfg)
+		Bar:StyleActionButton(_G["StanceButton"..i], cfg)
 	end
 	--possess buttons
 	for i = 1, NUM_POSSESS_SLOTS do
-		M:StyleActionButton(_G["PossessButton"..i], cfg)
+		Bar:StyleActionButton(_G["PossessButton"..i], cfg)
 	end
 	--extra action button
-	M:StyleExtraActionButton(cfg)
+	Bar:StyleExtraActionButton(cfg)
 	--spell flyout
 	SpellFlyoutBackgroundEnd:SetTexture(nil)
 	SpellFlyoutHorizontalBackground:SetTexture(nil)
@@ -338,7 +345,7 @@ function M:StyleAllActionButtons(cfg)
 		local i = 1
 		local button = _G["SpellFlyoutButton"..i]
 		while button and button:IsShown() do
-			M:StyleActionButton(button, cfg)
+			Bar:StyleActionButton(button, cfg)
 			i = i + 1
 			button = _G["SpellFlyoutButton"..i]
 		end
@@ -351,8 +358,8 @@ function Bar:ReskinBars()
 		icon = {
 			texCoord = I.TexCoord,
 			points = {
-				{"TOPLEFT", 1, -1},
-				{"BOTTOMRIGHT", -1, 1},
+				{"TOPLEFT", R.mult, -R.mult},
+				{"BOTTOMRIGHT", -R.mult, R.mult},
 			},
 		},
 		flyoutBorder = {file = ""},
@@ -373,8 +380,8 @@ function Bar:ReskinBars()
 		highlightTexture = {
 			file = "",
 			points = {
-				{"TOPLEFT", 1, -1},
-				{"BOTTOMRIGHT", -1, 1},
+				{"TOPLEFT", R.mult, -R.mult},
+				{"BOTTOMRIGHT", -R.mult, R.mult},
 			},
 		},
 		cooldown = {
@@ -403,61 +410,37 @@ function Bar:ReskinBars()
 				{"BOTTOMRIGHT", 2, 0},
 			},
 		},
-		buttonstyle = { file = ""},
+		buttonstyle = {file = ""},
 	}
-	M:StyleAllActionButtons(cfg)
-	hooksecurefunc("ActionButton_UpdateHotkeys", M.UpdateHotKey)
+	Bar:StyleAllActionButtons(cfg)
+	hooksecurefunc("ActionButton_UpdateHotkeys", Bar.UpdateHotKey)
 end
 
-
---[[==================================================== hide the artwork from blz ============================================================--
-local Empty_Art = CreateFrame("frame", nil)
-Empty_Art:Hide()
-
-for i = 0,3 do _G["MainMenuBarTexture"..i]:SetParent(Empty_Art)	 	end				--Art of Exp Bar(include Keys&Bags)
-for i = 0,3 do _G["MainMenuMaxLevelBar"..i]:SetParent(Empty_Art)	end				--Art of Exp Bar(When Exp & Rep hide)
-for i = 1,2 do _G["PossessBackground"..i]:SetParent(Empty_Art)	 	end				--Art of Possess(When Bar Bottomleft)
-for i = 0,1 do _G["SlidingActionBarTexture"..i]:SetParent(Empty_Art)end			--Art of Pet 	(When Bar Bottomleft)
-for i = 1,19 do _G["MainMenuXPBarDiv"..i]:SetParent(Empty_Art)		end				--Art of Exp. Bar Grid
-
-for i = 0,3 do ReputationWatchBar.StatusBar["WatchBarTexture"..i]:SetParent(Empty_Art)  end 	--Grid of Rep.
-for i = 0,3 do ArtifactWatchBar.StatusBar["WatchBarTexture"..i]:SetParent(Empty_Art)  end		  --Grid of Arti.
-for i = 0,3 do HonorWatchBar.StatusBar["WatchBarTexture"..i]:SetParent(Empty_Art)  end			  --Grid of Hor.
-for i = 0,3 do ReputationWatchBar.StatusBar["XPBarTexture"..i]:SetParent(Empty_Art)  end		  --Grid of Rep.  ( when self show only )
-for i = 0,3 do ArtifactWatchBar.StatusBar["XPBarTexture"..i]:SetParent(Empty_Art)  end			  --Grid of Arti. ( when self show only )
-for i = 0,3 do HonorWatchBar.StatusBar["XPBarTexture"..i]:SetParent(Empty_Art) end				    --Grid of Hor. 	( when self show only )
-
-for _, texture in next, {
-	MainMenuBarPageNumber,ActionBarUpButton,ActionBarDownButton, 							            --Art of Bar Number
-	MainMenuXPBarTextureLeftCap,MainMenuXPBarTextureRightCap,MainMenuXPBarTextureMid,  		--the background of xp bar bottom
-	StanceBarLeft, StanceBarMiddle, StanceBarRight, } 										                --Art of StanceBar when BL hide
-do	texture:SetParent(Empty_Art)  end]]
-
---[[------------------------------X   HotSpotMicroMenu by Sojik X ------------------------------]]--
+--------------------------------X   HotSpotMicroMenu by Sojik X --------------------------------
 
 local HotSpotMicroMenu = CreateFrame("Frame","MicroMenuHolder",UIParent)
 local MicroButtons = {
-CharacterMicroButton, SpellbookMicroButton, TalentMicroButton, AchievementMicroButton, QuestLogMicroButton, GuildMicroButton, LFDMicroButton, CollectionsMicroButton, EJMicroButton, StoreMicroButton, MainMenuMicroButton,}
---, HelpMicroButton, PVPMicroButton, SocialsMicroButton
-local function MoveMicroButtons(skinName)
+CharacterMicroButton, SpellbookMicroButton, TalentMicroButton, AchievementMicroButton, QuestLogMicroButton, GuildMicroButton, LFDMicroButton, CollectionsMicroButton, EJMicroButton, StoreMicroButton, MainMenuMicroButton,} --, HelpMicroButton, PVPMicroButton, SocialsMicroButton
+local function MoveMicroButtons()
 	for _, menu in pairs(MicroButtons) do
 		menu:SetParent(HotSpotMicroMenu)
 		menu:ClearAllPoints()
-		menu:SetScale(0.775)
+		menu:SetScale(0.75)
 	end
-	CharacterMicroButton:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", 3, -5)
-	EJMicroButton:SetPoint("BOTTOMRIGHT", CharacterMicroButton, "TOPRIGHT", 0, -5) 
-	CollectionsMicroButton:SetPoint("BOTTOMRIGHT", EJMicroButton, "TOPRIGHT", 0, -5)
-	TalentMicroButton:SetPoint("BOTTOMRIGHT", CollectionsMicroButton, "TOPRIGHT", 0, -5) 
-	LFDMicroButton:SetPoint("BOTTOMRIGHT", TalentMicroButton, "TOPRIGHT", 0, -5) 
-	AchievementMicroButton:SetPoint("BOTTOMRIGHT", LFDMicroButton, "TOPRIGHT", 0, -5)
-	SpellbookMicroButton:SetPoint("BOTTOMRIGHT", AchievementMicroButton, "TOPRIGHT", 0, -5)
-	GuildMicroButton:SetPoint("BOTTOMRIGHT", SpellbookMicroButton, "TOPRIGHT", 0, -5)
-	QuestLogMicroButton:SetPoint("BOTTOMRIGHT", GuildMicroButton, "TOPRIGHT", 0, -5)
-	StoreMicroButton:SetPoint("BOTTOMRIGHT", QuestLogMicroButton, "TOPRIGHT", 0, -5)
-	MainMenuMicroButton:SetPoint("BOTTOMRIGHT", StoreMicroButton, "TOPRIGHT", 0, -5)
+	CharacterMicroButton:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", 3, -8)
+	EJMicroButton:SetPoint("BOTTOMRIGHT", CharacterMicroButton, "TOPRIGHT", 0, -4) 
+	CollectionsMicroButton:SetPoint("BOTTOMRIGHT", EJMicroButton, "TOPRIGHT", 0, -4)
+	TalentMicroButton:SetPoint("BOTTOMRIGHT", CollectionsMicroButton, "TOPRIGHT", 0, -4) 
+	LFDMicroButton:SetPoint("BOTTOMRIGHT", TalentMicroButton, "TOPRIGHT", 0, -4) 
+	AchievementMicroButton:SetPoint("BOTTOMRIGHT", LFDMicroButton, "TOPRIGHT", 0, -4)
+	SpellbookMicroButton:SetPoint("BOTTOMRIGHT", AchievementMicroButton, "TOPRIGHT", 0, -4)
+	GuildMicroButton:SetPoint("BOTTOMRIGHT", SpellbookMicroButton, "TOPRIGHT", 0, -4)
+	
+	QuestLogMicroButton:SetPoint("BOTTOMLEFT", UIParent, "TOPRIGHT", 6, 6)
+	StoreMicroButton:SetPoint("BOTTOMRIGHT", QuestLogMicroButton, "TOPRIGHT", 0, -4)
+	MainMenuMicroButton:SetPoint("BOTTOMRIGHT", StoreMicroButton, "TOPRIGHT", 0, -4)
 end
-HotSpotMicroMenu:RegisterEvent("PLAYER_ENTERING_WORLD")
+HotSpotMicroMenu:RegisterEvent("PLAYER_LOGIN")
 HotSpotMicroMenu:SetScript("OnEvent", function()
   if not MaoRUISettingDB["Actionbar"]["Enable"] then return end
 	hooksecurefunc("UpdateMicroButtons", MoveMicroButtons)

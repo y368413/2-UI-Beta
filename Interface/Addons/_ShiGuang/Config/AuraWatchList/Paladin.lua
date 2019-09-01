@@ -50,7 +50,6 @@ local list = {
 		{AuraID = 105809, UnitID = "player"},	-- 神圣复仇者
 		{AuraID = 223316, UnitID = "player"},	-- 狂热殉道者
 		{AuraID = 200025, UnitID = "player"},	-- 美德道标
-		{AuraID = 132403, UnitID = "player"},	-- 正义盾击
 		{AuraID = 152262, UnitID = "player"},	-- 炽天使
 		{AuraID = 221883, UnitID = "player"},	-- 神圣马驹
 		{AuraID = 184662, UnitID = "player", Value = true},	-- 复仇之盾
@@ -66,11 +65,10 @@ local list = {
 		{AuraID = 156910, UnitID = "focus", Caster = "player"},	-- 信仰道标
 	},
 	["Spell Cooldown"] = {	-- 冷却计时组
-		{SlotID = 13, UnitID = "player"},		-- 饰品1
-		{SlotID = 14, UnitID = "player"},		-- 饰品2
-		{SpellID = 31884, UnitID = "player"},	-- 复仇之怒
-		{SpellID = 31842, UnitID = "player"},	-- 复仇之怒
-		{SpellID = 31821, UnitID = "player"},	-- 光环掌握
+		{SlotID = 13},		-- 饰品1
+		{SlotID = 14},		-- 饰品2
+		{SpellID = 31884},	-- 复仇之怒
+		{SpellID = 31821},	-- 光环掌握
 	},
 }
 

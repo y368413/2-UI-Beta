@@ -3,7 +3,12 @@ local M, R, U, I = unpack(ns)
 if not R.Infobar.Durability then return end
 
 local module = M:GetModule("Infobar")
-local info = module:RegisterInfobar(R.Infobar.DurabilityPos)
+local info = module:RegisterInfobar("Durability", R.Infobar.DurabilityPos)
+local format, gsub, sort, floor, modf, select = string.format, string.gsub, table.sort, math.floor, math.modf, select
+local GetInventoryItemLink, GetInventoryItemDurability, GetInventoryItemTexture = GetInventoryItemLink, GetInventoryItemDurability, GetInventoryItemTexture
+local GetMoneyString, GetMoney, GetRepairAllCost, RepairAllItems, CanMerchantRepair = GetMoneyString, GetMoney, GetRepairAllCost, RepairAllItems, CanMerchantRepair
+local GetAverageItemLevel, IsInGuild, CanGuildBankRepair, GetGuildBankWithdrawMoney = GetAverageItemLevel, IsInGuild, CanGuildBankRepair, GetGuildBankWithdrawMoney
+local C_Timer_After, IsShiftKeyDown, InCombatLockdown, CanMerchantRepair = C_Timer.After, IsShiftKeyDown, InCombatLockdown, CanMerchantRepair
 
 local localSlots = {
 	[1] = {1, HEADSLOT, 1000},
@@ -23,12 +28,18 @@ inform:SetPoint("BOTTOM", info, "TOP", 0, 23)
 inform.Text:SetText(U["Low Durability"])
 inform:Hide()
 
+local function sortSlots(a, b)
+	if a and b then
+		return a[3] < b[3]
+	end
+end
+
 local function getItemDurability()
 	local numSlots = 0
 	for i = 1, 10 do
 		if GetInventoryItemLink("player", localSlots[i][1]) then
 			local current, max = GetInventoryItemDurability(localSlots[i][1])
-			if current then 
+			if current then
 				localSlots[i][3] = current/max
 				numSlots = numSlots + 1
 			end
@@ -36,7 +47,8 @@ local function getItemDurability()
 			localSlots[i][3] = 1000
 		end
 	end
-	sort(localSlots, function(a, b) return a[3] < b[3] end)
+	sort(localSlots, sortSlots)
+
 	return numSlots
 end
 
@@ -50,7 +62,7 @@ end
 
 local function gradientColor(perc)
 	perc = perc > 1 and 1 or perc < 0 and 0 or perc -- Stay between 0-1
-	local seg, relperc = math.modf(perc*2)
+	local seg, relperc = modf(perc*2)
 	local r1, g1, b1, r2, g2, b2 = select(seg*3+1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0) -- R -> Y -> G
 	local r, g, b = r1+(r2-r1)*relperc, g1+(g2-g1)*relperc, b1+(b2-b1)*relperc
 	return format("|cff%02x%02x%02x", r*255, g*255, b*255), r, g, b
@@ -61,9 +73,9 @@ info.eventList = {
 }
 
 info.onEvent = function(self, event)
-	self:UnregisterEvent("PLAYER_ENTERING_WORLD")
-	if not MaoRUIDB["RepairType"] then MaoRUIDB["RepairType"] = 1 end
-
+	if event == "PLAYER_ENTERING_WORLD" then
+		self:UnregisterEvent("PLAYER_ENTERING_WORLD")
+	end
 	if event == "PLAYER_REGEN_ENABLED" then
 		self:UnregisterEvent(event)
 		self:RegisterEvent("UPDATE_INVENTORY_DURABILITY")
@@ -90,10 +102,10 @@ end)
 
 info.onMouseUp = function(self, btn)
 	if btn == "RightButton" then
-		MaoRUIDB["RepairType"] = MaoRUIDB["RepairType"] + 1
-		if MaoRUIDB["RepairType"] == 3 then MaoRUIDB["RepairType"] = 0 end
-		self:GetScript("OnEnter")(self)
+		MaoRUIDB["RepairType"] = mod(MaoRUIDB["RepairType"] + 1, 3)
+		self:onEnter()
 	else
+		if InCombatLockdown() then UIErrorsFrame:AddMessage(I.InfoColor..ERR_NOT_IN_COMBAT) return end
 		ToggleCharacter("PaperDollFrame")
 	end
 end
@@ -120,23 +132,31 @@ info.onEnter = function(self)
 		end
 	end
 
-	GameTooltip:AddDoubleLine(" ", "--------------", 1,1,1, .5,.5,.5)
+	GameTooltip:AddDoubleLine(" ", I.LineString)
 	GameTooltip:AddDoubleLine(" ", U["AutoRepair"]..": "..repairlist[MaoRUIDB["RepairType"]].." ", 1,1,1, .6,.8,1)
 	GameTooltip:Show()
 end
 
-info.onLeave = function() GameTooltip:Hide() end
+info.onLeave = M.HideTooltip
 
 -- Auto repair
-local isShown, isBankEmpty
+local isShown, isBankEmpty, autoRepair, repairAllCost, canRepair
 
-local function autoRepair(override)
+local function delayFunc()
+	if isBankEmpty then
+		autoRepair(true)
+	else
+		print(format(I.InfoColor.."%s:|r %s", U["Guild repair"], GetMoneyString(repairAllCost)))
+	end
+end
+
+function autoRepair(override)
 	if isShown and not override then return end
 	isShown = true
 	isBankEmpty = false
 
-	local repairAllCost, canRepair = GetRepairAllCost()
 	local myMoney = GetMoney()
+	repairAllCost, canRepair = GetRepairAllCost()
 
 	if canRepair and repairAllCost > 0 then
 		if (not override) and MaoRUIDB["RepairType"] == 1 and IsInGuild() and CanGuildBankRepair() and GetGuildBankWithdrawMoney() >= repairAllCost then
@@ -144,21 +164,15 @@ local function autoRepair(override)
 		else
 			if myMoney > repairAllCost then
 				RepairAllItems()
-				print(format(I.InfoColor.."%s:|r %s", U["Repair cost covered by G-Bank"], GetMoneyString(repairAllCost)))
+				print(format(I.InfoColor.."%s:|r %s", U["Repair cost"], GetMoneyString(repairAllCost)))
 				return
 			else
-				print("|cff99CCFF"..U["Go farm newbie"].."|r")
+				print(I.InfoColor..U["Repair error"])
 				return
 			end
 		end
 
-		C_Timer.After(.5, function()
-			if isBankEmpty then
-				autoRepair(true)
-			else
-				print(format(I.InfoColor.."%s:|r %s", U["Repair cost"], GetMoneyString(repairAllCost)))
-			end
-		end)
+		C_Timer_After(.5, delayFunc)
 	end
 end
 

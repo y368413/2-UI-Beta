@@ -1,4 +1,4 @@
-﻿--## SavedVariables: CaerdonWardrobeConfig  ## Version: v2.1.1
+﻿--## SavedVariables: CaerdonWardrobeConfig  ## Version: v2.3.5
 
 local eventFrame
 local isBagUpdate = false
@@ -63,8 +63,8 @@ local InventorySlots = {
 }
 
 local mainTip = CreateFrame( "GameTooltip", "CaerdonWardrobeGameTooltip", nil, "GameTooltipTemplate" )
-mainTip.ItemTooltip = CreateFrame("FRAME", "CaerdonWardrobeGameTooltipChild", nil, "InternalEmbeddedItemTooltipTemplate")
-mainTip.ItemTooltip.Tooltip.shoppingTooltips = { WorldMapCompareTooltip1, WorldMapCompareTooltip2 }
+mainTip.ItemTooltip = CreateFrame("FRAME", "CaerdonWardrobeGameTooltipChild", mainTip, "InternalEmbeddedItemTooltipTemplate")
+mainTip.ItemTooltip.Tooltip.shoppingTooltips = { ShoppingTooltip1, ShoppingTooltip2 }
 
 local cachedBinding = {}
 
@@ -220,15 +220,19 @@ end
 local function PlayerHasAppearance(appearanceID)
 	local hasAppearance = false
 
-    local sources = C_TransmogCollection.GetAppearanceSources(appearanceID)
+    local sources = C_TransmogCollection.GetAllAppearanceSources(appearanceID)
     local matchedSource
     if sources then
-        for i, source in pairs(sources) do
-            if source.isCollected then
-            	matchedSource = source
-                hasAppearance = true
-                break
-            end
+		for i, sourceID in pairs(sources) do
+			if sourceID and sourceID ~= NO_TRANSMOG_SOURCE_ID then
+				local categoryID, appearanceID, canEnchant, texture, isCollected, sourceItemLink = C_TransmogCollection.GetAppearanceSourceInfo(sourceID)
+
+				if isCollected then
+					matchedSource = source
+					hasAppearance = true
+					break
+				end
+			end
         end
     end
 
@@ -264,22 +268,12 @@ local function PlayerCanCollectAppearance(appearanceID, itemID, itemLink)
 		classArmor = LE_ITEM_ARMOR_MAIL
 	end
 
-	if equipSlot ~= "INVTYPE_CLOAK"
-		and itemClassID == LE_ITEM_CLASS_ARMOR and 
-		(	itemSubClassID == LE_ITEM_ARMOR_CLOTH or 
-			itemSubClassID == LE_ITEM_ARMOR_LEATHER or 
-			itemSubClassID == LE_ITEM_ARMOR_MAIL or
-			itemSubClassID == LE_ITEM_ARMOR_PLATE)
-		and itemSubClassID ~= classArmor then 
-			canCollect = false
-			return
-		end
 
 	if playerLevel >= reqLevel then
 	    local sources = C_TransmogCollection.GetAppearanceSources(appearanceID)
 	    if sources then
 	        for i, source in pairs(sources) do
-		        isInfoReady, canCollect = C_TransmogCollection.PlayerCanCollectSource(source.sourceID)
+				isInfoReady, canCollect = C_TransmogCollection.PlayerCanCollectSource(source.sourceID)
 	            if isInfoReady then
 	            	if canCollect then
 		            	matchedSource = source
@@ -289,7 +283,17 @@ local function PlayerCanCollectAppearance(appearanceID, itemID, itemLink)
 	            	shouldRetry = true
 	            end
 	        end
-	    end
+		else
+		end
+	end
+	if equipSlot ~= "INVTYPE_CLOAK"
+		and itemClassID == LE_ITEM_CLASS_ARMOR and 
+		(	itemSubClassID == LE_ITEM_ARMOR_CLOTH or 
+			itemSubClassID == LE_ITEM_ARMOR_LEATHER or 
+			itemSubClassID == LE_ITEM_ARMOR_MAIL or
+			itemSubClassID == LE_ITEM_ARMOR_PLATE)
+		and itemSubClassID ~= classArmor then 
+			canCollect = false
 	end
 
     return canCollect, matchedSource, shouldRetry
@@ -332,11 +336,15 @@ local function GetItemLinkLocal(bag, slot)
 	elseif bag == "LootFrame" or bag == "GroupLootFrame" then
 		return slot.link
 	elseif bag == "QuestButton" then
-		local itemID = slot.itemID
-		local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount,
-		itemEquipLoc, iconFileDataID, itemSellPrice, itemClassID, itemSubClassID, bindType, expacID, itemSetID, 
-		isCraftingReagent = GetItemInfo(itemID)
-		return itemLink
+		if slot.itemLink then
+			return slot.itemLink
+		else
+			local itemID = slot.itemID
+			local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount,
+			itemEquipLoc, iconFileDataID, itemSellPrice, itemClassID, itemSubClassID, bindType, expacID, itemSetID, 
+			isCraftingReagent = GetItemInfo(itemID)
+			return itemLink
+		end
 	else
 	    if bag then
 	      return GetContainerItemLink(bag, slot)
@@ -374,7 +382,9 @@ local function GetBindingStatus(bag, slot, itemID, itemLink)
 
     local isInEquipmentSet = false
     local isBindOnPickup = false
-    local isCompletionistItem = false
+	local isCompletionistItem = false
+	local matchesLootSpec = true
+	local unusableItem = false
     local isDressable, shouldRetry
 
     local isCollectionItem = IsCollectibleLink(itemLink)
@@ -385,9 +395,19 @@ local function GetBindingStatus(bag, slot, itemID, itemLink)
 		isDressable = false
 		shouldRetry = false
 	else
-	    isDressable, shouldRetry = IsDressableItemCheck(itemID, itemLink)
+		isDressable, shouldRetry = IsDressableItemCheck(itemID, itemLink)
 	end
 
+	local playerSpec = GetSpecialization();
+	local playerClassID = select(3, UnitClass("player")) 
+	local playerSpecID = -1
+	if (playerSpec) then
+		playerSpecID = GetSpecializationInfo(playerSpec, nil, nil, nil, UnitSex("player"));
+	end
+	local playerLootSpecID = GetLootSpecialization()
+	if playerLootSpecID == 0 then
+		playerLootSpecID = playerSpecID
+	end
 
 	if binding then
 		bindingText = binding.bindingText
@@ -396,6 +416,8 @@ local function GetBindingStatus(bag, slot, itemID, itemLink)
 		isInEquipmentSet = binding.isInEquipmentSet
 		isBindOnPickup = binding.isBindOnPickup
 		isCompletionistItem = binding.isCompletionistItem
+		unusableItem = binding.unusableItem
+		matchesLootSpec = binding.matchesLootSpec
 	elseif not shouldRetry then
 		needsItem = true
 		scanTip:SetOwner(WorldFrame, "ANCHOR_NONE")
@@ -418,9 +440,40 @@ local function GetBindingStatus(bag, slot, itemID, itemLink)
 			scanTip:SetLootItem(slot.index)
 		elseif bag == "GroupLootFrame" then
 			scanTip:SetLootRollItem(slot.index)
+		elseif bag == "EncounterJournal" then
+			local classID, specID = EJ_GetLootFilter();
+			if (specID == 0) then
+				if (playerSpec and classID == playerClassID) then
+					specID = playerSpecID
+				else
+					specID = -1;
+				end
+			end
+			scanTip:SetHyperlink(itemLink, classID, specID)
+
+			local specTable = GetItemSpecInfo(itemLink)
+			if specTable then
+				for specIndex = 1, #specTable do
+					matchesLootSpec = false
+
+					local validSpecID = GetSpecializationInfo(specIndex, nil, nil, nil, UnitSex("player"));
+					if validSpecID == playerLootSpecID then
+						matchesLootSpec = true
+						break
+					end
+				end
+			end
 		elseif bag == "QuestButton" then
-			GameTooltip_AddQuestRewardsToTooltip(scanTip, slot.questID)
-			scanTip = scanTip.ItemTooltip.Tooltip
+			if slot.questItem ~= nil and slot.questItem.type ~= nil then
+				if QuestInfoFrame.questLog then
+					scanTip:SetQuestLogItem(slot.questItem.type, slot.index, slot.questID)
+				else
+					scanTip:SetQuestItem(slot.questItem.type, slot.index, slot.questID)
+				end
+			else
+				GameTooltip_AddQuestRewardsToTooltip(scanTip, slot.questID)
+				scanTip = scanTip.ItemTooltip.Tooltip
+			end
 		else
 			scanTip:SetBagItem(bag, slot)
 		   	if not isCollectionItem then
@@ -453,7 +506,7 @@ local function GetBindingStatus(bag, slot, itemID, itemLink)
 							    if isVoidStorage then
 							    	-- Do nothing for now
 							    elseif isBank and not isBags then -- player or bank
-							    	if bag == BANK_CONTAINER and BankButtonIDToInvSlotID(slot) == equipSlot then
+									if bag == BANK_CONTAINER and BankButtonIDToInvSlotID(slot) == equipSlot then
 							    		needsItem = false
 										if bindingText then
 											bindingText = "*" .. bindingText
@@ -490,46 +543,78 @@ local function GetBindingStatus(bag, slot, itemID, itemLink)
 		end
 
 		local canBeChanged, noChangeReason, canBeSource, noSourceReason = C_Transmog.GetItemInfo(itemID)
-		if canBeSource then
-	        local hasTransmog = C_TransmogCollection.PlayerHasTransmog(itemID)
-	        if hasTransmog then
-	        	needsItem = false
-	        end
-	    else
+		if not isCollectionItem and canBeSource then
+			local appearanceID, isCollected, sourceID
+			appearanceID, isCollected, sourceID, shouldRetry = GetItemAppearance(itemID, itemLink)
+
+			if sourceID and sourceID ~= NO_TRANSMOG_SOURCE_ID then 
+				local hasTransmog = C_TransmogCollection.PlayerHasTransmogItemModifiedAppearance(sourceID)
+				if hasTransmog then
+					needsItem = false
+				else
+					if CaerdonWardrobeConfig.Icon.ShowLearnable.SameLookDifferentItem then
+						isCompletionistItem = true
+					end
+				end
+			end
+		else
 	    	needsItem = false
 	    end
 
-	  	local PET_KNOWN = strmatch(ITEM_PET_KNOWN, "[^%(]+")
-	  	local needsCollectionItem = true
-	  	local numLines = scanTip:NumLines()
-		for lineIndex = 1, numLines do
-			local scanName = scanTip:GetName()
-			local lineText = _G[scanName .. "TextLeft" .. lineIndex]:GetText()
-			if lineText then
-				-- TODO: Look at switching to GetItemSpell
-				if strmatch(lineText, USE_COLON) or strmatch(lineText, ITEM_SPELL_TRIGGER_ONEQUIP) or strmatch(lineText, string.format(ITEM_SET_BONUS, "")) then -- it's a recipe or has a "use" effect or belongs to a set
-					hasUse = true
-					-- break
-				end
+		local numLines = scanTip:NumLines()
+		local PET_KNOWN = strmatch(ITEM_PET_KNOWN, "[^%(]+")
+		local needsCollectionItem = true
 
-				if not bindingText then
-					bindingText = bindTextTable[lineText]
-				end
+		if not isCollectionItem and not noSourceReason and numLines == 0 then
+			shouldRetry = true
+		end
 
-				if lineText == RETRIEVING_ITEM_INFO then
-					shouldRetry = true
-					break
-				elseif lineText == ITEM_BIND_ON_PICKUP then
-					isBindOnPickup = true
-				elseif lineText == TRANSMOGRIFY_TOOLTIP_ITEM_UNKNOWN_APPEARANCE_KNOWN then
-					if CaerdonWardrobeConfig.Icon.ShowLearnable.SameLookDifferentItem then
-						isCompletionistItem = true
-					else
-						needsItem = false
+		if not shouldRetry then
+			for lineIndex = 1, numLines do
+				local scanName = scanTip:GetName()
+				local line = _G[scanName .. "TextLeft" .. lineIndex]
+				local lineText = line:GetText()
+				if lineText then
+					-- TODO: Look at switching to GetItemSpell
+					if strmatch(lineText, USE_COLON) or strmatch(lineText, ITEM_SPELL_TRIGGER_ONEQUIP) or strmatch(lineText, string.format(ITEM_SET_BONUS, "")) then -- it's a recipe or has a "use" effect or belongs to a set
+						hasUse = true
+						-- break
 					end
-					break
-				elseif lineText == ITEM_SPELL_KNOWN or strmatch(lineText, PET_KNOWN) then
-					needsCollectionItem = false
+
+					if not bindingText then
+						bindingText = bindTextTable[lineText]
+					end
+
+					if lineText == RETRIEVING_ITEM_INFO then
+						shouldRetry = true
+						break
+					elseif lineText == ITEM_BIND_ON_PICKUP or lineText == ITEM_SOULBOUND then
+						isBindOnPickup = true
+					elseif lineText == TRANSMOGRIFY_TOOLTIP_ITEM_UNKNOWN_APPEARANCE_KNOWN then
+						if CaerdonWardrobeConfig.Icon.ShowLearnable.SameLookDifferentItem then
+							isCompletionistItem = true
+						else
+							needsItem = false
+						end
+						break
+					elseif lineText == TRANSMOGRIFY_TOOLTIP_APPEARANCE_UNKNOWN then
+						if CaerdonWardrobeConfig.Icon.ShowLearnable.SameLookDifferentItem then
+							isCompletionistItem = true
+						end
+					elseif lineText == ITEM_SPELL_KNOWN or strmatch(lineText, PET_KNOWN) then
+						needsCollectionItem = false
+					end
+
+					-- TODO: Should possibly only look for "Classes:" but could have other reasons for not being usable
+					local r, g, b = line:GetTextColor()
+					hex = string.format("%02x%02x%02x", r*255, g*255, b*255)
+					if hex == "fe1f1f" and isBindOnPickup then
+						unusableItem = true
+						if not bag == "EncounterJournal" then
+							needsItem = false
+							isCompletionistItem = false
+						end
+					end
 				end
 			end
 		end
@@ -545,10 +630,8 @@ local function GetBindingStatus(bag, slot, itemID, itemLink)
 								-- TODO: Not sure what else to do here
 								needsItem = false
 							elseif numCollected > 0 then				
-								if isDebugItem then print("Already have it: " .. itemLink .. "- " .. numCollected) end
 								needsItem = false
 							else
-								if isDebugItem then print("Need: " .. itemLink .. ", " .. tostring(numCollected)) end
 								needsItem = true
 							end
 						else
@@ -562,11 +645,15 @@ local function GetBindingStatus(bag, slot, itemID, itemLink)
 				end
 			end
 
-			-- cachedBinding[itemKey] = {bindingText = bindingText, needsItem = needsItem, hasUse = hasUse, isDressable = isDressable, isInEquipmentSet = isInEquipmentSet, isBindOnPickup = isBindOnPickup, isCompletionistItem = isCompletionistItem }
+			-- cachedBinding[itemKey] = {bindingText = bindingText, needsItem = needsItem, hasUse = hasUse, isDressable = isDressable, isInEquipmentSet = isInEquipmentSet, isBindOnPickup = isBindOnPickup, isCompletionistItem = isCompletionistItem, unusableItem = unusableItem, matchesLootSpec = matchesLootSpec }
 		end
 	end
 
-	return bindingText, needsItem, hasUse, isDressable, isInEquipmentSet, isBindOnPickup, isCompletionistItem, shouldRetry
+	ShoppingTooltip1:Hide()
+	ShoppingTooltip2:Hide()
+	scanTip:Hide()
+
+	return bindingText, needsItem, hasUse, isDressable, isInEquipmentSet, isBindOnPickup, isCompletionistItem, shouldRetry, unusableItem, matchesLootSpec
 end
 
 local waitingOnItemData = {}
@@ -744,6 +831,8 @@ local function SetItemButtonMogStatus(originalButton, status, bindingStatus, opt
 		originalButton.caerdonButton = button
 	end
 
+	button:SetFrameLevel(originalButton:GetFrameLevel() + 100)
+
 	local mogStatus = button.mogStatus
 	local mogAnim = button.mogAnim
 	local iconPosition, showSellables, isSellable
@@ -830,7 +919,7 @@ local function SetItemButtonMogStatus(originalButton, status, bindingStatus, opt
 			button.isWaitingIcon = true
 		end
 	else
-		if status == "own" or status == "ownPlus" or status == "otherPlus" or status == "refundable" or status == "openable" then
+		if status == "own" or status == "ownPlus" or status == "otherSpec" or status == "otherSpecPlus" or status == "refundable" or status == "openable" then
 			showAnim = true
 
 			if mogAnim and button.isWaitingIcon then
@@ -875,6 +964,7 @@ local function SetItemButtonMogStatus(originalButton, status, bindingStatus, opt
 	-- 	end
 
 	local alpha = 1
+	mogStatus:SetVertexColor(1, 1, 1)
 	if status == "refundable" and not ShouldHideSellableIcon(bag) then
 		SetIconPositionAndSize(mogStatus, iconPosition, 3, 15, iconOffset)
 		alpha = 0.9
@@ -882,12 +972,10 @@ local function SetItemButtonMogStatus(originalButton, status, bindingStatus, opt
 	elseif status == "openable" and not ShouldHideSellableIcon(bag) then -- TODO: Add separate option for showing
 			SetIconPositionAndSize(mogStatus, iconPosition, 15, iconSize, iconOffset)
 			mogStatus:SetTexture("Interface\\Store\\category-icon-free")
-			mogStatus:SetVertexColor(1, 1, 1)
 	elseif status == "own" or status == "ownPlus" then
 		if not ShouldHideOwnIcon(bag) then
 			SetIconPositionAndSize(mogStatus, iconPosition, 15, iconSize, iconOffset)
 			mogStatus:SetTexture("Interface\\Store\\category-icon-clothes")  --Interface\\Store\\category-icon-featured
-			mogStatus:SetVertexColor(1, 1, 1)
 			if status == "ownPlus" then
 				mogStatus:SetVertexColor(0.4, 1, 0)
 			end
@@ -898,8 +986,17 @@ local function SetItemButtonMogStatus(originalButton, status, bindingStatus, opt
 		if not ShouldHideOtherIcon(bag) then
 			SetIconPositionAndSize(mogStatus, iconPosition, 15, otherIconSize, otherIconOffset)
 			mogStatus:SetTexture(otherIcon)
-			mogStatus:SetVertexColor(1, 1, 1)
 			if status == "otherPlus" then
+				mogStatus:SetVertexColor(0.4, 1, 0)
+			end
+		else
+			mogStatus:SetTexture("")
+		end
+	elseif status == "otherSpec" or status == "otherSpecPlus" then
+		if not ShouldHideOtherIcon(bag) then
+			SetIconPositionAndSize(mogStatus, iconPosition, 15, otherIconSize, otherIconOffset)
+			mogStatus:SetTexture("Interface\\COMMON\\icon-noloot")
+			if status == "otherSpecPlus" then
 				mogStatus:SetVertexColor(0.4, 1, 0)
 			end
 		else
@@ -964,21 +1061,26 @@ local function SetItemButtonBindType(button, mogStatus, bindingStatus, options, 
 	bindsOnText:ClearAllPoints()
 	bindsOnText:SetWidth(button:GetWidth())
 
-	if CaerdonWardrobeConfig.Binding.Position == "BOTTOM" then
-		bindsOnText:SetPoint("BOTTOMRIGHT", 0, 2)
+	local bindingPosition = options.overrideBindingPosition or CaerdonWardrobeConfig.Binding.Position
+	local bindingOffset = options.bindingOffset or 2
+
+	if bindingPosition == "BOTTOM" then
+		bindsOnText:SetPoint("BOTTOMRIGHT", bindingOffset, 2)
 		if bindingStatus == CaerdonWardrobeBoA then
 			local offset = options.itemCountOffset or 15
 			if (button.count and button.count > 1) then
 				bindsOnText:SetPoint("BOTTOMRIGHT", 0, offset)
-				if(options.bindingScale) then
-					bindsOnText:SetScale(options.bindingScale)
-				end
+			end
+			if(options.bindingScale) then
+				bindsOnText:SetScale(options.bindingScale)
 			end
 		end
-	elseif CaerdonWardrobeConfig.Binding.Position == "CENTER" then
+	elseif bindingPosition == "CENTER" then
 		bindsOnText:SetPoint("CENTER", 0, 0)
-	elseif CaerdonWardrobeConfig.Binding.Position == "TOP" then
+	elseif bindingPosition == "TOP" then
 		bindsOnText:SetPoint("TOPRIGHT", 0, -2)
+	else
+		bindsOnText:SetPoint(bindingPosition, options.bindingOffsetX or 2, options.bindingOffsetY or 2)
 	end
 
 	local bindingText
@@ -1068,10 +1170,10 @@ local function ProcessItem(itemID, bag, slot, button, options, itemProcessed)
 		return
 	end
 
-	local bindingStatus, needsItem, hasUse, isDressable, isInEquipmentSet, isBindOnPickup, isCompletionistItem, shouldRetry
+	local bindingStatus, needsItem, hasUse, isDressable, isInEquipmentSet, isBindOnPickup, isCompletionistItem, shouldRetry, unusableItem
 	local appearanceID, isCollected, sourceID
 
-	bindingStatus, needsItem, hasUse, isDressable, isInEquipmentSet, isBindOnPickup, isCompletionistItem, shouldRetry = GetBindingStatus(bag, slot, itemID, itemLink)
+	bindingStatus, needsItem, hasUse, isDressable, isInEquipmentSet, isBindOnPickup, isCompletionistItem, shouldRetry, unusableItem, matchesLootSpec = GetBindingStatus(bag, slot, itemID, itemLink)
 	if shouldRetry then
 		QueueProcessItem(itemLink, itemID, bag, slot, button, options, itemProcessed)
 		return
@@ -1088,36 +1190,52 @@ local function ProcessItem(itemID, bag, slot, button, options, itemProcessed)
 	end
 
 	if appearanceID then
-		if(needsItem and not isCollected and not PlayerHasAppearance(appearanceID)) then
-			local canCollect, matchedSource, shouldRetry = PlayerCanCollectAppearance(appearanceID, itemID, itemLink)
-			if shouldRetry then
-				QueueProcessItem(itemLink, itemID, bag, slot, button, options, itemProcessed)
-				return
-			end
+		local canCollect, matchedSource, shouldRetry = PlayerCanCollectAppearance(appearanceID, itemID, itemLink)
+		if shouldRetry then
+			QueueProcessItem(itemLink, itemID, bag, slot, button, options, itemProcessed)
+			return
+		end
 
-			if canCollect then
+		if(needsItem and not isCollected and not PlayerHasAppearance(appearanceID)) then
+			if canCollect and not unusableItem then
 				mogStatus = "own"
 			else
-				if bindingStatus and needsItem then
+				if bindingStatus then
 					mogStatus = "other"
-				elseif (bag == "EncounterJournal" or bag == "QuestButton") and needsItem then
+				elseif (bag == "EncounterJournal" or bag == "QuestButton") then
 					mogStatus = "other"
-				elseif (bag == "LootFrame" or bag == "GroupLootFrame") and needsItem and not isBindOnPickup then
+				elseif (bag == "LootFrame" or bag == "GroupLootFrame") and not isBindOnPickup then
 					mogStatus = "other"
+				elseif unusableItem then
+					mogStatus = "collected"
 				end
+			end
+
+			if not matchesLootSpec and bag == "EncounterJournal" then
+				mogStatus = "otherSpec"
 			end
 		else
 
 			if isCompletionistItem then
 				-- You have this, but you want them all.  Why?  Because.
-				local _, _, _, _, reqLevel, class, subclass, _, equipSlot = GetItemInfo(itemID)
-				local playerLevel = UnitLevel("player")
 
-				if playerLevel >= reqLevel then
+				-- local _, _, _, _, reqLevel, class, subclass, _, equipSlot = GetItemInfo(itemID)
+				-- local playerLevel = UnitLevel("player")
+
+				if canCollect then
 					mogStatus = "ownPlus"
 				else
 					mogStatus = "otherPlus"
 				end
+
+				if not matchesLootSpec and bag == "EncounterJournal" then
+					mogStatus = "otherSpecPlus"
+				end
+
+				if unusableItem then
+					mogStatus = "otherPlus"
+				end
+
 			-- If an item isn't flagged as a source or has a usable effect,
 			-- then don't mark it as sellable right now to avoid accidents.
 			-- May need to expand this to account for other items, too, for now.
@@ -1213,7 +1331,7 @@ local function ProcessItem(itemID, bag, slot, button, options, itemProcessed)
 end
 
 local function ProcessOrWaitItem(itemID, bag, slot, button, options, itemProcessed)
-	if itemID then
+	if itemID and GetItemInfoInstant(itemID) then
 		local waitItem = waitingOnItemData[tostring(itemID)]
 		if not waitItem then
 			waitItem = {}
@@ -1512,6 +1630,7 @@ local ignoreEvents = {
 	["COMPANION_UPDATE"] = {},
 	["CRITERIA_UPDATE"] = {},
 	["CURSOR_UPDATE"] = {},
+	["FRIENDLIST_UPDATE"] = {},
 	["GET_ITEM_INFO_RECEIVED"] = {},
 	["GUILDBANKBAGSLOTS_CHANGED"] = {},
 	["GUILD_ROSTER_UPDATE"] = {},
@@ -1529,8 +1648,12 @@ local ignoreEvents = {
 	["UNIT_POWER"] = {},
 	["UNIT_POWER_FREQUENT"] = {},
 	["UPDATE_INVENTORY_DURABILITY"] = {},
+	["UNIT_ATTACK_SPEED"] = {},
+	["UNIT_SPELL_HASTE"] = {},
+	["UNIT_TARGET"] = {},
 	["UPDATE_MOUSEOVER_UNIT"] = {},
 	["UPDATE_PENDING_MAIL"] = {},
+	["UPDATE_UI_WIDGET"] = {},
 	["UPDATE_WORLD_STATES"] = {},
 	["QUESTLINE_UPDATE"] = {},
 	["WORLD_MAP_UPDATE"] = {}
@@ -1722,6 +1845,128 @@ function eventFrame:ADDON_LOADED(name)
 	end
 end
 
+function UpdatePin(pin)
+	local options = {
+		iconOffset = -5,
+		iconSize = 60,
+		overridePosition = "TOPRIGHT",
+		-- itemCountOffset = 10,
+		-- bindingScale = 0.9
+	}
+
+	if GetNumQuestLogRewards(pin.questID) > 0 then
+		local itemName, itemTexture, numItems, quality, isUsable, itemID = GetQuestLogRewardInfo(1, pin.questID)
+		CaerdonWardrobe:UpdateButton(itemID, "QuestButton", { itemID = itemID, questID = pin.questID }, pin, options)
+	else
+		CaerdonWardrobe:ClearButton(pin)
+	end
+end
+
+local function OnQuestInfoShowRewards(template, parentFrame)
+	local numQuestRewards = 0;
+	local numQuestChoices = 0;
+	local rewardsFrame = QuestInfoFrame.rewardsFrame;
+	local questID
+
+	if ( template.canHaveSealMaterial ) then
+		local questFrame = parentFrame:GetParent():GetParent();
+		if ( template.questLog ) then
+			questID = questFrame.questID;
+		else
+			questID = GetQuestID();
+		end
+	end
+
+	local spellGetter;
+	if ( QuestInfoFrame.questLog ) then
+		questID = select(8, GetQuestLogTitle(GetQuestLogSelection()));
+		if C_QuestLog.ShouldShowQuestRewards(questID) then
+			numQuestRewards = GetNumQuestLogRewards();
+			numQuestChoices = GetNumQuestLogChoices();
+			-- playerTitle = GetQuestLogRewardTitle();
+			-- numSpellRewards = GetNumQuestLogRewardSpells();
+			-- spellGetter = GetQuestLogRewardSpell;
+		end
+	else
+		numQuestRewards = GetNumQuestRewards();
+		numQuestChoices = GetNumQuestChoices();
+		-- playerTitle = GetRewardTitle();
+		-- numSpellRewards = GetNumRewardSpells();
+		-- spellGetter = GetRewardSpell;
+	end
+
+	local options = {
+		iconOffset = 0,
+		iconSize = 40,
+		overridePosition = "TOPLEFT",
+		overrideBindingPosition = "TOPLEFT",
+		bindingOffsetX = -53,
+		bindingOffsetY = -16
+	}
+
+	local questItem, name, texture, quality, isUsable, numItems, itemID;
+	local rewardsCount = 0;
+	if ( numQuestChoices > 0 ) then
+		local index;
+		local itemLink;
+		local baseIndex = rewardsCount;
+		for i = 1, numQuestChoices do
+			index = i + baseIndex;
+			questItem = QuestInfo_GetRewardButton(rewardsFrame, index);
+			if ( QuestInfoFrame.questLog ) then
+				name, texture, numItems, quality, isUsable, itemID = GetQuestLogChoiceInfo(i);
+			else
+				name, texture, numItems, quality, isUsable = GetQuestItemInfo(questItem.type, i);
+				itemLink = GetQuestItemLink(questItem.type, i);
+				itemID = GetItemID(itemLink)
+			end
+			rewardsCount = rewardsCount + 1;
+
+			CaerdonWardrobe:UpdateButton(itemID, "QuestButton", { itemID = itemID, questID = questID, index = i, questItem = questItem }, questItem, options)
+		end
+	end
+
+	if ( numQuestRewards > 0) then
+		local index;
+		local itemLink;
+		local baseIndex = rewardsCount;
+		local buttonIndex = 0;
+		for i = 1, numQuestRewards, 1 do
+			buttonIndex = buttonIndex + 1;
+			index = i + baseIndex;
+			questItem = QuestInfo_GetRewardButton(rewardsFrame, index);
+			questItem.type = "reward";
+			questItem.objectType = "item";
+			if ( QuestInfoFrame.questLog ) then
+				name, texture, numItems, quality, isUsable, itemID = GetQuestLogRewardInfo(i);
+			else
+				name, texture, numItems, quality, isUsable = GetQuestItemInfo(questItem.type, i);
+				itemLink = GetQuestItemLink(questItem.type, i);
+				if itemLink ~= nil then
+					itemID = GetItemID(itemLink)
+				else
+					itemID = -1
+				end
+			end
+			rewardsCount = rewardsCount + 1;
+
+			if itemID ~= -1 then
+				CaerdonWardrobe:UpdateButton(itemID, "QuestButton", { itemID = itemID, questID = questID, index = i, questItem = questItem }, questItem, options)
+			end
+		end
+	end
+end
+
+local function OnQuestInfoDisplay(template, parentFrame)
+	-- Hooking OnQuestInfoDisplay instead of OnQuestInfoShowRewards directly because it seems to work
+	-- and I was having some problems.  :)
+	local i = 1
+	while template.elements[i] do
+		if template.elements[i] == QuestInfo_ShowRewards then OnQuestInfoShowRewards(template, parentFrame) return end
+		i = i + 3
+	end
+end
+
 function eventFrame:PLAYER_LOGIN(...)
 		-- eventFrame:RegisterEvent "PLAYERBANKSLOTS_CHANGED"
 		eventFrame:RegisterEvent "BAG_OPEN"
@@ -1733,7 +1978,16 @@ function eventFrame:PLAYER_LOGIN(...)
 		-- eventFrame:RegisterEvent "TRANSMOG_COLLECTION_ITEM_UPDATE"
 		eventFrame:RegisterEvent "EQUIPMENT_SETS_CHANGED"
 		eventFrame:RegisterEvent "MERCHANT_UPDATE"
+		eventFrame:RegisterEvent "PLAYER_LOOT_SPEC_UPDATED"
 	C_TransmogCollection.SetShowMissingSourceInItemTooltips(true)
+
+	hooksecurefunc (WorldMap_WorldQuestPinMixin, "RefreshVisuals", function (self)
+		if not IsModifiedClick("COMPAREITEMS") and not ShoppingTooltip1:IsShown() then
+			UpdatePin(self);
+		end
+	end)
+	-- hooksecurefunc("QuestInfo_GetRewardButton", OnQuestInfoGetRewardButton)
+	-- hooksecurefunc("QuestInfo_ShowRewards", OnQuestInfoShowRewards)
 end
 
 function RefreshMainBank()
@@ -1861,6 +2115,12 @@ function eventFrame:GET_ITEM_INFO_RECEIVED(itemID)
 	end
 end
 
+function eventFrame:PLAYER_LOOT_SPEC_UPDATED()
+	if EncounterJournal then
+		EncounterJournal_LootUpdate()
+	end
+end
+
 function eventFrame:TRANSMOG_COLLECTION_ITEM_UPDATE()
 	-- RefreshItems()
 end
@@ -1945,6 +2205,7 @@ function OnGroupLootFrameShow(frame)
 end
 
 hooksecurefunc("LootFrame_UpdateButton", OnLootFrameUpdateButton)
+hooksecurefunc("QuestInfo_Display", OnQuestInfoDisplay)
 
 GroupLootFrame1:HookScript("OnShow", OnGroupLootFrameShow)
 GroupLootFrame2:HookScript("OnShow", OnGroupLootFrameShow)

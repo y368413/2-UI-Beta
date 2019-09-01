@@ -43,8 +43,9 @@ function SortButton:OnClick(button)
 		DepositReagentBank()
 	else
 		if self:GetParent():IsBank() then
-			SortReagentBankBags()
+			self:RegisterEvent('BAG_UPDATE_DELAYED')
 			SortBankBags()
+			--SortReagentBankBags()   8.1.5已失效
 		elseif button == 'RightButton' then
 		  SetSortBagsRightToLeft(false)      --整理向左边背包移动
 		  SetInsertItemsLeftToRight(false)   --新增物品自动进入最右边背包 
@@ -76,4 +77,12 @@ function SortButton:OnLeave()
 	if GameTooltip:IsOwned(self) then
 		GameTooltip:Hide()
 	end
+end
+
+
+--[[ Events ]]--
+
+function SortButton:BAG_UPDATE_DELAYED()
+	self:UnregisterEvent('BAG_UPDATE_DELAYED')
+	SortReagentBankBags()
 end

@@ -239,7 +239,7 @@ function TOTxp_DangerInfo(msg)
 	if (alreadyOT == "no" or alreadyOT == "?") then
 		TOTxpFrame_Info:AddMessage(msg, 1, 0.2, 0);
 		--LowHealthFrame:Show();
-		PlaySoundFile("Sound\\Doodad\\BellTollNightElf.ogg");
+		--PlaySoundFile("Sound\\Doodad\\BellTollNightElf.ogg", "Master");
 	end
 	alreadyOT = "yes";
 end

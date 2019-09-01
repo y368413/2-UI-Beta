@@ -3,9 +3,13 @@ local M, R, U, I = unpack(ns)
 if not R.Infobar.Location then return end
 
 local module = M:GetModule("Infobar")
-local info = module:RegisterInfobar(R.Infobar.LocationPos)
+local info = module:RegisterInfobar("Location", R.Infobar.LocationPos)
 local mapModule = M:GetModule("Maps")
+local format, unpack = string.format, unpack
 info.text:SetFont(unpack(R.Infobar.TTFonts))
+local WorldMapFrame, SELECTED_DOCK_FRAME, ChatFrame_OpenChat = WorldMapFrame, SELECTED_DOCK_FRAME, ChatFrame_OpenChat
+local GetSubZoneText, GetZoneText, GetZonePVPInfo, IsInInstance = GetSubZoneText, GetZoneText, GetZonePVPInfo, IsInInstance
+local C_Map_GetBestMapForUnit = C_Map.GetBestMapForUnit
 
 local zoneInfo = {
 	sanctuary = {SANCTUARY_TERRITORY, {.41, .8, .94}},
@@ -38,54 +42,3 @@ info.onEvent = function(self)
 	if subzone ~= '' and subzone ~= realzone then self.text:SetFormattedText('%s - %s', realzone, subzone) else self.text:SetText(realzone) end
 	self.text:SetTextColor(r, g, b)
 end
-
---[[local function UpdateCoords(self, elapsed)
-	self.elapsed = (self.elapsed or 0) + elapsed
-	if self.elapsed > .1 then
-		local x, y = mapModule:GetPlayerMapPos(C_Map.GetBestMapForUnit("player"))
-		if x then
-			coordX, coordY = x, y
-		else
-			coordX, coordY = 0, 0
-			self:SetScript("OnUpdate", nil)
-		end
-		self:GetScript("OnEnter")(self)
-
-		self.elapsed = 0
-	end
-end]]
-
---info.onEnter = function(self)
-	--self:SetScript("OnUpdate", UpdateCoords)
-
-	--GameTooltip:SetOwner(self, "ANCHOR_BOTTOM", 0, -15)
-	--GameTooltip:ClearLines()
-	--GameTooltip:AddLine(format("%s |cffffffff(%s)", zone, formatCoords()), 0,.6,1)
-
-	--if pvp[1] and not IsInInstance() then
-		--local r, g, b = unpack(zoneInfo[pvp[1]][2])
-		--if subzone and subzone ~= zone then 
-			--GameTooltip:AddLine(" ")
-			--GameTooltip:AddLine(subzone, r, g, b)
-		--end
-		--GameTooltip:AddLine(format(zoneInfo[pvp[1]][1], pvp[3] or ""), r, g, b)
-	--end
-
-	--GameTooltip:AddDoubleLine(" ", I.LineString)
-	--GameTooltip:AddDoubleLine(" ", I.LeftButton.."WorldMap".." ", 1,1,1, .6,.8,1)
-	--GameTooltip:AddDoubleLine(" ", I.RightButton.."Send My Pos".." ", 1,1,1, .6,.8,1)
-	--GameTooltip:Show()
---end
-
---info.onLeave = function(self)
-	--self:SetScript("OnUpdate", nil)
-	--GameTooltip:Hide()
---end
-
---info.onMouseUp = function(_, btn)
-	--if btn == "LeftButton" then
-		--ToggleFrame(WorldMapFrame)
-	--if btn == "RightButton" then
-		--ChatFrame_OpenChat(format("%s: %s (%s)", U["My Position"], zone, formatCoords()), SELECTED_DOCK_FRAME)
-	--end
---end

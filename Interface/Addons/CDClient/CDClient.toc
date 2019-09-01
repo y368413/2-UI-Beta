@@ -1,0 +1,6 @@
+## Interface: 80200
+## Title: 小软CD客户端
+## Notes: 染CD,开传送门,右键单击"组"按钮可以隐藏插件,隐藏后输入/cdc重新显示.
+## Author: DemonW
+## SavedVariables: CDClientDB
+CDClient.lua

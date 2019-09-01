@@ -5,7 +5,7 @@
 
 local ADDON, Addon = ...
 local Cache = LibStub('LibItemCache-2.0')
-local ItemSlot = Addon:NewClass('ItemSlot', 'Button')
+local ItemSlot = Addon:NewClass('ItemSlot', Addon.IsRetail and 'ItemButton' or 'Button')
 ItemSlot.unused = {}
 ItemSlot.nextID = 0
 
@@ -34,7 +34,8 @@ function ItemSlot:New(parent, bag, slot)
 end
 
 function ItemSlot:Create()
-	local item = self:Bind(self:Construct())
+	local id = self:GetNextID()
+	local item = self:Bind(self:GetBlizzard(id) or self:Construct(id))
 	local name = item:GetName()
 
 	item.UpdateTooltip = nil
@@ -66,7 +67,7 @@ function ItemSlot:Create()
 
 	item:SetScript('OnShow', item.OnShow)
 	item:SetScript('OnHide', item.OnHide)
-	item:SetScript('PreClick', item.OnPreClick)
+    if item:GetScript('PreClick') then item:HookScript('PreClick', item.OnPreClick) else item:SetScript('PreClick', item.OnPreClick) end --abyui
 	item:HookScript('OnDragStart', item.OnDragStart)
 	item:HookScript('OnClick', item.OnClick)
 	item:SetScript('OnEnter', item.OnEnter)
@@ -76,9 +77,29 @@ function ItemSlot:Create()
 	return item
 end
 
-function ItemSlot:Construct()
-	self.nextID = self.nextID + 1
-	return CreateFrame('Button', ADDON .. self.Name .. self.nextID, nil, 'ContainerFrameItemButtonTemplate')
+function ItemSlot:GetNextID()
+    self.nextID = self.nextID + 1
+    return self.nextID
+end
+
+function ItemSlot:Construct(id)
+    return CreateFrame('ItemButton', ADDON..self.Name..id, nil, 'ContainerFrameItemButtonTemplate')
+end
+
+function ItemSlot:GetBlizzard(id)
+    if Addon.sets.displayBlizzard or not Addon:AreBasicFramesEnabled() then
+        return
+    end
+
+    local bag = ceil(id / MAX_CONTAINER_ITEMS)
+    local slot = (id-1) % MAX_CONTAINER_ITEMS + 1
+    local item = _G[format('ContainerFrame%dItem%d', bag, slot)]
+
+    if item then
+        item:SetID(0)
+        item:ClearAllPoints()
+        return item
+    end
 end
 
 function ItemSlot:Restore()
@@ -88,7 +109,8 @@ end
 function ItemSlot:Free()
 	self:Hide()
 	self:SetParent(nil)
-	self.frame, self.depositSlot = nil
+	self.frame = nil
+	self.depositSlot = nil
 	tinsert(self.unused, self)
 end
 
@@ -121,8 +143,12 @@ end
 
 function ItemSlot:OnPreClick(button)
 	if IsAddOnLoaded("AuctionsMaster") then return end
-	if not IsModifiedClick() and button == 'RightButton' then
-		if Cache.AtBank and IsReagentBankUnlocked() and GetContainerNumFreeSlots(REAGENTBANK_CONTAINER) > 0 then
+	if IsModifiedClick() or button ~= 'RightButton' then
+		return
+	end
+
+	if REAGENTBANK_CONTAINER and Cache.AtBank then
+		if IsReagentBankUnlocked() and GetContainerNumFreeSlots(REAGENTBANK_CONTAINER) > 0 then
 			if not Addon:IsReagents(self:GetBag()) and ItemSearch:TooltipPhrase(self.info.link, PROFESSIONS_USED_IN_COOKING) then
 				local maxstack = select(8, GetItemInfo(self.info.id))
 
@@ -143,13 +169,13 @@ function ItemSlot:OnPreClick(button)
 				return UseContainerItem(self:GetBag(), self:GetID(), nil, true)
 			end
 		end
+	end
 
-		if not self.canDeposit then
-			for i = 1,9 do
-				if not GetVoidTransferDepositInfo(i) then
-					self.depositSlot = i
-					return
-				end
+	if Addon.HasVault then
+		for i = 1,9 do
+			if not GetVoidTransferDepositInfo(i) then
+				self.depositSlot = i
+				return
 			end
 		end
 	end
@@ -160,7 +186,7 @@ function ItemSlot:OnClick(button)
 		if Addon.sets.flashFind and self.info.id then
 			self:SendSignal('FLASH_ITEM', self.info.id)
 		end
-	elseif GetNumVoidTransferDeposit() > 0 and button == 'RightButton' then
+	elseif GetNumVoidTransferDeposit and GetNumVoidTransferDeposit() > 0 and button == 'RightButton' then
 		if self.canDeposit and self.depositSlot then
 			ClickVoidTransferDepositSlot(self.depositSlot, true)
 		end
@@ -191,8 +217,11 @@ function ItemSlot:OnEnter()
 end
 
 function ItemSlot:OnLeave()
+	if BattlePetTooltip then
+		BattlePetTooltip:Hide()
+	end
+
 	GameTooltip:Hide()
-	BattlePetTooltip:Hide()
 	ResetCursor()
 end
 
@@ -200,18 +229,23 @@ end
 --[[ Update ]]--
 
 function ItemSlot:Update()
-	local info = self:GetInfo()
-
-	self.info, self.hasItem, self.readable = info, info.id and true, info.readable
-	self:After(0.1, 'SecondaryUpdate')
+	self.info = self:GetInfo()
+	self.hasItem = self.info.id and true
+	self.readable = self.info.readable
+	self:After(0.1, 'UpdateSecondary')
 	self:UpdateSlotColor()
 	self:UpdateBorder()
 
-	SetItemButtonTexture(self, info.icon or self:GetEmptyItemIcon())
-	SetItemButtonCount(self, info.count)
+	SetItemButtonTexture(self, self.info.icon or self:GetEmptyItemIcon())
+	SetItemButtonCount(self, self.info.count)
 end
 
-function ItemSlot:SecondaryUpdate()
+function ItemSlot:UpdateLocked()
+	self.info = self:GetInfo()
+	self:SetLocked(self.info.locked)
+end
+
+function ItemSlot:UpdateSecondary()
 	self:UpdateFocus()
 	self:UpdateSearch()
 	self:UpdateCooldown()
@@ -249,7 +283,7 @@ function ItemSlot:UpdateBorder()
 		end
 	end
 
-	self.IconBorder:SetTexture(id and C_ArtifactUI.GetRelicInfoByItemID(id) and 'Interface\\Artifacts\\RelicIconFrame' or 'Interface\\Common\\WhiteIconFrame')
+	self.IconBorder:SetTexture(id and C_ArtifactUI and C_ArtifactUI.GetRelicInfoByItemID(id) and 'Interface\\Artifacts\\RelicIconFrame' or 'Interface\\Common\\WhiteIconFrame')
 	self.IconBorder:SetVertexColor(r, g, b)
 	self.IconBorder:SetShown(r)
 
@@ -259,7 +293,7 @@ function ItemSlot:UpdateBorder()
 	self.NewItemTexture:SetAtlas(quality and NEW_ITEM_ATLAS_BY_QUALITY[quality] or 'bags-glow-white')
 	self.NewItemTexture:SetShown(new and not paid)
 
-	self.IconOverlay:SetShown(id and C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(id))
+	self.IconOverlay:SetShown(id and C_AzeriteEmpoweredItem and C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(id))
 	self.BattlepayItemTexture:SetShown(new and paid)
 	self.QuestBorder:SetShown(questID)
 end
@@ -279,10 +313,6 @@ function ItemSlot:UpdateUpgradeIcon()
 	else
 		self.UpgradeIcon:SetShown(isUpgrade)
 	end
-end
-
-function ItemSlot:UpdateLocked()
-	self:SetLocked(self.info.locked)
 end
 
 function ItemSlot:SetLocked(locked)
@@ -305,13 +335,8 @@ function ItemSlot:UpdateSearch()
 	local search = Addon.canSearch and Addon.search or ''
 	local matches = search == '' or ItemSearch:Matches(self.info.link, search)
 
-	if matches then
-		self:SetAlpha(1)
-		self:UpdateLocked()
-	else
-		self:SetLocked(true)
-		self:SetAlpha(0.3)
-	end
+	self:SetAlpha(matches and 1 or 0.3)
+	self:SetLocked(not matches or self.info.locked)
 end
 
 function ItemSlot:UpdateFocus()
@@ -372,11 +397,11 @@ end
 
 function ItemSlot:IsQuestItem()
 	if self.info.id then
-		if self.info.cached then
-			return select(12, GetItemInfo(self.info.id)) == LE_ITEM_CLASS_QUESTITEM or ItemSearch:Tooltip(self.info.link, QUEST_LOWER), false
-		else
+		if not self.info.cached and GetContainerItemQuestInfo then
 			local isQuest, questID, isActive = GetContainerItemQuestInfo(self:GetBag(), self:GetID())
 			return isQuest, (questID and not isActive)
+		else
+			return select(12, GetItemInfo(self.info.id)) == LE_ITEM_CLASS_QUESTITEM or ItemSearch:Tooltip(self.info.link, QUEST_LOWER), false
 		end
 	end
 end
@@ -390,7 +415,7 @@ function ItemSlot:IsPaid()
 end
 
 function ItemSlot:IsUpgrade()
-	return IsContainerItemAnUpgrade(self:GetBag(), self:GetID())
+	return IsContainerItemAnUpgrade and IsContainerItemAnUpgrade(self:GetBag(), self:GetID())
 end
 
 function ItemSlot:IsSlot(bag, slot)

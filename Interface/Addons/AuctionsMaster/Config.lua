@@ -129,6 +129,7 @@ local SellOptions = {
       step = 0.01,
       order = 2,
     },
+    header1 = { type = "header", name = "", order = 2.5},
     bidUndercutFixed = {
       name = L["Bid Undercut (Fixed)"],
       desc = L["Fixed amount to undercut market value for bid prices (e.g., 1g 2s 3c)."],
@@ -147,6 +148,7 @@ local SellOptions = {
       get = "GetFixedBuyoutUndercut",
       set = "SetFixedBuyoutUndercut",
     },
+    header2 = { type = "header", name = "", order = 4.5},
     vendorMultiplier = {
       type = "range",
       desc = L["Amount to multiply by vendor price to get default sell price."],
@@ -165,6 +167,7 @@ local SellOptions = {
       step = 0.01,
       order = 6,
     },
+    header3 = { type = "header", name = "", order = 6.5},
     defaultStacks = {
       type = "select",
       desc = L["Number of stacks suggested when an item is first placed in the \"Sell\" tab."],
@@ -385,12 +388,12 @@ local Defaults = {
   profile = {
     method = 1,
     duration = 3,
-    bidUndercut = 0.25,
-    buyoutUndercut = 0.02,
+    bidUndercut = 0.01,
+    buyoutUndercut = 0.01,
     bidUndercutFixed = 0,
     buyoutUndercutFixed = 0,
     vendorMultiplier = 3,
-    roundPrices = 0.05,
+    roundPrices = 0.01,
     minProfit = 10,
     minDiscount = 0.25,
     getAll = false,
@@ -407,7 +410,7 @@ local Defaults = {
     coinTooltips = true,
     showStackPrice = true,
     storePrices = true,
-    startTab = "a_default",
+    startTab = "d_last",
     lastTab = 1,
     fastScanAd = false,
     showGreeting = false,
@@ -738,7 +741,7 @@ function AuctionLite:InitConfig()
   config:RegisterOptionsTable("AuctionLite", SlashOptions, SlashCmds);
 
   local registry = LibStub("AceConfigRegistry-3.0");
-  registry:RegisterOptionsTable("AuctionLite Options", Options);
+  registry:RegisterOptionsTable("AuctionLite Options", Options); Options.name = L["AuctionLite Options"]
   registry:RegisterOptionsTable("AuctionLite Buy", BuyOptions);
   registry:RegisterOptionsTable("AuctionLite Sell", SellOptions);
   registry:RegisterOptionsTable("AuctionLite Tooltips", TooltipOptions);

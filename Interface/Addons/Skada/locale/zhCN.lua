@@ -3,6 +3,7 @@ local L = LibStub("AceLocale-3.0"):NewLocale("Skada", "zhCN", false)
 if not L then return end
 
 L["SkadaTitle"] = "|cff8000ff[战斗]|r伤害统计"
+L["Always show spec icon"] = "总是显示专精图标"
 L["%s dies"] = "%s次死亡"
 L["%s on %s removed by %s"] = "%s 在 %s 被 %s 移除"
 L["%s on %s removed by %s's %s"] = "%s 在 %s 被 %s 的 %s 移除"
@@ -426,3 +427,12 @@ L["Windows"] = "窗口"
 L["Wipe mode"] = "灭团模式"
 L["Yes"] = "是"
 L["Friendly Fire"] = "队友误伤"
+L["List of damaging spells"] = "伤害技能列表"
+L["List of players damaged"] = "伤害玩家列表"
+L["spells"] = "技能"
+L["targets"] = "目标"
+
+L["Healing: Personal HPS"] = "治疗:个人HPS"
+L["Healing: Raid HPS"] = "治疗:团队HPS"
+L["RHPS"] = true
+

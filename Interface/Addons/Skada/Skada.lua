@@ -885,7 +885,7 @@ function Skada:Report(channel, chantype, report_mode_name, report_set_name, max,
 		if data.id then
 			local label = data.reportlabel or (data.spellid and GetSpellLink(data.spellid)) or data.label
 			if report_mode.metadata and report_mode.metadata.showspots then
-				sendchat(("%2u. %s   %s"):format(nr, label, data.valuetext), channel, chantype)
+				sendchat(("%2u. %s %s   %s"):format(nr, (data.specname and "["..data.specname.."]" or ""), label, data.valuetext), channel, chantype)
 			else
 				sendchat(("%s   %s"):format(label, data.valuetext), channel, chantype)
 			end
@@ -2789,39 +2789,32 @@ do
 
 	function Skada:OnInitialize()
 		-- Register some SharedMedia goodies.
-		media:Register("font", "Vera Serif",			[[Interface\Addons\_ShiGuang\Media\Fonts\Pixel.ttf]])
 		--media:Register("statusbar", "Aluminium",		[[Interface\Addons\Skada\statusbar\Aluminium]])
 		--media:Register("statusbar", "Armory",			[[Interface\Addons\Skada\statusbar\Armory]])
-		media:Register("statusbar", "ShiGuang",		[[Interface\Addons\_ShiGuang\Media\Modules\Raid\ColorBar]])
-		media:Register("statusbar", "HalfStyle",		[[Interface\Addons\_ShiGuang\Media\Modules\Skada\YaSkada05]])
-		media:Register("statusbar", "AtlzSkada",		[[Interface\Addons\_ShiGuang\Media\Modules\Skada\AtlzSkada]])
-		media:Register("statusbar", "Yaskada",		[[Interface\Addons\_ShiGuang\Media\Modules\Skada\Yaskada]])
-		media:Register("statusbar", "Yaskada02",		[[Interface\Addons\_ShiGuang\Media\Modules\Skada\Yaskada02]])
-		media:Register("statusbar", "Yaskada03",		[[Interface\Addons\_ShiGuang\Media\Modules\Skada\Yaskada03]])
-		media:Register("statusbar", "Yaskada04",		[[Interface\Addons\_ShiGuang\Media\Modules\Skada\Yaskada04]])
-		media:Register("statusbar", "None",		[[Interface\Addons\_ShiGuang\Media\backdrop]])
 		--media:Register("statusbar", "TukTex",			[[Interface\Addons\Skada\statusbar\normTex]])
 
+
 		-- Some sounds (copied from Omen).
-		media:Register("sound", "Rubber Ducky",       [[Sound\Doodad\Goblin_Lottery_Open01.ogg]])
-		media:Register("sound", "Cartoon FX",         [[Sound\Doodad\Goblin_Lottery_Open03.ogg]])
-		media:Register("sound", "Explosion",          [[Sound\Doodad\Hellfire_Raid_FX_Explosion05.ogg]])
-		media:Register("sound", "Shing!",             [[Sound\Doodad\PortcullisActive_Closed.ogg]])
-		media:Register("sound", "Wham!",              [[Sound\Doodad\PVP_Lordaeron_Door_Open.ogg]])
-		media:Register("sound", "Simon Chime",        [[Sound\Doodad\SimonGame_LargeBlueTree.ogg]])
-		media:Register("sound", "War Drums",          [[Sound\Event Sounds\Event_wardrum_ogre.ogg]])
-		media:Register("sound", "Cheer",              [[Sound\Event Sounds\OgreEventCheerUnique.ogg]])
-		media:Register("sound", "Humm",               [[Sound\Spells\SimonGame_Visual_GameStart.ogg]])
-		media:Register("sound", "Short Circuit",      [[Sound\Spells\SimonGame_Visual_BadPress.ogg]])
-		media:Register("sound", "Fel Portal",         [[Sound\Spells\Sunwell_Fel_PortalStand.ogg]])
-		media:Register("sound", "Fel Nova",           [[Sound\Spells\SeepingGaseous_Fel_Nova.ogg]])
-		media:Register("sound", "You Will Die!",      [[Sound\Creature\CThun\CThunYouWillDie.ogg]])
+		media:Register("sound", "Rubber Ducky", 566121)
+		media:Register("sound", "Cartoon FX", 566543)
+		media:Register("sound", "Explosion", 566982)
+		media:Register("sound", "Shing!", 566240)
+		media:Register("sound", "Wham!", 566946)
+		media:Register("sound", "Simon Chime", 566076)
+		media:Register("sound", "War Drums", 567275)
+		media:Register("sound", "Cheer", 567283)
+		media:Register("sound", "Humm", 569518)
+		media:Register("sound", "Short Circuit", 568975)
+		media:Register("sound", "Fel Portal", 569215)
+		media:Register("sound", "Fel Nova", 568582)
+		media:Register("sound", "You Will Die!", 546633)
 
 		-- DB
 		self.db = LibStub("AceDB-3.0"):New("SkadaDB", self.defaults, "Default")
 		if type(SkadaPerCharDB) ~= "table" then SkadaPerCharDB = {} end
 		self.char = SkadaPerCharDB
 		self.char.sets = self.char.sets or {}
+		self.char.cached_specs = self.char.cached_specs or {}
 		LibStub("AceConfigRegistry-3.0"):RegisterOptionsTable("Skada", self.options, true)
 
 		-- Profiles

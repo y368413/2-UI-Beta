@@ -1,9 +1,9 @@
-﻿--## Version: 8.0.24 ## Author: lteke
+﻿--## Version: 8.1.25 ## Author: lteke
 
-local InProgressMissions, addon = ...
+local InProgressMissions = {}
 
-addon.frame = addon.frame or CreateFrame("Frame", nil, _G.WorldFrame)
-addon.events = addon.events or {}
+InProgressMissions.frame = InProgressMissions.frame or CreateFrame("Frame", nil, _G.WorldFrame)
+InProgressMissions.events = InProgressMissions.events or {}
 
 local MISSION_BUTTON_HEIGHT = 37
 local MISSION_ICON_SIZE = MISSION_BUTTON_HEIGHT - 4
@@ -32,6 +32,8 @@ local ORDERHALL_ADDONS = {
 	["OrderHallCommander"] = false,
 	["RENovate"] = false,
 }
+
+local TEXT_LEGION_MISSIONS = _G.EXPANSION_NAME6.." ".._G.GARRISON_MISSIONS
 
 local itemDifficulty do
 	local tooltip
@@ -73,14 +75,17 @@ local itemDifficulty do
 	})
 end
 
-local events = addon.events
+local events = InProgressMissions.events
 
-function addon:InitDB()
+function InProgressMissions:InitDB()
 	if type(IPMDB) ~= "table" then
 		IPMDB = {}
 	end
 	if IPMDB.enableGarrisonMissions == nil then
 		IPMDB.enableGarrisonMissions = true
+	end
+	if IPMDB.enableLegionMissions == nil then
+		IPMDB.enableLegionMissions = IPMDB.enableGarrisonMissions
 	end
 	if type(IPMDB.profiles) ~= "table" then
 		IPMDB.profiles = {}
@@ -100,7 +105,7 @@ function addon:InitDB()
 	-- end
 end
 
-function addon:SaveInProgressMissions()
+function InProgressMissions:SaveInProgressMissions()
 	self.saved = true
 	self:InitDB()
 	if UnitLevel("player") <= 90 then
@@ -159,13 +164,13 @@ do
 		end
 	end
 
-	function addon:UpdateMissions()
+	function InProgressMissions:UpdateMissions()
 		local garrisonType = C_Garrison.GetLandingPageGarrisonType()
 		wipe(self.missions)
 		if garrisonType == LE_GARRISON_TYPE_8_0 then
 			self:GetMissions(LE_FOLLOWER_TYPE_GARRISON_8_0, self.missions, true)
 		end
-		if garrisonType == LE_GARRISON_TYPE_7_0 or IPMDB.enableGarrisonMissions or C_Garrison.IsPlayerInGarrison(LE_GARRISON_TYPE_7_0) then
+		if garrisonType == LE_GARRISON_TYPE_7_0 or IPMDB.enableLegionMissions or C_Garrison.IsPlayerInGarrison(LE_GARRISON_TYPE_7_0) then
 			self:GetMissions(LE_FOLLOWER_TYPE_GARRISON_7_0, self.missions, true)
 		end
 		if garrisonType == LE_GARRISON_TYPE_6_0 or IPMDB.enableGarrisonMissions or C_Garrison.IsPlayerInGarrison(LE_GARRISON_TYPE_6_0) then
@@ -175,13 +180,13 @@ do
 		self:UpdateInProgressTabText()
 	end
 
-	function addon:UpdateAltMissions()
+	function InProgressMissions:UpdateAltMissions()
 		self.altMissions = wipe(self.altMissions or {})
 		for name, missions in pairs(IPMDB.profiles) do
 			if name ~= self.profileName and not IPMDB.ignores[name] then
 				for i, mission in ipairs(missions) do
 					mission.followerTypeID = mission.followerTypeID or 0
-					if mission.followerTypeID >= LE_FOLLOWER_TYPE_GARRISON_8_0 or IPMDB.enableGarrisonMissions then
+					if mission.followerTypeID >= LE_FOLLOWER_TYPE_GARRISON_8_0 or (mission.followerTypeID == LE_FOLLOWER_TYPE_GARRISON_7_0 and IPMDB.enableLegionMissions) or (mission.followerTypeID < LE_FOLLOWER_TYPE_GARRISON_7_0 and IPMDB.enableGarrisonMissions) then
 						if type(mission) == "table" and type(mission.charText) == "string" then
 							tinsert(self.altMissions, mission)
 						end
@@ -194,7 +199,7 @@ do
 	end
 
 	local temp = {}
-	function addon:GetMissions(followerType, dest, sort)
+	function InProgressMissions:GetMissions(followerType, dest, sort)
 		C_Garrison.GetInProgressMissions(temp, followerType)
 		for k, mission in pairs(temp) do
 			if type(mission) == "table" then
@@ -361,16 +366,16 @@ end
 
 local function GarrisonLandingPageReportList_Update(...)
 
-	local items = addon.missions
+	local items = InProgressMissions.missions
 	local numItems = #items
-	local scrollFrame = addon.listScroll
+	local scrollFrame = InProgressMissions.listScroll
 	local offset = HybridScrollFrame_GetOffset(scrollFrame)
 	local buttons = scrollFrame.buttons
 	local numButtons = #buttons
 
 	local stopUpdate = true
 
-	if (numItems == 0 and #addon.altMissions == 0) then
+	if (numItems == 0 and #InProgressMissions.altMissions == 0) then
 		GarrisonLandingPageReport.List.EmptyMissionText:SetText(GARRISON_EMPTY_IN_PROGRESS_LIST)
 	else
 		GarrisonLandingPageReport.List.EmptyMissionText:SetText(nil)
@@ -390,7 +395,7 @@ local function GarrisonLandingPageReportList_Update(...)
 			end
 		else
 			altMissionIndex = index - numItems
-			item = addon.altMissions[altMissionIndex]
+			item = InProgressMissions.altMissions[altMissionIndex]
 			if item and item.missionEndTime then
 				item.isComplete = (item.missionEndTime - baseTime) < 0
 			end
@@ -417,7 +422,7 @@ local function GarrisonLandingPageReportList_Update(...)
 				if item.isBuilding then
 					button.MissionType:SetText(GARRISON_LANDING_BUILDING_COMPLEATE)
 				else
-					button.MissionType:SetText(altMissionIndex and (item.charText or _G.UNKNOWN) or addon.playerNameText)
+					button.MissionType:SetText(altMissionIndex and (item.charText or _G.UNKNOWN) or InProgressMissions.playerNameText)
 				end
 				button.Title:SetWidth(290)
 			else
@@ -428,7 +433,7 @@ local function GarrisonLandingPageReportList_Update(...)
 					button.TimeLeft:SetText(item.timeLeft)
 					button.TimeLeft:SetTextColor(unpack(TIME_COLORS[4]))
 				else
-					button.MissionType:SetText(altMissionIndex and (item.charText or _G.UNKNOWN) or addon.playerNameText)
+					button.MissionType:SetText(altMissionIndex and (item.charText or _G.UNKNOWN) or InProgressMissions.playerNameText)
 					t = item.missionEndTime - baseTime
 					if t > 107999 then -- 30hr
 						button.TimeLeft:SetFormattedText(FORMAT_DURATION_DAYS, t / 86400)
@@ -483,7 +488,7 @@ local function GarrisonLandingPageReportList_Update(...)
 		end
 	end
 
-	local totalHeight = (numItems + #addon.altMissions) * scrollFrame.buttonHeight
+	local totalHeight = (numItems + #InProgressMissions.altMissions) * scrollFrame.buttonHeight
 	local displayedHeight = numButtons * scrollFrame.buttonHeight
 	HybridScrollFrame_Update(scrollFrame, totalHeight, displayedHeight)
 
@@ -494,7 +499,7 @@ local function ScrollFrame_UpdateAvailable(...)
 	local items = GarrisonLandingPageReport.List.AvailableItems or {}
 	local item
 	local rewardIndex
-	for i, button in ipairs(addon.listScroll.buttons) do
+	for i, button in ipairs(InProgressMissions.listScroll.buttons) do
 		if items[button.id] and button:IsShown() then
 			item = items[button.id]
 			button.Title:SetTextColor(unpack(TITLE_COLOR_NORMAL))
@@ -525,9 +530,9 @@ local function ScrollFrame_UpdateAvailable(...)
 end
 
 local function ScrollFrame_UpdateItems()
-	addon:UpdateMissions()
+	InProgressMissions:UpdateMissions()
 	local isTabProgress = GarrisonLandingPageReport.selectedTab == GarrisonLandingPageReport.InProgress
-	for k, button in pairs(addon.listScroll.buttons) do
+	for k, button in pairs(InProgressMissions.listScroll.buttons) do
 		button.MissionTypeIcon:ClearAllPoints()
 		button.MissionTypeIcon:SetPoint("LEFT", button, 2, 0)
 		button.MissionTypeIcon:SetSize(MISSION_ICON_SIZE, MISSION_ICON_SIZE)
@@ -542,7 +547,7 @@ local function ScrollFrame_UpdateItems()
 	if isTabProgress then
 		GarrisonLandingPageReportList_Update()
 	else
-		addon:HideMenu()
+		InProgressMissions:HideMenu()
 	end
 end
 
@@ -740,7 +745,7 @@ end
 
 local function GarrisonLandingPageReportMission_OnEnter(self, button)
 	if GarrisonLandingPageReport.selectedTab ~= GarrisonLandingPageReport.InProgress then
-		return addon.GarrisonLandingPageReportMission_OnEnter(self, button)
+		return InProgressMissions.GarrisonLandingPageReportMission_OnEnter(self, button)
 	end
 
 	if not self.id then return end
@@ -748,9 +753,9 @@ local function GarrisonLandingPageReportMission_OnEnter(self, button)
 	local missionInfo
 	local isAltMission = self.id < 0
 	if isAltMission then
-		missionInfo = addon.altMissions[-self.id]
+		missionInfo = InProgressMissions.altMissions[-self.id]
 	else
-		missionInfo = addon.missions[self.id]
+		missionInfo = InProgressMissions.missions[self.id]
 	end
 
 	if missionInfo then
@@ -764,13 +769,13 @@ end
 
 local function GarrisonLandingPageReportMission_OnClick(self, button)
 	if GarrisonLandingPageReport.selectedTab ~= GarrisonLandingPageReport.InProgress then
-		-- return addon.GarrisonLandingPageReportMission_OnClick(self, button)
+		-- return InProgressMissions.GarrisonLandingPageReportMission_OnClick(self, button)
 		return
 	end
 
 	if button ~= "RightButton" then
-		--return self.id > 0 and addon.GarrisonLandingPageReportMission_OnClick(self, button)
-		local item = addon.missions[self.id]
+		--return self.id > 0 and InProgressMissions.GarrisonLandingPageReportMission_OnClick(self, button)
+		local item = InProgressMissions.missions[self.id]
 		if item and item.missionID then
 			if IsModifiedClick("CHATLINK") then
 				local missionLink = C_Garrison.GetMissionLink(item.missionID)
@@ -783,11 +788,11 @@ local function GarrisonLandingPageReportMission_OnClick(self, button)
 			end
 		end
 	else
-		addon:CreateMenu()
-		local anchor = addon.listScroll
+		InProgressMissions:CreateMenu()
+		local anchor = InProgressMissions.listScroll
 		local uiScale, x, y = _G.UIParent:GetEffectiveScale(), GetCursorPosition()
 		x, y = x / uiScale - anchor:GetLeft() - 35, y / uiScale - anchor:GetBottom() - 5
-		ToggleDropDownMenu(1, nil, addon.menu, anchor:GetName(), x, y)
+		ToggleDropDownMenu(1, nil, InProgressMissions.menu, anchor:GetName(), x, y)
 	end
 end
 
@@ -800,6 +805,17 @@ local function FlipTexture(texture, horizontal)
     end
 end
 
+--local function ListScroll_OnScroll(self)
+--	if GameTooltip:IsVisible() then
+--		GameTooltip:Hide()
+--		for k, button in pairs(InProgressMissions.listScroll.buttons) do
+--			if button:IsVisible() and button:IsMouseOver() then
+--				GarrisonLandingPageReportMission_OnEnter(button)
+--				break
+--			end
+--		end
+--	end
+--end
 
 local function CreateQuantityFont()
 	if not _G.GarrisonReportFontRewardQuantity then
@@ -817,27 +833,27 @@ local function CreateQuantityFont()
 end
 
 local function UpdateItemInfoHandler(self)
-	if addon.listScroll:IsVisible() then
-		addon:RegisterEvent("GET_ITEM_INFO_RECEIVED")
+	if InProgressMissions.listScroll:IsVisible() then
+		InProgressMissions:RegisterEvent("GET_ITEM_INFO_RECEIVED")
 	else
-		addon:UnregisterEvent("GET_ITEM_INFO_RECEIVED")
+		InProgressMissions:UnregisterEvent("GET_ITEM_INFO_RECEIVED")
 	end
 end
 
-function addon:UpdateInProgressTabText()
+function InProgressMissions:UpdateInProgressTabText()
 	if _G.GarrisonLandingPageReport then
 		local text = GarrisonLandingPageReport.InProgress.Text
 		text:SetText((_G.GARRISON_LANDING_IN_PROGRESS.." (%d)"):format(#self.missions, #self.altMissions))
 	end
 end
 
-function addon:Refresh()
+function InProgressMissions:Refresh()
 	if _G.GarrisonLandingPageReport then
 		ScrollFrame_UpdateItems()
 	end
 end
 
-function addon:MissionButton_SetStyle()
+function InProgressMissions:MissionButton_SetStyle()
 	CreateQuantityFont()
 	for k, button in pairs(self.listScroll.buttons) do
 		if type(button) == "table" and button:GetObjectType() == "Button" then
@@ -918,28 +934,28 @@ function addon:MissionButton_SetStyle()
 end
 
 do
-	function addon:HideMenu()
-		if _G.UIDROPDOWNMENU_OPEN_MENU == addon.menu then
+	function InProgressMissions:HideMenu()
+		if _G.UIDROPDOWNMENU_OPEN_MENU == InProgressMissions.menu then
 			--GameTooltip:Hide()
 			CloseDropDownMenus()
 		end
 	end
 
 	local function IgnoreProfile_OnClick(self, name, arg2, checked)
-		addon:HideMenu()
+		InProgressMissions:HideMenu()
 
 		if name then
 			IPMDB.ignores[name] = not checked or nil
-			addon:UpdateAltMissions()
+			InProgressMissions:UpdateAltMissions()
 		end
 	end
 
 	local function SortMethod_OnClick(self, name)
-		addon:HideMenu()
+		InProgressMissions:HideMenu()
 
 		if name then
 			IPMDB.sortMethod = name
-			addon:UpdateAltMissions()
+			InProgressMissions:UpdateAltMissions()
 		end
 	end
 
@@ -947,7 +963,7 @@ do
 		IPMDB.sortMethod = nil
 		wipe(IPMDB.ignores)
 		wipe(IPMDB.profiles)
-		addon:UpdateAltMissions()
+		InProgressMissions:UpdateAltMissions()
 	end
 
 	local function Reset_OnClick(self)
@@ -967,11 +983,17 @@ do
 
 	local function ToggleGarrisonMissions(self)
 		IPMDB.enableGarrisonMissions = not IPMDB.enableGarrisonMissions
-		addon:UpdateAltMissions()
-		addon:Refresh()
+		InProgressMissions:UpdateAltMissions()
+		InProgressMissions:Refresh()
 	end
 
-	function addon:CreateMenu()
+	local function ToggleLegionMissions(self)
+		IPMDB.enableLegionMissions = not IPMDB.enableLegionMissions
+		InProgressMissions:UpdateAltMissions()
+		InProgressMissions:Refresh()
+	end
+
+	function InProgressMissions:CreateMenu()
 		if self.menu then return end
 		self.menu = CreateFrame("Frame", "InProgressMissionsDropDownList")
 		self.menu.displayMode = "MENU"
@@ -1019,6 +1041,13 @@ do
 
 				info.notCheckable = nil
 				info.isNotRadio = true
+				info.text = TEXT_LEGION_MISSIONS
+				info.func = ToggleLegionMissions
+				info.checked = IPMDB.enableLegionMissions and true or nil
+				UIDropDownMenu_AddButton(info, level)
+
+				info.notCheckable = nil
+				info.isNotRadio = true
 				info.text = _G.GARRISON_MISSIONS_TITLE
 				info.func = ToggleGarrisonMissions
 				info.checked = IPMDB.enableGarrisonMissions and true or nil
@@ -1030,7 +1059,7 @@ do
 				UIDropDownMenu_AddButton(info, level)
 
 				info.text = _G.CLOSE
-				info.func = addon.HideMenu
+				info.func = InProgressMissions.HideMenu
 				UIDropDownMenu_AddButton(info, level)
 
 			elseif level == 2 then
@@ -1069,7 +1098,7 @@ do
 	end
 end
 
-function addon:Init()
+function InProgressMissions:Init()
 	self.missions = {}
 	self:InitDB()
 	TIME_COLORS = {
@@ -1084,8 +1113,8 @@ function addon:Init()
 
 	self:CreateMenu()
 	_G.GarrisonLandingPageReport:HookScript("OnHide", function()
-		addon:HideMenu()
-		wipe(addon.missions)
+		InProgressMissions:HideMenu()
+		wipe(InProgressMissions.missions)
 		StaticPopup_Hide("InProgressMissions_CONFIRM_RESET")
 	end)
 	-- self.listScroll.scrollBar:HookScript("OnValueChanged", ListScroll_OnScroll)
@@ -1097,7 +1126,7 @@ function addon:Init()
 	hooksecurefunc("GarrisonLandingPageReportList_UpdateItems", ScrollFrame_UpdateItems)
 	hooksecurefunc("GarrisonLandingPageReportList_UpdateAvailable", ScrollFrame_UpdateAvailable)
 	hooksecurefunc(GarrisonLandingPageReport.InProgress.Text, "SetFormattedText", function(self)
-			addon:UpdateInProgressTabText()
+			InProgressMissions:UpdateInProgressTabText()
 	end)
 	self.listScroll = GarrisonLandingPageReport.List.listScroll
 	hooksecurefunc("GarrisonMissionButton_SetInProgressTooltip", GarrisonMissionButton_SetInProgressTooltip)
@@ -1112,12 +1141,72 @@ function addon:Init()
 		end
 	end)
 
-	--self:HookOrderHallMissionFrame()
+	self:HookOrderHallMissionFrame()
+	self:HookBFAMissionFrame()
 
 	self:MissionButton_SetStyle()
 	self.Init = function() end
 end
 
+local buttonText = {}
+
+local function CreateButtonText(button)
+	local text = button:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+	text:SetPoint("BOTTOMLEFT", 165, 6)
+	text:SetJustifyH("LEFT")
+	buttonText[button] = text
+	return text
+end
+
+function InProgressMissions:HookOrderHallMissionFrame()
+	if _G.OrderHallMissionFrameMissionsListScrollFrame and not self.OrderHallMissionsScrollFrame then
+		self.OrderHallMissionsScrollFrame = _G.OrderHallMissionFrameMissionsListScrollFrame
+		hooksecurefunc(_G.OrderHallMissionFrame.MissionTab.MissionList, "Update", function()
+			if InProgressMissions.OrderHallMissionsScrollFrame:IsVisible() and not InProgressMissions:OrderHallAddonExists() then
+				local info, text
+				for i, button in ipairs(InProgressMissions.OrderHallMissionsScrollFrame.buttons) do
+					info = button.info
+					text = buttonText[button] or CreateButtonText(button)
+					if info and not info.inProgress then
+						text:SetText(info.offerEndTime and RAID_INSTANCE_EXPIRES:format(info.offerTimeRemaining) or nil)
+						text:Show()
+					else
+						text:Hide()
+					end
+				end
+			end
+		end)
+	end
+end
+
+function InProgressMissions:HookBFAMissionFrame()
+	if _G.BFAMissionFrameMissionsListScrollFrame and not self.BFAMissionsScrollFrame then
+		self.BFAMissionsScrollFrame = _G.BFAMissionFrameMissionsListScrollFrame
+		hooksecurefunc(_G.BFAMissionFrame.MissionTab.MissionList, "Update", function()
+			if InProgressMissions.BFAMissionsScrollFrame:IsVisible() and not InProgressMissions:OrderHallAddonExists() then
+				local info, text
+				for i, button in ipairs(InProgressMissions.BFAMissionsScrollFrame.buttons) do
+					info = button.info
+					text = buttonText[button] or CreateButtonText(button)
+					if info and not info.inProgress then
+						text:SetText(info.offerEndTime and RAID_INSTANCE_EXPIRES:format(info.offerTimeRemaining) or nil)
+						text:Show()
+					else
+						text:Hide()
+					end
+				end
+			end
+		end)
+	end
+end
+
+function InProgressMissions:OrderHallAddonExists()
+	for k, v in pairs(ORDERHALL_ADDONS) do
+		if v then
+			return true
+		end
+	end
+end
 
 function events:ADDON_LOADED(event, name, ...)
 	if name == "Blizzard_GarrisonUI" then
@@ -1126,21 +1215,20 @@ function events:ADDON_LOADED(event, name, ...)
 		if _G.GarrisonLandingPageReportList then
 			self:Init()
 		end
-	--elseif name == "Blizzard_OrderHallUI" then
-		--self:HookOrderHallMissionFrame()
+	elseif name == "Blizzard_OrderHallUI" then
+		self:HookOrderHallMissionFrame()
 	elseif name and ORDERHALL_ADDONS[name] ~= nil then
 		ORDERHALL_ADDONS[name] = true
 	end
 end
 
-
 local function OnMissionUpdate()
-	addon.missionUpdated = false
-	addon:Refresh()
-	addon:SaveInProgressMissions()
+	InProgressMissions.missionUpdated = false
+	InProgressMissions:Refresh()
+	InProgressMissions:SaveInProgressMissions()
 end
 
-function addon:QueueSaveInProgressMissions()
+function InProgressMissions:QueueSaveInProgressMissions()
 	if not self.missionUpdated then
 		self.missionUpdated = true
 		C_Timer.After(0.5, OnMissionUpdate)
@@ -1165,8 +1253,8 @@ function events:PLAYER_LOGIN(event, ...)
 end
 
 local function OnShipmentCrafterClosed()
-	if addon.shipmentUpdated then
-		addon.shipmentUpdated = false
+	if InProgressMissions.shipmentUpdated then
+		InProgressMissions.shipmentUpdated = false
 		C_Garrison.RequestLandingPageShipmentInfo()
 	end
 end
@@ -1189,7 +1277,7 @@ function events:PLAYER_ENTERING_WORLD(event, ...)
 	end
 end
 
-function addon:GET_ITEM_INFO_RECEIVED(event, ...)
+function InProgressMissions:GET_ITEM_INFO_RECEIVED(event, ...)
 	if not GarrisonLandingPageReport:IsShown() then return end
 	local items
 	local selectedTab = GarrisonLandingPageReport.selectedTab
@@ -1205,7 +1293,7 @@ function addon:GET_ITEM_INFO_RECEIVED(event, ...)
 	for k, button in pairs(self.listScroll.buttons) do
 		if type(button.id) == "number" then
 			if button.id < 0 then
-				item = addon.altMissions[-button.id]
+				item = InProgressMissions.altMissions[-button.id]
 			else
 				item = items[button.id]
 			end
@@ -1216,23 +1304,23 @@ function addon:GET_ITEM_INFO_RECEIVED(event, ...)
 	end
 end
 
-addon.frame:SetScript("OnEvent", function(self, event, ...) events[event](addon, event, ...) end)
+InProgressMissions.frame:SetScript("OnEvent", function(self, event, ...) events[event](InProgressMissions, event, ...) end)
 for event, func in pairs(events) do
 	if type(func) == "function" then
-		addon.frame:RegisterEvent(event)
+		InProgressMissions.frame:RegisterEvent(event)
 	end
 end
 
-function addon:RegisterEvent(event, handler)
-	handler = handler or events[event] or addon[event]
+function InProgressMissions:RegisterEvent(event, handler)
+	handler = handler or events[event] or InProgressMissions[event]
 	if handler then
 		events[event] = handler
-		addon.frame:RegisterEvent(event)
+		InProgressMissions.frame:RegisterEvent(event)
 	end
 end
 
-function addon:UnregisterEvent(event)
-	addon.frame:UnregisterEvent(event)
+function InProgressMissions:UnregisterEvent(event)
+	InProgressMissions.frame:UnregisterEvent(event)
 end
 
 local function SlashCommandHandler(msg)
@@ -1253,12 +1341,12 @@ local function SlashCommandHandler(msg)
 end
 
 do
-	addon.profileName = UnitName("player").."-"..GetRealmName()
+	InProgressMissions.profileName = UnitName("player").."-"..GetRealmName()
 	local colorStr = RAID_CLASS_COLORS[select(2, UnitClass("player")) or "WARRIOR"].colorStr
-	addon.playerNameText = "|c"..colorStr..UnitName("player").."|r"
-	addon.alertMissions = {}
+	InProgressMissions.playerNameText = "|c"..colorStr..UnitName("player").."|r"
+	InProgressMissions.alertMissions = {}
 
-	SlashCmdList[InProgressMissions] = SlashCommandHandler
+	SlashCmdList["InProgressMissions"] = SlashCommandHandler
 	_G["SLASH_InProgressMissions1"] = "/ipm"
 	_G["SLASH_InProgressMissions2"] = "/inprogressmissions"
 end

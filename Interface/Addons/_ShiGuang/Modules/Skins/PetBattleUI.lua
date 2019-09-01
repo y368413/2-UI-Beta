@@ -1,8 +1,8 @@
 local _, ns = ...
 local M, R, U, I = unpack(ns)
-local module = M:GetModule("Skins")
+local S = M:GetModule("Skins")
 
-function module:CastBarSkin()
+function S:CastBarSkin()
   local function noop() end
     local function DisableBlizzardFrame(frame)
 	     frame.RegisterEvent = noop
@@ -13,9 +13,9 @@ function module:CastBarSkin()
 	if MaoRUISettingDB["Skins"]["CastBarstyle"] then DisableBlizzardFrame(CastingBarFrame) DisableBlizzardFrame(TargetFrameSpellBar) DisableBlizzardFrame(FocusFrameSpellBar) DisableBlizzardFrame(PetCastingBarFrame) return end
 end
 
-function module:PetBattleUI()
+function S:PetBattleUI()
 	if not MaoRUISettingDB["Skins"]["PetBattle"] then return end
-	local r, g, b = I.ClassColor.r, I.ClassColor.g, I.ClassColor.b
+	local r, g, b, pairs = I.r, I.g, I.b, pairs
 
 	-- Head Frame
 	local frame = PetBattleFrame
@@ -27,14 +27,14 @@ function module:PetBattleUI()
 	-- Weather
 	local weather = frame.WeatherFrame
 	weather:ClearAllPoints()
-	weather:SetPoint("TOP", UIParent, 0, -15)
+	weather:SetPoint("TOP", frame.TopVersusText, "BOTTOM", 0, -15)
 	weather.Label:Hide()
 	weather.Name:Hide()
 	weather.Icon:ClearAllPoints()
-	weather.Icon:SetPoint("TOP", UIParent, 0, -10)
+	weather.Icon:SetPoint("TOP", frame.TopVersusText, "BOTTOM", 0, -15)
 	weather.Icon:SetTexCoord(unpack(I.TexCoord))
 	M.CreateSD(weather.Icon, 3, 3)
-	weather.Icon.Shadow:SetFrameLevel(weather:GetFrameLevel())
+	weather.BackgroundArt:SetPoint("TOP", UIParent)
 	weather.Duration:ClearAllPoints()
 	weather.Duration:SetPoint("CENTER", weather.Icon, 1, 0)
 
@@ -159,7 +159,7 @@ function module:PetBattleUI()
 			if petOwner == LE_BATTLE_PET_ALLY then
 				self.Icon:SetTexCoord(.92, .08, .08, .92)
 			else
-				self.Icon:SetTexCoord(.08, .92, .08, .92)
+				self.Icon:SetTexCoord(unpack(I.TexCoord))
 			end
 		end
 		if self.glow then self.glow:Hide() end
@@ -189,7 +189,7 @@ function module:PetBattleUI()
 				local frame = self.frames[nextFrame]
 				frame.DebuffBorder:Hide()
 				if not frame.styled then
-					frame.Icon:SetTexCoord(.08, .92, .08, .92)
+					frame.Icon:SetTexCoord(unpack(I.TexCoord))
 					M.CreateSD(frame.Icon, 3, 3)
 					frame.styled = true
 				end
@@ -243,10 +243,10 @@ function module:PetBattleUI()
 			bu.Icon:SetTexCoord(unpack(I.TexCoord))
 			bu:SetNormalTexture("")
 			bu:GetPushedTexture():SetTexture(I.textures.pushed)
-			bu:GetHighlightTexture():SetColorTexture(1, 1, 1, .3)
+			bu:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
 			M.CreateSD(bu, 3, 3)
 
-			bu.Cooldown:SetFont(I.Font[1], 26, "OUTLINE")
+			bu.Cooldown:SetFont(I.Font[1], 26, I.Font[3])
 			bu.SelectedHighlight:ClearAllPoints()
 			bu.SelectedHighlight:SetPoint("TOPLEFT", bu, -12, 12)
 			bu.SelectedHighlight:SetPoint("BOTTOMRIGHT", bu, 12, -12)
@@ -260,9 +260,10 @@ function module:PetBattleUI()
 	for i = 1, 5 do
 		select(i, skipButton:GetRegions()):Hide()
 	end
-	M.CreateIF(skipButton, true)
+	M.PixelIcon(skipButton, "Interface\\Icons\\Ability_Foundryraid_Dormant", true)
+	skipButton.Icon:SetAllPoints()
+	M.CreateSD(skipButton, 3, 3)
 	skipButton:SetPushedTexture(I.textures.pushed)
-	skipButton.Icon:SetTexture("Interface\\Icons\\Ability_Foundryraid_Dormant")
 	M.CreateFS(skipButton, 14, PET_BATTLE_PASS, false, "BOTTOM", 1, 2)
 
 	local xpbar = PetBattleFrameXPBar
@@ -280,10 +281,10 @@ function module:PetBattleUI()
 
 	local turnTimer = bottomFrame.TurnTimer
 	turnTimer:SetParent(bar)
-	turnTimer:SetSize(xpbar:GetWidth()+2, xpbar:GetHeight()+10)
+	turnTimer:SetSize(xpbar:GetWidth()+4, xpbar:GetHeight()+10)
 	turnTimer:ClearAllPoints()
 	turnTimer:SetPoint("BOTTOM", bar, "TOP", 0, 7)
-	turnTimer.bg = M.CreateBG(turnTimer, 0)
+	turnTimer.bg = M.CreateBG(turnTimer, -1)
 	M.CreateBD(turnTimer.bg)
 	M.CreateSD(turnTimer.bg)
 	M.CreateTex(turnTimer.bg)
@@ -335,7 +336,7 @@ function module:PetBattleUI()
 	M.CreateGF(bgLeft, 180, 68, "Horizontal", 0, 0, 0, 0, .5)
 	local lineLeft = CreateFrame("Frame", nil, bgLeft)
 	lineLeft:SetPoint("BOTTOMRIGHT", bgLeft, "TOPRIGHT")
-	M.CreateGF(lineLeft, 180, 1, "Horizontal", r, g, b, 0, .7)
+	M.CreateGF(lineLeft, 180, R.mult, "Horizontal", r, g, b, 0, .7)
 	RegisterStateDriver(bgLeft, "visibility", visibleState)
 
 	local bgRight = CreateFrame("Frame", nil, UIParent)
@@ -343,6 +344,6 @@ function module:PetBattleUI()
 	M.CreateGF(bgRight, 180, 68, "Horizontal", 0, 0, 0, .5, 0)
 	local lineRight = CreateFrame("Frame", nil, bgRight)
 	lineRight:SetPoint("BOTTOMLEFT", bgRight, "TOPLEFT")
-	M.CreateGF(lineRight, 180, 1, "Horizontal", r, g, b, .7, 0)
+	M.CreateGF(lineRight, 180, R.mult, "Horizontal", r, g, b, .7, 0)
 	RegisterStateDriver(bgRight, "visibility", visibleState)
 end

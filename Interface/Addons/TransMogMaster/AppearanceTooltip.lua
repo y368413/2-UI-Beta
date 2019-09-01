@@ -580,10 +580,12 @@ local races = {
     [6] = "Tauren",
     [9] = "Goblin",
     -- Allied!
-    [27] = "BloodElf", -- "Nightborne",
+    [27] = "Nightborne", -- "Nightborne",
     [28] = "Tauren", -- "HighmountainTauren",
     [29] = "BloodElf", -- "VoidElf",
     [30] = "Draenei", -- "LightforgedDraenei",
+    [34] = "Dwarf", -- "DarkIronDwarf",
+    [36] = "Orc", -- "MagharOrc",
 }
 local genders = {
     [0] = "Male",
@@ -591,10 +593,11 @@ local genders = {
 }
 
 local raceMap = {
-    ["Nightborne"] = "BloodElf",
     ["HighmountainTauren"] = "Tauren",
     ["VoidElf"] = "BloodElf",
     ["LightforgedDraenei"] = "Draenei",
+    ["DarkIronDwarf"] = "Dwarf",
+    ["MagharOrc"] = "Orc",
 }
 
 local slots = {
@@ -864,6 +867,32 @@ slots_to_cameraids = {
     ["Human-Male-Tabard"] = 230,
     ["Human-Male-Waist"] = 234,
     ["Human-Male-Wrist"] = 237,
+    ["Nightborne-Female-Back"] = 1099,
+    ["Nightborne-Female-Feet"] = 1106,
+    ["Nightborne-Female-Hands"] = 1103,
+    ["Nightborne-Female-Head"] = 1096,
+    ["Nightborne-Female-Legs"] = 1105,
+    ["Nightborne-Female-Robe"] = 1107,
+    ["Nightborne-Female-Chest"] = 1100,
+    ["Nightborne-Female-Shirt"] = 1100,
+    ["Nightborne-Female-Shoulder"] = 1097,
+    ["Nightborne-Female-Shoulder-Alt"] = 1098,
+    ["Nightborne-Female-Tabard"] = 1101,
+    ["Nightborne-Female-Waist"] = 1104,
+    ["Nightborne-Female-Wrist"] = 1102,
+    ["Nightborne-Male-Back"] = 412,
+    ["Nightborne-Male-Feet"] = 1095,
+    ["Nightborne-Male-Hands"] = 417,
+    ["Nightborne-Male-Head"] = 1090,
+    ["Nightborne-Male-Legs"] = 419,
+    ["Nightborne-Male-Robe"] = 1091,
+    ["Nightborne-Male-Chest"] = 1092,
+    ["Nightborne-Male-Shirt"] = 1092,
+    ["Nightborne-Male-Shoulder"] = 411,
+    ["Nightborne-Male-Shoulder-Alt"] = 734,
+    ["Nightborne-Male-Tabard"] = 415,
+    ["Nightborne-Male-Waist"] = 418,
+    ["Nightborne-Male-Wrist"] = 416,
     ["NightElf-Female-Back"] = 423,
     ["NightElf-Female-Feet"] = 431,
     ["NightElf-Female-Hands"] = 428,
@@ -1181,13 +1210,13 @@ subText:SetPoint('RIGHT', -32, 0)
 subText:SetText("以下设置便于你更好的使用幻化鼠标提示框插件")
 
 local dressed = newCheckbox(panel, 'dressed', '穿衣状态', "Show the model wearing your current outfit, apart from the previewed item")
-local uncover = newCheckbox(panel, 'uncover', 'Uncover previewed item', "Remove clothes that would hide the item you're trying to preview")
+local uncover = newCheckbox(panel, 'uncover', '不显示已预览缓存', "Remove clothes that would hide the item you're trying to preview")
 local mousescroll = newCheckbox(panel, 'mousescroll', '鼠标滚轮旋转', "Use the mousewheel to rotate the model in the tooltip")
 local spin = newCheckbox(panel, 'spin', '旋转模型', "Constantly spin the model while it's displayed")
 local notifyKnown = newCheckbox(panel, 'notifyKnown', '提示是否已收藏', "Display a label showing whether you know the item appearance already")
 local currentClass = newCheckbox(panel, 'currentClass', '仅限当前角色', "Only show previews on items that the current character can collect")
 local byComparison = newCheckbox(panel, 'byComparison', '在对比框显示', "If the comparison tooltip is shown where the preview would want to be, show next to it (this makes it *much* less likely you'll have the preview overlap your cursor)")
-local tokens = newCheckbox(panel, 'tokens', 'Previews for tokens', "Show previews for the items which various tokens can be turned in for when mousing over the token")
+local tokens = newCheckbox(panel, 'tokens', '可预览套装', "Show previews for the items which various tokens can be turned in for when mousing over the token")
 
 local zoomWorn = newCheckbox(panel, 'zoomWorn', '仅显示该装备部位', "Zoom in on the part of your model which wears the item")
 local zoomHeld = newCheckbox(panel, 'zoomHeld', '不保持手持状态', "Zoom in on the held item being previewed, without seeing your character")
@@ -1227,6 +1256,8 @@ local customRaceDropdown = newDropdown(modelBox, 'modelRace', "选择你要的�
     [28] = "至高岭牛头人",
     [29] = "虚空精灵",
     [30] = "光铸德莱尼",
+    [34] = "Dark Iron Dwarf",
+    [36] = "Mag'har Orc",
 })
 UIDropDownMenu_SetWidth(customRaceDropdown, 100)
 local customGenderDropdown = newDropdown(modelBox, 'modelGender', "选择你要的性别", {

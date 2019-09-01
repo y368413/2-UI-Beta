@@ -47,6 +47,23 @@ end
 -- Cancel an auction query.
 function AuctionLite:CancelQuery()
   if Query ~= nil then
+      if Query.state ~= QUERY_STATE_APPROVE and Query.data then
+          --abyui Copy from QueryNewData()
+          local oldQuery = Query;
+          -- We're done.  End the query and return the results.
+          self:QueryEnd();
+          -- Update our price info.
+          local results = self:AnalyzeData(oldQuery.data);
+          for link, result in pairs(results) do
+              self:UpdateHistoricalPrice(link, result);
+          end
+          -- Notify our caller.
+          if oldQuery.finish ~= nil then
+              oldQuery.finish(results, oldQuery.link);
+          end
+          return
+      end
+
     if Query.state == QUERY_STATE_APPROVE then
       assert(Query.found ~= nil);
       Query.found = nil;
@@ -262,6 +279,7 @@ function AuctionLite:AnalyzeData(rawData)
           setPrice = true;
         end
       end
+      if not result._minprice or listing.price < result._minprice  then result._minprice = listing.price end --warbaby add absolute _minprice for show
       if listing.owner == UnitName("player") then
         result.itemsMine = result.itemsMine + listing.count;
         result.listingsMine = result.listingsMine + 1;
@@ -350,7 +368,7 @@ function AuctionLite:QueryNewData()
     pct = math.floor(seen * 100 / Query.total);
   end
   if Query.update ~= nil then
-    Query.update(pct, Query.getAll);
+    Query.update(pct, Query.getAll, Query.data);
   end
 
   -- Handle the new data based on the kind of query.

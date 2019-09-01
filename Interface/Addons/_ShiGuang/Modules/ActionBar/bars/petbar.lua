@@ -12,14 +12,14 @@ function Bar:CreatePetbar()
 	local frame = CreateFrame("Frame", "NDui_PetActionBar", UIParent, "SecureHandlerStateTemplate")
 	frame:SetWidth(num*cfg.size + (num-1)*margin + 2*padding)
 	frame:SetHeight(cfg.size + 2*padding)
-	if MaoRUISettingDB["Actionbar"]["Styles"] == 3 then
+	if MaoRUISettingDB["Actionbar"]["Style"] == 3 then
 		frame.Pos = {"BOTTOM", UIParent, "BOTTOM", 355, 85}
-	elseif (MaoRUISettingDB["Actionbar"]["Styles"] == 4) or (MaoRUISettingDB["Actionbar"]["Styles"] == 8) then
+	elseif (MaoRUISettingDB["Actionbar"]["Style"] == 4) or (MaoRUISettingDB["Actionbar"]["Style"] == 8) then
 	  frame.Pos = {"BOTTOM", UIParent, "BOTTOM", 80, 120}
 	else
 		frame.Pos = {"BOTTOM", UIParent, "BOTTOM", 100, 90}
 	end
-	frame:SetScale(MaoRUISettingDB["Actionbar"]["ActionbarScale"])
+	frame:SetScale(MaoRUISettingDB["Actionbar"]["Scale"])
 
 	--move the buttons into position and reparent them
 	PetActionBarFrame:SetParent(frame)
@@ -49,11 +49,11 @@ function Bar:CreatePetbar()
 
 	--create drag frame and drag functionality
 	if R.bars.userplaced then
-		M.Mover(frame, "Pet Actionbar", "PetBar", frame.Pos)
+		M.Mover(frame, U["Pet Actionbar"], "PetBar", frame.Pos)
 	end
 
 	--create the mouseover functionality
 	if cfg.fader then
-		M:CreateButtonFrameFader(frame, buttonList, cfg.fader)
+		Bar.CreateButtonFrameFader(frame, buttonList, cfg.fader)
 	end
 end

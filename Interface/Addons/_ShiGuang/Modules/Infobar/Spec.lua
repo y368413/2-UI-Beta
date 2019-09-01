@@ -3,17 +3,22 @@ local M, R, U, I = unpack(ns)
 if not R.Infobar.Spec then return end
 
 local module = M:GetModule("Infobar")
-local info = module:RegisterInfobar(R.Infobar.SpecPos)
-
---info:SetHitRectInsets(0, 0, -10, 0)
+local info = module:RegisterInfobar("Spec", R.Infobar.SpecPos)
 info.text:SetFont(unpack(R.Infobar.TTFonts))
+local format, wipe, select, next = string.format, table.wipe, select, next
+local SPECIALIZATION, TALENTS_BUTTON, MAX_TALENT_TIERS = SPECIALIZATION, TALENTS_BUTTON, MAX_TALENT_TIERS
+local SHOW_PVP_TALENT_LEVEL, PVP_TALENTS, LOOT_SPECIALIZATION_DEFAULT = SHOW_PVP_TALENT_LEVEL, PVP_TALENTS, LOOT_SPECIALIZATION_DEFAULT
+local GetSpecialization, GetSpecializationInfo, GetLootSpecialization, GetSpecializationInfoByID = GetSpecialization, GetSpecializationInfo, GetLootSpecialization, GetSpecializationInfoByID
+local GetTalentInfo, UnitLevel, GetCurrencyInfo, GetPvpTalentInfoByID, SetLootSpecialization, SetSpecialization = GetTalentInfo, UnitLevel, GetCurrencyInfo, GetPvpTalentInfoByID, SetLootSpecialization, SetSpecialization
+local C_SpecializationInfo_GetAllSelectedPvpTalentIDs = C_SpecializationInfo.GetAllSelectedPvpTalentIDs
 
 local function addIcon(texture)
 	texture = texture and "|T"..texture..":13:15:0:0:50:50:4:46:4:46|t" or ""
 	return texture
 end
 
-local menuFrame = CreateFrame("Frame", "SpecInfobarMenu", info, "UIDropDownMenuTemplate")
+--local menuFrame = CreateFrame("Frame", "SpecInfobarMenu", info, "UIDropDownMenuTemplate")
+local menuFrame = MSA_DropDownMenu_Create("SpecInfobarMenu", info)
 local menuList = {
 	{text = CHOOSE_SPECIALIZATION, isTitle = true, notCheckable = true},
 	{text = SPECIALIZATION, hasArrow = true, notCheckable = true},
@@ -42,7 +47,8 @@ info.onEvent = function(self)
 	end
 end
 
---[[info.onEnter = function(self)
+--[[local pvpTalents
+info.onEnter = function(self)
 	if not GetSpecialization() then return end
 	GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 15)
 	GameTooltip:ClearLines()
@@ -50,33 +56,33 @@ end
 	GameTooltip:AddLine(" ")
 
 	local _, specName, _, specIcon = GetSpecializationInfo(GetSpecialization())
-	GameTooltip:AddLine(addIcon(specIcon).." "..specName, 1,1,1)
+	GameTooltip:AddLine(addIcon(specIcon).." "..specName, .6,.8,1)
 
 	for t = 1, MAX_TALENT_TIERS do
 		for c = 1, 3 do
 			local _, name, icon, selected = GetTalentInfo(t, c, 1)
 			if selected then
-				GameTooltip:AddDoubleLine(" ", I.MyColor..name.." "..addIcon(icon))
+				GameTooltip:AddLine(addIcon(icon).." "..name, 1,1,1)
 			end
 		end
 	end
 
 	if UnitLevel("player") >= SHOW_PVP_TALENT_LEVEL then
-		pvpTalents = C_SpecializationInfo.GetAllSelectedPvpTalentIDs()
+		pvpTalents = C_SpecializationInfo_GetAllSelectedPvpTalentIDs()
 
 		if #pvpTalents > 0 then
 			local texture = select(3, GetCurrencyInfo(104))
 			GameTooltip:AddLine(" ")
 			GameTooltip:AddLine(addIcon(texture).." "..PVP_TALENTS, .6,.8,1)
 			for _, talentID in next, pvpTalents do
-			local _, name, icon, _, _, _, unlocked = GetPvpTalentInfoByID(talentID)
-			if name and unlocked then
-				GameTooltip:AddDoubleLine(" ", I.MyColor..name.." "..addIcon(icon))
+				local _, name, icon, _, _, _, unlocked = GetPvpTalentInfoByID(talentID)
+				if name and unlocked then
+					GameTooltip:AddLine(addIcon(icon).." "..name, 1,1,1)
 				end
 			end
 		end
 
-		wipe(C_SpecializationInfo.GetAllSelectedPvpTalentIDs())
+		wipe(pvpTalents)
 	end
 
 	GameTooltip:AddDoubleLine(" ", I.LineString)
@@ -85,7 +91,7 @@ end
 	GameTooltip:Show()
 end
 
-info.onLeave = function() GameTooltip:Hide() end]]
+info.onLeave = M.HideTooltip]]
 
 local function clickFunc(i, isLoot)
 	if not i then return end

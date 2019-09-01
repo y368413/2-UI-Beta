@@ -104,14 +104,14 @@ do -- Completion stats
 end
 
 --[[function EV:GARRISON_RECRUITMENT_NPC_OPENED()
-	--if C_Garrison.CanGenerateRecruits() then
-		--aconf.recruitTime = GetServerTime()-604801
-	--else
+	if C_Garrison.CanGenerateRecruits() then
+		aconf.recruitTime = GetServerTime()-604801
+	else
 		local dt = type(aconf.recruitTime) == "number" and GetServerTime() - aconf.recruitTime or 604801
 		if dt > 604800 then
 			aconf.recruitTime = GetServerTime()
 		end
-	--end
+	end
 end
 function EV:GARRISON_RECRUITMENT_FOLLOWERS_GENERATED()
 	aconf.recruitTime = GetServerTime()

@@ -1,4 +1,4 @@
-## Interface: 80000
+## Interface: 80200
 ## Title: World Quests (Angry + WQA + FlightMap)
 ## Title-zhCN:|cff0080ff[地图]|r世界任务
 ## Title-zhTW:|cff0080ff[地圖]|r世界任务
@@ -6,14 +6,14 @@
 ## Notes-zhCN: 将世界任务添加到任务列表并替换常规战斗地图，为玩家提供便利。
 ## Notes-zhTW: 將世界任務添加到任務列表並替換常規戰鬥地圖，為玩家提供便利。
 ## Author: Ermad + LanceDH + ykiigor + Semlar + Motig
-## Dependencies: Blizzard_FlightMap, Blizzard_ScrappingMachineUI, _ShiGuang
-## SavedVariables: AngryWorldQuests_Config, VWQL, WQADB, BWQDB, EasyScrap_SaveData
-## SavedVariablesPerCharacter: AngryWorldQuests_CharacterConfig, EasyScrap_IgnoreList
-## X-Packaged-Version: v0.20.2 + 66 + 8.0.0.6d + 10
+## Dependencies: _ShiGuang
+## SavedVariables: AngryWorldQuests_Config, VWQL, WQADB, BWQDB
+## SavedVariablesPerCharacter: AngryWorldQuests_CharacterConfig
+## X-Packaged-Version: v0.20.6 + 66 + 8.1.0.0 + 10
 
-## X-Repple: 地图
+## X-Repple: 2 UI
 
 AngryWorldQuest.lua
-WorldFlightMap.lua
+LibQTip-1.0.lua
 WQAchievements.lua
-EasyScrap.xml
+## EasyScrapXMLFrames.xml

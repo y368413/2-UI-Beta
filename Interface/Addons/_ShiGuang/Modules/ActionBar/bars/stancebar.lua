@@ -13,16 +13,16 @@ function Bar:CreateStancebar()
 	local frame = CreateFrame("Frame", "NDui_StanceBar", UIParent, "SecureHandlerStateTemplate")
 	frame:SetWidth(num*cfg.size + (num-1)*margin + 2*padding)
 	frame:SetHeight(cfg.size + 2*padding)
-	if (MaoRUISettingDB["Actionbar"]["Styles"] == 7) or (MaoRUISettingDB["Actionbar"]["Styles"] == 6) or (MaoRUISettingDB["Actionbar"]["Styles"] == 10) then
+	if (MaoRUISettingDB["Actionbar"]["Style"] == 7) or (MaoRUISettingDB["Actionbar"]["Style"] == 6) or (MaoRUISettingDB["Actionbar"]["Style"] == 10) then
 		frame.Pos = {"BOTTOM", UIParent, "BOTTOM", -120, 90}
-	elseif (MaoRUISettingDB["Actionbar"]["Styles"] == 4) or (MaoRUISettingDB["Actionbar"]["Styles"] == 8) then
+	elseif (MaoRUISettingDB["Actionbar"]["Style"] == 4) or (MaoRUISettingDB["Actionbar"]["Style"] == 8) then
 		frame.Pos = {"BOTTOM", UIParent, "BOTTOM", -42, 120}
-	elseif MaoRUISettingDB["Actionbar"]["Styles"] == 3 then
+	elseif MaoRUISettingDB["Actionbar"]["Style"] == 3 then
 		frame.Pos = {"BOTTOM", UIParent, "BOTTOM", -295, 85}
 	else
 		frame.Pos = {"BOTTOM", UIParent, "BOTTOM", -62, 85}
 	end
-	frame:SetScale(MaoRUISettingDB["Actionbar"]["ActionbarScale"])
+	frame:SetScale(MaoRUISettingDB["Actionbar"]["Scale"])
 
 	--STANCE BAR
 
@@ -73,11 +73,11 @@ function Bar:CreateStancebar()
 
 	--create drag frame and drag functionality
 	if R.bars.userplaced then
-		M.Mover(frame, "StanceBar", "StanceBar", frame.Pos)
+		M.Mover(frame, U["StanceBar"], "StanceBar", frame.Pos)
 	end
 
 	--create the mouseover functionality
 	if cfg.fader then
-		M:CreateButtonFrameFader(frame, buttonList, cfg.fader)
+		Bar.CreateButtonFrameFader(frame, buttonList, cfg.fader)
 	end
 end

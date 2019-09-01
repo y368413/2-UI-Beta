@@ -1,7 +1,7 @@
 ﻿-- HandyNotes
 -- enUS and enGB Localization file
 
-local L = LibStub("AceLocale-3.0"):NewLocale("HandyNotes", "enUS", true)
+local L = LibStub("AceLocale-3.0"):NewLocale("HandyNotes", "enUS", true, true)
 
 
 L["HandyNotes"] = true
@@ -76,6 +76,7 @@ L["Elemental Plateau"] = true
 L["Broken Shore"] = true
 L["Skald"] = true
 L["Argent Tournament Grounds"] = true
+L["Honor Hold"] = true
 
 L["Inside Blackrock Mountain"] = true
 L["Undiscovered"] = true
@@ -485,3 +486,550 @@ L["Somewhere"] = "Somewhere";
 
 L["Dagger"] = true
 
+L["Allow left click to open journal to dungeon or raid"] = true
+L["Allow right click to create waypoints with TomTom"] = true
+L["Continent Alpha"] = true
+L["Continent Scale"] = true
+L["Don't show discovered dungeons"] = true
+L["Enable TomTom integration"] = true
+L["Filter Options"] = true
+L["Hide all BfA nodes from the map"] = true
+L["Hide all Broken Isle nodes from the map"] = true
+L["Hide all Cataclysm nodes from the map"] = true
+L["Hide all Draenor nodes from the map"] = true
+L["Hide all Northrend nodes from the map"] = true
+L["Hide all Outland nodes from the map"] = true
+L["Hide all Pandaria nodes from the map"] = true
+L["Hide all Vanilla nodes from the map"] = true
+L["Hide Battle for Azeroth"] = true
+L["Hide Broken Isles"] = true
+L["Hide Cataclysm"] = true
+L["Hide Draenor"] = true
+L["Hide Instances"] = true
+L["Hide Northrend"] = true
+L["Hide Outland"] = true
+L["Hide Pandaria"] = true
+L["Hide Vanilla"] = true
+L["Invert Lockout"] = true
+L["Journal Integration"] = true
+L["Lockout Alpha"] = true
+L["Lockout Gray Icon"] = true
+L["Lockout Options"] = true
+L["Lockout Tooltip"] = true
+L["Show dungeon locations on the map"] = true
+L["Show Dungeons"] = true
+L["Show icons on continent map"] = true
+L["Show lockout information on tooltips"] = true
+L["Show Mixed"] = true
+L["Show mixed (dungeons + raids) locations on the map"] = true
+L["Show on Continent"] = true
+L["Show raid locations on the map"] = true
+L["Show Raids"] = true
+L["The alpha of dungeons and raids that are locked to any extent"] = true
+L["The alpha of the icons shown on the continent map"] = true
+L["The alpha of the icons shown on the zone map"] = true
+L["The scale of the icons shown on the continent map"] = true
+L["The scale of the icons shown on the zone map"] = true
+L["These settings control the look and feel of the icon."] = true
+L["This will check for legion and bfa dungeons that have already been discovered. THIS IS KNOWN TO CAUSE TAINT, ENABLE AT OWN RISK."] = true
+L["Turn mixed icons grey when ANY dungeon or raid listed is locked"] = true
+L["Use a different alpha for dungeons and raids that are locked to any extent"] = true
+L["Use gray icon for dungeons and raids that are locked to any extent"] = true
+L["Use Lockout Alpha"] = true
+L["Zone Alpha"] = true
+L["Zone Scale"] = true
+
+L["Warfronts"] = true
+L["Darkshore"] = true
+
+L["Amberclaw"] = true
+L["Shattershard"] = true
+L["Scalefiend"] = true
+L["Mrggr'marr"] = true
+L["Aman"] = true
+L["Hydrath"] = true
+L["Soggoth the SLitherer"] = true
+L["Twilight Prophet Graeme"] = true
+L["Athrikus Narassin"] = true
+L["Commander Ral'esh"] = true
+L["Glimmerspine"] = true
+L["Madfeather"] = true
+L["Granokk"] = true
+L["Stonebinder Ssra'vess"] = true
+L["Cyclarus"] = true
+L["Gren Tornfur"] = true
+L["Alash'anir"] = true
+L["Conflagros"] = true
+L["Grimhorn"] = true
+L["Onu"] = true
+L["Shadowclaw"] = true
+L["Thelar Moonstrike"] = true
+L["Sapper Odette"] = true
+L["Blackpaw"] = true
+L["Athil Dewfire"] = true
+L["Zim'kaga"] = true
+L["Moxo the Beheader"] = true
+L["Commander Drald"] = true
+L["Orwell Stevenson"] = true
+L["Burninator Mark V"] = true
+L["Croz Bloodrage"] = true
+L["Agathe Wyrmwood"] = true
+L["Ivus the Forest Lord"] = true
+L["Ivus the Decayed"] = true
+
+L["Ruins of Elune'eth"] = true
+L["Falanaar"] = true
+L["Waning Crescent"] = true
+L["Twilight Vineyards"] = true
+L["Evermoon Terrace"] = true
+L["Astravar Harbor"] = true
+L["Moon Guard Stronghold"] = true
+L["Tel'anor"] = true
+L["Sanctum of Order"] = true
+L["Lunastre Estate"] = true
+L["Felsoul Hold"] = true
+L["Moon Guard (entrance)"] = true
+L["Sanctum of Order (entrance)"] = true
+
+
+
+	-- chests
+	L["Moss-Covered Chest"] = true
+	L["Sturdy Chest"] = true
+	L["Smoldering Chest"] = true
+	L["Skull-Covered Chest"] = true
+	L["Blazing Chest"] = true
+	-- notes
+	L["On a treestump"] = true
+	L["In the shipwreck of Cpt. Zvezdan"] = true
+	L["On the top of the cliff. Use the Highwind Albatross"] = true
+	L["Inside the Mysterious Den. Use one of objects from Legends of the Past"] = true
+	L["Inside Cavern of Lost Spirits (entrance at 43.2, 41.3)"] = true
+	-- tooltip
+	L["Completed"] = true
+	-- buttons
+	L["Create waypoint"] = true
+	-- options
+	L["Timeless Treasures locations."] = "Locations of the chests for \"Treasure, Treasure Everywhere\"."
+	L["These settings control the visibility of the icons."] = "These settings control the visibility of the icons.\n\n"
+	L["Show completed"] = "Show completed"
+	L["Show icons for treasures you have already got."] = "Show icons for chests you have already opened."
+	L["Show Moss-Covered Chests"] = "Show Moss-Covered Chests"
+	L["Show not completed Moss-Covered Chests"] = "Show not completed Moss-Covered Chests"
+	L["Remove Icon Border"] = "Remove Icon Border"
+	L["Icon Scale"] = "Icon Scale"
+	L["Change the size of the icons."] = "Change the size of the icons."
+	L["Icon Alpha"] = "Icon Alpha"
+	L["Change the transparency of the icons."] = "Change the transparency of the icons."
+	L["These settings control the look of the icons."] = "\n\nThese settings control the look of the icons.\n\n"
+	L["Change Icon"] = "Enter the full texture path \ni.e. |cffFFFF00Interface\\ICONS\\inv_box_01|r"
+	
+	
+	L["OptionsDescription"] = "Locations of RareElites on Timeless Isle."
+	L["OptionsArgsDescription"] = "These settings control the look and feel of the icon."
+	L["OptionsIconScaleName"] = "Icon Scale"
+	L["OptionsIconScaleDescription"] = "The scale of the icons"
+	L["OptionsIconAlphaName"] = "Icon Alpha"
+	L["OptionsIconAlphaDescription"] = "The alpha transparency of the icons"
+
+	L["EmeralGander"] = "Emeral Gander"
+	L["EmeralGanderDrop"] = "Windfeather Plume"
+	L["EmeralGanderInfo"] = "spawns at various locations around the Celestial Court."
+
+	L["IronfurSteelhorn"] = "Ironfur Steelhorn"
+	L["IronfurSteelhornDrop"] = "Tuft of Yak Fur"
+
+	L["ImperialPython"] = "Imperial Python"
+	L["ImperialPythonDrop"] = "Death Adder Hatchling"
+
+	L["GreatTurtleFuryshell"] = "Great Turtle Furyshell"
+	L["GreatTurtleFuryshellDrop"] = "Hardened Shell"
+	L["GreatTurtleFuryshellInfo"] = "patrols among the turtles on the western shore of the island."
+
+	L["GuchiSwarmbringer"] = "Gu'chi the Swarmbringer"
+	L["GuchiSwarmbringerDrop"] = "Swarmling of Gu'chi"
+	L["GuchiSwarmbringerInfo"] = "spawns around Old Pi'Jiu."
+
+	L["Zesqua"] = "Zesqua"
+	L["ZesquaDrop"] = "Rain Stone"
+	L["ZesquaInfo"] = "spawns off the coast of Pi'Jiu, slightly to the east."
+
+	L["ZhuGonSour"] = "Zhu-Gon the Sour"
+	L["ZhuGonSourDrop"] = "Skunky Alemental"
+	L["ZhuGonSourInfo"] = "spawns after completing the Skunky Beer mini-event at the same location."
+
+	L["Karkanos"] = "Karkanos"
+	L["KarkanosDrop"] = "Giant Purse of Timeless Coins"
+	L["KarkanosInfo"] = "is summoned by talking to Fin Longpaw."
+
+	L["Chelon"] = "Chelon"
+	L["ChelonDrop"] = "Hardened Shell"
+	L["ChelonInfo"] = "spawns after you inspect the shell."
+
+	L["Spelurk"] = "Spelurk"
+	L["SpelurkDrop"] = "Cursed Talisman"
+	L["SpelurkInfo"] = "can be summoned by breaking the cave-in of the Mysterious Den. You can break the cave-in by using the new action button you get from finding and opening the objects of Timeless Legends Icon Timeless Legends. Alternatively, a Mage with Blink Icon Blink can teleport to the other side of the wall and use the hammer inside the cave to destroy the wall."
+
+	L["Cranegnasher"] = "Cranegnasher"
+	L["CranegnasherDrop"] = "Pristine Stalker Hide"
+	L["CranegnasherInfo"] = "needs to be summoned. You will find the corpse of a dead Fishgorged Crane. Inspecting the corpse indicates that these cranes are the favorite food of a creature. This means that you need to kite a live Fishgorged Crane onto the corpse to summon Cranegnasher (you will find these ads just south of the corpse)."
+
+	L["Rattleskew"] = "Rattleskew"
+	L["RattleskewDrop"] = "Captain Zvezdan's Lost Leg"
+	L["RattleskewInfo"] = "spawns in Tsavoka's Den."
+
+	L["MonstrousSpineclaw"] = "Monstrous Spineclaw"
+	L["MonstrousSpineclawDrop"] = "Spineclaw Crab"
+	L["MonstrousSpineclawInfo"] = "patrols underwater, off the southern coast of the island."
+
+	L["SpiritJadefire"] = "Spirit of Jadefire"
+	L["SpiritJadefireDrop"] = "Glowing Green Ash"
+	L["SpiritJadefireDrop2"] = "Jadefire Spirit"
+	L["SpiritJadefireInfo"] = "spawns inside the Caverns of Lost Spirits in the recess on the right, almost facing Zarhym."
+
+	L["Leafmender"] = "Leafmender"
+	L["LeafmenderDrop"] = "Ashleaf Spriteling"
+	L["LeafmenderInfo"] = "spawns in the Blazing Way, around the tree."
+
+	L["Bufo"] = "Bufo"
+	L["BufoDrop"] = "Gulp Froglet"
+	L["BufoInfo"] = "spawns in the area filled with Gulp Frogs."
+
+	L["Garnia"] = "Garnia"
+	L["GarniaDrop"] = "Ruby Droplet"
+	L["GarniaInfo"] = "spawns in the Red Lake."
+
+	L["Tsavoka"] = "Tsavo'ka"
+	L["TsavokaDrop"] = "Pristine Stalker Hide"
+	L["TsavokaInfo"] = "spawns in Tsavoka's Den."
+
+	L["Stinkbraid"] = "Stinkbraid"
+	L["StinkbraidInfo"] = "spawns on the deck of the pirate ship."
+
+	L["RockMoss"] = "Rock Moss"
+	L["RockMossDrop"] = "Golden Moss"
+	L["RockMossInfo"] = "spawns at the bottom of the Cavern of Lost Spirits."
+
+	L["WatcherOsu"] = "Watcher Osu"
+	L["WatcherOsuDrop"] = "Ashen Stone"
+	L["WatcherOsuInfo"] = "spawns in the Firewalker Ruins."
+
+	L["JakurOrdon"] = "Jakur of Ordon"
+	L["JakurOrdonDrop"] = "Warning Sign"
+	L["JakurOrdonInfo"] = "Jakur of Ordon."
+
+	L["ChampionBlackFlame"] = "Champion of the Black Flame"
+	L["ChampionBlackFlameDrop"] = "Blackflame Daggers"
+	L["ChampionBlackFlameDrop2"] = "Big Bag of Herbs"
+	L["ChampionBlackFlameInfo"] = "are three adds that patrol between the two bridges of the Blazing Way."
+
+	L["Cinderfall"] = "Cinderfall"
+	L["CinderfallDrop"] = "Falling Flame"
+	L["CinderfallInfo"] = "spawns on the broken bridge."
+
+	L["UrdurCauterizer"] = "Urdur the Cauterizer"
+	L["UrdurCauterizerDrop"] = "Sunset Stone"
+	L["UrdurCauterizerInfo"] = "spawns on western court of Ordon Sanctuary."
+
+	L["FlintlordGairan"] = "Flintlord Gairan"
+	L["FlintlordGairanDrop"] = "Ordon Death Chime"
+	L["FlintlordGairanInfo"] = "spawns at various locations around the Ordon Sanctuary."
+
+	L["Huolon"] = "Huolon"
+	L["HuolonDrop"] = "Reins of the Thundering Onyx Cloud Serpent"
+	L["HuolonInfo"] = "flies around the Blazing Way and the Firewalker Ruins."
+
+	L["Golganarr"] = "Golganarr"
+	L["GolganarrDrop"] = "Odd Polished Stone"
+	L["GolganarrDrop2"] = "Glinting Pile of Stone"
+	L["GolganarrInfo"] = "spawns around here."
+
+	L["Evermaw"] = "Evermaw"
+	L["EvermawDrop"] = "Mist-Filled Spirit Lantern"
+	L["EvermawInfo"] = "This mark is not the exact location as she swims clockwise around the island."
+
+	L["DreadShipVazuvius"] = "Dread Ship Vazuvius"
+	L["DreadShipVazuviusDrop"] = "Rime of the Time-Lost Mariner"
+	L["DreadShipVazuviusInfo"] = "It needs to be summoned at the nearby beach with the Mist-Filled Spirit Lantern Icon Mist-Filled Spirit Lantern that drops from Evermaw."
+
+	L["ArchiereusFlame"] = "Archiereus of Flame"
+	L["ArchiereusFlameDrop"] = "Elixir of Ancient Knowledge"
+	L["ArchiereusFlameInfo"] = "spawns inside the Ordon Sanctuary, so players who do not have the legendary cloak will need to use a Scroll of Challenge Icon Scroll of Challenge at the Challenger's Stone."
+
+	L["Rattleskew"] ="Rattleskew - Captain Zvezdan"
+	L["RattleskewDrop"] ="Captain Zvezdan's Lost Leg"
+	L["RattleskewDrop2"] ="Technique: Glyph of Skeleton"
+	L["RattleskewInfo"] ="Underwater Shipwreck - Partial boat on sea floor\nif Captain Zvezdan is there the event is available. You can join his crew of undead and clear the ship. This spawns Rattleskew"
+
+-------------------------------------------------------------------------------
+----------------------------------- MECHAGON ----------------------------------
+-------------------------------------------------------------------------------
+L["Mechagon"] = "Mechagon";
+L["avenger_note"] = "When Oglethorpe Obnoticus is in Rustbolt, kill the OOX-Fleetfoot/MG (runs all over the zone) to spawn.";
+L["beastbot_note"] = "Craft a Beastbot Powerpack at Pascal-K1N6 to activate.";
+L["cogstar_note"] = "Kill Upgraded Sentry mobs anywhere in the zone until he teleports in to reinforce them.";
+L["crazed_trogg_note"] = "Use a spraybot, paint filled bladder or the bots in Bondo's Yard to coat yourself in the color he yells.";
+L["deepwater_note"] = "Craft a Hundred-Fathom Lure at Pascal-K1N6 to summon.";
+L["doppel_gang"] = "The Doppel Gang";
+L["doppel_note"] = 'Along with two other players, use a Pressure Relief Valve from the "Cogfrenzy\'s Construction Frenzy" daily to activate.';
+L["drill_rig"] = "Requires Drill Rig ";
+L["foul_manifest_note"] = "Connect all three circuit breakers to the pylons in the water.";
+L["furor_note"] = 'During the "Aid From Nordrassil" daily quest, click the small blue mushrooms until he spawns.';
+L["killsaw_note"] = "Spawns anywhere in the Fleeting Forest, likely in response to killing Sawblade Clearcutters. Does not spawn on days when the Venture Company is in the forest and Clearcutters are not available."
+L["leachbeast_note"] = "Use an Exothermic Evaporator Coil to activate the Weather Alteration Machine.";
+L["nullifier_note"] = 'Hack the "Hackable Nullifier Relay" using either the Remote Circuit Bypasser punch card or the DNT-Smashed Transport Relay. The former drops from The Scrap King while the latter drops from minions that attack the JD41 and JD99 drill rigs.';
+L["scrapclaw_note"] = "Off the shore in the water.";
+L["sparkqueen_note"] = 'Spawns only when the "Bugs, Lots of \'Em!" daily is active.';
+L["rusty_note"] = "Craft a Personal Time Displacer at Pascal-K1N6 to enter the alternate future. Only spawns when Chromie is NOT present in Rustbolt.";
+L["vaultbot_note"] = "Kite to the tesla coil in Bondo's Yard or craft a Vaultbot Key at Pascal-K1N6 to break him open.";
+
+L["iron_chest"] = "Irontide Lockbox"
+L["mech_chest"] = "Mechanized Chest"
+L["msup_chest"] = "Mechanized Supply Chest"
+L["rust_chest"] = "Old Rusty Chest"
+L["iron_chest_note"] = "Open with an Irontide Lockbox Key dropped from mobs in the Western Spray."
+L["msup_chest_note"] = "Open with a Mechanized Supply Key dropped from mobs in the Western Spray."
+L["rust_chest_note"] = "Open with an Old Rusty Key dropped from mobs in the Western Spray."
+
+L["rec_rig"] = "Reclamation Rig"
+L["rec_rig_note"] = "To activate hard-mode, use the Supercollider weapon to convert all Irradiated Elementals into Unstable Irradiated Elementals. Pets are obtainable on both difficulties."
+
+L["options_toggle_mech_chest"] = "Mechanized Chests"
+L["options_toggle_mech_chest_desc"] = "Display locations of mechanized chests. There are 10 unique chests that can be looted once a day and each chest has 4-5 spawn locations. Locations are grouped by color."
+L["options_toggle_locked_chest"] = "Locked Chests"
+L["options_toggle_locked_chest_desc"] = "Display locations of locked chests in the Western Spray."
+L["options_toggle_recrig"] = "Reclamation Rig"
+L["options_toggle_recrig_desc"] = "Display the location of the Reclamation Rig and its rewards."
+
+-------------------------------------------------------------------------------
+----------------------------------- NAZJATAR ----------------------------------
+-------------------------------------------------------------------------------
+L["Nazjatar"] = "Nazjatar";
+L["naz_intro_note"] = "Complete the introductory quest chain to unlock rares, treasures, and world quests on Nazjatar."
+L["alga_note"] = "CAUTION: Cloaked with four adds!";
+L["allseer_note"] = "Spawns anywhere in lower Kal'methir.";
+L["anemonar_note"] = "Kill the Colossal Sky Ray on top of him to activate.";
+L["avarius_note"] = "Use Brinestone Pickaxe to collect and place the colored crystals on the pedestals. You do not have to be a miner!";
+L["banescale_note"] = "Small chance to spawn immediately after killing Packmother.";
+L["elderunu_note"] = "Spawns anywhere in upper Kal'methir.";
+L["gakula_note"] = "Shoo away Bloodfin Tadpoles until he spawns.";
+L["glimmershell_note"] = "Small chance to spawn in place of Glimmershell Hulks.";
+L["kelpwillow_note"] = "Bring a Muck Slug using a Prismatic Crystal to activate.";
+L["lasher_note"] = "Plant a Germinating Seed in the soil and feed it flies.";
+L["matriarch_note"] = "Shares a respawn timer with the other two Scale Matriarchs.";
+L["needle_note"] = "Usually spawns in the Gate of the Queen area.";
+L["oronu_note"] = "Summon a Drowned Hatchling to activate.";
+L["rockweed_note"] = "Kill Lost Algan and Wayward Algan all over the zone until he spawns. A raid group is recommended as this can be a long grind.";
+L["sandcastle_note"] = "Use a Scrying Stone to reveal chests anywhere in the zone until he spawns.";
+L["tidelord_note"] = "Kill the three Azsh'ari Invokers and the summoned Unleashed Tidefury until the Tidelord is summoned.";
+L["tidemistress_note"] = "Click Undisturbed Specimen eggs until she spawns.";
+L["urduu_note"] = "Kill a Staghorn Reefwalker in front of him to activate.";
+L["voice_deeps_notes"] = "Use a Molted Shell to break the rocks.";
+L["vorkoth_note"] = "Toss Chum into the pool until it spawns.";
+L["area_spawn"] = "Spawns in the surrounding area.";
+L["cora_spawn"] = "Spawns anywhere in the Coral Forest.";
+L["cave_spawn"] = "Spawns in a cave.";
+L["east_spawn"] = "Spawns anywhere in the eastern half of the zone.";
+L["ucav_spawn"] = "Spawns in an underwater cave.";
+L["zone_spawn"] = "Spawns all over the zone.";
+
+L["supply_chest"] = "War Supply Chest";
+L["assassin_looted"] = " looted while an assassin."
+
+L["arcane_chest"] = "Arcane Chest";
+L["glowing_chest"] = "Glowing Arcane Trunk";
+L["arcane_chest_01"] = "Under some seaweed.";
+L["arcane_chest_02"] = "Inside the building upstairs.";
+L["arcane_chest_03"] = "On the second level.";
+L["arcane_chest_04"] = "In the water above the waterfall.";
+L["arcane_chest_05"] = "In the ruins.";
+L["arcane_chest_06"] = ""; -- in the open
+L["arcane_chest_07"] = "In the back of a cave. Entrance in Zanj'ir Wash to the east.";
+L["arcane_chest_08"] = "Hidden under some starfish.";
+L["arcane_chest_09"] = "In a cave behind Pearlhusk Crawler.";
+L["arcane_chest_10"] = "Under a molted shell.";
+L["arcane_chest_11"] = "At the top of the hill.";
+L["arcane_chest_12"] = "At the top of the waterfall.";
+L["arcane_chest_13"] = "At the top of the cliff, behind a tree.";
+L["arcane_chest_14"] = "Inside Elun'alor Temple.";
+L["arcane_chest_15"] = "In the right side of the building.";
+L["arcane_chest_16"] = "In an underwater cave. Entrance to the south.";
+L["arcane_chest_17"] = "At the top of the waterfall.";
+L["arcane_chest_18"] = "In a cave just below the path.";
+L["arcane_chest_19"] = "On top of the rock archway. Use a glider.";
+L["arcane_chest_20"] = "On top of the mountain.";
+L["glowing_chest_1"] = "In the back of an underwater cave. Defend the pylon.";
+L["glowing_chest_2"] = "Uncross the wires.";
+L["glowing_chest_3"] = "In the back of a cave. Defend the pylon.";
+L["glowing_chest_4"] = "Match 3 red runes.";
+L["glowing_chest_5"] = "In a cave. Defend the pylon.";
+L["glowing_chest_6"] = "Uncross the wires.";
+L["glowing_chest_7"] = "Match 4 blue runes.";
+L["glowing_chest_8"] = "On top of the roof. Defend the pylon.";
+
+L["slimy_cocoon"] = "Slimy Cocoon";
+L["ravenous_slime_note"] = "Feed the slime a critter using a Prismatic Crystal. Repeat five days until it spawns an egg with a pet inside. The slime will stay gone until the next weekly reset.";
+L["slimy_cocoon_note"] = "A pet is ready to be collected from the cocoon! If it does not appear for you, the egg in on cooldown in your phase. Change phases or check back later.";
+
+L["cat_figurine"] = "Crystalline Cat Figurine"
+L["cat_figurine_01"] = "In an underwater cave. Figurine is on the floor in the open. Entrance to the east."
+L["cat_figurine_02"] = "In a cave under the nearby waterfall. Figurine is under a starfish on the wall."
+L["cat_figurine_03"] = "In an underwater cave. Figurine is hidden under some broken shells."
+L["cat_figurine_04"] = "In an underwater cave. Figurine is on the floor in the open."
+L["cat_figurine_05"] = "In a small cave. Figurine is hidden behind plant on the floor."
+L["cat_figurine_06"] = "In an underwater cave filled with hostile Reefwalkers. Figurine is up on the wall. Entrance to the north."
+L["cat_figurine_07"] = "In a small cave. Figurine is on the wall in some coral."
+L["cat_figurine_08"] = "In a small cave. Dodge the arcane circles. Figurine is on a tall rock in the back."
+L["cat_figurine_09"] = "In an underwater cave. Figurine is on the rock archway by the ceiling."
+L["cat_figurine_10"] = "In a cave just below the path. Figurine is between three barrels."
+
+L["mardivas_lab"] = "Mardivas's Laboratory";
+L["no_reagent"] = "No reagents"
+L["swater"] = "Small Water"
+L["gwater"] = "Greater Water"
+L["sfire"] = "Small Fire"
+L["gfire"] = "Greater Fire"
+L["searth"] = "Small Earth"
+L["gearth"] = "Greater Earth"
+L["murloco"] = "Murloco";
+L["tentacle_taco"] = "Sells "..ITEM_QUALITY_COLORS[4].hex.."[Hungry Herald's Tentacle Taco]|r if you are wearing the Benthic Azsh'ari Stormsurger Cape.";
+
+L["options_toggle_treasures_nazj"] = "Display locations of chests for the Trove Tracker achievement."
+L["options_toggle_slimes_nazj"] = "Ravenous Slimes"
+L["options_toggle_slimes_nazj_desc"] = "Display locations of the four Ravenous Slimes that produce pets once fed."
+L["options_toggle_cats_nazj"] = "Cat Figurines"
+L["options_toggle_cats_nazj_desc"] = "Display locations of the crystalline cat figurines for the Feline Figurines Found achievement."
+L["options_toggle_misc_nazj"] = "Display the location of Murloco's cave and Mardivas's Laboratory."
+
+-------------------------------------------------------------------------------
+------------------------------------ CAVES ------------------------------------
+-------------------------------------------------------------------------------
+
+L["blindlight_cave"] = "Cave entrance to Blindlight.";
+L["caverndark_cave"] = "Cave entrance to Caverndark Terror.";
+L["chasmhaunt_cave"] = "Cave entrance to Chasm-Haunter.";
+L["shassera_cave"] = "Cave entrance to Shassera.";
+
+-------------------------------------------------------------------------------
+------------------------------------ GEAR -------------------------------------
+-------------------------------------------------------------------------------
+
+L["cloth"] = "Cloth";
+L["leather"] = "Leather";
+L["mail"] = "Mail";
+L["plate"] = "Plate";
+
+L["1h_mace"] = "1h Mace";
+L["1h_sword"] = "1h Sword";
+L["1h_axe"] = "1h Axe";
+L["2h_mace"] = "2h Mace";
+L["2h_axe"] = "2h Axe";
+L["2h_sword"] = "2h Sword";
+L["shield"] = "Shield";
+L["dagger"] = "Dagger";
+L["staff"] = "Staff";
+L["fist"] = "Fist";
+L["polearm"] = "Polearm";
+L["bow"] = "Bow";
+L["gun"] = "Gun";
+L["wand"] = "Wand";
+L["crossbow"] = "Crossbow";
+L["offhand"] = "Off Hand";
+L["warglaives"] = "Warglaives";
+
+L["ring"] = "Ring";
+L["amulet"] = "Amulet";
+L["cloak"] = "Cloak";
+L["trinket"] = "Trinket";
+
+-------------------------------------------------------------------------------
+---------------------------------- TOOLTIPS -----------------------------------
+-------------------------------------------------------------------------------
+
+L["retrieving"] = "Retrieving item link ...";
+L["in_cave"] = "In a cave.";
+L["weekly"] = "Weekly";
+L["normal"] = "Normal";
+L["hard"] = "Hard";
+L["mount"] = "Mount";
+L["pet"] = "Pet";
+L["toy"] = "Toy";
+L["completed"] = "Completed"
+L["incomplete"] = "Incomplete"
+L["known"] = "Known"
+L["missing"] = "Missing"
+L["unobtainable"] = "Unobtainable"
+L["unlearnable"] = "Unlearnable"
+
+-------------------------------------------------------------------------------
+--------------------------------- CONTEXT MENU --------------------------------
+-------------------------------------------------------------------------------
+
+L["context_menu_title"] = "HandyNotes Mechagon & Nazjatar";
+L["context_menu_add_tomtom"] = "Add to TomTom";
+L["context_menu_hide_node"] = "Hide this node";
+L["context_menu_restore_hidden_nodes"] = "Restore all hidden nodes";
+
+-------------------------------------------------------------------------------
+----------------------------------- OPTIONS -----------------------------------
+-------------------------------------------------------------------------------
+
+L["options_title"] = "Mechagon & Nazjatar";
+
+------------------------------------ ICONS ------------------------------------
+
+L["options_icon_settings"] = "Icon Settings";
+L["options_icons_treasures"] = "Treasure Icons";
+L["options_icons_rares"] = "Rare Icons";
+L["options_icons_caves"] = "Cave Icons";
+L["options_icons_pet_battles"] = "Pet Battle Icons";
+L["options_icons_other"] = "Other Icons";
+L["options_scale"] = "Scale";
+L["options_scale_desc"] = "1 = 100%";
+L["options_opacity"] = "Opacity";
+L["options_opacity_desc"] = "0 = transparent, 1 = opaque";
+
+---------------------------------- VISIBILITY ---------------------------------
+
+L["options_visibility_settings"] = "Visibility";
+L["options_general_settings"] = "General";
+L["options_toggle_looted_rares"] = "Always show all rares";
+L["options_toggle_looted_rares_desc"] = "Show every rare regardless of looted status";
+L["options_toggle_looted_treasures"] = "Already looted Treasures";
+L["options_toggle_looted_treasures_desc"] = "Show every treasure regardless of looted status";
+L["options_toggle_hide_done_rare"] = "Hide rare, if all loot known";
+L["options_toggle_hide_done_rare_desc"] = "Hide all rares for which all loot is known.";
+L["options_toggle_hide_minimap"] = "Hide all icons on the minimap";
+L["options_toggle_hide_minimap_desc"] = "Hides all icons from this addon on the minimap and displays them only on the main map.";
+
+L["options_toggle_battle_pets_desc"] = "Display locations of battle pet trainers and NPCs.";
+L["options_toggle_battle_pets"] = "Battle Pets";
+L["options_toggle_caves_desc"] = "Display cave entrances for other nodes.";
+L["options_toggle_caves"] = "Caves";
+L["options_toggle_misc"] = "Miscellaneous";
+L["options_toggle_npcs"] = "NPCs";
+L["options_toggle_rares_desc"] = "Display locations of rare NPCs.";
+L["options_toggle_rares"] = "Rares";
+L["options_toggle_supplies_desc"] = "Display all possible locations for war supply crates.";
+L["options_toggle_supplies"] = "War Supply Drops";
+L["options_toggle_treasures"] = "Treasures";
+
+---------------------------------- TOOLTIP ---------------------------------
+
+L["options_tooltip_settings"] = "Tooltip";
+L["options_tooltip_settings_desc"] = "Tooltip";
+L["options_toggle_show_loot"] = "Show Loot";
+L["options_toggle_show_loot_desc"] = "Add loot information to the tooltip";
+L["options_toggle_show_notes"] = "Show Notes";
+L["options_toggle_show_notes_desc"] = "Add helpful notes to the tooltip where available";
+
+--------------------------------- DEVELOPMENT ---------------------------------
+
+L["options_dev_settings"] = "Development";
+L["options_dev_settings_desc"] = "Development settings";
+L["options_toggle_show_debug"] = "Debug";
+L["options_toggle_show_debug_desc"] = "Show debug stuff";
+L["options_toggle_ignore_quests"] = "Ignore Quests";
+L["options_toggle_ignore_quests_desc"] = "Ignore quest status of nodes";
+L["options_toggle_force_nodes"] = "Force Nodes";
+L["options_toggle_force_nodes_desc"] = "Force display all nodes";

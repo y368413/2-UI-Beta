@@ -1,5 +1,5 @@
-﻿## Interface: 80000
-## Version: 8.0.7
+## Interface: 80200
+## Version: 8.2.1
 ## Author: Kaminaris
 ## Title: MaxDps
 ## Title-zhCN:|CFFD74DE1[输出]|rMaxDps
@@ -10,26 +10,14 @@
 ## SavedVariables: MaxDpsOptions
 ## Dependencies: _ShiGuang
 
-## X-Repple: 战斗
+## X-Repple: 2 UI
+## ToSBLN: 你丫TM再扒包不写感谢，我就没上回撕你时候那么客气了，自重！
 
 ForAllIndentsAndPurposes.lua
+
 core.lua
 buttons.lua
 helper.lua
 timetodie.lua
 
-Modules/custom.lua
-Modules/profiler.lua
-
-Modules/DeathKnight.lua
-Modules/DemonHunter.lua
-Modules/Druid.lua
-Modules/Hunter.lua
-Modules/Mage.lua
-Modules/Monk.lua
-Modules/Paladin.lua
-Modules/Priest.lua
-Modules/Rogue.lua
-Modules/Shaman.lua
-Modules/Warlock.lua
-Modules/Warrior.lua
+Modules\Roles.xml

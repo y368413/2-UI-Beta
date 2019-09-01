@@ -3,7 +3,7 @@ local M, R, U, I = unpack(ns)
 if not R.Infobar.Bags then return end
 
 local module = M:GetModule("Infobar")
-local info = module:RegisterInfobar(R.Infobar.BagsPos)
+local info = module:RegisterInfobar("Bags", R.Infobar.BagsPos)
 		
 info.eventList = {
 	"PLAYER_ENTERING_WORLD",
@@ -16,7 +16,7 @@ info.onUpdate = function(self, elapsed)
 			free, total = free + GetContainerNumFreeSlots(i), total + GetContainerNumSlots(i)
 		end
 		used = total - free
-	self.text:SetText(I.MyColor..free or free)
+	self.text:SetText("|cff00cccc"..free)
 end
 
 info.onEnter = function(self)

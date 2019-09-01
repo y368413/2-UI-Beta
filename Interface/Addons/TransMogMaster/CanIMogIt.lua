@@ -1,8 +1,5 @@
 ﻿-- Constants for CanIMogIt
-
 local L = CanIMogIt.L
-
-
 --------------------------------------------
 -- Database scan speed values             --
 --------------------------------------------
@@ -188,7 +185,7 @@ CanIMogIt.NUM_SLOTS_PER_GUILDBANK_GROUP = 14 -- Buttons
 CanIMogIt.NUM_ENCOUNTER_JOURNAL_ENCOUNTER_LOOT_FRAMES = 10 -- Blizzard functions are locals
 -- Loot Roll = NUM_GROUP_LOOT_FRAMES
 CanIMogIt.NUM_MAIL_INBOX_ITEMS = 7
--- Mail Attachments = ATTACHMENTS_MAX_SEND
+-- Mail Attachments = ATTACHMENTS_MAX_RECEIVE
 -- Merchant Items = MERCHANT_ITEMS_PER_PAGE
 CanIMogIt.NUM_WARDROBE_COLLECTION_BUTTONS = 12 -- Blizzard functions are locals
 -- Trade Skill = no constants
@@ -518,7 +515,6 @@ function CanIMogIt:OpenOptionsMenu()
     InterfaceOptionsFrame_OpenToCategory(CanIMogIt.frame)
     InterfaceOptionsFrame_OpenToCategory(CanIMogIt.frame)
 end
-
 
 
 CanIMogIt.cache = {}
@@ -1484,13 +1480,15 @@ end
 
 
 function CanIMogIt:IsReadyForCalculations(itemLink)
-    -- Returns true of the item's GetItemInfo is ready, or if it's a keystone.
+    -- Returns true of the item's GetItemInfo is ready, or if it's a keystone,
+    -- or if it's a battlepet.
     local itemInfo = GetItemInfo(itemLink)
-    local type = string.match(itemLink, ".*(keystone):.*")
-    if not itemInfo and type ~= "keystone" then
-        return false
+    local isKeystone = string.match(itemLink, ".*(keystone):.*") == "keystone"
+    local isBattlepet = string.match(itemLink, ".*(battlepet):.*") == "battlepet"
+    if itemInfo or isKeystone or isBattlepet then
+        return true
     end
-    return true
+    return false
 end
 
 
@@ -1870,10 +1868,14 @@ function CanIMogIt:CalculateTooltipText(itemLink, bag, slot)
         playerKnowsTransmog, characterCanLearnTransmog, isItemSoulbound, text, unmodifiedText;
 
     local isItemSoulbound = CanIMogIt:IsItemSoulbound(itemLink, bag, slot)
-    if isItemSoulbound == nil then return end
 
     if isTransmogable then
         --Calculating the logic for each rule
+
+        -- If the item is transmogable, bug didn't give a result for soulbound state, it's
+        -- probably not ready yet.
+        if isItemSoulbound == nil then return end
+
         playerKnowsTransmogFromItem = CanIMogIt:PlayerKnowsTransmogFromItem(itemLink)
         if playerKnowsTransmogFromItem == nil then return end
 
@@ -2095,6 +2097,14 @@ local function addToTooltip(tooltip, itemLink, bag, slot)
         return
     end
 
+    -- If it's a battlepet, then don't add any lines. Battle Pet uses a
+    -- different tooltip frame than normal.
+    local isBattlepet = string.match(itemLink, ".*(battlepet):.*") == "battlepet"
+    if isBattlepet then
+        tooltip.CIMI_tooltipWritten = true
+        return
+    end
+
     local text;
     text = CanIMogIt:GetTooltipText(itemLink, bag, slot)
     if text and text ~= "" then
@@ -2136,7 +2146,7 @@ ItemRefShoppingTooltip1:HookScript("OnTooltipCleared", TooltipCleared)
 ItemRefShoppingTooltip2:HookScript("OnTooltipCleared", TooltipCleared)
 ShoppingTooltip1:HookScript("OnTooltipCleared", TooltipCleared)
 ShoppingTooltip2:HookScript("OnTooltipCleared", TooltipCleared)
-WorldMapTooltip.ItemTooltip.Tooltip:HookScript("OnTooltipCleared", TooltipCleared)
+GameTooltip.ItemTooltip.Tooltip:HookScript("OnTooltipCleared", TooltipCleared)
 
 
 local function CanIMogIt_AttachItemTooltip(tooltip)
@@ -2154,7 +2164,7 @@ ItemRefShoppingTooltip1:HookScript("OnTooltipSetItem", CanIMogIt_AttachItemToolt
 ItemRefShoppingTooltip2:HookScript("OnTooltipSetItem", CanIMogIt_AttachItemTooltip)
 ShoppingTooltip1:HookScript("OnTooltipSetItem", CanIMogIt_AttachItemTooltip)
 ShoppingTooltip2:HookScript("OnTooltipSetItem", CanIMogIt_AttachItemTooltip)
-WorldMapTooltip.ItemTooltip.Tooltip:HookScript("OnTooltipSetItem", CanIMogIt_AttachItemTooltip)
+GameTooltip.ItemTooltip.Tooltip:HookScript("OnTooltipSetItem", CanIMogIt_AttachItemTooltip)
 
 
 hooksecurefunc(GameTooltip, "SetMerchantItem",
@@ -2281,13 +2291,6 @@ end
 hooksecurefunc(GameTooltip, "SetHyperlink", OnSetHyperlink)
 
 
-
-
-
-
-
-
---database.lua
 --[[
     global = {
         "appearances" = {
@@ -2437,8 +2440,6 @@ function CanIMogIt:OnInitialize()
     end
     self.db = LibStub("AceDB-3.0"):New("CanIMogItDatabase", default)
 end
-
-
 
 
 function CanIMogIt:GetAppearanceHash(appearanceID, itemLink)
@@ -2686,14 +2687,6 @@ CanIMogIt.frame:AddEventFunction(TransmogCollectionUpdated)
 
 
 
-
-
-
-
-
-
-
---tooltipScanner.lua
 --[[
     source: http://forums.wowace.com/showthread.php?t=15588&page=2
 
@@ -2787,7 +2780,10 @@ function CanIMogItTooltipScanner:CIMI_SetItem(itemLink, bag, slot)
     elseif bag and slot then
         self:SetBagItem(bag, slot)
     else
-        self:SetHyperlink(itemLink)
+        local isBattlepet = string.match(itemLink, ".*(battlepet):.*") == "battlepet"
+        if not isBattlepet then
+            self:SetHyperlink(itemLink)
+        end
     end
 end
 

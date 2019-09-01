@@ -487,9 +487,9 @@ local function createSellWindow()
 	ilvlSlider:SetWidth(190)
 	_G["TCSellWindowIlvlSliderText"]:SetText("最高出售装等")
 	_G["TCSellWindowIlvlSliderLow"]:SetText("1")
-	_G["TCSellWindowIlvlSliderHigh"]:SetText("512")
-	ilvlSlider:SetMinMaxValues(1, 512)
- 	ilvlSlider:SetValue(821)
+	_G["TCSellWindowIlvlSliderHigh"]:SetText("316")
+	ilvlSlider:SetMinMaxValues(1, 316)
+ 	ilvlSlider:SetValue(210)
 	ilvlSlider:SetValueStep(1)
 	ilvlSlider:SetHitRectInsets(0, 0, 0, 0) -- default from OptionsSliderTemplate: 0,0,-10,-10
 
@@ -704,6 +704,7 @@ end
 
 -- Event Handler
 local events = {}
+
 function events:ADDON_LOADED(...)
 	if select(1, ...) == "TransMogMaster" then
 		TransmogCleanup:UnregisterEvent("ADDON_LOADED")
@@ -727,7 +728,7 @@ function events:ADDON_LOADED(...)
 					[1] = true,
 					[2] = true,
 				},
-				["ilvl"] = 430,
+				["ilvl"] = 210,
 			}
 		end
 		if not db.filters.onuse and db.filters.onuse ~= false then

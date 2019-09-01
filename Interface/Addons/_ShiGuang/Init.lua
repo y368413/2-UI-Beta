@@ -1,13 +1,14 @@
--- Initial
 local addonName, ns = ...
 ns[1] = {}			-- M, Basement
 ns[2] = {}			-- R, Config
 ns[3] = {}			-- U, Locales
-ns[4] = {}			-- I, DataBase
-MaoRUIDB = MaoRUIDB or {}
-MaoRUISettingDB = MaoRUISettingDB or {}
+ns[4] = {}			-- I, Database
+MaoRUIDB, MaoRUISettingDB = {}, {}
+ShiGuangDB = ShiGuangDB or {}
+ShiGuangPerDB = ShiGuangPerDB or {}
 
 local M, R, U, I = unpack(ns)
+local pairs, next, tinsert = pairs, next, table.insert
 
 -- Events
 local events = {}
@@ -69,13 +70,15 @@ end
 
 -- Init
 M:RegisterEvent("PLAYER_LOGIN", function()
-	for _, module in pairs(initQueue) do
+	for _, module in next, initQueue do
 		if module.OnLogin then
 			module:OnLogin()
 		else
 			print("Module <"..module.name.."> does not loaded.")
 		end
 	end
+
+	M.Modules = modules
 end)
 
 _G[addonName] = ns

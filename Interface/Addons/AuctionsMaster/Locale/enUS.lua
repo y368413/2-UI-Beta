@@ -5,6 +5,7 @@ debug = true
 
 local L = LibStub("AceLocale-3.0"):NewLocale("AuctionLite", "enUS", true, debug);
 
+L["AuctionLite Options"] = true
 L["%dh"] = true
 L["(none set)"] = true
 L["|cff00ff00Scanned %d listings.|r"] = true

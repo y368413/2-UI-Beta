@@ -7,8 +7,8 @@ function Bar:CreateBar4()
 	local padding, margin = 2, 2
 	local num = NUM_ACTIONBAR_BUTTONS
 	local buttonList = {}
-	local layout = MaoRUISettingDB["Actionbar"]["Styles"]
-	if (layout == 2) or (layout == 3) or (layout == 6) or (layout == 7)  or (layout == 8) or (layout == 9) or (layout == 10) then cfg = R.bars.bar2 end
+	local layout = MaoRUISettingDB["Actionbar"]["Style"]
+	if (layout == 2) or (layout == 3) or (layout == 6) or (layout == 7)  or (layout == 8) or (layout == 9) or (layout == 10) then cfg.size = 38 end
 
 	--create the frame to hold the buttons
 	local frame = CreateFrame("Frame", "NDui_ActionBar4", UIParent, "SecureHandlerStateTemplate")
@@ -33,14 +33,11 @@ function Bar:CreateBar4()
 		frame:SetHeight(num*cfg.size + (num-1)*margin + 2*padding)
 		frame.Pos = {"RIGHT", UIParent, "RIGHT", -1, -88}
 	end
-	frame:SetScale(MaoRUISettingDB["Actionbar"]["ActionbarScale"])
+	frame:SetScale(MaoRUISettingDB["Actionbar"]["Scale"])
 
 	--move the buttons into position and reparent them
 	MultiBarRight:SetParent(frame)
 	MultiBarRight:EnableMouse(false)
-	hooksecurefunc(MultiBarRight, "SetScale", function(self, scale)
-		if scale < 1 then self:SetScale(1) end
-	end)
 
 	for i = 1, num do
 		local button = _G["MultiBarRightButton"..i]
@@ -150,8 +147,8 @@ function Bar:CreateBar4()
 	end
 
 	--create the mouseover functionality
-	if MaoRUISettingDB["Actionbar"]["Bar4Fades"] and cfg.fader then
-		M:CreateButtonFrameFader(frame, buttonList, cfg.fader)
+	if MaoRUISettingDB["Actionbar"]["Bar4Fade"] and cfg.fader then
+		Bar.CreateButtonFrameFader(frame, buttonList, cfg.fader)
 	end
 
 	--fix annoying visibility

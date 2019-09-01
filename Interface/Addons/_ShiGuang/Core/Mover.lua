@@ -1,39 +1,44 @@
-﻿local _, ns = ...
+local _, ns = ...
 local M, R, U, I = unpack(ns)
 
 -- Frame Mover
 local MoverList, BackupTable, f = {}, {}
-M.Mover = function(Frame, Text, key, Pos, w, h)
-	if not MaoRUISettingDB["Mover"] then MaoRUISettingDB["Mover"] = {} end
-	local Mover = CreateFrame("Frame", nil, UIParent)
-	Mover:SetWidth(w or Frame:GetWidth())
-	Mover:SetHeight(h or Frame:GetHeight())
-	M.CreateBD(Mover)
-	M.CreateSD(Mover)
-	M.CreateTex(Mover)
-	M.CreateFS(Mover, I.Font[2], Text)
-	tinsert(MoverList, Mover)
-
-	if not MaoRUISettingDB["Mover"][key] then 
-		Mover:SetPoint(unpack(Pos))
-	else
-		Mover:SetPoint(unpack(MaoRUISettingDB["Mover"][key]))
+function M:Mover(text, value, anchor, width, height, isAuraWatch)
+	local key = "Mover"
+	if isAuraWatch then key = "AuraWatchMover" end
+	if not MaoRUISettingDB[key] then MaoRUISettingDB[key] = {} end
+	local mover = CreateFrame("Frame", nil, UIParent)
+	mover:SetWidth(width or self:GetWidth())
+	mover:SetHeight(height or self:GetHeight())
+	M.CreateBD(mover)
+	M.CreateSD(mover)
+	M.CreateTex(mover)
+	M.CreateFS(mover, I.Font[2], text):SetWordWrap(true)
+	if not isAuraWatch then
+		tinsert(MoverList, mover)
 	end
-	Mover:EnableMouse(true)
-	Mover:SetMovable(true)
-	Mover:SetClampedToScreen(true)
-	Mover:SetFrameStrata("HIGH")
-	Mover:RegisterForDrag("LeftButton")
-	Mover:SetScript("OnDragStart", function(self) self:StartMoving() end)
-	Mover:SetScript("OnDragStop", function(self)
-		self:StopMovingOrSizing()
-		local orig, _, tar, x, y = self:GetPoint()
-		MaoRUISettingDB["Mover"][key] = {orig, "UIParent", tar, x, y}
-	end)
-	Mover:Hide()
-	Frame:SetPoint("TOPLEFT", Mover)
 
-	return Mover
+	if not MaoRUISettingDB[key][value] then 
+		mover:SetPoint(unpack(anchor))
+	else
+		mover:SetPoint(unpack(MaoRUISettingDB[key][value]))
+	end
+	mover:EnableMouse(true)
+	mover:SetMovable(true)
+	mover:SetClampedToScreen(true)
+	mover:SetFrameStrata("HIGH")
+	mover:RegisterForDrag("LeftButton")
+	mover:SetScript("OnDragStart", function() mover:StartMoving() end)
+	mover:SetScript("OnDragStop", function()
+		mover:StopMovingOrSizing()
+		local orig, _, tar, x, y = mover:GetPoint()
+		MaoRUISettingDB[key][value] = {orig, "UIParent", tar, x, y}
+	end)
+	mover:Hide()
+	self:ClearAllPoints()
+	self:SetPoint("TOPLEFT", mover)
+
+	return mover
 end
 
 local function UnlockElements()
@@ -57,7 +62,7 @@ local function LockElements()
 end
 
 StaticPopupDialogs["RESET_MOVER"] = {
-	text = "你确定重置所有面板的位置吗？",
+	text = U["Reset Mover Confirm"],
 	button1 = OKAY,
 	button2 = CANCEL,
 	OnAccept = function()
@@ -67,7 +72,7 @@ StaticPopupDialogs["RESET_MOVER"] = {
 }
 
 StaticPopupDialogs["CANCEL_MOVER"] = {
-	text = "你确定取消本次的操作吗？",
+	text = U["Cancel Mover Confirm"],
 	button1 = OKAY,
 	button2 = CANCEL,
 	OnAccept = function()
@@ -87,9 +92,8 @@ local function CreateConsole()
 	M.CreateSD(f)
 	M.CreateTex(f)
 	M.CreateMF(f)
-	local lable = M.CreateFS(f, 15, "面板移动控制", false, "TOP", 0, -10)
-	lable:SetTextColor(1, .8, 0)
-	local bu, text = {}, {LOCK, CANCEL, "网格", RESET}
+	M.CreateFS(f, 15, U["Mover Console"], "system", "TOP", 0, -10)
+	local bu, text = {}, {LOCK, CANCEL, U["Grids"], RESET}
 	for i = 1, 4 do
 		bu[i] = M.CreateButton(f, 70, 28, text[i])
 		if i == 1 then
@@ -116,13 +120,12 @@ local function CreateConsole()
 
 	do
 		local frame = CreateFrame("Frame", nil, f)
-		frame:SetPoint("TOP", f, "BOTTOM")
+		frame:SetPoint("TOP", f, "BOTTOM", 0, -2)
 		frame:SetSize(296, 65)
 		M.CreateBD(frame)
 		M.CreateSD(frame)
 		M.CreateTex(frame)
-		local lable = M.CreateFS(frame, 15, MINIMAP_MENU_AURACONFIG, false, "TOP", 0, -10)
-		lable:SetTextColor(1, .8, 0)
+		M.CreateFS(frame, 15, MINIMAP_MENU_AURACONFIG, "system", "TOP", 0, -10)
 
 		local bu, text = {}, {UNLOCK, LOCK, RESET}
 		for i = 1, 3 do

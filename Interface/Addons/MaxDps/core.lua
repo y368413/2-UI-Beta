@@ -1,10 +1,9 @@
-﻿
+﻿local MaxDpsPro, MaxDps = ...;
+
+LibStub('AceAddon-3.0'):NewAddon(MaxDps, 'MaxDps', 'AceConsole-3.0', 'AceEvent-3.0', 'AceTimer-3.0');
+
 --- @class MaxDps
-MaxDps = LibStub('AceAddon-3.0'):NewAddon('MaxDps', 'AceConsole-3.0', 'AceEvent-3.0', 'AceTimer-3.0');
-
-
-
-
+_G[MaxDpsPro] = MaxDps;
 
 MaxDps.Textures = {
 	{text = 'Ping', value = 'Interface\\Cooldown\\ping4'},
@@ -39,7 +38,23 @@ MaxDps.defaultOptions = {
 		enabled = true,
 		disabledInfo = true,
 		debugMode = false,
+		forceSingle = false,
 		disableButtonGlow = false,
+
+		customGlow = false,
+		customGlowType = 'pixel',
+
+		-- Settings for pixel glow
+		customGlowLines = 8,
+		customGlowFrequency = 0.25,
+		customGlowLength = 3,
+		customGlowThickness = 3,
+
+		-- Settings for particle glow
+		customGlowParticles = 4,
+		customGlowScale = 1,
+		customGlowParticleFrequency = 0.125,
+
 		onCombatEnter = true,
 		texture = 'Interface\\Cooldown\\ping4',
 		customTexture = '',
@@ -62,7 +77,7 @@ MaxDps.defaultOptions = {
 function MaxDps:OnInitialize()
 	self.db = LibStub('AceDB-3.0'):New('MaxDpsOptions', self.defaultOptions);
 
-	self:RegisterChatCommand('maxdps', 'ShowCustomWindow');
+	--self:RegisterChatCommand('maxdps', 'ShowCustomWindow');
 
 	if not self.db.global.customRotations then
 		self.db.global.customRotations = {};
@@ -101,6 +116,25 @@ function MaxDps:Print(...)
 	MaxDps:DefaultPrint(...);
 end
 
+MaxDps.profilerStatus = 0;
+function MaxDps:ProfilerStart()
+	self:EnableModule('Profiler');
+	self.profilerStatus = 1;
+end
+
+function MaxDps:ProfilerStop()
+	self:DisableModule('Profiler');
+	self.profilerStatus = 0;
+end
+
+function MaxDps:ProfilerToggle()
+	if self.profilerStatus == 0 then
+		self:ProfilerStart();
+	else
+		self:ProfilerStop();
+	end
+end
+
 function MaxDps:EnableRotation()
 	if self.NextSpell == nil or self.rotationEnabled then
 		self:Print(self.Colors.Error .. 'Failed to enable addon!');
@@ -110,6 +144,9 @@ function MaxDps:EnableRotation()
 	self:Fetch();
 
 	self:CheckTalents();
+	self:GetAzeriteTraits();
+	self:GetAzeriteEssences();
+	self:CheckIsPlayerMelee();
 	if self.ModuleOnEnable then
 		self.ModuleOnEnable();
 	end
@@ -146,27 +183,66 @@ end
 function MaxDps:OnEnable()
 	self:RegisterEvent('PLAYER_TARGET_CHANGED');
 	self:RegisterEvent('PLAYER_TALENT_UPDATE');
-	self:RegisterEvent('ACTIONBAR_SLOT_CHANGED');
 	self:RegisterEvent('PLAYER_REGEN_DISABLED');
 	self:RegisterEvent('PLAYER_ENTERING_WORLD');
+	self:RegisterEvent('AZERITE_ESSENCE_ACTIVATED');
 
-	self:RegisterEvent('ACTIONBAR_HIDEGRID');
-	self:RegisterEvent('ACTIONBAR_PAGE_CHANGED');
-	self:RegisterEvent('LEARNED_SPELL_IN_TAB');
-	self:RegisterEvent('CHARACTER_POINTS_CHANGED');
-	self:RegisterEvent('ACTIVE_TALENT_GROUP_CHANGED');
-	self:RegisterEvent('PLAYER_SPECIALIZATION_CHANGED');
-	self:RegisterEvent('UPDATE_MACROS');
-	self:RegisterEvent('VEHICLE_UPDATE');
+	self:RegisterEvent('ACTIONBAR_SLOT_CHANGED', 'ButtonFetch');
+	self:RegisterEvent('ACTIONBAR_HIDEGRID', 'ButtonFetch');
+	self:RegisterEvent('ACTIONBAR_PAGE_CHANGED', 'ButtonFetch');
+	self:RegisterEvent('LEARNED_SPELL_IN_TAB', 'ButtonFetch');
+	self:RegisterEvent('CHARACTER_POINTS_CHANGED', 'ButtonFetch');
+	self:RegisterEvent('ACTIVE_TALENT_GROUP_CHANGED', 'ButtonFetch');
+	self:RegisterEvent('PLAYER_SPECIALIZATION_CHANGED', 'ButtonFetch');
+	self:RegisterEvent('UPDATE_MACROS', 'ButtonFetch');
+	self:RegisterEvent('VEHICLE_UPDATE', 'ButtonFetch');
+	self:RegisterEvent('UPDATE_STEALTH', 'ButtonFetch');
 
 	self:RegisterEvent('UNIT_ENTERED_VEHICLE');
 	self:RegisterEvent('UNIT_EXITED_VEHICLE');
+
+	self:RegisterEvent('NAME_PLATE_UNIT_ADDED');
+	self:RegisterEvent('NAME_PLATE_UNIT_REMOVED');
 	--	self:RegisterEvent('PLAYER_REGEN_ENABLED');
 
-	--self:Print(self.Colors.Info .. 'Initialized');
+	if not self.playerUnitFrame then
+		self.spellHistory = {};
+
+		self.playerUnitFrame = CreateFrame('Frame');
+		self.playerUnitFrame:RegisterUnitEvent('UNIT_SPELLCAST_SUCCEEDED', 'player');
+		self.playerUnitFrame:SetScript('OnEvent', function(_, event, unit, lineId, spellId)
+			if IsPlayerSpell(spellId) then
+				tinsert(self.spellHistory, 1, spellId);
+
+				if #self.spellHistory > 5 then
+					tremove(self.spellHistory);
+				end
+			end
+		end);
+	end
+
+	self:Print(self.Colors.Info .. 'Initialized');
+end
+
+MaxDps.visibleNameplates = {};
+function MaxDps:NAME_PLATE_UNIT_ADDED(_, nameplateUnit)
+	if not tContains(self.visibleNameplates, nameplateUnit) then
+		tinsert(self.visibleNameplates, nameplateUnit);
+	end
+end
+
+function MaxDps:NAME_PLATE_UNIT_REMOVED(_, nameplateUnit)
+	local index = tIndexOf(self.visibleNameplates, nameplateUnit);
+	if index ~= nil then
+		tremove(self.visibleNameplates, index)
+	end
 end
 
 function MaxDps:PLAYER_TALENT_UPDATE()
+	self:DisableRotation();
+end
+
+function MaxDps:AZERITE_ESSENCE_ACTIVATED()
 	self:DisableRotation();
 end
 
@@ -214,24 +290,32 @@ function MaxDps:ButtonFetch()
 	end
 end
 
-MaxDps.ACTIONBAR_SLOT_CHANGED = MaxDps.ButtonFetch;
-MaxDps.ACTIONBAR_HIDEGRID = MaxDps.ButtonFetch;
-MaxDps.ACTIONBAR_PAGE_CHANGED = MaxDps.ButtonFetch;
-MaxDps.LEARNED_SPELL_IN_TAB = MaxDps.ButtonFetch;
-MaxDps.CHARACTER_POINTS_CHANGED = MaxDps.ButtonFetch;
-MaxDps.ACTIVE_TALENT_GROUP_CHANGED = MaxDps.ButtonFetch;
-MaxDps.PLAYER_SPECIALIZATION_CHANGED = MaxDps.ButtonFetch;
-MaxDps.UPDATE_MACROS = MaxDps.ButtonFetch;
-MaxDps.VEHICLE_UPDATE = MaxDps.ButtonFetch;
+function MaxDps:PrepareFrameData()
+	if not self.FrameData then
+		self.FrameData = {
+			cooldown = self.PlayerCooldowns,
+			activeDot = self.ActiveDots
+		};
+	end
+
+	self.FrameData.timeShift, self.FrameData.currentSpell, self.FrameData.gcdRemains = MaxDps:EndCast();
+	self.FrameData.gcd = self:GlobalCooldown();
+	self.FrameData.buff, self.FrameData.debuff = MaxDps:CollectAuras();
+	self.FrameData.talents = self.PlayerTalents;
+	self.FrameData.azerite = self.AzeriteTraits;
+	self.FrameData.essences = self.AzeriteEssences;
+	self.FrameData.spellHistory = self.spellHistory;
+	self.FrameData.timeToDie = self:GetTimeToDie();
+end
 
 function MaxDps:InvokeNextSpell()
 	-- invoke spell check
 	local oldSkill = self.Spell;
 
-	local timeShift, currentSpell, gcd = MaxDps:EndCast();
-	local auras, targetAuras = MaxDps:CollectAuras();
+	self:PrepareFrameData();
 
-	self.Spell = self:NextSpell(timeShift, currentSpell, gcd, self.PlayerTalents);
+	--For backward compatibility only
+	self.Spell = self:NextSpell(self.FrameData.timeShift, self.FrameData.currentSpell, self.FrameData.gcd, self.PlayerTalents, self.AzeriteTraits);
 
 	if (oldSkill ~= self.Spell or oldSkill == nil) and self.Spell ~= nil then
 		self:GlowNextSpell(self.Spell);
@@ -274,7 +358,7 @@ end
 
 function MaxDps:LoadModule()
 	if self.Classes[self.ClassId] == nil then
-		self:Print(self.Colors.Error .. 'Invalid player class, please contact author of addon.');
+		--self:Print(self.Colors.Error .. 'Invalid player class, please contact author of addon.');
 		return;
 	end
 
@@ -293,13 +377,12 @@ function MaxDps:LoadModule()
 
 	--LoadAddOn(module);
 
+	self:InitTTD();
 	self:EnableRotationModule(self.Classes[self.ClassId]);
 end
 
 function MaxDps:EnableRotationModule(className)
-	local loaded = self:EnableModule(className);
-
-	if not loaded then
+	if not self:EnableModule(className) then
 		--self:Print(self.Colors.Error .. 'Could not find load module ' .. className .. ', reason: OUTDATED');
 	else
 		--self:Print(self.Colors.Info .. 'Finished Loading class module');

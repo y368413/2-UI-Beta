@@ -1,6 +1,6 @@
 ﻿local _, ns = ...
 local M, R, U, I = unpack(ns)
-local module = M:GetModule("Auras")
+local A = M:GetModule("Auras")
 
 -- Stagger Master
 local IconSize = R.Auras.IconSize
@@ -22,7 +22,7 @@ local function StaggerGo()
 		bu[i] = CreateFrame("Frame", nil, UIParent)
 		bu[i]:SetSize(IconSize, IconSize)
 		bu[i]:SetFrameStrata("HIGH")
-		M.CreateIF(bu[i], false, true)
+		M.AuraIcon(bu[i])
 		bu[i].Icon:SetTexture(GetSpellTexture(spells[i]))
 		bu[i].Count = M.CreateFS(bu[i], 16, "")
 		bu[i].Count:SetPoint("BOTTOMRIGHT", 4, -2)
@@ -177,7 +177,7 @@ local function checkSpec(event)
 	updateVisibility()
 end
 
-function module:Stagger()
+function A:Stagger()
 	if not MaoRUISettingDB["Auras"]["Stagger"] then return end
 
 	M:RegisterEvent("PLAYER_ENTERING_WORLD", checkSpec)

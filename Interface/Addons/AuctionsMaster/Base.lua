@@ -869,27 +869,16 @@ NS.AddLinesToTooltip = function( lines, double, tooltip )
 	-- https://wow.gamepedia.com/API_GameTooltip_AddDoubleLine
 	-- GameTooltip:AddLine(tooltipText [, r, g, b [, wrapText]])
 	-- GameTooltip:AddDoubleLine(leftText, rightText[, leftR, leftG, leftB[, rightR, rightG, rightB]])
-	--
-	-- fontObject disabled for now, screws up GameTooltip, but works fine if used on custom tooltip.
-	--
 	tooltip = tooltip or GameTooltip;
 	local tooltipName = tooltip:GetName();
 	if type( lines ) == "table" then
 		for i = 1, #lines do
 			if type( lines[i] ) == "table" then
-				--local fontObject;
 				if double then
 					tooltip:AddDoubleLine( lines[i][1], lines[i][2], ( lines[i][3] or nil ), ( lines[i][4] or nil ), ( lines[i][5] or nil ), ( lines[i][6] or nil ), ( lines[i][7] or nil ), ( lines[i][8] or nil ) );
-					--fontObject = #lines[i] > 2 and type( lines[i][#lines[i]] ) == "string" and lines[i][#lines[i]] or nil;
 				else
 					tooltip:AddLine( lines[i][1], ( lines[i][2] or nil ), ( lines[i][3] or nil ), ( lines[i][4] or nil ), ( lines[i][5] or nil ) );
-					--fontObject = #lines[i] > 1 and type( lines[i][#lines[i]] ) == "string" and lines[i][#lines[i]] or nil;
 				end
-				-- if fontObject then
-				-- 	local lineNum = tooltip:NumLines();
-				-- 	_G[tooltipName .. "TextLeft" .. lineNum]:SetFontObject( fontObject );
-				-- 	_G[tooltipName .. "TextRight" .. lineNum]:SetFontObject( fontObject );
-				-- end
 			else
 				tooltip:AddLine( lines[i] );
 			end

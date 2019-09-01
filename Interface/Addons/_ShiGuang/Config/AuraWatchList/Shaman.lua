@@ -10,7 +10,6 @@ local list = {
 		{AuraID = 198293, UnitID = "player"},	-- 疾风
 		{AuraID = 197211, UnitID = "player"},	-- 空气之怒
 		{AuraID = 260881, UnitID = "player"},	-- 幽灵狼
-		{AuraID = 192106, UnitID = "player"},	-- 闪电护盾
 	},
 	["Target Aura"] = {		-- 目标光环组
 		{AuraID = 61295, UnitID = "target", Caster = "player"},		-- 激流
@@ -71,6 +70,7 @@ local list = {
 		{AuraID = 224125, UnitID = "player"},	-- 火
 		{AuraID = 224126, UnitID = "player"},	-- 冰
 		{AuraID = 224127, UnitID = "player"},	-- 电
+		{AuraID = 187878, UnitID = "player"},	-- 毁灭闪电
 	},
 	["Focus Aura"] = {		-- 焦点光环组
 		{AuraID = 51514, UnitID = "focus", Caster = "player"},	-- 妖术
@@ -80,15 +80,16 @@ local list = {
 		{AuraID = 211015, UnitID = "focus", Caster = "player"},	-- 妖术
 	},
 	["Spell Cooldown"] = {	-- 冷却计时组
-		{SlotID = 13, UnitID = "player"},		-- 饰品1
-		{SlotID = 14, UnitID = "player"},		-- 饰品2
-		{SpellID = 20608, UnitID = "player"},	-- 复生
-		{SpellID = 98008, UnitID = "player"},	-- 灵魂链接
-		{SpellID = 114050, UnitID = "player"},	-- 升腾 元素
-		{SpellID = 114051, UnitID = "player"},	-- 升腾 增强
-		{SpellID = 114052, UnitID = "player"},	-- 升腾 恢复
-		{SpellID = 108280, UnitID = "player"},	-- 治疗之潮
-		{SpellID = 198506, UnitID = "player"},	-- 野性狼魂
+		{SlotID = 13},		-- 饰品1
+		{SlotID = 14},		-- 饰品2
+		{SpellID = 20608},	-- 复生
+		{SpellID = 98008},	-- 灵魂链接
+		{SpellID = 114050},	-- 升腾 元素
+		{SpellID = 114051},	-- 升腾 增强
+		{SpellID = 114052},	-- 升腾 恢复
+		{SpellID = 108280},	-- 治疗之潮
+		{SpellID = 198506},	-- 野性狼魂
+		{AuraID = 192106, UnitID = "player", Timeless = true},	-- 闪电护盾
 	},
 }
 

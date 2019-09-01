@@ -1,32 +1,26 @@
-
-
 local Brother = CreateFrame('Frame', 'BagBrother')
 Brother:SetScript('OnEvent', function(self, event, ...) self[event](self, ...) end)
-Brother:RegisterEvent('ADDON_LOADED')
 Brother:RegisterEvent('PLAYER_LOGIN')
 
 
---[[ Cache Loaded ]]--
+--[[ Server Ready ]]--
 
-function Brother:ADDON_LOADED()
-	self:RemoveEvent('ADDON_LOADED')
+function Brother:PLAYER_LOGIN()
+	self:RemoveEvent('PLAYER_LOGIN')
 	self:StartupCache()
-	self:SetupCharacter()
+	self:SetupEvents()
+	self:UpdateData()
 end
 
 function Brother:StartupCache()
-	local Player = UnitName('player')
-	local Realm = GetRealmName()
-	
+	local player, realm = UnitFullName('player')
 	BrotherBags = BrotherBags or {}
-	BrotherBags[Realm] = BrotherBags[Realm] or {}
-	
-	self.Realm = BrotherBags[Realm]
-	self.Realm[Player] = self.Realm[Player] or {equip = {}}
-	self.Player = self.Realm[Player]
-end
+	BrotherBags[realm] = BrotherBags[realm] or {}
 
-function Brother:SetupCharacter()
+	self.Realm = BrotherBags[realm]
+	self.Realm[player] = self.Realm[player] or {equip = {}}
+	self.Player = self.Realm[player]
+
 	local player = self.Player
 	player.faction = UnitFactionGroup('player') == 'Alliance'
 	player.class = select(2, UnitClass('player'))
@@ -34,30 +28,24 @@ function Brother:SetupCharacter()
 	player.sex = UnitSex('player')
 end
 
-
---[[ Server Ready ]]--
-
-function Brother:PLAYER_LOGIN()
-	self:RemoveEvent('PLAYER_LOGIN')
-	self:SetupEvents()
-	self:UpdateData()
-end
-
 function Brother:SetupEvents()
-	self:RegisterEvent('UNIT_INVENTORY_CHANGED')
-	self:RegisterEvent('PLAYER_MONEY')
 	self:RegisterEvent('BAG_UPDATE')
-
+	self:RegisterEvent('PLAYER_MONEY')
+	self:RegisterEvent('GUILD_ROSTER_UPDATE')
+	self:RegisterEvent('UNIT_INVENTORY_CHANGED')
 	self:RegisterEvent('BANKFRAME_OPENED')
 	self:RegisterEvent('BANKFRAME_CLOSED')
 
-	self:RegisterEvent('VOID_STORAGE_OPEN')
-	self:RegisterEvent('VOID_STORAGE_CLOSE')
+	if CanUseVoidStorage then
+		self:RegisterEvent('VOID_STORAGE_OPEN')
+		self:RegisterEvent('VOID_STORAGE_CLOSE')
+	end
 
-	self:RegisterEvent('GUILD_ROSTER_UPDATE')
-	self:RegisterEvent('GUILDBANKFRAME_OPENED')
-	self:RegisterEvent('GUILDBANKFRAME_CLOSED')
-	self:RegisterEvent('GUILDBANKBAGSLOTS_CHANGED')
+	if CanGuildBankRepair then
+		self:RegisterEvent('GUILDBANKFRAME_OPENED')
+		self:RegisterEvent('GUILDBANKFRAME_CLOSED')
+		self:RegisterEvent('GUILDBANKBAGSLOTS_CHANGED')
+	end
 end
 
 function Brother:UpdateData()
@@ -69,6 +57,9 @@ function Brother:UpdateData()
 	self:GUILD_ROSTER_UPDATE()
 	self:PLAYER_MONEY()
 end
+
+
+--[[ API ]]--
 
 function Brother:RemoveEvent(event)
 	self:UnregisterEvent(event)
@@ -92,7 +83,7 @@ local Reagents = REAGENTBANK_CONTAINER
 
 function BagBrother:BAG_UPDATE(bag)
 	local isBag = bag > Bank and bag <= BagSlots
-
+	
 	if isBag then
   		self:SaveBag(bag, bag == Backpack)
 	end
@@ -123,7 +114,7 @@ function BagBrother:BANKFRAME_CLOSED()
 			self:SaveBag(i)
 		end
 
-		if IsReagentBankUnlocked() then
+		if Reagents and IsReagentBankUnlocked() then
 			self:SaveBag(Reagents, true)
 		end
 
@@ -174,13 +165,14 @@ function BagBrother:GUILDBANKBAGSLOTS_CHANGED()
 
 		for i = 1, GetNumGuildBankTabs() do
 			guild[i] = guild[i] or {}
-			guild[i].name, guild[i].icon, guild[i].view, guild[i].deposit, guild[i].withdraw = GetGuildBankTabInfo(i)
-			guild[i].info = nil
+			guild[i].name, guild[i].icon, guild[i].view = GetGuildBankTabInfo(i)
 		end
 
 		local tab = GetCurrentGuildBankTab()
 		local items = guild[tab]
 		if items then
+			items.deposit, items.withdraw, items.remaining = select(4, GetGuildBankTabInfo(tab))
+
 			for i = 1, 98 do
 				local link = GetGuildBankItemLink(tab, i)
 				local _, count = GetGuildBankItemInfo(tab, i)
@@ -252,8 +244,7 @@ function BagBrother:ParseItem(link, count)
 end
 
 
-
-local Interface = LibStub:NewLibrary('BagBrotherInterface', 0)
+local Interface = LibStub:NewLibrary('BagBrotherInterface', 1)
 Interface.IsItemCache = true
 
 
@@ -324,7 +315,7 @@ end
 --[[ Bags ]]--
 
 function Interface:GetBag(realm, player, bag)
-  local slot = tonumber(bag) and bag > 0 and bag < 12 and ContainerIDToInventoryID(bag)
+  local slot = tonumber(bag) and bag > 0 and ContainerIDToInventoryID(bag)
   if slot then
     return Interface:GetItem(realm, player, 'equip', slot)
   end
@@ -339,8 +330,9 @@ function Interface:GetGuildTab(realm, guild, tab)
     name = tab.name,
     icon = tab.icon,
     viewable = tab.view,
-    canDeposit = tab.deposit,
-    numWithdrawals = tab.withdraw }
+    deposit = tab.deposit,
+    withdraw = tab.withdraw,
+    remaining = tab.remaining }
 end
 
 

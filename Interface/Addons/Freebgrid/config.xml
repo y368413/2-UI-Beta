@@ -1,6 +1,0 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/"> 
-    <Script file="libs\LibDDI-1.0\LibDDI-1.0.lua" />
-    <Script file="libs\LibAboutPanel\LibAboutPanel.lua" />
-    <Script file="config.lua" />
-	  <Script file="clickset\config.lua" />
-</Ui>

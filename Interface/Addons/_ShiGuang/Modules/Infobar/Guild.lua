@@ -3,67 +3,142 @@ local M, R, U, I = unpack(ns)
 if not R.Infobar.Guild then return end
 
 local module = M:GetModule("Infobar")
-local info = module:RegisterInfobar(R.Infobar.GuildPos)
+local info = module:RegisterInfobar("Guild", R.Infobar.GuildPos)
 
-local r, g, b = I.ClassColor.r, I.ClassColor.g, I.ClassColor.b
-local infoFrame = CreateFrame("Frame", "NDuiGuildInfobar", info)
-infoFrame:SetSize(335, 540)
-infoFrame:SetPoint("TOPLEFT", UIParent, 15, -30)
-infoFrame:SetClampedToScreen(true)
-infoFrame:SetFrameStrata("TOOLTIP")
-M.CreateBD(infoFrame, .7)
-M.CreateSD(infoFrame)
-M.CreateTex(infoFrame)
-infoFrame:Hide()
+local wipe, sort, format, select = table.wipe, table.sort, format, select
+local CLASS_ICON_TCOORDS, SELECTED_DOCK_FRAME = CLASS_ICON_TCOORDS, SELECTED_DOCK_FRAME
+local LEVEL_ABBR, CLASS_ABBR, NAME, ZONE, RANK, GUILDINFOTAB_APPLICANTS, REMOTE_CHAT = LEVEL_ABBR, CLASS_ABBR, NAME, ZONE, RANK, GUILDINFOTAB_APPLICANTS, REMOTE_CHAT
+local IsAltKeyDown, IsShiftKeyDown, InviteToGroup, C_Timer_After, GetTime, Ambiguate, MouseIsOver = IsAltKeyDown, IsShiftKeyDown, InviteToGroup, C_Timer.After, GetTime, Ambiguate, MouseIsOver
+local MailFrameTab_OnClick, MailFrame, SendMailNameEditBox = MailFrameTab_OnClick, MailFrame, SendMailNameEditBox
+local ChatEdit_ChooseBoxForSend, ChatEdit_ActivateChat, ChatFrame_OpenChat, ChatFrame_GetMobileEmbeddedTexture = ChatEdit_ChooseBoxForSend, ChatEdit_ActivateChat, ChatFrame_OpenChat, ChatFrame_GetMobileEmbeddedTexture
+local GetNumGuildMembers, GetGuildInfo, GetNumGuildApplicants, GetGuildRosterInfo, IsInGuild = GetNumGuildMembers, GetGuildInfo, GetNumGuildApplicants, GetGuildRosterInfo, IsInGuild
+local GetQuestDifficultyColor, GetRealZoneText, UnitInRaid, UnitInParty = GetQuestDifficultyColor, GetRealZoneText, UnitInRaid, UnitInParty
+local C_GuildInfo_GuildRoster = C_GuildInfo.GuildRoster
 
-local gName = M.CreateFS(infoFrame, 18, "Guild", true, "TOPLEFT", 15, -10)
-local gOnline = M.CreateFS(infoFrame, 13, "Online", false, "TOPLEFT", 15, -35)
-local gApps = M.CreateFS(infoFrame, 13, "Applications", false, "TOPRIGHT", -15, -35)
-local gRank = M.CreateFS(infoFrame, 13, "Rank", false, "TOPLEFT", 15, -51)
+local r, g, b = I.r, I.g, I.b
+local infoFrame, gName, gOnline, gApps, gRank, applyData, prevTime
 
-local bu = {}
-local width = {30, 35, 126, 126}
-for i = 1, 4 do
-	bu[i] = CreateFrame("Button", nil, infoFrame)
-	bu[i]:SetSize(width[i], 22)
-	bu[i]:SetFrameLevel(infoFrame:GetFrameLevel() + 3)
-	if i == 1 then
-		bu[i]:SetPoint("TOPLEFT", 12, -75)
-	else
-		bu[i]:SetPoint("LEFT", bu[i-1], "RIGHT", -2, 0)
-	end
-	bu[i].HL = bu[i]:CreateTexture(nil, "HIGHLIGHT")
-	bu[i].HL:SetAllPoints(bu[i])
-	bu[i].HL:SetColorTexture(r, g, b, .2)
+local function scrollBarHook(self, delta)
+	local scrollBar = self.ScrollBar
+	scrollBar:SetValue(scrollBar:GetValue() - delta*50)
 end
-M.CreateFS(bu[1], 13, LEVEL_ABBR)
-M.CreateFS(bu[2], 13, CLASS_ABBR)
-M.CreateFS(bu[3], 13, NAME, false, "LEFT", 5, 0)
-M.CreateFS(bu[4], 13, ZONE, false, "RIGHT", -5, 0)
+
+function module:ReskinScrollBar()
+	local scrollBar = self.ScrollBar
+	M.HideObject(scrollBar.ScrollUpButton)
+	M.HideObject(scrollBar.ScrollDownButton)
+	scrollBar.ThumbTexture:SetColorTexture(.3, .3, .3)
+	scrollBar.ThumbTexture:SetSize(3, 10)
+	scrollBar.ThumbTexture:SetPoint("LEFT", -5, 0)
+	self:SetScript("OnMouseWheel", scrollBarHook)
+end
+
+local function setupInfoFrame()
+	if infoFrame then infoFrame:Show() return end
+
+	infoFrame = CreateFrame("Frame", "NDuiGuildInfobar", info)
+	infoFrame:SetSize(335, 495)
+	infoFrame:SetPoint("TOPLEFT", UIParent, 15, -30)
+	infoFrame:SetClampedToScreen(true)
+	infoFrame:SetFrameStrata("TOOLTIP")
+	M.CreateBD(infoFrame, .7)
+	M.CreateSD(infoFrame)
+	M.CreateTex(infoFrame)
+
+	local function onUpdate(self, elapsed)
+		self.timer = (self.timer or 0) + elapsed
+		if self.timer > .1 then
+			if not infoFrame:IsMouseOver() then
+				self:Hide()
+				self:SetScript("OnUpdate", nil)
+			end
+
+			self.timer = 0
+		end
+	end
+	infoFrame:SetScript("OnLeave", function(self)
+		self:SetScript("OnUpdate", onUpdate)
+	end)
+
+	gName = M.CreateFS(infoFrame, 16, "Guild", true, "TOPLEFT", 15, -10)
+	gOnline = M.CreateFS(infoFrame, 13, "Online", false, "TOPLEFT", 15, -35)
+	gApps = M.CreateFS(infoFrame, 13, "Applications", false, "TOPRIGHT", -15, -35)
+	gRank = M.CreateFS(infoFrame, 13, "Rank", false, "TOPLEFT", 15, -51)
+
+	local bu = {}
+	local width = {30, 35, 126, 126}
+	for i = 1, 4 do
+		bu[i] = CreateFrame("Button", nil, infoFrame)
+		bu[i]:SetSize(width[i], 22)
+		bu[i]:SetFrameLevel(infoFrame:GetFrameLevel() + 3)
+		if i == 1 then
+			bu[i]:SetPoint("TOPLEFT", 12, -75)
+		else
+			bu[i]:SetPoint("LEFT", bu[i-1], "RIGHT", -2, 0)
+		end
+		bu[i].HL = bu[i]:CreateTexture(nil, "HIGHLIGHT")
+		bu[i].HL:SetAllPoints(bu[i])
+		bu[i].HL:SetColorTexture(r, g, b, .2)
+	end
+	M.CreateFS(bu[1], 13, LEVEL_ABBR)
+	M.CreateFS(bu[2], 13, CLASS_ABBR)
+	M.CreateFS(bu[3], 13, NAME, false, "LEFT", 5, 0)
+	M.CreateFS(bu[4], 13, ZONE, false, "RIGHT", -5, 0)
+
+	for i = 1, 4 do
+		bu[i]:SetScript("OnClick", function()
+			MaoRUIDB["GuildSortBy"] = i
+			MaoRUIDB["GuildSortOrder"] = not MaoRUIDB["GuildSortOrder"]
+			applyData()
+		end)
+	end
 
 M.CreateFS(infoFrame, 13, I.LineString, false, "BOTTOMRIGHT", -12, 26)
 M.CreateFS(infoFrame, 13, I.InfoColor..I.RightButton..CHAT_MSG_WHISPER_INFORM.."    ALT+"..I.LeftButton..INVITE.."    SHIFT+"..I.LeftButton..COPY_NAME, false, "BOTTOMRIGHT", -15, 10)
 
-local scrollFrame = CreateFrame("ScrollFrame", nil, infoFrame, "UIPanelScrollFrameTemplate")
-scrollFrame:SetSize(312, 375)
-scrollFrame:SetPoint("CENTER", 0, -15)
-scrollFrame.ScrollBar:Hide()
-scrollFrame.ScrollBar.Show = M.Dummy
-scrollFrame:SetScript("OnMouseWheel", function(_, delta)
-	local scrollBar = scrollFrame.ScrollBar
-	scrollBar:SetValue(scrollBar:GetValue() - delta*50)
-end)
-local roster = CreateFrame("Frame", nil, scrollFrame)
-roster:SetSize(312, 1)
-scrollFrame:SetScrollChild(roster)
+	local scrollFrame = CreateFrame("ScrollFrame", nil, infoFrame, "UIPanelScrollFrameTemplate")
+	scrollFrame:SetSize(312, 320)
+	scrollFrame:SetPoint("CENTER", 0, -15)
+	module.ReskinScrollBar(scrollFrame)
+
+	local roster = CreateFrame("Frame", nil, scrollFrame)
+	roster:SetSize(312, 1)
+	scrollFrame:SetScrollChild(roster)
+	infoFrame.roster = roster
+end
 
 local guildTable, frames, previous = {}, {}, 0
-local function createRoster(i)
-	local button = CreateFrame("Button", nil, roster)
+
+local function buttonOnClick(self, btn)
+	local name = guildTable[self.index][3]
+	if btn == "LeftButton" then
+		if IsAltKeyDown() then
+			InviteToGroup(name)
+		elseif IsShiftKeyDown() then
+			if MailFrame:IsShown() then
+				MailFrameTab_OnClick(nil, 2)
+				SendMailNameEditBox:SetText(name)
+				SendMailNameEditBox:HighlightText()
+			else
+				local editBox = ChatEdit_ChooseBoxForSend()
+				local hasText = (editBox:GetText() ~= "")
+				ChatEdit_ActivateChat(editBox)
+				editBox:Insert(name)
+				if not hasText then editBox:HighlightText() end
+			end
+		end
+	else
+		ChatFrame_OpenChat("/w "..name.." ", SELECTED_DOCK_FRAME)
+	end
+end
+
+local function createRoster(parent, i)
+	local button = CreateFrame("Button", nil, parent)
 	button:SetSize(312, 20)
 	button.HL = button:CreateTexture(nil, "HIGHLIGHT")
 	button.HL:SetAllPoints()
 	button.HL:SetColorTexture(r, g, b, .2)
+	button.index = i
 
 	button.level = M.CreateFS(button, 13, "Level", false)
 	button.level:SetPoint("TOP", button, "TOPLEFT", 16, -4)
@@ -79,36 +154,33 @@ local function createRoster(i)
 	button.zone:SetJustifyH("RIGHT")
 
 	button:RegisterForClicks("AnyUp")
-	button:SetScript("OnClick", function(_, btn)
-		local name = guildTable[i][3]
-		if btn == "LeftButton" then
-			if IsAltKeyDown() then
-				InviteToGroup(name)
-			elseif IsShiftKeyDown() then
-				if MailFrame:IsShown() then
-					MailFrameTab_OnClick(nil, 2)
-					SendMailNameEditBox:SetText(name)
-					SendMailNameEditBox:HighlightText()
-				else
-					local editBox = ChatEdit_ChooseBoxForSend()
-					local hasText = (editBox:GetText() ~= "")
-					ChatEdit_ActivateChat(editBox)
-					editBox:Insert(name)
-					if not hasText then editBox:HighlightText() end
-				end
-			end
-		else
-			ChatFrame_OpenChat("/w "..name.." ", SELECTED_DOCK_FRAME)
-		end
-	end)
+	button:SetScript("OnClick", buttonOnClick)
+
 	return button
 end
 
+C_Timer_After(5, function()
+	if IsInGuild() then C_GuildInfo_GuildRoster() end
+end)
+
+local function setPosition()
+	for i = 1, previous do
+		if i == 1 then
+			frames[i]:SetPoint("TOPLEFT")
+		else
+			frames[i]:SetPoint("TOP", frames[i-1], "BOTTOM")
+		end
+		frames[i]:Show()
+	end
+end
+
 local function refreshData()
-	if not MaoRUIDB["GuildSortBy"] then MaoRUIDB ["GuildSortBy"] = 1 end
+	if not prevTime or (GetTime()-prevTime > 5) then
+		C_GuildInfo_GuildRoster()
+		prevTime = GetTime()
+	end
 
 	wipe(guildTable)
-	GuildRoster()
 	local count = 0
 	local total, _, online = GetNumGuildMembers()
 	local guildName, guildRank = GetGuildInfo("player")
@@ -142,45 +214,40 @@ local function refreshData()
 			if not zone then zone = UNKNOWN end
 
 			count = count + 1
-			guildTable[count] = {level, class, name, zone, status}
+			guildTable[count] = {level, class, Ambiguate(name, "none"), zone, status}
 		end
 	end
 
-	if count > previous then
-		for i = previous+1, count do
-			if not frames[i] then
-				frames[i] = createRoster(i)
+	if count ~= previous then
+		if count > previous then
+			for i = previous+1, count do
+				if not frames[i] then
+					frames[i] = createRoster(infoFrame.roster, i)
+				end
+			end
+		elseif count < previous then
+			for i = count+1, previous do
+				frames[i]:Hide()
 			end
 		end
-	elseif count < previous then
-		for i = count+1, previous do
-			frames[i]:Hide()
-		end
+		previous = count
+
+		setPosition()
 	end
-	previous = count
 end
 
-local function setPosition()
-	for i = 1, previous do
-		if i == 1 then
-			frames[i]:SetPoint("TOPLEFT")
+local function sortGuild(a, b)
+	if a and b then
+		if MaoRUIDB["GuildSortOrder"] then
+			return a[MaoRUIDB["GuildSortBy"]] < b[MaoRUIDB["GuildSortBy"]]
 		else
-			frames[i]:SetPoint("TOP", frames[i-1], "BOTTOM")
+			return a[MaoRUIDB["GuildSortBy"]] > b[MaoRUIDB["GuildSortBy"]]
 		end
-		frames[i]:Show()
 	end
 end
 
-local function applyData()
-	sort(guildTable, function(a, b)
-		if a and b then
-			if MaoRUIDB["GuildSortOrder"] then
-				return a[MaoRUIDB["GuildSortBy"]] < b[MaoRUIDB["GuildSortBy"]]
-			else
-				return a[MaoRUIDB["GuildSortBy"]] > b[MaoRUIDB["GuildSortBy"]]
-			end
-		end
-	end)
+function applyData()
+	sort(guildTable, sortGuild)
 
 	for i = 1, previous do
 		local level, class, name, zone, status = unpack(guildTable[i])
@@ -192,20 +259,16 @@ local function applyData()
 		frames[i].class:SetTexCoord(tcoords[1] + .022, tcoords[2] - .025, tcoords[3] + .022, tcoords[4] - .025)
 
 		local namecolor = M.HexRGB(M.ClassColor(class))
-		frames[i].name:SetText(namecolor..Ambiguate(name, "guild")..status)
+		frames[i].name:SetText(namecolor..name..status)
 
-		local zonecolor = "|cffa6a6a6"
-		if GetRealZoneText() == zone then zonecolor = "|cff4cff4c" end
+		local zonecolor = I.GreyColor
+		if UnitInRaid(name) or UnitInParty(name) then
+			zonecolor = "|cff4c4cff"
+		elseif GetRealZoneText() == zone then
+			zonecolor = "|cff4cff4c"
+		end
 		frames[i].zone:SetText(zonecolor..zone)
 	end
-end
-
-for i = 1, 4 do
-	bu[i]:SetScript("OnClick", function()
-		MaoRUIDB["GuildSortBy"] = i
-		MaoRUIDB["GuildSortOrder"] = not MaoRUIDB["GuildSortOrder"]
-		applyData()
-	end)
 end
 
 info.eventList = {
@@ -214,55 +277,50 @@ info.eventList = {
 	"PLAYER_GUILD_UPDATE",
 }
 
-info.onEvent = function(self)
+info.onEvent = function(self, event, ...)
 	if not IsInGuild() then
 		self.text:SetText(I.MyColor.."Orz" or "Orz")
 		return
 	end
 
-	GuildRoster()
-	local _, _, online = GetNumGuildMembers()
-	self.text:SetText(format("%d"..I.MyColor.."%s" or "%d%s", online,">.<"))
+	if event == "GUILD_ROSTER_UPDATE" then
+		local canRequestRosterUpdate = ...
+		if canRequestRosterUpdate then
+			C_GuildInfo_GuildRoster()
+		end
+	end
 
-	if infoFrame:IsShown() then
+	local online = select(3, GetNumGuildMembers())
+	self.text:SetText(format("%d"..I.MyColor.."%s" or "%d%s", online,"~"))
+
+	if infoFrame and infoFrame:IsShown() then
 		refreshData()
-		setPosition()
 		applyData()
 	end
 end
 
 info.onEnter = function()
 	if not IsInGuild() then return end
+	setupInfoFrame()
 	refreshData()
-	setPosition()
 	applyData()
-	infoFrame:Show()
+end
+
+local function delayLeave()
+	if MouseIsOver(infoFrame) then return end
+	infoFrame:Hide()
 end
 
 info.onLeave = function()
-	C_Timer.After(.1, function()
-		if MouseIsOver(infoFrame) then return end
-		infoFrame:Hide()
-	end)
+	if not infoFrame then return end
+	C_Timer_After(.1, delayLeave)
 end
 
 info.onMouseUp = function()
+	if InCombatLockdown() then UIErrorsFrame:AddMessage(I.InfoColor..ERR_NOT_IN_COMBAT) return end
+
 	if not IsInGuild() then return end
 	infoFrame:Hide()
 	if not GuildFrame then LoadAddOn("Blizzard_GuildUI") end
 	ToggleFrame(GuildFrame)
 end
-
-infoFrame:SetScript("OnLeave", function(self)
-	self:SetScript("OnUpdate", function(self, elapsed)
-		self.timer = (self.timer or 0) + elapsed
-		if self.timer > .1 then
-			if not infoFrame:IsMouseOver() then
-				self:Hide()
-				self:SetScript("OnUpdate", nil)
-			end
-
-			self.timer = 0 
-		end
-	end)
-end)

@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------
--- AuctionLite 1.8.16
+-- AuctionLite 1.9.1
 --
 -- Lightweight addon to determine accurate market prices and to simplify
 -- the process of posting auctions.
@@ -8,15 +8,12 @@
 -------------------------------------------------------------------------------
 
 -- Create our addon.
-AuctionLite = LibStub("AceAddon-3.0"):NewAddon("AuctionLite",
-                                               "AceConsole-3.0",
-                                               "AceEvent-3.0",
-                                               "AceHook-3.0");
+AuctionLite = LibStub("AceAddon-3.0"):NewAddon("AuctionLite", "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0");
 
 local _
 local L = LibStub("AceLocale-3.0"):GetLocale("AuctionLite", false)
 
-local AUCTIONLITE_VERSION = "1.8.16";
+local AUCTIONLITE_VERSION = "1.9.1";
 
 -------------------------------------------------------------------------------
 -- Hooks and boostrap code
@@ -26,10 +23,14 @@ local AUCTIONLITE_VERSION = "1.8.16";
 function AuctionLite:ADDON_LOADED(_, name)
   if name == "Blizzard_AuctionUI" then
     self:RawHook("ChatEdit_InsertLink", "ChatEdit_InsertLink_Hook", true);
-    self:SecureHook("ContainerFrameItemButton_OnClick", "ContainerFrameItemButton_OnClick_Hook");
-    self:SecureHook("AuctionFrameTab_OnClick", "AuctionFrameTab_OnClick_Hook");
-    self:SecureHook("ClickAuctionSellItemButton", "ClickAuctionSellItemButton_Hook");
-    self:SecureHook("QueryAuctionItems", "QueryAuctionItems_Hook");
+    self:SecureHook("ContainerFrameItemButton_OnModifiedClick",
+                    "ContainerFrameItemButton_OnModifiedClick_Hook");
+    self:SecureHook("AuctionFrameTab_OnClick",
+                    "AuctionFrameTab_OnClick_Hook");
+    self:SecureHook("ClickAuctionSellItemButton",
+                    "ClickAuctionSellItemButton_Hook");
+    self:SecureHook("QueryAuctionItems",
+                    "QueryAuctionItems_Hook");
     self:HookAuctionFrameUpdate();
     self:AddAuctionFrameTabs();
     self:InitializeAuctionDuration();
@@ -44,6 +45,8 @@ function AuctionLite:ADDON_LOADED(_, name)
     self:HookBankTooltips();
   end
 end
+
+
 
 -- We're alive!
 function AuctionLite:OnInitialize()
@@ -102,12 +105,45 @@ function AuctionLite:OnInitialize()
   for i = 1, NUM_CONTAINER_FRAMES do
       for j = 1, MAX_CONTAINER_ITEMS do
           local f = getglobal("ContainerFrame"..i.."Item"..j);
-          if(f) then
-              if( f:GetScript('PreClick') ) then f:HookScript('PreClick', ContainerItemPreClick); else f:SetScript('PreClick', ContainerItemPreClick); end
+          if(f) then                                                           -----Thanks Aby
+    if( f:GetScript('PreClick') ) then
+        f:HookScript('PreClick', ContainerItemPreClick);
+    else
+        f:SetScript('PreClick', ContainerItemPreClick);
+    end
           end
       end
   end
-  
+
+  if IsAddOnLoaded("Combuctor") then
+      for i=1, 1000 do
+          local f = _G["CombuctorItem"..i]
+          if(f) then
+    if( f:GetScript('PreClick') ) then
+        f:HookScript('PreClick', ContainerItemPreClick);
+    else
+        f:SetScript('PreClick', ContainerItemPreClick);
+    end
+          else
+              break
+          end
+      end
+      local constructID
+      hooksecurefunc(Combuctor.ItemSlot, 'Create', function()
+          local f = constructID and _G["CombuctorItem"..constructID]
+          if(f) then
+    if( f:GetScript('PreClick') ) then
+        f:HookScript('PreClick', ContainerItemPreClick);
+    else
+        f:SetScript('PreClick', ContainerItemPreClick);
+    end
+          end
+      end)
+      hooksecurefunc(Combuctor.ItemSlot, "Construct", function(self, id)
+          constructID = id
+      end)
+  end
+
   -- Add our chat message filter.
   ChatFrame_AddMessageEventFilter("CHAT_MSG_SYSTEM", function(...)
     return self:MessageEventFilter(...);

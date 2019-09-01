@@ -1,6 +1,6 @@
 ﻿--## Author: Ermad  Core v1.3
 local AngryWorldQuest = {}
-local AngryWorldQuestV = "v0.20.5"
+local AngryWorldQuestV = "v0.20.6"
 local Listener = CreateFrame('Frame', 'AngryWorldQuestListener')
 local EventListeners = {}
 local function Addon_OnEvent(frame, event, ...)
@@ -146,7 +146,7 @@ local configDefaults = {
 	showHoveredPOI = true,
 	onlyCurrentZone = true,
 	selectedFilters = 0,
-	disabledFilters = 262028,
+	disabledFilters = 32328,
 	filterEmissary = 0,
 	filterLoot = 0,
 	filterFaction = 0,
@@ -937,9 +937,9 @@ local function TitleButton_OnEnter(self)
 			pin:EnableDrawLayer("HIGHLIGHT")
 		end
 	end
-	if Config.showComparisonRight then
-		WorldMapTooltip.ItemTooltip.Tooltip.overrideComparisonAnchorSide = "right"
-	end
+	--if Config.showComparisonRight then
+		--WorldMapTooltip.ItemTooltip.Tooltip.overrideComparisonAnchorSide = "right"
+	--end
 	TaskPOI_OnEnter(self)
 end
 
@@ -1450,7 +1450,6 @@ local function TaskPOI_IsFilteredReward(selectedFilters, questID)
 	if numQuestRewards > 0 then
 		local itemName, itemTexture, quantity, quality, isUsable, itemID = GetQuestLogRewardInfo(1, questID)
 		if itemName and itemTexture then
-			local artifactPower = nil--AngryWorldQuest.Data:ItemArtifactPower(itemID)
 			local iLevel = AngryWorldQuest.Data:RewardItemLevel(itemID, questID)
 				if iLevel then
 					local upgradesOnly = Config.filterLoot == FILTER_LOOT_UPGRADES or (Config.filterLoot == 0 and Config.lootFilterUpgrades)
@@ -1589,7 +1588,7 @@ local function TaskPOI_Sorter(a, b)
 		end
 	elseif Config.sortMethod == SORT_ZONE then
 		if MAPID_ORDER[a.mapID] ~= MAPID_ORDER[b.mapID] then
-			return MAPID_ORDER[a.mapID] < MAPID_ORDER[b.mapID]
+			return (MAPID_ORDER[a.mapID] or 0) < (MAPID_ORDER[b.mapID] or 0)
 		end
 	elseif Config.sortMethod == SORT_REWARDS then
 		local default_cat = #Mod.Filters + 1
@@ -1829,28 +1828,19 @@ function Mod:BeforeStartup()
 	self:AddFilter("ZONE", AngryWorldQuest.Locale.CURRENT_ZONE, "inv_misc_map02") -- ZONE
 	self:AddFilter("TRACKED", TRACKING, "icon_treasuremap")
 	self:AddFilter("FACTION", FACTION, "achievement_reputation_06")
-	-- self:AddFilter("ARTIFACT_POWER", ARTIFACT_POWER, "inv_7xp_inscription_talenttome01", true)
 	self:AddFilter("LOOT", BONUS_ROLL_REWARD_ITEM, "inv_misc_lockboxghostiron", true)
-
-	self:AddCurrencyFilter("ORDER_RESOURCES", CURRENCYID_RESOURCES, true)
-	self:AddCurrencyFilter("WAR_SUPPLIES", CURRENCYID_WAR_SUPPLIES)
-	self:AddCurrencyFilter("NETHERSHARD", CURRENCYID_NETHERSHARD)
-	self:AddCurrencyFilter("VEILED_ARGUNITE", CURRENCYID_VEILED_ARGUNITE)
-	self:AddCurrencyFilter("WAKENING_ESSENCE", CURRENCYID_WAKENING_ESSENCE)
 
 	self:AddCurrencyFilter("AZERITE", CURRENCYID_AZERITE, true)
 	self:AddCurrencyFilter("WAR_RESOURCES", CURRENCYID_WAR_RESOURCES, true)
 
 	self:AddFilter("GOLD", BONUS_ROLL_REWARD_MONEY, "inv_misc_coin_01")
 	self:AddFilter("ITEMS", ITEMS, "inv_box_01", true)
-	self:AddFilter("PVP", PVP, "pvpcurrency-honor-horde")
 	self:AddFilter("PROFESSION", TRADE_SKILLS, "inv_misc_note_01")
 	self:AddFilter("PETBATTLE", SHOW_PET_BATTLES_ON_MAP_TEXT, "tracking_wildpet")
 	self:AddFilter("RARE", ITEM_QUALITY3_DESC, "achievement_general_stayclassy")
 	self:AddFilter("DUNGEON", GROUP_FINDER, "inv_misc_summonable_boss_token")
 	self:AddFilter("SORT", RAID_FRAME_SORT_LABEL, "inv_misc_map_01")
 
-	if UnitFactionGroup("player") == "Alliance" then self.Filters.PVP.icon = "Interface\\Icons\\pvpcurrency-honor-alliance" end
 
 	self.Filters.TIME.values = { 1, 3, 6, 12, 24 }
 end
