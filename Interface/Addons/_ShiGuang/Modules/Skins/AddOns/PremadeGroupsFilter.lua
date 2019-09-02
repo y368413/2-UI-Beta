@@ -27,4 +27,5 @@ function S:PGFSkin()
 		end
 	end)
 
+	UsePFGButton.text:SetWidth(35)
 end
