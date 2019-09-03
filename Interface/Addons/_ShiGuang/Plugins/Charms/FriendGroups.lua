@@ -1,4 +1,4 @@
---## Author: Mikeprod  ## Version: 8.1    Fix for 8.2 by y368413
+--## Author: Mikeprod  ## Version: 8.2-fix6    Fix for 8.2 by y368413
 local hooks = {}
 
 local function Hook(source, target, secure)
@@ -533,8 +533,7 @@ local function FriendGroups_Update(forceUpdate)
 	end
 
 	buttonCount = buttonCount + GroupCount
-	-- 1.5 is a magic number which preventq the list scroll to be too long
-	totalScrollHeight = totalButtonHeight + GroupCount * FRIENDS_BUTTON_HEIGHTS[FRIENDS_BUTTON_TYPE_DIVIDER] / 1.5
+	totalScrollHeight = totalButtonHeight + GroupCount * FRIENDS_BUTTON_HEIGHTS[FRIENDS_BUTTON_TYPE_DIVIDER]
 
 	FriendsFrameFriendsScrollFrame.totalFriendListEntriesHeight = totalScrollHeight
 	FriendsFrameFriendsScrollFrame.numFriendListEntries = addButtonIndex
@@ -680,7 +679,7 @@ local function FriendGroups_OnClick(self, button)
     
     local group = self.info:GetText() or ""
     if button == "RightButton" then
-        --MSA_ToggleDropDownMenu(1, group, FriendGroups_Menu, "cursor", 0, 0)
+        --ToggleDropDownMenu(1, group, FriendGroups_Menu, "cursor", 0, 0)
         ShiGuangDB["FriendGroupsHideOffline"] = not ShiGuangDB["FriendGroupsHideOffline"]
         FriendGroups_Update()
     else
@@ -797,14 +796,14 @@ local menu_items = {
  
 FriendGroups_Menu.initialize = function(self, level)
 	if not menu_items[level] then return end
-    for _, items in ipairs(menu_items[level]) do
-		local info = MSA_DropDownMenu_CreateInfo()
+	for _, items in ipairs(menu_items[level]) do
+		local info = UIDropDownMenu_CreateInfo()
 		for prop, value in pairs(items) do
-			info[prop] = value ~= "" and value or MSA_DROPDOWNMENU_MENU_VALUE ~= "" and MSA_DropDownMenu_MENU_VALUE or "[ 2 UI ]"
+			info[prop] = value ~= "" and value or UIDROPDOWNMENU_MENU_VALUE ~= "" and UIDROPDOWNMENU_MENU_VALUE or "[ 2 UI ]"
 		end
 		info.arg1 = k
-		info.arg2 = MSA_DROPDOWNMENU_MENU_VALUE
-		MSA_DropDownMenu_AddButton(info, level)
+		info.arg2 = UIDROPDOWNMENU_MENU_VALUE
+		UIDropDownMenu_AddButton(info, level)
 	end
 end]]
 

@@ -1,6 +1,6 @@
 --[[
 Name: LibCurrencyInfo
-Revision: $Rev: 24 $
+Revision: $Rev: 26 $
 Maintainers: Arith
 Website: https://www.wowace.com/projects/libcurrencyinfo
 Dependencies: None
@@ -36,7 +36,7 @@ data.CurrencyByCategory = {
 --		201, -- Venture Coin
 --		321, -- Isle of Conquest Mark of Honor
 		391, -- Tol Barad Commendation
-		1602, -- Conquest
+		1602, -- Conquest, this one is actually under Hidden
 
 	},
 	[21] = { -- Wrath of the Lich King
@@ -139,40 +139,57 @@ data.CurrencyByCategory = {
 	[142] = { -- Hidden
 --		395, -- Justice Points
 --		396, -- Valor Points
---		1191, -- Valor
-		1324, -- Horde Qiraji Commendation
-		1325, -- Alliance Qiraji Commendation
---		1347, -- Legionfall Building - Personal Tracker - Mage Tower (Hidden)
---		1349, -- Legionfall Building - Personal Tracker - Command Tower (Hidden)
---		1350, -- Legionfall Building - Personal Tracker - Nether Tower (Hidden)
-		1501, -- Writhing Essence
-		1506, -- Argus Waystone
-		1540, -- Wood
-		1541, -- Iron
-		1559, -- Essence of Storms
-		1579, -- Champions of Azeroth
-		1592, -- Order of Embers
-		1593, -- Proudmore Admiralty
-		1594, -- Storm's Wake
-		1595, -- Talanji's Expedition
-		1596, -- Voldunai
-		1597, -- Zandalari Empire
-		1598, -- Tortollan Seekers
-		1599, -- 7th Legion
-		1600, -- Honorbound
-		1703, -- BFA Season 1 Rated Participation Currency
---		1705, -- Warfronts - Personal Tracker - Iron in Chest (Hidden)
+--		1171,	 -- Artifact Knowledge, this to be categorize in Legion
+		1191,	 -- Valor
+		1324,	 -- Horde Qiraji Commendation
+		1325,	 -- Alliance Qiraji Commendation
+--		1347,	 -- Legionfall Building - Personal Tracker - Mage Tower (Hidden)
+--		1349,	 -- Legionfall Building - Personal Tracker - Command Tower (Hidden)
+--		1350,	 -- Legionfall Building - Personal Tracker - Nether Tower (Hidden)
+		1501,	 -- Writhing Essence
+		1506,	 -- Argus Waystone
+		1540,	 -- Wood
+		1541,	 -- Iron
+		1559,	 -- Essence of Storms
+		1579,	 -- Champions of Azeroth
+		1592,	 -- Order of Embers
+		1593,	 -- Proudmoore Admiralty
+		1594,	 -- Storm's Wake
+		1595,	 -- Talanji's Expedition
+		1596,	 -- Voldunai
+		1597,	 -- Zandalari Empire
+		1598,	 -- Tortollan Seekers
+		1599,	 -- 7th Legion
+		1600,	 -- Honorbound
+-- 		1602,	 -- Conquest, this to be categorize in PvP
+		1703,	 -- BFA Season Rated Participation Currency
+		1705,	 -- Warfronts - Personal Tracker - Iron in Chest (Hidden)
+		1714,	 -- Warfronts - Personal Tracker - Wood in Chest (Hidden)
+		1722,	 -- Azerite Ore
+		1723,	 -- Lumber
+		1738,	 -- Unshackled
+		1739,	 -- Ankoan
+		1740,	 -- Rustbolt Resistance (Hidden)
+		1742,	 -- Rustbolt Resistance
+		1745,	 -- Nazjatar Ally - Neri Sharpfin
+		1746,	 -- Nazjatar Ally - Vim Brineheart
+		1747,	 -- Nazjatar Ally - Poen Gillbrack
+		1748,	 -- Nazjatar Ally - Bladesman Inowari
+		1749,	 -- Nazjatar Ally - Hunter Akana
+		1750,	 -- Nazjatar Ally - Farseer Ori
 	},
-	[143] = { -- Battle for Azeroth, Added in patch 8.0.1.25902
-		1560, -- Campaign Resources
-		1565, -- Rich Azerite Fragment
-		1580, -- Seal of Ancient Fate
-		1587, -- War Supplies
-		1710, -- Seafarer's Dubloon
-		1716, -- Honorbound Service Medal
-		1717, -- 7th Legion Service Medal
-		1718, -- Titan Residuum
-		1721, -- 棱彩法力珍珠
+	[143] = { -- Battle for Azeroth
+		1299,	 -- Brawler's Gold
+		1560,	 -- War Resources
+		1565,	 -- Rich Azerite Fragment
+		1580,	 -- Seal of Wartorn Fate
+		1587,	 -- War Supplies
+		1710,	 -- Seafarer's Dubloon
+		1716,	 -- Honorbound Service Medal
+		1717,	 -- 7th Legion Service Medal
+		1718,	 -- Titan Residuum
+		1721,	 -- Prismatic Manapearl
+--		1743,	 -- 8.2 NOT CURRENTLY USED
 	},
 	[144] = { -- Virtual
 		1553, -- Azerite
@@ -289,6 +306,7 @@ data.Currencies = {
 	[1273] = { id=1273, category=141 }, -- Seal of Broken Fate, Legion
 	[1275] = { id=1275, category=141 }, -- Curious Coin, Legion
 	[1299] = { id=1299, category=141 }, -- Brawler's Gold, Legion
+	[1299] = { id=1299, category=143 }, -- Brawler's Gold
 	[1314] = { id=1314, category=141 }, -- Lingering Soul Fragment, Legion
 	[1324] = { id=1324, category=142 }, -- Horde Qiraji Commendation, Hidden
 	[1325] = { id=1325, category=142 }, -- Alliance Qiraji Commendation, Hidden
@@ -313,12 +331,16 @@ data.Currencies = {
 	[1541] = { id=1541, category=142 }, -- Iron, Gathered by workers and miners when a mine is captured. Used to construct buildings and recruit or upgrade troops.
 	[1553] = { id=1553, category=144 }, -- Azerite, The blood of Azeroth crystalizes into chunks of Azerite, an extremely potent and powerful material.
 	[1559] = { id=1559, category=142 }, -- Essence of Storms, Extremely rare, found while killing enemies in the warfront. Used to grant yourself unbridled power at the Altar.
+	[1560] = { id=1560, category=143 }, -- War Resources
 	[1560] = { id=1560, category=143 }, -- War Resources, Used to recruit troops, run missions, and research upgrades for your war effort.
+	[1565] = { id=1565, category=143 }, -- Rich Azerite Fragment
 	[1565] = { id=1565, category=143 }, -- Rich Azerite Fragment, A fragment of rich Azerite. Turn-in to a nearby War Master for rewards.
 	[1579] = { id=1579, category=142 }, -- Champions of Azeroth, Grants reputation with the Champions of Azeroth.
+	[1580] = { id=1580, category=143 }, -- Seal of Wartorn Fate
 	[1580] = { id=1580, category=143 }, -- Seal of Wartorn Fate, Twists fate to provide an opportunity for additional treasure from Battle for Azeroth raid and dungeon bosses.
 	[1585] = { id=1585, category=144 }, -- Honor, Granted from slaying enemies of your faction
 	[1586] = { id=1586, category=144 }, -- Honor Level, Granted from slaying many enemies of your faction
+	[1587] = { id=1587, category=143 }, -- War Supplies
 	[1587] = { id=1587, category=143 }, -- War Supplies, Used to raise a force for the Battle of Stromgarde
 	[1592] = { id=1592, category=142 }, -- Order of Embers, Grants reputation with the Order of Embers.
 	[1593] = { id=1593, category=142 }, -- Proudmore Admiralty, Grants reputation with Proudmore Admiralty.
@@ -333,13 +355,31 @@ data.Currencies = {
 	[1703] = { id=1703, category=142 }, -- BFA Season 1 Rated Participation Currency,  
 	[1704] = { id=1704, category=23 }, -- Spirit Shard, The shard pulses with energy.
 	[1705] = { id=1705, category=142 }, -- Warfronts - Personal Tracker - Iron in Chest (Hidden),  
+	[1710] = { id=1710, category=143 }, -- Seafarer's Dubloon
 	[1710] = { id=1710, category=143 }, -- Seafarer's Dubloon, Currency used by the many varied tribes of the Great Sea. Used to procure items from traders on Island Expeditions.
+	[1714] = { id=1710, category=142 }, -- Warfronts - Personal Tracker - Wood in Chest (Hidden)
+	[1716] = { id=1716, category=143 }, -- Honorbound Service Medal
 	[1716] = { id=1716, category=143 }, -- Honorbound Service Medal
 	[1717] = { id=1717, category=143 }, -- 7th Legion Service Medal
+	[1717] = { id=1717, category=143 }, -- 7th Legion Service Medal
 	[1718] = { id=1718, category=143 }, -- Titan Residuum
-	[1721] = { id=1721, category=143 }, -- 棱彩法力珍珠
-	
+	[1721] = { id=1721, category=143 }, -- Prismatic Manapearl
+	[1722] = { id=1722, category=142 }, -- Azerite Ore
+	[1723] = { id=1723, category=142 }, -- Lumber
+	[1738] = { id=1738, category=142 }, -- Unshackled
+	[1739] = { id=1739, category=142 }, -- Ankoan
+	[1740] = { id=1740, category=142 }, -- Rustbolt Resistance (Hidden)
+	[1742] = { id=1742, category=142 }, -- Rustbolt Resistance
+	[1745] = { id=1745, category=142 }, -- Nazjatar Ally - Neri Sharpfin
+	[1746] = { id=1746, category=142 }, -- Nazjatar Ally - Vim Brineheart
+	[1747] = { id=1747, category=142 }, -- Nazjatar Ally - Poen Gillbrack
+	[1748] = { id=1748, category=142 }, -- Nazjatar Ally - Bladesman Inowari
+	[1749] = { id=1749, category=142 }, -- Nazjatar Ally - Hunter Akana
+	[1750] = { id=1750, category=142 }, -- Nazjatar Ally - Farseer Ori
+
 }
+
+
 -- ----------------------------------------------------------------------------
 -- Localized Lua globals.
 -- ----------------------------------------------------------------------------

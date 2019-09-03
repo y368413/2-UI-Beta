@@ -650,7 +650,6 @@ do
 		local count = AceGUI:GetNextWidgetNum(widgetType)
 		local frame = CreateFrame("Frame", nil, UIParent)
 		local dropdown = CreateFrame("Frame", "AceGUI30DropDown"..count, frame, "UIDropDownMenuTemplate")
-		--local dropdown = MSA_DropDownMenu_Create("AceGUI30DropDown"..count, frame)
 		
 		local self = {}
 		self.type = widgetType
