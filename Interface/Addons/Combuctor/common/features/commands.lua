@@ -69,14 +69,12 @@ end
 --[[ Options ]]--
 
 function Addon:CreateOptionsLoader()
-	CreateFrame('Frame', nil, InterfaceOptionsFrame):SetScript('OnShow', function(self)
-		LoadAddOn(ADDON .. '_Config')
-	end)
+	CreateFrame('Frame', nil, InterfaceOptionsFrame):SetScript('OnShow', function(self) LoadAddOn(ADDON) end)
 end
 
 function Addon:ShowOptions()
-	if LoadAddOn(ADDON .. '_Config') then
+	--if LoadAddOn(ADDON .. '_Config') then
 		InterfaceOptionsFrame_OpenToCategory(ADDON)
 		InterfaceOptionsFrame_OpenToCategory(ADDON) -- sometimes once not enough
-	end
+	--end
 end
