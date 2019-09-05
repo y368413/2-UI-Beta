@@ -90,6 +90,7 @@ local defaultSettings = {
 		BlockAddonAlert = true,
 		ChatMenu = true,
 		WhisperColor = true,
+		ChatItemLevel = true,
 	},
 	Map = {
 		Coord = true,

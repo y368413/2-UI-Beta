@@ -157,7 +157,7 @@ end
 local Cache_GetItemBind = function(button)
 	local ItemBind = GetPluginContainter(button):CreateFontString()
 	ItemBind:SetDrawLayer("ARTWORK")
-	ItemBind:SetPoint("BOTTOMLEFT", 2, 2)
+	ItemBind:SetPoint("BOTTOM", 2, 2)
 	ItemBind:SetFontObject(_G.NumberFont_Outline_Med or _G.NumberFontNormal) 
 	ItemBind:SetFont(ItemBind:GetFont(), 11, "OUTLINE")
 	ItemBind:SetShadowOffset(1, -1)

@@ -2,11 +2,13 @@ local _, ns = ...
 local M, R, U, I = unpack(ns)
 local module = M:GetModule("Chat")
 
-local strfind, gsub = string.find, string.gsub
+local strfind, strmatch, gsub = string.find, string.match, string.gsub
 local pairs, ipairs, tonumber = pairs, ipairs, tonumber
 local min, max, tremove = math.min, math.max, table.remove
 local IsGuildMember, C_FriendList_IsFriend, IsGUIDInGroup, C_Timer_After = IsGuildMember, C_FriendList.IsFriend, IsGUIDInGroup, C_Timer.After
 local Ambiguate, UnitIsUnit, BNGetGameAccountInfoByGUID, GetTime, SetCVar = Ambiguate, UnitIsUnit, BNGetGameAccountInfoByGUID, GetTime, SetCVar
+local GetItemInfo, GetItemStats = GetItemInfo, GetItemStats
+local LE_ITEM_CLASS_WEAPON, LE_ITEM_CLASS_ARMOR = LE_ITEM_CLASS_WEAPON, LE_ITEM_CLASS_ARMOR
 local BN_TOAST_TYPE_CLUB_INVITATION = BN_TOAST_TYPE_CLUB_INVITATION or 6
 
 -- Filter Chat symbols
@@ -148,6 +150,74 @@ function module:BlockTrashClub()
 		end
 	end
 end
+-- Show icon on chat hyperlinks
+local function GetHyperlink(link, texture)
+    if (not texture) then return link else return "|T"..texture..":0|t" .. link end
+end
+local function SetChatLinkIcon(link)
+    local schema, id = string.match(link, "|H(%w+):(%d+):")
+    local texture
+    if (schema == "item") then texture = select(10, GetItemInfo(tonumber(id)))
+    elseif (schema == "spell") then texture = select(3, GetSpellInfo(tonumber(id)))
+    elseif (schema == "achievement") then texture = select(10, GetAchievementInfo(tonumber(id)))
+    end
+    return GetHyperlink(link, texture)
+end
+-- Show itemlevel on chat hyperlinks
+local function isItemHasLevel(link)
+	local name, _, rarity, level, _, _, _, _, _, _, _, classID = GetItemInfo(link)
+	if name and level and rarity > 1 and (classID == LE_ITEM_CLASS_WEAPON or classID == LE_ITEM_CLASS_ARMOR) then
+		local itemLevel = M.GetItemLevel(link)
+		return name, itemLevel
+	end
+end
+
+local function isItemHasGem(link)
+	for index in pairs(GetItemStats(link)) do
+		if strfind(index, "EMPTY_SOCKET_") then
+			return "|TInterface\\ItemSocketingFrame\\UI-EmptySocket-Prismatic:0|t"
+		end
+	end
+	return ""
+end
+
+local itemCache = {}
+local function convertItemLevel(link)
+	if itemCache[link] then return itemCache[link] end
+
+	--local itemLink = strmatch(link, "|Hitem:.-|h")
+	--if itemLink then
+		--local name, itemLevel = isItemHasLevel(itemLink)
+		--if name and itemLevel then
+			--link = gsub(link, "|h%[(.-)%]|h", "|h["..name.."("..itemLevel..isItemHasGem(itemLink)..")]|h")
+			--itemCache[link] = link
+		--end
+	--end
+	  local itemLink = strmatch(link, "|H(.-)|h")
+	  local itemLinkGem = strmatch(link, "|Hitem:.-|h")
+    local name, _, _, _, _, class, subclass, _, equipSlot = GetItemInfo(itemLink)
+    local level = GetDetailedItemLevelInfo(itemLink)
+    if (level) then
+        if (equipSlot and strfind(equipSlot, "INVTYPE_")) then level = format("%s(%s)", level, _G[equipSlot] or equipSlot)
+        elseif (class == ARMOR) then level = format("%s(%s)", level, class)
+        elseif (subclass and strfind(subclass, RELICSLOT)) then level = format("%s(%s)", level, RELICSLOT)
+        end
+        if itemLinkGem then
+        link = gsub(link, "|h%[(.-)%]|h", "|h["..level..isItemHasGem(itemLinkGem)..":"..name.."]|h")
+        else
+        link = gsub(link, "|h%[(.-)%]|h", "|h["..level..":"..name.."]|h")
+        end
+        itemCache[link] = link
+    end
+	return link
+end
+
+function module:UpdateChatItemLevel(_, msg, ...)
+	if msg:find('Hitem:158923') or msg:find('Hkeystone') then return end
+	msg = gsub(msg, "(|H%w+:%d+:.-|h.-|h)", SetChatLinkIcon)
+	msg = gsub(msg, "(|Hitem:%d+:.-|h.-|h)", convertItemLevel)
+	return false, msg, ...
+end
 
 -- Filter azerite message on island expeditions
 local azerite = ISLANDS_QUEUE_WEEKLY_QUEST_PROGRESS:gsub("%%d/%%d ", "")
@@ -193,6 +263,24 @@ function module:ChatFilter()
 	end
 
 	hooksecurefunc(BNToastFrame, "ShowToast", self.BlockTrashClub)
+	
+	if MaoRUISettingDB["Chat"]["ChatItemLevel"] then
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_LOOT", self.UpdateChatItemLevel)
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", self.UpdateChatItemLevel)
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_SAY", self.UpdateChatItemLevel)
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_YELL", self.UpdateChatItemLevel)
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", self.UpdateChatItemLevel)
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", self.UpdateChatItemLevel)
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_BN_WHISPER", self.UpdateChatItemLevel)
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_RAID", self.UpdateChatItemLevel)
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_RAID_LEADER", self.UpdateChatItemLevel)
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_PARTY", self.UpdateChatItemLevel)
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_PARTY_LEADER", self.UpdateChatItemLevel)
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_GUILD", self.UpdateChatItemLevel)
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_BATTLEGROUND", self.UpdateChatItemLevel)
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_INSTANCE_CHAT", self.UpdateChatItemLevel)
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_INSTANCE_CHAT_LEADER", self.UpdateChatItemLevel)
+	end
 	M:RegisterEvent("PLAYER_ENTERING_WORLD", isPlayerOnIslands)
 end
 

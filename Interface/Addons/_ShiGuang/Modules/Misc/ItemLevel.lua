@@ -16,20 +16,20 @@ function MISC:GetSlotAnchor(index)
 	if not index then return end
 
 	if index <= 5 or index == 9 or index == 15 then
-		return "BOTTOMLEFT", 40, 20
+		return "BOTTOMLEFT", 46, 21
 	elseif index == 16 then
-		return "BOTTOMRIGHT", -40, 2
+		return "BOTTOMRIGHT", -46, 3
 	elseif index == 17 then
-		return "BOTTOMLEFT", 40, 2
+		return "BOTTOMLEFT", 46, 3
 	else
-		return "BOTTOMRIGHT", -40, 20
+		return "BOTTOMRIGHT", -46, 21
 	end
 end
 
 function MISC:CreateItemTexture(slot, relF, x, y)
 	local icon = slot:CreateTexture(nil, "ARTWORK")
 	icon:SetPoint(relF, x, y)
-	icon:SetSize(14, 14)
+	icon:SetSize(16, 16)
 	icon:SetTexCoord(unpack(I.TexCoord))
 	icon.bg = M.CreateBG(icon)
 	M.CreateBD(icon.bg)
@@ -45,10 +45,10 @@ function MISC:CreateItemString(frame, strType)
 		if index ~= 4 then
 			local slotFrame = _G[strType..slot.."Slot"]
 			local relF, x, y = MISC:GetSlotAnchor(index)
-			slotFrame.iLvlText = M.CreateFS(slotFrame, I.Font[2]+1)
+			slotFrame.iLvlText = M.CreateFS(slotFrame, I.Font[2]+3)
 			slotFrame.iLvlText:ClearAllPoints()
 			slotFrame.iLvlText:SetPoint(relF, slotFrame, x, y)
-			slotFrame.enchantText = M.CreateFS(slotFrame, I.Font[2]+1)
+			slotFrame.enchantText = M.CreateFS(slotFrame, I.Font[2])
 			slotFrame.enchantText:ClearAllPoints()
 			slotFrame.enchantText:SetPoint(relF, slotFrame, x, y)
 			slotFrame.enchantText:SetTextColor(0, 1, 0)
@@ -194,11 +194,11 @@ function MISC:ShowItemLevel()
 	if not MaoRUISettingDB["Misc"]["ItemLevel"] then return end
 
 	-- iLvl on CharacterFrame
-	--CharacterFrame:HookScript("OnShow", MISC.ItemLevel_UpdatePlayer)
-	--M:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", MISC.ItemLevel_UpdatePlayer)
+	CharacterFrame:HookScript("OnShow", MISC.ItemLevel_UpdatePlayer)
+	M:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", MISC.ItemLevel_UpdatePlayer)
 
 	-- iLvl on InspectFrame
-	--M:RegisterEvent("INSPECT_READY", self.ItemLevel_UpdateInspect)
+	M:RegisterEvent("INSPECT_READY", self.ItemLevel_UpdateInspect)
 
 	-- iLvl on FlyoutButtons
 	hooksecurefunc("EquipmentFlyout_DisplayButton", self.ItemLevel_FlyoutSetup)
