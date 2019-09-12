@@ -1,4 +1,4 @@
--- For All Indents And Purposes
+ï»¿-- For All Indents And Purposes
 local revision = 22
 -- Maintainer: kristofer.karlsson@gmail.com
 
@@ -873,8 +873,8 @@ if not IndentationLib.revision or revision > IndentationLib.revision then
         local script = critical_enter(editbox)
 
         local text = editboxGetText(editbox)
-        editbox:Insert("ª¡")
-        local pos = stringfind(editboxGetText(editbox), "ª¡", 1, 1)
+        editbox:Insert("î€€")
+        local pos = stringfind(editboxGetText(editbox), "î€€", 1, 1)
         editboxSetText(editbox, text)
 
         if pos then
