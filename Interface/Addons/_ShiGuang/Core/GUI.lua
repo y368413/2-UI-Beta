@@ -40,11 +40,12 @@ local defaultSettings = {
 		BankWidth = 16,
 		BagsiLvl = true,
 		BagsiLvlcolor = false,
-		Artifact = true,
 		ReverseSort = true,
 		ItemFilter = true,
 		ItemSetFilter = false,
 		DeleteButton = true,
+		FavouriteItems = {},
+		GatherEmpty = false,
 	},
 	Auras = {
 		Reminder = true,
@@ -91,6 +92,9 @@ local defaultSettings = {
 		ChatMenu = true,
 		WhisperColor = true,
 		ChatItemLevel = true,
+		Chatbar = true,
+		ChatWidth = 360,
+		ChatHeight = 121,
 	},
 	Map = {
 		Coord = true,
@@ -102,6 +106,7 @@ local defaultSettings = {
 		ShowRecycleBin = false,
 		WhoPings = true,
 		MapReveal = false,
+		Calendar = false,
 	},
 	Nameplate = {
 		Enable = true,
@@ -212,6 +217,7 @@ local defaultSettings = {
 		RaidCD = true,
 		PulseCD = false,
 		SorasThreat = true,
+		EnhancedMenu = false,
 	},
 	Tutorial = {
 		Complete = false,
@@ -222,6 +228,7 @@ local accountSettings = {
 	ChatFilterList = "%*",
 	Timestamp = false,
 	NameplateFilter = {[1]={}, [2]={}},
+	Changelog = {},
 	totalGold = {},
 	RepairType = 1,
 	AutoSell = true,
@@ -240,6 +247,7 @@ local accountSettings = {
 	KeystoneInfo = {},
 	AutoBubbles = false,
 	SystemInfoType = 1,
+	DisableInfobars = false,
 }
 
 -- Initial settings
@@ -300,6 +308,10 @@ local function updateBagSortOrder()
 	SetSortBagsRightToLeft(not MaoRUISettingDB["Bags"]["ReverseSort"])
 end
 
+local function updateReminder()
+	M:GetModule("Auras"):InitReminder()
+end
+
 local function updateChatSticky()
 	M:GetModule("Chat"):ChatWhisperSticky()
 end
@@ -314,6 +326,18 @@ end
 
 local function updateFilterList()
 	M:GetModule("Chat"):UpdateFilterList()
+end
+
+local function updateChatSize()
+	M:GetModule("Chat"):UpdateChatSize()
+end
+
+local function showMinimapClock()
+	M:GetModule("Maps"):ShowMinimapClock()
+end
+
+local function showCalendar()
+	M:GetModule("Maps"):ShowCalendar()
 end
 
 local function updateInterruptAlert()
@@ -350,6 +374,7 @@ end
 local function updateErrorBlocker()
 	M:GetModule("Misc"):UpdateErrorBlocker()
 end
+
 -- Config
 local tabList = {
 	U["Actionbar"],
@@ -427,7 +452,7 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "AuraWatch", "ClickThrough", U["AuraWatch ClickThrough"], true, true},
 		{1, "Auras", "Statue", U["Enable Statue"]},
 		{1, "Auras", "Totems", U["Enable Totems"], true},
-		{1, "Auras", "Reminder", U["Enable Reminder"], true, true},
+		{1, "Auras", "Reminder", U["Enable Reminder"], true, true, updateReminder},
 		{1, "Auras", "Stagger", U["Enable Stagger"]},
 		{1, "Auras", "BloodyHell", U["Enable BloodyHell"], true},
 		{1, "Auras", "HunterTool", U["Enable Marksman"], true, true},
@@ -477,21 +502,23 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 	  {1, "Misc", "FreeMountCD", "CD君(CN only)", true, true},
 	},
 	[5] = {
-		{1, "Chat", "Lock", "|cff00cc4c"..U["Lock Chat"]},
-		{1, "Chat", "Sticky", U["Chat Sticky"].."*", true, false, updateChatSticky},
-		{1, "Chat", "Oldname", U["Default Channel"], true, true},
+		{1, "Chat", "Oldname", U["Default Channel"]},
+		{1, "ACCOUNT", "Timestamp", U["Timestamp"], true, false, updateTimestamp},
+		{1, "Chat", "Sticky", U["Chat Sticky"].."*", true, true, updateChatSticky},
 		--{1, "Chat", "WhisperColor", U["Differ WhipserColor"].."*"},
 		{1, "Chat", "Freedom", U["Language Filter"]},
-		{1, "ACCOUNT", "Timestamp", U["Timestamp"], true, false, updateTimestamp},
-		{},--blank
+		{1, "Chat", "EnableFilter", "|cff00cc4c"..U["Enable Chatfilter"], true},
+		{1, "Chat", "BlockAddonAlert", U["Block Addon Alert"], true, true},
 		{1, "Chat", "Invite", "|cff00cc4c"..U["Whisper Invite"]},
 		{1, "Chat", "GuildInvite", U["Guild Invite Only"].."*", true},
-		{2, "Chat", "Keyword", U["Whisper Keyword"].."*", true, true, updateWhisperList},		
 		{},--blank
-		{1, "Chat", "EnableFilter", "|cff00cc4c"..U["Enable Chatfilter"]},
-		{1, "Chat", "BlockAddonAlert", U["Block Addon Alert"], true},
-		{2, "ACCOUNT", "ChatFilterList", U["Filter List"].."*", true, true, updateFilterList},
+		{1, "Chat", "Lock", "|cff00cc4c"..U["Lock Chat"]},
+		{3, "Chat", "ChatWidth", U["LockChatWidth"].."*", true, false, {200, 600, 0}, updateChatSize},
+		{3, "Chat", "ChatHeight", U["LockChatHeight"].."*", true, true, {100, 500, 0}, updateChatSize},
+		{},--blank				
 		{3, "Chat", "Matches", U["Keyword Match"].."*", false, false, {1, 3, 0}},
+		{2, "ACCOUNT", "ChatFilterList", U["Filter List"].."*", true, false, updateFilterList},
+		{2, "Chat", "Keyword", U["Whisper Keyword"].."*", true, true, updateWhisperList},
 	},
 	[6] = {
 		{1, "Tooltip", "CombatHide", U["Hide Tooltip"].."*"},
@@ -604,19 +631,11 @@ local function NDUI_VARIABLE(key, value, newValue)
 	end
 end
 
-local function editBoxOnEnter(self)
-	GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-	GameTooltip:ClearLines()
-	GameTooltip:AddLine(U["Tips"])
-	GameTooltip:AddLine(U["EdieBox Tip"], .6,.8,1)
-	GameTooltip:Show()
-end
-
 local function CreateOption(i)
 	local parent, offset = guiPage[i].child, 20
 
 	for _, option in pairs(optionList[i]) do
-		local optType, key, value, name, horizon, horizon2, data, callback = unpack(option)
+		local optType, key, value, name, horizon, horizon2, data, callback, tooltip = unpack(option)
 		-- Checkboxes
 		if optType == 1 then
 			local cb = M.CreateCheckBox(parent)
@@ -640,6 +659,10 @@ local function CreateOption(i)
 				bu:SetPoint("LEFT", cb.name, "RIGHT", -2, 1)
 				bu:SetScript("OnClick", data)
 			end
+			if tooltip then
+				cb.title = U["Tips"]
+				M.AddTooltip(cb, "ANCHOR_RIGHT", tooltip, "info")
+			end
 		-- Editbox
 		elseif optType == 2 then
 			local eb = M.CreateEditBox(parent, 160, 30)
@@ -660,47 +683,31 @@ local function CreateOption(i)
 				NDUI_VARIABLE(key, value, eb:GetText())
 				if callback then callback() end
 			end)
-			eb:SetScript("OnEnter", editBoxOnEnter)
-			eb:SetScript("OnLeave", M.HideTooltip)
+			eb.title = U["Tips"]
+			M.AddTooltip(eb, "ANCHOR_RIGHT", U["EdieBox Tip"], "info")
 
 			M.CreateFS(eb, 14, name, "system", "CENTER", 0, 25)
 		-- Slider
 		elseif optType == 3 then
 			local min, max, step = unpack(data)
-			local s = CreateFrame("Slider", key..value.."Slider", parent, "OptionsSliderTemplate")
+			local x, y
 			if horizon2 then
-				s:SetPoint("TOPLEFT", 470, -offset + 32)
+				x, y = 460, -offset + 32
 			elseif horizon then
-				s:SetPoint("TOPLEFT", 240, -offset + 32)
+				x, y = 230, -offset + 32
 			else
-				s:SetPoint("TOPLEFT", 20, -offset - 26)
+				x, y = 10, -offset - 26
 				offset = offset + 58
 			end
-			s:SetWidth(160)
-			s:SetMinMaxValues(min, max)
+			local s = M.CreateSlider(parent, name, min, max, x, y, width)
 			s:SetValue(NDUI_VARIABLE(key, value))
 			s:SetScript("OnValueChanged", function(_, v)
 				local current = tonumber(format("%."..step.."f", v))
 				NDUI_VARIABLE(key, value, current)
-				_G[s:GetName().."Text"]:SetText(current)
+				s.value:SetText(current)
 				if callback then callback() end
 			end)
-
-			M.CreateFS(s, 14, name, "system", "CENTER", 0, 21)
-			_G[s:GetName().."Low"]:SetText(min)
-			_G[s:GetName().."High"]:SetText(max)
-			_G[s:GetName().."Text"]:ClearAllPoints()
-			_G[s:GetName().."Text"]:SetPoint("TOP", s, "BOTTOM", 0, 3)
-			_G[s:GetName().."Text"]:SetText(format("%."..step.."f", NDUI_VARIABLE(key, value)))
-			s:SetBackdrop(nil)
-			local bd = CreateFrame("Frame", nil, s)
-			bd:SetPoint("TOPLEFT", 14, -2)
-			bd:SetPoint("BOTTOMRIGHT", -15, 3)
-			bd:SetFrameStrata("BACKGROUND")
-			M.CreateBD(bd, .3)
-			local thumb = _G[s:GetName().."Thumb"]
-			thumb:SetTexture(I.sparkTex)
-			thumb:SetBlendMode("ADD")
+			s.value:SetText(format("%."..step.."f", NDUI_VARIABLE(key, value)))
 		-- Dropdown
 		elseif optType == 4 then
 			local dd = M.CreateDropDown(parent, 143, 26, data)
@@ -788,7 +795,7 @@ local bloodlustFilter = {
 }
 
 local function exportData()
-	local text = I.Version..":"..I.MyName..":"..I.MyClass
+	local text = "UISettings:"..I.Version..":"..I.MyName..":"..I.MyClass
 	for KEY, VALUE in pairs(MaoRUISettingDB) do
 		if type(VALUE) == "table" then
 			for key, value in pairs(VALUE) do
@@ -817,6 +824,11 @@ local function exportData()
 						text = text..";"..KEY..":"..key
 						for _, v in ipairs(value) do
 							text = text..":"..tostring(v)
+						end
+					elseif key == "FavouriteItems" then
+						text = text..";"..KEY..":"..key
+						for itemID in pairs(value) do
+							text = text..":"..tostring(itemID)
 						end
 					end
 				else
@@ -855,11 +867,11 @@ local function importData()
 	local profile = dataFrame.editBox:GetText()
 	if M:IsBase64(profile) then profile = M:Decode(profile) end
 	local options = {strsplit(";", profile)}
-	--local title, _, _, class = strsplit(":", options[1])
-	--if title ~= "NDuiSettings" then
-		--UIErrorsFrame:AddMessage(I.InfoColor..U["Import data error"])
-		--return
-	--end
+	local title, _, _, class = strsplit(":", options[1])
+	if title ~= "UISettings" then
+		UIErrorsFrame:AddMessage(I.InfoColor..U["Import data error"])
+		return
+	end
 
 	for i = 2, #options do
 		local option = options[i]
@@ -870,7 +882,9 @@ local function importData()
 			MaoRUISettingDB[key][value] = {}
 		elseif arg1 == "r" or arg1 == "g" or arg1 == "b" then
 			local color = select(4, strsplit(":", option))
-			MaoRUISettingDB[key][value][arg1] = tonumber(color)
+			if MaoRUISettingDB[key][value] then
+				MaoRUISettingDB[key][value][arg1] = tonumber(color)
+			end
 		elseif key == "AuraWatchList" then
 			if value == "Switcher" then
 				local index, state = select(3, strsplit(":", option))
@@ -887,6 +901,11 @@ local function importData()
 				flash = toBoolean(flash)
 				if not MaoRUISettingDB[key][value] then MaoRUISettingDB[key][value] = {} end
 				MaoRUISettingDB[key][value][arg1] = {idType, spellID, unit, caster, stack, amount, timeless, combat, text, flash}
+			end
+		elseif value == "FavouriteItems" then
+			local items = {select(3, strsplit(":", option))}
+			for _, itemID in next, items do
+				MaoRUISettingDB[key][value][tonumber(itemID)] = true
 			end
 		elseif key == "Mover" then
 			local relFrom, parent, relTo, x, y = select(3, strsplit(":", option))
@@ -923,13 +942,13 @@ local function updateTooltip()
 	if M:IsBase64(profile) then profile = M:Decode(profile) end
 	local option = strsplit(";", profile)
 	local title, version, name, class = strsplit(":", option)
-	--if title == "NDuiSettings" then
+	if title == "UISettings" then
 		dataFrame.version = version
 		dataFrame.name = name
 		dataFrame.class = class
-	--else
-		--dataFrame.version = nil
-	--end
+	else
+		dataFrame.version = nil
+	end
 end
 
 local function createDataFrame()

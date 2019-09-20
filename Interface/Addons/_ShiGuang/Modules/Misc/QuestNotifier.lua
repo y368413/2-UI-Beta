@@ -88,12 +88,11 @@ function MISC:FindQuestComplete()
 		if link and isComplete and not completedQuest[questID] and not worldQuest then
 			if initComplete then
 				sendQuestMsg(completeText(link))
-			else
-				initComplete = true
 			end
 			completedQuest[questID] = true
 		end
 	end
+	initComplete = true
 end
 
 function MISC:FindWorldQuestComplete(questID)

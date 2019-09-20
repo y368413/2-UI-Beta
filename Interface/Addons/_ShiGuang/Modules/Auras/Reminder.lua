@@ -78,17 +78,33 @@ end
 
 function A:InitReminder()
 	if not groups then return end
-	if not MaoRUISettingDB["Auras"]["Reminder"] then return end
 
-	parentFrame = CreateFrame("Frame", nil, UIParent)
-	parentFrame:SetPoint("CENTER", -220, 130)
-	parentFrame:SetSize(iconSize, iconSize)
+	if MaoRUISettingDB["Auras"]["Reminder"] then
+		if not parentFrame then
+			parentFrame = CreateFrame("Frame", nil, UIParent)
+			parentFrame:SetPoint("CENTER", -220, 130)
+			parentFrame:SetSize(iconSize, iconSize)
+		end
+		parentFrame:Show()
 
-	M:RegisterEvent("UNIT_AURA", A.Reminder_OnEvent, "player")
-	M:RegisterEvent("UNIT_EXITED_VEHICLE", A.Reminder_OnEvent)
-	M:RegisterEvent("UNIT_ENTERED_VEHICLE", A.Reminder_OnEvent)
-	M:RegisterEvent("PLAYER_REGEN_ENABLED", A.Reminder_OnEvent)
-	M:RegisterEvent("PLAYER_REGEN_DISABLED", A.Reminder_OnEvent)
-	M:RegisterEvent("ZONE_CHANGED_NEW_AREA", A.Reminder_OnEvent)
-	M:RegisterEvent("PLAYER_ENTERING_WORLD", A.Reminder_OnEvent)
+		A:Reminder_OnEvent()
+		M:RegisterEvent("UNIT_AURA", A.Reminder_OnEvent, "player")
+		M:RegisterEvent("UNIT_EXITED_VEHICLE", A.Reminder_OnEvent)
+		M:RegisterEvent("UNIT_ENTERED_VEHICLE", A.Reminder_OnEvent)
+		M:RegisterEvent("PLAYER_REGEN_ENABLED", A.Reminder_OnEvent)
+		M:RegisterEvent("PLAYER_REGEN_DISABLED", A.Reminder_OnEvent)
+		M:RegisterEvent("ZONE_CHANGED_NEW_AREA", A.Reminder_OnEvent)
+		M:RegisterEvent("PLAYER_ENTERING_WORLD", A.Reminder_OnEvent)
+	else
+		if parentFrame then
+			parentFrame:Hide()
+			M:UnregisterEvent("UNIT_AURA", A.Reminder_OnEvent)
+			M:UnregisterEvent("UNIT_EXITED_VEHICLE", A.Reminder_OnEvent)
+			M:UnregisterEvent("UNIT_ENTERED_VEHICLE", A.Reminder_OnEvent)
+			M:UnregisterEvent("PLAYER_REGEN_ENABLED", A.Reminder_OnEvent)
+			M:UnregisterEvent("PLAYER_REGEN_DISABLED", A.Reminder_OnEvent)
+			M:UnregisterEvent("ZONE_CHANGED_NEW_AREA", A.Reminder_OnEvent)
+			M:UnregisterEvent("PLAYER_ENTERING_WORLD", A.Reminder_OnEvent)
+		end
+	end
 end

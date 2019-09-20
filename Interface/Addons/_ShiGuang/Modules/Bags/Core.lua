@@ -3,12 +3,13 @@ local M, R, U, I = unpack(ns)
 
 local module = M:RegisterModule("Bags")
 local cargBags = ns.cargBags
-local ipairs, strmatch, unpack = ipairs, string.match, unpack
+local ipairs, strmatch, unpack, pairs = ipairs, string.match, unpack, pairs
+local ceil = math.ceil
 local BAG_ITEM_QUALITY_COLORS = BAG_ITEM_QUALITY_COLORS
-local LE_ITEM_QUALITY_POOR, LE_ITEM_QUALITY_RARE, LE_ITEM_QUALITY_ARTIFACT, LE_ITEM_QUALITY_HEIRLOOM = LE_ITEM_QUALITY_POOR, LE_ITEM_QUALITY_RARE, LE_ITEM_QUALITY_ARTIFACT, LE_ITEM_QUALITY_HEIRLOOM
+local LE_ITEM_QUALITY_POOR, LE_ITEM_QUALITY_RARE, LE_ITEM_QUALITY_HEIRLOOM = LE_ITEM_QUALITY_POOR, LE_ITEM_QUALITY_RARE, LE_ITEM_QUALITY_HEIRLOOM
 local LE_ITEM_CLASS_WEAPON, LE_ITEM_CLASS_ARMOR, EJ_LOOT_SLOT_FILTER_ARTIFACT_RELIC = LE_ITEM_CLASS_WEAPON, LE_ITEM_CLASS_ARMOR, EJ_LOOT_SLOT_FILTER_ARTIFACT_RELIC
 local SortBankBags, SortReagentBankBags, SortBags = SortBankBags, SortReagentBankBags, SortBags
-local GetContainerNumSlots, GetContainerItemInfo, PickupContainerItem = GetContainerNumSlots, GetContainerItemInfo, PickupContainerItem
+local GetContainerNumSlots, GetContainerItemInfo, PickupContainerItem, GetContainerItemID = GetContainerNumSlots, GetContainerItemInfo, PickupContainerItem, GetContainerItemID
 local C_AzeriteEmpoweredItem_IsAzeriteEmpoweredItemByID, C_NewItems_IsNewItem, C_Timer_After = C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID, C_NewItems.IsNewItem, C_Timer.After
 local IsControlKeyDown, IsAltKeyDown, DeleteCursorItem = IsControlKeyDown, IsAltKeyDown, DeleteCursorItem
 
@@ -47,7 +48,6 @@ function module:UpdateAnchors(parent, bags)
 	end
 end
 
-
 local function highlightFunction(button, match)
 	button:SetAlpha(match and 1 or .3)
 end
@@ -55,8 +55,12 @@ end
 function module:CreateInfoFrame()
 	local infoFrame = CreateFrame("Button", nil, self)
 	infoFrame:SetPoint("TOPLEFT", 10, 0)
-	infoFrame:SetSize(220, 32)
-	M.CreateFS(infoFrame, 14, SEARCH, true, "LEFT", -5, 0)
+	infoFrame:SetSize(200, 32)
+	local icon = infoFrame:CreateTexture()
+	icon:SetSize(24, 24)
+	icon:SetPoint("LEFT")
+	icon:SetTexture("Interface\\Minimap\\Tracking\\None")
+	icon:SetTexCoord(1, 0, 0, 1)
 
 	local search = self:SpawnPlugin("SearchBar", infoFrame)
 	search.highlightFunction = highlightFunction
@@ -89,7 +93,8 @@ end
 function module:CreateCloseButton()
 	local bu = M.CreateButton(self, 24, 24, true, "Interface\\RAIDFRAME\\ReadyCheck-NotReady")
 	bu:SetScript("OnClick", CloseAllBags)
-	M.AddTooltip(bu, "ANCHOR_TOP", CLOSE)
+	bu.title = CLOSE
+	M.AddTooltip(bu, "ANCHOR_TOP")
 
 	return bu
 end
@@ -101,14 +106,15 @@ function module:CreateRestoreButton(f)
 		MaoRUISettingDB["TempAnchor"][f.bank:GetName()] = nil
 		MaoRUISettingDB["TempAnchor"][f.reagent:GetName()] = nil
 		f.main:ClearAllPoints()
-		f.main:SetPoint("BOTTOMRIGHT", -100, 100)
+		f.main:SetPoint("BOTTOMRIGHT", -50, 50)
 		f.bank:ClearAllPoints()
 		f.bank:SetPoint("BOTTOMRIGHT", f.main, "BOTTOMLEFT", -10, 0)
 		f.reagent:ClearAllPoints()
 		f.reagent:SetPoint("BOTTOMLEFT", f.bank)
 		PlaySound(SOUNDKIT.IG_MINIMAP_OPEN)
 	end)
-	M.AddTooltip(bu, "ANCHOR_TOP", RESET)
+	bu.title = RESET
+	M.AddTooltip(bu, "ANCHOR_TOP")
 
 	return bu
 end
@@ -129,7 +135,8 @@ function module:CreateReagentButton(f)
 			if btn == "RightButton" then DepositReagentBank() end
 		end
 	end)
-	M.AddTooltip(bu, "ANCHOR_TOP", REAGENT_BANK)
+	bu.title = REAGENT_BANK
+	M.AddTooltip(bu, "ANCHOR_TOP")
 
 	return bu
 end
@@ -143,7 +150,8 @@ function module:CreateBankButton(f)
 		f.reagent:Hide()
 		f.bank:Show()
 	end)
-	M.AddTooltip(bu, "ANCHOR_TOP", BANK)
+	bu.title = BANK
+	M.AddTooltip(bu, "ANCHOR_TOP")
 
 	return bu
 end
@@ -153,7 +161,8 @@ function module:CreateDepositButton()
 	bu.Icon:SetPoint("TOPLEFT", -R.mult, R.mult)
 	bu.Icon:SetPoint("BOTTOMRIGHT", R.mult, -R.mult)
 	bu:SetScript("OnClick", DepositReagentBank)
-	M.AddTooltip(bu, "ANCHOR_TOP", REAGENTBANK_DEPOSIT)
+	bu.title = REAGENTBANK_DEPOSIT
+	M.AddTooltip(bu, "ANCHOR_TOP")
 
 	return bu
 end
@@ -170,7 +179,8 @@ function module:CreateBagToggle()
 			PlaySound(SOUNDKIT.IG_BACKPACK_CLOSE)
 		end
 	end)
-	M.AddTooltip(bu, "ANCHOR_TOP", BACKPACK_TOOLTIP)
+	bu.title = BACKPACK_TOOLTIP
+	M.AddTooltip(bu, "ANCHOR_TOP")
 
 	return bu
 end
@@ -197,17 +207,19 @@ function module:CreateSortButton(name)
 			end
 		end
 	end)
-	M.AddTooltip(bu, "ANCHOR_TOP", U["Sort"])
+	bu.title = U["Sort"]
+	M.AddTooltip(bu, "ANCHOR_TOP")
 
 	return bu
 end
 
 local deleteEnable
 function module:CreateDeleteButton()
-	local disabledText = "|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:0:0:0:0|t"..U["ItemDeleteMode"]
-	local enabledText = disabledText.."\n\n"..I.InfoColor..U["DeleteMode Enabled"]
+	local enabledText = I.InfoColor..U["DeleteMode Enabled"]
 
 	local bu = M.CreateButton(self, 24, 24, true, "Interface\\Buttons\\UI-GroupLoot-Pass-Up")
+	bu.Icon:SetPoint("TOPLEFT", 3, -2)
+	bu.Icon:SetPoint("BOTTOMRIGHT", -1, 2)
 	bu:SetScript("OnClick", function(self)
 		deleteEnable = not deleteEnable
 		if deleteEnable then
@@ -215,22 +227,143 @@ function module:CreateDeleteButton()
 			self.text = enabledText
 		else
 			self:SetBackdropBorderColor(0, 0, 0)
-			self.text = disabledText
+			self.text = nil
 		end
 		self:GetScript("OnEnter")(self)
 	end)
-	M.AddTooltip(bu, "ANCHOR_TOP", disabledText)
+	bu.title = "|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:0:0:0:0|t"..U["ItemDeleteMode"]
+	M.AddTooltip(bu, "ANCHOR_TOP")
 
 	return bu
 end
 
 local function deleteButtonOnClick(self)
 	if not deleteEnable then return end
+
 	local texture, _, _, quality = GetContainerItemInfo(self.bagID, self.slotID)
 	if IsControlKeyDown() and IsAltKeyDown() and texture and (quality < LE_ITEM_QUALITY_RARE or quality == LE_ITEM_QUALITY_HEIRLOOM) then
 		PickupContainerItem(self.bagID, self.slotID)
 		DeleteCursorItem()
 	end
+end
+
+local favouriteEnable
+function module:CreateFavouriteButton()
+	local enabledText = I.InfoColor..U["FavouriteMode Enabled"]
+
+	local bu = M.CreateButton(self, 24, 24, true, "Interface\\Common\\friendship-heart")
+	bu.Icon:SetPoint("TOPLEFT", -5, 0)
+	bu.Icon:SetPoint("BOTTOMRIGHT", 5, -5)
+	bu:SetScript("OnClick", function(self)
+		favouriteEnable = not favouriteEnable
+		if favouriteEnable then
+			self:SetBackdropBorderColor(1, .8, 0)
+			self.text = enabledText
+		else
+			self:SetBackdropBorderColor(0, 0, 0)
+			self.text = nil
+		end
+		self:GetScript("OnEnter")(self)
+	end)
+	bu.title = U["FavouriteMode"]
+	M.AddTooltip(bu, "ANCHOR_TOP")
+
+	return bu
+end
+
+local function favouriteOnClick(self)
+	if not favouriteEnable then return end
+
+	local texture, _, _, quality, _, _, _, _, _, itemID = GetContainerItemInfo(self.bagID, self.slotID)
+	if texture and quality > LE_ITEM_QUALITY_POOR then
+		if MaoRUISettingDB["Bags"]["FavouriteItems"][itemID] then
+			MaoRUISettingDB["Bags"]["FavouriteItems"][itemID] = nil
+		else
+			MaoRUISettingDB["Bags"]["FavouriteItems"][itemID] = true
+		end
+		ClearCursor()
+		NDui_Backpack:BAG_UPDATE()
+	end
+end
+
+function module:ButtonOnClick(btn)
+	if btn ~= "LeftButton" then return end
+	deleteButtonOnClick(self)
+	favouriteOnClick(self)
+end
+
+function module:GetContainerEmptySlot(bagID)
+	for slotID = 1, GetContainerNumSlots(bagID) do
+		if not GetContainerItemID(bagID, slotID) then
+			return slotID
+		end
+	end
+end
+
+function module:GetEmptySlot(name)
+	if name == "Main" then
+		for bagID = 0, 4 do
+			local slotID = module:GetContainerEmptySlot(bagID)
+			if slotID then
+				return bagID, slotID
+			end
+		end
+	elseif name == "Bank" then
+		local slotID = module:GetContainerEmptySlot(-1)
+		if slotID then
+			return -1, slotID
+		end
+		for bagID = 5, 11 do
+			local slotID = module:GetContainerEmptySlot(bagID)
+			if slotID then
+				return bagID, slotID
+			end
+		end
+	elseif name == "Reagent" then
+		local slotID = module:GetContainerEmptySlot(-3)
+		if slotID then
+			return -3, slotID
+		end
+	end
+end
+
+function module:FreeSlotOnDrop()
+	local bagID, slotID = module:GetEmptySlot(self.__name)
+	if slotID then
+		PickupContainerItem(bagID, slotID)
+	end
+end
+
+local freeSlotContainer = {
+	["Main"] = true,
+	["Bank"] = true,
+	["Reagent"] = true,
+}
+
+function module:CreateFreeSlots()
+	if not MaoRUISettingDB["Bags"]["GatherEmpty"] then return end
+
+	local name = self.name
+	if not freeSlotContainer[name] then return end
+
+	local slot = CreateFrame("Button", name.."FreeSlot", self)
+	slot:SetSize(self.iconSize, self.iconSize)
+	slot:SetHighlightTexture(I.bdTex)
+	slot:GetHighlightTexture():SetVertexColor(1, 1, 1, .25)
+	local bg = M.CreateBG(slot)
+	M.CreateBD(bg, .3)
+	slot:SetScript("OnMouseUp", module.FreeSlotOnDrop)
+	slot:SetScript("OnReceiveDrag", module.FreeSlotOnDrop)
+	M.AddTooltip(slot, "ANCHOR_RIGHT", U["FreeSlots"])
+	slot.__name = name
+
+	local tag = self:SpawnPlugin("TagDisplay", "[space]", slot)
+	tag:SetFont(unpack(I.Font))
+	tag:SetTextColor(.6, .8, 1)
+	tag:SetPoint("CENTER", 1, 0)
+	tag.__name = name
+
+	self.freeSlot = slot
 end
 
 function module:OnLogin()
@@ -241,7 +374,6 @@ function module:OnLogin()
 	local bagsWidth = MaoRUISettingDB["Bags"]["BagsWidth"]
 	local bankWidth = MaoRUISettingDB["Bags"]["BankWidth"]
 	local iconSize = MaoRUISettingDB["Bags"]["IconSize"]
-	local artifaceMark = MaoRUISettingDB["Bags"]["Artifact"]
 	local showItemLevel = MaoRUISettingDB["Bags"]["BagsiLvl"]
 	local deleteButton = MaoRUISettingDB["Bags"]["DeleteButton"]
 	local itemSetFilter = MaoRUISettingDB["Bags"]["ItemSetFilter"]
@@ -254,7 +386,7 @@ function module:OnLogin()
 	Backpack:HookScript("OnHide", function() PlaySound(SOUNDKIT.IG_BACKPACK_CLOSE) end)
 
 	local f = {}
-	local onlyBags, bagAzeriteItem, bagEquipment, bagConsumble, bagsJunk, onlyBank, bankAzeriteItem, bankLegendary, bankEquipment, bankConsumble, onlyReagent, bagMountPet, bankMountPet = self:GetFilters()
+	local onlyBags, bagAzeriteItem, bagEquipment, bagConsumble, bagsJunk, onlyBank, bankAzeriteItem, bankLegendary, bankEquipment, bankConsumble, onlyReagent, bagMountPet, bankMountPet, bagFavourite, bankFavourite = self:GetFilters()
 
 	function Backpack:OnInit()
 		local MyContainer = self:GetContainerClass()
@@ -265,6 +397,9 @@ function module:OnLogin()
 
 		f.junk = MyContainer:New("Junk", {Columns = bagsWidth, Parent = f.main})
 		f.junk:SetFilter(bagsJunk, true)
+
+		f.bagFavourite = MyContainer:New("BagFavourite", {Columns = bagsWidth, Parent = f.main})
+		f.bagFavourite:SetFilter(bagFavourite, true)
 
 		f.azeriteItem = MyContainer:New("AzeriteItem", {Columns = bagsWidth, Parent = f.main})
 		f.azeriteItem:SetFilter(bagAzeriteItem, true)
@@ -282,6 +417,9 @@ function module:OnLogin()
 		f.bank:SetFilter(onlyBank, true)
 		f.bank:SetPoint("BOTTOMRIGHT", f.main, "BOTTOMLEFT", -10, 0)
 		f.bank:Hide()
+
+		f.bankFavourite = MyContainer:New("BankFavourite", {Columns = bankWidth, Parent = f.bank})
+		f.bankFavourite:SetFilter(bankFavourite, true)
 
 		f.bankAzeriteItem = MyContainer:New("BankAzeriteItem", {Columns = bankWidth, Parent = f.bank})
 		f.bankAzeriteItem:SetFilter(bankAzeriteItem, true)
@@ -342,16 +480,14 @@ function module:OnLogin()
 
 		self.Quest = M.CreateFS(self, 30, "!", "system", "LEFT", 3, 0)
 
-		self.Azerite = self:CreateTexture(nil, "ARTWORK")
+		self.Azerite = self:CreateTexture(nil, "ARTWORK", nil, 1)
 		self.Azerite:SetAtlas("AzeriteIconFrame")
 		self.Azerite:SetAllPoints()
 
-		if artifaceMark then
-			self.Artifact = self:CreateTexture(nil, "ARTWORK")
-			self.Artifact:SetAtlas("collections-icon-favorites")
-			self.Artifact:SetSize(35, 35)
-			self.Artifact:SetPoint("TOPLEFT", -12, 10)
-		end
+		self.Favourite = self:CreateTexture(nil, "ARTWORK", nil, 2)
+		self.Favourite:SetAtlas("collections-icon-favorites")
+		self.Favourite:SetSize(30, 30)
+		self.Favourite:SetPoint("TOPLEFT", -12, 9)
 
 		if showItemLevel then
 			self.iLvl = M.CreateFS(self, 12, "", false, "BOTTOMLEFT", 1, 1)
@@ -360,9 +496,7 @@ function module:OnLogin()
 		self.glowFrame = M.CreateBG(self, 4)
 		self.glowFrame:SetSize(iconSize+8, iconSize+8)
 
-		if deleteButton then
-			self:HookScript("OnClick", deleteButtonOnClick)
-		end
+		self:HookScript("OnClick", module.ButtonOnClick)
 	end
 
 	function MyButton:ItemOnEnter()
@@ -390,12 +524,10 @@ function module:OnLogin()
 			self.Azerite:SetAlpha(0)
 		end
 
-		if artifaceMark then
-			if item.rarity == LE_ITEM_QUALITY_ARTIFACT or item.id == 138019 then
-				self.Artifact:SetAlpha(1)
-			else
-				self.Artifact:SetAlpha(0)
-			end
+		if MaoRUISettingDB["Bags"]["FavouriteItems"][item.id] then
+			self.Favourite:SetAlpha(1)
+		else
+			self.Favourite:SetAlpha(0)
 		end
 
 		if showItemLevel then
@@ -441,12 +573,33 @@ function module:OnLogin()
 	function MyContainer:OnContentsChanged()
 		self:SortButtons("bagSlot")
 
+		local columns = self.Settings.Columns
 		local offset = 38
-		local width, height = self:LayoutButtons("grid", self.Settings.Columns, 5, 5, -offset + 5)
-		self:SetSize(width + 10, height + offset)
+		local spacing = 5
+		local xOffset = 5
+		local yOffset = -offset + spacing
+		local width, height = self:LayoutButtons("grid", columns, spacing, xOffset, yOffset)
+		if self.freeSlot then
+			local numSlots = #self.buttons + 1
+			local row = ceil(numSlots / columns)
+			local col = numSlots % columns
+			if col == 0 then col = columns end
+			local xPos = (col-1) * (iconSize + spacing)
+			local yPos = -1 * (row-1) * (iconSize + spacing)
 
-		module:UpdateAnchors(f.main, {f.azeriteItem, f.equipment, f.bagCompanion, f.consumble, f.junk})
-		module:UpdateAnchors(f.bank, {f.bankAzeriteItem, f.bankEquipment, f.bankLegendary, f.bankCompanion, f.bankConsumble})
+			self.freeSlot:ClearAllPoints()
+			self.freeSlot:SetPoint("TOPLEFT", self, "TOPLEFT", xPos+xOffset, yPos+yOffset)
+
+			if height < 0 then
+				width, height = columns * (iconSize+spacing)-spacing, iconSize
+			elseif col == 1 then
+				height = height + iconSize + spacing
+			end
+		end
+		self:SetSize(width + xOffset*2, height + offset)
+
+		module:UpdateAnchors(f.main, {f.azeriteItem, f.equipment, f.bagCompanion, f.consumble, f.bagFavourite, f.junk})
+		module:UpdateAnchors(f.bank, {f.bankAzeriteItem, f.bankEquipment, f.bankLegendary, f.bankCompanion, f.bankConsumble, f.bankFavourite})
 	end
 
 	function MyContainer:OnCreate(name, settings)
@@ -474,6 +627,8 @@ function module:OnLogin()
 			label = BAG_FILTER_JUNK
 		elseif strmatch(name, "Companion") then
 			label = MOUNTS_AND_PETS
+		elseif strmatch(name, "Favourite") then
+			label = PREFERENCES
 		end
 		if label then M.CreateFS(self, 14, label, true, "TOPLEFT", 5, -8) return end
 
@@ -485,7 +640,8 @@ function module:OnLogin()
 			module.CreateBagBar(self, settings, 4)
 			buttons[2] = module.CreateRestoreButton(self, f)
 			buttons[3] = module.CreateBagToggle(self)
-			if deleteButton then buttons[5] = module.CreateDeleteButton(self) end
+			buttons[5] = module.CreateFavouriteButton(self)
+			if deleteButton then buttons[6] = module.CreateDeleteButton(self) end
 		elseif name == "Bank" then
 			module.CreateBagBar(self, settings, 7)
 			buttons[2] = module.CreateReagentButton(self, f)
@@ -496,7 +652,7 @@ function module:OnLogin()
 		end
 		buttons[4] = module.CreateSortButton(self, name)
 
-		for i = 1, 5 do
+		for i = 1, 6 do
 			local bu = buttons[i]
 			if not bu then break end
 			if i == 1 then
@@ -507,6 +663,9 @@ function module:OnLogin()
 		end
 
 		self:HookScript("OnShow", M.RestoreMF)
+
+		self.iconSize = iconSize
+		module.CreateFreeSlots(self)
 	end
 
 	local BagButton = Backpack:GetClass("BagButton", true, "BagButton")

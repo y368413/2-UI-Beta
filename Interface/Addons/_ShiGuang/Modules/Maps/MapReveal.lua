@@ -140,8 +140,6 @@ local strsplit, ceil, mod = string.split, math.ceil, mod
 local pairs, tonumber, tinsert = pairs, tonumber, table.insert
 
 local function MapExplorationPin_RefreshOverlays(pin, fullUpdate)
-	if InCombatLockdown() then return end -- need reviewed
-
 	wipe(overlayTextures)
 	wipe(TileExists)
 
@@ -231,6 +229,8 @@ local function TexturePool_ResetVertexColor(pool, texture)
 end
 
 function module:MapReveal()
+	if IsAddOnLoaded("Leatrix_Maps") then return end
+
 	local bu = CreateFrame("CheckButton", nil, WorldMapFrame.BorderFrame, "OptionsCheckButtonTemplate")
 	bu:SetPoint("TOPLEFT", 56, 0)
 	bu:SetSize(26, 26)

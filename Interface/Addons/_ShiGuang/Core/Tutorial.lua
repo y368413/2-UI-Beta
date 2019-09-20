@@ -124,10 +124,8 @@ local function SetupUIScale()
 end
 
 local function ForceChatSettings()
-	ChatFrame1:ClearAllPoints()
-	ChatFrame1:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 0, 21)
-	ChatFrame1:SetWidth(360)
-	ChatFrame1:SetHeight(121)
+	M:GetModule("Chat"):UpdateChatSize()
+
 	for i = 1, NUM_CHAT_WINDOWS do
 		local cf = _G["ChatFrame"..i]
 		ChatFrame_RemoveMessageGroup(cf, "CHANNEL")
@@ -213,8 +211,7 @@ local function ForceSkadaOptions()
 		["profiles"] = {
 			["Default"] = {
 				["windows"] = {
-					{
-						["barheight"] = 16,
+					{	["barheight"] = 16,
 						["classicons"] = true,
 						["barslocked"] = true,
 						["y"] = 21,
@@ -367,14 +364,14 @@ local function YesTutor()
 	  MaoRUIDB["SkadaRequest"] = true
 	  MaoRUIDB["BWRequest"] = true
 	  ForceAddonSkins()
-	    --MaoRUIDB["ResetDetails"] = true 
+	    MaoRUIDB["ResetDetails"] = true 
 end
 
 local welcome
 local function HelloWorld()
 	if welcome then welcome:Show() return end
 	local BackDropFile = "Interface\\Addons\\_ShiGuang\\Media\\Modules\\Raid\\solid"
-	welcome = CreateFrame("Frame", nil, UIParent)
+	welcome = CreateFrame("Frame", "UI_Tutorial", UIParent)
 	welcome:SetPoint("TOPLEFT",0,0)
 	welcome:SetPoint("BOTTOMRIGHT",0,0)
 	welcome:SetFrameStrata("HIGH")
@@ -435,11 +432,11 @@ local function HelloWorld()
 	RightPic:SetScript("OnMouseUp", function(self) Sc(1) end)
 	RightPic:SetScript("OnMouseDown", function(self) Sc(0.6) end)
 	RightPic:SetScript("OnClick", function()
-		ReloadUI()
 		welcome:Hide()
 		YesTutor()
 		ShiGuangPerDB.BHT = false
 		MaoRUISettingDB["Tutorial"]["Complete"] = true
+		ReloadUI()
   end)
 	SmallText1 = M:CreatStyleText(LeftPic, STANDARD_TEXT_FONT, 16, "OUTLINE", "[ BFA 8.2.0 v "..GetAddOnMetadata("_ShiGuang", "Version").." ]", "LEFT",RightPic,"RIGHT",-26,60, I.r, I.g, I.b)
 	SmallText2 = M:CreatStyleText(LeftPic, STANDARD_TEXT_FONT, 16, "OUTLINE", "[ https://www.maorui.net ]", "LEFT",RightPic,"RIGHT",-26,20, I.r, I.g, I.b)

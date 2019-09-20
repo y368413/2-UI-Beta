@@ -154,6 +154,19 @@ function MISC:ExpBar_UpdateTooltip()
 		GameTooltip:AddLine(" ")
 		GameTooltip:AddLine(HONOR, .0,.6,1)
 		GameTooltip:AddDoubleLine(LEVEL.." "..level, current.." / "..barMax, .6,.8,1, 1,1,1)
+
+		local locked = not IsPlayerAtEffectiveMaxLevel()
+		local currentValue, maxValue, questID = PVPGetConquestLevelInfo()
+		local questDone = questID and questID == 0
+		if not locked then
+			GameTooltip:AddLine(" ")
+			GameTooltip:AddLine(PVP_CONQUEST, 0,.6,1)
+			if questDone then
+				GameTooltip:AddLine(CONQUEST_BAR_REWARD_DONE, .6,.8,1, 1)
+			else
+				GameTooltip:AddDoubleLine(ARENA_THIS_WEEK, currentValue.." / "..maxValue, .6,.8,1, 1,1,1)
+			end
+		end
 	end
 
 	if C_AzeriteItem.HasActiveAzeriteItem() then

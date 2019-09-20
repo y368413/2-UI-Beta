@@ -83,7 +83,6 @@ local Reagents = REAGENTBANK_CONTAINER
 
 function BagBrother:BAG_UPDATE(bag)
 	local isBag = bag > Bank and bag <= BagSlots
-	
 	if isBag then
   		self:SaveBag(bag, bag == Backpack)
 	end
