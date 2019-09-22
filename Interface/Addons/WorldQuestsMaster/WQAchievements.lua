@@ -1,4 +1,4 @@
---## Author: Urtgard  ## Version: v8.2.0-9release
+--## Author: Urtgard  ## Version: v8.2.0-10release
 WQAchievements = LibStub("AceAddon-3.0"):NewAddon("WQAchievements", "AceConsole-3.0", "AceTimer-3.0")
 local WQA = WQAchievements
 WQA.data = {}
@@ -1463,7 +1463,7 @@ function WQA:CheckItems(questID, isEmissary)
 					if GetInventoryItemID("player", i) then
 						local itemLink1 = GetInventoryItemLink("player", i)
 						if itemLink1 then
-							itemLevel1 = GetDetailedItemLevelInfo(itemLink1)
+							local itemLevel1 = GetDetailedItemLevelInfo(itemLink1)
 							if itemLevel1 then
 								AzeriteArmorCache[i] = itemLevel - itemLevel1
 								if itemLevel > itemLevel1 and itemLevel - itemLevel1 >= self.db.profile.options.reward.gear.itemLevelUpgradeMin then
@@ -1477,7 +1477,7 @@ function WQA:CheckItems(questID, isEmissary)
 						end
 					else
 						AzeriteArmorCache[i] = itemLevel
-						if itemLevel > itemLevel1 and itemLevel >= self.db.profile.options.reward.gear.itemLevelUpgradeMin then
+						if itemLevel and itemLevel >= self.db.profile.options.reward.gear.itemLevelUpgradeMin then
 							AzeriteArmorCacheIsUpgrade = true
 						end
 					end
@@ -1502,7 +1502,7 @@ function WQA:CheckItems(questID, isEmissary)
 						if GetInventoryItemID("player", i) then
 							local itemLink1 = GetInventoryItemLink("player", i)
 							if itemLink1 then
-								itemLevel1 = GetDetailedItemLevelInfo(itemLink1)
+								local itemLevel1 = GetDetailedItemLevelInfo(itemLink1)
 								if itemLevel1 then
 									n = n + 1
 									upgrade = itemLevel - itemLevel1
@@ -1528,7 +1528,7 @@ function WQA:CheckItems(questID, isEmissary)
 							if GetInventoryItemID("player", i) then
 								local itemLink1 = GetInventoryItemLink("player", i)
 								if itemLink1 then
-									itemLevel1 = GetDetailedItemLevelInfo(itemLink1)
+									local itemLevel1 = GetDetailedItemLevelInfo(itemLink1)
 									if itemLevel1 then
 										n = n + 1
 										upgrade = itemLevel - itemLevel1
@@ -1553,7 +1553,7 @@ function WQA:CheckItems(questID, isEmissary)
 						if GetInventoryItemID("player", i) then
 							local itemLink1 = GetInventoryItemLink("player", i)
 							if itemLink1 then
-								itemLevel1 = GetDetailedItemLevelInfo(itemLink1)
+								local itemLevel1 = GetDetailedItemLevelInfo(itemLink1)
 								if itemLevel1 then
 									n = n + 1
 									upgrade = itemLevel - itemLevel1

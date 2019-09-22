@@ -26,6 +26,7 @@ local VG = {
 	DemonSpikes        = 203720,
 	DemonSpikesAura    = 203819,
 	SoulBarrier        = 263648,
+	InfernalStrike	   = 189110,
 };
 
 setmetatable(VG, DemonHunter.spellMeta);
@@ -42,6 +43,8 @@ function DemonHunter:Vengeance()
 	MaxDps:GlowEssences();
 	MaxDps:GlowCooldown(VG.Metamorphosis, cooldown[VG.Metamorphosis].ready);
 	MaxDps:GlowCooldown(VG.DemonSpikes, cooldown[VG.DemonSpikes].ready and not buff[VG.DemonSpikesAura].up);
+	MaxDps:GlowCooldown(VG.FieryBrand, cooldown[VG.FieryBrand].ready);
+	MaxDps:GlowCooldown(VG.InfernalStrike, cooldown[VG.InfernalStrike].ready);
 
 	if talents[VG.SoulBarrier] then
 		MaxDps:GlowCooldown(VG.SoulBarrier, cooldown[VG.SoulBarrier].ready);

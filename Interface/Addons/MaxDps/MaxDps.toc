@@ -1,5 +1,5 @@
 ## Interface: 80200
-## Version: 8.2.1
+## Version: 8.2.2
 ## Author: Kaminaris
 ## Title: MaxDps
 ## Title-zhCN:|CFFD74DE1[输出]|rMaxDps

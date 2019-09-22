@@ -1,7 +1,32 @@
-local _, ns = ...
+﻿local _, ns = ...
 local M, R, U, I = unpack(ns)
 local module = M:RegisterModule("Infobar")
 local tinsert, pairs, unpack = table.insert, pairs, unpack
+
+function module:GetMoneyString(money, full)
+	if money >= 1e6 and not full then
+		return format("%.0f%s", money / 1e4, "|cffffd700●|r")
+	else
+		if money > 0 then
+			local moneyString = ""
+			local gold = floor(money / 1e4)
+			if gold > 0 then
+				moneyString = " "..gold.."|cffffd700●|r"
+			end
+			local silver = floor((money - (gold * 1e4)) / 100)
+			if silver > 0 then
+				moneyString = moneyString.." "..silver.."|cffb0b0b0●|r"
+			end
+			local copper = mod(money, 100)
+			if copper > 0 then
+				moneyString = moneyString.." "..copper.."|cffc77050●|r"
+			end
+			return moneyString
+		else
+			return " 0".."|cffc77050●|r"
+		end
+	end
+end
 
 function module:RegisterInfobar(name, point)
 	if not self.modules then self.modules = {} end

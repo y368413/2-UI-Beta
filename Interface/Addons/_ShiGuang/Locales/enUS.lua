@@ -103,7 +103,7 @@ MINIMAP_MENU_COMPAREITEMS = "Compare Items";
 MINIMAP_MENU_SWITCHUF = "Switch UF";
 MINIMAP_MENU_AFKSCREEN = "AFK Screen";
 MINIMAP_MENU_CHECKFOODSSS = "Check food/drink";
-MINIMAP_MENU_QUSETIONANSWER = "Question/Answer";
+MINIMAP_MENU_QUSETIONANSWER = "Question/Answer/UI changelog";
 MINIMAP_MENU_UISETTING = " Setting";
 MINIMAP_MENU_MORE = "      More...";
   -- Paku_Totems

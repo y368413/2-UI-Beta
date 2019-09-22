@@ -11,10 +11,8 @@ local BAG_ITEM_QUALITY_COLORS = BAG_ITEM_QUALITY_COLORS
 local inspectSlots = {
 	"Head", "Neck", "Shoulder", "Shirt", "Chest", "Waist", "Legs", "Feet", "Wrist", "Hands", "Finger0", "Finger1", "Trinket0", "Trinket1", "Back", "MainHand", "SecondaryHand",
 }
-
 function MISC:GetSlotAnchor(index)
 	if not index then return end
-
 	if index <= 5 or index == 9 or index == 15 then
 		return "BOTTOMLEFT", 46, 21
 	elseif index == 16 then
@@ -48,15 +46,19 @@ function MISC:CreateItemString(frame, strType)
 			slotFrame.iLvlText = M.CreateFS(slotFrame, I.Font[2]+3)
 			slotFrame.iLvlText:ClearAllPoints()
 			slotFrame.iLvlText:SetPoint(relF, slotFrame, x, y)
-			slotFrame.enchantText = M.CreateFS(slotFrame, I.Font[2])
+			slotFrame.enchantText = M.CreateFS(slotFrame, I.Font[2]-3)
 			slotFrame.enchantText:ClearAllPoints()
-			slotFrame.enchantText:SetPoint(relF, slotFrame, x, y)
+			slotFrame.enchantText:SetPoint(relF, slotFrame, x-1, y-12)
 			slotFrame.enchantText:SetTextColor(0, 1, 0)
 			for i = 1, 5 do
 				local offset = (i-1)*18 + 5
 				local iconX = x > 0 and x+offset or x-offset
 				local iconY = index > 15 and 20 or 2
+				if index == 10 or index == 11 or index == 12 then
+				slotFrame["textureIcon"..i] = MISC:CreateItemTexture(slotFrame, relF, x-39, y)
+				else
 				slotFrame["textureIcon"..i] = MISC:CreateItemTexture(slotFrame, relF, iconX, iconY)
+				end
 			end
 		end
 	end
@@ -91,8 +93,12 @@ function MISC:ItemLevel_SetupLevel(frame, strType, unit)
 					slotFrame.iLvlText:SetTextColor(1, 0.8, 0)  --color.r, color.g, color.b
 				end
 
-				if enchant then
-					slotFrame.enchantText:SetText(enchant)
+				if index == 10 or index == 11 or index == 12 or index == 16 or index == 17 then
+					if enchant then
+						slotFrame.enchantText:SetText(enchant)
+					else
+						slotFrame.enchantText:SetText("|cFFFF0000FM|r")
+					end
 				end
 
 				for i = 1, 5 do

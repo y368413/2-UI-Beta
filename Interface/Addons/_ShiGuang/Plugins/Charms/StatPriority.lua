@@ -1,4 +1,4 @@
-﻿--## Author: Vampyr78  ## Version: 1.4.6
+﻿--## Author: Vampyr78  ## Version: 1.5
 local pairs, gsub = pairs, string.gsub
 local statPriorityStats = {}
 --WARRIORArms
