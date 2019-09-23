@@ -200,7 +200,7 @@ end
 
 -- Timestamp
 function module:UpdateTimestamp()
-	local greyStamp = I.GreyColor.."[%H:%M:%S]|r "
+	local greyStamp = I.GreyColor.."[%H:%M]|r" --"[%H:%M:%S]|r "
 	if MaoRUIDB["Timestamp"] then
 		SetCVar("showTimestamps", greyStamp)
 	elseif GetCVar("showTimestamps") == greyStamp then

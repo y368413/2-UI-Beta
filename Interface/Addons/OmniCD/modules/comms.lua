@@ -263,6 +263,7 @@ do
             inspectInfo.slots = inspectInfo.slots or {}
             c = 12
             local ITEM_LEVEL = gsub(ITEM_LEVEL,"%%d","(%%d+)")
+            local ilvl
             local numSlots = #INVSLOTS
             for i = 1, numSlots do
                 inspectInfo.slots[i] = 0
@@ -301,7 +302,6 @@ do
                                     end
                                 elseif IsHeartOfAzeroth then
                                     if c > 14 then break end
-                                    local ilvl
                                     if j == 2 then
                                         ilvl = text:match(ITEM_LEVEL)
                                         if ilvl then

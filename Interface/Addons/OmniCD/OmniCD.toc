@@ -2,7 +2,7 @@
 ## Title: OmniCD
 ## Title-zhCN: |cff8000ff[小队]|r技能监控
 ## Title-zhTW: |cff8000ff[小队]|r技能监控
-## Version: 2.1.1
+## Version: 2.1.1a
 ## Author: Treebonker
 ## Notes: Tracks party cooldowns. Use |cffffd700/oc|r or |cffffd700/omnicd|r to open options
 ## X-Credits:

@@ -260,7 +260,7 @@ function module:SetupMinimap()
 	Minimap:SetFrameLevel(10)
 	Minimap:SetMaskTexture("Interface\\Buttons\\WHITE8X8")
 	--MinimapCluster:SetScale(scale)
-	MSA_DropDownList1:SetClampedToScreen(true)
+	--MSA_DropDownList1:SetClampedToScreen(true)
 
 	local mover = M.Mover(Minimap, U["Minimap"], "Minimap", R.Minimap.Pos, Minimap:GetWidth(), Minimap:GetHeight())
 	Minimap:ClearAllPoints()

@@ -169,22 +169,22 @@ local rules = {
     { pat = "^%s+",                         repl = "" },    --去掉空格
 }
 --替換字符
-local function ClearMessage(msg, button)
+local function clearMessage(msg, button)
     for _, rule in ipairs(rules) do
         if (not rule.button or rule.button == button) then msg = msg:gsub(rule.pat, rule.repl) end
     end
     return msg
 end
 --顯示信息
-local function ShowMessage(msg, button)
+local function showMessage(msg, button)
     local editBox = ChatEdit_ChooseBoxForSend()
-    msg = ClearMessage(msg, button)
+    msg = clearMessage(msg, button)
     ChatEdit_ActivateChat(editBox)
     editBox:SetText(editBox:GetText() .. msg)
     editBox:HighlightText()
 end
 --獲取複製的信息
-local function GetMessage(...)
+local function getMessage(...)
     local object
     for i = 1, select("#", ...) do
         object = select(i, ...)
@@ -195,18 +195,33 @@ end
 --HACK
 local _SetItemRef = SetItemRef
 SetItemRef = function(link, text, button, chatFrame)
-    if (chatFrame and link:sub(1,8) == "ChatCopy") then
-        local msg = GetMessage(chatFrame.FontStringContainer:GetRegions())
-        return ShowMessage(msg, button)
+    if (link:sub(1,8) == "ChatCopy") then
+        local msg = getMessage(chatFrame.FontStringContainer:GetRegions())
+        return showMessage(msg, button)
     end
     _SetItemRef(link, text, button, chatFrame)
 end
 
+--HACK
+if (CHAT_TIMESTAMP_FORMAT) then
+    if (not string.find(CHAT_TIMESTAMP_FORMAT, "ChatCopy")) then
+        CHAT_TIMESTAMP_FORMAT = "|cff68ccef|HChatCopy|h"..CHAT_TIMESTAMP_FORMAT.."|h|r"
+    end
+end
 local function AddMessage(self, text, ...)
     if (type(text) ~= "string") then
         text = tostring(text)
     end
+    if (CHAT_TIMESTAMP_FORMAT) then
+        if (not string.find(CHAT_TIMESTAMP_FORMAT, "ChatCopy")) then
+            CHAT_TIMESTAMP_FORMAT = "|cff68ccef|HChatCopy|h"..CHAT_TIMESTAMP_FORMAT.."|h|r"
+        end
+        if (not string.find(text, "%|HChatCopy%|h")) then
+            text = format("|cff68ccef|HChatCopy|h%s|h|r%s", BetterDate(CHAT_TIMESTAMP_FORMAT, time()), text)
+        end
+    else
     text = format("|cff68ccef|HChatCopy|h%s|h|r %s", ">", text)
+    end
     self.OrigAddMessage(self, text, ...)
 end
 local chatFrame
