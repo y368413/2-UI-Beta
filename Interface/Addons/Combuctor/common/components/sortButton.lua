@@ -5,28 +5,33 @@
 
 local ADDON, Addon = ...
 local L = LibStub('AceLocale-3.0'):GetLocale(ADDON)
-local SortButton = Addon:NewClass('SortButton', 'Button')
+local SortButton = Addon:NewClass('SortButton', 'CheckButton')
 
 
 --[[ Constructor ]]--
 
 function SortButton:New(parent)
-	local b = self:Bind(CreateFrame('Button', nil, parent, ADDON .. self.Name .. 'Template'))
-	b:RegisterForClicks('anyUp')
+	local b = self:Bind(CreateFrame('CheckButton', nil, parent, ADDON .. self.Name .. 'Template'))
+	b:RegisterSignal('SORTING_STATUS')
 	b:SetScript('OnClick', b.OnClick)
 	b:SetScript('OnEnter', b.OnEnter)
 	b:SetScript('OnLeave', b.OnLeave)
+	b:RegisterForClicks('anyUp')
 
 	return b
 end
 
+function SortButton:SORTING_STATUS(_,_, bags)
+	self:SetChecked(self:GetParent().Bags == bags)
+end
 
 --[[ Interaction ]]--
 
 function SortButton:OnClick(button)
+	self:SetChecked(nil)
 	local PickupContainerItem = _G.PickupContainerItem   
 	local function ReverseSort()
-		C_Timer.After(.5, function()
+		C_Timer.After(.3, function()
 			for bag = 0, 4 do
 				local numSlots = GetContainerNumSlots(bag)
 				for slot = 1, numSlots do
@@ -42,7 +47,7 @@ function SortButton:OnClick(button)
 	if IsControlKeyDown() then     ---------------Thanks Siweia  么么哒·~~~~
 		DepositReagentBank()
 	else
-		if self:GetParent():IsBank() then
+		if DepositReagentBank then
 			self:RegisterEvent('BAG_UPDATE_DELAYED')
 			SortBankBags()
 			--SortReagentBankBags()   8.1.5已失效
@@ -62,12 +67,12 @@ end
 function SortButton:OnEnter()
 	GameTooltip:SetOwner(self, self:GetRight() > (GetScreenWidth() / 2) and 'ANCHOR_LEFT' or 'ANCHOR_RIGHT')
 
-	if self:GetParent():IsBank() then
-		GameTooltip:SetText(L.TipManageBank)
-		GameTooltip:AddLine(L.TipDepositReagents, 1,1,1)
-		GameTooltip:AddLine(L.TipCleanBank, 1,1,1)
+	if DepositReagentBank then
+		GameTooltip:SetText(BAG_FILTER_CLEANUP)
+		GameTooltip:AddLine(L.TipCleanItems:format(L.LeftClick), 1,1,1)
+		GameTooltip:AddLine(L.TipDepositReagents:format(L.RightClick), 1,1,1)
 	else
-		GameTooltip:SetText(L.TipCleanBags)
+		GameTooltip:SetText(L.TipCleanItems:format(L.Click))
 	end
 
 	GameTooltip:Show()

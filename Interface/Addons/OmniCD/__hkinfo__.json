@@ -1,0 +1,23 @@
+{
+    "search": 0,
+    "searchList": [
+        {
+            "description": "Party cooldown tracker",
+            "fileName": "omnicd",
+            "img": "https://media.forgecdn.net/avatars/thumbnails/177/435/62/62/636770629156741843.png",
+            "name": "OmniCD"
+        }
+    ],
+    "target": "curse",
+    "searchName": "OmniCD",
+    "localName": "OmniCD",
+    "version": "v2.1.1",
+    "fileName": "omnicd",
+    "addonsMap": [
+        "OmniCD"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "name": "OmniCD",
+    "gameVersion": "8.2.0"
+}

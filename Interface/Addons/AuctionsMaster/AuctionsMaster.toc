@@ -1,4 +1,4 @@
-## Interface: 80200
+## Interface: 80205
 ## Title: AuctionLite + CollectionShop
 ## Title-zhCN: |cff69ccf0[拍卖]|r购售助手
 ## Title-zhTW: |cff69ccf0[拍卖]|r购售助手

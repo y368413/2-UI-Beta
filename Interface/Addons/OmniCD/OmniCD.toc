@@ -1,4 +1,4 @@
-﻿## Interface: 80200
+﻿## Interface: 80205
 ## Title: OmniCD
 ## Title-zhCN: |cff8000ff[小队]|r技能监控
 ## Title-zhTW: |cff8000ff[小队]|r技能监控

@@ -221,13 +221,13 @@ local function FriendGroups_UpdateFriendButton(button)
 		button.gameIcon:Hide()
 		button.background:SetColorTexture(FRIENDS_OFFLINE_BACKGROUND_COLOR.r, FRIENDS_OFFLINE_BACKGROUND_COLOR.g, FRIENDS_OFFLINE_BACKGROUND_COLOR.b, FRIENDS_OFFLINE_BACKGROUND_COLOR.a)
 		button.background:SetAlpha(0.5)
-		local scrollFrame = FriendsFrameFriendsScrollFrame
+		local scrollFrame = FriendsListFrameScrollFrame
 		local divider = scrollFrame.dividerPool:Acquire()
 		divider:SetParent(scrollFrame.ScrollChild)
 		divider:SetAllPoints(button)
 		divider:Show()
 	elseif ( button.buttonType == FRIENDS_BUTTON_TYPE_INVITE_HEADER ) then
-		local header = FriendsFrameFriendsScrollFrame.PendingInvitesHeaderButton
+		local header = FriendsListFrameScrollFrame.PendingInvitesHeaderButton
 		header:SetPoint("TOPLEFT", button, 1, 0)
 		header:Show()
 		header:SetFormattedText(FRIEND_REQUESTS, BNGetNumFriendInvites())
@@ -241,7 +241,7 @@ local function FriendGroups_UpdateFriendButton(button)
 		end
 		nameText = nil
 	elseif ( button.buttonType == FRIENDS_BUTTON_TYPE_INVITE ) then
-		local scrollFrame = FriendsFrameFriendsScrollFrame
+		local scrollFrame = FriendsListFrameScrollFrame
 		local invite = scrollFrame.invitePool:Acquire()
 		invite:SetParent(scrollFrame.ScrollChild)
 		invite:SetAllPoints(button)
@@ -297,7 +297,7 @@ local function FriendGroups_UpdateFriendButton(button)
 end
 
 local function FriendGroups_UpdateFriends()
-	local scrollFrame = FriendsFrameFriendsScrollFrame
+	local scrollFrame = FriendsListFrameScrollFrame
 	local offset = HybridScrollFrame_GetOffset(scrollFrame)
 	local buttons = scrollFrame.buttons
 	local numButtons = #buttons
@@ -535,8 +535,8 @@ local function FriendGroups_Update(forceUpdate)
 	buttonCount = buttonCount + GroupCount
 	totalScrollHeight = totalButtonHeight + GroupCount * FRIENDS_BUTTON_HEIGHTS[FRIENDS_BUTTON_TYPE_DIVIDER]
 
-	FriendsFrameFriendsScrollFrame.totalFriendListEntriesHeight = totalScrollHeight
-	FriendsFrameFriendsScrollFrame.numFriendListEntries = addButtonIndex
+	FriendsListFrameScrollFrame.totalFriendListEntriesHeight = totalScrollHeight
+	FriendsListFrameScrollFrame.numFriendListEntries = addButtonIndex
 
 	if buttonCount > #FriendButtons then
 		for i = #FriendButtons + 1, buttonCount do
@@ -662,9 +662,9 @@ local function FriendGroups_Update(forceUpdate)
 	end
 	if showRIDWarning then
 		FriendsListFrame.RIDWarning:Show()
-		FriendsFrameFriendsScrollFrame.scrollBar:Disable()
-		FriendsFrameFriendsScrollFrame.scrollUp:Disable()
-		FriendsFrameFriendsScrollFrame.scrollDown:Disable()
+		FriendsListFrameScrollFrame.scrollBar:Disable()
+		FriendsListFrameScrollFrame.scrollUp:Disable()
+		FriendsListFrameScrollFrame.scrollDown:Disable()
 	else
 		FriendsListFrame.RIDWarning:Hide()
 	end
@@ -775,7 +775,7 @@ local function InviteOrGroup(clickedgroup, invite)
 		local note = NoteAndGroups(noteText, groups)
 		if groups[clickedgroup] then
 			if invite and connected then
-				InviteUnit(name)
+				C_PartyInfo.InviteUnit(name)  --InviteUnit(name)
 			elseif not invite then
 				groups[clickedgroup] = nil
 				note = CreateNote(note, groups)
@@ -822,21 +822,21 @@ frame:SetScript("OnEvent", function(self, event, ...)
         --Hook("UnitPopup_ShowMenu", FriendGroups_SaveOpenMenu, true)
         --Hook("UnitPopup_OnClick", FriendGroups_OnFriendMenuClick, true)
         --Hook("UnitPopup_HideButtons", FriendGroups_HideButtons, true)
-        Hook("FriendsFrameTooltip_Show",function(button)
+        --[[Hook("FriendsFrameTooltip_Show",function(button)
 			if ( button.buttonType == FRIENDS_BUTTON_TYPE_DIVIDER ) then
 				if FriendsTooltip:IsShown() then
 					FriendsTooltip:Hide()
 				end
 				return
 			end
-		end,true)-- Fixes tooltip showing on groups
+		end,true)]]-- Fixes tooltip showing on groups
 
-        FriendsFrameFriendsScrollFrame.dynamic = FriendGroups_GetTopButton
-        FriendsFrameFriendsScrollFrame.update = FriendGroups_UpdateFriends
+        FriendsListFrameScrollFrame.dynamic = FriendGroups_GetTopButton
+        FriendsListFrameScrollFrame.update = FriendGroups_UpdateFriends
 		
 		--add some more buttons
-		FriendsFrameFriendsScrollFrame.buttons[1]:SetHeight(FRIENDS_FRAME_FRIENDS_FRIENDS_HEIGHT)
-		HybridScrollFrame_CreateButtons(FriendsFrameFriendsScrollFrame, "FriendsFrameButtonTemplate")
+		FriendsListFrameScrollFrame.buttons[1]:SetHeight(FRIENDS_FRAME_FRIENDS_FRIENDS_HEIGHT)
+		HybridScrollFrame_CreateButtons(FriendsListFrameScrollFrame, "FriendsFrameButtonTemplate")
         
         --table.remove(UnitPopupMenus["BN_FRIEND"], 5) --remove target option
         

@@ -1,4 +1,4 @@
-## Interface: 80200
+## Interface: 80205
 ## Title: AtlasLootReverse
 ## Title-zhCN: |cff00ff00[装备]|r掉落来源
 ## Title-zhTW: |cff00ff00[装备]|r掉落来源

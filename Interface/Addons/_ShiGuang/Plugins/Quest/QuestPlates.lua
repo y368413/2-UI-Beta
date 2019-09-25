@@ -1,4 +1,4 @@
--- ## Version: 8.0.1.2 ## Author: Semlar
+-- ## Version: 8.2.5.1 ## Author: Semlar
 local FQP, Events, A, T = CreateFrame('frame'), {}, ...
 
 local function Raise(_, event, ...)
@@ -127,7 +127,7 @@ function E:NAME_PLATE_UNIT_REMOVED(unitID)
 end
 
 function E:VARIABLES_LOADED()
-	SetCVar('showQuestTrackingTooltips', '1') -- Required for this addon to function, don't turn this off
+	SetCVar('showQuestTrackingTooltips', '1') -- Required for this QuestPlatesSet to function, don't turn this off
 end
 
 local TextureAtlases = {
@@ -209,15 +209,20 @@ local function GetQuestProgress(unitID)
 		local text = str and str:GetText()
 		if not text then return end
 		questID = questID or ActiveWorldQuests[ text ]
-		local playerName, progressText = strmatch(text, '^ ([^ ]-) ?%- (.+)$') -- nil or '' if 1 is missing but 2 is there
-
+		--local playerName, progressText = strmatch(text, '^(.-)(.+)$') -- nil or '' if 1 is missing but 2 is there
+		local playerName = ""
+		local progressText = text
+		local textOffset = select(4, str:GetPoint(2)) or 0
+		local isQuestText = textOffset > 27 and textOffset < 29 -- Threat text is 30, Quest text is 28?
+		
+		-- todo: if multiple entries are present, ONLY read the quest objectives for the player
+		-- if a name is listed in the pattern then we must be in a group
 		if playerName and playerName ~= '' and playerName ~= OurName then -- quest is for another group member
 			if not questType then
 				questType = 2
 			end
 		else
-		
-			if progressText then
+			if isQuestText then
 				local x, y = strmatch(progressText, '(%d+)/(%d+)')
 				if x and y then
 					local numLeft = y - x
@@ -236,20 +241,15 @@ local function GetQuestProgress(unitID)
 				if not x or (x and y and x ~= y) then
 					progressGlob = progressGlob and progressGlob .. '\n' .. progressText or progressText
 				end
-			else
-				if ActiveWorldQuests[ text ] then
-					local questID = ActiveWorldQuests[ text ]
-					local progress = C_TaskQuest.GetQuestProgressBarInfo(questID)
-					if progress then
-						local questType = 3 -- progress bar
-						return text, questType, ceil(100 - progress), questID
-					end
-				else
-					local index = QuestLogIndex[text]
-					if index then
-						questLogIndex = index
-					end
+			elseif ActiveWorldQuests[text] then
+				local questID = ActiveWorldQuests[ text ]
+				local progress = C_TaskQuest.GetQuestProgressBarInfo(questID) -- or GetQuestProgressBarPercent(questID) -- not sure what the difference is between these functions
+				if progress then
+					local questType = 3 -- progress bar
+					return text, questType, ceil(100 - progress), questID
 				end
+			elseif QuestLogIndex[text] then
+				questLogIndex = QuestLogIndex[text]
 			end
 		end
 	end

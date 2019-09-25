@@ -1,4 +1,4 @@
-﻿## Interface: 80200
+﻿## Interface: 80205
 ## Version: 1.1
 ## Title: KeepIronskin
 ## Notes: 用来嘲讽你们队里的菜鸡酒仙的小功能

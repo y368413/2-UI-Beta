@@ -1,4 +1,4 @@
-## Interface: 80200
+## Interface: 80205
 ## Title: World Quests (Angry + WQA + FlightMap)
 ## Title-zhCN:|cff0080ff[地图]|r世界任务
 ## Title-zhTW:|cff0080ff[地圖]|r世界任务

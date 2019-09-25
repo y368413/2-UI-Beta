@@ -189,7 +189,7 @@ function daftDressUp:setHidden()
 		DRF_button3:Hide();
 		--DRF_menu1:Hide()
 	end);
-	DressUpModel:HookScript("OnEnter", function()
+	--[[DressUpModel:HookScript("OnEnter", function()
 		daftDressUp:ShowFrameTextures(DressUpFrame);
 		DressUpFrame.NineSlice:Show();
 		DressUpFrameCloseButton:Show();
@@ -202,7 +202,7 @@ function daftDressUp:setHidden()
 		DRF_button2:Show();
 		DRF_button3:Show();
 		--DRF_menu1:Show()
-	end);
+	end);]]
 	WorldFrame:HookScript("OnEnter", function()
 		daftDressUp:HideFrameTextures(DressUpFrame);	
 		DressUpFrame.NineSlice:Hide();
