@@ -11,11 +11,6 @@
 				DEX_OptionsCheckButtonOnClick(self, self:GetName());
 				DEX_OnOptionCheck(self:GetName(), self:GetChecked())
 			</OnClick>
-			<OnEnter>
-				if ( self.tooltipText ) then
-					GameTooltip_AddNewbieTip(self, self.tooltipText, 1.0, 1.0, 1.0);
-				end
-			</OnEnter>
 			<OnLeave>
 				GameTooltip:Hide();
 			</OnLeave>
@@ -24,11 +19,6 @@
 	<!-- SLIDER TEMPLATE -->
 	<Slider name="DEXSliderTemplate" inherits="OptionsSliderTemplate" virtual="true">
 		<Scripts>
-			<OnEnter>
-				if ( self.tooltipText ) then
-					GameTooltip_AddNewbieTip(self,self.tooltipText, 1.0, 1.0, 1.0);
-				end
-			</OnEnter>
 			<OnValueChanged>
 				DEX_OptionsSliderOnValueChanged(self, self:GetName());
 			</OnValueChanged>
@@ -584,9 +574,6 @@
 						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
 						DEX_Reset();
 					</OnClick>
-					<OnEnter>
-						GameTooltip_AddNewbieTip(self,DEX_BUTTON_RESET_TIP, 1.0, 1.0, 1.0);
-					</OnEnter>
 					<OnLeave>
 						GameTooltip:Hide();
 					</OnLeave>

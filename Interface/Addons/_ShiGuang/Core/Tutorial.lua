@@ -438,7 +438,7 @@ local function HelloWorld()
 		MaoRUISettingDB["Tutorial"]["Complete"] = true
 		ReloadUI()
   end)
-	SmallText1 = M:CreatStyleText(LeftPic, STANDARD_TEXT_FONT, 16, "OUTLINE", "[ BFA 8.2.0 v "..GetAddOnMetadata("_ShiGuang", "Version").." ]", "LEFT",RightPic,"RIGHT",-26,60, I.r, I.g, I.b)
+	SmallText1 = M:CreatStyleText(LeftPic, STANDARD_TEXT_FONT, 16, "OUTLINE", "[ BFA 8.2.5 v "..GetAddOnMetadata("_ShiGuang", "Version").." ]", "LEFT",RightPic,"RIGHT",-26,60, I.r, I.g, I.b)
 	SmallText2 = M:CreatStyleText(LeftPic, STANDARD_TEXT_FONT, 16, "OUTLINE", "[ https://www.maorui.net ]", "LEFT",RightPic,"RIGHT",-26,20, I.r, I.g, I.b)
 	SmallText3 = M:CreatStyleText(LeftPic, STANDARD_TEXT_FONT, 16, "OUTLINE", "[ 鼠标右键点击小地图便捷插件设置 ]", "LEFT",RightPic,"RIGHT",-26,-20, I.r, I.g, I.b)
 	SmallText4 = M:CreatStyleText(LeftPic, STANDARD_TEXT_FONT, 16, "OUTLINE", "[ 系统自带功能，插件有针对性增强或者删减 ]", "LEFT",RightPic,"RIGHT",-26,-60, I.r, I.g, I.b)

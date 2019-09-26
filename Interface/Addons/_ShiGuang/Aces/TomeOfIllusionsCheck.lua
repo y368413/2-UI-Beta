@@ -74,7 +74,7 @@ function TomeOfIllusionsCheck:PrintTomeCheck()
   end
   table.sort(tomesByName)
   for itemName, itemInfo in pairsByKeys(tomesByName) do
-    print(format("%s - %s", itemInfo.itemLink, IsQuestFlaggedCompleted(itemInfo.questId) and "|cFF32AA00 √ |r" or "|cFF8BA3FD X |r"))
+    print(format("%s - %s", itemInfo.itemLink, C_QuestLog.IsQuestFlaggedCompleted(itemInfo.questId) and "|cFF32AA00 √ |r" or "|cFF8BA3FD X |r"))
   end
 end
 
@@ -114,7 +114,7 @@ local function OnIllusionBookTooltipAddLine(tooltip, ...)
       local itemId = tonumber(string.match(link, 'item:(%d+):'))
       local questId = TomeOfIllusionsCheck.tomesToQuests[itemId]
       if questId then
-        if IsQuestFlaggedCompleted(questId) then
+        if C_QuestLog.IsQuestFlaggedCompleted(questId) then
           tooltip:AddLine(format("|cFF32AA00"..COLLECTED.."|r", itemId))
           lineAdded = true
         else

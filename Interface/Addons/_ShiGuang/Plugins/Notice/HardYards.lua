@@ -188,7 +188,6 @@ local function HardYards_OnUpdate()
 end
 
 local function PlayerLogin( self )
-	if ( ShiGuangPerDB == nil )		then	ShiGuangPerDB 		=	{}	end
 	if ( ShiGuangPerDB.HardYardsshow == nil )		then 	ShiGuangPerDB.HardYardsshow	=	true 	end
 	if ( ShiGuangPerDB.HardYardsarrows == nil )	then 	ShiGuangPerDB.HardYardsarrows	=	{} 	end	-- X11BurlyWood DEB887
 	if ( ShiGuangPerDB.HardYardsarrows.r == nil )	then 	ShiGuangPerDB.HardYardsarrows.r	=	0.87 	end

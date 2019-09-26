@@ -51,7 +51,7 @@ local function IsClass(requiredClass)
 end
 
 local function HaveUpgradedZen()
-	return IsQuestFlaggedCompleted(40236)
+	return C_QuestLog.IsQuestFlaggedCompleted(40236)
 end
 
 local DaySunday = 1

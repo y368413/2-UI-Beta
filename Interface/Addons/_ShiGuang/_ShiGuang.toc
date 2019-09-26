@@ -7,7 +7,7 @@
 ## SavedVariables: MaoRUIDB,ShiGuangDB,CurrencyTrackingDB,VLegionToDo,CastbarsDB,iKeystonesDB,iKeystonesConfig,DialogKeyDB,AzeritePowerWeightsDB,TinyRosterDB
 ## SavedVariablesPerCharacter: MaoRUISettingDB,ShiGuangPerDB,DEX_SAVE
 
-## X-Support: 8.2.0
+## X-Support: 8.2.5
 ## X-Repple: 2 UI
 ## X-StatsVersion: 20190921
 ## X-LoadOn-Always: Delayed

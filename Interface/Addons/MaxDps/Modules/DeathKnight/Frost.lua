@@ -81,7 +81,7 @@ function DeathKnight:Frost()
 				return FR.RemorselessWinter;
 			end
 
-			if runes >= 1 and (buff[FR.Rime].up or not fever) then
+			if buff[FR.Rime].up or (runes >= 1 and not fever) then
 				return FR.HowlingBlast;
 			end
 

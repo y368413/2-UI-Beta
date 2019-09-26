@@ -15,5 +15,5 @@
 	</Binding>
 	<Binding name="FOLLOW" category="BINDING_HEADER_ACE3"> FollowUnit("target") </Binding>
 	<!--<Binding name="COMPARE_ACHIEVEMENTS"> InspectAchievements("target") </Binding>-->
-	<Binding name="Invite" category="BINDING_HEADER_ACE3"> InviteUnit("target") </Binding>
+	<Binding name="Invite" category="BINDING_HEADER_ACE3"> C_PartyInfo.ConfirmInviteUnit("target") </Binding>
 </Bindings>

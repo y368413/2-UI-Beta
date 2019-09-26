@@ -8,16 +8,6 @@ end
 
 local FRIENDS_GROUP_NAME_COLOR = NORMAL_FONT_COLOR
 
-local INVITE_RESTRICTION_NO_GAME_ACCOUNTS = 0
-local INVITE_RESTRICTION_CLIENT = 1
-local INVITE_RESTRICTION_LEADER = 2
-local INVITE_RESTRICTION_FACTION = 3
-local INVITE_RESTRICTION_INFO = 4
-local INVITE_RESTRICTION_WOW_PROJECT_ID = 5
-local INVITE_RESTRICTION_WOW_PROJECT_MAINLINE = 6
-local INVITE_RESTRICTION_WOW_PROJECT_CLASSIC = 7
-local INVITE_RESTRICTION_NONE = 8
-local INVITE_RESTRICTION_MOBILE = 9
 local ONE_YEAR = 12 * 30 * 24 * 60 * 60
 local FriendButtons = { count = 0 }
 local GroupCount = 0
@@ -75,11 +65,10 @@ local function FriendGroups_UpdateFriendButton(button)
 	button.buttonType = FriendButtons[index].buttonType
 	button.id = FriendButtons[index].id
 	local height = FRIENDS_BUTTON_HEIGHTS[button.buttonType]
-	local nameText, nameColor, infoText, broadcastText, isFavoriteFriend
+	local nameText, nameColor, infoText, isFavoriteFriend, statusTexture
 	local hasTravelPassButton = false
 	if button.buttonType == FRIENDS_BUTTON_TYPE_WOW then
 		local info = C_FriendList.GetFriendInfoByIndex(FriendButtons[index].id)
-		broadcastText = nil
 		if info.connected then
 			button.background:SetColorTexture(FRIENDS_WOW_BACKGROUND_COLOR.r, FRIENDS_WOW_BACKGROUND_COLOR.g, FRIENDS_WOW_BACKGROUND_COLOR.b, FRIENDS_WOW_BACKGROUND_COLOR.a)
 			if info.afk then
@@ -89,15 +78,15 @@ local function FriendGroups_UpdateFriendButton(button)
 			else
 				button.status:SetTexture(FRIENDS_TEXTURE_ONLINE)
 			end
-			nameColor = ClassColourCode(info.className,true)  --nameColor = FRIENDS_WOW_NAME_COLOR
 			nameText = info.name..", "..format(FRIENDS_LEVEL_TEMPLATE, info.level, info.className)
+			nameColor = ClassColourCode(info.className,true)  --nameColor = FRIENDS_WOW_NAME_COLOR
 		else
 			button.background:SetColorTexture(FRIENDS_OFFLINE_BACKGROUND_COLOR.r, FRIENDS_OFFLINE_BACKGROUND_COLOR.g, FRIENDS_OFFLINE_BACKGROUND_COLOR.b, FRIENDS_OFFLINE_BACKGROUND_COLOR.a)
 			button.status:SetTexture(FRIENDS_TEXTURE_OFFLINE)
 			nameText = info.name
 			nameColor = FRIENDS_GRAY_COLOR
+			infoText = FRIENDS_LIST_OFFLINE
 		end
-		infoText = info.mobile and LOCATION_MOBILE_APP or info.area
 		button.gameIcon:Hide()
 		button.summonButton:ClearAllPoints()
 		button.summonButton:SetPoint("TOPRIGHT", button, "TOPRIGHT", 1, -1)
@@ -301,7 +290,7 @@ local function FriendGroups_UpdateFriends()
 	local offset = HybridScrollFrame_GetOffset(scrollFrame)
 	local buttons = scrollFrame.buttons
 	local numButtons = #buttons
-	local numFriendButtons = FriendButtons.count
+	local numFriendButtons = scrollFrame.numFriendListEntries
 
 	local usedHeight = 0
 
@@ -323,9 +312,7 @@ local function FriendGroups_UpdateFriends()
 	end
 	HybridScrollFrame_Update(scrollFrame, scrollFrame.totalFriendListEntriesHeight, usedHeight)
 
-	if hooks["FriendsFrame_UpdateFriends"] then
-		hooks["FriendsFrame_UpdateFriends"]()
-	end
+	if hooks["FriendsFrame_UpdateFriends"] then hooks["FriendsFrame_UpdateFriends"]() end
 
 	-- Delete unused groups in the collapsed part
 	for key,_ in pairs(ShiGuangDB["FriendGroupsCollapsed"]) do
@@ -406,8 +393,8 @@ local function FriendGroups_Update(forceUpdate)
 	local FriendReqGroup = {}
 
 	local buttonCount = 0
-
 	FriendButtons.count = 0
+	
 	local addButtonIndex = 0
 	local totalButtonHeight = 0
 	local function AddButtonInfo(buttonType, id)

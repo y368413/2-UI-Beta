@@ -67,7 +67,7 @@ addon:SetScript("OnEvent", function(addon, event)
     local function UpdatePlayerDatabase()
       ShiGuangDB[realm][faction][player].level = UnitLevel("player")
       for item, quest in pairs(quests) do
-        if IsQuestFlaggedCompleted(quest[1]) then
+        if C_QuestLog.IsQuestFlaggedCompleted(quest[1]) then
           ShiGuangDB[realm][faction][player][item] = 1
         else
           ShiGuangDB[realm][faction][player][item] = nil

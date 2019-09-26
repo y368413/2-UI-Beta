@@ -317,7 +317,7 @@ function list:OnButtonClick(button, data, flag)
 			SendWho("n-"..data.name)
 		elseif IsAltKeyDown() then
 			-- Invite
-			InviteUnit(data.name)
+			C_PartyInfo.ConfirmInviteUnit(data.name)
 		else
 			if data.bnFriend then
 				SetItemRef( "BNplayer:"..(data.name)..":"..presenceID, ("|Hplayer:%1$s|h[%1$s]|h"):format(data.name), "LeftButton" )

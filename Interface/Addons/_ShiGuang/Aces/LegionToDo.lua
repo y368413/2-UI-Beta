@@ -123,7 +123,7 @@ local coinsCurrency = UnitLevel'player' <= 100 and 1129 or isLevel110 and 1273 o
 tinsert(ToDoFunc,function(self,collect)
 	local count = 0
 	for id,_ in pairs(coinsQuests) do
-		if IsQuestFlaggedCompleted(id) then
+		if C_QuestLog.IsQuestFlaggedCompleted(id) then
 			count = count + 1
 		end
 	end
@@ -145,7 +145,7 @@ tinsert(ToDoFunc,function(self,collect)
 	if UnitAura("player",GetSpellInfo(239967),nil) then
 		count = 0
 		for _,id in pairs({47038,47044,47053}) do
-			if IsQuestFlaggedCompleted(id) then
+			if C_QuestLog.IsQuestFlaggedCompleted(id) then
 				count = count + 1
 			end
 		end
@@ -258,7 +258,7 @@ tinsert(ToDoFunc,function(self,collect)
 end)
 
 tinsert(ToDoFunc,function(self,collect)
-	local arguniteQuest = IsQuestFlaggedCompleted(48799)
+	local arguniteQuest = C_QuestLog.IsQuestFlaggedCompleted(48799)
 
 	if not arguniteQuest then
 		local isInLog = GetQuestLogIndexByID(48799)
@@ -303,9 +303,9 @@ tinsert(ToDoFunc,function(self,collect)
 		collect.riftQuest = true
 	end
 
-	local recruitLvl1 = IsQuestFlaggedCompleted(48910)
-	local recruitLvl2 = IsQuestFlaggedCompleted(48911)
-	local recruitLvl3 = IsQuestFlaggedCompleted(48912)
+	local recruitLvl1 = C_QuestLog.IsQuestFlaggedCompleted(48910)
+	local recruitLvl2 = C_QuestLog.IsQuestFlaggedCompleted(48911)
+	local recruitLvl3 = C_QuestLog.IsQuestFlaggedCompleted(48912)
 	
 	if isLevel110 then
 		self:AddDoubleLine("Argus recruits:", (recruitLvl1 and "|cff00ff00+|r" or "|cffff0000-|r").."/"..(recruitLvl2 and "|cff00ff00+|r" or "|cffff0000-|r").."/"..(recruitLvl3 and "|cff00ff00+|r" or "|cffff0000-|r"),1,1,1)
@@ -318,7 +318,7 @@ end)
 
 
 tinsert(ToDoFunc,function(self,collect)
-	self:AddDoubleLine("Blingtron 6000", IsQuestFlaggedCompleted(40753) and "|cff00ff00Done" or "|cffff0000Not completed", 1,1,1)
+	self:AddDoubleLine("Blingtron 6000", C_QuestLog.IsQuestFlaggedCompleted(40753) and "|cff00ff00Done" or "|cffff0000Not completed", 1,1,1)
 end)
 
 
@@ -327,7 +327,7 @@ tinsert(ToDoFunc,function(self,collect)
 	
 	collect.island = nil
 	if questID then
-		if IsQuestFlaggedCompleted(questID) then
+		if C_QuestLog.IsQuestFlaggedCompleted(questID) then
 			self:AddDoubleLine("Islands", "|cff00ff00Done", 1,1,1)
 			collect.island = "|cff00ff00Done"
 		else
@@ -350,7 +350,7 @@ end)
 tinsert(ToDoFunc,function(self,collect)
 	local questID = UnitFactionGroup("player") ~= "Alliance" and 53416 or 53414
 
-	if IsQuestFlaggedCompleted(questID) then
+	if C_QuestLog.IsQuestFlaggedCompleted(questID) then
 		collect.warfront = true
 	else
 		collect.warfront = nil
@@ -361,7 +361,7 @@ tinsert(ToDoFunc,function(self,collect)
 	--The Battle for Darkshore
 	local questID = UnitFactionGroup("player") ~= "Alliance" and 53955 or 53992
 
-	if IsQuestFlaggedCompleted(questID) then
+	if C_QuestLog.IsQuestFlaggedCompleted(questID) then
 		collect.warfront2 = true
 	else
 		collect.warfront2 = nil
@@ -371,7 +371,7 @@ tinsert(ToDoFunc,function(self,collect)
 
 	local questID = UnitFactionGroup("player") ~= "Alliance" and 56137 or 56136
 
-	if IsQuestFlaggedCompleted(questID) then
+	if C_QuestLog.IsQuestFlaggedCompleted(questID) then
 		collect.warfrontHC = true
 	else
 		collect.warfrontHC = nil
@@ -636,7 +636,7 @@ tinsert(ToDoFunc,function(self,collect)
 	self:AddLine("Mythic:")
 	for i=1,#instances do
 		if instancesShowStatus[i] then
-			if instancesAttune[i] and not res[i] and not IsQuestFlaggedCompleted(instancesAttune[i]) then
+			if instancesAttune[i] and not res[i] and not C_QuestLog.IsQuestFlaggedCompleted(instancesAttune[i]) then
 				self:AddDoubleLine(instances[i], "|cffff0000Locked",1,1,1)
 				collect["instance"..i] = "|cffff0000Locked"
 			else

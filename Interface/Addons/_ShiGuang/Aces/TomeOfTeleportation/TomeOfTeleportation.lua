@@ -1520,35 +1520,35 @@ local PINK        = "|cffFFaaaa"
 local function AddColor(str,color) return color..(str or " ^-^ ").."|r" end
 
 local function completedstring(arg)
- if IsQuestFlaggedCompleted(arg) then return AddColor(COMPLETE,LIGHT_GREEN) else return AddColor(INCOMPLETE,LIGHT_RED) end
+ if C_QuestLog.IsQuestFlaggedCompleted(arg) then return AddColor(COMPLETE,LIGHT_GREEN) else return AddColor(INCOMPLETE,LIGHT_RED) end
 end
 
 -------------------------------------------------------------
 local bonus = {52834, 52838, 52835, 52839, 52837, 52840,}						--Order Resources(前3)  -Gold(中3)  --Orderhall(后1) 
 local count = 0
-for _, id in pairs(bonus) do if IsQuestFlaggedCompleted(id) then count = count + 1 end end
+for _, id in pairs(bonus) do if C_QuestLog.IsQuestFlaggedCompleted(id) then count = count + 1 end end
 local function CheckCurrency()
 	if count < 2 then return AddColor(count.." / 2",LIGHT_RED) elseif count >= 2 then return AddColor(count.." / 2",LIGHT_GREEN) end
 end
 local function TimeTravelFB()
- if IsQuestFlaggedCompleted(40168) or IsQuestFlaggedCompleted(40173) or IsQuestFlaggedCompleted(40786) or IsQuestFlaggedCompleted(45799) then return AddColor(COMPLETE,LIGHT_GREEN) else return AddColor(INCOMPLETE,LIGHT_RED) end
+ if C_QuestLog.IsQuestFlaggedCompleted(40168) or C_QuestLog.IsQuestFlaggedCompleted(40173) or C_QuestLog.IsQuestFlaggedCompleted(40786) or C_QuestLog.IsQuestFlaggedCompleted(45799) then return AddColor(COMPLETE,LIGHT_GREEN) else return AddColor(INCOMPLETE,LIGHT_RED) end
 end
 local function GarrisonInvade()
- if IsQuestFlaggedCompleted(37638) or IsQuestFlaggedCompleted(37639) or IsQuestFlaggedCompleted(37640) or IsQuestFlaggedCompleted(38482) then return AddColor(COMPLETE,LIGHT_GREEN) else return AddColor(INCOMPLETE,LIGHT_RED) end
+ if C_QuestLog.IsQuestFlaggedCompleted(37638) or C_QuestLog.IsQuestFlaggedCompleted(37639) or C_QuestLog.IsQuestFlaggedCompleted(37640) or C_QuestLog.IsQuestFlaggedCompleted(38482) then return AddColor(COMPLETE,LIGHT_GREEN) else return AddColor(INCOMPLETE,LIGHT_RED) end
 end
 local function LegionWolrdBoss()
- if IsQuestFlaggedCompleted(42270) or IsQuestFlaggedCompleted(42269) or IsQuestFlaggedCompleted(42779) or IsQuestFlaggedCompleted(43192) or IsQuestFlaggedCompleted(42819) or IsQuestFlaggedCompleted(43193) or IsQuestFlaggedCompleted(43513) or IsQuestFlaggedCompleted(43448) or IsQuestFlaggedCompleted(43512) or IsQuestFlaggedCompleted(43985) or IsQuestFlaggedCompleted(44287) then return AddColor(COMPLETE,LIGHT_GREEN) else return AddColor(INCOMPLETE,LIGHT_RED) end
+ if C_QuestLog.IsQuestFlaggedCompleted(42270) or C_QuestLog.IsQuestFlaggedCompleted(42269) or C_QuestLog.IsQuestFlaggedCompleted(42779) or C_QuestLog.IsQuestFlaggedCompleted(43192) or IsQuestFlaggedCompleted(42819) or IsQuestFlaggedCompleted(43193) or IsQuestFlaggedCompleted(43513) or IsQuestFlaggedCompleted(43448) or IsQuestFlaggedCompleted(43512) or IsQuestFlaggedCompleted(43985) or IsQuestFlaggedCompleted(44287) then return AddColor(COMPLETE,LIGHT_GREEN) else return AddColor(INCOMPLETE,LIGHT_RED) end
 end
 local function TombWolrdBoss()
- if IsQuestFlaggedCompleted(46947) or IsQuestFlaggedCompleted(46948) or IsQuestFlaggedCompleted(46945) or IsQuestFlaggedCompleted(47061) then return AddColor(COMPLETE,LIGHT_GREEN) else return AddColor(INCOMPLETE,LIGHT_RED) end
+ if C_QuestLog.IsQuestFlaggedCompleted(46947) or C_QuestLog.IsQuestFlaggedCompleted(46948) or C_QuestLog.IsQuestFlaggedCompleted(46945) or C_QuestLog.IsQuestFlaggedCompleted(47061) then return AddColor(COMPLETE,LIGHT_GREEN) else return AddColor(INCOMPLETE,LIGHT_RED) end
 end
 local function ArgusWolrdBoss()
- if IsQuestFlaggedCompleted(38276) or IsQuestFlaggedCompleted(47461) or IsQuestFlaggedCompleted(47462) or IsQuestFlaggedCompleted(47463) then return AddColor(COMPLETE,LIGHT_GREEN) else return AddColor(INCOMPLETE,LIGHT_RED) end
+ if C_QuestLog.IsQuestFlaggedCompleted(38276) or C_QuestLog.IsQuestFlaggedCompleted(47461) or C_QuestLog.IsQuestFlaggedCompleted(47462) or C_QuestLog.IsQuestFlaggedCompleted(47463) then return AddColor(COMPLETE,LIGHT_GREEN) else return AddColor(INCOMPLETE,LIGHT_RED) end
 end
 local function CheckIslandweekly()
 	local iwqID = C_IslandsQueue.GetIslandsWeeklyQuestID()
 	local _, _, _, cur, max = GetQuestObjectiveInfo(iwqID, 1, false)
-	if iwqID and UnitLevel("player") == 120 and IsQuestFlaggedCompleted(iwqID) then return AddColor(COMPLETE,LIGHT_RED) elseif iwqID and UnitLevel("player") == 120 then return AddColor(cur.." / "..max,LIGHT_GREEN) end
+	if iwqID and UnitLevel("player") == 120 and C_QuestLog.IsQuestFlaggedCompleted(iwqID) then return AddColor(COMPLETE,LIGHT_RED) elseif iwqID and UnitLevel("player") == 120 then return AddColor(cur.." / "..max,LIGHT_GREEN) end
 end
 ------------------------------------------------------------------------------------
 

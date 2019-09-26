@@ -216,7 +216,7 @@ end
 function iKS:createPlayer()
 	if player and not iKeystonesDB[player] then
 		local isleProgress, isleMax = select(4, GetQuestObjectiveInfo(iKS.IsleQuests[playerFaction], 1, false))
-		local isleDone = IsQuestFlaggedCompleted(iKS.IsleQuests[playerFaction])
+		local isleDone = C_QuestLog.IsQuestFlaggedCompleted(iKS.IsleQuests[playerFaction])
 		if UnitLevel('player') >= 120 and not iKeystonesConfig.ignoreList[player] then
 			iKeystonesDB[player] = {
 				name = UnitName('player'),
@@ -243,7 +243,7 @@ function iKS:createPlayer()
 		iKeystonesDB[player].faction = UnitFactionGroup('player') -- faction change (tbh i think guid would change) and update old DB
 		if not iKeystonesDB[player].isle then
 			local isleProgress, isleMax = select(4, GetQuestObjectiveInfo(iKS.IsleQuests[playerFaction], 1, false))
-			local isleDone = IsQuestFlaggedCompleted(iKS.IsleQuests[playerFaction])
+			local isleDone = C_QuestLog.IsQuestFlaggedCompleted(iKS.IsleQuests[playerFaction])
 			iKeystonesDB[player].isle = {
 				progress = string.format("%0.f", isleProgress/isleMax*100),
 				done = isleDone,
@@ -552,10 +552,10 @@ function iKeystones:CHALLENGE_MODE_MAPS_UPDATE()
 end
 function iKeystones:QUEST_LOG_UPDATE()
 	if not iKeystonesDB[player] then return end
-	if IsQuestFlaggedCompleted(44554) then
+	if C_QuestLog.IsQuestFlaggedCompleted(44554) then
 		iKeystonesDB[player].canLoot = false
 	end
-	if IsQuestFlaggedCompleted(iKS.IsleQuests[playerFaction]) then
+	if C_QuestLog.IsQuestFlaggedCompleted(iKS.IsleQuests[playerFaction]) then
 		iKeystonesDB[player].isle = {
 			progress = 0,
 			done = true,
