@@ -183,7 +183,11 @@ local function HardYards_OnUpdate()
 			ShowTheHardYards()
 		end
 	else
-		HardYards.rangeText:SetTextColor( nil,nil,nil,0 )
+		if HardYards.rangeText then
+		  HardYards.rangeText:SetTextColor( nil,nil,nil,0 )
+		else
+		  return
+		end
 	end
 end
 
@@ -230,7 +234,7 @@ local function PlayerLogin( self )
 	end)
 
 	HardYards.rangeText = HardYards:CreateFontString( nil, "OVERLAY" )
-	HardYards.rangeText:SetFont("Interface\\AddOns\\_ShiGuang\\Media\\Fonts\\Pixel.ttf", 36, "THICKOUTLINE")  -- "Fonts\\FRIZQT__.TTF", 42, "THICKOUTLINE" 
+	HardYards.rangeText:SetFont("Interface\\AddOns\\_ShiGuang\\Media\\Fonts\\Pixel.ttf", 32, "THICKOUTLINE")  -- "Fonts\\FRIZQT__.TTF", 42, "THICKOUTLINE" 
 	HardYards_SetSize()
 
 	faction = UnitFactionGroup( "player" )

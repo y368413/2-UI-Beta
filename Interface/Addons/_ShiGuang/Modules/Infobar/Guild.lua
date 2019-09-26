@@ -301,6 +301,7 @@ end
 
 info.onEnter = function()
 	if not IsInGuild() then return end
+	if NDuiFriendsFrame and NDuiFriendsFrame:IsShown() then NDuiFriendsFrame:Hide() end
 	setupInfoFrame()
 	refreshData()
 	applyData()

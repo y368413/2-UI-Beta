@@ -1,19 +1,12 @@
 ﻿local _, ns = ...
 local M, R, U, I = unpack(ns)
 local S = M:GetModule("Skins")
-local pairs = pairs
-local LE_QUEST_FREQUENCY_DAILY = LE_QUEST_FREQUENCY_DAILY or 2
-
 function S:QuestTracker()
-	-- Questblock click enhant
-	local function QuestHook(id)
-		local questLogIndex = GetQuestLogIndexByID(id)
-		if IsControlKeyDown() and CanAbandonQuest(id) then QuestMapQuestOptions_AbandonQuest(id)
-		elseif IsAltKeyDown() and GetQuestLogPushable(questLogIndex) then QuestMapQuestOptions_ShareQuest(id)
-		end
-	end
-	hooksecurefunc(QUEST_TRACKER_MODULE, "OnBlockHeaderClick", function(_, block) QuestHook(block.id) end)
-	hooksecurefunc("QuestMapLogTitleButton_OnClick", function(self) QuestHook(self.questID) end)
+	local pairs = pairs
+	local LE_QUEST_FREQUENCY_DAILY = LE_QUEST_FREQUENCY_DAILY or 2
+	local C_QuestLog_IsQuestReplayable = C_QuestLog.IsQuestReplayable
+
+
 
 	-- Show quest color and level
 	hooksecurefunc("QuestLogQuests_AddQuestButton", function(_, _, _, title, level, _, isHeader, _, isComplete, frequency, questID)
@@ -23,6 +16,8 @@ function S:QuestTracker()
 				local title = "["..level.."] "..title
 				if isComplete then
 					title = "|cffff78ff"..title
+				elseif C_QuestLog_IsQuestReplayable(questID) then
+					title = "|cff00ff00"..title
 				elseif frequency == LE_QUEST_FREQUENCY_DAILY then
 					title = "|cff3399ff"..title
 				end
