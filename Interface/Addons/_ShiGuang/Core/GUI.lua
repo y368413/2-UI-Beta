@@ -699,7 +699,7 @@ local function CreateOption(i)
 				x, y = 10, -offset - 26
 				offset = offset + 58
 			end
-			local s = M.CreateSlider(parent, name, min, max, x, y, width)
+			local s = M.CreateSlider(parent, name, min, max, x, y)
 			s:SetValue(NDUI_VARIABLE(key, value))
 			s:SetScript("OnValueChanged", function(_, v)
 				local current = tonumber(format("%."..step.."f", v))

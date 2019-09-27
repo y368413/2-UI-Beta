@@ -223,16 +223,16 @@ function BlinkHealth:UpdateUnitValues()
 	-- player
 	--if (UnitHasVehicleUI("player")) then
 		--heal, maxheal = UnitHealth("pet"), UnitHealthMax("pet");
-		--local _, powertype = UnitPowerType("pet")
 		--power, maxpower = UnitPower("pet"), UnitPowerMax("pet");
 		--petheal, petmax = UnitHealth("player"), UnitHealthMax("player");
 		--name = UnitName("player");	-- petName
+		--_, powertype = UnitPowerType("pet");
 	--else
 		heal, maxheal = UnitHealth("player"), UnitHealthMax("player");
-		local _, powertype = UnitPowerType("player")
 		power, maxpower = UnitPower("player"), UnitPowerMax("player");
 		petheal, petmax = UnitHealth("pet"), UnitHealthMax("pet");
 		name = UnitName("pet");
+		_, powertype = UnitPowerType("player");
 	--end
 	
 	perh = heal/maxheal * 100 + 0.5;
@@ -240,8 +240,8 @@ function BlinkHealth:UpdateUnitValues()
 	local hexColor = self:ToHexColor(1, 0.65, 0.16);  --0.49,0.99,0
 	heal, maxheal = self:FormatDigit(heal), self:FormatDigit(maxheal);
 	self.frame["player"].heal:SetFormattedText("|cff%s%s/%s|r", hexColor, heal, maxheal);	
-	if (powertype and PowerBarColor[powertype] and type(maxpower) == "number" and maxpower > 0) then		
-    hexColor = self:ToHexColorRGB(PowerBarColor[powertype]);
+	if (type(maxpower) == "number" and maxpower > 0 and PowerBarColor[powertype]) then
+        hexColor = self:ToHexColorRGB(PowerBarColor[powertype]);
 		power, maxpower = self:FormatDigit(power), self:FormatDigit(maxpower);
 		self.frame["player"].power:SetFormattedText("|cff%s%s/%s|r", hexColor, power, maxpower);
 		self.frame["player"].power:Show();
@@ -270,8 +270,8 @@ function BlinkHealth:UpdateUnitValues()
 	local hexH, hexP;
 	if (UnitExists("target")) then
 		heal, maxheal = UnitHealth("target"), UnitHealthMax("target");
-		local _, powertype = UnitPowerType("target")
 		power, maxpower = UnitPower("target"), UnitPowerMax("target");
+		_, powertype = UnitPowerType("target");
 		name = UnitName("target");
 		perh = heal/maxheal * 100 + 0.5;
 		self:SetPercentText("target", perh);		
@@ -423,26 +423,26 @@ function BlinkHealth:ConstructHealth(unit)
 	-- Name
 	local name, pet, tot;
 	if (unit == "player") then
+		name = this:CreateFontString(nil, "OVERLAY");
+		name:SetFontObject("SIFontMedium");
+		name:SetPoint("BOTTOMRIGHT", power, "BOTTOMRIGHT", 0, 18);
+
 		pet = this:CreateFontString(nil, "OVERLAY");
 		pet:SetFontObject("SIFontSmall");
 		pet:SetPoint("BOTTOMRIGHT", health[4], "TOPRIGHT", 0, 6);
 		this.pet = pet;
-		
-		name = this:CreateFontString(nil, "OVERLAY");
-		name:SetFontObject("SIFontMedium");
-		name:SetPoint("BOTTOMRIGHT", power, "BOTTOMRIGHT", 0, 18);
-		this.name = name;
 	else
 		name = this:CreateFontString(nil, "OVERLAY");
 		name:SetFontObject("SIFontMedium");
 		name:SetPoint("BOTTOMLEFT", power, "BOTTOMLEFT", 0, 18);
-		this.name = name;
 			
 		tot = this:CreateFontString(nil, "OVERLAY");
 		tot:SetFontObject("SIFontSmall");
 		tot:SetPoint("BOTTOMLEFT", health[4], "TOPLEFT", 0, 6);
 		this.tot = tot;		
 	end
+
+	this.name = name;
 end
 ---------------------- 符文条
 do

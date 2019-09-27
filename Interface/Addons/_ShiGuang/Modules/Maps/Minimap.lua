@@ -4,7 +4,8 @@ local M, R, U, I = unpack(ns)
 local module = M:GetModule("Maps")
 
 local strmatch, strfind, strupper = string.match, string.find, string.upper
-local pairs, ipairs = pairs, ipairs
+local select, pairs, ipairs, unpack = select, pairs, ipairs, unpack
+local cr, cg, cb = I.r, I.g, I.b
 function module:ReskinRegions()
 	-- Garrison
 	--GarrisonLandingPageMinimapButton:ClearAllPoints()
@@ -80,17 +81,11 @@ function module:ReskinRegions()
 	Invt:SetPoint("TOPRIGHT", Minimap, "BOTTOMLEFT", -20, -20)
 	Invt:SetSize(300, 80)
 	Invt:Hide()
-	M.CreateBD(Invt)
-	M.CreateSD(Invt)
-	M.CreateTex(Invt)
+	M.SetBackground(Invt)
 	M.CreateFS(Invt, 16, I.InfoColor..GAMETIME_TOOLTIP_CALENDAR_INVITES)
 
 	local function updateInviteVisibility()
-		if MaoRUISettingDB["Map"]["Invite"] and C_Calendar.GetNumPendingInvites() > 0 then
-			Invt:Show()
-		else
-			Invt:Hide()
-		end
+		Invt:SetShown(C_Calendar.GetNumPendingInvites() > 0)
 	end
 	M:RegisterEvent("CALENDAR_UPDATE_PENDING_INVITES", updateInviteVisibility)
 	M:RegisterEvent("PLAYER_ENTERING_WORLD", updateInviteVisibility)
@@ -103,11 +98,6 @@ function module:ReskinRegions()
 		M:UnregisterEvent("CALENDAR_UPDATE_PENDING_INVITES", updateInviteVisibility)
 		M:UnregisterEvent("PLAYER_ENTERING_WORLD", updateInviteVisibility)
 	end)
-	if TicketStatusFrame then
-		TicketStatusFrame:ClearAllPoints()
-		TicketStatusFrame:SetPoint("TOP", UIParent, "TOP", -400, -20)
-		TicketStatusFrame.SetPoint = M.Dummy
-	end
 end
 
 ----------------------------------------------------------------------------	右键菜单--------------------------------------------------------------------------
@@ -251,33 +241,75 @@ function module:WhoPingsMyMap()
 	end)
 end
 
+function module:UpdateMinimapScale()
+	local scale = NDuiMaoRUISettingDBDB["Map"]["MinmapScale"]
+	Minimap:SetScale(scale)
+	Minimap.mover:SetSize(Minimap:GetWidth()*scale, Minimap:GetHeight()*scale)
+end
+
+function module:ShowMinimapClock()
+	if MaoRUISettingDB["Map"]["Clock"] then
+		if not TimeManagerClockButton then LoadAddOn("Blizzard_TimeManager") end
+		if not TimeManagerClockButton.styled then
+			TimeManagerClockButton:DisableDrawLayer("BORDER")
+			TimeManagerClockButton:SetPoint("BOTTOM", Minimap, "BOTTOM", 0, -8)
+			TimeManagerClockTicker:SetFont(unpack(I.Font))
+			TimeManagerClockTicker:SetTextColor(1, 1, 1)
+
+			TimeManagerClockButton.styled = true
+		end
+		TimeManagerClockButton:Show()
+	else
+		if TimeManagerClockButton then TimeManagerClockButton:Hide() end
+	end
+end
+
+function module:ShowCalendar()
+	if MaoRUISettingDB["Map"]["Calendar"] then
+		if not GameTimeFrame.styled then
+			GameTimeFrame:SetNormalTexture(nil)
+			GameTimeFrame:SetPushedTexture(nil)
+			GameTimeFrame:SetHighlightTexture(nil)
+			GameTimeFrame:SetSize(18, 18)
+			GameTimeFrame:SetParent(Minimap)
+			GameTimeFrame:ClearAllPoints()
+			GameTimeFrame:SetPoint("BOTTOMRIGHT", Minimap, 1, 18)
+			GameTimeFrame:SetHitRectInsets(0, 0, 0, 0)
+
+			for i = 1, GameTimeFrame:GetNumRegions() do
+				local region = select(i, GameTimeFrame:GetRegions())
+				if region.SetTextColor then
+					region:SetTextColor(cr, cg, cb)
+					region:SetFont(unpack(I.Font))
+					break
+				end
+			end
+
+			GameTimeFrame.styled = true
+		end
+		GameTimeFrame:Show()
+	else
+		GameTimeFrame:Hide()
+	end
+end
+
 function module:SetupMinimap()
 	-- Shape and Position
-	--local scale = MaoRUISettingDB["Map"]["MinmapScale"]
 	Minimap:ClearAllPoints()
 	Minimap:SetPoint(unpack(R.Minimap.Pos))
 	Minimap:SetSize(186, 186)
 	Minimap:SetFrameLevel(10)
 	Minimap:SetMaskTexture("Interface\\Buttons\\WHITE8X8")
-	--MinimapCluster:SetScale(scale)
-	--MSA_DropDownList1:SetClampedToScreen(true)
+	DropDownList1:SetClampedToScreen(true)
 
 	local mover = M.Mover(Minimap, U["Minimap"], "Minimap", R.Minimap.Pos, Minimap:GetWidth(), Minimap:GetHeight())
 	Minimap:ClearAllPoints()
 	Minimap:SetPoint("TOPRIGHT", mover)
+	Minimap.mover = mover
 
-	-- ClockFrame
-	if MaoRUISettingDB["Map"]["Clock"] then
-		if not TimeManagerClockButton then LoadAddOn("Blizzard_TimeManager") end
-		local clockFrame, clockTime = TimeManagerClockButton:GetRegions()
-		clockFrame:Hide()
-		clockTime:SetFont(unpack(I.Font))
-		clockTime:SetTextColor(1, 1, 1)
-		TimeManagerClockButton:SetPoint("BOTTOM", Minimap, "BOTTOM", 0, -6)
-	else
-		if TimeManagerClockButton then TimeManagerClockButton:Hide() end
-		GameTimeFrame:Hide()
-	end
+	--self:UpdateMinimapScale()
+	self:ShowMinimapClock()
+	self:ShowCalendar()
 
 	-- Mousewheel Zoom
 	Minimap:EnableMouseWheel(true)
@@ -305,7 +337,6 @@ function module:SetupMinimap()
 	
 	-- Hide Blizz
 	local frames = {
-		"GameTimeFrame",
 		"MinimapBorderTop",
 		"MinimapNorthTag",
 		"MinimapBorder",

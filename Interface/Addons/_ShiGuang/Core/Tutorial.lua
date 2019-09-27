@@ -2,7 +2,7 @@
 local M, R, U, I = unpack(ns)
 local module = M:RegisterModule("Settings")
 local pairs, tonumber, wipe = pairs, tonumber, table.wipe
-local min, max, floor = math.min, math.max, floor
+local min, max = math.min, math.max
 
 -- Addon Info
 print("<<<---|cFFFFFF00 2|r|cFFFF0000 UI |r v"..GetAddOnMetadata("_ShiGuang", "Version").." ("..GetAddOnMetadata("_ShiGuang", "X-StatsVersion")..")" .." For "..GetAddOnMetadata("_ShiGuang", "X-Support").." --")

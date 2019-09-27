@@ -5,7 +5,7 @@ if not R.Infobar.Gold then return end
 local module = M:GetModule("Infobar")
 local info = module:RegisterInfobar("Gold", R.Infobar.GoldPos)
 
-local format, pairs, wipe, unpack = string.format, pairs, table.wipe, unpack
+local format, pairs, wipe, unpack, floor = string.format, pairs, table.wipe, unpack, floor
 local GOLD_AMOUNT_SYMBOL, CLASS_ICON_TCOORDS = GOLD_AMOUNT_SYMBOL, CLASS_ICON_TCOORDS
 local GetMoney, GetMoneyString, GetNumWatchedTokens, GetBackpackCurrencyInfo, GetCurrencyInfo = GetMoney, GetMoneyString, GetNumWatchedTokens, GetBackpackCurrencyInfo, GetCurrencyInfo
 local GetContainerNumSlots, GetContainerItemLink, GetItemInfo, GetContainerItemInfo, UseContainerItem = GetContainerNumSlots, GetContainerItemLink, GetItemInfo, GetContainerItemInfo, UseContainerItem
