@@ -102,7 +102,13 @@ local function FriendGroups_UpdateFriendButton(button)
 		button.summonButton:SetPoint("TOPRIGHT", button, "TOPRIGHT", 1, -1)
 		FriendsFrame_SummonButton_Update(button.summonButton)
 	elseif button.buttonType == FRIENDS_BUTTON_TYPE_BNET then
-		local bnetIDAccount, accountName, battleTag, isBattleTag, characterName, bnetIDGameAccount, client, isOnline, lastOnline, isBnetAFK, isBnetDND, messageText, noteText, isRIDFriend, messageTime, wowProjectID, isReferAFriend, canSummonFriend, isFavorite, mobile = BNGetFriendInfo(FriendButtons[index].id)
+						local accountInfo = C_BattleNet.GetFriendAccountInfo(FriendButtons[index].id)
+						accountInfo.note
+											local name = BNet_GetBNetAccountName(accountInfo)
+					local cname, level, class, area = accountInfo.gameAccountInfo.characterName, accountInfo.gameAccountInfo.characterLevel, accountInfo.gameAccountInfo.className, accountInfo.gameAccountInfo.areaName
+
+
+local bnetIDAccount, accountName, battleTag, isBattleTagFriend, characterName, bnetIDGameAccount, client, isOnline, lastOnline, isBnetAFK, isBnetDND, messageText, noteText, isRIDFriend, messageTime, wowProjectID, isReferAFriend, canSummonFriend, isFavorite, mobile = BNGetFriendInfo(FriendButtons[index].id)
 		broadcastText = messageText
 		isFavoriteFriend = isFavorite
 		-- set up player name and character name
@@ -439,7 +445,7 @@ local function FriendGroups_Update(forceUpdate)
 		if not BnetFriendGroups[i] then
 			BnetFriendGroups[i] = {}
 		end
-		local noteText = select(13,BNGetFriendInfo(i))
+		local noteText = C_BattleNet.GetFriendAccountInfo(i).note
 		NoteAndGroups(noteText, BnetFriendGroups[i])
 		for group in pairs(BnetFriendGroups[i]) do
 			IncrementGroup(group, true)
@@ -455,7 +461,7 @@ local function FriendGroups_Update(forceUpdate)
 		if not BnetFriendGroups[j] then
 			BnetFriendGroups[j] = {}
 		end
-		local noteText = select(13,BNGetFriendInfo(j))
+		local noteText = C_BattleNet.GetFriendAccountInfo(j).note
 		NoteAndGroups(noteText, BnetFriendGroups[j])
 		for group in pairs(BnetFriendGroups[j]) do
 			IncrementGroup(group)
@@ -471,7 +477,7 @@ local function FriendGroups_Update(forceUpdate)
 		if not BnetFriendGroups[j] then
 			BnetFriendGroups[j] = {}
 		end
-		local noteText = select(13,BNGetFriendInfo(j))
+		local noteText = C_BattleNet.GetFriendAccountInfo(j).note
 		NoteAndGroups(noteText, BnetFriendGroups[j])
 		for group in pairs(BnetFriendGroups[j]) do
 			IncrementGroup(group, true)
@@ -502,7 +508,7 @@ local function FriendGroups_Update(forceUpdate)
 		if not BnetFriendGroups[j] then
 			BnetFriendGroups[j] = {}
 		end
-		local noteText = select(13,BNGetFriendInfo(j))
+		local noteText = C_BattleNet.GetFriendAccountInfo(j).note
 		NoteAndGroups(noteText, BnetFriendGroups[j])
 		for group in pairs(BnetFriendGroups[j]) do
 			IncrementGroup(group)
@@ -648,8 +654,8 @@ local function FriendGroups_Update(forceUpdate)
 		local _, _, _, _, _, _, isRIDEnabled = BNGetInfo()
 		if ( isRIDEnabled ) then
 			for i = 1, numInvites do
-				local inviteID, accountName, isBattleTag = BNGetFriendInviteInfo(i)
-				if ( not isBattleTag ) then
+				local inviteID, accountName, isBattleTagFriend = BNGetFriendInviteInfo(i)
+				if ( not isBattleTagFriend ) then
 					-- found one
 					showRIDWarning = true
 					break
@@ -690,7 +696,8 @@ local function FriendGroups_Rename(self, old)
     if input == "" then return end
     local groups = {}
     for i = 1, BNGetNumFriends() do
-        local presenceID, _, _, _, _, _, _, _, _, _, _, _, noteText = BNGetFriendInfo(i)
+        local presenceID = C_BattleNet.GetFriendAccountInfo(i).bnetAccountID
+        local noteText = C_BattleNet.GetFriendAccountInfo(i).note
         local note = NoteAndGroups(noteText, groups)
         if groups[old] then
             groups[old] = nil
@@ -752,7 +759,9 @@ StaticPopupDialogs["FRIEND_GROUP_CREATE"] = {
 local function InviteOrGroup(clickedgroup, invite)
     local groups = {}
 	for i = 1, BNGetNumFriends() do
-		local presenceID, _, _, _, _, toonID, _, _, _, _, _, _, noteText = BNGetFriendInfo(i)
+		local toonID = C_BattleNet.GetFriendAccountInfo(i).gameAccountInfo.gameAccountID
+		local presenceID = C_BattleNet.GetFriendAccountInfo(i).bnetAccountID
+    local noteText = C_BattleNet.GetFriendAccountInfo(i).note
 		local note = NoteAndGroups(noteText, groups)
 		if groups[clickedgroup] then
 			if invite and toonID then

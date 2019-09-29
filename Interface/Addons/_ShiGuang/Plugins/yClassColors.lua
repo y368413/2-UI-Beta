@@ -146,10 +146,11 @@ local function friendsFrame()
 					if gameAccountInfo.isOnline and gameAccountInfo.clientProgram == BNET_CLIENT_WOW then
 						local charName = gameAccountInfo.characterName
 						local faction = gameAccountInfo.factionName
+						local level = gameAccountInfo.characterLevel or UNKNOWN
 						local class = gameAccountInfo.className or UNKNOWN
 						local zoneName = gameAccountInfo.areaName or UNKNOWN
-						if accountName and charName and class and faction == I.MyFaction then
-							nameText = accountName.." "..FRIENDS_WOW_NAME_COLOR_CODE.."("..classColor(class)..charName..FRIENDS_WOW_NAME_COLOR_CODE..")"
+						if accountName and charName and level and class and faction == I.MyFaction then
+							nameText = accountName.." "..FRIENDS_WOW_NAME_COLOR_CODE.."("..classColor(class)..level.." "..charName..FRIENDS_WOW_NAME_COLOR_CODE..")"
 							if zoneName == playerArea then
 								infoText = format("|cff00ff00%s|r", zoneName)
 							end
