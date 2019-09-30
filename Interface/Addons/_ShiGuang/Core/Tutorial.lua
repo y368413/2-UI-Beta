@@ -94,15 +94,11 @@ local function ForceRaidFrame()
 	CompactUnitFrameProfiles_UpdateCurrentPanel()
 end
 
-local function clipScale(scale)
-	return tonumber(format("%.5f", scale))
-end
-
 local function GetPerfectScale()
 	local scale = MaoRUIDB["UIScale"]
 	local bestScale = max(.4, min(1.15, 768 / I.ScreenHeight))
 	local pixelScale = 768 / I.ScreenHeight
-	if MaoRUIDB["LockUIScale"] then scale = clipScale(bestScale) end
+	if MaoRUIDB["LockUIScale"] then scale = bestScale end
 	R.mult = (bestScale / scale) - ((bestScale - pixelScale) / scale)
 
 	return scale
@@ -119,7 +115,7 @@ local function SetupUIScale()
 		UIParent:SetScale(scale)
 	end
 
-	MaoRUIDB["UIScale"] = clipScale(scale)
+	MaoRUIDB["UIScale"] = scale
 	isScaling = false
 end
 

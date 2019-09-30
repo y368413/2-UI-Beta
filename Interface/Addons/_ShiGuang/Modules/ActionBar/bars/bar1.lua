@@ -3,6 +3,28 @@ local M, R, U, I = unpack(ns)
 local Bar = M:RegisterModule("Actionbar")
 local cfg = R.bars.bar1
 
+local function UpdateActionbarScale(bar)
+	local frame = _G["NDui_Action"..bar]
+	frame:SetScale(MaoRUISettingDB["Actionbar"]["Scale"])
+	frame.mover:SetScale(MaoRUISettingDB["Actionbar"]["Scale"])
+end
+
+function Bar:UpdateAllScale()
+	if not MaoRUISettingDB["Actionbar"]["Enable"] then return end
+
+	UpdateActionbarScale("Bar1")
+	UpdateActionbarScale("Bar2")
+	UpdateActionbarScale("Bar3")
+	UpdateActionbarScale("Bar4")
+	UpdateActionbarScale("Bar5")
+
+	UpdateActionbarScale("BarExtra")
+	UpdateActionbarScale("BarZone")
+	UpdateActionbarScale("BarExit")
+	UpdateActionbarScale("BarPet")
+	UpdateActionbarScale("BarStance")
+end
+
 function Bar:OnLogin()
 	if not MaoRUISettingDB["Actionbar"]["Enable"] then return end
 
@@ -28,7 +50,6 @@ function Bar:OnLogin()
 	else
 		frame.Pos = {"BOTTOM", UIParent, "BOTTOM", 0, 2}
 	end
-	frame:SetScale(MaoRUISettingDB["Actionbar"]["Scale"])
 
 	for i = 1, num do
 		local button = _G["ActionButton"..i]
@@ -110,8 +131,7 @@ function Bar:OnLogin()
 
 	--create drag frame and drag functionality
 	if R.bars.userplaced then
-		local mover = M.Mover(frame, U["Main Actionbar"], "Bar1", frame.Pos)
-		mover:SetScale(MaoRUISettingDB["Actionbar"]["Scale"])
+		frame.mover = M.Mover(frame, U["Main Actionbar"], "Bar1", frame.Pos)
 	end
 
 	--create the mouseover functionality
@@ -151,6 +171,8 @@ function Bar:OnLogin()
 	self:CreateStancebar()
 	self:HideBlizz()
 	self:ReskinBars()
+	self:UpdateAllScale()
+	self:CreateBackground()
 
 	--vehicle fix
 	local function getActionTexture(button)
@@ -169,4 +191,48 @@ function Bar:OnLogin()
 			end
 		end
 	end)
+end
+
+function Bar:CreateBackground()
+	if not MaoRUISettingDB["Skins"]["BarLine"] then return end
+	if MaoRUISettingDB["Actionbar"]["Scale"] ~= 1 then return end
+
+	local cr, cg, cb = 0, 0, 0
+	if MaoRUISettingDB["Skins"]["ClassLine"] then cr, cg, cb = I.r, I.g, I.b end
+
+	local basic = 94
+	if MaoRUISettingDB["Actionbar"]["Style"] == 4 then basic = 130 end
+
+	local MactionbarL = CreateFrame("Frame", nil, UIParent)
+	MactionbarL:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", 0, 4)
+	M.CreateGF(MactionbarL, 250, basic, "Horizontal", 0, 0, 0, 0, .5)
+	local MactionbarL1 = CreateFrame("Frame", nil, MactionbarL)
+	MactionbarL1:SetPoint("BOTTOMRIGHT", MactionbarL, "TOPRIGHT")
+	M.CreateGF(MactionbarL1, 230, R.mult, "Horizontal", cr, cg, cb, 0, .7)
+	RegisterStateDriver(MactionbarL, "visibility", "[petbattle][overridebar][vehicleui][possessbar,@vehicle,exists] hide; show")
+
+	local MactionbarR = CreateFrame("Frame", nil, UIParent)
+	MactionbarR:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", 0, 4)
+	M.CreateGF(MactionbarR, 250, basic, "Horizontal", 0, 0, 0, .5, 0)
+	local MactionbarR1 = CreateFrame("Frame", nil, MactionbarR)
+	MactionbarR1:SetPoint("BOTTOMLEFT", MactionbarR, "TOPLEFT")
+	M.CreateGF(MactionbarR1, 230, R.mult, "Horizontal", cr, cg, cb, .7, 0)
+	RegisterStateDriver(MactionbarR, "visibility", "[petbattle][overridebar][vehicleui][possessbar,@vehicle,exists] hide; show")
+
+	-- OVERRIDEBAR
+	local OverbarL = CreateFrame("Frame", nil, UIParent)
+	OverbarL:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", 0, 4)
+	M.CreateGF(OverbarL, 200, 57, "Horizontal", 0, 0, 0, 0, .5)
+	local OverbarL1 = CreateFrame("Frame", nil, OverbarL)
+	OverbarL1:SetPoint("BOTTOMRIGHT", OverbarL, "TOPRIGHT")
+	M.CreateGF(OverbarL1, 200, R.mult, "Horizontal", cr, cg, cb, 0, .7)
+	RegisterStateDriver(OverbarL, "visibility", "[petbattle]hide; [overridebar][vehicleui][possessbar,@vehicle,exists] show; hide")
+
+	local OverbarR = CreateFrame("Frame", nil, UIParent)
+	OverbarR:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", 0, 4)
+	M.CreateGF(OverbarR, 200, 57, "Horizontal", 0, 0, 0, .5, 0)
+	local OverbarR1 = CreateFrame("Frame", nil, OverbarR)
+	OverbarR1:SetPoint("BOTTOMLEFT", OverbarR, "TOPLEFT")
+	M.CreateGF(OverbarR1, 200, R.mult, "Horizontal", cr, cg, cb, .7, 0)
+	RegisterStateDriver(OverbarR, "visibility", "[petbattle]hide; [overridebar][vehicleui][possessbar,@vehicle,exists] show; hide")
 end

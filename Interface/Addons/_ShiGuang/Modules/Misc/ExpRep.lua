@@ -5,13 +5,31 @@ local MISC = M:GetModule("Misc")
 --[[
 	一个工具条用来替代系统的经验条、声望条、神器经验等等
 ]]
-local format, pairs = string.format, pairs
+local format, pairs, select = string.format, pairs, select
 local min, mod, floor = math.min, mod, math.floor
 local MAX_PLAYER_LEVEL = MAX_PLAYER_LEVEL
 local MAX_REPUTATION_REACTION = MAX_REPUTATION_REACTION
 local FACTION_BAR_COLORS = FACTION_BAR_COLORS
 local NUM_FACTIONS_DISPLAYED = NUM_FACTIONS_DISPLAYED
 local REPUTATION_PROGRESS_FORMAT = REPUTATION_PROGRESS_FORMAT
+local HONOR, LEVEL, TUTORIAL_TITLE26, SPELLBOOK_AVAILABLE_AT = HONOR, LEVEL, TUTORIAL_TITLE26, SPELLBOOK_AVAILABLE_AT
+local ARTIFACT_POWER, ARTIFACT_RETIRED = ARTIFACT_POWER, ARTIFACT_RETIRED
+local PVP_CONQUEST, CONQUEST_BAR_REWARD_DONE, ARENA_THIS_WEEK = PVP_CONQUEST, CONQUEST_BAR_REWARD_DONE, ARENA_THIS_WEEK
+
+local UnitLevel, UnitXP, UnitXPMax, GetXPExhaustion, IsXPUserDisabled = UnitLevel, UnitXP, UnitXPMax, GetXPExhaustion, IsXPUserDisabled
+local GetText, UnitSex, BreakUpLargeNumbers, GetNumFactions, GetFactionInfo = GetText, UnitSex, BreakUpLargeNumbers, GetNumFactions, GetFactionInfo
+local GetWatchedFactionInfo, GetFriendshipReputation, GetFriendshipReputationRanks = GetWatchedFactionInfo, GetFriendshipReputation, GetFriendshipReputationRanks
+local HasArtifactEquipped, ArtifactBarGetNumArtifactTraitsPurchasableFromXP = HasArtifactEquipped, ArtifactBarGetNumArtifactTraitsPurchasableFromXP
+local IsWatchingHonorAsXP, UnitHonor, UnitHonorMax, UnitHonorLevel, IsPlayerAtEffectiveMaxLevel = IsWatchingHonorAsXP, UnitHonor, UnitHonorMax, UnitHonorLevel, IsPlayerAtEffectiveMaxLevel
+local C_Reputation_IsFactionParagon = C_Reputation.IsFactionParagon
+local C_Reputation_GetFactionParagonInfo = C_Reputation.GetFactionParagonInfo
+local C_AzeriteItem_HasActiveAzeriteItem = C_AzeriteItem.HasActiveAzeriteItem
+local C_AzeriteItem_IsAzeriteItemAtMaxLevel = C_AzeriteItem.IsAzeriteItemAtMaxLevel
+local C_AzeriteItem_FindActiveAzeriteItem = C_AzeriteItem.FindActiveAzeriteItem
+local C_AzeriteItem_GetAzeriteItemXPInfo = C_AzeriteItem.GetAzeriteItemXPInfo
+local C_AzeriteItem_GetPowerLevel = C_AzeriteItem.GetPowerLevel
+local C_ArtifactUI_IsEquippedArtifactDisabled = C_ArtifactUI.IsEquippedArtifactDisabled
+local C_ArtifactUI_GetEquippedArtifactInfo = C_ArtifactUI.GetEquippedArtifactInfo
 
 function MISC:ExpBar_Update()
 	local rest = self.restBar
@@ -39,8 +57,8 @@ function MISC:ExpBar_Update()
 				barMin, barMax, value = 0, 1, 1
 			end
 			standing = 5
-		elseif C_Reputation.IsFactionParagon(factionID) then
-			local currentValue, threshold = C_Reputation.GetFactionParagonInfo(factionID)
+		elseif C_Reputation_IsFactionParagon(factionID) then
+			local currentValue, threshold = C_Reputation_GetFactionParagonInfo(factionID)
 			currentValue = mod(currentValue, threshold)
 			barMin, barMax, value = 0, threshold, currentValue
 		else
@@ -56,20 +74,25 @@ function MISC:ExpBar_Update()
 		self:SetMinMaxValues(0, barMax)
 		self:SetValue(current)
 		self:Show()
-	elseif C_AzeriteItem.HasActiveAzeriteItem() then
-		local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
-		local xp, totalLevelXP = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
-		self:SetStatusBarColor(.9, .8, .6)
-		self:SetMinMaxValues(0, totalLevelXP)
-		self:SetValue(xp)
-		self:Show()
+	elseif C_AzeriteItem_HasActiveAzeriteItem() then
+		local isMaxLevel = C_AzeriteItem_IsAzeriteItemAtMaxLevel()
+		if isMaxLevel then
+			self:Hide()
+		else
+			local azeriteItemLocation = C_AzeriteItem_FindActiveAzeriteItem()
+			local xp, totalLevelXP = C_AzeriteItem_GetAzeriteItemXPInfo(azeriteItemLocation)
+			self:SetStatusBarColor(.9, .8, .6)
+			self:SetMinMaxValues(0, totalLevelXP)
+			self:SetValue(xp)
+			self:Show()
+		end
 	elseif HasArtifactEquipped() then
-		if C_ArtifactUI.IsEquippedArtifactDisabled() then
+		if C_ArtifactUI_IsEquippedArtifactDisabled() then
 			self:SetStatusBarColor(.6, .6, .6)
 			self:SetMinMaxValues(0, 1)
 			self:SetValue(1)
 		else
-			local _, _, _, _, totalXP, pointsSpent, _, _, _, _, _, _, artifactTier = C_ArtifactUI.GetEquippedArtifactInfo()
+			local _, _, _, _, totalXP, pointsSpent, _, _, _, _, _, _, artifactTier = C_ArtifactUI_GetEquippedArtifactInfo()
 			local _, xp, xpForNextPoint = ArtifactBarGetNumArtifactTraitsPurchasableFromXP(pointsSpent, totalXP, artifactTier)
 			xp = xpForNextPoint == 0 and 0 or xp
 			self:SetStatusBarColor(.9, .8, .6)
@@ -141,8 +164,8 @@ function MISC:ExpBar_UpdateTooltip()
 		GameTooltip:AddLine(name, 0,.6,1)
 		GameTooltip:AddDoubleLine(standingtext, value - barMin.." / "..barMax - barMin.." ("..floor((value - barMin)/(barMax - barMin)*100).."%)", .6,.8,1, 1,1,1)
 
-		if C_Reputation.IsFactionParagon(factionID) then
-			local currentValue, threshold = C_Reputation.GetFactionParagonInfo(factionID)
+		if C_Reputation_IsFactionParagon(factionID) then
+			local currentValue, threshold = C_Reputation_GetFactionParagonInfo(factionID)
 			local paraCount = floor(currentValue/threshold)
 			currentValue = mod(currentValue, threshold)
 			GameTooltip:AddDoubleLine("★"..paraCount, currentValue.."/"..threshold.." ("..floor(currentValue/threshold*100).."%)", .6,.8,1, 1,1,1)
@@ -169,25 +192,27 @@ function MISC:ExpBar_UpdateTooltip()
 		end
 	end
 
-	if C_AzeriteItem.HasActiveAzeriteItem() then
-		local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
+	if C_AzeriteItem_HasActiveAzeriteItem() then
+		local azeriteItemLocation = C_AzeriteItem_FindActiveAzeriteItem()
 		local azeriteItem = Item:CreateFromItemLocation(azeriteItemLocation)
-		local xp, totalLevelXP = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
-		local currentLevel = C_AzeriteItem.GetPowerLevel(azeriteItemLocation)
-
-		azeriteItem:ContinueWithCancelOnItemLoad(function()
-			local azeriteItemName = azeriteItem:GetItemName()
-			GameTooltip:AddLine(" ")
-			GameTooltip:AddLine(azeriteItemName.." ("..format(SPELLBOOK_AVAILABLE_AT, currentLevel)..")", 0,.6,1)
-			GameTooltip:AddDoubleLine(ARTIFACT_POWER, BreakUpLargeNumbers(xp).." / "..BreakUpLargeNumbers(totalLevelXP).." ("..floor(xp/totalLevelXP*100).."%)", .6,.8,1, 1,1,1)
-		end)
+		local xp, totalLevelXP = C_AzeriteItem_GetAzeriteItemXPInfo(azeriteItemLocation)
+		local currentLevel = C_AzeriteItem_GetPowerLevel(azeriteItemLocation)
+		local isMaxLevel = C_AzeriteItem_IsAzeriteItemAtMaxLevel()
+		if not isMaxLevel then
+			azeriteItem:ContinueWithCancelOnItemLoad(function()
+				local azeriteItemName = azeriteItem:GetItemName()
+				GameTooltip:AddLine(" ")
+				GameTooltip:AddLine(azeriteItemName.." ("..format(SPELLBOOK_AVAILABLE_AT, currentLevel)..")", 0,.6,1)
+				GameTooltip:AddDoubleLine(ARTIFACT_POWER, BreakUpLargeNumbers(xp).." / "..BreakUpLargeNumbers(totalLevelXP).." ("..floor(xp/totalLevelXP*100).."%)", .6,.8,1, 1,1,1)
+			end)
+		end
 	end
 
 	if HasArtifactEquipped() then
-		local _, _, name, _, totalXP, pointsSpent, _, _, _, _, _, _, artifactTier = C_ArtifactUI.GetEquippedArtifactInfo()
+		local _, _, name, _, totalXP, pointsSpent, _, _, _, _, _, _, artifactTier = C_ArtifactUI_GetEquippedArtifactInfo()
 		local num, xp, xpForNextPoint = ArtifactBarGetNumArtifactTraitsPurchasableFromXP(pointsSpent, totalXP, artifactTier)
 		GameTooltip:AddLine(" ")
-		if C_ArtifactUI.IsEquippedArtifactDisabled() then
+		if C_ArtifactUI_IsEquippedArtifactDisabled() then
 			GameTooltip:AddLine(name, 0,.6,1)
 			GameTooltip:AddLine(ARTIFACT_RETIRED, .6,.8,1, 1)
 		else
@@ -284,8 +309,8 @@ function MISC:HookParagonRep()
 
 		if factionIndex <= numFactions then
 			local factionID = select(14, GetFactionInfo(factionIndex))
-			if factionID and C_Reputation.IsFactionParagon(factionID) then
-				local currentValue, threshold = C_Reputation.GetFactionParagonInfo(factionID)
+			if factionID and C_Reputation_IsFactionParagon(factionID) then
+				local currentValue, threshold = C_Reputation_GetFactionParagonInfo(factionID)
 				if currentValue then
 					local barValue = mod(currentValue, threshold)
 					local factionStandingtext = "★"..floor(currentValue/threshold)

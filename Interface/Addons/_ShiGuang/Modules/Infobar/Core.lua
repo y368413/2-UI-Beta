@@ -68,6 +68,35 @@ function module:LoadInfobar(info)
 	end
 end
 
+function module:BackgroundLines()
+	if not MaoRUISettingDB["Skins"]["InfobarLine"] then return end
+
+	local cr, cg, cb = 0, 0, 0
+	if MaoRUISettingDB["Skins"]["ClassLine"] then cr, cg, cb = I.r, I.g, I.b end
+
+	-- TOPLEFT
+	local Tinfobar = CreateFrame("Frame", nil, UIParent)
+	Tinfobar:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 0, -3)
+	M.CreateGF(Tinfobar, 550, 18, "Horizontal", 0, 0, 0, .5, 0)
+	local Tinfobar1 = CreateFrame("Frame", nil, Tinfobar)
+	Tinfobar1:SetPoint("BOTTOM", Tinfobar, "TOP")
+	M.CreateGF(Tinfobar1, 550, R.mult, "Horizontal", cr, cg, cb, .7, 0)
+	local Tinfobar2 = CreateFrame("Frame", nil, Tinfobar)
+	Tinfobar2:SetPoint("TOP", Tinfobar, "BOTTOM")
+	M.CreateGF(Tinfobar2, 550, R.mult, "Horizontal", cr, cg, cb, .7, 0)
+
+	-- BOTTOMRIGHT
+	local Rinfobar = CreateFrame("Frame", nil, UIParent)
+	Rinfobar:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, 3)
+	M.CreateGF(Rinfobar, 450, 18, "Horizontal", 0, 0, 0, 0, .5)
+	local Rinfobar1 = CreateFrame("Frame", nil, Rinfobar)
+	Rinfobar1:SetPoint("BOTTOM", Rinfobar, "TOP")
+	M.CreateGF(Rinfobar1, 450, R.mult, "Horizontal", cr, cg, cb, 0, .7)
+	local Rinfobar2 = CreateFrame("Frame", nil, Rinfobar)
+	Rinfobar2:SetPoint("TOP", Rinfobar, "BOTTOM")
+	M.CreateGF(Rinfobar2, 450, R.mult, "Horizontal", cr, cg, cb, 0, .7)
+end
+
 function module:OnLogin()
 	if MaoRUIDB["DisableInfobars"] then return end
 
@@ -86,4 +115,6 @@ function module:OnLogin()
 			info.text:SetPoint("LEFT", self.modules[index-1], "RIGHT", 6, 0)
 		end
 	end
+
+	self:BackgroundLines()
 end

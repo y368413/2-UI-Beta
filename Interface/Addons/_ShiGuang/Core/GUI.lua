@@ -98,7 +98,6 @@ local defaultSettings = {
 	},
 	Map = {
 		Coord = true,
-		Invite = true,
 		Clock = false,
 		CombatPulse = false,
 		MapScale = 1,
@@ -146,6 +145,11 @@ local defaultSettings = {
 		CastBarstyle = true,
 		QuestTrackerSkinTitle = true,
 		WeakAuras = true,
+		BarLine = false,
+		InfobarLine = false,
+		ChatLine = false,
+		MenuLine = false,
+		ClassLine = false,
 		Details = true,
 		PGFSkin = true,
 		Rematch = true,
@@ -308,6 +312,10 @@ local function updateBagSortOrder()
 	SetSortBagsRightToLeft(not MaoRUISettingDB["Bags"]["ReverseSort"])
 end
 
+local function updateActionbarScale()
+	M:GetModule("Actionbar"):UpdateAllScale()
+end
+
 local function updateReminder()
 	M:GetModule("Auras"):InitReminder()
 end
@@ -389,7 +397,7 @@ local tabList = {
 local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 	[1] = {
 		{1, "Actionbar", "Enable", "|cff00cc4c"..U["Enable Actionbar"]},
-		{3, "Actionbar", "Scale", U["Actionbar Scale"], true, false, {.8, 1.5, 1}},
+		{3, "Actionbar", "Scale", U["Actionbar Scale"], true, false, {.8, 1.5, 1}, updateActionbarScale},
 		{4, "Actionbar", "Style", U["Actionbar Style"], true, true, {"-- 2*(3+12+3) --", "-- 2*(6+12+6) --", "-- 2*6+3*12+2*6 --", "-- 3*12 --", "-- 2*(12+6) --", "-- MR --", "-- PVP --", "-- 3*(4+12+4) --", "-- PVP2 --", "-- JK --"}},
 		{},--blank
 		{1, "Actionbar", "Cooldown", "|cff00cc4c"..U["Show Cooldown"]},
@@ -564,7 +572,7 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "Misc", "HideErrors", U["Hide Error"], false, false, updateErrorBlocker},
 		{1, "Misc", "ParagonRep", U["ParagonRep"], true},
 		{1, "ACCOUNT", "AutoBubbles", U["AutoBubbles"], true, true},
-		{3, "ACCOUNT", "UIScale", U["Setup UIScale"], false, false, {.4, 1.15, 1}},
+		{3, "ACCOUNT", "UIScale", U["Setup UIScale"], false, false, {.4, 1.15, 15}},
 		{3, "Misc", "WorldQusetRewardIconsSize", "WorldQusetRewardIconsSize", true, false, {21, 66, 0}},
 		{1, "ACCOUNT", "LockUIScale", "|cff00cc4c"..U["Lock UIScale"]},
 		{3, "UFs", "PlayerFrameScale", U["PlayerFrame Scale"], false, false, {0.6, 1.2, 1}},
@@ -690,6 +698,7 @@ local function CreateOption(i)
 		-- Slider
 		elseif optType == 3 then
 			local min, max, step = unpack(data)
+			local decimal = step > 2 and 2 or step
 			local x, y
 			if horizon2 then
 				x, y = 460, -offset + 32
@@ -704,7 +713,7 @@ local function CreateOption(i)
 			s:SetScript("OnValueChanged", function(_, v)
 				local current = tonumber(format("%."..step.."f", v))
 				NDUI_VARIABLE(key, value, current)
-				s.value:SetText(current)
+				s.value:SetText(format("%."..decimal.."f", current))
 				if callback then callback() end
 			end)
 			s.value:SetText(format("%."..step.."f", NDUI_VARIABLE(key, value)))
@@ -1020,7 +1029,7 @@ local function OpenGUI()
 	ok:SetPoint("BOTTOMRIGHT", -260, 66)
 	ok:SetScript("OnClick", function()
 		local scale = MaoRUIDB["UIScale"]
-		if scale ~= scaleOld then
+		if not MaoRUIDB["LockUIScale"] and scale ~= scaleOld then
 			UIParent:SetScale(scale)
 		end
 		f:Hide()
