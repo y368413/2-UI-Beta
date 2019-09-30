@@ -81,12 +81,8 @@ function InProgressMissions:InitDB()
 	if type(IPMDB) ~= "table" then
 		IPMDB = {}
 	end
-	if IPMDB.enableGarrisonMissions == nil then
-		IPMDB.enableGarrisonMissions = true
-	end
-	if IPMDB.enableLegionMissions == nil then
-		IPMDB.enableLegionMissions = IPMDB.enableGarrisonMissions
-	end
+	if IPMDB.enableGarrisonMissions == nil then IPMDB.enableGarrisonMissions = false end
+	if IPMDB.enableLegionMissions == nil then IPMDB.enableLegionMissions = IPMDB.enableGarrisonMissions end
 	if type(IPMDB.profiles) ~= "table" then
 		IPMDB.profiles = {}
 	end

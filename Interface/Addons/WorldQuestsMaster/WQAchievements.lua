@@ -62,7 +62,7 @@ local questZoneIDList = {
 }
 
 local function GetQuestZoneID(questID)
-	if WQA.questList[questID].isEmissary then return "Emissary" end
+	if WQA.questList[questID].isEmissary then return BOUNTY_BOARD_LOCKED_TITLE  end  --"Emissary"
 	if not WQA.questList[questID].info then	WQA.questList[questID].info = {} end
 	if WQA.questList[questID].info.zoneID then
 		return WQA.questList[questID].info.zoneID
@@ -97,7 +97,7 @@ local function GetMapInfo(mapID)
 end
 
 local function GetQuestZoneName(questID)
-	if WQA.questList[questID].isEmissary then return "Emissary" end
+	if WQA.questList[questID].isEmissary then return BOUNTY_BOARD_LOCKED_TITLE end    --"Emissary"
 	if not WQA.questList[questID].info then	WQA.questList[questID].info = {} end
 	WQA.questList[questID].info.zoneName = WQA.questList[questID].info.zoneName or GetMapInfo(GetQuestZoneID(questID)).name
 	return WQA.questList[questID].info.zoneName
@@ -105,9 +105,9 @@ end
 
 local function GetMissionZoneName(missionID)
 	if WQA.missionList[missionID].shipyard == true then
-		return "Shipyard"
+		return GARRISON_SHIPYARD_MISSION_REPORT   --"Shipyard"
 	else
-		return "Mission Table"
+		return BFA_MISSION_REPORT   --"Mission Table"
 	end
 end
 
@@ -320,7 +320,7 @@ function WQA:OnEnable()
 
 	self.event = CreateFrame("Frame")
 	self.event:RegisterEvent("PLAYER_ENTERING_WORLD")
-	--self.event:RegisterEvent("GARRISON_MISSION_LIST_UPDATE")
+	self.event:RegisterEvent("GARRISON_MISSION_LIST_UPDATE")
 	self.event:SetScript("OnEvent", function (...)
 		local _, name, id = ...
 		if name == "PLAYER_ENTERING_WORLD" then
@@ -361,8 +361,8 @@ function WQA:OnEnable()
 			self:Show("new", true)
 		elseif name == "QUEST_TURNED_IN" then
 			self.db.global.completed[id] = true
-		--elseif name == "GARRISON_MISSION_LIST_UPDATE" then
-			--self:CheckMissions()
+		elseif name == "GARRISON_MISSION_LIST_UPDATE" then
+			self:CheckMissions()
 		end
 	end)
 
@@ -1677,8 +1677,8 @@ function WQA:CreateQTip()
 			tooltip:AddColumn()
 		end
 
-		tooltip:AddHeader("World Quest")
-		tooltip:SetCell(1, tooltip:GetColumnCount(), "Reward")
+		tooltip:AddHeader(WORLD_QUEST_BANNER)  -- "World Quest"
+		tooltip:SetCell(1, tooltip:GetColumnCount(), BONUS_LOOT_LABEL)  -- "Reward"
 		tooltip:SetFrameStrata("MEDIUM")
 		tooltip:SetFrameLevel(100)
 		tooltip:AddSeparator()
@@ -1744,15 +1744,15 @@ function WQA:UpdateQTip(tasks)
 							GameTooltip:SetHyperlink(link)
 						end
 					else
-						--GameTooltip:SetText(C_Garrison.GetMissionName(id))
-						--GameTooltip:AddLine(string.format(GARRISON_MISSION_TOOLTIP_NUM_REQUIRED_FOLLOWERS, C_Garrison.GetMissionMaxFollowers(id)), 1, 1, 1)
-						--GarrisonMissionButton_AddThreatsToTooltip(id, WQA.missionList[task.id].followerType, false, C_Garrison.GetFollowerAbilityCountersForMechanicTypes(WQA.missionList[task.id].followerType))
-						--GameTooltip:AddLine(GARRISON_MISSION_AVAILABILITY)
-						--GameTooltip:AddLine(WQA.missionList[task.id].offerTimeRemaining, 1, 1, 1)
-						--if not C_Garrison.IsPlayerInGarrison(WQA.missionList[task.id].followerType) then
-							--GameTooltip:AddLine(" ")
-							--GameTooltip:AddLine(GarrisonFollowerOptions[WQA.missionList[task.id].followerType].strings.RETURN_TO_START, nil, nil, nil, 1)
-						--end
+						GameTooltip:SetText(C_Garrison.GetMissionName(id))
+						GameTooltip:AddLine(string.format(GARRISON_MISSION_TOOLTIP_NUM_REQUIRED_FOLLOWERS, C_Garrison.GetMissionMaxFollowers(id)), 1, 1, 1)
+						GarrisonMissionButton_AddThreatsToTooltip(id, WQA.missionList[task.id].followerType, false, C_Garrison.GetFollowerAbilityCountersForMechanicTypes(WQA.missionList[task.id].followerType))
+						GameTooltip:AddLine(GARRISON_MISSION_AVAILABILITY)
+						GameTooltip:AddLine(WQA.missionList[task.id].offerTimeRemaining, 1, 1, 1)
+						if not C_Garrison.IsPlayerInGarrison(WQA.missionList[task.id].followerType) then
+							GameTooltip:AddLine(" ")
+							GameTooltip:AddLine(GarrisonFollowerOptions[WQA.missionList[task.id].followerType].strings.RETURN_TO_START, nil, nil, nil, 1)
+						end
 					end
 					GameTooltip:Show()
 				end)
@@ -2333,9 +2333,9 @@ local optionsTimer
 local start
 
 WQA.ExpansionList = {
-	[6] = "|cFFFF0000----- Warlords of Draenor >>>|r",
-	[7] = "|cFFFF0000----- Legion >>>|r",
-	[8] = "|cFFFF0000----- Battle For Azeroth >>>|r",
+	[6] = "|cFFFF0000 WOD >>>|r",  --Warlords of Draenor
+	[7] = "|cFFFF0000 LEG >>>|r",  --Legion
+	[8] = "|cFFFF0000 BFA >>>|r",  --Battle For Azeroth
 }
 
 local IDToExpansionID = {

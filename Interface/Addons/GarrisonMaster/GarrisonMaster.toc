@@ -9,7 +9,7 @@
 ## LoadOnDemand: 1
 ## LoadWith: Blizzard_GarrisonUI, Blizzard_OrderHallUI
 ## RequiredDeps: Blizzard_GarrisonUI, Blizzard_OrderHallUI
-## SavedVariables: MasterPlanAG, SV_GarrisonMissionManager, IPMDB
+## SavedVariables: MasterPlanAG, SV_GarrisonMissionManager, IPMDB, WQADB
 ## SavedVariablesPerCharacter: MasterPlanPC, SVPC_GarrisonMissionManager
 ## Version: 0.116 + V59 + 1.4.0.2 + 8.1.25
 ## X-Version-Key: reach
@@ -47,3 +47,4 @@ Broker.lua
 
 MoreRewardsFormOrderHall.lua
 InProgressMissions.lua
+## GarrisonSwitch.lua

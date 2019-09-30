@@ -1,6 +1,5 @@
-﻿--## Author: Ermad  Core v1.3
+﻿--## Author: Ermad  Core v1.3  "v0.20.6"
 local AngryWorldQuest = {}
-local AngryWorldQuestV = "v0.20.6"
 local Listener = CreateFrame('Frame', 'AngryWorldQuestListener')
 local EventListeners = {}
 local function Addon_OnEvent(frame, event, ...)
@@ -134,7 +133,7 @@ function AngryWorldQuest:PLAYER_ENTERING_WORLD()
 end
 
 AngryWorldQuest.Name = GetAddOnMetadata("WorldQuestsMaster", "Title")
-AngryWorldQuest.Version = AngryWorldQuestV
+AngryWorldQuest.Version = GetAddOnMetadata("WorldQuestsMaster", "X-Packaged-Version")
 _G[AngryWorldQuest] = AngryWorldQuest
 
 local Config = AngryWorldQuest:NewModule('Config')
@@ -146,7 +145,7 @@ local configDefaults = {
 	showHoveredPOI = true,
 	onlyCurrentZone = true,
 	selectedFilters = 0,
-	disabledFilters = 32328,
+	disabledFilters = 32616,
 	filterEmissary = 0,
 	filterLoot = 0,
 	filterFaction = 0,
@@ -164,7 +163,7 @@ local configDefaults = {
 	saveFilters = false,
 }
 
-local FiltersConversion = { EMISSARY = 1, LOOT = 2, ORDER_RESOURCES = 3, GOLD = 4, ITEMS = 5, TIME = 6, FACTION = 7, PVP = 8, PROFESSION = 9, PETBATTLE = 10, SORT = 11, TRACKED = 12, ZONE = 13, RARE = 14, DUNGEON = 15, WAR_SUPPLIES = 16, NETHERSHARD = 17, VEILED_ARGUNITE = 18, WAKENING_ESSENCE = 19, AZERITE = 20, WAR_RESOURCES = 21 }
+local FiltersConversion = { EMISSARY = 1, ARTIFACT_POWER = 2, LOOT = 3, ORDER_RESOURCES = 4, GOLD = 5, ITEMS = 6, TIME = 7, FACTION = 8, PVP = 9, PROFESSION = 10, PETBATTLE = 11, SORT = 12, TRACKED = 13, ZONE = 14, RARE = 15, DUNGEON = 16, WAR_SUPPLIES = 17, NETHERSHARD = 18, VEILED_ARGUNITE = 19, WAKENING_ESSENCE = 20, AZERITE = 21, WAR_RESOURCES = 22 }
 
 local callbacks = {}
 local __filterTable
@@ -865,7 +864,7 @@ local SORT_ZONE = 3
 local SORT_FACTION = 4
 local SORT_REWARDS = 5
 local SORT_ORDER = { SORT_NAME, SORT_TIME, SORT_ZONE, SORT_FACTION, SORT_REWARDS }
-local REWARDS_ORDER = { LOOT = 1, CURRENCY = 2, GOLD = 3, ITEMS = 4 }
+local REWARDS_ORDER = { ARTIFACT_POWER = 1, LOOT = 2, CURRENCY = 3, GOLD = 4, ITEMS = 5 }
 Mod.SortOrder = SORT_ORDER
 
 local FACTION_ORDER_HORDE = { 2157, 2164, 2156, 2158, 2103, 2163 }
@@ -1450,7 +1449,13 @@ local function TaskPOI_IsFilteredReward(selectedFilters, questID)
 	if numQuestRewards > 0 then
 		local itemName, itemTexture, quantity, quality, isUsable, itemID = GetQuestLogRewardInfo(1, questID)
 		if itemName and itemTexture then
+			local artifactPower = nil--AngryWorldQuest.Data:ItemArtifactPower(itemID)
 			local iLevel = AngryWorldQuest.Data:RewardItemLevel(itemID, questID)
+			if artifactPower then
+				if selectedFilters.ARTIFACT_POWER then
+					positiveMatch = true
+				end
+			else
 				if iLevel then
 					local upgradesOnly = Config.filterLoot == FILTER_LOOT_UPGRADES or (Config.filterLoot == 0 and Config.lootFilterUpgrades)
 					if selectedFilters.LOOT and (not upgradesOnly or AngryWorldQuest.Data:RewardIsUpgrade(itemID, questID)) then
@@ -1461,12 +1466,13 @@ local function TaskPOI_IsFilteredReward(selectedFilters, questID)
 						positiveMatch = true
 					end
 				end
+			end
 		end
 	end
 
 	if positiveMatch then
 		return false
-	elseif hasCurrencyFilter or selectedFilters.LOOT or selectedFilters.ITEMS then
+	elseif hasCurrencyFilter or selectedFilters.ARTIFACT_POWER or selectedFilters.LOOT or selectedFilters.ITEMS then
 		return true
 	end
 end
