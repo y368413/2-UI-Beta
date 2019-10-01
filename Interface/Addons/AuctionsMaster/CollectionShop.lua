@@ -3,8 +3,8 @@
 --------------------------------------------------------------------------------------------------------------------------------------------
 local NS = select( 2, ... );
 local L = LibStub("AceLocale-3.0"):GetLocale("AuctionLite", false);
-NS.releasePatch = "8.2";
-NS.versionString = "3.08";
+NS.releasePatch = "8.2.5";
+NS.versionString = "3.09";
 NS.version = tonumber( NS.versionString );
 --
 NS.options = {};
@@ -267,9 +267,8 @@ for i = 1, #NS.ridingSpells do
 		NS.Print( string.format( "XXX:%d", NS.ridingSpells[i] ) );
 	end
 end
-NS.cachedDressUpIds = {};
 NS.mountInfo = {
-	-- As of 07/28/2019
+	-- As of 10/1/2019
 	--[mountItemId] = { displayID, spellID }, -- creatureName -- itemName
 	[90655] = { 45797, 132036 }, -- Thundering Ruby Cloud Serpent -- Reins of the Thundering Ruby Cloud Serpent
 	[153594] = { 80513, 256123 }, -- Xiwyllag ATV -- Xiwyllag ATV
@@ -319,8 +318,9 @@ NS.mountInfo = {
 	[49290] = { 34655, 65917 }, -- Magic Rooster -- Magic Rooster Egg
 };
 NS.petInfo = {
-	-- As of 07/28/2019
+	-- As of 10/1/2019
 	--[companionPetItemId] = { speciesID, creatureID }, -- itemName
+	[173296] = { 0000, 000000}, -- Rikki's Pith Helmet
 	[170072] = { 2766, 155829}, -- Armored Vaultbot
 	[167810] = { 2763, 151632}, -- Slimy Hermit Crab
 	[167806] = { 2760, 151673}, -- Slimy Octopode
@@ -511,7 +511,7 @@ NS.petInfo = {
 	[146953] = { 2042, 120397 }, -- Scraps
 };
 NS.toyInfo = {
-	-- As of 07/28/2019
+	-- As of 10/1/2019
 	--[toyItemId] = { catNum, subCatNum }, -- itemName
 	[168807] = { 6, 1 }, -- Wormhole Generator: Kul Tiras
 	[168808] = { 6, 1 }, -- Wormhole Generator: Zandalar
@@ -720,7 +720,7 @@ NS.IsTabShown = function()
 	end
 end
 --
-NS.SideDressUpModelCloseButton_OnClick = function()
+NS.SideDressUpFrameCloseButton_OnClick = function()
 	if AuctionFrameCollectionShop and AuctionFrameCollectionShop:IsShown() then
 		AuctionFrameCollectionShop_FlyoutPanel:Reset();
 	end
@@ -2514,50 +2514,20 @@ function NS.scan:Complete( cancelMessage )
 					HideUIPanel( SideDressUpFrame );
 					AuctionFrameCollectionShop_FlyoutPanel:Reset();
 				end
-				-- Mount and Pet DressUp data
-				local creatureID,displayID;
-				if NS.mode == "MOUNTS" then
-					-- Mount
-					displayID = NS.mountInfo[self.query.auction[6]][1]; -- itemId(6), displayID(1)
-				elseif NS.mode == "PETS" then
-					if self.query.auction[6] == 82800 then -- itemId(6)
-						-- Battle Pet
-						creatureID,displayID = GetAuctionItemBattlePetInfo( "list", self.query.auction.index );
-					else
-						-- Companion Pet
-						creatureID,displayID = NS.petInfo[self.query.auction[6]][2], 0; -- itemId(6), creatureID(2)
-					end
-				end
 				-- DressUp
 				if NS.mode == "MOUNTS" or NS.mode == "PETS" then
-					if creatureID or displayID then
-						if NS.mode == "MOUNTS" then
-							DressUpMount( displayID );
-						else
-							DressUpBattlePet( creatureID, displayID ); -- Uses creatureID or displayID, not both
-						end
-						-- DressUp again after delay to allow model time to load if not seen before
-						local dressUpID = ( creatureID and creatureID ~= 0 ) and creatureID or displayID;
-						if not NS.cachedDressUpIds[dressUpID] then
-							C_Timer.After( 0.3, function()
-								if NS.mode == "MOUNTS" then
-									DressUpMount( displayID );
-								else
-									DressUpBattlePet( creatureID, displayID );
-								end
-							end );
-							NS.cachedDressUpIds[dressUpID] = true;
-						end
+					if NS.mode == "MOUNTS" then
+						DressUpMountLink( self.query.auction[2] ); -- itemLink(2)
 					else
-						-- creatureID and displayID missing - shouldn't happen but just in case
-						NS.Print( string.format( L["%s cannot be previewed, no model data. Please report to addon developer"], self.query.auction[2] ) ); -- itemLink(2)
+						DressUpBattlePetLink( self.query.auction[2] ); -- itemLink(2)
 					end
 				elseif NS.mode == "APPEARANCES" or ( NS.mode == "RECIPES" and dressableRecipe ) then
+					DressUpFrame_Show(SideDressUpFrame); -- Switches over to player mode when coming from mount or battlepet mode
 					if NS.db["undressCharacter"] then
-						SideDressUpModel:Undress();
+						SideDressUpFrame.ModelScene:GetPlayerActor():Undress();
 						PlaySound( 798 ); -- gsTitleOptionOK: Keeps the sound consistent with the ResetButton click below
 					else
-						SideDressUpModelResetButton:Click(); -- ^^
+						SideDressUpFrame.ResetButton:Click(); -- ^^
 					end
 					DressUpVisual( self.query.auction[2] ); -- itemLink(2)
 				end
@@ -3657,7 +3627,14 @@ NS.Blizzard_AuctionUI_OnLoad = function()
 	-- Hook tab click
 	hooksecurefunc( "AuctionFrameTab_OnClick", NS.AuctionFrameTab_OnClick );
 	-- Hook SideDressUpModelCloseButton
-	SideDressUpModelCloseButton:HookScript( "OnClick", NS.SideDressUpModelCloseButton_OnClick );
+	SideDressUpFrameCloseButton:HookScript( "OnClick", NS.SideDressUpFrameCloseButton_OnClick );
+	-- Load up the SideDressUpFrame to prevent failure to show item on first use
+	if (SideDressUpFrame) then
+		C_Timer.After( 1, function()
+			DressUpFrame_Show(SideDressUpFrame);
+			HideUIPanel(SideDressUpFrame);
+		end );
+	end
 	-- Add new appearance sources to appearanceCollection to prevent unnecessary source lookups
 	CollectionShopEventsFrame:RegisterEvent( "TRANSMOG_COLLECTION_SOURCE_ADDED" );
 end
