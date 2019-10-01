@@ -58,7 +58,6 @@ function S:OnLogin()
 	self:DBMSkin()
 	self:SkadaSkin()
 	self:BigWigsSkin()
-	self:CastBarSkin()
 	self:PGFSkin()
 	-- Register skin
 	local media = LibStub and LibStub("LibSharedMedia-3.0", true)
@@ -74,6 +73,14 @@ function S:OnLogin()
 		media:Register("statusbar", "None",		[[Interface\Addons\_ShiGuang\Media\backdrop]])
 		media:Register("font", "Vera Serif",			[[Interface\Addons\_ShiGuang\Media\Fonts\Pixel.ttf]])
 	end
+	  local function noop() end
+    local function DisableBlizzardFrame(frame)
+	     frame.RegisterEvent = noop
+	     frame.Show = noop
+	     frame:UnregisterAllEvents()
+	     frame:Hide()
+    end
+	if MaoRUISettingDB["Skins"]["CastBarstyle"] then DisableBlizzardFrame(CastingBarFrame) DisableBlizzardFrame(TargetFrameSpellBar) DisableBlizzardFrame(FocusFrameSpellBar) DisableBlizzardFrame(PetCastingBarFrame) return end
 end
 
 function S:CreateToggle(frame)

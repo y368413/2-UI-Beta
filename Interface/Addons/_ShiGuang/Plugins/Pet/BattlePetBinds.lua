@@ -138,7 +138,7 @@ BattlePetBinds:RegisterEvent("PET_BATTLE_CLOSE")
 local BPB_BindState = false
 -- set our event handler function
 BattlePetBinds:SetScript("OnEvent", function(self, event, ...) -- event handler function
-	if (event == "ADDON_LOADED") then
+	if (event == "ADDON_LOADED") and (... == "_ShiGuang") then
 			BPBindOptions_Bind = {
 				"1", -- Attack #1
 				"2", -- Attack #2

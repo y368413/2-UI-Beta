@@ -2,17 +2,6 @@ local _, ns = ...
 local M, R, U, I = unpack(ns)
 local S = M:GetModule("Skins")
 
-function S:CastBarSkin()
-  local function noop() end
-    local function DisableBlizzardFrame(frame)
-	     frame.RegisterEvent = noop
-	     frame.Show = noop
-	     frame:UnregisterAllEvents()
-	     frame:Hide()
-    end
-	if MaoRUISettingDB["Skins"]["CastBarstyle"] then DisableBlizzardFrame(CastingBarFrame) DisableBlizzardFrame(TargetFrameSpellBar) DisableBlizzardFrame(FocusFrameSpellBar) DisableBlizzardFrame(PetCastingBarFrame) return end
-end
-
 function S:PetBattleUI()
 	if not MaoRUISettingDB["Skins"]["PetBattle"] then return end
 	local r, g, b, pairs = I.r, I.g, I.b, pairs
