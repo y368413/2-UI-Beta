@@ -4,13 +4,12 @@
 --]]
 
 local ADDON, Addon = ...
-Addon.ItemScale = 1.1
-Addon.FrameScale = 0.9
+Addon.ItemScale = 2.0
+Addon.FrameScale = 0.8
 Addon.canSearch = true
 
 function Addon:OnEnable()
 	self:StartupSettings()
-
 	self:CreateFrame('inventory')
 	self:CreateSlashCommands(ADDON:lower(), 'cbt')
 	self:CreateOptionsLoader()

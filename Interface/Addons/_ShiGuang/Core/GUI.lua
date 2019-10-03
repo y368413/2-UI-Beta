@@ -131,6 +131,7 @@ local defaultSettings = {
     BommIcon = true,
     HighlightTarget = true,
     HighlightFocus = true,
+    Figure = false,
 	},
 	Skins = {
 		DBM = true,
@@ -424,7 +425,7 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 	[2] = {
 		{1, "Nameplate", "Enable", "|cff00cc4c"..U["Enable Nameplate"], false, false},
 		{1, "Nameplate", "Numberstyle", "数字模式", true},
-		{1, "Nameplate", "nameonly", "右方仅显示名字", true, true},
+		{1, "Nameplate", "nameonly", "友方仅显示名字", true, true},
 		--{1, "Nameplate", "CustomUnitColor", "|cff00cc4c"..U["CustomUnitColor"]},
 		--{5, "Nameplate", "CustomColor", U["Custom Color"], 2},
 		--{2, "Nameplate", "UnitList", U["UnitColor List"]},
@@ -441,6 +442,7 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		--{1, "Nameplate", "QuestIcon", U["Nameplate QuestIcon"]},
 		{1, "Nameplate", "HighlightTarget", "血条高亮鼠标指向", true},
 		{1, "Nameplate", "HighlightTarget", "血条高亮焦点指向", true, true},
+		{1, "Nameplate", "Figure", "显示具体血量数字"},
 		--{1, "Nameplate", "FullHealth", U["Show FullHealth"], true},
 		--{1, "Nameplate", "ExplosivesScale", U["ExplosivesScale"]},
 		--{1, "Nameplate", "AKSProgress", U["AngryKeystones Progress"], true},

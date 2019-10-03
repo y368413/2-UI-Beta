@@ -4,7 +4,7 @@
 local NS = select( 2, ... );
 local L = LibStub("AceLocale-3.0"):GetLocale("AuctionLite", false);
 NS.releasePatch = "8.2.5";
-NS.versionString = "3.09";
+NS.versionString = "3.10";
 NS.version = tonumber( NS.versionString );
 --
 NS.options = {};
@@ -2508,29 +2508,30 @@ function NS.scan:Complete( cancelMessage )
 				if NS.mode ~= "RECIPES" or dressableRecipe then
 					AuctionFrameCollectionShop_FlyoutPanel:Hide();
 					if not SideDressUpFrame:IsShown() then
-						SideDressUpFrame:Show();
+						if NS.mode == "APPEARANCES" or NS.mode == "RECIPES" then
+							DressUpFrame_Show(SideDressUpFrame); -- Required to load the "player" mode for the dress up scene
+						end
 					end
 				elseif NS.mode == "RECIPES" and SideDressUpFrame:IsShown() then
 					HideUIPanel( SideDressUpFrame );
 					AuctionFrameCollectionShop_FlyoutPanel:Reset();
 				end
-				-- DressUp
-				if NS.mode == "MOUNTS" or NS.mode == "PETS" then
+				-- DressUp -- Delay to allow frame to initialize
+				C_Timer.After( 0.001, function()					
 					if NS.mode == "MOUNTS" then
 						DressUpMountLink( self.query.auction[2] ); -- itemLink(2)
-					else
+					elseif NS.mode == "PETS" then
 						DressUpBattlePetLink( self.query.auction[2] ); -- itemLink(2)
+					elseif NS.mode == "APPEARANCES" or ( NS.mode == "RECIPES" and dressableRecipe ) then
+						if NS.db["undressCharacter"] then
+							SideDressUpFrame.ModelScene:GetPlayerActor():Undress();
+							PlaySound( 798 ); -- gsTitleOptionOK: Keeps the sound consistent with the ResetButton click below
+						else
+							SideDressUpFrame.ResetButton:Click(); -- ^^
+						end
+						DressUpVisual( self.query.auction[2] ); -- itemLink(2)
 					end
-				elseif NS.mode == "APPEARANCES" or ( NS.mode == "RECIPES" and dressableRecipe ) then
-					DressUpFrame_Show(SideDressUpFrame); -- Switches over to player mode when coming from mount or battlepet mode
-					if NS.db["undressCharacter"] then
-						SideDressUpFrame.ModelScene:GetPlayerActor():Undress();
-						PlaySound( 798 ); -- gsTitleOptionOK: Keeps the sound consistent with the ResetButton click below
-					else
-						SideDressUpFrame.ResetButton:Click(); -- ^^
-					end
-					DressUpVisual( self.query.auction[2] ); -- itemLink(2)
-				end
+				end );
 			end
 			AuctionFrameCollectionShop_DialogFrame_BuyoutFrame_SelectedOwnerEditbox:SetText( ( self.selectedOwner and self.selectedOwner or L["Unknown"] ) );
 			AuctionFrameCollectionShop_DialogFrame_BuyoutFrame_SelectedOwnerLabel:Show();
@@ -3628,13 +3629,6 @@ NS.Blizzard_AuctionUI_OnLoad = function()
 	hooksecurefunc( "AuctionFrameTab_OnClick", NS.AuctionFrameTab_OnClick );
 	-- Hook SideDressUpModelCloseButton
 	SideDressUpFrameCloseButton:HookScript( "OnClick", NS.SideDressUpFrameCloseButton_OnClick );
-	-- Load up the SideDressUpFrame to prevent failure to show item on first use
-	if (SideDressUpFrame) then
-		C_Timer.After( 1, function()
-			DressUpFrame_Show(SideDressUpFrame);
-			HideUIPanel(SideDressUpFrame);
-		end );
-	end
 	-- Add new appearance sources to appearanceCollection to prevent unnecessary source lookups
 	CollectionShopEventsFrame:RegisterEvent( "TRANSMOG_COLLECTION_SOURCE_ADDED" );
 end

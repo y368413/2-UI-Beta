@@ -532,10 +532,14 @@ local function UpdateHealth(unitFrame)
 	
 	if not MaoRUISettingDB["Nameplate"]["Numberstyle"] then
 		unitFrame.healthBar:SetValue(perc)
-		if minHealth ~= maxHealth then 
-			unitFrame.healthBar.value:SetText(perc_text)
+		if MaoRUISettingDB["Nameplate"]["Figure"] then
+		  unitFrame.healthBar.value:SetText(M.Numb(minHealth))  --.." | "..M.Numb(max)
 		else
-			unitFrame.healthBar.value:SetText("")
+		  if minHealth ~= maxHealth then 
+			  unitFrame.healthBar.value:SetText(perc_text)
+		  else
+			  unitFrame.healthBar.value:SetText("")
+		  end
 		end
 		
 		if perc < .25 then

@@ -5,7 +5,7 @@
 ## Notes: A lightweight addon that tracks auction house data and improves the auction house interface. + Find and buy the lowest buyout Mounts, Pets, Toys, and Appearances.
 ## Notes-zhCN: 拍卖助手插件，是一款类似于Auctioneer的插件，让你更方便更容易的使用拍卖行
 ## Author: merial.kilrogg@gmail.com + Clinton Caldwell
-## Version: 1.9.1 + 3.09
+## Version: 1.9.1 + 3.10
 ## Dependencies: _ShiGuang
 ## SavedVariables: AuctionLiteDB, COLLECTIONSHOP_SAVEDVARIABLES
 ## SavedVariablesPerCharacter: COLLECTIONSHOP_SAVEDVARIABLESPERCHARACTER
