@@ -2,14 +2,14 @@
 ## Title:-|cFFFFFF00 2|r|cFFFF0000 UI |r-
 ## Author: ShiGuang、TuTu、Siweia
 ## Notes: Time Flies...
-## Version: 3.2.3
+## Version: 3.2.4
 ## Dependencies: Blizzard_FlightMap
 ## SavedVariables: MaoRUIDB,ShiGuangDB,CurrencyTrackingDB,VLegionToDo,CastbarsDB,iKeystonesDB,iKeystonesConfig,DialogKeyDB,AzeritePowerWeightsDB,TinyRosterDB
 ## SavedVariablesPerCharacter: MaoRUISettingDB,ShiGuangPerDB,DEX_SAVE
 
 ## X-Support: 8.2.5
 ## X-Repple: 2 UI
-## X-StatsVersion: 20190927
+## X-StatsVersion: 20191005
 ## X-LoadOn-Always: Delayed
 ## X-Website: https://git.coding.net/MaoRUI/MaoR-UI.git
 ## X-Credits: abin, ape47, Coolkid, Elv, Freebaser, Haleth, Haste, Loshine, Monolit, Neal, Neavo, p3lim, Qulight, Ray, superk, Tukz, Tuller, Warbaby, yleaf, Zork, EK, Rubgrsch, siweia & "PaoPao"...
