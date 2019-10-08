@@ -248,7 +248,7 @@ local function buttonOnClick(self, btn)
 					EasyMenu(menuList, menuFrame, self, 0, 0, "MENU", 1)
 				end
 			else
-				InviteToGroup(self.data[1])
+				C_PartyInfo.InviteUnit(self.data[1])
 			end
 		end
 	else

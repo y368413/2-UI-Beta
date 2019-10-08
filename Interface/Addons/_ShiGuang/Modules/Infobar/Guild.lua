@@ -8,7 +8,7 @@ local info = module:RegisterInfobar("Guild", R.Infobar.GuildPos)
 local wipe, sort, format, select = table.wipe, table.sort, format, select
 local CLASS_ICON_TCOORDS, SELECTED_DOCK_FRAME = CLASS_ICON_TCOORDS, SELECTED_DOCK_FRAME
 local LEVEL_ABBR, CLASS_ABBR, NAME, ZONE, RANK, GUILDINFOTAB_APPLICANTS, REMOTE_CHAT = LEVEL_ABBR, CLASS_ABBR, NAME, ZONE, RANK, GUILDINFOTAB_APPLICANTS, REMOTE_CHAT
-local IsAltKeyDown, IsShiftKeyDown, InviteToGroup, C_Timer_After, GetTime, Ambiguate, MouseIsOver = IsAltKeyDown, IsShiftKeyDown, InviteToGroup, C_Timer.After, GetTime, Ambiguate, MouseIsOver
+local IsAltKeyDown, IsShiftKeyDown, C_Timer_After, GetTime, Ambiguate, MouseIsOver = IsAltKeyDown, IsShiftKeyDown, C_Timer.After, GetTime, Ambiguate, MouseIsOver
 local MailFrameTab_OnClick, MailFrame, SendMailNameEditBox = MailFrameTab_OnClick, MailFrame, SendMailNameEditBox
 local ChatEdit_ChooseBoxForSend, ChatEdit_ActivateChat, ChatFrame_OpenChat, ChatFrame_GetMobileEmbeddedTexture = ChatEdit_ChooseBoxForSend, ChatEdit_ActivateChat, ChatFrame_OpenChat, ChatFrame_GetMobileEmbeddedTexture
 local GetNumGuildMembers, GetGuildInfo, GetNumGuildApplicants, GetGuildRosterInfo, IsInGuild = GetNumGuildMembers, GetGuildInfo, GetNumGuildApplicants, GetGuildRosterInfo, IsInGuild
@@ -113,7 +113,7 @@ local function buttonOnClick(self, btn)
 	local name = guildTable[self.index][3]
 	if btn == "LeftButton" then
 		if IsAltKeyDown() then
-			InviteToGroup(name)
+			C_PartyInfo.InviteUnit(name)
 		elseif IsShiftKeyDown() then
 			if MailFrame:IsShown() then
 				MailFrameTab_OnClick(nil, 2)

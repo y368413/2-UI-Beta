@@ -50,6 +50,7 @@ local list = {
 		{AuraID = 105809, UnitID = "player"},	-- 神圣复仇者
 		{AuraID = 223316, UnitID = "player"},	-- 狂热殉道者
 		{AuraID = 200025, UnitID = "player"},	-- 美德道标
+		{AuraID = 132403, UnitID = "player"},	-- 正义盾击
 		{AuraID = 152262, UnitID = "player"},	-- 炽天使
 		{AuraID = 221883, UnitID = "player"},	-- 神圣马驹
 		{AuraID = 184662, UnitID = "player", Value = true},	-- 复仇之盾

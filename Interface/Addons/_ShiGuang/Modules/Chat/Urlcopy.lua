@@ -6,7 +6,7 @@ local strfind, strmatch, strsub, gsub = string.find, string.match, string.sub, s
 local strsplit, strlen = string.split, string.len
 
 local IsModifierKeyDown, IsAltKeyDown, IsControlKeyDown, IsModifiedClick = IsModifierKeyDown, IsAltKeyDown, IsControlKeyDown, IsModifiedClick
-local InviteToGroup, GuildInvite, BNInviteFriend = InviteToGroup, GuildInvite, BNInviteFriend
+local GuildInvite, BNInviteFriend = GuildInvite, BNInviteFriend
 local CanCooperateWithGameAccount = CanCooperateWithGameAccount
 local C_BattleNet_GetAccountInfoByID = C_BattleNet.GetAccountInfoByID
 
@@ -63,10 +63,10 @@ function module:HyperlinkShowHook(link, _, button)
 		if type == "player" then
 			local unit = strmatch(value, "([^:]+)")
 			if IsAltKeyDown() then
-				InviteToGroup(unit)
+				C_PartyInfo.InviteUnit(unit)
 				hide = true
 			elseif IsControlKeyDown() then
-				GuildInvite(unit)
+				C_PartyInfo.InviteUnit(unit)
 				hide = true
 			end
 		elseif type == "BNplayer" then

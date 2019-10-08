@@ -1,4 +1,4 @@
-﻿--## Author: Lars "Goldpaw" Norberg ## Version: 1.0.24
+﻿--## Author: Lars "Goldpaw" Norberg ## Version: 1.0
 
 -- Using the Combuctor way to retrieve names, namespaces and stuff
 local MODULE =  ...
@@ -36,6 +36,10 @@ local S_ITEM_BOUND3 = _G.ITEM_BNETACCOUNTBOUND
 local S_ITEM_LEVEL = "^" .. string_gsub(_G.ITEM_LEVEL, "%%d", "(%%d+)")
 local S_TRANSMOGRIFY_STYLE_UNCOLLECTED = _G.TRANSMOGRIFY_STYLE_UNCOLLECTED
 local S_TRANSMOGRIFY_TOOLTIP_APPEARANCE_UNKNOWN = _G.TRANSMOGRIFY_TOOLTIP_APPEARANCE_UNKNOWN
+
+-- Redoing this to take other locales into consideration, 
+-- and to make sure we're capturing the slot count, and not the bag type. 
+--local S_CONTAINER_SLOTS = "^" .. string_gsub(string_gsub(_G.CONTAINER_SLOTS, "%%d", "(%%d+)"), "%%s", "(%.+)")
 local S_CONTAINER_SLOTS = "^" .. (string.gsub(string.gsub(CONTAINER_SLOTS, "%%([%d%$]-)d", "(%%d+)"), "%%([%d%$]-)s", "%.+"))
 
 -- Localization. 
@@ -190,20 +194,20 @@ local Cache_GetItemGarbage = function(button)
 
 		ItemGarbage.tempLocked = true
 
-		local itemLink = button:GetItem()
-		if itemLink then 
-			local _, _, itemRarity, iLevel, _, _, _, _, itemEquipLoc = GetItemInfo(itemLink)
-			local texture, itemCount, locked, quality, readable, _, _, isFiltered, noValue, itemID = GetContainerItemInfo(button:GetBag(), button:GetID())
-		
-			local isBattlePet, battlePetLevel, battlePetRarity = GetBattlePetInfo(itemLink)
-			if isBattlePet then 
-				itemRarity = battlePetRarity
-			end
+			local itemLink = button:GetItem()
+			if itemLink then 
+				local _, _, itemRarity, iLevel, _, _, _, _, itemEquipLoc = GetItemInfo(itemLink)
+				local texture, itemCount, locked, quality, readable, _, _, isFiltered, noValue, itemID = GetContainerItemInfo(button:GetBag(), button:GetID())
+			
+				local isBattlePet, battlePetLevel, battlePetRarity = GetBattlePetInfo(itemLink)
+				if isBattlePet then 
+					itemRarity = battlePetRarity
+				end
 
-			if not(((quality and (quality > 0)) or (itemRarity and (itemRarity > 0))) and (not locked)) then
-				Icon:SetDesaturated(true)
-			end 
-		end
+				if not(((quality and (quality > 0)) or (itemRarity and (itemRarity > 0))) and (not locked)) then
+					Icon:SetDesaturated(true)
+				end 
+			end
 
 		ItemGarbage.tempLocked = false
 	end)
