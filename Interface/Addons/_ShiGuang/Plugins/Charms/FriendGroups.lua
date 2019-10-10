@@ -12,17 +12,32 @@ end
 
 local FRIENDS_GROUP_NAME_COLOR = NORMAL_FONT_COLOR
 
-local INVITE_RESTRICTION_NO_GAME_ACCOUNTS = 0;
-local INVITE_RESTRICTION_CLIENT = 1;
-local INVITE_RESTRICTION_LEADER = 2;
-local INVITE_RESTRICTION_FACTION = 3;
-local INVITE_RESTRICTION_REALM = 4;
-local INVITE_RESTRICTION_INFO = 5;
-local INVITE_RESTRICTION_WOW_PROJECT_ID = 6;
-local INVITE_RESTRICTION_WOW_PROJECT_MAINLINE = 7;
-local INVITE_RESTRICTION_WOW_PROJECT_CLASSIC = 8;
-local INVITE_RESTRICTION_NONE = 9;
-local INVITE_RESTRICTION_MOBILE = 10;
+local INVITE_RESTRICTION_NO_GAME_ACCOUNTS = 0
+local INVITE_RESTRICTION_CLIENT = 1
+local INVITE_RESTRICTION_LEADER = 2
+local INVITE_RESTRICTION_FACTION = 3
+local INVITE_RESTRICTION_REALM = 4
+local INVITE_RESTRICTION_INFO = 5
+local INVITE_RESTRICTION_WOW_PROJECT_ID = 6
+local INVITE_RESTRICTION_WOW_PROJECT_MAINLINE = 7
+local INVITE_RESTRICTION_WOW_PROJECT_CLASSIC = 8
+local INVITE_RESTRICTION_NONE = 9
+local INVITE_RESTRICTION_MOBILE = 10
+
+-- classic and retails use different values for restrictions
+if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+	INVITE_RESTRICTION_NO_GAME_ACCOUNTS = 0
+	INVITE_RESTRICTION_CLIENT = 1
+	INVITE_RESTRICTION_LEADER = 2
+	INVITE_RESTRICTION_FACTION = 3
+	INVITE_RESTRICTION_REALM = nil
+	INVITE_RESTRICTION_INFO = 4
+	INVITE_RESTRICTION_WOW_PROJECT_ID = 5
+	INVITE_RESTRICTION_WOW_PROJECT_MAINLINE = 6
+	INVITE_RESTRICTION_WOW_PROJECT_CLASSIC = 7
+	INVITE_RESTRICTION_NONE = 8
+	INVITE_RESTRICTION_MOBILE = 9
+end
 
 local ONE_YEAR = 12 * 30 * 24 * 60 * 60
 local FriendButtons = { count = 0 }
@@ -30,7 +45,7 @@ local GroupCount = 0
 local GroupTotal = {}
 local GroupOnline = {}
 local GroupSorted = {}
-local FriendRequestString = string.sub(FRIEND_REQUESTS,1,-5)
+local FriendRequestString = string.sub(FRIEND_REQUESTS,1,-6)
 local FriendsScrollFrame
 local FriendButtonTemplate
 
@@ -42,7 +57,7 @@ else
 	FriendButtonTemplate = "FriendsFrameButtonTemplate"
 end
 
---[[local function ClassColourCode(class,table)
+local function ClassColourCode(class,table)
 	local initialClass = class
 	for k, v in pairs(LOCALIZED_CLASS_NAMES_FEMALE) do
 		if class == v then
@@ -58,35 +73,11 @@ end
 			end
 		end
 	end
+	local colour = RAID_CLASS_COLORS[class]
 	if table then
-		return RAID_CLASS_COLORS[class]
+		return colour
 	else
-		local colour = RAID_CLASS_COLORS[class]
 		return string.format("|cFF%02x%02x%02x", colour.r*255, colour.g*255, colour.b*255)
-	end
-end]]
-local ClassList = {}
-for k, v in pairs(LOCALIZED_CLASS_NAMES_MALE) do
-	ClassList[v] = k
-end
-local ClassColors = {}
-local colors = CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS
-for class, value in pairs(colors) do
-	ClassColors[class] = {}
-	ClassColors[class].r = value.r
-	ClassColors[class].g = value.g
-	ClassColors[class].b = value.b
-	ClassColors[class].colorStr = value.colorStr
-end
-
-local function ClassColourCode(class, showRGB)
-	local color = ClassColors[ClassList[class] or class]
-	if not color then color = ClassColors["PRIEST"] end
-
-	if showRGB then
-		return color.r, color.g, color.b
-	else
-		return "|c"..color.colorStr
 	end
 end
 
@@ -121,7 +112,8 @@ local function GetOnlineInfoText(client, isMobile, rafLinkType, locationText)
 end
 
 local function GetFriendInfoById(id)
-	local accountName, characterName, class, level, isFavoriteFriend, isOnline, bnetAccountId, client, canCoop, wowProjectID, lastOnline,	isAFK, isGameAFK, isDND, isGameBusy, mobile, zoneName
+	local accountName, characterName, class, level, isFavoriteFriend, isOnline, bnetAccountId, client, canCoop, wowProjectID, lastOnline, isAFK, isGameAFK, isDND, isGameBusy, mobile, zoneName
+	local realmName
 	if C_BattleNet and C_BattleNet.GetFriendAccountInfo then
 		local accountInfo = C_BattleNet.GetFriendAccountInfo(id)
 		if accountInfo then
@@ -146,18 +138,29 @@ local function GetFriendInfoById(id)
 				level = gameAccountInfo.characterLevel
 				client = gameAccountInfo.clientProgram
 				wowProjectID = gameAccountInfo.wowProjectID
+				gameText = gameAccountInfo.richPresence
+				zoneName = gameAccountInfo.areaName
+				realmName = gameAccountInfo.realmName
 			end
 		end
 	else
-		bnetIDAccount, accountName, _, _, characterName, bnetIDGameAccount, client, 
-		isOnline, lastOnline, isAFK, isDND, _, _, _, _, wowProjectID, _, _, 
-		isFavorite, mobile = BNGetFriendInfo(id)
+		bnetIDAccount, accountName, _, _, characterName, bnetAccountId, client, isOnline, lastOnline, isAFK, isDND, _, _, _, _, wowProjectID, _, _, isFavorite, mobile = BNGetFriendInfo(id)
+
+		if isOnline then
+			_, _, _, realmName, realmID, faction, _, class, _, zoneName, level, gameText, _, _, _, _, _, isGameAFK, isGameBusy, guid, wowProjectID, mobile = BNGetGameAccountInfo(bnetAccountId)
+		end
+
+		canCoop = CanCooperateWithGameAccount(bnetAccountId)
 	end
 
-	return accountName, characterName, class, level, isFavoriteFriend, isOnline, bnetAccountId, client, canCoop, wowProjectID, lastOnline, isAFK, isGameAFK, isDND, isGameBusy, mobile, zoneName
+	if realmName and realmName ~= "" then
+		zoneName = zoneName .. " - " .. realmName
+	end
+
+	return accountName, characterName, class, level, isFavoriteFriend, isOnline, bnetAccountId, client, canCoop, wowProjectID, lastOnline, isAFK, isGameAFK, isDND, isGameBusy, mobile, zoneName, gameText
 end
 
-local function FriendGroups_GetBNetButtonNameText(accountName, characterName, class, level)
+local function FriendGroups_GetBNetButtonNameText(accountName, client, canCoop, characterName, class, level)
 	local nameText
 
 	-- set up player name and character name
@@ -169,20 +172,20 @@ local function FriendGroups_GetBNetButtonNameText(accountName, characterName, cl
 
 	-- append character name
 	if characterName then
-		local characterNameSuffix
-		if not level then
-			characterNameSuffix = ""
-		else
-			characterNameSuffix= level.." "
-		end
 
 		local coopLabel = ""
 		if not canCoop then
 			coopLabel = CANNOT_COOPERATE_LABEL
 		end
+		local characterNameSuffix
+		if not level then
+			characterNameSuffix = coopLabel
+		else
+			characterNameSuffix= level.." "..coopLabel
+		end
 		if client == BNET_CLIENT_WOW then
 			local nameColor = ClassColourCode(class) or FRIENDS_WOW_NAME_COLOR
-			nameText = nameText.." "..nameColor.."("..characterNameSuffix..coopLabel..characterName..")"..FONT_COLOR_CODE_CLOSE
+			nameText = nameText.." "..nameColor.."("..characterNameSuffix..characterName..")"..FONT_COLOR_CODE_CLOSE
 		else
 			if ENABLE_COLORBLIND_MODE == "1" then
 				characterName = characterName..coopLabel
@@ -229,53 +232,65 @@ local function FriendGroups_UpdateFriendButton(button)
 			nameColor = FRIENDS_GRAY_COLOR
 			infoText = FRIENDS_LIST_OFFLINE
 		end
+		infoText = info.mobile and LOCATION_MOBILE_APP or info.area
 		button.gameIcon:Hide()
 		button.summonButton:ClearAllPoints()
 		button.summonButton:SetPoint("TOPRIGHT", button, "TOPRIGHT", 1, -1)
 		FriendsFrame_SummonButton_Update(button.summonButton)
 	elseif button.buttonType == FRIENDS_BUTTON_TYPE_BNET then
-		local accountInfo = C_BattleNet.GetFriendAccountInfo(FriendListEntries[index].id);
-		if accountInfo then
-			nameText, nameColor, statusTexture = FriendsFrame_GetBNetAccountNameAndStatus(accountInfo);
-			isFavoriteFriend = accountInfo.isFavorite;
+		local id = FriendButtons[index].id
+		local accountName, characterName, class, level, isFavoriteFriend, isOnline, bnetAccountId, client, canCoop, wowProjectID, lastOnline, isAFK, isGameAFK, isDND, isGameBusy, mobile, zoneName, gameText = GetFriendInfoById(id)
 
-			button.status:SetTexture(statusTexture);
+		nameText = FriendGroups_GetBNetButtonNameText(accountName, client, canCoop, characterName, class, level)
 
-			if accountInfo.gameAccountInfo.isOnline then
-				button.background:SetColorTexture(FRIENDS_BNET_BACKGROUND_COLOR.r, FRIENDS_BNET_BACKGROUND_COLOR.g, FRIENDS_BNET_BACKGROUND_COLOR.b, FRIENDS_BNET_BACKGROUND_COLOR.a);
-
-				if ShowRichPresenceOnly(accountInfo.gameAccountInfo.clientProgram, accountInfo.gameAccountInfo.wowProjectID, accountInfo.gameAccountInfo.factionName, accountInfo.gameAccountInfo.realmID) then
-					infoText = GetOnlineInfoText(accountInfo.gameAccountInfo.clientProgram, accountInfo.gameAccountInfo.isWowMobile, accountInfo.rafLinkType, accountInfo.gameAccountInfo.richPresence);
+		if isOnline then
+			button.background:SetColorTexture(FRIENDS_BNET_BACKGROUND_COLOR.r, FRIENDS_BNET_BACKGROUND_COLOR.g, FRIENDS_BNET_BACKGROUND_COLOR.b, FRIENDS_BNET_BACKGROUND_COLOR.a)
+			if isAFK or isGameAFK then
+				button.status:SetTexture(FRIENDS_TEXTURE_AFK)
+			elseif isDND or isGameBusy then
+				button.status:SetTexture(FRIENDS_TEXTURE_DND)
+			else
+				button.status:SetTexture(FRIENDS_TEXTURE_ONLINE)
+			end
+			if client == BNET_CLIENT_WOW and wowProjectID == WOW_PROJECT_ID then
+				if not zoneName or zoneName == "" then
+					infoText = UNKNOWN
 				else
-					infoText = GetOnlineInfoText(accountInfo.gameAccountInfo.clientProgram, accountInfo.gameAccountInfo.isWowMobile, accountInfo.rafLinkType, accountInfo.gameAccountInfo.areaName);
+					infoText = mobile and LOCATION_MOBILE_APP or zoneName
 				end
-
-				button.gameIcon:SetTexture(BNet_GetClientTexture(accountInfo.gameAccountInfo.clientProgram));
-
-				local fadeIcon = (accountInfo.gameAccountInfo.clientProgram == BNET_CLIENT_WOW) and (accountInfo.gameAccountInfo.wowProjectID ~= WOW_PROJECT_ID);
-				if fadeIcon then
-					button.gameIcon:SetAlpha(0.6);
-				else
-					button.gameIcon:SetAlpha(1);
-				end
-
-				--Note - this logic should match the logic in FriendsFrame_ShouldShowSummonButton
+			else
+				infoText = gameText
+			end
+			button.gameIcon:SetTexture(BNet_GetClientTexture(client))
+			nameColor = FRIENDS_BNET_NAME_COLOR
+			local fadeIcon = (client == BNET_CLIENT_WOW) and (wowProjectID ~= WOW_PROJECT_ID)
+			if fadeIcon then
+				button.gameIcon:SetAlpha(0.6)
+			else
+				button.gameIcon:SetAlpha(1)
+			end
+			--Note - this logic should match the logic in FriendsFrame_ShouldShowSummonButton
 
 			local shouldShowSummonButton = FriendsFrame_ShouldShowSummonButton(button.summonButton)
 			button.gameIcon:SetShown(not shouldShowSummonButton)
 
-				-- travel pass
-				hasTravelPassButton = true;
-				local restriction = FriendsFrame_GetInviteRestriction(button.id);
-				if restriction == INVITE_RESTRICTION_NONE then
-					button.travelPassButton:Enable();
-				else
-					button.travelPassButton:Disable();
-				end
+			-- travel pass
+			hasTravelPassButton = true
+			local restriction = FriendsFrame_GetInviteRestriction(button.id)
+			if ( restriction == INVITE_RESTRICTION_NONE ) then
+				button.travelPassButton:Enable()
 			else
-				button.background:SetColorTexture(FRIENDS_OFFLINE_BACKGROUND_COLOR.r, FRIENDS_OFFLINE_BACKGROUND_COLOR.g, FRIENDS_OFFLINE_BACKGROUND_COLOR.b, FRIENDS_OFFLINE_BACKGROUND_COLOR.a);
-				button.gameIcon:Hide();
-				infoText = FriendsFrame_GetLastOnlineText(accountInfo);
+				button.travelPassButton:Disable()
+			end
+		else
+			button.background:SetColorTexture(FRIENDS_OFFLINE_BACKGROUND_COLOR.r, FRIENDS_OFFLINE_BACKGROUND_COLOR.g, FRIENDS_OFFLINE_BACKGROUND_COLOR.b, FRIENDS_OFFLINE_BACKGROUND_COLOR.a)
+			button.status:SetTexture(FRIENDS_TEXTURE_OFFLINE)
+			nameColor = FRIENDS_GRAY_COLOR
+			button.gameIcon:Hide()
+			if ( not lastOnline or lastOnline == 0 or time() - lastOnline >= ONE_YEAR ) then
+				infoText = FRIENDS_LIST_OFFLINE
+			else
+				infoText = string.format(BNET_LAST_ONLINE_TIME, FriendsFrame_GetLastOnline(lastOnline))
 			end
 		end
 		button.summonButton:ClearAllPoints()
@@ -295,8 +310,10 @@ local function FriendGroups_UpdateFriendButton(button)
 			button.text:SetText(title)
 			button.text:Show()
 			nameText = counts
+			--button.name:SetJustifyH("RIGHT")
 		else
-			nameText = title.."          "..counts
+			nameText = title.." "..counts
+			--button.name:SetJustifyH("CENTER")
 		end
 		nameColor = FRIENDS_GROUP_NAME_COLOR
 		button.name:SetJustifyH("RIGHT")
@@ -312,10 +329,10 @@ local function FriendGroups_UpdateFriendButton(button)
 		button.background:SetColorTexture(FRIENDS_OFFLINE_BACKGROUND_COLOR.r, FRIENDS_OFFLINE_BACKGROUND_COLOR.g, FRIENDS_OFFLINE_BACKGROUND_COLOR.b, FRIENDS_OFFLINE_BACKGROUND_COLOR.a)
 		button.background:SetAlpha(0.5)
 		local scrollFrame = FriendsScrollFrame
-		local divider = scrollFrame.dividerPool:Acquire()
+		--[[local divider = scrollFrame.dividerPool:Acquire()
 		divider:SetParent(scrollFrame.ScrollChild)
 		divider:SetAllPoints(button)
-		divider:Show()
+		divider:Show()--]]
 	elseif ( button.buttonType == FRIENDS_BUTTON_TYPE_INVITE_HEADER ) then
 		local header = FriendsScrollFrame.PendingInvitesHeaderButton
 		header:SetPoint("TOPLEFT", button, 1, 0)
@@ -734,7 +751,6 @@ local function FriendGroups_Update(forceUpdate)
 		FriendsFrameSendMessageButton:Disable()
 	end
 	FriendsFrame.selectedFriend = selectedFriend
-	FriendGroups_UpdateFriends()
 
 	-- RID warning, upon getting the first RID invite
 	local showRIDWarning = false
@@ -760,6 +776,7 @@ local function FriendGroups_Update(forceUpdate)
 	else
 		FriendsListFrame.RIDWarning:Hide()
 	end
+	FriendGroups_UpdateFriends()
 end
 
 local function FriendGroups_OnClick(self, button)
