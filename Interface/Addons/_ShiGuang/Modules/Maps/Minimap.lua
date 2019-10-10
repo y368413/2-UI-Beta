@@ -123,7 +123,7 @@ local SetMrbarMicromenu = {
     { text = QUEST_LOG, icon = 'Interface\\GossipFrame\\ActiveQuestIcon',
         func = function() ToggleQuestLog() end, notCheckable = true},
     { text = FRIENDS, icon = 'Interface\\FriendsFrame\\PlusManz-BattleNet',
-        func = function() securecall(ToggleFriendsFrame, 1) end, notCheckable = true},
+        func = function() securecall(ToggleFriendsFrame) end, notCheckable = true},
     { text = GUILD, icon = 'Interface\\GossipFrame\\TabardGossipIcon',
         func = function() if (IsTrialAccount()) then UIErrorsFrame:AddMessage(ERR_RESTRICTED_ACCOUNT, 1, 0, 0)
         else securecall(ToggleGuildFrame) end end, notCheckable = true},

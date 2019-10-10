@@ -39,6 +39,7 @@ function module:UpdateChannelNames(text, ...)
 		text = gsub(text, "|h%[(%d+)%. 大腳世界頻道%]|h", "|h%[%1%.世界%]|h")
 		return self.oldAddMsg(self, text, ...) --self.oldAddMsg(self, gsub(text, "|h%[(%d+)%..-%]|h", "|h[%1]|h"), ...)
 end
+
 function module:ChannelRename()
 	for i = 1, NUM_CHAT_WINDOWS do
 		if i ~= 2 then
