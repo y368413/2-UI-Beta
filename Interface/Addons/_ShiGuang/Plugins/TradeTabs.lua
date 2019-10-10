@@ -154,15 +154,6 @@ local function createClickStopper(button)
 	f:Hide()
 end
 
-local function reskinTabs(button)
-	if F then
-		button:SetCheckedTexture(M.media.checked)
-		button:GetRegions():Hide()
-		F.CreateBG(button)
-		button:GetNormalTexture():SetTexCoord(unpack(I.TexCoord))
-	end
-end
-
 function TradeTabs:CreateTab(parent, spellID, isToy)
 	local name, texture, _
 	if isToy then
@@ -182,7 +173,6 @@ function TradeTabs:CreateTab(parent, spellID, isToy)
 
 	button:SetNormalTexture(texture)
 	button:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
-	reskinTabs(button)
 	button.CD = CreateFrame("Cooldown", nil, button, "CooldownFrameTemplate")
 	button.CD:SetAllPoints()
 

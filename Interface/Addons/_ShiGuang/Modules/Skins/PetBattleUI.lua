@@ -4,6 +4,8 @@ local S = M:GetModule("Skins")
 
 function S:PetBattleUI()
 	if not MaoRUISettingDB["Skins"]["PetBattle"] then return end
+	if not MaoRUISettingDB["Actionbar"]["Enable"] then return end
+
 	local r, g, b, pairs = I.r, I.g, I.b, pairs
 
 	-- Head Frame

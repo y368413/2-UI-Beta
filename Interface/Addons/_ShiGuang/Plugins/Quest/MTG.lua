@@ -744,14 +744,6 @@ function frame:CHAT_MSG_LOOT(event,...)
                 break
             end
         end
-    ShiGuangDB.MTGDB ={
-    ["talkedNPC"] = talkedNPC,
-    ["NPCNameList"] = NPCNameList,
-    ["merchantItemList"] = merchantItemList,
-    ["buyList"] = buyList,
-    ["buyLists"] = buyLists,
-    ["购买详情"] = buyitems,
-    }
     end
     return true
 end
@@ -794,7 +786,7 @@ function frame:ADDON_LOADED(event,...)
     if ShiGuangDB["j_BuyItemOption"] == nil then ShiGuangDB["j_BuyItemOption"] = 1 end --1购买普通物品  2不购买普通物品
     if ShiGuangDB["j_Markersize"] == nil then ShiGuangDB["j_Markersize"] = 26 end
     if ShiGuangDB["j_CheckTacoFirst"] == nil then ShiGuangDB["j_CheckTacoFirst"] = true end  --先检查玉米卷，然后再用玉米卷购买稀有品。
-    if ShiGuangDB["MTGsetting"] == nil then ShiGuangDB["MTGsetting"] = {} end
+    --if ShiGuangDB["MTGsetting"] == nil then ShiGuangDB["MTGsetting"] = {} end
     if ShiGuangDB["MTGsetting"][168053] == nil then ShiGuangDB["MTGsetting"][168053] = true end
     if ShiGuangDB["MTGsetting"][168091] == nil then ShiGuangDB["MTGsetting"][168091] = true end
     if ShiGuangDB["MTGsetting"][168092] == nil then ShiGuangDB["MTGsetting"][168092] = true end

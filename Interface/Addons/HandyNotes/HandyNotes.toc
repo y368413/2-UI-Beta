@@ -1,6 +1,6 @@
 ## Interface: 80205
 ## Author: Xinhuan
-## Version: v1.5.7
+## Version: v1.5.9
 ## Title: HandyNotes
 ## Title-zhCN:|cff0080ff[地图]|r宝藏稀有
 ## Title-zhTW:|cff0080ff[地图]|r寶藏稀有

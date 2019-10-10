@@ -478,30 +478,30 @@ function A:AuraWatch_UpdateAura(spellID, UnitID, index, bool)
 	for KEY, VALUE in pairs(AuraList) do
 		local value = VALUE.List[spellID]
 		if value and value.AuraID and value.UnitID == UnitID then
-				local filter = bool and "HELPFUL" or "HARMFUL"
-				local name, icon, count, _, duration, expires, caster, _, _, _, _, _, _, _, _, number = UnitAura(value.UnitID, index, filter)
-				if value.Combat and not InCombatLockdown() then return false end
-				if value.Caster and value.Caster:lower() ~= caster then return false end
-				if value.Stack and count and value.Stack > count then return false end
-				if value.Value and number then
-					if VALUE.Mode:lower() == "icon" then
+			local filter = bool and "HELPFUL" or "HARMFUL"
+			local name, icon, count, _, duration, expires, caster, _, _, _, _, _, _, _, _, number = UnitAura(value.UnitID, index, filter)
+			if value.Combat and not InCombatLockdown() then return false end
+			if value.Caster and value.Caster:lower() ~= caster then return false end
+			if value.Stack and count and value.Stack > count then return false end
+			if value.Value and number then
+				if VALUE.Mode:lower() == "icon" then
+					name = M.Numb(number)
+				elseif VALUE.Mode:lower() == "text" then
 							name = M.Numb(number)
-						elseif VALUE.Mode:lower() == "text" then
-							name = M.Numb(number)
-						elseif VALUE.Mode:lower() == "bar" then
-							name = name..":"..M.Numb(number)
-						end
-					else
-						if VALUE.Mode:lower() == "icon" then
+				elseif VALUE.Mode:lower() == "bar" then
+					name = name..":"..M.Numb(number)
+				end
+			else
+				if VALUE.Mode:lower() == "icon" then
 							name = value.Text or nil
-						elseif VALUE.Mode:lower() == "text" then
-							name = value.Text or nil
-						elseif VALUE.Mode:lower() == "bar" then
-							name = name
-						end
-					end
-					if value.Timeless then duration, expires = 0, 0 end
-				return KEY, value.UnitID, name, icon, count, duration, expires, index, filter, value.Flash
+				elseif VALUE.Mode:lower() == "text" then
+					name = value.Text or nil
+				elseif VALUE.Mode:lower() == "bar" then
+					name = name
+				end
+			end
+			if value.Timeless then duration, expires = 0, 0 end
+			return KEY, value.UnitID, name, icon, count, duration, expires, index, filter, value.Flash
 		end
 	end
 	return false

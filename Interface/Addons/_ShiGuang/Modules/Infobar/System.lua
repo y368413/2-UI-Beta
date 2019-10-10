@@ -126,7 +126,7 @@ info.onEnter = function(self)
 	GameTooltip:AddDoubleLine(U["World Latency"]..":", colorLatency(latencyWorld).."|r Ms", .6,.8,1, 1,1,1)
 	GameTooltip:AddDoubleLine(FRAMERATE_LABEL, colorFPS(fps).."|r Fps", .6,.8,1, 1,1,1)
 	GameTooltip:AddDoubleLine(" ", I.LineString)
-	if GetCVarBool("scriptProfile") then
+	if scriptProfile then
 		GameTooltip:AddDoubleLine(" ", I.RightButton..U["ResetCPUUsage"].." ", 1,1,1, .6,.8,1)
 	end
 	GameTooltip:AddDoubleLine(" ", I.LeftButton..U["CPU Usage"]..": "..(scriptProfile and "|cff55ff55"..VIDEO_OPTIONS_ENABLED or "|cffff5555"..VIDEO_OPTIONS_DISABLED).." ", 1,1,1, .6,.8,1)

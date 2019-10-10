@@ -159,7 +159,7 @@ local function delayFunc()
 	if isBankEmpty then
 		autoRepair(true)
 	else
-		print(format(I.InfoColor.."%s:|r %s", U["Guild repair"], module:GetMoneyString(repairAllCost, true)))
+		print(format(I.InfoColor.."%s|r%s", U["Guild repair"], module:GetMoneyString(repairAllCost, true)))
 	end
 end
 
@@ -177,7 +177,7 @@ function autoRepair(override)
 		else
 			if myMoney > repairAllCost then
 				RepairAllItems()
-				print(format(I.InfoColor.."%s:|r %s", U["Repair cost"], module:GetMoneyString(repairAllCost, true)))
+				print(format(I.InfoColor.."%s|r%s", U["Repair cost"], module:GetMoneyString(repairAllCost, true)))
 				return
 			else
 				print(I.InfoColor..U["Repair error"])

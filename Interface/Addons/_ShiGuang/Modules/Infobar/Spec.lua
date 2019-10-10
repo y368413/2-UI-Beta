@@ -17,8 +17,8 @@ local function addIcon(texture)
 	return texture
 end
 
---local menuFrame = CreateFrame("Frame", "SpecInfobarMenu", info, "UIDropDownMenuTemplate")
-local menuFrame = MSA_DropDownMenu_Create("SpecInfobarMenu", info)
+local menuFrame = CreateFrame("Frame", "SpecInfobarMenu", info, "UIDropDownMenuTemplate")
+--local menuFrame = MSA_DropDownMenu_Create("SpecInfobarMenu", info)
 local menuList = {
 	{text = CHOOSE_SPECIALIZATION, isTitle = true, notCheckable = true},
 	{text = SPECIALIZATION, hasArrow = true, notCheckable = true},
@@ -32,8 +32,9 @@ info.eventList = {
 }
 
 info.onEvent = function(self)
-	if GetSpecialization() then
-		local _, name, _, icon = GetSpecializationInfo(GetSpecialization())
+	local specIndex = GetSpecialization()
+	if specIndex then
+		local _, name, _, icon = GetSpecializationInfo(specIndex)
 		if not name then return end
 		local specID = GetLootSpecialization()
 		if specID == 0 then
@@ -49,13 +50,15 @@ end
 
 --[[local pvpTalents
 info.onEnter = function(self)
-	if not GetSpecialization() then return end
+	local specIndex = GetSpecialization()
+	if not specIndex then return end
+
 	GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 15)
 	GameTooltip:ClearLines()
 	GameTooltip:AddLine(TALENTS_BUTTON, 0,.6,1)
 	GameTooltip:AddLine(" ")
 
-	local _, specName, _, specIcon = GetSpecializationInfo(GetSpecialization())
+	local _, specName, _, specIcon = GetSpecializationInfo(specIndex)
 	GameTooltip:AddLine(addIcon(specIcon).." "..specName, .6,.8,1)
 
 	for t = 1, MAX_TALENT_TIERS do
@@ -86,8 +89,8 @@ info.onEnter = function(self)
 	end
 
 	GameTooltip:AddDoubleLine(" ", I.LineString)
-	GameTooltip:AddDoubleLine(" ", I.LeftButton.."SpecPanel".." ", 1,1,1, .6,.8,1)
-	GameTooltip:AddDoubleLine(" ", I.RightButton.."Change Spec".." ", 1,1,1, .6,.8,1)
+	GameTooltip:AddDoubleLine(" ", I.LeftButton..U["SpecPanel"].." ", 1,1,1, .6,.8,1)
+	GameTooltip:AddDoubleLine(" ", I.RightButton..U["Change Spec"].." ", 1,1,1, .6,.8,1)
 	GameTooltip:Show()
 end
 
@@ -100,7 +103,7 @@ local function clickFunc(i, isLoot)
 	else
 		SetSpecialization(i)
 	end
-	MSA_DropDownList1:Hide()
+	DropDownList1:Hide()
 end
 
 info.onMouseUp = function(self, btn)

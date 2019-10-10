@@ -378,5 +378,4 @@
 			</OnHide>
 		</Scripts>
 	</Frame>
-	<Script file="WorldFlightMap.lua"/>
 </Ui>

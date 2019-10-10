@@ -41,13 +41,14 @@
 
 	<Script file="Auras.lua"/>
 	<Script file="Reminder.lua"/>
-	<Script file="Monk.lua"/>
-	<Script file="Hunter.lua"/>
+	<!--Script file="Monk.lua"/>
+	<Script file="Hunter.lua"/-->
 	<Script file="Totems.lua"/>
-	<Script file="DeathKnight.lua"/>
+	<!--Script file="DeathKnight.lua"/-->
 	<Script file="PowerHit.lua"/>
 	<Script file="AuraWatch.lua"/>
 	<Script file="MonkStatue.lua"/>
+	<Include file="Lumos\Lumos.xml"/>
 	<Script file="RaidCD.lua"/>
 	<Script file="EnemyCD.lua"/>
 	<Script file="PulseCD.lua"/>

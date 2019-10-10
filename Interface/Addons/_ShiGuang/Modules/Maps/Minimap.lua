@@ -242,7 +242,7 @@ function module:WhoPingsMyMap()
 end
 
 function module:UpdateMinimapScale()
-	local scale = NDuiMaoRUISettingDBDB["Map"]["MinmapScale"]
+	local scale = MaoRUISettingDB["Map"]["MinmapScale"]
 	Minimap:SetScale(scale)
 	Minimap.mover:SetSize(Minimap:GetWidth()*scale, Minimap:GetHeight()*scale)
 end

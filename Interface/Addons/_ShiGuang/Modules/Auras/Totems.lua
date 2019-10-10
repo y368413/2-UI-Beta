@@ -32,7 +32,7 @@ local function TotemsGo()
 		defaultTotem:SetAlpha(0)
 		totem[i].parent = defaultTotem
 	end
-	M.Mover(Totembar, "Totembar", "Totems", R.Auras.TotemsPos, 140, 32)
+	M.Mover(Totembar, U["Totembar"], "Totems", R.Auras.TotemsPos, 140, 32)
 end
 
 function A:UpdateTotems()

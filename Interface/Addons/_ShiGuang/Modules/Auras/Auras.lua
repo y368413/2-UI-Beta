@@ -42,10 +42,7 @@ function A:OnLogin()
 	self.DebuffFrame:SetPoint("TOPRIGHT", debuffAnchor)
 
 	-- Elements
-	if I.MyClass == "HUNTER" then
-		self:HunterTool()
-	elseif I.MyClass == "MONK" then
-		self:Stagger()
+	if I.MyClass == "MONK" then
 		self:MonkStatue()
 	elseif I.MyClass == "SHAMAN" then
 		self:Totems()

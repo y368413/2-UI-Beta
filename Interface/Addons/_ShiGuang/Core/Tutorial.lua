@@ -38,6 +38,7 @@ local function ForceDefaultSettings()
 	SetCVar("nameplateShowAll", 1)
 	SetCVar("nameplateMotion", 1)
 	SetCVar("nameplateShowFriendlyNPCs", 0)
+	SetCVar("ActionButtonUseKeyDown", 1)
 	SetCVar("alwaysShowActionBars", 1)
 	SetCVar("lockActionBars", 1)
 	SetActionBarToggles(1, 1, 0, 0)
@@ -411,7 +412,7 @@ local function HelloWorld()
 		ReloadUI()
 		welcome:Hide()
 		YesTutor()
-		ShiGuangPerDB.BHT = true
+		ShiGuangPerDB["BHT"] = true
 		MaoRUISettingDB["Tutorial"]["Complete"] = true
 	end)
 	SmallText1 = M:CreatStyleText(LeftPic, STANDARD_TEXT_FONT, 16, "OUTLINE", "[ 微美化界面 ]", "RIGHT",LeftPic,"LEFT",26,60, I.r, I.g, I.b)
@@ -430,7 +431,7 @@ local function HelloWorld()
 	RightPic:SetScript("OnClick", function()
 		welcome:Hide()
 		YesTutor()
-		ShiGuangPerDB.BHT = false
+		ShiGuangPerDB["BHT"] = false
 		MaoRUISettingDB["Tutorial"]["Complete"] = true
 		ReloadUI()
   end)
@@ -497,7 +498,6 @@ SlashCmdList["ShiGuang"] = HelloWorld
 SLASH_ShiGuang1 = "/loadmr"
 
 -----------------------------------------
-function sendCmd(cmd) ChatFrame1EditBox:SetText(""); ChatFrame1EditBox:Insert(cmd); ChatEdit_SendText(ChatFrame1EditBox); end
 function module:OnLogin()
 	M.HideOption(Advanced_UseUIScale)
 	M.HideOption(Advanced_UIScaleSlider)

@@ -33,7 +33,6 @@ local BlzFrames = {
 	["PVEFrame"] = false,
 	["RaidParentFrame"] = false,
 	["ReputationFrame"] = true,
-	--["ScrollOfResurrectionSelectionFrame"] = false,
 	["SendMailFrame"] = true,
 	["SpellBookFrame"] = false,
 	["SplashFrame"] = false,
@@ -46,6 +45,7 @@ local BlzFrames = {
 	["VideoOptionsFrame"] = false,
 	-- Other AddOns
 	["BaudErrorFrame"] = false,
+	--["eCB_OptionFrame"] = false,
 }
 
 -- Frame Existing Check
@@ -97,7 +97,6 @@ local lodFrames = {
 	Blizzard_TradeSkillUI		= { ["TradeSkillFrame"] = false },
 	Blizzard_TrainerUI			= { ["ClassTrainerFrame"] = false },
 	Blizzard_VoidStorageUI		= { ["VoidStorageFrame"] = false, ["VoidStorageBorderFrameMouseBlockFrame"] = "VoidStorageFrame" },
-	--Blizzard_WarboardUI			= { ["WarboardQuestChoiceFrame"] = false },
 }
 
 local parentFrame, hooked = {}, {}

@@ -66,7 +66,7 @@ function module:HyperlinkShowHook(link, _, button)
 				C_PartyInfo.InviteUnit(unit)
 				hide = true
 			elseif IsControlKeyDown() then
-				C_PartyInfo.InviteUnit(unit)
+				GuildInvite(unit)
 				hide = true
 			end
 		elseif type == "BNplayer" then

@@ -83,17 +83,17 @@ function HPetOption:InitButtons()
 			func=function() HPetOption:Hide() end,
 		},
 		{name="Reset",type="Button",inherits="UIPanelButtonTemplate",
-			point="TOPLEFT",x=5,y=-5,width=50, height=20, text = "Reset",
+			point="TOPLEFT",x=5,y=-5,width=50, height=20, text = RESET,
 			func=self.Reset,
 		},
 		{name="Help",type="Button",inherits="UIPanelButtonTemplate",
 			point="BOTTOMLEFT",x=5,y=5,width=100, height=20, text = L["Search Help"],
 			func=self.HelpButton_Click,
 		},
-		{name="UpdateStone",type="Button",inherits="UIPanelButtonTemplate",
-			point="BOTTOMRIGHT",x=-5,y=5,width=100, height=20, text = L["Battle Stone"],
-			func=UpdateStoneButton_Click,
-		},
+		--{name="UpdateStone",type="Button",inherits="UIPanelButtonTemplate",
+			--point="BOTTOMRIGHT",x=-5,y=5,width=100, height=20, text = L["Battle Stone"],
+			--func=UpdateStoneButton_Click,
+		--},
 
 		----value buttons
 		----综合
@@ -346,11 +346,9 @@ end
 function HPetOption:OnCheckButtonClicked()
 	isChecked = self:GetChecked()
 	if isChecked then
-		-- PlaySound("igMainMenuOptionCheckBoxOn")
-		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 	else
-		-- PlaySound("igMainMenuOptionCheckBoxOff")
-		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF);
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
 	end
 	value = HPetOption.Buttons[self:GetID()]
 	if value.var then

@@ -1,5 +1,5 @@
 ﻿--## Author: xbeeps
-Castbars = LibStub("AceAddon-3.0"):NewAddon("Castbars", "AceConsole-3.0");
+local Castbars = LibStub("AceAddon-3.0"):NewAddon("Castbars", "AceConsole-3.0");
 Castbars.SharedMedia = LibStub("LibSharedMedia-3.0");
 Castbars.DoNothing = function() end;
 

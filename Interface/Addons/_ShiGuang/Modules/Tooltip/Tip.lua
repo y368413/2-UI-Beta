@@ -19,8 +19,8 @@ local C_PetBattles_GetNumAuras, C_PetBattles_GetAuraInfo = C_PetBattles.GetNumAu
 
 local classification = {
 	elite = " |cffcc8800"..ELITE.."|r",
-	rare = " |cffff99cc"..RARITY.."|r",
-	rareelite = " |cffff99cc"..RARITY.."|r ".."|cffcc8800"..ELITE.."|r",
+	rare = " |cffff99cc"..U["Rare"].."|r",
+	rareelite = " |cffff99cc"..U["Rare"].."|r ".."|cffcc8800"..ELITE.."|r",
 	worldboss = " |cffff0000"..BOSS.."|r",
 }
 
@@ -247,7 +247,7 @@ function TT:StatusBar_OnValueChanged(value)
 	if (value < min) or (value > max) then return end
 
 	if not self.text then
-			self.text = M.CreateFS(self, 12, "")
+		self.text = M.CreateFS(self, 12, "")
 	end
 
 	if value > 0 and max == 1 then

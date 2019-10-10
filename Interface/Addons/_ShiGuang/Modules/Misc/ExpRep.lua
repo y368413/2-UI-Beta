@@ -175,7 +175,7 @@ function MISC:ExpBar_UpdateTooltip()
 	if IsWatchingHonorAsXP() then
 		local current, barMax, level = UnitHonor("player"), UnitHonorMax("player"), UnitHonorLevel("player")
 		GameTooltip:AddLine(" ")
-		GameTooltip:AddLine(HONOR, .0,.6,1)
+		GameTooltip:AddLine(HONOR, 0,.6,1)
 		GameTooltip:AddDoubleLine(LEVEL.." "..level, current.." / "..barMax, .6,.8,1, 1,1,1)
 
 		local locked = not IsPlayerAtEffectiveMaxLevel()

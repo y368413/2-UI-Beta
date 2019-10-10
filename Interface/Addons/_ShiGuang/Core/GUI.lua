@@ -341,6 +341,10 @@ local function updateChatSize()
 	M:GetModule("Chat"):UpdateChatSize()
 end
 
+local function updateMinimapScale()
+	M:GetModule("Maps"):UpdateMinimapScale()
+end
+
 local function showMinimapClock()
 	M:GetModule("Maps"):ShowMinimapClock()
 end
@@ -384,6 +388,10 @@ local function updateErrorBlocker()
 	M:GetModule("Misc"):UpdateErrorBlocker()
 end
 
+local function resetDetails()
+	MaoRUIDB["ResetDetails"] = true
+end
+
 -- Config
 local tabList = {
 	U["Actionbar"],
@@ -415,7 +423,7 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		--{1, "Skins", "Skada", U["Skada Skin"], true},
 		--{1, "Skins", "Bigwigs", U["Bigwigs Skin"]},
 		{1, "Skins", "TMW", U["TMW Skin"]},
-		{1, "Skins", "Details", U["Details Skin"], true},
+		{1, "Skins", "Details", U["Details Skin"], true, false, resetDetails},
 		{1, "Skins", "WeakAuras", U["WeakAuras Skin"], true, true},
 		--{1, "Skins", "PGFSkin", U["PGF Skin"], true},
 		{4, "ACCOUNT", "TexStyle", U["Texture Style"], false, false, {U["Highlight"], U["Gradient"], U["Flat"]}},

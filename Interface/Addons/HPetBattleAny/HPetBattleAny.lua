@@ -34,12 +34,14 @@ HPetBattleAny.addon = addon
 
 function HPetBattleAny:Init_HPET()
 	if not self.initialized_HPET then
-		self:RegisterEvent("VARIABLES_LOADED");
+		-- self:RegisterEvent("VARIABLES_LOADED");		bf@178.com
+		self:VARIABLES_LOADED()
 		self.initialized_HPET = true
 		--printt("test:载入HPET部分")
 		self:LoadSomeAny()
 		if self.hook then self.hook:init() end
-		self:RegisterEvent("PLAYER_ENTERING_WORLD")
+		-- self:RegisterEvent("PLAYER_ENTERING_WORLD")	bf@178.com
+		self:PLAYER_ENTERING_WORLD()
 		if PetJournal then
 			HPetBattleAny:Init_BPET()
 		end
@@ -466,8 +468,7 @@ function HPetBattleAny:PET_BATTLE_OPENING_START(...)
 			end
 		end
 
-		if HPetSaves.Sound and self.EnemyPetInfo.FindBlue then --C_PetBattles.IsPlayerNPC(2) and select(2,C_PetBattles.IsTrapAvailable())~=7 then
---- 		PlaySoundFile( [[Sound\Event Sounds\Event_wardrum_ogre.wav]], "Master" );
+		if HPetSaves.Sound and self.EnemyPetInfo.FindBlue then
 			self:PlaySoundFile()
 		end
 	return true
@@ -603,7 +604,7 @@ end
 function HPetBattleAny:VARIABLES_LOADED()
 	if HPetSaves.Ver ~= VERSION then
 		local newSaves={}
-		self:PetPrintEX("HPetBattleAny更新, 设置内容可能出现改变.")
+		--self:PetPrintEX("HPetBattleAny更新, 设置内容可能出现改变.")
 		---检测Saves异常
 		for v,t in pairs(self.Default) do
 			if HPetSaves[v]==nil or type(HPetSaves[v])~=type(t) then
@@ -629,7 +630,7 @@ function HPetBattleAny:initforJournalFrame()
 	button:SetText(L["HPet Options"])
 	button:SetHeight(22)
 	button:SetWidth(#L["HPet Options"]*8)
-	button:SetPoint("TOPLEFT", PetJournalPetCard, "BOTTOMLEFT", -5, 0)
+	button:SetPoint("TOPLEFT", PetJournalLoadout, "BOTTOMLEFT", -1, -1)		--bf@178.com
 	button:SetScript("OnClick",function()
 		if HPetOption then
 			HPetOption:Toggle()
