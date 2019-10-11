@@ -102,8 +102,7 @@ end
 
 ----------------------------------------------------------------------------	右键菜单--------------------------------------------------------------------------
 --动作条样式
---local SetMrbarMenuFrame = CreateFrame("Frame", "ClickMenu", UIParent, "UIDropDownMenuTemplate")
-local SetMrbarMenuFrame = MSA_DropDownMenu_Create("ClickMenu", UIParent)
+local SetMrbarMenuFrame = CreateFrame("Frame", "ClickMenu", UIParent, "UIDropDownMenuTemplate")
 local SetMrbarMicromenu = {  
     { text = "|cffff8800 ------------------------|r", notCheckable = true },
     { text = "           "..MAINMENU_BUTTON.."", isTitle = true, notCheckable = true},
@@ -331,7 +330,6 @@ function module:SetupMinimap()
      end
     elseif btn == "MiddleButton" then ToggleFrame(ObjectiveTrackerFrame)  --M:DropDown(MapMicromenu, MapMenuFrame, 0, 0) --鼠标中键显示系统菜单
     elseif btn == "RightButton" then EasyMenu(SetMrbarMicromenu, SetMrbarMenuFrame, "cursor", 0, 0, "MENU", 2) --鼠标右键显示增强菜单
-    --else MSA_ToggleDropDownMenu(1, nil, MiniMapTrackingDropDown, self)
     end
 	end)
 	

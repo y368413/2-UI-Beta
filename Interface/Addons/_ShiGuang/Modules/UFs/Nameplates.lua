@@ -283,7 +283,7 @@ if GetCVar("nameplateShowSelf") == "1" then
 	Resourcebar:SetWidth(100)--(10+3)*6 - 3
 	Resourcebar:SetHeight(3)
 	Resourcebar.maxbar = 6
-	
+		
 	for i = 1, 6 do
 		Resourcebar[i] = CreateFrame("Frame", "2uiplateresource"..i, Resourcebar)
 		Resourcebar[i]:SetFrameLevel(1)

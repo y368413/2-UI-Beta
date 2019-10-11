@@ -527,7 +527,7 @@ function Gypsy.evt(self, evt, ...)
 			if (string.find(sender, "-") == nil) then 	sender = sender .. "-" .. GetRealmName() end
 			--print(cmd)
 			for i = 3, #dmsg do tinsert(payload, dmsg[i]) end
-			if (cmd == "debug") then print ("debugger") end
+			--if (cmd == "debug") then print ("debugger") end
 			if (cmd == "WHOIS") then
 				--print("WHOIS received")
 				Gypsy.AnswerReq()

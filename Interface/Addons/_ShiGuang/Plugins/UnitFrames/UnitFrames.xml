@@ -650,8 +650,6 @@
 			</OnLoad>
 		</Scripts>
 	</Button>
-	
-	<Script file="Nameplates.lua"/>
 	<Script file="iFrame.lua"/>
 	<Script file="iBuffs.lua"/>
 	<Script file="PartyTarget.lua"/>

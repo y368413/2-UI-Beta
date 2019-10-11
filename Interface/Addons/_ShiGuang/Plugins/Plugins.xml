@@ -1,11 +1,4 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-	<Script file="AlreadyKnown.lua"/>
-	<Script file="DragEmAll.lua"/>
-	<Script file="ExtraQuestButton.lua"/>
-	<Script file="FixTradeSkillSearch.lua"/>
-	<Script file="PetFilterTab.lua"/>
-	<Script file="QuickQuest.lua"/>
-	<Script file="TradeTabs.lua"/>
 	<Include file="Loot\Loot.xml"/>
 	<Include file="Gear\Gear.xml"/>
 	<Include file="Charms\Charms.xml"/>
@@ -15,5 +8,5 @@
 	<Include file="Notice\Notice.xml"/>
 	<Include file="TOTxp\TOTxp.xml"/>
 	<Include file="UnitFrames\UnitFrames.xml"/>
-	<Script file="MacroMr.lua"/>
+	<Include file="Aces\Aces.xml"/>
 </Ui>

@@ -39,8 +39,7 @@ local _backgroundList = {
 local DRF_button1 = CreateFrame("Button","DRF_UndressButton",DressUpFrame,"UIPanelButtonTemplate");
 local DRF_button2 = CreateFrame("Button","DRF_TargetButton",DressUpFrame,"UIPanelButtonTemplate");
 local DRF_button3 = CreateFrame("Button","DRF_RaceButton",DressUpFrame,"UIPanelButtonTemplate");
---local DRF_menu1 = CreateFrame("FRAME","DRF_RaceMenu",DRF_button3,"UIDropDownMenuTemplate");
-local DRF_menu1 = MSA_DropDownMenu_Create("DRF_RaceMenu", DRF_button3)
+local DRF_menu1 = CreateFrame("FRAME","DRF_RaceMenu",DRF_button3,"UIDropDownMenuTemplate");
 
 DRF_button1:SetPoint("BOTTOMLEFT",DressUpFrame,"BOTTOMLEFT",6,4);
 DRF_button1:SetSize(70,22);
@@ -80,54 +79,54 @@ local function DRF_menu1_OnClick(self, arg1, arg2, checked)
 end
 
 DRF_menu1:SetPoint("CENTER");
-MSA_DropDownMenu_Initialize(DRF_menu1, function(self, level, menuList)
-	local info = MSA_DropDownMenu_CreateInfo()
+UIDropDownMenu_Initialize(DRF_menu1, function(self, level, menuList)
+	local info = UIDropDownMenu_CreateInfo()
 	if level == 1 then
 		info.checked = false;
 		info.text = CHARMS_MALE;
 		info.menuList, info.hasArrow = 0, true;
-		MSA_DropDownMenu_AddButton(info, level);
+		UIDropDownMenu_AddButton(info, level);
 		info.text = CHARMS_FEMALE;
 		info.menuList, info.hasArrow = 1, true;
-		MSA_DropDownMenu_AddButton(info, level);
+		UIDropDownMenu_AddButton(info, level);
 	else
 		info.checked = false;
 		info.func = DRF_menu1_OnClick;
 		info.arg2 = menuList;
 		info.text, info.arg1 = CHARMS_HUMAN, 1;
-		MSA_DropDownMenu_AddButton(info, level);
+		UIDropDownMenu_AddButton(info, level);
 		info.text, info.arg1 = CHARMS_ORC, 2;
-		MSA_DropDownMenu_AddButton(info, level);
+		UIDropDownMenu_AddButton(info, level);
 		info.text, info.arg1 = CHARMS_DWARF, 3;
-		MSA_DropDownMenu_AddButton(info, level);
+		UIDropDownMenu_AddButton(info, level);
 		info.text, info.arg1 = CHARMS_NIGHTELF, 4;
-		MSA_DropDownMenu_AddButton(info, level);
+		UIDropDownMenu_AddButton(info, level);
 		info.text, info.arg1 = CHARMS_SCOURGE, 5;
-		MSA_DropDownMenu_AddButton(info, level);
+		UIDropDownMenu_AddButton(info, level);
 		info.text, info.arg1 = CHARMS_TAUREN, 6;
-		MSA_DropDownMenu_AddButton(info, level);
+		UIDropDownMenu_AddButton(info, level);
 		info.text, info.arg1 = CHARMS_GNOME, 7;
-		MSA_DropDownMenu_AddButton(info, level);
+		UIDropDownMenu_AddButton(info, level);
 		info.text, info.arg1 = CHARMS_TROLL, 8;
-		MSA_DropDownMenu_AddButton(info, level);
+		UIDropDownMenu_AddButton(info, level);
 		info.text, info.arg1 = CHARMS_GOBLIN, 9;
-		MSA_DropDownMenu_AddButton(info, level);
+		UIDropDownMenu_AddButton(info, level);
 		info.text, info.arg1 = CHARMS_BLOODELF, 10;
-		MSA_DropDownMenu_AddButton(info, level);
+		UIDropDownMenu_AddButton(info, level);
 		info.text, info.arg1 = CHARMS_DRAENEI, 11;
-		MSA_DropDownMenu_AddButton(info, level);
+		UIDropDownMenu_AddButton(info, level);
 		info.text, info.arg1 = CHARMS_WORGEN, 22;
-		MSA_DropDownMenu_AddButton(info, level);
+		UIDropDownMenu_AddButton(info, level);
 		info.text, info.arg1 = CHARMS_PANDAREN, 24;
-		MSA_DropDownMenu_AddButton(info, level);
+		UIDropDownMenu_AddButton(info, level);
     info.text, info.arg1 = CHARMS_NIGHTBORNE, 27; 
-    MSA_DropDownMenu_AddButton(info, level); 
+    UIDropDownMenu_AddButton(info, level); 
     info.text, info.arg1 = CHARMS_HIGHMOUNTAINTAUREN, 28; 
-    MSA_DropDownMenu_AddButton(info, level); 
+    UIDropDownMenu_AddButton(info, level); 
     info.text, info.arg1 = CHARMS_VOIDELF, 29; 
-    MSA_DropDownMenu_AddButton(info, level); 
+    UIDropDownMenu_AddButton(info, level); 
     info.text, info.arg1 = CHARMS_LIGHTFORGEDDRAENEI, 30; 
-    MSA_DropDownMenu_AddButton(info, level); 
+    UIDropDownMenu_AddButton(info, level); 
 	end
 end, "MENU");
 
@@ -141,7 +140,7 @@ DressUpFrameResetButton:SetScript("OnClick",function(self,event,arg1)
 end);
 
 DRF_button3:SetScript("OnClick",function(self,event,arg1)
-	MSA_ToggleDropDownMenu(1, nil, DRF_menu1, "cursor", 3, -3);
+	UIToggleDropDownMenu(1, nil, DRF_menu1, "cursor", 3, -3);
 end);
 
 ---------------------------------------------------------------daftDressUp

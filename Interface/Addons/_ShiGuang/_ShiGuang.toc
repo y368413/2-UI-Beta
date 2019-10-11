@@ -22,5 +22,3 @@ Config\Config.xml
 Libs\Libs.xml
 Modules\Modules.xml
 Plugins\Plugins.xml
-
-Aces\Aces.xml

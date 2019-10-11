@@ -348,14 +348,4 @@ function whoaPartyFrames()
 end
 hooksecurefunc("UnitFrame_Update", whoaPartyFrames)
 hooksecurefunc("PartyMemberFrame_ToPlayerArt", whoaPartyFrames)
-hooksecurefunc("TextStatusBar_UpdateTextStringWithValues", function()
-	for i = 1, 4 do
-		_G["PartyMemberFrame"..i.."HealthBarText"]:SetText(" ");
-		_G["PartyMemberFrame"..i.."HealthBarTextLeft"]:SetText(" ");
-		_G["PartyMemberFrame"..i.."HealthBarTextRight"]:SetText(" ");
-		_G["PartyMemberFrame"..i.."ManaBarText"]:SetText(" ");
-		_G["PartyMemberFrame"..i.."ManaBarTextLeft"]:SetText(" ");
-		_G["PartyMemberFrame"..i.."ManaBarTextRight"]:SetText(" ");
-	end
-end)
 --------------------------------------------------------------------------------------whoa end

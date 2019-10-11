@@ -157,9 +157,9 @@ function A:CreateLumos(self)
 	if not A.ChantLumos then return end
 
 	self.bu = {}
-	local iconSize = self.iconSize
+	local iconSize = R.Auras.IconSize
 	for i = 1, 5 do
-		local bu = CreateFrame("Frame", nil, self.Health)
+		local bu = CreateFrame("Frame", nil, self)
 		bu:SetSize(iconSize, iconSize)
 		M.AuraIcon(bu)
 		bu.glowFrame = M.CreateBG(bu, 4)
@@ -170,7 +170,7 @@ function A:CreateLumos(self)
 		fontParent:SetFrameLevel(bu:GetFrameLevel() + 5)
 		bu.Count = M.CreateFS(fontParent, 16, "", false, "BOTTOM", 0, -10)
 		if i == 1 then
-			bu:SetPoint("TOPLEFT", self.Power, "BOTTOMLEFT", 0, -5)
+			bu:SetPoint("TOPLEFT", self, "BOTTOMLEFT", 0, -6)
 		else
 			bu:SetPoint("LEFT", self.bu[i-1], "RIGHT", 2, 0)
 		end

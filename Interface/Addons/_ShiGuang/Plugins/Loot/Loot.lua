@@ -119,22 +119,3 @@ if event == 'START_LOOT_ROLL' then
 end
 if event == 'CONFIRM_LOOT_ROLL' then ConfirmLootRoll(id, rt) end
 end)
-
---[[local UnLootAlert = CreateFrame("Frame", "UnLootAlert")
-UnLootAlert:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-UnLootAlert:RegisterEvent("PLAYER_ENTERING_WORLD")
-UnLootAlert:SetScript("OnEvent", function(self, event, ...)
-  if event == "PLAYER_ENTERING_WORLD" or event == "ZONE_CHANGED_NEW_AREA" then
-    if select(2, IsInInstance()) == "raid" then
-    AlertFrame:UnregisterEvent('SHOW_LOOT_TOAST')
-    AlertFrame:UnregisterEvent('LOOT_ITEM_ROLL_WON')
-    AlertFrame:UnregisterEvent('SHOW_LOOT_TOAST_UPGRADE')
-    AlertFrame:UnregisterEvent('BONUS_ROLL_RESULT')
-    end
-  else
-    AlertFrame:RegisterEvent('SHOW_LOOT_TOAST')
-    AlertFrame:RegisterEvent('LOOT_ITEM_ROLL_WON')
-    AlertFrame:RegisterEvent('SHOW_LOOT_TOAST_UPGRADE')
-    AlertFrame:RegisterEvent('BONUS_ROLL_RESULT')
-  end
- end)]]

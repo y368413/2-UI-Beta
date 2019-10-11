@@ -18,7 +18,6 @@ local function addIcon(texture)
 end
 
 local menuFrame = CreateFrame("Frame", "SpecInfobarMenu", info, "UIDropDownMenuTemplate")
---local menuFrame = MSA_DropDownMenu_Create("SpecInfobarMenu", info)
 local menuList = {
 	{text = CHOOSE_SPECIALIZATION, isTitle = true, notCheckable = true},
 	{text = SPECIALIZATION, hasArrow = true, notCheckable = true},
