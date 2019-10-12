@@ -9,7 +9,7 @@
 ## Author: Ermad
 ## SavedVariables: AngryKeystones_Config, AngryKeystones_Data
 ## SavedVariablesPerCharacter: AngryKeystones_CharacterConfig
-## X-Packaged-Version: v0.18.0b
+## X-Packaged-Version: v0.18.1
 
 ## X-Repple: 2 UI
 
@@ -23,4 +23,3 @@ Keystone.lua
 Gossip.lua
 Splits.lua
 Schedule.lua
-## MGuildBest.lua

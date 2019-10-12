@@ -410,7 +410,7 @@ local function updateFriendsFrame()
 
 	for i = 1, #bnetTable do
 		local button = buttons[i+onlineFriends]
-		local _, accountName, charName, canCooperate, client, status, class, _, infoText = unpack(bnetTable[i])
+		local _, accountName, charName, canCooperate, client, status, class, level, infoText = unpack(bnetTable[i])
 
 		button.status:SetTexture(status)
 		local zoneColor = inactiveZone
@@ -418,7 +418,7 @@ local function updateFriendsFrame()
 		if client == BNET_CLIENT_WOW then
 			if canCooperate then
 				local color = I.ClassColors[class] or GetQuestDifficultyColor(1)
-				name = M.HexRGB(color)..charName
+				name = M.HexRGB(color)..charName.." "..level
 			end
 			zoneColor = GetRealZoneText() == infoText and activeZone or inactiveZone
 		end

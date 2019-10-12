@@ -19,8 +19,9 @@ function CIMI_UpdateTradeSkillIcons()
 
     for i, button in ipairs(buttons) do
         if button ~= nil and button.tradeSkillInfo ~= nil and button.tradeSkillInfo.recipeID ~= nil then
+            local recipeID = button.tradeSkillInfo.recipeID
             local text = button:GetText()
-            local itemLink = C_TradeSkillUI.GetRecipeItemLink(button.tradeSkillInfo.recipeID)
+            local itemLink = C_TradeSkillUI.GetRecipeItemLink(recipeID)
             if itemLink ~= nil then
                 --local icon = CanIMogIt:GetIconText(itemLink)
                 --if icon ~= nil and not string_starts(text, icon) then
