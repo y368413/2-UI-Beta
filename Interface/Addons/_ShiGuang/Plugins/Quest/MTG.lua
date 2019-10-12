@@ -786,7 +786,7 @@ function frame:ADDON_LOADED(event,...)
     if ShiGuangDB["j_BuyItemOption"] == nil then ShiGuangDB["j_BuyItemOption"] = 1 end --1购买普通物品  2不购买普通物品
     if ShiGuangDB["j_Markersize"] == nil then ShiGuangDB["j_Markersize"] = 26 end
     if ShiGuangDB["j_CheckTacoFirst"] == nil then ShiGuangDB["j_CheckTacoFirst"] = true end  --先检查玉米卷，然后再用玉米卷购买稀有品。
-    --if ShiGuangDB["MTGsetting"] == nil then ShiGuangDB["MTGsetting"] = {} end
+    if ShiGuangDB["MTGsetting"] == nil then ShiGuangDB["MTGsetting"] = {} end
     if ShiGuangDB["MTGsetting"][168053] == nil then ShiGuangDB["MTGsetting"][168053] = true end
     if ShiGuangDB["MTGsetting"][168091] == nil then ShiGuangDB["MTGsetting"][168091] = true end
     if ShiGuangDB["MTGsetting"][168092] == nil then ShiGuangDB["MTGsetting"][168092] = true end
@@ -826,11 +826,11 @@ MTG_OptionsFrame:SetScript("OnShow", function(self)
     if self.show then return end
 
     local guangao = MTG_OptionsFrame:CreateFontString(nil,"ARTWORK","GameFontNormalLarge")
-    guangao:SetPoint("TOPLEFT", 16, -16)
-    guangao:SetText(MTG_TITLE.." by JANY (v4.0.2-42-20190819)")
+    guangao:SetPoint("BOTTOMRIGHT", -16, 16)
+    guangao:SetText("by JANY (v4.0.2-42-20190819)")
 
     local dropDown = CreateFrame("FRAME", "WPDemoDropDown", MTG_OptionsFrame, "UIDropDownMenuTemplate")
-    dropDown:SetPoint("TOPLEFT", guangao, "BOTTOMLEFT", 310, -12)
+    dropDown:SetPoint("BOTTOMRIGHT", guangao, "TOPRIGHT", 0, 120)
     UIDropDownMenu_SetWidth(dropDown, 210)
     local j_fonts = {U["Buy normal items"],U["Don't buy normal items"]}
     UIDropDownMenu_SetText(dropDown,j_fonts[ShiGuangDB["j_BuyItemOption"]])
@@ -886,9 +886,9 @@ MTG_OptionsFrame:SetScript("OnShow", function(self)
     local count,countx=0,0
     for key,value in pairs(ShiGuangDB["MTGsetting"]) do
         count=count+1
-        if count>15 then countx,count=countx+1,0 end
+        if count>16 then countx,count=countx+1,0 end
         local MTG_button = CreateFrame("CheckButton", "MTG_Shielding_"..key, MTG_OptionsFrame, "InterfaceOptionsCheckButtonTemplate")
-        MTG_button:SetPoint("TOPLEFT", guangao, "BOTTOMLEFT", 21, -16-32*count)
+        MTG_button:SetPoint("TOPLEFT", 21, -16-32*count)
         getglobal(MTG_button:GetName().."Text"):SetText("|cFFad00c3"..GetItemInfo(key).."\n|r".."|cFF00FF00"..U[key])
         if value == true then MTG_button:SetChecked(true) else MTG_button:SetChecked(false) end
     end 

@@ -79,7 +79,7 @@ end
 local time = 0
 local onUpdate = function(self, elapsed)
 	time = time + elapsed
-	if time > 5 then
+	if time > 3 then
 		time = 0
 		self:scan()
 		self:SetScript('OnUpdate', nil)

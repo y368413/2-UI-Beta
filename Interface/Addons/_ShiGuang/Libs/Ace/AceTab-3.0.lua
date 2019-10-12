@@ -310,7 +310,7 @@ function AceTab:OnTabPressed(this)
 		end
 	end
 
-	if not firstMatch then 
+	if not firstMatch then
 		this.at3_last_precursor = "\0"
 		return true
 	end

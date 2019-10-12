@@ -232,3 +232,42 @@ for i = 1, NUM_CHAT_WINDOWS do
         chatFrame.AddMessage = AddMessage
     end
 end
+
+--AchievementFilter
+local achievements = {}
+local function achievementReady(id)
+	local area, guild = achievements[id].CHAT_MSG_ACHIEVEMENT, achievements[id].CHAT_MSG_GUILD_ACHIEVEMENT
+	if area and guild then -- merge area to guild
+		for name,class in pairs(area) do
+			if guild[name] == class then area[name] = nil end
+		end
+	end
+	for event,players in pairs(achievements[id]) do
+		if next(players) ~= nil then -- skip empty
+			local list = {}
+			for name,class in pairs(players) do
+				list[#list+1] = format("|c%s|Hplayer:%s|h%s|h|r", RAID_CLASS_COLORS[class].colorStr, name, name)
+			end
+			SendMessage(event, format("[%s]获得了成就%s！", table.concat(list, "、"), GetAchievementLink(id)))
+		end
+	end
+	achievements[id] = nil
+end
+
+local function achievementFilter(self, event, msg, _, _, _, _, _, _, _, _, _, _, guid)
+	if not guid or not guid:find("Player") then return end
+	local id = tonumber(msg:match("|Hachievement:(%d+)"))
+	if not id then return end
+	local _,class,_,_,_,name,server = GetPlayerInfoByGUID(guid)
+	if not name then return end -- check nil
+	if server ~= "" and server ~= playerServer then name = name.."-"..server end
+	if not achievements[id] then
+		achievements[id] = {}
+		C_Timer_After(0.5, function() achievementReady(id) end)
+	end
+	achievements[id][event] = achievements[id][event] or {}
+	achievements[id][event][name] = class
+	return true
+end
+ChatFrame_AddMessageEventFilter("CHAT_MSG_ACHIEVEMENT", achievementFilter)
+ChatFrame_AddMessageEventFilter("CHAT_MSG_GUILD_ACHIEVEMENT", achievementFilter)

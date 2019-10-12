@@ -27,6 +27,7 @@ local function DefaultSettings()
 	SetCVar("fstack_preferParentKeys", 0)
 	setglobal("MAX_EQUIPMENT_SETS_PER_PLAYER",100)
 	--CompactRaidFrameContainer:SetScale(0.85)
+	sendCmd("/console missingTransmogSourceInItemTooltips 1")
 end
 
 local function ForceDefaultSettings()
@@ -38,10 +39,14 @@ local function ForceDefaultSettings()
 	SetCVar("nameplateShowAll", 1)
 	SetCVar("nameplateMotion", 1)
 	SetCVar("nameplateShowFriendlyNPCs", 0)
+	SetCVar("showTutorials", 0)
 	SetCVar("ActionButtonUseKeyDown", 1)
 	SetCVar("alwaysShowActionBars", 1)
 	SetCVar("lockActionBars", 1)
 	SetActionBarToggles(1, 1, 0, 0)
+	SHOW_MULTI_ACTIONBAR_1="1" --左下方动作条 
+  SHOW_MULTI_ACTIONBAR_2="1" --右下方动作条 
+  InterfaceOptions_UpdateMultiActionBars() --刷新动作条
 	SetCVar("enableFloatingCombatText", 0)
 	SetCVar("floatingCombatTextCombatState", 0)
 	SetCVar("floatingCombatTextCombatDamage", 0)
@@ -69,28 +74,33 @@ local function ForceDefaultSettings()
 	SetCVar("doNotFlashLowHealthWarning", 1)
 	SetCVar("ffxGlow", 0)
 	SetCVar("autoQuestWatch", 1)
-	SetCVar("enableMouseSpeed", 0);
-	SetCVar("cameraYawMoveSpeed", 360); -- Maximum in-game: 270
+	--SetCVar("cameraYawMoveSpeed", 360); -- Maximum in-game: 270
 	SetCVar("statusText",1) --状态文字
 	SetCVar("statusTextDisplay","NUMERIC")--头像状态文字形式："NUMERIC"数值"PERCENT"百分比"BOTH"同时显示
-	SetCVar("showTutorials",0)
 	SetCVar("autoLootDefault",1) --自动拾取
 end
 
 local function ForceRaidFrame()
 	if not CompactUnitFrameProfiles.selectedProfile then return end
-	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "useClassColors", true)
-	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "displayPowerBar", false)
-	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "displayBorder", false)
+	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "useClassColors", true) --显示职业颜色
+	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "displayPowerBar", false) --显示能量条 
+	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "displayBorder", false) --显示边框
 	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "frameWidth", 160) --设置宽度
 	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "frameHeight", 21) --设置高度
-	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "autoActivate2Players", true)
-	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "autoActivate3Players", true)
-	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "autoActivate5Players", true)
-	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "autoActivate10Players", true)
-	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "autoActivate15Players", true)
-	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "autoActivate25Players", true)
-	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "autoActivate40Players", true)
+	--SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "autoActivate2Players", true)
+	--SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "autoActivate3Players", true)
+	--SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "autoActivate5Players", true)
+	--SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "autoActivate10Players", true)
+	--SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "autoActivate15Players", true)
+	--SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "autoActivate25Players", true)
+	--SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "autoActivate40Players", true)
+	--SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "keepGroupsTogether", true) --保持小队相连 
+	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "displayHealPrediction", true) --显示预计治疗 
+	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "displayAggroHighlight", true) --高亮显示仇恨目标 
+	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "displayPets", false) --显示宠物 
+	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "displayMainTankAndAssist", false) --显示主坦克和主助理 
+	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "displayOnlyDispellableDebuffs", true) --只显示可供驱散的负面
+  --SetRaidProfileSavedPosition(GetActiveRaidProfile(), false, "TOP", 440, "BOTTOM", 320, "LEFT", 0)	--团队框体位置 
 	CompactUnitFrameProfiles_ApplyCurrentSettings()
 	CompactUnitFrameProfiles_UpdateCurrentPanel()
 end
@@ -362,6 +372,7 @@ local function YesTutor()
 	  MaoRUIDB["BWRequest"] = true
 	  ForceAddonSkins()
 	    MaoRUIDB["ResetDetails"] = true 
+		MaoRUISettingDB["Tutorial"]["Complete"] = true
 end
 
 local welcome
@@ -408,12 +419,11 @@ local function HelloWorld()
 	LeftPic:SetScript("OnLeave", function(self) Sc(1) end)
 	LeftPic:SetScript("OnMouseUp", function(self) Sc(1) end)
 	LeftPic:SetScript("OnMouseDown", function(self) Sc(0.6) end)
-	LeftPic:SetScript("OnClick", function(self,Button)
-		ReloadUI()
+	LeftPic:SetScript("OnClick", function()
 		welcome:Hide()
 		YesTutor()
 		ShiGuangPerDB["BHT"] = true
-		MaoRUISettingDB["Tutorial"]["Complete"] = true
+		ReloadUI()
 	end)
 	SmallText1 = M:CreatStyleText(LeftPic, STANDARD_TEXT_FONT, 16, "OUTLINE", "[ 微美化界面 ]", "RIGHT",LeftPic,"LEFT",26,60, I.r, I.g, I.b)
 	SmallText2 = M:CreatStyleText(LeftPic, STANDARD_TEXT_FONT, 16, "OUTLINE", "[ 全职业适用无障碍 ]", "RIGHT",LeftPic,"LEFT",26,20, I.r, I.g, I.b)
@@ -432,7 +442,6 @@ local function HelloWorld()
 		welcome:Hide()
 		YesTutor()
 		ShiGuangPerDB["BHT"] = false
-		MaoRUISettingDB["Tutorial"]["Complete"] = true
 		ReloadUI()
   end)
 	SmallText1 = M:CreatStyleText(LeftPic, STANDARD_TEXT_FONT, 16, "OUTLINE", "[ BFA 8.2.5 v "..GetAddOnMetadata("_ShiGuang", "Version").." ]", "LEFT",RightPic,"RIGHT",-26,60, I.r, I.g, I.b)
@@ -494,8 +503,8 @@ local function HelloWorld()
 	PlayerModel:SetRotation(0)
 	PlayerModel.rotation = 0
 end
-SlashCmdList["ShiGuang"] = HelloWorld
-SLASH_ShiGuang1 = "/loadmr"
+SlashCmdList["SHIGUANG"] = HelloWorld
+SLASH_SHIGUANG1 = "/loadmr"
 
 -----------------------------------------
 function module:OnLogin()
@@ -508,7 +517,7 @@ function module:OnLogin()
 	
 	if not MaoRUISettingDB["Tutorial"]["Complete"] then HelloWorld() end
 			
-	if (ShiGuangPerDB.BHT == true) then
+	if (ShiGuangPerDB["BHT"] == true) then
 	      sendCmd("/bht on")
 	      PlayerFrame:SetAlpha(0)
 	      TargetFrame:SetAlpha(0)  	      
@@ -518,6 +527,5 @@ function module:OnLogin()
         TargetFrame:SetAlpha(1)
 	  end
 	
-	if MaoRUISettingDB["Chat"]["Lock"] then ForceChatSettings() end
-	sendCmd("/console missingTransmogSourceInItemTooltips 1")
+	--if MaoRUISettingDB["Chat"]["Lock"] then ForceChatSettings() end
 end

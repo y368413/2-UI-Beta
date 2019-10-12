@@ -13,12 +13,12 @@ end
 
 function BaudErrorFrame_OnLoad(self)
 	self:RegisterEvent("VARIABLES_LOADED")
-		RegisterTaintEvents(self)
+		RegisterTaintEvents(self)  --enableTaint
 
-    UIParent:UnregisterEvent("MACRO_ACTION_BLOCKED")
-    UIParent:UnregisterEvent("ADDON_ACTION_BLOCKED")
-    UIParent:UnregisterEvent("MACRO_ACTION_FORBIDDEN")
-    UIParent:UnregisterEvent("ADDON_ACTION_FORBIDDEN")
+	UIParent:UnregisterEvent("MACRO_ACTION_BLOCKED")
+	UIParent:UnregisterEvent("ADDON_ACTION_BLOCKED")
+	UIParent:UnregisterEvent("MACRO_ACTION_FORBIDDEN")
+	UIParent:UnregisterEvent("ADDON_ACTION_FORBIDDEN")
 
 	tinsert(UISpecialFrames, self:GetName())
 	SlashCmdList["BaudErrorFrame"] = function()

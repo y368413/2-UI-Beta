@@ -654,7 +654,7 @@
 	<Script file="iBuffs.lua"/>
 	<Script file="PartyTarget.lua"/>
 	<Script file="PartyCastbar.lua"/>
-	<Script file="PetTarget.lua"/>
+	<!--Script file="PetTarget.lua"/-->
 	<Script file="UnitFramesStyle.lua"/>
 	<Script file="WhoaThickFrames.lua"/>
 	<Script file="ColorFrames.lua"/>

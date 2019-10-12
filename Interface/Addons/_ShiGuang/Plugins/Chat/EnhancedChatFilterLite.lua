@@ -259,7 +259,11 @@ local function achievementReady(id)
 			for name,class in pairs(players) do
 				list[#list+1] = format("|c%s|Hplayer:%s|h%s|h|r", RAID_CLASS_COLORS[class].colorStr, name, name)
 			end
-			SendMessage(event, format("[%s]获得了成就%s！", tconcat(list, "、"), GetAchievementLink(id)))
+			if GetLocale() == "zhTW" then
+			  SendMessage(event, format("[%s]獲得了成就%s！", tconcat(list, "、"), GetAchievementLink(id)))
+			elseif GetLocale() == "zhCN" then
+			  SendMessage(event, format("[%s]获得了成就%s！", tconcat(list, "、"), GetAchievementLink(id)))
+			end
 		end
 	end
 	achievements[id] = nil
@@ -282,5 +286,3 @@ local function achievementFilter(self, event, msg, _, _, _, _, _, _, _, _, _, _,
 end
 ChatFrame_AddMessageEventFilter("CHAT_MSG_ACHIEVEMENT", achievementFilter)
 ChatFrame_AddMessageEventFilter("CHAT_MSG_GUILD_ACHIEVEMENT", achievementFilter)
-
-

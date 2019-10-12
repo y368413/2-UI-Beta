@@ -856,6 +856,7 @@ local function InviteOrGroup(clickedgroup, invite)
 		end
 	end
 end
+
 local frame = CreateFrame("Frame")
 frame:RegisterEvent("PLAYER_LOGIN")
 frame:SetScript("OnEvent", function(self, event, ...)

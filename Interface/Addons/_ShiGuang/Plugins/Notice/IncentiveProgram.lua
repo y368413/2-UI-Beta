@@ -633,7 +633,7 @@ local IncentiveProgramMenu = {
         end
         
         if ( fromDropDownMenu ) then
-            UIToggleDropDownMenu(1, nil, IncentiveProgram:GetFrame():GetUIMenuFrame(), IncentiveProgram:GetFrame():GetAnchorFrame() or IncentiveProgram:GetFrame():GetUIFrame(), 0, 0) --Close context menu and lock until LFGRoles reset
+            ToggleDropDownMenu(1, nil, IncentiveProgram:GetFrame():GetUIMenuFrame(), IncentiveProgram:GetFrame():GetAnchorFrame() or IncentiveProgram:GetFrame():GetUIFrame(), 0, 0) --Close context menu and lock until LFGRoles reset
         end
     end
 }
@@ -895,12 +895,12 @@ local IncentiveProgramFrame = {
             self:GetUIMenuFrame().point = "BOTTOMLEFT"
             self:GetUIMenuFrame().relativeTo = anchorFrame
             self:GetUIMenuFrame().relativePoint = "TOPRIGHT"
-            UIToggleDropDownMenu(1, nil, self:GetUIMenuFrame(), anchorFrame, 0, 0)
+            ToggleDropDownMenu(1, nil, self:GetUIMenuFrame(), anchorFrame, 0, 0)
         elseif ( button == "RightButton" ) then
             self:GetUIMenuFrame().point = "BOTTOMLEFT"
             self:GetUIMenuFrame().relativeTo = anchorFrame
             self:GetUIMenuFrame().relativePoint = "TOPRIGHT"
-            UIToggleDropDownMenu(1, nil, self:GetUIMenuFrame(), anchorFrame, 0, 0)
+            ToggleDropDownMenu(1, nil, self:GetUIMenuFrame(), anchorFrame, 0, 0)
         end
     end,
 

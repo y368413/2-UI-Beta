@@ -126,7 +126,6 @@ end
 function module:UpdateAddOnBlocker(event, msg, author)
 	local name = Ambiguate(author, "none")
 	if UnitIsUnit(name, "player") then return end
-
 	for _, word in ipairs(addonBlockList) do
 		if strfind(msg, word) then
 			if event == "CHAT_MSG_SAY" or event == "CHAT_MSG_YELL" then
@@ -247,8 +246,6 @@ function module:ChatFilter()
 		ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", self.UpdateChatFilter)
 		ChatFrame_AddMessageEventFilter("CHAT_MSG_EMOTE", self.UpdateChatFilter)
 		ChatFrame_AddMessageEventFilter("CHAT_MSG_TEXT_EMOTE", self.UpdateChatFilter)
-		ChatFrame_AddMessageEventFilter("CHAT_MSG_RAID", self.UpdateChatFilter)
-		ChatFrame_AddMessageEventFilter("CHAT_MSG_RAID_LEADER", self.UpdateChatFilter)
 	end
 
 	if MaoRUISettingDB["Chat"]["BlockAddonAlert"] then
@@ -285,95 +282,3 @@ function module:ChatFilter()
 	end
 	M:RegisterEvent("PLAYER_ENTERING_WORLD", isPlayerOnIslands)
 end
-
---MonsterSayFilter
---Turn off MSF in certain quests. Chat msg are repeated but important in these quests.
-local MSFOffQuestT = {[42880] = true, [54090]=true,} -- 42880: Meeting their Quota; 54090: Toys For Destruction
-local MSFOffQuestFlag = false
-
---TODO: If player uses hearthstone to leave questzone, QUEST_REMOVED is not fired.
-local Questf = CreateFrame("Frame")
-Questf:RegisterEvent("QUEST_ACCEPTED")
-Questf:RegisterEvent("QUEST_REMOVED")
-Questf:SetScript("OnEvent", function(self,event,arg1,arg2)
-	if event == "QUEST_ACCEPTED" and MSFOffQuestT[arg2] then MSFOffQuestFlag = true end
-	if event == "QUEST_REMOVED" and MSFOffQuestT[arg1] then MSFOffQuestFlag = false end
-end)
-
-local MSL, MSLPos = {}, 1
-local function monsterFilter(self,_,msg)
-	if MSFOffQuestFlag then return end
-	for _, v in ipairs(MSL) do if v == msg then return true end end
-	MSL[MSLPos] = msg
-	MSLPos = MSLPos + 1
-	if MSLPos > 7 then MSLPos = MSLPos - 7 end
-end
-ChatFrame_AddMessageEventFilter("CHAT_MSG_MONSTER_SAY", monsterFilter)
-ChatFrame_AddMessageEventFilter("CHAT_MSG_MONSTER_EMOTE", monsterFilter)
-
---SystemMessage
-local SystemFilterTag = {
-	-- !!! Always add parentheses since gsub() has two return values !!!
-	(ERR_LEARN_ABILITY_S:gsub("%%s","(.*)")),
-	(ERR_LEARN_SPELL_S:gsub("%%s","(.*)")),
-	(ERR_SPELL_UNLEARNED_S:gsub("%%s","(.*)")),
-	(ERR_LEARN_PASSIVE_S:gsub("%%s","(.*)")),
-	(ERR_PET_SPELL_UNLEARNED_S:gsub("%%s","(.*)")),
-	(ERR_PET_LEARN_ABILITY_S:gsub("%%s","(.*)")),
-	(ERR_PET_LEARN_SPELL_S:gsub("%%s","(.*)")),
-}
-local function systemMsgFilter(self,_,msg)
-	for _, s in ipairs(SystemFilterTag) do if msg:find(s) then return true end end
-end
-if UnitLevel("player") == GetMaxPlayerLevel() then ChatFrame_AddMessageEventFilter("CHAT_MSG_SYSTEM", systemMsgFilter) end
-
-
-local function SendMessage(event, msg)
-	local info = ChatTypeInfo[event:sub(10)]
-	for i = 1, NUM_CHAT_WINDOWS do
-		local ChatFrames = _G["ChatFrame"..i]
-		if ChatFrames and ChatFrames:IsEventRegistered(event) then
-			ChatFrames:AddMessage(msg, info.r, info.g, info.b)
-		end
-	end
-end
-
-
---AchievementFilter
-local achievements = {}
-local function achievementReady(id)
-	local area, guild = achievements[id].CHAT_MSG_ACHIEVEMENT, achievements[id].CHAT_MSG_GUILD_ACHIEVEMENT
-	if area and guild then -- merge area to guild
-		for name,class in pairs(area) do
-			if guild[name] == class then area[name] = nil end
-		end
-	end
-	for event,players in pairs(achievements[id]) do
-		if next(players) ~= nil then -- skip empty
-			local list = {}
-			for name,class in pairs(players) do
-				list[#list+1] = format("|c%s|Hplayer:%s|h%s|h|r", RAID_CLASS_COLORS[class].colorStr, name, name)
-			end
-			SendMessage(event, format("[%s]获得了成就%s！", table.concat(list, "、"), GetAchievementLink(id)))
-		end
-	end
-	achievements[id] = nil
-end
-
-local function achievementFilter(self, event, msg, _, _, _, _, _, _, _, _, _, _, guid)
-	if not guid or not guid:find("Player") then return end
-	local id = tonumber(msg:match("|Hachievement:(%d+)"))
-	if not id then return end
-	local _,class,_,_,_,name,server = GetPlayerInfoByGUID(guid)
-	if not name then return end -- check nil
-	if server ~= "" and server ~= playerServer then name = name.."-"..server end
-	if not achievements[id] then
-		achievements[id] = {}
-		C_Timer_After(0.5, function() achievementReady(id) end)
-	end
-	achievements[id][event] = achievements[id][event] or {}
-	achievements[id][event][name] = class
-	return true
-end
-ChatFrame_AddMessageEventFilter("CHAT_MSG_ACHIEVEMENT", achievementFilter)
-ChatFrame_AddMessageEventFilter("CHAT_MSG_GUILD_ACHIEVEMENT", achievementFilter)

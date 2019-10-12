@@ -332,7 +332,7 @@ AceDB.frame:SetScript("OnEvent", logoutHandler)
 
 function DBObjectLib:RegisterDefaults(defaults)
 	if defaults and type(defaults) ~= "table" then
-		error("Usage: AceDBObject:RegisterDefaults(defaults): 'defaults' - table or nil expected.", 2)
+		error(("Usage: AceDBObject:RegisterDefaults(defaults): 'defaults' - table or nil expected, got %q."):format(type(defaults)), 2)
 	end
 
 	validateDefaults(defaults, self.keys)
