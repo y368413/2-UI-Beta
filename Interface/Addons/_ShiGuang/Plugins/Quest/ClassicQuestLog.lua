@@ -204,25 +204,25 @@ function cql:UpdateLog()
       end
    end
 
-	-- next flag quests to be removed due to collapsed headers (can't tremove since have to loop forward)
-	local skipping
-	for index=1,#cql.quests do
-		if cql.quests[index][5] then -- this is a header
-			skipping = ShiGuangPerDB[cql.quests[index][2]] -- [2] is questTitle
-			cql.quests[index][6] = skipping -- update isCollapsed to reflect our version (which is independent of default's state)
-			if not skipping then
-				cql.expanded = true -- at least one header is expanded (for all quest +/- choice)
-			end
-		elseif skipping then
-			cql.quests[index] = false
-		end
-	end
-	-- then strip out flagged quests (doing this afterwards since we need to tremove backwards)
-	for index=#cql.quests,1,-1 do
-		if cql.quests[index]==false then
-			tremove(cql.quests,index)
-		end
-	end
+   -- next flag quests to be removed due to collapsed headers (can't tremove since have to loop forward)
+   local skipping
+   for index=1,#cql.quests do
+      if cql.quests[index][5] then -- this is a header
+         skipping = ShiGuangPerDB[cql.quests[index][2]] -- [2] is questTitle
+         cql.quests[index][6] = skipping -- update isCollapsed to reflect our version (which is independent of default's state)
+         if not skipping then
+            cql.expanded = true -- at least one header is expanded (for all quest +/- choice)
+         end
+      elseif skipping then
+         cql.quests[index] = false
+      end
+   end
+   -- then strip out flagged quests (doing this afterwards since we need to tremove backwards)
+   for index=#cql.quests,1,-1 do
+      if cql.quests[index]==false then
+         tremove(cql.quests,index)
+      end
+   end
 
    -- if player is in a war campaign then add a fake header
    local warCampaignHeader = cql:GetWarCampaignHeader()
@@ -398,7 +398,7 @@ function cql:UpdateQuestDetail()
    local questPortrait, questPortraitText, questPortraitName, questPortraitMount = GetQuestLogPortraitGiver();
    if (questPortrait and questPortrait ~= 0 and QuestLogShouldShowPortrait()) then
       -- only show quest portrait if it's not already shown
-	  if QuestNPCModel:GetParent()~=ClassicQuestLog or not QuestNPCModel:IsVisible() or cql.questPortrait~=questPortrait then
+	  if QuestNPCModel and (QuestNPCModel:GetParent()~=ClassicQuestLog or not QuestNPCModel:IsVisible() or cql.questPortrait~=questPortrait) then
 		QuestFrame_ShowQuestPortrait(ClassicQuestLog, questPortrait, questPortraitMount, questPortraitText, questPortraitName, -3, -42)
          cql.questPortrait = questPortrait
       end
@@ -414,7 +414,7 @@ function cql:ListEntryOnClick()
    if self.index==0 then
 		return -- this is a fake header/war campaign; don't do anything
 		elseif self.isHeader then
-		ShiGuangPerDB[self.questTitle] = not ShiGuangPerDB[self.questTitle] or nil
+      ShiGuangPerDB[self.questTitle] = not ShiGuangPerDB[self.questTitle] or nil
    else
       if IsModifiedClick("CHATLINK") and ChatEdit_GetActiveWindow() then
          local link = GetQuestLink(self.questID)

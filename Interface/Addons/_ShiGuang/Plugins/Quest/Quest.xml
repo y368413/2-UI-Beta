@@ -168,6 +168,9 @@
 							StaticPopup_Show("ABANDON_QUEST", GetAbandonQuestName());
 						end
 					</OnClick>
+					<OnEnter>
+						GameTooltip_AddNewbieTip(self, ABANDON_QUEST, 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_ABANDONQUEST, 1);
+					</OnEnter>
 					<OnLeave function="GameTooltip_Hide"/>
 				</Scripts>
 			</Button>
@@ -181,6 +184,9 @@
 						QuestLogPushQuest()
 						PlaySound(PlaySoundKitID and "igQuestLogOpen" or SOUNDKIT.IG_QUEST_LOG_OPEN)
 					</OnClick>
+					<OnEnter>
+						GameTooltip_AddNewbieTip(self, SHARE_QUEST, 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_SHAREQUEST, 1)
+					</OnEnter>
 					<OnLeave function="GameTooltip_Hide"/>
 				</Scripts>
 			</Button>
@@ -193,6 +199,9 @@
 					<OnClick>
 						ClassicQuestLog:ToggleWatch()
 					</OnClick>
+					<OnEnter>
+						GameTooltip_AddNewbieTip(self, TRACK_QUEST, 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_TRACKQUEST, 1)
+					</OnEnter>
 					<OnLeave function="GameTooltip_Hide"/>
 				</Scripts>
 			</Button>
