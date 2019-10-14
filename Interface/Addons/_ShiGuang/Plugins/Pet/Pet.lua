@@ -218,7 +218,7 @@ function frame:HideTickTooltip()
 end
 
 
---[[ Cloudy Pet Collected ## Author: Cloudyfa ## Version: 1.7 ]]
+--[[ Cloudy Pet Collected ## Author: Cloudyfa ## Version: 1.8 ]]
 --- Pet String Calculation ---
 local function GetPetString(name)
 	if (not name) or (name == '') then return end

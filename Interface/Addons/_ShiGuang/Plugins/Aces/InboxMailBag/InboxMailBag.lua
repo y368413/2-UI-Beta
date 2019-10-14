@@ -2,9 +2,6 @@
 --  ... finer detail for how long items may stay in the inbox
 --  ... PUSH_ITEM event based queue operation
 
-local _, ns = ...
-local M, R, U, I = unpack(ns)
-
 NUM_BAGITEMS_PER_ROW = 6;
 NUM_BAGITEMS_ROWS = 7;
 
@@ -574,7 +571,7 @@ end
 function InboxMailbagTab_Create()
 	local index = MailFrame.numTabs + 1;
 	
-	MB_Tab = CreateFrame("ItemButton", "MailFrameTab"..index, _G["MailFrame"], "MailFrameTabInboxMailbagTemplate", index);
+	MB_Tab = CreateFrame("Button", "MailFrameTab"..index, _G["MailFrame"], "MailFrameTabInboxMailbagTemplate", index);
 	MB_Tab:SetPoint("LEFT", _G["MailFrameTab"..MailFrame.numTabs], "RIGHT", -8, 0);
 	
 	-- We want to run our frame's inherited OnShow first

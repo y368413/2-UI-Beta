@@ -127,9 +127,9 @@
 			<OnEvent function="InboxMailbag_OnEvent"/>
 		</Scripts>
 	</Frame>
-	<ItemButton name="MailFrameTabInboxMailbagTemplate" inherits="FriendsFrameTabTemplate" text="MB_BAGNAME" virtual="true">
+	<Button name="MailFrameTabInboxMailbagTemplate" inherits="FriendsFrameTabTemplate" text="MB_BAGNAME" virtual="true">
 		<Scripts>
 			<OnClick function="InboxMailbagTab_OnClick"/>
 		</Scripts>
-	</ItemButton>
+	</Button>
 </Ui>

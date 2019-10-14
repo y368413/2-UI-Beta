@@ -23,22 +23,6 @@ local INVITE_RESTRICTION_WOW_PROJECT_MAINLINE = 7
 local INVITE_RESTRICTION_WOW_PROJECT_CLASSIC = 8
 local INVITE_RESTRICTION_NONE = 9
 local INVITE_RESTRICTION_MOBILE = 10
-
--- classic and retails use different values for restrictions
-if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
-	INVITE_RESTRICTION_NO_GAME_ACCOUNTS = 0
-	INVITE_RESTRICTION_CLIENT = 1
-	INVITE_RESTRICTION_LEADER = 2
-	INVITE_RESTRICTION_FACTION = 3
-	INVITE_RESTRICTION_REALM = nil
-	INVITE_RESTRICTION_INFO = 4
-	INVITE_RESTRICTION_WOW_PROJECT_ID = 5
-	INVITE_RESTRICTION_WOW_PROJECT_MAINLINE = 6
-	INVITE_RESTRICTION_WOW_PROJECT_CLASSIC = 7
-	INVITE_RESTRICTION_NONE = 8
-	INVITE_RESTRICTION_MOBILE = 9
-end
-
 local ONE_YEAR = 12 * 30 * 24 * 60 * 60
 local FriendButtons = { count = 0 }
 local GroupCount = 0
@@ -57,7 +41,11 @@ else
 	FriendButtonTemplate = "FriendsFrameButtonTemplate"
 end
 
-local function ClassColourCode(class,table)
+local function ClassColourCode(class, canCooperate, returnTable)
+	if not canCooperate then
+		return returnTable and FRIENDS_GRAY_COLOR or string.format("|cFF%02x%02x%02x", FRIENDS_GRAY_COLOR.r*255, FRIENDS_GRAY_COLOR.g*255, FRIENDS_GRAY_COLOR.b*255)
+	end
+
 	local initialClass = class
 	for k, v in pairs(LOCALIZED_CLASS_NAMES_FEMALE) do
 		if class == v then
@@ -73,8 +61,8 @@ local function ClassColourCode(class,table)
 			end
 		end
 	end
-	local colour = RAID_CLASS_COLORS[class]
-	if table then
+	local colour = class ~= "" and RAID_CLASS_COLORS[class] or FRIENDS_GRAY_COLOR
+	if returnTable then
 		return colour
 	else
 		return string.format("|cFF%02x%02x%02x", colour.r*255, colour.g*255, colour.b*255)
@@ -172,7 +160,6 @@ local function FriendGroups_GetBNetButtonNameText(accountName, client, canCoop, 
 
 	-- append character name
 	if characterName then
-
 		local coopLabel = ""
 		if not canCoop then
 			coopLabel = CANNOT_COOPERATE_LABEL
@@ -184,7 +171,7 @@ local function FriendGroups_GetBNetButtonNameText(accountName, client, canCoop, 
 			characterNameSuffix= level.." "..coopLabel
 		end
 		if client == BNET_CLIENT_WOW then
-			local nameColor = ClassColourCode(class) or FRIENDS_WOW_NAME_COLOR
+			local nameColor = ClassColourCode(class, canCoop)
 			nameText = nameText.." "..nameColor.."("..characterNameSuffix..characterName..")"..FONT_COLOR_CODE_CLOSE
 		else
 			if ENABLE_COLORBLIND_MODE == "1" then
@@ -222,7 +209,7 @@ local function FriendGroups_UpdateFriendButton(button)
 			else
 				button.status:SetTexture(FRIENDS_TEXTURE_ONLINE)
 			end
-			nameColor = ClassColourCode(info.className,true)  --nameColor = FRIENDS_WOW_NAME_COLOR
+			nameColor = ClassColourCode(info.className, CanCooperateWithGameAccount(C_BattleNet.GetFriendAccountInfo(FriendButtons[index].id)), true) or FRIENDS_WOW_NAME_COLOR
 			nameText = info.name..", "..format(FRIENDS_LEVEL_TEMPLATE, info.level, info.className)
 			infoText = GetOnlineInfoText(BNET_CLIENT_WOW, info.mobile, info.rafLinkType, info.area)
 		else
@@ -396,8 +383,12 @@ local function FriendGroups_UpdateFriendButton(button)
 		button:Hide()
 	end
 	-- update the tooltip if hovering over a button
-	if (FriendsTooltip.button == button) or (GetMouseFocus() == button) then
-		button:OnEnter()
+	if ( FriendsTooltip.button == button ) or ( GetMouseFocus() == button ) then
+		if FriendsFrameTooltip_Show then
+			FriendsFrameTooltip_Show(button)
+		else
+			button:OnEnter()
+		end
 	end
 	return height
 end
@@ -490,13 +481,17 @@ end
 
 local function FriendGroups_Update(forceUpdate)
 	local numBNetTotal, numBNetOnline, numBNetFavorite, numBNetFavoriteOnline = BNGetNumFriends()
+	numBNetFavorite = numBNetFavorite or 0
+	numBNetFavoriteOnline = numBNetFavoriteOnline or 0
 	local numBNetOffline = numBNetTotal - numBNetOnline
 	local numBNetFavoriteOffline = numBNetFavorite - numBNetFavoriteOnline
 	local numWoWTotal = C_FriendList.GetNumFriends()
 	local numWoWOnline = C_FriendList.GetNumOnlineFriends()
 	local numWoWOffline = numWoWTotal - numWoWOnline
 
-	QuickJoinToastButton:UpdateDisplayedFriendCount()
+	if QuickJoinToastButton then
+		QuickJoinToastButton:UpdateDisplayedFriendCount()
+	end
 	if ( not FriendsListFrame:IsShown() and not forceUpdate) then
 		return
 	end
@@ -541,7 +536,6 @@ local function FriendGroups_Update(forceUpdate)
 				AddButtonInfo(FRIENDS_BUTTON_TYPE_INVITE, i)
 			end
 		end
-		
 	end
 
 	-- favorite friends online
@@ -779,6 +773,43 @@ local function FriendGroups_Update(forceUpdate)
 	FriendGroups_UpdateFriends()
 end
 
+
+local function InviteOrGroup(clickedgroup, invite)
+	local groups = {}
+	for i = 1, BNGetNumFriends() do
+		local presenceID, _, _, _, _, toonID, _, _, _, _, _, _, noteText = BNGetFriendInfo(i)
+		local note = NoteAndGroups(noteText, groups)
+		if groups[clickedgroup] then
+			if invite and toonID then
+				BNInviteFriend(toonID)
+			elseif not invite then
+				groups[clickedgroup] = nil
+				note = CreateNote(note, groups)
+				BNSetFriendNote(presenceID, note)
+			end
+		end
+	end
+	for i = 1, C_FriendList.GetNumFriends() do
+		local friend_info = C_FriendList.GetFriendInfoByIndex(i)
+		local name = friend_info.name
+		local connected = friend_info.connected
+		local noteText = friend_info.notes
+		local note = NoteAndGroups(noteText, groups)
+		if groups[clickedgroup] then
+			if invite and connected then
+				InviteUnit(name)
+			elseif not invite then
+				groups[clickedgroup] = nil
+				note = CreateNote(note, groups)
+				SetFriendNotes(i, note)
+			end
+		end
+	end
+end
+
+local frame = CreateFrame("Frame")
+frame:RegisterEvent("PLAYER_LOGIN")
+
 local function FriendGroups_OnClick(self, button)
 	if self["text"] and not self.text:IsShown() then
 		hooks["FriendsFrameFriendButton_OnClick"](self, button)
@@ -824,41 +855,6 @@ local function HookButtons()
 	end
 end
 
-local function InviteOrGroup(clickedgroup, invite)
-	local groups = {}
-	for i = 1, BNGetNumFriends() do
-		local presenceID, _, _, _, _, toonID, _, _, _, _, _, _, noteText = BNGetFriendInfo(i)
-		local note = NoteAndGroups(noteText, groups)
-		if groups[clickedgroup] then
-			if invite and toonID then
-				BNInviteFriend(toonID)
-			elseif not invite then
-				groups[clickedgroup] = nil
-				note = CreateNote(note, groups)
-				BNSetFriendNote(presenceID, note)
-			end
-		end
-	end
-	for i = 1, C_FriendList.GetNumFriends() do
-		local friend_info = C_FriendList.GetFriendInfoByIndex(i)
-		local name = friend_info.name
-		local connected = friend_info.connected
-		local noteText = friend_info.notes
-		local note = NoteAndGroups(noteText, groups)
-		if groups[clickedgroup] then
-			if invite and connected then
-				InviteUnit(name)
-			elseif not invite then
-				groups[clickedgroup] = nil
-				note = CreateNote(note, groups)
-				SetFriendNotes(i, note)
-			end
-		end
-	end
-end
-
-local frame = CreateFrame("Frame")
-frame:RegisterEvent("PLAYER_LOGIN")
 frame:SetScript("OnEvent", function(self, event, ...)
     --if not MaoRUISettingDB["Misc"]["FriendGroups"] then self:UnregisterAllEvents() return end
 	if event == "PLAYER_LOGIN" then
@@ -885,6 +881,5 @@ frame:SetScript("OnEvent", function(self, event, ...)
 
         if ShiGuangDB["FriendGroupsCollapsed"] == nil then ShiGuangDB["FriendGroupsCollapsed"] = {} end
         if ShiGuangDB["FriendGroupsHideOffline"] == nil then ShiGuangDB["FriendGroupsHideOffline"] = true end
-        --if ShiGuangDB["FriendGroupsColourClasses"] == nil then ShiGuangDB["FriendGroupsColourClasses"] = true end
     end
 end)
