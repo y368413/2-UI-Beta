@@ -1,4 +1,4 @@
---## Author: Mikeprod  ## Version: 8.2.5
+--## Author: Mikeprod  ## Version: 8.2.5-2-g07582cf
 local hooks = {}
 
 local function Hook(source, target, secure)
@@ -41,8 +41,8 @@ else
 	FriendButtonTemplate = "FriendsFrameButtonTemplate"
 end
 
-local function ClassColourCode(class, canCooperate, returnTable)
-	if not canCooperate then
+local function ClassColourCode(class, returnTable)
+	if not class then
 		return returnTable and FRIENDS_GRAY_COLOR or string.format("|cFF%02x%02x%02x", FRIENDS_GRAY_COLOR.r*255, FRIENDS_GRAY_COLOR.g*255, FRIENDS_GRAY_COLOR.b*255)
 	end
 
@@ -171,7 +171,7 @@ local function FriendGroups_GetBNetButtonNameText(accountName, client, canCoop, 
 			characterNameSuffix= level.." "..coopLabel
 		end
 		if client == BNET_CLIENT_WOW then
-			local nameColor = ClassColourCode(class, canCoop)
+			local nameColor = ClassColourCode(class)
 			nameText = nameText.." "..nameColor.."("..characterNameSuffix..characterName..")"..FONT_COLOR_CODE_CLOSE
 		else
 			if ENABLE_COLORBLIND_MODE == "1" then
@@ -209,7 +209,7 @@ local function FriendGroups_UpdateFriendButton(button)
 			else
 				button.status:SetTexture(FRIENDS_TEXTURE_ONLINE)
 			end
-			nameColor = ClassColourCode(info.className, CanCooperateWithGameAccount(C_BattleNet.GetFriendAccountInfo(FriendButtons[index].id)), true) or FRIENDS_WOW_NAME_COLOR
+			nameColor = ClassColourCode(info.className, true) or FRIENDS_WOW_NAME_COLOR
 			nameText = info.name..", "..format(FRIENDS_LEVEL_TEMPLATE, info.level, info.className)
 			infoText = GetOnlineInfoText(BNET_CLIENT_WOW, info.mobile, info.rafLinkType, info.area)
 		else
@@ -876,6 +876,7 @@ frame:SetScript("OnEvent", function(self, event, ...)
 		FriendsScrollFrame.buttons[1]:SetHeight(FRIENDS_FRAME_FRIENDS_FRIENDS_HEIGHT)
 		HybridScrollFrame_CreateButtons(FriendsScrollFrame, FriendButtonTemplate)
 
+		--table.remove(UnitPopupMenus["BN_FRIEND"], 5) --remove target option
 		
 		HookButtons()
 

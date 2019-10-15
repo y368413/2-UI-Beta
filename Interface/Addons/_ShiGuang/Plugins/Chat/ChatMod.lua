@@ -1,4 +1,4 @@
-﻿local strfind, strrep, strmatch, pairs = string.find, string.rep, string.match, pairs
+﻿local strfind, strrep, strmatch, pairs, C_Timer_After = string.find, string.rep, string.match, pairs, C_Timer.After
 --[[--------------------------------------------------------------------
 	ChatLinkTooltips	Written by Junxx EU-Khaz'goroth <addons@colordesigns.de>
 ----------------------------------------------------------------------]]

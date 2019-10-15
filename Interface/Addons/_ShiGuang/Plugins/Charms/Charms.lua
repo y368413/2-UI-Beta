@@ -140,7 +140,7 @@ DressUpFrameResetButton:SetScript("OnClick",function(self,event,arg1)
 end);
 
 DRF_button3:SetScript("OnClick",function(self,event,arg1)
-	UIToggleDropDownMenu(1, nil, DRF_menu1, "cursor", 3, -3);
+	ToggleDropDownMenu(1, nil, DRF_menu1, "cursor", 3, -3);
 end);
 
 ---------------------------------------------------------------daftDressUp
