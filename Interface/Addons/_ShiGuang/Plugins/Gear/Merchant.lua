@@ -59,6 +59,50 @@ TrainAll:SetScript("OnEvent", function(self, event, addon)
 	end
 end)
 
+----------------------------------------------------------------------------------------
+--	Enchantment scroll on TradeSkill frame(OneClickEnchantScroll by Sara.Festung)
+----------------------------------------------------------------------------------------
+local OneClickEnchantScroll = CreateFrame("Frame")
+OneClickEnchantScroll:RegisterEvent("ADDON_LOADED")
+OneClickEnchantScroll:SetScript("OnEvent", function(self, event, addon)
+	if addon == "Blizzard_TradeSkillUI" and not IsAddOnLoaded("OneClickEnchantScroll") then
+		local button = CreateFrame("Button", "TradeSkillCreateScrollButton", TradeSkillFrame, "MagicButtonTemplate")
+		button:SetPoint("TOPRIGHT", TradeSkillFrame.DetailsFrame.CreateButton, "TOPLEFT")
+		button:SetScript("OnClick", function()
+			C_TradeSkillUI.CraftRecipe(TradeSkillFrame.DetailsFrame.selectedRecipeID)
+			UseItemByName(38682)
+		end)
+
+		hooksecurefunc(TradeSkillFrame.DetailsFrame, "RefreshButtons", function(self)
+			if C_TradeSkillUI.IsTradeSkillGuild() or C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsTradeSkillLinked() then
+				button:Hide()
+			else
+				local recipeInfo = self.selectedRecipeID and C_TradeSkillUI.GetRecipeInfo(self.selectedRecipeID)
+				if recipeInfo and recipeInfo.alternateVerb then
+					local _, _, _, _, _, parentSkillLineID = C_TradeSkillUI.GetTradeSkillLine()
+					if parentSkillLineID == 333 then
+						button:Show()
+						local numCreateable = recipeInfo.numAvailable
+						local numScrollsAvailable = GetItemCount(38682)
+						button:SetText("& ("..numScrollsAvailable..")")
+						 if numScrollsAvailable == 0 then
+							numCreateable = 0
+						end
+						if numCreateable > 0 then
+							button:Enable()
+						else
+							button:Disable()
+						end
+					else
+						button:Hide()
+					end
+				else
+					button:Hide()
+				end
+			end
+		end)
+	end
+end)
 -------------------------------------------------------------------------------------------------------MerchantFilterButtons
 local MerchantFrame = _G.MerchantFrame
 local GetMerchantFilter = _G.GetMerchantFilter
@@ -114,7 +158,7 @@ local function BuildButtons()
 		Buttons["SPEC"..i].texture = icon;
 		Buttons["SPEC"..i].filter = LE_LOOT_FILTER_SPEC1 + i - 1;
 		Buttons["SPEC"..i].coord = {0.1,0.9,0.1,0.9};
-		Buttons["SPEC"..i].x = (-(spacing)*(i+2))-30;
+		Buttons["SPEC"..i].x = (-(spacing)*(i+2))-60;
 	end
 	
 	SetPushed = function(Filter)
@@ -186,48 +230,3 @@ MerchantFilterButtons:SetScript("OnEvent", function(self,event)
 	end
 end)
 MerchantFrame:HookScript("OnShow", function() MerchantFrame_SetFilter(MerchantFrame, GetMerchantFilter()) SetPushed(GetMerchantFilter()) end)
-
-----------------------------------------------------------------------------------------
---	Enchantment scroll on TradeSkill frame(OneClickEnchantScroll by Sara.Festung)
-----------------------------------------------------------------------------------------
-local OneClickEnchantScroll = CreateFrame("Frame")
-OneClickEnchantScroll:RegisterEvent("ADDON_LOADED")
-OneClickEnchantScroll:SetScript("OnEvent", function(self, event, addon)
-	if addon == "Blizzard_TradeSkillUI" and not IsAddOnLoaded("OneClickEnchantScroll") then
-		local button = CreateFrame("Button", "TradeSkillCreateScrollButton", TradeSkillFrame, "MagicButtonTemplate")
-		button:SetPoint("TOPRIGHT", TradeSkillFrame.DetailsFrame.CreateButton, "TOPLEFT")
-		button:SetScript("OnClick", function()
-			C_TradeSkillUI.CraftRecipe(TradeSkillFrame.DetailsFrame.selectedRecipeID)
-			UseItemByName(38682)
-		end)
-
-		hooksecurefunc(TradeSkillFrame.DetailsFrame, "RefreshButtons", function(self)
-			if C_TradeSkillUI.IsTradeSkillGuild() or C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsTradeSkillLinked() then
-				button:Hide()
-			else
-				local recipeInfo = self.selectedRecipeID and C_TradeSkillUI.GetRecipeInfo(self.selectedRecipeID)
-				if recipeInfo and recipeInfo.alternateVerb then
-					local _, _, _, _, _, parentSkillLineID = C_TradeSkillUI.GetTradeSkillLine()
-					if parentSkillLineID == 333 then
-						button:Show()
-						local numCreateable = recipeInfo.numAvailable
-						local numScrollsAvailable = GetItemCount(38682)
-						button:SetText("& ("..numScrollsAvailable..")")
-						 if numScrollsAvailable == 0 then
-							numCreateable = 0
-						end
-						if numCreateable > 0 then
-							button:Enable()
-						else
-							button:Disable()
-						end
-					else
-						button:Hide()
-					end
-				else
-					button:Hide()
-				end
-			end
-		end)
-	end
-end)

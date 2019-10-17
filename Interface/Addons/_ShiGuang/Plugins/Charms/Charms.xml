@@ -6,4 +6,5 @@
 	<Script file="AlterCurrencies.lua"/>
 	<Script file="StatPriority.lua"/>
 	<Script file="FriendGroups.lua"/>
+	<Include file="FloFlyout\FloFlyout.xml"/>
 </Ui>

@@ -1,4 +1,4 @@
-﻿local strfind, strrep, strmatch, pairs, C_Timer_After = string.find, string.rep, string.match, pairs, C_Timer.After
+﻿local strfind, strrep, strmatch, pairs, C_Timer_After, ChatTypeInfo = string.find, string.rep, string.match, pairs, C_Timer.After, ChatTypeInfo
 --[[--------------------------------------------------------------------
 	ChatLinkTooltips	Written by Junxx EU-Khaz'goroth <addons@colordesigns.de>
 ----------------------------------------------------------------------]]
@@ -235,6 +235,15 @@ end
 
 --AchievementFilter
 local achievements = {}
+local function SendMessage(event, msg)
+	local info = ChatTypeInfo[event:sub(10)]
+	for i = 1, NUM_CHAT_WINDOWS do
+		local ChatFrames = _G["ChatFrame"..i]
+		if ChatFrames and ChatFrames:IsEventRegistered(event) then
+			ChatFrames:AddMessage(msg, info.r, info.g, info.b)
+		end
+	end
+end
 local function achievementReady(id)
 	local area, guild = achievements[id].CHAT_MSG_ACHIEVEMENT, achievements[id].CHAT_MSG_GUILD_ACHIEVEMENT
 	if area and guild then -- merge area to guild

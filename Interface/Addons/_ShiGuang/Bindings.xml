@@ -16,4 +16,7 @@
 	<Binding name="FOLLOW" category="BINDING_HEADER_ACE3"> FollowUnit("target") </Binding>
 	<!--<Binding name="COMPARE_ACHIEVEMENTS"> InspectAchievements("target") </Binding>-->
 	<Binding name="Invite" category="BINDING_HEADER_ACE3"> C_PartyInfo.ConfirmInviteUnit("target") </Binding>
+	<Binding name="Cloudy TradeSkill" category="BINDING_HEADER_ACE3">
+		if ShiGuangPerDB["CloudyTradeSkillPanel"] then CastSpellByID(ShiGuangPerDB["CloudyTradeSkillPanel"]) end
+	</Binding>
 </Bindings>

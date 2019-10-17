@@ -6331,7 +6331,8 @@ local function _SelectGroup(widget, callback, group)
 		scaleKey = dataGroup
 	end
 
-	local groupSet, classID, specNum, scaleName = strsplit("/", scaleKey)
+	local groupSet, classID, specNum, scaleName = strsplit("/", scaleKey, 4) -- Fixes the non-selectable scales if the scalename includes a slash-sign ('/') [Issue #46, https://www.curseforge.com/wow/addons/azeritepowerweights/issues/46]
+	--local groupSet, classID, specNum, scaleName = strsplit("/", scaleKey)
 
 	if scaleKey == "AzeritePowerWeightsImport" then -- Create New / Import
 		AzeritePowerWeights:CreateImportGroup(AzeritePowerWeights.scalesScroll)
@@ -6344,7 +6345,7 @@ local function _SelectGroup(widget, callback, group)
 			for _, dataSet in ipairs(customScales) do
 				if (dataSet) and dataSet[1] == scaleName and dataSet[2] == classID and dataSet[3] == specNum then
 					--AzeritePowerWeights:CreateWeightEditorGroup(true, AzeritePowerWeights.scalesScroll, dataSet[1], dataSet[4], scaleKey, cfg.specScales[playerSpecID].scaleID == scaleKey, classID, specNum) -- specNum is actually specID here
-					AzeritePowerWeights:CreateWeightEditorGroup(true, AzeritePowerWeights.scalesScroll, dataSet, scaleKey, cfg.specScales[playerSpecID].scaleID == scaleKey, classID, specNum) -- specNum is actually specID here
+					AzeritePowerWeights:CreateWeightEditorGroup(true, AzeritePowerWeights.scalesScroll, dataSet, scaleKey, cfg.specScales[playerSpecID].scaleID == scaleKey, classID, specNum, nil) -- specNum is actually specID here, nil is mode
 
 					break
 				end
@@ -6358,7 +6359,7 @@ local function _SelectGroup(widget, callback, group)
 					local specID, name, description, iconID, role, isRecommended, isAllowed = GetSpecializationInfoForClassID(classID, dataSet[3])
 
 					--AzeritePowerWeights:CreateWeightEditorGroup(false, AzeritePowerWeights.scalesScroll, ("%s - %s (%s)"):format(classDisplayName, name, dataSet[1]), dataSet[4], scaleKey, cfg.specScales[playerSpecID].scaleID == scaleKey, classID, specID)
-					AzeritePowerWeights:CreateWeightEditorGroup(false, AzeritePowerWeights.scalesScroll, dataSet, scaleKey, cfg.specScales[playerSpecID].scaleID == scaleKey, classID, specID)
+					AzeritePowerWeights:CreateWeightEditorGroup(false, AzeritePowerWeights.scalesScroll, dataSet, scaleKey, cfg.specScales[playerSpecID].scaleID == scaleKey, classID, specID, nil) -- nil is mode
 
 					break
 				end
@@ -6737,7 +6738,7 @@ function AzeritePowerWeights:CreateImportGroup(container)
 	container:ReleaseChildren()
 
 	local version = AceGUI:Create("Label")
-	version:SetText(" 8.2.9")
+	version:SetText(" 8.2.10")
 	version:SetJustifyH("RIGHT")
 	version:SetFullWidth(true)
 	container:AddChild(version)
@@ -6782,13 +6783,14 @@ function AzeritePowerWeights:CreateImportGroup(container)
 end
 
 --function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, titleText, powerWeights, scaleKey, isCurrentScales, classID, specID)
-function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, dataSet, scaleKey, isCurrentScales, classID, specID)
+function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, dataSet, scaleKey, isCurrentScales, classID, specID, mode)
 	local classDisplayName = GetClassInfo(dataSet[2])
 	local _, specName = GetSpecializationInfoForClassID(classID, dataSet[3])
 	local titleText = isCustomScale and dataSet[1] or ("%s - %s (%s)"):format(classDisplayName, specName, dataSet[1])
 	local powerWeights = dataSet[4]
 	-- 8.2 Azerite Essences
 	local essenceWeights = dataSet[5]
+	local currentMode = mode or ((_G.AzeriteEssenceUI and _G.AzeriteEssenceUI:IsShown()) and 1 or 0)
 
 	container:ReleaseChildren()
 
@@ -6843,7 +6845,8 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 	-- Tooltip start
 	local tooltipCheckbox = AceGUI:Create("CheckBox")
 	tooltipCheckbox:SetLabel(U["WeightEditor_TooltipText"])
-	tooltipCheckbox:SetFullWidth(true)
+	--tooltipCheckbox:SetFullWidth(true)
+	tooltipCheckbox:SetRelativeWidth(.5)
 	tooltipCheckbox:SetValue(false)
 	tooltipCheckbox:SetCallback("OnValueChanged", function(widget, callback, checked)
 		if checked == true then
@@ -6874,6 +6877,15 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 		end
 	end
 	-- Tooltip end
+
+	local modeButton = AceGUI:Create("Button")
+	modeButton:SetText(currentMode == 1 and "Change to Traits" or "Change to Essences")
+	modeButton:SetRelativeWidth(.5)
+	modeButton:SetCallback("OnClick", function()
+		-- Change Mode
+		AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, dataSet, scaleKey, isCurrentScales, classID, specID, currentMode == 1 and 0 or 1)
+	end)
+	container:AddChild(modeButton)
 
 	-- Timestamp start
 	local timestampText = AceGUI:Create("Label")
@@ -6982,7 +6994,7 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 		_updateTimestamp()
 	end
 
-	if _G.AzeriteEmpoweredItemUI and _G.AzeriteEmpoweredItemUI:IsShown() then
+	if currentMode == 0 then -- _G.AzeriteEmpoweredItemUI and _G.AzeriteEmpoweredItemUI:IsShown() or both UIs hidden
 		-- Class Powers title
 		local classTitle = AceGUI:Create("Heading")
 		classTitle:SetText(U["PowersTitles_Class"])
@@ -7293,7 +7305,7 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 			end
 		end
 		traitStack.editor = #e or 0
-	elseif _G.AzeriteEssenceUI and _G.AzeriteEssenceUI:IsShown() then
+	elseif currentMode == 1 then -- _G.AzeriteEssenceUI and _G.AzeriteEssenceUI:IsShown()
 		local topLine = AceGUI:Create("Heading")
 		topLine:SetFullWidth(true)
 		container:AddChild(topLine)
@@ -8672,7 +8684,7 @@ local SlashHandlers = {
 		--ReloadUI()
 	end,
 	["ticket"] = function()
-		local text = ("%s %s/%d/%s (%s)\nSettings: "):format("AzeritePowerWeights", "8.2.9", GetCVar("scriptErrors"), cfg.specScales[playerSpecID].scaleName or U["ScaleName_Unknown"], cfg.specScales[playerSpecID].scaleID)
+		local text = ("%s %s/%d/%s (%s)\nSettings: "):format("AzeritePowerWeights", "8.2.10", C_CVar.GetCVar("scriptErrors"), cfg.specScales[playerSpecID].scaleName or U["ScaleName_Unknown"], cfg.specScales[playerSpecID].scaleID)
 		local first = true
 		local skip = {
 			["onlyOwnClassDefaults"] = false,
@@ -8748,7 +8760,7 @@ local SlashHandlers = {
 
 	end,
 	["tt"] = function(...) -- Get tooltip stuff
-		local text = string.format("> START\n- - - - - - - - - -\nVer. %s\nClass/Spec: %s / %s\nScale: %s (%s)\n- - - - - - - - - -\n", "8.2.9", playerClassID, playerSpecID, cfg.specScales[playerSpecID].scaleName or U["ScaleName_Unknown"], cfg.specScales[playerSpecID].scaleID)
+		local text = string.format("> START\n- - - - - - - - - -\nVer. %s\nClass/Spec: %s / %s\nScale: %s (%s)\n- - - - - - - - - -\n", "8.2.10", playerClassID, playerSpecID, cfg.specScales[playerSpecID].scaleName or U["ScaleName_Unknown"], cfg.specScales[playerSpecID].scaleID)
 
 		text = text .. string.format("Score settings:\naddILvlToScore: %s\nscaleByAzeriteEmpowered: %s\naddPrimaryStatToScore: %s\nrelativeScore: %s\nshowOnlyUpgrades: %s\nshowTooltipLegend: %s\n- - - - - - - - - -\n", tostring(cfg.addILvlToScore), tostring(cfg.scaleByAzeriteEmpowered), tostring(cfg.addPrimaryStatToScore), tostring(cfg.relativeScore), tostring(cfg.showOnlyUpgrades), tostring(cfg.showTooltipLegend))
 
@@ -8823,7 +8835,7 @@ local SlashHandlers = {
 
 	end,
 	["is"] = function()
-		local text = string.join("\n", ("> START\nVer. %s"):format("8.2.9"), unpack(importStack))
+		local text = string.join("\n", ("> START\nVer. %s"):format("8.2.10"), unpack(importStack))
 	end,
 	["bang"] = function(...)
 		local number = tonumber(...)

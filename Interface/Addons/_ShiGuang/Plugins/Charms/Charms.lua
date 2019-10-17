@@ -69,9 +69,9 @@ DRF_button3.text = _G["DRF_RaceButton"];
 DRF_button3.text:SetText("...");
 
 local function DRF_SetArbitraryRace(id,gender)
-	DressUpModel:SetCustomRace(id,gender);
+	playerActor:SetCustomRace(id,gender);
 	SetDressUpBackground(DressUpFrame, _backgroundList[id]);
-	DressUpModel:TryOn(23323);
+	playerActor:TryOn(23323);
 end
 
 local function DRF_menu1_OnClick(self, arg1, arg2, checked)
