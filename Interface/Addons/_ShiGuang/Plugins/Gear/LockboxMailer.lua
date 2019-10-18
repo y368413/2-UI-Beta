@@ -1,4 +1,4 @@
---## Version: 0.1.2
+--## Version: 0.1.3
 local LockboxMailer = CreateFrame("Frame")
 local tooltip = CreateFrame("GameTooltip","LockboxMailerTooltip", UIParent, "GameTooltipTemplate");
 tooltip:SetOwner(LockboxMailer, "ANCHOR_NONE");
@@ -6,8 +6,8 @@ function LockboxMailer:FindLockboxes()
     wipe(self.LockboxTable)
     for bag = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
         for slot = 1, GetContainerNumSlots(bag) do
-            local itemLink = GetContainerItemLink(bag, slot)
-            if itemLink then
+            local lootable, itemLink = select(6,GetContainerItemInfo(bag, slot))
+            if lootable and itemLink then
                 tooltip:SetBagItem(bag, slot)
                 if tooltip:IsShown() then
                     for i = 1, tooltip:NumLines() do

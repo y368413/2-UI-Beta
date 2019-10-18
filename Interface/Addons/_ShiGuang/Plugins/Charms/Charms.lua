@@ -15,7 +15,8 @@ LFDParentFrame:HookScript("OnShow",function()
  end)
 --------------------------------------Hide the left/right end cap------------------------
 MainMenuBarArtFrame.LeftEndCap:Hide()  MainMenuBarArtFrame.RightEndCap:Hide()   
------------------------------------------	     幻化增强    -----------------------------------------
+--[[---------------------------------------	     幻化增强    -----------------------------------------
+local DressUpModel = DressUpFrame.ModelScene:GetPlayerActor();
 local _backgroundList = {
 	[1] = "Human",
 	[2] = "Orc",  --兽人
@@ -33,33 +34,86 @@ local _backgroundList = {
   [27] = "Nightborne",  --夜之子
   [28] = "HighmountainTauren",  --至高岭牛头人
   [29] = "VoidElf",   --虚空精灵
-  [30] = "LightforgedDraenei"   --光铸德莱尼
+  [30] = "LightforgedDraenei",  --光铸德莱尼
+	[31] = "ZandalariTroll",
+	[32] = "KulTiranHuman",
+	[34] = "DarkIronDwarf",
+	[36] = "MagharOrc",
 };
+
+-- _raceList is the content-reference table for the background list.
+local _raceList = { };
+for x, name in ipairs(_backgroundList) do
+	_raceList[name] = x;
+end
 
 local DRF_button1 = CreateFrame("Button","DRF_UndressButton",DressUpFrame,"UIPanelButtonTemplate");
 local DRF_button2 = CreateFrame("Button","DRF_TargetButton",DressUpFrame,"UIPanelButtonTemplate");
 local DRF_button3 = CreateFrame("Button","DRF_RaceButton",DressUpFrame,"UIPanelButtonTemplate");
 local DRF_menu1 = CreateFrame("FRAME","DRF_RaceMenu",DRF_button3,"UIDropDownMenuTemplate");
 
+function DRF_DoUndress(NoTimer)
+	DressUpModel = DressUpFrame.ModelScene:GetPlayerActor();
+	DressUpModel:Undress();
+	-- This function is implemented to hide the default "swim suits" for people who
+	-- do not want to see them. This would be useful with the auto-undress function
+	-- for people who play a character gender that they'd rather not see with only
+	-- the "bare necessities" all the time. And besides, most male characters have
+	-- really ugly underwear, anyhow!
+	-- EDIT: Well, the underwear really improved a LOT in Warlords with the new models. Kudos, Blizzard!
+
+	if ( DRF_Global["Conservative"] ) then
+		-- White Tuxedo Shirt
+		DressUpModel:TryOn(select(2,GetItemInfo(6833)));
+		-- Black Tuxedo Pants
+		DressUpModel:TryOn(select(2,GetItemInfo(6835)));
+		-- Brightwood Sandals
+		DressUpModel:TryOn(select(2,GetItemInfo(55726)));
+	end
+	if not NoTimer then
+		DRF_UndressQueued = 1;
+		DRF_TimeLeft = 1.25;
+	end
+	if ( DRF_LastQueuedItem ~= nil ) then
+		DressUpModel:TryOn(DRF_LastQueuedItem);
+	end
+end
+
 DRF_button1:SetPoint("BOTTOMLEFT",DressUpFrame,"BOTTOMLEFT",6,4);
 DRF_button1:SetSize(70,22);
 DRF_button1.text = _G["DRF_UndressButton"];
 DRF_button1.text:SetText(CHARMS_NAKEDIZE);
-DRF_button1:SetScript("OnClick",function(self,event,arg1) DressUpModel:Undress(); end);
+DRF_button1:SetScript("OnClick",function(self,event,arg1)
+	DRF_LastQueuedItem = nil;
+	DRF_DoUndress(1);
+end);
 
 DRF_button2:SetPoint("Center",DRF_UndressButton,"Center",62,0);
 DRF_button2:SetSize(60,22);
 DRF_button2.text = _G["DRF_TargetButton"];
 DRF_button2.text:SetText(CHARMS_TARGET);
 DRF_button2:SetScript("OnClick",function(self,event,arg1)
+	local race, fileName = UnitRace("target");
+	DressUpModel = DressUpFrame.ModelScene:GetPlayerActor();
+
 	if ( UnitIsPlayer("target") ) then
-		local race, fileName = UnitRace("target");
-		DressUpModel:SetUnit("target");
-		SetDressUpBackground(DressUpFrame, fileName);
+		DressUpModel:SetModelByUnit("target", false, true);
+		DRF_DumpItemLinks("precache"); -- Precache item links
+		DRF_LastGender = UnitSex("target");
+		DRF_LastRace = select(2,UnitRace("target"));
+		DRF_LastName = UnitName("target");
+		--SetDressUpBackground(DressUpFrame, fileName);
 	else
-		local race, fileName = UnitRace("player");
-		DressUpModel:SetUnit("player");
-		SetDressUpBackground(DressUpFrame, fileName);
+		race, fileName = UnitRace("player");
+		DressUpModel:SetModelByUnit("player", false, true);
+		DRF_LastGender = UnitSex("player");
+		DRF_LastRace = select(2,UnitRace("player"));
+		DRF_LastName = UnitName("player");
+		--SetDressUpBackground(DressUpFrame, fileName);
+	end
+	DRF_LastQueuedItem = nil;
+	if ( DRF_Global["UndressTarget"] ) then
+		DRF_DoUndress();
 	end
 end);
 
@@ -69,9 +123,38 @@ DRF_button3.text = _G["DRF_RaceButton"];
 DRF_button3.text:SetText("...");
 
 local function DRF_SetArbitraryRace(id,gender)
-	playerActor:SetCustomRace(id,gender);
-	SetDressUpBackground(DressUpFrame, _backgroundList[id]);
-	playerActor:TryOn(23323);
+	DressUpModel = DressUpFrame.ModelScene:GetPlayerActor();
+	DRF_LastQueuedItem = nil;
+	if ( gender == 0 or gender == 1 ) then
+		local OriginalHelmet = DressUpModel:GetSlotTransmogSources(GetInventorySlotInfo("HeadSlot")); -- To Replace the Helmet
+		local OriginalShoulder = DressUpModel:GetSlotTransmogSources(GetInventorySlotInfo("ShoulderSlot")); -- To Replace the Shoulder
+		DressUpModel:SetCustomRace(id, gender);
+		DRF_LastGender = 2 + gender;
+		DRF_LastRace = _backgroundList[id];
+		if ( DRF_Global["UndressTarget"] ) then
+			DRF_DoUndress();
+		end
+	elseif ( gender == 3 ) then
+		DressUpModel:SetModel("character\\".._backgroundList[id].."\\male\\".._backgroundList[id].."male.m2");
+		DRF_LastGender = 2;
+	elseif ( gender == 4 ) then
+		DressUpModel:SetModel("character\\".._backgroundList[id].."\\female\\".._backgroundList[id].."female.m2");
+		DRF_LastGender = 3;
+	end
+	if not ( id == 0 ) then
+		SetDressUpBackground(DressUpFrame, _backgroundList[id]);
+	else
+		DressUpBackgroundTopLeft:SetTexture(0,0,0,0.0)
+		DressUpBackgroundTopRight:SetTexture(0,0,0,0.0);
+		DressUpBackgroundBotLeft:SetTexture(0,0,0,0.0);
+		DressUpBackgroundBotRight:SetTexture(0,0,0,0.0);
+	end
+end
+
+local function DRF_PerformOtherAction(arg1,arg2)
+	if ( arg1 == 14 ) then
+		DressUpModel:UndressSlot(arg2);
+	end
 end
 
 local function DRF_menu1_OnClick(self, arg1, arg2, checked)
@@ -141,9 +224,9 @@ end);
 
 DRF_button3:SetScript("OnClick",function(self,event,arg1)
 	ToggleDropDownMenu(1, nil, DRF_menu1, "cursor", 3, -3);
-end);
+end);]]
 
----------------------------------------------------------------daftDressUp
+--[[-------------------------------------------------------------daftDressUp
 local daftDressUp_Scale = 1.21;
 local daftDressUp_Hide = true;
 local daftDressUp_Center = true;
@@ -188,7 +271,7 @@ function daftDressUp:setHidden()
 		DRF_button3:Hide();
 		--DRF_menu1:Hide()
 	end);
-	--[[DressUpModel:HookScript("OnEnter", function()
+	DressUpModel:HookScript("OnEnter", function()
 		daftDressUp:ShowFrameTextures(DressUpFrame);
 		DressUpFrame.NineSlice:Show();
 		DressUpFrameCloseButton:Show();
@@ -201,7 +284,7 @@ function daftDressUp:setHidden()
 		DRF_button2:Show();
 		DRF_button3:Show();
 		--DRF_menu1:Show()
-	end);]]
+	end);
 	WorldFrame:HookScript("OnEnter", function()
 		daftDressUp:HideFrameTextures(DressUpFrame);	
 		DressUpFrame.NineSlice:Hide();
@@ -229,7 +312,7 @@ end);
 --CharacterFrame:HookScript("OnShow", function() daftDressUp:setPosition(); end);
 --DressUpFrame:HookScript("OnShow", function() daftDressUp:setPosition(); end);
 --hooksecurefunc("UpdateUIPanelPositions", function() daftDressUp:setPosition(); end);
-
+]]
 -----------------------------------------	     随机队列倒计时    -----------------------------------------
 local timerBar = CreateFrame("StatusBar", nil, LFGDungeonReadyPopup)
 timerBar:SetPoint("BOTTOM", LFGDungeonReadyPopup, "TOP", 0, 0)
