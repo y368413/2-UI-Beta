@@ -3,8 +3,8 @@ local cfg = {
 	frameScale = "1",
 	smallScale = "0.85",
 	bigScale = "1",
-	initialShow = true,
-	useExtraButtons = false,
+	initialShow = false,
+	useExtraButtons = true,
 }
 
 -----------------------------------------
@@ -182,31 +182,9 @@ factionButton:SetScript("OnMouseUp", function(self, button)
 end)
 
 -- NO BUTTON BELLOW HERE IS A MODEL BUTTON
-local toggleModelCheckButton = CreateFrame("CheckButton", "toggleExtraModelButtons", DressUpModel, "UICheckButtonTemplate") 
-toggleModelCheckButton:SetPoint("LEFT", DressUpFrameOutfitDropDown.SaveButton,"RIGHT",12,0)
+local toggleModelCheckButton = CreateFrame("CheckButton", "toggleExtraModelButtons", DressUpFrame, "UICheckButtonTemplate") 
+toggleModelCheckButton:SetPoint("TOPLEFT", DressUpFrame,"TOPLEFT",54,4)
 toggleModelCheckButton:SetChecked(cfg.initialShow)
-
-local function checkButtonUpdateTooltip()
-	GameTooltip:Hide()
-	
-	GameTooltip:SetOwner(toggleModelCheckButton, "ANCHOR_BOTTOM")
-	GameTooltip:AddLine(" ")
-	if toggleModelCheckButton:GetChecked() then
-		GameTooltip:AddLine("Hide the model buttons")
-	else
-		GameTooltip:AddLine("Show the model buttons")
-	end
-	
-	GameTooltip:Show()
-end
-
-toggleModelCheckButton:SetScript("OnEnter", function(self)
-	checkButtonUpdateTooltip()
-end)
-
-toggleModelCheckButton:SetScript("OnLeave", function(self)
-	GameTooltip:Hide()
-end)
 
 toggleModelCheckButton:SetScript("OnClick", function(self, button, up)
 	if self:GetChecked() then
@@ -214,7 +192,6 @@ toggleModelCheckButton:SetScript("OnClick", function(self, button, up)
 	else
 		buttonHolder:Hide()
 	end
-	checkButtonUpdateTooltip()
 end)
 
 local lowerButtonHolder = CreateFrame("Frame",nil, DressUpFrame)
@@ -329,12 +306,8 @@ local function repositionButtons()
 		C_Timer.After(.001, function()
 			if MaximizeMinimizeFrame.MaximizeButton:IsShown() then
 				buttonHolder:SetScale(cfg.smallScale)
-				toggleModelCheckButton:ClearAllPoints()
-				toggleModelCheckButton:SetPoint("TOPRIGHT", DressUpModel, 4,4)
 			else
 				buttonHolder:SetScale(cfg.bigScale)
-				toggleModelCheckButton:ClearAllPoints()
-				toggleModelCheckButton:SetPoint("LEFT", DressUpFrameOutfitDropDown.SaveButton,"RIGHT",12,0)
 			end
 			if not cfg.useExtraButtons then lowerButtonHolder:Hide() else lowerButtonHolder:Show() end
 		end)
