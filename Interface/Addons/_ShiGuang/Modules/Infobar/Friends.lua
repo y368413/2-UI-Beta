@@ -226,7 +226,8 @@ local function buttonOnClick(self, btn)
 						local class = gameAccountInfo.className or UNKNOWN
 						local bnetIDGameAccount = gameAccountInfo.gameAccountID
 						local guid = gameAccountInfo.playerGuid
-						if client == BNET_CLIENT_WOW and CanCooperateWithUnit(gameAccountInfo) then
+						local wowProjectID = gameAccountInfo.wowProjectID
+						if client == BNET_CLIENT_WOW and CanCooperateWithUnit(gameAccountInfo) and wowProjectID == WOW_PROJECT_ID then
 							if not menuList[index] then menuList[index] = {} end
 							menuList[index].text = M.HexRGB(M.ClassColor(I.ClassList[class]))..charName
 							menuList[index].notCheckable = true

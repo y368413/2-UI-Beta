@@ -2,7 +2,7 @@
 local M, R, U, I = unpack(ns)
 local cr, cg, cb = I.r, I.g, I.b
 
-local type, pairs, tonumber, wipe = type, pairs, tonumber, table.wipe
+local type, pairs, tonumber, wipe, next = type, pairs, tonumber, table.wipe, next
 local strmatch, gmatch, strfind, format, gsub = string.match, string.gmatch, string.find, string.format, string.gsub
 local min, max, abs, floor = math.min, math.max, math.abs, math.floor
 
@@ -496,62 +496,102 @@ local iLvlDB = {}
 local itemLevelString = gsub(ITEM_LEVEL, "%%d", "")
 local enchantString = gsub(ENCHANTED_TOOLTIP_LINE, "%%s", "(.+)")
 local essenceTextureID = 2975691
+local essenceDescription = GetSpellDescription(277253)
+local ITEM_SPELL_TRIGGER_ONEQUIP = ITEM_SPELL_TRIGGER_ONEQUIP
 local tip = CreateFrame("GameTooltip", "NDui_iLvlTooltip", nil, "GameTooltipTemplate")
 
 local texturesDB, essencesDB = {}, {}
-function M:InspectItemTextures(clean, grabTextures)
-	wipe(texturesDB)
-	wipe(essencesDB)
-
-	for i = 1, 5 do
-		local tex = _G[tip:GetName().."Texture"..i]
-		local texture = tex and tex:GetTexture()
-		if not texture then break end
-
-		if grabTextures then
-			if texture == essenceTextureID then
-				local selected = (texturesDB[i-1] ~= essenceTextureID and texturesDB[i-1]) or nil
-				essencesDB[i] = {selected, tex:GetAtlas(), texture}
-				if selected then texturesDB[i-1] = nil end
-			else
-				texturesDB[i] = texture
-			end
-		end
-
-		if clean then tex:SetTexture() end
+function M:InspectItemTextures()
+	if not tip.gems then
+		tip.gems = {}
+	else
+		wipe(tip.gems)
 	end
 
-	return texturesDB, essencesDB
+	if not tip.essences then
+		tip.essences = {}
+	else
+		for _, essences in pairs(tip.essences) do
+			wipe(essences)
+		end
+	end
+
+	local step = 1
+	for i = 1, 10 do
+		local tex = _G[tip:GetName().."Texture"..i]
+		local texture = tex and tex:IsShown() and tex:GetTexture()
+		if texture then
+			if texture == essenceTextureID then
+				local selected = (tip.gems[i-1] ~= essenceTextureID and tip.gems[i-1]) or nil
+				if not tip.essences[step] then tip.essences[step] = {} end
+				tip.essences[step][1] = selected		--essence texture if selected or nil
+				tip.essences[step][2] = tex:GetAtlas()	--atlas place 'tooltip-heartofazerothessence-major' or 'tooltip-heartofazerothessence-minor'
+				tip.essences[step][3] = texture			--border texture placed by the atlas
+
+				step = step + 1
+				if selected then tip.gems[i-1] = nil end
+			else
+				tip.gems[i] = texture
+			end
+		end
+	end
+
+	return tip.gems, tip.essences
 end
 
-function M:InspectItemInfo(text, iLvl, enchantText)
+function M:InspectItemInfo(text, slotInfo)
 	local itemLevel = strfind(text, itemLevelString) and strmatch(text, "(%d+)%)?$")
-	if itemLevel then iLvl = tonumber(itemLevel) end
-	local enchant = strmatch(text, enchantString)
-	if enchant then enchantText = enchant end
+	if itemLevel then
+		slotInfo.iLvl = tonumber(itemLevel)
+	end
 
-	return iLvl, enchantText
+	local enchant = strmatch(text, enchantString)
+	if enchant then
+		slotInfo.enchantText = enchant
+	end
+end
+
+function M:CollectEssenceInfo(index, lineText, slotInfo)
+	local step = 1
+	local essence = slotInfo.essences[step]
+	if essence and next(essence) and (strfind(lineText, ITEM_SPELL_TRIGGER_ONEQUIP, nil, true) and strfind(lineText, essenceDescription, nil, true)) then
+		for i = 4, 2, -1 do
+			local line = _G[tip:GetName().."TextLeft"..index-i]
+			local text = line and line:GetText()
+
+			if text and (not strmatch(text, "^[ +]")) and essence and next(essence) then
+				local r, g, b = line:GetTextColor()
+				essence[4] = r
+				essence[5] = g
+				essence[6] = b
+
+				step = step + 1
+				essence = slotInfo.essences[step]
+			end
+		end
+	end
 end
 
 function M.GetItemLevel(link, arg1, arg2, fullScan)
 	if fullScan then
-		M:InspectItemTextures(true)
 		tip:SetOwner(UIParent, "ANCHOR_NONE")
 		tip:SetInventoryItem(arg1, arg2)
 
-		local iLvl, enchantText, gems, essences
-		gems, essences = M:InspectItemTextures(nil, true)
+		if not tip.slotInfo then tip.slotInfo = {} else wipe(tip.slotInfo) end
+
+		local slotInfo = tip.slotInfo
+		slotInfo.gems, slotInfo.essences = M:InspectItemTextures()
 
 		for i = 1, tip:NumLines() do
 			local line = _G[tip:GetName().."TextLeft"..i]
 			if line then
 				local text = line:GetText() or ""
-				iLvl, enchantText = M:InspectItemInfo(text, iLvl, enchantText)
-				if enchantText then break end
+				M:InspectItemInfo(text, slotInfo)
+				M:CollectEssenceInfo(i, text, slotInfo)
 			end
 		end
 
-		return iLvl, enchantText, gems, essences
+		return slotInfo
 	else
 		if iLvlDB[link] then return iLvlDB[link] end
 
@@ -595,8 +635,8 @@ function M:CreateButton(width, height, text, fontSize)
 	if type(text) == "boolean" then
 		M.PixelIcon(bu, fontSize, true)
 	else
-	M.CreateBC(bu)
-	bu.text = M.CreateFS(bu, fontSize or 14, text, true)
+		M.CreateBC(bu)
+		bu.text = M.CreateFS(bu, fontSize or 14, text, true)
 	end
 
 	return bu
@@ -626,7 +666,7 @@ function M:CreateEditBox(width, height)
 
 	eb.Type = "EditBox"
 	return eb
-end 
+end
 
 local function optOnClick(self)
 	PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK)

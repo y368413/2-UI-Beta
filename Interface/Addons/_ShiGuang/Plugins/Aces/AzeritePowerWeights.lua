@@ -6738,7 +6738,7 @@ function AzeritePowerWeights:CreateImportGroup(container)
 	container:ReleaseChildren()
 
 	local version = AceGUI:Create("Label")
-	version:SetText(" 8.2.10")
+	version:SetText(" 8.2.12")
 	version:SetJustifyH("RIGHT")
 	version:SetFullWidth(true)
 	container:AddChild(version)
@@ -8684,7 +8684,7 @@ local SlashHandlers = {
 		--ReloadUI()
 	end,
 	["ticket"] = function()
-		local text = ("%s %s/%d/%s (%s)\nSettings: "):format("AzeritePowerWeights", "8.2.10", C_CVar.GetCVar("scriptErrors"), cfg.specScales[playerSpecID].scaleName or U["ScaleName_Unknown"], cfg.specScales[playerSpecID].scaleID)
+		local text = ("%s %s/%d/%s (%s)\nSettings: "):format("AzeritePowerWeights", "8.2.12", C_CVar.GetCVar("scriptErrors"), cfg.specScales[playerSpecID].scaleName or U["ScaleName_Unknown"], cfg.specScales[playerSpecID].scaleID)
 		local first = true
 		local skip = {
 			["onlyOwnClassDefaults"] = false,
@@ -8760,7 +8760,7 @@ local SlashHandlers = {
 
 	end,
 	["tt"] = function(...) -- Get tooltip stuff
-		local text = string.format("> START\n- - - - - - - - - -\nVer. %s\nClass/Spec: %s / %s\nScale: %s (%s)\n- - - - - - - - - -\n", "8.2.10", playerClassID, playerSpecID, cfg.specScales[playerSpecID].scaleName or U["ScaleName_Unknown"], cfg.specScales[playerSpecID].scaleID)
+		local text = string.format("> START\n- - - - - - - - - -\nVer. %s\nClass/Spec: %s / %s\nScale: %s (%s)\n- - - - - - - - - -\n", "8.2.12", playerClassID, playerSpecID, cfg.specScales[playerSpecID].scaleName or U["ScaleName_Unknown"], cfg.specScales[playerSpecID].scaleID)
 
 		text = text .. string.format("Score settings:\naddILvlToScore: %s\nscaleByAzeriteEmpowered: %s\naddPrimaryStatToScore: %s\nrelativeScore: %s\nshowOnlyUpgrades: %s\nshowTooltipLegend: %s\n- - - - - - - - - -\n", tostring(cfg.addILvlToScore), tostring(cfg.scaleByAzeriteEmpowered), tostring(cfg.addPrimaryStatToScore), tostring(cfg.relativeScore), tostring(cfg.showOnlyUpgrades), tostring(cfg.showTooltipLegend))
 
@@ -8835,7 +8835,7 @@ local SlashHandlers = {
 
 	end,
 	["is"] = function()
-		local text = string.join("\n", ("> START\nVer. %s"):format("8.2.10"), unpack(importStack))
+		local text = string.join("\n", ("> START\nVer. %s"):format("8.2.12"), unpack(importStack))
 	end,
 	["bang"] = function(...)
 		local number = tonumber(...)

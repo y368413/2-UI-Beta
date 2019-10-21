@@ -279,7 +279,7 @@ local function ForceBigwigs()
 			["BigWigs_Plugins_Bars"] = {
 				["profiles"] = {
 					["Default"] = {
-						["outline"] = "OUTLINE",
+						["outline"] = I.Font[3],
 						["fontSize"] = 12,
 						["BigWigsAnchor_y"] = 336,
 						["BigWigsAnchor_x"] = 20,
@@ -338,7 +338,7 @@ local function ForceBigwigs()
 						["posx"] = 1002,
 						["fontSize"] = 14,
 						["font"] = I.Font[1],
-						["fontOutline"] = "OUTLINE",
+						["fontOutline"] = I.Font[3],
 						["posy"] = 490,
 					},
 				},
