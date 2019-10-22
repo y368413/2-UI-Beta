@@ -1,0 +1,20 @@
+## Interface: 80205
+## Title: AtlasLootReverse
+## Title-zhCN: |cff00ff00[装备]|r掉落来源
+## Title-zhTW: |cff00ff00[装备]|r掉落来源
+## Notes: Does a reverse lookup of AtlasLoot for an item's drop info.
+## Notes-zhCN: 装备掉落出处显示
+## Notes-zhTW: 装备掉落出处显示
+## Version: 1.14_163_20121126
+## Author: pceric
+## X-Thanks: AbyUI
+## X-Website: http://www.wowinterface.com/downloads/info12834-AtlasLootReverse.html
+## X-Category: Interface Enhancements
+## X-Embeds: Ace3, LibExtraTip
+## Dependencies: _ShiGuang
+
+## X-Repple: 2 UI
+
+db.lua
+db_tw.lua
+AtlasLootReverse.lua
