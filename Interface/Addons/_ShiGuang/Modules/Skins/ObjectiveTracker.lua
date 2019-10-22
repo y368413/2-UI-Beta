@@ -6,8 +6,6 @@ function S:QuestTracker()
 	local LE_QUEST_FREQUENCY_DAILY = LE_QUEST_FREQUENCY_DAILY or 2
 	local C_QuestLog_IsQuestReplayable = C_QuestLog.IsQuestReplayable
 
-
-
 	-- Show quest color and level
 	hooksecurefunc("QuestLogQuests_AddQuestButton", function(_, _, _, title, level, _, isHeader, _, isComplete, frequency, questID)
 		if ENABLE_COLORBLIND_MODE == "1" then return end

@@ -22,14 +22,14 @@ CandyBuckets.modules["hallow"] = {
 		{ quest = 28959, side = 2, [17] = {40.50, 11.40} },
 		{ quest = 12404, side = 3, extra = 3, [111] = {56.20, 81.80} },
 		{ quest = 12409, side = 3, extra = 3, [104] = {56.30, 59.80} },
-		{ quest = 12340, side = 1, [52] = {52.90, 53.60} },
+		{ quest = 12340, side = 1, [52] = {56.76, 47.31} },
 		{ quest = 12364, side = 2, [94] = {48.10, 47.80} },
 		{ quest = 12369, side = 2, [110] = {79.60, 57.90} },
 		{ quest = 12370, side = 2, [110] = {67.60, 73.20} },
 		{ quest = 12383, side = 2, [70] = {36.80, 32.40} },
 		{ quest = 12398, side = 3, [70] = {41.90, 74.10} },
 		{ quest = 13463, side = 3, [125] = {48.30, 40.80} },
-		{ quest = 13472, side = 3, [125] = {37.70, 59.80} },
+		{ quest = 13472, side = 3, [126] = {37.95, 59.99} },
 		{ quest = 28973, side = 2, [241] = {53.40, 42.90} },
 		{ quest = 28974, side = 2, [241] = {45.10, 76.70} },
 		{ quest = 28975, side = 2, [241] = {75.30, 54.80} },
@@ -43,11 +43,11 @@ CandyBuckets.modules["hallow"] = {
 		{ quest = 29001, side = 3, [198] = {42.70, 45.60} },
 		{ quest = 29016, side = 3, [249] = {26.60, 7.30} },
 		{ quest = 29017, side = 3, [249] = {54.70, 33.00} },
-		{ quest = 32020, side = 2, [418] = {28.30, 50.70} },
+		{ quest = 32020, side = 2, [418] = {28.63, 47.90} },
 		{ quest = 32022, side = 2, [392] = {58.30, 76.90} },
-		{ quest = 32034, side = 3, [418] = {51.50, 77.30} },
-		{ quest = 32036, side = 3, [418] = {75.90, 7.00} },
-		{ quest = 32047, side = 2, [418] = {61.00, 25.10} },
+		{ quest = 32034, side = 3, [418] = {53.49, 76.50} },
+		{ quest = 32036, side = 3, [418] = {79.81, 0.84} },
+		{ quest = 32047, side = 2, [418] = {63.75, 20.32} },
 		{ quest = 32052, side = 1, [393] = {37.30, 67.10} },
 		{ quest = 29019, side = 2, [207] = {51.20, 50.00} },
 		{ quest = 29020, side = 1, [207] = {47.40, 51.70} },
@@ -69,7 +69,7 @@ CandyBuckets.modules["hallow"] = {
 		{ quest = 12384, side = 2, [51] = {46.90, 56.70} },
 		{ quest = 12387, side = 2, [26] = {78.20, 81.40} },
 		{ quest = 12397, side = 3, [210] = {40.90, 73.80} },
-		{ quest = 12402, side = 3, [23] = {75.60, 52.40} },
+		{ quest = 12402, side = 3, [24] = {41.02, 90.77} },
 		{ quest = 28954, side = 1, [14] = {40.10, 49.00} },
 		{ quest = 28955, side = 3, [15] = {65.90, 35.80} },
 		{ quest = 28956, side = 1, [15] = {20.90, 56.20} },
@@ -226,6 +226,8 @@ CandyBuckets.modules["hallow"] = {
 		{ quest = 43057, side = 2, [627] = {66.80, 30.00} },
 		{ quest = 12409, side = 3, extra = 3, [104] = {61.00, 28.20} },
 		{ quest = 12404, side = 3, extra = 3, [111] = {28.10, 49.00} },
+		{ quest = 54709, side = 3, [1163] = {50.71, 82.30} },
+		{ quest = 54710, side = 3, [1161] = {73.66, 12.59} },
 	},
 	patterns = {
 		"^%s*[Cc][Aa][Nn][Dd][Yy]%s+[Bb][Uu][Cc][Kk][Ee][Tt]%s*$",
@@ -766,6 +768,13 @@ end
 -- Pin
 --
 
+local PIN_BORDER_COLOR = {
+	[0] = "Interface\\Buttons\\GREYSCALERAMP64",
+	[1] = "Interface\\Buttons\\BLUEGRAD64",
+	[2] = "Interface\\Buttons\\REDGRAD64",
+	[3] = "Interface\\Buttons\\YELLOWORANGE64",
+}
+
 CandyBucketsPinMixin = CreateFromMixins(MapCanvasPinMixin)
 
 function CandyBucketsPinMixin:OnLoad()
@@ -776,6 +785,8 @@ function CandyBucketsPinMixin:OnLoad()
 	self.Texture:SetMask("Interface\\CharacterFrame\\TempPortraitAlphaMask")
 	self.Texture:ClearAllPoints()
 	self.Texture:SetAllPoints()
+	self.Border:SetMask("Interface\\CharacterFrame\\TempPortraitAlphaMask")
+	self.Border:SetTexture(PIN_BORDER_COLOR[0])
 end
 
 function CandyBucketsPinMixin:OnAcquired(quest, poi)
@@ -783,6 +794,7 @@ function CandyBucketsPinMixin:OnAcquired(quest, poi)
 	self:UseFrameLevelType("PIN_FRAME_LEVEL_GOSSIP", self:GetMap():GetNumActivePinsByTemplate("CandyBucketsPinTemplate"))
 	self:SetSize(16, 16)
 	self.Texture:SetTexture(quest.module.texture[quest.extra or 1])
+	self.Border:SetTexture(PIN_BORDER_COLOR[quest.side or 0])
 	self.name = quest.module.title[quest.extra or 1]
 	if poi.GetXY then
 		self:SetPosition(poi:GetXY())
@@ -927,7 +939,7 @@ function addon:CheckCalendar()
 				--DEFAULT_CHAT_FRAME:AddMessage("|cffFFFFFF[CandyBuckets]|r|cffFFFFFF " .. event.title .. "|r!", 1, 1, 0)
 				addon:LoadModule(moduleName)
 				numLoadedRightNow = numLoadedRightNow + 1
-				DEFAULT_CHAT_FRAME:AddMessage("|cffFFFFFF[CandyBuckets]|r " .. event.title .. " (" .. #CandyBuckets.QUESTS .. ") |r!", 1, 1, 0)
+				DEFAULT_CHAT_FRAME:AddMessage("|cffFFFFFF[CandyBuckets]|r " .. event.title .. " [" .. #CandyBuckets.QUESTS .. "]|r !", 1, 1, 0)
 			elseif not ongoing and addon:CanUnloadModule(moduleName) then
 				DEFAULT_CHAT_FRAME:AddMessage("|cffFFFFFF[CandyBuckets]|r has unloaded the module for |cffFFFFFF" .. event.title .. "|r because the event has ended.", 1, 1, 0)
 				addon:UnloadModule(moduleName)

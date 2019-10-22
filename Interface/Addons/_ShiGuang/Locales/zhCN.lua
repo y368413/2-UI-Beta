@@ -402,6 +402,7 @@ U["Chat tab bg"] = "聊天框标签背景"
 U["QuestTrackerSkinTitle"] = "任务栏职业染色"
 U["Auto Reagent Bank"] = "材料自动存银行"
 U["Auto Mark"] = "自动标记 T N"
+U["Font Outline"] = "聊天框字体描边"
 
 U["DefaultScaleName_Default"] = "默认"
 U["DefaultScaleName_Defensive"] = "防御"
