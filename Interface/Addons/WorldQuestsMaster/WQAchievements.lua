@@ -990,8 +990,8 @@ function WQA:link(x)
 end
 
 local icons = {
-	unknown = "|TInterface\\AddOns\\CanIMogIt\\Icons\\UNKNOWN:0|t",
-	known = "|TInterface\\AddOns\\CanIMogIt\\Icons\\KNOWN_circle:0|t",
+	unknown = " X ",
+	known = " √ ",
 }
 
 function WQA:GetRewardForID(questID, key, type)

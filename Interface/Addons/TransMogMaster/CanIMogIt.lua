@@ -31,26 +31,26 @@ CanIMogIt.bufferMax = 25
 --------------------------------------------
 
 --[[ Icons
-CanIMogIt.KNOWN_ICON = "|TInterface\\Addons\\CanIMogIt\\Icons\\KNOWN:0|t "
-CanIMogIt.KNOWN_ICON_OVERLAY = "Interface\\Addons\\CanIMogIt\\Icons\\KNOWN_OVERLAY"
-CanIMogIt.KNOWN_BOE_ICON = "|TInterface\\Addons\\CanIMogIt\\Icons\\KNOWN_BOE:0|t "
-CanIMogIt.KNOWN_BOE_ICON_OVERLAY = "Interface\\Addons\\CanIMogIt\\Icons\\KNOWN_BOE_OVERLAY"
-CanIMogIt.KNOWN_BUT_ICON = "|TInterface\\Addons\\CanIMogIt\\Icons\\KNOWN_circle:0|t "
-CanIMogIt.KNOWN_BUT_ICON_OVERLAY = "Interface\\Addons\\CanIMogIt\\Icons\\KNOWN_circle_OVERLAY"
-CanIMogIt.KNOWN_BUT_BOE_ICON = "|TInterface\\Addons\\CanIMogIt\\Icons\\KNOWN_BOE_circle:0|t "
-CanIMogIt.KNOWN_BUT_BOE_ICON_OVERLAY = "Interface\\Addons\\CanIMogIt\\Icons\\KNOWN_BOE_circle_OVERLAY"
-CanIMogIt.UNKNOWABLE_SOULBOUND_ICON = "|TInterface\\Addons\\CanIMogIt\\Icons\\UNKNOWABLE_SOULBOUND:0|t "
-CanIMogIt.UNKNOWABLE_SOULBOUND_ICON_OVERLAY = "Interface\\Addons\\CanIMogIt\\Icons\\UNKNOWABLE_SOULBOUND_OVERLAY"
-CanIMogIt.UNKNOWABLE_BY_CHARACTER_ICON = "|TInterface\\Addons\\CanIMogIt\\Icons\\UNKNOWABLE_BY_CHARACTER:0|t "
-CanIMogIt.UNKNOWABLE_BY_CHARACTER_ICON_OVERLAY = "Interface\\Addons\\CanIMogIt\\Icons\\UNKNOWABLE_BY_CHARACTER_OVERLAY"
-CanIMogIt.UNKNOWN_ICON = "|TInterface\\Addons\\CanIMogIt\\Icons\\UNKNOWN:0|t "
-CanIMogIt.UNKNOWN_ICON_OVERLAY = "Interface\\Addons\\CanIMogIt\\Icons\\UNKNOWN_OVERLAY"
-CanIMogIt.NOT_TRANSMOGABLE_ICON = "|TInterface\\Addons\\CanIMogIt\\Icons\\NOT_TRANSMOGABLE:0|t "
-CanIMogIt.NOT_TRANSMOGABLE_ICON_OVERLAY = "Interface\\Addons\\CanIMogIt\\Icons\\NOT_TRANSMOGABLE_OVERLAY"
-CanIMogIt.NOT_TRANSMOGABLE_BOE_ICON = "|TInterface\\Addons\\CanIMogIt\\Icons\\NOT_TRANSMOGABLE_BOE:0|t "
-CanIMogIt.NOT_TRANSMOGABLE_BOE_ICON_OVERLAY = "Interface\\Addons\\CanIMogIt\\Icons\\NOT_TRANSMOGABLE_BOE_OVERLAY"
-CanIMogIt.QUESTIONABLE_ICON = "|TInterface\\Addons\\CanIMogIt\\Icons\\QUESTIONABLE:0|t "
-CanIMogIt.QUESTIONABLE_ICON_OVERLAY = "Interface\\Addons\\CanIMogIt\\Icons\\QUESTIONABLE_OVERLAY"
+CanIMogIt.KNOWN_ICON = "|TInterface\\Addons\\TransMogMaster\\Icons\\KNOWN:0|t "
+CanIMogIt.KNOWN_ICON_OVERLAY = "Interface\\Addons\\TransMogMaster\\Icons\\KNOWN_OVERLAY"
+CanIMogIt.KNOWN_BOE_ICON = "|TInterface\\Addons\\TransMogMaster\\Icons\\KNOWN_BOE:0|t "
+CanIMogIt.KNOWN_BOE_ICON_OVERLAY = "Interface\\Addons\\TransMogMaster\\Icons\\KNOWN_BOE_OVERLAY"
+CanIMogIt.KNOWN_BUT_ICON = "|TInterface\\Addons\\TransMogMaster\\Icons\\KNOWN_circle:0|t "
+CanIMogIt.KNOWN_BUT_ICON_OVERLAY = "Interface\\Addons\\TransMogMaster\\Icons\\KNOWN_circle_OVERLAY"
+CanIMogIt.KNOWN_BUT_BOE_ICON = "|TInterface\\Addons\\TransMogMaster\\Icons\\KNOWN_BOE_circle:0|t "
+CanIMogIt.KNOWN_BUT_BOE_ICON_OVERLAY = "Interface\\Addons\\TransMogMaster\\Icons\\KNOWN_BOE_circle_OVERLAY"
+CanIMogIt.UNKNOWABLE_SOULBOUND_ICON = "|TInterface\\Addons\\TransMogMaster\\Icons\\UNKNOWABLE_SOULBOUND:0|t "
+CanIMogIt.UNKNOWABLE_SOULBOUND_ICON_OVERLAY = "Interface\\Addons\\TransMogMaster\\Icons\\UNKNOWABLE_SOULBOUND_OVERLAY"
+CanIMogIt.UNKNOWABLE_BY_CHARACTER_ICON = "|TInterface\\Addons\\TransMogMaster\\Icons\\UNKNOWABLE_BY_CHARACTER:0|t "
+CanIMogIt.UNKNOWABLE_BY_CHARACTER_ICON_OVERLAY = "Interface\\Addons\\TransMogMaster\\Icons\\UNKNOWABLE_BY_CHARACTER_OVERLAY"
+CanIMogIt.UNKNOWN_ICON = "|TInterface\\Addons\\TransMogMaster\\Icons\\UNKNOWN:0|t "
+CanIMogIt.UNKNOWN_ICON_OVERLAY = "Interface\\Addons\\TransMogMaster\\Icons\\UNKNOWN_OVERLAY"
+CanIMogIt.NOT_TRANSMOGABLE_ICON = "|TInterface\\Addons\\TransMogMaster\\Icons\\NOT_TRANSMOGABLE:0|t "
+CanIMogIt.NOT_TRANSMOGABLE_ICON_OVERLAY = "Interface\\Addons\\TransMogMaster\\Icons\\NOT_TRANSMOGABLE_OVERLAY"
+CanIMogIt.NOT_TRANSMOGABLE_BOE_ICON = "|TInterface\\Addons\\TransMogMaster\\Icons\\NOT_TRANSMOGABLE_BOE:0|t "
+CanIMogIt.NOT_TRANSMOGABLE_BOE_ICON_OVERLAY = "Interface\\Addons\\TransMogMaster\\Icons\\NOT_TRANSMOGABLE_BOE_OVERLAY"
+CanIMogIt.QUESTIONABLE_ICON = "|TInterface\\Addons\\TransMogMaster\\Icons\\QUESTIONABLE:0|t "
+CanIMogIt.QUESTIONABLE_ICON_OVERLAY = "Interface\\Addons\\TransMogMaster\\Icons\\QUESTIONABLE_OVERLAY"
 ]]
 
 -- Colorblind colors
@@ -161,6 +161,47 @@ CanIMogIt.tooltipOverlayIcons = {
 CanIMogIt.DATABASE_START_UPDATE_TEXT = L["Updating appearances database."]
 CanIMogIt.DATABASE_DONE_UPDATE_TEXT = L["Items updated: "] -- followed by a number
 
+
+--------------------------------------------
+-- Location constants                     --
+--------------------------------------------
+
+CanIMogIt.LOCATIONS_ORDER = {
+    "TOPLEFT",
+    "TOP",
+    "TOPRIGHT",
+    "LEFT",
+    "CENTER",
+    "RIGHT",
+    "BOTTOMLEFT",
+    "BOTTOM",
+    "BOTTOMRIGHT",
+}
+
+CanIMogIt.LOCATIONS_TEXT = {
+    ["TOPLEFT"] = L["Top Left"],
+    ["TOP"] = L["Top"],
+    ["TOPRIGHT"] = L["Top Right (default)"],
+    ["LEFT"] = L["Left"],
+    ["CENTER"] = L["Center"],
+    ["RIGHT"] = L["Right"],
+    ["BOTTOMLEFT"] = L["Bottom Left"],
+    ["BOTTOM"] = L["Bottom"],
+    ["BOTTOMRIGHT"] = L["Bottom Right"],
+}
+
+CanIMogIt.ICON_LOCATIONS = {
+    ["TOPLEFT"] = {"TOPLEFT", 2, -2},
+    ["TOPRIGHT"] = {"TOPRIGHT", -2, -2},
+    ["BOTTOMLEFT"] = {"BOTTOMLEFT", 2, 2},
+    ["BOTTOMRIGHT"] = {"BOTTOMRIGHT", -2, 2},
+    ["CENTER"] = {"CENTER", 0, 0},
+    ["RIGHT"] = {"RIGHT", -2, 0},
+    ["LEFT"] = {"LEFT", 2, 0},
+    ["BOTTOM"] = {"BOTTOM", 0, 2},
+    ["TOP"] = {"TOP", 0, -2},
+}
+
 --------------------------------------------
 -- Blizzard frame constants --
 --------------------------------------------
@@ -227,7 +268,7 @@ function CanIMogIt.CreateMigrationPopup(dialogName, onAcceptFunc)
 end
 
 
-CanIMogIt_OptionsVersion = "1.9"
+CanIMogIt_OptionsVersion = "20"
 
 CanIMogItOptions_Defaults = {
     ["options"] = {
@@ -241,6 +282,7 @@ CanIMogItOptions_Defaults = {
         ["showVerboseText"] = false,
         ["showSourceLocationTooltip"] = false,
         ["printDatabaseScan"] = false,
+        ["iconLocation"] = "TOPRIGHT",
     },
 }
 
@@ -281,6 +323,10 @@ CanIMogItOptions_DisplayData = {
     ["printDatabaseScan"] = {
         ["displayName"] = L["Database Scanning chat messages"],
         ["description"] = L["Shows chat messages on login about the database scan."]
+    },
+    ["iconLocation"] = {
+        ["displayName"] = L["Location: "],
+        ["description"] = L["Move the icon to a different location on all frames."]
     },
 }
 
@@ -432,6 +478,59 @@ local function newCheckbox(parent, variableName, onClickFunction)
 end
 
 
+local function newDropDown(parent, variableName)
+    local displayData = CanIMogItOptions_DisplayData[variableName]
+    local frame = CreateFrame("Frame", "CanIMogItDropDownFrame" .. variableName, parent)
+    local dropDown = CreateFrame("Frame", "CanIMogItDropDown" .. variableName,
+            frame, "UIDropDownMenuTemplate")
+    UIDropDownMenu_SetWidth(dropDown, 150)
+    UIDropDownMenu_SetText(dropDown, CanIMogIt.LOCATIONS_TEXT[CanIMogItOptions[variableName]])
+
+    UIDropDownMenu_Initialize(dropDown, function(self, level, menuList)
+        local info = UIDropDownMenu_CreateInfo()
+        info.func = self.SetValue
+        -- TODO: This is hard-coded to locations, and will need to be changed for other dropdowns.
+        for _, value in ipairs(CanIMogIt.LOCATIONS_ORDER) do
+            name = CanIMogIt.LOCATIONS_TEXT[value]
+            info.text, info.arg1, info.checked = name, value, CanIMogItOptions[variableName] == value
+            UIDropDownMenu_AddButton(info)
+        end
+    end)
+
+    dropDown.SetValue = function(self, newValue)
+        CanIMogItOptions[variableName] = newValue
+        -- TODO: This is hard-coded to locations, and will need to be changed for other dropdowns.
+        UIDropDownMenu_SetText(dropDown, CanIMogIt.LOCATIONS_TEXT[CanIMogItOptions[variableName]])
+        CloseDropDownMenus()
+    end
+
+    -- TODO: This is hard-coded to locations, and will need to be changed for other dropdowns.
+
+
+    local title = frame:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
+    title:SetText(L["Icon Location"])
+
+    local text = frame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+    text:SetText("- " .. L["Requires /reload to take effect."])
+    local text2 = frame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+    text2:SetText("- " .. L["Does not affect Quests or Adventure Journal."])
+
+    frame:SetSize(300, 85)
+
+    title:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, -5)
+    dropDown:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -5)
+    text:SetPoint("TOPLEFT", dropDown, "BOTTOMLEFT", 30, 0)
+    text2:SetPoint("TOPLEFT", text, "BOTTOMLEFT", 0, -4)
+
+    -- Use this to show the bottom of the frame.
+    -- local sample = frame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+    -- sample:SetText("exmaple.")
+    -- sample:SetPoint("TOPLEFT", frame, "BOTTOMLEFT")
+
+    return frame
+end
+
+
 local function createOptionsMenu()
     -- define the checkboxes
     CanIMogIt.frame.showEquippableOnly = newCheckbox(CanIMogIt.frame, "showEquippableOnly")
@@ -443,6 +542,7 @@ local function createOptionsMenu()
     CanIMogIt.frame.showVerboseText = newCheckbox(CanIMogIt.frame, "showVerboseText")
     CanIMogIt.frame.showSourceLocationTooltip = newCheckbox(CanIMogIt.frame, "showSourceLocationTooltip")
     CanIMogIt.frame.printDatabaseScan = newCheckbox(CanIMogIt.frame, "printDatabaseScan")
+    CanIMogIt.frame.iconLocation = newDropDown(CanIMogIt.frame, "iconLocation")
 
     -- position the checkboxes
     CanIMogIt.frame.showEquippableOnly:SetPoint("TOPLEFT", 16, -16)
@@ -454,6 +554,7 @@ local function createOptionsMenu()
     CanIMogIt.frame.showVerboseText:SetPoint("TOPLEFT", CanIMogIt.frame.showItemIconOverlay, "BOTTOMLEFT")
     CanIMogIt.frame.showSourceLocationTooltip:SetPoint("TOPLEFT", CanIMogIt.frame.showVerboseText, "BOTTOMLEFT")
     CanIMogIt.frame.printDatabaseScan:SetPoint("TOPLEFT", CanIMogIt.frame.showSourceLocationTooltip, "BOTTOMLEFT")
+    CanIMogIt.frame.iconLocation:SetPoint("TOPLEFT", CanIMogIt.frame.printDatabaseScan, "BOTTOMLEFT")
 end
 
 
@@ -2706,7 +2807,6 @@ CanIMogIt.frame:AddEventFunction(TransmogCollectionUpdated)
 --     if event ~= "GET_ITEM_INFO_RECEIVED" then return end
 --     Database:GetItemInfoReceived()
 -- end
-
 
 
 --[[
