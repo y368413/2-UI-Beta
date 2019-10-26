@@ -498,7 +498,7 @@ function InboxMailbagItem_OnEnter(self, index)
 			end
 		end
 
-		local addSeparator = true;
+		--local addSeparator = true;
 		local GroupStacks = true;
 
 		for i, link in ipairs(links) do
@@ -523,7 +523,7 @@ function InboxMailbagItem_OnEnter(self, index)
 
 				-- Format expiration time
 				if strAmount then
-					if addSeparator then  tip:AddLine(" ");  addSeparator = false;  end
+					--if addSeparator then  tip:AddLine(" ");  addSeparator = false;  end
 
 					local canDelete = InboxItemCanDelete(link.mailID);
 

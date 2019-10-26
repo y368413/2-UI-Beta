@@ -43,6 +43,7 @@ L["Transmoggable Items Only"] = "只限可塑形物品"
 L["Unknown Items Only"] = "只限未收藏物品"
 L["Updating appearances database."] = "外觀資料庫更新中。"
 L["Verbose Text"] = "詳盡文字"
+L["We need to update our database. This may freeze the game for a few seconds."] = "我們需要更新數據庫，這可能會凍結遊戲幾秒鐘。"
 
 
 

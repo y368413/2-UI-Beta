@@ -22,7 +22,8 @@ CandyBuckets.modules["hallow"] = {
 		{ quest = 28959, side = 2, [17] = {40.50, 11.40} },
 		{ quest = 12404, side = 3, extra = 3, [111] = {56.20, 81.80} },
 		{ quest = 12409, side = 3, extra = 3, [104] = {56.30, 59.80} },
-		{ quest = 12340, side = 1, [52] = {56.76, 47.31} },
+		{ quest = 12340, side = 1, extra = 2, [52] = {56.76, 47.31} },
+		{ quest = 12340, side = 1, extra = 2, [52] = {52.90, 53.60} },
 		{ quest = 12364, side = 2, [94] = {48.10, 47.80} },
 		{ quest = 12369, side = 2, [110] = {79.60, 57.90} },
 		{ quest = 12370, side = 2, [110] = {67.60, 73.20} },
@@ -226,8 +227,8 @@ CandyBuckets.modules["hallow"] = {
 		{ quest = 43057, side = 2, [627] = {66.80, 30.00} },
 		{ quest = 12409, side = 3, extra = 3, [104] = {61.00, 28.20} },
 		{ quest = 12404, side = 3, extra = 3, [111] = {28.10, 49.00} },
-		{ quest = 54709, side = 3, [1163] = {50.71, 82.30} },
-		{ quest = 54710, side = 3, [1161] = {73.66, 12.59} },
+		{ quest = 54709, side = 2, [1163] = {50.71, 82.30} },
+		{ quest = 54710, side = 1, [1161] = {73.66, 12.59} },
 	},
 	patterns = {
 		"^%s*[Cc][Aa][Nn][Dd][Yy]%s+[Bb][Uu][Cc][Kk][Ee][Tt]%s*$",
@@ -649,15 +650,20 @@ do
 		13, -- Eastern Kingdoms
 		101, -- Outland
 		113, -- Northrend
+		127, -- Crystalsong Forest
 		203, -- Vashj'ir
 		224, -- Stranglethorn Vale
+		390, -- Vale of Eternal Blossoms
 		424, -- Pandaria
 		572, -- Draenor
 		619, -- Broken Isles
+		862, -- Zuldazar
 		875, -- Zandalar
 		876, -- Kul Tiras
+		895, -- Tiragarde Sound
+		947, -- Azeroth (CPU hog, but it's not too bad?)
 		948, -- The Maelstrom
-		-- 947, -- Azeroth (hogs CPU but is kind of neat, though not complete as we only check the direct children of these maps...)
+		1165, -- Dazar'alor
 	}
 
 	for i = 1, #parentMapIDs do
@@ -1000,18 +1006,17 @@ function addon:QueryCalendar(check)
 end
 
 function addon:IsDeliveryLocationExpected(questID)
-	local quest
+	local questCollection = {}
 	local questName
 
 	for i = 1, #CandyBuckets.QUESTS do
-		quest = CandyBuckets.QUESTS[i]
+		local quest = CandyBuckets.QUESTS[i]
 		if quest.quest == questID then
-			break
+			table.insert(questCollection, quest)
 		end
-		quest = nil
 	end
 
-	if not quest then
+	if not questCollection[1] then
 		questName = C_QuestLog.GetQuestInfo(questID)
 
 		if questName then
@@ -1032,51 +1037,83 @@ function addon:IsDeliveryLocationExpected(questID)
 			end
 
 			if missingFromModule then
-				quest = { missing = true, module = missingFromModule, quest = questID, side = 3 }
+				table.insert(questCollection, { missing = true, module = missingFromModule, quest = questID, side = 3 })
 			end
 		end
 	end
 
-	if not quest then
-		return nil
+	if not questCollection[1] then
+		return nil, nil, nil
 	end
 
 	local uiMapID, pos = GetPlayerMapAndPosition()
 	if not uiMapID then
-		return nil
+		return nil, nil, nil
 	elseif not pos then
-		return nil
+		return nil, nil, nil
 	end
 
-	if quest.missing then
-		quest[uiMapID] = { pos.x * 100, pos.y * 100 }
+	if questCollection[1].missing then
+		for i = 1, #questCollection do
+			questCollection[i][uiMapID] = { pos.x * 100, pos.y * 100 }
+		end
 	end
 
-	local qpos = quest[uiMapID]
-	if type(qpos) == "table" then
-		local distance = quest.missing and 1 or 0
+	local returnCount = 0
+	local returns = {}
 
-		if not quest.missing then
-			local dx = qpos[1]/100 - pos.x
-			local dy = qpos[2]/100 - pos.y
+	for i = 1, #questCollection do
+		local quest = questCollection[i]
+		local qpos = quest[uiMapID]
 
-			local dd = dx*dx + dy*dy
-			if dd < 0 then
-				return nil
+		local ret = {}
+		returnCount = returnCount + 1
+		returns[returnCount] = ret
+
+		repeat
+			if type(qpos) == "table" then
+				local distance = quest.missing and 1 or 0
+		
+				if not quest.missing then
+					local dx = qpos[1]/100 - pos.x
+					local dy = qpos[2]/100 - pos.y
+		
+					local dd = dx*dx + dy*dy
+					if dd < 0 then
+						ret.has, ret.success, ret.data = true, nil, nil
+						break
+					end
+		
+					distance = sqrt(dd)
+				end
+		
+				if distance > 0.02 then
+					ret.has, ret.success, ret.data = true, false, { quest = quest, uiMapID = uiMapID, x = pos.x, y = pos.y, distance = distance }
+				else
+					ret.has, ret.success = true, true
+				end
+		
+			elseif not quest.missing then
+				ret.has, ret.success, ret.data = true, false, { quest = quest, uiMapID = uiMapID, x = pos.x, y = pos.y, distance = 1 }
 			end
-
-			distance = sqrt(dd)
-		end
-
-		if distance > 0.02 then
-			return false, { quest = quest, uiMapID = uiMapID, x = pos.x, y = pos.y, distance = distance }
-		end
-
-	elseif not quest.missing then
-		return false, { quest = quest, uiMapID = uiMapID, x = pos.x, y = pos.y, distance = 1 }
+		until true
 	end
 
-	return true
+	for i = 1, returnCount do
+		local ret = returns[i]
+		if ret.has and ret.success then
+			return ret.success, ret.data, returnCount
+		end
+	end
+
+	for i = 1, returnCount do
+		local ret = returns[i]
+		if ret.has then
+			return ret.success, ret.data, returnCount
+		end
+	end
+
+	return true, nil, returnCount
 end
 
 --

@@ -1,3 +1,5 @@
+--- @type MaxDps MaxDps
+local _, MaxDps = ...;
 
 local Profiler = MaxDps:NewModule('Profiler', 'AceEvent-3.0');
 
@@ -89,10 +91,11 @@ function Profiler:ShowWindow()
 	if self.frame then
 		self.editBox:SetText(self:GenerateLua());
 		self.frame:Show();
-		return;
+		return
 	end
 
 	local f = AceGUI:Create('Window');
+	f:SetSize(500, 600);
 	f:SetTitle('MaxDps Profiler');
 	f:SetLayout('Flow');
 

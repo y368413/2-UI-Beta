@@ -1,5 +1,5 @@
 ## Interface: 80205
-## Version: 8.2.2
+## Version: 8.2.7
 ## Author: Kaminaris
 ## Title: MaxDps
 ## Title-zhCN:|CFFD74DE1[输出]|rMaxDps
@@ -15,9 +15,9 @@
 
 ForAllIndentsAndPurposes.lua
 
-core.lua
-buttons.lua
-helper.lua
-timetodie.lua
+Core.lua
+Buttons.lua
+Helper.lua
+TimeToDie.lua
 
 Modules\Roles.xml

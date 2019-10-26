@@ -580,6 +580,37 @@ L["known"] = "已收藏"
 L["missing"] = "缺少"
 L["unobtainable"] = "無法獲得"
 L["unlearnable"] = "未學習"
+
+-------------------------------------------------------------------------------
+--------------------------------- CONTEXT MENU --------------------------------
+-------------------------------------------------------------------------------
+
+L["context_menu_title"] = "HandyNotes 機械岡 & 納沙塔爾";
+L["context_menu_add_tomtom"] = "加入TomTom";
+L["context_menu_hide_node"] = "隱藏此節點";
+L["context_menu_restore_hidden_nodes"] = "恢復所有隱藏節點";
+L["Nazjatar"] = "納沙塔爾";
+L["Mechagon"] = "機械岡";
+
+-------------------------------------------------------------------------------
+----------------------------------- OPTIONS -----------------------------------
+-------------------------------------------------------------------------------
+
+L["options_title"] = "機械岡 & 納沙塔爾";
+
+------------------------------------ ICONS ------------------------------------
+
+L["options_icon_settings"] = "圖示設定";
+L["options_icons_treasures"] = "寶藏圖示";
+L["options_icons_rares"] = "稀有圖示";
+L["options_icons_caves"] = "洞穴圖示";
+L["options_icons_pet_battles"] = "戰寵圖示";
+L["options_icons_other"] = "其他圖示";
+L["options_scale"] = "縮放";
+L["options_scale_desc"] = "1 = 100%";
+L["options_opacity"] = "透明度";
+L["options_opacity_desc"] = "0 = 全透明，1 = 不透明";
+
 ---------------------------------- VISIBILITY ---------------------------------
 
 L["options_visibility_settings"] = "可見度";
@@ -605,3 +636,22 @@ L["options_toggle_supplies_desc"] = "顯示所有戰爭補給箱可能的位置�
 L["options_toggle_supplies"] = "戰爭補給掉落";
 L["options_toggle_treasures"] = "寶藏";
 
+---------------------------------- TOOLTIP ---------------------------------
+
+L["options_tooltip_settings"] = "工具提示";
+L["options_tooltip_settings_desc"] = "工具提示";
+L["options_toggle_show_loot"] = "顯示拾取物";
+L["options_toggle_show_loot_desc"] = "在工具提示加入掉落資訊";
+L["options_toggle_show_notes"] = "顯示註記";
+L["options_toggle_show_notes_desc"] = "如果可以在工具提示顯示有用註記";
+
+--------------------------------- DEVELOPMENT ---------------------------------
+
+L["options_dev_settings"] = "開發";
+L["options_dev_settings_desc"] = "開發設定";
+L["options_toggle_show_debug"] = "偵錯";
+L["options_toggle_show_debug_desc"] = "顯示偵錯內容";
+L["options_toggle_ignore_quests"] = "忽略任務";
+L["options_toggle_ignore_quests_desc"] = "忽略節點的任務狀態";
+L["options_toggle_force_nodes"] = "強制節點";
+L["options_toggle_force_nodes_desc"] = "強制顯示所有節點";

@@ -200,7 +200,7 @@ function MaxDps:AddStandardButton(button)
 			if HasAction(slot) then
 				type, actionType = GetActionInfo(slot);
 			else
-				return;
+				return
 			end
 		end
 
@@ -208,7 +208,7 @@ function MaxDps:AddStandardButton(button)
 			spellId = GetMacroSpell(actionType);
 		elseif type == 'item' then
 			self:AddItemButton(button);
-			return;
+			return
 		elseif type == 'spell' then
 			spellId = select(7, GetSpellInfo(actionType));
 		end

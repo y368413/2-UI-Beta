@@ -737,7 +737,7 @@ end
 ------------------------------------- NPC -------------------------------------
 -------------------------------------------------------------------------------
 
-local NPC_TOOLTIP_NAME = "HandyNotes_MechagonAndNazjatar_npcToolTip";
+local NPC_TOOLTIP_NAME = "HandyNotes_MechagonAndNazjatar_npcToolTip"
 local NPC_TOOLTIP = nil
 local NPC_CACHE = {}
 
@@ -784,6 +784,27 @@ local PetBattle = Class('PetBattle', NPC)
 
 PetBattle.icon = "paw_yellow"
 PetBattle.group = "pet_battles"
+
+-------------------------------------------------------------------------------
+------------------------------------ QUEST ------------------------------------
+-------------------------------------------------------------------------------
+
+local Quest = Class('Quest', Node)
+
+Quest.note = AVAILABLE_QUEST
+
+function Quest:init()
+    Node.init(self)
+    C_QuestLog.GetQuestInfo(self.quest[1]) -- fetch info from server
+end
+
+function Quest.getters:icon()
+    return self.daily and 'quest_blue' or 'quest_yellow'
+end
+
+function Quest.getters:label()
+    return C_QuestLog.GetQuestInfo(self.quest[1])
+end
 
 -------------------------------------------------------------------------------
 ------------------------------------ RARE -------------------------------------
@@ -838,6 +859,7 @@ MechagonAndNazjatar.node = {
     Cave=Cave,
     NPC=NPC,
     PetBattle=PetBattle,
+    Quest=Quest,
     Rare=Rare,
     Supply=Supply,
     Treasure=Treasure
@@ -1143,6 +1165,7 @@ local Node = MechagonAndNazjatar.node.Node
 local Cave = MechagonAndNazjatar.node.Cave
 local NPC = MechagonAndNazjatar.node.NPC
 local PetBattle = MechagonAndNazjatar.node.PetBattle
+local Quest = MechagonAndNazjatar.node.Quest
 local Rare = MechagonAndNazjatar.node.Rare
 local Supply = MechagonAndNazjatar.node.Supply
 local Treasure = MechagonAndNazjatar.node.Treasure
@@ -1185,6 +1208,10 @@ function map:enabled (node, coord, minimap)
     if isinstance(node, Rare) then return profile.rare_mech end
     if isinstance(node, PetBattle) then return profile.pet_mech end
     if node.label == L["rec_rig"] then return profile.recrig_mech end
+
+    -- node for the More Recycling daily
+    if isinstance(node, Quest) then return true end
+
     return false;
 end
 
@@ -1499,21 +1526,42 @@ nodes[30775964] = Treasure({label=L["iron_chest"], note=L["iron_chest_note"], re
 nodes[20537120] = Treasure({label=L["msup_chest"], note=L["msup_chest_note"], rewards={RED_PAINT}})
 nodes[18357618] = Treasure({label=L["rust_chest"], note=L["rust_chest_note"], rewards={RED_PAINT}})
 nodes[25267825] = Treasure({label=L["rust_chest"], note=L["rust_chest_note"], rewards={RED_PAINT}})
+nodes[23988441] = Treasure({label=L["rust_chest"], note=L["rust_chest_note"], rewards={RED_PAINT}})
 
 -------------------------------------------------------------------------------
 ------------------------------ MECHANIZED CHESTS ------------------------------
 -------------------------------------------------------------------------------
 
+--[[local MechChest = Class('MechChest', Treasure)
+
+MechChest.label = L["mech_chest"]
+MechChest.rewards = {
+    Achievement({id=13708, criteria={45773,45781,45779,45780,45785}}), -- Most Minis Wins
+    Item({item=167790, quest=55451}), -- Paint Vial: Fireball Red
+    Item({item=169850, weekly=57133}) -- Azeroth Mini Pack: Mechagon
+}
+
+local TREASURE1 = MechChest({quest=55547, icon='chest_blue'})
+local TREASURE2 = MechChest({quest=55548, icon='chest_brown'})
+local TREASURE3 = MechChest({quest=55549, icon='chest_orange'})
+local TREASURE4 = MechChest({quest=55550, icon='chest_yellow'})
+local TREASURE5 = MechChest({quest=55551, icon='chest_camo', future=1})
+local TREASURE6 = MechChest({quest=55552, icon='chest_lime'})
+local TREASURE7 = MechChest({quest=55553, icon='chest_red'})
+local TREASURE8 = MechChest({quest=55554, icon='chest_purple'})
+local TREASURE9 = MechChest({quest=55555, icon='chest_teal'})
+local TREASURE10 = MechChest({quest=55556, icon='chest_lblue'})]]
+
 local TREASURE1 = Treasure({quest=55547, icon='chest_blue', label=L["mech_chest"]})
 local TREASURE2 = Treasure({quest=55548, icon='chest_brown', label=L["mech_chest"]})
-local TREASURE3 = Treasure({quest=55549, icon='chest_camo', label=L["mech_chest"]})
-local TREASURE4 = Treasure({quest=55550, icon='chest_orange', label=L["mech_chest"]})
-local TREASURE5 = Treasure({quest=55551, icon='chest_lblue', future=1, label=L["mech_chest"]})
-local TREASURE6 = Treasure({quest=55552, icon='chest_purple', label=L["mech_chest"]})
+local TREASURE3 = Treasure({quest=55549, icon='chest_orange', label=L["mech_chest"]})
+local TREASURE4 = Treasure({quest=55550, icon='chest_yellow', label=L["mech_chest"]})
+local TREASURE5 = Treasure({quest=55551, icon='chest_camo', future=1, label=L["mech_chest"]})
+local TREASURE6 = Treasure({quest=55552, icon='chest_lime', label=L["mech_chest"]})
 local TREASURE7 = Treasure({quest=55553, icon='chest_red', label=L["mech_chest"]})
-local TREASURE8 = Treasure({quest=55554, icon='chest_lime', label=L["mech_chest"]})
+local TREASURE8 = Treasure({quest=55554, icon='chest_purple', label=L["mech_chest"]})
 local TREASURE9 = Treasure({quest=55555, icon='chest_teal', label=L["mech_chest"]})
-local TREASURE10 = Treasure({quest=55556, icon='chest_yellow', label=L["mech_chest"]})
+local TREASURE10 = Treasure({quest=55556, icon='chest_lblue', label=L["mech_chest"]})
 
 -- object 325659
 nodes[43304977] = TREASURE1
@@ -1578,7 +1626,11 @@ nodes[12088568] = TREASURE10
 -------------------------------- MISCELLANEOUS --------------------------------
 -------------------------------------------------------------------------------
 
--- More Recycling 55743
+--nodes[53486145] = Quest({quest=55743, requires=56117, daily=true, minimap=false, scale=1.8, rewards={ Achievement({id=13708, criteria={45772,45775,45776,45777,45778}}), -- Most Minis Wins
+--    Item({item=169848, weekly=57134}), -- Azeroth Mini Pack: Bondo's Yard
+--}})
+
+-------------------------------------------------------------------------------
 
 local RegRig = Class('RegRig', Node)
 
@@ -2121,7 +2173,7 @@ nodes[29604970] = PetBattle({id=154916, note=L["in_cave"]}) -- Ravenous Scalespa
 nodes[56400810] = PetBattle({id=154917, note=L["in_cave"]}) -- Mindshackle
 nodes[46602800] = PetBattle({id=154918, note=L["in_cave"]}) -- Kelpstone
 nodes[37501670] = PetBattle({id=154919, note=L["in_cave"]}) -- Voltgorger
-nodes[59102660] = PetBattle({id=154920, note=L["in_cave"]}) -- Frenzied Knifefang
+nodes[61472290] = PetBattle({id=154920, note=L["in_cave"]}) -- Frenzied Knifefang
 nodes[28102670] = PetBattle({id=154921, note=L["in_cave"]}) -- Giant Opaline Conch
 
 -------------------------------------------------------------------------------

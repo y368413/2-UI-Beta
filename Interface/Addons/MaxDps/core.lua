@@ -74,6 +74,21 @@ MaxDps.defaultOptions = {
 		sizeMult = 1.4
 	}
 };
+
+local TableInsert = tinsert;
+local TableRemove = tremove;
+local TableContains = tContains;
+local TableIndexOf = tIndexOf;
+
+local UnitIsFriend = UnitIsFriend;
+local IsPlayerSpell = IsPlayerSpell;
+local UnitClass = UnitClass;
+local GetSpecialization = GetSpecialization;
+local CreateFrame = CreateFrame;
+local GetAddOnInfo = GetAddOnInfo;
+local IsAddOnLoaded = IsAddOnLoaded;
+local LoadAddOn = LoadAddOn;
+
 function MaxDps:OnInitialize()
 	self.db = LibStub('AceDB-3.0'):New('MaxDpsOptions', self.defaultOptions);
 
