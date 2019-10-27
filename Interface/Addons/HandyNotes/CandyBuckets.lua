@@ -798,7 +798,7 @@ end
 function CandyBucketsPinMixin:OnAcquired(quest, poi)
 	self.quest = quest
 	self:UseFrameLevelType("PIN_FRAME_LEVEL_GOSSIP", self:GetMap():GetNumActivePinsByTemplate("CandyBucketsPinTemplate"))
-	self:SetSize(16, 16)
+	self:SetSize(12, 12)
 	self.Texture:SetTexture(quest.module.texture[quest.extra or 1])
 	self.Border:SetTexture(PIN_BORDER_COLOR[quest.side or 0])
 	self.name = quest.module.title[quest.extra or 1]
