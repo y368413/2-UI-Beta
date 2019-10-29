@@ -38,7 +38,7 @@ TOASTY_TRANSMOG_REMOVED = "幻化外观已移除";
 ----------------Binding----------------------
 TOMEOFTELEPORTATIONTITLE = "传送大师";
 TITLEREADME = "点击图标打开传送大师";
-BINDING_HEADER_TARGETCLASSBUTTON = "目标交互"
+ 
 ----------------Title----------------------
 CHAT_WHISPERPOP_TITLE="|cff777777[聊天]|r密语管理";
 GEAR_DELETEEMPTYMAILS_TITLE="|cffFFFFFF[邮件]|r删除空邮件";
@@ -54,7 +54,8 @@ DialogKey_TITLE = '|cff0080ff[任务]|r快捷对话';
 Farmer_TITLE = '|cff8080ff[拾取]|r拾取提示';
 HardYards_TITLE = '|cFFD2691E [菜单]|r距离显示:';
 MTG_TITLE = "|cff69ccf0[购买]|r鱼人助手";
-CASTBARS_STYLE_TITLE = "|cff8000ff[菜单]|r施法条条";
+ITEMTOOLTIPPROFESSION_TITLE = "|cff8080ff[专业]|r鼠标提示";
+BINDING_HEADER_TARGETCLASSBUTTON = "目标交互"
 ----------------Charms----------------------
 CHARMS_BUY_STACK="你确定购买|cffff0000一组|r下列物品吗？";
 CHARMS_NAKEDIZE="脱光光" ;
@@ -196,6 +197,7 @@ BARRELSOEASY_START_FIRST = "请开始第一轮,小桶子运动完才能开始标
 PVPPP_KILL_MSG = "荣誉击杀:%s/%s";
 PVPPP_KILL_AVG = "过去的一小时中一共获取了 %s 个荣誉击杀";
 ----------------UFs----------------------
+CASTBARS_STYLE_TITLE = "|cff8000ff[菜单]|r施法条条";
 UFRAMESTYLE_BLINKHEALTHTEXT_ANCHOR = "左键-拖动位置\n右键-锁定位置";
 ----------------BRP----------------------
 BRP_Description="使用 /brp 解锁和锁定位置，同时 /brp 也可复位位置。";
@@ -394,7 +396,7 @@ U["WallpaperKit"] = "屏保"
 U["xMerchant"] = "商人购买列表美化"
 U["UFClassIcon"] = "使用职业头像"
 U["UFPctText"] = "使用大血量百分比"
-U["UFFade"] = "智能头像渐隐"
+U["UFFade"] = "头像隐藏(满血or无目标)"
 U["Enable Bags"] = "系统自带背包增强"
 U["Chat Sticky"] = "启用密语粘滞"
 U["Chat bg"] = "聊天框背景"
@@ -787,7 +789,7 @@ U["Broken Spell"] = "控制技能打破通报"
 U["Interrupt"] = "打断→"
 U["Steal"] = "偷取→"
 U["Dispel"] = "驱散→"
-U["BrokenSpell"] = "破控 - %s > %s"
+U["BrokenSpell"] = "破控 - %s[%s] > %s[%s]"
 U["QuestNotifier"] = "启用任务通报"
 U["QuestProgress"] = "通报任务的详尽进度"
 U["AcceptQuest"] = "接受任务"

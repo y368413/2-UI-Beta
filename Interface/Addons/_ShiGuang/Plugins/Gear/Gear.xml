@@ -11,6 +11,7 @@
 	<Script file="LockboxMailer.lua"/>
 	<Script file="nReputation.lua" />
 	<Script file="MacroMr.lua"/>
+	<Script file="ItemTooltipProfession.lua"/>
 	<CheckButton name="nReputation" parent="ReputationFrame" mixin="nReputationMixin">
 		<Size x="24" y="24"/>
 		<Anchors>
