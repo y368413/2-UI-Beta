@@ -1,4 +1,4 @@
---## Author: Urtgard  ## Version: v8.2.0-10release
+--## Author: Urtgard  ## Version: v8.2.5-2release
 WQAchievements = LibStub("AceAddon-3.0"):NewAddon("WQAchievements", "AceConsole-3.0", "AceTimer-3.0")
 local WQA = WQAchievements
 WQA.data = {}
@@ -10,6 +10,10 @@ WQA.links = {}
 
 -- Blizzard
 local IsActive = C_TaskQuest.IsActive
+L["LE_QUEST_TAG_TYPE_PVP"] = CALENDAR_TYPE_PVP
+L["LE_QUEST_TAG_TYPE_PET_BATTLE"] = BATTLE_PET_SOURCE_5
+L["LE_QUEST_TAG_TYPE_PROFESSION"] = BATTLE_PET_SOURCE_4
+L["LE_QUEST_TAG_TYPE_DUNGEON"] = CALENDAR_TYPE_DUNGEON
 if GetLocale() == "zhCN" then
 	WQACHIEVEMENTS_TITLE = "|cff8080ff[成就]|r世界任务"
 elseif GetLocale() == "zhTW" then
@@ -17,10 +21,7 @@ elseif GetLocale() == "zhTW" then
 else
   WQACHIEVEMENTS_TITLE = "|cff8080ff[Achieve]|WQA"
 end
-L["LE_QUEST_TAG_TYPE_PVP"] = "PVP"
-L["LE_QUEST_TAG_TYPE_PET_BATTLE"] = "Pet Battle"
-L["LE_QUEST_TAG_TYPE_PROFESSION"] = "Profession"
-L["LE_QUEST_TAG_TYPE_DUNGEON"] = "Dungeon"
+
 local function GetExpansionByMissionID(missionID)
 	return WQA.missionList[missionID].expansion
 end
@@ -65,7 +66,7 @@ local questZoneIDList = {
 }
 
 local function GetQuestZoneID(questID)
-	if WQA.questList[questID].isEmissary then return BOUNTY_BOARD_LOCKED_TITLE  end  --"Emissary"
+	if WQA.questList[questID].isEmissary then return BOUNTY_BOARD_LOCKED_TITLE end  --"Emissary"
 	if not WQA.questList[questID].info then	WQA.questList[questID].info = {} end
 	if WQA.questList[questID].info.zoneID then
 		return WQA.questList[questID].info.zoneID
@@ -2323,7 +2324,6 @@ function WQA:CheckMissions()
 end
 function WQA:isQuestPinActive(questID)
 	for mapID in pairs(self.questPinMapList) do
-		--print(mapID)
 		for _, questPin in pairs(C_QuestLine.GetAvailableQuestLines(mapID)) do
 			if questPin.questID == questID then
 				return true
