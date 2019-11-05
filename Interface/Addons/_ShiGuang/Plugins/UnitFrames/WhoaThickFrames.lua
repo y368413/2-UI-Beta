@@ -331,18 +331,25 @@ function whoaPartyFrames()
 			_G["PartyMemberFrame"..i.."ManaBar"]:ClearAllPoints();
 			_G["PartyMemberFrame"..i.."ManaBar"]:SetPoint("TOPLEFT", 45, -26);
 			_G["PartyMemberFrame"..i.."ManaBar"]:SetHeight(5);
+			--_G["PartyMemberFrame"..i.."HealthBarTextLeft"]:SetText(" ");
 			_G["PartyMemberFrame"..i.."HealthBarTextLeft"]:ClearAllPoints();
 			_G["PartyMemberFrame"..i.."HealthBarTextLeft"]:SetPoint("LEFT", _G["PartyMemberFrame"..i.."HealthBar"], "LEFT", 0, 0);
+			--_G["PartyMemberFrame"..i.."HealthBarTextRight"]:SetText(" ");
 			_G["PartyMemberFrame"..i.."HealthBarTextRight"]:ClearAllPoints();
 			_G["PartyMemberFrame"..i.."HealthBarTextRight"]:SetPoint("RIGHT", _G["PartyMemberFrame"..i.."HealthBar"], "RIGHT", 0, 0);
+			--_G["PartyMemberFrame"..i.."ManaBarTextLeft"]:SetText(" ");
 			_G["PartyMemberFrame"..i.."ManaBarTextLeft"]:ClearAllPoints();
 			_G["PartyMemberFrame"..i.."ManaBarTextLeft"]:SetPoint("LEFT", _G["PartyMemberFrame"..i.."ManaBar"], "LEFT", 0, 0);
+			--_G["PartyMemberFrame"..i.."ManaBarTextRight"]:SetText(" ");
 			_G["PartyMemberFrame"..i.."ManaBarTextRight"]:ClearAllPoints();
 			_G["PartyMemberFrame"..i.."ManaBarTextRight"]:SetPoint("RIGHT", _G["PartyMemberFrame"..i.."ManaBar"], "RIGHT", 0, 0);
+			--_G["PartyMemberFrame"..i.."HealthBarText"]:SetText(" ");
 			_G["PartyMemberFrame"..i.."HealthBarText"]:ClearAllPoints();
 			_G["PartyMemberFrame"..i.."HealthBarText"]:SetPoint("LEFT", _G["PartyMemberFrame"..i.."HealthBar"], "RIGHT", 0, 0);
+			--_G["PartyMemberFrame"..i.."ManaBarText"]:SetText(" ");
 			_G["PartyMemberFrame"..i.."ManaBarText"]:ClearAllPoints();
 			_G["PartyMemberFrame"..i.."ManaBarText"]:SetPoint("LEFT", _G["PartyMemberFrame"..i.."ManaBar"], "RIGHT", 0, 0);
+			
 		end
 	end
 end

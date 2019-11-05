@@ -152,6 +152,7 @@ CreateDestination(
 		CreateItem(166746),				-- Fire Eater's Hearthstone  吞火者的炉石
 		CreateItem(165802),				-- Noble Gardener's Hearthstone  复活节的炉石
 		CreateItem(168907),				-- Holographic Digitalization Hearthstone 全息数字化炉石
+		CreateItem(172179),				-- 永恒旅者的炉石
 	})
 	
 CreateDestination(

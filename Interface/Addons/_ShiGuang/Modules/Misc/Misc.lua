@@ -288,8 +288,8 @@ local erList = {
 	[SPELL_FAILED_NO_COMBO_POINTS] = true,
 	[SPELL_FAILED_UNIT_NOT_INFRONT] = true,
 	[SPELL_FAILED_NO_ENDURANCE] = true,      -- Not enough endurance
-  [SPELL_FAILED_NOT_MOUNTED] = true,       -- You are mounted
-  [SPELL_FAILED_NOT_ON_TAXI] = true,       -- You are in flight
+	[SPELL_FAILED_NOT_MOUNTED] = true,       -- You are mounted
+	[SPELL_FAILED_NOT_ON_TAXI] = true,       -- You are in flight
 	[SPELL_FAILED_SPELL_IN_PROGRESS] = true,
 	[SPELL_FAILED_TARGET_AURASTATE] = true,
 	[SPELL_FAILED_TARGETS_DEAD] = true,      -- Your target is dead.
@@ -509,7 +509,6 @@ do
 				end
 			end
 		end
-
 		_MerchantItemButton_OnModifiedClick(self, ...)
 	end
 end
@@ -697,14 +696,14 @@ hooksecurefunc("TextStatusBar_UpdateTextStringWithValues",function(self,textStri
        --textString:SetText(tostring(math.ceil((value / maxValue) * 100)).."% "..maxValue.." ")
      end 
    end 
-   for i = 1, 4 do
+   --[[for i = 1, 4 do
 		_G["PartyMemberFrame"..i.."HealthBarText"]:SetText(" ");
 		_G["PartyMemberFrame"..i.."HealthBarTextLeft"]:SetText(" ");
 		_G["PartyMemberFrame"..i.."HealthBarTextRight"]:SetText(" ");
 		_G["PartyMemberFrame"..i.."ManaBarText"]:SetText(" ");
 		_G["PartyMemberFrame"..i.."ManaBarTextLeft"]:SetText(" ");
 		_G["PartyMemberFrame"..i.."ManaBarTextRight"]:SetText(" ");
-	end
+	end]]
 end)
 end
 

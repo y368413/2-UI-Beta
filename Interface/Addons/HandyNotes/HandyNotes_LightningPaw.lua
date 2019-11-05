@@ -1,4 +1,4 @@
--- ## Author: Voidiver  ## Version: 8.1.0.1
+-- ## Author: Voidiver  ## Version: 8.2.5.2
 local LightningPaw = {}
 local HandyNotes = LibStub("AceAddon-3.0"):GetAddon("HandyNotes")
 local Paw = HandyNotes:NewModule("HandyNotes_LightningPaw", "AceEvent-3.0", "AceHook-3.0", "AceConsole-3.0")

@@ -193,13 +193,13 @@ function MISC:InterruptAlert_Update(...)
 			if infoText == U["BrokenSpell"] then
 				if not MaoRUISettingDB["Misc"]["BrokenSpell"] then return end
 				if auraType and auraType == AURA_TYPE_BUFF or blackList[spellID] then return end
-				SendChatMessage(format(infoText, sourceName..GetSpellLink(extraskillID), destName..GetSpellLink(spellID)), msgChannel())
+				SendChatMessage(format(infoText, sourceName..GetSpellLink(extraskillID), destName..GetSpellLink(spellID)), "SAY")  --msgChannel()
 			else
 				if MaoRUISettingDB["Misc"]["OwnInterrupt"] and sourceName ~= I.MyName and not MISC:IsAllyPet(sourceFlags) then return end
 				   if MaoRUISettingDB["Misc"]["InterruptSound"] then
 				      PlaySoundFile("Interface\\Addons\\_ShiGuang\\Media\\Sounds\\ShutupFool.ogg", "Master")
 				   end
-				 SendChatMessage(infoText .. GetSpellLink(extraskillID), msgChannel())
+				 SendChatMessage(infoText .. GetSpellLink(extraskillID), "SAY")  --msgChannel()
 			end
 		end
 	end
