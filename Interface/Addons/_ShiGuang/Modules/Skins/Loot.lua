@@ -1,3 +1,10 @@
+local _, ns = ...
+local M, R, U, I = unpack(ns)
+local P = M:GetModule("Skins")
+
+function P:LootEx()
+	--if not MaoRUISettingDB["Skins"]["Loot"] then return end
+	
 ------------------------------------------------------------ImprovedLootFrame
 local wow_classic = WOW_PROJECT_ID and WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 	--LOOTFRAME_AUTOLOOT_DELAY = 0.5;
@@ -92,30 +99,51 @@ hooksecurefunc("LootFrame_Show", function(self, ...)
 	LootFrame_Update();
 end)
 
--------BGRoll----------------##Author: NOGARUKA  ##Version: 2
-local NeedList = {
-[18231] = true,
-[71951] = true,
-[71952] = true,
-[71953] = true,
-}
-local BGRoll = CreateFrame("Frame")
-BGRoll:RegisterEvent("START_LOOT_ROLL")
-BGRoll:RegisterEvent("CONFIRM_LOOT_ROLL")
-BGRoll:SetScript("OnEvent", function(self, event, id, rt)
-if event == 'START_LOOT_ROLL' then
-	local _, Name, _, _, _, Need, Greed, _ = GetLootRollItemInfo(id)
-	local Link = GetLootRollItemLink(id)
-	local ItemID = tonumber(strmatch(Link, 'item:(%d+)'))
-	if NeedList[ItemID] then
-		if Need then
-			print("→: ", (Name))
-			RollOnLoot(id, 1)
-		elseif Greed then
-			print("→: ", (Name))
-			RollOnLoot(id, 2)
+	local chn = { "say", "guild", "party", "raid"}
+	local chncolor = {
+		say = { 1, 1, 1},
+		guild = { .25, 1, .25},
+		party = { 2/3, 2/3, 1},
+		raid = { 1, .5, 0},
+	}
+
+	local function Announce(chn)
+		local nums = GetNumLootItems()
+		if(nums == 0) then return end
+		if UnitIsPlayer("target") or not UnitExists("target") then -- Chests are hard to identify!
+			SendChatMessage(format("*** %s ***", "箱子中的战利品"), chn)
+		else
+			SendChatMessage(format("*** %s%s ***", UnitName("target"), "的战利品"), chn)
+		end
+		for i = 1, GetNumLootItems() do
+			local link
+			if(LootSlotHasItem(i)) then     --判断，只发送物品
+				link = GetLootSlotLink(i)
+			else
+				_, link = GetLootSlotInfo(i)
+			end
+			if link then
+				local messlink = "- %s"
+				SendChatMessage(format(messlink, link), chn)
+			end
 		end
 	end
+
+	LootFrame.announce = {}
+	for i = 1, #chn do
+		LootFrame.announce[i] = CreateFrame("Button", "ItemLootAnnounceButton"..i, LootFrame)
+		LootFrame.announce[i]:SetSize(17, 17)
+		M.PixelIcon(LootFrame.announce[i], I.normTex, true)
+		M.CreateSD(LootFrame.announce[i])
+		LootFrame.announce[i].Icon:SetVertexColor(unpack(chncolor[chn[i]]))
+		LootFrame.announce[i]:SetPoint("RIGHT", i==1 and LootFrameCloseButton or LootFrame.announce[i-1], "LEFT", -3, 0)
+		LootFrame.announce[i]:SetScript("OnClick", function() Announce(chn[i]) end)
+		LootFrame.announce[i]:SetScript("OnEnter", function(self)
+			GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 5)
+			GameTooltip:ClearLines()
+			GameTooltip:AddLine("将战利品通报至".._G[chn[i]:upper()])
+			GameTooltip:Show()
+		end)
+		LootFrame.announce[i]:SetScript("OnLeave", GameTooltip_Hide)
+	end
 end
-if event == 'CONFIRM_LOOT_ROLL' then ConfirmLootRoll(id, rt) end
-end)
