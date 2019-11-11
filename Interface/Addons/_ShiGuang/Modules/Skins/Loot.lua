@@ -9,12 +9,8 @@ function P:LootEx()
 local wow_classic = WOW_PROJECT_ID and WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 	--LOOTFRAME_AUTOLOOT_DELAY = 0.5;
 	--LOOTFRAME_AUTOLOOT_RATE = 0.1;
-	
-	-- Woah, nice coding, blizz.
-	-- Anchor something positioned at the top of the frame to the center of the frame instead,
-	-- and make it an anonymous font string so I have to work to find it
-	local i = 1
 
+	local i = 1
 	while true do
 		local r = select(i, LootFrame:GetRegions())
 		if not r then break end
@@ -45,7 +41,6 @@ OverflowText:Hide()
 local t = {}
 local function CalculateNumMobsLooted()
 	wipe(t)
-
 	for i = 1, GetNumLootItems() do
 		for n = 1, select("#", GetLootSourceInfo(i)), 2 do
 			local GUID, num = select(n, GetLootSourceInfo(i))
@@ -57,23 +52,17 @@ local function CalculateNumMobsLooted()
 	for k, v in pairs(t) do
 		n = n + 1
 	end
-
 	return n
 end
 
 hooksecurefunc("LootFrame_Show", function(self, ...)
 	local maxButtons = floor(UIParent:GetHeight()/LootButton1:GetHeight() * 0.7)
-	
 	local num = GetNumLootItems()
-
 	if self.AutoLootTable then
 		num = #self.AutoLootTable
 	end
-
 	--self.AutoLootDelay = 0.4 + (num * 0.05)
-	
 	num = min(num, maxButtons)
-	
 	LootFrame:SetHeight(baseHeight + (num * buttonHeight))
 	for i = 1, num do
 		if i > LOOTFRAME_NUMBUTTONS then
@@ -89,13 +78,11 @@ hooksecurefunc("LootFrame_Show", function(self, ...)
 			button:SetPoint(p, "LootButton"..(i-1), r, x, y)
 		end
 	end
-
 	if CalculateNumMobsLooted() >= 50 then
 		OverflowText:Show()
 	else
 		OverflowText:Hide()
 	end
-
 	LootFrame_Update();
 end)
 
@@ -108,13 +95,12 @@ end)
 	}
 
 	local function Announce(chn)
-		local nums = GetNumLootItems()
-		if(nums == 0) then return end
-		if UnitIsPlayer("target") or not UnitExists("target") then -- Chests are hard to identify!
-			SendChatMessage(format("*** %s ***", "箱子中的战利品"), chn)
-		else
-			SendChatMessage(format("*** %s%s ***", UnitName("target"), "的战利品"), chn)
-		end
+		if (GetNumLootItems() == 0) then return end
+		--if UnitIsPlayer("target") or not UnitExists("target") then -- Chests are hard to identify!
+			--SendChatMessage(format("*** %s ***", "箱子中的战利品"), chn)
+		--else
+			--SendChatMessage(format("*** %s%s ***", UnitName("target"), "的战利品"), chn)
+		--end
 		for i = 1, GetNumLootItems() do
 			local link
 			if(LootSlotHasItem(i)) then     --判断，只发送物品
@@ -132,18 +118,15 @@ end)
 	LootFrame.announce = {}
 	for i = 1, #chn do
 		LootFrame.announce[i] = CreateFrame("Button", "ItemLootAnnounceButton"..i, LootFrame)
-		LootFrame.announce[i]:SetSize(17, 17)
+		LootFrame.announce[i]:SetSize(21, 21)
 		M.PixelIcon(LootFrame.announce[i], I.normTex, true)
 		M.CreateSD(LootFrame.announce[i])
 		LootFrame.announce[i].Icon:SetVertexColor(unpack(chncolor[chn[i]]))
-		LootFrame.announce[i]:SetPoint("RIGHT", i==1 and LootFrameCloseButton or LootFrame.announce[i-1], "LEFT", -3, 0)
+		if i==1 then
+		LootFrame.announce[i]:SetPoint("TOPRIGHT", LootFrameCloseButton, "BOTTOM", 3, -3)
+		else
+		LootFrame.announce[i]:SetPoint("RIGHT", LootFrame.announce[i-1], "LEFT", -6, 0)
+		end
 		LootFrame.announce[i]:SetScript("OnClick", function() Announce(chn[i]) end)
-		LootFrame.announce[i]:SetScript("OnEnter", function(self)
-			GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 5)
-			GameTooltip:ClearLines()
-			GameTooltip:AddLine("将战利品通报至".._G[chn[i]:upper()])
-			GameTooltip:Show()
-		end)
-		LootFrame.announce[i]:SetScript("OnLeave", GameTooltip_Hide)
 	end
 end

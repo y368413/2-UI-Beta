@@ -596,6 +596,20 @@ LegionTreasures_options = {
     },
 }
 
+local allQuestsComplete = function(quests)
+    if type(quests) == 'table' then
+        -- if it's a table, only count as complete if all quests are complete
+        for _, quest in ipairs(quests) do
+            if not IsQuestFlaggedCompleted(quest) then
+                return false
+            end
+        end
+        return true
+    elseif IsQuestFlaggedCompleted(quests) then
+        return true
+    end
+end
+
 local player_faction = UnitFactionGroup("player")
 local player_name = UnitName("player")
 LegionTreasures_should_show_point = function(coord, point, currentZone, currentLevel)
@@ -616,19 +630,7 @@ LegionTreasures_should_show_point = function(coord, point, currentZone, currentL
     end
     if (not LegionTreasures_db.found) then
         if point.quest then
-            if type(point.quest) == 'table' then
-                -- if it's a table, only count as complete if all quests are complete
-                local complete = true
-                for _, quest in ipairs(point.quest) do
-                    if not IsQuestFlaggedCompleted(quest) then
-                        complete = false
-                        break
-                    end
-                end
-                if complete then
-                    return false
-                end
-            elseif IsQuestFlaggedCompleted(point.quest) then
+            if allQuestsComplete(point.quest) then
                 return false
             end
         elseif point.achievement then
@@ -665,8 +667,7 @@ LegionTreasures_should_show_point = function(coord, point, currentZone, currentL
             end
         end
     end
-
-    if point.hide_before and not LegionTreasures_db.upcoming and not IsQuestFlaggedCompleted(point.hide_before) then
+    if point.hide_before and not LegionTreasures_db.upcoming and not allQuestsComplete(point.hide_before) then
         return false
     end
     return true
@@ -1241,7 +1242,7 @@ LegionTreasures_points = {
     [654] = { -- MucksnoutDen, Highmountain
         [60592533] = {quest=40494, currency=ARTIFACT, label=CHEST},
     },
-    [652] = { -- ThunderTotem, Highmountain
+    [750] = { -- ThunderTotem, Highmountain
         [13715555] = {quest=40491, currency=ARTIFACT, label=CHEST_SM},
         [63435929] = {quest=39531, item=141322, label="A Steamy Jewelry Box"},
         [50667537] = {quest=40472, currency=ARTIFACT, label=CHEST_SM},

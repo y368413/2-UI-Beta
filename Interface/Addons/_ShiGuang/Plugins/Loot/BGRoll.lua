@@ -1,21 +1,3 @@
-------------------------------------------------------------ImprovedLootFrame
-local wow_classic = WOW_PROJECT_ID and WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
-	--LOOTFRAME_AUTOLOOT_DELAY = 0.5;
-	--LOOTFRAME_AUTOLOOT_RATE = 0.1;
-	
-	-- Woah, nice coding, blizz.
-	-- Anchor something positioned at the top of the frame to the center of the frame instead,
-	-- and make it an anonymous font string so I have to work to find it
-	local i = 1
-
-	while true do
-		local r = select(i, LootFrame:GetRegions())
-		if not r then break end
-		if r.GetText and r:GetText() == ITEMS then
-			r:ClearAllPoints()
-			r:SetPoint("TOP", 12, -5)
-		end
-		i = i + 1
 -------BGRoll----------------##Author: NOGARUKA  ##Version: 2
 local NeedList = {
 [18231] = true,
