@@ -432,10 +432,8 @@ end
 
 
 --------------------------------X   HotSpotMicroMenu by Sojik X --------------------------------
-
 local HotSpotMicroMenu = CreateFrame("Frame","MicroMenuHolder",UIParent)
-local MicroButtons = {
-CharacterMicroButton, SpellbookMicroButton, TalentMicroButton, AchievementMicroButton, QuestLogMicroButton, GuildMicroButton, LFDMicroButton, CollectionsMicroButton, EJMicroButton, StoreMicroButton, MainMenuMicroButton,} --, HelpMicroButton, PVPMicroButton, SocialsMicroButton
+local MicroButtons = {CharacterMicroButton, SpellbookMicroButton, TalentMicroButton, AchievementMicroButton, QuestLogMicroButton, GuildMicroButton, LFDMicroButton, CollectionsMicroButton, EJMicroButton, StoreMicroButton, MainMenuMicroButton,} --, HelpMicroButton, PVPMicroButton, SocialsMicroButton
 local function MoveMicroButtons()
 	for _, menu in pairs(MicroButtons) do
 		menu:SetParent(HotSpotMicroMenu)

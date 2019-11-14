@@ -421,11 +421,11 @@ end
 local day, hour, minute = 86400, 3600, 60
 function M.FormatTime(s)
 	if s >= day then
-		return format("%d"..I.MyColor.."d", s/day), s % day
+		return format("%d"..I.MyColor.."d", s/day), s%day
 	elseif s >= hour then
-		return format("%d"..I.MyColor.."h", s/hour), s % hour
+		return format("%d"..I.MyColor.."h", s/hour), s%hour
 	elseif s >= minute then
-		return format("%d"..I.MyColor.."m", s/minute), s % minute
+		return format("%d"..I.MyColor.."m", s/minute), s%minute
 	elseif s > 10 then
 		return format("|cffcccc33%d|r", s), s - floor(s)
 	elseif s > 3 then
@@ -500,7 +500,6 @@ local essenceDescription = GetSpellDescription(277253)
 local ITEM_SPELL_TRIGGER_ONEQUIP = ITEM_SPELL_TRIGGER_ONEQUIP
 local tip = CreateFrame("GameTooltip", "NDui_iLvlTooltip", nil, "GameTooltipTemplate")
 
-local texturesDB, essencesDB = {}, {}
 function M:InspectItemTextures()
 	if not tip.gems then
 		tip.gems = {}

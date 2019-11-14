@@ -139,7 +139,7 @@ function module:UpdateAddOnBlocker(event, msg, author)
 end
 
 -- Block trash clubs
-local trashClubs = {"站桩", "致敬我们", "我们一起玩游戏"}
+local trashClubs = {"站桩", "致敬我们", "我们一起玩游戏", "部落大杂烩"}
 function module:BlockTrashClub()
 	if self.toastType == BN_TOAST_TYPE_CLUB_INVITATION then
 		local text = self.DoubleLine:GetText() or ""
@@ -174,7 +174,8 @@ local function isItemHasLevel(link)
 end
 
 local function isItemHasGem(link)
-	for index in pairs(GetItemStats(link)) do
+	local stats = GetItemStats(link)
+	for index in pairs(stats) do
 		if strfind(index, "EMPTY_SOCKET_") then
 			return "|TInterface\\ItemSocketingFrame\\UI-EmptySocket-Prismatic:0|t"
 		end

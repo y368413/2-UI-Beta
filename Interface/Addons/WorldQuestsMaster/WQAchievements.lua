@@ -1,4 +1,4 @@
---## Author: Urtgard  ## Version: v8.2.5-3release
+--## Author: Urtgard  ## Version: v8.2.5-4beta
 WQAchievements = LibStub("AceAddon-3.0"):NewAddon("WQAchievements", "AceConsole-3.0", "AceTimer-3.0")
 local WQA = WQAchievements
 WQA.data = {}
@@ -2369,6 +2369,7 @@ local CurrencyIDList = {
 		{id = 1716, faction = "Horde"}, -- Honorbound Service Medal
 		{id = 1717, faction = "Alliance"}, -- 7th Legion Service Medal
 		1721, -- Prismatic Manapearl
+		1602, -- Conquest
 	}
 }
 

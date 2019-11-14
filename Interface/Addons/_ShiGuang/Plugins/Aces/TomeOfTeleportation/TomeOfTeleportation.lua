@@ -1,4 +1,4 @@
-﻿--## Author: Remeen
+﻿--## Author: Remeen  3.5.3
 
 -- Tome of Teleportation by Remeen.
 
@@ -168,7 +168,7 @@ end
 function TeleporterCreateConsumable(id, dest)
 	local spell = {}
 	spell.spellId = id
-	spell.spellType = ST_Spell
+	spell.spellType = ST_Item
 	spell.zone = dest
 	spell.consumable = true
 	return spell

@@ -1,7 +1,7 @@
 ﻿local _, ns = ...
 local M, R, U, I = unpack(ns)
 local module = M:RegisterModule("Settings")
-local pairs, tonumber, wipe = pairs, tonumber, table.wipe
+local pairs, wipe = pairs, table.wipe
 local min, max = math.min, math.max
 
 -- Addon Info
@@ -525,7 +525,5 @@ function module:OnLogin()
 	      sendCmd("/bht off")
 	      PlayerFrame:SetAlpha(1)
         TargetFrame:SetAlpha(1)
-	  end
-	
-	--if MaoRUISettingDB["Chat"]["Lock"] then ForceChatSettings() end
+	  end	
 end

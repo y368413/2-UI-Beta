@@ -15,8 +15,9 @@ local BNGetNumFriends, GetRealZoneText, GetQuestDifficultyColor = BNGetNumFriend
 local C_BattleNet_GetFriendAccountInfo = C_BattleNet.GetFriendAccountInfo
 local C_BattleNet_GetFriendNumGameAccounts = C_BattleNet.GetFriendNumGameAccounts
 local C_BattleNet_GetFriendGameAccountInfo = C_BattleNet.GetFriendGameAccountInfo
+local InviteToGroup = C_PartyInfo.InviteUnit
 
-local BNET_CLIENT_WOW, UNKNOWN, GUILD_ONLINE_LABEL, UNKNOWN = BNET_CLIENT_WOW, UNKNOWN, GUILD_ONLINE_LABEL, UNKNOWN
+local BNET_CLIENT_WOW, UNKNOWN, GUILD_ONLINE_LABEL = BNET_CLIENT_WOW, UNKNOWN, GUILD_ONLINE_LABEL
 local FRIENDS_TEXTURE_ONLINE, FRIENDS_TEXTURE_AFK, FRIENDS_TEXTURE_DND = FRIENDS_TEXTURE_ONLINE, FRIENDS_TEXTURE_AFK, FRIENDS_TEXTURE_DND
 local WOW_PROJECT_ID = WOW_PROJECT_ID or 1
 local CLIENT_WOW_CLASSIC = "WoV" -- for sorting
@@ -249,7 +250,7 @@ local function buttonOnClick(self, btn)
 					EasyMenu(menuList, menuFrame, self, 0, 0, "MENU", 1)
 				end
 			else
-				C_PartyInfo.InviteUnit(self.data[1])
+				InviteToGroup(self.data[1])
 			end
 		end
 	else
@@ -278,7 +279,7 @@ local function buttonOnEnter(self)
 			local realmName = gameAccountInfo.realmName or ""
 			local faction = gameAccountInfo.factionName
 			local class = gameAccountInfo.className or UNKNOWN
-			local zoneName = gameAccountInfo.areaName
+			local zoneName = gameAccountInfo.areaName or UNKNOWN
 			local level = gameAccountInfo.characterLevel
 			local gameText = gameAccountInfo.richPresence or ""
 			local wowProjectID = gameAccountInfo.wowProjectID

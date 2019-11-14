@@ -2,7 +2,7 @@
 local M, R, U, I = unpack(ns)
 local MISC = M:GetModule("Misc")
 
-local pairs, select, next = pairs, select, next
+local pairs, select, next, type = pairs, select, next, type
 local UnitGUID, GetItemInfo = UnitGUID, GetItemInfo
 local GetContainerItemLink, GetInventoryItemLink = GetContainerItemLink, GetInventoryItemLink
 local EquipmentManager_UnpackLocation, EquipmentManager_GetItemInfoByLocation = EquipmentManager_UnpackLocation, EquipmentManager_GetItemInfoByLocation
@@ -25,7 +25,7 @@ function MISC:GetSlotAnchor(index)
 end
 
 function MISC:CreateItemTexture(slot, relF, x, y)
-	local icon = slot:CreateTexture(nil, "ARTWORK")
+	local icon = slot:CreateTexture()
 	icon:SetPoint(relF, x, y)
 	icon:SetSize(16, 16)
 	icon:SetTexCoord(unpack(I.TexCoord))
@@ -88,6 +88,7 @@ function MISC:ItemLevel_SetupLevel(frame, strType, unit)
 				local quality = select(3, GetItemInfo(link))
 				local info = M.GetItemLevel(link, unit, index, MaoRUISettingDB["Misc"]["GemNEnchant"])
 				local infoType = type(info)
+				local level
 				if infoType == "table" then
 					level = info.iLvl
 				else

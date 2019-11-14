@@ -9,6 +9,7 @@ local IsModifierKeyDown, IsAltKeyDown, IsControlKeyDown, IsModifiedClick = IsMod
 local GuildInvite, BNInviteFriend = GuildInvite, BNInviteFriend
 local CanCooperateWithGameAccount = CanCooperateWithGameAccount
 local C_BattleNet_GetAccountInfoByID = C_BattleNet.GetAccountInfoByID
+local InviteToGroup = C_PartyInfo.InviteUnit
 
 local foundurl = false
 
@@ -63,7 +64,7 @@ function module:HyperlinkShowHook(link, _, button)
 		if type == "player" then
 			local unit = strmatch(value, "([^:]+)")
 			if IsAltKeyDown() then
-				C_PartyInfo.InviteUnit(unit)
+				InviteToGroup(unit)
 				hide = true
 			elseif IsControlKeyDown() then
 				GuildInvite(unit)

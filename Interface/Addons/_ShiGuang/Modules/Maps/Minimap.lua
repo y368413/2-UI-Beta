@@ -123,9 +123,8 @@ local SetMrbarMicromenu = {
         func = function() ToggleQuestLog() end, notCheckable = true},
     { text = FRIENDS, icon = 'Interface\\FriendsFrame\\PlusManz-BattleNet',
         func = function() ToggleFriendsFrame() end, notCheckable = true},
-    { text = GUILD, icon = 'Interface\\GossipFrame\\TabardGossipIcon',
-        func = function() if (IsTrialAccount()) then UIErrorsFrame:AddMessage(ERR_RESTRICTED_ACCOUNT, 1, 0, 0)
-        else ToggleGuildFrame() end end, notCheckable = true},
+    --{ text = GUILD, icon = 'Interface\\GossipFrame\\TabardGossipIcon',
+        --func = function() if (IsTrialAccount()) then UIErrorsFrame:AddMessage(ERR_RESTRICTED_ACCOUNT, 1, 0, 0) else ToggleGuildFrame() end end, notCheckable = true},
     --{ text = GROUP_FINDER, icon = 'Interface\\LFGFRAME\\BattleNetWorking0',
         --func = function() securecall(PVEFrame_ToggleFrame, 'GroupFinderFrame', LFDParentFrame) end, notCheckable = true},
     { text = ENCOUNTER_JOURNAL, icon = 'Interface\\MINIMAP\\TRACKING\\Profession',
@@ -301,7 +300,7 @@ function module:SetupMinimap()
 	Minimap:SetMaskTexture("Interface\\Buttons\\WHITE8X8")
 	DropDownList1:SetClampedToScreen(true)
 
-	local mover = M.Mover(Minimap, U["Minimap"], "Minimap", R.Minimap.Pos, Minimap:GetWidth(), Minimap:GetHeight())
+	local mover = M.Mover(Minimap, U["Minimap"], "Minimap", R.Minimap.Pos)
 	Minimap:ClearAllPoints()
 	Minimap:SetPoint("TOPRIGHT", mover)
 	Minimap.mover = mover

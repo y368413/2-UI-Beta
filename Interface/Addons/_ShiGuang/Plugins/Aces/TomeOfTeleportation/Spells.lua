@@ -1,5 +1,5 @@
-
 local MapIDAlteracValley = 91
+local MapIDAlteracValleyKorrak = 1537
 local MapIDIsleOfThunder = 504
 local MapIDDalaran = 125
 local MapIDTanaanJungle = 534
@@ -33,14 +33,18 @@ local function AtContinent(requiredContinent)
 	return AtZone(requiredContinent)
 end
 
-function AllowWhistle()
+local function AllowWhistle()
 	--return AtContinent(ContinentIdBrokenIsles)() or AtContinent(ContinentIdArgus)() or AtContinent(ContinentIdKulTiras)() or AtContinent(ContinentIdZandalar)() or AtZone(MapIdAlterac)
 	-- This is getting complicated - until I find a better way, always allow it.
 	return true
 end
 
-function InBFAZone()
+local function InBFAZone()
 	return AtContinent(ContinentIdKulTiras)() or AtContinent(ContinentIdZandalar)()
+end
+
+local function IsInAlteracValley()
+	return AtZone(MapIDAlteracValley)() or AtZone(MapIDAlteracValleyKorrak)()
 end
 
 local function IsClass(requiredClass)
@@ -51,7 +55,7 @@ local function IsClass(requiredClass)
 end
 
 local function HaveUpgradedZen()
-	return C_QuestLog.IsQuestFlaggedCompleted(40236)
+	return C_QuestLog.IsQuestFlaggedCompleted(40236)   --IsQuestFlaggedCompleted(40236)
 end
 
 local DaySunday = 1
@@ -146,13 +150,13 @@ CreateDestination(
 		CreateItem(142542),				-- Tome of Town Portal  城镇传送门
 		CreateItem(162973),				-- Greatfather Winter's Hearthstone  冬天爷爷的炉石 278244
 		CreateItem(163045),				-- Headless Horseman's Hearthstone  无头骑士的炉石 278559
-		CreateItem(165669),				-- 春节长者的炉石 285362
-		CreateItem(165670),				-- 小匹德菲特的可爱炉石
 		CreateItem(166747),				-- Brewfest Reveler's Hearthstone  美酒节狂欢者的炉石
 		CreateItem(166746),				-- Fire Eater's Hearthstone  吞火者的炉石
 		CreateItem(165802),				-- Noble Gardener's Hearthstone  复活节的炉石
 		CreateItem(168907),				-- Holographic Digitalization Hearthstone 全息数字化炉石
-		CreateItem(172179),				-- 永恒旅者的炉石
+		CreateItem(165669),				-- Lunar Elder's Hearthstone  春节长者的炉石 285362
+		CreateItem(165670),				-- Peddlefeet's Lovely Hearthstone  小匹德菲特的可爱炉石
+		CreateItem(172179),				-- Eternal Traveler's Hearthstone  永恒旅者的炉石
 	})
 	
 CreateDestination(
@@ -170,18 +174,20 @@ CreateDestination(
 CreateDestination(
 	LocZone("Alterac Valley", 91),
 	{
-		CreateConditionalItem(17690, AtZone(MapIDAlteracValley) ),	-- Frostwolf Insignia Rank 1
-		CreateConditionalItem(17905, AtZone(MapIDAlteracValley) ),	-- Frostwolf Insignia Rank 2
-		CreateConditionalItem(17906, AtZone(MapIDAlteracValley) ),	-- Frostwolf Insignia Rank 3
-		CreateConditionalItem(17907, AtZone(MapIDAlteracValley) ),	-- Frostwolf Insignia Rank 4
-		CreateConditionalItem(17908, AtZone(MapIDAlteracValley) ),	-- Frostwolf Insignia Rank 5
-		CreateConditionalItem(17909, AtZone(MapIDAlteracValley) ),	-- Frostwolf Insignia Rank 6
-		CreateConditionalItem(17691, AtZone(MapIDAlteracValley) ),	-- Stormpike Insignia Rank 1
-		CreateConditionalItem(17900, AtZone(MapIDAlteracValley) ),	-- Stormpike Insignia Rank 2
-		CreateConditionalItem(17901, AtZone(MapIDAlteracValley) ),	-- Stormpike Insignia Rank 3
-		CreateConditionalItem(17902, AtZone(MapIDAlteracValley) ),	-- Stormpike Insignia Rank 4
-		CreateConditionalItem(17903, AtZone(MapIDAlteracValley) ),	-- Stormpike Insignia Rank 5
-		CreateConditionalItem(17904, AtZone(MapIDAlteracValley) ),	-- Stormpike Insignia Rank 6
+		CreateConditionalItem(17690, IsInAlteracValley ),	-- Frostwolf Insignia Rank 1
+		CreateConditionalItem(17905, IsInAlteracValley ),	-- Frostwolf Insignia Rank 2
+		CreateConditionalItem(17906, IsInAlteracValley ),	-- Frostwolf Insignia Rank 3
+		CreateConditionalItem(17907, IsInAlteracValley ),	-- Frostwolf Insignia Rank 4
+		CreateConditionalItem(17908, IsInAlteracValley ),	-- Frostwolf Insignia Rank 5
+		CreateConditionalItem(17909, IsInAlteracValley ),	-- Frostwolf Insignia Rank 6
+		CreateConditionalItem(17691, IsInAlteracValley ),	-- Stormpike Insignia Rank 1
+		CreateConditionalItem(17900, IsInAlteracValley ),	-- Stormpike Insignia Rank 2
+		CreateConditionalItem(17901, IsInAlteracValley ),	-- Stormpike Insignia Rank 3
+		CreateConditionalItem(17902, IsInAlteracValley ),	-- Stormpike Insignia Rank 4
+		CreateConditionalItem(17903, IsInAlteracValley ),	-- Stormpike Insignia Rank 5
+		CreateConditionalItem(17904, IsInAlteracValley ),	-- Stormpike Insignia Rank 6
+		CreateConditionalItem(18149, IsInAlteracValley ), -- Rune of Recall6
+		CreateConditionalItem(18150, IsInAlteracValley ), -- Rune of Recall6
 	})
 
 CreateDestination(

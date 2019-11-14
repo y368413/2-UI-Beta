@@ -14,6 +14,7 @@ local ChatEdit_ChooseBoxForSend, ChatEdit_ActivateChat, ChatFrame_OpenChat, Chat
 local GetNumGuildMembers, GetGuildInfo, GetNumGuildApplicants, GetGuildRosterInfo, IsInGuild = GetNumGuildMembers, GetGuildInfo, GetNumGuildApplicants, GetGuildRosterInfo, IsInGuild
 local GetQuestDifficultyColor, GetRealZoneText, UnitInRaid, UnitInParty = GetQuestDifficultyColor, GetRealZoneText, UnitInRaid, UnitInParty
 local C_GuildInfo_GuildRoster = C_GuildInfo.GuildRoster
+local InviteToGroup = C_PartyInfo.InviteUnit
 
 local r, g, b = I.r, I.g, I.b
 local infoFrame, gName, gOnline, gApps, gRank, applyData, prevTime
@@ -113,7 +114,7 @@ local function buttonOnClick(self, btn)
 	local name = guildTable[self.index][3]
 	if btn == "LeftButton" then
 		if IsAltKeyDown() then
-			C_PartyInfo.InviteUnit(name)
+			InviteToGroup(name)
 		elseif IsShiftKeyDown() then
 			if MailFrame:IsShown() then
 				MailFrameTab_OnClick(nil, 2)

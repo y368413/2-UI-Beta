@@ -698,7 +698,9 @@ local function CreateOption(i)
 				if callback then callback() end
 			end)
 			eb.title = U["Tips"]
-			M.AddTooltip(eb, "ANCHOR_RIGHT", U["EdieBox Tip"], "info")
+			local tip = U["EdieBox Tip"]
+			if tooltip then tip = tooltip.."|n"..tip end
+			M.AddTooltip(eb, "ANCHOR_RIGHT", tip, "info")
 
 			M.CreateFS(eb, 14, name, "system", "CENTER", 0, 25)
 		-- Slider
@@ -722,7 +724,7 @@ local function CreateOption(i)
 				s.value:SetText(format("%."..decimal.."f", current))
 				if callback then callback() end
 			end)
-			s.value:SetText(format("%."..step.."f", NDUI_VARIABLE(key, value)))
+			s.value:SetText(format("%."..decimal.."f", NDUI_VARIABLE(key, value)))
 		-- Dropdown
 		elseif optType == 4 then
 			local dd = M.CreateDropDown(parent, 143, 26, data)
@@ -898,8 +900,9 @@ local function importData()
 			for _, itemID in next, items do
 				MaoRUISettingDB[key][value][tonumber(itemID)] = true
 			end
-		elseif key == "Mover" then
+		elseif key == "Mover" or key == "AuraWatchMover" then
 			local relFrom, parent, relTo, x, y = select(3, strsplit(":", option))
+			value = tonumber(value) or value
 			x = tonumber(x)
 			y = tonumber(y)
 			MaoRUISettingDB[key][value] = {relFrom, parent, relTo, x, y}

@@ -22,7 +22,8 @@ local PLAYER_DIFFICULTY_TIMEWALKER, RAID_INFO_WORLD_BOSS, DUNGEON_DIFFICULTY3 = 
 local DUNGEONS, RAID_INFO, QUESTS_LABEL, ISLANDS_HEADER, QUEST_COMPLETE, LFG_LIST_LOADING, QUEUE_TIME_UNAVAILABLE = DUNGEONS, RAID_INFO, QUESTS_LABEL, ISLANDS_HEADER, QUEST_COMPLETE, LFG_LIST_LOADING, QUEUE_TIME_UNAVAILABLE
 local RequestRaidInfo, UnitLevel, GetNumSavedWorldBosses, GetSavedWorldBossInfo = RequestRaidInfo, UnitLevel, GetNumSavedWorldBosses, GetSavedWorldBossInfo
 local GetCVarBool, GetGameTime, GameTime_GetLocalTime, GameTime_GetGameTime, SecondsToTime = GetCVarBool, GetGameTime, GameTime_GetLocalTime, GameTime_GetGameTime, SecondsToTime
-local GetNumSavedInstances, GetSavedInstanceInfo, IsQuestFlaggedCompleted, GetQuestObjectiveInfo = GetNumSavedInstances, GetSavedInstanceInfo, C_QuestLog.IsQuestFlaggedCompleted, GetQuestObjectiveInfo
+local GetNumSavedInstances, GetSavedInstanceInfo, GetQuestObjectiveInfo = GetNumSavedInstances, GetSavedInstanceInfo, GetQuestObjectiveInfo
+local IsQuestFlaggedCompleted = C_QuestLog.IsQuestFlaggedCompleted
 
 local function updateTimerFormat(color, hour, minute)
 	if GetCVarBool("timeMgrUseMilitaryTime") then
@@ -237,7 +238,7 @@ info.onEnter = function(self)
 	title = false
 	local count, maxCoins = 0, 2
 	for _, id in pairs(bonus) do
-		if C_QuestLog.IsQuestFlaggedCompleted(id) then
+		if IsQuestFlaggedCompleted(id) then
 			count = count + 1
 		end
 	end
@@ -250,7 +251,7 @@ info.onEnter = function(self)
 	local iwqID = C_IslandsQueue_GetIslandsWeeklyQuestID()
 	if iwqID and UnitLevel("player") == 120 then
 		addTitle(QUESTS_LABEL)
-		if C_QuestLog.IsQuestFlaggedCompleted(iwqID) then
+		if IsQuestFlaggedCompleted(iwqID) then
 			GameTooltip:AddDoubleLine(ISLANDS_HEADER, QUEST_COMPLETE, 1,1,1, 1,0,0)
 		else
 			local cur, max = select(4, GetQuestObjectiveInfo(iwqID, 1, false))
@@ -261,7 +262,7 @@ info.onEnter = function(self)
 	end
 
 	for _, v in pairs(questlist) do
-		if v.name and C_QuestLog.IsQuestFlaggedCompleted(v.id) then
+		if v.name and IsQuestFlaggedCompleted(v.id) then
 			if v.name == U["Timewarped"] and isTimeWalker and checkTexture(v.texture) or v.name ~= U["Timewarped"] then
 				addTitle(QUESTS_LABEL)
 				GameTooltip:AddDoubleLine(v.name, QUEST_COMPLETE, 1,1,1, 1,0,0)

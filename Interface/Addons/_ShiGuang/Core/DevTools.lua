@@ -16,6 +16,7 @@ local M, R, U, I = unpack(ns)
 local strfind, format, strsplit = string.find, string.format, string.split
 local pairs, tonumber, tostring = pairs, tonumber, tostring
 local floor, ceil = math.floor, math.ceil
+local IsQuestFlaggedCompleted = C_QuestLog.IsQuestFlaggedCompleted
 
 local dev = {"烂柯人"}
 local function isDeveloper()
