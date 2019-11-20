@@ -1,4 +1,4 @@
--------------------------------------------------------------------------------
+﻿-------------------------------------------------------------------------------
 -- Util.lua
 --
 -- General utility functions.
@@ -120,6 +120,32 @@ function AuctionLite:SplitLink(link)
     str = link;
   end
 
+  ---修改：判断是否宠物，并额外返回内容
+  local itemID = tonumber(link:match("item:(%d+)"))
+  local breedStr
+  if itemID == nil then
+        local _, speciesID, level, breedQuality, maxHealth, power, speed, battlePetID = strsplit(":", link)
+        if speciesID then
+            if BPBID_Internal and speciesID and breedQuality then
+                local breedNum =
+                    BPBID_Internal.CalculateBreedID(
+                    tonumber(speciesID),
+                    tonumber(breedQuality)+1,
+                    tonumber(level),
+                    tonumber(maxHealth),
+                    tonumber(power),
+                    tonumber(speed),
+                    false,
+                    false
+                )
+                local breed = BPBID_Internal.RetrieveBreedName(breedNum)
+                if breed and breed ~= "NEW" then
+                  breedStr = breed
+                end
+          end
+      end
+  end
+
   -- Split the item string.
   local _, id, enchant, jewel1, jewel2, jewel3, jewel4, suffix, unique =
         strsplit(":", str);
@@ -128,7 +154,7 @@ function AuctionLite:SplitLink(link)
          tonumber(id) or 0, tonumber(suffix) or 0, tonumber(enchant) or 0,
          tonumber(jewel1) or 0, tonumber(jewel2) or 0,
          tonumber(jewel3) or 0, tonumber(jewel4) or 0,
-         tonumber(unique) or 0;
+         tonumber(unique) or 0 ,breedStr;
 end
 
 -- Zero out the uniqueId field from an item link.

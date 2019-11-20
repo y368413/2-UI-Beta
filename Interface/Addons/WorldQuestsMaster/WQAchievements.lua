@@ -1,4 +1,4 @@
---## Author: Urtgard  ## Version: v8.2.5-4beta
+--## Author: Urtgard  ## Version: v8.2.5-5release
 WQAchievements = LibStub("AceAddon-3.0"):NewAddon("WQAchievements", "AceConsole-3.0", "AceTimer-3.0")
 local WQA = WQAchievements
 WQA.data = {}
@@ -10,10 +10,6 @@ WQA.links = {}
 
 -- Blizzard
 local IsActive = C_TaskQuest.IsActive
-L["LE_QUEST_TAG_TYPE_PVP"] = CALENDAR_TYPE_PVP
-L["LE_QUEST_TAG_TYPE_PET_BATTLE"] = BATTLE_PET_SOURCE_5
-L["LE_QUEST_TAG_TYPE_PROFESSION"] = BATTLE_PET_SOURCE_4
-L["LE_QUEST_TAG_TYPE_DUNGEON"] = CALENDAR_TYPE_DUNGEON
 if GetLocale() == "zhCN" then
 	WQACHIEVEMENTS_TITLE = "|cff8080ff[成就]|r世界任务"
 elseif GetLocale() == "zhTW" then
@@ -2201,25 +2197,37 @@ end
 
 function WQA:formatTime(t)
 	local t = math.floor(t or 0)
-	local d, h, m
+	local d, h, m, timeString
 	d = math.floor(t/60/24)
 	h = math.floor(t/60 % 24)
 	m = t % 60
 	if d > 0 then
 		if h > 0 then
-			return d.."d "..h.."h"
+			timeString = string.format("%dd %dh", d, h)
 		else
-			return d.."d"
+			timeString = string.format("%dd", d)
 		end
 	elseif h > 0 then
 		if m > 0 then
-			return h.."h "..m.."m"
+			timeString = string.format("%dh %dm", h, m)
 		else
-			return h.."h"
+			timeString = string.format("%dh", h)
 		end
 	else
-		return m.."m"
+		timeString = string.format("%dm", m)
 	end
+	
+	if t > 0 then
+		if t <= 180 then
+			if t <= 30 then
+				timeString = string.format("|cffff3333%s|r", timeString)
+			else
+				timeString = string.format("|cffffff00%s|r", timeString)
+			end
+		end
+	end
+
+	return timeString
 end
 
 local LE_GARRISON_TYPE = {
@@ -2370,6 +2378,7 @@ local CurrencyIDList = {
 		{id = 1717, faction = "Alliance"}, -- 7th Legion Service Medal
 		1721, -- Prismatic Manapearl
 		1602, -- Conquest
+		1166, -- Timewarped Badge
 	}
 }
 
@@ -3112,7 +3121,7 @@ function WQA:UpdateOptions()
 	for k,v in pairs(worldQuestType) do
 		args[k] = {
 			type = "toggle",
-			name = L[k],
+			name = k,  --L[k]
 			set = function(info, val)
 				WQA.db.profile.options.reward.general.worldQuestType[v] = val
 			end,

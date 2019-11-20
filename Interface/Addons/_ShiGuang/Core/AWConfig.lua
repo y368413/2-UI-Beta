@@ -301,7 +301,7 @@ local function CreatePanel()
 		bu:SetScript("OnClick", function()
 			MaoRUISettingDB["AuraWatchList"]["Switcher"][index] = bu:GetChecked()
 		end)
-		M.CreateFS(bu, 15, "|cffff0000".."AW Switcher", false, "RIGHT", -25, 0)
+		M.CreateFS(bu, 15, "|cffff0000"..U["AW Switcher"], false, "RIGHT", -25, 0)
 	end
 
 	-- Main

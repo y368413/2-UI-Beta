@@ -92,7 +92,7 @@ function DialogKey:ChatCommand(input)			-- Chat command handler
 	local args = {strsplit(" ", input:trim())}
 	
 	if args[1] == "v" or args[1] == "ver" or args[1] == "version" then
-		DialogKey:Print(GAME_VERSION_LABEL..": |cffffd7001.7.3|r")
+		DialogKey:Print(GAME_VERSION_LABEL..": |cffffd7001.7.4|r")
 	elseif args[1] == "add" or args[1] == "a" or args[1] == "watch" then
 		if args[2] then
 			DialogKey:WatchFrame(args[2])
@@ -337,7 +337,7 @@ function DialogKey:HandleKey(key)				-- Run for every key hit ever; runs ClickBu
 	
 	if GetCurrentKeyBoardFocus() then return end -- Don't handle key if we're typing into something
 	
-	if key:find("^%d$") and GossipFrameGreetingPanel:IsVisible() and DialogKey.db.global.numKeysForGossip then
+	if key:find("^%d$") and (QuestFrameGreetingPanel:IsVisible() or GossipFrameGreetingPanel:IsVisible()) and DialogKey.db.global.numKeysForGossip then
 		local num = 1
 		local keynum = tonumber(key)
 		for i=1,9 do
@@ -359,54 +359,6 @@ function DialogKey:HandleKey(key)				-- Run for every key hit ever; runs ClickBu
 				num = num+1
 			end
 		end
-	elseif key:find("^%d$") and QuestFrameGreetingPanel:IsVisible() and DialogKey.db.global.numKeysForGossip then
-		local keynum = tonumber(key)
-		
-		local frames = DialogKey:GetQuestButtons()
-		DialogKey:ClickFrame(frames[1].frame)
-		
-		-- TODO: check if above line works? surely sometimes it puts accepted quests above available quests?
-		
-		--[[
-		if keynum <= GetNumActiveQuests() then
-			SelectActiveQuest(keynum)
-			DialogKey.frame:SetPropagateKeyboardInput(false)
-			PlaySound(SOUNDKIT.IG_QUEST_LIST_SELECT)
-			DialogKey:GlowQuestIndex(keynum)
-			return
-		elseif keynum <= GetNumActiveQuests()+GetNumAvailableQuests() then
-			SelectAvailableQuest(keynum - GetNumActiveQuests())
-			DialogKey.frame:SetPropagateKeyboardInput(false)
-			PlaySound(SOUNDKIT.IG_QUEST_LIST_SELECT)
-			DialogKey:GlowQuestIndex(keynum)
-			return
-		else
-			return
-		end
-		]]
-		
-		--[[
-		local num = 1
-		for i=1,9 do
-			local frame = _G["GossipTitleButton"..i]
-			
-			-- Try QuestTitleButton* instead if Gossip buttons aren't shown
-			if not frame:IsVisible() then
-				frame = _G["QuestTitleButton"..i]
-			end
-			
-			-- If the frame isn't blank (blank frames are used to separate gossip and quests)
-			if frame:IsVisible() and frame:GetText() then
-				if num == keynum then
-					DialogKey:ClickFrame(frame)
-					self:SetPropagateKeyboardInput(false)
-					return
-				end
-				
-				num = num+1
-			end
-		end
-		]]
 	
 	-- If 1-9 was pressed, 'select quest rewards' option is enabled, quest rewards are visible, and the quest is ready to complete
 	elseif key:find("^%d$") and QuestInfoRewardsFrameQuestInfoItem1:IsVisible() and QuestFrameCompleteQuestButton:IsVisible() and DialogKey.db.global.numKeysForQuestRewards then
@@ -572,24 +524,43 @@ end
 function DialogKey:GetQuestButtons()			-- Return sorted list of quest button frames
 	-- TODO: fix order being wrong on first load?
 	local frames = {}
-	for f,unknown in QuestFrameGreetingPanel.titleButtonPool:EnumerateActive() do
-		table.insert(frames,{
-			top      = f:GetTop(),
-			frame    = f,
-			name     = f:GetText()
-		})
-	end
 	
-	table.sort(frames,function(a,b)
-		if a.top > b.top then return 1 end
-		if b.top > a.top then return -1 end
-		return 0
-	end)
+	if QuestFrameGreetingPanel.titleButtonPool then
+		for f,unknown in QuestFrameGreetingPanel.titleButtonPool:EnumerateActive() do
+			table.insert(frames,{
+				top      = f:GetTop(),
+				frame    = f,
+				name     = f:GetText()
+			})
+		end
+		
+		table.sort(frames,function(a,b)
+			if a.top > b.top then
+				return 1
+			elseif a.top < b.top then
+				return -1
+			end
+			
+			return 0
+		end)
+	elseif QuestTitleButton1:IsVisible() then
+		for i=1,10 do
+			local frame = _G["QuestTitleButton"..i]
+			
+			if frame:IsVisible() and frame:GetText() ~= "" then
+				table.insert(frames, {
+					top   = frame:GetTop(),
+					frame = frame,
+					name  = frame:GetText()
+				})
+			end
+		end
+	end
 	
 	return frames
 end
 
-function DialogKey:EnumerateGossips_Gossip()-- Prefixes 1., 2., etc. to NPC options
+function DialogKey:EnumerateGossips_Gossip()	-- Prefixes 1., 2., etc. to NPC options
 	if not DialogKey.db.global.numKeysForGossip then return end
 	if not GossipFrameGreetingPanel:IsVisible() and not QuestFrameGreetingPanel:IsVisible() then return end
 	
@@ -715,7 +686,7 @@ function DialogKey:DisableQuestScrolling()		-- Frees up mouse wheel input again 
 	if not found then UIParent:EnableMouseWheel(false) end
 end
 
-function DialogKey:HandleScroll(delta)		-- Run when the mouse wheel is trapped and the user scrolls it
+function DialogKey:HandleScroll(delta)			-- Run when the mouse wheel is trapped and the user scrolls it
 	if not DialogKey.db.global.scrollQuests then return end
 	
 	local scrollFrame
@@ -740,14 +711,14 @@ end]]
 function DialogKey:CreateOptionsFrame()		-- Constructs the options frame
 	self.options = CreateFrame("Frame")
 	
-	-- scroll frame
+	--[[ scroll frame
 	local scrollFrame = CreateFrame("ScrollFrame", nil, self.options)
 	scrollFrame:SetPoint("TOPLEFT", 5, -5)
 	scrollFrame:SetPoint("BOTTOMRIGHT", -25, 5)
 	scrollFrame:EnableMouse(true)
 	scrollFrame:EnableMouseWheel(true)
 	
-	--[[scrollFrame:SetScript("OnMouseWheel", function(self, delta)
+	scrollFrame:SetScript("OnMouseWheel", function(self, delta)
 		local current = self.scrollBar:GetValue()
 		local minV, maxV = self.scrollBar:GetMinMaxValues()
 			
@@ -776,12 +747,6 @@ function DialogKey:CreateOptionsFrame()		-- Constructs the options frame
 	self.options.scrollBar = scrollBar]]
 	
 	-- options frame
-		local scrollFrame = CreateFrame("ScrollFrame", nil, self.options)
-	scrollFrame:SetPoint("TOPLEFT", 5, -5)
-	scrollFrame:SetPoint("BOTTOMRIGHT", -25, 5)
-	scrollFrame:EnableMouse(true)
-	scrollFrame:EnableMouseWheel(true)
-	
 	local optionsContent = CreateFrame("Frame", nil, self.options)
 	optionsContent:SetPoint("TOPLEFT", 5, -5)
 	--optionsContent:SetPoint("BOTTOMRIGHT", -25, 5)
@@ -796,7 +761,7 @@ function DialogKey:CreateOptionsFrame()		-- Constructs the options frame
 	
 	local subtitle = optionsContent:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
 	subtitle:SetFont(STANDARD_TEXT_FONT, 10)
-	subtitle:SetText("Version 1.7.3")
+	subtitle:SetText("Version 1.7.4")
 	subtitle:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 4, -8)
 	
 	optionsContent.keybindButtons = {}

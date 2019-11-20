@@ -12,8 +12,6 @@ BAGITEMS_ICON_DISPLAYED = NUM_BAGITEMS_PER_ROW * NUM_BAGITEMS_ROWS;
 local insert = table.insert;
 local remove = table.remove;
 
--- Localization globals
---local L = LibStub("AceLocale-3.0"):GetLocale("InboxMailbag", true);
 
 -- Export localization into namespace for XML localization
 MB_BAGNAME = InboxMailBag_BAGNAME;

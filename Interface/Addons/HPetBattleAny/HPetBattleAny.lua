@@ -342,6 +342,7 @@ end
 
 -----	调出宠物收集信息(已有宠物信息)
 function HPetBattleAny:GetPetCollectedInfo(speciesID,enemypet,islink,mini)
+	local isNpc = false 
 	local str1=""
 	local str2=""
 	local pets=type(speciesID)=="table" and  speciesID or HPetBattleAny:GetPetInfo(speciesID)
@@ -390,15 +391,17 @@ function HPetBattleAny:GetPetCollectedInfo(speciesID,enemypet,islink,mini)
 	else
 		if C_PetBattles.IsPlayerNPC(2) and (select(2,C_PetBattles.IsTrapAvailable())==6 or select(2,C_PetBattles.IsTrapAvailable())==7) then
 			str1=str1.."|cffffff00".._G["PET_BATTLE_TRAP_ERR_"..select(2,C_PetBattles.IsTrapAvailable())]
+			isNpc = true
 		else
 			if enemypet and not HPetBattleAny:CanTrapBySpeciesID(speciesID) then
 				str1=str1.."|cffffff00".._G["PET_BATTLE_TRAP_ERR_6"]
+				isNpc = true
 			else
 				str1=str1.."|cffff0000"..NOT_COLLECTED.."!|r"
 			end
 		end
 	end
-	return str1,str2
+	if isNpc then return nil,nil else return str1,str2 end
 end
 
 --[[ 	OnEvent:					PET_BATTLE_OPENING_START	]]--
@@ -460,10 +463,14 @@ function HPetBattleAny:PET_BATTLE_OPENING_START(...)
 
 			if HPetSaves.Contrast or true then
 				local str1,str2 = HPetBattleAny:GetPetCollectedInfo(speciesID,{["level"]=level,["rarity"]=rarity},true,HPetSaves.MiniTip)
+				if str1~=nil then
 				tmprint = tmprint..str1..str2
+				else
+				tmprint = nil
+				end
 			end
 
-			if HPetSaves.ShowMsg then
+			if tmprint~=nil and HPetSaves.ShowMsg then
 				self:PetPrintEX(tmprint)
 			end
 		end

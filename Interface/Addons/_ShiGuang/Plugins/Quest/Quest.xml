@@ -5,7 +5,7 @@
 	<Script file="QuestPlates.lua"/>
 	<Script file="BarrelsOEasy.lua"/>
 	<Script file="DarkmoonFaire.lua"/>
-	<!--Script file="QuestBindings.lua"/-->
+	<Script file="CollapseQuestLog.lua"/>
 	<Script file="WorldmapRewardIcon.lua"/>
 		<CheckButton name="ClassicQuestLogCheckButtonTemplate" inherits="UICheckButtonTemplate" virtual="true">
 		<Size x="24" y="24"/>

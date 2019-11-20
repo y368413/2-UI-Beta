@@ -1,4 +1,4 @@
--------------------------------------------------------------------------------
+﻿-------------------------------------------------------------------------------
 -- BuyFrame.lua
 --
 -- Implements the "Buy" tab.
@@ -1418,7 +1418,26 @@ function AuctionLite:BuyAdvancedButton_OnClick()
         info.text = name;
         info.func = function()
           BuyMode = BUY_MODE_FAVORITES;
-          self:MultiScan(favs);
+          --修改：添加菜单
+          if name=="宠物" then
+            local pets = {};
+            for m, n in pairs(favs) do
+              pets[m] = n
+            end
+            local numPets = C_PetJournal.GetNumPets()
+            if numPets>0 then
+              for index=1,numPets do
+                local _, _, owned, _, _, _, _, speciesName, _, _, _, _, _, _, _, isTradeable, _, _ = C_PetJournal.GetPetInfoByIndex(index)
+                if not owned and isTradeable then
+                  pets[speciesName] = true
+                end
+              end
+            end
+            self:MultiScan(pets);
+          else
+            self:MultiScan(favs);
+          end
+          
           CloseDropDownMenus();
         end
         UIDropDownMenu_AddButton(info, level);
@@ -1792,7 +1811,8 @@ function AuctionLite:AuctionFrameBuy_UpdateDetail()
   local offset = FauxScrollFrame_GetOffset(BuyScrollFrame);
   local displaySize = BUY_DISPLAY_SIZE - ExpandHeight;
 
-  local _, _, _, _, enchant, jewel1, jewel2, jewel3, jewel4 =
+  --修改：添加属性
+  local _, _, _, _, enchant, jewel1, jewel2, jewel3, jewel4,unique,breed =
     self:SplitLink(DetailLink);
 
   local showPlus = enchant ~= 0 or
@@ -1833,7 +1853,12 @@ function AuctionLite:AuctionFrameBuy_UpdateDetail()
 
       countText:SetText("|c" .. countColor .. item.count .. "x|r");
 
-      nameText:SetText("|c" .. nameColor .. name .. "|r");
+      --修改：添加属性
+      if breed then
+        nameText:SetText("|c" .. nameColor .. name .. " "..breed.."|r");
+      else
+        nameText:SetText("|c" .. nameColor .. name .. "|r");
+      end
 
       if showPlus then
         plusText:SetPoint("LEFT", nameText, "LEFT",
@@ -1935,8 +1960,9 @@ function AuctionLite:AuctionFrameBuy_UpdateSummary()
       else
         starButton:GetNormalTexture():SetAlpha(0.1);
       end
-
-      local name, color, _, _, enchant, jewel1, jewel2, jewel3, jewel4 =
+ 
+      --修改：添加属性
+      local name, color, _, _, enchant, jewel1, jewel2, jewel3, jewel4,unique,breed =
         self:SplitLink(item.link);
 
       local countStr = function(mine, all)
@@ -1949,7 +1975,12 @@ function AuctionLite:AuctionFrameBuy_UpdateSummary()
         return prefix .. "|cffffffff" .. all .. "|r";
       end
 
-      nameText:SetText("|c" .. color .. name .. "|r");
+      --修改：添加属性
+      if breed then
+        nameText:SetText("|c" .. color .. name .." "..breed.. "|r");
+      else
+        nameText:SetText("|c" .. color .. name .. "|r");
+      end
       listingsText:SetText(countStr(item.listingsMine, item.listingsAll));
       itemsText:SetText(countStr(item.itemsMine, item.itemsAll));
 
