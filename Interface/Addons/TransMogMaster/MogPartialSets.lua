@@ -26,12 +26,12 @@ function MogPartialSets:registerEvents()
 end
 
 function MogPartialSets:onAddonLoaded(loadedAddonName)
-    if loadedAddonName == "MogPartialSets" then
+    --if loadedAddonName == "MogPartialSets" then
         self:initConfiguration()
         self:prepareGlobalApiOverrides()
         self.loaded = true
         return true
-    end
+    --end
 end
 
 function MogPartialSets:prepareApiOverride(apiTable, key, name)

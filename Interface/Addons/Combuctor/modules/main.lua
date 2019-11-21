@@ -5,7 +5,7 @@
 
 local ADDON, Addon = ...
 Addon.ItemScale = 2.0
-Addon.FrameScale = 0.8
+Addon.FrameScale = 0.85
 Addon.canSearch = true
 
 function Addon:OnEnable()

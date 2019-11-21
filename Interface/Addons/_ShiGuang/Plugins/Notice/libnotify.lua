@@ -1,3 +1,6 @@
+-- Version: 2019.10.28ÐÞ¸´°æ @ ¸ßÆµ±äÑ¹Æ÷ by NGA - for 8.2.5(v0.1)
+-- Author: Shagu
+
 libnotify = {}
 libnotify.window = {}
 
@@ -65,7 +68,7 @@ function libnotify:CreateFrame()
   end
 
   frame.background = frame:CreateTexture("background", "BACKGROUND")
-  frame.background:SetTexture("Interface\\AddOns\\ShaguNotify\\textures\\UI-Achievement-Alert-Background")
+  frame.background:SetTexture("Interface\\ACHIEVEMENTFRAME\\UI-Achievement-Alert-Background")
   frame.background:SetPoint("TOPLEFT", 0, 120)
   frame.background:SetPoint("BOTTOMRIGHT", 0, 120)
   frame.background:SetTexCoord(0, .605, 0, .703)
@@ -83,7 +86,7 @@ function libnotify:CreateFrame()
   frame.name:SetPoint("BOTTOMRIGHT", -60, 156)
 
   frame.glow = frame:CreateTexture("glow", "OVERLAY")
-  frame.glow:SetTexture("Interface\\AddOns\\ShaguNotify\\textures\\UI-Achievement-Alert-Glow")
+  frame.glow:SetTexture("Interface\\ACHIEVEMENTFRAME\\UI-Achievement-Alert-Glow")
   frame.glow:SetBlendMode("ADD")
   frame.glow:SetWidth(400)
   frame.glow:SetHeight(171)
@@ -93,7 +96,7 @@ function libnotify:CreateFrame()
 
   frame.shine = frame:CreateTexture("shine", "OVERLAY")
   frame.shine:SetBlendMode("ADD")
-  frame.shine:SetTexture("Interface\\AddOns\\ShaguNotify\\textures\\UI-Achievement-Alert-Glow")
+  frame.shine:SetTexture("Interface\\ACHIEVEMENTFRAME\\UI-Achievement-Alert-Glow")
   frame.shine:SetWidth(67)
   frame.shine:SetHeight(72)
   frame.shine:SetPoint("BOTTOMLEFT", 0, 128)
@@ -108,14 +111,14 @@ function libnotify:CreateFrame()
   --[[
   frame.icon.backfill = frame.icon:CreateTexture("backfill", "BACKGROUND")
   frame.icon.backfill:SetBlendMode("ADD")
-  frame.icon.backfill:SetTexture("Interface\\AddOns\\ShaguNotify\\textures\\UI-Achievement-IconFrame-Backfill")
+  frame.icon.backfill:SetTexture("Interface\\ACHIEVEMENTFRAME\\UI-Achievement-IconFrame-Backfill")
   frame.icon.backfill:SetPoint("CENTER", 0, 0)
   frame.icon.backfill:SetWidth(64)
   frame.icon.backfill:SetHeight(64)
   ]]--
 
   frame.icon.bling = frame.icon:CreateTexture("bling", "BORDER")
-  frame.icon.bling:SetTexture("Interface\\AddOns\\ShaguNotify\\textures\\UI-Achievement-Bling")
+  frame.icon.bling:SetTexture("Interface\\ACHIEVEMENTFRAME\\UI-Achievement-Bling")
   frame.icon.bling:SetPoint("CENTER", -1, 1)
   frame.icon.bling:SetWidth(116)
   frame.icon.bling:SetHeight(116)
@@ -126,7 +129,7 @@ function libnotify:CreateFrame()
   frame.icon.texture:SetHeight(50)
 
   frame.icon.overlay = frame.icon:CreateTexture("overlay", "OVERLAY")
-  frame.icon.overlay:SetTexture("Interface\\AddOns\\ShaguNotify\\textures\\UI-Achievement-IconFrame")
+  frame.icon.overlay:SetTexture("Interface\\ACHIEVEMENTFRAME\\UI-Achievement-IconFrame")
   frame.icon.overlay:SetPoint("CENTER", -1, 2)
   frame.icon.overlay:SetHeight(72)
   frame.icon.overlay:SetWidth(72)
@@ -138,7 +141,7 @@ function libnotify:CreateFrame()
   frame.shield:SetPoint("TOPRIGHT", -10, 107)
 
   frame.shield.icon = frame.shield:CreateTexture("icon", "BACKGROUND")
-  frame.shield.icon:SetTexture("Interface\\AddOns\\ShaguNotify\\textures\\UI-Achievement-Shields")
+  frame.shield.icon:SetTexture("Interface\\ACHIEVEMENTFRAME\\UI-ACHIEVEMENT-SHIELDS-NOPOINTS")
   frame.shield.icon:SetWidth(52)
   frame.shield.icon:SetHeight(48)
   frame.shield.icon:SetPoint("TOPRIGHT", 1, -8)
@@ -174,5 +177,5 @@ end
 
 for i=1, libnotify.max_window do
   libnotify.window[i] = libnotify:CreateFrame()
-  libnotify.window[i]:SetPoint("TOP", 0, -66 - (88*i))
+  libnotify.window[i]:SetPoint("BOTTOM", 0, 21 + (88*i))  --"TOP", 0, -66 - (88*i)
 end

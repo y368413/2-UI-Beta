@@ -1,5 +1,7 @@
 ﻿<Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="PvPPP.lua"/>
+	<Script file="libnotify.lua"/>
+	<Script file="Quest_Complete.lua"/>
 	<Script file="NoItsNot.lua"/>
 	<Script file="Reminder.lua"/>
 	<Script file="HardYards.lua"/>
