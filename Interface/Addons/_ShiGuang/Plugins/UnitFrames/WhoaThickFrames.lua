@@ -2,8 +2,8 @@
 local function whoaUnitClass(healthbar, unit)
 	if UnitIsPlayer(unit) and UnitIsConnected(unit) and UnitClass(unit) then
 		_, class = UnitClass(unit);
-		local class = CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[class] or RAID_CLASS_COLORS[class];
-		healthbar:SetStatusBarColor(class.r, class.g, class.b);
+		local c = RAID_CLASS_COLORS[class];
+		healthbar:SetStatusBarColor(c.r, c.g, c.b);
 	elseif UnitIsPlayer(unit) and (not UnitIsConnected(unit)) then
 		healthbar:SetStatusBarColor(0.5,0.5,0.5);
 	else
@@ -26,10 +26,8 @@ local function whoaUnitReaction(healthbar, unit)
 				healthbar:SetStatusBarColor(0,0.6,0.1)
 			end
 		end
-				--healthbar:SetStatusBarColor(0.5, 0.5, 0.5)
 	end
 end
-hooksecurefunc("TargetFrame_CheckFaction", whoaUnitReaction)
 hooksecurefunc("UnitFrameHealthBar_Update", whoaUnitReaction)
 hooksecurefunc("HealthBar_OnValueChanged", function(self) whoaUnitReaction(self, self.unit) end)
 
@@ -66,6 +64,55 @@ hooksecurefunc("TargetFrame_UpdateAuraPositions", function(self, auraName, numAu
 		end
 	end
 end)
+--	Player frame.
+hooksecurefunc("PlayerFrame_ToPlayerArt", function(self)
+		PlayerFrameTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame");
+		PlayerStatusTexture:SetTexture("Interface\\AddOns\\_ShiGuang\\Media\\Modules\\UFs\\UI-Player-Status");
+		self.name:Hide();
+		--self.name:ClearAllPoints();
+		--self.name:SetPoint("CENTER", PlayerFrame, "CENTER",50.5, 36);
+		self.healthbar:SetPoint("TOPLEFT",106,-24);
+		self.healthbar:SetHeight(28);
+		self.healthbar.LeftText:ClearAllPoints();
+		self.healthbar.LeftText:SetPoint("LEFT",self.healthbar,"LEFT",5,0);	
+		self.healthbar.RightText:ClearAllPoints();
+		self.healthbar.RightText:SetPoint("RIGHT",self.healthbar,"RIGHT",-5,0);
+		self.healthbar.TextString:SetPoint("CENTER", self.healthbar, "CENTER", 0, 0);
+		self.manabar.LeftText:ClearAllPoints();
+		self.manabar.LeftText:SetPoint("LEFT",self.manabar,"LEFT",5,0)		;
+		self.manabar.RightText:ClearAllPoints();
+		self.manabar.RightText:SetPoint("RIGHT",self.manabar,"RIGHT",-5,0);
+		self.manabar.TextString:SetPoint("CENTER",self.manabar,"CENTER",0,0);
+		--PlayerFrameGroupIndicatorText:ClearAllPoints();
+		--PlayerFrameGroupIndicatorText:SetPoint("BOTTOMLEFT", PlayerFrame,"TOP",0,-20);
+		PlayerFrameGroupIndicatorLeft:Hide();
+		PlayerFrameGroupIndicatorMiddle:Hide();
+		PlayerFrameGroupIndicatorRight:Hide();
+end)
+
+--	Player vehicle frame.
+hooksecurefunc("PlayerFrame_ToVehicleArt", function(self, vehicleType)
+		if ( vehicleType == "Natural" ) then
+		PlayerFrameVehicleTexture:SetTexture("Interface\\Vehicles\\UI-Vehicle-Frame-Organic");
+		PlayerFrameFlash:SetTexture("Interface\\Vehicles\\UI-Vehicle-Frame-Organic-Flash");
+		PlayerFrameFlash:SetTexCoord(-0.02, 1, 0.07, 0.86);
+		self.healthbar:SetSize(103,12);
+		self.healthbar:SetPoint("TOPLEFT",116,-41);
+		self.manabar:SetSize(103,12);
+		self.manabar:SetPoint("TOPLEFT",116,-52);
+	else
+		PlayerFrameVehicleTexture:SetTexture("Interface\\Vehicles\\UI-Vehicle-Frame");
+		PlayerFrameFlash:SetTexture("Interface\\Vehicles\\UI-Vehicle-Frame-Flash");
+		PlayerFrameFlash:SetTexCoord(-0.02, 1, 0.07, 0.86);
+		self.healthbar:SetSize(100,12);
+		self.healthbar:SetPoint("TOPLEFT",119,-41);
+		self.manabar:SetSize(100,12);
+		self.manabar:SetPoint("TOPLEFT",119,-52);
+	end
+	PlayerName:SetPoint("CENTER",50,23);
+	PlayerFrameBackground:SetWidth(114);
+end)
+
 --[[	Player frame dead text.
 hooksecurefunc("TextStatusBar_UpdateTextStringWithValues",function(self)
 	local deadText = DEAD;
@@ -117,106 +164,10 @@ hooksecurefunc("TextStatusBar_UpdateTextStringWithValues",function(self)
 		for i, v in pairs({	FocusFrameHealthBar.LeftText, FocusFrameHealthBar.RightText, FocusFrameManaBar.LeftText, FocusFrameManaBar.RightText, FocusFrameTextureFrameManaBarText, FocusFrameManaBar }) do v:SetAlpha(1); end
 	end
 end)]]
---	Player frame.
-hooksecurefunc("PlayerFrame_ToPlayerArt", function(self)
-		PlayerFrameTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame");
-		PlayerStatusTexture:SetTexture("Interface\\AddOns\\_ShiGuang\\Media\\Modules\\UFs\\UI-Player-Status");
-	PlayerFrameBackground:SetWidth(120);
-		self.name:Hide();
-		--self.name:ClearAllPoints();
-		--self.name:SetPoint("CENTER", PlayerFrame, "CENTER",50.5, 36);
-		self.healthbar:SetPoint("TOPLEFT",106,-24);
-		self.healthbar:SetHeight(28);
-		self.healthbar.LeftText:ClearAllPoints();
-		self.healthbar.LeftText:SetPoint("LEFT",self.healthbar,"LEFT",5,0);	
-		self.healthbar.RightText:ClearAllPoints();
-		self.healthbar.RightText:SetPoint("RIGHT",self.healthbar,"RIGHT",-5,0);
-		self.healthbar.TextString:SetPoint("CENTER", self.healthbar, "CENTER", 0, 0);
-		self.manabar.LeftText:ClearAllPoints();
-		self.manabar.LeftText:SetPoint("LEFT",self.manabar,"LEFT",5,0)		;
-		self.manabar.RightText:ClearAllPoints();
-		self.manabar.RightText:SetPoint("RIGHT",self.manabar,"RIGHT",-5,0);
-		self.manabar.TextString:SetPoint("CENTER",self.manabar,"CENTER",0,0);
-		--PlayerFrameGroupIndicatorText:ClearAllPoints();
-		--PlayerFrameGroupIndicatorText:SetPoint("BOTTOMLEFT", PlayerFrame,"TOP",0,-20);
-		PlayerFrameGroupIndicatorLeft:Hide();
-		PlayerFrameGroupIndicatorMiddle:Hide();
-		PlayerFrameGroupIndicatorRight:Hide();
-end)
-		--self.healthbar.LeftText:SetFontObject(SystemFont_Outline_Small);
-		--self.healthbar.RightText:SetFontObject(SystemFont_Outline_Small);
-		--self.manabar.TextString:SetFontObject(SystemFont_Outline_Small);
-		--self.manabar.LeftText:SetFontObject(SystemFont_Outline_Small);
-		--self.manabar.RightText:SetFontObject(SystemFont_Outline_Small);
---	Player vehicle frame.
-hooksecurefunc("PlayerFrame_ToVehicleArt", function(self, vehicleType)
-		if ( vehicleType == "Natural" ) then
-		PlayerFrameVehicleTexture:SetTexture("Interface\\Vehicles\\UI-Vehicle-Frame-Organic");
-		PlayerFrameFlash:SetTexture("Interface\\Vehicles\\UI-Vehicle-Frame-Organic-Flash");
-		PlayerFrameFlash:SetTexCoord(-0.02, 1, 0.07, 0.86);
-		self.healthbar:SetSize(103,12);
-		self.healthbar:SetPoint("TOPLEFT",116,-41);
-		self.manabar:SetSize(103,12);
-		self.manabar:SetPoint("TOPLEFT",116,-52);
-	else
-		PlayerFrameVehicleTexture:SetTexture("Interface\\Vehicles\\UI-Vehicle-Frame");
-		PlayerFrameFlash:SetTexture("Interface\\Vehicles\\UI-Vehicle-Frame-Flash");
-		PlayerFrameFlash:SetTexCoord(-0.02, 1, 0.07, 0.86);
-		self.healthbar:SetSize(100,12);
-		self.healthbar:SetPoint("TOPLEFT",119,-41);
-		self.manabar:SetSize(100,12);
-		self.manabar:SetPoint("TOPLEFT",119,-52);
-	end
-	PlayerName:SetPoint("CENTER",50,23);
-	PlayerFrameBackground:SetWidth(114);
-end)
-
--- Pet frame
---[[hooksecurefunc("PlayerFrame_ToPlayerArt", function()
-		PetFrameHealthBarTextLeft:SetPoint("LEFT",PetFrameHealthBar,"LEFT",0,0);
-		PetFrameHealthBarTextRight:SetPoint("RIGHT",PetFrameHealthBar,"RIGHT",0,0);
-		PetFrameManaBarText:SetPoint("CENTER",PetFrameManaBar,"CENTER",0,-3);
-		PetFrameManaBarTextLeft:SetPoint("LEFT",PetFrameManaBar,"LEFT",0,-3);
-		PetFrameManaBarTextRight:SetPoint("RIGHT",PetFrameManaBar,"RIGHT",0,-3);
-		PetFrameHealthBarText:SetFontObject(SystemFont_Outline_Small);
-		PetFrameHealthBarTextLeft:SetFontObject(SystemFont_Outline_Small);
-		PetFrameHealthBarTextRight:SetFontObject(SystemFont_Outline_Small);
-		PetFrameManaBarText:SetFontObject(SystemFont_Outline_Small);
-		PetFrameManaBarTextLeft:SetFontObject(SystemFont_Outline_Small);
-		PetFrameManaBarTextRight:SetFontObject(SystemFont_Outline_Small);
-end)]]
-
-hooksecurefunc("PetFrame_Update", function(self, override)
-	if ( (not PlayerFrame.animating) or (override) ) then
-		if ( UnitIsVisible(self.unit) and PetUsesPetFrame() and not PlayerFrame.vehicleHidesPet ) then
-			if ( UnitPowerMax(self.unit) == 0 ) then
-					PetFrameTexture:SetTexture("Interface\\TargetingFrame\\UI-SmallTargetingFrame-NoMana");
-				PetFrameManaBarText:Hide();
-			else
-					PetFrameTexture:SetTexture("Interface\\TargetingFrame\\UI-SmallTargetingFrame");
-			end
-		end
-	end
-end)
-
-local function whoaPetFrameBg()
-	local f = CreateFrame("Frame",nil,PetFrame)
-	f:SetFrameStrata("BACKGROUND")
-	f:SetSize(70,18);
-	local t = f:CreateTexture(nil,"BACKGROUND")
-	t:SetColorTexture(0, 0, 0, 0.5)
-	t:SetAllPoints(f)
-	f.texture = t
-	f:SetPoint("CENTER",16,-5);
-	f:Show()
-end
-whoaPetFrameBg();
-
 
 --	Target frame
 hooksecurefunc("TargetFrame_CheckClassification", function(self, forceNormalTexture)
 	local classification = UnitClassification(self.unit);
-	self.highLevelTexture:ClearAllPoints();
 	self.highLevelTexture:SetPoint("CENTER", self.levelText, "CENTER", 0,0);
 	self.deadText:SetFont(STANDARD_TEXT_FONT,21,"OUTLINE")
 	self.deadText:SetPoint("TOPLEFT", self.healthbar, "TOPRIGHT", 12, -8)
@@ -228,36 +179,27 @@ hooksecurefunc("TargetFrame_CheckClassification", function(self, forceNormalText
 	self.healthbar.LeftText:SetPoint("LEFT", self.healthbar, "LEFT", 5, 0);
 	self.healthbar.RightText:SetPoint("RIGHT", self.healthbar, "RIGHT", -3, 0);
 	self.healthbar.TextString:SetPoint("CENTER", self.healthbar, "CENTER", 0, 0);
-	self.manabar.LeftText:SetPoint("LEFT", self.manabar, "LEFT", 2, -1);	
-	self.manabar.RightText:ClearAllPoints();
-	self.manabar.RightText:SetPoint("RIGHT", self.manabar, "RIGHT", -2, -1);
-	self.manabar.TextString:SetPoint("CENTER", self.manabar, "CENTER", 0, -1);
 	--TargetFrame.threatNumericIndicator:SetPoint("BOTTOM", PlayerFrame, "TOP", 72, -21);
 	--TargetFrame.threatNumericIndicator:SetPoint("TOPRIGHT", TargetFrame, "TOPRIGHT", -66, -3);
+	FocusFrame.threatNumericIndicator:SetAlpha(0);
 	if ( forceNormalTexture ) then
 		self.borderTexture:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame");
-		CreateBarPctText(TargetFrame, "LEFT", "RIGHT", 88, -8, "NumberFontNormalLarge", 36)
-	elseif ( UnitClassification(self.unit) == "minus" ) then
+	elseif ( classification == "minus" ) then
 		self.borderTexture:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Minus");
 		forceNormalTexture = true;
-		CreateBarPctText(TargetFrame, "LEFT", "RIGHT", 66, 0, "NumberFontNormalLarge", 36)
-	elseif ( UnitClassification(self.unit) == "worldboss" or UnitClassification(self.unit) == "elite" ) then
+	elseif ( classification == "worldboss" or classification == "elite" ) then
 		self.borderTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame-Elite");
-		CreateBarPctText(TargetFrame, "LEFT", "RIGHT", 102, -8, "NumberFontNormalLarge", 36)
-	elseif ( UnitClassification(self.unit) == "rareelite" ) then
+	elseif ( classification == "rareelite" ) then
 		self.borderTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame-Rare-Elite");
-		CreateBarPctText(TargetFrame, "LEFT", "RIGHT", 102, -8, "NumberFontNormalLarge", 36)
-	elseif ( UnitClassification(self.unit) == "rare" ) then
+	elseif ( classification == "rare" ) then
 		self.borderTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame-Rare");
-		CreateBarPctText(TargetFrame, "LEFT", "RIGHT", 102, -8, "NumberFontNormalLarge", 36)
 	else
 		self.borderTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame");
 		forceNormalTexture = true;
-		CreateBarPctText(TargetFrame, "LEFT", "RIGHT", 88, -8, "NumberFontNormalLarge", 36)
 	end
 	if ( forceNormalTexture ) then
 		self.haveElite = nil;
-		if ( UnitClassification(self.unit) == "minus" ) then
+		if ( classification == "minus" ) then
 			self.Background:SetSize(119,12);
 			self.Background:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", 7, 47);
 			self.name:SetPoint("LEFT", self, 16, 19);
@@ -271,7 +213,7 @@ hooksecurefunc("TargetFrame_CheckClassification", function(self, forceNormalText
 			self.Background:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", 7, 35);
 		end
 		if ( self.threatIndicator ) then
-			if ( UnitClassification(self.unit) == "minus" ) then
+			if ( classification == "minus" ) then
 				self.threatIndicator:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Minus-Flash");
 				self.threatIndicator:SetTexCoord(0, 1, 0, 1);
 				self.threatIndicator:SetWidth(256);
@@ -309,21 +251,6 @@ hooksecurefunc("UnitFrameManaBar_UpdateType", function(manaBar)
 	end
 end)
 
---[[function CreateStatusBarText(name, parentName, parent, point, x, y)
-	local fontString = parent:CreateFontString(parentName..name, nil, "TextStatusBarText")
-	fontString:SetPoint(point, parent, point, x, y)
-	return fontString
-end
-function whoaStatustextFrame()
-		TargetFrameHealthBar.TextString = CreateStatusBarText("Text", "TargetFrameHealthBar", TargetFrameTextureFrame, "CENTER", 0, 0);
-		TargetFrameHealthBar.LeftText = CreateStatusBarText("TextLeft", "TargetFrameHealthBar", TargetFrameTextureFrame, "LEFT", 5, 0);
-		TargetFrameHealthBar.RightText = CreateStatusBarText("TextRight", "TargetFrameHealthBar", TargetFrameTextureFrame, "RIGHT", -3, 0);
-		TargetFrameManaBar.TextString = CreateStatusBarText("Text", "TargetFrameManaBar", TargetFrameTextureFrame, "CENTER", 0, 0);
-		TargetFrameManaBar.LeftText = CreateStatusBarText("TextLeft", "TargetFrameManaBar", TargetFrameTextureFrame, "LEFT", 5, 0);
-		TargetFrameManaBar.RightText = CreateStatusBarText("TextRight", "TargetFrameManaBar", TargetFrameTextureFrame, "RIGHT", -3, 0);
-end
-whoaStatustextFrame()]]
-
 --	ToT & ToF
 function whoaFrameToTF()
 	TargetFrameToTTextureFrameDeadText:ClearAllPoints();
@@ -336,9 +263,6 @@ function whoaFrameToTF()
     TargetFrameToTManaBar:ClearAllPoints();
     TargetFrameToTManaBar:SetPoint("TOPLEFT", 45, -25);
     TargetFrameToTManaBar:SetHeight(5);
-	TargetFrameToTBackground:SetSize(50,14);
-	TargetFrameToTBackground:ClearAllPoints();
-	TargetFrameToTBackground:SetPoint("CENTER", "TargetFrameToT","CENTER",20, 0);
 	FocusFrameToTTextureFrameDeadText:ClearAllPoints();
 	FocusFrameToTTextureFrameDeadText:SetPoint("CENTER", "FocusFrameToTHealthBar" ,"CENTER",1, 0);
 	FocusFrameToTTextureFrameName:SetSize(65,10);
@@ -350,7 +274,6 @@ function whoaFrameToTF()
     FocusFrameToTManaBar:SetPoint("TOPLEFT", 43, -25);
     FocusFrameToTManaBar:SetHeight(5);
 end
-hooksecurefunc("TargetofTarget_Update", whoaFrameToTF)
 hooksecurefunc("TargetFrame_CheckClassification", whoaFrameToTF)
 
 --	Boss target frames.
@@ -406,28 +329,28 @@ function whoaPartyFrames()
 			_G["PartyMemberFrame"..i.."ManaBar"]:ClearAllPoints();
 			_G["PartyMemberFrame"..i.."ManaBar"]:SetPoint("TOPLEFT", 45, -26);
 			_G["PartyMemberFrame"..i.."ManaBar"]:SetHeight(5);
-			--_G["PartyMemberFrame"..i.."HealthBarTextLeft"]:SetText(" ");
 			_G["PartyMemberFrame"..i.."HealthBarTextLeft"]:ClearAllPoints();
 			_G["PartyMemberFrame"..i.."HealthBarTextLeft"]:SetPoint("LEFT", _G["PartyMemberFrame"..i.."HealthBar"], "LEFT", 0, 0);
-			--_G["PartyMemberFrame"..i.."HealthBarTextRight"]:SetText(" ");
 			_G["PartyMemberFrame"..i.."HealthBarTextRight"]:ClearAllPoints();
 			_G["PartyMemberFrame"..i.."HealthBarTextRight"]:SetPoint("RIGHT", _G["PartyMemberFrame"..i.."HealthBar"], "RIGHT", 0, 0);
-			--_G["PartyMemberFrame"..i.."ManaBarTextLeft"]:SetText(" ");
 			_G["PartyMemberFrame"..i.."ManaBarTextLeft"]:ClearAllPoints();
 			_G["PartyMemberFrame"..i.."ManaBarTextLeft"]:SetPoint("LEFT", _G["PartyMemberFrame"..i.."ManaBar"], "LEFT", 0, 0);
-			--_G["PartyMemberFrame"..i.."ManaBarTextRight"]:SetText(" ");
 			_G["PartyMemberFrame"..i.."ManaBarTextRight"]:ClearAllPoints();
 			_G["PartyMemberFrame"..i.."ManaBarTextRight"]:SetPoint("RIGHT", _G["PartyMemberFrame"..i.."ManaBar"], "RIGHT", 0, 0);
-			--_G["PartyMemberFrame"..i.."HealthBarText"]:SetText(" ");
 			_G["PartyMemberFrame"..i.."HealthBarText"]:ClearAllPoints();
 			_G["PartyMemberFrame"..i.."HealthBarText"]:SetPoint("LEFT", _G["PartyMemberFrame"..i.."HealthBar"], "RIGHT", 0, 0);
-			--_G["PartyMemberFrame"..i.."ManaBarText"]:SetText(" ");
 			_G["PartyMemberFrame"..i.."ManaBarText"]:ClearAllPoints();
 			_G["PartyMemberFrame"..i.."ManaBarText"]:SetPoint("LEFT", _G["PartyMemberFrame"..i.."ManaBar"], "RIGHT", 0, 0);
-			
 		end
 	end
 end
 hooksecurefunc("UnitFrame_Update", whoaPartyFrames)
 hooksecurefunc("PartyMemberFrame_ToPlayerArt", whoaPartyFrames)
+hooksecurefunc("TextStatusBar_UpdateTextStringWithValues", function()
+		for i = 1, 4 do
+			_G["PartyMemberFrame"..i.."ManaBarText"]:SetText(" ");
+			_G["PartyMemberFrame"..i.."ManaBarTextLeft"]:SetText(" ");
+			_G["PartyMemberFrame"..i.."ManaBarTextRight"]:SetText(" ");
+		end
+end)
 --------------------------------------------------------------------------------------whoa end

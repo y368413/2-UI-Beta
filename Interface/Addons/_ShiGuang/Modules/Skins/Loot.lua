@@ -4,8 +4,7 @@ local P = M:GetModule("Skins")
 
 function P:LootEx()
 	--if not MaoRUISettingDB["Skins"]["Loot"] then return end
-	
-------------------------------------------------------------ImprovedLootFrame
+	------------------------------------------------------------ImprovedLootFrame
 local wow_classic = WOW_PROJECT_ID and WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 	--LOOTFRAME_AUTOLOOT_DELAY = 0.5;
 	--LOOTFRAME_AUTOLOOT_RATE = 0.1;
