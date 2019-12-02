@@ -62,7 +62,6 @@ I.textures = {
 	flash		= Media.."ActionBars\\Flash",
 	pushed		= Media.."ActionBars\\Pushed",
 	checked		= Media.."ActionBars\\Checked",
-	equipped	= Media.."ActionBars\\Gloss",
 }
 I.LeftButton = " |TInterface\\TUTORIALFRAME\\UI-TUTORIAL-FRAME:13:11:0:-1:512:512:12:66:230:307|t "
 I.RightButton = " |TInterface\\TUTORIALFRAME\\UI-TUTORIAL-FRAME:13:11:0:-1:512:512:12:66:333:411|t "

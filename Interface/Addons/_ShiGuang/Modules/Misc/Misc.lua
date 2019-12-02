@@ -55,6 +55,7 @@ function MISC:OnLogin()
 	self:UpdateFasterLoot()
 	self:UpdateErrorBlocker()
 	self:TradeTargetInfo()
+	self:TradeTabs()
 	self:FreeMountCD()
 	self:WallpaperKit()
 	
@@ -604,11 +605,14 @@ do
 			if UIDD_REFRESH_OVERREAD_PATCH_VERSION ~= 1 then
 				return
 			end
-			for i = 1,UIDROPDOWNMENU_MAXLEVELS do
-				for j = 1,UIDROPDOWNMENU_MAXBUTTONS do
-					local b, _ = _G["DropDownList"..i.."Button"..j]
-					_ = issecurevariable(b, "checked") or drop(b, "checked")
-					_ = issecurevariable(b, "notCheckable") or drop(b, "notCheckable")
+			for i = 1, UIDROPDOWNMENU_MAXLEVELS do
+				local d = _G["DropDownList"..i]
+				if d and d.numButtons then
+					for j = d.numButtons+1, UIDROPDOWNMENU_MAXBUTTONS do
+						local b, _ = _G["DropDownList"..i.."Button"..j]
+						_ = issecurevariable(b, "checked") or drop(b, "checked")
+						_ = issecurevariable(b, "notCheckable") or drop(b, "notCheckable")
+					end
 				end
 			end
 		end)

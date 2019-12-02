@@ -146,7 +146,7 @@ info.onEnter = function(self)
 	end
 
 	GameTooltip:AddDoubleLine(" ", I.LineString)
-	GameTooltip:AddDoubleLine(" ", U["AutoRepair"]..": "..repairlist[MaoRUIDB["RepairType"]].." ", 1,1,1, .6,.8,1)
+	GameTooltip:AddDoubleLine(" ", U["Auto Repair"]..": "..repairlist[MaoRUIDB["RepairType"]].." ", 1,1,1, .6,.8,1)
 	GameTooltip:Show()
 end
 

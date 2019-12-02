@@ -2554,7 +2554,7 @@ LegionToDo:SetScript("OnShow",function(self)
 	end
 end)
 
-local MiniMapDropdown = CreateFrame("Frame", "LegionToDoMiniMapMenuFrame", nil, "UIDropDownMenuTemplate")
+--[[local MiniMapDropdown = CreateFrame("Frame", "LegionToDoMiniMapMenuFrame", nil, "UIDropDownMenuTemplate")
 local menuTable = {
 	{ text = "Legion ToDo", func = function() 
 		CloseDropDownMenus() 
@@ -2569,18 +2569,18 @@ local menuTable = {
 		LegionToDo:Show()
 	end, notCheckable = true, tooltipOnButton = 1, tooltipTitle = GetLocale() == "ruRU" and "Вновь показать всех скрытых прежде персонажей" or "Show all hidden chars" },
 	{ text = CLOSE, func = function() CloseDropDownMenus() end, notCheckable = true },
-}
+}]]
 
 MiniMapIcon:SetScript("OnMouseUp", function (self, button)
-	if button == "LeftButton" then
+	--if button == "LeftButton" then
 		wipe(hidden)
 		if IsShiftKeyDown() then
 			wipe(VLegionToDo.black)
 		end
 		LegionToDo:Show()
-	else
-		EasyMenu(menuTable, MiniMapDropdown, "cursor", 10 , -15, "MENU")
-	end
+	--else
+		--EasyMenu(menuTable, MiniMapDropdown, "cursor", 10 , -15, "MENU")
+	--end
 end)
 
 SlashCmdList["LTDSlash"] = function(arg)

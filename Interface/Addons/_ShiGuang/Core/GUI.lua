@@ -68,6 +68,7 @@ local defaultSettings = {
 		ClickThrough = false,
 		IconScale = 1,
 		DeprecatedAuras = false,
+		QuakeRing = false,
 	},
 	UFs = {
 		PlayerFrameScale = 0.9,

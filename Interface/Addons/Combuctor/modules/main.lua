@@ -4,7 +4,7 @@
 --]]
 
 local ADDON, Addon = ...
-Addon.ItemScale = 2.0
+Addon.ItemScale = 1.6
 Addon.FrameScale = 0.85
 Addon.canSearch = true
 
