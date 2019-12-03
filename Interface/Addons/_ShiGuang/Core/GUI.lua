@@ -183,7 +183,7 @@ local defaultSettings = {
 		Focuser = true,
 		ExpRep = true,
 		Screenshot = true,
-		TradeTab = true,
+		TradeTabs = true,
 		Interrupt = true,
 		OwnInterrupt = true,
 		InterruptSound = true,
@@ -568,7 +568,7 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 	[7] = {
 		{1, "Misc", "Mail", U["Mail Tool"]},
 		{1, "Misc", "Focuser", U["Easy Focus"], true},
-		{1, "Misc", "TradeTab", U["TradeTabs"], true, true},
+		{1, "Misc", "TradeTabs", U["TradeTabs"], true, true},
 		{1, "Misc", "PetFilter", U["Show PetFilter"]},
 		--{1, "Misc", "ItemLevel", U["Show ItemLevel"]},
 		{1, "Misc", "MissingStats", U["Show MissingStats"], true},

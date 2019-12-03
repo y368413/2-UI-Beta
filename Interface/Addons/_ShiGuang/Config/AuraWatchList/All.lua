@@ -51,6 +51,7 @@ local list = {
 		{AuraID =  188454, UnitID = "player"},
 		{AuraID =   62574, UnitID = "player"},
 		{AuraID =  229074, UnitID = "player"},
+		{AuraID =  90216, UnitID = "player"}, --工会战旗
 		-- 职业特性
 		{AuraID = 108503, UnitID = "player"},	--魔典:恶魔牺牲
 		{AuraID = 108446, UnitID = "player"},	--灵魂链接

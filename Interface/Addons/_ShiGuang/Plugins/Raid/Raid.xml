@@ -1,5 +1,6 @@
 ﻿<Ui xmlns="http://www.blizzard.com/wow/ui/">
-	<!--Script file="CCIcons.lua"/-->
+	<Script file="LibBossIDs-1.0.lua"/>
+	<Script file="TinyDPS.lua"/>
 	<!--Script file="WhoPulled.lua"/-->
 	<Script file="KeystoneHelper.lua"/>
 	<Script file="ElitismHelper.lua"/>

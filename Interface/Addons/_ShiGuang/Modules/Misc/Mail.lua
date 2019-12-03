@@ -239,33 +239,21 @@ function MISC:MailBox()
 end
 
 -------MailinputboxResizer---------------------------------------------------------------
-	local editbox_width = 230		--EditBox width				--default: 224
-	local moneyframe_pos = {"TOPLEFT","SendMailFrame","TOPLEFT",82,-70,}	--Money display position
-
-local c = SendMailCostMoneyFrame
-c:ClearAllPoints()
-c:SetPoint(unpack(moneyframe_pos))
-local f = "SendMailNameEditBox" 
-_G[f]:SetSize(editbox_width or 224,20)
-local r=_G[f.."Right"]
-r:ClearAllPoints()
-r:SetPoint("TOPRIGHT",0,0)
-local mi=_G[f.."Middle"]
-mi:SetSize(0,20)
-mi:ClearAllPoints()
-mi:SetPoint("LEFT",f.."Left","LEFT",8,0)
-mi:SetPoint("RIGHT",r,"RIGHT",-8,0)
+SendMailCostMoneyFrame:ClearAllPoints()
+SendMailCostMoneyFrame:SetPoint("TOPLEFT","SendMailFrame","TOPLEFT",82,-70)
+_G["SendMailNameEditBox"]:SetSize(230,20)				----EditBox width default: 224
+_G["SendMailNameEditBoxRight"]:ClearAllPoints()
+_G["SendMailNameEditBoxRight"]:SetPoint("TOPRIGHT",0,0)
+_G["SendMailNameEditBoxMiddle"]:SetSize(0,20)
+_G["SendMailNameEditBoxMiddle"]:ClearAllPoints()
+_G["SendMailNameEditBoxMiddle"]:SetPoint("LEFT","SendMailNameEditBoxLeft","LEFT",8,0)
+_G["SendMailNameEditBoxMiddle"]:SetPoint("RIGHT",_G["SendMailNameEditBoxRight"],"RIGHT",-8,0)
 
 -- Mailbox Cleaner-------- by Jadya - EU-Well of Eternity---------------------------------
-local min, low = math.min, string.lower
 local title = GEAR_DELETEEMPTYMAILS_TITLE
-local snd
 local em_enabled = false
-local i
-local lastindex, timeout = 0,0
-local timeout_range = 1 -- one second
+local timeout = 0
 local f = CreateFrame("Frame")
-
 local options_desc = { ["read"] = "Delete unread mails" }
 
 local function endloop()
@@ -276,9 +264,7 @@ end
 
 local function update()
  if not em_enabled or not InboxFrame or not InboxFrame:IsVisible() then endloop() return end
-
  local num = GetInboxNumItems()
-
  if num < 1 or i < 1 then
   endloop()
   return
@@ -288,18 +274,16 @@ local function update()
  
  if timeout > 0 then
   if i > num or (timeout < t) then
-   i = min(i - 1, num)
+   i = math.min(i - 1, num)
    timeout = 0
   else
    return
   end
  end
 
- --canDelete = InboxItemCanDelete(i)
- --if canDelete then
+ --if InboxItemCanDelete(i) then
  local packageIcon, stationeryIcon, sender, subject, money, CODAmount, daysLeft, itemCount, wasRead, wasReturned, textCreated, canReply, isGM, itemQuantity = GetInboxHeaderInfo(i)
- if (ShiGuangDB["MailRead"] or wasRead) and not isGM and (not snd or (snd and (snd == low(sender)))) and
-  (not itemCount or itemCount == 0) and (not money or money == 0) then
+ if (ShiGuangDB["MailRead"] or wasRead) and not isGM and (not snd or (snd and (snd == string.lower(sender)))) and (not itemCount or itemCount == 0) and (not money or money == 0) then
   DeleteInboxItem(i)
   timeout = t + 1
  else
@@ -321,7 +305,6 @@ local function printOptionMsg(arg, help)
 end
 
 local function start(arg)
-
  if arg == "MailRead" then
   ShiGuangDB["MailRead"] = not ShiGuangDB["MailRead"]
   printOptionMsg(arg)
@@ -333,7 +316,7 @@ local function start(arg)
   return
  end
  if arg and arg ~= "" then
-  snd = low(arg)
+  snd = string.lower(arg)
  else
   snd = nil
  end
@@ -585,26 +568,21 @@ end
 --## Author: @hjg719-NGA 
 
 SendList = { 
-{"暗影微粒","阿卡纳精华","辉光碎片","德拉诺之尘","碎裂的时光水晶","邪煞水晶","飘渺碎片","神秘精华","灵魂尘","漩涡水晶","天界碎片","小块天界碎片","强效天界精华","催眠之尘","小块梦境碎片","深渊水晶","梦境碎片","强效宇宙精华","次级宇宙精华","大块棱光碎片","虚空水晶","源生之土","源生之水"},
-{"炼金催化剂","烁星花","塔拉多幽兰","寒霜草","炎火草","戈尔隆德捕蝇草","纳格兰箭叶花"}, 
-{"奢华兽毛","怨毒布","烬丝布"}, 
-{"炼金催化剂","烁星花","塔拉多幽兰","寒霜草","炎火草","戈尔隆德捕蝇草","纳格兰箭叶花","巫术之"}, 
-{"怨毒板"},
-{"时光水晶","碎裂的时光水晶","天然兽皮","怨毒皮","邪能之灾","狂野之血","辉光碎片"},
+{"暗影微粒","阿卡纳精华","辉光碎片","德拉诺之尘","碎裂的时光水晶","邪煞水晶","飘渺碎片","神秘精华","灵魂尘","漩涡水晶","天界碎片","小块天界碎片","强效天界精华","催眠之尘","小块梦境碎片","深渊水晶","梦境碎片","强效宇宙精华","次级宇宙精华","大块棱光碎片","虚空水晶","源生之土","源生之水","奢华兽毛","怨毒布","烬丝布"},
 {"真铁矿石","黑石矿石"},
-{"怨毒锁"},
-{"妖纹包","军团勋章","食人魔箱子","大桶原油","虚空次元袋","钢铸之魂","血环之印","鲁克玛圣物","战歌之印"},
+{"炼金催化剂","烁星花","塔拉多幽兰","寒霜草","炎火草","戈尔隆德捕蝇草","纳格兰箭叶花"}, 
+{"海浪翡翠","焚石","狮眼石","天蓝宝石","红宝石","赤尖石"}, 
+{"时光水晶","碎裂的时光水晶","天然兽皮","怨毒皮","邪能之灾","狂野之血","辉光碎片","巫术之"},
+{},
+{"怨毒布","怨毒锁","怨毒板","妖纹包","军团勋章","食人魔箱子","大桶原油","虚空次元袋","钢铸之魂","血环之印","鲁克玛圣物","战歌之印"},
 } 
 Address = { 
-"暗影戒律", 
-"狂怒武器", 
-"暗影戒律", 
-"暗影戒律", 
-"暗影戒律", 
-"暗影戒律", 
-"暗影戒律", 
-"暗影戒律",
-"暗影戒律",
+"暗影戒律",   --附魔
+"狂怒武器",    --锻造
+"神圣惩戒",    --珠宝
+"野兽控制",    --制皮
+"奥术冰霜",    --工程、炼金
+"烂柯人-时光之穴",    --战网、宠物
 } 
 MailBOXEnable = nil
 
@@ -645,7 +623,8 @@ F_CLOSE=F_CLOSE or CreateFrame("frame")
 F_CLOSE:RegisterEvent("MAIL_CLOSED")
 F_CLOSE:SetScript("OnEvent",function() MailBOXEnable = nil end)
 
---[[local SendButton = CreateFrame("BUTTON", "SendMailButton", MailFrame, "SecureActionButtonTemplate") 
+--if I.isDeveloper then
+local SendButton = CreateFrame("BUTTON", "SendMailButton", MailFrame, "SecureActionButtonTemplate") 
 SendButton:SetWidth(43) 
 SendButton:SetHeight(43) 
 SendButton:SetPoint("TOPLEFT", MailFrame, "TOPRIGHT", 2, -21)
@@ -658,4 +637,5 @@ SendButton:SetAttribute("macrotext",
    "/click MailFrameTab2\n".. 
    "/autosend\n".. 
    "/click MailFrameTab1" 
-)]]
+)
+--end
