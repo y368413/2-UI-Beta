@@ -2,9 +2,9 @@
 local M, R, U, I = unpack(ns)
 local CDS = M:GetModule("Cooldowns")
 
-local SorasThreat_Statusbar = "Interface\\AddOns\\_ShiGuang\\Media\\Modules\\Raid\\statusbar"
-local SorasThreat_GlowTex = "Interface\\AddOns\\_ShiGuang\\Media\\Modules\\Raid\\solid"
-local SorasThreat_Solid = "Interface\\AddOns\\_ShiGuang\\Media\\Modules\\Raid\\dM2"
+local SorasThreat_Statusbar = "Interface\\AddOns\\_ShiGuang\\Media\\Modules\\Raid\\SorasThreatbar"
+local SorasThreat_GlowTex = "Interface\\AddOns\\_ShiGuang\\Media\\Modules\\Raid\\Solid"
+local SorasThreat_Solid = "Interface\\AddOns\\_ShiGuang\\Media\\Modules\\Raid\\ColorBar"
 local SorasThreat_ArrowLarge = "Interface\\BUTTONS\\UI-MicroStream-Red"
 local SorasThreat_ArrowSmall = "Interface\\PETBATTLES\\BattleBar-AbilityBadge-Strong-Small"
 local SorasThreat_NameTextL = 5									-- 名字长度 单位:字

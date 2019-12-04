@@ -1788,7 +1788,7 @@ local function newBar(g)
   dummybar:Hide()
   --dummybar:SetPoint("RIGHT", tdpsFrame, "RIGHT", -2, 0)
   dummybar:SetBackdrop({
-    bgFile = [[Interface\AddOns\_ShiGuang\Media\Modules\wglass.tga]],
+    bgFile = [[Interface\AddOns\_ShiGuang\Media\Modules\Skada\AtlzSkada.tga]],
     edgeFile = [[Interface\AddOns\_ShiGuang\Media\Modules\UI-StatusBar.tga]],
     tile = false,
     tileSize = 1,

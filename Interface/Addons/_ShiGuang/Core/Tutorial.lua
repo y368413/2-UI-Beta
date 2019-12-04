@@ -376,7 +376,7 @@ end
 local welcome
 local function HelloWorld()
 	if welcome then welcome:Show() return end
-	local BackDropFile = "Interface\\Addons\\_ShiGuang\\Media\\Modules\\Raid\\solid"
+	local BackDropFile = "Interface\\Addons\\_ShiGuang\\Media\\Modules\\Raid\\Solid"
 	welcome = CreateFrame("Frame", "UI_Tutorial", UIParent)
 	welcome:SetPoint("TOPLEFT",0,0)
 	welcome:SetPoint("BOTTOMRIGHT",0,0)

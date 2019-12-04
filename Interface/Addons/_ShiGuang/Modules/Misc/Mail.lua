@@ -337,7 +337,6 @@ TinyRosterDB = {
     SendMailNameEditBox = {},                                                   --發郵件
     BankItemSearchBox = {},                                                     --銀行查找
     BagItemSearchBox = {},                                                      --背包查找
-    ["TradeSkillFrame.SearchBox"] = { depands = "Blizzard_TradeSkillUI" },      --專業技能
 }
 
 --按鈕數量和高度

@@ -1419,7 +1419,7 @@ do
 	LegionToDo.shadow:SetPoint("RIGHT",20,0)
 	LegionToDo.shadow:SetPoint("TOP",0,20)
 	LegionToDo.shadow:SetPoint("BOTTOM",0,-20)
-	--LegionToDo.shadow:SetBackdrop({edgeFile="Interface\Addons\_ShiGuang\Media\Modules\Raid\solid.blp",edgeSize= 28,insets={left=20,right=20,top=20,bottom=20}})
+	--LegionToDo.shadow:SetBackdrop({edgeFile="Interface\Addons\_ShiGuang\Media\Modules\Raid\Solid.blp",edgeSize= 28,insets={left=20,right=20,top=20,bottom=20}})
 	LegionToDo.shadow:SetBackdropBorderColor(0,0,0,.45)
 end
 

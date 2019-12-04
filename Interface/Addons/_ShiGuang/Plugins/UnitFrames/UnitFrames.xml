@@ -459,7 +459,7 @@
 			
 			<Layer level="BACKGROUND">
 				<!-- 焦點 -->
-				<Texture name="$parenthlfocus" parentKey="hlfocus" file="Interface\AddOns\_ShiGuang\Media\Modules\hlglow" alphaMode="ADD" hidden="true">
+				<Texture name="$parenthlfocus" parentKey="hlfocus" file="Interface\AddOns\_ShiGuang\Media\Modules\UFs\hlglow" alphaMode="ADD" hidden="true">
 					<Size>
 						<AbsDimension x = "20" y = "30"/>
 					</Size>
@@ -475,7 +475,7 @@
 					<TexCoords left="0" right="1" top="1" bottom="0"/>
 				</Texture>
 				<!-- 目標 -->
-				<Texture name="$parenthlmo" parentKey="hlmo" file="Interface\AddOns\_ShiGuang\Media\Modules\hlglow" alphaMode="ADD" hidden="true">
+				<Texture name="$parenthlmo" parentKey="hlmo" file="Interface\AddOns\_ShiGuang\Media\Modules\UFs\hlglow" alphaMode="ADD" hidden="true">
 					<Size>
 						<AbsDimension x = "20" y = "30"/>
 					</Size>
@@ -574,7 +574,7 @@
 			</Layer>
 			<Layer level="BACKGROUND">
 				<!-- 焦點 -->
-				<Texture name="$parenthlfocus" parentKey="hlfocus" file="Interface\AddOns\_ShiGuang\Media\Modules\hlglow" alphaMode="ADD" hidden="true">
+				<Texture name="$parenthlfocus" parentKey="hlfocus" file="Interface\AddOns\_ShiGuang\Media\Modules\UFs\hlglow" alphaMode="ADD" hidden="true">
 					<Size>
 						<AbsDimension x = "20" y = "30"/>
 					</Size>
@@ -590,7 +590,7 @@
 					<TexCoords left="0" right="1" top="1" bottom="0"/>
 				</Texture>
 				<!-- 指向 -->
-				<Texture name="$parenthlmo" parentKey="hlmo" file="Interface\AddOns\_ShiGuang\Media\Modules\hlglow" alphaMode="ADD" hidden="true">
+				<Texture name="$parenthlmo" parentKey="hlmo" file="Interface\AddOns\_ShiGuang\Media\Modules\UFs\hlglow" alphaMode="ADD" hidden="true">
 					<Size>
 						<AbsDimension x = "20" y = "30"/>
 					</Size>

@@ -3,7 +3,6 @@ local M, R, U, I = unpack(ns)
 local module = M:RegisterModule("Chat")
 
 local maxLines = 1024
-local fontOutline
 local maxWidth, maxHeight = UIParent:GetWidth(), UIParent:GetHeight()
 local tostring, pairs, ipairs, strsub, strlower = tostring, pairs, ipairs, string.sub, string.lower
 local IsInGroup, IsInRaid, IsPartyLFG, IsInGuild, IsShiftKeyDown, IsControlKeyDown = IsInGroup, IsInRaid, IsPartyLFG, IsInGuild, IsShiftKeyDown, IsControlKeyDown
