@@ -253,12 +253,12 @@ _G["SendMailNameEditBoxMiddle"]:SetPoint("RIGHT",_G["SendMailNameEditBoxRight"],
 local title = GEAR_DELETEEMPTYMAILS_TITLE
 local em_enabled = false
 local timeout = 0
-local f = CreateFrame("Frame")
+local MailboxCleaner = CreateFrame("Frame")
 local options_desc = { ["read"] = "Delete unread mails" }
 
 local function endloop()
  em_enabled = false
- f:Hide()
+ MailboxCleaner:Hide()
  print(title.." - Done.")
 end
 
@@ -269,9 +269,7 @@ local function update()
   endloop()
   return
  end
- 
  local t = time()
- 
  if timeout > 0 then
   if i > num or (timeout < t) then
    i = math.min(i - 1, num)
@@ -290,14 +288,13 @@ local function update()
   i = i - 1
  end   
  --end
- 
  if i > num then 
   endloop()
  end
 end
 
-f:SetScript("OnUpdate", update)
-f:Hide()
+MailboxCleaner:SetScript("OnUpdate", update)
+MailboxCleaner:Hide()
 
 local function printOptionMsg(arg, help)
  if ShiGuangDB[arg] == nil then return end
@@ -323,16 +320,12 @@ local function start(arg)
  i = GetInboxNumItems()
  print(title.." - Doing"..(snd and " from "..snd or "").."...")
  em_enabled = true
- f:Show()
+ MailboxCleaner:Show()
 end
 
 local eventframe = CreateFrame("Frame")
 eventframe:RegisterEvent("PLAYER_ENTERING_WORLD")
-local function eventhandler()
- printOptionMsg("...", true)
- eventframe:SetScript("OnEvent", nil)
-end
-eventframe:SetScript("OnEvent", eventhandler)
+eventframe:SetScript("OnEvent", function() printOptionMsg("...", true) eventframe:SetScript("OnEvent", nil) end)
 -- slash command
 SLASH_MAILBOXCLEANER1 = "/mbclean"
 SLASH_MAILBOXCLEANER2 = "/mailboxcleaner"
@@ -344,6 +337,7 @@ TinyRosterDB = {
     SendMailNameEditBox = {},                                                   --發郵件
     BankItemSearchBox = {},                                                     --銀行查找
     BagItemSearchBox = {},                                                      --背包查找
+    ["TradeSkillFrame.SearchBox"] = { depands = "Blizzard_TradeSkillUI" },      --專業技能
 }
 
 --按鈕數量和高度
@@ -573,8 +567,8 @@ SendList = {
 {"炼金催化剂","烁星花","塔拉多幽兰","寒霜草","炎火草","戈尔隆德捕蝇草","纳格兰箭叶花"}, 
 {"海浪翡翠","焚石","狮眼石","天蓝宝石","红宝石","赤尖石"}, 
 {"时光水晶","碎裂的时光水晶","天然兽皮","怨毒皮","邪能之灾","狂野之血","辉光碎片","巫术之"},
-{},
-{"怨毒布","怨毒锁","怨毒板","妖纹包","军团勋章","食人魔箱子","大桶原油","虚空次元袋","钢铸之魂","血环之印","鲁克玛圣物","战歌之印"},
+{"怨毒布","怨毒锁","怨毒板"},
+{"妖纹包","军团勋章","食人魔箱子","大桶原油","虚空次元袋","钢铸之魂","血环之印","鲁克玛圣物","战歌之印"},
 } 
 Address = { 
 "暗影戒律",   --附魔
@@ -583,6 +577,7 @@ Address = {
 "野兽控制",    --制皮
 "奥术冰霜",    --工程、炼金
 "烂柯人-时光之穴",    --战网、宠物
+"狂怒武器",    --制皮
 } 
 MailBOXEnable = nil
 

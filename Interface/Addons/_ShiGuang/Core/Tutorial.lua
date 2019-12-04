@@ -38,14 +38,13 @@ local function ForceDefaultSettings()
 	SetCVar("nameplateShowAll", 1)
 	SetCVar("nameplateMotion", 1)
 	SetCVar("nameplateShowFriendlyNPCs", 0)
-	SetCVar("showTutorials", 0)
 	SetCVar("ActionButtonUseKeyDown", 1)
-	SetCVar("alwaysShowActionBars", 1)
+	--SetCVar("alwaysShowActionBars", 1)
 	SetCVar("lockActionBars", 1)
 	SetActionBarToggles(1, 1, 0, 0)
 	SHOW_MULTI_ACTIONBAR_1="1" --左下方动作条 
   SHOW_MULTI_ACTIONBAR_2="1" --右下方动作条 
-  InterfaceOptions_UpdateMultiActionBars() --刷新动作条
+  --InterfaceOptions_UpdateMultiActionBars() --刷新动作条
 	SetCVar("enableFloatingCombatText", 0)
 	SetCVar("floatingCombatTextCombatState", 0)
 	SetCVar("floatingCombatTextCombatDamage", 0)
@@ -72,7 +71,6 @@ local function ForceDefaultSettings()
   SetCVar("floatingCombatTextAuras", 0)   --光環 
 	SetCVar("doNotFlashLowHealthWarning", 1)
 	SetCVar("ffxGlow", 0)
-	SetCVar("autoQuestWatch", 1)
 	--SetCVar("cameraYawMoveSpeed", 360); -- Maximum in-game: 270
 	SetCVar("statusText",1) --状态文字
 	SetCVar("statusTextDisplay","NUMERIC")--头像状态文字形式："NUMERIC"数值"PERCENT"百分比"BOTH"同时显示

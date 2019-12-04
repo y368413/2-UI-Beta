@@ -5,6 +5,7 @@ local isBagUpdate = false
 local ignoreDefaultBags = false
 
 local CaerdonWardrobe = {}
+local CaerdonWardrobeNS = {}
 
 StaticPopupDialogs["CAERDON_WARDROBE_MULTIPLE_BAG_ADDONS"] = {
   text = "It looks like multiple bag addons are currently running (%s)! I can't guarantee Caerdon Wardrobe will work properly in this case.  You should only have one bag addon enabled!",
@@ -1771,7 +1772,7 @@ eventFrame:SetScript("OnUpdate", OnUpdate)
 C_TransmogCollection.SetShowMissingSourceInItemTooltips(true)
 SetCVar("missingTransmogSourceInItemTooltips", 1)
 
-function CaerdonWardrobe:GetDefaultConfig()
+function CaerdonWardrobeNS:GetDefaultConfig()
 	return {
 		Version = 7,
 		Icon = {
@@ -1818,8 +1819,8 @@ function CaerdonWardrobe:GetDefaultConfig()
 end
 
 local function ProcessSettings()
-	if not CaerdonWardrobeConfig or CaerdonWardrobeConfig.Version ~= CaerdonWardrobe:GetDefaultConfig().Version then
-		CaerdonWardrobeConfig = CaerdonWardrobe:GetDefaultConfig()
+	if not CaerdonWardrobeConfig or CaerdonWardrobeConfig.Version ~= CaerdonWardrobeNS:GetDefaultConfig().Version then
+		CaerdonWardrobeConfig = CaerdonWardrobeNS:GetDefaultConfig()
 	end
 end
 
@@ -1829,7 +1830,7 @@ end
 function eventFrame:ADDON_LOADED(name)
 	if name == "Combuctor" then
 		ProcessSettings()
-		CaerdonWardrobe:FireConfigLoaded()
+		CaerdonWardrobeNS:FireConfigLoaded()
 
 		if IsLoggedIn() then
 			OnEvent(eventFrame, "PLAYER_LOGIN")
@@ -2215,14 +2216,14 @@ GroupLootFrame4:HookScript("OnShow", OnGroupLootFrameShow)
 local configFrame
 local isConfigLoaded = false
 
-function CaerdonWardrobe:RegisterConfigFrame(frame)
+function CaerdonWardrobeNS:RegisterConfigFrame(frame)
 	configFrame = frame
 	if isConfigLoaded then
-		CaerdonWardrobe:FireConfigLoaded()
+		CaerdonWardrobeNS:FireConfigLoaded()
 	end
 end
 
-function CaerdonWardrobe:FireConfigLoaded()
+function CaerdonWardrobeNS:FireConfigLoaded()
 	isConfigLoaded = true
 	if configFrame then
 		configFrame:OnConfigLoaded()
@@ -2245,7 +2246,7 @@ end
 function configFrame:InitializeConfig()
 	self:Hide()
 	self:CreateComponents()
-	CaerdonWardrobe:RegisterConfigFrame(self)
+	CaerdonWardrobeNS:RegisterConfigFrame(self)
 end
 
 function configFrame:CreateComponents()
@@ -2552,7 +2553,7 @@ function configFrame:OnCancel()
 end
 
 function configFrame:OnResetToDefaults()
-	self:ApplyConfig(CaerdonWardrobe:GetDefaultConfig())
+	self:ApplyConfig(CaerdonWardrobeNS:GetDefaultConfig())
 end
 
 function configFrame:OnRefresh()
