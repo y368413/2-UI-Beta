@@ -313,11 +313,11 @@ end);
 --DressUpFrame:HookScript("OnShow", function() daftDressUp:setPosition(); end);
 --hooksecurefunc("UpdateUIPanelPositions", function() daftDressUp:setPosition(); end);
 ]]
---## Version: 1.0.0 ## Author: Crinseth
+--## Version: 1.1.0 ## Author: Crinseth
 local waitTable = {};
 local waitFrame = nil;
 
-local function wait(delay, func, ...)
+local function DressingWait(delay, func, ...)
   if(type(delay)~="number" or type(func)~="function") then
     return false;
   end
@@ -492,25 +492,25 @@ function SetupPlayerForModelScene(...)
         updateSlots()
         return resultDress
     end
-    wait(0.1, updateSlots, nil)
+    DressingWait(0.1, updateSlots, nil)
     return resultSetupPlayerForModelScene
 end
 
 local _DressUpSources = DressUpSources
 function DressUpSources(...)
     local resultDressUpSources = _DressUpSources(...)
-    wait(0.1, updateSlots, nil)
+    DressingWait(0.1, updateSlots, nil)
     return resultDressUpSources
 end
 
--- Hide slot buttons for pet preview
+-- Hide buttons for pet preview
 local _DressUpBattlePet = DressUpBattlePet
 function DressUpBattlePet(...)
     showButtons(false)
     return _DressUpBattlePet(...)
 end
 
--- Hide slots for mount preview
+-- Hide buttons for mount preview
 local _DressUpMount = DressUpMount
 function DressUpMount(...)
     showButtons(false)
