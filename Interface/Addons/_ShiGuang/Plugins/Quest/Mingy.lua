@@ -1,5 +1,4 @@
 ﻿----------------------------------------## Version: 1.3.1-- Mingy by Sonaza-- http://sonaza.com----------------------------------------
-
 local Mingy = {
 	Frame = nil,
 	RewardButton = nil,

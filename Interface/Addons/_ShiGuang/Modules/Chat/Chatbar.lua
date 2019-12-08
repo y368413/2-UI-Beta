@@ -223,23 +223,23 @@ local function ReplaceEmote(value)
     return value
 end
 
-local function filter(self, event, msg, ...)
+local function emotefilter(self, event, msg, ...)
     msg = msg:gsub("%{.-%}", ReplaceEmote)
     return false, msg, ...
 end
 
-ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", filter)
-ChatFrame_AddMessageEventFilter("CHAT_MSG_SAY", filter)
-ChatFrame_AddMessageEventFilter("CHAT_MSG_YELL", filter)
-ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", filter)
-ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", filter)
-ChatFrame_AddMessageEventFilter("CHAT_MSG_RAID", filter)
-ChatFrame_AddMessageEventFilter("CHAT_MSG_RAID_LEADER", filter)
-ChatFrame_AddMessageEventFilter("CHAT_MSG_PARTY", filter)
-ChatFrame_AddMessageEventFilter("CHAT_MSG_PARTY_LEADER", filter)
-ChatFrame_AddMessageEventFilter("CHAT_MSG_GUILD", filter)
-ChatFrame_AddMessageEventFilter("CHAT_MSG_BATTLEGROUND", filter)
-ChatFrame_AddMessageEventFilter("CHAT_MSG_EMOTE", filter)
+ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", emotefilter)
+ChatFrame_AddMessageEventFilter("CHAT_MSG_SAY", emotefilter)
+ChatFrame_AddMessageEventFilter("CHAT_MSG_YELL", emotefilter)
+ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", emotefilter)
+ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", emotefilter)
+ChatFrame_AddMessageEventFilter("CHAT_MSG_RAID", emotefilter)
+ChatFrame_AddMessageEventFilter("CHAT_MSG_RAID_LEADER", emotefilter)
+ChatFrame_AddMessageEventFilter("CHAT_MSG_PARTY", emotefilter)
+ChatFrame_AddMessageEventFilter("CHAT_MSG_PARTY_LEADER", emotefilter)
+ChatFrame_AddMessageEventFilter("CHAT_MSG_GUILD", emotefilter)
+ChatFrame_AddMessageEventFilter("CHAT_MSG_BATTLEGROUND", emotefilter)
+ChatFrame_AddMessageEventFilter("CHAT_MSG_EMOTE", emotefilter)
 
  --------------------------------------- 聊天表情-- Author:M  end -------------------------------------
  

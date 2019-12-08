@@ -652,6 +652,7 @@
 	</Button>
 	<Script file="iFrame.lua"/>
 	<Script file="iBuffs.lua"/>
+	<Script file="IconMarks.lua"/>
 	<Script file="PartyTarget.lua"/>
 	<Script file="PartyCastbar.lua"/>
 	<!--Script file="PetTarget.lua"/-->

@@ -1787,20 +1787,20 @@ local function newBar(g)
   dummybar:SetHeight(tdps.barHeight)
   dummybar:Hide()
   --dummybar:SetPoint("RIGHT", tdpsFrame, "RIGHT", -2, 0)
-  dummybar:SetBackdrop({
-    bgFile = [[Interface\AddOns\_ShiGuang\Media\Modules\Skada\AtlzSkada.tga]],
-    edgeFile = [[Interface\AddOns\_ShiGuang\Media\Modules\UI-StatusBar.tga]],
-    tile = false,
-    tileSize = 1,
-    edgeSize = 1,
-    insets = {
-      left = 0,
-      right = 0,
-      top = 0,
-      bottom = 0,
-    }
-  })
-  dummybar:SetStatusBarTexture([[Interface\AddOns\_ShiGuang\Media\Modules\wglass.tga]])
+  --dummybar:SetBackdrop({
+    --bgFile = [[Interface\AddOns\_ShiGuang\Media\Modules\Skada\YaSkada05.blp]],
+    --edgeFile = [[Interface\AddOns\_ShiGuang\Media\Modules\UI-StatusBar.tga]],
+    --tile = false,
+    --tileSize = 1,
+    --edgeSize = 1,
+    --insets = {
+      --left = 0,
+      --right = 0,
+      --top = 0,
+      --bottom = 0,
+    --}
+  --})
+  dummybar:SetStatusBarTexture([[Interface\AddOns\_ShiGuang\Media\Modules\UI-StatusBar.blp]])
 
   -- bar info
   dummybar.name, dummybar.guid, dummybar.n = strsplit("-", tdpsPlayer[g]["name"]), g, 0

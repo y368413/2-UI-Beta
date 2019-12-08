@@ -270,7 +270,7 @@ function module:ChatFrameBackground()
 	M.CreateGF(Linfobar3, 450, R.mult, "Horizontal", cr, cg, cb, .7, 0)
 	ChatFrame1.gradientBG = Linfobar
 end
-
+	
 function module:OnLogin()
 	for i = 1, NUM_CHAT_WINDOWS do
 		self.SkinChat(_G["ChatFrame"..i])
