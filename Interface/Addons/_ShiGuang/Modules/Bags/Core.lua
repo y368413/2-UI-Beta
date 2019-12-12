@@ -375,6 +375,7 @@ function module:OnLogin()
 	local showItemLevel = MaoRUISettingDB["Bags"]["BagsiLvl"]
 	local deleteButton = MaoRUISettingDB["Bags"]["DeleteButton"]
 	local itemSetFilter = MaoRUISettingDB["Bags"]["ItemSetFilter"]
+	local showNewItem = MaoRUISettingDB["Bags"]["ShowNewItem"]
 
 	-- Init
 	local Backpack = cargBags:NewImplementation("NDui_Backpack")
@@ -492,8 +493,10 @@ function module:OnLogin()
 			self.iLvl = M.CreateFS(self, 12, "", false, "BOTTOMLEFT", 1, 1)
 		end
 
-		self.glowFrame = M.CreateBG(self, 4)
-		self.glowFrame:SetSize(iconSize+8, iconSize+8)
+		if showNewItem then
+			self.glowFrame = M.CreateBG(self, 4)
+			self.glowFrame:SetSize(iconSize+8, iconSize+8)
+		end
 
 		self:HookScript("OnClick", module.ButtonOnClick)
 	end

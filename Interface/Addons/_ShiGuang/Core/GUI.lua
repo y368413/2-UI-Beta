@@ -46,6 +46,7 @@ local defaultSettings = {
 		DeleteButton = true,
 		FavouriteItems = {},
 		GatherEmpty = false,
+		ShowNewItem = true,
 	},
 	Auras = {
 		Reminder = true,

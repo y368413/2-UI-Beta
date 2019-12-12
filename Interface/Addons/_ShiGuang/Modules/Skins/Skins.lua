@@ -1,4 +1,4 @@
-local _, ns = ...
+锘縧ocal _, ns = ...
 local M, R, U, I = unpack(ns)
 local S = M:RegisterModule("Skins")
 
@@ -59,7 +59,7 @@ function S:OnLogin()
 	self:SkadaSkin()
 	self:BigWigsSkin()
 	self:PGFSkin()
-	self:LootEx()		-- 拾取增强
+	self:LootEx()		-- 鎷惧彇澧炲己
 	-- Register skin
 	local media = LibStub and LibStub("LibSharedMedia-3.0", true)
 	if media then

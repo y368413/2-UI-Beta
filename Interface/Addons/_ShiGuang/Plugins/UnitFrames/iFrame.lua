@@ -73,7 +73,7 @@ local function PartyLevelText_Update(self)
 	if not self.levelText then
 		self.levelText = _G[self:GetName()]:CreateFontString(nil, "OVERLAY", "NumberFontNormalLargeYellow")
 		self.levelText:ClearAllPoints();
-		self.levelText:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 12, -8)
+		self.levelText:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", 12, -6)
 	end
 	self.levelText:SetText(level)
 end
