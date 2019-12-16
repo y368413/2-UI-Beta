@@ -4,6 +4,7 @@
 	<Script file="Quest_Complete.lua"/>
 	<Script file="NoItsNot.lua"/>
 	<Script file="Reminder.lua"/>
+	<Script file="MountsSource.lua"/>
 	<Script file="HardYards.lua"/>
 	<Script file="PhotoRobot.lua"/>
 	<Script file="iKeystones.lua"/>
