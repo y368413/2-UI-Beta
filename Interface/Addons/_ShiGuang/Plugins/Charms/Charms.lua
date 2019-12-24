@@ -353,8 +353,7 @@ end)
 
 ------------------------------ ## Notes: Automatically destroys items in the pre-defined list    ## Author: Tim @ WoW Interface    ## Version: 1.0
 local itemList = {
-	[2287] = true,		-- haunch of meat (tested in RFC)  肉排
-	[1179] = true,		-- ice cold milk (tested in RFC)   冰镇牛奶
+	--[2287] = true,		-- haunch of meat (tested in RFC)  肉排
 }
 local DESTROY = CreateFrame("Frame", "AutoItemDestroyer")
 DESTROY:RegisterEvent("BAG_UPDATE")

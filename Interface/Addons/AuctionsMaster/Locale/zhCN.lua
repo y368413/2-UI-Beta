@@ -383,3 +383,4 @@ L["%sNeed More Help?|r"] = "%s需要更多帮助？|r"
 L["%sQuestions, Comments, Bugs, and Suggestions|r\n\n" ..
 						"https://mods.curse.com/addons/wow/collectionshop"] = "%s问题、错误、意见和建议，请访问|r\n\n" ..
 						"https://mods.curse.com/addons/wow/collectionshop"
+L["Unknown"] = "Unknown"

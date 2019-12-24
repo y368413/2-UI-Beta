@@ -2079,20 +2079,7 @@ LegionToDo:SetScript("OnShow",function(self)
 					local charName = db.name
 					hidden[ guidNow ] = true
 					if IsShiftKeyDown() or b == "RightButton" then
-						StaticPopupDialogs["LEGIONTODO_HIDECHAR"] = {
-							text = GetLocale() == "ruRU" and ("Скрыть персонажа "..charName..' навсегда?\nМожно будет вернуть его после сброса ("/ltd reset" или через меню ПКМ на иконке на миникарте)') or
-								("Hide char "..charName..'?\nYou can get it back after reset ("/ltd reset" or via menu Right click on minimap icon)'),
-							button1 = YES,
-							button2 = NO,
-							OnAccept = function()
-								VLegionToDo.black[ guidNow ] = true
-							end,
-							timeout = 0,
-							whileDead = true,
-							hideOnEscape = true,
-							preferredIndex = 3,
-						}
-						StaticPopup_Show("LEGIONTODO_HIDECHAR")					
+								VLegionToDo.black[ guidNow ] = true				
 					end
 					LegionToDo:Hide()
 					LegionToDo:Show()

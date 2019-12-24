@@ -64,6 +64,13 @@ hooksecurefunc("TargetFrame_UpdateAuraPositions", function(self, auraName, numAu
 		end
 	end
 end)
+
+local function CreateStatusBarText(name, parentName, parent, point, x, y)
+	local fontString = parent:CreateFontString(parentName..name, nil, "TextStatusBarText")
+	fontString:SetPoint(point, parent, point, x, y)
+	return fontString
+end
+
 --	Player frame.
 hooksecurefunc("PlayerFrame_ToPlayerArt", function(self)
 		PlayerFrameTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame");
@@ -183,21 +190,6 @@ hooksecurefunc("TargetFrame_CheckClassification", function(self, forceNormalText
 	--TargetFrame.threatNumericIndicator:SetPoint("TOPRIGHT", TargetFrame, "TOPRIGHT", -66, -3);
 	FocusFrame.threatNumericIndicator:SetAlpha(0);
 	if ( forceNormalTexture ) then
-		self.borderTexture:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame");
-	elseif ( classification == "minus" ) then
-		self.borderTexture:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Minus");
-		forceNormalTexture = true;
-	elseif ( classification == "worldboss" or classification == "elite" ) then
-		self.borderTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame-Elite");
-	elseif ( classification == "rareelite" ) then
-		self.borderTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame-Rare-Elite");
-	elseif ( classification == "rare" ) then
-		self.borderTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame-Rare");
-	else
-		self.borderTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame");
-		forceNormalTexture = true;
-	end
-	if ( forceNormalTexture ) then
 		self.haveElite = nil;
 		if ( classification == "minus" ) then
 			self.Background:SetSize(119,12);
@@ -236,6 +228,35 @@ hooksecurefunc("TargetFrame_CheckClassification", function(self, forceNormalText
 		end		
 	end
 	self.healthbar.lockColor = true;
+	if ( forceNormalTexture ) then
+		self.borderTexture:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame");
+		CreateBarPctText(TargetFrame, "LEFT", "RIGHT", 88, -8, "NumberFontNormalLarge", 36)
+	elseif ( classification == "minus" ) then
+		self.borderTexture:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Minus");
+		forceNormalTexture = true;
+		CreateBarPctText(TargetFrame, "LEFT", "RIGHT", 66, 0, "NumberFontNormalLarge", 36)
+	elseif ( classification == "worldboss" or classification == "elite" ) then
+		self.borderTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame-Elite");
+		CreateBarPctText(TargetFrame, "LEFT", "RIGHT", 102, -8, "NumberFontNormalLarge", 36)
+	elseif ( classification == "rareelite" ) then
+		self.borderTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame-Rare-Elite");
+		CreateBarPctText(TargetFrame, "LEFT", "RIGHT", 102, -8, "NumberFontNormalLarge", 36)
+	elseif ( classification == "rare" ) then
+		self.borderTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame-Rare");
+		CreateBarPctText(TargetFrame, "LEFT", "RIGHT", 102, -8, "NumberFontNormalLarge", 36)
+	else
+		self.borderTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame");
+		forceNormalTexture = true;
+		CreateBarPctText(TargetFrame, "LEFT", "RIGHT", 88, -8, "NumberFontNormalLarge", 36)
+	end
+	if ( self.showPVP ) then
+		local factionGroup = UnitFactionGroup(self.unit);
+		if ( UnitIsPVPFreeForAll(self.unit) ) then
+				self.pvpIcon:SetTexture("Interface\\TargetingFrame\\UI-PVP-FFA");
+		elseif ( factionGroup and factionGroup ~= "Neutral" and UnitIsPVP(self.unit) ) then
+				self.pvpIcon:SetTexture("Interface\\TargetingFrame\\UI-PVP-"..factionGroup);
+		end
+	end
 end)
 
 -- Mana texture

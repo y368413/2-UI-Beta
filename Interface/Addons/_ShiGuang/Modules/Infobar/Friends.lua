@@ -19,6 +19,7 @@ local InviteToGroup = C_PartyInfo.InviteUnit
 
 local BNET_CLIENT_WOW, UNKNOWN, GUILD_ONLINE_LABEL = BNET_CLIENT_WOW, UNKNOWN, GUILD_ONLINE_LABEL
 local FRIENDS_TEXTURE_ONLINE, FRIENDS_TEXTURE_AFK, FRIENDS_TEXTURE_DND = FRIENDS_TEXTURE_ONLINE, FRIENDS_TEXTURE_AFK, FRIENDS_TEXTURE_DND
+local RAF_RECRUIT_FRIEND, RAF_RECRUITER_FRIEND = RAF_RECRUIT_FRIEND, RAF_RECRUITER_FRIEND
 local WOW_PROJECT_ID = WOW_PROJECT_ID or 1
 local CLIENT_WOW_CLASSIC = "WoV" -- for sorting
 
@@ -76,9 +77,9 @@ local function GetOnlineInfoText(client, isMobile, rafLinkType, locationText)
 	end
 	if (client == BNET_CLIENT_WOW) and (rafLinkType ~= Enum.RafLinkType.None) and not isMobile then
 		if rafLinkType == Enum.RafLinkType.Recruit then
-			return RAF_RECRUIT_FRIEND:format(locationText)
+			return format(RAF_RECRUIT_FRIEND, locationText)
 		else
-			return RAF_RECRUITER_FRIEND:format(locationText)
+			return format(RAF_RECRUITER_FRIEND, locationText)
 		end
 	end
 
@@ -219,7 +220,7 @@ local function buttonOnClick(self, btn)
 
 				local numGameAccounts = C_BattleNet_GetFriendNumGameAccounts(self.data[1])
 				local lastGameAccountID, lastGameAccountGUID
-				if numGameAccounts > 1 then
+				if numGameAccounts > 0 then
 					for i = 1, numGameAccounts do
 						local gameAccountInfo = C_BattleNet_GetFriendGameAccountInfo(self.data[1], i)
 						local charName = gameAccountInfo.characterName

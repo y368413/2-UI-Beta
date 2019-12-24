@@ -348,8 +348,11 @@ end
 
 -- Archaeology counts
 do
-	local function CalculateArches()
-		print("|c0000FF00"..U["Arch Count"]..":")
+	local function CalculateArches(self)
+		GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
+		GameTooltip:ClearLines()
+		GameTooltip:AddLine("|c0000FF00"..U["Arch Count"]..":")
+		GameTooltip:AddLine(" ")
 		local total = 0
 		for i = 1, GetNumArchaeologyRaces() do
 			local numArtifacts = GetNumArtifactsByRace(i)
@@ -360,12 +363,13 @@ do
 			end
 			local name = GetArchaeologyRaceInfo(i)
 			if numArtifacts > 1 then
-				print("     - |cfffed100"..name..": ".."|cff70C0F5"..count)
+				GameTooltip:AddDoubleLine(name..":", I.InfoColor..count)
 				total = total + count
 			end
 		end
-		print("    -> |c0000ff00"..TOTAL..": ".."|cffff0000"..total)
-		print("|cff70C0F5------------------------")
+		GameTooltip:AddLine(" ")
+		GameTooltip:AddDoubleLine("|c0000ff00"..TOTAL..":", "|cffff0000"..total)
+		GameTooltip:Show()
 	end
 
 	local function AddCalculateIcon()
@@ -373,8 +377,8 @@ do
 		bu:SetPoint("TOPRIGHT", -45, -45)
 		bu:SetSize(35, 35)
 		M.PixelIcon(bu, "Interface\\ICONS\\Ability_Iyyokuk_Calculate", true)
-		M.AddTooltip(bu, "ANCHOR_RIGHT", U["Arch Count"], "system")
-		bu:SetScript("OnMouseUp", CalculateArches)
+		bu:SetScript("OnEnter", CalculateArches)
+		bu:SetScript("OnLeave", M.HideTooltip)
 	end
 
 	local function setupMisc(event, addon)
@@ -390,7 +394,18 @@ do
 	end
 
 	M:RegisterEvent("ADDON_LOADED", setupMisc)
+
+	local newTitleString = ARCHAEOLOGY_DIGSITE_PROGRESS_BAR_TITLE.." %s/%s"
+	local function updateArcTitle(_, ...)
+		local numFindsCompleted, totalFinds = ...
+		if ArcheologyDigsiteProgressBar then
+			ArcheologyDigsiteProgressBar.BarTitle:SetFormattedText(newTitleString, numFindsCompleted, totalFinds)
+		end
+	end
+	M:RegisterEvent("ARCHAEOLOGY_SURVEY_CAST", updateArcTitle)
+	M:RegisterEvent("ARCHAEOLOGY_FIND_COMPLETE", updateArcTitle)
 end
+
 
 -- Show BID and highlight price
 -- AH Gold Icon

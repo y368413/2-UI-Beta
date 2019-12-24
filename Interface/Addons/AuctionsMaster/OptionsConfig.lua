@@ -121,12 +121,9 @@ NS.options.cfg = {
 						local source = self:GetText();
 						if source ~= NS.db["tsmItemValueSource"] then
 							-- Validate Source
-							if ( TSMAPI_FOUR or TSMAPI ) and source ~= "" then
-								NS.tsmPriceSources = ( TSMAPI_FOUR and NS.TSMAPI_FOUR_GetPriceSources() or TSMAPI:GetPriceSources() ); -- TSM Price SOurces
-								if not NS.tsmPriceSources[source] then
-									if not ( TSMAPI_FOUR and TSMAPI_FOUR.CustomPrice.Validate( source ) or ( not TSMAPI_FOUR and TSMAPI:ValidateCustomPrice( source ) ) ) then
-										NS.Print( RED_FONT_COLOR_CODE .. L["Not a valid price source or custom price source."] .. FONT_COLOR_CODE_CLOSE );
-									end
+							if TSM_API and source ~= "" then
+								if not ( TSM_API and TSM_API.IsCustomPriceValid( source ) ) then
+									NS.Print( RED_FONT_COLOR_CODE .. L["Not a valid price source or custom price source."] .. FONT_COLOR_CODE_CLOSE );
 								end
 							end
 							--

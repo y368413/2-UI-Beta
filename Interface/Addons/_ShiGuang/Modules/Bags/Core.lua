@@ -583,7 +583,8 @@ function module:OnLogin()
 		local spacing = 5
 		local xOffset = 5
 		local yOffset = -offset + spacing
-		local width, height = self:LayoutButtons("grid", columns, spacing, xOffset, yOffset)
+		local _, height = self:LayoutButtons("grid", columns, spacing, xOffset, yOffset)
+		local width = columns * (iconSize+spacing)-spacing
 		if self.freeSlot then
 			if MaoRUISettingDB["Bags"]["GatherEmpty"] then
 				local numSlots = #self.buttons + 1
@@ -598,7 +599,7 @@ function module:OnLogin()
 				self.freeSlot:Show()
 
 				if height < 0 then
-					width, height = columns * (iconSize+spacing)-spacing, iconSize
+					height = iconSize
 				elseif col == 1 then
 					height = height + iconSize + spacing
 				end
@@ -712,9 +713,12 @@ function module:OnLogin()
 	-- Fixes
 	ToggleAllBags()
 	ToggleAllBags()
+	module.initComplete = true
+
 	BankFrame.GetRight = function() return f.bank:GetRight() end
 	BankFrameItemButton_Update = M.Dummy
 
+	-- Sort order
 	SetSortBagsRightToLeft(not MaoRUISettingDB["Bags"]["ReverseSort"])
 	SetInsertItemsLeftToRight(false)
 end

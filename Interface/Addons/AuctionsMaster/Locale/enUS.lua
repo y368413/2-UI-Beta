@@ -383,3 +383,4 @@ L["%s/cs|r - Opens options frame to \"Options\"\n" ..
 L["%sNeed More Help?|r"] = true
 L["%sQuestions, Comments, Bugs, and Suggestions|r\n\n" ..
 						"https://mods.curse.com/addons/wow/collectionshop"] = true
+L["Unknown"] = "Unknown"

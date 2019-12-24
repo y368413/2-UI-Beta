@@ -43,7 +43,8 @@ function A:OnLogin()
 
 	-- Elements
 	if I.MyClass == "MONK" then
-		self:MonkStatue()
+		self:Stagger()
+		--self:MonkStatue()
 	elseif I.MyClass == "SHAMAN" then
 		self:Totems()
 	end

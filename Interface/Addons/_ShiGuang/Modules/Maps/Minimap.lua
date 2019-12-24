@@ -6,6 +6,46 @@ local module = M:GetModule("Maps")
 local strmatch, strfind, strupper = string.match, string.find, string.upper
 local select, pairs, ipairs, unpack = select, pairs, ipairs, unpack
 local cr, cg, cb = I.r, I.g, I.b
+
+function module:CreatePulse()
+	if not MaoRUISettingDB["Map"]["CombatPulse"] then return end
+
+	local MBG = M.CreateBG(Minimap, 1)
+	M.CreateSD(MBG)
+	local anim = MBG:CreateAnimationGroup()
+	anim:SetLooping("BOUNCE")
+	anim.fader = anim:CreateAnimation("Alpha")
+	anim.fader:SetFromAlpha(.8)
+	anim.fader:SetToAlpha(.2)
+	anim.fader:SetDuration(1)
+	anim.fader:SetSmoothing("OUT")
+
+	local function updateMinimapAnim(event)
+		if event == "PLAYER_REGEN_DISABLED" then
+			MBG.Shadow:SetBackdropBorderColor(1, 0, 0)
+			anim:Play()
+		elseif not InCombatLockdown() then
+			if C_Calendar.GetNumPendingInvites() > 0 or MiniMapMailFrame:IsShown() then
+				MBG.Shadow:SetBackdropBorderColor(1, 1, 0)
+				anim:Play()
+			else
+				anim:Stop()
+				MBG.Shadow:SetBackdropBorderColor(0, 0, 0)
+			end
+		end
+	end
+	M:RegisterEvent("PLAYER_REGEN_ENABLED", updateMinimapAnim)
+	M:RegisterEvent("PLAYER_REGEN_DISABLED", updateMinimapAnim)
+	M:RegisterEvent("CALENDAR_UPDATE_PENDING_INVITES", updateMinimapAnim)
+	M:RegisterEvent("UPDATE_PENDING_MAIL", updateMinimapAnim)
+
+	MiniMapMailFrame:HookScript("OnHide", function()
+		if InCombatLockdown() then return end
+		anim:Stop()
+		MBG.Shadow:SetBackdropBorderColor(0, 0, 0)
+	end)
+end
+
 function module:ReskinRegions()
 	-- Garrison
 	--GarrisonLandingPageMinimapButton:ClearAllPoints()
@@ -353,6 +393,7 @@ function module:SetupMinimap()
 	Minimap:SetQuestBlobRingScalar(0)
 
 	-- Add Elements
+	self:CreatePulse()
 	self:ReskinRegions()
 	self:WhoPingsMyMap()
 end

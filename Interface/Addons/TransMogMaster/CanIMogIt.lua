@@ -1,4 +1,4 @@
-﻿ --8.2.5v1.20
+﻿ -- 8.2.5v1.21
  -- Constants for CanIMogIt
 local L = CanIMogIt.L
 --------------------------------------------
@@ -244,6 +244,7 @@ function CanIMogIt.CreateMigrationPopup(dialogName, onAcceptFunc)
 end
 
 
+-- OptionsVersion: Keep this as an integer, so comparison is easy.
 CanIMogIt_OptionsVersion = "20"
 
 CanIMogItOptions_Defaults = {

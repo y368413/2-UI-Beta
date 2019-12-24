@@ -78,7 +78,7 @@ local function ForceDefaultSettings()
 end
 
 local function ForceRaidFrame()
-		--CompactRaidFrameContainer:SetScale(0.85)
+		CompactRaidFrameContainer:SetScale(0.85)
 	if not CompactUnitFrameProfiles.selectedProfile then return end
 	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "useClassColors", true) --显示职业颜色
 	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "displayPowerBar", false) --显示能量条 
