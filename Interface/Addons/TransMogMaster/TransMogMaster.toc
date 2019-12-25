@@ -18,6 +18,7 @@
 Locale\_locales.xml
 CanIMogIt.lua
 Overlay\_overlays.xml
+Plugins\_plugins.xml
 
 TransmogCleanup.lua
 
