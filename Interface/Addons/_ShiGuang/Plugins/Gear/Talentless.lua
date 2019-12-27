@@ -28,9 +28,9 @@ function Talentless:UNIT_AURA()
 						Button.Cooldown:SetCooldown(expiration - duration, duration)
 					end
 
-					ActionButton_ShowOverlayGlow(Button)
+					--ActionButton_ShowOverlayGlow(Button)
 				else
-					ActionButton_HideOverlayGlow(Button)
+					--ActionButton_HideOverlayGlow(Button)
 					Button.Cooldown:SetCooldown(0, 0)
 				end
 			end

@@ -91,7 +91,7 @@ local function updateSpells()
 			bu[3].CD:SetReverse(true)
 			bu[3].CD:SetCooldown(exp - dur, dur)
 			bu[3].CD:Show()
-			ActionButton_ShowOverlayGlow(bu[3])
+			M.ShowOverlayGlow(bu[3])
 		else
 			bu[3].Count:ClearAllPoints()
 			bu[3].Count:SetPoint("BOTTOMRIGHT", 4, -2)
@@ -108,7 +108,7 @@ local function updateSpells()
 				ClearChargeCooldown(bu[3])
 				bu[3].CD:Hide()
 			end
-			ActionButton_HideOverlayGlow(bu[3])
+			M.HideOverlayGlow(bu[3])
 		end
 	end
 
@@ -136,9 +136,9 @@ local function updateSpells()
 		bu[4].Icon:SetTexture(texture or 463281)
 
 		if bu[4].Icon:GetTexture() == GetSpellTexture(124273) then
-			ActionButton_ShowOverlayGlow(bu[4])
+			M.ShowOverlayGlow(bu[4])
 		else
-			ActionButton_HideOverlayGlow(bu[4])
+			M.HideOverlayGlow(bu[4])
 		end
 	end
 
@@ -179,7 +179,6 @@ end
 
 function A:Stagger()
 	if not MaoRUISettingDB["Auras"]["Stagger"] then return end
-
 	M:RegisterEvent("PLAYER_ENTERING_WORLD", checkSpec)
 	M:RegisterEvent("PLAYER_TALENT_UPDATE", checkSpec)
 end

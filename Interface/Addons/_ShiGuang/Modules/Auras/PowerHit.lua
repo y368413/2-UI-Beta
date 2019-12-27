@@ -280,23 +280,23 @@ hooksecurefunc("ActionButton_OnUpdate", function(self, elapsed)
 	end
 	if UnitPower("player", Enum.PowerType.ComboPoints) >= 5 then		
 		if ( spellType == "spell" and IsOverlayedSpell(id) ) then
-			ActionButton_ShowOverlayGlow(parent);
+			M.ShowOverlayGlow(parent);
 			self.isAlert = true;
 			self:SetScript("OnUpdate", comboEventFrame_OnUpdate);
 		elseif ( spellType == "macro" ) then
 			local _, _, spellId = GetMacroSpell(id);
 			if ( spellId and IsOverlayedSpell(spellId) ) then
-				ActionButton_ShowOverlayGlow(parent);
+				M.ShowOverlayGlow(parent);
 				self.isAlert = true;
 				self:SetScript("OnUpdate", comboEventFrame_OnUpdate);
 			else
-				ActionButton_HideOverlayGlow(parent);
+				M.HideOverlayGlow(parent);
 			end
 		else
-			ActionButton_HideOverlayGlow(parent);
+			M.HideOverlayGlow(parent);
 		end
 	else
-		ActionButton_HideOverlayGlow(parent);
+		M.HideOverlayGlow(parent);
 	end	
   end);
 end)

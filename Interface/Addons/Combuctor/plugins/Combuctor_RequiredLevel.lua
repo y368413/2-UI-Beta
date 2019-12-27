@@ -461,7 +461,7 @@ local PostUpdateButtonWrapper = function(itemSlot)
 end
 
 
-Module.OnEnable = function()
+--Module.OnEnable = function()
   hooksecurefunc(Combuctor.ItemSlot, "Update", PostUpdateButtonWrapper)
 
   -- Needed because otherwise UpdateUpgradeIcon will reset the VertexColor.
@@ -477,7 +477,7 @@ Module.OnEnable = function()
   -- Needed to keep the desaturation.
   hooksecurefunc(Combuctor.ItemSlot, "SetLocked", PostUpdateButtonWrapper)
 
-end
+--end
 
 
 -- The %s in _G.ITEM_MIN_SKILL = "Requires %s (%d)" is replaced
