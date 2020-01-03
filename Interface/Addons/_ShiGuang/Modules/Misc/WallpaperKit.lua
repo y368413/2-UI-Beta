@@ -55,8 +55,10 @@ WallpaperKit.w,WallpaperKit.h = WallpaperKit:GetSize()
 -- BACKGROUND TEXTURE
 if WallpaperKitcfg.show.background then
 WallpaperKit.bg = WallpaperKit:CreateTexture(nil,"BACKGROUND",nil,-8)
---WallpaperKit.bg:SetTexture("Interface\\AddOns\\_ShiGuang\\Media\\Modules\\Wallpaper\\bg")
-WallpaperKit.bg:SetColorTexture(0.85, 0.3, 0.27, 0.8)
+WallpaperKit.bg:SetTexture("Interface\\AddOns\\_ShiGuang\\Media\\Modules\\UI-StatusBar")
+	if UnitFactionGroup("player") == "Horde" then WallpaperKit.bg:SetColorTexture(0.85, 0.3, 0.27, 0.8)
+	elseif UnitFactionGroup("player") == "Alliance" then WallpaperKit.bg:SetColorTexture(0, 145, 255, 0.8)
+  else WallpaperKit.bg:SetColorTexture(255, 222, 123, 0) end
 WallpaperKit.bg:SetVertexColor(WallpaperKitcfg.color.class.r, WallpaperKitcfg.color.class.g, WallpaperKitcfg.color.class.b, 1)
 WallpaperKit.bg:SetPoint("CENTER")
 WallpaperKit.bg:SetSize(WallpaperKit.w,WallpaperKit.w)

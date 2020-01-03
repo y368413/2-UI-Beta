@@ -456,7 +456,8 @@ if GetCVar("nameplateShowSelf") == "1" then
 			end
 		elseif (GetCVar("nameplateResourceOnTarget") == "1") and (event == "PLAYER_TARGET_CHANGED" or event == "NAME_PLATE_UNIT_ADDED") then
 			local namePlateTarget = C_NamePlate.GetNamePlateForUnit("target")
-			if namePlateTarget and UnitCanAttack("player", namePlateTarget.UnitFrame.displayedUnit) then
+			if namePlateTarget then
+			 if UnitCanAttack("player", namePlateTarget.UnitFrame.displayedUnit) then
 				self:SetParent(namePlateTarget)
 				self:ClearAllPoints()
 				if MaoRUISettingDB["Nameplate"]["Numberstyle"] then
@@ -465,6 +466,9 @@ if GetCVar("nameplateShowSelf") == "1" then
 					self:SetPoint("TOP", namePlateTarget.UnitFrame.healthBar, "BOTTOM", 0, 0) -- 目标条
 				end
 				self:Show()
+			else
+			  return
+			end
 			else
 				self:Hide()
 			end

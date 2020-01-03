@@ -614,7 +614,7 @@ local eventList = {
 }
 
 local function checkPetFlags(sourceFlags, all)
-	if sourceFlags == I.MyPetFlags or (all and (sourceFlags == I.PartyPetFlags or sourceFlags == I.RaidPetFlags)) then
+	if I:IsMyPet(sourceFlags) or (all and (sourceFlags == I.PartyPetFlags or sourceFlags == I.RaidPetFlags)) then
 		return true
 	end
 end

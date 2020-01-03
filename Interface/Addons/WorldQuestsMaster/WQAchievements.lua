@@ -1,4 +1,4 @@
---## Author: Urtgard  ## Version: v8.2.5-7release
+--## Author: Urtgard  ## Version: v8.2.5-8release
 WQAchievements = LibStub("AceAddon-3.0"):NewAddon("WQAchievements", "AceConsole-3.0", "AceTimer-3.0")
 local WQA = WQAchievements
 WQA.data = {}
@@ -242,14 +242,14 @@ function WQA:OnInitialize()
 			options = {
 				['*'] = true,
 				chat = false,
-				PopUp = true,
+				PopUp = false,
 				zone = { ['*'] = true},
 				reward = {
 					gear = {
 						['*'] = true,
 						itemLevelUpgradeMin = 1,
 						PercentUpgradeMin = 1,
-						unknownSource = false,
+						unknownSource = true,
 					},
 					general = {
 						gold = false,
@@ -258,9 +258,9 @@ function WQA:OnInitialize()
 							['*'] = true,
 						},
 					},
-					reputation = {['*'] = false},
+					reputation = {['*'] = true},
 					currency = {},
-					craftingreagent = {['*'] = false},
+					craftingreagent = {['*'] = true},
 					['*'] = {
 						['*'] = true,
 						profession = {
@@ -270,17 +270,17 @@ function WQA:OnInitialize()
 						},
 					},
 				},
-				emissary = {['*'] = false},
+				emissary = {['*'] = true},
 				missionTable = {
 					reward = {
 						gold = false,
 						goldMin = 0,
 						['*'] = {
-							['*'] = false,
+							['*'] = true,
 						},
 					},
 				},
-				delay = 3,
+				delay = 1,
 			},
 			["achievements"] = {exclusive = {}, ['*'] = "default"},
 			["mounts"] = {exclusive = {}, ['*'] = "default"},
@@ -384,7 +384,6 @@ WQA:RegisterChatCommand("wqa", "slash")
 
 function WQA:slash(input)
 	local arg1 = string.lower(input)
-
 	if arg1 == "" then
 		self:Show()
 		--self:CheckWQ()
@@ -558,7 +557,7 @@ do
 			{name = "Boxing Match", id = 13438, criteriaType = "QUESTS", criteria = {{54524, 54516}}, faction = "Horde"},
 			-- 8.1.5
 			-- Circle, Square, Triangle
-			{name = "Master Calligrapher", id = 13512, criteriaType = "QUESTS", criteria = {{55340, 55342, 55343, 55344}, {55264, 55342, 55343, 55344}, {55341, 55342, 55343, 55344}}},
+			{name = "Master Calligrapher", id = 13512, criteriaType = "QUESTS", criteria = {{55340, 55342}, {55264, 55343}, {55341, 55344}}},
 			-- Mission Table
 			-- Alliance
 			{name = "Azeroth at War: The Barrens", id = 12896, criteriaType = "MISSION_TABLE", faction = "Alliance"},
@@ -1936,7 +1935,7 @@ function WQA:GetRewardTextByID(questID, key, value, i, type)
 	local k, v = key, value
 	local text
 	if k == "custom" then
-		text = "Custom"
+		text = "★" --CUSTOM 
 	elseif k == "item" then
 		text = self:GetRewardForID(questID, k, type)
 	elseif k == "reputation" then

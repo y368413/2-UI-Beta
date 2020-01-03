@@ -160,7 +160,7 @@ function MISC:ExpBar_UpdateTooltip()
 			end
 			standingtext = GetText("FACTION_STANDING_LABEL"..standing, UnitSex("player"))
 		end
-		GameTooltip:AddLine(" ")
+		--GameTooltip:AddLine(" ")
 		GameTooltip:AddLine(name, 0,.6,1)
 		GameTooltip:AddDoubleLine(standingtext, value - barMin.." / "..barMax - barMin.." ("..floor((value - barMin)/(barMax - barMin)*100).."%)", .6,.8,1, 1,1,1)
 
@@ -174,7 +174,7 @@ function MISC:ExpBar_UpdateTooltip()
 
 	if IsWatchingHonorAsXP() then
 		local current, barMax, level = UnitHonor("player"), UnitHonorMax("player"), UnitHonorLevel("player")
-		GameTooltip:AddLine(" ")
+		--GameTooltip:AddLine(" ")
 		GameTooltip:AddLine(HONOR, 0,.6,1)
 		GameTooltip:AddDoubleLine(LEVEL.." "..level, current.." / "..barMax, .6,.8,1, 1,1,1)
 
@@ -182,7 +182,7 @@ function MISC:ExpBar_UpdateTooltip()
 		local currentValue, maxValue, questID = PVPGetConquestLevelInfo()
 		local questDone = questID and questID == 0
 		if not locked then
-			GameTooltip:AddLine(" ")
+			--GameTooltip:AddLine(" ")
 			GameTooltip:AddLine(PVP_CONQUEST, 0,.6,1)
 			if questDone then
 				GameTooltip:AddLine(CONQUEST_BAR_REWARD_DONE, .6,.8,1, 1)
@@ -201,7 +201,7 @@ function MISC:ExpBar_UpdateTooltip()
 		if not isMaxLevel then
 			azeriteItem:ContinueWithCancelOnItemLoad(function()
 				local azeriteItemName = azeriteItem:GetItemName()
-				GameTooltip:AddLine(" ")
+				--GameTooltip:AddLine(" ")
 				GameTooltip:AddLine(azeriteItemName.." ("..format(SPELLBOOK_AVAILABLE_AT, currentLevel)..")", 0,.6,1)
 				GameTooltip:AddDoubleLine(ARTIFACT_POWER, BreakUpLargeNumbers(xp).." / "..BreakUpLargeNumbers(totalLevelXP).." ("..floor(xp/totalLevelXP*100).."%)", .6,.8,1, 1,1,1)
 			end)
@@ -211,7 +211,7 @@ function MISC:ExpBar_UpdateTooltip()
 	if HasArtifactEquipped() then
 		local _, _, name, _, totalXP, pointsSpent, _, _, _, _, _, _, artifactTier = C_ArtifactUI_GetEquippedArtifactInfo()
 		local num, xp, xpForNextPoint = ArtifactBarGetNumArtifactTraitsPurchasableFromXP(pointsSpent, totalXP, artifactTier)
-		GameTooltip:AddLine(" ")
+		--GameTooltip:AddLine(" ")
 		if C_ArtifactUI_IsEquippedArtifactDisabled() then
 			GameTooltip:AddLine(name, 0,.6,1)
 			GameTooltip:AddLine(ARTIFACT_RETIRED, .6,.8,1, 1)
@@ -261,11 +261,8 @@ function MISC:SetupScript(bar)
 	bar:SetScript("OnLeave", M.HideTooltip)
 	bar:SetScript("OnMouseUp", function(_, btn)
 	  if btn == "LeftButton" then
-		if HasArtifactEquipped() then
-		   if not ArtifactFrame or not ArtifactFrame:IsShown() then SocketInventoryItem(16)
-		   else ToggleFrame(ArtifactFrame)
-		   end
-		end
+		if not HasArtifactEquipped() then return end
+		   if not ArtifactFrame or not ArtifactFrame:IsShown() then SocketInventoryItem(16) else ToggleFrame(ArtifactFrame) end
 	  elseif btn == "RightButton" then
         if (UnitLevel("player") ~= MAX_PLAYER_LEVEL) then sendReports() else return end
       end

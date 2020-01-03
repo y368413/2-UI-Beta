@@ -218,6 +218,7 @@ local defaultSettings = {
 		WorldQusetRewardIconsSize = 36,
 		ParagonRep = true,
 		UunatAlert = false,
+		InstantDelete = true,
 		RaidCD = true,
 		PulseCD = false,
 		SorasThreat = true,

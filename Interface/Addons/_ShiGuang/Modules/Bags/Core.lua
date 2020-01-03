@@ -74,7 +74,7 @@ function module:CreateInfoFrame()
 
 	local tag = self:SpawnPlugin("TagDisplay", "[money]", infoFrame)
 	tag:SetFont(unpack(I.Font))
-	tag:SetPoint("RIGHT", -5, 0)
+	tag:SetPoint("LEFT", icon, "RIGHT", 5, 0)
 end
 
 function module:CreateBagBar(settings, columns)
@@ -473,21 +473,25 @@ function module:OnLogin()
 		self.BG = M.CreateBG(self)
 		M.CreateBD(self.BG, .3)
 
-		self.junkIcon = self:CreateTexture(nil, "ARTWORK")
+		local parentFrame = CreateFrame("Frame", nil, self)
+		parentFrame:SetAllPoints()
+		parentFrame:SetFrameLevel(5)
+
+		self.junkIcon = parentFrame:CreateTexture(nil, "ARTWORK")
 		self.junkIcon:SetAtlas("bags-junkcoin")
 		self.junkIcon:SetSize(20, 20)
 		self.junkIcon:SetPoint("TOPRIGHT", 1, 0)
 
-		self.Quest = M.CreateFS(self, 30, "!", "system", "LEFT", 3, 0)
-
-		self.Azerite = self:CreateTexture(nil, "ARTWORK", nil, 1)
+		self.Azerite = self:CreateTexture(nil, "ARTWORK")
 		self.Azerite:SetAtlas("AzeriteIconFrame")
 		self.Azerite:SetAllPoints()
 
-		self.Favourite = self:CreateTexture(nil, "ARTWORK", nil, 2)
+		self.Favourite = parentFrame:CreateTexture(nil, "ARTWORK")
 		self.Favourite:SetAtlas("collections-icon-favorites")
 		self.Favourite:SetSize(30, 30)
 		self.Favourite:SetPoint("TOPLEFT", -12, 9)
+
+		self.Quest = M.CreateFS(self, 30, "!", "system", "LEFT", 3, 0)
 
 		if showItemLevel then
 			self.iLvl = M.CreateFS(self, 12, "", false, "BOTTOMLEFT", 1, 1)

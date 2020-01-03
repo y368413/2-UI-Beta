@@ -10,6 +10,8 @@ local list = {
 		{AuraID = 198293, UnitID = "player"},	-- 疾风
 		{AuraID = 197211, UnitID = "player"},	-- 空气之怒
 		{AuraID = 260881, UnitID = "player"},	-- 幽灵狼
+		{AuraID = 192106, UnitID = "player", Timeless = true},	-- 闪电护盾
+		{AuraID = 277943, UnitID = "player"},	-- 先祖共鸣
 	},
 	["Target Aura"] = {		-- 目标光环组
 		{AuraID = 61295, UnitID = "target", Caster = "player"},		-- 激流
