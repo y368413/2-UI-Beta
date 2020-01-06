@@ -86,13 +86,6 @@ hooksecurefunc("TargetFrame_UpdateAuraPositions", function(self, auraName, numAu
 		end
 	end
 end)
-
-local function CreateStatusBarText(name, parentName, parent, point, x, y)
-	local fontString = parent:CreateFontString(parentName..name, nil, "TextStatusBarText")
-	fontString:SetPoint(point, parent, point, x, y)
-	return fontString
-end
-
 --	Player frame.
 hooksecurefunc("PlayerFrame_ToPlayerArt", function(self)
 		PlayerFrameTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame");

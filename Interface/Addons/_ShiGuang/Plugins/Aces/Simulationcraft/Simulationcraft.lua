@@ -1,4 +1,4 @@
--- Author: Theck, navv_, seriallos  Version: 1.12.2
+-- Author: Theck, navv_, seriallos  Version: 1.12.4
 
 local Simulationcraft = {}
 
@@ -799,7 +799,7 @@ end
 -- This is the workhorse function that constructs the profile
 function Simulationcraft:PrintSimcProfile(debugOutput, noBags, links)
   -- addon metadata
-  local versionComment = '# SimC Addon ' .. '1.12.3'
+  local versionComment = '# SimC Addon ' .. '1.12.4'
   local simcVersionWarning = '# Requires SimulationCraft 820-01 or newer'
 
   -- Basic player info

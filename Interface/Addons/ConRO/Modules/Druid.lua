@@ -13,11 +13,18 @@ local ConRO_Druid, ids = ...;
 	}
 	ids.Druid_AzTrait = {
 		ArcanicPulsar = 287773,
+		IronJaws = 276021,
+		GuardiansWrath = 278511,
 		StreakingStars = 272871,
+		WildFleshrending = 279527,
 	}
 	ids.Druid_AzTraitBuff = {
-
+		IronJaws = 276026,
+		GuardiansWrath = 279541,
 	}
+	ids.Druid_AzTraitDebuff = {
+		ConcentratedFlame = 295368,
+	}	
 	ids.AzEssence = {
 		BloodoftheEnemy = 298273,
 		ConcentratedFlame = 295373,
@@ -857,6 +864,7 @@ function ConRO.Druid.Feral(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	local swipe												= ConRO:AbilityReady(ids.Feral_Ability.Swipe, timeShift);
 	local swipeB											= ConRO:AbilityReady(ids.Feral_Ability.Swipe_Bear, timeShift);
 	local mang												= ConRO:AbilityReady(ids.Feral_Ability.Mangle, timeShift);	
+	local maim												= ConRO:AbilityReady(ids.Feral_Ability.Maim, timeShift);
 	
 	local kotj												= ConRO:AbilityReady(ids.Feral_Talent.IncarnationKingoftheJungle, timeShift);
 		local kotjBuff 											= ConRO:Aura(ids.Feral_Buff.IncarnationKingoftheJungle, timeShift);
@@ -871,8 +879,12 @@ function ConRO.Druid.Feral(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	local emaul												= ConRO:AbilityReady(ids.Feral_PvPTalent.EnragedMaul, timeShift);
 		local pvp_tnc											= ConRO:Form(ids.Feral_Buff.ToothandClaw, timeShift);	
 
+	local azChosen_IronJaws, azCount_IronJaws				= ConRO:AzPowerChosen(ids.Druid_AzTrait.IronJaws);
+		local ijAzBuff											= ConRO:Aura(ids.Druid_AzTraitBuff.IronJaws, timeShift);
+	
 	local azEssence_BloodoftheEnemy							= ConRO:AbilityReady(ids.AzEssence.BloodoftheEnemy, timeShift);	
 	local azEssence_ConcentratedFlame						= ConRO:AbilityReady(ids.AzEssence.ConcentratedFlame, timeShift);
+		local cfAzDebuff										= ConRO:TargetAura(ids.Druid_AzTraitDebuff.ConcentratedFlame, timeShift)
 	local azEssence_GuardianofAzeroth						= ConRO:AbilityReady(ids.AzEssence.GuardianofAzeroth, timeShift);
 	local azEssence_MemoryofLucidDream						= ConRO:AbilityReady(ids.AzEssence.MemoryofLucidDream, timeShift);
 		local moldAzEssBuff										= ConRO:Aura(ids.AzEssenceBuff.MemoryofLucidDream, timeShift);
@@ -889,7 +901,6 @@ function ConRO.Druid.Feral(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	
 	ConRO:AbilityBurst(ids.Feral_Ability.Berserk, berserk and ConRO_BurstButton:IsVisible() and not tChosen[ids.Feral_Talent.IncarnationKingoftheJungle]);
 	ConRO:AbilityBurst(ids.Feral_Talent.IncarnationKingoftheJungle, kotj and ConRO_BurstButton:IsVisible());
-	ConRO:AbilityBurst(ids.Feral_Talent.BrutalSlash, bslash and rakeDebuff and bsCharges <= bsMaxCharges and combo <= 4 and ((ConRO_AutoButton:IsVisible() and tarInMelee <= 1) or ConRO_SingleButton:IsVisible()));
 
 --Rotations	
 	if bf then
@@ -1006,7 +1017,7 @@ function ConRO.Druid.Feral(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 			return ids.Feral_Ability.CatForm;
 		end
 
-		if azEssence_ConcentratedFlame then
+		if azEssence_ConcentratedFlame and tfBuff and not cfAzDebuff then
 			return ids.AzEssence.ConcentratedFlame;
 		end
 		
@@ -1060,6 +1071,10 @@ function ConRO.Druid.Feral(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 			return ids.Feral_Talent.SavageRoar;
 		end
 		
+		if maim and combo >= 5 and azChosen_IronJaws and azCount_IronJaws >= 2 and ijAzBuff then
+			return ids.Feral_Ability.Maim;
+		end
+		
 		if fbite and apBuff then
 			return ids.Feral_Ability.FerociousBite;
 		end
@@ -1072,7 +1087,7 @@ function ConRO.Druid.Feral(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 			return ids.Feral_Talent.Moonfire_Cat;
 		end
 		
-		if thrash and not thrDebuff and ((ConRO_AutoButton:IsVisible() and tarInMelee >= 2) or ConRO_AoEButton:IsVisible()) then
+		if thrash and not thrDebuff and (ConRO:AzPowerChosen(ids.Druid_AzTrait.WildFleshrending) or (ConRO_AutoButton:IsVisible() and tarInMelee >= 2) or ConRO_AoEButton:IsVisible()) then
 			return ids.Feral_Ability.Thrash_Cat;
 		end
 		
@@ -1080,7 +1095,7 @@ function ConRO.Druid.Feral(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 			return ids.Feral_Ability.Swipe_Cat;
 		end
 		
-		if bslash and (bsCharges == bsMaxCharges or (bsCharges == bsMaxCharges - 1 and bsCCD <= 1.5) or (ConRO_AutoButton:IsVisible() and tarInMelee >= 2) or ConRO_AoEButton:IsVisible()) and combo <= 4 then
+		if bslash and combo <= 4 and ((ConRO_AutoButton:IsVisible() and not ccBuff) or ConRO_AoEButton:IsVisible()) then
 			return ids.Feral_Talent.BrutalSlash;
 		end
 		
@@ -1138,7 +1153,9 @@ function ConRO.Druid.Guardian(_, timeShift, currentSpell, gcd, tChosen, pvpChose
 		local pulvBuff 											= ConRO:Aura(ids.Guard_Buff.PulverizeBuff, timeShift + 3);
 	local gou	 											= ConRO:AbilityReady(ids.Guard_Talent.IncarnationGuardianofUrsoc, timeShift);
 		local gouBuff 											= ConRO:Aura(ids.Guard_Buff.IncarnationGuardianofUrsoc, timeShift);
-		
+	
+		local gwAzTBuff, gwAzTBCount							= ConRO:Aura(ids.Druid_AzTraitBuff.GuardiansWrath, timeShift);
+	
 --Conditions	
 	local inRange 											= ConRO:IsSpellInRange(GetSpellInfo(ids.Guard_Talent.WildCharge_Bear), 'target');
 	local incombat 											= UnitAffectingCombat('player');
@@ -1205,7 +1222,7 @@ function ConRO.Druid.Guardian(_, timeShift, currentSpell, gcd, tChosen, pvpChose
 			return ids.Guard_Ability.Thrash_Bear;
 		end	
 		
-		if maul and not ConRO:TarYou() then
+		if maul and not ConRO:TarYou() and (rage >= 90 or (ConRO:AzPowerChosen(ids.Druid_AzTrait.GuardiansWrath) and gwAzTBCount < 3)) then
 			return ids.Guard_Ability.Maul;
 		end	
 		
@@ -1229,7 +1246,7 @@ function ConRO.Druid.GuardianDef(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 	
 	local lunarb 											= ConRO:AbilityReady(ids.Guard_Talent.LunarBeam, timeShift);
 	
-	local ironBuff 											= ConRO:Aura(ids.Guard_Buff.Ironfur, timeShift);
+	local ironBuff, ifBCount								= ConRO:Aura(ids.Guard_Buff.Ironfur, timeShift);
 
 --Conditions	
 	local playerPh 											= ConRO:PercentHealth('player');
@@ -1239,11 +1256,11 @@ function ConRO.Druid.GuardianDef(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 		return ids.Guard_Talent.LunarBeam;
 	end
 	
-	if fregen and playerPh <= 50 then
+	if fregen and playerPh <= 60 then
 		return ids.Guard_Ability.FrenziedRegeneration;
 	end
 	
-	if iron and ConRO:TarYou() and rage >= 90  then
+	if iron and ConRO:TarYou() and ifBCount < 4 then
 		return ids.Guard_Ability.Ironfur;
 	end
 	

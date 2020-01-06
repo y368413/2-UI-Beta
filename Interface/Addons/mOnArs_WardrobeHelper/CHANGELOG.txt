@@ -1,4 +1,7 @@
-﻿== 1.18.4 ==
+﻿== 1.18.5 ==
+ * update FR categorization (thanks to Kyramyz)
+
+== 1.18.4 ==
  * minimap button can now be used to hide the window
  * allow to sort by progress by clicking on the table header
 
