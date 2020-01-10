@@ -1,6 +1,6 @@
 --[[
 Name: LibCurrencyInfo
-Revision: $Rev: 26 $
+Revision: $Rev: 30 $
 Maintainers: Arith
 Website: https://www.wowace.com/projects/libcurrencyinfo
 Dependencies: None
@@ -177,6 +177,7 @@ data.CurrencyByCategory = {
 		1748,	 -- Nazjatar Ally - Bladesman Inowari
 		1749,	 -- Nazjatar Ally - Hunter Akana
 		1750,	 -- Nazjatar Ally - Farseer Ori
+		1752,	 -- Honeyback Hive
 	},
 	[143] = { -- Battle for Azeroth
 		1299,	 -- Brawler's Gold
@@ -376,6 +377,7 @@ data.Currencies = {
 	[1748] = { id=1748, category=142 }, -- Nazjatar Ally - Bladesman Inowari
 	[1749] = { id=1749, category=142 }, -- Nazjatar Ally - Hunter Akana
 	[1750] = { id=1750, category=142 }, -- Nazjatar Ally - Farseer Ori
+	[1752] = { id=1752, category=142 }, -- Honeyback Hive
 
 }
 

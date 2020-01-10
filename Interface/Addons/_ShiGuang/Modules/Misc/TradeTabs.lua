@@ -3,14 +3,16 @@ local M, R, U, I = unpack(ns)
 local MISC = M:GetModule("Misc")
 
 local pairs, unpack, tinsert, select = pairs, unpack, tinsert, select
-local GetSpellCooldown, GetSpellInfo, GetItemCooldown = GetSpellCooldown, GetSpellInfo, GetItemCooldown
-local IsPassiveSpell, IsCurrentSpell, CastSpell = IsPassiveSpell, IsCurrentSpell, CastSpell
+local GetSpellCooldown, GetSpellInfo, GetItemCooldown, GetItemCount, GetItemInfo = GetSpellCooldown, GetSpellInfo, GetItemCooldown, GetItemCount, GetItemInfo
+local IsPassiveSpell, IsCurrentSpell, CastSpell, IsPlayerSpell = IsPassiveSpell, IsCurrentSpell, CastSpell, IsPlayerSpell
 local GetProfessions, GetProfessionInfo, GetSpellBookItemInfo = GetProfessions, GetProfessionInfo, GetSpellBookItemInfo
 local PlayerHasToy, C_ToyBox_IsToyUsable, C_ToyBox_GetToyInfo = PlayerHasToy, C_ToyBox.IsToyUsable, C_ToyBox.GetToyInfo
 
 local BOOKTYPE_PROFESSION = BOOKTYPE_PROFESSION
 local RUNEFORGING_ID = 53428
+local PICK_LOCK = 1804
 local CHEF_HAT = 134020
+local THERMAL_ANVIL = 87216
 local tabList = {}
 
 local onlyPrimary = {
@@ -21,37 +23,13 @@ local onlyPrimary = {
 	[356] = true, -- Fishing
 }
 
-function MISC:TradeTabs_ModButtons()
-		TradeSkillFrame.SearchBox:SetWidth(260)
-		local Onlyshowmakeablerecipes = CreateFrame("CheckButton", nil, TradeSkillFrame, "OptionsCheckButtonTemplate")
-      Onlyshowmakeablerecipes:SetPoint("BOTTOMLEFT", TradeSkillFrame.SearchBox, "RIGHT", 8, -3)
-      Onlyshowmakeablerecipes:SetSize(21, 21)
-      Onlyshowmakeablerecipes.text = M.CreateFS(Onlyshowmakeablerecipes, 14, CRAFT_IS_MAKEABLE, false, "LEFT", 21, 0)
-      Onlyshowmakeablerecipes:SetHitRectInsets(0, -10, 0, 0)
-      Onlyshowmakeablerecipes:SetScript("OnEvent", function(self) C_TradeSkillUI.GetOnlyShowMakeableRecipes() end)
-      --Onlyshowmakeablerecipes:SetChecked(C_TradeSkillUI.GetOnlyShowMakeableRecipes())
-      Onlyshowmakeablerecipes:SetScript("OnClick", function(self) C_TradeSkillUI.SetOnlyShowMakeableRecipes(not C_TradeSkillUI.GetOnlyShowMakeableRecipes()) end)
-    local tradeSkillID, name, rank, skillLineMaxRank = C_TradeSkillUI.GetTradeSkillLine();
-		local isNPCCrafting = C_TradeSkillUI.IsNPCCrafting() and skillLineMaxRank == 0;
-		if not C_TradeSkillUI.IsTradeSkillGuild() and not isNPCCrafting then
-		 local Onlyshowrecipesthatprovideskillups = CreateFrame("CheckButton", nil, TradeSkillFrame, "OptionsCheckButtonTemplate")
-      Onlyshowrecipesthatprovideskillups:SetPoint("TOPLEFT", TradeSkillFrame.SearchBox, "RIGHT", 8, 3)
-      Onlyshowrecipesthatprovideskillups:SetSize(21, 21)
-      Onlyshowrecipesthatprovideskillups.text = M.CreateFS(Onlyshowrecipesthatprovideskillups, 14, TRADESKILL_FILTER_HAS_SKILL_UP, false, "LEFT", 21, 0)
-      Onlyshowrecipesthatprovideskillups:SetHitRectInsets(0, -10, 0, 0)
-      Onlyshowrecipesthatprovideskillups:SetScript("OnEvent", function(self) C_TradeSkillUI.GetOnlyShowSkillUpRecipes() end)
-      --Onlyshowrecipesthatprovideskillups:SetChecked(C_TradeSkillUI.GetOnlyShowSkillUpRecipes())
-      Onlyshowrecipesthatprovideskillups:SetScript("OnClick", function(self) C_TradeSkillUI.SetOnlyShowSkillUpRecipes(not C_TradeSkillUI.GetOnlyShowSkillUpRecipes()) end)
-    end
-end
-
 function MISC:UpdateProfessions()
 	local prof1, prof2, _, fish, cook = GetProfessions()
 	local profs = {prof1, prof2, fish, cook}
 	if I.MyClass == "DEATHKNIGHT" then
 		MISC:TradeTabs_Create(nil, RUNEFORGING_ID)
-	elseif I.MyClass == 'ROGUE' and isUseable(1804) then
-		MISC:TradeTabs_Create(nil, 1804) --PickLock
+	elseif I.MyClass == "ROGUE" and IsPlayerSpell(PICK_LOCK) then
+		MISC:TradeTabs_Create(nil, PICK_LOCK)
 	end
 	local isCook
 	for _, prof in pairs(profs) do
@@ -75,8 +53,8 @@ function MISC:UpdateProfessions()
 	if isCook and PlayerHasToy(CHEF_HAT) and C_ToyBox_IsToyUsable(CHEF_HAT) then
 		MISC:TradeTabs_Create(nil, nil, CHEF_HAT)
 	end
-	if GetItemCount(87216) ~= 0 then
-		MISC:TradeTabs_Create(nil, 126462) --ThermalAnvil
+	if GetItemCount(THERMAL_ANVIL) > 0 then
+		MISC:TradeTabs_Create(nil, nil, nil, THERMAL_ANVIL)
 	end
 end
 
@@ -108,10 +86,12 @@ function MISC:TradeTabs_OnClick()
 end
 
 local index = 1
-function MISC:TradeTabs_Create(slotID, spellID, itemID)
+function MISC:TradeTabs_Create(slotID, spellID, toyID, itemID)
 	local name, _, texture
-	if itemID then
-		_, name, texture = C_ToyBox_GetToyInfo(itemID)
+	if toyID then
+		_, name, texture = C_ToyBox_GetToyInfo(toyID)
+	elseif itemID then
+		name, _, _, _, _, _, _, _, _, texture = GetItemInfo(itemID)
 	else
 		name, _, texture = GetSpellInfo(spellID)
 	end
@@ -119,8 +99,8 @@ function MISC:TradeTabs_Create(slotID, spellID, itemID)
 	tab.tooltip = name
 	tab.slotID = slotID
 	tab.spellID = spellID
-	tab.itemID = itemID
-	tab.type = itemID and "toy" or "spell"
+	tab.itemID = toyID or itemID
+	tab.type = (toyID and "toy") or (itemID and "item") or "spell"
 	if slotID then
 		tab:SetScript("OnClick", MISC.TradeTabs_OnClick)
 	else
@@ -140,14 +120,55 @@ function MISC:TradeTabs_Create(slotID, spellID, itemID)
 	index = index + 1
 end
 
+function MISC:TradeTabs_FilterIcons()
+	local buttonList = {
+		[1] = {"Atlas:bags-greenarrow", TRADESKILL_FILTER_HAS_SKILL_UP, C_TradeSkillUI.GetOnlyShowSkillUpRecipes, C_TradeSkillUI.SetOnlyShowSkillUpRecipes},
+		[2] = {"Interface\\RAIDFRAME\\ReadyCheck-Ready", CRAFT_IS_MAKEABLE, C_TradeSkillUI.GetOnlyShowMakeableRecipes, C_TradeSkillUI.SetOnlyShowMakeableRecipes},
+	}
+
+	local function filterClick(self)
+		local value = self.__value
+		if value[3]() then
+			value[4](false)
+			self:SetBackdropBorderColor(0, 0, 0)
+		else
+			value[4](true)
+			self:SetBackdropBorderColor(1, .8, 0)
+		end
+	end
+
+	local buttons = {}
+	for index, value in pairs(buttonList) do
+		local bu = CreateFrame("Button", nil, TradeSkillFrame)
+		bu:SetSize(21, 21)
+		bu:SetPoint("RIGHT", TradeSkillFrame.FilterButton, "LEFT", -5 - (index-1)*27, 0)
+		M.PixelIcon(bu, value[1], true)
+		M.AddTooltip(bu, "ANCHOR_TOP", value[2])
+		bu.__value = value
+		bu:SetScript("OnClick", filterClick)
+
+		buttons[index] = bu
+	end
+
+	local function updateFilterStatus()
+		for index, value in pairs(buttonList) do
+			if value[3]() then
+				buttons[index]:SetBackdropBorderColor(1, .8, 0)
+			else
+				buttons[index]:SetBackdropBorderColor(0, 0, 0)
+			end
+		end
+	end
+	M:RegisterEvent("TRADE_SKILL_LIST_UPDATE", updateFilterStatus)
+end
 function MISC:TradeTabs_OnLoad()
+	TradeSkillFrame.SearchBox:SetWidth(268)
 	MISC:UpdateProfessions()
 	MISC:TradeTabs_Update()
-	MISC:TradeTabs_ModButtons()
-	M:RegisterEvent("TRADE_SKILL_LIST_UPDATE", MISC.TradeTabs_ModButtons)
 	M:RegisterEvent("TRADE_SKILL_SHOW", MISC.TradeTabs_Update)
 	M:RegisterEvent("TRADE_SKILL_CLOSE", MISC.TradeTabs_Update)
 	M:RegisterEvent("CURRENT_SPELL_CAST_CHANGED", MISC.TradeTabs_Update)
+	MISC:TradeTabs_FilterIcons()
 end
 
 function MISC.TradeTabs_OnEvent(event, addon)

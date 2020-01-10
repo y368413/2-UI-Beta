@@ -11,6 +11,7 @@
         self:RegisterEvent("ZONE_CHANGED");
 		self:RegisterEvent("ZONE_CHANGED_NEW_AREA");
 		self:RegisterEvent("ZONE_CHANGED_INDOORS");
+		Teleporter_OnLoad();
       </OnLoad>
       <OnEvent function="Teleporter_OnEvent"/>
       <OnUpdate function="Teleporter_OnUpdate"/>

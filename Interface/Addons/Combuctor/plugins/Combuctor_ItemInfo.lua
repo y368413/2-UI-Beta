@@ -444,6 +444,4 @@ local Update = function(self)
 	end	
 end 
 
-Module.OnEnable = function(self)
-	hooksecurefunc(Combuctor.ItemSlot, "Update", Update)
-end 
+hooksecurefunc(Combuctor.ItemSlot, "Update", Update)

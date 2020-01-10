@@ -37,6 +37,9 @@ local function GetPowerType()
     end
 end
 
+local fntBig = CreateFont("SIFontBig");
+fntBig:SetFont(STANDARD_TEXT_FONT, 22, "THICKOUTLINE");
+
 local fntMedium = CreateFont("SIFontMedium");  -- Power, absolute health
 fntMedium:SetFont(STANDARD_TEXT_FONT, 16, "OUTLINE");
 fntMedium:SetTextColor(1, 0.65, 0.16);
@@ -89,17 +92,45 @@ BlinkHealth.runeColors = {
 	{0, .5, 0};
 	{0, 1, 1};
 	{.9, .1, 1};
-}
+};
+
 BlinkHealth.classColor = {};
-do for k, v in pairs(RAID_CLASS_COLORS) do BlinkHealth.classColor[k] = {v.r, v.g, v.b}; end end
+do
+    for k, v in pairs(RAID_CLASS_COLORS) do
+        BlinkHealth.classColor[k] = {v.r, v.g, v.b};
+    end
+end
+
+function BlinkHealth:OnInitialize()
+	self.frame = {};
+	self:CreateAnchorFrame()
+	self:ConstructFrame("player");
+	self:ConstructFrame("target");
+	self.class = select(2, UnitClass("player"));
+	if (self.class == "DEATHKNIGHT") then		
+		self:ConstructRunes();
+	end
+	if ("MONK,PALADIN,WARLOCK,MAGE,ROGUE,DRUID"):find(self.class) then
+		self:ConstructCombo();
+		self:ConstructHitPoints();	-- 构建连击点
+	end
+	--self:ConstructCastingBar();
+	self:UpdateUnitFrame();
+	SlashCmdList["BLINKHEALTH"] = BlinkHealth_SlashHandler;
+	SLASH_BLINKHEALTH1 = "/bht";
+	if (ShiGuangPerDB.BHTHit == true) then sendCmd("/bht hiton") else sendCmd("/bht hitoff") end
+end
+
+
 
 function BlinkHealth:OnEnable()
 	self:RegisterEvent("PLAYER_TARGET_CHANGED");
-  self:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED");
-  self:RegisterEvent("PLAYER_ENTERING_WORLD");
+    self:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED");
+    self:RegisterEvent("PLAYER_ENTERING_WORLD");
 	self:RegisterEvent("PLAYER_REGEN_DISABLED");
 	self:RegisterEvent("PLAYER_REGEN_ENABLED");
-  self:RegisterEvent("UNIT_POWER_UPDATE");
+    self:RegisterEvent("UNIT_POWER_UPDATE");
+
 	self.frame["player"]:Show();
 	self.handle = self:ScheduleRepeatingTimer("UpdateUnitValues", 0.05);
 end
@@ -133,7 +164,9 @@ end
 
 function BlinkHealth:UNIT_POWER_UPDATE(event, unit)
 	if (unit == "player") then
-        if BlinkHealthTextPowerType then self:UpdateComboPoints(); end
+        if BlinkHealthTextPowerType then
+            self:UpdateComboPoints();
+        end
 	end
 end
 
@@ -183,7 +216,7 @@ function BlinkHealth:CreateAnchorFrame()
 	end);
 
 	--self.anchor.originalStopMovingOrSizing = self.anchor.StopMovingOrSizing;
-	self.anchor.duration = 1;  	--RegisterForSaveFrame(self.anchor);
+	--self.anchor.duration = 1;  	--RegisterForSaveFrame(self.anchor);
 	self.anchor:Hide();
 end
 
@@ -209,12 +242,22 @@ end
 
 function BlinkHealth:UpdateComboPoints()
 	local comboPoints = UnitPower(PlayerFrame.unit, BlinkHealthTextPowerType);
-	  if (comboPoints and comboPoints > 0) then
+	if (comboPoints and comboPoints > 0) then
+
         self.hitPoint.text:SetText(comboPoints);
-	  else
+		self.Combo:Show();
+		for i=1, 10 do
+			self.Combo[i]:Hide();
+		end
+
+		for i=1, comboPoints do
+			self.Combo[i]:Show();
+		end
+	else
+		self.Combo:Hide();
         self.hitPoint.text:SetText("");
         self.hitPoint.hit:SetText("");
-	  end
+	end
 end
 
 function BlinkHealth:UpdateUnitValues()
@@ -302,20 +345,12 @@ function BlinkHealth:UpdateUnitValues()
 			hexColor = self:ToHexColor(UnitSelectionColor("target"));
 		end
 		--精英、银英、世界boss加前缀
-		if(UnitClassification("target")=="elite") then
-			name="[精英]"..name;
-		end
-		if(UnitClassification("target")=="rare") then
-			name="[稀有]"..name;
-		end
-		if(UnitClassification("target")=="rareelite") then
-			name="[稀有精英]"..name;
-		end
-		if(UnitClassification("target")=="worldboss") then
-			name="[世界BOSS]"..name;
-		end
+		if(UnitClassification("target")=="elite") then name="[精英]"..name; end
+		if(UnitClassification("target")=="rare") then name="[稀有]"..name; end
+		if(UnitClassification("target")=="rareelite") then name="[稀有精英]"..name; end
+		if(UnitClassification("target")=="worldboss") then name="[世界BOSS]"..name; end
+		
 		self.frame["target"].name:SetFormattedText("|cff%s%s|r", hexColor, name);
-	
 		if (UnitExists("targettarget")) then
 			heal, maxheal = UnitHealth("targettarget"), UnitHealthMax("targettarget");
 			perh = heal/maxheal*100+0.5
@@ -463,7 +498,41 @@ function BlinkHealth:ConstructHealth(unit)
 
 	this.name = name;
 end
----------------------- 符文条
+--------------
+-- 连击点
+function BlinkHealth:ConstructCombo()
+    if self.Combo then return end
+	local this = self.frame["target"];
+	self.Combo = CreateFrame("Frame", nil, this);
+	self.Combo:SetWidth(80)
+	self.Combo:SetHeight(16)
+	self.Combo:SetPoint("TOPLEFT", this.heal, "BOTTOMLEFT", 0, 0);
+	local bg, fill = {}, {};
+	for i = 1, 10 do
+		self.Combo[i] = CreateFrame("Frame", nil, self.Combo)
+		self.Combo[i]:SetWidth(16)
+		self.Combo[i]:SetHeight(16)
+		if i == 1 then 
+			self.Combo[i]:SetPoint("LEFT", self.Combo, "LEFT")
+		else
+			self.Combo[i]:SetPoint("LEFT", self.Combo[i - 1], "RIGHT") 
+		end
+		bg[i] = self.Combo[i]:CreateTexture(nil, "ARTWORK")
+		bg[i]:SetTexture("Interface\\AddOns\\_ShiGuang\\Media\\Modules\\BlinkHealthText\\combo.blp")
+		bg[i]:SetTexCoord(0, 16 / 64, 0, 1)
+		bg[i]:SetAllPoints(self.Combo[i])
+		fill[i] = self.Combo[i]:CreateTexture(nil, "OVERLAY")
+		fill[i]:SetTexture("Interface\\AddOns\\_ShiGuang\\Media\\Modules\\BlinkHealthText\\combo.blp")
+		fill[i]:SetTexCoord(0.5, 0.75, 0, 1)
+		fill[i]:SetVertexColor(1, 1, 0)
+		fill[i]:SetAllPoints(self.Combo[i])
+	end
+	self.Combo:Hide();
+	self.Combo.bg = bg;
+	self.Combo.fill = fill;	
+end
+--------------------
+-- 符文条
 do
 function BlinkHealth:ConstructRunes()
 	local this = self.frame["player"];
@@ -577,7 +646,7 @@ local OnUpdate = function(self, elapsed)
 end
 
 function BlinkHealth:UpdateRuneType(event, rid)	
-	local runeType = 3; --GetRuneType(rid)
+	local runeType = 3 --GetRuneType(rid)
 	local colors = self.runeColors[runeType]
 	local rune = self.Runes[rid];
 	local r, g, b = colors[1], colors[2], colors[3];
@@ -705,7 +774,7 @@ function BlinkHealth:CreateHitAnchor()
 	end);
 	
 	--self.HitAnchor.originalStopMovingOrSizing = self.HitAnchor.StopMovingOrSizing;
-	self.HitAnchor.duration = 1;
+	--self.HitAnchor.duration = 1;
 	self.HitAnchor:Hide();
 end
 
@@ -729,6 +798,19 @@ function BlinkHealth:ConstructHitPoints()
 	end	
 end
 
+
+function BlinkHealth:ShowAnchor()
+	self.anchor:Show();
+end
+
+function BlinkHealth:ToggleNameVisible(switch)
+	if (switch) then
+		self.frame["target"].name:Show();
+	else
+		self.frame["target"].name:Hide();
+	end
+end
+
 function BlinkHealth:ToggleRuneFrameVisible(switch)
 	if (switch) then	
 		self:EnableRune();
@@ -741,12 +823,16 @@ end
 function BlinkHealth:ToggleHitPoint(switch)
 	if (switch) then
 		self.hitPoint:Show();
+		self.Combo:SetAlpha(0);
 	else
 		self.hitPoint:Hide();
+		self.Combo:SetAlpha(1);
 	end
 end
-function BlinkHealth:ShowAnchor() self.anchor:Show(); end
-function BlinkHealth:ShowHitAnchor() self.HitAnchor:Show(); end
+
+function BlinkHealth:ShowHitAnchor()
+	self.HitAnchor:Show();
+end
 
 function BlinkHealth_SlashHandler(msg)
 	local BHT_1 = "输入 /bht on 或 /bht off 开关插件\n";
@@ -775,21 +861,6 @@ function BlinkHealth_SlashHandler(msg)
 	else 
 		DEFAULT_CHAT_FRAME:AddMessage(BHT_1..BHT_2..BHT_3);
 	end
-end
-
-function BlinkHealth:OnInitialize()
-	self.frame = {};
-	self:CreateAnchorFrame()
-	self:ConstructFrame("player");
-	self:ConstructFrame("target");
-	if (I.MyClass == "DEATHKNIGHT") then self:ConstructRunes(); BlinkHealth:ToggleRuneFrameVisible(true); end	
-	if (I.MyClass == "MONK") or (I.MyClass == "PALADIN") or (I.MyClass == "WARLOCK") or (I.MyClass == "MAGE") or (I.MyClass == "ROGUE") or (I.MyClass == "DRUID") then		
-		self:ConstructHitPoints();	-- 构建连击点
-	end	
-	self:UpdateUnitFrame();
-	SlashCmdList["BLINKHEALTH"] = BlinkHealth_SlashHandler;
-	SLASH_BLINKHEALTH1 = "/bht";
-	if (ShiGuangPerDB.BHTHit == true) then sendCmd("/bht hiton") else sendCmd("/bht hitoff") end
 end
 
 ------------------------------------------------------头像渐隐

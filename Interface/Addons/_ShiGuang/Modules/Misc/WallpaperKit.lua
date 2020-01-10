@@ -39,10 +39,6 @@ WallpaperKitcfg.classicon = { size = 21, font = "Interface\\Addons\\_ShiGuang\\M
 -- FACTION ICON
 WallpaperKitcfg.factionicon = { size = 0.8, pos = { point = "CENTER", X = -430, Y = -21, },}
 ------------------------------- FUNCTIONS-----------------------------
-local function OnEvent(self)
-	if UIParent:IsShown() and self:IsShown() then self:Disable() return end
-	if UnitIsAFK("player") then self:Enable() end
-end
 --canvas frame
 local WallpaperKit = CreateFrame("Frame",nil,UIParent)
 WallpaperKit:SetAllPoints()
@@ -210,8 +206,12 @@ hidebutton:SetScript("OnClick", button_OnClick)
 -- canvas enable func
 function WallpaperKit:Enable() self:Show() self:UpdateModel() self.fadeIn:Play() end  --UIParent:Hide()
 -- canvas disable func
-function WallpaperKit:Disable() UIParent:Show() self.fadeOut:Play() end
+function WallpaperKit:Disable() self.fadeOut:Play() end  -- UIParent:Show()
 
+local function OnEvent(self)
+	if UIParent:IsShown() and self:IsShown() then self:Disable() return end
+	if UnitIsAFK("player") then self:Enable() end
+end
 WallpaperKit:SetScript("OnEvent",OnEvent)
 WallpaperKit:RegisterEvent("PLAYER_FLAGS_CHANGED")
 WallpaperKit:RegisterEvent("PLAYER_ENTERING_WORLD")

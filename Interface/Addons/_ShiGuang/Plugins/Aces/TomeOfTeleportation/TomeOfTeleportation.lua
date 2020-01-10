@@ -286,6 +286,24 @@ local function RebuildSpellList()
 	end
 end
 
+function Teleporter_OnLoad() 
+	SlashCmdList["TELEPORTER"] = TeleporterFunction
+	SLASH_TELEPORTER1 = "/tomeofteleport"
+	SLASH_TELEPORTER2 = "/tele"	
+
+	SlashCmdList["TELEPORTEREQUIP"] = TeleporterEquipSlashCmdFunction
+	SLASH_TELEPORTEREQUIP1 = "/teleporterequip"
+
+	SlashCmdList["TELEPORTERUSEITEM"] = TeleporterUseItemSlashCmdFunction
+	SLASH_TELEPORTERUSEITEM1 = "/teleporteruseitem"
+
+	SlashCmdList["TELEPORTERCASTSPELL"] = TeleporterCastSpellSlashCmdFunction
+	SLASH_TELEPORTERCASTSPELL1 = "/teleportercastspell"
+
+	SlashCmdList["TELEPORTERCREATEMACRO"] = TeleporterCreateMacroSlashCmdFunction
+	SLASH_TELEPORTERCREATEMACRO1 = "/teleportercreatemacro"
+end 
+
 local function SavePosition()
 	local points = {}
 	for i = 1,TeleporterParentFrame:GetNumPoints(),1 do
@@ -734,12 +752,6 @@ local function AddCustomizationIcon(existingIcon, buttonFrame, xOffset, yOffset,
 	return iconObject
 end
 
-
-local function InitalizeOptions()
-	if not ShiGuangPerDB["showSpells"] then ShiGuangPerDB["showSpells"] = {} end
-	if not ShiGuangPerDB["sortOrder"] then ShiGuangPerDB["sortOrder"] = {} end
-end
-
 local IsAdding = false
 
 local function FinishAddingItem(dialog, isItem, id)
@@ -851,7 +863,6 @@ local function CreateMainFrame()
 	local lastDest = nil
 	local maximumHeight = GetScaledOption("maximumHeight")
 	local fontHeight = GetScaledOption("fontHeight")
-	local frameEdgeSize = GetOption("frameEdgeSize")
 	local fontFile = GetOption("buttonFont")
 	local fontFlags = nil 
 	local buttonInset = GetOption("buttonInset")	
@@ -875,7 +886,6 @@ local function CreateMainFrame()
 	TeleporterParentFrame:SetScript("OnDragStop", function() TeleporterParentFrame:StopMovingOrSizing(); SavePosition(); end )
 	TeleporterParentFrame:EnableMouse(true)
 	TeleporterParentFrame:SetMovable(true)
-	TeleporterParentFrame:SetScript("OnMouseUp", OnClickFrame)
 	
 	-- Close button
 	local closeButton = CreateFrame( "Button", "TeleporterCloseButton", TeleporterParentFrame, "UIPanelButtonTemplate" )
@@ -885,14 +895,6 @@ local function CreateMainFrame()
 	closeButton:SetHeight( buttonHeight )
 	closeButton:SetScript( "OnClick", TeleporterClose )			
 	
-	-- Help text
-	if GetOption("showHelp") then
-		local helpString = TeleporterParentFrame:CreateFontString("TeleporterHelpString", nil, GetOption("titleFont"))
-		helpString:SetFont(fontFile, fontHeight, fontFlags)
-		helpString:SetText( "Click to teleport, Ctrl+click to create a macro." )
-		helpString:SetJustifyV("CENTER")
-		helpString:SetJustifyH("LEFT")
-	end
 	
 	AddItemButton = CreateFrame( "Button", "TeleporterAddItemButton", TeleporterParentFrame, "UIPanelButtonTemplate" )
 	AddItemButton:SetText( "Add Item" )
@@ -976,7 +978,8 @@ function TeleporterOpenFrame()
 		return
 	end
 	
-	InitalizeOptions()
+	if not ShiGuangPerDB["showSpells"] then ShiGuangPerDB["showSpells"] = {} end
+	if not ShiGuangPerDB["sortOrder"] then ShiGuangPerDB["sortOrder"] = {} end
 	
 	if not IsVisible then		
 		local buttonHeight = GetScaledOption("buttonHeight")
@@ -986,7 +989,6 @@ function TeleporterOpenFrame()
 		local lastDest = nil
 		local maximumHeight = GetScaledOption("maximumHeight")
 		local fontHeight = GetScaledOption("fontHeight")
-		local frameEdgeSize = GetOption("frameEdgeSize")
 		local fontFile = GetOption("buttonFont")
 		local fontFlags = nil 
 		local buttonInset = GetOption("buttonInset")		
@@ -999,10 +1001,7 @@ function TeleporterOpenFrame()
 			CreateMainFrame()			
 		end
 		
-		TeleporterParentFrame:SetBackdrop({bgFile = GetOption("background"), 
-											edgeFile = GetOption("edge"), 
-											tile = false, edgeSize = frameEdgeSize, 
-											insets = { left = buttonInset, right = buttonInset, top = buttonInset, bottom = buttonInset }});
+		TeleporterParentFrame:SetBackdrop({bgFile = GetOption("background"), tile = false, insets = { left = buttonInset, right = buttonInset, top = buttonInset, bottom = buttonInset }});
 		TeleporterParentFrame:SetBackdropColor(
 				GetOption("backgroundR"),
 				GetOption("backgroundG"),
@@ -1086,9 +1085,7 @@ function TeleporterOpenFrame()
 				local buttonBorder = 4 * GetScale()
 		
 				buttonFrame:SetBackdrop({bgFile = GetOption("buttonBackground"), 
-													edgeFile = GetOption("buttonEdge"), 
 													tile = true, tileSize = GetOption("buttonTileSize"), 
-													edgeSize = GetScaledOption("buttonEdgeSize"), 
 													insets = { left = buttonBorder, right = buttonBorder, top = buttonBorder, bottom = buttonBorder }});
 											
 				buttonFrame:SetAttribute("type", "macro")
@@ -1192,8 +1189,6 @@ function TeleporterOpenFrame()
 				buttonFrame.ShowIcon = AddCustomizationIcon(buttonFrame.ShowIcon, buttonFrame, ShowIconOffset, iconOffsetY, iconW, iconH, "showButtonIcon", function() OnClickShow(spell) end)				
 				buttonFrame.SortUpIcon = AddCustomizationIcon(buttonFrame.SortUpIcon, buttonFrame, SortUpIconOffset, iconOffsetY, iconW, iconH, "sortUpIcon", function() OnClickSortUp(spell) end)
 				buttonFrame.SortDownIcon = AddCustomizationIcon(buttonFrame.SortDownIcon, buttonFrame, SortDownIconOffset, iconOffsetY, iconW, iconH, "sortDownIcon", function() OnClickSortDown(spell) end)
-				
-				buttonFrame:SetScript("OnMouseUp", OnClickTeleButton)
 				
 				local buttonSetting = { }	
 				buttonSetting.isItem = isItem
@@ -1403,7 +1398,11 @@ function TeleporterCreateMacroSlashCmdFunction( spell )
 end
 
 function Teleporter_OnAddonLoaded()
-	icon:Register("TomeTele", dataobj)		
+	if TomeOfTele_Icon == nil then
+		TomeOfTele_Icon = {}
+	end
+	
+	icon:Register("TomeTele", dataobj, TomeOfTele_Icon)		
 	RebuildSpellList()
 	for index, spell in ipairs(TeleporterSpells) do		
 		if (spell.spellType == ST_Item) then
