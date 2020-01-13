@@ -7,7 +7,7 @@
 	<Script file="MountsSource.lua"/>
 	<Script file="HardYards.lua"/>
 	<Script file="PhotoRobot.lua"/>
-	<Script file="iKeystones.lua"/>
+	<!--Script file="iKeystones.lua"/-->
 	<Script file="TransmogHeadsUp.lua"/>
 	<Script file="IncentiveProgram.lua"/>
 </Ui>

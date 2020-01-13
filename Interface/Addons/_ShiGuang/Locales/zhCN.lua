@@ -331,6 +331,9 @@ CurrencyTracking_CURRENCY_TO_TRACK = "在游戏画面上要追踪的通货：";
 CurrencyTracking_TRACKED_CURRENCY = "追踪的货币";
 CurrencyTracking_TRACKED_ITEMS = "追踪的物品";
 CurrencyTracking_PROFILE_OPTIONS = "设定选项";
+----------------WorldQuest----------------------
+WQACHIEVEMENTS_TITLE = "|cff8080ff[成就]|r世界任务"
+ANGRYWORLDQUEST_TITLE = "|cff0080ff[地图]|r世界任务"
 ----------------MTG----------------------
 U["Don't buy cape items"] = "不要买稀有品"
 U["buy cape items that don't need taco"] = "购买不含饼干的的稀有品"
@@ -366,6 +369,7 @@ U["Grrmrlg"] = "格姆勒格"
 U["Flrgrrl"] = "弗勒格勒"
 U["Hurlgrl"] = "胡勒格勒"
 U["Mrrl"] = "穆勒尔" 
+
 
 U["PlayerFrame Scale"] = "头像缩放"
 U["Enable Stagger"] = "启用职业监控-WST"

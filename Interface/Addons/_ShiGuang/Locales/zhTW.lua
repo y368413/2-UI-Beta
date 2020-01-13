@@ -258,6 +258,9 @@ SHIGUANG_Craft="专业";
 SHIGUANG_Gets="[獲得]:";
 SHIGUANG_Lost="[失去]:";
 SHIGUANG_Refund="[退款]:";
+----------------WorldQuest----------------------
+WQACHIEVEMENTS_TITLE = "|cff8080ff[成就]|r世界任务"
+ANGRYWORLDQUEST_TITLE = "||cff0080ff[地圖]|r世界任务"
 ----------------MTG----------------------
   U["Don't buy cape items"] = "不要買稀有品"
   U["buy cape items that don't need taco"] = "購買不含觸手捲的的稀有品"

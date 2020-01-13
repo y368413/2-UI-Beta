@@ -242,6 +242,10 @@ SHIGUANG_Craft="Craft";
 SHIGUANG_Gets="[Gets]:";
 SHIGUANG_Lost="[Lost]:";
 SHIGUANG_Refund="[Refund]:";
+----------------WorldQuest----------------------
+WQACHIEVEMENTS_TITLE = "|cff8080ff[Achieve]|WQA"
+ANGRYWORLDQUEST_TITLE = "|cff0080ff[Angry]|rWorld Quests"
+
   U["Don't buy cape items"] = "Don't buy cape items"
   U["buy cape items that don't need taco"] = "buy cape items that don't need taco"
   U["buy every cape items"] = "buy every cape items"

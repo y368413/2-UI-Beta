@@ -135,7 +135,7 @@ function MISC:KeystoneInfo_Create()
 			local dungeon = C_ChallengeMode_GetMapUIInfo(tonumber(mapID))
 			GameTooltip:AddDoubleLine(format(color.."%s:|r", name), format("%s%s(%s)|r", factionColor, dungeon, level))
 		end
-		GameTooltip:AddDoubleLine(" ", I.LineString)
+		--GameTooltip:AddDoubleLine(" ", I.LineString)
 		GameTooltip:AddDoubleLine(" ", I.ScrollButton..U["Reset Gold"].." ", 1,1,1, .6,.8,1)
 		GameTooltip:Show()
 	end)

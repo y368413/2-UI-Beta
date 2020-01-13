@@ -132,8 +132,8 @@ function AngryWorldQuest:PLAYER_ENTERING_WORLD()
 	self:UnregisterEvent('PLAYER_ENTERING_WORLD', self)
 end
 
-AngryWorldQuest.Name = GetAddOnMetadata("WorldQuestsMaster", "Title")
-AngryWorldQuest.Version = GetAddOnMetadata("WorldQuestsMaster", "X-Packaged-Version")
+AngryWorldQuest.Name = ANGRYWORLDQUEST_TITLE
+AngryWorldQuest.Version = "v0.20.6"
 _G[AngryWorldQuest] = AngryWorldQuest
 
 local Config = AngryWorldQuest:NewModule('Config')
@@ -145,7 +145,7 @@ local configDefaults = {
 	showHoveredPOI = true,
 	onlyCurrentZone = true,
 	selectedFilters = 0,
-	disabledFilters = 32616,
+	disabledFilters = 65232,  --32616  47312
 	filterEmissary = 0,
 	filterLoot = 0,
 	filterFaction = 0,

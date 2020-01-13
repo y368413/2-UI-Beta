@@ -121,16 +121,13 @@ function BlinkHealth:OnInitialize()
 	if (ShiGuangPerDB.BHTHit == true) then sendCmd("/bht hiton") else sendCmd("/bht hitoff") end
 end
 
-
-
 function BlinkHealth:OnEnable()
 	self:RegisterEvent("PLAYER_TARGET_CHANGED");
-    self:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED");
-    self:RegisterEvent("PLAYER_ENTERING_WORLD");
+  self:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED");
+  self:RegisterEvent("PLAYER_ENTERING_WORLD");
 	self:RegisterEvent("PLAYER_REGEN_DISABLED");
 	self:RegisterEvent("PLAYER_REGEN_ENABLED");
-    self:RegisterEvent("UNIT_POWER_UPDATE");
-
+  self:RegisterEvent("UNIT_POWER_UPDATE");
 	self.frame["player"]:Show();
 	self.handle = self:ScheduleRepeatingTimer("UpdateUnitValues", 0.05);
 end
@@ -257,7 +254,7 @@ function BlinkHealth:UpdateComboPoints()
 		self.Combo:Hide();
         self.hitPoint.text:SetText("");
         self.hitPoint.hit:SetText("");
-	end
+	  end
 end
 
 function BlinkHealth:UpdateUnitValues()

@@ -10,14 +10,6 @@ WQA.links = {}
 
 -- Blizzard
 local IsActive = C_TaskQuest.IsActive
-if GetLocale() == "zhCN" then
-	WQACHIEVEMENTS_TITLE = "|cff8080ff[成就]|r世界任务"
-elseif GetLocale() == "zhTW" then
-  WQACHIEVEMENTS_TITLE = "|cff8080ff[成就]|r世界任务"
-else
-  WQACHIEVEMENTS_TITLE = "|cff8080ff[Achieve]|WQA"
-end
-
 local function GetExpansionByMissionID(missionID)
 	return WQA.missionList[missionID].expansion
 end
