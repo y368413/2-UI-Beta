@@ -345,11 +345,10 @@ function BlinkHealth:UpdateUnitValues()
 			hexColor = self:ToHexColor(UnitSelectionColor("target"));
 		end
 		--精英、银英、世界boss加前缀
-		if(UnitClassification("target")=="elite") then name="[精英]"..name; end
-		if(UnitClassification("target")=="rare") then name="[稀有]"..name; end
-		if(UnitClassification("target")=="rareelite") then name="[稀有精英]"..name; end
-		if(UnitClassification("target")=="worldboss") then name="[世界BOSS]"..name; end
-		
+		if(UnitClassification("target")=="elite") then name="[精英] "..name; end
+		if(UnitClassification("target")=="rare") then name="[稀有] "..name; end
+		if(UnitClassification("target")=="rareelite") then name="[稀有精英] "..name; end
+		if(UnitClassification("target")=="worldboss") then name="[世界BOSS] "..name; end
 		self.frame["target"].name:SetFormattedText("|cff%s%s|r", hexColor, name);
 		if (UnitExists("targettarget")) then
 			heal, maxheal = UnitHealth("targettarget"), UnitHealthMax("targettarget");

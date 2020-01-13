@@ -2257,7 +2257,7 @@ local nodes = Pandaria.nodeData;
 
 --if true then return end
 
-local function nameCheck ()
+--[[local function nameCheck ()
   for zone, zoneNodes in pairs(nodes) do
     for coords, node in pairs(zoneNodes) do
       local info = HandyNotes_Pandaria.getNodeInfo(node);
@@ -2281,4 +2281,4 @@ end
 
 HandyNotes_Pandaria.on('PLAYER_STOPPED_MOVING', function ()
   nameCheck();
-end);
+end);]]

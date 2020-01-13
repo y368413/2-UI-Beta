@@ -366,7 +366,7 @@ end
 
 function module:OnLogin()
 	if not MaoRUISettingDB["Bags"]["Enable"] then return end
-	if IsAddOnLoaded("Combuctor") or IsAddOnLoaded("Bagnon") then return end
+	if IsAddOnLoaded("Combuctor") or IsAddOnLoaded("Bagnon") or IsAddOnLoaded("Inventorian") then return end
 	-- Settings
 	local bagsScale = MaoRUISettingDB["Bags"]["BagsScale"]
 	local bagsWidth = MaoRUISettingDB["Bags"]["BagsWidth"]

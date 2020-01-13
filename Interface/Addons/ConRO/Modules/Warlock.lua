@@ -134,6 +134,7 @@ local ConRO_Warlock, ids = ...;
 		Whiplash = 6360, --Succubus
 		SpellLock = 19647, --Felhunter
 		DevourMagic = 19505, --Felhunter
+		OpticalBlast = 115781, --Observer
 		MeteorStrike = 171017, --Infernal	
 		ThreateningPresence = 112042, -- Voidwalker
 	}
@@ -233,6 +234,7 @@ local ConRO_Warlock, ids = ...;
 		Whiplash = 6360, --Succubus
 		SpellLock = 19647, --Felhunter
 		DevourMagic = 19505, --Felhunter
+		OpticalBlast = 115781, --Observer
 		MeteorStrike = 171017, --Infernal	
 		Felstorm = 89751, -- Felguard
 		AxeToss = 89766,
@@ -333,6 +335,7 @@ local ConRO_Warlock, ids = ...;
 		Whiplash = 6360, --Succubus
 		SpellLock = 19647, --Felhunter
 		DevourMagic = 19505, --Felhunter
+		OpticalBlast = 115781, --Observer
 		MeteorStrike = 171017, --Infernal	
 		ThreateningPresence = 112042, -- Voidwalker
 	}
@@ -432,6 +435,7 @@ function ConRO.Warlock.Affliction(_, timeShift, currentSpell, gcd, tChosen)
 	
 	local splock											= ConRO:AbilityReady(ids.Aff_PetAbility.SpellLock, timeShift);
 	local dmagic											= ConRO:AbilityReady(ids.Aff_PetAbility.DevourMagic, timeShift);
+	local oBlastRDY											= ConRO:AbilityReady(ids.Aff_PetAbility.OpticalBlast, timeShift);
 
 	local idAzBuff, idAzBCount, idAzBDur					= ConRO:Aura(ids.Warlock_AzTraitBuff.InevitableDemise, timeShift);
 
@@ -477,7 +481,8 @@ function ConRO.Warlock.Affliction(_, timeShift, currentSpell, gcd, tChosen)
 	ConRO:AbilityBurst(ids.Aff_Ability.SummonDarkglare, sumdarkglare and aDebuff and cDebuff and uaCount >= 1 and ConRO_BurstButton:IsVisible());
 	ConRO:AbilityBurst(ids.Aff_Talent.DarkSoulMisery, dsmisery and ConRO_BurstButton:IsVisible());	
 	
-	ConRO:AbilityInterrupt(ids.Aff_Ability.SpellLock, splock and ConRO:Interrupt());	
+	ConRO:AbilityInterrupt(ids.Aff_PetAbility.SpellLock, splock and ConRO:Interrupt());
+	ConRO:AbilityInterrupt(ids.Aff_PetAbility.OpticalBlast, oBlastRDY and ConRO:Interrupt());
 	ConRO:AbilityPurge(ids.Aff_PetAbility.DevourMagic, dmagic and ConRO:Purgable());
 	ConRO:AbilityPurge(ids.Racial.ArcaneTorrent, arctorrent and Close and ConRO:Purgable());
 	
@@ -706,7 +711,8 @@ function ConRO.Warlock.Demonology(_, timeShift, currentSpell, gcd, tChosen)
 	local splock 											= ConRO:AbilityReady(ids.Demo_PetAbility.SpellLock, timeShift);
 	local dmagic											= ConRO:AbilityReady(ids.Demo_PetAbility.DevourMagic, timeShift);
 	local felstorm, fsCD									= ConRO:AbilityReady(ids.Demo_PetAbility.Felstorm, timeShift);
-
+	local oBlastRDY											= ConRO:AbilityReady(ids.Demo_PetAbility.OpticalBlast, timeShift);
+	
 		local fkAzBuff, _, fkAzBDur								= ConRO:Aura(ids.Warlock_AzTraitBuff.ForbiddenKnowledge, timeShift);
 		local sbAzBuff, _, sbAzBDur								= ConRO:Aura(ids.Warlock_AzTraitBuff.ShadowsBite, timeShift);
 	local azChosen_ExplosivePotential						= ConRO:AzPowerChosen(ids.Warlock_AzTrait.ExplosivePotential);
@@ -743,7 +749,8 @@ function ConRO.Warlock.Demonology(_, timeShift, currentSpell, gcd, tChosen)
 	ConRO:AbilityBurst(ids.Demo_Talent.NetherPortal, nportal and sdtyrant and cdstalk and (svilefiend or not tChosen[ids.Demo_Talent.SummonVilefiend]) and shards >= 1 and currentSpell ~= ids.Demo_Talent.NetherPortal and ConRO_BurstButton:IsVisible());
 	ConRO:AbilityBurst(ids.Demo_Talent.Doom, doom and not dDebuff);
 	
-	ConRO:AbilityInterrupt(ids.Demo_Ability.SpellLock, splock and ConRO:Interrupt());
+	ConRO:AbilityInterrupt(ids.Demo_PetAbility.SpellLock, splock and ConRO:Interrupt());
+	ConRO:AbilityInterrupt(ids.Demo_PetAbility.OpticalBlast, oBlastRDY and ConRO:Interrupt());
 	ConRO:AbilityPurge(ids.Demo_PetAbility.DevourMagic, dmagic and ConRO:Purgable());
 	ConRO:AbilityPurge(ids.Racial.ArcaneTorrent, arctorrent and Close and ConRO:Purgable());
 	
@@ -958,6 +965,7 @@ function ConRO.Warlock.Destruction(_, timeShift, currentSpell, gcd, tChosen)
 		
 	local splock 											= ConRO:AbilityReady(ids.Dest_PetAbility.SpellLock, timeShift);
 	local dmagic											= ConRO:AbilityReady(ids.Dest_PetAbility.DevourMagic, timeShift);
+	local oBlastRDY											= ConRO:AbilityReady(ids.Dest_PetAbility.OpticalBlast, timeShift);
 
 	local azEssence_ConcentratedFlame						= ConRO:AbilityReady(ids.AzEssence.ConcentratedFlame, timeShift);
 	local azEssence_FocusedAzeriteBeam						= ConRO:AbilityReady(ids.AzEssence.FocusedAzeriteBeam, timeShift);	
@@ -981,7 +989,8 @@ function ConRO.Warlock.Destruction(_, timeShift, currentSpell, gcd, tChosen)
 	end
 
 --Indicators
-	ConRO:AbilityInterrupt(ids.Dest_Ability.SpellLock, splock and ConRO:Interrupt());
+	ConRO:AbilityInterrupt(ids.Dest_PetAbility.SpellLock, splock and ConRO:Interrupt());
+	ConRO:AbilityInterrupt(ids.Dest_PetAbility.OpticalBlast, oBlastRDY and ConRO:Interrupt());
 	ConRO:AbilityPurge(ids.Dest_PetAbility.DevourMagic, dmagic and ConRO:Purgable());
 	ConRO:AbilityPurge(ids.Racial.ArcaneTorrent, arctorrent and Close and ConRO:Purgable());
 
