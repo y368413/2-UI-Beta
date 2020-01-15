@@ -185,7 +185,6 @@ CanIMogIt.ICON_LOCATIONS = {
 
 
 ---- Auction Houses ----
--- Auction House = NUM_BROWSE_TO_DISPLAY
 CanIMogIt.NUM_BLACKMARKET_BUTTONS = 12  -- No Blizzard constant
 
 ---- Containers ----
@@ -318,8 +317,6 @@ local EVENTS = {
     "TRANSMOG_COLLECTION_UPDATED",
     "PLAYER_LOGIN",
     "GET_ITEM_INFO_RECEIVED",
-    "AUCTION_HOUSE_SHOW",
-    "AUCTION_ITEM_LIST_UPDATE",
     "BLACK_MARKET_OPEN",
     "BLACK_MARKET_ITEM_UPDATE",
     "BLACK_MARKET_CLOSE",
@@ -2396,20 +2393,20 @@ hooksecurefunc(GameTooltip, "SetBagItem",
 )
 
 
-hooksecurefunc(GameTooltip, "SetAuctionItem",
-    function(tooltip, type, index)
-        addToTooltip(tooltip, GetAuctionItemLink(type, index))
-    end
-)
+--hooksecurefunc(GameTooltip, "SetAuctionItem",
+    --function(tooltip, type, index)
+        --addToTooltip(tooltip, GetAuctionItemLink(type, index))
+    --end
+--)
 
 
-hooksecurefunc(GameTooltip, "SetAuctionSellItem",
-    function(tooltip)
-        local name = GetAuctionSellItemInfo()
-        local _, link = GetItemInfo(name)
-        addToTooltip(tooltip, link)
-    end
-)
+--hooksecurefunc(GameTooltip, "SetAuctionSellItem",
+    --function(tooltip)
+        --local name = GetAuctionSellItemInfo()
+        --local _, link = GetItemInfo(name)
+        --addToTooltip(tooltip, link)
+    --end
+--)
 
 
 hooksecurefunc(GameTooltip, "SetLootItem",

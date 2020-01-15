@@ -36,19 +36,17 @@ local S_ITEM_BOUND3 = _G.ITEM_BNETACCOUNTBOUND
 local S_ITEM_LEVEL = "^" .. string_gsub(_G.ITEM_LEVEL, "%%d", "(%%d+)")
 local S_TRANSMOGRIFY_STYLE_UNCOLLECTED = _G.TRANSMOGRIFY_STYLE_UNCOLLECTED
 local S_TRANSMOGRIFY_TOOLTIP_APPEARANCE_UNKNOWN = _G.TRANSMOGRIFY_TOOLTIP_APPEARANCE_UNKNOWN
-
--- Redoing this to take other locales into consideration, 
--- and to make sure we're capturing the slot count, and not the bag type. 
---local S_CONTAINER_SLOTS = "^" .. string_gsub(string_gsub(_G.CONTAINER_SLOTS, "%%d", "(%%d+)"), "%%s", "(%.+)")
 local S_CONTAINER_SLOTS = "^" .. (string.gsub(string.gsub(CONTAINER_SLOTS, "%%([%d%$]-)d", "(%%d+)"), "%%([%d%$]-)s", "%.+"))
 
 -- Localization. 
 -- *Just enUS so far. 
-local L = {
-	["BoE"] = "BoE", -- Bind on Equip 
-	["BoU"] = "BoU"  -- Bind on Use
-}
-
+if GetLocale() == "zhCN" or GetLocale() == "zhTW" then
+	Combuctor_ItemInfoBoE = "|cff1eff00装绑|r"; -- Bind on Equip 
+	Combuctor_ItemInfoBoU = "|cFF00DDFF    _|r";  -- Bind on Use
+else
+	Combuctor_ItemInfoBoE = "BoE"; -- Bind on Equip 
+	Combuctor_ItemInfoBoU = "BoU"; -- Bind on Use
+end
 -- FontString & Texture Caches
 local Cache_ItemBind = {}
 local Cache_ItemGarbage = {}
@@ -56,30 +54,30 @@ local Cache_ItemLevel = {}
 local Cache_Uncollected = {}
 
 -- Flag tracking merchant frame visibility
-local MERCHANT_VISIBLE
+--local MERCHANT_VISIBLE
 
 -- Just keep this running, regardless of other stuff (?)
 -- *might be conflicts with the standard Update function here. 
-local MerchantTracker = CreateFrame("Frame")
-MerchantTracker:RegisterEvent("MERCHANT_SHOW")
-MerchantTracker:RegisterEvent("MERCHANT_CLOSED")
-MerchantTracker:SetScript("OnEvent", function(self, event, ...) 
-	if (event == "MERCHANT_SHOW") then
-		MERCHANT_VISIBLE = true
-	elseif (event == "MERCHANT_CLOSED") then 
-		MERCHANT_VISIBLE = false
-	end
-	for button,ItemGarbage in pairs(Cache_ItemGarbage) do
-		local JunkIcon = button.JunkIcon
-		if JunkIcon then
-			if (MERCHANT_VISIBLE and ItemGarbage.showJunk) then 
-				JunkIcon:Show()
-			else 
-				JunkIcon:Hide()
-			end
-		end
-	end
-end)
+--local MerchantTracker = CreateFrame("Frame")
+--MerchantTracker:RegisterEvent("MERCHANT_SHOW")
+--MerchantTracker:RegisterEvent("MERCHANT_CLOSED")
+--MerchantTracker:SetScript("OnEvent", function(self, event, ...) 
+	--if (event == "MERCHANT_SHOW") then
+		--MERCHANT_VISIBLE = true
+	--elseif (event == "MERCHANT_CLOSED") then 
+		--MERCHANT_VISIBLE = false
+	--end
+	--for button,ItemGarbage in pairs(Cache_ItemGarbage) do
+		--local JunkIcon = button.JunkIcon
+		--if JunkIcon then
+			--if (MERCHANT_VISIBLE and ItemGarbage.showJunk) then 
+				--JunkIcon:Show()
+			--else 
+				--JunkIcon:Hide()
+			--end
+		--end
+	--end
+--end)
 
 -----------------------------------------------------------
 -- Utility Functions
@@ -291,7 +289,7 @@ local Update = function(self)
 			--local ItemBind = Cache_ItemBind[self] or Cache_GetItemBind(self)
 			--local r, g, b = GetItemQualityColor(itemRarity)
 			--ItemBind:SetTextColor(r * 2/3, g * 2/3, b * 2/3)
-			--ItemBind:SetText((bindType == 3) and L["BoU"] or L["BoE"])
+			--ItemBind:SetText((bindType == 3) and Combuctor_ItemInfoBoU or Combuctor_ItemInfoBoE)
 		--else 
 			--if Cache_ItemBind[self] then 
 				--Cache_ItemBind[self]:SetText("")
@@ -302,8 +300,6 @@ local Update = function(self)
 		-- ItemLevel
 		---------------------------------------------------
 		if (itemEquipLoc == "INVTYPE_BAG") then 
-			
-
 			local scannedSlots
 			local line = _G[ScannerTipName.."TextLeft3"]
 			if line then
@@ -406,18 +402,18 @@ local Update = function(self)
 			end
 		end
 
-		local JunkIcon = self.JunkIcon
-		if JunkIcon then 
-			local ItemGarbage = Cache_ItemGarbage[self] 
-			if ItemGarbage then 
-				ItemGarbage.showJunk = showJunk
-			end 
-			if (MERCHANT_VISIBLE and showJunk) then 
-				JunkIcon:Show()
-			else
-				JunkIcon:Hide()
-			end
-		end
+		--local JunkIcon = self.JunkIcon
+		--if JunkIcon then 
+			--local ItemGarbage = Cache_ItemGarbage[self] 
+			--if ItemGarbage then 
+				--ItemGarbage.showJunk = showJunk
+			--end 
+			--if (MERCHANT_VISIBLE and showJunk) then 
+				--JunkIcon:Show()
+			--else
+				--JunkIcon:Hide()
+			--end
+		--end
 
 	else
 		if Cache_Uncollected[self] then 
@@ -433,14 +429,14 @@ local Update = function(self)
 			Cache_ItemGarbage[self]:Hide()
 			Cache_ItemGarbage[self].showJunk = nil
 		end
-		local JunkIcon = self.JunkIcon
-		if JunkIcon then 
-			if (MERCHANT_VISIBLE and showJunk) then 
-				JunkIcon:Show()
-			else
-				JunkIcon:Hide()
-			end
-		end
+		--local JunkIcon = self.JunkIcon
+		--if JunkIcon then 
+			--if (MERCHANT_VISIBLE and showJunk) then 
+				--JunkIcon:Show()
+			--else
+				--JunkIcon:Hide()
+			--end
+		--end
 	end	
 end 
 

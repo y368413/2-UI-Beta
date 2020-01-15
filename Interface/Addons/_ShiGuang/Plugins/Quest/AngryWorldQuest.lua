@@ -145,7 +145,7 @@ local configDefaults = {
 	showHoveredPOI = true,
 	onlyCurrentZone = true,
 	selectedFilters = 0,
-	disabledFilters = 65232,  --32616  47312
+	disabledFilters = 47248,
 	filterEmissary = 0,
 	filterLoot = 0,
 	filterFaction = 0,
@@ -191,35 +191,19 @@ setmetatable(Config, {
 })
 
 function Config:Get(key)
-	if self:CharacterConfig() then
-		if AngryWorldQuests_CharacterConfig == nil or AngryWorldQuests_CharacterConfig[key] == nil then
-			return configDefaults[key]
-		else
-			return AngryWorldQuests_CharacterConfig[key]
-		end
-	else
 		if AngryWorldQuests_Config == nil or AngryWorldQuests_Config[key] == nil then
 			return configDefaults[key]
 		else
 			return AngryWorldQuests_Config[key]
 		end
-	end
 end
 
 function Config:Set(key, newValue, silent)
-	if self:CharacterConfig() then
-		if configDefaults[key] == newValue then
-			AngryWorldQuests_CharacterConfig[key] = nil
-		else
-			AngryWorldQuests_CharacterConfig[key] = newValue
-		end
-	else
 		if configDefaults[key] == newValue then
 			AngryWorldQuests_Config[key] = nil
 		else
 			AngryWorldQuests_Config[key] = newValue
 		end
-	end
 	if key == 'selectedFilters' then 
 		__filterTable = nil
 	end
@@ -332,20 +316,6 @@ function Config:ToggleFilter(key)
 	return not currentValue
 end
 
-function Config:CharacterConfig()
-	return AngryWorldQuests_CharacterConfig and AngryWorldQuests_CharacterConfig['__enabled']
-end
-
-function Config:SetCharacterConfig(enabled)
-	AngryWorldQuests_CharacterConfig['__enabled'] = enabled
-	if not AngryWorldQuests_CharacterConfig['__init'] then
-		AngryWorldQuests_CharacterConfig['__init'] = true
-		for key,value in pairs(AngryWorldQuests_Config) do
-			AngryWorldQuests_CharacterConfig[key] = value
-		end
-	end
-end
-
 local panelOriginalConfig = {}
 local optionPanel
 
@@ -405,18 +375,6 @@ local function CheckBox_OnClick(self)
 		panelOriginalConfig[key] = Config[key]
 	end
 	Config:Set(key, self:GetChecked())
-end
-
-local function CharConfigCheckBox_OnClick(self)
-	local status = Config:CharacterConfig()
-	Config:SetCharacterConfig( not status )
-
-	for key,callbacks_key in pairs(callbacks) do
-		for _, func in ipairs(callbacks_key) do
-			func(key, Config:Get(key))
-		end
-	end
-	Panel_OnRefresh(optionPanel)
 end
 
 local function DropDown_OnClick(self, dropdown)
@@ -487,19 +445,12 @@ local function DropDown_Create(self)
 	return dropdown
 end
 
-local panelInit, checkboxes, dropdowns, filterCheckboxes, charConfigCheckbox
+local panelInit, checkboxes, dropdowns, filterCheckboxes
 Panel_OnRefresh = function(self)
 	if not panelInit then
 		local footer = self:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
 		footer:SetPoint('BOTTOMRIGHT', -16, 16)
 		footer:SetText( AngryWorldQuest.Version or "Dev" )
-
-		charConfigCheckbox = CreateFrame("CheckButton", nil, self, "InterfaceOptionsCheckButtonTemplate")
-		charConfigCheckbox:SetScript("OnClick", CharConfigCheckBox_OnClick)
-		charConfigCheckbox.Text:SetFontObject("GameFontHighlightSmall")
-		charConfigCheckbox.Text:SetPoint("LEFT", charConfigCheckbox, "RIGHT", 0, 1)
-		charConfigCheckbox.Text:SetText( AngryWorldQuest.Locale.config_characterConfig )
-		charConfigCheckbox:SetPoint("BOTTOMLEFT", 14, 12)
 
 		local label = self:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
 		label:SetPoint("TOPLEFT", 16, -16)
@@ -561,8 +512,6 @@ Panel_OnRefresh = function(self)
 
 		panelInit = true
 	end
-
-	charConfigCheckbox:SetChecked( Config:CharacterConfig() )
 	
 	for _, check in ipairs(checkboxes) do
 		CheckBox_Update(check)
@@ -594,17 +543,12 @@ end
 
 function Config:BeforeStartup()
 	if AngryWorldQuests_Config == nil then AngryWorldQuests_Config = {} end
-	if AngryWorldQuests_CharacterConfig == nil then AngryWorldQuests_CharacterConfig = {} end
 
 	if not AngryWorldQuests_Config['__version'] then
 		AngryWorldQuests_Config['__version'] = configVersion
 	end
-	if not AngryWorldQuests_CharacterConfig['__version'] then
-		AngryWorldQuests_CharacterConfig['__version'] = configVersion
-	end
 
 	AngryWorldQuests_Config['__version'] = configVersion
-	AngryWorldQuests_CharacterConfig['__version'] = configVersion
 
 	if not self:Get('saveFilters') then
 		AngryWorldQuests_Config.selectedFilters = nil
@@ -613,21 +557,13 @@ function Config:BeforeStartup()
 		AngryWorldQuests_Config.filterFaction = nil
 		AngryWorldQuests_Config.filterZone = nil
 		AngryWorldQuests_Config.filterTime = nil
-		AngryWorldQuests_CharacterConfig.selectedFilters = nil
-		AngryWorldQuests_CharacterConfig.filterEmissary = nil
-		AngryWorldQuests_CharacterConfig.filterLoot = nil
-		AngryWorldQuests_CharacterConfig.filterFaction = nil
-		AngryWorldQuests_CharacterConfig.filterZone = nil
-		AngryWorldQuests_CharacterConfig.filterTime = nil
 	end
 
 end
 
 function Config:Startup()
 	local lastFilter = AngryWorldQuests_Config['__filters']
-	local lastFilter2 = AngryWorldQuests_CharacterConfig['__filters']
 	local value = AngryWorldQuests_Config['disabledFilters'] or 0
-	local value2 = AngryWorldQuests_CharacterConfig['disabledFilters'] or 0
 	local maxFilter = 0
 	for key,index in pairs(FiltersConversion) do
 		if AngryWorldQuest.QuestFrame.Filters[key] then
@@ -639,20 +575,11 @@ function Config:Startup()
 					value = bit.bor(value, mask)
 				end
 			end
-			if not lastFilter2 or index > lastFilter2 then
-				if AngryWorldQuest.QuestFrame.Filters[key].default  then
-					value2 = bit.band(value2, bit.bnot(mask))
-				else
-					value2 = bit.bor(value2, mask)
-				end
-			end
 			if index > maxFilter then maxFilter = index end
 		end
 	end
 	AngryWorldQuests_Config['disabledFilters'] = value
 	AngryWorldQuests_Config['__filters'] = maxFilter
-	AngryWorldQuests_CharacterConfig['disabledFilters'] = value2
-	AngryWorldQuests_CharacterConfig['__filters'] = maxFilter
 
 	optionPanel = self:CreatePanel('AngryWorldQuest')
 end

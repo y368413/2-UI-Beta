@@ -25,7 +25,7 @@ function AutoDisplay:RegisterGameEvents()
 	self:RegisterMessage('CACHE_BANK_CLOSED')
 	self:RegisterMessage('CACHE_BANK_OPENED')
 
-	self:RegisterDisplayEvents('displayAuction', 'AUCTION_HOUSE_SHOW', 'AUCTION_HOUSE_CLOSED')
+	--self:RegisterDisplayEvents('displayAuction', 'AUCTION_HOUSE_SHOW', 'AUCTION_HOUSE_CLOSED')
 	self:RegisterDisplayEvents('displayCraft', 'TRADE_SKILL_SHOW', 'TRADE_SKILL_CLOSE')
 	self:RegisterDisplayEvents('displayTrade', 'TRADE_SHOW', 'TRADE_CLOSED')
 

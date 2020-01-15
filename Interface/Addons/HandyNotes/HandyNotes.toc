@@ -7,7 +7,7 @@
 ## Notes: Handynotes with(BfA-Achievments+BattleForAzerothTreasures)
 ## Notes-zhCN: 宝藏将会在地图上标记出，概览所有稀有，判定你是否击杀了一次性稀有。
 ## Notes-zhTW: 宝藏将会在地图上标记出，概覽所有稀有，并判定時候已擊殺過。
-## SavedVariables: HandyNotesDB, HandyNotes_HandyNotesDB, HandyNotesArathiDB, Handynotes_PandariaDB, HandyNotes_WarfrontTreasuresDB, HandyNotes_BFA_HF_TrackerDB, NPC_Name_CacheDB, Item_Name_CacheDB, HNMoleMachineConfig, HandyNotes_MechagonAndNazjatarDB
+## SavedVariables: HandyNotesDB, HandyNotes_HandyNotesDB, HandyNotesArathiDB, Handynotes_PandariaDB, HandyNotes_WarfrontTreasuresDB, HandyNotes_BFA_HF_TrackerDB, NPC_Name_CacheDB, Item_Name_CacheDB, HNMoleMachineConfig, HandyNotes_MechagonAndNazjatarDB, HandyNotes_ScarabCoffersDB
 ## Dependencies: _ShiGuang
 
 ## X-Repple: 2 UI
@@ -41,6 +41,7 @@ BFA\HandyNotes_BFA_HF_Tracker.lua
 BFA\HandyNotes_MechagonAndNazjatar.lua
 
 # Mode files
+Mode\HandyNotes_ScarabCoffers.lua
 Mode\HandyNotes_MoleMachine.lua
 Mode\HandyNotes_LightningPaw.lua
 Mode\HandyNotes_DungeonLocations.lua

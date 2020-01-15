@@ -4,7 +4,7 @@
 ## Notes: Time Flies...
 ## Version: 3.2.9
 ## SavedVariables: MaoRUIDB,ShiGuangDB,CurrencyTrackingDB,VLegionToDo,CastbarsDB,iKeystonesDB,iKeystonesConfig,DialogKeyDB,AzeritePowerWeightsDB,TinyRosterDB,AngryWorldQuests_Config, WQADB
-## SavedVariablesPerCharacter: MaoRUISettingDB,ShiGuangPerDB,DEX_SAVE,FLOFLYOUT_CONFIG,AngryWorldQuests_CharacterConfig
+## SavedVariablesPerCharacter: MaoRUISettingDB,ShiGuangPerDB,DEX_SAVE,FLOFLYOUT_CONFIG
 
 ## X-Support: 8.2.5
 ## X-Repple: 2 UI
