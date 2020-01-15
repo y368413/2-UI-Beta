@@ -17,8 +17,7 @@ local quest = {
 	 "点击聊天框角色名称可实现:|cff3399FF     Shift-密语 Ctrl-邀请工会 Alt-组队邀请",
    "|cFF00DDFF如需改进和反馈，可以回帖或者在讨论组(n9PnFl0o)告诉我，谢谢。",
    "-------------------------------"..GetAddOnMetadata("_ShiGuang", "X-StatsVersion").."----[正式]",
-
-   "[调整]有增加、有删减，主要是为了过几天的8.3做准备。",
+   "[调整]初步适配8.3，因为春节将近工作太忙，偶发bug请及时反馈以便修复",
    "[插件]版本号升级为v "..GetAddOnMetadata("_ShiGuang", "Version"),
    "--------------------------over",
 

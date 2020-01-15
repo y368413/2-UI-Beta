@@ -1,9 +1,0 @@
-## Interface: 80200
-## Title: !Test!
-## Notes: Test some luas
-## DefaultState: disabled
-## Dependencies: _ShiGuang
-
-## X-Repple: 2 UI
-
-Test.lua

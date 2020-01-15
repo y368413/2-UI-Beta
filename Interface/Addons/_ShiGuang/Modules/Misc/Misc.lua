@@ -406,22 +406,7 @@ do
 	M:RegisterEvent("ARCHAEOLOGY_FIND_COMPLETE", updateArcTitle)
 end
 
-
--- Show BID and highlight price
--- AH Gold Icon
-local function formats(value)
-	local str = ''
-	if value > 9999 then
-		str = str .. format('|c00ffd700%d●|r', floor(value / 10000))
-	end
-	if value > 99 and floor(value/100)%100 ~= 0 then
-		str = str .. format('|c00c7c7cf%d●|r', (floor(value / 100) % 100))
-	end
-	if floor(value)%100 ~= 0 then
-		str = str .. format('|c00eda55f%d●|r', (floor(value) % 100))
-	end
-	return str
-end
+--[[ Show BID and highlight price
 do
 	local function setupMisc(event, addon)
 		if addon == "Blizzard_AuctionUI" then
@@ -443,6 +428,20 @@ do
 						local itemName = _G[buttonName.."Name"]
 						local moneyFrame = _G[buttonName.."MoneyFrame"]
 						local buyoutMoney = _G[buttonName.."BuyoutFrameMoney"]
+						-- AH Gold Icon
+						local function formats(value)
+							local str = ''
+							if value > 9999 then
+								str = str .. format('|c00ffd700%d●|r', floor(value / 10000))
+							end
+							if value > 99 and floor(value/100)%100 ~= 0 then
+								str = str .. format('|c00c7c7cf%d●|r', (floor(value / 100) % 100))
+							end
+							if floor(value)%100 ~= 0 then
+								str = str .. format('|c00eda55f%d●|r', (floor(value) % 100))
+							end
+							return str
+						end
 						if buyoutPrice >= 5*1e7 then color = "red" end
 							if bidAmount > 0 then
 								name = name .. " |cffffff00[￥]|r"
@@ -461,7 +460,7 @@ do
 		end
 	end
 	M:RegisterEvent("ADDON_LOADED", setupMisc)
-end
+end]]
 
 -- Drag AltPowerbar
 do

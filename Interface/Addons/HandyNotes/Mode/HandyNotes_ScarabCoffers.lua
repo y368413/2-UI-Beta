@@ -237,7 +237,7 @@ ScarabCoffers_defaults = {
 
 ScarabCoffers_options = {
     type = "group",
-    name = "HandyNotes_ScarabCoffers",
+    name = "ScarabCoffers",
     get = function(info) return ScarabCoffers_db[info[#info]] end,
     set = function(info, v)
         ScarabCoffers_db[info[#info]] = v

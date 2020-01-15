@@ -1,4 +1,4 @@
-﻿--## Author: wT  ## Version: 1.5.7.1
+﻿--## Author: wT  ## Version: 1.5.8
 local _, BossesKilled = ...
 if not BossesKilled.RegisterEvent and not BossesKilled.UnregisterEvent and not BossesKilled.UnregisterAllEvents then
 	local f = CreateFrame("frame")
@@ -340,7 +340,7 @@ BossesKilled.raidData = {
   [1732] = { numEncounters = 3, startFrom =  1 }, -- Crimson Descent
   [1733] = { numEncounters = 2, startFrom =  1 }, -- Heart of Corruption
 	
-	-- Battle of Dazar'alor - coming soon
+	-- Battle of Dazar'alor
 	[1945] = { numEncounters = 3, startFrom =  1 },
 	[1946] = { numEncounters = 3, startFrom =  1 },
 	[1947] = { numEncounters = 3, startFrom =  1 },
@@ -355,4 +355,10 @@ BossesKilled.raidData = {
 	[2009] = { numEncounters = 3, startFrom =  1 }, -- The Grand Reception
 	[2010] = { numEncounters = 3, startFrom =  1 }, -- Depths of the Devoted
 	[2011] = { numEncounters = 2, startFrom =  1 }, -- The Circle of Stars
+	
+	-- Ny'alotha, the Waking City
+	[2036] = { numEncounters = 3, startFrom =  1 }, -- Vision of Destiny
+	[2037] = { numEncounters = 4, startFrom =  1 }, -- Halls of Devotion
+	[2038] = { numEncounters = 3, startFrom =  1 }, -- Gift of Flesh
+	[2039] = { numEncounters = 2, startFrom =  1 }, -- The Waking Dream
 }

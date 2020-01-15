@@ -1,4 +1,4 @@
-﻿## Interface: 80205
+## Interface: 80300
 ## Title: AutoLoadPetTeam For Rematch
 ## Title-zhCN: AutoLoadPetTeam For Rematch
 ## Notes: 宠物自动换队-适配Rematch版

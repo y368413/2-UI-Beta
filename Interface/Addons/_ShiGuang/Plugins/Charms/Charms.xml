@@ -3,8 +3,8 @@
 	<Script file="rlTools.lua"/>
 	<Script file="kAutoOpen.lua"/>
 	<Script file="xMerchant.lua"/>
-	<Script file="AlterCurrencies.lua"/>
-	<!--Script file="StatPriority.lua"/-->
 	<Script file="FriendGroups.lua"/>
-	<Script file="SX_ImprovingDressup.lua"/>
+	<Script file="AlterCurrencies.lua"/>
+	<!--Script file="StatPriority.lua">
+	<Script file="SX_ImprovingDressup.lua"//-->
 </Ui>

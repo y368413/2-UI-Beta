@@ -1,4 +1,4 @@
-## Interface:  80205
+## Interface: 80300
 ## Title: mOnAr's WardrobeHelper
 ## Version: 1.18.5
 ## Author: mOnAr

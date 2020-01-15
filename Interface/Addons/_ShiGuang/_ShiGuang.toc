@@ -1,14 +1,14 @@
-## Interface: 80205
+## Interface: 80300
 ## Title:-|cFFFFFF00 2|r|cFFFF0000 UI |r-
 ## Author: ShiGuang、TuTu、Siweia
 ## Notes: Time Flies...
-## Version: 3.2.9
-## SavedVariables: MaoRUIDB,ShiGuangDB,CurrencyTrackingDB,VLegionToDo,CastbarsDB,iKeystonesDB,iKeystonesConfig,DialogKeyDB,AzeritePowerWeightsDB,TinyRosterDB,AngryWorldQuests_Config, WQADB
-## SavedVariablesPerCharacter: MaoRUISettingDB,ShiGuangPerDB,DEX_SAVE,FLOFLYOUT_CONFIG
+## Version: 3.3.0
+## SavedVariables: MaoRUIDB,ShiGuangDB,CurrencyTrackingDB,VLegionToDo,CastbarsDB,DialogKeyDB,AzeritePowerWeightsDB,TinyRosterDB,AngryWorldQuests_Config, WQADB
+## SavedVariablesPerCharacter: MaoRUISettingDB,ShiGuangPerDB,DEX_SAVE
 
-## X-Support: 8.2.5
+## X-Support: 8.3.0
 ## X-Repple: 2 UI
-## X-StatsVersion: 20200106
+## X-StatsVersion: 20200115
 ## X-LoadOn-Always: Delayed
 ## X-Website: https://github.com/y368413/2-UI
 ## X-Credits: abin, ape47, Coolkid, Elv, Freebaser, Haleth, Haste, Loshine, Monolit, Neal, Neavo, p3lim, Qulight, Ray, superk, Tukz, Tuller, Warbaby, yleaf, Zork, EK, Rubgrsch, siweia & "PaoPao"...

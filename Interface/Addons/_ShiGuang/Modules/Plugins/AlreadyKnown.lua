@@ -116,7 +116,7 @@ if IsAddOnLoaded("Blizzard_GuildBankUI") then
 	hooksecurefunc("GuildBankFrame_Update", GuildBankFrame_Update)
 end
 
--- auction frame
+--[[ auction frame
 local function AuctionFrameBrowse_Update()
 	local numItems = GetNumAuctionItems("list")
 	local offset = FauxScrollFrame_GetOffset(BrowseScrollFrame)
@@ -178,21 +178,21 @@ if IsAddOnLoaded("Blizzard_AuctionUI") then
 	hooksecurefunc("AuctionFrameBrowse_Update", AuctionFrameBrowse_Update)
 	hooksecurefunc("AuctionFrameBid_Update", AuctionFrameBid_Update)
 	hooksecurefunc("AuctionFrameAuctions_Update", AuctionFrameAuctions_Update)
-end
+end]]
 
 -- for LoD addons
-if not (isBlizzard_GuildBankUILoaded and isBlizzard_AuctionUILoaded) then
+if not (isBlizzard_GuildBankUILoaded) then  -- and isBlizzard_AuctionUILoaded
 	local function OnEvent(self, event, addonName)
 		if addonName == "Blizzard_GuildBankUI" then
 			isBlizzard_GuildBankUILoaded = true
 			hooksecurefunc("GuildBankFrame_Update", GuildBankFrame_Update)
-		elseif addonName == "Blizzard_AuctionUI" then
-			isBlizzard_AuctionUILoaded = true
-			hooksecurefunc("AuctionFrameBrowse_Update", AuctionFrameBrowse_Update)
-			hooksecurefunc("AuctionFrameBid_Update", AuctionFrameBid_Update)
-			hooksecurefunc("AuctionFrameAuctions_Update", AuctionFrameAuctions_Update)
+		--elseif addonName == "Blizzard_AuctionUI" then
+			--isBlizzard_AuctionUILoaded = true
+			--hooksecurefunc("AuctionFrameBrowse_Update", AuctionFrameBrowse_Update)
+			--hooksecurefunc("AuctionFrameBid_Update", AuctionFrameBid_Update)
+			--hooksecurefunc("AuctionFrameAuctions_Update", AuctionFrameAuctions_Update)
 		end
-		if isBlizzard_GuildBankUILoaded and isBlizzard_AuctionUILoaded then
+		if isBlizzard_GuildBankUILoaded then --and isBlizzard_AuctionUILoaded 
 			self:UnregisterEvent(event)
 			self:SetScript("OnEvent", nil)
 			OnEvent = nil

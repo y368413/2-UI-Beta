@@ -3,7 +3,7 @@
 	<Script file="SubSpec.lua"/>
 	<Script file="Merchant.lua"/>
 	<Script file="Molinari.lua"/>
-	<Script file="AHhelper.lua"/>
+	<!--Script file="AHhelper.lua"/-->
 	<Script file="NomiCakes.lua"/>
 	<Script file="AutoFollow.lua"/>
 	<Script file="Talentless.lua"/>
