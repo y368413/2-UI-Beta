@@ -2,7 +2,7 @@
 local M, R, U, I = unpack(ns)
 local MISC = M:GetModule("Misc")
 
-local strsplit, pairs, tonumber, sub = string.split, pairs, tonumber, string.sub
+local strsplit, pairs, tonumber, sub, strfind = string.split, pairs, tonumber, string.sub, string.find
 local deletedelay, mailItemIndex, inboxItems = .5, 0, {}
 local button1, button2, button3, lastopened, imOrig_InboxFrame_OnClick, hasNewMail, takingOnlyCash, onlyCurrentMail, needsToWait, skipMail
 
@@ -191,6 +191,115 @@ function MISC:InboxItem_OnEnter()
 	end
 end
 
+function MISC:MailBox_ContactList()
+	local bars = {}
+	local barIndex = 0
+
+	local bu = M.CreateGear(SendMailFrame)
+	bu:SetPoint("LEFT", SendMailNameEditBox, "RIGHT", 3, 0)
+
+	local list = CreateFrame("Frame", nil, bu)
+	list:SetSize(200, 424)
+	list:SetPoint("TOPLEFT", MailFrame, "TOPRIGHT", 5, 0)
+	list:SetFrameStrata("Tooltip")
+	M.SetBD(list)
+	M.CreateFS(list, 14, U["ContactList"], "system", "TOP", 0, -5)
+
+	local editbox = M.CreateEditBox(list, 120, 25)
+	editbox:SetPoint("TOPLEFT", 5, -22)
+	local swatch = M.CreateColorSwatch(list, "")
+	swatch:SetPoint("LEFT", editbox, "RIGHT", 5, 0)
+
+	local function sortBars()
+		local index = 0
+		for _, bar in pairs(bars) do
+			if bar:IsShown() then
+				bar:SetPoint("TOPLEFT", list, 5, -50 - index*22)
+				index = index + 1
+			end
+		end
+	end
+
+	local function buttonOnClick(self)
+		local text = self.name:GetText() or ""
+		SendMailNameEditBox:SetText(text)
+	end
+
+	local function deleteOnClick(self)
+		MaoRUIDB["ContactList"][self.__owner.name:GetText()] = nil
+		self.__owner:Hide()
+		sortBars()
+		barIndex = barIndex - 1
+	end
+
+	local function createContactBar(text, r, g, b)
+		local button = CreateFrame("Button", nil, list)
+		button:SetSize(165, 20)
+		button.HL = button:CreateTexture(nil, "HIGHLIGHT")
+		button.HL:SetAllPoints()
+		button.HL:SetColorTexture(1, 1, 1, .25)
+	
+		button.name = M.CreateFS(button, 13, text, false, "LEFT", 10, 0)
+		button.name:SetPoint("RIGHT", button, "LEFT", 230, 0)
+		button.name:SetJustifyH("LEFT")
+		button.name:SetTextColor(r, g, b)
+	
+		button:RegisterForClicks("AnyUp")
+		button:SetScript("OnClick", buttonOnClick)
+	
+		button.delete = M.CreateButton(button, 20, 20, true, "Interface\\RAIDFRAME\\ReadyCheck-NotReady")
+		button.delete:SetPoint("LEFT", button, "RIGHT", 5, 0)
+		button.delete.__owner = button
+		button.delete:SetScript("OnClick", deleteOnClick)
+	
+		return button
+	end
+
+	local function createBar(text, r, g, b)
+		if barIndex < 17 then
+			barIndex = barIndex + 1
+		end
+		for i = 1, barIndex do
+			if not bars[i] then
+				bars[i] = createContactBar(text, r, g, b)
+			end
+			if not bars[i]:IsShown() then
+				bars[i]:Show()
+				bars[i].name:SetText(text)
+				bars[i].name:SetTextColor(r, g, b)
+				break
+			end
+		end
+	end
+
+	bu:SetScript("OnClick", function()
+		ToggleFrame(list)
+	end)
+
+	local add = M.CreateButton(list, 42, 25, ADD, 14)
+	add:SetPoint("LEFT", swatch, "RIGHT", 5, 0)
+	add:SetScript("OnClick", function()
+		local text = editbox:GetText()
+		if text == "" or tonumber(text) then return end -- incorrect input
+		if not strfind(text, "-") then text = text.."-"..I.MyRealm end -- complete player realm name
+
+		local r, g, b = swatch.tex:GetVertexColor()
+		MaoRUIDB["ContactList"][text] = r..":"..g..":"..b
+		createBar(text, r, g, b)
+		sortBars()
+		editbox:SetText("")
+	end)
+
+	for name, color in pairs(MaoRUIDB["ContactList"]) do
+		if color then
+			local r, g, b = strsplit(":", color)
+			r, g, b = tonumber(r), tonumber(g), tonumber(b)
+			createBar(name, r, g, b)
+		end
+	end
+	sortBars()
+end
+
 function MISC:MailBox()
 	if not MaoRUISettingDB["Misc"]["Mail"] then return end
 	if IsAddOnLoaded("Postal") then return end
@@ -228,10 +337,18 @@ function MISC:MailBox()
 	hooksecurefunc("InboxFrame_Update", MISC.InboxFrame_Hook)
 	hooksecurefunc("InboxFrameItem_OnEnter", MISC.InboxItem_OnEnter)
 
+	MISC:MailBox_ContactList()
+
 	-- Replace the alert frame
 	if InboxTooMuchMail then
 		InboxTooMuchMail:ClearAllPoints()
 		InboxTooMuchMail:SetPoint("BOTTOM", MailFrame, "TOP", 0, 5)
+	end
+
+	if MaoRUISettingDB["Skins"]["BlizzardSkins"] then
+		M.Reskin(button1)
+		M.Reskin(button2)
+		M.Reskin(button3)
 	end
 
 	-- Hide Blizz

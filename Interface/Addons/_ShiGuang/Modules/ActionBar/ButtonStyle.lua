@@ -118,14 +118,13 @@ local function SetupCooldown(cooldown, cfg)
 end
 
 local function SetupBackdrop(button)
-	local bg = M.CreateBG(button, 0)
-	M.CreateBD(bg)
-	M.CreateSD(bg)
-	M.CreateTex(bg)
+	M.CreateBD(button, .25)
+	M.CreateTex(button)
+	M.CreateSD(button)
 	if MaoRUISettingDB["Actionbar"]["Classcolor"] then
-		bg:SetBackdropColor(I.r, I.g, I.b, .25)
+		button:SetBackdropColor(I.r, I.g, I.b, .25)
 	else
-		bg:SetBackdropColor(.2, .2, .2, .25)
+		button:SetBackdropColor(.2, .2, .2, .25)
 	end
 end
 

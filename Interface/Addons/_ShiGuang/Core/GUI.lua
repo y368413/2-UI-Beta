@@ -31,6 +31,7 @@ local defaultSettings = {
 		Scale = 1,
 		BindType = 1,
 		OverrideWA = false,
+		MicroMenu = true,
 	},
 	Bags = {
 		Enable = true,
@@ -47,6 +48,9 @@ local defaultSettings = {
 		FavouriteItems = {},
 		GatherEmpty = false,
 		ShowNewItem = true,
+		SplitCount = 1,
+		SpecialBagsColor = false,
+		iLvlToShow = 1,
 	},
 	Auras = {
 		Reminder = true,
@@ -95,6 +99,7 @@ local defaultSettings = {
 		ChatWidth = 360,
 		ChatHeight = 121,
 		Outline = false,
+		BlockStranger = false,
 	},
 	Map = {
 		Coord = true,
@@ -154,7 +159,15 @@ local defaultSettings = {
 		Details = true,
 		PGFSkin = true,
 		Rematch = true,
-		InfobarLine = true,
+		ToggleDirection = 1,
+		BlizzardSkins = true,
+		SkinAlpha = .5,
+		DefaultBags = false,
+		FlatMode = false,
+		AlertFrames = true,
+		FontOutline = true,
+		Loot = true,
+		Shadow = true,
 	},
 	Tooltip = {
 		CombatHide = true,
@@ -176,6 +189,7 @@ local defaultSettings = {
 		Mail = true,
 		ItemLevel = true,
 		GemNEnchant = true,
+		AzeriteTraits = true,
 		MissingStats = true,
 		HideErrors = true,
 		SoloInfo = true,
@@ -222,6 +236,8 @@ local defaultSettings = {
 		RaidCD = true,
 		PulseCD = false,
 		SorasThreat = true,
+		DBMCount = "10",
+		EasyMarking = true,
 	},
 	Tutorial = {
 		Complete = false,
@@ -252,6 +268,7 @@ local accountSettings = {
 	AutoBubbles = false,
 	SystemInfoType = 1,
 	DisableInfobars = false,
+	ContactList = {}
 }
 
 -- Initial settings
@@ -277,7 +294,7 @@ local function InitialSettings(source, target, fullClean)
 
 	for i, j in pairs(target) do
 		if source[i] == nil then target[i] = nil end
-		if type(j) == "table" and fullClean then
+		if fullClean and type(j) == "table" then
 			for k, v in pairs(j) do
 				if type(v) ~= "table" and source[i] and source[i][k] == nil then
 					target[i][k] = nil
@@ -296,6 +313,7 @@ loader:SetScript("OnEvent", function(self, _, addon)
 		MaoRUISettingDB["BFA"] = true
 	end
 
+	M:SetupUIScale(true)
 	InitialSettings(defaultSettings, MaoRUISettingDB, true)
 	InitialSettings(accountSettings, MaoRUIDB)
 	I.normTex = textureList[MaoRUIDB["TexStyle"]]
@@ -310,6 +328,10 @@ end
 
 local function updateBagSortOrder()
 	SetSortBagsRightToLeft(not MaoRUISettingDB["Bags"]["ReverseSort"])
+end
+
+local function updateBagStatus()
+	M:GetModule("Bags"):UpdateAllBags()
 end
 
 local function updateActionbarScale()
@@ -339,6 +361,11 @@ end
 local function updateChatSize()
 	M:GetModule("Chat"):UpdateChatSize()
 end
+
+local function updateToggleDirection()
+	M:GetModule("Skins"):RefreshToggleDirection()
+end
+
 
 local function updateMinimapScale()
 	M:GetModule("Maps"):UpdateMinimapScale()
@@ -385,6 +412,12 @@ end
 
 local function updateErrorBlocker()
 	M:GetModule("Misc"):UpdateErrorBlocker()
+end
+
+local function updateSkinAlpha()
+	for _, frame in pairs(R.frames) do
+		M:SetBackdropColor(frame, 0, 0, 0, MaoRUISettingDB["Skins"]["SkinAlpha"])
+	end
 end
 
 local function resetDetails()
@@ -728,6 +761,10 @@ local function CreateOption(i)
 				if callback then callback() end
 			end)
 			s.value:SetText(format("%."..decimal.."f", NDUI_VARIABLE(key, value)))
+			if tooltip then
+				s.title = U["Tips"]
+				M.AddTooltip(s, "ANCHOR_RIGHT", tooltip, "info")
+			end
 		-- Dropdown
 		elseif optType == 4 then
 			local dd = M.CreateDropDown(parent, 143, 26, data)
@@ -781,6 +818,10 @@ local function CreateOption(i)
 			offset = offset + 32
 		end
 	end
+
+	local footer = CreateFrame("Frame", nil, parent)
+	footer:SetSize(20, 20)
+	footer:SetPoint("TOPLEFT", 25, -offset)
 end
 
 local bloodlustFilter = {
@@ -843,6 +884,10 @@ local function exportData()
 				for spellID in pairs(value) do
 					text = text..":"..spellID
 				end
+			end
+		elseif KEY == "ContactList" then
+			for name, color in pairs(VALUE) do
+				text = text..";ACCOUNT:"..KEY..":"..name..":"..color
 			end
 		end
 	end
@@ -921,6 +966,9 @@ local function importData()
 				for _, spellID in next, spells do
 					MaoRUIDB[value][tonumber(arg1)][tonumber(spellID)] = true
 				end
+			elseif value == "ContactList" then
+				local name, r, g, b = select(3, strsplit(":", option))
+				MaoRUIDB["ContactList"][name] = r..":"..g..":"..b
 			end
 		elseif tonumber(arg1) then
 			if value == "DBMCount" then
@@ -956,13 +1004,13 @@ local function createDataFrame()
 	dataFrame:SetSize(500, 500)
 	dataFrame:SetFrameStrata("DIALOG")
 	M.CreateMF(dataFrame)
-	M.SetBackground(dataFrame)
+	M.SetBD(dataFrame)
 	dataFrame.Header = M.CreateFS(dataFrame, 16, U["Export Header"], true, "TOP", 0, -5)
 
 	local scrollArea = CreateFrame("ScrollFrame", nil, dataFrame, "UIPanelScrollFrameTemplate")
 	scrollArea:SetPoint("TOPLEFT", 10, -30)
 	scrollArea:SetPoint("BOTTOMRIGHT", -28, 40)
-	M.CreateBD(M.CreateBG(scrollArea), .25)
+	M.CreateBDFrame(scrollArea, .25)
 
 	local editBox = CreateFrame("EditBox", nil, dataFrame)
 	editBox:SetMultiLine(true)
@@ -1036,14 +1084,10 @@ local function OpenGUI()
 	close:SetPoint("TOP", 280, -56)
 	close:SetScript("OnClick", function() f:Hide() end)
 
-	local scaleOld = MaoRUIDB["UIScale"]
 	local ok = M.CreateButton(f, 66, 21, OKAY)
 	ok:SetPoint("BOTTOMRIGHT", -260, 66)
 	ok:SetScript("OnClick", function()
-		local scale = MaoRUIDB["UIScale"]
-		if not MaoRUIDB["LockUIScale"] and scale ~= scaleOld then
-			UIParent:SetScale(scale)
-		end
+		M:SetupUIScale()
 		f:Hide()
 		StaticPopup_Show("RELOAD_NDUI")
 	end)
@@ -1134,6 +1178,8 @@ function G:OnLogin()
 		HideUIPanel(GameMenuFrame)
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
 	end)
+
+	if MaoRUISettingDB["Skins"]["BlizzardSkins"] then M.Reskin(gui) end
 end
 
 

@@ -79,7 +79,7 @@ end
 
 local function ForceRaidFrame()
 		CompactRaidFrameContainer:SetScale(0.85)
-	if not CompactUnitFrameProfiles.selectedProfile then return end
+	if not CompactUnitFrameProfiles then return end
 	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "useClassColors", true) --显示职业颜色
 	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "displayPowerBar", false) --显示能量条 
 	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "displayBorder", false) --显示边框
@@ -101,31 +101,6 @@ local function ForceRaidFrame()
   --SetRaidProfileSavedPosition(GetActiveRaidProfile(), false, "TOP", 440, "BOTTOM", 320, "LEFT", 0)	--团队框体位置 
 	CompactUnitFrameProfiles_ApplyCurrentSettings()
 	CompactUnitFrameProfiles_UpdateCurrentPanel()
-end
-
-local function GetPerfectScale()
-	local scale = MaoRUIDB["UIScale"]
-	local bestScale = max(.4, min(1.15, 768 / I.ScreenHeight))
-	local pixelScale = 768 / I.ScreenHeight
-	if MaoRUIDB["LockUIScale"] then scale = bestScale end
-	R.mult = (bestScale / scale) - ((bestScale - pixelScale) / scale)
-
-	return scale
-end
-
-local isScaling = false
-local function SetupUIScale()
-	if isScaling then return end
-	isScaling = true
-
-	local scale = GetPerfectScale()
-	local parentScale = UIParent:GetScale()
-	if scale ~= parentScale and not InCombatLockdown() then
-		UIParent:SetScale(scale)
-	end
-
-	MaoRUIDB["UIScale"] = scale
-	isScaling = false
 end
 
 local function ForceChatSettings()
@@ -363,8 +338,8 @@ local function YesTutor()
 	  ForceDefaultSettings()
 	  ForceRaidFrame()
 	  ForceChatSettings()
-	  --MaoRUIDB["LockUIScale"] = true
-	  SetupUIScale()
+	  MaoRUIDB["LockUIScale"] = true
+			M:SetupUIScale()
 	  MaoRUIDB["DBMRequest"] = true
 	  MaoRUIDB["SkadaRequest"] = true
 	  MaoRUIDB["BWRequest"] = true
@@ -508,9 +483,6 @@ SLASH_SHIGUANG1 = "/loadmr"
 function module:OnLogin()
 	M.HideOption(Advanced_UseUIScale)
 	M.HideOption(Advanced_UIScaleSlider)
-	SetupUIScale()
-	M:RegisterEvent("UI_SCALE_CHANGED", SetupUIScale)
-	DefaultSettings()
 	ForceAddonSkins()
 	
 	if not MaoRUISettingDB["Tutorial"]["Complete"] then HelloWorld() end

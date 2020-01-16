@@ -55,7 +55,6 @@ function Bar:CreateExtrabar()
 
 	local spellButton = ZoneAbilityFrame.SpellButton
 	spellButton.Style:SetAlpha(0)
-	spellButton.Icon:SetTexCoord(unpack(I.TexCoord))
 	spellButton:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
-	M.CreateSD(spellButton.Icon, 3, 3)
+	M.ReskinIcon(spellButton.Icon, true)
 end

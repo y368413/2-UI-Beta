@@ -105,6 +105,14 @@ function MISC:OnLogin()
 	hooksecurefunc(StaticPopupDialogs["DELETE_GOOD_ITEM"], "OnShow", function(self)
 		self.editBox:SetText(DELETE_ITEM_CONFIRM_STRING)
 	end)
+
+	-- Fix blizz bug in addon list
+	local _AddonTooltip_Update = AddonTooltip_Update
+	function AddonTooltip_Update(owner)
+		if not owner then return end
+		if owner:GetID() < 1 then return end
+		_AddonTooltip_Update(owner)
+	end
 end
 
 -- Get Naked
@@ -136,7 +144,9 @@ function MISC:ExtendInstance()
 	bu:SetPoint("TOPRIGHT", -35, -5)
 	bu:SetSize(25, 25)
 	M.PixelIcon(bu, GetSpellTexture(80353), true)
-	M.AddTooltip(bu, "ANCHOR_RIGHT", CHARMS_EXTEND, "system")
+	bu.title = U["Extend Instance"]
+	local tipStr = format(U["Extend Instance Tip"], I.LeftButton, I.RightButton)
+	M.AddTooltip(bu, "ANCHOR_RIGHT", tipStr, "system")
 
 	bu:SetScript("OnMouseUp", function(_, btn)
 		for i = 1, GetNumSavedInstances() do

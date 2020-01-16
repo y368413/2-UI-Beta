@@ -802,3 +802,182 @@ L["Show Shrines"] = "顯示聖壇"
 L["Show Shrines which Jewelercrafters can use to create gems"] = "顯示那些珠寶學者可以創造珠寶的聖壇"
 L["Reset hidden nodes"] = "重置隱藏的節點"
 L["Show all nodes that you manually hid by right-clicking on them and choosing \"hide\"."] = "顯示所有透過您手動右鍵點擊並選擇\\\"隱藏\\\"的節點。"
+
+-------------------------------------------------------------------------------
+------------------------------------ ULDUM ------------------------------------
+-------------------------------------------------------------------------------
+
+L["uldum"] = "奥丹姆"
+L["uldum_intro_note"] = "完成介绍性任务链，以解锁奥丹姆中的稀有物品，宝藏和攻击任务。"
+
+L["aqir_flayer"] = "与Aqir Hive Workers以及Aqir Reapers共享出生点。"
+L["aqir_titanus"] = "与Aqir Goliaths共享出生点。"
+L["aqir_warcaster"] = "与Aqir Voidcasters共享出生点。"
+L["atekhramun"] = "压碎附近的毒鳞蠍直到出现"
+L["chamber_of_the_moon"] = "在月亮之室地下。"
+L["chamber_of_the_stars"] = "在星星之室地下。"
+L["chamber_of_the_sun"] = "在太阳之室里面。"
+L["friendly_alpaca"] = "喂七次羊驼基萨尔绿色蔬菜，以作为坐骑收藏。 在一个位置出现10分钟，然後重生。"
+L["gersahl"] = "基萨尔灌木丛"
+L["gersahl_note"] = "喂给友善的羊驼七次获得坐骑。 不需要草药。"
+L["hmiasma"] = "喂食它周围的软泥，直到它启动。"
+L["left_eye"] = "放下全视之眼玩具的左半部分。"
+L["platform"] = "出生在浮动平台顶部。"
+L["reshef"] = "与Voidwarped High Guards共享出生点。"
+L["spirit_cave"] = "Spirit of Dark Ritualist Zakahn的洞穴入口。"
+L["wastewander"] = "与Wastewander Hosts共享出生点。"
+
+L["amathet_cache"] = "Amathet Cache"
+L["black_empire_cache"] = "Black Empire Cache"
+L["black_empire_coffer"] = "Black Empire Coffer"
+L["infested_cache"] = "Infested Cache"
+L["infested_strongbox"] = "Infested Strongbox"
+L["amathet_reliquary"] = "Amathet Reliquary"
+
+L["cursed_relic"] = "需要诅咒圣物"
+L["tolvir_relic"] = "需要托维尔圣物"
+
+-------------------------------------------------------------------------------
+------------------------------------ VALE -------------------------------------
+-------------------------------------------------------------------------------
+
+L["vale"] = "锦绣谷"
+L["vale_intro_note"] = "完成介绍性任务链，以解锁锦绣谷中的稀有物品，宝藏和攻击任务。"
+
+L["big_blossom_mine"] = "在矿内，入口在东北。"
+L["guolai"] = "在郭莱大厅中。"
+L["jadec"] = "在郭莱大厅中，在楼梯底部向左走。"
+L["pools_of_power"] = "在能量之池中，入口在黄金宝塔。"
+L["right_eye"] = "放下全视之眼玩具的右半部分。"
+L["tisiphon"] = "单击丹妮尔的幸运钓鱼竿。"
+
+L["ambered_cache"] = "Ambered Cache"
+L["ambered_coffer"] = "Ambered Coffer"
+L["mogu_plunder"] = "Mogu Plunder"
+L["mogu_strongbox"] = "Mogu Strongbox"
+
+-------------------------------------------------------------------------------
+------------------------------------ GEAR -------------------------------------
+-------------------------------------------------------------------------------
+
+L["cloth"] = "布甲";
+L["leather"] = "皮甲";
+L["mail"] = "锁甲";
+L["plate"] = "板甲";
+
+L["1h_mace"] = "单手锤";
+L["1h_sword"] = "单手剑";
+L["1h_axe"] = "单手斧";
+L["2h_mace"] = "双手锤";
+L["2h_axe"] = "双手斧";
+L["2h_sword"] = "双手剑";
+L["shield"] = "盾牌";
+L["dagger"] = "匕首";
+L["staff"] = "法杖";
+L["fist"] = "拳套";
+L["polearm"] = "长柄武器";
+L["bow"] = "弓";
+L["gun"] = "枪";
+L["wand"] = "魔杖";
+L["crossbow"] = "弩";
+L["offhand"] = "副手";
+L["warglaive"] = "战刃";
+
+L["ring"] = "戒指";
+L["amulet"] = "项链";
+L["cloak"] = "披风";
+L["trinket"] = "饰品";
+
+-------------------------------------------------------------------------------
+---------------------------------- TOOLTIPS -----------------------------------
+-------------------------------------------------------------------------------
+
+L["retrieving"] = "检索项目连结 ...";
+L["in_cave"] = "在洞穴。";
+L["in_small_cave"] = "在小洞穴。"
+L["in_water_cave"] = "在水下洞穴。";
+L["weekly"] = "每周";
+L["normal"] = "普通";
+L["hard"] = "困难";
+L["mount"] = "坐骑";
+L["pet"] = "宠物";
+L["toy"] = "玩具";
+L["completed"] = "已完成"
+L["incomplete"] = "未完成"
+L["known"] = "已收藏"
+L["missing"] = "缺少"
+L["unobtainable"] = "无法获得"
+L["unlearnable"] = "无法学习"
+
+-------------------------------------------------------------------------------
+--------------------------------- CONTEXT MENU --------------------------------
+-------------------------------------------------------------------------------
+
+L["context_menu_title"] = "HandyNotes 恩若司的幻象";
+L["context_menu_add_tomtom"] = "加入到TomTom";
+L["context_menu_hide_node"] = "隐藏此节点";
+L["context_menu_restore_hidden_nodes"] = "恢复所有隐藏节点";
+
+-------------------------------------------------------------------------------
+----------------------------------- OPTIONS -----------------------------------
+-------------------------------------------------------------------------------
+
+--L["options_title"] = "恩若司的幻象";
+
+------------------------------------ ICONS ------------------------------------
+
+L["options_icon_settings"] = "图示设定";
+L["options_icons_treasures"] = "宝藏图示";
+L["options_icons_rares"] = "稀有图示";
+L["options_icons_caves"] = "洞穴图示";
+L["options_icons_pet_battles"] = "战宠图示";
+L["options_icons_other"] = "其他图示";
+L["options_scale"] = "缩放";
+L["options_scale_desc"] = "1 = 100%";
+L["options_opacity"] = "透明度";
+L["options_opacity_desc"] = "0 = 透明, 1 = 不透明";
+
+---------------------------------- VISIBILITY ---------------------------------
+
+L["options_visibility_settings"] = "可视性";
+L["options_general_settings"] = "一般";
+L["options_toggle_looted_rares"] = "永远显示所有稀有";
+L["options_toggle_looted_rares_desc"] = "不论拾取状态显示所有稀有";
+L["options_toggle_looted_treasures"] = "已经拾取的宝藏";
+L["options_toggle_looted_treasures_desc"] = "不论拾取状态显示所有宝藏";
+L["options_toggle_hide_done_rare"] = "如果战利品已收藏，隐藏稀有";
+L["options_toggle_hide_done_rare_desc"] = "隐藏所有战利品已收藏的稀有。";
+L["options_toggle_hide_minimap"] = "隐藏小地图上的所有图示";
+L["options_toggle_hide_minimap_desc"] = "在小地图上隐藏此插件的所有图示，并只在主地图上显示它们。";
+
+L["options_toggle_battle_pets_desc"] = "显示战宠训练师与NPC的位置。";
+L["options_toggle_battle_pets"] = "战宠";
+L["options_toggle_caves_desc"] = "显示其他节点的洞穴入口。";
+L["options_toggle_caves"] = "洞穴";
+L["options_toggle_chests_desc"] = "显示宝箱位置 (每日可拾取的)。";
+L["options_toggle_chests"] = "宝箱";
+L["options_toggle_misc"] = "其他";
+L["options_toggle_npcs"] = "NPC";
+L["options_toggle_rares_desc"] = "显示稀有NPC的位置。";
+L["options_toggle_rares"] = "稀有";
+L["options_toggle_supplies_desc"] = "显示战争补给箱的所有可能位置。";
+L["options_toggle_supplies"] = "战争补给空投";
+L["options_toggle_treasures"] = "宝藏";
+
+---------------------------------- TOOLTIP ---------------------------------
+
+L["options_tooltip_settings"] = "工具提示";
+L["options_tooltip_settings_desc"] = "工具提示";
+L["options_toggle_show_loot"] = "显示战利品";
+L["options_toggle_show_loot_desc"] = "在工具提示中加入战利品资讯";
+L["options_toggle_show_notes"] = "显示注记";
+L["options_toggle_show_notes_desc"] = "在可用的工具提示中加入有用的注记";
+
+--------------------------------- DEVELOPMENT ---------------------------------
+
+L["options_dev_settings"] = "开发";
+L["options_dev_settings_desc"] = "开发设定";
+L["options_toggle_show_debug"] = "侦错";
+L["options_toggle_show_debug_desc"] = "显示侦错内容";
+L["options_toggle_force_nodes"] = "强制节点";
+L["options_toggle_force_nodes_desc"] = "强制显示全部节点";

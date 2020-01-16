@@ -3,6 +3,9 @@ local M, R, U, I = unpack(ns)
 local S = M:GetModule("Skins")
 
 local function ReskinDetails()
+	-- instance table can be nil sometimes
+	Details.tabela_instancias = Details.tabela_instancias or {}
+
 	local function setupInstance(instance)
 		if instance.styled then return end
 		if not instance.baseframe then return end
@@ -18,11 +21,8 @@ local function ReskinDetails()
 		instance:SetBarSettings(18, MaoRUIDB["ResetDetails"] and "normTex" or nil)
 		instance:SetBarTextSettings(MaoRUIDB["ResetDetails"] and 14 or nil, I.Font[1], nil, nil, nil, true, true, nil, nil, nil, nil, nil, nil, false, nil, false, nil)
 
-		local bg = M.CreateBG(instance.baseframe)
+		local bg = M.SetBD(instance.baseframe)
 		bg:SetPoint("TOPLEFT", -1, 18)
-		M.CreateBD(bg)
-		M.CreateSD(bg)
-		M.CreateTex(bg)
 		instance.baseframe.bg = bg
 
 		if instance:GetId() <= 2 then
@@ -84,13 +84,12 @@ local function ReskinDetails()
 	end
 
 	-- Numberize
-	local _detalhes = _G._detalhes
 	local current = MaoRUIDB["NumberFormat"]
 	if current < 3 then
-		_detalhes.numerical_system = current
-		_detalhes:SelectNumericalSystem()
+		Details.numerical_system = current
+		Details:SelectNumericalSystem()
 	end
-	_detalhes.OpenWelcomeWindow = function()
+	Details.OpenWelcomeWindow = function()
 		if instance1 then
 			EmbedWindow(instance1, -3, 25, 320, 190)
 			instance1:SetBarSettings(18, "normTex")

@@ -317,7 +317,7 @@ end)]]
 --NiceDamage:ApplySystemDamageFonts()
 
 
---## Title: Extended Transmog UI  ## Author: Germbread ## Version: 1.1.0
+--[[## Title: Extended Transmog UI  ## Author: Germbread ## Version: 1.1.0
 function ExtTransmog_RebuildFrame()
     WardrobeFrame:SetWidth(1200);
     --WardrobeFrame:SetScale(0.82);
@@ -340,7 +340,9 @@ function ExtTransmog_RebuildFrame()
     WardrobeTransmogFrame.Model.MainHandEnchantButton:ClearAllPoints();
     WardrobeTransmogFrame.Model.MainHandEnchantButton:SetPoint("BOTTOM", WardrobeTransmogFrame.Model.MainHandButton, "BOTTOM", 0, -20);
     WardrobeTransmogFrame.Model.SecondaryHandEnchantButton:ClearAllPoints();
-    WardrobeTransmogFrame.Model.SecondaryHandEnchantButton:SetPoint("BOTTOM", WardrobeTransmogFrame.Model.SecondaryHandButton, "BOTTOM", 0, -20);    
+    WardrobeTransmogFrame.Model.SecondaryHandEnchantButton:SetPoint("BOTTOM", WardrobeTransmogFrame.Model.SecondaryHandButton, "BOTTOM", 0, -20); 
+    
+    UIPanelWindows["WardrobeFrame"].width = 1200;   
 end
 local ExtTransmogUI = CreateFrame("Frame")
 ExtTransmogUI:RegisterEvent("ADDON_LOADED")
@@ -349,7 +351,7 @@ ExtTransmogUI:SetScript("OnEvent",function(self,event,addon)
 		ExtTransmog_RebuildFrame()
 		ExtTransmogUI:UnregisterEvent("ADDON_LOADED")
 	end
-end)
+end)]]
 
 ------------------------------ ## Notes: Automatically destroys items in the pre-defined list    ## Author: Tim @ WoW Interface    ## Version: 1.0
 local itemList = {

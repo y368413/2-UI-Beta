@@ -7,6 +7,8 @@ local GetSpellCooldown, GetSpellInfo, GetItemCooldown, GetItemCount, GetItemInfo
 local IsPassiveSpell, IsCurrentSpell, CastSpell, IsPlayerSpell = IsPassiveSpell, IsCurrentSpell, CastSpell, IsPlayerSpell
 local GetProfessions, GetProfessionInfo, GetSpellBookItemInfo = GetProfessions, GetProfessionInfo, GetSpellBookItemInfo
 local PlayerHasToy, C_ToyBox_IsToyUsable, C_ToyBox_GetToyInfo = PlayerHasToy, C_ToyBox.IsToyUsable, C_ToyBox.GetToyInfo
+local C_TradeSkillUI_GetOnlyShowSkillUpRecipes, C_TradeSkillUI_SetOnlyShowSkillUpRecipes = C_TradeSkillUI.GetOnlyShowSkillUpRecipes, C_TradeSkillUI.SetOnlyShowSkillUpRecipes
+local C_TradeSkillUI_GetOnlyShowMakeableRecipes, C_TradeSkillUI_SetOnlyShowMakeableRecipes = C_TradeSkillUI.GetOnlyShowMakeableRecipes, C_TradeSkillUI.SetOnlyShowMakeableRecipes
 
 local BOOKTYPE_PROFESSION = BOOKTYPE_PROFESSION
 local RUNEFORGING_ID = 53428
@@ -81,6 +83,17 @@ function MISC:TradeTabs_Update()
 	end
 end
 
+function MISC:TradeTabs_Reskin()
+	if not MaoRUISettingDB["Skins"]["BlizzardSkins"] then return end
+
+	for _, tab in pairs(tabList) do
+		tab:SetCheckedTexture(I.textures.pushed)
+		tab:GetRegions():Hide()
+		M.CreateBDFrame(tab)
+		tab:GetNormalTexture():SetTexCoord(unpack(I.TexCoord))
+	end
+end
+
 function MISC:TradeTabs_OnClick()
 	CastSpell(self.slotID, BOOKTYPE_PROFESSION)
 end
@@ -122,8 +135,8 @@ end
 
 function MISC:TradeTabs_FilterIcons()
 	local buttonList = {
-		[1] = {"Atlas:bags-greenarrow", TRADESKILL_FILTER_HAS_SKILL_UP, C_TradeSkillUI.GetOnlyShowSkillUpRecipes, C_TradeSkillUI.SetOnlyShowSkillUpRecipes},
-		[2] = {"Interface\\RAIDFRAME\\ReadyCheck-Ready", CRAFT_IS_MAKEABLE, C_TradeSkillUI.GetOnlyShowMakeableRecipes, C_TradeSkillUI.SetOnlyShowMakeableRecipes},
+		[1] = {"Atlas:bags-greenarrow", TRADESKILL_FILTER_HAS_SKILL_UP, C_TradeSkillUI_GetOnlyShowSkillUpRecipes, C_TradeSkillUI_SetOnlyShowSkillUpRecipes},
+		[2] = {"Interface\\RAIDFRAME\\ReadyCheck-Ready", CRAFT_IS_MAKEABLE, C_TradeSkillUI_GetOnlyShowMakeableRecipes, C_TradeSkillUI_SetOnlyShowMakeableRecipes},
 	}
 
 	local function filterClick(self)
@@ -164,6 +177,8 @@ end
 function MISC:TradeTabs_OnLoad()
 	TradeSkillFrame.SearchBox:SetWidth(268)
 	MISC:UpdateProfessions()
+
+	MISC:TradeTabs_Reskin()
 	MISC:TradeTabs_Update()
 	M:RegisterEvent("TRADE_SKILL_SHOW", MISC.TradeTabs_Update)
 	M:RegisterEvent("TRADE_SKILL_CLOSE", MISC.TradeTabs_Update)

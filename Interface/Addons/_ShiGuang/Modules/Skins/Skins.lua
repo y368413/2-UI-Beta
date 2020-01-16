@@ -2,6 +2,28 @@
 local M, R, U, I = unpack(ns)
 local S = M:RegisterModule("Skins")
 
+R.themes = {}
+R.themes["AuroraClassic"] = {}
+
+StaticPopupDialogs["AURORA_CLASSIC_WARNING"] = {
+	text = U["AuroraClassic warning"],
+	button1 = DISABLE,
+	hideOnEscape = false,
+	whileDead = 1,
+	OnAccept = function()
+		DisableAddOn("Aurora")
+		DisableAddOn("AuroraClassic")
+		ReloadUI()
+	end,
+}
+function S:DetectAurora()
+	if I.isDeveloper then return end
+
+	if IsAddOnLoaded("AuroraClassic") or IsAddOnLoaded("Aurora") then
+		StaticPopup_Show("AURORA_CLASSIC_WARNING")
+	end
+end
+
 function S:OnLogin()
 	PlayerFrame:SetScale(MaoRUISettingDB["UFs"]["PlayerFrameScale"]) 
 	TargetFrame:SetScale(MaoRUISettingDB["UFs"]["PlayerFrameScale"])
@@ -49,6 +71,20 @@ function S:OnLogin()
    Bottomline:SetBackdrop({bgFile = "Interface\\AddOns\\_ShiGuang\\Media\\Modules\\line"}) 
    Bottomline:SetBackdropColor(I.r, I.g, I.b, 0.8)
    end
+	self:DetectAurora()
+
+	if not IsAddOnLoaded("AuroraClassic") and not IsAddOnLoaded("Aurora") then
+		-- Reskin Blizzard UIs
+		for _, func in pairs(R.themes["AuroraClassic"]) do
+			func()
+		end
+		if MaoRUISettingDB["Skins"]["BlizzardSkins"] then
+			M:RegisterEvent("ADDON_LOADED", function(_, addon)
+				local func = R.themes[addon]
+				if func then func() end
+			end)
+		end
+	end
 
 	-- Add Skins
 	self:CreateRM()
@@ -86,17 +122,37 @@ function S:OnLogin()
 	DisableBlizzardFrame(TargetFrameSpellBar) DisableBlizzardFrame(FocusFrameSpellBar) DisableBlizzardFrame(PetCastingBarFrame) return end
 end
 
-function S:CreateToggle(frame)
-	local close = M.CreateButton(frame, 20, 80, ">", 18)
-	close:SetPoint("RIGHT", frame.bg, "LEFT", -2, 0)
-	M.CreateSD(close)
-	M.CreateTex(close)
+function S:GetToggleDirection()
+	local direc = MaoRUISettingDB["Skins"]["ToggleDirection"]
+	if direc == 1 then
+		return ">", "<", "RIGHT", "LEFT", -2, 0, 20, 80
+	elseif direc == 2 then
+		return "<", ">", "LEFT", "RIGHT", 2, 0, 20, 80
+	elseif direc == 3 then
+		return "∨", "∧", "BOTTOM", "TOP", 0, 2, 80, 20
+	else
+		return "∧", "∨", "TOP", "BOTTOM", 0, -2, 80, 20
+	end
+end
 
-	local open = M.CreateButton(UIParent, 20, 80, "<", 18)
-	open:SetPoint("RIGHT", frame.bg, "RIGHT", 2, 0)
-	M.CreateSD(open)
-	M.CreateTex(open)
+local toggleFrames = {}
+
+local function CreateToggleButton(parent)
+	local bu = CreateFrame("Button", nil, parent)
+	bu:SetSize(20, 80)
+	bu.text = M.CreateFS(bu, 18, nil, true)
+	M.ReskinMenuButton(bu)
+
+	return bu
+end
+
+function S:CreateToggle(frame)
+	local close = CreateToggleButton(frame)
+	frame.closeButton = close
+
+	local open = CreateToggleButton(UIParent)
 	open:Hide()
+	frame.openButton = open
 
 	open:SetScript("OnClick", function()
 		open:Hide()
@@ -105,7 +161,31 @@ function S:CreateToggle(frame)
 		open:Show()
 	end)
 
+	S:SetToggleDirection(frame)
+	tinsert(toggleFrames, frame)
+
 	return open, close
+end
+
+function S:SetToggleDirection(frame)
+	local str1, str2, rel1, rel2, x, y, width, height = S:GetToggleDirection()
+	local parent = frame.bg
+	local close = frame.closeButton
+	local open = frame.openButton
+	close:ClearAllPoints()
+	close:SetPoint(rel1, parent, rel2, x, y)
+	close:SetSize(width, height)
+	close.text:SetText(str1)
+	open:ClearAllPoints()
+	open:SetPoint(rel1, parent, rel1, -x, -y)
+	open:SetSize(width, height)
+	open.text:SetText(str2)
+end
+
+function S:RefreshToggleDirection()
+	for _, frame in pairs(toggleFrames) do
+		S:SetToggleDirection(frame)
+	end
 end
 
 function S:LoadWithAddOn(addonName, value, func)

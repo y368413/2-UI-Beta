@@ -49,6 +49,8 @@ function module:GetFilterResult(event, msg, name, flag, guid)
 		return
 	end
 
+	if MaoRUISettingDB["Chat"]["BlockStranger"] and event == "CHAT_MSG_WHISPER" then return true end -- Block strangers
+
 	if R.BadBoys[name] and R.BadBoys[name] >= 5 then return true end
 
 	local filterMsg = gsub(msg, "|H.-|h(.-)|h", "%1")

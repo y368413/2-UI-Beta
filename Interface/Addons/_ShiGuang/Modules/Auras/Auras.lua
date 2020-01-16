@@ -7,7 +7,7 @@ local format, floor, strmatch, select, unpack = format, floor, strmatch, select,
 local DebuffTypeColor = _G.DebuffTypeColor
 local UnitAura, GetTime = UnitAura, GetTime
 local GetInventoryItemQuality, GetInventoryItemTexture, GetItemQualityColor, GetWeaponEnchantInfo = GetInventoryItemQuality, GetInventoryItemTexture, GetItemQualityColor, GetWeaponEnchantInfo
-local margin, offset, settings = 6, 12
+local margin, offset, settings = 3, 12
 
 function A:OnLogin()
 	-- Config
@@ -244,7 +244,7 @@ function A:CreateAuraIcon(button)
 	local fontSize = floor(cfg.size/30*14 + .5)
 
 	button.icon = button:CreateTexture(nil, "BORDER")
-	button.icon:SetAllPoints()
+	button.icon:SetInside()
 	button.icon:SetTexCoord(unpack(I.TexCoord))
 
 	button.count = button:CreateFontString(nil, "ARTWORK")
@@ -257,10 +257,10 @@ function A:CreateAuraIcon(button)
 
 	button.highlight = button:CreateTexture(nil, "HIGHLIGHT")
 	button.highlight:SetColorTexture(1, 1, 1, .25)
-	button.highlight:SetAllPoints(button.icon)
+	button.highlight:SetInside()
 
-	local bg = M.CreateBG(button)
-	button.Shadow = M.CreateSD(bg)
+	M.CreateBD(button, .25)
+	M.CreateSD(button)
 
 	button:SetScript("OnAttributeChanged", A.OnAttributeChanged)
 end

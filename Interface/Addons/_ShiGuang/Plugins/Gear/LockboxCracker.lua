@@ -1,4 +1,4 @@
---## Author: Michael Röhrig ## Version: 8.2.5 build 1
+--## Author: Michael Röhrig ## Version: 8.3.0 build 1
 
 -- Don't load the addon on non rogue classes
 _, _, classIndex = UnitClass("player")

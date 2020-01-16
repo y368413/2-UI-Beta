@@ -3,12 +3,15 @@ ns[1] = {}			-- M, Basement
 ns[2] = {}			-- R, Config
 ns[3] = {}			-- U, Locales
 ns[4] = {}			-- I, Database
+
 MaoRUISettingDB, MaoRUIDB = {}, {}
 ShiGuangDB = ShiGuangDB or {}
 ShiGuangPerDB = ShiGuangPerDB or {}
 
 local M, R, U, I = unpack(ns)
 local pairs, next, tinsert = pairs, next, table.insert
+local min, max = math.min, math.max
+local CombatLogGetCurrentEventInfo, GetPhysicalScreenSize = CombatLogGetCurrentEventInfo, GetPhysicalScreenSize
 
 -- Events
 local events = {}
@@ -69,7 +72,42 @@ function M:GetModule(name)
 end
 
 -- Init
+local function GetBestScale()
+	local scale = M:Round(768 / I.ScreenHeight, 5)
+	return max(.4, min(1.15, scale))
+end
+
+function M:SetupUIScale(init)
+	if MaoRUIDB["LockUIScale"] then MaoRUIDB["UIScale"] = GetBestScale() end
+	local scale = MaoRUIDB["UIScale"]
+	if init then
+		local pixel = 1
+		local ratio = 768 / I.ScreenHeight
+		R.mult = (pixel / scale) - ((pixel - ratio) / scale)
+	elseif not InCombatLockdown() then
+		UIParent:SetScale(scale)
+	end
+end
+
+local isScaling = false
+local function UpdatePixelScale(event)
+	if isScaling then return end
+	isScaling = true
+
+	if event == "UI_SCALE_CHANGED" then
+		I.ScreenWidth, I.ScreenHeight = GetPhysicalScreenSize()
+	end
+	M:SetupUIScale(true)
+	M:SetupUIScale()
+
+	isScaling = false
+end
+
 M:RegisterEvent("PLAYER_LOGIN", function()
+	-- Update UIScale
+	M:SetupUIScale()
+	M:RegisterEvent("UI_SCALE_CHANGED", UpdatePixelScale)
+
 	for _, module in next, initQueue do
 		if module.OnLogin then
 			module:OnLogin()

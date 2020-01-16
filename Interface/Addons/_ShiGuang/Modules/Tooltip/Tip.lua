@@ -102,12 +102,12 @@ function TT:InsertRoleFrame(role)
 		f:SetPoint("TOPRIGHT", self, "TOPLEFT", -1, -4)
 		f:SetSize(20, 20)
 		f:SetTexture("Interface\\LFGFrame\\UI-LFG-ICONS-ROLEBACKGROUNDS")
-		M.CreateSD(f, 3, 3)
+		f.bg = M.CreateBDFrame(f)
 		self.roleFrame = f
 	end
 	self.roleFrame:SetTexCoord(unpack(roleTex[role]))
 	self.roleFrame:SetAlpha(1)
-	self.roleFrame.Shadow:SetAlpha(1)
+	self.roleFrame.bg:SetAlpha(1)
 end
 
 function TT:OnTooltipCleared()
@@ -116,7 +116,7 @@ function TT:OnTooltipCleared()
 	end
 	if self.roleFrame and self.roleFrame:GetAlpha() ~= 0 then
 		self.roleFrame:SetAlpha(0)
-		self.roleFrame.Shadow:SetAlpha(0)
+		self.roleFrame.bg:SetAlpha(0)
 	end
 end
 
@@ -230,12 +230,12 @@ function TT:OnTooltipSetUnit()
 		end
 
 		if alive then
-			GameTooltipStatusBar:SetStatusBarColor(M.UnitColor(unit))
+			self.StatusBar:SetStatusBarColor(M.UnitColor(unit))
 		else
-			GameTooltipStatusBar:Hide()
+			self.StatusBar:Hide()
 		end
 	else
-		GameTooltipStatusBar:SetStatusBarColor(0, .9, 0)
+		self.StatusBar:SetStatusBarColor(0, .9, 0)
 	end
 
 	TT.InspectUnitSpecAndLevel(self)
@@ -258,41 +258,39 @@ function TT:StatusBar_OnValueChanged(value)
 end
 
 function TT:ReskinStatusBar()
-	GameTooltipStatusBar:ClearAllPoints()
-	GameTooltipStatusBar:SetPoint("BOTTOMLEFT", GameTooltip, "TOPLEFT", R.mult, 3)
-	GameTooltipStatusBar:SetPoint("BOTTOMRIGHT", GameTooltip, "TOPRIGHT", -R.mult, 3)
-	GameTooltipStatusBar:SetStatusBarTexture(I.normTex)
-	GameTooltipStatusBar:SetHeight(5)
-	local bg = M.CreateBG(GameTooltipStatusBar)
-	M.CreateBD(bg, .7)
-	M.CreateSD(bg)
-	M.CreateTex(bg)
+	self.StatusBar:ClearAllPoints()
+	self.StatusBar:SetPoint("BOTTOMLEFT", self.bg, "TOPLEFT", R.mult, 3)
+	self.StatusBar:SetPoint("BOTTOMRIGHT", self.bg, "TOPRIGHT", -R.mult, 3)
+	self.StatusBar:SetStatusBarTexture(I.normTex)
+	self.StatusBar:SetHeight(5)
+	M.CreateBDFrame(self.StatusBar, nil, true)
 end
 
 function TT:GameTooltip_ShowStatusBar()
-	if self.statusBarPool then
-		local bar = self.statusBarPool:Acquire()
-		if bar and not bar.styled then
-			M.StripTextures(bar)
-			local tex = select(3, bar:GetRegions())
-			tex:SetTexture(I.normTex)
-			M.CreateBD(M.CreateBG(bar), .25)
+	if not self or self:IsForbidden() then return end
+	if not self.statusBarPool then return end
 
-			bar.styled = true
-		end
+	local bar = self.statusBarPool:GetNextActive()
+	if bar and not bar.styled then
+		M.StripTextures(bar)
+		M.CreateBDFrame(bar, .25)
+		bar:SetStatusBarTexture(I.normTex)
+
+		bar.styled = true
 	end
 end
 
 function TT:GameTooltip_ShowProgressBar()
-	if self.progressBarPool then
-		local bar = self.progressBarPool:Acquire()
-		if bar and not bar.styled then
-			M.StripTextures(bar.Bar)
-			bar.Bar:SetStatusBarTexture(I.normTex)
-			M.CreateBD(M.CreateBG(bar.Bar), .25)
+	if not self or self:IsForbidden() then return end
+	if not self.progressBarPool then return end
 
-			bar.styled = true
-		end
+	local bar = self.progressBarPool:GetNextActive()
+	if bar and not bar.styled then
+		M.StripTextures(bar.Bar)
+		M.CreateBDFrame(bar.Bar, .25)
+		bar.Bar:SetStatusBarTexture(I.normTex)
+
+		bar.styled = true
 	end
 end
 
@@ -312,7 +310,10 @@ function TT:GameTooltip_SetDefaultAnchor(parent)
 end
 
 -- Tooltip skin
-local function getBackdrop(self) return self.bg:GetBackdrop() end
+local fakeBg = CreateFrame("Frame", nil, UIParent)
+fakeBg:SetBackdrop({ bgFile = I.bdTex, edgeFile = I.bdTex, edgeSize = 1 })
+
+local function getBackdrop() return fakeBg:GetBackdrop() end
 local function getBackdropColor() return 0, 0, 0, .7 end
 local function getBackdropBorderColor() return 0, 0, 0 end
 
@@ -327,29 +328,30 @@ function TT:ReskinTooltip()
 	if not self.tipStyled then
 		self:SetBackdrop(nil)
 		self:DisableDrawLayer("BACKGROUND")
-		local bg = M.CreateBG(self, 0)
-		bg:SetFrameLevel(self:GetFrameLevel())
-		M.CreateBD(bg, .7)
-		M.CreateSD(bg)
-		M.CreateTex(bg)
-		self.bg = bg
+		self.bg = M.CreateBDFrame(self, .7, true)
+		self.bg:SetInside(self)
+		M.CreateTex(self.bg)
 
 		-- other gametooltip-like support
 		self.GetBackdrop = getBackdrop
 		self.GetBackdropColor = getBackdropColor
 		self.GetBackdropBorderColor = getBackdropBorderColor
 
+		if self.StatusBar then
+			TT.ReskinStatusBar(self)
+		end
+
 		self.tipStyled = true
 	end
 
-	self.bg.Shadow:SetBackdropBorderColor(0, 0, 0)
+	self.bg:SetBackdropBorderColor(0, 0, 0)
 	if MaoRUISettingDB["Tooltip"]["ClassColor"] and self.GetItem then
 		local _, item = self:GetItem()
 		if item then
 			local quality = select(3, GetItemInfo(item))
 			local color = BAG_ITEM_QUALITY_COLORS[quality or 1]
 			if color then
-				self.bg.Shadow:SetBackdropBorderColor(color.r, color.g, color.b)
+				self.bg:SetBackdropBorderColor(color.r, color.g, color.b)
 			end
 		end
 	end
@@ -372,10 +374,10 @@ function TT:GameTooltip_SetBackdropStyle()
 end
 
 function TT:OnLogin()
-	self:ReskinStatusBar()
+	GameTooltip.StatusBar = GameTooltipStatusBar
 	GameTooltip:HookScript("OnTooltipCleared", self.OnTooltipCleared)
 	GameTooltip:HookScript("OnTooltipSetUnit", self.OnTooltipSetUnit)
-	GameTooltipStatusBar:SetScript("OnValueChanged", self.StatusBar_OnValueChanged)
+	GameTooltip.StatusBar:SetScript("OnValueChanged", self.StatusBar_OnValueChanged)
 	hooksecurefunc("GameTooltip_ShowStatusBar", self.GameTooltip_ShowStatusBar)
 	hooksecurefunc("GameTooltip_ShowProgressBar", self.GameTooltip_ShowProgressBar)
 	hooksecurefunc("GameTooltip_SetDefaultAnchor", self.GameTooltip_SetDefaultAnchor)

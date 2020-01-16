@@ -178,7 +178,7 @@ local function BuildICON(iconSize)
 
 	local frame = CreateFrame("Frame", nil, PetBattleFrameHider)
 	frame:SetSize(iconSize, iconSize)
-	M.CreateSD(frame, 3, 3)
+	M.SetBD(frame)
 
 	frame.Icon = frame:CreateTexture(nil, "ARTWORK")
 	frame.Icon:SetAllPoints()
@@ -194,8 +194,8 @@ local function BuildICON(iconSize)
 
 	frame.Spellname = M.CreateFS(parentFrame, 12, "", false, "BOTTOM", 0, -3)
 	frame.Count = M.CreateFS(parentFrame, iconSize*.55, "", false, "BOTTOMRIGHT", 6, -3)
-	frame.glowFrame = M.CreateBG(frame, 4)
-	frame.glowFrame:SetSize(iconSize+8, iconSize+8)
+
+	frame.glowFrame = M.CreateGlowFrame(frame, iconSize)
 
 	if not MaoRUISettingDB["AuraWatch"]["ClickThrough"] then enableTooltip(frame) end
 
@@ -224,7 +224,7 @@ end
 local function BuildBAR(barWidth, iconSize)
 	local frame = CreateFrame("Frame", nil, PetBattleFrameHider)
 	frame:SetSize(iconSize, iconSize)
-	M.CreateSD(frame, 2, 2)
+	M.SetBD(frame)
 
 	frame.Icon = frame:CreateTexture(nil, "ARTWORK")
 	frame.Icon:SetAllPoints()
@@ -252,7 +252,7 @@ end
 local function BuildBAR2(barWidth, iconSize)
 	local frame = CreateFrame("Frame", nil, PetBattleFrameHider)
 	frame:SetSize(iconSize, iconSize)
-	M.CreateSD(frame, 2, 2)
+	M.SetBD(frame)
 
 	frame.Icon = frame:CreateTexture(nil, "ARTWORK")
 	frame.Icon:SetAllPoints()
