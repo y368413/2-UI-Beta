@@ -440,4 +440,4 @@ local Update = function(self)
 	end	
 end 
 
-hooksecurefunc(Combuctor.ItemSlot, "Update", Update)
+hooksecurefunc(Combuctor.Item, "Update", Update)

@@ -3,7 +3,7 @@
 
   <Include file="style.xml"/>
   <Include file="frame.xml"/>
-  <Include file="..\..\common\Wildpants.xml"/>
+  <Include file="..\common\Wildpants.xml"/>
 
 	<Script file="qualityButton.lua"/>
 	<Script file="qualityFilter.lua"/>

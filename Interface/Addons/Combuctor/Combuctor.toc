@@ -12,6 +12,5 @@
 
 ## X-Repple: 2 UI
 
-addons\main\main.xml
-addons\config\config.xml
+addons\main.xml
 plugins\plugins.xml

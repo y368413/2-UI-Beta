@@ -2694,7 +2694,7 @@ if Version then
 
 
 	local function HookCombuctor()
-		hooksecurefunc(Combuctor.ItemSlot, "Update", OnUpdateSlot)
+		hooksecurefunc(Combuctor.Item, "Update", OnUpdateSlot)
 	end
 
 	local eventFrame = CreateFrame("FRAME")

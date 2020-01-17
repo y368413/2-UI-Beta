@@ -42,8 +42,8 @@ function Slash.OnSlashCommand(cmd)
 		Addon.Frames:Toggle('vault')
 	elseif cmd == 'version' then
 		print('|cff33ff99' .. ADDON .. '|r version ' .. Addon.Version)
-	elseif cmd == 'config' or cmd == 'options' then
-		Addon:ShowOptions()
+	--elseif cmd == 'config' or cmd == 'options' then
+		--Addon:ShowOptions()
 	else
 		Slash:PrintHelp()
 	end
@@ -55,7 +55,7 @@ function Slash:PrintHelp()
 	self:Print('bank', L.CmdShowBank)
 	self:Print('guild', L.CmdShowGuild, Addon.LoadGuild)
 	self:Print('vault', L.CmdShowVault, Addon.LoadVault)
-	self:Print('config/options', L.CmdShowOptions)
+	--self:Print('config/options', L.CmdShowOptions)
 	self:Print('version', L.CmdShowVersion)
 end
 

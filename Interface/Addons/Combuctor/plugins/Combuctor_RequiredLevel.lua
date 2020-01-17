@@ -462,20 +462,20 @@ end
 
 
 --Module.OnEnable = function()
-  hooksecurefunc(Combuctor.ItemSlot, "Update", PostUpdateButtonWrapper)
+  hooksecurefunc(Combuctor.Item, "Update", PostUpdateButtonWrapper)
 
   -- Needed because otherwise UpdateUpgradeIcon will reset the VertexColor.
-  hooksecurefunc(Combuctor.ItemSlot, "UpdateUpgradeIcon", PostUpdateButtonWrapper)
+  hooksecurefunc(Combuctor.Item, "UpdateUpgradeIcon", PostUpdateButtonWrapper)
 
   -- Needed to set the VertexColor in time when BAG_UPDATE_COOLDOWN is triggered.
-  hooksecurefunc(Combuctor.ItemSlot, "UpdateCooldown", PostUpdateButtonWrapper)
+  hooksecurefunc(Combuctor.Item, "UpdateCooldown", PostUpdateButtonWrapper)
 
   -- Needed to keep the frame of unusable recipes.
-  hooksecurefunc(Combuctor.ItemSlot, "OnEnter", PostUpdateButtonWrapper)
-  hooksecurefunc(Combuctor.ItemSlot, "OnLeave", PostUpdateButtonWrapper)
+  hooksecurefunc(Combuctor.Item, "OnEnter", PostUpdateButtonWrapper)
+  hooksecurefunc(Combuctor.Item, "OnLeave", PostUpdateButtonWrapper)
 
   -- Needed to keep the desaturation.
-  hooksecurefunc(Combuctor.ItemSlot, "SetLocked", PostUpdateButtonWrapper)
+  hooksecurefunc(Combuctor.Item, "SetLocked", PostUpdateButtonWrapper)
 
 --end
 

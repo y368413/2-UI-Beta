@@ -1,4 +1,4 @@
---[[
+ï»¿--[[
 	sortButton.lua
 		A style agnostic item sorting button
 --]]
@@ -32,10 +32,10 @@ function SortButton:OnClick(button)
 	if IsControlKeyDown() and DepositReagentBank then return DepositReagentBank() end
 	local frame = self:GetParent()
 	if not frame:IsCached() then
-		---------------Thanks Siweia  Ã´Ã´ßÕ¡¤~~~~
+		---------------Thanks Siweia  ä¹ˆä¹ˆå“’Â·~~~~
 		if button == 'RightButton' then
-		  SetSortBagsRightToLeft(false)      --ÕûÀíÏò×ó±ß±³°üÒÆ¶¯
-		  --SetInsertItemsLeftToRight(false)  --ĞÂÔöÎïÆ·×Ô¶¯½øÈë×îÓÒ±ß±³°ü
+		  SetSortBagsRightToLeft(false)      --æ•´ç†å‘å·¦è¾¹èƒŒåŒ…ç§»åŠ¨
+		  --SetInsertItemsLeftToRight(false)  --æ–°å¢ç‰©å“è‡ªåŠ¨è¿›å…¥æœ€å³è¾¹èƒŒåŒ…
 			frame:SortItems()  --SortBags()
 		  C_Timer.After(.3, function()
 			for bag = 0, 4 do
@@ -49,8 +49,8 @@ function SortButton:OnClick(button)
 			end
 		  end)
 		else
-		  SetSortBagsRightToLeft(true)      --ÕûÀíÏò×ó±ß±³°üÒÆ¶¯
-		  --SetInsertItemsLeftToRight(true)  --ĞÂÔöÎïÆ·×Ô¶¯½øÈë×î×ó±ß±³°ü
+		  SetSortBagsRightToLeft(true)      --æ•´ç†å‘å·¦è¾¹èƒŒåŒ…ç§»åŠ¨
+		  --SetInsertItemsLeftToRight(true)  --æ–°å¢ç‰©å“è‡ªåŠ¨è¿›å…¥æœ€å·¦è¾¹èƒŒåŒ…
 		  frame:SortItems()   --SortBags()
 		end
 	end

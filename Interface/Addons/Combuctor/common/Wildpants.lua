@@ -52,6 +52,7 @@ local FrameDefaults = {
 	rules = AsArray({
 		'all', 'all/normal', 'all/trade', 'all/reagent', 'all/keys', 'all/quiver',
 		'equip', 'equip/armor', 'equip/weapon', 'equip/trinket',
+		'binding', 'binding/account', 'binding/equip', 'binding/use', 'binding/all', "binding/soulbound",
 		'use', 'use/consume', 'use/enhance',
 		'trade', 'trade/goods', 'trade/gem', 'trade/glyph', 'trade/recipe',
 		'quest', 'misc',
@@ -63,19 +64,19 @@ local ProfileDefaults = {
 		reversedTabs = true,
 		borderColor = {1, 1, 1, 1},
 		point = 'BOTTOMRIGHT',
-		x = -50, y = 100,
-		columns = 8,
-		width = 384,
-		height = 200,
+		x = -43, y = 160,
+		columns = 10,
+		width = 430,
+		height = 600,
 	}, FrameDefaults),
 
 	bank = SetDefaults({
 		borderColor = {1, 1, 0, 1},
 		point = 'LEFT',
-		columns = 12,
-		width = 600,
-		height = 500,
-		x = 95
+		x = 21, y = 43,
+		columns = 20,
+		width = 821,
+		height = 800,
 	}, FrameDefaults),
 
 	vault = SetDefaults({
@@ -88,7 +89,7 @@ local ProfileDefaults = {
 	guild = SetDefaults({
 		borderColor = {0, 1, 0, 1},
 		point = 'CENTER',
-		columns = 7,
+		columns = 10,
 	}, FrameDefaults)
 }
 
@@ -96,8 +97,6 @@ local ProfileDefaults = {
 --[[ Startup ]]--
 
 function Addon:OnEnable()
-  CreateFrame('Frame', nil, InterfaceOptionsFrame):SetScript('OnShow', function() LoadAddOn(Addon.Name) end)
-
 	_G[SETS] = SetDefaults(_G[SETS] or {}, {
 		version = Addon.Version,
 		global = SetDefaults({}, ProfileDefaults),
@@ -147,13 +146,4 @@ end
 
 function Addon:GetProfile(owner)
 	return self.sets.profiles[self:GetOwnerID(owner)] or self.sets.global
-end
-
-
---[[ Options ]]--
-
-function Addon:ShowOptions()
-	--if LoadAddOn(ADDON .. '_Config') then
-		Addon.GeneralOptions:Open()
-	--end
 end
