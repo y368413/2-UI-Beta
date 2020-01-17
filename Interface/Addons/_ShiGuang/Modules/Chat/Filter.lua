@@ -42,6 +42,7 @@ end
 
 R.BadBoys = {} -- debug
 local chatLines, prevLineID, filterResult = {}, 0, false
+
 function module:GetFilterResult(event, msg, name, flag, guid)
 	if name == I.MyName or (event == "CHAT_MSG_WHISPER" and flag == "GM") or flag == "DEV" then
 		return

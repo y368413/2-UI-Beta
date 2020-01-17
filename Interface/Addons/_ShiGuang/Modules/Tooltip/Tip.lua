@@ -99,7 +99,7 @@ local roleTex = {
 function TT:InsertRoleFrame(role)
 	if not self.roleFrame then
 		local f = self:CreateTexture(nil, "OVERLAY")
-		f:SetPoint("TOPRIGHT", self, "TOPLEFT", -1, -4)
+		f:SetPoint("TOPRIGHT", self, "TOPLEFT", -2, -2)
 		f:SetSize(20, 20)
 		f:SetTexture("Interface\\LFGFrame\\UI-LFG-ICONS-ROLEBACKGROUNDS")
 		f.bg = M.CreateBDFrame(f)

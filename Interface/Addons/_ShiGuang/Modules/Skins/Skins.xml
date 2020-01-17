@@ -1,7 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="Skins.lua"/>
 	<Script file="ObjectiveTracker.lua"/>
-	<Script file="RaidManager.lua"/>
 	<Script file="PetBattleUI.lua"/>
 	<Script file="Loot.lua"/>
 	
@@ -11,5 +10,4 @@
 	<Script file="AddOns\TMW.lua"/>
 	<Script file="AddOns\WeakAuras.lua"/>
 	<Script file="AddOns\Details.lua"/>
-	<Script file="AddOns\PremadeGroupsFilter.lua"/>
 </Ui>

@@ -56,6 +56,7 @@ function MISC:OnLogin()
 	self:UpdateErrorBlocker()
 	self:TradeTargetInfo()
 	self:TradeTabs()
+	self:CreateRM()
 	self:FreeMountCD()
 	self:WallpaperKit()
 	
@@ -103,7 +104,9 @@ function MISC:OnLogin()
 
 	-- Instant delete
 	hooksecurefunc(StaticPopupDialogs["DELETE_GOOD_ITEM"], "OnShow", function(self)
-		self.editBox:SetText(DELETE_ITEM_CONFIRM_STRING)
+		if MaoRUISettingDB["Misc"]["InstantDelete"] then
+			self.editBox:SetText(DELETE_ITEM_CONFIRM_STRING)
+		end
 	end)
 
 	-- Fix blizz bug in addon list

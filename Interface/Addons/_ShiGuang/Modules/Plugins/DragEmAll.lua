@@ -51,7 +51,7 @@ local BlzFrames = {
 local function IsFrameExists()
 	for k in pairs(BlzFrames) do
 		local name = _G[k]
-		if not name then print("XXX:", k) end
+		if not name and I.isDeveloper then print("XXX:", k) end
 	end
 end
 

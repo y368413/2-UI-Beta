@@ -6,7 +6,7 @@ local gsub, strfind = string.gsub, string.find
 local INTERFACE_ACTION_BLOCKED = INTERFACE_ACTION_BLOCKED
 
 function module:UpdateChannelNames(text, ...)
-	if strfind(text, INTERFACE_ACTION_BLOCKED) then return end
+	if strfind(text, INTERFACE_ACTION_BLOCKED) and not I.isDeveloper then return end
 		if (GetLocale() == "zhCN") then
 		text = gsub(text, "|h%[(%d+)%. 综合.-%]|h", "|h%[%1%.综合%]|h")
 		text = gsub(text, "|h%[(%d+)%. 交易.-%]|h", "|h%[%1%.交易%]|h")

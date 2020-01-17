@@ -8,6 +8,7 @@ I.Version = GetAddOnMetadata("_ShiGuang", "Version")
 I.Support = GetAddOnMetadata("_ShiGuang", "X-Support")
 I.Client = GetLocale()
 I.ScreenWidth, I.ScreenHeight = GetPhysicalScreenSize()
+I.isNewPatch = GetBuildInfo() == "8.3.0" -- keep it for future purpose
 
 -- Colors
 I.MyName = UnitName("player")
@@ -48,8 +49,14 @@ I.normTex = Media.."normTex"
 I.gradTex = Media.."gradTex"
 I.flatTex = Media.."flatTex"
 I.bgTex = Media.."bgTex"
-I.EnergyTex = Media.."Skullflower3"
+I.MicroTex = Media.."Hutu\\"
 I.arrowTex = Media.."Modules\\Raid\\textureArrowAbove"
+I.rolesTex = Media.."UI-LFG-ICON-ROLES"
+I.arrowUp = Media.."arrow-up-active"
+I.arrowDown = Media.."arrow-down-active"
+I.arrowLeft = Media.."arrow-left-active"
+I.arrowRight = Media.."arrow-right-active"
+I.EnergyTex = Media.."Skullflower3"
 I.mailTex = "Interface\\Minimap\\Tracking\\Mailbox"
 I.gearTex = Media.."arrow-down-active"  --Media.."Modules\\Raid\\ArrowLarge"
 I.eyeTex = "Interface\\Minimap\\Raid_Icon"		-- blue: \\Dungeon_Icon
@@ -63,10 +70,10 @@ I.newItemFlash = "Interface\\Cooldown\\star4"
 I.sparkTex = "Interface\\CastingBar\\UI-CastingBar-Spark"
 I.TexCoord = {.08, .92, .08, .92}
 I.textures = {
-	normal		= Media.."ActionBars\\Gloss",
-	flash		= Media.."ActionBars\\Flash",
-	pushed		= Media.."ActionBars\\Pushed",
-	checked		= Media.."ActionBars\\Checked",
+	normal		= Media.."ActionBar\\gloss",
+	flash		= Media.."ActionBar\\flash",
+	pushed		= Media.."ActionBar\\pushed",
+	checked		= Media.."ActionBar\\checked",
 }
 I.LeftButton = " |TInterface\\TUTORIALFRAME\\UI-TUTORIAL-FRAME:13:11:0:-1:512:512:12:66:230:307|t "
 I.RightButton = " |TInterface\\TUTORIALFRAME\\UI-TUTORIAL-FRAME:13:11:0:-1:512:512:12:66:333:411|t "

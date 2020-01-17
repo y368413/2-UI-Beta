@@ -33,6 +33,7 @@
 	<Script file="MDGuildBest.lua"/>
 	<Script file="AlertFrames.lua"/>
 	<Script file="TradeTabs.lua"/>
+	<Script file="RaidManager.lua"/>
 	<Script file="FreeMountCD.lua"/>
 	<Script file="WallpaperKit.lua"/>
 </Ui>

@@ -430,7 +430,7 @@ function Bar:ReskinBars()
 end
 
 
---------------------------------X   HotSpotMicroMenu by Sojik X --------------------------------
+--[[------------------------------X   HotSpotMicroMenu by Sojik X --------------------------------
 local HotSpotMicroMenu = CreateFrame("Frame","MicroMenuHolder",UIParent)
 local MicroButtons = {CharacterMicroButton, SpellbookMicroButton, TalentMicroButton, AchievementMicroButton, QuestLogMicroButton, GuildMicroButton, LFDMicroButton, CollectionsMicroButton, EJMicroButton, StoreMicroButton, MainMenuMicroButton,} --, HelpMicroButton, PVPMicroButton, SocialsMicroButton
 local function MoveMicroButtons()
@@ -457,4 +457,4 @@ HotSpotMicroMenu:SetScript("OnEvent", function()
   if not MaoRUISettingDB["Actionbar"]["Enable"] then return end
 	hooksecurefunc("UpdateMicroButtons", MoveMicroButtons)
 	MoveMicroButtons()
-end)
+end)]]

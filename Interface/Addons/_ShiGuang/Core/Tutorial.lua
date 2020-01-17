@@ -2,7 +2,6 @@
 local M, R, U, I = unpack(ns)
 local module = M:RegisterModule("Settings")
 local pairs, wipe = pairs, table.wipe
-local min, max = math.min, math.max
 
 -- Addon Info
 print("<<<---|cFFFFFF00 2|r|cFFFF0000 UI |r v"..GetAddOnMetadata("_ShiGuang", "Version").." ("..GetAddOnMetadata("_ShiGuang", "X-StatsVersion")..")" .." For "..GetAddOnMetadata("_ShiGuang", "X-Support").." --")
@@ -15,7 +14,7 @@ local function DefaultSettings()
 	SetCVar("autoQuestWatch", 1)  
 	SetCVar("alwaysCompareItems", 1)
 	SetCVar("synchronizeSettings", 1)
-  SetCVar("synchronizeMacros", 1)
+	SetCVar("synchronizeMacros", 1)
 	SetCVar("ShowClassColorInNameplate", 1)
 	SetCVar("screenshotQuality", 10)
 	SetCVar("showTutorials", 0)
@@ -102,6 +101,8 @@ local function ForceRaidFrame()
 	CompactUnitFrameProfiles_ApplyCurrentSettings()
 	CompactUnitFrameProfiles_UpdateCurrentPanel()
 end
+
+
 
 local function ForceChatSettings()
 	M:GetModule("Chat"):UpdateChatSize()
@@ -334,18 +335,18 @@ end
 
 -- Tutorial
 local function YesTutor()
-	  DefaultSettings()
-	  ForceDefaultSettings()
-	  ForceRaidFrame()
-	  ForceChatSettings()
-	  MaoRUIDB["LockUIScale"] = true
+
+			ForceDefaultSettings()
+			ForceRaidFrame()
+			ForceChatSettings()
+			MaoRUIDB["LockUIScale"] = true
 			M:SetupUIScale()
-	  MaoRUIDB["DBMRequest"] = true
-	  MaoRUIDB["SkadaRequest"] = true
-	  MaoRUIDB["BWRequest"] = true
-	  ForceAddonSkins()
-	    MaoRUIDB["ResetDetails"] = true 
-		MaoRUISettingDB["Tutorial"]["Complete"] = true
+			MaoRUIDB["DBMRequest"] = true
+			MaoRUIDB["SkadaRequest"] = true
+			MaoRUIDB["BWRequest"] = true
+			ForceAddonSkins()
+			MaoRUIDB["ResetDetails"] = true
+			MaoRUISettingDB["Tutorial"]["Complete"] = true
 end
 
 local welcome
@@ -369,7 +370,8 @@ local function HelloWorld()
 	local BottomBlack = CreateFrame("Frame", nil, welcome) 
 	BottomBlack:SetPoint("TOPLEFT",welcome,"BOTTOMLEFT",0,43)
 	BottomBlack:SetPoint("BOTTOMRIGHT",0,0)
-	M.CreateBD(BottomBlack, 1)
+	--M.CreateBD(BottomBlack, 1)
+	M.CreateBDFrame(BottomBlack, .2)
 	BottomBlackText = M:CreatStyleText(BottomBlack, STANDARD_TEXT_FONT, 16, "OUTLINE", "-----  开袋即食零设置 上手即用懒人包  -----", "BOTTOM",BottomBlack,"BOTTOM",0,16, 0.97,0.75,0) 
 	
 	local WelcomeTitle1 = M:CreatStyleButton(nil, welcome, 60, 60, "BOTTOM", welcome, "CENTER", 0, 12, 1, 1) 
@@ -417,7 +419,7 @@ local function HelloWorld()
 		ShiGuangPerDB["BHT"] = false
 		ReloadUI()
   end)
-	SmallText1 = M:CreatStyleText(LeftPic, STANDARD_TEXT_FONT, 16, "OUTLINE", "[ BFA 8.2.5 v "..GetAddOnMetadata("_ShiGuang", "Version").." ]", "LEFT",RightPic,"RIGHT",-26,60, I.r, I.g, I.b)
+	SmallText1 = M:CreatStyleText(LeftPic, STANDARD_TEXT_FONT, 16, "OUTLINE", "[ BFA " ..GetAddOnMetadata("_ShiGuang", "X-Support").. " v "..GetAddOnMetadata("_ShiGuang", "Version").." ]", "LEFT",RightPic,"RIGHT",-26,60, I.r, I.g, I.b)
 	SmallText2 = M:CreatStyleText(LeftPic, STANDARD_TEXT_FONT, 16, "OUTLINE", "[ https://www.maorui.net ]", "LEFT",RightPic,"RIGHT",-26,20, I.r, I.g, I.b)
 	SmallText3 = M:CreatStyleText(LeftPic, STANDARD_TEXT_FONT, 16, "OUTLINE", "[ 鼠标右键点击小地图便捷插件设置 ]", "LEFT",RightPic,"RIGHT",-26,-20, I.r, I.g, I.b)
 	SmallText4 = M:CreatStyleText(LeftPic, STANDARD_TEXT_FONT, 16, "OUTLINE", "[ 系统自带功能，插件有针对性增强或者删减 ]", "LEFT",RightPic,"RIGHT",-26,-60, I.r, I.g, I.b)
@@ -481,10 +483,13 @@ SLASH_SHIGUANG1 = "/loadmr"
 
 -----------------------------------------
 function module:OnLogin()
+	-- Hide options
 	M.HideOption(Advanced_UseUIScale)
 	M.HideOption(Advanced_UIScaleSlider)
+
+	-- Tutorial and settings
+	DefaultSettings()
 	ForceAddonSkins()
-	
 	if not MaoRUISettingDB["Tutorial"]["Complete"] then HelloWorld() end
 			
 	if (ShiGuangPerDB["BHT"] == true) then

@@ -1,9 +1,9 @@
 ﻿local _, ns = ...
 local M, R, U, I = unpack(ns)
-local S = M:GetModule("Skins")
+local MISC = M:GetModule("Misc")
 
-function S:CreateRM()
-	if not MaoRUISettingDB["Skins"]["RM"] then return end
+function MISC:CreateRM()
+	if not MaoRUISettingDB["Misc"]["RaidTool"] then return end
 
 	local tinsert, strsplit, format = table.insert, string.split, string.format
 	local next, pairs, mod = next, pairs, mod

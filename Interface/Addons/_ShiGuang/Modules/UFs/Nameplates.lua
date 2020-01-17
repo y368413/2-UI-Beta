@@ -160,7 +160,6 @@ if GetCVar("nameplateShowSelf") == "1" then
 	PowerFrame.powerBar:SetHeight(3)
 	PowerFrame.powerBar:SetStatusBarTexture(I.normTex)
 	PowerFrame.powerBar:SetMinMaxValues(0, 1)
-	--PowerFrame.powerBar.bg = M.CreateBDFrame(PowerFrame.powerBar)
 	--M.CreateSD(PowerFrame.powerBar, 3, 3)
 	
 	PowerFrame.powerperc = PowerFrame:CreateFontString(nil, "OVERLAY")
@@ -289,7 +288,6 @@ if GetCVar("nameplateShowSelf") == "1" then
 		Resourcebar[i] = CreateFrame("Frame", "2uiplateresource"..i, Resourcebar)
 		Resourcebar[i]:SetFrameLevel(1)
 		Resourcebar[i]:SetSize(16, 3)
-		--Resourcebar[i].bg = M.CreateBDFrame(Resourcebar[i])
 		--M.CreateSD(Resourcebar[i], 3, 3)
 
 		Resourcebar[i].tex = Resourcebar[i]:CreateTexture(nil, "OVERLAY")

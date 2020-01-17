@@ -635,7 +635,7 @@ function module:OnLogin()
 			local color = BAG_ITEM_QUALITY_COLORS[item.rarity]
 			self.iLvl:SetText(level)
 				if MaoRUISettingDB["Bags"]["BagsiLvlcolor"] then
-			self.iLvl:SetTextColor(color.r, color.g, color.b)
+				self.iLvl:SetTextColor(color.r, color.g, color.b)
 				end
 		else
 			self.iLvl:SetText("")

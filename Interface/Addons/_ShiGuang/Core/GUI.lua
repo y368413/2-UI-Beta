@@ -4,7 +4,7 @@ local G = M:RegisterModule("GUI")
 
 local tonumber, tostring, pairs, ipairs, next, select, type = tonumber, tostring, pairs, ipairs, next, select, type
 local tinsert, format, strsplit = table.insert, string.format, string.split
-local r, g, b = I.r, I.g, I.b
+local cr, cg, cb = I.r, I.g, I.b
 local guiTab, guiPage, f, dataFrame = {}, {}
 
 -- Default Settings
@@ -142,20 +142,16 @@ local defaultSettings = {
 		DBM = true,
 		Skada = false,
 		Bigwigs = true,
-		RM = true,
-		RMRune = false,
-		DBMCount = "10",
-		EasyMarking = true,
 		TMW = true,
 		PetBattle = true,
 		CastBarstyle = true,
 		QuestTrackerSkinTitle = true,
 		WeakAuras = true,
 		BarLine = false,
-		InfobarLine = false,
+		InfobarLine = true,
 		ChatLine = false,
-		MenuLine = false,
-		ClassLine = false,
+		MenuLine = true,
+		ClassLine = true,
 		Details = true,
 		PGFSkin = true,
 		Rematch = true,
@@ -236,6 +232,8 @@ local defaultSettings = {
 		RaidCD = true,
 		PulseCD = false,
 		SorasThreat = true,
+		RaidTool = true,
+		RMRune = false,
 		DBMCount = "10",
 		EasyMarking = true,
 	},
@@ -247,7 +245,6 @@ local defaultSettings = {
 local accountSettings = {
 	ChatFilterList = "%*",
 	Timestamp = false,
-	NameplateFilter = {[1]={}, [2]={}},
 	Changelog = {},
 	totalGold = {},
 	RepairType = 1,
@@ -313,9 +310,9 @@ loader:SetScript("OnEvent", function(self, _, addon)
 		MaoRUISettingDB["BFA"] = true
 	end
 
-	M:SetupUIScale(true)
 	InitialSettings(defaultSettings, MaoRUISettingDB, true)
 	InitialSettings(accountSettings, MaoRUIDB)
+	M:SetupUIScale(true)
 	I.normTex = textureList[MaoRUIDB["TexStyle"]]
 
 	self:UnregisterAllEvents()
@@ -365,7 +362,6 @@ end
 local function updateToggleDirection()
 	M:GetModule("Skins"):RefreshToggleDirection()
 end
-
 
 local function updateMinimapScale()
 	M:GetModule("Maps"):UpdateMinimapScale()
@@ -460,7 +456,8 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		--{1, "Skins", "PGFSkin", U["PGF Skin"], true},
 		{4, "ACCOUNT", "TexStyle", U["Texture Style"], false, false, {U["Highlight"], U["Gradient"], U["Flat"]}},
 		{4, "ACCOUNT", "NumberFormat", U["Numberize"], true, false, {U["Number Type1"], U["Number Type2"], U["Number Type3"]}},
-		{2, "Skins", "DBMCount", U["Countdown Sec"].."*", true, true},
+		{2, "Misc", "DBMCount", U["Countdown Sec"].."*", true, true},
+		{1, "Actionbar", "MicroMenu", U["Micromenu"]},
 	},
 	[2] = {
 		{1, "Nameplate", "Enable", "|cff00cc4c"..U["Enable Nameplate"]},
@@ -522,8 +519,8 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 	},
 	[4] = {
 		--{1, "Skins", "RM", "|cff00cc4c"..U["Raid Manger"]},
-		--{1, "Skins", "RMRune", U["Runes Check"].."*"},
-		--{1, "Skins", "EasyMarking", U["Easy Mark"].."*"},
+		--{1, "Misc", "RMRune", U["Runes Check"].."*"},
+		--{1, "Misc", "EasyMarking", U["Easy Mark"].."*"},
 		{1, "Misc", "QuestNotifier", "|cff00cc4c"..U["QuestNotifier"].."*", false, false, nil, updateQuestNotifier},
 		{1, "Misc", "QuestProgress", U["QuestProgress"].."*", true},
 		{1, "Misc", "OnlyCompleteRing", U["OnlyCompleteRing"].."*", true, true},
@@ -614,7 +611,7 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "Misc", "HideErrors", U["Hide Error"], false, false, nil, updateErrorBlocker},
 		{1, "Misc", "ParagonRep", U["ParagonRep"], true},
 		{1, "ACCOUNT", "AutoBubbles", U["AutoBubbles"], true, true},
-		{3, "ACCOUNT", "UIScale", U["Setup UIScale"], false, false, {.4, 1.15, 15}},
+		{3, "ACCOUNT", "UIScale", U["Setup UIScale"], false, false, {.4, 1.15, 2}},
 		{3, "Misc", "WorldQusetRewardIconsSize", "WorldQusetRewardIconsSize", true, false, {21, 66, 0}},
 		{1, "ACCOUNT", "LockUIScale", "|cff00cc4c"..U["Lock UIScale"]},
 		{3, "UFs", "PlayerFrameScale", U["PlayerFrame Scale"], false, false, {0.6, 1.2, 1}},
@@ -626,7 +623,7 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 local function SelectTab(i)
 	for num = 1, #tabList do
 		if num == i then
-			guiTab[num]:SetBackdropColor(r, g, b, .3)
+			guiTab[num]:SetBackdropColor(cr, cg, cb, .3)
 			guiTab[num].checked = true
 			guiPage[num]:Show()
 		else
@@ -643,7 +640,7 @@ local function tabOnClick(self)
 end
 local function tabOnEnter(self)
 	if self.checked then return end
-	self:SetBackdropColor(r, g, b, .3)
+	self:SetBackdropColor(cr, cg, cb, .3)
 end
 local function tabOnLeave(self)
 	if self.checked then return end
@@ -652,7 +649,7 @@ end
 
 local function CreateTab(parent, i, name)
 	local tab = CreateFrame("Button", nil, parent)
-	tab:SetPoint("TOP", -270 + 90*(i-1), -116)
+	tab:SetPoint("TOP", -270 + 90*(i-1) + R.mult, -116)
 	tab:SetSize(90, 30)
 	M.CreateBD(tab, .3)
 	M.CreateFS(tab, 15, name, "system", "CENTER", 0, 0)
@@ -814,7 +811,7 @@ local function CreateOption(i)
 		else
 			local l = CreateFrame("Frame", nil, parent)
 			l:SetPoint("TOPLEFT", 25, -offset - 12)
-			M.CreateGF(l, 550, R.mult, "Horizontal", .7, .7, .7, .7, 0)
+			M.CreateGF(l, 550, R.mult, "Horizontal", 1, 1, 1, .25, .25)
 			offset = offset + 32
 		end
 	end
@@ -857,7 +854,7 @@ local function exportData()
 								end
 							end
 						end
-					elseif KEY == "Mover" or KEY == "InternalCD" then
+					elseif KEY == "Mover" or KEY == "InternalCD" or KEY == "AuraWatchMover" then
 						text = text..";"..KEY..":"..key
 						for _, v in ipairs(value) do
 							text = text..":"..tostring(v)
@@ -878,14 +875,7 @@ local function exportData()
 	end
 
 	for KEY, VALUE in pairs(MaoRUIDB) do
-		if KEY == "NameplateFilter" then
-			for index, value in pairs(VALUE) do
-				text = text..";ACCOUNT:"..KEY..":"..index
-				for spellID in pairs(value) do
-					text = text..":"..spellID
-				end
-			end
-		elseif KEY == "ContactList" then
+		if KEY == "ContactList" then
 			for name, color in pairs(VALUE) do
 				text = text..";ACCOUNT:"..KEY..":"..name..":"..color
 			end
@@ -961,12 +951,7 @@ local function importData()
 			itemID = tonumber(itemID)
 			MaoRUISettingDB[key][spellID] = {spellID, duration, indicator, unit, itemID}
 		elseif key == "ACCOUNT" then
-			if value == "NameplateFilter" then
-				local spells = {select(4, strsplit(":", option))}
-				for _, spellID in next, spells do
-					MaoRUIDB[value][tonumber(arg1)][tonumber(spellID)] = true
-				end
-			elseif value == "ContactList" then
+			if value == "ContactList" then
 				local name, r, g, b = select(3, strsplit(":", option))
 				MaoRUIDB["ContactList"][name] = r..":"..g..":"..b
 			end
@@ -1011,6 +996,7 @@ local function createDataFrame()
 	scrollArea:SetPoint("TOPLEFT", 10, -30)
 	scrollArea:SetPoint("BOTTOMRIGHT", -28, 40)
 	M.CreateBDFrame(scrollArea, .25)
+	--M.ReskinScroll(scrollArea.ScrollBar)
 
 	local editBox = CreateFrame("EditBox", nil, dataFrame)
 	editBox:SetMultiLine(true)
@@ -1075,8 +1061,9 @@ local function OpenGUI()
 	f:SetSize(1280, 600)
 	f:SetPoint("CENTER")
 	f:SetFrameStrata("HIGH")
-	f:SetFrameLevel(5)
+	f:SetFrameLevel(10)
 	M.CreateMF(f)
+	--M.SetBD(f)
 	M.CreateFS(f, 43, "2 UI", true, "TOP", 0, -62)
 	M.CreateFS(f, 21, "v"..I.Version, false, "TOP", 80, -80)
 
@@ -1094,7 +1081,7 @@ local function OpenGUI()
 
 	for i, name in pairs(tabList) do
 		guiTab[i] = CreateTab(f, i, name)
-		guiPage[i] = CreateFrame("ScrollFrame", nil, f)
+		guiPage[i] = CreateFrame("ScrollFrame", nil, f, "UIPanelScrollFrameTemplate")
 		guiPage[i]:SetPoint("TOPLEFT", 300, -160)
 		guiPage[i]:SetSize(680, 400)
 		guiPage[i]:Hide()
@@ -1179,10 +1166,8 @@ function G:OnLogin()
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
 	end)
 
-	if MaoRUISettingDB["Skins"]["BlizzardSkins"] then M.Reskin(gui) end
+	--if MaoRUISettingDB["Skins"]["BlizzardSkins"] then M.Reskin(gui) end
 end
-
-
 
 SlashCmdList["MAORUIGUI"] = OpenGUI
 SLASH_MAORUIGUI1 = '/mr'
