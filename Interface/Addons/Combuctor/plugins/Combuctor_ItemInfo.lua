@@ -62,21 +62,21 @@ local Cache_Uncollected = {}
 --MerchantTracker:RegisterEvent("MERCHANT_SHOW")
 --MerchantTracker:RegisterEvent("MERCHANT_CLOSED")
 --MerchantTracker:SetScript("OnEvent", function(self, event, ...) 
-	--if (event == "MERCHANT_SHOW") then
-		--MERCHANT_VISIBLE = true
-	--elseif (event == "MERCHANT_CLOSED") then 
-		--MERCHANT_VISIBLE = false
-	--end
-	--for button,ItemGarbage in pairs(Cache_ItemGarbage) do
-		--local JunkIcon = button.JunkIcon
-		--if JunkIcon then
-			--if (MERCHANT_VISIBLE and ItemGarbage.showJunk) then 
-				--JunkIcon:Show()
-			--else 
-				--JunkIcon:Hide()
-			--end
-		--end
-	--end
+--	if (event == "MERCHANT_SHOW") then
+--		MERCHANT_VISIBLE = true
+--	elseif (event == "MERCHANT_CLOSED") then 
+--		MERCHANT_VISIBLE = false
+--	end
+--	for button,ItemGarbage in pairs(Cache_ItemGarbage) do
+--		local JunkIcon = button.JunkIcon
+--		if JunkIcon then
+--			if (MERCHANT_VISIBLE and ItemGarbage.showJunk) then 
+--				JunkIcon:Show()
+--			else 
+--				JunkIcon:Hide()
+--			end
+--		end
+--	end
 --end)
 
 -----------------------------------------------------------
@@ -404,15 +404,15 @@ local Update = function(self)
 
 		--local JunkIcon = self.JunkIcon
 		--if JunkIcon then 
-			--local ItemGarbage = Cache_ItemGarbage[self] 
-			--if ItemGarbage then 
-				--ItemGarbage.showJunk = showJunk
-			--end 
-			--if (MERCHANT_VISIBLE and showJunk) then 
-				--JunkIcon:Show()
-			--else
-				--JunkIcon:Hide()
-			--end
+		--	local ItemGarbage = Cache_ItemGarbage[self] 
+		--	if ItemGarbage then 
+		--		ItemGarbage.showJunk = showJunk
+		--	end 
+		--	if MERCHANT_VISIBLE and showJunk then 
+		--		JunkIcon:Show()
+		--	else
+		--		JunkIcon:Hide()
+		--	end
 		--end
 
 	else
@@ -431,11 +431,11 @@ local Update = function(self)
 		end
 		--local JunkIcon = self.JunkIcon
 		--if JunkIcon then 
-			--if (MERCHANT_VISIBLE and showJunk) then 
-				--JunkIcon:Show()
-			--else
-				--JunkIcon:Hide()
-			--end
+		--	if MERCHANT_VISIBLE and showJunk then 
+		--		JunkIcon:Show()
+		--	else
+		--		JunkIcon:Hide()
+		--	end
 		--end
 	end	
 end 

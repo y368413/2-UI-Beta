@@ -2,10 +2,10 @@
 
 local L = {}
 if GetLocale() == "zhCN" or GetLocale() == "zhTW" then
-L.Binding = "绑定物品"
+L.Binding = "绑定"
 L.All = "全部"
-L.Account = "账号通用"
-L.Equip = "装备绑定"
+L.Account = "战网"
+L.Equip = "装绑"
 L.Use = "使用绑定"
 L.Pickup = "拾取绑定"
 L.Soulbound = "灵魂绑定"

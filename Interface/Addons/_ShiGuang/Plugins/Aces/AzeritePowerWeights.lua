@@ -2120,7 +2120,13 @@ local sourceData = {
 				["name"] = "Earthlink",
 				["azeritePowerID"] = 461,
 			}, -- [6]
-		}
+			{
+				["spellID"] = 317137,
+				["icon"] = 839910,
+				["name"] = "Heart of Darkness",
+				["azeritePowerID"] = 582,
+			}, -- [7]
+		},
 	},
 	["raid"] = {
 		{
@@ -2453,6 +2459,11 @@ local essenceData = {
 			["name"] = "Conflict and Strife",
 			["icon"] = 3015742,
 		}, -- [6]
+		{
+			["essenceID"] = 37,
+			["name"] = "The Formless Void",
+			["icon"] = 3193845,
+		}, -- [7]
 	},
 	["tank"] = {
 		{
@@ -2480,33 +2491,53 @@ local essenceData = {
 			["name"] = "Aegis of the Deep",
 			["icon"] = 2967110,
 		}, -- [5]
+		{
+			["essenceID"] = 33,
+			["name"] = "Touch of the Everlasting",
+			["icon"] = 3193847,
+		}, -- [6]
+		{
+			["essenceID"] = 34,
+			["name"] = "Strength of the Warden",
+			["icon"] = 3193846,
+		}, -- [7]
 	},
 	["healer"] = {
+		{
+			["essenceID"] = 16,
+			["name"] = "Unwavering Ward",
+			["icon"] = 3193842,
+		}, -- [1]
 		{
 			["essenceID"] = 17,
 			["name"] = "The Ever-Rising Tide",
 			["icon"] = 2967108,
-		}, -- [1]
+		}, -- [2]
 		{
 			["essenceID"] = 18,
 			["name"] = "Artifice of Time",
 			["icon"] = 2967112,
-		}, -- [2]
+		}, -- [3]
 		{
 			["essenceID"] = 19,
 			["name"] = "The Well of Existence",
 			["icon"] = 516796,
-		}, -- [3]
+		}, -- [4]
 		{
 			["essenceID"] = 20,
 			["name"] = "Life-Binder's Invocation",
 			["icon"] = 2967106,
-		}, -- [4]
+		}, -- [5]
 		{
 			["essenceID"] = 21,
 			["name"] = "Vitality Conduit",
 			["icon"] = 2967100,
-		}, -- [5]
+		}, -- [6]
+		{
+			["essenceID"] = 24,
+			["name"] = "Spirit of Preservation",
+			["icon"] = 2967101,
+		}, -- [7]
 	},
 	["damager"] = {
 		{
@@ -2534,6 +2565,16 @@ local essenceData = {
 			["name"] = "The Unbound Force",
 			["icon"] = 2967102,
 		}, -- [5]
+		{
+			["essenceID"] = 35,
+			["name"] = "Breath of the Dying",
+			["icon"] = 3193844,
+		}, -- [6]
+		{
+			["essenceID"] = 36,
+			["name"] = "Spark of Inspiration",
+			["icon"] = 3193843,
+		}, -- [7]
 	}
 }
 AzeritePowerWeights.essenceData = essenceData
@@ -5797,7 +5838,6 @@ AzeritePowerWeights.GetDefaultScaleSet = GetDefaultScaleSet
 
 --#EOF
 
-
 --[[----------------------------------------------------------------------------
 	AzeritePowerWeights
 
@@ -6112,7 +6152,6 @@ end
 AzeritePowerWeights.CreatePopUp = CreatePopUp
 
 --#EOF
-
 
 --[[----------------------------------------------------------------------------
 	AzeritePowerWeights
@@ -6897,7 +6936,7 @@ function AzeritePowerWeights:CreateImportGroup(container)
 	container:ReleaseChildren()
 
 	local version = AceGUI:Create("Label")
-	version:SetText(" 8.2.17")
+	version:SetText(" 8.3.1")
 	version:SetJustifyH("RIGHT")
 	version:SetFullWidth(true)
 	container:AddChild(version)
@@ -8020,47 +8059,14 @@ function f:UpdateValues() -- Update scores
 			end
 		end
 
-		--[[
-			Major Slot
-			---------------------
-			milestoneID		115
-			requiredLevel	0
-			slot			0
-			swirlScale		1
 
-			canUnlock		false
-			isDraggable		true
-			isMajorSlot		true
-			unlocked		true
-
-			Minor Slot 1
-			---------------------
-			milestoneID		116
-			requiredLevel	55
-			slot			1
-			swirlScale		1
-
-			canUnlock		false
-			isDraggable		false
-			isMajorSlot		false
-			unlocked		false
-
-			Minor Slot 2
-			---------------------
-			milestoneID		117
-			requiredLevel	65
-			slot			2
-			swirlScale		1
-
-			canUnlock		false
-			isDraggable		false
-			isMajorSlot		false
-			unlocked		false
-		]]--
 		local milestones = C_AzeriteEssence.GetMilestones()
 		local slots = 0
 		for i = #milestones, 1, -1 do
-			if milestones[i].ID == 117 and milestones[i].unlocked == true then -- Major + 2 Minor
+			if milestones[i].ID == 119 and milestones[i].unlocked == true then -- Major + 3 minor
+				slots = 4
+				break
+			elseif milestones[i].ID == 117 and milestones[i].unlocked == true then -- Major + 2 Minor
 				slots = 3
 				break
 			elseif milestones[i].ID == 116 and milestones[i].unlocked == true then -- Major + Minor
@@ -9004,7 +9010,7 @@ local SlashHandlers = {
 		--ReloadUI()
 	end,
 	["ticket"] = function()
-		local text = ("%s %s/%d/%s (%s)\nSettings: "):format("AzeritePowerWeights", "8.2.17", C_CVar.GetCVar("scriptErrors"), cfg.specScales[playerSpecID].scaleName or U["ScaleName_Unknown"], cfg.specScales[playerSpecID].scaleID)
+		local text = ("%s %s/%d/%s (%s)\nSettings: "):format("AzeritePowerWeights", "8.3.1", C_CVar.GetCVar("scriptErrors"), cfg.specScales[playerSpecID].scaleName or U["ScaleName_Unknown"], cfg.specScales[playerSpecID].scaleID)
 		local first = true
 		local skip = {
 			["onlyOwnClassDefaults"] = false,
@@ -9080,7 +9086,7 @@ local SlashHandlers = {
 
 	end,
 	["tt"] = function(...) -- Get tooltip stuff
-		local text = string.format("> START\n- - - - - - - - - -\nVer. %s\nClass/Spec: %s / %s\nScale: %s (%s)\n- - - - - - - - - -\n", "8.2.17", playerClassID, playerSpecID, cfg.specScales[playerSpecID].scaleName or U["ScaleName_Unknown"], cfg.specScales[playerSpecID].scaleID)
+		local text = string.format("> START\n- - - - - - - - - -\nVer. %s\nClass/Spec: %s / %s\nScale: %s (%s)\n- - - - - - - - - -\n", "8.3.1", playerClassID, playerSpecID, cfg.specScales[playerSpecID].scaleName or U["ScaleName_Unknown"], cfg.specScales[playerSpecID].scaleID)
 
 		text = text .. string.format("Score settings:\naddILvlToScore: %s\nscaleByAzeriteEmpowered: %s\naddPrimaryStatToScore: %s\nrelativeScore: %s\nshowOnlyUpgrades: %s\nshowTooltipLegend: %s\n- - - - - - - - - -\n", tostring(cfg.addILvlToScore), tostring(cfg.scaleByAzeriteEmpowered), tostring(cfg.addPrimaryStatToScore), tostring(cfg.relativeScore), tostring(cfg.showOnlyUpgrades), tostring(cfg.showTooltipLegend))
 
@@ -9155,7 +9161,7 @@ local SlashHandlers = {
 
 	end,
 	["is"] = function()
-		local text = string.join("\n", ("> START\nVer. %s"):format("8.2.17"), unpack(importStack))
+		local text = string.join("\n", ("> START\nVer. %s"):format("8.3.1"), unpack(importStack))
 	end,
 	["bang"] = function(...)
 		local number = tonumber(...)

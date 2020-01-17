@@ -181,7 +181,7 @@ end
 
 --------------------------------------------------------------------
 
-function BagBrother:SaveBag(bag, onlyItems)
+function BagBrother:SaveBag(bag, onlyItems, saveSize)
 	local size = GetContainerNumSlots(bag)
 	if size > 0 then
 		local items = {}
