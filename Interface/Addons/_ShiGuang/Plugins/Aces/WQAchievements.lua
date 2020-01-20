@@ -1,4 +1,4 @@
---## Author: Urtgard  ## Version: v8.2.5-8release
+--## Author: Urtgard  ## Version: v8.3.0-8release
 WQAchievements = LibStub("AceAddon-3.0"):NewAddon("WQAchievements", "AceConsole-3.0", "AceTimer-3.0")
 local WQA = WQAchievements
 WQA.data = {}
@@ -2469,6 +2469,8 @@ WQA.ZoneIDList = {
 		1165, -- Dazar'alor
 		1355, -- Nazjatar
 		1462, -- Mechagon
+		1527, -- Uldum
+		1530, -- Vale of Eternal Blossoms
 	}
 }
 

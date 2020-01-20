@@ -87,7 +87,7 @@ function G:CreateScroll(parent, width, height, text)
 	scroll.child = CreateFrame("Frame", nil, scroll)
 	scroll.child:SetSize(width, 1)
 	scroll:SetScrollChild(scroll.child)
-	M.ReskinScroll(scroll.ScrollBar)
+	--M.ReskinScroll(scroll.ScrollBar)
 
 	return scroll
 end

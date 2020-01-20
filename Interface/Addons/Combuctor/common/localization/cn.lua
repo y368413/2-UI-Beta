@@ -28,6 +28,11 @@ L.TitleBags = '%s的背包'
 L.TitleBank = '%s的银行'
 L.TitleVault = '%s的虚空仓库'
 
+--dropdowns
+L.TitleFrames = '%s的框架'
+L.SelectCharacter = '选择角色'
+L.ConfirmDelete = '确定要删除 %s 的缓存数据？'
+
 --interactions
 L.Click = '点击'
 L.Drag = '<拖动>'
@@ -74,10 +79,10 @@ L.TipCountGuild = '公会：%d'
 L.TipDelimiter = '|'
 
 --dialogs
-L.ConfirmTransfer = '存入此物品将移除全部修改并使其不可交易和不可退款。|n|n希望继续？'
-L.PurchaseVault = '希望解锁虚空仓库？|n|n|cffffd200花费：|r %s'
-L.CannotPurchaseVault = '没有足够的货币解锁虚空仓库服务|n|n|cffff2020花费：%s|r'
 L.AskMafia = '问问大佬'
+L.ConfirmTransfer = '存入任一物品将移除全部修改并使其不可交易和不可退款。|n|n希望继续？'
+L.CannotPurchaseVault = '没有足够的货币解锁虚空仓库服务|n|n|cffff2020花费：%s|r'
+L.PurchaseVault = '希望解锁虚空仓库？|n|n|cffffd200花费：|r %s'
 
 -- general
 L.GeneralOptionsDesc = '这些通用功能可以依据配置切换。'
@@ -161,6 +166,7 @@ L.GlowQuest = '任务物品染色'
 L.GlowUnusable = '无用品染色'
 L.GlowSets = '套装染色'
 L.GlowNew = '新物品发光'
+L.GlowPoor = '标记垃圾物品'
 L.GlowAlpha = '发光亮度'
 
 L.EmptySlots = '显示空格背景材质'

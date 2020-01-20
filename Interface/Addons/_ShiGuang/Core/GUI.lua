@@ -1081,7 +1081,7 @@ local function OpenGUI()
 
 	for i, name in pairs(tabList) do
 		guiTab[i] = CreateTab(f, i, name)
-		guiPage[i] = CreateFrame("ScrollFrame", nil, f, "UIPanelScrollFrameTemplate")
+		guiPage[i] = CreateFrame("ScrollFrame", nil, f)
 		guiPage[i]:SetPoint("TOPLEFT", 300, -160)
 		guiPage[i]:SetSize(680, 400)
 		guiPage[i]:Hide()

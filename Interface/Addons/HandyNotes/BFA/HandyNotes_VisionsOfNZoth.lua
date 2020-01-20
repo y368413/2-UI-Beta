@@ -174,7 +174,7 @@ function HandyNotes_VisionsOfNZoth:OnEnter(mapID, coord)
     end
 
     VisionsOfNZoth_NameResolver:Resolve(node.label, function (label)
-        tooltip:SetText(label)
+        tooltip:SetText(label or UNKNOWN)
 
         -- optional top-right text
         if node.rlabel then
@@ -763,6 +763,7 @@ function MinimapDataProvider:CreatePin()
     pin:SetParent(Minimap)
     pin:SetWidth(12)
     pin:SetHeight(12)
+    pin.minimap = true
     pin.texture = texture
     texture:SetAllPoints(pin)
     texture:SetTexelSnappingBias(0)
@@ -1045,9 +1046,7 @@ PetBattle.group = "pet_battles"
 ------------------------------------ QUEST ------------------------------------
 -------------------------------------------------------------------------------
 
-local Quest = VisionsOfNZoth_Class('Quest', Node)
-
-Quest.note = AVAILABLE_QUEST
+local Quest = VisionsOfNZoth_Class('Quest', Node, {note=AVAILABLE_QUEST})
 
 function Quest:init ()
     Node.init(self)
@@ -1060,6 +1059,27 @@ end
 
 function Quest.getters:label ()
     return C_QuestLog.GetQuestInfo(self.quest[1])
+end
+
+-------------------------------------------------------------------------------
+-------------------------------- TIMED EVENT --------------------------------
+-------------------------------------------------------------------------------
+
+local TimedEvent = VisionsOfNZoth_Class('TimedEvent', Quest, {scale=2, note=''})
+
+function TimedEvent.getters:icon ()
+    -- Override icon getter to be a simple yellow peg
+    return 'peg_yellow'
+end
+
+function TimedEvent:enabled (map, coord, minimap)
+    if not VisionsOfNZoth_ignore_quests then
+        -- Timed events that are not active today return nil here
+        if not C_TaskQuest.GetQuestTimeLeftMinutes(self.quest[1]) then
+            return false
+        end
+    end
+    return Quest.enabled(self, map, coord, minimap)
 end
 
 -------------------------------------------------------------------------------
@@ -1130,6 +1150,7 @@ VisionsOfNZoth_node = {
     Quest=Quest,
     Rare=Rare,
     Supply=Supply,
+    TimedEvent=TimedEvent,
     Treasure=Treasure
 }
 
@@ -1158,7 +1179,13 @@ end
 -- /run print(GetAchievementCriteriaInfo(ID, NUM))
 
 local Achievement = VisionsOfNZoth_Class('Achievement', Reward)
-local GetCriteriaInfo = GetAchievementCriteriaInfoByID
+local GetCriteriaInfo = function (id, criteria)
+    local results = {GetAchievementCriteriaInfoByID(id, criteria)}
+    if not results[1] then
+        results = {GetAchievementCriteriaInfo(id, criteria)}
+    end
+    return unpack(results)
+end
 
 function Achievement:init ()
     -- we allow a single number, table of numbers or table of
@@ -1181,7 +1208,7 @@ end
 function Achievement:obtained ()
     if select(4, GetAchievementInfo(self.id)) then return true end
     for i, c in ipairs(self.criteria) do
-        local _, _, completed = GetAchievementCriteriaInfoByID(self.id, c.id)
+        local _, _, completed = GetCriteriaInfo(self.id, c.id)
         if not completed then return false end
     end
     return true
@@ -1430,11 +1457,12 @@ end
 
 function POI:draw (pin, xy)
     local t = pin.texture
+    local size = pin.minimap and 10 or (pin.parentHeight * 0.015)
     t:SetTexCoord(0, 1, 0, 1)
     t:SetVertexColor(0, 0.5, 1, 1)
     t:SetTexture("Interface\\AddOns\\HandyNotes\\Icons\\circle")
     pin:SetAlpha(0.75)
-    pin:SetSize(10, 10)
+    pin:SetSize(size, size)
     return HandyNotes:getXY(xy)
 end
 
@@ -1520,6 +1548,7 @@ function NameResolver:GetCachedName (link)
 end
 
 function NameResolver:IsLink (link)
+    if link == nil then return link end
     return strsub(link, 1, 5) == 'unit:'
 end
 
@@ -1565,6 +1594,7 @@ local NPC = VisionsOfNZoth_node.NPC
 local PetBattle = VisionsOfNZoth_node.PetBattle
 local Rare = VisionsOfNZoth_node.Rare
 local Supply = VisionsOfNZoth_node.Supply
+local TimedEvent = VisionsOfNZoth_node.TimedEvent
 local Treasure = VisionsOfNZoth_node.Treasure
 
 local Achievement = VisionsOfNZoth_reward.Achievement
@@ -1573,7 +1603,6 @@ local Mount = VisionsOfNZoth_reward.Mount
 local Pet = VisionsOfNZoth_reward.Pet
 local Quest = VisionsOfNZoth_reward.Quest
 local Toy = VisionsOfNZoth_reward.Toy
-local Transmog = VisionsOfNZoth_reward.Transmog
 
 local Path = VisionsOfNZoth_poi.Path
 local POI = VisionsOfNZoth_poi.POI
@@ -1626,9 +1655,11 @@ function map:enabled (node, coord, minimap)
 
     local profile = HandyNotes_VisionsOfNZoth.db.profile
     if isinstance(node, Treasure) then return profile.chest_uldum end
-    if isinstance(node, Supply) then return profile.chest_uldum end
+    if isinstance(node, Supply) then return profile.coffer_uldum end
     if isinstance(node, Rare) then return profile.rare_uldum end
     if isinstance(node, PetBattle) then return profile.pet_uldum end
+    if isinstance(node, TimedEvent) then return profile.event_uldum end
+    if node.alpaca then return profile.alpaca_uldum end
 
     return true
 end
@@ -1638,8 +1669,11 @@ end
 -------------------------------------------------------------------------------
 
 defaults['chest_uldum'] = true
+defaults['coffer_uldum'] = true
 defaults['rare_uldum'] = true
+defaults['event_uldum'] = true
 defaults['pet_uldum'] = true
+defaults['alpaca_uldum'] = true
 
 options.groupUldum = {
     type = "header",
@@ -1656,12 +1690,30 @@ options.chestUldum = {
     width = "normal",
 }
 
+options.cofferUldum = {
+    type = "toggle",
+    arg = "coffer_uldum",
+    name = L["options_toggle_coffers"],
+    desc = L["options_toggle_coffers_desc"],
+    order = 2,
+    width = "normal",
+}
+
 options.rareUldum = {
     type = "toggle",
     arg = "rare_uldum",
     name = L["options_toggle_rares"],
     desc = L["options_toggle_rares_desc"],
-    order = 2,
+    order = 3,
+    width = "normal",
+}
+
+options.eventUldum = {
+    type = "toggle",
+    arg = "event_uldum",
+    name = L["options_toggle_assault_events"],
+    desc = L["options_toggle_assault_events_desc"],
+    order = 4,
     width = "normal",
 }
 
@@ -1670,7 +1722,16 @@ options.petUldum = {
     arg = "pet_uldum",
     name = L["options_toggle_battle_pets"],
     desc = L["options_toggle_battle_pets_desc"],
-    order = 3,
+    order = 5,
+    width = "normal",
+}
+
+options.alpacaUldum = {
+    type = "toggle",
+    arg = "alpaca_uldum",
+    name = L["options_toggle_alpaca_uldum"],
+    desc = L["options_toggle_alpaca_uldum_desc"],
+    order = 6,
     width = "normal",
 }
 
@@ -1693,16 +1754,16 @@ function Intro.getters:label ()
     return select(2, GetAchievementInfo(14153)) -- Uldum Under Assault
 end
 
--- Where the Heart is => Surfacing Threats
-local Q = Quest({id={58583, 58506, 56374, 56209, 56375, 56472, 56376}})
+-- Network Diagnostics => Surfacing Threats
+local Q = Quest({id={58506, 56374, 56209, 56375, 56472, 56376}})
 
 if UnitFactionGroup('player') == 'Alliance' then
     map.intro = Intro({faction='Alliance', rewards={
-        Quest({id={58496, 58498}}), Q
+        Quest({id={58496, 58498, 58502}}), Q
     }})
 else
     map.intro = Intro({faction='Horde', rewards={
-        Quest({id={58582}}), Q
+        Quest({id={58582, 58583}}), Q
     }})
 end
 
@@ -1743,7 +1804,7 @@ nodes[38732500] = Rare({id=154578, quest=58612, note=L["aqir_flayer"], pois={
         29816310, 32056727, 32426645, 33646358, 37094853
     })
 }}) -- Aqir Flayer
-nodes[31245691] = Rare({id=154576, quest=58614, note=L["aqir_titanus"], pois={
+nodes[30595944] = Rare({id=154576, quest=58614, note=L["aqir_titanus"], pois={
     POI({30266161, 30076533, 31496674, 33356610, 32486946, 34856598}),
     Path({37295892, 36485588, 37285284}),
     Path({38134884, 36535023, 34765141, 32935159}),
@@ -1766,10 +1827,10 @@ nodes[38214521] = Rare({id=162172, quest=58694, note=L["aqir_warcaster"], pois={
         41463988, 41993776, 42913735
     }) -- Aqir Voidcaster
 }}) -- Aqir Warcaster
-nodes[44854235] = Rare({id=162370, quest=58718, assault=AQR}) -- Armagedillo
+nodes[44854235] = Rare({id=162370, quest=58718, assault={AQR,AMA}}) -- Armagedillo
 nodes[65035129] = Rare({id=152757, quest=55710, assault=AMA, note=L["atekhramun"]}) -- Atekhramun
-nodes[45605777] = Rare({id=162171, quest=58699, assault=AQR, note=L["chamber_of_the_sun"]}) -- Captain Dunewalker
-nodes[75345222] = Rare({id=157167, quest=nil, assault=AMA}) -- Champion Sen-mat
+nodes[45605777] = Rare({id=162171, quest=58699, assault=AQR, note=L["chamber_of_the_sun"]..' '..L["dunewalker"]}) -- Captain Dunewalker
+nodes[75425216] = Rare({id=157167, quest=57280, assault={AQR,AMA}}) -- Champion Sen-mat
 nodes[30854971] = Rare({id=162147, quest=58696, assault=AQR, rewards={
     Mount({id=1319, item=174769}) -- Malevolent Drone
 }}) -- Corpse Eater
@@ -1854,6 +1915,7 @@ nodes[65903522] = Rare({id=152657, quest=55682, assault=AMA, pois={
 nodes[49328235] = Rare({id=158636, quest=57688, assault=EMP, note=L["platform"], rewards={
     Toy({item=169303}) -- Hell-Bent Bracers
 }}) -- The Grand Executor
+nodes[84324729] = Rare({id=157188, quest=57285, assault=AMA, note=L["tomb_widow"]}) -- The Tomb Widow
 nodes[67486382] = Rare({id=152788, quest=55716, assault=AMA, note=L["uatka"]}) -- Uat-ka the Sun's Wrath
 nodes[33592569] = Rare({id=162170, quest=58702, assault=AQR}) -- Warcaster Xeshro
 nodes[79505217] = Rare({id=151852, quest=55461, assault=AMA, pois={
@@ -1880,32 +1942,45 @@ local AQRTR4 = AQRChest({quest=58141, icon='chest_yellow'})
 local AQRTR5 = AQRChest({quest=58142, icon='chest_teal'})
 
 -- quest=58138
+nodes[44855696] = AQRTR1
 nodes[45845698] = clone(AQRTR1, {note=L["chamber_of_the_sun"]})
+nodes[46176156] = AQRTR1
 nodes[46525801] = AQRTR1
 nodes[50555882] = AQRTR1
 nodes[51736032] = AQRTR1
 -- quest=58139
+nodes[30526540] = AQRTR2
 nodes[31166796] = AQRTR2
 nodes[32764770] = AQRTR2
 nodes[32976010] = AQRTR2
 nodes[33366210] = AQRTR2
+nodes[33476998] = AQRTR2
 -- quest=58140
 nodes[18356130] = AQRTR3
 nodes[19836512] = AQRTR3
+nodes[20585920] = AQRTR3
 nodes[23055936] = AQRTR3
 nodes[24525507] = AQRTR3
+nodes[26066468] = AQRTR3
 -- quest=58141
 nodes[36032024] = AQRTR4
 nodes[37484577] = AQRTR4
 nodes[38774014] = AQRTR4
+nodes[39692354] = AQRTR4
 nodes[39754504] = AQRTR4
+nodes[40244251] = AQRTR4
+nodes[40454422] = AQRTR4
+nodes[40823893] = AQRTR4
 -- quest=58142
 nodes[28030834] = AQRTR5
 nodes[30671611] = AQRTR5
+nodes[30903046] = AQRTR5
 nodes[33953036] = AQRTR5
 nodes[35413157] = AQRTR5
+nodes[45561320] = AQRTR5
 
-nodes[36252324] = Supply({quest=nil, assault=AQR, label=L["infested_strongbox"], note=L["chamber_of_the_moon"]})
+nodes[36252324] = Supply({quest=58137, assault=AQR,
+    label=L["infested_strongbox"], note=L["chamber_of_the_moon"]})
 
 -------------------------------------------------------------------------------
 
@@ -1918,7 +1993,6 @@ local EMPTR2 = EMPChest({quest=57624, icon='chest_purple'})
 local EMPTR3 = EMPChest({quest=57626, icon='chest_orange'})
 local EMPTR4 = EMPChest({quest=57627, icon='chest_yellow'})
 local EMPTR5 = EMPChest({quest=57635, icon='chest_teal'})
---local EMPTR6 = EMPChest({quest=nil, icon='chest_lime'})
 
 -- quest=57623
 nodes[58361535] = EMPTR1
@@ -1962,6 +2036,7 @@ local AMATR5 = AMAChest({quest=55699, icon='chest_teal'})
 local AMATR6 = AMAChest({quest=55700, icon='chest_lime'})
 
 -- quest=55689
+nodes[80575110] = AMATR1
 nodes[80785611] = AMATR1
 nodes[81585359] = AMATR1
 nodes[84534540] = AMATR1
@@ -1993,6 +2068,7 @@ nodes[79314578] = AMATR4
 nodes[63084970] = AMATR5
 nodes[64094488] = AMATR5
 nodes[65403796] = AMATR5
+nodes[66394350] = AMATR5
 nodes[69744236] = AMATR5
 nodes[69874163] = AMATR5
 -- quest=55700
@@ -2000,6 +2076,7 @@ nodes[60932455] = AMATR6
 nodes[61343060] = AMATR6
 nodes[63122508] = clone(AMATR6, {note=L["chamber_of_the_stars"]})
 nodes[63532160] = AMATR6
+nodes[65543142] = AMATR6
 nodes[65882147] = clone(AMATR6, {note=L["chamber_of_the_stars"]})
 nodes[67172800] = clone(AMATR6, {note=L["chamber_of_the_stars"]})
 nodes[68222051] = AMATR6
@@ -2014,6 +2091,54 @@ nodes[73685054] = AMACOFF
 nodes[75914194] = AMACOFF
 
 -------------------------------------------------------------------------------
+-------------------------------- ASSAULT EVENTS -------------------------------
+-------------------------------------------------------------------------------
+
+nodes[34392928] = TimedEvent({quest=58679, assault=AQR, note=L["dormant_destroyer"]}) -- Dormant Destroyer
+nodes[20765913] = TimedEvent({quest=58676, assault=AQR, note=L["dormant_destroyer"]}) -- Dormant Destroyer
+nodes[31365562] = TimedEvent({quest=58667, assault=AQR, note=L["obsidian_extract"]}) -- Obsidian Extraction
+nodes[36542060] = TimedEvent({quest=59003, assault=AQR, note=L["combust_cocoon"]}) -- Combustible Cocoons
+nodes[37054778] = TimedEvent({quest=58961, assault=AQR, note=L["ambush_settlers"]}) -- Ambushed Settlers
+nodes[27765714] = TimedEvent({quest=58974, assault=AQR, note=L["ambush_settlers"]}) -- Ambushed Settlers
+nodes[22496418] = TimedEvent({quest=58952, assault=AQR, note=L["purging_flames"]}) -- Purging Flames
+nodes[28336559] = TimedEvent({quest=58990, assault=AQR, note=L["titanus_egg"]}) -- Titanus Egg
+nodes[46845804] = TimedEvent({quest=58981, assault=AQR, note=L["chamber_of_the_sun"]..' '..L["hardened_hive"]}) -- Hardened Hive
+nodes[37136702] = TimedEvent({quest=58662, assault=AQR, note=L["burrowing_terrors"]}) -- Burrowing Terrors
+nodes[45134306] = TimedEvent({quest=58661, assault=AQR, note=L["burrowing_terrors"]}) -- Burrowing Terrors
+nodes[31614380] = TimedEvent({quest=58660, assault=AQR, note=L["burrowing_terrors"]}) -- Burrowing Terrors
+
+-------------------------------------------------------------------------------
+
+-- local MAWREWARD = {Achievement({id=14161, criteria=1})}
+
+-- nodes[] = TimedEvent({quest=58257, assault=EMP, note=L["consuming_maw"], rewards=MAWREWARD}) -- Consuming Maw
+-- nodes[] = TimedEvent({quest=58258, assault=EMP, note=L["consuming_maw"], rewards=MAWREWARD}) -- Consuming Maw
+-- nodes[] = TimedEvent({quest=58256, assault=EMP, note=L["consuming_maw"], rewards=MAWREWARD}) -- Consuming Maw
+-- nodes[] = TimedEvent({quest=58216, assault=EMP, note=L["consuming_maw"], rewards=MAWREWARD}) -- Consuming Maw
+
+-------------------------------------------------------------------------------
+
+nodes[64002800] = TimedEvent({quest=57215, assault=AMA, note=L["engine_of_ascen"]}) -- Engine of Ascension
+nodes[64962255] = TimedEvent({quest=55355, assault=AMA, note=L["lightblade_training"]}) -- Lightblade Training Grounds
+nodes[70006000] = TimedEvent({quest=55360, assault=AMA, note=L["unsealed_tomb"]}) -- The Unsealed Tomb
+nodes[71004500] = TimedEvent({quest=55358, assault=AMA, note=L["beacon_of_sun_king"]}) -- Beacon of the Sun King
+nodes[76004700] = TimedEvent({quest=57243, assault=AMA, note=L["slave_camp"]}) -- Amathet Slave Camp
+nodes[84005400] = TimedEvent({quest=55670, assault=AMA, note=L["raiding_fleet"]}) -- Amathet Raiding Fleet
+
+-- nodes[????????] = TimedEvent({quest=nil, assault=AMA}) -- Solar Collector
+-- nodes[62002000] = TimedEvent({quest=nil, assault=AMA, note=L["beacon_of_sun_king"]}) -- Beacon of the Sun King
+-- nodes[64003000] = TimedEvent({quest=nil, assault=AMA}) -- Ritual of Ascension
+-- nodes[65003700] = TimedEvent({quest=nil, assault=AMA}) -- Unearthed Keeper
+-- nodes[66005000] = TimedEvent({quest=nil, assault=AMA}) -- Solar Collector
+-- nodes[66005000] = TimedEvent({quest=nil, assault=AMA}) -- Solar Extractor
+-- nodes[71006800] = TimedEvent({quest=nil, assault=AMA}) -- Unearthed Keeper
+-- nodes[78005700] = TimedEvent({quest=nil, assault=AMA}) -- Unearthed Keeper
+-- nodes[80006600] = TimedEvent({quest=nil, assault=AMA}) -- Solar Extractor
+-- nodes[83004800] = TimedEvent({quest=nil, assault=AMA}) -- Unearthed Keeper
+-- nodes[83006100] = TimedEvent({quest=nil, assault=AMA, note=L["beacon_of_sun_king"]}) -- Beacon of the Sun King
+-- nodes[61004700] = TimedEvent({quest=nil, assault=AMA}) -- The Vir'naal Front
+
+-------------------------------------------------------------------------------
 --------------------------------- BATTLE PETS ---------------------------------
 -------------------------------------------------------------------------------
 
@@ -2026,8 +2151,8 @@ nodes[61745440] = PetBattle({id=162461}) -- Whispers
 ------------------------------- SPRINGFUR ALPACA ------------------------------
 -------------------------------------------------------------------------------
 
--- daily 58879, final 58887
-nodes[58005169] = Node({icon=134190, quest={58879, 58887}, label=L["gersahl"], note=L["gersahl_note"], pois={
+nodes[58005169] = Node({icon=134190, alpaca=true, label=L["gersahl"],
+    note=L["gersahl_note"], pois={
     POI({
         46922961, 49453556, 50583294, 55484468, 56265101, 56691882, 57112548,
         57235056, 57458491, 57474682, 57741910, 58005169, 58202808, 58967759,
@@ -2037,8 +2162,12 @@ nodes[58005169] = Node({icon=134190, quest={58879, 58887}, label=L["gersahl"], n
     })
 }, rewards={Item({item=174858})}})
 
-nodes[47004800] = NPC({id=162765, icon=2916287, quest={58879, 58887}, note=L["friendly_alpaca"], pois={
-    POI({30002900, 39000800, 41007000, 47004800, 52001900, 55006900, 76636813})
+nodes[47004800] = NPC({id=162765, icon=2916287, quest=58879, alpaca=true,
+    note=L["friendly_alpaca"], pois={
+    POI({
+        15006200, 24000900, 27004800, 30002900, 39000800, 41007000, 47004800,
+        52001900, 55006900, 62705340, 63011446, 69001300, 70003900, 76636813
+    })
 }, rewards={
     Mount({id=1329, item=174859}) -- Springfur Alpaca
 }})
@@ -2059,15 +2188,14 @@ local Node = VisionsOfNZoth_node.Node
 local PetBattle = VisionsOfNZoth_node.PetBattle
 local Rare = VisionsOfNZoth_node.Rare
 local Supply = VisionsOfNZoth_node.Supply
+local TimedEvent = VisionsOfNZoth_node.TimedEvent
 local Treasure = VisionsOfNZoth_node.Treasure
 
 local Achievement = VisionsOfNZoth_reward.Achievement
-local Item = VisionsOfNZoth_reward.Item
 local Mount = VisionsOfNZoth_reward.Mount
 local Pet = VisionsOfNZoth_reward.Pet
 local Quest = VisionsOfNZoth_reward.Quest
 local Toy = VisionsOfNZoth_reward.Toy
-local Transmog = VisionsOfNZoth_reward.Transmog
 
 local Path = VisionsOfNZoth_poi.Path
 local POI = VisionsOfNZoth_poi.POI
@@ -2120,9 +2248,10 @@ function map:enabled (node, coord, minimap)
 
     local profile = HandyNotes_VisionsOfNZoth.db.profile
     if isinstance(node, Treasure) then return profile.chest_vale end
-    if isinstance(node, Supply) then return profile.chest_vale end
+    if isinstance(node, Supply) then return profile.coffer_vale end
     if isinstance(node, Rare) then return profile.rare_vale end
     if isinstance(node, PetBattle) then return profile.pet_vale end
+    if isinstance(node, TimedEvent) then return profile.event_vale end
 
     return true
 end
@@ -2132,7 +2261,9 @@ end
 -------------------------------------------------------------------------------
 
 defaults['chest_vale'] = true
+defaults['coffer_vale'] = true
 defaults['rare_vale'] = true
+defaults['event_vale'] = true
 defaults['pet_vale'] = true
 
 options.groupVale = {
@@ -2150,12 +2281,30 @@ options.chestVale = {
     width = "normal",
 }
 
+options.cofferVale = {
+    type = "toggle",
+    arg = "coffer_vale",
+    name = L["options_toggle_coffers"],
+    desc = L["options_toggle_coffers_desc"],
+    order = 12,
+    width = "normal",
+}
+
 options.rareVale = {
     type = "toggle",
     arg = "rare_vale",
     name = L["options_toggle_rares"],
     desc = L["options_toggle_rares_desc"],
-    order = 12,
+    order = 13,
+    width = "normal",
+}
+
+options.eventVale = {
+    type = "toggle",
+    arg = "event_vale",
+    name = L["options_toggle_assault_events"],
+    desc = L["options_toggle_assault_events_desc"],
+    order = 14,
     width = "normal",
 }
 
@@ -2164,7 +2313,7 @@ options.petVale = {
     arg = "pet_vale",
     name = L["options_toggle_battle_pets"],
     desc = L["options_toggle_battle_pets_desc"],
-    order = 13,
+    order = 15,
     width = "normal",
 }
 
@@ -2187,18 +2336,18 @@ function Intro.getters:label ()
     return select(2, GetAchievementInfo(14154)) -- Defend the Vale
 end
 
--- Where the Heart is => Surfacing Threats
-local Q1 = Quest({id={58583, 58506, 56374, 56209, 56375, 56472, 56376}})
+-- Network Diagnostics => Surfacing Threats
+local Q1 = Quest({id={58506, 56374, 56209, 56375, 56472, 56376}})
 -- Forging Onward => Magni's Findings
 local Q2 = Quest({id={56377, 56536, 56537, 56538, 56539, 56771, 56540}})
 
 if UnitFactionGroup('player') == 'Alliance' then
     map.intro = Intro({faction='Alliance', rewards={
-        Quest({id={58496, 58498}}), Q1, Q2
+        Quest({id={58496, 58498, 58502}}), Q1, Q2
     }})
 else
     map.intro = Intro({faction='Horde', rewards={
-        Quest({id={58582}}), Q1, Q2
+        Quest({id={58582, 58583}}), Q1, Q2
     }})
 end
 
@@ -2301,7 +2450,6 @@ local MANTR2 = MANChest({quest=58225, icon='chest_purple'})
 local MANTR3 = MANChest({quest=58226, icon='chest_orange'})
 local MANTR4 = MANChest({quest=58227, icon='chest_yellow'})
 local MANTR5 = MANChest({quest=58228, icon='chest_teal'})
---local MANTR6 = MANChest({quest=nil, icon='chest_lime'})
 
 -- quest=58224
 nodes[07223945] = MANTR1
@@ -2399,35 +2547,47 @@ local EMPTR6 = EMPChest({quest=57203, icon='chest_lime'})
 nodes[42024621] = EMPTR1
 nodes[42314323] = EMPTR1
 nodes[42814020] = EMPTR1
+nodes[44274195] = EMPTR1
 nodes[44483693] = EMPTR1
 nodes[46314037] = EMPTR1
 nodes[50673444] = EMPTR1
 nodes[52673967] = EMPTR1
 nodes[53884179] = EMPTR1
--- quest=57199
+-- quest=57199 (DONT FORGET TO ADD TO THE POOLS OF POWER MAP BELOW)
 nodes[56113034] = EMPTR2
 nodes[56152716] = EMPTR2
+nodes[58452979] = EMPTR2
 nodes[61422747] = EMPTR2
+nodes[64932682] = EMPTR2
 nodes[67222783] = EMPTR2
 nodes[69933311] = EMPTR2
 nodes[70282286] = EMPTR2
 nodes[73242533] = EMPTR2
 -- quest=57200
 nodes[57334165] = EMPTR3
+nodes[59186181] = EMPTR3
 nodes[59605624] = EMPTR3
+nodes[61674641] = EMPTR3
+nodes[62035159] = EMPTR3
 nodes[62585721] = EMPTR3
+nodes[65206504] = EMPTR3
 nodes[65855969] = EMPTR3
 nodes[67565584] = EMPTR3
 -- quest=57201
+nodes[70215370] = EMPTR4
+nodes[77076363] = EMPTR4
 nodes[77413129] = EMPTR4
 nodes[78305251] = EMPTR4
 nodes[78435833] = EMPTR4
 nodes[79034330] = EMPTR4
+nodes[80733960] = EMPTR4
 nodes[81363381] = EMPTR4
 nodes[87813771] = EMPTR4
 -- quest=57202
 nodes[60806337] = EMPTR5
 nodes[63107059] = EMPTR5
+nodes[64297053] = EMPTR5
+nodes[68306247] = EMPTR5
 nodes[71516854] = EMPTR5
 -- quest=57203
 nodes[42456853] = EMPTR6
@@ -2448,6 +2608,52 @@ nodes[69516094] = EMPCOFF
 nodes[76626437] = EMPCOFF
 
 -------------------------------------------------------------------------------
+
+-- Blizzard added a separate map for the pools of power midway through the
+-- first week, yay ...
+
+local pmap = clone(map, {id=1579, nodes={}})
+local pnodes = pmap.nodes
+pmap.intro = nil
+
+-- quest=57199
+pnodes[09235255] = EMPTR2
+pnodes[09554460] = EMPTR2
+pnodes[15235182] = EMPTR2
+pnodes[23234539] = EMPTR2
+pnodes[32504372] = EMPTR2
+pnodes[38294622] = EMPTR2
+pnodes[45715972] = EMPTR2
+pnodes[46313359] = EMPTR2
+pnodes[54384017] = EMPTR2
+
+pnodes[42104690] = clone(EMPCOFF, {note=L["pools_of_power"]})
+
+-------------------------------------------------------------------------------
+-------------------------------- ASSAULT EVENTS -------------------------------
+-------------------------------------------------------------------------------
+
+local MAWREWARD = {Achievement({id=14161, criteria=1})}
+
+nodes[41354535] = TimedEvent({quest=58439, assault=EMP, note=L["consuming_maw"], rewards=MAWREWARD}) -- Consuming Maw
+nodes[46365714] = TimedEvent({quest=58438, assault=EMP, note=L["consuming_maw"], rewards=MAWREWARD}) -- Consuming Maw
+nodes[81314952] = TimedEvent({quest=58442, assault=EMP, note=L["consuming_maw"], rewards=MAWREWARD}) -- Consuming Maw
+
+nodes[42316703] = TimedEvent({quest=56090, assault=EMP, note=L["protect_stout"]}) -- Protecting the Stout
+nodes[43624146] = TimedEvent({quest=57146, assault=EMP, note=L["corruption_tear"]}) -- Corruption Tear
+nodes[49356668] = TimedEvent({quest=56074, assault=EMP, note=L["void_conduit"]}) -- Void Conduit
+nodes[56685933] = TimedEvent({quest=56178, assault=EMP, note=L["void_conduit"]}) -- Void Conduit
+nodes[60614333] = TimedEvent({quest=56163, assault=EMP, note=L["bound_guardian"]}) -- Bound Guardian
+nodes[60706594] = TimedEvent({quest=56099, assault=EMP, note=L["big_blossom_mine"]}) -- Font of Corruption
+nodes[69502214] = TimedEvent({quest=57375, assault=EMP, note=L["pulse_mound"]}) -- Pulsating Mound
+nodes[74164004] = TimedEvent({quest=56076, assault=EMP, note=L["abyssal_ritual"]}) -- Abyssal Ritual
+nodes[76365163] = TimedEvent({quest=57379, assault=EMP, note=L["infested_statue"]}) -- Infested Jade Statue
+nodes[79233315] = TimedEvent({quest=56177, assault=EMP, note=L["void_conduit"]}) -- Void Conduit
+nodes[79525433] = TimedEvent({quest=56180, assault=EMP, note=L["bound_guardian"]}) -- Bound Guardian
+
+-- nodes[69002100] = TimedEvent({quest=nil, assault=EMP}) -- Reach of N'Zoth
+
+-------------------------------------------------------------------------------
 --------------------------------- BATTLE PETS ---------------------------------
 -------------------------------------------------------------------------------
 
@@ -2455,6 +2661,73 @@ nodes[28553494] = PetBattle({id=162470}) -- Baruk Stone Defender
 nodes[56172822] = PetBattle({id=162468}) -- K'tiny the Mad
 nodes[57465427] = PetBattle({id=162469}) -- Tormentius
 nodes[07333190] = PetBattle({id=162471}) -- Vil'thik Hatchling
+
+-------------------------------------------------------------------------------
+
+VisionsOfNZoth_maps[map.id] = map
+VisionsOfNZoth_maps[pmap.id] = pmap
+
+
+
+-------------------------------------------------------------------------------
+---------------------------------- NAMESPACE ----------------------------------
+-------------------------------------------------------------------------------
+
+local Map = VisionsOfNZoth_Map
+local NPC = VisionsOfNZoth_node.NPC
+local Mount = VisionsOfNZoth_reward.Mount
+local POI = VisionsOfNZoth_poi.POI
+
+
+-------------------------------------------------------------------------------
+------------------------------------- MAP -------------------------------------
+-------------------------------------------------------------------------------
+
+local map = Map({ id=864 })
+local nodes = map.nodes
+
+function map:enabled (node, coord, minimap)
+    if not Map.enabled(self, node, coord, minimap) then return false end
+
+    local profile = HandyNotes_VisionsOfNZoth.db.profile
+    if node.alpaca then return profile.alpaca_voldun end
+
+    return true
+end
+
+-------------------------------------------------------------------------------
+----------------------------------- OPTIONS -----------------------------------
+-------------------------------------------------------------------------------
+
+defaults['alpaca_voldun'] = true
+
+options.groupVoldun = {
+    type = "header",
+    name = L["voldun"],
+    order = 20,
+}
+
+options.alpacaVoldun = {
+    type = "toggle",
+    arg = "alpaca_voldun",
+    name = L["options_toggle_alpaca_voldun"],
+    desc = L["options_toggle_alpaca_voldun_desc"],
+    order = 21,
+    width = "normal",
+}
+
+-------------------------------------------------------------------------------
+------------------------------ ELUSIVE QUICKHOOF ------------------------------
+-------------------------------------------------------------------------------
+
+nodes[43006900] = NPC({id=162681, icon=2916283, alpaca=true, pois={
+    POI({
+        26405250, 29006600, 31106730, 42006000, 43006900, 51108590, 52508900,
+        54008200, 54605320, 55007300
+    })
+}, rewards={
+    Mount({id=1324, item=174860}) -- Elusive Quickhoof
+}, note=L["elusive_alpaca"]})
 
 -------------------------------------------------------------------------------
 

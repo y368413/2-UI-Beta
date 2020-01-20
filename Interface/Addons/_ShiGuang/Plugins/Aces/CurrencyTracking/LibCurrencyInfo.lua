@@ -1,6 +1,6 @@
 --[[
 Name: LibCurrencyInfo
-Revision: $Rev: 30 $
+Revision: $Rev: 34 $
 Maintainers: Arith
 Website: https://www.wowace.com/projects/libcurrencyinfo
 Dependencies: None
@@ -178,6 +178,8 @@ data.CurrencyByCategory = {
 		1749,	 -- Nazjatar Ally - Hunter Akana
 		1750,	 -- Nazjatar Ally - Farseer Ori
 		1752,	 -- Honeyback Hive
+		1757, 	 -- Uldum Accord
+		1758, 	 -- Rajani
 	},
 	[143] = { -- Battle for Azeroth
 		1299,	 -- Brawler's Gold
@@ -189,8 +191,10 @@ data.CurrencyByCategory = {
 		1716,	 -- Honorbound Service Medal
 		1717,	 -- 7th Legion Service Medal
 		1718,	 -- Titan Residuum
+		1719,	 -- Corrupted Memento
 		1721,	 -- Prismatic Manapearl
 --		1743,	 -- 8.2 NOT CURRENTLY USED
+		1755, 	 -- Coalescing Visions
 	},
 	[144] = { -- Virtual
 		1553, -- Azerite
@@ -364,6 +368,7 @@ data.Currencies = {
 	[1717] = { id=1717, category=143 }, -- 7th Legion Service Medal
 	[1717] = { id=1717, category=143 }, -- 7th Legion Service Medal
 	[1718] = { id=1718, category=143 }, -- Titan Residuum
+	[1719] = { id=1719, category=143 }, -- Corrupted Memento
 	[1721] = { id=1721, category=143 }, -- Prismatic Manapearl
 	[1722] = { id=1722, category=142 }, -- Azerite Ore
 	[1723] = { id=1723, category=142 }, -- Lumber
@@ -378,8 +383,12 @@ data.Currencies = {
 	[1749] = { id=1749, category=142 }, -- Nazjatar Ally - Hunter Akana
 	[1750] = { id=1750, category=142 }, -- Nazjatar Ally - Farseer Ori
 	[1752] = { id=1752, category=142 }, -- Honeyback Hive
-
+	[1757] = { id=1757, category=142 }, -- Uldum Accord
+	[1758] = { id=1758, category=142 }, -- Rajani
+	[1755] = { id=1755, category=143 }, -- Coalescing Visions
 }
+
+
 
 
 -- ----------------------------------------------------------------------------

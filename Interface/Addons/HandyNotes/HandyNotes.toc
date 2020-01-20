@@ -4,10 +4,10 @@
 ## Title: HandyNotes
 ## Title-zhCN:|cff0080ff[地图]|r宝藏稀有
 ## Title-zhTW:|cff0080ff[地图]|r寶藏稀有
-## Notes: Handynotes with(BfA-Achievments+BattleForAzerothTreasures)
-## Notes-zhCN: 宝藏将会在地图上标记出，概览所有稀有，判定你是否击杀了一次性稀有。
-## Notes-zhTW: 宝藏将会在地图上标记出，概覽所有稀有，并判定時候已擊殺過。
-## SavedVariables: HandyNotesDB, HandyNotes_HandyNotesDB, HandyNotesArathiDB, Handynotes_PandariaDB, HandyNotes_WarfrontTreasuresDB, HandyNotes_BFA_HF_TrackerDB, NPC_Name_CacheDB, Item_Name_CacheDB, HNMoleMachineConfig, HandyNotes_MechagonAndNazjatarDB, HandyNotes_ScarabCoffersDB, HandyNotes_VisionsOfNZothDB, HandyNotes_ShrinesForJewelcraftersDB
+## Notes: Handynotes with Achievments+Treasures+Toys+Mounts
+## Notes-zhCN: 稀有、宝藏、坐骑、玩具将会在地图上标记出，并判定是否已击杀过。
+## Notes-zhTW: 稀有、宝藏、坐骑、玩具将会在地图上标记出，并判定是否已擊殺過。
+## SavedVariables: HandyNotesDB, HandyNotes_HandyNotesDB, HandyNotesArathiDB, Handynotes_PandariaDB, HandyNotes_WarfrontTreasuresDB, HandyNotes_BFA_HF_TrackerDB, NPC_Name_CacheDB, Item_Name_CacheDB, HNMoleMachineConfig, HandyNotes_MechagonAndNazjatarDB, HandyNotes_ScarabCoffersDB, HandyNotes_VisionsOfNZothDB, HandyNotes_ShrinesForJewelcraftersDB, HandyNotes_Universal_ExplorerDB
 ## Dependencies: _ShiGuang
 
 ## X-Repple: 2 UI
@@ -47,6 +47,8 @@ Mode\HandyNotes_ScarabCoffers.lua
 Mode\HandyNotes_MoleMachine.lua
 Mode\HandyNotes_LightningPaw.lua
 Mode\HandyNotes_DungeonLocations.lua
+Mode\HandyNotes_Universal_Explorer.lua
+
 
 # Others files
 CandyBuckets.lua

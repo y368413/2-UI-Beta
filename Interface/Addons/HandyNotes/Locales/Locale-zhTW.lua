@@ -379,6 +379,110 @@ L["Sanctum of Order (entrance)"] = "秩序聖所 (入口)"
 L["Tel'anor"] = "泰爾亞諾"
 L["Twilight Vineyards"] = "暮光葡萄園"
 L["Waning Crescent"] = "弦月旅店"
+
+L["OptionsDescription"] = "永恒岛稀有精英位置显示"
+L["OptionsArgsDescription"] = "调整图标外观"
+L["OptionsIconScaleName"] = "图标大小"
+L["OptionsIconScaleDescription"] = "图标的大小"
+L["OptionsIconAlphaName"] = "图标透明度"
+L["OptionsIconAlphaDescription"] = "图标的透明度"
+L["EmeralGander"] = "翠羽公鹤"
+L["EmeralGanderDrop"] = "风翎鹤羽"
+L["EmeralGanderInfo"] = "在天神庭院周围有许多刷新点。"
+L["IronfurSteelhorn"] = "铁鬃铜角牛"
+L["IronfurSteelhornDrop"] = "一簇牦牛毛"
+L["ImperialPython"] = "帝王巨蟒"
+L["ImperialPythonDrop"] = "致死小蝰蛇"
+L["GreatTurtleFuryshell"] = "怒壳巨龟"
+L["GreatTurtleFuryshellDrop"] = "硬化之壳"
+L["GreatTurtleFuryshellInfo"] = "在西海岸巡逻。"
+L["GuchiSwarmbringer"] = "虫群先锋古赤"
+L["GuchiSwarmbringerDrop"] = "古赤的蚕宝宝"
+L["GuchiSwarmbringerInfo"] = "在老酒湾附近刷新。"
+L["Zesqua"] = "泽泉"
+L["ZesquaDrop"] = "降雨之石"
+L["ZesquaInfo"] = "在老酒湾的海岸东边。"
+L["ZhuGonSour"] = "泛酸的筑汞"
+L["ZhuGonSourDrop"] = "酒灵臭臭"
+L["ZhuGonSourInfo"] = "在老酒湾刷新的稀有事件，完成后可看见稀有精英泛酸的筑汞。"
+L["Karkanos"] = "卡卡诺斯"
+L["KarkanosDrop"] = "一大包永恒铸币"
+L["KarkanosInfo"] = "码头会刷新钓手，与之对话可召唤卡卡诺斯。"
+L["Chelon"] = "蛰龙"
+L["ChelonDrop"] = "硬化之壳"
+L["ChelonInfo"] = "蛰龙刷新时为龟壳，点击后即可召唤出蛰龙。"
+L["Spelurk"] = "斯普鲁克"
+L["SpelurkDrop"] = "被诅咒的护身符"
+L["SpelurkInfo"] = "秘密巢穴洞口被塌方覆盖，进入的玩家需要点击左边石头旁的巨锤以砸开塌方，同时斯普鲁克刷新。法师可以闪现进去用里面的巨锤砸开塌方。"
+L["Cranegnasher"] = "噬鹤者"
+L["CranegnasherDrop"] = "新鲜的追猎者之皮"
+L["CranegnasherInfo"] = "需要召唤。 地上出现可调查的嗜鱼鹤尸体时，从南边拉一只嗜鱼鹤过来它就会跳下来。"
+L["Rattleskew"] = "响骨"
+L["RattleskewDrop"] = "扎维兹坦船长的断腿"
+L["RattleskewInfo"] = "沉船会刷新触发事件：藤壶号之战，在水下帮助npc击败几波幽灵海盗后，响骨会刷新。"
+L["MonstrousSpineclaw"] = "凶暴钳爪蟹"
+L["MonstrousSpineclawDrop"] = "钳爪小螃蟹"
+L["MonstrousSpineclawInfo"] = "海边所有可能的钳爪蟹刷新点。"
+L["SpiritJadefire"] = "玉火之灵"
+L["SpiritJadefireDrop"] = "发光的绿色灰烬"
+L["SpiritJadefireDrop2"] = "玉火炎灵"
+L["SpiritJadefireInfo"] = "孤魂岩洞内刷新。"
+L["Leafmender"] = "剪叶者"
+L["LeafmenderDrop"] = "灰叶小林精"
+L["LeafmenderInfo"] = "永恒岛下方蹈火者上方精英野牛人区。"
+L["Bufo"] = "布佛"
+L["BufoDrop"] = "幼年巨口娃"
+L["BufoInfo"] = "在有很多巨口娃的区域刷新。"
+L["Garnia"] = "加尼亚"
+L["GarniaDrop"] = "红玉小水滴"
+L["GarniaInfo"] = "在红玉湖刷新，只能坐信天翁上去。"
+L["Tsavoka"] = "查沃卡"
+L["TsavokaDrop"] = "新鲜的追踪者之皮"
+L["TsavokaInfo"] = "在查沃卡巢穴中刷新。"
+L["Stinkbraid"] = "斯汀克布莱德"
+L["StinkbraidInfo"] = "右下海面上的海盗船上。"
+L["RockMoss"] = "石苔"
+L["RockMossDrop"] = "金苔藓"
+L["RockMossInfo"] = "孤魂岩洞深处。"
+L["WatcherOsu"] = "斥候奥苏"
+L["WatcherOsuDrop"] = "灰烬之石"
+L["WatcherOsuInfo"] = "蹈火者小径。"
+L["JakurOrdon"] = "神战士迦库尔"
+L["JakurOrdonDrop"] = "警告标志"
+L["JakurOrdonInfo"] = "蹈火者废墟悬崖边缘处。"
+L["ChampionBlackFlame"] = "黑火勇士"
+L["ChampionBlackFlameDrop"] = "黑火匕首"
+L["ChampionBlackFlameDrop2"] = "一大袋草药"
+L["ChampionBlackFlameInfo"] = "蹈火者小径，不停的沿着道路巡逻。黑火勇士是3个一组的野牛人。"
+L["Cinderfall"] = "落烬"
+L["CinderfallDrop"] = "坠焰"
+L["CinderfallInfo"] = "断桥处。"
+L["UrdurCauterizer"] = "烙印者乌都尔"
+L["UrdurCauterizerDrop"] = "日落之石"
+L["UrdurCauterizerInfo"] = "斡耳朵神殿外围墙边。"
+L["FlintlordGairan"] = "燧石领主铠兰"
+L["FlintlordGairanDrop"] = "斡耳朵死亡之钟"
+L["FlintlordGairanInfo"] = "斡耳朵神殿周围有很多刷新点。"
+L["Huolon"] = "惑龙"
+L["HuolonDrop"] = "雷霆玛瑙云端祥龙的缰绳"
+L["HuolonInfo"] = "在蹈火者之径附近的天空中飞翔。"
+L["Golganarr"] = "高戈纳尔"
+L["GolganarrDrop"] = "古怪的抛光石"
+L["GolganarrDrop2"] = "一堆闪亮的石头"
+L["GolganarrInfo"] = "就在这附近刷新。"
+L["Evermaw"] = "吞天"
+L["EvermawDrop"] = "雾气缭绕的幽魂灯笼"
+L["EvermawInfo"] = "此标记不是确切的位置，因为这货沿着海岸一直在游。"
+L["DreadShipVazuvius"] = "幽灵船瓦组维斯号"
+L["DreadShipVazuviusDrop"] = "迷时水手结晶"
+L["DreadShipVazuviusInfo"] = "需要在海边的墓碑处使用击杀稀有吞天后获得的物品雾气缭绕的幽魂灯笼才会出现。"
+L["ArchiereusFlame"] = "烈焰祭司阿克鲁斯"
+L["ArchiereusFlameDrop"] = "远古知识药剂"
+L["ArchiereusFlameInfo"] = "在斡耳朵圣殿内刷新，所以没有橙色披风的玩家只能在挑战者之石处使用挑战卷轴。"
+L["Rattleskew"] ="响骨 - 扎维兹坦船长"
+L["RattleskewDrop"] ="扎维兹坦船长遗失的小腿"
+L["RattleskewDrop2"] ="工艺图:骷髅雕文"
+L["RattleskewInfo"] ="随机事件“藤壶号之战”：东南部半艘沉船(60.6, 87.2)的甲板上出现扎维兹坦船长及其手下剑客时，击败围攻它们的亡灵水手后刷新。"
 -------------------------------------------------------------------------------
 ----------------------------------- MECHAGON ----------------------------------
 -------------------------------------------------------------------------------
@@ -534,52 +638,54 @@ L["shassera_cave"] = "夏瑟菈洞穴的入口。";
 ------------------------------------ GEAR -------------------------------------
 -------------------------------------------------------------------------------
 
-L["cloth"] = "布甲";
-L["leather"] = "皮甲";
-L["mail"] = "鎖甲";
-L["plate"] = "鎧甲";
+L["cloth"] = "布甲"
+L["leather"] = "皮甲"
+L["mail"] = "鎖甲"
+L["plate"] = "鎧甲"
 
-L["1h_mace"] = "單手錘";
-L["1h_sword"] = "單手劍";
-L["1h_axe"] = "單手斧";
-L["2h_mace"] = "雙手錘";
-L["2h_axe"] = "雙手斧";
-L["2h_sword"] = "雙手劍";
-L["shield"] = "盾牌";
-L["dagger"] = "匕首";
-L["staff"] = "法杖";
-L["fist"] = "拳套";
-L["polearm"] = "長柄";
-L["bow"] = "弓";
-L["gun"] = "槍";
-L["wand"] = "魔杖";
-L["crossbow"] = "弩";
-L["offhand"] = "副手";
-L["warglaives"] = "戰刃";
+L["1h_mace"] = "單手錘"
+L["1h_sword"] = "單手劍"
+L["1h_axe"] = "單手斧"
+L["2h_mace"] = "雙手錘"
+L["2h_axe"] = "雙手斧"
+L["2h_sword"] = "雙手劍"
+L["shield"] = "盾牌"
+L["dagger"] = "匕首"
+L["staff"] = "法杖"
+L["fist"] = "拳套"
+L["polearm"] = "長柄武器"
+L["bow"] = "弓"
+L["gun"] = "槍"
+L["wand"] = "魔杖"
+L["crossbow"] = "弩"
+L["offhand"] = "副手"
+L["warglaive"] = "戰刃"
 
-L["ring"] = "戒指";
-L["amulet"] = "項鍊";
-L["cloak"] = "披風";
-L["trinket"] = "飾品";
+L["ring"] = "戒指"
+L["amulet"] = "項鍊"
+L["cloak"] = "披風"
+L["trinket"] = "飾品"
 
 -------------------------------------------------------------------------------
 ---------------------------------- TOOLTIPS -----------------------------------
 -------------------------------------------------------------------------------
 
-L["retrieving"] = "檢索物品連結 ...";
-L["in_cave"] = "在洞穴。";
-L["weekly"] = "每週";
-L["normal"] = "普通";
-L["hard"] = "困難";
-L["mount"] = "坐騎";
-L["pet"] = "寵物";
-L["toy"] = "玩具";
+L["retrieving"] = "檢索項目連結 ..."
+L["in_cave"] = "在洞穴。"
+L["in_small_cave"] = "在小洞穴。"
+L["in_water_cave"] = "在水下洞穴。"
+L["weekly"] = "每週"
+L["normal"] = "普通"
+L["hard"] = "困難"
+L["mount"] = "坐騎"
+L["pet"] = "寵物"
+L["toy"] = "玩具"
 L["completed"] = "已完成"
 L["incomplete"] = "未完成"
 L["known"] = "已收藏"
 L["missing"] = "缺少"
 L["unobtainable"] = "無法獲得"
-L["unlearnable"] = "未學習"
+L["unlearnable"] = "無法學習"
 
 -------------------------------------------------------------------------------
 --------------------------------- CONTEXT MENU --------------------------------
@@ -692,3 +798,183 @@ L["Show Shrines"] = "顯示聖壇"
 L["Show Shrines which Jewelercrafters can use to create gems"] = "顯示那些珠寶學者可以創造珠寶的聖壇"
 L["Reset hidden nodes"] = "重置隱藏的節點"
 L["Show all nodes that you manually hid by right-clicking on them and choosing \"hide\"."] = "顯示所有透過您手動右鍵點擊並選擇\\\"隱藏\\\"的節點。"
+
+-------------------------------------------------------------------------------
+------------------------------------ ULDUM ------------------------------------
+-------------------------------------------------------------------------------
+
+L["uldum"] = "奥丹姆"
+L["uldum_intro_note"] = "完成奥丹姆引导任务解锁稀有、宝藏及突袭任务！"
+
+L["aqir_flayer"] = "与Aqir Hive Workers(待翻译)以及Aqir Reapers(待翻译)共享刷新点。"
+L["aqir_titanus"] = "与Aqir Goliaths(待翻译)共享刷新点。"
+L["aqir_warcaster"] = "与Aqir Voidcasters(待翻译)共享刷新点。"
+L["atekhramun"] = "踩死碎坑上的幼蝎直到稀有出现"
+L["chamber_of_the_moon"] = "在月亮密室下面。"
+L["chamber_of_the_stars"] = "在群星密室下面。"
+L["chamber_of_the_sun"] = "在太阳密室里面。"
+L["friendly_alpaca"] = "在一个位置只出现10分钟，然后在一个较长的刷新时间后再次出现。每天可以喂食羊驼一个基萨尔野菜，7天(次)后会获得坐骑"
+L["gersahl"] = "基萨尔野菜"
+L["gersahl_note"] = "用于喂食友善的羊驼，可以获得坐骑：春袭羊驼。不需要草药学即可采摘。模型较小，可被草药学追踪，建议调低环境细节和地表景观两项设置参数以防伤眼"
+L["hmiasma"] = "喂食它周围的软泥直到启动。"
+L["left_eye"] = "放下全视之眼玩具的左半部分（原文，笔者也不明白，待更新）"
+L["platform"] = "刷新在浮空平台顶部。"
+L["reshef"] = "与Voidwarped High Guards(待翻译)共享刷新点。"
+L["spirit_cave"] = "黑暗仪祭师的洞穴入口。"
+L["uatka"] = "需要三个人分别点击神秘的装置，消耗一个日灼护符，出自阿玛塞特圣箱。注意：一个人也可以点击，护符并不返还，别问我怎么知道的"
+L["wastewander"] = "与Wastewander Hosts(待翻译)共享刷新点。"
+
+L["amathet_cache"] = "阿玛赛特宝箱"
+L["black_empire_cache"] = "黑暗帝国宝箱"
+L["black_empire_coffer"] = "黑暗帝国宝匣"
+L["infested_cache"] = "Infested Cache"
+L["infested_strongbox"] = "Infested Strongbox"
+L["amathet_reliquary"] = "阿玛赛特圣箱"
+
+L["cursed_relic"] = "需要虚曲圣物"
+L["tolvir_relic"] = "需要托维尔圣物"
+
+-------------------------------------------------------------------------------
+------------------------------------ VALE -------------------------------------
+-------------------------------------------------------------------------------
+
+L["vale"] = "锦绣谷"
+L["vale_intro_note"] = "完成锦绣谷引导任务解锁稀有、宝藏及突袭任务！"
+
+L["big_blossom_mine"] = "在矿洞里面，入口在东北方向。"
+L["guolai"] = "Inside Guo-Lai Halls."
+L["jadec"] = "Inside Guo-Lai Halls. Go left at the bottom of the stairs."
+L["pools_of_power"] = "在能量池中，入口在鎏金亭（地图中间雕像）。"
+L["right_eye"] = "放下全视之眼玩具的右半部分（原文，笔者也不明白，待更新）"
+L["tisiphon"] = "Click on Danielle's Lucky Fishing Rod."
+
+L["ambered_cache"] = "Ambered Cache"
+L["ambered_coffer"] = "Ambered Coffer"
+L["mogu_plunder"] = "Mogu Plunder"
+L["mogu_strongbox"] = "Mogu Strongbox"
+
+-------------------------------------------------------------------------------
+------------------------------------ GEAR -------------------------------------
+-------------------------------------------------------------------------------
+
+L["cloth"] = "布甲"
+L["leather"] = "皮甲"
+L["mail"] = "锁甲"
+L["plate"] = "板甲"
+
+L["1h_mace"] = "单手锤"
+L["1h_sword"] = "单手剑"
+L["1h_axe"] = "单手斧"
+L["2h_mace"] = "双手锤"
+L["2h_axe"] = "双手斧"
+L["2h_sword"] = "双手剑"
+L["shield"] = "盾牌"
+L["dagger"] = "匕首"
+L["staff"] = "法杖"
+L["fist"] = "拳套"
+L["polearm"] = "长柄武器"
+L["bow"] = "弓"
+L["gun"] = "枪"
+L["wand"] = "魔杖"
+L["crossbow"] = "弩"
+L["offhand"] = "副手"
+L["warglaive"] = "战刃"
+
+L["ring"] = "戒指"
+L["amulet"] = "项链"
+L["cloak"] = "披风"
+L["trinket"] = "饰品"
+
+-------------------------------------------------------------------------------
+---------------------------------- TOOLTIPS -----------------------------------
+-------------------------------------------------------------------------------
+
+L["retrieving"] = "正在获取此项信息"
+L["in_cave"] = "在洞穴。"
+L["in_small_cave"] = "在小洞穴。"
+L["in_water_cave"] = "在水下洞穴。"
+L["weekly"] = "每周"
+L["normal"] = "普通"
+L["hard"] = "困难"
+L["mount"] = "坐骑"
+L["pet"] = "宠物"
+L["toy"] = "玩具"
+L["completed"] = "已完成"
+L["incomplete"] = "未完成"
+L["known"] = "已获得"
+L["missing"] = "未获得"
+L["unobtainable"] = "无法获得"
+L["unlearnable"] = "无法解锁（相对当前职业、专精或其它原因）"
+
+-------------------------------------------------------------------------------
+--------------------------------- CONTEXT MENU --------------------------------
+-------------------------------------------------------------------------------
+
+L["context_menu_title"] = "HandyNotes 恩若司的幻象"
+L["context_menu_add_tomtom"] = "加入到TomTom"
+L["context_menu_hide_node"] = "隱藏此節點"
+L["context_menu_restore_hidden_nodes"] = "恢復所有隱藏節點"
+
+-------------------------------------------------------------------------------
+----------------------------------- OPTIONS -----------------------------------
+-------------------------------------------------------------------------------
+
+L["VisionsOfNZoth"] = "恩若司的幻象"
+
+------------------------------------ ICONS ------------------------------------
+
+L["options_icon_settings"] = "圖示設定"
+L["options_icons_treasures"] = "寶藏圖示"
+L["options_icons_rares"] = "稀有圖示"
+L["options_icons_caves"] = "洞穴圖示"
+L["options_icons_pet_battles"] = "戰寵圖示"
+L["options_icons_other"] = "其他圖示"
+L["options_scale"] = "縮放"
+L["options_scale_desc"] = "1 = 100%"
+L["options_opacity"] = "透明度"
+L["options_opacity_desc"] = "0 = 透明, 1 = 不透明"
+
+---------------------------------- VISIBILITY ---------------------------------
+
+L["options_visibility_settings"] = "可視性"
+L["options_general_settings"] = "一般"
+L["options_toggle_looted_rares"] = "永遠顯示所有稀有"
+L["options_toggle_looted_rares_desc"] = "不論拾取狀態顯示所有稀有"
+L["options_toggle_looted_treasures"] = "已經拾取的寶藏"
+L["options_toggle_looted_treasures_desc"] = "不論拾取狀態顯示所有寶藏"
+L["options_toggle_hide_done_rare"] = "如果戰利品已收藏，隱藏稀有"
+L["options_toggle_hide_done_rare_desc"] = "隱藏所有戰利品已收藏的稀有。"
+L["options_toggle_hide_minimap"] = "隱藏小地圖上的所有圖示"
+L["options_toggle_hide_minimap_desc"] = "在小地圖上隱藏此插件的所有圖示，並只在主地圖上顯示它們。"
+
+L["options_toggle_battle_pets_desc"] = "顯示戰寵訓練師與NPC的位置。"
+L["options_toggle_battle_pets"] = "戰寵"
+L["options_toggle_caves_desc"] = "顯示其他節點的洞穴入口。"
+L["options_toggle_caves"] = "洞穴"
+L["options_toggle_chests_desc"] = "顯示寶箱位置 (每日可拾取的)。"
+L["options_toggle_chests"] = "寶箱"
+L["options_toggle_misc"] = "其他"
+L["options_toggle_npcs"] = "NPC"
+L["options_toggle_rares_desc"] = "顯示稀有NPC的位置。"
+L["options_toggle_rares"] = "稀有"
+L["options_toggle_supplies_desc"] = "顯示戰爭補給箱的所有可能位置。"
+L["options_toggle_supplies"] = "戰爭補給空投"
+L["options_toggle_treasures"] = "寶藏"
+
+---------------------------------- TOOLTIP ---------------------------------
+
+L["options_tooltip_settings"] = "工具提示"
+L["options_tooltip_settings_desc"] = "工具提示"
+L["options_toggle_show_loot"] = "顯示戰利品"
+L["options_toggle_show_loot_desc"] = "在工具提示中加入戰利品資訊"
+L["options_toggle_show_notes"] = "顯示註記"
+L["options_toggle_show_notes_desc"] = "在可用的工具提示中加入有用的註記"
+
+--------------------------------- DEVELOPMENT ---------------------------------
+
+L["options_dev_settings"] = "開發"
+L["options_dev_settings_desc"] = "開發設定"
+L["options_toggle_show_debug"] = "偵錯"
+L["options_toggle_show_debug_desc"] = "顯示偵錯內容"
+L["options_toggle_force_nodes"] = "強制節點"
+L["options_toggle_force_nodes_desc"] = "強制顯示全部節點"

@@ -349,6 +349,7 @@ function MISC:MailBox()
 		M.Reskin(button1)
 		M.Reskin(button2)
 		M.Reskin(button3)
+		M.Reskin(button4)
 	end
 
 	-- Hide Blizz

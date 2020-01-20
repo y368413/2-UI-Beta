@@ -101,7 +101,6 @@ local function lovewow()
 	close:SetScript("OnClick", function() f:Hide() end)
 end
 
-
 local function compareToShow(event)
 	if UI_Tutorial then return end
 
