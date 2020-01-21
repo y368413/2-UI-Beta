@@ -35,7 +35,7 @@ if IsAddOnLoaded("Combuctor") then
         CombuctorItemButton_CIMIUpdateIcon(self.CanIMogItOverlay)
     end
     
-    hooksecurefunc(Combuctor.ItemSlot, "Update", CIMI_CombuctorUpdate)
+    hooksecurefunc(Combuctor.Item, "Update", CIMI_CombuctorUpdate)
     CanIMogIt:RegisterMessage("ResetCache", function () Combuctor:UpdateFrames() end)
     --hooksecurefunc(Combuctor.Item, "Update", CIMI_CombuctorUpdate)
     --CanIMogIt:RegisterMessage("ResetCache", function () Combuctor.Frames:Update() end)

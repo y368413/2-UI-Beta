@@ -7,7 +7,7 @@
 ## Notes: Handynotes with Achievments+Treasures+Toys+Mounts
 ## Notes-zhCN: 稀有、宝藏、坐骑、玩具将会在地图上标记出，并判定是否已击杀过。
 ## Notes-zhTW: 稀有、宝藏、坐骑、玩具将会在地图上标记出，并判定是否已擊殺過。
-## SavedVariables: HandyNotesDB, HandyNotes_HandyNotesDB, HandyNotesArathiDB, Handynotes_PandariaDB, HandyNotes_WarfrontTreasuresDB, HandyNotes_BFA_HF_TrackerDB, NPC_Name_CacheDB, Item_Name_CacheDB, HNMoleMachineConfig, HandyNotes_MechagonAndNazjatarDB, HandyNotes_ScarabCoffersDB, HandyNotes_VisionsOfNZothDB, HandyNotes_ShrinesForJewelcraftersDB, HandyNotes_Universal_ExplorerDB
+## SavedVariables: HandyNotesDB, HandyNotes_HandyNotesDB, HandyNotesArathiDB, Handynotes_PandariaDB, HandyNotes_WarfrontTreasuresDB, HandyNotes_BFA_HF_TrackerDB, NPC_Name_CacheDB, Item_Name_CacheDB, HNMoleMachineConfig, HandyNotes_MechagonAndNazjatarDB, HandyNotes_ScarabCoffersDB, HandyNotes_VisionsOfNZothDB, HandyNotes_ShrinesForJewelcraftersDB, HandyNotes_Universal_ExplorerDB, HandyNotes_TravelGuideDB
 ## Dependencies: _ShiGuang
 
 ## X-Repple: 2 UI
@@ -48,7 +48,7 @@ Mode\HandyNotes_MoleMachine.lua
 Mode\HandyNotes_LightningPaw.lua
 Mode\HandyNotes_DungeonLocations.lua
 Mode\HandyNotes_Universal_Explorer.lua
-
+Mode\HandyNotes_TravelGuide.lua
 
 # Others files
 CandyBuckets.lua
