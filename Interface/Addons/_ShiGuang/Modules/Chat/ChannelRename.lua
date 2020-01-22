@@ -14,6 +14,7 @@ function module:UpdateChannelNames(text, ...)
 		text = gsub(text, "|h%[(%d+)%. 寻求组队.-%]|h", "|h%[%1%.组队%]|h")
     text = gsub(text, "|h%[(%d+)%. 世界防务.-%]|h", "|h%[%1%.世界防务%]|h")
 		text = gsub(text, "|h%[(%d+)%. 公会招募.-%]|h", "|h%[%1%.招募%]|h")
+		text = gsub(text, "|h%[(%d+)%. 大脚世界频道%]|h", "|h%[%1%.世界%]|h")
 		elseif (GetLocale() == "zhTW") then
 		text = gsub(text, "|h%[(%d+)%. 綜合.-%]|h", "|h%[%1%.綜合%]|h")
 		text = gsub(text, "|h%[(%d+)%. 貿易.-%]|h", "|h%[%1%.貿易%]|h")
@@ -21,13 +22,8 @@ function module:UpdateChannelNames(text, ...)
 		text = gsub(text, "|h%[(%d+)%. 尋求組隊.-%]|h", "|h%[%1%.組隊%]|h")
     text = gsub(text, "|h%[(%d+)%. 世界防務.-%]|h", "|h%[%1%.世界防務%]|h")
 		text = gsub(text, "|h%[(%d+)%. 公會招募.-%]|h", "|h%[%1%.招募%]|h")
+		--text = gsub(text, "|h%[(%d+)%. 大腳世界頻道%]|h", "|h%[%1%.世界%]|h")
 		else
-		chn[1] = "%[%d+%. General.-%]"
-		chn[2] = "%[%d+%. Trade.-%]"
-		chn[3] = "%[%d+%. LocalDefense.-%]"
-		chn[4] = "%[%d+%. LookingForGroup%]"
-		chn[5] = "%[%d+%. WorldDefense%]"
-		chn[6] = "%[%d+%. GuildRecruitment.-%]"
 		text = gsub(text, "|h%[(%d+)%. General.-%]|h", "|h%[%1%.General%]|h")
 		text = gsub(text, "|h%[(%d+)%. Trade.-%]|h", "|h%[%1%.Trade%]|h")
 		text = gsub(text, "|h%[(%d+)%. LocalDefense.-%]|h", "|h%[%1%.Defense%]|h")
@@ -35,8 +31,6 @@ function module:UpdateChannelNames(text, ...)
     text = gsub(text, "|h%[(%d+)%. WorldDefense.-%]|h", "|h%[%1%.WorldDefense%]|h")
 		text = gsub(text, "|h%[(%d+)%. GuildRecruitment.-%]|h", "|h%[%1%.Recruitment%]|h")
 		end
-		text = gsub(text, "|h%[(%d+)%. 大脚世界频道%]|h", "|h%[%1%.世界%]|h")
-		text = gsub(text, "|h%[(%d+)%. 大腳世界頻道%]|h", "|h%[%1%.世界%]|h")
 		return self.oldAddMsg(self, text, ...) --self.oldAddMsg(self, gsub(text, "|h%[(%d+)%..-%]|h", "|h[%1]|h"), ...)
 end
 

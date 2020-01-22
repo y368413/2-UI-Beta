@@ -33,7 +33,6 @@ local function GetPowerType()
         return Enum.PowerType.ComboPoints
     elseif (class == DRUID) then
         return UnitPowerType("player") == Enum.PowerType.Energy and Enum.PowerType.ComboPoints or nil
-    --elseif (class == DEATHKNIGHT) then
     end
 end
 
@@ -127,7 +126,7 @@ function BlinkHealth:OnEnable()
   self:RegisterEvent("PLAYER_ENTERING_WORLD");
 	self:RegisterEvent("PLAYER_REGEN_DISABLED");
 	self:RegisterEvent("PLAYER_REGEN_ENABLED");
-  self:RegisterEvent("UNIT_POWER_UPDATE");
+    self:RegisterEvent("UNIT_POWER_UPDATE");
 	self.frame["player"]:Show();
 	self.handle = self:ScheduleRepeatingTimer("UpdateUnitValues", 0.05);
 end
@@ -141,6 +140,9 @@ end
 
 function BlinkHealth:PLAYER_TARGET_CHANGED()
 	self:UpdateUnitFrame();
+	if (self.class == "ROGUE" or self.class == "DRUID") then
+		self:UpdateComboPoints();
+	end
 end
 
 function BlinkHealth:PLAYER_SPECIALIZATION_CHANGED()
@@ -149,6 +151,7 @@ end
 
 function BlinkHealth:PLAYER_ENTERING_WORLD()
     BlinkHealthTextPowerType = GetPowerType()
+    self:UpdateUnitFrame(); --更新状态显示数值
 end
 
 function BlinkHealth:PLAYER_REGEN_DISABLED()
@@ -175,7 +178,7 @@ function BlinkHealth:CreateAnchorFrame()
 	self.anchor:SetHeight(80);
 	self.anchor:EnableMouse(true);
 	self.anchor:SetMovable(true);
-	self.anchor:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 235);
+	self.anchor:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 265);
 	local backdrop = {
 		bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
 		edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
@@ -342,11 +345,13 @@ function BlinkHealth:UpdateUnitValues()
 			hexColor = self:ToHexColor(UnitSelectionColor("target"));
 		end
 		--精英、银英、世界boss加前缀
-		if(UnitClassification("target")=="elite") then name="[精英] "..name; end
-		if(UnitClassification("target")=="rare") then name="[稀有] "..name; end
-		if(UnitClassification("target")=="rareelite") then name="[稀有精英] "..name; end
-		if(UnitClassification("target")=="worldboss") then name="[世界BOSS] "..name; end
+		if(UnitClassification("target")=="elite") then name="[精英]"..name; end
+		if(UnitClassification("target")=="rare") then name="[稀有]"..name; end
+		if(UnitClassification("target")=="rareelite") then name="[稀有精英]"..name; end
+		if(UnitClassification("target")=="worldboss") then name="[世界BOSS]"..name; end
+		
 		self.frame["target"].name:SetFormattedText("|cff%s%s|r", hexColor, name);
+	
 		if (UnitExists("targettarget")) then
 			heal, maxheal = UnitHealth("targettarget"), UnitHealthMax("targettarget");
 			perh = heal/maxheal*100+0.5

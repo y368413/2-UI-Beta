@@ -16,7 +16,7 @@ LFDParentFrame:HookScript("OnShow",function()
 --------------------------------------Hide the left/right end cap------------------------
 MainMenuBarArtFrame.LeftEndCap:Hide()  MainMenuBarArtFrame.RightEndCap:Hide()   
 
---## Version: 1.1.0 ## Author: Crinseth
+--## Version: 1.1.1 ## Author: Crinseth
 local waitTable = {};
 local waitFrame = nil;
 local function DressingWait(delay, func, ...)
@@ -70,6 +70,9 @@ local HIDDEN_SOURCES = {
 	[84223] = true, -- waist
 }
 local buttons = {}
+local undressButton
+local DressUpTargetBtn
+
 local updateSlots
 -- Toggle buttons visibility
 local function showButtons(show)
@@ -79,6 +82,13 @@ local function showButtons(show)
         else
             button:Hide()
         end
+    end
+    if show then
+        undressButton:Show()
+        DressUpTargetBtn:Show()
+    else
+        undressButton:Hide()
+        DressUpTargetBtn:Hide()
     end
 end
 -- Button click event
@@ -139,6 +149,34 @@ for i, slot in ipairs(SLOTS) do
     button:SetHighlightTexture(button.highlight)
     buttons[slot] = button
 end
+
+-- Undress button
+undressButton = CreateFrame("Button", nil, DressUpFrame, "UIPanelButtonTemplate")
+undressButton:SetSize(80, 21)
+undressButton:SetText(CHARMS_NAKEDIZE)
+undressButton:SetPoint("BOTTOMLEFT", 6, 4)
+undressButton:SetScript("OnClick", function()
+    DressUpFrame.ModelScene:GetPlayerActor():Undress()
+    updateSlots()
+end)
+
+DressUpTargetBtn = CreateFrame("Button",nil,DressUpFrame,"UIPanelButtonTemplate") 
+DressUpTargetBtn:SetSize(80, 21)
+DressUpTargetBtn:SetText(CHARMS_TARGET)
+DressUpTargetBtn:SetPoint("LEFT", undressButton, "RIGHT", 0,0)
+DressUpTargetBtn:Disable()
+DressUpTargetBtn:SetScript("OnClick", function()
+	DressUpFrame.ModelScene:GetPlayerActor():SetModelByUnit("target", false, true)
+	updateSlots()
+end)
+DressUpTargetBtn:RegisterEvent("PLAYER_TARGET_CHANGED")
+DressUpTargetBtn:SetScript("OnEvent", function()
+	if UnitExists("target") and UnitIsPlayer("target") then
+		DressUpTargetBtn:Enable() 
+	else 
+		DressUpTargetBtn:Disable() 
+	end
+end)
 
 -- Updates slot buttons content based on PlayerActor
 updateSlots = function()
