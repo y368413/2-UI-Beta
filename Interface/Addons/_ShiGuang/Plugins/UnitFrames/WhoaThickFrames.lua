@@ -264,14 +264,14 @@ hooksecurefunc("TargetFrame_CheckClassification", function(self, forceNormalText
 		end		
 	end
 	self.healthbar.lockColor = true;
-	if ( self.showPVP ) then
+	--[[if ( self.showPVP ) then
 		local factionGroup = UnitFactionGroup(self.unit);
 		if ( UnitIsPVPFreeForAll(self.unit) ) then
 				self.pvpIcon:SetTexture("Interface\\TargetingFrame\\UI-PVP-FFA");
 		elseif ( factionGroup and factionGroup ~= "Neutral" and UnitIsPVP(self.unit) ) then
 				self.pvpIcon:SetTexture("Interface\\TargetingFrame\\UI-PVP-"..factionGroup);
 		end
-	end
+	end]]
 end)
 
 -- Mana texture

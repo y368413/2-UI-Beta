@@ -1594,7 +1594,6 @@ end
 VisionsOfNZoth_NameResolver = NameResolver
 
 
-
 -------------------------------------------------------------------------------
 ---------------------------------- NAMESPACE ----------------------------------
 -------------------------------------------------------------------------------
@@ -1916,7 +1915,7 @@ nodes[21236105] = Rare({id=162140, quest=58697, assault=AQR, rewards={
     Path({22486168, 21316279, 19896347, 19356128, 20345804, 21435846, 24325860, 24866015, 24406194, 22486168})
 }}) -- Skikx'traz
 nodes[66676804] = Rare({id=162372, quest=58715, assault={AQR, AMA}, pois={
-    POI({58038282, 66676804, 70997407})
+    POI({58606160, 58038282, 66676804, 70997407})
 }}) -- Spirit of Cyrus the Black
 nodes[49944011] = Rare({id=162352, quest=58716, assault={AQR, AMA}, note=L["in_water_cave"]}) -- Spirit of Dark Ritualist Zakahn
 nodes[52154012] = Cave({parent=nodes[49944011], assault={AQR, AMA}, label=L["spirit_cave"]}) -- Entrance
@@ -1930,6 +1929,7 @@ nodes[49328235] = Rare({id=158636, quest=57688, assault=EMP, note=L["platform"],
     Toy({item=169303}) -- Hell-Bent Bracers
 }}) -- The Grand Executor
 nodes[84324729] = Rare({id=157188, quest=57285, assault=AMA, note=L["tomb_widow"]}) -- The Tomb Widow
+nodes[60014937] = Rare({id=158595, quest=57673, assault=EMP}) -- Thoughtstealer Vos
 nodes[67486382] = Rare({id=152788, quest=55716, assault=AMA, note=L["uatka"]}) -- Uat-ka the Sun's Wrath
 nodes[33592569] = Rare({id=162170, quest=58702, assault=AQR}) -- Warcaster Xeshro
 nodes[79505217] = Rare({id=151852, quest=55461, assault=AMA, pois={
@@ -1956,6 +1956,7 @@ local AQRTR4 = AQRChest({quest=58141, icon='chest_yellow'})
 local AQRTR5 = AQRChest({quest=58142, icon='chest_teal'})
 
 -- quest=58138
+nodes[43925868] = clone(AQRTR1, {note=L["chamber_of_the_sun"]})
 nodes[44855696] = AQRTR1
 nodes[45845698] = clone(AQRTR1, {note=L["chamber_of_the_sun"]})
 nodes[46176156] = AQRTR1
@@ -1976,6 +1977,7 @@ nodes[19836512] = AQRTR3
 nodes[20585920] = AQRTR3
 nodes[23055936] = AQRTR3
 nodes[24525507] = AQRTR3
+nodes[24606387] = AQRTR3
 nodes[26066468] = AQRTR3
 -- quest=58141
 nodes[36032024] = AQRTR4
@@ -1990,6 +1992,7 @@ nodes[40823893] = AQRTR4
 nodes[28030834] = AQRTR5
 nodes[30671611] = AQRTR5
 nodes[30903046] = AQRTR5
+nodes[31521515] = AQRTR5
 nodes[33953036] = AQRTR5
 nodes[35413157] = AQRTR5
 nodes[45561320] = AQRTR5
@@ -2031,6 +2034,7 @@ nodes[47507687] = EMPTR5
 nodes[51707135] = EMPTR5
 nodes[51777298] = EMPTR5
 nodes[52197757] = EMPTR5
+nodes[55397860] = EMPTR5
 
 local EMPCOFF = Supply({quest=nil, assault=EMP, note=L["cursed_relic"],
     label=L["black_empire_coffer"]})
@@ -2126,10 +2130,20 @@ nodes[31614380] = TimedEvent({quest=58660, assault=AQR, note=L["burrowing_terror
 
 -- local MAWREWARD = {Achievement({id=14161, criteria=1})}
 
--- nodes[] = TimedEvent({quest=58257, assault=EMP, note=L["consuming_maw"], rewards=MAWREWARD}) -- Consuming Maw
+nodes[55382132] = TimedEvent({quest=58257, assault=EMP, note=L["consuming_maw"], rewards=MAWREWARD}) -- Consuming Maw
 -- nodes[] = TimedEvent({quest=58258, assault=EMP, note=L["consuming_maw"], rewards=MAWREWARD}) -- Consuming Maw
 -- nodes[] = TimedEvent({quest=58256, assault=EMP, note=L["consuming_maw"], rewards=MAWREWARD}) -- Consuming Maw
 -- nodes[] = TimedEvent({quest=58216, assault=EMP, note=L["consuming_maw"], rewards=MAWREWARD}) -- Consuming Maw
+
+nodes[48518489] = TimedEvent({quest=57522, assault=EMP, note=L["call_of_void"]}) -- Call of the Void
+nodes[49443920] = TimedEvent({quest=58276, assault=EMP, note=L["in_flames"]}) -- Mar'at In Flames
+-- nodes[60005506] = TimedEvent({quest=, assault=EMP, pois={
+--     Path({60315245, 59785364, 60005506, 60385696, 60495866})
+-- }}) -- Spirit Drinker
+nodes[59022780] = TimedEvent({quest=57588, assault=EMP, pois={
+    Path({58102290, 58422547, 59022780, 59602914, 60063133, 60753296, 60453467})
+}}) -- Spirit Drinker
+nodes[62037070] = TimedEvent({quest=58271, assault=EMP, note=L["voidflame_ritual"]}) -- Voidflame Ritual
 
 -------------------------------------------------------------------------------
 
@@ -2515,6 +2529,7 @@ nodes[20441477] = MOGTR1
 nodes[27061822] = MOGTR1
 nodes[23850753] = MOGTR1
 -- quest=57208
+nodes[18292766] = MOGTR2
 nodes[20462833] = MOGTR2
 nodes[24773504] = MOGTR2
 nodes[30283762] = MOGTR2
@@ -2529,6 +2544,7 @@ nodes[32721893] = MOGTR3
 nodes[15496436] = MOGTR4
 nodes[16704468] = MOGTR4
 nodes[17356860] = MOGTR4
+nodes[18787398] = MOGTR4
 nodes[21356297] = MOGTR4
 nodes[29774890] = MOGTR4
 -- quest=57212
@@ -2542,8 +2558,12 @@ nodes[33876683] = MOGTR6
 nodes[37666584] = MOGTR6
 nodes[38417028] = MOGTR6
 
-nodes[10782831] = Supply({quest=57214, assault=MOG, label=L["mogu_strongbox"]})
-nodes[43134209] = Supply({quest=57214, assault=MOG, label=L["mogu_strongbox"]})
+local MOGCOFF = Supply({quest=57214, assault=MOG, label=L["mogu_strongbox"],
+    sublabel=L["mogu_relic"]})
+
+nodes[10782831] = MOGCOFF
+nodes[20006321] = MOGCOFF
+nodes[43134209] = MOGCOFF
 
 -------------------------------------------------------------------------------
 
@@ -2647,6 +2667,15 @@ pnodes[42104690] = clone(EMPCOFF, {note=L["pools_of_power"]})
 
 -------------------------------------------------------------------------------
 -------------------------------- ASSAULT EVENTS -------------------------------
+-------------------------------------------------------------------------------
+
+nodes[31332897] = TimedEvent({quest=57087, assault=MOG, note=L["colored_flames"]}) -- Baruk Obliterator
+nodes[25791737] = TimedEvent({quest=57339, assault=MOG, note=L["guolai"]..' '..L["construction_ritual"]}) -- Construction Ritual
+nodes[14582315] = TimedEvent({quest=57158, assault=MOG, note=L["electric_empower"]}) -- Electric Empowerment
+nodes[22423650] = TimedEvent({quest=58367, assault=MOG, note=L["empowered_demo"]}) -- Empowered Demolisher
+nodes[33477097] = TimedEvent({quest=58334, assault=MOG, note=L["in_flames"]}) -- Mistfall In Flames
+nodes[47662165] = TimedEvent({quest=57101, assault=MOG, note=L["colored_flames"]}) -- Zan-Tien Serpent Cage
+
 -------------------------------------------------------------------------------
 
 local MAWREWARD = {Achievement({id=14161, criteria=1})}
