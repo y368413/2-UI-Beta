@@ -4,8 +4,8 @@ if not R.Infobar.Time then return end
 
 local module = M:GetModule("Infobar")
 local info = module:RegisterInfobar("Time", R.Infobar.TimePos)
-local time, date = time, date
 info.text:SetFont(unpack(R.Infobar.TimeFonts))
+local time, date = time, date
 local strfind, format, floor = string.find, string.format, math.floor
 local mod, tonumber, pairs, ipairs, select = mod, tonumber, pairs, ipairs, select
 local C_Map_GetMapInfo = C_Map.GetMapInfo
@@ -99,6 +99,8 @@ local questlist = {
 	{name = U["Timewarped"], id = 55499, texture = 1129683},	-- WoD
 }
 
+local visionList = { 58151, 58155, 58156, 58167, 58168 }
+
 -- Check Invasion Status
 local region = GetCVar("portal")
 local legionZoneTime = {
@@ -112,23 +114,8 @@ local bfaZoneTime = {
 	["US"] = 1546769340, -- CN+16
 }
 
-local legionTime = { -- took me 12 rounds
-	4,2,3,1,
-	2,4,1,3,
-	4,3,1,2,
-	1,2,4,3,
-	4,3,1,2,
-	3,2,1,4,
-	1,4,3,2,
-	3,4,2,1,
-	4,1,2,3,
-	2,3,4,1,
-	4,3,1,2,
-	1,2,4,3,
-}
-
 local invIndex = {
-	[1] = {title = "Legion Invasion", duration = 66600, maps = {630, 641, 650, 634}, timeTable = legionTime, baseTime = legionZoneTime[region] or legionZoneTime["CN"]}, -- need reviewed
+	[1] = {title = "Legion Invasion", duration = 66600, maps = {630, 641, 650, 634}, timeTable = {}, baseTime = legionZoneTime[region] or legionZoneTime["CN"]}, -- need reviewed
 	[2] = {title = "BfA Invasion", duration = 68400, maps = {862, 863, 864, 896, 942, 895}, timeTable = {4, 1, 6, 2, 5, 3}, baseTime = bfaZoneTime[region] or bfaZoneTime["CN"]},
 }
 
@@ -258,6 +245,14 @@ info.onEnter = function(self)
 			local stautsText = cur.."/"..max
 			if not cur or not max then stautsText = LFG_LIST_LOADING end
 			GameTooltip:AddDoubleLine(ISLANDS_HEADER, stautsText, 1,1,1, 0,1,0)
+		end
+	end
+
+	for _, id in pairs(visionList) do
+		if IsQuestFlaggedCompleted(id) then
+			addTitle(QUESTS_LABEL)
+			GameTooltip:AddDoubleLine(U["LesserVision"], QUEST_COMPLETE, 1,1,1, 1,0,0)
+			break
 		end
 	end
 

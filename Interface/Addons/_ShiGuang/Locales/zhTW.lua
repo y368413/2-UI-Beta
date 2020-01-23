@@ -1473,3 +1473,5 @@ U["AuroraClassic warning"] = "檢測到你啓用了Aurora或者AuroraClassic，�
 U["ReskinAlertFrames"] = "美化通知窗口"
 U["BlockStranger"] = "屏蔽陌生人密語"
 U["BlockStrangerTip"] = "|n啓用后，只接受來自隊友、好友以及公會成員的密語。"
+U["LesserVision"] = "恩佐斯的小幻象"
+U["UFs PartyAltPower"] = "顯示小隊特殊能量"

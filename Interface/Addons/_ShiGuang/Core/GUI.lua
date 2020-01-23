@@ -98,8 +98,8 @@ local defaultSettings = {
 		Chatbar = true,
 		ChatWidth = 360,
 		ChatHeight = 121,
-		Outline = false,
 		BlockStranger = false,
+		Outline = false,
 	},
 	Map = {
 		Coord = true,

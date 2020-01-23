@@ -66,11 +66,11 @@ end
 function MISC:SoloInfo()
 	if MaoRUISettingDB["Misc"]["SoloInfo"] then
 		self:SoloInfo_Update()
-		M:RegisterEvent("PLAYER_ENTERING_WORLD", self.SoloInfo_Update)
+		M:RegisterEvent("UPDATE_INSTANCE_INFO", self.SoloInfo_Update)
 		M:RegisterEvent("PLAYER_DIFFICULTY_CHANGED", self.SoloInfo_Update)
 	else
 		if soloInfo then soloInfo:Hide() end
-		M:UnregisterEvent("PLAYER_ENTERING_WORLD", self.SoloInfo_Update)
+		M:UnregisterEvent("UPDATE_INSTANCE_INFO", self.SoloInfo_Update)
 		M:UnregisterEvent("PLAYER_DIFFICULTY_CHANGED", self.SoloInfo_Update)
 	end
 end

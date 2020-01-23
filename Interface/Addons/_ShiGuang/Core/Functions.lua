@@ -410,8 +410,8 @@ function M:ReskinMenuButton()
 	self.bg = M.SetBD(self)
 	self:SetScript("OnEnter", Menu_OnEnter)
 	self:SetScript("OnLeave", Menu_OnLeave)
-	self:SetScript("OnMouseUp", Menu_OnMouseUp)
-	self:SetScript("OnMouseDown", Menu_OnMouseDown)
+	self:HookScript("OnMouseUp", Menu_OnMouseUp)
+	self:HookScript("OnMouseDown", Menu_OnMouseDown)
 end
 -- Arrows
 local direcIndex = {

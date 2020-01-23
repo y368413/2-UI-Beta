@@ -1478,3 +1478,5 @@ U["AuroraClassic warning"] = "Before we start, you need to disable addon Aurora 
 U["ReskinAlertFrames"] = "Reskin AlertFrames"
 U["BlockStranger"] = "Block stranger whipser"
 U["BlockStrangerTip"] = "|nIf checked, only accept whispers from party or raid members, friends and guild members."
+U["LesserVision"] = "Lesser Vision of N'Zoth"
+U["UFs PartyAltPower"] = "Show Party AltPower"

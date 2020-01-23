@@ -127,8 +127,8 @@ function MISC:KeystoneInfo_Create()
 		GameTooltip:ClearLines()
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 		GameTooltip:AddLine(U["Account Keystones"])
-		for name, info in pairs(MaoRUIDB["KeystoneInfo"]) do
-			local name = Ambiguate(name, "none")
+		for fullName, info in pairs(MaoRUIDB["KeystoneInfo"]) do
+			local name = Ambiguate(fullName, "none")
 			local mapID, level, class, faction = strsplit(":", info)
 			local color = M.HexRGB(M.ClassColor(class))
 			local factionColor = faction == "Horde" and "|cffff5040" or "|cff00adf0"

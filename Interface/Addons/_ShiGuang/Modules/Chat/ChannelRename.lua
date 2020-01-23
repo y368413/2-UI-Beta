@@ -7,6 +7,11 @@ local INTERFACE_ACTION_BLOCKED = INTERFACE_ACTION_BLOCKED
 
 function module:UpdateChannelNames(text, ...)
 	if strfind(text, INTERFACE_ACTION_BLOCKED) and not I.isDeveloper then return end
+
+	local r, g, b = ...
+	if MaoRUISettingDB["Chat"]["WhisperColor"] and strfind(text, U["Tell"].." |H[BN]*player.+%]") then
+		r, g, b = r*.7, g*.7, b*.7
+	end
 		if (GetLocale() == "zhCN") then
 		text = gsub(text, "|h%[(%d+)%. 综合.-%]|h", "|h%[%1%.综合%]|h")
 		text = gsub(text, "|h%[(%d+)%. 交易.-%]|h", "|h%[%1%.交易%]|h")
@@ -22,7 +27,7 @@ function module:UpdateChannelNames(text, ...)
 		text = gsub(text, "|h%[(%d+)%. 尋求組隊.-%]|h", "|h%[%1%.組隊%]|h")
     text = gsub(text, "|h%[(%d+)%. 世界防務.-%]|h", "|h%[%1%.世界防務%]|h")
 		text = gsub(text, "|h%[(%d+)%. 公會招募.-%]|h", "|h%[%1%.招募%]|h")
-		--text = gsub(text, "|h%[(%d+)%. 大腳世界頻道%]|h", "|h%[%1%.世界%]|h")
+		text = gsub(text, "|h%[(%d+)%. 大腳世界頻道%]|h", "|h%[%1%.世界%]|h")
 		else
 		text = gsub(text, "|h%[(%d+)%. General.-%]|h", "|h%[%1%.General%]|h")
 		text = gsub(text, "|h%[(%d+)%. Trade.-%]|h", "|h%[%1%.Trade%]|h")
@@ -31,7 +36,7 @@ function module:UpdateChannelNames(text, ...)
     text = gsub(text, "|h%[(%d+)%. WorldDefense.-%]|h", "|h%[%1%.WorldDefense%]|h")
 		text = gsub(text, "|h%[(%d+)%. GuildRecruitment.-%]|h", "|h%[%1%.Recruitment%]|h")
 		end
-		return self.oldAddMsg(self, text, ...) --self.oldAddMsg(self, gsub(text, "|h%[(%d+)%..-%]|h", "|h[%1]|h"), ...)
+		return self.oldAddMsg(self, text, r, g, b) --self.oldAddMsg(self, gsub(text, "|h%[(%d+)%..-%]|h", "|h[%1]|h"), r, g, b)
 end
 
 function module:ChannelRename()

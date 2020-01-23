@@ -111,6 +111,7 @@ function module:ReskinRegions()
 	MiniMapMailFrame:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMRIGHT", 6,-2)
 	MiniMapMailIcon:SetTexture(I.mailTex)
 	MiniMapMailBorder:Hide()
+	MiniMapMailIcon:SetVertexColor(1, 1, 0)
 
 	-- Invites Icon
 	GameTimeCalendarInvitesTexture:ClearAllPoints()

@@ -42,7 +42,7 @@ function Bar:CreateExtrabar()
 
 	--zone ability
 	local zoneFrame = CreateFrame("Frame", "NDui_ActionBarZone", UIParent)
-	zoneFrame:SetWidth(cfg.size + 2*padding) --64
+	zoneFrame:SetWidth(cfg.size + 2*padding)
 	zoneFrame:SetHeight(cfg.size + 2*padding)
 	zoneFrame.Pos = {"BOTTOM", UIParent, "BOTTOM", -360, 100}
 
