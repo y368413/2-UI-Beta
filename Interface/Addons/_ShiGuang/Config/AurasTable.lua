@@ -66,7 +66,7 @@ function module:AddNewAuraWatch(class, list)
 end
 
 function module:AddDeprecatedGroup()
-	if not MaoRUISettingDB["AuraWatch"]["DeprecatedAuras"] then return end
+	if not MaoRUIDB["AuraWatch"]["DeprecatedAuras"] then return end
 
 	for name, value in pairs(R.DeprecatedAuras) do
 		for _, list in pairs(AuraWatchList["ALL"]) do

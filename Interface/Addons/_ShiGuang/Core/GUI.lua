@@ -305,15 +305,15 @@ local loader = CreateFrame("Frame")
 loader:RegisterEvent("ADDON_LOADED")
 loader:SetScript("OnEvent", function(self, _, addon)
 	if addon ~= "_ShiGuang" then return end
-	if not MaoRUISettingDB["BFA"] then
-		MaoRUISettingDB = {}
-		MaoRUISettingDB["BFA"] = true
+	if not MaoRUIDB["BFA"] then
+		MaoRUIDB = {}
+		MaoRUIDB["BFA"] = true
 	end
 
-	InitialSettings(defaultSettings, MaoRUISettingDB, true)
-	InitialSettings(accountSettings, MaoRUIDB)
+	InitialSettings(defaultSettings, MaoRUIDB, true)
+	InitialSettings(accountSettings, MaoRUIAccountDB)
 	M:SetupUIScale(true)
-	I.normTex = textureList[MaoRUIDB["TexStyle"]]
+	I.normTex = textureList[MaoRUIAccountDB["TexStyle"]]
 
 	self:UnregisterAllEvents()
 end)
@@ -324,7 +324,7 @@ local function setupAuraWatch()
 end
 
 local function updateBagSortOrder()
-	SetSortBagsRightToLeft(not MaoRUISettingDB["Bags"]["ReverseSort"])
+	SetSortBagsRightToLeft(not MaoRUIDB["Bags"]["ReverseSort"])
 end
 
 local function updateBagStatus()
@@ -412,12 +412,12 @@ end
 
 local function updateSkinAlpha()
 	for _, frame in pairs(R.frames) do
-		M:SetBackdropColor(frame, 0, 0, 0, MaoRUISettingDB["Skins"]["SkinAlpha"])
+		M:SetBackdropColor(frame, 0, 0, 0, MaoRUIDB["Skins"]["SkinAlpha"])
 	end
 end
 
 local function resetDetails()
-	MaoRUIDB["ResetDetails"] = true
+	MaoRUIAccountDB["ResetDetails"] = true
 end
 
 -- Config
@@ -665,15 +665,15 @@ end
 local function NDUI_VARIABLE(key, value, newValue)
 	if key == "ACCOUNT" then
 		if newValue ~= nil then
-			MaoRUIDB[value] = newValue
+			MaoRUIAccountDB[value] = newValue
 		else
-			return MaoRUIDB[value]
+			return MaoRUIAccountDB[value]
 		end
 	else
 		if newValue ~= nil then
-			MaoRUISettingDB[key][value] = newValue
+			MaoRUIDB[key][value] = newValue
 		else
-			return MaoRUISettingDB[key][value]
+			return MaoRUIDB[key][value]
 		end
 	end
 end
@@ -830,7 +830,7 @@ local bloodlustFilter = {
 
 local function exportData()
 	local text = "UISettings:"..I.Version..":"..I.MyName..":"..I.MyClass
-	for KEY, VALUE in pairs(MaoRUISettingDB) do
+	for KEY, VALUE in pairs(MaoRUIDB) do
 		if type(VALUE) == "table" then
 			for key, value in pairs(VALUE) do
 				if type(value) == "table" then
@@ -866,7 +866,7 @@ local function exportData()
 						end
 					end
 				else
-					if MaoRUISettingDB[KEY][key] ~= defaultSettings[KEY][key] then
+					if MaoRUIDB[KEY][key] ~= defaultSettings[KEY][key] then
 						text = text..";"..KEY..":"..key..":"..tostring(value)
 					end
 				end
@@ -874,7 +874,7 @@ local function exportData()
 		end
 	end
 
-	for KEY, VALUE in pairs(MaoRUIDB) do
+	for KEY, VALUE in pairs(MaoRUIAccountDB) do
 		if KEY == "ContactList" then
 			for name, color in pairs(VALUE) do
 				text = text..";ACCOUNT:"..KEY..":"..name..":"..color
@@ -908,18 +908,18 @@ local function importData()
 		local option = options[i]
 		local key, value, arg1 = strsplit(":", option)
 		if arg1 == "true" or arg1 == "false" then
-			MaoRUISettingDB[key][value] = toBoolean(arg1)
+			MaoRUIDB[key][value] = toBoolean(arg1)
 		elseif arg1 == "EMPTYTABLE" then
-			MaoRUISettingDB[key][value] = {}
+			MaoRUIDB[key][value] = {}
 		elseif arg1 == "r" or arg1 == "g" or arg1 == "b" then
 			local color = select(4, strsplit(":", option))
-			if MaoRUISettingDB[key][value] then
-				MaoRUISettingDB[key][value][arg1] = tonumber(color)
+			if MaoRUIDB[key][value] then
+				MaoRUIDB[key][value][arg1] = tonumber(color)
 			end
 		elseif key == "AuraWatchList" then
 			if value == "Switcher" then
 				local index, state = select(3, strsplit(":", option))
-				MaoRUISettingDB[key][value][tonumber(index)] = toBoolean(state)
+				MaoRUIDB[key][value][tonumber(index)] = toBoolean(state)
 			else
 				local idType, spellID, unit, caster, stack, amount, timeless, combat, text, flash = select(4, strsplit(":", option))
 				value = tonumber(value)
@@ -930,36 +930,36 @@ local function importData()
 				timeless = toBoolean(timeless)
 				combat = toBoolean(combat)
 				flash = toBoolean(flash)
-				if not MaoRUISettingDB[key][value] then MaoRUISettingDB[key][value] = {} end
-				MaoRUISettingDB[key][value][arg1] = {idType, spellID, unit, caster, stack, amount, timeless, combat, text, flash}
+				if not MaoRUIDB[key][value] then MaoRUIDB[key][value] = {} end
+				MaoRUIDB[key][value][arg1] = {idType, spellID, unit, caster, stack, amount, timeless, combat, text, flash}
 			end
 		elseif value == "FavouriteItems" then
 			local items = {select(3, strsplit(":", option))}
 			for _, itemID in next, items do
-				MaoRUISettingDB[key][value][tonumber(itemID)] = true
+				MaoRUIDB[key][value][tonumber(itemID)] = true
 			end
 		elseif key == "Mover" or key == "AuraWatchMover" then
 			local relFrom, parent, relTo, x, y = select(3, strsplit(":", option))
 			value = tonumber(value) or value
 			x = tonumber(x)
 			y = tonumber(y)
-			MaoRUISettingDB[key][value] = {relFrom, parent, relTo, x, y}
+			MaoRUIDB[key][value] = {relFrom, parent, relTo, x, y}
 		elseif key == "InternalCD" then
 			local spellID, duration, indicator, unit, itemID = select(3, strsplit(":", option))
 			spellID = tonumber(spellID)
 			duration = tonumber(duration)
 			itemID = tonumber(itemID)
-			MaoRUISettingDB[key][spellID] = {spellID, duration, indicator, unit, itemID}
+			MaoRUIDB[key][spellID] = {spellID, duration, indicator, unit, itemID}
 		elseif key == "ACCOUNT" then
 			if value == "ContactList" then
 				local name, r, g, b = select(3, strsplit(":", option))
-				MaoRUIDB["ContactList"][name] = r..":"..g..":"..b
+				MaoRUIAccountDB["ContactList"][name] = r..":"..g..":"..b
 			end
 		elseif tonumber(arg1) then
 			if value == "DBMCount" then
-				MaoRUISettingDB[key][value] = arg1
+				MaoRUIDB[key][value] = arg1
 			else
-				MaoRUISettingDB[key][value] = tonumber(arg1)
+				MaoRUIDB[key][value] = tonumber(arg1)
 			end
 		end
 	end
@@ -1097,8 +1097,8 @@ local function OpenGUI()
 		button1 = YES,
 		button2 = NO,
 		OnAccept = function()
-			MaoRUISettingDB = {}
 			MaoRUIDB = {}
+			MaoRUIAccountDB = {}
 			ReloadUI()
 		end,
 		whileDead = 1,
@@ -1166,7 +1166,7 @@ function G:OnLogin()
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
 	end)
 
-	--if MaoRUISettingDB["Skins"]["BlizzardSkins"] then M.Reskin(gui) end
+	--if MaoRUIDB["Skins"]["BlizzardSkins"] then M.Reskin(gui) end
 end
 
 SlashCmdList["MAORUIGUI"] = OpenGUI

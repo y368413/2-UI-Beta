@@ -295,7 +295,7 @@ end)
 local AutoReagentBank = CreateFrame("Frame")
 AutoReagentBank:RegisterEvent("BANKFRAME_OPENED")
 AutoReagentBank:SetScript("OnEvent", function(self, event, ...)
-  if not MaoRUISettingDB["Misc"]["AutoReagentBank"] then self:UnregisterAllEvents() return end
+  if not MaoRUIDB["Misc"]["AutoReagentBank"] then self:UnregisterAllEvents() return end
 	if not BankFrameItemButton_Update_OLD then
 		BankFrameItemButton_Update_OLD = BankFrameItemButton_Update
 		

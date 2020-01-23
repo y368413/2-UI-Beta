@@ -82,7 +82,7 @@ end
 
 -- 任务名称职业着色 -------------------------------------------------------
 function S:QuestTrackerSkinTitle()
- if not MaoRUISettingDB["Skins"]["QuestTrackerSkinTitle"] then return end
+ if not MaoRUIDB["Skins"]["QuestTrackerSkinTitle"] then return end
     hooksecurefunc(QUEST_TRACKER_MODULE, "SetBlockHeader", function(_, block)
         --for i = 1, GetNumQuestWatches() do
 		    --local questID = GetQuestWatchInfo(i)

@@ -78,7 +78,7 @@ function module:UpdateMapID()
 end
 
 function module:SetupCoords()
-	if not MaoRUISettingDB["Map"]["Coord"] then return end
+	if not MaoRUIDB["Map"]["Coord"] then return end
 
 	playerCoords = M.CreateFS(WorldMapFrame.BorderFrame, 12, "", false, "BOTTOMLEFT", 110, 3)
 	cursorCoords = M.CreateFS(WorldMapFrame.BorderFrame, 12, "", false, "BOTTOMLEFT", 220, 3)
@@ -105,7 +105,7 @@ function module:UpdateMapAnchor()
 end
 
 function module:WorldMapScale()
-	mapScale = MaoRUISettingDB["Map"]["MapScale"]
+	mapScale = MaoRUIDB["Map"]["MapScale"]
 
 	-- Fix worldmap cursor when scaling
 	if mapScale > 1 then

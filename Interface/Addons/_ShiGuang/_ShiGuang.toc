@@ -3,8 +3,8 @@
 ## Author: ShiGuang、TuTu、Siweia
 ## Notes: Time Flies...
 ## Version: 3.3.1
-## SavedVariables: MaoRUIDB,ShiGuangDB,CurrencyTrackingDB,VLegionToDo,CastbarsDB,DialogKeyDB,AzeritePowerWeightsDB,AngryWorldQuests_Config,WQADB
-## SavedVariablesPerCharacter: MaoRUISettingDB,ShiGuangPerDB,DEX_SAVE
+## SavedVariables: MaoRUIAccountDB,ShiGuangDB,CurrencyTrackingDB,VLegionToDo,CastbarsDB,DialogKeyDB,AzeritePowerWeightsDB,AngryWorldQuests_Config,WQADB
+## SavedVariablesPerCharacter: MaoRUIDB,ShiGuangPerDB,DEX_SAVE
 
 ## X-Support: 8.3.0
 ## X-Repple: 2 UI

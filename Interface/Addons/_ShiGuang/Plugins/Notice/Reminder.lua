@@ -455,7 +455,7 @@ function Flashevents:TRADE_WITH_QUESTION(...) SendChatMessage("*TRADE_WITH_QUEST
 function Flashevents:TRADE_SHOW(...) SendChatMessage("-- 交易 --", "WHISPER", nil, UnitName("player")); end
 --------------------------------------------------------------------------- end of events
 AltTabLfgNotification:SetScript("OnEvent", function(self, event, ...)
- if not MaoRUISettingDB["Misc"]["AltTabLfgNotification"] then return end
+ if not MaoRUIDB["Misc"]["AltTabLfgNotification"] then return end
  Flashevents[event](self, ...);
 end);
 for k, v in pairs(Flashevents) do AltTabLfgNotification:RegisterEvent(k);  end]]
@@ -494,7 +494,7 @@ CrazyCatLady:RegisterEvent("UNIT_AURA")
 CrazyCatLady:RegisterEvent("PLAYER_DEAD")
 CrazyCatLady:RegisterEvent("PLAYER_UNGHOST")
 CrazyCatLady:SetScript("OnEvent", function(self, event, ...) 
-  if not MaoRUISettingDB["Misc"]["CrazyCatLady"] then self:UnregisterAllEvents() return end
+  if not MaoRUIDB["Misc"]["CrazyCatLady"] then self:UnregisterAllEvents() return end
 	if event == "PLAYER_DEAD" then PlaySoundFile("Sound\\creature\\Auriaya\\UR_Auriaya_Death01.ogg", "Master")
 	elseif event == "PLAYER_UNGHOST" then StopMusic() end
 end)]]

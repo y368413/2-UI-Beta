@@ -3,11 +3,11 @@ local M, R, U, I = unpack(ns)
 local S = M:RegisterModule("Skins")
 
 function S:OnLogin()
-	PlayerFrame:SetScale(MaoRUISettingDB["UFs"]["PlayerFrameScale"]) 
-	TargetFrame:SetScale(MaoRUISettingDB["UFs"]["PlayerFrameScale"])
+	PlayerFrame:SetScale(MaoRUIDB["UFs"]["PlayerFrameScale"]) 
+	TargetFrame:SetScale(MaoRUIDB["UFs"]["PlayerFrameScale"])
 
    ----BOTTOM
-   if MaoRUISettingDB["Skins"]["InfobarLine"] then
+   if MaoRUIDB["Skins"]["InfobarLine"] then
    local Bottomline = CreateFrame("Frame", nil, UIParent) 
    Bottomline:SetFrameLevel(0) 
    Bottomline:SetFrameStrata("BACKGROUND")
@@ -48,12 +48,12 @@ function S:OnLogin()
 	     frame:UnregisterAllEvents()
 	     frame:Hide()
     end
-	if MaoRUISettingDB["Skins"]["CastBarstyle"] then --DisableBlizzardFrame(CastingBarFrame) 
+	if MaoRUIDB["Skins"]["CastBarstyle"] then --DisableBlizzardFrame(CastingBarFrame) 
 	DisableBlizzardFrame(TargetFrameSpellBar) DisableBlizzardFrame(FocusFrameSpellBar) DisableBlizzardFrame(PetCastingBarFrame) return end
 end
 
 function S:GetToggleDirection()
-	local direc = MaoRUISettingDB["Skins"]["ToggleDirection"]
+	local direc = MaoRUIDB["Skins"]["ToggleDirection"]
 	if direc == 1 then
 		return ">", "<", "RIGHT", "LEFT", -2, 0, 20, 80
 	elseif direc == 2 then
@@ -120,7 +120,7 @@ end
 
 function S:LoadWithAddOn(addonName, value, func)
 	local function loadFunc(event, addon)
-		if not MaoRUISettingDB["Skins"][value] then return end
+		if not MaoRUIDB["Skins"][value] then return end
 
 		if event == "PLAYER_ENTERING_WORLD" then
 			M:UnregisterEvent(event, loadFunc)

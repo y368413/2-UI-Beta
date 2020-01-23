@@ -87,7 +87,7 @@ local function GetSlotItemLocation(id)
 end
 
 function MISC:ItemLevel_UpdateTraits(button, id, link)
-	if not MaoRUISettingDB["Misc"]["AzeriteTraits"] then return end
+	if not MaoRUIDB["Misc"]["AzeriteTraits"] then return end
 
 	local empoweredItemLocation = GetSlotItemLocation(id)
 	if not empoweredItemLocation then return end
@@ -133,7 +133,7 @@ function MISC:ItemLevel_SetupLevel(frame, strType, unit)
 			local link = GetInventoryItemLink(unit, index)
 			if link then
 				local quality = select(3, GetItemInfo(link))
-				local info = M.GetItemLevel(link, unit, index, MaoRUISettingDB["Misc"]["GemNEnchant"])
+				local info = M.GetItemLevel(link, unit, index, MaoRUIDB["Misc"]["GemNEnchant"])
 				local infoType = type(info)
 				local level
 				if infoType == "table" then
@@ -271,7 +271,7 @@ function MISC.ItemLevel_ScrappingShow(event, addon)
 end
 
 function MISC:ShowItemLevel()
-	if not MaoRUISettingDB["Misc"]["ItemLevel"] then return end
+	if not MaoRUIDB["Misc"]["ItemLevel"] then return end
 
 	-- iLvl on CharacterFrame
 	CharacterFrame:HookScript("OnShow", MISC.ItemLevel_UpdatePlayer)

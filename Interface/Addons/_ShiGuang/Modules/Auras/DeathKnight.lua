@@ -228,7 +228,7 @@ local function checkSpec(event)
 end
 
 function A:BloodyHell()
-	if not MaoRUISettingDB["Auras"]["BloodyHell"] then return end
+	if not MaoRUIDB["Auras"]["BloodyHell"] then return end
 
 	M:RegisterEvent("PLAYER_ENTERING_WORLD", checkSpec)
 	M:RegisterEvent("PLAYER_TALENT_UPDATE", checkSpec)

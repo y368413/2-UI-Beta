@@ -61,7 +61,7 @@ local function ClassRecourePlace()
   end
 end
 function A:ClassRecoure()
-	if not MaoRUISettingDB["Auras"]["ClassRecourePlace"] then return end
+	if not MaoRUIDB["Auras"]["ClassRecourePlace"] then return end
 	ClassRecourePlace()
 end
 
@@ -94,7 +94,7 @@ local function updateEnergy()
 end
 
 function A:Energy()
-	if not MaoRUISettingDB["Auras"]["EnergyBar"] then return end
+	if not MaoRUIDB["Auras"]["EnergyBar"] then return end
 	RiphieEnergy()
 	M:RegisterEvent("UNIT_AURA", updateEnergy)
 	M:RegisterEvent("UNIT_POWER_UPDATE", updateEnergy)
@@ -172,7 +172,7 @@ BlinkComboHelperFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
 BlinkComboHelperFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
 BlinkComboHelperFrame:RegisterEvent("PLAYER_LOGIN")
 BlinkComboHelperFrame:SetScript("OnEvent", function(self, event, ...)
-  if not MaoRUISettingDB["Auras"]["BlinkComboHelper"] then return end
+  if not MaoRUIDB["Auras"]["BlinkComboHelper"] then return end
 	if ( event == "PLAYER_LOGIN" ) then		--self:UnregisterEvent("PLAYER_LOGIN");
 		self:Hide();
 		self.delayedUpdate = 0

@@ -178,7 +178,7 @@ local function checkSpec(event)
 end
 
 function A:Stagger()
-	if not MaoRUISettingDB["Auras"]["Stagger"] then return end
+	if not MaoRUIDB["Auras"]["Stagger"] then return end
 	M:RegisterEvent("PLAYER_ENTERING_WORLD", checkSpec)
 	M:RegisterEvent("PLAYER_TALENT_UPDATE", checkSpec)
 end

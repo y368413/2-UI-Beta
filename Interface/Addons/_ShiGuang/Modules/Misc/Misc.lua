@@ -61,7 +61,7 @@ function MISC:OnLogin()
 	self:WallpaperKit()
 	
 	----------------QuickQueue.lua----------------------
-	if MaoRUISettingDB["Misc"]["QuickQueue"] then
+	if MaoRUIDB["Misc"]["QuickQueue"] then
 	  local QuickQueue = CreateFrame("Frame")
 	    QuickQueue:RegisterEvent("LFG_ROLE_CHECK_SHOW")
 	    QuickQueue:SetScript("OnEvent", function(self, event, ...) CompleteLFGRoleCheck(true) end)
@@ -73,7 +73,7 @@ function MISC:OnLogin()
 	end
 
 	-- Hide Bossbanner
-	if MaoRUISettingDB["Misc"]["HideBanner"] then BossBanner:UnregisterAllEvents() end
+	if MaoRUIDB["Misc"]["HideBanner"] then BossBanner:UnregisterAllEvents() end
 
 	-- Unregister talent event
 	if PlayerTalentFrame then
@@ -85,7 +85,7 @@ function MISC:OnLogin()
 	end
 
 	-- Auto chatBubbles
-	if MaoRUIDB["AutoBubbles"] then
+	if MaoRUIAccountDB["AutoBubbles"] then
 		local function updateBubble()
 			local name, instType = GetInstanceInfo()
 			if name and instType == "raid" then
@@ -104,7 +104,7 @@ function MISC:OnLogin()
 
 	-- Instant delete
 	hooksecurefunc(StaticPopupDialogs["DELETE_GOOD_ITEM"], "OnShow", function(self)
-		if MaoRUISettingDB["Misc"]["InstantDelete"] then
+		if MaoRUIDB["Misc"]["InstantDelete"] then
 			self.editBox:SetText(DELETE_ITEM_CONFIRM_STRING)
 		end
 	end)
@@ -238,7 +238,7 @@ function MISC:UpdateScreenShot()
 		end)
 	end
 
-	if MaoRUISettingDB["Misc"]["Screenshot"] then
+	if MaoRUIDB["Misc"]["Screenshot"] then
 		M:RegisterEvent("ACHIEVEMENT_EARNED", MISC.ScreenShotOnEvent)
 	else
 		MISC.ScreenShotFrame:Hide()
@@ -261,7 +261,7 @@ function MISC:DoFasterLoot()
 end
 
 function MISC:UpdateFasterLoot()
-	if MaoRUISettingDB["Misc"]["FasterLoot"] then
+	if MaoRUIDB["Misc"]["FasterLoot"] then
 		M:RegisterEvent("LOOT_READY", MISC.DoFasterLoot)
 	else
 		M:UnregisterEvent("LOOT_READY", MISC.DoFasterLoot)
@@ -327,7 +327,7 @@ function MISC:ErrorBlockerOnEvent(_, text)
 end
 
 function MISC:UpdateErrorBlocker()
-	if MaoRUISettingDB["Misc"]["HideErrors"] then
+	if MaoRUIDB["Misc"]["HideErrors"] then
 		M:RegisterEvent("UI_ERROR_MESSAGE", MISC.ErrorBlockerOnEvent)
 	else
 		isRegistered = true

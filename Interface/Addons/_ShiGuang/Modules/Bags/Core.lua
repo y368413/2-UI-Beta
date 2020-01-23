@@ -101,9 +101,9 @@ end
 function module:CreateRestoreButton(f)
 	local bu = M.CreateButton(self, 24, 24, true, "Atlas:transmog-icon-revert")
 	bu:SetScript("OnClick", function()
-		MaoRUISettingDB["TempAnchor"][f.main:GetName()] = nil
-		MaoRUISettingDB["TempAnchor"][f.bank:GetName()] = nil
-		MaoRUISettingDB["TempAnchor"][f.reagent:GetName()] = nil
+		MaoRUIDB["TempAnchor"][f.main:GetName()] = nil
+		MaoRUIDB["TempAnchor"][f.bank:GetName()] = nil
+		MaoRUIDB["TempAnchor"][f.reagent:GetName()] = nil
 		f.main:ClearAllPoints()
 		f.main:SetPoint("BOTTOMRIGHT", -50, 50)
 		f.bank:ClearAllPoints()
@@ -191,7 +191,7 @@ function module:CreateSortButton(name)
 		elseif name == "Reagent" then
 			SortReagentBankBags()
 		else
-			if MaoRUISettingDB["Bags"]["ReverseSort"] then
+			if MaoRUIDB["Bags"]["ReverseSort"] then
 				if InCombatLockdown() then
 					UIErrorsFrame:AddMessage(I.InfoColor..ERR_NOT_IN_COMBAT)
 				else
@@ -274,10 +274,10 @@ local function favouriteOnClick(self)
 
 	local texture, _, _, quality, _, _, _, _, _, itemID = GetContainerItemInfo(self.bagID, self.slotID)
 	if texture and quality > LE_ITEM_QUALITY_POOR then
-		if MaoRUISettingDB["Bags"]["FavouriteItems"][itemID] then
-			MaoRUISettingDB["Bags"]["FavouriteItems"][itemID] = nil
+		if MaoRUIDB["Bags"]["FavouriteItems"][itemID] then
+			MaoRUIDB["Bags"]["FavouriteItems"][itemID] = nil
 		else
-			MaoRUISettingDB["Bags"]["FavouriteItems"][itemID] = true
+			MaoRUIDB["Bags"]["FavouriteItems"][itemID] = true
 		end
 		ClearCursor()
 		module:UpdateAllBags()
@@ -360,7 +360,7 @@ end
 local splitEnable
 local function saveSplitCount(self)
 	local count = self:GetText() or ""
-	MaoRUISettingDB["Bags"]["SplitCount"] = tonumber(count) or 1
+	MaoRUIDB["Bags"]["SplitCount"] = tonumber(count) or 1
 end
 
 function module:CreateSplitButton()
@@ -386,7 +386,7 @@ function module:CreateSplitButton()
 			self:SetBackdropBorderColor(1, .8, 0)
 			self.text = enabledText
 			splitFrame:Show()
-			editbox:SetText(MaoRUISettingDB["Bags"]["SplitCount"])
+			editbox:SetText(MaoRUIDB["Bags"]["SplitCount"])
 		else
 			self:SetBackdropBorderColor(0, 0, 0)
 			self.text = nil
@@ -406,8 +406,8 @@ local function splitOnClick(self)
 	PickupContainerItem(self.bagID, self.slotID)
 
 	local texture, itemCount, locked = GetContainerItemInfo(self.bagID, self.slotID)
-	if texture and not locked and itemCount and itemCount > MaoRUISettingDB["Bags"]["SplitCount"] then
-		SplitContainerItem(self.bagID, self.slotID, MaoRUISettingDB["Bags"]["SplitCount"])
+	if texture and not locked and itemCount and itemCount > MaoRUIDB["Bags"]["SplitCount"] then
+		SplitContainerItem(self.bagID, self.slotID, MaoRUIDB["Bags"]["SplitCount"])
 
 		local bagID, slotID = module:GetEmptySlot("Main")
 		if slotID then
@@ -430,16 +430,16 @@ function module:UpdateAllBags()
 end
 
 function module:OnLogin()
-	if not MaoRUISettingDB["Bags"]["Enable"] then return end
+	if not MaoRUIDB["Bags"]["Enable"] then return end
 	if IsAddOnLoaded("Combuctor") or IsAddOnLoaded("Bagnon") or IsAddOnLoaded("Inventorian") then return end
 	-- Settings
-	local bagsScale = MaoRUISettingDB["Bags"]["BagsScale"]
-	local bagsWidth = MaoRUISettingDB["Bags"]["BagsWidth"]
-	local bankWidth = MaoRUISettingDB["Bags"]["BankWidth"]
-	local iconSize = MaoRUISettingDB["Bags"]["IconSize"]
-	local deleteButton = MaoRUISettingDB["Bags"]["DeleteButton"]
-	local itemSetFilter = MaoRUISettingDB["Bags"]["ItemSetFilter"]
-	local showNewItem = MaoRUISettingDB["Bags"]["ShowNewItem"]
+	local bagsScale = MaoRUIDB["Bags"]["BagsScale"]
+	local bagsWidth = MaoRUIDB["Bags"]["BagsWidth"]
+	local bankWidth = MaoRUIDB["Bags"]["BankWidth"]
+	local iconSize = MaoRUIDB["Bags"]["IconSize"]
+	local deleteButton = MaoRUIDB["Bags"]["DeleteButton"]
+	local itemSetFilter = MaoRUIDB["Bags"]["ItemSetFilter"]
+	local showNewItem = MaoRUIDB["Bags"]["ShowNewItem"]
 
 	-- Init
 	local Backpack = cargBags:NewImplementation("NDui_Backpack")
@@ -634,18 +634,18 @@ function module:OnLogin()
 			self.Corrupt:SetAlpha(0)
 		end
 
-		if MaoRUISettingDB["Bags"]["FavouriteItems"][item.id] then
+		if MaoRUIDB["Bags"]["FavouriteItems"][item.id] then
 			self.Favourite:SetAlpha(1)
 		else
 			self.Favourite:SetAlpha(0)
 		end
 
-		if MaoRUISettingDB["Bags"]["BagsiLvl"] and isItemNeedsLevel(item) then
+		if MaoRUIDB["Bags"]["BagsiLvl"] and isItemNeedsLevel(item) then
 			local level = M.GetItemLevel(item.link, item.bagID, item.slotID) or item.level
-			if level < MaoRUISettingDB["Bags"]["iLvlToShow"] then level = "" end
+			if level < MaoRUIDB["Bags"]["iLvlToShow"] then level = "" end
 			local color = BAG_ITEM_QUALITY_COLORS[item.rarity]
 			self.iLvl:SetText(level)
-				if MaoRUISettingDB["Bags"]["BagsiLvlcolor"] then
+				if MaoRUIDB["Bags"]["BagsiLvlcolor"] then
 				self.iLvl:SetTextColor(color.r, color.g, color.b)
 				end
 		else
@@ -660,7 +660,7 @@ function module:OnLogin()
 			end
 		end
 
-		if MaoRUISettingDB["Bags"]["SpecialBagsColor"] then
+		if MaoRUIDB["Bags"]["SpecialBagsColor"] then
 			local bagType = module.BagsType[item.bagID]
 			local color = bagTypeColor[bagType] or bagTypeColor[0]
 			self:SetBackdropColor(unpack(color))
@@ -698,7 +698,7 @@ function module:OnLogin()
 		local _, height = self:LayoutButtons("grid", columns, spacing, xOffset, yOffset)
 		local width = columns * (iconSize+spacing)-spacing
 		if self.freeSlot then
-			if MaoRUISettingDB["Bags"]["GatherEmpty"] then
+			if MaoRUIDB["Bags"]["GatherEmpty"] then
 				local numSlots = #self.buttons + 1
 				local row = ceil(numSlots / columns)
 				local col = numSlots % columns
@@ -834,6 +834,6 @@ function module:OnLogin()
 	BankFrameItemButton_Update = M.Dummy
 
 	-- Sort order
-	SetSortBagsRightToLeft(not MaoRUISettingDB["Bags"]["ReverseSort"])
+	SetSortBagsRightToLeft(not MaoRUIDB["Bags"]["ReverseSort"])
 	SetInsertItemsLeftToRight(false)
 end

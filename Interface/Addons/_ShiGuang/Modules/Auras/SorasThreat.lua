@@ -236,7 +236,7 @@ local function ThreatEvent(event)
 end
 
 function CDS:SorasThreat()
-    if MaoRUISettingDB["Misc"]["SorasThreat"] then
+    if MaoRUIDB["Misc"]["SorasThreat"] then
 		ThreatFrame = CreateThreatFrame()
 		M:RegisterEvent("UNIT_THREAT_LIST_UPDATE", ThreatEvent)
 		M:RegisterEvent("PLAYER_TARGET_CHANGED", ThreatEvent)

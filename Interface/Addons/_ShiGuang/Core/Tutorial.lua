@@ -113,7 +113,7 @@ local function ForceChatSettings()
 	end
 	FCF_SavePositionAndDimensions(ChatFrame1)
 
-	MaoRUISettingDB["Chat"]["Lock"] = true
+	MaoRUIDB["Chat"]["Lock"] = true
 end
 
 StaticPopupDialogs["RELOAD_NDUI"] = {
@@ -181,7 +181,7 @@ local function ForceDBMOptions()
 	DBM_AllSavedOptions["Default"]["HideObjectivesFrame"] = false
 	DBM_AllSavedOptions["Default"]["WarningFontSize"] = 20
 	DBM_AllSavedOptions["Default"]["SpecialWarningFontSize2"] = 36
-	MaoRUIDB["DBMRequest"] = false
+	MaoRUIAccountDB["DBMRequest"] = false
 end
 -- Skada
 local function ForceSkadaOptions()
@@ -241,7 +241,7 @@ local function ForceSkadaOptions()
 			},
 		},
 	}
-	MaoRUIDB["SkadaRequest"] = false
+	MaoRUIAccountDB["SkadaRequest"] = false
 end
 
 -- BigWigs
@@ -324,13 +324,13 @@ local function ForceBigwigs()
 			},
 		},
 	}
-	MaoRUIDB["BWRequest"] = false
+	MaoRUIAccountDB["BWRequest"] = false
 end
 
 local function ForceAddonSkins()
-	if MaoRUIDB["DBMRequest"] then ForceDBMOptions() end
-	if MaoRUIDB["SkadaRequest"] then ForceSkadaOptions() end
-	if MaoRUIDB["BWRequest"] then ForceBigwigs() end
+	if MaoRUIAccountDB["DBMRequest"] then ForceDBMOptions() end
+	if MaoRUIAccountDB["SkadaRequest"] then ForceSkadaOptions() end
+	if MaoRUIAccountDB["BWRequest"] then ForceBigwigs() end
 end
 
 -- Tutorial
@@ -339,14 +339,14 @@ local function YesTutor()
 			ForceDefaultSettings()
 			ForceRaidFrame()
 			ForceChatSettings()
-			MaoRUIDB["LockUIScale"] = true
+			MaoRUIAccountDB["LockUIScale"] = true
 			M:SetupUIScale()
-			MaoRUIDB["DBMRequest"] = true
-			MaoRUIDB["SkadaRequest"] = true
-			MaoRUIDB["BWRequest"] = true
+			MaoRUIAccountDB["DBMRequest"] = true
+			MaoRUIAccountDB["SkadaRequest"] = true
+			MaoRUIAccountDB["BWRequest"] = true
 			ForceAddonSkins()
-			MaoRUIDB["ResetDetails"] = true
-			MaoRUISettingDB["Tutorial"]["Complete"] = true
+			MaoRUIAccountDB["ResetDetails"] = true
+			MaoRUIDB["Tutorial"]["Complete"] = true
 end
 
 local welcome
@@ -490,7 +490,7 @@ function module:OnLogin()
 	-- Tutorial and settings
 	DefaultSettings()
 	ForceAddonSkins()
-	if not MaoRUISettingDB["Tutorial"]["Complete"] then HelloWorld() end
+	if not MaoRUIDB["Tutorial"]["Complete"] then HelloWorld() end
 			
 	if (ShiGuangPerDB["BHT"] == true) then
 	      sendCmd("/bht on")

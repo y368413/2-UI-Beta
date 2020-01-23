@@ -252,7 +252,7 @@ end
  --------------------------------------- 聊天表情-- Author:M  end -------------------------------------
  
 function module:Chatbar()
-	if not MaoRUISettingDB["Chat"]["Chatbar"] then return end
+	if not MaoRUIDB["Chat"]["Chatbar"] then return end
 	ChatFrameFilter()
 	
 	local chatFrame = SELECTED_DOCK_FRAME

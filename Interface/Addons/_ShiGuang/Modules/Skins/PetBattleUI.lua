@@ -3,7 +3,7 @@ local M, R, U, I = unpack(ns)
 local S = M:GetModule("Skins")
 
 function S:PetBattleUI()
-	if not MaoRUISettingDB["Skins"]["PetBattle"] then return end
+	if not MaoRUIDB["Skins"]["PetBattle"] then return end
 
 	local r, g, b, pairs = I.r, I.g, I.b, pairs
 

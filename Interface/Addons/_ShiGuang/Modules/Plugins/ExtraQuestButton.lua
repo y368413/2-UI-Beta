@@ -4,7 +4,7 @@ local M, R, U, I = unpack(ns)
 local strmatch = string.match
 local tonumber, next, type = tonumber, next, type
 
--- Sometimes blizzard does actually do what I want
+-- Warlords of Draenor intro quest items which inspired this addon
 local blacklist = {
 	[113191] = true,
 	[110799] = true,
@@ -216,7 +216,7 @@ function ExtraQuestButton:PLAYER_LOGIN()
 	self.HotKey = HotKey
 
 	local Count = self:CreateFontString("$parentCount", nil, "NumberFont_Shadow_Med")
-	Count:SetPoint("TOPLEFT", 7, -7)
+	Count:SetPoint("TOPLEFT", 3, -3)
 	self.Count = Count
 
 	local Cooldown = CreateFrame("Cooldown", "$parentCooldown", self, "CooldownFrameTemplate")
@@ -361,7 +361,7 @@ function ExtraQuestButton:SetItem(itemLink, texture)
 		else
 			HotKey:Hide()
 		end
-		if MaoRUISettingDB["Actionbar"]["Enable"] then M:GetModule("Actionbar").UpdateHotKey(self) end
+		if MaoRUIDB["Actionbar"]["Enable"] then M:GetModule("Actionbar").UpdateHotKey(self) end
 
 		if(InCombatLockdown()) then
 			self:RegisterEvent("PLAYER_REGEN_ENABLED")

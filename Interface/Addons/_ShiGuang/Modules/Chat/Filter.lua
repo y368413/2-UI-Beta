@@ -18,7 +18,7 @@ local msgSymbols = {"`", "～", "＠", "＃", "^", "＊", "！", "？", "。", "
 
 local FilterList = {}
 function module:UpdateFilterList()
-	M.SplitList(FilterList, MaoRUIDB["ChatFilterList"], true)
+	M.SplitList(FilterList, MaoRUIAccountDB["ChatFilterList"], true)
 end
 
 -- ECF strings compare
@@ -50,7 +50,7 @@ function module:GetFilterResult(event, msg, name, flag, guid)
 		return
 	end
 
-	if MaoRUISettingDB["Chat"]["BlockStranger"] and event == "CHAT_MSG_WHISPER" then return true end -- Block strangers
+	if MaoRUIDB["Chat"]["BlockStranger"] and event == "CHAT_MSG_WHISPER" then return true end -- Block strangers
 
 	if R.BadBoys[name] and R.BadBoys[name] >= 5 then return true end
 
@@ -73,7 +73,7 @@ function module:GetFilterResult(event, msg, name, flag, guid)
 		end
 	end
 
-	if matches >= MaoRUISettingDB["Chat"]["Matches"] then
+	if matches >= MaoRUIDB["Chat"]["Matches"] then
 		return true
 	end
 
@@ -242,7 +242,7 @@ local function isPlayerOnIslands()
 end
 
 function module:ChatFilter()
-	if MaoRUISettingDB["Chat"]["EnableFilter"] then
+	if MaoRUIDB["Chat"]["EnableFilter"] then
 		self:UpdateFilterList()
 		ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", self.UpdateChatFilter)
 		ChatFrame_AddMessageEventFilter("CHAT_MSG_SAY", self.UpdateChatFilter)
@@ -252,7 +252,7 @@ function module:ChatFilter()
 		ChatFrame_AddMessageEventFilter("CHAT_MSG_TEXT_EMOTE", self.UpdateChatFilter)
 	end
 
-	if MaoRUISettingDB["Chat"]["BlockAddonAlert"] then
+	if MaoRUIDB["Chat"]["BlockAddonAlert"] then
 		ChatFrame_AddMessageEventFilter("CHAT_MSG_SAY", self.UpdateAddOnBlocker)
 		ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", self.UpdateAddOnBlocker)
 		ChatFrame_AddMessageEventFilter("CHAT_MSG_EMOTE", self.UpdateAddOnBlocker)
@@ -267,7 +267,7 @@ function module:ChatFilter()
 
 	hooksecurefunc(BNToastFrame, "ShowToast", self.BlockTrashClub)
 	
-	if MaoRUISettingDB["Chat"]["ChatItemLevel"] then
+	if MaoRUIDB["Chat"]["ChatItemLevel"] then
 		ChatFrame_AddMessageEventFilter("CHAT_MSG_LOOT", self.UpdateChatItemLevel)
 		ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", self.UpdateChatItemLevel)
 		ChatFrame_AddMessageEventFilter("CHAT_MSG_SAY", self.UpdateChatItemLevel)

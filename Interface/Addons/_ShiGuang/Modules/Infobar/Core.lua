@@ -69,10 +69,10 @@ function module:LoadInfobar(info)
 end
 
 function module:BackgroundLines()
-	if not MaoRUISettingDB["Skins"]["InfobarLine"] then return end
+	if not MaoRUIDB["Skins"]["InfobarLine"] then return end
 
 	local cr, cg, cb = 0, 0, 0
-	if MaoRUISettingDB["Skins"]["ClassLine"] then cr, cg, cb = I.r, I.g, I.b end
+	if MaoRUIDB["Skins"]["ClassLine"] then cr, cg, cb = I.r, I.g, I.b end
 
 	-- TOPLEFT
 	local Tinfobar = CreateFrame("Frame", nil, UIParent)
@@ -107,7 +107,7 @@ function module:BackgroundLines()
 end
 
 function module:OnLogin()
-	if MaoRUIDB["DisableInfobars"] then return end
+	if MaoRUIAccountDB["DisableInfobars"] then return end
 
 	if not self.modules then return end
 	for _, info in pairs(self.modules) do

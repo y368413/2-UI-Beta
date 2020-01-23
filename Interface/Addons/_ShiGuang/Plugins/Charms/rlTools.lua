@@ -293,7 +293,7 @@ TankHealerMarkFrame:RegisterEvent("PLAYER_LOGIN")
 TankHealerMarkFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 
 TankHealerMarkFrame:SetScript("OnEvent", function(self, event, ...)
-  if not MaoRUISettingDB["Misc"]["AutoMark"] then return end
+  if not MaoRUIDB["Misc"]["AutoMark"] then return end
 	if (not IsInRaid()) and IsInGroup() then
 		local ROLEMARKS={["TANK"]=2,["HEALER"]=5}
 		for i=1,5 do 

@@ -107,7 +107,7 @@ end)
 
 info.onMouseUp = function(self, btn)
 	if btn == "RightButton" then
-		MaoRUIDB["RepairType"] = mod(MaoRUIDB["RepairType"] + 1, 3)
+		MaoRUIAccountDB["RepairType"] = mod(MaoRUIAccountDB["RepairType"] + 1, 3)
 		self:onEnter()
 	else
 		if InCombatLockdown() then UIErrorsFrame:AddMessage(I.InfoColor..ERR_NOT_IN_COMBAT) return end
@@ -147,7 +147,7 @@ info.onEnter = function(self)
 	end
 
 	GameTooltip:AddDoubleLine(" ", I.LineString)
-	GameTooltip:AddDoubleLine(" ", U["Auto Repair"]..": "..repairlist[MaoRUIDB["RepairType"]].." ", 1,1,1, .6,.8,1)
+	GameTooltip:AddDoubleLine(" ", U["Auto Repair"]..": "..repairlist[MaoRUIAccountDB["RepairType"]].." ", 1,1,1, .6,.8,1)
 	GameTooltip:Show()
 end
 
@@ -173,7 +173,7 @@ function autoRepair(override)
 	repairAllCost, canRepair = GetRepairAllCost()
 
 	if canRepair and repairAllCost > 0 then
-		if (not override) and MaoRUIDB["RepairType"] == 1 and IsInGuild() and CanGuildBankRepair() and GetGuildBankWithdrawMoney() >= repairAllCost then
+		if (not override) and MaoRUIAccountDB["RepairType"] == 1 and IsInGuild() and CanGuildBankRepair() and GetGuildBankWithdrawMoney() >= repairAllCost then
 			RepairAllItems(true)
 		else
 			if myMoney > repairAllCost then
@@ -203,7 +203,7 @@ local function merchantClose()
 end
 
 local function merchantShow()
-	if IsShiftKeyDown() or MaoRUIDB["RepairType"] == 0 or not CanMerchantRepair() then return end
+	if IsShiftKeyDown() or MaoRUIAccountDB["RepairType"] == 0 or not CanMerchantRepair() then return end
 	autoRepair()
 	M:RegisterEvent("UI_ERROR_MESSAGE", checkBankFund)
 	M:RegisterEvent("MERCHANT_CLOSED", merchantClose)

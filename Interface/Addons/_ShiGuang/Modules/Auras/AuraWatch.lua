@@ -35,7 +35,7 @@ local function DataAnalyze(v)
 end
 
 local function InsertData(index, target)
-	if MaoRUISettingDB["AuraWatchList"]["Switcher"][index] then
+	if MaoRUIDB["AuraWatchList"]["Switcher"][index] then
 		wipe(target)
 	end
 
@@ -52,15 +52,15 @@ local function ConvertTable()
 	for i = 1, 10 do
 		myTable[i] = {}
 		if i < 10 then
-			local value = MaoRUISettingDB["AuraWatchList"][i]
+			local value = MaoRUIDB["AuraWatchList"][i]
 			if value and next(value) then
 				for spellID, v in pairs(value) do
 					myTable[i][spellID] = DataAnalyze(v)
 				end
 			end
 		else
-			if next(MaoRUISettingDB["InternalCD"]) then
-				for spellID, v in pairs(MaoRUISettingDB["InternalCD"]) do
+			if next(MaoRUIDB["InternalCD"]) then
+				for spellID, v in pairs(MaoRUIDB["InternalCD"]) do
 					myTable[i][spellID] = DataAnalyze(v)
 				end
 			end
@@ -174,7 +174,7 @@ end
 
 -- Icon mode
 local function BuildICON(iconSize)
-	iconSize = iconSize * MaoRUISettingDB["AuraWatch"]["IconScale"]
+	iconSize = iconSize * MaoRUIDB["AuraWatch"]["IconScale"]
 
 	local frame = CreateFrame("Frame", nil, PetBattleFrameHider)
 	frame:SetSize(iconSize, iconSize)
@@ -197,7 +197,7 @@ local function BuildICON(iconSize)
 
 	frame.glowFrame = M.CreateGlowFrame(frame, iconSize)
 
-	if not MaoRUISettingDB["AuraWatch"]["ClickThrough"] then enableTooltip(frame) end
+	if not MaoRUIDB["AuraWatch"]["ClickThrough"] then enableTooltip(frame) end
 
 	frame:Hide()
 	return frame
@@ -215,7 +215,7 @@ local function BuildTEXT(iconSize)
 	frame.Count = M.CreateFS(frame, iconSize*.55, "", false, "BOTTOMRIGHT", 6, -3)
 	frame.Spellname = M.CreateFS(frame, 12, "", false, "LEFT", iconSize, -3)
 
-	if not MaoRUISettingDB["AuraWatch"]["ClickThrough"] then enableTooltip(frame) end
+	if not MaoRUIDB["AuraWatch"]["ClickThrough"] then enableTooltip(frame) end
 
 	frame:Hide()
 	return frame
@@ -243,7 +243,7 @@ local function BuildBAR(barWidth, iconSize)
 	frame.Spellname:SetWidth(frame.Statusbar:GetWidth()*.65)
 	frame.Spellname:SetJustifyH("LEFT")
 
-	if not MaoRUISettingDB["AuraWatch"]["ClickThrough"] then enableTooltip(frame) end
+	if not MaoRUIDB["AuraWatch"]["ClickThrough"] then enableTooltip(frame) end
 
 	frame:Hide()
 	return frame
@@ -271,7 +271,7 @@ local function BuildBAR2(barWidth, iconSize)
 	frame.Spellname:SetWidth(frame.Statusbar:GetWidth()*.65)
 	frame.Spellname:SetJustifyH("LEFT")
 
-	if not MaoRUISettingDB["AuraWatch"]["ClickThrough"] then enableTooltip(frame) end
+	if not MaoRUIDB["AuraWatch"]["ClickThrough"] then enableTooltip(frame) end
 
 	frame:Hide()
 	return frame
@@ -652,7 +652,7 @@ function A:AuraWatch_UpdateInt(_, ...)
 		if value.OnSuccess then guid, name = sourceGUID, sourceName end
 
 		A:AuraWatch_SetupInt(value.IntID, value.ItemID, value.Duration, value.UnitID, guid, name)
-		if MaoRUISettingDB["AuraWatch"]["QuakeRing"] and spellID == 240447 then PlaySound(soundKitID, "Master") end -- 'Ding' on quake
+		if MaoRUIDB["AuraWatch"]["QuakeRing"] and spellID == 240447 then PlaySound(soundKitID, "Master") end -- 'Ding' on quake
 
 		cache[timestamp] = spellID
 	end
@@ -680,7 +680,7 @@ end
 
 -- Event
 function A.AuraWatch_OnEvent(event, ...)
-	if not MaoRUISettingDB["AuraWatch"]["Enable"] then
+	if not MaoRUIDB["AuraWatch"]["Enable"] then
 		M:UnregisterEvent("PLAYER_ENTERING_WORLD", A.AuraWatch_OnEvent)
 		M:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED", A.AuraWatch_OnEvent)
 		return

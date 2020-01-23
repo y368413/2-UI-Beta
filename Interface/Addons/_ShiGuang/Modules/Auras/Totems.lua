@@ -56,7 +56,7 @@ function A:UpdateTotems()
 end
 
 function A:Totems()
-	if not MaoRUISettingDB["Auras"]["Totems"] then return end
+	if not MaoRUIDB["Auras"]["Totems"] then return end
 	TotemsGo()
 	M:RegisterEvent("PLAYER_ENTERING_WORLD", self.UpdateTotems)
 	M:RegisterEvent("PLAYER_TOTEM_UPDATE", self.UpdateTotems)
