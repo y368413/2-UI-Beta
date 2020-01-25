@@ -1,12 +1,11 @@
 --## Author: Metriss - Stormrage  ## Version: 1
-ESSENCE_SET_MANAGER_ADDON = ESSENCE_SET_MANAGER_ADDON or LibStub("AceAddon-3.0"):NewAddon("ESSENCE_SET_MANAGER_ADDON", "AceConsole-3.0")
-local esm = ESSENCE_SET_MANAGER_ADDON
+local esm = ESSENCE_SET_MANAGER_ADDON or LibStub("AceAddon-3.0"):NewAddon("ESSENCE_SET_MANAGER_ADDON", "AceConsole-3.0")
 local _G = _G
 local setButtons = {}
 local setNames = {}
 
 local MAX_SETS = 7
-local Y_OFFSET = -70
+local Y_OFFSET = -36
 local SLOT_MAJOR = 115
 local SLOT_MINOR1 = 116
 local SLOT_MINOR2 = 117
@@ -195,9 +194,9 @@ esm.createSetButton = function(text, i)
 	local set = esm.specProfiles[esm.currentSpec][text]
 	if not setButtons[i] then
 		setButtons[i] = CreateFrame("Button", "", AzeriteEssenceUI, "UIPanelButtonTemplate")
-		setButtons[i]:SetPoint("TOPLEFT", AzeriteEssenceUI, "TOPLEFT" , 15, Y_OFFSET + -50 * i)
-		setButtons[i]:SetWidth(50)
-		setButtons[i]:SetHeight(50)
+		setButtons[i]:SetPoint("TOPRIGHT", AzeriteEssenceUI, "TOP" , 126, Y_OFFSET + -43 * i)
+		setButtons[i]:SetWidth(43)
+		setButtons[i]:SetHeight(43)
 		setButtons[i]:SetScript("OnClick", function() esm.setButtonPress(setButtons[i]) end)
 		setButtons[i]:SetScript("OnEnter", function() esm.showInfoTooltip(setButtons[i]) end)
 		setButtons[i]:SetScript("OnLeave", function() esm.hideInfoTooltip(setButtons[i]) end)
@@ -352,9 +351,9 @@ esm.inputTextChanged = function()
 		esm.save:Show()
 	end
 	if not tContains(setNames, esm.input:GetText()) then
-		esm.save:SetText("Create")
+		esm.save:SetText(COMMUNITIES_CREATE)
 	else
-		esm.save:SetText("Update")
+		esm.save:SetText(UPDATE)
 	end
 end
 
@@ -453,7 +452,7 @@ esm.deleteSet = function(name)
 	esm.specProfiles[esm.currentSpec][name] = nil
 	esm.updateSetNames()
 	if name == esm.input:GetText() then
-		esm.save:SetText("Create")
+		esm.save:SetText(COMMUNITIES_CREATE)
 	end
 end
 
