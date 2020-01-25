@@ -240,8 +240,6 @@ function HandyNotes_VisionsOfNZoth:OnClick(button, down, mapID, coord)
     elseif button == "LeftButton" and down then
         if node.pois then
             node._focus = not node._focus
-            VisionsOfNZoth_MinimapDataProvider:RefreshAllData()
-            VisionsOfNZoth_WorldMapDataProvider:RefreshAllData()
             HandyNotes_VisionsOfNZoth:Refresh()
         end
     end
@@ -304,6 +302,8 @@ end
 
 function HandyNotes_VisionsOfNZoth:Refresh()
     self:SendMessage("HandyNotes_NotifyUpdate", "HandyNotes_VisionsOfNZoth")
+    VisionsOfNZoth_MinimapDataProvider:RefreshAllData()
+    VisionsOfNZoth_WorldMapDataProvider:RefreshAllData()
 end
 
 local ICONS = "Interface\\Addons\\HandyNotes\\Icons\\icons.blp"
@@ -585,13 +585,6 @@ local function BootstrapDevelopmentEnvironment()
         desc = L["options_dev_settings_desc"],
         inline = true,
         args = {
-            show_debug = {
-                type = "toggle",
-                arg = "show_debug",
-                name = L["options_toggle_show_debug"],
-                desc = L["options_toggle_show_debug_desc"],
-                order = 1,
-            },
             force_nodes = {
                 type = "toggle",
                 arg = "force_nodes",
@@ -782,7 +775,7 @@ function MinimapDataProvider:RefreshAllData()
     if not map then return end
 
     for coord, node in pairs(map.nodes) do
-        if node._focus or node._hover then
+        if (node._focus or node._hover) and map:enabled(node, coord, true) then
             for i, poi in ipairs(node.pois or {}) do
                 poi:render(self, map.id)
             end
@@ -841,7 +834,7 @@ function WorldMapDataProvider:RefreshAllData(fromOnShow)
     if not map then return end
 
     for coord, node in pairs(map.nodes) do
-        if node._focus or node._hover then
+        if (node._focus or node._hover) and map:enabled(node, coord, false) then
             for i, poi in ipairs(node.pois or {}) do
                 poi:render(self:GetMap(), WorldMapPinTemplate)
             end
@@ -1069,9 +1062,7 @@ end
 -- When a quest node is turned in, force a refresh. Not all quests give loot.
 HandyNotes_VisionsOfNZoth:RegisterEvent('QUEST_TURNED_IN', function (_, id)
     if QUEST_IDS[id] then
-        C_Timer.After(1, function()
-            HandyNotes_VisionsOfNZoth:Refresh()
-        end)
+        C_Timer.After(1, function() HandyNotes_VisionsOfNZoth:Refresh() end)
     end
 end)
 
@@ -1129,30 +1120,29 @@ function Rare:enabled (map, coord, minimap)
 end
 
 -------------------------------------------------------------------------------
------------------------------------ SUPPLY ------------------------------------
--------------------------------------------------------------------------------
-
-local Supply = VisionsOfNZoth_Class('Supply', Node)
-
-Supply.icon = "star_chest"
-Supply.scale = 2
-Supply.group = "treasures"
-
--------------------------------------------------------------------------------
 ---------------------------------- TREASURE -----------------------------------
 -------------------------------------------------------------------------------
 
-local Treasure = VisionsOfNZoth_Class('Treasure', Node)
-
-Treasure.icon = "chest_gray"
-Treasure.scale = 1.3
-Treasure.group = "treasures"
+local Treasure = VisionsOfNZoth_Class('Treasure', Node, {
+    icon = 'chest_gray',
+    scale = 1.3,
+    group = 'treasures'
+})
 
 function Treasure:enabled (map, coord, minimap)
     local db = HandyNotes_VisionsOfNZoth.db
     if db.profile.always_show_treasures then return true end
     return Node.enabled(self, map, coord, minimap)
 end
+
+-------------------------------------------------------------------------------
+----------------------------------- SUPPLY ------------------------------------
+-------------------------------------------------------------------------------
+
+local Supply = VisionsOfNZoth_Class('Supply', Treasure, {
+    icon = 'star_chest',
+    scale = 2
+})
 
 -------------------------------------------------------------------------------
 
@@ -1849,13 +1839,18 @@ nodes[48657067] = Rare({id=158491, quest=57662, assault=EMP, pois={
     Path({53287082, 54066945, 53446815, 49866959, 48097382, 46537211, 46257561, 44217851})
 }}) -- Falconer Amenophis
 nodes[75056816] = Rare({id=157120, quest=57258, assault={AQR, AMA}}) -- Fangtaker Orsa
-nodes[55085317] = Rare({id=158633, quest=57680, assault=EMP, rewards={
+nodes[55475169] = Rare({id=158633, quest=57680, assault=EMP, pois={
+    POI({
+        53845079, 54215140, 54255185, 54575190, 54605233, 54635076, 54704963,
+        54925253, 55065317, 55214990, 55335305, 55445072, 55475169, 55495031,
+        55705404, 55835437, 55915107, 55935310, 56425386, 56485353
+    })
+}, rewards={
+    Item({item=175142}), -- All-Seeing Right Eye
     Toy({item=175140}) -- All-Seeing Eye
-}, note=L["left_eye"]}) -- Gaze of N'Zoth
+}, note=L["gaze_of_nzoth"]..' '..L["right_eye"]}) -- Gaze of N'Zoth
 nodes[54694317] = Rare({id=158597, quest=57675, assault=EMP}) -- High Executor Yothrim
-nodes[52398000] = Rare({id=158528, quest=57664, assault=EMP, note=L["reshef"], pois={
-    POI({51568173, 51578293, 53657939, 54147941, 49028263, 49008194}) -- Voidwarped High Guard
-}}) -- High Guard Reshef
+nodes[47507718] = Rare({id=158528, quest=57664, assault=EMP}) -- High Guard Reshef
 nodes[42485873] = Rare({id=162163, quest=58701, assault=AQR, pois={
     Path({42485873, 44396076, 46215988, 46785800, 46465623, 44545616, 43055653, 42485873})
 }}) -- High Priest Ytaessis
@@ -1875,6 +1870,7 @@ nodes[19755847] = Rare({id=155531, quest=56823, note=L["wastewander"], pois={
 nodes[73908353] = Rare({id=157134, quest=57259, rewards={
     Mount({id=1314, item=174641}) -- Drake of the Four Winds
 }}) -- Ishak of the Four Winds
+nodes[77005000] = Rare({id=152431, quest=nil, assault=AMA, note=L["kanebti"]}) -- Kaneb-ti
 nodes[71237375] = Rare({id=156655, quest=57433, assault=EMP}) -- Korzaran the Slaughterer
 nodes[34681890] = Rare({id=154604, quest=56340, assault=AQR, note=L["chamber_of_the_moon"], rewards={
     Pet({id=2847, item=174475}) -- Rotbreath
@@ -1927,16 +1923,45 @@ nodes[49328235] = Rare({id=158636, quest=57688, assault=EMP, note=L["platform"],
 }}) -- The Grand Executor
 nodes[84324729] = Rare({id=157188, quest=57285, assault=AMA, note=L["tomb_widow"]}) -- The Tomb Widow
 nodes[60014937] = Rare({id=158595, quest=57673, assault=EMP}) -- Thoughtstealer Vos
-nodes[67486382] = Rare({id=152788, quest=55716, assault=AMA, note=L["uatka"]}) -- Uat-ka the Sun's Wrath
+nodes[67486382] = Rare({id=152788, quest=55716, assault=AMA, note=L["uatka"], rewards={
+    Item({item=174875}) -- Obelisk of the Sun
+}}) -- Uat-ka the Sun's Wrath
 nodes[33592569] = Rare({id=162170, quest=58702, assault=AQR}) -- Warcaster Xeshro
 nodes[79505217] = Rare({id=151852, quest=55461, assault=AMA, pois={
     Path({77755217, 81265217})
 }}) -- Watcher Rehu
--- nodes[] = Rare({id=157473, quest=nil, rewards={
---     Toy({item=174874}) -- Budget K'thir Disguise
--- }}) -- Yiphrim the Will Ravager
+
 nodes[80165708] = Rare({id=157164, quest=57279, assault=AMA}) -- Zealot Tekem
 nodes[39694159] = Rare({id=162141, quest=58695, assault=AQR}) -- Zuythiz
+
+-------------------------------------------------------------------------------
+------------------------------- NEFERSET RARES --------------------------------
+-------------------------------------------------------------------------------
+
+local start = 45009400;
+local function coord(x, y)
+    return start + x*2500000 + y*400;
+end
+
+local NefRare = VisionsOfNZoth_Class('NefersetRare', Rare, {
+    assault=EMP, note=L["neferset_rare"],
+    pois={POI({50007868, 50568833, 55207930})}
+})
+
+function NefRare:enabled (map, coord, minimap)
+    if not Rare.enabled(self, map, coord, minimap) then return false end
+    -- Only show if the Summoning Ritual event is active or completed
+    return C_TaskQuest.GetQuestTimeLeftMinutes(57359) or IsQuestFlaggedCompleted(57359)
+end
+
+nodes[coord(0, 0)] = NefRare({id=157472, quest=57437}) -- Aphrom the Guise of Madness
+nodes[coord(1, 0)] = NefRare({id=157470, quest=57436}) -- R'aas the Anima Devourer
+nodes[coord(2, 0)] = NefRare({id=157390, quest=57434}) -- R'oyolok the Reality Eater
+nodes[coord(3, 0)] = NefRare({id=157476, quest=57439}) -- Shugshul the Flesh Gorger
+nodes[coord(4, 0)] = NefRare({id=157473, quest=57438, rewards={
+    Toy({item=174874}) -- Budget K'thir Disguise
+}}) -- Yiphrim the Will Ravager
+nodes[coord(5, 0)] = NefRare({id=157469, quest=57435}) -- Zoth'rum the Intellect Pillager
 
 -------------------------------------------------------------------------------
 ---------------------------------- TREASURES ----------------------------------
@@ -2021,24 +2046,28 @@ nodes[60576213] = EMPTR3
 nodes[61778172] = EMPTR3
 nodes[62588188] = EMPTR3
 nodes[62977610] = EMPTR3
+nodes[64436501] = EMPTR3
 nodes[70217325] = EMPTR3
 -- quest=57627
 nodes[59867422] = EMPTR4
 nodes[60757493] = EMPTR4
 nodes[62157346] = EMPTR4
 nodes[62737184] = EMPTR4
+nodes[64607503] = EMPTR4
 nodes[65357117] = EMPTR4
 nodes[67167394] = EMPTR4
 -- quest=57635
 nodes[45697961] = EMPTR5
 nodes[47507687] = EMPTR5
+nodes[49037684] = EMPTR5
 nodes[49398584] = EMPTR5
 nodes[51707135] = EMPTR5
 nodes[51777298] = EMPTR5
+nodes[51897858] = EMPTR5
 nodes[52197757] = EMPTR5
 nodes[55397860] = EMPTR5
 
-local EMPCOFF = Supply({quest=nil, assault=EMP, note=L["cursed_relic"],
+local EMPCOFF = Supply({quest=57628, assault=EMP, note=L["cursed_relic"],
     label=L["black_empire_coffer"]})
 
 nodes[71657334] = EMPCOFF
@@ -2134,23 +2163,32 @@ nodes[31614380] = TimedEvent({quest=58660, assault=AQR, note=L["burrowing_terror
 
 nodes[55382132] = TimedEvent({quest=58257, assault=EMP, note=L["consuming_maw"], rewards=MAWREWARD}) -- Consuming Maw
 nodes[62407931] = TimedEvent({quest=58258, assault=EMP, note=L["consuming_maw"], rewards=MAWREWARD}) -- Consuming Maw
--- nodes[] = TimedEvent({quest=58256, assault=EMP, note=L["consuming_maw"], rewards=MAWREWARD}) -- Consuming Maw
+nodes[46793424] = TimedEvent({quest=58256, assault=EMP, note=L["consuming_maw"], rewards=MAWREWARD}) -- Consuming Maw
 -- nodes[] = TimedEvent({quest=58216, assault=EMP, note=L["consuming_maw"], rewards=MAWREWARD}) -- Consuming Maw
 
 nodes[48518489] = TimedEvent({quest=57522, assault=EMP, note=L["call_of_void"]}) -- Call of the Void
+nodes[53677575] = TimedEvent({quest=57585, assault=EMP, note=L["call_of_void"]}) -- Call of the Void
 nodes[52015072] = TimedEvent({quest=57543, assault=EMP, note=L["executor_nzoth"]}) -- Executor of N'Zoth
+nodes[57044951] = TimedEvent({quest=57592, assault=EMP, note=L["executor_nzoth"]}) -- Executor of N'Zoth
+nodes[59014663] = TimedEvent({quest=57580, assault=EMP, note=L["executor_nzoth"]}) -- Executor of N'Zoth
+nodes[66476806] = TimedEvent({quest=57582, assault=EMP, note=L["executor_nzoth"]}) -- Executor of N'Zoth
 nodes[49443920] = TimedEvent({quest=58276, assault=EMP, note=L["in_flames"]}) -- Mar'at In Flames
+nodes[50578232] = TimedEvent({quest=58275, assault=EMP, note=L["monstrous_summon"]}) -- Monstrous Summoning
 nodes[59767241] = TimedEvent({quest=57429, assault=EMP, note=L["pyre_amalgamated"], rewards={
     Pet({id=2851, item=174478}) -- Wicked Lurker
 }}) -- Pyre of the Amalgamated One (also 58330?)
--- nodes[60005506] = TimedEvent({quest=, assault=EMP, pois={
---     Path({60315245, 59785364, 60005506, 60385696, 60495866})
--- }}) -- Spirit Drinker (57456, 57590, 57591, 57586, 57587)
+nodes[50568833] = TimedEvent({quest=57359, assault=EMP, note=L["summoning_ritual"]}) -- Summoning Ritual
+nodes[62037070] = TimedEvent({quest=58271, assault=EMP, note=L["voidflame_ritual"]}) -- Voidflame Ritual
+
+nodes[47174044] = TimedEvent({quest=57456, assault=EMP, pois={
+    Path({47944278, 47084245, 47254116, 47053964, 46583882, 46943783})
+}}) -- Spirit Drinker
 nodes[59022780] = TimedEvent({quest=57588, assault=EMP, pois={
     Path({58102290, 58422547, 59022780, 59602914, 60063133, 60753296, 60453467})
 }}) -- Spirit Drinker
-nodes[50568833] = TimedEvent({quest=57359, assault=EMP, note=L["summoning_ritual"]}) -- Summoning Ritual
-nodes[62037070] = TimedEvent({quest=58271, assault=EMP, note=L["voidflame_ritual"]}) -- Voidflame Ritual
+-- nodes[60005506] = TimedEvent({quest=, assault=EMP, pois={
+--     Path({60315245, 59785364, 60005506, 60385696, 60495866})
+-- }}) -- Spirit Drinker (57590, 57591, 57586, 57587)
 
 -------------------------------------------------------------------------------
 
@@ -2187,26 +2225,40 @@ nodes[61745440] = PetBattle({id=162461}) -- Whispers
 ------------------------------- SPRINGFUR ALPACA ------------------------------
 -------------------------------------------------------------------------------
 
-nodes[58005169] = Node({icon=134190, alpaca=true, label=L["gersahl"],
-    note=L["gersahl_note"], pois={
-    POI({
-        46922961, 49453556, 50583294, 55484468, 56265101, 56691882, 57112548,
-        57235056, 57458491, 57474682, 57741910, 58005169, 58202808, 58967759,
-        59027433, 59098568, 59567664, 60447755, 65167045, 65427433, 66047881,
-        66257753, 67377771, 68097535, 68117202, 68517407, 68947308, 71087875,
-        71657803
-    })
-}, rewards={Item({item=174858})}})
+local function GetAlpacaStatus ()
+    local count = select(4, GetQuestObjectiveInfo(58881, 0, false))
+    if count ~= nil then return VisionsOfNZoth_status.Gray(tostring(count)..'/7') end
+end
 
-nodes[47004800] = NPC({id=162765, icon=2916287, quest=58879, alpaca=true,
-    note=L["friendly_alpaca"], pois={
-    POI({
+local Alpaca = VisionsOfNZoth_Class('Alpaca', NPC, {
+    id=162765, icon=2916287, quest=58879, alpaca=true,
+    note=L["friendly_alpaca"],
+    pois={POI({
         15006200, 24000900, 27004800, 30002900, 39000800, 41007000, 47004800,
         52001900, 55006900, 62705340, 63011446, 69001300, 70003900, 76636813
-    })
-}, rewards={
-    Mount({id=1329, item=174859}) -- Springfur Alpaca
-}})
+    })},
+    rewards={Mount({id=1329, item=174859})} -- Springfur Alpaca
+})
+
+local Gersahl = VisionsOfNZoth_Class('Gersahl', Node, {
+    icon=134190, alpaca=true, label=L["gersahl"], note=L["gersahl_note"],
+    pois={POI({
+        46922961, 49453556, 50504167, 50583294, 53133577, 55484468, 56114967,
+        56265101, 56691882, 57112548, 57235056, 57281602, 57458491, 57474682,
+        57741910, 58005169, 58131768, 58202808, 58967759, 59027433, 59098568,
+        59266302, 59557986, 59567664, 59628482, 60018165, 60447755, 60627655,
+        61371430, 64717249, 65167045, 65427433, 66047881, 66137572, 66217063,
+        66257753, 66557212, 67377771, 68097535, 68117202, 68517407, 68947308,
+        69237501, 71087875, 71657803
+    })},
+    rewards={Item({item=174858})} -- Gersahl Greens
+})
+
+Alpaca.getters.rlabel = GetAlpacaStatus
+Gersahl.getters.rlabel = GetAlpacaStatus
+
+nodes[47004800] = Alpaca()
+nodes[58005169] = Gersahl()
 
 -------------------------------------------------------------------------------
 
@@ -2455,7 +2507,9 @@ nodes[21901232] = Rare({id=157162, quest=57346, assault=MOG, note=L["guolai_cent
     Mount({id=1313, item=174649}) -- Rajani Warserpent
 }}) -- Rei Lun
 nodes[64175175] = Rare({id=154490, quest=56302, assault=EMP}) -- Rijz'x the Devourer
-nodes[46425710] = Rare({id=156083, quest=56954, assault=MOG}) -- Sanguifang
+nodes[46425710] = Rare({id=156083, quest=56954, assault=MOG, rewards={
+    Item({item=174071}) -- Sanguifang's Pulsating Canine
+}}) -- Sanguifang
 nodes[17873752] = Rare({id=157291, quest=57351, assault=MOG}) -- Spymaster Hul'ach
 nodes[26057505] = Rare({id=157279, quest=57348, assault=MOG, pois={
     Path({23467717, 25247587, 26837367, 27117143})
@@ -2471,9 +2525,10 @@ nodes[09586736] = Rare({id=157468, quest=57364, note=L["tisiphon"]}) -- Tisiphon
 nodes[86664165] = Rare({id=154394, quest=56213, assault=EMP}) -- Veskan the Fallen
 nodes[66732812] = Rare({id=154332, quest=56183, assault=EMP, note=L["pools_of_power"]}) -- Voidtender Malketh
 nodes[52956225] = Rare({id=154495, quest=56303, assault=EMP, rewards={
+    Item({item=175141}), -- All-Seeing Left Eye
     Toy({item=175140}), -- All-Seeing Eye
     Pet({id=2846, item=174474}) -- Corrupted Tentacle
-}, note=L["right_eye"]}) -- Will of N'Zoth
+}, note=L["left_eye"]}) -- Will of N'Zoth
 nodes[53794889] = Rare({id=157443, quest=57358, assault=MOG}) -- Xiln the Mountain
 nodes[70954053] = Rare({id=154087, quest=56084, assault=EMP}) -- Zror'um the Infinite
 
@@ -2539,12 +2594,14 @@ nodes[20221140] = MOGTR1
 nodes[20441477] = MOGTR1
 nodes[23850753] = MOGTR1
 nodes[26001261] = MOGTR1
+nodes[26130403] = MOGTR1
 nodes[27061822] = MOGTR1
 -- quest=57208
 nodes[18292766] = MOGTR2
 nodes[20462833] = MOGTR2
 nodes[21982793] = MOGTR2
 nodes[24773504] = MOGTR2
+nodes[25114049] = MOGTR2
 nodes[30283762] = MOGTR2
 nodes[30983065] = MOGTR2
 nodes[33503481] = MOGTR2
@@ -2694,9 +2751,11 @@ nodes[25791737] = TimedEvent({quest=57339, assault=MOG, note=L["guolai_right"]..
 nodes[14582315] = TimedEvent({quest=57158, assault=MOG, note=L["electric_empower"]}) -- Electric Empowerment
 nodes[22423650] = TimedEvent({quest=58367, assault=MOG, note=L["empowered_demo"]}) -- Empowered Demolisher
 nodes[26661700] = TimedEvent({quest=58370, assault=MOG, note=L["empowered_demo"]}) -- Empowered Demolisher
+nodes[20421247] = TimedEvent({quest=57171, assault=MOG, note=L["goldbough_guardian"]}) -- Goldbough Guardian
 nodes[33477097] = TimedEvent({quest=58334, assault=MOG, note=L["in_flames"]}) -- Mistfall In Flames
 nodes[50236341] = TimedEvent({quest=57299, assault=MOG, note=L["mystery_sacro"]}) -- Mysterious Sarcophagus
 nodes[24824769] = TimedEvent({quest=57323, assault=MOG, note=L["serpent_binding"]}) -- Serpent Binding
+nodes[17054571] = TimedEvent({quest=57256, assault=MOG, note=L["stormchosen_arena"]}) -- Stormchosen Arena
 nodes[19870750] = TimedEvent({quest=57049, assault=MOG, note=L["guolai_left"]..' '..L["vault_of_souls"]}) -- Vault of Souls
 nodes[21411413] = TimedEvent({quest=57023, assault=MOG, note=L["guolai_center"]..' '..L["weighted_artifact"]}) -- Weighted Mogu Artifact
 nodes[47662165] = TimedEvent({quest=57101, assault=MOG, note=L["colored_flames"]}) -- Zan-Tien Serpent Cage
@@ -2736,7 +2795,6 @@ nodes[07333190] = PetBattle({id=162471}) -- Vil'thik Hatchling
 
 VisionsOfNZoth_maps[map.id] = map
 VisionsOfNZoth_maps[pmap.id] = pmap
-
 
 
 -------------------------------------------------------------------------------

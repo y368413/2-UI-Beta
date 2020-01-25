@@ -4,6 +4,7 @@
   <Script file="LegionToDo.lua"/>
   <Script file="WQAchievements.lua"/>
   <Script file="CombatNotification.lua"/>
+  <Script file="EssenceSetManager.lua"/>
   <Script file="AzeritePowerWeights.lua"/>
   <Script file="TomeOfIllusionsCheck.lua"/>
   <!--Script file="MythicKeystoneStatus.lua"/-->

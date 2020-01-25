@@ -111,6 +111,9 @@ local defaultSettings = {
 		WhoPings = true,
 		MapReveal = false,
 		Calendar = false,
+		zrMMbordersize = 2,
+		zrMMbuttonsize = 16,
+		zrMMbuttonpos = "Bottom",
 	},
 	Nameplate = {
 		Enable = true,

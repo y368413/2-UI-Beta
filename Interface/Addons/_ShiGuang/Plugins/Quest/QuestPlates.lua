@@ -1,4 +1,4 @@
--- ## Version: 8.2.5.1 ## Author: Semlar
+-- ## Version: 8.3.0.2 ## Author: Semlar
 local FQP, Events, A, T = CreateFrame('frame'), {}, ...
 
 local function Raise(_, event, ...)
@@ -64,32 +64,6 @@ local E = QuestPlatesSet:Eve()
 local Nameplates = {} -- [plate] = f, holds all nameplate frames
 local ActiveNameplates = {} -- [plate] = f, only stores currently visible nameplates
 local GUIDs = {} -- [guid] = plate
-function QuestPlatesSet:GetActiveNameplates()
-	return ActiveNameplates
-end
-
-function QuestPlatesSet:GetFrameFromNameplate(plate)
-	return Nameplates[plate]
-end
-
-function QuestPlatesSet:GetPlateForUnit(unitID)
-	local plate, f = C_NamePlate.GetNamePlateForUnit(unitID)
-	if plate then
-		f = Nameplates[plate]
-	end
-	return plate, f
-end
-
-function QuestPlatesSet:GetUnitForPlate(plate)
-	return Nameplates[plate] and Nameplates[plate]._unitID
-end
-
-function QuestPlatesSet:GetPlateForGUID(guid)
-	local plate = GUIDs[guid]
-	if plate then
-		return plate, ActiveNameplates[plate]
-	end
-end
 
 function E:NAME_PLATE_CREATED(plate)
 	local f = CreateFrame('frame', nil, plate)
@@ -129,11 +103,6 @@ end
 function E:VARIABLES_LOADED()
 	SetCVar('showQuestTrackingTooltips', '1') -- Required for this QuestPlatesSet to function, don't turn this off
 end
-
-local TextureAtlases = {
-	['item'] = 'Banker', -- bag icon, you have to loot something for this quest
-	--['monster'] = '', -- you must kill or interact with units for this quest
-}
 
 -- C_TaskQuest.GetQuestsForPlayerByMapID(GetCurrentMapAreaID())
 local ActiveWorldQuests = {
@@ -192,8 +161,6 @@ local QuestPlateTooltip = CreateFrame('GameTooltip', 'QuestPlateTooltip', nil, '
 QuestLogIndex = {} -- [questName] = questLogIndex, this is to "quickly" look up quests from its name in the tooltip
 
 local function GetQuestProgress(unitID)
-
-	
 	QuestPlateTooltip:SetOwner(WorldFrame, 'ANCHOR_NONE')
 	--QuestPlateTooltip:SetHyperlink('unit:' .. guid)
 	QuestPlateTooltip:SetUnit(unitID)
@@ -341,7 +308,7 @@ end
 
 local function UpdateQuestIcon(plate, unitID)
 	local Q = QuestPlates[plate]
-	local unitID = unitID or QuestPlatesSet:GetUnitForPlate(plate)
+	local unitID = unitID or (Nameplates[plate] and Nameplates[plate]._unitID)
 	if not Q then return end
 	
 	local scenarioName, currentStage, numStages, flags, _, _, _, xp, money, scenarioType, _, textureKitID = C_Scenario.GetInfo()
@@ -435,7 +402,7 @@ local function CacheQuestIndexes()
 		end
 	end
 	
-	for plate, f in pairs(QuestPlatesSet:GetActiveNameplates()) do
+	for plate, f in pairs(ActiveNameplates) do
 		UpdateQuestIcon(plate, f._unitID)
 	end
 end
@@ -444,7 +411,7 @@ function E:UNIT_QUEST_LOG_CHANGED(unitID)
 	if unitID == 'player' then
 		CacheQuestIndexes()
 	else	
-		for plate in pairs(QuestPlatesSet:GetActiveNameplates()) do
+		for plate in pairs(ActiveNameplates) do
 			UpdateQuestIcon(plate)
 		end
 	end

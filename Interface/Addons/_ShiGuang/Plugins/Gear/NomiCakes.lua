@@ -1,4 +1,4 @@
-﻿--## Author: Semlar ## Version: 7.2.5.2
+﻿--## Author: Semlar ## Version: 8.3.0.1
 NomiCakesGossipButtonName = 'GossipTitleButton' -- Allow other addons to override the buttons we hook, if needed
 local HookedButtons = {} -- [button] = true
 local Undiscoverable = { -- List of rank 1 recipes that can't be obtained from nomi
@@ -401,7 +401,6 @@ local function OutputRecipes()
 		for requisite in pairs(requisites) do
 				local recipeLink = GetSpellLink(requisite)
 				print(' |cffffff66-|r ' .. recipeLink)
-
 		end
 	end
 	
