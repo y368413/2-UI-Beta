@@ -61,7 +61,7 @@ function MISC:OnLogin()
 	self:WallpaperKit()
 	
 	----------------QuickQueue.lua----------------------
-	if MaoRUIDB["Misc"]["QuickQueue"] then
+	if MaoRUIPerDB["Misc"]["QuickQueue"] then
 	  local QuickQueue = CreateFrame("Frame")
 	    QuickQueue:RegisterEvent("LFG_ROLE_CHECK_SHOW")
 	    QuickQueue:SetScript("OnEvent", function(self, event, ...) CompleteLFGRoleCheck(true) end)
@@ -73,7 +73,7 @@ function MISC:OnLogin()
 	end
 
 	-- Hide Bossbanner
-	if MaoRUIDB["Misc"]["HideBanner"] then BossBanner:UnregisterAllEvents() end
+	if MaoRUIPerDB["Misc"]["HideBanner"] then BossBanner:UnregisterAllEvents() end
 
 	-- Unregister talent event
 	if PlayerTalentFrame then
@@ -85,7 +85,7 @@ function MISC:OnLogin()
 	end
 
 	-- Auto chatBubbles
-	if MaoRUIAccountDB["AutoBubbles"] then
+	if MaoRUIDB["AutoBubbles"] then
 		local function updateBubble()
 			local name, instType = GetInstanceInfo()
 			if name and instType == "raid" then
@@ -104,7 +104,7 @@ function MISC:OnLogin()
 
 	-- Instant delete
 	hooksecurefunc(StaticPopupDialogs["DELETE_GOOD_ITEM"], "OnShow", function(self)
-		if MaoRUIDB["Misc"]["InstantDelete"] then
+		if MaoRUIPerDB["Misc"]["InstantDelete"] then
 			self.editBox:SetText(DELETE_ITEM_CONFIRM_STRING)
 		end
 	end)
@@ -238,7 +238,7 @@ function MISC:UpdateScreenShot()
 		end)
 	end
 
-	if MaoRUIDB["Misc"]["Screenshot"] then
+	if MaoRUIPerDB["Misc"]["Screenshot"] then
 		M:RegisterEvent("ACHIEVEMENT_EARNED", MISC.ScreenShotOnEvent)
 	else
 		MISC.ScreenShotFrame:Hide()
@@ -261,7 +261,7 @@ function MISC:DoFasterLoot()
 end
 
 function MISC:UpdateFasterLoot()
-	if MaoRUIDB["Misc"]["FasterLoot"] then
+	if MaoRUIPerDB["Misc"]["FasterLoot"] then
 		M:RegisterEvent("LOOT_READY", MISC.DoFasterLoot)
 	else
 		M:UnregisterEvent("LOOT_READY", MISC.DoFasterLoot)
@@ -327,7 +327,7 @@ function MISC:ErrorBlockerOnEvent(_, text)
 end
 
 function MISC:UpdateErrorBlocker()
-	if MaoRUIDB["Misc"]["HideErrors"] then
+	if MaoRUIPerDB["Misc"]["HideErrors"] then
 		M:RegisterEvent("UI_ERROR_MESSAGE", MISC.ErrorBlockerOnEvent)
 	else
 		isRegistered = true

@@ -273,7 +273,7 @@ function MISC:SetupScript(bar)
 end
 
 function MISC:Expbar()
-	if not MaoRUIDB["Misc"]["ExpRep"] then return end
+	if not MaoRUIPerDB["Misc"]["ExpRep"] then return end
 
 	local bar = CreateFrame("StatusBar", nil, Minimap)
 	bar:SetPoint("TOP", Minimap, "BOTTOM", 0, 0)
@@ -324,6 +324,6 @@ function MISC:HookParagonRep()
 end
 
 function MISC:ParagonReputationSetup()
-	if not MaoRUIDB["Misc"]["ParagonRep"] then return end
+	if not MaoRUIPerDB["Misc"]["ParagonRep"] then return end
 	hooksecurefunc("ReputationFrame_Update", self.HookParagonRep)
 end

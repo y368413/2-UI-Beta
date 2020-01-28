@@ -1,6 +1,6 @@
 ﻿local kAutoOpen = CreateFrame('Frame')
 kAutoOpen:SetScript('OnEvent', function(self, event, ...)
- if not MaoRUIDB["Misc"]["kAutoOpen"] then self:UnregisterAllEvents() return end
+ if not MaoRUIPerDB["Misc"]["kAutoOpen"] then self:UnregisterAllEvents() return end
  self[event](...)
 end)
 
@@ -758,7 +758,7 @@ local AutoConfirmRollRemap = {
 }
 local AutoConfirmRoll = CreateFrame("Frame")
 function AutoConfirmRoll:OnEvent(event, ...)
- if not MaoRUIDB["Misc"]["AutoConfirmRoll"] then self:UnregisterAllEvents() return end
+ if not MaoRUIPerDB["Misc"]["AutoConfirmRoll"] then self:UnregisterAllEvents() return end
 	self[AutoConfirmRollRemap[event]](self, ...)
 end
 for k in pairs(AutoConfirmRollRemap) do AutoConfirmRoll:RegisterEvent(k) end

@@ -64,7 +64,7 @@ function MISC:SoloInfo_Update()
 end
 
 function MISC:SoloInfo()
-	if MaoRUIDB["Misc"]["SoloInfo"] then
+	if MaoRUIPerDB["Misc"]["SoloInfo"] then
 		self:SoloInfo_Update()
 		M:RegisterEvent("UPDATE_INSTANCE_INFO", self.SoloInfo_Update)
 		M:RegisterEvent("PLAYER_DIFFICULTY_CHANGED", self.SoloInfo_Update)
@@ -100,11 +100,11 @@ function MISC:RareAlert_Update(id)
 		local atlasHeight = height/(txBottom-txTop)
 		local tex = format("|T%s:%d:%d:0:0:%d:%d:%d:%d:%d:%d|t", filename, 0, 0, atlasWidth, atlasHeight, atlasWidth*txLeft, atlasWidth*txRight, atlasHeight*txTop, atlasHeight*txBottom)
 			RaidNotice_AddMessage(RaidWarningFrame, "----------   "..tex..(info.name or "").."   ----------", ChatTypeInfo["RAID_WARNING"])
-			if MaoRUIDB["Misc"]["AlertinChat"] then
+			if MaoRUIPerDB["Misc"]["AlertinChat"] then
 			local currrentTime = "|cff00ff00["..date("%H:%M:%S").."]|r"
 				print(currrentTime.." -> "..I.InfoColor.." → "..tex..(info.name or ""))
 			end
-		if not MaoRUIDB["Misc"]["RareAlertInWild"] or instType == "none" then
+		if not MaoRUIPerDB["Misc"]["RareAlertInWild"] or instType == "none" then
 			PlaySoundFile("Interface\\Addons\\_ShiGuang\\Media\\Sounds\\Dadongda.ogg", "Master")
 		end
 
@@ -124,7 +124,7 @@ function MISC:RareAlert_CheckInstance()
 end
 
 function MISC:RareAlert()
-	if MaoRUIDB["Misc"]["RareAlerter"] then
+	if MaoRUIPerDB["Misc"]["RareAlerter"] then
 		self:RareAlert_CheckInstance()
 		M:RegisterEvent("PLAYER_ENTERING_WORLD", self.RareAlert_CheckInstance)
 	else
@@ -174,27 +174,27 @@ local blackList = {
 }
 
 function MISC:IsAllyPet(sourceFlags)
-	if I:IsMyPet(sourceFlags) or (not MaoRUIDB["Misc"]["OwnInterrupt"] and (sourceFlags == I.PartyPetFlags or sourceFlags == I.RaidPetFlags)) then
+	if I:IsMyPet(sourceFlags) or (not MaoRUIPerDB["Misc"]["OwnInterrupt"] and (sourceFlags == I.PartyPetFlags or sourceFlags == I.RaidPetFlags)) then
 		return true
 	end
 end
 
 function MISC:InterruptAlert_Update(...)
-	if MaoRUIDB["Misc"]["AlertInInstance"] and (not IsInInstance() or IsPartyLFG()) then return end
+	if MaoRUIPerDB["Misc"]["AlertInInstance"] and (not IsInInstance() or IsPartyLFG()) then return end
 
 	local _, eventType, _, sourceGUID, sourceName, sourceFlags, _, _, destName, _, _, spellID, _, _, extraskillID, _, _, auraType = ...
 	if not sourceGUID or sourceName == destName then return end
 
 	if UnitInRaid(sourceName) or UnitInParty(sourceName) or MISC:IsAllyPet(sourceFlags) then
 		local infoText = infoType[eventType]
-		if infoText then
+		if infoText and (IsPartyLFG() or IsInRaid()) then
 			if infoText == U["BrokenSpell"] then
-				if not MaoRUIDB["Misc"]["BrokenSpell"] then return end
+				if not MaoRUIPerDB["Misc"]["BrokenSpell"] then return end
 				if auraType and auraType == AURA_TYPE_BUFF or blackList[spellID] then return end
 				SendChatMessage(format(infoText, sourceName..GetSpellLink(extraskillID), destName..GetSpellLink(spellID)), "SAY")  --msgChannel()
 			else
-				if MaoRUIDB["Misc"]["OwnInterrupt"] and sourceName ~= I.MyName and not MISC:IsAllyPet(sourceFlags) then return end
-				   if MaoRUIDB["Misc"]["InterruptSound"] then
+				if MaoRUIPerDB["Misc"]["OwnInterrupt"] and sourceName ~= I.MyName and not MISC:IsAllyPet(sourceFlags) then return end
+				   if MaoRUIPerDB["Misc"]["InterruptSound"] then
 				      PlaySoundFile("Interface\\Addons\\_ShiGuang\\Media\\Sounds\\ShutupFool.ogg", "Master")
 				   end
 				 SendChatMessage(infoText .. GetSpellLink(extraskillID), "SAY")  --msgChannel()
@@ -212,7 +212,7 @@ function MISC:InterruptAlert_CheckGroup()
 end
 
 function MISC:InterruptAlert()
-	if MaoRUIDB["Misc"]["Interrupt"] then
+	if MaoRUIPerDB["Misc"]["Interrupt"] then
 		self:InterruptAlert_CheckGroup()
 		M:RegisterEvent("GROUP_LEFT", self.InterruptAlert_CheckGroup)
 		M:RegisterEvent("GROUP_JOINED", self.InterruptAlert_CheckGroup)
@@ -240,7 +240,7 @@ function MISC:Explosive_Update(...)
 		local overkill = select(index, ...)
 		if overkill and overkill > 0 then
 			local name = strsplit("-", sourceName or UNKNOWN)
-			local cache = MaoRUIDB["Misc"]["ExplosiveCache"]
+			local cache = MaoRUIPerDB["Misc"]["ExplosiveCache"]
 			if not cache[name] then cache[name] = 0 end
 			cache[name] = cache[name] + 1
 		end
@@ -248,13 +248,13 @@ function MISC:Explosive_Update(...)
 end
 
 local function startCount()
-	wipe(MaoRUIDB["Misc"]["ExplosiveCache"])
+	wipe(MaoRUIPerDB["Misc"]["ExplosiveCache"])
 	M:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED", MISC.Explosive_Update)
 end
 
 local function endCount()
 	local text
-	for name, count in pairs(MaoRUIDB["Misc"]["ExplosiveCache"]) do
+	for name, count in pairs(MaoRUIPerDB["Misc"]["ExplosiveCache"]) do
 		text = (text or U["ExplosiveCount"])..name.."("..count..") "
 	end
 	if text then SendChatMessage(text, "PARTY") end
@@ -283,7 +283,7 @@ function MISC.Explosive_CheckAffixes(event)
 end
 
 function MISC:ExplosiveAlert()
-	if MaoRUIDB["Misc"]["ExplosiveCount"] then
+	if MaoRUIPerDB["Misc"]["ExplosiveCount"] then
 		self:Explosive_CheckAffixes()
 		M:RegisterEvent("PLAYER_ENTERING_WORLD", self.Explosive_CheckAffixes)
 	else
@@ -311,7 +311,7 @@ local itemList = {
 }
 
 function MISC:ItemAlert_Update(unit, _, spellID)
-	if not MaoRUIDB["Misc"]["PlacedItemAlert"] then return end
+	if not MaoRUIPerDB["Misc"]["PlacedItemAlert"] then return end
 
 	if (UnitInRaid(unit) or UnitInParty(unit)) and spellID and itemList[spellID] and lastTime ~= GetTime() then
 		local who = UnitName(unit)
@@ -373,7 +373,7 @@ function MISC:UunatAlert_CheckInstance()
 end
 
 function MISC:UunatAlert()
-	if MaoRUIDB["Misc"]["UunatAlert"] then
+	if MaoRUIPerDB["Misc"]["UunatAlert"] then
 		self:UunatAlert_CheckInstance()
 		M:RegisterEvent("PLAYER_ENTERING_WORLD", self.UunatAlert_CheckInstance)
 	else

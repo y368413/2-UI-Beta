@@ -84,7 +84,7 @@ function MISC:TradeTabs_Update()
 end
 
 function MISC:TradeTabs_Reskin()
-	if not MaoRUIDB["Skins"]["BlizzardSkins"] then return end
+	if not MaoRUIPerDB["Skins"]["BlizzardSkins"] then return end
 
 	for _, tab in pairs(tabList) do
 		tab:SetCheckedTexture(I.textures.pushed)
@@ -201,6 +201,6 @@ function MISC.TradeTabs_OnEvent(event, addon)
 end
 
 function MISC:TradeTabs()
-	if not MaoRUIDB["Misc"]["TradeTabs"] then return end
+	if not MaoRUIPerDB["Misc"]["TradeTabs"] then return end
 	M:RegisterEvent("ADDON_LOADED", MISC.TradeTabs_OnEvent)
 end

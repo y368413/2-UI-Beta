@@ -232,7 +232,7 @@ for spell in pairs(R.RaidSpells) do
 end
 
 function CDS:RaidCD()
-   if MaoRUIDB["Misc"]["RaidCD"] then
+   if MaoRUIPerDB["Misc"]["RaidCD"] then
     local RaidCDAnchor = CreateFrame("Frame", "RaidCDAnchor", UIParent)
     RaidCDAnchor:SetSize(210, 21)
     M.Mover(RaidCDAnchor, U["Raid CD"], "RaidInterrupt", {"RIGHT", UIParent, "RIGHT", -210, 120})

@@ -9,7 +9,7 @@ local buttonList = {}
 
 function Bar:MicroButton_SetupTexture(icon, texture)
 	local r, g, b = I.r, I.g, I.b
-	if not MaoRUIDB["Skins"]["ClassLine"] then r, g, b = 0, 0, 0 end
+	if not MaoRUIPerDB["Skins"]["ClassLine"] then r, g, b = 0, 0, 0 end
 
 	icon:SetOutside(nil, 3, 3)
 	icon:SetTexture(I.MicroTex..texture)
@@ -41,11 +41,11 @@ function Bar:MicroButton_Create(parent, data)
 
 		local hl = button:GetHighlightTexture()
 		Bar:MicroButton_SetupTexture(hl, texture)
-		if not MaoRUIDB["Skins"]["ClassLine"] then hl:SetVertexColor(1, 1, 1) end
+		if not MaoRUIPerDB["Skins"]["ClassLine"] then hl:SetVertexColor(1, 1, 1) end
 
 		local flash = button.Flash
 		Bar:MicroButton_SetupTexture(flash, texture)
-		if not MaoRUIDB["Skins"]["ClassLine"] then flash:SetVertexColor(1, 1, 1) end
+		if not MaoRUIPerDB["Skins"]["ClassLine"] then flash:SetVertexColor(1, 1, 1) end
 	else
 		bu:SetScript("OnMouseUp", method)
 		M.AddTooltip(bu, "ANCHOR_RIGHT", tooltip)
@@ -53,12 +53,12 @@ function Bar:MicroButton_Create(parent, data)
 		local hl = bu:CreateTexture(nil, "HIGHLIGHT")
 		hl:SetBlendMode("ADD")
 		Bar:MicroButton_SetupTexture(hl, texture)
-		if not MaoRUIDB["Skins"]["ClassLine"] then hl:SetVertexColor(1, 1, 1) end
+		if not MaoRUIPerDB["Skins"]["ClassLine"] then hl:SetVertexColor(1, 1, 1) end
 	end
 end
 
 function Bar:MicroMenu()
-	if not MaoRUIDB["Actionbar"]["MicroMenu"] then return end
+	if not MaoRUIPerDB["Actionbar"]["MicroMenu"] then return end
 
 	local menubar = CreateFrame("Frame", nil, UIParent)
 	menubar:SetSize(21, 185)

@@ -216,7 +216,7 @@ function ExtraQuestButton:PLAYER_LOGIN()
 	self.HotKey = HotKey
 
 	local Count = self:CreateFontString("$parentCount", nil, "NumberFont_Shadow_Med")
-	Count:SetPoint("TOPLEFT", 3, -3)
+	Count:SetPoint("BOTTOMRIGHT", -3, 3)
 	self.Count = Count
 
 	local Cooldown = CreateFrame("Cooldown", "$parentCooldown", self, "CooldownFrameTemplate")
@@ -361,7 +361,7 @@ function ExtraQuestButton:SetItem(itemLink, texture)
 		else
 			HotKey:Hide()
 		end
-		if MaoRUIDB["Actionbar"]["Enable"] then M:GetModule("Actionbar").UpdateHotKey(self) end
+		if MaoRUIPerDB["Actionbar"]["Enable"] then M:GetModule("Actionbar").UpdateHotKey(self) end
 
 		if(InCombatLockdown()) then
 			self:RegisterEvent("PLAYER_REGEN_ENABLED")

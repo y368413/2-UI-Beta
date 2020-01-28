@@ -117,71 +117,71 @@ function zrMM:CreateButtonFrame()
 		local buttonCount = 0
 		local hideButtons = {}
 			Minimap.buttonFrame:ClearAllPoints()
-			if (MaoRUIDB["Map"]["zrMMbuttonpos"] == "Top") then
-				Minimap.buttonFrame:SetSize(Minimap:GetWidth(),MaoRUIDB["Map"]["zrMMbuttonsize"])
+			if (MaoRUIPerDB["Map"]["zrMMbuttonpos"] == "Top") then
+				Minimap.buttonFrame:SetSize(Minimap:GetWidth(),MaoRUIPerDB["Map"]["zrMMbuttonsize"])
 				Minimap.buttonFrame:SetPoint("BOTTOMLEFT", Minimap, "TOPLEFT", 3, 6)
-			elseif (MaoRUIDB["Map"]["zrMMbuttonpos"] == "Right") then
-				Minimap.buttonFrame:SetSize(MaoRUIDB["Map"]["zrMMbuttonsize"],Minimap:GetHeight())
+			elseif (MaoRUIPerDB["Map"]["zrMMbuttonpos"] == "Right") then
+				Minimap.buttonFrame:SetSize(MaoRUIPerDB["Map"]["zrMMbuttonsize"],Minimap:GetHeight())
 				Minimap.buttonFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 6, 0)
-			elseif (MaoRUIDB["Map"]["zrMMbuttonpos"] == "Bottom") then
-				Minimap.buttonFrame:SetSize(Minimap:GetWidth(),MaoRUIDB["Map"]["zrMMbuttonsize"])
+			elseif (MaoRUIPerDB["Map"]["zrMMbuttonpos"] == "Bottom") then
+				Minimap.buttonFrame:SetSize(Minimap:GetWidth(),MaoRUIPerDB["Map"]["zrMMbuttonsize"])
 				Minimap.buttonFrame:SetPoint("TOPRIGHT", Minimap, "BOTTOMRIGHT", -3, -6)
-			elseif (MaoRUIDB["Map"]["zrMMbuttonpos"] == "Left") then
-				Minimap.buttonFrame:SetSize(MaoRUIDB["Map"]["zrMMbuttonsize"],Minimap:GetHeight())
+			elseif (MaoRUIPerDB["Map"]["zrMMbuttonpos"] == "Left") then
+				Minimap.buttonFrame:SetSize(MaoRUIPerDB["Map"]["zrMMbuttonsize"],Minimap:GetHeight())
 				Minimap.buttonFrame:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -6, 0)		
 			end
         for k, f in pairs(zrButtonFrame.frameTable) do
-            f:SetWidth(MaoRUIDB["Map"]["zrMMbuttonsize"])
-            f:SetHeight(MaoRUIDB["Map"]["zrMMbuttonsize"])
+            f:SetWidth(MaoRUIPerDB["Map"]["zrMMbuttonsize"])
+            f:SetHeight(MaoRUIPerDB["Map"]["zrMMbuttonsize"])
             f:ClearAllPoints()
             if (hideButtons[f:GetName()]) then
                 f:Hide()
                 f:SetAlpha(0)
             end
 			if (f:IsShown()) then
-				if (MaoRUIDB["Map"]["zrMMbuttonpos"] == "Top") then
+				if (MaoRUIPerDB["Map"]["zrMMbuttonpos"] == "Top") then
 					if (last) then
 						if buttonCount == 10 then
-							f:SetPoint("BOTTOMLEFT", first, "TOPLEFT", 0, MaoRUIDB["Map"]["zrMMbordersize"]*3)
+							f:SetPoint("BOTTOMLEFT", first, "TOPLEFT", 0, MaoRUIPerDB["Map"]["zrMMbordersize"]*3)
 							buttonCount = 0
 						else
-							f:SetPoint("BOTTOMLEFT", last, "BOTTOMRIGHT", MaoRUIDB["Map"]["zrMMbordersize"]*3, 0)     
+							f:SetPoint("BOTTOMLEFT", last, "BOTTOMRIGHT", MaoRUIPerDB["Map"]["zrMMbordersize"]*3, 0)     
 						end
 					else
 						f:SetPoint("BOTTOMLEFT", Minimap.buttonFrame, "BOTTOMLEFT", -2, 0)
 						first = f
 					end
-				elseif (MaoRUIDB["Map"]["zrMMbuttonpos"] == "Bottom") then
+				elseif (MaoRUIPerDB["Map"]["zrMMbuttonpos"] == "Bottom") then
 					if (last) then
 						if buttonCount == 9 then
-							f:SetPoint("TOPRIGHT", first, "BOTTOMRIGHT", 0, -MaoRUIDB["Map"]["zrMMbordersize"]*3)
+							f:SetPoint("TOPRIGHT", first, "BOTTOMRIGHT", 0, -MaoRUIPerDB["Map"]["zrMMbordersize"]*3)
 							buttonCount = 0
 						else
-							f:SetPoint("TOPRIGHT", last, "TOPLEFT", -MaoRUIDB["Map"]["zrMMbordersize"]*3, 0)     
+							f:SetPoint("TOPRIGHT", last, "TOPLEFT", -MaoRUIPerDB["Map"]["zrMMbordersize"]*3, 0)     
 						end
 					else
 						f:SetPoint("TOPRIGHT", Minimap.buttonFrame, "TOPRIGHT", -24, 0)
 						first = f
 					end
-				elseif (MaoRUIDB["Map"]["zrMMbuttonpos"] == "Right") then
+				elseif (MaoRUIPerDB["Map"]["zrMMbuttonpos"] == "Right") then
 					if (last) then
 						if buttonCount == 10 then
-							f:SetPoint("TOPLEFT", first, "TOPRIGHT", MaoRUIDB["Map"]["zrMMbordersize"]*3, 0)
+							f:SetPoint("TOPLEFT", first, "TOPRIGHT", MaoRUIPerDB["Map"]["zrMMbordersize"]*3, 0)
 							buttonCount = 0
 						else
-							f:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -MaoRUIDB["Map"]["zrMMbordersize"]*3)  
+							f:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -MaoRUIPerDB["Map"]["zrMMbordersize"]*3)  
 						end
 					else
 						f:SetPoint("TOPLEFT", Minimap.buttonFrame, "TOPLEFT", 0, 0)
 						first = f
 					end
-				elseif (MaoRUIDB["Map"]["zrMMbuttonpos"] == "Left") then
+				elseif (MaoRUIPerDB["Map"]["zrMMbuttonpos"] == "Left") then
 					if (last) then
 						if buttonCount == 10 then
-							f:SetPoint("TOPRIGHT", first, "TOPLEFT", -MaoRUIDB["Map"]["zrMMbordersize"]*3, 0)
+							f:SetPoint("TOPRIGHT", first, "TOPLEFT", -MaoRUIPerDB["Map"]["zrMMbordersize"]*3, 0)
 							buttonCount = 0
 						else
-							f:SetPoint("TOPRIGHT", last, "BOTTOMRIGHT", 0, -MaoRUIDB["Map"]["zrMMbordersize"]*3)        
+							f:SetPoint("TOPRIGHT", last, "BOTTOMRIGHT", 0, -MaoRUIPerDB["Map"]["zrMMbordersize"]*3)        
 						end
 					else
 						f:SetPoint("TOPRIGHT", Minimap.buttonFrame, "TOPRIGHT", 0, 0)

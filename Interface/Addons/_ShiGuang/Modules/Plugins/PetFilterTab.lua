@@ -79,7 +79,7 @@ local function loadPetFilter()
 end
 
 function MISC:PetFilterTab()
-	if not MaoRUIDB["Misc"]["PetFilter"] then return end
+	if not MaoRUIPerDB["Misc"]["PetFilter"] then return end
 
 	local function onLoad(event, addon)
 		if addon == "Blizzard_Collections" then

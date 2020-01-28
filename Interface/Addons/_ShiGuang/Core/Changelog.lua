@@ -17,11 +17,17 @@ local quest = {
 	 "点击聊天框角色名称可实现:|cff3399FF     Shift-密语 Ctrl-邀请工会 Alt-组队邀请",
    "|cFF00DDFF如需改进和反馈，可以回帖或者在讨论组(n9PnFl0o)告诉我，谢谢。",
    "-------------------------------"..GetAddOnMetadata("_ShiGuang", "X-StatsVersion").."----[正式]",
-   "[调整]适配8.3",
-   "[更新]收菜助手、换了新的主菜单图标，感谢胡图",
-   "[删除]AH助手",
-   "[添加]新的入侵地图稀有宝藏、艾泽里特装备特质显示在装备界面、",
-   "[修复]之前出现的仇恨错位bug、邮件助手bug和其它一些小bug",
+   "[祝福]武汉加油!大家尽可能呆在家被出门，出门切记戴口罩!",
+   "[更新]恩佐斯入侵地图稀有宝藏模块",
+   "[更新]小地图各种图标收纳风格统一化处理",
+   "[更新]Simulationcraft",
+   "[添加]艾泽里特精华现在也可以像天赋一样保存几套",
+   "[添加]现在钥石鼠标提示可以看到掉落装等和低保装等",
+   "[修复]背包不显示钥石信息的bug",
+   "[修复]小队框架血条材质错位的bug",
+   "[修复]野外打断/驱散/偷取喊话引起的报错",
+   "[修复]DH登陆时一个不重要的报错",
+   "[修复]因外服没有大脚频道导致的密语框位置错误",
    "[插件]版本号升级为v "..GetAddOnMetadata("_ShiGuang", "Version"),
    "--------------------------over",
 
@@ -104,11 +110,11 @@ end
 local function compareToShow(event)
 	if UI_Tutorial then return end
 
-	local old1, old2 = strsplit(".", MaoRUIAccountDB["Changelog"].Version or "")
+	local old1, old2 = strsplit(".", MaoRUIDB["Changelog"].Version or "")
 	local cur1, cur2 = strsplit(".", I.Version)
 	if old1 ~= cur1 or old2 ~= cur2 then
 		Helplist()
-		MaoRUIAccountDB["Changelog"].Version = I.Version
+		MaoRUIDB["Changelog"].Version = I.Version
 	end
 
 	M:UnregisterEvent(event, compareToShow)

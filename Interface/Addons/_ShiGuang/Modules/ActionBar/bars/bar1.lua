@@ -5,12 +5,12 @@ local cfg = R.bars.bar1
 
 local function UpdateActionbarScale(bar)
 	local frame = _G["NDui_Action"..bar]
-	frame:SetScale(MaoRUIDB["Actionbar"]["Scale"])
-	frame.mover:SetScale(MaoRUIDB["Actionbar"]["Scale"])
+	frame:SetScale(MaoRUIPerDB["Actionbar"]["Scale"])
+	frame.mover:SetScale(MaoRUIPerDB["Actionbar"]["Scale"])
 end
 
 function Bar:UpdateAllScale()
-	if not MaoRUIDB["Actionbar"]["Enable"] then return end
+	if not MaoRUIPerDB["Actionbar"]["Enable"] then return end
 
 	UpdateActionbarScale("Bar1")
 	UpdateActionbarScale("Bar2")
@@ -26,12 +26,12 @@ function Bar:UpdateAllScale()
 end
 
 function Bar:OnLogin()
-	if not MaoRUIDB["Actionbar"]["Enable"] then return end
+	if not MaoRUIPerDB["Actionbar"]["Enable"] then return end
 
 	local padding, margin = 2, 2
 	local num = NUM_ACTIONBAR_BUTTONS
 	local buttonList = {}
-	local layout = MaoRUIDB["Actionbar"]["Style"]
+	local layout = MaoRUIPerDB["Actionbar"]["Style"]
 
 	--create the frame to hold the buttons
 	local frame = CreateFrame("Frame", "NDui_ActionBar1", UIParent, "SecureHandlerStateTemplate")
@@ -195,14 +195,14 @@ function Bar:OnLogin()
 end
 
 function Bar:CreateBackground()
-	if not MaoRUIDB["Skins"]["BarLine"] then return end
-	if MaoRUIDB["Actionbar"]["Scale"] ~= 1 then return end
+	if not MaoRUIPerDB["Skins"]["BarLine"] then return end
+	if MaoRUIPerDB["Actionbar"]["Scale"] ~= 1 then return end
 
 	local cr, cg, cb = 0, 0, 0
-	if MaoRUIDB["Skins"]["ClassLine"] then cr, cg, cb = I.r, I.g, I.b end
+	if MaoRUIPerDB["Skins"]["ClassLine"] then cr, cg, cb = I.r, I.g, I.b end
 
 	local basic = 94
-	if MaoRUIDB["Actionbar"]["Style"] == 4 then basic = 130 end
+	if MaoRUIPerDB["Actionbar"]["Style"] == 4 then basic = 130 end
 
 	local MactionbarL = CreateFrame("Frame", nil, UIParent)
 	MactionbarL:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", 0, 4)

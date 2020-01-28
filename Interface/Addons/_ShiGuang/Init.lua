@@ -4,7 +4,7 @@ ns[2] = {}			-- R, Config
 ns[3] = {}			-- U, Locales
 ns[4] = {}			-- I, Database
 
-MaoRUIDB, MaoRUIAccountDB = {}, {}
+MaoRUIPerDB, MaoRUIDB = {}, {}
 ShiGuangDB = ShiGuangDB or {}
 ShiGuangPerDB = ShiGuangPerDB or {}
 
@@ -78,8 +78,8 @@ local function GetBestScale()
 end
 
 function M:SetupUIScale(init)
-	if MaoRUIAccountDB["LockUIScale"] then MaoRUIAccountDB["UIScale"] = GetBestScale() end
-	local scale = MaoRUIAccountDB["UIScale"]
+	if MaoRUIDB["LockUIScale"] then MaoRUIDB["UIScale"] = GetBestScale() end
+	local scale = MaoRUIDB["UIScale"]
 	if init then
 		local pixel = 1
 		local ratio = 768 / I.ScreenHeight

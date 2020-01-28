@@ -20,8 +20,9 @@ CreateBarPctText(TargetFrame, "LEFT", "RIGHT", 80, -8, "NumberFontNormalLarge", 
 for i = 1, 4 do CreateBarPctText(_G["PartyMemberFrame"..i], "LEFT", "RIGHT", 6, 0, "NumberFontNormal", 16) end
 --for i = 1, MAX_BOSS_FRAMES do CreateBarPctText(_G["Boss"..i.."TargetFrame"], "LEFT", "RIGHT", 8, 30, "NumberFontNormal", 36) end	
 
+
+function whoaUnitClass(healthbar, unit)
 --	Player class colors.
-local function whoaUnitClass(healthbar, unit)
 	if UnitIsPlayer(unit) and UnitIsConnected(unit) and UnitClass(unit) then
 		_, class = UnitClass(unit);
 		local c = RAID_CLASS_COLORS[class];
@@ -31,12 +32,7 @@ local function whoaUnitClass(healthbar, unit)
 	else
 		healthbar:SetStatusBarColor(0,0.9,0);
 	end
-end
-hooksecurefunc("UnitFrameHealthBar_Update", whoaUnitClass)
-hooksecurefunc("HealthBar_OnValueChanged", function(self) whoaUnitClass(self, self.unit) end)
-
---	Unit faction colors.
-local function whoaUnitReaction(healthbar, unit)
+--	Unit faction colors.	
 	if UnitExists(unit) and (not UnitIsPlayer(unit)) then
 		if (UnitIsTapDenied(unit)) and not UnitPlayerControlled(unit) then
 			healthbar:SetStatusBarColor(0.5, 0.5, 0.5)
@@ -50,8 +46,8 @@ local function whoaUnitReaction(healthbar, unit)
 		end
 	end
 end
-hooksecurefunc("UnitFrameHealthBar_Update", whoaUnitReaction)
-hooksecurefunc("HealthBar_OnValueChanged", function(self) whoaUnitReaction(self, self.unit) end)
+hooksecurefunc("UnitFrameHealthBar_Update", whoaUnitClass)
+hooksecurefunc("HealthBar_OnValueChanged", function(self) whoaUnitClass(self, self.unit) end)
 
 ---------------------------------------------------------------------------------	Aura positioning constants.
 local LARGE_AURA_SIZE, SMALL_AURA_SIZE, AURA_OFFSET_Y, AURA_ROW_WIDTH, NUM_TOT_AURA_ROWS = 21, 16, 1, 128, 2   -- Set aura size.
@@ -208,7 +204,7 @@ hooksecurefunc("TargetFrame_CheckClassification", function(self, forceNormalText
 		self.borderTexture:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame");
 		CreateBarPctText(TargetFrame, "LEFT", "RIGHT", 88, -8, "NumberFontNormalLarge", 36)
 	elseif ( classification == "minus" ) then
-		self.borderTexture:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Minus");
+		self.borderTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame-Minus");
 		forceNormalTexture = true;
 		CreateBarPctText(TargetFrame, "LEFT", "RIGHT", 66, 0, "NumberFontNormalLarge", 36)
 	elseif ( classification == "worldboss" or classification == "elite" ) then
@@ -264,14 +260,6 @@ hooksecurefunc("TargetFrame_CheckClassification", function(self, forceNormalText
 		end		
 	end
 	self.healthbar.lockColor = true;
-	--[[if ( self.showPVP ) then
-		local factionGroup = UnitFactionGroup(self.unit);
-		if ( UnitIsPVPFreeForAll(self.unit) ) then
-				self.pvpIcon:SetTexture("Interface\\TargetingFrame\\UI-PVP-FFA");
-		elseif ( factionGroup and factionGroup ~= "Neutral" and UnitIsPVP(self.unit) ) then
-				self.pvpIcon:SetTexture("Interface\\TargetingFrame\\UI-PVP-"..factionGroup);
-		end
-	end]]
 end)
 
 -- Mana texture
@@ -281,7 +269,7 @@ hooksecurefunc("UnitFrameManaBar_UpdateType", function(manaBar)
 	if ( info ) then
 		if ( not manaBar.lockColor ) then
 			if not ( info.atlas ) then
-				manaBar:SetStatusBarTexture("Interface\\Addons\\_ShiGuang\\Media\\Skullflower3");
+				manaBar:SetStatusBarTexture("Interface\\Addons\\_ShiGuang\\Media\\EnergyTex");
 			end
 		end
 	end
@@ -319,7 +307,7 @@ hooksecurefunc("TargetFrame_CheckClassification", whoaFrameToTF)
 		_G["Boss"..i.."TargetFrameTextureFrameDeadText"]:SetPoint("CENTER",_G["Boss"..i.."TargetFrameHealthBar"],"CENTER",0,0);
 		_G["Boss"..i.."TargetFrameTextureFrameName"]:ClearAllPoints();
 		_G["Boss"..i.."TargetFrameTextureFrameName"]:SetPoint("CENTER",_G["Boss"..i.."TargetFrameManaBar"],"CENTER",0,0);
-		_G["Boss"..i.."TargetFrameTextureFrameTexture"]:SetTexture("Interface\\Addons\\whoaUnitFrames\\media\\UI-UNITFRAME-BOSS");
+		_G["Boss"..i.."TargetFrameTextureFrameTexture"]:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-UNITFRAME-BOSS");
 		_G["Boss"..i.."TargetFrameNameBackground"]:Hide();
 		_G["Boss"..i.."TargetFrameHealthBar"]:SetSize(116,18);
 		_G["Boss"..i.."TargetFrameHealthBar"]:ClearAllPoints();

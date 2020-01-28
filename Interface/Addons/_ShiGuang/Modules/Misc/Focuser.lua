@@ -60,7 +60,7 @@ function MISC.Focuser_OnEvent(event)
 end
 
 function MISC:Focuser()
-	if not MaoRUIDB["Misc"]["Focuser"] then return end
+	if not MaoRUIPerDB["Misc"]["Focuser"] then return end
 
 	-- Keybinding override so that models can be shift/alt/ctrl+clicked
 	local f = CreateFrame("CheckButton", "FocuserButton", UIParent, "SecureActionButtonTemplate")

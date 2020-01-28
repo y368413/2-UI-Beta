@@ -97,14 +97,6 @@ VisionsOfNZoth_status = {
 ----------------------------------- HELPERS -----------------------------------
 -------------------------------------------------------------------------------
 
-local function debug(...)
-    if (HandyNotes_VisionsOfNZoth.db.profile.show_debug) then
-        print(...)
-    end
-end
-
---VisionsOfNZoth_debug = debug
-
 local DropdownMenu = CreateFrame("Frame", "HandyNotes_VisionsOfNZothDropdownMenu");
 DropdownMenu.displayMode = "MENU";
 local function initializeDropdownMenu (button, level, mapID, coord)
@@ -276,7 +268,6 @@ function HandyNotes_VisionsOfNZoth:RegisterWithHandyNotes()
             return nil, nil, nil, nil
         end
         function HandyNotes_VisionsOfNZoth:GetNodes2(mapID, _minimap)
-            debug('Loading nodes for map: '..mapID..' (minimap='..tostring(_minimap)..')')
             map = VisionsOfNZoth_maps[mapID]
             minimap = _minimap
 
@@ -437,7 +428,6 @@ VisionsOfNZoth_optionDefaults = {
 
         -- development
         development = false,
-        show_debug = false,
         force_nodes = false
     },
 };
@@ -497,14 +487,14 @@ VisionsOfNZoth_options.args.VisibilityGroup = {
         groupGeneral = {
             type = "header",
             name = L["options_general_settings"],
-            order = 30,
+            order = 100,
         },
         always_show_rares = {
             type = "toggle",
             arg = "always_show_rares",
             name = L["options_toggle_looted_rares"],
             desc = L["options_toggle_looted_rares_desc"],
-            order = 31,
+            order = 101,
             width = "full",
         },
         always_show_treasures = {
@@ -512,7 +502,7 @@ VisionsOfNZoth_options.args.VisibilityGroup = {
             arg = "always_show_treasures",
             name = L["options_toggle_looted_treasures"],
             desc = L["options_toggle_looted_treasures_desc"],
-            order = 32,
+            order = 102,
             width = "full",
         },
         hide_done_rare = {
@@ -520,7 +510,7 @@ VisionsOfNZoth_options.args.VisibilityGroup = {
             arg = "hide_done_rare",
             name = L["options_toggle_hide_done_rare"],
             desc = L["options_toggle_hide_done_rare_desc"],
-            order = 35,
+            order = 103,
             width = "full",
         },
         hide_minimap = {
@@ -528,7 +518,7 @@ VisionsOfNZoth_options.args.VisibilityGroup = {
             arg = "hide_minimap",
             name = L["options_toggle_hide_minimap"],
             desc = L["options_toggle_hide_minimap_desc"],
-            order = 36,
+            order = 104,
             width = "full",
         },
     },
@@ -2049,10 +2039,13 @@ nodes[62977610] = EMPTR3
 nodes[64436501] = EMPTR3
 nodes[70217325] = EMPTR3
 -- quest=57627
+nodes[59816610] = EMPTR4
 nodes[59867422] = EMPTR4
 nodes[60757493] = EMPTR4
+nodes[61206544] = EMPTR4
 nodes[62157346] = EMPTR4
 nodes[62737184] = EMPTR4
+nodes[62807565] = EMPTR4
 nodes[64607503] = EMPTR4
 nodes[65357117] = EMPTR4
 nodes[67167394] = EMPTR4
@@ -2061,6 +2054,7 @@ nodes[45697961] = EMPTR5
 nodes[47507687] = EMPTR5
 nodes[49037684] = EMPTR5
 nodes[49398584] = EMPTR5
+nodes[51157388] = EMPTR5
 nodes[51707135] = EMPTR5
 nodes[51777298] = EMPTR5
 nodes[51897858] = EMPTR5
@@ -2168,9 +2162,11 @@ nodes[46793424] = TimedEvent({quest=58256, assault=EMP, note=L["consuming_maw"],
 
 nodes[48518489] = TimedEvent({quest=57522, assault=EMP, note=L["call_of_void"]}) -- Call of the Void
 nodes[53677575] = TimedEvent({quest=57585, assault=EMP, note=L["call_of_void"]}) -- Call of the Void
+nodes[65907284] = TimedEvent({quest=57541, assault=EMP, note=L["call_of_void"]}) -- Call of the Void
 nodes[52015072] = TimedEvent({quest=57543, assault=EMP, note=L["executor_nzoth"]}) -- Executor of N'Zoth
 nodes[57044951] = TimedEvent({quest=57592, assault=EMP, note=L["executor_nzoth"]}) -- Executor of N'Zoth
 nodes[59014663] = TimedEvent({quest=57580, assault=EMP, note=L["executor_nzoth"]}) -- Executor of N'Zoth
+nodes[60203789] = TimedEvent({quest=57449, assault=EMP, note=L["executor_nzoth"]}) -- Executor of N'Zoth
 nodes[66476806] = TimedEvent({quest=57582, assault=EMP, note=L["executor_nzoth"]}) -- Executor of N'Zoth
 nodes[49443920] = TimedEvent({quest=58276, assault=EMP, note=L["in_flames"]}) -- Mar'at In Flames
 nodes[50578232] = TimedEvent({quest=58275, assault=EMP, note=L["monstrous_summon"]}) -- Monstrous Summoning
@@ -2183,12 +2179,15 @@ nodes[62037070] = TimedEvent({quest=58271, assault=EMP, note=L["voidflame_ritual
 nodes[47174044] = TimedEvent({quest=57456, assault=EMP, pois={
     Path({47944278, 47084245, 47254116, 47053964, 46583882, 46943783})
 }}) -- Spirit Drinker
+nodes[58347785] = TimedEvent({quest=57590, assault=EMP, pois={
+    Path({58908017, 58347785, 58907588, 58187367, 58687192, 58896905, 58886621})
+}}) -- Spirit Drinker
 nodes[59022780] = TimedEvent({quest=57588, assault=EMP, pois={
     Path({58102290, 58422547, 59022780, 59602914, 60063133, 60753296, 60453467})
 }}) -- Spirit Drinker
 -- nodes[60005506] = TimedEvent({quest=, assault=EMP, pois={
 --     Path({60315245, 59785364, 60005506, 60385696, 60495866})
--- }}) -- Spirit Drinker (57590, 57591, 57586, 57587)
+-- }}) -- Spirit Drinker (57591, 57586, 57587)
 
 -------------------------------------------------------------------------------
 
@@ -2460,7 +2459,7 @@ nodes[34156805] = Rare({id=157466, quest=57363, assault=MOG, rewards={
     Mount({id=1328, item=174840}) -- Xinlao
 }}) -- Anh-De the Loyal
 nodes[57084098] = Rare({id=154447, quest=56237, assault=EMP}) -- Brother Meller
-nodes[06487070] = Rare({id=160878, quest=58307, assault=MAN}) -- Buh'gzaki the Blasphemous
+nodes[06487204] = Rare({id=160878, quest=58307, assault=MAN}) -- Buh'gzaki the Blasphemous
 nodes[06406433] = Rare({id=160893, quest=58308, assault=MAN, pois={
     Path({06476733, 06416420, 04016423, 04025675, 03985061, 06484877, 06484597})
 }}) -- Captain Vor'lek
@@ -2473,8 +2472,8 @@ nodes[26506657] = Rare({id=160872, quest=58304, assault=MAN}) -- Destroyer Krox'
 nodes[41505721] = Rare({id=157287, quest=57349, assault=MOG, pois={
     Path({41745982, 40446144, 38995953, 39805740, 41505721, 45405297})
 }}) -- Dokani Obliterator
-nodes[11854081] = Rare({id=160874, quest=58305, assault=MAN}) -- Drone Keeper Ak'thet
-nodes[10474089] = Rare({id=160876, quest=58306, assault=MAN}) -- Enraged Amber Elemental
+nodes[13004085] = Rare({id=160874, quest=58305, assault=MAN}) -- Drone Keeper Ak'thet
+nodes[10004085] = Rare({id=160876, quest=58306, assault=MAN}) -- Enraged Amber Elemental
 nodes[45244524] = Rare({id=157267, quest=57343, assault=EMP, pois={
     Path({44174609, 45244524, 45324176, 44783891})
 }}) -- Escaped Mutation
@@ -2492,7 +2491,7 @@ nodes[12183091] = Rare({id=157160, quest=57345, assault=MOG, rewards={
 }, pois={
     Path({13132578, 11833049, 08953570})
 }}) -- Houndlord Ren
-nodes[18426557] = Rare({id=160930, quest=58312, assault=MAN}) -- Infused Amber Ooze
+nodes[19976576] = Rare({id=160930, quest=58312, assault=MAN}) -- Infused Amber Ooze
 nodes[17201162] = Rare({id=160968, quest=58295, assault=MOG, note=L["guolai_left"]}) -- Jade Colossus
 nodes[26691061] = Rare({id=157290, quest=57350, assault=MOG, note=L["in_small_cave"]}) -- Jade Watcher
 nodes[17850918] = Rare({id=160920, quest=58310, assault=MAN}) -- Kal'tik the Blight
@@ -2510,6 +2509,7 @@ nodes[64175175] = Rare({id=154490, quest=56302, assault=EMP}) -- Rijz'x the Devo
 nodes[46425710] = Rare({id=156083, quest=56954, assault=MOG, rewards={
     Item({item=174071}) -- Sanguifang's Pulsating Canine
 }}) -- Sanguifang
+nodes[25074411] = Rare({id=160906, quest=58309, assault=MAN}) -- Skiver
 nodes[17873752] = Rare({id=157291, quest=57351, assault=MOG}) -- Spymaster Hul'ach
 nodes[26057505] = Rare({id=157279, quest=57348, assault=MOG, pois={
     Path({23467717, 25247587, 26837367, 27117143})
@@ -2547,10 +2547,12 @@ local MANTR4 = MANChest({quest=58227, icon='chest_yellow'})
 local MANTR5 = MANChest({quest=58228, icon='chest_teal'})
 
 -- quest=58224
+nodes[04066172] = MANTR1
 nodes[07223945] = MANTR1
 nodes[10662334] = MANTR1
 nodes[11552553] = MANTR1
 nodes[15797164] = MANTR1
+nodes[15887672] = MANTR1
 -- quest=58225
 nodes[16021946] = MANTR2
 nodes[17432634] = MANTR2
@@ -2558,22 +2560,28 @@ nodes[21051415] = MANTR2
 -- quest=58226
 nodes[07693682] = MANTR3
 nodes[09302831] = MANTR3
+nodes[10174243] = MANTR3
 nodes[15083162] = MANTR3
 nodes[15324320] = MANTR3
 nodes[16343312] = MANTR3
+nodes[18253632] = MANTR3
 -- quest=58227
+nodes[18063844] = MANTR4
 nodes[22903439] = MANTR4
 nodes[24994118] = MANTR4
 nodes[26704680] = MANTR4
 nodes[31724184] = MANTR4
 -- quest=58228
 nodes[07356617] = MANTR5
+nodes[10746891] = MANTR5
 nodes[15406394] = MANTR5
 nodes[16096581] = MANTR5
 nodes[19897504] = MANTR5
+nodes[19975976] = MANTR5
 nodes[21506269] = MANTR5
+nodes[21636992] = MANTR5
 
-nodes[21586246] = Supply({quest=58770, assault=MAN, label=L["ambered_coffer"]})
+nodes[21586246] = Supply({quest=58770, assault=MAN, label=L["ambered_coffer"], sublabel=L["mantid_relic"]})
 
 -------------------------------------------------------------------------------
 
@@ -2590,6 +2598,7 @@ local MOGTR6 = MOGChest({quest=57213, icon='chest_lime'})
 
 -- quest=57206
 nodes[13500720] = MOGTR1
+nodes[17741256] = MOGTR1
 nodes[20221140] = MOGTR1
 nodes[20441477] = MOGTR1
 nodes[23850753] = MOGTR1
@@ -2745,6 +2754,24 @@ pnodes[42104690] = clone(EMPCOFF, {note=L["pools_of_power"]})
 -------------------------------- ASSAULT EVENTS -------------------------------
 -------------------------------------------------------------------------------
 
+nodes[29266081] = TimedEvent({quest=57445, assault=MAN, note=L["noodle_cart"]}) -- Chin's Noodle Cart
+nodes[08852675] = TimedEvent({quest=57521, assault=MAN, note=L["empowered_wagon"]}) -- Empowered War Wagon
+nodes[11006443] = TimedEvent({quest=57085, assault=MAN, note=L["empowered_wagon"]}) -- Empowered War Wagon
+nodes[18556572] = TimedEvent({quest=57540, assault=MAN, note=L["kunchong_incubator"]}) -- Kunchong Incubator
+nodes[06484227] = TimedEvent({quest=57558, assault=MAN, note=L["mantid_hatch"]}) -- Mantid Hatchery
+nodes[06487067] = TimedEvent({quest=57089, assault=MAN, note=L["mantid_hatch"]}) -- Mantid Hatchery
+nodes[19287227] = TimedEvent({quest=57384, assault=MAN, note=L["mending_monstro"]}) -- Mending Monstrosity
+nodes[26644650] = TimedEvent({quest=57404, assault=MAN, note=L["ravager_hive"]}) -- Ravager Hive
+nodes[16964567] = TimedEvent({quest=57484, assault=MAN, note=L["ritual_wakening"]}) -- Ritual of Wakening
+nodes[14073421] = TimedEvent({quest=57453, assault=MAN, note=L["swarm_caller"]}) -- Swarm Caller
+nodes[25663647] = TimedEvent({quest=57517, assault=MAN, note=L["swarm_caller"]}) -- Swarm Caller
+nodes[27011715] = TimedEvent({quest=57519, assault=MAN, note=L["swarm_caller"]}) -- Swarm Caller
+nodes[31146095] = TimedEvent({quest=57542, assault=MAN, note=L["swarm_caller"]}) -- Swarm Caller
+nodes[11384092] = TimedEvent({quest=57476, assault=MAN, note=L["feeding_grounds"]}) -- Vil'thik Feeding Grounds
+nodes[11034854] = TimedEvent({quest=57508, assault=MAN, note=L["war_banner"]}) -- Zara'thik War Banner
+
+-------------------------------------------------------------------------------
+
 nodes[31332897] = TimedEvent({quest=57087, assault=MOG, note=L["colored_flames"]}) -- Baruk Obliterator
 nodes[19167199] = TimedEvent({quest=57272, assault=MOG, note=L["colored_flames"]}) -- Bloodbound Effigy
 nodes[25791737] = TimedEvent({quest=57339, assault=MOG, note=L["guolai_right"]..' '..L["construction_ritual"]}) -- Construction Ritual
@@ -2780,8 +2807,6 @@ nodes[76365163] = TimedEvent({quest=57379, assault=EMP, note=L["infested_statue"
 nodes[79233315] = TimedEvent({quest=56177, assault=EMP, note=L["void_conduit"]}) -- Void Conduit
 nodes[79525433] = TimedEvent({quest=56180, assault=EMP, note=L["bound_guardian"]}) -- Bound Guardian
 
--- nodes[69002100] = TimedEvent({quest=nil, assault=EMP}) -- Reach of N'Zoth
-
 -------------------------------------------------------------------------------
 --------------------------------- BATTLE PETS ---------------------------------
 -------------------------------------------------------------------------------
@@ -2802,6 +2827,76 @@ VisionsOfNZoth_maps[pmap.id] = pmap
 -------------------------------------------------------------------------------
 
 local Map = VisionsOfNZoth_Map
+local Node = VisionsOfNZoth_node.Node
+local Rare = VisionsOfNZoth_node.Rare
+local Mount = VisionsOfNZoth_reward.Mount
+local Toy = VisionsOfNZoth_reward.Toy
+local Path = VisionsOfNZoth_poi.Path
+-------------------------------------------------------------------------------
+------------------------------------- MAP -------------------------------------
+-------------------------------------------------------------------------------
+
+local stormwind = Map({ id=1470 })
+
+function stormwind:enabled (node, coord, minimap)
+    if not Map.enabled(self, node, coord, minimap) then return false end
+    return HandyNotes_VisionsOfNZoth.db.profile.misc_visions
+end
+
+-------------------------------------------------------------------------------
+----------------------------------- OPTIONS -----------------------------------
+-------------------------------------------------------------------------------
+
+defaults['misc_visions'] = true
+
+options.groupVisions = {
+    type = "header",
+    name = L["horrific_visions"],
+    order = 20,
+}
+
+options.mailVisions = {
+    type = "toggle",
+    arg = "misc_visions",
+    name = L["options_toggle_misc"],
+    desc = L["options_toggle_visions_desc"],
+    order = 21,
+    width = "normal",
+}
+
+-------------------------------------------------------------------------------
+---------------------------------- STORMWIND ----------------------------------
+-------------------------------------------------------------------------------
+
+local MAIL = Node({icon=133468, label=L["mailbox"], rewards={
+    Mount({id=1315, item=174653}) -- Mail Muncher
+}, note=L["mail_muncher"]})
+
+stormwind.nodes[49688700] = MAIL
+stormwind.nodes[54645752] = MAIL
+stormwind.nodes[61687604] = MAIL
+stormwind.nodes[62073082] = MAIL
+stormwind.nodes[76306430] = MAIL
+
+stormwind.nodes[58905290] = Node({icon=237272, label=L["void_skull"], note=L["void_skull_note"], rewards={
+    Toy({item=174921}) -- Void-Touched Skull
+}})
+
+stormwind.nodes[59106390] = Rare({id=158284, pois={
+    Path({
+        58707630, 57507290, 56406950, 56706670, 59106390, 62306130, 64706190,
+        67006490, 68406710
+    })
+}, rewards={
+    Toy({item=174926}) -- Overly Sensitive Void Spectacles
+}}) -- Craggle Wobbletop
+
+-------------------------------------------------------------------------------
+
+VisionsOfNZoth_maps[stormwind.id] = stormwind
+
+
+
 local NPC = VisionsOfNZoth_node.NPC
 local Mount = VisionsOfNZoth_reward.Mount
 local POI = VisionsOfNZoth_poi.POI
@@ -2832,7 +2927,7 @@ defaults['alpaca_voldun'] = true
 options.groupVoldun = {
     type = "header",
     name = L["voldun"],
-    order = 20,
+    order = 30,
 }
 
 options.alpacaVoldun = {
@@ -2840,7 +2935,7 @@ options.alpacaVoldun = {
     arg = "alpaca_voldun",
     name = L["options_toggle_alpaca_voldun"],
     desc = L["options_toggle_alpaca_voldun_desc"],
-    order = 21,
+    order = 31,
     width = "normal",
 }
 

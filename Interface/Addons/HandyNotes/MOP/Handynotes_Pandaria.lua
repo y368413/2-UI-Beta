@@ -1776,7 +1776,7 @@ local function interpreteNodeInfo (nodeInfo)
 
     if (settings.show_achievements == true and achievementInfo ~= nil) then
       if (achievementInfo.completed == false) then
---        nodeInfo.icon = achievementInfo.icon;
+        -- nodeInfo.icon = achievementInfo.icon;
         nodeInfo.icon = ICON_MAP.skullYellow;
         nodeInfo.display = true;
         return;
@@ -1789,12 +1789,17 @@ local function interpreteNodeInfo (nodeInfo)
       return;
     end
 
-    nodeInfo.icon = ICON_MAP.skullGray;
+
+    if (settings.always_show_rares == true) then
+      nodeInfo.display = true;
+      nodeInfo.icon = ICON_MAP.skullGray;
+      return;
+    end
   end
 
   local treasureInfo = nodeInfo.treasureInfo;
 
-  if (settings.show_treasures and treasureInfo ~= nil) then
+  if (settings.show_treasures == true and treasureInfo ~= nil) then
     if (treasureInfo.collected == false) then
       nodeInfo.icon = treasureInfo.icon;
       nodeInfo.display = true;
@@ -2111,6 +2116,7 @@ local function registerWithHandyNotes ()
     show_toys = true,
     show_achievements = true,
     show_special_rares = true,
+    always_show_rares = false,
   };
 
   if (Handynotes_PandariaDB == nil) then
@@ -2222,6 +2228,14 @@ local function registerWithHandyNotes ()
             arg = 'show_special_rares',
             width = 'full',
           },
+          always_show_rares = {
+            order = 4,
+            type = 'toggle',
+            name = 'exist (always)',
+            desc = 'exist (always)',
+            arg = 'always_show_rares',
+            width = 'full',
+          },
           reset_nodes = {
             order = 5,
             type = 'execute',
@@ -2247,38 +2261,3 @@ HandyNotes_Pandaria.on('PLAYER_LOGIN', function ()
   HandyNotes_Pandaria.funnel({'CRITERIA_UPDATE'}, 2, updateNodes);
   HandyNotes_Pandaria.on({'NEW_TOY_ADDED', 'NEW_MOUNT_ADDED'}, updateNodes);
 end);
-
-HandyNotes_Pandaria.on('PLAYER_LOGIN', function ()
-  convertedData = nil;
-end);
-
-local rareInfo = Pandaria.rareData;
-local nodes = Pandaria.nodeData;
-
---if true then return end
-
---[[local function nameCheck ()
-  for zone, zoneNodes in pairs(nodes) do
-    for coords, node in pairs(zoneNodes) do
-      local info = HandyNotes_Pandaria.getNodeInfo(node);
-
-      if (info == nil) then
-        print(node.treasure, '-', node.rare);
-      end
-
-      if (info and info.name == nil) then
-        if (node.treasure ~= nil) then
-          print('no name for treasure:', node.treasure);
-        end
-
-        if (node.rare ~= nil) then
-          print('no name for rare:', node.rare);
-        end
-      end
-    end
-  end
-end
-
-HandyNotes_Pandaria.on('PLAYER_STOPPED_MOVING', function ()
-  nameCheck();
-end);]]

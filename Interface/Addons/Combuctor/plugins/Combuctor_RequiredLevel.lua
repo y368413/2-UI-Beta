@@ -306,7 +306,7 @@ local PostUpdateButton = function(itemSlot)
 
   local itemLink = itemSlot:GetItem()
   if itemLink then
-  
+
     -- Locked items should always be greyed out.
     if itemSlot.info.locked then
       local buttonIconTexture = _G[itemSlot:GetName().."IconTexture"]
@@ -461,7 +461,6 @@ local PostUpdateButtonWrapper = function(itemSlot)
 end
 
 
---Module.OnEnable = function()
   hooksecurefunc(Combuctor.Item, "Update", PostUpdateButtonWrapper)
 
   -- Needed because otherwise UpdateUpgradeIcon will reset the VertexColor.
@@ -477,7 +476,6 @@ end
   -- Needed to keep the desaturation.
   hooksecurefunc(Combuctor.Item, "SetLocked", PostUpdateButtonWrapper)
 
---end
 
 
 -- The %s in _G.ITEM_MIN_SKILL = "Requires %s (%d)" is replaced

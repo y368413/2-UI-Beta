@@ -127,7 +127,7 @@ function MISC:KeystoneInfo_Create()
 		GameTooltip:ClearLines()
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 		GameTooltip:AddLine(U["Account Keystones"])
-		for fullName, info in pairs(MaoRUIAccountDB["KeystoneInfo"]) do
+		for fullName, info in pairs(MaoRUIDB["KeystoneInfo"]) do
 			local name = Ambiguate(fullName, "none")
 			local mapID, level, class, faction = strsplit(":", info)
 			local color = M.HexRGB(M.ClassColor(class))
@@ -142,7 +142,7 @@ function MISC:KeystoneInfo_Create()
 	button:SetScript("OnLeave", M.HideTooltip)
 	button:SetScript("OnMouseUp", function(_, btn)
 		if btn == "MiddleButton" then
-			wipe(MaoRUIAccountDB["KeystoneInfo"])
+			wipe(MaoRUIDB["KeystoneInfo"])
 		end
 	end)
 end
@@ -164,9 +164,9 @@ function MISC:KeystoneInfo_Update()
 	local link, itemString = MISC:KeystoneInfo_UpdateBag()
 	if link then
 		local _, mapID, level = strsplit(":", itemString)
-		MaoRUIAccountDB["KeystoneInfo"][myFullName] = mapID..":"..level..":"..I.MyClass..":"..myFaction
+		MaoRUIDB["KeystoneInfo"][myFullName] = mapID..":"..level..":"..I.MyClass..":"..myFaction
 	else
-		MaoRUIAccountDB["KeystoneInfo"][myFullName] = nil
+		MaoRUIDB["KeystoneInfo"][myFullName] = nil
 	end
 end
 

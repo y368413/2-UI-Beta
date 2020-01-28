@@ -39,7 +39,7 @@ end
 
 -- Create Shadow
 function M:CreateSD(size, override)
-	if not override and not MaoRUIDB["Skins"]["Shadow"] then return end
+	if not override and not MaoRUIPerDB["Skins"]["Shadow"] then return end
 
 	if self.Shadow then return end
 
@@ -144,7 +144,7 @@ R.frames = {}
 function M:CreateBD(a)
 	self:SetBackdrop(nil)
 	M:PixelBorders(self)
-	M:SetBackdrop(self, a or MaoRUIDB["Skins"]["SkinAlpha"])
+	M:SetBackdrop(self, a or MaoRUIPerDB["Skins"]["SkinAlpha"])
 	if not a then tinsert(R.frames, self) end
 end
 
@@ -152,7 +152,7 @@ function M:CreateGradient()
 	local tex = self:CreateTexture(nil, "BORDER")
 	tex:SetInside(self)
 	tex:SetTexture(I.bdTex)
-	if MaoRUIDB["Skins"]["FlatMode"] then
+	if MaoRUIPerDB["Skins"]["FlatMode"] then
 		tex:SetVertexColor(.3, .3, .3, .25)
 	else
 		tex:SetGradientAlpha("Vertical", 0, 0, 0, .5, .3, .3, .3, .3)
@@ -317,7 +317,7 @@ end
 local function Button_OnEnter(self)
 	if not self:IsEnabled() then return end
 
-	if MaoRUIDB["Skins"]["FlatMode"] then
+	if MaoRUIPerDB["Skins"]["FlatMode"] then
 		self.bgTex:SetVertexColor(cr / 4, cg / 4, cb / 4)
 	else
 		self:SetBackdropColor(cr, cg, cb, .25)
@@ -326,7 +326,7 @@ local function Button_OnEnter(self)
 end
 
 local function Button_OnLeave(self)
-	if MaoRUIDB["Skins"]["FlatMode"] then
+	if MaoRUIPerDB["Skins"]["FlatMode"] then
 		self.bgTex:SetVertexColor(.3, .3, .3, .25)
 	else
 		self:SetBackdropColor(0, 0, 0, 0)
@@ -400,7 +400,7 @@ local function Menu_OnLeave(self)
 	self.bg:SetBackdropBorderColor(0, 0, 0)
 end
 local function Menu_OnMouseUp(self)
-	self.bg:SetBackdropColor(0, 0, 0, MaoRUIDB["Skins"]["SkinAlpha"])
+	self.bg:SetBackdropColor(0, 0, 0, MaoRUIPerDB["Skins"]["SkinAlpha"])
 end
 local function Menu_OnMouseDown(self)
 	self.bg:SetBackdropColor(cr, cg, cb, .25)
@@ -521,7 +521,7 @@ end
 
 -- Numberize
 function M.Numb(n)
-	if MaoRUIAccountDB["NumberFormat"] == 1 then
+	if MaoRUIDB["NumberFormat"] == 1 then
 		if n >= 1e12 then
 			return format("%.2ft", n / 1e12)
 		elseif n >= 1e9 then
@@ -533,7 +533,7 @@ function M.Numb(n)
 		else
 			return format("%.0f", n)
 		end
-	elseif MaoRUIAccountDB["NumberFormat"] == 2 then
+	elseif MaoRUIDB["NumberFormat"] == 2 then
 		if n >= 1e12 then
 			return format("%.2f"..U["NumberCap3"], n / 1e12)
 		elseif n >= 1e8 then
@@ -711,7 +711,7 @@ function M.FormatTime(s)
 	elseif s > 3 then
 		return format("|cffffff00%d|r", s), s - floor(s)
 	else
-		if MaoRUIDB["Actionbar"]["DecimalCD"] then
+		if MaoRUIPerDB["Actionbar"]["DecimalCD"] then
 			return format("|cffff0000%.1f|r", s), s - format("%.1f", s)
 		else
 			return format("|cffff0000%d|r", s + .5), s - floor(s)

@@ -143,7 +143,11 @@ local tipFrame = CreateFrame("Button", "WhisperPopTipFrame", UIParent)
 WhisperPop.tipFrame = tipFrame
 --SetFrameMobile(tipFrame)
 --tipFrame:SetParent(chatbar)
-tipFrame:SetPoint("BOTTOMLEFT", UIParent,"BOTTOMLEFT",285, 0)
+if GetCVar("portal") == "CN" then
+tipFrame:SetPoint("BOTTOMLEFT", UIParent,"BOTTOMLEFT",285, 2)
+else
+tipFrame:SetPoint("BOTTOMLEFT", UIParent,"BOTTOMLEFT",262, 2)
+end
 tipFrame:SetWidth(16)
 tipFrame:SetHeight(16)
 tipFrame:RegisterForClicks("LeftButtonUp", "RightButtonUp")

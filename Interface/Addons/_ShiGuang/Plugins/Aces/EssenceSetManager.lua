@@ -1,6 +1,5 @@
 --## Author: Metriss - Stormrage  ## Version: 1
 local esm = ESSENCE_SET_MANAGER_ADDON or LibStub("AceAddon-3.0"):NewAddon("ESSENCE_SET_MANAGER_ADDON", "AceConsole-3.0")
-local _G = _G
 local setButtons = {}
 local setNames = {}
 
@@ -42,11 +41,7 @@ eventHandlerFrame:SetScript("OnEvent", function(self, event, arg1)
 	elseif event == "AZERITE_ESSENCE_UPDATE" then
 		esm.updateSetButtons()
 		esm.updateInfoTooltip()
-	elseif event == "PLAYER_UPDATE_RESTING" then
-		esm.saturation = esm.checkIfCanChange()
-		esm.updateBtnSaturation()
-	elseif event == "UNIT_AURA" and arg1 == "player" then
-		esm.saturation = esm.checkIfCanChange()
+	elseif event == "PLAYER_UPDATE_RESTING" or (event == "UNIT_AURA" and arg1 == "player") then
 		esm.updateBtnSaturation()
 	end
 end)
@@ -69,8 +64,29 @@ esm.getSpecName = function()
 end
 
 esm.updateBtnSaturation = function()
+	esm.saturation = esm.checkIfCanChange()
 	for i=0, #(setButtons) do
-		setButtons[i].tex:SetDesaturated(esm.saturation)
+		if setButtons[i] then
+			setButtons[i].tex:SetDesaturated(esm.saturation)
+		end
+	end
+	esm.updateTomeButton()
+end
+
+esm.updateTomeButton = function()
+	local tranquilCount = GetItemCount("Tome of the Tranquil Mind")
+	local quietCount =  GetItemCount("Tome of the Quiet Mind")
+	local totalCount = tranquilCount + quietCount
+	esm.itemBtn:SetText(totalCount)
+	if esm.saturation == 1 and totalCount > 0 then
+		esm.itemBtn:Enable()
+	else
+		esm.itemBtn:Disable()
+	end
+	if tranquilCount > 0 then
+		esm.itemBtn:SetAttribute("item", "Tome of the Tranquil Mind");
+	else
+		esm.itemBtn:SetAttribute("item", "Tome of the Quiet Mind");
 	end
 end
 
@@ -103,10 +119,6 @@ end
 
 
 esm.updateSetButtons = function()
-	if ElvUI then --more room if you use ElvUI because the giant azerite icon isn't there
-		Y_OFFSET = -40
-		MAX_SETS = 8
-	end
 	esm.saturation = esm.checkIfCanChange()
 	esm.createSetFromEquipped()
 	esm.getUnlockedCount()
@@ -122,35 +134,34 @@ esm.updateSetButtons = function()
 			end
 		end
 	end
+	esm.updateBtnSaturation()
 end
 
 esm.createFonts = function()
-	local fontStr = "Fonts\\FRIZQT___CYR.TTF"
-
 	esm.fontWhite = CreateFont("noMatch")
 	esm.fontWhite:CopyFontObject("GameFontNormal");
 	esm.fontWhite:SetTextColor(1, 1, 1, 1.0);
-	esm.fontWhite:SetFont(fontStr, 14, "OUTLINE")
+	esm.fontWhite:SetFont(STANDARD_TEXT_FONT, 14, "OUTLINE")
 	
 	esm.fontGreen = CreateFont("Match")
 	esm.fontGreen:CopyFontObject("GameFontNormal");
 	esm.fontGreen:SetTextColor(0, 1, 0, 1.0);
-	esm.fontGreen:SetFont(fontStr, 15, "OUTLINE")
+	esm.fontGreen:SetFont(STANDARD_TEXT_FONT, 15, "OUTLINE")
 	
 	esm.fontRed = CreateFont("Missing")
 	esm.fontRed:CopyFontObject("GameFontNormal");
 	esm.fontRed:SetTextColor(1, 0, 0, 1.0);
-	esm.fontRed:SetFont(fontStr, 14, "OUTLINE")
+	esm.fontRed:SetFont(STANDARD_TEXT_FONT, 14, "OUTLINE")
 
 end
 
 esm.createSaveFrames = function()
 	esm.input = CreateFrame("EditBox", "", AzeriteEssenceUI, "InputBoxTemplate");
-	esm.input:SetPoint("TOPLEFT", AzeriteEssenceUI, "TOPLEFT" , 80, -35)
+	esm.input:SetPoint("BOTTOMLEFT", AzeriteEssenceUI, "BOTTOM" , -33, 8)
 	esm.input:SetFrameStrata("DIALOG")
 	esm.input:SetSize(80,30)
 	esm.input:SetMultiLine(false)
-    esm.input:SetAutoFocus(false)
+  esm.input:SetAutoFocus(false)
 	esm.input:SetMaxLetters(10)
 	esm.input:SetScript("OnTextChanged", function() esm.inputTextChanged() end)
 
@@ -160,8 +171,18 @@ esm.createSaveFrames = function()
 	esm.save:SetHeight(25)
 	esm.save:SetNormalFontObject("GameFontNormal")
 	esm.save:SetScript("OnClick", function() esm.saveButtonPress(esm.save) end)
-	esm.save:SetText("Create")
+	esm.save:SetText(COMMUNITIES_CREATE)
 	esm.save:Disable()
+	
+	esm.itemBtn = CreateFrame("Button", nil, esm.save, "SecureActionButtonTemplate, UIPanelButtonTemplate");
+	esm.itemBtn:SetPoint("BOTTOMRIGHT", esm.save, "TOPRIGHT" , 0, 0)
+	esm.itemBtn:SetNormalFontObject("GameFontNormal")
+	--esm.itemBtn:SetSize(50, 50)
+	esm.itemBtn:SetWidth(26)
+	esm.itemBtn:SetHeight(26)
+	esm.itemBtn:SetText("Use Tome ("..GetItemCount("Tome of the Tranquil Mind")..")" )
+	esm.itemBtn:SetAttribute("type", "item");
+	--esm.itemBtn:SetNormalTexture("interface\\addons\\nickalert\\green-panel-button-up.tga")
 
 end
 
@@ -260,7 +281,7 @@ esm.isMissingEssence = function(set, unlocked)
 	
 end
 
-esm.addTooltipLine = function(type, essence, setName)
+esm.addTooltipLine = function(type, essence)
 	local r, g, b
 	local match = false
 	local emptyText = "|cffff0009<EMPTY>|r"
@@ -289,18 +310,17 @@ esm.showInfoTooltip = function(button)
 	GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
 	local major = esm.specProfiles[esm.currentSpec][button.setName].major
 	local minors = esm.specProfiles[esm.currentSpec][button.setName].minors
-	local emptyText = "|cffff0009<EMPTY>|r"
 	local mOneName, mTwoName, mThreeName
 	
-	esm.addTooltipLine("major", major, button.setName)
+	esm.addTooltipLine("major", major)
 	if esm.unlocked >= 2 then
-		esm.addTooltipLine("minor", minors.one, button.setName)
+		esm.addTooltipLine("minor", minors.one)
 	end
 	if esm.unlocked >= 3 then
-		esm.addTooltipLine("minor", minors.two, button.setName)
+		esm.addTooltipLine("minor", minors.two)
 	end
 	if esm.unlocked >= 4 then
-		esm.addTooltipLine("minor", minors.three, button.setName)
+		esm.addTooltipLine("minor", minors.three)
 	end
 	
 	GameTooltip:AddLine(" ")
@@ -345,10 +365,7 @@ esm.inputTextChanged = function()
 	if esm.input:GetText() == "" then
 		esm.save:Disable()
 	else
-		esm.save:Show()
 		esm.save:Enable()
-		esm.save:Hide()
-		esm.save:Show()
 	end
 	if not tContains(setNames, esm.input:GetText()) then
 		esm.save:SetText(COMMUNITIES_CREATE)
@@ -457,24 +474,24 @@ esm.deleteSet = function(name)
 end
 
 esm:RegisterChatCommand("esm", function(msg, editbox)
-      local words = {}
-      for word in msg:gmatch("[^ ]+") do 
-         table.insert(words, word)
-      end
-      if words[1] == "activate" then
-         table.remove(words, 1)
-         local name = table.concat(words, " ")
-         if name == "" then 
-            esm.printHelpActivate()
-         else
+	local words = {}
+	for word in msg:gmatch("[^ ]+") do 
+		table.insert(words, word)
+	end
+	if words[1] == "activate" then
+		table.remove(words, 1)
+		local name = table.concat(words, " ")
+		if name == "" then 
+			esm.printHelpActivate()
+		else
 			if esm.specProfiles[esm.currentSpec][name] then
 				esm.activateSet(name)
 			else
 				esm.errorPrint("There is no set saved with this name for this spec. Capitalization must be the same.")
 			end
-         end
-      else
-         esm.printHelp()
-      end
+		end
+	else
+		esm.printHelp()
+	end
       
 end)

@@ -3,7 +3,7 @@ local M, R, U, I = unpack(ns)
 local MISC = M:GetModule("Misc")
 
 function MISC:CreateRM()
-	if not MaoRUIDB["Misc"]["RaidTool"] then return end
+	if not MaoRUIPerDB["Misc"]["RaidTool"] then return end
 
 	local tinsert, strsplit, format = table.insert, string.split, string.format
 	local next, pairs, mod = next, pairs, mod
