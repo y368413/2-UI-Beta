@@ -48,8 +48,8 @@ function S:OnLogin()
 	     frame:UnregisterAllEvents()
 	     frame:Hide()
     end
-	if MaoRUIPerDB["Skins"]["CastBarstyle"] then --DisableBlizzardFrame(CastingBarFrame) 
-	DisableBlizzardFrame(TargetFrameSpellBar) DisableBlizzardFrame(FocusFrameSpellBar) DisableBlizzardFrame(PetCastingBarFrame) return end
+	--if MaoRUIPerDB["Skins"]["CastBarstyle"] then --DisableBlizzardFrame(CastingBarFrame) 
+	--DisableBlizzardFrame(TargetFrameSpellBar) DisableBlizzardFrame(FocusFrameSpellBar) DisableBlizzardFrame(PetCastingBarFrame) return end
 end
 
 function S:GetToggleDirection()

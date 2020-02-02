@@ -42,14 +42,14 @@ function A:OnLogin()
 	self.DebuffFrame:SetPoint("TOPRIGHT", debuffAnchor)
 
 	-- Elements
-	if I.MyClass == "MONK" then
-		self:Stagger()
+	--if I.MyClass == "MONK" then
+		--self:Stagger()
 		--self:MonkStatue()
-	elseif I.MyClass == "SHAMAN" then
+	if I.MyClass == "SHAMAN" then
 		self:Totems()
 	end
 	self:InitReminder()
-	self:Energy()
+	--self:Energy()
 	self:ClassRecoure()
 end
 

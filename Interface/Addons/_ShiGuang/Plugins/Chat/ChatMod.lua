@@ -185,10 +185,8 @@ local function showMessage(msg, button)
 end
 --獲取複製的信息
 local function getMessage(...)
-    local object
     for i = 1, select("#", ...) do
-        object = select(i, ...)
-        if (object:IsObjectType("FontString") and MouseIsOver(object)) then return object:GetText() end
+        if (select(i, ...):IsObjectType("FontString") and MouseIsOver(select(i, ...))) then return select(i, ...):GetText() end
     end
     return ""
 end

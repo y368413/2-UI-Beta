@@ -835,9 +835,7 @@ end
 
 local function FriendGroups_OnEnter(self)
 	if ( self.buttonType == FRIENDS_BUTTON_TYPE_DIVIDER ) then
-		if FriendsTooltip:IsShown() then
-			FriendsTooltip:Hide()
-		end
+		if FriendsTooltip:IsShown() then FriendsTooltip:Hide() end
 		return
 	end
 end

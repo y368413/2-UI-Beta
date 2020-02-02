@@ -2,6 +2,7 @@
 local esm = ESSENCE_SET_MANAGER_ADDON or LibStub("AceAddon-3.0"):NewAddon("ESSENCE_SET_MANAGER_ADDON", "AceConsole-3.0")
 local setButtons = {}
 local setNames = {}
+local azeriteUIOpen = false
 
 local MAX_SETS = 7
 local Y_OFFSET = -36
@@ -18,6 +19,7 @@ local eventHandlerFrame = CreateFrame("Frame")
 eventHandlerFrame:RegisterEvent("ADDON_LOADED")
 eventHandlerFrame:RegisterEvent("AZERITE_ESSENCE_UPDATE")
 eventHandlerFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+eventHandlerFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 eventHandlerFrame:SetScript("OnEvent", function(self, event, arg1)
 	if event == "ADDON_LOADED" then
 		if arg1 == "_ShiGuang" then
@@ -28,31 +30,36 @@ eventHandlerFrame:SetScript("OnEvent", function(self, event, arg1)
 			esm.createSaveFrames()
 			_G.AzeriteEssenceUI:HookScript("OnShow", function() esm.azeriteUIShow() end)
 			_G.AzeriteEssenceUI:HookScript("OnHide", function() esm.azeriteUIHide() end)
-			eventHandlerFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 		end
 	elseif event == "PLAYER_SPECIALIZATION_CHANGED" or event == "PLAYER_ENTERING_WORLD" then
 		esm.currentSpec = esm.getSpecName()
 		esm.createSpecSet(esm.currentSpec)
 		esm.updateSetNames()
-		if event == "PLAYER_SPECIALIZATION_CHANGED" then
+		if event == "PLAYER_SPECIALIZATION_CHANGED" and azeriteUIOpen then
 			esm.updateSetButtons()
 			esm.input:SetText("")
 		end
-	elseif event == "AZERITE_ESSENCE_UPDATE" then
+	elseif event == "AZERITE_ESSENCE_UPDATE" and azeriteUIOpen then
 		esm.updateSetButtons()
 		esm.updateInfoTooltip()
 	elseif event == "PLAYER_UPDATE_RESTING" or (event == "UNIT_AURA" and arg1 == "player") then
-		esm.updateBtnSaturation()
+		if azeriteUIOpen then
+			esm.updateBtnSaturation()
+		end
 	end
 end)
 
 esm.azeriteUIShow = function()
+	azeriteUIOpen = true
+	esm.currentSpec = esm.getSpecName()
 	eventHandlerFrame:RegisterEvent("PLAYER_UPDATE_RESTING")
 	eventHandlerFrame:RegisterEvent("UNIT_AURA")
 	esm.updateSetButtons()
 end
 
 esm.azeriteUIHide = function()
+	azeriteUIOpen = false
+	esm.input:SetText("")
 	eventHandlerFrame:UnregisterEvent("PLAYER_UPDATE_RESTING")
 	eventHandlerFrame:UnregisterEvent("UNIT_AURA")
 end

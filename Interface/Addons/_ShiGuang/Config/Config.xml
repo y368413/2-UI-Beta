@@ -5,4 +5,5 @@
 	<Script file="Cooldowns.lua"/>
 	<Script file="AurasTable.lua"/>
 	<Include file="AuraWatchList\AuraWatchList.xml"/>
+	<Include file="RaidFrameAuras\RaidFrameAuras.xml"/>
 </Ui>

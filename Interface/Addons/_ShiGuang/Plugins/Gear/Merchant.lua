@@ -34,12 +34,20 @@ hooksecurefunc("MerchantFrame_UpdateMerchantInfo", MerchantItemlevel)
 ----------------------------------------------------------------------------------------
 local TrainAll = CreateFrame("Frame")
 TrainAll:RegisterEvent("ADDON_LOADED")
-TrainAll:SetScript("OnEvent", function(self, event, addon)
+TrainAll:SetScript("OnEvent", function(_, _, addon)
 	if addon == "Blizzard_TrainerUI" then
+		local cost, num
 		local button = CreateFrame("Button", "ClassTrainerTrainAllButton", ClassTrainerFrame, "UIPanelButtonTemplate")
 		button:SetText(ALL..LEARN )
 		button:SetPoint("TOPRIGHT", ClassTrainerTrainButton, "TOPLEFT", 0, 0)
 		button:SetWidth(min(88, button:GetTextWidth() + 21))
+		button:SetScript("OnEnter", function()
+			GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
+			GameTooltip:SetText(AVAILABLE..": "..num.."\n"..COSTS_LABEL.." "..GetMoneyString(cost))
+		end)
+		button:SetScript("OnLeave", function()
+			GameTooltip:Hide()
+		end)
 		button:SetScript("OnClick", function()
 			for i = 1, GetNumTrainerServices() do
 				if select(2, GetTrainerServiceInfo(i)) == "available" then
@@ -48,16 +56,18 @@ TrainAll:SetScript("OnEvent", function(self, event, addon)
 			end
 		end)
 		hooksecurefunc("ClassTrainerFrame_Update", function()
+			num, cost = 0, 0
 			for i = 1, GetNumTrainerServices() do
-				if ClassTrainerTrainButton:IsEnabled() and select(2, GetTrainerServiceInfo(i)) == "available" then
-					button:Enable()
-					return
+				if select(2, GetTrainerServiceInfo(i)) == "available" then
+					num = num + 1
+					cost = cost + GetTrainerServiceCost(i)
 				end
 			end
-			button:Disable()
+			button:SetEnabled(num > 0)
 		end)
 	end
 end)
+
 
 ----------------------------------------------------------------------------------------
 --	Enchantment scroll on TradeSkill frame(OneClickEnchantScroll by Sara.Festung)

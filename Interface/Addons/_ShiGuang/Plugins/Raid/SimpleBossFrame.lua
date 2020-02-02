@@ -86,11 +86,9 @@ do
 	end
 end
 
-SimpleBossFrame.anchorFrame = SimpleBossFrame.anchorFrame or CreateFrame("Frame", nil, _G.UIParent)
-
 local events = SimpleBossFrame.events
 local commands = SimpleBossFrame.commands
-local anchorFrame = SimpleBossFrame.anchorFrame
+local anchorFrame = SimpleBossFrame.anchorFrame or CreateFrame("Frame", nil, UIParent)
 local frames = {}
 
 local buff_prototype = {}

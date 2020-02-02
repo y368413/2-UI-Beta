@@ -83,7 +83,7 @@ local LoadMPOnShow, LoadMP do
 		end
 	end
 end
---[[local function ShowLanding(page)
+local function ShowLanding(page)
 	HideUIPanel(GarrisonLandingPage)
 	ShowGarrisonLandingPage(page)
 	if page and page < 3 then
@@ -106,18 +106,18 @@ GarrisonLandingPageMinimapButton:HookScript("OnClick", function(self, b)
 			else
 				HideUIPanel(GarrisonLandingPage)
 			end
---			if not landingChoiceMenu then
---				landingChoiceMenu = CreateFrame("Frame", "MP_LandingChoicesDrop", UIParent, "UIDropDownMenuTemplate")
---				local function ShowLanding_(_, ...)
---					return ShowLanding(...)
---				end
---				landingChoices = {
---					{text=GARRISON_LANDING_PAGE_TITLE, func=ShowLanding_, arg1=2, notCheckable=true},
---					{text=ORDER_HALL_LANDING_PAGE_TITLE, func=ShowLanding_, arg1=3, notCheckable=true},
---					{text=WAR_CAMPAIGN, func=ShowLanding_, arg1=C_Garrison.GetLandingPageGarrisonType(), notCheckable=true},
---				}
---			end
---			EasyMenu(landingChoices, landingChoiceMenu, "cursor", 0, 0, "MENU", 4)
+			if not landingChoiceMenu then
+				landingChoiceMenu = CreateFrame("Frame", "MP_LandingChoicesDrop", UIParent, "UIDropDownMenuTemplate")
+				local function ShowLanding_(_, ...)
+					return ShowLanding(...)
+				end
+				landingChoices = {
+					{text=GARRISON_LANDING_PAGE_TITLE, func=ShowLanding_, arg1=2, notCheckable=true},
+					{text=ORDER_HALL_LANDING_PAGE_TITLE, func=ShowLanding_, arg1=3, notCheckable=true},
+					{text=WAR_CAMPAIGN, func=ShowLanding_, arg1=C_Garrison.GetLandingPageGarrisonType(), notCheckable=true},
+				}
+			end
+			EasyMenu(landingChoices, landingChoiceMenu, "cursor", 0, 0, "MENU", 4)
 			ShowLanding(3)
 		elseif GarrisonLandingPage.garrTypeID == 3 then
 			ShowLanding(2)
@@ -128,7 +128,7 @@ hooksecurefunc("ShowGarrisonLandingPage", function(pg)
 	if pg < 3 then
 		LoadMP()
 	end
-end)]]
+end)
 
 function E:ADDON_LOADED(addon)
 	if addon == "GarrisonMaster" then
@@ -166,7 +166,3 @@ end
 E.ZONE_CHANGED = CheckCacheWarning
 
 MasterPlanA = api
-
-SLASH_MASTERPLAN1, SlashCmdList.MASTERPLAN = "/masterplan", function()
-	print("|cff0080ffMasterPlan|r v" .. GetAddOnMetadata("GarrisonMaster", "Version") .. " " .. (GetAddOnMetadata("MasterPlan", "X-Version-Key") or "0.113"))
-end

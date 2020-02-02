@@ -78,6 +78,32 @@ function S:QuestTracker()
 		WORLD_QUEST_TRACKER_MODULE.Header,
 	}
 	for _, header in pairs(headers) do Moveit(header) reskinHeader(header) end
+
+----------------------------------------------------------------------------------------
+--	Ctrl+Click to abandon a quest or Alt+Click to share a quest(by Suicidal Katt)
+----------------------------------------------------------------------------------------
+hooksecurefunc("QuestMapLogTitleButton_OnClick", function(self)
+	local questLogIndex = GetQuestLogIndexByID(self.questID)
+	if IsControlKeyDown() then
+		CloseDropDownMenus()
+		QuestMapQuestOptions_AbandonQuest(self.questID)
+	elseif IsAltKeyDown() and GetQuestLogPushable(questLogIndex) then
+		CloseDropDownMenus()
+		QuestMapQuestOptions_ShareQuest(self.questID)
+	end
+end)
+
+hooksecurefunc(QUEST_TRACKER_MODULE, "OnBlockHeaderClick", function(_, block)
+	local questLogIndex = block.id
+	if IsControlKeyDown() then
+		CloseDropDownMenus()
+		QuestMapQuestOptions_AbandonQuest(questLogIndex)
+	elseif IsAltKeyDown() and GetQuestLogPushable(questLogIndex) then
+		CloseDropDownMenus()
+		QuestLogPushQuest(questLogIndex)
+	end
+end)
+
 end
 
 -- 任务名称职业着色 -------------------------------------------------------
@@ -128,7 +154,7 @@ numQuests:SetScript('OnEvent',function()
 	end 
 end)
 
- -- CompletedTip -----------------------------------------------------------Version: 1.0.0.80200    --Author: InvisiBill
+ -- CompletedTip -----------------------------------------------------------Version: 1.0.0.80300    --Author: InvisiBill
 local function onSetHyperlink(self, link)
     local type, id = string.match(link,"^(%a+):(%d+)")
     if not type or not id then return end

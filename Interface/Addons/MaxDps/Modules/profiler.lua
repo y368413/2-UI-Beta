@@ -50,11 +50,11 @@ end
 
 function Profiler:SpellEvent(e, unit, _, spellId)
 	if not UnitIsUnit(unit, 'player') then
-		return;
+		return
 	end
 
 	if self.Spells[spellId] then
-		return;
+		return
 	end
 
 	local spellName = GetSpellInfo(spellId);

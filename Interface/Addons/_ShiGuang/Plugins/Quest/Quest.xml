@@ -2,7 +2,7 @@
 	<Script file="Loh.lua"/>
 	<!--Script file="MTG.lua"/-->
 	<Script file="Mingy.lua"/>
-	<Script file="QuestPlates.lua"/>
+	<!--Script file="QuestPlates.lua"/-->
 	<Script file="BarrelsOEasy.lua"/>
 	<Script file="DarkmoonFaire.lua"/>
 	<Script file="AngryWorldQuest.lua"/>

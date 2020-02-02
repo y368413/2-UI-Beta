@@ -15,7 +15,7 @@ HN.Plugin = {}
 HN.CurrentMap = 0
 HN.ContinentData = {}
 
-HN.DefaultSettings = {["Alpha"] = 1, ["Scale"] = 2.5}
+HN.DefaultSettings = {["Alpha"] = 1, ["Scale"] = 1.25}
 HN.Options = {
   type = "group",
   name = L["Mole Machine"],

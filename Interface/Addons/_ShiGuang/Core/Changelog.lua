@@ -63,10 +63,10 @@ local function Helplist()
 	if f then f:Show() return end
 	local f = CreateFrame("Frame", "Helplist", UIParent)
 	local bgTexture = f:CreateTexture("name", "BACKGROUND")
-    bgTexture:SetTexture("Interface\\PETBATTLES\\Weather-StaticField");
+    bgTexture:SetTexture("Interface\\ARCHEOLOGY\\Arch-BookItemLeft");
     bgTexture:SetAllPoints();
     bgTexture:SetAlpha(.6)
-	f:SetPoint("TOPLEFT", 360, -100)
+	f:SetPoint("TOPLEFT", 260, -60)
 	f:SetScale(1.1)
 	f:SetFrameStrata("HIGH")
 	M.CreateMF(f)

@@ -117,7 +117,7 @@ function module:WorldMapScale()
 	end
 
 	M.CreateMF(WorldMapFrame, nil, true)
-	hooksecurefunc(WorldMapFrame, "SynchronizeDisplayState", self.UpdateMapAnchor)
+	--hooksecurefunc(WorldMapFrame, "SynchronizeDisplayState", self.UpdateMapAnchor)
 end
 
 function module:OnLogin()

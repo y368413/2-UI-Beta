@@ -1,6 +1,6 @@
 local VisionsOfNZoth = {}
 
-VisionsOfNZoth_Class = function (name, parent, attrs)
+VisionsOfNZoth.Class = function (name, parent, attrs)
     parent = parent or {}
     local Class = attrs or {}
     Class.getters = {}
@@ -59,7 +59,7 @@ VisionsOfNZoth_Class = function (name, parent, attrs)
     return Class
 end
 
-VisionsOfNZoth_isinstance = function (instance, class)
+VisionsOfNZoth.isinstance = function (instance, class)
     local function compare (c1, c2)
         if c2 == nil then return false end
         if c1 == c2 then return true end
@@ -68,7 +68,7 @@ VisionsOfNZoth_isinstance = function (instance, class)
     return compare(class, instance.__class)
 end
 
-VisionsOfNZoth_clone = function (instance, newattrs)
+VisionsOfNZoth.clone = function (instance, newattrs)
     local clone = {}
     for k, v in pairs(instance) do clone[k] = v end
     for k, v in pairs(newattrs or {}) do clone[k] = v end
@@ -84,9 +84,9 @@ local HandyNotes_VisionsOfNZoth = LibStub("AceAddon-3.0"):NewAddon("HandyNotes_V
 local HandyNotes = LibStub("AceAddon-3.0"):GetAddon("HandyNotes", true)
 local L = LibStub("AceLocale-3.0"):GetLocale("HandyNotes", true);
 
-VisionsOfNZoth_maps = {};
+VisionsOfNZoth.maps = {};
 
-VisionsOfNZoth_status = {
+VisionsOfNZoth.status = {
     Green = function (t) return string.format('(|cFF00FF00%s|r)', t) end,
     Gray = function (t) return string.format('(|cFF999999%s|r)', t) end,
     Red = function (t) return string.format('(|cFFFF0000%s|r)', t) end,
@@ -101,7 +101,7 @@ local DropdownMenu = CreateFrame("Frame", "HandyNotes_VisionsOfNZothDropdownMenu
 DropdownMenu.displayMode = "MENU";
 local function initializeDropdownMenu (button, level, mapID, coord)
     if not level then return end
-    local node = VisionsOfNZoth_maps[mapID].nodes[coord];
+    local node = VisionsOfNZoth.maps[mapID].nodes[coord];
     local spacer = {text='', disabled=1, notClickable=1, notCheckable=1};
 
     if (level == 1) then
@@ -117,7 +117,7 @@ local function initializeDropdownMenu (button, level, mapID, coord)
                 func=function (button)
                     local x, y = HandyNotes:getXY(coord);
                     TomTom:AddWaypoint(mapID, x, y, {
-                        title = VisionsOfNZoth_NameResolver:GetCachedName(node.label),
+                        title = VisionsOfNZoth.NameResolver:GetCachedName(node.label),
                         persistent = nil,
                         minimap = true,
                         world = true
@@ -156,7 +156,7 @@ end
 -------------------------------------------------------------------------------
 
 function HandyNotes_VisionsOfNZoth:OnEnter(mapID, coord)
-    local node = VisionsOfNZoth_maps[mapID].nodes[coord];
+    local node = VisionsOfNZoth.maps[mapID].nodes[coord];
     local tooltip = self:GetParent() == WorldMapButton and WorldMapTooltip or GameTooltip;
 
     if self:GetCenter() > UIParent:GetCenter() then
@@ -165,7 +165,7 @@ function HandyNotes_VisionsOfNZoth:OnEnter(mapID, coord)
         tooltip:SetOwner(self, "ANCHOR_RIGHT");
     end
 
-    VisionsOfNZoth_NameResolver:Resolve(node.label, function (label)
+    VisionsOfNZoth.NameResolver:Resolve(node.label, function (label)
         tooltip:SetText(label or UNKNOWN)
 
         -- optional top-right text
@@ -190,7 +190,7 @@ function HandyNotes_VisionsOfNZoth:OnEnter(mapID, coord)
             for i, reward in ipairs(node.rewards or {}) do
 
                 -- Add a blank line between achievements and other rewards
-                local isAchieve = VisionsOfNZoth_isinstance(reward, VisionsOfNZoth_reward.Achievement)
+                local isAchieve = VisionsOfNZoth.isinstance(reward, VisionsOfNZoth.reward.Achievement)
                 if isAchieve and firstAchieve then
                     tooltip:AddLine(" ")
                     firstAchieve = false
@@ -204,17 +204,17 @@ function HandyNotes_VisionsOfNZoth:OnEnter(mapID, coord)
         end
 
         node._hover = true
-        VisionsOfNZoth_MinimapDataProvider:RefreshAllData()
-        VisionsOfNZoth_WorldMapDataProvider:RefreshAllData()
+        VisionsOfNZoth.MinimapDataProvider:RefreshAllData()
+        VisionsOfNZoth.WorldMapDataProvider:RefreshAllData()
         tooltip:Show()
     end)
 end
 
 function HandyNotes_VisionsOfNZoth:OnLeave(mapID, coord)
-    local node = VisionsOfNZoth_maps[mapID].nodes[coord]
+    local node = VisionsOfNZoth.maps[mapID].nodes[coord]
     node._hover = false
-    VisionsOfNZoth_MinimapDataProvider:RefreshAllData()
-    VisionsOfNZoth_WorldMapDataProvider:RefreshAllData()
+    VisionsOfNZoth.MinimapDataProvider:RefreshAllData()
+    VisionsOfNZoth.WorldMapDataProvider:RefreshAllData()
     if self:GetParent() == WorldMapButton then
         WorldMapTooltip:Hide();
     else
@@ -223,7 +223,7 @@ function HandyNotes_VisionsOfNZoth:OnLeave(mapID, coord)
 end
 
 function HandyNotes_VisionsOfNZoth:OnClick(button, down, mapID, coord)
-    local node = VisionsOfNZoth_maps[mapID].nodes[coord]
+    local node = VisionsOfNZoth.maps[mapID].nodes[coord]
     if button == "RightButton" and down then
         DropdownMenu.initialize = function (button, level)
             initializeDropdownMenu(button, level, mapID, coord)
@@ -238,8 +238,8 @@ function HandyNotes_VisionsOfNZoth:OnClick(button, down, mapID, coord)
 end
 
 function HandyNotes_VisionsOfNZoth:OnInitialize()
-    VisionsOfNZoth_faction = UnitFactionGroup('player')
-    self.db = LibStub("AceDB-3.0"):New('HandyNotes_VisionsOfNZothDB', VisionsOfNZoth_optionDefaults, "Default")
+    VisionsOfNZoth.faction = UnitFactionGroup('player')
+    self.db = LibStub("AceDB-3.0"):New('HandyNotes_VisionsOfNZothDB', VisionsOfNZoth.optionDefaults, "Default")
     self:RegisterEvent("PLAYER_ENTERING_WORLD", function ()
         self:UnregisterEvent("PLAYER_ENTERING_WORLD")
         self:ScheduleTimer("RegisterWithHandyNotes", 1)
@@ -268,7 +268,7 @@ function HandyNotes_VisionsOfNZoth:RegisterWithHandyNotes()
             return nil, nil, nil, nil
         end
         function HandyNotes_VisionsOfNZoth:GetNodes2(mapID, _minimap)
-            map = VisionsOfNZoth_maps[mapID]
+            map = VisionsOfNZoth.maps[mapID]
             minimap = _minimap
 
             if map then
@@ -282,10 +282,10 @@ function HandyNotes_VisionsOfNZoth:RegisterWithHandyNotes()
     end
 
     if self.db.profile.development then
-        VisionsOfNZoth_BootstrapDevelopmentEnvironment()
+        VisionsOfNZoth.BootstrapDevelopmentEnvironment()
     end
 
-    HandyNotes:RegisterPluginDB("HandyNotes_VisionsOfNZoth", self, VisionsOfNZoth_options)
+    HandyNotes:RegisterPluginDB("HandyNotes_VisionsOfNZoth", self, VisionsOfNZoth.options)
 
     self:RegisterBucketEvent({ "LOOT_CLOSED", "PLAYER_MONEY", "SHOW_LOOT_TOAST", "SHOW_LOOT_TOAST_UPGRADE" }, 2, "Refresh")
     self:Refresh()
@@ -293,8 +293,8 @@ end
 
 function HandyNotes_VisionsOfNZoth:Refresh()
     self:SendMessage("HandyNotes_NotifyUpdate", "HandyNotes_VisionsOfNZoth")
-    VisionsOfNZoth_MinimapDataProvider:RefreshAllData()
-    VisionsOfNZoth_WorldMapDataProvider:RefreshAllData()
+    VisionsOfNZoth.MinimapDataProvider:RefreshAllData()
+    VisionsOfNZoth.WorldMapDataProvider:RefreshAllData()
 end
 
 local ICONS = "Interface\\Addons\\HandyNotes\\Icons\\icons.blp"
@@ -305,7 +305,7 @@ local function coords(x, y, grid, xo, yo)
     return { xo+x*grid, xo+(x+1)*grid-1, yo+y*grid, yo+(y+1)*grid-1 }
 end
 
-VisionsOfNZoth_icons = {
+VisionsOfNZoth.icons = {
 
     ---------------------------------------------------------------------------
     ---------------------------------- GAME -----------------------------------
@@ -386,7 +386,7 @@ VisionsOfNZoth_icons = {
     shootbox_pink = { icon=ICONS, coords=coords(1, 4, 48, 160) }
 };
 
-for name, icon in pairs(VisionsOfNZoth_icons) do
+for name, icon in pairs(VisionsOfNZoth.icons) do
     if type(icon) == 'table' then
         icon.tCoordLeft = icon.coords[1]/ICONS_SIZE
         icon.tCoordRight = icon.coords[2]/ICONS_SIZE
@@ -400,7 +400,7 @@ end
 ---------------------------------- DEFAULTS -----------------------------------
 -------------------------------------------------------------------------------
 
-VisionsOfNZoth_optionDefaults = {
+VisionsOfNZoth.optionDefaults = {
     profile = {
         -- icon scales
         icon_scale_caves = 1,
@@ -408,6 +408,7 @@ VisionsOfNZoth_optionDefaults = {
         icon_scale_pet_battles = 1,
         icon_scale_rares = 1,
         icon_scale_treasures = 1,
+        icon_scale_assaultevents = 1,
 
         -- icon alphas
         icon_alpha_caves = 0.75,
@@ -415,6 +416,7 @@ VisionsOfNZoth_optionDefaults = {
         icon_alpha_pet_battles = 1.0,
         icon_alpha_rares = 0.75,
         icon_alpha_treasures = 0.75,
+        icon_alpha_assaultevents = 1.0,
 
         -- visibility
         always_show_rares = false,
@@ -436,7 +438,7 @@ VisionsOfNZoth_optionDefaults = {
 --------------------------------- OPTIONS UI ----------------------------------
 -------------------------------------------------------------------------------
 
-VisionsOfNZoth_options = {
+VisionsOfNZoth.options = {
     type = "group",
     name = L["VisionsOfNZoth"],
     get = function(info) return HandyNotes_VisionsOfNZoth.db.profile[info.arg] end,
@@ -444,7 +446,7 @@ VisionsOfNZoth_options = {
     args = {}
 }
 
-VisionsOfNZoth_options.args.IconOptions = {
+VisionsOfNZoth.options.args.IconOptions = {
     type = "group",
     name = L["options_icon_settings"],
     inline = true,
@@ -452,14 +454,14 @@ VisionsOfNZoth_options.args.IconOptions = {
     args = {}
 }
 
-for i, group in ipairs{'treasures', 'rares', 'pet_battles', 'caves', 'other'} do
-    VisionsOfNZoth_options.args.IconOptions.args['group_icon_'..group] = {
+for i, group in ipairs{'treasures', 'rares', 'assaultevents', 'pet_battles', 'caves', 'other'} do
+    VisionsOfNZoth.options.args.IconOptions.args['group_icon_'..group] = {
         type = "header",
         name = L["options_icons_"..group],
         order = i * 10,
     }
 
-    VisionsOfNZoth_options.args.IconOptions.args['icon_scale_'..group] = {
+    VisionsOfNZoth.options.args.IconOptions.args['icon_scale_'..group] = {
         type = "range",
         name = L["options_scale"],
         desc = L["options_scale_desc"],
@@ -468,7 +470,7 @@ for i, group in ipairs{'treasures', 'rares', 'pet_battles', 'caves', 'other'} do
         order = i * 10 + 1,
     }
 
-    VisionsOfNZoth_options.args.IconOptions.args['icon_alpha_'..group] = {
+    VisionsOfNZoth.options.args.IconOptions.args['icon_alpha_'..group] = {
         type = "range",
         name = L["options_opacity"],
         desc = L["options_opacity_desc"],
@@ -478,7 +480,7 @@ for i, group in ipairs{'treasures', 'rares', 'pet_battles', 'caves', 'other'} do
     }
 end
 
-VisionsOfNZoth_options.args.VisibilityGroup = {
+VisionsOfNZoth.options.args.VisibilityGroup = {
     type = "group",
     order = 10,
     name = L["options_visibility_settings"],
@@ -524,7 +526,7 @@ VisionsOfNZoth_options.args.VisibilityGroup = {
     },
 }
 
-VisionsOfNZoth_options.args.TooltipGroup = {
+VisionsOfNZoth.options.args.TooltipGroup = {
     type = "group",
     order = 20,
     name = L["options_tooltip_settings"],
@@ -568,7 +570,7 @@ To enable all development settings and functionality:
 
 local function BootstrapDevelopmentEnvironment()
     -- Add development settings to the UI
-    VisionsOfNZoth_options.args.DevelopmentGroup = {
+    VisionsOfNZoth.options.args.DevelopmentGroup = {
         type = "group",
         order = 30,
         name = L["options_dev_settings"],
@@ -598,14 +600,12 @@ local function BootstrapDevelopmentEnvironment()
                 for id = 0, max_quest_id do
                     local s = IsQuestFlaggedCompleted(id)
                     if s ~= quests[id] then
-                        --VisionsOfNZoth_debug('Quest', id, 'changed:', tostring(quests[id]), '=>', tostring(s))
                         quests[id] = s
                     end
                 end
                 lastCheck = GetTime()
             end
         end)
-        --VisionsOfNZoth_debug('Quest IDs are now being tracked')
     end)
 
     -- Listen for LCTRL + LALT when the world map is open to display nodes
@@ -614,10 +614,10 @@ local function BootstrapDevelopmentEnvironment()
     local groupPins = WorldMapFrame.pinPools.GroupMembersPinTemplate
     IQFrame:SetPropagateKeyboardInput(true)
     IQFrame:SetScript('OnKeyDown', function (_, key)
-        if not VisionsOfNZoth_ignore_quests and (key == 'LCTRL' or key == 'LALT') then
+        if not VisionsOfNZoth.ignore_quests and (key == 'LCTRL' or key == 'LALT') then
             if IsLeftControlKeyDown() and IsLeftAltKeyDown() then
                 IQFrame:SetPropagateKeyboardInput(false)
-                VisionsOfNZoth_ignore_quests = true
+                VisionsOfNZoth.ignore_quests = true
                 HandyNotes_VisionsOfNZoth:Refresh()
 
                 -- Hide player pins on the map
@@ -626,9 +626,9 @@ local function BootstrapDevelopmentEnvironment()
         end
     end)
     IQFrame:SetScript('OnKeyUp', function (_, key)
-        if VisionsOfNZoth_ignore_quests and (key == 'LCTRL' or key == 'LALT') then
+        if VisionsOfNZoth.ignore_quests and (key == 'LCTRL' or key == 'LALT') then
             IQFrame:SetPropagateKeyboardInput(true)
-            VisionsOfNZoth_ignore_quests = false
+            VisionsOfNZoth.ignore_quests = false
             HandyNotes_VisionsOfNZoth:Refresh()
 
             -- Show player pins on the map
@@ -639,14 +639,15 @@ end
 
 -------------------------------------------------------------------------------
 
-VisionsOfNZoth_BootstrapDevelopmentEnvironment = BootstrapDevelopmentEnvironment
+VisionsOfNZoth.BootstrapDevelopmentEnvironment = BootstrapDevelopmentEnvironment
 
 
 -------------------------------------------------------------------------------
+local Class = VisionsOfNZoth.Class
 ------------------------------------- MAP -------------------------------------
 -------------------------------------------------------------------------------
 
-local Map = VisionsOfNZoth_Class('Map')
+local Map = Class('Map')
 
 Map.id = 0
 Map.intro = nil
@@ -658,7 +659,7 @@ end
 
 function Map:prepare ()
     for coord, node in pairs(self.nodes) do
-        VisionsOfNZoth_NameResolver:Prepare(node.label)
+        VisionsOfNZoth.NameResolver:Prepare(node.label)
     end
 end
 
@@ -761,7 +762,7 @@ function MinimapDataProvider:RefreshAllData()
     HBDPins:RemoveAllMinimapIcons(MinimapPinsKey)
     self:ReleaseAllPins()
 
-    local map = VisionsOfNZoth_maps[HBD:GetPlayerZone()]
+    local map = VisionsOfNZoth.maps[HBD:GetPlayerZone()]
     if not map then return end
 
     for coord, node in pairs(map.nodes) do
@@ -820,7 +821,7 @@ function WorldMapDataProvider:RefreshAllData(fromOnShow)
     self:RemoveAllData()
 
     if not self:GetMap() then return end
-    local map = VisionsOfNZoth_maps[self:GetMap():GetMapID()]
+    local map = VisionsOfNZoth.maps[self:GetMap():GetMapID()]
     if not map then return end
 
     for coord, node in pairs(map.nodes) do
@@ -874,12 +875,12 @@ end
 
 -------------------------------------------------------------------------------
 
-VisionsOfNZoth_Map = Map
-VisionsOfNZoth_MinimapDataProvider = MinimapDataProvider
-VisionsOfNZoth_WorldMapDataProvider = WorldMapDataProvider
+VisionsOfNZoth.Map = Map
+VisionsOfNZoth.MinimapDataProvider = MinimapDataProvider
+VisionsOfNZoth.WorldMapDataProvider = WorldMapDataProvider
 
 
-local isinstance = VisionsOfNZoth_isinstance
+local isinstance = VisionsOfNZoth.isinstance
 
 -------------------------------------------------------------------------------
 ------------------------------------ NODE -------------------------------------
@@ -900,7 +901,7 @@ Base class for all displayed nodes.
 
 --]]
 
-local Node = VisionsOfNZoth_Class('Node')
+local Node = Class('Node')
 
 Node.label = UNKNOWN
 Node.minimap = true
@@ -924,7 +925,7 @@ function Node:display ()
     local db = HandyNotes_VisionsOfNZoth.db
     local icon = self.icon
     if type(icon) == 'string' then
-        icon = VisionsOfNZoth_icons[self.icon] or VisionsOfNZoth_icons.default
+        icon = VisionsOfNZoth.icons[self.icon] or VisionsOfNZoth.icons.default
     end
     local scale = self.scale * (db.profile['icon_scale_'..self.group] or 1)
     local alpha = self.alpha * (db.profile['icon_alpha_'..self.group] or 1)
@@ -945,9 +946,9 @@ function Node:enabled (map, coord, minimap)
     if not self.minimap and minimap then return false end
 
     -- Node may be faction restricted
-    if self.faction and self.faction ~= VisionsOfNZoth_faction then return false end
+    if self.faction and self.faction ~= VisionsOfNZoth.faction then return false end
 
-    if not VisionsOfNZoth_ignore_quests then
+    if not VisionsOfNZoth.ignore_quests then
         -- All attached quest ids must be false
         for i, quest in ipairs(self.quest or {}) do
             if IsQuestFlaggedCompleted(quest) then return false end
@@ -966,7 +967,7 @@ end
 ------------------------------------ CAVE -------------------------------------
 -------------------------------------------------------------------------------
 
-local Cave = VisionsOfNZoth_Class('Cave', Node)
+local Cave = Class('Cave', Node)
 
 Cave.icon = "door_down"
 Cave.scale = 1.2
@@ -1005,7 +1006,7 @@ end
 ------------------------------------- NPC -------------------------------------
 -------------------------------------------------------------------------------
 
-local NPC = VisionsOfNZoth_Class('NPC', Node)
+local NPC = Class('NPC', Node)
 
 function NPC:init ()
     Node.init(self)
@@ -1020,7 +1021,7 @@ end
 ---------------------------------- PETBATTLE ----------------------------------
 -------------------------------------------------------------------------------
 
-local PetBattle = VisionsOfNZoth_Class('PetBattle', NPC)
+local PetBattle = Class('PetBattle', NPC)
 
 PetBattle.icon = "paw_yellow"
 PetBattle.group = "pet_battles"
@@ -1029,7 +1030,7 @@ PetBattle.group = "pet_battles"
 ------------------------------------ QUEST ------------------------------------
 -------------------------------------------------------------------------------
 
-local Quest = VisionsOfNZoth_Class('Quest', Node, {note=AVAILABLE_QUEST})
+local Quest = Class('Quest', Node, {note=AVAILABLE_QUEST})
 local QUEST_IDS = {}
 
 function Quest:init ()
@@ -1060,7 +1061,9 @@ end)
 -------------------------------- TIMED EVENT --------------------------------
 -------------------------------------------------------------------------------
 
-local TimedEvent = VisionsOfNZoth_Class('TimedEvent', Quest, {scale=2, note=''})
+local TimedEvent = Class('TimedEvent', Quest, {scale=2, note=''})
+
+TimedEvent.group = "assaultevents"
 
 function TimedEvent.getters:icon ()
     -- Override icon getter to be a simple yellow peg
@@ -1068,7 +1071,7 @@ function TimedEvent.getters:icon ()
 end
 
 function TimedEvent:enabled (map, coord, minimap)
-    if not VisionsOfNZoth_ignore_quests then
+    if not VisionsOfNZoth.ignore_quests then
         -- Timed events that are not active today return nil here
         if not C_TaskQuest.GetQuestTimeLeftMinutes(self.quest[1]) then
             return false
@@ -1081,7 +1084,7 @@ end
 ------------------------------------ RARE -------------------------------------
 -------------------------------------------------------------------------------
 
-local Rare = VisionsOfNZoth_Class('Rare', NPC)
+local Rare = Class('Rare', NPC)
 
 Rare.group = "rares"
 
@@ -1113,7 +1116,7 @@ end
 ---------------------------------- TREASURE -----------------------------------
 -------------------------------------------------------------------------------
 
-local Treasure = VisionsOfNZoth_Class('Treasure', Node, {
+local Treasure = Class('Treasure', Node, {
     icon = 'chest_gray',
     scale = 1.3,
     group = 'treasures'
@@ -1129,14 +1132,14 @@ end
 ----------------------------------- SUPPLY ------------------------------------
 -------------------------------------------------------------------------------
 
-local Supply = VisionsOfNZoth_Class('Supply', Treasure, {
+local Supply = Class('Supply', Treasure, {
     icon = 'star_chest',
     scale = 2
 })
 
 -------------------------------------------------------------------------------
 
-VisionsOfNZoth_node = {
+VisionsOfNZoth.node = {
     Node=Node,
     Cave=Cave,
     NPC=NPC,
@@ -1148,15 +1151,15 @@ VisionsOfNZoth_node = {
     Treasure=Treasure
 }
 
-local Green = VisionsOfNZoth_status.Green
-local Orange = VisionsOfNZoth_status.Orange
-local Red = VisionsOfNZoth_status.Red
+local Green = VisionsOfNZoth.status.Green
+local Orange = VisionsOfNZoth.status.Orange
+local Red = VisionsOfNZoth.status.Red
 
 -------------------------------------------------------------------------------
 ----------------------------------- REWARD ------------------------------------
 -------------------------------------------------------------------------------
 
-local Reward = VisionsOfNZoth_Class('Reward')
+local Reward = Class('Reward')
 
 function Reward:obtained ()
     return true
@@ -1172,7 +1175,7 @@ end
 
 -- /run print(GetAchievementCriteriaInfo(ID, NUM))
 
-local Achievement = VisionsOfNZoth_Class('Achievement', Reward)
+local Achievement = Class('Achievement', Reward)
 local GetCriteriaInfo = function (id, criteria)
     local results = {GetAchievementCriteriaInfoByID(id, criteria)}
     if not results[1] then
@@ -1234,7 +1237,7 @@ end
 ------------------------------------ ITEM -------------------------------------
 -------------------------------------------------------------------------------
 
-local Item = VisionsOfNZoth_Class('Item', Reward)
+local Item = Class('Item', Reward)
 
 function Item:init ()
     if not self.item then
@@ -1280,7 +1283,7 @@ end
 
 -- /run for i,m in ipairs(C_MountJournal.GetMountIDs()) do if (C_MountJournal.GetMountInfoByID(m) == "NAME") then print(m); end end
 
-local Mount = VisionsOfNZoth_Class('Mount', Item)
+local Mount = Class('Mount', Item)
 
 function Mount:obtained ()
     return select(11, C_MountJournal.GetMountInfoByID(self.id))
@@ -1299,7 +1302,7 @@ end
 
 -- /run print(C_PetJournal.FindPetIDByName("NAME"))
 
-local Pet = VisionsOfNZoth_Class('Pet', Item)
+local Pet = Class('Pet', Item)
 
 function Pet:obtained ()
     return C_PetJournal.GetNumCollectedInfo(self.id) > 0
@@ -1316,7 +1319,7 @@ end
 ------------------------------------ QUEST ------------------------------------
 -------------------------------------------------------------------------------
 
-local Quest = VisionsOfNZoth_Class('Quest', Reward)
+local Quest = Class('Quest', Reward)
 
 function Quest:init ()
     if type(self.id) == 'number' then
@@ -1348,7 +1351,7 @@ function Quest:render (tooltip)
         status = (count == #self.id) and Green(status) or Red(status)
     end
 
-    local icon = VisionsOfNZoth_icons.quest_chalice
+    local icon = VisionsOfNZoth.icons.quest_chalice
     tooltip:AddDoubleLine((name or UNKNOWN), status)
     tooltip:AddTexture(icon, {
         width = 12,
@@ -1361,7 +1364,7 @@ end
 ------------------------------------- TOY -------------------------------------
 -------------------------------------------------------------------------------
 
-local Toy = VisionsOfNZoth_Class('Toy', Item)
+local Toy = Class('Toy', Item)
 
 function Toy:obtained ()
     return PlayerHasToy(self.item)
@@ -1378,7 +1381,7 @@ end
 ---------------------------------- TRANSMOG -----------------------------------
 -------------------------------------------------------------------------------
 
-local Transmog = VisionsOfNZoth_Class('Transmog', Item)
+local Transmog = Class('Transmog', Item)
 local CTC = C_TransmogCollection
 
 function Transmog:obtained ()
@@ -1425,7 +1428,7 @@ end
 
 -------------------------------------------------------------------------------
 
-VisionsOfNZoth_reward = {
+VisionsOfNZoth.reward = {
     Reward=Reward,
     Achievement=Achievement,
     Item=Item,
@@ -1440,7 +1443,7 @@ VisionsOfNZoth_reward = {
 -------------------------- POI (Point of Interest) ----------------------------
 -------------------------------------------------------------------------------
 
-local POI = VisionsOfNZoth_Class('POI')
+local POI = Class('POI')
 
 function POI:render (map, template)
     -- draw a circle at every coord
@@ -1464,13 +1467,13 @@ end
 ------------------------------------ BLOB -------------------------------------
 -------------------------------------------------------------------------------
 
-local Blob = VisionsOfNZoth_Class('Blob')
+local Blob = Class('Blob')
 
 -------------------------------------------------------------------------------
 ------------------------------------ PATH -------------------------------------
 -------------------------------------------------------------------------------
 
-local Path = VisionsOfNZoth_Class('Path', POI)
+local Path = Class('Path', POI)
 
 function Path:render (map, template)
     -- draw a circle at every coord and a line between them
@@ -1507,7 +1510,7 @@ end
 
 -------------------------------------------------------------------------------
 
-VisionsOfNZoth_poi = {
+VisionsOfNZoth.poi = {
     POI=POI,
     Path=Path
 }
@@ -1571,37 +1574,36 @@ end
 
 -------------------------------------------------------------------------------
 
-VisionsOfNZoth_NameResolver = NameResolver
+VisionsOfNZoth.NameResolver = NameResolver
 
 
 -------------------------------------------------------------------------------
 ---------------------------------- NAMESPACE ----------------------------------
 -------------------------------------------------------------------------------
-local Map = VisionsOfNZoth_Map
-local clone = VisionsOfNZoth_clone
-local isinstance = VisionsOfNZoth_isinstance
+local Map = VisionsOfNZoth.Map
+local clone = VisionsOfNZoth.clone
 
-local Node = VisionsOfNZoth_node.Node
-local Cave = VisionsOfNZoth_node.Cave
-local NPC = VisionsOfNZoth_node.NPC
-local PetBattle = VisionsOfNZoth_node.PetBattle
-local Rare = VisionsOfNZoth_node.Rare
-local Supply = VisionsOfNZoth_node.Supply
-local TimedEvent = VisionsOfNZoth_node.TimedEvent
-local Treasure = VisionsOfNZoth_node.Treasure
+local Node = VisionsOfNZoth.node.Node
+local Cave = VisionsOfNZoth.node.Cave
+local NPC = VisionsOfNZoth.node.NPC
+local PetBattle = VisionsOfNZoth.node.PetBattle
+local Rare = VisionsOfNZoth.node.Rare
+local Supply = VisionsOfNZoth.node.Supply
+local TimedEvent = VisionsOfNZoth.node.TimedEvent
+local Treasure = VisionsOfNZoth.node.Treasure
 
-local Achievement = VisionsOfNZoth_reward.Achievement
-local Item = VisionsOfNZoth_reward.Item
-local Mount = VisionsOfNZoth_reward.Mount
-local Pet = VisionsOfNZoth_reward.Pet
-local Quest = VisionsOfNZoth_reward.Quest
-local Toy = VisionsOfNZoth_reward.Toy
+local Achievement = VisionsOfNZoth.reward.Achievement
+local Item = VisionsOfNZoth.reward.Item
+local Mount = VisionsOfNZoth.reward.Mount
+local Pet = VisionsOfNZoth.reward.Pet
+local Quest = VisionsOfNZoth.reward.Quest
+local Toy = VisionsOfNZoth.reward.Toy
 
-local Path = VisionsOfNZoth_poi.Path
-local POI = VisionsOfNZoth_poi.POI
+local Path = VisionsOfNZoth.poi.Path
+local POI = VisionsOfNZoth.poi.POI
 
-local options = VisionsOfNZoth_options.args.VisibilityGroup.args
-local defaults = VisionsOfNZoth_optionDefaults.profile
+local options = VisionsOfNZoth.options.args.VisibilityGroup.args
+local defaults = VisionsOfNZoth.optionDefaults.profile
 
 local AQR, EMP, AMA = 0, 1, 2 -- assaults
 
@@ -1615,13 +1617,10 @@ local nodes = map.nodes
 local function GetAssault ()
     local textures = C_MapExplorationInfo.GetExploredMapTextures(map.id)
     if textures and textures[1].fileDataIDs[1] == 3165083 then
-        --VisionsOfNZoth_debug('Uldum assault: AQR')
         return AQR -- left
     elseif textures and textures[1].fileDataIDs[1] == 3165092 then
-        --VisionsOfNZoth_debug('Uldum assault: EMP')
         return EMP -- middle
     elseif textures and textures[1].fileDataIDs[1] == 3165098 then
-        --VisionsOfNZoth_debug('Uldum assault: AMA')
         return AMA -- right
     end
 end
@@ -1732,7 +1731,7 @@ options.alpacaUldum = {
 ------------------------------------ INTRO ------------------------------------
 -------------------------------------------------------------------------------
 
-local Intro = VisionsOfNZoth_Class('Intro', Node)
+local Intro = Class('Intro', Node)
 
 Intro.note = L["uldum_intro_note"]
 Intro.icon = 'quest_yellow'
@@ -1765,7 +1764,6 @@ nodes[46004300] = map.intro
 HandyNotes_VisionsOfNZoth:RegisterEvent('QUEST_WATCH_UPDATE', function (_, index)
     local _, _, _, _, _, _, _, questID = GetQuestLogTitle(index)
     if questID == 56376 then
-        --VisionsOfNZoth_debug('Uldum assaults unlock detected')
         C_Timer.After(1, function()
             HandyNotes_VisionsOfNZoth:Refresh()
         end)
@@ -1860,13 +1858,13 @@ nodes[19755847] = Rare({id=155531, quest=56823, note=L["wastewander"], pois={
 nodes[73908353] = Rare({id=157134, quest=57259, rewards={
     Mount({id=1314, item=174641}) -- Drake of the Four Winds
 }}) -- Ishak of the Four Winds
-nodes[77005000] = Rare({id=152431, quest=nil, assault=AMA, note=L["kanebti"]}) -- Kaneb-ti
+nodes[77005000] = Rare({id=152431, quest=55629, assault=AMA, note=L["kanebti"]}) -- Kaneb-ti
 nodes[71237375] = Rare({id=156655, quest=57433, assault=EMP}) -- Korzaran the Slaughterer
 nodes[34681890] = Rare({id=154604, quest=56340, assault=AQR, note=L["chamber_of_the_moon"], rewards={
     Pet({id=2847, item=174475}) -- Rotbreath
 }}) -- Lord Aj'qirai
 nodes[30476602] = Rare({id=156078, quest=56952, assault=AQR, pois={
-    POI({30476602, 33696573})
+    POI({30476602, 32876907, 33696573})
 }}) -- Magus Rehleth
 nodes[66842035] = Rare({id=157157, quest=57277, assault=AMA}) -- Muminah the Incandescent
 nodes[62012454] = Rare({id=152677, quest=55684, assault=AMA}) -- Nebet the Ascended
@@ -1933,7 +1931,7 @@ local function coord(x, y)
     return start + x*2500000 + y*400;
 end
 
-local NefRare = VisionsOfNZoth_Class('NefersetRare', Rare, {
+local NefRare = Class('NefersetRare', Rare, {
     assault=EMP, note=L["neferset_rare"],
     pois={POI({50007868, 50568833, 55207930})}
 })
@@ -1957,7 +1955,7 @@ nodes[coord(5, 0)] = NefRare({id=157469, quest=57435}) -- Zoth'rum the Intellect
 ---------------------------------- TREASURES ----------------------------------
 -------------------------------------------------------------------------------
 
-local AQRChest = VisionsOfNZoth_Class('AQRChest', Treasure, {
+local AQRChest = Class('AQRChest', Treasure, {
     assault=AQR, label=L["infested_cache"]
 })
 
@@ -1987,6 +1985,7 @@ nodes[33476998] = AQRTR2
 nodes[18356130] = AQRTR3
 nodes[19836512] = AQRTR3
 nodes[20585920] = AQRTR3
+nodes[23406539] = AQRTR3
 nodes[23055936] = AQRTR3
 nodes[24525507] = AQRTR3
 nodes[24606387] = AQRTR3
@@ -2006,7 +2005,9 @@ nodes[30671611] = AQRTR5
 nodes[30903046] = AQRTR5
 nodes[31521515] = AQRTR5
 nodes[33953036] = AQRTR5
+nodes[35101878] = AQRTR5
 nodes[35413157] = AQRTR5
+nodes[36871616] = AQRTR5
 nodes[41592264] = clone(AQRTR5, {note=L["chamber_of_the_moon"]})
 nodes[45561320] = AQRTR5
 
@@ -2015,7 +2016,7 @@ nodes[36252324] = Supply({quest=58137, assault=AQR,
 
 -------------------------------------------------------------------------------
 
-local EMPChest = VisionsOfNZoth_Class('EMPChest', Treasure, {
+local EMPChest = Class('EMPChest', Treasure, {
     assault=EMP, label=L["black_empire_cache"]
 })
 
@@ -2030,22 +2031,28 @@ nodes[58361535] = EMPTR1
 -- quest=57624
 nodes[50793143] = EMPTR2
 -- quest=57626
+nodes[57808250] = EMPTR3
 nodes[57817487] = EMPTR3
+nodes[58247282] = EMPTR3
 nodes[59226749] = EMPTR3
 nodes[60576213] = EMPTR3
 nodes[61778172] = EMPTR3
 nodes[62588188] = EMPTR3
 nodes[62977610] = EMPTR3
 nodes[64436501] = EMPTR3
+nodes[67547066] = EMPTR3
 nodes[70217325] = EMPTR3
 -- quest=57627
 nodes[59816610] = EMPTR4
 nodes[59867422] = EMPTR4
 nodes[60757493] = EMPTR4
+nodes[60967000] = EMPTR4
 nodes[61206544] = EMPTR4
+nodes[61817595] = EMPTR4
 nodes[62157346] = EMPTR4
 nodes[62737184] = EMPTR4
 nodes[62807565] = EMPTR4
+nodes[63867065] = EMPTR4
 nodes[64607503] = EMPTR4
 nodes[65357117] = EMPTR4
 nodes[67167394] = EMPTR4
@@ -2054,12 +2061,14 @@ nodes[45697961] = EMPTR5
 nodes[47507687] = EMPTR5
 nodes[49037684] = EMPTR5
 nodes[49398584] = EMPTR5
+nodes[49807210] = EMPTR5
 nodes[51157388] = EMPTR5
 nodes[51707135] = EMPTR5
 nodes[51777298] = EMPTR5
 nodes[51897858] = EMPTR5
 nodes[52197757] = EMPTR5
 nodes[55397860] = EMPTR5
+nodes[55658346] = EMPTR5
 
 local EMPCOFF = Supply({quest=57628, assault=EMP, note=L["cursed_relic"],
     label=L["black_empire_coffer"]})
@@ -2068,7 +2077,7 @@ nodes[71657334] = EMPCOFF
 
 -------------------------------------------------------------------------------
 
-local AMAChest = VisionsOfNZoth_Class('AMAChest', Treasure, {
+local AMAChest = Class('AMAChest', Treasure, {
     assault=AMA, label=L["amathet_cache"]
 })
 
@@ -2092,10 +2101,12 @@ nodes[71226851] = AMATR2
 nodes[71305922] = AMATR2
 nodes[72216422] = AMATR2
 nodes[73117297] = AMATR2
+nodes[73707393] = AMATR2
 nodes[73987095] = AMATR2
 nodes[78286207] = AMATR2
 nodes[79166486] = AMATR2
 -- quest=55691
+nodes[71504750] = AMATR3
 nodes[72474857] = AMATR3
 nodes[74195187] = AMATR3
 nodes[75335579] = AMATR3
@@ -2103,7 +2114,9 @@ nodes[75575372] = AMATR3
 nodes[78125302] = AMATR3
 -- quest=55698
 nodes[71884388] = AMATR4
+nodes[72764468] = AMATR4
 nodes[72944350] = AMATR4
+nodes[73714646] = AMATR4
 nodes[74364390] = AMATR4
 nodes[75134608] = AMATR4
 nodes[76344679] = AMATR4
@@ -2124,11 +2137,13 @@ nodes[65543142] = AMATR6
 nodes[65882147] = clone(AMATR6, {note=L["chamber_of_the_stars"]})
 nodes[67172800] = clone(AMATR6, {note=L["chamber_of_the_stars"]})
 nodes[68222051] = AMATR6
+nodes[68933234] = AMATR6
 
 local AMACOFF = Supply({quest=55692, assault=AMA,
     label=L["amathet_reliquary"], sublabel=L["tolvir_relic"]})
 
 nodes[64463415] = clone(AMACOFF, {note=L["chamber_of_the_stars"]})
+nodes[66882414] = AMACOFF
 nodes[67464294] = AMACOFF
 nodes[73337356] = AMACOFF
 nodes[73685054] = AMACOFF
@@ -2191,25 +2206,24 @@ nodes[59022780] = TimedEvent({quest=57588, assault=EMP, pois={
 
 -------------------------------------------------------------------------------
 
-nodes[64002800] = TimedEvent({quest=57215, assault=AMA, note=L["engine_of_ascen"]}) -- Engine of Ascension
-nodes[64962255] = TimedEvent({quest=55355, assault=AMA, note=L["lightblade_training"]}) -- Lightblade Training Grounds
-nodes[70006000] = TimedEvent({quest=55360, assault=AMA, note=L["unsealed_tomb"]}) -- The Unsealed Tomb
-nodes[71004500] = TimedEvent({quest=55358, assault=AMA, note=L["beacon_of_sun_king"]}) -- Beacon of the Sun King
-nodes[76004700] = TimedEvent({quest=57243, assault=AMA, note=L["slave_camp"]}) -- Amathet Slave Camp
 nodes[84005400] = TimedEvent({quest=55670, assault=AMA, note=L["raiding_fleet"]}) -- Amathet Raiding Fleet
+nodes[76004700] = TimedEvent({quest=57243, assault=AMA, note=L["slave_camp"]}) -- Amathet Slave Camp
+nodes[62062069] = TimedEvent({quest=55356, assault=AMA, note=L["beacon_of_sun_king"]}) -- Beacon of the Sun King
+nodes[71594586] = TimedEvent({quest=55358, assault=AMA, note=L["beacon_of_sun_king"]}) -- Beacon of the Sun King
+nodes[83496186] = TimedEvent({quest=55357, assault=AMA, note=L["beacon_of_sun_king"]}) -- Beacon of the Sun King
+nodes[64502982] = TimedEvent({quest=57215, assault=AMA, note=L["engine_of_ascen"]}) -- Engine of Ascension
+nodes[64442267] = TimedEvent({quest=55355, assault=AMA, note=L["lightblade_training"]}) -- Lightblade Training Grounds
+nodes[64482984] = TimedEvent({quest=55359, assault=AMA, note=L["chamber_of_the_stars"]..' '..L["ritual_ascension"]}) -- Ritual of Ascension
+nodes[66515030] = TimedEvent({quest=57235, assault=AMA, note=L["solar_collector"]}) -- Solar Collector
+nodes[80256607] = TimedEvent({quest=57234, assault=AMA, note=L["solar_collector"]}) -- Solar Collector
+nodes[69905991] = TimedEvent({quest=55360, assault=AMA, note=L["unsealed_tomb"]}) -- The Unsealed Tomb
+nodes[61414704] = TimedEvent({quest=55354, assault=AMA, note=L["virnall_front"]}) -- The Vir'nall Front
+nodes[71366849] = TimedEvent({quest=57217, assault=AMA, note=L["unearthed_keeper"]}) -- Unearthed Keeper
 
--- nodes[????????] = TimedEvent({quest=nil, assault=AMA}) -- Solar Collector
--- nodes[62002000] = TimedEvent({quest=nil, assault=AMA, note=L["beacon_of_sun_king"]}) -- Beacon of the Sun King
--- nodes[64003000] = TimedEvent({quest=nil, assault=AMA}) -- Ritual of Ascension
 -- nodes[65003700] = TimedEvent({quest=nil, assault=AMA}) -- Unearthed Keeper
--- nodes[66005000] = TimedEvent({quest=nil, assault=AMA}) -- Solar Collector
 -- nodes[66005000] = TimedEvent({quest=nil, assault=AMA}) -- Solar Extractor
--- nodes[71006800] = TimedEvent({quest=nil, assault=AMA}) -- Unearthed Keeper
 -- nodes[78005700] = TimedEvent({quest=nil, assault=AMA}) -- Unearthed Keeper
--- nodes[80006600] = TimedEvent({quest=nil, assault=AMA}) -- Solar Extractor
 -- nodes[83004800] = TimedEvent({quest=nil, assault=AMA}) -- Unearthed Keeper
--- nodes[83006100] = TimedEvent({quest=nil, assault=AMA, note=L["beacon_of_sun_king"]}) -- Beacon of the Sun King
--- nodes[61004700] = TimedEvent({quest=nil, assault=AMA}) -- The Vir'naal Front
 
 -------------------------------------------------------------------------------
 --------------------------------- BATTLE PETS ---------------------------------
@@ -2226,29 +2240,29 @@ nodes[61745440] = PetBattle({id=162461}) -- Whispers
 
 local function GetAlpacaStatus ()
     local count = select(4, GetQuestObjectiveInfo(58881, 0, false))
-    if count ~= nil then return VisionsOfNZoth_status.Gray(tostring(count)..'/7') end
+    if count ~= nil then return VisionsOfNZoth.status.Gray(tostring(count)..'/7') end
 end
 
-local Alpaca = VisionsOfNZoth_Class('Alpaca', NPC, {
+local Alpaca = Class('Alpaca', NPC, {
     id=162765, icon=2916287, quest=58879, alpaca=true,
     note=L["friendly_alpaca"],
     pois={POI({
         15006200, 24000900, 27004800, 30002900, 39000800, 41007000, 47004800,
-        52001900, 55006900, 62705340, 63011446, 69001300, 70003900, 76636813
+        52001900, 55006900, 62705340, 63011446, 70003900, 76636813
     })},
     rewards={Mount({id=1329, item=174859})} -- Springfur Alpaca
 })
 
-local Gersahl = VisionsOfNZoth_Class('Gersahl', Node, {
+local Gersahl = Class('Gersahl', Node, {
     icon=134190, alpaca=true, label=L["gersahl"], note=L["gersahl_note"],
     pois={POI({
-        46922961, 49453556, 50504167, 50583294, 53133577, 55484468, 56114967,
-        56265101, 56691882, 57112548, 57235056, 57281602, 57458491, 57474682,
-        57741910, 58005169, 58131768, 58202808, 58967759, 59027433, 59098568,
-        59266302, 59557986, 59567664, 59628482, 60018165, 60447755, 60627655,
-        61371430, 64717249, 65167045, 65427433, 66047881, 66137572, 66217063,
-        66257753, 66557212, 67377771, 68097535, 68117202, 68517407, 68947308,
-        69237501, 71087875, 71657803
+        43802760, 46922961, 49453556, 50504167, 50583294, 53133577, 55484468,
+        56114967, 56202550, 56265101, 56691882, 56901740, 57112548, 57235056,
+        57281602, 57458491, 57474682, 57741910, 58005169, 58131768, 58202808,
+        58967759, 59027433, 59098568, 59266302, 59557986, 59567664, 59628482,
+        59805460, 60018165, 60447755, 60627655, 61371430, 64717249, 65167045,
+        65427433, 66047881, 66137572, 66217063, 66257753, 66557212, 67377771,
+        68097535, 68117202, 68517407, 68947308, 69237501, 71087875, 71657803
     })},
     rewards={Item({item=174858})} -- Gersahl Greens
 })
@@ -2261,35 +2275,8 @@ nodes[58005169] = Gersahl()
 
 -------------------------------------------------------------------------------
 
-VisionsOfNZoth_maps[map.id] = map
+VisionsOfNZoth.maps[map.id] = map
 
--------------------------------------------------------------------------------
----------------------------------- NAMESPACE ----------------------------------
--------------------------------------------------------------------------------
-
-local Map = VisionsOfNZoth_Map
-local clone = VisionsOfNZoth_clone
-local isinstance = VisionsOfNZoth_isinstance
-
-local Node = VisionsOfNZoth_node.Node
-local PetBattle = VisionsOfNZoth_node.PetBattle
-local Rare = VisionsOfNZoth_node.Rare
-local Supply = VisionsOfNZoth_node.Supply
-local TimedEvent = VisionsOfNZoth_node.TimedEvent
-local Treasure = VisionsOfNZoth_node.Treasure
-
-local Achievement = VisionsOfNZoth_reward.Achievement
-local Item = VisionsOfNZoth_reward.Item
-local Mount = VisionsOfNZoth_reward.Mount
-local Pet = VisionsOfNZoth_reward.Pet
-local Quest = VisionsOfNZoth_reward.Quest
-local Toy = VisionsOfNZoth_reward.Toy
-
-local Path = VisionsOfNZoth_poi.Path
-local POI = VisionsOfNZoth_poi.POI
-
-local options = VisionsOfNZoth_options.args.VisibilityGroup.args
-local defaults = VisionsOfNZoth_optionDefaults.profile
 
 local MAN, MOG, EMP = 0, 1, 2 -- assaults
 
@@ -2303,13 +2290,10 @@ local nodes = map.nodes
 local function GetAssault()
     local textures = C_MapExplorationInfo.GetExploredMapTextures(map.id)
     if textures and textures[1].fileDataIDs[1] == 3155826 then
-        --VisionsOfNZoth_debug('Vale assault: MAN')
         return MAN -- left
     elseif textures and textures[1].fileDataIDs[1] == 3155832 then
-        --VisionsOfNZoth_debug('Vale assault: MOG')
         return MOG -- middle
     elseif textures and textures[1].fileDataIDs[1] == 3155841 then
-        --VisionsOfNZoth_debug('Vale assault: EMP')
         return EMP -- right
     end
 end
@@ -2409,7 +2393,7 @@ options.petVale = {
 ------------------------------------ INTRO ------------------------------------
 -------------------------------------------------------------------------------
 
-local Intro = VisionsOfNZoth_Class('Intro', Node)
+local Intro = Class('Intro', Node)
 
 Intro.note = L["vale_intro_note"]
 Intro.icon = 'quest_yellow'
@@ -2443,7 +2427,6 @@ nodes[26005200] = map.intro
 
 HandyNotes_VisionsOfNZoth:RegisterEvent('QUEST_ACCEPTED', function (_, _, id)
     if id == 56540 then
-        --VisionsOfNZoth_debug('Vale assaults unlock detected')
         C_Timer.After(1, function()
             HandyNotes_VisionsOfNZoth:Refresh()
         end)
@@ -2536,7 +2519,7 @@ nodes[70954053] = Rare({id=154087, quest=56084, assault=EMP}) -- Zror'um the Inf
 ---------------------------------- TREASURES ----------------------------------
 -------------------------------------------------------------------------------
 
-local MANChest = VisionsOfNZoth_Class('MANChest', Treasure, {
+local MANChest = Class('MANChest', Treasure, {
     assault=MAN, label=L["ambered_cache"]
 })
 
@@ -2548,6 +2531,7 @@ local MANTR5 = MANChest({quest=58228, icon='chest_teal'})
 
 -- quest=58224
 nodes[04066172] = MANTR1
+nodes[05165140] = MANTR1
 nodes[07223945] = MANTR1
 nodes[10662334] = MANTR1
 nodes[11552553] = MANTR1
@@ -2556,6 +2540,7 @@ nodes[15887672] = MANTR1
 -- quest=58225
 nodes[16021946] = MANTR2
 nodes[17432634] = MANTR2
+nodes[19001350] = clone(MANTR2, {note=L["guolai"]})
 nodes[21051415] = MANTR2
 -- quest=58226
 nodes[07693682] = MANTR3
@@ -2564,11 +2549,14 @@ nodes[10174243] = MANTR3
 nodes[15083162] = MANTR3
 nodes[15324320] = MANTR3
 nodes[16343312] = MANTR3
+nodes[17714771] = MANTR3
 nodes[18253632] = MANTR3
 -- quest=58227
 nodes[18063844] = MANTR4
 nodes[22903439] = MANTR4
+nodes[24153524] = MANTR4
 nodes[24994118] = MANTR4
+nodes[25843841] = MANTR4
 nodes[26704680] = MANTR4
 nodes[31724184] = MANTR4
 -- quest=58228
@@ -2585,7 +2573,7 @@ nodes[21586246] = Supply({quest=58770, assault=MAN, label=L["ambered_coffer"], s
 
 -------------------------------------------------------------------------------
 
-local MOGChest = VisionsOfNZoth_Class('MOGChest', Treasure, {
+local MOGChest = Class('MOGChest', Treasure, {
     assault=MOG, label=L["mogu_plunder"]
 })
 
@@ -2634,6 +2622,7 @@ nodes[44186853] = MOGTR5
 nodes[47937093] = MOGTR5
 nodes[48466580] = MOGTR5
 nodes[51146319] = MOGTR5
+nodes[52276731] = MOGTR5
 -- quest=57213
 nodes[32097104] = MOGTR6
 nodes[33346985] = MOGTR6
@@ -2652,7 +2641,7 @@ nodes[50182143] = MOGCOFF
 
 -------------------------------------------------------------------------------
 
-local EMPChest = VisionsOfNZoth_Class('EMPChest', Treasure, {
+local EMPChest = Class('EMPChest', Treasure, {
     assault=EMP, label=L["black_empire_cache"]
 })
 
@@ -2695,6 +2684,7 @@ nodes[65855969] = EMPTR3
 nodes[67565584] = EMPTR3
 -- quest=57201
 nodes[70215370] = EMPTR4
+nodes[76594867] = EMPTR4
 nodes[77076363] = EMPTR4
 nodes[77413129] = EMPTR4
 nodes[78305251] = EMPTR4
@@ -2708,6 +2698,7 @@ nodes[60806337] = EMPTR5
 nodes[63107059] = EMPTR5
 nodes[64297053] = EMPTR5
 nodes[68306247] = EMPTR5
+nodes[68705880] = EMPTR5
 nodes[70686357] = EMPTR5
 nodes[71516854] = EMPTR5
 -- quest=57203
@@ -2800,7 +2791,7 @@ nodes[43624146] = TimedEvent({quest=57146, assault=EMP, note=L["corruption_tear"
 nodes[49356668] = TimedEvent({quest=56074, assault=EMP, note=L["void_conduit"]}) -- Void Conduit
 nodes[56685933] = TimedEvent({quest=56178, assault=EMP, note=L["void_conduit"]}) -- Void Conduit
 nodes[60614333] = TimedEvent({quest=56163, assault=EMP, note=L["bound_guardian"]}) -- Bound Guardian
-nodes[60706594] = TimedEvent({quest=56099, assault=EMP, note=L["big_blossom_mine"]..' '..L["font_corruption"]}) -- Font of Corruption
+nodes[60416780] = TimedEvent({quest=56099, assault=EMP, note=L["big_blossom_mine"]..' '..L["font_corruption"]}) -- Font of Corruption
 nodes[69502214] = TimedEvent({quest=57375, assault=EMP, note=L["pulse_mound"]}) -- Pulsating Mound
 nodes[74164004] = TimedEvent({quest=56076, assault=EMP, note=L["abyssal_ritual"]}) -- Abyssal Ritual
 nodes[76365163] = TimedEvent({quest=57379, assault=EMP, note=L["infested_statue"]}) -- Infested Jade Statue
@@ -2818,23 +2809,20 @@ nodes[07333190] = PetBattle({id=162471}) -- Vil'thik Hatchling
 
 -------------------------------------------------------------------------------
 
-VisionsOfNZoth_maps[map.id] = map
-VisionsOfNZoth_maps[pmap.id] = pmap
+VisionsOfNZoth.maps[map.id] = map
+VisionsOfNZoth.maps[pmap.id] = pmap
 
 
--------------------------------------------------------------------------------
----------------------------------- NAMESPACE ----------------------------------
--------------------------------------------------------------------------------
-
-local Map = VisionsOfNZoth_Map
-local Node = VisionsOfNZoth_node.Node
-local Rare = VisionsOfNZoth_node.Rare
-local Mount = VisionsOfNZoth_reward.Mount
-local Toy = VisionsOfNZoth_reward.Toy
-local Path = VisionsOfNZoth_poi.Path
 -------------------------------------------------------------------------------
 ------------------------------------- MAP -------------------------------------
 -------------------------------------------------------------------------------
+
+local orgrimmar = Map({ id=1469 })
+
+function orgrimmar:enabled (node, coord, minimap)
+    if not Map.enabled(self, node, coord, minimap) then return false end
+    return HandyNotes_VisionsOfNZoth.db.profile.misc_visions
+end
 
 local stormwind = Map({ id=1470 })
 
@@ -2865,12 +2853,28 @@ options.mailVisions = {
 }
 
 -------------------------------------------------------------------------------
----------------------------------- STORMWIND ----------------------------------
--------------------------------------------------------------------------------
 
 local MAIL = Node({icon=133468, label=L["mailbox"], rewards={
     Mount({id=1315, item=174653}) -- Mail Muncher
 }, note=L["mail_muncher"]})
+
+-------------------------------------------------------------------------------
+---------------------------------- ORGRIMMAR ----------------------------------
+-------------------------------------------------------------------------------
+
+orgrimmar.nodes[39304900] = MAIL
+orgrimmar.nodes[39708030] = MAIL
+orgrimmar.nodes[52707580] = MAIL
+orgrimmar.nodes[60105130] = MAIL
+orgrimmar.nodes[67673924] = MAIL
+
+orgrimmar.nodes[39906120] = Node({icon=1001616, label=L["shave_kit"], note=L["shave_kit_note"], rewards={
+    Toy({item=174920}) -- Coifcurl's Close Shave Kit
+}})
+
+-------------------------------------------------------------------------------
+---------------------------------- STORMWIND ----------------------------------
+-------------------------------------------------------------------------------
 
 stormwind.nodes[49688700] = MAIL
 stormwind.nodes[54645752] = MAIL
@@ -2893,13 +2897,9 @@ stormwind.nodes[59106390] = Rare({id=158284, pois={
 
 -------------------------------------------------------------------------------
 
-VisionsOfNZoth_maps[stormwind.id] = stormwind
+VisionsOfNZoth.maps[orgrimmar.id] = orgrimmar
+VisionsOfNZoth.maps[stormwind.id] = stormwind
 
-
-
-local NPC = VisionsOfNZoth_node.NPC
-local Mount = VisionsOfNZoth_reward.Mount
-local POI = VisionsOfNZoth_poi.POI
 
 
 -------------------------------------------------------------------------------
@@ -2954,4 +2954,4 @@ nodes[43006900] = NPC({id=162681, icon=2916283, alpaca=true, pois={
 
 -------------------------------------------------------------------------------
 
-VisionsOfNZoth_maps[map.id] = map
+VisionsOfNZoth.maps[map.id] = map

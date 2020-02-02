@@ -53,6 +53,61 @@ function WhatADropItemLevel(mlvl)
  end
 end
 
+function MythicWeeklyResiduumAmount(mlvl)
+-- TODO: Add reward for keys 2 - 9
+ if (mlvl == "2") then
+  return "？"
+ elseif (mlvl == "3") then
+  return "？"
+ elseif (mlvl == "4") then
+  return "？"
+ elseif (mlvl == "5") then
+  return "？"
+ elseif (mlvl == "6") then
+  return "？"
+ elseif (mlvl == "7") then
+  return "？"
+ elseif (mlvl == "8") then
+  return "？"
+ elseif (mlvl == "9") then
+  return "400"
+ elseif (mlvl == "10") then
+  return "1700"
+ elseif (mlvl == "11") then
+  return "1790" 
+ elseif (mlvl == "12") then
+  return "1880"  
+ elseif (mlvl == "13") then
+  return "1970"
+ elseif (mlvl == "14") then
+  return "2060"
+ elseif (mlvl == "15") then
+  return "2150"
+ elseif (mlvl == "16") then
+  return "22400"
+ elseif (mlvl == "17") then
+  return "2330"
+ elseif (mlvl == "18") then
+  return "2420"
+ elseif (mlvl == "19") then
+  return "2510"
+ elseif (mlvl == "20") then
+  return "2600"
+ elseif (mlvl == "21") then
+  return "2665"
+ elseif (mlvl == "22") then
+  return "2730"
+ elseif (mlvl == "23") then
+  return "2795"
+ elseif (mlvl == "24") then
+  return "2850"
+ elseif (mlvl == "25") then
+  return "2915"
+ else
+  return ""
+ end
+end
+
 local function DecorateTooltip(self, link, _)
 	if not link then
 		_, link = self:GetItem()
@@ -77,6 +132,7 @@ local function DecorateTooltip(self, link, _)
 				if weeklyRewardLevel ~= 0 then
 								self:AddDoubleLine("|cffff00ff"..WEEKLY..REWARD.."|r", weeklyRewardLevel, 1, 1, 1,true)
 								self:AddDoubleLine("|cffff00ff"..INSTANCE..LOOT.."|r", WhatADropItemLevel(mythicLevel) .. "+", 1,1,1,true)
+								self:AddDoubleLine("|cffff00ff"..WEEKLY..REWARD.."|r", MythicWeeklyResiduumAmount(mythicLevel), 1, 1, 1,true)
 				end
 			end
 			-- C_MythicPlus.GetRewardLevelForDifficultyLevel(9)

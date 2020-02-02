@@ -5,6 +5,6 @@
 	<Script file="KeystoneHelper.lua"/>
 	<Script file="ElitismHelper.lua"/>
 	<Script file="Asentenceintroduction.lua"/>
-	<Script file="SimpleBossFrame.lua"/>
+	<!--Script file="SimpleBossFrame.lua"/-->
 	<Include file="DamageExm\DamageExm.xml"/>
 </Ui>

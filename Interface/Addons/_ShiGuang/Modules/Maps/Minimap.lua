@@ -56,7 +56,7 @@ function module:ReskinRegions()
 		--self:GetHighlightTexture():SetTexture(I.garrTex)
 		--self:SetSize(30, 30)
 	--end)
-	--[[if not IsAddOnLoaded("GarrisonMaster") then
+	if not (IsAddOnLoaded("GarrisonMaster") or IsAddOnLoaded("MasterPlan")) then
 		GarrisonLandingPageMinimapButton:RegisterForClicks("AnyUp")
 		GarrisonLandingPageMinimapButton:HookScript("OnClick", function(_, btn, down)
 			if btn == "MiddleButton" and not down then
@@ -67,7 +67,7 @@ function module:ReskinRegions()
 				ShowGarrisonLandingPage(LE_GARRISON_TYPE_6_0)
 			end
 		end)
-	end]]
+	end
 
 	-- QueueStatus Button
 	QueueStatusMinimapButton:ClearAllPoints()

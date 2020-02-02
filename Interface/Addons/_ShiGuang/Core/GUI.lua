@@ -13,6 +13,7 @@ local defaultSettings = {
 	Mover = {},
 	InternalCD = {},
 	AuraWatchMover = {},
+	RaidClickSets = {},
 	TempAnchor = {},
 	AuraWatchList = {
 		Switcher = {},
@@ -32,6 +33,7 @@ local defaultSettings = {
 		BindType = 1,
 		OverrideWA = false,
 		MicroMenu = true,
+		MicroMenuStyle = false,
 	},
 	Bags = {
 		Enable = true,
@@ -57,7 +59,7 @@ local defaultSettings = {
 		Totems = true,
 		DestroyTotems = true,
 		Statue = true,
-		ClassAuras = true,
+		ClassAuras = false,
 		ReverseBuffs = false,
 		BuffSize = 30,
 		BuffsPerRow = 16,
@@ -65,8 +67,8 @@ local defaultSettings = {
 		DebuffSize = 34,
 		DebuffsPerRow = 16,
 		BlinkComboHelper = true,
-		EnergyBar = true,
-		ClassRecourePlace = true,
+		EnergyBar = false,
+		ClassRecourePlace = false,
 	},
 	AuraWatch = {
 		Enable = true,
@@ -76,6 +78,57 @@ local defaultSettings = {
 		QuakeRing = false,
 	},
 	UFs = {
+		Arena = true,
+		Castbars = true,
+		SwingBar = false,
+		SwingTimer = false,
+		RaidFrame = true,
+		AutoRes = true,
+		NumGroups = 8,
+		SimpleMode = true,
+		SimpleModeSortByRole = true,
+		InstanceAuras = true,
+		RaidDebuffScale = 1,
+		SpecRaidPos = false,
+		RaidClassColor = true,
+		HorizonRaid = false,
+		HorizonParty = true,
+		ReverseRaid = false,
+		SimpleRaidScale = 12,
+		RaidWidth = 88,
+		RaidHeight = 16,
+		RaidPowerHeight = 2,
+		RaidHPMode = 1,
+		AurasClickThrough = false,
+		RaidClickSets = false,
+		ShowTeamIndex = false,
+		ClassPower = true, --
+		QuakeTimer = true, --
+		LagString = true,  --
+		RuneTimer = true,
+		RaidBuffIndicator = true,
+		PartyFrame = true,
+		PartyWatcher = true,
+		PWOnRight = false,
+		PartyWidth = 120,
+		PartyHeight = 26,
+		PartyPowerHeight = 6,
+		PartyPetFrame = false,
+		PartyPetWidth = 120,
+		PartyPetHeight = 16,
+		PartyPetPowerHeight = 2,
+		HealthColor = 2,
+		BuffIndicatorType = 2,
+		BuffIndicatorScale = 1,
+		UFTextScale = 1,  --
+		PlayerWidth = 245,
+		PlayerHeight = 24,
+		PartyAltPower = true,
+		BossWidth = 120,  --
+		BossHeight = 21,  --
+		BossPowerHeight = 3,  --
+		CastingColor = {r=.3, g=.7, b=1},
+		NotInterruptColor = {r=1, g=.5, b=.5},
 		PlayerFrameScale = 0.9,
 		UFPctText = true,
 		UFClassIcon = false,
@@ -121,24 +174,53 @@ local defaultSettings = {
 		ColorBorder = true,
 		PlayerAura = false,
 		maxAuras = 6,
-		AuraSize = 18,
+		AuraSize = 26,
 		AuraFilter = 2,
 		OtherFilter = 2,
 		FriendlyCC = false,
 		HostileCC = true,
 		TankMode = false,
+		TargetIndicator = 3,
 		Arrow = true,
 		InsideView = true,
 		MinAlpha = .6,
 		Distance = 42,
+		PlateWidth = 168,
+		PlateHeight = 9,
+		CustomUnitColor = true,
+		CustomColor = {r=0, g=.8, b=.3},
+		UnitList = "",
 		ShowPowerList = "",
+		VerticalSpacing = .6,
+		ShowPlayerPlate = true,
+		PPHeight = 3,
+		PPPHeight = 6,
+		PPPowerText = true,
 		Width = 88,
 		Height = 6,
-    nameonly = false,  --只显示名字
-    BommIcon = true,
-    HighlightTarget = true,
-    HighlightFocus = true,
+		
+    --nameonly = false,  --只显示名字
+    --BommIcon = true,
+    --HighlightTarget = true,
+    --HighlightFocus = true,
     FullHealth = false,
+		SecureColor = {r=1, g=0, b=1},
+		TransColor = {r=1, g=.8, b=0},
+		InsecureColor = {r=1, g=0, b=0},
+		OffTankColor = {r=.2, g=.7, b=.5},
+		DPSRevertThreat = false,
+		ExplosivesScale = true,
+		PPIconSize = 36,
+		AKSProgress = true,
+		PPHideOOC = true,
+		NameplateClassPower = true,
+		MaxPowerGlow = true,
+		NameTextSize = 14,
+		HealthTextSize = 16,
+		MinScale = 1,
+		MinAlpha = 1,
+		ColorBorder = true,
+		QuestIndicator = true,
 	},
 	Skins = {
 		DBM = true,
@@ -245,6 +327,8 @@ local defaultSettings = {
 local accountSettings = {
 	ChatFilterList = "%*",
 	Timestamp = false,
+	NameplateFilter = {[1]={}, [2]={}},
+	RaidDebuffs = {},
 	Changelog = {},
 	totalGold = {},
 	RepairType = 1,
@@ -260,11 +344,14 @@ local accountSettings = {
 	DBMRequest = false,
 	SkadaRequest = false,
 	BWRequest = false,
+	RaidAuraWatch = {},
+	CornerBuffs = {},
 	TexStyle = 3,
 	KeystoneInfo = {},
 	AutoBubbles = false,
 	SystemInfoType = 1,
 	DisableInfobars = false,
+	PartyWatcherSpells = {},
 	ContactList = {}
 }
 
@@ -318,6 +405,31 @@ loader:SetScript("OnEvent", function(self, _, addon)
 	self:UnregisterAllEvents()
 end)
 
+-- Callbacks
+local function setupRaidFrame()
+	G:SetupRaidFrame(guiPage[3])
+end
+
+local function setupRaidDebuffs()
+	G:SetupRaidDebuffs(guiPage[3])
+end
+
+local function setupClickCast()
+	G:SetupClickCast(guiPage[3])
+end
+
+local function setupBuffIndicator()
+	G:SetupBuffIndicator(guiPage[3])
+end
+
+local function setupPartyWatcher()
+	G:SetupPartyWatcher(guiPage[3])
+end
+
+local function setupNameplateFilter()
+	G:SetupNameplateFilter(guiPage[2])
+end
+
 local function setupAuraWatch()
 	f:Hide()
 	SlashCmdList["NDUI_AWCONFIG"]()
@@ -361,6 +473,50 @@ end
 
 local function updateToggleDirection()
 	M:GetModule("Skins"):RefreshToggleDirection()
+end
+
+local function updatePlateInsideView()
+	M:GetModule("UnitFrames"):PlateInsideView()
+end
+
+local function updatePlateSpacing()
+	M:GetModule("UnitFrames"):UpdatePlateSpacing()
+end
+
+local function updatePlateRange()
+	M:GetModule("UnitFrames"):UpdatePlateRange()
+end
+
+local function updateCustomUnitList()
+	M:GetModule("UnitFrames"):CreateUnitTable()
+end
+
+local function updatePowerUnitList()
+	M:GetModule("UnitFrames"):CreatePowerUnitTable()
+end
+
+local function refreshNameplates()
+	M:GetModule("UnitFrames"):RefreshAllPlates()
+end
+
+local function updatePlateScale()
+	M:GetModule("UnitFrames"):UpdatePlateScale()
+end
+
+local function updatePlateAlpha()
+	M:GetModule("UnitFrames"):UpdatePlateAlpha()
+end
+
+local function updateRaidNameText()
+	M:GetModule("UnitFrames"):UpdateRaidNameText()
+end
+
+local function updatePlayerPlate()
+	M:GetModule("UnitFrames"):ResizePlayerPlate()
+end
+
+local function refreshRaidFrameIcons()
+	M:GetModule("UnitFrames"):RefreshRaidFrameIcons()
 end
 
 local function updateMinimapScale()
@@ -424,6 +580,7 @@ end
 local tabList = {
 	U["Actionbar"],
 	U["Nameplate"],
+	U["RaidFrame"],
 	U["Auras"],
 	U["ChatFrame"],
 	U["Skins"],
@@ -445,6 +602,7 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "Actionbar", "Count", U["Actionbar Item Counts"], true, true},
 		{1, "Actionbar", "MicroMenu", U["Micromenu"]},
 		{1, "Actionbar", "Classcolor", U["ClassColor BG"], true},
+		{1, "Actionbar", "MicroMenuStyle", U["MicroMenuStyle"], true, true},
 		--{1, "Actionbar", "Bar4Fade", U["Bar4 Fade"]},
 		--{1, "Actionbar", "Bar5Fade", U["Bar5 Fade"], true},
 		{},--blank
@@ -464,28 +622,86 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 
 	},
 	[2] = {
-		{1, "Nameplate", "Enable", "|cff00cc4c"..U["Enable Nameplate"]},
-		{1, "Nameplate", "Numberstyle", "数字模式", true},
-		{1, "Nameplate", "nameonly", "友方仅显示名字", true, true},
-		{1, "Nameplate", "TankMode", "|cff00cc4c"..U["Tank Mode"].."*"},
-		{1, "Nameplate", "FriendlyCC", U["Friendly CC"].."*", true},
-		{1, "Nameplate", "HostileCC", U["Hostile CC"].."*", true, true},
-		{1, "Nameplate", "BommIcon", "|cff00cc4c"..U["BommIcon"]},
-		{1, "Nameplate", "HighlightTarget", "血条高亮鼠标指向", true},
-		{1, "Nameplate", "HighlightFocus", "血条高亮焦点指向", true, true},
-		{1, "Nameplate", "FullHealth", U["Show FullHealth"]},
-		{1, "Nameplate", "InsideView", U["Nameplate InsideView"], true},
-		{},--blank
-		{2, "Nameplate", "ShowPowerList", U["ShowPowerList"].."*", true, true, nil, nil, U["CustomUnitTips"]},
-		{3, "Nameplate", "MinAlpha", U["Nameplate MinAlpha"], false, false, {0, 1, 1}},
+		{1, "Nameplate", "Enable", "|cff00cc4c"..U["Enable Nameplate"], nil, nil, setupNameplateFilter},
+		{1, "Nameplate", "FullHealth", U["Show FullHealth"].."*", true, nil, nil, refreshNameplates},
+		{4, "Nameplate", "TargetIndicator", U["TargetIndicator"].."*", true, true, {DISABLE, U["TopArrow"], U["RightArrow"], U["TargetGlow"], U["TopNGlow"], U["RightNGlow"]}, refreshNameplates},
+		{1, "Nameplate", "FriendlyCC", U["Friendly CC"].."*"},
+		{1, "Nameplate", "HostileCC", U["Hostile CC"].."*", true},
+		{1, "Nameplate", "ExplosivesScale", U["ExplosivesScale"], true, true},
+		--{1, "Nameplate", "InsideView", U["Nameplate InsideView"].."*", nil, nil, nil, updatePlateInsideView},
+		--{1, "Nameplate", "QuestIndicator", U["QuestIndicator"], true, true},
+		{1, "Nameplate", "CustomUnitColor", "|cff00cc4c"..U["CustomUnitColor"].."*", nil, nil, nil, updateCustomUnitList},
+		{1, "Nameplate", "TankMode", "|cff00cc4c"..U["Tank Mode"].."*", true},
+		{1, "Nameplate", "DPSRevertThreat", U["DPS Revert Threat"].."*", true, true},
+		--{3, "Nameplate", "VerticalSpacing", U["NP VerticalSpacing"].."*", false, nil, {.5, 1.5, 1}, updatePlateSpacing},
+		{1, "Nameplate", "ColorBorder", U["ColorBorder"].."*", false, false, nil, refreshNameplates},
+		{1, "Nameplate", "AKSProgress", U["AngryKeystones Progress"], true},
+		{3, "Nameplate", "Distance", U["Nameplate Distance"].."*", false, false, {20, 100, 0}, updatePlateRange},
+		{3, "Nameplate", "MinScale", U["Nameplate MinScale"].."*", true, false, {.5, 1, 1}, updatePlateScale},
+		{3, "Nameplate", "MinAlpha", U["Nameplate MinAlpha"].."*", true, true, {.5, 1, 1}, updatePlateAlpha},
+		{3, "Nameplate", "PlateWidth", U["NP Width"].."*", false, false, {50, 250, 0}, refreshNameplates},
+		{3, "Nameplate", "PlateHeight", U["NP Height"].."*", true, false, {5, 30, 0}, refreshNameplates},
+		{3, "Nameplate", "NameTextSize", U["NameTextSize"].."*", true, true, {10, 30, 0}, refreshNameplates},
+		{3, "Nameplate", "HealthTextSize", U["HealthTextSize"].."*", false, false, {10, 30, 0}, refreshNameplates},
 		{3, "Nameplate", "maxAuras", U["Max Auras"], true, false, {0, 10, 0}},
-		{3, "Nameplate", "AuraSize", U["Auras Size"], true, true, {12, 36, 0}},
-		{3, "Nameplate", "Distance", U["Nameplate Distance"], false, false, {20, 100, 0}},
-		{3, "Nameplate", "Width", U["NP Width"], true, false, {60, 160, 0}},
-		{3, "Nameplate", "Height", U["NP Height"], true, true, {3, 16, 0}},
+		{3, "Nameplate", "AuraSize", U["Auras Size"], true, true, {18, 40, 0}},
+		{2, "Nameplate", "UnitList", U["UnitColor List"].."*", nil, nil, nil, updateCustomUnitList, U["CustomUnitTips"]},
+		{2, "Nameplate", "ShowPowerList", U["ShowPowerList"].."*", true, nil, nil, updatePowerUnitList, U["CustomUnitTips"]},
+		{5, "Nameplate", "SecureColor", U["Secure Color"].."*"},
+		{5, "Nameplate", "TransColor", U["Trans Color"].."*", 1},
+		{5, "Nameplate", "InsecureColor", U["Insecure Color"].."*", 2},
+		{5, "Nameplate", "OffTankColor", U["OffTank Color"].."*", 3},
+		{5, "Nameplate", "CustomColor", U["Custom Color"].."*", 4},
+		--{1, "Nameplate", "Numberstyle", "数字模式", true},
+		--{1, "Nameplate", "nameonly", "友方仅显示名字", true, true},
+		--{1, "Nameplate", "TankMode", "|cff00cc4c"..U["Tank Mode"].."*"},
+		--{1, "Nameplate", "FriendlyCC", U["Friendly CC"].."*", true},
+		--{1, "Nameplate", "HostileCC", U["Hostile CC"].."*", true, true},
+		--{1, "Nameplate", "BommIcon", "|cff00cc4c"..U["BommIcon"]},
+		--{1, "Nameplate", "HighlightTarget", "血条高亮鼠标指向", true},
+		--{1, "Nameplate", "HighlightFocus", "血条高亮焦点指向", true, true},
+		--{1, "Nameplate", "FullHealth", U["Show FullHealth"]},
+		--{1, "Nameplate", "InsideView", U["Nameplate InsideView"], true},
+		--{},--blank
+		--{2, "Nameplate", "ShowPowerList", U["ShowPowerList"].."*", true, true, nil, nil, U["CustomUnitTips"]},
+		--{3, "Nameplate", "MinAlpha", U["Nameplate MinAlpha"], false, false, {0, 1, 1}},
+		--{3, "Nameplate", "maxAuras", U["Max Auras"], true, false, {0, 10, 0}},
+		--{3, "Nameplate", "AuraSize", U["Auras Size"], true, true, {12, 36, 0}},
+		--{3, "Nameplate", "Distance", U["Nameplate Distance"], false, false, {20, 100, 0}},
+		--{3, "Nameplate", "Width", U["NP Width"], true, false, {60, 160, 0}},
+		--{3, "Nameplate", "Height", U["NP Height"], true, true, {3, 16, 0}},
 	},
 	[3] = {
-		{1, "AuraWatch", "Enable", "|cff00cc4c"..U["Enable AuraWatch"], false, false, nil, setupAuraWatch},
+		{1, "UFs", "RaidFrame", "|cff00cc4c"..U["UFs RaidFrame"], false, false, setupRaidFrame, nil, U["RaidFrameTip"]},
+		{1, "UFs", "PartyFrame", "|cff00cc4c"..U["UFs PartyFrame"], true},
+		{1, "UFs", "PartyPetFrame", "|cff00cc4c"..U["UFs PartyPetFrame"], true, true},
+		{1, "UFs", "SimpleMode", "|cff00cc4c"..U["Simple RaidFrame"]},
+		{1, "UFs", "SimpleModeSortByRole", U["SimpleMode SortByRole"], true},
+		{1, "UFs", "RuneTimer", U["UFs RuneTimer"], true, true},
+		{1, "UFs", "ShowTeamIndex", U["RaidFrame TeamIndex"]},
+		{1, "UFs", "RaidClassColor", U["ClassColor RaidFrame"], true},
+		{1, "UFs", "PWOnRight", U["PartyWatcherOnRight"], true, true},
+		{1, "UFs", "HorizonParty", U["Horizon PartyFrame"]},
+		{1, "UFs", "HorizonRaid", U["Horizon RaidFrame"], true},		
+		{1, "UFs", "ReverseRaid", U["Reverse RaidFrame"], true, true},
+		{1, "UFs", "PartyAltPower", U["UFs PartyAltPower"]},
+		{1, "UFs", "SpecRaidPos", U["Spec RaidPos"], true},
+		{1, "UFs", "AutoRes", U["UFs AutoRes"], true, true},
+		{1, "UFs", "RaidClickSets", "|cff00cc4c"..U["Enable ClickSets"], nil, nil, setupClickCast},
+		{1, "UFs", "InstanceAuras", "|cff00cc4c"..U["Instance Auras"], true, nil, setupRaidDebuffs},
+		{1, "UFs", "RaidBuffIndicator", "|cff00cc4c"..U["RaidBuffIndicator"], true, true, setupBuffIndicator, nil, U["RaidBuffIndicatorTip"]},
+		{1, "UFs", "PartyWatcher", U["UFs PartyWatcher"], nil, nil, setupPartyWatcher},
+		{1, "UFs", "AurasClickThrough", U["RaidAuras ClickThrough"], true},
+		{},--blank
+		{4, "UFs", "RaidHPMode", U["RaidHPMode"].."*", false, false, {U["DisableRaidHP"], U["RaidHPPercent"], U["RaidHPCurrent"], U["RaidHPLost"]}, updateRaidNameText},
+		{4, "UFs", "HealthColor", U["HealthColor"], true, false, {U["Default Dark"], U["ClassColorHP"], U["GradientHP"]}},
+		{4, "UFs", "BuffIndicatorType", U["BuffIndicatorType"].."*", true, true, {U["BI_Blocks"], U["BI_Icons"], U["BI_Numbers"]}, refreshRaidFrameIcons},
+		{3, "UFs", "BuffIndicatorScale", U["BuffIndicatorScale"].."*", false, false, {1, 2, 1}, refreshRaidFrameIcons},
+		{3, "UFs", "RaidDebuffScale", U["RaidDebuffScale"].."*", true, false, {1, 2, 1}, refreshRaidFrameIcons},
+		{3, "UFs", "NumGroups", U["Num Groups"], true, true, {4, 8, 0}},
+	},
+	[4] = {
+		{1, "AuraWatch", "Enable", "|cff00cc4c"..U["Enable AuraWatch"], false, false, setupAuraWatch},
 		{1, "AuraWatch", "DeprecatedAuras", U["DeprecatedAuras"], true},
 		--{1, "AuraWatch", "QuakeRing", U["QuakeRing"].."*"},
 		{1, "AuraWatch", "ClickThrough", U["AuraWatch ClickThrough"], true, true},
@@ -500,15 +716,24 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 	  {1, "Auras", "ReverseBuffs", U["ReverseBuffs"], true, true},
 	  {1, "Misc", "RaidCD", U["Raid CD"]},
 	  {1, "Misc", "PulseCD", U["Pulse CD"], true},
-		--{1, "Auras", "ClassAuras", U["Enable ClassAuras"]},
 		{1, "Auras", "ReverseDebuffs", U["ReverseDebuffs"], true, true},
 		{3, "Auras", "BuffSize", U["BuffSize"], false, false, {24, 40, 0}},
 		{3, "Auras", "DebuffSize", U["DebuffSize"], true, false, {24, 40, 0}},
 		{3, "Auras", "BuffsPerRow", U["BuffsPerRow"], false, false, {10, 20, 0}},
 		{3, "Auras", "DebuffsPerRow", U["DebuffsPerRow"], true, false, {10, 16, 0}},
 		{3, "AuraWatch", "IconScale", U["AuraWatch IconScale"], true, true, {.8, 2, 1}},
+		{},--blank		
+		{1, "Nameplate", "ShowPlayerPlate", "|cff00cc4c"..U["Enable PlayerPlate"]},
+		{1, "Auras", "ClassAuras", U["Enable ClassAuras"], true},
+		{1, "Nameplate", "MaxPowerGlow", U["MaxPowerGlow"], true, true},
+		{1, "Nameplate", "NameplateClassPower", U["Nameplate ClassPower"]},
+		{1, "Nameplate", "PPPowerText", U["PlayerPlate PowerText"], true},
+		{1, "Nameplate", "PPHideOOC", U["Fadeout OOC"], true, true},
+		{3, "Nameplate", "PPIconSize", U["PlayerPlate IconSize"], false, nil, {21, 60, 0}, updatePlayerPlate}, -- FIX ME: need to refactor classpower
+		{3, "Nameplate", "PPHeight", U["PlayerPlate HPHeight"].."*", true, false, {1, 16, 0}, updatePlayerPlate},
+		{3, "Nameplate", "PPPHeight", U["PlayerPlate MPHeight"].."*", true, true, {3, 16, 0}, updatePlayerPlate},
 	},
-	[4] = {
+	[5] = {
 		{1, "Chat", "Outline", U["Font Outline"]},
 		{1, "ACCOUNT", "Timestamp", U["Timestamp"], true, false, nil, updateTimestamp},
 		{1, "Chat", "Sticky", U["Chat Sticky"].."*", true, true, nil, updateChatSticky},
@@ -534,7 +759,7 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{2, "ACCOUNT", "ChatFilterList", U["Filter List"].."*", true, false, nil, updateFilterList},
 		{2, "Chat", "Keyword", U["Whisper Keyword"].."*", true, true, nil, updateWhisperList},
 	},
-	[5] = {
+	[6] = {
 		{1, "UFs", "UFFade", U["UFFade"]},
 		{1, "UFs", "UFClassIcon", U["UFClassIcon"], true},
 	  {1, "UFs", "UFPctText", U["UFPctText"], true, true},
@@ -567,16 +792,16 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		--{3, "Skins", "SkinAlpha", U["SkinAlpha"].."*", true, {0, 1, 1}, updateSkinAlpha},
 		--{1, "Skins", "Loot", U["Loot"]},
 		--{1, "Skins", "BlizzardSkins", "|cff00cc4c"..U["BlizzardSkins"], true, nil, nil, U["BlizzardSkinsTips"]},
-		{1, "Skins", "InfobarLine", U["Infobar Line"], true},	
+		{1, "Skins", "InfobarLine", U["ClassColor Line"], true},	
 		--{1, "Skins", "ChatLine", U["Chat Line"]},
 		--{1, "Skins", "MenuLine", U["Menu Line"], true},
-		{1, "Skins", "ClassLine", U["ClassColor Line"], true, true},
+		--{1, "Skins", "ClassLine", U["ClassColor Line"], true, true},
 		--{4, "Skins", "ToggleDirection", U["ToggleDirection"].."*", true, true, {U["LEFT"], U["RIGHT"], U["TOP"], U["BOTTOM"]}, updateToggleDirection},
 		{4, "ACCOUNT", "TexStyle", U["Texture Style"], false, false, {U["Highlight"], U["Gradient"], U["Flat"]}},
 		{4, "ACCOUNT", "NumberFormat", U["Numberize"], true, false, {U["Number Type1"], U["Number Type2"], U["Number Type3"]}},
 		{2, "Misc", "DBMCount", U["Countdown Sec"].."*", true, true},
 	},
-	[6] = {
+	[7] = {
 	  --{1, "Misc", "RaidTool", "|cff00cc4c"..U["Raid Manger"]},
 		--{1, "Misc", "RMRune", U["Runes Check"].."*"},
 		--{1, "Misc", "EasyMarking", U["Easy Mark"].."*"},
@@ -616,7 +841,7 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "Misc", "QuickQueue", U["QuickQueue"], true},
 	  {1, "Misc", "AutoReagentInBank", U["Auto Reagent Bank"], true, true},
 	},
-	[7] = {
+	[8] = {
 		{1, "Misc", "ParagonRep", U["ParagonRep"]},
 		{1, "Misc", "TradeTabs", U["TradeTabs"], true},
 		{1, "Misc", "PetFilter", U["Show PetFilter"], true, true},
@@ -700,7 +925,7 @@ local function NDUI_VARIABLE(key, value, newValue)
 end
 
 local function CreateOption(i)
-	local parent, offset = guiPage[i].child, 20
+	local parent, offset = guiPage[i].child, 60
 
 	for _, option in pairs(optionList[i]) do
 		local optType, key, value, name, horizon, horizon2, data, callback, tooltip = unpack(option)
@@ -709,11 +934,11 @@ local function CreateOption(i)
 			local cb = M.CreateCheckBox(parent)
 			cb:SetHitRectInsets(-5, -5, -5, -5)
 			if horizon2 then
-				cb:SetPoint("TOPLEFT", 470, -offset + 32)
+				cb:SetPoint("TOPLEFT", 550, -offset + 32)
 			elseif horizon then
-				cb:SetPoint("TOPLEFT", 240, -offset + 32)
+				cb:SetPoint("TOPLEFT", 310, -offset + 32)
 			else
-				cb:SetPoint("TOPLEFT", 20, -offset)
+				cb:SetPoint("TOPLEFT", 60, -offset)
 				offset = offset + 32
 			end
 			cb.name = M.CreateFS(cb, 14, name, false, "LEFT", 30, 0)
@@ -733,14 +958,14 @@ local function CreateOption(i)
 			end
 		-- Editbox
 		elseif optType == 2 then
-			local eb = M.CreateEditBox(parent, 160, 23)
+			local eb = M.CreateEditBox(parent, 210, 23)
 			eb:SetMaxLetters(999)
 			if horizon2 then
-				eb:SetPoint("TOPLEFT", 470, -offset + 32)
+				eb:SetPoint("TOPLEFT", 550, -offset + 32)
 			elseif horizon then
-				eb:SetPoint("TOPLEFT", 240, -offset + 32)
+				eb:SetPoint("TOPLEFT", 310, -offset + 32)
 			else
-				eb:SetPoint("TOPLEFT", 20, -offset - 26)
+				eb:SetPoint("TOPLEFT", 60, -offset - 26)
 				offset = offset + 58
 			end
 			eb:SetText(NDUI_VARIABLE(key, value))
@@ -755,7 +980,6 @@ local function CreateOption(i)
 			local tip = U["EdieBox Tip"]
 			if tooltip then tip = tooltip.."|n"..tip end
 			M.AddTooltip(eb, "ANCHOR_RIGHT", tip, "info")
-
 			M.CreateFS(eb, 14, name, "system", "CENTER", 0, 25)
 		-- Slider
 		elseif optType == 3 then
@@ -763,11 +987,11 @@ local function CreateOption(i)
 			local decimal = step > 2 and 2 or step
 			local x, y
 			if horizon2 then
-				x, y = 460, -offset + 32
+				x, y = 540, -offset + 32
 			elseif horizon then
-				x, y = 230, -offset + 32
+				x, y = 300, -offset + 32
 			else
-				x, y = 10, -offset - 26
+				x, y = 55, -offset - 26
 				offset = offset + 58
 			end
 			local s = M.CreateSlider(parent, name, min, max, x, y)
@@ -785,13 +1009,13 @@ local function CreateOption(i)
 			end
 		-- Dropdown
 		elseif optType == 4 then
-			local dd = M.CreateDropDown(parent, 143, 26, data)
+			local dd = M.CreateDropDown(parent, 160, 26, data)
 			if horizon2 then
-				dd:SetPoint("TOPLEFT", 470, -offset + 32)
+				dd:SetPoint("TOPLEFT", 560, -offset + 32)
 			elseif horizon then
-				dd:SetPoint("TOPLEFT", 240, -offset + 32)
+				dd:SetPoint("TOPLEFT", 320, -offset + 32)
 			else
-				dd:SetPoint("TOPLEFT", 20, -offset - 26)
+				dd:SetPoint("TOPLEFT", 70, -offset - 26)
 				offset = offset + 58
 			end
 			dd.Text:SetText(data[NDUI_VARIABLE(key, value)])
@@ -814,32 +1038,27 @@ local function CreateOption(i)
 					if callback then callback() end
 				end)
 			end
-
 			M.CreateFS(dd, 14, name, "system", "CENTER", 0, 25)
 		-- Colorswatch
 		elseif optType == 5 then
 			local f = M.CreateColorSwatch(parent, name, NDUI_VARIABLE(key, value))
-			local width = 25 + (horizon or 0)*155
+			local width = 80 + (horizon or 0)*120
 			if horizon2 then
-				dd:SetPoint("TOPLEFT", width, -offset + 30)
+				dd:SetPoint("TOPLEFT", width, -offset + 32)
 			elseif horizon then
-				f:SetPoint("TOPLEFT", width, -offset + 30)
+				f:SetPoint("TOPLEFT", width, -offset + 32)
 			else
-				f:SetPoint("TOPLEFT", width, -offset - 6)
-				offset = offset + 36
+				f:SetPoint("TOPLEFT", width, -offset - 16)
+				offset = offset + 48
 			end
 		-- Blank, no optType
 		else
 			local l = CreateFrame("Frame", nil, parent)
-			l:SetPoint("TOPLEFT", 25, -offset - 12)
+			l:SetPoint("TOPLEFT", 26, -offset - 12)
 			M.CreateGF(l, 550, R.mult, "Horizontal", 1, 1, 1, .25, .25)
 			offset = offset + 32
 		end
 	end
-
-	local footer = CreateFrame("Frame", nil, parent)
-	footer:SetSize(20, 20)
-	footer:SetPoint("TOPLEFT", 25, -offset)
 end
 
 local bloodlustFilter = {
@@ -875,7 +1094,7 @@ local function exportData()
 								end
 							end
 						end
-					elseif KEY == "Mover" or KEY == "InternalCD" or KEY == "AuraWatchMover" then
+					elseif KEY == "Mover" or KEY == "RaidClickSets" or KEY == "InternalCD" or KEY == "AuraWatchMover" then
 						text = text..";"..KEY..":"..key
 						for _, v in ipairs(value) do
 							text = text..":"..tostring(v)
@@ -896,7 +1115,42 @@ local function exportData()
 	end
 
 	for KEY, VALUE in pairs(MaoRUIDB) do
-		if KEY == "ContactList" then
+		if KEY == "RaidAuraWatch" then
+			text = text..";ACCOUNT:"..KEY
+			for spellID in pairs(VALUE) do
+				text = text..":"..spellID
+			end
+		elseif KEY == "RaidDebuffs" then
+			for instName, value in pairs(VALUE) do
+				for spellID, prio in pairs(value) do
+					text = text..";ACCOUNT:"..KEY..":"..instName..":"..spellID..":"..prio
+				end
+			end
+		elseif KEY == "NameplateFilter" then
+			for index, value in pairs(VALUE) do
+				text = text..";ACCOUNT:"..KEY..":"..index
+				for spellID in pairs(value) do
+					text = text..":"..spellID
+				end
+			end
+		elseif KEY == "CornerBuffs" then
+			for class, value in pairs(VALUE) do
+				for spellID, data in pairs(value) do
+					if not bloodlustFilter[spellID] and class == I.MyClass then
+						local anchor, color, filter = unpack(data)
+						text = text..";ACCOUNT:"..KEY..":"..class..":"..spellID..":"..anchor..":"..color[1]..":"..color[2]..":"..color[3]..":"..tostring(filter or false)
+					end
+				end
+			end
+		elseif KEY == "PartyWatcherSpells" then
+			text = text..";ACCOUNT:"..KEY
+			for spellID, duration in pairs(VALUE) do
+				local name = GetSpellInfo(spellID)
+				if name then
+					text = text..":"..spellID..":"..duration
+				end
+			end
+		elseif KEY == "ContactList" then
 			for name, color in pairs(VALUE) do
 				text = text..";ACCOUNT:"..KEY..":"..name..":"..color
 			end
@@ -965,6 +1219,10 @@ local function importData()
 			x = tonumber(x)
 			y = tonumber(y)
 			MaoRUIPerDB[key][value] = {relFrom, parent, relTo, x, y}
+		elseif key == "RaidClickSets" then
+			if I.MyClass == class then
+				MaoRUIPerDB[key][value] = {select(3, strsplit(":", option))}
+			end
 		elseif key == "InternalCD" then
 			local spellID, duration, indicator, unit, itemID = select(3, strsplit(":", option))
 			spellID = tonumber(spellID)
@@ -972,7 +1230,40 @@ local function importData()
 			itemID = tonumber(itemID)
 			MaoRUIPerDB[key][spellID] = {spellID, duration, indicator, unit, itemID}
 		elseif key == "ACCOUNT" then
-			if value == "ContactList" then
+			if value == "RaidAuraWatch" then
+				local spells = {select(3, strsplit(":", option))}
+				for _, spellID in next, spells do
+					MaoRUIDB[value][tonumber(spellID)] = true
+				end
+			elseif value == "RaidDebuffs" then
+				local instName, spellID, priority = select(3, strsplit(":", option))
+				if not MaoRUIDB[value][instName] then MaoRUIDB[value][instName] = {} end
+				MaoRUIDB[value][instName][tonumber(spellID)] = tonumber(priority)
+			elseif value == "NameplateFilter" then
+				local spells = {select(4, strsplit(":", option))}
+				for _, spellID in next, spells do
+					MaoRUIDB[value][tonumber(arg1)][tonumber(spellID)] = true
+				end
+			elseif value == "CornerBuffs" then
+				local class, spellID, anchor, r, g, b, filter = select(3, strsplit(":", option))
+				spellID = tonumber(spellID)
+				r = tonumber(r)
+				g = tonumber(g)
+				b = tonumber(b)
+				filter = toBoolean(filter)
+				if not MaoRUIDB[value][class] then MaoRUIDB[value][class] = {} end
+				MaoRUIDB[value][class][spellID] = {anchor, {r, g, b}, filter}
+			elseif value == "PartyWatcherSpells" then
+				local options = {strsplit(":", option)}
+				local index = 3
+				local spellID = options[index]
+				while spellID do
+					local duration = options[index+1]
+					MaoRUIDB[value][tonumber(spellID)] = tonumber(duration) or 0
+					index = index + 2
+					spellID = options[index]
+				end
+			elseif value == "ContactList" then
 				local name, r, g, b = select(3, strsplit(":", option))
 				MaoRUIDB["ContactList"][name] = r..":"..g..":"..b
 			end
@@ -1079,7 +1370,7 @@ local function OpenGUI()
     bgTexture:SetTexCoord(0,1,0,600/1024);
     bgTexture:SetAllPoints();
     bgTexture:SetAlpha(1)
-	f:SetSize(1280, 600)
+	f:SetSize(1440, 700)
 	f:SetPoint("CENTER")
 	f:SetFrameStrata("HIGH")
 	f:SetFrameLevel(10)
@@ -1088,12 +1379,12 @@ local function OpenGUI()
 	M.CreateFS(f, 43, "2 UI", true, "TOP", 0, -62)
 	M.CreateFS(f, 21, "v"..I.Version, false, "TOP", 80, -80)
 
-	local close = M.CreateButton(f, 21, 21, "X")
-	close:SetPoint("TOP", 280, -56)
+	local close = M.CreateButton(f, 36, 36, "X")
+	close:SetPoint("TOP", 310, -66)
 	close:SetScript("OnClick", function() f:Hide() end)
 
-	local ok = M.CreateButton(f, 66, 21, OKAY)
-	ok:SetPoint("BOTTOMRIGHT", -260, 66)
+	local ok = M.CreateButton(f, 88, 31, OKAY)
+	ok:SetPoint("BOTTOMRIGHT", -162, 38)
 	ok:SetScript("OnClick", function()
 		M:SetupUIScale()
 		f:Hide()
@@ -1103,16 +1394,16 @@ local function OpenGUI()
 	for i, name in pairs(tabList) do
 		guiTab[i] = CreateTab(f, i, name)
 		guiPage[i] = CreateFrame("ScrollFrame", nil, f)
-		guiPage[i]:SetPoint("TOPLEFT", 300, -160)
-		guiPage[i]:SetSize(680, 400)
+		guiPage[i]:SetPoint("TOPLEFT", 310, -120)
+		guiPage[i]:SetSize(880, 520)
 		guiPage[i]:Hide()
 		guiPage[i].child = CreateFrame("Frame", nil, guiPage[i])
 		guiPage[i].child:SetSize(610, 1)
 		guiPage[i]:SetScrollChild(guiPage[i].child)
 		CreateOption(i)
 	end
-	local reset = M.CreateButton(f, 66, 21, "Reset?")
-	reset:SetPoint("BOTTOMLEFT", 270, 66)
+	local reset = M.CreateButton(f, 88, 31, "Reset?")
+	reset:SetPoint("BOTTOMLEFT", 172, 42)
 	StaticPopupDialogs["RESET_NDUI"] = {
 		text = CONFIRM_RESET_SETTINGS,
 		button1 = YES,
@@ -1128,8 +1419,8 @@ local function OpenGUI()
 		StaticPopup_Show("RESET_NDUI")
 	end)
 
-	local import = M.CreateButton(f, 66, 26, U["Import"])
-	import:SetPoint("BOTTOMLEFT", 160, 33)
+	local import = M.CreateButton(f, 88, 31, U["Import"])
+	import:SetPoint("TOPLEFT", 172, -80)
 	import:SetScript("OnClick", function()
 		f:Hide()
 		createDataFrame()
@@ -1138,8 +1429,8 @@ local function OpenGUI()
 		dataFrame.editBox:SetText("")
 	end)
 
-	local export = M.CreateButton(f, 66, 26, U["Export"])
-	export:SetPoint("BOTTOMRIGHT", -150, 33)
+	local export = M.CreateButton(f, 88, 31, U["Export"])
+	export:SetPoint("TOPRIGHT", -160, -80)
 	export:SetScript("OnClick", function()
 		f:Hide()
 		createDataFrame()
@@ -1187,7 +1478,6 @@ function G:OnLogin()
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
 	end)
 
-	--if MaoRUIPerDB["Skins"]["BlizzardSkins"] then M.Reskin(gui) end
 end
 
 SlashCmdList["MAORUIGUI"] = OpenGUI

@@ -1,7 +1,8 @@
-local NoItsNot = CreateFrame("Frame", "NoItsNotFrame");
-NoItsNot:RegisterEvent("ADDON_LOADED");
+local NoItsNot = CreateFrame("Frame")
+NoItsNot:RegisterEvent("ADDON_LOADED")
 NoItsNot:SetScript("OnEvent", function(_, event)
 	if event == "ADDON_LOADED" then
+	  NoItsNot:UnregisterEvent("ADDON_LOADED")
 		function TalentMicroButtonAlert:Show()
 			TalentMicroButtonAlert:Hide();
 		end
@@ -15,4 +16,4 @@ NoItsNot:SetScript("OnEvent", function(_, event)
 		--end
 		--CollectionsMicroButtonAlert:Hide();
 	end
-end);
+end)

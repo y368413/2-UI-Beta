@@ -1,15 +1,3 @@
-  PlayerFrame:ClearAllPoints() PlayerFrame:SetPoint("RIGHT",UIParent,"CENTER", -150, -250) PlayerFrame:SetUserPlaced(true)  --PlayerFrame:SetScale(0.8) 
-  TargetFrame:ClearAllPoints() TargetFrame:SetPoint("LEFT",UIParent,"CENTER", 150, -250) TargetFrame:SetUserPlaced(true)  --TargetFrame:SetScale(0.8) 
-  PartyMemberFrame1:ClearAllPoints() PartyMemberFrame1:SetPoint("TOPLEFT", 260, -143)
-  TargetFrameToT:ClearAllPoints() TargetFrameToT:SetPoint("LEFT",TargetFrame,"BOTTOMRIGHT", -43, 21)
-  TargetFrameToTTextureFrameName:ClearAllPoints() TargetFrameToTTextureFrameName:SetPoint("LEFT",TargetFrameToT,"Top", -8, -43)
-  PetFrameHealthBarText:SetPoint("BOTTOMRIGHT", PetFrame, "LEFT", 3,-6)  
-  PetFrameManaBarText:SetPoint("TOPRIGHT", PetFrame, "LEFT", 3, -6)
-  PetFrameManaBarText:SetTextColor(0, 1, 1)
-  FocusFrame:SetScript("OnMouseDown", function(self, elapsed) if IsShiftKeyDown() and (not InCombatLockdown()) then FocusFrame:StartMoving(); end end)
-  FocusFrame:SetScript("OnMouseUp", function(self, elapsed) FocusFrame:StopMovingOrSizing(); end)
-  FocusFrame:SetClampedToScreen(1);
-  
 ------------------------------------------Class icon---------------------------------------
 hooksecurefunc("UnitFramePortrait_Update",function(self) 
    if not MaoRUIPerDB["UFs"]["UFClassIcon"] then return end

@@ -127,18 +127,19 @@ local GetNextChar = function(word,num)
 end
 
 local updaterun = CreateFrame("Frame")
-
 local flowingframe = CreateFrame("Frame",nil,UIParent)
 	flowingframe:SetFrameStrata("HIGH")
 	flowingframe:SetPoint(unpack(E.Epos)) --("CENTER",UIParent,0,140)
 	flowingframe:SetHeight(64)
-	flowingframe:SetScript("OnUpdate", FadingFrame_OnUpdate)
 	flowingframe:Hide()
-	flowingframe.fadeInTime = 0
-	flowingframe.holdTime = 3
-	flowingframe.fadeOutTime = 0.5
-	
-local flowingtext = flowingframe:CreateFontString(nil,"OVERLAY")
+  --flowingframe.Bg = alertFrame:CreateTexture(nil, "BACKGROUND")
+  --flowingframe.Bg:SetTexture("Interface\\LEVELUP\\MinorTalents")
+  --flowingframe.Bg:SetPoint("TOP")
+  --flowingframe.Bg:SetSize(400, 67)
+  --flowingframe.Bg:SetTexCoord(0, 400 / 512, 341 / 512, 407 / 512)
+  --flowingframe.Bg:SetVertexColor(1, 1, 1, 0.4)
+
+local flowingtext = flowingframe:CreateFontString(nil,"OVERLAY")  --CreateFontString(nil, "ARTWORK", "GameFont_Gigantic")
 	flowingtext:SetPoint("Left")
 	flowingtext:SetFont(GameFontNormal:GetFont(), E.Fontsize, 'OUTLINE')	-- 字体
 	flowingtext:SetShadowOffset(0,0)
@@ -167,12 +168,10 @@ local updatestring = function(self,t)
 		if step > len then 
 			self:Hide()
 			flowingtext:SetText(stringE)
-			FadingFrame_Show(flowingframe)
 			rightchar:SetText("")
 			word = ""
 		else 
 			nextstep()
-			FadingFrame_Show(flowingframe)
 			count = speed
 		end
 	end
@@ -206,7 +205,6 @@ ElvUIAlertRun = function(f,r,g,b)
 		flowingframe:SetWidth(l)
 		
 	rightchar:SetText("")
-	FadingFrame_Show(flowingframe)
 	updaterun:Show()
 end
 

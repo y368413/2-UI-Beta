@@ -338,7 +338,7 @@ hooksecurefunc("TextStatusBar_UpdateTextStringWithValues", function()
 	end
 end)]]
 
---	Party Frames.
+--[[	Party Frames.
 function whoaPartyFrames()
 	local useCompact = GetCVarBool("useCompactPartyFrames");
 	if IsInGroup(player) and (not IsInRaid(player)) and (not useCompact) then 
@@ -376,5 +376,5 @@ hooksecurefunc("TextStatusBar_UpdateTextStringWithValues", function()
 			_G["PartyMemberFrame"..i.."ManaBarTextLeft"]:SetText(" ");
 			_G["PartyMemberFrame"..i.."ManaBarTextRight"]:SetText(" ");
 		end
-end)
+end)]]
 --------------------------------------------------------------------------------------whoa end

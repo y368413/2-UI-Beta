@@ -7,7 +7,7 @@
 	<Include file="Quest\Quest.xml"/>
 	<Include file="Raid\Raid.xml"/>
 	<Include file="Notice\Notice.xml"/>
-	<Include file="TOTxp\TOTxp.xml"/>
+	<!--Include file="TOTxp\TOTxp.xml"/-->
 	<Include file="UnitFrames\UnitFrames.xml"/>
 	<Include file="Aces\Aces.xml"/>
 </Ui>

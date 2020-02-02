@@ -1,5 +1,5 @@
 ## Interface: 80300
-## Version: 8.2.8
+## Version: 8.3.0
 ## Author: Kaminaris
 ## Title: MaxDps
 ## Title-zhCN:|CFFD74DE1[输出]|rMaxDps
@@ -9,10 +9,6 @@
 ## Notes-zhTW: 輸出迴圈提示助手。
 ## SavedVariables: MaxDpsOptions
 ## Dependencies: _ShiGuang
-
-## X-Repple: 2 UI
-## ToSBLN: 你丫TM再扒包不写感谢，我就没上回撕你时候那么客气了，自重！
-
 ForAllIndentsAndPurposes.lua
 
 Core.lua

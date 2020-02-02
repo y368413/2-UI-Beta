@@ -1,5 +1,6 @@
 local _, ns = ...
 local M, R, U, I = unpack(ns)
+local oUF = ns.oUF or oUF
 local MISC = M:GetModule("Misc")
 
 local _G = getfenv(0)
@@ -12,6 +13,7 @@ local pending = {}
 
 function MISC:Focuser_Setup()
 	if not self or self.focuser then return end
+	if self:GetName() and strmatch(self:GetName(), "oUF_NPs") then return end
 
 	if not InCombatLockdown() then
 		self:SetAttribute(modifier.."-type"..mouseButton, "focus")
@@ -29,21 +31,6 @@ function MISC:Focuser_CreateFrameHook(name, _, template)
 end
 
 function MISC.Focuser_OnEvent(event)
-  -- Set the keybindings on the default unit frames since we won't get any CreateFrame notification about them
-  local duf = {
-	PlayerFrame,
-	PetFrame,
-	PartyMemberFrame1,
-	PartyMemberFrame2,
-	PartyMemberFrame3,
-	PartyMemberFrame4,
-	PartyMemberFrame1PetFrame,
-	PartyMemberFrame2PetFrame,
-	PartyMemberFrame3PetFrame,
-	PartyMemberFrame4PetFrame,
-	TargetFrame,
-	TargetofTargetFrame,
-  }
 	if event == "PLAYER_REGEN_ENABLED" then
 		if next(pending) then
 			for frame in next, pending do
@@ -51,7 +38,7 @@ function MISC.Focuser_OnEvent(event)
 			end
 		end
 	else
-		for _, object in next, duf do
+		for _, object in next, oUF.objects do
 			if not object.focuser then
 				MISC.Focuser_Setup(object)
 			end

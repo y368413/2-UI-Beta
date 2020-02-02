@@ -12,8 +12,12 @@ function Bar:MicroButton_SetupTexture(icon, texture)
 	if not MaoRUIPerDB["Skins"]["ClassLine"] then r, g, b = 0, 0, 0 end
 
 	icon:SetOutside(nil, 3, 3)
+	if MaoRUIPerDB["Actionbar"]["MicroMenuStyle"] then
 	icon:SetTexture(I.MicroTex..texture)
 	icon:SetVertexColor(r, g, b)
+	else	
+	icon:SetTexture("Interface\\BUTTONS\\"..texture)
+	end
 end
 
 function Bar:MicroButton_Create(parent, data)
@@ -21,7 +25,11 @@ function Bar:MicroButton_Create(parent, data)
 
 	local bu = CreateFrame("Frame", nil, parent)
 	tinsert(buttonList, bu)
+	if MaoRUIPerDB["Actionbar"]["MicroMenuStyle"] then
 	bu:SetSize(21, 21)
+	else	
+	bu:SetSize(16, 32)
+	end
 
 	local icon = bu:CreateTexture(nil, "ARTWORK")
 	Bar:MicroButton_SetupTexture(icon, texture)
@@ -66,18 +74,18 @@ function Bar:MicroMenu()
 
 	-- Generate Buttons
 	local buttonInfo = {
-		{"player", "CharacterMicroButton"},
-		{"encounter", "EJMicroButton"},
-		{"collections", "CollectionsMicroButton"},
-		{"talents", "TalentMicroButton"},
-		{"LFG", "LFDMicroButton"},
-		{"achievements", "AchievementMicroButton"},
-		{"spellbook", "SpellbookMicroButton"},
-		{"guild", "GuildMicroButton"},
-		{"quests", "QuestLogMicroButton"},
-		{"store", "StoreMicroButton"},
-		{"help", "MainMenuMicroButton", MicroButtonTooltipText(MAINMENU_BUTTON, "TOGGLEGAMEMENU")},
-		{"bags", ToggleAllBags, MicroButtonTooltipText(BAGSLOT, "OPENALLBAGS")},
+		{"UI-MicroButton-Raid-Up", "CharacterMicroButton"},
+		{"UI-MicroButton-EJ-Up", "EJMicroButton"},
+		{"UI-MicroButton-Mounts-Up", "CollectionsMicroButton"},
+		{"UI-MicroButton-Talents-Up", "TalentMicroButton"},
+		{"UI-MicroButton-LFG-Up", "LFDMicroButton"},
+		{"UI-MicroButton-Achievement-Up", "AchievementMicroButton"},
+		{"UI-MicroButton-Spellbook-Up", "SpellbookMicroButton"},
+		{"UI-MICROBUTTON-SOCIALS-UP", "GuildMicroButton"},
+		{"UI-MICROBUTTON-QUEST-UP", "QuestLogMicroButton"},
+		{"UI-MicroButton-BStore-Up", "StoreMicroButton"},
+		{"UI-MicroButton-Help-Up", "MainMenuMicroButton", MicroButtonTooltipText(MAINMENU_BUTTON, "TOGGLEGAMEMENU")},
+		{"UI-MicroButton-Abilities-Up", ToggleAllBags, MicroButtonTooltipText(BAGSLOT, "OPENALLBAGS")},
 	}
 	for _, info in pairs(buttonInfo) do
 		Bar:MicroButton_Create(menubar, info)
@@ -88,9 +96,13 @@ function Bar:MicroMenu()
 		if i == 1 then
 			buttonList[i]:SetPoint("BOTTOM")
 		elseif i == 9 then
-			buttonList[i]:SetPoint("BOTTOMLEFT", Minimap, "BOTTOMRIGHT", -1, -3)
+			buttonList[i]:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMRIGHT", 1, -1)
 		else
+	if MaoRUIPerDB["Actionbar"]["MicroMenuStyle"] then
 			buttonList[i]:SetPoint("BOTTOM", buttonList[i-1], "TOP", 0, 3)
+	else	
+			buttonList[i]:SetPoint("BOTTOM", buttonList[i-1], "TOP", 0, -8)
+	end
 		end
 	end
 
@@ -104,4 +116,6 @@ function Bar:MicroMenu()
 
 	CharacterMicroButtonAlert:EnableMouse(false)
 	M.HideOption(CharacterMicroButtonAlert)
+	TalentMicroButtonAlert:EnableMouse(false)
+	M.HideOption(TalentMicroButtonAlert)
 end

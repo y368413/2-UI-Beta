@@ -81,7 +81,79 @@ function module:AddDeprecatedGroup()
 	wipe(R.DeprecatedAuras)
 end
 
+-- RaidFrame spells
+local RaidBuffs = {}
+function module:AddClassSpells(list)
+	for class, value in pairs(list) do
+		RaidBuffs[class] = value
+	end
+end
+
+-- RaidFrame debuffs
+local RaidDebuffs = {}
+function module:RegisterDebuff(_, instID, _, spellID, level)
+	local instName = EJ_GetInstanceInfo(instID)
+	if not instName then
+		if I.isDeveloper then print("Invalid instance ID: "..instID) end
+		return
+	end
+
+	if not RaidDebuffs[instName] then RaidDebuffs[instName] = {} end
+	if level then
+		if level > 6 then level = 6 end
+	else
+		level = 2
+	end
+
+	RaidDebuffs[instName][spellID] = level
+end
+
+-- Party watcher spells
+function module:UpdatePartyWatcherSpells()
+	if not next(MaoRUIDB["PartyWatcherSpells"]) then
+		for spellID, duration in pairs(R.PartySpells) do
+			local name = GetSpellInfo(spellID)
+			if name then
+				MaoRUIDB["PartyWatcherSpells"][spellID] = duration
+			end
+		end
+	end
+end
+
 function module:OnLogin()
+	for instName, value in pairs(RaidDebuffs) do
+		for spell, priority in pairs(value) do
+			if MaoRUIDB["RaidDebuffs"][instName] and MaoRUIDB["RaidDebuffs"][instName][spell] and MaoRUIDB["RaidDebuffs"][instName][spell] == priority then
+				MaoRUIDB["RaidDebuffs"][instName][spell] = nil
+			end
+		end
+	end
+	for instName, value in pairs(MaoRUIDB["RaidDebuffs"]) do
+		if not next(value) then
+			MaoRUIDB["RaidDebuffs"][instName] = nil
+		end
+	end
+
 	self:AddDeprecatedGroup()
 	R.AuraWatchList = AuraWatchList
+	R.RaidBuffs = RaidBuffs
+	R.RaidDebuffs = RaidDebuffs
+
+	if not MaoRUIDB["CornerBuffs"][I.MyClass] then MaoRUIDB["CornerBuffs"][I.MyClass] = {} end
+	if not next(MaoRUIDB["CornerBuffs"][I.MyClass]) then
+		M.CopyTable(R.CornerBuffs[I.MyClass], MaoRUIDB["CornerBuffs"][I.MyClass])
+	end
+
+	self:UpdatePartyWatcherSpells()
+
+	-- Filter bloodlust for healers
+	local bloodlustList = {57723, 57724, 80354, 264689}
+	local function filterBloodlust()
+		for _, spellID in pairs(bloodlustList) do
+			MaoRUIDB["CornerBuffs"][I.MyClass][spellID] = I.Role ~= "Healer" and {"BOTTOMLEFT", {1, .8, 0}, true} or nil
+			R.RaidBuffs["WARNING"][spellID] = (I.Role ~= "Healer")
+		end
+	end
+	filterBloodlust()
+	M:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED", filterBloodlust)
 end

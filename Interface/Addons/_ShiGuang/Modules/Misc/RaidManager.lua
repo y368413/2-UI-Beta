@@ -22,7 +22,6 @@ function MISC:CreateRM()
 			self:Hide()
 		end
 	end)
-
   
 	-- Battle resurrect
 	local resFrame = CreateFrame("Frame", nil, header)

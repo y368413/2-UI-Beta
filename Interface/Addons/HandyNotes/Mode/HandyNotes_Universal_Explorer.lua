@@ -94,7 +94,7 @@ do
         if (level == 1) then
 		-- Create the title of the menu
 		info.isTitle      = 1
-		info.text         = "HandyNotes - " .. "HandyNotes_Universal_Explorer"
+		info.text         = "HandyNotes - Universal_Explorer"
 		info.notCheckable = 1
 		UIDropDownMenu_AddButton(info, level)
 		wipe(info)
@@ -203,7 +203,7 @@ Universal_Explorer.defaults = {
 
 Universal_Explorer.options = {
     type = "group",
-    name = "HandyNotes_Universal_Explorer",
+    name = "Universal_Explorer",
     get = function(info) return Universal_Explorer.db[info[#info]] end,
     set = function(info, v)
         Universal_Explorer.db[info[#info]] = v

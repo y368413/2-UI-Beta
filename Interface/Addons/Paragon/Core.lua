@@ -486,11 +486,11 @@ local function GameTooltip_OnTooltipSetItem(tooltip)
 		if ParagonDB["config"]["tooltip_alts_enabled"] and limit >= 1 then
 			if bound == "BoA" and outputFaction(faction, 1, "tooltip", 1) then
 				--tooltip:AddLine(" ")
-				if ParagonDB["config"]["tooltip_alts_enabled_alt"] and IsAltKeyDown() then
-					tooltip:AddLine(L["lowest reputation"])
-				else
-					tooltip:AddLine(L["highest reputation"])
-				end
+				--if ParagonDB["config"]["tooltip_alts_enabled_alt"] and IsAltKeyDown() then
+					--tooltip:AddLine(L["lowest reputation"])
+				--else
+					--tooltip:AddLine(L["highest reputation"])
+				--end
 				tooltip:AddLine(outputFaction(faction, 1, "tooltip", 1))
 
 				if limit >= 2 then
@@ -501,7 +501,7 @@ local function GameTooltip_OnTooltipSetItem(tooltip)
 					end
 				end
 
-				if ParagonDB["config"]["tooltip_alts_enabled_shift"] and limit_shift > limit and IsShiftKeyDown() then
+				if ParagonDB["config"]["tooltip_alts_enabled_shift"] and limit_shift > limit then  -- and IsShiftKeyDown()
 					for i = (limit + 1), limit_shift do
 						if outputFaction(faction, i, "tooltip", i) then
 							tooltip:AddLine(outputFaction(faction, i, "tooltip", i))
@@ -512,13 +512,13 @@ local function GameTooltip_OnTooltipSetItem(tooltip)
 				end
 			end
 		elseif ParagonDB["config"]["tooltip_alts_enabled_shift"] and limit_shift >= 1 then
-			if IsShiftKeyDown() then
+			--if IsShiftKeyDown() then
 				--tooltip:AddLine(" ")
-				if ParagonDB["config"]["tooltip_alts_enabled_alt"] and IsAltKeyDown() then
-					tooltip:AddLine(L["lowest reputation"])
-				else
-					tooltip:AddLine(L["highest reputation"])
-				end
+				--if ParagonDB["config"]["tooltip_alts_enabled_alt"] and IsAltKeyDown() then
+					--tooltip:AddLine(L["lowest reputation"])
+				--else
+					--tooltip:AddLine(L["highest reputation"])
+				--end
 				tooltip:AddLine(outputFaction(faction, 1, "tooltip", 1))
 
 				if limit_shift >= 2 then
@@ -528,10 +528,10 @@ local function GameTooltip_OnTooltipSetItem(tooltip)
 						end
 					end
 				end
-			else
+			--else
 				--tooltip:AddLine(" ")
-				tooltip:AddLine("|cff00ff00"..L["hold shift for highest reputation"].."|r")
-			end
+				--tooltip:AddLine("|cff00ff00"..L["hold shift for highest reputation"].."|r")
+			--end
 		end
 	end
 end

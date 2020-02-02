@@ -1,6 +1,0 @@
-﻿<Ui xmlns="http://www.blizzard.com/wow/ui/">
-	<Script file="DefaultClickSets.lua"/>
-	<Script file="UIDropDownTooltipFunc.lua"/>
-	<Include file= "GridClickSetsFrame.xml"/>
-	<Script file="SetupCompactUnitFrame.lua"/>
-</Ui>

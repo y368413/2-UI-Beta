@@ -626,6 +626,11 @@ CandyBuckets.modules["midsummer"] = {
 	}
 }
 
+
+if WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE then
+	return
+end
+
 ---- Session--
 CandyBuckets.FACTION = 0
 CandyBuckets.QUESTS = {}
@@ -680,6 +685,29 @@ do
 	end
 end
 
+local function GetLowestLevelMapFromMapID(uiMapID, x, y)
+	if not uiMapID or not x or not y then
+		return uiMapID, x, y
+	end
+
+	local child = C_Map.GetMapInfoAtPosition(uiMapID, x, y)
+	if not child or not child.mapID then
+		return uiMapID, x, y
+	end
+
+	local continentID, worldPos = C_Map.GetWorldPosFromMapPos(uiMapID, { x = x, y = y })
+	if not continentID or not worldPos then
+		return uiMapID, x, y
+	end
+
+	local _, mapPos = C_Map.GetMapPosFromWorldPos(continentID, worldPos, child.mapID)
+	if mapPos and mapPos.x and mapPos.y then
+		return child.mapID, mapPos.x, mapPos.y
+	end
+
+	return uiMapID, x, y
+end
+
 local function GetPlayerMapAndPosition()
 	local unit = "player"
 
@@ -690,10 +718,95 @@ local function GetPlayerMapAndPosition()
 
 	local pos = C_Map.GetPlayerMapPosition(uiMapID, unit)
 	if not pos or not pos.x or not pos.y then
-		return uiMapID, IsInInstance() ~= "none" and { x = 10, y = 10 } or nil
+		return uiMapID
 	end
 
 	return uiMapID, pos
+end
+
+---- Waypoint--
+
+-- CandyBuckets:GetWaypointAddon()
+-- CandyBuckets:AutoWaypoint(poi, wholeModule, silent)
+do
+	local waypointAddons = {}
+
+	-- TomTom (v80001-1.0.2)
+	table.insert(waypointAddons, {
+		name = "TomTom",
+		func = function(self, poi, wholeModule)
+			if wholeModule then
+				self:funcAll(poi.quest.module)
+				TomTom:SetClosestWaypoint()
+			else
+				local uiMapID = poi:GetMap():GetMapID()
+				local x, y = poi:GetPosition()
+				local childUiMapID, childX, childY = GetLowestLevelMapFromMapID(uiMapID, x, y)
+				local mapInfo = C_Map.GetMapInfo(childUiMapID)
+				TomTom:AddWaypoint(childUiMapID, childX, childY, {
+					title = string.format("%s (%s, %d)", poi.name, mapInfo.name or "Map " .. childUiMapID, poi.quest.quest),
+					minimap = true,
+					crazy = true,
+				})
+			end
+			return true
+		end,
+		funcAll = function(self, module)
+			for i = 1, #CandyBuckets.QUESTS do
+				local quest = CandyBuckets.QUESTS[i]
+				if quest.module == module then
+					for uiMapID, coords in pairs(quest) do
+						if type(uiMapID) == "number" and type(coords) == "table" then
+							local name = module.title[quest.extra or 1]
+							local mapInfo = C_Map.GetMapInfo(uiMapID)
+							TomTom:AddWaypoint(uiMapID, coords[1]/100, coords[2]/100, {
+								title = string.format("%s (%s, %d)", name, mapInfo.name or "Map " .. uiMapID, quest.quest),
+								minimap = true,
+								crazy = true,
+							})
+						end
+					end
+				end
+			end
+			return true
+		end,
+	})
+
+	local supportedAddons = ""
+	local supportedAddonsWarned = false
+	for i = 1, #waypointAddons do
+		supportedAddons = supportedAddons .. waypointAddons[i].name .. " "
+	end
+
+	function CandyBuckets:GetWaypointAddon()
+		for i = 1, #waypointAddons do
+			local waypoint = waypointAddons[i]
+			if IsAddOnLoaded(waypoint.name) then
+				return waypoint
+			end
+		end
+	end
+
+	function CandyBuckets:AutoWaypoint(poi, wholeModule, silent)
+		local waypoint = CandyBuckets:GetWaypointAddon()
+		if not waypoint then
+			if not silent then
+				if not supportedAddonsWarned and supportedAddons ~= "" then
+					supportedAddonsWarned = true
+					DEFAULT_CHAT_FRAME:AddMessage("You need to install one of these supported waypoint addons: " .. supportedAddons, 1, 1, 0)
+				end
+			end
+			return false
+		end
+		local status, err = pcall(function() return waypoint:func(poi, wholeModule) end)
+		if not status or err ~= true then
+			if not silent then
+				DEFAULT_CHAT_FRAME:AddMessage("Unable to set waypoint using " .. waypoint.name .. (type(err) == "string" and ": " .. err or ""), 1, 1, 0)
+			end
+			return false
+		end
+		return true
+	end
 end
 
 ---- Mixin--
@@ -738,7 +851,7 @@ function CandyBucketsDataProviderMixin:RefreshAllData(fromOnShow)
 						poi = poi[translateKey]
 
 					else
-						local continentID, worldPos = C_Map.GetWorldPosFromMapPos(childUiMapID, CreateVector2D(poi[1]/100, poi[2]/100))
+						local continentID, worldPos = C_Map.GetWorldPosFromMapPos(childUiMapID, CreateVector2D(poi[1]/100, poi[2]/100)) -- TODO: replace with a table and xy properties?
 						poi, poi2 = nil, poi
 
 						if continentID and worldPos then
@@ -807,12 +920,26 @@ function CandyBucketsPinMixin:OnAcquired(quest, poi)
 	else
 		self:SetPosition(poi[1]/100, poi[2]/100)
 	end
+	local uiMapID = self:GetMap():GetMapID()
+	if uiMapID then
+		local x, y = self:GetPosition()
+		local childUiMapID, childX, childY = GetLowestLevelMapFromMapID(uiMapID, x, y)
+		local mapInfo = C_Map.GetMapInfo(childUiMapID)
+		if mapInfo and mapInfo.name and childX and childY then
+			self.description = string.format("%s (%.2f, %.2f)", mapInfo.name, childX * 100, childY * 100)
+		end
+	end
 end
 
 function CandyBucketsPinMixin:OnReleased()
 	self.quest, self.name, self.description = nil
 end
 
+
+function CandyBucketsPinMixin:OnClick(button)
+	if button ~= "LeftButton" then return end
+	CandyBuckets:AutoWaypoint(self, IsModifierKeyDown())
+end
 
 ---- Modules--
 
@@ -939,6 +1066,11 @@ function addon:CheckCalendar()
 				ongoing = curHour >= event.startTime.hour and (curHour > event.startTime.hour or curMinute >= event.startTime.minute)
 			elseif event.sequenceType == "END" then
 				ongoing = curHour <= event.endTime.hour and (curHour < event.endTime.hour or curMinute <= event.endTime.minute)
+				-- TODO: linger for 3 hours extra just in case event is active but not in the calendar
+				if not ongoing then
+					local paddingHour = max(0, curHour - 3)
+					ongoing = paddingHour <= event.endTime.hour and (paddingHour < event.endTime.hour or curMinute <= event.endTime.minute)
+				end
 			end
 
 			if ongoing and addon:CanLoadModule(moduleName) then
@@ -1169,6 +1301,10 @@ end
 
 function addon:QUEST_TURNED_IN(event, questID)
 	CandyBuckets.COMPLETED_QUESTS[questID] = true
+	local success, info, checkedNumQuestPOIs = addon:IsDeliveryLocationExpected(questID)
+	if success == false then
+		DEFAULT_CHAT_FRAME:AddMessage(format("|cffFFFFFF%s|r quest |cffFFFFFF%s#%d|r turned in at the wrong location. You were at |cffFFFFFF%d/%d/%.2f/%.2f|r roughly |cffFFFFFF%.2f|r units away from the expected %s. Please screenshot/copy this message and report it to the author. Thanks!", addonName, info.quest.module.event, questID, CandyBuckets.FACTION, info.uiMapID, info.x * 100, info.y * 100, info.distance * 100, checkedNumQuestPOIs and checkedNumQuestPOIs > 1 and checkedNumQuestPOIs .. " locations" or "location"), 1, 1, 0)
+	end
 	if addon:RemoveQuestPois(questID) then
 		addon:RefreshAllWorldMaps(true)
 	end
