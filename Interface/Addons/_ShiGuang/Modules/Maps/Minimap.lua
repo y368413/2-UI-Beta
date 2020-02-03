@@ -56,7 +56,7 @@ function module:ReskinRegions()
 		--self:GetHighlightTexture():SetTexture(I.garrTex)
 		--self:SetSize(30, 30)
 	--end)
-	if not (IsAddOnLoaded("GarrisonMaster") or IsAddOnLoaded("MasterPlan")) then
+	if not (IsAddOnLoaded("GarrisonMissionManager") or IsAddOnLoaded("GarrisonMaster")) then
 		GarrisonLandingPageMinimapButton:RegisterForClicks("AnyUp")
 		GarrisonLandingPageMinimapButton:HookScript("OnClick", function(_, btn, down)
 			if btn == "MiddleButton" and not down then
@@ -361,15 +361,15 @@ function module:SetupMinimap()
 
 	-- Click Func
 	Minimap:SetScript("OnMouseUp", function(self, btn)
-    if btn == "LeftButton" then 
-     if IsAltKeyDown() then ToggleFrame(WorldMapFrame) --Alt+鼠标左键点击显示大地图
-     elseif IsShiftKeyDown() then ToggleBattlefieldMinimap() --Shift+鼠标左键显示战场小地图
-     elseif IsControlKeyDown() then ToggleFrame(ObjectiveTrackerFrame) --Ctrl+鼠标左键显示任务
-     else Minimap_OnClick(self) --鼠标左键点击小地图显示Ping位置提示
-     end
-    elseif btn == "MiddleButton" then ToggleFrame(ObjectiveTrackerFrame)  --M:DropDown(MapMicromenu, MapMenuFrame, 0, 0) --鼠标中键显示系统菜单
-    elseif btn == "RightButton" then EasyMenu(SetMrbarMicromenu, SetMrbarMenuFrame, "cursor", 0, 0, "MENU", 2) --鼠标右键显示增强菜单
-    end
+		if btn == "LeftButton" then 
+			if IsAltKeyDown() then ToggleFrame(WorldMapFrame) --Alt+鼠标左键点击显示大地图
+			elseif IsShiftKeyDown() then ToggleBattlefieldMinimap() --Shift+鼠标左键显示战场小地图
+			elseif IsControlKeyDown() then ToggleFrame(ObjectiveTrackerFrame) --Ctrl+鼠标左键显示任务
+			else Minimap_OnClick(self) --鼠标左键点击小地图显示Ping位置提示
+			end
+		elseif btn == "MiddleButton" then ToggleFrame(ObjectiveTrackerFrame)  --M:DropDown(MapMicromenu, MapMenuFrame, 0, 0) --鼠标中键显示系统菜单
+		elseif btn == "RightButton" then EasyMenu(SetMrbarMicromenu, SetMrbarMenuFrame, "cursor", 0, 0, "MENU", 2) --鼠标右键显示增强菜单
+		end
 	end)
 	
 	-- Hide Blizz

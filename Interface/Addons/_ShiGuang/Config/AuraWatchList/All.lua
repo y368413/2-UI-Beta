@@ -171,12 +171,12 @@ local list = {
 		{AuraID = 278388, UnitID = "player"},	-- 永冻护壳之心
 		{AuraID = 274430, UnitID = "player", Text = U["Haste"]},	-- 永不间断的时钟，急速
 		{AuraID = 274431, UnitID = "player", Text = U["Mastery"]},	-- 精通
-		{AuraID = 267325, UnitID = "player", Text = U["Mastery"]},	-- 注铅骰子，精通
-		{AuraID = 267326, UnitID = "player", Text = U["Mastery"]},	-- 精通
-		{AuraID = 267327, UnitID = "player", Text = U["Haste"]},	-- 急速
-		{AuraID = 267329, UnitID = "player", Text = U["Haste"]},	-- 急速
-		{AuraID = 267330, UnitID = "player", Text = U["Crit"]},	-- 爆击
-		{AuraID = 267331, UnitID = "player", Text = U["Crit"]},	-- 爆击
+		--{AuraID = 267325, UnitID = "player", Text = U["Mastery"]},	-- 注铅骰子，精通
+		--{AuraID = 267326, UnitID = "player", Text = U["Mastery"]},	-- 精通
+		--{AuraID = 267327, UnitID = "player", Text = U["Haste"]},	-- 急速
+		--{AuraID = 267329, UnitID = "player", Text = U["Haste"]},	-- 急速
+		--{AuraID = 267330, UnitID = "player", Text = U["Crit"]},	-- 爆击
+		--{AuraID = 267331, UnitID = "player", Text = U["Crit"]},	-- 爆击
 		{AuraID = 280573, UnitID = "player", Combat = true},	-- 重组阵列
 		{AuraID = 289523, UnitID = "player", Combat = true},	-- 耀辉之光
 		{AuraID = 295408, UnitID = "player"},	-- 险恶赐福
@@ -189,6 +189,7 @@ local list = {
 		{AuraID = 301624, UnitID = "target", Caster = "player"},	-- 颤栗毒素
 		{AuraID = 302565, UnitID = "target", Caster = "player"},	-- 导电墨汁
 		{AuraID = 296962, UnitID = "player"},	-- 艾萨拉饰品
+		{AuraID = 315787, UnitID = "player", Caster = "player"},	-- 生命充能
 		-- 艾泽里特特质
 		{AuraID = 277960, UnitID = "player"},	-- 神经电激
 		{AuraID = 280852, UnitID = "player"},	-- 解放者之力
@@ -301,9 +302,11 @@ local list = {
 	["Raid Debuff"] = {		-- 团队减益组
 		{AuraID = 295413, UnitID = "player", Stack = 20, Flash = true},	-- 苦楚
 	-- 5人本
+		{AuraID = 311390, UnitID = "player"},	-- 疯狂：昆虫恐惧症，幻象
 		{AuraID = 314478, UnitID = "player"},	-- 倾泻恐惧
 		{AuraID = 314483, UnitID = "player"},	-- 倾泻恐惧
 		{AuraID = 314565, UnitID = "player", Flash = true},	-- 亵渎大地
+		{AuraID = 314308, UnitID = "player", Flash = true},	-- 灵魂毁灭
 		{AuraID = 209858, UnitID = "player"},	-- 死疽溃烂
 		{AuraID = 240559, UnitID = "player"},	-- 重伤
 		{AuraID = 302420, UnitID = "player"},	-- 女王法令：隐藏
@@ -397,6 +400,8 @@ local list = {
 		{AuraID = 307645, UnitID = "player"},	-- 黑暗之心
 		{AuraID = 315932, UnitID = "player"},	-- 蛮力重击
 		-- 虚无者莱登
+		{AuraID = 313977, UnitID = "player"},	-- 虚空诅咒，小怪
+		{AuraID = 306184, UnitID = "player", Value = true},	-- 释放的虚空
 		{AuraID = 306819, UnitID = "player"},	-- 虚化重击
 		{AuraID = 306279, UnitID = "player"},	-- 动荡暴露
 		{AuraID = 306637, UnitID = "player"},	-- 不稳定的虚空爆发
@@ -412,6 +417,8 @@ local list = {
 		{AuraID = 307044, UnitID = "player"},	-- 梦魇抗原
 		{AuraID = 307011, UnitID = "player"},	-- 疯狂繁衍
 		{AuraID = 307061, UnitID = "player"},	-- 菌丝生长
+		{AuraID = 306973, UnitID = "player"},	-- 疯狂炸弹
+		{AuraID = 306984, UnitID = "player"},	-- 狂乱炸弹
 		-- 腐蚀者恩佐斯
 		{AuraID = 308996, UnitID = "player"},	-- 恩佐斯的仆从
 		{AuraID = 313609, UnitID = "player"},	-- 恩佐斯之赐

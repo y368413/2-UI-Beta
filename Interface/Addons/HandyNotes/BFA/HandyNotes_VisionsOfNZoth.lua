@@ -2004,6 +2004,7 @@ nodes[28030834] = AQRTR5
 nodes[30671611] = AQRTR5
 nodes[30903046] = AQRTR5
 nodes[31521515] = AQRTR5
+nodes[33571901] = AQRTR5
 nodes[33953036] = AQRTR5
 nodes[35101878] = AQRTR5
 nodes[35413157] = AQRTR5
@@ -2108,6 +2109,8 @@ nodes[79166486] = AMATR2
 -- quest=55691
 nodes[71504750] = AMATR3
 nodes[72474857] = AMATR3
+nodes[73035386] = AMATR3
+nodes[73045143] = AMATR3
 nodes[74195187] = AMATR3
 nodes[75335579] = AMATR3
 nodes[75575372] = AMATR3
@@ -2126,6 +2129,7 @@ nodes[63084970] = AMATR5
 nodes[64094488] = AMATR5
 nodes[65403796] = AMATR5
 nodes[66394350] = AMATR5
+nodes[67884158] = AMATR5
 nodes[69744236] = AMATR5
 nodes[69874163] = AMATR5
 -- quest=55700
@@ -2148,6 +2152,7 @@ nodes[67464294] = AMACOFF
 nodes[73337356] = AMACOFF
 nodes[73685054] = AMACOFF
 nodes[75914194] = AMACOFF
+nodes[83116028] = AMACOFF
 
 -------------------------------------------------------------------------------
 -------------------------------- ASSAULT EVENTS -------------------------------
@@ -2206,7 +2211,7 @@ nodes[59022780] = TimedEvent({quest=57588, assault=EMP, pois={
 
 -------------------------------------------------------------------------------
 
-nodes[84005400] = TimedEvent({quest=55670, assault=AMA, note=L["raiding_fleet"]}) -- Amathet Raiding Fleet
+nodes[84205548] = TimedEvent({quest=55670, assault=AMA, note=L["raiding_fleet"]}) -- Amathet Raiding Fleet
 nodes[76004700] = TimedEvent({quest=57243, assault=AMA, note=L["slave_camp"]}) -- Amathet Slave Camp
 nodes[62062069] = TimedEvent({quest=55356, assault=AMA, note=L["beacon_of_sun_king"]}) -- Beacon of the Sun King
 nodes[71594586] = TimedEvent({quest=55358, assault=AMA, note=L["beacon_of_sun_king"]}) -- Beacon of the Sun King
@@ -2218,12 +2223,10 @@ nodes[66515030] = TimedEvent({quest=57235, assault=AMA, note=L["solar_collector"
 nodes[80256607] = TimedEvent({quest=57234, assault=AMA, note=L["solar_collector"]}) -- Solar Collector
 nodes[69905991] = TimedEvent({quest=55360, assault=AMA, note=L["unsealed_tomb"]}) -- The Unsealed Tomb
 nodes[61414704] = TimedEvent({quest=55354, assault=AMA, note=L["virnall_front"]}) -- The Vir'nall Front
+nodes[65513779] = TimedEvent({quest=57219, assault=AMA, note=L["unearthed_keeper"]}) -- Unearthed Keeper
 nodes[71366849] = TimedEvent({quest=57217, assault=AMA, note=L["unearthed_keeper"]}) -- Unearthed Keeper
-
--- nodes[65003700] = TimedEvent({quest=nil, assault=AMA}) -- Unearthed Keeper
--- nodes[66005000] = TimedEvent({quest=nil, assault=AMA}) -- Solar Extractor
--- nodes[78005700] = TimedEvent({quest=nil, assault=AMA}) -- Unearthed Keeper
--- nodes[83004800] = TimedEvent({quest=nil, assault=AMA}) -- Unearthed Keeper
+nodes[78225754] = TimedEvent({quest=57223, assault=AMA, note=L["unearthed_keeper"]}) -- Unearthed Keeper
+nodes[82534796] = TimedEvent({quest=57218, assault=AMA, note=L["unearthed_keeper"]}) -- Unearthed Keeper
 
 -------------------------------------------------------------------------------
 --------------------------------- BATTLE PETS ---------------------------------
@@ -2868,9 +2871,16 @@ orgrimmar.nodes[52707580] = MAIL
 orgrimmar.nodes[60105130] = MAIL
 orgrimmar.nodes[67673924] = MAIL
 
-orgrimmar.nodes[39906120] = Node({icon=1001616, label=L["shave_kit"], note=L["shave_kit_note"], rewards={
+local SHAVE_KIT = Node({icon=1001616, label=L["shave_kit"], note=L["shave_kit_note"], rewards={
     Toy({item=174920}) -- Coifcurl's Close Shave Kit
 }})
+
+function SHAVE_KIT:enabled (map, coord, minimap)
+    if not Node.enabled(self, map, coord, minimap) then return false end
+    return HandyNotes_VisionsOfNZoth.db.profile.always_show_treasures or (not self:done())
+end
+
+orgrimmar.nodes[39906120] = SHAVE_KIT
 
 -------------------------------------------------------------------------------
 ---------------------------------- STORMWIND ----------------------------------
@@ -2882,9 +2892,16 @@ stormwind.nodes[61687604] = MAIL
 stormwind.nodes[62073082] = MAIL
 stormwind.nodes[76306430] = MAIL
 
-stormwind.nodes[58905290] = Node({icon=237272, label=L["void_skull"], note=L["void_skull_note"], rewards={
+local VOID_SKULL = Node({icon=237272, label=L["void_skull"], note=L["void_skull_note"], rewards={
     Toy({item=174921}) -- Void-Touched Skull
 }})
+
+function VOID_SKULL:enabled (map, coord, minimap)
+    if not Node.enabled(self, map, coord, minimap) then return false end
+    return HandyNotes_VisionsOfNZoth.db.profile.always_show_treasures or (not self:done())
+end
+
+stormwind.nodes[58905290] = VOID_SKULL
 
 stormwind.nodes[59106390] = Rare({id=158284, pois={
     Path({

@@ -50,7 +50,7 @@ function A:OnLogin()
 	end
 	self:InitReminder()
 	--self:Energy()
-	self:ClassRecoure()
+	--self:ClassRecoure()
 end
 
 local day, hour, minute = 86400, 3600, 60
@@ -128,9 +128,9 @@ function A:UpdateAuras(button, index)
 
 		if filter == "HARMFUL" then
 			local color = DebuffTypeColor[debuffType or "none"]
-			button.Shadow:SetBackdropBorderColor(color.r, color.g, color.b)
+			button:SetBackdropBorderColor(color.r, color.g, color.b)
 		else
-			button.Shadow:SetBackdropBorderColor(0, 0, 0)
+			button:SetBackdropBorderColor(0, 0, 0)
 		end
 
 		button.icon:SetTexture(texture)

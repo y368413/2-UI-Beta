@@ -5,7 +5,6 @@ local S = M:RegisterModule("Skins")
 function S:OnLogin()
 	PlayerFrame:SetScale(MaoRUIPerDB["UFs"]["PlayerFrameScale"]) 
 	TargetFrame:SetScale(MaoRUIPerDB["UFs"]["PlayerFrameScale"])
-
    ----BOTTOM
    if MaoRUIPerDB["Skins"]["InfobarLine"] then
    local Bottomline = CreateFrame("Frame", nil, UIParent) 
@@ -23,33 +22,31 @@ function S:OnLogin()
 	self:QuestTrackerSkinTitle()
 	self:PetBattleUI()
 	self:DBMSkin()
-	self:SkadaSkin()
 	self:BigWigsSkin()
 	self:LootEx()		-- 拾取增强
 	-- Register skin
 	local media = LibStub and LibStub("LibSharedMedia-3.0", true)
 	if media then
 		media:Register("statusbar", "normTex", I.normTex)
-		media:Register("statusbar", "ShiGuang",		  [[Interface\Addons\_ShiGuang\Media\Modules\Raid\ColorBar]])
-		media:Register("statusbar", "HalfStyle",		[[Interface\Addons\_ShiGuang\Media\Modules\Skada\YaSkada05]])
-		media:Register("statusbar", "AtlzSkada",		[[Interface\Addons\_ShiGuang\Media\Modules\Skada\AtlzSkada]])
-		media:Register("statusbar", "Yaskada",		  [[Interface\Addons\_ShiGuang\Media\Modules\Skada\Yaskada]])
-		media:Register("statusbar", "Yaskada02",		[[Interface\Addons\_ShiGuang\Media\Modules\Skada\Yaskada02]])
-		media:Register("statusbar", "Yaskada03",		[[Interface\Addons\_ShiGuang\Media\Modules\Skada\Yaskada03]])
-		media:Register("statusbar", "Yaskada04",		[[Interface\Addons\_ShiGuang\Media\Modules\Skada\Yaskada04]])
-		media:Register("statusbar", "Rainbow",			[[Interface\Addons\_ShiGuang\Media\Modules\Skada\Rainbow]])
-		media:Register("statusbar", "None",		      [[Interface\Addons\_ShiGuang\Media\backdrop]])
-		media:Register("font", "Vera Serif",			  [[Interface\Addons\_ShiGuang\Media\Fonts\Pixel.ttf]])
+		media:Register("statusbar", "ShiGuang", [[Interface\Addons\_ShiGuang\Media\Modules\Raid\ColorBar]])
+		media:Register("statusbar", "HalfStyle", [[Interface\Addons\_ShiGuang\Media\Modules\Skada\YaSkada05]])
+		media:Register("statusbar", "AtlzSkada", [[Interface\Addons\_ShiGuang\Media\Modules\Skada\AtlzSkada]])
+		media:Register("statusbar", "Yaskada", [[Interface\Addons\_ShiGuang\Media\Modules\Skada\Yaskada]])
+		media:Register("statusbar", "Yaskada02", [[Interface\Addons\_ShiGuang\Media\Modules\Skada\Yaskada02]])
+		media:Register("statusbar", "Yaskada03", [[Interface\Addons\_ShiGuang\Media\Modules\Skada\Yaskada03]])
+		media:Register("statusbar", "Yaskada04", [[Interface\Addons\_ShiGuang\Media\Modules\Skada\Yaskada04]])
+		media:Register("statusbar", "Rainbow", [[Interface\Addons\_ShiGuang\Media\Modules\Skada\Rainbow]])
+		media:Register("statusbar", "None",	[[Interface\Addons\_ShiGuang\Media\backdrop]])
+		media:Register("font", "Vera Serif", [[Interface\Addons\_ShiGuang\Media\Fonts\Pixel.ttf]])
 	end
 	  local function noop() end
-    local function DisableBlizzardFrame(frame)
+    local function DisableBlzFrame(frame)
 	     frame.RegisterEvent = noop
 	     frame.Show = noop
 	     frame:UnregisterAllEvents()
 	     frame:Hide()
     end
-	--if MaoRUIPerDB["Skins"]["CastBarstyle"] then --DisableBlizzardFrame(CastingBarFrame) 
-	--DisableBlizzardFrame(TargetFrameSpellBar) DisableBlizzardFrame(FocusFrameSpellBar) DisableBlizzardFrame(PetCastingBarFrame) return end
+	if MaoRUIPerDB["Skins"]["CastBarstyle"] then DisableBlzFrame(TargetFrameSpellBar) DisableBlzFrame(FocusFrameSpellBar) DisableBlzFrame(PetCastingBarFrame) return end --CastingBarFrame
 end
 
 function S:GetToggleDirection()

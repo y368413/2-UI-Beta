@@ -65,6 +65,7 @@ function oUF:DisableBlizzard(unit)
 	if(not unit) then return end
 
 	if(unit == 'player') then
+	if (ShiGuangPerDB["BHT"] == true) then	
 		handleFrame(PlayerFrame)
 
 		-- For the damn vehicle support:
@@ -77,14 +78,19 @@ function oUF:DisableBlizzard(unit)
 		-- User placed frames don't animate
 		PlayerFrame:SetUserPlaced(true)
 		--PlayerFrame:SetDontSavePosition(true)
+		end
 	elseif(unit == 'pet') then
 		handleFrame(PetFrame)
 	elseif(unit == 'target') then
+	if (ShiGuangPerDB["BHT"] == true) then	
 		handleFrame(TargetFrame)
 		handleFrame(ComboFrame)
+	end
 	elseif(unit == 'focus') then
+	if (ShiGuangPerDB["BHT"] == true) then	
 		handleFrame(FocusFrame)
 		handleFrame(TargetofFocusFrame)
+	end
 	elseif(unit == 'targettarget') then
 		handleFrame(TargetFrameToT)
 	elseif(unit:match('boss%d?$')) then

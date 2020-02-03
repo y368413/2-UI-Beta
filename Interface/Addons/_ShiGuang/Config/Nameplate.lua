@@ -60,9 +60,9 @@ R.WhiteList = {
 	[313208]	= true,		-- 无形幻象，先知斯基特拉
 	[307637]	= true,		-- 突变进化，主脑
 	[307213]	= true,		-- 虚空灌注
-	[307227]	= true,		-- 重生
 	[307583]	= true,		-- 不稳定的喷发
 	[312595]	= true,		-- 易爆腐蚀，德雷阿佳丝
+	[317672]	= true,		-- 血性狂乱，伊格诺斯
 	[307729]	= true,		-- 狂热晋升，维克修娜
 	[312750]	= true,		-- 召唤梦魇，虚无者莱登
 	[306990]	= true,		-- 适化外膜，恩佐斯外壳
@@ -193,7 +193,10 @@ R.CustomUnits = {
 	[GetSectionInfo(19393)] = true,	-- 雪怒之魂
 	[GetSectionInfo(19279)] = true,	-- 谄媚海妖
 	[GetSectionInfo(19019)] = true,	-- 贪婪的追猎者
+	["爆裂工虫"] = true,
 	[GetSectionInfo(21209)] = true,	-- 亚基掠夺者
+	[GetSectionInfo(20561)] = true,	-- 惊魂淤血
+	[GetSectionInfo(21329)] = true,	-- 聚合增生
 }
 
 -- 显示能量值的单位

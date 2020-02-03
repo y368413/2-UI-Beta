@@ -126,7 +126,7 @@ function BlinkHealth:OnEnable()
   self:RegisterEvent("PLAYER_ENTERING_WORLD");
 	self:RegisterEvent("PLAYER_REGEN_DISABLED");
 	self:RegisterEvent("PLAYER_REGEN_ENABLED");
-    self:RegisterEvent("UNIT_POWER_UPDATE");
+	self:RegisterEvent("UNIT_POWER_UPDATE");
 	self.frame["player"]:Show();
 	self.handle = self:ScheduleRepeatingTimer("UpdateUnitValues", 0.05);
 end
@@ -735,7 +735,7 @@ end
 function BlinkHealth:CreateHitAnchor()
 	if (self.HitAnchor) then return end
 
-	self.HitAnchor = CreateFrame("Button", "SimpleInfoHitPointAnchorFrameNew", UIParent);
+	self.HitAnchor = CreateFrame("Button", "SimpleInfoHitPointAnchor", UIParent)
 	self.HitAnchor:SetSize(100, 80);
 	self.HitAnchor:EnableMouse(true);
 	self.HitAnchor:SetMovable(true);
@@ -848,7 +848,9 @@ function BlinkHealth_SlashHandler(msg)
 	elseif (cmdtype == "off") then BlinkHealth:OnDisable();
 	elseif (cmdtype == "move" or cmdtype == "m") then
 			BlinkHealth:ShowAnchor();
+		if (I.MyClass == "MONK") or (I.MyClass == "PALADIN") or (I.MyClass == "WARLOCK") or (I.MyClass == "MAGE") or (I.MyClass == "ROGUE") or (I.MyClass == "DRUID") then	
 			BlinkHealth:ShowHitAnchor();
+		end		
   elseif (cmdtype == "hiton") then
 		if (I.MyClass == "MONK") or (I.MyClass == "PALADIN") or (I.MyClass == "WARLOCK") or (I.MyClass == "MAGE") or (I.MyClass == "ROGUE") or (I.MyClass == "DRUID") then	
 			BlinkHealth:ToggleHitPoint(true);

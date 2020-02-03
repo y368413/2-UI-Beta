@@ -17,7 +17,11 @@ oUF.colors.power.ARCANE_CHARGES = {.41, .8, .94}
 -- Various values
 local function retVal(self, val1, val2, val3, val4, val5)
 	local mystyle = self.mystyle
-	if mystyle == "boss" or mystyle == "arena" then
+	if mystyle == "player" or mystyle == "target" then
+		return val1
+	elseif mystyle == "focus" then
+		return val2
+	elseif mystyle == "boss" or mystyle == "arena" then
 		return val3
 	else
 		if mystyle == "nameplate" and val5 then
@@ -265,8 +269,8 @@ function UF:UpdateTextScale()
 	for _, frame in pairs(oUF.objects) do
 		local style = frame.mystyle
 		if style and textScaleFrames[style] then
-			frame.nameText:SetScale(scale)
-			frame.healthValue:SetScale(scale)
+			--frame.nameText:SetScale(scale)
+			--frame.healthValue:SetScale(scale)
 			if frame.powerText then frame.powerText:SetScale(scale) end
 		end
 	end
@@ -342,7 +346,7 @@ function UF:CreateCastBar(self)
 	local cb = CreateFrame("StatusBar", "oUF_Castbar"..mystyle, self)
 	cb:SetHeight(31)
 	cb:SetWidth(self:GetWidth() - 21)
-	M.CreateSB(cb, true, .3, .7, 1)
+	M.CreateSB(cb, true, .2, .8, 1)
 
 	if mystyle == "player" then
 		cb:SetSize(MaoRUIPerDB["UFs"]["PlayerCBWidth"], MaoRUIPerDB["UFs"]["PlayerCBHeight"])
@@ -350,6 +354,9 @@ function UF:CreateCastBar(self)
 	elseif mystyle == "target" then
 		cb:SetSize(MaoRUIPerDB["UFs"]["TargetCBWidth"], MaoRUIPerDB["UFs"]["TargetCBHeight"])
 		createBarMover(cb, U["Target Castbar"], "TargetCB", R.UFs.Targetcb)
+	elseif mystyle == "focus" then
+		cb:SetSize(MaoRUIPerDB["UFs"]["FocusCBWidth"], MaoRUIPerDB["UFs"]["FocusCBHeight"])
+		createBarMover(cb, U["Focus Castbar"], "FocusCB", R.UFs.Focuscb)
 	elseif mystyle == "boss" or mystyle == "arena" then
 		cb:SetPoint("TOPRIGHT", self.Power, "BOTTOMRIGHT", 0, -8)
 		cb:SetSize(self:GetWidth(), 10)
@@ -382,7 +389,7 @@ function UF:CreateCastBar(self)
 		cb.SafeZone = safe
 
 		if MaoRUIPerDB["UFs"]["LagString"] then
-			local lag = M.CreateFS(cb, 10, "", false, "CENTER", -6, 17)
+			local lag = M.CreateFS(cb, 8, "", false, "CENTER", -6, -6)
 			cb.Lag = lag
 			self:RegisterEvent("CURRENT_SPELL_CAST_CHANGED", M.OnCastSent, true)
 		end
@@ -941,7 +948,7 @@ function UF:CreatePrediction(self)
 	}
 end
 
-function UF.PostUpdateAddPower(element, _, cur, max)
+--[[function UF.PostUpdateAddPower(element, _, cur, max)
 	if element.Text and max > 0 then
 		local perc = cur/max * 100
 		if perc == 100 then
@@ -957,8 +964,9 @@ end
 
 function UF:CreateAddPower(self)
 	local bar = CreateFrame("StatusBar", nil, self)
-	bar:SetSize(150, 4)
-	bar:SetPoint("TOPLEFT", self, "BOTTOMLEFT", 0, -10)
+	bar:SetPoint("TOPLEFT", self.Power, "BOTTOMLEFT", 0, -3)
+	bar:SetPoint("TOPRIGHT", self.Power, "BOTTOMRIGHT", 0, -3)
+	bar:SetHeight(4)
 	bar:SetStatusBarTexture(I.normTex)
 	M.CreateBDFrame(bar, 0, true)
 	bar.colorPower = true
@@ -973,6 +981,19 @@ function UF:CreateAddPower(self)
 	self.AdditionalPower.bg = bg
 	self.AdditionalPower.Text = text
 	self.AdditionalPower.PostUpdate = UF.PostUpdateAddPower
+	self.AdditionalPower.displayPairs = {
+		["DRUID"] = {
+			[1] = true,
+			[3] = true,
+			[8] = true,
+		},
+		["SHAMAN"] = {
+			[11] = true,
+		},
+		["PRIEST"] = {
+			[13] = true,
+		}
+	}
 end
 
 function UF:CreateSwing(self)
@@ -1031,7 +1052,7 @@ function UF:CreateQuakeTimer(self)
 	bar.Icon = icon
 
 	self.QuakeTimer = bar
-end
+end]]
 
 function UF:CreatePVPClassify(self)
     local bu = self:CreateTexture(nil, "ARTWORK")

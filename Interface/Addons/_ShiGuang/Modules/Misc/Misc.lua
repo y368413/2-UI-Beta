@@ -57,6 +57,7 @@ function MISC:OnLogin()
 	self:TradeTargetInfo()
 	self:TradeTabs()
 	self:CreateRM()
+	self:BlockWQTInvite()
 	self:FreeMountCD()
 	self:WallpaperKit()
 	
@@ -419,62 +420,6 @@ do
 	M:RegisterEvent("ARCHAEOLOGY_FIND_COMPLETE", updateArcTitle)
 end
 
---[[ Show BID and highlight price
-do
-	local function setupMisc(event, addon)
-		if addon == "Blizzard_AuctionUI" then
-			hooksecurefunc("AuctionFrameBrowse_Update", function()
-				local numBatchAuctions = GetNumAuctionItems("list")
-				local offset = FauxScrollFrame_GetOffset(BrowseScrollFrame)
-				local name, buyoutPrice, bidAmount, hasAllInfo
-				for i = 1, NUM_BROWSE_TO_DISPLAY do
-					local index = offset + i + (NUM_AUCTION_ITEMS_PER_PAGE * AuctionFrameBrowse.page)
-					local shouldHide = index > (numBatchAuctions + (NUM_AUCTION_ITEMS_PER_PAGE * AuctionFrameBrowse.page))
-					if not shouldHide then
-						name, _, count, _, _, _, _, _, _, buyoutPrice, bidAmount, _, _, _, _, _, _, hasAllInfo = GetAuctionItemInfo("list", offset + i)
-						if not hasAllInfo then shouldHide = true end
-					end
-					if not shouldHide then
-						local alpha = .5
-						local color = "yellow"
-						local buttonName = "BrowseButton"..i
-						local itemName = _G[buttonName.."Name"]
-						local moneyFrame = _G[buttonName.."MoneyFrame"]
-						local buyoutMoney = _G[buttonName.."BuyoutFrameMoney"]
-						-- AH Gold Icon
-						local function formats(value)
-							local str = ''
-							if value > 9999 then
-								str = str .. format('|c00ffd700%d●|r', floor(value / 10000))
-							end
-							if value > 99 and floor(value/100)%100 ~= 0 then
-								str = str .. format('|c00c7c7cf%d●|r', (floor(value / 100) % 100))
-							end
-							if floor(value)%100 ~= 0 then
-								str = str .. format('|c00eda55f%d●|r', (floor(value) % 100))
-							end
-							return str
-						end
-						if buyoutPrice >= 5*1e7 then color = "red" end
-							if bidAmount > 0 then
-								name = name .. " |cffffff00[￥]|r"
-								alpha = 1.0
-							end
-							if (buyoutPrice > 0) and (count > 1) then
-								name = name .. " |cffffff00["..formats(floor(buyoutPrice / count)).."|cffffff00]|r"
-							end
-							itemName:SetText(name)
-							moneyFrame:SetAlpha(alpha)
-							SetMoneyFrameColor(buyoutMoney:GetName(), color)
-					end
-				end
-			end)
-			M:UnregisterEvent(event, setupMisc)
-		end
-	end
-	M:RegisterEvent("ADDON_LOADED", setupMisc)
-end]]
-
 -- Drag AltPowerbar
 do
 	local mover = CreateFrame("Frame", "NDuiAltBarMover", PlayerPowerBarAlt)
@@ -707,6 +652,48 @@ do
 
 	M:RegisterEvent("ADDON_LOADED", fixGuildNews)
 	M:RegisterEvent("ADDON_LOADED", fixCommunitiesNews)
+end
+
+function MISC:BlockWQTInvite()
+	if not MaoRUIPerDB["Misc"]["BlockWQT"] then return end
+
+	local frame = CreateFrame("Frame", nil, StaticPopup1)
+	frame:SetPoint("TOP", StaticPopup1, "BOTTOM", 0, -3)
+	frame:SetSize(200, 34)
+	M.CreateBD(frame)
+	M.CreateTex(frame)
+	M.CreateSD(frame)
+	frame:Hide()
+
+	local WQTUsers = {}
+	local currentName
+
+	local bu = CreateFrame("Button", nil, frame)
+	bu:SetInside(frame, 5, 5)
+	M.CreateFS(bu, 15, U["DeclineNBlock"], "system")
+	bu.title = U["Tips"]
+	M.AddTooltip(bu, "ANCHOR_TOP", U["DeclineNBlockTips"], "info")
+	M.Reskin(bu)
+	bu:SetScript("OnClick", function()
+		if currentName then
+			WQTUsers[currentName] = true
+		end
+		StaticPopup_Hide("PARTY_INVITE")
+	end)
+
+	M:RegisterEvent("PARTY_INVITE_REQUEST", function(_, name)
+		if WQTUsers[name] then
+			StaticPopup_Hide("PARTY_INVITE")
+			return
+		end
+		frame:Show()
+		currentName = name
+	end)
+
+	hooksecurefunc(StaticPopup1, "Hide", function()
+		frame:Hide()
+		currentName = nil
+	end)
 end
 
 do

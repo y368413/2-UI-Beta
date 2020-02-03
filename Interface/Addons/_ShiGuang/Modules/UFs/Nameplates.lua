@@ -44,6 +44,7 @@ function UF:UpdatePlateSpacing()
 end
 
 function UF:UpdateClickableSize()
+	if InCombatLockdown() then return end
 	C_NamePlate.SetNamePlateEnemySize(MaoRUIPerDB["Nameplate"]["PlateWidth"], MaoRUIPerDB["Nameplate"]["PlateHeight"]+40)
 	C_NamePlate.SetNamePlateFriendlySize(MaoRUIPerDB["Nameplate"]["PlateWidth"], MaoRUIPerDB["Nameplate"]["PlateHeight"]+40)
 end
@@ -386,7 +387,7 @@ function UF:UpdateQuestUnit(_, unit)
 								isLootQuest = nil
 							elseif progress < 100 then
 								questProgress = 100 - progress
-								break
+								--break -- lower priority on progress
 							end
 						end
 					end

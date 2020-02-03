@@ -21,7 +21,7 @@ function MISC:AddAlerts()
 	--self:VersionCheck()
 	--self:ExplosiveAlert()
 	self:PlacedItemAlert()
-	self:UunatAlert()
+	--self:UunatAlert()
 end
 
 --[[
@@ -222,78 +222,6 @@ function MISC:InterruptAlert()
 		M:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED", MISC.InterruptAlert_Update)
 	end
 end
---[[
-	大米完成时，通报打球统计
-]]
-local eventList = {
-	["SWING_DAMAGE"] = 13,
-	["RANGE_DAMAGE"] = 16,
-	["SPELL_DAMAGE"] = 16,
-	["SPELL_PERIODIC_DAMAGE"] = 16,
-	["SPELL_BUILDING_DAMAGE"] = 16,
-}
-
-function MISC:Explosive_Update(...)
-	local _, eventType, _, _, sourceName, _, _, destGUID = ...
-	local index = eventList[eventType]
-	if index and M.GetNPCID(destGUID) == 120651 then
-		local overkill = select(index, ...)
-		if overkill and overkill > 0 then
-			local name = strsplit("-", sourceName or UNKNOWN)
-			local cache = MaoRUIPerDB["Misc"]["ExplosiveCache"]
-			if not cache[name] then cache[name] = 0 end
-			cache[name] = cache[name] + 1
-		end
-	end
-end
-
-local function startCount()
-	wipe(MaoRUIPerDB["Misc"]["ExplosiveCache"])
-	M:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED", MISC.Explosive_Update)
-end
-
-local function endCount()
-	local text
-	for name, count in pairs(MaoRUIPerDB["Misc"]["ExplosiveCache"]) do
-		text = (text or U["ExplosiveCount"])..name.."("..count..") "
-	end
-	if text then SendChatMessage(text, "PARTY") end
-	M:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED", MISC.Explosive_Update)
-end
-
-local function pauseCount()
-	local name, _, instID = GetInstanceInfo()
-	if name and instID == 8 then
-		M:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED", MISC.Explosive_Update)
-	else
-		M:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED", MISC.Explosive_Update)
-	end
-end
-
-function MISC.Explosive_CheckAffixes(event)
-	local affixes = C_MythicPlus_GetCurrentAffixes()
-	if not affixes then return end
-
-	if affixes[3] and affixes[3].id == 13 then
-		M:RegisterEvent("CHALLENGE_MODE_START", startCount)
-		M:RegisterEvent("CHALLENGE_MODE_COMPLETED", endCount)
-		M:RegisterEvent("PLAYER_ENTERING_WORLD", pauseCount)
-	end
-	M:UnregisterEvent("PLAYER_ENTERING_WORLD", MISC.Explosive_CheckAffixes)
-end
-
-function MISC:ExplosiveAlert()
-	if MaoRUIPerDB["Misc"]["ExplosiveCount"] then
-		self:Explosive_CheckAffixes()
-		M:RegisterEvent("PLAYER_ENTERING_WORLD", self.Explosive_CheckAffixes)
-	else
-		M:UnregisterEvent("CHALLENGE_MODE_START", startCount)
-		M:UnregisterEvent("CHALLENGE_MODE_COMPLETED", endCount)
-		M:UnregisterEvent("PLAYER_ENTERING_WORLD", pauseCount)
-		M:UnregisterEvent("PLAYER_ENTERING_WORLD", self.Explosive_CheckAffixes)
-		M:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED", self.Explosive_Update)
-	end
-end
 
 --[[
 	放大餐时叫一叫
@@ -337,52 +265,6 @@ function MISC:PlacedItemAlert()
 	M:RegisterEvent("GROUP_JOINED", self.ItemAlert_CheckGroup)
 end
 
--- 乌纳特踩圈通报
-function MISC:UunatAlert_CheckAura()
-	for i = 1, 16 do
-		local name, _, _, _, _, _, _, _, _, spellID = UnitDebuff("player", i)
-		if not name then break end
-		if name and spellID == 284733 then
-			return true
-		end
-	end
-end
-
-local uunatCache = {}
-function MISC:UunatAlert_Update(...)
-	local _, eventType, _, _, _, _, _, _, destName, _, _, spellID = ...
-	if eventType == "SPELL_DAMAGE" and spellID == 285214 and not MISC:UunatAlert_CheckAura() then
-		uunatCache[destName] = (uunatCache[destName] or 0) + 1
-		SendChatMessage(format(U["UunatAlertString"], destName, uunatCache[destName]), msgChannel())
-	end
-end
-
-local function resetCount()
-	wipe(uunatCache)
-end
-
-function MISC:UunatAlert_CheckInstance()
-	local instID = select(8, GetInstanceInfo())
-	if instID == 2096 then
-		M:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED", MISC.UunatAlert_Update)
-		M:RegisterEvent("ENCOUNTER_END", resetCount)
-	else
-		M:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED", MISC.UunatAlert_Update)
-		M:UnregisterEvent("ENCOUNTER_END", resetCount)
-	end
-end
-
-function MISC:UunatAlert()
-	if MaoRUIPerDB["Misc"]["UunatAlert"] then
-		self:UunatAlert_CheckInstance()
-		M:RegisterEvent("PLAYER_ENTERING_WORLD", self.UunatAlert_CheckInstance)
-	else
-		wipe(uunatCache)
-		M:UnregisterEvent("PLAYER_ENTERING_WORLD", self.UunatAlert_CheckInstance)
-		M:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED", self.UunatAlert_Update)
-		M:UnregisterEvent("ENCOUNTER_END", resetCount)
-	end
-end
 
 --[[## Author: Nick Melancon  ## Version: 0.1
 local JaniFailedBonusRoll = CreateFrame("FRAME");

@@ -266,7 +266,7 @@ function module:ChatFilter()
 	end
 
 	hooksecurefunc(BNToastFrame, "ShowToast", self.BlockTrashClub)
-	
+
 	if MaoRUIPerDB["Chat"]["ChatItemLevel"] then
 		ChatFrame_AddMessageEventFilter("CHAT_MSG_LOOT", self.UpdateChatItemLevel)
 		ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", self.UpdateChatItemLevel)

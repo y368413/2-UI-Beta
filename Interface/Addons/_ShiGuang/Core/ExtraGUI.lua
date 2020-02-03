@@ -19,12 +19,7 @@ local function createExtraGUI(parent, name, title, bgFrame)
 	local frame = CreateFrame("Frame", name, parent)
 	frame:SetSize(300, 600)
 	frame:SetPoint("LEFT", parent:GetParent(), "RIGHT", -92, -16)
-	 --local bgTexture = frame:CreateTexture("name", "BACKGROUND")
-    --bgTexture:SetTexture("Interface\\Destiny\\UI-Destiny");  --FontStyles\\FontStyleGarrisons
-    --bgTexture:SetTexCoord(0.3,0.7,0.1,0.5);
-    --bgTexture:SetAllPoints();
-    --bgTexture:SetAlpha(1)
-  M.SetBD(frame)
+	M.SetBD(frame)
 	parent:HookScript("OnHide", function()
 		if frame:IsShown() then frame:Hide() end
 	end)
@@ -60,7 +55,7 @@ local function clearEdit(options)
 	end
 end
 
-local raidDebuffsGUI, clickCastGUI, buffIndicatorGUI, plateGUI, unitframeGUI, castbarGUI, raidframeGUI, partyWatcherGUI
+local raidDebuffsGUI, clickCastGUI, buffIndicatorGUI, plateGUI, unitframeGUI, castbarGUI, raidframeGUI, partyWatcherGUI, bagFilterGUI
 
 local function updateRaidDebuffs()
 	M:GetModule("UnitFrames"):UpdateRaidDebuffs()
@@ -812,4 +807,130 @@ function G:SetupRaidFrame(parent)
 		end
 	end
 	createOptionGroup(scroll.child, U["PartyPetFrame"], -600, "PartyPet", resizePartyPetFrame)
+end
+
+local function createOptionSwatch(parent, name, value, x, y)
+	local swatch = M.CreateColorSwatch(parent, name, value)
+	swatch:SetPoint("TOPLEFT", x, y)
+	swatch.text:SetTextColor(1, .8, 0)
+end
+
+function G:SetupCastbar(parent)
+	toggleExtraGUI("NDuiGUI_CastbarSetup")
+	if castbarGUI then return end
+
+	castbarGUI = createExtraGUI(parent, "NDuiGUI_CastbarSetup", U["Castbar Settings"].."*")
+
+	local scroll = G:CreateScroll(castbarGUI, 260, 540)
+
+	createOptionTitle(scroll.child, U["Castbar Colors"], -10)
+	createOptionSwatch(scroll.child, U["Interruptible Color"], MaoRUIPerDB["UFs"]["CastingColor"], 40, -40)
+	createOptionSwatch(scroll.child, U["NotInterruptible Color"], MaoRUIPerDB["UFs"]["NotInterruptColor"], 40, -70)
+
+	local defaultValue = {
+		["Player"] = {300, 20},
+		["Target"] = {280, 20},
+		["Focus"] = {320, 20},
+	}
+
+	local function createOptionGroup(parent, title, offset, value, func)
+		createOptionTitle(parent, title, offset)
+		createOptionSlider(parent, U["Castbar Width"].."("..defaultValue[value][1]..")", 200, 400, 30, offset-60, value.."CBWidth", func)
+		createOptionSlider(parent, U["Castbar Height"].."("..defaultValue[value][2]..")", 10, 50, 30, offset-130, value.."CBHeight", func)
+	end
+
+	local function updatePlayerCastbar()
+		if _G.oUF_Player then
+			local width, height = MaoRUIPerDB["UFs"]["PlayerCBWidth"], MaoRUIPerDB["UFs"]["PlayerCBHeight"]
+			_G.oUF_Player.Castbar:SetSize(width, height)
+			_G.oUF_Player.Castbar.Icon:SetSize(height, height)
+			_G.oUF_Player.Castbar.mover:Show()
+			_G.oUF_Player.Castbar.mover:SetSize(width+height+5, height+5)
+			if _G.oUF_Player.QuakeTimer then
+				_G.oUF_Player.QuakeTimer:SetSize(width, height)
+				_G.oUF_Player.QuakeTimer.Icon:SetSize(height, height)
+				_G.oUF_Player.QuakeTimer.mover:Show()
+				_G.oUF_Player.QuakeTimer.mover:SetSize(width+height+5, height+5)
+			end
+			if _G.oUF_Player.Swing then
+				_G.oUF_Player.Swing:SetWidth(width-height-5)
+			end
+		end
+	end
+	createOptionGroup(scroll.child, U["Player Castbar"], -110, "Player", updatePlayerCastbar)
+
+	local function updateTargetCastbar()
+		if _G.oUF_Target then
+			local width, height = MaoRUIPerDB["UFs"]["TargetCBWidth"], MaoRUIPerDB["UFs"]["TargetCBHeight"]
+			_G.oUF_Target.Castbar:SetSize(width, height)
+			_G.oUF_Target.Castbar.Icon:SetSize(height, height)
+			_G.oUF_Target.Castbar.mover:Show()
+			_G.oUF_Target.Castbar.mover:SetSize(width+height+5, height+5)
+		end
+	end
+	createOptionGroup(scroll.child, U["Target Castbar"], -310, "Target", updateTargetCastbar)
+
+	local function updateFocusCastbar()
+		if _G.oUF_Focus then
+			local width, height = MaoRUIPerDB["UFs"]["FocusCBWidth"], MaoRUIPerDB["UFs"]["FocusCBHeight"]
+			_G.oUF_Focus.Castbar:SetSize(width, height)
+			_G.oUF_Focus.Castbar.Icon:SetSize(height, height)
+			_G.oUF_Focus.Castbar.mover:Show()
+			_G.oUF_Focus.Castbar.mover:SetSize(width+height+5, height+5)
+		end
+	end
+	createOptionGroup(scroll.child, U["Focus Castbar"], -510, "Focus", updateFocusCastbar)
+
+	castbarGUI:HookScript("OnHide", function()
+		if _G.oUF_Player then
+			_G.oUF_Player.Castbar.mover:Hide()
+			if _G.oUF_Player.QuakeTimer then _G.oUF_Player.QuakeTimer.mover:Hide() end
+		end
+		if _G.oUF_Target then _G.oUF_Target.Castbar.mover:Hide() end
+		if _G.oUF_Focus then _G.oUF_Focus.Castbar.mover:Hide() end
+	end)
+end
+
+local function createOptionCheck(parent, offset, text)
+	local box = M.CreateCheckBox(parent)
+	box:SetPoint("TOPLEFT", 10, -offset)
+	M.CreateFS(box, 14, text, false, "LEFT", 30, 0)
+	return box
+end
+
+function G:SetupBagFilter(parent)
+	toggleExtraGUI("NDuiGUI_BagFilterSetup")
+	if bagFilterGUI then return end
+
+	bagFilterGUI = createExtraGUI(parent, "NDuiGUI_BagFilterSetup", U["BagFilterSetup"].."*")
+
+	local scroll = G:CreateScroll(bagFilterGUI, 260, 540)
+
+	local filterOptions = {
+		[1] = "FilterJunk",
+		[2] = "FilterConsumble",
+		[3] = "FilterAzerite",
+		[4] = "FilterEquipment",
+		[5] = "FilterLegendary",
+		[6] = "FilterMount",
+		[7] = "FilterFavourite",
+	}
+
+	local Bags = M:GetModule("Bags")
+	local function filterOnClick(self)
+		local value = self.__value
+		MaoRUIPerDB["Bags"][value] = not MaoRUIPerDB["Bags"][value]
+		self:SetChecked(MaoRUIPerDB["Bags"][value])
+		Bags:UpdateAllBags()
+	end
+
+	local offset = 10
+	for _, value in ipairs(filterOptions) do
+		local box = createOptionCheck(scroll, offset, U[value])
+		box:SetChecked(MaoRUIPerDB["Bags"][value])
+		box.__value = value
+		box:SetScript("OnClick", filterOnClick)
+
+		offset = offset + 35
+	end
 end

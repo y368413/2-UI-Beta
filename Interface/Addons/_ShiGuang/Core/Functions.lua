@@ -413,6 +413,32 @@ function M:ReskinMenuButton()
 	self:HookScript("OnMouseUp", Menu_OnMouseUp)
 	self:HookScript("OnMouseDown", Menu_OnMouseDown)
 end
+function M:Texture_OnEnter()
+	if self:IsEnabled() then
+		if self.pixels then
+			for _, pixel in pairs(self.pixels) do
+				pixel:SetVertexColor(cr, cg, cb)
+			end
+		elseif self.bg then
+			self.bg:SetBackdropColor(cr, cg, cb, .25)
+		else
+			self.bgTex:SetVertexColor(cr, cg, cb)
+		end
+	end
+end
+
+function M:Texture_OnLeave()
+	if self.pixels then
+		for _, pixel in pairs(self.pixels) do
+			pixel:SetVertexColor(1, 1, 1)
+		end
+	elseif self.bg then
+		self.bg:SetBackdropColor(0, 0, 0, .25)
+	else
+		self.bgTex:SetVertexColor(1, 1, 1)
+	end
+end
+
 -- Arrows
 local direcIndex = {
 	["up"] = I.arrowUp,

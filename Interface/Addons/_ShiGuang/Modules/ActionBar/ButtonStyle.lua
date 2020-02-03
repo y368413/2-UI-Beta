@@ -428,33 +428,3 @@ function Bar:ReskinBars()
 		M:RegisterEvent("UPDATE_BINDINGS", Bar.UpdateStanceHotKey)
 	end
 end
-
-
---[[------------------------------X   HotSpotMicroMenu by Sojik X --------------------------------
-local HotSpotMicroMenu = CreateFrame("Frame","MicroMenuHolder",UIParent)
-local MicroButtons = {CharacterMicroButton, SpellbookMicroButton, TalentMicroButton, AchievementMicroButton, QuestLogMicroButton, GuildMicroButton, LFDMicroButton, CollectionsMicroButton, EJMicroButton, StoreMicroButton, MainMenuMicroButton,} --, HelpMicroButton, PVPMicroButton, SocialsMicroButton
-local function MoveMicroButtons()
-	for _, menu in pairs(MicroButtons) do
-		menu:SetParent(HotSpotMicroMenu)
-		menu:ClearAllPoints()
-		menu:SetScale(0.75)
-	end
-	CharacterMicroButton:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", 3, -8)
-	EJMicroButton:SetPoint("BOTTOMRIGHT", CharacterMicroButton, "TOPRIGHT", 0, -4) 
-	CollectionsMicroButton:SetPoint("BOTTOMRIGHT", EJMicroButton, "TOPRIGHT", 0, -4)
-	TalentMicroButton:SetPoint("BOTTOMRIGHT", CollectionsMicroButton, "TOPRIGHT", 0, -4) 
-	LFDMicroButton:SetPoint("BOTTOMRIGHT", TalentMicroButton, "TOPRIGHT", 0, -4) 
-	AchievementMicroButton:SetPoint("BOTTOMRIGHT", LFDMicroButton, "TOPRIGHT", 0, -4)
-	SpellbookMicroButton:SetPoint("BOTTOMRIGHT", AchievementMicroButton, "TOPRIGHT", 0, -4)
-	GuildMicroButton:SetPoint("BOTTOMRIGHT", SpellbookMicroButton, "TOPRIGHT", 0, -4)
-	
-	QuestLogMicroButton:SetPoint("BOTTOMLEFT", UIParent, "TOPRIGHT", 6, 6)
-	StoreMicroButton:SetPoint("BOTTOMRIGHT", QuestLogMicroButton, "TOPRIGHT", 0, -4)
-	MainMenuMicroButton:SetPoint("BOTTOMRIGHT", StoreMicroButton, "TOPRIGHT", 0, -4)
-end
-HotSpotMicroMenu:RegisterEvent("PLAYER_LOGIN")
-HotSpotMicroMenu:SetScript("OnEvent", function()
-  if not MaoRUIPerDB["Actionbar"]["Enable"] then return end
-	hooksecurefunc("UpdateMicroButtons", MoveMicroButtons)
-	MoveMicroButtons()
-end)]]

@@ -88,7 +88,7 @@ local function ForceDefaultSettings()
 end
 
 local function ForceRaidFrame()
-		CompactRaidFrameContainer:SetScale(0.85)
+	CompactRaidFrameContainer:SetScale(0.85)
 	if not CompactUnitFrameProfiles then return end
 	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "useClassColors", true) --显示职业颜色
 	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "displayPowerBar", false) --显示能量条 
@@ -108,12 +108,10 @@ local function ForceRaidFrame()
 	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "displayPets", false) --显示宠物 
 	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "displayMainTankAndAssist", false) --显示主坦克和主助理 
 	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "displayOnlyDispellableDebuffs", true) --只显示可供驱散的负面
-  --SetRaidProfileSavedPosition(GetActiveRaidProfile(), false, "TOP", 440, "BOTTOM", 320, "LEFT", 0)	--团队框体位置 
+	--SetRaidProfileSavedPosition(GetActiveRaidProfile(), false, "TOP", 440, "BOTTOM", 320, "LEFT", 0)	--团队框体位置 
 	CompactUnitFrameProfiles_ApplyCurrentSettings()
 	CompactUnitFrameProfiles_UpdateCurrentPanel()
 end
-
-
 
 local function ForceChatSettings()
 	M:GetModule("Chat"):UpdateChatSize()
@@ -502,14 +500,10 @@ function module:OnLogin()
 	DefaultSettings()
 	ForceAddonSkins()
 	if not MaoRUIPerDB["Tutorial"]["Complete"] then HelloWorld() end
-			
-	if (ShiGuangPerDB["BHT"] == true) then
-	      sendCmd("/bht on")
-	      PlayerFrame:SetAlpha(0)
-	      TargetFrame:SetAlpha(0)  	      
-    else
-	      sendCmd("/bht off")
-	      PlayerFrame:SetAlpha(1)
-        TargetFrame:SetAlpha(1)
-	  end	
+	if (ShiGuangPerDB["BHT"] == true) then sendCmd("/bht on") else sendCmd("/bht off") end
+	      --PlayerFrame:SetAlpha(0)
+	      --TargetFrame:SetAlpha(0)     
+
+	      --PlayerFrame:SetAlpha(1)
+	      --TargetFrame:SetAlpha(1)
 end

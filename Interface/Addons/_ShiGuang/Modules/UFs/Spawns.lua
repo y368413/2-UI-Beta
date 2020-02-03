@@ -12,7 +12,7 @@ local function SetUnitFrameSize(self, unit)
 	self:SetSize(width, height)
 end
 
-local function CreatePlayerStyle(self)
+--[[local function CreatePlayerStyle(self)
 	self.mystyle = "player"
 	UF:CreateCastBar(self)
 	if MaoRUIPerDB["UFs"]["Castbars"] then
@@ -24,14 +24,20 @@ local function CreatePlayerStyle(self)
 		UF:StaggerBar(self)
 	end
 	if not MaoRUIPerDB["Misc"]["ExpRep"] then UF:CreateExpRepBar(self) end
-	if MaoRUIPerDB["UFs"]["PlayerDebuff"] then UF:CreateDebuffs(self) end
 	if MaoRUIPerDB["UFs"]["SwingBar"] then UF:CreateSwing(self) end
 	if MaoRUIPerDB["UFs"]["QuakeTimer"] then UF:CreateQuakeTimer(self) end
 end
+
 local function CreateTargetStyle(self)
 	self.mystyle = "target"
 	UF:CreateCastBar(self)
 end
+
+local function CreateFocusStyle(self)
+	self.mystyle = "focus"
+	UF:CreateCastBar(self)
+end]]
+
 local function CreateBossStyle(self)
 	self.mystyle = "boss"
 	SetUnitFrameSize(self, "Boss")
@@ -145,10 +151,17 @@ function UF:OnLogin()
 	end
 
 	-- Default Clicksets for RaidFrame
-	self:DefaultClickSets()
-
-		oUF:RegisterStyle("Player", CreatePlayerStyle)
-		oUF:RegisterStyle("Target", CreateTargetStyle)
+	  self:DefaultClickSets()
+		--oUF:RegisterStyle("Player", CreatePlayerStyle)
+		--oUF:RegisterStyle("Target", CreateTargetStyle)
+		--oUF:RegisterStyle("Focus", CreateFocusStyle)
+		-- Loader
+		--oUF:SetActiveStyle("Player")
+		local player = oUF:Spawn("player", "oUF_Player")
+		--oUF:SetActiveStyle("Target")
+		local target = oUF:Spawn("target", "oUF_Target")
+		--oUF:SetActiveStyle("Focus")
+		local focus = oUF:Spawn("focus", "oUF_Focus")
 		oUF:RegisterStyle("Boss", CreateBossStyle)
 		oUF:SetActiveStyle("Boss")
 		local boss = {}
@@ -156,9 +169,9 @@ function UF:OnLogin()
 			boss[i] = oUF:Spawn("boss"..i, "oUF_Boss"..i)
 			local moverWidth, moverHeight = boss[i]:GetWidth(), boss[i]:GetHeight()+8
 			if i == 1 then
-				boss[i].mover = M.Mover(boss[i], U["BossFrame"]..i, "Boss1", {"TOPRIGHT", UIParent, "TOPRIGHT", -21, -260}, moverWidth, moverHeight)
+				boss[i].mover = M.Mover(boss[i], U["BossFrame"]..i, "Boss1", {"TOPRIGHT", UIParent, "TOPRIGHT", -16, -230}, moverWidth, moverHeight)
 			else
-				boss[i].mover = M.Mover(boss[i], U["BossFrame"]..i, "Boss"..i, {"TOP", boss[i-1], "BOTTOM", 0, -21}, moverWidth, moverHeight)
+				boss[i].mover = M.Mover(boss[i], U["BossFrame"]..i, "Boss"..i, {"TOP", boss[i-1], "BOTTOM", 0, -26}, moverWidth, moverHeight)
 			end
 		end
 		if MaoRUIPerDB["UFs"]["Arena"] then

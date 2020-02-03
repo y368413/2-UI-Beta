@@ -196,27 +196,26 @@ WallpaperKit.fadeOut:HookScript("OnFinished", function(self) self:GetParent():Se
 SLASH_WALLPAPERKIT1 = '/wallpaperkit'; --'/wpk', 3.
 function SlashCmdList.WALLPAPERKIT(msg, editbox) -- 4.
 if WallpaperKit:IsShown() then WallpaperKit:Disable() else WallpaperKit:Enable() end end
-function button_OnClick() WallpaperKit:Disable(); if UnitIsAFK("player") then SendChatMessage("", "AFK"); end end
+
 local hidebutton = CreateFrame("BUTTON", nil, WallpaperKit)
 hidebutton:SetSize(UIParent:GetWidth(),UIParent:GetHeight())
 hidebutton:SetPoint("CENTER")
 hidebutton.t = hidebutton:CreateTexture(nil,"BACKGROUND",nil,0)
-hidebutton:SetScript("OnClick", button_OnClick)
+hidebutton:SetScript("OnClick", function() WallpaperKit:Disable(); if UnitIsAFK("player") then SendChatMessage("", "AFK"); end end)
 -----------------------------------------------------------------------
 -- canvas enable func
 function WallpaperKit:Enable() self:Show() self:UpdateModel() self.fadeIn:Play() end  --UIParent:Hide()
 -- canvas disable func
 function WallpaperKit:Disable() self.fadeOut:Play() end  -- UIParent:Show()
 
-local function OnEvent(self)
-	if UIParent:IsShown() and self:IsShown() then self:Disable() return end
-	if UnitIsAFK("player") then self:Enable() end
-end
-WallpaperKit:SetScript("OnEvent",OnEvent)
 WallpaperKit:RegisterEvent("PLAYER_FLAGS_CHANGED")
 WallpaperKit:RegisterEvent("PLAYER_ENTERING_WORLD")
 WallpaperKit:RegisterEvent("PLAYER_LEAVING_WORLD")
-UIParent:HookScript("OnShow", function() OnEvent(WallpaperKit) end)
+WallpaperKit:SetScript("OnEvent", function(self)
+	if UIParent:IsShown() and self:IsShown() then self:Disable() return end
+	if UnitIsAFK("player") then self:Enable() end
+end)
 
+--UIParent:HookScript("OnShow", function() OnEvent(WallpaperKit) end)
 --/script T,F=T or 0,F or CreateFrame("frame")if X then X=nil print("OFF.")else print("ON.") X=function()local t=GetTime()if t-T>1 then StaticPopup1Button2:Click()T=t end end end F:SetScript("OnUpdate",X)
 end 

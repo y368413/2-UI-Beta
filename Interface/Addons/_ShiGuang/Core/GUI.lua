@@ -16,7 +16,7 @@ local defaultSettings = {
 	RaidClickSets = {},
 	TempAnchor = {},
 	AuraWatchList = {
-		Switcher = {},
+	Switcher = {},
 	},
 	Actionbar = {
 		Enable = true,
@@ -53,12 +53,20 @@ local defaultSettings = {
 		SplitCount = 1,
 		SpecialBagsColor = false,
 		iLvlToShow = 1,
+
+		FilterJunk = true,
+		FilterConsumble = true,
+		FilterAzerite = true,
+		FilterEquipment = true,
+		FilterLegendary = true,
+		FilterMount = true,
+		FilterFavourite = true,
 	},
 	Auras = {
 		Reminder = true,
 		Totems = true,
 		DestroyTotems = true,
-		Statue = true,
+		--Statue = true,
 		ClassAuras = false,
 		ReverseBuffs = false,
 		BuffSize = 30,
@@ -66,9 +74,8 @@ local defaultSettings = {
 		ReverseDebuffs = false,
 		DebuffSize = 34,
 		DebuffsPerRow = 16,
-		BlinkComboHelper = true,
-		EnergyBar = false,
-		ClassRecourePlace = false,
+		--EnergyBar = false,
+		--ClassRecourePlace = false,
 	},
 	AuraWatch = {
 		Enable = true,
@@ -121,14 +128,21 @@ local defaultSettings = {
 		BuffIndicatorType = 2,
 		BuffIndicatorScale = 1,
 		UFTextScale = 1,  --
+		PartyAltPower = true,
 		PlayerWidth = 245,
 		PlayerHeight = 24,
-		PartyAltPower = true,
+
 		BossWidth = 120,  --
 		BossHeight = 21,  --
 		BossPowerHeight = 3,  --
 		CastingColor = {r=.3, g=.7, b=1},
 		NotInterruptColor = {r=1, g=.5, b=.5},
+		PlayerCBWidth = 240,
+		PlayerCBHeight = 16,
+		TargetCBWidth = 280,
+		TargetCBHeight = 21,
+		FocusCBWidth = 245,
+		FocusCBHeight = 18,
 		PlayerFrameScale = 0.9,
 		UFPctText = true,
 		UFClassIcon = false,
@@ -170,20 +184,13 @@ local defaultSettings = {
 	},
 	Nameplate = {
 		Enable = true,
-		Numberstyle = false,
-		ColorBorder = true,
-		PlayerAura = false,
 		maxAuras = 6,
 		AuraSize = 26,
-		AuraFilter = 2,
-		OtherFilter = 2,
 		FriendlyCC = false,
 		HostileCC = true,
 		TankMode = false,
 		TargetIndicator = 3,
-		Arrow = true,
 		InsideView = true,
-		MinAlpha = .6,
 		Distance = 42,
 		PlateWidth = 168,
 		PlateHeight = 9,
@@ -193,17 +200,10 @@ local defaultSettings = {
 		ShowPowerList = "",
 		VerticalSpacing = .6,
 		ShowPlayerPlate = true,
-		PPHeight = 3,
-		PPPHeight = 6,
+		PPHeight = 1,
+		PPPHeight = 8,
 		PPPowerText = true,
-		Width = 88,
-		Height = 6,
-		
-    --nameonly = false,  --只显示名字
-    --BommIcon = true,
-    --HighlightTarget = true,
-    --HighlightFocus = true,
-    FullHealth = false,
+		FullHealth = false,
 		SecureColor = {r=1, g=0, b=1},
 		TransColor = {r=1, g=.8, b=0},
 		InsecureColor = {r=1, g=0, b=0},
@@ -213,7 +213,7 @@ local defaultSettings = {
 		PPIconSize = 36,
 		AKSProgress = true,
 		PPHideOOC = true,
-		NameplateClassPower = true,
+		NameplateClassPower = false,
 		MaxPowerGlow = true,
 		NameTextSize = 14,
 		HealthTextSize = 16,
@@ -221,10 +221,22 @@ local defaultSettings = {
 		MinAlpha = 1,
 		ColorBorder = true,
 		QuestIndicator = true,
+		--MinAlpha = .6,
+		--Arrow = true,
+		--AuraFilter = 2,
+		--OtherFilter = 2,
+		--Width = 88,
+		--Height = 6,
+		--Numberstyle = false,
+		--PlayerAura = false,		
+		--nameonly = false,  --只显示名字
+		--BommIcon = true,
+		--HighlightTarget = true,
+		--HighlightFocus = true,
 	},
 	Skins = {
 		DBM = true,
-		Skada = false,
+		--Skada = false,
 		Bigwigs = true,
 		TMW = true,
 		PetBattle = true,
@@ -288,15 +300,7 @@ local defaultSettings = {
 		AutoQuest = true,
 		HideTalking = true,
 		HideBanner = false,
-		QuickQueue = true,
 		PetFilter = true,
-		--AltTabLfgNotification = false,
-		--CrazyCatLady = true,
-		WallpaperKit = true,
-		AutoReagentInBank = false,
-		kAutoOpen = true,
-		AutoConfirmRoll = false,
-		AutoMark = true,
 		QuestNotifier = true,
 		QuestProgress = false,
 		OnlyCompleteRing = true,
@@ -304,20 +308,29 @@ local defaultSettings = {
 		ExplosiveCache = {},
 		PlacedItemAlert = false,
 		RareAlertInWild = false,
-		xMerchant = true,
-		FreeMountCD = true,
-		WorldQusetRewardIcons = true,
-		WorldQusetRewardIconsSize = 36,
 		ParagonRep = true,
 		UunatAlert = false,
 		InstantDelete = true,
-		RaidCD = true,
-		PulseCD = false,
-		SorasThreat = true,
 		RaidTool = true,
 		RMRune = false,
 		DBMCount = "10",
 		EasyMarking = true,
+		BlockWQT = true,
+		QuickQueue = true,
+		--AltTabLfgNotification = false,
+		--CrazyCatLady = true,
+		WallpaperKit = true,
+		AutoReagentInBank = false,
+		kAutoOpen = true,
+		AutoConfirmRoll = false,
+		AutoMark = true,
+		xMerchant = true,
+		FreeMountCD = true,
+		WorldQusetRewardIcons = true,
+		WorldQusetRewardIconsSize = 36,
+		RaidCD = true,
+		PulseCD = false,
+		SorasThreat = true,
 	},
 	Tutorial = {
 		Complete = false,
@@ -352,7 +365,7 @@ local accountSettings = {
 	SystemInfoType = 1,
 	DisableInfobars = false,
 	PartyWatcherSpells = {},
-	ContactList = {}
+	ContactList = {},
 }
 
 -- Initial settings
@@ -406,6 +419,15 @@ loader:SetScript("OnEvent", function(self, _, addon)
 end)
 
 -- Callbacks
+local function setupBagFilter()
+	G:SetupBagFilter(guiPage[6])
+end
+
+
+local function setupCastbar()
+	G:SetupCastbar(guiPage[3])
+end
+
 local function setupRaidFrame()
 	G:SetupRaidFrame(guiPage[3])
 end
@@ -441,6 +463,13 @@ end
 
 local function updateBagStatus()
 	M:GetModule("Bags"):UpdateAllBags()
+
+	local label = BAG_FILTER_EQUIPMENT
+	if MaoRUIPerDB["Bags"]["ItemSetFilter"] then
+		label = U["Equipement Set"]
+	end
+	_G.NDui_BackpackEquipment.label:SetText(label)
+	_G.NDui_BackpackBankEquipment.label:SetText(label)
 end
 
 local function updateActionbarScale()
@@ -515,6 +544,10 @@ local function updatePlayerPlate()
 	M:GetModule("UnitFrames"):ResizePlayerPlate()
 end
 
+local function updateUFTextScale()
+	M:GetModule("UnitFrames"):UpdateTextScale()
+end
+
 local function refreshRaidFrameIcons()
 	M:GetModule("UnitFrames"):RefreshRaidFrameIcons()
 end
@@ -554,6 +587,7 @@ end
 local function updateQuestNotifier()
 	M:GetModule("Misc"):QuestNotifier()
 end
+
 local function updateScreenShot()
 	M:GetModule("Misc"):UpdateScreenShot()
 end
@@ -706,17 +740,17 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		--{1, "AuraWatch", "QuakeRing", U["QuakeRing"].."*"},
 		{1, "AuraWatch", "ClickThrough", U["AuraWatch ClickThrough"], true, true},
 		{1, "Auras", "Totems", U["Enable Totems"]},
-		{1, "Auras", "Reminder", U["Enable Reminder"].."*", true, false, nil, updateReminder},
+		{1, "Auras", "ReverseBuffs", U["ReverseBuffs"], true},
+		{1, "Auras", "ReverseDebuffs", U["ReverseDebuffs"], true, true},
 		--{1, "Auras", "Stagger", U["Enable Stagger"]},
 		--{1, "Auras", "BloodyHell", U["Enable BloodyHell"], true},
 		--{1, "Auras", "HunterTool", U["Enable Marksman"], true, true},
 		--{1, "Auras", "BlinkComboHelper", U["Enable BlinkComboHelper"]},
-		{1, "Auras", "EnergyBar", U["Class EnergyBar"]},
-	  {1, "Auras", "ClassRecourePlace", U["Class Recoure Center"], true},
-	  {1, "Auras", "ReverseBuffs", U["ReverseBuffs"], true, true},
-	  {1, "Misc", "RaidCD", U["Raid CD"]},
-	  {1, "Misc", "PulseCD", U["Pulse CD"], true},
-		{1, "Auras", "ReverseDebuffs", U["ReverseDebuffs"], true, true},
+		--{1, "Auras", "EnergyBar", U["Class EnergyBar"]},
+		--{1, "Auras", "ClassRecourePlace", U["Class Recoure Center"], true},
+		{1, "Misc", "RaidCD", U["Raid CD"]},
+		{1, "Misc", "PulseCD", U["Pulse CD"], true},
+		{1, "Auras", "Reminder", U["Enable Reminder"].."*", true, true, nil, updateReminder},
 		{3, "Auras", "BuffSize", U["BuffSize"], false, false, {24, 40, 0}},
 		{3, "Auras", "DebuffSize", U["DebuffSize"], true, false, {24, 40, 0}},
 		{3, "Auras", "BuffsPerRow", U["BuffsPerRow"], false, false, {10, 20, 0}},
@@ -895,7 +929,7 @@ end
 
 local function CreateTab(parent, i, name)
 	local tab = CreateFrame("Button", nil, parent)
-	tab:SetPoint("TOP", -270 + 90*(i-1) + R.mult, -116)
+	tab:SetPoint("TOP", -310 + 90*(i-1) + R.mult, -121)
 	tab:SetSize(90, 30)
 	M.CreateBD(tab, .3)
 	M.CreateFS(tab, 15, name, "system", "CENTER", 0, 0)
