@@ -803,13 +803,13 @@ o.createMenuItems = function()
 		table.insert(o.menuItems, {name = "", category = true, index = i + 0.9})
 	end
 
-	table.insert(o.menuItems, {name = "Special", category = true, index = #o.EXPS + 1})
+	table.insert(o.menuItems, {name = o.strings["Special"], category = true, index = #o.EXPS + 1})
 	table.insert(o.menuItems, {name = "", category = true, index = #o.EXPS + 1 + 0.9})
 
-	table.insert(o.menuItems, {name = "Custom Categories", category = true, index = #o.EXPS + 2})
+	table.insert(o.menuItems, {name = o.strings["Custom Categories"], category = true, index = #o.EXPS + 2})
 	table.insert(o.menuItems, {name = "", category = true, index = #o.EXPS + 2 + 0.9})
 
-	table.insert(o.menuItems, {name = "Unknown", category = true, index = #o.EXPS + 3})
+	table.insert(o.menuItems, {name = o.strings["Unknown"], category = true, index = #o.EXPS + 3})
 	table.insert(o.menuItems, {name = "", category = true, index = #o.EXPS + 3 + 0.9})
 
 	for k, v in orderedPairs(o.instances) do

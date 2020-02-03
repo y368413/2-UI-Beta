@@ -4,23 +4,14 @@ local o = mOnWardrobe
 if o.strings == nil then o.strings = {} end
 local s = o.strings
 
-s["Page N"] = "第 %i 頁"
 s["Refresh Instance"] = "重新整理副本"
 s["Refresh Items"] = "重新整理物品"
 s["Current Instance"] = "當前副本"
 s["Click Refresh Info"] = "點擊上方的 %s 按鈕載入副本"
-s["Progress"] = "進度"
 s["Missing Items"] = "尚未收集的物品"
-s["Instance"] = "副本"
 s["Hide List Option"] = "開啟副本時隱藏清單"
 s["Refresh Confirmation"] = "這個動作將會使遊戲停頓幾秒，\n是否要繼續?"
-s["Yes"] = "是"
-s["No"] = "否"
 s["Open Options"] = "開啟設定選項"
-s["Options"] = "選項"
-s["Close"] = "關閉"
-s["Defaults"] = "預設值"
-s["General"] = "一般"
 s["Debug"] = "除錯"
 s["Debug Info"] = "這裡的每一個選項都是實驗性質，有可能會造成遊戲無法繼續運行。別說我沒警告過你。"
 s["Disable Progress"] = "停用進度"

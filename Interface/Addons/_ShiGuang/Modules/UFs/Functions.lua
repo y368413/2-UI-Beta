@@ -400,7 +400,7 @@ function UF:CreateCastBar(self)
 		local shield = cb:CreateTexture(nil, "OVERLAY")
 		shield:SetAtlas("nameplates-InterruptShield")
 		shield:SetSize(21, 21)
-		shield:SetPoint("CENTER", cb, 31, -3)  --"CENTER", 0, -5
+		shield:SetPoint("CENTER", cb, 21, -3)  --"CENTER", 0, -5
 		cb.Shield = shield
 
 		local iconSize = self:GetHeight()*2 + 3
@@ -948,7 +948,7 @@ function UF:CreatePrediction(self)
 	}
 end
 
---[[function UF.PostUpdateAddPower(element, _, cur, max)
+function UF.PostUpdateAddPower(element, _, cur, max)
 	if element.Text and max > 0 then
 		local perc = cur/max * 100
 		if perc == 100 then
@@ -962,39 +962,6 @@ end
 	end
 end
 
-function UF:CreateAddPower(self)
-	local bar = CreateFrame("StatusBar", nil, self)
-	bar:SetPoint("TOPLEFT", self.Power, "BOTTOMLEFT", 0, -3)
-	bar:SetPoint("TOPRIGHT", self.Power, "BOTTOMRIGHT", 0, -3)
-	bar:SetHeight(4)
-	bar:SetStatusBarTexture(I.normTex)
-	M.CreateBDFrame(bar, 0, true)
-	bar.colorPower = true
-
-	local bg = bar:CreateTexture(nil, "BACKGROUND")
-	bg:SetAllPoints()
-	bg:SetTexture(I.normTex)
-	bg.multiplier = .25
-	local text = M.CreateFS(bar, 12, "", false, "CENTER", 1, -3)
-
-	self.AdditionalPower = bar
-	self.AdditionalPower.bg = bg
-	self.AdditionalPower.Text = text
-	self.AdditionalPower.PostUpdate = UF.PostUpdateAddPower
-	self.AdditionalPower.displayPairs = {
-		["DRUID"] = {
-			[1] = true,
-			[3] = true,
-			[8] = true,
-		},
-		["SHAMAN"] = {
-			[11] = true,
-		},
-		["PRIEST"] = {
-			[13] = true,
-		}
-	}
-end
 
 function UF:CreateSwing(self)
 	if not MaoRUIPerDB["UFs"]["Castbars"] then return end
@@ -1052,7 +1019,7 @@ function UF:CreateQuakeTimer(self)
 	bar.Icon = icon
 
 	self.QuakeTimer = bar
-end]]
+end
 
 function UF:CreatePVPClassify(self)
     local bu = self:CreateTexture(nil, "ARTWORK")

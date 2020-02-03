@@ -4,8 +4,8 @@ local M, R, U, I = unpack(ns)
 local unpack, GetTime, IsPlayerSpell = unpack, GetTime, IsPlayerSpell
 local UnitInVehicle, UnitIsUnit = UnitInVehicle, UnitIsUnit
 
-local CastbarCompleteColor = {.1, .8, 0}
-local CastbarFailColor = {1, .1, 0}
+local CastbarCompleteColor = {.2, .6, .8}
+local CastbarFailColor = {0.1, 0.6, 0.9}  --1, .1, 0
 
 local function GetSpellName(spellID)
 	local name = GetSpellInfo(spellID)

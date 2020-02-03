@@ -135,8 +135,8 @@ local defaultSettings = {
 		BossWidth = 120,  --
 		BossHeight = 21,  --
 		BossPowerHeight = 3,  --
-		CastingColor = {r=.3, g=.7, b=1},
-		NotInterruptColor = {r=1, g=.5, b=.5},
+		CastingColor = {r=.8, g=.6, b=.1},  --r=.3, g=.7, b=1
+		NotInterruptColor = {r=.6, g=.6, b=.6},  --r=1, g=.5, b=.5
 		PlayerCBWidth = 240,
 		PlayerCBHeight = 16,
 		TargetCBWidth = 280,

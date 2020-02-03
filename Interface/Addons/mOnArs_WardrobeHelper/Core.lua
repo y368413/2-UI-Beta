@@ -28,12 +28,12 @@ o.instances = {}
 o.version = GetAddOnMetadata("mOnArs_WardrobeHelper", "Version")
 
 local TYPES = {
-	"Boss drop",
-	"Quests",
-	"Vendor",
-	"World/Instance Drop",
-	"Achievements",
-	"Professions"
+	_G["TRANSMOG_SOURCE_1"],
+	_G["TRANSMOG_SOURCE_2"],
+	_G["TRANSMOG_SOURCE_3"],
+	_G["TRANSMOG_SOURCE_4"],
+	_G["TRANSMOG_SOURCE_5"],
+	_G["TRANSMOG_SOURCE_6"]
 }
 
 TYPES[0] = "Other"
@@ -227,6 +227,12 @@ local function getUpdateHelper()
 											end
 										else
 											local type = TYPES[sourceType]
+											local name, isWeapon, canEnchant, canMainHand, canOffHand = C_TransmogCollection.GetCategoryInfo(i)
+											if i < 10 then
+												name = '0' .. i .. ' - ' .. name
+											else
+												name = i .. ' - ' .. name
+											end
 											if newInstances[type] == nil then
 												newInstances[type] = {}
 												newInstances[type]["difficulties"] = {}
@@ -235,15 +241,15 @@ local function getUpdateHelper()
 												newInstances[type]["collected"] = 0
 												newInstances[type]["total"] = 0
 											end
-											if newInstances[type]["difficulties"]["Normal"]["bosses"][i] == nil then
-												newInstances[type]["difficulties"]["Normal"]["bosses"][i] = {}
-												newInstances[type]["difficulties"]["Normal"]["bosses"][i]["items"] = {}
+											if newInstances[type]["difficulties"]["Normal"]["bosses"][name] == nil then
+												newInstances[type]["difficulties"]["Normal"]["bosses"][name] = {}
+												newInstances[type]["difficulties"]["Normal"]["bosses"][name]["items"] = {}
 											end
 											if collected then
 												newInstances[type]["collected"] = newInstances[type]["collected"] + 1
 											else
 												table.insert(
-													newInstances[type]["difficulties"]["Normal"]["bosses"][i]["items"],
+													newInstances[type]["difficulties"]["Normal"]["bosses"][name]["items"],
 													{
 														link = itemString,
 														id = itemID,

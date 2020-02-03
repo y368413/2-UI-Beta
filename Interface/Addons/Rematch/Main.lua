@@ -359,7 +359,6 @@ function rematch:PLAYER_TARGET_CHANGED()
 							rematch:AutoShow()
 						end
 						rematch:LoadTeam(npcID)
-						--rematch:loadSimilarTeam(npcID)  --自动换队伍
 						rematch:SetLastInteractNpcID(npcID)
 					end
 				end
@@ -393,7 +392,6 @@ function rematch:UPDATE_MOUSEOVER_UNIT()
 					rematch:AutoShow()
 				end
 				rematch:LoadTeam(npcID) -- then load it
-				--rematch:loadSimilarTeam(npcID) -- then load it   --自动换队伍
 				rematch:SetLastInteractNpcID(npcID)
 			end
 		end
@@ -536,13 +534,6 @@ function rematch:PET_BATTLE_CLOSE()
 			C_Timer.After(0.75,rematch.LoadHealthiestOfLoadedPets)
 		end
 		rematch.wasInPVP = nil
-
-		--C_Timer.After(0.05,function()
-			--if settings.AutoLoad then 
-				--rematch:loadSimilarTeam(rematch.recentTarget)
-			--end
-		--end)
-	
 	end
 end
 
@@ -570,7 +561,7 @@ function rematch:CHAT_MSG_SYSTEM(message)
 		-- if "%s has been added to your pet journal!" and %s is a pet link
 		local petLink = message:match(patternNewPet)
 		if petLink then
-			local _,petID = petLink:match("battlepet:(%d+):.+:(BattlePet%-.-)\124h")
+			local _,petID = petLink:match("battlepet:(%d+):.+:(BattlePet%-.-):(%d+)\124h") -- 1/20/20 added :(%d+) before |h
 			if petID and rematch:PetCanLevel(petID) then
 				local addID
 				local speciesID,_,level,_,_,_,_,name = C_PetJournal.GetPetInfoByPetID(petID)

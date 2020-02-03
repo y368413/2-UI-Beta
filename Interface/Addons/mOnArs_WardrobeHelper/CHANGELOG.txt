@@ -1,4 +1,9 @@
-﻿== 1.18.5 ==
+﻿== 1.18.6 ==
+ * update categorization method (thanks to hizuro_de)
+ * minor localization fixes (thanks to hizuro_de)
+ * added names to item slots in Special
+
+== 1.18.5 ==
  * update FR categorization (thanks to Kyramyz)
 
 == 1.18.4 ==
@@ -259,6 +264,7 @@
  * initial release
 
 == TODO ==
+ * https://www.townlong-yak.com/framexml/live/GlobalStrings.lua
  * add illusions
  * sort bosses by real order
  * remove duplicate items

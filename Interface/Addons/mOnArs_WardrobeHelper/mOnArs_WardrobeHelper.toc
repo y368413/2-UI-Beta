@@ -1,6 +1,6 @@
-## Interface: 80300
+## Interface:  80300
 ## Title: mOnAr's WardrobeHelper
-## Version: 1.18.5
+## Version: 1.18.6
 ## Author: mOnAr
 ## Notes:
 ## SavedVariables: mOnWDSave
@@ -14,10 +14,9 @@ Functions.lua
 
 Init.lua
 
-localization\Categorization.en.lua
-localization\Categorization.cn.lua
-localization\Categorization.tw.lua
+Categorization.lua
 
+localization\_Localization.global.lua
 localization\Localization.en.lua
 localization\Localization.cn.lua
 localization\Localization.tw.lua
