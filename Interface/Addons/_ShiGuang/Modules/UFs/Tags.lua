@@ -160,7 +160,8 @@ oUF.Tags.Methods["nphp"] = function(unit)
 	local per = oUF.Tags.Methods["perhp"](unit) or 0
 	if MaoRUIPerDB["Nameplate"]["FullHealth"] then
 		local cur = UnitHealth(unit)
-		return ValueAndPercent(cur, per)
+		--return ValueAndPercent(cur, per)
+		return M.Numb(cur)
 	elseif per < 100 then
 		return ColorPercent(per)
 	end

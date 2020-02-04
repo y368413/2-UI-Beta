@@ -929,7 +929,7 @@ end
 
 local function CreateTab(parent, i, name)
 	local tab = CreateFrame("Button", nil, parent)
-	tab:SetPoint("TOP", -310 + 90*(i-1) + R.mult, -121)
+	tab:SetPoint("TOP", -310 + 88*(i-1) + R.mult, -121)
 	tab:SetSize(90, 30)
 	M.CreateBD(tab, .3)
 	M.CreateFS(tab, 15, name, "system", "CENTER", 0, 0)
@@ -1078,12 +1078,12 @@ local function CreateOption(i)
 			local f = M.CreateColorSwatch(parent, name, NDUI_VARIABLE(key, value))
 			local width = 80 + (horizon or 0)*120
 			if horizon2 then
-				dd:SetPoint("TOPLEFT", width, -offset + 32)
+				dd:SetPoint("TOPLEFT", width, -offset + 33)
 			elseif horizon then
-				f:SetPoint("TOPLEFT", width, -offset + 32)
+				f:SetPoint("TOPLEFT", width, -offset + 33)
 			else
-				f:SetPoint("TOPLEFT", width, -offset - 16)
-				offset = offset + 48
+				f:SetPoint("TOPLEFT", width, -offset - 3)
+				offset = offset + 36
 			end
 		-- Blank, no optType
 		else
@@ -1404,7 +1404,7 @@ local function OpenGUI()
     bgTexture:SetTexCoord(0,1,0,600/1024);
     bgTexture:SetAllPoints();
     bgTexture:SetAlpha(1)
-	f:SetSize(1440, 700)
+	f:SetSize(1440, 660)
 	f:SetPoint("CENTER")
 	f:SetFrameStrata("HIGH")
 	f:SetFrameLevel(10)
@@ -1414,7 +1414,7 @@ local function OpenGUI()
 	M.CreateFS(f, 21, "v"..I.Version, false, "TOP", 80, -80)
 
 	local close = M.CreateButton(f, 36, 36, "X")
-	close:SetPoint("TOP", 310, -66)
+	close:SetPoint("TOP", 310, -60)
 	close:SetScript("OnClick", function() f:Hide() end)
 
 	local ok = M.CreateButton(f, 88, 31, OKAY)

@@ -366,8 +366,8 @@ function UF:CreateCastBar(self)
 		cb:SetHeight(self:GetHeight())
 	end
 
-	local timer = M.CreateFS(cb, retVal(self, 12, 12, 12, 12, MaoRUIPerDB["Nameplate"]["NameTextSize"]-2), "11", false, "RIGHT", -2, 0)
-	local name = M.CreateFS(cb, retVal(self, 12, 12, 12, 12, MaoRUIPerDB["Nameplate"]["NameTextSize"]-1), "11", false, "LEFT", 2, 0)
+	local timer = M.CreateFS(cb, retVal(self, 12, 12, 12, 12, MaoRUIPerDB["Nameplate"]["NameTextSize"]-2), "10", false, "RIGHT", -2, 0)
+	local name = M.CreateFS(cb, retVal(self, 12, 12, 12, 12, MaoRUIPerDB["Nameplate"]["NameTextSize"]-1), "10", false, "LEFT", 2, 0)
 	name:SetPoint("RIGHT", timer, "LEFT", -6, 0)
 	name:SetJustifyH("LEFT")
 
@@ -409,11 +409,11 @@ function UF:CreateCastBar(self)
 		cb.timeToHold = .5
 	end
 
-	if mystyle == "nameplate" or mystyle == "boss" or mystyle == "arena" then
+	--if mystyle == "nameplate" or mystyle == "boss" or mystyle == "arena" then
 		cb.decimal = "%.1f"
-	else
-		cb.decimal = "%.2f"
-	end
+	--else
+		--cb.decimal = "%.2f"
+	--end
 
 	cb.Time = timer
 	cb.Text = name

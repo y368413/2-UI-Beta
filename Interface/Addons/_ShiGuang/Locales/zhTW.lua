@@ -296,7 +296,8 @@ ANGRYWORLDQUEST_TITLE = "||cff0080ff[地圖]|r世界任务"
   U["Flrgrrl"] = "弗咕嚕"
   U["Hurlgrl"] = "呼咕嚕"
   U["Mrrl"] = "莫嚕" 
-  
+
+U["Damage"] = "傷害"  
 U["Lock UIScale"] = "鎖定推薦UI縮放值"
 U["Lock Chat"] = "鎖定聊天視窗設置"
 U["Minimap Clock"] = "小地圖時間"

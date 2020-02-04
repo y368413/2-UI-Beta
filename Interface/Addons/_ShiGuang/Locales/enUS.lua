@@ -282,6 +282,7 @@ ANGRYWORLDQUEST_TITLE = "|cff0080ff[Angry]|rWorld Quests"
   U["Hurlgrl"] = "Hurlgrl"
   U["Mrrl"] = "Mrrl" 
   
+U["Damage"] = "Damage"    
 U["Lock UIScale"] = "Lock UIScale"
 U["Lock Chat"] = "Lock Chat"
 U["Minimap Clock"] = "Minimap Clock"

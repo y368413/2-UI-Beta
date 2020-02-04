@@ -370,7 +370,7 @@ U["Flrgrrl"] = "弗勒格勒"
 U["Hurlgrl"] = "胡勒格勒"
 U["Mrrl"] = "穆勒尔" 
 
-
+U["Damage"] = "伤害"
 U["PlayerFrame Scale"] = "头像缩放"
 U["Enable Stagger"] = "启用职业监控-WST"
 U["Enable Statue"] = "启用职业监控-雕像"

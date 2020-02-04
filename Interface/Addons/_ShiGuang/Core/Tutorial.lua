@@ -221,7 +221,7 @@ local function ForceSkadaOptions()
 						},
 						["barfontflags"] = "OUTLINE",
 						["point"] = "BOTTOMRIGHT",
-						["mode"] = "伤害",
+						["mode"] = U["Damage"],
 						["barwidth"] = 285,
 						["barbgcolor"] = {
 							["a"] = 0.21,
@@ -501,9 +501,4 @@ function module:OnLogin()
 	ForceAddonSkins()
 	if not MaoRUIPerDB["Tutorial"]["Complete"] then HelloWorld() end
 	if (ShiGuangPerDB["BHT"] == true) then sendCmd("/bht on") else sendCmd("/bht off") end
-	      --PlayerFrame:SetAlpha(0)
-	      --TargetFrame:SetAlpha(0)     
-
-	      --PlayerFrame:SetAlpha(1)
-	      --TargetFrame:SetAlpha(1)
 end

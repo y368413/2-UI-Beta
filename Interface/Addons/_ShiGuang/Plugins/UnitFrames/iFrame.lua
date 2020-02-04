@@ -69,7 +69,7 @@ hooksecurefunc("PartyMemberFrame_UpdateMember", function(self)
 	end
 end)
 
-local iFrame = CreateFrame("Frame")
+--[[local iFrame = CreateFrame("Frame")
 iFrame:RegisterEvent("UNIT_LEVEL")
 iFrame:SetScript("OnEvent", function(self, event, ...)
 	local arg1 = ...
@@ -80,5 +80,5 @@ iFrame:SetScript("OnEvent", function(self, event, ...)
 			end
 		end
 	end
-end)
+end)]]
 --------------------------------------------------------------------------------------iFrame end
