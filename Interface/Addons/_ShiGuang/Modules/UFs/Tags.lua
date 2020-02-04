@@ -29,7 +29,7 @@ end
 
 local function ValueAndPercent(cur, per)
 	if per < 100 then
-		return M.Numb(cur).." | "..ColorPercent(per)
+		return M.Numb(cur).."/"..ColorPercent(per)
 	else
 		return M.Numb(cur)
 	end
@@ -55,7 +55,7 @@ oUF.Tags.Methods["power"] = function(unit)
 	local per = oUF.Tags.Methods["perpp"](unit) or 0
 	if (unit == "player" and not UnitHasVehicleUI(unit)) or unit == "target" or unit == "focus" then
 		if per < 100 and UnitPowerType(unit) == 0 then
-			return M.Numb(cur).." | "..per
+			return M.Numb(cur).."/"..per
 		else
 			return M.Numb(cur)
 		end
@@ -228,6 +228,6 @@ oUF.Tags.Methods["monkstagger"] = function(unit)
 	local cur = UnitStagger(unit) or 0
 	local perc = cur / UnitHealthMax(unit)
 	if cur == 0 then return end
-	return M.Numb(cur).." | "..I.MyColor..floor(perc*100 + .5).."%"
+	return M.Numb(cur).."/"..I.MyColor..floor(perc*100 + .5).."%"
 end
 oUF.Tags.Events["monkstagger"] = "UNIT_MAXHEALTH UNIT_AURA"

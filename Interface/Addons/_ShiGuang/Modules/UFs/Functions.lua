@@ -389,7 +389,7 @@ function UF:CreateCastBar(self)
 		cb.SafeZone = safe
 
 		if MaoRUIPerDB["UFs"]["LagString"] then
-			local lag = M.CreateFS(cb, 8, "", false, "CENTER", -6, -6)
+			local lag = M.CreateFS(cb, 8, "", false, "LEFT", 3, -12)
 			cb.Lag = lag
 			self:RegisterEvent("CURRENT_SPELL_CAST_CHANGED", M.OnCastSent, true)
 		end

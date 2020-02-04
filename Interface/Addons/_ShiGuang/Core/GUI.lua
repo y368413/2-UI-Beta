@@ -116,7 +116,7 @@ local defaultSettings = {
 		RaidBuffIndicator = true,
 		PartyFrame = true,
 		PartyWatcher = true,
-		PWOnRight = false,
+		PWOnRight = true,
 		PartyWidth = 120,
 		PartyHeight = 26,
 		PartyPowerHeight = 6,
@@ -329,7 +329,7 @@ local defaultSettings = {
 		WorldQusetRewardIcons = true,
 		WorldQusetRewardIconsSize = 36,
 		RaidCD = true,
-		PulseCD = false,
+		PulseCD = true,
 		SorasThreat = true,
 	},
 	Tutorial = {

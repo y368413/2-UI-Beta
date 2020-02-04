@@ -2,7 +2,6 @@
 	<Script file="PvPPP.lua"/>
 	<Script file="libnotify.lua"/>
 	<Script file="Quest_Complete.lua"/>
-	<!--Script file="iKeystones.lua"/-->
 	<Script file="Reminder.lua"/>
 	<Script file="MountsSource.lua"/>
 	<Script file="HardYards.lua"/>
