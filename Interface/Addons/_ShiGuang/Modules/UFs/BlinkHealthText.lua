@@ -271,19 +271,19 @@ function BlinkHealth:UpdateUnitValues()
 	local heal, maxheal, perh, petheal, petmax, name;
 	local power, maxpower, powertype, _;
 	-- player
-	if (UnitHasVehicleUI("player")) then
-		heal, maxheal = UnitHealth("pet"), UnitHealthMax("pet");
-		power, maxpower = UnitPower("pet"), UnitPowerMax("pet");
-		petheal, petmax = UnitHealth("player"), UnitHealthMax("player");
-		name = UnitName("player");	-- petName
-		_, powertype = UnitPowerType("pet");
-	else
+	--if (UnitHasVehicleUI("player")) then
+		--heal, maxheal = UnitHealth("pet"), UnitHealthMax("pet");
+		--power, maxpower = UnitPower("pet"), UnitPowerMax("pet");
+		--petheal, petmax = UnitHealth("player"), UnitHealthMax("player");
+		--name = UnitName("player");	-- petName
+		--_, powertype = UnitPowerType("pet");
+	--else
 		heal, maxheal = UnitHealth("player"), UnitHealthMax("player");
 		power, maxpower = UnitPower("player"), UnitPowerMax("player");
 		petheal, petmax = UnitHealth("pet"), UnitHealthMax("pet");
 		name = UnitName("pet");
 		_, powertype = UnitPowerType("player");
-	end
+	--end
 	if maxheal<1 then 
 		maxheal =1
 	end
