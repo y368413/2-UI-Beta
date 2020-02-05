@@ -22,12 +22,9 @@ constants.defaults = {
 		tooltip_alpha = 0.9,
 		tooltip_scale = 1,
 		currencies = {
-				[1755] = true,
-				[1533] = true,
-				[1721] = true,
-				[1560] = true,
 				[1580] = true,
-				[1710] = true,
+				[1719] = true,
+				[1755] = true,
 	  },
 		items = {},
 		maxItems = 0, -- 0 means un-limited

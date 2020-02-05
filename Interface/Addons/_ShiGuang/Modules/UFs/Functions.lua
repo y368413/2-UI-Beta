@@ -82,7 +82,7 @@ function UF:CreateHealthBar(self)
 	health:SetFrameLevel(self:GetFrameLevel() - 2)
 	health.backdrop = M.CreateBDFrame(health, 0, true) -- don't mess up with libs
 	health.shadow = health.backdrop.Shadow
-	M.SmoothBar(health)
+	M:SmoothBar(health)
 
 	local bg = health:CreateTexture(nil, "BACKGROUND")
 	bg:SetAllPoints()
@@ -135,13 +135,12 @@ function UF:CreateHealthText(self)
 		name:SetWidth(self:GetWidth()*.55)
 	end
 
-	local colorStr = self.Health.colorClass and "" or "[color]"
 	if mystyle == "nameplate" then
 		self:Tag(name, "[nplevel][name]")
 	elseif mystyle == "arena" then
-		self:Tag(name, "[arenaspec] "..colorStr.."[name]")
+		self:Tag(name, "[arenaspec] [color][name]")
 	else
-		self:Tag(name, colorStr.."[name]")
+		self:Tag(name, "[color][name]")
 	end
 
 	local hpval = M.CreateFS(textFrame, retVal(self, 14, 13, 13, 13, MaoRUIPerDB["Nameplate"]["HealthTextSize"]), "", false, "RIGHT", -3, -1)
@@ -220,7 +219,7 @@ function UF:CreatePowerBar(self)
 	power:SetHeight(powerHeight)
 	power:SetFrameLevel(self:GetFrameLevel() - 2)
 	power.backdrop = M.CreateBDFrame(power, 0)
-	M.SmoothBar(power)
+	M:SmoothBar(power)
 
 	if self.Health.shadow then
 		self.Health.shadow:SetPoint("BOTTOMRIGHT", power.backdrop, R.mult+3, -R.mult-3)
@@ -969,7 +968,7 @@ function UF:CreateSwing(self)
 	local bar = CreateFrame("StatusBar", nil, self)
 	local width = MaoRUIPerDB["UFs"]["PlayerCBWidth"] - MaoRUIPerDB["UFs"]["PlayerCBHeight"] - 5
 	bar:SetSize(width, 3)
-	bar:SetPoint("TOP", self.Castbar.mover, "BOTTOM", 0, -5)
+	bar:SetPoint("TOP", self.Castbar.mover, "BOTTOM", 0, -3)
 
 	local two = CreateFrame("StatusBar", nil, bar)
 	two:Hide()
@@ -988,9 +987,9 @@ function UF:CreateSwing(self)
 	M.CreateSB(off, true, .8, .8, .8)
 
 	if MaoRUIPerDB["UFs"]["SwingTimer"] then
-		bar.Text = M.CreateFS(bar, 12, "")
-		bar.TextMH = M.CreateFS(main, 12, "")
-		bar.TextOH = M.CreateFS(off, 12, "", false, "CENTER", 1, -5)
+		bar.Text = M.CreateFS(bar, 11, "")
+		bar.TextMH = M.CreateFS(main, 11, "")
+		bar.TextOH = M.CreateFS(off, 11, "", false, "CENTER", 1, -5)
 	end
 
 	self.Swing = bar

@@ -138,7 +138,6 @@ local function UNIT_SPELLCAST_START(self, event, unit)
 	local shield = element.Shield
 	if(shield and notInterruptible) then
 		shield:Show()
-		--element:SetStatusBarColor(0.35, 0.35, 0.35)
 	elseif(shield) then
 		shield:Hide()
 	end
@@ -250,7 +249,6 @@ local function UNIT_SPELLCAST_NOT_INTERRUPTIBLE(self, event, unit)
 	local shield = element.Shield
 	if(shield) then
 		shield:Show()
-		--element:SetStatusBarColor(0.35, 0.35, 0.35)
 	end
 
 	element.notInterruptible = true
@@ -353,7 +351,6 @@ local function UNIT_SPELLCAST_CHANNEL_START(self, event, unit, _, spellID)
 	local shield = element.Shield
 	if(shield and notInterruptible) then
 		shield:Show()
-		--element:SetStatusBarColor(0.35, 0.35, 0.35)
 	elseif(shield) then
 		shield:Hide()
 	end

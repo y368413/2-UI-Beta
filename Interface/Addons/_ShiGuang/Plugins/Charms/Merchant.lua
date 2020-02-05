@@ -1,13 +1,11 @@
 ﻿----------------------------------------------------------------------------------------
 --	Show item level for weapons and armor in merchant
 ----------------------------------------------------------------------------------------
-local function MerchantItemlevel()
+hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
 	local numItems = GetMerchantNumItems()
-
 	for i = 1, MERCHANT_ITEMS_PER_PAGE do
 		local index = (MerchantFrame.page - 1) * MERCHANT_ITEMS_PER_PAGE + i
 		if index > numItems then return end
-
 		local button = _G["MerchantItem"..i.."ItemButton"]
 		if button and button:IsShown() then
 			if not button.text then
@@ -17,7 +15,6 @@ local function MerchantItemlevel()
 			else
 				button.text:SetText("")
 			end
-
 			local itemLink = GetMerchantItemLink(index)
 			if itemLink then
 				local _, _, quality, itemlevel, _, _, _, _, _, _, _, itemClassID = GetItemInfo(itemLink)
@@ -27,8 +24,7 @@ local function MerchantItemlevel()
 			end
 		end
 	end
-end
-hooksecurefunc("MerchantFrame_UpdateMerchantInfo", MerchantItemlevel)
+end)
 ----------------------------------------------------------------------------------------
 -- Learn all available skills(TrainAll by SDPhantom)
 ----------------------------------------------------------------------------------------

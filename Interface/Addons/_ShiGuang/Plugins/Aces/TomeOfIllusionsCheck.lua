@@ -124,8 +124,5 @@ local function OnIllusionBookTooltipAddLine(tooltip, ...)
       end
    end
 end
-
-local function OnIllusionBookTooltipCleared(tooltip, ...) lineAdded = false end
-
 GameTooltip:HookScript("OnTooltipSetItem", OnIllusionBookTooltipAddLine)
-GameTooltip:HookScript("OnTooltipCleared", OnIllusionBookTooltipCleared)
+GameTooltip:HookScript("OnTooltipCleared", function(tooltip, ...) lineAdded = false end)

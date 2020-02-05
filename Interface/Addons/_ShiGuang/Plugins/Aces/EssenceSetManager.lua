@@ -1,11 +1,11 @@
---## Author: Metriss - Stormrage  ## Version: 1
+--## Author: Metriss - Stormrage  ## Version: 1.04
 local esm = ESSENCE_SET_MANAGER_ADDON or LibStub("AceAddon-3.0"):NewAddon("ESSENCE_SET_MANAGER_ADDON", "AceConsole-3.0")
 local setButtons = {}
-local setNames = {}
-local azeriteUIOpen = false
+esm.setNames = {}
+esm.azeriteUIOpen = false
 
-local MAX_SETS = 7
-local Y_OFFSET = -36
+local MAX_SETS = 8
+local Y_OFFSET = -32
 local SLOT_MAJOR = 115
 local SLOT_MINOR1 = 116
 local SLOT_MINOR2 = 117
@@ -15,12 +15,12 @@ local CHANGE_SPELL_IDS = {227041, 256231, 226241, 256229}
 esm.specProfiles = {}
 esm.ae = C_AzeriteEssence
 
-local eventHandlerFrame = CreateFrame("Frame")
-eventHandlerFrame:RegisterEvent("ADDON_LOADED")
-eventHandlerFrame:RegisterEvent("AZERITE_ESSENCE_UPDATE")
-eventHandlerFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-eventHandlerFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
-eventHandlerFrame:SetScript("OnEvent", function(self, event, arg1)
+esm.eventHandlerFrame = CreateFrame("Frame")
+esm.eventHandlerFrame:RegisterEvent("ADDON_LOADED")
+esm.eventHandlerFrame:RegisterEvent("AZERITE_ESSENCE_UPDATE")
+esm.eventHandlerFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+esm.eventHandlerFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+esm.eventHandlerFrame:SetScript("OnEvent", function(self, event, arg1)
 	if event == "ADDON_LOADED" then
 		if arg1 == "_ShiGuang" then
 			if ShiGuangPerDB.EssenceSetManager == nil then ShiGuangPerDB.EssenceSetManager = {} end
@@ -35,33 +35,52 @@ eventHandlerFrame:SetScript("OnEvent", function(self, event, arg1)
 		esm.currentSpec = esm.getSpecName()
 		esm.createSpecSet(esm.currentSpec)
 		esm.updateSetNames()
-		if event == "PLAYER_SPECIALIZATION_CHANGED" and azeriteUIOpen then
+		--esm.updateLDBButton()
+		if event == "PLAYER_SPECIALIZATION_CHANGED" then
 			esm.updateSetButtons()
-			esm.input:SetText("")
+			--esm.updateLDBSetButtons()
+			--esm.updateLDBButton()
+			esm.setInputText("")
 		end
-	elseif event == "AZERITE_ESSENCE_UPDATE" and azeriteUIOpen then
+	elseif event == "AZERITE_ESSENCE_UPDATE" then
+		--esm.updateLDBButton()
 		esm.updateSetButtons()
+		--esm.updateLDBSetButtons()
 		esm.updateInfoTooltip()
 	elseif event == "PLAYER_UPDATE_RESTING" or (event == "UNIT_AURA" and arg1 == "player") then
-		if azeriteUIOpen then
-			esm.updateBtnSaturation()
-		end
+		esm.updateBtnSaturation()
 	end
 end)
 
+
+esm.setInputText = function(text)
+	if esm.input then
+		esm.input:SetText(text)
+	end
+end
+
 esm.azeriteUIShow = function()
-	azeriteUIOpen = true
+	esm.azeriteUIOpen = true
 	esm.currentSpec = esm.getSpecName()
-	eventHandlerFrame:RegisterEvent("PLAYER_UPDATE_RESTING")
-	eventHandlerFrame:RegisterEvent("UNIT_AURA")
+	esm.checkEvents()
 	esm.updateSetButtons()
 end
 
 esm.azeriteUIHide = function()
-	azeriteUIOpen = false
-	esm.input:SetText("")
-	eventHandlerFrame:UnregisterEvent("PLAYER_UPDATE_RESTING")
-	eventHandlerFrame:UnregisterEvent("UNIT_AURA")
+	esm.azeriteUIOpen = false
+	esm.setInputText("")
+	esm.checkEvents()
+end
+
+esm.checkEvents = function()
+	if esm.azeriteUIOpen or esm.LDBOpen then
+		esm.eventHandlerFrame:RegisterEvent("PLAYER_UPDATE_RESTING")
+		esm.eventHandlerFrame:RegisterEvent("UNIT_AURA")
+	else
+		esm.eventHandlerFrame:UnregisterEvent("PLAYER_UPDATE_RESTING")
+		esm.eventHandlerFrame:UnregisterEvent("UNIT_AURA")
+	end
+
 end
 
 esm.getSpecName = function()
@@ -72,28 +91,33 @@ end
 
 esm.updateBtnSaturation = function()
 	esm.saturation = esm.checkIfCanChange()
-	for i=0, #(setButtons) do
+	for i=0, #(esm.setNames) do
 		if setButtons[i] then
 			setButtons[i].tex:SetDesaturated(esm.saturation)
 		end
+		--if esm.LDBSetButtons[i] then
+			--esm.LDBSetButtons[i].tex:SetDesaturated(esm.saturation)
+		--end
 	end
 	esm.updateTomeButton()
 end
 
 esm.updateTomeButton = function()
-	local tranquilCount = GetItemCount("Tome of the Tranquil Mind")
-	local quietCount =  GetItemCount("Tome of the Quiet Mind")
-	local totalCount = tranquilCount + quietCount
-	esm.itemBtn:SetText(totalCount)
-	if esm.saturation == 1 and totalCount > 0 then
-		esm.itemBtn:Enable()
-	else
-		esm.itemBtn:Disable()
-	end
-	if tranquilCount > 0 then
-		esm.itemBtn:SetAttribute("item", "Tome of the Tranquil Mind");
-	else
-		esm.itemBtn:SetAttribute("item", "Tome of the Quiet Mind");
+	if esm.itemBtn then
+		local tranquilCount = GetItemCount("Tome of the Tranquil Mind")
+		local quietCount =  GetItemCount("Tome of the Quiet Mind")
+		local totalCount = tranquilCount + quietCount
+		esm.itemBtn:SetText(totalCount)
+		if esm.saturation == 1 and totalCount > 0 then
+			esm.itemBtn:Enable()
+		else
+			esm.itemBtn:Disable()
+		end
+		if tranquilCount > 0 then
+			esm.itemBtn:SetAttribute("item", "Tome of the Tranquil Mind");
+		else
+			esm.itemBtn:SetAttribute("item", "Tome of the Quiet Mind");
+		end
 	end
 end
 
@@ -104,9 +128,9 @@ esm.createSpecSet = function(spec)
 end
 
 esm.updateSetNames = function()
-	setNames = {}
+	esm.setNames = {}
 	for k,v in pairs(esm.specProfiles[esm.currentSpec]) do
-		table.insert(setNames, k)
+		table.insert(esm.setNames, k)
 	end
 end
 
@@ -126,39 +150,46 @@ end
 
 
 esm.updateSetButtons = function()
-	esm.saturation = esm.checkIfCanChange()
-	esm.createSetFromEquipped()
-	esm.getUnlockedCount()
-	local i = 0
-	for name, line in esm.pairsByKeys(esm.specProfiles[esm.currentSpec]) do
-		esm.createSetButton(name, i)
-		i = i + 1
-    end
-	if (#(setButtons)+1) > i then --hide unused buttons if you delete some
-		for ii=i, #(setButtons)+1 do
-			if setButtons[ii] then
-				setButtons[ii]:Hide()
+	if _G.AzeriteEssenceUI then
+		esm.saturation = esm.checkIfCanChange()
+		esm.createSetFromEquipped()
+		esm.getUnlockedCount()
+		local i = 0
+		for name, line in esm.pairsByKeys(esm.specProfiles[esm.currentSpec]) do
+			if i < MAX_SETS then
+				esm.createSetButton(name, i)
+				i = i + 1
+			else
+				break;
 			end
 		end
+		if (#(setButtons)+1) > i then --hide unused buttons if you delete some
+			for ii=i, #(setButtons)+1 do
+				if setButtons[ii] then
+					setButtons[ii]:Hide()
+				end
+			end
+		end
+		esm.updateBtnSaturation()
+		--esm.updateLDBButton()
 	end
-	esm.updateBtnSaturation()
 end
 
 esm.createFonts = function()
 	esm.fontWhite = CreateFont("noMatch")
 	esm.fontWhite:CopyFontObject("GameFontNormal");
 	esm.fontWhite:SetTextColor(1, 1, 1, 1.0);
-	esm.fontWhite:SetFont(STANDARD_TEXT_FONT, 14, "OUTLINE")
+	esm.fontWhite:SetFont(STANDARD_TEXT_FONT, 13, "OUTLINE")
 	
 	esm.fontGreen = CreateFont("Match")
 	esm.fontGreen:CopyFontObject("GameFontNormal");
 	esm.fontGreen:SetTextColor(0, 1, 0, 1.0);
-	esm.fontGreen:SetFont(STANDARD_TEXT_FONT, 15, "OUTLINE")
+	esm.fontGreen:SetFont(STANDARD_TEXT_FONT, 14, "OUTLINE")
 	
 	esm.fontRed = CreateFont("Missing")
 	esm.fontRed:CopyFontObject("GameFontNormal");
 	esm.fontRed:SetTextColor(1, 0, 0, 1.0);
-	esm.fontRed:SetFont(STANDARD_TEXT_FONT, 14, "OUTLINE")
+	esm.fontRed:SetFont(STANDARD_TEXT_FONT, 13, "OUTLINE")
 
 end
 
@@ -193,23 +224,29 @@ esm.createSaveFrames = function()
 
 end
 
-esm.getFont = function(set)
-	if esm.isMissingEssence(set) then
-		useFont = esm.fontRed
+
+esm.isSetEquipped = function(set)
+	local equipped = true
+	if set.major.ID ~= esm.equippedMajorID then
+		equipped = false
 	else
-		local match = true
-		if set.major.ID ~= esm.equippedMajorID then
-			match = false
-		else
-			for k,v in pairs(set.minors) do
-				if v.ID then
-					if not tContains(esm.equippedMinorIDs, v.ID) then
-						match = false
-					end
+		for k,v in pairs(set.minors) do
+			if v.ID then
+				if not tContains(esm.equippedMinorIDs, v.ID) then
+					equipped = false
 				end
 			end
 		end
-		if match then
+	end
+	return equipped
+end
+
+esm.getFont = function(set)
+	local useFont
+	if esm.isMissingEssence(set) then
+		useFont = esm.fontRed
+	else
+		if esm.isSetEquipped(set) then
 			useFont = esm.fontGreen
 		else
 			useFont = esm.fontWhite
@@ -230,11 +267,14 @@ esm.createSetButton = function(text, i)
 		setButtons[i]:SetScript("OnLeave", function() esm.hideInfoTooltip(setButtons[i]) end)
 		setButtons[i].tex = setButtons[i]:CreateTexture()
 		setButtons[i].tex:SetAllPoints()
+		--setButtons[i]:SetBackdrop ({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", tile = true, tileSize = 16, edgeFile = [[Interface\ButtoPLTrader:NS\WHITE8X8]], edgeSize = 47})
+		--setButtons[i]:SetBackdropBorderColor (0, 0, 0, 1)
 	end
 	local useFont = esm.getFont(set)
 	if set.major.ID then
 		setButtons[i].tex:SetTexture(esm.ae.GetEssenceInfo(set.major.ID).icon)
 		setButtons[i].tex:SetDesaturated(esm.saturation)
+		setButtons[i].tex:SetTexCoord(.08, .92, .08, .92)
 	end
 	setButtons[i]:SetNormalFontObject(useFont)
 	setButtons[i]:SetHighlightFontObject(useFont)
@@ -314,7 +354,25 @@ end
 
 esm.showInfoTooltip = function(button)
 	esm.currentButton = button
-	GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
+	--if not esm.LDBOpen then
+		GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
+	--[[else
+		local x, y = esm.LDBButton:GetCenter()
+		if y > GetScreenWidth()/2 then
+			if x < GetScreenWidth()/2 then
+				GameTooltip:SetOwner(esm.LDBButton.bg, "ANCHOR_RIGHT")
+			else
+				GameTooltip:SetOwner(esm.LDBButton.bg, "ANCHOR_LEFT")
+			end
+		else
+			if x < GetScreenWidth()/2 then
+				GameTooltip:SetOwner(esm.LDBButton.bg, "ANCHOR_TOPRIGHT")
+			else
+				GameTooltip:SetOwner(esm.LDBButton.bg, "ANCHOR_TOPLEFT")
+			end
+		
+		end
+	end]]
 	local major = esm.specProfiles[esm.currentSpec][button.setName].major
 	local minors = esm.specProfiles[esm.currentSpec][button.setName].minors
 	local mOneName, mTwoName, mThreeName
@@ -351,7 +409,7 @@ end
 esm.saveButtonPress = function()
 	if esm.input:GetText() ~= "" then
 		esm.saveSet(esm.input:GetText())
-		esm.input:SetText("")
+		esm.setInputText("")
 	end
 end
 
@@ -360,6 +418,7 @@ esm.setButtonPress = function(button)
 		if IsControlKeyDown() then
 			esm.deleteSet(button.setName)
 			esm.updateSetButtons()
+			--esm.updateLDBSetButtons()
 		else
 			esm.saveSet(button.setName)
 		end
@@ -374,7 +433,7 @@ esm.inputTextChanged = function()
 	else
 		esm.save:Enable()
 	end
-	if not tContains(setNames, esm.input:GetText()) then
+	if not tContains(esm.setNames, esm.input:GetText()) then
 		esm.save:SetText(COMMUNITIES_CREATE)
 	else
 		esm.save:SetText(UPDATE)
@@ -405,7 +464,6 @@ esm.activateSet = function(name)
 	if set.minors.three.ID then
 		esm.ae.ActivateEssence(set.minors.three.ID, SLOT_MINOR3)
 	end
- 
 end
 
 esm.checkIfCanChange = function()
@@ -461,7 +519,9 @@ esm.saveSet = function(name)
 	if set then
 		esm.specProfiles[esm.currentSpec][name] = set
 		esm.updateSetButtons()
+		--esm.updateLDBSetButtons()
 		esm.updateSetNames()
+		--esm.updateLDBButton()
 		esm.updateInfoTooltip()
 	else
 		esm.errorPrint("You can not save a set without a major essence!")
@@ -475,7 +535,7 @@ end
 esm.deleteSet = function(name)
 	esm.specProfiles[esm.currentSpec][name] = nil
 	esm.updateSetNames()
-	if name == esm.input:GetText() then
+	if esm.input and name == esm.input:GetText() then
 		esm.save:SetText(COMMUNITIES_CREATE)
 	end
 end
@@ -497,8 +557,12 @@ esm:RegisterChatCommand("esm", function(msg, editbox)
 				esm.errorPrint("There is no set saved with this name for this spec. Capitalization must be the same.")
 			end
 		end
+	--elseif words[1] == "debugreset" then
+		--EssenceSetManager = {}
+		--print("Congrats you just RESET all of your profiles. I hope you didn't type this by accident.")
 	else
 		esm.printHelp()
 	end
       
 end)
+

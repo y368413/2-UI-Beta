@@ -40,7 +40,7 @@ WallpaperKitcfg.classicon = { size = 21, font = "Interface\\Addons\\_ShiGuang\\M
 WallpaperKitcfg.factionicon = { size = 0.8, pos = { point = "CENTER", X = -430, Y = -21, },}
 ------------------------------- FUNCTIONS-----------------------------
 --canvas frame
-local WallpaperKit = CreateFrame("Frame",nil,UIParent)
+local WallpaperKit = CreateFrame("Frame")
 WallpaperKit:SetAllPoints()
 WallpaperKit:SetFrameStrata("HIGH")
 WallpaperKit:SetFrameLevel(0)

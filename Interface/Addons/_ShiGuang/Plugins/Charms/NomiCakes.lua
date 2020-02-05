@@ -119,7 +119,7 @@ end
 
 local RecipeCache = {} -- [recipeID] = info
 
-local f = CreateFrame('frame')
+local NomiCakes = CreateFrame('frame')
 
 local RegisteredFrames = {} -- Holds a list of frames that should be registered for TRADE_SKILL_SHOW after our addon is finished
 local Callback
@@ -130,18 +130,18 @@ local function RequestCookingStuff(callback)
 		for _, frame in pairs(RegisteredFrames) do
 			frame:UnregisterEvent('TRADE_SKILL_SHOW')
 		end
-		f:RegisterEvent('TRADE_SKILL_SHOW')
+		NomiCakes:RegisterEvent('TRADE_SKILL_SHOW')
 		-- There seems to be no other way to prevent the tradeskill ui from opening when we call this function,
 		-- so we have to make SURE that the event always get re-registered or we'll break the other tradeskills
 		local opened = C_TradeSkillUI.OpenTradeSkill(185)
 		if not opened then
-			f:UnregisterEvent('TRADE_SKILL_SHOW')
+			NomiCakes:UnregisterEvent('TRADE_SKILL_SHOW')
 			for _, frame in pairs(RegisteredFrames) do
 				frame:RegisterEvent('TRADE_SKILL_SHOW')
 			end
 		end
 	else
-		f:GetScript('OnEvent')(f, 'TRADE_SKILL_LIST_UPDATE')
+		NomiCakes:GetScript('OnEvent')(NomiCakes, 'TRADE_SKILL_LIST_UPDATE')
 	end
 end
 
@@ -291,7 +291,7 @@ local function DecorateNomi()
 	end
 end
 
-f:SetScript('OnEvent', function(self, event, ...)
+NomiCakes:SetScript('OnEvent', function(self, event, ...)
 	if event == 'GOSSIP_SHOW' then
 		local guid = UnitGUID('npc')
 		if guid then
@@ -332,10 +332,10 @@ f:SetScript('OnEvent', function(self, event, ...)
 		end
 	end
 end)
-f:RegisterEvent('GOSSIP_SHOW')
-f:RegisterEvent('GOSSIP_CLOSED')
-f:RegisterEvent('GET_ITEM_INFO_RECEIVED')
-f:RegisterEvent('PLAYER_LOGIN')
+NomiCakes:RegisterEvent('GOSSIP_SHOW')
+NomiCakes:RegisterEvent('GOSSIP_CLOSED')
+NomiCakes:RegisterEvent('GET_ITEM_INFO_RECEIVED')
+NomiCakes:RegisterEvent('PLAYER_LOGIN')
 
 local function OutputRecipes()
 	local results = {}
@@ -443,8 +443,8 @@ do -- Experimental work order stuff
 	local WorkOrders = NomiCakesDatas.WorkOrders -- [i] = {itemID, placementTime, endTime}
 	local ShipmentOpenTime
 	local NumWorkOrdersOrdered, WorkOrderType = 0
-	local f = CreateFrame('frame')
-	f:SetScript('OnEvent', function(self, event, ...)
+	local NomiCakes = CreateFrame('frame')
+	NomiCakes:SetScript('OnEvent', function(self, event, ...)
 		if event == 'SHIPMENT_CRAFTER_OPENED' then
 			if ... == 122 then -- we're talking to nomi
 				ShipmentOpenTime = time()
@@ -529,7 +529,7 @@ do -- Experimental work order stuff
 			self:RegisterEvent('SHIPMENT_CRAFTER_OPENED')
 		end
 	end)
-	f:RegisterEvent('ADDON_LOADED')
+	NomiCakes:RegisterEvent('ADDON_LOADED')
 	
 	local READY_FOR_PICKUP = GARRISON_LANDING_RETURN:gsub('%s*%%d%s*', '')
 	local IgnoreShow = false

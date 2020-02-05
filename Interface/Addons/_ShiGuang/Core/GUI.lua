@@ -53,7 +53,6 @@ local defaultSettings = {
 		SplitCount = 1,
 		SpecialBagsColor = false,
 		iLvlToShow = 1,
-
 		FilterJunk = true,
 		FilterConsumble = true,
 		FilterAzerite = true,
@@ -109,9 +108,9 @@ local defaultSettings = {
 		AurasClickThrough = false,
 		RaidClickSets = false,
 		ShowTeamIndex = false,
-		ClassPower = true, --
-		QuakeTimer = true, --
-		LagString = true,  --
+		ClassPower = true,
+		QuakeTimer = true,
+		LagString = false,
 		RuneTimer = true,
 		RaidBuffIndicator = true,
 		PartyFrame = true,
@@ -127,14 +126,13 @@ local defaultSettings = {
 		HealthColor = 2,
 		BuffIndicatorType = 2,
 		BuffIndicatorScale = 1,
-		UFTextScale = 1,  --
+		UFTextScale = 1,
 		PartyAltPower = true,
 		PlayerWidth = 245,
 		PlayerHeight = 24,
-
-		BossWidth = 120,  --
-		BossHeight = 21,  --
-		BossPowerHeight = 3,  --
+		BossWidth = 120,
+		BossHeight = 21,
+		BossPowerHeight = 3,
 		CastingColor = {r=.8, g=.6, b=.1},  --r=.3, g=.7, b=1
 		NotInterruptColor = {r=.6, g=.6, b=.6},  --r=1, g=.5, b=.5
 		PlayerCBWidth = 240,
@@ -218,21 +216,9 @@ local defaultSettings = {
 		NameTextSize = 14,
 		HealthTextSize = 16,
 		MinScale = 1,
-		MinAlpha = 1,
+		MinAlpha = 0.8,
 		ColorBorder = true,
 		QuestIndicator = true,
-		--MinAlpha = .6,
-		--Arrow = true,
-		--AuraFilter = 2,
-		--OtherFilter = 2,
-		--Width = 88,
-		--Height = 6,
-		--Numberstyle = false,
-		--PlayerAura = false,		
-		--nameonly = false,  --只显示名字
-		--BommIcon = true,
-		--HighlightTarget = true,
-		--HighlightFocus = true,
 	},
 	Skins = {
 		DBM = true,
@@ -420,9 +406,8 @@ end)
 
 -- Callbacks
 local function setupBagFilter()
-	G:SetupBagFilter(guiPage[6])
+	G:SetupBagFilter(guiPage[7])
 end
-
 
 local function setupCastbar()
 	G:SetupCastbar(guiPage[3])
@@ -639,6 +624,11 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "Actionbar", "MicroMenuStyle", U["MicroMenuStyle"], true, true},
 		--{1, "Actionbar", "Bar4Fade", U["Bar4 Fade"]},
 		--{1, "Actionbar", "Bar5Fade", U["Bar5 Fade"], true},
+		--{1, "UFs", "LagString", U["Castbar LagString"]},
+		{1, "UFs", "QuakeTimer", U["UFs QuakeTimer"]},
+		--{1, "UFs", "ClassPower", U["UFs ClassPower"], true, true},
+		{1, "UFs", "SwingBar", U["UFs SwingBar"], true},
+		{1, "UFs", "SwingTimer", U["UFs SwingTimer"], true, true, nil, nil, U["SwingTimer Tip"]},
 		{},--blank
 		{1, "Tooltip", "CombatHide", U["Hide Tooltip"].."*"},
 		{1, "Tooltip", "Cursor", U["Follow Cursor"].."*", true},
@@ -653,7 +643,6 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "Tooltip", "AzeriteArmor", "|cff00cc4c"..U["Show AzeriteArmor"]},
 		{1, "Tooltip", "OnlyArmorIcons", U["Armor icons only"].."*", true},
 		{1, "Tooltip", "TargetBy", U["Show TargetedBy"].."*", true, true},
-
 	},
 	[2] = {
 		{1, "Nameplate", "Enable", "|cff00cc4c"..U["Enable Nameplate"], nil, nil, setupNameplateFilter},
@@ -733,6 +722,7 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{3, "UFs", "BuffIndicatorScale", U["BuffIndicatorScale"].."*", false, false, {1, 2, 1}, refreshRaidFrameIcons},
 		{3, "UFs", "RaidDebuffScale", U["RaidDebuffScale"].."*", true, false, {1, 2, 1}, refreshRaidFrameIcons},
 		{3, "UFs", "NumGroups", U["Num Groups"], true, true, {4, 8, 0}},
+		--{3, "UFs", "UFTextScale", U["UFTextScale"], true, {.8, 2, 2}, updateUFTextScale},
 	},
 	[4] = {
 		{1, "AuraWatch", "Enable", "|cff00cc4c"..U["Enable AuraWatch"], false, false, setupAuraWatch},
@@ -858,9 +848,11 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 	  {1, "Misc", "AutoMark", U["Auto Mark"]},
 	  {1, "Misc", "kAutoOpen", U["kAutoOpen"], true},
 		{1, "Misc", "AutoConfirmRoll", U["AutoConfirmRoll"], true, true},
+		{1, "Misc", "QuickQueue", U["QuickQueue"]},
+	  {1, "Misc", "AutoReagentInBank", U["Auto Reagent Bank"], true},
 		{1, "Bags", "Enable", "|cff00cc4c"..U["Enable Bags"]},
-		--{1, "Bags", "ItemFilter", U["Bags ItemFilter"].."*", true, true, nil, updateBagStatus},
-		--{1, "Bags", "ItemSetFilter", U["Use ItemSetFilter"].."*", true, true, nil, updateBagStatus},
+		--{1, "Bags", "ItemFilter", U["Bags ItemFilter"].."*", true, nil, setupBagFilter, updateBagStatus},
+		--{1, "Bags", "ItemSetFilter", U["Use ItemSetFilter"].."*", true, true, nil, updateBagStatus, U["ItemSetFilterTips"]},
 		--{1, "Bags", "GatherEmpty", U["Bags GatherEmpty"].."*", true, true, nil, updateBagStatus},
 		--{1, "Bags", "ReverseSort", U["Bags ReverseSort"].."*", true, true, nil, updateBagSortOrder},
 		--{1, "Bags", "SpecialBagsColor", U["SpecialBagsColor"].."*", true, true, nil, updateBagStatus, U["SpecialBagsColorTip"]},
@@ -872,8 +864,6 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		--{3, "Bags", "IconSize", U["Bags IconSize"], true, true, {30, 42, 0}},
 		--{3, "Bags", "BagsWidth", U["Bags Width"], true, true, {10, 20, 0}},
 		--{3, "Bags", "BankWidth", U["Bank Width"], true, true, {10, 20, 0}},
-		{1, "Misc", "QuickQueue", U["QuickQueue"], true},
-	  {1, "Misc", "AutoReagentInBank", U["Auto Reagent Bank"], true, true},
 	},
 	[8] = {
 		{1, "Misc", "ParagonRep", U["ParagonRep"]},

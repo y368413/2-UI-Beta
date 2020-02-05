@@ -529,7 +529,7 @@ function UF:UpdateExplosives(event, unit)
 
 	local npcID = self.npcID
 	if event == "NAME_PLATE_UNIT_ADDED" and npcID == id then
-		self:SetScale(1.5)
+		self:SetScale(1.25)
 	elseif event == "NAME_PLATE_UNIT_REMOVED" then
 		self:SetScale(1)
 	end
@@ -619,9 +619,9 @@ function UF:AddFollowerXP(self)
 	bar:SetSize(MaoRUIPerDB["Nameplate"]["PlateWidth"]*.75, MaoRUIPerDB["Nameplate"]["PlateHeight"])
 	bar:SetPoint("TOP", self.Castbar, "BOTTOM", 0, -3)
 	M.CreateSB(bar, false, 0, .7, 1)
-	bar.progressText = M.CreateFS(bar, 12)
+	bar.ProgressText = M.CreateFS(bar, 12)
 
-	self.NazjatarFollowerXP = bar
+	self.WidgetXPBar = bar
 end
 
 -- Interrupt info on castbars
@@ -659,7 +659,7 @@ function UF:CreatePlates()
 	--health.backdrop = M.CreateBDFrame(health, nil, true) -- don't mess up with libs
   M.CreateTex(health)
   M.CreateSD(health, 3)
-	M.SmoothBar(health)
+	M:SmoothBar(health)
 
 	self.Health = health
 	self.Health.UpdateColor = UF.UpdateColor

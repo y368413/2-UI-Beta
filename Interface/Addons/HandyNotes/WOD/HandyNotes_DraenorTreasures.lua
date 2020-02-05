@@ -904,18 +904,18 @@ function DraenorTreasures:OnEnter(mapFile, coord)
     tooltip:SetText(nodes[mapFile][coord][2])
     if (nodes[mapFile][coord][3] ~= nil) and (DraenorTreasures.db.profile.show_loot == true) then
         if ((nodes[mapFile][coord][7] ~= nil) and (nodes[mapFile][coord][7] ~= "")) then
-            tooltip:AddLine(("Loot: " .. GetItem(nodes[mapFile][coord][7])), nil, nil, nil, true)
+            tooltip:AddLine((GetItem(nodes[mapFile][coord][7])), nil, nil, nil, true)
 
             if ((nodes[mapFile][coord][3] ~= nil) and (nodes[mapFile][coord][3] ~= "")) then
-                tooltip:AddLine(("Lootinfo: " .. nodes[mapFile][coord][3]), nil, nil, nil, true)
+                tooltip:AddLine((nodes[mapFile][coord][3]), nil, nil, nil, true)
             end
         else
-            tooltip:AddLine(("Loot: " .. nodes[mapFile][coord][3]), nil, nil, nil, true)
+            tooltip:AddLine((nodes[mapFile][coord][3]), nil, nil, nil, true)
         end
     end
 
     if (nodes[mapFile][coord][4] ~= "") and (DraenorTreasures.db.profile.show_notes == true) then
-     tooltip:AddLine(("Notes: " .. nodes[mapFile][coord][4]), nil, nil, nil, true)
+     tooltip:AddLine((nodes[mapFile][coord][4]), nil, nil, nil, true)
     end
 
     tooltip:Show()

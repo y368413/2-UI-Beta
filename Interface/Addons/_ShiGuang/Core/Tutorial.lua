@@ -19,13 +19,11 @@ local function DefaultSettings()
 	SetCVar("screenshotQuality", 10)
 	SetCVar("showTutorials", 0)
 	SetCVar("overrideArchive", 0)
-	SetCVar("WorldTextScale", 1)
 	SetCVar("showQuestTrackingTooltips", 1)
 	SetCVar("showTargetOfTarget",1) --目标的目标
-	SetCVar("worldPreloadNonCritical", 0)								--加快蓝条，读完蓝条再载入游戏模组
-	SetCVar("fstack_preferParentKeys", 0)
-	setglobal("MAX_EQUIPMENT_SETS_PER_PLAYER",100)
+	--SetCVar("fstack_preferParentKeys", 0)
 	SetCVar("missingTransmogSourceInItemTooltips", 1)
+	--setglobal("MAX_EQUIPMENT_SETS_PER_PLAYER",100)
 end
 
 local function ForceDefaultSettings()
@@ -85,6 +83,7 @@ local function ForceDefaultSettings()
 	SetCVar("statusText",1) --状态文字
 	SetCVar("statusTextDisplay","NUMERIC")--头像状态文字形式："NUMERIC"数值"PERCENT"百分比"BOTH"同时显示
 	SetCVar("autoLootDefault",1) --自动拾取
+	SetCVar("worldPreloadNonCritical", 0) --加快蓝条，读完蓝条再载入游戏模组
 end
 
 local function ForceRaidFrame()

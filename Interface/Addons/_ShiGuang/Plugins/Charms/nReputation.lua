@@ -1,5 +1,3 @@
-local gsub, find = string.gsub, string.find
-
 nReputationMixin = {}
 
 function nReputationMixin:OnLoad()
@@ -43,8 +41,8 @@ end
 function nReputationMixin:OnEvent(event, ...)
 	if ( event == "CHAT_MSG_COMBAT_FACTION_CHANGE" ) then
     local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11 = ...
-		local pattern_standing_inc = gsub(gsub(FACTION_STANDING_INCREASED, "(%%s)", "(.+)"), "(%%d)", "(%%d+)")
-		local s1, e1, faction, amount = find(arg1, pattern_standing_inc)
+		local pattern_standing_inc = string.gsub(string.gsub(FACTION_STANDING_INCREASED, "(%%s)", "(.+)"), "(%%d)", "(%%d+)")
+		local s1, e1, faction, amount = string.find(arg1, pattern_standing_inc)
 		if ( s1 ~= nil and amount ~= nil ) then
 			if ( faction ~= GUILD ) then
 				self:SetWatched(faction)

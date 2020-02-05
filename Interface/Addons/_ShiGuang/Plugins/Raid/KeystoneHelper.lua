@@ -33,21 +33,43 @@ local function GetModifiers(linkType, ...)
 	return modifiers, instanceID, mythicLevel
 end
 
-function WhatADropItemLevel(mlvl)
+function MythicLootItemLevel(mlvl)
  if (mlvl == "2" or mlvl == "3") then
   return "435"
  elseif (mlvl == "4") then
   return "440"
  elseif (mlvl == "5" or mlvl == "6") then
   return "445"
- elseif (mlvl == "7" or mlvl == "8") then
+ elseif (mlvl == "7") then
   return "450"
- elseif (mlvl == "9" or mlvl == "10" or mlvl == "11") then
+ elseif (mlvl == "8" or mlvl == "9" or mlvl == "10") then
   return "455"
- elseif (mlvl == "12" or mlvl == "13" or mlvl == "14") then
+ elseif (mlvl == "11" or mlvl == "12" or mlvl == "13") then
   return "460"
- elseif (mlvl >= "15") then
+ elseif (mlvl == "14" or mlvl == "15") then
   return "465"
+ else
+  return ""
+ end
+end
+
+function MythicWeeklyLootItemLevel(mlvl)
+ if (mlvl == "2") then
+  return "440"
+ elseif (mlvl == "3") then
+  return "445"
+ elseif (mlvl == "4" or mlvl == "5") then
+  return "450"
+ elseif (mlvl == "6") then
+  return "455"
+ elseif (mlvl == "7" or mlvl == "8" or mlvl == "9") then
+  return "460"
+ elseif (mlvl == "10" or mlvl == "11") then
+  return "465"
+ elseif (mlvl == "12" or mlvl == "13" or mlvl == "14") then
+  return "470"
+ elseif (mlvl == "15") then
+  return "475"
  else
   return ""
  end
@@ -70,7 +92,7 @@ function MythicWeeklyResiduumAmount(mlvl)
  elseif (mlvl == "8") then
   return "？"
  elseif (mlvl == "9") then
-  return "400"
+  return "？"
  elseif (mlvl == "10") then
   return "1700"
  elseif (mlvl == "11") then
@@ -84,7 +106,7 @@ function MythicWeeklyResiduumAmount(mlvl)
  elseif (mlvl == "15") then
   return "2150"
  elseif (mlvl == "16") then
-  return "22400"
+  return "2240"
  elseif (mlvl == "17") then
   return "2330"
  elseif (mlvl == "18") then
@@ -100,7 +122,7 @@ function MythicWeeklyResiduumAmount(mlvl)
  elseif (mlvl == "23") then
   return "2795"
  elseif (mlvl == "24") then
-  return "2850"
+  return "2860"
  elseif (mlvl == "25") then
   return "2915"
  else
@@ -131,7 +153,7 @@ local function DecorateTooltip(self, link, _)
 				local weeklyRewardLevel, endOfRunRewardLevel = C_MythicPlus.GetRewardLevelForDifficultyLevel(mythicLevel)
 				if weeklyRewardLevel ~= 0 then
 								self:AddDoubleLine("|cffff00ff"..WEEKLY..REWARD.."|r", weeklyRewardLevel, 1, 1, 1,true)
-								self:AddDoubleLine("|cffff00ff"..INSTANCE..LOOT.."|r", WhatADropItemLevel(mythicLevel) .. "+", 1,1,1,true)
+								self:AddDoubleLine("|cffff00ff"..INSTANCE..LOOT.."|r", MythicLootItemLevel(mythicLevel) .. "+", 1,1,1,true)
 								self:AddDoubleLine("|cffff00ff"..WEEKLY..REWARD.."|r", MythicWeeklyResiduumAmount(mythicLevel), 1, 1, 1,true)
 				end
 			end
@@ -183,7 +205,8 @@ do
         local titans = {nil, 440, 445, 450, 450, 455, 460, 460, 465, 465, 465, 470, 470, 475, 475, 475, 475, 475, 475, 475, 475, 475, 475, 475, 475}
         ChallengesFrame.WeeklyInfo.Child.WeeklyChest:HookScript("OnEnter", function(self) 
             if GameTooltip:IsVisible() then 
-                GameTooltip:AddLine("|cff00ff00".."钥石层数  奖励装等  低保装等".."|r") 
+                GameTooltip:AddLine(" ")
+                GameTooltip:AddLine("|cff00ff00".." 钥石层数   奖励装等   低保装等".."|r") 
                 local start = 2 
                 if self.level and self.level > 0 then 
                     start = self.level - 3 
@@ -200,15 +223,14 @@ do
                     else 
                         break 
                     end 
-                end 
-            --GameTooltip:AddLine(" ") 
+                end  
             --GameTooltip:AddLine("415随机 需要1725  分解返365")
             --GameTooltip:AddLine("430随机 需要9000  分解返2000")
             --GameTooltip:AddLine("445随机 需要47500 分解返10000")
             --GameTooltip:AddLine("445指定 需要20万")
             --GameTooltip:AddLine("分解400返115 385返35 370返12")
             --GameTooltip:AddLine("仅分解|cffff0000同甲|r特质装才返")
-            --GameTooltip:Show() 
+            GameTooltip:Show() 
             end 
         end) 
     end) 

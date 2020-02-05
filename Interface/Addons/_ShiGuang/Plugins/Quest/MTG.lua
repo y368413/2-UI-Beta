@@ -1,7 +1,90 @@
-local _, ns = ...
-local M, R, U, I = unpack(ns)
 --## Author: JANY ## Version: v4.0.2-42-20190819
-local strmatch, strformat = string.match, string.format
+MTG_L = GetLocale() == "zhCN" and {
+  ["Mrrl's trade game"] = "鱼人购买助手",
+  ["Don't buy cape items"] = "不要买稀有品",
+  ["buy cape items that don't need taco"] = "购买不含饼干的的稀有品",
+  ["buy every cape items"] = "购买每一件珍稀物品",
+  ["Buy normal items"] = "购买普通物品",
+  ["Don't buy normal items"] = "不购买普通物品",
+  ["Check taco before buying rare items with taco"] = "先检查塔可饼，然后再用塔可饼购买稀有品",
+
+  ["Detected that you have loaded WeakAuras's Mrrl's trade game, to avoid repeated purchases, the MTG addon has been automatically closed, followed by WeakAuras's Mrrl's trade game purchase"] = "检测到你已加载WA的Mrrl's trade game,为了避免重复购买,MTG插件已自动关闭,接下来使用的是WA的Mrrl's trade game购买.",
+  ["buy"] = "购买",
+  ["Use it manually in the water"] = "去水里手动使用",
+  ["This item wants a Taco cake"] = "这个物品要塔可饼",
+  ["This item doesn't need tower cakes"] = "这个物品不需要塔可饼",
+
+  ["Detected"] = "检测到",
+  [168053] = "奖励:单个保镖75经验",--极其聪明的寄居蟹
+  [168091] = "奖励:长满藤壶的宝箱",--严重生锈的保险箱
+  [168092] = "奖励:解密实验洞穴所需物品",--一捆异常暖和的洗澡
+  [168093] = "奖励:3个棱彩珍珠",--污秽的法力珍珠手镯
+  [168094] = "奖励:占卜石",--微微嗡鸣的海石
+  [168095] = "奖励:神器能量",--奇特的珊瑚丛
+  [168096] = "奖励:发芽之种,卤岩矿锄,鱼饵等召唤用任务物品",--浸水的工具箱
+  [168097] = "奖励:底栖装备",--被盗的护甲箱
+  --## the following items require Azsh'ari Stormsurger Cape
+  --## as the wowhead data is not completed yet, some might skip taco check 
+  [170159] = "奖励:3个棱彩珍珠",--污秽的法力珍珠手镯
+  [170152] = "奖励:深渊海螺150声望",--裹影贝壳
+  [170153] = "奖励:保镖全加150经验",--看起来很不祥的书典
+  [170157] = "奖励:解密实验洞穴所需物品",--一堆凶兆之沙
+  [170161] = "奖励:单个保镖75经验",--极其聪明的寄居蟹
+  [170162] = "奖励:发芽之种,卤岩矿锄,鱼饵等召唤用任务物品", --浸水的工具箱
+  [170101] = "奖励:底栖装备",--被盗的护甲箱
+  [169202] = "奖励:坐骑",
+  [170158] = "奖励:7个棱彩珍珠",--不可名状的珍珠人偶
+
+  ["Mrrglrlr"] = "穆勒格勒勒",
+  ["Grrmrlg"] = "格姆勒格",
+  ["Flrgrrl"] = "弗勒格勒",
+  ["Hurlgrl"] = "胡勒格勒",
+  ["Mrrl"] = "穆勒尔", 
+} or GetLocale() == "zhTW" and {
+  ["Mrrl's trade game"] = "魚人購買助手",
+  ["Don't buy cape items"] = "不要買稀有品",
+  ["buy cape items that don't need taco"] = "購買不含觸手捲的的稀有品",
+  ["buy every cape items"] = "購買每一件珍稀物品",
+  ["Buy normal items"] = "購買普通物品",
+  ["Don't buy normal items"] = "不購買普通物品",
+  ["Check taco before buying rare items with taco"] = "先檢查觸手捲，然後再用觸手捲購買稀有品",
+
+  ["Detected that you have loaded WeakAuras's Mrrl's trade game, to avoid repeated purchases, the MTG addon has been automatically closed, followed by WeakAuras's Mrrl's trade game purchase"] = "檢測到你已加載WA的Mrrl's trade game,為了避免重復購買,MTG插件已自動關閉,接下來使用的是WA的Mrrl's trade game購買.",
+  ["buy"] = "購買",
+  ["Use it manually in the water"] = "去水裡手動使用",
+  ["This item wants a Taco cake"] = "這個物品要觸手捲",
+  ["This item doesn't need tower cakes"] = "這個物品不需要觸手捲",
+
+  ["Detected"] = "檢測到",
+  [168053] = "獎勵:單個保鏢75經驗",--極其聰明的寄居蟹
+  [168091] = "獎勵:長滿藤壺的寶箱",--嚴重生鏽的保險箱
+  [168092] = "獎勵:解密實驗室所需物品",--一捆異常暖和的洗澡
+  [168093] = "獎勵:3個棱彩珍珠",--污穢的法力珍珠手鐲
+  [168094] = "獎勵:顯現石",--微微嗡鳴的海石
+  [168095] = "獎勵:神器能量",--奇特的珊瑚叢
+  [168096] = "獎勵:發芽種子,鹵石鋤,餌食等召喚用任務物品",--浸水的工具箱
+  [168097] = "獎勵:海底裝備",--被盜的護甲箱
+  --## the following items require Azsh'ari Stormsurger Cape
+  --## as the wowhead data is not completed yet, some might skip taco check 
+  [170159] = "獎勵:3個棱彩珍珠",--污穢的法力珍珠手鐲
+  [170152] = "獎勵:深淵海螺150聲望",--裹影貝殼
+  [170153] = "獎勵:保鏢全加150經驗",--看起來很不祥的書典
+  [170157] = "獎勵:解密實驗室所需物品",--一堆凶兆之沙
+  [170161] = "獎勵:單個保鏢75經驗",--極其聰明的寄居蟹
+  [170162] = "獎勵:發芽種子,鹵石鋤,餌食等召喚用任務物品", --浸水的工具箱
+  [170101] = "獎勵:海底裝備",--被盜的護甲箱
+  [169202] = "獎勵:坐騎",
+  [170158] = "獎勵:7個棱彩珍珠",--不可名狀的珍珠人偶
+
+  ["Mrrglrlr"] = "莫咕嚕",
+  ["Grrmrlg"] = "咕莫咕",
+  ["Flrgrrl"] = "弗咕嚕",
+  ["Hurlgrl"] = "呼咕嚕",
+  ["Mrrl"] = "莫嚕", 
+} or { }
+
+setmetatable(MTG_L, {__index = function(self, key) rawset(self, key, key); return key; end})
+
 local showReq = true --显示每个项目的要求。
 local showAllButNotOnlyMeetsReq = false --显示每个项目，但不是仅显示当前要求。
 local j_sort = 1  --按以下方式对buyString进行排序：1个NPC优先。2稀有优先
@@ -9,25 +92,25 @@ local j_MerchantShowDelay = 0.5 --延迟
 
 local valueableList = {}
 local valueableListinfo = {
-        [168053] = U[168053],
-        [168091] = U[168091],--严重生锈的保险箱
-        [168092] = U[168092],--一捆异常暖和的洗澡
-        [168093] = U[168093],--污秽的法力珍珠手镯
-        [168094] = U[168094],--微微嗡鸣的海石
-        [168095] = U[168095],--奇特的珊瑚丛
-        [168096] = U[168096],--浸水的工具箱
-        [168097] = U[168097],--被盗的护甲箱
+        [168053] = MTG_L[168053],
+        [168091] = MTG_L[168091],--严重生锈的保险箱
+        [168092] = MTG_L[168092],--一捆异常暖和的洗澡
+        [168093] = MTG_L[168093],--污秽的法力珍珠手镯
+        [168094] = MTG_L[168094],--微微嗡鸣的海石
+        [168095] = MTG_L[168095],--奇特的珊瑚丛
+        [168096] = MTG_L[168096],--浸水的工具箱
+        [168097] = MTG_L[168097],--被盗的护甲箱
         --## the following items require Azsh'ari Stormsurger Cape
         --## as the wowhead data is not completed yet, some might skip taco check 
-        [170159] = U[170159],--污秽的法力珍珠手镯
-        [170152] = U[170152],--裹影贝壳
-        [170153] = U[170153],--看起来很不祥的书典
-        [170157] = U[170157],--一堆凶兆之沙
-        [170161] = U[170161],--极其聪明的寄居蟹
-        [170162] = U[170162], --浸水的工具箱
-        [170101] = U[170101],--被盗的护甲箱
-        [169202] = U[169202],
-        [170158] = U[170158],--不可名状的珍珠人偶
+        [170159] = MTG_L[170159],--污秽的法力珍珠手镯
+        [170152] = MTG_L[170152],--裹影贝壳
+        [170153] = MTG_L[170153],--看起来很不祥的书典
+        [170157] = MTG_L[170157],--一堆凶兆之沙
+        [170161] = MTG_L[170161],--极其聪明的寄居蟹
+        [170162] = MTG_L[170162], --浸水的工具箱
+        [170101] = MTG_L[170101],--被盗的护甲箱
+        [169202] = MTG_L[169202],
+        [170158] = MTG_L[170158],--不可名状的珍珠人偶
 
     }
 
@@ -50,16 +133,16 @@ local j_fullNPCRaidTargetIndex = {
     [152084] = 2,
 }
 local NPCNameList={
-        [152084] = "|TInterface\\TARGETINGFRAME\\UI-RaidTargetingIcon_2:26|t "..U["Mrrl"],
-        [151952] = "|TInterface\\TARGETINGFRAME\\UI-RaidTargetingIcon_1:26|t "..U["Flrgrrl"],
-        [151953] = "|TInterface\\TARGETINGFRAME\\UI-RaidTargetingIcon_3:26|t "..U["Hurlgrl"],
-        [151950] = "|TInterface\\TARGETINGFRAME\\UI-RaidTargetingIcon_6:26|t "..U["Mrrglrlr"],
-        [151951] = "|TInterface\\TARGETINGFRAME\\UI-RaidTargetingIcon_5:26|t "..U["Grrmrlg"],
+        [152084] = "|TInterface\\TARGETINGFRAME\\UI-RaidTargetingIcon_2:26|t "..MTG_L["Mrrl"],
+        [151952] = "|TInterface\\TARGETINGFRAME\\UI-RaidTargetingIcon_1:26|t "..MTG_L["Flrgrrl"],
+        [151953] = "|TInterface\\TARGETINGFRAME\\UI-RaidTargetingIcon_3:26|t "..MTG_L["Hurlgrl"],
+        [151950] = "|TInterface\\TARGETINGFRAME\\UI-RaidTargetingIcon_6:26|t "..MTG_L["Mrrglrlr"],
+        [151951] = "|TInterface\\TARGETINGFRAME\\UI-RaidTargetingIcon_5:26|t "..MTG_L["Grrmrlg"],
 } 
 
-local frame = CreateFrame("Frame")
-frame:RegisterEvent("ADDON_LOADED") 
-frame:SetScript("OnEvent", function(self, event,...) 
+local MTG = CreateFrame("Frame")
+MTG:RegisterEvent("ADDON_LOADED") 
+MTG:SetScript("OnEvent", function(self, event,...) 
     if self[event] then
         return self[event](self, event, ...)
     end
@@ -119,24 +202,24 @@ local initializeValueableList = function(J_id,J_Boolean)
         [170158] = buyRareItemsWithTaco,
     }
     --[[valueableList = {
-        [168053] = {itemType = buyNormalItems,iteminfo=U[168053],},
-        [168091] = {itemType = buyNormalItems,iteminfo=U[168091], },
-        [168092] = {itemType = buyNormalItems,iteminfo=U[168092], },
-        [168093] = {itemType = buyNormalItems,iteminfo=U[168093], },
-        [168094] = {itemType = buyNormalItems,iteminfo=U[168094], },
-        [168095] = {itemType = buyNormalItems,iteminfo=U[168095], },
-        [168096] = {itemType = buyNormalItems,iteminfo=U[168096], },
-        [168097] = {itemType = buyNormalItems,iteminfo=U[168097], },
+        [168053] = {itemType = buyNormalItems,iteminfo=MTG_L[168053],},
+        [168091] = {itemType = buyNormalItems,iteminfo=MTG_L[168091], },
+        [168092] = {itemType = buyNormalItems,iteminfo=MTG_L[168092], },
+        [168093] = {itemType = buyNormalItems,iteminfo=MTG_L[168093], },
+        [168094] = {itemType = buyNormalItems,iteminfo=MTG_L[168094], },
+        [168095] = {itemType = buyNormalItems,iteminfo=MTG_L[168095], },
+        [168096] = {itemType = buyNormalItems,iteminfo=MTG_L[168096], },
+        [168097] = {itemType = buyNormalItems,iteminfo=MTG_L[168097], },
         --------------------------
-        [170159] = {itemType = buyRareItemsNoTaco,iteminfo=U[170159], },
-        [170152] = {itemType = buyRareItemsNoTaco,iteminfo=U[170152], },
-        [170153] = {itemType = buyRareItemsWithTaco,iteminfo=U[170153], },
-        [170157] = {itemType = buyRareItemsNoTaco,iteminfo=U[170157], },
-        [170161] = {itemType = buyRareItemsWithTaco,iteminfo=U[170161], },
-        [170162] = {itemType = buyRareItemsNoTaco,iteminfo=U[170162], },
-        [170101] = {itemType = buyRareItemsNoTaco,iteminfo=U[170101], },
-        [169202] = {itemType = buyRareItemsWithTaco,iteminfo=U[169202], },
-        [170158] = {itemType = buyRareItemsWithTaco,iteminfo=U[170158], },
+        [170159] = {itemType = buyRareItemsNoTaco,iteminfo=MTG_L[170159], },
+        [170152] = {itemType = buyRareItemsNoTaco,iteminfo=MTG_L[170152], },
+        [170153] = {itemType = buyRareItemsWithTaco,iteminfo=MTG_L[170153], },
+        [170157] = {itemType = buyRareItemsNoTaco,iteminfo=MTG_L[170157], },
+        [170161] = {itemType = buyRareItemsWithTaco,iteminfo=MTG_L[170161], },
+        [170162] = {itemType = buyRareItemsNoTaco,iteminfo=MTG_L[170162], },
+        [170101] = {itemType = buyRareItemsNoTaco,iteminfo=MTG_L[170101], },
+        [169202] = {itemType = buyRareItemsWithTaco,iteminfo=MTG_L[169202], },
+        [170158] = {itemType = buyRareItemsWithTaco,iteminfo=MTG_L[170158], },
     }]]
     if debug.showValueableList or true then
         for k,v in pairs(valueableList) do 
@@ -146,10 +229,10 @@ local initializeValueableList = function(J_id,J_Boolean)
     end
     if J_Boolean and valueableList[J_id]~=nil and valueableList[J_id] == buyRareItemsNoTaco then
         valueableList[J_id] = buyRareItemsWithTaco
-        print(J_id,U["This item wants a Taco cake"])
+        print(J_id,MTG_L["This item wants a Taco cake"])
     elseif not J_Boolean and valueableList[J_id]~=nil and valueableList[J_id] == buyRareItemsWithTaco then
         valueableList[J_id] = buyRareItemsNoTaco
-        print(J_id,U["This item doesn't need tower cakes"])
+        print(J_id,MTG_L["This item doesn't need tower cakes"])
     end
 end
 local everGenerated = false
@@ -398,7 +481,7 @@ local buyList = {}
 local buyLists = {}
 local GetItemID = function(itemLink)
     if not itemLink then return nil end
-    local itemID = strmatch(itemLink, "item:(%d+):")
+    local itemID = string.match(itemLink, "item:(%d+):")
     return itemID and tonumber(itemID) or nil
 end
 
@@ -417,7 +500,7 @@ end
 local GetNPCID = function(unit)
     if not unit then return nil end
     local id = UnitGUID(unit)
-    id = strmatch(id, "-(%d+)-%x+$")
+    id = string.match(id, "-(%d+)-%x+$")
     return tonumber(id, 10)
 end
 
@@ -543,15 +626,15 @@ local generatebuyString = function()
 
     
     local tempStrnSet = {}
-    
+ 
     for itemID, itemBuyInfo in pairs(buyList) do
-        local ReqStrn = showReq and strformat(" (%s)", generateReqString(itemID)) or ""
-        local strn
+        local ReqStrn = showReq and string.format(" (%s)", generateReqString(itemID)) or ""
+        local strn 
         if meetsReq(itemID) or showAllButNotOnlyMeetsReq then--满足要求
             if itemBuyInfo.amount > 1 then
-                strn = strformat(" %s %s %sx%d%s",NPCNameList[itemBuyInfo.NPC], "→", getItemLink(itemID), itemBuyInfo.amount, ReqStrn)
+                strn = string.format(" %s %s %sx%d%s",NPCNameList[itemBuyInfo.NPC], MTG_L["buy"],getItemLink(itemID), itemBuyInfo.amount, ReqStrn)
             elseif itemBuyInfo.amount > 0 then
-                strn = strformat(" %s %s %s%s",NPCNameList[itemBuyInfo.NPC], "→", getItemLink(itemID), ReqStrn)
+                strn = string.format(" %s %s %s%s",NPCNameList[itemBuyInfo.NPC], MTG_L["buy"], getItemLink(itemID), ReqStrn)
             end
             
             table.insert(tempStrnSet, {
@@ -579,7 +662,7 @@ local checkDealReplacementString = function()
     local strn = ""
     for _, itemID in pairs(replaceList) do
         if GetItemCount(itemID) >= 1 then
-            strn = strformat("%s %s %s", strn, U["Use it manually in the water"], getItemLink(itemID))
+            strn = string.format("%s %s %s", strn,MTG_L["Use it manually in the water"], getItemLink(itemID))
         end
     end
     return strn
@@ -598,9 +681,9 @@ generateReqString = function(itemID)
                 break
             else
                 if strn == "" then
-                    strn = (Amount * req.amount > 1) and strformat("%sx%d", getItemLink(req.item), Amount * req.amount) or strformat("%s", getItemLink(req.item))
+                    strn = (Amount * req.amount > 1) and string.format("%sx%d", getItemLink(req.item), Amount * req.amount) or string.format("%s", getItemLink(req.item))
                 else
-                    strn = (Amount * req.amount > 1) and strformat("%s+%sx%d", strn, getItemLink(req.item), Amount * req.amount) or strformat("%s+%s", strn, getItemLink(req.item))
+                    strn = (Amount * req.amount > 1) and string.format("%s+%sx%d", strn, getItemLink(req.item), Amount * req.amount) or string.format("%s+%s", strn, getItemLink(req.item))
                 end
             end
         end    
@@ -679,11 +762,11 @@ function J_MRRL_DELAYED_MERCHANT_SHOW()
 
                 end 
             if not talkedNPC[NPCID] then
-                print(GX_ADAPTER_AUTO_DETECT , NPCname,currentItem,valueableListinfo[GetItemID(currentItem)] or "")
+                print(MTG_L["Detected"], NPCname,currentItem,valueableListinfo[GetItemID(currentItem)] or "")
             end
                               
             else
-                print(strformat("|cff999900未扫描物品信息. 重新和 %s 对话!", NPCname))
+                print(string.format("|cff999900未扫描物品信息. 重新和 %s 对话!", NPCname))
                 return false
             end                
         end 
@@ -699,32 +782,32 @@ function J_MRRL_DELAYED_MERCHANT_SHOW()
         
     end
     if fullNPC[NPCID] then 
-        C_Timer.After(1, function() JNAYDBM_Purchase_prompt(strformat("%s%s", generatebuyString(), checkDealReplacementString()),5.0,false) end)
+        C_Timer.After(1, function() JNAYDBM_Purchase_prompt(string.format("%s%s", generatebuyString(), checkDealReplacementString()),5.0,false) end)
     end
     return true
 end
 
 
 
-function frame:MERCHANT_SHOW(event,...)
+function MTG:MERCHANT_SHOW(event,...)
     C_Timer.After(j_MerchantShowDelay, J_MRRL_DELAYED_MERCHANT_SHOW)
 end
 
 
-function frame:MERCHANT_CLOSED(event,...)
+function MTG:MERCHANT_CLOSED(event,...)
     if IsAddOnLoaded("WeakAuras") then
         if WeakAuras.loaded["Mrrl's trade game"] then 
-            frame:UnregisterEvent("MERCHANT_SHOW")
-            frame:UnregisterEvent("MERCHANT_CLOSED")
-            frame:UnregisterEvent("CHAT_MSG_LOOT")
-            JNAYDBM_Purchase_prompt(U["Detected WeakAuras's Mrrl's"],5.0,false)
+            MTG:UnregisterEvent("MERCHANT_SHOW")
+            MTG:UnregisterEvent("MERCHANT_CLOSED")
+            MTG:UnregisterEvent("CHAT_MSG_LOOT")
+            JNAYDBM_Purchase_prompt(MTG_L["Detected that you have loaded WeakAuras's Mrrl's trade game, to avoid repeated purchases, the MTG addon has been automatically closed, followed by WeakAuras's Mrrl's trade game purchase"],5.0,false)
         end
     end
     return true
 end
 
 local buyitems = ""
-function frame:CHAT_MSG_LOOT(event,...)
+function MTG:CHAT_MSG_LOOT(event,...)
     local line, _, _, _, unit = ...
     if unit == playerFullName then
         for itemID, _ in pairs(buyList) do
@@ -732,8 +815,8 @@ function frame:CHAT_MSG_LOOT(event,...)
             if item == nil and itemID ~= 167916 and itemID ~= 170100 and merchantItemList[itemID] then 
                 print(JNAYDBM_Purchase_prompt(itemID.."发生了一些错误,/RL后重新购买.",5.0,false))
             end
-            if item ~= nil and strmatch(line, item) then
-                local lootAmount = strmatch(line, item .. "]|h|rx(%d+)") or 1
+            if item ~= nil and string.match(line, item) then
+                local lootAmount = string.match(line, item .. "]|h|rx(%d+)") or 1
                 buyitems = buyitems ..itemID.."("..lootAmount..")"..unit.."】【"
                 buyList[itemID].amount = buyList[itemID].amount - lootAmount
                 if valueableList[itemID] ~= nil then
@@ -760,9 +843,9 @@ function JNAYDBM_Purchase_prompt(message,duration,clear)
         local v
         for _, v in ipairs(chatframes) do
             if v == "MONSTER_BOSS_EMOTE" then
-                local frame = 'ChatFrame' .. i
-                if _G[frame] then
-                    _G[frame]:AddMessage(message,1.0,1.0,0.0,GetChatTypeIndex(ChatTypeInfo["RAID_BOSS_EMOTE"].id))
+                local MTG = 'ChatFrame' .. i
+                if _G[MTG] then
+                    _G[MTG]:AddMessage(message,1.0,1.0,0.0,GetChatTypeIndex(ChatTypeInfo["RAID_BOSS_EMOTE"].id))
                 end
                 break
             end
@@ -770,18 +853,18 @@ function JNAYDBM_Purchase_prompt(message,duration,clear)
     end
 end
 
-function frame:GET_ITEM_INFO_RECEIVED(event,...)
+function MTG:GET_ITEM_INFO_RECEIVED(event,...)
     local  itemID, success = ...
     if itemID ~= 0 and not success then     
         if merchantItemList[itemID] then
             print(itemID,"未成功地从服务器查询该项")
             J_ADDmerchantItemList()--加载物品列表
-            C_Timer.After(3, function() frame:UnregisterEvent("GET_ITEM_INFO_RECEIVED") end)--3秒后自动关闭未加载物品提示,防止死循环
+            C_Timer.After(3, function() MTG:UnregisterEvent("GET_ITEM_INFO_RECEIVED") end)--3秒后自动关闭未加载物品提示,防止死循环
         end 
     end
 end
 
-function frame:ADDON_LOADED(event,...)
+function MTG:ADDON_LOADED(event,...)
     if ShiGuangDB["j_BuyRareItemOption"] == nil then ShiGuangDB["j_BuyRareItemOption"] = 2 end --1 购买不含塔可的稀有品。2 购买每一件珍稀物品。3 不要买稀有品
     if ShiGuangDB["j_BuyItemOption"] == nil then ShiGuangDB["j_BuyItemOption"] = 1 end --1购买普通物品  2不购买普通物品
     if ShiGuangDB["j_Markersize"] == nil then ShiGuangDB["j_Markersize"] = 26 end
@@ -805,115 +888,10 @@ function frame:ADDON_LOADED(event,...)
     if ShiGuangDB["MTGsetting"][170162] == nil then ShiGuangDB["MTGsetting"][170162] = true end
     if ShiGuangDB["MTGsetting"][169202] == nil then ShiGuangDB["MTGsetting"][169202] = true end
     if ShiGuangDB["MTGsetting"][170158] == nil then ShiGuangDB["MTGsetting"][170158] = true end
-      frame:RegisterEvent("MERCHANT_SHOW")
-      frame:RegisterEvent("MERCHANT_CLOSED")
-      frame:RegisterEvent("CHAT_MSG_LOOT")
-      frame:RegisterEvent("GET_ITEM_INFO_RECEIVED")
+      MTG:RegisterEvent("MERCHANT_SHOW")
+      MTG:RegisterEvent("MERCHANT_CLOSED")
+      MTG:RegisterEvent("CHAT_MSG_LOOT")
+      MTG:RegisterEvent("GET_ITEM_INFO_RECEIVED")
     initializeValueableList()
     J_ADDmerchantItemList()--加载物品列表
 end
-
-
-
-
-
-
-
-local MTG_OptionsFrame = CreateFrame("Frame", nil, InterfaceOptionsFramePanelContainer)
-MTG_OptionsFrame:Hide()
-MTG_OptionsFrame.name = MTG_TITLE
-MTG_OptionsFrame:SetScript("OnShow", function(self)
-    if self.show then return end
-
-    local guangao = MTG_OptionsFrame:CreateFontString(nil,"ARTWORK","GameFontNormalLarge")
-    guangao:SetPoint("BOTTOMRIGHT", -16, 16)
-    guangao:SetText("by JANY (v4.0.2-42-20190819)")
-
-    local dropDown = CreateFrame("FRAME", "WPDemoDropDown", MTG_OptionsFrame, "UIDropDownMenuTemplate")
-    dropDown:SetPoint("BOTTOMRIGHT", guangao, "TOPRIGHT", 0, 120)
-    UIDropDownMenu_SetWidth(dropDown, 210)
-    local j_fonts = {U["Buy normal items"],U["Don't buy normal items"]}
-    UIDropDownMenu_SetText(dropDown,j_fonts[ShiGuangDB["j_BuyItemOption"]])
-    UIDropDownMenu_Initialize(dropDown, function(self, level, menuList)
-        local info = UIDropDownMenu_CreateInfo()
-        info.func = function(self)
-            ShiGuangDB["j_BuyItemOption"] = self.value
-            print("设置:"..j_fonts[ShiGuangDB["j_BuyItemOption"]])
-            UIDropDownMenu_SetText(dropDown,j_fonts[ShiGuangDB["j_BuyItemOption"]])
-        end
-        for i, font in next, j_fonts do
-            info.value = i
-            info.text, info.arg1, info.checked = font, i, i == ShiGuangDB["j_BuyItemOption"]
-            UIDropDownMenu_AddButton(info)
-        end
-    end)
-
-    local BuyRareItemdropDown = CreateFrame("FRAME", "WPDemoDropDown", MTG_OptionsFrame, "UIDropDownMenuTemplate")
-    BuyRareItemdropDown:SetPoint("TOP", dropDown, "BOTTOM", 0, -8)
-    UIDropDownMenu_SetWidth(BuyRareItemdropDown, 210)
-    local fonts = {U["buy cape items that don't need taco"],U["buy every cape items"],U["Don't buy cape items"]}
-    UIDropDownMenu_SetText(BuyRareItemdropDown,fonts[ShiGuangDB["j_BuyRareItemOption"]])
-    UIDropDownMenu_Initialize(BuyRareItemdropDown, function(self, level, menuList)
-        local info = UIDropDownMenu_CreateInfo()
-        info.func = function(self)
-            ShiGuangDB["j_BuyRareItemOption"] = self.value
-            print("设置:"..fonts[ShiGuangDB["j_BuyRareItemOption"]])
-            UIDropDownMenu_SetText(BuyRareItemdropDown,fonts[ShiGuangDB["j_BuyRareItemOption"]])
-        end
-        for i, font in next, fonts do
-            info.value = i
-            info.text, info.arg1, info.checked = font, i, i == ShiGuangDB["j_BuyRareItemOption"]
-            UIDropDownMenu_AddButton(info)
-        end
-    end)
---[[
-    local Markersizetext = MTG_OptionsFrame:CreateFontString(nil,"ARTWORK","GameFontNormal")
-    Markersizetext:SetTextColor(1,1,1)
-    Markersizetext:SetPoint("LEFT",0,60)
-    Markersizetext:SetText("标记图标大小")
-    local MarkersizeEditBox = CreateFrame("EditBox", "Markersize", MTG_OptionsFrame, "InputBoxTemplate")
-    MarkersizeEditBox:SetSize(100, 20)
-    MarkersizeEditBox:SetPoint("LEFT",0,30)
-    MarkersizeEditBox:SetAutoFocus(false)
-    MarkersizeEditBox:SetText(ShiGuangDB["j_Markersize"])
-    MarkersizeEditBox:SetCursorPosition(0)
-]]
-    local J_button = CreateFrame("CheckButton", "j_s_CheckTacoFirst", MTG_OptionsFrame, "InterfaceOptionsCheckButtonTemplate")
-    J_button:SetPoint("TOPLEFT", BuyRareItemdropDown, "BOTTOMLEFT", 8, -12)
-    getglobal(J_button:GetName().."Text"):SetText(U["Check taco before buying rare items with taco"])
-    if ShiGuangDB["j_CheckTacoFirst"] == true then J_button:SetChecked(true) else J_button:SetChecked(false) end
-
-    local count,countx=0,0
-    for key,value in pairs(ShiGuangDB["MTGsetting"]) do
-        count=count+1
-        if count>16 then countx,count=countx+1,0 end
-        local MTG_button = CreateFrame("CheckButton", "MTG_Shielding_"..key, MTG_OptionsFrame, "InterfaceOptionsCheckButtonTemplate")
-        MTG_button:SetPoint("TOPLEFT", 21, -16-32*count)
-        getglobal(MTG_button:GetName().."Text"):SetText("|cFFad00c3"..GetItemInfo(key).."\n|r".."|cFF00FF00"..U[key])
-        if value == true then MTG_button:SetChecked(true) else MTG_button:SetChecked(false) end
-    end 
-
-    self.show = true
-    MTG_OptionsFrame:SetScript("OnHide", function(self)
-    --if _G["Markersize"]:GetText() then ShiGuangDB["j_Markersize"]=_G["Markersize"]:GetText() end
-
-    if _G["j_s_CheckTacoFirst"]:GetChecked() then
-        if ShiGuangDB["j_CheckTacoFirst"] ~= true then ShiGuangDB["j_CheckTacoFirst"] = true end
-    else
-        if ShiGuangDB["j_CheckTacoFirst"] ~= false then ShiGuangDB["j_CheckTacoFirst"] = false end
-    end
-
-    for key,value in pairs(ShiGuangDB["MTGsetting"]) do
-        if _G["MTG_Shielding_"..key]:GetChecked() then
-            if ShiGuangDB["MTGsetting"][(key)] ~= true then ShiGuangDB["MTGsetting"][(key)] = true
-                print(key,"开启")
-            end
-        else
-            if ShiGuangDB["MTGsetting"][(key)] ~= false then ShiGuangDB["MTGsetting"][(key)] = false
-                print(key,"关闭")
-            end
-        end
-    end
-    end)
-end)
-InterfaceOptions_AddCategory(MTG_OptionsFrame)

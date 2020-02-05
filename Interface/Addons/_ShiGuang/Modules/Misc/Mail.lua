@@ -345,7 +345,7 @@ function MISC:MailBox()
 		InboxTooMuchMail:SetPoint("BOTTOM", MailFrame, "TOP", 0, 5)
 	end
 
-	if MaoRUIPerDB["Skins"]["BlizzardSkins"] then
+	if not MaoRUIPerDB["Skins"]["BlizzardSkins"] then
 		M.Reskin(button1)
 		M.Reskin(button2)
 		M.Reskin(button3)

@@ -17,6 +17,7 @@ function Bar:MicroButton_SetupTexture(icon, texture)
 	icon:SetVertexColor(r, g, b)
 	else	
 	icon:SetTexture("Interface\\BUTTONS\\"..texture)
+	icon:SetVertexColor(1, 1, 1)
 	end
 end
 
@@ -28,7 +29,7 @@ function Bar:MicroButton_Create(parent, data)
 	if MaoRUIPerDB["Actionbar"]["MicroMenuStyle"] then
 	bu:SetSize(21, 21)
 	else	
-	bu:SetSize(16, 32)
+	bu:SetSize(16, 36)
 	end
 
 	local icon = bu:CreateTexture(nil, "ARTWORK")
@@ -80,12 +81,12 @@ function Bar:MicroMenu()
 		{"UI-MicroButton-Talents-Up", "TalentMicroButton"},
 		{"UI-MicroButton-LFG-Up", "LFDMicroButton"},
 		{"UI-MicroButton-Achievement-Up", "AchievementMicroButton"},
-		{"UI-MicroButton-Spellbook-Up", "SpellbookMicroButton"},
 		{"UI-MICROBUTTON-SOCIALS-UP", "GuildMicroButton"},
+		{"UI-MicroButton-Spellbook-Up", "SpellbookMicroButton"},
 		{"UI-MICROBUTTON-QUEST-UP", "QuestLogMicroButton"},
 		{"UI-MicroButton-BStore-Up", "StoreMicroButton"},
 		{"UI-MicroButton-Help-Up", "MainMenuMicroButton", MicroButtonTooltipText(MAINMENU_BUTTON, "TOGGLEGAMEMENU")},
-		{"UI-MicroButton-Abilities-Up", ToggleAllBags, MicroButtonTooltipText(BAGSLOT, "OPENALLBAGS")},
+		{"UI-MicroButton-Abilities-Up", function() ToggleAllBags() end, MicroButtonTooltipText(BAGSLOT, "OPENALLBAGS")},
 	}
 	for _, info in pairs(buttonInfo) do
 		Bar:MicroButton_Create(menubar, info)
@@ -101,7 +102,7 @@ function Bar:MicroMenu()
 	if MaoRUIPerDB["Actionbar"]["MicroMenuStyle"] then
 			buttonList[i]:SetPoint("BOTTOM", buttonList[i-1], "TOP", 0, 3)
 	else	
-			buttonList[i]:SetPoint("BOTTOM", buttonList[i-1], "TOP", 0, -8)
+			buttonList[i]:SetPoint("BOTTOM", buttonList[i-1], "TOP", 0, -12)
 	end
 		end
 	end

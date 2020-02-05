@@ -133,24 +133,21 @@ function AngryWorldQuest:PLAYER_ENTERING_WORLD()
 end
 
 AngryWorldQuest.Name = ANGRYWORLDQUEST_TITLE
-AngryWorldQuest.Version = "v0.20.6"
 _G[AngryWorldQuest] = AngryWorldQuest
 
 local Config = AngryWorldQuest:NewModule('Config')
-
-local configVersion = 20
 local configDefaults = {
 	collapsed = false,
 	showAtTop = true,
 	showHoveredPOI = true,
 	onlyCurrentZone = true,
-	selectedFilters = 0,
-	disabledFilters = 47248,
-	filterEmissary = 0,
-	filterLoot = 0,
-	filterFaction = 0,
-	filterZone = 0,
-	filterTime = 0,
+	AngryWorldQuestsSelectedFilters = 0,
+	AngryWorldQuestsDisabledFilters = 63680,  --47248
+	AngryWorldQuestsFilterEmissary = 0,
+	AngryWorldQuestsFilterLoot = 0,
+	AngryWorldQuestsFilterFaction = 0,
+	AngryWorldQuestsFilterZone = 0,
+	AngryWorldQuestsFilterTime = 0,
 	lootFilterUpgrades = false,
 	lootUpgradesLevel = -1,
 	timeFilterDuration = 6,
@@ -191,20 +188,20 @@ setmetatable(Config, {
 })
 
 function Config:Get(key)
-		if AngryWorldQuests_Config == nil or AngryWorldQuests_Config[key] == nil then
+		if ShiGuangDB[key] == nil then
 			return configDefaults[key]
 		else
-			return AngryWorldQuests_Config[key]
+			return ShiGuangDB[key]
 		end
 end
 
 function Config:Set(key, newValue, silent)
 		if configDefaults[key] == newValue then
-			AngryWorldQuests_Config[key] = nil
+			ShiGuangDB[key] = nil
 		else
-			AngryWorldQuests_Config[key] = newValue
+			ShiGuangDB[key] = newValue
 		end
-	if key == 'selectedFilters' then 
+	if key == 'AngryWorldQuestsSelectedFilters' then 
 		__filterTable = nil
 	end
 	if callbacks[key] and not silent then
@@ -251,23 +248,23 @@ function Config:FilterKeyToMask(key)
 end
 
 function Config:HasFilters()
-	return self:Get('selectedFilters') > 0
+	return self:Get('AngryWorldQuestsSelectedFilters') > 0
 end
 function Config:IsOnlyFilter(key)
-	local value = self:Get('selectedFilters')
+	local value = self:Get('AngryWorldQuestsSelectedFilters')
 	local mask = self:FilterKeyToMask(key)
 	return mask == value
 end
 
 function Config:GetFilter(key)
-	local value = self:Get('selectedFilters')
+	local value = self:Get('AngryWorldQuestsSelectedFilters')
 	local mask = self:FilterKeyToMask(key)
 	return bit.band(value, mask) == mask
 end
 
 function Config:GetFilterTable(numFilters)
 	if __filterTable == nil then
-		local value = self:Get('selectedFilters')
+		local value = self:Get('AngryWorldQuestsSelectedFilters')
 		__filterTable = {}
 		for key,i in pairs(FiltersConversion) do
 			local mask = 2^(i-1)
@@ -278,33 +275,33 @@ function Config:GetFilterTable(numFilters)
 end
 
 function Config:GetFilterDisabled(key)
-	local value = self:Get('disabledFilters')
+	local value = self:Get('AngryWorldQuestsDisabledFilters')
 	local mask = self:FilterKeyToMask(key)
 	return bit.band(value, mask) == mask
 end
 
 function Config:SetFilter(key, newValue)
-	local value = self:Get('selectedFilters')
+	local value = self:Get('AngryWorldQuestsSelectedFilters')
 	local mask = self:FilterKeyToMask(key)
 	if newValue then
 		value = bit.bor(value, mask)
 	else
 		value = bit.band(value, bit.bnot(mask))
 	end
-	self:Set('selectedFilters', value)
+	self:Set('AngryWorldQuestsSelectedFilters', value)
 end
 
 function Config:SetNoFilter()
-	self:Set('selectedFilters', 0)
+	self:Set('AngryWorldQuestsSelectedFilters', 0)
 end
 
 function Config:SetOnlyFilter(key)
 	local mask = self:FilterKeyToMask(key)
-	self:Set('selectedFilters', mask)
+	self:Set('AngryWorldQuestsSelectedFilters', mask)
 end
 
 function Config:ToggleFilter(key)
-	local value = self:Get('selectedFilters')
+	local value = self:Get('AngryWorldQuestsSelectedFilters')
 	local mask = self:FilterKeyToMask(key)
 	local currentValue = bit.band(value, mask) == mask
 	if not currentValue then
@@ -312,7 +309,7 @@ function Config:ToggleFilter(key)
 	else
 		value = bit.band(value, bit.bnot(mask))
 	end
-	self:Set('selectedFilters', value)
+	self:Set('AngryWorldQuestsSelectedFilters', value)
 	return not currentValue
 end
 
@@ -327,14 +324,13 @@ end
 
 local function Panel_OnCancel(self)
 	-- for key, value in pairs(panelOriginalConfig) do
-	-- 	if key == "disabledFilters" then AngryWorldQuests_Config["selectedFilters"] = nil end
+	-- 	if key == "AngryWorldQuestsDisabledFilters" then AngryWorldQuests_Config["AngryWorldQuestsSelectedFilters"] = nil end
 	-- 	Config:Set(key, value)
 	-- end
 	wipe(panelOriginalConfig)
 end
 
 local function Panel_OnDefaults(self)
-	AngryWorldQuests_Config = { __version = configVersion }
 	for key,callbacks_key in pairs(callbacks) do
 		for _, func in ipairs(callbacks_key) do
 			func(key, configDefaults[key])
@@ -344,24 +340,24 @@ local function Panel_OnDefaults(self)
 end
 
 local function FilterCheckBox_Update(self)
-	local value = Config:Get("disabledFilters")
+	local value = Config:Get("AngryWorldQuestsDisabledFilters")
 	local mask = self.filterMask
 	self:SetChecked( bit.band(value,mask) == 0 )
 end
 
 local function FilterCheckBox_OnClick(self)
-	local key = "disabledFilters"
+	local key = "AngryWorldQuestsDisabledFilters"
 	if panelOriginalConfig[key] == nil then
 		panelOriginalConfig[key] = Config[key]
 	end
-	local value = Config:Get("disabledFilters")
+	local value = Config:Get("AngryWorldQuestsDisabledFilters")
 	local mask = self.filterMask
 	if self:GetChecked() then
 		value = bit.band(value, bit.bnot(mask))
 	else
 		value = bit.bor(value, mask)
 	end
-	AngryWorldQuests_Config["selectedFilters"] = nil
+	ShiGuangDB["AngryWorldQuestsSelectedFilters"] = nil
 	Config:Set(key, value)
 end
 
@@ -450,7 +446,7 @@ Panel_OnRefresh = function(self)
 	if not panelInit then
 		local footer = self:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
 		footer:SetPoint('BOTTOMRIGHT', -16, 16)
-		footer:SetText( AngryWorldQuest.Version or "Dev" )
+		footer:SetText("v0.20.6")  -- or "Dev" 
 
 		local label = self:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
 		label:SetPoint("TOPLEFT", 16, -16)
@@ -542,28 +538,20 @@ function Config:CreatePanel()
 end
 
 function Config:BeforeStartup()
-	if AngryWorldQuests_Config == nil then AngryWorldQuests_Config = {} end
-
-	if not AngryWorldQuests_Config['__version'] then
-		AngryWorldQuests_Config['__version'] = configVersion
-	end
-
-	AngryWorldQuests_Config['__version'] = configVersion
-
+	--if AngryWorldQuests_Config == nil then AngryWorldQuests_Config = {} end
 	if not self:Get('saveFilters') then
-		AngryWorldQuests_Config.selectedFilters = nil
-		AngryWorldQuests_Config.filterEmissary = nil
-		AngryWorldQuests_Config.filterLoot = nil
-		AngryWorldQuests_Config.filterFaction = nil
-		AngryWorldQuests_Config.filterZone = nil
-		AngryWorldQuests_Config.filterTime = nil
+		ShiGuangDB.AngryWorldQuestsSelectedFilters = nil
+		ShiGuangDB.AngryWorldQuestsFilterEmissary = nil
+		ShiGuangDB.AngryWorldQuestsFilterLoot = nil
+		ShiGuangDB.AngryWorldQuestsFilterFaction = nil
+		ShiGuangDB.AngryWorldQuestsFilterZone = nil
+		ShiGuangDB.AngryWorldQuestsFilterTime = nil
 	end
-
 end
 
 function Config:Startup()
-	local lastFilter = AngryWorldQuests_Config['__filters']
-	local value = AngryWorldQuests_Config['disabledFilters'] or 0
+	local lastFilter = ShiGuangDB['__AngryWorldQuestsFilters'] or 22
+	local value = ShiGuangDB['AngryWorldQuestsDisabledFilters'] or 0
 	local maxFilter = 0
 	for key,index in pairs(FiltersConversion) do
 		if AngryWorldQuest.QuestFrame.Filters[key] then
@@ -578,8 +566,8 @@ function Config:Startup()
 			if index > maxFilter then maxFilter = index end
 		end
 	end
-	AngryWorldQuests_Config['disabledFilters'] = value
-	AngryWorldQuests_Config['__filters'] = maxFilter
+	ShiGuangDB['AngryWorldQuestsDisabledFilters'] = value
+	ShiGuangDB['__AngryWorldQuestsFilters'] = maxFilter
 
 	optionPanel = self:CreatePanel('AngryWorldQuest')
 end
@@ -912,29 +900,29 @@ end
 
 local function FilterButton_OnEnter(self)
 	local text = Mod.Filters[ self.filter ].name
-	if self.filter == "EMISSARY" and Config.filterEmissary and not IsQuestComplete(Config.filterEmissary) then
-		local title = GetQuestLogTitle(GetQuestLogIndexByID(Config.filterEmissary))
+	if self.filter == "EMISSARY" and Config.AngryWorldQuestsFilterEmissary and not IsQuestComplete(Config.AngryWorldQuestsFilterEmissary) then
+		local title = GetQuestLogTitle(GetQuestLogIndexByID(Config.AngryWorldQuestsFilterEmissary))
 		if title then text = text..": "..title end
 	end
 	if self.filter == "LOOT" then
-		if Config.filterLoot == FILTER_LOOT_UPGRADES or (Config.filterLoot == 0 and Config.lootFilterUpgrades) then
+		if Config.AngryWorldQuestsFilterLoot == FILTER_LOOT_UPGRADES or (Config.AngryWorldQuestsFilterLoot == 0 and Config.lootFilterUpgrades) then
 			text = string.format("%s (%s)", text, AngryWorldQuest.Locale.UPGRADES)
 		end
 	end
-	if self.filter == "FACTION" and Config.filterFaction ~= 0 then
-		local title = GetFactionInfoByID(Config.filterFaction)
+	if self.filter == "FACTION" and Config.AngryWorldQuestsFilterFaction ~= 0 then
+		local title = GetFactionInfoByID(Config.AngryWorldQuestsFilterFaction)
 		if title then text = text..": "..title end
 	end
 	if self.filter == "SORT" then
 		local title = AngryWorldQuest.Locale["config_sortMethod_"..Config.sortMethod]
 		if title then text = text..": "..title end
 	end
-	if self.filter == "ZONE" and Config.filterZone ~= 0 then
-		local title = GetMapNameByID(Config.filterZone)
+	if self.filter == "ZONE" and Config.AngryWorldQuestsFilterZone ~= 0 then
+		local title = GetMapNameByID(Config.AngryWorldQuestsFilterZone)
 		if title then text = text..": "..title end
 	end
 	if self.filter == "TIME" then
-		local hours = Config.filterTime ~= 0 and Config.filterTime or Config.timeFilterDuration
+		local hours = Config.AngryWorldQuestsFilterTime ~= 0 and Config.AngryWorldQuestsFilterTime or Config.timeFilterDuration
 		text = string.format(BLACK_MARKET_HOT_ITEM_TIME_LEFT, string.format(FORMATED_HOURS, hours))
 	end
 	GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
@@ -949,19 +937,19 @@ end
 local filterMenu
 local function FilterMenu_OnClick(self, key)
 	if key == "EMISSARY" then
-		Config:Set('filterEmissary', self.value, true)
+		Config:Set('AngryWorldQuestsFilterEmissary', self.value, true)
 	end
 	if key == "LOOT" then
-		Config:Set('filterLoot', self.value, true)
+		Config:Set('AngryWorldQuestsFilterLoot', self.value, true)
 	end
 	if key == "FACTION" then
-		Config:Set('filterFaction', self.value, true)
+		Config:Set('AngryWorldQuestsFilterFaction', self.value, true)
 	end
 	if key == "ZONE" then
-		Config:Set('filterZone', self.value, true)
+		Config:Set('AngryWorldQuestsFilterZone', self.value, true)
 	end
 	if key == "TIME" then
-		Config:Set('filterTime', self.value, true)
+		Config:Set('AngryWorldQuestsFilterTime', self.value, true)
 	end
 	if key == "SORT" then
 		Config:Set('sortMethod', self.value)
@@ -975,7 +963,7 @@ end
 local function FilterMenu_Initialize(self, level)
 	local info = { func = FilterMenu_OnClick, arg1 = self.filter }
 	if self.filter == "EMISSARY" then
-		local value = Config.filterEmissary
+		local value = Config.AngryWorldQuestsFilterEmissary
 		if GetQuestLogIndexByID(value) == 0 then value = 0 end
 
 		info.text = ALL
@@ -994,7 +982,7 @@ local function FilterMenu_Initialize(self, level)
 			end
 		end
 	elseif self.filter == "LOOT" then
-		local value = Config.filterLoot
+		local value = Config.AngryWorldQuestsFilterLoot
 		if value == 0 then value = Config.lootFilterUpgrades and FILTER_LOOT_UPGRADES or FILTER_LOOT_ALL end
 
 		info.text = ALL
@@ -1007,7 +995,7 @@ local function FilterMenu_Initialize(self, level)
 		info.checked = info.value == value
 		My_UIDropDownMenu_AddButton(info, level)
 	elseif self.filter == "ZONE" then
-		local value = Config.filterZone
+		local value = Config.AngryWorldQuestsFilterZone
 
 		info.text = AngryWorldQuest.Locale.CURRENT_ZONE
 		info.value = 0
@@ -1022,7 +1010,7 @@ local function FilterMenu_Initialize(self, level)
 			My_UIDropDownMenu_AddButton(info, level)
 		end
 	elseif self.filter == "FACTION" then
-		local value = Config.filterFaction
+		local value = Config.AngryWorldQuestsFilterFaction
 
 		local mapID = QuestMapFrame:GetParent():GetMapID()
 		local factions = IsLegionMap(mapID) and FACTION_ORDER_LEGION or FACTION_ORDER
@@ -1034,7 +1022,7 @@ local function FilterMenu_Initialize(self, level)
 			My_UIDropDownMenu_AddButton(info, level)
 		end
 	elseif self.filter == "TIME" then
-		local value = Config.filterTime ~= 0 and Config.filterTime or Config.timeFilterDuration
+		local value = Config.AngryWorldQuestsFilterTime ~= 0 and Config.AngryWorldQuestsFilterTime or Config.timeFilterDuration
 
 		for _, hours in ipairs(Mod.Filters.TIME.values) do
 			info.text = string.format(FORMATED_HOURS, hours)
@@ -1076,7 +1064,7 @@ local function FilterButton_OnClick(self, button)
 	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 	if (button == 'RightButton' and (self.filter == "EMISSARY" or self.filter == "LOOT" or self.filter == "FACTION" or self.filter == "TIME")) -- or self.filter == "ZONE"
 			or (self.filter == "SORT")
-			or (self.filter == "FACTION" and not Config:GetFilter("FACTION")) then -- and Config.filterFaction == 0
+			or (self.filter == "FACTION" and not Config:GetFilter("FACTION")) then -- and Config.AngryWorldQuestsFilterFaction == 0
 		local MY_UIDROPDOWNMENU_OPEN_MENU = Lib_UIDropDownMenu_Initialize and LIB_UIDROPDOWNMENU_OPEN_MENU or UIDROPDOWNMENU_OPEN_MENU
 		if filterMenu and MY_UIDROPDOWNMENU_OPEN_MENU == filterMenu and My_DropDownList1:IsShown() and filterMenu.filter == self.filter then
 			My_HideDropDownMenu(1)
@@ -1087,23 +1075,23 @@ local function FilterButton_OnClick(self, button)
 	else
 		My_HideDropDownMenu(1)
 		if IsShiftKeyDown() then
-			if self.filter == "EMISSARY" then Config:Set('filterEmissary', 0, true) end
-			if self.filter == "LOOT" then Config:Set('filterLoot', 0, true) end
+			if self.filter == "EMISSARY" then Config:Set('AngryWorldQuestsFilterEmissary', 0, true) end
+			if self.filter == "LOOT" then Config:Set('AngryWorldQuestsFilterLoot', 0, true) end
 			Config:ToggleFilter(self.filter)
 		else
 			if Config:IsOnlyFilter(self.filter) then
-				Config:Set('filterFaction', 0, true)
-				Config:Set('filterEmissary', 0, true)
-				Config:Set('filterLoot', 0, true)
-				Config:Set('filterZone', 0, true)
-				Config:Set('filterTime', 0, true)
+				Config:Set('AngryWorldQuestsFilterFaction', 0, true)
+				Config:Set('AngryWorldQuestsFilterEmissary', 0, true)
+				Config:Set('AngryWorldQuestsFilterLoot', 0, true)
+				Config:Set('AngryWorldQuestsFilterZone', 0, true)
+				Config:Set('AngryWorldQuestsFilterTime', 0, true)
 				Config:SetNoFilter()
 			else
-				if self.filter ~= "FACTION" then Config:Set('filterFaction', 0, true) end
-				if self.filter ~= "EMISSARY" then Config:Set('filterEmissary', 0, true) end
-				if self.filter ~= "LOOT" then Config:Set('filterLoot', 0, true) end
-				if self.filter ~= "ZONE" then Config:Set('filterZone', 0, true) end
-				if self.filter ~= "TIME" then Config:Set('filterTime', 0, true) end
+				if self.filter ~= "FACTION" then Config:Set('AngryWorldQuestsFilterFaction', 0, true) end
+				if self.filter ~= "EMISSARY" then Config:Set('AngryWorldQuestsFilterEmissary', 0, true) end
+				if self.filter ~= "LOOT" then Config:Set('AngryWorldQuestsFilterLoot', 0, true) end
+				if self.filter ~= "ZONE" then Config:Set('AngryWorldQuestsFilterZone', 0, true) end
+				if self.filter ~= "TIME" then Config:Set('AngryWorldQuestsFilterTime', 0, true) end
 				Config:SetOnlyFilter(self.filter)
 			end
 		end
@@ -1349,17 +1337,17 @@ local function QuestFrame_AddQuestButton(questInfo, prevButton)
 	return button
 end
 
-local function TaskPOI_IsFilteredReward(selectedFilters, questID)
+local function TaskPOI_IsFilteredReward(AngryWorldQuestsSelectedFilters, questID)
 	local positiveMatch = false
 	local hasCurrencyFilter = false
 
 	local money = GetQuestLogRewardMoney(questID)
-	if money > 0 and selectedFilters["GOLD"] then
+	if money > 0 and AngryWorldQuestsSelectedFilters["GOLD"] then
 		positiveMatch = true
 	end	
 
 	local numQuestCurrencies = GetNumQuestLogRewardCurrencies(questID)
-	for key,_ in pairs(selectedFilters) do
+	for key,_ in pairs(AngryWorldQuestsSelectedFilters) do
 		local filter = Mod.Filters[key]
 		if filter.preset == FILTER_CURRENCY then
 			hasCurrencyFilter = true
@@ -1379,17 +1367,17 @@ local function TaskPOI_IsFilteredReward(selectedFilters, questID)
 			local artifactPower = nil--AngryWorldQuest.Data:ItemArtifactPower(itemID)
 			local iLevel = AngryWorldQuest.Data:RewardItemLevel(itemID, questID)
 			if artifactPower then
-				if selectedFilters.ARTIFACT_POWER then
+				if AngryWorldQuestsSelectedFilters.ARTIFACT_POWER then
 					positiveMatch = true
 				end
 			else
 				if iLevel then
-					local upgradesOnly = Config.filterLoot == FILTER_LOOT_UPGRADES or (Config.filterLoot == 0 and Config.lootFilterUpgrades)
-					if selectedFilters.LOOT and (not upgradesOnly or AngryWorldQuest.Data:RewardIsUpgrade(itemID, questID)) then
+					local upgradesOnly = Config.AngryWorldQuestsFilterLoot == FILTER_LOOT_UPGRADES or (Config.AngryWorldQuestsFilterLoot == 0 and Config.lootFilterUpgrades)
+					if AngryWorldQuestsSelectedFilters.LOOT and (not upgradesOnly or AngryWorldQuest.Data:RewardIsUpgrade(itemID, questID)) then
 						positiveMatch = true
 					end
 				else
-					if selectedFilters.ITEMS then
+					if AngryWorldQuestsSelectedFilters.ITEMS then
 						positiveMatch = true
 					end
 				end
@@ -1399,14 +1387,14 @@ local function TaskPOI_IsFilteredReward(selectedFilters, questID)
 
 	if positiveMatch then
 		return false
-	elseif hasCurrencyFilter or selectedFilters.ARTIFACT_POWER or selectedFilters.LOOT or selectedFilters.ITEMS then
+	elseif hasCurrencyFilter or AngryWorldQuestsSelectedFilters.ARTIFACT_POWER or AngryWorldQuestsSelectedFilters.LOOT or AngryWorldQuestsSelectedFilters.ITEMS then
 		return true
 	end
 end
 
 local function TaskPOI_IsFiltered(info, displayMapID)
 	local hasFilters = Config:HasFilters()
-	local selectedFilters = Config:GetFilterTable()
+	local AngryWorldQuestsSelectedFilters = Config:GetFilterTable()
 
 	local title, factionID, capped = C_TaskQuest.GetQuestInfoByQuestID(info.questId)
 	local tagID, tagName, worldQuestType, rarity, isElite, tradeskillLineIndex = GetQuestTagInfo(info.questId)
@@ -1425,63 +1413,63 @@ local function TaskPOI_IsFiltered(info, displayMapID)
 	end
 
 	if hasFilters then
-		local lootFiltered = TaskPOI_IsFilteredReward(selectedFilters, info.questId)
+		local lootFiltered = TaskPOI_IsFilteredReward(AngryWorldQuestsSelectedFilters, info.questId)
 		if lootFiltered ~= nil then
 			isFiltered = lootFiltered
 		end
 		
-		if selectedFilters.FACTION then
-			if (factionID == Config.filterFaction or AngryWorldQuest.Data:QuestHasFaction(info.questId, Config.filterFaction)) then
+		if AngryWorldQuestsSelectedFilters.FACTION then
+			if (factionID == Config.AngryWorldQuestsFilterFaction or AngryWorldQuest.Data:QuestHasFaction(info.questId, Config.AngryWorldQuestsFilterFaction)) then
 				isFiltered = false
 			end
 		end
 
-		if selectedFilters.TIME then
-			local hours = Config.filterTime ~= 0 and Config.filterTime or Config.timeFilterDuration
+		if AngryWorldQuestsSelectedFilters.TIME then
+			local hours = Config.AngryWorldQuestsFilterTime ~= 0 and Config.AngryWorldQuestsFilterTime or Config.timeFilterDuration
 			if timeLeftMinutes and (timeLeftMinutes - WORLD_QUESTS_TIME_CRITICAL_MINUTES) <= (hours * 60) then
 				isFiltered = false
 			end
 		end
 
-		if selectedFilters.PVP then
+		if AngryWorldQuestsSelectedFilters.PVP then
 			if worldQuestType == LE_QUEST_TAG_TYPE_PVP then
 				isFiltered = false
 			end
 		end
 
-		if selectedFilters.PETBATTLE then
+		if AngryWorldQuestsSelectedFilters.PETBATTLE then
 			if worldQuestType == LE_QUEST_TAG_TYPE_PET_BATTLE then
 				isFiltered = false
 			end
 		end
 
-		if selectedFilters.PROFESSION then
+		if AngryWorldQuestsSelectedFilters.PROFESSION then
 			if tradeskillLineIndex then
 				isFiltered = false
 			end
 		end
 
-		if selectedFilters.TRACKED then
+		if AngryWorldQuestsSelectedFilters.TRACKED then
 			if IsWorldQuestHardWatched(info.questId) or GetSuperTrackedQuestID() == info.questId then
 				isFiltered = false
 			end
 		end
 
-		if selectedFilters.RARE then
+		if AngryWorldQuestsSelectedFilters.RARE then
 			if rarity ~= LE_WORLD_QUEST_QUALITY_COMMON then
 				isFiltered = false
 			end
 		end
 
-		if selectedFilters.DUNGEON then
+		if AngryWorldQuestsSelectedFilters.DUNGEON then
 			if worldQuestType == LE_QUEST_TAG_TYPE_DUNGEON or worldQuestType == LE_QUEST_TAG_TYPE_RAID then
 				isFiltered = false
 			end
 		end
 
-		if selectedFilters.ZONE then
+		if AngryWorldQuestsSelectedFilters.ZONE then
 			local currentMapID = QuestMapFrame:GetParent():GetMapID()
-			local filterMapID = Config.filterZone
+			local filterMapID = Config.AngryWorldQuestsFilterZone
 
 			if filterMapID ~= 0 then
 				if info.mapID and info.mapID == filterMapID then
@@ -1494,9 +1482,9 @@ local function TaskPOI_IsFiltered(info, displayMapID)
 			end
 		end
 
-		if selectedFilters.EMISSARY then
+		if AngryWorldQuestsSelectedFilters.EMISSARY then
 			local bounties = GetQuestBountyInfoForMapID(UnitLevel("player") and MAPID_KUL_TIRAS or MAPID_BROKENISLES)
-			local bountyFilter = Config.filterEmissary
+			local bountyFilter = Config.AngryWorldQuestsFilterEmissary
 			if GetQuestLogIndexByID(bountyFilter) == 0 or IsQuestComplete(bountyFilter) then bountyFilter = 0 end
 			for _, bounty in ipairs(bounties) do
 				if bounty and not IsQuestComplete(bounty.questID) and IsQuestCriteriaForBounty(info.questId, bounty.questID) and (bountyFilter == 0 or bountyFilter == bounty.questID) then
@@ -1602,7 +1590,7 @@ local function QuestFrame_Update()
 		for i = 1, #filterButtons do filterButtons[i]:Hide() end
 	else
 		local hasFilters = Config:HasFilters()
-		local selectedFilters = Config:GetFilterTable()
+		local AngryWorldQuestsSelectedFilters = Config:GetFilterTable()
 
 		local enabledCount = 0
 		for i=#Mod.FiltersOrder, 1, -1 do
@@ -1631,7 +1619,7 @@ local function QuestFrame_Update()
 				end
 
 				if Mod.FiltersOrder[i] ~= "SORT" then
-					if selectedFilters[Mod.FiltersOrder[i]] then
+					if AngryWorldQuestsSelectedFilters[Mod.FiltersOrder[i]] then
 						filterButton:SetNormalAtlas("worldquest-tracker-ring-selected")
 					else
 						filterButton:SetNormalAtlas("worldquest-tracker-ring")
@@ -1824,7 +1812,7 @@ function Mod:Startup()
 		QuestMapFrame_UpdateAll()
 	end)
 
-	Config:RegisterCallback({'hideUntrackedPOI', 'hideFilteredPOI', 'showContinentPOI', 'onlyCurrentZone', 'sortMethod', 'selectedFilters', 'disabledFilters', 'filterEmissary', 'filterLoot', 'filterFaction', 'filterZone', 'filterTime', 'lootFilterUpgrades', 'lootUpgradesLevel', 'timeFilterDuration'}, function() 
+	Config:RegisterCallback({'hideUntrackedPOI', 'hideFilteredPOI', 'showContinentPOI', 'onlyCurrentZone', 'sortMethod', 'AngryWorldQuestsSelectedFilters', 'AngryWorldQuestsDisabledFilters', 'AngryWorldQuestsFilterEmissary', 'AngryWorldQuestsFilterLoot', 'AngryWorldQuestsFilterFaction', 'AngryWorldQuestsFilterZone', 'AngryWorldQuestsFilterTime', 'lootFilterUpgrades', 'lootUpgradesLevel', 'timeFilterDuration'}, function() 
 		QuestMapFrame_UpdateAll()
 		dataProvder:RefreshAllData()
 	end)

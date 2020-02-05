@@ -1,3 +1,52 @@
+hooksecurefunc("TextStatusBar_UpdateTextString", function(bar)   ----	  血量百分比数字 
+	local value = bar:GetValue()
+	local _, max = bar:GetMinMaxValues()
+	if bar.pctText then
+		bar.pctText:SetText(value==0 and "" or tostring(math.ceil((value / max) * 100)))  --(value==0 and "" or tostring(math.ceil((value / max) * 100)) .. "%")
+		if not MaoRUIPerDB["UFs"]["UFPctText"] or value == max then bar.pctText:Hide()
+		elseif GetCVarBool("statusTextPercentage") and ( bar.unit == PlayerFrame.unit or bar.unit == "target" or bar.unit == "focus" ) then bar.pctText:Hide()
+		else bar.pctText:Show()
+		end
+	end
+end)
+
+local function colorHPBar(bar, unit)
+	if bar and not bar.lockValues and unit == bar.unit then
+		local min, max = bar:GetMinMaxValues()
+		local value = bar:GetValue()
+		if max > min then value = (value - min) / (max - min) else value = 0 end
+		if value > 0.5 then r, g, b = 2*(1-value), 1, 0 else r, g, b = 1, 2*value, 0 end
+			--if UnitIsPlayer(unit) and UnitClass(unit) then  --按职业着色
+				--local color = RAID_CLASS_COLORS[select(2, UnitClass(unit))]
+				--bar:SetStatusBarColor(color.r, color.g, color.b)
+			--else
+				--bar:SetStatusBarColor(r, g, b)
+			--end
+		if bar.pctText then	bar.pctText:SetTextColor(r, g, b) end
+	end
+end
+hooksecurefunc("UnitFrameHealthBar_Update", colorHPBar)
+hooksecurefunc("HealthBar_OnValueChanged", function(self) colorHPBar(self, self.unit) end)
+
+hooksecurefunc("UnitFrame_Update", function(self)
+	if self.name and self.unit then
+		local color = RAID_CLASS_COLORS[select(2, UnitClass(self.unit))] or NORMAL_FONT_COLOR
+	  if self.name then
+	    if UnitIsPlayer(self.unit) then 
+		   self.name:SetTextColor(color.r, color.g, color.b)
+		elseif UnitIsEnemy("player", "target") then 
+		   self.name:SetTextColor(1,0,0) 
+		elseif UnitIsFriend("player", "target") then 
+		   self.name:SetTextColor(0,1,0)  
+		else
+		   self.name:SetTextColor(1,1,0) 
+		end
+	end
+		--if string.len(self:GetName()) == 16 and string.find(self:GetName(), "PartyMemberFrame") then
+			--self.name:SetText(GetUnitName(self.unit))							-- 不显示队友姓名中的服务器名
+		--end
+	end
+end)
 ------------------------------------------Class icon---------------------------------------
 hooksecurefunc("UnitFramePortrait_Update",function(self) 
    if not MaoRUIPerDB["UFs"]["UFClassIcon"] then return end
@@ -50,7 +99,6 @@ BINDING_NAME_INSPECT = "    "..INSPECT
 BINDING_NAME_TRADE = "    "..TRADE
 BINDING_NAME_WHISPER = "    "..WHISPER
 BINDING_NAME_FOLLOW = "    "..FOLLOW
---BINDING_NAME_COMPARE_ACHIEVEMENTS = COMPARE_ACHIEVEMENTS
 BINDING_NAME_Invite = "    "..CALENDAR_INVITE_PLAYER 
 
 local targeticon = CreateFrame("Button", "TargetClass", TargetFrame)
@@ -96,7 +144,7 @@ targeticon:SetScript("OnMouseDown", function(self, button)
 				end
 				ChatFrame_SendTell(fullname)
 		elseif button == "Button4" then
-			if CheckInteractDistance("target",4) then FollowUnit(fullname, 1); end
+			if CheckInteractDistance("target",4) then FollowUnit("target", 1); end
 		else
 			if CheckInteractDistance("target",1) then InspectAchievements("target") end
 		end
@@ -110,3 +158,98 @@ hooksecurefunc("TargetFrame_Update", function()
 		targeticon:Hide()
 	end
 end)
+
+--[[宠物目标
+local ToPetFrame = CreateFrame("Button", "UFP_ToPetFrame", PetFrame, "SecureUnitButtonTemplate, SecureHandlerAttributeTemplate");
+ToPetFrame:SetFrameLevel(8);
+ToPetFrame:SetWidth(96);
+ToPetFrame:SetHeight(48);
+ToPetFrame:ClearAllPoints();
+ToPetFrame:SetPoint("TOP", PetFrame, "BOTTOM", 12, 21);
+
+ToPetFrame:SetAttribute("unit", "pettarget");
+RegisterUnitWatch(ToPetFrame);
+ToPetFrame:SetAttribute("*type1", "target");
+ToPetFrame:RegisterForClicks("AnyUp");
+
+ToPetFrame.Portrait = ToPetFrame:CreateTexture("UFP_ToPetFramePortrait", "BORDER");
+ToPetFrame.Portrait:SetWidth(27);
+ToPetFrame.Portrait:SetHeight(27);
+ToPetFrame.Portrait:ClearAllPoints();
+ToPetFrame.Portrait:SetPoint("TOPLEFT", ToPetFrame, "TOPLEFT", 6, -5);
+
+ToPetFrame.Texture = ToPetFrame:CreateTexture("UFP_ToPetFrameTexture", "ARTWORK");
+ToPetFrame.Texture:SetTexture("Interface\\TargetingFrame\\UI-PartyFrame");
+ToPetFrame.Texture:SetWidth(96);
+ToPetFrame.Texture:SetHeight(48);
+ToPetFrame.Texture:ClearAllPoints();
+ToPetFrame.Texture:SetPoint("TOPLEFT", ToPetFrame, "TOPLEFT", 0, -2);
+
+ToPetFrame.Name = ToPetFrame:CreateFontString(nil, "OVERLAY");
+ToPetFrame.Name:SetFont(STANDARD_TEXT_FONT, 10, "OUTLINE")
+ToPetFrame.Name:ClearAllPoints();
+ToPetFrame.Name:SetPoint("BOTTOMLEFT", ToPetFrame, "BOTTOMLEFT", 32, 12);
+
+ToPetFrame.HealthBar = CreateFrame("StatusBar", "UFP_ToPetFrameHealthBar", ToPetFrame);
+ToPetFrame.HealthBar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar");
+ToPetFrame.HealthBar:SetFrameLevel(2);
+ToPetFrame.HealthBar:SetMinMaxValues(0, 100);
+ToPetFrame.HealthBar:SetValue(0);
+ToPetFrame.HealthBar:SetWidth(53);
+ToPetFrame.HealthBar:SetHeight(6);
+ToPetFrame.HealthBar:ClearAllPoints();
+ToPetFrame.HealthBar:SetPoint("TOPLEFT", ToPetFrame, "TOPLEFT", 35, -9);
+ToPetFrame.HealthBar:SetStatusBarColor(0, 1, 0);
+
+ToPetFrame.HPPct = ToPetFrame:CreateFontString("UFP_ToPetFrameHPPct", "ARTWORK", "TextStatusBarText");
+ToPetFrame.HPPct:SetFont(GameFontNormal:GetFont(), 10, "OUTLINE");
+ToPetFrame.HPPct:SetTextColor(1, 0.75, 0);
+ToPetFrame.HPPct:SetJustifyH("LEFT");
+ToPetFrame.HPPct:ClearAllPoints();
+ToPetFrame.HPPct:SetPoint("LEFT", ToPetFrame.HealthBar, "RIGHT", 2, -4);
+
+ToPetFrame.PowerBar = CreateFrame("StatusBar", "UFP_ToPetFramePowerBar", ToPetFrame);
+ToPetFrame.PowerBar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar");
+ToPetFrame.PowerBar:SetFrameLevel(2);
+ToPetFrame.PowerBar:SetMinMaxValues(0, 100);
+ToPetFrame.PowerBar:SetValue(0);
+ToPetFrame.PowerBar:SetWidth(53);
+ToPetFrame.PowerBar:SetHeight(6);
+ToPetFrame.PowerBar:ClearAllPoints();
+ToPetFrame.PowerBar:SetPoint("TOPLEFT", ToPetFrame, "TOPLEFT", 35, -16);
+ToPetFrame.PowerBar:SetStatusBarColor(0, 0, 1);
+
+local pettarget = CreateFrame("Frame");
+    ToPetFrame:SetAttribute("unit", "pettarget");
+        pettarget:SetScript("OnUpdate", function(self, elapsed)
+            self.timer = (self.timer or 0) + elapsed;
+            if self.timer >= 0.2 then
+                if UnitExists("pettarget") then
+                    ToPetFrame.Name:SetText(UnitName("pettarget"));
+
+                    local ToPetNameColor = PowerBarColor[UnitPowerType("pettarget")] or PowerBarColor["MANA"];
+                    ToPetFrame.PowerBar:SetStatusBarColor(ToPetNameColor.r, ToPetNameColor.g, ToPetNameColor.b);
+
+                    SetPortraitTexture(ToPetFrame.Portrait, "pettarget");
+
+                    if UnitHealthMax("pettarget") > 0 then
+                        ToPetFrame.HealthBar:SetValue(UnitHealth("pettarget") / UnitHealthMax("pettarget") * 100);
+                        local ToPetPctText = "";
+                            ToPetPctText = math.floor(UnitHealth("pettarget") / UnitHealthMax("pettarget") * 100);
+                        ToPetFrame.HPPct:SetText(ToPetPctText);
+                    else
+                        ToPetFrame.HealthBar:SetValue(0);
+                        ToPetFrame.HPPct:SetText("");
+                    end
+
+                    if UnitPowerMax("pettarget") > 0 then
+                        ToPetFrame.PowerBar:SetValue(UnitPower("pettarget") / UnitPowerMax("pettarget") * 100);
+                    else
+                        ToPetFrame.PowerBar:SetValue(0);
+                    end
+                else
+                    ToPetFrame.HPPct:SetText("");
+                end
+                self.timer = 0;
+            end
+        end);]]
