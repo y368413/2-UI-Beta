@@ -410,7 +410,7 @@ local function setupBagFilter()
 end
 
 local function setupCastbar()
-	G:SetupCastbar(guiPage[3])
+	G:SetupCastbar(guiPage[4])
 end
 
 local function setupRaidFrame()
@@ -741,8 +741,10 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "Misc", "RaidCD", U["Raid CD"]},
 		{1, "Misc", "PulseCD", U["Pulse CD"], true},
 		{1, "Auras", "Reminder", U["Enable Reminder"].."*", true, true, nil, updateReminder},
-		{3, "Auras", "BuffSize", U["BuffSize"], false, false, {24, 40, 0}},
-		{3, "Auras", "DebuffSize", U["DebuffSize"], true, false, {24, 40, 0}},
+		{},--blank		
+		{1, "UFs", "Castbars", "|cff00cc4c"..U["UFs Castbar"], false, false, setupCastbar},
+		{3, "Auras", "BuffSize", U["BuffSize"], true, false, {24, 40, 0}},
+		{3, "Auras", "DebuffSize", U["DebuffSize"], true, true, {24, 40, 0}},
 		{3, "Auras", "BuffsPerRow", U["BuffsPerRow"], false, false, {10, 20, 0}},
 		{3, "Auras", "DebuffsPerRow", U["DebuffsPerRow"], true, false, {10, 16, 0}},
 		{3, "AuraWatch", "IconScale", U["AuraWatch IconScale"], true, true, {.8, 2, 1}},
@@ -850,7 +852,7 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "Misc", "AutoConfirmRoll", U["AutoConfirmRoll"], true, true},
 		{1, "Misc", "QuickQueue", U["QuickQueue"]},
 	  {1, "Misc", "AutoReagentInBank", U["Auto Reagent Bank"], true},
-		{1, "Bags", "Enable", "|cff00cc4c"..U["Enable Bags"]},
+		{1, "Bags", "Enable", "|cff00cc4c"..U["Enable Bags"], true, true},
 		--{1, "Bags", "ItemFilter", U["Bags ItemFilter"].."*", true, nil, setupBagFilter, updateBagStatus},
 		--{1, "Bags", "ItemSetFilter", U["Use ItemSetFilter"].."*", true, true, nil, updateBagStatus, U["ItemSetFilterTips"]},
 		--{1, "Bags", "GatherEmpty", U["Bags GatherEmpty"].."*", true, true, nil, updateBagStatus},

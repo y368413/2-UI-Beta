@@ -31,6 +31,21 @@ function MISC:Focuser_CreateFrameHook(name, _, template)
 end
 
 function MISC.Focuser_OnEvent(event)
+  -- Set the keybindings on the default unit frames since we won't get any CreateFrame notification about them
+  local duf = {
+	PlayerFrame,
+	PetFrame,
+	PartyMemberFrame1,
+	PartyMemberFrame2,
+	PartyMemberFrame3,
+	PartyMemberFrame4,
+	PartyMemberFrame1PetFrame,
+	PartyMemberFrame2PetFrame,
+	PartyMemberFrame3PetFrame,
+	PartyMemberFrame4PetFrame,
+	TargetFrame,
+	TargetofTargetFrame,
+  }
 	if event == "PLAYER_REGEN_ENABLED" then
 		if next(pending) then
 			for frame in next, pending do
