@@ -19,10 +19,10 @@ local function CreatePlayerStyle(self)
 		--UF:ReskinMirrorBars()
 		--UF:ReskinTimerTrakcer(self)
 	--end
-	if MaoRUIPerDB["UFs"]["ClassPower"] and not MaoRUIPerDB["Nameplate"]["ShowPlayerPlate"] then
-		UF:CreateClassPower(self)
-		UF:StaggerBar(self)
-	end
+	--if MaoRUIPerDB["UFs"]["ClassPower"] and not MaoRUIPerDB["Nameplate"]["ShowPlayerPlate"] then
+		--UF:CreateClassPower(self)
+		--UF:StaggerBar(self)
+	--end
 	if not MaoRUIPerDB["Misc"]["ExpRep"] then UF:CreateExpRepBar(self) end
 	if MaoRUIPerDB["UFs"]["SwingBar"] then UF:CreateSwing(self) end
 	if MaoRUIPerDB["UFs"]["QuakeTimer"] then UF:CreateQuakeTimer(self) end
