@@ -28,15 +28,15 @@ local function CreatePlayerStyle(self)
 	if MaoRUIPerDB["UFs"]["QuakeTimer"] then UF:CreateQuakeTimer(self) end
 end
 
-local function CreateTargetStyle(self)
+--[[local function CreateTargetStyle(self)
 	self.mystyle = "target"
-	--UF:CreateCastBar(self)
+	UF:CreateCastBar(self)
 end
 
 local function CreateFocusStyle(self)
 	self.mystyle = "focus"
-	--UF:CreateCastBar(self)
-end
+	UF:CreateCastBar(self)
+end]]
 
 local function CreateBossStyle(self)
 	self.mystyle = "boss"
@@ -153,14 +153,14 @@ function UF:OnLogin()
 	-- Default Clicksets for RaidFrame
 	  self:DefaultClickSets()
 		oUF:RegisterStyle("Player", CreatePlayerStyle)
-		oUF:RegisterStyle("Target", CreateTargetStyle)
-		oUF:RegisterStyle("Focus", CreateFocusStyle)
+		--oUF:RegisterStyle("Target", CreateTargetStyle)
+		--oUF:RegisterStyle("Focus", CreateFocusStyle)
 		-- Loader
 		oUF:SetActiveStyle("Player")
 		local player = oUF:Spawn("player", "oUF_Player")
-		oUF:SetActiveStyle("Target")
+		--oUF:SetActiveStyle("Target")
 		local target = oUF:Spawn("target", "oUF_Target")
-		oUF:SetActiveStyle("Focus")
+		--oUF:SetActiveStyle("Focus")
 		local focus = oUF:Spawn("focus", "oUF_Focus")
 		oUF:RegisterStyle("Boss", CreateBossStyle)
 		oUF:SetActiveStyle("Boss")
