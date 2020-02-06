@@ -14,11 +14,11 @@ end
 
 local function CreatePlayerStyle(self)
 	self.mystyle = "player"
-	UF:CreateCastBar(self)
-	if MaoRUIPerDB["UFs"]["Castbars"] then
-		UF:ReskinMirrorBars()
-		UF:ReskinTimerTrakcer(self)
-	end
+	--UF:CreateCastBar(self)
+	--if MaoRUIPerDB["UFs"]["Castbars"] then
+		--UF:ReskinMirrorBars()
+		--UF:ReskinTimerTrakcer(self)
+	--end
 	if MaoRUIPerDB["UFs"]["ClassPower"] and not MaoRUIPerDB["Nameplate"]["ShowPlayerPlate"] then
 		UF:CreateClassPower(self)
 		UF:StaggerBar(self)
@@ -30,12 +30,12 @@ end
 
 local function CreateTargetStyle(self)
 	self.mystyle = "target"
-	UF:CreateCastBar(self)
+	--UF:CreateCastBar(self)
 end
 
 local function CreateFocusStyle(self)
 	self.mystyle = "focus"
-	UF:CreateCastBar(self)
+	--UF:CreateCastBar(self)
 end
 
 local function CreateBossStyle(self)

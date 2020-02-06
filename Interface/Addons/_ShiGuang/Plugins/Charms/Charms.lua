@@ -147,10 +147,10 @@ DESTROY:SetScript("OnEvent", function(_, event, ...)
 end)]]
 
 ------------------------------------------------------------------------------- 
---## Version: 1.1.1 ## Author: Crinseth
+--## Version: 1.2.0 ## Author: Crinseth
 local waitTable = {};
 local waitFrame = nil;
-local function DressingWait(delay, func, ...)
+function DressingWait(delay, func, ...)
   if(type(delay)~="number" or type(func)~="function") then
     return false;
   end
@@ -228,6 +228,7 @@ local function onClick(self, button)
 		local slotID, slotTexture = GetInventorySlotInfo(self.slot)
         DressUpFrame.ModelScene:GetPlayerActor():UndressSlot(slotID)
         updateSlots()
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 	elseif self.item and IsModifiedClick() then
 		HandleModifiedItemClick(self.item)
 	end
@@ -289,6 +290,7 @@ undressButton:SetPoint("BOTTOMLEFT", 6, 4)
 undressButton:SetScript("OnClick", function()
     DressUpFrame.ModelScene:GetPlayerActor():Undress()
     updateSlots()
+    PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK)
 end)
 
 DressUpTargetBtn = CreateFrame("Button",nil,DressUpFrame,"UIPanelButtonTemplate") 

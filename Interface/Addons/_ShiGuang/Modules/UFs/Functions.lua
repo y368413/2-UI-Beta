@@ -347,16 +347,16 @@ function UF:CreateCastBar(self)
 	cb:SetWidth(self:GetWidth() - 21)
 	M.CreateSB(cb, true, .2, .8, 1)
 
-	if mystyle == "player" then
-		cb:SetSize(MaoRUIPerDB["UFs"]["PlayerCBWidth"], MaoRUIPerDB["UFs"]["PlayerCBHeight"])
-		createBarMover(cb, U["Player Castbar"], "PlayerCB", R.UFs.Playercb)
-	elseif mystyle == "target" then
-		cb:SetSize(MaoRUIPerDB["UFs"]["TargetCBWidth"], MaoRUIPerDB["UFs"]["TargetCBHeight"])
-		createBarMover(cb, U["Target Castbar"], "TargetCB", R.UFs.Targetcb)
-	elseif mystyle == "focus" then
-		cb:SetSize(MaoRUIPerDB["UFs"]["FocusCBWidth"], MaoRUIPerDB["UFs"]["FocusCBHeight"])
-		createBarMover(cb, U["Focus Castbar"], "FocusCB", R.UFs.Focuscb)
-	elseif mystyle == "boss" or mystyle == "arena" then
+	--if mystyle == "player" then
+		--cb:SetSize(MaoRUIPerDB["UFs"]["PlayerCBWidth"], MaoRUIPerDB["UFs"]["PlayerCBHeight"])
+		--createBarMover(cb, U["Player Castbar"], "PlayerCB", R.UFs.Playercb)
+	--elseif mystyle == "target" then
+		--cb:SetSize(MaoRUIPerDB["UFs"]["TargetCBWidth"], MaoRUIPerDB["UFs"]["TargetCBHeight"])
+		--createBarMover(cb, U["Target Castbar"], "TargetCB", R.UFs.Targetcb)
+	--elseif mystyle == "focus" then
+		--cb:SetSize(MaoRUIPerDB["UFs"]["FocusCBWidth"], MaoRUIPerDB["UFs"]["FocusCBHeight"])
+		--createBarMover(cb, U["Focus Castbar"], "FocusCB", R.UFs.Focuscb)
+	if mystyle == "boss" or mystyle == "arena" then
 		cb:SetPoint("TOPRIGHT", self.Power, "BOTTOMRIGHT", 0, -8)
 		cb:SetSize(self:GetWidth(), 10)
 	elseif mystyle == "nameplate" then
@@ -378,7 +378,7 @@ function UF:CreateCastBar(self)
 		M.SetBD(cb.Icon)
 	end
 
-	if mystyle == "player" then
+	--[[if mystyle == "player" then
 		local safe = cb:CreateTexture(nil,"OVERLAY")
 		safe:SetTexture(I.normTex)
 		safe:SetVertexColor(1, 0, 0, .6)
@@ -391,8 +391,8 @@ function UF:CreateCastBar(self)
 			local lag = M.CreateFS(cb, 8, "", false, "LEFT", 3, -12)
 			cb.Lag = lag
 			self:RegisterEvent("CURRENT_SPELL_CAST_CHANGED", M.OnCastSent, true)
-		end
-	elseif mystyle == "nameplate" then
+		end]]
+	if mystyle == "nameplate" then
 		name:SetPoint("LEFT", cb, 6, -3)
 		timer:SetPoint("RIGHT", cb, 0, -3)
 
@@ -963,12 +963,13 @@ end
 
 
 function UF:CreateSwing(self)
-	if not MaoRUIPerDB["UFs"]["Castbars"] then return end
+	--if not MaoRUIPerDB["UFs"]["Castbars"] then return end
 
 	local bar = CreateFrame("StatusBar", nil, self)
 	local width = MaoRUIPerDB["UFs"]["PlayerCBWidth"] - MaoRUIPerDB["UFs"]["PlayerCBHeight"] - 5
 	bar:SetSize(width, 3)
-	bar:SetPoint("TOP", self.Castbar.mover, "BOTTOM", 0, -3)
+	createBarMover(bar, U["UFs SwingBar"], "Swing", {"CENTER", UIParent, "CENTER", 0, -250})
+	--bar:SetPoint("TOP", self.Castbar.mover, "BOTTOM", 0, -3)
 
 	local two = CreateFrame("StatusBar", nil, bar)
 	two:Hide()
@@ -1000,7 +1001,7 @@ function UF:CreateSwing(self)
 end
 
 function UF:CreateQuakeTimer(self)
-	if not MaoRUIPerDB["UFs"]["Castbars"] then return end
+	--if not MaoRUIPerDB["UFs"]["Castbars"] then return end
 
 	local bar = CreateFrame("StatusBar", nil, self)
 	bar:SetSize(MaoRUIPerDB["UFs"]["PlayerCBWidth"], MaoRUIPerDB["UFs"]["PlayerCBHeight"])

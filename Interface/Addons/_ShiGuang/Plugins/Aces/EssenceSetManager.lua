@@ -1,4 +1,4 @@
---## Author: Metriss - Stormrage  ## Version: 1.04
+--## Author: Metriss - Stormrage  ## Version: 1.05
 local esm = ESSENCE_SET_MANAGER_ADDON or LibStub("AceAddon-3.0"):NewAddon("ESSENCE_SET_MANAGER_ADDON", "AceConsole-3.0")
 local setButtons = {}
 esm.setNames = {}

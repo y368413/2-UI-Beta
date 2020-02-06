@@ -742,9 +742,9 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "Misc", "PulseCD", U["Pulse CD"], true},
 		{1, "Auras", "Reminder", U["Enable Reminder"].."*", true, true, nil, updateReminder},
 		{},--blank		
-		{1, "UFs", "Castbars", "|cff00cc4c"..U["UFs Castbar"], false, false, setupCastbar},
-		{3, "Auras", "BuffSize", U["BuffSize"], true, false, {24, 40, 0}},
-		{3, "Auras", "DebuffSize", U["DebuffSize"], true, true, {24, 40, 0}},
+		--{1, "UFs", "Castbars", "|cff00cc4c"..U["UFs Castbar"], false, false, setupCastbar},
+		{3, "Auras", "BuffSize", U["BuffSize"], false, false, {24, 40, 0}},
+		{3, "Auras", "DebuffSize", U["DebuffSize"], true, false, {24, 40, 0}},
 		{3, "Auras", "BuffsPerRow", U["BuffsPerRow"], false, false, {10, 20, 0}},
 		{3, "Auras", "DebuffsPerRow", U["DebuffsPerRow"], true, false, {10, 16, 0}},
 		{3, "AuraWatch", "IconScale", U["AuraWatch IconScale"], true, true, {.8, 2, 1}},
