@@ -66,7 +66,7 @@ end)
 local p=PlayerHitIndicator;p.Show=p.Hide;p:Hide() 
 local p=PetHitIndicator;p.Show=p.Hide;p:Hide() 
 
--------------------------------	  目标种族、职业和其它信息   ----------------------------------------
+--[[-----------------------------	  目标种族、职业和其它信息   ----------------------------------------
 TargetFrame:CreateFontString("TargetFrameType", "OVERLAY", "GameFontNormalSmall")
 TargetFrameType:SetPoint("BOTTOMRIGHT", TargetFrame, "BOTTOMRIGHT", -43, -8)
 TargetFrameType:SetTextColor(1, 0.75, 0)
@@ -91,7 +91,7 @@ hooksecurefunc("TargetFrame_Update", function(self)
 		end
 	TargetFrameType:SetText(typeText)
 	TargetFrameRace:SetText(raceText)
-end)
+end)]]
 	
 ------------------------------------------------------------------------------- TargetClassButton by 狂飙@cwdg(networm@qq.com) 20120119 DIY by y368413 
 -- Binding Variables

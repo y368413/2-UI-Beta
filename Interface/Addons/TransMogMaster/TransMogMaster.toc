@@ -8,7 +8,7 @@
 ## Notes-zhTW: 加入到物品提示顯示你已經收藏一個塑形外觀 + 出售物品界面和鼠标提示界面，使你幻化时便捷。
 ## X-Category: Transmogrify
 ## Author: TorelTwiddler, Ami Yuy + Elvador + Kruithne + Kemayo + romdeau23
-## SavedVariables: CanIMogItOptions, CanIMogItDatabase, TransmogCleanupDB, AppearanceTooltipDB, MogPartialSetsAddonConfig
+## SavedVariables: CanIMogItOptions, CanIMogItDatabase, AppearanceTooltipDB, MogPartialSetsAddonConfig
 ## SavedVariablesPerCharacter: AppearanceTooltipDBPC
 ## RequiredDeps: _ShiGuang
 ## DefaultState: disabled
@@ -19,8 +19,6 @@ Locale\_locales.xml
 CanIMogIt.lua
 Overlay\_overlays.xml
 Plugins\_plugins.xml
-
-TransmogCleanup.lua
 
 LibArmorToken-1.0.lua
 LibAppropriateItems-1.0.lua

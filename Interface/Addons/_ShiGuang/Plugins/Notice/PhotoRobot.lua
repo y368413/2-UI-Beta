@@ -6,9 +6,7 @@
 local PhotoRobot = {}
 
 PhotoRobot.spellDB = {
- 
 	-- Interrupts
-
 	"1766", -- Kick (Rogue)
 	"2139", -- Counterspell (Mage)
 	"6552", -- Pummel (Warrior)
@@ -436,12 +434,72 @@ function PhotoRobot.CreateConfig()
 	PhotoRobot.subtitle:SetTextColor(1, 1, 1, 0.5)
 	
 	----------------------------------
+	-- panel 2 start
+	----------------------------------
+	
+	PhotoRobot.checkbox3 = CreateFrame("CheckButton", "PhotoRobotcheckbox3", PhotoRobot.panel, "ChatConfigCheckButtonTemplate")
+	PhotoRobot.checkbox3:SetPoint("TOPLEFT", PhotoRobot.subtitle, "BOTTOMLEFT", 10, -21)
+	_G[PhotoRobot.checkbox3:GetName().."Text"]:SetText(PHOTOROBOT_EnableonPlayerFrame)
+	_G[PhotoRobot.checkbox3:GetName().."Text"]:SetPoint("LEFT", PhotoRobot.checkbox3, "RIGHT", 3, 1)
+	PhotoRobot.checkbox3.tooltip = PHOTOROBOT_onPlayerFrame
+	PhotoRobot.checkbox3:SetScript("OnClick", function(self, button, down)
+		if PhotoRobot.checkbox3:GetChecked() then
+			PhotoRobot.db.ShowOnPlayerAuras = true
+		else
+			PhotoRobot.db.ShowOnPlayerAuras = false
+		end
+	end)
+	
+	--[[PhotoRobot.checkbox1 = CreateFrame("CheckButton", "PhotoRobotcheckbox1", p1, "ChatConfigCheckButtonTemplate")
+	PhotoRobot.checkbox1:SetPoint("TOPLEFT", PhotoRobot.checkbox3, "BOTTOMLEFT", 0, -5)
+	_G[PhotoRobot.checkbox1:GetName().."Text"]:SetText(PHOTOROBOT_onPartyFrames)
+	_G[PhotoRobot.checkbox1:GetName().."Text"]:SetPoint("LEFT", PhotoRobot.checkbox1, "RIGHT", 3, 1)
+	PhotoRobot.checkbox1.tooltip = PHOTOROBOT_PartyFramesdisplay
+	PhotoRobot.checkbox1:Show()
+	PhotoRobot.checkbox1:SetScript("OnClick", function(self, button, down)
+		if PhotoRobot.checkbox1:GetChecked() then
+			PhotoRobot.db.ShowOnPartyAuras = true
+		else
+			PhotoRobot.db.ShowOnPartyAuras = false
+		end
+	end)
+	
+	PhotoRobot.checkbox2 = CreateFrame("CheckButton", "PhotoRobotcheckbox2", p1, "ChatConfigCheckButtonTemplate")
+	PhotoRobot.checkbox2:SetPoint("TOPLEFT", PhotoRobot.checkbox1, "BOTTOMLEFT", 15, -5)
+	_G[PhotoRobot.checkbox2:GetName().."Text"]:SetText(PHOTOROBOT_inArena)
+	_G[PhotoRobot.checkbox2:GetName().."Text"]:SetPoint("LEFT", PhotoRobot.checkbox2, "RIGHT", 3, 1)
+	PhotoRobot.checkbox2.tooltip = PHOTOROBOT_BlzPartyFramesdisplay
+	PhotoRobot.checkbox2:Hide()
+	PhotoRobot.checkbox2:SetScript("OnClick", function(self, button, down)
+		if PhotoRobot.checkbox2:GetChecked() then
+			PhotoRobot.db.ShowOnPartyFrames = true
+		else
+			PhotoRobot.db.ShowOnPartyFrames = false
+		end
+	end)
+	
+	PhotoRobot.checkbox4 = CreateFrame("CheckButton", "PhotoRobotcheckbox4", p1, "ChatConfigCheckButtonTemplate")
+	PhotoRobot.checkbox4:SetPoint("TOPLEFT", PhotoRobot.checkbox1, "BOTTOMLEFT", 0, -35)
+	_G[PhotoRobot.checkbox4:GetName().."Text"]:SetText(PHOTOROBOT_onArenaFrames)
+	_G[PhotoRobot.checkbox4:GetName().."Text"]:SetPoint("LEFT", PhotoRobot.checkbox4, "RIGHT", 3, 1)
+	PhotoRobot.checkbox4.tooltip = PHOTOROBOT_ArenaFramesdisplay
+	PhotoRobot.checkbox4:SetScript("OnClick", function(self, button, down)
+		if PhotoRobot.checkbox4:GetChecked() then
+			PhotoRobot.db.ShowOnArenaAuras = true
+		else
+			PhotoRobot.db.ShowOnArenaAuras = false
+		end
+	end)]]
+	----------------------------------
+	-- panel 2 end
+	----------------------------------	
+	----------------------------------
 	-- panel 1 start
 	----------------------------------
 	local p1 = PhotoRobot.panel
 
 	PhotoRobot.dropdown1 = CreateFrame("Frame", "PhotoRobotdropdown1", PhotoRobot.panel, "UIDropDownMenuTemplate")
-	PhotoRobot.dropdown1:SetPoint("TOPLEFT", PhotoRobot.subtitle, "BOTTOMLEFT", -10, -30)
+	PhotoRobot.dropdown1:SetPoint("TOPLEFT", PhotoRobot.checkbox3, "BOTTOMLEFT", -10, -30)
 	PhotoRobot.dropdown1:SetWidth(40)
 	PhotoRobot.dropdown1.font = PhotoRobot.dropdown1:CreateFontString("PhotoRobotdropdownFont", "ARTWORK", "GameFontNormalSmall")
 	PhotoRobot.dropdown1.font:SetPoint("BOTTOMLEFT", PhotoRobot.dropdown1, "TOPLEFT", 20, 0)
@@ -633,74 +691,13 @@ function PhotoRobot.CreateConfig()
 	----------------------------------
 	-- panel 1 end
 	----------------------------------
-	
-	----------------------------------
-	-- panel 2 start
-	----------------------------------
-	
-	PhotoRobot.checkbox3 = CreateFrame("CheckButton", "PhotoRobotcheckbox3", PhotoRobot.panel, "ChatConfigCheckButtonTemplate")
-	PhotoRobot.checkbox3:SetPoint("LEFT", PhotoRobot.slider1, "LEFT", 0, -90)
-	_G[PhotoRobot.checkbox3:GetName().."Text"]:SetText(PHOTOROBOT_EnableonPlayerFrame)
-	_G[PhotoRobot.checkbox3:GetName().."Text"]:SetPoint("LEFT", PhotoRobot.checkbox3, "RIGHT", 3, 1)
-	PhotoRobot.checkbox3.tooltip = PHOTOROBOT_onPlayerFrame
-	PhotoRobot.checkbox3:SetScript("OnClick", function(self, button, down)
-		if PhotoRobot.checkbox3:GetChecked() then
-			PhotoRobot.db.showPlayerAuras = true
-		else
-			PhotoRobot.db.showPlayerAuras = false
-		end
-	end)
-	
-	PhotoRobot.checkbox1 = CreateFrame("CheckButton", "PhotoRobotcheckbox1", p1, "ChatConfigCheckButtonTemplate")
-	PhotoRobot.checkbox1:SetPoint("TOPLEFT", PhotoRobot.checkbox3, "BOTTOMLEFT", 0, -5)
-	_G[PhotoRobot.checkbox1:GetName().."Text"]:SetText(PHOTOROBOT_onPlayerFrame)
-	_G[PhotoRobot.checkbox1:GetName().."Text"]:SetPoint("LEFT", PhotoRobot.checkbox1, "RIGHT", 3, 1)
-	PhotoRobot.checkbox1.tooltip = PHOTOROBOT_PartyFramesdisplay
-	PhotoRobot.checkbox1:Show()
-	PhotoRobot.checkbox1:SetScript("OnClick", function(self, button, down)
-		if PhotoRobot.checkbox1:GetChecked() then
-			PhotoRobot.db.showPartyAuras = true
-		else
-			PhotoRobot.db.showPartyAuras = false
-		end
-	end)
-	
-	PhotoRobot.checkbox2 = CreateFrame("CheckButton", "PhotoRobotcheckbox2", p1, "ChatConfigCheckButtonTemplate")
-	PhotoRobot.checkbox2:SetPoint("TOPLEFT", PhotoRobot.checkbox1, "BOTTOMLEFT", 15, -5)
-	_G[PhotoRobot.checkbox2:GetName().."Text"]:SetText(PHOTOROBOT_inArena)
-	_G[PhotoRobot.checkbox2:GetName().."Text"]:SetPoint("LEFT", PhotoRobot.checkbox2, "RIGHT", 3, 1)
-	PhotoRobot.checkbox2.tooltip = PHOTOROBOT_BlzPartyFramesdisplay
-	PhotoRobot.checkbox2:Hide()
-	PhotoRobot.checkbox2:SetScript("OnClick", function(self, button, down)
-		if PhotoRobot.checkbox2:GetChecked() then
-			PhotoRobot.db.showPartyFrames = true
-		else
-			PhotoRobot.db.showPartyFrames = false
-		end
-	end)
-	
-	PhotoRobot.checkbox4 = CreateFrame("CheckButton", "PhotoRobotcheckbox4", p1, "ChatConfigCheckButtonTemplate")
-	PhotoRobot.checkbox4:SetPoint("TOPLEFT", PhotoRobot.checkbox1, "BOTTOMLEFT", 0, -35)
-	_G[PhotoRobot.checkbox4:GetName().."Text"]:SetText(PHOTOROBOT_onArenaFrames)
-	_G[PhotoRobot.checkbox4:GetName().."Text"]:SetPoint("LEFT", PhotoRobot.checkbox4, "RIGHT", 3, 1)
-	PhotoRobot.checkbox4.tooltip = PHOTOROBOT_ArenaFramesdisplay
-	PhotoRobot.checkbox4:SetScript("OnClick", function(self, button, down)
-		if PhotoRobot.checkbox4:GetChecked() then
-			PhotoRobot.db.showArenaAuras = true
-		else
-			PhotoRobot.db.showArenaAuras = false
-		end
-	end)
-	----------------------------------
-	-- panel 2 end
-	----------------------------------
 end
 
 local defaults = {
-	showArenaAuras = true,
-	showPlayerAuras = false,
-	showPartyFrames = true,
-	showPartyAuras = false,
+	ShowOnArenaAuras = false,
+	ShowOnPlayerAuras = true,
+	ShowOnPartyFrames = false,
+	ShowOnPartyAuras = false,
 	fontSize = "Large",
 	PhotoRobotr = 1.0,
 	PhotoRobotg = 1.0,
@@ -753,7 +750,7 @@ for i = 1, 5 do
 end
 
 PhotoRobot.f:SetScript("OnEvent", function(self, event, ...) 
-	  if PhotoRobot[event] then 
+	  if (ShiGuangPerDB["BHT"] == false) and PhotoRobot[event] then 
 		 return PhotoRobot[event](PhotoRobot, event, ...) 
 	  end 
 end)
@@ -765,6 +762,7 @@ PhotoRobot.f:RegisterEvent("ARENA_OPPONENT_UPDATE")
 
 -- event functions
 function PhotoRobot:PLAYER_ENTERING_WORLD(event, ...)
+  if ShiGuangPerDB["BHT"] == true then return end 
 	--[[local _, instance = IsInInstance() I don't know why this block is added, I try to solve by brute force
 	local parent
 	if instance == "raid" then
@@ -791,7 +789,7 @@ function PhotoRobot:PLAYER_ENTERING_WORLD(event, ...)
 		self.CreateAuraIcons("PhotoRobotTargetTexture", TargetFrame.portrait, TargetFrame, tFrame)
 		self.CreateAuraIcons("PhotoRobotFocusTexture", FocusFrame.portrait, FocusFrame, fFrame)
 		self.CreateAuraIcons("PhotoRobotPlayerTexture", PlayerFrame.portrait, PlayerFrame, pFrame)
-		-- if self.db.showPartyFrames then
+		-- if self.db.ShowOnPartyFrames then
 			-- self.f:RegisterEvent("PARTY_MEMBERS_CHANGED")
 		-- end
 		for i = 1, 4 do
@@ -800,10 +798,11 @@ function PhotoRobot:PLAYER_ENTERING_WORLD(event, ...)
 				self.CreateAuraIcons("PhotoRobotPartyTexture"..i, frame.portrait, frame, self["PartyFrame"..i])
 			end
 		end
-		self.checkbox2:Show()
+		--self.checkbox2:Show()
 end
 
 function PhotoRobot:ARENA_OPPONENT_UPDATE(event, unit, status)
+  if ShiGuangPerDB["BHT"] == true then return end 
 	if (unit == "arena1" or unit == "arena2" or unit == "arena3" or unit == "arena4" or unit == "arena5") and status == "seen" then
 		-- print("found unit: " .. unit)
 
@@ -811,8 +810,9 @@ function PhotoRobot:ARENA_OPPONENT_UPDATE(event, unit, status)
 end
 
 function PhotoRobot:PARTY_MEMBERS_CHANGED(event)
+  if ShiGuangPerDB["BHT"] == true then return end 
 	-- show blizzard frames
-	if self.db.showPartyFrames then
+	if self.db.ShowOnPartyFrames then
 		local _, instance = IsInInstance()
 		if instance == "arena" then
 			-- print("in arena")
@@ -827,16 +827,17 @@ function PhotoRobot:PARTY_MEMBERS_CHANGED(event)
 end
 
 function PhotoRobot:UNIT_AURA(event, unit)
+  if ShiGuangPerDB["BHT"] == true then return end 
 	--print("UNIT_AURA " .. unit)
 	if unit == "target" or unit == "focus" then 
 		PhotoRobot.CheckAuras(unit)
 	end
-	if PhotoRobot.db.showArenaAuras and (ArenaEnemyFrame1 or ArenaEnemyFrame2 or ArenaEnemyFrame3 or ArenaEnemyFrame4 or ArenaEnemyFrame5) then
+	if PhotoRobot.db.ShowOnArenaAuras and (ArenaEnemyFrame1 or ArenaEnemyFrame2 or ArenaEnemyFrame3 or ArenaEnemyFrame4 or ArenaEnemyFrame5) then
 		if unit == "arena1" or unit == "arena2" or unit == "arena3" or unit == "arena4" or unit == "arena5" then 
 			PhotoRobot.CheckAuras(unit)
 		end
 	end
-	if PhotoRobot.db.showPartyAuras then
+	if PhotoRobot.db.ShowOnPartyAuras then
 		if unit == "party1" or unit == "party2" or unit == "party3" or unit == "party4" then
 				if (unit == "party1" and (PartyMemberFrame1:IsVisible())) or
 					(unit == "party2" and (PartyMemberFrame2:IsVisible())) or
@@ -846,7 +847,7 @@ function PhotoRobot:UNIT_AURA(event, unit)
 				end
 		end
 	end
-	if PhotoRobot.db.showPlayerAuras then
+	if PhotoRobot.db.ShowOnPlayerAuras then
 		if unit == "player" then
 			PhotoRobot.CheckAuras(unit)
 		end
@@ -855,6 +856,7 @@ end
 
 
 function PhotoRobot:PLAYER_TARGET_CHANGED(event)
+  if ShiGuangPerDB["BHT"] == true then return end 
 	tFrame.auras = {}
 	--PhotoRobot.SetPortraitTexture(tFrame, nil)
 	if UnitExists("target") then
@@ -866,6 +868,7 @@ end
 
 
 function PhotoRobot:PLAYER_FOCUS_CHANGED(event)
+  if ShiGuangPerDB["BHT"] == true then return end 
 	fFrame.auras = {}
 	if UnitExists("focus") then
 		PhotoRobot.CheckAuras("focus")
@@ -876,7 +879,7 @@ end
 
 
 function PhotoRobot:ADDON_LOADED(event, addon)
-	if addon == "_ShiGuang" then
+	if (ShiGuangPerDB["BHT"] == false) and addon == "_ShiGuang" then
 		--if not PhotoRobotDB then PhotoRobotDB = {} end
 		self.db = self.CopyDefaults(defaults, ShiGuangPerDB)
 		
@@ -884,10 +887,10 @@ function PhotoRobot:ADDON_LOADED(event, addon)
 		UIDropDownMenu_SetText(self.dropdown1, self.db.fontSize)
 		self.colorButton.texture:SetTexture("Interface\\ChatFrame\\ChatFrameColorSwatch")
 		self.colorButton.texture:SetTexture(self.db.PhotoRobotr, self.db.PhotoRobotg, self.db.PhotoRobotb)
-		self.checkbox1:SetChecked(self.db.showPartyAuras)
-		self.checkbox2:SetChecked(self.db.showPartyFrames)
-		self.checkbox3:SetChecked(self.db.showPlayerAuras)
-		self.checkbox4:SetChecked(self.db.showArenaAuras)
+		--self.checkbox1:SetChecked(self.db.ShowOnPartyAuras)
+		--self.checkbox2:SetChecked(self.db.ShowOnPartyFrames)
+		self.checkbox3:SetChecked(self.db.ShowOnPlayerAuras)
+		--self.checkbox4:SetChecked(self.db.ShowOnArenaAuras)
 		self.panel.checkbox1:SetChecked(self.db.showDecimals)
 		self.slider1:SetValue(self.db.arenaFrameScale)
 		self.arenaTextureFrame:SetScale(self.db.arenaFrameScale)
