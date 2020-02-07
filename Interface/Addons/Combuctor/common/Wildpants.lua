@@ -53,6 +53,7 @@ local FrameDefaults = {
 		'all', 'all/normal', 'all/trade', 'all/reagent', 'all/keys', 'all/quiver',
 		'equip', 'equip/armor', 'equip/weapon', 'equip/trinket',
 		'binding', 'binding/account', 'binding/equip', 'binding/use', 'binding/all', "binding/soulbound",
+		'BFA',
 		'use', 'use/consume', 'use/enhance',
 		'trade', 'trade/goods', 'trade/gem', 'trade/glyph', 'trade/recipe',
 		'quest', 'misc',

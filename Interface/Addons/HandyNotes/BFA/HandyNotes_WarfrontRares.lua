@@ -459,7 +459,7 @@ local function generateMenu( button, level )
 
     if (level == 1) then
         info.isTitle = 1
-        info.text = L["context_menu_title"]
+        info.text = L["context_menu_title_Arathi"]
         info.notCheckable = 1
         UIDropDownMenu_AddButton(info, level)
         

@@ -85,7 +85,7 @@ local defaultSettings = {
 	},
 	UFs = {
 		Arena = true,
-		Castbars = true,
+		Castbars = false,
 		SwingBar = false,
 		SwingTimer = false,
 		RaidFrame = true,

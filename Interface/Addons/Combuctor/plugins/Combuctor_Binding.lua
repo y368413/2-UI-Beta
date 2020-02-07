@@ -24,9 +24,7 @@ local tooltipScanner = _G['LibItemSearchTooltipScanner'] or CreateFrame('GameToo
 
 local Addon = Combuctor
 
---
--- Copied pretty much wholesale from LibItemSearch 1.2
--- 
+---- Copied pretty much wholesale from LibItemSearch 1.2-- 
 local function link_FindSearchInTooltip(itemLink, search, bag, slot)
     local itemID = itemLink:match('item:(%d+)')
     if not itemID then

@@ -79,12 +79,14 @@ function MISC:ExpBar_Update()
 		if isMaxLevel then
 			self:Hide()
 		else
-			local azeriteItemLocation = C_AzeriteItem_FindActiveAzeriteItem()
+			--local azeriteItemLocation = C_AzeriteItem_FindActiveAzeriteItem()
+			if azeriteItemLocation then
 			local xp, totalLevelXP = C_AzeriteItem_GetAzeriteItemXPInfo(azeriteItemLocation)
 			self:SetStatusBarColor(.9, .8, .6)
 			self:SetMinMaxValues(0, totalLevelXP)
 			self:SetValue(xp)
 			self:Show()
+			end
 		end
 	elseif HasArtifactEquipped() then
 		if C_ArtifactUI_IsEquippedArtifactDisabled() then

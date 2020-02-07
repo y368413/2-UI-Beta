@@ -112,7 +112,7 @@ local function initializeDropdownMenu (button, level, mapID, coord)
 
     if (level == 1) then
         UIDropDownMenu_AddButton({
-            text=L["context_menu_title"], isTitle=1, notCheckable=1
+            text=L["context_menu_title_Mechagon"], isTitle=1, notCheckable=1
         }, level);
 
         UIDropDownMenu_AddButton(spacer, level);
@@ -428,7 +428,7 @@ MechagonAndNazjatar.optionDefaults = {
 
 MechagonAndNazjatar.options = {
     type = "group",
-    name = L["options_title"],
+    name = L["options_title_Mechagon"],
     get = function(info) return MechagonAndNazjatar.addon.db.profile[info.arg] end,
     set = function(info, v) MechagonAndNazjatar.addon.db.profile[info.arg] = v; MechagonAndNazjatar.addon:Refresh() end,
     args = {}

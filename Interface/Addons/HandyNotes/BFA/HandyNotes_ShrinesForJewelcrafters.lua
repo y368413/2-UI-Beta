@@ -52,7 +52,7 @@ local atlas_texture = function(atlas, scale)
         tCoordRight = right,
         tCoordTop = top,
         tCoordBottom = bottom,
-        scale = scale or 1,
+        scale = scale or 0.85,
     }
 end
 

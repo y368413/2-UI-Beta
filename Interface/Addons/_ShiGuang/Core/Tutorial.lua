@@ -38,6 +38,8 @@ local function ForceDefaultSettings()
   FocusFrame:SetScript("OnMouseDown", function(self, elapsed) if IsShiftKeyDown() and (not InCombatLockdown()) then FocusFrame:StartMoving(); end end)
   FocusFrame:SetScript("OnMouseUp", function(self, elapsed) FocusFrame:StopMovingOrSizing(); end)
   FocusFrame:SetClampedToScreen(1)
+  SetCVar("nameplateSelectedScale", 1.25)
+  SetCVar("nameplateLargerScale", 1.25)
 	SetCVar("autoLootDefault", 1)
 	SetCVar("lootUnderMouse", 1)
 	SetCVar("autoSelfCast", 1)
@@ -194,7 +196,7 @@ end
 -- Skada
 local function ForceSkadaOptions()
 	if not IsAddOnLoaded("Skada") then return end
-	if SkadaDB then wipe(SkadaDB) end
+	if SkadaDB then return end  --wipe(SkadaDB)
 	SkadaDB = {
 		["hasUpgraded"] = true,
 		["profiles"] = {
@@ -343,18 +345,16 @@ end
 
 -- Tutorial
 local function YesTutor()
-
-			ForceDefaultSettings()
-			ForceRaidFrame()
-			ForceChatSettings()
-			MaoRUIDB["LockUIScale"] = true
-			M:SetupUIScale()
-			MaoRUIDB["DBMRequest"] = true
-			MaoRUIDB["SkadaRequest"] = true
-			MaoRUIDB["BWRequest"] = true
-			ForceAddonSkins()
-			MaoRUIDB["ResetDetails"] = true
-			MaoRUIPerDB["Tutorial"]["Complete"] = true
+	ForceRaidFrame()
+	ForceChatSettings()
+	MaoRUIDB["LockUIScale"] = true
+	M:SetupUIScale()
+	MaoRUIDB["DBMRequest"] = true
+	MaoRUIDB["SkadaRequest"] = true
+	MaoRUIDB["BWRequest"] = true
+	ForceAddonSkins()
+	MaoRUIDB["ResetDetails"] = true
+	MaoRUIDB["YesTutor"] = false
 end
 
 local welcome
@@ -404,8 +404,10 @@ local function HelloWorld()
 	LeftPic:SetScript("OnMouseDown", function(self) Sc(0.6) end)
 	LeftPic:SetScript("OnClick", function()
 		welcome:Hide()
-		YesTutor()
+		if MaoRUIDB["YesTutor"] then YesTutor() end
+		MaoRUIPerDB["Tutorial"]["Complete"] = true
 		ShiGuangPerDB["BHT"] = true
+		ForceDefaultSettings()
 		ReloadUI()
 	end)
 	SmallText1 = M:CreatStyleText(LeftPic, STANDARD_TEXT_FONT, 16, "OUTLINE", "[ 微美化界面 ]", "RIGHT",LeftPic,"LEFT",26,60, I.r, I.g, I.b)
@@ -423,8 +425,10 @@ local function HelloWorld()
 	RightPic:SetScript("OnMouseDown", function(self) Sc(0.6) end)
 	RightPic:SetScript("OnClick", function()
 		welcome:Hide()
-		YesTutor()
+		if MaoRUIDB["YesTutor"] then YesTutor() end
+		MaoRUIPerDB["Tutorial"]["Complete"] = true
 		ShiGuangPerDB["BHT"] = false
+		ForceDefaultSettings()
 		ReloadUI()
   end)
 	SmallText1 = M:CreatStyleText(LeftPic, STANDARD_TEXT_FONT, 16, "OUTLINE", "[ BFA " ..GetAddOnMetadata("_ShiGuang", "X-Support").. " v "..GetAddOnMetadata("_ShiGuang", "Version").." ]", "LEFT",RightPic,"RIGHT",-26,60, I.r, I.g, I.b)
@@ -494,7 +498,6 @@ function module:OnLogin()
 	-- Hide options
 	M.HideOption(Advanced_UseUIScale)
 	M.HideOption(Advanced_UIScaleSlider)
-
 	-- Tutorial and settings
 	DefaultSettings()
 	ForceAddonSkins()

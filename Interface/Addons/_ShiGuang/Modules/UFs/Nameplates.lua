@@ -61,8 +61,8 @@ function UF:SetupCVars()
 	SetCVar("showQuestTrackingTooltips", 1)
 
 	UF:UpdatePlateScale()
-	SetCVar("nameplateSelectedScale", 1)
-	SetCVar("nameplateLargerScale", 1)
+	--SetCVar("nameplateSelectedScale", 1)
+	--SetCVar("nameplateLargerScale", 1)
 
 	SetCVar("nameplateShowSelf", 0)
 	SetCVar("nameplateResourceOnTarget", 0)
@@ -488,7 +488,7 @@ end
 -- Unit classification
 local classify = {
 	rare = {"Interface\\MINIMAP\\ObjectIcons", .391, .487, .644, .74},  --rare = {1, 1, 1, true},
-	--elite = {"Interface\\MINIMAP\\Minimap_skull_elite", 0, 1, 0, 1},	--elite = {1, 1, 1},
+	elite = {"Interface\\MINIMAP\\Minimap_skull_elite", 0, 1, 0, 1},	--elite = {1, 1, 1},
 	rareelite = {"Interface\\MINIMAP\\ObjectIcons", .754, .875, .624, .749},	--rareelite = {1, .1, .1},
 	worldboss = {"Interface\\MINIMAP\\ObjectIcons", .879, 1, .754, .879},	  --worldboss = {0, 1, 0},
 }
