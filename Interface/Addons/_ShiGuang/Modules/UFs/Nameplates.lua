@@ -509,14 +509,21 @@ end
 
 function UF:UpdateUnitClassify(unit)
 	local class = UnitClassification(unit)
+	local level = UnitLevel(unit)
 	if self.creatureIcon then
 		if class and classify[class] then
 			local tex, r, g, b, desature = unpack(classify[class])
 			--self.creatureIcon:SetVertexColor(r, g, b)
 			--self.creatureIcon:SetDesaturated(desature)
-			self.creatureIcon:SetTexture(tex)
-		  self.creatureIcon:SetTexCoord(r, g, b, desature)
-			self.creatureIcon:Show()
+			if level and level < UnitLevel("player") then  -- or level == -1
+			    if class == elite then
+			        self.creatureIcon:Hide()
+			    end
+			else
+			    self.creatureIcon:SetTexture(tex)
+		      self.creatureIcon:SetTexCoord(r, g, b, desature)
+			    self.creatureIcon:Show()
+			end
 		else
 			self.creatureIcon:Hide()
 		end

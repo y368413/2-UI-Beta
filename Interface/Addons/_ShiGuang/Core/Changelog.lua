@@ -4,7 +4,7 @@ if I.Client ~= "zhCN" then return end
 
 local strsplit, pairs = string.split, pairs
 
-local quest = {
+local UIQuestsandHelp = {
    "更多设置请|cFF00DDFF右键小地图|r",
  	 "任何你不喜欢的，请你控制台关了它.|cff3399FF        自己去下载自己喜欢的",
  	 "|cff3399FF头像样式一就仅只有你看到这些.    无任何施法条、连击点和更多其它",
@@ -17,21 +17,10 @@ local quest = {
 	 "点击聊天框角色名称可实现:|cff3399FF     Shift-密语 Ctrl-邀请工会 Alt-组队邀请",
    "|cFF00DDFF如需改进和反馈，可以回帖或者在讨论组(n9PnFl0o)告诉我，谢谢。",
    "-------------------------------"..GetAddOnMetadata("_ShiGuang", "X-StatsVersion").."----[正式]",
-   "[注意]控制台设置后的 白色三角形 可以点击后设置更多",
-   "[注意]使用多功能团框的话，记得控制台别勾选“简易模式框体”",
-   "[新增]团队框架(感谢Siweia)",
-   "[升级]小地图左侧游戏菜单按钮支持双模式切换",
-   "[更新]恩佐斯入侵地图稀有宝藏模块",
-   "[更新]Skada、全职业重要技能监控",
-   "[更新]艾泽里特特质评分",
-   "[移除]好友分组功能(后台报错太多)",
-   "[移除]人物跟随增强和一些基本没人用的功能",
-   "[简化]姓名版(血条)已支持FB内显示右方",
-   "[添加]MOP、WOD野外宝箱和稀有提示",
-   "[修复]背包无法切换显示其它角色背包物品的bug",
-   "[修复]Skada统计死亡模块报错的bug",
-   "[修复]战斗中打开团队界面，无法看到队伍情况的bug",
-   "[修复]小地图收菜图标无法打开旧版本收菜信息的bug",
+   "|cFFFF0000[注意]控制台设置后的 金色齿轮 可以点击后设置更多|r",
+   "|cFFFF0000[注意]使用多功能团框的话，记得控制台别勾选“简易模式框体”|r",
+   "[添加]腐蚀等级评定提示",
+   "[修复]最近反馈的一些bug，感谢大家！",
    "[插件]版本号升级为v "..GetAddOnMetadata("_ShiGuang", "Version"),
    "--------------------------over",
 }
@@ -77,7 +66,7 @@ local function Helplist()
 	M.CreateFS(f, 30, "2 UI", true, "TOPLEFT", 43, 16)
 	M.CreateFS(f, 16, I.Version, true, "TOPLEFT", 112, 6)
 	local offset = 0
-	for n, t in pairs(quest) do
+	for n, t in pairs(UIQuestsandHelp) do
 		M.CreateFS(f, 14, n..": "..t, false, "TOPLEFT", 21, -(21 + offset))
 		offset = offset + 21
 	end
