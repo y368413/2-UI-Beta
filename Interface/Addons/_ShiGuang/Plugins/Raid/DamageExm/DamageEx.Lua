@@ -1123,9 +1123,13 @@ function DEX_Set_WOWDamage()
 	if (DEX_Get("DEX_ShowDamageWoW") == 0) then
 		SetCVar("floatingCombatTextCombatDamage", 0);
 		SetCVar("floatingCombatTextCombatHealing", 0);
+		SetCVar("floatingCombatTextPetMeleeDamage", 0)   	 --寵物對目標傷害
+    SetCVar("floatingCombatTextPetSpellDamage", 0)   	 --寵物對目標傷害
 	else
 		SetCVar("floatingCombatTextCombatDamage", 1);
 		SetCVar("floatingCombatTextCombatHealing", 1);
+		SetCVar("floatingCombatTextPetMeleeDamage", 1)   	 --寵物對目標傷害
+    SetCVar("floatingCombatTextPetSpellDamage", 1)   	 --寵物對目標傷害
 	end
 end
 

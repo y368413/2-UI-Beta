@@ -57,12 +57,12 @@ local function ForceDefaultSettings()
   --InterfaceOptions_UpdateMultiActionBars() --刷新动作条
 	SetCVar("enableFloatingCombatText", 0)
 	SetCVar("floatingCombatTextCombatState", 0)
-	SetCVar("floatingCombatTextCombatDamage", 0)
-	SetCVar("floatingCombatTextCombatHealing", 0)
+	--SetCVar("floatingCombatTextCombatDamage", 0)
+	--SetCVar("floatingCombatTextCombatHealing", 0)
 	SetCVar("floatingCombatTextCombatDamageDirectionalScale", 1)
 	SetCVar("floatingCombatTextFloatMode", 3) 
-  SetCVar("floatingCombatTextPetMeleeDamage", 0)   	 --寵物對目標傷害
-  SetCVar("floatingCombatTextPetSpellDamage", 0)   	 --寵物對目標傷害
+  --SetCVar("floatingCombatTextPetMeleeDamage", 0)   	 --寵物對目標傷害
+  --SetCVar("floatingCombatTextPetSpellDamage", 0)   	 --寵物對目標傷害
   SetCVar("floatingCombatTextCombatHealingAbsorbTarget", 0)    --目標盾提示 
   SetCVar("floatingCombatTextCombatHealingAbsorbSelf", 0)    --自身得盾/護甲提示 
   SetCVar("floatingCombatTextDodgeParryMiss", 0)    --閃招 
