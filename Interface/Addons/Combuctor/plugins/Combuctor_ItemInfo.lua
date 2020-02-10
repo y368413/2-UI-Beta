@@ -33,6 +33,8 @@ local IsArtifactRelicItem = _G.IsArtifactRelicItem
 local S_ITEM_BOUND1 = _G.ITEM_SOULBOUND
 local S_ITEM_BOUND2 = _G.ITEM_ACCOUNTBOUND
 local S_ITEM_BOUND3 = _G.ITEM_BNETACCOUNTBOUND
+local S_ITEM_BOUND4 = _G.ITEM_BIND_TO_ACCOUNT
+local S_ITEM_BOUND5 = _G.ITEM_BIND_TO_BNETACCOUNT
 local S_ITEM_LEVEL = "^" .. string_gsub(_G.ITEM_LEVEL, "%%d", "(%%d+)")
 local S_TRANSMOGRIFY_STYLE_UNCOLLECTED = _G.TRANSMOGRIFY_STYLE_UNCOLLECTED
 local S_TRANSMOGRIFY_TOOLTIP_APPEARANCE_UNKNOWN = _G.TRANSMOGRIFY_TOOLTIP_APPEARANCE_UNKNOWN
@@ -42,10 +44,12 @@ local S_CONTAINER_SLOTS = "^" .. (string.gsub(string.gsub(CONTAINER_SLOTS, "%%([
 -- *Just enUS so far. 
 if GetLocale() == "zhCN" or GetLocale() == "zhTW" then
 	Combuctor_ItemInfoBoE = "|cff1eff00装绑|r"; -- Bind on Equip 
-	Combuctor_ItemInfoBoU = "|cFF00DDFF    _|r";  -- Bind on Use
+	Combuctor_ItemInfoBoU = "BoU"  -- Bind on Use
+	Combuctor_ItemInfoBoA = "|cffe6cc80战网|r"; -- Bind on Account 
 else
-	Combuctor_ItemInfoBoE = "BoE"; -- Bind on Equip 
-	Combuctor_ItemInfoBoU = "BoU"; -- Bind on Use
+	Combuctor_ItemInfoBoE = "|cff1eff00BoE|r"; -- Bind on Equip 
+	Combuctor_ItemInfoBoU = "BoU"  -- Bind on Use
+	Combuctor_ItemInfoBoA = "|cffe6cc80BoA|r"; -- Bind on Account
 end
 -- FontString & Texture Caches
 local Cache_ItemBind = {}
@@ -84,7 +88,22 @@ local IsItemBound = function(button)
 			break
 		end
 		local msg = line:GetText()
-		if msg and (string_find(msg, S_ITEM_BOUND1) or string_find(msg, S_ITEM_BOUND2) or string_find(msg, S_ITEM_BOUND3)) then 
+		if msg and string_find(msg, S_ITEM_BOUND1) then 
+			return true
+		end
+	end
+end
+
+local IsItemAccount = function(button)
+	-- We're trying line 2 to 6 for the bind texts, 
+	-- I don't think they're ever further down.
+	for i = 2,6 do 
+		local line = _G[ScannerTipName.."TextLeft"..i]
+		if (not line) then
+			break
+		end
+		local msg = line:GetText()
+		if msg and (string_find(msg, S_ITEM_BOUND2) or string_find(msg, S_ITEM_BOUND3) or string_find(msg, S_ITEM_BOUND4) or string_find(msg, S_ITEM_BOUND5)) then 
 			return true
 		end
 	end
@@ -257,18 +276,24 @@ local Update = function(self)
 		end
 
 		---------------------------------------------------
-		-- ItemBind
+		--[[ ItemBind
 		---------------------------------------------------
-		--if (itemRarity and (itemRarity > 1)) and ((bindType == 2) or (bindType == 3)) and (not IsItemBound(self)) then
-			--local ItemBind = Cache_ItemBind[self] or Cache_GetItemBind(self)
-			--local r, g, b = GetItemQualityColor(itemRarity)
-			--ItemBind:SetTextColor(r * 2/3, g * 2/3, b * 2/3)
-			--ItemBind:SetText((bindType == 3) and Combuctor_ItemInfoBoU or Combuctor_ItemInfoBoE)
-		--else 
-			--if Cache_ItemBind[self] then 
-				--Cache_ItemBind[self]:SetText("")
-			--end	
-		--end
+		if (itemRarity and (itemRarity > 1)) then
+		if  ((bindType == 2) or (bindType == 3)) and (not IsItemBound(self) or not IsItemAccount(self)) then
+			local ItemBind = Cache_ItemBind[self] or Cache_GetItemBind(self)
+			ItemBind:SetText((bindType == 3) and Combuctor_ItemInfoBoU or Combuctor_ItemInfoBoE)
+		elseif IsItemAccount(self) then
+			local ItemBind = Cache_ItemBind[self] or Cache_GetItemBind(self)
+			ItemBind:SetText(Combuctor_ItemInfoBoA)
+		elseif IsItemBound(self) then
+			local ItemBind = Cache_ItemBind[self] or Cache_GetItemBind(self)
+			ItemBind:SetText("|cFF00DDFF_|r")
+		else 
+			if Cache_ItemBind[self] then 
+				Cache_ItemBind[self]:SetText("")
+			end	
+		end
+		end]]
 
 		---------------------------------------------------
 		-- ItemLevel

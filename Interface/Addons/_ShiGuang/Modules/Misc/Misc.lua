@@ -9,8 +9,6 @@ local GetNumArchaeologyRaces = GetNumArchaeologyRaces
 local GetNumArtifactsByRace = GetNumArtifactsByRace
 local GetArtifactInfoByRace = GetArtifactInfoByRace
 local GetArchaeologyRaceInfo = GetArchaeologyRaceInfo
-local GetNumAuctionItems, GetAuctionItemInfo = GetNumAuctionItems, GetAuctionItemInfo
-local FauxScrollFrame_GetOffset, SetMoneyFrameColor = FauxScrollFrame_GetOffset, SetMoneyFrameColor
 local EquipmentManager_UnequipItemInSlot = EquipmentManager_UnequipItemInSlot
 local EquipmentManager_RunAction = EquipmentManager_RunAction
 local GetInventoryItemTexture = GetInventoryItemTexture
@@ -58,6 +56,7 @@ function MISC:OnLogin()
 	self:TradeTabs()
 	self:CreateRM()
 	self:BlockWQTInvite()
+	self:OverrideAWQ()
 	self:FreeMountCD()
 	self:WallpaperKit()
 	
@@ -439,12 +438,14 @@ do
 			statusFrame.Hide = statusFrame.Show
 		end
 	end)
-	local function dragAlert(event, unit)
-		if unit ~= "player" then return end
-		UIErrorsFrame:AddMessage(I.InfoColor..U["Drag AltBar Tip"])
-		M:UnregisterEvent(event, dragAlert)
-	end
-	M:RegisterEvent("UNIT_POWER_BAR_SHOW", dragAlert)
+
+	local count = 0
+	PlayerPowerBarAlt:HookScript("OnEnter", function()
+		if count < 5 then
+			UIErrorsFrame:AddMessage(I.InfoColor..U["Drag AltBar Tip"])
+			count = count + 1
+		end
+	end)
 end
 
 -- ALT+RightClick to buy a stack
@@ -654,6 +655,7 @@ do
 	M:RegisterEvent("ADDON_LOADED", fixCommunitiesNews)
 end
 
+-- Button to block auto invite addons
 function MISC:BlockWQTInvite()
 	if not MaoRUIPerDB["Misc"]["BlockWQT"] then return end
 
@@ -694,6 +696,28 @@ function MISC:BlockWQTInvite()
 		frame:Hide()
 		currentName = nil
 	end)
+end
+
+-- Override default settings for AngryWorldQuests
+function MISC:OverrideAWQ()
+	if not IsAddOnLoaded("AngryWorldQuests") then return end
+
+	AngryWorldQuests_Config = AngryWorldQuests_Config or {}
+	AngryWorldQuests_CharacterConfig = AngryWorldQuests_CharacterConfig or {}
+
+	local settings = {
+		hideFilteredPOI = true,
+		showContinentPOI = true,
+		sortMethod = 2,
+	}
+	local function overrideOptions(_, key)
+		local value = settings[key]
+		if value then
+			AngryWorldQuests_Config[key] = value
+			AngryWorldQuests_CharacterConfig[key] = value
+		end
+	end
+	hooksecurefunc(AngryWorldQuests.Modules.Config, "Set", overrideOptions)
 end
 
 do

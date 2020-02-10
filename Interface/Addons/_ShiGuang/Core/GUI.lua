@@ -179,6 +179,7 @@ local defaultSettings = {
 		zrMMbordersize = 2,
 		zrMMbuttonsize = 16,
 		zrMMbuttonpos = "Bottom",
+		zrMMcustombuttons = {},
 	},
 	Nameplate = {
 		Enable = true,
@@ -698,9 +699,9 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "UFs", "RaidFrame", "|cff00cc4c"..U["UFs RaidFrame"], false, false, setupRaidFrame, nil, U["RaidFrameTip"]},
 		{1, "UFs", "PartyFrame", "|cff00cc4c"..U["UFs PartyFrame"], true},
 		{1, "UFs", "PartyPetFrame", "|cff00cc4c"..U["UFs PartyPetFrame"], true, true},
-		{1, "UFs", "SimpleMode", "|cff00cc4c"..U["Simple RaidFrame"]},
-		{1, "UFs", "SimpleModeSortByRole", U["SimpleMode SortByRole"], true},
-		{1, "UFs", "RuneTimer", U["UFs RuneTimer"], true, true},
+		{1, "UFs", "Arena", U["Arena Frame"]},
+		{1, "UFs", "SimpleMode", "|cff00cc4c"..U["Simple RaidFrame"], true},
+		{1, "UFs", "SimpleModeSortByRole", U["SimpleMode SortByRole"], true, true},
 		{1, "UFs", "ShowTeamIndex", U["RaidFrame TeamIndex"]},
 		{1, "UFs", "RaidClassColor", U["ClassColor RaidFrame"], true},
 		{1, "UFs", "PWOnRight", U["PartyWatcherOnRight"], true, true},
@@ -715,6 +716,7 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "UFs", "RaidBuffIndicator", "|cff00cc4c"..U["RaidBuffIndicator"], true, true, setupBuffIndicator, nil, U["RaidBuffIndicatorTip"]},
 		{1, "UFs", "PartyWatcher", U["UFs PartyWatcher"], nil, nil, setupPartyWatcher},
 		{1, "UFs", "AurasClickThrough", U["RaidAuras ClickThrough"], true},
+		{1, "UFs", "RuneTimer", U["UFs RuneTimer"], true, true},
 		{},--blank
 		{4, "UFs", "RaidHPMode", U["RaidHPMode"].."*", false, false, {U["DisableRaidHP"], U["RaidHPPercent"], U["RaidHPCurrent"], U["RaidHPLost"]}, updateRaidNameText},
 		{4, "UFs", "HealthColor", U["HealthColor"], true, false, {U["Default Dark"], U["ClassColorHP"], U["GradientHP"]}},

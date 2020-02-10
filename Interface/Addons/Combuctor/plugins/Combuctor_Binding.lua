@@ -129,13 +129,13 @@ local function isBinding(player, bag, slot, bagInfo, itemInfo)
     end
     return isBindToAccount(player, bag, slot, bagInfo, itemInfo)
 		or isBindOnEquip(player, bag, slot, bagInfo, itemInfo)
-		or isBindOnUse(player, bag, slot, bagInfo, itemInfo)
+		--or isBindOnUse(player, bag, slot, bagInfo, itemInfo)
 		or isSoulbound(player, bag, slot, bagInfo, itemInfo)
 end
 
 Addon.Rules:New('binding', L.Binding, 'Interface/Icons/Achievement_Reputation_ArgentChampion', isBinding)
 --Addon.Rules:New('binding/all', L.All, nil, isBinding)
-Addon.Rules:New('binding/use', L.Use, nil, isBindOnUse)
+--Addon.Rules:New('binding/use', L.Use, nil, isBindOnUse)
 Addon.Rules:New('binding/soulbound', L.Soulbound, nil, isSoulbound)
 Addon.Rules:New('binding/equip', L.Equip, nil, isBindOnEquip)
 Addon.Rules:New('binding/account', L.Account, nil, isBindToAccount)

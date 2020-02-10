@@ -1,22 +1,9 @@
 ﻿--## SavedVariables: CaerdonWardrobeConfig  ## Version: v2.4.0
 
-local eventFrame
 local isBagUpdate = false
 local ignoreDefaultBags = false
-
-local CaerdonWardrobe = {}
-local CaerdonWardrobeNS = {}
-
-StaticPopupDialogs["CAERDON_WARDROBE_MULTIPLE_BAG_ADDONS"] = {
-  text = "It looks like multiple bag addons are currently running (%s)! I can't guarantee Caerdon Wardrobe will work properly in this case.  You should only have one bag addon enabled!",
-  button1 = "Got it!",
-  OnAccept = function()
-  end,
-  timeout = 0,
-  whileDead = true,
-  hideOnEscape = true,
-  preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
-}
+CaerdonWardrobe = {}
+CaerdonWardrobeNS = {}
 
 if GetLocale() == "zhCN" then
   CaerdonWardrobeBoA = "|cffe6cc80战网|r";
@@ -68,7 +55,6 @@ mainTip.ItemTooltip = CreateFrame("FRAME", "CaerdonWardrobeGameTooltipChild", ma
 mainTip.ItemTooltip.Tooltip.shoppingTooltips = { ShoppingTooltip1, ShoppingTooltip2 }
 
 local cachedBinding = {}
-
 local model = CreateFrame('DressUpModel')
 
 local function GetItemID(itemLink)
@@ -183,7 +169,7 @@ local function GetItemSource(itemID, itemLink)
 	if itemSources == "NONE" then
 		itemSources = nil
 	elseif not itemSources then
-		local isDressable, shouldRetry, slot = IsDressableItemCheck(itemID, itemLink)
+		isDressable, shouldRetry, slot = IsDressableItemCheck(itemID, itemLink)
 		if not shouldRetry then
 			if not isDressable then
 		    	cachedItemSources[itemLink] = "NONE"
@@ -316,9 +302,7 @@ end
 local function GetItemInfoLocal(itemID, bag, slot)
 	local name = GetItemInfo(itemID)
 	if name then
-		if bag == "AuctionFrame" then
-			name = GetAuctionItemInfo("list", slot)
-		elseif bag == "MerchantFrame" then
+		if bag == "MerchantFrame" then
 			if MerchantFrame.selectedTab == 1 then
 				name = GetMerchantItemInfo(slot)
 			else
@@ -331,10 +315,7 @@ local function GetItemInfoLocal(itemID, bag, slot)
 end
 
 local function GetItemLinkLocal(bag, slot)
-	if bag == "AuctionFrame" then
-		local _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, hasAllInfo =  GetAuctionItemInfo("list", slot);
-		return hasAllInfo and GetAuctionItemLink("list", slot)
-	elseif bag == "MerchantFrame" then
+	if bag == "MerchantFrame" then
 		if MerchantFrame.selectedTab == 1 then
 			return GetMerchantItemLink(slot)
 		else
@@ -368,7 +349,7 @@ end
 
 local function GetItemKey(bag, slot, itemLink)
 	local itemKey
-	if bag == "AuctionFrame" or bag == "MerchantFrame" then
+	if bag == "MerchantFrame" then
 		itemKey = itemLink
 	elseif bag == "GuildBankFrame" then
 		itemKey = itemLink .. slot.tab .. slot.index
@@ -435,9 +416,7 @@ local function GetBindingStatus(bag, slot, itemID, itemLink)
 	elseif not shouldRetry then
 		needsItem = true
 		scanTip:SetOwner(WorldFrame, "ANCHOR_NONE")
-		if bag == "AuctionFrame" then
-			scanTip:SetAuctionItem("list", slot)
-		elseif bag == "MerchantFrame" then
+		if bag == "MerchantFrame" then
 			if MerchantFrame.selectedTab == 1 then
 				scanTip:SetMerchantItem(slot)
 			else
@@ -622,7 +601,8 @@ local function GetBindingStatus(bag, slot, itemID, itemLink)
 					-- TODO: Should possibly only look for "Classes:" but could have other reasons for not being usable
 					local r, g, b = line:GetTextColor()
 					hex = string.format("%02x%02x%02x", r*255, g*255, b*255)
-					if hex == "fe1f1f" and isBindOnPickup then
+					if hex == "fe1f1f" and (isBindOnPickup or IsRecipeLink(itemLink)) then
+						-- Assume BoE recipes can't be learned to avoid erroneous stars in AH / vendor
 						unusableItem = true
 						if not bag == "EncounterJournal" then
 							needsItem = false
@@ -713,8 +693,7 @@ end
 local function IsBankOrBags(bag)
 	local isBankOrBags = false
 
-	if bag ~= "AuctionFrame" and 
-	   bag ~= "MerchantFrame" and 
+	if bag ~= "MerchantFrame" and 
 	   bag ~= "GuildBankFrame" and
 	   bag ~= "EncounterJournal" and
 	   bag ~= "QuestButton" and
@@ -728,10 +707,6 @@ end
 
 local function ShouldHideBindingStatus(bag, bindingStatus)
 	local shouldHide = false
-
-	if bag == "AuctionFrame" then
-		shouldHide = true
-	end
 
 	if not CaerdonWardrobeConfig.Binding.ShowStatus.BankAndBags and IsBankOrBags(bag) then
 		shouldHide = true
@@ -771,10 +746,6 @@ local function ShouldHideOwnIcon(bag)
 		shouldHide = true
 	end
 
-	if not CaerdonWardrobeConfig.Icon.ShowLearnable.Auction and bag == "AuctionFrame" then
-		shouldHide = true
-	end
-
 	return shouldHide
 end
 
@@ -793,10 +764,6 @@ local function ShouldHideOtherIcon(bag)
 		shouldHide = true
 	end
 
-	if not CaerdonWardrobeConfig.Icon.ShowLearnableByOther.Auction and bag == "AuctionFrame" then
-		shouldHide = true
-	end
-
 	return shouldHide
 end
 
@@ -812,10 +779,6 @@ local function ShouldHideSellableIcon(bag)
 	end
 
 	if bag == "MerchantFrame" then
-		shouldHide = true
-	end
-
-	if bag == "AuctionFrame" then
 		shouldHide = true
 	end
 
@@ -851,7 +814,7 @@ local function SetItemButtonMogStatus(originalButton, status, bindingStatus, opt
 	local mogAnim = button.mogAnim
 	local iconPosition, showSellables, isSellable
 	local iconSize = 43
-	local otherIcon = "Interface\\Store\\category-icon-free"  --Interface\\Store\\category-icon-placeholder
+	local otherIcon = "Interface\\Store\\category-icon-placeholder"
 	local otherIconSize = 43
 	local otherIconOffset = 0
 	local iconOffset = 0
@@ -989,7 +952,7 @@ local function SetItemButtonMogStatus(originalButton, status, bindingStatus, opt
 	elseif status == "own" or status == "ownPlus" then
 		if not ShouldHideOwnIcon(bag) then
 			SetIconPositionAndSize(mogStatus, iconPosition, 15, iconSize, iconOffset)
-			mogStatus:SetTexture("Interface\\Store\\category-icon-clothes")  --Interface\\Store\\category-icon-featured
+			mogStatus:SetTexture("Interface\\Store\\category-icon-featured")
 			if status == "ownPlus" then
 				mogStatus:SetVertexColor(0.4, 1, 0)
 			end
@@ -1020,7 +983,7 @@ local function SetItemButtonMogStatus(originalButton, status, bindingStatus, opt
 		if not IsGearSetStatus(bindingStatus) and showSellables and isSellable and not ShouldHideSellableIcon(bag) then -- it's known and can be sold
 			SetIconPositionAndSize(mogStatus, iconPosition, 10, 30, iconOffset)
 			alpha = 0.9
-			mogStatus:SetTexture("Interface\\Store\\category-icon-services")  --Interface\\Store\\category-icon-bag
+			mogStatus:SetTexture("Interface\\Store\\category-icon-bag")
 		elseif IsGearSetStatus(bindingStatus) and CaerdonWardrobeConfig.Binding.ShowGearSetsAsIcon then
 			SetIconPositionAndSize(mogStatus, iconPosition, 10, 30, iconOffset)
 			mogStatus:SetTexture("Interface\\Store\\category-icon-clothes")
@@ -1572,40 +1535,6 @@ local function OnGuildBankFrameUpdate()
 	isGuildBankFrameUpdateRequested = true
 end
 
-local function OnAuctionBrowseUpdate()
-	local offset = FauxScrollFrame_GetOffset(BrowseScrollFrame);
-
-	for i=1, NUM_BROWSE_TO_DISPLAY do
-		local auctionIndex = offset + i
-		local index = auctionIndex + (NUM_AUCTION_ITEMS_PER_PAGE * AuctionFrameBrowse.page);
-		local buttonName = "BrowseButton"..i.."Item";
-		local button = _G[buttonName];
-
-		local numBatchAuctions, totalAuctions = GetNumAuctionItems("list");
-		local shouldHide = index > (numBatchAuctions + (NUM_AUCTION_ITEMS_PER_PAGE * AuctionFrameBrowse.page));
-		if ( not shouldHide ) then
-			name, texture, count, quality, canUse, level, levelColHeader, minBid, minIncrement, buyoutPrice, bidAmount, highBidder, bidderFullName, owner, ownerFullName, saleStatus, itemId, hasAllInfo =  GetAuctionItemInfo("list", auctionIndex);
-			
-			if ( not hasAllInfo ) then --Bug  145328
-				shouldHide = true;
-			end
-		end
-
-		if not shouldHide then
-			local bag = "AuctionFrame"
-			local slot = auctionIndex
-
-			local itemLink = GetAuctionItemLink("list", auctionIndex)
-			if(itemLink) then
-				local itemID = GetItemID(itemLink)
-				if itemID and button then
-					ProcessOrWaitItem(itemID, bag, slot, button, { showMogIcon=true, showBindStatus=false, showSellables=false })
-				end
-			end
-		end
-	end
-end
-
 local function OnMerchantUpdate()
 	for i=1, MERCHANT_ITEMS_PER_PAGE, 1 do
 		local index = (((MerchantFrame.page - 1) * MERCHANT_ITEMS_PER_PAGE) + i)
@@ -1785,11 +1714,11 @@ local function OnEncounterJournalSetLootButton(item)
 	end
 end
 
-eventFrame = CreateFrame("FRAME", "CaerdonWardrobeFrame")
-eventFrame:RegisterEvent "ADDON_LOADED"
-eventFrame:RegisterEvent "PLAYER_LOGOUT"
-eventFrame:SetScript("OnEvent", OnEvent)
-eventFrame:SetScript("OnUpdate", OnUpdate)
+local CaerdonWardrobeFrame = CreateFrame("FRAME", "CaerdonWardrobeFrame")
+CaerdonWardrobeFrame:RegisterEvent("ADDON_LOADED")
+CaerdonWardrobeFrame:RegisterEvent("PLAYER_LOGOUT")
+CaerdonWardrobeFrame:SetScript("OnEvent", OnEvent)
+CaerdonWardrobeFrame:SetScript("OnUpdate", OnUpdate)
 
 C_TransmogCollection.SetShowMissingSourceInItemTooltips(true)
 SetCVar("missingTransmogSourceInItemTooltips", 1)
@@ -1805,22 +1734,20 @@ function CaerdonWardrobeNS:GetDefaultConfig()
 				BankAndBags = true,
 				GuildBank = true,
 				Merchant = true,
-				Auction = true,
-				SameLookDifferentItem = false
+				SameLookDifferentItem = false,
 			},
 
 			ShowLearnableByOther = {
 				BankAndBags = true,
 				GuildBank = true,
 				Merchant = true,
-				Auction = true,
 				EncounterJournal = true,
-				SameLookDifferentItem = false
+				SameLookDifferentItem = false,
 			},
 
 			ShowSellable = {
 				BankAndBags = true,
-				GuildBank = false
+				GuildBank = true,
 			}
 		},
 
@@ -1828,14 +1755,14 @@ function CaerdonWardrobeNS:GetDefaultConfig()
 			ShowStatus = {
 				BankAndBags = true,
 				GuildBank = true,
-				Merchant = true
+				Merchant = true,
 			},
 
 			ShowBoA = true,
 			ShowBoE = true,
 			ShowGearSets = true,
 			ShowGearSetsAsIcon = false,
-			Position = "BOTTOM"
+			Position = "BOTTOM",
 		}
 	}
 end
@@ -1846,21 +1773,19 @@ local function ProcessSettings()
 	end
 end
 
-function eventFrame:PLAYER_LOGOUT()
+function CaerdonWardrobeFrame:PLAYER_LOGOUT()
 end
 
-function eventFrame:ADDON_LOADED(name)
+function CaerdonWardrobeFrame:ADDON_LOADED(name)
 	if name == "Combuctor" then
 		ProcessSettings()
 		CaerdonWardrobeNS:FireConfigLoaded()
 
 		if IsLoggedIn() then
-			OnEvent(eventFrame, "PLAYER_LOGIN")
+			OnEvent(CaerdonWardrobeFrame, "PLAYER_LOGIN")
 		else
-			eventFrame:RegisterEvent "PLAYER_LOGIN"
+			CaerdonWardrobeFrame:RegisterEvent("PLAYER_LOGIN")
 		end
-	elseif name == "Blizzard_AuctionUI" then
-		hooksecurefunc("AuctionFrameBrowse_Update", OnAuctionBrowseUpdate)
 	elseif name == "Blizzard_GuildBankUI" then
 		hooksecurefunc("GuildBankFrame_Update", OnGuildBankFrameUpdate)
 	elseif name == "Blizzard_EncounterJournal" then
@@ -1990,18 +1915,18 @@ local function OnQuestInfoDisplay(template, parentFrame)
 	end
 end
 
-function eventFrame:PLAYER_LOGIN(...)
-		-- eventFrame:RegisterEvent "PLAYERBANKSLOTS_CHANGED"
-		eventFrame:RegisterEvent "BAG_OPEN"
-		eventFrame:RegisterEvent "BAG_UPDATE"
-		eventFrame:RegisterEvent "BAG_UPDATE_DELAYED"
-		eventFrame:RegisterEvent "BANKFRAME_OPENED"
-		eventFrame:RegisterEvent "GET_ITEM_INFO_RECEIVED"
-		eventFrame:RegisterEvent "TRANSMOG_COLLECTION_UPDATED"
-		-- eventFrame:RegisterEvent "TRANSMOG_COLLECTION_ITEM_UPDATE"
-		eventFrame:RegisterEvent "EQUIPMENT_SETS_CHANGED"
-		eventFrame:RegisterEvent "MERCHANT_UPDATE"
-		eventFrame:RegisterEvent "PLAYER_LOOT_SPEC_UPDATED"
+function CaerdonWardrobeFrame:PLAYER_LOGIN(...)
+		-- CaerdonWardrobeFrame:RegisterEvent("PLAYERBANKSLOTS_CHANGED")
+		CaerdonWardrobeFrame:RegisterEvent("BAG_OPEN")
+		CaerdonWardrobeFrame:RegisterEvent("BAG_UPDATE")
+		CaerdonWardrobeFrame:RegisterEvent("BAG_UPDATE_DELAYED")
+		CaerdonWardrobeFrame:RegisterEvent("BANKFRAME_OPENED")
+		CaerdonWardrobeFrame:RegisterEvent("GET_ITEM_INFO_RECEIVED")
+		CaerdonWardrobeFrame:RegisterEvent("TRANSMOG_COLLECTION_UPDATED")
+		-- CaerdonWardrobeFrame:RegisterEvent("TRANSMOG_COLLECTION_ITEM_UPDATE")
+		CaerdonWardrobeFrame:RegisterEvent("EQUIPMENT_SETS_CHANGED")
+		CaerdonWardrobeFrame:RegisterEvent("MERCHANT_UPDATE")
+		CaerdonWardrobeFrame:RegisterEvent("PLAYER_LOOT_SPEC_UPDATED")
 	C_TransmogCollection.SetShowMissingSourceInItemTooltips(true)
 
 	hooksecurefunc (WorldMap_WorldQuestPinMixin, "RefreshVisuals", function (self)
@@ -2032,10 +1957,6 @@ local function RefreshItems()
 		else
 			OnBuybackUpdate()
 		end
-	end
-
-	if AuctionFrame and AuctionFrame:IsShown() then
-		OnAuctionBrowseUpdate()
 	end
 
 	if BankFrame:IsShown() then
@@ -2096,11 +2017,11 @@ hooksecurefunc("OpenBag", OnOpenBag)
 hooksecurefunc("OpenBackpack", OnOpenBackpack)
 hooksecurefunc("ToggleBag", OnOpenBag)
 
-function eventFrame:BAG_UPDATE(bagID)
+function CaerdonWardrobeFrame:BAG_UPDATE(bagID)
 	AddBagUpdateRequest(bagID)
 end
 
-function eventFrame:BAG_UPDATE_DELAYED()
+function CaerdonWardrobeFrame:BAG_UPDATE_DELAYED()
 	local count = 0
 	for _ in pairs(waitingOnBagUpdate) do 
 		count = count + 1
@@ -2113,7 +2034,7 @@ function eventFrame:BAG_UPDATE_DELAYED()
 	end
 end
 
-function eventFrame:GET_ITEM_INFO_RECEIVED(itemID)
+function CaerdonWardrobeFrame:GET_ITEM_INFO_RECEIVED(itemID)
 	local itemData = waitingOnItemData[tostring(itemID)]
 	if itemData then
         for bag, bagData in pairs(itemData) do
@@ -2138,35 +2059,35 @@ function eventFrame:GET_ITEM_INFO_RECEIVED(itemID)
 	end
 end
 
-function eventFrame:PLAYER_LOOT_SPEC_UPDATED()
+function CaerdonWardrobeFrame:PLAYER_LOOT_SPEC_UPDATED()
 	if EncounterJournal then
 		EncounterJournal_LootUpdate()
 	end
 end
 
-function eventFrame:TRANSMOG_COLLECTION_ITEM_UPDATE()
+function CaerdonWardrobeFrame:TRANSMOG_COLLECTION_ITEM_UPDATE()
 	-- RefreshItems()
 end
 
-function eventFrame:TRANSMOG_COLLECTION_UPDATED()
+function CaerdonWardrobeFrame:TRANSMOG_COLLECTION_UPDATED()
 	RefreshItems()
 end
 
-function eventFrame:MERCHANT_UPDATE()
+function CaerdonWardrobeFrame:MERCHANT_UPDATE()
 	RefreshItems()
 end
 
-function eventFrame:EQUIPMENT_SETS_CHANGED()
+function CaerdonWardrobeFrame:EQUIPMENT_SETS_CHANGED()
 	RefreshItems()
 end
 
-function eventFrame:BANKFRAME_OPENED()
+function CaerdonWardrobeFrame:BANKFRAME_OPENED()
 	-- RefreshMainBank()
 end
 
 -- Turning this off for now as I made fixes for the container hook and don't
 -- need to do this twice.  Keeping around for a bit just in case.
--- function eventFrame:PLAYERBANKSLOTS_CHANGED(slot, arg2)
+-- function CaerdonWardrobeFrame:PLAYERBANKSLOTS_CHANGED(slot, arg2)
 -- 	if ( slot <= NUM_BANKGENERIC_SLOTS ) then
 -- 		OnBankItemUpdate(BankSlotsFrame["Item"..slot]);
 -- 	else
@@ -2256,7 +2177,7 @@ end
 -- GUILDBANKBAGSLOTS_CHANGED
 -- GUILDBANKFRAME_OPENED
 
------------------------------------config
+--[[---------------------------------config
 local components, pendingConfig
 local configFrame = CreateFrame("Frame", nil, InterfaceOptionsFramePanelContainer)
 
@@ -2375,14 +2296,6 @@ function configFrame:CreateComponents()
 	components.showLearnableOnMerchantLabel:SetWidth(80)
 	components.showLearnableOnMerchantLabel:SetText("商人")
 
-	components.showLearnableOnAuction = CreateFrame("CheckButton", "CaerdonWardrobeConfig_showLearnableOnAuction", self, "InterfaceOptionsCheckButtonTemplate")
-	components.showLearnableOnAuction:SetPoint("LEFT", components.showLearnableOnMerchantLabel, "RIGHT", 20, 0)
-	components.showLearnableOnAuction:SetPoint("TOP", components.showLearnableOnMerchant, "TOP", 0, 0)
-	components.showLearnableOnAuctionLabel = _G[components.showLearnableOnAuction:GetName() .. "Text"]
-	components.showLearnableOnAuctionLabel:SetWidth(100)
-	components.showLearnableOnAuctionLabel:SetText("AH")
-
-
 	components.showLearnableOtherLabel = self:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
 	components.showLearnableOtherLabel:SetText("在其它物品上显示可学:")
 	components.showLearnableOtherLabel:SetPoint("TOPLEFT", components.showLearnableOnBags, "BOTTOMLEFT", -15, -15)
@@ -2406,15 +2319,6 @@ function configFrame:CreateComponents()
 	components.showLearnableOtherOnMerchantLabel = _G[components.showLearnableOtherOnMerchant:GetName() .. "Text"]
 	components.showLearnableOtherOnMerchantLabel:SetWidth(80)
 	components.showLearnableOtherOnMerchantLabel:SetText("商人")
-
-	components.showLearnableOtherOnAuction = CreateFrame("CheckButton", "CaerdonWardrobeConfig_showLearnableOtherOnAuction", self, "InterfaceOptionsCheckButtonTemplate")
-	components.showLearnableOtherOnAuction:SetPoint("LEFT", components.showLearnableOtherOnMerchantLabel, "RIGHT", 20, 0)
-	components.showLearnableOtherOnAuction:SetPoint("TOP", components.showLearnableOtherOnMerchant, "TOP", 0, 0)
-	components.showLearnableOtherOnAuctionLabel = _G[components.showLearnableOtherOnAuction:GetName() .. "Text"]
-	components.showLearnableOtherOnAuctionLabel:SetWidth(100)
-	components.showLearnableOtherOnAuctionLabel:SetText("AH")
-
-
 
 	components.showSellableLabel = self:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
 	components.showSellableLabel:SetText("显示可卖出物品:")
@@ -2441,7 +2345,7 @@ function configFrame:CreateComponents()
 	components.mogIconShowSameLookDifferentItem = CreateFrame("CheckButton", "CaerdonWardrobeConfig_mogIconShowSameLookDifferentItem", self, "InterfaceOptionsCheckButtonTemplate")
 	components.mogIconShowSameLookDifferentItem:SetPoint("TOPLEFT", components.mogIconShowAnimation, "BOTTOMLEFT", 0, -10)
 	components.mogIconShowSameLookDifferentItemLabel = _G[components.mogIconShowSameLookDifferentItem:GetName() .. "Text"]
-	components.mogIconShowSameLookDifferentItemLabel:SetText("包括不同的相同物品/外观(you completionist, you)")
+	components.mogIconShowSameLookDifferentItemLabel:SetText("包括外观相同的不同物品(you completionist, you)")
 
 
 end
@@ -2508,12 +2412,10 @@ function configFrame:RefreshComponents()
 	components.showLearnableOnBags:SetChecked(config.Icon.ShowLearnable.BankAndBags)
 	components.showLearnableOnGuildBank:SetChecked(config.Icon.ShowLearnable.GuildBank)
 	components.showLearnableOnMerchant:SetChecked(config.Icon.ShowLearnable.Merchant)
-	components.showLearnableOnAuction:SetChecked(config.Icon.ShowLearnable.Auction)
 
 	components.showLearnableOtherOnBags:SetChecked(config.Icon.ShowLearnableByOther.BankAndBags)
 	components.showLearnableOtherOnGuildBank:SetChecked(config.Icon.ShowLearnableByOther.GuildBank)
 	components.showLearnableOtherOnMerchant:SetChecked(config.Icon.ShowLearnableByOther.Merchant)
-	components.showLearnableOtherOnAuction:SetChecked(config.Icon.ShowLearnableByOther.Auction)
 
 	components.showSellableOnBags:SetChecked(config.Icon.ShowSellable.BankAndBags)
 	components.showSellableOnGuildBank:SetChecked(config.Icon.ShowSellable.GuildBank)
@@ -2539,12 +2441,10 @@ function configFrame:UpdatePendingValues()
 	config.Icon.ShowLearnable.BankAndBags = components.showLearnableOnBags:GetChecked()
 	config.Icon.ShowLearnable.GuildBank = components.showLearnableOnGuildBank:GetChecked()
 	config.Icon.ShowLearnable.Merchant = components.showLearnableOnMerchant:GetChecked()
-	config.Icon.ShowLearnable.Auction = components.showLearnableOnAuction:GetChecked()
 
 	config.Icon.ShowLearnableByOther.BankAndBags = components.showLearnableOtherOnBags:GetChecked()
 	config.Icon.ShowLearnableByOther.GuildBank = components.showLearnableOtherOnGuildBank:GetChecked()
 	config.Icon.ShowLearnableByOther.Merchant = components.showLearnableOtherOnMerchant:GetChecked()
-	config.Icon.ShowLearnableByOther.Auction = components.showLearnableOtherOnAuction:GetChecked()
 
 	config.Icon.ShowSellable.BankAndBags = components.showSellableOnBags:GetChecked()
 	config.Icon.ShowSellable.GuildBank = components.showSellableOnGuildBank:GetChecked()
@@ -2582,7 +2482,7 @@ function configFrame:OnRefresh()
 	self:RefreshComponents()
 end
 
-configFrame:InitializeConfig()
+configFrame:InitializeConfig()]]
 
 -----------------------------------------for Combuctor
 local isBagUpdateRequested = false
@@ -2697,28 +2597,28 @@ if Version then
 		hooksecurefunc(Combuctor.Item, "Update", OnUpdateSlot)
 	end
 
-	local eventFrame = CreateFrame("FRAME")
+	local CaerdonWardrobeFrame = CreateFrame("FRAME")
 
-	eventFrame:SetScript("OnEvent", OnEvent)
-	eventFrame:SetScript("OnUpdate", OnUpdate)
-	-- eventFrame:RegisterEvent("TRANSMOG_COLLECTION_ITEM_UPDATE")
+	CaerdonWardrobeFrame:SetScript("OnEvent", OnEvent)
+	CaerdonWardrobeFrame:SetScript("OnUpdate", OnUpdate)
+	-- CaerdonWardrobeFrame:RegisterEvent("TRANSMOG_COLLECTION_ITEM_UPDATE")
 
 	HookCombuctor()
 
-	function eventFrame:ADDON_LOADED(name)
+	function CaerdonWardrobeFrame:ADDON_LOADED(name)
 	end
 
-	function eventFrame:TRANSMOG_COLLECTION_ITEM_UPDATE()
+	function CaerdonWardrobeFrame:TRANSMOG_COLLECTION_ITEM_UPDATE()
 	    if Combuctor.sets then
 	        Combuctor:UpdateFrames()
 	    end
 	end
 
-	function eventFrame:GUILDBANKFRAME_OPENED()
+	function CaerdonWardrobeFrame:GUILDBANKFRAME_OPENED()
 		atGuild = true
 	end
 
-	function eventFrame:GUILDBANKFRAME_CLOSED()
+	function CaerdonWardrobeFrame:GUILDBANKFRAME_CLOSED()
 		atGuild = false
 	end
 

@@ -18,7 +18,6 @@
 Locale\_locales.xml
 CanIMogIt.lua
 Overlay\_overlays.xml
-Plugins\_plugins.xml
 
 LibArmorToken-1.0.lua
 LibAppropriateItems-1.0.lua

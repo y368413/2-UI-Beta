@@ -73,49 +73,89 @@ function zrMM:CreateButtonFrame()
     Minimap.buttonFrame:RegisterEvent("UPDATE_FACTION")
     -- Find and move buttons
     zrButtonFrame.frameTable = {}
-    local ignoreFrames = {}
+    Minimap.ignoreFrames = {}
     local hideTextures = {}
-    local manualTarget = {}
+    Minimap.manualTarget = {}
     local hideButtons = {}
     local numChildren = 0
 	
-    manualTarget['CodexBrowserIcon'] = true                             
-    --manualTarget['MiniMapTrackingFrame'] = true
-    --manualTarget['MiniMapMailFrame'] = true
-    manualTarget['ZygorGuidesViewerMapIcon'] = true
-    manualTarget['MiniMapBattlefieldFrame'] = true
-    manualTarget['PeggledMinimapIcon'] = true
-    manualTarget['EnxMiniMapIcon'] = true
+    Minimap.manualTarget['CodexBrowserIcon'] = true                             
+    --Minimap.manualTarget['MiniMapTrackingFrame'] = true
+    --Minimap.manualTarget['MiniMapMailFrame'] = true
+    Minimap.manualTarget['ZygorGuidesViewerMapIcon'] = true
+    Minimap.manualTarget['MiniMapBattlefieldFrame'] = true
+    Minimap.manualTarget['PeggledMinimapIcon'] = true
+    Minimap.manualTarget['EnxMiniMapIcon'] = true
 
-    ignoreFrames['zrButtonFrame'] = true
-    ignoreFrames['MinimapBackdrop'] = true
-    ignoreFrames['GameTimeFrame'] = true
-    ignoreFrames['MinimapVoiceChatFrame'] = true
-    ignoreFrames['TimeManagerClockButton'] = true
-    ignoreFrames['MiniMapTracking'] = true
-    ignoreFrames['COHCMinimapButton'] = true
-    ignoreFrames['MinimapZoomIn'] = true
-    ignoreFrames['MinimapZoomOut'] = true
-    ignoreFrames['GameTimeFrame'] = true
-    ignoreFrames['MiniMapTrackingButton'] = true
-    ignoreFrames['MiniMapTracking'] = true
-    ignoreFrames['GarrisonLandingPageMinimapButton'] = true
-    ignoreFrames['QueueStatusMinimapButton'] = true
-    ignoreFrames['QueueStatusMinimapButtonDropDownButton'] = true
-    ignoreFrames['COHCMinimapButton'] = true
-    ignoreFrames['BaudErrorFrameMinimapButton'] = true
+    Minimap.ignoreFrames['zrButtonFrame'] = true
+    Minimap.ignoreFrames['MinimapBackdrop'] = true
+    Minimap.ignoreFrames['GameTimeFrame'] = true
+    Minimap.ignoreFrames['MinimapVoiceChatFrame'] = true
+    Minimap.ignoreFrames['TimeManagerClockButton'] = true
+    Minimap.ignoreFrames['MiniMapTracking'] = true
+    Minimap.ignoreFrames['COHCMinimapButton'] = true
+    Minimap.ignoreFrames['MinimapZoomIn'] = true
+    Minimap.ignoreFrames['MinimapZoomOut'] = true
+    Minimap.ignoreFrames['GameTimeFrame'] = true
+    Minimap.ignoreFrames['MiniMapTrackingButton'] = true
+    Minimap.ignoreFrames['MiniMapTracking'] = true
+    Minimap.ignoreFrames['GarrisonLandingPageMinimapButton'] = true
+    Minimap.ignoreFrames['QueueStatusMinimapButton'] = true
+    Minimap.ignoreFrames['QueueStatusMinimapButtonDropDownButton'] = true
+    Minimap.ignoreFrames['COHCMinimapButton'] = true
+    Minimap.ignoreFrames['BaudErrorFrameMinimapButton'] = true
 
     hideTextures['Interface\\Minimap\\MiniMap-TrackingBorder'] = true
     hideTextures['Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight'] = true
     hideTextures['Interface\\Minimap\\UI-Minimap-Background'] = true 
     hideTextures[136430] = true 
     hideTextures[136467] = true 
+	
+	zrMM.buttonPosChanged = true
+	
+	local function loadCustomButtons()
+		local numbuttons = 0
+		for i,v in pairs(MaoRUIPerDB["Map"]["zrMMcustombuttons"]) do 
+			numbuttons = numbuttons + 1
+		end
+		if numbuttons >= 0 then
+			for k,v in pairs(MaoRUIPerDB["Map"]["zrMMcustombuttons"]) do
+				if Minimap.manualTarget[k] ~= nil then
+					MaoRUIPerDB["Map"]["zrMMcustombuttons"][k] = nil
+				else
+					Minimap.manualTarget[k] = v
+				end
+			end
+		end
+	end
+	loadCustomButtons()
+	
+	function zrMM:AddMinimapButton(frame)
+		local n = frame:GetName()
+		if Minimap.manualTarget[n] == nil and zrButtonFrame.frameTable[n] == nil then
+			Minimap.manualTarget[n] = true
+			if MaoRUIPerDB["Map"]["zrMMcustombuttons"][n] ~= true then
+				MaoRUIPerDB["Map"]["zrMMcustombuttons"][n] = true
+			end
+		end
+	end
+	
+	function zrMM:RemoveMinimapButton(frame)
+		local n = frame:GetName()
+		if MaoRUIPerDB["Map"]["zrMMcustombuttons"][n] ~= nil then
+			MaoRUIPerDB["Map"]["zrMMcustombuttons"][n] = nil
+			Minimap.manualTarget[n] = nil
+		end
+	end
 
   function zrMM:MinimapButtonResizeMove()
     local last = nil
 		local first = nil
 		local buttonCount = 0
-		local hideButtons = {}
+
+        hideButtons = {}
+		
+		if zrMM.buttonPosChanged == true then
 			Minimap.buttonFrame:ClearAllPoints()
 			if (MaoRUIPerDB["Map"]["zrMMbuttonpos"] == "Top") then
 				Minimap.buttonFrame:SetSize(Minimap:GetWidth(),MaoRUIPerDB["Map"]["zrMMbuttonsize"])
@@ -130,6 +170,10 @@ function zrMM:CreateButtonFrame()
 				Minimap.buttonFrame:SetSize(MaoRUIPerDB["Map"]["zrMMbuttonsize"],Minimap:GetHeight())
 				Minimap.buttonFrame:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -6, 0)		
 			end
+			zrMM.buttonPosChanged = false
+		end
+
+
         for k, f in pairs(zrButtonFrame.frameTable) do
             f:SetWidth(MaoRUIPerDB["Map"]["zrMMbuttonsize"])
             f:SetHeight(MaoRUIPerDB["Map"]["zrMMbuttonsize"])
@@ -233,13 +277,13 @@ function zrMM:CreateButtonFrame()
                 local f = c[i]
                 local n = f:GetName() or i;
                 f.buttonindex = i
-                if (f:IsShown() and not ignoreFrames[n] and ((manualTarget[n]) or (f:GetName() and (strfind(n, "LibDB") or strfind(n, "Button") or strfind(n, "Btn"))))) then
+                if (f:IsShown() and not Minimap.ignoreFrames[n]) and ((Minimap.manualTarget[n] or f:GetName()) and (string.find(n, "LibDB") or string.find(n, "Button") or string.find(n, "Btn"))) then
                     SkinButton(f)
                     zrButtonFrame.frameTable[n] = f
                 end
             end
         else
-            for t, v in pairs(manualTarget) do
+            for t, v in pairs(Minimap.manualTarget) do
 				local f = _G[t]
                 if (f) then
                     local n = f:GetName() or i;

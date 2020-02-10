@@ -1,4 +1,4 @@
-﻿ -- 8.2.5v1.21
+﻿ -- 8.3.0v1.23
  -- Constants for CanIMogIt
 local L = CanIMogIt.L
 --------------------------------------------
@@ -31,7 +31,7 @@ CanIMogIt.bufferMax = 25
 -- Tooltip icon, color and text constants --
 --------------------------------------------
 
---[[ Icons
+-- Icons
 CanIMogIt.KNOWN_ICON = "|TInterface\\Addons\\TransMogMaster\\Icons\\KNOWN:0|t "
 CanIMogIt.KNOWN_ICON_OVERLAY = "Interface\\Addons\\TransMogMaster\\Icons\\KNOWN_OVERLAY"
 CanIMogIt.KNOWN_BOE_ICON = "|TInterface\\Addons\\TransMogMaster\\Icons\\KNOWN_BOE:0|t "
@@ -52,7 +52,6 @@ CanIMogIt.NOT_TRANSMOGABLE_BOE_ICON = "|TInterface\\Addons\\TransMogMaster\\Icon
 CanIMogIt.NOT_TRANSMOGABLE_BOE_ICON_OVERLAY = "Interface\\Addons\\TransMogMaster\\Icons\\NOT_TRANSMOGABLE_BOE_OVERLAY"
 CanIMogIt.QUESTIONABLE_ICON = "|TInterface\\Addons\\TransMogMaster\\Icons\\QUESTIONABLE:0|t "
 CanIMogIt.QUESTIONABLE_ICON_OVERLAY = "Interface\\Addons\\TransMogMaster\\Icons\\QUESTIONABLE_OVERLAY"
-]]
 
 -- Colorblind colors
 CanIMogIt.BLUE =   "|cff15abff"
@@ -88,27 +87,28 @@ local CANNOT_DETERMINE =                                L["Cannot determine stat
 
 
 -- Combine icons, color, and text into full tooltip
-CanIMogIt.KNOWN =                                           CanIMogIt.BLUE .. KNOWN
-CanIMogIt.KNOWN_BOE =                                       CanIMogIt.YELLOW .. KNOWN
-CanIMogIt.KNOWN_FROM_ANOTHER_ITEM =                         CanIMogIt.BLUE .. KNOWN_FROM_ANOTHER_ITEM
-CanIMogIt.KNOWN_FROM_ANOTHER_ITEM_BOE =                     CanIMogIt.YELLOW .. KNOWN_FROM_ANOTHER_ITEM
-CanIMogIt.KNOWN_BY_ANOTHER_CHARACTER =                      CanIMogIt.BLUE .. KNOWN_BY_ANOTHER_CHARACTER
-CanIMogIt.KNOWN_BY_ANOTHER_CHARACTER_BOE =                  CanIMogIt.YELLOW .. KNOWN_BY_ANOTHER_CHARACTER
-CanIMogIt.KNOWN_BUT_TOO_LOW_LEVEL =                         CanIMogIt.BLUE .. KNOWN_BUT_TOO_LOW_LEVEL
-CanIMogIt.KNOWN_BUT_TOO_LOW_LEVEL_BOE =                     CanIMogIt.YELLOW .. KNOWN_BUT_TOO_LOW_LEVEL
-CanIMogIt.KNOWN_FROM_ANOTHER_ITEM_BUT_TOO_LOW_LEVEL =       CanIMogIt.BLUE .. KNOWN_FROM_ANOTHER_ITEM_BUT_TOO_LOW_LEVEL
-CanIMogIt.KNOWN_FROM_ANOTHER_ITEM_BUT_TOO_LOW_LEVEL_BOE =   CanIMogIt.YELLOW .. KNOWN_FROM_ANOTHER_ITEM_BUT_TOO_LOW_LEVEL
-CanIMogIt.KNOWN_FROM_ANOTHER_ITEM_AND_CHARACTER =           CanIMogIt.BLUE .. KNOWN_FROM_ANOTHER_ITEM_AND_CHARACTER
-CanIMogIt.KNOWN_FROM_ANOTHER_ITEM_AND_CHARACTER_BOE =       CanIMogIt.YELLOW .. KNOWN_FROM_ANOTHER_ITEM_AND_CHARACTER
--- CanIMogIt.KNOWN_FROM_ANOTHER_ITEM_AND_CHARACTER =        CanIMogIt.YELLOW .. CANNOT_DETERMINE
-CanIMogIt.UNKNOWABLE_SOULBOUND =                            CanIMogIt.BLUE_GREEN .. UNKNOWABLE_SOULBOUND
-CanIMogIt.UNKNOWABLE_BY_CHARACTER =                         CanIMogIt.YELLOW .. UNKNOWABLE_BY_CHARACTER
-CanIMogIt.UNKNOWN =                                         CanIMogIt.RED_ORANGE .. UNKNOWN
-CanIMogIt.NOT_TRANSMOGABLE =                                CanIMogIt.GRAY .. NOT_TRANSMOGABLE
-CanIMogIt.NOT_TRANSMOGABLE_BOE =                            CanIMogIt.YELLOW .. NOT_TRANSMOGABLE
+CanIMogIt.KNOWN =                                           CanIMogIt.KNOWN_ICON .. CanIMogIt.BLUE .. KNOWN
+CanIMogIt.KNOWN_BOE =                                       CanIMogIt.KNOWN_BOE_ICON .. CanIMogIt.YELLOW .. KNOWN
+CanIMogIt.KNOWN_FROM_ANOTHER_ITEM =                         CanIMogIt.KNOWN_BUT_ICON .. CanIMogIt.BLUE .. KNOWN_FROM_ANOTHER_ITEM
+CanIMogIt.KNOWN_FROM_ANOTHER_ITEM_BOE =                     CanIMogIt.KNOWN_BUT_BOE_ICON .. CanIMogIt.YELLOW .. KNOWN_FROM_ANOTHER_ITEM
+CanIMogIt.KNOWN_BY_ANOTHER_CHARACTER =                      CanIMogIt.KNOWN_ICON .. CanIMogIt.BLUE .. KNOWN_BY_ANOTHER_CHARACTER
+CanIMogIt.KNOWN_BY_ANOTHER_CHARACTER_BOE =                  CanIMogIt.KNOWN_BOE_ICON .. CanIMogIt.YELLOW .. KNOWN_BY_ANOTHER_CHARACTER
+CanIMogIt.KNOWN_BUT_TOO_LOW_LEVEL =                         CanIMogIt.KNOWN_ICON .. CanIMogIt.BLUE .. KNOWN_BUT_TOO_LOW_LEVEL
+CanIMogIt.KNOWN_BUT_TOO_LOW_LEVEL_BOE =                     CanIMogIt.KNOWN_BOE_ICON .. CanIMogIt.YELLOW .. KNOWN_BUT_TOO_LOW_LEVEL
+CanIMogIt.KNOWN_FROM_ANOTHER_ITEM_BUT_TOO_LOW_LEVEL =       CanIMogIt.KNOWN_BUT_ICON .. CanIMogIt.BLUE .. KNOWN_FROM_ANOTHER_ITEM_BUT_TOO_LOW_LEVEL
+CanIMogIt.KNOWN_FROM_ANOTHER_ITEM_BUT_TOO_LOW_LEVEL_BOE =   CanIMogIt.KNOWN_BUT_BOE_ICON .. CanIMogIt.YELLOW .. KNOWN_FROM_ANOTHER_ITEM_BUT_TOO_LOW_LEVEL
+CanIMogIt.KNOWN_FROM_ANOTHER_ITEM_AND_CHARACTER =           CanIMogIt.KNOWN_BUT_ICON .. CanIMogIt.BLUE .. KNOWN_FROM_ANOTHER_ITEM_AND_CHARACTER
+CanIMogIt.KNOWN_FROM_ANOTHER_ITEM_AND_CHARACTER_BOE =       CanIMogIt.KNOWN_BUT_BOE_ICON .. CanIMogIt.YELLOW .. KNOWN_FROM_ANOTHER_ITEM_AND_CHARACTER
+-- CanIMogIt.KNOWN_FROM_ANOTHER_ITEM_AND_CHARACTER =        CanIMogIt.QUESTIONABLE_ICON .. CanIMogIt.YELLOW .. CANNOT_DETERMINE
+CanIMogIt.UNKNOWABLE_SOULBOUND =                            CanIMogIt.UNKNOWABLE_SOULBOUND_ICON .. CanIMogIt.BLUE_GREEN .. UNKNOWABLE_SOULBOUND
+CanIMogIt.UNKNOWABLE_BY_CHARACTER =                         CanIMogIt.UNKNOWABLE_BY_CHARACTER_ICON .. CanIMogIt.YELLOW .. UNKNOWABLE_BY_CHARACTER
+CanIMogIt.UNKNOWN =                                         CanIMogIt.UNKNOWN_ICON .. CanIMogIt.RED_ORANGE .. UNKNOWN
+CanIMogIt.NOT_TRANSMOGABLE =                                CanIMogIt.NOT_TRANSMOGABLE_ICON .. CanIMogIt.GRAY .. NOT_TRANSMOGABLE
+CanIMogIt.NOT_TRANSMOGABLE_BOE =                            CanIMogIt.NOT_TRANSMOGABLE_BOE_ICON .. CanIMogIt.YELLOW .. NOT_TRANSMOGABLE
+CanIMogIt.CANNOT_DETERMINE =                                CanIMogIt.QUESTIONABLE_ICON
 
 
---[[CanIMogIt.tooltipIcons = {
+CanIMogIt.tooltipIcons = {
     [CanIMogIt.KNOWN] = CanIMogIt.KNOWN_ICON,
     [CanIMogIt.KNOWN_BOE] = CanIMogIt.KNOWN_BOE_ICON,
     [CanIMogIt.KNOWN_FROM_ANOTHER_ITEM] = CanIMogIt.KNOWN_BUT_ICON,
@@ -128,7 +128,7 @@ CanIMogIt.NOT_TRANSMOGABLE_BOE =                            CanIMogIt.YELLOW .. 
     [CanIMogIt.UNKNOWN] = CanIMogIt.UNKNOWN_ICON,
     [CanIMogIt.NOT_TRANSMOGABLE] = CanIMogIt.NOT_TRANSMOGABLE_ICON,
     [CanIMogIt.NOT_TRANSMOGABLE_BOE] = CanIMogIt.NOT_TRANSMOGABLE_BOE_ICON,
-    -- [CanIMogIt.CANNOT_DETERMINE] = CanIMogIt.QUESTIONABLE_ICON,
+    [CanIMogIt.CANNOT_DETERMINE] = CanIMogIt.QUESTIONABLE_ICON,
 }
 
 
@@ -153,8 +153,8 @@ CanIMogIt.tooltipOverlayIcons = {
     [CanIMogIt.UNKNOWN] = CanIMogIt.UNKNOWN_ICON_OVERLAY,
     [CanIMogIt.NOT_TRANSMOGABLE] = CanIMogIt.NOT_TRANSMOGABLE_ICON_OVERLAY,
     [CanIMogIt.NOT_TRANSMOGABLE_BOE] = CanIMogIt.NOT_TRANSMOGABLE_BOE_ICON_OVERLAY,
-    -- [CanIMogIt.CANNOT_DETERMINE] = CanIMogIt.QUESTIONABLE_ICON_OVERLAY,
-}]]
+    [CanIMogIt.CANNOT_DETERMINE] = CanIMogIt.QUESTIONABLE_ICON_OVERLAY,
+}
 
 
 -- Other text
@@ -177,6 +177,7 @@ CanIMogIt.ICON_LOCATIONS = {
     ["LEFT"] = {"LEFT", 2, 0},
     ["BOTTOM"] = {"BOTTOM", 0, 2},
     ["TOP"] = {"TOP", 0, -2},
+    ["AUCTION_HOUSE"] = {"LEFT", 137, 0}
 }
 
 --------------------------------------------
@@ -253,7 +254,7 @@ CanIMogItOptions_Defaults = {
         ["showTransmoggableOnly"] = true,
         ["showUnknownOnly"] = true,
         ["showSetInfo"] = true,
-        ["showItemIconOverlay"] = true,
+        ["showItemIconOverlay"] = false,
         -- ["showBoEColors"] = true,
         ["showVerboseText"] = false,
         ["showSourceLocationTooltip"] = false,
@@ -316,6 +317,8 @@ local EVENTS = {
     "ADDON_LOADED",
     "TRANSMOG_COLLECTION_UPDATED",
     "PLAYER_LOGIN",
+    "AUCTION_HOUSE_SHOW",
+    "AUCTION_HOUSE_BROWSE_RESULTS_UPDATED",
     "GET_ITEM_INFO_RECEIVED",
     "BLACK_MARKET_OPEN",
     "BLACK_MARKET_ITEM_UPDATE",
@@ -2256,7 +2259,7 @@ function CanIMogIt:GetTooltipText(itemLink, bag, slot)
 end
 
 
---[[function CanIMogIt:GetIconText(itemLink, bag, slot)
+function CanIMogIt:GetIconText(itemLink, bag, slot)
         --Gets the icon as text for this itemLink/bag+slot. Does not include the other text
         --that is also caluculated.
     local text, unmodifiedText = CanIMogIt:GetTooltipText(itemLink, bag, slot)
@@ -2267,7 +2270,7 @@ end
         icon = ""
     end
     return icon
-end]]
+end
 
 
 

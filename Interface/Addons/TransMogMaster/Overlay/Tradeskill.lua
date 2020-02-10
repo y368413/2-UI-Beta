@@ -23,11 +23,11 @@ function CIMI_UpdateTradeSkillIcons()
             local text = button:GetText()
             local itemLink = C_TradeSkillUI.GetRecipeItemLink(recipeID)
             if itemLink ~= nil then
-                --local icon = CanIMogIt:GetIconText(itemLink)
-                --if icon ~= nil and not string_starts(text, icon) then
-                    --text = icon .. text
+                local icon = CanIMogIt:GetIconText(itemLink)
+                if icon ~= nil and not string_starts(text, icon) then
+                    text = icon .. text
                     button:SetText(text)
-                --end
+                end
             end
         end
     end

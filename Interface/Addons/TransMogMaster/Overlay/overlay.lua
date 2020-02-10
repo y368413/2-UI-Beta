@@ -47,12 +47,12 @@ function CIMI_SetIcon(frame, updateIconFunc, text, unmodifiedText)
         -- An empty string means that the text shouldn't be displayed.
         frame.CIMIIconTexture:SetShown(false)
         frame:SetScript("OnUpdate", nil);
-    --else
+    else
         -- Show an icon!
-        --frame.CIMIIconTexture:SetShown(true)
-        --local icon = CanIMogIt.tooltipOverlayIcons[unmodifiedText]
-        --frame.CIMIIconTexture:SetTexture(icon, false)
-        --frame:SetScript("OnUpdate", nil);
+        frame.CIMIIconTexture:SetShown(true)
+        local icon = CanIMogIt.tooltipOverlayIcons[unmodifiedText]
+        frame.CIMIIconTexture:SetTexture(icon, false)
+        frame:SetScript("OnUpdate", nil);
     end
     frame.shown = frame.CIMIIconTexture:IsShown()
 end
