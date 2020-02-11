@@ -283,9 +283,9 @@ function M:CreateGear(name)
 	bu.Icon:SetAllPoints()
 	bu.Icon:SetTexture(I.gearTex)
 	bu.Icon:SetTexCoord(0, .5, 0, .5)
+	bu.Icon:SetVertexColor(1, 0, 0, 1)
 	bu:SetHighlightTexture(I.gearTex)
 	bu:GetHighlightTexture():SetTexCoord(0, .5, 0, .5)
-
 	return bu
 end
 
@@ -1079,6 +1079,8 @@ function M:CreateDropDown(width, height, data)
 	bu.Icon:SetAllPoints()
 	bu.Icon:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\Raid\\ArrowLarge")
 	bu.Icon:SetVertexColor(1, 0, 0, 1)
+	bu:SetHighlightTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\Raid\\ArrowLarge")
+	bu:GetHighlightTexture():SetVertexColor(0, 1, 0, 1)
 	bu:SetPoint("LEFT", dd, "RIGHT", -8, 3)
 	local list = CreateFrame("Frame", nil, dd)
 	list:SetPoint("TOP", dd, "BOTTOM", 0, -2)

@@ -754,19 +754,21 @@ function G:SetupRaidFrame(parent)
 		["Party"] = {80, 25},
 		["PartyPet"] = {80, 8},
 		["Raid"] = {60, 12},
+		["Boss"] = {100, 16},
 	}
 
 	local defaultValue = {
 		["Party"] = {100, 32, 2},
 		["PartyPet"] = {100, 22, 2},
 		["Raid"] = {80, 32, 2},
+		["Boss"] = {120, 21, 3},
 	}
 
 	local function createOptionGroup(parent, title, offset, value, func)
 		createOptionTitle(parent, title, offset)
-		createOptionSlider(parent, U["Health Width"].."("..defaultValue[value][1]..")", minRange[value][1], 200, 30, offset-60, value.."Width", func)
+		createOptionSlider(parent, U["Health Width"].."("..defaultValue[value][1]..")", minRange[value][1], 300, 30, offset-60, value.."Width", func)
 		createOptionSlider(parent, U["Health Height"].."("..defaultValue[value][2]..")", minRange[value][2], 60, 30, offset-130, value.."Height", func)
-		createOptionSlider(parent, U["Power Height"].."("..defaultValue[value][3]..")", 2, 30, 30, offset-200, value.."PowerHeight", func)
+		createOptionSlider(parent, U["Power Height"].."("..defaultValue[value][3]..")", 2, 20, 30, offset-200, value.."PowerHeight", func)
 	end
 
 	local function resizeRaidFrame()
@@ -807,6 +809,15 @@ function G:SetupRaidFrame(parent)
 		end
 	end
 	createOptionGroup(scroll.child, U["PartyPetFrame"], -600, "PartyPet", resizePartyPetFrame)
+	
+	local function updateBossSize()
+		for _, frame in next, ns.oUF.objects do
+			if frame.mystyle == "boss" or frame.mystyle == "arena" then
+				SetUnitFrameSize(frame, "Boss")
+			end
+		end
+	end
+	createOptionGroup(scroll.child, U["Boss&Arena"], -860, "Boss", updateBossSize)
 end
 
 local function createOptionSwatch(parent, name, value, x, y)

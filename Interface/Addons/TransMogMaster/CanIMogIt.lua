@@ -1,4 +1,4 @@
-﻿ -- 8.3.0v1.23
+﻿ -- 8.3.0v1.24
  -- Constants for CanIMogIt
 local L = CanIMogIt.L
 --------------------------------------------
@@ -254,7 +254,7 @@ CanIMogItOptions_Defaults = {
         ["showTransmoggableOnly"] = true,
         ["showUnknownOnly"] = true,
         ["showSetInfo"] = true,
-        ["showItemIconOverlay"] = false,
+        ["showItemIconOverlay"] = true,
         -- ["showBoEColors"] = true,
         ["showVerboseText"] = false,
         ["showSourceLocationTooltip"] = false,

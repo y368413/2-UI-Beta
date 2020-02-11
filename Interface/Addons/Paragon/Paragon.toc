@@ -8,4 +8,4 @@
 BoringData.lua
 Locale.lua
 Core.lua
-Config.lua
+## Config.lua

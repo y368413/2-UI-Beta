@@ -141,9 +141,6 @@ end
 
 function BlinkHealth:PLAYER_TARGET_CHANGED()
 	self:UpdateUnitFrame();
-	if (self.class == "ROGUE" or self.class == "DRUID") then
-		self:UpdateComboPoints();
-	end
 end
 
 function BlinkHealth:PLAYER_SPECIALIZATION_CHANGED()
@@ -250,21 +247,19 @@ end
 function BlinkHealth:UpdateComboPoints()
 	local comboPoints = UnitPower(PlayerFrame.unit, BlinkHealthTextPowerType);
 	if (comboPoints and comboPoints > 0) then
-
         self.hitPoint.text:SetText(comboPoints);
 		self.Combo:Show();
 		for i=1, 10 do
 			self.Combo[i]:Hide();
 		end
-
 		for i=1, comboPoints do
 			self.Combo[i]:Show();
 		end
 	else
 		self.Combo:Hide();
-        self.hitPoint.text:SetText("");
-        self.hitPoint.hit:SetText("");
-	  end
+    self.hitPoint.text:SetText("");
+    self.hitPoint.hit:SetText("");
+	end
 end
 
 function BlinkHealth:UpdateUnitValues()
@@ -769,7 +764,7 @@ function BlinkHealth:CreateHitAnchor()
 	self.HitAnchor.text:SetPoint("LEFT", self.HitAnchor, "LEFT", 20, -5);
 	self.HitAnchor.text:SetJustifyH("RIGHT");
 	self.HitAnchor.text:SetTextColor(1.0, 0.69, 0.0);
-	self.HitAnchor.text:SetText("5 hit");
+	self.HitAnchor.text:SetText("hits");
 
 	self.HitAnchor:RegisterForClicks("LeftButtonDown", "RightButtonDown");
 	self.HitAnchor:SetScript("OnMouseDown", function(self, button)

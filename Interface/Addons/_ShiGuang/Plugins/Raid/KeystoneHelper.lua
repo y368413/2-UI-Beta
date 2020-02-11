@@ -46,7 +46,7 @@ function MythicLootItemLevel(mlvl)
   return "455"
  elseif (mlvl == "11" or mlvl == "12" or mlvl == "13") then
   return "460"
- elseif (mlvl == "14" or mlvl == "15") then
+ elseif (mlvl >= "14") then
   return "465"
  else
   return ""
@@ -68,7 +68,7 @@ function MythicWeeklyLootItemLevel(mlvl)
   return "465"
  elseif (mlvl == "12" or mlvl == "13" or mlvl == "14") then
   return "470"
- elseif (mlvl == "15") then
+ elseif (mlvl >= "15") then
   return "475"
  else
   return ""
@@ -76,7 +76,6 @@ function MythicWeeklyLootItemLevel(mlvl)
 end
 
 function MythicWeeklyResiduumAmount(mlvl)
--- TODO: Add reward for keys 2 - 9
  if (mlvl == "2") then
   return "？"
  elseif (mlvl == "3") then
@@ -84,9 +83,9 @@ function MythicWeeklyResiduumAmount(mlvl)
  elseif (mlvl == "4") then
   return "？"
  elseif (mlvl == "5") then
-  return "？"
+  return "68"
  elseif (mlvl == "6") then
-  return "？"
+  return "75"
  elseif (mlvl == "7") then
   return "？"
  elseif (mlvl == "8") then

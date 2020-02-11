@@ -70,6 +70,7 @@ function AuctionHouseFrame_CIMIOnValueChanged()
     end
 end
 
+
 ----------------------------
 -- Begin adding to frames --
 ----------------------------
@@ -79,6 +80,10 @@ local function HookOverlayAuctionHouse(event)
 
     -- Add hook for the Auction House frames.
     local buttons = _G["AuctionHouseFrameScrollChild"]:GetParent().buttons
+    if buttons == nil then
+        return
+    end
+
     for i, button in pairs(buttons) do
         local frame = button
         frame.CIMI_index = i
@@ -100,4 +105,5 @@ local function AuctionHouseUpdateEvents(event, ...)
     if event ~= "AUCTION_HOUSE_BROWSE_RESULTS_UPDATED" then return end
     C_Timer.After(.1, AuctionHouseFrame_CIMIOnValueChanged)
 end
+
 CanIMogIt.frame:AddEventFunction(AuctionHouseUpdateEvents)

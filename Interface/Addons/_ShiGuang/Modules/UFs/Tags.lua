@@ -1,6 +1,5 @@
 ﻿local _, ns = ...
 local M, R, U, I = unpack(ns)
-
 local oUF = ns.oUF or oUF
 
 local AFK, DND, DEAD, PLAYER_OFFLINE = AFK, DND, DEAD, PLAYER_OFFLINE

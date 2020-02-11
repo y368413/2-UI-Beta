@@ -184,3 +184,94 @@ function module:OnLogin()
 	SetCVar("countdownForCooldowns", 0)
 	M.HideOption(InterfaceOptionsActionBarsPanelCountdownCooldowns)
 end
+
+--------------Fivecombo-----------------------------------------------
+local OverlayedSpellID = {};
+OverlayedSpellID["ROGUE"] = {
+	408,   --肾击
+	1943,  --割裂
+	2098,  --刺骨
+	5171,  --切割
+	8647,  --破甲
+	26679, --致命投掷
+	32645, --毒伤
+	73651, --恢复
+	193316,
+	195452,
+	196819,
+	199804,
+	206237,
+};
+OverlayedSpellID["DRUID"] = {
+	1079,   --割裂
+	22568,  --割碎
+	22570,  --凶猛撕咬
+	52610,  --野蛮咆哮
+};
+
+local function IsOverlayedSpell(spellID)
+	local _, class = UnitClass("player");
+	if (not OverlayedSpellID[class]) then return false end
+	for i, id in ipairs(OverlayedSpellID[class]) do
+		if (id == spellID) then
+			return true;
+		end
+	end
+	return false;
+end
+local function comboEventFrame_OnUpdate(self, elapsed)
+	local countTime = self.countTime - elapsed;
+	if (countTime <= 0) then
+		local parent = self:GetParent();
+		local points = UnitPower("player", Enum.PowerType.ComboPoints)
+		local maxPoints = UnitPowerMax("player", Enum.PowerType.ComboPoints)
+		if (self.isAlert and points ~= maxPoints) then
+			self:SetScript("OnUpdate", nil);
+			ActionButton_HideOverlayGlow(parent);
+			self.countTime = 0;
+		end
+		self.countTime = TOOLTIP_UPDATE_TIME;
+	end
+end
+
+hooksecurefunc("ActionButton_OnUpdate", function(self, elapsed)
+	if (self.comboEventFrame) then return end
+	self.comboEventFrame = CreateFrame("Frame", nil, self);
+	self.comboEventFrame.countTime = 0;
+	self.comboEventFrame:RegisterEvent("UNIT_POWER_UPDATE");
+	self.comboEventFrame:RegisterEvent('UNIT_POWER_FREQUENT')
+	self.comboEventFrame:RegisterEvent('UNIT_MAXPOWER')
+	self.comboEventFrame:SetScript("OnEvent", function(self, event, ...)
+	local parent = self:GetParent();
+	local spellType, id, subType  = GetActionInfo(parent.action);
+	-- 如果是系统自身的提示，就不再处理
+	if ( spellType == "spell" and IsSpellOverlayed(id) ) then
+		return;
+	elseif (spellType == "macro") then
+		local _, _, spellId = GetMacroSpell(id);
+		if ( spellId and IsSpellOverlayed(spellId) ) then
+			return;
+		end		
+	end
+	if UnitPower("player", Enum.PowerType.ComboPoints) >= 5 then		
+		if ( spellType == "spell" and IsOverlayedSpell(id) ) then
+			M.ShowOverlayGlow(parent);
+			self.isAlert = true;
+			self:SetScript("OnUpdate", comboEventFrame_OnUpdate);
+		elseif ( spellType == "macro" ) then
+			local _, _, spellId = GetMacroSpell(id);
+			if ( spellId and IsOverlayedSpell(spellId) ) then
+				M.ShowOverlayGlow(parent);
+				self.isAlert = true;
+				self:SetScript("OnUpdate", comboEventFrame_OnUpdate);
+			else
+				M.HideOverlayGlow(parent);
+			end
+		else
+			M.HideOverlayGlow(parent);
+		end
+	else
+		M.HideOverlayGlow(parent);
+	end	
+  end);
+end)
