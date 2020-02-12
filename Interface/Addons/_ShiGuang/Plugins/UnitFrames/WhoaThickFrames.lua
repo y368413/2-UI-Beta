@@ -50,7 +50,7 @@ hooksecurefunc("UnitFrameHealthBar_Update", whoaUnitClass)
 hooksecurefunc("HealthBar_OnValueChanged", function(self) whoaUnitClass(self, self.unit) end)
 
 ---------------------------------------------------------------------------------	Aura positioning constants.
-local LARGE_AURA_SIZE, SMALL_AURA_SIZE, AURA_OFFSET_Y, AURA_ROW_WIDTH, NUM_TOT_AURA_ROWS = 21, 16, 1, 128, 2   -- Set aura size.
+local LARGE_AURA_SIZE, SMALL_AURA_SIZE, AURA_OFFSET_Y, AURA_ROW_WIDTH, NUM_TOT_AURA_ROWS = 26, 21, 1, 121, 3   -- Set aura size.
 hooksecurefunc("TargetFrame_UpdateAuraPositions", function(self, auraName, numAuras, numOppositeAuras, largeAuraList, updateFunc, maxRowWidth, offsetX, mirrorAurasVertically)
 	local offsetY = AURA_OFFSET_Y;
 	local rowWidth = 0;
