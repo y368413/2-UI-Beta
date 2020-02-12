@@ -70,23 +70,23 @@ function Bar:MicroMenu()
 	if not MaoRUIPerDB["Actionbar"]["MicroMenu"] then return end
 
 	local menubar = CreateFrame("Frame", nil, UIParent)
-	menubar:SetSize(21, 185)
+	menubar:SetSize(21, 186)  --*MaoRUIPerDB["Map"]["MinimapScale"]
 	M.Mover(menubar, U["Menubar"], "Menubar", R.Skins.MicroMenuPos)
 
 	-- Generate Buttons
 	local buttonInfo = {
-		{"UI-MicroButton-Raid-Up", "CharacterMicroButton"},
-		{"UI-MicroButton-EJ-Up", "EJMicroButton"},
-		{"UI-MicroButton-Mounts-Up", "CollectionsMicroButton"},
-		{"UI-MicroButton-Talents-Up", "TalentMicroButton"},
-		{"UI-MicroButton-LFG-Up", "LFDMicroButton"},
-		{"UI-MicroButton-Achievement-Up", "AchievementMicroButton"},
-		{"UI-MICROBUTTON-SOCIALS-UP", "GuildMicroButton"},
-		{"UI-MicroButton-Spellbook-Up", "SpellbookMicroButton"},
+		--{"UI-MicroButton-BStore-Up", "StoreMicroButton"},
+		--{"UI-MicroButton-Help-Up", "MainMenuMicroButton", MicroButtonTooltipText(MAINMENU_BUTTON, "TOGGLEGAMEMENU")},
+		--{"UI-MicroButton-Abilities-Up", function() ToggleAllBags() end, MicroButtonTooltipText(BAGSLOT, "OPENALLBAGS")},
 		{"UI-MICROBUTTON-QUEST-UP", "QuestLogMicroButton"},
-		{"UI-MicroButton-BStore-Up", "StoreMicroButton"},
-		{"UI-MicroButton-Help-Up", "MainMenuMicroButton", MicroButtonTooltipText(MAINMENU_BUTTON, "TOGGLEGAMEMENU")},
-		{"UI-MicroButton-Abilities-Up", function() ToggleAllBags() end, MicroButtonTooltipText(BAGSLOT, "OPENALLBAGS")},
+		{"UI-MicroButton-Spellbook-Up", "SpellbookMicroButton"},
+		{"UI-MICROBUTTON-SOCIALS-UP", "GuildMicroButton"},
+		{"UI-MicroButton-Achievement-Up", "AchievementMicroButton"},
+		{"UI-MicroButton-LFG-Up", "LFDMicroButton"},
+		{"UI-MicroButton-Talents-Up", "TalentMicroButton"},
+		{"UI-MicroButton-Mounts-Up", "CollectionsMicroButton"},
+		{"UI-MicroButton-EJ-Up", "EJMicroButton"},
+		{"UI-MicroButton-Raid-Up", "CharacterMicroButton"},
 	}
 	for _, info in pairs(buttonInfo) do
 		Bar:MicroButton_Create(menubar, info)
@@ -95,15 +95,15 @@ function Bar:MicroMenu()
 	-- Order Positions
 	for i = 1, #buttonList do
 		if i == 1 then
-			buttonList[i]:SetPoint("BOTTOM")
-		elseif i == 9 then
-			buttonList[i]:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMRIGHT", 1, -1)
+			buttonList[i]:SetPoint("TOPRIGHT", menubar, "TOPRIGHT", 0, 16)
+		--elseif i == 9 and MaoRUIPerDB["Map"]["MinimapScale"] > 1.1 then
+		  		--buttonList[i]:SetPoint("BOTTOM", buttonList[i-1], "TOP", 0, -12)
+		--elseif i == 10 and MaoRUIPerDB["Map"]["MinimapScale"] >= 1.3  then
+		  		--buttonList[i]:SetPoint("BOTTOM", buttonList[i-1], "TOP", 0, -12)
+		--elseif i >= 9 then
+			--buttonList[i]:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMRIGHT", 1, -1)
 		else
-	if MaoRUIPerDB["Actionbar"]["MicroMenuStyle"] then
-			buttonList[i]:SetPoint("BOTTOM", buttonList[i-1], "TOP", 0, 3)
-	else	
-			buttonList[i]:SetPoint("BOTTOM", buttonList[i-1], "TOP", 0, -12)
-	end
+			buttonList[i]:SetPoint("CENTER", buttonList[i-1], "CENTER", 0, -21)
 		end
 	end
 

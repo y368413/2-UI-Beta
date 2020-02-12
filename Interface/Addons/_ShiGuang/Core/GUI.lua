@@ -171,7 +171,7 @@ local defaultSettings = {
 		Clock = false,
 		CombatPulse = false,
 		MapScale = 1,
-		MinmapScale = 1.5,
+		MinimapScale = 1,
 		ShowRecycleBin = false,
 		WhoPings = true,
 		MapReveal = false,
@@ -882,15 +882,15 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "Misc", "Mail", U["Mail Tool"]},
 		{1, "Misc", "Focuser", U["Easy Focus"], true},
 		{1, "Misc", "FasterLoot", U["Faster Loot"].."*", true, true, nil, updateFasterLoot},
-	  {1, "Misc", "FreeMountCD", "CD君(CN only)"},
-		{},--blank	
 		{1, "ACCOUNT", "LockUIScale", "|cff00cc4c"..U["Lock UIScale"]},
-		{3, "ACCOUNT", "UIScale", U["Setup UIScale"], true, false, {.4, 1.15, 2}},
-		{3, "Misc", "WorldQusetRewardIconsSize", "WorldQusetRewardIconsSize", true, true, {21, 66, 0}},
-		{3, "UFs", "PlayerFrameScale", U["PlayerFrame Scale"], false, false, {0.6, 1.2, 1}},
-		{3, "Tooltip", "Scale", U["Tooltip Scale"].."*", true, false, {.5, 1.5, 1}},
-		{3, "Map", "MapScale", U["Map Scale"], true, true, {1, 2, 1}},
-		--{3, "Map", "MinmapScale", U["Minimap Scale"].."*", false, false, {1, 2, 1}, updateMinimapScale},
+	  {1, "Misc", "FreeMountCD", "CD君(CN only)", true},
+		{},--blank	
+		{3, "ACCOUNT", "UIScale", U["Setup UIScale"], false, false, {.4, 1.15, 2}},
+		{3, "Misc", "WorldQusetRewardIconsSize", "WorldQusetRewardIconsSize", true, false, {21, 66, 0}},
+		{3, "UFs", "PlayerFrameScale", U["PlayerFrame Scale"], true, true, {0.6, 1.2, 1}},
+		{3, "Tooltip", "Scale", U["Tooltip Scale"].."*", false, false, {.5, 1.5, 1}},
+		{3, "Map", "MapScale", U["Map Scale"], true, false, {1, 2, 1}},
+		{3, "Map", "MinimapScale", U["Minimap Scale"].."*", true, true, {1, 2, 1}, updateMinimapScale},
 	},
 }
 

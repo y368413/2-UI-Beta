@@ -10,8 +10,6 @@ zrMM.loader:SetScript("OnEvent", function(self, event, addon)
 	end
 end)
 
-
-
 function zrMM:border_gen(parent)
 		local frame = parent:CreateTexture(nil, "BACKGROUND", nil, -8)
 		frame:SetTexture("Interface\\Buttons\\WHITE8x8")
@@ -80,29 +78,31 @@ function zrMM:CreateButtonFrame()
     local numChildren = 0
 	
     Minimap.manualTarget['CodexBrowserIcon'] = true                             
-    --Minimap.manualTarget['MiniMapTrackingFrame'] = true
-    --Minimap.manualTarget['MiniMapMailFrame'] = true
     Minimap.manualTarget['ZygorGuidesViewerMapIcon'] = true
-    Minimap.manualTarget['MiniMapBattlefieldFrame'] = true
     Minimap.manualTarget['PeggledMinimapIcon'] = true
     Minimap.manualTarget['EnxMiniMapIcon'] = true
 
     Minimap.ignoreFrames['zrButtonFrame'] = true
-    Minimap.ignoreFrames['MinimapBackdrop'] = true
     Minimap.ignoreFrames['GameTimeFrame'] = true
+    Minimap.ignoreFrames['MiniMapLFGFrame'] = true
+    Minimap.ignoreFrames['BattlefieldMinimap'] = true
+    Minimap.ignoreFrames['MinimapBackdrop'] = true
+    Minimap.ignoreFrames["FeedbackUIButton"] = true
+    Minimap.ignoreFrames["HelpOpenTicketButton"] = true
+    Minimap.ignoreFrames["MiniMapBattlefieldFrame"] = true
+		Minimap.ignoreFrames["GarrisonLandingPageMinimapButton"] = true
+		Minimap.ignoreFrames["MinimapZoneTextButton"] = true
     Minimap.ignoreFrames['MinimapVoiceChatFrame'] = true
     Minimap.ignoreFrames['TimeManagerClockButton'] = true
-    Minimap.ignoreFrames['MiniMapTracking'] = true
+    Minimap.ignoreFrames['MiniMapTrackingFrame'] = true
+    Minimap.ignoreFrames['MiniMapMailFrame'] = true
     Minimap.ignoreFrames['COHCMinimapButton'] = true
     Minimap.ignoreFrames['MinimapZoomIn'] = true
     Minimap.ignoreFrames['MinimapZoomOut'] = true
-    Minimap.ignoreFrames['GameTimeFrame'] = true
     Minimap.ignoreFrames['MiniMapTrackingButton'] = true
     Minimap.ignoreFrames['MiniMapTracking'] = true
-    Minimap.ignoreFrames['GarrisonLandingPageMinimapButton'] = true
     Minimap.ignoreFrames['QueueStatusMinimapButton'] = true
     Minimap.ignoreFrames['QueueStatusMinimapButtonDropDownButton'] = true
-    Minimap.ignoreFrames['COHCMinimapButton'] = true
     Minimap.ignoreFrames['BaudErrorFrameMinimapButton'] = true
 
     hideTextures['Interface\\Minimap\\MiniMap-TrackingBorder'] = true
@@ -172,7 +172,6 @@ function zrMM:CreateButtonFrame()
 			end
 			zrMM.buttonPosChanged = false
 		end
-
 
         for k, f in pairs(zrButtonFrame.frameTable) do
             f:SetWidth(MaoRUIPerDB["Map"]["zrMMbuttonsize"])

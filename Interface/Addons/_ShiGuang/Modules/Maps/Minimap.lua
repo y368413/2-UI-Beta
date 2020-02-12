@@ -49,7 +49,7 @@ function module:ReskinRegions()
 	-- Garrison
 	GarrisonLandingPageMinimapButton:ClearAllPoints()
 	GarrisonLandingPageMinimapButton:SetPoint("TOPRIGHT", Minimap, "BOTTOMRIGHT", 6, 6)
-	GarrisonLandingPageMinimapButton:SetScale(0.75)
+	GarrisonLandingPageMinimapButton:SetScale(0.72)
 	--hooksecurefunc("GarrisonLandingPageMinimapButton_UpdateIcon", function(self)
 		--self:GetNormalTexture():SetTexture(I.garrTex)
 		--self:GetPushedTexture():SetTexture(I.garrTex)
@@ -280,7 +280,7 @@ function module:WhoPingsMyMap()
 end
 
 function module:UpdateMinimapScale()
-	local scale = MaoRUIPerDB["Map"]["MinmapScale"]
+	local scale = MaoRUIPerDB["Map"]["MinimapScale"]
 	Minimap:SetScale(scale)
 	Minimap.mover:SetSize(Minimap:GetWidth()*scale, Minimap:GetHeight()*scale)
 end
@@ -345,7 +345,7 @@ function module:SetupMinimap()
 	Minimap:SetPoint("TOPRIGHT", mover)
 	Minimap.mover = mover
 
-	--self:UpdateMinimapScale()
+	self:UpdateMinimapScale()
 	self:ShowMinimapClock()
 	self:ShowCalendar()
 
