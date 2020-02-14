@@ -229,7 +229,7 @@ do
             --GameTooltip:AddLine("445指定 需要20万")
             --GameTooltip:AddLine("分解400返115 385返35 370返12")
             --GameTooltip:AddLine("仅分解|cffff0000同甲|r特质装才返")
-            --GameTooltip:Show() 
+            GameTooltip:Show() 
             end 
         end) 
     end) 

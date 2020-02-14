@@ -363,6 +363,8 @@ local PostUpdateButton = function(itemSlot)
             buttonIconTexture:SetVertexColor(1,.3,.3)
             buttonIconTexture:SetDesaturated(1)
           end
+        else
+          if ItemBind then ItemBind:Show() end
         end
         return
       end

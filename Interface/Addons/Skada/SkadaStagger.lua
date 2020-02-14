@@ -72,9 +72,7 @@ local function logStaggerTick(set, tick, isCurrent)
                         local timeSinceLastTick = tick.timestamp - player.stagger.lastTickTime
                         player.stagger.duration = player.stagger.duration + timeSinceLastTick
                         if timeSinceLastTick > 60 then
-                              --printdebug(tick.dstName.."'s time since last tick: "..timeSinceLastTick.." (ignored)")
                         elseif timeSinceLastTick > 2 then
-                              --printdebug(tick.dstName.."'s time since last tick: "..timeSinceLastTick)
                               player.stagger.freezeDuration = player.stagger.freezeDuration + (timeSinceLastTick - 0.5)
                         end
                   end
@@ -83,7 +81,6 @@ local function logStaggerTick(set, tick, isCurrent)
                         --printdebug(tick.dstName.."'s stagger tick for "..tick.samount.." ("..tick.remainingStagger.." remains)")
                   else
                         player.stagger.lastTickTime = nil
-                        --printdebug(tick.dstName.."'s stagger ended")
                   end
             end
       end
@@ -93,7 +90,6 @@ local purify = {}
 local function logStaggerPurify(set, purify)
       local player = Skada:get_player(set, purify.srcGUID, purify.srcName)
       if player then
-      --debugprint('>>logstpury',purify.samount)
             player.stagger.purified = player.stagger.purified + purify.samount
             player.stagger.purifyCount = player.stagger.purifyCount + 1
             if player.stagger.purifyMax < purify.samount then
@@ -158,7 +154,6 @@ local function SpellAbsorbed(timestamp, eventtype, srcGUID, srcName, srcFlags, d
 
         if spellId == 124255 then
         --if nil then
-            --debugprint('## st absorbed','aAmount',aAmount)
             proc_st_tick(timestamp,dstGUID,dstName,aAmount,0,srcName,srcGUID,1)
         end
 

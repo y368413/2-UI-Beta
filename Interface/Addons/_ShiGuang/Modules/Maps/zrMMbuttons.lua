@@ -196,8 +196,8 @@ function zrMM:CreateButtonFrame()
 					end
 				elseif (MaoRUIPerDB["Map"]["zrMMbuttonpos"] == "Bottom") then
 					if (last) then
-						if buttonCount == 9 then
-							f:SetPoint("TOPRIGHT", first, "BOTTOMRIGHT", 0, -MaoRUIPerDB["Map"]["zrMMbordersize"]*3)
+						if buttonCount == 8 then
+							f:SetPoint("TOPRIGHT", first, "BOTTOMRIGHT", MaoRUIPerDB["Map"]["zrMMbuttonsize"]+MaoRUIPerDB["Map"]["zrMMbordersize"]*3, -MaoRUIPerDB["Map"]["zrMMbordersize"]*3)
 							buttonCount = 0
 						else
 							f:SetPoint("TOPRIGHT", last, "TOPLEFT", -MaoRUIPerDB["Map"]["zrMMbordersize"]*3, 0)     

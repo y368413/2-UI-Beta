@@ -83,7 +83,9 @@ local list = {
 		{AuraID =     17, UnitID = "player", Value = true},				    --真言术:盾(MS)
 		{AuraID =  48707, UnitID = "player", Value = true}, 				--反魔法护罩
 		{AuraID = 108366, UnitID = "player", Value = true, Combat = true},  --灵魂榨取
-		{AuraID = 124275, UnitID = "player", Value = true},				    --醉拳
+		{AuraID = 124275, UnitID = "player", Value = true},				    --醉拳-绿
+		{AuraID = 124274, UnitID = "player", Value = true},				    --醉拳-黄
+		{AuraID = 124273, UnitID = "player", Value = true},				    --醉拳-红
 		{AuraID = 221772, UnitID = "player", Value = true}, 				--溢出
 		{AuraID = 207472, UnitID = "player", Value = true},                 --沙瓦迪卡
 		{AuraID = 269279, UnitID = "player", Value = true},                 --回声防护

@@ -10,6 +10,7 @@
 	<Script file="NomiCakes.lua"/>
 	<Script file="Talentless.lua"/>
 	<Script file="nReputation.lua"/>
+	<!--Script file="FriendGroups.lua"/-->
 	<Script file="LockboxMailer.lua"/>
 	<!--Script file="LockboxCracker.lua"/-->
 	<Script file="ItemTooltipProfession.lua"/>

@@ -1,4 +1,4 @@
---## Author: Metriss - Stormrage  ## Version: 1.05
+--## Author: Metriss - Stormrage  ## Version: 1.06
 local esm = ESSENCE_SET_MANAGER_ADDON or LibStub("AceAddon-3.0"):NewAddon("ESSENCE_SET_MANAGER_ADDON", "AceConsole-3.0")
 local setButtons = {}
 esm.setNames = {}
@@ -73,7 +73,7 @@ esm.azeriteUIHide = function()
 end
 
 esm.checkEvents = function()
-	if esm.azeriteUIOpen or esm.LDBOpen then
+	if esm.azeriteUIOpen then  -- or esm.LDBOpen
 		esm.eventHandlerFrame:RegisterEvent("PLAYER_UPDATE_RESTING")
 		esm.eventHandlerFrame:RegisterEvent("UNIT_AURA")
 	else
@@ -108,15 +108,16 @@ esm.updateTomeButton = function()
 		local quietCount =  GetItemCount("Tome of the Quiet Mind")
 		local totalCount = tranquilCount + quietCount
 		esm.itemBtn:SetText(totalCount)
-		if esm.saturation == 1 and totalCount > 0 then
-			esm.itemBtn:Enable()
-		else
-			esm.itemBtn:Disable()
-		end
+		if InCombatLockdown() then return end
 		if tranquilCount > 0 then
 			esm.itemBtn:SetAttribute("item", "Tome of the Tranquil Mind");
 		else
 			esm.itemBtn:SetAttribute("item", "Tome of the Quiet Mind");
+		end
+		if esm.saturation == 1 and totalCount > 0 then
+			esm.itemBtn:Enable()
+		else
+			esm.itemBtn:Disable()
 		end
 	end
 end
@@ -171,7 +172,6 @@ esm.updateSetButtons = function()
 			end
 		end
 		esm.updateBtnSaturation()
-		--esm.updateLDBButton()
 	end
 end
 
@@ -423,6 +423,7 @@ esm.setButtonPress = function(button)
 			esm.saveSet(button.setName)
 		end
 	else
+		if InCombatLockdown() then return end
 		esm.activateSet(button.setName)
 	end
 end
@@ -471,7 +472,7 @@ esm.checkIfCanChange = function()
 		return nil
 	end
 	for i = 1, 40 do
-		local _, _, _, _, _, _, _, _, _, spellID = UnitAura("player", i, "HELPFUL|PLAYER")
+		local _, _, _, _, _, _, _, _, _, spellID = UnitAura("player", i, "HELPFUL")
 		if spellID then
 			if tContains(CHANGE_SPELL_IDS, spellID) then
 				return nil

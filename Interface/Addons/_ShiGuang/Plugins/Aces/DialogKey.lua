@@ -302,7 +302,7 @@ function DialogKey:WatchFrame(name)				-- Add given frame to the watch list
 		DialogKey:Glow(frame, "add")
 	end
 	
-	DialogKey:UpdateAdditionalFrames()
+	--DialogKey:UpdateAdditionalFrames()
 end
 
 function DialogKey:UnwatchFrame(name)			-- Remove given frame from the watch list
@@ -325,7 +325,7 @@ function DialogKey:UnwatchFrame(name)			-- Remove given frame from the watch lis
 		DialogKey:Glow(frame, "remove")
 	end
 	
-	DialogKey:UpdateAdditionalFrames()
+	--DialogKey:UpdateAdditionalFrames()
 end
 
 -- Primary functions --
@@ -1150,7 +1150,7 @@ function DialogKey:ClearBind(index)			-- Clears the keybind from the given bindi
 end
 
 -- Options frame helpers --
-function DialogKey:SaveAdditionalButtons()	-- Save the button names in the additional input to the saved settings
+--[[function DialogKey:SaveAdditionalButtons()	-- Save the button names in the additional input to the saved settings
 	self:Hide()
 	--local editbox = DialogKey.options.content.additionalScroll.EditBox
 	--editbox:ClearFocus()
@@ -1166,12 +1166,12 @@ function DialogKey:SaveAdditionalButtons()	-- Save the button names in the addit
 	DialogKey.db.global.additionalButtons = final
 end
 
---[[function DialogKey:UpdateAdditionalFrames()	-- Updates the "Additional buttons" textbox with the latest settings
+function DialogKey:UpdateAdditionalFrames()	-- Updates the "Additional buttons" textbox with the latest settings
 	local editbox = self.options.content.additionalScroll.EditBox
 	local newvalue = table.concat(self.db.global.additionalButtons, "\n")
 	editbox.previousText = newvalue
 	editbox:SetText(newvalue)
-end]]
+end
 
 function DialogKey:SaveBlacklist()			-- Save the button names in the additional input to the saved settings
 	self:Hide()
@@ -1189,7 +1189,7 @@ function DialogKey:SaveBlacklist()			-- Save the button names in the additional 
 	DialogKey.db.global.dialogBlacklist = final
 end
 
---[[function DialogKey:UpdateBlacklist()		-- Updates the "Additional buttons" textbox with the latest settings
+function DialogKey:UpdateBlacklist()		-- Updates the "Additional buttons" textbox with the latest settings
 	local editbox = self.options.content.blacklistScroll.EditBox
 	local newvalue = table.concat(self.db.global.dialogBlacklist, "\n")
 	editbox.previousText = newvalue
