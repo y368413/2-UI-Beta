@@ -114,10 +114,10 @@ function M:PixelBorders(frame)
 		borders.CENTER = frame:CreateTexture(nil, "BACKGROUND", nil, -1)
 		borders.CENTER:SetTexture(I.bdTex)
 
-		borders.TOPLEFT:Point("BOTTOMRIGHT", borders.CENTER, "TOPLEFT", 1, -1)
-		borders.TOPRIGHT:Point("BOTTOMLEFT", borders.CENTER, "TOPRIGHT", -1, -1)
-		borders.BOTTOMLEFT:Point("TOPRIGHT", borders.CENTER, "BOTTOMLEFT", 1, 1)
-		borders.BOTTOMRIGHT:Point("TOPLEFT", borders.CENTER, "BOTTOMRIGHT", -1, 1)
+		borders.TOPLEFT:Point("BOTTOMRIGHT", borders.CENTER, "TOPLEFT", R.mult, -R.mult)
+		borders.TOPRIGHT:Point("BOTTOMLEFT", borders.CENTER, "TOPRIGHT", -R.mult, -R.mult)
+		borders.BOTTOMLEFT:Point("TOPRIGHT", borders.CENTER, "BOTTOMLEFT", R.mult, R.mult)
+		borders.BOTTOMRIGHT:Point("TOPLEFT", borders.CENTER, "BOTTOMRIGHT", -R.mult, R.mult)
 
 		borders.TOP:Point("TOPLEFT", borders.TOPLEFT, "TOPRIGHT", 0, 0)
 		borders.TOP:Point("TOPRIGHT", borders.TOPRIGHT, "TOPLEFT", 0, 0)
@@ -1061,7 +1061,7 @@ end
 
 local function buttonOnClick(self)
 	PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK)
-	ToggleFrame(self.__list)
+	M:TogglePanel(self.__list)
 end
 
 function M:CreateDropDown(width, height, data)
@@ -1193,6 +1193,14 @@ function M:CreateSlider(name, minValue, maxValue, x, y, width)
 	slider.value:SetScript("OnEnterPressed", updateSliderEditBox)
 
 	return slider
+end
+
+function M:TogglePanel(frame)
+	if frame:IsShown() then
+		frame:Hide()
+	else
+		frame:Show()
+	end
 end
 
 	-- Function --

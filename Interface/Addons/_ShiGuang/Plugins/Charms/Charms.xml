@@ -11,10 +11,7 @@
 	<Script file="Talentless.lua"/>
 	<Script file="nReputation.lua"/>
 	<!--Script file="FriendGroups.lua"/-->
-	<Script file="LockboxMailer.lua"/>
-	<!--Script file="LockboxCracker.lua"/-->
 	<Script file="ItemTooltipProfession.lua"/>
-	<Script file="OneClickDisenchanting.lua"/>
 	<CheckButton name="nReputation" parent="ReputationFrame" mixin="nReputationMixin">
 		<Size x="24" y="24"/>
 		<Anchors>

@@ -1628,6 +1628,9 @@ merge(BFA_HF_Tracker_points[862], { -- Zuldazar
     -- Mushroom Harvest
     [45537917] = {npc=143314, achievement=13027, criteria=41391, note="On the beach, between trees",}, -- Bane of the Woods
 })
+merge(BFA_HF_Tracker_points[1165], { -- Dazar'alor
+	[55378240] = {quest=48333, npc=120899, item=160947, achievement=12944, criteria=41875,}, -- Kul'krazahn
+})
 merge(BFA_HF_Tracker_points[863], { -- Nazmir
     [67812972] = {quest=48063, npc=125250, achievement=12942, criteria=41440,}, -- Ancient Jawbreaker
     [32802690] = {quest=50563, npc=134293, achievement=12942, criteria=41447,}, -- Azerite-Infused Slag
@@ -1747,6 +1750,9 @@ merge(BFA_HF_Tracker_points[895], { -- Tiragarde Sound
     [61515233] = {quest=49963, npc=130350, item=155571, note="Ride to Roan Berthold in Southwind Station; follow the road",}, -- Guardian of the Spring (49983 is the ride, 49963 is the loot)
     -- [52253215] = {quest=nil, npc=132052, item=155074,}, -- Vol'Jim (removed from game?)
 })
+merge(BFA_HF_Tracker_points[1161], { -- Boralus
+    [80403500] = {quest=51877, npc=139287, achievement=12939, criteria=41830,}, -- Sawtooth
+})
 merge(BFA_HF_Tracker_points[896], { -- Drustvar
     [59933466] = {quest=47884, npc=124548, achievement=12941, criteria=41706,}, -- Betsy
     [58901790] = {quest=48842, npc=127333, achievement=12941, criteria=41708,}, -- Barbthorn Queen
@@ -1828,12 +1834,6 @@ merge(BFA_HF_Tracker_points[942], { -- Stormsong Valley
     -- [68745147] = {quest=nil, npc=132047,}, -- Reinforced Hullbreaker
     -- [40143732] = {quest=nil, npc=137649,}, -- Pest Remover Mk. II
     -- [67217525] = {quest=nil, npc=134147,}, -- Beehemoth
-})
-merge(BFA_HF_Tracker_points[1161], { -- Boralus
-    [80403500] = {quest=51877, npc=139287, achievement=12939, criteria=41830,}, -- Sawtooth
-})
-merge(BFA_HF_Tracker_points[1165], { -- Dazar'alor
-	[55378240] = {quest=48333, npc=120899, item=160947, achievement=12944, criteria=41875,}, -- Kul'krazahn
 })
 --merge(BFA_HF_Tracker_points[1355], { -- Nazjatar
 --    [78003280] = {quest=56276, npc=151870, item=169369, achievement=13691, criteria=45543,note="Summoned using a [Scrying Stone]"}, -- Sandcastle

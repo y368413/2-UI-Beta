@@ -1,9 +1,5 @@
 ﻿--## Version: v18  ## Author: Kemayo
 local AppearanceTooltip = {}    --local _, AppearanceTooltip = ...
-local GetScreenWidth = GetScreenWidth
-local GetScreenHeight = GetScreenHeight
-local IsDressableItem = IsDressableItem
-local setDefaults, db
 local LAT = LibStub("LibArmorToken-1.0")
 local LAI = LibStub("LibAppropriateItems-1.0")
 
@@ -41,7 +37,7 @@ function tooltip:ADDON_LOADED(addon)
         byComparison = true, -- whether to show by the comparison, or fall back to vertical if needed
         tokens = true, -- try to preview tokens?
     })
-    db = _G["AppearanceTooltipDB"]
+    local db = _G["AppearanceTooltipDB"]
     AppearanceTooltip.db = db
 
     self:UnregisterEvent("ADDON_LOADED")
@@ -549,9 +545,6 @@ do
     end
 end
 
---local debugf = tekDebug and tekDebug:GetFrame(myname)
---function AppearanceTooltip.Debug(...) if debugf then debugf:AddMessage(string.join(", ", tostringall(...))) end end
-
 function setDefaults(options, defaults)
     setmetatable(options, { __index = function(t, k)
         if type(defaults[k]) == "table" then
@@ -687,7 +680,6 @@ function AppearanceTooltip:GetCameraID(itemid, race, gender)
         end
         key = ("%s-%s-%s"):format(race, gender, slot_override[itemid] or slots[slot] or "Default")
     end
-    -- AppearanceTooltip.Debug("GetCameraID", key, slots_to_cameraids[key], itemcamera)
     return slots_to_cameraids[key], itemcamera
 end
 

@@ -71,12 +71,9 @@ end
 ---------------------------------- NAMESPACE ----------------------------------
 -------------------------------------------------------------------------------
 
-local Addon = LibStub("AceAddon-3.0"):NewAddon("HandyNotes_MechagonAndNazjatar", "AceBucket-3.0", "AceConsole-3.0", "AceEvent-3.0", "AceTimer-3.0")
+local HandyNotes_MechagonAndNazjatar = LibStub("AceAddon-3.0"):NewAddon("HandyNotes_MechagonAndNazjatar", "AceBucket-3.0", "AceConsole-3.0", "AceEvent-3.0", "AceTimer-3.0")
 local HandyNotes = LibStub("AceAddon-3.0"):GetAddon("HandyNotes", true)
 local L = LibStub("AceLocale-3.0"):GetLocale("HandyNotes");
-
-MechagonAndNazjatar.addon = Addon;
-MechagonAndNazjatar.locale = L;
 MechagonAndNazjatar.maps = {};
 
 MechagonAndNazjatar.status = {
@@ -98,7 +95,7 @@ MechagonAndNazjatar.status = {
 -------------------------------------------------------------------------------
 
 local function debug(...)
-    if (Addon.db.profile.show_debug) then
+    if (HandyNotes_MechagonAndNazjatar.db.profile.show_debug) then
         print(...);
     end
 end
@@ -135,16 +132,16 @@ local function initializeDropdownMenu (button, level, mapID, coord)
         UIDropDownMenu_AddButton({
             text=L["context_menu_hide_node"], notCheckable=1,
             func=function (button)
-                Addon.db.char[mapID..'_coord_'..coord] = true;
-                Addon:Refresh()
+                HandyNotes_MechagonAndNazjatar.db.char[mapID..'_coord_'..coord] = true;
+                HandyNotes_MechagonAndNazjatar:Refresh()
             end
         }, level);
 
         UIDropDownMenu_AddButton({
             text=L["context_menu_restore_hidden_nodes"], notCheckable=1,
             func=function ()
-                table.wipe(Addon.db.char)
-                Addon:Refresh()
+                table.wipe(HandyNotes_MechagonAndNazjatar.db.char)
+                HandyNotes_MechagonAndNazjatar:Refresh()
             end
         }, level);
 
@@ -161,7 +158,7 @@ end
 ---------------------------------- CALLBACKS ----------------------------------
 -------------------------------------------------------------------------------
 
-function Addon:OnEnter(mapID, coord)
+function HandyNotes_MechagonAndNazjatar:OnEnter(mapID, coord)
     local node = MechagonAndNazjatar.maps[mapID].nodes[coord];
     local tooltip = self:GetParent() == WorldMapButton and WorldMapTooltip or GameTooltip;
 
@@ -181,11 +178,11 @@ function Addon:OnEnter(mapID, coord)
         rtext:Show()
     end
 
-    if node.note and Addon.db.profile.show_notes then
+    if node.note and HandyNotes_MechagonAndNazjatar.db.profile.show_notes then
         tooltip:AddLine(node.note, 1, 1, 1, true);
     end
 
-    if Addon.db.profile.show_loot then
+    if HandyNotes_MechagonAndNazjatar.db.profile.show_loot then
         local firstAchieve, firstOther = true, true
         for i, reward in ipairs(node.rewards or {}) do
 
@@ -206,7 +203,7 @@ function Addon:OnEnter(mapID, coord)
     tooltip:Show();
 end
 
-function Addon:OnLeave( mapID, coord )
+function HandyNotes_MechagonAndNazjatar:OnLeave( mapID, coord )
     if self:GetParent() == WorldMapButton then
         WorldMapTooltip:Hide();
     else
@@ -214,7 +211,7 @@ function Addon:OnLeave( mapID, coord )
     end
 end
 
-function Addon:OnClick(button, down, mapID, coord)
+function HandyNotes_MechagonAndNazjatar:OnClick(button, down, mapID, coord)
     local node = MechagonAndNazjatar.maps[mapID].nodes[coord];
     if button == "RightButton" and down then
         DropdownMenu.initialize = function (button, level)
@@ -226,7 +223,7 @@ function Addon:OnClick(button, down, mapID, coord)
     end
 end
 
-function Addon:OnInitialize()
+function HandyNotes_MechagonAndNazjatar:OnInitialize()
     MechagonAndNazjatar.faction = UnitFactionGroup('player')
     self.db = LibStub("AceDB-3.0"):New("HandyNotes_MechagonAndNazjatarDB", MechagonAndNazjatar.optionDefaults, "Default")
     self:RegisterEvent("PLAYER_ENTERING_WORLD", function ()
@@ -239,7 +236,7 @@ end
 ------------------------------------ MAIN -------------------------------------
 -------------------------------------------------------------------------------
 
-function Addon:RegisterWithHandyNotes()
+function HandyNotes_MechagonAndNazjatar:RegisterWithHandyNotes()
     do
         local map, minimap
         local function iter(nodes, precoord)
@@ -256,7 +253,7 @@ function Addon:RegisterWithHandyNotes()
             end
             return nil, nil, nil, nil
         end
-        function Addon:GetNodes2(mapID, _minimap)
+        function HandyNotes_MechagonAndNazjatar:GetNodes2(mapID, _minimap)
             map = MechagonAndNazjatar.maps[mapID]
             minimap = _minimap
 
@@ -276,7 +273,7 @@ function Addon:RegisterWithHandyNotes()
     self:Refresh()
 end
 
-function Addon:Refresh()
+function HandyNotes_MechagonAndNazjatar:Refresh()
     self:SendMessage("HandyNotes_NotifyUpdate", "HandyNotes_MechagonAndNazjatar")
 end
 
@@ -382,7 +379,7 @@ end
 ---------------------------------- NAMESPACE ----------------------------------
 -------------------------------------------------------------------------------
 
-local L = MechagonAndNazjatar.locale;
+local L = L;
 
 -------------------------------------------------------------------------------
 ---------------------------------- DEFAULTS -----------------------------------
@@ -429,8 +426,8 @@ MechagonAndNazjatar.optionDefaults = {
 MechagonAndNazjatar.options = {
     type = "group",
     name = L["options_title_Mechagon"],
-    get = function(info) return MechagonAndNazjatar.addon.db.profile[info.arg] end,
-    set = function(info, v) MechagonAndNazjatar.addon.db.profile[info.arg] = v; MechagonAndNazjatar.addon:Refresh() end,
+    get = function(info) return HandyNotes_MechagonAndNazjatar.db.profile[info.arg] end,
+    set = function(info, v) HandyNotes_MechagonAndNazjatar.db.profile[info.arg] = v; HandyNotes_MechagonAndNazjatar:Refresh() end,
     args = {}
 }
 
@@ -594,7 +591,7 @@ end
 function Map:prepare () end
 
 function Map:enabled (node, coord, minimap)
-    local db = MechagonAndNazjatar.addon.db
+    local db = HandyNotes_MechagonAndNazjatar.db
 
     -- Check if we've been hidden by the user
     if db.char[self.id..'_coord_'..coord] then return false end
@@ -653,7 +650,7 @@ function Node:init ()
 end
 
 function Node:display ()
-    local db = MechagonAndNazjatar.addon.db
+    local db = HandyNotes_MechagonAndNazjatar.db
     local icon = self.icon
     if type(icon) == 'string' then
         icon = MechagonAndNazjatar.icons[self.icon] or MechagonAndNazjatar.icons.default
@@ -671,7 +668,7 @@ function Node:done ()
 end
 
 function Node:enabled (map, coord, minimap)
-    local db = MechagonAndNazjatar.addon.db
+    local db = HandyNotes_MechagonAndNazjatar.db
 
     -- Minimap may be disabled for this node
     if not self.minimap and minimap then return false end
@@ -820,7 +817,7 @@ function Rare.getters:icon ()
 end
 
 function Rare:enabled (map, coord, minimap)
-    local db = MechagonAndNazjatar.addon.db
+    local db = HandyNotes_MechagonAndNazjatar.db
     if db.profile.hide_done_rare and self:done() then return false end
     if db.profile.always_show_rares then return true end
     return NPC.enabled(self, map, coord, minimap)
@@ -847,7 +844,7 @@ Treasure.scale = 1.2
 Treasure.group = "treasures"
 
 function Treasure:enabled (map, coord, minimap)
-    local db = MechagonAndNazjatar.addon.db
+    local db = HandyNotes_MechagonAndNazjatar.db
     if db.profile.always_show_treasures then return true end
     return Node.enabled(self, map, coord, minimap)
 end
@@ -934,7 +931,7 @@ function Achievement:render (tooltip)
             r, g, b = 0, 1, 0
         end
 
-        if c.note and MechagonAndNazjatar.addon.db.profile.show_notes then
+        if c.note and HandyNotes_MechagonAndNazjatar.db.profile.show_notes then
             tooltip:AddDoubleLine(ctext, c.note, r, g, b)
         else
             tooltip:AddLine(ctext, r, g, b)
@@ -1130,7 +1127,7 @@ function Transmog:render (tooltip)
     end
 
     local suffix = ' ('..L[self.slot]..')'
-    if self.note and MechagonAndNazjatar.addon.db.profile.show_notes then
+    if self.note and HandyNotes_MechagonAndNazjatar.db.profile.show_notes then
         suffix = suffix..' ('..self.note..')'
     end
 
@@ -1200,7 +1197,7 @@ function map:enabled (node, coord, minimap)
     if self.future and not node.future then return false end
     if not self.future and node.future == 1 then return false end
 
-    local profile = MechagonAndNazjatar.addon.db.profile
+    local profile = HandyNotes_MechagonAndNazjatar.db.profile
     if isinstance(node, Treasure) then
         if node.quest then return profile.chest_mech end
         return profile.locked_mech
@@ -1217,12 +1214,12 @@ end
 
 -- Listen for aura applied/removed events so we can refresh when the player
 -- enters and exits the alternate future
-MechagonAndNazjatar.addon:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED', function ()
+HandyNotes_MechagonAndNazjatar:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED', function ()
     local _,e,_,_,_,_,_,_,t,_,_,s  = CombatLogGetCurrentEventInfo()
     if (e == 'SPELL_AURA_APPLIED' or e == 'SPELL_AURA_REMOVED') and
         t == UnitName('player') and s == TIME_DISPLACEMENT then
         C_Timer.After(1, function()
-            MechagonAndNazjatar.addon:Refresh();
+            HandyNotes_MechagonAndNazjatar:Refresh();
         end);
     end
 end)
@@ -1675,7 +1672,7 @@ function map:enabled (node, coord, minimap)
     if node.icon == 'quest_yellow' then return true end
     if not self.phased and node.icon ~= 'quest_yellow' then return false end
 
-    local profile = MechagonAndNazjatar.addon.db.profile
+    local profile = HandyNotes_MechagonAndNazjatar.db.profile
     if isinstance(node, Treasure) then return profile.treasure_nazjatar end
     if isinstance(node, Rare) then return profile.rare_nazjatar end
     if isinstance(node, Supply) then return profile.supply_nazjatar end
@@ -1818,10 +1815,10 @@ nodes[11952802] = Intro({quest=55500, faction='Horde', rewards={
 
 map.intros = { Alliance = nodes[11952801], Horde = nodes[11952802] }
 
-MechagonAndNazjatar.addon:RegisterEvent('QUEST_TURNED_IN', function (_, questID)
+HandyNotes_MechagonAndNazjatar:RegisterEvent('QUEST_TURNED_IN', function (_, questID)
     if questID == 56156 or questID == 55500 then
         C_Timer.After(1, function()
-            MechagonAndNazjatar.addon:Refresh();
+            HandyNotes_MechagonAndNazjatar:Refresh();
         end);
     end
 end)
@@ -2087,13 +2084,13 @@ nodes[54894869] = Node({icon="green_egg", quest=55475, requires=55470,
 nodes[71722570] = Node({icon="green_egg", quest=55476, requires=55471,
     label=L["slimy_cocoon"], note=L["slimy_cocoon_note"], rewards=SLIME_PETS});
 
-MechagonAndNazjatar.addon:RegisterEvent('UNIT_SPELLCAST_SUCCEEDED', function (...)
+HandyNotes_MechagonAndNazjatar:RegisterEvent('UNIT_SPELLCAST_SUCCEEDED', function (...)
     -- Watch for a spellcast event that signals the slime was fed.
     -- https://www.wowhead.com/spell=293775/schleimphage-feeding-tracker
     local _, source, _, spellID = ...
     if (source == 'player' and spellID == 293775) then
         C_Timer.After(1, function()
-            MechagonAndNazjatar.addon:Refresh();
+            HandyNotes_MechagonAndNazjatar:Refresh();
         end);
     end
 end)
@@ -2149,12 +2146,12 @@ nodes[55362715] = Node({quest=56986, icon="emerald_cat", label=L["cat_figurine"]
 nodes[61641079] = Node({quest=56991, icon="emerald_cat", label=L["cat_figurine"], note=L["cat_figurine_09"]})
 nodes[38004925] = Node({quest=56989, icon="emerald_cat", label=L["cat_figurine"], note=L["cat_figurine_10"]})
 
-MechagonAndNazjatar.addon:RegisterEvent('CRITERIA_EARNED', function (...)
+HandyNotes_MechagonAndNazjatar:RegisterEvent('CRITERIA_EARNED', function (...)
     -- Watch for criteria events that signal the figurine was clicked
     local _, achievement = ...
     if achievement == 13836 then
         C_Timer.After(1, function()
-            MechagonAndNazjatar.addon:Refresh();
+            HandyNotes_MechagonAndNazjatar:Refresh();
         end);
     end
 end)

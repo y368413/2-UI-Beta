@@ -1,13 +1,9 @@
 ﻿--## Author: Demonist  ## Version: 2.2.0.1
-SubSpecGlobal = {}
 local mainFrame = nil
-
 local eventFrame = CreateFrame("Frame", "SubSpec_EventFrame", UIParent)
-eventFrame:Show()
-
+--eventFrame:Show()
 local updateTalentsFrame = CreateFrame("Frame", "SubSpec_UpdateTalentsFrame", UIParent)
-updateTalentsFrame:Show()
-
+--updateTalentsFrame:Show()
 
 local function GetCurrentTalents()
 	local ret = {}
@@ -309,7 +305,6 @@ end
 local function CreateUi()
 	mainFrame = CreateFrame("Frame", "SubSpec_MainFrame", PlayerTalentFrameTalents)
 	mainFrame:Hide()
-	SubSpecGlobal._mainFrame = mainFrame
 	
 	mainFrame.texture = mainFrame:CreateTexture(nil, "ARTWORK")
 	mainFrame.texture:SetPoint("BOTTOMLEFT")

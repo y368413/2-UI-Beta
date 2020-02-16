@@ -3,8 +3,6 @@ local M, R, U, I = unpack(ns)
 local S = M:RegisterModule("Skins")
 
 function S:OnLogin()
-	PlayerFrame:SetScale(MaoRUIPerDB["UFs"]["PlayerFrameScale"]) 
-	TargetFrame:SetScale(MaoRUIPerDB["UFs"]["PlayerFrameScale"])
    ----BOTTOM
    if MaoRUIPerDB["Skins"]["InfobarLine"] then
    local Bottomline = CreateFrame("Frame", nil, UIParent) 

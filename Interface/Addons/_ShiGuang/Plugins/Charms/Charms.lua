@@ -10,6 +10,7 @@ end)]]
 MainMenuBarArtFrame.LeftEndCap:Hide()  MainMenuBarArtFrame.RightEndCap:Hide()   
 -----------------------------------------	     随机队列倒计时    -----------------------------------------
 local timerBar = CreateFrame("StatusBar", nil, LFGDungeonReadyPopup)
+local timeLeft = 0
 timerBar:SetPoint("BOTTOM", LFGDungeonReadyPopup, "TOP", 0, 0)
 timerBar:SetSize(210, 12)
 timerBar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar", "BORDER")
@@ -21,7 +22,6 @@ timerBar:SetBackdrop({
 	insets = {left = -1, right = -1, top = -1, bottom = -1},
 })
 timerBar:Hide()
-
 timerBar.Spark = timerBar:CreateTexture(nil, "OVERLAY")
 timerBar.Spark:SetTexture"Interface\\CastingBar\\UI-CastingBar-Spark"
 timerBar.Spark:SetSize(32, 32)
@@ -34,9 +34,7 @@ timerBar.Border:SetPoint("TOP", timerBar, 0, 28)
 timerBar.Text = timerBar:CreateFontString(nil, "OVERLAY")
 timerBar.Text:SetFontObject(GameFontHighlight)
 timerBar.Text:SetPoint("CENTER", timerBar, "CENTER")
-
 timerBar:SetScript("OnUpdate", function(self, elapsed)
-	local timeLeft = 0
 	timeLeft = (timeLeft or 0) - elapsed
 	if(timeLeft <= 0) then return self:Hide() end
 	self:SetValue(timeLeft)
@@ -46,7 +44,6 @@ end)
 local LFGDungeonReadyTimeFrame = CreateFrame("Frame")
 LFGDungeonReadyTimeFrame:RegisterEvent("LFG_PROPOSAL_SHOW") 
 LFGDungeonReadyTimeFrame:SetScript("OnEvent", function(self, event, ...)
-	if (_G["BigWigsLoader"]) then return end
 	timerBar:SetMinMaxValues(0, 40)
 	timeLeft = 40
 	timerBar:Show()
@@ -150,6 +147,16 @@ end)]]
 --## Version: 1.2.0 ## Author: Crinseth
 local waitTable = {};
 local waitFrame = nil;
+local Dressingbuttons = {}
+local HIDDEN_SOURCES = {
+	[77344] = true, -- head
+	[77343] = true, -- shoulder
+	[77345] = true, -- back
+	[83202] = true, -- shirt
+	[83203] = true, -- tabard
+	[84223] = true, -- waist
+}
+
 function DressingWait(delay, func, ...)
   if(type(delay)~="number" or type(func)~="function") then
     return false;
@@ -177,37 +184,60 @@ function DressingWait(delay, func, ...)
   tinsert(waitTable,{delay,func,{...}});
   return true;
 end
-local SLOTS = {
-	"HeadSlot",
-	"ShoulderSlot",
-	"BackSlot",
-	"ChestSlot",
-	"ShirtSlot",
-	"TabardSlot",
-	"WristSlot",
-	"HandsSlot",
-	"WaistSlot",
-	"LegsSlot",
-	"FeetSlot",
-	"MainHandSlot",
-	"SecondaryHandSlot",
-}
-local HIDDEN_SOURCES = {
-	[77344] = true, -- head
-	[77343] = true, -- shoulder
-	[77345] = true, -- back
-	[83202] = true, -- shirt
-	[83203] = true, -- tabard
-	[84223] = true, -- waist
-}
-local buttons = {}
-local undressButton
-local DressUpTargetBtn
 
-local updateSlots
+-- Updates slot buttons content based on PlayerActor
+local updateSlots = function()
+    local playerActor = DressUpFrame.ModelScene:GetPlayerActor()
+    for slot, button in pairs(Dressingbuttons) do
+        local slotID, slotTexture = GetInventorySlotInfo(slot)
+		local sourceID = playerActor:GetSlotTransmogSources(slotID)
+		if sourceID == NO_TRANSMOG_SOURCE_ID or HIDDEN_SOURCES[sourceID] then
+			button.item = nil
+			button.text = nil
+			button.icon:SetTexture(slotTexture)
+			button:Disable()
+		else
+			local categoryID, appearanceID, canEnchant, icon, isCollected, link = C_TransmogCollection.GetAppearanceSourceInfo(sourceID)
+			button.item = link
+			button.text = UNKNOWN
+			button.icon:SetTexture(icon or [[Interface\Icons\INV_Misc_QuestionMark]])
+			button:Enable()
+		end
+    end
+end
+
+-- Undress button
+local undressButton = CreateFrame("Button", nil, DressUpFrame, "UIPanelButtonTemplate")
+undressButton:SetSize(80, 21)
+undressButton:SetText(CHARMS_NAKEDIZE)
+undressButton:SetPoint("BOTTOMLEFT", 6, 4)
+undressButton:SetScript("OnClick", function()
+    DressUpFrame.ModelScene:GetPlayerActor():Undress()
+    updateSlots()
+    PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK)
+end)
+
+local DressUpTargetBtn = CreateFrame("Button",nil,DressUpFrame,"UIPanelButtonTemplate") 
+DressUpTargetBtn:SetSize(80, 21)
+DressUpTargetBtn:SetText(CHARMS_TARGET)
+DressUpTargetBtn:SetPoint("LEFT", undressButton, "RIGHT", 0,0)
+DressUpTargetBtn:Disable()
+DressUpTargetBtn:SetScript("OnClick", function()
+	DressUpFrame.ModelScene:GetPlayerActor():SetModelByUnit("target", false, true)
+	updateSlots()
+end)
+DressUpTargetBtn:RegisterEvent("PLAYER_TARGET_CHANGED")
+DressUpTargetBtn:SetScript("OnEvent", function()
+	if UnitExists("target") and UnitIsPlayer("target") then
+		DressUpTargetBtn:Enable() 
+	else 
+		DressUpTargetBtn:Disable() 
+	end
+end)
+
 -- Toggle buttons visibility
 local function showButtons(show)
-    for slot, button in pairs(buttons) do
+    for slot, button in pairs(Dressingbuttons) do
         if show then
             button:Show()
         else
@@ -248,6 +278,21 @@ local buttonSizeWithPadding = buttonSize + 5
 local sideInsetLeft = 10
 local sideInsetRight = 12
 local topInset = -80
+local SLOTS = {
+	"HeadSlot",
+	"ShoulderSlot",
+	"BackSlot",
+	"ChestSlot",
+	"ShirtSlot",
+	"TabardSlot",
+	"WristSlot",
+	"HandsSlot",
+	"WaistSlot",
+	"LegsSlot",
+	"FeetSlot",
+	"MainHandSlot",
+	"SecondaryHandSlot",
+}
 -- Create item slot buttons
 for i, slot in ipairs(SLOTS) do
     local button = CreateFrame("Button", nil, DressUpFrame)
@@ -279,57 +324,7 @@ for i, slot in ipairs(SLOTS) do
     button.highlight:SetAtlas("bags-glow-white")
     button.highlight:SetBlendMode("ADD")
     button:SetHighlightTexture(button.highlight)
-    buttons[slot] = button
-end
-
--- Undress button
-undressButton = CreateFrame("Button", nil, DressUpFrame, "UIPanelButtonTemplate")
-undressButton:SetSize(80, 21)
-undressButton:SetText(CHARMS_NAKEDIZE)
-undressButton:SetPoint("BOTTOMLEFT", 6, 4)
-undressButton:SetScript("OnClick", function()
-    DressUpFrame.ModelScene:GetPlayerActor():Undress()
-    updateSlots()
-    PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK)
-end)
-
-DressUpTargetBtn = CreateFrame("Button",nil,DressUpFrame,"UIPanelButtonTemplate") 
-DressUpTargetBtn:SetSize(80, 21)
-DressUpTargetBtn:SetText(CHARMS_TARGET)
-DressUpTargetBtn:SetPoint("LEFT", undressButton, "RIGHT", 0,0)
-DressUpTargetBtn:Disable()
-DressUpTargetBtn:SetScript("OnClick", function()
-	DressUpFrame.ModelScene:GetPlayerActor():SetModelByUnit("target", false, true)
-	updateSlots()
-end)
-DressUpTargetBtn:RegisterEvent("PLAYER_TARGET_CHANGED")
-DressUpTargetBtn:SetScript("OnEvent", function()
-	if UnitExists("target") and UnitIsPlayer("target") then
-		DressUpTargetBtn:Enable() 
-	else 
-		DressUpTargetBtn:Disable() 
-	end
-end)
-
--- Updates slot buttons content based on PlayerActor
-updateSlots = function()
-    local playerActor = DressUpFrame.ModelScene:GetPlayerActor()
-    for slot, button in pairs(buttons) do
-        local slotID, slotTexture = GetInventorySlotInfo(slot)
-		local sourceID = playerActor:GetSlotTransmogSources(slotID)
-		if sourceID == NO_TRANSMOG_SOURCE_ID or HIDDEN_SOURCES[sourceID] then
-			button.item = nil
-			button.text = nil
-			button.icon:SetTexture(slotTexture)
-			button:Disable()
-		else
-			local categoryID, appearanceID, canEnchant, icon, isCollected, link = C_TransmogCollection.GetAppearanceSourceInfo(sourceID)
-			button.item = link
-			button.text = UNKNOWN
-			button.icon:SetTexture(icon or [[Interface\Icons\INV_Misc_QuestionMark]])
-			button:Enable()
-		end
-    end
+    Dressingbuttons[slot] = button
 end
 
 -- Hook onto PlayerActor creation in order to hook onto its functions
@@ -358,7 +353,7 @@ function SetupPlayerForModelScene(...)
     return resultSetupPlayerForModelScene
 end
 
-local _DressUpSources = DressUpSources
+--[[local _DressUpSources = DressUpSources
 function DressUpSources(...)
     local resultDressUpSources = _DressUpSources(...)
     DressingWait(0.1, updateSlots, nil)
@@ -377,7 +372,7 @@ local _DressUpMount = DressUpMount
 function DressUpMount(...)
     showButtons(false)
     return _DressUpMount(...)
-end
+end]]
 
 --## Title: Extended Transmog UI  ## Author: Germbread ## Version: 1.1.1
 function ExtTransmog_RebuildFrame()

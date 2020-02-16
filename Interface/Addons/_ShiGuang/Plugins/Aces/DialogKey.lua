@@ -381,7 +381,7 @@ function DialogKey:HandleKey(key)				-- Run for every key hit ever; runs ClickBu
 		end
 	end
 	
-	-- If the dialog key was pressed (default space), try to hit a bound button and if one was found, don't propagate it
+	--[[ If the dialog key was pressed (default space), try to hit a bound button and if one was found, don't propagate it
 	if key == DialogKey.db.global.keys[1] or key == DialogKey.db.global.keys[2] then
 		if DialogKey:ClickButtons() then		-- If we did hit a watched button, suppress keys for a second and don't propagate the keypress (e.g. don't jump)
 			if DialogKey.db.global.keyCooldown > 0 then
@@ -394,10 +394,10 @@ function DialogKey:HandleKey(key)				-- Run for every key hit ever; runs ClickBu
 			self:SetPropagateKeyboardInput(false)
 		else									-- If we didn't hit a button and the suppress timer isn't running, allow the keypress (e.g. jump)
 			self:SetPropagateKeyboardInput(true)
-		end
-	else										-- If the pressed button wasn't even bound to DialogKey, allow the keypress (don't handle it)
+		end]]
+	--else										-- If the pressed button wasn't even bound to DialogKey, allow the keypress (don't handle it)
 		self:SetPropagateKeyboardInput(true)
-	end
+	--end
 end
 
 function DialogKey:ClickButtons()				-- Main function to click on dialog buttons when the bound key is pressed. Return true to mark the keypress as handled and block input (like jumping)
@@ -764,7 +764,7 @@ function DialogKey:CreateOptionsFrame()		-- Constructs the options frame
 	subtitle:SetText("Version 1.7.4")
 	subtitle:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 4, -8)
 	
-	optionsContent.keybindButtons = {}
+	--[[optionsContent.keybindButtons = {}
 	
 	local button1 = CreateFrame("Button", nil, optionsContent, "UIPanelButtonTemplate")
 	button1:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 4,-64)
@@ -824,14 +824,14 @@ function DialogKey:CreateOptionsFrame()		-- Constructs the options frame
 	keybindReminder:SetText("Press any key...")
 	keybindReminder:SetPoint("LEFT", button2, "RIGHT", 4, 0)
 	keybindReminder:Hide()
-	optionsContent.keybindReminder = keybindReminder
+	optionsContent.keybindReminder = keybindReminder]]
 	
 	-- NOTE: a lot of these are reversed (option = not self:GetChecked()) because the options were originally "don't <action>" instead of "<action>"
 	-- and it's just easier to rename them and reverse than try to convert users' settings
 	
 	-- Don't click greyed-out buttons
 	local ignoreCheckbox = CreateFrame("CheckButton", "DialogKeyOptIgnore", optionsContent, "UICheckButtonTemplate")
-	ignoreCheckbox:SetPoint("TOPLEFT", button1, "BOTTOMLEFT", -3, -20)
+	ignoreCheckbox:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 3,-26)
 	_G["DialogKeyOptIgnoreText"]:SetText("忽略无法选择的选项")  --Don't try to click on greyed-out buttons
 	ignoreCheckbox:SetScript("OnShow", function(self) self:SetChecked(DialogKey.db.global.ignoreDisabledButtons) end)
 	ignoreCheckbox:SetScript("OnClick", function(self) DialogKey.db.global.ignoreDisabledButtons = self:GetChecked() end)
@@ -1132,20 +1132,20 @@ end
 
 function DialogKey:HandleKeybind(key)		-- Run for a keypress during binding mode; saves that key as the bound one
 	self.options.content.keybindButtons[self.keybindIndex]:SetText(GetBindingText(key))
-	self.db.global.keys[self.keybindIndex] = key
+	--self.db.global.keys[self.keybindIndex] = key
 	DialogKey:DisableKeybindMode()
 	
 	-- Clear this assignment from other options so you don't have both options set to SPACE or whatever; not necessary, but clean
-	for i,thiskey in pairs(self.db.global.keys) do
+	--[[for i,thiskey in pairs(self.db.global.keys) do
 		if i ~= self.keybindIndex and thiskey == key then
 			self.db.global.keys[i] = nil
 			self.options.content.keybindButtons[i]:SetText("")
 		end
-	end
+	end]]
 end
 
 function DialogKey:ClearBind(index)			-- Clears the keybind from the given binding button
-	DialogKey.db.global.keys[index] = nil
+	--DialogKey.db.global.keys[index] = nil
 	DialogKey.options.content.keybindButtons[index]:SetText("")
 end
 

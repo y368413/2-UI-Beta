@@ -1,4 +1,4 @@
-local _, ns = ...
+ï»¿local _, ns = ...
 local M, R, U, I = unpack(ns)
 local CDS = M:RegisterModule("Cooldowns")
 
@@ -32,14 +32,14 @@ local function sortByExpiration(a, b)
 	return a.endTime > b.endTime
 end
 
-local function CreateFS(frame)
+local CreateFS = function(frame)
 	local fstring = frame:CreateFontString(nil, "OVERLAY")
 	fstring:SetFont(STANDARD_TEXT_FONT,11,"OUTLINE")
 	fstring:SetShadowOffset(1, -1)
 	return fstring
 end
 
-local function UpdatePositions()
+local UpdatePositions = function()
 		for i = 1, #bars do
 			bars[i]:ClearAllPoints()
 			if i == 1 then
@@ -55,14 +55,14 @@ local function UpdatePositions()
 		end
 end
 
-local function StopTimer(bar)
+local StopTimer = function(bar)
 	bar:SetScript("OnUpdate", nil)
 	bar:Hide()
 	tremove(bars, bar.id)
 	UpdatePositions()
 end
 
-local function UpdateCharges(bar)
+local UpdateCharges = function(bar)
 	local curCharges, maxCharges, start, duration = GetSpellCharges(20484)
 	if curCharges == maxCharges then
 		bar.startTime = 0
@@ -77,7 +77,7 @@ local function UpdateCharges(bar)
 	end
 end
 
-local function BarUpdate(self)
+local BarUpdate = function(self)
 	local curTime = GetTime()
 	if self.endTime < curTime then
 			StopTimer(self)
@@ -86,7 +86,7 @@ local function BarUpdate(self)
 	self.right:SetText(FormatTime(self.endTime - curTime))
 end
 
-local function OnEnter(self)
+local OnEnter = function(self)
 	GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 	GameTooltip:SetSpellByID(self.spellId)
 	GameTooltip:AddLine(" ")
@@ -95,11 +95,26 @@ local function OnEnter(self)
 	GameTooltip:Show()
 end
 
-local function OnLeave(self)
+local OnLeave = function()
 	GameTooltip:Hide()
 end
 
-local function OnMouseDown(self, button)
+local CheckChat = function(warning)
+	if IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
+		return "INSTANCE_CHAT"
+	elseif IsInRaid(LE_PARTY_CATEGORY_HOME) then
+		if warning and (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player") or IsEveryoneAssistant()) then
+			return "RAID_WARNING"
+		else
+			return "RAID"
+		end
+	elseif IsInGroup(LE_PARTY_CATEGORY_HOME) then
+		return "PARTY"
+	end
+	return "SAY"
+end
+
+local OnMouseDown = function(self, button)
 	if button == "LeftButton" then
 			SendChatMessage(sformat("%s - %s: %s", self.name, GetSpellLink(self.spellId), self.right:GetText()), CheckChat())
 	elseif button == "RightButton" then
@@ -107,7 +122,7 @@ local function OnMouseDown(self, button)
 	end
 end
 
-local function CreateBar()
+local CreateBar = function()
 	local bar = CreateFrame("Statusbar", nil, UIParent)
 	bar:SetFrameStrata("MEDIUM")
 	bar:SetSize(raidcd_width, raidcd_height)
@@ -145,7 +160,7 @@ local function CreateBar()
 	return bar
 end
 
-local function StartTimer(name, spellId)
+local StartTimer = function(name, spellId)
 	local spell, _, icon = GetSpellInfo(spellId)
 	for _, v in pairs(bars) do
 		if v.name == name and v.spell == spell then
@@ -184,7 +199,7 @@ local function StartTimer(name, spellId)
 	UpdatePositions()
 end
 
-local function OnEvent(self, event)
+local OnEvent = function(self, event)
 	if event == "PLAYER_ENTERING_WORLD" or event == "ZONE_CHANGED_NEW_AREA" then
 		if select(2, IsInInstance()) == "raid" and IsInGroup() then
 			self:RegisterEvent("SPELL_UPDATE_CHARGES")
@@ -225,10 +240,7 @@ local function OnEvent(self, event)
 end
 
 for spell in pairs(R.RaidSpells) do
-	local name = GetSpellInfo(spell)
-	if not name then
-		print("|cffff0000XXX ¡ú ["..tostring(spell).."]|r")
-	end
+	if not GetSpellInfo(spell) then print("|cffff0000XXX â†’ ["..tostring(spell).."]|r") end
 end
 
 function CDS:RaidCD()

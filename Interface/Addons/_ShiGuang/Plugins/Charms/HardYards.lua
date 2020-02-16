@@ -1,13 +1,10 @@
-﻿-- Globals
-----------
+﻿-- Globals ----------
 HardYards_min, HardYards_max = 0, 0
 
--- Localisation Optimisation - Lua
-----------------------------------
+-- Localisation Optimisation - Lua ----------------------------------
 local modf, random, gmatch, lower, match, sub, tonumber, tostring  = math.modf, random, string.gmatch, string.lower, string.match, string.sub, tonumber, tostring
 
--- Preset Ranges
-----------------
+-- Preset Ranges ----------------
 local hy_rangeItems = {
 	35278,	-- 80:	Reinforced Net
 	41265,	-- 70:	Eyesore Blaster
@@ -44,83 +41,69 @@ local hy_rangeAlt = {
 	["33278"] = 34368,	-- 8:  Attuned Crystal Cores
 }
 
--- Colour Scheme
-----------------
+-- Colour Scheme ----------------
 local hy_colour_X11Brown		= "\124cFFA52A2A"	-- Error messages
 local hy_colour_X11Peru			= "\124cFFCD853F"	-- Debug messages
 local hy_colour_numbers			= "\124cFFF4A460"	-- Highlight and warning messages
 local hy_colour_arrows			= "\124cFFDEB887"	-- Plain text
 local hy_colour_label			= "\124cFFD2691E"	-- HardYards chat line prefix
--- Locals
----------
-local hy_on = true
 local hy_range = ""
 --========================================================================================================================================--
-local function round( num, places )		-- round to nearest integer, ties round away from zero
-	local mult = 10 ^ ( places or 0 )
-	return modf( num * mult + ( ( num < 0 and -1 ) or 1 ) * 0.5 ) / mult
-end
-
-local function printHY( message )
-	DEFAULT_CHAT_FRAME:AddMessage( "\124".. HardYards_TITLE.. "\124cFFDEB887".. message.. "\124r" )
-end
-
 local function HardYards_SetSize()
-	HardYards.rangeText:SetTextHeight( ShiGuangPerDB.HardYardssize )
+	HardYards.rangeText:SetTextHeight(ShiGuangPerDB.HardYardssize)
 	HardYards.rangeText:ClearAllPoints()
-	HardYards.rangeText:SetPoint( "CENTER", ShiGuangPerDB.HardYardssize/30, -( ShiGuangPerDB.HardYardssize/10 ) )
+	HardYards.rangeText:SetPoint("CENTER", ShiGuangPerDB.HardYardssize/30, -(ShiGuangPerDB.HardYardssize/10))
 end
 
-local function SetLocalsFromDB( databaseEntity )
-	if ( databaseEntity == "arrows" ) then
-		hy_colour_arrows = "\124c".. format( "FF%02x%02x%02x",  ShiGuangPerDB.HardYardsarrows.r * 255, ShiGuangPerDB.HardYardsarrows.g * 255, ShiGuangPerDB.HardYardsarrows.b * 255 )
-	elseif ( databaseEntity == "numbers" ) then
-		hy_colour_numbers = "\124c".. format( "FF%02x%02x%02x", ShiGuangPerDB.HardYardsnumbers.r * 255, ShiGuangPerDB.HardYardsnumbers.g * 255, ShiGuangPerDB.HardYardsnumbers.b * 255 )
-	elseif ( databaseEntity == "label" ) then
-		hy_colour_label = "\124c".. format( "FF%02x%02x%02x", ShiGuangPerDB.HardYardslabel.r * 255, ShiGuangPerDB.HardYardslabel.g * 255, ShiGuangPerDB.HardYardslabel.b * 255 )
+local function SetLocalsFromDB(databaseEntity)
+	if (databaseEntity == "arrows") then
+		hy_colour_arrows = "\124c".. format("FF%02x%02x%02x",  ShiGuangPerDB.HardYardsarrows.r * 255, ShiGuangPerDB.HardYardsarrows.g * 255, ShiGuangPerDB.HardYardsarrows.b * 255)
+	elseif (databaseEntity == "numbers") then
+		hy_colour_numbers = "\124c".. format("FF%02x%02x%02x", ShiGuangPerDB.HardYardsnumbers.r * 255, ShiGuangPerDB.HardYardsnumbers.g * 255, ShiGuangPerDB.HardYardsnumbers.b * 255)
+	elseif (databaseEntity == "label") then
+		hy_colour_label = "\124c".. format("FF%02x%02x%02x", ShiGuangPerDB.HardYardslabel.r * 255, ShiGuangPerDB.HardYardslabel.g * 255, ShiGuangPerDB.HardYardslabel.b * 255)
 	end
 end
 
-local function ColourPicker( databaseEntity )
+local function ColourPicker(databaseEntity)
 	ColorPickerFrame.originalColours = { ShiGuangPerDB[ databaseEntity ].r, ShiGuangPerDB[ databaseEntity ].g, ShiGuangPerDB[ databaseEntity ].b }
 	ColorPickerFrame.func = function()
 		local rNew, gNew, bNew = ColorPickerFrame:GetColorRGB()
+		local mult = 10 ^ (3 or 0)
 		ShiGuangPerDB[ databaseEntity ].r, ShiGuangPerDB[ databaseEntity ].g, ShiGuangPerDB[ databaseEntity ].b = rNew, gNew, bNew
-		ShiGuangPerDB[ databaseEntity ].r = round( ShiGuangPerDB[ databaseEntity ].r, 3)
-		ShiGuangPerDB[ databaseEntity ].g = round( ShiGuangPerDB[ databaseEntity ].g, 3)
-		ShiGuangPerDB[ databaseEntity ].b = round( ShiGuangPerDB[ databaseEntity ].b, 3)
-		SetLocalsFromDB( databaseEntity )
+		ShiGuangPerDB[ databaseEntity ].r = modf(ShiGuangPerDB[databaseEntity].r * mult + ((ShiGuangPerDB[databaseEntity].r < 0 and -1) or 1) * 0.5) / mult
+		ShiGuangPerDB[ databaseEntity ].g = modf(ShiGuangPerDB[databaseEntity].g * mult + ((ShiGuangPerDB[databaseEntity].g < 0 and -1) or 1) * 0.5) / mult
+		ShiGuangPerDB[ databaseEntity ].b = modf(ShiGuangPerDB[databaseEntity].b * mult + ((ShiGuangPerDB[databaseEntity].b < 0 and -1) or 1) * 0.5) / mult
+		SetLocalsFromDB(databaseEntity)
 	end
-	if ( ShiGuangPerDB[ databaseEntity ].r == 0 ) and ( ShiGuangPerDB[ databaseEntity ].g == 0 ) and ( ShiGuangPerDB[ databaseEntity ].b == 0 ) then
-		ColorPickerFrame:SetColorRGB( 0.004, 0.004, 0.004 )
+	if (ShiGuangPerDB[ databaseEntity ].r == 0) and (ShiGuangPerDB[ databaseEntity ].g == 0) and (ShiGuangPerDB[ databaseEntity ].b == 0) then
+		ColorPickerFrame:SetColorRGB(0.004, 0.004, 0.004)
 	else
-		ColorPickerFrame:SetColorRGB( ShiGuangPerDB[ databaseEntity ].r, ShiGuangPerDB[ databaseEntity ].g, ShiGuangPerDB[ databaseEntity ].b )
+		ColorPickerFrame:SetColorRGB(ShiGuangPerDB[ databaseEntity ].r, ShiGuangPerDB[ databaseEntity ].g, ShiGuangPerDB[ databaseEntity ].b)
 	end
 	ColorPickerFrame.cancelFunc = function()
-		ShiGuangPerDB[ databaseEntity ].r, ShiGuangPerDB[ databaseEntity ].g, ShiGuangPerDB[ databaseEntity ].b = unpack( ColorPickerFrame.originalColours )
-		SetLocalsFromDB( databaseEntity )
+		ShiGuangPerDB[ databaseEntity ].r, ShiGuangPerDB[ databaseEntity ].g, ShiGuangPerDB[ databaseEntity ].b = unpack(ColorPickerFrame.originalColours)
+		SetLocalsFromDB(databaseEntity)
 	end
 	ColorPickerFrame:Show()
 end
 
-local between, missed, furthest = "", 0, 0
-
-local function DoTheHardYards( unitID, actualTarget )
-	between, missed, furthest, result = hy_colour_arrows.. " - ".. hy_colour_numbers, 0, 0, false
+local function DoTheHardYards(unitID, actualTarget)
+	local missed, furthest, result = 0, 0, false
 	for i=1,#hy_rangeItems do
 		result = false
 		if hy_rangeItems[i] < 10 then
-			result = CheckInteractDistance( unitID, hy_rangeItems[i] ) or 0
+			result = CheckInteractDistance(unitID, hy_rangeItems[i]) or 0
 		else
-			result = IsItemInRange( hy_rangeItems[i], unitID )
+			result = IsItemInRange(hy_rangeItems[i], unitID)
 		end
-		if ( result == nil ) then
-			local v = tostring( hy_rangeItems[i] )
+		if (result == nil) then
+			local v = tostring(hy_rangeItems[i])
 			if hy_rangeAlt[v] then
 				if hy_rangeAlt[v] < 10 then
-					result = CheckInteractDistance( unitID, hy_rangeAlt[v] ) or 0
+					result = CheckInteractDistance(unitID, hy_rangeAlt[v]) or 0
 				else
-					result = IsItemInRange( hy_rangeAlt[v], unitID )
+					result = IsItemInRange(hy_rangeAlt[v], unitID)
 				end
 			end
 		end
@@ -136,172 +119,153 @@ local function DoTheHardYards( unitID, actualTarget )
 
 	if furthest == #hy_rangeMax then
 		hy_range = hy_colour_numbers.. ""
-		if ( actualTarget == true ) then
+		if (actualTarget == true) then
 			HardYards_min = 0
 			HardYards_max = 5
 		end
 	elseif furthest > 0 then
 		if missed > 0 then
-			hy_range = hy_colour_numbers.. hy_rangeMin[ missed ].. between.. hy_rangeMax[ furthest ]
-			if ( actualTarget == true ) then
-				HardYards_min = tonumber( hy_rangeMin[ missed ] )
-				HardYards_max = tonumber( hy_rangeMax[ furthest ] )
+			hy_range = hy_colour_numbers.. hy_rangeMin[ missed ].. hy_colour_arrows.. " - ".. hy_colour_numbers.. hy_rangeMax[ furthest ]
+			if (actualTarget == true) then
+				HardYards_min = tonumber(hy_rangeMin[ missed ])
+				HardYards_max = tonumber(hy_rangeMax[ furthest ])
 			end
 		else
-			hy_range = hy_colour_numbers.. hy_rangeMin[ furthest ].. between.. hy_rangeMax[ furthest ]
-			if ( actualTarget == true ) then
-				HardYards_min = tonumber( hy_rangeMin[ furthest ] )
-				HardYards_max = tonumber( hy_rangeMax[ furthest ] )
+			hy_range = hy_colour_numbers.. hy_rangeMin[ furthest ].. hy_colour_arrows.. " - ".. hy_colour_numbers.. hy_rangeMax[ furthest ]
+			if (actualTarget == true) then
+				HardYards_min = tonumber(hy_rangeMin[ furthest ])
+				HardYards_max = tonumber(hy_rangeMax[ furthest ])
 			end
 		end
 	elseif missed > 0 then
-		hy_range = hy_colour_numbers.. hy_rangeMin[ missed ].. between.. "80+"
-		if ( actualTarget == true ) then
-			HardYards_min = tonumber( hy_rangeMin[ missed ] )
+		hy_range = hy_colour_numbers.. hy_rangeMin[ missed ].. hy_colour_arrows.. " - ".. hy_colour_numbers.. "80+"
+		if (actualTarget == true) then
+			HardYards_min = tonumber(hy_rangeMin[ missed ])
 			HardYards_max = -1
 		end
 	else
 		hy_range = hy_colour_numbers.. "80+"
-		if ( actualTarget == true ) then
+		if (actualTarget == true) then
 			HardYards_min = -1
 			HardYards_max = -1
 		end
 	end
 end
 
-local function ShowTheHardYards()
-	HardYards.rangeText:SetText( hy_range )
-	HardYards.rangeText:SetTextColor( nil,nil,nil,1 )
-	local width, height = HardYards.rangeText:GetWidth(), HardYards.rangeText:GetHeight()
-	HardYards:SetSize( width*1.2, height*1.3 )
-end
+--------------------------------------------------------------------------------------------------------------------------------------------
+local HardYards = CreateFrame("Frame", "HardYards", UIParent)
+HardYards:RegisterEvent("PLAYER_LOGIN")
+HardYards:SetScript("OnEvent", function(self, event)
+	if (event == "PLAYER_LOGIN") then
+	if (ShiGuangPerDB.HardYardsshow == nil)		then 	ShiGuangPerDB.HardYardsshow	=	true 	end
+	if (ShiGuangPerDB.HardYardsarrows == nil)	then 	ShiGuangPerDB.HardYardsarrows	=	{} 	end	-- X11BurlyWood DEB887
+	if (ShiGuangPerDB.HardYardsarrows.r == nil)	then 	ShiGuangPerDB.HardYardsarrows.r	=	0.87 	end
+	if (ShiGuangPerDB.HardYardsarrows.g == nil)	then 	ShiGuangPerDB.HardYardsarrows.g	=	0.72 	end
+	if (ShiGuangPerDB.HardYardsarrows.b == nil)	then 	ShiGuangPerDB.HardYardsarrows.b	=	0.53 	end
+	if (ShiGuangPerDB.HardYardsnumbers == nil)	then 	ShiGuangPerDB.HardYardsnumbers	=	{} 	end	-- X11SandyBrown F4A460
+	if (ShiGuangPerDB.HardYardsnumbers.r == nil)	then 	ShiGuangPerDB.HardYardsnumbers.r	=	0.96 	end
+	if (ShiGuangPerDB.HardYardsnumbers.g == nil)	then 	ShiGuangPerDB.HardYardsnumbers.g	=	0.64 	end
+	if (ShiGuangPerDB.HardYardsnumbers.b == nil)	then 	ShiGuangPerDB.HardYardsnumbers.b	=	0.38 	end
+	if (ShiGuangPerDB.HardYardslabel == nil)		then 	ShiGuangPerDB.HardYardslabel	=	{} 	end	-- X11Chocolate D2691E
+	if (ShiGuangPerDB.HardYardslabel.r == nil)	then 	ShiGuangPerDB.HardYardslabel.r	=	0.82 	end
+	if (ShiGuangPerDB.HardYardslabel.g == nil)	then 	ShiGuangPerDB.HardYardslabel.g	=	0.41 	end
+	if (ShiGuangPerDB.HardYardslabel.b == nil)	then 	ShiGuangPerDB.HardYardslabel.b	=	0.12 	end
+	if (ShiGuangPerDB.HardYardssize == nil)		then 	ShiGuangPerDB.HardYardssize	=	26 	end
 
-local function HardYards_OnUpdate()
-	if UnitExists( "target" ) then
-		DoTheHardYards( "target", true )
-		if ( ShiGuangPerDB.HardYardsshow == true ) then
-			ShowTheHardYards()
-		end
-	else
-		if HardYards.rangeText then
-		  HardYards.rangeText:SetTextColor( nil,nil,nil,0 )
-		else
-		  return
-		end
-	end
-end
+	SetLocalsFromDB("arrows")
+	SetLocalsFromDB("numbers")
+	SetLocalsFromDB("label")
 
-local function PlayerLogin( self )
-	if ( ShiGuangPerDB.HardYardsshow == nil )		then 	ShiGuangPerDB.HardYardsshow	=	true 	end
-	if ( ShiGuangPerDB.HardYardsarrows == nil )	then 	ShiGuangPerDB.HardYardsarrows	=	{} 	end	-- X11BurlyWood DEB887
-	if ( ShiGuangPerDB.HardYardsarrows.r == nil )	then 	ShiGuangPerDB.HardYardsarrows.r	=	0.87 	end
-	if ( ShiGuangPerDB.HardYardsarrows.g == nil )	then 	ShiGuangPerDB.HardYardsarrows.g	=	0.72 	end
-	if ( ShiGuangPerDB.HardYardsarrows.b == nil )	then 	ShiGuangPerDB.HardYardsarrows.b	=	0.53 	end
-	if ( ShiGuangPerDB.HardYardsnumbers == nil )	then 	ShiGuangPerDB.HardYardsnumbers	=	{} 	end	-- X11SandyBrown F4A460
-	if ( ShiGuangPerDB.HardYardsnumbers.r == nil )	then 	ShiGuangPerDB.HardYardsnumbers.r	=	0.96 	end
-	if ( ShiGuangPerDB.HardYardsnumbers.g == nil )	then 	ShiGuangPerDB.HardYardsnumbers.g	=	0.64 	end
-	if ( ShiGuangPerDB.HardYardsnumbers.b == nil )	then 	ShiGuangPerDB.HardYardsnumbers.b	=	0.38 	end
-	if ( ShiGuangPerDB.HardYardslabel == nil )		then 	ShiGuangPerDB.HardYardslabel	=	{} 	end	-- X11Chocolate D2691E
-	if ( ShiGuangPerDB.HardYardslabel.r == nil )	then 	ShiGuangPerDB.HardYardslabel.r	=	0.82 	end
-	if ( ShiGuangPerDB.HardYardslabel.g == nil )	then 	ShiGuangPerDB.HardYardslabel.g	=	0.41 	end
-	if ( ShiGuangPerDB.HardYardslabel.b == nil )	then 	ShiGuangPerDB.HardYardslabel.b	=	0.12 	end
-	if ( ShiGuangPerDB.HardYardssize == nil )		then 	ShiGuangPerDB.HardYardssize	=	26 	end
-
-	SetLocalsFromDB( "arrows" )
-	SetLocalsFromDB( "numbers" )
-	SetLocalsFromDB( "label" )
-
-	HardYards:SetFrameStrata( "BACKGROUND" )
-	HardYards:SetClampedToScreen( true )
-	HardYards:EnableMouse( false )
-	HardYards:SetMovable( true )
+	HardYards:SetFrameStrata("BACKGROUND")
+	HardYards:SetClampedToScreen(true)
+	HardYards:EnableMouse(false)
+	HardYards:SetMovable(true)
 	HardYards:ClearAllPoints()
 	if ShiGuangPerDB.HardYardsx and ShiGuangPerDB.HardYardsy then
-		HardYards:SetPoint( "TOPLEFT", ShiGuangPerDB.HardYardsx, -( UIParent:GetHeight() - ShiGuangPerDB.HardYardsy ) )
+		HardYards:SetPoint("TOPLEFT", ShiGuangPerDB.HardYardsx, -(UIParent:GetHeight() - ShiGuangPerDB.HardYardsy))
 	else
-		HardYards:SetPoint( "CENTER", 0, -( UIParent:GetHeight() / 3 ) )
+		HardYards:SetPoint("CENTER", 0, -(UIParent:GetHeight() / 3))
 	end
 
-	HardYards:SetScript( "OnMouseDown", function( self, button )
-		if ( button == "LeftButton" ) and IsShiftKeyDown() then
-			self:StartMoving()
-		end
+	HardYards:SetScript("OnMouseDown", function(self, button)
+		if (button == "LeftButton") and IsShiftKeyDown() then	self:StartMoving() end
 	end)
-	HardYards:SetScript( "OnMouseUp", function( self )
+	HardYards:SetScript("OnMouseUp", function(self)
 		self:StopMovingOrSizing()
 		ShiGuangPerDB.HardYardsx = HardYards:GetLeft()
 		ShiGuangPerDB.HardYardsy = HardYards:GetTop()
 	end)
 
-	HardYards.rangeText = HardYards:CreateFontString( nil, "OVERLAY" )
+	HardYards.rangeText = HardYards:CreateFontString(nil, "OVERLAY")
 	HardYards.rangeText:SetFont("Interface\\AddOns\\_ShiGuang\\Media\\Fonts\\Pixel.ttf", 32, "THICKOUTLINE")  -- "Fonts\\FRIZQT__.TTF", 42, "THICKOUTLINE" 
 	HardYards_SetSize()
 
-	faction = UnitFactionGroup( "player" )
-end
-
---------------------------------------------------------------------------------------------------------------------------------------------
-
-local function HardYards_OnEvent( self, event, parm1 )
-	if ( event == "PLAYER_LOGIN" ) then
-		PlayerLogin( self )
+	faction = UnitFactionGroup("player")
 	end
-end
-local HardYards = CreateFrame( "Frame", "HardYards", UIParent )
-HardYards:RegisterEvent( "PLAYER_LOGIN" )
-HardYards:SetScript( "OnEvent", HardYards_OnEvent )
-HardYards:SetScript( "OnUpdate", HardYards_OnUpdate )
+end)
+HardYards:SetScript("OnUpdate", function()
+	if UnitExists("target") then
+		DoTheHardYards("target", true)
+		if (ShiGuangPerDB.HardYardsshow == true) then
+			HardYards.rangeText:SetText(hy_range)
+			HardYards.rangeText:SetTextColor(nil,nil,nil,1)
+			HardYards:SetSize(HardYards.rangeText:GetWidth()*1.2, HardYards.rangeText:GetHeight()*1.3)
+		end
+	else
+		if HardYards.rangeText then
+		  HardYards.rangeText:SetTextColor(nil,nil,nil,0)
+		else
+		  return
+		end
+	end
+end)
 
 --------------------------------------------------------------------------------------------------------------------------------------------
-SLASH_HardYards1, SLASH_HardYards2, SLASH_HardYards3, SLASH_HardYards4 = "/hardyards", "/hard", "/yards", "/hy"
+SLASH_HardYards1 = "/hardyards"
 --------------------------------------------------------------------------------------------------------------------------------------------
-
-local soundkitHandle = nil
-SlashCmdList[ "HardYards" ] = function( options )
+SlashCmdList[ "HardYards" ] = function(options)
 	local firstParm, firstParm3, secondParm, secondParm3, thirdParm, thirdParm3, fourthParm, fourthParm3
-	for v in gmatch( options, "%S+" ) do
-		v = lower( v )
+	for v in gmatch(options, "%S+") do
+		v = lower(v)
 		if not firstParm3 then
 			firstParm = v
-			firstParm3 = sub( v,1,3 )
+			firstParm3 = sub(v,1,3)
 		elseif not secondParm3 then
 			secondParm = v
-			secondParm3 = sub( v,1,3 )
+			secondParm3 = sub(v,1,3)
 		elseif not thirdParm3 then
 			thirdParm = v
-			thirdParm3 = sub( v,1,3 )
+			thirdParm3 = sub(v,1,3)
 		else
 			fourthParm = v
-			fourthParm3 = sub( v,1,3 )
+			fourthParm3 = sub(v,1,3)
 			break
 		end
 	end
-
-	if ( firstParm3 == "?" ) or ( firstParm3 == nil ) then
+	if (firstParm3 == "?") or (firstParm3 == nil) then
 		print("|cffCCCC88[菜单]|r距离显示 设置命令行:\n"..
 		  hy_colour_X11SandyBrown.. "/hy arr\124r = 设置“ <-> ”的颜色\n"..
 			hy_colour_X11SandyBrown.. "size n\124r = 设置大小(0-100). 栗子: '/hy siz 43'\n"..
 			hy_colour_X11SandyBrown.."show / hide\124r  = 开关距离显示\n")
-	elseif ( firstParm3 == "arr" ) then
-		if ( secondParm3 == "def" ) then
+	elseif (firstParm3 == "arr") then
+		if (secondParm3 == "def") then
 			ShiGuangPerDB.HardYardsarrows.r, ShiGuangPerDB.HardYardsarrows.g, ShiGuangPerDB.HardYardsarrows.b = 0.87, 0.72, 0.53
-			SetLocalsFromDB( "arrows" )
+			SetLocalsFromDB("arrows")
 		else
-			ColourPicker( "arrows" )
+			ColourPicker("arrows")
 		end
-	elseif ( firstParm3 == "siz" ) then
-		local size = tonumber( secondParm3 ) or 0
-		if ( size >= 5 ) and ( size <= 100 ) then
+	elseif (firstParm3 == "siz") then
+		local size = tonumber(secondParm3) or 0
+		if (size >= 5) and (size <= 100) then
 			ShiGuangPerDB.HardYardssize = size
 			HardYards_SetSize()
 		else
-			printHY( hy_colour_X11SandyBrown.. "<错误>: ".. hy_colour_X11BurlyWood.. "设置数值必须是0-100之间任意数值" )
+			DEFAULT_CHAT_FRAME:AddMessage("\124".. HardYards_TITLE.. "\124cFFDEB887".. hy_colour_X11SandyBrown.. "<错误>: ".. hy_colour_X11BurlyWood.. "设置数值必须是0-100之间任意数值".. "\124r")
 		end
-	elseif ( firstParm3 == "hid" ) then
+	elseif (firstParm3 == "hid") then
 		ShiGuangPerDB.HardYardsshow = false
-		HardYards.rangeText:SetTextColor( nil,nil,nil,0 )
-	elseif ( firstParm3 == "sho" ) then
+		HardYards.rangeText:SetTextColor(nil,nil,nil,0)
+	elseif (firstParm3 == "sho") then
 		ShiGuangPerDB.HardYardsshow = true
-
 	end
 end

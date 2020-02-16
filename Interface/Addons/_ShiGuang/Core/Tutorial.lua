@@ -24,6 +24,8 @@ local function DefaultSettings()
 	--SetCVar("fstack_preferParentKeys", 0)
 	SetCVar("missingTransmogSourceInItemTooltips", 1)
 	--setglobal("MAX_EQUIPMENT_SETS_PER_PLAYER",100)
+  PlayerFrame:SetScale(MaoRUIPerDB["UFs"]["PlayerFrameScale"]) 
+	TargetFrame:SetScale(MaoRUIPerDB["UFs"]["PlayerFrameScale"])
 end
 
 local function ForceDefaultSettings()

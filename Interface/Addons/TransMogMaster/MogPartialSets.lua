@@ -32,12 +32,12 @@ function MogPartialSets:registerEvents()
 end
 
 function MogPartialSets:onAddonLoaded(loadedAddonName)
-    --if loadedAddonName == "MogPartialSets" then
+    if loadedAddonName == "TransMogMaster" then
         self:initConfiguration()
         self:prepareGlobalApiOverrides()
         self.loaded = true
         return true
-    --end
+    end
 end
 
 function MogPartialSets:prepareApiOverride(apiTable, method, identifier)

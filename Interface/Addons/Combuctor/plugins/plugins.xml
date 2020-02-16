@@ -4,5 +4,4 @@
   <Script file="Combuctor_BFA.lua"/>
   <Script file="Combuctor_Binding.lua"/>
   <Script file="Combuctor_ItemInfo.lua"/>
-  <Script file="Combuctor_RequiredLevel.lua"/>
 </Ui>

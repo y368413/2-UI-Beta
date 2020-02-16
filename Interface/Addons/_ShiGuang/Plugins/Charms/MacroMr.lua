@@ -175,23 +175,18 @@ function CreateMrMacroButton()
 	button:SetText("常用宏推荐")
 	button:SetPoint("BOTTOMRIGHT",MacroFrame,"BOTTOM",11,5)
 	button:SetScript("OnClick",function() 
-		ShowMrMacroMacroFrame()
+		if MrMacroFrame then ToggleFrame(MrMacroFrame) else CreateMrMacroFrame() end
 	end)
-	--initilize()
 end
-function ShowMrMacroMacroFrame()
-	if MrMacroFrame then ToggleFrame(MrMacroFrame)
-	else CreateMrMacroFrame()
-	end
-end
+
 function CreateMrMacroFrame()
 	local f = CreateFrame("Frame","MrMacroFrame",MacroFrame,"ButtonFrameTemplate")
 	f:SetSize(330,420)
 	f:SetPoint("LEFT",MacroFrame,"RIGHT",10,0)
 	f:RegisterForDrag("LeftButton")
 	f:EnableMouse(true)
-	f:SetScript("OnDragStart",function(self) MacroFrame:StartMoving()end)
-	f:SetScript("OnDragStop",function(self) MacroFrame:StopMovingOrSizing() end)
+	--f:SetScript("OnDragStart",function(self) MacroFrame:StartMoving()end)
+	--f:SetScript("OnDragStop",function(self) MacroFrame:StopMovingOrSizing() end)
 	f:SetScript("OnShow",MrMacroShowMacro)
 
 	MrMacroFramePortrait:SetTexture("Interface\\MacroFrame\\MacroFrame-Icon")

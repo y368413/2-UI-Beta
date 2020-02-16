@@ -26,13 +26,6 @@ for i,v in ipairs(affixScheduleText) do
 	affixSchedule[i] = { affixScheduleKeys[v[1]], affixScheduleKeys[v[2]], affixScheduleKeys[v[3]] }
 end
 
-local seasonAffix = 119
-local beguilingInfo = {
-	[1] = 132886,
-	[2] = 132315,
-	[3] = 135735,
-}
-
 local affixScheduleUnknown = false
 local currentWeek
 local currentKeystoneMapID
@@ -83,6 +76,10 @@ local function UpdatePartyKeystones()
 					entry.Text:SetText(name)
 					entry.Text:SetTextColor(color:GetRGBA())
 
+					local _, suffix = strsplit("-", keystoneName)
+					if suffix then
+						keystoneName = suffix
+					end
 					entry.Text2:SetText(keystoneName)
 
 					e = e + 1
@@ -140,11 +137,6 @@ local function UpdateFrame()
 				local affix = entry.Affixes[j]
 				affix:SetUp(affixes[j])
 			end
-
-			entry.Affixes[4]:SetUp(seasonAffix)
-			local beguilingWeek = scheduleWeek%3
-			if beguilingWeek == 0 then beguilingWeek = 3 end
-			entry.Affixes[4].Portrait:SetTexture(beguilingInfo[beguilingWeek])
 		end
 		Mod.AffixFrame.Label:Hide()
 	else
@@ -212,7 +204,7 @@ function Mod:Blizzard_ChallengesUI()
 
 		local affixes = {}
 		local prevAffix
-		for j = 4, 1, -1 do
+		for j = 3, 1, -1 do
 			local affix = makeAffix(entry)
 			if prevAffix then
 				affix:SetPoint("RIGHT", prevAffix, "LEFT", -4, 0)

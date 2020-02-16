@@ -88,6 +88,7 @@ local defaults = {
         append = true,
         summary = true,
         english = false,
+        icon = true,
     }
 }
 
@@ -147,6 +148,7 @@ function CorruptionTooltips:GetCorruption(bonuses)
     end
 end
 
+
 function CorruptionTooltips:CreateTooltip(tooltip)
 	local name, item = tooltip:GetItem()
   	if not name then return end
@@ -160,7 +162,10 @@ function CorruptionTooltips:CreateTooltip(tooltip)
 		if corruption then
 			local name = corruption[1]
 			local icon = corruption[2]
-			local line = '|T'..icon..':12:12:0:0|t '.."|cff956dd1"..name.."|r"
+            local line = '|T'..icon..':0|t '..'|cff956dd1'..name..'|r'
+            if defaults.profile.icon ~= true then
+                line = '|cff956dd1'..name..'|r'
+            end
 			if CorruptionTooltips:Append(tooltip, line) ~= true then
                 --tooltip:AddLine(" ")
                 tooltip:AddLine(line)
@@ -223,7 +228,11 @@ function CorruptionTooltips:SummaryHook(frame)
             for i=1, #corruptions do
                 local name = corruptions[i][1]
                 local icon = corruptions[i][2]
-                local line = '|T'..icon..':12:12:0:0|t '.."|cff956dd1"..name.."|r"
+                local line = '|T'..icon..':0|t '..'|cff956dd1'..name..'|r'
+                if defaults.profile.icon ~= true then
+                    line = '|cff956dd1'..name..'|r'
+                end
+
                 if buckets[name] == nil then
                     buckets[name] = {
                         1,
@@ -235,7 +244,7 @@ function CorruptionTooltips:SummaryHook(frame)
             end
             table.sort(buckets)
             for name, _ in pairs(buckets) do
-                GameTooltip:AddLine("  |cff956dd1"..buckets[name][2]..buckets[name][1]..' x '.."|r")
+                GameTooltip:AddLine("  |cff956dd1"..buckets[name][2]..' x '..buckets[name][1].."|r")
             end
             GameTooltip:Show()
         end

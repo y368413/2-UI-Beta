@@ -155,9 +155,9 @@ local configDefaults = {
 	hideFilteredPOI = true,
 	showContinentPOI = false,
 	showComparisonRight = false,
-	sortMethod = 1,
+	sortMethod = 2,
 	extendedInfo = false,
-	saveFilters = false,
+	saveFilters = true,
 }
 
 local FiltersConversion = { EMISSARY = 1, ARTIFACT_POWER = 2, LOOT = 3, ORDER_RESOURCES = 4, GOLD = 5, ITEMS = 6, TIME = 7, FACTION = 8, PVP = 9, PROFESSION = 10, PETBATTLE = 11, SORT = 12, TRACKED = 13, ZONE = 14, RARE = 15, DUNGEON = 16, WAR_SUPPLIES = 17, NETHERSHARD = 18, VEILED_ARGUNITE = 19, WAKENING_ESSENCE = 20, AZERITE = 21, WAR_RESOURCES = 22 }
@@ -550,7 +550,7 @@ function Config:BeforeStartup()
 end
 
 function Config:Startup()
-	local lastFilter = ShiGuangDB['__AngryWorldQuestsFilters'] or 22
+	local lastFilter = ShiGuangDB['__AngryWorldQuestsFilters'] or 0
 	local value = ShiGuangDB['AngryWorldQuestsDisabledFilters'] or 0
 	local maxFilter = 0
 	for key,index in pairs(FiltersConversion) do

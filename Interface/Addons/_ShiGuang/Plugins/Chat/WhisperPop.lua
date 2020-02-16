@@ -141,7 +141,7 @@ end
 -- Tip frame
 local tipFrame = CreateFrame("Button", "WhisperPopTipFrame", UIParent)
 WhisperPop.tipFrame = tipFrame
---SetFrameMobile(tipFrame)
+SetFrameMobile(tipFrame)
 --tipFrame:SetParent(chatbar)
 if GetCVar("portal") == "CN" then
 tipFrame:SetPoint("BOTTOMLEFT", UIParent,"BOTTOMLEFT",285, 2)

@@ -275,15 +275,6 @@ InboxMailBag_RETURNED_1 = "%s 从 %s |cffFF2020 将返回于 %s 后|r";
 InboxMailBag_RETURNED_7 = "%s 从 %s |cffFFA020 将返回于 %d |4日:日; 后|r";
 InboxMailBag_TOTAL = "总计讯息: %d";
 InboxMailBag_TOTAL_MORE = "总计讯息: %d (%d)";
-----------------GRIDCLICKSETS----------------------
-GRIDCLICKSETS_MENUNAME = "点击施法设置";
-GRIDCLICKSETS_MENUTIP = "设置血条按钮的点击动作, 例如施法, 协助等.";
-GRIDCLICKSETS_TITLE = "点击施法设置";
-GRIDCLICKSETS_LOCKWARNING = "战斗中无法设置按钮属性, 设置已保存, 脱离战斗后自动生效。";
-GRIDCLICKSETS_SET = "团框点击施法已更新设置。";
-GRIDCLICKSETS_SET_WHEEL_UP = "上滚";
-GRIDCLICKSETS_SET_WHEEL_DOWN = "下滚";
-GRIDCLICKSETS_SET_RESET_WARNING = "当前专精的设置将全部重置且无法恢复！";
 ----------------CurrencyTracking----------------------
 CurrencyTracking_Notes = "|cff00CC33追踪所有获取的通货，并显示在游戏画面上|r";
 CurrencyTracking_Elemental = "元素";
@@ -374,6 +365,7 @@ U["QuestTrackerSkinTitle"] = "任务栏职业染色"
 U["Auto Reagent Bank"] = "材料自动存银行"
 U["Auto Mark"] = "自动标记 T N"
 U["Font Outline"] = "聊天框字体描边"
+U["HunterPetHelp"] = "宠物低血量报警"
 
 U["DefaultScaleName_Default"] = "默认"
 U["DefaultScaleName_Defensive"] = "防御"
@@ -544,7 +536,7 @@ U["Drog"] = "药剂"
 U["ClassBar"] = "职业条"
 U["Absorb"] = "吸收"
 U["Shield"] = "盾牌"
-
+--------------------------------------------------------------------------------------------------ND
 
 U["From"] = "来自"
 U["Tell"] = "告诉"

@@ -42,7 +42,7 @@ end
 local function toggleExtraGUI(name)
 	for _, frame in next, extraGUIs do
 		if frame:GetName() == name then
-			ToggleFrame(frame)
+			M:TogglePanel(frame)
 		else
 			frame:Hide()
 		end

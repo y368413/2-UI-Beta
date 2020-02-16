@@ -318,6 +318,7 @@ local defaultSettings = {
 		RaidCD = true,
 		PulseCD = true,
 		SorasThreat = true,
+		HunterPetHelp = true,
 	},
 	Tutorial = {
 		Complete = false,
@@ -742,8 +743,7 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		--{1, "Auras", "ClassRecourePlace", U["Class Recoure Center"], true},
 		{1, "Misc", "RaidCD", U["Raid CD"]},
 		{1, "Misc", "PulseCD", U["Pulse CD"], true},
-		{1, "Auras", "Reminder", U["Enable Reminder"].."*", true, true, nil, updateReminder},
-		{},--blank		
+		{1, "Auras", "Reminder", U["Enable Reminder"].."*", true, true, nil, updateReminder},		
 		--{1, "UFs", "Castbars", "|cff00cc4c"..U["UFs Castbar"], false, false, setupCastbar},
 		{3, "Auras", "BuffSize", U["BuffSize"], false, false, {24, 40, 0}},
 		{3, "Auras", "DebuffSize", U["DebuffSize"], true, false, {24, 40, 0}},
@@ -868,6 +868,7 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		--{3, "Bags", "IconSize", U["Bags IconSize"], true, true, {30, 42, 0}},
 		--{3, "Bags", "BagsWidth", U["Bags Width"], true, true, {10, 20, 0}},
 		--{3, "Bags", "BankWidth", U["Bank Width"], true, true, {10, 20, 0}},
+		{1, "Misc", "HunterPetHelp", U["HunterPetHelp"]},
 	},
 	[8] = {
 		{1, "Misc", "ParagonRep", U["ParagonRep"]},
