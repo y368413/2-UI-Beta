@@ -227,7 +227,7 @@ local function comboEventFrame_OnUpdate(self, elapsed)
 		local maxPoints = UnitPowerMax("player", Enum.PowerType.ComboPoints)
 		if (self.isAlert and points ~= maxPoints) then
 			self:SetScript("OnUpdate", nil);
-			ActionButton_HideOverlayGlow(parent);
+			M.HideOverlayGlow(parent);
 			self.countTime = 0;
 		end
 		self.countTime = TOOLTIP_UPDATE_TIME;

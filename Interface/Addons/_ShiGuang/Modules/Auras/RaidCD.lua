@@ -3,7 +3,7 @@ local M, R, U, I = unpack(ns)
 local CDS = M:RegisterModule("Cooldowns")
 
 function CDS:OnLogin()
-	self:RaidCD()
+	--self:RaidCD()
 	self:PulseCD()
 	self:SorasThreat()
 end
