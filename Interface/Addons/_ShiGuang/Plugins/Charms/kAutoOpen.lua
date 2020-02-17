@@ -602,39 +602,3 @@ kAutoOpen:Register('BAG_UPDATE_DELAYED', function()
 		end
 	end
 end)
-
--------------------------------------------------------------------------------------AutoConfirmRoll
-local AutoConfirmRollRemap = {
-	CONFIRM_LOOT_ROLL = "CONFIRM_ROLL",
-	CONFIRM_DISENCHANT_ROLL = "CONFIRM_ROLL",
-	LOOT_BIND_CONFIRM = "LOOT_BIND_CONFIRM",
-}
-local AutoConfirmRoll = CreateFrame("Frame")
-function AutoConfirmRoll:OnEvent(event, ...)
- if not MaoRUIPerDB["Misc"]["AutoConfirmRoll"] then self:UnregisterAllEvents() return end
-	self[AutoConfirmRollRemap[event]](self, ...)
-end
-for k in pairs(AutoConfirmRollRemap) do AutoConfirmRoll:RegisterEvent(k) end
-AutoConfirmRoll:SetScript("OnEvent", AutoConfirmRoll.OnEvent)
-function AutoConfirmRoll:CONFIRM_ROLL(id, lootType)
-	ConfirmLootRoll(id, lootType)
-	StaticPopup_Hide("CONFIRM_LOOT_ROLL")
-end
-
-local AutoConfirmRollCheckList = {}
-function AutoConfirmRoll:OnUpdate(elapsed)
-	for slot in pairs(AutoConfirmRollCheckList) do
-		LootSlot(slot)
-		ConfirmLootSlot(slot)
-	end
-	wipe(AutoConfirmRollCheckList)
-	StaticPopup_Hide("LOOT_BIND")
-	self:SetScript("OnUpdate", nil)
-end
-function AutoConfirmRoll:LOOT_BIND_CONFIRM(slot)
-	if not AutoConfirmRollCheckList[slot] then
-		AutoConfirmRollCheckList[slot] = true
-		StaticPopup_Hide("LOOT_BIND")
-		self:SetScript("OnUpdate", self.OnUpdate)
-	end
-end

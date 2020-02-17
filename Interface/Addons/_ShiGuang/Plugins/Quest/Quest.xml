@@ -4,6 +4,7 @@
 	<Script file="Mingy.lua"/>
 	<Script file="BarrelsOEasy.lua"/>
 	<Script file="DarkmoonFaire.lua"/>
+	<Script file="Quest_Complete.lua"/>
 	<!--Script file="QuestBindings.lua"/-->
 	<Script file="AngryWorldQuest.lua"/>
 	<Script file="WorldmapRewardIcon.lua"/>

@@ -37,28 +37,6 @@ local function collectedApperance(itemLink)
 	return ScanForTransmogState(itemLink)
 end
 
--- usage:
--- local info = collectedApperance(itemLink)
--- info =
----- 1 = has collected or not available to your class (basically: no info about transmog show in the tooltip for said item)
----- 2 = has apperance from another item
----- 3 = have not collected
----- 4 = unusable transmog ??
-
-local function IsJewelery(ItemSlot)
-	if ItemSlot == "INVTYPE_NECK" or ItemSlot == "INVTYPE_TRINKET" or ItemSlot == "INVTYPE_FINGER" or ItemSlot == "INVTYPE_RELIC" then
-		--print("Is jewelery");
-		return true;
-	else
-		--print("Is NOT jewelery");
-		return false;
-	end
-end
-
-local function ItemIsBoE(ItemBoE)
-	if ItemBoE == 2 then return true; else return false; end
-end
-
 TransmogHeadsUp:SetScript("OnEvent", function(self, event, ...)
 	local message = select(1, ...);
 	local playername = select(5, ...);  	--find playername
@@ -70,12 +48,17 @@ TransmogHeadsUp:SetScript("OnEvent", function(self, event, ...)
 		local ItemBoE = select(14,GetItemInfo(itemID));
 		local ItemType = select(6,GetItemInfo(itemID));
 		local ItemSlot = select(9,GetItemInfo(itemID));
-		if not IsJewelery(ItemSlot) then  		--if its NOT jewelery
-			if ItemIsBoE(ItemBoE) then
+		if ItemSlot == "INVTYPE_NECK" or ItemSlot == "INVTYPE_TRINKET" or ItemSlot == "INVTYPE_FINGER" or ItemSlot == "INVTYPE_RELIC" then return end
+		--if not IsJewelery(ItemSlot) then  		--if its NOT jewelery
+			if ItemBoE == 2 then
 				local itemLink = select(2,GetItemInfo(itemID));         --find itemLink from ItemID
 				local itemLinkString = string.match(itemLink, "item[%-?%d:]+")
 				if not C_TransmogCollection.PlayerHasTransmog(itemID) then 
 					local info = collectedApperance(itemLinkString);
+---- 1 = has collected or not available to your class (basically: no info about transmog show in the tooltip for said item)
+---- 2 = has apperance from another item
+---- 3 = have not collected
+---- 4 = unusable transmog ??
 					if info == 3 then
 						PlaySound(4147, "Master", false);
 						--RaidNotice_AddMessage(RaidWarningFrame, "----------   "..TRANSMOGRIFY ..(itemLink or "").. "   ----------", ChatTypeInfo["RAID_WARNING"])
@@ -95,6 +78,6 @@ TransmogHeadsUp:SetScript("OnEvent", function(self, event, ...)
 					end
 				end
 			end
-		end
+		--end
 	end
 end);

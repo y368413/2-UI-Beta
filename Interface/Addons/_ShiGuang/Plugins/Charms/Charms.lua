@@ -7,7 +7,7 @@ hooksecurefunc(StaticPopupDialogs["CONFIRM_LEAVE_BATTLEFIELD"],"OnShow",function
 	if IsActiveBattlefieldArena() or GetBattlefieldWinner() then self.button1:Click() end
 end)]]
 --------------------------------------Hide the left/right end cap------------------------
-MainMenuBarArtFrame.LeftEndCap:Hide()  MainMenuBarArtFrame.RightEndCap:Hide()   
+--MainMenuBarArtFrame.LeftEndCap:Hide()  MainMenuBarArtFrame.RightEndCap:Hide()   
 -----------------------------------------	     随机队列倒计时    -----------------------------------------
 local timerBar = CreateFrame("StatusBar", nil, LFGDungeonReadyPopup)
 local timeLeft = 0

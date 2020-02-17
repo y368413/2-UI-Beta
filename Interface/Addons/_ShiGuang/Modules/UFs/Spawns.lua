@@ -282,7 +282,7 @@ function UF:OnLogin()
 				"sortMethod", sortMethod,
 				"maxColumns", 2,
 				"unitsPerColumn", 30,
-				"columnSpacing", 5,
+				"columnSpacing", 6,
 				"point", "TOP",
 				"columnAnchorPoint", "LEFT",
 				"oUF-initialConfigFunction", ([[
@@ -318,15 +318,15 @@ function UF:OnLogin()
 				"showSolo", false,
 				"showParty", not showPartyFrame,
 				"showRaid", true,
-				"xoffset", 5,
-				"yOffset", -5,
+				"xoffset", 6,
+				"yOffset", -6,
 				"groupFilter", tostring(i),
 				"groupingOrder", "1,2,3,4,5,6,7,8",
 				"groupBy", "GROUP",
 				"sortMethod", "INDEX",
 				"maxColumns", 1,
 				"unitsPerColumn", 5,
-				"columnSpacing", 5,
+				"columnSpacing", 6,
 				"point", horizonRaid and "LEFT" or "TOP",
 				"columnAnchorPoint", "LEFT",
 				"oUF-initialConfigFunction", ([[
@@ -341,13 +341,13 @@ function UF:OnLogin()
 				groups[i] = CreateGroup("oUF_Raid"..i, i)
 				if i == 1 then
 					if horizonRaid then
-						raidMover = M.Mover(groups[i], U["RaidFrame"], "RaidFrame", {"BOTTOMLEFT", UIParent, 3, 160}, (raidWidth+5)*5, (raidFrameHeight+(MaoRUIPerDB["UFs"]["ShowTeamIndex"] and 25 or 15))*numGroups)
+						raidMover = M.Mover(groups[i], U["RaidFrame"], "RaidFrame", {"BOTTOMLEFT", UIParent, 3, 160}, (raidWidth+5)*5, (raidFrameHeight+(MaoRUIPerDB["UFs"]["ShowTeamIndex"] and 21 or 12))*numGroups)
 						if reverse then
 							groups[i]:ClearAllPoints()
 							groups[i]:SetPoint("BOTTOMLEFT", raidMover)
 						end
 					else
-						raidMover = M.Mover(groups[i], U["RaidFrame"], "RaidFrame", {"BOTTOMLEFT", UIParent, 3, 160}, (raidWidth+5)*numGroups, (raidFrameHeight+10)*5)
+						raidMover = M.Mover(groups[i], U["RaidFrame"], "RaidFrame", {"BOTTOMLEFT", UIParent, 3, 160}, (raidWidth+5)*numGroups, (raidFrameHeight+8)*5)
 						if reverse then
 							groups[i]:ClearAllPoints()
 							groups[i]:SetPoint("TOPRIGHT", raidMover)
@@ -356,15 +356,15 @@ function UF:OnLogin()
 				else
 					if horizonRaid then
 						if reverse then
-							groups[i]:SetPoint("BOTTOMLEFT", groups[i-1], "TOPLEFT", 0, MaoRUIPerDB["UFs"]["ShowTeamIndex"] and 25 or 15)
+							groups[i]:SetPoint("BOTTOMLEFT", groups[i-1], "TOPLEFT", 0, MaoRUIPerDB["UFs"]["ShowTeamIndex"] and 21 or 12)
 						else
-							groups[i]:SetPoint("TOPLEFT", groups[i-1], "BOTTOMLEFT", 0, MaoRUIPerDB["UFs"]["ShowTeamIndex"] and -25 or -15)
+							groups[i]:SetPoint("TOPLEFT", groups[i-1], "BOTTOMLEFT", 0, MaoRUIPerDB["UFs"]["ShowTeamIndex"] and -21 or -12)
 						end
 					else
 						if reverse then
-							groups[i]:SetPoint("TOPRIGHT", groups[i-1], "TOPLEFT", -5, 0)
+							groups[i]:SetPoint("TOPRIGHT", groups[i-1], "TOPLEFT", -6, 0)
 						else
-							groups[i]:SetPoint("TOPLEFT", groups[i-1], "TOPRIGHT", 5, 0)
+							groups[i]:SetPoint("TOPLEFT", groups[i-1], "TOPRIGHT", 6, 0)
 						end
 					end
 				end

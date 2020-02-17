@@ -3,7 +3,6 @@
 
 libnotify = {}
 libnotify.window = {}
-
 libnotify.max_window = 5
 
 function libnotify:CreateFrame()
@@ -179,3 +178,22 @@ for i=1, libnotify.max_window do
   libnotify.window[i] = libnotify:CreateFrame()
   libnotify.window[i]:SetPoint("BOTTOM", 0, 16 + (88*i))  --"TOP", 0, -66 - (88*i)
 end
+
+
+-- A notification trigger for quest objective commpletion
+local QuestCompleteNotification = CreateFrame("Frame")
+QuestCompleteNotification:RegisterEvent("QUEST_WATCH_UPDATE")
+QuestCompleteNotification:RegisterEvent("UNIT_QUEST_LOG_CHANGED")
+QuestCompleteNotification.queue = nil
+QuestCompleteNotification:SetScript("OnEvent", function(self, event, unit)
+	if event == "QUEST_WATCH_UPDATE" then
+		QuestCompleteNotification.queue = unit
+	elseif event == "UNIT_QUEST_LOG_CHANGED" and QuestCompleteNotification.queue and unit == "player" then
+		local title, level, tag, header, collapsed, complete = GetQuestLogTitle(QuestCompleteNotification.queue)
+		if complete then
+			libnotify:ShowPopup(title, nil, nil, tag)  --title, level, nil, tag
+			PlaySoundFile("Interface\\AddOns\\ShaguNotify\\textures\\complete.ogg", "Master")
+		end
+		QuestCompleteNotification.queue = nil
+	end
+end)

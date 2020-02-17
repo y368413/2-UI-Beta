@@ -498,8 +498,8 @@ end
 
 local function openOptions(openItems)
 	-- open the profiles tab before, so the menu expands
-	--InterfaceOptionsFrame_OpenToCategory(CurrencyTracking.optionsFrames.Profiles)
-	--InterfaceOptionsFrame_OpenToCategory(CurrencyTracking.optionsFrames.Profiles) -- yes, run twice to force the tre get expanded
+	InterfaceOptionsFrame_OpenToCategory(CurrencyTracking.optionsFrames.Profiles)
+	InterfaceOptionsFrame_OpenToCategory(CurrencyTracking.optionsFrames.Profiles) -- yes, run twice to force the tre get expanded
 	if (openItems) then
 		InterfaceOptionsFrame_OpenToCategory(CurrencyTracking.optionsFrames.Items)
 	else
@@ -513,9 +513,9 @@ function CurrencyTracking:OpenOptions(openItems)
 	openOptions(openItems)
 end
 
---local function giveProfiles()
-	--return AceDBOptions:GetOptionsTable(CurrencyTracking.db)
---end
+local function giveProfiles()
+	return AceDBOptions:GetOptionsTable(CurrencyTracking.db)
+end
 
 function CurrencyTracking:SetupOptions()
 	self.optionsFrames = {}
@@ -527,7 +527,7 @@ function CurrencyTracking:SetupOptions()
 	self:RegisterModuleOptions("Items", getItemOptions, CurrencyTracking_TRACKED_ITEMS)
 	--addTokenOptionFrame()
 	self:RegisterModuleOptions("Currencies", getCurrenciesOptions, CurrencyTracking_TRACKED_CURRENCY)
-	--self:RegisterModuleOptions("Profiles", giveProfiles, CurrencyTracking_PROFILE_OPTIONS)
+	self:RegisterModuleOptions("Profiles", giveProfiles, CurrencyTracking_PROFILE_OPTIONS)
 end
 
 -- Description: Function which extends our options table in a modular way

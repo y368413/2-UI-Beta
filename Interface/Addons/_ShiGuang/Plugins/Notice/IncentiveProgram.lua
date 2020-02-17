@@ -3,9 +3,9 @@
 local IncentiveProgram = {}
 
 --Core
-local IncentiveProgram_ADDON_DISPLAY_NAME = NOTICE_INCENTIVEPROGRAM_TITLE.." (|cFF69CCF0 r17 |r)"
+IncentiveProgram.ADDON_DISPLAY_NAME = NOTICE_INCENTIVEPROGRAM_TITLE.." (|cFF69CCF0 r17 |r)"
 
-local IncentiveProgram_Flair = {
+IncentiveProgram.Flair = {
     [849] = "HM1 - ",
     [850] = "HM2 - ",
     [851] = "HM3 - ",
@@ -36,12 +36,25 @@ local IncentiveProgram_Flair = {
 	[1613] = "ANT4 - ",
 	[1731] = "ULD1 - ",
 	[1732] = "ULD2 - ",
-	[1733] = "ULD3 - "
-    
+	[1733] = "ULD3 - ",
+	[1945] = "DAR1 - ",
+	[1946] = "DAR2 - ",
+	[1947] = "DAR3 - ",
+	[1948] = "DAR4 - ",
+	[1949] = "DAR5 - ",
+	[1950] = "DAR6 - ",
+	[1951] = "COS1 - ", -- Crucible of Storms
+	[2009] = "EP1 - ", -- The Grand Reception
+	[2010] = "EP2 - ", -- Depths of the Devoted
+	[2011] = "EP3 - ", -- The Circle of Stars
+	[2036] = "NY1 - ", -- Vision of Destiny
+	[2037] = "NY2 - ", -- Halls of Devotion
+	[2038] = "NY3 - ", -- Gift of Flesh
+	[2039] = "NY4 - ", -- The Waking Dream    
 }
 
 --Icon File Paths
-local IncentiveProgram_Icons = {
+IncentiveProgram.Icons = {
     ["INCENTIVE_NONE"] = "Interface\\ICONS\\Ability_Malkorok_BlightofYshaarj_Red",
     ["INCENTIVE_RARE"] = "Interface\\Icons\\INV_Misc_Coin_17",
     ["INCENTIVE_UNCOMMON"] = "Interface\\Icons\\INV_Misc_Coin_18",
@@ -52,7 +65,7 @@ local IncentiveProgram_Icons = {
   }
   
 --Settings
-local IncentiveProgram_Settings = {
+IncentiveProgram.Settings = {
     QA_TANK = "queueAsTank",
     QA_HEALER = "queueAsHealer",
     QA_DAMAGE = "queueAsDamage",
@@ -92,25 +105,25 @@ local IncentiveProgram_Settings = {
 	CHANNEL_MASTER = "MASTER"
 }
 
-local IncentiveProgram_TickRate  = 20
-local IncentiveProgram_SoundRate = 1
-local IncentiveProgram_CycleRate = 1.5
+IncentiveProgram.TickRate  = 20
+IncentiveProgram.SoundRate = 1
+IncentiveProgram.CycleRate = 1.5
 
-local IncentiveProgram_ALERT = 1
-local IncentiveProgram_TOAST = 2
+IncentiveProgram.ALERT = 1
+IncentiveProgram.TOAST = 2
 
 --Dungeon Constants
-local IncentiveProgram_DUNGEON_REMOVED = 1
-local IncentiveProgram_DUNGEON_ADDED = 2
-local IncentiveProgram_DUNGEON_DIFFERENCE = 3
+IncentiveProgram.DUNGEON_REMOVED = 1
+IncentiveProgram.DUNGEON_ADDED = 2
+IncentiveProgram.DUNGEON_DIFFERENCE = 3
 
-local IncentiveProgram_TOAST_TANK = "\124TInterface\\LFGFRAME\\UI-LFG-ICON-PORTRAITROLES:20:20:0:0:64:64:0:19:22:41\124t Tank"
-local IncentiveProgram_TOAST_HEALER = "\124TInterface\\LFGFRAME\\UI-LFG-ICON-PORTRAITROLES:20:20:0:0:64:64:20:39:1:20\124t Healer"
-local IncentiveProgram_TOAST_DAMAGE = "\124TInterface\\LFGFRAME\\UI-LFG-ICON-PORTRAITROLES:20:20:0:0:64:64:20:39:22:41\124t Damage"
+IncentiveProgram.TOAST_TANK = "\124TInterface\\LFGFRAME\\UI-LFG-ICON-PORTRAITROLES:20:20:0:0:64:64:0:19:22:41\124t Tank"
+IncentiveProgram.TOAST_HEALER = "\124TInterface\\LFGFRAME\\UI-LFG-ICON-PORTRAITROLES:20:20:0:0:64:64:20:39:1:20\124t Healer"
+IncentiveProgram.TOAST_DAMAGE = "\124TInterface\\LFGFRAME\\UI-LFG-ICON-PORTRAITROLES:20:20:0:0:64:64:20:39:22:41\124t Damage"
 
 
 --Context Menu
-local IncentiveProgram_ContextMenu = {
+IncentiveProgram.ContextMenu = {
     TANK = 2,
     HEALER = 3,
     DAMAGE = 4,
@@ -125,7 +138,7 @@ local IncentiveProgram_ContextMenu = {
 	INTERFACE_PANEL = "interfacePanel"
 }
 
-local IncentiveProgram_ContextLabels = {
+IncentiveProgram.ContextLabels = {
     ROLES = INCENTIVEPROGRAM_ROLES,
     TANK = "T",
     HEALER = "N",
@@ -188,29 +201,29 @@ if ( healer ) then healer = "" else healer = "\124CFFC41F3B" end
 if ( damage ) then damage = "" else damage = "\124CFFC41F3B" end
 local menuData = {
     [1] = {
-        ["text"] = IncentiveProgram_ContextLabels["ROLES"],
+        ["text"] = IncentiveProgram.ContextLabels["ROLES"],
         ["notCheckable"] = true,
         ["hasArrow"] = true,
         ["value"] = { --submenu
             [1] = {
-                ["text"] = tank..IncentiveProgram_ContextLabels["TANK"],
+                ["text"] = tank..IncentiveProgram.ContextLabels["TANK"],
                 ["isNotRadio"] = true,
-                ["arg1"] = IncentiveProgram_ContextMenu["ROLES"],
-                ["arg2"] = IncentiveProgram_Settings["ROLE_TANK"],
+                ["arg1"] = IncentiveProgram.ContextMenu["ROLES"],
+                ["arg2"] = IncentiveProgram.Settings["ROLE_TANK"],
                 ["keepShownOnClick"] = true
             },
             [2] = {
-                ["text"] = healer..IncentiveProgram_ContextLabels["HEALER"],
+                ["text"] = healer..IncentiveProgram.ContextLabels["HEALER"],
                 ["isNotRadio"] = true,
-                ["arg1"] = IncentiveProgram_ContextMenu["ROLES"],
-                ["arg2"] = IncentiveProgram_Settings["ROLE_HEALER"],
+                ["arg1"] = IncentiveProgram.ContextMenu["ROLES"],
+                ["arg2"] = IncentiveProgram.Settings["ROLE_HEALER"],
                 ["keepShownOnClick"] = true
             },
             [3] = {
-                ["text"] = damage..IncentiveProgram_ContextLabels["DAMAGE"],
+                ["text"] = damage..IncentiveProgram.ContextLabels["DAMAGE"],
                 ["isNotRadio"] = true,
-                ["arg1"] = IncentiveProgram_ContextMenu["ROLES"],
-                ["arg2"] = IncentiveProgram_Settings["ROLE_DAMAGE"],
+                ["arg1"] = IncentiveProgram.ContextMenu["ROLES"],
+                ["arg2"] = IncentiveProgram.Settings["ROLE_DAMAGE"],
                 ["keepShownOnClick"] = true
             }
         }
@@ -218,9 +231,9 @@ local menuData = {
     
     [2] = {
         ["notCheckable"] = true,
-        ["text"] = IncentiveProgram_ContextLabels["IGNORED"],
+        ["text"] = IncentiveProgram.ContextLabels["IGNORED"],
         ["hasArrow"] = true,
-        ["value"] = IncentiveProgram_ContextMenu["IGNORE"]
+        ["value"] = IncentiveProgram.ContextMenu["IGNORE"]
     },
     
     [3] = {
@@ -228,7 +241,7 @@ local menuData = {
         ["notCheckable"] = true,
         ["keepShownOnClick"] = true,
         ["disabled"] = true,
-        ["icon"] = IncentiveProgram_Icons["CONTEXT_MENU_DIVIDER"],
+        ["icon"] = IncentiveProgram.Icons["CONTEXT_MENU_DIVIDER"],
         ["iconInfo"] = {
             ["tCoordLeft"] = 0,
             ["tCoordRight"] = 1,
@@ -241,54 +254,54 @@ local menuData = {
     },
     
     [4] = {
-        ["text"] = IncentiveProgram_ContextLabels["SETTINGS"],
+        ["text"] = IncentiveProgram.ContextLabels["SETTINGS"],
         ["notCheckable"] = true,
         ["hasArrow"] = true,
         ["value"] = {
             [1] = {
-                ["text"] = IncentiveProgram_ContextLabels["HIDE_IN_PARTY"],
+                ["text"] = IncentiveProgram.ContextLabels["HIDE_IN_PARTY"],
                 ["isNotRadio"] = true,
-                ["arg1"] = IncentiveProgram_ContextMenu["SETTINGS"],
-                ["arg2"] = IncentiveProgram_Settings["HIDE_IN_PARTY"],
+                ["arg1"] = IncentiveProgram.ContextMenu["SETTINGS"],
+                ["arg2"] = IncentiveProgram.Settings["HIDE_IN_PARTY"],
                 ["keepShownOnClick"] = true
             },
             [2] = {
-                ["text"] = IncentiveProgram_ContextLabels["HIDE_ALWAYS"],
+                ["text"] = IncentiveProgram.ContextLabels["HIDE_ALWAYS"],
                 ["isNotRadio"] = true,
-                ["arg1"] = IncentiveProgram_ContextMenu["SETTINGS"],
-                ["arg2"] = IncentiveProgram_Settings["HIDE_ALWAYS"],
+                ["arg1"] = IncentiveProgram.ContextMenu["SETTINGS"],
+                ["arg2"] = IncentiveProgram.Settings["HIDE_ALWAYS"],
                 ["keepShownOnClick"] = true,
-				["tooltipTitle"] = IncentiveProgram_ADDON_DISPLAY_NAME,
-				["tooltipText"] = IncentiveProgram_ContextLabels["TOOLTIP_HIDE_ALWAYS"],
+				["tooltipTitle"] = IncentiveProgram.ADDON_DISPLAY_NAME,
+				["tooltipText"] = IncentiveProgram.ContextLabels["TOOLTIP_HIDE_ALWAYS"],
 				["tooltipOnButton"] = 1
             },
             [3] = {
-                ["text"] = IncentiveProgram_ContextLabels["ALERT"],
+                ["text"] = IncentiveProgram.ContextLabels["ALERT"],
                 ["isNotRadio"] = true,
-                ["arg1"] = IncentiveProgram_ContextMenu["SETTINGS"],
-                ["arg2"] = IncentiveProgram_Settings["ALERT"],
+                ["arg1"] = IncentiveProgram.ContextMenu["SETTINGS"],
+                ["arg2"] = IncentiveProgram.Settings["ALERT"],
                 ["keepShownOnClick"] = true
             },
             [4] = {
-                ["text"] = IncentiveProgram_ContextLabels["ALERT_TOAST"],
+                ["text"] = IncentiveProgram.ContextLabels["ALERT_TOAST"],
                 ["isNotRadio"] = true,
-                ["arg1"] = IncentiveProgram_ContextMenu["SETTINGS"],
-                ["arg2"] = IncentiveProgram_Settings["ALERT_TOAST"],
+                ["arg1"] = IncentiveProgram.ContextMenu["SETTINGS"],
+                ["arg2"] = IncentiveProgram.Settings["ALERT_TOAST"],
                 ["keepShownOnClick"] = true
             },
             [5] = {
-                ["text"] = IncentiveProgram_ContextLabels["IGNORE_COMPLETED_LFR"],
+                ["text"] = IncentiveProgram.ContextLabels["IGNORE_COMPLETED_LFR"],
                 ["isNotRadio"] = true,
-                ["arg1"] = IncentiveProgram_ContextMenu["SETTINGS"],
-                ["arg2"] = IncentiveProgram_Settings["IGNORE_COMPLETED_LFR"],
+                ["arg1"] = IncentiveProgram.ContextMenu["SETTINGS"],
+                ["arg2"] = IncentiveProgram.Settings["IGNORE_COMPLETED_LFR"],
                 ["keepShownOnClick"] = true,
-				["tooltipTitle"] = IncentiveProgram_ADDON_DISPLAY_NAME,
-				["tooltipText"] = IncentiveProgram_ContextLabels["TOOLTIP_IGNORE_LFR"],
+				["tooltipTitle"] = IncentiveProgram.ADDON_DISPLAY_NAME,
+				["tooltipText"] = IncentiveProgram.ContextLabels["TOOLTIP_IGNORE_LFR"],
 				["tooltipOnButton"] = 1
             },
 			[6] = {
-				text = IncentiveProgram_ContextLabels["INTERFACE_PANEL"],
-				arg1 = IncentiveProgram_ContextMenu["INTERFACE_PANEL"],
+				text = IncentiveProgram.ContextLabels["INTERFACE_PANEL"],
+				arg1 = IncentiveProgram.ContextMenu["INTERFACE_PANEL"],
 				notCheckable = true,
 				leftPadding = 16
 			}
@@ -301,7 +314,7 @@ local function createTitleInfo(level)
     local info = UIDropDownMenu_CreateInfo()
     
     --Add title
-    info.text = IncentiveProgram_ADDON_DISPLAY_NAME
+    info.text = IncentiveProgram.ADDON_DISPLAY_NAME
     info.isTitle = true
     info.notCheckable = true
     
@@ -324,9 +337,9 @@ local function createSettingsMenu(level, level2Table)
             for key,value in pairs(level2Table[i]) do
                 info[key] = value
             end
-            if level2Table[i]["arg1"] == IncentiveProgram_ContextMenu["ROLES"] then
+            if level2Table[i]["arg1"] == IncentiveProgram.ContextMenu["ROLES"] then
                 info.checked = IncentiveProgram:GetSettings():GetUserSetting(level2Table[i]["arg2"])
-            elseif level2Table[i]["arg1"] == IncentiveProgram_ContextMenu["SETTINGS"] then
+            elseif level2Table[i]["arg1"] == IncentiveProgram.ContextMenu["SETTINGS"] then
                 info.checked = IncentiveProgram:GetSettings():GetSetting(level2Table[i]["arg2"])
             end
             
@@ -339,15 +352,15 @@ end
 local function createSettingsIgnoreList(level)
     local count = 0
     for key, value in pairs (IncentiveProgram:GetSettings().db.dungeonSettings) do
-        if ( IncentiveProgram:GetSettings():GetDungeonSetting(key, IncentiveProgram_Settings["IGNORE"]) ) then
+        if ( IncentiveProgram:GetSettings():GetDungeonSetting(key, IncentiveProgram.Settings["IGNORE"]) ) then
             local info = UIDropDownMenu_CreateInfo()
-            info.text = value[IncentiveProgram_Settings["DUNGEON_NAME"]]
+            info.text = value[IncentiveProgram.Settings["DUNGEON_NAME"]]
             info.notCheckable = true
             info.func = menu.MenuOnClick
-            info.arg1 = IncentiveProgram_ContextMenu["IGNORE"]
+            info.arg1 = IncentiveProgram.ContextMenu["IGNORE"]
             info.arg2 = key
             
-            info.icon = IncentiveProgram_Icons["CONTEXT_MENU_RED_X"]
+            info.icon = IncentiveProgram.Icons["CONTEXT_MENU_RED_X"]
             info.padding = 8
             
             UIDropDownMenu_AddButton(info, level)
@@ -358,7 +371,7 @@ local function createSettingsIgnoreList(level)
     
     if ( count == 0 ) then
         local info = UIDropDownMenu_CreateInfo()
-        info.text = IncentiveProgram_ContextLabels["NO_IGNORED"]
+        info.text = IncentiveProgram.ContextLabels["NO_IGNORED"]
         info.notCheckable = true
         info.disabled = true
         
@@ -383,7 +396,7 @@ local function createDungeonEntry(dungeonID, name, level, isShortage, showAll)
 	end
     
     --Color red if ignored but showing all anyways
-	local ignored = IncentiveProgram:GetSettings():GetDungeonSetting(dungeonID, IncentiveProgram_Settings["IGNORE"])
+	local ignored = IncentiveProgram:GetSettings():GetDungeonSetting(dungeonID, IncentiveProgram.Settings["IGNORE"])
     if ( ignored and showAll ) then
         info.colorCode = "|cFFC41F3B"
     end
@@ -393,7 +406,7 @@ local function createDungeonEntry(dungeonID, name, level, isShortage, showAll)
         info.colorCode = "|cFF69CCF0"
     end
 
-    local flair = IncentiveProgram_Flair[dungeonID] or ""
+    local flair = IncentiveProgram.Flair[dungeonID] or ""
     info.text = flair..name
     info.value = dungeonID
     info.notCheckable = true
@@ -413,14 +426,14 @@ end
 local function createIgnoreButton(dungeonID, level)
     local info = UIDropDownMenu_CreateInfo()
     
-    if ( IncentiveProgram:GetSettings():GetDungeonSetting(dungeonID, IncentiveProgram_Settings["IGNORE"]) ) then
-        info.text = IncentiveProgram_ContextLabels["UNIGNORE"]
+    if ( IncentiveProgram:GetSettings():GetDungeonSetting(dungeonID, IncentiveProgram.Settings["IGNORE"]) ) then
+        info.text = IncentiveProgram.ContextLabels["UNIGNORE"]
     else
-        info.text = IncentiveProgram_ContextLabels["IGNORE"]
+        info.text = IncentiveProgram.ContextLabels["IGNORE"]
     end
     
-    info.arg1 = IncentiveProgram_ContextMenu["QUEUE"]
-    info.arg2 = IncentiveProgram_Settings["IGNORE"]
+    info.arg1 = IncentiveProgram.ContextMenu["QUEUE"]
+    info.arg2 = IncentiveProgram.Settings["IGNORE"]
     info.value = dungeonID
     info.func = menu.MenuOnClick
     info.notCheckable = true
@@ -434,11 +447,11 @@ local function createRoleButtons(dungeonID, level, showAll)
     --Tank
     if ( tank and ( shortageTank or showAll ) ) then
         local info = UIDropDownMenu_CreateInfo()
-        info.text = IncentiveProgram_ContextLabels["TANK"]
-        info.arg1 = IncentiveProgram_ContextMenu["QUEUE"]
-        info.arg2 = IncentiveProgram_Settings["QA_TANK"]
+        info.text = IncentiveProgram.ContextLabels["TANK"]
+        info.arg1 = IncentiveProgram.ContextMenu["QUEUE"]
+        info.arg2 = IncentiveProgram.Settings["QA_TANK"]
         info.value = dungeonID
-        info.checked = IncentiveProgram:GetSettings():GetDungeonSetting(dungeonID, IncentiveProgram_Settings["QA_TANK"])
+        info.checked = IncentiveProgram:GetSettings():GetDungeonSetting(dungeonID, IncentiveProgram.Settings["QA_TANK"])
         info.isNotRadio = true
         info.func = menu.MenuOnClick
         info.keepShownOnClick = true
@@ -453,11 +466,11 @@ local function createRoleButtons(dungeonID, level, showAll)
     --Healer
     if ( healer and ( shortageHealer or showAll ) ) then
         local info = UIDropDownMenu_CreateInfo()
-        info.text = IncentiveProgram_ContextLabels["HEALER"]
-        info.arg1 = IncentiveProgram_ContextMenu["QUEUE"]
-        info.arg2 = IncentiveProgram_Settings["QA_HEALER"]
+        info.text = IncentiveProgram.ContextLabels["HEALER"]
+        info.arg1 = IncentiveProgram.ContextMenu["QUEUE"]
+        info.arg2 = IncentiveProgram.Settings["QA_HEALER"]
         info.value = dungeonID
-        info.checked = IncentiveProgram:GetSettings():GetDungeonSetting(dungeonID, IncentiveProgram_Settings["QA_HEALER"])
+        info.checked = IncentiveProgram:GetSettings():GetDungeonSetting(dungeonID, IncentiveProgram.Settings["QA_HEALER"])
         info.isNotRadio = true
         info.func = menu.MenuOnClick
         info.keepShownOnClick = true
@@ -472,11 +485,11 @@ local function createRoleButtons(dungeonID, level, showAll)
     --Damage
     if ( damage and ( shortageDamage or showAll ) ) then
         local info = UIDropDownMenu_CreateInfo()
-        info.text = IncentiveProgram_ContextLabels["DAMAGE"]
-        info.arg1 = IncentiveProgram_ContextMenu["QUEUE"]
-        info.arg2 = IncentiveProgram_Settings["QA_DAMAGE"]
+        info.text = IncentiveProgram.ContextLabels["DAMAGE"]
+        info.arg1 = IncentiveProgram.ContextMenu["QUEUE"]
+        info.arg2 = IncentiveProgram.Settings["QA_DAMAGE"]
         info.value = dungeonID
-        info.checked = IncentiveProgram:GetSettings():GetDungeonSetting(dungeonID, IncentiveProgram_Settings["QA_DAMAGE"])
+        info.checked = IncentiveProgram:GetSettings():GetDungeonSetting(dungeonID, IncentiveProgram.Settings["QA_DAMAGE"])
         info.isNotRadio = true
         info.func = menu.MenuOnClick
         info.keepShownOnClick = true
@@ -495,9 +508,9 @@ end
 ---------------------------------------   
 local function createJoinButton(dungeonID, level)
     local info = UIDropDownMenu_CreateInfo()
-    info.text = IncentiveProgram_ContextLabels["JOIN_QUEUE"]
-    info.arg1 = IncentiveProgram_ContextMenu["QUEUE"]
-    info.arg2 = IncentiveProgram_ContextMenu["JOIN"]
+    info.text = IncentiveProgram.ContextLabels["JOIN_QUEUE"]
+    info.arg1 = IncentiveProgram.ContextMenu["QUEUE"]
+    info.arg2 = IncentiveProgram.ContextMenu["JOIN"]
     info.value = dungeonID
     info.func = menu.MenuOnClick
     info.notCheckable = true
@@ -557,7 +570,7 @@ local IncentiveProgramMenu = {
                 createSettingsMenu(level)
             elseif ( level == 2 ) then
                 local level2Table = UIDROPDOWNMENU_MENU_VALUE
-                if ( level2Table == IncentiveProgram_ContextMenu["IGNORE"] ) then
+                if ( level2Table == IncentiveProgram.ContextMenu["IGNORE"] ) then
                     createSettingsIgnoreList(level)
                 else
                     createSettingsMenu(level, level2Table)
@@ -567,45 +580,45 @@ local IncentiveProgramMenu = {
     end,
        
     MenuOnClick = function(menuButton, arg1, arg2)
-        if ( arg1 == IncentiveProgram_ContextMenu["ROLES"] ) then
-            if ( arg2 == IncentiveProgram_Settings["ROLE_TANK"] ) then
-                IncentiveProgram:GetSettings():SetUserSetting(IncentiveProgram_Settings["ROLE_TANK"], menuButton.checked)
-            elseif ( arg2 == IncentiveProgram_Settings["ROLE_HEALER"] ) then
-                IncentiveProgram:GetSettings():SetUserSetting(IncentiveProgram_Settings["ROLE_HEALER"], menuButton.checked)
-            elseif ( arg2 == IncentiveProgram_Settings["ROLE_DAMAGE"] ) then
-                IncentiveProgram:GetSettings():SetUserSetting(IncentiveProgram_Settings["ROLE_DAMAGE"], menuButton.checked)
+        if ( arg1 == IncentiveProgram.ContextMenu["ROLES"] ) then
+            if ( arg2 == IncentiveProgram.Settings["ROLE_TANK"] ) then
+                IncentiveProgram:GetSettings():SetUserSetting(IncentiveProgram.Settings["ROLE_TANK"], menuButton.checked)
+            elseif ( arg2 == IncentiveProgram.Settings["ROLE_HEALER"] ) then
+                IncentiveProgram:GetSettings():SetUserSetting(IncentiveProgram.Settings["ROLE_HEALER"], menuButton.checked)
+            elseif ( arg2 == IncentiveProgram.Settings["ROLE_DAMAGE"] ) then
+                IncentiveProgram:GetSettings():SetUserSetting(IncentiveProgram.Settings["ROLE_DAMAGE"], menuButton.checked)
             end
             
             IncentiveProgram:SetCount(IncentiveProgram:GetDungeon():GetShortageCount()) --Refresh Count
-        elseif ( arg1 == IncentiveProgram_ContextMenu["IGNORE"] ) then
-            IncentiveProgram:GetSettings():SetDungeonSetting(arg2, IncentiveProgram_Settings["IGNORE"], false)
+        elseif ( arg1 == IncentiveProgram.ContextMenu["IGNORE"] ) then
+            IncentiveProgram:GetSettings():SetDungeonSetting(arg2, IncentiveProgram.Settings["IGNORE"], false)
             IncentiveProgram:SetCount(IncentiveProgram:GetDungeon():GetShortageCount()) --Refresh Count
             
-        elseif ( arg1 == IncentiveProgram_ContextMenu["SETTINGS"] ) then
+        elseif ( arg1 == IncentiveProgram.ContextMenu["SETTINGS"] ) then
             IncentiveProgram:GetSettings():SetSetting(arg2, menuButton.checked)
             IncentiveProgram:GetFrame():UpdatedSettings() --In case new settings now hide frame
             
-        elseif ( arg1 == IncentiveProgram_ContextMenu["QUEUE"] ) then
+        elseif ( arg1 == IncentiveProgram.ContextMenu["QUEUE"] ) then
             local dungeonID = UIDROPDOWNMENU_MENU_VALUE
-            if ( arg2 == IncentiveProgram_Settings["IGNORE"] ) then
+            if ( arg2 == IncentiveProgram.Settings["IGNORE"] ) then
                 local ignoreSetting = IncentiveProgram:GetSettings():GetDungeonSetting(dungeonID, arg2)
                 IncentiveProgram:GetSettings():SetDungeonSetting(dungeonID, arg2, not ignoreSetting)
-            elseif ( ( arg2 == IncentiveProgram_Settings["QA_TANK"] ) or
-                     ( arg2 == IncentiveProgram_Settings["QA_HEALER"] ) or 
-                     ( arg2 == IncentiveProgram_Settings["QA_DAMAGE"] ) ) then
+            elseif ( ( arg2 == IncentiveProgram.Settings["QA_TANK"] ) or
+                     ( arg2 == IncentiveProgram.Settings["QA_HEALER"] ) or 
+                     ( arg2 == IncentiveProgram.Settings["QA_DAMAGE"] ) ) then
                 IncentiveProgram:GetSettings():SetDungeonSetting(dungeonID, arg2, menuButton.checked)
-            elseif ( arg2 == IncentiveProgram_ContextMenu["JOIN"] ) then
+            elseif ( arg2 == IncentiveProgram.ContextMenu["JOIN"] ) then
                 menu:JoinDungeon(dungeonID, true)
             end
             
             IncentiveProgram:SetCount(IncentiveProgram:GetDungeon():GetShortageCount()) --Refresh Count
-        elseif ( arg1 == IncentiveProgram_ContextMenu["INTERFACE_PANEL"] ) then
+        elseif ( arg1 == IncentiveProgram.ContextMenu["INTERFACE_PANEL"] ) then
 			InterfaceOptionsFrame_OpenToCategory(IncentiveProgramInterfacePanel) 
 		end
     end,
   
     JoinDungeon = function(self, dungeonID, fromDropDownMenu)
-        local dungeonType = IncentiveProgram:GetSettings():GetDungeonSetting(dungeonID, IncentiveProgram_Settings["DUNGEON_TYPE"])
+        local dungeonType = IncentiveProgram:GetSettings():GetDungeonSetting(dungeonID, IncentiveProgram.Settings["DUNGEON_TYPE"])
         local canQueue, tank, healer, damage = IncentiveProgram:GetDungeon():CanQueueForDungeon(dungeonID)
         local lfgLeader, lfgTank, lfgHealer, lfgDamage = GetLFGRoles()
         
@@ -614,22 +627,22 @@ local IncentiveProgramMenu = {
             RaidFinderQueueFrame.raid = dungeonID
             RaidFinderQueueFrame_Join() --Blizzard function in RaidFinder.lua
             
-            IncentiveProgram_SavedLFGRoles_isUpdated = true
-            IncentiveProgram_SavedLFGRoles_Leader = lfgLeader
-            IncentiveProgram_SavedLFGRoles_Tank = lfgTank
-            IncentiveProgram_SavedLFGRoles_Healer = lfgHealer
-            IncentiveProgram_SavedLFGRoles_Damage = lfgDamage
+            IncentiveProgram.SavedLFGRoles.isUpdated = true
+            IncentiveProgram.SavedLFGRoles.Leader = lfgLeader
+            IncentiveProgram.SavedLFGRoles.Tank = lfgTank
+            IncentiveProgram.SavedLFGRoles.Healer = lfgHealer
+            IncentiveProgram.SavedLFGRoles.Damage = lfgDamage
         elseif ( dungeonType == LE_LFG_CATEGORY_LFD ) and canQueue then
             SetLFGRoles(lfgLeader, tank, healer, damage)
             
             LFDQueueFrame.type = dungeonID
             LFDQueueFrame_Join() --Blizzard Function in LFGFrame.lua
             
-            IncentiveProgram_SavedLFGRoles_isUpdated = true
-            IncentiveProgram_SavedLFGRoles_Leader = lfgLeader
-            IncentiveProgram_SavedLFGRoles_Tank = lfgTank
-            IncentiveProgram_SavedLFGRoles_Healer = lfgHealer
-            IncentiveProgram_SavedLFGRoles_Damage = lfgDamage
+            IncentiveProgram.SavedLFGRoles.isUpdated = true
+            IncentiveProgram.SavedLFGRoles.Leader = lfgLeader
+            IncentiveProgram.SavedLFGRoles.Tank = lfgTank
+            IncentiveProgram.SavedLFGRoles.Healer = lfgHealer
+            IncentiveProgram.SavedLFGRoles.Damage = lfgDamage
         end
         
         if ( fromDropDownMenu ) then
@@ -672,38 +685,38 @@ end
 local IncentiveProgramSettings
 
 local defaultSettings = {}
-    defaultSettings[IncentiveProgram_Settings["QA_TANK"]] = true
-    defaultSettings[IncentiveProgram_Settings["QA_HEALER"]] = true
-    defaultSettings[IncentiveProgram_Settings["QA_DAMAGE"]] = true
-    defaultSettings[IncentiveProgram_Settings["IGNORE"]] = false
-    defaultSettings[IncentiveProgram_Settings["HIDE_IN_PARTY"]] = true
-    defaultSettings[IncentiveProgram_Settings["HIDE_ALWAYS"]] = false
-	  defaultSettings[IncentiveProgram_Settings["HIDE_EMPTY"]] = true
-    defaultSettings[IncentiveProgram_Settings["ALERT"]] = true
-    defaultSettings[IncentiveProgram_Settings["ALERT_TOAST"]] = false
-    defaultSettings[IncentiveProgram_Settings["COUNT_EVEN_IF_NOT_SELECTED"]] = false
-    defaultSettings[IncentiveProgram_Settings["COUNT_EVEN_IF_NOT_ROLE_ELIGIBLE"]] = false
+    defaultSettings[IncentiveProgram.Settings["QA_TANK"]] = true
+    defaultSettings[IncentiveProgram.Settings["QA_HEALER"]] = true
+    defaultSettings[IncentiveProgram.Settings["QA_DAMAGE"]] = true
+    defaultSettings[IncentiveProgram.Settings["IGNORE"]] = false
+    defaultSettings[IncentiveProgram.Settings["HIDE_IN_PARTY"]] = true
+    defaultSettings[IncentiveProgram.Settings["HIDE_ALWAYS"]] = false
+	  defaultSettings[IncentiveProgram.Settings["HIDE_EMPTY"]] = true
+    defaultSettings[IncentiveProgram.Settings["ALERT"]] = true
+    defaultSettings[IncentiveProgram.Settings["ALERT_TOAST"]] = false
+    defaultSettings[IncentiveProgram.Settings["COUNT_EVEN_IF_NOT_SELECTED"]] = false
+    defaultSettings[IncentiveProgram.Settings["COUNT_EVEN_IF_NOT_ROLE_ELIGIBLE"]] = false
 
     --default values for roles you want to play determined
     --by the roles you can play
     local tank, healer, damage = C_LFGList.GetAvailableRoles()
-    defaultSettings[IncentiveProgram_Settings["ROLE_TANK"]] = tank
-    defaultSettings[IncentiveProgram_Settings["ROLE_HEALER"]] = healer
-    defaultSettings[IncentiveProgram_Settings["ROLE_DAMAGE"]] = damage
+    defaultSettings[IncentiveProgram.Settings["ROLE_TANK"]] = tank
+    defaultSettings[IncentiveProgram.Settings["ROLE_HEALER"]] = healer
+    defaultSettings[IncentiveProgram.Settings["ROLE_DAMAGE"]] = damage
     
-    defaultSettings[IncentiveProgram_Settings["FRAME_TOP"]] = -1
-    defaultSettings[IncentiveProgram_Settings["TOAST_TOP"]] = -1
+    defaultSettings[IncentiveProgram.Settings["FRAME_TOP"]] = -1
+    defaultSettings[IncentiveProgram.Settings["TOAST_TOP"]] = -1
 
-	defaultSettings[IncentiveProgram_Settings["IGNORE_COMPLETED_LFR"]] = true
-	defaultSettings[IncentiveProgram_Settings["ALERT_PING"]] = false
-	defaultSettings[IncentiveProgram_Settings["ALERT_SOUND"]] = false  --47615
-	defaultSettings[IncentiveProgram_Settings["ALERT_REPEATS"]] = 2
-	defaultSettings[IncentiveProgram_Settings["TOAST_PING"]] = false
-	defaultSettings[IncentiveProgram_Settings["TOAST_SOUND"]] = false  --18019
-	defaultSettings[IncentiveProgram_Settings["TOAST_REPEATS"]] = 1
-	defaultSettings[IncentiveProgram_Settings["CYCLE_COUNT"]] = 2
-	defaultSettings[IncentiveProgram_Settings["CONTINUOUSLY_CYCLE"]] = false
-	defaultSettings[IncentiveProgram_Settings["CHANNEL"]] = "SFX"
+	defaultSettings[IncentiveProgram.Settings["IGNORE_COMPLETED_LFR"]] = true
+	defaultSettings[IncentiveProgram.Settings["ALERT_PING"]] = false
+	defaultSettings[IncentiveProgram.Settings["ALERT_SOUND"]] = false  --47615
+	defaultSettings[IncentiveProgram.Settings["ALERT_REPEATS"]] = 2
+	defaultSettings[IncentiveProgram.Settings["TOAST_PING"]] = false
+	defaultSettings[IncentiveProgram.Settings["TOAST_SOUND"]] = false  --18019
+	defaultSettings[IncentiveProgram.Settings["TOAST_REPEATS"]] = 1
+	defaultSettings[IncentiveProgram.Settings["CYCLE_COUNT"]] = 2
+	defaultSettings[IncentiveProgram.Settings["CONTINUOUSLY_CYCLE"]] = false
+	defaultSettings[IncentiveProgram.Settings["CHANNEL"]] = "SFX"
 
 local IncentiveProgramSettings = {
     new = function(self)
@@ -712,9 +725,9 @@ local IncentiveProgramSettings = {
         self.__index = self
 		
         local db = ShiGuangDB  --IncentiveProgramDB or {} 
-        db.IncentiveProgramSetting = db.IncentiveProgramSetting or {}
+        db.IncentiveProgramSettings = db.IncentiveProgramSettings or {}
         db.dungeonSettings = db.dungeonSettings or {}
-        db.IncentiveProgramUserSettings = db.IncentiveProgramUserSettings or {}
+        db.userSettings = db.userSettings or {}
         
         obj.db = db
         
@@ -724,22 +737,22 @@ local IncentiveProgramSettings = {
     GetSetting = function(self, key)
         if not key then return end
         if not self.db then return end
-        if not self.db.IncentiveProgramSetting then self.db.IncentiveProgramSetting = {} end
+        if not self.db.IncentiveProgramSettings then self.db.IncentiveProgramSettings = {} end
         
-        if self.db.IncentiveProgramSetting[key] == nil then
-            self.db.IncentiveProgramSetting[key] = defaultSettings[key] or false
+        if self.db.IncentiveProgramSettings[key] == nil then
+            self.db.IncentiveProgramSettings[key] = defaultSettings[key] or false
         end
         
-        return self.db.IncentiveProgramSetting[key]
+        return self.db.IncentiveProgramSettings[key]
     end,
    
     SetSetting = function(self, key, value)
         if value == nil then return end
         if not key then return end
         if not self.db then return end
-        if not self.db.IncentiveProgramSetting then self.db.IncentiveProgramSetting = {} end
+        if not self.db.IncentiveProgramSettings then self.db.IncentiveProgramSettings = {} end
         
-        self.db.IncentiveProgramSetting[key] = value
+        self.db.IncentiveProgramSettings[key] = value
     end,
 
     GetDungeonSetting = function(self, id, key)
@@ -767,42 +780,42 @@ local IncentiveProgramSettings = {
     GetUserSetting = function(self, key)
         if not key then return end
         if not self.db then return end
-        if not self.db.IncentiveProgramUserSettings then self.db.IncentiveProgramUserSettings = {} end
+        if not self.db.userSettings then self.db.userSettings = {} end
      
 		if not self.guid then self.guid = UnitGUID("player") end
 		if not self.guid then return (defaultSettings[key] or false) end
 	 
-        if not self.db.IncentiveProgramUserSettings[self.guid] then self.db.IncentiveProgramUserSettings[self.guid] = {} end
+        if not self.db.userSettings[self.guid] then self.db.userSettings[self.guid] = {} end
         
-        if self.db.IncentiveProgramUserSettings[self.guid][key] == nil then
-            self.db.IncentiveProgramUserSettings[self.guid][key] = defaultSettings[key] or false
+        if self.db.userSettings[self.guid][key] == nil then
+            self.db.userSettings[self.guid][key] = defaultSettings[key] or false
         end
         
-        return self.db.IncentiveProgramUserSettings[self.guid][key]
+        return self.db.userSettings[self.guid][key]
     end,
 
     SetUserSetting = function(self, key, value)
         if value == nil then return end
         if not key then return end
         if not self.db then return end
-        if not self.db.IncentiveProgramUserSettings then self.db.IncentiveProgramUserSettings = {} end
+        if not self.db.userSettings then self.db.userSettings = {} end
 		
 		if not self.guid then self.guid = UnitGUID("player") end
 		if self.guid then
-			if not self.db.IncentiveProgramUserSettings[self.guid] then self.db.IncentiveProgramUserSettings[self.guid] = {} end
+			if not self.db.userSettings[self.guid] then self.db.userSettings[self.guid] = {} end
 			
-			self.db.IncentiveProgramUserSettings[self.guid][key] = value
+			self.db.userSettings[self.guid][key] = value
 		end
     end
 }
 
 function IncentiveProgram:GetSettings()
-    if not settings then
-        settings = IncentiveProgramSettings:new()
-		IncentiveProgram_CreateInterfacePanel() --Settings are now loaded, load up the Interface Panel
+    if not IncentiveProgramSettings then
+        IncentiveProgramSettings = IncentiveProgramSettings:new()
+		IncentiveProgram.CreateInterfacePanel() --Settings are now loaded, load up the Interface Panel
     end
     
-    return settings
+    return IncentiveProgramSettings
 end
 
 
@@ -828,8 +841,8 @@ local IncentiveProgramFrame = {
         local ipFrame = CreateFrame("Button", "IncentiveProgramFrame", UIParent)
         ipFrame:SetWidth(21)  --32
         ipFrame:SetHeight(21) --32
-        local top = IncentiveProgram:GetSettings():GetSetting(IncentiveProgram_Settings["FRAME_TOP"])
-        local left = IncentiveProgram:GetSettings():GetSetting(IncentiveProgram_Settings["FRAME_LEFT"])
+        local top = IncentiveProgram:GetSettings():GetSetting(IncentiveProgram.Settings["FRAME_TOP"])
+        local left = IncentiveProgram:GetSettings():GetSetting(IncentiveProgram.Settings["FRAME_LEFT"])
         
         if ( top == -1 ) then --frame has not been set yet
             ipFrame:SetPoint("topleft", Minimap, "topleft", 0, 0)
@@ -845,8 +858,8 @@ local IncentiveProgramFrame = {
         ipFrame:SetScript("OnDragStart", function(s) s:StartMoving() end)
         ipFrame:SetScript("OnDragStop", function(s)
             s:StopMovingOrSizing()
-            IncentiveProgram:GetSettings():SetSetting(IncentiveProgram_Settings["FRAME_TOP"], s:GetTop())
-            IncentiveProgram:GetSettings():SetSetting(IncentiveProgram_Settings["FRAME_LEFT"], s:GetLeft())
+            IncentiveProgram:GetSettings():SetSetting(IncentiveProgram.Settings["FRAME_TOP"], s:GetTop())
+            IncentiveProgram:GetSettings():SetSetting(IncentiveProgram.Settings["FRAME_LEFT"], s:GetLeft())
         end)
         ipFrame:SetScript("OnClick", function(s, button, down)
             self:OnClick(button, down)
@@ -855,7 +868,7 @@ local IncentiveProgramFrame = {
         --Set Texture
         ipFrame.tex = ipFrame:CreateTexture(nil, "BACKGROUND")
         ipFrame.tex:SetAllPoints(ipFrame)
-        ipFrame.tex:SetTexture(IncentiveProgram_Icons["INCENTIVE_NONE"]);
+        ipFrame.tex:SetTexture(IncentiveProgram.Icons["INCENTIVE_NONE"]);
         
         --Set Text on the button, Gradiants make text easier to see
         ipFrame.leftGradiant = ipFrame:CreateTexture(nil, "BORDER")
@@ -905,7 +918,7 @@ local IncentiveProgramFrame = {
     end,
 
     HideTextures = function(self)
-        self.ipFrame.tex:SetTexture(IncentiveProgram_Icons["INCENTIVE_NONE"])
+        self.ipFrame.tex:SetTexture(IncentiveProgram.Icons["INCENTIVE_NONE"])
         self.ipFrame.leftGradiant:Hide()
         self.ipFrame.rightGradiant:Hide()
         self.ipFrame.text:Hide()
@@ -916,7 +929,7 @@ local IncentiveProgramFrame = {
         if texture then
             self.ipFrame.tex:SetTexture(texture)
         else
-            self.ipFrame.tex:SetTexture(IncentiveProgram_Icons["INCENTIVE_RARE"])
+            self.ipFrame.tex:SetTexture(IncentiveProgram.Icons["INCENTIVE_RARE"])
         end
         
         self.ipFrame.leftGradiant:Show()
@@ -935,9 +948,9 @@ local IncentiveProgramFrame = {
     end,
 
     UpdatedSettings = function(self)
-        local hideAlways = IncentiveProgram:GetSettings():GetSetting(IncentiveProgram_Settings["HIDE_ALWAYS"])
-        local hideInParty = IncentiveProgram:GetSettings():GetSetting(IncentiveProgram_Settings["HIDE_IN_PARTY"])
-		local hideEmpty = IncentiveProgram:GetSettings():GetSetting(IncentiveProgram_Settings["HIDE_EMPTY"])
+        local hideAlways = IncentiveProgram:GetSettings():GetSetting(IncentiveProgram.Settings["HIDE_ALWAYS"])
+        local hideInParty = IncentiveProgram:GetSettings():GetSetting(IncentiveProgram.Settings["HIDE_IN_PARTY"])
+		local hideEmpty = IncentiveProgram:GetSettings():GetSetting(IncentiveProgram.Settings["HIDE_EMPTY"])
 		
 		if ( hideAlways ) then
 			self:HideFrame()
@@ -966,8 +979,8 @@ local IncentiveProgramFrame = {
 	ResetFramePosition = function(self)
 		self.ipFrame:ClearAllPoints()
 		self.ipFrame:SetPoint("topleft", Minimap, "topleft", 0, 0)
-        IncentiveProgram:GetSettings():SetSetting(IncentiveProgram_Settings["FRAME_TOP"], self.ipFrame:GetTop())
-        IncentiveProgram:GetSettings():SetSetting(IncentiveProgram_Settings["FRAME_LEFT"], self.ipFrame:GetLeft())
+        IncentiveProgram:GetSettings():SetSetting(IncentiveProgram.Settings["FRAME_TOP"], self.ipFrame:GetTop())
+        IncentiveProgram:GetSettings():SetSetting(IncentiveProgram.Settings["FRAME_LEFT"], self.ipFrame:GetLeft())
 	end
 }
 
@@ -1052,7 +1065,7 @@ local IncentiveProgramToast = {
         topLine:SetPoint("TOPLEFT", 49, -7)
         topLine:SetPoint("RIGHT", -20, 0)
         topLine:SetTextColor(0.510, 0.773, 1)
-        topLine:SetText("有新的随机奖励")
+        topLine:SetText(NOTICE_INCENTIVEPROGRAM_TITLE)
         toastFrame.topLine = topLine
         
         local middleLine = toastFrame:CreateFontString("IncentiveProgramToastFrameMiddleLine", "BORDER", "FriendsFont_Normal")
@@ -1092,8 +1105,8 @@ local IncentiveProgramToast = {
         clickFrame:SetScript("OnDragStart", function(s) s:GetParent():StartMoving() end)
         clickFrame:SetScript("OnDragStop", function(s)
             s:GetParent():StopMovingOrSizing()
-            IncentiveProgram:GetSettings():SetSetting(IncentiveProgram_Settings["TOAST_TOP"], s:GetParent():GetTop())
-            IncentiveProgram:GetSettings():SetSetting(IncentiveProgram_Settings["TOAST_LEFT"], s:GetParent():GetLeft())
+            IncentiveProgram:GetSettings():SetSetting(IncentiveProgram.Settings["TOAST_TOP"], s:GetParent():GetTop())
+            IncentiveProgram:GetSettings():SetSetting(IncentiveProgram.Settings["TOAST_LEFT"], s:GetParent():GetLeft())
         end)
         
         toastFrame.clickFrame = clickFrame
@@ -1204,7 +1217,7 @@ local IncentiveProgramToast = {
         self:UpdateAnchor()
         toastFrame:Show();
         --PlaySoundKitID(18019) --BNet toast frame ping --Done in core.lua now.
-		--IncentiveProgram:SetSound(IncentiveProgram_TOAST) --decided against playing sound on each toast refresh
+		--IncentiveProgram:SetSound(IncentiveProgram.TOAST) --decided against playing sound on each toast refresh
         toastFrame.glowFrame.animIn:Play()
         toastFrame.waitAndAnimOut:Stop()
         if toastFrame:IsMouseOver() then
@@ -1234,8 +1247,8 @@ local IncentiveProgramToast = {
         local toastFrame = self.toastFrame
         toastFrame:ClearAllPoints()
         
-        local top = IncentiveProgram:GetSettings():GetSetting(IncentiveProgram_Settings["TOAST_TOP"])
-        local left = IncentiveProgram:GetSettings():GetSetting(IncentiveProgram_Settings["TOAST_LEFT"])
+        local top = IncentiveProgram:GetSettings():GetSetting(IncentiveProgram.Settings["TOAST_TOP"])
+        local left = IncentiveProgram:GetSettings():GetSetting(IncentiveProgram.Settings["TOAST_LEFT"])
         if ( top == -1 ) then
             toastFrame:SetPoint("TOPLEFT",3,-21)
         else
@@ -1276,8 +1289,8 @@ local function getDungeonInfo()
     
     for i=1, GetNumRFDungeons() do
         local id, name = GetRFDungeonInfo(i)
-        IncentiveProgram:GetSettings():SetDungeonSetting(id, IncentiveProgram_Settings["DUNGEON_NAME"], name)
-        IncentiveProgram:GetSettings():SetDungeonSetting(id, IncentiveProgram_Settings["DUNGEON_TYPE"], LE_LFG_CATEGORY_RF)
+        IncentiveProgram:GetSettings():SetDungeonSetting(id, IncentiveProgram.Settings["DUNGEON_NAME"], name)
+        IncentiveProgram:GetSettings():SetDungeonSetting(id, IncentiveProgram.Settings["DUNGEON_TYPE"], LE_LFG_CATEGORY_RF)
         if IsLFGDungeonJoinable(id) then
             tinsert(dungeonIDs, id)
             tinsert(dungeonNames, name)
@@ -1287,8 +1300,8 @@ local function getDungeonInfo()
     
     for i=1, GetNumRandomDungeons() do
         local id, name = GetLFGRandomDungeonInfo(i)
-        IncentiveProgram:GetSettings():SetDungeonSetting(id, IncentiveProgram_Settings["DUNGEON_NAME"], name)
-        IncentiveProgram:GetSettings():SetDungeonSetting(id, IncentiveProgram_Settings["DUNGEON_TYPE"], LE_LFG_CATEGORY_LFD)
+        IncentiveProgram:GetSettings():SetDungeonSetting(id, IncentiveProgram.Settings["DUNGEON_NAME"], name)
+        IncentiveProgram:GetSettings():SetDungeonSetting(id, IncentiveProgram.Settings["DUNGEON_TYPE"], LE_LFG_CATEGORY_LFD)
         if IsLFGDungeonJoinable(id) then
             tinsert(dungeonIDs, id)
             tinsert(dungeonNames, name)
@@ -1300,9 +1313,9 @@ local function getDungeonInfo()
 end
 
 local function canQueueForRoles(tank, healer, damage)
-	local roleTank = IncentiveProgram:GetSettings():GetUserSetting(IncentiveProgram_Settings["ROLE_TANK"])
-	local roleHealer = IncentiveProgram:GetSettings():GetUserSetting(IncentiveProgram_Settings["ROLE_HEALER"])
-	local roleDamage = IncentiveProgram:GetSettings():GetUserSetting(IncentiveProgram_Settings["ROLE_DAMAGE"])
+	local roleTank = IncentiveProgram:GetSettings():GetUserSetting(IncentiveProgram.Settings["ROLE_TANK"])
+	local roleHealer = IncentiveProgram:GetSettings():GetUserSetting(IncentiveProgram.Settings["ROLE_HEALER"])
+	local roleDamage = IncentiveProgram:GetSettings():GetUserSetting(IncentiveProgram.Settings["ROLE_DAMAGE"])
 	
 	tank = tank and roleTank
 	healer = healer and roleHealer
@@ -1315,22 +1328,22 @@ local function getAlertText(tempKey)
     local returnString
     
     if ( string.find(tempKey, "T") ) then
-        returnString = IncentiveProgram_TOAST_TANK
+        returnString = IncentiveProgram.TOAST_TANK
     end
     
     if ( string.find(tempKey, "H") ) then
         if ( returnString ) then
-            returnString = returnString.." | "..IncentiveProgram_TOAST_HEALER
+            returnString = returnString.." | "..IncentiveProgram.TOAST_HEALER
         else
-            returnString = IncentiveProgram_TOAST_HEALER
+            returnString = IncentiveProgram.TOAST_HEALER
         end
     end
     
     if ( string.find(tempKey, "D") ) then
         if ( returnString ) then
-            returnString = returnString.." | "..IncentiveProgram_TOAST_DAMAGE
+            returnString = returnString.." | "..IncentiveProgram.TOAST_DAMAGE
         else
-            returnString = IncentiveProgram_TOAST_DAMAGE
+            returnString = IncentiveProgram.TOAST_DAMAGE
         end
     end
     
@@ -1338,8 +1351,8 @@ local function getAlertText(tempKey)
 end
 
 local function sendAlert(dungeonID, tempKey)
-	local flair = IncentiveProgram_Flair[dungeonID] or ""
-	local name = IncentiveProgram:GetSettings():GetDungeonSetting(dungeonID, IncentiveProgram_Settings["DUNGEON_NAME"]) or ""
+	local flair = IncentiveProgram.Flair[dungeonID] or ""
+	local name = IncentiveProgram:GetSettings():GetDungeonSetting(dungeonID, IncentiveProgram.Settings["DUNGEON_NAME"]) or ""
 	local line1 = flair..name
 	
 	local line2 = getAlertText(tempKey) or ""
@@ -1351,8 +1364,8 @@ local function sendAlert(dungeonID, tempKey)
 		texture = texture or 348520
 	end
 	
-	local ignoreCompletedLFRs = IncentiveProgram:GetSettings():GetSetting(IncentiveProgram_Settings["IGNORE_COMPLETED_LFR"])
-	local ignoreDungeon = IncentiveProgram:GetSettings():GetDungeonSetting(dungeonID, IncentiveProgram_Settings["IGNORE"])
+	local ignoreCompletedLFRs = IncentiveProgram:GetSettings():GetSetting(IncentiveProgram.Settings["IGNORE_COMPLETED_LFR"])
+	local ignoreDungeon = IncentiveProgram:GetSettings():GetDungeonSetting(dungeonID, IncentiveProgram.Settings["IGNORE"])
 	
 	if ( ignoreCompletedLFRs ) then
 		local encounterDone, encounterTotal = GetLFGDungeonNumEncounters(dungeonID)
@@ -1436,11 +1449,11 @@ local IncentiveProgramDungeon = {
             
             if ( self:IsQueued(key) ) then
             
-            elseif ( IncentiveProgram:GetSettings():GetDungeonSetting(key, IncentiveProgram_Settings["IGNORE"]) ) then
+            elseif ( IncentiveProgram:GetSettings():GetDungeonSetting(key, IncentiveProgram.Settings["IGNORE"]) ) then
             
             elseif ( not self:CanQueueForDungeon(key) ) then
             
-			elseif ( IncentiveProgram:GetSettings():GetSetting(IncentiveProgram_Settings["IGNORE_COMPLETED_LFR"]) ) then
+			elseif ( IncentiveProgram:GetSettings():GetSetting(IncentiveProgram.Settings["IGNORE_COMPLETED_LFR"]) ) then
 				local encounterDone, encounterTotal = GetLFGDungeonNumEncounters(key)
 
 				if ( encounterDone == 0 ) then --Not an LFR, so alert.
@@ -1488,9 +1501,9 @@ local IncentiveProgramDungeon = {
     CanQueueForDungeon = function(self, dungeonID)
         local shortageTank, shortageHealer, shortageDamage = self:GetShortageRoles(dungeonID)
       
-        local queueAsTank =  IncentiveProgram:GetSettings():GetDungeonSetting(dungeonID, IncentiveProgram_Settings["QA_TANK"])
-        local queueAsHealer = IncentiveProgram:GetSettings():GetDungeonSetting(dungeonID, IncentiveProgram_Settings["QA_HEALER"])
-        local queueAsDamage = IncentiveProgram:GetSettings():GetDungeonSetting(dungeonID, IncentiveProgram_Settings["QA_DAMAGE"])
+        local queueAsTank =  IncentiveProgram:GetSettings():GetDungeonSetting(dungeonID, IncentiveProgram.Settings["QA_TANK"])
+        local queueAsHealer = IncentiveProgram:GetSettings():GetDungeonSetting(dungeonID, IncentiveProgram.Settings["QA_HEALER"])
+        local queueAsDamage = IncentiveProgram:GetSettings():GetDungeonSetting(dungeonID, IncentiveProgram.Settings["QA_DAMAGE"])
 
         if ( ( shortageTank and queueAsTank ) or ( shortageHealer and queueAsHealer ) or ( shortageDamage and queueAsDamage ) ) then
             return true, ( shortageTank and queueAsTank ), ( shortageHealer and queueAsHealer ), ( shortageDamage and queueAsDamage )
@@ -1528,399 +1541,13 @@ end
 
 
 
-
-
-
-
-
---------------------------------------------- Slash Command-----------------------------------------
-local function setSetting(element, value)
-	if not element.settingKey then return false end
-
-	if element.userSetting then
-		IncentiveProgram:GetSettings():SetUserSetting(element.settingKey, value)
-	elseif element.dungeonSetting and element.dungeonID then
-		
-	else
-		IncentiveProgram:GetSettings():SetSetting(element.settingKey, value)
-	end
-	
-	IncentiveProgram:GetFrame():UpdatedSettings()
-	IncentiveProgram:SetCount(IncentiveProgram:GetDungeon():GetShortageCount()) --Refresh Count
-	InterfaceOptionsOptionsFrame_RefreshAddOns()
-end
-
-local function getSetting(element)
-	if not element.settingKey then return false end
-	
-	if element.userSetting then
-		return IncentiveProgram:GetSettings():GetUserSetting(element.settingKey)
-	elseif element.dungeonSetting and element.dungeonID then
-	
-	else
-		return IncentiveProgram:GetSettings():GetSetting(element.settingKey)
-	end
-	
-	return false
-end
-
-local function checkButtonOnClick(self, button)
-	if self.buttonList then
-		for _, b in pairs(self.buttonList) do
-			if b == self then
-				self:SetChecked(true)
-				setSetting(self, self.value)
-			else
-				b:SetChecked(false)
-			end
-		end
-	else
-		setSetting(self, self:GetChecked())
-		self:SetChecked(getSetting(self))
-	end
-end
-
-local function loadSettings(panel)
-	--Roles
-	panel.rolesTank:SetChecked(getSetting(panel.rolesTank))
-	panel.rolesHealer:SetChecked(getSetting(panel.rolesHealer))
-	panel.rolesDamage:SetChecked(getSetting(panel.rolesDamage))
-	
-	--General Settings
-	panel.generalHideInParty:SetChecked(getSetting(panel.generalHideInParty))
-	panel.generalHideAlways:SetChecked(getSetting(panel.generalHideAlways))
-	panel.generalHideEmpty:SetChecked(getSetting(panel.generalHideEmpty))
-	panel.generalAlert:SetChecked(getSetting(panel.generalAlert))
-	panel.generalAlertToast:SetChecked(getSetting(panel.generalAlertToast))
-	panel.generalIgnoreCompletedLFR:SetChecked(getSetting(panel.generalIgnoreCompletedLFR))
-	
-	--Sounds
-	panel.soundsAlertPing:SetChecked(getSetting(panel.soundsAlertPing))
-	panel.soundsAlertSound:SetText(getSetting(panel.soundsAlertSound))
-	panel.soundsAlertRepeats:SetText(getSetting(panel.soundsAlertRepeats))
-	panel.soundsToastPing:SetChecked(getSetting(panel.soundsToastPing))
-	panel.soundsToastSound:SetText(getSetting(panel.soundsToastSound))
-	panel.soundsToastRepeats:SetText(getSetting(panel.soundsToastRepeats))
-	
-	--Cycles
-	panel.cyclesCount:SetText(getSetting(panel.cyclesCount))
-	panel.cyclesContinuous:SetChecked(getSetting(panel.cyclesContinuous))
-	
-	local channel = getSetting(panel.soundsChannelDefault)
-	for _, b in pairs(panel.soundsChannelDefault.buttonList) do
-		if b.value == channel then
-			b:SetChecked(true)
-		else
-			b:SetChecked(false)
-		end
-	end
-end
-
-local function createCheckButton(panel, subname, text, anchorFrame, anchorPoint, anchorTo, xOffset, yOffset, settingKey, userSetting, dungeonSetting, dungeonID, tooltip)
-	local cb = CreateFrame("CheckButton", panel:GetName()..subname, panel, "UICheckButtonTemplate")
-	cb.text:SetText(text) --.text from UICheckButtonTemplate
-	cb:SetPoint(anchorPoint, anchorFrame, anchorTo, xOffset, yOffset)
-	cb.settingKey = settingKey
-	cb.userSetting = userSetting
-	cb.dungeonSetting = dungeonSetting
-	cb.dungeonID = dungeonID
-	cb.tooltip = tooltip
-	cb:SetScript("OnClick", checkButtonOnClick)
-
-	cb:SetScript("OnEnter", function(self, ...)
-		if self.tooltip then
-			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-			GameTooltip:AddLine(IncentiveProgram_ADDON_DISPLAY_NAME, 1.0, 1.0, 1.0)
-			GameTooltip:AddLine(self.tooltip, nil, nil, nil, true)
-			GameTooltip:Show()
-		end
-	end)
-	
-	cb:SetScript("OnLeave", function(self, ...)
-		GameTooltip:Hide()
-	end)
-	
-	return cb
-end
-
-local function createEditBox(panel, subname, text, anchorFrame, anchorPoint, anchorTo, xOffset, yOffset, settingKey, userSetting, dungeonSetting, dungeonID, tooltip)
-	local eb = CreateFrame("EditBox", panel:GetName()..subname, panel, "InputBoxInstructionsTemplate")
-	eb.Instructions:SetText(text) --.Instructions from InputBoxInstructionsTemplate
-	eb:SetPoint(anchorPoint, anchorFrame, anchorTo, xOffset, yOffset)
-	eb:SetHeight(18)
-	eb:SetWidth(65)
-	eb.settingKey = settingKey
-	eb.userSetting = userSetting
-	eb.dungeonSetting = dungeonSetting
-	eb.dungeonID = dungeonID
-	eb.tooltip = tooltip
-	eb:SetAutoFocus(false)
-	eb:SetScript("OnEditFocusGained", function(self, ...)
-		self.originalValue = self:GetText()
-	end)
-	eb:SetScript("OnEditFocusLost", function(self, ...)
-		if self:GetText() ~= "" and tonumber(self:GetText()) and tonumber(self:GetText()) > 0 then
-			setSetting(self, self:GetText())
-		else
-			self:SetText(self.originalValue or getSetting(self) or "")
-		end
-	end)
-	
-	eb:SetScript("OnEscapePressed", function(self, ...)
-		self:SetText(self.originalValue or getSetting(self) or "")
-		self:ClearFocus()
-	end)
-	
-	eb:SetScript("OnEnterPressed", function(self, ...)
-		self:ClearFocus()
-	end)
-	
-	eb:SetScript("OnEnter", function(self, ...)
-		if self.tooltip then
-			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-			GameTooltip:AddLine(IncentiveProgram_ADDON_DISPLAY_NAME, 1.0, 1.0, 1.0)
-			GameTooltip:AddLine(self.tooltip, nil, nil, nil, true)
-			GameTooltip:Show()
-		end
-	end)
-	
-	eb:SetScript("OnLeave", function(self, ...)
-		GameTooltip:Hide()
-	end)
-	
-	return eb
-end
-
-local function createRadioButton(panel, subname, text, anchorFrame, anchorPoint, anchorTo, xOffset, yOffset, settingKey, userSetting, dungeonSetting, dungeonID, tooltip, buttonList, value)
-	local rb = CreateFrame("CheckButton", panel:GetName()..subname, panel, "UIRadioButtonTemplate")
-	rb.text:SetText(text) --.text from UICheckButtonTemplate
-	rb:SetPoint(anchorPoint, anchorFrame, anchorTo, xOffset, yOffset)
-	rb.settingKey = settingKey
-	rb.userSetting = userSetting
-	rb.dungeonSetting = dungeonSetting
-	rb.dungeonID = dungeonID
-	rb.tooltip = tooltip
-	rb:SetScript("OnClick", checkButtonOnClick)
-
-	rb:SetScript("OnEnter", function(self, ...)
-		if self.tooltip then
-			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-			GameTooltip:AddLine(IncentiveProgram_ADDON_DISPLAY_NAME, 1.0, 1.0, 1.0)
-			GameTooltip:AddLine(self.tooltip, nil, nil, nil, true)
-			GameTooltip:Show()
-		end
-	end)
-	
-	rb:SetScript("OnLeave", function(self, ...)
-		GameTooltip:Hide()
-	end)
-	
-	table.insert(buttonList, rb)
-	rb.buttonList = buttonList
-	rb.value = value
-	
-	return rb
-end
-
-local function createInterfacePanel()
-
-	--Add an interface panel to the blizzard AddOn Interface UI
-	local panel = CreateFrame("Frame","IncentiveProgramInterfacePanel",UIParent)
-	panel.name = NOTICE_INCENTIVEPROGRAM_PANEL_TITLE
-	
-	panel.okay = function(self, ...)
-	end
-	
-	panel.default = function(self, ...)
-	end
-	
-	panel.refresh = function(self, ...)
-		loadSettings(self)
-	end
-	
-	InterfaceOptions_AddCategory(panel)
-	
-	--Header
-	panel.title = panel:CreateFontString(panel:GetName().."Title", "ARTWORK", "Game18Font")
-	panel.title:SetText(IncentiveProgram_ADDON_DISPLAY_NAME)
-	panel.title:SetTextColor(1,0.82,0)
-	panel.title:SetPoint("TOPLEFT", 10, -10)
-	
-	--Roles
-	panel.rolesHeader = panel:CreateFontString(panel:GetName().."RolesHeader", "ARTWORK", "Game15Font")
-	panel.rolesHeader:SetText(IncentiveProgram_ContextLabels["ROLES"])
-	panel.rolesHeader:SetPoint("TOPLEFT", panel.title, "BOTTOMLEFT", 0, -25)
-	local tank, healer, damage = C_LFGList.GetAvailableRoles()
-	if ( tank ) then tank = "" else tank = "\124CFFC41F3B" end
-	if ( healer ) then healer = "" else healer = "\124CFFC41F3B" end
-	if ( damage ) then damage = "" else damage = "\124CFFC41F3B" end
-
-	panel.rolesTank = createCheckButton(panel, "RolesTankCheckBox", tank..IncentiveProgram_ContextLabels["TANK"],
-		panel.rolesHeader, "LEFT", "RIGHT", 35, 0, IncentiveProgram_Settings["ROLE_TANK"], true, nil, nil)
-		
-	panel.rolesHealer = createCheckButton(panel, "RolesHealerCheckBox", healer..IncentiveProgram_ContextLabels["HEALER"],
-		panel.rolesTank, "LEFT", "RIGHT", 100, 0, IncentiveProgram_Settings["ROLE_HEALER"], true, nil, nil)
-		
-	panel.rolesDamage = createCheckButton(panel, "RolesDamageCheckBox", damage..IncentiveProgram_ContextLabels["DAMAGE"],
-		panel.rolesHealer, "LEFT", "RIGHT", 100, 0, IncentiveProgram_Settings["ROLE_DAMAGE"], true, nil, nil)
-
-	
-	--General Settings
-	panel.generalHeader = panel:CreateFontString(panel:GetName().."GeneralHeader", "ARTWORK", "Game15Font")
-	panel.generalHeader:SetText(IncentiveProgram_ContextLabels["SETTINGS"])
-	panel.generalHeader:SetPoint("TOPLEFT", panel.rolesHeader, "BOTTOMLEFT", 0, -25)
-	
-	panel.generalHideInParty = createCheckButton(panel, "GeneralHideInParty", IncentiveProgram_ContextLabels["HIDE_IN_PARTY"],
-		panel.generalHeader, "LEFT", "RIGHT", 15, 0, IncentiveProgram_Settings["HIDE_IN_PARTY"], nil, nil, nil)
-	
-	panel.generalHideAlways = createCheckButton(panel, "GeneralHideAlways", IncentiveProgram_ContextLabels["HIDE_ALWAYS"],
-		panel.generalHideInParty, "LEFT", "RIGHT", 150, 0, IncentiveProgram_Settings["HIDE_ALWAYS"], nil, nil, nil)
-	
-	panel.generalHideEmpty = createCheckButton(panel, "GenerlaHideEmpty", IncentiveProgram_ContextLabels["HIDE_EMPTY"],
-		panel.generalHideAlways, "LEFT", "RIGHT", 100, 0, IncentiveProgram_Settings["HIDE_EMPTY"], nil, nil, nil)
-	
-	panel.generalAlert = createCheckButton(panel, "GeneralAlert", IncentiveProgram_ContextLabels["ALERT"],
-		panel.generalHideInParty, "TOPLEFT", "BOTTOMLEFT", 0, 0, IncentiveProgram_Settings["ALERT"], nil, nil, nil)
-	
-	panel.generalAlertToast = createCheckButton(panel, "GeneralAlertToast", IncentiveProgram_ContextLabels["ALERT_TOAST"],
-		panel.generalAlert, "LEFT", "RIGHT", 200, 0, IncentiveProgram_Settings["ALERT_TOAST"], nil, nil, nil)
-	
-	panel.generalIgnoreCompletedLFR = createCheckButton(panel, "GeneralIgnoreCompletedLFR", IncentiveProgram_ContextLabels["IGNORE_COMPLETED_LFR"],
-		panel.generalAlert, "TOPLEFT", "BOTTOMLEFT", 0, 0, IncentiveProgram_Settings["IGNORE_COMPLETED_LFR"], nil, nil, nil, IncentiveProgram_ContextLabels["TOOLTIP_IGNORE_LFR"])
-
-	
-	--Sounds
-	panel.soundsHeader = panel:CreateFontString(panel:GetName().."SoundsHeader", "ARTWORK", "Game15Font")
-	panel.soundsHeader:SetText(IncentiveProgram_ContextLabels["SOUNDS"])
-	panel.soundsHeader:SetPoint("TOPLEFT", panel.generalHeader, "BOTTOMLEFT", 0, -95)
-	
-	--Sounds
-	----Alert Ping
-	panel.soundsAlertPing = createCheckButton(panel, "SoundsAlertPing", IncentiveProgram_ContextLabels["ALERT_PING"],
-		panel.soundsHeader, "LEFT", "RIGHT", 20, 0, IncentiveProgram_Settings["ALERT_PING"], nil, nil, nil)
-		
-	panel.soundsAlertSoundLabel = panel:CreateFontString(panel:GetName().."SoundAlertSoundLabel", "ARTWORK", "GameFontNormalSmall")
-	panel.soundsAlertSoundLabel:SetText(IncentiveProgram_ContextLabels["SOUND_ID"])
-	panel.soundsAlertSoundLabel:SetPoint("LEFT", panel.soundsAlertPing, "RIGHT", 100, -1)
-		
-	panel.soundsAlertSound = createEditBox(panel, "SoundsAlertSound", IncentiveProgram_ContextLabels["SOUND_ID"],
-		panel.soundsAlertSoundLabel, "LEFT", "RIGHT", 15, 1, IncentiveProgram_Settings["ALERT_SOUND"], nil, nil, nil, IncentiveProgram_ContextLabels["TOOLTIP_SOUND_ID_1"])
-	
-	panel.soundsAlertTest = CreateFrame("Button", panel:GetName().."SoundsAlertTest", panel, "UIPanelButtonTemplate")
-	panel.soundsAlertTest:SetPoint("LEFT", panel.soundsAlertSound, "RIGHT", 10, -1)
-	panel.soundsAlertTest.Text:SetText("Test") --.Text from UIPanelButtonTemplate
-	panel.soundsAlertTest:SetScript("OnClick", function(self)
-		local soundID = getSetting(panel.soundsAlertSound)
-		local channel = getSetting(panel.soundsChannelDefault)
-		PlaySound(soundID, channel)
-	end)
-		
-	panel.soundsAlertRepeatsLabel = panel:CreateFontString(panel:GetName().."SoundAlertRepeatsLabel", "ARTWORK", "GameFontNormalSmall")
-	panel.soundsAlertRepeatsLabel:SetText(IncentiveProgram_ContextLabels["REPEATS"])
-	panel.soundsAlertRepeatsLabel:SetPoint("LEFT", panel.soundsAlertTest, "RIGHT", 15, 0)
-	
-	panel.soundsAlertRepeats = createEditBox(panel, "SoundsAlertRepeats", IncentiveProgram_ContextLabels["REPEATS"],
-		panel.soundsAlertRepeatsLabel, "LEFT", "RIGHT", 15, 1, IncentiveProgram_Settings["ALERT_REPEATS"], nil, nil, nil, IncentiveProgram_ContextLabels["TOOLTIP_SOUND_REPEATS"])
-	
-	--Sounds
-	----Toast Ping
-	panel.soundsToastPing = createCheckButton(panel, "SoundsToastPing", IncentiveProgram_ContextLabels["TOAST_PING"],
-		panel.soundsAlertPing, "TOPLEFT", "BOTTOMLEFT", 0, 0, IncentiveProgram_Settings["TOAST_PING"], nil, nil, nil)
-		
-	panel.soundsToastSoundLabel = panel:CreateFontString(panel:GetName().."SoundToastSoundLabel", "ARTWORK", "GameFontNormalSmall")
-	panel.soundsToastSoundLabel:SetText(IncentiveProgram_ContextLabels["SOUND_ID"])
-	panel.soundsToastSoundLabel:SetPoint("LEFT", panel.soundsToastPing, "RIGHT", 100, -1)
-		
-	panel.soundsToastSound = createEditBox(panel, "SoundsToastSound", IncentiveProgram_ContextLabels["SOUND_ID"],
-		panel.soundsToastSoundLabel, "LEFT", "RIGHT", 15, 1, IncentiveProgram_Settings["TOAST_SOUND"], nil, nil, nil, IncentiveProgram_ContextLabels["TOOLTIP_SOUND_ID_2"])
-			
-	panel.soundsToastTest = CreateFrame("Button", panel:GetName().."SoundsToastTest", panel, "UIPanelButtonTemplate")
-	panel.soundsToastTest:SetPoint("LEFT", panel.soundsToastSound, "RIGHT", 10, -1)
-	panel.soundsToastTest.Text:SetText("Test") --.Text from UIPanelButtonTemplate
-	panel.soundsToastTest:SetScript("OnClick", function(self)
-		local soundID = getSetting(panel.soundsToastSound)
-		local channel = getSetting(panel.soundsChannelDefault)
-		PlaySound(soundID, channel)
-	end)
-		
-	panel.soundsToastRepeatsLabel = panel:CreateFontString(panel:GetName().."SoundToastRepeatsLabel", "ARTWORK", "GameFontNormalSmall")
-	panel.soundsToastRepeatsLabel:SetText(IncentiveProgram_ContextLabels["REPEATS"])
-	panel.soundsToastRepeatsLabel:SetPoint("LEFT", panel.soundsToastTest, "RIGHT", 15, 0)
-	
-	panel.soundsToastRepeats = createEditBox(panel, "SoundsToastRepeats", IncentiveProgram_ContextLabels["REPEATS"],
-		panel.soundsToastRepeatsLabel, "LEFT", "RIGHT", 15, 1, IncentiveProgram_Settings["TOAST_REPEATS"], nil, nil, nil, IncentiveProgram_ContextLabels["TOOLTIP_SOUND_REPEATS"])
-	
-	--Sounds
-	----Channel Radio
-	local tblRadioChannel = {}
-	
-	panel.soundsChannelLabel = panel:CreateFontString(panel:GetName().."SoundChannelLabel", "ARTWORK", "GameFontNormalSmall")
-	panel.soundsChannelLabel:SetText(INCENTIVEPROGRAM_CHANNEL)
-	panel.soundsChannelLabel:SetPoint("TOPLEFT", panel.soundsHeader, "BOTTOMLEFT", 0, -50)
-	
-	panel.soundsChannelDefault = createRadioButton(panel, "SoundsChannelDefault", SOUND, panel.soundsChannelLabel, "LEFT", "RIGHT", 15, 0, IncentiveProgram_Settings["CHANNEL"]
-	, nil, nil, nil, INCENTIVEPROGRAM_CHANNEL_DISC, tblRadioChannel, "SFX")	
-	panel.soundsChannelMusic = createRadioButton(panel, "SoundsChannelMusic", INCENTIVEPROGRAM_MUSIC, panel.soundsChannelDefault, "LEFT", "RIGHT", 100, 0, IncentiveProgram_Settings["CHANNEL"]
-	, nil, nil, nil, nil, tblRadioChannel, "Music")	
-	panel.soundsChannelAmbience = createRadioButton(panel, "SoundsChannelAmbience", INCENTIVEPROGRAM_AMBIENCE, panel.soundsChannelMusic, "LEFT", "RIGHT", 60, 0, IncentiveProgram_Settings["CHANNEL"]
-	, nil, nil, nil, nil, tblRadioChannel, "Ambience")	
-	panel.soundsChannelMaster = createRadioButton(panel, "SoundsChannelMaster", INCENTIVEPROGRAM_MASTER, panel.soundsChannelAmbience, "LEFT", "RIGHT", 100, 0, IncentiveProgram_Settings["CHANNEL"]
-	, nil, nil, nil, INCENTIVEPROGRAM_MASTER_DISC, tblRadioChannel, "Master")
-	
-	--Cycles
-	panel.cyclesHeader = panel:CreateFontString(panel:GetName().."SoundsHeader", "ARTWORK", "Game15Font")
-	panel.cyclesHeader:SetText(IncentiveProgram_ContextLabels["ANIM_CYCLES"])
-	panel.cyclesHeader:SetPoint("TOPLEFT", panel.soundsHeader, "BOTTOMLEFT", 0, -95)
-	
-	panel.cyclesCount = createEditBox(panel, "CyclesCount", IncentiveProgram_ContextLabels["ANIM_CYCLES"],
-		panel.cyclesHeader, "LEFT", "RIGHT", 35, 0, IncentiveProgram_Settings["CYCLE_COUNT"], nil, nil, nil, IncentiveProgram_ContextLabels["TOOLTIP_CYCLE_COUNT"])
-	
-	panel.cyclesContinuous = createCheckButton(panel, "CyclesContinuous", IncentiveProgram_ContextLabels["CONTINUOUSLY_CYCLE"],
-		panel.cyclesCount, "LEFT", "RIGHT", 65, 0, IncentiveProgram_Settings["CONTINUOUSLY_CYCLE"], nil, nil, nil, IncentiveProgram_ContextLabels["TOOLTIP_CONTINUOUSLY_CYCLE"])
-	
-	
-	--Reset Button
-	panel.resetPositionBtn = CreateFrame("BUTTON", panel:GetName().."ResetPosition", panel, "UIPanelButtonTemplate")
-	panel.resetPositionBtn:SetText(INCENTIVEPROGRAM_RESET_POSITION)
-	panel.resetPositionBtn:SetWidth(100)
-	panel.resetPositionBtn:SetPoint("TOPLEFT", panel.cyclesHeader, "BOTTOMLEFT", 0, -25)
-	panel.resetPositionBtn:SetScript("OnClick", function()
-		IncentiveProgram:GetFrame():ResetFramePosition()
-	end)
-	
-	--Tell Bliz's interface frame to update and show the interface panel
-    InterfaceAddOnsList_Update();
-	
-	--test
-	--InterfaceOptionsFrame_OpenToCategory(IncentiveProgramInterfacePanel) 
-end
-
-IncentiveProgram_CreateInterfacePanel = createInterfacePanel
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 local eventFrame = CreateFrame("Frame", "IncentiveProgramEventFrame", UIParent)
 eventFrame:RegisterEvent("VARIABLES_LOADED")
 eventFrame:SetScript("OnEvent", function(self, ...) self:OnEvent(...) end)
 eventFrame:SetScript("OnUpdate", function(self, ...) self:OnUpdate(...) end)
 
 --------------------------------------------- Variables-----------------------------------------
-local IncentiveProgram_SavedLFGRoles = {
+IncentiveProgram.SavedLFGRoles = {
     isUpdated = false,
     Leader = false,
     Tank = false,
@@ -1930,8 +1557,8 @@ local IncentiveProgram_SavedLFGRoles = {
 --------------------------------------------- Slash Command -----------------------------------------
 SLASH_INCENTIVEPROGRAM1 = "/ip"
 function SlashCmdList.INCENTIVEPROGRAM(msg, editbox)
-    --IncentiveProgram:GetSettings():SetSetting(IncentiveProgram_Settings["HIDE_IN_PARTY"], false)
-    --IncentiveProgram:GetSettings():SetSetting(IncentiveProgram_Settings["HIDE_ALWAYS"], false)
+    --IncentiveProgram:GetSettings():SetSetting(IncentiveProgram.Settings["HIDE_IN_PARTY"], false)
+    --IncentiveProgram:GetSettings():SetSetting(IncentiveProgram.Settings["HIDE_ALWAYS"], false)
     --IncentiveProgram:GetFrame():ShowFrame()
 	InterfaceOptionsFrame_OpenToCategory(IncentiveProgramInterfacePanel) 
 end
@@ -1945,7 +1572,7 @@ function eventFrame:OnEvent(event, ...)
         self:RegisterEvent("LFG_ROLE_UPDATE")
     elseif ( event == "GROUP_ROSTER_UPDATE" or event == "LFG_UPDATE" ) then --Party Update
         if IsInGroup() then
-            if ( IncentiveProgram:GetSettings():GetSetting(IncentiveProgram_Settings["HIDE_IN_PARTY"]) ) then
+            if ( IncentiveProgram:GetSettings():GetSetting(IncentiveProgram.Settings["HIDE_IN_PARTY"]) ) then
                 IncentiveProgram:GetFrame():HideFrame()
             end
             
@@ -1960,7 +1587,7 @@ function eventFrame:OnEvent(event, ...)
 		if ( count == 0 ) then
 			eventFrame.continousEnabled = false
 		else
-			if ( IncentiveProgram:GetSettings():GetSetting(IncentiveProgram_Settings["CONTINUOUSLY_CYCLE"]) ) then
+			if ( IncentiveProgram:GetSettings():GetSetting(IncentiveProgram.Settings["CONTINUOUSLY_CYCLE"]) ) then
 				eventFrame.continousEnabled = true
 			else
 				eventFrame.continousEnabled = false
@@ -1968,14 +1595,14 @@ function eventFrame:OnEvent(event, ...)
 		end
     end
     
-    if ( IncentiveProgram_SavedLFGRoles_isUpdated ) then
-	    IncentiveProgram_SavedLFGRoles_isUpdated = false
-        SetLFGRoles(IncentiveProgram_SavedLFGRoles_Leader, IncentiveProgram_SavedLFGRoles_Tank, IncentiveProgram_SavedLFGRoles_Healer, IncentiveProgram_SavedLFGRoles_Damage)
+    if ( IncentiveProgram.SavedLFGRoles.isUpdated ) then
+	    IncentiveProgram.SavedLFGRoles.isUpdated = false
+        SetLFGRoles(IncentiveProgram.SavedLFGRoles.Leader, IncentiveProgram.SavedLFGRoles.Tank, IncentiveProgram.SavedLFGRoles.Healer, IncentiveProgram.SavedLFGRoles.Damage)
     end
 end
 
 function eventFrame:OnUpdate(e)
-    self.elapsed = self.elapsed or (IncentiveProgram_TickRate - 5)
+    self.elapsed = self.elapsed or (IncentiveProgram.TickRate - 5)
     self.elapsed = self.elapsed + e
 	
 	self.soundElapsed = self.soundElapsed or 0
@@ -1987,7 +1614,7 @@ function eventFrame:OnUpdate(e)
 	self.cycleElapsed = self.cycleElapsed + e
     self.cycleCount = self.cycleCount or 0
 
-	if ( self.elapsed >= IncentiveProgram_TickRate ) then
+	if ( self.elapsed >= IncentiveProgram.TickRate ) then
 		self.elapsed = 0
 		if ( not IsInGroup() ) then --can't get incentives in a group anyways.  Seems to still trigger
 									--when in LFR dungeons anyways, so ignore it now.
@@ -1995,20 +1622,20 @@ function eventFrame:OnUpdate(e)
 		end
 	end
 	
-	if ( self.soundElapsed >= IncentiveProgram_SoundRate ) then
+	if ( self.soundElapsed >= IncentiveProgram.SoundRate ) then
 		self.soundElapsed = 0
 		if ( self.soundCountAlert > 0 ) then
-			local successful = PlaySound(IncentiveProgram:GetSettings():GetSetting(IncentiveProgram_Settings["ALERT_SOUND"]), IncentiveProgram:GetSettings():GetSetting(IncentiveProgram_Settings["CHANNEL"]))
+			local successful = PlaySound(IncentiveProgram:GetSettings():GetSetting(IncentiveProgram.Settings["ALERT_SOUND"]), IncentiveProgram:GetSettings():GetSetting(IncentiveProgram.Settings["CHANNEL"]))
 			if successful then self.soundCountAlert = self.soundCountAlert - 1 end
 		end
 		
 		if ( self.soundCountToast > 0 ) then
-			local successful = PlaySound(IncentiveProgram:GetSettings():GetSetting(IncentiveProgram_Settings["TOAST_SOUND"]), IncentiveProgram:GetSettings():GetSetting(IncentiveProgram_Settings["CHANNEL"]))
+			local successful = PlaySound(IncentiveProgram:GetSettings():GetSetting(IncentiveProgram.Settings["TOAST_SOUND"]), IncentiveProgram:GetSettings():GetSetting(IncentiveProgram.Settings["CHANNEL"]))
 			if successful then self.soundCountToast = self.soundCountToast - 1 end
 		end
 	end
 	
-	if ( self.cycleElapsed >= IncentiveProgram_CycleRate ) then
+	if ( self.cycleElapsed >= IncentiveProgram.CycleRate ) then
 		self.cycleElapsed = 0
 		
 		if ( self.cycleCount == 0 and self.continousEnabled ) then
@@ -2017,13 +1644,13 @@ function eventFrame:OnUpdate(e)
 		if ( self.cycleCount > 0 ) then
 			if ( ( self.cycleCount % 3 ) == 0 ) then
 				IncentiveProgram:SetCount(IncentiveProgram:GetDungeon():GetShortageCount()
-					,IncentiveProgram_Icons["INCENTIVE_PLENTIFUL"])
+					,IncentiveProgram.Icons["INCENTIVE_PLENTIFUL"])
 			elseif ( ( self.cycleCount % 3 ) == 1 ) then
 				IncentiveProgram:SetCount(IncentiveProgram:GetDungeon():GetShortageCount()
-					,IncentiveProgram_Icons["INCENTIVE_UNCOMMON"])
+					,IncentiveProgram.Icons["INCENTIVE_UNCOMMON"])
 			else
 				IncentiveProgram:SetCount(IncentiveProgram:GetDungeon():GetShortageCount()
-					,IncentiveProgram_Icons["INCENTIVE_RARE"])
+					,IncentiveProgram.Icons["INCENTIVE_RARE"])
 			end
 			self.cycleCount = self.cycleCount - 1
 		end
@@ -2033,7 +1660,7 @@ end
 function IncentiveProgram:SetCount(count, texture)
 	if ( not count ) then count = 0 end
     if ( not texture ) then
-        texture = IncentiveProgram_Icons["INCENTIVE_RARE"]
+        texture = IncentiveProgram.Icons["INCENTIVE_RARE"]
     end
 
     if ( count > 0 ) then
@@ -2044,25 +1671,25 @@ function IncentiveProgram:SetCount(count, texture)
 end
 
 function IncentiveProgram:SetAlert(line1, line2, texture, arg1, arg2)
-    if ( IncentiveProgram:GetSettings():GetSetting(IncentiveProgram_Settings["ALERT"]) ) then
-        eventFrame.cycleCount = 3 * IncentiveProgram:GetSettings():GetSetting(IncentiveProgram_Settings["CYCLE_COUNT"])
-		IncentiveProgram:SetSound(IncentiveProgram_ALERT)
+    if ( IncentiveProgram:GetSettings():GetSetting(IncentiveProgram.Settings["ALERT"]) ) then
+        eventFrame.cycleCount = 3 * IncentiveProgram:GetSettings():GetSetting(IncentiveProgram.Settings["CYCLE_COUNT"])
+		IncentiveProgram:SetSound(IncentiveProgram.ALERT)
     end
     
-    if ( IncentiveProgram:GetSettings():GetSetting(IncentiveProgram_Settings["ALERT_TOAST"]) ) then
+    if ( IncentiveProgram:GetSettings():GetSetting(IncentiveProgram.Settings["ALERT_TOAST"]) ) then
         IncentiveProgram:GetToast():AddToast(line1, line2, texture, arg1, arg2, IncentiveProgram:GetMenu().JoinDungeon)
-		IncentiveProgram:SetSound(IncentiveProgram_TOAST)
+		IncentiveProgram:SetSound(IncentiveProgram.TOAST)
     end
 end
 
 function IncentiveProgram:SetSound(alertType)
-	if ( alertType == IncentiveProgram_ALERT ) then
-		if ( IncentiveProgram:GetSettings():GetSetting(IncentiveProgram_Settings["ALERT_PING"]) ) then
-			eventFrame.soundCountAlert = tonumber(IncentiveProgram:GetSettings():GetSetting(IncentiveProgram_Settings["ALERT_REPEATS"])) or 0
+	if ( alertType == IncentiveProgram.ALERT ) then
+		if ( IncentiveProgram:GetSettings():GetSetting(IncentiveProgram.Settings["ALERT_PING"]) ) then
+			eventFrame.soundCountAlert = tonumber(IncentiveProgram:GetSettings():GetSetting(IncentiveProgram.Settings["ALERT_REPEATS"])) or 0
 		end
-	elseif ( alertType == IncentiveProgram_TOAST ) then
-		if ( IncentiveProgram:GetSettings():GetSetting(IncentiveProgram_Settings["TOAST_PING"]) ) then
-			eventFrame.soundCountToast = tonumber(IncentiveProgram:GetSettings():GetSetting(IncentiveProgram_Settings["TOAST_REPEATS"])) or 0
+	elseif ( alertType == IncentiveProgram.TOAST ) then
+		if ( IncentiveProgram:GetSettings():GetSetting(IncentiveProgram.Settings["TOAST_PING"]) ) then
+			eventFrame.soundCountToast = tonumber(IncentiveProgram:GetSettings():GetSetting(IncentiveProgram.Settings["TOAST_REPEATS"])) or 0
 		end
 	end
 end

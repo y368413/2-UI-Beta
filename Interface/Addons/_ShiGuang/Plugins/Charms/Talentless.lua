@@ -2,13 +2,6 @@ local Talentless = CreateFrame('Frame', 'Talentless', UIParent)
 Talentless:RegisterEvent('ADDON_LOADED')
 Talentless:SetScript('OnEvent', function(self, event, ...) self[event](self, ...) end)
 
-function Talentless:PLAYER_LEVEL_UP(level)
-	if(level == 101) then table.remove(self.Items[1].items, 1)
-	elseif(level == 120) then table.remove(self.Items[2].items, 1) self:UnregisterEvent('PLAYER_LEVEL_UP')
-	end
-	if(self:IsShown()) then self:UpdateItems() end
-end
-
 function Talentless:BAG_UPDATE_DELAYED() self:UpdateItems() end
 
 function Talentless:CreateItemButtons()
@@ -128,7 +121,7 @@ function Talentless:ADDON_LOADED(addon)
 		--PlayerTalentFrameTalents.unspentText:ClearAllPoints()
 		--PlayerTalentFrameTalents.unspentText:SetPoint('TOP', 0, 24)
 		self:CreateItemButtons()
-		if(UnitLevel('player') < 120 and not (IsTrialAccount() or IsVeteranTrialAccount())) then self:RegisterEvent('PLAYER_LEVEL_UP') end
+		--if(UnitLevel('player') < 120 and not (IsTrialAccount() or IsVeteranTrialAccount())) then self:RegisterEvent('PLAYER_LEVEL_UP') end
 		self:UnregisterEvent('ADDON_LOADED')
 		self:RegisterEvent('BAG_UPDATE_DELAYED')
 		self:UpdateItems()

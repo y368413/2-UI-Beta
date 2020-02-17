@@ -590,7 +590,8 @@ local function Item_OnLeave(self)
 	ResetCursor();
 end
 
-local function OnEvent(self, event)
+local function OnEvent(self, event, ...)
+	if (select(1, ...) =="_ShiGuang") then
 		self:UnregisterEvent("ADDON_LOADED");
 		local x = 0;
 		if ( x ~= 0 ) then
@@ -599,6 +600,7 @@ local function OnEvent(self, event)
 			self.search:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 60-x, 9);
 		end
 		return;
+	end
 end
 
 local frame = CreateFrame("Frame", "NuuhMerchantFrame", MerchantFrame);
@@ -679,7 +681,7 @@ end
 
 local function Search_OnEnter(self)
 	GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-	GameTooltip:SetText(xMerchant_Tobrowseitemtooltipstoo);
+	GameTooltip:SetText("To browse item tooltips, too");
 end
 
 local tooltipsearching = CreateFrame("CheckButton", "$parentTooltipSearching", frame, "InterfaceOptionsSmallCheckButtonTemplate");
@@ -689,8 +691,8 @@ tooltipsearching:SetHeight(21);
 tooltipsearching:SetPoint("LEFT", search, "RIGHT", 5, -2);
 tooltipsearching:SetHitRectInsets(0, 0, 0, 0);
 tooltipsearching:SetScript("OnClick", Search_OnClick);
---tooltipsearching:SetScript("OnEnter", Search_OnEnter);
---tooltipsearching:SetScript("OnLeave", GameTooltip_Hide);
+tooltipsearching:SetScript("OnEnter", Search_OnEnter);
+tooltipsearching:SetScript("OnLeave", GameTooltip_Hide);
 tooltipsearching:SetChecked(false);
 
 local scrollframe = CreateFrame("ScrollFrame", "NuuhMerchantScrollFrame", frame, "FauxScrollFrameTemplate");
@@ -874,19 +876,19 @@ hooksecurefunc("MerchantFrame_Update", function()
 		-- DONEY
 		FactionsUpdate();
 		MerchantUpdate();
-		
-    MerchantBuyBackItem:ClearAllPoints();
-    MerchantBuyBackItem:SetPoint("BOTTOMLEFT", 175, 32);
-
-    for _, frame in next, { MerchantNextPageButton, MerchantPrevPageButton, MerchantPageText } do
-	    frame:Hide()
-	    frame.Show = function() end;
-    end
 	else
 		frame:Hide();
-		for i=1, 10, 1 do _G["MerchantItem"..i]:Show(); end
+		for i=1, 12, 1 do _G["MerchantItem"..i]:Show(); end
 		if (StackSplitFrame:IsShown()) then StackSplitFrame:Hide(); end
 	end
 end);
-
+		
 hooksecurefunc("MerchantFrame_OnHide", function() if MaoRUIPerDB["Misc"]["xMerchant"] then wipe(errors); wipe(currencies); end end);
+MerchantBuyBackItem:ClearAllPoints();
+MerchantBuyBackItem:SetPoint("BOTTOMLEFT", 175, 32);
+
+for _, frame in next, { MerchantNextPageButton, MerchantPrevPageButton, MerchantPageText } do
+	frame:Hide()
+	frame.Show = function() end;
+end
+
