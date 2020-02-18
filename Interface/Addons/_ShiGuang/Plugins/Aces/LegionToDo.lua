@@ -1700,12 +1700,13 @@ LegionToDo.Options:SetPushedTexture("Interface\\Buttons\\LockButton-Unlocked-Dow
 LegionToDo.Options:SetHighlightTexture("Interface\\Buttons\\UI-Common-MouseHilight", "ADD")
 LegionToDo.Options:SetSize(32, 32)
 
-local CharsListDropdown = CreateFrame("Frame", "LegionToDoCharsListMenuFrame", LegionToDo, "UIDropDownMenuTemplate")
+--local CharsListDropdown = CreateFrame("Frame", "LegionToDoCharsListMenuFrame", LegionToDo, "UIDropDownMenuTemplate")
+local CharsListDropdown = MSA_DropDownMenu_Create("LegionToDoCharsListMenuFrame", LegionToDo)
 
 LegionToDo.CharsList = CreateFrame("Button",nil,LegionToDo,"UIPanelButtonTemplate")
 LegionToDo.CharsList:SetPoint("TOPLEFT",160,-5)
 LegionToDo.CharsList:SetScript("OnClick",function(self)
-	if UIDROPDOWNMENU_OPEN_MENU then
+	if MSA_DROPDOWNMENU_OPEN_MENU then
 		CloseDropDownMenus()
 		return
 	end

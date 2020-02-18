@@ -1,5 +1,4 @@
 ﻿local strfind, strrep, strmatch, pairs, C_Timer_After, ChatTypeInfo = string.find, string.rep, string.match, pairs, C_Timer.After, ChatTypeInfo
-
 --[[--------------------------------------------------------------------
 align
 ----------------------------------------------------------------------]]

@@ -4,5 +4,5 @@
 	<Script file="PhotoRobot.lua"/>
 	<Script file="TransmogHeadsUp.lua"/>
 	<Script file="FeastsAndPortals.lua"/>
-	<!--Script file="IncentiveProgram.lua"/-->
+	<Script file="IncentiveProgram.lua"/>
 </Ui>

@@ -1579,7 +1579,7 @@ function dataobj:OnEnter()
    GameTooltip:AddLine(chest_icon..AddColor(BOSS_DEAD,GOLD))
    for i = 1, GetNumSavedInstances() do
 	   local name, id, _, difficulty, locked, extended, instanceIDMostSig, isRaid, maxPlayers, level, total, progress = GetSavedInstanceInfo(i)
-	   GameTooltip:AddDoubleLine(AddColor(name.."("..level..")",WHITE), locked and AddColor(progress.."/"..total, LIGHT_GREEN) or AddColor("已过期", LIGHT_RED))
+	   GameTooltip:AddDoubleLine(AddColor(name.."("..level..")",WHITE), locked and AddColor(progress.."/"..total, LIGHT_GREEN) or AddColor(" 0/0 ", LIGHT_RED))
    end
    GameTooltip:Show()
 end
