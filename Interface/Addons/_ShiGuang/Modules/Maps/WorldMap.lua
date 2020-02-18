@@ -128,9 +128,10 @@ function module:OnLogin()
 end
 
 --## Author: Coop ## Version: 01.00
-local CollapseQuestLog = CreateFrame("Button", "CollapseButton", QuestScrollFrame, 'UIPanelButtonTemplate')
+local CollapseQuestLog = CreateFrame("Button", "CollapseButton", WorldMapFrame.BorderFrame, 'UIPanelButtonTemplate')
+CollapseQuestLog:ClearAllPoints();
+CollapseQuestLog:SetPoint("TOPRIGHT",-68,0)
 CollapseQuestLog:SetSize(24,24)
-CollapseQuestLog:SetPoint("TOPRIGHT",-16,26)
-CollapseQuestLog:SetText("*")
-CollapseQuestLog:RegisterForClicks("LeftButtonUp")
+CollapseQuestLog:SetText("-")
+CollapseQuestLog:RegisterForClicks("AnyUp")
 CollapseQuestLog:SetScript("OnClick", function() CollapseQuestHeader(0) end)

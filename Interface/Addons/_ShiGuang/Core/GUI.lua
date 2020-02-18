@@ -143,7 +143,7 @@ local defaultSettings = {
 		FocusCBHeight = 18,
 		PlayerFrameScale = 0.9,
 		UFPctText = true,
-		UFClassIcon = false,
+		UFClassIcon = true,
 		UFFade = true,
 	},
 	Chat = {

@@ -4,8 +4,8 @@
 	<Include file="Loot\Loot.xml"/>
 	<Include file="Raid\Raid.xml"/>
 	<Include file="Quest\Quest.xml"/>
-	<Include file="Notice\Notice.xml"/>
 	<Include file="Charms\Charms.xml"/>
+	<Include file="Notice\Notice.xml"/>
 	<Include file="UnitFrames\UnitFrames.xml"/>
 	<Include file="Aces\Aces.xml"/>
 </Ui>

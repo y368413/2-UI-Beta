@@ -66,8 +66,10 @@ local Spells = {
 	[272874] = 20,		--- Trample (Ashvane Commander)
 	[268260] = 20,		--- Broadside (Ashvane Cannoneer)
 	[269029] = 20,		--- Clear the Deck (Dread Captain Lockwood)
+	[268443] = 20,		--- Dread Volley (Dread Captain Lockwood)
 	[272713] = 20,		--- Crushing Slam (Bilge Rat Demolisher)
 	[274941] = 20,		--- Banana Rampage swirlies(Bilge Rat Buccaneer)
+	[257883] = 20,		--- Break Water (Hadal Darkfathom)
 	[276068] = 20,		--- Tidal Surge (Hadal Darkfathom)
 	[257886] = 20,		--- Brine Pool (Hadal Darkfathom)
 	[261565] = 20,		--- Crashing Tide (Hadal Darkfathom)
@@ -145,7 +147,6 @@ local Spells = {
 	[268417] = 20,		--- Power Through (Azerite Extractor)
 	[268704] = 20,		--- Furious Quake (Stonefury)
 	[258628] = 20,		--- Resonant Quake (Earthrager)
-	--[268865] = 20,		--- Force Cannon (Weapons Tester) is targeted on random player i think
 	[269092] = 20,		--- Artillery Barrage (Ordnance Specialist)
 	[271583] = 20,		--- Black Powder Special (Mines near the track)
 	[269831] = 20,		--- Toxic Sludge (Oil Environment)
@@ -155,7 +156,6 @@ local Spells = {
 	[268851] = 20,		--- Lightning Shield (Aspix and Adderis)
 	[263573] = 20,		--- Cyclone Strike (Adderis)
 	[272658] = 20,		--- Electrified Scales (Scaled Krolusk Rider)
-	--what is this? dodgeable?
 	[273225] = 20,		--- Volley (Sandswept Marksman)
 	[272655] = 20,		--- Scouring Sand (Mature Krolusk)
 	[273995] = 20,		--- Pyrrhic Blast (Crazed Incubator)
@@ -178,6 +178,35 @@ local Spells = {
 	[272609] = 20,		--- Maddenin Gaze (Faceless Corruptor)
 	[272469] = 20,		--- Abyssal Slam (Faceless Corruptor)
 	[270108] = 20,		--- Rotting Spore (Unbound Abomination)
+	
+	-- Mechagon Workshop
+	[294128] = 20,		--- Rocket Barrage (Rocket Tonk)
+	[285020] = 20,		--- Whirling Edge (The Platinum Pummeler)
+	[294291] = 20,		--- Process Waste ()
+	[291930] = 20,		--- Air Drop (K.U-J.0)
+	[294324] = 20,		--- Mega Drill (Waste Processing Unit)
+	[293861] = 20,		--- Anti-Personnel Squirrel (Anti-Personnel Squirrel)
+	[295168] = 20,		--- Capacitor Discharge (Blastatron X-80)
+	[294954] = 20,		--- Self-Trimming Hedge (Head Machinist Sparkflux)
+	
+	
+	-- Mechagon Junkyard
+	[300816] = 20,		--- Slimewave (Slime Elemental)
+	[300188] = 20,		--- Scrap Cannon (Weaponized Crawler)
+	[300427] = 20,		--- Shockwave (Scrapbone Bully)
+	[294890] = 20,		--- Gryro-Scrap (Malfunctioning Scrapbot)
+	[300129] = 20,		--- Self-Destruct Protocol (Malfunctioning Scrapbot)
+	[300561] = 20,		--- Explosion (Scrapbone Trashtosser)
+	[299475] = 20,		--- B.O.R.K. (Scraphound)
+	[299535] = 20,		--- Scrap Blast (Pistonhead Blaster)
+	[298940] = 20,		--- Bolt Buster (Naeno Megacrash)
+	[297283] = 20,		--- Cave In (King Gobbamak)
+	
+	
+	--- Awakened Lieutenant
+	[314309] = 20,		--- Dark Fury (Urg'roth, Breaker of Heroes)
+	[314467] = 20,		--- Volatile Rupture (Voidweaver Mal'thir)
+	[314565] = 20,		--- Defiled Ground (Blood of the Corruptor)
 }
 
 local SpellsNoTank = {
@@ -242,7 +271,13 @@ local Auras = {
 	[269970] = true,		-- Blinding Sand (Merektha)
 
 	-- Underrot
-
+	
+	-- Mechagon Workshop
+	[293986] = true,		--- Sonic Pulse (Blastatron X-80)
+	
+	-- Mechaton Junkyard
+	[398529] = true,		-- Gooped (Gunker)
+	[300659] = true,		-- Consuming Slime (Toxic Monstrosity)
 }
 
 local AurasNoTank = {
@@ -284,7 +319,7 @@ end)
 
 function generateMaybeOutput(user)
 	local func = function()
-			local msg = "<^-^> "..user.." 受到伤害 "
+			local msg = "<EH> "..user.." → "
 			local sending = false
 			local _i = 0
 			for spellID,amount in pairs(TimerData[user]) do
@@ -314,7 +349,7 @@ function generateMaybeOutput(user)
 					else
 						msg = msg..GetSpellLink(spellID).." "
 					end
-				msg = msg.."损失血量为 "..msgAmount.."万 (-"..pct.."%)."
+				msg = msg.."X "..msgAmount..DANWEI_WAN.." (-"..pct.."%)."
 					sending = true
 					_i = _i + 1
 				end
@@ -345,7 +380,7 @@ SlashCmdList["ELITISMHELPER"] = function(msg,editBox)
 		end
 	elseif msg == "start" then
 	        ElitismFrame:CHALLENGE_MODE_START()	
-	elseif msg == "eod" then
+	elseif msg == "end" then
 		ElitismFrame:CHALLENGE_MODE_COMPLETED()
 	end
 end
@@ -364,6 +399,15 @@ function maybeSendChatMessage(message)
 	--if IsInGroup() and not IsInGroup(2) and not IsInRaid() then SendChatMessage(message,"PARTY")
 	--elseif IsInGroup() and not IsInGroup(2) and IsInRaid() then SendChatMessage(message,"RAID")
 	--end	
+end
+
+function delayMaybeSendChatMessage(message, delay)
+	C_Timer.After(
+		delay,
+		function()
+			maybeSendChatMessage(message)
+		end
+	)
 end
 
 function ElitismFrame:RebuildTable()
@@ -407,13 +451,13 @@ function ElitismFrame:CHALLENGE_MODE_COMPLETED(event,...)
 		--maybeSendChatMessage("Thank you for travelling with ElitismHelper. No failure damage was taken this run.")
 		return
 	else
-		maybeSendChatMessage("<^-^>，下面是该躲不躲技能排行（倒序）:")
+		maybeSendChatMessage("Amount of failure damage:")
 	end
 	local u = { }
 	for k, v in pairs(CombinedFails) do table.insert(u, { key = k, value = v }) end
 	table.sort(u, compareDamage)
 	for k,v in pairs(u) do
-			maybeSendChatMessage(k..". "..v["key"].." "..round(v["value"] / 10000 ,1).." 万")
+			maybeSendChatMessage(k..". "..v["key"].." "..round(v["value"] / 10000 ,1)..DANWEI_WAN)
 	end
 	--CombinedFails = {}
 end
@@ -492,9 +536,9 @@ end
 function ElitismFrame:AuraApply(timestamp, eventType, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, spellId, spellName, spellSchool, auraType, auraAmount)
 	if (Auras[spellId] or (AurasNoTank[spellId] and UnitGroupRolesAssigned(dstName) ~= "TANK")) and UnitIsPlayer(dstName)  then
 		if auraAmount then
-			maybeSendChatMessage("<^-^> "..dstName.." 受到伤害 "..GetSpellLink(spellId)..". "..auraAmount.." Stacks.")
+			maybeSendChatMessage("<EH> "..dstName.." → "..GetSpellLink(spellId)..". "..auraAmount.." Stacks.")
 		else
-			maybeSendChatMessage("<^-^> "..dstName.." 受到伤害 "..GetSpellLink(spellId)..".")
+			maybeSendChatMessage("<EH> "..dstName.." → "..GetSpellLink(spellId)..".")
 		end
 	end
 end

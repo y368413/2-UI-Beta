@@ -164,3 +164,87 @@ function A:ChantLumos(self)
 		UpdateBuff(self.bu[5], 266779, 266779, true, false, true)
 	end
 end
+
+--PetHealthWarning------------------
+PetHealthAlert_Threshold=35
+PetHealthAlert_Warned=false
+-- Initialize
+function PetHealthAlert_Initialize()	
+	PetHealthAlert:SetWidth(450)
+	PetHealthAlert:SetHeight(200)
+	PetHealthAlert:SetPoint("CENTER",UIParent,"CENTER",0,360)	
+	PetHealthAlert:SetFont("Interface\\addons\\HunterMaster\\Media\\REDCIRCL.TTF",36,"THICKOUTLINE")
+	PetHealthAlert:SetShadowColor(0.00,0.00,0.00,0.75)
+	PetHealthAlert:SetShadowOffset(3.00,-3.00)
+	PetHealthAlert:SetJustifyH("CENTER")		
+	PetHealthAlert:SetMaxLines(2)
+	--PetHealthAlert:SetInsertMode("BOTTOM")
+	PetHealthAlert:SetTimeVisible(2)
+	PetHealthAlert:SetFadeDuration(1)		
+	--HealthWatch:Update()
+end
+-- Update health warning
+function PetHealthAlert_Update()	
+	if(floor((UnitHealth("pet")/UnitHealthMax("pet"))*100)<=PetHealthAlert_Threshold and PetHealthAlert_Warned==false)then
+		PlaySoundFile("Interface\\AddOns\\_ShiGuang\\Media\\Sounds\\beep.ogg")	
+		PetHealthAlert:AddMessage("- CRITICAL PET HEALTH -", 1, 0, 0, nil, 3)
+		PetHealthAlert_Warned=true
+		return
+	end
+	if(floor((UnitHealth("pet")/UnitHealthMax("pet"))*100)>PetHealthAlert_Threshold)then
+		PetHealthAlert_Warned=false
+		return
+	end	
+end
+local PetHealthAlert=CreateFrame("ScrollingMessageFrame","!PHA",UIParent)	
+PetHealthAlert:RegisterEvent("PLAYER_LOGIN")
+PetHealthAlert:RegisterEvent("UNIT_HEALTH")
+PetHealthAlert:SetScript("OnEvent",function(Event,Arg1,...)
+  if MaoRUIPerDB["Misc"]["HunterPetHelp"] then return end
+	if(Event=="PLAYER_LOGIN")then
+		PetHealthAlert_Initialize()
+		return
+	end	
+	if(Event=="UNIT_HEALTH" and Arg1=="pet")then
+		PetHealthAlert_Update()
+		return
+	end	
+end)
+
+--ImprovedStableFrame------------------
+local maxSlots = NUM_PET_STABLE_PAGES * NUM_PET_STABLE_SLOTS
+local NUM_PER_ROW, heightChange = 10, 60
+
+for i = NUM_PET_STABLE_SLOTS + 1, maxSlots do 
+	if not _G["PetStableStabledPet"..i] then
+		CreateFrame("Button", "PetStableStabledPet"..i, PetStableFrame, "PetStableSlotTemplate", i)
+	end
+end
+
+for i = 1, maxSlots do
+	local frame = _G["PetStableStabledPet"..i]
+	if i > 1 then
+		frame:ClearAllPoints()
+		frame:SetPoint("LEFT", _G["PetStableStabledPet"..i-1], "RIGHT", 7.3, 0)
+	end
+	frame:SetFrameLevel(PetStableFrame:GetFrameLevel() + 1)
+	frame:SetScale(7/NUM_PER_ROW)
+end
+
+PetStableStabledPet1:ClearAllPoints()
+PetStableStabledPet1:SetPoint("TOPLEFT", PetStableBottomInset, 9, -9)
+
+for i = NUM_PER_ROW+1, maxSlots, NUM_PER_ROW do
+	_G["PetStableStabledPet"..i]:ClearAllPoints()
+	_G["PetStableStabledPet"..i]:SetPoint("TOPLEFT", _G["PetStableStabledPet"..i-NUM_PER_ROW], "BOTTOMLEFT", 0, -5)
+end
+
+PetStableNextPageButton:Hide()
+PetStablePrevPageButton:Hide()
+PetStableFrameModelBg:SetHeight(281 - heightChange)
+PetStableFrameModelBg:SetTexCoord(0.16406250, 0.77734375, 0.00195313, 0.55078125 - heightChange/512)
+PetStableFrameInset:SetPoint("BOTTOMRIGHT", PetStableFrame, "BOTTOMRIGHT", -6, 126 + heightChange)
+PetStableFrameStableBg:SetHeight(116 + heightChange)
+NUM_PET_STABLE_SLOTS = maxSlots
+NUM_PET_STABLE_PAGES = 1
+PetStableFrame.page = 1
