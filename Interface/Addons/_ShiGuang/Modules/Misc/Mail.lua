@@ -273,7 +273,7 @@ function MISC:MailBox_ContactList()
 	end
 
 	bu:SetScript("OnClick", function()
-		ToggleFrame(list)
+		M:TogglePanel(list)
 	end)
 
 	local add = M.CreateButton(list, 43, 26, ADD, 14)

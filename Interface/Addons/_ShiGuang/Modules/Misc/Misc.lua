@@ -692,7 +692,7 @@ function MISC:BlockWQTInvite()
 		currentName = name
 	end)
 
-	hooksecurefunc(StaticPopup1, "Hide", function()
+	hooksecurefunc("StaticPopup_OnHide", function()
 		frame:Hide()
 		currentName = nil
 	end)
