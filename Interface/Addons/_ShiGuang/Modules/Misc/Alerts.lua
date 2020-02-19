@@ -187,17 +187,25 @@ function MISC:InterruptAlert_Update(...)
 
 	if UnitInRaid(sourceName) or UnitInParty(sourceName) or MISC:IsAllyPet(sourceFlags) then
 		local infoText = infoType[eventType]
-		if infoText and (IsPartyLFG() or IsInRaid()) then
+		if infoText then
 			if infoText == U["BrokenSpell"] then
 				if not MaoRUIPerDB["Misc"]["BrokenSpell"] then return end
 				if auraType and auraType == AURA_TYPE_BUFF or blackList[spellID] then return end
-				SendChatMessage(format(infoText, sourceName..GetSpellLink(extraskillID), destName..GetSpellLink(spellID)), "SAY")  --msgChannel()
+				if IsInInstance() then
+					SendChatMessage(format(infoText, sourceName..GetSpellLink(extraskillID), destName..GetSpellLink(spellID)), "SAY")  --msgChannel()
+				else
+					SendChatMessage(format(infoText, sourceName..GetSpellLink(extraskillID), destName..GetSpellLink(spellID)), "PARTY")  --msgChannel()
+				end
 			else
 				if MaoRUIPerDB["Misc"]["OwnInterrupt"] and sourceName ~= I.MyName and not MISC:IsAllyPet(sourceFlags) then return end
 				   if MaoRUIPerDB["Misc"]["InterruptSound"] then
 				      PlaySoundFile("Interface\\Addons\\_ShiGuang\\Media\\Sounds\\ShutupFool.ogg", "Master")
 				   end
-				 SendChatMessage(infoText .. GetSpellLink(extraskillID), "SAY")  --msgChannel()
+				if IsInInstance() then
+					SendChatMessage(infoText .. GetSpellLink(extraskillID), "SAY")  --msgChannel()
+				else
+					SendChatMessage(infoText .. GetSpellLink(extraskillID), "PARTY")  --msgChannel()
+				end
 			end
 		end
 	end
