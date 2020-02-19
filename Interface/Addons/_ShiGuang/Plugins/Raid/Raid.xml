@@ -5,5 +5,5 @@
 	<Script file="KeystoneHelper.lua"/>
 	<Script file="ElitismHelper.lua"/>
 	<Script file="Asentenceintroduction.lua"/>
-	<Include file="DamageExm\DamageExm.xml"/>
+	<Include file="DamageEx\DamageEx.xml"/>
 </Ui>

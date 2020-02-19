@@ -454,7 +454,6 @@
 						</FontString>
 					</Layer>
 				</Layers>
-				<!--TODO 错误 Error:(473, 7) Invalid content was found starting with element 'Anchors'. One of '{"http://www.blizzard.com/wow/ui/":TitleRegion, "http://www.blizzard.com/wow/ui/":ResizeBounds, "http://www.blizzard.com/wow/ui/":Backdrop, "http://www.blizzard.com/wow/ui/":HitRectInsets, "http://www.blizzard.com/wow/ui/":Layers, "http://www.blizzard.com/wow/ui/":Attributes, "http://www.blizzard.com/wow/ui/":Frames, "http://www.blizzard.com/wow/ui/":Scripts, "http://www.blizzard.com/wow/ui/":NormalTexture, "http://www.blizzard.com/wow/ui/":PushedTexture, "http://www.blizzard.com/wow/ui/":DisabledTexture, "http://www.blizzard.com/wow/ui/":HighlightTexture, "http://www.blizzard.com/wow/ui/":ButtonText, "http://www.blizzard.com/wow/ui/":NormalFont, "http://www.blizzard.com/wow/ui/":HighlightFont, "http://www.blizzard.com/wow/ui/":DisabledFont, "http://www.blizzard.com/wow/ui/":NormalColor, "http://www.blizzard.com/wow/ui/":HighlightColor, "http://www.blizzard.com/wow/ui/":DisabledColor, "http://www.blizzard.com/wow/ui/":PushedTextOffset}' is expected.-->
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="DEX_ColorSpec" relativePoint="LEFT">
 						<Offset>
