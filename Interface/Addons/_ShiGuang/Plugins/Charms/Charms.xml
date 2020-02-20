@@ -5,11 +5,11 @@
 	<Script file="SubSpec.lua"/>
 	<Script file="Merchant.lua"/>
 	<Script file="kAutoOpen.lua"/>
-	<Script file="xMerchant.lua"/>
 	<Script file="HardYards.lua"/>
 	<Script file="NomiCakes.lua"/>
 	<Script file="Talentless.lua"/>
 	<Script file="nReputation.lua"/>
+	<Script file="WallpaperKit.lua"/>
 	<!--Script file="FriendGroups.lua"/-->
 	<Script file="AlterCurrencies.lua"/>
 	<Script file="ItemTooltipProfession.lua"/>

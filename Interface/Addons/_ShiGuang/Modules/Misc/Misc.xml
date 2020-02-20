@@ -13,5 +13,5 @@
 	<Script file="TradeTabs.lua"/>
 	<Script file="RaidManager.lua"/>
 	<Script file="FreeMountCD.lua"/>
-	<Script file="WallpaperKit.lua"/>
+	<Script file="xMerchant.lua"/>
 </Ui>

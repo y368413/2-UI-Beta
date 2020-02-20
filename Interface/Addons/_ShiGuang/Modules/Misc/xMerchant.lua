@@ -1,6 +1,10 @@
 ﻿--## Author: Nils Ruesch  ## Version: 1.8.2
 --[[ xMerchant Copyright (c) 2010-2014, Nils Ruesch All rights reserved. ]]
-
+local _, ns = ...
+local M, R, U, I = unpack(ns)
+local MISC = M:GetModule("Misc")
+function MISC:xMerchant()
+if not MaoRUIPerDB["Misc"]["xMerchant"] then return end
 local xMerchant = {};
 local buttons = {};
 local knowns = {};
@@ -869,8 +873,8 @@ end
 xMerchant_InitItemsButtons()
 
 hooksecurefunc("MerchantFrame_Update", function()
-	if ( MerchantFrame.selectedTab == 1 ) and MaoRUIPerDB["Misc"]["xMerchant"] then
-		for i=1, 12, 1 do _G["MerchantItem"..i]:Hide(); end
+	if ( MerchantFrame.selectedTab == 1 ) then
+		for i=1, 10, 1 do _G["MerchantItem"..i]:Hide(); end
 		frame:Show();
 		CurrencyUpdate();
 		-- DONEY
@@ -878,17 +882,18 @@ hooksecurefunc("MerchantFrame_Update", function()
 		MerchantUpdate();
 	else
 		frame:Hide();
-		for i=1, 12, 1 do _G["MerchantItem"..i]:Show(); end
+		for i=1, 10, 1 do _G["MerchantItem"..i]:Show(); end
 		if (StackSplitFrame:IsShown()) then StackSplitFrame:Hide(); end
 	end
 end);
 		
-hooksecurefunc("MerchantFrame_OnHide", function() if MaoRUIPerDB["Misc"]["xMerchant"] then wipe(errors); wipe(currencies); end end);
-MerchantBuyBackItem:ClearAllPoints();
-MerchantBuyBackItem:SetPoint("BOTTOMLEFT", 175, 32);
+hooksecurefunc("MerchantFrame_OnHide", function() wipe(errors); wipe(currencies); end);
+--MerchantBuyBackItem:ClearAllPoints();
+--MerchantBuyBackItem:SetPoint("BOTTOMLEFT", 175, 32);
 
 for _, frame in next, { MerchantNextPageButton, MerchantPrevPageButton, MerchantPageText } do
 	frame:Hide()
 	frame.Show = function() end;
 end
 
+end
