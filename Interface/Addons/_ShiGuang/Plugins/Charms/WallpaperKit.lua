@@ -52,7 +52,7 @@ WallpaperKit.bg:SetTexture("Interface\\AddOns\\_ShiGuang\\Media\\Modules\\UI-Sta
   else WallpaperKit.bg:SetColorTexture(0.52, 0.21, 0.6, 0.85) end  --255, 222, 123, 0.85
 WallpaperKit.bg:SetVertexColor(WallpaperKitcfg.color.class.r, WallpaperKitcfg.color.class.g, WallpaperKitcfg.color.class.b, 1)
 WallpaperKit.bg:SetPoint("CENTER")
-WallpaperKit.bg:SetSize(WallpaperKit.w,WallpaperKit.w)
+WallpaperKit.bg:SetSize(WallpaperKit.w,WallpaperKit.h)
 else
 end
 -- AURA TEXTURE
@@ -62,7 +62,7 @@ WallpaperKit.bg2:SetTexture("") --WallpaperKitcfg.aura.texture
 if WallpaperKitcfg.aura.classcolor then WallpaperKit.bg2:SetVertexColor(WallpaperKitcfg.color.class.r, WallpaperKitcfg.color.class.g, WallpaperKitcfg.color.class.b, 1)
 else WallpaperKit.bg2:SetVertexColor(unpack(WallpaperKitcfg.aura.color)) end
 WallpaperKit.bg2:SetPoint(WallpaperKitcfg.aura.pos.point, WallpaperKitcfg.aura.pos.X, WallpaperKitcfg.aura.pos.Y)
-WallpaperKit.bg2:SetSize(WallpaperKit.w*WallpaperKitcfg.aura.size,WallpaperKit.w*WallpaperKitcfg.aura.size)
+WallpaperKit.bg2:SetSize(WallpaperKit.w*WallpaperKitcfg.aura.size,WallpaperKit.h*WallpaperKitcfg.aura.size)
 else return end
 
 -- TOP SHADE
@@ -190,8 +190,9 @@ SLASH_WALLPAPERKIT1 = '/wallpaperkit'; --'/wpk', 3.
 function SlashCmdList.WALLPAPERKIT(msg, editbox) if WallpaperKit:IsShown() then WallpaperKit:Disable() else WallpaperKit:Enable() end end
 
 local hidebutton = CreateFrame("BUTTON", nil, WallpaperKit)
-hidebutton:SetSize(UIParent:GetWidth(),UIParent:GetHeight())
-hidebutton:SetPoint("CENTER")
+--hidebutton:SetSize(WallpaperKit.w,WallpaperKit.h)
+hidebutton:SetPoint("TOPLEFT")
+hidebutton:SetPoint("BOTTOMRIGHT")
 --hidebutton.t = hidebutton:CreateTexture(nil,"BACKGROUND",nil,0)
 hidebutton:SetScript("OnClick", function() WallpaperKit:Disable(); if UnitIsAFK("player") then SendChatMessage("", "AFK"); end end)
 -- canvas enable func
@@ -200,11 +201,11 @@ function WallpaperKit:Enable() WallpaperKit:Show() WallpaperKit:UpdateModel() Wa
 function WallpaperKit:Disable() WallpaperKit.fadeOut:Play() end  --UIParent:Show()
 
 WallpaperKit:RegisterEvent("PLAYER_FLAGS_CHANGED")
---WallpaperKit:RegisterEvent("PLAYER_ENTERING_WORLD")
---WallpaperKit:RegisterEvent("PLAYER_LEAVING_WORLD")
+WallpaperKit:RegisterEvent("PLAYER_ENTERING_WORLD")
+WallpaperKit:RegisterEvent("PLAYER_LEAVING_WORLD")
 WallpaperKit:SetScript("OnEvent",function(WallpaperKit)
   if not MaoRUIPerDB["Misc"]["WallpaperKit"] then return end
-	if UIParent:IsShown() and WallpaperKit:IsShown() then WallpaperKit:Disable() return end
+	if WallpaperKit:IsShown() then WallpaperKit:Disable() end
 	if UnitIsAFK("player") then WallpaperKit:Enable() end
 end)
 

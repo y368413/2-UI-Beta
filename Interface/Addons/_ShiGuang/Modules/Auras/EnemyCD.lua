@@ -1,8 +1,10 @@
 ﻿local _, ns = ...
 local M, R, U, I = unpack(ns)
+local CDS = M:GetModule("Cooldowns")
 ----------------------------------------------------------------------------------------
 --	Enemy cooldowns(alEnemyCD by Allez)
 ----------------------------------------------------------------------------------------
+
 local show = {
 	none = false,
 	pvp = false,
@@ -14,13 +16,18 @@ local band = bit.band
 local esize = 28
 local limit = (27 * 12)/esize
 
+function CDS:EnemyCD()
+  if not MaoRUIPerDB["Misc"]["EnemyCD"] then return end
+  
 local EnemyCDAnchor = CreateFrame("Frame", "EnemyCDAnchor", UIParent)
-EnemyCDAnchor:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 43, 210)
 if direction == "UP" or direction == "DOWN" then
 	EnemyCDAnchor:SetSize(esize, (esize * 5) + 12)
 else
 	EnemyCDAnchor:SetSize((esize * 5) + 12, esize)
 end
+--EnemyCDAnchor:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 43, 210)
+M.Mover(EnemyCDAnchor, U["Enemy CD"], "EnemyCDs", {"BOTTOMLEFT", UIParent, "BOTTOMLEFT", 43, 210})
+
 
 local OnEnter = function(self)
 	if IsShiftKeyDown() then
@@ -117,7 +124,7 @@ local StartTimer = function(name, sID)
 	UpdatePositions()
 end
 
-local OnEvent = function(self, event)
+local OnEvent = function(_, event)
 	if event == "COMBAT_LOG_EVENT_UNFILTERED" then
 		local _, eventType, _, _, sourceName, sourceFlags, _, _, _, _, _, spellID = CombatLogGetCurrentEventInfo()
 
@@ -154,3 +161,4 @@ SlashCmdList.EnemyCD = function()
 	StartTimer(UnitName("player"), 51514)
 end
 SLASH_EnemyCD1 = "/enemycd"
+end

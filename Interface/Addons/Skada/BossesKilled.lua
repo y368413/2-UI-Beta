@@ -218,15 +218,15 @@ function BossesKilled:ShowTooltip(button)
 			GameTooltip:AddLine(tooltip.text)
 		end
 	end
-	GameTooltip:AddLine(" ")
-	GameTooltip:AddLine("<点击选择这个副本>")
-	GameTooltip:AddLine(" ")
-	if ENABLE_COLORBLIND_MODE == "1" then -- TODO: Remove duplicates. Only check for not ENABLE_COLORBLIND_MODE in which case add the first AddLine. After outside of if, add second AddLine
-		GameTooltip:AddLine("(Button lights up if you're queued for this raid)")
-	else
-		GameTooltip:AddLine("(|c00ff0000红色|r 就是你打过了, |c0000ff00绿的|r 就快去打,")
-		GameTooltip:AddLine(" 按钮亮起，说明你正在排这个本~)")
-	end
+	--GameTooltip:AddLine(" ")
+	--GameTooltip:AddLine("<点击选择这个副本>")
+	--GameTooltip:AddLine(" ")
+	--if ENABLE_COLORBLIND_MODE == "1" then -- TODO: Remove duplicates. Only check for not ENABLE_COLORBLIND_MODE in which case add the first AddLine. After outside of if, add second AddLine
+		--GameTooltip:AddLine("(Button lights up if you're queued for this raid)")
+	--else
+		--GameTooltip:AddLine("(|c00ff0000红色|r 就是你打过了, |c0000ff00绿的|r 就快去打,")
+		--GameTooltip:AddLine(" 按钮亮起，说明你正在排这个本~)")
+	--end
 	GameTooltip:Show()
 end
 

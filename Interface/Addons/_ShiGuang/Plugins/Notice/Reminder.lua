@@ -461,29 +461,77 @@ end);
 for k, v in pairs(Flashevents) do AltTabLfgNotification:RegisterEvent(k);  end]]
 
 --  CtrlIndicator    Author: 图图   --用途: 用于检测Ctrl是否卡住,Ctrl按下4.5秒之后就会提示
-UIParent:CreateFontString("CtrlIndicatorText", "OVERLAY");
-CtrlIndicatorText:SetPoint("TOP", 0, -88);
-CtrlIndicatorText:SetFont(STANDARD_TEXT_FONT, 21,"OUTLINE")
-CtrlIndicatorText:SetText("|cffffffff你的Ctrl或者Shift可能卡啦!|r")
-UIParent:CreateTexture("CtrlIndicatorBG");
-CtrlIndicatorBG:SetPoint("CENTER", CtrlIndicatorText, "CENTER", 0, 0);
-CtrlIndicatorBG:SetAtlas("OBJFX-BarGlow", true)
-local ctrlCnt = 0;
+UIParent:CreateFontString("CtrlIndicatorTextCtrl", "OVERLAY")
+UIParent:CreateFontString("CtrlIndicatorTextAlt", "OVERLAY")
+UIParent:CreateFontString("CtrlIndicatorTextShift", "OVERLAY")
+
+CtrlIndicatorTextCtrl:SetPoint("TOP", 0, -88)
+CtrlIndicatorTextCtrl:SetFont(STANDARD_TEXT_FONT, 21,"OUTLINE")
+CtrlIndicatorTextCtrl:SetText("|cffffffff你的Ctrl可能卡啦!|r")
+UIParent:CreateTexture("CtrlIndicatorCtrlBG")
+CtrlIndicatorCtrlBG:SetPoint("CENTER", CtrlIndicatorTextCtrl, "CENTER", 0, 0)
+CtrlIndicatorCtrlBG:SetAtlas("OBJFX-BarGlow", true)
+
+CtrlIndicatorTextAlt:SetPoint("TOP", 0, -88)
+CtrlIndicatorTextAlt:SetFont(STANDARD_TEXT_FONT, 21,"OUTLINE")
+CtrlIndicatorTextAlt:SetText("|cffffffff你的Alt可能卡啦!|r")
+UIParent:CreateTexture("CtrlIndicatorAltBG")
+CtrlIndicatorAltBG:SetPoint("CENTER", CtrlIndicatorTextAlt, "CENTER", 0, 0);
+CtrlIndicatorAltBG:SetAtlas("OBJFX-BarGlow", true)
+
+CtrlIndicatorTextShift:SetPoint("TOP", 0, -88)
+CtrlIndicatorTextShift:SetFont(STANDARD_TEXT_FONT, 21,"OUTLINE")
+CtrlIndicatorTextShift:SetText("|cffffffff你的Shift可能卡啦!|r")
+UIParent:CreateTexture("CtrlIndicatorShiftBG")
+CtrlIndicatorShiftBG:SetPoint("CENTER", CtrlIndicatorTextAlt, "CENTER", 0, 0)
+CtrlIndicatorShiftBG:SetAtlas("OBJFX-BarGlow", true)
+
+local ctrlCnt, AltCnt, ShiftCnt = 0, 0, 0;
 C_Timer.NewTicker(0.1, function()
-    if(IsControlKeyDown()) or (IsShiftKeyDown()) then
+    if IsControlKeyDown() then
         ctrlCnt=ctrlCnt+1
     else    
         ctrlCnt = 0
-        CtrlIndicatorText:Hide();
+        CtrlIndicatorTextCtrl:Hide();
     end
     if ctrlCnt==45 then
         print("|cffff0000你的Ctrl或者Shift可能卡啦!|r")
-        CtrlIndicatorText:Show();
+        CtrlIndicatorTextCtrl:Show();
     end
     if ctrlCnt > 45 then
-        CtrlIndicatorBG:SetAlpha(0.69+math.sin((ctrlCnt%20)/20*2*3.1415926535898)/3.3333333);
+        CtrlIndicatorCtrlBG:SetAlpha(0.69+math.sin((ctrlCnt%20)/20*2*3.1415926535898)/3.3333333);
     else
-        CtrlIndicatorBG:SetAlpha(0);
+        CtrlIndicatorCtrlBG:SetAlpha(0);
+    end
+    if IsAltKeyDown() then
+        AltCnt=AltCnt+1
+    else    
+        AltCnt = 0
+        CtrlIndicatorTextAlt:Hide();
+    end
+    if AltCnt==45 then
+        print("|cffff0000你的Alt可能卡啦!|r")
+        CtrlIndicatorTextAlt:Show();
+    end
+    if AltCnt > 45 then
+        CtrlIndicatorAltBG:SetAlpha(0.69+math.sin((AltCnt%20)/20*2*3.1415926535898)/3.3333333);
+    else
+        CtrlIndicatorAltBG:SetAlpha(0);
+    end
+    if IsShiftKeyDown() then
+        ShiftCnt=ShiftCnt+1
+    else    
+        ShiftCnt = 0
+        CtrlIndicatorTextShift:Hide();
+    end
+    if ShiftCnt==45 then
+        print("|cffff0000你的Shift可能卡啦!|r")
+        CtrlIndicatorTextShift:Show();
+    end
+    if ShiftCnt > 45 then
+        CtrlIndicatorShiftBG:SetAlpha(0.69+math.sin((ShiftCnt%20)/20*2*3.1415926535898)/3.3333333);
+    else
+        CtrlIndicatorShiftBG:SetAlpha(0);
     end
 end)
 

@@ -70,7 +70,7 @@ function MISC:CreateRM()
 				else
 					self.Timer:SetFormattedText("%d:%.2d", timer/60, timer%60)
 				end
-		SendChatMessage("战复剩: "..charges.."次 充能: "..self.Timer:GetText(), "YELL")
+		SendChatMessage(U["BattleResurrectCount"]..charges..U["BattleResurrectNext"]..self.Timer:GetText(), "YELL")
 		else
 		return
 		end
