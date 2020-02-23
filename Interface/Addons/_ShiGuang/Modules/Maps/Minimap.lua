@@ -237,8 +237,6 @@ local SetMrbarMicromenu = {
         --func = function() sendCmd("/wallpaperkit"); end, notCheckable = true},
     --{ text = MINIMAP_MENU_CHECKFOODSSS, icon = 'Interface\\MINIMAP\\TRACKING\\Reagents',
         --func = function() sendCmd("/hj"); end, notCheckable = true  },
-    --{ text = MINIMAP_MENU_KEYS, icon = 'Interface\\Icons\\inv_misc_treasurechest02b',
-        --func = function() sendCmd("/iKeystones"); end, notCheckable = true},
     { text = MINIMAP_MENU_WORLDQUESTREWARD, icon = 'Interface\\Calendar\\UI-Calendar-Button',
         func = function() sendCmd("/wqa popup"); end, notCheckable = true},
     --{ text = "|cFF00DDFF -- OneKeyMacro --|r", func = function() sendCmd("/MacroHelp"); end, notCheckable = true},

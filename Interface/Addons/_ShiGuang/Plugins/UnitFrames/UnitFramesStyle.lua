@@ -159,7 +159,7 @@ hooksecurefunc("TargetFrame_Update", function()
 	end
 end)
 
---[[宠物目标
+--宠物目标
 local ToPetFrame = CreateFrame("Button", "UFP_ToPetFrame", PetFrame, "SecureUnitButtonTemplate, SecureHandlerAttributeTemplate");
 ToPetFrame:SetFrameLevel(8);
 ToPetFrame:SetWidth(96);
@@ -252,4 +252,4 @@ local pettarget = CreateFrame("Frame");
                 end
                 self.timer = 0;
             end
-        end);]]
+        end);

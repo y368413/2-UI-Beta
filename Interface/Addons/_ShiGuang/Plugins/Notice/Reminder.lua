@@ -102,33 +102,37 @@ function initExtraRep(factionID, name)
 		if hasRewardPending then
       extraRep[name] = extraRep[name] + threshold
     end
-    if extraRep[name] > threshold and (not hasRewardPending) then
-      extraRep[name] = extraRep[name] - threshold
-    end
 	end
+	if extraRep[name] > threshold and (not hasRewardPending) then
+    extraRep[name] = extraRep[name] - threshold
+  end
 end
+
 local SonicReputation = CreateFrame("Frame");
 SonicReputation:RegisterEvent("UPDATE_FACTION");
 SonicReputation:SetScript("OnEvent", function()
 	local numFactions = GetNumFactions(self);
 	for i = 1, numFactions, 1 do
 		local name, _, standingID, barMin, barMax, barValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild, factionID = GetFactionInfo(i);
-		local min, max, value = 0;
-		--7.2额外声望
+		local value = 0;
 		if barValue >= 42000 then
       if C_Reputation_IsFactionParagon(factionID) then
         initExtraRep(factionID,name)
         local currentValue, threshold, _, hasRewardPending = C_Reputation.GetFactionParagonInfo(factionID)
-        min, max = 0, threshold
         value = currentValue % threshold
         if hasRewardPending then 
           value = value + threshold
         end
         local extraChange = value - extraRep[name];
-        if(extraChange > 0) then 
+        if extraChange > 0 and value < 10000 then
           extraRep[name] = value
-          local extra_msg = string.format("%s: %+d (%d/%d)", name, extraChange, value, threshold)
+          local extra_msg = string.format("|cffee80ee%s: %+d (%d/%d)|r", name, extraChange, value, threshold)
           createMessage(extra_msg);
+        end
+        if extraChange ~= 0 and value > 10000 then
+          extraRep[name] = value
+          local extra_msg2 = string.format("|cffff4500%s: %+d (%d/%d)|r", name, extraChange, value, threshold)
+          createMessage(extra_msg2);
         end
       end
     elseif name and (not isHeader) or (hasRep) then
@@ -138,12 +142,12 @@ SonicReputation:SetScript("OnEvent", function()
       local change = barValue - rep[name];
       if (change > 0) then
         rep[name] = barValue
-				local msg = string.format("%s: %+d (%d/%d)", name, change, barValue - barMin, barMax - barMin);
+				local msg = string.format("%s: %+d (%d/%d)", name, change, barValue - barMin, barMax - barMin)
         createMessage(msg)
       end
     end
 	end
-end);
+end)
 ChatFrame_AddMessageEventFilter("CHAT_MSG_COMBAT_FACTION_CHANGE", function() return true; end);
 
 --[[---------------------------------ExaltedPlus------------------------------------------
@@ -317,9 +321,7 @@ hooksecurefunc("SpellActivationOverlay_ShowOverlay", SAO_ShowTimer)
 hooksecurefunc("SpellActivationOverlay_HideOverlays", SAO_HideTimer)
 
 -- adjust LossOfControlFrame by nj55top
-
-local showAbilityName = true
-function LoCF_AdjustDisplay(self)
+hooksecurefunc("LossOfControlFrame_SetUpDisplay", function(self)
 	self.blackBg:SetAlpha(0)
 	self.RedLineTop:SetAlpha(0)
 	self.RedLineBottom:SetAlpha(0)
@@ -327,10 +329,10 @@ function LoCF_AdjustDisplay(self)
 	self.Icon:ClearAllPoints()
 	self.TimeLeft.NumberText:ClearAllPoints()
 	if useIcon or useBuffIcon then
-		self.Icon:SetPoint("TOP", SAOF, "BOTTOM", -(iconSize + iconGap), 21)
+		self.Icon:SetPoint("TOP", SpellActivationOverlayFrame, "BOTTOM", -(iconSize + iconGap), 21)
 		self.TimeLeft.NumberText:SetPoint("TOPLEFT", self.Icon, "BOTTOMLEFT")
 	else
-		self.Icon:SetPoint("TOP", SAOF, "BOTTOM", 0, 21)
+		self.Icon:SetPoint("TOP", SpellActivationOverlayFrame, "BOTTOM", 0, 21)
 		self.TimeLeft.NumberText:SetPoint("LEFT", self.Icon, "RIGHT")
 	end
 --	self.TimeLeft.NumberText:SetTextHeight(fontSize)
@@ -339,10 +341,8 @@ function LoCF_AdjustDisplay(self)
 --	self.AbilityName:SetTextHeight(fontSize)
 	self.AbilityName:ClearAllPoints()
 	self.AbilityName:SetPoint("RIGHT", self.Icon, "LEFT")
-	if not showAbilityName then self.AbilityName:SetText("") end
-end
-
-hooksecurefunc("LossOfControlFrame_SetUpDisplay", LoCF_AdjustDisplay)
+	--self.AbilityName:SetText("")
+end)
 
 
 ------------------------------BattleResAlert---------------------------
@@ -495,7 +495,7 @@ C_Timer.NewTicker(0.1, function()
         CtrlIndicatorTextCtrl:Hide();
     end
     if ctrlCnt==45 then
-        print("|cffff0000你的Ctrl或者Shift可能卡啦!|r")
+        print("|cffff0000你的Ctrl可能卡啦!|r")
         CtrlIndicatorTextCtrl:Show();
     end
     if ctrlCnt > 45 then

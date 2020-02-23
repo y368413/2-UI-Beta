@@ -188,7 +188,7 @@ T.reputationItemBoA = {
 	[146941] = "valarjar", -- Valarjar Insignia (250)
 
 	-- Warlords of Draenor
-	--[128315] = "<meta>", -- Medallion of the Legion (1000 to multiple factions)
+	[128315] = "arakkoa outcasts|council of exarchs|frostwolf orcs|hand of the prophet|laughing skull orcs|order of the awakened|sha'tari defense|steamwheedle preservation society|the saberstalkers|vol'jin's headhunters", -- Medallion of the Legion (1000)
 	[167924] = "arakkoa outcasts", -- Commendation of the Arakkoa Outcasts (300)
 	[117492] = "arakkoa outcasts", -- Relic of Rukhmar (2500)
 	[167929] = "council of exarchs", -- Commendation of the Council of Exarchs (300)
@@ -196,8 +196,8 @@ T.reputationItemBoA = {
 	[168018] = "hand of the prophet", -- Commendation of the Hand of the Prophet (300)
 	[167930] = "laughing skull orcs", -- Commendation of the Laughing Skull Orcs (300)
 	[167925] = "order of the awakened", -- Commendation of the Order of the Awakened (300)
-	[167926] = "steamwheedle preservation society", -- Commendation of the Steamwheedle Preservation Society (300)
 	[167932] = "sha'tari defense", -- Commendation of the Sha'tari Defense (300)
+	[167926] = "steamwheedle preservation society", -- Commendation of the Steamwheedle Preservation Society (300)
 	[118100] = "steamwheedle preservation society", -- Highmaul Relic (350)
 	[118654] = "steamwheedle preservation society", -- Aogexon's Fang (500)
 	[118655] = "steamwheedle preservation society", -- Bergruu's Horn (500)
@@ -285,7 +285,7 @@ T.reputationItemBoA = {
 -- Reputation item IDs - Soulbound
 T.reputationItemBoP = {
 	-- Battle for Azeroth
-	--[170184] = "<meta>", -- Ancient Reefwalker Bark (350 The Unshackled/Waveblade Ankoan)
+	[170184] = "the unshackled|waveblade ankoan", -- Ancient Reefwalker Bark (350 The Unshackled/Waveblade Ankoan)
 	[163617] = "7th legion", -- Rusted Alliance Insignia (250)
 	[163217] = "champions of azeroth", -- Azeroth's Tear (250)
 	[163614] = "order of embers", -- Exotic Spices (250)
@@ -352,22 +352,21 @@ T.reputationItemBoP = {
 	[118099] = "steamwheedle preservation society", -- Gorian Artifact Fragment (250 per 20)
 
 	-- Mists of Pandaria
-	--[[ NYI
-	[79265]  = "<meta>", -- Blue Feather (900 with Chee Chee or Old Hillpaw, 540 with other Tillers members)
-	[79266]  = "<meta>", -- Jade Cat (900 with Ella or Fish Fellreed, 540 with other Tillers members)
-	[79267]  = "<meta>", -- Lovely Apple (900 with Jogu the Drunk or Sho, 540 with other Tillers members)
-	[79268]  = "<meta>", -- Marsh Lily (900 with Farmer Fung or Gina Mudclaw, 540 with other Tillers members)
-	[79264]  = "<meta>", -- Ruby Shard (900 with Haohan Mudclaw or Tina Mudclaw, 540 with other Tillers members)
-	]]
-	[89155] = "order of the cloud serpent", -- Onyx Egg (500)
+	[86592]  = "golden lotus|order of the cloud serpent|shado-pan|the anglers|the august celestials|the klaxxi|the lorewalkers|the tillers", -- Hozen Peace Pipe (1000)
+	[79265]  = "chee chee|old hillpaw", -- Blue Feather (900 with Chee Chee or Old Hillpaw, 540 with other Tillers members)
+	[79266]  = "ella|fish fellreed", -- Jade Cat (900 with Ella or Fish Fellreed, 540 with other Tillers members)
+	[79267]  = "jogu the drunk|sho", -- Lovely Apple (900 with Jogu the Drunk or Sho, 540 with other Tillers members)
+	[79268]  = "farmer fung|gina mudclaw", -- Marsh Lily (900 with Farmer Fung or Gina Mudclaw, 540 with other Tillers members)
+	[79264]  = "haohan mudclaw|tina mudclaw", -- Ruby Shard (900 with Haohan Mudclaw or Tina Mudclaw, 540 with other Tillers members)
+	[89155]  = "order of the cloud serpent", -- Onyx Egg (500)
 
 	-- Cataclysm
-	[65909] = "dragonmaw clan", -- Tabard of the Dragonmaw Clan
-	[65906] = "guardians of hyjal", -- Tabard of the Guardians of Hyjal
-	[65904] = "ramkahen", -- Tabard of Ramkahen
-	[65905] = "the earthen ring", -- Tabard of the Earthen Ring
-	[65907] = "therazane", -- Tabard of Therazane
-	[65908] = "wildhammer clan", -- Tabard of the Wildhammer Clan
+	[65909]  = "dragonmaw clan", -- Tabard of the Dragonmaw Clan
+	[65906]  = "guardians of hyjal", -- Tabard of the Guardians of Hyjal
+	[65904]  = "ramkahen", -- Tabard of Ramkahen
+	[65905]  = "the earthen ring", -- Tabard of the Earthen Ring
+	[65907]  = "therazane", -- Tabard of Therazane
+	[65908]  = "wildhammer clan", -- Tabard of the Wildhammer Clan
 
 	-- Wrath of the Lich King
 	[44711]  = "argent crusade", -- Argent Crusade Commendation Badge (520)
@@ -382,10 +381,10 @@ T.reputationItemBoP = {
 
 	-- The Burning Crusade
 	[32506]  = "netherwing", -- Netherwing Egg (250)
-	--[25433] = "<meta>", -- Obsidian Warbeads (250 Consortium per 10, or 500 Kurenai/Mag'har per 10)
-	[29209] = "the consortium", -- Zaxxis Insignia (250 per 10)
-	[25416] = "the consortium", -- Oshu'gun Crystal Fragment (250 per 10, up to Friendly)
-	[25463] = "the consortium", -- Pair of Ivory Tusks (250 per 3, up to Friendly)
+	[25433]  = "kurenai|the consortium|the mag'har", -- Obsidian Warbeads (250 Consortium per 10, or 500 Kurenai/Mag'har per 10)
+	[29209]  = "the consortium", -- Zaxxis Insignia (250 per 10)
+	[25416]  = "the consortium", -- Oshu'gun Crystal Fragment (250 per 10, up to Friendly)
+	[25463]  = "the consortium", -- Pair of Ivory Tusks (250 per 3, up to Friendly)
 
 	-- Classic
 	[71088]  = "bilgewater cartel", -- Bilgewater Writ of Commendation (250)

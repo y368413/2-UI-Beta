@@ -1,5 +1,5 @@
 --## Version: 1.6.2  ## Author: Anayanka (Defias Brotherhood - EU)
-CorruptionDate = {
+CorruptionDateR = {
     ["6455"] = {"Avoidant", "I", 315607},
     ["6483"] = {"Avoidant", "I", 315607},
     ["6484"] = {"Avoidant", "II", 315608},
@@ -61,6 +61,21 @@ CorruptionDate = {
     ["6569"] = {"Lash of the Void", "", 317290},
 }
 
+-- fixed weapon bonuses for EJ
+CorruptionDateW = {
+    ["172199"] = "6571", -- Faralos, Empire's Dream
+    ["172200"] = "6572", -- Sk'shuul Vaz
+    ["172191"] = "6567", -- An'zig Vra
+    ["172193"] = "6568", -- Whispering Eldritch Bow
+    ["172198"] = "6570", -- Mar'kowa, the Mindpiercer
+    ["172197"] = "6569", -- Unguent Caress
+    ["172227"] = "6544", -- Shard of the Black Empire
+    ["172196"] = "6541", -- Vorzz Yoq'al
+    ["174106"] = "6550", -- Qwor N'lyeth
+    ["172189"] = "6548", -- Eyestalk of Il'gynoth
+    ["174108"] = "6553", -- Shgla'yos, Astral Malignity
+    ["172187"] = "6539", -- Devastation's Hour
+}
 CorruptionTooltips = LibStub("AceAddon-3.0"):NewAddon("CorruptionTooltips", "AceEvent-3.0", "AceConsole-3.0", "AceHook-3.0")
 
 local defaults = {
@@ -92,9 +107,9 @@ function CorruptionTooltips:Append(tooltip, line)
         for i = 1, tooltip:NumLines() do
             local left = _G[tooltip:GetName().."TextLeft"..i]
             local text = left:GetText()
-            if text ~= nil and strsub(text, 1, 1) == "+" then
-                detected = string.find(text, ITEM_MOD_CORRUPTION)
-                if detected ~= nil then
+            if (text ~= nil) then
+                local detected = string.find(text, ITEM_MOD_CORRUPTION)
+                if (detected ~= nil and (strsub(text, 1, 1) == "+")) then
                     left:SetText(left:GetText().." / "..line)
                     return true
                 end
@@ -108,16 +123,16 @@ function CorruptionTooltips:GetCorruption(bonuses)
     if #bonuses > 0 then
         for i, bonus_id in pairs(bonuses) do
             bonus_id = tostring(bonus_id)
-            if CorruptionDate[bonus_id] ~= nil then
-                local name, rank, icon, castTime, minRange, maxRange = GetSpellInfo(CorruptionDate[bonus_id][3])
-                if CorruptionDate[bonus_id][2] ~= "" then
-                    rank = CorruptionDate[bonus_id][2]
+            if CorruptionDateR[bonus_id] ~= nil then
+                local name, rank, icon, castTime, minRange, maxRange = GetSpellInfo(CorruptionDateR[bonus_id][3])
+                if CorruptionDateR[bonus_id][2] ~= "" then
+                    rank = CorruptionDateR[bonus_id][2]
                 else
                     rank = ""
                 end
                 if defaults.profile.english then
-                    name = CorruptionDate[bonus_id][1]
-                    rank = CorruptionDate[bonus_id][2]
+                    name = CorruptionDateR[bonus_id][1]
+                    rank = CorruptionDateR[bonus_id][2]
                 end
                 return {
                     name.." "..rank,
@@ -137,6 +152,13 @@ function CorruptionTooltips:CreateTooltip(tooltip)
         local bonuses = {}
         for index=1, itemSplit[13] do
             bonuses[#bonuses + 1] = itemSplit[13 + index]
+        end
+        -- local lookup for items without bonuses, like in the EJ
+        if itemSplit[13] == 1 then
+            local itemID = tostring(itemSplit[1])
+            if CorruptionDateW[itemID] ~= nil then
+                bonuses[#bonuses + 1] = CorruptionDateW[itemID]
+            end
         end
 		local corruption = CorruptionTooltips:GetCorruption(bonuses)
 		if corruption then

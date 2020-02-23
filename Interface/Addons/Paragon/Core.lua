@@ -471,19 +471,26 @@ local function GameTooltip_OnTooltipSetItem(tooltip)
 		local limit = tonumber(ParagonDB["config"]["tooltip_alts_limit"])
 		local limit_shift = tonumber(ParagonDB["config"]["tooltip_alts_limit_shift"])
 
-		if setContains(d, faction) and ParagonDB["config"]["tooltip_personal_enabled"] then
-			--tooltip:AddLine(" ")
-			tooltip:AddLine("|cffffffff" .. L["f "..faction] .. "|r")
+		local factions = { strsplit("|", faction) }
+		local totalFactions = 0
 
-			local displayAmount = "  " .. FormatLargeNumber(d[faction]["current"]) .. " / " .. FormatLargeNumber(d[faction]["max"])
-			if d[faction]["standingId"] == 8 or (T.faction[faction]["friend"] ~= 0 and d[faction]["standingId"] >= T.faction[faction]["friend"]) then -- Exalted/Best Friend
-				displayAmount = ""
+		for _, faction in pairs(factions) do
+			if setContains(d, faction) and ParagonDB["config"]["tooltip_personal_enabled"] then
+				totalFactions = totalFactions + 1
+
+				tooltip:AddLine(" ")
+				tooltip:AddLine("|cffffffff" .. L["f "..faction] .. "|r")
+
+				local displayAmount = "  " .. FormatLargeNumber(d[faction]["current"]) .. " / " .. FormatLargeNumber(d[faction]["max"])
+				if d[faction]["standingId"] == 8 or (T.faction[faction]["friend"] ~= 0 and d[faction]["standingId"] >= T.faction[faction]["friend"]) then -- Exalted/Best Friend
+					displayAmount = ""
+				end
+
+				tooltip:AddLine(standingColor(d[faction]["standingId"], faction) .. standing(d[faction]["standingId"], faction) .. displayAmount .. "|r")
 			end
-
-			tooltip:AddLine(standingColor(d[faction]["standingId"], faction) .. standing(d[faction]["standingId"], faction) .. displayAmount .. "|r")
 		end
 
-		if ParagonDB["config"]["tooltip_alts_enabled"] and limit >= 1 then
+		if ParagonDB["config"]["tooltip_alts_enabled"] and limit >= 1 and totalFactions == 1 then
 			if bound == "BoA" and outputFaction(faction, 1, "tooltip", 1) then
 				--tooltip:AddLine(" ")
 				--if ParagonDB["config"]["tooltip_alts_enabled_alt"] and IsAltKeyDown() then
@@ -511,14 +518,14 @@ local function GameTooltip_OnTooltipSetItem(tooltip)
 					tooltip:AddLine("|cff00ff00"..L["hold shift for more"].."|r")
 				end
 			end
-		elseif ParagonDB["config"]["tooltip_alts_enabled_shift"] and limit_shift >= 1 then
-			--if IsShiftKeyDown() then
-				--tooltip:AddLine(" ")
-				--if ParagonDB["config"]["tooltip_alts_enabled_alt"] and IsAltKeyDown() then
-					--tooltip:AddLine(L["lowest reputation"])
-				--else
-					--tooltip:AddLine(L["highest reputation"])
-				--end
+		elseif ParagonDB["config"]["tooltip_alts_enabled_shift"] and limit_shift >= 1 and totalFactions == 1 then
+			if IsShiftKeyDown() then
+				tooltip:AddLine(" ")
+				if ParagonDB["config"]["tooltip_alts_enabled_alt"] and IsAltKeyDown() then
+					tooltip:AddLine(L["lowest reputation"])
+				else
+					tooltip:AddLine(L["highest reputation"])
+				end
 				tooltip:AddLine(outputFaction(faction, 1, "tooltip", 1))
 
 				if limit_shift >= 2 then
@@ -531,7 +538,7 @@ local function GameTooltip_OnTooltipSetItem(tooltip)
 			--else
 				--tooltip:AddLine(" ")
 				--tooltip:AddLine("|cff00ff00"..L["hold shift for highest reputation"].."|r")
-			--end
+			end
 		end
 	end
 end
