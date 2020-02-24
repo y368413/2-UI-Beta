@@ -58,7 +58,7 @@ function S:QuestTracker()
 	  header:HookScript("OnDragStop", function() ObjectiveTrackerFrame:StopMovingOrSizing() end)
   end
   
-	-- Reskin Headers
+	--[[ Reskin Headers
 	local function reskinHeader(header)
 		header.Text:SetTextColor(I.r, I.g, I.b)
 		header.Background:Hide()
@@ -77,8 +77,9 @@ function S:QuestTracker()
 		BONUS_OBJECTIVE_TRACKER_MODULE.Header,
 		WORLD_QUEST_TRACKER_MODULE.Header,
 	}
-	for _, header in pairs(headers) do Moveit(header) reskinHeader(header) end
+	for _, header in pairs(headers) do Moveit(header) reskinHeader(header) end]]
 
+end
 ----------------------------------------------------------------------------------------
 --	Ctrl+Click to abandon a quest or Alt+Click to share a quest(by Suicidal Katt)
 ----------------------------------------------------------------------------------------
@@ -104,7 +105,6 @@ hooksecurefunc(QUEST_TRACKER_MODULE, "OnBlockHeaderClick", function(_, block)
 	end
 end)
 
-end
 
 -- 任务名称职业着色 -------------------------------------------------------
 function S:QuestTrackerSkinTitle()

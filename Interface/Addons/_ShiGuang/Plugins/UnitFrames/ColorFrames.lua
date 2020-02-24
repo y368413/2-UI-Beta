@@ -229,6 +229,8 @@ local function ColorFrames()
 		ObjectiveTrackerBlocksFrame.QuestHeader.Background,
 		ObjectiveTrackerBlocksFrame.ScenarioHeader.Background,
 		ObjectiveTrackerBlocksFrame.AchievementHeader.Background,
+		BONUS_OBJECTIVE_TRACKER_MODULE.Header.Background,
+		WORLD_QUEST_TRACKER_MODULE.Header.Background,
 		PaladinPowerBarBG,
 		PaladinPowerBarBankBG,
 		--PartyMemberFrame1PetFrameTexture,

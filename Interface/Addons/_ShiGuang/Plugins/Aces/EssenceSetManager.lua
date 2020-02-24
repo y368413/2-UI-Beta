@@ -104,15 +104,15 @@ end
 
 esm.updateTomeButton = function()
 	if esm.itemBtn then
-		local tranquilCount = GetItemCount("Tome of the Tranquil Mind")
-		local quietCount =  GetItemCount("Tome of the Quiet Mind")
+		local tranquilCount = GetItemCount("item:"..141446)
+		local quietCount =  GetItemCount("item:"..153647)
 		local totalCount = tranquilCount + quietCount
 		esm.itemBtn:SetText(totalCount)
 		if InCombatLockdown() then return end
 		if tranquilCount > 0 then
-			esm.itemBtn:SetAttribute("item", "Tome of the Tranquil Mind");
+			esm.itemBtn:SetAttribute("item", "item:"..141446);
 		else
-			esm.itemBtn:SetAttribute("item", "Tome of the Quiet Mind");
+			esm.itemBtn:SetAttribute("item", "item:"..153647);
 		end
 		if esm.saturation == 1 and totalCount > 0 then
 			esm.itemBtn:Enable()

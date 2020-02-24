@@ -64,6 +64,7 @@ local LE = {
 	LE_QUEST_TAG_TYPE_PROFESSION = LE_QUEST_TAG_TYPE_PROFESSION,
 	LE_ITEM_QUALITY_COMMON = LE_ITEM_QUALITY_COMMON,
 	LE_QUEST_TAG_TYPE_FACTION_ASSAULT = LE_QUEST_TAG_TYPE_FACTION_ASSAULT,
+	LE_QUEST_TAG_TYPE_THREAT = LE_QUEST_TAG_TYPE_THREAT,
 	BAG_ITEM_QUALITY_COLORS = BAG_ITEM_QUALITY_COLORS,
 	ITEM_SPELL_TRIGGER_ONUSE = ITEM_SPELL_TRIGGER_ONUSE,
 	ITEM_BIND_ON_EQUIP = ITEM_BIND_ON_EQUIP,
@@ -73,7 +74,7 @@ local LE = {
 	ORDER_RESOURCES_NAME_BFA = GetCurrencyInfo(1560),
 }
 
-local GetCurrentMapAreaID = function() return WorldMapFrame:GetMapID() or 0 end 
+local GetCurrentMapID = function() return WorldMapFrame:GetMapID() or 0 end 
 local inspectScantip = CreateFrame("GameTooltip", "WorldmapRewardIconWorldQuestListInspectScanningTooltip", nil, "GameTooltipTemplate")
       inspectScantip:SetOwner(UIParent, "ANCHOR_NONE")
   
@@ -147,27 +148,7 @@ end
 			end
 		end
 	end
-	local lastCheck = 0
-	function WorldQuestList_IsAzeriteItemAtMaxLevel()
-			if C_AzeriteItem.HasActiveAzeriteItem() then
-				local currTime = GetTime()
-				if currTime - lastCheck > 5 then
-					azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
-					lastCheck = currTime
-				end
-				
-				if azeriteItemLocation then		
-					local isEx, isAzeriteItem = pcall(C_AzeriteItem.IsAzeriteItem,azeriteItemLocation)	--C_AzeriteItem.IsAzeriteItem spams errors if you put neck into the bank
-					if isEx and isAzeriteItem then		
-						local currentLevel = C_AzeriteItem.GetPowerLevel(azeriteItemLocation)
-						
-						if currentLevel == 50 then
-							return true
-						end
-					end
-				end
-			end			
-	end	
+
 	local function AddText(table,obj,num,text)
 		num = num + 1
 		local t = table[num]
@@ -195,7 +176,7 @@ function WorldQuestList_WQIcons_AddIcons(frame,pinName)
 		local pins = frame.pinPools[pinName or "WorldMap_WorldQuestPinTemplate"]
 		if pins then
 			local isWorldMapFrame = frame == WorldMapFrame
-			local isRibbonDisabled = isWorldMapFrame and GENERAL_MAPS[GetCurrentMapAreaID()]
+			local isRibbonDisabled = isWorldMapFrame and GENERAL_MAPS[GetCurrentMapID()]
 			local tCount = 0
 			local bountyMapID = frame:GetMapID() or 0
 			if bountyMapID == 1014 then bountyMapID = 876 
@@ -296,9 +277,9 @@ function WorldQuestList_WQIcons_AddIcons(frame,pinName)
 							amount = floor(numItems * (warMode and C_QuestLog.QuestHasWarModeBonus(obj.questID) and C_CurrencyInfo.DoesWarModeBonusApply(currencyID) and warModeBonus or 1))
 							ajustSize = 5
 							iconTexture, ajustMask = nil
-							if WorldQuestList_IsAzeriteItemAtMaxLevel() then
-								iconGray = true
-							end
+							--if WorldQuestList_IsAzeriteItemAtMaxLevel() then
+								--iconGray = true
+							--end
 							break
 						elseif currencyID == 1220 or currencyID == 1560 then	--OR
 							iconAtlas = "legionmission-icon-currency"
@@ -585,11 +566,11 @@ function WorldQuestList_WQIcons_AddIcons(frame,pinName)
 						obj.WQL_rewardRibbonText:SetText("")
 					end
 					obj.TimeLowFrame:SetPoint("CENTER",-16,-16)
+					--obj.BountyRing:SetSize(obj.WQL_BountyRing_defSize,obj.WQL_BountyRing_defSize)
 					obj.BountyRing:SetVertexColor(1,1,1)
 					obj.BountyRing:SetAtlas('QuestNormal')
 					obj.BountyRing:SetSize(MaoRUIPerDB["Misc"]["WorldQusetRewardIconsSize"], MaoRUIPerDB["Misc"]["WorldQusetRewardIconsSize"])
 					obj.BountyRing:SetPoint('CENTER', 23, 0)
-					--obj.BountyRing:SetSize(obj.WQL_BountyRing_defSize,obj.WQL_BountyRing_defSize)
 				end
 				obj.WQL_questID = nil
 			end
@@ -631,7 +612,7 @@ function WorldQuestList_WQIcons_UpdateScale()
 	local pins = WorldMapFrame.pinPools["WorldMap_WorldQuestPinTemplate"]
 	if pins then
 		local startScale, endScale = defStartScale, defEndScale
-		local generalMap = GENERAL_MAPS[GetCurrentMapAreaID()]
+		local generalMap = GENERAL_MAPS[GetCurrentMapID()]
 		local scaleFactor = 1  --(MaoRUIPerDB["Map"]["MapScale"] or 1)
 		if not generalMap then
 			startScale, endScale = defStartScale, defEndScale
@@ -651,7 +632,9 @@ function WorldQuestList_WQIcons_UpdateScale()
 			--scaleFactor, startScale, endScale
 			if obj.startScale ~= startScale or obj.endScale ~= endScale then
 				obj:SetScalingLimits(1, startScale, endScale)
-				obj:ApplyCurrentScale()
+				if obj:GetMap() and obj:GetMap().ScrollContainer.zoomLevels then	--fix unk error in 8.3
+					obj:ApplyCurrentScale()
+				end
 			end
 		end
 	end
@@ -676,7 +659,7 @@ function WorldMapQuestBountyCount:OnLoad()
 		WRWorldQuestFrame.autoEmisarryId = bountyBoard.bounties[tab.bountyIndex];
 	end)
 	
-	hooksecurefunc(bountyBoard, "RefreshSelectedBounty", function(s, tab) 
+	hooksecurefunc(bountyBoard, "RefreshSelectedBounty", function() 
 		if (MaoRUIPerDB["Misc"]["WorldQusetRewardIcons"]) then
 			self:UpdateBountyCounters();
 		end
@@ -713,7 +696,7 @@ function WorldMapQuestBountyCount:AddBountyCountersToTab(tab)
 			local progress, goal = desc:match("([%d]+)%s*/%s*([%d]+)");
 			progress = tonumber(progress);
 			goal = tonumber(goal);			
-			if progress == goal then return end;
+			if (progress == goal) then return end;
 			local offsetAngle, startAngle = 32, 270;			
 			-- position of first counter
 			startAngle = startAngle - offsetAngle * (goal -1) /2			

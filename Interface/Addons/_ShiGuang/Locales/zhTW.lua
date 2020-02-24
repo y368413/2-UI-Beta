@@ -234,7 +234,7 @@ SHIGUANG_Refund="[退款]:";
 ----------------Announcer----------------------
 Announcer_Sap = ">>>被悶棍<<<";
 Announcer_RocketPP = "漏油!!!救命啊~";
-Announcer_Purgatory = "要死啦要死啦~";
+Announcer_Purgatory = "要死啦 要死啦~";
 Announcer_Interrupted = "打斷→";
 Announcer_Disperse = "驅散→";
 Announcer_Stole = "偷取→";
