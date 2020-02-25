@@ -16,8 +16,6 @@ DemonHunter.spellMeta = {
 	end
 }
 
--- Vengeance
-
 function DemonHunter:Enable()
 	if MaxDps.Spec == 1 then
 		MaxDps.NextSpell = DemonHunter.Havoc;

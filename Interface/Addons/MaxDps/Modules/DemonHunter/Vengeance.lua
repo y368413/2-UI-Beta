@@ -39,6 +39,7 @@ function DemonHunter:Vengeance()
 	local currentSpell = fd.currentSpell;
 	local pain = UnitPower('player', Enum.PowerType.Pain);
 	local soulFragments = buff[VG.SoulFragments].count;
+	local SigilOfFlame = talents[VG.ConcentratedSigils] and VG.SigilOfFlame2 or VG.SigilOfFlame;
 
 	MaxDps:GlowEssences();
 	MaxDps:GlowCooldown(VG.Metamorphosis, cooldown[VG.Metamorphosis].ready);
@@ -75,6 +76,16 @@ function DemonHunter:Vengeance()
 	if pain <= 90 and cooldown[VG.ImmolationAura].ready then
 		return VG.ImmolationAura;
 	end
+	
+	-- fel_devastation;
+	if talents[VG.FelDevastation] and cooldown[VG.FelDevastation].ready and currentSpell ~= VG.FelDevastation then
+		return VG.FelDevastation;
+	end
+
+	-- sigil_of_flame;
+	if cooldown[SigilOfFlame].ready then
+		return SigilOfFlame;
+	end
 
 	-- felblade,if=pain<=70;
 	if talents[VG.Felblade] and cooldown[VG.Felblade].ready and pain <= 70 then
@@ -84,17 +95,6 @@ function DemonHunter:Vengeance()
 	-- fracture,if=soul_fragments<=3;
 	if talents[VG.Fracture] and soulFragments <= 3 and cooldown[VG.Fracture].ready then
 		return VG.Fracture;
-	end
-
-	-- fel_devastation;
-	if talents[VG.FelDevastation] and cooldown[VG.FelDevastation].ready and currentSpell ~= VG.FelDevastation then
-		return VG.FelDevastation;
-	end
-
-	-- sigil_of_flame;
-	local SigilOfFlame = talents[VG.ConcentratedSigils] and VG.SigilOfFlame2 or VG.SigilOfFlame;
-	if cooldown[SigilOfFlame].ready then
-		return SigilOfFlame;
 	end
 
 	-- shear;
@@ -116,10 +116,11 @@ function DemonHunter:VengeanceBrand()
 	local debuff = fd.debuff;
 	local talents = fd.talents;
 	local currentSpell = fd.currentSpell;
+	local SigilOfFlame = talents[VG.ConcentratedSigils] and VG.SigilOfFlame2 or VG.SigilOfFlame;
 
 	-- sigil_of_flame,if=cooldown.fiery_brand.remains<2;
-	if cooldown[VG.FieryBrand].remains < 2 and cooldown[VG.SigilOfFlame].ready then
-		return VG.SigilOfFlame;
+	if cooldown[VG.FieryBrand].remains < 2 and cooldown[SigilOfFlame].ready then
+		return SigilOfFlame;
 	end
 
 	-- fiery_brand;
@@ -139,7 +140,7 @@ function DemonHunter:VengeanceBrand()
 	end
 
 	-- sigil_of_flame,if=dot.fiery_brand.ticking;
-	if debuff[VG.FieryBrand].up and cooldown[VG.SigilOfFlame].ready then
-		return VG.SigilOfFlame;
+	if debuff[VG.FieryBrand].up and cooldown[SigilOfFlame].ready then
+		return SigilOfFlame;
 	end
 end
