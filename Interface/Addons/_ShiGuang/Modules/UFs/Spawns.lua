@@ -224,7 +224,7 @@ function UF:OnLogin()
 			self:SetHeight(%d)
 			]]):format(partyWidth, partyFrameHeight))
 
-			local partyMover = M.Mover(party, U["PartyFrame"], "PartyFrame", {"BOTTOM", UIParent, 0, 180}, moverWidth, moverHeight)
+			local partyMover = M.Mover(party, U["PartyFrame"], "PartyFrame", {"TOPLEFT", UIParent, 310, -120}, moverWidth, moverHeight)
 			party:ClearAllPoints()
 			party:SetPoint("BOTTOMLEFT", partyMover)
 

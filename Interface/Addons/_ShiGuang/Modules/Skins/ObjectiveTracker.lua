@@ -58,7 +58,7 @@ function S:QuestTracker()
 	  header:HookScript("OnDragStop", function() ObjectiveTrackerFrame:StopMovingOrSizing() end)
   end
   
-	--[[ Reskin Headers
+	-- Reskin Headers
 	local function reskinHeader(header)
 		header.Text:SetTextColor(I.r, I.g, I.b)
 		header.Background:Hide()
@@ -77,7 +77,7 @@ function S:QuestTracker()
 		BONUS_OBJECTIVE_TRACKER_MODULE.Header,
 		WORLD_QUEST_TRACKER_MODULE.Header,
 	}
-	for _, header in pairs(headers) do Moveit(header) reskinHeader(header) end]]
+	for _, header in pairs(headers) do Moveit(header) reskinHeader(header) end
 
 end
 ----------------------------------------------------------------------------------------

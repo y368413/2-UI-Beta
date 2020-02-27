@@ -585,18 +585,18 @@ WorldMapFrame:RegisterCallback("WorldQuestsUpdate", function()
   if not MaoRUIPerDB["Misc"]["WorldQusetRewardIcons"] then return end
 	WorldQuestList_WQIcons_AddIcons()
 end)
---[[local WQIcons_FlightMapLoad = CreateFrame("Frame")
+
+local WQIcons_FlightMapLoad = CreateFrame("Frame")
 WQIcons_FlightMapLoad:RegisterEvent("ADDON_LOADED")
 WQIcons_FlightMapLoad:SetScript("OnEvent",function (self, event, arg)
 	if arg == "Blizzard_FlightMap" and MaoRUIPerDB["Misc"]["WorldQusetRewardIcons"] then
 		self:UnregisterAllEvents()
 		FlightMapFrame:RegisterCallback("WorldQuestsUpdate", function() WorldQuestList_WQIcons_AddIcons(FlightMapFrame,"FlightMap_WorldQuestPinTemplate") end)
 	end
-end)]]
+end)
 
 
 --- Icons size on map
-
 local defScaleFactor, defStartScale, defEndScale = 1, 0.425, 0.425
 if WorldMap_WorldQuestPinMixin then
 	local f = CreateFrame("Frame")
