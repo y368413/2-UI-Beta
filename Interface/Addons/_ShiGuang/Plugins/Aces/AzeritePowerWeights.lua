@@ -8,7 +8,7 @@ local M, R, U, I = unpack(ns)
 	(c) 2018 -
 	Sanex @ EU-Arathor / ahak @ Curseforge
 ----------------------------------------------------------------------------]]--
-local AzeritePowerWeights = {}
+local n = {}
 
 -- 8.3 Powers for every Class and Spec
 local sourceData = {
@@ -2425,7 +2425,7 @@ local sourceData = {
 		}, -- [13]
 	}
 }
-AzeritePowerWeights.sourceData = sourceData
+n.sourceData = sourceData
 -- 8.3 Azerite Essences
 local essenceData = {
 	["common"] = {
@@ -2577,7 +2577,7 @@ local essenceData = {
 		}, -- [7]
 	}
 }
-AzeritePowerWeights.essenceData = essenceData
+n.essenceData = essenceData
 
 -- Default Scales Data
 --[[
@@ -2598,9 +2598,9 @@ local defaultNameTable = {
 	[defensiveName] = U["DefaultScaleName_Defensive"],
 	[offensiveName] = U["DefaultScaleName_Offensive"]
 }
-AzeritePowerWeights.defaultNameTable = defaultNameTable
+n.defaultNameTable = defaultNameTable
 local defaultScalesData = {}
-AzeritePowerWeights.defaultScalesData = defaultScalesData
+n.defaultScalesData = defaultScalesData
 
 local function insertDefaultScalesData(scaleName, classIndex, specNum, powerScales, essenceScales, timestamp)
 	defaultScalesData[#defaultScalesData + 1] = {
@@ -5836,7 +5836,7 @@ local function GetDefaultScaleSet(classID, specNum)
 	end
 end
 
-AzeritePowerWeights.GetDefaultScaleSet = GetDefaultScaleSet
+n.GetDefaultScaleSet = GetDefaultScaleSet
 
 --#EOF
 
@@ -5870,19 +5870,19 @@ local function CreateUI(...)
 	treeGroup:SetLayout("Fill")
 
 	frame:AddChild(treeGroup)
-	AzeritePowerWeights.treeGroup = treeGroup
+	n.treeGroup = treeGroup
 
 	-- Content Area
 	local scalesScroll = AceGUI:Create("ScrollFrame")
 	scalesScroll:SetLayout("Flow")
 
 	treeGroup:AddChild(scalesScroll)
-	AzeritePowerWeights.scalesScroll = scalesScroll
+	n.scalesScroll = scalesScroll
 
 	return frame
 end
 
-AzeritePowerWeights.CreateUI = CreateUI
+n.CreateUI = CreateUI
 
 
 -- PopUp Frame
@@ -6151,7 +6151,7 @@ local function CreatePopUp(mode, titleText, descriptionText, editboxText, callba
 	popupOpenAlready = true
 end
 
-AzeritePowerWeights.CreatePopUp = CreatePopUp
+n.CreatePopUp = CreatePopUp
 
 --#EOF
 
@@ -6169,7 +6169,7 @@ local ACR = LibStub("AceConfigRegistry-3.0")
 local AceGUI = LibStub("AceGUI-3.0")
 
 -- Default DB settings
-local dbVersion = 2
+local dbVersion = 3
 local dbDefaults = {
 	customScales = {},
 	char = {},
@@ -6177,6 +6177,8 @@ local dbDefaults = {
 }
 local charDefaults = { -- Remember to update the ticket-tool when changing this
 	debug = false,
+	enableTraits = true,
+	enableEssences = true,
 	onlyOwnClassDefaults = true,
 	onlyOwnClassCustoms = false,
 	importingCanUpdate = true,
@@ -6210,7 +6212,7 @@ local importVersion = 2
 
 -- Score Strings
 local reallyBigNumber = 2^31 - 1 -- 2147483647, go over this and errors are thrown
-local activeStrings = {} -- Pointers of score strings in use are save in this table
+local activeTStrings, activeEStrings = {}, {} -- Pointers of score strings in use are save in this table
 local scoreData = {} -- Current active scales are saved to this table
 -- 8.2 Azerite Essences
 local essenceScoreData = {}
@@ -6290,7 +6292,7 @@ local function _populateWeights() -- Populate scoreData with active spec's scale
 	if groupSet and classID and specNum and scaleName then
 		classID = tonumber(classID)
 		specNum = tonumber(specNum)
-		for _, dataSet in ipairs(groupSet == "C" and customScales or AzeritePowerWeights.defaultScalesData) do
+		for _, dataSet in ipairs(groupSet == "C" and customScales or n.defaultScalesData) do
 			if (dataSet) and dataSet[1] == scaleName and dataSet[2] == classID and dataSet[3] == specNum then
 				wipe(scoreData)
 				local scoreCount = 0
@@ -6307,14 +6309,13 @@ local function _populateWeights() -- Populate scoreData with active spec's scale
 					essenceCount = essenceCount + 1
 				end
 				essenceStack.loading = essenceCount
-				if AzeritePowerWeights.guiContainer then
-					AzeritePowerWeights.guiContainer:SetStatusText(format(U["WeightEditor_CurrentScale"], groupSet == "D" and (AzeritePowerWeights.defaultNameTable[scaleName] or cfg.specScales[playerSpecID].scaleName) or cfg.specScales[playerSpecID].scaleName))
+				if n.guiContainer then
+					n.guiContainer:SetStatusText(format(U["WeightEditor_CurrentScale"], groupSet == "D" and (n.defaultNameTable[scaleName] or cfg.specScales[playerSpecID].scaleName) or cfg.specScales[playerSpecID].scaleName))
 				end
 				return
 			end
 		end
 	else
-		return
 	end
 end
 
@@ -6511,12 +6512,12 @@ local function _buildTree(t)
 		icon = 134400
 	})
 
-	for _, dataSet in ipairs(AzeritePowerWeights.defaultScalesData) do
+	for _, dataSet in ipairs(n.defaultScalesData) do
 		local classDisplayName, classTag, classID = GetClassInfo(dataSet[2])
 		local specID, name, description, iconID, role, isRecommended, isAllowed = GetSpecializationInfoForClassID(classID, dataSet[3])
 		local c = _G.RAID_CLASS_COLORS[classTag]
 
-		local scaleName = (AzeritePowerWeights.defaultNameTable[ dataSet[1] ] and AzeritePowerWeights.defaultNameTable[ dataSet[1] ] ~= U["DefaultScaleName_Default"]) and classDisplayName .. " - " .. name .. " (" .. AzeritePowerWeights.defaultNameTable[ dataSet[1] ] .. ")" or classDisplayName .. " - " .. name
+		local scaleName = (n.defaultNameTable[ dataSet[1] ] and n.defaultNameTable[ dataSet[1] ] ~= U["DefaultScaleName_Default"]) and classDisplayName .. " - " .. name .. " (" .. n.defaultNameTable[ dataSet[1] ] .. ")" or classDisplayName .. " - " .. name
 		if (dataSet) and ((cfg.onlyOwnClassDefaults and classID == playerClassID) or (not cfg.onlyOwnClassDefaults)) then
 			t[2].children[#t[2].children + 1] = {
 				value = "D/"..dataSet[2].."/"..dataSet[3].."/"..dataSet[1],
@@ -6539,7 +6540,7 @@ local function _SelectGroup(widget, callback, group)
 	local groupSet, classID, specNum, scaleName = strsplit("/", scaleKey, 4) -- Fixes the non-selectable scales if the scalename includes a slash-sign ('/') [Issue #46, https://www.curseforge.com/wow/addons/azeritepowerweights/issues/46]
 
 	if scaleKey == "AzeritePowerWeightsImport" then -- Create New / Import
-		AzeritePowerWeights:CreateImportGroup(AzeritePowerWeights.scalesScroll)
+		n:CreateImportGroup(n.scalesScroll)
 	else -- Scaleset
 		classID = tonumber(classID)
 		specNum = tonumber(specNum)
@@ -6548,7 +6549,7 @@ local function _SelectGroup(widget, callback, group)
 
 			for _, dataSet in ipairs(customScales) do
 				if (dataSet) and dataSet[1] == scaleName and dataSet[2] == classID and dataSet[3] == specNum then
-					AzeritePowerWeights:CreateWeightEditorGroup(true, AzeritePowerWeights.scalesScroll, dataSet, scaleKey, cfg.specScales[playerSpecID].scaleID == scaleKey, classID, specNum, nil) -- specNum is actually specID here, nil is mode
+					n:CreateWeightEditorGroup(true, n.scalesScroll, dataSet, scaleKey, cfg.specScales[playerSpecID].scaleID == scaleKey, classID, specNum, nil) -- specNum is actually specID here, nil is mode
 
 					break
 				end
@@ -6556,12 +6557,12 @@ local function _SelectGroup(widget, callback, group)
 
 		elseif groupSet == "D" then -- Default Scales
 
-			for _, dataSet in ipairs(AzeritePowerWeights.defaultScalesData) do
+			for _, dataSet in ipairs(n.defaultScalesData) do
 				if (dataSet) and dataSet[1] == scaleName and dataSet[2] == classID and dataSet[3] == specNum then
 					local classDisplayName, classTag, classID = GetClassInfo(dataSet[2])
 					local specID, name, description, iconID, role, isRecommended, isAllowed = GetSpecializationInfoForClassID(classID, dataSet[3])
 
-					AzeritePowerWeights:CreateWeightEditorGroup(false, AzeritePowerWeights.scalesScroll, dataSet, scaleKey, cfg.specScales[playerSpecID].scaleID == scaleKey, classID, specID, nil) -- nil is mode
+					n:CreateWeightEditorGroup(false, n.scalesScroll, dataSet, scaleKey, cfg.specScales[playerSpecID].scaleID == scaleKey, classID, specID, nil) -- nil is mode
 
 					break
 				end
@@ -6592,11 +6593,11 @@ local function _enableScale(powerWeights, essenceWeights, scaleKey)
 	essenceStack.loading = essenceCount
 
 	local groupSet, _, _, scaleName = strsplit("/", scaleKey)
-	AzeritePowerWeights.guiContainer:SetStatusText(format(U["WeightEditor_CurrentScale"], groupSet == "D" and (AzeritePowerWeights.defaultNameTable[scaleName] or scaleName) or scaleName))
+	n.guiContainer:SetStatusText(format(U["WeightEditor_CurrentScale"], groupSet == "D" and (n.defaultNameTable[scaleName] or scaleName) or scaleName))
 
 	cfg.specScales[playerSpecID].scaleID = scaleKey
 	cfg.specScales[playerSpecID].scaleName = scaleName
-	AzeritePowerWeights.treeGroup:SelectByValue(cfg.specScales[playerSpecID].scaleID)
+	n.treeGroup:SelectByValue(cfg.specScales[playerSpecID].scaleID)
 end
 
 local function _checkForNameCollisions(nameString, previousName, classID, specID)
@@ -6648,12 +6649,12 @@ local function _exportScale(powerWeights, essenceWeights, scaleName, classID, sp
 	local exportString = format(template, "AzeritePowerWeights", importVersion, scaleName, classID, specID, #t > 0 and " "..strjoin(", ", unpack(t)) or "", #e > 0 and " "..strjoin(", ", unpack(e)) or "")
 
 	--CreatePopUp(mode, titleText, descriptionText, editboxText, callbackFunction)
-	AzeritePowerWeights.CreatePopUp("Export", U["ExportPopup_Title"], format(U["ExportPopup_Desc"], NORMAL_FONT_COLOR_CODE .. scaleName .. FONT_COLOR_CODE_CLOSE, NORMAL_FONT_COLOR_CODE, FONT_COLOR_CODE_CLOSE, NORMAL_FONT_COLOR_CODE, FONT_COLOR_CODE_CLOSE), exportString)
+	n.CreatePopUp("Export", U["ExportPopup_Title"], format(U["ExportPopup_Desc"], NORMAL_FONT_COLOR_CODE .. scaleName .. FONT_COLOR_CODE_CLOSE, NORMAL_FONT_COLOR_CODE, FONT_COLOR_CODE_CLOSE, NORMAL_FONT_COLOR_CODE, FONT_COLOR_CODE_CLOSE), exportString)
 end
 
 local importStack = {}
 local function _importScale(importMode) -- Show import popup and parse input
-	local template = "^%s*%(%s*AzeritePowerWeights%s*:%s*(%d+)%s*:%s*\"([^\"]+)\"%s*:%s*(%d+)%s*:%s*(%d+)%s*:%s*(.+)%s*:%s*(.+)%s*%)%s*$"
+	local template = "^%s*%(%s*" .. "AzeritePowerWeights" .. "%s*:%s*(%d+)%s*:%s*\"([^\"]+)\"%s*:%s*(%d+)%s*:%s*(%d+)%s*:%s*(.+)%s*:%s*(.+)%s*%)%s*$"
 	wipe(importStack)
 
 	local callbackFunction = function(widget, callback, ...)
@@ -6692,7 +6693,7 @@ local function _importScale(importMode) -- Show import popup and parse input
 				importStack[#importStack + 1] = ("String version is old: %s / %s / %s"):format(tostring(stringVersion), tostring(importVersion), tostring(version))
 				if not version then
 					importStack[#importStack + 1] = "-> First retry...\n"
-					Print("ERROR: Old or malformed \"Import string\"")
+					Print(U["ImportPopup_Error_OldStringRetry"])
 					_saveString(importString, (importVersion - 1))
 				elseif version > 1 then
 					importStack[#importStack + 1] = "-> Still retrying...\n"
@@ -6709,9 +6710,9 @@ local function _importScale(importMode) -- Show import popup and parse input
 				local result = insertCustomScalesData(scaleName, classID, specID, powerWeights, essenceWeights, 2) -- Set scaleMode 2 for Imported
 
 				-- Rebuild Tree
-				AzeritePowerWeights.treeGroup.tree = _buildTree(AzeritePowerWeights.treeGroup.tree)
-				AzeritePowerWeights.treeGroup:SelectByValue("C/"..classID.."/"..specID.."/"..scaleName)
-				AzeritePowerWeights.treeGroup:RefreshTree(true)
+				n.treeGroup.tree = _buildTree(n.treeGroup.tree)
+				n.treeGroup:SelectByValue("C/"..classID.."/"..specID.."/"..scaleName)
+				n.treeGroup:RefreshTree(true)
 
 				if result then -- Updated old scale
 					importStack[#importStack + 1] = "- Updated old scale.\n> END"
@@ -6750,10 +6751,10 @@ local function _importScale(importMode) -- Show import popup and parse input
 	--CreatePopUp(mode, titleText, descriptionText, editboxText, callbackFunction)
 	if importMode then -- Mass Import
 		importStack[#importStack + 1] = "=== MassImport"
-		AzeritePowerWeights.CreatePopUp("MassImport", U["ImportPopup_Title"], format(U["ImportPopup_Desc"], NORMAL_FONT_COLOR_CODE, FONT_COLOR_CODE_CLOSE, NORMAL_FONT_COLOR_CODE .. _G.ACCEPT .. FONT_COLOR_CODE_CLOSE), "", callbackFunction)
+		n.CreatePopUp("MassImport", U["MassImportPopup_Title"], format(U["MassImportPopup_Desc"], NORMAL_FONT_COLOR_CODE, FONT_COLOR_CODE_CLOSE, NORMAL_FONT_COLOR_CODE .. _G.ACCEPT .. FONT_COLOR_CODE_CLOSE), "", callbackFunction)
 	else -- Import
 		importStack[#importStack + 1] = "=== Import"
-	AzeritePowerWeights.CreatePopUp("Import", U["ImportPopup_Title"], format(U["ImportPopup_Desc"], NORMAL_FONT_COLOR_CODE, FONT_COLOR_CODE_CLOSE, NORMAL_FONT_COLOR_CODE .. _G.ACCEPT .. FONT_COLOR_CODE_CLOSE), "", callbackFunction)
+	n.CreatePopUp("Import", U["ImportPopup_Title"], format(U["ImportPopup_Desc"], NORMAL_FONT_COLOR_CODE, FONT_COLOR_CODE_CLOSE, NORMAL_FONT_COLOR_CODE .. _G.ACCEPT .. FONT_COLOR_CODE_CLOSE), "", callbackFunction)
 	end
 end
 
@@ -6777,9 +6778,9 @@ local function _createScale() -- Show create popup and parse input
 			local result = insertCustomScalesData(scaleName, classID, specID, nil, nil, 1) -- Set scaleMode 1 for Created
 
 			-- Rebuild Tree
-			AzeritePowerWeights.treeGroup.tree = _buildTree(AzeritePowerWeights.treeGroup.tree)
-			AzeritePowerWeights.treeGroup:SelectByValue("C/"..classID.."/"..specID.."/"..scaleName)
-			AzeritePowerWeights.treeGroup:RefreshTree(true)
+			n.treeGroup.tree = _buildTree(n.treeGroup.tree)
+			n.treeGroup:SelectByValue("C/"..classID.."/"..specID.."/"..scaleName)
+			n.treeGroup:RefreshTree(true)
 
 
 			if result then -- Updated old instead of creating new, which should never happen
@@ -6794,7 +6795,7 @@ local function _createScale() -- Show create popup and parse input
 	end
 
 	--CreatePopUp(mode, titleText, descriptionText, editboxText, callbackFunction)
-	AzeritePowerWeights.CreatePopUp("Create", U["CreatePopup_Title"], format(U["CreatePopup_Desc"], NORMAL_FONT_COLOR_CODE .. _G.ACCEPT .. FONT_COLOR_CODE_CLOSE), "", callbackFunction)
+	n.CreatePopUp("Create", U["CreatePopup_Title"], format(U["CreatePopup_Desc"], NORMAL_FONT_COLOR_CODE .. _G.ACCEPT .. FONT_COLOR_CODE_CLOSE), "", callbackFunction)
 end
 
 local function _renameScale(scaleName, classID, specID, isCurrentScales) -- Show rename popup and check for name collisions
@@ -6823,9 +6824,9 @@ local function _renameScale(scaleName, classID, specID, isCurrentScales) -- Show
 
 			Print(U["RenamePopup_RenamedScale"], scaleName, finalName)
 
-			AzeritePowerWeights.treeGroup.tree = _buildTree(AzeritePowerWeights.treeGroup.tree)
-			AzeritePowerWeights.treeGroup:SelectByValue("C/"..classID.."/"..specID.."/"..finalName)
-			AzeritePowerWeights.treeGroup:RefreshTree(true)
+			n.treeGroup.tree = _buildTree(n.treeGroup.tree)
+			n.treeGroup:SelectByValue("C/"..classID.."/"..specID.."/"..finalName)
+			n.treeGroup:RefreshTree(true)
 
 			if isCurrentScales and scaleWeights then
 				_enableScale(scaleWeights, essenceWeights, "C/"..classID.."/"..specID.."/"..finalName)
@@ -6862,7 +6863,7 @@ local function _renameScale(scaleName, classID, specID, isCurrentScales) -- Show
 	end
 
 	--CreatePopUp(mode, titleText, descriptionText, editboxText, callbackFunction)
-	AzeritePowerWeights.CreatePopUp("Rename", U["RenamePopup_Title"], format(U["RenamePopup_Desc"], NORMAL_FONT_COLOR_CODE .. scaleName .. FONT_COLOR_CODE_CLOSE, NORMAL_FONT_COLOR_CODE .. _G.ACCEPT .. FONT_COLOR_CODE_CLOSE), scaleName, callbackFunction)
+	n.CreatePopUp("Rename", U["RenamePopup_Title"], format(U["RenamePopup_Desc"], NORMAL_FONT_COLOR_CODE .. scaleName .. FONT_COLOR_CODE_CLOSE, NORMAL_FONT_COLOR_CODE .. _G.ACCEPT .. FONT_COLOR_CODE_CLOSE), scaleName, callbackFunction)
 end
 
 local function _deleteScale(scaleName, classID, specID, isCurrentScales) -- Show delete popup and remove scale
@@ -6880,18 +6881,18 @@ local function _deleteScale(scaleName, classID, specID, isCurrentScales) -- Show
 		tremove(customScales, index)
 		Print(U["DeletePopup_DeletedScale"], scaleName)
 
-		AzeritePowerWeights.treeGroup.tree = _buildTree(AzeritePowerWeights.treeGroup.tree)
-		AzeritePowerWeights.treeGroup:SelectByValue("AzeritePowerWeightsImport")
-		AzeritePowerWeights.treeGroup:RefreshTree(true)
+		n.treeGroup.tree = _buildTree(n.treeGroup.tree)
+		n.treeGroup:SelectByValue("AzeritePowerWeightsImport")
+		n.treeGroup:RefreshTree(true)
 
 		-- If removed scaleKey was in use, revert back to default option
 		if isCurrentScales then
 			local specNum = GetSpecialization()
 			playerClassID = playerClassID or select(3, UnitClass("player"))
-			local scaleKey = AzeritePowerWeights.GetDefaultScaleSet(playerClassID, specNum)
+			local scaleKey = n.GetDefaultScaleSet(playerClassID, specNum)
 			local _, _, _, defaultScaleName = strsplit("/", scaleKey)
 			
-			for _, dataSet in ipairs(AzeritePowerWeights.defaultScalesData) do
+			for _, dataSet in ipairs(n.defaultScalesData) do
 				if (dataSet) and dataSet[1] == defaultScaleName and dataSet[2] == playerClassID and dataSet[3] == specNum then
 					_enableScale(dataSet[4], dataSet[5], scaleKey)
 
@@ -6931,14 +6932,14 @@ local function _deleteScale(scaleName, classID, specID, isCurrentScales) -- Show
 	end
 
 	--CreatePopUp(mode, titleText, descriptionText, editboxText, callbackFunction)
-	AzeritePowerWeights.CreatePopUp("Delete", U["DeletePopup_Title"], format(U["DeletePopup_Desc"], NORMAL_FONT_COLOR_CODE .. scaleName .. FONT_COLOR_CODE_CLOSE, NORMAL_FONT_COLOR_CODE .. _G.ACCEPT .. FONT_COLOR_CODE_CLOSE), U["DeletePopup_Warning"], callbackFunction)
+	n.CreatePopUp("Delete", U["DeletePopup_Title"], format(U["DeletePopup_Desc"], NORMAL_FONT_COLOR_CODE .. scaleName .. FONT_COLOR_CODE_CLOSE, NORMAL_FONT_COLOR_CODE .. _G.ACCEPT .. FONT_COLOR_CODE_CLOSE), U["DeletePopup_Warning"], callbackFunction)
 end
 
-function AzeritePowerWeights:CreateImportGroup(container)
+function n:CreateImportGroup(container)
 	container:ReleaseChildren()
 
 	local version = AceGUI:Create("Label")
-	version:SetText(" 8.3.4")
+	version:SetText(" 8.3.5")
 	version:SetJustifyH("RIGHT")
 	version:SetFullWidth(true)
 	container:AddChild(version)
@@ -6967,7 +6968,7 @@ function AzeritePowerWeights:CreateImportGroup(container)
 	container:AddChild(importButton)
 
 	local massImportButton = AceGUI:Create("Button")
-	massImportButton:SetText("Mass Import")
+	massImportButton:SetText(U["WeightEditor_MassImportText"])
 	massImportButton:SetFullWidth(true)
 	massImportButton:SetCallback("OnClick", function()
 		-- Call _importScale
@@ -6982,7 +6983,7 @@ function AzeritePowerWeights:CreateImportGroup(container)
 	lastOpenScale = "AzeritePowerWeightsImport"
 end
 
-function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, dataSet, scaleKey, isCurrentScales, classID, specID, mode)
+function n:CreateWeightEditorGroup(isCustomScale, container, dataSet, scaleKey, isCurrentScales, classID, specID, mode)
 	local classDisplayName = GetClassInfo(dataSet[2])
 	local _, specName = GetSpecializationInfoForClassID(classID, dataSet[3])
 	local titleText = isCustomScale and dataSet[1] or ("%s - %s (%s)"):format(classDisplayName, specName, dataSet[1])
@@ -7053,7 +7054,7 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 			cfg.tooltipScales[#cfg.tooltipScales + 1] = {
 				scaleID = scaleKey,
 				--scaleName = thisScaleName
-				scaleName = groupSet == "D" and (AzeritePowerWeights.defaultNameTable[thisScaleName] or thisScaleName) or thisScaleName
+				scaleName = groupSet == "D" and (n.defaultNameTable[thisScaleName] or thisScaleName) or thisScaleName
 			}
 		else
 			if #cfg.tooltipScales > 0 then
@@ -7078,11 +7079,11 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 	-- Tooltip end
 
 	local modeButton = AceGUI:Create("Button")
-	modeButton:SetText(currentMode == 1 and "Change to Traits" or "Change to Essences")
+	modeButton:SetText(currentMode == 1 and U["WeightEditor_ModeToTraits"] or U["WeightEditor_ModeToEssences"])
 	modeButton:SetRelativeWidth(.5)
 	modeButton:SetCallback("OnClick", function()
 		-- Change Mode
-		AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, dataSet, scaleKey, isCurrentScales, classID, specID, currentMode == 1 and 0 or 1)
+		n:CreateWeightEditorGroup(isCustomScale, container, dataSet, scaleKey, isCurrentScales, classID, specID, currentMode == 1 and 0 or 1)
 	end)
 	container:AddChild(modeButton)
 
@@ -7096,11 +7097,11 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 		-- 8.2 Azerite Essences
 		-- timestamp 5->6, scaleMode 6->7
 		if dataSet[7] == 1 then
-			timestampText:SetText(format("Created %s", date("%Y.%m.%d", (dataSet[6] or 0))))
+			timestampText:SetText(format(U["WeightEditor_TimestampText_Created"], date("%Y.%m.%d", (dataSet[6] or 0))))
 		elseif dataSet[7] == 2 then
-			timestampText:SetText(format("Imported %s", date("%Y.%m.%d", (dataSet[6] or 0))))
+			timestampText:SetText(format(U["WeightEditor_TimestampText_Imported"], date("%Y.%m.%d", (dataSet[6] or 0))))
 		else -- dataSet[6] 0, Default or Updated
-			timestampText:SetText(format("Updated %s", date("%Y.%m.%d", (dataSet[6] or 0))))
+			timestampText:SetText(format(U["WeightEditor_TimestampText_Updated"], date("%Y.%m.%d", (dataSet[6] or 0))))
 		end
 	end
 
@@ -7200,13 +7201,13 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 		container:AddChild(classTitle)
 
 		-- Center Power
-		local cname = GetSpellInfo(C_AzeriteEmpoweredItem.GetPowerInfo(AzeritePowerWeights.sourceData.center.azeritePowerID).spellID)
+		local cname = GetSpellInfo(C_AzeriteEmpoweredItem.GetPowerInfo(n.sourceData.center.azeritePowerID).spellID)
 		e[c] = AceGUI:Create("EditBox")
-		e[c]:SetLabel(format("  |T%d:18|t %s", AzeritePowerWeights.sourceData.center.icon, cname or AzeritePowerWeights.sourceData.center.name))
-		e[c]:SetText(powerWeights[AzeritePowerWeights.sourceData.center.azeritePowerID] or "")
+		e[c]:SetLabel(format("  |T%d:18|t %s", n.sourceData.center.icon, cname or n.sourceData.center.name))
+		e[c]:SetText(powerWeights[n.sourceData.center.azeritePowerID] or "")
 		e[c]:SetRelativeWidth(.5)
 		if isCustomScale then
-			e[c]:SetUserData("dataPointer", AzeritePowerWeights.sourceData.center.azeritePowerID)
+			e[c]:SetUserData("dataPointer", n.sourceData.center.azeritePowerID)
 			e[c]:SetCallback("OnEnterPressed", _saveValue)
 		else
 			e[c]:SetDisabled(true)
@@ -7215,14 +7216,14 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 		c = c + 1
 
 		-- Class Powers
-		for i, powerData in ipairs(AzeritePowerWeights.sourceData.class[classID][specID]) do
+		for i, powerData in ipairs(n.sourceData.class[classID][specID]) do
 			local name = GetSpellInfo(C_AzeriteEmpoweredItem.GetPowerInfo(powerData.azeritePowerID).spellID)
 			e[c] = AceGUI:Create("EditBox")
 			e[c]:SetLabel(format("  |T%d:18|t %s", powerData.icon, name or powerData.name))
 			e[c]:SetText(powerWeights[powerData.azeritePowerID] or "")
 			e[c]:SetRelativeWidth(.5)
 			if isCustomScale then
-				e[c]:SetUserData("dataPointer", AzeritePowerWeights.sourceData.class[classID][specID][i].azeritePowerID)
+				e[c]:SetUserData("dataPointer", n.sourceData.class[classID][specID][i].azeritePowerID)
 				e[c]:SetCallback("OnEnterPressed", _saveValue)
 			else
 				e[c]:SetDisabled(true)
@@ -7238,14 +7239,14 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 			container:AddChild(defTitle)
 
 			-- Defensive Powers
-			for i, powerData in ipairs(AzeritePowerWeights.sourceData.defensive[classID]) do
+			for i, powerData in ipairs(n.sourceData.defensive[classID]) do
 				local name = GetSpellInfo(C_AzeriteEmpoweredItem.GetPowerInfo(powerData.azeritePowerID).spellID)
 				e[c] = AceGUI:Create("EditBox")
 				e[c]:SetLabel(format("  |T%d:18|t %s", powerData.icon, name or powerData.name))
 				e[c]:SetText(powerWeights[powerData.azeritePowerID] or "")
 				e[c]:SetRelativeWidth(.5)
 				if isCustomScale then
-					e[c]:SetUserData("dataPointer", AzeritePowerWeights.sourceData.defensive[classID][i].azeritePowerID)
+					e[c]:SetUserData("dataPointer", n.sourceData.defensive[classID][i].azeritePowerID)
 					e[c]:SetCallback("OnEnterPressed", _saveValue)
 				else
 					e[c]:SetDisabled(true)
@@ -7253,14 +7254,14 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 				container:AddChild(e[c])
 				c = c + 1
 			end
-			for i, powerData in ipairs(AzeritePowerWeights.sourceData.defensive.common) do
+			for i, powerData in ipairs(n.sourceData.defensive.common) do
 				local name = GetSpellInfo(C_AzeriteEmpoweredItem.GetPowerInfo(powerData.azeritePowerID).spellID)
 				e[c] = AceGUI:Create("EditBox")
 				e[c]:SetLabel(format("  |T%d:18|t %s", powerData.icon, name or powerData.name))
 				e[c]:SetText(powerWeights[powerData.azeritePowerID] or "")
 				e[c]:SetRelativeWidth(.5)
 				if isCustomScale then
-					e[c]:SetUserData("dataPointer", AzeritePowerWeights.sourceData.defensive.common[i].azeritePowerID)
+					e[c]:SetUserData("dataPointer", n.sourceData.defensive.common[i].azeritePowerID)
 					e[c]:SetCallback("OnEnterPressed", _saveValue)
 				else
 					e[c]:SetDisabled(true)
@@ -7277,7 +7278,7 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 			container:AddChild(roleTitle)
 
 			-- Role Powers
-			for i, powerData in ipairs(AzeritePowerWeights.sourceData.role.common) do
+			for i, powerData in ipairs(n.sourceData.role.common) do
 				local name = GetSpellInfo(C_AzeriteEmpoweredItem.GetPowerInfo(powerData.azeritePowerID).spellID)
 				e[c] = AceGUI:Create("EditBox")
 				local roleIcon = "|TInterface\\LFGFrame\\LFGRole:0:3:::64:16:16:64:0:16|t" -- Tank, DPS & Healer
@@ -7285,7 +7286,7 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 				e[c]:SetText(powerWeights[powerData.azeritePowerID] or "")
 				e[c]:SetRelativeWidth(.5)
 				if isCustomScale then
-					e[c]:SetUserData("dataPointer", AzeritePowerWeights.sourceData.role.common[i].azeritePowerID)
+					e[c]:SetUserData("dataPointer", n.sourceData.role.common[i].azeritePowerID)
 					e[c]:SetCallback("OnEnterPressed", _saveValue)
 				else
 					e[c]:SetDisabled(true)
@@ -7296,7 +7297,7 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 
 			-- Non-Healer Powers
 			if bit.band(roleBits, bit.bor(BIT_DAMAGER, BIT_TANK)) ~= 0 then
-				for i, powerData in ipairs(AzeritePowerWeights.sourceData.role.nonhealer) do
+				for i, powerData in ipairs(n.sourceData.role.nonhealer) do
 					local name = GetSpellInfo(C_AzeriteEmpoweredItem.GetPowerInfo(powerData.azeritePowerID).spellID)
 					e[c] = AceGUI:Create("EditBox")
 					local roleIcon = "|TInterface\\LFGFrame\\LFGRole:0:2:::64:16:16:48:0:16|t" -- Tank & DPS
@@ -7304,7 +7305,7 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 					e[c]:SetText(powerWeights[powerData.azeritePowerID] or "")
 					e[c]:SetRelativeWidth(.5)
 					if isCustomScale then
-						e[c]:SetUserData("dataPointer", AzeritePowerWeights.sourceData.role.nonhealer[i].azeritePowerID)
+						e[c]:SetUserData("dataPointer", n.sourceData.role.nonhealer[i].azeritePowerID)
 						e[c]:SetCallback("OnEnterPressed", _saveValue)
 					else
 						e[c]:SetDisabled(true)
@@ -7315,7 +7316,7 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 			end
 			-- Tank Powers
 			if bit.band(roleBits, BIT_TANK) ~= 0 then
-				for i, powerData in ipairs(AzeritePowerWeights.sourceData.role.tank) do
+				for i, powerData in ipairs(n.sourceData.role.tank) do
 					local name = GetSpellInfo(C_AzeriteEmpoweredItem.GetPowerInfo(powerData.azeritePowerID).spellID)
 					e[c] = AceGUI:Create("EditBox")
 					local roleIcon = "|TInterface\\LFGFrame\\LFGRole:0::::64:16:32:48:0:16|t" -- Tank
@@ -7323,7 +7324,7 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 					e[c]:SetText(powerWeights[powerData.azeritePowerID] or "")
 					e[c]:SetRelativeWidth(.5)
 					if isCustomScale then
-						e[c]:SetUserData("dataPointer", AzeritePowerWeights.sourceData.role.tank[i].azeritePowerID)
+						e[c]:SetUserData("dataPointer", n.sourceData.role.tank[i].azeritePowerID)
 						e[c]:SetCallback("OnEnterPressed", _saveValue)
 					else
 						e[c]:SetDisabled(true)
@@ -7334,7 +7335,7 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 			end
 			-- Healer Powers
 			if bit.band(roleBits, BIT_HEALER) ~= 0 then
-				for i, powerData in ipairs(AzeritePowerWeights.sourceData.role.healer) do
+				for i, powerData in ipairs(n.sourceData.role.healer) do
 					local name = GetSpellInfo(C_AzeriteEmpoweredItem.GetPowerInfo(powerData.azeritePowerID).spellID)
 					e[c] = AceGUI:Create("EditBox")
 					local roleIcon = "|TInterface\\LFGFrame\\LFGRole:0::::64:16:48:64:0:16|t" -- Healer
@@ -7342,7 +7343,7 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 					e[c]:SetText(powerWeights[powerData.azeritePowerID] or "")
 					e[c]:SetRelativeWidth(.5)
 					if isCustomScale then
-						e[c]:SetUserData("dataPointer", AzeritePowerWeights.sourceData.role.healer[i].azeritePowerID)
+						e[c]:SetUserData("dataPointer", n.sourceData.role.healer[i].azeritePowerID)
 						e[c]:SetCallback("OnEnterPressed", _saveValue)
 					else
 						e[c]:SetDisabled(true)
@@ -7360,14 +7361,14 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 			container:AddChild(zoneTitle)
 
 			-- Raid Powers
-			for i, powerData in ipairs(AzeritePowerWeights.sourceData.raid) do
+			for i, powerData in ipairs(n.sourceData.raid) do
 				local name = GetSpellInfo(C_AzeriteEmpoweredItem.GetPowerInfo(powerData.azeritePowerID).spellID)
 				e[c] = AceGUI:Create("EditBox")
 				e[c]:SetLabel(format("  |T%d:18|t*%s*", powerData.icon, name or powerData.name))
 				e[c]:SetText(powerWeights[powerData.azeritePowerID] or "")
 				e[c]:SetRelativeWidth(.5)
 				if isCustomScale then
-					e[c]:SetUserData("dataPointer", AzeritePowerWeights.sourceData.raid[i].azeritePowerID)
+					e[c]:SetUserData("dataPointer", n.sourceData.raid[i].azeritePowerID)
 					e[c]:SetCallback("OnEnterPressed", _saveValue)
 				else
 					e[c]:SetDisabled(true)
@@ -7380,14 +7381,14 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 			local startPoint = 1
 			local endPoint = 15
 			for i = startPoint, endPoint do
-				local powerData = AzeritePowerWeights.sourceData.zone[i]
+				local powerData = n.sourceData.zone[i]
 				local name = GetSpellInfo(C_AzeriteEmpoweredItem.GetPowerInfo(powerData.azeritePowerID).spellID)
 				e[c] = AceGUI:Create("EditBox")
 				e[c]:SetLabel(format("  |T%d:18|t %s", powerData.icon, name or powerData.name))
 				e[c]:SetText(powerWeights[powerData.azeritePowerID] or "")
 				e[c]:SetRelativeWidth(.5)
 				if isCustomScale then
-					e[c]:SetUserData("dataPointer", AzeritePowerWeights.sourceData.zone[i].azeritePowerID)
+					e[c]:SetUserData("dataPointer", n.sourceData.zone[i].azeritePowerID)
 					e[c]:SetCallback("OnEnterPressed", _saveValue)
 				else
 					e[c]:SetDisabled(true)
@@ -7399,14 +7400,14 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 			local tidesStart = isHorde and 18 or 16
 			local tidesEnd = isHorde and 19 or 17
 			for i = tidesStart, tidesEnd do
-				local powerData = AzeritePowerWeights.sourceData.zone[i]
+				local powerData = n.sourceData.zone[i]
 				local name = GetSpellInfo(C_AzeriteEmpoweredItem.GetPowerInfo(powerData.azeritePowerID).spellID)
 				e[c] = AceGUI:Create("EditBox")
 				e[c]:SetLabel(format("  |T%d:18|t %s", powerData.icon, name or powerData.name))
 				e[c]:SetText(powerWeights[powerData.azeritePowerID] or "")
 				e[c]:SetRelativeWidth(.5)
 				if isCustomScale then
-					e[c]:SetUserData("dataPointer", AzeritePowerWeights.sourceData.zone[i].azeritePowerID)
+					e[c]:SetUserData("dataPointer", n.sourceData.zone[i].azeritePowerID)
 					e[c]:SetCallback("OnEnterPressed", _saveValue)
 				else
 					e[c]:SetDisabled(true)
@@ -7415,15 +7416,15 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 				c = c + 1
 			end
 			-- 8.2 ->
-			for i = 20, #AzeritePowerWeights.sourceData.zone do
-				local powerData = AzeritePowerWeights.sourceData.zone[i]
+			for i = 20, #n.sourceData.zone do
+				local powerData = n.sourceData.zone[i]
 				local name = GetSpellInfo(C_AzeriteEmpoweredItem.GetPowerInfo(powerData.azeritePowerID).spellID)
 				e[c] = AceGUI:Create("EditBox")
 				e[c]:SetLabel(format("  |T%d:18|t %s", powerData.icon, name or powerData.name))
 				e[c]:SetText(powerWeights[powerData.azeritePowerID] or "")
 				e[c]:SetRelativeWidth(.5)
 				if isCustomScale then
-					e[c]:SetUserData("dataPointer", AzeritePowerWeights.sourceData.zone[i].azeritePowerID)
+					e[c]:SetUserData("dataPointer", n.sourceData.zone[i].azeritePowerID)
 					e[c]:SetCallback("OnEnterPressed", _saveValue)
 				else
 					e[c]:SetDisabled(true)
@@ -7440,14 +7441,14 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 			container:AddChild(professionTitle)
 
 			-- Profession Powers
-			for i, powerData in ipairs(AzeritePowerWeights.sourceData.profession) do
+			for i, powerData in ipairs(n.sourceData.profession) do
 				local name = GetSpellInfo(C_AzeriteEmpoweredItem.GetPowerInfo(powerData.azeritePowerID).spellID)
 				e[c] = AceGUI:Create("EditBox")
 				e[c]:SetLabel(format("  |T%d:18|t %s", powerData.icon, name or powerData.name))
 				e[c]:SetText(powerWeights[powerData.azeritePowerID] or "")
 				e[c]:SetRelativeWidth(.5)
 				if isCustomScale then
-					e[c]:SetUserData("dataPointer", AzeritePowerWeights.sourceData.profession[i].azeritePowerID)
+					e[c]:SetUserData("dataPointer", n.sourceData.profession[i].azeritePowerID)
 					e[c]:SetCallback("OnEnterPressed", _saveValue)
 				else
 					e[c]:SetDisabled(true)
@@ -7468,15 +7469,15 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 			local startPoint = isHorde and 1 or 7
 			local endPoint = isHorde and 6 or 12
 			for i = startPoint, endPoint do
-				local powerData = AzeritePowerWeights.sourceData.pvp[i]
+				local powerData = n.sourceData.pvp[i]
 				local name = GetSpellInfo(C_AzeriteEmpoweredItem.GetPowerInfo(powerData.azeritePowerID).spellID)
 				e[c] = AceGUI:Create("EditBox")
 				e[c]:SetLabel(format("  |T%d:18|t %s", powerData.icon, name or powerData.name))
 				e[c]:SetText(powerWeights[powerData.azeritePowerID] or "")
 				e[c]:SetRelativeWidth(.5)
 				if isCustomScale then
-					e[c]:SetUserData("dataPointer", AzeritePowerWeights.sourceData.pvp[i].azeritePowerID)
-					e[c]:SetUserData("pairPointer", AzeritePowerWeights.sourceData.pvp[i].pair)
+					e[c]:SetUserData("dataPointer", n.sourceData.pvp[i].azeritePowerID)
+					e[c]:SetUserData("pairPointer", n.sourceData.pvp[i].pair)
 					e[c]:SetCallback("OnEnterPressed", _saveValue)
 				else
 					e[c]:SetDisabled(true)
@@ -7485,15 +7486,15 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 				c = c + 1
 			end
 			-- 8.1:
-			for i = 13, #AzeritePowerWeights.sourceData.pvp do
-				local powerData = AzeritePowerWeights.sourceData.pvp[i]
+			for i = 13, #n.sourceData.pvp do
+				local powerData = n.sourceData.pvp[i]
 				local name = GetSpellInfo(C_AzeriteEmpoweredItem.GetPowerInfo(powerData.azeritePowerID).spellID)
 				e[c] = AceGUI:Create("EditBox")
 				e[c]:SetLabel(format("  |T%d:18|t %s", powerData.icon, name or powerData.name))
 				e[c]:SetText(powerWeights[powerData.azeritePowerID] or "")
 				e[c]:SetRelativeWidth(.5)
 				if isCustomScale then
-					e[c]:SetUserData("dataPointer", AzeritePowerWeights.sourceData.pvp[i].azeritePowerID)
+					e[c]:SetUserData("dataPointer", n.sourceData.pvp[i].azeritePowerID)
 					e[c]:SetCallback("OnEnterPressed", _saveValue)
 				else
 					e[c]:SetDisabled(true)
@@ -7508,7 +7509,7 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 		topLine:SetFullWidth(true)
 		container:AddChild(topLine)
 
-		for i, essenceData in ipairs(AzeritePowerWeights.essenceData.common) do
+		for i, essenceData in ipairs(n.essenceData.common) do
 			local roleIcon = "|TInterface\\LFGFrame\\LFGRole:0:3:::64:16:16:64:0:16|t" -- Tank, DPS & Healer
 			local essenceTitle = AceGUI:Create("Heading")
 			essenceTitle:SetText(format("|T%d:18|t %s", essenceData.icon, essenceData.name))
@@ -7516,11 +7517,11 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 			container:AddChild(essenceTitle)
 
 			e[c] = AceGUI:Create("EditBox")
-			e[c]:SetLabel(format("  %s %s", roleIcon, "Major"))
+			e[c]:SetLabel(format("  %s %s", roleIcon, U["WeightEditor_Major"]))
 			e[c]:SetText(essenceWeights[essenceData.essenceID] and essenceWeights[essenceData.essenceID][1] or "")
 			e[c]:SetRelativeWidth(.25)
 			if isCustomScale then
-				e[c]:SetUserData("essencePointer", AzeritePowerWeights.essenceData.common[i].essenceID)
+				e[c]:SetUserData("essencePointer", n.essenceData.common[i].essenceID)
 				e[c]:SetUserData("essenceMajor", true)
 				e[c]:SetCallback("OnEnterPressed", _saveEssenceValue)
 			else
@@ -7530,11 +7531,11 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 			c = c + 1
 
 			e[c] = AceGUI:Create("EditBox")
-			e[c]:SetLabel(format("  %s %s", roleIcon, "Minor"))
+			e[c]:SetLabel(format("  %s %s", roleIcon, U["WeightEditor_Minor"]))
 			e[c]:SetText(essenceWeights[essenceData.essenceID] and essenceWeights[essenceData.essenceID][2] or "")
 			e[c]:SetRelativeWidth(.25)
 			if isCustomScale then
-				e[c]:SetUserData("essencePointer", AzeritePowerWeights.essenceData.common[i].essenceID)
+				e[c]:SetUserData("essencePointer", n.essenceData.common[i].essenceID)
 				e[c]:SetUserData("essenceMajor", false)
 				e[c]:SetCallback("OnEnterPressed", _saveEssenceValue)
 			else
@@ -7546,7 +7547,7 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 
 		-- Tank Powers
 		if bit.band(roleBits, BIT_TANK) ~= 0 then
-			for i, essenceData in ipairs(AzeritePowerWeights.essenceData.tank) do
+			for i, essenceData in ipairs(n.essenceData.tank) do
 				local roleIcon = "|TInterface\\LFGFrame\\LFGRole:0::::64:16:32:48:0:16|t" -- Tank
 				local essenceTitle = AceGUI:Create("Heading")
 				essenceTitle:SetText(format("|T%d:18|t %s", essenceData.icon, essenceData.name))
@@ -7554,11 +7555,11 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 				container:AddChild(essenceTitle)
 
 				e[c] = AceGUI:Create("EditBox")
-				e[c]:SetLabel(format("  %s %s", roleIcon, "Major"))
+				e[c]:SetLabel(format("  %s %s", roleIcon, U["WeightEditor_Major"]))
 				e[c]:SetText(essenceWeights[essenceData.essenceID] and essenceWeights[essenceData.essenceID][1] or "")
 				e[c]:SetRelativeWidth(.25)
 				if isCustomScale then
-					e[c]:SetUserData("essencePointer", AzeritePowerWeights.essenceData.tank[i].essenceID)
+					e[c]:SetUserData("essencePointer", n.essenceData.tank[i].essenceID)
 					e[c]:SetUserData("essenceMajor", true)
 					e[c]:SetCallback("OnEnterPressed", _saveEssenceValue)
 				else
@@ -7568,11 +7569,11 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 				c = c + 1
 
 				e[c] = AceGUI:Create("EditBox")
-				e[c]:SetLabel(format("  %s %s", roleIcon, "Minor"))
+				e[c]:SetLabel(format("  %s %s", roleIcon, U["WeightEditor_Minor"]))
 				e[c]:SetText(essenceWeights[essenceData.essenceID] and essenceWeights[essenceData.essenceID][2] or "")
 				e[c]:SetRelativeWidth(.25)
 				if isCustomScale then
-					e[c]:SetUserData("essencePointer", AzeritePowerWeights.essenceData.tank[i].essenceID)
+					e[c]:SetUserData("essencePointer", n.essenceData.tank[i].essenceID)
 					e[c]:SetUserData("essenceMajor", false)
 					e[c]:SetCallback("OnEnterPressed", _saveEssenceValue)
 				else
@@ -7584,7 +7585,7 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 		end
 		-- Healer Powers
 		if bit.band(roleBits, BIT_HEALER) ~= 0 then
-			for i, essenceData in ipairs(AzeritePowerWeights.essenceData.healer) do
+			for i, essenceData in ipairs(n.essenceData.healer) do
 				local roleIcon = "|TInterface\\LFGFrame\\LFGRole:0::::64:16:48:64:0:16|t" -- Healer
 				local essenceTitle = AceGUI:Create("Heading")
 				essenceTitle:SetText(format("|T%d:18|t %s", essenceData.icon, essenceData.name))
@@ -7592,11 +7593,11 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 				container:AddChild(essenceTitle)
 
 				e[c] = AceGUI:Create("EditBox")
-				e[c]:SetLabel(format("  %s %s", roleIcon, "Major"))
+				e[c]:SetLabel(format("  %s %s", roleIcon, U["WeightEditor_Major"]))
 				e[c]:SetText(essenceWeights[essenceData.essenceID] and essenceWeights[essenceData.essenceID][1] or "")
 				e[c]:SetRelativeWidth(.25)
 				if isCustomScale then
-					e[c]:SetUserData("essencePointer", AzeritePowerWeights.essenceData.healer[i].essenceID)
+					e[c]:SetUserData("essencePointer", n.essenceData.healer[i].essenceID)
 					e[c]:SetUserData("essenceMajor", true)
 					e[c]:SetCallback("OnEnterPressed", _saveEssenceValue)
 				else
@@ -7606,11 +7607,11 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 				c = c + 1
 
 				e[c] = AceGUI:Create("EditBox")
-				e[c]:SetLabel(format("  %s %s", roleIcon, "Minor"))
+				e[c]:SetLabel(format("  %s %s", roleIcon, U["WeightEditor_Minor"]))
 				e[c]:SetText(essenceWeights[essenceData.essenceID] and essenceWeights[essenceData.essenceID][2] or "")
 				e[c]:SetRelativeWidth(.25)
 				if isCustomScale then
-					e[c]:SetUserData("essencePointer", AzeritePowerWeights.essenceData.healer[i].essenceID)
+					e[c]:SetUserData("essencePointer", n.essenceData.healer[i].essenceID)
 					e[c]:SetUserData("essenceMajor", false)
 					e[c]:SetCallback("OnEnterPressed", _saveEssenceValue)
 				else
@@ -7622,7 +7623,7 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 		end
 		-- DPS Powers
 		if bit.band(roleBits, BIT_DAMAGER) ~= 0 then
-			for i, essenceData in ipairs(AzeritePowerWeights.essenceData.damager) do
+			for i, essenceData in ipairs(n.essenceData.damager) do
 				local roleIcon = "|TInterface\\LFGFrame\\LFGRole:0::::64:16:16:32:0:16|t" -- Damager
 				local essenceTitle = AceGUI:Create("Heading")
 				essenceTitle:SetText(format("|T%d:18|t %s", essenceData.icon, essenceData.name))
@@ -7630,11 +7631,11 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 				container:AddChild(essenceTitle)
 
 				e[c] = AceGUI:Create("EditBox")
-				e[c]:SetLabel(format("  %s %s", roleIcon, "Major"))
+				e[c]:SetLabel(format("  %s %s", roleIcon, U["WeightEditor_Major"]))
 				e[c]:SetText(essenceWeights[essenceData.essenceID] and essenceWeights[essenceData.essenceID][1] or "")
 				e[c]:SetRelativeWidth(.25)
 				if isCustomScale then
-					e[c]:SetUserData("essencePointer", AzeritePowerWeights.essenceData.damager[i].essenceID)
+					e[c]:SetUserData("essencePointer", n.essenceData.damager[i].essenceID)
 					e[c]:SetUserData("essenceMajor", true)
 					e[c]:SetCallback("OnEnterPressed", _saveEssenceValue)
 				else
@@ -7644,11 +7645,11 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 				c = c + 1
 
 				e[c] = AceGUI:Create("EditBox")
-				e[c]:SetLabel(format("  %s %s", roleIcon, "Minor"))
+				e[c]:SetLabel(format("  %s %s", roleIcon, U["WeightEditor_Minor"]))
 				e[c]:SetText(essenceWeights[essenceData.essenceID] and essenceWeights[essenceData.essenceID][2] or "")
 				e[c]:SetRelativeWidth(.25)
 				if isCustomScale then
-					e[c]:SetUserData("essencePointer", AzeritePowerWeights.essenceData.damager[i].essenceID)
+					e[c]:SetUserData("essencePointer", n.essenceData.damager[i].essenceID)
 					e[c]:SetUserData("essenceMajor", false)
 					e[c]:SetCallback("OnEnterPressed", _saveEssenceValue)
 				else
@@ -7668,60 +7669,93 @@ function AzeritePowerWeights:CreateWeightEditorGroup(isCustomScale, container, d
 	lastOpenScale = scaleKey
 end
 
-local function _toggleEditorUI()
-	if not AzeritePowerWeights.guiContainer then return end
+local function _toggleEditorUI(widget, handler, button, down)
+	if not n.guiContainer then return end
 
-	AzeritePowerWeights.guiContainer:ClearAllPoints()
-	if _G.AzeriteEmpoweredItemUI and _G.AzeriteEmpoweredItemUI:IsShown() then
-		AzeritePowerWeights.guiContainer:SetPoint("TOPLEFT", _G.AzeriteEmpoweredItemUI, "TOPRIGHT", 10, 0)
-		AzeritePowerWeights.guiContainer:SetPoint("BOTTOMLEFT", _G.AzeriteEmpoweredItemUI, "BOTTOMRIGHT", 10, 0)
-	elseif _G.AzeriteEssenceUI and _G.AzeriteEssenceUI:IsShown() then
-		AzeritePowerWeights.guiContainer:SetPoint("TOPLEFT", _G.AzeriteEssenceUI, "TOPRIGHT", 10, 0)
-		AzeritePowerWeights.guiContainer:SetPoint("BOTTOMLEFT", _G.AzeriteEssenceUI, "BOTTOMRIGHT", 10, 0)
+	n.guiContainer:ClearAllPoints()
+	--if _G.AzeriteEmpoweredItemUI and _G.AzeriteEmpoweredItemUI:IsShown() then
+	if widget == n.TenableButton then
+		n.guiContainer:SetPoint("TOPLEFT", _G.AzeriteEmpoweredItemUI, "TOPRIGHT", 10, 0)
+		n.guiContainer:SetPoint("BOTTOMLEFT", _G.AzeriteEmpoweredItemUI, "BOTTOMRIGHT", 10, 0)
+	--elseif _G.AzeriteEssenceUI and _G.AzeriteEssenceUI:IsShown() then
+	elseif widget == n.EenableButton then
+		n.guiContainer:SetPoint("TOPLEFT", _G.AzeriteEssenceUI, "TOPRIGHT", 10, 0)
+		n.guiContainer:SetPoint("BOTTOMLEFT", _G.AzeriteEssenceUI, "BOTTOMRIGHT", 10, 0)
 	else
-		AzeritePowerWeights.guiContainer:SetPoint("CENTER", _G.UIParent)
+		n.guiContainer:SetPoint("CENTER", _G.UIParent)
 	end
 
-	if AzeritePowerWeights.guiContainer:IsShown() then
-		AzeritePowerWeights.guiContainer:Hide()
+	if n.guiContainer:IsShown() then
+		n.guiContainer:Hide()
 	else
-		AzeritePowerWeights.guiContainer:Show()
+		n.guiContainer:Show()
 	end
 end
 
 -- Hook and Init functions
 local function _setupStringAndEnableButton() -- Move string and enableButton between AzeriteEmpoweredItemUI and AzeriteEssenceUI
 	C_Timer.After(0, function() -- Fire on next frame instead of current frame
-		if _G.AzeriteEmpoweredItemUI and _G.AzeriteEmpoweredItemUI:IsShown() then
-			AzeritePowerWeights.frame:SetParent(_G.AzeriteEmpoweredItemUI)
+		if cfg.enableTraits and _G.AzeriteEmpoweredItemUI and _G.AzeriteEmpoweredItemUI:IsShown() then
+			if not n.Tstring then
+				local s = AcquireString(_G.AzeriteEmpoweredItemUI, "")
+
+				local scale = _G.AzeriteEmpoweredItemUI:GetEffectiveScale() or 1
+				local fontName, fontHeight, fontFlags = s:GetFont()
+				s:SetFont(fontName, fontHeight * scale, "")
+
+				s:SetJustifyH("LEFT")
+				s:SetJustifyV("TOP")
+				n.Tstring = s
+			end
 
 			if _G.AzeriteEmpoweredItemUIPortrait:IsShown() then -- Default UI etc. who show Portrait
-				AzeritePowerWeights.string:SetPoint("TOPLEFT", _G.AzeriteEmpoweredItemUI.ClipFrame.BackgroundFrame, 10, -50)
+				n.Tstring:SetPoint("TOPLEFT", _G.AzeriteEmpoweredItemUI.ClipFrame.BackgroundFrame, 10, -50)
 			else -- ElvUI etc. who hides Portrait
-				AzeritePowerWeights.string:SetPoint("TOPLEFT", _G.AzeriteEmpoweredItemUI.ClipFrame.BackgroundFrame, 10, -10)
+				n.Tstring:SetPoint("TOPLEFT", _G.AzeriteEmpoweredItemUI.ClipFrame.BackgroundFrame, 10, -10)
 			end
+			n.Tstring:Show()
 
-			AzeritePowerWeights.enableButton:SetPoint("BOTTOMLEFT", _G.AzeriteEmpoweredItemUI, "BOTTOMLEFT", 10, 10)
-			AzeritePowerWeights.enableButton.frame:SetParent(_G.AzeriteEmpoweredItemUI.ClipFrame.BackgroundFrame) -- Fix enableButton hiding behind AzeriteEmpoweredItemUI elements with ElvUI if the AzeriteUI skinning is disabled.
-		elseif _G.AzeriteEssenceUI and _G.AzeriteEssenceUI:IsShown() then
-			AzeritePowerWeights.frame:SetParent(_G.AzeriteEssenceUI)
+			n.TenableButton:SetPoint("BOTTOMLEFT", _G.AzeriteEmpoweredItemUI, "BOTTOMLEFT", 10, 10)
+			n.TenableButton.frame:SetParent(_G.AzeriteEmpoweredItemUI.ClipFrame.BackgroundFrame) -- Fix enableButton hiding behind AzeriteEmpoweredItemUI elements with ElvUI if the AzeriteUI skinning is disabled.
+			n.TenableButton.frame:Show()
+		else
+			if n.Tstring then
+				n.Tstring:Hide()
+			end
+			n.TenableButton.frame:Hide()
+		end
+		
+		if cfg.enableEssences and _G.AzeriteEssenceUI and _G.AzeriteEssenceUI:IsShown() then
+			if not n.Estring then
+				local s = AcquireString(_G.AzeriteEssenceUI, "")
+
+				local scale = _G.AzeriteEssenceUI:GetEffectiveScale() or 1
+				local fontName, fontHeight, fontFlags = s:GetFont()
+				s:SetFont(fontName, fontHeight * scale, "")
+
+				s:SetJustifyH("LEFT")
+				s:SetJustifyV("TOP")
+				n.Estring = s
+			end
 
 			if ElvUI and ElvUI[3] and ElvUI[3].skins and ElvUI[3].skins.blizzard and ElvUI[3].skins.blizzard.AzeriteEssence then -- ElvUI etc. who hides Portrait
-				AzeritePowerWeights.string:SetPoint("TOPLEFT", _G.AzeriteEssenceUI.LeftInset, 10, -10)
+				n.Estring:SetPoint("TOPLEFT", _G.AzeriteEssenceUI.LeftInset, 10, -10)
 			else -- Default UI etc. who show Portrait
-				AzeritePowerWeights.string:SetPoint("TOPLEFT", _G.AzeriteEssenceUI.LeftInset, 10, -50)
+				n.Estring:SetPoint("TOPLEFT", _G.AzeriteEssenceUI.LeftInset, 10, -50)
 			end
+			n.Estring:Show()
 
-			AzeritePowerWeights.enableButton:SetPoint("BOTTOMLEFT", _G.AzeriteEssenceUI, "BOTTOMLEFT", 10, 10)
-			AzeritePowerWeights.enableButton.frame:SetParent(_G.AzeriteEssenceUI.LeftInset)
+			n.EenableButton:SetPoint("BOTTOMLEFT", _G.AzeriteEssenceUI, "BOTTOMLEFT", 10, 10)
+			n.EenableButton.frame:SetParent(_G.AzeriteEssenceUI.LeftInset)
+			n.EenableButton.frame:Show()
 		else
-			AzeritePowerWeights.frame:Hide()
-			AzeritePowerWeights.enableButton.frame:Hide()
+			if n.Estring then
+				n.Estring:Hide()
+			end
+			n.EenableButton.frame:Hide()
 
-			return
+			--return
 		end
-		AzeritePowerWeights.frame:Show()
-		AzeritePowerWeights.enableButton.frame:Show()
 	end)
 end
 
@@ -7729,32 +7763,22 @@ function f:HookAzeriteUI() -- Set Parents and Anchors
 	if not playerSpecID then return end -- No playerSpecID yet, return
 	self:InitUI()
 
-	--[[
-	if _G.AzeriteEmpoweredItemUIPortrait:IsShown() then -- Default UI etc. who show Portrait
-		AzeritePowerWeights.string:SetPoint("TOPLEFT", _G.AzeriteEmpoweredItemUI.ClipFrame.BackgroundFrame, 10, -50)
-	else -- ElvUI etc. who hides Portrait
-		AzeritePowerWeights.string:SetPoint("TOPLEFT", _G.AzeriteEmpoweredItemUI.ClipFrame.BackgroundFrame, 10, -10)
-	end
-	AzeritePowerWeights.frame:Show()
-
-	AzeritePowerWeights.enableButton:SetPoint("BOTTOMLEFT", _G.AzeriteEmpoweredItemUI, "BOTTOMLEFT", 10, 10)
-	AzeritePowerWeights.enableButton.frame:SetParent(_G.AzeriteEmpoweredItemUI.ClipFrame.BackgroundFrame) -- Fix enableButton hiding behind AzeriteEmpoweredItemUI elements with ElvUI if the AzeriteUI skinning is disabled.
-	AzeritePowerWeights.enableButton.frame:Show()
-	]]
 	_setupStringAndEnableButton()
 
 	_G.AzeriteEmpoweredItemUI:HookScript("OnHide", function() -- Hide strings on frame hide
-		while #activeStrings > 0 do
-			local s = tremove(activeStrings)
+		while #activeTStrings > 0 do
+			local s = tremove(activeTStrings)
 			ReleaseString(s)
 		end
 
-		if AzeritePowerWeights.guiContainer then
-			AzeritePowerWeights.scalesScroll:ReleaseChildren()
+		if n.guiContainer then
+			n.scalesScroll:ReleaseChildren()
 			lastOpenScale = nil
 			f:RefreshConfig()
 
-			AzeritePowerWeights.guiContainer:Hide()
+			n.guiContainer:Hide()
+			n.Tstring:Hide()
+			n.TenableButton.frame:Hide()
 		end
 	end)
 end
@@ -7766,17 +7790,19 @@ function f:HookAzeriteEssenceUI() -- Set Parents and Anchors for the 8.2 Azerite
 	_setupStringAndEnableButton()
 
 	_G.AzeriteEssenceUI:HookScript("OnHide", function() -- Hide strings on frame hide
-		while #activeStrings > 0 do
-			local s = tremove(activeStrings)
+		while #activeEStrings > 0 do
+			local s = tremove(activeEStrings)
 			ReleaseString(s)
 		end
 
-		if AzeritePowerWeights.guiContainer then
-			AzeritePowerWeights.scalesScroll:ReleaseChildren()
+		if n.guiContainer then
+			n.scalesScroll:ReleaseChildren()
 			lastOpenScale = nil
 			f:RefreshConfig()
 
-			AzeritePowerWeights.guiContainer:Hide()
+			n.guiContainer:Hide()
+			n.Estring:Hide()
+			n.EenableButton.frame:Hide()
 		end
 	end)
 end
@@ -7787,44 +7813,40 @@ function f:InitUI() -- Build UI and set up some initial data
 	initDone = true
 
 
-	local frame = CreateFrame("Frame")
-	frame:Hide()
-	AzeritePowerWeights.frame = frame
-
-	local string = frame:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
-	string:SetJustifyH("LEFT")
-	string:SetJustifyV("TOP")
-	string:SetText("")
-	AzeritePowerWeights.string = string
-
-	-- Enable Button
-	local enableButton = AceGUI:Create("Button")
+	-- Enable Buttons
+	local TenableButton = AceGUI:Create("Button")
 	--enableButton:SetPoint("BOTTOMLEFT", _G.AzeriteEmpoweredItemUI, "BOTTOMLEFT", 10, 10)
-	enableButton:SetText(U["Weights"])
-	enableButton:SetAutoWidth(true)
-	enableButton:SetCallback("OnClick", _toggleEditorUI)
-	AzeritePowerWeights.enableButton = enableButton
+	TenableButton:SetText("AzeritePowerWeights")
+	TenableButton:SetAutoWidth(true)
+	TenableButton:SetCallback("OnClick", _toggleEditorUI)
+	n.TenableButton = TenableButton
+
+	local EenableButton = AceGUI:Create("Button")
+	EenableButton:SetText("AzeritePowerWeights")
+	EenableButton:SetAutoWidth(true)
+	EenableButton:SetCallback("OnClick", _toggleEditorUI)
+	n.EenableButton = EenableButton
 
 	-- Editor GUI
-	AzeritePowerWeights.guiContainer = AzeritePowerWeights.CreateUI()
-	--AzeritePowerWeights.guiContainer:SetPoint("TOPLEFT", _G.AzeriteEmpoweredItemUI, "TOPRIGHT", 10, 0)
-	--AzeritePowerWeights.guiContainer:SetPoint("BOTTOMLEFT", _G.AzeriteEmpoweredItemUI, "BOTTOMRIGHT", 10, 0)
+	n.guiContainer = n.CreateUI()
+	--n.guiContainer:SetPoint("TOPLEFT", _G.AzeriteEmpoweredItemUI, "TOPRIGHT", 10, 0)
+	--n.guiContainer:SetPoint("BOTTOMLEFT", _G.AzeriteEmpoweredItemUI, "BOTTOMRIGHT", 10, 0)
 
 	-- TreeGroup Hacks for QoL
-	AzeritePowerWeights.treeGroup:SetCallback("OnGroupSelected", _SelectGroup)
-	AzeritePowerWeights.treeGroup.tree = _buildTree(AzeritePowerWeights.treeGroup.tree)
+	n.treeGroup:SetCallback("OnGroupSelected", _SelectGroup)
+	n.treeGroup.tree = _buildTree(n.treeGroup.tree)
 	local statusTable = {}
-	for i = 1, #AzeritePowerWeights.treeGroup.tree do
+	for i = 1, #n.treeGroup.tree do
 		statusTable[#statusTable + 1] = true
 	end
-	AzeritePowerWeights.treeGroup:SetStatusTable({
+	n.treeGroup:SetStatusTable({
 		groups = statusTable,
 		treesizable = false,
 		selected = ("%d\001%s"):format(1, "AzeritePowerWeightsImport")
 	}) -- Expand groups
 
 	-- Content Area
-	AzeritePowerWeights:CreateImportGroup(AzeritePowerWeights.scalesScroll)
+	n:CreateImportGroup(n.scalesScroll)
 
 	-- Check if we have spec
 	if not (playerSpecID and cfg and cfg.specScales[playerSpecID] and cfg.specScales[playerSpecID].scaleID) then
@@ -7838,7 +7860,8 @@ function f:UpdateValues() -- Update scores
 	lock = nil
 	if not (_G.AzeriteEmpoweredItemUI or _G.AzeriteEssenceUI) then return end
 
-	if _G.AzeriteEmpoweredItemUI and _G.AzeriteEmpoweredItemUI:IsShown() then
+	-- TRAITS
+	if cfg.enableTraits and _G.AzeriteEmpoweredItemUI and _G.AzeriteEmpoweredItemUI:IsShown() then
 		local currentScore, currentPotential, maxScore, currentLevel, maxLevel, midTrait = 0, 0, 0, 0, 0, 0
 		local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
 		if azeriteItemLocation then
@@ -7846,8 +7869,8 @@ function f:UpdateValues() -- Update scores
 		end
 
 		-- Update score strings and calculate current score
-		while #activeStrings > 0 do
-			local s = tremove(activeStrings)
+		while #activeTStrings > 0 do
+			local s = tremove(activeTStrings)
 			ReleaseString(s)
 		end
 
@@ -7951,7 +7974,7 @@ function f:UpdateValues() -- Update scores
 				end
 				frameTmp = frameTmp .. " " .. (frame.azeritePowerID or "?") .. ":" .. (scoreData[powerInfo.azeritePowerID] or "!") .. ":" .. (scoreData[frame.azeritePowerID] or "!")
 				local s = AcquireString(frame, score)
-				activeStrings[#activeStrings + 1] = s
+				activeTStrings[#activeTStrings + 1] = s
 
 				if powerInfo then
 					traitStack.scoreData[#traitStack.scoreData + 1] = ("%s = %s"):format(tostring(powerInfo.azeritePowerID), tostring(score))
@@ -8001,19 +8024,26 @@ function f:UpdateValues() -- Update scores
 			mS = (maxScore == 0 and "%d" or ("%%.%df"):format(decimals)):format(maxScore)
 		end
 
-	local baseScore = format(U["PowersScoreString"], cS, cP, mS, currentLevel, maxLevel)
+		local baseScore = format(U["PowersScoreString"], cS, cP, mS, currentLevel, maxLevel)
 
-	local groupSet, _, _, scaleName = strsplit("/", cfg.specScales[playerSpecID].scaleID)
-	AzeritePowerWeights.string:SetText(format("%s\n%s", NORMAL_FONT_COLOR_CODE .. ((groupSet == "D" and (AzeritePowerWeights.defaultNameTable[scaleName] or cfg.specScales[playerSpecID].scaleName) or cfg.specScales[playerSpecID].scaleName) or U["ScaleName_Unknown"]) .. FONT_COLOR_CODE_CLOSE, baseScore))
+		local groupSet, _, _, scaleName = strsplit("/", cfg.specScales[playerSpecID].scaleID)
+
+		if n.Tstring then
+			n.Tstring:SetText(format("%s\n%s", NORMAL_FONT_COLOR_CODE .. ((groupSet == "D" and (n.defaultNameTable[scaleName] or cfg.specScales[playerSpecID].scaleName) or cfg.specScales[playerSpecID].scaleName) or U["ScaleName_Unknown"]) .. FONT_COLOR_CODE_CLOSE, baseScore))
+		else
+			delayedUpdate()
+		end
 
 		traitStack.scoreData.current = cS
 		traitStack.scoreData.potential = cP
 		traitStack.scoreData.maximum = mS
 
-	elseif _G.AzeriteEssenceUI and _G.AzeriteEssenceUI:IsShown() then -- 8.2 Azerite Essences
+	end
+	-- ESSENCES
+	if cfg.enableEssences and _G.AzeriteEssenceUI and _G.AzeriteEssenceUI:IsShown() then -- 8.2 Azerite Essences
 		-- Update score strings and calculate current score
-		while #activeStrings > 0 do
-			local s = tremove(activeStrings)
+		while #activeEStrings > 0 do
+			local s = tremove(activeEStrings)
 			ReleaseString(s)
 		end
 
@@ -8373,11 +8403,11 @@ function f:UpdateValues() -- Update scores
 
 			if slotFrame.unlocked then
 				local s = AcquireString(slotFrame, score)
-				activeStrings[#activeStrings + 1] = s
+				activeEStrings[#activeEStrings + 1] = s
 			end
 		end
 
-		--AzeritePowerWeights.string:SetText("Cool")
+		--n.string:SetText("Cool")
 		local currentLevel = _G.AzeriteEssenceUI.powerLevel or 0
 		local maxLevel = milestones[#milestones].requiredLevel or 0
 
@@ -8395,7 +8425,11 @@ function f:UpdateValues() -- Update scores
 		local baseScore = format(U["PowersScoreString"], cS, cP, mS, currentLevel, maxLevel)
 		local groupSet, _, _, scaleName = strsplit("/", cfg.specScales[playerSpecID].scaleID)
 
-		AzeritePowerWeights.string:SetText(format("%s\n%s", NORMAL_FONT_COLOR_CODE .. ((groupSet == "D" and (AzeritePowerWeights.defaultNameTable[scaleName] or cfg.specScales[playerSpecID].scaleName) or cfg.specScales[playerSpecID].scaleName) or U["ScaleName_Unknown"]) .. FONT_COLOR_CODE_CLOSE, baseScore))
+		if n.Estring then
+			n.Estring:SetText(format("%s\n%s", NORMAL_FONT_COLOR_CODE .. ((groupSet == "D" and (n.defaultNameTable[scaleName] or cfg.specScales[playerSpecID].scaleName) or cfg.specScales[playerSpecID].scaleName) or U["ScaleName_Unknown"]) .. FONT_COLOR_CODE_CLOSE, baseScore))
+		else
+			delayedUpdate()
+		end
 
 		essenceStack.scoreData.current = cS
 		essenceStack.scoreData.potential = cP
@@ -8421,7 +8455,7 @@ local function _getGearScore(dataPointer, itemEquipLoc)
 	end
 
 	local itemLink = GetInventoryItemLink("player", itemEquipLoc)
-	
+
 	if C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemLink) then
 		local equipLocation = ItemLocation:CreateFromEquipmentSlot(itemEquipLoc)
 		local allTierInfo = C_AzeriteEmpoweredItem.GetAllTierInfoByItemID(itemLink)
@@ -8498,12 +8532,13 @@ local function _updateTooltip(tooltip, itemLink)
 
 		tooltipTable[i] = tooltipTable[i] or {}
 		tooltipTable[i].tooltipScale = tooltipScale.scaleID
+
 		local dataPointer
 		local groupSet, classID, specNum, scaleName = strsplit("/", tooltipScale.scaleID)
 		if groupSet and classID and specNum and scaleName then
 			classID = tonumber(classID)
 			specNum = tonumber(specNum)
-			for _, dataSet in ipairs(groupSet == "C" and customScales or AzeritePowerWeights.defaultScalesData) do
+			for _, dataSet in ipairs(groupSet == "C" and customScales or n.defaultScalesData) do
 				if (dataSet) and dataSet[1] == scaleName and dataSet[2] == classID and dataSet[3] == specNum then
 					dataPointer = dataSet[4]
 
@@ -8898,7 +8933,7 @@ function f:ADDON_LOADED(event, addon)
 				select(3, strmatch(cfg.specScales[specID].scaleID, "D/(%d+)/(%d+)/(.+)")) == U["DefaultScaleName_Offensive"])
 			then
 
-				local scaleKey = AzeritePowerWeights.GetDefaultScaleSet(playerClassID, i)
+				local scaleKey = n.GetDefaultScaleSet(playerClassID, i)
 				local _, _, _, defaultScaleName = strsplit("/", scaleKey)
 
 				cfg.specScales[specID] = {
@@ -8976,18 +9011,18 @@ end
 -- Config
 function f:RefreshConfig()
 	delayedUpdate()
-	if AzeritePowerWeights.treeGroup and AzeritePowerWeights.treeGroup.tree then
-		AzeritePowerWeights.treeGroup.tree = _buildTree(AzeritePowerWeights.treeGroup.tree)
-		AzeritePowerWeights.treeGroup:RefreshTree(true)
+	if n.treeGroup and n.treeGroup.tree then
+		n.treeGroup.tree = _buildTree(n.treeGroup.tree)
+		n.treeGroup:RefreshTree(true)
 
 		local lastExists;
-		for _, v in ipairs(AzeritePowerWeights.treeGroup.tree) do
+		for _, v in ipairs(n.treeGroup.tree) do
 			if v.value == lastOpenScale then
 				lastExists = true
 			end
 		end
 
-		AzeritePowerWeights.treeGroup:SelectByValue(lastExists and lastOpenScale or "AzeritePowerWeightsImport")
+		n.treeGroup:SelectByValue(lastExists and lastOpenScale or "AzeritePowerWeightsImport")
 	end
 end
 
@@ -9002,17 +9037,19 @@ local SlashHandlers = {
 		wipe(AzeritePowerWeightsDB)
 
 		f:ADDON_LOADED("ADDON_LOADED", "AzeritePowerWeights")
-		if AzeritePowerWeights.treeGroup and AzeritePowerWeights.treeGroup.tree then
-			AzeritePowerWeights.treeGroup.tree = _buildTree(AzeritePowerWeights.treeGroup.tree)
-			AzeritePowerWeights.treeGroup:SelectByValue("AzeritePowerWeightsImport")
-			AzeritePowerWeights.treeGroup:RefreshTree(true)
+		if n.treeGroup and n.treeGroup.tree then
+			n.treeGroup.tree = _buildTree(n.treeGroup.tree)
+			n.treeGroup:SelectByValue("AzeritePowerWeightsImport")
+			n.treeGroup:RefreshTree(true)
 		end
 		--ReloadUI()
 	end,
 	["ticket"] = function()
-		local text = ("%s %s/%d/%s (%s)\nSettings: "):format("AzeritePowerWeights", "8.3.4", C_CVar.GetCVar("scriptErrors"), cfg.specScales[playerSpecID].scaleName or U["ScaleName_Unknown"], cfg.specScales[playerSpecID].scaleID)
+		local text = ("%s %s/%d/%s (%s)\nSettings: "):format("AzeritePowerWeights", "8.3.5", C_CVar.GetCVar("scriptErrors"), cfg.specScales[playerSpecID].scaleName or U["ScaleName_Unknown"], cfg.specScales[playerSpecID].scaleID)
 		local first = true
 		local skip = {
+			["enableTraits"] = false,
+			["enableEssences"] = false,
 			["onlyOwnClassDefaults"] = false,
 			["onlyOwnClassCustoms"] = false,
 			["importingCanUpdate"] = true,
@@ -9043,10 +9080,17 @@ local SlashHandlers = {
 				end
 			end
 		end
-		if AzeritePowerWeights.frame then
-			text = text .. ("\nFrame: %s, %s, %s/%s, %s/%s"):format(tostring(AzeritePowerWeights.frame:GetParent():GetName()), tostring(AzeritePowerWeights.frame:IsShown()), tostring(AzeritePowerWeights.frame:GetFrameStrata()), tostring(AzeritePowerWeights.frame:GetParent():GetFrameStrata()), tostring(AzeritePowerWeights.frame:GetFrameLevel()), tostring(AzeritePowerWeights.frame:GetParent():GetFrameLevel()))
-			text = text .. ("\nString: %s, %s"):format(tostring(AzeritePowerWeights.string:GetParent():GetParent():GetName()), tostring(AzeritePowerWeights.string:IsShown()))
-			text = text .. ("\nButton: %s, %s, %s/%s, %s/%s"):format(tostring(AzeritePowerWeights.enableButton.frame:GetParent():GetParent():GetName() or AzeritePowerWeights.enableButton.frame:GetParent():GetParent():GetParent():GetName()), tostring(AzeritePowerWeights.enableButton.frame:IsShown()), tostring(AzeritePowerWeights.enableButton.frame:GetFrameStrata()), tostring(AzeritePowerWeights.enableButton.frame:GetParent():GetFrameStrata()), tostring(AzeritePowerWeights.enableButton.frame:GetFrameLevel()), tostring(AzeritePowerWeights.enableButton.frame:GetParent():GetFrameLevel()))
+		if n.Tstring then
+			text = text .. ("\nTString: %s, %s"):format(tostring(select(2, n.Tstring:GetPoint()):GetParent():GetParent():GetName()), tostring(n.Tstring:IsShown()))
+			text = text .. ("\nTButton: %s, %s, %s/%s, %s/%s"):format(tostring(n.TenableButton.frame:GetParent():GetParent():GetName() or n.TenableButton.frame:GetParent():GetParent():GetParent():GetName()), tostring(n.TenableButton.frame:IsShown()), tostring(n.TenableButton.frame:GetFrameStrata()), tostring(n.TenableButton.frame:GetParent():GetFrameStrata()), tostring(n.TenableButton.frame:GetFrameLevel()), tostring(n.TenableButton.frame:GetParent():GetFrameLevel()))
+		else
+			text = text .. ("\nNo Tstring / TButton")
+		end
+		if n.Estring then
+			text = text .. ("\nEString: %s, %s"):format(tostring(select(2, n.Estring:GetPoint()):GetParent():GetName()), tostring(n.Estring:IsShown()))
+			text = text .. ("\nEButton: %s, %s, %s/%s, %s/%s"):format(tostring(n.EenableButton.frame:GetParent():GetParent():GetName() or n.EenableButton.frame:GetParent():GetParent():GetParent():GetName()), tostring(n.EenableButton.frame:IsShown()), tostring(n.EenableButton.frame:GetFrameStrata()), tostring(n.EenableButton.frame:GetParent():GetFrameStrata()), tostring(n.EenableButton.frame:GetFrameLevel()), tostring(n.EenableButton.frame:GetParent():GetFrameLevel()))
+		else
+			text = text .. ("\nNo Estring / EButton")
 		end
 		text = text .. ("\nTrait Scores:\nLoaded: %s, Editor: %s"):format(tostring(traitStack.loading), tostring(traitStack.editor))
 		if traitStack.scoreData then
@@ -9086,7 +9130,7 @@ local SlashHandlers = {
 
 	end,
 	["tt"] = function(...) -- Get tooltip stuff
-		local text = string.format("> START\n- - - - - - - - - -\nVer. %s\nClass/Spec: %s / %s\nScale: %s (%s)\n- - - - - - - - - -\n", "8.3.4", playerClassID, playerSpecID, cfg.specScales[playerSpecID].scaleName or U["ScaleName_Unknown"], cfg.specScales[playerSpecID].scaleID)
+		local text = string.format("> START\n- - - - - - - - - -\nVer. %s\nClass/Spec: %s / %s\nScale: %s (%s)\n- - - - - - - - - -\n", "8.3.5", playerClassID, playerSpecID, cfg.specScales[playerSpecID].scaleName or U["ScaleName_Unknown"], cfg.specScales[playerSpecID].scaleID)
 
 		text = text .. string.format("Score settings:\naddILvlToScore: %s\nscaleByAzeriteEmpowered: %s\naddPrimaryStatToScore: %s\nrelativeScore: %s\nshowOnlyUpgrades: %s\nshowTooltipLegend: %s\n- - - - - - - - - -\n", tostring(cfg.addILvlToScore), tostring(cfg.scaleByAzeriteEmpowered), tostring(cfg.addPrimaryStatToScore), tostring(cfg.relativeScore), tostring(cfg.showOnlyUpgrades), tostring(cfg.showTooltipLegend))
 
@@ -9161,7 +9205,7 @@ local SlashHandlers = {
 
 	end,
 	["is"] = function()
-		local text = string.join("\n", ("> START\nVer. %s"):format("8.3.4"), unpack(importStack))
+		local text = string.join("\n", ("> START\nVer. %s"):format("8.3.5"), unpack(importStack))
 	end,
 	["bang"] = function(...)
 		local number = tonumber(...)
@@ -9186,7 +9230,7 @@ local SlashHandlers = {
 			[12] =	2	+	1	-	0	-	0, -- Demon Hunter (+1 for TMI)
 		}
 		local emptySpecs = 6
-		for _, v in ipairs(AzeritePowerWeights.defaultScalesData) do
+		for _, v in ipairs(n.defaultScalesData) do
 			if next(v[4]) or next(v[5]) then -- Check for not empty scales
 				numSpecs[v[2]] = numSpecs[v[2]] - 1
 			else
@@ -9219,7 +9263,7 @@ SlashCmdList["AZERITEPOWERWEIGHTS"] = function(text)
 			Print(U["Slash_RemindConfig"], "AzeritePowerWeights")
 			shouldKnowAboutConfig = true
 		end
-		if not AzeritePowerWeights.guiContainer then
+		if not n.guiContainer then
 			if not _G.AzeriteEmpoweredItemUI then
 				local loaded, reason = LoadAddOn("Blizzard_AzeriteUI")
 				if loaded then

@@ -5,4 +5,5 @@
 	<Script file="Nameplates.lua"/>
 	<Script file="Spawns.lua"/>
 	<Script file="BlinkHealthText.lua"/>
+	<Script file="WhoaThickFrames.lua"/>
 </Ui>

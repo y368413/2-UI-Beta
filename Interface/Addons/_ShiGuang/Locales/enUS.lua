@@ -347,6 +347,8 @@ U["Auto Reagent Bank"] = "Auto Reagent Bank"
 U["Auto Mark"] = "Auto Mark T N"
 U["Font Outline"] = "ChatFont Outline"
 U["HunterPetHelp"] = "PetHealthCritical"
+
+------------------------------------------------------------------------------AzeritePowerWeights
 	U["DefaultScaleName_Default"] = "Default";
 	U["DefaultScaleName_Defensive"] = "Defensive";
 	U["DefaultScaleName_Offensive"] = "Offensive";
@@ -360,10 +362,13 @@ U["HunterPetHelp"] = "PetHealthCritical"
 	U["ExportPopup_Desc"] = "Exporting scale %1$s\nPress %2$sCtrl+C%3$s to copy the string and %4$sCtrl+V%5$s to paste it somewhere" -- %1$s = scaleName, rest are color codes
 	U["ImportPopup_Title"] = "Import Scale"
 	U["ImportPopup_Desc"] = "Importing scale from string\nPress %1$sCtrl+V%2$s to paste string to the editbox and press %3$s" -- %1$s and %2$s are color codes and %3$s = _G.ACCEPT
+U["ImportPopup_Error_OldStringRetry"] = "ERROR: Old or malformed \"Import string\" -version is used, trying to import it anyway as a new scale!"
 	U["ImportPopup_Error_OldStringVersion"] = "ERROR: \"Import string\" -version is too old or malformed import string!"
 	U["ImportPopup_Error_MalformedString"] = "ERROR: Malformed import string!"
 	U["ImportPopup_UpdatedScale"] = "Updated existing scale \"%s\"" -- %s = scaleName
 	U["ImportPopup_CreatedNewScale"] = "Imported new scale \"%s\"" -- %s = scaleName
+U["MassImportPopup_Title"] = "Mass Import Scales"
+U["MassImportPopup_Desc"] = "Importing multiple scales at once from string\nPress %1$sCtrl+V%2$s to paste string to the editbox and press %3$s"
 	U["CreatePopup_Title"] = "Create Scale"
 	U["CreatePopup_Desc"] = "Creating new scale. Select class and specialization from dropdown and then enter name for the new scale and press %1$s" -- %s = _G.ACCEPT
 	U["CreatePopup_Error_UnknownError"] = "ERROR: Something went wrong creating new scale \"%s\"!" -- %s = scaleName
@@ -372,6 +377,7 @@ U["HunterPetHelp"] = "PetHealthCritical"
 	U["RenamePopup_Desc"] = "Renaming scale %1$s\nEnter new name to the editbox and press %2$s" -- %1$s = old (current) scaleName, %2$s = _G.ACCEPT
 	U["RenamePopup_RenamedScale"] = "Renamed scale \"%1$s\" to \"%2$s\"" -- %1$s = old scaleName, %2$s = new scaleName
 	U["DeletePopup_Title"] = "Delete Scale"
+
 	U["DeletePopup_Desc"] = "Deleting scale %1$s\nPress %2$s to confirm.\nAll characters using this scale for their specialization will be reverted back to Default scale." -- %1$s = scaleName, %2$s = _G.ACCEPT
 	U["DeletePopup_Warning"] = " ! This action is permanent and cannot be reversed ! "
 	U["DeletePopup_DeletedScale"] = "Deleted scale \"%s\"" -- %s = scaleName
@@ -379,12 +385,20 @@ U["HunterPetHelp"] = "PetHealthCritical"
 	U["WeightEditor_VersionText"] = "Version %s" -- %s = version
 	U["WeightEditor_CreateNewText"] = "Create New"
 	U["WeightEditor_ImportText"] = "Import"
+U["WeightEditor_MassImportText"] = "Mass Import"
 	U["WeightEditor_EnableScaleText"] = "Use this Scale"
 	U["WeightEditor_ExportText"] = "Export"
 	U["WeightEditor_RenameText"] = "Rename"
 	U["WeightEditor_DeleteText"] = "Delete"
-	U["WeightEditor_TooltipText"] = "Show in Tooltips"
-	U["WeightEditor_CurrentScale"] = "Current scale: %s" -- %s current scaleName
+U["WeightEditor_TooltipText"] = "Show in Tooltips"
+U["WeightEditor_ModeToEssences"] = "Change to Essences"
+U["WeightEditor_ModeToTraits"] = "Change to Traits"
+U["WeightEditor_TimestampText_Created"] = "Created %s" -- %s DD.MM.YYYY
+U["WeightEditor_TimestampText_Imported"] = "Imported %s" -- %s DD.MM.YYYY
+U["WeightEditor_TimestampText_Updated"] = "Updated %s" -- %s DD.MM.YYYY
+U["WeightEditor_CurrentScale"] = "Current scale: %s" -- %s current scaleName
+U["WeightEditor_Major"] = "Major"
+U["WeightEditor_Minor"] = "Minor"
 	U["PowersTitles_Class"] = "Class Powers"
 	U["PowersTitles_Defensive"] = "Defensive Powers"
 	U["PowersTitles_Role"] = "Role Powers"
@@ -397,6 +411,10 @@ U["HunterPetHelp"] = "PetHealthCritical"
 	U["Config_SettingsAddonExplanation"] = "This addon calculates \"Current score\", \"Current potetial\" and \"Maximum score\" for Azerite gear based on your selected scale's weights."
 	U["Config_SettingsScoreExplanation"] = "\"Current score\" is the sum of the currently selected Azerite powers in the item.\n\"Current potetial\" is the sum of the highest weighted Azerite powers from each tier you have access to in the item.\n\"Maximum score\" is the sum of the highest weighted Azerite powers from each tier, including the locked ones, in the item."
 	U["Config_SettingsSavedPerChar"] = "All these settings here are saved per character.\nCustom scales are shared between all characters."
+U["Config_Enable_Traits"] = "Azerite Traits"
+U["Config_Enable_Traits_Desc"] = "Enable %s for Azerite Empowered items." -- %s = ADDON_NAME
+U["Config_Enable_Essences"] = "Azerite Essences"
+U["Config_Enable_Essences_Desc"] = "Enable %s for Azerite Essences." -- %s = ADDON_NAME
 	U["Config_Scales_Title"] = "Scales list"
 	U["Config_Scales_Desc"] = "Following settings only affects the list of Default scales. All Custom scales will be always listed to every class."
 	U["Config_Scales_OwnClassDefaultsOnly"] = "List own class Default-scales only"
@@ -426,12 +444,18 @@ U["HunterPetHelp"] = "PetHealthCritical"
 	U["Config_Score_AddItemLevelToScore_Desc"] = "Add Azerite items itemlevel to all current score, current potential and maximum score calculations."
 	U["Config_Score_ScaleByAzeriteEmpowered"] = "Scale itemlevel score by the weight of %s in the scale" -- %s Name of Azerite Empowered, returned by _G.GetSpellInfo(263978)
 	U["Config_Score_ScaleByAzeriteEmpowered_Desc"] = "When adding itemlevel to the scores, use the weight of %s of the scale to calculate value of +1 itemlevel instead of using +1 itemlevel = +1 score." -- %s Name of Azerite Empowered, returned by _G.GetSpellInfo(263978)
+U["Config_Score_AddPrimaryStatToScore"] = "Add primary stat to all scores"
+U["Config_Score_AddPrimaryStatToScore_Desc"] = "Add Azerite items amount of primary stat (%s/%s/%s) to all current score, current potential and maximum score calculations." -- %s, %s, %s = _G.ITEM_MOD_AGILITY_SHORT, _G.ITEM_MOD_INTELLECT_SHORT, _G.ITEM_MOD_STRENGTH_SHORT
 	U["Config_Score_RelativeScore"] = "Show relative values in tooltips instead of absolute values"
 	U["Config_Score_RelativeScore_Desc"] = "Instead of showing absolute values of scales in tooltips, calculate the relative value compared to currently equiped items and show them in percentages."
 	U["Config_Score_ShowOnlyUpgrades"] = "Show tooltips only for upgrades"
 	U["Config_Score_ShowOnlyUpgrades_Desc"] = "Show scales values in tooltips only if it is an upgrade compared to currently equiped item. This works only with relative values enabled."
 	U["Config_Score_ShowTooltipLegend"] = "Show legend in tooltips"
 	U["Config_Score_ShowTooltipLegend_Desc"] = "Show reminder for \"Current score / Current potetial / Maximum score\" in tooltips."
+U["Config_Score_OutlineScores"] = "Outline Scores"
+U["Config_Score_OutlineScores_Desc"] = "Draw small outline around the score-numbers on Azerite traits/essences to make it easier to read the numbers on light trait/essence icons."
+U["Config_Score_PreferBiSMajor"] = "Prefer best major essence"
+U["Config_Score_PreferBiSMajor_Desc"] = "Always pick the highest scored major essence even when sometimes you could get better overall score by not selecting the best major essence. When this setting is disabled, the addon will calculate few different score combinations and will pick the best overall score."
     U["Slash_Command"] = "/azerite" -- If you need localized slash-command, this doesn't replace the existing /azerite
 	U["Slash_RemindConfig"] = "Check ESC -> Interface -> AddOns -> %s for settings." -- %s = ADDON_NAME
 	U["Slash_Error_Unkown"] = "ERROR: Something went wrong!"
