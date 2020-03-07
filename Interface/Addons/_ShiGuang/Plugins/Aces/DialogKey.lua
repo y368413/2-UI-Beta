@@ -1,6 +1,6 @@
-﻿--## Author: Foxthorn  ## Version: 1.7.3
+﻿--## Author: Foxthorn  ## Version: 1.7.4
 
-local DialogKey = LibStub("AceAddon-3.0"):NewAddon("DialogKey", "AceConsole-3.0", "AceTimer-3.0", "AceEvent-3.0")
+DialogKey = LibStub("AceAddon-3.0"):NewAddon("DialogKey", "AceConsole-3.0", "AceTimer-3.0", "AceEvent-3.0")
 
 
 local defaults = {								-- Default settings
@@ -10,7 +10,7 @@ local defaults = {								-- Default settings
 		showGlow = false,
 		shownBindWarning = false,
 		additionalButtons = {},
-		dialogBlacklist = {},
+		--dialogBlacklist = {},
 		numKeysForGossip = true,
 		numKeysForQuestRewards = true,
 		--scrollQuests = false,
@@ -39,9 +39,9 @@ DialogKey.buttons = {							-- List of buttons to try and click
 --	ClassicQuestLogDetailScrollFrame
 --}
 
-DialogKey.builtinDialogBlacklist = {			-- If a confirmation dialog contains one of these strings, don't accept it
-	"Are you sure you want to go back to Shal'Aran?", -- Seems to bug out and not work if an AddOn clicks the confirm button?
-}
+--DialogKey.builtinDialogBlacklist = {			-- If a confirmation dialog contains one of these strings, don't accept it
+--	"Are you sure you want to go back to Shal'Aran?", -- Seems to bug out and not work if an AddOn clicks the confirm button?
+--}
 
 function DialogKey:OnInitialize()				-- Runs on addon initialization
 	self.db = LibStub("AceDB-3.0"):New("DialogKeyDB", defaults, true)
@@ -498,18 +498,18 @@ function DialogKey:ClickFrame(frame)			-- Attempts to click a passed frame
 		if self.db.global.dontClickReleases and StaticPopup1Button1:IsVisible() and StaticPopup1Button1Text:GetText() == DEATH_RELEASE then return end
 		
 		-- Don't click OK if the dialog box's text matches a blacklist line
-		for i=1,#self.db.global.dialogBlacklist do
-			if StaticPopup1Button1:IsVisible() and StaticPopup1Text:GetText():lower():find(self.db.global.dialogBlacklist[i]:lower()) then return end
-		end
+		--for i=1,#self.db.global.dialogBlacklist do
+			--if StaticPopup1Button1:IsVisible() and StaticPopup1Text:GetText():lower():find(self.db.global.dialogBlacklist[i]:lower()) then return end
+		--end
 		
 		-- Don't click OK if the dialog box's text matches a BUILT-IN blacklisted string
 		-- (e.g. the Withered Army Training exit dialog - will never work because of taint issues with it casting a teleport spell
-		for i=1,#DialogKey.builtinDialogBlacklist do
-			if StaticPopup1Button1:IsVisible() and StaticPopup1Text:GetText():lower():find(DialogKey.builtinDialogBlacklist[i]:lower()) then
-				DialogKey:Print("|cffff3333This dialog casts a spell and does not work with DialogKey. Sorry!|r")
-				return
-			end
-		end
+		--for i=1,#DialogKey.builtinDialogBlacklist do
+			--if StaticPopup1Button1:IsVisible() and StaticPopup1Text:GetText():lower():find(DialogKey.builtinDialogBlacklist[i]:lower()) then
+				--DialogKey:Print("|cffff3333This dialog casts a spell and does not work with DialogKey. Sorry!|r")
+				--return
+			--end
+		--end
 		
 		DialogKey:Glow(frame, "click")
 		frame:Click()
@@ -1171,12 +1171,12 @@ end
 	local newvalue = table.concat(self.db.global.additionalButtons, "\n")
 	editbox.previousText = newvalue
 	editbox:SetText(newvalue)
-end]]
+end
 
 function DialogKey:SaveBlacklist()			-- Save the button names in the additional input to the saved settings
 	self:Hide()
-	--local editbox = DialogKey.options.content.blacklistScroll.EditBox
-	--editbox:ClearFocus()
+	local editbox = DialogKey.options.content.blacklistScroll.EditBox
+	editbox:ClearFocus()
 	
 	local final = {}
 	for i,name in pairs({strsplit("\n",editbox:GetText())}) do
@@ -1189,7 +1189,7 @@ function DialogKey:SaveBlacklist()			-- Save the button names in the additional 
 	DialogKey.db.global.dialogBlacklist = final
 end
 
---[[function DialogKey:UpdateBlacklist()		-- Updates the "Additional buttons" textbox with the latest settings
+function DialogKey:UpdateBlacklist()		-- Updates the "Additional buttons" textbox with the latest settings
 	local editbox = self.options.content.blacklistScroll.EditBox
 	local newvalue = table.concat(self.db.global.dialogBlacklist, "\n")
 	editbox.previousText = newvalue
@@ -1199,8 +1199,6 @@ end]]
 function DialogKey:ValueToString(value)		-- Returns 'Disabled' for 0, '1 second' for 1, 'x seconds' for anything else
 	if value == 0 then
 		return "XXX"
-	elseif value == 1 then
-		return value .. " s"
 	else
 		return value .. " s"
 	end

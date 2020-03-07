@@ -253,7 +253,7 @@ hooksecurefunc("ActionButton_OnUpdate", function(self, elapsed)
 			return;
 		end		
 	end
-	if UnitPower("player", Enum.PowerType.ComboPoints) >= 5 then		
+	if UnitPower("player", Enum.PowerType.ComboPoints) == UnitPowerMax("player", Enum.PowerType.ComboPoints) then		
 		if ( spellType == "spell" and IsOverlayedSpell(id) ) then
 			M.ShowOverlayGlow(parent);
 			self.isAlert = true;

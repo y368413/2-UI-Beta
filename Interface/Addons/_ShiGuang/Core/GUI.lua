@@ -850,7 +850,7 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "Misc", "AutoConfirmRoll", U["AutoConfirmRoll"], true, true},
 		{1, "Misc", "QuickQueue", U["QuickQueue"]},
 	  {1, "Misc", "AutoReagentInBank", U["Auto Reagent Bank"], true},
-		{1, "Bags", "Enable", "|cff00cc4c"..U["Enable Bags"], true, true},
+		--{1, "Bags", "Enable", "|cff00cc4c"..U["Enable Bags"], true, true},
 		--{1, "Bags", "ItemFilter", U["Bags ItemFilter"].."*", true, nil, setupBagFilter, updateBagStatus},
 		--{1, "Bags", "ItemSetFilter", U["Use ItemSetFilter"].."*", true, true, nil, updateBagStatus, U["ItemSetFilterTips"]},
 		--{1, "Bags", "GatherEmpty", U["Bags GatherEmpty"].."*", true, true, nil, updateBagStatus},

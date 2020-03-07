@@ -130,7 +130,7 @@ end
 --## Author: Coop ## Version: 01.00
 local CollapseQuestLog = CreateFrame("Button", "CollapseButton", WorldMapFrame.BorderFrame, 'UIPanelButtonTemplate')
 CollapseQuestLog:ClearAllPoints();
-CollapseQuestLog:SetPoint("TOPRIGHT",-68,0)
+CollapseQuestLog:SetPoint("TOPRIGHT",-48,0)
 CollapseQuestLog:SetSize(24,24)
 CollapseQuestLog:SetText("-")
 CollapseQuestLog:RegisterForClicks("AnyUp")

@@ -3,7 +3,7 @@
 local HandyNotesWorldMapButtonFrame = CreateFrame("Frame");
 local HandyNotesWorldMapButton = CreateFrame("Button", "HandyNotesWorldMapButtonFrame", WorldMapFrame.BorderFrame, "UIPanelButtonTemplate");
 HandyNotesWorldMapButton:ClearAllPoints();
-HandyNotesWorldMapButton:SetPoint("TOPRIGHT",-48,0);
+HandyNotesWorldMapButton:SetPoint("TOPRIGHT",-68,0);
 HandyNotesWorldMapButton:SetSize(24, 24);
 HandyNotesWorldMapButton:SetText("*");
 HandyNotesWorldMapButton:RegisterForClicks("AnyUp");
@@ -12,9 +12,9 @@ function SetIconTooltip(IsRev)
   WorldMapTooltip:Hide();
   WorldMapTooltip:SetOwner(HandyNotesWorldMapButton, "ANCHOR_BOTTOMLEFT");
   if HandyNotes:IsEnabled() then
-    WorldMapTooltip:AddLine(SHOW_MAP..ALL..EMBLEM_SYMBOL, nil, nil, nil, nil, 1 );
+    WorldMapTooltip:AddLine(HIDE..EMBLEM_SYMBOL, nil, nil, nil, nil, 1 );
   else
-    WorldMapTooltip:AddLine(IGNORE_REMOVE..EMBLEM_SYMBOL, nil, nil, nil, nil, 1 );
+    WorldMapTooltip:AddLine(SHOW_MAP..ALL..EMBLEM_SYMBOL, nil, nil, nil, nil, 1 );
   end
   WorldMapTooltip:Show();
 end

@@ -1,3 +1,7 @@
+02/29/2020 version 4.10.2
+- Added a "Quality" tab to the pullout "Type Bar" beneath the pet search box (alongside "Type", "Strong vs" and "Tough vs"), to quickly turn on filters for level 25 pets, rare pets, and to set the sort order to Health, Power or Speed.
+- Updated to support PetTracker's new breed API.
+
 02/06/2020 version 4.10.1
 - Added Uldum and Vale of Eternal Blossom targets to new Battle for Azeroth target menu.
 - Moved Nazjatar and Mechagon targets to the Battle for Azeroth target menu.

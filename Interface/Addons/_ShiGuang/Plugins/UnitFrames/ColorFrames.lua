@@ -135,11 +135,9 @@ local daftFrameHue_Custom = false;
 local daftFrameHue_R = 0.2;
 local daftFrameHue_G = 0.2;
 local daftFrameHue_B = 0.2;
-local daftFrameHue_A = 1;
 local daftFrameHue_classcolor = (CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS)[select(2, UnitClass("player"))];
 
 local daftFrameHue = CreateFrame("Frame", "daftFrameHue", UIParent);
-daftFrameHue:RegisterEvent("PLAYER_LOGIN");
 daftFrameHue:RegisterEvent("ADDON_LOADED");
 local function ColorFrames()
 	for i, texture in pairs({
@@ -189,24 +187,30 @@ local function ColorFrames()
 		--Boss5TargetFrameTextureFrameTexture,
 		CastingBarFrameBorder,
 		CharacterFrameBg,
-		CharacterFrameTitleBg,
+		CharacterFrame.TitleBg,
 		WorldMapFrameBg,
-		WorldMapFrameTitleBg,
+		WorldMapFrame.BorderFrame.TitleBg,
 		FriendsFrameBg,
-		FriendsFrameTitleBg,
+		FriendsFrame.TitleBg,
 		PVEFrameBg,
-		PVEFrameTitleBg,
-		SpellBookFrameTitleBg,
+		PVEFrame.TitleBg,
+		SpellBookFrame.TitleBg,
 		PlayerTalentFrameBg,
+		PlayerTalentFrameInsetBg,
 		PlayerTalentFrameTitleBg,
+		CommunitiesFrameBg,
+		CommunitiesFrameBgTitleBg,
 		GuildFrameBg,
 		GuildFrameTitleBg,
 		ClassicQuestLogBg,
-		ClassicQuestLogTitleBg,
+		ClassicQuestLog.TitleBg,
 		TradeSkillFrameBg,
 		TradeSkillFrameTitleBg,
-		CombuctorFrameInventoryBg,
-		--CompactRaidFrameManagerBg,
+		CombuctorInventoryFrame1Bg,
+		CombuctorInventoryFrameTitleBg,
+		CombuctorBankFrame1Bg,
+		CombuctorBankFrameTitleBg,
+		CompactRaidFrameManagerBg,
 		FocusFrameSpellBarBorder,
 		FocusFrameTextureFrameTexture,
 		FocusFrameToTTextureFrameTexture,
@@ -266,11 +270,10 @@ local function ColorFrames()
 		--TargetFrameTextureFrameTexture,
 		TargetFrameToTTextureFrameTexture,
 		}) do
-		
 		if daftFrameHue_Custom then
-			texture:SetVertexColor(daftFrameHue_R, daftFrameHue_G, daftFrameHue_B, daftFrameHue_A);
+			texture:SetVertexColor(daftFrameHue_R, daftFrameHue_G, daftFrameHue_B, 1);
 		else
-			texture:SetVertexColor(daftFrameHue_classcolor.r, daftFrameHue_classcolor.g, daftFrameHue_classcolor.b, daftFrameHue_A);
+			texture:SetVertexColor(daftFrameHue_classcolor.r, daftFrameHue_classcolor.g, daftFrameHue_classcolor.b, 1);
 		end;
 	end;
 end;

@@ -1,4 +1,4 @@
-local _, T = ...
+﻿local _, T = ...
 local L = T.L
 
 SLASH_PARAGON1 = "/paragon"
@@ -138,7 +138,7 @@ local function format_realm(realmName)
 	if realmName == T.realm then
 		return "" -- Same realm as player, hide it
 	else
-		if ParagonDB["config"]["short_realm_names"] then
+		--[[if ParagonDB["config"]["short_realm_names"] then
 			local parts = {}
 			for part in string.gmatch(realmName, "[^ ]+") do
 				tinsert(parts, part)
@@ -152,9 +152,9 @@ local function format_realm(realmName)
 					realmName = realmName .. string.sub(part, 1, 1)
 				end
 			end
-		end
+		end]]
 
-		return "-" .. realmName
+		return "- ★" --.. realmName
 	end
 end
 
