@@ -6939,7 +6939,7 @@ function n:CreateImportGroup(container)
 	container:ReleaseChildren()
 
 	local version = AceGUI:Create("Label")
-	version:SetText(" 8.3.5")
+	version:SetText(" 8.3.6")
 	version:SetJustifyH("RIGHT")
 	version:SetFullWidth(true)
 	container:AddChild(version)
@@ -7777,7 +7777,9 @@ function f:HookAzeriteUI() -- Set Parents and Anchors
 			f:RefreshConfig()
 
 			n.guiContainer:Hide()
-			n.Tstring:Hide()
+			if n.Tstring then
+				n.Tstring:Hide()
+			end
 			n.TenableButton.frame:Hide()
 		end
 	end)
@@ -7801,7 +7803,9 @@ function f:HookAzeriteEssenceUI() -- Set Parents and Anchors for the 8.2 Azerite
 			f:RefreshConfig()
 
 			n.guiContainer:Hide()
-			n.Estring:Hide()
+			if n.Estring then
+				n.Estring:Hide()
+			end
 			n.EenableButton.frame:Hide()
 		end
 	end)
@@ -9045,7 +9049,7 @@ local SlashHandlers = {
 		--ReloadUI()
 	end,
 	["ticket"] = function()
-		local text = ("%s %s/%d/%s (%s)\nSettings: "):format("AzeritePowerWeights", "8.3.5", C_CVar.GetCVar("scriptErrors"), cfg.specScales[playerSpecID].scaleName or U["ScaleName_Unknown"], cfg.specScales[playerSpecID].scaleID)
+		local text = ("%s %s/%d/%s (%s)\nSettings: "):format("AzeritePowerWeights", "8.3.6", C_CVar.GetCVar("scriptErrors"), cfg.specScales[playerSpecID].scaleName or U["ScaleName_Unknown"], cfg.specScales[playerSpecID].scaleID)
 		local first = true
 		local skip = {
 			["enableTraits"] = false,
@@ -9130,7 +9134,7 @@ local SlashHandlers = {
 
 	end,
 	["tt"] = function(...) -- Get tooltip stuff
-		local text = string.format("> START\n- - - - - - - - - -\nVer. %s\nClass/Spec: %s / %s\nScale: %s (%s)\n- - - - - - - - - -\n", "8.3.5", playerClassID, playerSpecID, cfg.specScales[playerSpecID].scaleName or U["ScaleName_Unknown"], cfg.specScales[playerSpecID].scaleID)
+		local text = string.format("> START\n- - - - - - - - - -\nVer. %s\nClass/Spec: %s / %s\nScale: %s (%s)\n- - - - - - - - - -\n", "8.3.6", playerClassID, playerSpecID, cfg.specScales[playerSpecID].scaleName or U["ScaleName_Unknown"], cfg.specScales[playerSpecID].scaleID)
 
 		text = text .. string.format("Score settings:\naddILvlToScore: %s\nscaleByAzeriteEmpowered: %s\naddPrimaryStatToScore: %s\nrelativeScore: %s\nshowOnlyUpgrades: %s\nshowTooltipLegend: %s\n- - - - - - - - - -\n", tostring(cfg.addILvlToScore), tostring(cfg.scaleByAzeriteEmpowered), tostring(cfg.addPrimaryStatToScore), tostring(cfg.relativeScore), tostring(cfg.showOnlyUpgrades), tostring(cfg.showTooltipLegend))
 
@@ -9205,7 +9209,7 @@ local SlashHandlers = {
 
 	end,
 	["is"] = function()
-		local text = string.join("\n", ("> START\nVer. %s"):format("8.3.5"), unpack(importStack))
+		local text = string.join("\n", ("> START\nVer. %s"):format("8.3.6"), unpack(importStack))
 	end,
 	["bang"] = function(...)
 		local number = tonumber(...)

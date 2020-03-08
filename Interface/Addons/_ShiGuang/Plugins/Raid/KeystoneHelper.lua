@@ -201,7 +201,7 @@ do
     f:SetScript("OnEvent", function(self, event, addon) 
         if addon ~= "Blizzard_ChallengesUI" then return end 
         local levels = {nil, 435, 435, 440, 445, 445, 450, 450, 455, 455, 455, 460, 460, 460, 460, 460, 460, 460, 460, 460, 460, 460, 460, 460, 460} 
-        local titans = {nil, 440, 445, 450, 450, 455, 460, 460, 465, 465, 465, 470, 470, 475, 475, 475, 475, 475, 475, 475, 475, 475, 475, 475, 475}
+        local titans = {nil, 440, 445, 450, 450, 455, 460, 460, 465, 465, 465, 470, 470, 470, 475, 475, 475, 475, 475, 475, 475, 475, 475, 475, 475}
         ChallengesFrame.WeeklyInfo.Child.WeeklyChest:HookScript("OnEnter", function(self) 
             if GameTooltip:IsVisible() then 
                 GameTooltip:AddLine(" ")

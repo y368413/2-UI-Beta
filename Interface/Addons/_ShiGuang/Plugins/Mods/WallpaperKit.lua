@@ -207,24 +207,26 @@ function WallpaperKit:Enable() WallpaperKit:Show() WallpaperKit:UpdateModel() Wa
 function WallpaperKit:Disable() WallpaperKit.fadeOut:Play() end  --UIParent:Show()
 
 function frame_OnUpdate(self, elapsed) 
-    update = update + elapsed 
-    if update > interval then 
-      total = total + 1 
-  local minutes = afk_minutes 
-  local seconds = afk_seconds 
-  if total >= 60 then 
-    minutes = floor(total / 60) 
-    seconds = tostring(total - (minutes * 60)) 
+	if AFK == true then
+		update = update + elapsed
+		if update > interval then
+			total = total + 1
+	local minutes = afk_minutes
+	local seconds = afk_seconds
+	if total >= 60 then
+		minutes = floor(total / 60)
+		seconds = tostring(total - (minutes * 60))
     WallpaperKit.texttime:SetText(tostring(minutes)..":"..string.format("%02d", tostring(seconds)))
-  else 
-    minutes = 0 
-    seconds = total 
+	else
+		minutes = 0
+		seconds = total
     WallpaperKit.texttime:SetText(tostring(minutes)..":"..string.format("%02d", tostring(seconds)))
-  end 
-  afk_minutes = tostring(minutes) 
-  afk_seconds = tostring(seconds) 
-      update = 0 
-    end 
+	end
+	afk_minutes = tostring(minutes)
+	afk_seconds = tostring(seconds)
+			update = 0
+		end
+	end
 end
 
 WallpaperKit:RegisterEvent("PLAYER_FLAGS_CHANGED")
@@ -233,7 +235,7 @@ WallpaperKit:RegisterEvent("PLAYER_LEAVING_WORLD")
 WallpaperKit:SetScript("OnEvent",function()
   if not MaoRUIPerDB["Misc"]["WallpaperKit"] then return end
 	if WallpaperKit:IsShown() then WallpaperKit:Disable() end
-	if UnitIsAFK("player") then WallpaperKit:Enable() hour, minute = GetGameTime() WallpaperKit:SetScript("OnUpdate", frame_OnUpdate) end  
+	if UnitIsAFK("player") then WallpaperKit:Enable() AFK = true WallpaperKit:SetScript("OnUpdate", frame_OnUpdate) else AFK = false total = 0 WallpaperKit:SetScript("OnUpdate", nil) end  
 end)
 
 --UIParent:HookScript("OnShow", function() OnEvent(WallpaperKit) end)
