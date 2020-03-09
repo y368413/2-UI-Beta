@@ -595,7 +595,6 @@ WQIcons_FlightMapLoad:SetScript("OnEvent",function (self, event, arg)
 	end
 end)
 
-
 --- Icons size on map
 local defScaleFactor, defStartScale, defEndScale = 1, 0.425, 0.425
 if WorldMap_WorldQuestPinMixin then

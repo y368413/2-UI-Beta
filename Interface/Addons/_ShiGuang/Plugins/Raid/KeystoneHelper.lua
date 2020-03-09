@@ -1,7 +1,5 @@
 ﻿--## Author: Semlar ## Version: 8.3.0.1
-
 C_MythicPlus.RequestRewards()
-
 local function GetModifiers(linkType, ...)
 	if type(linkType) ~= 'string' then return end
 	local modifierOffset = 4
@@ -162,7 +160,6 @@ local function DecorateTooltip(self, link, _)
 		end
 	end
 end
-
 -- hack to handle ItemRefTooltip:GetItem() not returning a proper keystone link
 hooksecurefunc(ItemRefTooltip, 'SetHyperlink', DecorateTooltip) 
 --ItemRefTooltip:HookScript('OnTooltipSetItem', DecorateTooltip)
@@ -195,42 +192,67 @@ GameTooltip:HookScript('OnTooltipSetItem', DecorateTooltip)
 end]]
 
 --------------------
-do 
-    local f = CreateFrame("Frame"); 
-    f:RegisterEvent("ADDON_LOADED") 
-    f:SetScript("OnEvent", function(self, event, addon) 
+    local KeyReword = CreateFrame("Frame"); 
+    KeyReword:RegisterEvent("ADDON_LOADED") 
+    KeyReword:SetScript("OnEvent", function(self, event, addon) 
         if addon ~= "Blizzard_ChallengesUI" then return end 
-        local levels = {nil, 435, 435, 440, 445, 445, 450, 450, 455, 455, 455, 460, 460, 460, 460, 460, 460, 460, 460, 460, 460, 460, 460, 460, 460} 
-        local titans = {nil, 440, 445, 450, 450, 455, 460, 460, 465, 465, 465, 470, 470, 470, 475, 475, 475, 475, 475, 475, 475, 475, 475, 475, 475}
+    --levels           1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20
+        local drops  = { nil, 435, 435, 440, 445, 445, 450, 455, 455, 455, 460, 460, 460, 465, 465, 465, 465, 465, 465, 465, 465, 465, 465, 465, 465 }
+        local levels = { nil, 440, 445, 450, 450, 455, 460, 460, 460, 465, 465, 470, 470, 470, 475, 475, 475, 475, 475, 475, 475, 475, 475, 475, 475 }
+        local titans = { nil, nil, nil, nil, nil,  75, 330, 365, 400, 1700, 1790, 1880, 1970, 2060, 2150, 2240, 2330, 2420, 2510, 2600, 2665,2730,2795,2860,2915}
         ChallengesFrame.WeeklyInfo.Child.WeeklyChest:HookScript("OnEnter", function(self) 
             if GameTooltip:IsVisible() then 
                 GameTooltip:AddLine(" ")
-                GameTooltip:AddLine("|cff00ff00".." 钥石层数   奖励装等   低保装等".."|r") 
+                GameTooltip:AddLine("|cff00ff00".." 钥石层数  掉落  周箱  奖励精华".."|r") 
                 local start = 2 
                 if self.level and self.level > 0 then 
-                    start = self.level - 3 
+                    start = self.level - 8 
                 elseif self.ownedKeystoneLevel and self.ownedKeystoneLevel > 0 then 
-                    start = self.ownedKeystoneLevel - 5 
+                    --start = self.ownedKeystoneLevel - 5 
                 end 
-                for i = start, start + 9 do 
+                for i = start, start + 12 do 
                     if levels[i] or titans[i] then 
-                        local line = "    %2d层 |T130758:10:35:0:0:32:32:10:22:10:22|t %s |T130758:10:25:0:0:32:32:10:22:10:22|t %s" 
+                        local line = "    %2d层 |T130758:10:15:0:0:32:32:10:22:10:22|t %s |T130758:10:10:0:0:32:32:10:22:10:22|t %s |T130758:10:15:0:0:32:32:10:22:10:22|t %s"
+                        local drop = drops[i] and format("%d", drops[i]) or " ? "
                         local level = levels[i] and format("%d", levels[i]) or " ? " 
                         local titan = titans[i] and format("%4d", titans[i]) or "  ? " 
                     if i == self.level then line = "|cff00ff00"..line.."|r" end
-                        GameTooltip:AddLine(format(line, i, level, titan)) 
+                        GameTooltip:AddLine(format(line, i, drop, level, titan)) 
                     else 
                         break 
                     end 
                 end  
-            --GameTooltip:AddLine("415随机 需要1725  分解返365")
-            --GameTooltip:AddLine("430随机 需要9000  分解返2000")
-            --GameTooltip:AddLine("445随机 需要47500 分解返10000")
-            --GameTooltip:AddLine("445指定 需要20万")
-            --GameTooltip:AddLine("分解400返115 385返35 370返12")
-            --GameTooltip:AddLine("仅分解|cffff0000同甲|r特质装才返")
+            GameTooltip:AddLine("")
+            GameTooltip:AddLine("445随机 需要175  分解返40")
+            GameTooltip:AddLine("460随机 需要900  分解返200")
+            GameTooltip:AddLine("475随机 需要4750 分解返1000 指定需要2万")
+            GameTooltip:AddLine("仅分解8.3版本|cffff0000同甲|r特质装才返")
             GameTooltip:Show() 
             end 
         end) 
     end) 
-end
+    
+--------------------
+    local PVPReword = CreateFrame("Frame"); 
+    PVPReword:RegisterEvent("ADDON_LOADED") 
+    PVPReword:SetScript("OnEvent", function(self, event, addon) 
+        if addon ~= "Blizzard_PVPUI" then return end 
+    local ratings  = { "0000~1399", "1400~1599", "1600~1799", "1800~2099", "2100~2399", "2400~9999" }
+    local match =    { 430,       440,        450,         455,         460,         465 }
+    local weekly =   { 445,       455,        460,         465,         470,         475 }
+    local weekly2 =  { 445,       460,        460,         475,         475,         475 }
+    PVPQueueFrame.HonorInset.RatedPanel.WeeklyChest:HookScript("OnEnter", function(self)
+        if GameTooltip:IsVisible() then
+            GameTooltip:AddLine(" ")
+            GameTooltip:AddLine("PVP等级  比赛结束  低保散件  低保特质")
+            for i, v in ipairs(ratings) do
+            local line = " %9s |T130758:10:20:0:0:32:32:10:22:10:22|t %d |T130758:10:28:0:0:32:32:10:22:10:22|t %d |T130758:10:35:0:0:32:32:10:22:10:22|t %d"
+                GameTooltip:AddLine(format(line, ratings[i], match[i], weekly[i], weekly2[i]))
+            end
+
+            GameTooltip:AddLine(" ")
+            GameTooltip:AddLine("500征服 首周440，2~9周445，10~25周460")
+            GameTooltip:Show()
+        end
+    end)
+    end) 

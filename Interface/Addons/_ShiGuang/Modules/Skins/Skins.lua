@@ -34,6 +34,8 @@ function S:OnLogin()
 		media:Register("statusbar", "Yaskada03", [[Interface\Addons\_ShiGuang\Media\Modules\Skada\Yaskada03]])
 		media:Register("statusbar", "Yaskada04", [[Interface\Addons\_ShiGuang\Media\Modules\Skada\Yaskada04]])
 		media:Register("statusbar", "Rainbow", [[Interface\Addons\_ShiGuang\Media\Modules\Skada\Rainbow]])
+		media:Register("statusbar", "Fire", [[Interface\Addons\_ShiGuang\Media\Modules\Skada\Fire]])
+		media:Register("statusbar", "RainowCat", [[Interface\Addons\_ShiGuang\Media\Modules\Skada\RainowCat]])
 		media:Register("statusbar", "None",	[[Interface\Addons\_ShiGuang\Media\backdrop]])
 		media:Register("font", "Vera Serif", [[Interface\Addons\_ShiGuang\Media\Fonts\Pixel.ttf]])
 	end

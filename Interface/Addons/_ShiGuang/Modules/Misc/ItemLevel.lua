@@ -286,3 +286,8 @@ function MISC:ShowItemLevel()
 	-- iLvl on ScrappingMachineFrame
 	M:RegisterEvent("ADDON_LOADED", self.ItemLevel_ScrappingShow)
 end
+
+    
+if not PaperDollFrame_UpdateCorruptedItemGlows then return end
+CharacterFrame:SetScript("OnShow", function() PaperDollFrame_UpdateCorruptedItemGlows(true) end) --HookScript
+--if CharacterStatsPane.ItemLevelFrame.Corruption then SetOrHookScript(CharacterStatsPane.ItemLevelFrame.Corruption, "OnLeave", hook) end
