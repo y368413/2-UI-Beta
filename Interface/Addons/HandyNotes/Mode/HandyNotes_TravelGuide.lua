@@ -40,7 +40,7 @@ TravelGuide_icon_texture = {
 	flightmaster = "Interface\\MINIMAP\\TRACKING\\FlightMaster",	
 	zeppelin 	= "Interface\\AddOns\\HandyNotes\\Icons\\Zeppelin",			
 	hzeppelin 	= "Interface\\AddOns\\HandyNotes\\Icons\\Zeppelin_Horde",
-	worderhall	= "Interface\\AddOns\\HandyNotes\\Icons\\Warriororderhall",
+	worderhall	= "Interface\\Icons\\ClassIcon_Warrior",
 }	
 --[[-------------------------------------NOT IN USE-------------------------------------
 vehicle 		= "Interface\\MINIMAP\\Vehicle-Air-Occupied",

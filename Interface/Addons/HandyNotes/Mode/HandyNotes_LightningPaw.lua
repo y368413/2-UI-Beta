@@ -3,7 +3,7 @@ local LightningPaw = {}
 local HandyNotes = LibStub("AceAddon-3.0"):GetAddon("HandyNotes")
 --local Paw = HandyNotes:NewModule("HandyNotes_LightningPaw", "AceEvent-3.0", "AceHook-3.0", "AceConsole-3.0")
 local Paw = HandyNotes:NewModule("HandyNotes_LightningPaw")
-local Icon_Grass = "Interface\\AddOns\\HandyNotes\\Icons\\Grass"
+local Icon_Grass = "Interface\\GLUES\\Models\\UI_PandarenCharacterSelect\\PandaCharSel_Grass02"
 
 --- ------------------------------------------------------------
 --> 
@@ -380,12 +380,4 @@ function Paw:OnInitialize()
 	}
 	self.db = LibStub("AceDB-3.0"):New("HandyNotes_LightningPawDB", defaults, "Default")
 	HandyNotes:RegisterPluginDB("LightningPaw", PawHandler, options)
-end
-
-function Paw:OnEnable()
-	
-end
-
-function Paw:OnDisable()
-	
 end

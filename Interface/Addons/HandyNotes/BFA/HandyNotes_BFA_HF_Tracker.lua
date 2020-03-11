@@ -287,8 +287,8 @@ local function work_out_texture(point)
 				end
 			end
 		end
-		local texture = "Interface\\Addons\\HandyNotes\\Icons\\Achievement"
-		default_texture = atlas_perso(texture, point.scale)
+		local texture = "Interface\\ACHIEVEMENTFRAME\\UI-Achievement-Progressive-Shield-NoPoints" --"Interface\\Addons\\HandyNotes\\Icons\\Achievement"
+		default_texture = atlas_perso(texture, point.scale*2)
 	end
 	--------------------------------------
     if point.follower then
@@ -1551,9 +1551,9 @@ BFA_HF_Tracker_points = {
 }
 
 ------ Icons DB -------
-local eliteOr = "Interface\\Addons\\HandyNotes\\Icons\\EliteOr" -- Jaune
-local eliteAr = "Interface\\Addons\\HandyNotes\\Icons\\EliteArgent" -- Gris
-local skull = "Interface\\Addons\\HandyNotes\\Icons\\Skull" -- violet
+local eliteOr = "Interface\\Worldmap\\Skull_64Blue" -- Jaune
+local eliteAr = "Interface\\Worldmap\\Skull_64Grey" -- Gris
+local skull = "Interface\\Worldmap\\Skull_64Purple" -- violet
 -----------------------
 
 local merge = BFA_HF_Tracker_merge
@@ -1972,7 +1972,7 @@ merge(BFA_HF_Tracker_points[942], { -- Stormsong Valley
 --})
 
 ------ Icons DB -------
-local planche = "Interface\\Addons\\HandyNotes\\Icons\\Planche"
+local planche = "Interface\\Icons\\INV_Sword_05"
 local conte = "Interface\\Addons\\HandyNotes\\Icons\\Conte"
 local krag = "Interface\\Addons\\HandyNotes\\Icons\\Krag"
 local trashpile = "Interface\\Addons\\HandyNotes\\Icons\\Trashpile"

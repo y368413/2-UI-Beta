@@ -3,7 +3,7 @@ local TimelessIsle_RareElites = LibStub("AceAddon-3.0"):NewAddon("TimelessIsle_R
 --TimelessIsle_RareElites = HandyNotes:NewModule("TimelessIsle_RareElites", "AceConsole-3.0", "AceEvent-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("HandyNotes")
 local db
-local iconDefault = "Interface\\AddOns\\HandyNotes\\Icons\\RareWhite.tga"
+local iconDefault = "Interface\\MINIMAP\\Minimap_skull_normal"
 
 TimelessIsle_RareElites.nodes = { }
 local nodes = TimelessIsle_RareElites.nodes
@@ -111,7 +111,7 @@ local options = {
 function TimelessIsle_RareElites:OnInitialize()
  local defaults = {
   profile = {
-   icon_scale = 1.0,
+   icon_scale = 1.5,
    icon_alpha = 1.0,
    alwaysshow = false,
   },

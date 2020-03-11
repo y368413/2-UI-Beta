@@ -18,39 +18,11 @@ local HandyNotes = LibStub("AceAddon-3.0"):GetAddon("HandyNotes", true)
 local L = LibStub("AceLocale-3.0"):GetLocale("HandyNotes");
 
 local iconDefaults = {
-    skull_grey = "Interface\\Addons\\HandyNotes\\Icons\\RareWhite.blp",
-    skull_purple = "Interface\\Addons\\HandyNotes\\Icons\\RarePurple.blp",
-    skull_blue = "Interface\\Addons\\HandyNotes\\Icons\\RareBlue.blp",
-    skull_yellow = "Interface\\Addons\\HandyNotes\\Icons\\RareYellow.blp",
-    battle_pet = "Interface\\Addons\\HandyNotes\\Icons\\BattlePet.blp",
-	treasure = "Interface\\Addons\\HandyNotes\\Icons\\Treasure.blp",
-	portal = "Interface\\Addons\\HandyNotes\\Icons\\Portal.blp",
+  skull_grey = "Interface\\MINIMAP\\Minimap_skull_normal",
 	default = "Interface\\Icons\\TRADE_ARCHAEOLOGY_CHESTOFTINYGLASSANIMALS",
-	eye = "Interface\\Icons\\INV_Misc_Eye_02.blp",
-	shadowmend = "Interface\\Icons\\Spell_Priest_Shadow Mend.blp",
 	cave = "Interface\\Addons\\HandyNotes\\Icons\\Cave.blp",	
-	starChestBlue = {
-		icon = "Interface\\Addons\\HandyNotes\\Icons\\shootboxes.blp",
-		tCoordLeft = 6/256, tCoordRight = 58/256, tCoordTop = 6/64, tCoordBottom = 58/64,
-	},
-	starChestPurple = {
-		icon = "Interface\\Addons\\HandyNotes\\Icons\\shootboxes.blp",
-		tCoordLeft = (64+6)/256, tCoordRight = (64+58)/256, tCoordTop = 6/64, tCoordBottom = 58/64,
-	},
-	starChestYellow = {
-		icon = "Interface\\Addons\\HandyNotes\\Icons\\shootboxes.blp",
-		tCoordLeft = (128+6)/256, tCoordRight = (128+58)/256, tCoordTop = 6/64, tCoordBottom = 58/64,
-	},
-	starChestBlank = {
-		icon = "Interface\\Addons\\HandyNotes_WarfrontRares\\Artwork\\shootboxes.blp",
-		tCoordLeft = (192+6)/256, tCoordRight = (192+58)/256, tCoordTop = 6/64, tCoordBottom = 58/64,
-	},
-	skullWhite = "Interface\\Addons\\HandyNotes\\Icons\\RareWhite.blp",
-	skullWhiteRedGlow = "Interface\\Addons\\HandyNotes\\Icons\\Skull.blp",
-	skullWhiteGreenGlow = "Interface\\Addons\\HandyNotes\\Icons\\RareYellow.blp",
-	skullBlue = "Interface\\Addons\\HandyNotes\\Icons\\RareBlue.blp",
-	skullBlueRedGlow = "Interface\\Addons\\HandyNotes\\Icons\\RarePurple.blp",
-	skullBlueGreenGlow = "Interface\\Addons\\HandyNotes\\Icons\\Skull.blp",
+	skullWhite = "Interface\\Worldmap\\Skull_64Grey",
+	skullBlue = "Interface\\Worldmap\\Skull_64Blue",
 }
 local itemTypeMisc = 0;
 local itemTypePet = 1;
@@ -816,13 +788,13 @@ end
 function Arathi:OnInitialize()
     local Arathi_defaults = {
         profile = {
-            icon_scale_treasures = 1.2,
-            icon_scale_rares = 1.2,
-			icon_scale_caves = 1.5,
+            icon_scale_treasures = 1.5,
+            icon_scale_rares = 1.5,
+            icon_scale_caves = 1.2,
             icon_scale_pets = 1.2,
-            icon_alpha_treasures = 0.5,
-			icon_alpha_rares = 0.75,
-			icon_alpha_caves = 0.75,
+            icon_alpha_treasures = 0.8,
+			icon_alpha_rares = 1,
+			icon_alpha_caves = 0.85,
 			icon_alpha_pets = 1.0,
             alwaysshowrares = false,
             alwaysshowtreasures = false,

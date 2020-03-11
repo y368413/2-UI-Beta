@@ -5,7 +5,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("HandyNotes")
 --TimelessIsleChest = HandyNotes:NewModule("TimelessIsleChest", "AceConsole-3.0", "AceEvent-3.0")
 --local db
 local iconDefault = "Interface\\Icons\\TRADE_ARCHAEOLOGY_CHESTOFTINYGLASSANIMALS"
-local iconRareElite = "Interface\\AddOns\\HandyNotes\\Icons\\RareWhite.tga"
+local iconRareElite = "Interface\\MINIMAP\\Minimap_skull_normal"
 
 TimelessIsleChest.nodes = { }
 local nodes = TimelessIsleChest.nodes

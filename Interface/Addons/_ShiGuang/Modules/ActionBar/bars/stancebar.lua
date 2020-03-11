@@ -14,13 +14,13 @@ function Bar:CreateStancebar()
 	frame:SetWidth(num*cfg.size + (num-1)*margin + 2*padding)
 	frame:SetHeight(cfg.size + 2*padding)
 	if (MaoRUIPerDB["Actionbar"]["Style"] == 7) or (MaoRUIPerDB["Actionbar"]["Style"] == 6) or (MaoRUIPerDB["Actionbar"]["Style"] == 10) then
-		frame.Pos = {"BOTTOM", UIParent, "BOTTOM", -120, 90}
+		frame.Pos = {"BOTTOM", UIParent, "BOTTOM", -120, 82}
 	elseif (MaoRUIPerDB["Actionbar"]["Style"] == 4) or (MaoRUIPerDB["Actionbar"]["Style"] == 8) then
 		frame.Pos = {"BOTTOM", UIParent, "BOTTOM", -42, 120}
 	elseif MaoRUIPerDB["Actionbar"]["Style"] == 3 then
-		frame.Pos = {"BOTTOM", UIParent, "BOTTOM", -295, 85}
+		frame.Pos = {"BOTTOM", UIParent, "BOTTOM", -295, 82}
 	else
-		frame.Pos = {"BOTTOM", UIParent, "BOTTOM", -62, 85}
+		frame.Pos = {"BOTTOM", UIParent, "BOTTOM", -62, 82}
 	end
 
 	--STANCE BAR

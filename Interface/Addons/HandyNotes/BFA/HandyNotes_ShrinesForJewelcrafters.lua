@@ -301,7 +301,7 @@ ShrinesForJewelcrafters_defaults = {
         show_on_minimap = true,
         show_Shrine = true,
         repeatable = true,
-        icon_scale = 1.0,
+        icon_scale = 0.6,
         icon_alpha = 1.0,
     },
     char = {
@@ -436,7 +436,7 @@ ShrinesForJewelcrafters_points = {
             ["cont"] = true,
             Shrine = true,
             ["note"] = L["Laribole"], -- green
-            ["pathto"] = "Interface\\Addons\\HandyNotes\\Icons\\green_shrine.tga",
+            ["pathto"] = "Interface\\Icons\\INV_Jewelcrafting_80_Gem02_Green",
         },
     },
 
@@ -446,7 +446,7 @@ ShrinesForJewelcrafters_points = {
             ["cont"] = true,
             Shrine = true,
             ["note"] = L["Scarlet Diamond"], -- red
-            ["pathto"] = "Interface\\Addons\\HandyNotes\\Icons\\red_shrine.tga",
+            ["pathto"] = "Interface\\Icons\\INV_Jewelcrafting_80_Gem02_Red",
         },
     },
 
@@ -456,7 +456,7 @@ ShrinesForJewelcrafters_points = {
             ["cont"] = true,
             Shrine = true,
             ["note"] = L["Amberblaze"], -- orange
-            ["pathto"] = "Interface\\Addons\\HandyNotes\\Icons\\orange_shrine.tga",
+            ["pathto"] = "Interface\\Icons\\INV_Jewelcrafting_80_Gem02_Orange",
         },
     },
 
@@ -466,7 +466,7 @@ ShrinesForJewelcrafters_points = {
             ["cont"] = true,
             Shrine = true,
             ["note"] = L["Royal Quartz"], -- blue
-            ["pathto"] = "Interface\\Addons\\HandyNotes\\Icons\\blue_shrine.tga",
+            ["pathto"] = "Interface\\Icons\\INV_Jewelcrafting_80_Gem02_Blue",
         },
     },
 
@@ -476,7 +476,7 @@ ShrinesForJewelcrafters_points = {
             ["cont"] = true,
             Shrine = true,
             ["note"] = L["Tidal Amethyst"], -- purple
-            ["pathto"] = "Interface\\Addons\\HandyNotes\\Icons\\purple_shrine.tga",
+            ["pathto"] = "Interface\\Icons\\INV_Jewelcrafting_80_Gem02_Purple",
         },
     },
 
@@ -486,7 +486,7 @@ ShrinesForJewelcrafters_points = {
             ["cont"] = true,
             Shrine = true,
             ["note"] = L["Owlseye"], -- yellow
-            ["pathto"] = "Interface\\Addons\\HandyNotes\\Icons\\yellow_shrine.tga",
+            ["pathto"] = "Interface\\Icons\\INV_Jewelcrafting_80_Gem02_Yellow",
         },
     },
 

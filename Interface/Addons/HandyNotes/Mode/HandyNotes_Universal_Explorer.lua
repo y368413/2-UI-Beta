@@ -1,4 +1,3 @@
-
 local Universal_Explorer	= {}
 local HandyNotes = LibStub("AceAddon-3.0"):GetAddon("HandyNotes")
 local HL = LibStub("AceAddon-3.0"):NewAddon("HandyNotes_Universal_Explorer", "AceEvent-3.0")
@@ -159,7 +158,7 @@ do
 			alpha = value.alpha or 1
 			if value.achievement then
 				if (UnitName("player") ~= select ( 6, GetAchievementCriteriaInfoByID (value.achievement, value.criteria) ) ) then
-				icon = "Interface\\Addons\\HandyNotes\\Icons\\Explorer Coord" 
+				icon = "Interface\\Addons\\HandyNotes\\Icons\\ExplorerCoord" 
 				end
 			end
 --      -------------------------------------------------------------------------------------------

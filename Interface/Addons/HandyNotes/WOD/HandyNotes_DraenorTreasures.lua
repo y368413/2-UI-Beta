@@ -8,13 +8,13 @@ local iconDefaults = {
     shrine = "Interface\\Icons\\inv_misc_statue_02",
     glider = "Interface\\Icons\\inv_feather_04",
     rocket = "Interface\\Icons\\ability_mount_rocketmount",
-    skull_blue = "Interface\\Addons\\HandyNotes\\Icons\\RareIconBlue.tga",
-    skull_green = "Interface\\Addons\\HandyNotes\\Icons\\RareIconGreen.blp",
-    skull_grey = "Interface\\Addons\\HandyNotes\\Icons\\RareIcon.tga",
-    skull_orange = "Interface\\Addons\\HandyNotes\\Icons\\RareIconOrange.blp",
-    skull_purple = "Interface\\Addons\\HandyNotes\\Icons\\RareIconPurple.blp",
-    skull_red = "Interface\\Addons\\HandyNotes\\Icons\\RareIconRed.blp",
-    skull_yellow = "Interface\\Addons\\HandyNotes\\Icons\\RareIconYellow.blp",
+    skull_blue = "Interface\\Worldmap\\Skull_64Blue.tga",
+    skull_green = "Interface\\Worldmap\\Skull_64Green.blp",
+    skull_grey = "Interface\\Worldmap\\Skull_64Grey.tga",
+    skull_orange = "Interface\\MINIMAP\\Minimap_skull_elite.blp",
+    skull_purple = "Interface\\Worldmap\\Skull_64Purple.blp",
+    skull_red = "Interface\\Worldmap\\Skull_64Red.blp",
+    skull_yellow = "Interface\\MINIMAP\\Minimap_skull_normal.blp",
 }
 
 local PlayerFaction, _ = UnitFactionGroup("player")
