@@ -251,7 +251,7 @@ end
 
 function Gypsy.isWearable(item)
 	local itemInfo = {GetItemInfo(item)}
-	if (Gypsy.getItemSlot ~= "M") then
+	if (Gypsy.getItemSlot ~= "MISC") then
 		--wearables
 		if itemInfo[13] == Gypsy.Itemclass or itemInfo[13] == 0 or (itemInfo[13] == 1 and (itemInfo[9] == "INVTYPE_BACK" or itemInfo[9] == "INVTYPE_CLOAK")) then return true end
 		-- weapons
@@ -300,10 +300,10 @@ function Gypsy.getItemSlot(item)
 		if string.len(snipper) > 2 then 
 			return snipper
 		else
-			return "M"
+			return "MISC"
 		end
 	else
-		return "M"
+		return "MISC"
 	end
 end
 
@@ -527,7 +527,6 @@ function Gypsy.evt(self, evt, ...)
 			if (string.find(sender, "-") == nil) then 	sender = sender .. "-" .. GetRealmName() end
 			--print(cmd)
 			for i = 3, #dmsg do tinsert(payload, dmsg[i]) end
-			--if (cmd == "debug") then print ("debugger") end
 			if (cmd == "WHOIS") then
 				--print("WHOIS received")
 				Gypsy.AnswerReq()
