@@ -144,18 +144,19 @@ WhisperPop.tipFrame = tipFrame
 SetFrameMobile(tipFrame)
 --tipFrame:SetParent(chatbar)
 if GetCVar("portal") == "CN" then
-tipFrame:SetPoint("BOTTOMLEFT", UIParent,"BOTTOMLEFT",285, 2)
+tipFrame:SetPoint("BOTTOMLEFT", UIParent,"BOTTOMLEFT",285, 0)
 else
-tipFrame:SetPoint("BOTTOMLEFT", UIParent,"BOTTOMLEFT",262, 2)
+tipFrame:SetPoint("BOTTOMLEFT", UIParent,"BOTTOMLEFT",262, 0)
 end
-tipFrame:SetWidth(16)
-tipFrame:SetHeight(16)
+tipFrame:SetWidth(21)
+tipFrame:SetHeight(21)
 tipFrame:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 
 tipFrame.icon = tipFrame:CreateTexture(tipFrame:GetName().."Icon", "ARTWORK")
 tipFrame.icon:SetAllPoints(tipFrame)
 tipFrame.icon:SetTexture("Interface\\FriendsFrame\\broadcast-hover")
 --tipFrame.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+tipFrame.icon:Hide()
 tipFrame.icon:SetDesaturated(true)
 tipFrame.text = tipFrame:CreateFontString(tipFrame:GetName().."Text", "ARTWORK", "GameFontNormalSmall")
 tipFrame.text:SetPoint("LEFT", tipFrame, "RIGHT")

@@ -883,13 +883,26 @@ end
 iPlayerFrame = CreateFrame("Frame", "iPlayerFrame", UIParent, "SecureHandlerStateTemplate")
 iPlayerFrame.Toggle = function(self, event, ...)
 	if (not MaoRUIPerDB["UFs"]["UFFade"]) or (ShiGuangPerDB.BHT == true) then return end
-	if UnitHealth("player") < UnitHealthMax("player") * 0.95 or ( powerTypeAscending and UnitPower("player") <= UnitPowerMax("player") * 0.95 ) or TargetFrame:IsShown() or UnitAffectingCombat("player") or CharacterFrame:IsShown() or ContainerFrame1:IsShown() then
-		PlayerFrame:Show()
+	if UnitHealth("player") < UnitHealthMax("player") * 0.99 or (powerTypeAscending and UnitPower("player") <= UnitPowerMax("player") * 0.99) or TargetFrame:IsShown() or UnitAffectingCombat("player") or CharacterFrame:IsShown() or ContainerFrame1:IsShown() then
+		if (not PlayerFrame:IsShown()) then
+			if (not InCombatLockdown()) then
+				local returnState, returnMessage = pcall(PlayerFrame.Show, PlayerFrame)
+				if not (returnState) then
+					if not (returnMessage == nil) then else end
+				end
+			end
+		end
 	else
-		PlayerFrame:Hide()
+		if (PlayerFrame:IsShown()) then
+			if (not InCombatLockdown()) then
+				local returnState, returnMessage = pcall(PlayerFrame.Hide, PlayerFrame)
+				if not (returnState) then
+					if not (returnMessage == nil) then else end
+				end
+			end
+		end
 	end
 end
- 
 -- Events
 iPlayerFrame:RegisterEvent("PLAYER_LOGIN")
 iPlayerFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
@@ -899,10 +912,8 @@ iPlayerFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
 iPlayerFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
 iPlayerFrame:RegisterEvent("UNIT_MAXPOWER")
 iPlayerFrame:RegisterEvent("UNIT_MODEL_CHANGED")
-
 -- Bind function to events
 iPlayerFrame:SetScript("OnEvent", iPlayerFrame.Toggle)
-
 -- Bind function to existing windows
 TargetFrame:HookScript("OnShow", iPlayerFrame.Toggle)
 TargetFrame:HookScript("OnHide", iPlayerFrame.Toggle)
