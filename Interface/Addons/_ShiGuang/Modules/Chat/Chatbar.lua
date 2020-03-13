@@ -23,25 +23,7 @@ local function ArtifactLevel()
 end
 
 local slotNames = {
-    "HeadSlot",
-    "NeckSlot",
-    "ShoulderSlot",
-    "BackSlot",
-    "ChestSlot",
-    "ShirtSlot",
-    "TabardSlot",
-    "WristSlot",
-    "HandsSlot",
-    "WaistSlot",
-    "LegsSlot",
-    "FeetSlot",
-    "Finger0Slot",
-    "Finger1Slot",
-    "Trinket0Slot",
-    "Trinket1Slot",
-    "MainHandSlot",
-    "SecondaryHandSlot",
-    "AmmoSlot"
+    "HeadSlot", "NeckSlot", "ShoulderSlot", "BackSlot", "ChestSlot", "ShirtSlot", "TabardSlot", "WristSlot", "HandsSlot", "WaistSlot", "LegsSlot", "FeetSlot", "Finger0Slot", "Finger1Slot", "Trinket0Slot", "Trinket1Slot", "MainHandSlot", "SecondaryHandSlot", "AmmoSlot"
 }
 
 -- 特质装等级

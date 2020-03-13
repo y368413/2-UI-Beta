@@ -3,7 +3,7 @@ local M, R, U, I = unpack(ns)
 local MISC = M:GetModule("Misc")
 local TT = M:GetModule("Tooltip")
 
-local pairs, select, next, type = pairs, select, next, type
+local pairs, select, next, type, unpack = pairs, select, next, type, unpack
 local UnitGUID, GetItemInfo, GetSpellInfo = UnitGUID, GetItemInfo, GetSpellInfo
 local GetContainerItemLink, GetInventoryItemLink = GetContainerItemLink, GetInventoryItemLink
 local EquipmentManager_UnpackLocation, EquipmentManager_GetItemInfoByLocation = EquipmentManager_UnpackLocation, EquipmentManager_GetItemInfoByLocation
@@ -114,6 +114,72 @@ function MISC:ItemLevel_UpdateTraits(button, id, link)
 	end
 end
 
+function MISC:ItemLevel_UpdateInfo(index, slotFrame, info, quality)
+	local infoType = type(info)
+	local level
+	if infoType == "table" then
+		level = info.iLvl
+	else
+		level = info
+	end
+
+	if level and level > 1 and quality then
+		local color = BAG_ITEM_QUALITY_COLORS[quality]
+		slotFrame.iLvlText:SetText(level)
+		slotFrame.iLvlText:SetTextColor(1, 0.8, 0)  --color.r, color.g, color.b
+	end
+
+	if infoType == "table" then
+		local enchant = info.enchantText
+		if enchant then
+			slotFrame.enchantText:SetText(enchant)
+		else
+			if index == 10 or index == 11 or index == 12 or index == 16 or index == 17 then
+				slotFrame.enchantText:SetText("|cFFFF0000FM|r")
+			end
+		end
+
+		local gemStep, essenceStep = 1, 1
+		for i = 1, 10 do
+			local texture = slotFrame["textureIcon"..i]
+			local bg = texture.bg
+			local gem = info.gems and info.gems[gemStep]
+			local essence = not gem and (info.essences and info.essences[essenceStep])
+			if gem then
+				texture:SetTexture(gem)
+				bg:SetBackdropBorderColor(0, 0, 0)
+				bg:Show()
+
+				gemStep = gemStep + 1
+			elseif essence and next(essence) then
+				local r = essence[4]
+				local g = essence[5]
+				local b = essence[6]
+				if r and g and b then
+					bg:SetBackdropBorderColor(r, g, b)
+				else
+					bg:SetBackdropBorderColor(0, 0, 0)
+				end
+
+				local selected = essence[1]
+				texture:SetTexture(selected)
+				bg:Show()
+
+				essenceStep = essenceStep + 1
+			end
+		end
+	end
+end
+
+function MISC:ItemLevel_RefreshInfo(link, unit, index, slotFrame)
+	C_Timer.After(.1, function()
+		local quality = select(3, GetItemInfo(link))
+		local info = M.GetItemLevel(link, unit, index, MaoRUIPerDB["Misc"]["GemNEnchant"])
+		if info == "tooSoon" then return end
+		MISC:ItemLevel_UpdateInfo(index, slotFrame, info, quality)
+	end)
+end
+
 function MISC:ItemLevel_SetupLevel(frame, strType, unit)
 	if not UnitExists(unit) then return end
 
@@ -134,59 +200,10 @@ function MISC:ItemLevel_SetupLevel(frame, strType, unit)
 			if link then
 				local quality = select(3, GetItemInfo(link))
 				local info = M.GetItemLevel(link, unit, index, MaoRUIPerDB["Misc"]["GemNEnchant"])
-				local infoType = type(info)
-				local level
-				if infoType == "table" then
-					level = info.iLvl
+				if info == "tooSoon" then
+					MISC:ItemLevel_RefreshInfo(link, unit, index, slotFrame)
 				else
-					level = info
-				end
-
-				if level and level > 1 and quality then
-					local color = BAG_ITEM_QUALITY_COLORS[quality]
-					slotFrame.iLvlText:SetText(level)
-					slotFrame.iLvlText:SetTextColor(1, 0.8, 0)  --color.r, color.g, color.b
-				end
-
-				if infoType == "table" then
-					local enchant = info.enchantText
-					if enchant then
-						slotFrame.enchantText:SetText(enchant)
-					else
-					if index == 10 or index == 11 or index == 12 or index == 16 or index == 17 then
-						slotFrame.enchantText:SetText("|cFFFF0000FM|r")
-					end
-					end
-
-					local gemStep, essenceStep = 1, 1
-					for i = 1, 10 do
-						local texture = slotFrame["textureIcon"..i]
-						local bg = texture.bg
-						local gem = info.gems and info.gems[gemStep]
-						local essence = not gem and (info.essences and info.essences[essenceStep])
-						if gem then
-							texture:SetTexture(gem)
-							bg:SetBackdropBorderColor(0, 0, 0)
-							bg:Show()
-
-							gemStep = gemStep + 1
-						elseif essence and next(essence) then
-							local r = essence[4]
-							local g = essence[5]
-							local b = essence[6]
-							if r and g and b then
-								bg:SetBackdropBorderColor(r, g, b)
-							else
-								bg:SetBackdropBorderColor(0, 0, 0)
-							end
-
-							local selected = essence[1]
-							texture:SetTexture(selected)
-							bg:Show()
-
-							essenceStep = essenceStep + 1
-						end
-					end
+					MISC:ItemLevel_UpdateInfo(index, slotFrame, info, quality)
 				end
 
 				if strType == "Character" then
@@ -286,8 +303,3 @@ function MISC:ShowItemLevel()
 	-- iLvl on ScrappingMachineFrame
 	M:RegisterEvent("ADDON_LOADED", self.ItemLevel_ScrappingShow)
 end
-
-    
-if not PaperDollFrame_UpdateCorruptedItemGlows then return end
-CharacterFrame:SetScript("OnShow", function() PaperDollFrame_UpdateCorruptedItemGlows(true) end) --HookScript
---if CharacterStatsPane.ItemLevelFrame.Corruption then SetOrHookScript(CharacterStatsPane.ItemLevelFrame.Corruption, "OnLeave", hook) end

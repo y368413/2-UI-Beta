@@ -22,7 +22,8 @@ local function ReskinWA()
 			end
 		elseif fType == "aurabar" then
 			if not f.styled then
-				M.SetBD(f.bar)
+				f.bg = M.SetBD(f.bar)
+				f.bg:SetFrameLevel(0)
 				f.icon:SetTexCoord(unpack(I.TexCoord))
 				f.icon.SetTexCoord = M.Dummy
 				f.iconFrame:SetAllPoints(f.icon)

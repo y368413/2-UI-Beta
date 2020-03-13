@@ -58,7 +58,6 @@ function MISC:OnLogin()
 	--self:BlockWQTInvite()
 	self:OverrideAWQ()
 	self:FreeMountCD()
-	--self:WallpaperKit()
 	self:xMerchant()
 	
 	----------------QuickQueue.lua----------------------

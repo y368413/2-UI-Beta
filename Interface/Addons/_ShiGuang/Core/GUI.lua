@@ -35,32 +35,6 @@ local defaultSettings = {
 		MicroMenu = true,
 		MicroMenuStyle = false,
 	},
-	Bags = {
-		Enable = true,
-		BagsScale = 0.9,
-		IconSize = 34,
-		BagsWidth = 10,
-		BankWidth = 16,
-		BagsiLvl = true,
-		BagsiLvlcolor = false,
-		ReverseSort = true,
-		ItemFilter = true,
-		ItemSetFilter = false,
-		DeleteButton = true,
-		FavouriteItems = {},
-		GatherEmpty = false,
-		ShowNewItem = true,
-		SplitCount = 1,
-		SpecialBagsColor = false,
-		iLvlToShow = 1,
-		FilterJunk = true,
-		FilterConsumble = true,
-		FilterAzerite = true,
-		FilterEquipment = true,
-		FilterLegendary = true,
-		FilterMount = true,
-		FilterFavourite = true,
-	},
 	Auras = {
 		Reminder = true,
 		Totems = true,
@@ -128,6 +102,7 @@ local defaultSettings = {
 		BuffIndicatorScale = 1,
 		UFTextScale = 1,
 		PartyAltPower = true,
+		SmoothAmount = .3,
 		PlayerWidth = 245,
 		PlayerHeight = 24,
 		BossWidth = 120,
@@ -263,6 +238,7 @@ local defaultSettings = {
 		HideJunkGuild = true,
 		AzeriteArmor = true,
 		OnlyArmorIcons = true,
+		CorruptionRank = true,
 	},
 	Misc = {
 		Mail = true,
@@ -538,6 +514,10 @@ end
 
 local function refreshRaidFrameIcons()
 	M:GetModule("UnitFrames"):RefreshRaidFrameIcons()
+end
+
+local function updateSmoothingAmount()
+	M:SetSmoothingAmount(MaoRUIPerDB["UFs"]["SmoothAmount"])
 end
 
 local function updateMinimapScale()

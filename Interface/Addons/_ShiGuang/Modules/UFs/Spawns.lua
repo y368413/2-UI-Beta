@@ -151,7 +151,7 @@ function UF:OnLogin()
 	end
 
 	-- Default Clicksets for RaidFrame
-	  self:DefaultClickSets()
+	self:DefaultClickSets()
 		oUF:RegisterStyle("Player", CreatePlayerStyle)
 		oUF:RegisterStyle("Target", CreateTargetStyle)
 		oUF:RegisterStyle("Focus", CreateFocusStyle)
@@ -274,14 +274,14 @@ function UF:OnLogin()
 				"showSolo", false,
 				"showParty", not showPartyFrame,
 				"showRaid", true,
-				"xoffset", 8,
-				"yOffset", -8,
+				"xoffset", 6,
+				"yOffset", -6,
 				"groupFilter", tostring(i),
 				"groupingOrder", groupingOrder,
 				"groupBy", groupBy,
 				"sortMethod", sortMethod,
 				"maxColumns", 2,
-				"unitsPerColumn", 30,
+				"unitsPerColumn", 25,
 				"columnSpacing", 6,
 				"point", "TOP",
 				"columnAnchorPoint", "LEFT",

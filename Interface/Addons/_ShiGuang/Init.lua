@@ -73,8 +73,7 @@ end
 
 -- Init
 local function GetBestScale()
-	local scale = M:Round(768 / I.ScreenHeight, 5)
-	return max(.4, min(1.15, scale))
+	return max(.4, min(1.15, 768 / I.ScreenHeight, 5))
 end
 
 function M:SetupUIScale(init)
@@ -104,9 +103,10 @@ local function UpdatePixelScale(event)
 end
 
 M:RegisterEvent("PLAYER_LOGIN", function()
-	-- Update UIScale
+	-- Initial
 	M:SetupUIScale()
 	M:RegisterEvent("UI_SCALE_CHANGED", UpdatePixelScale)
+	M:SetSmoothingAmount(MaoRUIPerDB["UFs"]["SmoothAmount"])
 
 	for _, module in next, initQueue do
 		if module.OnLogin then

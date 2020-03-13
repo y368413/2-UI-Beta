@@ -379,20 +379,6 @@ function UF:CreateCastBar(self)
 		M.SetBD(cb.Icon)
 	end
 
-	--[[if mystyle == "player" then
-		local safe = cb:CreateTexture(nil,"OVERLAY")
-		safe:SetTexture(I.normTex)
-		safe:SetVertexColor(1, 0, 0, .6)
-		safe:SetPoint("TOPRIGHT")
-		safe:SetPoint("BOTTOMRIGHT")
-		cb:SetFrameLevel(10)
-		cb.SafeZone = safe
-
-		if MaoRUIPerDB["UFs"]["LagString"] then
-			local lag = M.CreateFS(cb, 8, "", false, "LEFT", 3, -12)
-			cb.Lag = lag
-			self:RegisterEvent("CURRENT_SPELL_CAST_CHANGED", M.OnCastSent, true)
-		end]]
 	if mystyle == "nameplate" then
 		name:SetPoint("LEFT", cb, 6, -3)
 		timer:SetPoint("RIGHT", cb, 0, -3)
@@ -601,7 +587,7 @@ function UF:CreateAuras(self)
 	bu.initialAnchor = "TOPLEFT"
 	bu["growth-y"] = "DOWN"
 	bu.spacing = 3
-  if mystyle == "raid" then
+	if mystyle == "raid" then
 		if MaoRUIPerDB["UFs"]["RaidBuffIndicator"] then
 			bu.initialAnchor = "LEFT"
 			bu:SetPoint("LEFT", self, 15, 0)
