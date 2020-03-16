@@ -2,7 +2,6 @@ local _, ns = ...
 local M, R, U, I = unpack(ns)
 local Bar = M:GetModule("Actionbar")
 
--- Texture credit: 胡里胡涂
 local _G = getfenv(0)
 local tinsert, pairs, type = table.insert, pairs, type
 local buttonList = {}
@@ -10,15 +9,9 @@ local buttonList = {}
 function Bar:MicroButton_SetupTexture(icon, texture)
 	local r, g, b = I.r, I.g, I.b
 	if not MaoRUIPerDB["Skins"]["ClassLine"] then r, g, b = 0, 0, 0 end
-
 	icon:SetOutside(nil, 3, 3)
-	if MaoRUIPerDB["Actionbar"]["MicroMenuStyle"] then
-	icon:SetTexture(I.MicroTex..texture)
-	icon:SetVertexColor(r, g, b)
-	else	
 	icon:SetTexture("Interface\\BUTTONS\\"..texture)
 	icon:SetVertexColor(1, 1, 1)
-	end
 end
 
 function Bar:MicroButton_Create(parent, data)
@@ -26,11 +19,7 @@ function Bar:MicroButton_Create(parent, data)
 
 	local bu = CreateFrame("Frame", nil, parent)
 	tinsert(buttonList, bu)
-	if MaoRUIPerDB["Actionbar"]["MicroMenuStyle"] then
 	bu:SetSize(21, 21)
-	else	
-	bu:SetSize(16, 36)
-	end
 
 	local icon = bu:CreateTexture(nil, "ARTWORK")
 	Bar:MicroButton_SetupTexture(icon, texture)
@@ -95,11 +84,7 @@ function Bar:MicroMenu()
 	-- Order Positions
 	for i = 1, #buttonList do
 		if i == 1 then
-		  if MaoRUIPerDB["Actionbar"]["MicroMenuStyle"] then
-			buttonList[i]:SetPoint("TOPRIGHT", menubar, "TOPRIGHT", 0, 0)
-			else
 			buttonList[i]:SetPoint("TOPRIGHT", menubar, "TOPRIGHT", 0, 18)
-			end
 		--elseif i == 9 and MaoRUIPerDB["Map"]["MinimapScale"] > 1.1 then
 		  		--buttonList[i]:SetPoint("BOTTOM", buttonList[i-1], "TOP", 0, -12)
 		--elseif i == 10 and MaoRUIPerDB["Map"]["MinimapScale"] >= 1.3  then

@@ -33,7 +33,6 @@ local defaultSettings = {
 		BindType = 1,
 		OverrideWA = false,
 		MicroMenu = true,
-		MicroMenuStyle = false,
 	},
 	Auras = {
 		Reminder = true,
@@ -604,7 +603,6 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "Actionbar", "Count", U["Actionbar Item Counts"], true, true},
 		{1, "Actionbar", "MicroMenu", U["Micromenu"]},
 		{1, "Actionbar", "Classcolor", U["ClassColor BG"], true},
-		{1, "Actionbar", "MicroMenuStyle", U["MicroMenuStyle"], true, true},
 		--{1, "Actionbar", "Bar4Fade", U["Bar4 Fade"]},
 		--{1, "Actionbar", "Bar5Fade", U["Bar5 Fade"], true},
 		--{1, "UFs", "LagString", U["Castbar LagString"]},

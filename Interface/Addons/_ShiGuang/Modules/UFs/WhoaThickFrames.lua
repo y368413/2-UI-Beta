@@ -178,6 +178,13 @@ end)
 
 --	Player frame.
 hooksecurefunc("PlayerFrame_ToPlayerArt", function(self)
+		self.healthbar:SetStatusBarTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-StatusBar");
+			self.healthbar.AnimatedLossBar:SetStatusBarTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-StatusBar");
+			PlayerFrameMyHealPredictionBar:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-StatusBar");
+			PlayerFrameAlternateManaBar:SetStatusBarTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-StatusBar");
+			PlayerFrameManaBar.FeedbackFrame.BarTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-StatusBar");
+			PlayerFrameManaBar.FeedbackFrame.LossGlowTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-StatusBar");
+			PlayerFrameManaBar.FeedbackFrame.GainGlowTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-StatusBar");
 		PlayerStatusTexture:ClearAllPoints();
 		PlayerStatusTexture:SetPoint("CENTER", PlayerFrame, "CENTER",16, 8);
 		PlayerFrameTexture:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-TargetingFrame");
@@ -202,6 +209,13 @@ hooksecurefunc("PlayerFrame_ToPlayerArt", function(self)
 		PlayerFrameGroupIndicatorLeft:Hide();
 		PlayerFrameGroupIndicatorMiddle:Hide();
 		PlayerFrameGroupIndicatorRight:Hide();
+end)
+
+hooksecurefunc("PlayerFrame_UpdatePvPStatus", function()
+	local factionGroup, factionName = UnitFactionGroup("player");
+	if ( factionGroup and factionGroup ~= "Neutral" and UnitIsPVP("player") ) then
+			PlayerPVPIcon:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-PVP-"..factionGroup);
+	end
 end)
 
 --	Player vehicle frame.
@@ -283,8 +297,6 @@ end)
 hooksecurefunc("TargetFrame_CheckClassification", function(self, forceNormalTexture)
 	local classification = UnitClassification(self.unit);
 	self.highLevelTexture:SetPoint("CENTER", self.levelText, "CENTER", 0,0);
-	--self.deadText:SetFont(STANDARD_TEXT_FONT,21,"OUTLINE");
-	--self.deadText:SetPoint("TOPLEFT", self.healthbar, "TOPRIGHT", 12, -8);
 	self.deadText:SetPoint("CENTER", self.healthbar, "CENTER",0,0);
 	self.nameBackground:Hide();
 	self.threatIndicator:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Flash");
@@ -295,7 +307,6 @@ hooksecurefunc("TargetFrame_CheckClassification", function(self, forceNormalText
 	self.healthbar.RightText:SetPoint("RIGHT", self.healthbar, "RIGHT", -3, 0);
 	self.healthbar.TextString:SetPoint("CENTER", self.healthbar, "CENTER", 0, 0);
 	TargetFrame.threatNumericIndicator:SetPoint("BOTTOM", PlayerFrame, "TOP", 72, -21);
-	--TargetFrame.threatNumericIndicator:SetPoint("TOPRIGHT", TargetFrame, "TOPRIGHT", -66, -3);
 	FocusFrame.threatNumericIndicator:SetAlpha(0);
 	if ( forceNormalTexture ) then
 		self.borderTexture:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame");
@@ -318,6 +329,14 @@ hooksecurefunc("TargetFrame_CheckClassification", function(self, forceNormalText
 		forceNormalTexture = true;
 		CreateBarPctText(TargetFrame, "LEFT", "RIGHT", 88, -8, "NumberFontNormalLarge", 36)
 	end
+		local factionGroup = UnitFactionGroup(self.unit);
+		if ( UnitIsPVPFreeForAll(self.unit) ) then
+				--self.pvpIcon:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-PVP-FFA");
+				self.pvpIcon:SetTexture("Interface\\TargetingFrame\\UI-PVP-FFA");
+		elseif ( factionGroup and factionGroup ~= "Neutral" and UnitIsPVP(self.unit) ) then
+				self.pvpIcon:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-PVP-"..factionGroup);
+				--self.pvpIcon:SetTexture("Interface\\TargetingFrame\\UI-PVP-"..factionGroup);
+		end
 	if ( forceNormalTexture ) then
 		self.haveElite = nil;
 		if ( classification == "minus" ) then
@@ -357,6 +376,7 @@ hooksecurefunc("TargetFrame_CheckClassification", function(self, forceNormalText
 		end		
 	end
 	self.healthbar.lockColor = true;
+	self.healthbar:SetStatusBarTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-StatusBar");
 end)
 
 -- Mana texture

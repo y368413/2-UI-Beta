@@ -1487,12 +1487,12 @@ local nodeHider = HandyNotes_Pandaria.import('nodeHider');
 
 local ICON_MAP = {
   question = 'Interface\\Icons\\inv_misc_questionmark',
-  skullGray = 'Interface\\Addons\\Handynotes\\Icons\\RareIcon.tga',
-  skullGreen = 'Interface\\Addons\\Handynotes\\Icons\\RareIconGreen',
-  skullBlue = 'Interface\\Addons\\Handynotes\\Icons\\RareIconBlue.tga',
-  skullOrange = 'Interface\\Addons\\Handynotes\\Icons\\RareIconOrange',
-  skullYellow = 'Interface\\Addons\\Handynotes\\Icons\\RareIconYellow',
-  skullPurple = 'Interface\\Addons\\Handynotes\\Icons\\RareIconPurple',
+  skullGray = 'Interface\\Worldmap\\Skull_64Grey',
+  skullGreen = 'Interface\\Worldmap\\Skull_64Green',
+  skullBlue = 'Interface\\Worldmap\\Skull_64Blue',
+  skullOrange = 'Interface\\Worldmap\\Skull_64Red',
+  skullYellow = 'Interface\\MINIMAP\\Minimap_skull_elite',
+  skullPurple = 'Interface\\Worldmap\\Skull_64Purple',
   chest = 'Interface\\Icons\\TRADE_ARCHAEOLOGY_CHESTOFTINYGLASSANIMALS',
 };
 
