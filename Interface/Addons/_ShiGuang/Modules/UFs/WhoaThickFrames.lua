@@ -1,5 +1,18 @@
 local _, ns = ...
 local M, R, U, I = unpack(ns)
+
+hooksecurefunc("TextStatusBar_UpdateTextString", function(bar)   ----	  血量百分比数字 
+	local value = bar:GetValue()
+	local _, max = bar:GetMinMaxValues()
+	if bar.pctText then
+		bar.pctText:SetText(value==0 and "" or tostring(math.ceil((value / max) * 100)))  --(value==0 and "" or tostring(math.ceil((value / max) * 100)) .. "%")
+		if not MaoRUIPerDB["UFs"]["UFPctText"] or value == max then bar.pctText:Hide()
+		elseif GetCVarBool("statusTextPercentage") and ( bar.unit == PlayerFrame.unit or bar.unit == "target" or bar.unit == "focus" ) then bar.pctText:Hide()
+		else bar.pctText:Show()
+		end
+	end
+end)
+
 function CreateBarPctText(frame, ap, rp, x, y, font, fontsize)
 	local bar = frame.healthbar 
 	if bar then
@@ -15,6 +28,7 @@ function CreateBarPctText(frame, ap, rp, x, y, font, fontsize)
 	end
 end
 CreateBarPctText(PlayerFrame, "RIGHT", "LEFT", -80, -8, "NumberFontNormalLarge", 36)
+CreateBarPctText(PetFrame, "LEFT", "RIGHT", 8, -3, "NumberFontNormalLarge", 16)
 --CreateBarPctText(TargetFrame, "LEFT", "RIGHT", 80, -8, "NumberFontNormalLarge", 36)
 --CreateBarPctText(TargetFrameToT, "BOTTOMLEFT", "TOPRIGHT", 0, 5)
 CreateBarPctText(FocusFrame, "RIGHT", "LEFT", -3, -8, "NumberFontNormalLarge", 36)
@@ -209,6 +223,14 @@ hooksecurefunc("PlayerFrame_ToPlayerArt", function(self)
 		PlayerFrameGroupIndicatorLeft:Hide();
 		PlayerFrameGroupIndicatorMiddle:Hide();
 		PlayerFrameGroupIndicatorRight:Hide();
+end)
+
+hooksecurefunc("TextStatusBar_UpdateTextStringWithValues", function()
+		for i = 1, 4 do
+		  PetFrameHealthBarText:SetText(" ");
+		  PetFrameHealthBarTextLeft:SetText(" ");
+		  PetFrameHealthBarTextRight:SetText(" ");
+		end
 end)
 
 hooksecurefunc("PlayerFrame_UpdatePvPStatus", function()

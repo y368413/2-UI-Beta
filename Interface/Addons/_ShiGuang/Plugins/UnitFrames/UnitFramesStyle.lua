@@ -1,15 +1,3 @@
-hooksecurefunc("TextStatusBar_UpdateTextString", function(bar)   ----	  血量百分比数字 
-	local value = bar:GetValue()
-	local _, max = bar:GetMinMaxValues()
-	if bar.pctText then
-		bar.pctText:SetText(value==0 and "" or tostring(math.ceil((value / max) * 100)))  --(value==0 and "" or tostring(math.ceil((value / max) * 100)) .. "%")
-		if not MaoRUIPerDB["UFs"]["UFPctText"] or value == max then bar.pctText:Hide()
-		elseif GetCVarBool("statusTextPercentage") and ( bar.unit == PlayerFrame.unit or bar.unit == "target" or bar.unit == "focus" ) then bar.pctText:Hide()
-		else bar.pctText:Show()
-		end
-	end
-end)
-
 local function colorHPBar(bar, unit)
 	if bar and not bar.lockValues and unit == bar.unit then
 		local min, max = bar:GetMinMaxValues()
