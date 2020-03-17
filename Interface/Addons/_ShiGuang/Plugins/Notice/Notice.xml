@@ -2,6 +2,7 @@
 	<Script file="PvPPP.lua"/>
 	<Script file="Reminder.lua"/>
 	<Script file="PhotoRobot.lua"/>
+	<Script file="NZothServant.lua"/>
 	<Script file="TransmogHeadsUp.lua"/>
 	<Script file="FeastsAndPortals.lua"/>
 	<Script file="IncentiveProgram.lua"/>

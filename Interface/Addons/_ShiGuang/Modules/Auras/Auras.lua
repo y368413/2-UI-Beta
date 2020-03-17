@@ -49,8 +49,6 @@ function A:OnLogin()
 		self:Totems()
 	end
 	self:InitReminder()
-	--self:Energy()
-	--self:ClassRecoure()
 end
 
 local day, hour, minute = 86400, 3600, 60

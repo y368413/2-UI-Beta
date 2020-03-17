@@ -8,7 +8,6 @@ local UnitGUID, GetItemInfo, GetSpellInfo = UnitGUID, GetItemInfo, GetSpellInfo
 local GetContainerItemLink, GetInventoryItemLink = GetContainerItemLink, GetInventoryItemLink
 local EquipmentManager_UnpackLocation, EquipmentManager_GetItemInfoByLocation = EquipmentManager_UnpackLocation, EquipmentManager_GetItemInfoByLocation
 local C_AzeriteEmpoweredItem_IsPowerSelected = C_AzeriteEmpoweredItem.IsPowerSelected
-local BAG_ITEM_QUALITY_COLORS = BAG_ITEM_QUALITY_COLORS
 
 local inspectSlots = {
 	"Head", "Neck", "Shoulder", "Shirt", "Chest", "Waist", "Legs", "Feet", "Wrist", "Hands", "Finger0", "Finger1", "Trinket0", "Trinket1", "Back", "MainHand", "SecondaryHand",
@@ -124,7 +123,7 @@ function MISC:ItemLevel_UpdateInfo(index, slotFrame, info, quality)
 	end
 
 	if level and level > 1 and quality then
-		local color = BAG_ITEM_QUALITY_COLORS[quality]
+		local color = I.QualityColors[quality]
 		slotFrame.iLvlText:SetText(level)
 		slotFrame.iLvlText:SetTextColor(1, 0.8, 0)  --color.r, color.g, color.b
 	end
@@ -239,7 +238,7 @@ function MISC:ItemLevel_FlyoutUpdate(bag, slot, quality)
 		level = M.GetItemLevel(link, "player", slot)
 	end
 
-	local color = BAG_ITEM_QUALITY_COLORS[quality or 1]
+	local color = I.QualityColors[quality or 1]
 	self.iLvl:SetText(level)
 	self.iLvl:SetTextColor(1, 0.8, 0)  --color.r, color.g, color.b
 end
@@ -272,7 +271,7 @@ function MISC:ItemLevel_ScrappingUpdate()
 		quality = self.item:GetItemQuality()
 	end
 	local level = M.GetItemLevel(self.itemLink)
-	local color = BAG_ITEM_QUALITY_COLORS[quality]
+	local color = I.QualityColors[quality]
 	self.iLvl:SetText(level)
 	self.iLvl:SetTextColor(color.r, color.g, color.b)
 end

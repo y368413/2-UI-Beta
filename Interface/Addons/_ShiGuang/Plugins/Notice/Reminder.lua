@@ -46,23 +46,19 @@ end
 
 GarrisonLandingPageMinimapButton:HookScript("OnEnter", function(self)
 	if C_Garrison.GetLandingPageGarrisonType() ~= LE_GARRISON_TYPE_7_0 then return end
-
 	GameTooltip:SetOwner(self, "ANCHOR_NONE")
 	GameTooltip:SetPoint("BOTTOM", self, "TOP", 0, 1)
 	GameTooltip:SetText(self.title, 1, 1, 1)
 	GameTooltip:AddLine(self.description, nil, nil, nil, true)
 	GameTooltip:AddLine(" ")
-
 	local currency, amount, icon = GetCurrencyInfo(C_Garrison.GetCurrencyTypes(LE_GARRISON_TYPE_7_0))
 	GameTooltip:AddDoubleLine(currency, ("%s |T%s:0:0:0:2:64:64:4:60:4:60|t"):format(BreakUpLargeNumbers(amount), icon), 1, 1, 1, 1, 1, 1)
-
 	if #categoryInfo > 0 then
 		GameTooltip:AddLine(" ")
 		for _, info in ipairs(categoryInfo) do
 			GameTooltip:AddDoubleLine(info.name, ("%d/%d |T%d:0|t"):format(info.count, info.limit, info.icon), 1, 1, 1, 1, 1, 1)
 		end
 	end
-
 	GameTooltip:Show()
 end)
 
@@ -316,7 +312,6 @@ function SAO_HideTimer(...)
 	SAO[spellID].timer:Hide()
 	SAO[spellID].timer:SetScript("OnUpdate", nil)
 end
-
 hooksecurefunc("SpellActivationOverlay_ShowOverlay", SAO_ShowTimer)
 hooksecurefunc("SpellActivationOverlay_HideOverlays", SAO_HideTimer)
 

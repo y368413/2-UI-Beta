@@ -38,7 +38,7 @@ local defaultSettings = {
 		Reminder = true,
 		Totems = true,
 		DestroyTotems = true,
-		--Statue = true,
+		Statue = false,
 		ClassAuras = false,
 		ReverseBuffs = false,
 		BuffSize = 30,
@@ -46,8 +46,6 @@ local defaultSettings = {
 		ReverseDebuffs = false,
 		DebuffSize = 34,
 		DebuffsPerRow = 16,
-		--EnergyBar = false,
-		--ClassRecourePlace = false,
 	},
 	AuraWatch = {
 		Enable = true,

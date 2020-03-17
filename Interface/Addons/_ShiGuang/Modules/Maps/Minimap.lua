@@ -1,4 +1,3 @@
--------------------------------------Auther：NDui siweia
 local _, ns = ...
 local M, R, U, I = unpack(ns)
 local module = M:GetModule("Maps")

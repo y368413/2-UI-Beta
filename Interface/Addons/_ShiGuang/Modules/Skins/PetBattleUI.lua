@@ -9,9 +9,7 @@ function S:PetBattleUI()
 
 	-- Head Frame
 	local frame = PetBattleFrame
-	for i = 1, 3 do
-		select(i, frame:GetRegions()):Hide()
-	end
+	M.StripTextures(frame)
 	frame.TopVersusText:SetPoint("TOP", 0, -45)
 
 	-- Weather
@@ -22,8 +20,7 @@ function S:PetBattleUI()
 	weather.Name:Hide()
 	weather.Icon:ClearAllPoints()
 	weather.Icon:SetPoint("TOP", frame.TopVersusText, "BOTTOM", 0, -15)
-	weather.Icon:SetTexCoord(unpack(I.TexCoord))
-	M.CreateSD(weather.Icon, 3, 3)
+	M.ReskinIcon(weather.Icon, true)
 	weather.BackgroundArt:SetPoint("TOP", UIParent)
 	weather.Duration:ClearAllPoints()
 	weather.Duration:SetPoint("CENTER", weather.Icon, 1, 0)
@@ -35,20 +32,15 @@ function S:PetBattleUI()
 		unit.HealthBarFrame:Hide()
 		unit.healthBarWidth = 250
 		unit.ActualHealthBar:SetTexture(I.normTex)
-		--unit.healthBg = M.CreateBG(unit.ActualHealthBar)
-		unit.healthBg = M.CreateBDFrame(unit.ActualHealthBar, 0)
+		unit.healthBg = M.SetBD(unit.ActualHealthBar)
 		unit.healthBg:ClearAllPoints()
 		unit.healthBg:SetWidth(252)
-		M.CreateBD(unit.healthBg)
-		M.CreateSD(unit.healthBg)
-		M.CreateTex(unit.healthBg)
 		unit.HealthText:ClearAllPoints()
 		unit.HealthText:SetPoint("CENTER", unit.healthBg)
 
 		unit.petIcon = unit:CreateTexture(nil, "ARTWORK")
 		unit.petIcon:SetSize(25, 25)
-		unit.petIcon:SetTexCoord(unpack(I.TexCoord))
-		M.CreateSD(unit.petIcon, 3, 3)
+		M.ReskinIcon(unit.petIcon, true)
 		unit.PetType:SetAlpha(0)
 		unit.PetType:ClearAllPoints()
 		unit.PetType:SetAllPoints(unit.petIcon)
@@ -57,7 +49,7 @@ function S:PetBattleUI()
 		unit.Border:SetAlpha(0)
 		unit.Border2:SetAlpha(0)
 		unit.BorderFlash:SetAlpha(0)
-		M.CreateSD(unit.Icon, 5, 5)
+		unit.Iconbg = M.CreateBDFrame(unit.Icon, nil, true)
 
 		unit.LevelUnderlay:SetAlpha(0)
 		unit.Level:SetFontObject(SystemFont_Shadow_Huge1)
@@ -103,8 +95,7 @@ function S:PetBattleUI()
 		unit.HealthDivider:SetAlpha(0)
 		unit.BorderAlive:SetAlpha(0)
 		unit.BorderDead:SetAlpha(0)
-		unit.Icon:SetTexCoord(unpack(I.TexCoord))
-		M.CreateSD(unit.Icon, 3, 3)
+		unit.Iconbg = M.ReskinIcon(unit.Icon, true)
 
 		unit.deadIcon = unit:CreateTexture(nil, "ARTWORK")
 		unit.deadIcon:SetAllPoints(unit.Icon)
@@ -115,14 +106,10 @@ function S:PetBattleUI()
 		unit.ActualHealthBar:ClearAllPoints()
 		unit.ActualHealthBar:SetPoint("TOPLEFT", unit.Icon, "BOTTOMLEFT", 1, -4)
 		unit.ActualHealthBar:SetTexture(I.normTex)
-		--unit.healthBg = M.CreateBG(unit.ActualHealthBar)
-		unit.healthBg = M.CreateBDFrame(unit.ActualHealthBar, 0)
+		unit.healthBg = M.SetBD(unit.ActualHealthBar)
 		unit.healthBg:SetPoint("TOPLEFT", unit.ActualHealthBar, -1, 1)
 		unit.healthBg:SetPoint("BOTTOMRIGHT", unit.ActualHealthBar, "TOPLEFT", 37, -8)
 		unit.healthBg:SetFrameLevel(unit:GetFrameLevel())
-		M.CreateBD(unit.healthBg)
-		M.CreateSD(unit.healthBg)
-		M.CreateTex(unit.healthBg)
 
 		if index < 3 then
 			unit.ActualHealthBar:SetGradient("VERTICAL", .26, 1, .22, .13, .5, .11)
@@ -155,16 +142,16 @@ function S:PetBattleUI()
 			end
 		end
 		if self.glow then self.glow:Hide() end
-		if self.Icon.Shadow then
+		if self.Iconbg then
 			local quality = C_PetBattles.GetBreedQuality(self.petOwner, self.petIndex) - 1 or 1
-			local color = BAG_ITEM_QUALITY_COLORS[quality]
-			self.Icon.Shadow:SetBackdropBorderColor(color.r, color.g, color.b)
+			local color = I.QualityColors[quality]
+			self.Iconbg:SetBackdropBorderColor(color.r, color.g, color.b)
 		end
 	end)
 
 	hooksecurefunc("PetBattleUnitFrame_UpdateHealthInstant", function(self)
-		if self.BorderDead and self.BorderDead:IsShown() and self.Icon.Shadow then
-			self.Icon.Shadow:SetBackdropBorderColor(1, .12, .24)
+		if self.BorderDead and self.BorderDead:IsShown() and self.Iconbg then
+			self.Iconbg:SetBackdropBorderColor(1, .12, .24)
 		end
 		if self.BorderDead and self.deadIcon then
 			self.deadIcon:SetShown(self.BorderDead:IsShown())
@@ -181,15 +168,9 @@ function S:PetBattleUI()
 				local frame = self.frames[nextFrame]
 				frame.DebuffBorder:Hide()
 				if not frame.styled then
-					frame.Icon:SetTexCoord(unpack(I.TexCoord))
-					M.CreateSD(frame.Icon, 3, 3)
+					M.ReskinIcon(frame.Icon, true)
 					frame.styled = true
 				end
-				--[[if isBuff then
-					frame.Icon.Shadow:SetBackdropBorderColor(0, .6, .1)
-				else
-					frame.Icon.Shadow:SetBackdropBorderColor(.8, 0, 0)
-				end]]
 
 				nextFrame = nextFrame + 1
 			end
@@ -224,19 +205,21 @@ function S:PetBattleUI()
 		for i = 1, 6 do
 			local bu = buttonList[i]
 			bu:SetParent(bar)
-			bu:SetSize(40, 40)
+			bu:SetSize(43, 43)
 			bu:ClearAllPoints()
 			if i == 1 then
 				bu:SetPoint("LEFT", bar)
 			else
-				bu:SetPoint("LEFT", buttonList[i-1], "RIGHT", 5, 0)
+				bu:SetPoint("LEFT", buttonList[i-1], "RIGHT", 3, 0)
 			end
 
-			bu.Icon:SetTexCoord(unpack(I.TexCoord))
 			bu:SetNormalTexture("")
 			bu:GetPushedTexture():SetTexture(I.textures.pushed)
 			bu:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
-			M.CreateSD(bu, 3, 3)
+			if not bu.bg then
+				bu.bg = M.ReskinIcon(bu.Icon, true)
+				bu.Icon:SetInside()
+			end
 
 			bu.Cooldown:SetFont(I.Font[1], 26, I.Font[3])
 			bu.SelectedHighlight:ClearAllPoints()
@@ -248,39 +231,26 @@ function S:PetBattleUI()
 
 	local skipButton = bottomFrame.TurnTimer.SkipButton
 	skipButton:SetParent(bar)
-	skipButton:SetSize(40, 40)
-	for i = 1, 5 do
-		select(i, skipButton:GetRegions()):Hide()
-	end
+	skipButton:SetSize(42, 42)
+	M.StripTextures(skipButton)
 	M.PixelIcon(skipButton, "Interface\\Icons\\Ability_Foundryraid_Dormant", true)
-	skipButton.Icon:SetAllPoints()
-	M.CreateSD(skipButton, 3, 3)
+	M.CreateSD(skipButton)
+	skipButton.HL:SetAllPoints(skipButton)
 	skipButton:SetPushedTexture(I.textures.pushed)
-	M.CreateFS(skipButton, 14, PET_BATTLE_PASS, false, "BOTTOM", 1, 2)
 
 	local xpbar = PetBattleFrameXPBar
-	for i = 2, 4 do
-		select(i, xpbar:GetRegions()):Hide()
-	end
-	for i = 7, 12 do
-		select(i, xpbar:GetRegions()):Hide()
-	end
+	M.StripTextures(xpbar)
 	xpbar:SetParent(bar)
 	xpbar:SetWidth(bar:GetWidth())
 	xpbar:SetStatusBarTexture(I.normTex)
-	M.CreateSD(xpbar, 3, 3)
-	M.CreateTex(xpbar)
+	M.CreateBDFrame(xpbar, nil, true)
 
 	local turnTimer = bottomFrame.TurnTimer
 	turnTimer:SetParent(bar)
 	turnTimer:SetSize(xpbar:GetWidth()+4, xpbar:GetHeight()+10)
 	turnTimer:ClearAllPoints()
 	turnTimer:SetPoint("BOTTOM", bar, "TOP", 0, 7)
-	--turnTimer.bg = M.CreateBG(turnTimer, -1)
-	turnTimer.bg = M.CreateBDFrame(turnTimer, 0)
-	M.CreateBD(turnTimer.bg)
-	M.CreateSD(turnTimer.bg)
-	M.CreateTex(turnTimer.bg)
+	turnTimer.bg = M.CreateBDFrame(turnTimer, nil, true)
 	turnTimer.Bar:ClearAllPoints()
 	turnTimer.Bar:SetPoint("LEFT", 2, 0)
 	turnTimer.TimerText:ClearAllPoints()
@@ -288,7 +258,7 @@ function S:PetBattleUI()
 
 	hooksecurefunc("PetBattleFrame_UpdatePassButtonAndTimer", function()
 		skipButton:ClearAllPoints()
-		skipButton:SetPoint("LEFT", bottomFrame.ForfeitButton, "RIGHT", 5, 0)
+		skipButton:SetPoint("LEFT", bottomFrame.ForfeitButton, "RIGHT", 3, 0)
 
 		local pveBattle = C_PetBattles.IsPlayerNPC(LE_BATTLE_PET_ENEMY)
 		turnTimer.bg:SetShown(not pveBattle)
@@ -306,8 +276,7 @@ function S:PetBattleUI()
 		local unit = bottomFrame.PetSelectionFrame["Pet"..i]
 		local icon = unit.Icon
 
-		icon:SetTexCoord(unpack(I.TexCoord))
-		M.CreateSD(icon, 3, 3)
+		unit.Iconbg = M.ReskinIcon(icon, true)
 		unit.HealthBarBG:Hide()
 		unit.Framing:Hide()
 		unit.HealthDivider:Hide()
@@ -315,13 +284,9 @@ function S:PetBattleUI()
 
 		unit.ActualHealthBar:SetPoint("BOTTOMLEFT", icon, "BOTTOMRIGHT", 5, 0)
 		unit.ActualHealthBar:SetTexture(I.normTex)
-		--local bg = M.CreateBG(unit.ActualHealthBar)
-		local bg = M.CreateBDFrame(unit.ActualHealthBar, 0)
+		local bg = M.SetBD(unit.ActualHealthBar)
 		bg:SetPoint("TOPLEFT", unit.ActualHealthBar, -1, 1)
 		bg:SetPoint("BOTTOMRIGHT", unit.ActualHealthBar, "BOTTOMLEFT", 129, -1)
-		M.CreateBD(bg)
-		M.CreateSD(bg)
-		M.CreateTex(bg)
 	end
 
 	-- Petbar Background

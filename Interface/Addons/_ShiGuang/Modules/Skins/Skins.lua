@@ -19,6 +19,7 @@ function S:OnLogin()
 	self:QuestTracker()
 	self:QuestTrackerSkinTitle()
 	self:PetBattleUI()
+	self:CharacterFrameUI()
 	self:DBMSkin()
 	self:BigWigsSkin()
 	self:LootEx()		-- 拾取增强

@@ -91,10 +91,15 @@ function G:SetupRaidDebuffs(parent)
 	end
 
 	local dungeons = {}
-	for _, dungeon in next, C_ChallengeMode.GetMapTable() do
-		local name = C_ChallengeMode.GetMapUIInfo(dungeon)
-		tinsert(dungeons, name)
+	for _, dungeonID in next, C_ChallengeMode.GetMapTable() do
+		if dungeonID < 369 then
+			local name = C_ChallengeMode.GetMapUIInfo(dungeonID)
+			tinsert(dungeons, name)
+		end
 	end
+	local mechagon = EJ_GetInstanceInfo(1178)
+	tinsert(dungeons, mechagon)
+
 	local raids = {
 		[1] = EJ_GetInstanceInfo(1031),
 		[2] = EJ_GetInstanceInfo(1176),
@@ -925,6 +930,7 @@ function G:SetupBagFilter(parent)
 		[5] = "FilterLegendary",
 		[6] = "FilterMount",
 		[7] = "FilterFavourite",
+		[8] = "FilterGoods",
 	}
 
 	local Bags = M:GetModule("Bags")

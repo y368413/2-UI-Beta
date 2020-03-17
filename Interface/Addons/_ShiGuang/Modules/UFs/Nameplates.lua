@@ -45,8 +45,6 @@ end
 
 function UF:UpdateClickableSize()
 	if InCombatLockdown() then return end
-	--C_NamePlate.SetNamePlateEnemySize(MaoRUIPerDB["Nameplate"]["PlateWidth"], MaoRUIPerDB["Nameplate"]["PlateHeight"]+40)
-	--C_NamePlate.SetNamePlateFriendlySize(MaoRUIPerDB["Nameplate"]["PlateWidth"], MaoRUIPerDB["Nameplate"]["PlateHeight"]+40)
 	C_NamePlate.SetNamePlateEnemySize(MaoRUIPerDB["Nameplate"]["PlateWidth"]*MaoRUIDB["UIScale"], MaoRUIPerDB["Nameplate"]["PlateHeight"]*MaoRUIDB["UIScale"]+40)
 	C_NamePlate.SetNamePlateFriendlySize(MaoRUIPerDB["Nameplate"]["PlateWidth"]*MaoRUIDB["UIScale"], MaoRUIPerDB["Nameplate"]["PlateHeight"]*MaoRUIDB["UIScale"]+40)
 end
@@ -598,7 +596,7 @@ function UF:MouseoverIndicator(self)
 	local highlight = CreateFrame("Frame", nil, self.Health)
 	highlight:SetAllPoints(self)
 	highlight:Hide()
-	local texture = highlight:CreateTexture(nil, "ARTWORK")  
+	local texture = highlight:CreateTexture(nil, "ARTWORK")
 	texture:SetPoint("BOTTOM", self, "BOTTOM", 0, 0)
 	texture:SetSize(MaoRUIPerDB["Nameplate"]["PlateWidth"]+8, MaoRUIPerDB["Nameplate"]["PlateHeight"]+8)
 	texture:SetTexture("Interface\\AddOns\\_ShiGuang\\Media\\Modules\\UFs\\hlglow")
@@ -759,7 +757,7 @@ function UF:PostUpdatePlates(event, unit)
 			guidToPlate[self.unitGUID] = self
 		end
 		self.npcID = M.GetNPCID(self.unitGUID)
-		
+
 		local blizzPlate = self:GetParent().UnitFrame
 		self.widget = blizzPlate.WidgetContainer
 	elseif event == "NAME_PLATE_UNIT_REMOVED" then

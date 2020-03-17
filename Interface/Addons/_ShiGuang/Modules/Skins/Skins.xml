@@ -2,6 +2,7 @@
 	<Script file="Skins.lua"/>
 	<Script file="ObjectiveTracker.lua"/>
 	<Script file="PetBattleUI.lua"/>
+	<Script file="CharacterFrame.lua"/>
 	<Script file="Loot.lua"/>
 	
 	<Script file="AddOns\Bigwigs.lua"/>
