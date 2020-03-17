@@ -1026,7 +1026,7 @@ local IncentiveProgramToast = {
         toastFrame:SetHeight(52)
         toastFrame:SetMovable(true)
         toastFrame:SetClampedToScreen(true)
-        toastFrame:SetPoint("TOPRIGHT",-3,-3)
+        toastFrame:SetPoint("BOTTOMLEFT", _G.ChatFrame1, "TOPLEFT", 3, 43)
         
         --Backdrop
         toastFrame:SetBackdrop( {
@@ -1248,9 +1248,9 @@ local IncentiveProgramToast = {
         local top = IncentiveProgram:GetSettings():GetSetting(IncentiveProgram.Settings["TOAST_TOP"])
         local left = IncentiveProgram:GetSettings():GetSetting(IncentiveProgram.Settings["TOAST_LEFT"])
         if ( top == -1 ) then
-            toastFrame:SetPoint("TOPRIGHT",-3,-3)
+            toastFrame:SetPoint("BOTTOMLEFT", _G.ChatFrame1, "TOPLEFT", 3, 43)
         else
-            toastFrame:SetPoint("BOTTOMLEFT", left, top - toastFrame:GetHeight())
+            toastFrame:SetPoint("TOPLEFT", left, top + toastFrame:GetHeight())
         end
     end
 }

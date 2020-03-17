@@ -142,12 +142,12 @@ end
 local tipFrame = CreateFrame("Button", "WhisperPopTipFrame", UIParent)
 WhisperPop.tipFrame = tipFrame
 SetFrameMobile(tipFrame)
---tipFrame:SetParent(chatbar)
-if GetCVar("portal") == "CN" then
+--[[if GetCVar("portal") == "CN" then
 tipFrame:SetPoint("BOTTOMLEFT", UIParent,"BOTTOMLEFT",285, 0)
 else
 tipFrame:SetPoint("BOTTOMLEFT", UIParent,"BOTTOMLEFT",262, 0)
-end
+end]]
+tipFrame:SetPoint("BOTTOMLEFT", _G.ChatFrame1Tab, "TOPLEFT", 3, 3)
 tipFrame:SetWidth(21)
 tipFrame:SetHeight(21)
 tipFrame:RegisterForClicks("LeftButtonUp", "RightButtonUp")
@@ -184,12 +184,13 @@ function tipFrame:SetTip(name)
 
 	self.name = name
 	self.elapsed = 0
-	self.icon:Show()
+	--self.icon:Show()
 	if name then
 		self.icon:SetDesaturated(false)
 		self.text:SetText(name)
 		self:SetScript("OnUpdate", TipFrame_OnUpdate)
 	else
+		self.icon:Hide()
 		self.icon:SetDesaturated(true)
 		self.text:SetText()
 		self:SetScript("OnUpdate", nil)
@@ -197,23 +198,8 @@ function tipFrame:SetTip(name)
 end
 
 tipFrame:SetScript("OnClick", function(self)
-	GameTooltip:Hide()
 	WhisperPop:ToggleFrame()
 end)
-
---[[tipFrame:SetScript("OnEnter", function(self)
-	GameTooltip:SetOwner(self, "ANCHOR_LEFT")
-	GameTooltip:ClearLines()
-	GameTooltip:AddLine(CHAT_WHISPERPOP_TITLE)
-	GameTooltip:AddLine(WHISPERPOP_LOCALE["tip tooltip"], 0, 1, 0, 1)
-	GameTooltip:Show()
-end)
-
-tipFrame:SetScript("OnLeave", function(self)
-	GameTooltip:Hide()
-end)]]
-
---tipFrame:SetTip("Test")
 
 -- Main frame
 local frame = WhisperPop:CreateCommonFrame("WhisperPopFrame", UIParent, CHAT_WHISPERPOP_TITLE)

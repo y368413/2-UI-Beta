@@ -460,17 +460,20 @@ C_Timer.NewTicker(0.1, function()
     if IsControlKeyDown() then ctrlCnt=ctrlCnt+1 else ctrlCnt = 0 end
     if ctrlCnt==45 then
         PlaySoundFile("Interface\\AddOns\\_ShiGuang\\Media\\Sounds\\Legendary.ogg", "Master")
-        RaidNotice_AddMessage(RaidWarningFrame, "|cffff0000你的Ctrl可能卡啦!|r", ChatTypeInfo["RAID_WARNING"])
+        UIErrorsFrame:AddMessage("你的Ctrl可能卡啦!",1,0,0,5)
+        --RaidNotice_AddMessage(RaidWarningFrame, "|cffff0000你的Ctrl可能卡啦!|r", ChatTypeInfo["RAID_WARNING"])
     end
     if IsAltKeyDown() then AltCnt=AltCnt+1 else AltCnt = 0 end
     if AltCnt==45 then
         PlaySoundFile("Interface\\AddOns\\_ShiGuang\\Media\\Sounds\\Legendary.ogg", "Master")
-        RaidNotice_AddMessage(RaidWarningFrame, "|cffff0000你的Alt可能卡啦!|r", ChatTypeInfo["RAID_WARNING"])
+        UIErrorsFrame:AddMessage("你的Alt可能卡啦!",1,0,0,5)
+        --RaidNotice_AddMessage(RaidWarningFrame, "|cffff0000你的Alt可能卡啦!|r", ChatTypeInfo["RAID_WARNING"])
     end
     if IsShiftKeyDown() then ShiftCnt=ShiftCnt+1 else ShiftCnt = 0 end
     if ShiftCnt==45 then
         PlaySoundFile("Interface\\AddOns\\_ShiGuang\\Media\\Sounds\\Legendary.ogg", "Master")
-        RaidNotice_AddMessage(RaidWarningFrame, "|cffff0000你的Shift可能卡啦!|r", ChatTypeInfo["RAID_WARNING"])
+        UIErrorsFrame:AddMessage("你的Shift可能卡啦!",1,0,0,5)
+        --RaidNotice_AddMessage(RaidWarningFrame, "|cffff0000你的Shift可能卡啦!|r", ChatTypeInfo["RAID_WARNING"])
     end
 end)
 

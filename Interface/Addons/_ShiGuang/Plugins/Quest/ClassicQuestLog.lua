@@ -1,4 +1,4 @@
-﻿--## Author: Gello  ## Version: 1.4.2
+﻿--## Author: Gello  ## Version: 1.4.7
 local function ShowUIPanel(panel)
 	QuestFrame:ClearAllPoints()
 	QuestInfoSealFrame:ClearAllPoints()
@@ -36,7 +36,7 @@ function cql:OnEvent(event)
 
       cql:SetMinResize(667,300)
       cql:SetMaxResize(667,700)
-		cql:SetHeight(496)
+      cql:SetHeight(496)
 
       cql:UpdateOverrides()
       cql:RegisterEvent("UPDATE_BINDINGS")
@@ -398,7 +398,7 @@ function cql:UpdateQuestDetail()
    local questPortrait, questPortraitText, questPortraitName, questPortraitMount = GetQuestLogPortraitGiver();
    if (questPortrait and questPortrait ~= 0 and QuestLogShouldShowPortrait()) then
       -- only show quest portrait if it's not already shown
-	  if QuestNPCModel and (QuestNPCModel:GetParent()~=ClassicQuestLog or not QuestNPCModel:IsVisible() or cql.questPortrait~=questPortrait) then
+	  if QuestModelScene and (QuestModelScene:GetParent()~=ClassicQuestLog or not QuestModelScene:IsVisible() or cql.questPortrait~=questPortrait) then
 		QuestFrame_ShowQuestPortrait(ClassicQuestLog, questPortrait, questPortraitMount, questPortraitText, questPortraitName, -3, -42)
          cql.questPortrait = questPortrait
       end
@@ -623,31 +623,31 @@ end
 -- if no key is set, we override the default's binding and hook the macro button
 
 function cql:UpdateOverrides()
-	local key = GetBindingKey("CLASSIC_QUEST_LOG_TOGGLE")
-	if key then -- and ShiGuangDB.AltBinding then
-		ClearOverrideBindings(cql)
-		cql.overridingKey = nil
-	else -- there's no binding for addon, so override the default stuff
-		-- hook the ToggleQuestLog (if it's not been hooked before)
-		if not cql.oldToggleQuestLog then
-			cql.oldToggleQuestLog = ToggleQuestLog
-			function ToggleQuestLog(...)
-				if cql.overridingKey then
-					cql:ToggleWindow() -- to toggle our window if overriding
-					return
-				else
-					return cql.oldToggleQuestLog(...) -- and default stuff if they clear overriding
-				end
-			end
-		end
-		-- now see if default toggle quest binding has changed
-		local newKey = GetBindingKey("TOGGLEQUESTLOG")
-		if cql.overridingKey~=newKey and newKey then
-			ClearOverrideBindings(cql)
-			SetOverrideBinding(cql,false,newKey,"CLASSIC_QUEST_LOG_TOGGLE")
-			cql.overridingKey = newKey
-		end
-	end
+   local key = GetBindingKey("CLASSIC_QUEST_LOG_TOGGLE")
+   if key then -- and ShiGuangDB.AltBinding then
+      ClearOverrideBindings(cql)
+      cql.overridingKey = nil
+   else -- there's no binding for addon, so override the default stuff
+      -- hook the ToggleQuestLog (if it's not been hooked before)
+      if not cql.oldToggleQuestLog then
+         cql.oldToggleQuestLog = ToggleQuestLog
+         function ToggleQuestLog(...)
+            if cql.overridingKey then
+               cql:ToggleWindow() -- to toggle our window if overriding
+               return
+            else
+               return cql.oldToggleQuestLog(...) -- and default stuff if they clear overriding
+            end
+         end
+      end
+      -- now see if default toggle quest binding has changed
+      local newKey = GetBindingKey("TOGGLEQUESTLOG")
+      if cql.overridingKey~=newKey and newKey then
+         ClearOverrideBindings(cql)
+         SetOverrideBinding(cql,false,newKey,"CLASSIC_QUEST_LOG_TOGGLE")
+         cql.overridingKey = newKey
+      end
+   end
 end
 
 function cql:ToggleWindow()

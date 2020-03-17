@@ -2,10 +2,39 @@
 local M, R, U, I = unpack(ns)
 local S = M:GetModule("Skins")
 function S:QuestTracker()
-	local pairs = pairs
+	local r, g, b = I.r, I.g, I.b
 	local LE_QUEST_FREQUENCY_DAILY = LE_QUEST_FREQUENCY_DAILY or 2
 	local C_QuestLog_IsQuestReplayable = C_QuestLog.IsQuestReplayable
 
+	-- Reskin Headers
+	local function reskinHeader(header)
+		header.Text:SetTextColor(r, g, b)
+		header.Background:Hide()
+		local bg = header:CreateTexture(nil, "ARTWORK")
+		bg:SetTexture("Interface\\LFGFrame\\UI-LFG-SEPARATOR")
+		bg:SetTexCoord(0, .66, 0, .31)
+		bg:SetVertexColor(r, g, b, .8)
+		bg:SetPoint("BOTTOMLEFT", -30, -4)
+		bg:SetSize(250, 30)
+	end
+  -- Move Headers 
+  local function Moveit(header) 
+    header:EnableMouse(true)	
+	  header:RegisterForDrag("LeftButton")
+    header:SetHitRectInsets(-15, -15, -5, -5)
+ 	  header:HookScript("OnDragStart", function() ObjectiveTrackerFrame:StartMoving() end) 
+	  header:HookScript("OnDragStop", function() ObjectiveTrackerFrame:StopMovingOrSizing() end)
+  end
+	local headers = {
+		ObjectiveTrackerBlocksFrame.QuestHeader,
+		ObjectiveTrackerBlocksFrame.AchievementHeader,
+		ObjectiveTrackerBlocksFrame.ScenarioHeader,
+		BONUS_OBJECTIVE_TRACKER_MODULE.Header,
+		WORLD_QUEST_TRACKER_MODULE.Header,
+		ObjectiveTrackerFrame.BlocksFrame.UIWidgetsHeader
+	}
+	for _, header in pairs(headers) do Moveit(header) reskinHeader(header) end
+	
 	-- Show quest color and level
 	hooksecurefunc("QuestLogQuests_AddQuestButton", function(_, _, _, title, level, _, isHeader, _, isComplete, frequency, questID)
 		if ENABLE_COLORBLIND_MODE == "1" then return end
@@ -24,8 +53,9 @@ function S:QuestTracker()
 				button.Text:SetWidth(205)
 				button.Text:SetWordWrap(false)
 				button.Check:SetPoint("LEFT", button.Text, button.Text:GetWrappedWidth(), 0)
-			end end end)
-	
+			end
+	  end
+  end)
 	-- Hook objective tracker
 	hooksecurefunc(QUEST_TRACKER_MODULE, "Update", function()
 		for i = 1, GetNumQuestWatches() do
@@ -48,37 +78,6 @@ function S:QuestTracker()
 				if QuestInfoFrame.questLog then
 					if GetQuestLogSelection() > 0 then QuestInfoTitleHeader:SetText("["..select(2, GetQuestLogTitle(GetQuestLogSelection())).."] "..QuestInfoTitleHeader:GetText()) end
 	end end end end)
-
-  -- Move Headers 
-  local function Moveit(header) 
-      header:EnableMouse(true)	
-	  header:RegisterForDrag("LeftButton")
-      header:SetHitRectInsets(-15, -15, -5, -5)
- 	  header:HookScript("OnDragStart", function() ObjectiveTrackerFrame:StartMoving() end) 
-	  header:HookScript("OnDragStop", function() ObjectiveTrackerFrame:StopMovingOrSizing() end)
-  end
-  
-	-- Reskin Headers
-	local function reskinHeader(header)
-		header.Text:SetTextColor(I.r, I.g, I.b)
-		header.Background:Hide()
-		local bg = header:CreateTexture(nil, "ARTWORK")
-		bg:SetTexture("Interface\\LFGFrame\\UI-LFG-SEPARATOR")
-		bg:SetTexCoord(0, .66, 0, .31)
-		bg:SetVertexColor(I.r, I.g, I.b, .8)
-		bg:SetPoint("BOTTOMLEFT", -30, -4)
-		bg:SetSize(250, 30)
-	end
-
-	local headers = {
-		ObjectiveTrackerBlocksFrame.QuestHeader,
-		ObjectiveTrackerBlocksFrame.AchievementHeader,
-		ObjectiveTrackerBlocksFrame.ScenarioHeader,
-		BONUS_OBJECTIVE_TRACKER_MODULE.Header,
-		WORLD_QUEST_TRACKER_MODULE.Header,
-	}
-	for _, header in pairs(headers) do Moveit(header) reskinHeader(header) end
-
 end
 ----------------------------------------------------------------------------------------
 --	Ctrl+Click to abandon a quest or Alt+Click to share a quest(by Suicidal Katt)
@@ -93,7 +92,6 @@ hooksecurefunc("QuestMapLogTitleButton_OnClick", function(self)
 		QuestMapQuestOptions_ShareQuest(self.questID)
 	end
 end)
-
 hooksecurefunc(QUEST_TRACKER_MODULE, "OnBlockHeaderClick", function(_, block)
 	local questLogIndex = block.id
 	if IsControlKeyDown() then
@@ -178,6 +176,6 @@ hooksecurefunc(GameTooltip, "SetHyperlink", onSetHyperlink)
     ObjectiveTrackerFrame:SetPoint("TOPLEFT","UIParent","TOPLEFT",26,-21)
     ObjectiveTrackerFrame.SetPoint = function() end
     ObjectiveTrackerFrame:SetHeight(GetScreenHeight()*.75)
-    --ObjectiveTrackerFrame:SetClampedToScreen(true)
+    ObjectiveTrackerFrame:SetClampedToScreen(true)
     ObjectiveTrackerFrame:SetMovable(true)
     if ObjectiveTrackerFrame:IsMovable() then ObjectiveTrackerFrame:SetUserPlaced(true) end

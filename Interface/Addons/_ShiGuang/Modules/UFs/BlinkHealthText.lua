@@ -872,17 +872,16 @@ function BlinkHealth_SlashHandler(msg)
 	end
 end
 
-------------------------------------------------------头像渐隐  ## Version: 0.6 ## Author: Darkretailer
-local DescandingPowerTypes = { 0, 2, 3 }
-powerTypeAscending = false
-PowerTypeID, PowerTypeName = UnitPowerType("player")
-for _,p in pairs(DescandingPowerTypes) do
-	if p == PowerTypeID then powerTypeAscending = true end
+------------------------------------------------------头像渐隐
+local function PowerTypeAscending()
+	PowerTypeID, PowerTypeName = UnitPowerType("player")
+	for _,p in pairs({ 0, 2, 3}) do if p == PowerTypeID then Return = true end end
+	Return = false
 end
 
-iPlayerFrame = CreateFrame("Frame", "iPlayerFrame", UIParent, "SecureHandlerStateTemplate")
-iPlayerFrame.Toggle = function(self, event, ...)
+local function AutoHidePlayerFrame(self,event, ...)
 	if (not MaoRUIPerDB["UFs"]["UFFade"]) or (ShiGuangPerDB.BHT == true) then return end
+	--if (event == nil) then event = "TargetFrame or CharacterModelFrame toggled" end
 	if UnitHealth("player") < UnitHealthMax("player") * 0.99 or (powerTypeAscending and UnitPower("player") <= UnitPowerMax("player") * 0.99) or TargetFrame:IsShown() or UnitAffectingCombat("player") or CharacterFrame:IsShown() or ContainerFrame1:IsShown() then
 		if (not PlayerFrame:IsShown()) then
 			if (not InCombatLockdown()) then
@@ -903,7 +902,8 @@ iPlayerFrame.Toggle = function(self, event, ...)
 		end
 	end
 end
--- Events
+
+local iPlayerFrame = CreateFrame("Frame", "iPlayerFrame", UIParent, "SecureHandlerStateTemplate")
 iPlayerFrame:RegisterEvent("PLAYER_LOGIN")
 iPlayerFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
 iPlayerFrame:RegisterEvent("UNIT_HEALTH")
@@ -912,12 +912,10 @@ iPlayerFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
 iPlayerFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
 iPlayerFrame:RegisterEvent("UNIT_MAXPOWER")
 iPlayerFrame:RegisterEvent("UNIT_MODEL_CHANGED")
--- Bind function to events
-iPlayerFrame:SetScript("OnEvent", iPlayerFrame.Toggle)
--- Bind function to existing windows
-TargetFrame:HookScript("OnShow", iPlayerFrame.Toggle)
-TargetFrame:HookScript("OnHide", iPlayerFrame.Toggle)
-CharacterModelFrame:HookScript("OnShow", iPlayerFrame.Toggle)
-CharacterModelFrame:HookScript("OnHide", iPlayerFrame.Toggle)
-ContainerFrame1:HookScript("OnShow", iPlayerFrame.Toggle)
-ContainerFrame1:HookScript("OnHide", iPlayerFrame.Toggle)
+iPlayerFrame:SetScript("OnEvent", AutoHidePlayerFrame)
+TargetFrame:HookScript("OnShow", AutoHidePlayerFrame)
+TargetFrame:HookScript("OnHide", AutoHidePlayerFrame)
+CharacterModelFrame:HookScript("OnShow", AutoHidePlayerFrame)
+CharacterModelFrame:HookScript("OnHide", AutoHidePlayerFrame)
+ContainerFrame1:HookScript("OnShow", AutoHidePlayerFrame)
+ContainerFrame1:HookScript("OnHide", AutoHidePlayerFrame)
