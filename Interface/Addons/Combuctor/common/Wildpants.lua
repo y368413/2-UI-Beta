@@ -51,12 +51,13 @@ local FrameDefaults = {
 
 	rules = AsArray({
 		'all', 'all/normal', 'all/trade', 'all/reagent', 'all/keys', 'all/quiver',
-		'equip', 'equip/armor', 'equip/weapon', 'equip/trinket',
 		'binding', 'binding/account', 'binding/equip', 'binding/use', 'binding/all', "binding/soulbound",
-		'BFA',
+		'equip', 'equip/armor', 'equip/weapon', 'equip/trinket',
 		'use', 'use/consume', 'use/enhance',
 		'trade', 'trade/goods', 'trade/gem', 'trade/glyph', 'trade/recipe',
-		'quest', 'misc',
+		'quest', 
+		'ShiGuang', 'ShiGuang/Open', 'ShiGuang/Garrison', 'ShiGuang/BFA',
+		'misc',
 	}),
 }
 

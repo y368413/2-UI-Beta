@@ -233,12 +233,12 @@ hooksecurefunc("TextStatusBar_UpdateTextStringWithValues", function()
 		end
 end)
 
-hooksecurefunc("PlayerFrame_UpdatePvPStatus", function()
+--[[hooksecurefunc("PlayerFrame_UpdatePvPStatus", function()
 	local factionGroup, factionName = UnitFactionGroup("player");
 	if ( factionGroup and factionGroup ~= "Neutral" and UnitIsPVP("player") ) then
 			PlayerPVPIcon:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-PVP-"..factionGroup);
 	end
-end)
+end)]]
 
 --	Player vehicle frame.
 hooksecurefunc("PlayerFrame_ToVehicleArt", function(self, vehicleType)
@@ -351,14 +351,14 @@ hooksecurefunc("TargetFrame_CheckClassification", function(self, forceNormalText
 		forceNormalTexture = true;
 		CreateBarPctText(TargetFrame, "LEFT", "RIGHT", 88, -8, "NumberFontNormalLarge", 36)
 	end
-		local factionGroup = UnitFactionGroup(self.unit);
+		--[[local factionGroup = UnitFactionGroup(self.unit);
 		if ( UnitIsPVPFreeForAll(self.unit) ) then
 				--self.pvpIcon:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-PVP-FFA");
 				self.pvpIcon:SetTexture("Interface\\TargetingFrame\\UI-PVP-FFA");
 		elseif ( factionGroup and factionGroup ~= "Neutral" and UnitIsPVP(self.unit) ) then
 				self.pvpIcon:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-PVP-"..factionGroup);
 				--self.pvpIcon:SetTexture("Interface\\TargetingFrame\\UI-PVP-"..factionGroup);
-		end
+		end]]
 	if ( forceNormalTexture ) then
 		self.haveElite = nil;
 		if ( classification == "minus" ) then
@@ -473,8 +473,8 @@ hooksecurefunc("TextStatusBar_UpdateTextStringWithValues", function()
 	end
 end)]]
 
---[[	Party Frames.
-function whoaPartyFrames()
+--	Party Frames.
+--[[function whoaPartyFrames()
 	local useCompact = GetCVarBool("useCompactPartyFrames");
 	if IsInGroup(player) and (not IsInRaid(player)) and (not useCompact) then 
 		for i = 1, 4 do

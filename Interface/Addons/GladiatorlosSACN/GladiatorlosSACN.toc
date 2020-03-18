@@ -1,0 +1,18 @@
+## Interface: 80300
+## Title: GladiatorlosSACN
+## Title-zhCN: |cFF99CC01[PVP]|r技能语音
+## Title-zhTW: |cFF99CC01[PVP]|r技能語音
+## Notes: PVP Spell Sound Alerter
+## Notes-zhCN: PVP技能語音提示
+## Notes-zhTW: PVP技能語音提示
+## Author: Abatorlos(of Spinebreaker), DuskAshes, superk521, zuhligan, Grit (Legion Update), Mini_Dragon, LordKuper + VV(2020-03-18)
+## SavedVariables: GladiatorlosSADB
+## Version: 2.2.1
+
+## X-Repple: 2 UI
+
+embeds.xml
+Locales\locales.xml
+GladiatorlosSA2.lua
+spelllist.lua
+options.lua

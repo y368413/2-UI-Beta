@@ -1381,7 +1381,7 @@ function Castbars:OnInitialize()
     end
 
     -- Register Texture and Listen to LibSharedMedia-3.0 callbacks
-    self.SharedMedia:Register("statusbar", "Castbars", [[Interface\AddOns\_ShiGuang\Media\Modules\UI-StatusBar]])
+    self.SharedMedia:Register("statusbar", "Castbars", [[Interface\AddOns\_ShiGuang\Media\Modules\UFs\UI-StatusBar]])
     self.SharedMedia.RegisterCallback(self, "LibSharedMedia_Registered", "FrameMediaRestoreAll")
     self.SharedMedia.RegisterCallback(self, "LibSharedMedia_SetGlobal", "FrameMediaRestoreAll")
 
