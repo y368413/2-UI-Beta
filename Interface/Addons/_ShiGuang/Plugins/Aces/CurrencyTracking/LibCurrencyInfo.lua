@@ -195,6 +195,7 @@ data.CurrencyByCategory = {
 		1721,	 -- Prismatic Manapearl
 --		1743,	 -- 8.2 NOT CURRENTLY USED
 		1755, 	 -- Coalescing Visions
+		1803, 	 -- Coalescing Visions
 	},
 	[144] = { -- Virtual
 		1553, -- Azerite
