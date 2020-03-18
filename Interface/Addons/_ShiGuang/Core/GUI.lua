@@ -381,9 +381,9 @@ loader:SetScript("OnEvent", function(self, _, addon)
 end)
 
 -- Callbacks
-local function setupBagFilter()
-	G:SetupBagFilter(guiPage[7])
-end
+--local function setupBagFilter()
+	--G:SetupBagFilter(guiPage[7])
+--end
 
 local function setupCastbar()
 	G:SetupCastbar(guiPage[4])
@@ -418,20 +418,20 @@ local function setupAuraWatch()
 	SlashCmdList["NDUI_AWCONFIG"]()
 end
 
-local function updateBagSortOrder()
-	SetSortBagsRightToLeft(not MaoRUIPerDB["Bags"]["ReverseSort"])
-end
+--local function updateBagSortOrder()
+	--SetSortBagsRightToLeft(not MaoRUIPerDB["Bags"]["ReverseSort"])
+--end
 
-local function updateBagStatus()
-	M:GetModule("Bags"):UpdateAllBags()
+--local function updateBagStatus()
+	--M:GetModule("Bags"):UpdateAllBags()
 
-	local label = BAG_FILTER_EQUIPMENT
-	if MaoRUIPerDB["Bags"]["ItemSetFilter"] then
-		label = U["Equipement Set"]
-	end
-	_G.NDui_BackpackEquipment.label:SetText(label)
-	_G.NDui_BackpackBankEquipment.label:SetText(label)
-end
+	--local label = BAG_FILTER_EQUIPMENT
+	--if MaoRUIPerDB["Bags"]["ItemSetFilter"] then
+		--label = U["Equipement Set"]
+	--end
+	--_G.NDui_BackpackEquipment.label:SetText(label)
+	--_G.NDui_BackpackBankEquipment.label:SetText(label)
+--end
 
 local function updateActionbarScale()
 	M:GetModule("Actionbar"):UpdateAllScale()
