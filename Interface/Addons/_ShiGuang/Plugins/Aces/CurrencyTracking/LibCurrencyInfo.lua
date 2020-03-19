@@ -195,7 +195,7 @@ data.CurrencyByCategory = {
 		1721,	 -- Prismatic Manapearl
 --		1743,	 -- 8.2 NOT CURRENTLY USED
 		1755, 	 -- Coalescing Visions
-		1803, 	 -- Coalescing Visions
+		1803, 	 -- Echoes of NY
 	},
 	[144] = { -- Virtual
 		1553, -- Azerite
@@ -387,6 +387,7 @@ data.Currencies = {
 	[1757] = { id=1757, category=142 }, -- Uldum Accord
 	[1758] = { id=1758, category=142 }, -- Rajani
 	[1755] = { id=1755, category=143 }, -- Coalescing Visions
+	[1803] = { id=1803, category=143 }, -- Coalescing Visions
 }
 
 

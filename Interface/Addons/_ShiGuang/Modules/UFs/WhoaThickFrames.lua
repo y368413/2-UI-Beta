@@ -38,6 +38,19 @@ CreateBarPctText(FocusFrame, "RIGHT", "LEFT", -3, -8, "NumberFontNormalLarge", 3
 
 --	Player class colors.
 function whoaUnitClass(healthbar, unit)
+	if healthbar and not healthbar.lockValues and unit == healthbar.unit then
+		local min, max = healthbar:GetMinMaxValues()
+		local value = healthbar:GetValue()
+		if max > min then value = (value - min) / (max - min) else value = 0 end
+		if value > 0.5 then r, g, b = 2*(1-value), 1, 0 else r, g, b = 1, 2*value, 0 end
+			--if UnitIsPlayer(unit) and UnitClass(unit) then  --按职业着色
+				--local color = RAID_CLASS_COLORS[select(2, UnitClass(unit))]
+				--healthbar:SetStatusBarColor(color.r, color.g, color.b)
+			--else
+				--healthbar:SetStatusBarColor(r, g, b)
+			--end
+		if healthbar.pctText then	healthbar.pctText:SetTextColor(r, g, b) end
+	end
 	if UnitIsPlayer(unit) and UnitIsConnected(unit) and UnitClass(unit) then
 		_, class = UnitClass(unit);
 		local c = RAID_CLASS_COLORS[class];
@@ -132,6 +145,7 @@ hooksecurefunc("TextStatusBar_UpdateTextStringWithValues",function(statusFrame, 
 			textString:Hide();
 			return;
 		end
+		
 		local textDisplay = GetCVar("statusTextDisplay");
 		if ( value and valueMax > 0 and ( (textDisplay ~= "NUMERIC" and textDisplay ~= "NONE") or statusFrame.showPercentage ) and not statusFrame.showNumeric) then
 			if ( value == 0 and statusFrame.zeroText ) then
@@ -265,9 +279,6 @@ end)
 
 --	Player frame dead text.
 hooksecurefunc("TextStatusBar_UpdateTextStringWithValues",function(self)
-	local deadText = DEAD;
-	local ghostText = "Ghost";
-	
 	if UnitIsDead("player") or UnitIsGhost("player") then
 		PlayerFrameHealthBarText:SetFontObject(GameFontNormalSmall);
 		for i, v in pairs({	PlayerFrameHealthBar.LeftText, PlayerFrameHealthBar.RightText, PlayerFrameManaBar.LeftText, PlayerFrameManaBar.RightText, PlayerFrameTextureFrameManaBarText, PlayerFrameManaBar }) do v:SetAlpha(0); end
@@ -275,9 +286,9 @@ hooksecurefunc("TextStatusBar_UpdateTextStringWithValues",function(self)
 			PlayerFrameHealthBarText:Show();
 		end
 		if UnitIsDead("player") then
-			PlayerFrameHealthBarText:SetText(deadText);
+			PlayerFrameHealthBarText:SetText(DEAD);
 		elseif UnitIsGhost("player") then
-			PlayerFrameHealthBarText:SetText(ghostText);
+			PlayerFrameHealthBarText:SetText("Ghost");
 		end
 	elseif not UnitIsDead("player") and not UnitIsGhost("player") then
 		PlayerFrameHealthBarText:SetFontObject(TextStatusBarText);
