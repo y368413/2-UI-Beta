@@ -18,7 +18,7 @@ Saythanks:SetScript("OnEvent", function()
 	for key, value in pairs(thanksspells) do
 		if spell == key and value == true and player == UnitName("player") and buffer ~= UnitName("player") and subEvent == "SPELL_CAST_SUCCESS" then
 			--SendChatMessage("Thanks:"....GetSpellLink(spell)..", "..buffer:gsub("%-[^|]+", ""), "WHISPER", nil, buffer)
-			print(GetSpellLink(spell)..SHIGUANG_Gets..buffer)
+			DEFAULT_CHAT_FRAME:AddMessage(GetSpellLink(spell)..SHIGUANG_Gets..buffer)
 		end
 	end
 end)
@@ -346,7 +346,7 @@ BattleResAlert:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 BattleResAlert:SetScript("OnEvent",function(a,b,c,event, d,e,sourceName, f,g,h,destName, i,j,spellId)
 	if (((spellId == 95750) or (spellId == 20484) or (spellId == 113269) or (spellId == 61999) or (spellId == 126393)) and (event == "SPELL_CAST_SUCCESS") and (destName == UnitName("player"))) then
 		DEFAULT_CHAT_FRAME:AddMessage("战复 "..sourceName..".")
-		--PlaySound("ReadyCheck", "Master")
+		PlaySound(SOUNDKIT.READY_CHECK, "Master")
 	end
 end)
 
@@ -354,7 +354,7 @@ end)
 local HideFishingBobberTooltip = CreateFrame("Frame")
 HideFishingBobberTooltip:RegisterEvent("PLAYER_LOGIN")
 HideFishingBobberTooltip:SetScript("OnEvent", function()
-  local L = {
+  local Fish = {
     deDE = "Angelschwimmer",
     enUS = "Fishing Bobber",
     esES = "Corcho de pesca",
@@ -367,12 +367,9 @@ HideFishingBobberTooltip:SetScript("OnEvent", function()
     zhCN = "鱼漂",
     zhTW = "魚漂",
   }
-  local localized = L[GetLocale()]
   GameTooltip:HookScript("OnShow", function()
     local tooltipText = GameTooltipTextLeft1
-    if tooltipText and tooltipText:GetText() == localized then
-      GameTooltip:Hide()
-    end
+    if tooltipText and tooltipText:GetText() == Fish[GetLocale()] then GameTooltip:Hide() end
   end)
 end)
 ------------------------------------------------------     重置副本提示     -----------------------------------------------------
@@ -457,6 +454,7 @@ for k, v in pairs(Flashevents) do AltTabLfgNotification:RegisterEvent(k);  end]]
 --  CtrlIndicator    Author: 图图   --检测Ctrl是否卡住,Ctrl按下4.5秒之后就会提示
 local ctrlCnt, AltCnt, ShiftCnt = 0, 0, 0;
 C_Timer.NewTicker(0.1, function()
+    if not MaoRUIPerDB["Misc"]["CtrlIndicator"] then return end
     if IsControlKeyDown() then ctrlCnt=ctrlCnt+1 else ctrlCnt = 0 end
     if ctrlCnt==45 then
         PlaySoundFile("Interface\\AddOns\\_ShiGuang\\Media\\Sounds\\Legendary.ogg", "Master")

@@ -314,8 +314,6 @@ function module:Chatbar()
         Emote_button:SetHighlightTexture("Interface\\Buttons\\UI-Common-MouseHilight", "ADD")
         Emote_button:SetPoint("TOPLEFT", 8+(index%column)*(Emote_width+space), -8 - floor(index/column)*(Emote_height+space))
         Emote_button:SetScript("OnMouseUp", EmoteButton_OnClick)
-        --Emote_button:SetScript("OnEnter", EmoteButton_OnEnter)
-        --Emote_button:SetScript("OnLeave", EmoteButton_OnLeave)
         index = index + 1
     end
     Emote_IconPanel:SetHeight(ceil(index/column)*(Emote_height+space) +8)

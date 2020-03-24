@@ -293,6 +293,7 @@ local defaultSettings = {
 		EnemyCD = false,
 		SorasThreat = true,
 		HunterPetHelp = true,
+		CtrlIndicator = true,
 	},
 	Tutorial = {
 		Complete = false,
@@ -840,7 +841,8 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		--{3, "Bags", "IconSize", U["Bags IconSize"], true, true, {30, 42, 0}},
 		--{3, "Bags", "BagsWidth", U["Bags Width"], true, true, {10, 20, 0}},
 		--{3, "Bags", "BankWidth", U["Bank Width"], true, true, {10, 20, 0}},
-		{1, "Misc", "HunterPetHelp", U["HunterPetHelp"]},
+		{1, "Misc", "HunterPetHelp", U["HunterPetHelp"], true, true},
+		{1, "Misc", "CtrlIndicator", "Shift/Alt/Ctrl卡住提示"},
 	},
 	[8] = {
 		{1, "Misc", "ParagonRep", U["ParagonRep"]},

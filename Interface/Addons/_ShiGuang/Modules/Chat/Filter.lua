@@ -177,8 +177,7 @@ local function isItemHasLevel(link)
 end
 
 local function isItemHasGem(link)
-	local stats = GetItemStats(link)
-	for index in pairs(stats) do
+	for index in pairs(GetItemStats(link)) do
 		if strfind(index, "EMPTY_SOCKET_") then
 			return "|TInterface\\ItemSocketingFrame\\UI-EmptySocket-Prismatic:0|t"
 		end
