@@ -1,6 +1,6 @@
 --## Author: ykiigor  ## SavedVariables: VLegionToDo
-local LegionToDoVersion = "3.8"
-local VERSION_NUMERIC = 38
+local LegionToDoVersion = "4.0"
+local VERSION_NUMERIC = 40
 
 local GetCurrentRegion
 do
@@ -122,7 +122,7 @@ local coinsCurrency = UnitLevel'player' <= 100 and 1129 or isLevel110 and 1273 o
 tinsert(ToDoFunc,function(self,collect)
 	local count = 0
 	for id,_ in pairs(coinsQuests) do
-		if C_QuestLog.IsQuestFlaggedCompleted(id) then
+		if IsQuestFlaggedCompleted(id) then
 			count = count + 1
 		end
 	end
@@ -144,7 +144,7 @@ tinsert(ToDoFunc,function(self,collect)
 	if UnitAura("player",GetSpellInfo(239967),nil) then
 		count = 0
 		for _,id in pairs({47038,47044,47053}) do
-			if C_QuestLog.IsQuestFlaggedCompleted(id) then
+			if IsQuestFlaggedCompleted(id) then
 				count = count + 1
 			end
 		end
@@ -237,6 +237,13 @@ tinsert(ToDoFunc,function(self,collect)
 		self:AddTexture(646678)
 	end
 	collect.mementos = amount
+
+	local name, amount, texturePath, earnedThisWeek, weeklyMax, totalMax, isDiscovered, quality = GetCurrencyInfo(1803)
+	if not isLevel110 then
+		self:AddDoubleLine(name, amount, 1,1,1)
+		self:AddTexture(3069889)
+	end
+	collect.echoon = amount
 end)
 
 local days3val = 3 * 24 * 60 * 60
@@ -274,7 +281,7 @@ tinsert(ToDoFunc,function(self,collect)
 end)
 
 tinsert(ToDoFunc,function(self,collect)
-	local arguniteQuest = C_QuestLog.IsQuestFlaggedCompleted(48799)
+	local arguniteQuest = IsQuestFlaggedCompleted(48799)
 
 	if not arguniteQuest then
 		local isInLog = GetQuestLogIndexByID(48799)
@@ -319,9 +326,9 @@ tinsert(ToDoFunc,function(self,collect)
 		collect.riftQuest = true
 	end
 
-	local recruitLvl1 = C_QuestLog.IsQuestFlaggedCompleted(48910)
-	local recruitLvl2 = C_QuestLog.IsQuestFlaggedCompleted(48911)
-	local recruitLvl3 = C_QuestLog.IsQuestFlaggedCompleted(48912)
+	local recruitLvl1 = IsQuestFlaggedCompleted(48910)
+	local recruitLvl2 = IsQuestFlaggedCompleted(48911)
+	local recruitLvl3 = IsQuestFlaggedCompleted(48912)
 	
 	if isLevel110 then
 		self:AddDoubleLine("Argus recruits:", (recruitLvl1 and "|cff00ff00+|r" or "|cffff0000-|r").."/"..(recruitLvl2 and "|cff00ff00+|r" or "|cffff0000-|r").."/"..(recruitLvl3 and "|cff00ff00+|r" or "|cffff0000-|r"),1,1,1)
@@ -356,7 +363,7 @@ end)
 
 
 tinsert(ToDoFunc,function(self,collect)
-	self:AddDoubleLine("Blingtron 6000", C_QuestLog.IsQuestFlaggedCompleted(40753) and "|cff00ff00Done" or "|cffff0000Not completed", 1,1,1)
+	self:AddDoubleLine("Blingtron 6000", IsQuestFlaggedCompleted(40753) and "|cff00ff00Done" or "|cffff0000Not completed", 1,1,1)
 end)
 
 
@@ -365,7 +372,7 @@ tinsert(ToDoFunc,function(self,collect)
 	
 	collect.island = nil
 	if questID then
-		if C_QuestLog.IsQuestFlaggedCompleted(questID) then
+		if IsQuestFlaggedCompleted(questID) then
 			self:AddDoubleLine("Islands", "|cff00ff00Done", 1,1,1)
 			collect.island = "|cff00ff00Done"
 		else
@@ -388,7 +395,7 @@ end)
 tinsert(ToDoFunc,function(self,collect)
 	local questID = UnitFactionGroup("player") ~= "Alliance" and 53416 or 53414
 
-	if C_QuestLog.IsQuestFlaggedCompleted(questID) then
+	if IsQuestFlaggedCompleted(questID) then
 		collect.warfront = true
 	else
 		collect.warfront = nil
@@ -399,7 +406,7 @@ tinsert(ToDoFunc,function(self,collect)
 	--The Battle for Darkshore
 	local questID = UnitFactionGroup("player") ~= "Alliance" and 53955 or 53992
 
-	if C_QuestLog.IsQuestFlaggedCompleted(questID) then
+	if IsQuestFlaggedCompleted(questID) then
 		collect.warfront2 = true
 	else
 		collect.warfront2 = nil
@@ -409,7 +416,7 @@ tinsert(ToDoFunc,function(self,collect)
 
 	local questID = UnitFactionGroup("player") ~= "Alliance" and 56137 or 56136
 
-	if C_QuestLog.IsQuestFlaggedCompleted(questID) then
+	if IsQuestFlaggedCompleted(questID) then
 		collect.warfrontHC = true
 	else
 		collect.warfrontHC = nil
@@ -644,6 +651,13 @@ local function IsInArray(arr,subj)
 		end
 	end
 end
+local function IsInArray2(arr,subj)
+	for i=1,#arr do
+		if subj:find("^"..arr[i]) then
+			return i
+		end
+	end
+end
 
 tinsert(ToDoFunc,function(self,collect)
 	local res = {}
@@ -671,7 +685,7 @@ tinsert(ToDoFunc,function(self,collect)
 	self:AddLine("Mythic:")
 	for i=1,#instances do
 		if instancesShowStatus[i] then
-			if instancesAttune[i] and not res[i] and not C_QuestLog.IsQuestFlaggedCompleted(instancesAttune[i]) then
+			if instancesAttune[i] and not res[i] and not IsQuestFlaggedCompleted(instancesAttune[i]) then
 				self:AddDoubleLine(instances[i], "|cffff0000Locked",1,1,1)
 				collect["instance"..i] = "|cffff0000Locked"
 			else
@@ -752,7 +766,7 @@ tinsert(ToDoFunc,function(self,collect)
 		local instanceName, instanceID, instanceReset, instanceDifficulty, locked, extended, instanceIDMostSig, isRaid, maxPlayers, difficultyName, totalBosses, defeatedBosses = GetSavedInstanceInfo(i)
 	
 		if instanceDifficulty and IsInArray(raidsDiffs,instanceDifficulty) then
-			local inArr = IsInArray(raids,instanceName)
+			local inArr = IsInArray(raids,instanceName) or IsInArray2(raids,instanceName)
 			if inArr then
 				defeatedBosses = (locked or extended) and defeatedBosses or 0
 								
@@ -937,7 +951,7 @@ end)
 tinsert(ToDoFunc,function(self,collect)
 	local avgItemLevel, avgItemLevelEquipped = GetAverageItemLevel()
 	
-	local ilvlStr = format("|cff%s%.1f|r",avgItemLevelEquipped >= 360 and "00ff00" or avgItemLevelEquipped >= 340 and "ffff00" or "ff0000",avgItemLevelEquipped)
+	local ilvlStr = format("|cff%s%.1f|r",avgItemLevelEquipped >= 460 and "00ff00" or avgItemLevelEquipped >= 430 and "ffff00" or "ff0000",avgItemLevelEquipped)
 
 	collect.ilvl = ilvlStr
 	self:AddDoubleLine("iLvl", ilvlStr,nil,nil,nil,1,1,1)
@@ -1108,6 +1122,20 @@ tinsert(ToDoFunc,function(self,collect)
 end)
 
 
+tinsert(ToDoFunc,function(self,collect)
+	collect.cloak_lvl = nil
+
+	local itemLink = GetInventoryItemLink("player",15)
+	if itemLink then
+		local itemID = itemLink:match("item:(%d+)")
+		if itemID == "169223" then
+			local ilvl = select(4,GetItemInfo(itemLink))
+			if ilvl then
+				collect.cloak_lvl = min(15, max((ilvl - 470) / 2 + 1, 1))
+			end
+		end
+	end
+end)
 
 
 
@@ -1919,6 +1947,9 @@ LegionToDo:SetScript("OnShow",function(self)
 	local name, _, texturePath = GetCurrencyInfo(1721)
 	count = LineUpdate(count,"manapearl",name,texturePath)
 
+	local name, _, texturePath = GetCurrencyInfo(1803)
+	count = LineUpdate(count,"echoon",name,texturePath)
+
 	local name, _, texturePath = GetCurrencyInfo(1755)
 	count = LineUpdate(count,"coalescing",name,texturePath)
 
@@ -1926,6 +1957,8 @@ LegionToDo:SetScript("OnShow",function(self)
 	count = LineUpdate(count,"mementos",name,texturePath)
 
 	count = LineUpdate(count,"miniVision","Mini Vision")
+
+	count = LineUpdate(count,"cloak_lvl","Cloak level")
 	
 	count = LineUpdate(count,"argunitequest","Argunite quest")
 	
@@ -2184,6 +2217,11 @@ LegionToDo:SetScript("OnShow",function(self)
 				lines[lineCount].cols[col]:SetText(db.manapearl or "0")
 			end
 
+			if not optData["echoon"] or OPTIONS_TOGGLED  then
+				lineCount = lineCount + 1
+				lines[lineCount].cols[col]:SetText(db.echoon or "0")
+			end
+
 			if not optData["coalescing"] or OPTIONS_TOGGLED  then
 				lineCount = lineCount + 1
 				local t = db.coalescing_bott or 0				
@@ -2207,6 +2245,11 @@ LegionToDo:SetScript("OnShow",function(self)
 					end			
 				end
 			end	
+
+			if not optData["cloak_lvl"] or OPTIONS_TOGGLED  then
+				lineCount = lineCount + 1
+				lines[lineCount].cols[col]:SetText(db.cloak_lvl or "-")
+			end
 			
 			if not optData["argunitequest"] or OPTIONS_TOGGLED  then
 				lineCount = lineCount + 1

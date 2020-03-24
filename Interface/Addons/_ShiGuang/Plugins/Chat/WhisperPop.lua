@@ -748,4 +748,5 @@ frame:SetScript("OnEvent", function(self, event)
 end)
 -------------------------------------------------- Slash handler-------------------------------------------------
 SLASH_WHISPERPOP1 = "/whisperpop"
+SLASH_WHISPERPOP2 = "/whi"
 SlashCmdList["WHISPERPOP"] = function() WhisperPop:ToggleFrame() end
