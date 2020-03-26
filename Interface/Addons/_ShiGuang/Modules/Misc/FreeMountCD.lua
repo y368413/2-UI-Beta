@@ -23,11 +23,11 @@ if UnitFactionGroup("player") == "Alliance" then
 	..'\n'..
 	'/script SetLegacyRaidDifficultyID(4)'
 	..'\n'..
-	'/run local M=function(a,b)SendChatMessage(b,"WHISPER",nil,a)end; M("永夜绽放之薇-艾森娜","9")M("LMCD-战歌","组")M("林荫下的乞丐-安苏","44296")M("波雅丶汉库克-埃雷达尔","1")M("聖殤-通灵学院","1")M("蚊飙-奥蕾莉亚","1")M("氺手-国王之谷","1")M("心一-破碎岭","1")M("子瓜-诺兹多姆","1")M("千山云影-雷霆号角","1")M("蛋总的徒弟-刺骨利刃","1")M("甜果冻—阿古斯","1")M("古南泉-白银之手","1")'
+	'/run local M=function(a,b)SendChatMessage(b,"WHISPER",nil,a)end; M("永夜绽放之薇-艾森娜","9")M("LMCD-战歌","组")M("林荫下的乞丐-安苏","44296")M("波雅丶汉库克-埃雷达尔","1")M("聖殤-通灵学院","1")M("蚊飙-奥蕾莉亚","1")M("氺手-国王之谷","1")M("第三仙-轻风之语","1")M("子瓜-诺兹多姆","1")M("千山云影-雷霆号角","1")M("蛋总的徒弟-刺骨利刃","1")M("甜果冻-阿古斯","1")M("古南泉-白银之手","1")'
 	..'\n'..
 	'/run UIErrorsFrame:AddMessage("进本一定要点>>>清<<<按钮!")'
 	..'\n'..
-	'/E 已开始联盟【常规CD】的云分流排队，v1.407QX(2019.8.2)'
+	'/E 已开始联盟【常规CD】的云分流排队，v1.408QX(2019.12.18)'
 	..'\n'..
 	'/E 欢迎加入免费CD联盟群【秘蓝玫瑰Ⅵ】，群号634966405'
 	..'\n'..
@@ -36,7 +36,7 @@ if UnitFactionGroup("player") == "Alliance" then
 	FreeMountCD_ExitMacro =   --'/click CD4M'
 	'/W 永夜绽放之薇-艾森娜  0'
 	..'\n'..
-	'/W 永夜绽放之薇-艾森娜 版本1.407QX'
+	'/W 永夜绽放之薇-艾森娜 版本1.408QX'
 	..'\n'..
 	'/W LMCD-战歌 0'
 	..'\n'..
@@ -50,7 +50,7 @@ if UnitFactionGroup("player") == "Alliance" then
 	..'\n'..
 	'/W 氺手-国王之谷 0'
 	..'\n'..
-	'/W 心一-破碎岭 0'
+	'/W 第三仙-轻风之语 0'
 	..'\n'..
 	'/W 子瓜-诺兹多姆 0'
 	..'\n'..
@@ -58,7 +58,7 @@ if UnitFactionGroup("player") == "Alliance" then
 	..'\n'..
 	'/W 蛋总的徒弟-刺骨利刃 0'
 	..'\n'..
-	'/W 甜果冻—阿古斯 0'
+	'/W 甜果冻-阿古斯 0'
 	..'\n'..
 	'/W 古南泉-白银之手 0'
 	..'\n'..
@@ -71,7 +71,7 @@ if UnitFactionGroup("player") == "Alliance" then
 	..'\n'..
 	'/script SetLegacyRaidDifficultyID(4)'
 	..'\n'..
-	'/run local M=function(a,b)SendChatMessage(b,"WHISPER",nil,a)end;M("永夜绽放之薇-艾森娜","9")M("LMCD-战歌","组")M("波雅丶汉库克-埃雷达尔","1")M("子瓜-诺兹多姆","1")M("古南泉-白银之手","1")'
+	'/run local M=function(a,b)SendChatMessage(b,"WHISPER",nil,a)end;M("永夜绽放之薇-艾森娜","9")M("LMCD-战歌","组")M("波雅丶汉库克-埃雷达尔","1")M("子瓜-诺兹多姆","1")M("古南泉-白银之手","1")M("第三仙-轻风之语","1")'
 	..'\n'..
 	'/run UIErrorsFrame:AddMessage("进本一定要点>>>清<<<按钮!")'
 	..'\n'..
@@ -82,33 +82,33 @@ if UnitFactionGroup("player") == "Alliance" then
   ..'\n'..
   '/script SetLegacyRaidDifficultyID(4)'
   ..'\n'..
-	'/run local M=function(a,b)SendChatMessage(b,"WHISPER",nil,a)end;M("永夜绽放之薇-艾森娜","9")M("LMCD-战歌","组")M("林荫下的乞丐-安苏","44296")M("波雅丶汉库克-埃雷达尔","1")M("聖殤-通灵学院","1")M("蚊飙-奥蕾莉亚","1")M("氺手-国王之谷","1")M("心一-破碎岭","1")M("子瓜-诺兹多姆","1")M("千山云影-雷霆号角","1")M("蛋总的徒弟-刺骨利刃","1")M("甜果冻—阿古斯","1")M("古南泉-白银之手","1")'
+	'/run local M=function(a,b)SendChatMessage(b,"WHISPER",nil,a)end;M("永夜绽放之薇-艾森娜","9")M("LMCD-战歌","组")M("林荫下的乞丐-安苏","44296")M("波雅丶汉库克-埃雷达尔","1")M("聖殤-通灵学院","1")M("蚊飙-奥蕾莉亚","1")M("氺手-国王之谷","1")M("第三仙-轻风之语","1")M("子瓜-诺兹多姆","1")M("千山云影-雷霆号角","1")M("蛋总的徒弟-刺骨利刃","1")M("甜果冻-阿古斯","1")M("古南泉-白银之手","1")'
   ..'\n'..
   '/run UIErrorsFrame:AddMessage("进本一定要点>>>清<<<按钮!")'
   ..'\n'..
-  '/E 已开始【蛋刀CD】云分流排队!,v1.407QX(2019.8.2)';
+  '/E 已开始【蛋刀CD】云分流排队!,v1.408QX(2019.12.18)';
   
 	FreeMountCD_AgdypxMacro =   --'/click CD7M'
 	'/script SetRaidDifficultyID(14)'
 	..'\n'..
 	'/script SetLegacyRaidDifficultyID(4)'
 	..'\n'..
-	'/run local M=function(a,b)SendChatMessage(b,"WHISPER",nil,a)end;M("永夜绽放之薇-艾森娜","9")M("LMCD-战歌","组")M("林荫下的乞丐-安苏","44296")M("波雅丶汉库克-埃雷达尔","1")M("聖殤-通灵学院","1")M("蚊飙-奥蕾莉亚","1")M("氺手-国王之谷","1")M("心一-破碎岭","1")M("子瓜-诺兹多姆","1")M("千山云影-雷霆号角","1")M("蛋总的徒弟-刺骨利刃","1")M("甜果冻—阿古斯","1")M("古南泉-白银之手","1")'
+	'/run local M=function(a,b)SendChatMessage(b,"WHISPER",nil,a)end;M("永夜绽放之薇-艾森娜","9")M("LMCD-战歌","组")M("林荫下的乞丐-安苏","44296")M("波雅丶汉库克-埃雷达尔","1")M("聖殤-通灵学院","1")M("蚊飙-奥蕾莉亚","1")M("氺手-国王之谷","1")M("第三仙-轻风之语","1")M("子瓜-诺兹多姆","1")M("千山云影-雷霆号角","1")M("蛋总的徒弟-刺骨利刃","1")M("甜果冻-阿古斯","1")M("古南泉-白银之手","1")'
 	..'\n'..
 	'/run UIErrorsFrame:AddMessage("CD君组你后一定要点 H 按钮，插件会自动为你切换10人英雄难度！看到切换提示后进本。")'
 	..'\n'..
-	'/E 已开始【决战奥格-小吼（H难度）】的CD云分流排队，v1.407QX(2019.8.2)' ;
+	'/E 已开始【决战奥格-小吼（H难度）】的CD云分流排队，v1.408QX(2019.12.18)' ;
 	
 	FreeMountCD_DingMacro =   --'/click CD12M'
 	'/script SetRaidDifficultyID(14)'
 	..'\n'..
 	'/script SetLegacyRaidDifficultyID(4)'
 	..'\n'..
-	'/run local M=function(a,b)SendChatMessage(b,"WHISPER",nil,a)end;M("永夜绽放之薇-艾森娜","9")M("LMCD-战歌","组")M("林荫下的乞丐-安苏","44296")M("波雅丶汉库克-埃雷达尔","1")M("聖殤-通灵学院","1")M("蚊飙-奥蕾莉亚","1")M("子瓜-诺兹多姆","1")'
+	'/run local M=function(a,b)SendChatMessage(b,"WHISPER",nil,a)end;M("永夜绽放之薇-艾森娜","9")M("LMCD-战歌","组")M("林荫下的乞丐-安苏","44296")M("波雅丶汉库克-埃雷达尔","1")M("聖殤-通灵学院","1")M("蚊飙-奥蕾莉亚","1")M("子瓜-诺兹多姆","1")M("第三仙-轻风之语","1")'
 	..'\n'..
 	'/run UIErrorsFrame:AddMessage("如要染英雄难度请在被组后点 H 按钮，CD君切换10人英雄难度！看到切换提示后进本。")'
 	..'\n'..
-	'/E 已开始【定向CD（普通、H双难度）】的CD云分流排队，v1.407QX(2019.8.2)' ;
+	'/E 已开始【定向CD（普通、H双难度）】的CD云分流排队，v1.408QX(2019.12.18)' ;
 		
 	FreeMountCD_CheckMacro =   --/click CD9M
 	'/E 开始查询CD君在线状态……'
@@ -127,7 +127,7 @@ if UnitFactionGroup("player") == "Alliance" then
 	..'\n'..
 	'/W 氺手-国王之谷 在'
 	..'\n'..
-	'/W 心一-破碎岭 在'
+	'/W 第三仙-轻风之语 在'
 	..'\n'..
 	'/W 子瓜-诺兹多姆 在'
 	..'\n'..
@@ -135,7 +135,7 @@ if UnitFactionGroup("player") == "Alliance" then
 	..'\n'..
 	'/W 蛋总的徒弟-刺骨利刃 在'
 	..'\n'..
-	'/W 甜果冻—阿古斯 在'
+	'/W 甜果冻-阿古斯 在'
 	..'\n'..
 	'/W 古南泉-白银之手 在';
 	
@@ -145,11 +145,11 @@ elseif UnitFactionGroup("player") == "Horde" then
 	..'\n'..
 	'/script SetLegacyRaidDifficultyID(4)'
 	..'\n'..
-	'/run local M=function(a,b)SendChatMessage(b,"WHISPER",nil,a)end;M("郑矢娜-战歌","9")M("BLCDX-战歌","组")M("月色下的乞丐-辛达苟萨","44296")M("阿焦大做饭-希尔瓦娜斯","1")M("月娜-战歌","1")M("大浪七号-格瑞姆巴托","1")M("假中医-死亡之翼","1")M("Lau-太阳之井","1")M("红了眼眶-血色十字军","1")M("罐子-冬寒","1")M("噬魔者-图拉扬","1")M("丿长空-凤凰之神","1")M("九筱妖-布兰卡德","1")M("演员壹号-影之哀伤","1")M("想静静-贫瘠之地","1")M("亻壬忄生-安苏","1")M("王权富贵-海加尔","1")M("颜老师-风暴之鳞","1")M("溟炎-洛丹伦","1")M("时丶光-地狱咆哮","1")M("随心而遇-战歌","1")M("谎言-加尔","1")'
+	'/run local M=function(a,b)SendChatMessage(b,"WHISPER",nil,a)end;M("郑矢娜-战歌","9")M("BLCDX-战歌","组")M("月色下的乞丐-辛达苟萨","44296")M("阿焦大做饭-希尔瓦娜斯","1")M("月娜-战歌","1")M("哞哞呜呜-瓦里安","1")M("假中医-死亡之翼","1")M("Lau-太阳之井","1")M("红了眼眶-血色十字军","1")M("罐子-冬寒","1")M("噬魔者-图拉扬","1")M("丿长空-凤凰之神","1")M("九筱妖-布兰卡德","1")M("演员壹号-影之哀伤","1")M("想静静-贫瘠之地","1")M("亻壬忄生-安苏","1")M("王权富贵-海加尔","1")M("颜老师-风暴之鳞","1")M("溟炎-洛丹伦","1")M("时丶光-地狱咆哮","1")M("随心而遇-战歌","1")M("谎言-加尔","1")'
 	..'\n'..
 	'/run UIErrorsFrame:AddMessage("进本要点>>>清<<<按钮!")'
 	..'\n'..
-	'/E v1.407QX(2019.8.2)'
+	'/E v1.408QX(2019.12.18)'
 	..'\n'..
 	'/E 免费CD群 819754629【嫣红蔷薇Ⅷ】欢迎您！'
 	..'\n'..
@@ -158,7 +158,7 @@ elseif UnitFactionGroup("player") == "Horde" then
 	FreeMountCD_ExitMacro = --'/click CD2M'
 	'/W 郑矢娜-战歌 0'
 	..'\n'..
-	'/W 郑矢娜-战歌 版本1.407QX'
+	'/W 郑矢娜-战歌 版本1.408QX'
 	..'\n'..
 	'/W BLCDX-战歌 0'
 	..'\n'..
@@ -168,7 +168,7 @@ elseif UnitFactionGroup("player") == "Horde" then
 	..'\n'..
 	'/W 月娜-战歌 0'
 	..'\n'..
-	'/W 大浪七号-格瑞姆巴托 0'
+	'/W 哞哞呜呜-瓦里安 0'
 	..'\n'..
 	'/W 假中医-死亡之翼 0'
 	..'\n'..
@@ -211,7 +211,7 @@ elseif UnitFactionGroup("player") == "Horde" then
 	..'\n'..
 	'/script SetLegacyRaidDifficultyID(4)'
 	..'\n'..
-	'/run local M=function(a,b)SendChatMessage(b,"WHISPER",nil,a)end;M("郑矢娜-战歌","9")M("BLCDX-战歌","组")M("月色下的乞丐-辛达苟萨","44296")M("假中医-死亡之翼","1")M("Lau-太阳之井","1")M("噬魔者-图拉扬","1")M("想静静-贫瘠之地","1")M("亻壬忄生-安苏","1")M("时丶光-地狱咆哮","1")M("随心而遇-战歌","1")M("谎言-加尔","1")'
+	'/run local M=function(a,b)SendChatMessage(b,"WHISPER",nil,a)end;M("郑矢娜-战歌","9")M("BLCDX-战歌","组")M("月色下的乞丐-辛达苟萨","44296")M("假中医-死亡之翼","1")M("Lau-太阳之井","1")M("噬魔者-图拉扬","1")M("想静静-贫瘠之地","1")M("亻壬忄生-安苏","1")M("时丶光-地狱咆哮","1")M("随心而遇-战歌","1")M("谎言-加尔","1")M("哞哞呜呜-瓦里安","1")'
 	..'\n'..
 	'/run UIErrorsFrame:AddMessage("进本一定要点>>>清<<<按钮!")'
 	..'\n'..
@@ -222,33 +222,33 @@ elseif UnitFactionGroup("player") == "Horde" then
 	 ..'\n'..
 	 '/script SetLegacyRaidDifficultyID(4)'
 	 ..'\n'..
-	'/run local M=function(a,b)SendChatMessage(b,"WHISPER",nil,a)end;M("郑矢娜-战歌","9")M("BLCDX-战歌","组")M("月色下的乞丐-辛达苟萨","44296")M("阿焦大做饭-希尔瓦娜斯","1")M("月娜-战歌","1")M("大浪七号-格瑞姆巴托","1")M("假中医-死亡之翼","1")M("Lau-太阳之井","1")M("红了眼眶-血色十字军","1")M("罐子-冬寒","1")M("噬魔者-图拉扬","1")M("丿长空-凤凰之神","1")M("九筱妖-布兰卡德","1")M("演员壹号-影之哀伤","1")M("想静静-贫瘠之地","1")M("亻壬忄生-安苏","1")M("王权富贵-海加尔","1")M("颜老师-风暴之鳞","1")M("溟炎-洛丹伦","1")M("时丶光-地狱咆哮","1")M("随心而遇-战歌","1")M("谎言-加尔","1")'
+	'/run local M=function(a,b)SendChatMessage(b,"WHISPER",nil,a)end;M("郑矢娜-战歌","9")M("BLCDX-战歌","组")M("月色下的乞丐-辛达苟萨","44296")M("阿焦大做饭-希尔瓦娜斯","1")M("月娜-战歌","1")M("哞哞呜呜-瓦里安","1")M("假中医-死亡之翼","1")M("Lau-太阳之井","1")M("红了眼眶-血色十字军","1")M("罐子-冬寒","1")M("噬魔者-图拉扬","1")M("丿长空-凤凰之神","1")M("九筱妖-布兰卡德","1")M("演员壹号-影之哀伤","1")M("想静静-贫瘠之地","1")M("亻壬忄生-安苏","1")M("王权富贵-海加尔","1")M("颜老师-风暴之鳞","1")M("溟炎-洛丹伦","1")M("时丶光-地狱咆哮","1")M("随心而遇-战歌","1")M("谎言-加尔","1")'
 	 ..'\n'..
 	 '/run UIErrorsFrame:AddMessage("进本一定要点>>>清<<<按钮!")'
 	 ..'\n'..
-	 '/E 已开始【蛋刀CD】云分流排队，v1.407QX(2019.8.2)';
+	 '/E 已开始【蛋刀CD】云分流排队，v1.408QX(2019.12.18)';
 	
 	FreeMountCD_AgdypxMacro =   --'/click CD7M'
 	'/script SetRaidDifficultyID(14)'
 	..'\n'..
 	'/script SetLegacyRaidDifficultyID(4)'
 	..'\n'..
-	'/run local M=function(a,b)SendChatMessage(b,"WHISPER",nil,a)end;M("郑矢娜-战歌","9")M("BLCDX-战歌","组")M("月色下的乞丐-辛达苟萨","44296")M("阿焦大做饭-希尔瓦娜斯","1")M("月娜-战歌","1")M("大浪七号-格瑞姆巴托","1")M("假中医-死亡之翼","1")M("Lau-太阳之井","1")M("红了眼眶-血色十字军","1")M("罐子-冬寒","1")M("噬魔者-图拉扬","1")M("丿长空-凤凰之神","1")M("九筱妖-布兰卡德","1")M("演员壹号-影之哀伤","1")M("想静静-贫瘠之地","1")M("亻壬忄生-安苏","1")M("王权富贵-海加尔","1")M("颜老师-风暴之鳞","1")M("溟炎-洛丹伦","1")M("时丶光-地狱咆哮","1")M("随心而遇-战歌","1")M("谎言-加尔","1")'
+	'/run local M=function(a,b)SendChatMessage(b,"WHISPER",nil,a)end;M("郑矢娜-战歌","9")M("BLCDX-战歌","组")M("月色下的乞丐-辛达苟萨","44296")M("阿焦大做饭-希尔瓦娜斯","1")M("月娜-战歌","1")M("哞哞呜呜-瓦里安","1")M("假中医-死亡之翼","1")M("Lau-太阳之井","1")M("红了眼眶-血色十字军","1")M("罐子-冬寒","1")M("噬魔者-图拉扬","1")M("丿长空-凤凰之神","1")M("九筱妖-布兰卡德","1")M("演员壹号-影之哀伤","1")M("想静静-贫瘠之地","1")M("亻壬忄生-安苏","1")M("王权富贵-海加尔","1")M("颜老师-风暴之鳞","1")M("溟炎-洛丹伦","1")M("时丶光-地狱咆哮","1")M("随心而遇-战歌","1")M("谎言-加尔","1")'
 	..'\n'..
 	'/run UIErrorsFrame:AddMessage("CD君组你后一定要点 H 按钮，插件会自动为你切换10人英雄难度！看到切换提示后进本。")'
 	..'\n'..
-	'/E 已开始【决战奥格-小吼（H难度）】的CD云分流排队，版本1.407QX(219.8.2))';
+	'/E 已开始【决战奥格-小吼（H难度）】的CD云分流排队，版本1.408QX(2019.12.18))';
 	
 	FreeMountCD_DingMacro =   --'/click CD12M'
 	'/script SetRaidDifficultyID(14)'
 	..'\n'..
 	'/script SetLegacyRaidDifficultyID(4)'
 	..'\n'..
-	'/run local M=function(a,b)SendChatMessage(b,"WHISPER",nil,a)end;M("郑矢娜-战歌","9")M("BLCDX-战歌","组")M("月色下的乞丐-辛达苟萨","44296")M("月娜-战歌","1")M("噬魔者-图拉扬","1")M("亻壬忄生-安苏","1")M("溟炎-洛丹伦","1")M("时丶光-地狱咆哮","1")M("随心而遇-战歌","1")M("谎言-加尔","1")'
+	'/run local M=function(a,b)SendChatMessage(b,"WHISPER",nil,a)end;M("郑矢娜-战歌","9")M("BLCDX-战歌","组")M("月色下的乞丐-辛达苟萨","44296")M("月娜-战歌","1")M("噬魔者-图拉扬","1")M("亻壬忄生-安苏","1")M("溟炎-洛丹伦","1")M("时丶光-地狱咆哮","1")M("随心而遇-战歌","1")M("谎言-加尔","1")M("哞哞呜呜-瓦里安","1")'
 	..'\n'..
 	'/run UIErrorsFrame:AddMessage("如要染英雄难度请在被组后点 H 按钮，CD君切换10人英雄难度！看到切换提示后进本。")'
 	..'\n'..
-	'/E 已开始【定向CD（普通、H双难度）】的CD云分流排队，版本1.407QX(219.8.2))' ;
+	'/E 已开始【定向CD（普通、H双难度）】的CD云分流排队，版本1.408QX(2019.12.18))' ;
 	
 	FreeMountCD_CheckMacro =   --/click CD9M
 	'/E 开始查询CD君在线状态……'
@@ -263,7 +263,7 @@ elseif UnitFactionGroup("player") == "Horde" then
 	..'\n'..
 	'/W 月娜-战歌 在'
 	..'\n'..
-	'/W 大浪七号-格瑞姆巴托 在'
+	'/W 哞哞呜呜-瓦里安 在'
 	..'\n'..
 	'/W 假中医-死亡之翼 在'
 	..'\n'..
@@ -319,7 +319,7 @@ else return end
   	GameTooltip:SetOwner(FreeMountCD_Main, "ANCHOR_TOP")
   	GameTooltip:AddLine("                【《魔兽世界》免费CD云分流终端】", 1, 2, 0)
   	GameTooltip:AddLine("                              【观星者】（国服）", 1, 0, 1)
-  	GameTooltip:AddLine("  【版本1.407QX 群内三轨疾速版.（8.2.0）】", 0,6,6)
+  	GameTooltip:AddLine("  【版本1.408QX 群内三轨疾速版.（8.3.0）】", 0,6,6)
   	GameTooltip:AddLine("  【本终端是提供《魔兽世界》免费低级本进度功能的小工具插件】", 1, 0.4,0.8)
 		GameTooltip:AddLine("  【此插件及其提供的服务永久免费，不收取任何形式的费用！】", 1, 0,0)
 		GameTooltip:AddLine("  【任何人不得冒充插件版权拥有者、以有偿形式分享本插件！】", 1, 0,0)

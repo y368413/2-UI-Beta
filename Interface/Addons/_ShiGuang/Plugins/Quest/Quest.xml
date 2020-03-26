@@ -5,7 +5,7 @@
 	<Script file="BarrelsOEasy.lua"/>
 	<Script file="DarkmoonFaire.lua"/>
 	<Script file="Quest_Complete.lua"/>
-	<!--Script file="QuestBindings.lua"/-->
+	<Script file="QuestBindings.lua"/>
 	<Script file="AngryWorldQuest.lua"/>
 	<Script file="WorldmapRewardIcon.lua"/>
 	<CheckButton name="ClassicQuestLogCheckButtonTemplate" inherits="UICheckButtonTemplate" virtual="true">
@@ -478,5 +478,22 @@
 			</OnMouseUp>
 		</Scripts>
 	</Frame>
+    <Button name="QuestBindingsButtonTemplate" virtual="true">
+        <Size x="16" y="16"/>
+        <Layers>
+            <Layer level="ARTWORK">
+                <FontString parentKey="key" inherits="qb_NumberFont">
+                    <Anchors>
+                        <Anchor point="CENTER" x="0.5" y="-0.5"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnClick>
+                self:GetParent():Click()
+            </OnClick>
+        </Scripts>
+    </Button>
 	<Script file="ClassicQuestLog.lua"/>
 </Ui>

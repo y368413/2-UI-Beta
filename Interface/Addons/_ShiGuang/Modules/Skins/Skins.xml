@@ -3,6 +3,8 @@
 	<Script file="ObjectiveTracker.lua"/>
 	<Script file="PetBattleUI.lua"/>
 	<Script file="CharacterFrame.lua"/>
+	<Script file="EquipmentFlyout.lua"/>
+	<Script file="Blizzard_InspectUI.lua"/>
 	<Script file="Loot.lua"/>
 	
 	<Script file="AddOns\Bigwigs.lua"/>

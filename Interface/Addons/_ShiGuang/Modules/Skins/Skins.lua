@@ -2,6 +2,40 @@
 local M, R, U, I = unpack(ns)
 local S = M:RegisterModule("Skins")
 
+local pairs, wipe = pairs, wipe
+local IsAddOnLoaded = IsAddOnLoaded
+
+R.defaultThemes = {}
+R.themes = {}
+
+function S:LoadDefaultSkins()
+	if IsAddOnLoaded("AuroraClassic") or IsAddOnLoaded("Aurora") then return end
+
+	-- Reskin Blizzard UIs
+	for _, func in pairs(R.defaultThemes) do
+		func()
+	end
+	wipe(R.defaultThemes)
+
+	--if not MaoRUIPerDB["Skins"]["BlizzardSkins"] then return end
+
+	for addonName, func in pairs(R.themes) do
+		local isLoaded, isFinished = IsAddOnLoaded(addonName)
+		if isLoaded and isFinished then
+			func()
+			R.themes[addonName] = nil
+		end
+	end
+
+	M:RegisterEvent("ADDON_LOADED", function(_, addonName)
+		local func = R.themes[addonName]
+		if func then
+			func()
+			R.themes[addonName] = nil
+		end
+	end)
+end
+
 function S:OnLogin()
    ----BOTTOM
    if MaoRUIPerDB["Skins"]["InfobarLine"] then
@@ -14,13 +48,12 @@ function S:OnLogin()
    Bottomline:SetBackdrop({bgFile = "Interface\\AddOns\\_ShiGuang\\Media\\Modules\\line"}) 
    Bottomline:SetBackdropColor(I.r, I.g, I.b, 0.8)
    end
-   
+
+	self:LoadDefaultSkins()
 	-- Add Skins
 	self:QuestTracker()
 	self:QuestTrackerSkinTitle()
 	self:PetBattleUI()
-	self:CharacterFrameUI()
-	--self:InspectFrameUI()
 	self:DBMSkin()
 	self:BigWigsSkin()
 	self:LootEx()		-- 拾取增强

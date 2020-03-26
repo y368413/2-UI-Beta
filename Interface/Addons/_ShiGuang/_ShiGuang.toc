@@ -2,13 +2,13 @@
 ## Title:-|cFFFFFF00 2|r|cFFFF0000 UI |r-
 ## Author: ShiGuang、TuTu、Siweia
 ## Notes: Time Flies...
-## Version: 3.4.7
+## Version: 3.4.8
 ## SavedVariables: MaoRUIDB,ShiGuangDB,CastbarsDB,CurrencyTrackingDB,VLegionToDo,DialogKeyDB,AzeritePowerWeightsDB,WQADB
 ## SavedVariablesPerCharacter: MaoRUIPerDB,ShiGuangPerDB,DEX_SAVE
 
 ## X-Support: 8.3.0
 ## X-Repple: 2 UI
-## X-StatsVersion: 20200308
+## X-StatsVersion: 20200319
 ## X-LoadOn-Always: Delayed
 ## X-Website: https://github.com/y368413/2-UI
 ## X-Credits: abin, ape47, Coolkid, Elv, Freebaser, Haleth, Haste, Loshine, Monolit, Neal, Neavo, p3lim, Qulight, Ray, superk, Tukz, Tuller, Warbaby, yleaf, Zork, EK, Rubgrsch, siweia & "PaoPao"...
