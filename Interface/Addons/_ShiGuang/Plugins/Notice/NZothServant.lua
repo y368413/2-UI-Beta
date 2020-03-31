@@ -5,6 +5,9 @@ local zmhx = 0
 local fhzy = 0
 local tlcx = 0
 local bkyydzx = 0 
+local sum = 0
+local flag = 0
+local i = 0
 
 local eventSwitch = {
 	["SPELL_AURA_APPLIED"] = true,
@@ -43,12 +46,27 @@ end)
 
 function lrnFrame:SpellDamage(timestamp, eventType, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, spellId, spellName, spellSchool, aAmount)
 	if srcName == GetUnitName("player",true) and spellId == 317159 then --317159
-		if FirstTime < timestamp - 2 then
-			FirstTime = timestamp
+		--if FirstTime < timestamp - 2 then
+			--FirstTime = timestamp
 			--SendChatMessage("开炮 "..string.format("%.1f", aAmount*0.001).."k", "EMOTE")--("SAY", "WHISPER", "EMOTE", "CHANNEL", "PARTY", "INSTANCE_CHAT", "GUILD", "OFFICER", "YELL", "RAID", "RAID_WARNING", "AFK", "DND")
-			RaidNotice_AddMessage(RaidWarningFrame, "|cffff0000开炮 |r"..string.format("%.1f", aAmount*0.0001).."万", ChatTypeInfo["RAID_WARNING"])
+			--RaidNotice_AddMessage(RaidWarningFrame, "|cffff0000开炮 |r"..string.format("%.1f", aAmount*0.0001).."万", ChatTypeInfo["RAID_WARNING"])
 			--PlaySoundFile("Interface/AddOns/NZothServant/kaipao.ogg")
+		--end
+		sum = sum + aAmount
+		i = i + 1
+		if flag == 0 then 
+			FirstTime = timestamp
+			flag =1
 		end
+	end
+
+	if timestamp - FirstTime > 2 and flag == 1 then
+		flag = 0
+		--SendChatMessage("暮光炮击中了"..string.format("%.d",i ).."个敌人，打出了" ..string.format("%.1f", sum*0.0001).."万的伤害，太香啦", "EMOTE")
+		RaidNotice_AddMessage(RaidWarningFrame, "|cffff0000开炮|r - "..string.format("%.d",i ).."个 - "..string.format("%.1f", aAmount*0.0001).."万", ChatTypeInfo["RAID_WARNING"])
+		sum = 0
+		i = 0
+	end
 	elseif srcName == GetUnitName("player",true) and spellId == 316835 then
 		if chuxu < timestamp - 10 then
 			chuxu = timestamp
@@ -82,7 +100,7 @@ function lrnFrame:lrdebuff()
 	  if name == "贪婪触须" and tlcx < etime - 5 and false then
 	  	tlcx = etime
 	    --SendChatMessage("贪婪触须!", "EMOTE")
-	    IErrorsFrame:AddMessage("贪婪触须!",1,0,0,5)
+	    UIErrorsFrame:AddMessage("贪婪触须!",1,0,0,5)
 	    --PlaySoundFile("Interface/AddOns/NZothServant/BassDrop.ogg")
 	  end
 	end
@@ -91,7 +109,7 @@ function lrnFrame:lrdebuff()
 	  if name == "不可言喻的真相" and bkyydzx < etime - 10 then
 	  	bkyydzx = etime
 	  	--SendChatMessage("不可言喻的真相!", "EMOTE")
-	  	IErrorsFrame:AddMessage("不可言喻的真相!",1,0,0,5)
+	  	UIErrorsFrame:AddMessage("不可言喻的真相!",1,0,0,5)
 	    --print(("%d=%s, %s, %.2f minutes left."):format(i,name,icon,(etime-GetTime())/60))
 	  end
 	end

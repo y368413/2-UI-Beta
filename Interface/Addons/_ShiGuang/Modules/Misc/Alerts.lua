@@ -126,11 +126,11 @@ end
 function MISC:RareAlert()
 	if MaoRUIPerDB["Misc"]["RareAlerter"] then
 		self:RareAlert_CheckInstance()
-		M:RegisterEvent("PLAYER_ENTERING_WORLD", self.RareAlert_CheckInstance)
+		M:RegisterEvent("UPDATE_INSTANCE_INFO", self.RareAlert_CheckInstance)
 	else
 		wipe(cache)
 		M:UnregisterEvent("VIGNETTE_MINIMAP_UPDATED", self.RareAlert_Update)
-		M:UnregisterEvent("PLAYER_ENTERING_WORLD", self.RareAlert_CheckInstance)
+		M:UnregisterEvent("UPDATE_INSTANCE_INFO", self.RareAlert_CheckInstance)
 	end
 end
 

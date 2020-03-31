@@ -67,7 +67,8 @@ local defaultSettings = {
 		InstanceAuras = true,
 		RaidDebuffScale = 1,
 		SpecRaidPos = false,
-		RaidClassColor = true,
+		--RaidClassColor = true,
+		RaidHealthColor = 2,
 		HorizonRaid = false,
 		HorizonParty = false,
 		ReverseRaid = false,
@@ -100,6 +101,7 @@ local defaultSettings = {
 		UFTextScale = 1,
 		PartyAltPower = true,
 		SmoothAmount = .3,
+		RaidTextScale = 0.85, 
 		PlayerWidth = 245,
 		PlayerHeight = 24,
 		BossWidth = 120,
@@ -136,6 +138,7 @@ local defaultSettings = {
 		ChatWidth = 360,
 		ChatHeight = 121,
 		BlockStranger = false,
+		AllowFriends = true,
 		Outline = false,
 	},
 	Map = {
@@ -382,10 +385,6 @@ loader:SetScript("OnEvent", function(self, _, addon)
 end)
 
 -- Callbacks
---local function setupBagFilter()
-	--G:SetupBagFilter(guiPage[7])
---end
-
 local function setupCastbar()
 	G:SetupCastbar(guiPage[4])
 end
@@ -419,20 +418,6 @@ local function setupAuraWatch()
 	SlashCmdList["NDUI_AWCONFIG"]()
 end
 
---local function updateBagSortOrder()
-	--SetSortBagsRightToLeft(not MaoRUIPerDB["Bags"]["ReverseSort"])
---end
-
---local function updateBagStatus()
-	--M:GetModule("Bags"):UpdateAllBags()
-
-	--local label = BAG_FILTER_EQUIPMENT
-	--if MaoRUIPerDB["Bags"]["ItemSetFilter"] then
-		--label = U["Equipement Set"]
-	--end
-	--_G.NDui_BackpackEquipment.label:SetText(label)
-	--_G.NDui_BackpackBankEquipment.label:SetText(label)
---end
 
 local function updateActionbarScale()
 	M:GetModule("Actionbar"):UpdateAllScale()
@@ -508,6 +493,10 @@ end
 
 local function updateUFTextScale()
 	M:GetModule("UnitFrames"):UpdateTextScale()
+end
+
+local function updateRaidTextScale()
+	M:GetModule("UnitFrames"):UpdateRaidTextScale()
 end
 
 local function refreshRaidFrameIcons()
@@ -670,12 +659,14 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 	[3] = {
 		{1, "UFs", "RaidFrame", "|cff00cc4c"..U["UFs RaidFrame"], false, false, setupRaidFrame, nil, U["RaidFrameTip"]},
 		{1, "UFs", "PartyFrame", "|cff00cc4c"..U["UFs PartyFrame"], true},
-		{1, "UFs", "PartyPetFrame", "|cff00cc4c"..U["UFs PartyPetFrame"], true, true},
-		{1, "UFs", "Arena", U["Arena Frame"]},
+		{1, "UFs", "Arena", U["Arena Frame"], true, true},
+		--{3, "UFs", "NumGroups", U["Num Groups"], true, true, {4, 8, 0}},
+		{1, "UFs", "PartyPetFrame", "|cff00cc4c"..U["UFs PartyPetFrame"]},
 		{1, "UFs", "SimpleMode", "|cff00cc4c"..U["Simple RaidFrame"], true},
 		{1, "UFs", "SimpleModeSortByRole", U["SimpleMode SortByRole"], true, true},
 		{1, "UFs", "ShowTeamIndex", U["RaidFrame TeamIndex"]},
-		{1, "UFs", "RaidClassColor", U["ClassColor RaidFrame"], true},
+		--{1, "UFs", "RaidClassColor", U["ClassColor RaidFrame"]},
+		{1, "UFs", "PartyWatcher", U["UFs PartyWatcher"], true, nil, setupPartyWatcher},
 		{1, "UFs", "PWOnRight", U["PartyWatcherOnRight"], true, true},
 		{1, "UFs", "HorizonParty", U["Horizon PartyFrame"]},
 		{1, "UFs", "HorizonRaid", U["Horizon RaidFrame"], true},		
@@ -686,17 +677,15 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "UFs", "RaidClickSets", "|cff00cc4c"..U["Enable ClickSets"], nil, nil, setupClickCast},
 		{1, "UFs", "InstanceAuras", "|cff00cc4c"..U["Instance Auras"], true, nil, setupRaidDebuffs},
 		{1, "UFs", "RaidBuffIndicator", "|cff00cc4c"..U["RaidBuffIndicator"], true, true, setupBuffIndicator, nil, U["RaidBuffIndicatorTip"]},
-		{1, "UFs", "PartyWatcher", U["UFs PartyWatcher"], nil, nil, setupPartyWatcher},
-		{1, "UFs", "AurasClickThrough", U["RaidAuras ClickThrough"], true},
-		{1, "UFs", "RuneTimer", U["UFs RuneTimer"], true, true},
-		{},--blank
+		{1, "UFs", "AurasClickThrough", U["RaidAuras ClickThrough"]},
+		{1, "UFs", "RuneTimer", U["UFs RuneTimer"], true},
 		{4, "UFs", "RaidHPMode", U["RaidHPMode"].."*", false, false, {U["DisableRaidHP"], U["RaidHPPercent"], U["RaidHPCurrent"], U["RaidHPLost"]}, updateRaidNameText},
-		{4, "UFs", "HealthColor", U["HealthColor"], true, false, {U["Default Dark"], U["ClassColorHP"], U["GradientHP"]}},
+		{4, "UFs", "RaidHealthColor", U["HealthColor"], true, false, {U["Default Dark"], U["ClassColorHP"], U["GradientHP"]}},
 		{4, "UFs", "BuffIndicatorType", U["BuffIndicatorType"].."*", true, true, {U["BI_Blocks"], U["BI_Icons"], U["BI_Numbers"]}, refreshRaidFrameIcons},
 		{3, "UFs", "BuffIndicatorScale", U["BuffIndicatorScale"].."*", false, false, {1, 2, 1}, refreshRaidFrameIcons},
 		{3, "UFs", "RaidDebuffScale", U["RaidDebuffScale"].."*", true, false, {1, 2, 1}, refreshRaidFrameIcons},
-		{3, "UFs", "NumGroups", U["Num Groups"], true, true, {4, 8, 0}},
-		--{3, "UFs", "UFTextScale", U["UFTextScale"], true, {.8, 2, 2}, updateUFTextScale},
+		{3, "UFs", "RaidTextScale", U["UFTextScale"], true, true, {.8, 1.5, 2}, updateRaidTextScale},
+		--{3, "UFs", "UFTextScale", U["UFTextScale"], true, {.8, 1.5, 2}, updateUFTextScale},
 	},
 	[4] = {
 		{1, "AuraWatch", "Enable", "|cff00cc4c"..U["Enable AuraWatch"], false, false, setupAuraWatch},
@@ -714,12 +703,10 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "Misc", "EnemyCD", U["Enemy CD"], true, true},
 		{1, "Auras", "Totems", U["Enable Totems"]},
 		{1, "Auras", "ReverseBuffs", U["ReverseBuffs"], true},
-		{1, "Auras", "ReverseDebuffs", U["ReverseDebuffs"], true, true},
-		{1, "Auras", "Reminder", U["Enable Reminder"].."*", false, false, nil, updateReminder},		
+		{1, "Auras", "ReverseDebuffs", U["ReverseDebuffs"], true, true},	
 		--{1, "UFs", "Castbars", "|cff00cc4c"..U["UFs Castbar"], false, false, setupCastbar},
-		{},--blank	
-		{3, "Auras", "BuffSize", U["BuffSize"], true, false, {24, 40, 0}},
-		{3, "Auras", "DebuffSize", U["DebuffSize"], true, true, {24, 40, 0}},
+		{3, "Auras", "BuffSize", U["BuffSize"], false, false, {24, 40, 0}},
+		{3, "Auras", "DebuffSize", U["DebuffSize"], true, false, {24, 40, 0}},
 		{3, "Auras", "BuffsPerRow", U["BuffsPerRow"], false, false, {10, 20, 0}},
 		{3, "Auras", "DebuffsPerRow", U["DebuffsPerRow"], true, false, {10, 16, 0}},
 		{3, "AuraWatch", "IconScale", U["AuraWatch IconScale"], true, true, {.8, 2, 1}},
@@ -750,6 +737,7 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "Misc", "HideTalking", U["No Talking"]},
 		{1, "Misc", "HideBanner", U["Hide Bossbanner"], true},
 		{1, "Misc", "HideErrors", U["Hide Error"].."*", true, true, nil, updateErrorBlocker},
+		{1, "Chat", "AllowFriends", U["AllowFriendsSpam"].."*", false, false, nil, nil, U["AllowFriendsSpamTip"]},
 		{},--blank
 		{1, "Chat", "Lock", "|cff00cc4c"..U["Lock Chat"]},
 		{3, "Chat", "ChatWidth", U["LockChatWidth"].."*", true, false, {200, 600, 0}, updateChatSize},
@@ -821,6 +809,7 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 	  {1, "Misc", "PlacedItemAlert", U["Placed Item Alert"], true, false},
 		--{1, "Misc", "RareAlertInWild", U["RareAlertInWild"].."*", true},
 	  --{1, "Misc", "CrazyCatLady", U["Death Alarm"]},
+	  {1, "Auras", "Reminder", U["Enable Reminder"].."*", true, true, nil, updateReminder},	
 		{},--blank
 	  {1, "Misc", "AutoMark", U["Auto Mark"]},
 	  {1, "Misc", "kAutoOpen", U["kAutoOpen"], true},

@@ -230,14 +230,14 @@ function Teleporter_OnEvent(self, event, ...)
 		if IsVisible then
 			TeleporterUpdateAllButtons()
 		end
-	--elseif event == "PLAYER_REGEN_DISABLED" then
+	elseif event == "PLAYER_REGEN_DISABLED" then
 		-- Can't close while in combat due to secure buttons, so disable Esc key
-		--if TeleporterParentFrame then
-			--local frameIndex = TeleporterFindInSpecialFrames()
-			--if frameIndex then
-				--tremove(UISpecialFrames,frameIndex);
-			--end
-		--end
+		if TeleporterParentFrame then
+			local frameIndex = TeleporterFindInSpecialFrames()
+			if frameIndex then
+				tremove(UISpecialFrames,frameIndex);
+			end
+		end
 	elseif event == "PLAYER_REGEN_ENABLED" then
 		if TeleporterParentFrame then
 			if not TeleporterFindInSpecialFrames() then

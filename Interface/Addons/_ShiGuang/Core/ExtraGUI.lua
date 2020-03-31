@@ -788,7 +788,7 @@ function G:SetupRaidFrame(parent)
 
 	local function resizeRaidFrame()
 		for _, frame in pairs(ns.oUF.objects) do
-			if frame.mystyle == "raid" and not frame.isPartyFrame then
+			if frame.mystyle == "raid" and not frame.isPartyFrame and not frame.isPartyPet then
 				if MaoRUIPerDB["UFs"]["SimpleMode"] then
 					local scale = MaoRUIPerDB["UFs"]["SimpleRaidScale"]/10
 					local frameWidth = 100*scale
@@ -818,7 +818,7 @@ function G:SetupRaidFrame(parent)
 
 	local function resizePartyPetFrame()
 		for _, frame in pairs(ns.oUF.objects) do
-			if frame.mystyle == "partypet" then
+			if frame.isPartyPet then
 				SetUnitFrameSize(frame, "PartyPet")
 			end
 		end

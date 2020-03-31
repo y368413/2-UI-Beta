@@ -146,6 +146,7 @@ local PetBattleFrameHider = CreateFrame("Frame", nil, UIParent, "SecureHandlerSt
 PetBattleFrameHider:SetAllPoints()
 PetBattleFrameHider:SetFrameStrata("LOW")
 RegisterStateDriver(PetBattleFrameHider, "visibility", "[petbattle] hide; show")
+A.PetBattleFrameHider = PetBattleFrameHider
 
 -- BuildICON
 local function tooltipOnEnter(self)
@@ -178,19 +179,19 @@ local function BuildICON(iconSize)
 
 	local frame = CreateFrame("Frame", nil, PetBattleFrameHider)
 	frame:SetSize(iconSize, iconSize)
-	M.SetBD(frame)
+	frame.bg = M.SetBD(frame)
 
 	frame.Icon = frame:CreateTexture(nil, "ARTWORK")
-	frame.Icon:SetAllPoints()
+	frame.Icon:SetInside(frame.bg)
 	frame.Icon:SetTexCoord(unpack(I.TexCoord))
 
 	frame.Cooldown = CreateFrame("Cooldown", nil, frame, "CooldownFrameTemplate")
-	frame.Cooldown:SetAllPoints()
+	frame.Cooldown:SetInside(frame.bg)
 	frame.Cooldown:SetReverse(true)
 
 	local parentFrame = CreateFrame("Frame", nil, frame)
 	parentFrame:SetAllPoints()
-	parentFrame:SetFrameLevel(frame:GetFrameLevel() + 5)
+	parentFrame:SetFrameLevel(frame:GetFrameLevel() + 6)
 
 	frame.Spellname = M.CreateFS(parentFrame, 12, "", false, "BOTTOM", 0, -3)
 	frame.Count = M.CreateFS(parentFrame, iconSize*.55, "", false, "BOTTOMRIGHT", 6, -3)
@@ -202,11 +203,11 @@ local function BuildICON(iconSize)
 	frame:Hide()
 	return frame
 end
+
 -- BuildTEXT
 local function BuildTEXT(iconSize)
 	local frame = CreateFrame("Frame", nil, PetBattleFrameHider)
 	frame:SetSize(iconSize, iconSize)
-	--M.CreateSD(Frame, 3, 3)
 
 	frame.Icon = frame:CreateTexture(nil, "ARTWORK")
 	frame.Icon:SetAllPoints()
@@ -220,6 +221,7 @@ local function BuildTEXT(iconSize)
 	frame:Hide()
 	return frame
 end
+
 -- Bar mode
 local function BuildBAR(barWidth, iconSize)
 	local frame = CreateFrame("Frame", nil, PetBattleFrameHider)
@@ -248,6 +250,7 @@ local function BuildBAR(barWidth, iconSize)
 	frame:Hide()
 	return frame
 end
+
 -- BuildBAR2
 local function BuildBAR2(barWidth, iconSize)
 	local frame = CreateFrame("Frame", nil, PetBattleFrameHider)
@@ -775,6 +778,8 @@ end
 -- Gift of the Titans
 local hasTitan
 function A:AuraWatch_OnUnitAura()
+	if not IntCD.MoveHandle then return end
+
 	for i = 1, 40 do
 		local name, _, _, _, _, expires, _, _, _, spellID = UnitBuff("player", i)
 		if not name then break end
@@ -788,4 +793,13 @@ function A:AuraWatch_OnUnitAura()
 	end
 	hasTitan = false
 end
-M:RegisterEvent("UNIT_AURA", A.AuraWatch_OnUnitAura, "player")
+
+function A:AuraWatch_CheckInstance()
+	local diffID = select(3, GetInstanceInfo())
+	if diffID == 152 then
+		M:RegisterEvent("UNIT_AURA", A.AuraWatch_OnUnitAura, "player")
+	else
+		M:UnregisterEvent("UNIT_AURA", A.AuraWatch_OnUnitAura)
+	end
+end
+M:RegisterEvent("UPDATE_INSTANCE_INFO", A.AuraWatch_CheckInstance)

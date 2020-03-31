@@ -99,7 +99,8 @@ local function CreatePartyStyle(self)
 end
 
 local function CreatePartyPetStyle(self)
-	self.mystyle = "partypet"
+	self.mystyle = "raid"
+	self.isPartyPet = true
 	self.Range = {
 		insideAlpha = 1, outsideAlpha = .4,
 	}
@@ -127,6 +128,7 @@ function UF:OnLogin()
 	local partyWidth, partyHeight = MaoRUIPerDB["UFs"]["PartyWidth"], MaoRUIPerDB["UFs"]["PartyHeight"]
 	local showPartyPetFrame = MaoRUIPerDB["UFs"]["PartyPetFrame"]
 	local petWidth, petHeight = MaoRUIPerDB["UFs"]["PartyPetWidth"], MaoRUIPerDB["UFs"]["PartyPetHeight"]
+	local showTeamIndex = MaoRUIPerDB["UFs"]["ShowTeamIndex"]
 
 	if MaoRUIPerDB["Nameplate"]["Enable"] then
 		self:SetupCVars()
@@ -341,13 +343,13 @@ function UF:OnLogin()
 				groups[i] = CreateGroup("oUF_Raid"..i, i)
 				if i == 1 then
 					if horizonRaid then
-						raidMover = M.Mover(groups[i], U["RaidFrame"], "RaidFrame", {"BOTTOMLEFT", UIParent, 3, 160}, (raidWidth+5)*5, (raidFrameHeight+(MaoRUIPerDB["UFs"]["ShowTeamIndex"] and 21 or 12))*numGroups)
+						raidMover = M.Mover(groups[i], U["RaidFrame"], "RaidFrame", {"BOTTOMLEFT", UIParent, 3, 160}, (raidWidth+5)*5-6, (raidFrameHeight+(showTeamIndex and 25 or 6))*numGroups - (showTeamIndex and 25 or 6))
 						if reverse then
 							groups[i]:ClearAllPoints()
 							groups[i]:SetPoint("BOTTOMLEFT", raidMover)
 						end
 					else
-						raidMover = M.Mover(groups[i], U["RaidFrame"], "RaidFrame", {"BOTTOMLEFT", UIParent, 3, 160}, (raidWidth+5)*numGroups, (raidFrameHeight+8)*5)
+						raidMover = M.Mover(groups[i], U["RaidFrame"], "RaidFrame", {"BOTTOMLEFT", UIParent, 3, 160}, (raidWidth+5)*numGroups-6, (raidFrameHeight+6)*5-6)
 						if reverse then
 							groups[i]:ClearAllPoints()
 							groups[i]:SetPoint("TOPRIGHT", raidMover)
@@ -356,9 +358,9 @@ function UF:OnLogin()
 				else
 					if horizonRaid then
 						if reverse then
-							groups[i]:SetPoint("BOTTOMLEFT", groups[i-1], "TOPLEFT", 0, MaoRUIPerDB["UFs"]["ShowTeamIndex"] and 21 or 12)
+							groups[i]:SetPoint("BOTTOMLEFT", groups[i-1], "TOPLEFT", 0, showTeamIndex and 21 or 6)
 						else
-							groups[i]:SetPoint("TOPLEFT", groups[i-1], "BOTTOMLEFT", 0, MaoRUIPerDB["UFs"]["ShowTeamIndex"] and -21 or -12)
+							groups[i]:SetPoint("TOPLEFT", groups[i-1], "BOTTOMLEFT", 0, showTeamIndex and -21 or -6)
 						end
 					else
 						if reverse then
@@ -369,7 +371,7 @@ function UF:OnLogin()
 					end
 				end
 
-				if MaoRUIPerDB["UFs"]["ShowTeamIndex"] then
+				if showTeamIndex then
 					local parent = _G["oUF_Raid"..i.."UnitButton1"]
 					local teamIndex = M.CreateFS(parent, 12, format(GROUP_NUMBER, i))
 					teamIndex:ClearAllPoints()

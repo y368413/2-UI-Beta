@@ -238,12 +238,14 @@ local list = {
 		{AuraID = 302952, UnitID = "player"},	-- 现实流转
 		{AuraID = 295137, UnitID = "player", Flash = true},	-- 源血
 		{AuraID = 311203, UnitID = "player"},	-- 光荣时刻
+		{AuraID = 311202, UnitID = "player"},	-- 收割火焰
 		-- 腐蚀
 		{AuraID = 316823, UnitID = "player"},	-- 虚空仪式
 		{AuraID = 318211, UnitID = "player"},	-- 活力涌动
 		{AuraID = 318219, UnitID = "player"},	-- 致命之势
 		{AuraID = 317020, UnitID = "player", Flash = true, Combat = true},	-- 虚空回响
 		{AuraID = 318378, UnitID = "player", Flash = true},	-- 坚定决心，橙披
+		{AuraID = 317859, UnitID = "player"},	-- 龙族强化，橙披
 		-- 炼金石
 		{AuraID = 60233, UnitID = "player"},	-- 敏捷
 		{AuraID = 60229, UnitID = "player"},	-- 力量
@@ -310,6 +312,7 @@ local list = {
 		{AuraID = 319695, UnitID = "player", Flash = true},	-- 壮美幻象
 	-- 5人本
 		{AuraID = 311390, UnitID = "player"},	-- 疯狂：昆虫恐惧症，幻象
+		{AuraID = 306583, UnitID = "player"},	-- 灌铅脚步
 		{AuraID = 313698, UnitID = "player", Flash = true},	-- 泰坦之赐
 		{AuraID = 314478, UnitID = "player"},	-- 倾泻恐惧
 		{AuraID = 314483, UnitID = "player"},	-- 倾泻恐惧
@@ -642,6 +645,7 @@ local list = {
 	},
 	["Warning"] = {			-- 目标重要光环组
 	-- 幻象
+		{AuraID = 304975, UnitID = "target", Value = true},	-- 虚空哀嚎，吸收盾
 		{AuraID = 319643, UnitID = "target", Value = true},	-- 虚空哀嚎，吸收盾
 	-- 5人本
 		{AuraID = 226510, UnitID = "target"},	-- 血池回血
