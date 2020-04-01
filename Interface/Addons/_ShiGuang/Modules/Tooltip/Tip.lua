@@ -417,7 +417,7 @@ function TT:OnLogin()
 	self:SetupTooltipID()
 	self:TargetedInfo()
 	self:AzeriteArmor()
-	self:CorruptionRank()
+	--self:CorruptionRank()
 end
 
 -- Tooltip Skin Registration

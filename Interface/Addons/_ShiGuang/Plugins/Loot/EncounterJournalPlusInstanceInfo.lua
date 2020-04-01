@@ -18,6 +18,7 @@ local function GetSavedInstances()
 
   for i = 1, GetNumSavedInstances() do
     local name, id, _, difficulty, locked, extended, _, isRaid, maxPlayers, difficultyName, numEncounters, encounterProgress = GetSavedInstanceInfo(i);
+        if name == "围攻伯拉勒斯" then numEncounters = 4 end
     local instances = isRaid and db.raids or db.dungeons;
 
     if instances[name] == nil then
@@ -214,13 +215,17 @@ local function RenderInstanceInfo(instanceButton, savedInstance)
     encounterProgress = encounterProgress .. "\n" .. string.format("%s/%s", instance.encounterProgress, instance.numEncounters);
   end);
 
-  difficultyButton:SetText(difficulty);
-  difficultyButton:SetWidth(difficultyButton:GetStringWidth() * 1.25);
-  difficultyButton:Show();
+    if difficultyButton then
+        difficultyButton:SetText(difficulty);
+        difficultyButton:SetWidth(difficultyButton:GetStringWidth() * 1.25);
+        difficultyButton:Show();
+    end
 
-  encounterProgressButton:SetText(encounterProgress);
-  encounterProgressButton:SetWidth(encounterProgressButton:GetStringWidth() * 1.25);
-  encounterProgressButton:Show();
+    if encounterProgressButton then
+        encounterProgressButton:SetText(encounterProgress);
+        encounterProgressButton:SetWidth(encounterProgressButton:GetStringWidth() * 1.25);
+        encounterProgressButton:Show();
+    end
 end
 
 local function RenderEncounterJournalEncounterBossInfo(index)
@@ -264,7 +269,7 @@ local function RenderEncounterJournalInstances()
   local dungeonsTab, raidsTab = GetEncounterJournalInstanceTabs();
   local savedInstances = savedDB[(raidsTab ~= nil and not raidsTab:IsEnabled()) and "raids" or "dungeons"];
 
-  RenderSavedInstancesOverview(savedDB);
+  --RenderSavedInstancesOverview(savedDB);
 
   HandleEncounterJournalScrollInstances(function(instanceButton)
     local instanceName = EJ_GetInstanceInfo(instanceButton.instanceID);
@@ -319,10 +324,14 @@ function EncounterJournalPlus_InstanceInfo_OnEvent(self, event, arg1)
       end
     end);
 
-    EncounterJournalEncounter_OnHook();
-    EncounterJournalTierDropdown_OnSelect();
+    --EncounterJournalEncounter_OnHook();
+    --EncounterJournalTierDropdown_OnSelect();
     EncounterJournalInstanceTab_OnClick();
   elseif event == "UPDATE_INSTANCE_INFO" then
     RenderEncounterJournalInstances();
   end
 end
+
+local frame = CreateFrame("Frame")
+EncounterJournalPlus_InstanceInfo_OnLoad(frame)
+frame:SetScript("OnEvent", EncounterJournalPlus_InstanceInfo_OnEvent)

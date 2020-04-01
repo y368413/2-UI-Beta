@@ -353,7 +353,7 @@ function SetupPlayerForModelScene(...)
     return resultSetupPlayerForModelScene
 end
 
---[[local _DressUpSources = DressUpSources
+local _DressUpSources = DressUpSources
 function DressUpSources(...)
     local resultDressUpSources = _DressUpSources(...)
     DressingWait(0.1, updateSlots, nil)
@@ -372,7 +372,7 @@ local _DressUpMount = DressUpMount
 function DressUpMount(...)
     showButtons(false)
     return _DressUpMount(...)
-end]]
+end
 
 --## Title: Extended Transmog UI  ## Author: Germbread ## Version: 1.1.1
 function ExtTransmog_RebuildFrame()

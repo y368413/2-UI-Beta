@@ -56,6 +56,7 @@ local Cache_ItemBind = {}
 local Cache_ItemGarbage = {}
 local Cache_ItemLevel = {}
 local Cache_Uncollected = {}
+local Cache_CorruptionItems = {}
 
 -----------------------------------------------------------
 -- Utility Functions
@@ -104,6 +105,19 @@ local IsItemAccount = function(button)
 		end
 		local msg = line:GetText()
 		if msg and (string_find(msg, S_ITEM_BOUND2) or string_find(msg, S_ITEM_BOUND3) or string_find(msg, S_ITEM_BOUND4) or string_find(msg, S_ITEM_BOUND5)) then 
+			return true
+		end
+	end
+end
+
+local IsItemCorruption = function(button)
+	for i = 5, 12 do 
+		local line = _G[ScannerTipName.."TextLeft"..i]
+		if (not line) then
+			break
+		end
+		local msg = line:GetText()
+		if msg and strmatch(msg, ITEM_MOD_CORRUPTION) then 
 			return true
 		end
 	end
@@ -218,6 +232,20 @@ local Cache_GetUncollected = function(button)
 	return Uncollected
 end
 
+local Cache_CorruptionRank = function(button)
+	local CorruptionItems = GetPluginContainter(button):CreateTexture()
+	CorruptionItems:SetDrawLayer("OVERLAY")
+	CorruptionItems:SetPoint("BOTTOMLEFT", 0, 0)
+	CorruptionItems:SetSize(16, 16)
+	CorruptionItems:SetTexture([[Interface\ICONS\INV_DARKMOON_EYE]])  --INV_EyeofNzothPet
+	CorruptionItems:Hide()
+
+	-- Store the reference for the next time
+	Cache_CorruptionItems[button] = CorruptionItems
+
+	return CorruptionItems
+end
+
 -----------------------------------------------------------
 -- Main Update
 -----------------------------------------------------------
@@ -236,6 +264,20 @@ local Update = function(self)
 
 		-- Refresh the scanner a single time per update
 		RefreshScanner(self)
+
+		---------------------------------------------------
+		-- CorruptionRank
+		---------------------------------------------------
+		if (itemRarity and itemRarity > 1) then 
+		if IsItemCorruption(self) then  --		if IsCorruptedItem(button) then
+				local CorruptionItems = Cache_CorruptionItems[self] or Cache_CorruptionRank(self)
+				CorruptionItems:Show()
+		else
+			if Cache_CorruptionItems[self] then 
+				Cache_CorruptionItems[self]:Hide()
+			end	
+		end
+		end
 
 		---------------------------------------------------
 		-- Uncollected Appearance
@@ -266,7 +308,7 @@ local Update = function(self)
 				Cache_Uncollected[self]:Hide()
 			end	
 		end
-
+		
 		---------------------------------------------------
 		--[[ ItemBind
 		---------------------------------------------------
@@ -408,6 +450,9 @@ local Update = function(self)
 	else
 		if Cache_Uncollected[self] then 
 			Cache_Uncollected[self]:Hide()
+		end	
+		if Cache_CorruptionItems[self] then 
+			Cache_CorruptionItems[self]:Hide()
 		end	
 		if Cache_ItemLevel[self] then
 			Cache_ItemLevel[self]:SetText("")

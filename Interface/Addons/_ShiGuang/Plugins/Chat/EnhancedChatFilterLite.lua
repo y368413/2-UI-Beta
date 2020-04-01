@@ -1,4 +1,4 @@
--- ECF-lite 8.2.0-2, @Rubgrsch
+-- ECF-lite 8.3.0-3, @Rubgrsch
 
 -- Lua
 local _G = _G
@@ -28,7 +28,7 @@ local UTF8Symbols = {
 	['#']='',['&']='',[';']='',[':']='',['~']='',['\\']='',['=']='',
 	["\t"]='',["\n"]='',["\r"]='',[" "]='',
 }
-local RaidAlertTagList = {"%*%*.+%*%*", "EUI[:_]", "PS 死亡:", "|Hspell.+[=>%- ]> ", "受伤源自 |Hspell", "已打断.*|Hspell", "→|Hspell", "打断：.+|Hspell", "打断.+>.+<", "<iLvl>", "^%-+$", "<EH>", "<友情提示>"}
+local RaidAlertTagList = {"%*%*.+%*%*", "EUI[:_]", "PS 死亡:", "|Hspell.+[=>%- ]+> ", "受伤源自 |Hspell", "已打断.*|Hspell", "→.?|Hspell", "打断：.+|Hspell", "打断.+>.+<", "<iLvl>", "^%-+$", "<EH>", "<友情提示>"}
 local QuestReportTagList = {"任务进度提示", "任务完成[%)%-]", "<大脚", "接受任务[%]:%-]", "进度:.+: %d+/%d+", "【爱不易】", "【有爱插件】","任务.*%[%d+%].+ 已完成!"}
 local RegexCharList = "[().%%%+%-%*?%[%]$^{}]" -- won't work on regex blackWord, but works on others
 
@@ -87,14 +87,12 @@ local function strDiff(sA, sB) -- arrays of bytes
 	return this[len_b+1]/max(len_a,len_b)
 end
 
---Record how many times players are filterd
-local playerCache = {}
-setmetatable(playerCache, {__index=function() return 0 end})
-
+local blockedPlayers = {}
+setmetatable(blockedPlayers, {__index=function() return 0 end})
 local chatLines = {}
 local chatEvents = {["CHAT_MSG_WHISPER"] = 1, ["CHAT_MSG_SAY"] = 2, ["CHAT_MSG_YELL"] = 2, ["CHAT_MSG_EMOTE"] = 2, ["CHAT_MSG_TEXT_EMOTE"] = 2, ["CHAT_MSG_CHANNEL"] = 3, ["CHAT_MSG_PARTY"] = 4, ["CHAT_MSG_PARTY_LEADER"] = 4, ["CHAT_MSG_RAID"] = 4, ["CHAT_MSG_RAID_LEADER"] = 4, ["CHAT_MSG_RAID_WARNING"] = 4, ["CHAT_MSG_INSTANCE_CHAT"] = 4, ["CHAT_MSG_INSTANCE_CHAT_LEADER"] = 4, ["CHAT_MSG_DND"] = 5}
 
---Store which type of channels have which filters enabled, [eventIdx] = {filters}
+--Store which type of channels enabled which filters, [eventIdx] = {filters}
 local eventStatus = {
 --	aggr, 	dnd,	raid,	quest,	normal,	repeat
 	{true,	true,	true,	true,	true,	true},
@@ -110,7 +108,7 @@ local function ECFfilter(Event,msg,player,flags,IsMyFriend,good)
 	if player == playerName or flags == "GM" or flags == "DEV" then return end
 
 	-- filter bad players
-	if not good and playerCache[player] >= 3 then return true end
+	if not good and blockedPlayers[player] >= 3 then return true end
 
 	-- remove color/hypelink
 	local filterString = msg:gsub("|H.-|h(.-)|h","%1"):gsub("|c%x%x%x%x%x%x%x%x",""):gsub("|r","")
@@ -130,7 +128,7 @@ local function ECFfilter(Event,msg,player,flags,IsMyFriend,good)
 	-- AggressiveFilter: Filter AggressiveTags, currently only journal link
 	if filtersStatus[1] and not IsMyFriend then
 		if annoying >= 0.25 and oriLen >= 30 then return true end
-		if msg:find("|Hjournal") then return true end
+		if msg:find("|Hjournal") or msg:find("|HclubTicket") then return true end
 	end
 
 	-- DND and auto-reply
@@ -189,7 +187,7 @@ local function preECFfilter(self,event,msg,player,_,_,_,flags,_,_,_,_,lineID,gui
 		end
 		filterResult = ECFfilter(chatEvents[event],msg,player,flags,IsMyFriend,good)
 
-		if filterResult and not good then playerCache[player] = playerCache[player] + 1 end
+		if filterResult and not good then blockedPlayers[player] = blockedPlayers[player] + 1 end
 	end
 	return filterResult
 end

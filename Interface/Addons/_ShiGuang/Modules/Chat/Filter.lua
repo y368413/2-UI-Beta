@@ -206,7 +206,9 @@ local function convertItemLevel(link)
         elseif (class == ARMOR) then level = format("%s(%s)", level, class)
         elseif (subclass and strfind(subclass, RELICSLOT)) then level = format("%s(%s)", level, RELICSLOT)
         end
-        if itemLinkGem then
+        if IsCorruptedItem(link) then
+        link = gsub(link, "|h%[(.-)%]|h", "|h["..level..isItemHasGem(itemLinkGem)..":"..name.."|T3004126:0|t".."]|h")
+        elseif itemLinkGem then
         link = gsub(link, "|h%[(.-)%]|h", "|h["..level..isItemHasGem(itemLinkGem)..":"..name.."]|h")
         else
         link = gsub(link, "|h%[(.-)%]|h", "|h["..level..":"..name.."]|h")

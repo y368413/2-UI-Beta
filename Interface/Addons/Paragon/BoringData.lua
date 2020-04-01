@@ -255,11 +255,13 @@ T.reputationItemBoA = {
 	[129955] = "alliance vanguard", -- Commendation of the Alliance Vanguard (500)
 
 	-- The Burning Crusade
+	[24401]  = "cenarion expedition", -- Unidentified Plant Parts (250 per 10, up to Honored)
 	[129949] = "cenarion expedition", -- Commendation of the Cenarion Expedition (500)
 	[129948] = "honor hold", -- Commendation of Honor Hold (500)
 	[129950] = "keepers of time", -- Commendation of the Keepers of Time (500)
-	[24449]  = "sporeggar", -- Fertile Spores (250 per 6)
-	[24246]  = "sporeggar", -- Sanguine Hibiscus (250 per 5)
+	[24449]  = "sporeggar", -- Fertile Spores (750 per 6)
+	[24291]  = "sporeggar", -- Bog Lord Tendril (750 per 6, up to Friendly)
+	[24246]  = "sporeggar", -- Sanguine Hibiscus (750 per 5)
 	[129945] = "the consortium", -- Commendation of The Consortium (500)
 	[129947] = "thrallmar", -- Commendation of Thrallmar (500)
 	[129951] = "lower city", -- Commendation of Lower City (500)
@@ -380,6 +382,7 @@ T.reputationItemBoP = {
 	[43156]  = "wyrmrest accord", -- Tabard of the Wyrmrest Accord
 
 	-- The Burning Crusade
+	[24290]  = "sporeggar", -- Mature Spore Sack (750 per 10, up to Friendly)
 	[32506]  = "netherwing", -- Netherwing Egg (250)
 	[25433]  = "kurenai|the consortium|the mag'har", -- Obsidian Warbeads (250 Consortium per 10, or 500 Kurenai/Mag'har per 10)
 	[29209]  = "the consortium", -- Zaxxis Insignia (250 per 10)

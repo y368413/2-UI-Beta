@@ -58,7 +58,6 @@ function lrnFrame:SpellDamage(timestamp, eventType, srcGUID, srcName, srcFlags, 
 			FirstTime = timestamp
 			flag =1
 		end
-	end
 
 	if timestamp - FirstTime > 2 and flag == 1 then
 		flag = 0
