@@ -1181,7 +1181,7 @@ MiniMapIcon:SetScript("OnEnter",function(self)
 	RequestRaidInfo()
 
 	GameTooltip:SetOwner(self, "ANCHOR_LEFT") 
-	GameTooltip:AddLine("BfA ToDo") 
+	GameTooltip:AddLine("BFA ToDo") 
 	for _,func in pairs(ToDoFunc) do
 		pcall(func,GameTooltip,charData)
 		--func(GameTooltip,charData)

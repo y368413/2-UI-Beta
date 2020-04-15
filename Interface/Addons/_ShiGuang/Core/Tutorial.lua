@@ -29,17 +29,25 @@ local function DefaultSettings()
 end
 
 local function ForceDefaultSettings()
+  local PlayerFrame = _G["PlayerFrame"]
+  if (PlayerFrame and not PlayerFrame_IsAnimatedOut(PlayerFrame)) then
   PlayerFrame:ClearAllPoints() PlayerFrame:SetPoint("RIGHT",UIParent,"CENTER", -150, -250) PlayerFrame:SetUserPlaced(true)  --PlayerFrame:SetScale(0.8) 
+  end
+  local TargetFrame = _G["TargetFrame"]
+  if (TargetFrame) then
   TargetFrame:ClearAllPoints() TargetFrame:SetPoint("LEFT",UIParent,"CENTER", 150, -250) TargetFrame:SetUserPlaced(true)  --TargetFrame:SetScale(0.8) 
-  --PartyMemberFrame1:ClearAllPoints() PartyMemberFrame1:SetPoint("TOPLEFT", 260, -143)
+  end
   TargetFrameToT:ClearAllPoints() TargetFrameToT:SetPoint("LEFT",TargetFrame,"BOTTOMRIGHT", -43, 21)
   TargetFrameToTTextureFrameName:ClearAllPoints() TargetFrameToTTextureFrameName:SetPoint("LEFT",TargetFrameToT,"Top", -8, -43)
   PetFrameHealthBarText:SetPoint("BOTTOMRIGHT", PetFrame, "LEFT", 3,-6)  
   PetFrameManaBarText:SetPoint("TOPRIGHT", PetFrame, "LEFT", 3, -6)
   PetFrameManaBarText:SetTextColor(0, 1, 1)
+  local FocusFrame = _G["FocusFrame"]
+  if (FocusFrame) then
   FocusFrame:SetScript("OnMouseDown", function(self, elapsed) if IsShiftKeyDown() and (not InCombatLockdown()) then FocusFrame:StartMoving(); end end)
   FocusFrame:SetScript("OnMouseUp", function(self, elapsed) FocusFrame:StopMovingOrSizing(); end)
-  FocusFrame:SetClampedToScreen(1)
+  --FocusFrame:SetClampedToScreen(1)
+  end
   SetCVar("nameplateSelectedScale", 1.25)
   SetCVar("nameplateLargerScale", 1.25)
 	SetCVar("autoLootDefault", 1)
@@ -49,14 +57,20 @@ local function ForceDefaultSettings()
 	SetCVar("nameplateShowSelf", 0)
 	SetCVar("nameplateShowAll", 1)
 	SetCVar("nameplateMotion", 1)
+	--SetCVar("guildMemberNotify", 0)--公会成员提示
+  --SetCVar("showToastBroadcast", 0)--通告更新
+  --SetCVar("showToastWindow", 0)--显示浮窗
 	SetCVar("nameplateShowFriendlyNPCs", 0)
+	SetCVar("showTimestamps", "none")--聊天时间戳
 	SetCVar("ActionButtonUseKeyDown", 1)
 	--SetCVar("alwaysShowActionBars", 1)
 	SetCVar("lockActionBars", 1)
 	SetActionBarToggles(1, 1, 0, 0)
 	SHOW_MULTI_ACTIONBAR_1="1" --左下方动作条 
   SHOW_MULTI_ACTIONBAR_2="1" --右下方动作条 
-  --InterfaceOptions_UpdateMultiActionBars() --刷新动作条
+  SHOW_MULTI_ACTIONBAR_3 = "0" --右动作条1
+  SHOW_MULTI_ACTIONBAR_4 = "0" --右动作条2
+  InterfaceOptions_UpdateMultiActionBars() --刷新动作条
 	SetCVar("enableFloatingCombatText", 0)
 	SetCVar("floatingCombatTextCombatState", 0)
 	--SetCVar("floatingCombatTextCombatDamage", 0)
@@ -83,6 +97,7 @@ local function ForceDefaultSettings()
   SetCVar("floatingCombatTextAuras", 0)   --光環 
 	SetCVar("doNotFlashLowHealthWarning", 1)
 	SetCVar("ffxGlow", 0)
+	SetCVar("Sound_EnableErrorSpeech", 0)								--错误提示音
 	--SetCVar("cameraYawMoveSpeed", 360); -- Maximum in-game: 270
 	SetCVar("statusText",1) --状态文字
 	SetCVar("statusTextDisplay","NUMERIC")--头像状态文字形式："NUMERIC"数值"PERCENT"百分比"BOTH"同时显示
@@ -93,6 +108,7 @@ end
 local function ForceRaidFrame()
 	CompactRaidFrameContainer:SetScale(0.85)
 	if not CompactUnitFrameProfiles then return end
+	--SetRaidProfileOption(GetActiveRaidProfile(), "healthText", "none")
 	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "useClassColors", true) --显示职业颜色
 	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "displayPowerBar", false) --显示能量条 
 	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "displayBorder", false) --显示边框

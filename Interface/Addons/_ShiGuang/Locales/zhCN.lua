@@ -38,7 +38,6 @@ TOASTY_TRANSMOG_REMOVED = "幻化外观已移除";
 ----------------Binding----------------------
 TOMEOFTELEPORTATIONTITLE = "传送大师";
 TITLEREADME = "点击图标打开传送大师";
- 
 ----------------Title----------------------
 CHAT_WHISPERPOP_TITLE="|cff777777[聊天]|r密语管理";
 GEAR_DELETEEMPTYMAILS_TITLE="|cffFFFFFF[邮件]|r删除空邮件";

@@ -306,9 +306,12 @@ function module:OnLogin()
 
 	-- ProfanityFilter
 	if not BNFeaturesEnabledAndConnected() then return end
-	if not MaoRUIPerDB["Chat"]["Freedom"] then
-		SetCVar("profanityFilter", 1)
-	else
+	if MaoRUIPerDB["Chat"]["Freedom"] then
+		if GetCVar("portal") == "CN" then
+			ConsoleExec("portal TW")
+		end
 		SetCVar("profanityFilter", 0)
+	else
+		SetCVar("profanityFilter", 1)
 	end
 end

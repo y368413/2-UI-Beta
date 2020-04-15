@@ -65,11 +65,11 @@ end)]]
 	
 ------------------------------------------------------------------------------- TargetClassButton by 狂飙@cwdg(networm@qq.com) 20120119 DIY by y368413 
 -- Binding Variables
-BINDING_NAME_INSPECT = "    "..INSPECT
-BINDING_NAME_TRADE = "    "..TRADE
-BINDING_NAME_WHISPER = "    "..WHISPER
-BINDING_NAME_FOLLOW = "    "..FOLLOW
-BINDING_NAME_Invite = "    "..CALENDAR_INVITE_PLAYER 
+BINDING_NAME_TARGETCLASSBUTTON_INSPECT = "    "..INSPECT
+BINDING_NAME_TARGETCLASSBUTTON_TRADE = "    "..TRADE
+BINDING_NAME_TARGETCLASSBUTTON_WHISPER = "    "..WHISPER
+BINDING_NAME_TARGETCLASSBUTTON_FOLLOW = "    "..FOLLOW
+BINDING_NAME_TARGETCLASSBUTTON_COMPARE_ACHIEVEMENTS = "    "..COMPARE_ACHIEVEMENTS
 
 local targeticon = CreateFrame("Button", "TargetClass", TargetFrame)
 targeticon:Hide()
@@ -90,26 +90,25 @@ icon:SetHeight(21)
 icon:SetPoint("CENTER")
 RaiseFrameLevel(targeticon)
 targeticon:SetScript("OnUpdate", function(self)
-	if (not UnitCanAttack("player","target") and UnitIsPlayer("target") and CheckInteractDistance("target",1)) then
+	if (not UnitCanAttack("player","target") and UnitIsPlayer("target")) then
 		targeticon:Enable()
-		SetDesaturation(TargetClassIcon, false) 	--	TargetClassIcon:SetDesaturated(false)
+		SetDesaturation(TargetClassIcon, false)
 	else
 		targeticon:Disable()
-		SetDesaturation(TargetClassIcon, true)	--	TargetClassIcon:SetDesaturated(true)
+		SetDesaturation(TargetClassIcon, true)
 	end
 end)
 targeticon:SetScript("OnMouseDown", function(self, button)
 	if (not UnitCanAttack("player","target") and UnitIsPlayer("target")) then
 		if button == "LeftButton" then
-			if CheckInteractDistance("target",1) then InspectUnit("target") end
+			InspectUnit("target")
 		elseif button == "RightButton" then
 			if CheckInteractDistance("target",2) then InitiateTrade("target") end
 		elseif button == "MiddleButton" then  --	StartDuel("target")
 				local server = nil;
 				local name, server = UnitName("target");
 				local fullname = name;			
-				if server then
-				--if ( server and (not "target" or UnitRealmRelationship("target") ~= LE_REALM_RELATION_SAME) ) then
+				if ( server and (not "target" or UnitRealmRelationship("target") ~= LE_REALM_RELATION_SAME) ) then
 					fullname = name.."-"..server;
 				end
 				ChatFrame_SendTell(fullname)
@@ -129,7 +128,7 @@ hooksecurefunc("TargetFrame_Update", function()
 	end
 end)
 
---宠物目标
+--[[宠物目标
 local ToPetFrame = CreateFrame("Button", "UFP_ToPetFrame", PetFrame, "SecureUnitButtonTemplate, SecureHandlerAttributeTemplate");
 ToPetFrame:SetFrameLevel(8);
 ToPetFrame:SetWidth(96);
@@ -222,4 +221,4 @@ local pettarget = CreateFrame("Frame");
                 end
                 self.timer = 0;
             end
-        end);
+        end);]]
