@@ -119,8 +119,7 @@ function TT:Corruption_Convert(name, icon, level)
 		local line = _G[self:GetName().."TextLeft"..i]
 		local text = line:GetText()
 		if text and strmatch(text, ITEM_MOD_CORRUPTION) then
-			--line:SetText(text.." - "..getIconString(icon)..name.." "..level)
-			line:SetText(getIconString(icon)..name.." "..level)
+			line:SetText(getIconString(icon)..name.." "..level)  -- text.." / "..
 			return
 		end
 	end

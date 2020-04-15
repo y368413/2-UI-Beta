@@ -29,6 +29,7 @@ local function DefaultSettings()
 end
 
 local function ForceDefaultSettings()
+  --/console cvar_defaul
   local PlayerFrame = _G["PlayerFrame"]
   if (PlayerFrame and not PlayerFrame_IsAnimatedOut(PlayerFrame)) then
   PlayerFrame:ClearAllPoints() PlayerFrame:SetPoint("RIGHT",UIParent,"CENTER", -150, -250) PlayerFrame:SetUserPlaced(true)  --PlayerFrame:SetScale(0.8) 

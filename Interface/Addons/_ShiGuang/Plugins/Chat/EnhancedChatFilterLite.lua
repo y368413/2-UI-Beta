@@ -82,7 +82,7 @@ local function strDiff(sA, sB) -- arrays of bytes
 		for j=1, len_b do
 			this[j+1] = (sA[i] == sB[j]) and last[j] or (min(last[j+1], this[j], last[j]) + 1)
 		end
-		for j=0, len_b do last[j+1]=this[j+1] end
+		for j=1, len_b+1 do last[j]=this[j] end
 	end
 	return this[len_b+1]/max(len_a,len_b)
 end
