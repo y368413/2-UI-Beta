@@ -19,7 +19,7 @@ local UIQuestsandHelp = {
    "-------------------------------"..GetAddOnMetadata("_ShiGuang", "X-StatsVersion").."----[正式]",
    "|cFFFF0000[注意]控制台设置后的 红色齿轮 可以点击后设置更多|r",
    "|cFFFF0000[注意]使用多功能团框的话，记得控制台别勾选“简易模式框体”|r",
-   "[更新]口吐芬芳",
+   "[修复]无法观察其它玩家装备的bug",
    "[更新]常规维护和优化",
    "[调整]更加直观显示腐蚀等级和腐蚀值",
    "[插件]版本号升级为v "..GetAddOnMetadata("_ShiGuang", "Version"),

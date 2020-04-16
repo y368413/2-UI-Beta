@@ -38,6 +38,7 @@ TOASTY_TRANSMOG_REMOVED = "幻化外观已移除";
 ----------------Binding----------------------
 TOMEOFTELEPORTATIONTITLE = "传送大师";
 TITLEREADME = "点击图标打开传送大师";
+ 
 ----------------Title----------------------
 CHAT_WHISPERPOP_TITLE="|cff777777[聊天]|r密语管理";
 GEAR_DELETEEMPTYMAILS_TITLE="|cffFFFFFF[邮件]|r删除空邮件";
@@ -1189,4 +1190,3 @@ U["ShowCorruptionRank"] = "显示装备腐蚀等级"
 U["ShowAllTip"] = "|n默认不勾选，只显示玩家自己施放的Buff。|n|n勾选后，则将显示所有人的释放的Buff。"
 U["AllowFriendsSpam"] = "允许来自好友的广告"
 U["AllowFriendsSpamTip"] = "|n勾选后，将允许来自队友、好友以及公会成员发布的广告。"
-U["CorruptionSummary"] = "腐蚀统计"
