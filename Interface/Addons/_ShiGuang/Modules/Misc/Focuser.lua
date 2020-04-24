@@ -52,6 +52,9 @@ function MISC.Focuser_OnEvent(event)
 				MISC.Focuser_Setup(frame)
 			end
 		end
+		--for i,frame in pairs(duf) do
+		--	MISC.Focuser_Setup(frame)
+		--end
 	else
 		for _, object in next, oUF.objects do
 			if not object.focuser then
