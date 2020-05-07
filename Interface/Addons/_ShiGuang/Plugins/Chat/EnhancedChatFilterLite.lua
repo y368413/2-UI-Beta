@@ -6,8 +6,6 @@ local format, ipairs, max, min, next, pairs, tconcat, tonumber, tremove = format
 -- WoW
 local Ambiguate, C_BattleNet_GetGameAccountInfoByGUID, C_Item_GetItemQualityByID, C_Timer_After, ChatTypeInfo, GetAchievementLink, GetPlayerInfoByGUID, GetTime, C_FriendList_IsFriend, IsGUIDInGroup, IsGuildMember, RAID_CLASS_COLORS = Ambiguate, C_BattleNet.GetGameAccountInfoByGUID, C_Item.GetItemQualityByID, C_Timer.After, ChatTypeInfo, GetAchievementLink, GetPlayerInfoByGUID, GetTime, C_FriendList.IsFriend, IsGUIDInGroup, IsGuildMember, RAID_CLASS_COLORS
 
--- GLOBALS: NUM_CHAT_WINDOWS
-
 local playerName, playerServer = GetUnitName("player"), GetRealmName()
 
 -- Some UTF-8 symbols that will be auto-changed
@@ -95,20 +93,19 @@ local chatEvents = {["CHAT_MSG_WHISPER"] = 1, ["CHAT_MSG_SAY"] = 2, ["CHAT_MSG_Y
 
 -- Store which type of channels enabled which filters, [eventIdx] = {filters}
 local eventStatus = {
---	aggr, 	dnd,	raid,	quest,	normal,	repeat
-	{true,	true,	true,	true,	true,	true},
-	{true,	true,	true,	true,	false,	true},
-	{true,	true,	false,	false,	false,	true},
-	{false,	false,	true,	true,	false,	true},
-	{false,	false,	false,	false,	false,	true},
-	{false,	true,	false,	false,	false,	false},
+--	aggr, 	dnd,	black,	raid,	quest,	repeat
+	{false,	false,	true,	false,	false,	false},
+	{false,	false,	true,	false,	false,	false},
+	{false,	false,	true,	false,	false,	false},
+	{false,	false,	false,	false,	false,	false},
+	{false,	false,	false,	false,	false,	false},
 }
 
 local function ECFfilter(Event,msg,player,flags,IsMyFriend,good)
 	-- don't filter player/GM/DEV
 	if player == playerName or flags == "GM" or flags == "DEV" then return end
 
-	-- filter bad players
+	-- filter blocked players
 	if not good and blockedPlayers[player] >= 3 then return true end
 
 	-- remove color/hypelink
@@ -136,13 +133,13 @@ local function ECFfilter(Event,msg,player,flags,IsMyFriend,good)
 	if filtersStatus[2] and (flags == "DND" or Event == 5) and not IsMyFriend then return true end
 
 	-- raidAlert
-	if filtersStatus[3] then
+	if filtersStatus[4] then
 		for _,tag in ipairs(RaidAlertTagList) do
 			if msg:find(tag) then return true end
 		end
 	end
 	-- questReport and partyAnnounce
-	if filtersStatus[4] then
+	if filtersStatus[5] then
 		for _,tag in ipairs(QuestReportTagList) do
 			if msg:find(tag) then return true end
 		end
