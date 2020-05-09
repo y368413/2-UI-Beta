@@ -525,7 +525,7 @@ R.PartysSpells = {
     --["ALL"] = {
         [305252] = 120, --type = "all",       item = 172672, item2 = 165806 },
         [286342] = 180, --type = "all",       item = 172673, item2 = 165807 },
-        [295271] = 120, --type = "all",       item = 167865 },
+        [315362] = 60, --type = "all",       item = 174472 },
     --},
     --["ESSENCES"] = {
         [295373] = 30,  --type = "essence",   item = 295373 },

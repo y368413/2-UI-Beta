@@ -16,7 +16,7 @@ local C_MythicPlus_GetCurrentAffixes = C_MythicPlus.GetCurrentAffixes
 
 function MISC:AddAlerts()
 	self:SoloInfo()
-	--self:RareAlert()
+	self:RareAlert()
 	self:InterruptAlert()
 	--self:VersionCheck()
 	--self:ExplosiveAlert()
