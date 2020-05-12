@@ -1,5 +1,6 @@
 --## Author: JANY ## Version: 8.3.0
 local FirstTime = 0
+local FirstTime_ = 0
 local chuxu = 0
 local zmhx = 0
 local fhzy = 0
@@ -8,6 +9,9 @@ local bkyydzx = 0
 local sum = 0
 local flag = 0
 local i = 0
+local sum_ = 0
+local flag_ = 0
+local j = 0
 
 local eventSwitch = {
 	["SPELL_AURA_APPLIED"] = true,
