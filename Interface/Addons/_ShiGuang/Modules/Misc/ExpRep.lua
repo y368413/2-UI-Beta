@@ -280,9 +280,11 @@ function MISC:Expbar()
 	rest:SetFrameLevel(bar:GetFrameLevel() - 1)
 	bar.restBar = rest
 
-	self:SetupScript(bar)
+	MISC:SetupScript(bar)
 end
+MISC:RegisterMisc("ExpRep", MISC.Expbar)
 
+-- Paragon reputation info
 function MISC:HookParagonRep()
 	local numFactions = GetNumFactions()
 	local factionOffset = FauxScrollFrame_GetOffset(ReputationListScrollFrame)
@@ -313,5 +315,6 @@ end
 
 function MISC:ParagonReputationSetup()
 	if not MaoRUIPerDB["Misc"]["ParagonRep"] then return end
-	hooksecurefunc("ReputationFrame_Update", self.HookParagonRep)
+	hooksecurefunc("ReputationFrame_Update", MISC.HookParagonRep)
 end
+MISC:RegisterMisc("ParagonRep", MISC.ParagonReputationSetup)

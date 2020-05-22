@@ -219,6 +219,7 @@ local defaultSettings = {
 		FontOutline = true,
 		Loot = true,
 		Shadow = true,
+		FontScale = 1,
 		CastBarstyle = true,
 		QuestTrackerSkinTitle = true,
 	},
@@ -279,6 +280,7 @@ local defaultSettings = {
 		DBMCount = "10",
 		EasyMarking = true,
 		BlockInvite = false,
+		NzothVision = true,
 		QuickQueue = true,
 		--AltTabLfgNotification = false,
 		--CrazyCatLady = true,
@@ -328,10 +330,10 @@ local accountSettings = {
 	TexStyle = 3,
 	KeystoneInfo = {},
 	AutoBubbles = false,
-	SystemInfoType = 1,
 	DisableInfobars = false,
 	PartyWatcherSpells = {},
 	ContactList = {},
+	CustomJunkList = {},
 }
 
 -- Initial settings
@@ -517,10 +519,6 @@ end
 
 local function updateInterruptAlert()
 	M:GetModule("Misc"):InterruptAlert()
-end
-
-local function updateUunatAlert()
-	M:GetModule("Misc"):UunatAlert()
 end
 
 local function updateExplosiveAlert()
@@ -1121,7 +1119,7 @@ local function exportData()
 	end
 
 	for KEY, VALUE in pairs(MaoRUIDB) do
-		if KEY == "RaidAuraWatch" then
+		if KEY == "RaidAuraWatch" or KEY == "CustomJunkList" then
 			text = text..";ACCOUNT:"..KEY
 			for spellID in pairs(VALUE) do
 				text = text..":"..spellID
@@ -1236,7 +1234,7 @@ local function importData()
 			itemID = tonumber(itemID)
 			MaoRUIPerDB[key][spellID] = {spellID, duration, indicator, unit, itemID}
 		elseif key == "ACCOUNT" then
-			if value == "RaidAuraWatch" then
+			if value == "RaidAuraWatch" or value == "CustomJunkList" then
 				local spells = {select(3, strsplit(":", option))}
 				for _, spellID in next, spells do
 					MaoRUIDB[value][tonumber(spellID)] = true
