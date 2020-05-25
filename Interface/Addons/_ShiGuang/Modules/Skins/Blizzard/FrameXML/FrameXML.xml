@@ -2,7 +2,6 @@
 	<Script file="CharacterFrame.lua"/>
 	<Script file="EquipmentFlyout.lua"/>
 	<Script file="Fonts.lua"/>
-	<Script file="LootFrame.lua"/>
 	<Script file="ObjectiveTracker.lua"/>
 	<Script file="PetBattleUI.lua"/>
 </Ui>

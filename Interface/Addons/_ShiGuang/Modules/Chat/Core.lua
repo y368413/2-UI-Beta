@@ -83,7 +83,7 @@ function module:SkinChat()
 	M.StripTextures(tab, 7)
 	--hooksecurefunc(tab, "SetAlpha", module.TabSetAlpha)
 
-	if MaoRUIPerDB["Chat"]["Lock"] then M.StripTextures(self) end
+	--if MaoRUIPerDB["Chat"]["Lock"] then M.StripTextures(self) end
 	M.HideObject(self.buttonFrame)
 	M.HideObject(self.ScrollBar)
 	M.HideObject(self.ScrollToBottomButton)

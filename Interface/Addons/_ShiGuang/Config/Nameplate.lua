@@ -159,10 +159,6 @@ local function GetSectionInfo(id)
 	return C_EncounterJournal.GetSectionInfo(id).title
 end
 
-R.CustomBommUnits = {
-	[120651] = true, -- 爆炸物
-}
-
 -- 特殊单位的染色列表
 R.CustomUnits = {
 	[120651] = true, -- 爆炸物

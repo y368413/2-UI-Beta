@@ -107,8 +107,9 @@ local function ForceDefaultSettings()
 end
 
 local function ForceRaidFrame()
-	CompactRaidFrameContainer:SetScale(0.85)
+	if InCombatLockdown() then return end
 	if not CompactUnitFrameProfiles then return end
+	CompactRaidFrameContainer:SetScale(0.85)
 	--SetRaidProfileOption(GetActiveRaidProfile(), "healthText", "none")
 	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "useClassColors", true) --显示职业颜色
 	SetRaidProfileOption(CompactUnitFrameProfiles.selectedProfile, "displayPowerBar", false) --显示能量条 
@@ -285,7 +286,7 @@ local function ForceBigwigs()
 						["outline"] = I.Font[3],
 						["fontSize"] = 12,
 						["BigWigsAnchor_y"] = 336,
-						["BigWigsAnchor_x"] = 20,
+						["BigWigsAnchor_x"] = 16,
 						["BigWigsAnchor_width"] = 175,
 						["growup"] = true,
 						["interceptMouse"] = false,
@@ -296,7 +297,7 @@ local function ForceBigwigs()
 						["font"] = I.Font[1],
 						["onlyInterceptOnKeypress"] = true,
 						["emphasizeMultiplier"] = 1,
-						["BigWigsEmphasizeAnchor_x"] = 836,
+						["BigWigsEmphasizeAnchor_x"] = 810,
 						["BigWigsEmphasizeAnchor_y"] = 350,
 						["BigWigsEmphasizeAnchor_width"] = 220,
 						["emphasizeGrowup"] = true,
