@@ -397,10 +397,8 @@ end
 
 local castSpellIndex = {[143394] = 1, [306608] = 2}
 function MISC:NVision_OnEvent(unit, _, spellID)
-	if unit ~= "player" then return end
-
 	local index = castSpellIndex[spellID]
-	if index then
+	if index and (index == 1 or unit == "player") then
 		local frame = MISC.VisionFrame
 		local bar = frame.bars[index]
 		bar.count = bar.count + 1
@@ -413,12 +411,24 @@ function MISC:NVision_Check()
 	if diffID == 152 then
 		MISC:NVision_Create()
 		M:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED", MISC.NVision_OnEvent, "player")
+
+		if not RaidBossEmoteFrame.__isOff then
+			RaidBossEmoteFrame:UnregisterAllEvents()
+			RaidBossEmoteFrame.__isOff = true
+		end
 	else
 		if MISC.VisionFrame then
 			MISC:NVision_Update(1, true)
 			MISC:NVision_Update(2, true)
 			MISC.VisionFrame:Hide()
 			M:UnregisterEvent("UNIT_SPELLCAST_SUCCEEDED", MISC.NVision_OnEvent)
+		end
+
+		if RaidBossEmoteFrame.__isOff then
+			RaidBossEmoteFrame:RegisterEvent("RAID_BOSS_EMOTE")
+			RaidBossEmoteFrame:RegisterEvent("RAID_BOSS_WHISPER")
+			RaidBossEmoteFrame:RegisterEvent("CLEAR_BOSS_EMOTES")
+			RaidBossEmoteFrame.__isOff = nil
 		end
 	end
 end

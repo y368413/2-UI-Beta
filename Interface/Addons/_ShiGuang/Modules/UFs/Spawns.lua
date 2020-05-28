@@ -267,9 +267,11 @@ function UF:OnLogin()
 		local raidMover
 		if MaoRUIPerDB["UFs"]["SimpleMode"] then
 			local groupingOrder, groupBy, sortMethod = "1,2,3,4,5,6,7,8", "GROUP", "INDEX"
-			if MaoRUIPerDB["UFs"]["SimpleModeSortByRole"] then
+			if MaoRUIPerDB["UFs"]["SMSortByRole"] then
 				groupingOrder, groupBy, sortMethod = "TANK,HEALER,DAMAGER,NONE", "ASSIGNEDROLE", "NAME"
 			end
+			local unitsPerColumn = MaoRUIPerDB["UFs"]["SMUnitsPerColumn"]
+			local maxColumns = M:Round(numGroups*5 / unitsPerColumn)
 
 			local function CreateGroup(name, i)
 				local group = oUF:SpawnHeader(name, nil, "solo,party,raid",
@@ -277,15 +279,15 @@ function UF:OnLogin()
 				"showSolo", false,
 				"showParty", not showPartyFrame,
 				"showRaid", true,
-				"xoffset", 6,
-				"yOffset", -6,
+				"xoffset", 5,
+				"yOffset", -5,
 				"groupFilter", tostring(i),
 				"groupingOrder", groupingOrder,
 				"groupBy", groupBy,
 				"sortMethod", sortMethod,
-				"maxColumns", 2,
-				"unitsPerColumn", 25,
-				"columnSpacing", 6,
+				"maxColumns", maxColumns,
+				"unitsPerColumn", unitsPerColumn,
+				"columnSpacing", 5,
 				"point", "TOP",
 				"columnAnchorPoint", "LEFT",
 				"oUF-initialConfigFunction", ([[
@@ -309,9 +311,9 @@ function UF:OnLogin()
 			end
 
 			local group = CreateGroup("oUF_Raid", groupFilter)
-			local moverWidth = numGroups > 4 and (100*scale*2 + 5) or 100
-			local moverHeight = 25*scale*20 + 10*19
-			raidMover = M.Mover(group, U["RaidFrame"], "RaidFrame", {"TOPLEFT", UIParent, 3, -26}, moverWidth, moverHeight)
+			local moverWidth = (100*scale*maxColumns + 5*(maxColumns-1))
+			local moverHeight = 25*scale*unitsPerColumn + 5*(unitsPerColumn-1)
+			raidMover = M.Mover(group, U["RaidFrame"], "RaidFrame", {"TOPLEFT", UIParent, 35, -50}, moverWidth, moverHeight)
 		else
 			local raidFrameHeight = raidHeight + MaoRUIPerDB["UFs"]["RaidPowerHeight"] + R.mult
 
@@ -321,15 +323,15 @@ function UF:OnLogin()
 				"showSolo", false,
 				"showParty", not showPartyFrame,
 				"showRaid", true,
-				"xoffset", 6,
-				"yOffset", -6,
+				"xoffset", 5,
+				"yOffset", -5,
 				"groupFilter", tostring(i),
 				"groupingOrder", "1,2,3,4,5,6,7,8",
 				"groupBy", "GROUP",
 				"sortMethod", "INDEX",
 				"maxColumns", 1,
 				"unitsPerColumn", 5,
-				"columnSpacing", 6,
+				"columnSpacing", 5,
 				"point", horizonRaid and "LEFT" or "TOP",
 				"columnAnchorPoint", "LEFT",
 				"oUF-initialConfigFunction", ([[
@@ -344,13 +346,13 @@ function UF:OnLogin()
 				groups[i] = CreateGroup("oUF_Raid"..i, i)
 				if i == 1 then
 					if horizonRaid then
-						raidMover = M.Mover(groups[i], U["RaidFrame"], "RaidFrame", {"BOTTOMLEFT", UIParent, 3, 160}, (raidWidth+5)*5-6, (raidFrameHeight+(showTeamIndex and 25 or 6))*numGroups - (showTeamIndex and 25 or 6))
+						raidMover = M.Mover(groups[i], U["RaidFrame"], "RaidFrame", {"BOTTOMLEFT", UIParent, 3, 160}, (raidWidth+5)*5-5, (raidFrameHeight+(showTeamIndex and 25 or 5))*numGroups - (showTeamIndex and 25 or 5))
 						if reverse then
 							groups[i]:ClearAllPoints()
 							groups[i]:SetPoint("BOTTOMLEFT", raidMover)
 						end
 					else
-						raidMover = M.Mover(groups[i], U["RaidFrame"], "RaidFrame", {"BOTTOMLEFT", UIParent, 3, 160}, (raidWidth+5)*numGroups-6, (raidFrameHeight+6)*5-6)
+						raidMover = M.Mover(groups[i], U["RaidFrame"], "RaidFrame", {"BOTTOMLEFT", UIParent, 3, 160}, (raidWidth+5)*numGroups-5, (raidFrameHeight+5)*5-5)
 						if reverse then
 							groups[i]:ClearAllPoints()
 							groups[i]:SetPoint("TOPRIGHT", raidMover)
@@ -359,15 +361,15 @@ function UF:OnLogin()
 				else
 					if horizonRaid then
 						if reverse then
-							groups[i]:SetPoint("BOTTOMLEFT", groups[i-1], "TOPLEFT", 0, showTeamIndex and 21 or 6)
+							groups[i]:SetPoint("BOTTOMLEFT", groups[i-1], "TOPLEFT", 0, showTeamIndex and 20 or 5)
 						else
-							groups[i]:SetPoint("TOPLEFT", groups[i-1], "BOTTOMLEFT", 0, showTeamIndex and -21 or -6)
+							groups[i]:SetPoint("TOPLEFT", groups[i-1], "BOTTOMLEFT", 0, showTeamIndex and -20 or -5)
 						end
 					else
 						if reverse then
-							groups[i]:SetPoint("TOPRIGHT", groups[i-1], "TOPLEFT", -6, 0)
+							groups[i]:SetPoint("TOPRIGHT", groups[i-1], "TOPLEFT", -5, 0)
 						else
-							groups[i]:SetPoint("TOPLEFT", groups[i-1], "TOPRIGHT", 6, 0)
+							groups[i]:SetPoint("TOPLEFT", groups[i-1], "TOPRIGHT", 5, 0)
 						end
 					end
 				end
