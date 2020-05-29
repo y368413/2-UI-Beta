@@ -1,0 +1,41 @@
+2.15
+UPDATE: removed "Kojo's Master Matching Set" as a Trtollan Paragon reward since it never made it into the live game.
+UPDATE: keystone feats now show S4 progress
+
+2.14
+NEW: Module BFAQuestRewards; this module lists achievements and collectibles that are in some way connected with daily/weekly quests
+UPDATE: added "Honeyback Harvester's Harness" to BFAQuestRewards
+UPDATE: moved "Periodic Destruction" to BFAQuestRewards and altered the listing rules a little
+
+Detailed:
+The mount item will always be listed as missing by the new module until you learned the mount; if the current character has unlocked the faction, there will also be a notification if the current character has not killed Honey Smasher today.
+The detailed list of missing summons for "Periodic Destruction" will now only be printed for characters that have completed at least one of the summons.
+
+2.13
+UPDATE: added "Periodic Destruction" to BFAWQAchievements (even though it's weekly)
+UPDATE: added "Puzzle Performer" to BFAWQAchievements
+
+2.12
+UPDATE: added all remaining 8.2 rank3 recipes to BFAWQRecipes (Enchanting and Alchemy were still missing)
+
+2.11
+FIX: bug that prevented refreshing modules while an incursion was ongoing
+
+2.1
+NEW: Option "Track Warmode"; enable this option if you want anything warmode related to show up in your module list
+NEW: Module BFAWarmode; for now, this module only includes incursion-related achievements, as generally speaking this addon only tracks things that are in some way time-limited. This also includes the incursion-specific secret supply cache. The module will not only tell you to collect this cache one time for the achievement, it will check the hidden daily quest to tell you if you are still able to loot the cache today on your current character. It will also give you TomTom links to all the possible spawn locations.
+Important: Since the Secret Cache is not always up, it is classified as a "Rare" source, which means you will not be informed about it, if you have disabled the option "Include rare" (enabled by default)
+
+
+IMPORTANT NOTE: Due to a a change in the account-data table the account M+ data will be reset with this update and you have to login each character again to update to the new table. Sorry, but it was unavoidable this time. I hope resets like this will not be necessary again in the future.
+
+2.09
+CHANGE: BFAParagon: Rustbolt Resistance now uses the "main daily" as an emissary replacement. That means the faction will only be listed as "ToDo" until you did that quest if you use the "Paragon Emissary" option
+
+2.08
+FIX: Keystone-Data was not updated frequently enough to ensure the data was fully accurate
+
+2.07
+UPDATE: added "Master Calligrapher" and "Nazjatarget Eliminated" to BFAWQAchievements
+UPDATE: added the new Nazjatar cooking recipes to BFAWQRecipes
+UPDATE: added "Rustbolt Resistance", "Waveblade Ankoan" and "The Unshackled" to BFAParagon

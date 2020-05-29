@@ -1,0 +1,1 @@
+4/21/2020 - Fixed a error where No Names and No items were provided for Vendors in Duratar.

@@ -1,0 +1,95 @@
+## Interface: 80300
+## Title: ThingsToDo2
+## Notes: Lists things to do based on runtime character data.
+## Notes-deDe: Gibt Aufgaben für den aktuellen Charakter aus.
+## Author: Nathasil
+## Version: 2.15
+## SavedVariables: ThingsToDo2_AccountData
+## SavedVariablesPerCharacter: ThingsToDo2_CharacterData
+
+Templates\TTD2_Templates_Base.lua
+Templates\TTD2_Templates_Initialised.lua
+Templates\TTD2_Templates_Frame.lua
+Templates\TTD2_Templates_ExtendedFrame.lua
+Templates\TTD2_Templates_ButtonFrame.lua
+Templates\TTD2_Templates_MinimapButton.lua
+Templates\TTD2_Templates_AddonFrame.lua
+Templates\TTD2_Templates_UIPanelButton.lua
+Templates\TTD2_Templates_UICheckButton.lua
+Templates\TTD2_Templates_SlaveUICheckButton.lua
+Templates\TTD2_Templates_InsecureActionButton.lua
+Templates\TTD2_Templates_ScrollableContentFrame.lua
+Templates\TTD2_Templates_EventModule.lua
+Templates\TTD2_Templates_UIButtonChatModule.lua
+Templates\TTD2_Templates_Collection.lua
+Templates\TTD2_Templates_AsynchronousCollection.lua
+Templates\TTD2_Templates_ParagonModule.lua
+Templates\TTD2_Templates_WQRecipesModule.lua
+Templates\TTD2_Templates_WarfrontXMog.lua
+Templates\TTD2_Templates_UIButtonEventModule.lua
+
+Tools\TTD2_Tools_SavedData.lua
+Tools\TTD2_Tools_Table.lua
+Tools\TTD2_Tools_Chat.lua
+Tools\TTD2_Tools_Map.lua
+Tools\TTD2_Tools_TomTom.lua
+Tools\TTD2_Tools_Item.lua
+Tools\TTD2_Tools_Quest.lua
+Tools\TTD2_Tools_NPC.lua
+Tools\TTD2_Tools_WorldQuest.lua
+Tools\TTD2_Tools_MountJournal.lua
+Tools\TTD2_Tools_PetJournal.lua
+Tools\TTD2_Tools_ToyJournal.lua
+Tools\TTD2_Tools_Achievement.lua
+Tools\TTD2_Tools_Garrison.lua
+Tools\TTD2_Tools_Keystone.lua
+Tools\TTD2_Tools_Currency.lua
+Tools\TTD2_Tools_Unit.lua
+Tools\TTD2_Tools_Faction.lua
+Tools\TTD2_Tools_Incursion.lua
+Tools\TTD2_Tools_XMog.lua
+Tools\TTD2_Tools_Tooltip.lua
+Tools\TTD2_Tools_Recipe.lua
+Tools\TTD2_Tools_Profession.lua
+Tools\TTD2_Tools_Archaeology.lua
+Tools\TTD2_Tools_Output.lua
+Tools\TTD2_Tools_SlashCommandList.lua
+Tools\TTD2_Tools_EventDispatcher.lua
+Tools\TTD2_Tools_ComplexChat.lua
+Tools\TTD2_Tools_ContributionCollector.lua
+Tools\TTD2_Tools_AzeriteEssence.lua
+Tools\TTD2_Tools_Warmode.lua
+
+Modules\TTD2_Modules_LegionFishing.lua
+Modules\TTD2_Modules_LegionParagon.lua
+Modules\TTD2_Modules_LegionWQRecipes.lua
+Modules\TTD2_Modules_ArgusCollectibles.lua
+Modules\TTD2_Modules_ArgusEgg.lua
+Modules\TTD2_Modules_BFAMissions.lua
+Modules\TTD2_Modules_BFAMissableQuests.lua
+Modules\TTD2_Modules_BFAWQAchievements.lua
+Modules\TTD2_Modules_BFAKeystone.lua
+Modules\TTD2_Modules_BFABonusroll.lua
+Modules\TTD2_Modules_BFAIslandStatus.lua
+Modules\TTD2_Modules_BFAWQRecipes.lua
+Modules\TTD2_Modules_BFAParagon.lua
+Modules\TTD2_Modules_BFAWarmode.lua
+Modules\TTD2_Modules_BFAQuestRewards.lua
+Modules\TTD2_Modules_XMogArathi.lua
+Modules\TTD2_Modules_XMogDarkshore.lua
+Modules\TTD2_Modules_ArchaeologyAutoWaypoint.lua
+Modules\TTD2_Modules_ArchaeologyCrateButton.lua
+
+#the following modules are placeholders
+#modules\ttd2_mod_MountsDungeon.lua
+#modules\ttd2_mod_MountsRaid.lua
+#modules\ttd2_mod_MountsWorldboss.lua
+#modules\ttd2_mod_LegionPetBattles.lua
+#modules\ttd2_mod_Blingtron.lua
+
+Frames\TTD2_Frames_ScanningTooltip.lua
+Frames\TTD2_Frames_MinimapButton.lua
+Frames\TTD2_Frames_Main.lua
+Frames\TTD2_Frames_Options.lua
+
+ThingsToDo2.lua

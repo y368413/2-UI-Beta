@@ -1,0 +1,14 @@
+{
+    "target": "curse",
+    "searchName": "CollectionShop",
+    "localName": "CollectionShop",
+    "version": "v4.02",
+    "fileName": "collectionshop",
+    "addonsMap": [
+        "CollectionShop"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "name": "CollectionShop",
+    "gameVersion": ""
+}
