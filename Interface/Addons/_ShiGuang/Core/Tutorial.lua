@@ -4,7 +4,7 @@ local module = M:RegisterModule("Settings")
 local pairs, wipe = pairs, table.wipe
 
 -- Addon Info
-print("<<<---|cFFFFFF00 2|r|cFFFF0000 UI |r v"..GetAddOnMetadata("_ShiGuang", "Version").." ("..GetAddOnMetadata("_ShiGuang", "X-StatsVersion")..")" .." For "..GetAddOnMetadata("_ShiGuang", "X-Support").." --")
+print("<<<---|cFFFFFF00 2|r|cFFFF0000 UI|r v"..GetAddOnMetadata("_ShiGuang", "Version").." ("..GetAddOnMetadata("_ShiGuang", "X-StatsVersion")..")" .." For "..GetAddOnMetadata("_ShiGuang", "X-Support").." --")
 print("  ---|cffC495DD 特别感谢|r|cff3399ffSiweia|r|cffC495DD,向他学到了好多.|r---  ")
 print("--------------- 有你们的魔兽,才是世界 -->>>")
 

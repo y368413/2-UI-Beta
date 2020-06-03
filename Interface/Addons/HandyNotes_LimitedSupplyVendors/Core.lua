@@ -5,7 +5,7 @@ LimitedSupplyVendors.points = {}
 
 -- our db and defaults
 local db
-local defaults = { profile = { completed = false, icon_scale = 1.4, icon_alpha = 0.8 } }
+local defaults = { profile = { completed = false, icon_scale = .85, icon_alpha = 0.8 } }
 
 local continents = {
 	[12]  = true, -- Kalimdor
