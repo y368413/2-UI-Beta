@@ -313,7 +313,7 @@ function UF:OnLogin()
 			local group = CreateGroup("oUF_Raid", groupFilter)
 			local moverWidth = (100*scale*maxColumns + 5*(maxColumns-1))
 			local moverHeight = 25*scale*unitsPerColumn + 5*(unitsPerColumn-1)
-			raidMover = M.Mover(group, U["RaidFrame"], "RaidFrame", {"TOPLEFT", UIParent, 35, -50}, moverWidth, moverHeight)
+			raidMover = M.Mover(group, U["RaidFrame"], "RaidFrame", {"TOPLEFT", UIParent, 3, -26}, moverWidth, moverHeight)
 		else
 			local raidFrameHeight = raidHeight + MaoRUIPerDB["UFs"]["RaidPowerHeight"] + R.mult
 
