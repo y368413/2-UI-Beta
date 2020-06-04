@@ -94,7 +94,7 @@ function module:ReskinRegions()
 	for _, v in pairs(flags) do
 		local flag = _G[v]
 		flag:ClearAllPoints()
-		flag:SetPoint("TOPRIGHT" ,Minimap, "TOPRIGHT", 3, 3)
+		flag:SetPoint("TOPLEFT" ,Minimap, "TOPLEFT", -6, 6)
 		flag:SetScale(0.85)
 	end
 	
