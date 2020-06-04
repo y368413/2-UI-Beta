@@ -3,7 +3,7 @@ local M, R, U, I = unpack(ns)
 local G = M:RegisterModule("GUI")
 
 local tonumber, tostring, pairs, ipairs, next, select, type = tonumber, tostring, pairs, ipairs, next, select, type
-local tinsert, format, strsplit = table.insert, string.format, string.split
+local tinsert, format, strsplit, strfind = table.insert, string.format, string.split, string.find
 local cr, cg, cb = I.r, I.g, I.b
 local guiTab, guiPage, f, dataFrame = {}, {}
 
@@ -78,6 +78,7 @@ local defaultSettings = {
 		RaidPowerHeight = 2,
 		RaidHPMode = 1,
 		AurasClickThrough = false,
+		AutoAttack = true,
 		RaidClickSets = true,
 		ShowTeamIndex = false,
 		ClassPower = true,
@@ -100,10 +101,17 @@ local defaultSettings = {
 		BuffIndicatorScale = 1,
 		UFTextScale = 1,
 		PartyAltPower = true,
+		PartyWatcherSync = true,
 		SmoothAmount = .3,
 		RaidTextScale = 0.85, 
 		PlayerWidth = 245,
 		PlayerHeight = 24,
+		FocusWidth = 160,
+		FocusHeight = 21,
+		FocusPowerHeight = 3,
+		PetWidth = 100,
+		PetHeight = 16,
+		PetPowerHeight = 2,
 		BossWidth = 120,
 		BossHeight = 21,
 		BossPowerHeight = 3,
@@ -274,7 +282,6 @@ local defaultSettings = {
 		PlacedItemAlert = false,
 		RareAlertInWild = false,
 		ParagonRep = true,
-		UunatAlert = false,
 		InstantDelete = true,
 		RaidTool = true,
 		RMRune = false,
@@ -671,12 +678,13 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		--{3, "UFs", "NumGroups", U["Num Groups"], true, true, {4, 8, 0}},
 		{1, "UFs", "PartyPetFrame", "|cff00cc4c"..U["UFs PartyPetFrame"]},
 		--{1, "UFs", "RaidClassColor", U["ClassColor RaidFrame"]},
-		{1, "UFs", "PartyWatcher", U["UFs PartyWatcher"], true, nil, setupPartyWatcher},
+		{1, "UFs", "PartyWatcher", "|cff00cc4c"..U["UFs PartyWatcher"], true, nil, setupPartyWatcher, nil, U["PartyWatcherTip"]},
+		--{1, "UFs", "PartyWatcherSync", U["PartyWatcherSync"], nil, nil, nil, nil, U["PartyWatcherSyncTip"]},
 		{1, "UFs", "PWOnRight", U["PartyWatcherOnRight"], true, true},
 		{1, "UFs", "HorizonParty", U["Horizon PartyFrame"]},
 		{1, "UFs", "HorizonRaid", U["Horizon RaidFrame"], true},		
 		{1, "UFs", "ReverseRaid", U["Reverse RaidFrame"], true, true},
-		{1, "UFs", "PartyAltPower", U["UFs PartyAltPower"]},
+		{1, "UFs", "PartyAltPower", U["UFs PartyAltPower"], false, false, nil, nil, U["PartyAltPowerTip"]},
 		{1, "UFs", "SpecRaidPos", U["Spec RaidPos"], true},
 		{1, "UFs", "AutoRes", U["UFs AutoRes"], true, true},
 		{1, "UFs", "RaidClickSets", "|cff00cc4c"..U["Enable ClickSets"], nil, nil, setupClickCast},
@@ -1192,7 +1200,7 @@ local function importData()
 			MaoRUIPerDB[key][value] = toBoolean(arg1)
 		elseif arg1 == "EMPTYTABLE" then
 			MaoRUIPerDB[key][value] = {}
-		elseif arg1 == "r" or arg1 == "g" or arg1 == "b" then
+		elseif strfind(value, "Color") and (arg1 == "r" or arg1 == "g" or arg1 == "b") then
 			local color = select(4, strsplit(":", option))
 			if MaoRUIPerDB[key][value] then
 				MaoRUIPerDB[key][value][arg1] = tonumber(color)

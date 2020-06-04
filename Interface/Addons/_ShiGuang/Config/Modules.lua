@@ -41,6 +41,7 @@ R.UFs = {
 	Playercb		= {"CENTER", UIParent, "CENTER", 0, -250},			-- 玩家施法条默认位置
 	Targetcb		= {"CENTER", UIParent, "CENTER", 0, -145},			-- 目标施法条默认位置
 	Focuscb			= {"CENTER", UIParent, "CENTER", 0, -130},			-- 焦点施法条默认位置
+	FocusPos		= {"LEFT", UIParent, "LEFT", 5, -150},				-- 焦点框体默认位置
 	PlayerPlate		= {"CENTER", UIParent, "CENTER", 0, -188},			-- 玩家姓名板默认位置
 	BarPoint		= {"CENTER", UIParent, "CENTER", 0, -176},								-- 资源条位置（以自身头像为基准）
 	BarSize			= {150, 5},											-- 资源条的尺寸（宽，长）

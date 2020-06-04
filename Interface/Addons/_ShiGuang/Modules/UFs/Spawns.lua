@@ -36,7 +36,29 @@ end
 
 local function CreateFocusStyle(self)
 	self.mystyle = "focus"
-	--UF:CreateCastBar(self)
+	SetUnitFrameSize(self, "Focus")
+
+	UF:CreateHeader(self)
+	UF:CreateHealthBar(self)
+	UF:CreateHealthText(self)
+	UF:CreatePowerBar(self)
+	UF:CreatePowerText(self)
+	UF:CreateCastBar(self)
+	UF:CreateRaidMark(self)
+	UF:CreateIcons(self)
+	UF:CreatePrediction(self)
+	UF:CreateAuras(self)
+end
+
+local function CreateFocusTargetStyle(self)
+	self.mystyle = "focustarget"
+	SetUnitFrameSize(self, "Pet")
+
+	UF:CreateHeader(self)
+	UF:CreateHealthBar(self)
+	UF:CreateHealthText(self)
+	UF:CreatePowerBar(self)
+	UF:CreateRaidMark(self)
 end
 
 local function CreateBossStyle(self)
@@ -157,14 +179,24 @@ function UF:OnLogin()
 	self:DefaultClickSets()
 		oUF:RegisterStyle("Player", CreatePlayerStyle)
 		oUF:RegisterStyle("Target", CreateTargetStyle)
+		if (ShiGuangPerDB["BHT"] == true) then
 		oUF:RegisterStyle("Focus", CreateFocusStyle)
+		oUF:RegisterStyle("FocusTarget", CreateFocusTargetStyle)
+		end
 		-- Loader
 		oUF:SetActiveStyle("Player")
 		local player = oUF:Spawn("player", "oUF_Player")
 		oUF:SetActiveStyle("Target")
 		local target = oUF:Spawn("target", "oUF_Target")
+		if (ShiGuangPerDB["BHT"] == true) then
 		oUF:SetActiveStyle("Focus")
 		local focus = oUF:Spawn("focus", "oUF_Focus")
+		M.Mover(focus, U["FocusUF"], "FocusUF", R.UFs.FocusPos)
+		oUF:SetActiveStyle("FocusTarget")
+		local focustarget = oUF:Spawn("focustarget", "oUF_FocusTarget")
+		M.Mover(focustarget, U["FotUF"], "FotUF", {"TOPLEFT", oUF_Focus, "TOPRIGHT", 5, 0})
+		end
+
 		oUF:RegisterStyle("Boss", CreateBossStyle)
 		oUF:SetActiveStyle("Boss")
 		local boss = {}
@@ -201,6 +233,8 @@ function UF:OnLogin()
 
 		-- Group Styles
 		if showPartyFrame then
+			UF:SyncWithZenTracker()
+
 			oUF:RegisterStyle("Party", CreatePartyStyle)
 			oUF:SetActiveStyle("Party")
 

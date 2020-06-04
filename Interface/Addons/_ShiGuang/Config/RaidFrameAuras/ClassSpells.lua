@@ -67,7 +67,7 @@ R.CornerBuffs = {
 }
 
 -- 小队框体的技能监控CD [spellID] = duration in seconds
-R.PartysSpells = {
+R.PartySpells = {
 	[57994]  = 12,	-- 风剪
 	[1766]   = 15,	-- 脚踢
 	[6552]   = 15,	-- 拳击
