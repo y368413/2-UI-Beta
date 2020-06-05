@@ -12,6 +12,7 @@
 	<Script file="nReputation.lua"/>
 	<Script file="WallpaperKit.lua"/>
 	<Script file="FriendGroups.lua"/>
+	<Script file="ShowChanceBar.lua"/>
 	<Script file="AlterCurrencies.lua"/>
 	<Script file="ItemTooltipProfession.lua"/>
 	<CheckButton name="nReputation" parent="ReputationFrame" mixin="nReputationMixin">

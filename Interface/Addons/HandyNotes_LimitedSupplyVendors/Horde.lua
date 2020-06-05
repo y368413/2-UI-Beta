@@ -740,45 +740,60 @@ points[10] = { -- "Northern Barrens"
 		cost = {999999999}, --Cost of each item?
 		},
 
-	[50065708] = {
+	[50675779] = {
 		npcid = 0000, --NPC ID
 		name = "|cffEEC410Zargh|r", --Vendor Name
 		info = "|cffFFFFFFRecipe: Hot Lion Chops|r |cffDF0101Horde only|r", --tooltip display
-		coords = 50065708, --Cordinates to vendor
+		coords = 50675779, --Cordinates to vendor
 		items = {00000}, --Items the vendor sells
 		icon = "interface\\icons\\Inv_scroll_03", --Icon displayed on map
 		cost = {999999999}, --Cost of each item?
 		},
 
-	[48065804] = {
+	[48515843] = {
 		npcid = 0000, --NPC ID
 		name = "|cffEEC410Hula'mahi|r", --Vendor Name
 		info = "|cffFFFFFFRecipe: Holy Protection Potion|r", --tooltip display
-		coords = 48065804, --Cordinates to vendor
+		coords = 48515843, --Cordinates to vendor
 		items = {00000}, --Items the vendor sells
 		icon = "interface\\icons\\Inv_scroll_03", --Icon displayed on map
 		cost = {999999999}, --Cost of each item?
 		},
 
-	[68046902] = {
+	[68346912] = {
 		npcid = 0000, --NPC ID
 		name = "|cffEEC410Gagsprocket|r", --Vendor Name
 		info = "|cffFFFFFFSchematic: Green Firework|r |cffFFFFFF\nSchematic: Minor Recombobulator|r", --tooltip display
-		coords = 68046902, --Cordinates to vendor
+		coords = 68346912, --Cordinates to vendor
 		items = {00000}, --Items the vendor sells
 		icon = "interface\\icons\\Inv_scroll_03", --Icon displayed on map
 		cost = {999999999}, --Cost of each item?
 		},
 
-	[67007304] = {
+	[67087341] = {
 		npcid = 0000, --NPC ID
 		name = "|cffEEC410Ranik|r", --Vendor Name
 		info = "|cffFFFFFFRecipe: Rage Potion|r |cffFFFFFF\nDesign: Wicked Moonstone Ring|r |cffFFFFFF\nPattern: Blue Linen Robe|r |cffFFFFFF\nPattern: Greater Adept's Robe|r", --tooltip display
-		coords = 67007304, --Cordinates to vendor
+		coords = 67087341, --Cordinates to vendor
 		items = {00000}, --Items the vendor sells
 		icon = "interface\\icons\\Inv_scroll_03", --Icon displayed on map
 		cost = {999999999}, --Cost of each item?
+		},		
+		
+	[66727268] = {
+		npcid = 3658, --NPC ID
+		name = "|cffEEC410Lizzarik !WANDERING!|r", --Vendor Name
+		info = "|cff1eff00Heavy Spiked Mace|r |cff1eff00\nIronwood Maul|r |cff1eff00\nEnamelled Broadsword|r |cff1eff00\nFeral Blade|r ", --tooltip display
+		coords = 66727268, --Cordinates to vendor
+		items = {4778,4777,4765,4766}, --Items the vendor sells
+		icon = "interface\\icons\\Inv_scroll_03", --Icon displayed on map
+		cost = {999999999}, --Cost of each item?
 		},
+		
+		
+		
+		
+		
 
 }
 
@@ -809,21 +824,21 @@ points[76] = { -- "Aszhara"
 
 
 points[66] = { -- "Desolace"
-	[55085606] = {
+	[55845653] = {
 		npcid = 0000, --NPC ID
 		name = "|cffEEC410Muuran|r", --Vendor Name
 		info = "|cffFFFFFFPlans: Solid Iron Maul|r", --tooltip display
-		coords = 55085606, --Cordinates to vendor
+		coords = 55845653, --Cordinates to vendor
 		items = {00000}, --Items the vendor sells
 		icon = "interface\\icons\\Inv_scroll_03", --Icon displayed on map
 		cost = {999999999}, --Cost of each item?
 		},
 
-	[51005304] = {
+	[50975356] = {
 		npcid = 0000, --NPC ID
 		name = "|cffEEC410Kireena|r", --Vendor Name
 		info = "|cffFFFFFFPattern: Azure Silk Gloves|r |cffFFFFFF\nRecipe: Heavy Kodo Stew|r", --tooltip display
-		coords = 51005304, --Cordinates to vendor
+		coords = 50975356, --Cordinates to vendor
 		items = {00000}, --Items the vendor sells
 		icon = "interface\\icons\\Inv_scroll_03", --Icon displayed on map
 		cost = {999999999}, --Cost of each item?
@@ -831,21 +846,21 @@ points[66] = { -- "Desolace"
 }
 
 points[1] = { -- "Durotar"
-	[57047700] = {
+	[57417701] = {
 		npcid = 0000, --NPC ID
 		name = "|cffEEC410Zansoa|r", --Vendor Name
 		info = "|cffFFFFFFRecipe: Slitherskin Mackerel|r", --tooltip display
-		coords = 57047700, --Cordinates to vendor
+		coords = 57417701, --Cordinates to vendor
 		items = {00000}, --Items the vendor sells
 		icon = "interface\\icons\\Inv_scroll_03", --Icon displayed on map
 		cost = {999999999}, --Cost of each item?
 		},
 
-	[50084208] = {
+	[50744283] = {
 		npcid = 0000, --NPC ID
 		name = "|cffEEC410Grimtak|r", --Vendor Name
 		info = "|cffFFFFFFRecipe: Scorpid Surprise|r |cffDF0101Horde only|r", --tooltip display
-		coords = 50084208, --Cordinates to vendor
+		coords = 50744283, --Cordinates to vendor
 		items = {00000}, --Items the vendor sells
 		icon = "interface\\icons\\Inv_scroll_03", --Icon displayed on map
 		cost = {999999999}, --Cost of each item?
@@ -855,21 +870,21 @@ points[1] = { -- "Durotar"
 }
 
 points[70] = { -- "Dustwallow"
-	[36063100] = {
+	[36713098] = {
 		npcid = 0000, --NPC ID
 		name = "|cffEEC410Ogg'marr|r", --Vendor Name
 		info = "|cffFFFFFFRecipe: Heavy Crocolisk Stew|r |cffDF0101Horde only|r |cffFFFFFF\nRecipe: Carrion Surprise|r |cffDF0101Horde only|r |cffFFFFFF\nRecipe: Roast Raptor|r |cffFFFFFF\nRecipe: Dragonbreath Chili|r", --tooltip display
-		coords = 36063100, --Cordinates to vendor
+		coords = 36713098, --Cordinates to vendor
 		items = {00000}, --Items the vendor sells
 		icon = "interface\\icons\\Inv_scroll_03", --Icon displayed on map
 		cost = {999999999}, --Cost of each item?
 		},
 
-	[35023008] = {
+	[35153084] = {
 		npcid = 0000, --NPC ID
 		name = "|cffEEC410Ghok'kah|r", --Vendor Name
 		info = "|cffFFFFFFPattern: Icy Cloak|r |cffDF0101Horde only|r", --tooltip display
-		coords = 35023008, --Cordinates to vendor
+		coords = 35153084, --Cordinates to vendor
 		items = {00000}, --Items the vendor sells
 		icon = "interface\\icons\\Inv_scroll_03", --Icon displayed on map
 		cost = {999999999}, --Cost of each item?
@@ -889,31 +904,31 @@ points[77] = { -- "Felwood"
 }
 
 points[69] = { -- "Feralas"
-	[52084700] = {
+	[52834711] = {
 		npcid = 0000, --NPC ID
 		name = "|cffEEC410Jangdor Swiftstrider|r", --Vendor Name
 		info = "|cff1EFF0BPattern: Green Whelp Bracers|r |cff1EFF0B\nPattern: Nightscape Shoulders|r |cffFFFFFF\nPattern: Living Shoulders|r |cffFFFFFF\nPattern: Turtle Scale Gloves|r", --tooltip display
-		coords = 52084700, --Cordinates to vendor
+		coords = 52834711, --Cordinates to vendor
 		items = {00000}, --Items the vendor sells
 		icon = "interface\\icons\\Inv_scroll_03", --Icon displayed on map
 		cost = {999999999}, --Cost of each item?
 		},
 
-	[74064208] = {
+	[74494273] = {
 		npcid = 0000, --NPC ID
 		name = "|cffEEC410Sheendra Tallgrass|r", --Vendor Name
 		info = "|cffFFFFFFRecipe: Hot Wolf Ribs|r |cffFFFFFF\nRecipe: Baked Salmon|r |cffFFFFFF\nRecipe: Lobster Stew|r |cffFFFFFF\nRecipe: Mightfish Steak|r", --tooltip display
-		coords = 74064208, --Cordinates to vendor
+		coords = 74494273, --Cordinates to vendor
 		items = {00000}, --Items the vendor sells
 		icon = "interface\\icons\\Inv_scroll_03", --Icon displayed on map
 		cost = {999999999}, --Cost of each item?
 		},
 
-	[76004304] = {
+	[76064329] = {
 		npcid = 0000, --NPC ID
 		name = "|cffEEC410Bronk|r", --Vendor Name
 		info = "|cffFFFFFFRecipe: Nature Protection Potion|r |cffFFFFFF\nRecipe: Ghost Dye|r", --tooltip display
-		coords = 76004304, --Cordinates to vendor
+		coords = 76064329, --Cordinates to vendor
 		items = {00000}, --Items the vendor sells
 		icon = "interface\\icons\\Inv_scroll_03", --Icon displayed on map
 		cost = {999999999}, --Cost of each item?
@@ -936,11 +951,11 @@ points[80] = { -- "Moonglade"
 
 
 points[7] = { -- "Mulgore"
-	[46045708] = {
+	[46395777] = {
 		npcid = 0000, --NPC ID
 		name = "|cffEEC410Wunna Darkmane|r", --Vendor Name
 		info = "|cffFFFFFFRecipe: Roasted Kodo Meat|r |cffDF0101Horde only|r", --tooltip display
-		coords = 46045708, --Cordinates to vendor
+		coords = 46395777, --Cordinates to vendor
 		items = {00000}, --Items the vendor sells
 		icon = "interface\\icons\\Inv_scroll_03", --Icon displayed on map
 		cost = {999999999}, --Cost of each item?
@@ -1111,41 +1126,41 @@ points[85] = { -- "Orgrimmar"
 
 
 points[81] = { -- "Silithus"
-	[55043606] = {
+	[55513672] = {
 		npcid = 0000, --NPC ID
 		name = "|cffEEC410Calandrath|r", --Vendor Name
 		info = "|cff1EFF0BRecipe: Greater Nature Protection Potion|r", --tooltip display
-		coords = 55043606, --Cordinates to vendor
+		coords = 55513672, --Cordinates to vendor
 		items = {00000}, --Items the vendor sells
 		icon = "interface\\icons\\Inv_scroll_03", --Icon displayed on map
 		cost = {999999999}, --Cost of each item?
 		},
 
-	[81021806] = {
+	[81381837] = {
 		npcid = 0000, --NPC ID
-		name = "|cffEEC410Zannok Hidepiercer|r", --Vendor Name
+		name = "|cffEEC410Zannok Hidepiercer|r *Requires Time Traveling*", --Vendor Name
 		info = "|cffFFFFFFPattern: Heavy Scorpid Bracers|r |cffFFFFFF\nPattern: Heavy Scorpid Helm|r", --tooltip display
-		coords = 81021806, --Cordinates to vendor
+		coords = 81381837, --Cordinates to vendor
 		items = {00000}, --Items the vendor sells
 		icon = "interface\\icons\\Inv_scroll_03", --Icon displayed on map
 		cost = {999999999}, --Cost of each item?
 		},
 
-	[53083404] = {
+	[53803435] = {
 		npcid = 0000, --NPC ID
 		name = "|cffEEC410Mishta|r", --Vendor Name
 		info = "|cffFFFFFFDesign: Emerald Crown of Destruction|r", --tooltip display
-		coords = 53083404, --Cordinates to vendor
+		coords = 53803435, --Cordinates to vendor
 		items = {00000}, --Items the vendor sells
 		icon = "interface\\icons\\Inv_scroll_03", --Icon displayed on map
 		cost = {999999999}, --Cost of each item?
 		},
 
-	[55063700] = {
+	[55603723] = {
 		npcid = 0000, --NPC ID
 		name = "|cffEEC410Kania|r", --Vendor Name
 		info = "|cffFFFFFFFormula: Lesser Mana Oil|r |cffFFFFFF\nFormula: Wizard Oil|r |cffFFFFFF\nPattern: Enchanted Runecloth Bag|r", --tooltip display
-		coords = 55063700, --Cordinates to vendor
+		coords = 55603723, --Cordinates to vendor
 		items = {00000}, --Items the vendor sells
 		icon = "interface\\icons\\Inv_scroll_03", --Icon displayed on map
 		cost = {999999999}, --Cost of each item?
@@ -1167,21 +1182,21 @@ points[199] = { -- "SouthernBarrens"
 }
 
 points[65] = { -- "StonetalonMountains"
-	[50046306] = {
+	[50536338] = {
 		npcid = 0000, --NPC ID
 		name = "|cffEEC410Jeeda|r", --Vendor Name
 		info = "|cffFFFFFFRecipe: Fire Protection Potion|r |cffDF0101Horde only|r", --tooltip display
-		coords = 50046306, --Cordinates to vendor
+		coords = 50536338, --Cordinates to vendor
 		items = {00000}, --Items the vendor sells
 		icon = "interface\\icons\\Inv_scroll_03", --Icon displayed on map
 		cost = {999999999}, --Cost of each item?
 		},
 
-	[48066106] = {
+	[48696152] = {
 		npcid = 0000, --NPC ID
 		name = "|cffEEC410Kulwia|r", --Vendor Name
 		info = "|cff1EFF0BFormula: Enchant Bracer - Lesser Strength|r |cff1EFF0B\nFormula: Enchant Cloak - Minor Agility|r", --tooltip display
-		coords = 48066106, --Cordinates to vendor
+		coords = 48696152, --Cordinates to vendor
 		items = {00000}, --Items the vendor sells
 		icon = "interface\\icons\\Inv_scroll_03", --Icon displayed on map
 		cost = {999999999}, --Cost of each item?
@@ -1191,41 +1206,62 @@ points[65] = { -- "StonetalonMountains"
 }
 
 points[71] = { -- "Tanaris"
-	[50062806] = {
+	[50672863] = {
 		npcid = 0000, --NPC ID
-		name = "|cffEEC410Haughty Modiste & Vizzklick & Blizrik Buckshot|r", --Vendor Name
-		info = "|cffFFFFFFPattern: Haliscan Pantaloons|r |cffFFFFFF\nPattern: Dress Shoes|r |cffFFFFFF\nPattern: Haliscan Jacket|r |cffFFFFFF\nPattern: Crimson Silk Robe|r |cffFFFFFF\nPattern: Soul Pouch|r |cffFFFFFF\nSchematic: EZ-Thro Dynamite II|r", --tooltip display
-		coords = 50062806, --Cordinates to vendor
+		name = "|cffEEC410Haughty Modiste|r", --Vendor Name
+		info = "|cffFFFFFFPattern: Haliscan Pantaloons|r |cffFFFFFF\nPattern: Dress Shoes|r |cffFFFFFF\nPattern: Haliscan Jacket|r", --tooltip display
+		coords = 50672863, --Cordinates to vendor
+		items = {00000}, --Items the vendor sells
+		icon = "interface\\icons\\Inv_scroll_03", --Icon displayed on map
+		cost = {999999999}, --Cost of each item?
+		},		
+		
+	[50732873] = {
+		npcid = 0000, --NPC ID
+		name = "|cffEEC410Vizzklick|r", --Vendor Name
+		info = "|cffFFFFFFPattern: Crimson Silk Robe|r |cffFFFFFF\nPattern: Soul Pouch|r", --tooltip display
+		coords = 50732873, --Cordinates to vendor
 		items = {00000}, --Items the vendor sells
 		icon = "interface\\icons\\Inv_scroll_03", --Icon displayed on map
 		cost = {999999999}, --Cost of each item?
 		},
+		
+	[50712852] = {
+		npcid = 0000, --NPC ID
+		name = "|cffEEC410Blizrik Buckshot|r", --Vendor Name
+		info = "|cffFFFFFFSchematic: EZ-Thro Dynamite II|r", --tooltip display
+		coords = 50712852, --Cordinates to vendor
+		items = {00000}, --Items the vendor sells
+		icon = "interface\\icons\\Inv_scroll_03", --Icon displayed on map
+		cost = {999999999}, --Cost of each item?
+		},	
+		
 
-	[52062900] = {
+	[52562905] = {
 		npcid = 0000, --NPC ID
 		name = "|cffEEC410Dirge Quikcleave|r", --Vendor Name
 		info = "|cffFFFFFFRecipe: Tender Wolf Steak|r", --tooltip display
-		coords = 52062900, --Cordinates to vendor
+		coords = 52562905, --Cordinates to vendor
 		items = {00000}, --Items the vendor sells
 		icon = "interface\\icons\\Inv_scroll_03", --Icon displayed on map
 		cost = {999999999}, --Cost of each item?
 		},
 
-	[51023002] = {
+	[51153039] = {
 		npcid = 0000, --NPC ID
 		name = "|cffEEC410Krinkle Goodsteel|r", --Vendor Name
 		info = "|cffFFFFFFPlans: Golden Scale Coif|r", --tooltip display
-		coords = 51023002, --Cordinates to vendor
+		coords = 51153039, --Cordinates to vendor
 		items = {00000}, --Items the vendor sells
 		icon = "interface\\icons\\Inv_scroll_03", --Icon displayed on map
 		cost = {999999999}, --Cost of each item?
 		},
 
-	[50082800] = {
+	[50852797] = {
 		npcid = 0000, --NPC ID
 		name = "|cffEEC410Alchemist Pestlezugg|r", --Vendor Name
 		info = "|cffFFFFFFRecipe: Nature Protection Potion|r |cffFFFFFF\nRecipe: Philosopher's Stone|r |cffFFFFFF\nRecipe: Transmute Iron to Gold|r |cffFFFFFF\nRecipe: Transmute Mithril to Truesilver|r |cffFFFFFF\nRecipe: Transmute Arcanite|r", --tooltip display
-		coords = 50082800, --Cordinates to vendor
+		coords = 50852797, --Cordinates to vendor
 		items = {00000}, --Items the vendor sells
 		icon = "interface\\icons\\Inv_scroll_03", --Icon displayed on map
 		cost = {999999999}, --Cost of each item?
@@ -1235,11 +1271,11 @@ points[71] = { -- "Tanaris"
 }
 
 points[88] = { -- "ThunderBluff"
-	[43084406] = {
+	[43804507] = {
 		npcid = 0000, --NPC ID
 		name = "|cffEEC410Mahu|r", --Vendor Name
 		info = "|cffFFFFFFPattern: Red Woolen Bag|r |cffFFFFFF\nPattern: Orange Martial Shirt|r |cffFFFFFF\nPattern: White Wedding Dress|r |cffFFFFFF\nPattern: Red Linen Bag|r", --tooltip display
-		coords = 43084406, --Cordinates to vendor
+		coords = 43804507, --Cordinates to vendor
 		items = {00000}, --Items the vendor sells
 		icon = "interface\\icons\\Inv_scroll_03", --Icon displayed on map
 		cost = {999999999}, --Cost of each item?
@@ -1299,21 +1335,21 @@ points[88] = { -- "ThunderBluff"
 }
 
 points[78] = { -- "UngoroCrater"
-	[54086206] = {
+	[54756247] = {
 		npcid = 0000, --NPC ID
 		name = "|cffEEC410Nergal|r", --Vendor Name
 		info = "|cff0A70D0Pattern: Devilsaur Leggings|r |cffFFFFFF\nPattern: Devilsaur Gauntlets|r", --tooltip display
-		coords = 54086206, --Cordinates to vendor
+		coords = 54756247, --Cordinates to vendor
 		items = {00000}, --Items the vendor sells
 		icon = "interface\\icons\\Inv_scroll_03", --Icon displayed on map
 		cost = {999999999}, --Cost of each item?
 		},
 
-	[43044106] = {
+	[43444157] = {
 		npcid = 0000, --NPC ID
 		name = "|cffEEC410Dramm Riverhorn|r", --Vendor Name
 		info = "|cffFFFFFFPlans: Runic Plate Boots|r |cffFFFFFF\nPlans: Runic Plate Helm|r |cffFFFFFF\nPlans: Runic Plate Shoulders|r |cffFFFFFF\nPlans: Runic Plate Leggings|r", --tooltip display
-		coords = 43044106, --Cordinates to vendor
+		coords = 43444157, --Cordinates to vendor
 		items = {00000}, --Items the vendor sells
 		icon = "interface\\icons\\Inv_scroll_03", --Icon displayed on map
 		cost = {999999999}, --Cost of each item?
@@ -1323,41 +1359,41 @@ points[78] = { -- "UngoroCrater"
 }
 
 points[83] = { -- "Winterspring"
-	[59025008] = {
+	[59225092] = {
 		npcid = 0000, --NPC ID
 		name = "|cffEEC410Xizzer Fizzbolt|r", --Vendor Name
 		info = "|cffFFFFFFSchematic: Delicate Arcanite Converter|r |cffFFFFFF\nSchematic: Masterwork Target Dummy|r |cffFFFFFF\nSchematic: Powerful Seaforium Charge|r |cffFFFFFF\nSchematic: Gyrofreeze Ice Reflector|r", --tooltip display
-		coords = 59025008, --Cordinates to vendor
+		coords = 59225092, --Cordinates to vendor
 		items = {00000}, --Items the vendor sells
 		icon = "interface\\icons\\Inv_scroll_03", --Icon displayed on map
 		cost = {999999999}, --Cost of each item?
 		},
 
-	[59085106] = {
+	[59825156] = {
 		npcid = 0000, --NPC ID
 		name = "|cffEEC410Himmik|r", --Vendor Name
 		info = "|cffFFFFFFRecipe: Monster Omelet|r", --tooltip display
-		coords = 59085106, --Cordinates to vendor
+		coords = 59825156, --Cordinates to vendor
 		items = {00000}, --Items the vendor sells
 		icon = "interface\\icons\\Inv_scroll_03", --Icon displayed on map
 		cost = {999999999}, --Cost of each item?
 		},
 
-	[59064902] = {
+	[59684931] = {
 		npcid = 0000, --NPC ID
 		name = "|cffEEC410Qia|r", --Vendor Name
 		info = "|cffFFFFFFFormula: Enchant Chest - Major Health|r |cffFFFFFF\nDesign: Necklace of the Diamond Tower|r |cffFFFFFF\nPattern: Frostsaber Boots|r |cffFFFFFF\nPattern: Mooncloth|r |cffFFFFFF\nPattern: Runecloth Bag|r", --tooltip display
-		coords = 59064902, --Cordinates to vendor
+		coords = 59684931, --Cordinates to vendor
 		items = {00000}, --Items the vendor sells
 		icon = "interface\\icons\\Inv_scroll_03", --Icon displayed on map
 		cost = {999999999}, --Cost of each item?
 		},
 
-	[58006308] = {
+	[58096368] = {
 		npcid = 0000, --NPC ID
 		name = "|cffEEC410Daleohm|r", --Vendor Name
 		info = "|cff0A70D0Plans:Frostguard|r", --tooltip display
-		coords = 58006308, --Cordinates to vendor
+		coords = 58096368, --Cordinates to vendor
 		items = {00000}, --Items the vendor sells
 		icon = "interface\\icons\\Inv_scroll_03", --Icon displayed on map
 		cost = {999999999}, --Cost of each item?

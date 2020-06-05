@@ -178,7 +178,7 @@ function TSP_EventFrame:ADDON_LOADED(loaded)
 		
 		TSP_SetsDataProvider = CreateFromMixins(WardrobeSetsDataProviderMixin);
 		TSP_EventFrame:RegisterEvent("TRANSMOG_COLLECTION_UPDATED");
-		TSP_EventFrame:RegisterEvent("PLAYER_REGEN_DISABLED");
+		--TSP_EventFrame:RegisterEvent("PLAYER_REGEN_DISABLED");
 		TSP_EventFrame:RegisterEvent("PLAYER_REGEN_ENABLED");
 		--TSP_SettingsButton:SetParent(WardrobeCollectionFrame.SetsCollectionFrame);
 		--TSP_SettingsButton:SetPoint("TOPRIGHT", WardrobeCollectionFrame, "TOPRIGHT", -11, -35);
