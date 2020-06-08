@@ -1,4 +1,4 @@
--- ECF-lite 8.3.0-7, @Rubgrsch
+-- ECF-lite 8.3.0-7-2, @Rubgrsch
 
 -- Lua
 local _G = _G
@@ -93,7 +93,7 @@ local function ECFfilter(Event,msg,player,flags,IsMyFriend,good)
 	if player == playerName or flags == "GM" or flags == "DEV" then return end
 
 	-- filter blocked players
-	if not good and blockedPlayers[player] then return true end
+	if not good and blockedPlayers[player] >= 3 then return true end
 
 	-- remove color/hypelink
 	local filterString = msg:gsub("|H.-|h(.-)|h","%1"):gsub("|c%x%x%x%x%x%x%x%x",""):gsub("|r","")
@@ -167,7 +167,7 @@ local function PreECFfilter(self,event,msg,player,_,_,_,flags,_,_,_,_,lineID,gui
 		end
 		filterResult = ECFfilter(chatEvents[event],msg,player,flags,IsMyFriend,good)
 
-		if filterResult and not good then blockedPlayers[player] = (blockedPlayers[player] or 0) + 1 end
+		if filterResult and not good then blockedPlayers[player] = blockedPlayers[player] + 1 end
 	end
 	return filterResult
 end

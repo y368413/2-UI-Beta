@@ -1,3 +1,7 @@
+06/06/2020 version 4.10.4
+- Added Ninn Jah and Tempton to Blackrock Depths target menu
+- Fix for Unit 17 not showing up in BfA/Mechagon target menu
+
 03/09/2020 version 4.10.3
 - If you have both old PetTracker_Breeds and a recent version of PetTracker both enabled, Rematch will not attempt to get breeds from PetTracker in that unstable state.
 - For users of recent PetTracker versions, added "Show Breeds As Text Not Icons" under Appearance Options to show breeds in the more standard letter format (like H/P, B/B, etc.) rather than PetTracker's icons. If this option is not supported, the option is hidden.

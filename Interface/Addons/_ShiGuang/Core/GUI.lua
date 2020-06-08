@@ -63,8 +63,8 @@ local defaultSettings = {
 		AutoRes = true,
 		NumGroups = 8,
 		SimpleMode = true,
-		SMSortByRole  = true,
 		SMUnitsPerColumn = 25,
+		SMGroupByIndex = 3,
 		InstanceAuras = true,
 		RaidDebuffScale = 1,
 		SpecRaidPos = false,
@@ -211,7 +211,6 @@ local defaultSettings = {
 		TMW = true,
 		PetBattle = true,
 		WeakAuras = true,
-		BarLine = false,
 		InfobarLine = true,
 		ChatLine = false,
 		MenuLine = true,
@@ -315,6 +314,7 @@ local defaultSettings = {
 
 local accountSettings = {
 	ChatFilterList = "%*",
+	ChatFilterWhiteList = "",
 	TimestampFormat = 1,
 	NameplateFilter = {[1]={}, [2]={}},
 	RaidDebuffs = {},
@@ -449,6 +449,10 @@ local function updateFilterList()
 	M:GetModule("Chat"):UpdateFilterList()
 end
 
+local function updateFilterWhiteList()
+	M:GetModule("Chat"):UpdateFilterWhiteList()
+end
+
 local function updateChatSize()
 	M:GetModule("Chat"):UpdateChatSize()
 end
@@ -507,6 +511,13 @@ end
 
 local function refreshRaidFrameIcons()
 	M:GetModule("UnitFrames"):RefreshRaidFrameIcons()
+end
+
+local function updateSimpleModeGroupBy()
+	local UF = M:GetModule("UnitFrames")
+	if UF.UpdateSimpleModeHeader then
+		UF:UpdateSimpleModeHeader()
+	end
 end
 
 local function updateSmoothingAmount()
@@ -669,9 +680,11 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		--{3, "Nameplate", "Height", U["NP Height"], true, true, {3, 16, 0}},
 	},
 	[3] = {
-		{1, "UFs", "SimpleMode", "|cff00cc4c"..U["Simple RaidFrame"]},
-		{1, "UFs", "SMSortByRole", U["SimpleMode SortByRole"], true},
-		{3, "UFs", "SMUnitsPerColumn", U["SimpleMode Column"], true, true, {10, 40, 0}},
+		{1, "UFs", "SimpleMode", "|cff00cc4c"..U["SimpleRaidFrame"], false, false, nil, nil, U["SimpleRaidFrameTip"]},
+		{3, "UFs", "SMUnitsPerColumn", U["SimpleMode Column"], true, false, {10, 40, 0}},
+		{4, "UFs", "SMGroupByIndex", U["SimpleMode GroupBy"].."*", true, true, {GROUP, CLASS, ROLE}, updateSimpleModeGroupBy},
+		--{1, "UFs", "SMSortByRole", U["SimpleMode SortByRole"], true},
+		--{3, "UFs", "SMUnitsPerColumn", U["SimpleMode Column"], true, true, {10, 40, 0}},
 		{1, "UFs", "RaidFrame", "|cff00cc4c"..U["UFs RaidFrame"], false, false, setupRaidFrame, nil, U["RaidFrameTip"]},
 		{1, "UFs", "PartyFrame", "|cff00cc4c"..U["UFs PartyFrame"], true},
 		{1, "UFs", "Arena", U["Arena Frame"], true, true},
@@ -753,22 +766,22 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "Misc", "HideBanner", U["Hide Bossbanner"], true},
 		{1, "Misc", "HideErrors", U["Hide Error"].."*", true, true, nil, updateErrorBlocker},
 		{1, "Chat", "AllowFriends", U["AllowFriendsSpam"].."*", false, false, nil, nil, U["AllowFriendsSpamTip"]},
+		{1, "Chat", "Lock", "|cff00cc4c"..U["Lock Chat"], true, false},
 		{},--blank
-		{1, "Chat", "Lock", "|cff00cc4c"..U["Lock Chat"]},
+		{3, "Chat", "Matches", U["Keyword Match"].."*", false, false, {1, 3, 0}},
 		{3, "Chat", "ChatWidth", U["LockChatWidth"].."*", true, false, {200, 600, 0}, updateChatSize},
 		{3, "Chat", "ChatHeight", U["LockChatHeight"].."*", true, true, {100, 500, 0}, updateChatSize},			
 		--{1, "Chat", "Chatbar", U["ShowChatbar"], true},
 		--{1, "Chat", "ChatItemLevel", U["ShowChatItemLevel"]},
-		{3, "Chat", "Matches", U["Keyword Match"].."*", false, false, {1, 3, 0}},
-		{2, "ACCOUNT", "ChatFilterList", U["Filter List"].."*", true, false, nil, updateFilterList},
-		{2, "Chat", "Keyword", U["Whisper Keyword"].."*", true, true, nil, updateWhisperList},
+		{2, "ACCOUNT", "ChatFilterList", U["Filter List"].."*", false, false, nil, updateFilterList},
+		{2, "Chat", "Keyword", U["Whisper Keyword"].."*", true, false, nil, updateWhisperList},
+		{2, "ACCOUNT", "ChatFilterWhiteList", "|cff00cc4c"..U["ChatFilterWhiteList"].."*", true, true, nil, updateFilterWhiteList, U["ChatFilterWhiteListTip"]},
 	},
 	[6] = {
 		{1, "UFs", "UFFade", U["UFFade"]},
 		{1, "UFs", "UFClassIcon", U["UFClassIcon"], true},
 	  {1, "UFs", "UFPctText", U["UFPctText"], true, true},
 	  --{1, "Skins", "InfobarLine", "底部职业着色条"},
-	  --{1, "Skins", "BarLine", U["Bar Line"]},
 	  {1, "Misc", "xMerchant", U["xMerchant"]},
 	  {1, "Misc", "WallpaperKit", U["WallpaperKit"], true},
 		{},--blank
@@ -1067,9 +1080,11 @@ local function CreateOption(i)
 			end
 		-- Blank, no optType
 		else
+			if not key then
 			local l = CreateFrame("Frame", nil, parent)
 			l:SetPoint("TOPLEFT", 26, -offset - 12)
 			M.CreateGF(l, 550, R.mult, "Horizontal", 1, 1, 1, .25, .25)
+			end
 			offset = offset + 32
 		end
 	end

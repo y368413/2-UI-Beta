@@ -357,7 +357,7 @@ function MISC:NVision_Create()
 		},
 		[2] = {
 			anchorF = "LEFT", anchorT = "RIGHT", offset = 3,
-			texture = "Interface\\ICONS\\INV_Crate_01",
+			texture = 2000861,
 			color = {.8, 0, 1}, reverse = true, maxValue = 12,
 		}
 	}

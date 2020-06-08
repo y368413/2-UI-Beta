@@ -300,12 +300,14 @@ function UF:OnLogin()
 
 		local raidMover
 		if MaoRUIPerDB["UFs"]["SimpleMode"] then
-			local groupingOrder, groupBy, sortMethod = "1,2,3,4,5,6,7,8", "GROUP", "INDEX"
-			if MaoRUIPerDB["UFs"]["SMSortByRole"] then
-				groupingOrder, groupBy, sortMethod = "TANK,HEALER,DAMAGER,NONE", "ASSIGNEDROLE", "NAME"
-			end
 			local unitsPerColumn = MaoRUIPerDB["UFs"]["SMUnitsPerColumn"]
 			local maxColumns = M:Round(numGroups*5 / unitsPerColumn)
+			local groupByIndex = MaoRUIPerDB["UFs"]["SMGroupByIndex"]
+			local groupByTypes = {
+				[1] = {"1,2,3,4,5,6,7,8", "GROUP", "INDEX"},
+				[2] = {"DEATHKNIGHT,WARRIOR,DEMONHUNTER,ROGUE,MONK,PALADIN,DRUID,SHAMAN,HUNTER,PRIEST,MAGE,WARLOCK", "CLASS", "NAME"},
+				[3] = {"TANK,HEALER,DAMAGER,NONE", "ASSIGNEDROLE", "NAME"},
+			}
 
 			local function CreateGroup(name, i)
 				local group = oUF:SpawnHeader(name, nil, "solo,party,raid",
@@ -316,9 +318,6 @@ function UF:OnLogin()
 				"xoffset", 5,
 				"yOffset", -5,
 				"groupFilter", tostring(i),
-				"groupingOrder", groupingOrder,
-				"groupBy", groupBy,
-				"sortMethod", sortMethod,
 				"maxColumns", maxColumns,
 				"unitsPerColumn", unitsPerColumn,
 				"columnSpacing", 5,
@@ -348,6 +347,14 @@ function UF:OnLogin()
 			local moverWidth = (100*scale*maxColumns + 5*(maxColumns-1))
 			local moverHeight = 25*scale*unitsPerColumn + 5*(unitsPerColumn-1)
 			raidMover = M.Mover(group, U["RaidFrame"], "RaidFrame", {"TOPLEFT", UIParent, 3, -26}, moverWidth, moverHeight)
+
+			function UF:UpdateSimpleModeHeader()
+				local groupByIndex = MaoRUIPerDB["UFs"]["SMGroupByIndex"]
+				group:SetAttribute("groupingOrder", groupByTypes[groupByIndex][1])
+				group:SetAttribute("groupBy", groupByTypes[groupByIndex][2])
+				group:SetAttribute("sortMethod", groupByTypes[groupByIndex][3])
+			end
+			UF:UpdateSimpleModeHeader()
 		else
 			local raidFrameHeight = raidHeight + MaoRUIPerDB["UFs"]["RaidPowerHeight"] + R.mult
 
