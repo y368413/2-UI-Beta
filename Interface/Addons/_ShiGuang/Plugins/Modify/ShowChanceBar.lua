@@ -146,8 +146,8 @@ local function Initializationframe()
 	J_BarFrame:ClearAllPoints()
 	J_BarFrame:SetFrameStrata("BACKGROUND")
 	J_BarFrame:SetScale(ShiGuangDB["ShowChanceBarScale"])
-	J_BarFrame:SetWidth(300) -- Set these to whatever height/width is needed 
-	J_BarFrame:SetHeight(150) -- for your Texture
+	J_BarFrame:SetWidth(120) -- Set these to whatever height/width is needed 
+	J_BarFrame:SetHeight(120) -- for your Texture
 	J_BarFrame:EnableMouse(true)
 	J_BarFrame:SetMovable(true)
 	J_BarFrame:SetPropagateKeyboardInput(true)
@@ -278,7 +278,7 @@ function J_BarFrame:J_ADDON_LOADED()
 	if ShiGuangDB["ShowChanceBarPoint"] == nil then ShiGuangDB["ShowChanceBarPoint"] = "LEFT" end
 	if ShiGuangDB["ShowChanceBarRelay"] == nil then ShiGuangDB["ShowChanceBarRelay"] = "LEFT" end
 	if ShiGuangDB["ShowChanceBarX"] == nil then ShiGuangDB["ShowChanceBarX"] = 21 end
-	if ShiGuangDB["ShowChanceBarY"] == nil then ShiGuangDB["ShowChanceBarY"] = 210 end
+	if ShiGuangDB["ShowChanceBarY"] == nil then ShiGuangDB["ShowChanceBarY"] = -210 end
 	if ShiGuangDB["ShowChanceBarScale"] == nil then ShiGuangDB["ShowChanceBarScale"] = 1 end
 	self:RegisterEvent("PLAYER_ENTERING_WORLD");
 	self:RegisterEvent("CHARACTER_POINTS_CHANGED");

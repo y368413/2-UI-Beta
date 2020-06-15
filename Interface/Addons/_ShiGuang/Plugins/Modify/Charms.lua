@@ -487,28 +487,35 @@ function SetOrHookScript(target,eventName,func)
 		return target:SetScript(eventName,func)
 	end
 end
-local icons = {
-  bleed = "Interface/Icons/Ability_IronMaidens_CorruptedBlood",
-  clarity = "Interface/Icons/ability_warlock_soulswap",
-  echo = "Interface/Icons/Ability_Priest_VoidEntropy",
-  passive_avoidance = "Interface/Icons/spell_warlock_demonsoul",
-  passive_crit = "Interface/Icons/Ability_Priest_ShadowyApparition",
-  passive_crit_dam = "Interface/Icons/Achievement_Profession_Fishing_FindFish",
-  passive_haste = "Interface/Icons/Ability_Mage_NetherWindPresence",
-  passive_leech = "Interface/Icons/Spell_Shadow_LifeDrain02_purple",
-  passive_mastery = "Interface/Icons/Ability_Rogue_SinisterCalling",
-  passive_versatility = "Interface/Icons/Spell_Arcane_ArcaneTactics",
-  proc_crit = "Interface/Icons/Ability_Hunter_RaptorStrike",
-  proc_haste = "Interface/Icons/Ability_Warrior_BloodFrenzy",
-  proc_mastery = "Interface/Icons/Spell_Nature_FocusedMind",
-  proc_versatility = "Interface/Icons/Ability_Hunter_OneWithNature",
-  ritual = "Interface/Icons/Spell_Shadow_Shadesofdarkness",
-  star = "Interface/Icons/Ability_Druid_Starfall",
-  truth = "Interface/Icons/INV_Wand_1H_NzothRaid_D_01",
-  twilight = "Interface/Icons/Spell_Priest_VoidSear",
-  twisted = "Interface/Icons/Achievement_Boss_YoggSaron_01",
-  special = "INterface\\Icons\\INV_Misc_QuestionMark",
-}
+
+    LOCALES = {
+        PATTERN_INFO = "%d级%s",
+        UNKNOWN = "其他或专有",
+        special = "专有",
+
+        passive_crit_dam = "爆伤",
+        passive_mastery = "渠精",
+        passive_haste = "渠急",
+        passive_versatility = "渠全",
+        passive_crit = "渠暴",
+        passive_avoidance = "闪避",
+        passive_leech = "吸血",
+
+        proc_haste = "急速",
+        proc_crit = "暴击",
+        proc_mastery = "精通",
+        proc_versatility = "全能",
+
+        twilight = "暮光",
+        ritual = "仪式",
+        twisted = "触须",
+        clarity = "洞察",
+        truth = "真相",
+        echo = "回响",
+        star = "无尽",
+        bleed = "龟裂",
+    }
+
 local data = {
   affixes = {
     [6437] = { key = "passive_crit_dam", level = 1, },
@@ -586,33 +593,30 @@ local data = {
     twisted = { 10, 35, 66, },
   },
 }
-    LOCALES = {
-        PATTERN_INFO = "%d级%s",
-        UNKNOWN = "其他或专有",
-        special = "专有",
 
-        passive_crit_dam = "爆伤",
-        passive_mastery = "渠精",
-        passive_haste = "渠急",
-        passive_versatility = "渠全",
-        passive_crit = "渠暴",
-        passive_avoidance = "闪避",
-        passive_leech = "吸血",
+local icons = {
+  bleed = "Interface/Icons/Ability_IronMaidens_CorruptedBlood",
+  clarity = "Interface/Icons/ability_warlock_soulswap",
+  echo = "Interface/Icons/Ability_Priest_VoidEntropy",
+  passive_avoidance = "Interface/Icons/spell_warlock_demonsoul",
+  passive_crit = "Interface/Icons/Ability_Priest_ShadowyApparition",
+  passive_crit_dam = "Interface/Icons/Achievement_Profession_Fishing_FindFish",
+  passive_haste = "Interface/Icons/Ability_Mage_NetherWindPresence",
+  passive_leech = "Interface/Icons/Spell_Shadow_LifeDrain02_purple",
+  passive_mastery = "Interface/Icons/Ability_Rogue_SinisterCalling",
+  passive_versatility = "Interface/Icons/Spell_Arcane_ArcaneTactics",
+  proc_crit = "Interface/Icons/Ability_Hunter_RaptorStrike",
+  proc_haste = "Interface/Icons/Ability_Warrior_BloodFrenzy",
+  proc_mastery = "Interface/Icons/Spell_Nature_FocusedMind",
+  proc_versatility = "Interface/Icons/Ability_Hunter_OneWithNature",
+  ritual = "Interface/Icons/Spell_Shadow_Shadesofdarkness",
+  star = "Interface/Icons/Ability_Druid_Starfall",
+  truth = "Interface/Icons/INV_Wand_1H_NzothRaid_D_01",
+  twilight = "Interface/Icons/Spell_Priest_VoidSear",
+  twisted = "Interface/Icons/Achievement_Boss_YoggSaron_01",
+  special = "INterface\\Icons\\INV_Misc_QuestionMark",
+}
 
-        proc_haste = "急速",
-        proc_crit = "暴击",
-        proc_mastery = "精通",
-        proc_versatility = "全能",
-
-        twilight = "暮光",
-        ritual = "仪式",
-        twisted = "触须",
-        clarity = "洞察",
-        truth = "真相",
-        echo = "回响",
-        star = "无尽",
-        bleed = "龟裂",
-    }
 if success and GetCVar("portal") == "CN" then
     local prices = { [10] = 3000, [12] = 3300, [15] = 4125, [16] = 4250, [17] = 4250, [20] = 5000, [28] = 6300, [30] = 6750, [35] = 7875, [45] = 9000, [50] = 10000, [66] = 13200, [75] = 15000, }
     local vendors = {
@@ -620,6 +624,7 @@ if success and GetCVar("portal") == "CN" then
         { { "passive_mastery", 1, }, { "ritual", 1, }, { "proc_crit", 2, }, { "passive_leech", 2, }, { "truth", 2, }, { "passive_versatility", 3, }, { "passive_avoidance", 2, }, },
         { { "star", 1, }, { "proc_versatility", 1, }, { "clarity", 1, }, { "passive_crit", 2, }, { "proc_haste", 3, }, { "passive_leech", 3, }, { "passive_avoidance", 3, }, },
         { { "passive_crit", 1, }, { "passive_leech", 1, }, { "passive_haste", 2, }, { "twilight", 2, }, { "proc_mastery", 3, }, { "passive_crit_dam", 3, }, },
+        { { "passive_haste", 1, }, { "twisted", 1, }, { "proc_haste", 2, }, { "echo", 2, }, { "star", 3, }, { "passive_crit", 3, }, },
     }
     local firstTime = time({ year =2020, month=5, day=21, hour=7})
     local interval = 60*60*24*7/2
@@ -657,7 +662,7 @@ if success and GetCVar("portal") == "CN" then
         GameTooltip_AddColoredLine(tip, "当前 至 " .. date(timeFormat, firstTime + round * interval), NORMAL_FONT_COLOR);
         local list = vendors[round]
         if not list then
-            GameTooltip_AddColoredLine(tip, "没有数据，请更新爱不易", HIGHLIGHT_FONT_COLOR)
+            GameTooltip_AddColoredLine(tip, "暂时没有数据", HIGHLIGHT_FONT_COLOR)
         else
             addVendorTip(list)
         end
