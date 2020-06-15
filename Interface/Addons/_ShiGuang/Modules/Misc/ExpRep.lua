@@ -263,9 +263,9 @@ end
 function MISC:Expbar()
 	if not MaoRUIPerDB["Misc"]["ExpRep"] then return end
 
-	local bar = CreateFrame("StatusBar", nil, Minimap)
+	local bar = CreateFrame("StatusBar", "NDuiMinimapDataBar", MinimapCluster)
 	bar:SetPoint("TOP", Minimap, "BOTTOM", 0, 0)
-	bar:SetSize(Minimap:GetWidth()-2, 3)
+	bar:SetSize(Minimap:GetWidth()-2*MaoRUIPerDB["Map"]["MinimapScale"], 3)
 	bar:SetHitRectInsets(0, 0, 0, -10)
 	M.CreateSB(bar)
 	
