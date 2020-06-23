@@ -2,7 +2,7 @@
 ## Title: HandyNotes_LimitedSupplyVendors
 ## Notes: Displays the locations of Limited Supply Vendor Recipes.
 ## Author: Killdnaction@Thrall
-## Version: v1.0.3
+## Version: v1.0.4
 ## X-Category: Map & Minimap
 ## SavedVariables: HandyNotes_LimitedSupplyVendorsDB
 ## RequiredDeps: HandyNotes

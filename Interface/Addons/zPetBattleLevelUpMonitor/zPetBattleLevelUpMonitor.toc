@@ -8,3 +8,4 @@
 
 Monitor.xml
 PetTooltip.xml
+DestroyBoom.lua
