@@ -3,7 +3,7 @@ local M, R, U, I = unpack(ns)
 local G = M:RegisterModule("GUI")
 
 local tonumber, tostring, pairs, ipairs, next, select, type = tonumber, tostring, pairs, ipairs, next, select, type
-local tinsert, format, strsplit, strfind = table.insert, string.format, string.split, string.find
+local tinsert, strsplit, strfind = table.insert, string.split, string.find
 local cr, cg, cb = I.r, I.g, I.b
 local guiTab, guiPage, f, dataFrame = {}, {}
 
@@ -104,6 +104,8 @@ local defaultSettings = {
 		PartyWatcherSync = true,
 		SmoothAmount = .3,
 		RaidTextScale = 0.85, 
+		FrequentHealth = false,
+		HealthFrequency = .25,
 		PlayerWidth = 245,
 		PlayerHeight = 24,
 		FocusWidth = 160,
@@ -520,6 +522,10 @@ local function updateSimpleModeGroupBy()
 	end
 end
 
+local function updateRaidHealthMethod()
+	M:GetModule("UnitFrames"):UpdateRaidHealthMethod()
+end
+
 local function updateSmoothingAmount()
 	M:SetSmoothingAmount(MaoRUIPerDB["UFs"]["SmoothAmount"])
 end
@@ -603,7 +609,7 @@ local tabList = {
 local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 	[1] = {
 		{1, "Actionbar", "Enable", "|cff00cc4c"..U["Enable Actionbar"]},
-		{3, "Actionbar", "Scale", U["Actionbar Scale"].."*", true, false, {.8, 1.5, 1}, updateActionbarScale},
+		{3, "Actionbar", "Scale", U["Actionbar Scale"].."*", true, false, {.8, 1.5, .1}, updateActionbarScale},
 		{4, "Actionbar", "Style", U["Actionbar Style"], true, true, {"-- 2*(3+12+3) --", "-- 2*(6+12+6) --", "-- 2*6+3*12+2*6 --", "-- 3*12 --", "-- 2*(12+6) --", "-- MR --", "-- PVP --", "-- 3*(4+12+4) --", "-- PVP2 --", "-- JK --"}},
 		{},--blank
 		{1, "Actionbar", "Cooldown", "|cff00cc4c"..U["Show Cooldown"]},
@@ -622,12 +628,12 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "UFs", "SwingBar", U["UFs SwingBar"], true},
 		{1, "UFs", "SwingTimer", U["UFs SwingTimer"], true, true, nil, nil, U["SwingTimer Tip"]},
 		{},--blank	
-		{3, "ACCOUNT", "UIScale", U["Setup UIScale"], false, false, {.4, 1.15, 2}},
+		{3, "ACCOUNT", "UIScale", U["Setup UIScale"], false, false, {.4, 1.15, .01}},
 		{3, "Misc", "WorldQusetRewardIconsSize", "WorldQusetRewardIconsSize", true, false, {21, 66, 0}},
 		{3, "UFs", "PlayerFrameScale", U["PlayerFrame Scale"], true, true, {0.6, 1.2, 1}},
-		{3, "Tooltip", "Scale", U["Tooltip Scale"].."*", false, false, {.5, 1.5, 1}},
-		{3, "Map", "MapScale", U["Map Scale"], true, false, {1, 2, 1}},
-		{3, "Map", "MinimapScale", U["Minimap Scale"].."*", true, true, {1, 2, 1}, updateMinimapScale},
+		{3, "Tooltip", "Scale", U["Tooltip Scale"].."*", false, false, {.5, 1.5, .1}},
+		{3, "Map", "MapScale", U["Map Scale"], true, false, {1, 2, .1}},
+		{3, "Map", "MinimapScale", U["Minimap Scale"].."*", true, true, {1, 2, .1}, updateMinimapScale},
 	},
 	[2] = {
 		{1, "Nameplate", "Enable", "|cff00cc4c"..U["Enable Nameplate"], nil, nil, setupNameplateFilter},
@@ -641,18 +647,18 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "Nameplate", "CustomUnitColor", "|cff00cc4c"..U["CustomUnitColor"].."*", nil, nil, nil, updateCustomUnitList},
 		{1, "Nameplate", "TankMode", "|cff00cc4c"..U["Tank Mode"].."*", true},
 		{1, "Nameplate", "DPSRevertThreat", U["DPS Revert Threat"].."*", true, true},
-		--{3, "Nameplate", "VerticalSpacing", U["NP VerticalSpacing"].."*", false, nil, {.5, 1.5, 1}, updatePlateSpacing},
+		--{3, "Nameplate", "VerticalSpacing", U["NP VerticalSpacing"].."*", false, nil, {.5, 1.5, .1}, updatePlateSpacing},
 		{1, "Nameplate", "ColorBorder", U["ColorBorder"].."*", false, false, nil, refreshNameplates},
 		{1, "Nameplate", "AKSProgress", U["AngryKeystones Progress"], true},
-		{3, "Nameplate", "Distance", U["Nameplate Distance"].."*", false, false, {20, 100, 0}, updatePlateRange},
-		{3, "Nameplate", "MinScale", U["Nameplate MinScale"].."*", true, false, {.5, 1, 1}, updatePlateScale},
-		{3, "Nameplate", "MinAlpha", U["Nameplate MinAlpha"].."*", true, true, {.5, 1, 1}, updatePlateAlpha},
-		{3, "Nameplate", "PlateWidth", U["NP Width"].."*", false, false, {50, 250, 0}, refreshNameplates},
-		{3, "Nameplate", "PlateHeight", U["NP Height"].."*", true, false, {5, 30, 0}, refreshNameplates},
-		{3, "Nameplate", "NameTextSize", U["NameTextSize"].."*", true, true, {10, 30, 0}, refreshNameplates},
-		{3, "Nameplate", "HealthTextSize", U["HealthTextSize"].."*", false, false, {10, 30, 0}, refreshNameplates},
-		{3, "Nameplate", "maxAuras", U["Max Auras"], true, false, {0, 10, 0}},
-		{3, "Nameplate", "AuraSize", U["Auras Size"], true, true, {18, 40, 0}},
+		{3, "Nameplate", "Distance", U["Nameplate Distance"].."*", false, false, {20, 100, .1}, updatePlateRange},
+		{3, "Nameplate", "MinScale", U["Nameplate MinScale"].."*", true, false, {.5, 1, .1}, updatePlateScale},
+		{3, "Nameplate", "MinAlpha", U["Nameplate MinAlpha"].."*", true, true, {.5, 1, .1}, updatePlateAlpha},
+		{3, "Nameplate", "PlateWidth", U["NP Width"].."*", false, false, {50, 250, 1}, refreshNameplates},
+		{3, "Nameplate", "PlateHeight", U["NP Height"].."*", true, false, {5, 30, 1}, refreshNameplates},
+		{3, "Nameplate", "NameTextSize", U["NameTextSize"].."*", true, true, {10, 30, 1}, refreshNameplates},
+		{3, "Nameplate", "HealthTextSize", U["HealthTextSize"].."*", false, false, {10, 30, 1}, refreshNameplates},
+		{3, "Nameplate", "maxAuras", U["Max Auras"], true, false, {0, 10, 1}},
+		{3, "Nameplate", "AuraSize", U["Auras Size"], true, true, {18, 40, 1}},
 		{2, "Nameplate", "UnitList", U["UnitColor List"].."*", nil, nil, nil, updateCustomUnitList, U["CustomUnitTips"]},
 		{2, "Nameplate", "ShowPowerList", U["ShowPowerList"].."*", true, nil, nil, updatePowerUnitList, U["CustomUnitTips"]},
 		{5, "Nameplate", "SecureColor", U["Secure Color"].."*"},
@@ -681,14 +687,13 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 	},
 	[3] = {
 		{1, "UFs", "SimpleMode", "|cff00cc4c"..U["SimpleRaidFrame"], false, false, nil, nil, U["SimpleRaidFrameTip"]},
-		{3, "UFs", "SMUnitsPerColumn", U["SimpleMode Column"], true, false, {10, 40, 0}},
+		{3, "UFs", "SMUnitsPerColumn", U["SimpleMode Column"], true, false, {10, 40, 1}},
 		{4, "UFs", "SMGroupByIndex", U["SimpleMode GroupBy"].."*", true, true, {GROUP, CLASS, ROLE}, updateSimpleModeGroupBy},
 		--{1, "UFs", "SMSortByRole", U["SimpleMode SortByRole"], true},
-		--{3, "UFs", "SMUnitsPerColumn", U["SimpleMode Column"], true, true, {10, 40, 0}},
 		{1, "UFs", "RaidFrame", "|cff00cc4c"..U["UFs RaidFrame"], false, false, setupRaidFrame, nil, U["RaidFrameTip"]},
 		{1, "UFs", "PartyFrame", "|cff00cc4c"..U["UFs PartyFrame"], true},
 		{1, "UFs", "Arena", U["Arena Frame"], true, true},
-		--{3, "UFs", "NumGroups", U["Num Groups"], true, true, {4, 8, 0}},
+		--{3, "UFs", "NumGroups", U["Num Groups"], true, true, {4, 8, 1}},
 		{1, "UFs", "PartyPetFrame", "|cff00cc4c"..U["UFs PartyPetFrame"]},
 		--{1, "UFs", "RaidClassColor", U["ClassColor RaidFrame"]},
 		{1, "UFs", "PartyWatcher", "|cff00cc4c"..U["UFs PartyWatcher"], true, nil, setupPartyWatcher, nil, U["PartyWatcherTip"]},
@@ -709,10 +714,12 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{4, "UFs", "RaidHPMode", U["RaidHPMode"].."*", false, false, {U["DisableRaidHP"], U["RaidHPPercent"], U["RaidHPCurrent"], U["RaidHPLost"]}, updateRaidNameText},
 		{4, "UFs", "RaidHealthColor", U["HealthColor"], true, false, {U["Default Dark"], U["ClassColorHP"], U["GradientHP"]}},
 		{4, "UFs", "BuffIndicatorType", U["BuffIndicatorType"].."*", true, true, {U["BI_Blocks"], U["BI_Icons"], U["BI_Numbers"]}, refreshRaidFrameIcons},
-		{3, "UFs", "BuffIndicatorScale", U["BuffIndicatorScale"].."*", false, false, {0.6, 2, 1}, refreshRaidFrameIcons},
-		{3, "UFs", "RaidDebuffScale", U["RaidDebuffScale"].."*", true, false, {0.6, 2, 1}, refreshRaidFrameIcons},
-		{3, "UFs", "RaidTextScale", U["UFTextScale"], true, true, {.8, 1.5, 2}, updateRaidTextScale},
-		--{3, "UFs", "UFTextScale", U["UFTextScale"], true, {.8, 1.5, 2}, updateUFTextScale},
+		{3, "UFs", "BuffIndicatorScale", U["BuffIndicatorScale"].."*", false, false, {0.6, 2, .1}, refreshRaidFrameIcons},
+		{3, "UFs", "RaidDebuffScale", U["RaidDebuffScale"].."*", true, false, {0.6, 2, .1}, refreshRaidFrameIcons},
+		{3, "UFs", "RaidTextScale", U["UFTextScale"], true, true, {.8, 1.5, .05}, updateRaidTextScale},
+		--{3, "UFs", "SmoothAmount", "|cff00cc4c"..U["SmoothAmount"], true, true, {.15, .6, .05}, updateSmoothingAmount, U["SmoothAmountTip"]},
+		--{1, "UFs", "FrequentHealth", "|cff00cc4c"..U["FrequentHealth"].."*" false, true, nil, updateRaidHealthMethod, U["FrequentHealthTip"]},
+		--{3, "UFs", "HealthFrequency", U["HealthFrequency"].."*" true, true, {.1, .5, .05}, updateRaidHealthMethod, U["HealthFrequencyTip"]},
 	},
 	[4] = {
 		{1, "AuraWatch", "Enable", "|cff00cc4c"..U["Enable AuraWatch"], false, false, setupAuraWatch},
@@ -732,11 +739,11 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "Auras", "ReverseBuffs", U["ReverseBuffs"], true},
 		{1, "Auras", "ReverseDebuffs", U["ReverseDebuffs"], true, true},	
 		--{1, "UFs", "Castbars", "|cff00cc4c"..U["UFs Castbar"], false, false, setupCastbar},
-		{3, "Auras", "BuffSize", U["BuffSize"], false, false, {24, 40, 0}},
-		{3, "Auras", "DebuffSize", U["DebuffSize"], true, false, {24, 40, 0}},
-		{3, "Auras", "BuffsPerRow", U["BuffsPerRow"], false, false, {10, 20, 0}},
-		{3, "Auras", "DebuffsPerRow", U["DebuffsPerRow"], true, false, {10, 16, 0}},
-		{3, "AuraWatch", "IconScale", U["AuraWatch IconScale"], true, true, {.8, 2, 1}},
+		{3, "Auras", "BuffSize", U["BuffSize"], false, false, {24, 40, 1}},
+		{3, "Auras", "DebuffSize", U["DebuffSize"], true, false, {24, 40, 1}},
+		{3, "Auras", "BuffsPerRow", U["BuffsPerRow"], false, false, {10, 20, 1}},
+		{3, "Auras", "DebuffsPerRow", U["DebuffsPerRow"], true, false, {10, 16, 1}},
+		{3, "AuraWatch", "IconScale", U["AuraWatch IconScale"], true, true, {.8, 2, .1}},
 		{},--blank		
 		{1, "Nameplate", "ShowPlayerPlate", "|cff00cc4c"..U["Enable PlayerPlate"]},
 		{1, "Auras", "ClassAuras", U["Enable ClassAuras"], true},
@@ -744,9 +751,9 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "Nameplate", "NameplateClassPower", U["Nameplate ClassPower"]},
 		{1, "Nameplate", "PPPowerText", U["PlayerPlate PowerText"], true},
 		{1, "Nameplate", "PPHideOOC", U["Fadeout OOC"], true, true},
-		{3, "Nameplate", "PPIconSize", U["PlayerPlate IconSize"], false, nil, {21, 60, 0}, updatePlayerPlate}, -- FIX ME: need to refactor classpower
-		{3, "Nameplate", "PPHeight", U["PlayerPlate HPHeight"].."*", true, false, {1, 16, 0}, updatePlayerPlate},
-		{3, "Nameplate", "PPPHeight", U["PlayerPlate MPHeight"].."*", true, true, {3, 16, 0}, updatePlayerPlate},
+		{3, "Nameplate", "PPIconSize", U["PlayerPlate IconSize"], false, nil, {21, 60, 1}, updatePlayerPlate}, -- FIX ME: need to refactor classpower
+		{3, "Nameplate", "PPHeight", U["PlayerPlate HPHeight"].."*", true, false, {1, 16, 1}, updatePlayerPlate},
+		{3, "Nameplate", "PPPHeight", U["PlayerPlate MPHeight"].."*", true, true, {3, 16, 1}, updatePlayerPlate},
 	},
 	[5] = {
 		{1, "Chat", "Outline", U["Font Outline"]},
@@ -768,9 +775,9 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "Chat", "AllowFriends", U["AllowFriendsSpam"].."*", false, false, nil, nil, U["AllowFriendsSpamTip"]},
 		{1, "Chat", "Lock", "|cff00cc4c"..U["Lock Chat"], true, false},
 		{},--blank
-		{3, "Chat", "Matches", U["Keyword Match"].."*", false, false, {1, 3, 0}},
-		{3, "Chat", "ChatWidth", U["LockChatWidth"].."*", true, false, {200, 600, 0}, updateChatSize},
-		{3, "Chat", "ChatHeight", U["LockChatHeight"].."*", true, true, {100, 500, 0}, updateChatSize},			
+		{3, "Chat", "Matches", U["Keyword Match"].."*", false, false, {1, 3, 1}},
+		{3, "Chat", "ChatWidth", U["LockChatWidth"].."*", true, false, {200, 600, 1}, updateChatSize},
+		{3, "Chat", "ChatHeight", U["LockChatHeight"].."*", true, true, {100, 500, 1}, updateChatSize},			
 		--{1, "Chat", "Chatbar", U["ShowChatbar"], true},
 		--{1, "Chat", "ChatItemLevel", U["ShowChatItemLevel"]},
 		{2, "ACCOUNT", "ChatFilterList", U["Filter List"].."*", false, false, nil, updateFilterList},
@@ -806,7 +813,7 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		--{1, "Skins", "PGFSkin", U["PGF Skin"], true},
 		--{1, "Skins", "Rematch", U["Rematch Skin"], true, true},
 		{1, "Skins", "FlatMode", U["FlatMode"]},
-		--{3, "Skins", "SkinAlpha", U["SkinAlpha"].."*", true, {0, 1, 1}, updateSkinAlpha},
+		--{3, "Skins", "SkinAlpha", U["SkinAlpha"].."*", true, {0, 1, .05}, updateSkinAlpha},
 		--{1, "Skins", "Loot", U["Loot"]},
 		--{1, "Skins", "BlizzardSkins", "|cff00cc4c"..U["BlizzardSkins"], true, nil, nil, U["BlizzardSkinsTips"]},
 		{1, "Skins", "InfobarLine", U["ClassColor Line"], true},	
@@ -1011,7 +1018,6 @@ local function CreateOption(i)
 		-- Slider
 		elseif optType == 3 then
 			local min, max, step = unpack(data)
-			local decimal = step > 2 and 2 or step
 			local x, y
 			if horizon2 then
 				x, y = 540, -offset + 32
@@ -1021,15 +1027,15 @@ local function CreateOption(i)
 				x, y = 55, -offset - 26
 				offset = offset + 58
 			end
-			local s = M.CreateSlider(parent, name, min, max, x, y)
+			local s = M.CreateSlider(parent, name, min, max, step, x, y)
 			s:SetValue(NDUI_VARIABLE(key, value))
 			s:SetScript("OnValueChanged", function(_, v)
-				local current = tonumber(format("%."..step.."f", v))
+				local current = M:Round(tonumber(v), 2)
 				NDUI_VARIABLE(key, value, current)
-				s.value:SetText(format("%."..decimal.."f", current))
+				s.value:SetText(current)
 				if callback then callback() end
 			end)
-			s.value:SetText(format("%."..decimal.."f", NDUI_VARIABLE(key, value)))
+			s.value:SetText(M:Round(NDUI_VARIABLE(key, value), 2))
 			if tooltip then
 				s.title = U["Tips"]
 				M.AddTooltip(s, "ANCHOR_RIGHT", tooltip, "info")

@@ -676,6 +676,21 @@ do
 		return bu
 	end
 
+	local function updateIconBorderColor(self, r, g, b)
+		if r == .65882 then r, g, b = 0, 0, 0 end
+		self.__owner.bg:SetBackdropBorderColor(r, g, b)
+	end
+	local function resetIconBorderColor(self)
+		self.__owner.bg:SetBackdropBorderColor(0, 0, 0)
+	end
+	function M:HookIconBorderColor()
+		self:SetAlpha(0)
+		self.__owner = self:GetParent()
+		if not self.__owner.bg then return end
+		hooksecurefunc(self, "SetVertexColor", updateIconBorderColor)
+		hooksecurefunc(self, "Hide", resetIconBorderColor)
+	end
+
 	-- Handle statusbar
 	function M:CreateSB(spark, r, g, b)
 		self:SetStatusBarTexture(I.normTex)
@@ -970,11 +985,13 @@ do
 		self:ClearFocus()
 	end
 
-	function M:CreateSlider(name, minValue, maxValue, x, y, width)
+	function M:CreateSlider(name, minValue, maxValue, step, x, y, width)
 		local slider = CreateFrame("Slider", nil, self, "OptionsSliderTemplate")
 		slider:SetPoint("TOPLEFT", x, y)
 		slider:SetWidth(width or 200)
 		slider:SetMinMaxValues(minValue, maxValue)
+		slider:SetValueStep(step)
+		slider:SetObeyStepOnDrag(true)
 		slider:SetHitRectInsets(0, 0, 0, 0)
 		--M.ReskinSlider(slider)
 

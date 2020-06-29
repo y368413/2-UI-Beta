@@ -746,7 +746,7 @@ local function sliderValueChanged(self, v)
 end
 
 local function createOptionSlider(parent, title, minV, maxV, x, y, value, func)
-	local slider = M.CreateSlider(parent, title, minV, maxV, x, y)
+	local slider = M.CreateSlider(parent, title, minV, maxV, 1, x, y)
 	slider:SetValue(MaoRUIPerDB["UFs"][value])
 	slider.value:SetText(MaoRUIPerDB["UFs"][value])
 	slider.__value = value
