@@ -279,9 +279,10 @@ function BlinkHealth:UpdateUnitValues()
 		name = UnitName("pet");
 		_, powertype = UnitPowerType("player");
 	--end
-	if maxheal<1 then 
-		maxheal =1
-	end
+	--if maxheal<1 then 
+		--maxheal =1
+	--end
+    if maxheal == 0 or maxpower == 0 then return end
 	self:SetPercentText("player", heal/maxheal * 100 + 0.5);
 	local hexColor = self:ToHexColor(1, 0.65, 0.16);  --0.49,0.99,0
 	heal, maxheal = self:FormatDigit(heal), self:FormatDigit(maxheal);
@@ -314,19 +315,11 @@ function BlinkHealth:UpdateUnitValues()
 	-- target
 	local hexH, hexP;
 	if (UnitExists("target")) then
-		if RealMobHealth and RealMobHealth.GetUnitHealth then 
-			heal, maxheal = RealMobHealth.GetUnitHealth("target")
-		else
-			heal = UnitHealth("target") or 0
-			maxheal = UnitHealthMax("target") or 1
-		end
-		--heal, maxheal = UnitHealth("target"), UnitHealthMax("target");
+		heal, maxheal = UnitHealth("target"), UnitHealthMax("target");
 		power, maxpower = UnitPower("target"), UnitPowerMax("target");
 		_, powertype = UnitPowerType("target");
 		name = UnitName("target");
-		if maxheal < 1 then
-		maxheal =1
-		end
+		if maxheal < 1 then maxheal =1 end
 		self:SetPercentText("target", heal/maxheal * 100 + 0.5);		
 		heal, maxheal = self:FormatDigit(heal), self:FormatDigit(maxheal);
 		local hexH = self:ToHexColor(1, 0.65, 0.16);   --0.49,0.99,0
@@ -358,9 +351,7 @@ function BlinkHealth:UpdateUnitValues()
 	
 		if (UnitExists("targettarget")) then
 			heal, maxheal = UnitHealth("targettarget"), UnitHealthMax("targettarget");
-			if maxheal < 1 then
-				maxheal =1
-			end
+			if maxheal < 1 then maxheal =1 end
 			hexColor = self:ToHexColor(1, 0.65, 0.16);
 			name = UnitName("targettarget");
 			if (UnitIsUnit("targettarget", "player")) then

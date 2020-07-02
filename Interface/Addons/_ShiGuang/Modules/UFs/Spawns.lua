@@ -51,23 +51,8 @@ local function CreateFocusStyle(self)
 	UF:CreateAuras(self)
 end
 
-local function CreateToTStyle(self)
-	self.mystyle = "tot"
-end
-
 local function CreateFocusTargetStyle(self)
 	self.mystyle = "focustarget"
-	SetUnitFrameSize(self, "Pet")
-
-	UF:CreateHeader(self)
-	UF:CreateHealthBar(self)
-	UF:CreateHealthText(self)
-	UF:CreatePowerBar(self)
-	UF:CreateRaidMark(self)
-end
-
-local function CreatePetStyle(self)
-	self.mystyle = "pet"
 	SetUnitFrameSize(self, "Pet")
 
 	UF:CreateHeader(self)
@@ -195,11 +180,9 @@ function UF:OnLogin()
 	self:DefaultClickSets()
 		oUF:RegisterStyle("Player", CreatePlayerStyle)
 		oUF:RegisterStyle("Target", CreateTargetStyle)
-		oUF:RegisterStyle("ToT", CreateToTStyle)
 		if (ShiGuangPerDB["BHT"] == true) then
 		oUF:RegisterStyle("Focus", CreateFocusStyle)
 		oUF:RegisterStyle("FocusTarget", CreateFocusTargetStyle)
-		oUF:RegisterStyle("Pet", CreatePetStyle)
 		end
 		-- Loader
 		oUF:SetActiveStyle("Player")
@@ -207,14 +190,7 @@ function UF:OnLogin()
 		oUF:SetActiveStyle("Target")
 		local target = oUF:Spawn("target", "oUF_Target")
 
-		oUF:SetActiveStyle("ToT")
-		local targettarget = oUF:Spawn("targettarget", "oUF_ToT")
-
 		if (ShiGuangPerDB["BHT"] == true) then
-		oUF:SetActiveStyle("Pet")
-		local pet = oUF:Spawn("pet", "oUF_Pet")
-		M.Mover(pet, U["PetUF"], "PetUF", R.UFs.PetPos)
-
 		oUF:SetActiveStyle("Focus")
 		local focus = oUF:Spawn("focus", "oUF_Focus")
 		M.Mover(focus, U["FocusUF"], "FocusUF", R.UFs.FocusPos)

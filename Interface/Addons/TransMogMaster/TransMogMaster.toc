@@ -9,7 +9,6 @@
 ## X-Category: Transmogrify
 ## Author: TorelTwiddler, Ami Yuy + Elvador + Kruithne + Kemayo + romdeau23
 ## SavedVariables: CanIMogItOptions, CanIMogItDatabase, AppearanceTooltipDB, MogPartialSetsAddonConfig
-## SavedVariablesPerCharacter: AppearanceTooltipDBPC
 ## RequiredDeps: _ShiGuang
 ## DefaultState: disabled
 
@@ -19,11 +18,10 @@ Locale\_locales.xml
 CanIMogIt.lua
 Overlay\_overlays.xml
 
-LibArmorToken-1.0.lua
-LibAppropriateItems-1.0.lua
+Lib\LibArmorToken-1.0.lua
+Lib\LibAppropriateItems-1.0.lua
 AppearanceTooltip.lua
 
 TransmogTokens.lua
 
-MogPartialSets.lua
 MogPartialSets.xml

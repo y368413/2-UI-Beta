@@ -281,7 +281,6 @@ local textScaleFrames = {
 	["target"] = true,
 	["focus"] = true,
 	["pet"] = true,
-	["tot"] = true,
 	["focustarget"] = true,
 	["boss"] = true,
 	["arena"] = true,
