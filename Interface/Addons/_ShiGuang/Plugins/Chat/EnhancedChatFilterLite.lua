@@ -1,4 +1,4 @@
--- ECF-lite 8.3.0-7-2, @Rubgrsch
+-- ECF-lite 8.3.0-8, @Rubgrsch
 
 -- Lua
 local _G = _G
@@ -73,7 +73,10 @@ local function strDiff(sA, sB) -- arrays of bytes
 	return this[len_b+1]/max(len_a,len_b)
 end
 
-local blockedPlayers = {}
+--------------- Filters ---------------
+-- Blocked players: have been filtered many times
+-- Record how many times players are filterd
+local blockedPlayers, blockedMsg = {}, {}
 setmetatable(blockedPlayers, {__index=function() return 0 end})
 local chatLines = {}
 local chatEvents = {["CHAT_MSG_WHISPER"] = 1, ["CHAT_MSG_SAY"] = 2, ["CHAT_MSG_YELL"] = 2, ["CHAT_MSG_EMOTE"] = 2, ["CHAT_MSG_TEXT_EMOTE"] = 2, ["CHAT_MSG_CHANNEL"] = 3, ["CHAT_MSG_PARTY"] = 4, ["CHAT_MSG_PARTY_LEADER"] = 4, ["CHAT_MSG_RAID"] = 4, ["CHAT_MSG_RAID_LEADER"] = 4, ["CHAT_MSG_RAID_WARNING"] = 4, ["CHAT_MSG_INSTANCE_CHAT"] = 4, ["CHAT_MSG_INSTANCE_CHAT_LEADER"] = 4, ["CHAT_MSG_DND"] = 5}
@@ -92,8 +95,8 @@ local function ECFfilter(Event,msg,player,flags,IsMyFriend,good)
 	-- don't filter player/GM/DEV
 	if player == playerName or flags == "GM" or flags == "DEV" then return end
 
-	-- filter blocked players
-	if not good and blockedPlayers[player] >= 3 then return true end
+	-- filter blocked players and blocked msg
+	if not good and (blockedPlayers[player] >= 3 or blockedMsg[msg]) then return true end
 
 	-- remove color/hypelink
 	local filterString = msg:gsub("|H.-|h(.-)|h","%1"):gsub("|c%x%x%x%x%x%x%x%x",""):gsub("|r","")
@@ -154,10 +157,16 @@ local function ECFfilter(Event,msg,player,flags,IsMyFriend,good)
 end
 
 local prevLineID, filterResult = 0, false
-local function PreECFfilter(self,event,msg,player,_,_,_,flags,_,_,_,_,lineID,guid)
+local function PreECFfilter(self,event,msg,player,language,_,_,flags,_,_,_,_,lineID,guid)
 	-- With multiple chat tabs one msg can trigger filters multiple times and repeatFilter will return wrong result
 	if lineID ~= prevLineID then
 		prevLineID = lineID
+
+		-- filter unknown languages
+		if not availableLanguages[language] then
+			filterResult = true
+			return true
+		end
 
 		player = Ambiguate(player, "none")
 		local IsMyFriend, good
@@ -167,7 +176,10 @@ local function PreECFfilter(self,event,msg,player,_,_,_,flags,_,_,_,_,lineID,gui
 		end
 		filterResult = ECFfilter(chatEvents[event],msg,player,flags,IsMyFriend,good)
 
-		if filterResult and not good then blockedPlayers[player] = blockedPlayers[player] + 1 end
+		if filterResult and not good then
+			blockedPlayers[player] = blockedPlayers[player] + 1
+			if blockedPlayers[player] >= 3 then blockedMsg[msg] = true end
+		end
 	end
 	return filterResult
 end

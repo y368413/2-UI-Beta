@@ -17,9 +17,10 @@
 Locale\_locales.xml
 CanIMogIt.lua
 Overlay\_overlays.xml
+## Plugins\_plugins.xml
 
-Lib\LibArmorToken-1.0.lua
-Lib\LibAppropriateItems-1.0.lua
+Libs\LibArmorToken-1.0.lua
+Libs\LibAppropriateItems-1.0.lua
 AppearanceTooltip.lua
 
 TransmogTokens.lua
