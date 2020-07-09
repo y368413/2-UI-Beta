@@ -8,7 +8,7 @@ TTD2.Frames = TTD2.Frames or {}
 local Frames = TTD2.Frames
 
 --[[
-this frame displays options previously maintained by Tools.SavedVariables
+this frame displays options setup by Tools.SavedVariables
 ]]
 
 local super = Templates.AddonFrame
@@ -148,6 +148,19 @@ function this:Create()
 	ResourcefulBonusRoll.CheckButtonLabel = "Resourceful Bonus-Roll"
 	ResourcefulBonusRoll.FrameTooltipText = "You will only be told to trade more rolls if you can do so for War-Resources and currently have at least double the amount necessary.\n\nMeans: You will only be told to trade the first roll if you have at least "..TTD2.Tools.Chat:Green("500 War-Resources").." and need "..TTD2.Tools.Chat:Green("1000 War-Resources").." to be noted about the second."
 	self.ScrollFrame:AddButtonToContentFrame(ResourcefulBonusRoll)
+	
+	local HorrificWaste = TTD2.Templates.UICheckButton:new()
+	HorrificWaste.CheckButtonSavedDataSetting = "HorrificWaste"
+	HorrificWaste.CheckButtonLabel = "Horrific Waste"
+	HorrificWaste.FrameTooltipText = "Consider all item rewards from"..TTD2.Tools.Chat:Purple(" Horrific Visions")..TTD2.Tools.Chat:Red(" done").." as soon as any single item reward was collected for the week.\n\nMay be useful if all you care about is the"..TTD2.Tools.Chat:Orange(" Malefic Core").."."
+	self.ScrollFrame:AddButtonToContentFrame(HorrificWaste)
+	
+	local DemandingVisions = TTD2.Templates.SlaveUICheckButton:new()
+	DemandingVisions.CheckButtonSavedDataSetting = "DemandingVisions"
+	DemandingVisions.CheckButtonLabel = "Demanding Visions"
+	DemandingVisions.FrameTooltipText = "Only check if the"..TTD2.Tools.Chat:Green(" ilvl470 (= 5 masks)").." reward has been collected this week."
+	DemandingVisions.MasterUICheckButton = HorrificWaste
+	self.ScrollFrame:AddButtonToContentFrame(DemandingVisions)
 	
 	--spacing
 	self.ScrollFrame:AddButtonToContentFrame()

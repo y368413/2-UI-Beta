@@ -1,3 +1,7 @@
+06/29/2020 version 4.10.5
+- Clarified in the script filter pet variables help that "name" is the current displayed name of the pet and to use petInfo.speciesName to get its original name.
+- Fix for notes buttons (Delete, Undo, Save) not working.
+
 06/06/2020 version 4.10.4
 - Added Ninn Jah and Tempton to Blackrock Depths target menu
 - Fix for Unit 17 not showing up in BfA/Mechagon target menu

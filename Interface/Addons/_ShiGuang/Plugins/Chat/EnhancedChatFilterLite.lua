@@ -1,11 +1,24 @@
 -- ECF-lite 8.3.0-8, @Rubgrsch
+--Default Options
+local defaults = {
+	enableDND = true, -- DND
+	enableCFA = true, -- Achievement Filter
+	enableMSF = false, -- Monster Say Filter
+	enableLanguage = false, -- block other languages, like common/orcish
+	blackWordList = {},
+	totalBlackWordsFiltered = 0, -- total blackWord filtered if keywords cleanup enabled, false if disabled
+	lesserBlackWordThreshold = 3, -- in lesserBlackWord
+	lootItemFilterList = {[71096] = true, [49655] = true}, -- item list, [id] = true
+	lootCurrencyFilterList = {}, -- Currency list, [id] = true
+	lootQualityMin = 1, -- loot quality filter, 0..4 = poor..epic
+	blockedPlayers = {}, -- blocked players list, [serverName] = {[guid] = times}
+}
 
 -- Lua
 local _G = _G
 local format, ipairs, max, min, next, pairs, tconcat, tonumber, tremove = format, ipairs, max, min, next, pairs, table.concat, tonumber, tremove
 -- WoW
 local Ambiguate, C_BattleNet_GetGameAccountInfoByGUID, C_Item_GetItemQualityByID, C_Timer_After, ChatTypeInfo, GetAchievementLink, GetPlayerInfoByGUID, GetTime, C_FriendList_IsFriend, IsGUIDInGroup, IsGuildMember, RAID_CLASS_COLORS = Ambiguate, C_BattleNet.GetGameAccountInfoByGUID, C_Item.GetItemQualityByID, C_Timer.After, ChatTypeInfo, GetAchievementLink, GetPlayerInfoByGUID, GetTime, C_FriendList.IsFriend, IsGUIDInGroup, IsGuildMember, RAID_CLASS_COLORS
-
 local playerName, playerServer = GetUnitName("player"), GetRealmName()
 
 -- Some UTF-8 symbols that will be auto-changed
@@ -78,6 +91,13 @@ end
 -- Record how many times players are filterd
 local blockedPlayers, blockedMsg = {}, {}
 setmetatable(blockedPlayers, {__index=function() return 0 end})
+
+-- Languages that player understand
+local availableLanguages = {
+	[""] = true,
+}
+
+-- Chat Events
 local chatLines = {}
 local chatEvents = {["CHAT_MSG_WHISPER"] = 1, ["CHAT_MSG_SAY"] = 2, ["CHAT_MSG_YELL"] = 2, ["CHAT_MSG_EMOTE"] = 2, ["CHAT_MSG_TEXT_EMOTE"] = 2, ["CHAT_MSG_CHANNEL"] = 3, ["CHAT_MSG_PARTY"] = 4, ["CHAT_MSG_PARTY_LEADER"] = 4, ["CHAT_MSG_RAID"] = 4, ["CHAT_MSG_RAID_LEADER"] = 4, ["CHAT_MSG_RAID_WARNING"] = 4, ["CHAT_MSG_INSTANCE_CHAT"] = 4, ["CHAT_MSG_INSTANCE_CHAT_LEADER"] = 4, ["CHAT_MSG_DND"] = 5}
 
@@ -122,6 +142,25 @@ local function ECFfilter(Event,msg,player,flags,IsMyFriend,good)
 	-- DND and auto-reply
 	if filtersStatus[2] and (flags == "DND" or Event == 5) and not IsMyFriend then return true end
 
+	-- blackWord Filter
+	if filtersStatus[3] and not IsMyFriend then
+		local count = 0
+		for k,v in pairs(defaults.blackWordList) do
+			if (v.regex and filterString or msgLine):find(k) then
+				if v.lesser then
+					count = count + 1
+				else
+					if C.shouldEnableKeywordCleanup then
+						v.count = (v.count or 0) + 1
+						defaults.totalBlackWordsFiltered = defaults.totalBlackWordsFiltered + 1
+					end
+					return true
+				end
+			end
+		end
+		if count >= defaults.lesserBlackWordThreshold then return true end
+	end
+
 	-- raidAlert
 	if filtersStatus[4] then
 		for _,tag in ipairs(RaidAlertTagList) do
@@ -163,7 +202,7 @@ local function PreECFfilter(self,event,msg,player,language,_,_,flags,_,_,_,_,lin
 		prevLineID = lineID
 
 		-- filter unknown languages
-		if not availableLanguages[language] then
+		if not availableLanguages[language] and defaults.enableLanguage then
 			filterResult = true
 			return true
 		end
@@ -201,7 +240,8 @@ end)
 
 local MSL, MSLPos = {}, 1
 local function MonsterFilter(self,_,msg)
-	if MSFOffQuestFlag then return end
+	if not defaults.enableMSF or MSFOffQuestFlag then return end
+
 	for _, v in ipairs(MSL) do if v == msg then return true end end
 	MSL[MSLPos] = msg
 	MSLPos = MSLPos + 1
@@ -260,7 +300,7 @@ local function AchievementReady(id)
 end
 
 local function AchievementFilter(self, event, msg, _, _, _, _, _, _, _, _, _, _, guid)
-	if not guid or not guid:find("Player") then return end
+	if not defaults.enableCFA or not guid or not guid:find("Player") then return end
 	local id = tonumber(msg:match("|Hachievement:(%d+)"))
 	if not id then return end
 	local _,class,_,_,_,name,server = GetPlayerInfoByGUID(guid)
@@ -276,3 +316,18 @@ local function AchievementFilter(self, event, msg, _, _, _, _, _, _, _, _, _, _,
 end
 ChatFrame_AddMessageEventFilter("CHAT_MSG_ACHIEVEMENT", AchievementFilter)
 ChatFrame_AddMessageEventFilter("CHAT_MSG_GUILD_ACHIEVEMENT", AchievementFilter)
+
+-- Loot Filter
+local function lootItemFilter(self,_,msg)
+	local itemID = tonumber(msg:match("|Hitem:(%d+)"))
+	if not itemID then return end -- pet cages don't have 'item'
+	if defaults.lootItemFilterList[itemID] then return true end
+	if C_Item_GetItemQualityByID(itemID) < defaults.lootQualityMin then return true end
+end
+ChatFrame_AddMessageEventFilter("CHAT_MSG_LOOT", lootItemFilter)
+
+local function lootCurrecyFilter(self,_,msg)
+	local currencyID = tonumber(msg:match("|Hcurrency:(%d+)"))
+	if defaults.lootCurrencyFilterList[currencyID] then return true end
+end
+ChatFrame_AddMessageEventFilter("CHAT_MSG_CURRENCY", lootCurrecyFilter)

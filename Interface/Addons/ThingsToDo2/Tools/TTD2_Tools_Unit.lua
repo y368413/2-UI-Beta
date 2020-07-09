@@ -20,6 +20,10 @@ this.PlayerFaction =
 	Neutral		= "Neutral"
 }
 
+function this:GetPlayerGUID()	
+	return UnitGUID(self.PlayerUnit)
+end
+
 function this:GetPlayerLevel()	
 	return UnitLevel(self.PlayerUnit)
 end

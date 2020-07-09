@@ -33,7 +33,7 @@ this.ClassColors =
 
 this.FactionColors =
 {
-	["Alliance"]	= "002366", --royal blue; pure blue is very hard to see on most backgrounds
+	["Alliance"]	= "0070DD", --wow "rare" quality blue
 	["Horde"]		= "FF0000",
 	["Neutral"]		= "00FF00"
 }

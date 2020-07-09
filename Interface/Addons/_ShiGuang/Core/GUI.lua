@@ -111,6 +111,7 @@ local defaultSettings = {
 		FocusWidth = 160,
 		FocusHeight = 21,
 		FocusPowerHeight = 3,
+		FocusPowerOffset = 2,
 		PetWidth = 100,
 		PetHeight = 16,
 		PetPowerHeight = 2,
@@ -329,7 +330,7 @@ local accountSettings = {
 	DetectVersion = I.Version,
 	ResetDetails = true,
 	LockUIScale = false,
-	UIScale = .8,
+	UIScale = .71,
 	NumberFormat = 2,
 	VersionCheck = true,
 	DBMRequest = false,
@@ -1028,6 +1029,7 @@ local function CreateOption(i)
 				offset = offset + 58
 			end
 			local s = M.CreateSlider(parent, name, min, max, step, x, y)
+			s.__default = (key == "ACCOUNT" and accountSettings[value]) or defaultSettings[key][value]
 			s:SetValue(NDUI_VARIABLE(key, value))
 			s:SetScript("OnValueChanged", function(_, v)
 				local current = M:Round(tonumber(v), 2)
@@ -1470,6 +1472,23 @@ local function OpenGUI()
 		dataFrame.text:SetText(OKAY)
 		exportData()
 	end)
+
+	--[[local optTip = CreateFrame("Button", nil, f)
+	optTip:SetPoint("TOPLEFT", 20, -5)
+	optTip:SetSize(45, 45)
+	optTip.Icon = optTip:CreateTexture(nil, "ARTWORK")
+	optTip.Icon:SetAllPoints()
+	optTip.Icon:SetTexture(616343)
+	optTip:SetHighlightTexture(616343)
+	optTip:SetScript("OnEnter", function()
+		GameTooltip:ClearLines()
+		GameTooltip:SetOwner(f, "ANCHOR_NONE")
+		GameTooltip:SetPoint("TOPRIGHT", f, "TOPLEFT", -5, -3)
+		GameTooltip:AddLine(U["Tips"])
+		GameTooltip:AddLine(U["Option* Tips"], .6,.8,1, 1)
+		GameTooltip:Show()
+	end)
+	optTip:SetScript("OnLeave", M.HideTooltip)]]
 
 	local credit = CreateFrame("Button", nil, f)
 	credit:SetPoint("BOTTOM", 0, 66)

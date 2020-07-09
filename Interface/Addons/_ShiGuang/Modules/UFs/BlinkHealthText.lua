@@ -283,9 +283,7 @@ function BlinkHealth:UpdateUnitValues()
 		name = UnitName("pet");
 		_, powertype = UnitPowerType("player");
 	end
-	--if maxheal<1 then 
-		--maxheal =1
-	--end
+	--if maxheal<1 then maxheal =1 end
     if maxheal == 0 or maxpower == 0 then return end
 	self:SetPercentText("player", heal/maxheal * 100 + 0.5);
 	local hexColor = self:ToHexColor(1, 0.65, 0.16);  --0.49,0.99,0
@@ -319,7 +317,7 @@ function BlinkHealth:UpdateUnitValues()
 	-- target
 	local hexH, hexP;
 	if (UnitExists("target")) then
-		heal, maxheal = UnitHealth("target"), UnitHealthMax("target");
+		heal, maxheal = UnitHealth("target") or 0, UnitHealthMax("target") or 1;
 		power, maxpower = UnitPower("target"), UnitPowerMax("target");
 		_, powertype = UnitPowerType("target");
 		name = UnitName("target");

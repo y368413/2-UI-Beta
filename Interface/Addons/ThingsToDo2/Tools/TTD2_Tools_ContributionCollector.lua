@@ -15,12 +15,6 @@ local super = Templates.Base
 Tools.ContributionCollector = super:new()
 local this = Tools.ContributionCollector
 
-this.Collectors =
-{
-	["Battle for Stromgarde"]	= 116,
-	["Battle for Darkshore"]	= 117
-}
-
 function this:GetNameByID(ID)
 	return C_ContributionCollector.GetName(ID)
 end
@@ -32,6 +26,11 @@ function this:IsActiveByID(ID)
 end
 
 --[[
+this.Collectors =
+{
+	["Battle for Stromgarde"]	= 116,
+	["Battle for Darkshore"]	= 117
+}
 function this:GetTime1(ID)
 	local ContributionState, ContributionPercentageComplete, TimeOfNextStateChange, StartTime = C_ContributionCollector.GetState(ID)
 	

@@ -285,7 +285,7 @@ function J_BarFrame:J_ADDON_LOADED()
 	if ShiGuangDB["ShowChanceBarX"] == nil then ShiGuangDB["ShowChanceBarX"] = 21 end
 	if ShiGuangDB["ShowChanceBarY"] == nil then ShiGuangDB["ShowChanceBarY"] = -210 end
 	if ShiGuangDB["ShowChanceBarScale"] == nil then ShiGuangDB["ShowChanceBarScale"] = 1 end
-	if ShiGuangDB.ShowChanceBarConfig ~= nil then 
+	--if ShiGuangDB.ShowChanceBarConfig ~= nil then 
 		ShiGuangDB.ShowChanceBarConfig = {
 			["ITEMLEVEL"] = { name = "物品等级" , FRAMEINDEX = 1, isEnable = false},
 			["STAMINA"] = { name = "耐力" , FRAMEINDEX = 2, isEnable = false},
@@ -303,7 +303,7 @@ function J_BarFrame:J_ADDON_LOADED()
 			["SPEED"] = { name = "加速" , FRAMEINDEX = 12, isEnable = false},
 			["ALTERNATEMANA"] = { name = "法力值" , FRAMEINDEX = 13, isEnable = false},
 		} 
-	end
+	--end
 	for k,v in pairs(ShiGuangDB.ShowChanceBarConfig) do
 		if v.isEnable then
 			J_BarFrame:J_CreateNewbar(ShiGuangDB.ShowChanceBarConfig[k].FRAMEINDEX)

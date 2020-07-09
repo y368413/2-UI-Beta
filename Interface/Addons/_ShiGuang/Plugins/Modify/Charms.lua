@@ -651,7 +651,7 @@ if success and GetCVar("portal") == "CN" then
         end
     end
 
-    CoreScheduleTimer(false, 2, function()
+    --CoreScheduleTimer(false, 2, function()
     SetOrHookScript(GameTooltip, "OnHide", function() tip:Hide() end)
     CharIcon:HookScript("OnEnter", function()
         local round0 = floor((time()-firstTime)/interval) + 1
@@ -698,6 +698,6 @@ if success and GetCVar("portal") == "CN" then
         end
 
         tip:Show()
-    end)
+    --end)
     end)
 end
