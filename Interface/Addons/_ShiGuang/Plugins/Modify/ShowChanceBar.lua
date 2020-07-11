@@ -1,15 +1,4 @@
 --## Author: JANY  ## Version: 8.2.5
-J_PAPERDOLL_FRAMEINDEX = {
-	["STRENGTH"] = 1,
-	["AGILITY"] = 1,
-	["INTELLECT"] = 1,
-	["CRITCHANCE"] = 2,
-	["HASTE"] = 3,
-	["MASTERY"] = 4,
-	["VERSATILITY"] = 5,
-	--["SPEED"] = 6,
-}
-
 J_PAPERDOLL_STATINFO = {
 	-- General
 	["HEALTH"] = {
@@ -154,8 +143,8 @@ local function J_Initializationframe()
 	J_BarFrame:ClearAllPoints()
 	J_BarFrame:SetFrameStrata("BACKGROUND")
 	J_BarFrame:SetScale(ShiGuangDB["ShowChanceBarScale"])
-	J_BarFrame:SetWidth(120) -- Set these to whatever height/width is needed 
-	J_BarFrame:SetHeight(120) -- for your Texture
+	J_BarFrame:SetWidth(160) -- Set these to whatever height/width is needed 
+	J_BarFrame:SetHeight(100) -- for your Texture
 	J_BarFrame:EnableMouse(true)
 	J_BarFrame:SetMovable(true)
 	J_BarFrame:SetPropagateKeyboardInput(true)
@@ -204,7 +193,7 @@ function J_BarFrame:J_CreateNewbar(index)
 	if bar then return end
 	bar = CreateFrame("StatusBar", barName, self)
 	bar:SetScale(self:GetScale())
-	bar:SetSize(80, 6)
+	bar:SetSize(190, 6)
 	bar:SetPoint("CENTER", self,"CENTER", 0, -23*(index-1))
 
 	bar:SetStatusBarTexture([[Interface\AddOns\_ShiGuang\Media\normTex]])
@@ -283,25 +272,25 @@ function J_BarFrame:J_ADDON_LOADED()
 	if ShiGuangDB["ShowChanceBarPoint"] == nil then ShiGuangDB["ShowChanceBarPoint"] = "LEFT" end
 	if ShiGuangDB["ShowChanceBarRelay"] == nil then ShiGuangDB["ShowChanceBarRelay"] = "LEFT" end
 	if ShiGuangDB["ShowChanceBarX"] == nil then ShiGuangDB["ShowChanceBarX"] = 21 end
-	if ShiGuangDB["ShowChanceBarY"] == nil then ShiGuangDB["ShowChanceBarY"] = -210 end
+	if ShiGuangDB["ShowChanceBarY"] == nil then ShiGuangDB["ShowChanceBarY"] = -120 end
 	if ShiGuangDB["ShowChanceBarScale"] == nil then ShiGuangDB["ShowChanceBarScale"] = 1 end
 	--if ShiGuangDB.ShowChanceBarConfig ~= nil then 
 		ShiGuangDB.ShowChanceBarConfig = {
-			["ITEMLEVEL"] = { name = "物品等级" , FRAMEINDEX = 1, isEnable = false},
-			["STAMINA"] = { name = "耐力" , FRAMEINDEX = 2, isEnable = false},
-			["HEALTH"] = { name = "生命" , FRAMEINDEX = 3, isEnable = false},
-			["POWER"] = { name = "怒气值" , FRAMEINDEX = 4, isEnable = false},
-			["STRENGTH"] = { name = "力量" , FRAMEINDEX = 5, isEnable = false},
-			["AGILITY"] = { name = "敏捷" , FRAMEINDEX = 5,isEnable = false},
-			["INTELLECT"] = { name = "智力" , FRAMEINDEX = 5, isEnable = false},
-			["CRITCHANCE"] = { name = "暴击" , FRAMEINDEX = 6, isEnable = true},
-			["HASTE"] = { name = "急速" , FRAMEINDEX = 7, isEnable = true},
-			["MASTERY"] = { name = "精通" , FRAMEINDEX = 8, isEnable = false},
-			["VERSATILITY"] = { name = "全能" , FRAMEINDEX = 9, isEnable = true},
-			["LIFESTEAL"] = { name = "吸血" , FRAMEINDEX = 10, isEnable = false},
-			["MOVESPEED"] = { name = "移动速度" , FRAMEINDEX = 11, isEnable = false},
-			["SPEED"] = { name = "加速" , FRAMEINDEX = 12, isEnable = false},
-			["ALTERNATEMANA"] = { name = "法力值" , FRAMEINDEX = 13, isEnable = false},
+			--["ITEMLEVEL"] = { name = "物品等级" , FRAMEINDEX = 1, isEnable = false},
+			--["STAMINA"] = { name = "耐力" , FRAMEINDEX = 2, isEnable = false},
+			--["HEALTH"] = { name = "生命" , FRAMEINDEX = 3, isEnable = false},
+			--["POWER"] = { name = "怒气值" , FRAMEINDEX = 4, isEnable = false},
+			--["STRENGTH"] = { name = "力量" , FRAMEINDEX = 5, isEnable = false},
+			--["AGILITY"] = { name = "敏捷" , FRAMEINDEX = 5,isEnable = false},
+			--["INTELLECT"] = { name = "智力" , FRAMEINDEX = 5, isEnable = false},
+			["CRITCHANCE"] = { name = "暴击" , FRAMEINDEX = 1, isEnable = true},
+			["HASTE"] = { name = "急速" , FRAMEINDEX = 2, isEnable = true},
+			["VERSATILITY"] = { name = "全能" , FRAMEINDEX = 3, isEnable = true},
+			--["MASTERY"] = { name = "精通" , FRAMEINDEX = 9, isEnable = false},
+			--["LIFESTEAL"] = { name = "吸血" , FRAMEINDEX = 10, isEnable = false},
+			--["MOVESPEED"] = { name = "移动速度" , FRAMEINDEX = 11, isEnable = false},
+			--["SPEED"] = { name = "加速" , FRAMEINDEX = 12, isEnable = false},
+			--["ALTERNATEMANA"] = { name = "法力值" , FRAMEINDEX = 13, isEnable = false},
 		} 
 	--end
 	for k,v in pairs(ShiGuangDB.ShowChanceBarConfig) do

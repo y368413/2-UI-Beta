@@ -4065,15 +4065,6 @@ function Query:OnDisable()
 
 end
 
---[[ ///////////////////////////
-item_list structure:
-	["item_list"] = {
-		[item_id] = {
-			itemname, icon, itemLink
-		},
-	}
-/////////////////////////////// ]]
-
 function Query.RefreshItem(item)
 	if not item_list[item.itemID] then
 		if ( item.itemName and item.icon ) then
