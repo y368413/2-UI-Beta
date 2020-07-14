@@ -1,6 +1,10 @@
+2.18
+FIX: 2 wrong ItemIDs for recipes in BFAWQRecipes (Inscription Contracts); the addon would still have informed you about the WQ being up unless you were an Engineer, though
+FIX: Possible concat nil LUA error if a worldquest was technically available to a character but hidden from the map for whatever reason (phasing, profession skill level etc.)
+
 2.17
-FIXED: LUA error in BFAKeystone introduced by 2.16 when not using account-wide option
-FIXED: XMogArathi - Horde Demonhunters were falsely listed as eligible to loot the 1h mace, causing a LUA error
+FIX: LUA error in BFAKeystone introduced by 2.16 when not using account-wide option
+FIX: XMogArathi - Horde Demonhunters were falsely listed as eligible to loot the 1h mace, causing a LUA error
 CHANGE: The blue hue used in color-coded output for Alliance is now the wow rare-item-quality color
 
 2.16

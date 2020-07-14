@@ -789,7 +789,6 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "UFs", "UFFade", U["UFFade"]},
 		{1, "UFs", "UFClassIcon", U["UFClassIcon"], true},
 	  {1, "UFs", "UFPctText", U["UFPctText"], true, true},
-	  --{1, "Skins", "InfobarLine", "底部职业着色条"},
 	  {1, "Misc", "xMerchant", U["xMerchant"]},
 	  {1, "Misc", "WallpaperKit", U["WallpaperKit"], true},
 	  {1, "Skins", "FlatMode", U["FlatMode"]},

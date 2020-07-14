@@ -43,8 +43,8 @@ function this:GetCompleteWQRecipesData()
 				ProfessionID	= 773,
 				Recipes			=
 				{
-					{ ItemID = 162321, WQID = 52393 },	--Recipe: Contract: Tortollan Seekers
-					{ ItemID = 162321, WQID = 52394 }	--Recipe: Contract: Champions of Azeroth
+					{ ItemID = 162372, WQID = 52393 },	--Recipe: Contract: Tortollan Seekers
+					{ ItemID = 162374, WQID = 52394 }	--Recipe: Contract: Champions of Azeroth
 				}
 			}
 		},
@@ -190,8 +190,6 @@ function this:GetCompleteWQRecipesData()
 				ProfessionID	= 773,
 				Recipes			=
 				{
-					{ ItemID = 162321, WQID = 52393 },	--Recipe: Contract: Tortollan Seekers
-					{ ItemID = 162321, WQID = 52394 },	--Recipe: Contract: Champions of Azeroth
 					{ ItemID = 162366, WQID = 52395 },	--Recipe: Contract: Zandalari Empire
 					{ ItemID = 162368, WQID = 52396 },	--Recipe: Contract: Talanji's Expedition
 					{ ItemID = 162370, WQID = 52397 }	--Recipe: Contract: Voldunai

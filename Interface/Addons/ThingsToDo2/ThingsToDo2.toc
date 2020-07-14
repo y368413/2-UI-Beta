@@ -3,7 +3,7 @@
 ## Notes: Lists things to do based on runtime character data.
 ## Notes-deDe: Gibt Aufgaben für den aktuellen Charakter aus.
 ## Author: Nathasil
-## Version: 2.17
+## Version: 2.18
 ## SavedVariables: ThingsToDo2_AccountData
 ## SavedVariablesPerCharacter: ThingsToDo2_CharacterData
 
