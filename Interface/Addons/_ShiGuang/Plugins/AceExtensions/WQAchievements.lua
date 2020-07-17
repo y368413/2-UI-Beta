@@ -1,4 +1,4 @@
---## Author: Urtgard  ## Version: v8.3.0-5release
+--## Author: Urtgard  ## Version: v8.3.0-6release
 WQAchievements = LibStub("AceAddon-3.0"):NewAddon("WQAchievements", "AceConsole-3.0", "AceTimer-3.0")
 local WQA = WQAchievements
 WQA.data = {}
@@ -1329,6 +1329,10 @@ function WQA:Reward()
 					for i=1,#quests do
 						local questID = quests[i].questId
 						local worldQuestType = select(3,GetQuestTagInfo(questID)) or 0
+
+						if self.questList[questID] and not self.db.profile.options.reward.general.worldQuestType[worldQuestType] then
+							self.questList[questID] = nil
+						end
 
 						if self.db.profile.options.zone[C_TaskQuest.GetQuestZoneID(questID)] == true and self.db.profile.options.reward.general.worldQuestType[worldQuestType] then
 							-- 100 different World Quests achievements

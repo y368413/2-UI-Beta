@@ -90,7 +90,7 @@ function module:SkinChat()
 	tabFs:SetFont(I.Font[1], I.Font[2]+2, I.Font[3])
 	tabFs:SetShadowColor(0, 0, 0, 0)
 	tabFs:SetTextColor(1, .8, 0)
-	M.StripTextures(tab, 6)
+	M.StripTextures(tab, 0)
 	hooksecurefunc(tab, "SetAlpha", module.TabSetAlpha)
 
 	--if MaoRUIPerDB["Chat"]["Lock"] then M.StripTextures(self) end
