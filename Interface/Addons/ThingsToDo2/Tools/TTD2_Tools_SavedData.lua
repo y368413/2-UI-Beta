@@ -10,6 +10,9 @@ local Tools = TTD2.Tools
 --[[
 The purpose of this tool is to handle our SavedVariables. Most importantly to default values not present in SavedVars
 and remove deprecated values from SavedVars.
+
+Update:
+Added a Version field to AccountData; if the Version of the loaded data is smaller than the current version (or does not exist) all stored AccountData is discarded.
 ]]
 
 local super = Templates.Base
@@ -36,6 +39,19 @@ function this:LoadCharacterValue(Value, Default)
 	end
 end
 
+function this:VersionCheck()
+
+	local CurrentVersion = 3
+
+	if(	(ThingsToDo2_AccountData			~= nil) and
+		(	(	(ThingsToDo2_AccountData.Version ~= nil) and (ThingsToDo2_AccountData.Version	< CurrentVersion)	) or (ThingsToDo2_AccountData.Version == nil)	)	)  then
+		ThingsToDo2_AccountData = nil	--disregard the old data
+	end
+	
+	--use current version for our data
+	self.AccountData.Version = CurrentVersion
+end
+
 function this:LoadAccountCharacterTable()
 	if(	(ThingsToDo2_AccountData			~= nil) and
 		(ThingsToDo2_AccountData.Characters ~= nil) ) then
@@ -58,7 +74,7 @@ end
 function this:LoadFromGlobals()
 	--[[
 	In this function, we create empty internal mirror-tables of the stored session data and then try and read the session data into them.
-	Afterwards we set the session tables to those new mirror tables. We do this to ensure the tables do not get clustered up with
+	Afterwards we set the session tables to those new mirror tables. We do this to ensure the tables do not get cluttered up with
 	deprecated data. We may lose data this way in big updates, but the beneit of keeping the session data file "current" is bigger
 	than that.
 	]]
@@ -72,6 +88,7 @@ function this:LoadFromGlobals()
 	--ThingsToDo2_AccountData
 	self.AccountData				= self.AccountData					or {}
 	self.AccountData.Values			= self.AccountData.Values			or {}
+	self:VersionCheck()
 	
 	--init all the settings which are reflected by checkboxes in the options frame
 	self:LoadCharacterSetting("PrintCompleted", false)
@@ -92,6 +109,8 @@ function this:LoadFromGlobals()
 	self:LoadCharacterSetting("MPlusAccount", false)
 	self:LoadCharacterSetting("MPlusAccountAlwaysShowStones", false)
 	self:LoadCharacterSetting("TrackWarmode", false)
+	self:LoadCharacterSetting("HorrificWaste", false)
+	self:LoadCharacterSetting("DemandingVisions", false)
 	
 	self:LoadCharacterValue("MinimapPosition", 0.0)
 	

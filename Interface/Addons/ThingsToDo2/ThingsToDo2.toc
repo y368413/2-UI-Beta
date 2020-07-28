@@ -3,7 +3,7 @@
 ## Notes: Lists things to do based on runtime character data.
 ## Notes-deDe: Gibt Aufgaben für den aktuellen Charakter aus.
 ## Author: Nathasil
-## Version: 2.15
+## Version: 2.18
 ## SavedVariables: ThingsToDo2_AccountData
 ## SavedVariablesPerCharacter: ThingsToDo2_CharacterData
 
@@ -75,6 +75,7 @@ Modules\TTD2_Modules_BFAWQRecipes.lua
 Modules\TTD2_Modules_BFAParagon.lua
 Modules\TTD2_Modules_BFAWarmode.lua
 Modules\TTD2_Modules_BFAQuestRewards.lua
+Modules\TTD2_Modules_BFAHorrificVisions.lua
 Modules\TTD2_Modules_XMogArathi.lua
 Modules\TTD2_Modules_XMogDarkshore.lua
 Modules\TTD2_Modules_ArchaeologyAutoWaypoint.lua

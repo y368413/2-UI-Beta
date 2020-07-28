@@ -1,15 +1,4 @@
 --## Author: JANY  ## Version: 8.2.5
-J_PAPERDOLL_FRAMEINDEX = {
-	["STRENGTH"] = 1,
-	["AGILITY"] = 1,
-	["INTELLECT"] = 1,
-	["CRITCHANCE"] = 2,
-	["HASTE"] = 3,
-	["MASTERY"] = 4,
-	["VERSATILITY"] = 5,
-	--["SPEED"] = 6,
-}
-
 J_PAPERDOLL_STATINFO = {
 	-- General
 	["HEALTH"] = {
@@ -118,10 +107,17 @@ J_PAPERDOLL_STATCATEGORIES= {
 			[1] = { stat = "STRENGTH", primary = LE_UNIT_STAT_STRENGTH },
 			[2] = { stat = "AGILITY", primary = LE_UNIT_STAT_AGILITY },
 			[3] = { stat = "INTELLECT", primary = LE_UNIT_STAT_INTELLECT },
-			[4] = { stat = "STAMINA" },
+			[4] = { stat = "STAMINA"},
 			[5] = { stat = "ARMOR" },
 			[6] = { stat = "STAGGER", hideAt = 0, roles = { "TANK" }},
 			[7] = { stat = "MANAREGEN", roles =  { "HEALER" } },
+			[8] = { stat = "HEALTH"},
+			[9] = { stat = "POWER"},
+			[10] = { stat = "ALTERNATEMANA"},
+			[11] = { stat = "ITEMLEVEL"},
+			[12] = { stat = "MOVESPEED"},
+
+
 		},
 	},
 	[2] = {
@@ -142,12 +138,13 @@ J_PAPERDOLL_STATCATEGORIES= {
 };
 local J_BarFrame = CreateFrame("Frame",nil,UIParent)
 J_BarFrame:RegisterEvent("ADDON_LOADED")
-local function Initializationframe()
+
+local function J_Initializationframe()
 	J_BarFrame:ClearAllPoints()
 	J_BarFrame:SetFrameStrata("BACKGROUND")
 	J_BarFrame:SetScale(ShiGuangDB["ShowChanceBarScale"])
-	J_BarFrame:SetWidth(120) -- Set these to whatever height/width is needed 
-	J_BarFrame:SetHeight(120) -- for your Texture
+	J_BarFrame:SetWidth(160) -- Set these to whatever height/width is needed 
+	J_BarFrame:SetHeight(100) -- for your Texture
 	J_BarFrame:EnableMouse(true)
 	J_BarFrame:SetMovable(true)
 	J_BarFrame:SetPropagateKeyboardInput(true)
@@ -193,9 +190,10 @@ end
 function J_BarFrame:J_CreateNewbar(index)
 	local barName = "J_BarFrame_Bar"..index;
 	local bar = _G[barName];
+	if bar then return end
 	bar = CreateFrame("StatusBar", barName, self)
 	bar:SetScale(self:GetScale())
-	bar:SetSize(80, 6)
+	bar:SetSize(190, 6)
 	bar:SetPoint("CENTER", self,"CENTER", 0, -23*(index-1))
 
 	bar:SetStatusBarTexture([[Interface\AddOns\_ShiGuang\Media\normTex]])
@@ -205,11 +203,13 @@ function J_BarFrame:J_CreateNewbar(index)
 
     bar.RightValue = bar:CreateFontString(nil, "ARTWORK")
     bar.RightValue:SetFont("Interface\\AddOns\\_ShiGuang\\Media\\Fonts\\Pixel.ttf", 16, "THINOUTLINE")
+    bar.RightValue:SetShadowOffset(0, 0)
     bar.RightValue:SetPoint("RIGHT", bar, 0, 12)
     bar.RightValue:SetVertexColor(1, 1, 1)
 
     bar.LeftName = bar:CreateFontString(nil, "ARTWORK")
     bar.LeftName:SetFont(STANDARD_TEXT_FONT, 12, "THINOUTLINE")
+    bar.LeftName:SetShadowOffset(0, 0)
     bar.LeftName:SetPoint("LEFT", bar, "LEFT", 0, 12)
 
 	bar.Background = bar:CreateTexture(nil, "BACKGROUND")
@@ -265,12 +265,6 @@ function J_BarFrame:J_SetBarData(statFrame,j_name,j_value,j_MinValues,j_MaxValue
 	statFrame:Show()
 end
 
-J_BarFrame:J_CreateNewbar(1)
-J_BarFrame:J_CreateNewbar(2)
-J_BarFrame:J_CreateNewbar(3)
-J_BarFrame:J_CreateNewbar(4)
-J_BarFrame:J_CreateNewbar(5)
---J_BarFrame:J_CreateNewbar(6)
 
 
 
@@ -278,8 +272,32 @@ function J_BarFrame:J_ADDON_LOADED()
 	if ShiGuangDB["ShowChanceBarPoint"] == nil then ShiGuangDB["ShowChanceBarPoint"] = "LEFT" end
 	if ShiGuangDB["ShowChanceBarRelay"] == nil then ShiGuangDB["ShowChanceBarRelay"] = "LEFT" end
 	if ShiGuangDB["ShowChanceBarX"] == nil then ShiGuangDB["ShowChanceBarX"] = 21 end
-	if ShiGuangDB["ShowChanceBarY"] == nil then ShiGuangDB["ShowChanceBarY"] = -210 end
+	if ShiGuangDB["ShowChanceBarY"] == nil then ShiGuangDB["ShowChanceBarY"] = -120 end
 	if ShiGuangDB["ShowChanceBarScale"] == nil then ShiGuangDB["ShowChanceBarScale"] = 1 end
+	--if ShiGuangDB.ShowChanceBarConfig ~= nil then 
+		ShiGuangDB.ShowChanceBarConfig = {
+			--["ITEMLEVEL"] = { name = "物品等级" , FRAMEINDEX = 1, isEnable = false},
+			--["STAMINA"] = { name = "耐力" , FRAMEINDEX = 2, isEnable = false},
+			--["HEALTH"] = { name = "生命" , FRAMEINDEX = 3, isEnable = false},
+			--["POWER"] = { name = "怒气值" , FRAMEINDEX = 4, isEnable = false},
+			--["STRENGTH"] = { name = "力量" , FRAMEINDEX = 5, isEnable = false},
+			--["AGILITY"] = { name = "敏捷" , FRAMEINDEX = 5,isEnable = false},
+			--["INTELLECT"] = { name = "智力" , FRAMEINDEX = 5, isEnable = false},
+			["CRITCHANCE"] = { name = "暴击" , FRAMEINDEX = 1, isEnable = true},
+			["HASTE"] = { name = "急速" , FRAMEINDEX = 2, isEnable = true},
+			["VERSATILITY"] = { name = "全能" , FRAMEINDEX = 3, isEnable = true},
+			--["MASTERY"] = { name = "精通" , FRAMEINDEX = 9, isEnable = false},
+			--["LIFESTEAL"] = { name = "吸血" , FRAMEINDEX = 10, isEnable = false},
+			--["MOVESPEED"] = { name = "移动速度" , FRAMEINDEX = 11, isEnable = false},
+			--["SPEED"] = { name = "加速" , FRAMEINDEX = 12, isEnable = false},
+			--["ALTERNATEMANA"] = { name = "法力值" , FRAMEINDEX = 13, isEnable = false},
+		} 
+	--end
+	for k,v in pairs(ShiGuangDB.ShowChanceBarConfig) do
+		if v.isEnable then
+			J_BarFrame:J_CreateNewbar(ShiGuangDB.ShowChanceBarConfig[k].FRAMEINDEX)
+		end
+	end
 	self:RegisterEvent("PLAYER_ENTERING_WORLD");
 	self:RegisterEvent("CHARACTER_POINTS_CHANGED");
 	self:RegisterEvent("UNIT_MODEL_CHANGED");
@@ -371,8 +389,8 @@ function J_BarFrame_UpdateStats()
 			if ( showStat ) then
 				-- statFrame.onEnterFunc = nil;
 				-- statFrame.UpdateTooltip = nil;
-				if J_PAPERDOLL_FRAMEINDEX[stat.stat] then 
-					local statFrame = _G["J_BarFrame_Bar"..J_PAPERDOLL_FRAMEINDEX[stat.stat]]
+				if ShiGuangDB.ShowChanceBarConfig[stat.stat] and ShiGuangDB.ShowChanceBarConfig[stat.stat].isEnable then
+					local statFrame = _G["J_BarFrame_Bar"..ShiGuangDB.ShowChanceBarConfig[stat.stat].FRAMEINDEX]
 					J_PAPERDOLL_STATINFO[stat.stat].updateFunc(statFrame, "player");
 					if ( not stat.hideAt or stat.hideAt ~= statFrame.numericValue ) then
 						if ( numStatInCat == 0 ) then
@@ -425,15 +443,65 @@ function GetEnemyParryChance(levelOffset)
 end
 
 function J_BarFrame_SetHealth(statFrame, unit)
-	return
+
+	if (not unit) then
+		unit = "player";
+	end
+	local nhealth = UnitHealth(unit);
+	local health = UnitHealthMax(unit);
+	local healthText = BreakUpLargeNumbers(health);
+
+	
+	statFrame.tooltip = HIGHLIGHT_FONT_COLOR_CODE..format(PAPERDOLLFRAME_TOOLTIP_FORMAT, HEALTH).." "..healthText..FONT_COLOR_CODE_CLOSE;
+	if (unit == "player") then
+		statFrame.tooltip2 = STAT_HEALTH_TOOLTIP;
+	elseif (unit == "pet") then
+		statFrame.tooltip2 = STAT_HEALTH_PET_TOOLTIP;
+	end
+	J_BarFrame:J_SetBarData(statFrame,"生命",nhealth,0,health)
 end
 
 function J_BarFrame_SetPower(statFrame, unit)
-	return
+	if (not unit) then
+		unit = "player";
+	end
+	local powerType, powerToken = UnitPowerType(unit);
+	local power = UnitPowerMax(unit) or 0;
+	local npower = UnitPower(unit) or 0;
+	local powerText = BreakUpLargeNumbers(power);
+	if (powerToken and _G[powerToken]) then
+		
+		statFrame.tooltip = HIGHLIGHT_FONT_COLOR_CODE..format(PAPERDOLLFRAME_TOOLTIP_FORMAT, _G[powerToken]).." "..powerText..FONT_COLOR_CODE_CLOSE;
+		statFrame.tooltip2 = _G["STAT_"..powerToken.."_TOOLTIP"];
+
+	end
+
+	J_BarFrame:J_SetBarData(statFrame,format(PAPERDOLLFRAME_TOOLTIP_FORMAT, _G[powerToken]),npower,0,power)
 end
 
 function J_BarFrame_SetAlternateMana(statFrame, unit)
-	return
+	if (not unit) then
+		unit = "player";
+	end
+	local _, class = UnitClass(unit);
+	if (class ~= "DRUID" and (class ~= "MONK" or GetSpecialization() ~= SPEC_MONK_MISTWEAVER)) then
+		statFrame:Hide();
+		return;
+	end
+	local powerType, powerToken = UnitPowerType(unit);
+	if (powerToken == "MANA") then
+		statFrame:Hide();
+		return;
+	end
+
+	local power = UnitPowerMax(unit, 0);
+	local npower = UnitPower(unit, 0);
+	local powerText = BreakUpLargeNumbers(power);
+	
+	statFrame.tooltip = HIGHLIGHT_FONT_COLOR_CODE..format(PAPERDOLLFRAME_TOOLTIP_FORMAT, MANA).." "..powerText..FONT_COLOR_CODE_CLOSE;
+	statFrame.tooltip2 = _G["STAT_MANA_TOOLTIP"];
+
+	J_BarFrame:J_SetBarData(statFrame,format(PAPERDOLLFRAME_TOOLTIP_FORMAT, MANA),npower,0,power)
 end
 
 function J_BarFrame_SetStat(statFrame, unit, statIndex)
@@ -632,7 +700,7 @@ function J_BarFrame_SetCritChance(statFrame, unit)
 	
 
 	
-	J_BarFrame:J_SetBarData(statFrame,"暴击",critChance,0,100)
+	
 
 	statFrame.tooltip = HIGHLIGHT_FONT_COLOR_CODE..format(PAPERDOLLFRAME_TOOLTIP_FORMAT, STAT_CRITICAL_STRIKE)..FONT_COLOR_CODE_CLOSE;
 	local extraCritChance = GetCombatRatingBonus(rating);
@@ -642,6 +710,8 @@ function J_BarFrame_SetCritChance(statFrame, unit)
 	else
 		statFrame.tooltip2 = format(CR_CRIT_TOOLTIP, BreakUpLargeNumbers(extraCritRating), extraCritChance);
 	end
+
+	J_BarFrame:J_SetBarData(statFrame,format("暴击 :  %d [+%0.2f%%]",extraCritRating,extraCritChance),critChance,0,100)
 	
 end
 function J_BarFrame_SetEnergyRegen(statFrame, unit)
@@ -669,7 +739,7 @@ function J_BarFrame_SetHaste(statFrame, unit)
 		hasteFormatString = "%s";
 	end
 
-	J_BarFrame:J_SetBarData(statFrame,"急速",haste,0,100)
+	
 	statFrame.tooltip = HIGHLIGHT_FONT_COLOR_CODE..format(PAPERDOLLFRAME_TOOLTIP_FORMAT, STAT_HASTE)..FONT_COLOR_CODE_CLOSE;
 
 	local _, class = UnitClass(unit);
@@ -679,7 +749,7 @@ function J_BarFrame_SetHaste(statFrame, unit)
 	end
 	statFrame.tooltip2 = statFrame.tooltip2 .. format(STAT_HASTE_BASE_TOOLTIP, BreakUpLargeNumbers(GetCombatRating(rating)), GetCombatRatingBonus(rating));
 
-	statFrame:Show();
+	J_BarFrame:J_SetBarData(statFrame,format("急速 :  %d [+%0.2f%%]",BreakUpLargeNumbers(GetCombatRating(rating)), GetCombatRatingBonus(rating)),haste,0,100)
 end
 
 function J_BarFrame_SetManaRegen(statFrame, unit)
@@ -695,7 +765,7 @@ function J_BarFrame_SetMastery(statFrame, unit)
 	local masteryBonus = GetCombatRatingBonus(CR_MASTERY) * bonusCoeff;
 
 	statFrame.tooltip2 = format(STAT_MASTERY_TOOLTIP, BreakUpLargeNumbers(GetCombatRating(CR_MASTERY)), masteryBonus), NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true;
-	J_BarFrame:J_SetBarData(statFrame,"精通",mastery,0,100)
+	J_BarFrame:J_SetBarData(statFrame,format(STAT_MASTERY_TOOLTIP, BreakUpLargeNumbers(GetCombatRating(CR_MASTERY)), masteryBonus),mastery,0,100)
 end
 
 -- Task 68016: Speed increases run speed
@@ -704,17 +774,27 @@ function J_BarFrame_SetSpeed(statFrame, unit)
 
 
 
-	J_BarFrame:J_SetBarData(statFrame,"速度",speed,0,30)
+	
 
 	statFrame.tooltip = HIGHLIGHT_FONT_COLOR_CODE .. format(PAPERDOLLFRAME_TOOLTIP_FORMAT, STAT_SPEED) .. " " .. format("%.2F%%", speed) .. FONT_COLOR_CODE_CLOSE;
 	statFrame.tooltip2 = format(CR_SPEED_TOOLTIP, BreakUpLargeNumbers(GetCombatRating(CR_SPEED)), GetCombatRatingBonus(CR_SPEED));
 
-	
+	J_BarFrame:J_SetBarData(statFrame,statFrame.tooltip,speed,0,100)
 end
 
 -- Task 68016: Lifesteal returns a portion of all damage done as health
 function J_BarFrame_SetLifesteal(statFrame, unit)
-	return
+	if ( unit ~= "player" ) then
+		statFrame:Hide();
+		return;
+	end
+
+	local lifesteal = GetLifesteal();
+	
+	statFrame.tooltip = HIGHLIGHT_FONT_COLOR_CODE .. format(PAPERDOLLFRAME_TOOLTIP_FORMAT, STAT_LIFESTEAL) .. " " .. format("%.2F%%", lifesteal) .. FONT_COLOR_CODE_CLOSE;
+
+	statFrame.tooltip2 = format(CR_LIFESTEAL_TOOLTIP, BreakUpLargeNumbers(GetCombatRating(CR_LIFESTEAL)), GetCombatRatingBonus(CR_LIFESTEAL));
+	J_BarFrame:J_SetBarData(statFrame,statFrame.tooltip,lifesteal,0,100)
 end
 
 -- Task 68016: Avoidance reduces AoE damage taken
@@ -728,35 +808,105 @@ function J_BarFrame_SetVersatility(statFrame, unit)
 	local versatilityDamageBonus = GetCombatRatingBonus(CR_VERSATILITY_DAMAGE_DONE) + GetVersatilityBonus(CR_VERSATILITY_DAMAGE_DONE);
 	local versatilityDamageTakenReduction = GetCombatRatingBonus(CR_VERSATILITY_DAMAGE_TAKEN) + GetVersatilityBonus(CR_VERSATILITY_DAMAGE_TAKEN);
 	
-	J_BarFrame:J_SetBarData(statFrame,"全能",versatilityDamageBonus,0,100)
+	
 	
 	statFrame.tooltip = HIGHLIGHT_FONT_COLOR_CODE..format(PAPERDOLLFRAME_TOOLTIP_FORMAT, STAT_VERSATILITY)..FONT_COLOR_CODE_CLOSE;
 
 	statFrame.tooltip2 = format(CR_VERSATILITY_TOOLTIP, versatilityDamageBonus, versatilityDamageTakenReduction, BreakUpLargeNumbers(versatility), versatilityDamageBonus, versatilityDamageTakenReduction);
 
+	J_BarFrame:J_SetBarData(statFrame,format("全能 :  %d [%0.2f%%/%0.2f%%]", BreakUpLargeNumbers(versatility), versatilityDamageBonus, versatilityDamageTakenReduction),versatilityDamageBonus,0,100)
 end
 
 
 function J_BarFrame_SetItemLevel(statFrame, unit)
-	return
+	if ( unit ~= "player" ) then
+		statFrame:Hide();
+		return;
+	end
+
+	local avgItemLevel, avgItemLevelEquipped = GetAverageItemLevel();
+	local minItemLevel = C_PaperDollInfo.GetMinItemLevel();
+
+	local displayItemLevel = math.max(minItemLevel or 0, avgItemLevelEquipped);
+
+	displayItemLevel = floor(displayItemLevel);
+	avgItemLevel = floor(avgItemLevel);
+
+	
+	statFrame.tooltip = HIGHLIGHT_FONT_COLOR_CODE..format(PAPERDOLLFRAME_TOOLTIP_FORMAT, STAT_AVERAGE_ITEM_LEVEL).." "..avgItemLevel;
+	if ( displayItemLevel ~= avgItemLevel ) then
+		statFrame.tooltip = statFrame.tooltip .. "  " .. format(STAT_AVERAGE_ITEM_LEVEL_EQUIPPED, avgItemLevelEquipped);
+	end
+	statFrame.tooltip = statFrame.tooltip .. FONT_COLOR_CODE_CLOSE;
+	statFrame.tooltip2 = STAT_AVERAGE_ITEM_LEVEL_TOOLTIP;
+	
+	J_BarFrame:J_SetBarData(statFrame,statFrame.tooltip .. FONT_COLOR_CODE_CLOSE,displayItemLevel,0,avgItemLevel)
 end
 
 function MovementSpeed_OnEnter(statFrame)
 	return
 end
 
-function MovementSpeed_OnUpdate(statFrame, elapsedTime)
-	return
+function J_MovementSpeed_OnUpdate(statFrame, elapsedTime)
+	local unit = statFrame.unit;
+	local _, runSpeed, flightSpeed, swimSpeed = GetUnitSpeed(unit);
+	runSpeed = runSpeed/BASE_MOVEMENT_SPEED*100;
+	flightSpeed = flightSpeed/BASE_MOVEMENT_SPEED*100;
+	swimSpeed = swimSpeed/BASE_MOVEMENT_SPEED*100;
+
+	-- Pets seem to always actually use run speed
+	if (unit == "pet") then
+		swimSpeed = runSpeed;
+	end
+
+	-- Determine whether to display running, flying, or swimming speed
+	local speed = runSpeed;
+	local swimming = IsSwimming(unit);
+	if (swimming) then
+		speed = swimSpeed;
+	elseif (IsFlying(unit)) then
+		speed = flightSpeed;
+	end
+
+	-- Hack so that your speed doesn't appear to change when jumping out of the water
+	if (IsFalling(unit)) then
+		if (statFrame.wasSwimming) then
+			speed = swimSpeed;
+		end
+	else
+		statFrame.wasSwimming = swimming;
+	end
+
+	local valueText = format("%d%%", speed+0.5);
+	
+	statFrame.speed = speed;
+	statFrame.runSpeed = runSpeed;
+	statFrame.flightSpeed = flightSpeed;
+	statFrame.swimSpeed = swimSpeed;
+
+	J_BarFrame:J_SetBarData(statFrame,STAT_MOVEMENT_SPEED.." "..valueText,speed,0,420)
+	
+	
 end
 
 function J_BarFrame_SetMovementSpeed(statFrame, unit)
-	return
+	if ( unit ~= "player" ) then
+		statFrame:Hide();
+		return;
+	end
+
+	statFrame.wasSwimming = nil;
+	statFrame.unit = unit;
+	statFrame:Show();
+	J_MovementSpeed_OnUpdate(statFrame);
+
+	statFrame.onEnterFunc = MovementSpeed_OnEnter;
 end
 
 J_BarFrame:SetScript("OnEvent", function(self, event, ...)
 	if event == "ADDON_LOADED" then
 		J_BarFrame:J_ADDON_LOADED()
-		Initializationframe()
+		J_Initializationframe()
 	end
 	local unit = ...;
 

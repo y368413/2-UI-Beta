@@ -5,7 +5,7 @@ TTD2.Templates = TTD2.Templates or {}
 local Templates = TTD2.Templates
 
 --[[
-this module tests the learned status of recipes awardedby worldquests and checks for the availability of these quests.
+this module tests the learned status of recipes awarded by worldquests and checks for the availability of these quests.
 it also transforms the more human-readable input-table of the specialised modules into one better suited for filtering.
 ]]
 

@@ -12,6 +12,9 @@ If this field is set to another UICheckButton object, this object will hook the 
 function of the Master.
 If the Master is not checked, this slave is also set to not checked AND disabled.
 If the Master is checked, this slave is set to enabled.
+
+Update:
+Buttons are created in an enabled state by default, which means slave buttons that are created with an unchecked master must be disabled upon creation!
 ]]
 
 local super = Templates.UICheckButton
@@ -27,6 +30,7 @@ function this:Create()
 	self.ButtonPosX = self.ButtonPosX or (self.MasterUICheckButton.ButtonPosX + 25)
 
 	super.Create(self)
+	self.Frame:SetEnabled(self.MasterUICheckButton.CheckButtonState) --make sure the button is correctly disabled after creation if the master is unchecked
 	
 	self:UpdateSlaveStatus()
 	
@@ -42,7 +46,7 @@ function this:Create()
 	self.MasterUICheckButton.Frame:SetScript("OnClick", function(Frame, Button, Down)
 		self.PreviousSlaveFunction(self.PreviousSlaveObject, Frame, Button, Down)
 		self:HookedMasterClick(Frame, Button, Down)
-	end)
+	end)		
 end
 
 function this:UpdateSlaveStatus()

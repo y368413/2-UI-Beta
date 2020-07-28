@@ -27,12 +27,32 @@ function this:GetLinkByID(ID)
 end
 
 function this:IsActiveByID(ID)
+	--[[
+	Important: C_TaskQuest.IsActive() is not 100% reliable.
+	It will return false even if the Quest is available serverside if SOME restrictions are not met; like level, profession-type or unlock-quest.
+	It does, however, not consider ALL restrictions; it may return true even if the current character does not actually see the quest because of phasing or other obscure limitations.
+	
+	In conclusion:
+	There does not exist an API to check if a quest is offered by the server regardless of limitations. You can only reliably check if the current character is able to see
+	a specific quest on the map or not. You can also unreliably check if a character could complete some requirements to get access to a quest.
+	--]]	
+
 	return C_TaskQuest.IsActive(ID)
 end
 
+function this:IsVisibleByID(ID)
+	return (C_TaskQuest.GetQuestZoneID(ID) ~= nil)
+end
+
 function this:GetLocationByID(ID)
-	
+
 	local MapID = C_TaskQuest.GetQuestZoneID(ID)
+	
+	--Important: MapID may be nil for invalid QuestIDs, Quests that are not active and - most confusing - quests that are active but hiden from the current character because some unlock requirements are not met.
+	if(MapID == nil) then
+		return nil
+	end
+	
 	local PosX, PosY = C_TaskQuest.GetQuestLocation(ID,MapID)
 	
 	return MapID,PosX,PosY

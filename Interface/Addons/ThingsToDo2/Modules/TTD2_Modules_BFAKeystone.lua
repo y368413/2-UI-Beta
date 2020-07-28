@@ -64,7 +64,7 @@ function this:ReceiveEvent(Event, Data)
 	end
 end
 
-function this:CreateCharacterOutput(CCFN, KeystoneData)
+function this:CreateCharacterOutput(CharacterData, KeystoneData)
 	self:Init()
 	
 	local Out = TTD2.Tools.Output
@@ -74,10 +74,8 @@ function this:CreateCharacterOutput(CCFN, KeystoneData)
 		return
 	end
 	
-	local CharacterLine = nil
-	if(CCFN ~= nil) then
-		CharacterLine = Out:AddLine(Out.Status.Completed, CCFN)
-	end
+	local CCFN = TTD2.Tools.Chat:GetColorCodedName(CharacterData) --ColorCodedFullName
+	local CharacterLine = Out:AddLine(Out.Status.Completed, CCFN)
 	
 	local AnythingToDo = false
 	
@@ -154,16 +152,17 @@ function this:CreateOutput()
 		
 		local CharacterTable = TTD2.Tools.SavedData:GetAccountCharacterTable()
 		
-		for CCFN, CharacterData in pairs(CharacterTable) do
+		for _, CharacterData in pairs(CharacterTable) do
 			if(CharacterData.Keystone ~= nil) then
-				self:CreateCharacterOutput(CCFN, CharacterData.Keystone)
+				self:CreateCharacterOutput(CharacterData.UnitData, CharacterData.Keystone)
 			end
 		end
 	else
 		
 		TTD2.Tools.Keystone:RemoveAccountPlayerData()
-		local PlayerKeystoneData = TTD2.Tools.Keystone:GetPlayerData()
-		self:CreateCharacterOutput(nil,PlayerKeystoneData)
+		self:CreateCharacterOutput(
+			TTD2.Tools.Unit:GetPlayerData(),
+			TTD2.Tools.Keystone:GetPlayerData())
 	end
 	
 	return

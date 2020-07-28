@@ -28,6 +28,11 @@ function this:GetWQTomTomLink(WQID, ReplaceName)
 	local MapID, PosX, PosY = Tools.WorldQuest:GetLocationByID(WQID)
 	--print("MapID: ", MapID, " PosX: ", PosX, " PosY: ", PosY)
 	
+	--if the quest is not visible for our character, use std. quest link instead
+	if(MapID == nil) then
+		return Tools.WorldQuest:GetLinkByID(WQID)
+	end
+	
 	return Tools.TomTom:CreateLink(MapID,PosX,PosY,Name)
 end
 

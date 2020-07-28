@@ -1,5 +1,24 @@
+2.18
+FIX: 2 wrong ItemIDs for recipes in BFAWQRecipes (Inscription Contracts); the addon would still have informed you about the WQ being up unless you were an Engineer, though
+FIX: Possible concat nil LUA error if a worldquest was technically available to a character but hidden from the map for whatever reason (phasing, profession skill level etc.)
+
+2.17
+FIX: LUA error in BFAKeystone introduced by 2.16 when not using account-wide option
+FIX: XMogArathi - Horde Demonhunters were falsely listed as eligible to loot the 1h mace, causing a LUA error
+CHANGE: The blue hue used in color-coded output for Alliance is now the wow rare-item-quality color
+
+2.16
+NEW: Module BFAHorrificVision; this module is only active for characters that have unlocked the legendary cloak and informs you about ilvl rewards still available from HVs this week, therefore allowing you to check if you have already done a full clear this week or not
+NEW: Option "Horrific Waste", default: OFF; enable this option to put all rewards still available to you on "done" status as soon as you have received any single one of them. Using this option the module will basically only check if you have completed any single full clear (= malefic core eligible) run this week
+NEW: Option "Demanding Vision", default: OFF; enable this modification of "Horrific Waste" to only accept ilvl470 as sufficient to put other rewards on "done"
+CHANGE: The internal structure of account-wide-saved keystone data was changed a little to prevent possible data duplication. This change required a reset of the existing account-wide saved data. You will have to login every character you want the addon to supervise one more time to recreate the data. Please note that loading keystone data from the server can take a few seconds; don't logout before the data is available
+CHANGE: The blue hue used in color-coded output for Alliance has been changed to "royal blue", which should be a lot better readable on most backgrounds than the old hue
+
+Detailed:
+What most people would like to easily check is whether they have already looted a core from Horrific Visions this week or not. However, there does not seem to exist an API to actually check this. What can be checked, however, is which ilvl rewards you have already looted from the Horrific Vision this week. Since ilvl445-470 can only be looted from a full-clear - which would also reward a core - this check can be used to indirectly check for a core.
+
 2.15
-UPDATE: removed "Kojo's Master Matching Set" as a Trtollan Paragon reward since it never made it into the live game.
+UPDATE: removed "Kojo's Master Matching Set" as a Tortollan Paragon reward since it never made it into the live game.
 UPDATE: keystone feats now show S4 progress
 
 2.14

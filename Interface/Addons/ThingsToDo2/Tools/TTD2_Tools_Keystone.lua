@@ -203,7 +203,7 @@ function this:UpdateAccountTable()
 	--make sure the saved account table "Keystone" only contains relevant data
 	local CharacterTable = TTD2.Tools.SavedData:GetAccountCharacterTable()
 	
-	for ColorCodedName, CharacterData in pairs(CharacterTable) do
+	for GUID, CharacterData in pairs(CharacterTable) do
 		if(CharacterData.Keystone ~= nil) then
 			--this character contains keystone-data, let's take a look
 			local Data = CharacterData.Keystone
@@ -258,11 +258,11 @@ function this:UpdateAccountPlayerData()
 		--we found some relevant information. store it.
 		local CharacterTable	= TTD2.Tools.SavedData:GetAccountCharacterTable()
 		local PlayerUnitData	= Tools.Unit:GetPlayerData()
-		local CCFN				= Tools.Chat:GetColorCodedName(PlayerUnitData)
+		local GUID				= Tools.Unit:GetPlayerGUID()
 		
-		CharacterTable[CCFN]			= CharacterTable[CCFN] or {}
-		CharacterTable[CCFN].UnitData	= PlayerUnitData
-		CharacterTable[CCFN].Keystone	= PlayerKeystoneData
+		CharacterTable[GUID]			= CharacterTable[GUID] or {}
+		CharacterTable[GUID].UnitData	= PlayerUnitData
+		CharacterTable[GUID].Keystone	= PlayerKeystoneData
 	end
 	
 	return
@@ -271,11 +271,10 @@ end
 function this:RemoveAccountPlayerData()
 
 	local CharacterTable	= TTD2.Tools.SavedData:GetAccountCharacterTable()
-	local PlayerUnitData	= Tools.Unit:GetPlayerData()
-	local CCFN				= Tools.Chat:GetColorCodedName(PlayerUnitData)
+	local GUID				= Tools.Unit:GetPlayerGUID()
 	
-	if(CharacterTable[CCFN] ~= nil) then
-		CharacterTable[CCFN].Keystone = nil
+	if(CharacterTable[GUID] ~= nil) then
+		CharacterTable[GUID].Keystone = nil
 	end
 	
 	return

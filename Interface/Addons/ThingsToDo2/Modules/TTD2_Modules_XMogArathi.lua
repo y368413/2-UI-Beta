@@ -581,7 +581,7 @@ function this:GetAllSourceItemIDs()
 				{
 					--agi 1h mace
 					ID = 166337,
-					Classes = { "ROGUE", "SHAMAN", "MONK", "DEMONHUNTER" }
+					Classes = { "ROGUE", "SHAMAN", "MONK" }
 				}
 			}
 		}
