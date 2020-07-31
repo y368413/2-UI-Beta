@@ -172,7 +172,10 @@ local UnitIsConnected                 = _G.UnitIsConnected
 local UnitIsPlayer                    = _G.UnitIsPlayer
 local UnitIsUnit                      = _G.UnitIsUnit
 local UnitName                        = _G.UnitName
-local SendAddonMessage                = C_ChatInfo and C_ChatInfo.SendAddonMessage or SendAddonMessage -- XXX 8.0 compat
+local SendAddonMessage                = _G.C_ChatInfo.SendAddonMessage
+
+local MAX_TALENT_TIERS                = _G.MAX_TALENT_TIERS
+local NUM_TALENT_COLUMNS              = _G.NUM_TALENT_COLUMNS
 
 
 local global_spec_id_roles_detailed = {
@@ -255,11 +258,7 @@ function lib:PLAYER_LOGIN ()
   frame:RegisterEvent ("UNIT_NAME_UPDATE")
   frame:RegisterEvent ("UNIT_AURA")
   frame:RegisterEvent ("CHAT_MSG_ADDON")
-  if C_ChatInfo then -- XXX 8.0 compat
-    C_ChatInfo.RegisterAddonMessagePrefix (COMMS_PREFIX)
-  else
-    RegisterAddonMessagePrefix (COMMS_PREFIX)
-  end
+  C_ChatInfo.RegisterAddonMessagePrefix (COMMS_PREFIX)
 
   local guid = UnitGUID ("player")
   local info = self:BuildInfo ("player")

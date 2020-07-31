@@ -171,6 +171,7 @@ local defaultSettings = {
 		Enable = true,
 		maxAuras = 6,
 		AuraSize = 26,
+		AuraFilter = 3,
 		FriendlyCC = false,
 		HostileCC = true,
 		TankMode = false,
@@ -185,6 +186,7 @@ local defaultSettings = {
 		ShowPowerList = "",
 		VerticalSpacing = .6,
 		ShowPlayerPlate = true,
+		PPWidth = 175,
 		PPHeight = 1,
 		PPPHeight = 8,
 		PPPowerText = true,
@@ -195,7 +197,6 @@ local defaultSettings = {
 		OffTankColor = {r=.2, g=.7, b=.5},
 		DPSRevertThreat = false,
 		ExplosivesScale = true,
-		PPIconSize = 36,
 		AKSProgress = true,
 		PPHideOOC = true,
 		NameplateClassPower = false,
@@ -218,7 +219,6 @@ local defaultSettings = {
 		ChatLine = false,
 		MenuLine = true,
 		ClassLine = true,
-		Details = true,
 		PGFSkin = true,
 		Rematch = true,
 		ToggleDirection = 1,
@@ -328,7 +328,6 @@ local accountSettings = {
 	GuildSortBy = 1,
 	GuildSortOrder = true,
 	DetectVersion = I.Version,
-	ResetDetails = true,
 	LockUIScale = false,
 	UIScale = .71,
 	NumberFormat = 2,
@@ -581,20 +580,6 @@ local function updateSkinAlpha()
 	end
 end
 
-StaticPopupDialogs["RESET_DETAILS"] = {
-	text = U["Reset Details check"],
-	button1 = YES,
-	button2 = NO,
-	OnAccept = function()
-		MaoRUIDB["ResetDetails"] = true
-		ReloadUI()
-	end,
-	whileDead = 1,
-}
-local function resetDetails()
-	StaticPopup_Show("RESET_DETAILS")
-end
-
 -- Config
 local tabList = {
 	U["Actionbar"],
@@ -642,7 +627,7 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{4, "Nameplate", "TargetIndicator", U["TargetIndicator"].."*", true, true, {DISABLE, U["TopArrow"], U["RightArrow"], U["TargetGlow"], U["TopNGlow"], U["RightNGlow"]}, refreshNameplates},
 		{1, "Nameplate", "FriendlyCC", U["Friendly CC"].."*"},
 		{1, "Nameplate", "HostileCC", U["Hostile CC"].."*", true},
-		{1, "Nameplate", "ExplosivesScale", U["ExplosivesScale"], true, true},
+		{4, "Nameplate", "AuraFilter", "*", true, true, {U["BlackNWhite"], U["PlayerOnly"], U["IncludeCrowdControl"]}, refreshNameplates},  --U["NameplateAuraFilter"]..
 		--{1, "Nameplate", "InsideView", U["Nameplate InsideView"].."*", nil, nil, nil, updatePlateInsideView},
 		--{1, "Nameplate", "QuestIndicator", U["QuestIndicator"], true, true},
 		{1, "Nameplate", "CustomUnitColor", "|cff00cc4c"..U["CustomUnitColor"].."*", nil, nil, nil, updateCustomUnitList},
@@ -650,7 +635,8 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "Nameplate", "DPSRevertThreat", U["DPS Revert Threat"].."*", true, true},
 		--{3, "Nameplate", "VerticalSpacing", U["NP VerticalSpacing"].."*", false, nil, {.5, 1.5, .1}, updatePlateSpacing},
 		{1, "Nameplate", "ColorBorder", U["ColorBorder"].."*", false, false, nil, refreshNameplates},
-		{1, "Nameplate", "AKSProgress", U["AngryKeystones Progress"], true},
+		{1, "Nameplate", "ExplosivesScale", U["ExplosivesScale"], true},
+		{1, "Nameplate", "AKSProgress", U["AngryKeystones Progress"], true, true},
 		{3, "Nameplate", "Distance", U["Nameplate Distance"].."*", false, false, {20, 100, .1}, updatePlateRange},
 		{3, "Nameplate", "MinScale", U["Nameplate MinScale"].."*", true, false, {.5, 1, .1}, updatePlateScale},
 		{3, "Nameplate", "MinAlpha", U["Nameplate MinAlpha"].."*", true, true, {.5, 1, .1}, updatePlateAlpha},
@@ -670,7 +656,6 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		--{1, "Nameplate", "Numberstyle", "数字模式", true},
 		--{1, "Nameplate", "nameonly", "友方仅显示名字", true, true},
 		--{1, "Nameplate", "TankMode", "|cff00cc4c"..U["Tank Mode"].."*"},
-		--{1, "Nameplate", "FriendlyCC", U["Friendly CC"].."*", true},
 		--{1, "Nameplate", "HostileCC", U["Hostile CC"].."*", true, true},
 		--{1, "Nameplate", "BommIcon", "|cff00cc4c"..U["BommIcon"]},
 		--{1, "Nameplate", "HighlightTarget", "血条高亮鼠标指向", true},
@@ -752,7 +737,7 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "Nameplate", "NameplateClassPower", U["Nameplate ClassPower"]},
 		{1, "Nameplate", "PPPowerText", U["PlayerPlate PowerText"], true},
 		{1, "Nameplate", "PPHideOOC", U["Fadeout OOC"], true, true},
-		{3, "Nameplate", "PPIconSize", U["PlayerPlate IconSize"], false, nil, {21, 60, 1}, updatePlayerPlate}, -- FIX ME: need to refactor classpower
+		{3, "Nameplate", "PPWidth", U["PlayerPlate HPWidth"], false, nil, {120, 310, 1}, updatePlayerPlate}, -- FIX ME: need to refactor classpower
 		{3, "Nameplate", "PPHeight", U["PlayerPlate HPHeight"].."*", true, false, {1, 16, 1}, updatePlayerPlate},
 		{3, "Nameplate", "PPPHeight", U["PlayerPlate MPHeight"].."*", true, true, {3, 16, 1}, updatePlayerPlate},
 	},
@@ -791,7 +776,7 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 	  {1, "UFs", "UFPctText", U["UFPctText"], true, true},
 	  {1, "Misc", "xMerchant", U["xMerchant"]},
 	  {1, "Misc", "WallpaperKit", U["WallpaperKit"], true},
-	  {1, "Skins", "FlatMode", U["FlatMode"]},
+	  {1, "Skins", "FlatMode", U["FlatMode"], true, true},
 		{},--blank
 		{1, "Map", "Coord", U["Map Coords"]},
 		{1, "Map", "Clock", U["Minimap Clock"].."*", true, false, nil, showMinimapClock},
@@ -804,8 +789,7 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "Misc", "WorldQusetRewardIcons", U["WorldQusetRewardIcons"], true, true},
 		{},--blank
 		{1, "Skins", "TMW", U["TMW Skin"]},
-		{1, "Skins", "Details", U["Details Skin"], true, false, nil, resetDetails},
-		{1, "Skins", "WeakAuras", U["WeakAuras Skin"], true, true},
+		{1, "Skins", "WeakAuras", U["WeakAuras Skin"], true},
 		--{1, "Skins", "PGFSkin", U["PGF Skin"], true},
 		--{1, "Skins", "Rematch", U["Rematch Skin"], true, true},
 		{1, "Skins", "Bigwigs", U["Bigwigs Skin"]},

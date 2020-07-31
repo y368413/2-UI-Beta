@@ -1,8 +1,7 @@
----------------------------------------------------------
+---------------------------------------------------------## Author: Kemayo  ## Version: 1 ## SavedVariables: HandyNotes_LostAndFoundDB
 -- Addon declaration
 HandyNotes_LostAndFound = LibStub("AceAddon-3.0"):NewAddon("HandyNotes_LostAndFound", "AceEvent-3.0")
 local HandyNotes = LibStub("AceAddon-3.0"):GetAddon("HandyNotes")
--- local L = LibStub("AceLocale-3.0"):GetLocale("HandyNotes_LostAndFound", true)
 
 ---------------------------------------------------------
 -- Our db upvalue and db defaults
@@ -319,7 +318,7 @@ do
         if (level == 1) then
             -- Create the title of the menu
             info.isTitle      = 1
-            info.text         = "HandyNotes - LostAndFound"
+            info.text         = "HandyNotes-LostAndFound"
             info.notCheckable = 1
             UIDropDownMenu_AddButton(info, level)
 

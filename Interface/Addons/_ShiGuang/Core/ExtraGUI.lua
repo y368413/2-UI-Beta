@@ -255,10 +255,13 @@ function G:SetupRaidDebuffs(parent)
 		local instName = self.text or self
 		local index = 0
 
-		for spellID, priority in pairs(R.RaidDebuffs[instName]) do
-			if not (MaoRUIDB["RaidDebuffs"][instName] and MaoRUIDB["RaidDebuffs"][instName][spellID]) then
-				index = index + 1
-				applyData(index, instName, spellID, priority)
+		--for spellID, priority in pairs(R.RaidDebuffs[instName]) do
+		if R.RaidDebuffs[instName] then
+			for spellID, priority in pairs(R.RaidDebuffs[instName]) do
+				if not (MaoRUIDB["RaidDebuffs"][instName] and MaoRUIDB["RaidDebuffs"][instName][spellID]) then
+					index = index + 1
+					applyData(index, instName, spellID, priority)
+				end
 			end
 		end
 
