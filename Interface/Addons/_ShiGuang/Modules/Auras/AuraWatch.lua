@@ -734,6 +734,7 @@ SlashCmdList.AuraWatch = function(msg)
 			end
 			value[1].MoveHandle:Show()
 		end
+
 		if IntCD.MoveHandle then
 			IntCD.MoveHandle:Show()
 			for i = 1, #IntTable do

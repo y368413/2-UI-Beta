@@ -106,8 +106,11 @@ local defaultSettings = {
 		RaidTextScale = 0.85, 
 		FrequentHealth = false,
 		HealthFrequency = .25,
+
 		PlayerWidth = 245,
 		PlayerHeight = 24,
+		PlayerPowerHeight = 6,
+		PlayerPowerOffset = 2,
 		FocusWidth = 160,
 		FocusHeight = 21,
 		FocusPowerHeight = 3,
@@ -187,8 +190,9 @@ local defaultSettings = {
 		VerticalSpacing = .6,
 		ShowPlayerPlate = true,
 		PPWidth = 175,
-		PPHeight = 1,
-		PPPHeight = 8,
+		PPBarHeight = 6,
+		PPHealthHeight = 0,
+		PPPowerHeight = 6,
 		PPPowerText = true,
 		FullHealth = false,
 		SecureColor = {r=1, g=0, b=1},
@@ -207,6 +211,7 @@ local defaultSettings = {
 		MinAlpha = 0.8,
 		ColorBorder = true,
 		QuestIndicator = true,
+		NameOnlyMode = false,
 	},
 	Skins = {
 		DBM = true,
@@ -499,10 +504,6 @@ local function updateRaidNameText()
 	M:GetModule("UnitFrames"):UpdateRaidNameText()
 end
 
-local function updatePlayerPlate()
-	M:GetModule("UnitFrames"):ResizePlayerPlate()
-end
-
 local function updateUFTextScale()
 	M:GetModule("UnitFrames"):UpdateTextScale()
 end
@@ -644,8 +645,8 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{3, "Nameplate", "PlateHeight", U["NP Height"].."*", true, false, {5, 30, 1}, refreshNameplates},
 		{3, "Nameplate", "NameTextSize", U["NameTextSize"].."*", true, true, {10, 30, 1}, refreshNameplates},
 		{3, "Nameplate", "HealthTextSize", U["HealthTextSize"].."*", false, false, {10, 30, 1}, refreshNameplates},
-		{3, "Nameplate", "maxAuras", U["Max Auras"], true, false, {0, 10, 1}},
-		{3, "Nameplate", "AuraSize", U["Auras Size"], true, true, {18, 40, 1}},
+		{3, "Nameplate", "maxAuras", U["Max Auras"].."*", true, false, {0, 10, 1}, refreshNameplates},
+		{3, "Nameplate", "AuraSize", U["Auras Size"].."*", true, true, {18, 40, 1}, refreshNameplates},
 		{2, "Nameplate", "UnitList", U["UnitColor List"].."*", nil, nil, nil, updateCustomUnitList, U["CustomUnitTips"]},
 		{2, "Nameplate", "ShowPowerList", U["ShowPowerList"].."*", true, nil, nil, updatePowerUnitList, U["CustomUnitTips"]},
 		{5, "Nameplate", "SecureColor", U["Secure Color"].."*"},
@@ -737,9 +738,10 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "Nameplate", "NameplateClassPower", U["Nameplate ClassPower"]},
 		{1, "Nameplate", "PPPowerText", U["PlayerPlate PowerText"], true},
 		{1, "Nameplate", "PPHideOOC", U["Fadeout OOC"], true, true},
-		{3, "Nameplate", "PPWidth", U["PlayerPlate HPWidth"], false, nil, {120, 310, 1}, updatePlayerPlate}, -- FIX ME: need to refactor classpower
-		{3, "Nameplate", "PPHeight", U["PlayerPlate HPHeight"].."*", true, false, {1, 16, 1}, updatePlayerPlate},
-		{3, "Nameplate", "PPPHeight", U["PlayerPlate MPHeight"].."*", true, true, {3, 16, 1}, updatePlayerPlate},
+		{3, "Nameplate", "PPWidth", U["PlayerPlate HPWidth"].."*", false, nil, {120, 310, 1}, refreshNameplates}, -- FIX ME: need to refactor classpower
+		--{3, "Nameplate", "PPBarHeight", U["PlayerPlate CPHeight"].."*", true, false, {0, 16, 1}, refreshNameplates},
+		{3, "Nameplate", "PPHealthHeight", U["PlayerPlate HPHeight"].."*", true, false, {0, 16, 1}, refreshNameplates},
+		{3, "Nameplate", "PPPowerHeight", U["PlayerPlate MPHeight"].."*", true, true, {0, 16, 1}, refreshNameplates},
 	},
 	[5] = {
 		{1, "Chat", "Outline", U["Font Outline"]},
@@ -995,7 +997,7 @@ local function CreateOption(i)
 				if callback then callback() end
 			end)
 			eb.title = U["Tips"]
-			local tip = U["EdieBox Tip"]
+			local tip = U["EditBox Tip"]
 			if tooltip then tip = tooltip.."|n"..tip end
 			M.AddTooltip(eb, "ANCHOR_RIGHT", tip, "info")
 			M.CreateFS(eb, 14, name, "system", "CENTER", 0, 25)

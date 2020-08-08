@@ -236,6 +236,9 @@ function WQA:OnInitialize()
 				['*'] = true,
 				chat = false,
 				PopUp = false,
+				popupRememberPosition = false,
+				popupX = 600,
+				popupY = 800,
 				zone = { ['*'] = true},
 				reward = {
 					gear = {
@@ -1952,7 +1955,9 @@ end
 function WQA:AnnouncePopUp(quests, silent)
 	if not self.PopUp then
 		local PopUp = CreateFrame("Frame", "WQAchievementsPopUp", UIParent, "UIPanelDialogTemplate")
-		tinsert(UISpecialFrames, "WQAchievementsPopUp")
+		if self.db.profile.options.esc then
+			tinsert(UISpecialFrames, "WQAchievementsPopUp")
+		end
 		self.PopUp = PopUp
 		PopUp:SetMovable(true)
 		PopUp:EnableMouse(true)
@@ -1964,6 +1969,10 @@ function WQA:AnnouncePopUp(quests, silent)
 		PopUp:SetScript("OnDragStop", function(self)
 			self.moving = nil
 			self:StopMovingOrSizing()
+			if WQA.db.profile.options.popupRememberPosition then
+				WQA.db.profile.options.popupX = self:GetLeft()
+				WQA.db.profile.options.popupY = self:GetTop()
+			end
 		end)
 		PopUp:SetWidth(430)
 		PopUp:SetHeight(80)
@@ -1991,6 +2000,11 @@ function WQA:AnnouncePopUp(quests, silent)
 	self:UpdateQTip(quests)
 	PopUp:SetWidth(self.tooltip:GetWidth()+8.5)
 	PopUp:SetHeight(self.tooltip:GetHeight()+32)
+
+	if self.db.profile.options.popupRememberPosition then
+		PopUp:ClearAllPoints()
+		PopUp:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", self.db.profile.options.popupX, self.db.profile.options.popupY)
+	end
 end
 
 function WQA:GetRewardTextByID(questID, key, value, i, type)
@@ -3046,6 +3060,19 @@ function WQA:UpdateOptions()
 				 	end,
 					 order = newOrder()
 					},
+					popupRememberPosition = {
+						type = "toggle",
+						name = "Remember PopUp position",
+						width = "double",
+						set = function(info, val)
+							WQA.db.profile.options.popupRememberPosition = val
+						end,
+						descStyle = "inline",
+					 get = function()
+					 	return WQA.db.profile.options.popupRememberPosition
+				 	end,
+					 order = newOrder()
+					},
 					sortByName = {
 						type = "toggle",
 						name = "Sort quests by name",
@@ -3180,6 +3207,20 @@ function WQA:UpdateOptions()
 						descStyle = "inline",
 					 get = function()
 					 	return WQA.db.profile.options.WorldQuestTracker
+				 	end,
+					 order = newOrder()
+					},
+					esc = {
+						type = "toggle",
+						name = "Close PopUp with ESC",
+						desc = "Requires a reload",
+						width = "double",
+						set = function(info, val)
+							WQA.db.profile.options.esc = val
+						end,
+						descStyle = "inline",
+					 get = function()
+					 	return WQA.db.profile.options.esc
 				 	end,
 					 order = newOrder()
 					},

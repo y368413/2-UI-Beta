@@ -157,16 +157,16 @@ function UF:CheckTankStatus(unit)
 end
 
 -- Update unit color
-function UF.UpdateColor(self, _, unit)
+function UF:UpdateColor(_, unit)
 	if not unit or self.unit ~= unit then return end
 
 	local element = self.Health
 	local name = self.unitName
 	local npcID = self.npcID
 	local isCustomUnit = customUnits[name] or customUnits[npcID]
-	local isPlayer = UnitIsPlayer(unit)
+	local isPlayer = self.isPlayer
+	local isFriendly = self.isFriendly
 	local status = UnitThreatSituation(self.feedbackUnit, unit) or false -- just in case
-	local reaction = UnitReaction(unit, "player")
 	local customColor = MaoRUIPerDB["Nameplate"]["CustomColor"]
 	local secureColor = MaoRUIPerDB["Nameplate"]["SecureColor"]
 	local transColor = MaoRUIPerDB["Nameplate"]["TransColor"]
@@ -180,13 +180,13 @@ function UF.UpdateColor(self, _, unit)
 	else
 		if isCustomUnit then
 			r, g, b = customColor.r, customColor.g, customColor.b
-		elseif isPlayer and (reaction and reaction >= 5) then
+		elseif isPlayer and isFriendly then
 			if MaoRUIPerDB["Nameplate"]["FriendlyCC"] then
 				r, g, b = M.UnitColor(unit)
 			else
 				r, g, b = .3, .3, 1
 			end
-		elseif isPlayer and (reaction and reaction <= 4) and MaoRUIPerDB["Nameplate"]["HostileCC"] then
+		elseif isPlayer and (not isFriendly) and MaoRUIPerDB["Nameplate"]["HostileCC"] then
 			r, g, b = M.UnitColor(unit)
 		elseif UnitIsTapDenied(unit) and not UnitPlayerControlled(unit) then
 			r, g, b = .6, .6, .6
@@ -257,15 +257,16 @@ function UF:UpdateTargetChange()
 	if MaoRUIPerDB["Nameplate"]["TargetIndicator"] == 1 then return end
 
 	if UnitIsUnit(self.unit, "target") and not UnitIsUnit(self.unit, "player") then
-		element:SetAlpha(1)
+		element:Show()
 	else
-		element:SetAlpha(0)
+		element:Hide()
 	end
 end
 
-function UF:UpdateTargetIndicator(self)
+function UF:UpdateTargetIndicator()
 	local style = MaoRUIPerDB["Nameplate"]["TargetIndicator"]
 	local element = self.TargetIndicator
+	local isNameOnly = self.isNameOnly
 	if style == 1 then
 		element:Hide()
 	else
@@ -274,26 +275,46 @@ function UF:UpdateTargetIndicator(self)
 			element.LeftArrow:Hide()
 			element.RightArrow:Hide()
 			element.Glow:Hide()
+			element.nameGlow:Hide()
 		elseif style == 3 then
 			element.TopArrow:Hide()
 			element.LeftArrow:Show()
 			element.RightArrow:Show()
 			element.Glow:Hide()
+			element.nameGlow:Hide()
 		elseif style == 4 then
 			element.TopArrow:Hide()
 			element.LeftArrow:Hide()
 			element.RightArrow:Hide()
-			element.Glow:Show()
+			if isNameOnly then
+				element.Glow:Hide()
+				element.nameGlow:Show()
+			else
+				element.Glow:Show()
+				element.nameGlow:Hide()
+			end
 		elseif style == 5 then
 			element.TopArrow:Show()
 			element.LeftArrow:Hide()
 			element.RightArrow:Hide()
-			element.Glow:Show()
+			if isNameOnly then
+				element.Glow:Hide()
+				element.nameGlow:Show()
+			else
+				element.Glow:Show()
+				element.nameGlow:Hide()
+			end
 		elseif style == 6 then
 			element.TopArrow:Hide()
 			element.LeftArrow:Show()
 			element.RightArrow:Show()
-			element.Glow:Show()
+			if isNameOnly then
+				element.Glow:Hide()
+				element.nameGlow:Show()
+			else
+				element.Glow:Show()
+				element.nameGlow:Hide()
+			end
 		end
 		element:Show()
 	end
@@ -303,7 +324,7 @@ function UF:AddTargetIndicator(self)
 	local frame = CreateFrame("Frame", nil, self)
 	frame:SetAllPoints()
 	frame:SetFrameLevel(0)
-	frame:SetAlpha(0)
+	frame:Hide()
 
 	frame.TopArrow = frame:CreateTexture(nil, "BACKGROUND", nil, -6)
 	frame.TopArrow:SetSize(52, 52)
@@ -330,9 +351,17 @@ function UF:AddTargetIndicator(self)
 	frame.Glow:SetBackdropBorderColor(1, 1, 1)
 	frame.Glow:SetFrameLevel(0)
 
+	frame.nameGlow = frame:CreateTexture(nil, "BACKGROUND", nil, -5)
+	frame.nameGlow:SetSize(150, 80)
+	frame.nameGlow:SetTexture("Interface\\GLUES\\Models\\UI_Draenei\\GenericGlow64")
+	frame.nameGlow:SetVertexColor(0, .6, 1)
+	frame.nameGlow:SetBlendMode("ADD")
+	frame.nameGlow:SetPoint("CENTER", self, "BOTTOM")
+
 	self.TargetIndicator = frame
-	UF:UpdateTargetIndicator(self)
+
 	self:RegisterEvent("PLAYER_TARGET_CHANGED", UF.UpdateTargetChange, true)
+	UF.UpdateTargetIndicator(self)
 end
 
 -- Quest progress
@@ -348,7 +377,6 @@ function UF:QuestIconCheck()
 	M:RegisterEvent("PLAYER_ENTERING_WORLD", CheckInstanceStatus)
 end
 
-local unitTip = CreateFrame("GameTooltip", "NDuiQuestUnitTip", nil, "GameTooltipTemplate")
 function UF:UpdateQuestUnit(_, unit)
 	if not MaoRUIPerDB["Nameplate"]["QuestIndicator"] then return end
 	if isInInstance then
@@ -360,11 +388,11 @@ function UF:UpdateQuestUnit(_, unit)
 	unit = unit or self.unit
 
 	local isLootQuest, questProgress
-	unitTip:SetOwner(UIParent, "ANCHOR_NONE")
-	unitTip:SetUnit(unit)
+	M.ScanTip:SetOwner(UIParent, "ANCHOR_NONE")
+	M.ScanTip:SetUnit(unit)
 
-	for i = 2, unitTip:NumLines() do
-		local textLine = _G[unitTip:GetName().."TextLeft"..i]
+	for i = 2, M.ScanTip:NumLines() do
+		local textLine = _G["NDui_ScanTooltipTextLeft"..i]
 		local text = textLine:GetText()
 		if textLine and text then
 			local r, g, b = textLine:GetTextColor()
@@ -372,7 +400,7 @@ function UF:UpdateQuestUnit(_, unit)
 				if isInGroup and text == I.MyName or not isInGroup then
 					isLootQuest = true
 
-					local questLine = _G[unitTip:GetName().."TextLeft"..(i+1)]
+					local questLine = _G["NDui_ScanTooltipTextLeft"..(i+1)]
 					local questText = questLine:GetText()
 					if questLine and questText then
 						local current, goal = strmatch(questText, "(%d+)/(%d+)")
@@ -502,33 +530,34 @@ function UF:AddCreatureIcon(self)
 	iconFrame:SetFrameLevel(self:GetFrameLevel() + 2)
 
 	local icon = iconFrame:CreateTexture(nil, "ARTWORK")
-	icon:SetAtlas("VignetteKill")
+	--icon:SetAtlas("VignetteKill")
 	icon:SetPoint("BOTTOM", self, "LEFT", -3, -1)
 	icon:SetSize(26, 26)
 	icon:Hide()
 
-	self.creatureIcon = icon
+	self.ClassifyIndicator = icon
 end
 
 function UF:UpdateUnitClassify(unit)
-	local class = UnitClassification(unit)
-	local level = UnitLevel(unit)
-	if self.creatureIcon then
-		if class and classify[class] then
+	if self.ClassifyIndicator then
+		local class = UnitClassification(unit)
+	  local level = UnitLevel(unit)
+		if (not self.isNameOnly) and class and classify[class] then
 			local tex, r, g, b, desature = unpack(classify[class])
-			--self.creatureIcon:SetVertexColor(r, g, b)
-			--self.creatureIcon:SetDesaturated(desature)
+			--self.ClassifyIndicator:SetVertexColor(r, g, b)
+			--self.ClassifyIndicator:SetDesaturated(desature)
+			
 			if level and level < UnitLevel("player") then  -- or level == -1
 			    if class == elite then
-			        self.creatureIcon:Hide()
+			        self.ClassifyIndicator:Hide()
 			    end
-			else
-			    self.creatureIcon:SetTexture(tex)
-		      self.creatureIcon:SetTexCoord(r, g, b, desature)
-			    self.creatureIcon:Show()
+			else    
+			    self.ClassifyIndicator:SetTexture(tex)
+		      self.ClassifyIndicator:SetTexCoord(r, g, b, desature)
+		      self.ClassifyIndicator:Show()
 			end
 		else
-			self.creatureIcon:Hide()
+			self.ClassifyIndicator:Hide()
 		end
 	end
 end
@@ -676,6 +705,13 @@ function UF:CreatePlates()
 	self.Health = health
 	self.Health.UpdateColor = UF.UpdateColor
 
+	local title = M.CreateFS(self, MaoRUIPerDB["Nameplate"]["NameTextSize"]-1)
+	title:ClearAllPoints()
+	title:SetPoint("TOP", self, "BOTTOM", 0, -10)
+	title:Hide()
+	self:Tag(title, "[npctitle]")
+	self.npcTitle = title
+
 	UF:CreateHealthText(self)
 	UF:CreateCastBar(self)
 	UF:CreateRaidMark(self)
@@ -710,7 +746,7 @@ function UF:UpdateClassPowerAnchor()
 		bar:SetParent(nameplate.unitFrame)
 		bar:SetScale(.85)
 		bar:ClearAllPoints()
-		bar:SetPoint("TOP", nameplate.unitFrame, "BOTTOM", 0, 1)
+		bar:SetPoint("TOP", nameplate.unitFrame, "BOTTOM", 0, 1)  --.nameText
 		bar:Show()
 	else
 		bar:Hide()
@@ -735,18 +771,95 @@ function UF:UpdateTargetClassPower()
 	end
 end
 
-function UF:RefreshAllPlates()
+function UF:UpdateNameplateAuras()
+	local element = self.Auras
+	if MaoRUIPerDB["Nameplate"]["ShowPlayerPlate"] and MaoRUIPerDB["Nameplate"]["NameplateClassPower"] then
+		element:SetPoint("BOTTOMLEFT", self.nameText, "TOPLEFT", 0, 10 + _G.oUF_ClassPowerBar:GetHeight())
+	else
+		element:SetPoint("BOTTOMLEFT", self.nameText, "TOPLEFT", 0, 5)
+	end
+	element.numTotal = MaoRUIPerDB["Nameplate"]["maxAuras"]
+	element.size = MaoRUIPerDB["Nameplate"]["AuraSize"]
+	element.showDebuffType = MaoRUIPerDB["Nameplate"]["ColorBorder"]
+	element:SetWidth(self:GetWidth())
+	element:SetHeight((element.size + element.spacing) * 2)
+	element:ForceUpdate()
+end
+
+function UF:RefreshNameplats()
 	for nameplate in pairs(platesList) do
 		nameplate:SetSize(MaoRUIPerDB["Nameplate"]["PlateWidth"], MaoRUIPerDB["Nameplate"]["PlateHeight"])
 		nameplate.nameText:SetFont(I.Font[1], MaoRUIPerDB["Nameplate"]["NameTextSize"], I.Font[3])
+		nameplate.npcTitle:SetFont(I.Font[1], MaoRUIPerDB["Nameplate"]["NameTextSize"]-1, I.Font[3])
 		nameplate.Castbar.Time:SetFont(I.Font[1], MaoRUIPerDB["Nameplate"]["NameTextSize"], I.Font[3])
 		nameplate.Castbar.Text:SetFont(I.Font[1], MaoRUIPerDB["Nameplate"]["NameTextSize"], I.Font[3])
 		nameplate.healthValue:SetFont(I.Font[1], MaoRUIPerDB["Nameplate"]["HealthTextSize"], I.Font[3])
 		nameplate.healthValue:UpdateTag()
-		nameplate.Auras.showDebuffType = MaoRUIPerDB["Nameplate"]["ColorBorder"]
-		UF:UpdateTargetIndicator(nameplate)
+		UF.UpdateNameplateAuras(nameplate)
+		UF.UpdateTargetIndicator(nameplate)
+		UF.UpdateTargetChange(nameplate)
 	end
 	UF:UpdateClickableSize()
+end
+
+function UF:RefreshAllPlates()
+	if MaoRUIPerDB["Nameplate"]["ShowPlayerPlate"] then
+		UF:ResizePlayerPlate()
+	end
+	UF:RefreshNameplats()
+end
+
+local DisabledElements = {
+	"Health", "Castbar", "HealPredictionAndAbsorb", "PvPClassificationIndicator"
+}
+function UF:UpdatePlateByType()
+	local name = self.nameText
+	local hpval = self.healthValue
+	local title = self.npcTitle
+	local raidtarget = self.RaidTargetIndicator
+	local classify = self.ClassifyIndicator
+
+	name:ClearAllPoints()
+	raidtarget:ClearAllPoints()
+
+	if self.isNameOnly then
+		for _, element in pairs(DisabledElements) do
+			if self:IsElementEnabled(element) then
+				self:DisableElement(element)
+			end
+		end
+
+		name:SetJustifyH("CENTER")
+		self:Tag(name, "[nplevel][color][name]")
+		name:UpdateTag()
+		name:SetPoint("CENTER", self, "BOTTOM")
+		hpval:Hide()
+		title:Show()
+
+		raidtarget:SetPoint("TOP", title, "BOTTOM", 0, -5)
+		raidtarget:SetParent(self)
+		classify:Hide()
+	else
+		for _, element in pairs(DisabledElements) do
+			if not self:IsElementEnabled(element) then
+				self:EnableElement(element)
+			end
+		end
+
+		name:SetJustifyH("LEFT")
+		self:Tag(name, "[nplevel][name]")
+		name:UpdateTag()
+		name:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 0, 5)
+		name:SetPoint("BOTTOMRIGHT", self, "TOPRIGHT", 0, 5)
+		hpval:Show()
+		title:Hide()
+
+		raidtarget:SetPoint("RIGHT", self, "LEFT", -3, 0)
+		raidtarget:SetParent(self.Health)
+		classify:Show()
+	end
+
+	UF.UpdateTargetIndicator(self)
 end
 
 function UF:PostUpdatePlates(event, unit)
@@ -759,27 +872,37 @@ function UF:PostUpdatePlates(event, unit)
 			guidToPlate[self.unitGUID] = self
 		end
 		self.npcID = M.GetNPCID(self.unitGUID)
+		self.isPlayer = UnitIsPlayer(unit)
+		self.reaction = UnitReaction(unit, "player")
+		self.isFriendly = self.reaction and self.reaction >= 5
+		self.isNameOnly = MaoRUIPerDB["Nameplate"]["NameOnlyMode"] and self.isFriendly or false
 
 		local blizzPlate = self:GetParent().UnitFrame
 		self.widget = blizzPlate.WidgetContainer
+
+		if self.previousType == nil or self.previousType ~= self.isNameOnly then
+			UF.UpdatePlateByType(self)
+			self.previousType = self.isNameOnly
+		end
 	elseif event == "NAME_PLATE_UNIT_REMOVED" then
 		if self.unitGUID then
 			guidToPlate[self.unitGUID] = nil
 		end
 	end
 
-	UF.UpdateUnitPower(self)
-	UF.UpdateTargetChange(self)
-	UF.UpdateQuestUnit(self, event, unit)
-	UF.UpdateUnitClassify(self, unit)
+	if event ~= "NAME_PLATE_UNIT_REMOVED" then
+		UF.UpdateUnitPower(self)
+		UF.UpdateTargetChange(self)
+		UF.UpdateQuestUnit(self, event, unit)
+		UF.UpdateUnitClassify(self, unit)
+		UF.UpdateDungeonProgress(self, unit)
+		UF:UpdateClassPowerAnchor()
+	end
 	UF.UpdateExplosives(self, event, unit)
-	UF.UpdateDungeonProgress(self, unit)
-	UF:UpdateClassPowerAnchor()
 end
 
 -- Player Nameplate
 local auras = M:GetModule("Auras")
-local margin = R.UFs.BarMargin
 
 function UF:PlateVisibility(event)
 	if (event == "PLAYER_REGEN_DISABLED" or InCombatLockdown()) and UnitIsUnit("player", self.unit) then
@@ -798,29 +921,45 @@ end
 function UF:ResizePlayerPlate()
 	local plate = _G.oUF_PlayerPlate
 	if plate then
-		local pWidth = MaoRUIPerDB["Nameplate"]["PPWidth"]
-		local pHeight, ppHeight = MaoRUIPerDB["Nameplate"]["PPHeight"], MaoRUIPerDB["Nameplate"]["PPPHeight"]
-		local iconSize = (pWidth - margin*4)/5
-		plate:SetSize(pWidth, pHeight + ppHeight + R.mult)
-		plate.mover:SetSize(pWidth, pHeight + ppHeight + R.mult)
-		plate.Health:SetHeight(pHeight)
-		plate.Power:SetHeight(ppHeight)
+		local barWidth = MaoRUIPerDB["Nameplate"]["PPWidth"]
+		local barHeight = MaoRUIPerDB["Nameplate"]["PPBarHeight"]
+		local healthHeight = MaoRUIPerDB["Nameplate"]["PPHealthHeight"]
+		local powerHeight = MaoRUIPerDB["Nameplate"]["PPPowerHeight"]
+
+		plate:SetSize(barWidth, healthHeight + powerHeight + R.mult)
+		plate.mover:SetSize(barWidth, healthHeight + powerHeight + R.mult)
+		plate.Health:SetHeight(healthHeight)
+		plate.Power:SetHeight(powerHeight)
+
 		local bars = plate.ClassPower or plate.Runes
 		if bars then
-			for i = 1, 6 do
-				bars[i]:SetHeight(pHeight)
+			local classpowerWidth = MaoRUIPerDB["Nameplate"]["NameplateClassPower"] and MaoRUIPerDB["Nameplate"]["PlateWidth"] or barWidth
+			_G.oUF_ClassPowerBar:SetSize(classpowerWidth, barHeight)
+			local max = bars.__max
+			for i = 1, max do
+				bars[i]:SetHeight(barHeight)
+				bars[i]:SetWidth((classpowerWidth - (max-1)*R.margin) / max)
 			end
 		end
 		if plate.Stagger then
-			plate.Stagger:SetHeight(pHeight)
+			plate.Stagger:SetHeight(barHeight)
 		end
 		if plate.bu then
+			local iconSize = (barWidth - R.margin*4)/5
 			for i = 1, 5 do
 				plate.bu[i]:SetSize(iconSize, iconSize)
 			end
 		end
 		if plate.dices then
-			plate.dices[1]:SetPoint("BOTTOMLEFT", plate.Health, "TOPLEFT", 0, 8 + plate.Health:GetHeight())
+			local offset = MaoRUIPerDB["Nameplate"]["NameplateClassPower"] and R.margin or (R.margin*2 + barHeight)
+			local size = (barWidth - 10)/6
+			for i = 1, 6 do
+				local dice = plate.dices[i]
+				dice:SetSize(size, size)
+				if i == 1 then
+					dice:SetPoint("BOTTOMLEFT", plate.Health, "TOPLEFT", 0, offset)
+				end
+			end
 		end
 	end
 end
@@ -828,8 +967,8 @@ end
 function UF:CreatePlayerPlate()
 	self.mystyle = "PlayerPlate"
 	self:EnableMouse(false)
-	local pHeight, ppHeight = MaoRUIPerDB["Nameplate"]["PPHeight"], MaoRUIPerDB["Nameplate"]["PPPHeight"]
-	self:SetSize(MaoRUIPerDB["Nameplate"]["PPWidth"], pHeight + ppHeight + R.mult)
+	local healthHeight, powerHeight = MaoRUIPerDB["Nameplate"]["PPHealthHeight"], MaoRUIPerDB["Nameplate"]["PPPowerHeight"]
+	self:SetSize(MaoRUIPerDB["Nameplate"]["PPWidth"], healthHeight + powerHeight + R.mult)
 
 	UF:CreateHealthBar(self)
 	UF:CreatePowerBar(self)

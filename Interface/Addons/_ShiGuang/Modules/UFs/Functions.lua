@@ -61,7 +61,7 @@ function UF:CreateHealthBar(self)
 	health:SetPoint("TOPRIGHT", self)
 	local healthHeight
 	if mystyle == "PlayerPlate" then
-		healthHeight = MaoRUIPerDB["Nameplate"]["PPHeight"]
+		healthHeight = MaoRUIPerDB["Nameplate"]["PPHealthHeight"]
 	elseif mystyle == "raid" then
 		if self.isPartyFrame then
 			healthHeight = MaoRUIPerDB["UFs"]["PartyHeight"]
@@ -224,7 +224,7 @@ function UF:CreatePowerBar(self)
 	power:SetPoint("BOTTOMRIGHT", self)
 	local powerHeight
 	if mystyle == "PlayerPlate" then
-		powerHeight = MaoRUIPerDB["Nameplate"]["PPPHeight"]
+		powerHeight = MaoRUIPerDB["Nameplate"]["PPPowerHeight"]
 	elseif mystyle == "raid" then
 		if self.isPartyFrame then
 			powerHeight = MaoRUIPerDB["UFs"]["PartyPowerHeight"]
@@ -594,7 +594,9 @@ function UF.CustomFilter(element, unit, button, name, _, _, _, _, _, caster, isS
 			return (button.isPlayer or caster == "pet") and MaoRUIDB["CornerBuffs"][I.MyClass][spellID] or R.RaidBuffs["ALL"][spellID] or R.RaidBuffs["WARNING"][spellID]
 		end
 	elseif style == "nameplate" or style == "boss" or style == "arena" then
-		if MaoRUIDB["NameplateFilter"][2][spellID] or R.BlackList[spellID] then
+		if element.__owner.isNameOnly then
+			return MaoRUIDB["NameplateFilter"][1][spellID] or R.WhiteList[spellID]
+		elseif MaoRUIDB["NameplateFilter"][2][spellID] or R.BlackList[spellID] then
 			return false
 		elseif element.showStealableBuffs and isStealable and not UnitIsPlayer(unit) then
 			return true
@@ -723,7 +725,6 @@ function UF:CreateDebuffs(self)
 end
 
 -- Class Powers
-local margin = R.UFs.BarMargin
 local barWidth, barHeight = unpack(R.UFs.BarSize)
 
 function UF.PostUpdateClassPower(element, cur, max, diff, powerType)
@@ -739,7 +740,7 @@ function UF.PostUpdateClassPower(element, cur, max, diff, powerType)
 
 	if diff then
 		for i = 1, max do
-			element[i]:SetWidth((barWidth - (max-1)*margin)/max)
+			element[i]:SetWidth((barWidth - (max-1)*R.margin)/max)
 		end
 		for i = max + 1, 6 do
 			element[i].bg:Hide()
@@ -796,7 +797,8 @@ end
 
 function UF:CreateClassPower(self)
 	if self.mystyle == "PlayerPlate" then
-		barWidth, barHeight = self:GetWidth(), self.Health:GetHeight()+2
+		barWidth = MaoRUIPerDB["Nameplate"]["NameplateClassPower"] and MaoRUIPerDB["Nameplate"]["PlateWidth"] or MaoRUIPerDB["Nameplate"]["PPWidth"]
+		barHeight = MaoRUIPerDB["Nameplate"]["PPBarHeight"]
 		R.UFs.BarPoint = {"BOTTOMLEFT", self, "TOPLEFT", 0, 3}
 	end
 
@@ -808,14 +810,14 @@ function UF:CreateClassPower(self)
 	for i = 1, 6 do
 		bars[i] = CreateFrame("StatusBar", nil, bar)
 		bars[i]:SetHeight(barHeight)
-		bars[i]:SetWidth((barWidth - 5*margin) / 6)
+		bars[i]:SetWidth((barWidth - 5*R.margin) / 6)
 		bars[i]:SetStatusBarTexture(I.normTex)
 		bars[i]:SetFrameLevel(self:GetFrameLevel() + 5)
 		M.CreateBDFrame(bars[i], 0, true)
 		if i == 1 then
 			bars[i]:SetPoint("BOTTOMLEFT")
 		else
-			bars[i]:SetPoint("LEFT", bars[i-1], "RIGHT", margin, 0)
+			bars[i]:SetPoint("LEFT", bars[i-1], "RIGHT", R.margin, 0)
 		end
 
 		bars[i].bg = bar:CreateTexture(nil, "BACKGROUND")
