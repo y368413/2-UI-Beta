@@ -327,9 +327,11 @@ end
 
 function UF:CreateIcons(self)
 	local mystyle = self.mystyle
-
-	local phase = self:CreateTexture(nil, "OVERLAY")
-	phase:SetPoint("TOP", self, 0, 12)
+	local parentFrame = CreateFrame("Frame", nil, self)
+	parentFrame:SetAllPoints()
+	parentFrame:SetFrameLevel(5)
+	local phase = parentFrame:CreateTexture(nil, "OVERLAY")
+	phase:SetPoint("TOP", self.Health, 0, 12)
 	phase:SetSize(22, 22)
 	self.PhaseIndicator = phase
 

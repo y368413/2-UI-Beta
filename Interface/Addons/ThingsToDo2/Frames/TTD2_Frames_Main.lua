@@ -18,7 +18,7 @@ local this = Frames.Main
 function this:Create()
 	
 	self.FrameName = "TTD2_Main"
-	self.FrameTitleText = TTD2.Tools.Chat:GetColoredAddonTitle().." v"..GetAddOnMetadata("ThingsToDo2","Version")
+	self.FrameTitleText = TTD2.Tools.Chat:GetColoredAddonTitle().." "..GetAddOnMetadata("ThingsToDo2","Version")
 	self.AddonFrameResetPosX	= 50
 	self.AddonFrameResetPosY	= -100
 	

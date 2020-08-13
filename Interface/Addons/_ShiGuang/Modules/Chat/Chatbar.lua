@@ -260,10 +260,10 @@ function module:Chatbar()
 	_G.ChatFrameChannelButton:SetParent(VoiceFrame)
 	_G.ChatFrameToggleVoiceDeafenButton:SetParent(VoiceFrame)
 	_G.ChatFrameToggleVoiceMuteButton:SetParent(VoiceFrame)
-	_G.QuickJoinToastButton.Show = M.Dummy
-	_G.QuickJoinToastButton:Hide()
-	--_G.QuickJoinToastButton:SetParent(VoiceFrame)
-	_G.ChatAlertFrame:SetClampedToScreen(true)
+	--_G.QuickJoinToastButton.Show = M.Dummy
+	--_G.QuickJoinToastButton:Hide()
+	_G.QuickJoinToastButton:SetParent(VoiceFrame)
+	--_G.ChatAlertFrame:SetClampedToScreen(true)
 	_G.ChatAlertFrame:ClearAllPoints()
 	_G.ChatAlertFrame:SetPoint("BOTTOMLEFT", _G.ChatFrame1Tab, "TOPLEFT", 6, 21)
 

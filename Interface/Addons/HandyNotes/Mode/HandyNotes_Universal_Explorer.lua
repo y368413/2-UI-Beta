@@ -154,8 +154,10 @@ do
 --	Create ICON
 --      -------------------------------------------------------------------------------------------
 		local icon, alpha, scale
-			scale = value.scale or 1
-			alpha = value.alpha or 1
+			scale = (value.scale or 1) * Universal_Explorer.db.icon_scale
+			alpha = (value.alpha or 1) * Universal_Explorer.db.icon_alpha
+	--		scale = value.scale or 1
+	--		alpha = value.alpha or 1
 			if value.achievement then
 				if (UnitName("player") ~= select ( 6, GetAchievementCriteriaInfoByID (value.achievement, value.criteria) ) ) then
 				icon = "Interface\\Addons\\HandyNotes\\Icons\\ExplorerCoord" 

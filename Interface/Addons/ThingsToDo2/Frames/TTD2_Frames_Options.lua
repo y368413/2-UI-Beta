@@ -174,5 +174,15 @@ function this:Create()
 	ArchaeologyAutoWaypoint.CheckButtonToggleOnFunction	= TTD2.Modules.ArchaeologyAutoWaypoint.AddWaypointToClosestDigsite
 	ArchaeologyAutoWaypoint.CheckButtonToggleOnObject	= TTD2.Modules.ArchaeologyAutoWaypoint
 	self.ScrollFrame:AddButtonToContentFrame(ArchaeologyAutoWaypoint)
+	
+	local HorrificVisionTracker = TTD2.Templates.UICheckButton:new()
+	HorrificVisionTracker.CheckButtonSavedDataSetting = "HorrificVisionTracker"
+	HorrificVisionTracker.CheckButtonLabel = "Horrific Vision Tracker"
+	HorrificVisionTracker.FrameTooltipText = TTD2.Tools.Chat:Green("Horrific Visions:").."\nShow a small tracking frame inside of Horrific Visions. The tooltip of the frame will tell you exactly how many chests/crystals you and/or your party have collected. Will automatically add TomTom-Waypoints to chests partymembers open.\n\n"..TTD2.Tools.Chat:Green("Toggling this option on will reset the tracking frame inside visions.")
+	HorrificVisionTracker.ButtonScriptFunction		= TTD2.Tools.EventDispatcher.CheckModules
+	HorrificVisionTracker.ButtonScriptObject		= TTD2.Tools.EventDispatcher
+	--HorrificVisionTracker.CheckButtonToggleOnFunction	= TTD2.Modules.ArchaeologyAutoWaypoint.AddWaypointToClosestDigsite
+	--HorrificVisionTracker.CheckButtonToggleOnObject	= TTD2.Modules.ArchaeologyAutoWaypoint
+	self.ScrollFrame:AddButtonToContentFrame(HorrificVisionTracker)
 
 end

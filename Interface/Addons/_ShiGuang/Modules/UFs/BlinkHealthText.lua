@@ -1,5 +1,3 @@
-local _, ns = ...
-local M, R, U, I = unpack(ns)
 -------------------------------------------------------------------------------
 -- 文件: SimpleInfo.lua ver 1.0  日期: 2010-12-11  作者: dugu@wowbox
 -- 描述: 在屏幕中下方显示玩家(宠物)和目标(ToT)的基本信息  版权所有@多玩游戏网
@@ -117,7 +115,7 @@ function BlinkHealth:OnInitialize()
 	self:UpdateUnitFrame();
 	SlashCmdList["BLINKHEALTH"] = BlinkHealth_SlashHandler;
 	SLASH_BLINKHEALTH1 = "/bht";
-	if (ShiGuangPerDB.BHTHit == true) then sendCmd("/bht hiton") else sendCmd("/bht hitoff") end
+	--if (ShiGuangPerDB.BHTHit == true) then sendCmd("/bht hiton") else sendCmd("/bht hitoff") end
 end
 
 function BlinkHealth:OnEnable()
@@ -934,6 +932,7 @@ function BlinkHealth_SlashHandler(msg)
 	local BHT_2 = "输入 /bht m 调整位置\n";
 	local BHT_3 = "输入 /bht hiton 或 /bht hitoff 是否显示数字连击点数\n";
 	local cmdtype, para1 = strsplit(" ", string.lower(msg))
+	local MyClass = select(2, UnitClass("player"))
 	local listSec = 0;
 	if para1 ~= nil then
 		listSec = tonumber(para1);
@@ -942,16 +941,16 @@ function BlinkHealth_SlashHandler(msg)
 	elseif (cmdtype == "off") then BlinkHealth:OnDisable();
 	elseif (cmdtype == "move" or cmdtype == "m") then
 			BlinkHealth:ShowAnchor();
-		if (I.MyClass == "MONK") or (I.MyClass == "PALADIN") or (I.MyClass == "WARLOCK") or (I.MyClass == "MAGE") or (I.MyClass == "ROGUE") or (I.MyClass == "DRUID") then	
+		if (MyClass == "MONK") or (MyClass == "PALADIN") or (MyClass == "WARLOCK") or (MyClass == "MAGE") or (MyClass == "ROGUE") or (MyClass == "DRUID") then	
 			BlinkHealth:ShowHitAnchor();
 		end		
   elseif (cmdtype == "hiton") then
-		if (I.MyClass == "MONK") or (I.MyClass == "PALADIN") or (I.MyClass == "WARLOCK") or (I.MyClass == "MAGE") or (I.MyClass == "ROGUE") or (I.MyClass == "DRUID") then	
+		if (MyClass == "MONK") or (MyClass == "PALADIN") or (MyClass == "WARLOCK") or (MyClass == "MAGE") or (MyClass == "ROGUE") or (MyClass == "DRUID") then	
 			BlinkHealth:ToggleHitPoint(true);
 		end			
 		ShiGuangPerDB.BHTHit = true;		
 	elseif (cmdtype == "hitoff") then
-		if (I.MyClass == "MONK") or (I.MyClass == "PALADIN") or (I.MyClass == "WARLOCK") or (I.MyClass == "MAGE") or (I.MyClass == "ROGUE") or (I.MyClass == "DRUID") then
+		if (MyClass == "MONK") or (MyClass == "PALADIN") or (MyClass == "WARLOCK") or (MyClass == "MAGE") or (MyClass == "ROGUE") or (MyClass == "DRUID") then
 			BlinkHealth:ToggleHitPoint(false);
 		end
 		ShiGuangPerDB.BHTHit = false;

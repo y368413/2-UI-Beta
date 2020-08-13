@@ -9,5 +9,5 @@
 	<Script file="FriendGroups.lua"/>
 	<Script file="ShowChanceBar.lua"/>
 	<Script file="Quest_Complete.lua"/>
-	<!--Script file="BlinkRogueHelper.lua"/-->
+	<Script file="BlinkRogueHelper.lua"/>
 </Ui>

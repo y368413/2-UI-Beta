@@ -1,4 +1,4 @@
---## Author: Urtgard  ## Version: v8.3.0-6release
+--## Author: Urtgard  ## Version: v8.3.0-9release
 WQAchievements = LibStub("AceAddon-3.0"):NewAddon("WQAchievements", "AceConsole-3.0", "AceTimer-3.0")
 local WQA = WQAchievements
 WQA.data = {}
@@ -204,6 +204,15 @@ WQA.data.custom = {wqID = "", rewardID = "", rewardType = "none", questType = "W
 WQA.data.custom.mission = {missionID = "", rewardID = "", rewardType = "none"}
 --WQA.data.customReward = 0
 
+local ldb = LibStub:GetLibrary("LibDataBroker-1.1")
+local dataobj = ldb:NewDataObject("WQAchievements", {
+	type = "data source",
+	text = "WQA",
+	icon = "Interface\\Icons\\INV_Misc_Map06",
+})
+
+local icon = LibStub("LibDBIcon-1.0")
+
 function WQA:OnInitialize()
 	-- Remove data for the other faction
 	local faction = UnitFactionGroup("player")
@@ -277,6 +286,7 @@ function WQA:OnInitialize()
 					},
 				},
 				delay = 1,
+				LibDBIcon = { hide = false}
 			},
 			["achievements"] = {exclusive = {}, ['*'] = "default"},
 			["mounts"] = {exclusive = {}, ['*'] = "default"},
@@ -311,6 +321,9 @@ function WQA:OnInitialize()
 		end
 		self.db.global.customReward = nil
 	end
+
+	-- Minimap Icon
+	icon:Register("WQAchievements", dataobj, self.db.profile.options.LibDBIcon)
 end
 
 function WQA:OnEnable()
@@ -2231,13 +2244,6 @@ function WQA:Special()
 	end
 end
 
-local ldb = LibStub:GetLibrary("LibDataBroker-1.1")
-local dataobj = ldb:NewDataObject("WQAchievements", {
-	type = "data source",
-	text = "WQA",
-	icon = "Interface\\Icons\\INV_Misc_Map06",
-})
-
 local anchor
 function dataobj:OnEnter()
 	anchor = self
@@ -2432,6 +2438,14 @@ function WQA:IsQuestFlaggedCompleted(questID)
 		return not IsQuestFlaggedCompleted(questID)
 	else
 		return false
+	end
+end
+
+function WQA:UpdateMinimapIcon()
+	if self.db.profile.options.LibDBIcon.hide then
+		icon:Hide("WQAchievements")
+	else
+		icon:Show("WQAchievements")
 	end
 end
 
@@ -3223,6 +3237,20 @@ function WQA:UpdateOptions()
 					 	return WQA.db.profile.options.esc
 				 	end,
 					 order = newOrder()
+					},
+					LibDBIcon = {
+						type = "toggle",
+						name = "Show Minimap Icon",
+						width = "double",
+						set = function(info, val)
+							WQA.db.profile.options.LibDBIcon.hide = not val
+							WQA:UpdateMinimapIcon()
+						end,
+						descStyle = "inline",
+						get = function()
+							return not WQA.db.profile.options.LibDBIcon.hide
+						end,
+						order = newOrder()
 					},
 				}
 			}

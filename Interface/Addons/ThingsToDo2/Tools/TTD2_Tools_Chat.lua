@@ -58,6 +58,10 @@ function this:Yellow(Message)
     return "|cFFFFFF00"..tostring(Message).."|r"
 end
 
+function this:White(Message)
+    return "|cFFFFFFFF"..tostring(Message).."|r"
+end
+
 function this:Gray(Message)
     return "|cFF9D9D9D"..tostring(Message).."|r"
 end
