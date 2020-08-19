@@ -166,7 +166,7 @@ local defaultSettings = {
 		MapReveal = false,
 		Calendar = false,
 		zrMMbordersize = 2,
-		zrMMbuttonsize = 16,
+		zrMMbuttonsize = 18,
 		zrMMbuttonpos = "Bottom",
 		zrMMcustombuttons = {},
 	},
@@ -191,7 +191,7 @@ local defaultSettings = {
 		ShowPlayerPlate = true,
 		PPWidth = 175,
 		PPBarHeight = 6,
-		PPHealthHeight = 0,
+		PPHealthHeights = 0.1,
 		PPPowerHeight = 6,
 		PPPowerText = true,
 		FullHealth = false,
@@ -314,6 +314,7 @@ local defaultSettings = {
 		SorasThreat = true,
 		HunterPetHelp = true,
 		CtrlIndicator = true,
+		BlinkRogueHelper = false,
 	},
 	Tutorial = {
 		Complete = false,
@@ -740,8 +741,8 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "Nameplate", "PPHideOOC", U["Fadeout OOC"], true, true},
 		{3, "Nameplate", "PPWidth", U["PlayerPlate HPWidth"].."*", false, nil, {120, 310, 1}, refreshNameplates}, -- FIX ME: need to refactor classpower
 		--{3, "Nameplate", "PPBarHeight", U["PlayerPlate CPHeight"].."*", true, false, {0, 16, 1}, refreshNameplates},
-		{3, "Nameplate", "PPHealthHeight", U["PlayerPlate HPHeight"].."*", true, false, {0, 16, 1}, refreshNameplates},
-		{3, "Nameplate", "PPPowerHeight", U["PlayerPlate MPHeight"].."*", true, true, {0, 16, 1}, refreshNameplates},
+		{3, "Nameplate", "PPHealthHeights", U["PlayerPlate HPHeight"].."*", true, false, {0, 16, .1}, refreshNameplates},
+		{3, "Nameplate", "PPPowerHeight", U["PlayerPlate MPHeight"].."*", true, true, {1, 16, 1}, refreshNameplates},
 	},
 	[5] = {
 		{1, "Chat", "Outline", U["Font Outline"]},
@@ -852,7 +853,8 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		--{3, "Bags", "BagsWidth", U["Bags Width"], true, true, {10, 20, 0}},
 		--{3, "Bags", "BankWidth", U["Bank Width"], true, true, {10, 20, 0}},
 		{1, "Misc", "HunterPetHelp", U["HunterPetHelp"], true, true},
-		{1, "Misc", "CtrlIndicator", "Shift/Alt/Ctrl卡住提示"},
+		{1, "Misc", "CtrlIndicator", U["Shiftfreeze"]},
+		{1, "Misc", "BlinkRogueHelper", U["BlinkRogueHelper"], true},
 	},
 	[8] = {
 		{1, "Misc", "ParagonRep", U["ParagonRep"]},

@@ -939,7 +939,7 @@ function UF:ResizePlayerPlate()
 	if plate then
 		local barWidth = MaoRUIPerDB["Nameplate"]["PPWidth"]
 		local barHeight = MaoRUIPerDB["Nameplate"]["PPBarHeight"]
-		local healthHeight = MaoRUIPerDB["Nameplate"]["PPHealthHeight"]
+		local healthHeight = MaoRUIPerDB["Nameplate"]["PPHealthHeights"]
 		local powerHeight = MaoRUIPerDB["Nameplate"]["PPPowerHeight"]
 
 		plate:SetSize(barWidth, healthHeight + powerHeight + R.mult)
@@ -983,7 +983,7 @@ end
 function UF:CreatePlayerPlate()
 	self.mystyle = "PlayerPlate"
 	self:EnableMouse(false)
-	local healthHeight, powerHeight = MaoRUIPerDB["Nameplate"]["PPHealthHeight"], MaoRUIPerDB["Nameplate"]["PPPowerHeight"]
+	local healthHeight, powerHeight = MaoRUIPerDB["Nameplate"]["PPHealthHeights"], MaoRUIPerDB["Nameplate"]["PPPowerHeight"]
 	self:SetSize(MaoRUIPerDB["Nameplate"]["PPWidth"], healthHeight + powerHeight + R.mult)
 
 	UF:CreateHealthBar(self)

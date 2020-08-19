@@ -557,6 +557,8 @@ U["Absorb"] = "吸收"
 U["Shield"] = "盾牌"
 U["BattleResurrectCount"] = "战复剩: "
 U["BattleResurrectNext"] = "次 充能: "
+U["Shiftfreeze"] = "Shift/Alt/Ctrl卡住提示"
+U["BlinkRogueHelper"] = "浮动连击点"
 
 U["From"] = "來自"
 U["Tell"] = "告訴"

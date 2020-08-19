@@ -990,10 +990,10 @@ local function FriendGroups_OnClick(self, button)
 		ShiGuangDB["FriendGroupsHideOffline"] = not ShiGuangDB["FriendGroupsHideOffline"]
 		FriendGroups_Update()
 	elseif button == "RightButton" then
-		ShiGuangDB["FriendGroupsCollapsed"][group] = not ShiGuangDB["FriendGroupsCollapsed"][group]
+		ShiGuangDB["FriendGroupsingame_only"] = not ShiGuangDB["FriendGroupsingame_only"]
 		FriendGroups_Update()
 	else
-		ShiGuangDB["FriendGroupsingame_only"] = not ShiGuangDB["FriendGroupsingame_only"]
+		ShiGuangDB["FriendGroupsCollapsed"][group] = not ShiGuangDB["FriendGroupsCollapsed"][group]
 		FriendGroups_Update()
 	end
 end

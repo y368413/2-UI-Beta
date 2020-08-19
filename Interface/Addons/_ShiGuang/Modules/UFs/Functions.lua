@@ -61,7 +61,7 @@ function UF:CreateHealthBar(self)
 	health:SetPoint("TOPRIGHT", self)
 	local healthHeight
 	if mystyle == "PlayerPlate" then
-		healthHeight = MaoRUIPerDB["Nameplate"]["PPHealthHeight"]
+		healthHeight = MaoRUIPerDB["Nameplate"]["PPHealthHeights"]
 	elseif mystyle == "raid" then
 		if self.isPartyFrame then
 			healthHeight = MaoRUIPerDB["UFs"]["PartyHeight"]
@@ -649,7 +649,7 @@ function UF:CreateAuras(self)
 		bu.initialAnchor = "BOTTOMLEFT"
 		bu["growth-y"] = "UP"
 		--if MaoRUIPerDB["Nameplate"]["ShowPlayerPlate"] and MaoRUIPerDB["Nameplate"]["NameplateClassPower"] then
-			--bu:SetPoint("BOTTOMLEFT", self.nameText, "TOPLEFT", 0, 5 + _G.oUF_ClassPowerBar:GetHeight())
+			--bu:SetPoint("BOTTOMLEFT", self.nameText, "TOPLEFT", 0, 10 + _G.oUF_ClassPowerBar:GetHeight())
 		--else
 			bu:SetPoint("BOTTOMLEFT", self.nameText, "TOPLEFT", 0, 5)
 		--end

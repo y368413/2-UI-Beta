@@ -542,6 +542,8 @@ U["Absorb"] = "Absorb"
 U["Shield"] = "Shield"
 U["BattleResurrectCount"] = "Battle Resurrect: "
 U["BattleResurrectNext"] = "Times Next: "
+U["Shiftfreeze"] = "Shift/Alt/Ctrl Freeze Tips"
+U["BlinkRogueHelper"] = "Blink Rogue Helper"
 --------------------------------------------------------------------------------------------------ND
 
 U["From"] = "From"

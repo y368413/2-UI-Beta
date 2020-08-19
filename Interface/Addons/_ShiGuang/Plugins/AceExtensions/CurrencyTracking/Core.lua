@@ -3943,7 +3943,7 @@ else
 end
 
 
--- $Id: Core.lua 191 2020-07-02 16:19:06Z arith $
+-- $Id: Core.lua 198 2020-08-16 14:02:54Z arith $
 -----------------------------------------------------------------------
 -- Upvalued Lua API.
 -----------------------------------------------------------------------
@@ -3955,13 +3955,33 @@ local string, tonumber = _G.string, _G.tonumber
 local format, strsub, strlen, strgmatch = string.format, string.sub, string.len, string.gmatch
 local floor, fmod = math.floor, math.fmod
 -- WoW
+local GetAddOnInfo, GetAddOnMetadata = _G.GetAddOnInfo, _G.GetAddOnMetadata
 local GameTooltip = _G.GameTooltip
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers
 local GetCurrencyListSize, GetCurrencyListInfo, GetCurrencyInfo = _G.GetCurrencyListSize, _G.GetCurrencyListInfo, _G.GetCurrencyInfo
 local GetItemInfoInstant, GetItemCount, GetItemInfo, GetItemIcon = _G.GetItemInfoInstant, _G.GetItemCount, _G.GetItemInfo, _G.GetItemIcon
 local UnitName, GetRealmName = _G.UnitName, _G.GetRealmName
 local GetMoney = _G.GetMoney
+local GetLocale = _G.GetLocale
 
+local GetBuildInfo = _G.GetBuildInfo
+
+-- Determine WoW TOC Version
+local WoWClassic, WoWRetail, WoWShadowlands
+local wowtocversion  = select(4, GetBuildInfo())
+if wowtocversion < 19999 then
+	WoWClassic = true
+elseif wowtocversion > 19999 and wowtocversion < 90000 then 
+	WoWRetail = true
+else
+	WoWShadowlands = true
+end
+
+if WoWClassic or WoWRetail then
+	GetCurrencyListSize, GetCurrencyListInfo, GetCurrencyInfo = _G.GetCurrencyListSize, _G.GetCurrencyListInfo, _G.GetCurrencyInfo
+else -- Shadowlands
+	GetCurrencyListSize, GetCurrencyListInfo, GetCurrencyInfo = C_CurrencyInfo.GetCurrencyListSize, C_CurrencyInfo.GetCurrencyListInfo, C_CurrencyInfo.GetCurrencyInfo
+end
 -- ----------------------------------------------------------------------------
 -- AddOn namespace.
 -- ----------------------------------------------------------------------------
@@ -4072,7 +4092,16 @@ local function getTooltipText()
 		-- // GetCurrencyListInfo() syntax:
 		-- // name, isHeader, isExpanded, isUnused, isWatched, count, icon = GetCurrencyListInfo(index)
 		local name, isHeader, isUnused, count, icon, _
-		name, isHeader, _, isUnused, _, count, icon = GetCurrencyListInfo(i)
+		if WoWClassic or WoWRetail then
+			name, isHeader, _, isUnused, _, count, icon = GetCurrencyListInfo(i)
+		else
+			local curr = GetCurrencyListInfo(i)
+			name = curr.name
+			isHeader = curr.isHeader
+			isUnused = curr.isTypeUnused
+			count = curr.quantity
+			icon = curr.iconFileID
+		end
 		if ( isHeader ) then
 			tooltip = tooltip..name.."\n"
 		elseif ( (count >= 0) and not isUnused ) then
@@ -4169,7 +4198,13 @@ local function handleTrackedButtons(button, currencyID, itemID)
 	local itemName, itemLink, count, icon, _
 	local width = 15
 	if (currencyID) then 
-		_, count, icon = GetCurrencyInfo(currencyID) 
+		if WoWClassic or WoWRetail then
+			_, count, icon = GetCurrencyInfo(currencyID) 
+		else
+			local curr = GetCurrencyInfo(currencyID)
+			count = curr.quantity
+			icon = curr.iconFileID
+		end
 	elseif (itemID) then
 		if (item_list[itemID] and item_list[itemID][1] and item_list[itemID][2] and item_list[itemID][3]) then
 			itemName, icon, itemLink = item_list[itemID][1], item_list[itemID][2], item_list[itemID][3]
@@ -4277,7 +4312,13 @@ local function currencyButton_Update()
 	-- tracked currencies
 	for currencyID, v in pairs(profile["currencies"]) do
 		if (currencyID and type(currencyID) == "number" and profile["currencies"][currencyID] == true) then
-			local _, count = GetCurrencyInfo(currencyID)
+			local _, count
+			if WoWClassic or WoWRetail then
+				_, count = GetCurrencyInfo(currencyID)
+			else
+				local curr = GetCurrencyInfo(currencyID)
+				count = curr.quantity
+			end
 
 			if (count >= 0) then
 				if (profile.hide_zero and count == 0) then
@@ -4351,7 +4392,14 @@ local function currencyString_Update()
 	-- tracked currencies
 	for currencyID, v in pairs(profile["currencies"]) do
 		if (currencyID and type(currencyID) == "number" and profile["currencies"][currencyID] == true) then
-			local _, count, icon = GetCurrencyInfo(currencyID)
+			local _, count, icon
+			if WoWClassic or WoWRetail then
+				_, count, icon = GetCurrencyInfo(currencyID)
+			else
+				local curr = GetCurrencyInfo(currencyID)
+				count = curr.quantity
+				icon = curr.iconFileID
+			end
 			if not icon then icon = 0 end -- somehow Legionfall War Supplies' icon is not available in 7.2.5.23959, this should temporary resolve the blocking issue
 			
 			if (count >= 0) then

@@ -1841,7 +1841,7 @@ function WQA:UpdateQTip(tasks)
 					else
 						GameTooltip:SetText(C_Garrison.GetMissionName(id))
 						GameTooltip:AddLine(string.format(GARRISON_MISSION_TOOLTIP_NUM_REQUIRED_FOLLOWERS, C_Garrison.GetMissionMaxFollowers(id)), 1, 1, 1)
-						GarrisonMissionButton_AddThreatsToTooltip(id, WQA.missionList[task.id].followerType, false, C_Garrison.GetFollowerAbilityCountersForMechanicTypes(WQA.missionList[task.id].followerType))
+						--GarrisonMissionButton_AddThreatsToTooltip(id, WQA.missionList[task.id].followerType, false, C_Garrison.GetFollowerAbilityCountersForMechanicTypes(WQA.missionList[task.id].followerType))
 						GameTooltip:AddLine(GARRISON_MISSION_AVAILABILITY)
 						GameTooltip:AddLine(WQA.missionList[task.id].offerTimeRemaining, 1, 1, 1)
 						if not C_Garrison.IsPlayerInGarrison(WQA.missionList[task.id].followerType) then

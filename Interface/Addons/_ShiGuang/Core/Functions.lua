@@ -807,6 +807,55 @@ do
 	end
 	hooksecurefunc("PanelTemplates_DeselectTab", resetTabAnchor)
 	hooksecurefunc("PanelTemplates_SelectTab", resetTabAnchor)
+	-- Handle close button
+	function M:Texture_OnEnter()
+		if self:IsEnabled() then
+			if self.bg then
+				self.bg:SetBackdropColor(cr, cg, cb, .25)
+			else
+				self.bgTex:SetVertexColor(cr, cg, cb)
+			end
+		end
+	end
+
+	function M:Texture_OnLeave()
+		if self.bg then
+			self.bg:SetBackdropColor(0, 0, 0, .25)
+		else
+			self.bgTex:SetVertexColor(1, 1, 1)
+		end
+	end
+	-- Handle arrows
+	local arrowDegree = {
+		["up"] = 0,
+		["down"] = 180,
+		["left"] = 90,
+		["right"] = -90,
+	}
+	function M:SetupArrow(direction)
+		self:SetTexture(I.ArrowUp)
+		self:SetRotation(rad(arrowDegree[direction]))
+	end
+
+	function M:ReskinArrow(direction)
+		self:SetSize(16, 16)
+		--M.Reskin(self, true)
+
+		self:SetDisabledTexture(I.bdTex)
+		local dis = self:GetDisabledTexture()
+		dis:SetVertexColor(0, 0, 0, .3)
+		dis:SetDrawLayer("OVERLAY")
+		dis:SetAllPoints()
+
+		local tex = self:CreateTexture(nil, "ARTWORK")
+		tex:SetAllPoints()
+		M.SetupArrow(tex, direction)
+		tex:SetVertexColor(1, 0, 0, 1)
+		self.bgTex = tex
+
+		self:HookScript("OnEnter", function() if self:IsEnabled() then self.bgTex:SetVertexColor(0, 1, 0, 1) end end)
+		self:HookScript("OnLeave", function() self.bgTex:SetVertexColor(1, 0, 0, 1) end)
+	end
 end
 
 -- GUI elements
@@ -895,15 +944,11 @@ do
 		dd.Text:SetPoint("RIGHT", -5, 0)
 		dd.options = {}
 
-	local bu = CreateFrame("Button", dd, self)
-	bu:SetSize(26, 26)
-	bu.Icon = bu:CreateTexture(nil, "ARTWORK")
-	bu.Icon:SetAllPoints()
-	bu.Icon:SetTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\Raid\\ArrowLarge")
-	bu.Icon:SetVertexColor(1, 0, 0, 1)
-	bu:SetHighlightTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\Raid\\ArrowLarge")
-	bu:GetHighlightTexture():SetVertexColor(0, 1, 0, 1)
-	bu:SetPoint("LEFT", dd, "RIGHT", -8, 3)
+		local bu = CreateFrame("Button", nil, dd)
+		bu:SetPoint("RIGHT", 12, 5)
+		M.ReskinArrow(bu, "down")
+		bu:SetSize(26, 26)
+
 		local list = CreateFrame("Frame", nil, dd)
 		list:SetPoint("TOP", dd, "BOTTOM", 0, -2)
 		M.CreateBD(list, 0.85)

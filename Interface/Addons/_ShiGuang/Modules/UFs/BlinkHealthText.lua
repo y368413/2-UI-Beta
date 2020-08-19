@@ -31,6 +31,7 @@ local function GetPowerType()
         return Enum.PowerType.ComboPoints
     elseif (class == DRUID) then
         return UnitPowerType("player") == Enum.PowerType.Energy and Enum.PowerType.ComboPoints or nil
+    --elseif (class == DEATHKNIGHT) then
     end
 end
 
@@ -103,14 +104,8 @@ function BlinkHealth:OnInitialize()
 	self:CreateAnchorFrame()
 	self:ConstructFrame("player");
 	self:ConstructFrame("target");
-	self.class = select(2, UnitClass("player"));
-	if (self.class == "DEATHKNIGHT") then		
-		self:ConstructRunes();
-	end
-	if ("MONK,PALADIN,WARLOCK,MAGE,ROGUE,DRUID"):find(self.class) then
-		self:ConstructCombo();
-		self:ConstructHitPoints();	-- 构建连击点
-	end
+	--if (select(2, UnitClass("player")) == "DEATHKNIGHT") then self:ConstructRunes(); end
+	--if ("MONK,PALADIN,WARLOCK,MAGE,ROGUE,DRUID"):find(select(2, UnitClass("player"))) then self:ConstructCombo(); self:ConstructHitPoints(); end	-- 构建连击点 
 	--self:ConstructCastingBar();
 	self:UpdateUnitFrame();
 	SlashCmdList["BLINKHEALTH"] = BlinkHealth_SlashHandler;
@@ -125,7 +120,7 @@ function BlinkHealth:OnEnable()
 	self:RegisterEvent("PLAYER_REGEN_DISABLED");
 	self:RegisterEvent("PLAYER_REGEN_ENABLED");
 	self:RegisterEvent("UNIT_HEALTH");
-	self:RegisterEvent("UNIT_POWER_UPDATE");
+	--self:RegisterEvent("UNIT_POWER_UPDATE");
 	self.frame["player"]:Show();
 	self.handle = self:ScheduleRepeatingTimer("UpdateUnitValues", 0.05);
 end
@@ -164,13 +159,13 @@ function BlinkHealth:PLAYER_REGEN_ENABLED()
 	self:UpdateUnitFrame();
 end
 
-function BlinkHealth:UNIT_POWER_UPDATE(event, unit)
+--[[function BlinkHealth:UNIT_POWER_UPDATE(event, unit)
 	if (unit == "player") then
         if BlinkHealthTextPowerType then
             self:UpdateComboPoints();
         end
 	end
-end
+end]]
 
 function BlinkHealth:CreateAnchorFrame()
 	if (self.anchor) then return end
@@ -242,10 +237,10 @@ function BlinkHealth:UpdateUnitFrame()
 	end
 end
 
-function BlinkHealth:UpdateComboPoints()
+--[[function BlinkHealth:UpdateComboPoints()
 	local comboPoints = UnitPower(PlayerFrame.unit, BlinkHealthTextPowerType);
 	if (comboPoints and comboPoints > 0) then
-        self.hitPoint.text:SetText(comboPoints);
+    --self.hitPoint.text:SetText(comboPoints);
 		self.Combo:Show();
 		for i=1, 10 do
 			self.Combo[i]:Hide();
@@ -255,14 +250,14 @@ function BlinkHealth:UpdateComboPoints()
 		end
 	else
 		self.Combo:Hide();
-    self.hitPoint.text:SetText("");
-    self.hitPoint.hit:SetText("");
+    --self.hitPoint.text:SetText("");
+    --self.hitPoint.hit:SetText("");
 	end
 
 	--if (self.castBar and self.castBar:IsShown()) then
 		--self:CastingBarAdjustPosition();
 	--end
-end
+end]]
 
 function BlinkHealth:UpdateUnitValues()
 	local heal, maxheal, perh, petheal, petmax, name;
@@ -496,7 +491,7 @@ function BlinkHealth:ConstructHealth(unit)
 	this.name = name;
 end
 --------------
--- 连击点
+--[[ 连击点
 function BlinkHealth:ConstructCombo()
     if self.Combo then return end
 	local this = self.frame["target"];
@@ -527,9 +522,9 @@ function BlinkHealth:ConstructCombo()
 	self.Combo:Hide();
 	self.Combo.bg = bg;
 	self.Combo.fill = fill;	
-end
+end]]
 --------------------
--- 符文条
+--[[ 符文条
 do
 function BlinkHealth:ConstructRunes()
 	local this = self.frame["player"];
@@ -686,7 +681,7 @@ function BlinkHealth:DisableRune()
 	self.Runes:Hide();
 	self:UnregisterEvent("RUNE_POWER_UPDATE");
 end
-end
+end]]
 ----------------------
 --[[ 施法条
 do
@@ -775,6 +770,7 @@ function S:ConstructCastingBar()
 	name.Text:SetWidth(100);
 end
 end]]
+
 function BlinkHealth:ConstructFrame(unit)
 	self.frame[unit] = CreateFrame("Frame", "SimpleInfoPlayerFrame" .. unit, UIParent);
 	self.frame[unit]:SetWidth(200);
@@ -816,7 +812,7 @@ end)
 	self:ConstructHealth(unit);	
 end
 
-function BlinkHealth:CreateHitAnchor()
+--[[function BlinkHealth:CreateHitAnchor()
 	if (self.HitAnchor) then return end
 
 	self.HitAnchor = CreateFrame("Button", "SimpleInfoHitPointAnchor", UIParent)
@@ -883,7 +879,7 @@ function BlinkHealth:ConstructHitPoints()
 	end	
 end
 
---[[function S:ToggleCastingBar(switch)
+function S:ToggleCastingBar(switch)
 	if (switch) then
 		self.castBar.showCastbar = true;
 	else
@@ -896,7 +892,7 @@ function BlinkHealth:ShowAnchor()
 	self.anchor:Show();
 end
 
-function BlinkHealth:ToggleNameVisible(switch)
+--[[function BlinkHealth:ToggleNameVisible(switch)
 	if (switch) then
 		self.frame["target"].name:Show();
 	else
@@ -925,37 +921,38 @@ end
 
 function BlinkHealth:ShowHitAnchor()
 	self.HitAnchor:Show();
-end
+end]]
 
 function BlinkHealth_SlashHandler(msg)
-	local BHT_1 = "输入 /bht on 或 /bht off 开关插件\n";
-	local BHT_2 = "输入 /bht m 调整位置\n";
-	local BHT_3 = "输入 /bht hiton 或 /bht hitoff 是否显示数字连击点数\n";
+	--local BHT_1 = "输入 /bht on 或 /bht off 开关插件\n";
+	--local BHT_2 = "输入 /bht m 调整位置\n";
+	--local BHT_3 = "输入 /bht hiton 或 /bht hitoff 是否显示数字连击点数\n";
 	local cmdtype, para1 = strsplit(" ", string.lower(msg))
-	local MyClass = select(2, UnitClass("player"))
+	--local MyClass = select(2, UnitClass("player"))
 	local listSec = 0;
 	if para1 ~= nil then
 		listSec = tonumber(para1);
 	end
 	if (cmdtype == "on") then BlinkHealth:OnEnable();
 	elseif (cmdtype == "off") then BlinkHealth:OnDisable();
-	elseif (cmdtype == "move" or cmdtype == "m") then
+	--elseif (cmdtype == "rune") then if (MyClass == "DEATHKNIGHT") then BlinkHealth:ToggleRuneFrameVisible(true); end
+	else--if (cmdtype == "move" or cmdtype == "m") then
 			BlinkHealth:ShowAnchor();
-		if (MyClass == "MONK") or (MyClass == "PALADIN") or (MyClass == "WARLOCK") or (MyClass == "MAGE") or (MyClass == "ROGUE") or (MyClass == "DRUID") then	
-			BlinkHealth:ShowHitAnchor();
-		end		
-  elseif (cmdtype == "hiton") then
-		if (MyClass == "MONK") or (MyClass == "PALADIN") or (MyClass == "WARLOCK") or (MyClass == "MAGE") or (MyClass == "ROGUE") or (MyClass == "DRUID") then	
-			BlinkHealth:ToggleHitPoint(true);
-		end			
-		ShiGuangPerDB.BHTHit = true;		
-	elseif (cmdtype == "hitoff") then
-		if (MyClass == "MONK") or (MyClass == "PALADIN") or (MyClass == "WARLOCK") or (MyClass == "MAGE") or (MyClass == "ROGUE") or (MyClass == "DRUID") then
-			BlinkHealth:ToggleHitPoint(false);
-		end
-		ShiGuangPerDB.BHTHit = false;
-	else 
-		DEFAULT_CHAT_FRAME:AddMessage(BHT_1..BHT_2..BHT_3);
+		--if (MyClass == "MONK") or (MyClass == "PALADIN") or (MyClass == "WARLOCK") or (MyClass == "MAGE") or (MyClass == "ROGUE") or (MyClass == "DRUID") then	
+			--BlinkHealth:ShowHitAnchor();
+		--end		
+  --elseif (cmdtype == "hiton") then
+		--if (MyClass == "MONK") or (MyClass == "PALADIN") or (MyClass == "WARLOCK") or (MyClass == "MAGE") or (MyClass == "ROGUE") or (MyClass == "DRUID") then	
+			--BlinkHealth:ToggleHitPoint(true);
+		--end			
+		--ShiGuangPerDB.BHTHit = true;		
+	--elseif (cmdtype == "hitoff") then
+		--if (MyClass == "MONK") or (MyClass == "PALADIN") or (MyClass == "WARLOCK") or (MyClass == "MAGE") or (MyClass == "ROGUE") or (MyClass == "DRUID") then
+			--BlinkHealth:ToggleHitPoint(false);
+		--end
+		--ShiGuangPerDB.BHTHit = false;
+	--else 
+		--DEFAULT_CHAT_FRAME:AddMessage("输入 /bht m 调整位置");
 	end
 end
 

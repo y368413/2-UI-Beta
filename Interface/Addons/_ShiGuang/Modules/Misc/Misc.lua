@@ -65,6 +65,7 @@ function MISC:OnLogin()
 	self:CreateRM()
 	self:FreeMountCD()
 	self:xMerchant()
+	self:BlinkRogueHelper()
 	
 	----------------QuickQueue.lua----------------------
 	if MaoRUIPerDB["Misc"]["QuickQueue"] then
