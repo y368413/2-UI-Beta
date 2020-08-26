@@ -1,4 +1,4 @@
---## Author: Urtgard  ## Version: v8.3.0-11release
+--## Author: Urtgard  ## Version: v8.3.0-12release
 WQAchievements = LibStub("AceAddon-3.0"):NewAddon("WQAchievements", "AceConsole-3.0", "AceTimer-3.0")
 local WQA = WQAchievements
 WQA.data = {}
@@ -531,7 +531,7 @@ do
 			{name = "By de Power of de Loa!", id = 13035, criteriaType = "QUESTS", criteria = {{51178, 51232}}},
 			{name = "Bless the Rains Down in Freehold", id = 13050, criteriaType = "QUESTS", criteria = {{53196, 52159}}},
 			{name = "Kul Runnings", id = 13060, criteriaType = "QUESTS", criteria = {49994, 53188, 53189}, faction = "Alliance"},
-			{name = "Battle on Zandalar and Kul Tiras", id = 12936, criteriaType="QUESTS", criteria = {
+			{name = "Battle on Zandalar and Kul Tiras", id = 12936, criteriaType= "QUESTS", criteria = {
 				52009,
 				52126,
 				52165,
@@ -1715,6 +1715,7 @@ function WQA:CheckItems(questID, isEmissary)
 				end
 			end
 
+			-- print(expacID, GetExpansionByQuestID(questID), itemLink, questID)
 			-- Recipe
 			if itemClassID == 9 then
 				if self.db.profile.options.reward.recipe[expacID] == true then
@@ -1746,6 +1747,7 @@ function WQA:CheckItems(questID, isEmissary)
 						local spellID = C_AzeriteEmpoweredItem.GetPowerInfo(azeritePowerID).spellID
 						if self.azeriteTraitsList[spellID] then
 							self:AddRewardToQuest(questID, "AZERITE_TRAIT", spellID, isEmissary)
+							self:AddRewardToQuest(questID, "ITEM", {itemLink = itemLink}, isEmissary)
 						end
 					end
 				end
