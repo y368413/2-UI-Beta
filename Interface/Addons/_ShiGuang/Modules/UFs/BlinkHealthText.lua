@@ -110,7 +110,7 @@ function BlinkHealth:OnInitialize()
 	self:UpdateUnitFrame();
 	SlashCmdList["BLINKHEALTH"] = BlinkHealth_SlashHandler;
 	SLASH_BLINKHEALTH1 = "/bht";
-	--if (ShiGuangPerDB.BHTHit == true) then sendCmd("/bht hiton") else sendCmd("/bht hitoff") end
+	--if (ShiGuangPerDB.BHTHit == true) then SenduiCmd("/bht hiton") else SenduiCmd("/bht hitoff") end
 end
 
 function BlinkHealth:OnEnable()
@@ -782,8 +782,8 @@ function BlinkHealth:ConstructFrame(unit)
      RightClickPlayer:SetPoint("TOPLEFT",0,0)
      RightClickPlayer:SetPoint("BOTTOMRIGHT",0,-16)
      RightClickPlayer:SetScript("OnMouseDown", function(self, button)
-		    --if button == "LeftButton" then sendCmd("/click PlayerFrame LeftButton")
-		    if button == "RightButton" then sendCmd("/click PlayerFrame RightButton") 
+		    --if button == "LeftButton" then SenduiCmd("/click PlayerFrame LeftButton")
+		    if button == "RightButton" then SenduiCmd("/click PlayerFrame RightButton") 
 		    end
     end)
 -------------------------------------------------------------
@@ -797,7 +797,7 @@ function BlinkHealth:ConstructFrame(unit)
     --if button == "LeftButton" then
 		  --if CheckInteractDistance("target",1) then InspectUnit("target") end
 		if button == "RightButton" then
-        sendCmd("/click TargetFrame RightButton")
+        SenduiCmd("/click TargetFrame RightButton")
 		elseif button == "MiddleButton" then
 			--if CheckInteractDistance("target",2) then InitiateTrade("target") end
 			if CheckInteractDistance("target",1) then InspectUnit("target") end
@@ -964,7 +964,7 @@ local function PowerTypeAscending()
 end
 
 local function AutoHidePlayerFrame(self,event, ...)
-	if (not MaoRUIPerDB["UFs"]["UFFade"]) or (ShiGuangPerDB.BHT == true) then return end
+	if (not MaoRUIPerDB["UFs"]["UFFade"]) or (ShiGuangPerDB["BHT"] == true) then return end
 	--if (event == nil) then event = "TargetFrame or CharacterModelFrame toggled" end
 	if UnitHealth("player") < UnitHealthMax("player") * 0.99 or (powerTypeAscending and UnitPower("player") <= UnitPowerMax("player") * 0.99) or TargetFrame:IsShown() or UnitAffectingCombat("player") or CharacterFrame:IsShown() or ContainerFrame1:IsShown() then
 		if (not PlayerFrame:IsShown()) then

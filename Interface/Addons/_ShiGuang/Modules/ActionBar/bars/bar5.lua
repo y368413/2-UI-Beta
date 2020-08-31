@@ -81,22 +81,32 @@ function Bar:CreateBar5()
 			end
 		elseif layout == 10 then
 		  if i == 1 then
+				button:SetSize(cfg.size, cfg.size)
 				button:SetPoint("TOPLEFT", frame, padding, -padding)
+			elseif i == 2 then
+				button:SetSize(cfg.size, cfg.size)
+				button:SetPoint("LEFT", _G["MultiBarLeftButton"..i-1], "RIGHT", 3*margin, 0)
+			elseif i == 3 then
+				button:SetSize(cfg.size, cfg.size)
+				button:SetPoint("LEFT", _G["MultiBarLeftButton"..i-1], "RIGHT", 3*margin, 0)
 			elseif i == 4 then
-				local previous = _G["MultiBarLeftButton1"]
-				button:SetPoint("TOPRIGHT", previous, "BOTTOM", 0, -3*margin)
+				button:SetSize(cfg.size, cfg.size)
+				button:SetPoint("LEFT", _G["MultiBarLeftButton"..i-1], "RIGHT", 3*margin, 0)
+			elseif i == 5 then
+				button:SetSize(cfg.size + 15, cfg.size + 15)
+				button:SetPoint("TOPLEFT", _G["MultiBarLeftButton1"], "BOTTOMLEFT", 0, -3*margin)
+			elseif i == 6 then
+				button:SetSize(cfg.size + 15, cfg.size + 15)
+				button:SetPoint("LEFT", _G["MultiBarLeftButton5"], "RIGHT", 3*margin, 0)
+			elseif i == 7 then
+				button:SetSize(cfg.size + 15, cfg.size + 15)
+				button:SetPoint("LEFT", _G["MultiBarLeftButton6"], "RIGHT", 3*margin, 0)
 			elseif i == 8 then
-				local previous = _G["MultiBarLeftButton4"]
-				button:SetPoint("TOPLEFT", previous, "BOTTOM", 0, -3*margin)
-			elseif i == 11 then
-				local previous = _G["ActionButton9"]
-				button:SetPoint("RIGHT", previous, "BOTTOMLEFT", -2*margin, 0)
-			elseif i == 12 then
-				local previous = _G["ActionButton11"]
-				button:SetPoint("LEFT", previous, "BOTTOMRIGHT", 2*margin, 0)
+				button:SetSize(cfg.size - 9, cfg.size - 9)
+				button:SetPoint("TOPLEFT", _G["MultiBarLeftButton5"], "BOTTOMLEFT", 0, -3*margin)
 			else
-				local previous = _G["MultiBarLeftButton"..i-1]
-				button:SetPoint("LEFT", previous, "RIGHT", 3*margin, 0)
+				button:SetSize(cfg.size - 9, cfg.size - 9)
+				button:SetPoint("LEFT", _G["MultiBarLeftButton"..i-1], "RIGHT", 3*margin, 0)
 			end
 		else
 		if i == 1 then

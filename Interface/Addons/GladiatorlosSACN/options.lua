@@ -38,6 +38,7 @@ local function setOption(info, value)
 	if value then
 		PlaySoundFile("Interface\\Addons\\"..gsadb.path_menu.."\\"..name..".ogg",gsadb.output_menu);
 	end
+	GSA:CanTalkHere()
 end
 
 local function getOption(info)
@@ -52,12 +53,9 @@ local function spellOption(order, spellID, ...)
 			type = 'toggle',
 			name = "\124T" .. icon .. ":24\124t" .. spellname,			
 			desc = function ()
-				--GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR")				
-				--GameTooltip:SetHyperlink(GetSpellLink(spellID))			
-				--Fix this.
-				
-				--GameTooltip:Show(GetSpellLink(spellID))
-				--GameTooltip:Show(descr)  
+				GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR")				
+				GameTooltip:SetHyperlink(GetSpellLink(spellID))			
+				GameTooltip:Show()  
 			end, -- https://i.imgur.com/ChzUb.jpg
 			descStyle = "custom",
 					order = order,
@@ -854,7 +852,7 @@ function GSA:OnOptionCreate()
 								inline = true,
 								name = L["|cffC41F3BDeath Knight|r"],
 								order = 40,
-								args = listOption({47476,207127,47568,207289,207349,49206,77606,108194,108199,152280,207167,204160,130736,190778,275699,49576,212468,212552,49028,48265,203173,48743,46584},"castSuccess"),
+								args = listOption({47476,207127,47568,207289,207349,49206,77606,108194,108199,152280,207167,204160,305392,130736,190778,275699,49576,212468,212552,49028,48265,203173,48743,46584},"castSuccess"),
 							},
 							demonhunter = { -- CastSuccess
 								type = 'group',
@@ -903,7 +901,7 @@ function GSA:OnOptionCreate()
 								inline = true,
 								name = L["|cffFFFFFFPriest|r"],
 								order = 120,
-								args = listOption({8122,34433,64044,15487,64843,19236,123040,204263,2050,88625,205369,211522,108968,271466,62618,263165,73325,215769,209780,289657},"castSuccess"),
+								args = listOption({8122,34433,64044,15487,64843,19236,123040,204263,2050,88625,205369,211522,108968,271466,62618,263165,73325,215769,209780,289657,305498},"castSuccess"),
 							},
 							rogue = { -- CastSuccess
 								type = 'group',
@@ -965,7 +963,7 @@ function GSA:OnOptionCreate()
 						func = function()
 							gsadb.custom[L["New Sound Alert"]] = {
 								name = L["New Sound Alert"],
-								soundfilepath = "Interface\\AddOns\\GladiatorlosSA2\\Voice_Custom\\Will-Demo.ogg",--"..L["New Sound Alert"]..".ogg",
+								soundfilepath = "Interface\\AddOns\\GladiatorlosSACN\\Voice\\Will-Demo.ogg",--"..L["New Sound Alert"]..".ogg",
 								sourceuidfilter = "any",
 								destuidfilter = "any",
 								eventtype = {

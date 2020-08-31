@@ -425,8 +425,8 @@ local function HelloWorld()
 	LeftPic:SetScript("OnClick", function()
 		welcome:Hide()
 		if MaoRUIDB["YesTutor"] then YesTutor() end
-		MaoRUIPerDB["Tutorial"]["Complete"] = true
 		ShiGuangPerDB["BHT"] = true
+		MaoRUIPerDB["Tutorial"]["Complete"] = true
 		ForceDefaultSettings()
 		ReloadUI()
 	end)
@@ -446,8 +446,8 @@ local function HelloWorld()
 	RightPic:SetScript("OnClick", function()
 		welcome:Hide()
 		if MaoRUIDB["YesTutor"] then YesTutor() end
-		MaoRUIPerDB["Tutorial"]["Complete"] = true
 		ShiGuangPerDB["BHT"] = false
+		MaoRUIPerDB["Tutorial"]["Complete"] = true
 		ForceDefaultSettings()
 		ReloadUI()
   end)
@@ -522,5 +522,5 @@ function module:OnLogin()
 	DefaultSettings()
 	ForceAddonSkins()
 	if not MaoRUIPerDB["Tutorial"]["Complete"] then HelloWorld() end
-	if (ShiGuangPerDB["BHT"] == true) then sendCmd("/bht on") else sendCmd("/bht off") end
+	if (ShiGuangPerDB["BHT"] == true) then SenduiCmd("/bht on") else SenduiCmd("/bht off") end
 end
