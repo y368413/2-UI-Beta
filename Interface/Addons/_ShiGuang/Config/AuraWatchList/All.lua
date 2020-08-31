@@ -44,6 +44,9 @@ local module = M:GetModule("AurasTable")
 
 -- 全职业的相关监控
 local list = {
+	["Spell Cooldown"] = {	-- 冷却计时组
+		{SpellID = 125439},	-- 宠物绷带
+	},
 	["ClassBar"] = {		-- 职业技能
 		--300% Drog
 		{AuraID =  189375, UnitID = "player"},

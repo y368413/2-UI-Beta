@@ -24,7 +24,10 @@ function this:Create()
 	self.FrameTemplate = "BasicFrameTemplate"
 	super.Create(self)
 	
-	self.Frame:SetSize(300, 600)
+	self.AddonFrameSizeX = self.AddonFrameSizeX or 300
+	self.AddonFrameSizeY = self.AddonFrameSizeY or 600
+	
+	self.Frame:SetSize(self.AddonFrameSizeX, self.AddonFrameSizeY)
 	
 	if(self.FrameTitleText ~= nil) then
 		self.Frame.TitleText:SetText(self.FrameTitleText)

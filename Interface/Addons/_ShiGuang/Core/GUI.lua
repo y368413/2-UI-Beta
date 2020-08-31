@@ -106,8 +106,11 @@ local defaultSettings = {
 		RaidTextScale = 0.85, 
 		FrequentHealth = false,
 		HealthFrequency = .25,
+
 		PlayerWidth = 245,
 		PlayerHeight = 24,
+		PlayerPowerHeight = 6,
+		PlayerPowerOffset = 2,
 		FocusWidth = 160,
 		FocusHeight = 21,
 		FocusPowerHeight = 3,
@@ -163,7 +166,7 @@ local defaultSettings = {
 		MapReveal = false,
 		Calendar = false,
 		zrMMbordersize = 2,
-		zrMMbuttonsize = 16,
+		zrMMbuttonsize = 18,
 		zrMMbuttonpos = "Bottom",
 		zrMMcustombuttons = {},
 	},
@@ -171,6 +174,7 @@ local defaultSettings = {
 		Enable = true,
 		maxAuras = 6,
 		AuraSize = 26,
+		AuraFilter = 3,
 		FriendlyCC = false,
 		HostileCC = true,
 		TankMode = false,
@@ -185,8 +189,10 @@ local defaultSettings = {
 		ShowPowerList = "",
 		VerticalSpacing = .6,
 		ShowPlayerPlate = true,
-		PPHeight = 1,
-		PPPHeight = 8,
+		PPWidth = 175,
+		PPBarHeight = 6,
+		PPHealthHeights = 0.1,
+		PPPowerHeight = 6,
 		PPPowerText = true,
 		FullHealth = false,
 		SecureColor = {r=1, g=0, b=1},
@@ -195,7 +201,6 @@ local defaultSettings = {
 		OffTankColor = {r=.2, g=.7, b=.5},
 		DPSRevertThreat = false,
 		ExplosivesScale = true,
-		PPIconSize = 36,
 		AKSProgress = true,
 		PPHideOOC = true,
 		NameplateClassPower = false,
@@ -206,6 +211,7 @@ local defaultSettings = {
 		MinAlpha = 0.8,
 		ColorBorder = true,
 		QuestIndicator = true,
+		NameOnlyMode = false,
 	},
 	Skins = {
 		DBM = true,
@@ -218,7 +224,6 @@ local defaultSettings = {
 		ChatLine = false,
 		MenuLine = true,
 		ClassLine = true,
-		Details = true,
 		PGFSkin = true,
 		Rematch = true,
 		ToggleDirection = 1,
@@ -309,6 +314,7 @@ local defaultSettings = {
 		SorasThreat = true,
 		HunterPetHelp = true,
 		CtrlIndicator = true,
+		BlinkRogueHelper = false,
 	},
 	Tutorial = {
 		Complete = false,
@@ -328,7 +334,6 @@ local accountSettings = {
 	GuildSortBy = 1,
 	GuildSortOrder = true,
 	DetectVersion = I.Version,
-	ResetDetails = true,
 	LockUIScale = false,
 	UIScale = .71,
 	NumberFormat = 2,
@@ -500,10 +505,6 @@ local function updateRaidNameText()
 	M:GetModule("UnitFrames"):UpdateRaidNameText()
 end
 
-local function updatePlayerPlate()
-	M:GetModule("UnitFrames"):ResizePlayerPlate()
-end
-
 local function updateUFTextScale()
 	M:GetModule("UnitFrames"):UpdateTextScale()
 end
@@ -581,20 +582,6 @@ local function updateSkinAlpha()
 	end
 end
 
-StaticPopupDialogs["RESET_DETAILS"] = {
-	text = U["Reset Details check"],
-	button1 = YES,
-	button2 = NO,
-	OnAccept = function()
-		MaoRUIDB["ResetDetails"] = true
-		ReloadUI()
-	end,
-	whileDead = 1,
-}
-local function resetDetails()
-	StaticPopup_Show("RESET_DETAILS")
-end
-
 -- Config
 local tabList = {
 	U["Actionbar"],
@@ -611,7 +598,7 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 	[1] = {
 		{1, "Actionbar", "Enable", "|cff00cc4c"..U["Enable Actionbar"]},
 		{3, "Actionbar", "Scale", U["Actionbar Scale"].."*", true, false, {.8, 1.5, .1}, updateActionbarScale},
-		{4, "Actionbar", "Style", U["Actionbar Style"], true, true, {"-- 2*(3+12+3) --", "-- 2*(6+12+6) --", "-- 2*6+3*12+2*6 --", "-- 3*12 --", "-- 2*(12+6) --", "-- MR --", "-- PVP --", "-- 3*(4+12+4) --", "-- PVP2 --", "-- JK --"}},
+		{4, "Actionbar", "Style", U["Actionbar Style"], true, true, {"-- 2*(3+12+3) --", "-- 2*(6+12+6) --", "-- 2*6+3*12+2*6 --", "-- 3*12 --", "-- 2*(12+6) --", "-- MR --", "-- What --", "-- 3*(4+12+4) --", "-- PVP2 --", "-- Cool --"}},
 		{},--blank
 		{1, "Actionbar", "Cooldown", "|cff00cc4c"..U["Show Cooldown"]},
 		{1, "Actionbar", "DecimalCD", U["Decimal Cooldown"].."*", true},
@@ -630,8 +617,8 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "UFs", "SwingTimer", U["UFs SwingTimer"], true, true, nil, nil, U["SwingTimer Tip"]},
 		{},--blank	
 		{3, "ACCOUNT", "UIScale", U["Setup UIScale"], false, false, {.4, 1.15, .01}},
-		{3, "Misc", "WorldQusetRewardIconsSize", "WorldQusetRewardIconsSize", true, false, {21, 66, 0}},
-		{3, "UFs", "PlayerFrameScale", U["PlayerFrame Scale"], true, true, {0.6, 1.2, 1}},
+		{3, "Misc", "WorldQusetRewardIconsSize", "WorldQusetRewardIconsSize", true, false, {21, 66, 1}},
+		{3, "UFs", "PlayerFrameScale", U["PlayerFrame Scale"], true, true, {0.6, 1.2, .1}},
 		{3, "Tooltip", "Scale", U["Tooltip Scale"].."*", false, false, {.5, 1.5, .1}},
 		{3, "Map", "MapScale", U["Map Scale"], true, false, {1, 2, .1}},
 		{3, "Map", "MinimapScale", U["Minimap Scale"].."*", true, true, {1, 2, .1}, updateMinimapScale},
@@ -642,7 +629,7 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{4, "Nameplate", "TargetIndicator", U["TargetIndicator"].."*", true, true, {DISABLE, U["TopArrow"], U["RightArrow"], U["TargetGlow"], U["TopNGlow"], U["RightNGlow"]}, refreshNameplates},
 		{1, "Nameplate", "FriendlyCC", U["Friendly CC"].."*"},
 		{1, "Nameplate", "HostileCC", U["Hostile CC"].."*", true},
-		{1, "Nameplate", "ExplosivesScale", U["ExplosivesScale"], true, true},
+		{4, "Nameplate", "AuraFilter", "*", true, true, {U["BlackNWhite"], U["PlayerOnly"], U["IncludeCrowdControl"]}, refreshNameplates},  --U["NameplateAuraFilter"]..
 		--{1, "Nameplate", "InsideView", U["Nameplate InsideView"].."*", nil, nil, nil, updatePlateInsideView},
 		--{1, "Nameplate", "QuestIndicator", U["QuestIndicator"], true, true},
 		{1, "Nameplate", "CustomUnitColor", "|cff00cc4c"..U["CustomUnitColor"].."*", nil, nil, nil, updateCustomUnitList},
@@ -650,7 +637,8 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "Nameplate", "DPSRevertThreat", U["DPS Revert Threat"].."*", true, true},
 		--{3, "Nameplate", "VerticalSpacing", U["NP VerticalSpacing"].."*", false, nil, {.5, 1.5, .1}, updatePlateSpacing},
 		{1, "Nameplate", "ColorBorder", U["ColorBorder"].."*", false, false, nil, refreshNameplates},
-		{1, "Nameplate", "AKSProgress", U["AngryKeystones Progress"], true},
+		{1, "Nameplate", "ExplosivesScale", U["ExplosivesScale"], true},
+		{1, "Nameplate", "AKSProgress", U["AngryKeystones Progress"], true, true},
 		{3, "Nameplate", "Distance", U["Nameplate Distance"].."*", false, false, {20, 100, .1}, updatePlateRange},
 		{3, "Nameplate", "MinScale", U["Nameplate MinScale"].."*", true, false, {.5, 1, .1}, updatePlateScale},
 		{3, "Nameplate", "MinAlpha", U["Nameplate MinAlpha"].."*", true, true, {.5, 1, .1}, updatePlateAlpha},
@@ -658,8 +646,8 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{3, "Nameplate", "PlateHeight", U["NP Height"].."*", true, false, {5, 30, 1}, refreshNameplates},
 		{3, "Nameplate", "NameTextSize", U["NameTextSize"].."*", true, true, {10, 30, 1}, refreshNameplates},
 		{3, "Nameplate", "HealthTextSize", U["HealthTextSize"].."*", false, false, {10, 30, 1}, refreshNameplates},
-		{3, "Nameplate", "maxAuras", U["Max Auras"], true, false, {0, 10, 1}},
-		{3, "Nameplate", "AuraSize", U["Auras Size"], true, true, {18, 40, 1}},
+		{3, "Nameplate", "maxAuras", U["Max Auras"].."*", true, false, {0, 10, 1}, refreshNameplates},
+		{3, "Nameplate", "AuraSize", U["Auras Size"].."*", true, true, {18, 40, 1}, refreshNameplates},
 		{2, "Nameplate", "UnitList", U["UnitColor List"].."*", nil, nil, nil, updateCustomUnitList, U["CustomUnitTips"]},
 		{2, "Nameplate", "ShowPowerList", U["ShowPowerList"].."*", true, nil, nil, updatePowerUnitList, U["CustomUnitTips"]},
 		{5, "Nameplate", "SecureColor", U["Secure Color"].."*"},
@@ -670,7 +658,6 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		--{1, "Nameplate", "Numberstyle", "数字模式", true},
 		--{1, "Nameplate", "nameonly", "友方仅显示名字", true, true},
 		--{1, "Nameplate", "TankMode", "|cff00cc4c"..U["Tank Mode"].."*"},
-		--{1, "Nameplate", "FriendlyCC", U["Friendly CC"].."*", true},
 		--{1, "Nameplate", "HostileCC", U["Hostile CC"].."*", true, true},
 		--{1, "Nameplate", "BommIcon", "|cff00cc4c"..U["BommIcon"]},
 		--{1, "Nameplate", "HighlightTarget", "血条高亮鼠标指向", true},
@@ -752,9 +739,10 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "Nameplate", "NameplateClassPower", U["Nameplate ClassPower"]},
 		{1, "Nameplate", "PPPowerText", U["PlayerPlate PowerText"], true},
 		{1, "Nameplate", "PPHideOOC", U["Fadeout OOC"], true, true},
-		{3, "Nameplate", "PPIconSize", U["PlayerPlate IconSize"], false, nil, {21, 60, 1}, updatePlayerPlate}, -- FIX ME: need to refactor classpower
-		{3, "Nameplate", "PPHeight", U["PlayerPlate HPHeight"].."*", true, false, {1, 16, 1}, updatePlayerPlate},
-		{3, "Nameplate", "PPPHeight", U["PlayerPlate MPHeight"].."*", true, true, {3, 16, 1}, updatePlayerPlate},
+		{3, "Nameplate", "PPWidth", U["PlayerPlate HPWidth"].."*", false, nil, {120, 310, 1}, refreshNameplates}, -- FIX ME: need to refactor classpower
+		--{3, "Nameplate", "PPBarHeight", U["PlayerPlate CPHeight"].."*", true, false, {0, 16, 1}, refreshNameplates},
+		{3, "Nameplate", "PPHealthHeights", U["PlayerPlate HPHeight"].."*", true, false, {0, 16, .1}, refreshNameplates},
+		{3, "Nameplate", "PPPowerHeight", U["PlayerPlate MPHeight"].."*", true, true, {1, 16, 1}, refreshNameplates},
 	},
 	[5] = {
 		{1, "Chat", "Outline", U["Font Outline"]},
@@ -791,7 +779,7 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 	  {1, "UFs", "UFPctText", U["UFPctText"], true, true},
 	  {1, "Misc", "xMerchant", U["xMerchant"]},
 	  {1, "Misc", "WallpaperKit", U["WallpaperKit"], true},
-	  {1, "Skins", "FlatMode", U["FlatMode"]},
+	  {1, "Skins", "FlatMode", U["FlatMode"], true, true},
 		{},--blank
 		{1, "Map", "Coord", U["Map Coords"]},
 		{1, "Map", "Clock", U["Minimap Clock"].."*", true, false, nil, showMinimapClock},
@@ -804,8 +792,7 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "Misc", "WorldQusetRewardIcons", U["WorldQusetRewardIcons"], true, true},
 		{},--blank
 		{1, "Skins", "TMW", U["TMW Skin"]},
-		{1, "Skins", "Details", U["Details Skin"], true, false, nil, resetDetails},
-		{1, "Skins", "WeakAuras", U["WeakAuras Skin"], true, true},
+		{1, "Skins", "WeakAuras", U["WeakAuras Skin"], true},
 		--{1, "Skins", "PGFSkin", U["PGF Skin"], true},
 		--{1, "Skins", "Rematch", U["Rematch Skin"], true, true},
 		{1, "Skins", "Bigwigs", U["Bigwigs Skin"]},
@@ -866,7 +853,8 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		--{3, "Bags", "BagsWidth", U["Bags Width"], true, true, {10, 20, 0}},
 		--{3, "Bags", "BankWidth", U["Bank Width"], true, true, {10, 20, 0}},
 		{1, "Misc", "HunterPetHelp", U["HunterPetHelp"], true, true},
-		{1, "Misc", "CtrlIndicator", "Shift/Alt/Ctrl卡住提示"},
+		{1, "Misc", "CtrlIndicator", U["Shiftfreeze"]},
+		{1, "Misc", "BlinkRogueHelper", U["BlinkRogueHelper"], true},
 	},
 	[8] = {
 		{1, "Misc", "ParagonRep", U["ParagonRep"]},
@@ -1011,7 +999,7 @@ local function CreateOption(i)
 				if callback then callback() end
 			end)
 			eb.title = U["Tips"]
-			local tip = U["EdieBox Tip"]
+			local tip = U["EditBox Tip"]
 			if tooltip then tip = tooltip.."|n"..tip end
 			M.AddTooltip(eb, "ANCHOR_RIGHT", tip, "info")
 			M.CreateFS(eb, 14, name, "system", "CENTER", 0, 25)

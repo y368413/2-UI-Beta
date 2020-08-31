@@ -1,4 +1,4 @@
---## Author: Urtgard  ## Version: v8.3.0-6release
+--## Author: Urtgard  ## Version: v8.3.0-13release
 WQAchievements = LibStub("AceAddon-3.0"):NewAddon("WQAchievements", "AceConsole-3.0", "AceTimer-3.0")
 local WQA = WQAchievements
 WQA.data = {}
@@ -204,6 +204,15 @@ WQA.data.custom = {wqID = "", rewardID = "", rewardType = "none", questType = "W
 WQA.data.custom.mission = {missionID = "", rewardID = "", rewardType = "none"}
 --WQA.data.customReward = 0
 
+local ldb = LibStub:GetLibrary("LibDataBroker-1.1")
+local dataobj = ldb:NewDataObject("WQAchievements", {
+	type = "data source",
+	text = "WQA",
+	icon = "Interface\\Icons\\INV_Misc_Map06",
+})
+
+local icon = LibStub("LibDBIcon-1.0")
+
 function WQA:OnInitialize()
 	-- Remove data for the other faction
 	local faction = UnitFactionGroup("player")
@@ -236,6 +245,9 @@ function WQA:OnInitialize()
 				['*'] = true,
 				chat = false,
 				PopUp = false,
+				popupRememberPosition = false,
+				popupX = 600,
+				popupY = 800,
 				zone = { ['*'] = true},
 				reward = {
 					gear = {
@@ -243,6 +255,7 @@ function WQA:OnInitialize()
 						itemLevelUpgradeMin = 1,
 						PercentUpgradeMin = 1,
 						unknownSource = true,
+						azeriteTraits = "",
 					},
 					general = {
 						gold = false,
@@ -274,6 +287,7 @@ function WQA:OnInitialize()
 					},
 				},
 				delay = 1,
+				LibDBIcon = { hide = false}
 			},
 			["achievements"] = {exclusive = {}, ['*'] = "default"},
 			["mounts"] = {exclusive = {}, ['*'] = "default"},
@@ -308,6 +322,9 @@ function WQA:OnInitialize()
 		end
 		self.db.global.customReward = nil
 	end
+
+	-- Minimap Icon
+	icon:Register("WQAchievements", dataobj, self.db.profile.options.LibDBIcon)
 end
 
 function WQA:OnEnable()
@@ -514,7 +531,7 @@ do
 			{name = "By de Power of de Loa!", id = 13035, criteriaType = "QUESTS", criteria = {{51178, 51232}}},
 			{name = "Bless the Rains Down in Freehold", id = 13050, criteriaType = "QUESTS", criteria = {{53196, 52159}}},
 			{name = "Kul Runnings", id = 13060, criteriaType = "QUESTS", criteria = {49994, 53188, 53189}, faction = "Alliance"},
-			{name = "Battle on Zandalar and Kul Tiras", id = 12936, criteriaType="QUESTS", criteria = {
+			{name = "Battle on Zandalar and Kul Tiras", id = 12936, criteriaType= "QUESTS", criteria = {
 				52009,
 				52126,
 				52165,
@@ -919,6 +936,14 @@ function WQA:AddReward(list, rewardType, reward, emissary)
 		l.professionSkillup = reward
 	elseif rewardType == "GOLD" then
 		l.gold = reward
+	elseif rewardType == "AZERITE_TRAIT" then
+		if not l.azeriteTraits then l.azeriteTraits = {} end
+		for k,v in pairs(l.azeriteTraits) do
+			if v.spellID == reward then
+				return
+			end
+		end
+		l.azeriteTraits[#l.azeriteTraits + 1] = {spellID = reward}
 	end
 end
 
@@ -960,8 +985,8 @@ function WQA:CheckWQ(mode)
 				else
 					self:SetRewardLinkByID(questID, k, v, 1, link)
 				end
-				
-				if k == "achievement" or k == "chance" then
+
+				if k == "achievement" or k == "chance" or k == "azeriteTraits" then
 					for i = 2, #v do
 						link = self:GetRewardLinkByID(questID, k, v, i)
 						if not link then
@@ -1063,11 +1088,6 @@ function WQA:link(x)
 	end
 end
 
-local icons = {
-	unknown = " X ",
-	known = " √ ",
-}
-
 function WQA:GetRewardForID(questID, key, type)
 	local l
 	if type == "MISSION" then 
@@ -1081,7 +1101,7 @@ function WQA:GetRewardForID(questID, key, type)
 		if l.item then
 			if l.item then
 				if l.item.transmog then
-					r = r..icons[l.item.transmog]
+					r = r..l.item.transmog
 				end
 				if l.item.itemLevelUpgrade then
 					if r ~= "" then r = r.." " end
@@ -1162,7 +1182,7 @@ function WQA:AnnounceChat(tasks, silent)
 		local more
 		for k,v in pairs(l[task.id].reward) do
 			local rewardText = self:GetRewardTextByID(task.id, k, v, 1, task.type)
-			if k == "achievement" or k == "chance" then
+			if k == "achievement" or k == "chance" or k == "azeriteTraits" then
 				for j = 2, 3 do 
 					local t = self:GetRewardTextByID(task.id, k, v, j, task.type)
 					if t then
@@ -1321,6 +1341,14 @@ function WQA:Reward()
 	self.rewards = false
 	local retry = false
 
+	-- Azerite Traits
+	if self.db.profile.options.reward.gear.azeriteTraits ~= "" then
+		self.azeriteTraitsList = {}
+		for spellID in string.gmatch(self.db.profile.options.reward.gear.azeriteTraits, "(%d+)") do
+			self.azeriteTraitsList[tonumber(spellID)] = true
+		end
+	end
+
 	for i in pairs(self.ZoneIDList) do
 		for _,mapID in pairs(self.ZoneIDList[i]) do
 			if self.db.profile.options.zone[mapID] == true then
@@ -1418,6 +1446,32 @@ local jewelryCache = {
 	[165785] = true, -- Tortollan Trader's Stock
 }
 
+-- CanIMogIt
+function WQA:IsTransmogable(itemLink)
+    -- Returns whether the item is transmoggable or not.
+
+    -- White items are not transmoggable.
+    local quality = select(3, GetItemInfo(itemLink))
+    if quality == nil then return end
+    if quality <= 1 then
+        return false
+    end
+
+    local itemID, _, _, slotName = GetItemInfoInstant(itemLink)
+
+    -- See if the game considers it transmoggable
+    local transmoggable = select(3, C_Transmog.GetItemInfo(itemID))
+    if transmoggable == false then
+        return false
+    end
+
+	-- See if the item is in a valid transmoggable slot
+	local slot = EquipLocToSlot1[slotName]
+    if slot == nil or slot == 11 or slot == 13 then
+        return false
+    end
+    return true
+end
 
 function WQA:CheckItems(questID, isEmissary)
 	local retry = false
@@ -1433,7 +1487,7 @@ function WQA:CheckItems(questID, isEmissary)
 			
 			local itemName, _, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice, itemClassID, itemSubClassID = GetItemInfo(itemLink)
 			local expacID = GetExpansionByQuestID(questID)
-
+			
 			-- Ask Pawn if this is an Upgrade
 			if PawnIsItemAnUpgrade and self.db.profile.options.reward.gear.PawnUpgrade then
 				local Item = PawnGetItemData(itemLink)
@@ -1658,13 +1712,24 @@ function WQA:CheckItems(questID, isEmissary)
 			end
 
 			-- Transmog
-			if CanIMogIt and self.db.profile.options.reward.gear.unknownAppearance then
-				if CanIMogIt:IsEquippable(itemLink) and CanIMogIt:CharacterCanLearnTransmog(itemLink) then
+			if self.db.profile.options.reward.gear.unknownAppearance and self:IsTransmogable(itemLink) then
+				if itemClassID == 2 or itemClassID == 4 then
 					local transmog
-					if not CanIMogIt:PlayerKnowsTransmog(itemLink) then
-						transmog = "unknown"
-					elseif not CanIMogIt:PlayerKnowsTransmogFromItem(itemLink) and self.db.profile.options.reward.gear.unknownSource then
-						transmog = "known"
+					if AllTheThings then
+						local state = AllTheThings.SearchForLink(itemLink)[1].collected
+						if not state then
+							transmog = "|TInterface\\Addons\\AllTheThings\\assets\\unknown:0|t"
+						elseif state == 2 and self.db.profile.options.reward.gear.unknownSource then
+							transmog = "|TInterface\\Addons\\AllTheThings\\assets\\known_circle:0|t"
+						end
+					elseif CanIMogIt then
+						if CanIMogIt:IsEquippable(itemLink) and CanIMogIt:CharacterCanLearnTransmog(itemLink) then
+							if not CanIMogIt:PlayerKnowsTransmog(itemLink) then
+								transmog = "|TInterface\\AddOns\\TransMogMaster\\Icons\\UNKNOWN:0|t"  --" X "
+							elseif not CanIMogIt:PlayerKnowsTransmogFromItem(itemLink) and self.db.profile.options.reward.gear.unknownSource then
+								transmog = "|TInterface\\AddOns\\TransMogMaster\\Icons\\KNOWN_circle:0|t"  --" √ "
+							end
+						end
 					end
 					if transmog then
 						local item = {itemLink = itemLink, transmog = transmog}
@@ -1682,6 +1747,7 @@ function WQA:CheckItems(questID, isEmissary)
 				end
 			end
 
+			-- print(expacID, GetExpansionByQuestID(questID), itemLink, questID)
 			-- Recipe
 			if itemClassID == 9 then
 				if self.db.profile.options.reward.recipe[expacID] == true then
@@ -1703,6 +1769,19 @@ function WQA:CheckItems(questID, isEmissary)
 			if self.db.global.custom.worldQuestReward[itemID] == true then
 				if self.db.profile.custom.worldQuestReward[itemID] == true then
 					self:AddRewardToQuest(questID, "CUSTOM_ITEM", itemLink, isEmissary)
+				end
+			end
+
+			-- Azerite Traits
+			if self.db.profile.options.reward.gear.azeriteTraits ~= "" and C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemLink) then
+				for _,ring in pairs(C_AzeriteEmpoweredItem.GetAllTierInfoByItemID(itemLink)) do
+					for _,azeritePowerID in pairs(ring.azeritePowerIDs) do
+						local spellID = C_AzeriteEmpoweredItem.GetPowerInfo(azeritePowerID).spellID
+						if self.azeriteTraitsList[spellID] then
+							self:AddRewardToQuest(questID, "AZERITE_TRAIT", spellID, isEmissary)
+							self:AddRewardToQuest(questID, "ITEM", {itemLink = itemLink}, isEmissary)
+						end
+					end
 				end
 			end
 
@@ -1825,7 +1904,7 @@ function WQA:UpdateQTip(tasks)
 					else
 						GameTooltip:SetText(C_Garrison.GetMissionName(id))
 						GameTooltip:AddLine(string.format(GARRISON_MISSION_TOOLTIP_NUM_REQUIRED_FOLLOWERS, C_Garrison.GetMissionMaxFollowers(id)), 1, 1, 1)
-						GarrisonMissionButton_AddThreatsToTooltip(id, WQA.missionList[task.id].followerType, false, C_Garrison.GetFollowerAbilityCountersForMechanicTypes(WQA.missionList[task.id].followerType))
+						--GarrisonMissionButton_AddThreatsToTooltip(id, WQA.missionList[task.id].followerType, false, C_Garrison.GetFollowerAbilityCountersForMechanicTypes(WQA.missionList[task.id].followerType))
 						GameTooltip:AddLine(GARRISON_MISSION_AVAILABILITY)
 						GameTooltip:AddLine(WQA.missionList[task.id].offerTimeRemaining, 1, 1, 1)
 						if not C_Garrison.IsPlayerInGarrison(WQA.missionList[task.id].followerType) then
@@ -1883,7 +1962,7 @@ function WQA:UpdateQTip(tasks)
 				local more = false
 				for k,v in pairs(list) do
 					for n = 1,3 do
-						if n == 1 or (n > 1 and (k == "achievement" or k == "chance")) then
+						if n == 1 or (n > 1 and (k == "achievement" or k == "chance" or k == "azeriteTraits")) then
 							local text = self:GetRewardTextByID(id, k, v, n, task.type)
 							if text then
 								j = j + 1
@@ -1952,7 +2031,9 @@ end
 function WQA:AnnouncePopUp(quests, silent)
 	if not self.PopUp then
 		local PopUp = CreateFrame("Frame", "WQAchievementsPopUp", UIParent, "UIPanelDialogTemplate")
-		tinsert(UISpecialFrames, "WQAchievementsPopUp")
+		if self.db.profile.options.esc then
+			tinsert(UISpecialFrames, "WQAchievementsPopUp")
+		end
 		self.PopUp = PopUp
 		PopUp:SetMovable(true)
 		PopUp:EnableMouse(true)
@@ -1964,6 +2045,10 @@ function WQA:AnnouncePopUp(quests, silent)
 		PopUp:SetScript("OnDragStop", function(self)
 			self.moving = nil
 			self:StopMovingOrSizing()
+			if WQA.db.profile.options.popupRememberPosition then
+				WQA.db.profile.options.popupX = self:GetLeft()
+				WQA.db.profile.options.popupY = self:GetTop()
+			end
 		end)
 		PopUp:SetWidth(430)
 		PopUp:SetHeight(80)
@@ -1991,6 +2076,11 @@ function WQA:AnnouncePopUp(quests, silent)
 	self:UpdateQTip(quests)
 	PopUp:SetWidth(self.tooltip:GetWidth()+8.5)
 	PopUp:SetHeight(self.tooltip:GetHeight()+32)
+
+	if self.db.profile.options.popupRememberPosition then
+		PopUp:ClearAllPoints()
+		PopUp:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", self.db.profile.options.popupX, self.db.profile.options.popupY)
+	end
 end
 
 function WQA:GetRewardTextByID(questID, key, value, i, type)
@@ -2051,6 +2141,9 @@ function WQA:GetRewardLinkByID(questId, key, value, i)
 		return nil
 	elseif k == "gold" then
 		return nil
+	elseif k == "azeriteTraits" then
+		if not v[i] then return nil end
+		link = GetSpellLink(v[i].spellID)
 	end
 	return link
 end
@@ -2217,19 +2310,6 @@ function WQA:Special()
 	end
 end
 
-local ldb = LibStub:GetLibrary("LibDataBroker-1.1")
-local dataobj = ldb:NewDataObject("WQAchievements", {
-	type = "data source",
-	text = "WQA",
-	icon = "Interface\\Icons\\INV_Misc_Map06",
-})
-
-local anchor
-function dataobj:OnEnter()
-	anchor = self
-	WQA:Show("LDB")
-end
-
 local function PopUpIsShown()
 	if WQA.PopUp then
 		return WQA.PopUp.shown
@@ -2238,10 +2318,27 @@ local function PopUpIsShown()
 	end
 end
 
+local anchor
+function dataobj:OnEnter()
+	anchor = self
+	if not PopUpIsShown() then
+		WQA:Show("LDB")
+	end
+end
+
+function dataobj:OnClick(button)
+	if button == "LeftButton" then
+		WQA:Show("popup")
+	elseif button == "RightButton" then
+		InterfaceOptionsFrame_Show()
+		InterfaceOptionsFrame_OpenToCategory("WQAchievements")
+	end
+end
+
 function WQA:AnnounceLDB(quests)
 	-- Hide PopUp
 	if PopUpIsShown() then
-		self.PopUp:Hide()
+		return
 	end
 
 	self:CreateQTip()
@@ -2418,6 +2515,14 @@ function WQA:IsQuestFlaggedCompleted(questID)
 		return not IsQuestFlaggedCompleted(questID)
 	else
 		return false
+	end
+end
+
+function WQA:UpdateMinimapIcon()
+	if self.db.profile.options.LibDBIcon.hide then
+		icon:Hide("WQAchievements")
+	else
+		icon:Show("WQAchievements")
 	end
 end
 
@@ -2816,6 +2921,17 @@ function WQA:UpdateOptions()
 						 	end,
 							 order = newOrder()
 							},
+							azeriteTraits = {
+								name = "Azerite Traits",
+								desc = "Comma separated spellIDs",
+								type = "input",
+								order = newOrder(),
+								--width = .6,
+								set = function(info,val)
+									WQA.db.profile.options.reward.gear.azeriteTraits = val
+								end,
+						 	get = function() return WQA.db.profile.options.reward.gear.azeriteTraits end
+							},
 						},
 					},
 				}
@@ -3046,6 +3162,19 @@ function WQA:UpdateOptions()
 				 	end,
 					 order = newOrder()
 					},
+					popupRememberPosition = {
+						type = "toggle",
+						name = "Remember PopUp position",
+						width = "double",
+						set = function(info, val)
+							WQA.db.profile.options.popupRememberPosition = val
+						end,
+						descStyle = "inline",
+					 get = function()
+					 	return WQA.db.profile.options.popupRememberPosition
+				 	end,
+					 order = newOrder()
+					},
 					sortByName = {
 						type = "toggle",
 						name = "Sort quests by name",
@@ -3182,6 +3311,34 @@ function WQA:UpdateOptions()
 					 	return WQA.db.profile.options.WorldQuestTracker
 				 	end,
 					 order = newOrder()
+					},
+					esc = {
+						type = "toggle",
+						name = "Close PopUp with ESC",
+						desc = "Requires a reload",
+						width = "double",
+						set = function(info, val)
+							WQA.db.profile.options.esc = val
+						end,
+						descStyle = "inline",
+					 get = function()
+					 	return WQA.db.profile.options.esc
+				 	end,
+					 order = newOrder()
+					},
+					LibDBIcon = {
+						type = "toggle",
+						name = "Show Minimap Icon",
+						width = "double",
+						set = function(info, val)
+							WQA.db.profile.options.LibDBIcon.hide = not val
+							WQA:UpdateMinimapIcon()
+						end,
+						descStyle = "inline",
+						get = function()
+							return not WQA.db.profile.options.LibDBIcon.hide
+						end,
+						order = newOrder()
 					},
 				}
 			}

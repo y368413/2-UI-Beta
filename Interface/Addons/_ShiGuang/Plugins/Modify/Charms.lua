@@ -144,10 +144,26 @@ DESTROY:SetScript("OnEvent", function(_, event, ...)
 end)]]
 
 ------------------------------------------------------------------------------- 
---## Version: 1.2.0 ## Author: Crinseth
+--## Version: 1.2.2 ## Author: Crinseth
 local waitTable = {};
 local waitFrame = nil;
 local Dressingbuttons = {}
+if DressMode == nil then DressMode = 1 end
+local SLOTS = {
+	"HeadSlot",
+	"ShoulderSlot",
+	"BackSlot",
+	"ChestSlot",
+	"ShirtSlot",
+	"TabardSlot",
+	"WristSlot",
+	"HandsSlot",
+	"WaistSlot",
+	"LegsSlot",
+	"FeetSlot",
+	"MainHandSlot",
+	"SecondaryHandSlot",
+}
 local HIDDEN_SOURCES = {
 	[77344] = true, -- head
 	[77343] = true, -- shoulder
@@ -278,21 +294,7 @@ local buttonSizeWithPadding = buttonSize + 5
 local sideInsetLeft = 10
 local sideInsetRight = 12
 local topInset = -80
-local SLOTS = {
-	"HeadSlot",
-	"ShoulderSlot",
-	"BackSlot",
-	"ChestSlot",
-	"ShirtSlot",
-	"TabardSlot",
-	"WristSlot",
-	"HandsSlot",
-	"WaistSlot",
-	"LegsSlot",
-	"FeetSlot",
-	"MainHandSlot",
-	"SecondaryHandSlot",
-}
+
 -- Create item slot buttons
 for i, slot in ipairs(SLOTS) do
     local button = CreateFrame("Button", nil, DressUpFrame)
@@ -330,26 +332,35 @@ end
 -- Hook onto PlayerActor creation in order to hook onto its functions
 local _SetupPlayerForModelScene = SetupPlayerForModelScene
 function SetupPlayerForModelScene(...)
-    showButtons(true)
     local resultSetupPlayerForModelScene = _SetupPlayerForModelScene(...)
     local playerActor = DressUpFrame.ModelScene:GetPlayerActor()
+    if playerActor ~= nil then
+        showButtons(true)
 
-    -- Update slots when a gear piece has changed
-    local _TryOn = playerActor.TryOn
-    playerActor.TryOn = function (...)
-        local resultTryOn = _TryOn(...)
-        updateSlots()
-        return resultTryOn
-    end
+        if DressMode == 2 then
+            DressUpFrame.ModelScene:GetPlayerActor():Undress()
+        end
 
-    -- Update slots when reset button has been pressed
-    local _Dress = playerActor.Dress
-    playerActor.Dress = function (...)
-        local resultDress = _Dress(...)
-        updateSlots()
-        return resultDress
+        -- Update slots when a gear piece has changed
+        local _TryOn = playerActor.TryOn
+        playerActor.TryOn = function (...)
+          if DressMode == 3 then
+                DressUpFrame.ModelScene:GetPlayerActor():Undress()
+            end
+            local resultTryOn = _TryOn(...)
+            updateSlots()
+            return resultTryOn
+        end
+
+        -- Update slots when reset button has been pressed
+        local _Dress = playerActor.Dress
+        playerActor.Dress = function (...)
+            local resultDress = _Dress(...)
+            updateSlots()
+            return resultDress
+        end
+        DressingWait(0.1, updateSlots, nil)
     end
-    DressingWait(0.1, updateSlots, nil)
     return resultSetupPlayerForModelScene
 end
 

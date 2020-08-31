@@ -27,15 +27,15 @@ function this:Register()
 	end
 	
 	self.EventFrame = CreateFrame("Frame")
-	self.EventFrame:SetScript("OnEvent", function(Frame, Event, Data)
-		self:OnEvent(Event, Data)
+	self.EventFrame:SetScript("OnEvent", function(Frame, Event, Data, ...)
+		self:OnEvent(Event, Data, ...)
 		return
 	end)	
 	self.EventFrame:RegisterEvent("ADDON_LOADED")
 	return
 end
 
-function this:OnEvent(Event, Data)
+function this:OnEvent(Event, Data, ...)
 
 	if(Event == "ADDON_LOADED") then
 		if(Data == "ThingsToDo2") then --"ADDON_LOADED" events for other addons are not important for us and ignored
@@ -58,7 +58,7 @@ function this:OnEvent(Event, Data)
 		
 		--Tools.Chat:Debug("event received: "..Event)
 		for Listener, _ in pairs(self.EventTable[Event]) do
-			Listener:ReceiveEvent(Event, Data)
+			Listener:ReceiveEvent(Event, Data, ...)
 		end
 	end
 	

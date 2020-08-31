@@ -1,3 +1,29 @@
+2.19 (release)
+(copied from beta-builds)
+NEW: Module HorrificVisionTracker; this module will display a small, draggable frame when entering horrific visions. The tooltip of this frame will tell the exact status of collected chests+crystals per area, including crystals collected by party members and automatically create tomtom-waypoints to chests opened by party members that you have not yet opened yourself.
+The Tracker is NOT intended to tell you where all of the objects are - use HandyNotes for that if you wish. The purpose of the Tracker is to keep count of the objects you (and your party) have actually collected.
+NEW: Option "HorrificVisionTracker", default: ON; used to enable the above module. If you close the tracking frame by accident or drag it off-screen you can always retoggle the option to reset the frame.
+
+NOTE:
+I spent some time thinking about whether to enable or disable the HVT by default. Usually, i would disable a feature like this since i am not a fa of putting frames into players' faces without explicit consent. In this case, however, i am not sure a lot of people would even see or notice this new feature if it was disabled by default since it does not appear as a new button in the task list.
+Also, the tracker will only ever appear for people who might actually want it - those entering a vision. It can easily be closed and after seeing it in the preparation area there is plenty of time to disable it if it is unwanted. It also clearly states that it belonges to TTD2 in the title bar of the frame so players really should not be confused which addon created it.
+
+The tracker relies on precise position data of objects inside the vision to work. I personally ran a LOT of visions in the last two weeks to make sure my data is complete and accurate - but there is always the chance an object might be missing or off. If you (or someone in your party) interacts with an object that the tracker does not know, there will be an error-message; if that ever happens to you, i would be grateful for a PM detaling your situation.
+
+Therefore, i will enable the tracker by default.
+
+2.19 BETA3
+UPDATE: HorrificVisionTracker now has data for the stormwind vision
+
+2.19 BETA2
+FIX: HorrificVisionTracker could cause LUA errors under specific circumstances
+
+2.19 BETA
+NEW: Module HorrificVisionTracker; if enabled in the options, this module will display a small, draggable frame when entering horrific visions. The tooltip of this frame will tell the exact status of collected chests+crystals per area, including crystals collected by party members and automatically creating tomtom-waypoints to chests opened by party members that you have not yet opened yourself.
+NEW: Option "HorrificVisionTracker"; used to enable the above module. If you close the tracking frame by accident or drag it off-screen you can always retoggle the option to reset the frame.
+
+This is a BETA version since for the new module to work every possible treasure location must be verified to be quite accurate. Therefore, the tracker is ENABLED by default in this version, it will not be in the release version since i consider creating frames in the middle of your screen quite intrusive. Also, there is debug-output whenever picking up a treasure item inside a vision to track down possible problems.
+
 2.18
 FIX: 2 wrong ItemIDs for recipes in BFAWQRecipes (Inscription Contracts); the addon would still have informed you about the WQ being up unless you were an Engineer, though
 FIX: Possible concat nil LUA error if a worldquest was technically available to a character but hidden from the map for whatever reason (phasing, profession skill level etc.)

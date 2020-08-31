@@ -111,6 +111,7 @@ function this:LoadFromGlobals()
 	self:LoadCharacterSetting("TrackWarmode", false)
 	self:LoadCharacterSetting("HorrificWaste", false)
 	self:LoadCharacterSetting("DemandingVisions", false)
+	self:LoadCharacterSetting("HorrificVisionTracker", true)
 	
 	self:LoadCharacterValue("MinimapPosition", 0.0)
 	

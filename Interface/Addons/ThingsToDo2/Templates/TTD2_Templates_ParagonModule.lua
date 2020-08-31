@@ -224,7 +224,7 @@ function this:CreateOutput()
 		if(FactionInfo.Paragon ~= nil) then
 		
 			--add current factionrep to faction-line
-			FactionLineContent = FactionLineContent.."( "..TTD2.Tools.Chat:Yellow(FactionInfo.Paragon.CurrentRep).."/"..TTD2.Tools.Chat:Yellow(FactionInfo.Paragon.NextRep)..")"
+			FactionLineContent = FactionLineContent.." ("..TTD2.Tools.Chat:Yellow(FactionInfo.Paragon.CurrentRep).."/"..TTD2.Tools.Chat:Yellow(FactionInfo.Paragon.NextRep)..")"
 			
 			--add line for paragon chest
 			if(FactionInfo.Paragon.HasRewardPending == true) then

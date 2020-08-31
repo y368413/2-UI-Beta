@@ -917,8 +917,8 @@ L["Horde Zeppelin"] = true
 L["Show the Horde Zeppelin locations."] = true
 L["Alliance Zeppelin"] = true
 L["Show the Alliance Zeppelin locations."] = true
-L["Note"] = true
-L["Show the node's additional notes when it's available."] = true
+
+L["Portal"] = true
 L["Show the portal locations."] = true
 L["Order Hall portal"] = true
 L["Show the Order Hall portal locations."] = true
@@ -926,6 +926,13 @@ L["Warfront portal"] = true
 L["Show the Warfront portal locations."] = true
 L["Deeprun Tram"] = true
 L["Show the Deeprun Tram locations in Stormwind and Ironforge."] = true
+
+L["Note"] = true
+L["Show the node's additional notes when it's available."] = true
+
+L["Easy waypoints"] = true
+L["easy_waypoints_desc"] = "Activates simplified waypoint creation. \nAllows you to set a waypoint by right-clicking and access to more options by CTRL + right-clicking."
+
 L["Others"] = true
 L["Show all the other POIs."] = true
 --Plugin_config
@@ -933,7 +940,7 @@ L["AddOn Settings"] = true
 L["Query from server"] = true
 L["Send query request to server to lookup localized name. May be a little bit slower for the first time lookup but would be very fast once the name is found and cached."] = true
 L["Restore hidden nodes"] = true
-L["Show all nodes that you manually hid by right-clicking on them and choosing \"Hide this node\"."] = true
+L["Show all nodes that you have manually hidden by right-clicking on them and choosing \"Hide this node\"."] = true
 L["All hidden nodes have been restored"] = true
 --Handler
 L["Shows the portal, zepplin and boat locations on the World Map and the MiniMap."] = true
@@ -975,7 +982,10 @@ L["Portal to Stormheim"] = true
 L["Portal to Helheim"] = true
 L["Portal to Dalaran"] = true
 L["Portal to Azsuna"] = true
+L["Portal to Val'sharah"] = true
 L["Portal to Emerald Dreamway"] = true
+L["Portal to Suramar"] = true
+L["Portal to Highmountain"] = true
 L["Great Eagle to Trueshot Lodge"] = true
 L["Jump to Skyhold"] = true
 L["Dalaran"] = true
@@ -984,6 +994,7 @@ L["Val'sharah"] = true
 L["Suramar"] = true
 L["Highmountain"] = true
 L["Stormheim"] = true
+L["Broken Shore"] = true
 --WoD
 L["Portal to Warspear"] = true
 L["Portal to Stormshield"] = true
@@ -1077,3 +1088,8 @@ L["Kalimdor, Tanaris"] = true
 L["Portal to Caverns of Time"] = true
 L["Eastern Kingdoms, Arathi Highlands"] = true
 L["Kalimdor, Darkshore"] = true
+
+L["Portal to Dalaran Crater"] = true
+L["Eastern Kingdoms, Hillsbrad Foothills"] = true
+L["Portal to Tombs"] = true
+L["Eastern Kingdoms, Silverpine Forest"] = true
