@@ -196,7 +196,7 @@ end
 -- ----------------------------------------------------------------------------
 Universal_Explorer.defaults = {
 	profile = {
-		icon_scale = 1.5,
+		icon_scale = 0.85,
 		icon_alpha = 1.0,
 		completed = false,
 	},

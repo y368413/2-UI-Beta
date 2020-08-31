@@ -19,7 +19,6 @@ local UIQuestsandHelp = {
    "-------------------------------"..GetAddOnMetadata("_ShiGuang", "X-StatsVersion").."----[正式]",
    "|cFFFF0000[注意]控制台设置后的 红色齿轮 可以点击后设置更多|r",
    "|cFFFF0000[注意]使用多功能团框的话，记得控制台别勾选“简易模式框体”|r",
-   "[修复]暮光炮伤害显示错误的bug",
    "[添加]浮动连击点",
    "[更新]常规维护和优化",
    "[插件]版本号升级为v "..GetAddOnMetadata("_ShiGuang", "Version"),

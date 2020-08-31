@@ -62,7 +62,7 @@ local function ForceDefaultSettings()
 	SetCVar("nameplateShowFriendlyNPCs", 0)
 	SetCVar("showTimestamps", "none")--聊天时间戳
 	SetCVar("ActionButtonUseKeyDown", 1)
-	--SetCVar("alwaysShowActionBars", 1)
+	SetCVar("alwaysShowActionBars", 0)
 	SetCVar("lockActionBars", 1)
 	SetActionBarToggles(1, 1, 0, 0)
 	SHOW_MULTI_ACTIONBAR_1="1" --左下方动作条 

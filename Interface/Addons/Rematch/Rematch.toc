@@ -7,7 +7,6 @@
 
 Localization\Rematch zhTW.lua
 Localization\Rematch zhCN.lua
-Localization\Rematch esES.lua
 
 Main.lua
 Templates.xml

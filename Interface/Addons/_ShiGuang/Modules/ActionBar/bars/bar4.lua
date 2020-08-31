@@ -16,7 +16,7 @@ function Bar:CreateBar4()
 		frame:SetWidth(24*cfg.size + 24*margin + 6*padding)
 		frame:SetHeight(2*cfg.size + margin + 2*padding)
 		frame.Pos = {"BOTTOM", UIParent, "BOTTOM", 0, 2}
-	elseif (layout == 6) or (layout == 9) or (layout == 10) then
+	elseif layout == 6 then
 		frame:SetWidth(25*cfg.size + 25*margin + 2*padding)
 		frame:SetHeight(2*cfg.size + 2*margin + 2*padding)
 		frame.Pos = {"BOTTOM", UIParent, "BOTTOM", 0, 2}
@@ -25,9 +25,13 @@ function Bar:CreateBar4()
 	  frame:SetHeight(cfg.size + 2*padding)
 		frame.Pos = {"CENTER", UIParent, "CENTER", 80, -220}
 	elseif layout == 8 then
-		frame:SetWidth(25*cfg.size + 25*margin + 2*padding)
-		frame:SetHeight(3*cfg.size + 1*margin + 0*padding)
-		frame.Pos = {"BOTTOM", UIParent, "BOTTOM", 0, 2}
+		frame:SetWidth(4*cfg.size + margin + padding)
+		frame:SetHeight(3*cfg.size + margin + padding)
+		frame.Pos = {"BOTTOM", UIParent, "BOTTOM", -8*cfg.size - 8*margin , 3*margin}
+	elseif (layout == 9) or (layout == 10) then
+		frame:SetWidth(6*cfg.size)
+		frame:SetHeight(2*cfg.size)
+		frame.Pos = {"BOTTOM", UIParent, "BOTTOM", -9*cfg.size - 8*padding, 9}
 	else
 		frame:SetWidth(cfg.size + 2*padding)
 		frame:SetHeight(num*cfg.size + (num-1)*margin + 2*padding)
@@ -78,22 +82,6 @@ function Bar:CreateBar4()
 			else
 				button:SetPoint("LEFT", _G["MultiBarRightButton"..i-1], "RIGHT", margin, 0)
 			end
-		elseif (layout == 9) or (layout == 10) then
-			if i == 1 then
-				button:SetPoint("TOPLEFT", frame, 3*cfg.size + 12*margin + 1*padding, -padding)
-			elseif i == 4 then
-				local previous = _G["MultiBarRightButton1"]
-				button:SetPoint("TOP", previous, "BOTTOM", 0, -margin)
-			elseif i == 7 then
-				local previous = _G["MultiBarRightButton3"]
-				button:SetPoint("LEFT", previous, "RIGHT", 12*cfg.size + 12*margin + 4*padding, 0)
-			elseif i == 10 then
-				local previous = _G["MultiBarRightButton7"]
-				button:SetPoint("TOP", previous, "BOTTOM", 0, -margin)
-			else
-				local previous = _G["MultiBarRightButton"..i-1]
-				button:SetPoint("LEFT", previous, "RIGHT", margin, 0)
-			end
 		elseif layout == 7 then
 		  if i == 1 then
 			  button:SetPoint("LEFT", frame, padding, 0)
@@ -115,7 +103,7 @@ function Bar:CreateBar4()
 			end
 		elseif layout == 8 then
 			if i == 1 then
-				button:SetPoint("TOPLEFT", frame, 2*cfg.size +6*margin + 6*padding, -padding)
+				button:SetPoint("TOPRIGHT", frame, -padding, -padding)
 			elseif i == 5 then
 				local previous = _G["MultiBarRightButton1"]
 				button:SetPoint("TOP", previous, "BOTTOM", 0, -margin)
@@ -124,7 +112,59 @@ function Bar:CreateBar4()
 				button:SetPoint("TOP", previous, "BOTTOM", 0, -margin)
 			else
 				local previous = _G["MultiBarRightButton"..i-1]
-				button:SetPoint("LEFT", previous, "RIGHT", margin, 0)
+				button:SetPoint("RIGHT", previous, "LEFT", -margin, 0)
+			end
+		elseif layout == 9 then
+			if i == 1 then
+				button:SetSize(cfg.size + 7, cfg.size + 7)
+				button:SetPoint("TOPRIGHT", frame, padding, -padding)
+			elseif i == 2 then
+				button:SetSize(cfg.size + 7, cfg.size + 7)
+				button:SetPoint("RIGHT", _G["MultiBarRightButton"..i-1], "LEFT", -margin, 0)
+			elseif i == 3 then
+				button:SetSize(cfg.size + 7, cfg.size + 7)
+				button:SetPoint("RIGHT", _G["MultiBarRightButton"..i-1], "LEFT", -margin, 0)
+			elseif i == 4 then
+				button:SetSize(cfg.size + 7, cfg.size + 7)
+				button:SetPoint("RIGHT", _G["MultiBarRightButton"..i-1], "LEFT", -margin, 0)
+			elseif i == 5 then
+				button:SetSize(cfg.size + 7, cfg.size + 7)
+				button:SetPoint("RIGHT", _G["MultiBarRightButton"..i-1], "LEFT", -margin, 0)
+			elseif i == 6 then
+				button:SetSize(cfg.size - 7, cfg.size - 7)
+				button:SetPoint("TOPRIGHT", _G["MultiBarRightButton1"], "BOTTOMRIGHT", 0, -margin)
+			else
+				button:SetSize(cfg.size - 7, cfg.size - 7)
+				button:SetPoint("RIGHT", _G["MultiBarRightButton"..i-1], "LEFT", -1.3*margin, 0)
+			end
+		elseif layout == 10 then
+		  if i == 1 then
+				button:SetSize(cfg.size, cfg.size)
+				button:SetPoint("TOPRIGHT", frame, padding, -padding)
+			elseif i == 2 then
+				button:SetSize(cfg.size, cfg.size)
+				button:SetPoint("RIGHT", _G["MultiBarRightButton1"], "LEFT", -margin, 0)
+			elseif i == 3 then
+				button:SetSize(cfg.size, cfg.size)
+				button:SetPoint("TOPRIGHT", _G["MultiBarRightButton1"], "BOTTOMRIGHT", 0, -margin)
+			elseif i == 4 then
+				button:SetSize(cfg.size, cfg.size)
+				button:SetPoint("RIGHT", _G["MultiBarRightButton"..i-1], "LEFT", -margin, 0)
+			elseif i == 5 then
+				button:SetSize(cfg.size + 10, cfg.size + 10)
+				button:SetPoint("TOPRIGHT", _G["MultiBarRightButton2"], "TOPLEFT", -margin, 0)
+			elseif i == 6 then
+				button:SetSize(cfg.size + 10, cfg.size + 10)
+				button:SetPoint("RIGHT", _G["MultiBarRightButton5"], "LEFT", -margin, 0)
+			elseif i == 7 then
+				button:SetSize(cfg.size + 10, cfg.size + 10)
+				button:SetPoint("RIGHT", _G["MultiBarRightButton6"], "LEFT", -margin, 0)
+			elseif i == 8 then
+				button:SetSize(cfg.size - 10, cfg.size - 10)
+				button:SetPoint("TOPRIGHT", _G["MultiBarRightButton5"], "BOTTOMRIGHT", 0, -margin)
+			else
+				button:SetSize(cfg.size - 10, cfg.size - 10)
+				button:SetPoint("RIGHT", _G["MultiBarRightButton"..i-1], "LEFT", -margin, 0)
 			end
 		else
 			if i == 1 then

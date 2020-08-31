@@ -42,11 +42,11 @@ function Bar:OnLogin()
 	elseif layout == 6 then
 		frame.Pos = {"CENTER", UIParent, "CENTER", 105, -220}
 	elseif layout == 9 then
-	  frame:SetWidth(num*cfg.size + (num-1)*margin + 2*padding)
-	  frame:SetHeight(cfg.size + 2*padding)
-		frame.Pos = {"CENTER", UIParent, "CENTER", 76, -220}
+	  frame:SetWidth(7*cfg.size + 5*padding)
+	  frame:SetHeight(cfg.size + padding)
+		frame.Pos = {"CENTER", UIParent, "CENTER", 0, -210}
 	elseif layout == 10 then
-		frame.Pos = {"CENTER", UIParent, "CENTER", 110, -205}
+		frame.Pos = {"CENTER", UIParent, "CENTER", 110, -210}
 	else
 		frame.Pos = {"BOTTOM", UIParent, "BOTTOM", 0, 2}
 	end
@@ -85,26 +85,27 @@ function Bar:OnLogin()
 			end
 		elseif layout == 9 then
 		  if i == 1 then
+			  button:SetSize(cfg.size * 0.85, cfg.size * 0.85)
 			  button:SetPoint("LEFT", frame, padding, 0)
 		  elseif i == 9 then
-			  local previous = _G["ActionButton1"]
-			  button:SetPoint("TOPRIGHT", previous, "BOTTOM", -margin+10, 0)
+			  button:SetSize(cfg.size * 0.85, cfg.size * 0.85)
+			  button:SetPoint("TOPLEFT", _G["ActionButton3"], "BOTTOMLEFT", 0, -margin)
 			elseif i == 11 then
-			  local previous = _G["ActionButton7"]
-			  button:SetPoint("TOPLEFT", previous, "BOTTOM", margin-10, 0)
+			  button:SetSize(cfg.size * 0.85, cfg.size * 0.85)
+			  button:SetPoint("TOPLEFT", _G["ActionButton5"], "BOTTOMLEFT", 0, -margin)
 			else
-			  local previous = _G["ActionButton"..i-1]
-			  button:SetPoint("LEFT", previous, "RIGHT", margin, 0)
+			  button:SetSize(cfg.size * 0.85, cfg.size * 0.85)
+			  button:SetPoint("LEFT", _G["ActionButton"..i-1], "RIGHT", margin, 0)
 			end
 		elseif layout == 10 then
 		  if i == 1 then
-			  button:SetSize(cfg.size * 1.1, cfg.size * 0.6)
+			  button:SetSize(cfg.size * 1.1, cfg.size * 0.85)
 			  button:SetPoint("LEFT", frame, padding, 0)
 			elseif i == 7 then
-			  button:SetSize(cfg.size * 1.1, cfg.size * 0.6)
+			  button:SetSize(cfg.size * 1.1, cfg.size * 0.85)
 			  button:SetPoint("TOPLEFT", _G["ActionButton1"], "BOTTOMLEFT", 0, -padding)
 			else
-			  button:SetSize(cfg.size * 1.1, cfg.size * 0.6)
+			  button:SetSize(cfg.size * 1.1, cfg.size * 0.85)
 			  local previous = _G["ActionButton"..i-1]
 			  button:SetPoint("LEFT", previous, "RIGHT", margin, 0)
 			end
