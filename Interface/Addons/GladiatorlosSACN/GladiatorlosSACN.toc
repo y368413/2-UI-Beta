@@ -11,7 +11,6 @@
 
 ## X-Repple: 2 UI
 
-embeds.xml
 Locales\locales.xml
 GladiatorlosSA2.lua
 spelllist.lua
