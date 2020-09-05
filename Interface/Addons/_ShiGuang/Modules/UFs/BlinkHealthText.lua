@@ -927,14 +927,14 @@ function BlinkHealth_SlashHandler(msg)
 	--local BHT_1 = "输入 /bht on 或 /bht off 开关插件\n";
 	--local BHT_2 = "输入 /bht m 调整位置\n";
 	--local BHT_3 = "输入 /bht hiton 或 /bht hitoff 是否显示数字连击点数\n";
-	local cmdtype, para1 = strsplit(" ", string.lower(msg))
+	--local cmdtype, para1 = strsplit(" ", string.lower(msg))
 	--local MyClass = select(2, UnitClass("player"))
-	local listSec = 0;
-	if para1 ~= nil then
-		listSec = tonumber(para1);
-	end
-	if (cmdtype == "on") then BlinkHealth:OnEnable();
-	elseif (cmdtype == "off") then BlinkHealth:OnDisable();
+	--local listSec = 0;
+	--if para1 ~= nil then
+		--listSec = tonumber(para1);
+	--end
+	if (msg == "on") then BlinkHealth:OnEnable();
+	elseif (msg == "off") then BlinkHealth:OnDisable();
 	--elseif (cmdtype == "rune") then if (MyClass == "DEATHKNIGHT") then BlinkHealth:ToggleRuneFrameVisible(true); end
 	else--if (cmdtype == "move" or cmdtype == "m") then
 			BlinkHealth:ShowAnchor();
