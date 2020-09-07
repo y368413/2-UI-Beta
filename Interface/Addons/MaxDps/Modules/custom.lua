@@ -31,7 +31,7 @@ function Custom:GetClassIcon(classTag)
 	);
 end
 
-function Custom:Enable()
+function Custom:OnEnable()
 	self.CustomRotations = {};
 	self.Specs = {};
 	-- private for dropdowns
