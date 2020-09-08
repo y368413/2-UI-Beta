@@ -8,7 +8,7 @@ function Bar:CreateBar5()
 	local num = NUM_ACTIONBAR_BUTTONS
 	local buttonList = {}
 	local layout = MaoRUIPerDB["Actionbar"]["Style"]
-	if (layout == 6) or (layout == 8) or (layout == 9) or (layout == 10) then cfg.size = 38 end
+	if (layout == 6) or (layout == 8) or (layout == 9) or (layout == 10) or (layout == 11) then cfg.size = 38 end
 
 	--create the frame to hold the buttons
 	local frame = CreateFrame("Frame", "NDui_ActionBar5", UIParent, "SecureHandlerStateTemplate")
@@ -32,6 +32,10 @@ function Bar:CreateBar5()
 		frame:SetWidth(6*cfg.size)
 		frame:SetHeight(2*cfg.size)
 		frame.Pos = {"BOTTOM", UIParent, "BOTTOM", 9*cfg.size+ 6*padding, 9}
+	elseif layout == 11 then
+		frame:SetWidth(4*cfg.size + 2*margin + 2*padding)
+		frame:SetHeight(3*cfg.size + 4*margin + 2*padding)
+		frame.Pos = {"CENTER", UIParent, "CENTER", 8*cfg.size + 6*padding, 4*cfg.size + 6*padding}
 	else
 		frame.Pos = {"RIGHT", UIParent, "RIGHT", -1, -88}
 	end
@@ -136,6 +140,35 @@ function Bar:CreateBar5()
 			else
 				button:SetSize(cfg.size - 10, cfg.size - 10)
 				button:SetPoint("LEFT", _G["MultiBarLeftButton"..i-1], "RIGHT", margin, 0)
+			end
+		elseif layout == 11 then
+		  if i == 1 then
+			  button:SetSize(cfg.size, cfg.size)
+			  button:SetPoint("TOPLEFT", frame, padding, -margin)
+		  elseif i == 2 then
+			  button:SetSize(cfg.size, cfg.size)
+			  button:SetPoint("LEFT", _G["MultiBarLeftButton"..i-1], "RIGHT", padding, 0)
+			elseif i == 3 then
+			  button:SetSize(cfg.size, cfg.size)
+			  button:SetPoint("LEFT", _G["MultiBarLeftButton"..i-1], "RIGHT", padding, 0)
+			elseif i == 4 then
+			  button:SetSize(cfg.size, cfg.size)
+			  button:SetPoint("LEFT", _G["MultiBarLeftButton"..i-1], "RIGHT", padding, 0)
+			elseif i == 5 then
+			  button:SetSize(cfg.size *1.35, cfg.size *1.35)
+			  button:SetPoint("TOPLEFT", _G["MultiBarLeftButton1"], "BOTTOMLEFT", 0, -margin)
+			elseif i == 6 then
+			  button:SetSize(cfg.size *1.35, cfg.size *1.35)
+			  button:SetPoint("LEFT", _G["MultiBarLeftButton"..i-1], "RIGHT", padding, 0)
+			elseif i == 7 then
+			  button:SetSize(cfg.size *1.35, cfg.size *1.35)
+			  button:SetPoint("LEFT", _G["MultiBarLeftButton"..i-1], "RIGHT", padding, 0)
+			elseif i == 8 then
+			  button:SetSize(cfg.size *0.8, cfg.size*0.8)
+			  button:SetPoint("TOPLEFT", _G["MultiBarLeftButton5"], "BOTTOMLEFT", 0, -margin)
+			else
+			  button:SetSize(cfg.size *0.8, cfg.size*0.8)
+			  button:SetPoint("LEFT", _G["MultiBarLeftButton"..i-1], "RIGHT", padding*0.8, 0)
 			end
 		else
 		if i == 1 then

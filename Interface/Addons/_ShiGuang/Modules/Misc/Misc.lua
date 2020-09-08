@@ -48,24 +48,27 @@ function MISC:OnLogin()
 	end
 
 	-- Init
-	self:NakedIcon()
-	self:ExtendInstance()
-	self:VehicleSeatMover()
-	self:UIWidgetFrameMover()
-	self:MoveDurabilityFrame()
-	self:MoveTicketStatusFrame()
-	self:UpdateScreenShot()
-	self:UpdateFasterLoot()
-	self:UpdateErrorBlocker()
-	self:TradeTargetInfo()
-	self:MoverQuestTracker()
-	self:BlockStrangerInvite()
-	self:OverrideAWQ()
-	self:ReplaceContaminantName()
-	self:CreateRM()
-	self:FreeMountCD()
-	self:xMerchant()
-	self:BlinkRogueHelper()
+	MISC:NakedIcon()
+	MISC:ExtendInstance()
+	MISC:VehicleSeatMover()
+	MISC:UIWidgetFrameMover()
+	MISC:MoveDurabilityFrame()
+	MISC:MoveTicketStatusFrame()
+	MISC:UpdateScreenShot()
+	MISC:UpdateFasterLoot()
+	MISC:UpdateErrorBlocker()
+	MISC:TradeTargetInfo()
+	MISC:MoverQuestTracker()
+	MISC:BlockStrangerInvite()
+	MISC:OverrideAWQ()
+	MISC:ReplaceContaminantName()
+	MISC:ToggleBossBanner()
+	MISC:ToggleBossEmote()
+	
+	MISC:CreateRM()
+	MISC:FreeMountCD()
+	MISC:xMerchant()
+	MISC:BlinkRogueHelper()
 	
 	----------------QuickQueue.lua----------------------
 	if MaoRUIPerDB["Misc"]["QuickQueue"] then
@@ -73,14 +76,6 @@ function MISC:OnLogin()
 	    QuickQueue:RegisterEvent("LFG_ROLE_CHECK_SHOW")
 	    QuickQueue:SetScript("OnEvent", function(self, event, ...) CompleteLFGRoleCheck(true) end)
 	end
-
-	-- Max camera distancee
-	if tonumber(GetCVar("cameraDistanceMaxZoomFactor")) ~= 2.6 then
-		SetCVar("cameraDistanceMaxZoomFactor", 2.6)
-	end
-
-	-- Hide Bossbanner
-	if MaoRUIPerDB["Misc"]["HideBanner"] then BossBanner:UnregisterAllEvents() end
 
 	-- Unregister talent event
 	if PlayerTalentFrame then
@@ -122,6 +117,27 @@ function MISC:OnLogin()
 		if not owner then return end
 		if owner:GetID() < 1 then return end
 		_AddonTooltip_Update(owner)
+	end
+end
+
+-- Hide Bossbanner
+function MISC:ToggleBossBanner()
+	if MaoRUIPerDB["Misc"]["HideBanner"] then
+		BossBanner:UnregisterAllEvents()
+	else
+		BossBanner:RegisterEvent("BOSS_KILL")
+		BossBanner:RegisterEvent("ENCOUNTER_LOOT_RECEIVED")
+	end
+end
+
+-- Hide boss emote
+function MISC:ToggleBossEmote()
+	if MaoRUIPerDB["Misc"]["HideBossEmote"] then
+		RaidBossEmoteFrame:UnregisterAllEvents()
+	else
+		RaidBossEmoteFrame:RegisterEvent("RAID_BOSS_EMOTE")
+		RaidBossEmoteFrame:RegisterEvent("RAID_BOSS_WHISPER")
+		RaidBossEmoteFrame:RegisterEvent("CLEAR_BOSS_EMOTES")
 	end
 end
 

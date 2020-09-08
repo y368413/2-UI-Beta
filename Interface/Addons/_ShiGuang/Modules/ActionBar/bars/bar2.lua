@@ -19,7 +19,7 @@ function Bar:CreateBar2()
 		frame:SetWidth(12*(cfg.size-7) + (num-1)*margin + 2*padding)
 		frame:SetHeight(cfg.size + padding)
 		frame.Pos = {"BOTTOM", UIParent, "BOTTOM", 0, 4}
-	elseif (layout == 9) or (layout == 10) then
+	elseif (layout == 9) or (layout == 10) or (layout == 11) then
 		frame.Pos = {"BOTTOM", UIParent, "BOTTOM", 0, 4}
 	else
 		frame.Pos = {"BOTTOM", UIParent, "BOTTOM", 0, 42}

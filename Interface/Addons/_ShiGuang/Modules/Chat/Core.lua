@@ -239,28 +239,6 @@ function module:UpdateTabColors(selected)
 	end
 end
 
-function module:ChatFrameBackground()
-	if not MaoRUIPerDB["Chat"]["Lock"] then return end
-	if not MaoRUIPerDB["Skins"]["ChatLine"] then return end
-
-	local cr, cg, cb = 0, 0, 0
-	if MaoRUIPerDB["Skins"]["ClassLine"] then cr, cg, cb = I.r, I.g, I.b end
-
-	local Linfobar = CreateFrame("Frame", nil, UIParent)
-	Linfobar:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 0, 3)
-	M.CreateGF(Linfobar, 450, ChatFrame1:GetHeight() + 30, "Horizontal", 0, 0, 0, .5, 0)
-	local Linfobar1 = CreateFrame("Frame", nil, Linfobar)
-	Linfobar1:SetPoint("BOTTOM", Linfobar, "TOP")
-	M.CreateGF(Linfobar1, 450, R.mult, "Horizontal", cr, cg, cb, .7, 0)
-	local Linfobar2 = CreateFrame("Frame", nil, Linfobar)
-	Linfobar2:SetPoint("BOTTOM", Linfobar, "BOTTOM", 0, 18)
-	M.CreateGF(Linfobar2, 450, R.mult, "Horizontal", cr, cg, cb, .7, 0)
-	local Linfobar3 = CreateFrame("Frame", nil, Linfobar)
-	Linfobar3:SetPoint("TOP", Linfobar, "BOTTOM")
-	M.CreateGF(Linfobar3, 450, R.mult, "Horizontal", cr, cg, cb, .7, 0)
-	ChatFrame1.gradientBG = Linfobar
-end
-	
 function module:OnLogin()
 	for i = 1, NUM_CHAT_WINDOWS do
 		self.SkinChat(_G["ChatFrame"..i])
@@ -294,7 +272,6 @@ function module:OnLogin()
 	self:Chatbar()
 	self:UrlCopy()
 	self:WhisperInvite()
-	self:ChatFrameBackground()
 
 	-- Lock chatframe
 	if MaoRUIPerDB["Chat"]["Lock"] then

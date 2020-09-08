@@ -51,6 +51,10 @@ function Bar:OnLogin()
 	  frame:SetWidth(7*cfg.size - padding)
 	  frame:SetHeight(2*cfg.size - 3*padding)
 		frame.Pos = {"CENTER", UIParent, "CENTER", 0, -230}
+	elseif layout == 11 then
+	  frame:SetWidth(7*cfg.size + 4*margin)
+		frame:SetHeight(2*cfg.size - margin)
+		frame.Pos = {"CENTER", UIParent, "CENTER", 0, -225}
 	else
 		frame.Pos = {"BOTTOM", UIParent, "BOTTOM", 0, 2}
 	end
@@ -115,6 +119,23 @@ function Bar:OnLogin()
 			  button:SetSize(cfg.size * 1.1, cfg.size * 0.85)
 			  local previous = _G["ActionButton"..i-1]
 			  button:SetPoint("LEFT", previous, "RIGHT", margin, 0)
+			end
+		elseif layout == 11 then
+		  if i == 1 then
+			  button:SetSize(cfg.size *0.9, cfg.size *0.9)
+			  button:SetPoint("LEFT", frame, cfg.size *1.2 + padding, cfg.size *0.5-margin)
+		  elseif i == 6 then
+			  button:SetSize(cfg.size *0.9, cfg.size *0.9)
+			  button:SetPoint("TOP", _G["ActionButton1"], "BOTTOM", 0, -margin)
+		  elseif i == 11 then
+			  button:SetSize(cfg.size *1.2, cfg.size *01.2)
+			  button:SetPoint("TOPRIGHT", _G["ActionButton1"], "LEFT", -margin, 2*margin)
+			elseif i == 12 then
+			  button:SetSize(cfg.size *1.2, cfg.size *1.2)
+			  button:SetPoint("TOPLEFT", _G["ActionButton5"], "RIGHT", margin, 2*margin)
+			else
+			  button:SetSize(cfg.size *0.9, cfg.size *0.9)
+			  button:SetPoint("LEFT", _G["ActionButton"..i-1], "RIGHT", margin, 0)
 			end
 		else
 		  if i == 1 then

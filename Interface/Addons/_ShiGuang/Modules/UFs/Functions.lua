@@ -390,6 +390,7 @@ function UF:CreateCastBar(self)
 	M.CreateSB(cb, true, .2, .8, 1)
 
 	if mystyle == "focus" then
+		cb:SetFrameLevel(10)
 		cb:SetSize(MaoRUIPerDB["UFs"]["FocusCBWidth"], MaoRUIPerDB["UFs"]["FocusCBHeight"])
 		createBarMover(cb, U["Focus Castbar"], "FocusCB", R.UFs.Focuscb)
 	elseif mystyle == "boss" or mystyle == "arena" then
@@ -749,18 +750,17 @@ function UF.PostUpdateClassPower(element, cur, max, diff, powerType)
 		end
 	end
 
-	if MaoRUIPerDB["Nameplate"]["ShowPlayerPlate"] and MaoRUIPerDB["Nameplate"]["MaxPowerGlow"] then
-		if (powerType == "COMBO_POINTS" or powerType == "HOLY_POWER") and element.__owner.unit ~= "vehicle" and cur == max then
-			for i = 1, 6 do
-				if element[i]:IsShown() then
-					M.ShowOverlayGlow(element[i].glow)
-				end
-			end
-		else
-			for i = 1, 6 do
-				M.HideOverlayGlow(element[i].glow)
-			end
+	element.thisColor = cur == max and 1 or 2
+	if not element.prevColor or element.prevColor ~= element.thisColor then
+		local r, g, b = 1, 0, 0
+		if element.thisColor == 2 then
+			local color = element.__owner.colors.power[powerType]
+			r, g, b = color[1], color[2], color[3]
 		end
+		for i = 1, #element do
+			element[i]:SetStatusBarColor(r, g, b)
+		end
+		element.prevColor = element.thisColor
 	end
 end
 
@@ -829,12 +829,6 @@ function UF:CreateClassPower(self)
 
 		if I.MyClass == "DEATHKNIGHT" and MaoRUIPerDB["UFs"]["RuneTimer"] then
 			bars[i].timer = M.CreateFS(bars[i], 13, "")
-		end
-
-		if MaoRUIPerDB["Nameplate"]["ShowPlayerPlate"] then
-			bars[i].glow = CreateFrame("Frame", nil, bars[i])
-			bars[i].glow:SetPoint("TOPLEFT", -3, 2)
-			bars[i].glow:SetPoint("BOTTOMRIGHT", 3, -2)
 		end
 	end
 
