@@ -1,12 +1,4 @@
-﻿--## SavedVariables: CaerdonWardrobeConfig  ## Version: v2.5.1
-
-local isBagUpdate = false
-local ignoreDefaultBags = false
-CaerdonWardrobe = {}
-CaerdonWardrobeNS = {}
-
-local version, build, date, tocversion = GetBuildInfo()
-local isShadowlands = tonumber(build) > 35700
+﻿--## Author: Caerdon ## SavedVariables: CaerdonWardrobeConfig  ## Version: v2.8.0
 
 if GetLocale() == "zhCN" then
   CaerdonWardrobeBoA = "|cffe6cc80战网|r";
@@ -19,13 +11,42 @@ else
   CaerdonWardrobeBoE = "|cff1eff00BoE|r";
 end
 
+local isBagUpdate = false
+local ignoreDefaultBags = false
+
+local version, build, date, tocversion = GetBuildInfo()
+local isShadowlands = tonumber(build) > 35700
+
+CaerdonWardrobeNS = {}
+CaerdonWardrobe = {}
+CaerdonWardrobeMixin = {}
+
+function CaerdonWardrobeMixin:OnLoad()
+	self:RegisterEvent("ADDON_LOADED")
+	self:RegisterEvent("PLAYER_LOGOUT")
+	self:RegisterEvent("AUCTION_HOUSE_BROWSE_RESULTS_UPDATED")
+	self:RegisterEvent("AUCTION_HOUSE_SHOW")
+	self:RegisterEvent("BAG_OPEN")
+	self:RegisterEvent("BAG_UPDATE")
+	self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+	self:RegisterEvent("BAG_UPDATE_DELAYED")
+	self:RegisterEvent("BANKFRAME_OPENED")
+	-- self:RegisterEvent("GET_ITEM_INFO_RECEIVED")
+	self:RegisterEvent("TRANSMOG_COLLECTION_UPDATED")
+	-- self:RegisterEvent("TRANSMOG_COLLECTION_ITEM_UPDATE")
+	self:RegisterEvent("EQUIPMENT_SETS_CHANGED")
+	self:RegisterEvent("UPDATE_EXPANSION_LEVEL")
+	self:RegisterEvent("MERCHANT_UPDATE")
+	self:RegisterEvent("PLAYER_LOOT_SPEC_UPDATED")
+	self:RegisterEvent("PLAYER_LOGIN")
+end
 local bindTextTable = {
 	[ITEM_ACCOUNTBOUND]        = CaerdonWardrobeBoA,
 	[ITEM_BNETACCOUNTBOUND]    = CaerdonWardrobeBoA,
 	[ITEM_BIND_TO_ACCOUNT]     = CaerdonWardrobeBoA,
 	[ITEM_BIND_TO_BNETACCOUNT] = CaerdonWardrobeBoA,
-	[ITEM_BIND_ON_EQUIP]       = CaerdonWardrobeBoE,
-	[ITEM_BIND_ON_USE]         = CaerdonWardrobeBoE,
+	--[ITEM_BIND_ON_EQUIP]       = CaerdonWardrobeBoE,
+	--[ITEM_BIND_ON_USE]         = CaerdonWardrobeBoE,
 	[ITEM_SOULBOUND]           = "|cFF00DDFF    _|r",  -- 拾取后绑定
 	[ITEM_BIND_ON_PICKUP]      = "|cFF00DDFF    _|r",
 }
@@ -53,20 +74,26 @@ local InventorySlots = {
     ['INVTYPE_TABARD'] = INVSLOT_TABARD
 }
 
-local mainTip = CreateFrame( "GameTooltip", "CaerdonWardrobeGameTooltip", nil, "GameTooltipTemplate" )
-mainTip.ItemTooltip = CreateFrame("FRAME", "CaerdonWardrobeGameTooltipChild", mainTip, "InternalEmbeddedItemTooltipTemplate")
-mainTip.ItemTooltip.Tooltip.shoppingTooltips = { ShoppingTooltip1, ShoppingTooltip2 }
-
-local cachedBinding = {}
 local model = CreateFrame('DressUpModel')
 
 local function GetItemID(itemLink)
+	if not itemLink then
+		return nil
+	end
+
 	return tonumber(itemLink:match("item:(%d+)") or itemLink:match("battlepet:(%d+)"))
 end
 
+local function IsConduit(itemLink)
+	return isShadowlands and C_Soulbinds.IsItemConduitByItemInfo(itemLink)
+end
+
 local function IsPetLink(itemLink)
+	local isPet = LinkUtil.IsLinkType(itemLink, "battlepet")
 	local itemID = GetItemID(itemLink)
-	if itemID == 82800 then
+	if isPet then
+		return true
+	elseif itemID == 82800 then
 		return true -- It's showing up as [Pet Cage] for whatever reason
 	elseif( itemLink ) then 
 		local _, _, _, linkType, linkID, _, _, _, _, _, battlePetID, battlePetDisplayID = strsplit(":|H", itemLink);
@@ -76,12 +103,22 @@ local function IsPetLink(itemLink)
 				return true;
 			end
 		elseif ( linkType == "battlepet" ) then
-			local speciesID, _, _, _, _, displayID, _, _, _, _, creatureID = C_PetJournal.GetPetInfoByPetID(battlePetID);
-			if ( speciesID == tonumber(linkID)) then
-				if (creatureID and displayID) then
-					return true;
-				end	
+			if battlePetID and battlePetID ~= "" and battlePetID ~= "0" then
+				local speciesID, _, _, _, _, displayID, _, _, _, _, creatureID = C_PetJournal.GetPetInfoByPetID(battlePetID);
+				if ( speciesID == tonumber(linkID)) then
+					if (creatureID and displayID) then
+						return true;
+					end	
+				else
+					speciesID = tonumber(linkID);
+					local _, _, _, creatureID, _, _, _, _, _, _, _, displayID = C_PetJournal.GetPetInfoBySpeciesID(speciesID);
+					displayID = (battlePetDisplayID and battlePetDisplayID ~= "0") and battlePetDisplayID or displayID;
+					if (creatureID and displayID) then
+						return true;
+					end	
+				end
 			else
+				-- Mostly in place as a hack for bad battlepet links from addons
 				speciesID = tonumber(linkID);
 				local _, _, _, creatureID, _, _, _, _, _, _, _, displayID = C_PetJournal.GetPetInfoBySpeciesID(speciesID);
 				displayID = (battlePetDisplayID and battlePetDisplayID ~= "0") and battlePetDisplayID or displayID;
@@ -91,25 +128,8 @@ local function IsPetLink(itemLink)
 			end
 		end
 	end
+
 	return false
-
-
--- 	local isPet = false
--- 	local itemName, itemLinkInfo, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount,
--- itemEquipLoc, iconFileDataID, itemSellPrice, itemClassID, itemSubClassID, bindType, expacID, itemSetID, 
--- isCraftingReagent = GetItemInfo(itemLink)
-
--- 	local itemID = GetItemID(itemLink)
--- 	if itemID == 82800 then
--- 		isPet = true -- probably at the guild bank
--- 	elseif itemClassID == LE_ITEM_CLASS_MISCELLANEOUS and itemSubClassID == LE_ITEM_MISCELLANEOUS_COMPANION_PET then
--- 		isPet = true
--- 	elseif not itemClassID then
--- 		local link, name = string.match(itemLink, "|H(.-)|h(.-)|h")
--- 		isPet = strsub(link, 1, 9) == "battlepet"
--- 	end
-
--- 	return isPet
 end
 
 local function IsMountLink(itemLink)
@@ -154,79 +174,56 @@ local function IsCollectibleLink(itemLink)
 	return IsPetLink(itemLink) or IsMountLink(itemLink) or IsToyLink(itemLink) or IsRecipeLink(itemLink)
 end
 
-local cachedIsDressable = {}
 local function IsDressableItemCheck(itemID, itemLink)
 	local isDressable = true
 	local shouldRetry = false
 	local slot
 
-	local dressableCache = cachedIsDressable[itemLink]
-	if dressableCache then
-		isDressable = dressableCache.isDressable
-		slot = dressableCache.slot
-	else
-	    local _, _, _, slotName = GetItemInfoInstant(itemID)
-	    if slotName and slotName ~= "" then -- make sure it's a supported slot
-		    slot = InventorySlots[slotName]
-		    if not slot then
-				isDressable = false
-		    elseif not IsDressableItem(itemLink) then
-		    	-- IsDressableItem can return false instead of true for
-		    	-- an item that is actually dressable (seems to happen
-		    	-- most often during item caching).  Adding some
-		    	-- retry tags to the cache if IsDressableItem says its
-		    	-- not but transmog says it can be a source
-				local canBeChanged, noChangeReason, canBeSource, noSourceReason = C_Transmog.GetItemInfo(itemID)
-				isDressable = false
-				if canBeSource then
-					shouldRetry = true
-				end
-			end
-		else
+	local _, _, _, slotName = GetItemInfoInstant(itemID)
+	if slotName and slotName ~= "" then -- make sure it's a supported slot
+		slot = InventorySlots[slotName]
+		if not slot then
 			isDressable = false
+		elseif not IsDressableItem(itemLink) then
+			-- IsDressableItem can return false instead of true for
+			-- an item that is actually dressable (seems to happen
+			-- most often during item caching).  Adding some
+			-- retry tags to the cache if IsDressableItem says its
+			-- not but transmog says it can be a source
+			local canBeChanged, noChangeReason, canBeSource, noSourceReason = C_Transmog.GetItemInfo(itemID)
+			isDressable = false
+			if canBeSource then
+				shouldRetry = true
+			end
 		end
-
-		if not shouldRetry then
-			cachedIsDressable[itemLink] = { isDressable = isDressable, slot = slot }
-		end
+	else
+		isDressable = false
 	end
-    return isDressable, shouldRetry, slot
+
+	return isDressable, shouldRetry, slot
 end
 
-local cachedItemSources = {}
 local function GetItemSource(itemID, itemLink)
-	local itemSources = cachedItemSources[itemLink]
-	local shouldRetry = false
-	local isDressable = false
-	if itemSources == "NONE" then
-		itemSources = nil
-	elseif not itemSources then
-		isDressable, shouldRetry, slot = IsDressableItemCheck(itemID, itemLink)
-		if not shouldRetry then
-			if not isDressable then
-		    	cachedItemSources[itemLink] = "NONE"
+	local itemSources
+	local isDressable, shouldRetry, slot = IsDressableItemCheck(itemID, itemLink)
+	if not shouldRetry then
+		if isDressable then
+			-- Looks like I can use this now.  Keeping the old code around for a bit just in case.
+			-- Actually, still seeing problems with this...try it first but fallback to model
+			-- I've tried several times to remove this.  Seems to work at first.. but then...
+			local appearanceID, sourceID, arg1, arg2 = C_TransmogCollection.GetItemInfo(itemLink)
+			if sourceID then
+				itemSources = sourceID
 			else
-				-- Looks like I can use this now.  Keeping the old code around for a bit just in case.
-				-- Actually, still seeing problems with this...try it first but fallback to model
-				local appearanceID, sourceID = C_TransmogCollection.GetItemInfo(itemLink)
-				if sourceID then
-					itemSources = sourceID
-				else
-				    model:SetUnit('player')
-				    model:Undress()
-				    model:TryOn(itemLink, slot)
-				    itemSources = model:GetSlotTransmogSources(slot)
-				end
-
-			    if itemSources then
-					cachedItemSources[itemLink] = itemSources
-				else
-					cachedItemSources[itemLink] = "NONE"
-				end
+			    model:SetUnit('player')
+			    model:Undress()
+			    model:TryOn(itemLink, slot)
+			    itemSources = model:GetSlotTransmogSources(slot)
 			end
 		end
 	end
-    return itemSources, shouldRetry
+
+	return itemSources, shouldRetry
 end
 
 local function GetItemAppearance(itemID, itemLink)
@@ -234,8 +231,8 @@ local function GetItemAppearance(itemID, itemLink)
 	local sourceID, shouldRetry = GetItemSource(itemID, itemLink)
 
     if sourceID and sourceID ~= NO_TRANSMOG_SOURCE_ID then
-        categoryID, appearanceID, canEnchant, texture, isCollected, sourceItemLink = C_TransmogCollection.GetAppearanceSourceInfo(sourceID)
-        if sourceItemLink then
+        categoryID, appearanceID, canEnchant, texture, isCollected, sourceItemLink, _, _, appearanceSubclass = C_TransmogCollection.GetAppearanceSourceInfo(sourceID)
+		if sourceItemLink then
 			local _, _, quality = GetItemInfo(sourceItemLink)
 			-- Skip artifact weapons and common for now
 			if quality == Enum.ItemQuality.Common then
@@ -244,7 +241,7 @@ local function GetItemAppearance(itemID, itemLink)
 	 			sourceID = NO_TRANSMOG_SOURCE_ID
 			end
 		end
-    end
+	end
 
     return appearanceID, isCollected, sourceID, shouldRetry
 end
@@ -271,7 +268,7 @@ local function PlayerHasAppearance(appearanceID)
     return hasAppearance, matchedSource
 end
  
-local function PlayerCanCollectAppearance(appearanceID, itemID, itemLink)
+local function PlayerCanCollectAppearance(sourceID, appearanceID, itemID, itemLink)
 	local _, _, quality, _, reqLevel, itemClass, itemSubClass, _, equipSlot, _, _, itemClassID, itemSubClassID = GetItemInfo(itemID)
 	local playerLevel = UnitLevel("player")
 	local canCollect = false
@@ -300,23 +297,26 @@ local function PlayerCanCollectAppearance(appearanceID, itemID, itemLink)
 		classArmor = LE_ITEM_ARMOR_MAIL
 	end
 
-	if playerLevel >= reqLevel then
-	    local sources = C_TransmogCollection.GetAppearanceSources(appearanceID)
-	    if sources then
-	        for i, source in pairs(sources) do
-				isInfoReady, canCollect = C_TransmogCollection.PlayerCanCollectSource(source.sourceID)
-	            if isInfoReady then
-	            	if canCollect then
-		            	matchedSource = source
-		            end
-	                break
-	            else
-	            	shouldRetry = true
-	            end
-	        end
-		else
-		end
-	end
+	-- if playerLevel >= reqLevel then
+		isInfoReady, canCollect = C_TransmogCollection.PlayerCanCollectSource(sourceID)
+		matchedSource = source
+	    -- local sources = C_TransmogCollection.GetAppearanceSources(appearanceID)
+	    -- if sources then
+	    --     for i, source in pairs(sources) do
+		-- 		isInfoReady, canCollect = C_TransmogCollection.PlayerCanCollectSource(source.sourceID)
+	    --         if isInfoReady then
+	    --         	if canCollect then
+		--             	matchedSource = source
+		--             end
+	    --             break
+	    --         else
+	    --         	shouldRetry = true
+	    --         end
+	    --     end
+		-- else
+		-- end
+	-- end
+
 	if equipSlot ~= "INVTYPE_CLOAK"
 		and itemClassID == LE_ITEM_CLASS_ARMOR and 
 		(	itemSubClassID == LE_ITEM_ARMOR_CLOTH or 
@@ -330,76 +330,12 @@ local function PlayerCanCollectAppearance(appearanceID, itemID, itemLink)
     return canCollect, matchedSource, shouldRetry
 end
 
-local function GetItemInfoLocal(itemID, bag, slot)
-	local name = GetItemInfo(itemID)
-	if name then
-		if bag == "AuctionFrame" then
-			name = GetAuctionItemInfo("list", slot)
-		elseif bag == "MerchantFrame" then
-			if MerchantFrame.selectedTab == 1 then
-				name = GetMerchantItemInfo(slot)
-			else
-				name = GetBuybackItemInfo(slot)
-			end
-		end
-	end
-
-	return name
-end
-
-local function GetItemLinkLocal(bag, slot)
-	if bag == "AuctionFrame" then
-		local browseResults = C_AuctionHouse.GetBrowseResults()
-		local _, itemLink = GetItemInfo(browseResults[slot].itemKey.itemID);
-		return itemLink
-	elseif bag == "MerchantFrame" then
-		if MerchantFrame.selectedTab == 1 then
-			return GetMerchantItemLink(slot)
-		else
-			return GetBuybackItemLink(slot)
-		end
-	elseif bag == "BankFrame" then
-		return GetInventoryItemLink("player", slot)
-	elseif bag == "GuildBankFrame" then
-		return GetGuildBankItemLink(slot.tab, slot.index)
-	elseif bag == "EncounterJournal" then
-		-- local itemID, encounterID, name, icon, slotName, armorType, itemLink = EJ_GetLootInfoByIndex(slot)
-		return slot.link
-	elseif bag == "LootFrame" or bag == "GroupLootFrame" then
-		return slot.link
-	elseif bag == "OpenMailFrame" then
-		local name, itemID, itemTexture, count, quality, canUse = GetInboxItem(InboxFrame.openMailID, slot);
-		local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount,
-		itemEquipLoc, iconFileDataID, itemSellPrice, itemClassID, itemSubClassID, bindType, expacID, itemSetID, 
-		isCraftingReagent = GetItemInfo(itemID)
-		return itemLink
-	elseif bag == "SendMailFrame" then
-		local itemName, itemID, itemTexture, stackCount, quality = GetSendMailItem(slot);
-		local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount,
-		itemEquipLoc, iconFileDataID, itemSellPrice, itemClassID, itemSubClassID, bindType, expacID, itemSetID, 
-		isCraftingReagent = GetItemInfo(itemID)
-		return itemLink
-	elseif bag == "QuestButton" then
-		if slot.itemLink then
-			return slot.itemLink
-		else
-			local itemID = slot.itemID
-			local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount,
-			itemEquipLoc, iconFileDataID, itemSellPrice, itemClassID, itemSubClassID, bindType, expacID, itemSetID, 
-			isCraftingReagent = GetItemInfo(itemID)
-			return itemLink
-		end
-	else
-	    if bag then
-	      return GetContainerItemLink(bag, slot)
-	    end
-	end
-end
-
 local function GetItemKey(bag, slot, itemLink)
 	local itemKey
-	if bag == "AuctionFrame" or bag == "MerchantFrame" then
-		itemKey = itemLink
+	if bag == "AuctionFrame" then
+		itemKey = itemLink .. slot.index
+	elseif bag == "MerchantFrame" then
+		itemKey = itemLink .. slot
 	elseif bag == "GuildBankFrame" then
 		itemKey = itemLink .. slot.tab .. slot.index
 	elseif bag == "EncounterJournal" then
@@ -408,10 +344,12 @@ local function GetItemKey(bag, slot, itemLink)
 		itemKey = itemLink .. bag
 	elseif bag == "LootFrame" or bag == "GroupLootFrame" then
 		itemKey = itemLink
-	elseif bag == "OpenMailFrame" or bag == "SendMailFrame" then
+	elseif bag == "OpenMailFrame" or bag == "SendMailFrame" or bag == "InboxFrame" then
+		itemKey = itemLink .. slot
+	elseif bag == "BlackMarketScrollFrame" then
 		itemKey = itemLink .. slot
 	else
-		itemKey = itemLink .. bag .. slot
+		itemKey = itemLink .. tostring(bag) .. tostring(slot)
 	end
 
 	return itemKey
@@ -420,22 +358,37 @@ end
 local equipLocations = {}
 
 local function GetBindingStatus(bag, slot, itemID, itemLink)
-	local scanTip = mainTip
+	local scanTip = CaerdonWardrobeFrameTooltip
+	scanTip:ClearLines()
+	-- Weird bug with scanning tooltips - have to disable showing
+	-- transmog info during the scan
+	C_TransmogCollection.SetShowMissingSourceInItemTooltips(false)
+	SetCVar("missingTransmogSourceInItemTooltips", 0)
+	local originalAlwaysCompareItems = GetCVarBool("alwaysCompareItems")
+	SetCVar("alwaysCompareItems", 0)
+
 	local itemKey = GetItemKey(bag, slot, itemLink)
 
-	local binding = cachedBinding[itemKey]
+	local binding
 	local bindingText, needsItem, hasUse
 
     local isInEquipmentSet = false
-    local isBindOnPickup = false
+	local isBindOnPickup = false
+	local isBindOnUse = false
+	local isSoulbound = false
 	local isCompletionistItem = false
 	local matchesLootSpec = true
 	local unusableItem = false
+	local skillTooLow = false
+	local foundRedRequirements = false
 	local isDressable, shouldRetry
+	local isLocked = false
 	
 	local tooltipSpeciesID = 0
 
-    local isCollectionItem = IsCollectibleLink(itemLink)
+	local isCollectionItem = IsCollectibleLink(itemLink)
+	local isRecipe = IsRecipeLink(itemLink)
+	local isPetLink = IsPetLink(itemLink)
 
     local shouldCheckEquipmentSet = false
 
@@ -457,34 +410,31 @@ local function GetBindingStatus(bag, slot, itemID, itemLink)
 		playerLootSpecID = playerSpecID
 	end
 
-	if binding then
-		bindingText = binding.bindingText
-		needsItem = binding.needsItem
-		hasUse = binding.hasUse
-		isInEquipmentSet = binding.isInEquipmentSet
-		isBindOnPickup = binding.isBindOnPickup
-		isCompletionistItem = binding.isCompletionistItem
-		unusableItem = binding.unusableItem
-		matchesLootSpec = binding.matchesLootSpec
-	elseif not shouldRetry then
+	if not shouldRetry then
 		needsItem = true
-		scanTip:SetOwner(WorldFrame, "ANCHOR_NONE")
 		if bag == "AuctionFrame" then
-			local itemKey = C_AuctionHouse.MakeItemKey(itemID)
+			local itemKey = slot.itemKey
 			scanTip:SetItemKey(itemKey.itemID, itemKey.itemLevel, itemKey.itemSuffix)
+			tooltipSpeciesID = itemKey.battlePetSpeciesID
 		elseif bag == "MerchantFrame" then
 			if MerchantFrame.selectedTab == 1 then
-				scanTip:SetMerchantItem(slot)
+         		scanTip:SetMerchantItem(slot)
 			else
-				scanTip:SetBuybackItem(slot)
+         		scanTip:SetBuybackItem(slot)
 			end
+		elseif bag == "ItemLink" then
+			scanTip:SetHyperlink(itemLink)
 		elseif bag == BANK_CONTAINER then
-			scanTip:SetInventoryItem("player", BankButtonIDToInvSlotID(slot))
+			local hasItem, hasCooldown, repairCost, speciesID, level, breedQuality, maxHealth, power, speed, name = scanTip:SetInventoryItem("player", BankButtonIDToInvSlotID(slot))
+			tooltipSpeciesID = speciesID
 		   	if not isCollectionItem then
 				shouldCheckEquipmentSet = true
 			end
+		elseif bag == REAGENTBANK_CONTAINER then
+			local hasItem, hasCooldown, repairCost, speciesID, level, breedQuality, maxHealth, power, speed, name = scanTip:SetInventoryItem("player", ReagentBankButtonIDToInvSlotID(slot))
 		elseif bag == "GuildBankFrame" then
-			scanTip:SetGuildBankItem(slot.tab, slot.index)
+			local speciesID, level, breedQuality, maxHealth, power, speed, name = scanTip:SetGuildBankItem(slot.tab, slot.index)
+			tooltipSpeciesID = speciesID
 		elseif bag == "LootFrame" then
 			scanTip:SetLootItem(slot.index)
 		elseif bag == "GroupLootFrame" then
@@ -495,6 +445,11 @@ local function GetBindingStatus(bag, slot, itemID, itemLink)
 		elseif bag == "SendMailFrame" then
 			local hasCooldown, speciesID, level, breedQuality, maxHealth, power, speed, name = scanTip:SetSendMailItem(slot)
 			tooltipSpeciesID = speciesID
+		elseif bag == "InboxFrame" then
+			local hasCooldown, speciesID, level, breedQuality, maxHealth, power, speed, name = scanTip:SetInboxItem(slot);
+			tooltipSpeciesID = speciesID
+		elseif bag == "BlackMarketScrollFrame" then
+			scanTip:SetHyperlink(itemLink)
 		elseif bag == "EncounterJournal" then
 			local classID, specID = EJ_GetLootFilter();
 			if (specID == 0) then
@@ -530,16 +485,61 @@ local function GetBindingStatus(bag, slot, itemID, itemLink)
 				scanTip = scanTip.ItemTooltip.Tooltip
 			end
 		else
-			scanTip:SetBagItem(bag, slot)
-		   	if not isCollectionItem then
+			local hasCooldown, repairCost, speciesID, level, breedQuality, maxHealth, power, speed, name = scanTip:SetBagItem(bag, slot)
+			tooltipSpeciesID = speciesID
+			if not isCollectionItem then
 				shouldCheckEquipmentSet = true
 			end
 		end
 
+		local itemName, itemLinkInfo, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount,
+		itemEquipLoc, iconFileDataID, itemSellPrice, itemClassID, itemSubClassID, bindType, expacID, itemSetID, 
+		isCraftingReagent = GetItemInfo(itemLink)
+
+		isBindOnPickup = bindType == 1
+		if bindType == 1 then -- BoP
+			isBindOnPickup = true
+		elseif bindType == 2 then -- BoE
+			bindingText = CaerdonWardrobeBoE
+		elseif bindType == 3 then -- BoU
+			isBindOnUse = true
+			bindingText = CaerdonWardrobeBoE
+		elseif bindType == 4 then -- Quest
+			bindingText = ""
+		end
+
+		local isConduit = false
+		if IsConduit(itemLink) then
+			shouldCheckEquipmentSet = false
+
+			isConduit = true
+
+			local conduitTypes = { 
+				Enum.SoulbindConduitType.Potency,
+				Enum.SoulbindConduitType.Endurance,
+				Enum.SoulbindConduitType.Finesse
+			}
+
+			local conduitKnown = false
+			for conduitTypeIndex = 1, #conduitTypes do
+				local conduitCollection = C_Soulbinds.GetConduitCollection(conduitTypes[conduitTypeIndex])
+				for conduitCollectionIndex = 1, #conduitCollection do
+					local conduitData = conduitCollection[conduitCollectionIndex]
+					if conduitData.conduitItemID == itemID then
+						conduitKnown = true
+					end
+				end
+			end
+
+			if not conduitKnown then
+				-- TODO: May need to consider spec / class?  Not sure yet
+				needsItem = true
+			end
+		end
+		
 		if shouldCheckEquipmentSet then
-	 		local _, _, _, _, reqLevel, class, subclass, _, equipSlot = GetItemInfo(itemID)
 		   -- Use equipment set for binding text if it's assigned to one
-			if equipSlot ~= "" and C_EquipmentSet.CanUseEquipmentSets() then
+			if itemEquipLoc ~= "" and C_EquipmentSet.CanUseEquipmentSets() then
 
 				-- Flag to ensure flagging multiple set membership
 				local isBindingTextDone = false
@@ -598,7 +598,7 @@ local function GetBindingStatus(bag, slot, itemID, itemLink)
 		end
 
 		local canBeChanged, noChangeReason, canBeSource, noSourceReason = C_Transmog.GetItemInfo(itemID)
-		if not isCollectionItem and canBeSource then
+		if not isCollectionItem and not isConduit and canBeSource then
 			local appearanceID, isCollected, sourceID
 			appearanceID, isCollected, sourceID, shouldRetry = GetItemAppearance(itemID, itemLink)
 
@@ -611,20 +611,23 @@ local function GetBindingStatus(bag, slot, itemID, itemLink)
 						isCompletionistItem = true
 					end
 				end
+			else
+				needsItem = false
 			end
-		else
+		elseif not isCollectionItem and not isConduit then
 	    	needsItem = false
 	    end
 
 		local numLines = scanTip:NumLines()
-		local PET_KNOWN = strmatch(ITEM_PET_KNOWN, "[^%(]+")
-		local needsCollectionItem = true
-
 		if not isCollectionItem and not noSourceReason and numLines == 0 then
 			shouldRetry = true
 		end
 
 		if not shouldRetry then
+			local isPetKnown = false
+			local PET_KNOWN = strmatch(ITEM_PET_KNOWN, "[^%(]+")
+			local foundTradeskillMatch = false
+
 			for lineIndex = 1, numLines do
 				local scanName = scanTip:GetName()
 				local line = _G[scanName .. "TextLeft" .. lineIndex]
@@ -632,8 +635,12 @@ local function GetBindingStatus(bag, slot, itemID, itemLink)
 				if lineText then
 					-- TODO: Look at switching to GetItemSpell
 					if strmatch(lineText, USE_COLON) or strmatch(lineText, ITEM_SPELL_TRIGGER_ONEQUIP) or strmatch(lineText, string.format(ITEM_SET_BONUS, "")) then -- it's a recipe or has a "use" effect or belongs to a set
-						hasUse = true
-						-- break
+						if not isCollectionItem and not isConduit then
+							hasUse = true
+						end
+						if isRecipe and strmatch(lineText, "Use: Re%-learn .*") then
+							needsItem = false
+						end
 					end
 
 					if not bindingText then
@@ -643,95 +650,209 @@ local function GetBindingStatus(bag, slot, itemID, itemLink)
 					if lineText == RETRIEVING_ITEM_INFO then
 						shouldRetry = true
 						break
-					elseif lineText == ITEM_BIND_ON_PICKUP or lineText == ITEM_SOULBOUND then
+					elseif lineText == ITEM_SOULBOUND then
+						isSoulbound = true
 						isBindOnPickup = true
-					elseif lineText == TRANSMOGRIFY_TOOLTIP_ITEM_UNKNOWN_APPEARANCE_KNOWN then
-						if CaerdonWardrobeConfig.Icon.ShowLearnable.SameLookDifferentItem then
-							isCompletionistItem = true
-						else
-							needsItem = false
-						end
-						break
-					elseif lineText == TRANSMOGRIFY_TOOLTIP_APPEARANCE_UNKNOWN then
-						if CaerdonWardrobeConfig.Icon.ShowLearnable.SameLookDifferentItem then
-							isCompletionistItem = true
-						end
-					elseif lineText == ITEM_SPELL_KNOWN or strmatch(lineText, PET_KNOWN) then
-						needsCollectionItem = false
-					end
+					-- TODO: Don't think we need these anymore?
+					-- elseif lineText == TRANSMOGRIFY_TOOLTIP_ITEM_UNKNOWN_APPEARANCE_KNOWN then
+					-- 	if CaerdonWardrobeConfig.Icon.ShowLearnable.SameLookDifferentItem then
+					-- 		isCompletionistItem = true
+					-- 		print("Completion 1: " .. itemLink .. lineText)
+					-- 	else
+					-- 		needsItem = false
+					-- 	end
+					-- 	break
+					-- elseif lineText == TRANSMOGRIFY_TOOLTIP_APPEARANCE_UNKNOWN then
+					-- 	if CaerdonWardrobeConfig.Icon.ShowLearnable.SameLookDifferentItem then
+					-- 		isCompletionistItem = true
+					-- 		print("Completion 2: " .. itemLink .. lineText)
+					-- 	end
+					elseif lineText == ITEM_SPELL_KNOWN then
+						needsItem = false
+					elseif lineText == LOCKED then
+						isLocked = true
+					elseif lineText == TOOLTIP_SUPERCEDING_SPELL_NOT_KNOWN then
+						unusableItem = true
+						skillTooLow = true
+					elseif isPetLink and strmatch(lineText, PET_KNOWN) then
+						isPetKnown = true
+					end 
 
 					-- TODO: Should possibly only look for "Classes:" but could have other reasons for not being usable
 					local r, g, b = line:GetTextColor()
 					hex = string.format("%02x%02x%02x", r*255, g*255, b*255)
-					if hex == "fe1f1f" and (isBindOnPickup or IsRecipeLink(itemLink)) then
-						-- Assume BoE recipes can't be learned to avoid erroneous stars in AH / vendor
-						unusableItem = true
-						if not bag == "EncounterJournal" then
-							needsItem = false
-							isCompletionistItem = false
+					-- TODO: Provide option to show stars on BoE recipes that aren't for current toon
+					-- TODO: Surely there's a better way than checking hard-coded color values for red-like things
+						if isRecipe then
+							if hex == "fe1f1f" then
+								foundRedRequirements = true
+							end
+
+							-- TODO: Cooking and fishing are not represented in trade skill lines right now
+							-- Assuming all toons have cooking for now.
+
+							-- TODO: Some day - look into saving toon skill lines / ranks into a DB and showing
+							-- which toons could learn a recipe.
+
+							-- local prof1, prof2, archaeology, fishing, cooking, firstAid = GetProfessions()
+							local replaceSkill = "%w"
+							local skillCheck = string.gsub(ITEM_MIN_SKILL, "%%s", "%(.+%)")
+							skillCheck = string.gsub(skillCheck, "%(%%d%)", "%%%(%(%%d+%)%%%)")
+							if strmatch(lineText, skillCheck) then
+								local _, _, requiredSkill, requiredRank = string.find(lineText, skillCheck)
+								local skillLines = C_TradeSkillUI.GetAllProfessionTradeSkillLines()
+								for skillLineIndex = 1, #skillLines do
+									local skillLineID = skillLines[skillLineIndex]
+									local name, rank, maxRank, modifier, parentSkillLineID = C_TradeSkillUI.GetTradeSkillLineInfoByID(skillLineID)
+									if requiredSkill == name then
+										foundTradeskillMatch = true
+										if not rank or rank < tonumber(requiredRank) then
+											-- Toon either doesn't have profession or isn't high enough level.
+											unusableItem = true
+											if isBindOnPickup then
+												if not rank or rank == 0 then
+													needsItem = false
+												end
+											end
+
+											if rank and rank > 0 then -- has skill but isn't high enough
+												skillTooLow = true
+												needsItem = true -- still need this but need to rank up
+											else
+												needsItem = false
+											end
+										else
+											break
+										end
+									end
+								end
+							end		
+						-- elseif isBindOnPickup then
+						-- 	unusableItem = true
+						-- 	if not bag == "EncounterJournal" then
+						-- 		needsItem = false
+						-- 		isCompletionistItem = false
+						-- 	end
 						end
-					end
+					-- end
 				end
 			end
-		end
 
-		if not shouldRetry then
+			if foundRedRequirements then
+				unusableItem = true
+				skillTooLow = true
+			end
+
+			if bindingText then
+				if isSoulbound and bindingText == CaerdonWardrobeBoE then
+					bindingText = nil
+				end
+			elseif isCollectionItem or isLocked or isOpenable then
+				if not isBindOnPickup then
+					bindingText = CaerdonWardrobeBoE
+				end
+			end
+
 			if isCollectionItem and not unusableItem then
-				if numLines == 0 and IsPetLink(itemLink) then
-					local petID = GetItemID(itemLink)
-					if petID then
-						if petID ~= 82800 then -- generic pet cage
-							local numCollected = C_PetJournal.GetNumCollectedInfo(petID)
-							if numCollected == nil then
-								needsItem = false
-							elseif numCollected > 0 then				
-								needsItem = false
-							else
-								needsItem = true
+				if isPetLink then
+					if not tooltipSpeciesID then
+						-- Attempt to grab it from itemLink
+						-- TODO: This is almost a complete copy of the logic in IsPetLink - clean up
+						local _, _, _, linkType, linkID, _, _, _, _, _, battlePetID, battlePetDisplayID = strsplit(":|H", itemLink);
+						if ( linkType == "item") then
+							local _, _, _, creatureID, _, _, _, _, _, _, _, displayID, speciesID = C_PetJournal.GetPetInfoByItemID(tonumber(linkID));
+							if (creatureID and displayID) then
+								tooltipSpeciesID = tonumber(speciesID)
 							end
-						else
-							if tooltipSpeciesID > 0 then
-								-- Pet cages have some magic info that comes back from tooltip setup
-								local numCollected = C_PetJournal.GetNumCollectedInfo(tooltipSpeciesID)
-								if numCollected == nil then
-									needsItem = false
-								elseif numCollected > 0 then
-									needsItem = false
+						elseif ( linkType == "battlepet" ) then
+							if battlePetID and battlePetID ~= "" and battlePetID ~= "0" then
+								local speciesID, _, _, _, _, displayID, _, _, _, _, creatureID = C_PetJournal.GetPetInfoByPetID(battlePetID);
+								if ( speciesID == tonumber(linkID)) then
+									if (creatureID and displayID) then
+										tooltipSpeciesID = tonumber(speciesID)
+									end	
 								else
-									needsItem = true
+									speciesID = tonumber(linkID);
+									local _, _, _, creatureID, _, _, _, _, _, _, _, displayID = C_PetJournal.GetPetInfoBySpeciesID(speciesID);
+									displayID = (battlePetDisplayID and battlePetDisplayID ~= "0") and battlePetDisplayID or displayID;
+									if (creatureID and displayID) then
+										tooltipSpeciesID = tonumber(speciesID)
+									end	
 								end
 							else
-								needsItem = false
+								-- Mostly in place as a hack for bad battlepet links from addons
+								speciesID = tonumber(linkID);
+								local _, _, _, creatureID, _, _, _, _, _, _, _, displayID = C_PetJournal.GetPetInfoBySpeciesID(speciesID);
+								displayID = (battlePetDisplayID and battlePetDisplayID ~= "0") and battlePetDisplayID or displayID;
+								if (creatureID and displayID) then
+									tooltipSpeciesID = tonumber(speciesID)
+								end	
 							end
 						end
 					end
-				elseif needsCollectionItem then
-					needsItem = true
-				else
+
+					if tooltipSpeciesID and tooltipSpeciesID > 0 then
+						-- Pet cages have some magic info that comes back from tooltip setup
+						local numCollected = C_PetJournal.GetNumCollectedInfo(tooltipSpeciesID)
+						if numCollected == nil then
+							needsItem = false
+						elseif numCollected > 0 then
+							needsItem = false
+						else
+							needsItem = true
+						end
+					elseif isPetKnown then
+						needsItem = false
+					else
+						needsItem = true
+					end
+				end
+			elseif isCollectionItem then
+				if not isRecipe then
+					needsItem = false
 				end
 			end
-
-			-- cachedBinding[itemKey] = {bindingText = bindingText, needsItem = needsItem, hasUse = hasUse, isDressable = isDressable, isInEquipmentSet = isInEquipmentSet, isBindOnPickup = isBindOnPickup, isCompletionistItem = isCompletionistItem, unusableItem = unusableItem, matchesLootSpec = matchesLootSpec }
 		end
+
+		C_TransmogCollection.SetShowMissingSourceInItemTooltips(true)
+		SetCVar("missingTransmogSourceInItemTooltips", 1)
+		SetCVar("alwaysCompareItems", originalAlwaysCompareItems)
 	end
 
-	ShoppingTooltip1:Hide()
-	ShoppingTooltip2:Hide()
-	scanTip:Hide()
-
-	return bindingText, needsItem, hasUse, isDressable, isInEquipmentSet, isBindOnPickup, isCompletionistItem, shouldRetry, unusableItem, matchesLootSpec
+	return { 
+		bindingText = bindingText, 
+		needsItem = needsItem, 
+		hasUse = hasUse, 
+		isDressable = isDressable, 
+		isInEquipmentSet = isInEquipmentSet, 
+		isBindOnPickup = isBindOnPickup, 
+		isCompletionistItem = isCompletionistItem, 
+		shouldRetry = shouldRetry, 
+		unusableItem = unusableItem, 
+		matchesLootSpec = matchesLootSpec, 
+		isLocked = isLocked, 
+		skillTooLow = skillTooLow
+	}
 end
 
 local waitingOnItemData = {}
 
-local function IsGearSetStatus(status)
+local function IsGearSetStatus(status, item)
 	return status and status ~= CaerdonWardrobeBoA and status ~= CaerdonWardrobeBoE
 end
 
-local function SetIconPositionAndSize(icon, startingPoint, offset, size, iconOffset)
+-- TODO: Fix this to make more flexible and consistent - getting crazy and wrong I'm sure
+local function SetIconPositionAndSize(icon, startingPoint, offset, size, iconOffset, scaleAdjustment)
+	scaleAdjustment = scaleAdjustment or 1
+	sizeAdjustment = size - (size * scaleAdjustment)
+	offset = offset - (sizeAdjustment / 2)
+	iconOffset = iconOffset + (sizeAdjustment / 2)
+
 	icon:ClearAllPoints()
 
-	local offsetSum = offset - iconOffset
+	icon:SetSize(size - sizeAdjustment, size - sizeAdjustment)
+
+	local offsetSum = (offset - iconOffset) * scaleAdjustment
 	if startingPoint == "TOPRIGHT" then
 		icon:SetPoint("TOPRIGHT", offsetSum, offsetSum)
 	elseif startingPoint == "TOPLEFT" then
@@ -740,9 +861,12 @@ local function SetIconPositionAndSize(icon, startingPoint, offset, size, iconOff
 		icon:SetPoint("BOTTOMRIGHT", offsetSum, offsetSum * -1)
 	elseif startingPoint == "BOTTOMLEFT" then
 		icon:SetPoint("BOTTOMLEFT", offsetSum * -1, offsetSum * -1)
+	elseif startingPoint == "RIGHT" then
+		icon:SetPoint("RIGHT", iconOffset, 0)
+	elseif startingPoint == "LEFT" then
+		icon:SetPoint("LEFT", iconOffset, 0)
 	end
 
-	icon:SetSize(size, size)
 end
 
 local function AddRotation(group, order, degrees, duration, smoothing, startDelay, endDelay)
@@ -773,7 +897,10 @@ local function IsBankOrBags(bag)
 	   bag ~= "LootFrame" and
 	   bag ~= "GroupLootFrame" and
 	   bag ~= "OpenMailFrame" and
-	   bag ~= "SendMailFrame" then
+	   bag ~= "SendMailFrame" and 
+	   bag ~= "InboxFrame" and
+	   bag ~= "ItemLink" and
+	   bag ~= "BlackMarketScrollFrame" then
 		isBankOrBags = true
 	end
 
@@ -854,6 +981,29 @@ local function ShouldHideOtherIcon(bag)
 	return shouldHide
 end
 
+local function ShouldHideQuestIcon(bag)
+	local shouldHide = false
+
+	if bag == "AuctionFrame" then
+		shouldHide = true
+	end
+
+	return shouldHide
+end
+
+local function ShouldHideOldExpansionIcon(bag)
+	local shouldHide = false
+
+	if bag == "AuctionFrame" then
+		shouldHide = not CaerdonWardrobeConfig.Icon.ShowOldExpansion.Auction
+	elseif
+		bag == "MerchantFrame" then -- distracting to show in merchant frame - maybe buyback?
+		shouldHide = true
+	end
+
+	return shouldHide
+end
+
 local function ShouldHideSellableIcon(bag)
 	local shouldHide = false
 
@@ -890,8 +1040,9 @@ local function SetItemButtonMogStatusFilter(originalButton, isFiltered)
 	end
 end
 
-local function SetItemButtonMogStatus(originalButton, status, bindingStatus, options, bag, slot, itemID)
+local function SetItemButtonMogStatus(originalButton, item, bag, slot, options, status, bindingStatus)
 	local button = originalButton.caerdonButton
+
 	if not button then
 		button = CreateFrame("Frame", nil, originalButton)
 		button:SetAllPoints()
@@ -977,6 +1128,16 @@ local function SetItemButtonMogStatus(originalButton, status, bindingStatus, opt
 	if status == "waiting" then
 		showAnim = true
 
+		if mogAnim and not button.isWaitingIcon then
+			if mogAnim:IsPlaying() then
+				mogAnim:Finish()
+			end
+
+			mogAnim = nil
+			button.mogAnim = nil
+			button.isWaitingIcon = false
+		end
+
 		if not mogAnim or not button.isWaitingIcon then
 			mogAnim = mogStatus:CreateAnimationGroup()
 
@@ -987,7 +1148,7 @@ local function SetItemButtonMogStatus(originalButton, status, bindingStatus, opt
 			button.isWaitingIcon = true
 		end
 	else
-		if status == "own" or status == "ownPlus" or status == "otherSpec" or status == "otherSpecPlus" or status == "refundable" or status == "openable" then
+		if status == "own" or status == "ownPlus" or status == "otherSpec" or status == "otherSpecPlus" or status == "refundable" or status == "openable" or status == "locked" then
 			showAnim = true
 
 			if mogAnim and button.isWaitingIcon then
@@ -1033,13 +1194,27 @@ local function SetItemButtonMogStatus(originalButton, status, bindingStatus, opt
 
 	local alpha = 1
 	mogStatus:SetVertexColor(1, 1, 1)
-	if status == "refundable" and not ShouldHideSellableIcon(bag) then
+	-- TODO: Add options to hide these statuses
+	if status == "refundable" then
 		SetIconPositionAndSize(mogStatus, iconPosition, 3, 15, iconOffset)
 		alpha = 0.9
 		mogStatus:SetTexture("Interface\\COMMON\\mini-hourglass")
-	elseif status == "openable" and not ShouldHideSellableIcon(bag) then -- TODO: Add separate option for showing
-			SetIconPositionAndSize(mogStatus, iconPosition, 15, iconSize, iconOffset)
-			mogStatus:SetTexture("Interface\\Store\\category-icon-free")
+	elseif status == "openable" then
+		SetIconPositionAndSize(mogStatus, iconPosition, 15, iconSize, iconOffset)
+		mogStatus:SetTexture("Interface\\Store\\category-icon-free")
+	elseif status == "lowSkill" then
+		mogStatus:SetTexture("Interface\\WorldMap\\Gear_64Grey")
+		SetIconPositionAndSize(mogStatus, iconPosition, 15, 30, iconOffset, 0.6)
+		-- mogStatus:SetTexture("Interface\\QUESTFRAME\\SkillUp-BG")
+		-- mogStatus:SetTexture("Interface\\DialogFrame\\UI-Dialog-Icon-AlertNew")
+		-- mogStatus:SetTexture("Interface\\Buttons\\JumpUpArrow")
+	elseif status == "locked" then
+		SetIconPositionAndSize(mogStatus, iconPosition, 15, iconSize, iconOffset)
+		mogStatus:SetTexture("Interface\\Store\\category-icon-key")
+	elseif status == "oldexpansion" and not ShouldHideOldExpansionIcon(bag) then
+		SetIconPositionAndSize(mogStatus, iconPosition, 10, 30, iconOffset)
+		alpha = 0.9
+		mogStatus:SetTexture("Interface\\Store\\category-icon-wow")
 	elseif status == "own" or status == "ownPlus" then
 		if not ShouldHideOwnIcon(bag) then
 			SetIconPositionAndSize(mogStatus, iconPosition, 15, iconSize, iconOffset)
@@ -1070,12 +1245,15 @@ local function SetItemButtonMogStatus(originalButton, status, bindingStatus, opt
 		else
 			mogStatus:SetTexture("")
 		end
+	elseif status == "quest" and not ShouldHideQuestIcon(bag) then
+		SetIconPositionAndSize(mogStatus, iconPosition, 2, 15, iconOffset)
+		mogStatus:SetTexture("Interface\\MINIMAP\\MapQuestHub_Icon32")
 	elseif status == "collected" then
-		if not IsGearSetStatus(bindingStatus) and showSellables and isSellable and not ShouldHideSellableIcon(bag) then -- it's known and can be sold
+		if not IsGearSetStatus(bindingStatus, item) and showSellables and isSellable and not ShouldHideSellableIcon(bag) then -- it's known and can be sold
 			SetIconPositionAndSize(mogStatus, iconPosition, 10, 30, iconOffset)
 			alpha = 0.9
 			mogStatus:SetTexture("Interface\\Store\\category-icon-bag")
-		elseif IsGearSetStatus(bindingStatus) and CaerdonWardrobeConfig.Binding.ShowGearSetsAsIcon then
+		elseif IsGearSetStatus(bindingStatus, item) and CaerdonWardrobeConfig.Binding.ShowGearSetsAsIcon then
 			SetIconPositionAndSize(mogStatus, iconPosition, 10, 30, iconOffset)
 			mogStatus:SetTexture("Interface\\Store\\category-icon-clothes")
 		else
@@ -1085,7 +1263,7 @@ local function SetItemButtonMogStatus(originalButton, status, bindingStatus, opt
 		alpha = 0.5
 		SetIconPositionAndSize(mogStatus, iconPosition, 10, 30, iconOffset)
 		mogStatus:SetTexture("Interface\\Common\\StreamCircle")
-	elseif IsGearSetStatus(bindingStatus) and CaerdonWardrobeConfig.Binding.ShowGearSetsAsIcon then
+	elseif IsGearSetStatus(bindingStatus, item) and CaerdonWardrobeConfig.Binding.ShowGearSetsAsIcon then
 		SetIconPositionAndSize(mogStatus, iconPosition, 10, 30, iconOffset)
 		mogStatus:SetTexture("Interface\\Store\\category-icon-clothes")
 	end
@@ -1110,7 +1288,7 @@ local function SetItemButtonMogStatus(originalButton, status, bindingStatus, opt
 	end
 end
 
-local function SetItemButtonBindType(button, mogStatus, bindingStatus, options, bag, itemID)
+local function SetItemButtonBindType(button, mogStatus, bindingStatus, options, bag)
 	local bindsOnText = button.bindsOnText
 
 	if not bindingStatus and not bindsOnText then return end
@@ -1191,12 +1369,10 @@ local function SetItemButtonBindType(button, mogStatus, bindingStatus, options, 
 	bindsOnText:SetText(bindingText)
 end
 
-local itemQueue = {}
-local function QueueProcessItem(itemLink, itemID, bag, slot, button, options, itemProcessed)
-	local itemKey = GetItemKey(bag, slot, itemLink)
-	itemQueue[itemKey] = { itemID = itemID, bag = bag, slot = slot, button = button, options = options, itemProcessed = itemProcessed }
-	SetItemButtonMogStatus(button, "waiting", nil, options, bag, slot, itemID)
-	isItemUpdateRequested = true
+local function QueueProcessItem(itemLink, bag, slot, button, options)
+	C_Timer.After(0.1, function()
+		CaerdonWardrobe:UpdateButtonLink(itemLink, bag, slot, button, options)
+	end)
 end
 
 local function ItemIsSellable(itemID, itemLink)
@@ -1219,7 +1395,7 @@ local function GetBankContainer(button)
 	return containerID
 end
 
-local function ProcessItem(itemID, bag, slot, button, options, itemProcessed)
+local function ProcessItem(item, bag, slot, button, options)
 	local bindingText
 	local mogStatus = nil
 
@@ -1231,89 +1407,126 @@ local function ProcessItem(itemID, bag, slot, button, options, itemProcessed)
 	local showBindStatus = options.showBindStatus
 	local showSellables = options.showSellables
 
-	local canBeChanged, noChangeReason, canBeSource, noSourceReason = C_Transmog.GetItemInfo(itemID)
-
-	local itemLink = GetItemLinkLocal(bag, slot)
-	if bag == "EncounterJournal" and not itemLink then
+	local itemLink = item:GetItemLink()
+	if not itemLink then
+		-- Requiring an itemLink for now unless I find a reason not to
 		return
 	end
 
-	local bindingStatus, needsItem, hasUse, isDressable, isInEquipmentSet, isBindOnPickup, isCompletionistItem, shouldRetry, unusableItem
+	local itemID = item:GetItemID() or GetItemID(itemLink)
+	if not itemID then
+		return
+	end
+
+	local canBeChanged, noChangeReason, canBeSource, noSourceReason = C_Transmog.GetItemInfo(itemLink)
+
 	local appearanceID, isCollected, sourceID
 
-	bindingStatus, needsItem, hasUse, isDressable, isInEquipmentSet, isBindOnPickup, isCompletionistItem, shouldRetry, unusableItem, matchesLootSpec = GetBindingStatus(bag, slot, itemID, itemLink)
+	local bindingResult = GetBindingStatus(bag, slot, itemID, itemLink)
+	local shouldRetry = bindingResult.shouldRetry
 	if shouldRetry then
-		QueueProcessItem(itemLink, itemID, bag, slot, button, options, itemProcessed)
+		QueueProcessItem(itemLink, bag, slot, button, options)
 		return
 	end
 
-   	if IsCollectibleLink(itemLink) then
+	local itemName, itemLinkInfo, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount,
+	itemEquipLoc, iconFileDataID, itemSellPrice, itemClassID, itemSubClassID, bindType, expacID, itemSetID, 
+	isCraftingReagent = GetItemInfo(itemLink)
+
+	local playerLevel = UnitLevel("player")
+
+	if IsCollectibleLink(itemLink) or IsConduit(itemLink) then
    		shouldRetry = false
-   	else
+	else
+		local expansionID = expacID
+		if expansionID and expansionID >= 0 and expansionID < GetExpansionLevel() then 
+			local shouldShowExpansion = false
+
+			if expansionID > 0 or CaerdonWardrobeConfig.Icon.ShowOldExpansion.Unknown then
+				if isCraftingReagent and CaerdonWardrobeConfig.Icon.ShowOldExpansion.Reagents then
+					shouldShowExpansion = true
+				elseif bindingResult.hasUse and CaerdonWardrobeConfig.Icon.ShowOldExpansion.Usable then
+					shouldShowExpansion = true
+				elseif not isCraftingReagent and not bindingResult.hasUse and CaerdonWardrobeConfig.Icon.ShowOldExpansion.Other then
+					shouldShowExpansion = true
+				end
+			end
+
+			if shouldShowExpansion then
+				mogStatus = "oldexpansion"
+			end
+		end
+		
 		appearanceID, isCollected, sourceID, shouldRetry = GetItemAppearance(itemID, itemLink)
 		if shouldRetry then
-			QueueProcessItem(itemLink, itemID, bag, slot, button, options, itemProcessed)
+			QueueProcessItem(itemLink, bag, slot, button, options)
 			return
 		end
+	end
+
+	local isQuestItem = itemClassID == LE_ITEM_CLASS_QUESTITEM
+	if isQuestItem and CaerdonWardrobeConfig.Icon.ShowQuestItems then
+		mogStatus = "quest"
 	end
 
 	if appearanceID then
-		local canCollect, matchedSource, shouldRetry = PlayerCanCollectAppearance(appearanceID, itemID, itemLink)
+		local canCollect, matchedSource, shouldRetry = PlayerCanCollectAppearance(sourceID, appearanceID, itemID, itemLink)
 		if shouldRetry then
-			QueueProcessItem(itemLink, itemID, bag, slot, button, options, itemProcessed)
+			QueueProcessItem(itemLink, bag, slot, button, options)
 			return
 		end
 
-		if(needsItem and not isCollected and not PlayerHasAppearance(appearanceID)) then
-			if canCollect and not unusableItem then
-				mogStatus = "own"
+		if(bindingResult.needsItem and not isCollected and not PlayerHasAppearance(appearanceID)) then
+			if canCollect and not bindingResult.unusableItem then
+				if itemMinLevel and playerLevel < itemMinLevel then
+					mogStatus = "lowSkill"
+				else
+					mogStatus = "own"
+				end
 			else
-				if bindingStatus then
+				if bindingResult.bindingText then
 					mogStatus = "other"
 				elseif (bag == "EncounterJournal" or bag == "QuestButton") then
 					mogStatus = "other"
-				elseif (bag == "LootFrame" or bag == "GroupLootFrame") and not isBindOnPickup then
+				elseif (bag == "LootFrame" or bag == "GroupLootFrame") and not bindingResult.isBindOnPickup then
 					mogStatus = "other"
-				elseif unusableItem then
+				elseif bindingResult.unusableItem then
 					mogStatus = "collected"
 				end
 			end
 
-			if not matchesLootSpec and bag == "EncounterJournal" then
+			if not bindingResult.matchesLootSpec and bag == "EncounterJournal" then
 				mogStatus = "otherSpec"
 			end
 		else
 
-			if isCompletionistItem then
-				-- You have this, but you want them all.  Why?  Because.
-
-				-- local _, _, _, _, reqLevel, class, subclass, _, equipSlot = GetItemInfo(itemID)
-				-- local playerLevel = UnitLevel("player")
-
+			if bindingResult.isCompletionistItem then
 				if canCollect then
 					mogStatus = "ownPlus"
+				elseif bindingResult.isBindOnPickup then
+					mogStatus = "otherSpecPlus"
 				else
 					mogStatus = "otherPlus"
 				end
 
-				if not matchesLootSpec and bag == "EncounterJournal" then
+				if not bindingResult.matchesLootSpec and bag == "EncounterJournal" then
 					mogStatus = "otherSpecPlus"
 				end
 
-				if unusableItem then
+				if bindingResult.unusableItem then
 					mogStatus = "otherPlus"
 				end
 
 			-- If an item isn't flagged as a source or has a usable effect,
 			-- then don't mark it as sellable right now to avoid accidents.
 			-- May need to expand this to account for other items, too, for now.
-			elseif canBeSource and not isInEquipmentSet then
-				if isDressable and not shouldRetry then -- don't flag items for sale that have use effects for now
+			elseif canBeSource and not bindingResult.isInEquipmentSet then
+				if bindingResult.isDressable and not shouldRetry then -- don't flag items for sale that have use effects for now
 					if IsBankOrBags(bag) then
 					 	local money, itemCount, refundSec, currencyCount, hasEnchants = GetContainerItemPurchaseInfo(bag, slot, isEquipped);
-						if hasUse and refundSec then
+						if bindingResult.hasUse and refundSec then
 							mogStatus = "refundable"
-						elseif not hasUse then
+						elseif not bindingResult.hasUse then
 							mogStatus = "collected"
 						end
 					else 
@@ -1329,23 +1542,53 @@ local function ProcessItem(itemID, bag, slot, button, options, itemProcessed)
 			-- end
 
 		end
-	elseif needsItem then
-		if ((canBeSource and isDressable) or IsMountLink(itemLink)) and not shouldRetry then
-			local _, _, _, _, reqLevel, class, subclass, _, equipSlot = GetItemInfo(itemID)
-			local playerLevel = UnitLevel("player")
-
-			if not reqLevel or playerLevel >= reqLevel then
+	elseif bindingResult.needsItem then
+		if ((canBeSource and bindingResult.isDressable) or IsMountLink(itemLink)) and not shouldRetry then
+			if not itemMinLevel or playerLevel >= itemMinLevel then
 				mogStatus = "own"
 			else
 				mogStatus = "other"
 			end
-		elseif IsPetLink(itemLink) or IsToyLink(itemLink) or IsRecipeLink(itemLink) then
+		elseif IsPetLink(itemLink) or IsToyLink(itemLink) then
+			if bindingResult.unusableItem then
+				mogStatus = "other"
+			else
+				mogStatus = "own"
+			end
+		elseif IsRecipeLink(itemLink) then
+			if bindingResult.unusableItem then
+				if bindingResult.skillTooLow then
+					mogStatus = "lowSkill"
+				end
+				-- Don't show these for now
+				-- mogStatus = "other"
+			else
+				mogStatus = "own"
+			end
+
+			-- Let's just ignore the Librams for now until I decide what to do about them
+			if itemID == 11732 or 
+			   itemID == 11733 or
+			   itemID == 11734 or 
+			   itemID == 11736 or 
+			   itemID == 11737 or
+			   itemID == 18332 or
+			   itemID == 18333 or
+			   itemID == 18334 or
+			   itemID == 21288 then
+				if CaerdonWardrobeConfig.Icon.ShowOldExpansion.Usable then
+					mogStatus = "oldexpansion"
+				else
+					mogStatus = nil
+				end
+			end
+		elseif IsConduit(itemLink) then
 			mogStatus = "own"
 		end
 	else
 		if canBeSource then
 	        local hasTransmog = C_TransmogCollection.PlayerHasTransmog(itemID)
-	        if hasTransmog and not hasUse and isDressable then
+	        if hasTransmog and not bindingResult.hasUse and bindingResult.isDressable then
 	        	-- Tabards don't have an appearance ID and will end up here.
 	        	mogStatus = "collected"
 	        end
@@ -1361,7 +1604,11 @@ local function ProcessItem(itemID, bag, slot, button, options, itemProcessed)
 				if duration > 0 and not isEnabled then
 					mogStatus = "refundable" -- Can't open yet... show timer
 				else
-					mogStatus = "openable"
+					if bindingResult.isLocked then
+						mogStatus = "locked"
+					else
+						mogStatus = "openable"
+					end
 				end
 			end
 
@@ -1380,8 +1627,7 @@ local function ProcessItem(itemID, bag, slot, button, options, itemProcessed)
 	end
 
 	if mogStatus == "collected" and 
-		ItemIsSellable(itemID, itemLink) and 
-		not isInEquipmentSet then
+		ItemIsSellable(itemID, itemLink) and not bindingResult.isInEquipmentSet then
        	-- Anything that reports as the player having should be safe to sell
        	-- unless it's in an equipment set or needs to be excluded for some
        	-- other reason
@@ -1389,49 +1635,22 @@ local function ProcessItem(itemID, bag, slot, button, options, itemProcessed)
 	end
 
 	if button then
-		SetItemButtonMogStatus(button, mogStatus, bindingStatus, options, bag, slot, itemID)
-		SetItemButtonBindType(button, mogStatus, bindingStatus, options, bag, itemID)
-	end
-
-	if itemProcessed then
-		itemProcessed(mogStatus, bindingStatus)
+		SetItemButtonMogStatus(button, item, bag, slot, options, mogStatus, bindingResult.bindingText)
+		SetItemButtonBindType(button, mogStatus, bindingResult.bindingText, options, bag)
 	end
 end
 
-local function ProcessOrWaitItem(itemID, bag, slot, button, options, itemProcessed)
-	if itemID and GetItemInfoInstant(itemID) then
-		local waitItem = waitingOnItemData[tostring(itemID)]
-		if not waitItem then
-			waitItem = {}
-			waitingOnItemData[tostring(itemID)] = waitItem
-		end
-
-		local waitBag = waitItem[tostring(bag)]
-		if not waitBag then
-			waitBag = {}
-			waitItem[tostring(bag)] = waitBag
-		end
-
-		-- Turning off item name check for now as it seems unnecessary - revisit if problems
-		-- local itemName = GetItemInfoLocal(itemID, bag, slot)
-		local itemLink = GetItemLinkLocal(bag, slot)
-		if itemLink == nil then
-		-- if itemName == nil or itemLink == nil then
-			SetItemButtonMogStatus(button, "waiting", nil, options, bag, slot, itemID)
-			waitBag[tostring(slot)] = { itemID = itemID, bag = bag, slot = slot, button = button, options = options, itemProcessed = itemProcessed}
-		else
-			waitingOnItemData[tostring(itemID)][tostring(bag)][tostring(slot)] = nil
-			ProcessItem(itemID, bag, slot, button, options, itemProcessed)
-		end
-	else
-		SetItemButtonMogStatus(button, nil)
-		SetItemButtonBindType(button, nil)
-	end
+local function ProcessOrWaitItemLink(itemLink, bag, slot, button, options)
+	CaerdonWardrobe:UpdateButtonLink(itemLink, bag, slot, button, options)
 end
 
 local registeredAddons = {}
 local registeredBagAddons = {}
 local bagAddonCount = 0
+
+function CaerdonWardrobe:GetItemID(itemLink)
+	return GetItemID(itemLink)
+end
 
 function CaerdonWardrobe:RegisterAddon(name, addonOptions)
 	local options = {
@@ -1466,28 +1685,33 @@ function CaerdonWardrobe:RegisterAddon(name, addonOptions)
 	end
 end
 
-function CaerdonWardrobe:ClearButton(button)
-	SetItemButtonMogStatus(button, nil)
+function CaerdonWardrobe:ClearButton(button, item, bag, slot, options)
+	SetItemButtonMogStatus(button, item, bag, slot, options, nil)
 	SetItemButtonBindType(button, nil)
 end
 
-function CaerdonWardrobe:UpdateButton(itemID, bag, slot, button, options, itemProcessed)
-	ProcessOrWaitItem(itemID, bag, slot, button, options, itemProcessed)
-end
+function CaerdonWardrobe:UpdateButtonLink(itemLink, bag, slot, button, options)
+	if not itemLink then
+		CaerdonWardrobe:ClearButton(button)
+		return
+	end
 
-function CaerdonWardrobe:ResetButton(button)
-	-- Deprecating to merge my other bag extensions
-	-- Moved to CaerdonWardrobe:ClearButton
-end
+	local item = Item:CreateFromItemLink(itemLink)
+	SetItemButtonMogStatus(button, item, bag, slot, options, "waiting", nil)
 
-function CaerdonWardrobe:ProcessItem(itemID, bag, slot, button, options, itemProcessed)
-	-- Deprecating to merge my other bag extensions
-	-- Moved to CaerdonWardrobe:UpdateButton
-end
-
-function CaerdonWardrobe:RegisterBagAddon(options)
-	-- Deprecating to merge my other bag extensions
-	-- Moved to CaerdonWardrobe:RegisterAddon
+	-- TODO: May have to look into cancelable continue to avoid timing issues
+	-- Need to figure out how to key this correctly (could have multiple of item in bags, for instance)
+	-- but in cases of rapid data update (AH scroll), we don't want to update an old button
+	-- Look into ContinuableContainer
+	if item:IsItemEmpty() then -- not sure what this represents?  Seems to happen for caged pet - assuming item is ready.
+		SetItemButtonMogStatus(button, item, bag, slot, options, nil)
+		ProcessItem(item, bag, slot, button, options)
+	else
+		item:ContinueOnItemLoad(function ()
+			SetItemButtonMogStatus(button, item, bag, slot, options, nil)
+			ProcessItem(item, bag, slot, button, options)
+		end)
+	end
 end
 
 local function OnContainerUpdate(self, asyncUpdate)
@@ -1497,29 +1721,8 @@ local function OnContainerUpdate(self, asyncUpdate)
 		local button = _G[self:GetName() .. "Item" .. buttonIndex]
 		local slot = button:GetID()
 
-		local itemID = GetContainerItemID(bagID, slot)
-		local texture, itemCount, locked = GetContainerItemInfo(bagID, slot)
-
-		ProcessOrWaitItem(itemID, bagID, slot, button, { showMogIcon = true, showBindStatus = true, showSellables = true })
-	end
-end
-
-local function OnItemUpdate_Coroutine()
-	local processQueue = {}
-	local itemCount = 0
-
-	for itemKey, itemInfo in pairs(itemQueue) do
-		processQueue[itemKey] = itemInfo
-		itemQueue[itemKey] = nil
-	end
-
-	for itemKey, itemInfo in pairs(processQueue) do
-		itemCount = itemCount + 1
-
-		ProcessOrWaitItem(itemInfo.itemID, itemInfo.bag, itemInfo.slot, itemInfo.button, itemInfo.options, itemInfo.itemProcessed)
-		if itemCount % 8 == 0 then
-			coroutine.yield()
-		end
+		local itemLink = GetContainerItemLink(bagID, slot)
+		CaerdonWardrobe:UpdateButtonLink(itemLink, bagID, slot, button, { showMogIcon = true, showBindStatus = true, showSellables = true })
 	end
 end
 
@@ -1559,21 +1762,13 @@ local function ScheduleContainerUpdate(frame)
 	AddBagUpdateRequest(bagID)
 end
 
--- hooksecurefunc("ContainerFrame_Update", ScheduleContainerUpdate)
-
 local function OnBankItemUpdate(button)
-	-- local containerID = GetBankContainer(button)
-	-- local buttonID = button:GetID()
-
-	-- local bag = "BankFrame"
-	-- local slot = button:GetInventorySlot();
 	local bag = GetBankContainer(button)
 	local slot = button:GetID()
 
-	-- local itemID = GetContainerItemID(containerID, buttonID)
 	if bag and slot then
-		local itemID = GetContainerItemID(bag, slot)
-		ProcessOrWaitItem(itemID, bag, slot, button, { showMogIcon=true, showBindStatus=true, showSellables=true })
+		local itemLink = GetContainerItemLink(bag, slot)
+		CaerdonWardrobe:UpdateButtonLink(itemLink, bag, slot, button, { showMogIcon=true, showBindStatus=true, showSellables=true })
 	end
 end
 
@@ -1612,13 +1807,7 @@ local function OnGuildBankFrameUpdate_Coroutine()
 			}
 
 			local itemLink = GetGuildBankItemLink(tab, i)
-			if itemLink then
-				local itemID = GetItemID(itemLink)
-				ProcessOrWaitItem(itemID, bag, slot, button, options)
-			else
-				-- nil results in button icon / text reset
-				ProcessOrWaitItem(nil, bag, slot, button, options)
-			end
+			CaerdonWardrobe:UpdateButtonLink(itemLink, bag, slot, button, options)
 		end
 	end
 end
@@ -1627,9 +1816,28 @@ local function OnGuildBankFrameUpdate()
 	isGuildBankFrameUpdateRequested = true
 end
 
+local auctionTimer
+local auctionContinuableContainer = ContinuableContainer:Create();
+
 local function OnAuctionBrowseUpdate()
 	-- Event pump since first load won't have UI ready
-	C_Timer.After(0, function() 
+	if not AuctionHouseFrame:IsVisible() then
+		return
+	end
+
+	if auctionTimer then
+		auctionTimer:Cancel()
+	end
+
+	-- TODO: Battle Pet scans are not clean, yet.
+	auctionContinuableContainer:Cancel()
+
+	local buttons = HybridScrollFrame_GetButtons(AuctionHouseFrame.BrowseResultsFrame.ItemList.ScrollFrame);
+	for i, button in ipairs(buttons) do
+		CaerdonWardrobe:ClearButton(button)
+	end
+
+	auctionTimer = C_Timer.NewTimer(0.1, function() 
 		local browseResults = C_AuctionHouse.GetBrowseResults()
 		local offset = AuctionHouseFrame.BrowseResultsFrame.ItemList:GetScrollOffset();
 
@@ -1638,27 +1846,71 @@ local function OnAuctionBrowseUpdate()
 			local bag = "AuctionFrame"
 			local slot = i + offset
 
-			local item = browseResults[slot]
 			local _, itemLink
-			if (item) then
-				_, itemLink = GetItemInfo(browseResults[slot].itemKey.itemID);
+
+			local browseResult = browseResults[slot]
+			if browseResult then
+				local item = Item:CreateFromItemID(browseResult.itemKey.itemID)
+				-- TODO: Do we need to check if slot has changed for buttons?  Could do something here...
+				-- item:ContinueOnItemLoad(function ()
+				-- 	print(item:GetItemLink())
+				-- end)
+				if not item:IsItemEmpty() then
+					auctionContinuableContainer:AddContinuable(item)
+				end
+			end
+		end
+
+		auctionContinuableContainer:ContinueOnLoad(function()
+			local checkOffset = AuctionHouseFrame.BrowseResultsFrame.ItemList:GetScrollOffset();
+			-- TODO: Not sure if this is actually doing anything - hasn't been triggered, yet.
+			if checkOffset ~= offset then 
+				return
 			end
 
-			if(itemLink) then
-				local itemID = GetItemID(itemLink)
-				if itemID and button then
-					ProcessOrWaitItem(itemID, bag, slot, button, 
+			for i, button in ipairs(buttons) do
+				local bag = "AuctionFrame"
+				local slot = i + offset
+	
+				local _, itemLink
+	
+				local browseResult = browseResults[slot]
+				if browseResult then
+					local item = Item:CreateFromItemID(browseResult.itemKey.itemID)
+					local itemKeyInfo = C_AuctionHouse.GetItemKeyInfo(browseResult.itemKey)
+	
+					if itemKeyInfo and itemKeyInfo.battlePetLink then
+						itemLink = itemKeyInfo.battlePetLink
+					else
+						itemLink = item:GetItemLink()
+					end
+	
+					-- From AuctionHouseTableBuilder
+					local PRICE_DISPLAY_WIDTH = 120;
+					local PRICE_DISPLAY_WITH_CHECKMARK_WIDTH = 140;
+					local PRICE_DISPLAY_PADDING = 0;
+					local BUYOUT_DISPLAY_PADDING = 0;
+					local STANDARD_PADDING = 10;
+
+					local iconSize = 30
+					-- From AuctionHouseTableBuilder.GetBrowseListLayout
+					local iconOffset = 
+						PRICE_DISPLAY_PADDING + 146 - (iconSize / 2)
+					if itemLink and button then
+						CaerdonWardrobe:UpdateButtonLink(itemLink, bag, { index = slot, itemKey = browseResult.itemKey }, button,  
 						{
-							iconOffset = 10,
-							iconSize = 30,				
+							overridePosition = "LEFT",
+							iconOffset = iconOffset,
+							iconSize = iconSize,				
 							showMogIcon=true, 
 							showBindStatus=false, 
 							showSellables=false
 						})
+					end
 				end
 			end
-		end
-	end)
+		end)
+	end, 1)
 end
 
 local function OnAuctionBrowseClick(self, buttonName, isDown)
@@ -1676,8 +1928,11 @@ local function OnMerchantUpdate()
 		local bag = "MerchantFrame"
 		local slot = index
 
-		local itemID = GetMerchantItemID(index)
-		ProcessOrWaitItem(itemID, bag, slot, button, { showMogIcon=true, showBindStatus=true, showSellables=false})
+		local itemLink = GetMerchantItemLink(index)
+		CaerdonWardrobe:UpdateButtonLink(itemLink, bag, slot, button, { 
+			showMogIcon=true, showBindStatus=true, showSellables=false, 
+			otherIconSize = 20, otherIconOffset = 10,	
+		})
 	end
 end
 
@@ -1691,8 +1946,8 @@ local function OnBuybackUpdate()
 			local bag = "MerchantFrame"
 			local slot = index
 
-			local itemID = C_MerchantFrame.GetBuybackItemID(index)
-			ProcessOrWaitItem(itemID, bag, slot, button, { showMogIcon=true, showBindStatus=true, showSellables=false})
+			local itemLink = GetBuybackItemLink(index)
+			CaerdonWardrobe:UpdateButtonLink(itemLink, bag, slot, button, { showMogIcon=true, showBindStatus=true, showSellables=false})
 		end
 	end
 end
@@ -1700,7 +1955,7 @@ end
 hooksecurefunc("MerchantFrame_UpdateMerchantInfo", OnMerchantUpdate)
 hooksecurefunc("MerchantFrame_UpdateBuybackInfo", OnBuybackUpdate)
 
-local function OnEvent(self, event, ...)
+function CaerdonWardrobeMixin:OnEvent(event, ...)
 	local handler = self[event]
 	if(handler) then
 		handler(self, ...)
@@ -1712,11 +1967,8 @@ local timeSinceLastBagUpdate = nil
 local GUILDBANKFRAMEUPDATE_INTERVAL = 0.1
 local BAGUPDATE_INTERVAL = 0.1
 local ITEMUPDATE_INTERVAL = 0.1
-local timeSinceLastItemUpdate = nil
 
-local latestDataRequestQuestID = nil
-
-local function OnUpdate(self, elapsed)
+function CaerdonWardrobeMixin:OnUpdate(elapsed)
 	if self.itemUpdateCoroutine then
 		if coroutine.status(self.itemUpdateCoroutine) ~= "dead" then
 			local ok, result = coroutine.resume(self.itemUpdateCoroutine)
@@ -1767,13 +2019,6 @@ local function OnUpdate(self, elapsed)
 		timeSinceLastBagUpdate = timeSinceLastBagUpdate + elapsed
 	end
 
-	if isItemUpdateRequested then
-		isItemUpdateRequested = false
-		timeSinceLastItemUpdate = 0
-	elseif timeSinceLastItemUpdate then
-		timeSinceLastItemUpdate = timeSinceLastItemUpdate + elapsed
-	end
-
 	if( timeSinceLastGuildBankUpdate ~= nil and (timeSinceLastGuildBankUpdate > GUILDBANKFRAMEUPDATE_INTERVAL) ) then
 		timeSinceLastGuildBankUpdate = nil
 		self.guildBankUpdateCoroutine = coroutine.create(OnGuildBankFrameUpdate_Coroutine)
@@ -1783,15 +2028,17 @@ local function OnUpdate(self, elapsed)
 		timeSinceLastBagUpdate = nil
 		self.bagUpdateCoroutine = coroutine.create(OnBagUpdate_Coroutine)
 	end
-
-	if( timeSinceLastItemUpdate ~= nil and (timeSinceLastItemUpdate > ITEMUPDATE_INTERVAL) ) then
-		timeSinceLastItemUpdate = nil
-		self.itemUpdateCoroutine = coroutine.create(OnItemUpdate_Coroutine)
-	end
 end
 
 local function OnEncounterJournalSetLootButton(item)
-	local itemID, encounterID, name, icon, slot, armorType, itemLink = EJ_GetLootInfoByIndex(item.index);
+	local itemID, encounterID, name, icon, slot, armorType, itemLink;
+	if isShadowlands then
+		local itemInfo = C_EncounterJournal.GetLootInfoByIndex(item.index);
+		itemLink = itemInfo.link
+	else
+		itemID, encounterID, name, icon, slot, armorType, itemLink = EJ_GetLootInfoByIndex(item.index);
+	end
+	
 	local options = {
 		iconOffset = 8,
 		otherIcon = "Interface\\Buttons\\UI-GroupLoot-Pass-Up",
@@ -1800,23 +2047,12 @@ local function OnEncounterJournalSetLootButton(item)
 		overridePosition = "TOPRIGHT"
 	}
 
-	if name then
-		ProcessItem(itemID, "EncounterJournal", item, item, options)
-	end
+	CaerdonWardrobe:UpdateButtonLink(itemLink, "EncounterJournal", item, item, options)
 end
-
-local CaerdonWardrobeFrame = CreateFrame("FRAME", "CaerdonWardrobeFrame")
-CaerdonWardrobeFrame:RegisterEvent("ADDON_LOADED")
-CaerdonWardrobeFrame:RegisterEvent("PLAYER_LOGOUT")
-CaerdonWardrobeFrame:SetScript("OnEvent", OnEvent)
-CaerdonWardrobeFrame:SetScript("OnUpdate", OnUpdate)
-
-C_TransmogCollection.SetShowMissingSourceInItemTooltips(true)
-SetCVar("missingTransmogSourceInItemTooltips", 1)
 
 function CaerdonWardrobeNS:GetDefaultConfig()
 	return {
-		Version = 7,
+		Version = 8,
 		Icon = {
 			EnableAnimation = true,
 			Position = "TOPRIGHT",
@@ -1840,8 +2076,18 @@ function CaerdonWardrobeNS:GetDefaultConfig()
 
 			ShowSellable = {
 				BankAndBags = true,
-				GuildBank = true,
-			}
+				GuildBank = true
+			},
+
+			ShowOldExpansion = {
+				Unknown = false,
+				Reagents = true,
+				Usable = false,
+				Other = false,
+				Auction = true
+			},
+
+			ShowQuestItems = true
 		},
 
 		Binding = {
@@ -1866,221 +2112,66 @@ local function ProcessSettings()
 	end
 end
 
-function CaerdonWardrobeFrame:PLAYER_LOGOUT()
+function CaerdonWardrobeMixin:PLAYER_LOGOUT()
 end
 
-function CaerdonWardrobeFrame:ADDON_LOADED(name)
+function CaerdonWardrobeMixin:ADDON_LOADED(name)
 	if name == "Combuctor" then
 		ProcessSettings()
 		CaerdonWardrobeNS:FireConfigLoaded()
-
-		if IsLoggedIn() then
-			OnEvent(CaerdonWardrobeFrame, "PLAYER_LOGIN")
-		else
-			CaerdonWardrobeFrame:RegisterEvent("PLAYER_LOGIN")
-		end
 	elseif name == "Blizzard_GuildBankUI" then
 		hooksecurefunc("GuildBankFrame_Update", OnGuildBankFrameUpdate)
 	elseif name == "Blizzard_EncounterJournal" then
 		hooksecurefunc("EncounterJournal_SetLootButton", OnEncounterJournalSetLootButton)
+	-- elseif name == "TradeSkillMaster" then
+	-- 	print("HOOKING TSM")
+	-- 	hooksecurefunc (TSM.UI.AuctionScrollingTable, "_SetRowData", function (self, row, data)
+	-- 		print("Row: " .. row:GetField("auctionId"))
+	-- 	end)
 	end
 end
 
-function UpdatePin(pin)
-	local options = {
-		iconOffset = -5,
-		iconSize = 60,
-		overridePosition = "TOPRIGHT",
-		-- itemCountOffset = 10,
-		-- bindingScale = 0.9
-	}
-
-	if GetNumQuestLogRewards(pin.questID) > 0 then
-		local itemName, itemTexture, numItems, quality, isUsable, itemID = GetQuestLogRewardInfo(1, pin.questID)
-		CaerdonWardrobe:UpdateButton(itemID, "QuestButton", { itemID = itemID, questID = pin.questID }, pin, options)
-	else
-		CaerdonWardrobe:ClearButton(pin)
-	end
-end
-
-local function QuestInfo_GetQuestID()
-	if ( QuestInfoFrame.questLog ) then
-		if (isShadowlands) then
-			return C_QuestLog.GetSelectedQuest();
-		else
-			return select(8, GetQuestLogTitle(GetQuestLogSelection()));
-		end
-	else
-		return GetQuestID();
-	end
-end
-
-local function OnQuestInfoShowRewards(template, parentFrame)
-	local numQuestRewards = 0;
-	local numQuestChoices = 0;
-	local rewardsFrame = QuestInfoFrame.rewardsFrame;
-	local questID = QuestInfo_GetQuestID()
-
-	if questID == 0 then return end -- quest abandoned
-
-	-- if ( template.canHaveSealMaterial ) then
-	-- 	local questFrame = parentFrame:GetParent():GetParent();
-	-- 	if ( template.questLog ) then
-	-- 		questID = questFrame.questID;
-	-- 	else
-	-- 		questID = GetQuestID();
-	-- 	end
-	-- end
-
-	local spellGetter;
-
-	if ( QuestInfoFrame.questLog ) then
-		if C_QuestLog.ShouldShowQuestRewards(questID) then
-			numQuestRewards = GetNumQuestLogRewards();
-			numQuestChoices = GetNumQuestLogChoices(questID, true);
-			-- playerTitle = GetQuestLogRewardTitle();
-			-- numSpellRewards = GetNumQuestLogRewardSpells();
-			-- spellGetter = GetQuestLogRewardSpell;
-		end
-	else
-		if ( QuestFrameRewardPanel:IsShown() or C_QuestLog.ShouldShowQuestRewards(questID) ) then
-			numQuestRewards = GetNumQuestRewards();
-			numQuestChoices = GetNumQuestChoices();
-			-- playerTitle = GetRewardTitle();
-			-- numSpellRewards = GetNumRewardSpells();
-			-- spellGetter = GetRewardSpell;
-		end
-	end
-
-	if not HaveQuestRewardData(questID) then
-		-- HACK: Force load and handle in QUEST_DATA_LOAD_RESULT
-		-- Not needed if Blizzard fixes showing of rewards in follow-up quests
-		latestDataRequestQuestID = questID
-		C_QuestLog.RequestLoadQuestByID(questID)
-		return
-	end
-
-	local options = {
-		iconOffset = 0,
-		iconSize = 40,
-		overridePosition = "TOPLEFT",
-		overrideBindingPosition = "TOPLEFT",
-		bindingOffsetX = -53,
-		bindingOffsetY = -16
-	}
-
-	local questItem, name, texture, quality, isUsable, numItems, itemID;
-	local rewardsCount = 0;
-	if ( numQuestChoices > 0 ) then
-		local index;
-		local itemLink;
-		local baseIndex = rewardsCount;
-		for i = 1, numQuestChoices do
-			index = i + baseIndex;
-			questItem = QuestInfo_GetRewardButton(rewardsFrame, index);
-			if ( QuestInfoFrame.questLog ) then
-				name, texture, numItems, quality, isUsable, itemID = GetQuestLogChoiceInfo(i);
-			else
-				name, texture, numItems, quality, isUsable = GetQuestItemInfo(questItem.type, i);
-				itemLink = GetQuestItemLink(questItem.type, i);
-				itemID = GetItemID(itemLink)
-			end
-			rewardsCount = rewardsCount + 1;
-
-			CaerdonWardrobe:UpdateButton(itemID, "QuestButton", { itemID = itemID, questID = questID, index = i, questItem = questItem }, questItem, options)
-		end
-	end
-
-	if ( numQuestRewards > 0) then
-		local index;
-		local itemLink;
-		local baseIndex = rewardsCount;
-		local buttonIndex = 0;
-		for i = 1, numQuestRewards, 1 do
-			buttonIndex = buttonIndex + 1;
-			index = i + baseIndex;
-			questItem = QuestInfo_GetRewardButton(rewardsFrame, index);
-			questItem.type = "reward";
-			questItem.objectType = "item";
-			if ( QuestInfoFrame.questLog ) then
-				name, texture, numItems, quality, isUsable, itemID = GetQuestLogRewardInfo(i);
-			else
-				name, texture, numItems, quality, isUsable = GetQuestItemInfo(questItem.type, i);
-				itemLink = GetQuestItemLink(questItem.type, i);
-				if itemLink ~= nil then
-					itemID = GetItemID(itemLink)
-				else
-					itemID = -1
-				end
-			end
-			rewardsCount = rewardsCount + 1;
-
-			if itemID ~= -1 then
-				CaerdonWardrobe:UpdateButton(itemID, "QuestButton", { itemID = itemID, questID = questID, index = i, questItem = questItem }, questItem, options)
-			end
-		end
-	end
-end
-
-local function OnQuestInfoDisplay(template, parentFrame)
-	-- Hooking OnQuestInfoDisplay instead of OnQuestInfoShowRewards directly because it seems to work
-	-- and I was having some problems.  :)
-	local i = 1
-	while template.elements[i] do
-		if template.elements[i] == QuestInfo_ShowRewards then OnQuestInfoShowRewards(template, parentFrame) return end
-		i = i + 3
-	end
-end
-
-function CaerdonWardrobeFrame:PLAYER_LOGIN(...)
-	-- CaerdonWardrobeFrame:RegisterEvent("PLAYERBANKSLOTS_CHANGED")
-	CaerdonWardrobeFrame:RegisterEvent("AUCTION_HOUSE_BROWSE_RESULTS_UPDATED")
-	CaerdonWardrobeFrame:RegisterEvent("AUCTION_HOUSE_SHOW")
-	CaerdonWardrobeFrame:RegisterEvent("BAG_OPEN")
-	CaerdonWardrobeFrame:RegisterEvent("BAG_UPDATE")
-	CaerdonWardrobeFrame:RegisterEvent("BAG_UPDATE_DELAYED")
-	CaerdonWardrobeFrame:RegisterEvent("BANKFRAME_OPENED")
-	CaerdonWardrobeFrame:RegisterEvent("GET_ITEM_INFO_RECEIVED")
-	CaerdonWardrobeFrame:RegisterEvent("TRANSMOG_COLLECTION_UPDATED")
-	-- CaerdonWardrobeFrame:RegisterEvent("TRANSMOG_COLLECTION_ITEM_UPDATE")
-	CaerdonWardrobeFrame:RegisterEvent("EQUIPMENT_SETS_CHANGED")
-	CaerdonWardrobeFrame:RegisterEvent("MERCHANT_UPDATE")
-	CaerdonWardrobeFrame:RegisterEvent("PLAYER_LOOT_SPEC_UPDATED")
-	CaerdonWardrobeFrame:RegisterEvent("QUEST_DATA_LOAD_RESULT")
+function CaerdonWardrobeMixin:PLAYER_LOGIN(...)
+	-- Show missing info in tooltips
+	-- NOTE: This causes a bug with tooltip scanning, so we disable
+	--   briefly and turn it back on with each scan.
 	C_TransmogCollection.SetShowMissingSourceInItemTooltips(true)
-
-	hooksecurefunc (WorldMap_WorldQuestPinMixin, "RefreshVisuals", function (self)
-		if not IsModifiedClick("COMPAREITEMS") and not ShoppingTooltip1:IsShown() then
-			UpdatePin(self);
-		end
-	end)
-	-- hooksecurefunc("QuestInfo_GetRewardButton", OnQuestInfoGetRewardButton)
-	-- hooksecurefunc("QuestInfo_ShowRewards", OnQuestInfoShowRewards)
+	SetCVar("missingTransmogSourceInItemTooltips", 1)
 end
 
-function CaerdonWardrobeFrame:AUCTION_HOUSE_BROWSE_RESULTS_UPDATED()
+function CaerdonWardrobeMixin:AUCTION_HOUSE_BROWSE_RESULTS_UPDATED()
 	OnAuctionBrowseUpdate()
 end
 
+local function OnSelectBrowseResult(self, browseResult)
+	local itemLink
+	local item = Item:CreateFromItemID(browseResult.itemKey.itemID)
+	local itemKeyInfo = C_AuctionHouse.GetItemKeyInfo(browseResult.itemKey)
+
+	if itemKeyInfo and itemKeyInfo.battlePetLink then
+		itemLink = itemKeyInfo.battlePetLink
+	else
+		itemLink = item:GetItemLink()
+	end
+
+	CaerdonWardrobe:UpdateButtonLink(itemLink, "ItemLink", nil, AuctionHouseFrame.ItemBuyFrame.ItemDisplay.ItemButton,  
+	{
+		overridePosition = "TOPLEFT",
+		iconOffset = -5,
+		iconSize = 50,				
+		showMogIcon=true, 
+		showBindStatus=false, 
+		showSellables=false
+	})
+end
+
+
 local hookAuction = true
-function CaerdonWardrobeFrame:AUCTION_HOUSE_SHOW()
+function CaerdonWardrobeMixin:AUCTION_HOUSE_SHOW()
 	if (hookAuction) then
 		hookAuction = false
 		AuctionHouseFrame.BrowseResultsFrame.ItemList.ScrollFrame.scrollBar:HookScript("OnValueChanged", OnAuctionBrowseUpdate)
-	end
-end
-
-function CaerdonWardrobeFrame:QUEST_DATA_LOAD_RESULT(questID, success)
-	if success then
-		-- Total hack until Blizzard fixes quest rewards not loading
-		if questID == latestDataRequestQuestID then
-			latestDataRequestQuestID = nil
-
-			if QuestFrameDetailPanel:IsShown() then
-				QuestFrameDetailPanel:Hide();
-				QuestFrameDetailPanel:Show();
-			end
-		end
+		hooksecurefunc(AuctionHouseFrame, "SelectBrowseResult", OnSelectBrowseResult)
 	end
 end
 
@@ -2093,31 +2184,35 @@ function RefreshMainBank()
 	end
 end
 
+local refreshTimer
 local function RefreshItems()
-	cachedBinding = {}
-	cachedIsDressable = {}
+	if refreshTimer then
+		refreshTimer:Cancel()
+	end
 
-	if MerchantFrame:IsShown() then 
-		if MerchantFrame.selectedTab == 1 then
-			OnMerchantUpdate()
-		else
-			OnBuybackUpdate()
+	refreshTimer = C_Timer.NewTimer(0.1, function ()
+		if MerchantFrame:IsShown() then 
+			if MerchantFrame.selectedTab == 1 then
+				OnMerchantUpdate()
+			else
+				OnBuybackUpdate()
+			end
 		end
-	end
 
-	if AuctionFrame and AuctionFrame:IsShown() then
-		OnAuctionBrowseUpdate()
-	end
+		if AuctionFrame and AuctionFrame:IsShown() then
+			OnAuctionBrowseUpdate()
+		end
 
-	if BankFrame:IsShown() then
-		RefreshMainBank()
-	end
+		if BankFrame:IsShown() then
+			RefreshMainBank()
+		end
 
-	for i=1, NUM_CONTAINER_FRAMES, 1 do
-		local frame = _G["ContainerFrame"..i];
-		waitingOnBagUpdate[tostring(i)] = true
-		isBagUpdateRequested = true
-	end
+		for i=1, NUM_CONTAINER_FRAMES, 1 do
+			local frame = _G["ContainerFrame"..i];
+			waitingOnBagUpdate[tostring(i)] = true
+			isBagUpdateRequested = true
+		end
+	end, 1)
 end
 
 local function OnContainerFrameUpdateSearchResults(frame)
@@ -2167,11 +2262,11 @@ hooksecurefunc("OpenBag", OnOpenBag)
 hooksecurefunc("OpenBackpack", OnOpenBackpack)
 hooksecurefunc("ToggleBag", OnOpenBag)
 
-function CaerdonWardrobeFrame:BAG_UPDATE(bagID)
+function CaerdonWardrobeMixin:BAG_UPDATE(bagID)
 	AddBagUpdateRequest(bagID)
 end
 
-function CaerdonWardrobeFrame:BAG_UPDATE_DELAYED()
+function CaerdonWardrobeMixin:BAG_UPDATE_DELAYED()
 	local count = 0
 	for _ in pairs(waitingOnBagUpdate) do 
 		count = count + 1
@@ -2184,166 +2279,46 @@ function CaerdonWardrobeFrame:BAG_UPDATE_DELAYED()
 	end
 end
 
-function CaerdonWardrobeFrame:GET_ITEM_INFO_RECEIVED(itemID)
-	local itemData = waitingOnItemData[tostring(itemID)]
-	if itemData then
-        for bag, bagData in pairs(itemData) do
-        	for slot, slotData in pairs(bagData) do
-        		-- Checking item info before continuing.  In certain cases,
-        		-- the name / link are still nil here for some reason.
-        		-- I've seen it at merchants so far.  I'm assuming that
-        		-- these requests will ultimately result in yet another
-        		-- GET_ITEM_INFO_RECEIVED event as that seems to be the case.
-				-- Turning off item name check for now as it seems unnecessary - revisit if problems
-				-- local itemName = GetItemInfoLocal(itemID, slotData.bag, slotData.slot)
-				local itemLink = GetItemLinkLocal(slotData.bag, slotData.slot)
-
-				if itemLink then
-				-- if itemLink and itemName then
-					ProcessItem(itemID, slotData.bag, slotData.slot, slotData.button, slotData.options, slotData.itemProcessed)
-				else
-					ProcessOrWaitItem(itemID, slotData.bag, slotData.slot, slotData.button, slotData.options, slotData.itemProcessed)
-				end
-        	end
-        end
-	end
-end
-
-function CaerdonWardrobeFrame:PLAYER_LOOT_SPEC_UPDATED()
+function CaerdonWardrobeMixin:PLAYER_LOOT_SPEC_UPDATED()
 	if EncounterJournal then
 		EncounterJournal_LootUpdate()
 	end
 end
 
-function CaerdonWardrobeFrame:TRANSMOG_COLLECTION_ITEM_UPDATE()
+function CaerdonWardrobeMixin:TRANSMOG_COLLECTION_ITEM_UPDATE()
 	-- RefreshItems()
 end
 
-function CaerdonWardrobeFrame:TRANSMOG_COLLECTION_UPDATED()
+function CaerdonWardrobeMixin:UNIT_SPELLCAST_SUCCEEDED(unitTarget, castGUID, spellID)
+	if unitTarget == "player" then
+		-- Tracking unlock spells to know to refresh
+		-- May have to add some other abilities but this is a good place to start.
+		if spellID == 1804 then
+			RefreshItems(true)
+		end
+	end
+end
+
+function CaerdonWardrobeMixin:TRANSMOG_COLLECTION_UPDATED()
 	RefreshItems()
 end
 
-function CaerdonWardrobeFrame:MERCHANT_UPDATE()
+function CaerdonWardrobeMixin:MERCHANT_UPDATE()
 	RefreshItems()
 end
 
-function CaerdonWardrobeFrame:EQUIPMENT_SETS_CHANGED()
+function CaerdonWardrobeMixin:EQUIPMENT_SETS_CHANGED()
 	RefreshItems()
 end
 
-function CaerdonWardrobeFrame:BANKFRAME_OPENED()
+function CaerdonWardrobeMixin:UPDATE_EXPANSION_LEVEL()
+	-- Can change while logged in!
+	RefreshItems()
+end
+
+function CaerdonWardrobeMixin:BANKFRAME_OPENED()
 	-- RefreshMainBank()
 end
-
--- Turning this off for now as I made fixes for the container hook and don't
--- need to do this twice.  Keeping around for a bit just in case.
--- function CaerdonWardrobeFrame:PLAYERBANKSLOTS_CHANGED(slot, arg2)
--- 	if ( slot <= NUM_BANKGENERIC_SLOTS ) then
--- 		OnBankItemUpdate(BankSlotsFrame["Item"..slot]);
--- 	else
--- 		OnBankItemUpdate(BankSlotsFrame["Bag"..(slot-NUM_BANKGENERIC_SLOTS)]);
--- 	end
--- end
-
-local function OnMailFrameUpdateButtonPositions(letterIsTakeable, textCreated, stationeryIcon, money)
-	for i=1, ATTACHMENTS_MAX_RECEIVE do
-		local attachmentButton = OpenMailFrame.OpenMailAttachments[i];
-		if HasInboxItem(InboxFrame.openMailID, i) then
-			local name, itemID, itemTexture, count, quality, canUse = GetInboxItem(InboxFrame.openMailID, i);
-			if name then
-				ProcessOrWaitItem(itemID, "OpenMailFrame", i, attachmentButton, nil)
-			else
-				SetItemButtonMogStatus(attachmentButton, nil)
-				SetItemButtonBindType(attachmentButton, nil)		
-			end
-		else
-			SetItemButtonMogStatus(attachmentButton, nil)
-			SetItemButtonBindType(attachmentButton, nil)		
-		end
-	end
-end
-
-local function OnSendMailFrameUpdate()
-	for i=1, ATTACHMENTS_MAX_SEND do
-		local attachmentButton = SendMailFrame.SendMailAttachments[i];
-
-		if HasSendMailItem(i) then
-			local itemName, itemID, itemTexture, stackCount, quality = GetSendMailItem(i);
-			if itemName then
-				ProcessOrWaitItem(itemID, "SendMailFrame", i, attachmentButton, nil)
-			else
-				SetItemButtonMogStatus(attachmentButton, nil)
-				SetItemButtonBindType(attachmentButton, nil)		
-			end
-		else
-			SetItemButtonMogStatus(attachmentButton, nil)
-			SetItemButtonBindType(attachmentButton, nil)		
-		end
-	end
-end
-
-local function OnLootFrameUpdateButton(index)
-	local numLootItems = LootFrame.numLootItems;
-	local numLootToShow = LOOTFRAME_NUMBUTTONS;
-
-	if LootFrame.AutoLootTable then
-		numLootItems = #LootFrame.AutoLootTable
-	end
-
-	if numLootItems > LOOTFRAME_NUMBUTTONS then
-		numLootToShow = numLootToShow - 1
-	end
-
-	local isProcessing = false
-	
-	local button = _G["LootButton"..index];
-	local slot = (numLootToShow * (LootFrame.page - 1)) + index;
-	if slot <= numLootItems then
-		if ((LootSlotHasItem(slot) or (LootFrame.AutoLootTable and LootFrame.AutoLootTable[slot])) and index <= numLootToShow) then
-			-- texture, item, quantity, quality, locked, isQuestItem, questId, isActive = GetLootSlotInfo(slot)
-			link = GetLootSlotLink(slot)
-			if link then
-				local itemID = GetItemID(link)
-				if itemID then
-					isProcessing = true
-					ProcessOrWaitItem(itemID, "LootFrame", { index = slot, link = link }, button, nil)
-				end
-			end
-		end
-	end
-
-	if not isProcessing then
-		SetItemButtonMogStatus(button, nil)
-		SetItemButtonBindType(button, nil)
-	end
-end
-
-function OnGroupLootFrameShow(frame)
-	-- local texture, name, count, quality, bindOnPickUp, canNeed, canGreed, canDisenchant, reasonNeed, reasonGreed, reasonDisenchant, deSkillRequired = GetLootRollItemInfo(frame.rollID)
-	-- if name == nil then
-	-- 	return
-	-- end
-
-	local itemLink = GetLootRollItemLink(frame.rollID)
-	if itemLink == nil then
-		return
-	end
-
-	local itemID = GetItemID(itemLink)
-	if itemID then
-		ProcessOrWaitItem(itemID, "GroupLootFrame", { index = frame.rollID, link = itemLink}, frame.IconFrame, nil)
-	end
-end
-
-hooksecurefunc("LootFrame_UpdateButton", OnLootFrameUpdateButton)
-hooksecurefunc("QuestInfo_Display", OnQuestInfoDisplay)
-hooksecurefunc("OpenMailFrame_UpdateButtonPositions", OnMailFrameUpdateButtonPositions)
-hooksecurefunc("SendMailFrame_Update", OnSendMailFrameUpdate)
-
-GroupLootFrame1:HookScript("OnShow", OnGroupLootFrameShow)
-GroupLootFrame2:HookScript("OnShow", OnGroupLootFrameShow)
-GroupLootFrame3:HookScript("OnShow", OnGroupLootFrameShow)
-GroupLootFrame4:HookScript("OnShow", OnGroupLootFrameShow)
 
 local configFrame
 local isConfigLoaded = false
@@ -2362,472 +2337,363 @@ function CaerdonWardrobeNS:FireConfigLoaded()
 	end
 end
 
--- BAG_OPEN
--- GUILDBANKBAGSLOTS_CHANGED
--- GUILDBANKFRAME_OPENED
+local LootMixin, Loot = {}
 
---[[---------------------------------config
-local components, pendingConfig
-local configFrame = CreateFrame("Frame", nil, InterfaceOptionsFramePanelContainer)
-
-local function PropagateErrors(func)
-	-- Make sure that errors aren't swallowed for InterfaceOption callbacks
-	return function() xpcall(function () func(configFrame) end, geterrorhandler()) end
+function LootMixin:OnLoad()
+    hooksecurefunc("LootFrame_UpdateButton", function(...) Loot:OnLootFrameUpdateButton(...) end)
 end
 
-function configFrame:InitializeConfig()
-	self:Hide()
-	self:CreateComponents()
-	CaerdonWardrobeNS:RegisterConfigFrame(self)
-end
+function LootMixin:OnLootFrameUpdateButton(index)
+	local numLootItems = LootFrame.numLootItems;
+	local numLootToShow = LOOTFRAME_NUMBUTTONS;
 
-function configFrame:CreateComponents()
-	components = {}
-	components.title = self:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
-	components.title:SetText("|cff00ff00[背包]|r幻化提示")
-	components.title:SetPoint("TOPLEFT", 16, -16)
-
-	components.titleSeparator = self:CreateTexture(nil, "ARTWORK")
-	components.titleSeparator:SetColorTexture(0.25, 0.25, 0.25)
-	components.titleSeparator:SetSize(600, 1)
-	components.titleSeparator:SetPoint("LEFT", self, "TOPLEFT", 10, -40)
-
-	components.bindingTextLabel = self:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-	components.bindingTextLabel:SetText("提示文字 (瞎JB翻译的，我也没来得及验证是不是准确，你们发现不对就告诉我)")
-	components.bindingTextLabel:SetPoint("TOPLEFT", components.titleSeparator, "BOTTOMLEFT", 0, -10)
-
-	components.bindingTextPositionLabel = self:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
-	components.bindingTextPositionLabel:SetText("定位:")
-	components.bindingTextPositionLabel:SetPoint("TOPLEFT", components.bindingTextLabel, "BOTTOMLEFT", 15, -15)
-	components.bindingTextPosition = CreateFrame("Button", "CaerdonWardrobeConfig_BindingTextPosition", self, "UIDropDownMenuTemplate")
-	components.bindingTextPosition:SetPoint("TOPLEFT", components.bindingTextPositionLabel, "TOPRIGHT", -9, 9)
-
-	components.showStatusLabel = self:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
-	components.showStatusLabel:SetText("显示于:")
-	components.showStatusLabel:SetPoint("TOPLEFT", components.bindingTextPositionLabel, "BOTTOMLEFT", 0, -15)
-
-	components.showBindingOnBags = CreateFrame("CheckButton", "CaerdonWardrobeConfig_showBindingOnBags", self, "InterfaceOptionsCheckButtonTemplate")
-	components.showBindingOnBags:SetPoint("TOPLEFT", components.showStatusLabel, "BOTTOMLEFT", 15, -5)
-	components.showBindingOnBagsLabel = _G[components.showBindingOnBags:GetName() .. "Text"]
-	components.showBindingOnBagsLabel:SetWidth(80)
-	components.showBindingOnBagsLabel:SetText("背包+银行")
-
-	components.showBindingOnGuildBank = CreateFrame("CheckButton", "CaerdonWardrobeConfig_showBindingOnGuildBank", self, "InterfaceOptionsCheckButtonTemplate")
-	components.showBindingOnGuildBank:SetPoint("LEFT", components.showBindingOnBagsLabel, "RIGHT", 21, 0)
-	components.showBindingOnGuildBank:SetPoint("TOP", components.showBindingOnBags, "TOP", 0, 0)
-	components.showBindingOnGuildBankLabel = _G[components.showBindingOnGuildBank:GetName() .. "Text"]
-	components.showBindingOnGuildBankLabel:SetWidth(80)
-	components.showBindingOnGuildBankLabel:SetText("工会银行")
-
-	components.showBindingOnMerchant = CreateFrame("CheckButton", "CaerdonWardrobeConfig_showBindingOnMerchant", self, "InterfaceOptionsCheckButtonTemplate")
-	components.showBindingOnMerchant:SetPoint("LEFT", components.showBindingOnGuildBankLabel, "RIGHT", 20, 0)
-	components.showBindingOnMerchant:SetPoint("TOP", components.showBindingOnGuildBank, "TOP", 0, 0)
-	components.showBindingOnMerchantLabel = _G[components.showBindingOnMerchant:GetName() .. "Text"]
-	components.showBindingOnMerchantLabel:SetWidth(80)
-	components.showBindingOnMerchantLabel:SetText("商人")
-
-	components.showGearSets = CreateFrame("CheckButton", "CaerdonWardrobeConfig_showGearSets", self, "InterfaceOptionsCheckButtonTemplate")
-	components.showGearSets:SetPoint("TOPLEFT", components.showBindingOnBags, "BOTTOMLEFT", -20, -10)
-	components.showGearSetsLabel = _G[components.showGearSets:GetName() .. "Text"]
-	components.showGearSetsLabel:SetText("显示角标")
-
-	components.showGearSetsAsIcon = CreateFrame("CheckButton", "CaerdonWardrobeConfig_showGearSetsAsIcon", self, "InterfaceOptionsCheckButtonTemplate")
-	components.showGearSetsAsIcon:SetPoint("TOPLEFT", components.showGearSets, "BOTTOMLEFT", 22, 8)
-	components.showGearSetsAsIconLabel = _G[components.showGearSetsAsIcon:GetName() .. "Text"]
-	components.showGearSetsAsIconLabel:SetText("图标样式")
-
-	components.showBoA = CreateFrame("CheckButton", "CaerdonWardrobeConfig_showBoA", self, "InterfaceOptionsCheckButtonTemplate")
-	components.showBoA:SetPoint("LEFT", components.showGearSetsLabel, "RIGHT", 20, 0)
-	components.showBoA:SetPoint("TOP", components.showGearSets, "TOP", 0, 0)
-	components.showBoALabel = _G[components.showBoA:GetName() .. "Text"]
-	components.showBoALabel:SetWidth(140)
-	components.showBoALabel:SetText("显示战网绑定物品")
-
-	components.showBoE = CreateFrame("CheckButton", "CaerdonWardrobeConfig_showBoE", self, "InterfaceOptionsCheckButtonTemplate")
-	components.showBoE:SetPoint("LEFT", components.showBoALabel, "RIGHT", 20, 0)
-	components.showBoE:SetPoint("TOP", components.showBoA, "TOP", 0, 0)
-	components.showBoELabel = _G[components.showBoE:GetName() .. "Text"]
-	components.showBoELabel:SetWidth(140)
-	components.showBoELabel:SetText("显示装备绑定物品")
-
-	components.mogIconLabel = self:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-	components.mogIconLabel:SetText("幻化图标提示")
-	components.mogIconLabel:SetPoint("TOPLEFT", components.showGearSetsAsIcon, "BOTTOMLEFT", -10, -20)
-
-	components.mogIconPositionLabel = self:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
-	components.mogIconPositionLabel:SetText("定位:")
-	components.mogIconPositionLabel:SetPoint("TOPLEFT", components.mogIconLabel, "BOTTOMLEFT", 15, -15)
-	components.mogIconPosition = CreateFrame("Button", "CaerdonWardrobeConfig_MogIconPosition", self, "UIDropDownMenuTemplate")
-	components.mogIconPosition:SetPoint("TOPLEFT", components.mogIconPositionLabel, "TOPRIGHT", -9, 9)
-
-
-	components.showLearnableLabel = self:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
-	components.showLearnableLabel:SetText("显示可学:")
-	components.showLearnableLabel:SetPoint("TOPLEFT", components.mogIconPositionLabel, "BOTTOMLEFT", 0, -20)
-
-	components.showLearnableOnBags = CreateFrame("CheckButton", "CaerdonWardrobeConfig_showLearnableOnBags", self, "InterfaceOptionsCheckButtonTemplate")
-	components.showLearnableOnBags:SetPoint("TOPLEFT", components.showLearnableLabel, "BOTTOMLEFT", 15, -5)
-	components.showLearnableOnBagsLabel = _G[components.showLearnableOnBags:GetName() .. "Text"]
-	components.showLearnableOnBagsLabel:SetWidth(80)
-	components.showLearnableOnBagsLabel:SetText("背包+银行")
-
-	components.showLearnableOnGuildBank = CreateFrame("CheckButton", "CaerdonWardrobeConfig_showLearnableOnGuildBank", self, "InterfaceOptionsCheckButtonTemplate")
-	components.showLearnableOnGuildBank:SetPoint("LEFT", components.showLearnableOnBagsLabel, "RIGHT", 20, 0)
-	components.showLearnableOnGuildBank:SetPoint("TOP", components.showLearnableOnBags, "TOP", 0, 0)
-	components.showLearnableOnGuildBankLabel = _G[components.showLearnableOnGuildBank:GetName() .. "Text"]
-	components.showLearnableOnGuildBankLabel:SetWidth(80)
-	components.showLearnableOnGuildBankLabel:SetText("工会银行")
-
-	components.showLearnableOnMerchant = CreateFrame("CheckButton", "CaerdonWardrobeConfig_showLearnableOnMerchant", self, "InterfaceOptionsCheckButtonTemplate")
-	components.showLearnableOnMerchant:SetPoint("LEFT", components.showLearnableOnGuildBankLabel, "RIGHT", 20, 0)
-	components.showLearnableOnMerchant:SetPoint("TOP", components.showLearnableOnGuildBank, "TOP", 0, 0)
-	components.showLearnableOnMerchantLabel = _G[components.showLearnableOnMerchant:GetName() .. "Text"]
-	components.showLearnableOnMerchantLabel:SetWidth(80)
-	components.showLearnableOnMerchantLabel:SetText("商人")
-
-	components.showLearnableOnAuction = CreateFrame("CheckButton", "CaerdonWardrobeConfig_showLearnableOnAuction", self, "InterfaceOptionsCheckButtonTemplate")
-	components.showLearnableOnAuction:SetPoint("LEFT", components.showLearnableOnMerchantLabel, "RIGHT", 20, 0)
-	components.showLearnableOnAuction:SetPoint("TOP", components.showLearnableOnMerchant, "TOP", 0, 0)
-	components.showLearnableOnAuctionLabel = _G[components.showLearnableOnAuction:GetName() .. "Text"]
-	components.showLearnableOnAuctionLabel:SetWidth(100)
-	components.showLearnableOnAuctionLabel:SetText("Auction House")
-
-
-	components.showLearnableOtherLabel = self:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
-	components.showLearnableOtherLabel:SetText("在其它物品上显示可学:")
-	components.showLearnableOtherLabel:SetPoint("TOPLEFT", components.showLearnableOnBags, "BOTTOMLEFT", -15, -15)
-
-	components.showLearnableOtherOnBags = CreateFrame("CheckButton", "CaerdonWardrobeConfig_showLearnableOtherOnBags", self, "InterfaceOptionsCheckButtonTemplate")
-	components.showLearnableOtherOnBags:SetPoint("TOPLEFT", components.showLearnableOtherLabel, "BOTTOMLEFT", 15, -5)
-	components.showLearnableOtherOnBagsLabel = _G[components.showLearnableOtherOnBags:GetName() .. "Text"]
-	components.showLearnableOtherOnBagsLabel:SetWidth(80)
-	components.showLearnableOtherOnBagsLabel:SetText("背包+银行")
-
-	components.showLearnableOtherOnGuildBank = CreateFrame("CheckButton", "CaerdonWardrobeConfig_showLearnableOtherOnGuildBank", self, "InterfaceOptionsCheckButtonTemplate")
-	components.showLearnableOtherOnGuildBank:SetPoint("LEFT", components.showLearnableOtherOnBagsLabel, "RIGHT", 21, 0)
-	components.showLearnableOtherOnGuildBank:SetPoint("TOP", components.showLearnableOtherOnBags, "TOP", 0, 0)
-	components.showLearnableOtherOnGuildBankLabel = _G[components.showLearnableOtherOnGuildBank:GetName() .. "Text"]
-	components.showLearnableOtherOnGuildBankLabel:SetWidth(80)
-	components.showLearnableOtherOnGuildBankLabel:SetText("工会银行")
-
-	components.showLearnableOtherOnMerchant = CreateFrame("CheckButton", "CaerdonWardrobeConfig_showLearnableOtherOnMerchant", self, "InterfaceOptionsCheckButtonTemplate")
-	components.showLearnableOtherOnMerchant:SetPoint("LEFT", components.showLearnableOtherOnGuildBankLabel, "RIGHT", 20, 0)
-	components.showLearnableOtherOnMerchant:SetPoint("TOP", components.showLearnableOtherOnGuildBank, "TOP", 0, 0)
-	components.showLearnableOtherOnMerchantLabel = _G[components.showLearnableOtherOnMerchant:GetName() .. "Text"]
-	components.showLearnableOtherOnMerchantLabel:SetWidth(80)
-	components.showLearnableOtherOnMerchantLabel:SetText("商人")
-
-	components.showLearnableOtherOnAuction = CreateFrame("CheckButton", "CaerdonWardrobeConfig_showLearnableOtherOnAuction", self, "InterfaceOptionsCheckButtonTemplate")
-	components.showLearnableOtherOnAuction:SetPoint("LEFT", components.showLearnableOtherOnMerchantLabel, "RIGHT", 20, 0)
-	components.showLearnableOtherOnAuction:SetPoint("TOP", components.showLearnableOtherOnMerchant, "TOP", 0, 0)
-	components.showLearnableOtherOnAuctionLabel = _G[components.showLearnableOtherOnAuction:GetName() .. "Text"]
-	components.showLearnableOtherOnAuctionLabel:SetWidth(100)
-	components.showLearnableOtherOnAuctionLabel:SetText("Auction House")
-
-	components.showSellableLabel = self:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
-	components.showSellableLabel:SetText("显示可卖出物品:")
-	components.showSellableLabel:SetPoint("TOPLEFT", components.showLearnableOtherOnBags, "BOTTOMLEFT", -15, -15)
-
-	components.showSellableOnBags = CreateFrame("CheckButton", "CaerdonWardrobeConfig_showSellableOnBags", self, "InterfaceOptionsCheckButtonTemplate")
-	components.showSellableOnBags:SetPoint("TOPLEFT", components.showSellableLabel, "BOTTOMLEFT", 15, -5)
-	components.showSellableOnBagsLabel = _G[components.showSellableOnBags:GetName() .. "Text"]
-	components.showSellableOnBagsLabel:SetWidth(80)
-	components.showSellableOnBagsLabel:SetText("背包+银行")
-
-	components.showSellableOnGuildBank = CreateFrame("CheckButton", "CaerdonWardrobeConfig_showSellableOnGuildBank", self, "InterfaceOptionsCheckButtonTemplate")
-	components.showSellableOnGuildBank:SetPoint("LEFT", components.showSellableOnBagsLabel, "RIGHT", 21, 0)
-	components.showSellableOnGuildBank:SetPoint("TOP", components.showSellableOnBags, "TOP", 0, 0)
-	components.showSellableOnGuildBankLabel = _G[components.showSellableOnGuildBank:GetName() .. "Text"]
-	components.showSellableOnGuildBankLabel:SetWidth(80)
-	components.showSellableOnGuildBankLabel:SetText("工会银行")
-
-	components.mogIconShowAnimation = CreateFrame("CheckButton", "CaerdonWardrobeConfig_MogIconShowAnimation", self, "InterfaceOptionsCheckButtonTemplate")
-	components.mogIconShowAnimation:SetPoint("TOPLEFT", components.showSellableOnBags, "BOTTOMLEFT", -20, -15)
-	components.mogIconShowAnimationLabel = _G[components.mogIconShowAnimation:GetName() .. "Text"]
-	components.mogIconShowAnimationLabel:SetText("显示图标动画")
-
-	components.mogIconShowSameLookDifferentItem = CreateFrame("CheckButton", "CaerdonWardrobeConfig_mogIconShowSameLookDifferentItem", self, "InterfaceOptionsCheckButtonTemplate")
-	components.mogIconShowSameLookDifferentItem:SetPoint("TOPLEFT", components.mogIconShowAnimation, "BOTTOMLEFT", 0, -10)
-	components.mogIconShowSameLookDifferentItemLabel = _G[components.mogIconShowSameLookDifferentItem:GetName() .. "Text"]
-	components.mogIconShowSameLookDifferentItemLabel:SetText("包括外观相同的不同物品(you completionist, you)")
-
-
-end
-
-function configFrame:InitializeMogIconPosition()
-	self:AddMogIconPositionDropDownItem("Top Left", "TOPLEFT")
-	self:AddMogIconPositionDropDownItem("Top Right", "TOPRIGHT")
-	self:AddMogIconPositionDropDownItem("Bottom Left", "BOTTOMLEFT")
-	self:AddMogIconPositionDropDownItem("Bottom Right", "BOTTOMRIGHT")
-
-	UIDropDownMenu_SetSelectedValue(components.mogIconPosition, pendingConfig.Icon.Position)
-end
-
-function configFrame:InitializeBindingTextPosition()
-	self:AddBindingTextPositionDropDownItem("Top", "TOP")
-	self:AddBindingTextPositionDropDownItem("Center", "CENTER")
-	self:AddBindingTextPositionDropDownItem("Bottom", "BOTTOM")
-
-	UIDropDownMenu_SetSelectedValue(components.bindingTextPosition, pendingConfig.Binding.Position)
-end
-
-function configFrame:AddMogIconPositionDropDownItem(name, value)
-	local info = UIDropDownMenu_CreateInfo()
-	info.text = name
-	info.value = value
-	info.func = function(self, arg1, arg2, checked)
-		UIDropDownMenu_SetSelectedValue(components.mogIconPosition, value)
-		pendingConfig.Icon.Position = value
+	if LootFrame.AutoLootTable then
+		numLootItems = #LootFrame.AutoLootTable
 	end
 
-	UIDropDownMenu_AddButton(info)
-end
-
-function configFrame:AddBindingTextPositionDropDownItem(name, value)
-	local info = UIDropDownMenu_CreateInfo()
-	info.text = name
-	info.value = value
-	info.func = function(self, arg1, arg2, checked)
-		UIDropDownMenu_SetSelectedValue(components.bindingTextPosition, value)
-		pendingConfig.Binding.Position = value
+	if numLootItems > LOOTFRAME_NUMBUTTONS then
+		numLootToShow = numLootToShow - 1
 	end
 
-	UIDropDownMenu_AddButton(info)
-end
-
-function configFrame:ApplyConfig(config)
-	pendingConfig = CopyTable(config)
-end
-
-function configFrame:RefreshComponents()
-	local config = pendingConfig
-
-	UIDropDownMenu_Initialize(components.bindingTextPosition, function() self:InitializeBindingTextPosition() end)
-	components.showBindingOnBags:SetChecked(config.Binding.ShowStatus.BankAndBags)
-	components.showBindingOnGuildBank:SetChecked(config.Binding.ShowStatus.GuildBank)
-	components.showBindingOnMerchant:SetChecked(config.Binding.ShowStatus.Merchant)
-	components.showGearSets:SetChecked(config.Binding.ShowGearSets)
-	components.showGearSetsAsIcon:SetChecked(config.Binding.ShowGearSetsAsIcon)
-	components.showBoA:SetChecked(config.Binding.ShowBoA)
-	components.showBoE:SetChecked(config.Binding.ShowBoE)
-
-	UIDropDownMenu_Initialize(components.mogIconPosition, function() self:InitializeMogIconPosition() end)
-
-	components.showLearnableOnBags:SetChecked(config.Icon.ShowLearnable.BankAndBags)
-	components.showLearnableOnGuildBank:SetChecked(config.Icon.ShowLearnable.GuildBank)
-	components.showLearnableOnMerchant:SetChecked(config.Icon.ShowLearnable.Merchant)
-	components.showLearnableOnAuction:SetChecked(config.Icon.ShowLearnable.Auction)
-
-	components.showLearnableOtherOnBags:SetChecked(config.Icon.ShowLearnableByOther.BankAndBags)
-	components.showLearnableOtherOnGuildBank:SetChecked(config.Icon.ShowLearnableByOther.GuildBank)
-	components.showLearnableOtherOnMerchant:SetChecked(config.Icon.ShowLearnableByOther.Merchant)
-	components.showLearnableOtherOnAuction:SetChecked(config.Icon.ShowLearnableByOther.Auction)
-
-	components.showSellableOnBags:SetChecked(config.Icon.ShowSellable.BankAndBags)
-	components.showSellableOnGuildBank:SetChecked(config.Icon.ShowSellable.GuildBank)
-
-	components.mogIconShowAnimation:SetChecked(config.Icon.EnableAnimation)
-	components.mogIconShowSameLookDifferentItem:SetChecked(config.Icon.ShowLearnable.SameLookDifferentItem)
-end
-
-function configFrame:UpdatePendingValues()
-	local config = pendingConfig
-
-	config.Binding.Position = UIDropDownMenu_GetSelectedValue(components.bindingTextPosition)
-	config.Binding.ShowStatus.BankAndBags = components.showBindingOnBags:GetChecked()
-	config.Binding.ShowStatus.GuildBank = components.showBindingOnGuildBank:GetChecked()
-	config.Binding.ShowStatus.Merchant = components.showBindingOnMerchant:GetChecked()
-	config.Binding.ShowGearSets = components.showGearSets:GetChecked()
-	config.Binding.ShowGearSetsAsIcon = components.showGearSetsAsIcon:GetChecked()
-	config.Binding.ShowBoA = components.showBoA:GetChecked()
-	config.Binding.ShowBoE = components.showBoE:GetChecked()
-	
-	config.Icon.Position = UIDropDownMenu_GetSelectedValue(components.mogIconPosition)
-
-	config.Icon.ShowLearnable.BankAndBags = components.showLearnableOnBags:GetChecked()
-	config.Icon.ShowLearnable.GuildBank = components.showLearnableOnGuildBank:GetChecked()
-	config.Icon.ShowLearnable.Merchant = components.showLearnableOnMerchant:GetChecked()
-	config.Icon.ShowLearnable.Auction = components.showLearnableOnAuction:GetChecked()
-
-	config.Icon.ShowLearnableByOther.BankAndBags = components.showLearnableOtherOnBags:GetChecked()
-	config.Icon.ShowLearnableByOther.GuildBank = components.showLearnableOtherOnGuildBank:GetChecked()
-	config.Icon.ShowLearnableByOther.Merchant = components.showLearnableOtherOnMerchant:GetChecked()
-	config.Icon.ShowLearnableByOther.Auction = components.showLearnableOtherOnAuction:GetChecked()
-
-	config.Icon.ShowSellable.BankAndBags = components.showSellableOnBags:GetChecked()
-	config.Icon.ShowSellable.GuildBank = components.showSellableOnGuildBank:GetChecked()
-
-	config.Icon.EnableAnimation = components.mogIconShowAnimation:GetChecked()
-	config.Icon.ShowLearnable.SameLookDifferentItem = components.mogIconShowSameLookDifferentItem:GetChecked()
-end
-
-function configFrame:OnConfigLoaded()
-	self:ApplyConfig(CaerdonWardrobeConfig)
-
-	self.name = "|cff00ff00[背包]|r幻化提示"
-	self.okay = PropagateErrors(self.OnSave)
-	self.cancel = PropagateErrors(self.OnCancel)
-	self.default = PropagateErrors(self.OnResetToDefaults)
-	self.refresh = PropagateErrors(self.OnRefresh)
-
-	InterfaceOptions_AddCategory(self)
-end
-
-function configFrame:OnSave()
-	self:UpdatePendingValues()
-	CaerdonWardrobeConfig = CopyTable(pendingConfig)
-end
-
-function configFrame:OnCancel()
-	self:ApplyConfig(CaerdonWardrobeConfig)
-end
-
-function configFrame:OnResetToDefaults()
-	self:ApplyConfig(CaerdonWardrobeNS:GetDefaultConfig())
-end
-
-function configFrame:OnRefresh()
-	self:RefreshComponents()
-end
-
-configFrame:InitializeConfig()]]
-
------------------------------------------for Combuctor
-local isBagUpdateRequested = false
-local waitingOnBagUpdate = {}
-local atGuild = false
-
-local Version = nil
-if select(4, GetAddOnInfo('Combuctor')) then
-	Version = GetAddOnMetadata('Combuctor', 'Version')
-	CaerdonWardrobe:RegisterAddon('Combuctor', { isBags = true, hookDefaultBags = true })
-end
-
-if Version then
-
-	local function OnBagUpdate_Coroutine()
-	    for bag, bagData in pairs(waitingOnBagUpdate) do
-	    	for slot, slotData in pairs(bagData) do
-	    		for itemID, itemData in pairs(slotData) do
-					CaerdonWardrobe:UpdateButton(itemData.itemID, itemData.bag, itemData.slot, itemData.button, { showMogIcon = true, showBindStatus = true, showSellables = true } )
-	    		end
-	    	end
-
-			waitingOnBagUpdate[bag] = nil
-	    end
-
-		waitingOnBagUpdate = {}
-	end
-
-	local function ScheduleItemUpdate(itemID, bag, slot, button)
-		local waitBag = waitingOnBagUpdate[tostring(bag)]
-		if not waitBag then
-			waitBag = {}
-			waitingOnBagUpdate[tostring(bag)] = waitBag
+	local button = _G["LootButton"..index];
+	local slot = (numLootToShow * (LootFrame.page - 1)) + index;
+	if slot <= numLootItems then
+		if ((LootSlotHasItem(slot) or (LootFrame.AutoLootTable and LootFrame.AutoLootTable[slot])) and index <= numLootToShow) then
+			link = GetLootSlotLink(slot)
+			CaerdonWardrobe:UpdateButtonLink(link, "LootFrame", { index = slot, link = link }, button, nil)
 		end
+	end
+end
 
-		local waitSlot = waitBag[tostring(slot)]
-		if not waitSlot then
-			waitSlot = {}
-			waitBag[tostring(slot)] = waitSlot
+
+Loot = CreateFromMixins(LootMixin)
+Loot:OnLoad()
+
+
+local GroupLootMixin, GroupLoot = {}
+
+function GroupLootMixin:OnLoad()
+    GroupLootFrame1:HookScript("OnShow", function(...) GroupLoot:OnGroupLootFrameShow(...) end)
+    GroupLootFrame2:HookScript("OnShow", function(...) GroupLoot:OnGroupLootFrameShow(...) end)
+    GroupLootFrame3:HookScript("OnShow", function(...) GroupLoot:OnGroupLootFrameShow(...) end)
+    GroupLootFrame4:HookScript("OnShow", function(...) GroupLoot:OnGroupLootFrameShow(...) end)
+end
+
+function GroupLootMixin:OnGroupLootFrameShow(frame)
+	local itemLink = GetLootRollItemLink(frame.rollID)
+	CaerdonWardrobe:UpdateButtonLink(itemLink, "GroupLootFrame", { index = frame.rollID, link = itemLink}, frame.IconFrame, nil)
+end
+
+GroupLoot = CreateFromMixins(GroupLootMixin)
+GroupLoot:OnLoad()
+
+
+local MailMixin, Mail = {}
+
+function MailMixin:OnLoad()
+    hooksecurefunc("OpenMailFrame_UpdateButtonPositions", function(...) Mail:OnMailFrameUpdateButtonPositions(...) end)
+    hooksecurefunc("SendMailFrame_Update", function(...) Mail:OnSendMailFrameUpdate(...) end)
+    hooksecurefunc("InboxFrame_Update", function(...) Mail:OnInboxFrameUpdate(...) end)
+end
+
+function MailMixin:OnMailFrameUpdateButtonPositions(letterIsTakeable, textCreated, stationeryIcon, money)
+	for i=1, ATTACHMENTS_MAX_RECEIVE do
+		local attachmentButton = OpenMailFrame.OpenMailAttachments[i];
+		if HasInboxItem(InboxFrame.openMailID, i) then
+			-- local name, itemID, itemTexture, count, quality, canUse = GetInboxItem(InboxFrame.openMailID, i);
+			local itemLink = GetInboxItemLink(InboxFrame.openMailID, i)
+			CaerdonWardrobe:UpdateButtonLink(itemLink, "OpenMailFrame", i, attachmentButton, nil)
+		else
+            CaerdonWardrobe:ClearButton(attachmentButton)
 		end
-
-		waitSlot[tostring(itemID)] = { itemID = itemID, bag = bag, slot = slot, button = button }
-		isBagUpdateRequested = true
 	end
+end
 
-	local function OnUpdateSlot(self)
-		-- if not self:IsCached() then
-			local bag, slot = self:GetBag(), self:GetID()
+function MailMixin:OnSendMailFrameUpdate()
+	for i=1, ATTACHMENTS_MAX_SEND do
+		local attachmentButton = SendMailFrame.SendMailAttachments[i];
 
-			if bag ~= "vault" then
-				local tab = GetCurrentGuildBankTab()
-				if atGuild and tab == bag then
-					local itemLink = GetGuildBankItemLink(tab, slot)
-					if itemLink then
-						local itemID = tonumber(itemLink:match("item:(%d+)"))
-						bag = "GuildBankFrame"
-						slot = { tab = tab, index = slot }
-						ScheduleItemUpdate(itemID, bag, slot, self)
-					else
-						CaerdonWardrobe:ClearButton(self)
-					end
-				else
-					local itemID = GetContainerItemID(bag, slot)
-					if itemID then
-						ScheduleItemUpdate(itemID, bag, slot, self)
-					else
-						CaerdonWardrobe:ClearButton(self)
-					end
-				end
-			end
-		-- end
+		if HasSendMailItem(i) then
+			local itemLink = GetSendMailItemLink(i)
+			CaerdonWardrobe:UpdateButtonLink(itemLink, "SendMailFrame", i, attachmentButton, nil)
+		else
+            CaerdonWardrobe:ClearButton(attachmentButton)
+		end
 	end
+end
 
-	local function OnEvent(self, event, ...)
-		local handler = self[event]
-		if(handler) then
-			handler(self, ...)
+function MailMixin:OnInboxFrameUpdate()
+	local numItems, totalItems = GetInboxNumItems();
+
+	for i=1, INBOXITEMS_TO_DISPLAY do
+		local index = ((InboxFrame.pageNum - 1) * INBOXITEMS_TO_DISPLAY) + i;
+
+		button = _G["MailItem"..i.."Button"];
+		if ( index <= numItems ) then
+			-- Setup mail item
+			local packageIcon, stationeryIcon, sender, subject, money, CODAmount, daysLeft, itemCount, wasRead, x, y, z, isGM, firstItemQuantity, firstItemLink = GetInboxHeaderInfo(index);
+			CaerdonWardrobe:UpdateButtonLink(firstItemLink, "InboxFrame", index, button, nil)
+		else
+            CaerdonWardrobe:ClearButton(button)
+		end
+	end
+end
+
+Mail = CreateFromMixins(MailMixin)
+Mail:OnLoad()
+
+local QuestMixin, Quest = {}
+
+local version, build, date, tocversion = GetBuildInfo()
+local isShadowlands = tonumber(build) > 35700
+
+-- TODO: Consider setting up a callback framework via RegisterAddon
+local frame = CreateFrame("frame")
+frame:RegisterEvent("QUEST_DATA_LOAD_RESULT")
+frame:SetScript("OnEvent", function(this, event, ...)
+    Quest[event](Quest, ...)
+end)
+
+function QuestMixin:OnLoad()
+    self.latestDataRequestQuestID = nil
+
+	-- self:RegisterEvent("QUEST_DATA_LOAD_RESULT")
+    hooksecurefunc("QuestInfo_Display", function(...) Quest:OnQuestInfoDisplay(...) end)
+end
+
+function QuestMixin:OnQuestInfoDisplay(template, parentFrame)
+	-- Hooking OnQuestInfoDisplay instead of OnQuestInfoShowRewards directly because it seems to work
+	-- and I was having some problems.  :)
+	local i = 1
+	while template.elements[i] do
+		if template.elements[i] == QuestInfo_ShowRewards then self:OnQuestInfoShowRewards(template, parentFrame) return end
+		i = i + 3
+	end
+end
+
+function QuestMixin:GetQuestID()
+	if ( QuestInfoFrame.questLog ) then
+		if (isShadowlands) then
+			return C_QuestLog.GetSelectedQuest();
+		else
+			return select(8, GetQuestLogTitle(GetQuestLogSelection()));
+		end
+	else
+		return GetQuestID();
+	end
+end
+
+function QuestMixin:OnQuestInfoShowRewards(template, parentFrame)
+	local numQuestRewards = 0;
+	local numQuestChoices = 0;
+	local rewardsFrame = QuestInfoFrame.rewardsFrame;
+	local questID = self:GetQuestID()
+
+	if questID == 0 then return end -- quest abandoned
+
+	-- if ( template.canHaveSealMaterial ) then
+	-- 	local questFrame = parentFrame:GetParent():GetParent();
+	-- 	if ( template.questLog ) then
+	-- 		questID = questFrame.questID;
+	-- 	else
+	-- 		questID = GetQuestID();
+	-- 	end
+	-- end
+
+	local spellGetter;
+
+	if ( QuestInfoFrame.questLog ) then
+		if C_QuestLog.ShouldShowQuestRewards(questID) then
+			numQuestRewards = GetNumQuestLogRewards();
+			numQuestChoices = GetNumQuestLogChoices(questID, true);
+			-- playerTitle = GetQuestLogRewardTitle();
+			-- numSpellRewards = GetNumQuestLogRewardSpells();
+			-- spellGetter = GetQuestLogRewardSpell;
+		end
+	else
+		if ( QuestFrameRewardPanel:IsShown() or C_QuestLog.ShouldShowQuestRewards(questID) ) then
+			numQuestRewards = GetNumQuestRewards();
+			numQuestChoices = GetNumQuestChoices();
+			-- playerTitle = GetRewardTitle();
+			-- numSpellRewards = GetNumRewardSpells();
+			-- spellGetter = GetRewardSpell;
 		end
 	end
 
-	local timeSinceLastBagUpdate = nil
-	local BAGUPDATE_INTERVAL = 0.3
+	if not HaveQuestRewardData(questID) then
+		-- HACK: Force load and handle in QUEST_DATA_LOAD_RESULT
+		-- Not needed if Blizzard fixes showing of rewards in follow-up quests
+		self.latestDataRequestQuestID = questID
+		C_QuestLog.RequestLoadQuestByID(questID)
+		return
+	end
 
-	local function OnUpdate(self, elapsed)
-		if(self.bagUpdateCoroutine) then
-			if coroutine.status(self.bagUpdateCoroutine) ~= "dead" then
-				local ok, result = coroutine.resume(self.bagUpdateCoroutine)
-				if not ok then
-					error(result)
+	local options = {
+		iconOffset = 0,
+		iconSize = 40,
+		overridePosition = "TOPLEFT",
+		overrideBindingPosition = "TOPLEFT",
+		bindingOffsetX = -53,
+		bindingOffsetY = -16
+	}
+
+	local questItem, name, texture, quality, isUsable, numItems, itemID;
+	local rewardsCount = 0;
+	if ( numQuestChoices > 0 ) then
+		local index;
+		local itemLink;
+		local baseIndex = rewardsCount;
+		for i = 1, numQuestChoices do
+			index = i + baseIndex;
+			questItem = QuestInfo_GetRewardButton(rewardsFrame, index);
+			if ( QuestInfoFrame.questLog ) then
+				name, texture, numItems, quality, isUsable, itemID = GetQuestLogChoiceInfo(i);
+
+				if itemID then
+					_, itemLink = GetItemInfo(itemID)
 				end
 			else
-				self.bagUpdateCoroutine = nil
+				name, texture, numItems, quality, isUsable = GetQuestItemInfo(questItem.type, i);
+				itemLink = GetQuestItemLink(questItem.type, i);
 			end
-			return
-		end
+			rewardsCount = rewardsCount + 1;
 
-		if isBagUpdateRequested then
-			isBagUpdateRequested = false
-			timeSinceLastBagUpdate = 0
-		elseif timeSinceLastBagUpdate then
-			timeSinceLastBagUpdate = timeSinceLastBagUpdate + elapsed
-		end
-
-		if( timeSinceLastBagUpdate ~= nil and (timeSinceLastBagUpdate > BAGUPDATE_INTERVAL) ) then
-			timeSinceLastBagUpdate = nil
-			self.bagUpdateCoroutine = coroutine.create(OnBagUpdate_Coroutine)
+			CaerdonWardrobe:UpdateButtonLink(itemLink, "QuestButton", { itemID = itemID, questID = questID, index = i, questItem = questItem }, questItem, options)
 		end
 	end
 
+	if ( numQuestRewards > 0) then
+		local index;
+		local itemLink;
+		local baseIndex = rewardsCount;
+		local buttonIndex = 0;
+		for i = 1, numQuestRewards, 1 do
+			buttonIndex = buttonIndex + 1;
+			index = i + baseIndex;
+			questItem = QuestInfo_GetRewardButton(rewardsFrame, index);
+			questItem.type = "reward";
+			questItem.objectType = "item";
+			if ( QuestInfoFrame.questLog ) then
+				name, texture, numItems, quality, isUsable, itemID = GetQuestLogRewardInfo(i);
+				if itemID then
+					_, itemLink = GetItemInfo(itemID)
+				end
+			else
+				name, texture, numItems, quality, isUsable = GetQuestItemInfo(questItem.type, i);
+				itemLink = GetQuestItemLink(questItem.type, i);
+			end
+			rewardsCount = rewardsCount + 1;
 
-	local function HookCombuctor()
-		hooksecurefunc(Combuctor.Item, "Update", OnUpdateSlot)
+			CaerdonWardrobe:UpdateButtonLink(itemLink, "QuestButton", { itemID = itemID, questID = questID, index = i, questItem = questItem }, questItem, options)
+		end
 	end
-
-	local CaerdonWardrobeFrame = CreateFrame("FRAME")
-
-	CaerdonWardrobeFrame:SetScript("OnEvent", OnEvent)
-	CaerdonWardrobeFrame:SetScript("OnUpdate", OnUpdate)
-	-- CaerdonWardrobeFrame:RegisterEvent("TRANSMOG_COLLECTION_ITEM_UPDATE")
-
-	HookCombuctor()
-
-	function CaerdonWardrobeFrame:ADDON_LOADED(name)
-	end
-
-	function CaerdonWardrobeFrame:TRANSMOG_COLLECTION_ITEM_UPDATE()
-	    if Combuctor.sets then
-	        Combuctor:UpdateFrames()
-	    end
-	end
-
-	function CaerdonWardrobeFrame:GUILDBANKFRAME_OPENED()
-		atGuild = true
-	end
-
-	function CaerdonWardrobeFrame:GUILDBANKFRAME_CLOSED()
-		atGuild = false
-	end
-
 end
+
+function QuestMixin:QUEST_DATA_LOAD_RESULT(questID, success)
+	if success then
+		-- Total hack until Blizzard fixes quest rewards not loading
+		if questID == self.latestDataRequestQuestID then
+			self.latestDataRequestQuestID = nil
+
+			if QuestFrameDetailPanel:IsShown() then
+				QuestFrameDetailPanel:Hide();
+				QuestFrameDetailPanel:Show();
+			end
+		end
+	end
+end
+
+Quest = CreateFromMixins(QuestMixin)
+Quest:OnLoad()
+
+local WorldMapMixin, WorldMap = {}
+
+function WorldMapMixin:OnLoad()
+	hooksecurefunc (WorldMap_WorldQuestPinMixin, "RefreshVisuals", function (self)
+		if not IsModifiedClick("COMPAREITEMS") and not ShoppingTooltip1:IsShown() then
+			WorldMap:UpdatePin(self);
+		end
+	end)
+end
+
+function WorldMapMixin:UpdatePin(pin)
+	local options = {
+		iconOffset = -5,
+		iconSize = 60,
+		overridePosition = "TOPRIGHT",
+		-- itemCountOffset = 10,
+		-- bindingScale = 0.9
+	}
+
+	local itemLink, itemName, itemTexture, numItems, quality, isUsable, itemID
+
+	if GetNumQuestLogRewards(pin.questID) > 0 then
+		itemName, itemTexture, numItems, quality, isUsable, itemID = GetQuestLogRewardInfo(1, pin.questID)
+
+		if itemID then
+			_, itemLink = GetItemInfo(itemID)
+		end
+	end
+			
+	CaerdonWardrobe:UpdateButtonLink(itemLink, "QuestButton", { itemID = itemID, questID = pin.questID }, pin, options)
+end
+
+WorldMap = CreateFromMixins(WorldMapMixin)
+WorldMap:OnLoad()
+
+
+local BlackMarketMixin, BlackMarket = {}
+
+local frame = CreateFrame("frame")
+frame:RegisterEvent("ADDON_LOADED")
+frame:SetScript("OnEvent", function(this, event, ...)
+    BlackMarket[event](Quest, ...)
+end)
+
+function BlackMarketMixin:OnLoad()
+end
+
+function BlackMarketMixin:ADDON_LOADED(name)
+	if name == "Blizzard_BlackMarketUI" then
+		frame:RegisterEvent("BLACK_MARKET_ITEM_UPDATE")
+	end
+end
+
+function BlackMarketMixin:UpdateBlackMarketItems()
+	local numItems = C_BlackMarket.GetNumItems();
+	
+	if (not numItems) then
+		numItems = 0;
+	end
+	
+	local scrollFrame = BlackMarketScrollFrame;
+	local offset = HybridScrollFrame_GetOffset(scrollFrame);
+	local buttons = scrollFrame.buttons;
+	local numButtons = #buttons;
+
+	for i = 1, numButtons do
+		local button = buttons[i];
+		local index = offset + i; -- adjust index
+
+		if ( index <= numItems ) then
+			local name, texture, quantity, itemType, usable, level, levelType, sellerName, minBid, minIncrement, currBid, youHaveHighBid, numBids, timeLeft, link, marketID, quality = C_BlackMarket.GetItemInfoByIndex(index);
+			CaerdonWardrobe:UpdateButtonLink(link, "BlackMarketScrollFrame", index, button, nil)
+		else
+            CaerdonWardrobe:ClearButton(button)
+		end
+	end
+end
+
+function BlackMarketMixin:UpdateBlackMarketHotItem()
+	local button = BlackMarketFrame.HotDeal.Item
+	local name, texture, quantity, itemType, usable, level, levelType, sellerName, minBid, minIncrement, currBid, youHaveHighBid, numBids, timeLeft, link, marketID, quality = C_BlackMarket.GetHotItem();
+	CaerdonWardrobe:UpdateButtonLink(link, "BlackMarketScrollFrame", "HotItem", button, nil)
+end
+
+function BlackMarketMixin:BLACK_MARKET_ITEM_UPDATE()
+	BlackMarket:UpdateBlackMarketItems()
+	BlackMarket:UpdateBlackMarketHotItem()
+end
+
+BlackMarket = CreateFromMixins(BlackMarketMixin)
+BlackMarket:OnLoad()

@@ -425,9 +425,11 @@ function MISC:NVision_Check()
 		end
 
 		if RaidBossEmoteFrame.__isOff then
-			RaidBossEmoteFrame:RegisterEvent("RAID_BOSS_EMOTE")
-			RaidBossEmoteFrame:RegisterEvent("RAID_BOSS_WHISPER")
-			RaidBossEmoteFrame:RegisterEvent("CLEAR_BOSS_EMOTES")
+			if not MaoRUIPerDB["Misc"]["HideBossEmote"] then
+				RaidBossEmoteFrame:RegisterEvent("RAID_BOSS_EMOTE")
+				RaidBossEmoteFrame:RegisterEvent("RAID_BOSS_WHISPER")
+				RaidBossEmoteFrame:RegisterEvent("CLEAR_BOSS_EMOTES")
+			end
 			RaidBossEmoteFrame.__isOff = nil
 		end
 	end

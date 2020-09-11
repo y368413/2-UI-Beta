@@ -1,7 +1,46 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="BagBrother.lua"/>
-  <Script file="CaerdonWardrobe.lua"/>
   <Script file="Combuctor_ShiGuang.lua"/>
   <Script file="Combuctor_Binding.lua"/>
   <Script file="Combuctor_ItemInfo.lua"/>
+	<Script file="CaerdonWardrobe.lua" />   
+	<!-- This is derived from GameTooltip in GameTooltip.xml -->
+	<GameTooltip name="CaerdonWardrobeFrameShoppingTooltip1" hidden="true" />	
+	<GameTooltip name="CaerdonWardrobeFrameShoppingTooltip2" hidden="true" />
+	<GameTooltip name="CaerdonWardrobeFrameTooltip" inherits="GameTooltipTemplate">
+		<Frames>
+			<Frame parentKey="ItemTooltip" inherits="InternalEmbeddedItemTooltipTemplate" hidden="true">
+				<Scripts>
+					<OnLoad>
+						self.Tooltip.shoppingTooltips = { CaerdonWardrobeFrameShoppingTooltip1, CaerdonWardrobeFrameShoppingTooltip2 };
+					</OnLoad>
+				</Scripts>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				self:SetOwner(WorldFrame, "ANCHOR_NONE")
+				self.shoppingTooltips = { CaerdonWardrobeFrameShoppingTooltip1, CaerdonWardrobeFrameShoppingTooltip2 };
+			</OnLoad>
+		</Scripts>
+	</GameTooltip>
+    <Frame name="CaerdonWardrobeFrame" secureMixin="CaerdonWardrobeMixin">
+		<Scripts>
+			<OnLoad method="OnLoad"/>
+			<OnEvent method="OnEvent"/>
+            <OnUpdate method="OnUpdate"/>
+		</Scripts>
+    </Frame>
+    <Script file="CaerdonWardrobeCombuctor.lua"/>
+	<!--Frame name="CaerdonWardrobeConfigFrame" hidden="true" secureMixin="CaerdonWardrobeConfigMixin">
+		<Scripts>
+			<OnLoad method="OnLoad"/>
+        </Scripts>
+    </Frame>
+    <Frame name="CaerdonWardrobeConfigGeneralFrame" hidden="true" secureMixin="CaerdonWardrobeConfigGeneralMixin">
+		<Scripts>
+			<OnLoad method="OnLoad"/>
+        </Scripts>
+    </Frame>
+    <Script file="CaerdonWardrobeConfigPanel.lua"/-->
 </Ui>

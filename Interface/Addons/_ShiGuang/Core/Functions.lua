@@ -789,7 +789,7 @@ do
 
 		if not noHighlight then
 			self:HookScript("OnEnter", Button_OnEnter)
-			 self:HookScript("OnLeave", Button_OnLeave)
+			self:HookScript("OnLeave", Button_OnLeave)
 		end
 	end
 

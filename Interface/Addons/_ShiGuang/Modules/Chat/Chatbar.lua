@@ -318,7 +318,7 @@ function module:Chatbar()
     Emote_IconPanel:SetBackdropColor(0,0,0)
     Emote_IconPanel:SetClampedToScreen(true)
     Emote_IconPanel:SetFrameStrata("DIALOG")
-    Emote_IconPanel:SetPoint("BOTTOMLEFT",Emote_CallButton,"TOPLEFT",-23,0)
+    Emote_IconPanel:SetPoint("BOTTOMLEFT",Emote_CallButton,"TOPLEFT",-43,0)
     for _, v in ipairs(emotes) do
         Emote_button = CreateFrame("Button", nil, Emote_IconPanel)
         Emote_button.emote = "{" .. (v[GetLocale()] or v.key) .. "}"

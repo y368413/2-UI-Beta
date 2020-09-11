@@ -202,9 +202,8 @@ local defaultSettings = {
 		DPSRevertThreat = false,
 		ExplosivesScale = true,
 		AKSProgress = true,
-		PPHideOOC = true,
+		PPFadeout = true,
 		NameplateClassPower = false,
-		MaxPowerGlow = true,
 		NameTextSize = 14,
 		HealthTextSize = 16,
 		MinScale = 1,
@@ -212,6 +211,7 @@ local defaultSettings = {
 		ColorBorder = true,
 		QuestIndicator = true,
 		NameOnlyMode = false,
+		PPGCDTicker = true,
 	},
 	Skins = {
 		DBM = true,
@@ -280,6 +280,7 @@ local defaultSettings = {
 		AutoQuest = true,
 		HideTalking = true,
 		HideBanner = false,
+		HideBossEmote = false,
 		PetFilter = true,
 		QuestNotifier = true,
 		QuestProgress = false,
@@ -493,6 +494,18 @@ local function refreshNameplates()
 	M:GetModule("UnitFrames"):RefreshAllPlates()
 end
 
+local function togglePlatePower()
+	M:GetModule("UnitFrames"):TogglePlatePower()
+end
+
+local function togglePlateVisibility()
+	M:GetModule("UnitFrames"):TogglePlateVisibility()
+end
+
+local function toggleGCDTicker()
+	M:GetModule("UnitFrames"):ToggleGCDTicker()
+end
+
 local function updatePlateScale()
 	M:GetModule("UnitFrames"):UpdatePlateScale()
 end
@@ -576,6 +589,14 @@ local function updateErrorBlocker()
 	M:GetModule("Misc"):UpdateErrorBlocker()
 end
 
+local function toggleBossBanner()
+	M:GetModule("Misc"):ToggleBossBanner()
+end
+
+local function toggleBossEmote()
+	M:GetModule("Misc"):ToggleBossEmote()
+end
+
 local function updateSkinAlpha()
 	for _, frame in pairs(R.frames) do
 		M:SetBackdropColor(frame, 0, 0, 0, MaoRUIPerDB["Skins"]["SkinAlpha"])
@@ -598,11 +619,11 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 	[1] = {
 		{1, "Actionbar", "Enable", "|cff00cc4c"..U["Enable Actionbar"]},
 		{3, "Actionbar", "Scale", U["Actionbar Scale"].."*", true, false, {.8, 1.5, .1}, updateActionbarScale},
-		{4, "Actionbar", "Style", U["Actionbar Style"], true, true, {"-- 2*(3+12+3) --", "-- 2*(6+12+6) --", "-- 2*6+3*12+2*6 --", "-- 3*12 --", "-- 2*(12+6) --", "-- 3*(4+12+4) --", "-- What --", "-- MR --", "-- PVP2 --", "-- Cool --"}},
+		{4, "Actionbar", "Style", U["Actionbar Style"], true, true, {"-- 2*(3+12+3) --", "-- 2*(6+12+6) --", "-- 2*6+3*12+2*6 --", "-- 3*12 --", "-- 2*(12+6) --", "-- 3*(4+12+4) --", "-- What --", "-- MR --", "-- PVP2 --", "-- Cool --", "-- JK --"}},
 		{},--blank
 		{1, "Actionbar", "Cooldown", "|cff00cc4c"..U["Show Cooldown"]},
 		{1, "Actionbar", "DecimalCD", U["Decimal Cooldown"].."*", true},
-		{1, "Actionbar", "OverrideWA", U["HideCooldownOnWA"], true, true},
+		{1, "Actionbar", "OverrideWA", U["HideCooldownOnWA"].."*", true, true},
 		{1, "Actionbar", "Hotkeys", U["Actionbar Hotkey"]},
 		{1, "Actionbar", "Macro", U["Actionbar Macro"], true},
 		{1, "Actionbar", "Count", U["Actionbar Item Counts"], true, true},
@@ -737,8 +758,9 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "Auras", "ClassAuras", U["Enable ClassAuras"], true},
 		{1, "Nameplate", "MaxPowerGlow", U["MaxPowerGlow"], true, true},
 		{1, "Nameplate", "NameplateClassPower", U["Nameplate ClassPower"]},
-		{1, "Nameplate", "PPPowerText", U["PlayerPlate PowerText"], true},
-		{1, "Nameplate", "PPHideOOC", U["Fadeout OOC"], true, true},
+		{1, "Nameplate", "PPPowerText", U["PlayerPlate PowerText"].."*", true, false, nil, togglePlatePower},
+		{1, "Nameplate", "PPFadeout", U["PlayerPlate Fadeout"].."*", true, true, nil, togglePlateVisibility},
+		--{1, "Nameplate", "PPGCDTicker", U["PlayerPlate GCDTicker"].."*", nil, nil, nil, toggleGCDTicker},
 		{3, "Nameplate", "PPWidth", U["PlayerPlate HPWidth"].."*", false, nil, {120, 310, 1}, refreshNameplates}, -- FIX ME: need to refactor classpower
 		--{3, "Nameplate", "PPBarHeight", U["PlayerPlate CPHeight"].."*", true, false, {0, 16, 1}, refreshNameplates},
 		{3, "Nameplate", "PPHealthHeights", U["PlayerPlate HPHeight"].."*", true, false, {0, 16, .1}, refreshNameplates},
@@ -759,7 +781,8 @@ local optionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "ACCOUNT", "AutoBubbles", U["AutoBubbles"], true, true},
 		{},--blank
 		{1, "Misc", "HideTalking", U["No Talking"]},
-		{1, "Misc", "HideBanner", U["Hide Bossbanner"], true},
+		{1, "Misc", "HideBanner", U["Hide Bossbanner"].."*", true, false, nil, toggleBossBanner},
+		--{1, "Misc", "HideBossEmote", U["HideBossEmote"].."*", nil, nil, toggleBossEmote},
 		{1, "Misc", "HideErrors", U["Hide Error"].."*", true, true, nil, updateErrorBlocker},
 		{1, "Chat", "AllowFriends", U["AllowFriendsSpam"].."*", false, false, nil, nil, U["AllowFriendsSpamTip"]},
 		{1, "Chat", "Lock", "|cff00cc4c"..U["Lock Chat"], true, false},

@@ -2,7 +2,7 @@
 	<Script file="CCIcons.lua"/>
 	<Script file="AutoCage.lua"/>
 	<Script file="Caravana.lua"/>
-	<Script file="AutoInvite.lua"/>
+	<!--Script file="AutoInvite.lua"/-->
 	<Script file="SoundMutes.lua"/>
 	<!--Script file="TinyDPS.lua"/>
 	<Script file="WhoPulled.lua"/-->
