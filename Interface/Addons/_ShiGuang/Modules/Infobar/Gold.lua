@@ -99,6 +99,24 @@ info.onEnter = function(self)
 		GameTooltip:AddDoubleLine(getClassIcon(class)..k, module:GetMoneyString(gold), r,g,b, 1,1,1)
 		totalGold = totalGold + gold
 	end
+	
+	local realms = GetAutoCompleteRealms() 
+  if realms and realms[1] then 
+    for _, realm in ipairs(realms) do 
+        if realm ~= myRealm then 
+            local connectedRealmList = MaoRUIDB["totalGold"][realm] 
+            if connectedRealmList then 
+                for k, v in pairs(connectedRealmList) do 
+                    local gold, class = unpack(v) 
+                    local r, g, b = M.ClassColor(class) 
+                    GameTooltip:AddDoubleLine(getClassIcon(class)..k.."-"..realm, module:GetMoneyString(gold), r,g,b, 1,1,1) 
+                    totalGold = totalGold + gold 
+                end 
+            end 
+        end 
+    end 
+  end
+  
 	GameTooltip:AddLine(" ")
 	GameTooltip:AddDoubleLine(TOTAL..":", module:GetMoneyString(totalGold), .6,.8,1, 1,1,1)
 

@@ -1048,7 +1048,7 @@ function UF:UpdateGCDTicker(elapsed)
 end
 
 function UF:CreateGCDTicker(self)
-	local ticker = CreateFrame("StatusBar", nil, self)
+	local ticker = CreateFrame("StatusBar", nil, self.Power)
 	ticker:SetFrameLevel(self:GetFrameLevel() + 3)
 	ticker:SetStatusBarTexture(I.normTex)
 	ticker:GetStatusBarTexture():SetAlpha(0)
