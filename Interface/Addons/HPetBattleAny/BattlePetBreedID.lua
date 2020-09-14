@@ -428,11 +428,11 @@ local function BPBID_Hook_HSFUpdate(scrollFrame)
                     
                 -- Display breed as part of the nickname if the pet has one, otherwise use the real name
                 if (customName) then
-                    thisPet.name:SetText(hex..customName.." ("..GetBreedID_Journal(petID)..")".."|r")
+                    thisPet.name:SetText(hex..customName.." ["..GetBreedID_Journal(petID).."]".."|r")
                     thisPet.subName:Show()
                     thisPet.subName:SetText(name)
                 else
-                    thisPet.name:SetText(hex..name.." ("..GetBreedID_Journal(petID)..")".."|r")
+                    thisPet.name:SetText(hex..name.." ["..GetBreedID_Journal(petID).."]".."|r")
                     thisPet.subName:Hide()
                 end
                 
@@ -6732,9 +6732,9 @@ local function BPBID_Hook_BattleUpdate(self)
             -- Set standard text or use hex coloring based on font fix option
             if (BPBID_Options.BattleFontFix) then
                 local _, _, _, hex = GetItemQualityColor(internal.rarityCache[self.petIndex + offset] - 1)
-                self.Name:SetText("|c"..hex..name.." ("..breed..")".."|r")
+                self.Name:SetText("|c"..hex..name.." ["..breed.."]".."|r")
             else
-                self.Name:SetText(name.." ("..breed..")")
+                self.Name:SetText(name.." ["..breed.."]")
             end
         end
     else
@@ -6743,9 +6743,9 @@ local function BPBID_Hook_BattleUpdate(self)
             -- Set standard text or use hex coloring based on font fix option
             if (not BPBID_Options.BattleFontFix) then
                 local _, _, _, hex = GetItemQualityColor(internal.rarityCache[self.petIndex + offset] - 1)
-                self.Name:SetText("|c"..hex..name.." ("..breed..")".."|r")
+                self.Name:SetText("|c"..hex..name.." ["..breed.."]".."|r")
             else
-                self.Name:SetText(name.." ("..breed..")")
+                self.Name:SetText(name.." ["..breed.."]")
             end
         end
 
@@ -6801,9 +6801,9 @@ local function BPBID_Hook_BPTShow(speciesID, level, rarity, maxHealth, power, sp
         local currentText = BattlePetTooltip.Name:GetText()
 
         -- Test if we've already written to the tooltip
-        if not strfind(currentText, " (" .. breed .. ")") then
+        if not strfind(currentText, " [" .. breed .. "]") then
             -- Append breed to tooltip
-            BattlePetTooltip.Name:SetText(currentText .. " (" .. breed .. ")")
+            BattlePetTooltip.Name:SetText(currentText .. " [" .. breed .. "]")
 
             -- If this not the same tooltip as before
             if (BPTNameText ~= BattlePetTooltip.Name:GetText()) then
@@ -6865,7 +6865,7 @@ local function BPBID_Hook_FBPTShow(speciesID, level, rarity, maxHealth, power, s
         end
 
         -- Append breed to tooltip
-        FloatingBattlePetTooltip.Name:SetText(realname.." ("..breed..")")
+        FloatingBattlePetTooltip.Name:SetText(realname.." ["..breed.."]")
 
         -- Could potentially try to avoid collisons better here but it will be hard because these aren't even really GameTooltips
         -- Resize all relevant parts of tooltip to avoid cutoff breeds/names (since Blizzard made these static-sized!)
@@ -6916,7 +6916,7 @@ function internal.Hook_PJTEnter(self, motion)
             local breed = internal.RetrieveBreedName(breedNum)
             
             -- Write breed to tooltip
-            GameTooltipTextLeft1:SetText(GameTooltipTextLeft1:GetText().." ("..breed..")")
+            GameTooltipTextLeft1:SetText(GameTooltipTextLeft1:GetText().." ["..breed.."]")
             
             -- Resize to avoid cutting off breed
             GameTooltip:Show()
@@ -6975,9 +6975,9 @@ function internal.Hook_ArkInventory(tooltip, h, i)
         local currentText = GameTooltipTextLeft1:GetText()
 
         -- Test if we've already written to the tooltip
-        if currentText and not strfind(currentText, " (" .. breed .. ")") then
+        if currentText and not strfind(currentText, " [" .. breed .. "]") then
             -- Append breed to tooltip
-            GameTooltipTextLeft1:SetText(currentText .. " (" .. breed .. ")")
+            GameTooltipTextLeft1:SetText(currentText .. " [" .. breed .. "]")
             reloadTooltip = true
         end
     elseif (BPBID_Options.Names.FBPT) and (tooltip == ItemRefTooltip) then
@@ -6985,7 +6985,7 @@ function internal.Hook_ArkInventory(tooltip, h, i)
         local currentText = ItemRefTooltipTextLeft1:GetText()
 
         -- Append breed to tooltip
-        ItemRefTooltipTextLeft1:SetText(currentText .. " (" .. breed .. ")")
+        ItemRefTooltipTextLeft1:SetText(currentText .. " [" .. breed .. "]")
         reloadTooltip = true
     end
     

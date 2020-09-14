@@ -1203,8 +1203,8 @@ local function SetItemButtonMogStatus(originalButton, item, bag, slot, options, 
 		SetIconPositionAndSize(mogStatus, iconPosition, 15, iconSize, iconOffset)
 		mogStatus:SetTexture("Interface\\Store\\category-icon-free")
 	elseif status == "lowSkill" then
-		mogStatus:SetTexture("Interface\\WorldMap\\Gear_64Grey")
-		SetIconPositionAndSize(mogStatus, iconPosition, 15, 30, iconOffset, 0.6)
+		SetIconPositionAndSize(mogStatus, iconPosition, 10, 30, iconOffset)
+		mogStatus:SetTexture("Interface\\Store\\category-icon-scroll")  --Interface\\WorldMap\\Gear_64Grey
 		-- mogStatus:SetTexture("Interface\\QUESTFRAME\\SkillUp-BG")
 		-- mogStatus:SetTexture("Interface\\DialogFrame\\UI-Dialog-Icon-AlertNew")
 		-- mogStatus:SetTexture("Interface\\Buttons\\JumpUpArrow")
@@ -1214,7 +1214,7 @@ local function SetItemButtonMogStatus(originalButton, item, bag, slot, options, 
 	elseif status == "oldexpansion" and not ShouldHideOldExpansionIcon(bag) then
 		SetIconPositionAndSize(mogStatus, iconPosition, 10, 30, iconOffset)
 		alpha = 0.9
-		mogStatus:SetTexture("Interface\\Store\\category-icon-wow")
+		mogStatus:SetTexture("Interface\\Store\\category-icon-hot")
 	elseif status == "own" or status == "ownPlus" then
 		if not ShouldHideOwnIcon(bag) then
 			SetIconPositionAndSize(mogStatus, iconPosition, 15, iconSize, iconOffset)
@@ -1246,8 +1246,8 @@ local function SetItemButtonMogStatus(originalButton, item, bag, slot, options, 
 			mogStatus:SetTexture("")
 		end
 	elseif status == "quest" and not ShouldHideQuestIcon(bag) then
-		SetIconPositionAndSize(mogStatus, iconPosition, 2, 15, iconOffset)
-		mogStatus:SetTexture("Interface\\MINIMAP\\MapQuestHub_Icon32")
+		SetIconPositionAndSize(mogStatus, iconPosition, 10, 30, iconOffset)
+		mogStatus:SetTexture("Interface\\Store\\category-icon-ticket")
 	elseif status == "collected" then
 		if not IsGearSetStatus(bindingStatus, item) and showSellables and isSellable and not ShouldHideSellableIcon(bag) then -- it's known and can be sold
 			SetIconPositionAndSize(mogStatus, iconPosition, 10, 30, iconOffset)

@@ -274,7 +274,8 @@ function module:Chatbar()
 	_G.ChatFrameToggleVoiceMuteButton:SetParent(VoiceFrame)
 	--_G.QuickJoinToastButton.Show = M.Dummy
 	--_G.QuickJoinToastButton:Hide()
-	_G.QuickJoinToastButton:SetParent(VoiceFrame)
+	--_G.QuickJoinToastButton:SetParent(VoiceFrame)
+	_G.QuickJoinToastButton:SetAlpha(0)
 	_G.ChatAlertFrame:ClearAllPoints()
 	_G.ChatAlertFrame:SetPoint("BOTTOMLEFT", _G.ChatFrame1Tab, "TOPLEFT", 6, 21)
 
