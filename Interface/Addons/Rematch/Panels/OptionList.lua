@@ -130,7 +130,6 @@ panel.opts = {
 	{ "check", "QueueAutoLearn", L["Automatically Level New Pets"], L["When you capture or learn a pet, automatically add it to the leveling queue."] },
 	{ "check", "QueueAutoLearnOnly", L["Only Pets Without A 25"], L["Only automatically level pets which don't have a version already at 25 or in the queue."], "QueueAutoLearn" },
 	{ "check", "QueueAutoLearnRare", L["Only Rare Pets"], L["Only automatically level rare quality pets."], "QueueAutoLearn" },
-	{ "check", "QueueRandomWhenEmpty", L["Use Random If Queue Empty"], L["When the queue is empty, use a random high level pet instead of ignoring the slot when a team loads."] },
 	{ "header", L["Pet Filter Options"], 8 },
 	{ "check", "StrongVsLevel", L["Use Level In Strong Vs Filter"], L["When doing a Strong Vs filter, take the level of the pet into account. If a pet is not high enough level to use a Strong Vs ability, do not list the pet.\n\n\124cffffffffNote:\124r A Strong Vs filter is sometimes useful for identifying pets you want to level or capture. This option will hide those pets while the Strong Vs filter is active."], nil, true },
 	{ "check", "ResetFilters", L["Reset Filters On Login"], L["When logging in, start with all pets listed and no filters active."] },

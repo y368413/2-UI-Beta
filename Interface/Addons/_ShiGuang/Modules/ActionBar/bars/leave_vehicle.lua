@@ -26,7 +26,8 @@ function Bar:CreateLeaveVehicle()
 	button:RegisterForClicks("AnyUp")
 	button.icon:SetTexture("INTERFACE\\PLAYERACTIONBARALT\\NATURAL")
 	button.icon:SetTexCoord(.086, .168, .360, .441)
-	button.__lockIcon = true
+	button.icon:SetDrawLayer("ARTWORK")
+	button.icon.__lockdown = true
 
 	button:SetScript("OnEnter", MainMenuBarVehicleLeaveButton_OnEnter)
 	button:SetScript("OnLeave", M.HideTooltip)
