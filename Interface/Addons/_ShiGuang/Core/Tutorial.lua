@@ -64,10 +64,7 @@ local function ForceDefaultSettings()
 	SetCVar("ActionButtonUseKeyDown", 1)
 	SetCVar("alwaysShowActionBars", 0)
 	SetCVar("lockActionBars", 1)
-	SetCVar("WorldTextScale", 1.2)
-	SetCVar("cameraDistanceMaxZoomFactor", 2.6)
-	SetCVar("floatingCombatTextCombatDamageDirectionalOffset", 10)
-	SetActionBarToggles(1, 1, 1, 1)
+	SetActionBarToggles(1, 1, 0, 0)
 	SHOW_MULTI_ACTIONBAR_1="1" --左下方动作条 
   SHOW_MULTI_ACTIONBAR_2="1" --右下方动作条 
   SHOW_MULTI_ACTIONBAR_3 = "0" --右动作条1
