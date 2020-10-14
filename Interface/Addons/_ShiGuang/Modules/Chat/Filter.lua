@@ -9,7 +9,6 @@ local IsGuildMember, C_FriendList_IsFriend, IsGUIDInGroup, C_Timer_After = IsGui
 local Ambiguate, UnitIsUnit, GetTime, SetCVar = Ambiguate, UnitIsUnit, GetTime, SetCVar
 local GetItemInfo, GetItemStats = GetItemInfo, GetItemStats
 local C_BattleNet_GetGameAccountInfoByGUID = C_BattleNet.GetGameAccountInfoByGUID
-local IsCorruptedItem = IsCorruptedItem
 
 local LE_ITEM_CLASS_WEAPON, LE_ITEM_CLASS_ARMOR = LE_ITEM_CLASS_WEAPON, LE_ITEM_CLASS_ARMOR
 local BN_TOAST_TYPE_CLUB_INVITATION = BN_TOAST_TYPE_CLUB_INVITATION or 6
@@ -228,10 +227,6 @@ local function isItemHasGem(link)
 	return text
 end
 
-local function isItemCorrupted(link)
-	return IsCorruptedItem(link) and "|T3004126:0:0:0:0:64:64:5:59:5:59|t" or ""
-end
-
 local itemCache = {}
 local function convertItemLevel(link)
 	if itemCache[link] then return itemCache[link] end
@@ -253,9 +248,7 @@ local function convertItemLevel(link)
         elseif (class == ARMOR) then level = format("%s(%s)", level, class)
         elseif (subclass and strfind(subclass, RELICSLOT)) then level = format("%s(%s)", level, RELICSLOT)
         end
-        if IsCorruptedItem(link) then
-        link = gsub(link, "|h%[(.-)%]|h", "|h["..level..isItemHasGem(itemLinkGem)..":"..name.."|T3004126:0|t".."]|h")
-        elseif itemLinkGem then
+        if itemLinkGem then
         link = gsub(link, "|h%[(.-)%]|h", "|h["..level..isItemHasGem(itemLinkGem)..":"..name.."]|h")
         else
         link = gsub(link, "|h%[(.-)%]|h", "|h["..level..":"..name.."]|h")
@@ -270,23 +263,6 @@ function module:UpdateChatItemLevel(_, msg, ...)
 	msg = gsub(msg, "(|H%w+:%d+:.-|h.-|h)", SetChatLinkIcon)
 	msg = gsub(msg, "(|Hitem:%d+:.-|h.-|h)", convertItemLevel)
 	return false, msg, ...
-end
-
--- Filter azerite message on island expeditions
-local azerite = ISLANDS_QUEUE_WEEKLY_QUEST_PROGRESS:gsub("%%d/%%d ", "")
-local function filterAzeriteGain(_, _, msg)
-	if strfind(msg, azerite) then
-		return true
-	end
-end
-
-local function isPlayerOnIslands()
-	local _, instanceType, _, _, maxPlayers = GetInstanceInfo()
-	if instanceType == "scenario" and (maxPlayers == 3 or maxPlayers == 6) then
-		ChatFrame_AddMessageEventFilter("CHAT_MSG_SYSTEM", filterAzeriteGain)
-	else
-		ChatFrame_RemoveMessageEventFilter("CHAT_MSG_SYSTEM", filterAzeriteGain)
-	end
 end
 
 function module:ChatFilter()
@@ -333,5 +309,4 @@ function module:ChatFilter()
 		ChatFrame_AddMessageEventFilter("CHAT_MSG_INSTANCE_CHAT", self.UpdateChatItemLevel)
 		ChatFrame_AddMessageEventFilter("CHAT_MSG_INSTANCE_CHAT_LEADER", self.UpdateChatItemLevel)
 	end
-	M:RegisterEvent("PLAYER_ENTERING_WORLD", isPlayerOnIslands)
 end
