@@ -80,7 +80,11 @@ end
 
 function module:StartTimer(start, duration)
 	if self:IsForbidden() then return end
+<<<<<<< HEAD
 	if self.noCooldownCount or hideNumbers[self] then return end
+=======
+	if self.noCooldownCount  or hideNumbers[self] then return end
+>>>>>>> e512d0584504748f2a8e30fc35555ee8ffd6b52b
 
 	local frameName = self.GetName and self:GetName()
 	if MaoRUIPerDB["Actionbar"]["OverrideWA"] and frameName and strfind(frameName, "WeakAuras") then
