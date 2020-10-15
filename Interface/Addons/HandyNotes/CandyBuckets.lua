@@ -231,14 +231,14 @@ CandyBuckets.modules["hallow"] = {
 	},
 	patterns = {
 		"^%s*[Cc][Aa][Nn][Dd][Yy]%s+[Bb][Uu][Cc][Kk][Ee][Tt]%s*$",
-		"^%s*[Ee][Ii][Mm][Ee][Rr]%s+[Mm][Ii][Tt]%s+[Ss][üü][??][Ii][Gg][Kk][Ee][Ii][Tt][Ee][Nn]%s*$",
+		"^%s*[Ee][Ii][Mm][Ee][Rr]%s+[Mm][Ii][Tt]%s+[Ss][Üü][ßß][Ii][Gg][Kk][Ee][Ii][Tt][Ee][Nn]%s*$",
 		"^%s*[Cc][Uu][Bb][Oo]%s+[Dd][Ee]%s+[Cc][Aa][Rr][Aa][Mm][Ee][Ll][Oo][Ss]%s*$",
 		"^%s*[Uu][Nn]%s+[Ss][Ee][Aa][Uu]%s+[Dd][Ee]%s+[Bb][Oo][Nn][Bb][Oo][Nn][Ss]%s*$",
 		"^%s*[Ss][Ee][Aa][Uu]%s+[Dd][Ee]%s+[Bb][Oo][Nn][Bb][Oo][Nn][Ss]%s*$",
 		"^%s*[Ss][Ee][Cc][Cc][Hh][Ii][Oo]%s+[Dd][Ee][Ll][Ll][Ee]%s+[Cc][Aa][Rr][Aa][Mm][Ee][Ll][Ll][Ee]%s*$",
 		"^%s*[Bb][Aa][Ll][Dd][Ee]%s+[Dd][Ee]%s+[Dd][Oo][Cc][Ee][Ss]%s*$",
 		"^%s*[Кк][Уу][Лл][Ее][Кк]%s+[Кк][Оо][Нн][Фф][Ее][Тт]%s*$",
-		"^%s*??%s+???%s*$",
+		"^%s*사탕%s+바구니%s*$",
 		"^%s*糖罐%s*$",
 		"^%s*%[%s*[Cc][Aa][Nn][Dd][Yy]%s+[Bb][Uu][Cc][Kk][Ee][Tt]%s*%]%s*$",
 	}
@@ -361,7 +361,7 @@ CandyBuckets.modules["lunar"] = {
 		"%s+[Ee][Ll]%s+[Aa][Nn][Cc][Ee][Ss][Tt][Rr][Oo]%s*$",
 		"^%s*[Ll]'[Aa][Nn][Cc][Ii][Ee][Nn]%s+",
 		"%s+[Ll]'[Aa][Nn][Zz][Ii][Aa][Nn][oO]%s*$",
-		",%s+[Oo]%s+[Aa][Nn][Cc][Ii][??][Oo]%s*$",
+		",%s+[Oo]%s+[Aa][Nn][Cc][Ii][Ãã][Oo]%s*$",
 		"^%s*[Пп][Рр][Ее][Дд][Оо][Кк]%s+",
 	}
 }
@@ -613,16 +613,16 @@ CandyBuckets.modules["midsummer"] = {
 		"^%s*[Oo][Nn][Oo][Rr][Aa]%s+[Ii][Ll]%s+[Ff][Aa][Ll][òò]%s*$",
 		"^%s*[Rr][Ee][Vv][Ee][Rr][Ee][Nn][Cc][Ii][Ee]%s+[Aa]%s+[Cc][Hh][Aa][Mm][Aa]%s*$",
 		"^%s*[Пп][Оо][Кк][Лл][Оо][Нн][Ее][Нн][Ии][Ее]%s+[Оо][Гг][Нн][Юю]%s*$",
-		"^%s*???%s+???%s*$",
+		"^%s*불꽃에%s+경의를%s*$",
 		"^%s*祭拜这团火焰%s*$",
 		"^%s*[Dd][Ee][Ss][Ee][Cc][Rr][Aa][Tt][Ee]%s+[Tt][Hh][Ii][Ss]%s+[Ff][Ii][Rr][Ee]%s*%!%s*$",
 		"^%s*[Ee][Nn][Tt][Ww][Ee][Ii][Hh][Tt]%s+[Dd][Ii][Ee][Ss][Ee][Ss]%s+[Ff][Ee][Uu][Ee][Rr]%s*%!%s*$",
-		"^%s*%?%s*[Pp][Rr][Oo][Ff][Aa][Nn][Aa]%s+[Ee][Ss][Tt][Ee]%s+[Ff][Uu][Ee][Gg][Oo]%s*%!%s*$",
-		"^%s*[Dd][éé][Ss][Aa][Cc][Rr][Aa][Ll][Ii][Ss][Ee][Zz]%s+[Cc][Ee]%s+[Ff][Ee][Uu]%s*%!%s*$",
-		"^%s*[Dd][Ii][Ss][Ss][Aa][Cc][Rr][Aa]%s+[Qq][Uu][Ee][Ss][Tt][Oo]%s+[Ff][Aa][Ll][òò]%s*%!%s*$",
+		"^%s*%¡%s*[Pp][Rr][Oo][Ff][Aa][Nn][Aa]%s+[Ee][Ss][Tt][Ee]%s+[Ff][Uu][Ee][Gg][Oo]%s*%!%s*$",
+		"^%s*[Dd][Éé][Ss][Aa][Cc][Rr][Aa][Ll][Ii][Ss][Ee][Zz]%s+[Cc][Ee]%s+[Ff][Ee][Uu]%s*%!%s*$",
+		"^%s*[Dd][Ii][Ss][Ss][Aa][Cc][Rr][Aa]%s+[Qq][Uu][Ee][Ss][Tt][Oo]%s+[Ff][Aa][Ll][Òò]%s*%!%s*$",
 		"^%s*[Pp][Rr][Oo][Ff][Aa][Nn][Ee]%s+[Oo]%s+[Ff][Oo][Gg][Oo]%s*%!%s*$",
 		"^%s*[Оо][Сс][Кк][Вв][Ее][Рр][Нн][Ее][Нн][Ии][Ее]%s+[Оо][Гг][Нн][Яя]%s*$",
-		"^%s*???%s+??%s*%!%s*$",
+		"^%s*화톳불%s+모독%s*%!%s*$",
 		"^%s*亵渎这团火焰%s*%！%s*$",
 	}
 }
