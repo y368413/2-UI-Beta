@@ -1,0 +1,14 @@
+{
+    "target": "curse",
+    "searchName": "mOnArs WardrobeHelper",
+    "localName": "mOnArs_WardrobeHelper",
+    "version": "1.20",
+    "fileName": "monars-wardrobehelper",
+    "addonsMap": [
+        "mOnArs_WardrobeHelper"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "name": "mOnArs WardrobeHelper",
+    "gameVersion": "9.0.1"
+}

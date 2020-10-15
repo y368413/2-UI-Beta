@@ -1,0 +1,16 @@
+## Interface: 70300
+## Title: |cff00ccffHandyNotes_AncientShrines by Frost_WD
+## Notes: Ancient shrine buffs for ganking or just for pve.
+## Author: Frost-Xavius EU | Frost_WD
+## Version: 2.0
+## License: http://creativecommons.org/licenses/by-nc-sa/2.5
+## LegalCode: http://creativecommons.org/licenses/by-nc-sa/2.5/legalcode
+## DefaultState: enabled
+## X-Category: Map
+## X-eMail: Frost@wicked-demise.com
+## SavedVariables: HandyNotes_AncientShrinesDB
+## RequiredDeps: HandyNotes
+
+handler.lua
+config.lua
+nodes.lua

@@ -1,0 +1,14 @@
+{
+    "target": "curse",
+    "searchName": "ThingsToDo2",
+    "localName": "ThingsToDo2",
+    "version": "2.19",
+    "fileName": "thingstodo2",
+    "addonsMap": [
+        "ThingsToDo2"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "name": "ThingsToDo2",
+    "gameVersion": ""
+}

@@ -1,0 +1,8 @@
+Changes since tag v1.6.3
+
+commit 53dc1e9cd04a97fc2000ec4077fa53cd8ade2085
+Author: Hendrik Leppkes <h.leppkes@gmail.com>
+Date:   Fri Sep 25 08:19:33 2020 +0200
+
+    Stop event spam on 9.0
+

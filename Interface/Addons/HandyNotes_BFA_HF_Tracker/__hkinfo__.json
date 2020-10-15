@@ -1,0 +1,14 @@
+{
+    "target": "curse",
+    "searchName": "HandyNotes : BFA_HF_Tracker",
+    "localName": "HandyNotes_BFA_HF_Tracker",
+    "version": "BFA_HF_Tracker_8.0.5",
+    "fileName": "handynotes-bfa_hf_tracker",
+    "addonsMap": [
+        "HandyNotes_BFA_HF_Tracker"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "name": "HandyNotes_BFA_HF_Tracker",
+    "gameVersion": ""
+}

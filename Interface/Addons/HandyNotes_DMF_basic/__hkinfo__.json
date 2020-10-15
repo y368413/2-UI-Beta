@@ -1,0 +1,17 @@
+{
+    "target": "curse",
+    "searchName": "handynotes_DMF (Darkmoon Faire)",
+    "localName": "HandyNotes_DMF_basic",
+    "version": "handynotes_DMF",
+    "fileName": "handynotes_dmf-darkmoon-faire",
+    "addonsMap": [
+        "HandyNotes_DMF_basic",
+        "HandyNotes_DMF_treasure"
+    ],
+    "interfaceMap": [],
+    "children": [
+        "HandyNotes_DMF_treasure"
+    ],
+    "name": "HandyNotes_DMF_basic",
+    "gameVersion": ""
+}

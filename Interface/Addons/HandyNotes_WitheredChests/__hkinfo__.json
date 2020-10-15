@@ -1,0 +1,14 @@
+{
+    "target": "curse",
+    "searchName": "HandyNotes_WitheredChests",
+    "localName": "HandyNotes_WitheredChests",
+    "version": "HandyNotes_WitheredChests_1.2.1.zip",
+    "fileName": "handynotes_witheredchests",
+    "addonsMap": [
+        "HandyNotes_WitheredChests"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "name": "HandyNotes_WitheredChests",
+    "gameVersion": ""
+}

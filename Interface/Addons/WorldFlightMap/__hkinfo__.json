@@ -3,12 +3,5 @@
     "searchName": "WorldFlightMap",
     "localName": "WorldFlightMap",
     "version": "8.3.0.1",
-    "fileName": "worldflightmap",
-    "addonsMap": [
-        "WorldFlightMap"
-    ],
-    "interfaceMap": [],
-    "children": [],
-    "name": "WorldFlightMap",
-    "gameVersion": "8.3.0"
+    "fileName": "worldflightmap"
 }

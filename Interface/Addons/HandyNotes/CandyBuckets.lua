@@ -1,4 +1,4 @@
-﻿--## Author: Vladinator  ## Version: 8.3.0.200703
+﻿--## Author: Vladinator  ## Version: 9.0.0.200731
 
 local CandyBuckets = {}
 CandyBuckets.modules = CandyBuckets.modules or {}
@@ -243,6 +243,8 @@ CandyBuckets.modules["hallow"] = {
 		"^%s*%[%s*[Cc][Aa][Nn][Dd][Yy]%s+[Bb][Uu][Cc][Kk][Ee][Tt]%s*%]%s*$",
 	}
 }
+
+CandyBuckets.modules = CandyBuckets.modules or {}
 
 CandyBuckets.modules["lunar"] = {
 	event = "lunar",
@@ -629,6 +631,8 @@ CandyBuckets.modules["midsummer"] = {
 if WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE then
 	return
 end
+
+local C_Calendar_GetDate = C_Calendar.GetDate or C_DateAndTime.GetCurrentCalendarTime -- TODO: 9.0
 
 ---- Session--
 CandyBuckets.FACTION = 0
@@ -1145,7 +1149,7 @@ end
 
 function addon:CheckCalendar()
 	local curHour, curMinute = GetGameTime()
-	local curDate = C_Calendar.GetDate()
+	local curDate = C_Calendar_GetDate()
 	local calDate = C_Calendar.GetMonthInfo()
 	local month, day, year = calDate.month, curDate.monthDay, calDate.year
 	local curMonth, curYear = curDate.month, curDate.year
@@ -1218,7 +1222,7 @@ end
 function addon:QueryCalendar(check)
 	local function DelayedUpdate()
 		if type(CalendarFrame) ~= "table" or not CalendarFrame:IsShown() then
-			local curDate = C_Calendar.GetDate()
+			local curDate = C_Calendar_GetDate()
 			C_Calendar.SetAbsMonth(curDate.month, curDate.year)
 			C_Calendar.OpenCalendar()
 		end
@@ -1373,7 +1377,14 @@ function addon:PLAYER_LOGIN(event)
 		CandyBuckets.FACTION = 3
 	end
 
-	GetQuestsCompleted(CandyBuckets.COMPLETED_QUESTS)
+	if GetQuestsCompleted then
+		GetQuestsCompleted(CandyBuckets.COMPLETED_QUESTS)
+	else
+		for _, id in ipairs(C_QuestLog.GetAllCompletedQuestIDs()) do
+			CandyBuckets.COMPLETED_QUESTS[id] = true
+		end
+	end
+
 	addon:QueryCalendar(true)
 end
 

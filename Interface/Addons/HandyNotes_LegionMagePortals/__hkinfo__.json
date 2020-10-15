@@ -1,0 +1,14 @@
+{
+    "target": "curse",
+    "searchName": "HandyNotes_LegionMagePortals",
+    "localName": "HandyNotes_LegionMagePortals",
+    "version": "HandyNotes_LegionMagePortals__2018-07-24 14:47:46",
+    "fileName": "legion-mage-portals",
+    "addonsMap": [
+        "HandyNotes_LegionMagePortals"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "name": "HandyNotes_LegionMagePortals",
+    "gameVersion": ""
+}

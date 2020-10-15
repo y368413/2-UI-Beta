@@ -1,0 +1,14 @@
+{
+    "target": "curse",
+    "searchName": "Handynotes - Warfront Rares",
+    "localName": "HandyNotes_WarfrontRares",
+    "version": "0.5.4",
+    "fileName": "handynotes-warfrontrares",
+    "addonsMap": [
+        "HandyNotes_WarfrontRares"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "name": "HandyNotes_WarfrontRares",
+    "gameVersion": ""
+}

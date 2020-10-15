@@ -1,0 +1,196 @@
+<Ui>
+
+    <!-- template for the list buttons in the log -->
+	<Button name="ClassicQuestLogListButtonTemplate" virtual="true" text="Quest Title Example">
+		<Size x="299" y="16"/>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture parentKey="selected" file="Interface\QuestFrame\UI-QuestLogTitleHighlight" alphaMode="ADD"/>
+			</Layer>
+			<Layer level="ARTWORK">
+				<!-- number to left of quest indicating how many in group are on same quest -->
+				<FontString parentKey="groupmates" inherits="GameFontNormalSmall" justifyH="RIGHT">
+					<Size x="0" y="16"/>
+					<Anchors>
+						<Anchor point="LEFT" x="8" y="0"/>
+					</Anchors>
+				</FontString>
+				<!-- icon for the "tag" (Daily) (Account) (Raid) (Complete) etc -->
+				<Texture parentKey="tag" file="Interface\QuestFrame\QuestTypeIcons">
+					<Size x="18" y="18"/>
+					<Anchors>
+						<Anchor point="RIGHT" x="-2" y="0"/>
+					</Anchors>
+				</Texture>
+				<!-- checkmark to note tracked quests appears to right of normalText (anchored in the UpdateLogList) -->
+				<Texture parentKey="check" file="Interface\Buttons\UI-CheckBox-Check">
+					<Size x="16" y="16"/>
+					<Anchors>
+						<Anchor point="LEFT"/>
+					</Anchors> 
+				</Texture>
+                <FontString parentKey="progress" inherits="GameFontHighlightSmall" text="0/3">
+                    <Anchors>
+                        <Anchor point="RIGHT" x="-20" y="0"/>
+                    </Anchors>
+                    <Color r="0.7" g="0.7" b="0.7"/>
+                </FontString>
+			</Layer>
+		</Layers>
+		<!-- quest title/header normalText is shifted to right 20 -->
+		<ButtonText parentKey="normalText" nonspacewrap="true">
+			<Size x="0" y="10"/>
+			<Anchors>
+				<Anchor point="LEFT" x="20" y="0"/>
+			</Anchors> 
+		</ButtonText>
+		<NormalTexture file="Interface\Buttons\UI-MinusButton-UP">
+			<Size x="16" y="16"/>
+			<Anchors>
+				<Anchor point="LEFT" x="3" y="0"/>
+			</Anchors>
+		</NormalTexture>
+		<HighlightTexture file="Interface\Buttons\UI-PlusButton-Hilight" alphaMode="ADD">
+			<Size x="16" y="16"/>
+			<Anchors>
+				<Anchor point="LEFT" x="3" y="0"/>
+			</Anchors>
+		</HighlightTexture>
+		<NormalFont style="GameFontNormalLeft"/>
+		<HighlightFont style="GameFontHighlightLeft"/>
+		<DisabledFont style="GameFontHighlightLeft"/>
+		<Scripts>
+			<OnLoad>
+				self.check:SetPoint("LEFT",self.normalText,"RIGHT")
+			</OnLoad>
+			<OnClick>
+				ClassicQuestLog.log.ListButtonOnClick(self)
+			</OnClick>
+			<OnEnter>
+				ClassicQuestLog.log.ListButtonOnEnter(self)
+			</OnEnter>
+			<OnLeave>
+                ClassicQuestLog.log.ListButtonOnLeave(self)
+			</OnLeave>
+		</Scripts>
+	</Button>
+
+    <!-- the scrollFrame in left panel with the list of quests -->
+    <ScrollFrame parentKey="log" name="ClassicQuestLogScrollFrame" parent="ClassicQuestLog"  inherits="HybridScrollFrameTemplate">
+        <Size x="305" y="700"/> <!-- 403 is standard height; 700 is initial height to allow enough buttons created -->
+        <Anchors>
+            <Anchor point="TOPLEFT" x="6" y="-64"/>
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="top" file="Interface\PaperDollInfoFrame\UI-Character-ScrollBar">
+                    <Size x="29" y="102"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="-6" y="5"/>
+                    </Anchors>
+                    <TexCoords left="0" right="0.445" top="0" bottom="0.4"/>
+                </Texture>
+                <Texture parentKey="bottom" file="Interface\PaperDollInfoFrame\UI-Character-ScrollBar">
+                    <Size x="29" y="106"/>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" x="-6" y="-2"/>
+                    </Anchors>
+                    <TexCoords left="0.515625" right="0.960625" top="0" bottom="0.4140625"/>
+                </Texture>
+                <Texture parentKey="middle" file="Interface\PaperDollInfoFrame\UI-Character-ScrollBar">
+                    <Size x="29" y="1"/>
+                    <Anchors>
+                        <Anchor point="TOP" relativeKey="$parent.top" relativePoint="BOTTOM"/>
+                        <Anchor point="BOTTOM" relativeKey="$parent.bottom" relativePoint="TOP"/>
+                    </Anchors>
+                    <TexCoords left="0" right="0.445" top=".75" bottom="1.0"/>
+                </Texture>
+            </Layer>
+            <Layer level="BORDER">
+                <Texture parentKey="background" file="Interface\QuestFrame\QuestMapLogAtlas">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="0" y="1"/>
+                        <Anchor point="BOTTOMRIGHT" x="-2" y="-2"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+            <!-- expand/collapse all button -->
+            <Button parentKey="expandAll">
+                <Size x="64" y="32"/>
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="48" y="0"/>
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture file="Interface\QuestFrame\UI-QuestLogSortTab-Left">
+                            <Size x="8" y="32"/>
+                            <Anchors>
+                                <Anchor point="LEFT"/>
+                            </Anchors>
+                        </Texture>
+                        <Texture file="Interface\QuestFrame\UI-QuestLogSortTab-Right">
+                            <Size x="8" y="32"/>
+                            <Anchors>
+                                <Anchor point="RIGHT"/>
+                            </Anchors>
+                        </Texture>
+                        <Texture file="Interface\QuestFrame\UI-QuestLogSortTab-Middle">
+                            <Size x="0" y="32"/>
+                            <Anchors>
+                                <Anchor point="LEFT" x="8" y="0"/>
+                                <Anchor point="RIGHT" x="-8" y="0"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <!-- quest title/header normalText is shifted to right 20 -->
+                <ButtonText parentKey="normalText" text="ALL">
+                    <Size x="0" y="10"/>
+                        <Anchors>
+                        <Anchor point="LEFT" x="28" y="-4"/>
+                    </Anchors> 
+                </ButtonText>
+                <NormalTexture file="Interface\Buttons\UI-MinusButton-UP">
+                    <Size x="16" y="16"/>
+                    <Anchors>
+                        <Anchor point="LEFT" x="11" y="-4"/>
+                    </Anchors>
+                </NormalTexture>
+                <HighlightTexture file="Interface\Buttons\UI-PlusButton-Hilight" alphaMode="ADD">
+                    <Size x="16" y="16"/>
+                    <Anchors>
+                        <Anchor point="LEFT" x="11" y="-4"/>
+                    </Anchors>
+                </HighlightTexture>
+                <NormalFont style="GameFontNormalLeft"/>
+                <HighlightFont style="GameFontHighlightLeft"/>
+                <DisabledFont style="GameFontHighlightLeft"/>
+                <Scripts>
+                    <OnClick>
+                        ClassicQuestLog.log:ExpandAllOnClick()
+                    </OnClick>
+                </Scripts>
+            </Button>
+            <Slider name="$parentScrollBar" inherits="HybridScrollBarTemplate" parentKey="scrollBar">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="0" y="-13"/>
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" x="0" y="14"/>
+                </Anchors>
+                <Scripts>
+                    <OnLoad>
+                        local name = self:GetName();
+                        _G[name.."BG"]:Hide();
+                        _G[name.."Top"]:Hide();
+                        _G[name.."Bottom"]:Hide();
+                        _G[name.."Middle"]:Hide();
+                        self.doNotHide = true;
+                    </OnLoad>
+                </Scripts>
+            </Slider>
+        </Frames>
+    </ScrollFrame>
+
+    <Script file="log.lua"/>
+</Ui>

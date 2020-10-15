@@ -1,0 +1,14 @@
+{
+    "target": "curse",
+    "searchName": "TomTom",
+    "localName": "TomTom",
+    "version": "v90001-1.1.5",
+    "fileName": "tomtom",
+    "addonsMap": [
+        "TomTom"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "name": "TomTom",
+    "gameVersion": "9.0.1"
+}

@@ -1,0 +1,86 @@
+2.19 (release)
+(copied from beta-builds)
+NEW: Module HorrificVisionTracker; this module will display a small, draggable frame when entering horrific visions. The tooltip of this frame will tell the exact status of collected chests+crystals per area, including crystals collected by party members and automatically create tomtom-waypoints to chests opened by party members that you have not yet opened yourself.
+The Tracker is NOT intended to tell you where all of the objects are - use HandyNotes for that if you wish. The purpose of the Tracker is to keep count of the objects you (and your party) have actually collected.
+NEW: Option "HorrificVisionTracker", default: ON; used to enable the above module. If you close the tracking frame by accident or drag it off-screen you can always retoggle the option to reset the frame.
+
+NOTE:
+I spent some time thinking about whether to enable or disable the HVT by default. Usually, i would disable a feature like this since i am not a fa of putting frames into players' faces without explicit consent. In this case, however, i am not sure a lot of people would even see or notice this new feature if it was disabled by default since it does not appear as a new button in the task list.
+Also, the tracker will only ever appear for people who might actually want it - those entering a vision. It can easily be closed and after seeing it in the preparation area there is plenty of time to disable it if it is unwanted. It also clearly states that it belonges to TTD2 in the title bar of the frame so players really should not be confused which addon created it.
+
+The tracker relies on precise position data of objects inside the vision to work. I personally ran a LOT of visions in the last two weeks to make sure my data is complete and accurate - but there is always the chance an object might be missing or off. If you (or someone in your party) interacts with an object that the tracker does not know, there will be an error-message; if that ever happens to you, i would be grateful for a PM detaling your situation.
+
+Therefore, i will enable the tracker by default.
+
+2.19 BETA3
+UPDATE: HorrificVisionTracker now has data for the stormwind vision
+
+2.19 BETA2
+FIX: HorrificVisionTracker could cause LUA errors under specific circumstances
+
+2.19 BETA
+NEW: Module HorrificVisionTracker; if enabled in the options, this module will display a small, draggable frame when entering horrific visions. The tooltip of this frame will tell the exact status of collected chests+crystals per area, including crystals collected by party members and automatically creating tomtom-waypoints to chests opened by party members that you have not yet opened yourself.
+NEW: Option "HorrificVisionTracker"; used to enable the above module. If you close the tracking frame by accident or drag it off-screen you can always retoggle the option to reset the frame.
+
+This is a BETA version since for the new module to work every possible treasure location must be verified to be quite accurate. Therefore, the tracker is ENABLED by default in this version, it will not be in the release version since i consider creating frames in the middle of your screen quite intrusive. Also, there is debug-output whenever picking up a treasure item inside a vision to track down possible problems.
+
+2.18
+FIX: 2 wrong ItemIDs for recipes in BFAWQRecipes (Inscription Contracts); the addon would still have informed you about the WQ being up unless you were an Engineer, though
+FIX: Possible concat nil LUA error if a worldquest was technically available to a character but hidden from the map for whatever reason (phasing, profession skill level etc.)
+
+2.17
+FIX: LUA error in BFAKeystone introduced by 2.16 when not using account-wide option
+FIX: XMogArathi - Horde Demonhunters were falsely listed as eligible to loot the 1h mace, causing a LUA error
+CHANGE: The blue hue used in color-coded output for Alliance is now the wow rare-item-quality color
+
+2.16
+NEW: Module BFAHorrificVision; this module is only active for characters that have unlocked the legendary cloak and informs you about ilvl rewards still available from HVs this week, therefore allowing you to check if you have already done a full clear this week or not
+NEW: Option "Horrific Waste", default: OFF; enable this option to put all rewards still available to you on "done" status as soon as you have received any single one of them. Using this option the module will basically only check if you have completed any single full clear (= malefic core eligible) run this week
+NEW: Option "Demanding Vision", default: OFF; enable this modification of "Horrific Waste" to only accept ilvl470 as sufficient to put other rewards on "done"
+CHANGE: The internal structure of account-wide-saved keystone data was changed a little to prevent possible data duplication. This change required a reset of the existing account-wide saved data. You will have to login every character you want the addon to supervise one more time to recreate the data. Please note that loading keystone data from the server can take a few seconds; don't logout before the data is available
+CHANGE: The blue hue used in color-coded output for Alliance has been changed to "royal blue", which should be a lot better readable on most backgrounds than the old hue
+
+Detailed:
+What most people would like to easily check is whether they have already looted a core from Horrific Visions this week or not. However, there does not seem to exist an API to actually check this. What can be checked, however, is which ilvl rewards you have already looted from the Horrific Vision this week. Since ilvl445-470 can only be looted from a full-clear - which would also reward a core - this check can be used to indirectly check for a core.
+
+2.15
+UPDATE: removed "Kojo's Master Matching Set" as a Tortollan Paragon reward since it never made it into the live game.
+UPDATE: keystone feats now show S4 progress
+
+2.14
+NEW: Module BFAQuestRewards; this module lists achievements and collectibles that are in some way connected with daily/weekly quests
+UPDATE: added "Honeyback Harvester's Harness" to BFAQuestRewards
+UPDATE: moved "Periodic Destruction" to BFAQuestRewards and altered the listing rules a little
+
+Detailed:
+The mount item will always be listed as missing by the new module until you learned the mount; if the current character has unlocked the faction, there will also be a notification if the current character has not killed Honey Smasher today.
+The detailed list of missing summons for "Periodic Destruction" will now only be printed for characters that have completed at least one of the summons.
+
+2.13
+UPDATE: added "Periodic Destruction" to BFAWQAchievements (even though it's weekly)
+UPDATE: added "Puzzle Performer" to BFAWQAchievements
+
+2.12
+UPDATE: added all remaining 8.2 rank3 recipes to BFAWQRecipes (Enchanting and Alchemy were still missing)
+
+2.11
+FIX: bug that prevented refreshing modules while an incursion was ongoing
+
+2.1
+NEW: Option "Track Warmode"; enable this option if you want anything warmode related to show up in your module list
+NEW: Module BFAWarmode; for now, this module only includes incursion-related achievements, as generally speaking this addon only tracks things that are in some way time-limited. This also includes the incursion-specific secret supply cache. The module will not only tell you to collect this cache one time for the achievement, it will check the hidden daily quest to tell you if you are still able to loot the cache today on your current character. It will also give you TomTom links to all the possible spawn locations.
+Important: Since the Secret Cache is not always up, it is classified as a "Rare" source, which means you will not be informed about it, if you have disabled the option "Include rare" (enabled by default)
+
+
+IMPORTANT NOTE: Due to a a change in the account-data table the account M+ data will be reset with this update and you have to login each character again to update to the new table. Sorry, but it was unavoidable this time. I hope resets like this will not be necessary again in the future.
+
+2.09
+CHANGE: BFAParagon: Rustbolt Resistance now uses the "main daily" as an emissary replacement. That means the faction will only be listed as "ToDo" until you did that quest if you use the "Paragon Emissary" option
+
+2.08
+FIX: Keystone-Data was not updated frequently enough to ensure the data was fully accurate
+
+2.07
+UPDATE: added "Master Calligrapher" and "Nazjatarget Eliminated" to BFAWQAchievements
+UPDATE: added the new Nazjatar cooking recipes to BFAWQRecipes
+UPDATE: added "Rustbolt Resistance", "Waveblade Ankoan" and "The Unshackled" to BFAParagon

@@ -1,0 +1,24 @@
+tag b71ed0f009254d4250291945f76dda13e03ac7a8 v1.2
+Author:	Antoine Pietri <antoine.pietri1@gmail.com>
+Date:	Sat Oct 5 19:36:28 2019 +0200
+
+version 1.2
+-----BEGIN PGP SIGNATURE-----
+
+iQFOBAABCAA4FiEEK3+ITqUhoMLTy00+5HbuHqx0YRkFAl2Y1JwaHGFudG9pbmUu
+cGlldHJpMUBnbWFpbC5jb20ACgkQ5HbuHqx0YRkzNwf6AsutcRS+djLaB6Re6V/g
+Pcnq6lRdny9LuWcb/chKLTJ0RnunSgDdUp4iUA5+l/JhMF+4iSyHz9mbJhXSGQ5H
++kfYmRT0yInirCPq7Pc4gennUNMcDnDSBjcchAwmu3RcLqcyQUvHN6Et3+G8tclu
+U2q04Hq9vPqj7UG6qmFkqOvvBMYXLbifLZUZSrk7UE/NAYKZXfd9S4TcU9e90aU4
+bjoDkJ9B+sIfwE0T4RjggijBx/q0RxaW1XjqdHWMoBU4npLwJ5TktQYnW4uo+gzU
+ptgIR/B6gtPvePIiZLIVNeW0nAeQfwS96tM+HPeV3V5VxZB/IBxHFi+zKQA5E8W2
+Yg==
+=IEDB
+-----END PGP SIGNATURE-----
+
+commit 74c1649f394b184646603797a432207030e0bc34
+Author: Antoine Pietri <antoine.pietri1@gmail.com>
+Date:   Sat Oct 5 19:35:27 2019 +0200
+
+    Bump API version to 80205
+

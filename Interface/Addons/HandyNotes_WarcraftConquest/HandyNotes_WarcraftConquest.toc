@@ -1,0 +1,30 @@
+## Interface: 80100
+## Title: HandyNotes: |cff00d9ffWarcraftConquest|r
+## Notes: In-game locations for Warcraft Conquest campaigns!
+## Author: Sonceri
+## Version: 0.100
+## DefaultState: enabled
+## SavedVariables: HandyNotes_WarcraftConquest
+## RequiredDeps: HandyNotes
+
+# Library files
+Libs\HereBeDragons\HereBeDragons-2.0.lua
+
+# Addon Files
+Const\const-color.lua
+Const\const-text.lua
+Const\const-links.lua
+Const\const-zones.lua
+Utils\utils-text.lua
+Const\const-options.lua
+Utils\utils-icons.lua
+Const\const-icons.lua
+Const\const-range.lua
+Utils\utils-points.lua
+Data\load_data.xml
+Const\const-search.lua
+Utils\utils-search.lua
+Utils\utils-frames.lua
+
+# Core Files
+Core\load_core.xml

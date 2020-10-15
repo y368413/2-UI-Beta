@@ -1,0 +1,227 @@
+<Ui>
+
+    <Button name="ClassicQuestLogOptionsTemplate" virtual="true">
+        <Size x="280" y="40"/>
+        <Frames>
+            <CheckButton parentKey="check">
+                <Size x="24" y="24"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT"/>
+                </Anchors>
+                <NormalTexture file="Interface\Buttons\UI-CheckBox-Up"/>
+                <PushedTexture file="Interface\Buttons\UI-CheckBox-Down"/>
+                <HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD"/>
+                <CheckedTexture file="Interface\Buttons\UI-CheckBox-Check"/>
+                <DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled"/>
+                <Scripts>
+                    <OnEnter>
+                        self:GetParent():GetScript("OnEnter")(self:GetParent())
+                    </OnEnter>
+                    <OnLeave>
+                        self:GetParent():GetScript("OnLeave")(self:GetParent())
+                    </OnLeave>
+                    <OnClick>
+                        ClassicQuestLog.options.OptionOnClick(self)
+                    </OnClick>
+                </Scripts>
+            </CheckButton>
+        </Frames>
+        <Layers>
+            <Layer level="ARTWORK">
+                <FontString parentKey="text" inherits="GameFontNormal" justifyH="LEFT" justifyV="TOP">
+                    <Size x="250" y="0"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="28" y="-6"/>
+                    </Anchors>
+                </FontString>
+                <FontString parentKey="description" inherits="GameFontNormalSmall" justifyH="LEFT" justifyV="TOP" nonspacewrap="true">
+                    <Size x="244" y="0"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="28" y="-22"/>
+                    </Anchors>
+                    <Color r="0.75" g="0.75" b="0.75"/>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnLoad>
+                self.text:SetText(self.optText)
+                self.description:SetText(self.optDesc)
+                self:SetHeight(32+self.description:GetStringHeight())
+            </OnLoad>
+            <OnEnter>
+                self.check:LockHighlight()
+                self.text:SetTextColor(1,1,1)
+            </OnEnter>
+            <OnLeave>
+                self.check:UnlockHighlight()
+                self.text:SetTextColor(1,0.82,0)
+            </OnLeave>
+            <OnMouseDown>
+                self.check:SetButtonState("PUSHED")
+            </OnMouseDown>
+            <OnMouseUp>
+                self.check:SetButtonState("NORMAL")
+            </OnMouseUp>
+            <OnClick>
+                self.check:Click()
+            </OnClick>
+            <OnShow> <!-- reset to default state -->
+                self.check:SetButtonState("NORMAL")
+                self.check:UnlockHighlight()
+                self.text:SetTextColor(1,0.82,0)
+            </OnShow>
+        </Scripts>
+    </Button>
+
+    <!-- the options scrollframe when the red options panel button is clicked -->
+    <ScrollFrame parentKey="options" parent="ClassicQuestLog" inherits="UIPanelScrollFrameTemplate" hidden="true">
+        <Anchors>
+            <Anchor point="TOPLEFT" relativeKey="$parent.detail" relativePoint="TOPLEFT"/>
+            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.detail" relativePoint="BOTTOMRIGHT"/>
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="background" file="Interface\QuestFrame\QuestMapLogCampaignLore">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="-2" y="1"/>
+                        <Anchor point="BOTTOMRIGHT" x="1" y="-1"/>
+                    </Anchors>
+                    <TexCoords left="0" right="0.2775" top="0.11" bottom="1"/>
+                </Texture>
+            </Layer>
+            <Layer level="BORDER">
+                <Texture parentKey="top" file="Interface\PaperDollInfoFrame\UI-Character-ScrollBar">
+                    <Size x="29" y="102"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="-2" y="5"/>
+                    </Anchors>
+                    <TexCoords left="0" right="0.445" top="0" bottom="0.4"/>
+                </Texture>
+                <Texture parentKey="bottom" file="Interface\PaperDollInfoFrame\UI-Character-ScrollBar">
+                    <Size x="29" y="106"/>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" x="-2" y="-2"/>
+                    </Anchors>
+                    <TexCoords left="0.515625" right="0.960625" top="0" bottom="0.4140625"/>
+                </Texture>
+                <Texture parentKey="middle" file="Interface\PaperDollInfoFrame\UI-Character-ScrollBar">
+                    <Size x="29" y="1"/>
+                    <Anchors>
+                        <Anchor point="TOP" relativeKey="$parent.top" relativePoint="BOTTOM"/>
+                        <Anchor point="BOTTOM" relativeKey="$parent.bottom" relativePoint="TOP"/>
+                    </Anchors>
+                    <TexCoords left="0" right="0.445" top=".75" bottom="1.0"/>
+                </Texture>
+            </Layer>
+        </Layers>
+        <ScrollChild>
+            <Frame parentKey="content">
+                <Size x="298" y="50"/>
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="headerBack" file="Interface\QuestFrame\QuestMapLogAtlas">
+                            <Size x="300" y="58"/>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" x="-8" y="0"/>
+                                <Anchor point="TOPRIGHT" x="8" y="0"/>
+                            </Anchors>
+                            <TexCoords left="0.283203" right="0.537109" top="0.902344" bottom="0.958985"/>
+                        </Texture>
+                        <FontString parentKey="headerTitle" inherits="GameFontHighlightMedium" text="OPTIONS">
+                            <Anchors>
+                                <Anchor point="CENTER" relativeKey="$parent.headerBack" x="0" y="4"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+                <Frames>
+                    <Button parentKey="close" inherits="ClassicQuestLogCloseButtonTemplate">
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" x="-8" y="-4"/>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                ClassicQuestLog:SetMode("detail")
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                    <!-- options here -->
+                    <Button parentKey="LockWindow" inherits="ClassicQuestLogOptionsTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" x="8" y="-72"/>
+                        </Anchors>
+                        <KeyValues>
+                            <KeyValue key="optVar" value="LockWindow"/>
+                            <KeyValue key="optText" value="Lock Window Position"/>
+                            <KeyValue key="optDesc" value="Prevent dragging the window unless Shift is held."/>
+                        </KeyValues>
+                    </Button>
+                    <Button parentKey="ShowResizeGrip" inherits="ClassicQuestLogOptionsTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.LockWindow" relativePoint="BOTTOMLEFT"/>
+                        </Anchors>
+                        <KeyValues>
+                            <KeyValue key="optVar" value="ShowResizeGrip"/>
+                            <KeyValue key="optText" value="Show Resize Grip"/>
+                            <KeyValue key="optDesc" value="Show a resize grip across the bottom of the window to change its height."/>
+                        </KeyValues>
+                    </Button>
+                    <Button parentKey="ShowLevels" inherits="ClassicQuestLogOptionsTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.ShowResizeGrip" relativePoint="BOTTOMLEFT"/>
+                        </Anchors>
+                        <KeyValues>
+                            <KeyValue key="optVar" value="ShowLevels"/>
+                            <KeyValue key="optText" value="Show Quest Levels"/>
+                            <KeyValue key="optDesc" value="Show the level of each quest in the log."/>
+                        </KeyValues>
+                    </Button>
+                    <Button parentKey="ShowTooltips" inherits="ClassicQuestLogOptionsTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.ShowLevels" relativePoint="BOTTOMLEFT"/>
+                        </Anchors>
+                        <KeyValues>
+                            <KeyValue key="optVar" value="ShowTooltips"/>
+                            <KeyValue key="optText" value="Show Quest Tooltips"/>
+                            <KeyValue key="optDesc" value="When the mouse is over a quest in the log, show a brief synopsis of the quest and its progress."/>
+                        </KeyValues>
+                    </Button>
+                    <Button parentKey="SolidBackground" inherits="ClassicQuestLogOptionsTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.ShowTooltips" relativePoint="BOTTOMLEFT"/>
+                        </Anchors>
+                        <KeyValues>
+                            <KeyValue key="optVar" value="SolidBackground"/>
+                            <KeyValue key="optText" value="Dark Background"/>
+                            <KeyValue key="optDesc" value="Use a dark background behind both the quest log and quest details."/>
+                        </KeyValues>
+                    </Button>
+                    <Button parentKey="ShowFromObjectiveTracker" inherits="ClassicQuestLogOptionsTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.SolidBackground" relativePoint="BOTTOMLEFT"/>
+                        </Anchors>
+                        <KeyValues>
+                            <KeyValue key="optVar" value="ShowFromObjectiveTracker"/>
+                            <KeyValue key="optText" value="Show From Objective Tracker"/>
+                            <KeyValue key="optDesc" value="When clicking a quest on the objective tracker (in the default UI, this is the list of quests beneath the minimap), go to this addon's log instead of the map; unless in combat."/>
+                        </KeyValues>
+                    </Button>
+                </Frames>
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <FontString parentKey="version" inherits="GameFontNormalSmall">
+                            <Anchors>
+                                <Anchor point="TOPRIGHT" x="-8" y="-56"/>
+                            </Anchors>
+                            <Color r="0.5" g="0.5" b="0.5"/>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>
+        </ScrollChild>
+    </ScrollFrame>
+
+
+    <Script file="options.lua"/>
+</Ui>

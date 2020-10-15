@@ -1,0 +1,14 @@
+{
+    "target": "curse",
+    "searchName": "HandyNotes_SuramarLocations",
+    "localName": "HandyNotes_SuramarLocations",
+    "version": "HandyNotes_SuramarLocations",
+    "fileName": "handynotes_suramarlocations",
+    "addonsMap": [
+        "HandyNotes_SuramarLocations"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "name": "HandyNotes_SuramarLocations",
+    "gameVersion": ""
+}

@@ -1,0 +1,14 @@
+{
+    "target": "curse",
+    "searchName": "Farmer",
+    "localName": "Farmer",
+    "version": "Farmer 3.4",
+    "fileName": "farmer",
+    "addonsMap": [
+        "Farmer"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "name": "Farmer",
+    "gameVersion": "9.0.1"
+}

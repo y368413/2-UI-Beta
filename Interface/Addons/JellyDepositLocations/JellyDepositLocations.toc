@@ -1,0 +1,16 @@
+## Interface: 80300
+## Title: Jelly Deposit Locations
+## Notes: Adds Jelly Deposit Location Data to GatherMate2
+## Author: Jacatola <jacobjdowning@gmail.com>
+## Version: v1.1.0
+
+## Dependency: GatherMate2
+## OptionalDeps: Routes
+
+Libs\LibStub\LibStub.lua
+Libs\AceAddon-3.0\AceAddon-3.0.xml
+
+Locales\JellyDepositLocations-enUS.lua
+
+JellyDepositLocations.lua
+Data.lua

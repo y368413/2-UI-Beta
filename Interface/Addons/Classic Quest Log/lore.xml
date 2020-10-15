@@ -1,0 +1,135 @@
+<Ui>
+
+    <!-- semi-transparent X button to place on lore and options -->
+    <Button name="ClassicQuestLogCloseButtonTemplate" virtual="true">
+        <Size x="28" y="28"/>
+        <NormalTexture file="Interface\Buttons\UI-SquareButton-Up"/>
+        <PushedTexture file="Interface\Buttons\UI-SquareButton-Down"/>
+        <HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD"/>
+        <Layers>
+            <Layer level="OVERLAY">
+                <Texture parentKey="icon" file="Interface\Buttons\UI-StopButton">
+                    <Size x="14" y="14"/>
+                    <Anchors>
+                        <Anchor point="CENTER"/>
+                    </Anchors>
+                    <Color r="0.75" g="0.75" b="0.75" a="0.75"/>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnMouseDown>
+                self.icon:SetPoint("CENTER",-1,-2)
+            </OnMouseDown>
+            <OnMouseUp>
+                self.icon:SetPoint("CENTER",0,0)
+            </OnMouseUp>
+            <OnShow>
+                self.icon:SetPoint("CENTER",0,0)
+            </OnShow>
+        </Scripts>
+    </Button>
+
+    <!-- the lore scrollframe displayed when a campaign header "the story so far..." button is clicked -->
+    <ScrollFrame parentKey="lore" parent="ClassicQuestLog" inherits="UIPanelScrollFrameTemplate" hidden="true">
+        <Anchors>
+            <Anchor point="TOPLEFT" relativeKey="$parent.detail" relativePoint="TOPLEFT"/>
+            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.detail" relativePoint="BOTTOMRIGHT"/>
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="background" file="Interface\QuestFrame\QuestMapLogCampaignLore">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="-2" y="1"/>
+                        <Anchor point="BOTTOMRIGHT" x="1" y="-1"/>
+                    </Anchors>
+                    <!-- <TexCoords left="0" right="0.5859375" top="0" bottom="0.65625"/> -->
+                    <TexCoords left="0" right="0.2775" top="0.11" bottom="1"/>
+                </Texture>
+            </Layer>
+            <Layer level="BORDER">
+                <Texture parentKey="top" file="Interface\PaperDollInfoFrame\UI-Character-ScrollBar">
+                    <Size x="29" y="102"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="-2" y="5"/>
+                    </Anchors>
+                    <TexCoords left="0" right="0.445" top="0" bottom="0.4"/>
+                </Texture>
+                <Texture parentKey="bottom" file="Interface\PaperDollInfoFrame\UI-Character-ScrollBar">
+                    <Size x="29" y="106"/>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" x="-2" y="-2"/>
+                    </Anchors>
+                    <TexCoords left="0.515625" right="0.960625" top="0" bottom="0.4140625"/>
+                </Texture>
+                <Texture parentKey="middle" file="Interface\PaperDollInfoFrame\UI-Character-ScrollBar">
+                    <Size x="29" y="1"/>
+                    <Anchors>
+                        <Anchor point="TOP" relativeKey="$parent.top" relativePoint="BOTTOM"/>
+                        <Anchor point="BOTTOM" relativeKey="$parent.bottom" relativePoint="TOP"/>
+                    </Anchors>
+                    <TexCoords left="0" right="0.445" top=".75" bottom="1.0"/>
+                </Texture>
+            </Layer>
+        </Layers>
+        <ScrollChild>
+            <Frame parentKey="content">
+                <Size x="298" y="403"/>
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="headerBack" file="Interface\QuestFrame\QuestMapLogAtlas">
+                            <Size x="300" y="58"/>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" x="-8" y="0"/>
+                                <Anchor point="TOPRIGHT" x="8" y="0"/>
+                            </Anchors>
+                            <TexCoords left="0.283203" right="0.537109" top="0.785156" bottom="0.841797"/>
+                        </Texture>
+                        <FontString parentKey="headerTitle" inherits="GameFontHighlightMedium">
+                            <Anchors>
+                                <Anchor point="CENTER" relativeKey="$parent.headerBack" x="0" y="12"/>
+                            </Anchors>
+                        </FontString>
+                        <FontString parentKey="headerProgress" inherits="GameFontHighlightSmall" text="Campaign: 0/3 Chapters">
+                            <Anchors>
+                                <Anchor point="CENTER" relativeKey="$parent.headerBack" x="0" y="-6"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+                <Frames>
+                    <Button parentKey="close" inherits="ClassicQuestLogCloseButtonTemplate">
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" x="-8" y="-4"/>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                ClassicQuestLog:SetMode("detail")
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                </Frames>
+            </Frame>
+        </ScrollChild>
+    </ScrollFrame>
+
+    <Button parentKey="loreButton" parent="ClassicQuestLog" hidden="true">
+        <Size x="24" y="20"/>
+        <NormalTexture file="Interface\QuestFrame\QuestMapLogCampaignLore">
+            <TexCoords left="0.283203" right="0.318359" top="0.183594" bottom="0.244141"/>
+        </NormalTexture>
+        <HighlightTexture file="Interface\QuestFrame\QuestMapLogCampaignLore">
+            <TexCoords left="0.891602" right="0.926758" top="0.00195312" bottom="0.0625"/>
+        </HighlightTexture>
+        <Scripts>
+            <OnClick>
+                ClassicQuestLog.lore.LoreButtonOnClick(self)
+            </OnClick>
+            <OnUpdate>
+                ClassicQuestLog.lore.LoreButtonOnUpdate(self,elapsed)
+            </OnUpdate>
+        </Scripts>
+    </Button>
+
+    <Script file="lore.lua"/>
+</Ui>

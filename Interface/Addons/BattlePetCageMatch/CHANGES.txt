@@ -1,0 +1,13 @@
+tag df854ef9662580534d446af443369c9e8be27ef7 V2.4
+Author:	SLOKnightfall <SLOKnightfall@gmail.com>
+Date:	Mon Sep 7 11:05:07 2020 -0700
+
+-bugfixes
+
+commit a6e80503960123bd49635a3b22ee1b4cb8eff2b5
+Author: SLOKnightfall <SLOKnightfall@gmail.com>
+Date:   Mon Sep 7 11:03:05 2020 -0700
+
+    -Fixed issue where addon broke if show cage window was not selected.
+    -Fixed issue where cageing would stop if the current pet in the list was in a pet battle team slot.  These pets are now skipped when generating the list with a warning message displayed.
+

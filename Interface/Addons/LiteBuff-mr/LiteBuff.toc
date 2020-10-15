@@ -1,0 +1,28 @@
+## Interface: 80300
+## Title: LiteBuff
+## Title-zhTW: |cffff0000[必备]|rBuff监视
+## Title-zhCN: |cffff0000[必备]|rBuff监视
+## Notes: Help you more quickly to the blessings of the team the small card.
+## Notes-zhTW: 幫你更快速的給團隊上祝福的小插件。
+## Notes-zhCN: 帮你更快速的给团队上Buff。
+## Version: 4.60-Mod
+## Author: Abin
+## SavedVariables: LiteBuffDB
+## SavedVariablesPerCharacter: LiteBuffCharDB
+## X-Category: Buffs
+## X-eMail: abinn32@yahoo.com
+
+Includes\InterfaceOptionPage-1.0.lua
+Includes\LibScanTip.lua
+Includes\LibAuraGroups-1.0.lua
+#Includes\LibPlayerSpells-1.0.lua
+Includes\LibItemQuery.lua
+
+Locales\enUS.lua
+Locales\zhCN.lua
+Locales\zhTW.lua
+
+Core.lua
+Templates\embeds.xml
+Buttons\embeds.xml
+Options.lua
