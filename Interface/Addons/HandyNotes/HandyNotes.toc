@@ -32,29 +32,29 @@ MOP\HandyNotes_TimelessIsleChests.lua
 WOD\HandyNotes_Draenor.lua
 
 # LEG
-LEG\HandyNotes_SuramarLeylines.lua
-LEG\HandyNotes_SuramarTelemancy.lua
+#LEG\HandyNotes_SuramarLeylines.lua
+#LEG\HandyNotes_SuramarTelemancy.lua
 LEG\HandyNotes_LegionTreasures.lua
 
 # BFA
 BFA\HandyNotes_WarfrontRares.lua
 BFA\HandyNotes_BFA_HF_Tracker.lua
-BFA\HandyNotes_MechagonAndNazjatar.lua
+#BFA\HandyNotes_MechagonAndNazjatar.lua
 BFA\HandyNotes_ShrinesForJewelcrafters.lua
-BFA\HandyNotes_VisionsOfNZoth.xml
+#BFA\HandyNotes_VisionsOfNZoth.xml
 
 # Mode files
 Mode\HandyNotes_ScarabCoffers.lua
 Mode\HandyNotes_MoleMachine.lua
 Mode\HandyNotes_LightningPaw.lua
-Mode\HandyNotes_DungeonLocations.lua
+#Mode\HandyNotes_DungeonLocations.lua
 Mode\HandyNotes_Universal_Explorer.lua
-Mode\HandyNotes_TravelGuide.lua
-Mode\HandyNotes_AzerothsTopTunes.lua
+#Mode\HandyNotes_TravelGuide.lua
+#Mode\HandyNotes_AzerothsTopTunes.lua
 Mode\HandyNotes_BFA_Jelly.lua
 Mode\HandyNotes_HigherDimensionalLearning.lua
-Mode\HandyNotes_PetDailies.lua
-Mode\HandyNotes_Syd'sWitheredChests.lua
+#Mode\HandyNotes_PetDailies.lua
+#Mode\HandyNotes_Syd'sWitheredChests.lua
 
 # Others files
 CandyBuckets.lua

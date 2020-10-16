@@ -1368,7 +1368,7 @@ elseif (UnitFactionGroup("player") =="Horde") then
     HandyNotes_Draenor.nodes["Gorgrond"][47245180] = { "Gorgrond", "36718", "Unknown Petrified Egg", "nil", "nil", "Icon_Treasure_Default", "Treasure-Quest", "824", "36250" }
 end
 
-if ((IsQuestFlaggedCompleted(36386) == false) or (IsQuestFlaggedCompleted(36390) == false) or (IsQuestFlaggedCompleted(36389) == false) or (IsQuestFlaggedCompleted(36392) == false) or (IsQuestFlaggedCompleted(36388) == false) or (IsQuestFlaggedCompleted(36381) == false)) then
+if ((C_QuestLog.IsQuestFlaggedCompleted(36386) == false) or (C_QuestLog.IsQuestFlaggedCompleted(36390) == false) or (C_QuestLog.IsQuestFlaggedCompleted(36389) == false) or (C_QuestLog.IsQuestFlaggedCompleted(36392) == false) or (C_QuestLog.IsQuestFlaggedCompleted(36388) == false) or (C_QuestLog.IsQuestFlaggedCompleted(36381) == false)) then
     HandyNotes_Draenor.nodes["SpiresOfArak"][43901500] = { "SpiresOfArak", "36395", "Elixir of Shadow Sight 1", "Elixir of Shadow Sight", "Elixir can be used at Shrine of Terrok for 1 of 6 i585 Weapons (see Gift of Anzu) Object will be removed as soon as you loot all Gifts of Anzu", "Icon_Treasure_Default", "Treasure", "115463" }
     HandyNotes_Draenor.nodes["SpiresOfArak"][43802470] = { "SpiresOfArak", "36397", "Elixir of Shadow Sight 2", "Elixir of Shadow Sight", "Elixir can be used at Shrine of Terrok for 1 of 6 i585 Weapons (see Gift of Anzu) Object will be removed as soon as you loot all Gifts of Anzu", "Icon_Treasure_Default", "Treasure", "115463" }
     HandyNotes_Draenor.nodes["SpiresOfArak"][69204330] = { "SpiresOfArak", "36398", "Elixir of Shadow Sight 3", "Elixir of Shadow Sight", "Elixir can be used at Shrine of Terrok for 1 of 6 i585 Weapons (see Gift of Anzu) Object will be removed as soon as you loot all Gifts of Anzu", "Icon_Treasure_Default", "Treasure", "115463" }
@@ -1388,7 +1388,7 @@ local ClickedCoord = nil
 
 local function GetRewardNameByID(ID)
     if ID == "824" or ID == "823" then
-        local Reward = GetCurrencyInfo(ID)
+        local Reward = C_CurrencyInfo.GetCurrencyInfo(ID)
         if Reward ~= nil then
             return Reward
         end
@@ -1403,7 +1403,7 @@ end
 
 local function GetRewardLinkByID(ID)
     if ID == "824" or ID == "823" then
-        local Reward = GetCurrencyInfo(ID)
+        local Reward = C_CurrencyInfo.GetCurrencyInfo(ID)
         if Reward ~= nil then
             return Reward
         end
@@ -1418,7 +1418,7 @@ end
 
 local function GetRewardIconByID(ID)
     if ID == "824" or ID == "823" then
-         local _, _, Icon = GetCurrencyInfo(ID)
+         local _, _, Icon = C_CurrencyInfo.GetCurrencyInfo(ID)
          if Icon ~= nil then
             return Icon
          end
@@ -1749,7 +1749,7 @@ function HandyNotes_Draenor:RegisterWithHandyNotes()
 
                             if self.db.profile.Settings.Rares.ShowAlreadyKilled == true or not self.db.char[ID] then
 
-                                if IsQuestFlaggedCompleted(ID) == false then
+                                if C_QuestLog.IsQuestFlaggedCompleted(ID) == false then
 
                                     if AchievementCriteriaIndex ~= nil and AchievementCriteriaIndex ~= "nil" then
 
@@ -1775,7 +1775,7 @@ function HandyNotes_Draenor:RegisterWithHandyNotes()
 
                             if self.db.profile.Settings.Treasures.ShowAlreadyCollected == true or not self.db.char[ID] then
 
-                                if IsQuestFlaggedCompleted(ID) == false then
+                                if C_QuestLog.IsQuestFlaggedCompleted(ID) == false then
 
                                     if ItemID ~= nil and ItemID ~= "nil" then
                                         return state, nil, GetRewardIconByID(ItemID), self.db.profile.Settings.Treasures.IconScale, self.db.profile.Settings.Treasures.IconAlpha
@@ -1797,7 +1797,7 @@ function HandyNotes_Draenor:RegisterWithHandyNotes()
 
                                 if self.db.profile.Settings.Treasures.ShowAlreadyCollected == false then
 
-                                    if IsQuestFlaggedCompleted(AchievementCriteriaIndex) then
+                                    if C_QuestLog.IsQuestFlaggedCompleted(AchievementCriteriaIndex) then
 
                                         if ItemID ~= nil and ItemID ~= "nil" then
                                             return state, nil, GetRewardIconByID(ItemID), self.db.profile.Settings.Treasures.IconScale, self.db.profile.Settings.Treasures.IconAlpha

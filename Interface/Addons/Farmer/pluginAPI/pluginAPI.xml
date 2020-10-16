@@ -1,9 +1,0 @@
-<UI>
-  <script file="API.lua"/>
-  <script file="Core.lua"/>
-  <script file="Detectors.lua"/>
-  <script file="Events.lua"/>
-  <script file="Options.lua"/>
-  <script file="Class.lua"/>
-  <script file="Factory.lua"/>
-</UI>

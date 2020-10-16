@@ -1,4 +1,4 @@
---## Version: 1.4.2  ## Author: syndenbock  ## SavedVariables: Handynotes_PandariaDB
+--## Version: 1.4.3  ## Author: syndenbock  ## SavedVariables: Handynotes_PandariaDB
 local Pandaria = {}
 local Handynotes_Pandaria = {};
 
@@ -89,7 +89,7 @@ do
     if (callbackList == nil) then return end
 
     for x = 1, #callbackList, 1 do
-      callbackList[1](...);
+      callbackList[x](...);
     end
   end
 end
@@ -882,7 +882,7 @@ Pandaria.rareData = {
   },
   [69769] = {
     name = 'Zandalari Warbringer',
-    description = 'The color of the NPC\'s mount determines the color of the mount that can drop.',
+    description = 'The color of the NPCs mount determines the color of the mount that can drop.',
   },
   [69768] = {
     name = 'Zandalari Warscout',
@@ -1474,13 +1474,13 @@ end
 Handynotes_Pandaria.on('PLAYER_LOGIN', parseData);
 
 
+local IsQuestFlaggedCompleted = _G.C_QuestLog.IsQuestFlaggedCompleted;
 local rareData = Pandaria.rareData;
 local treasureInfo = Pandaria.treasureData;
 local nodes = Pandaria.nodeData;
 local playerFaction;
 local dataCache;
 local settings = {};
-local pendingData = {};
 
 local nodeHider = Handynotes_Pandaria.import('nodeHider');
 
@@ -1510,23 +1510,24 @@ Handynotes_Pandaria.on('PLAYER_LOGIN', function ()
   playerFaction = UnitFactionGroup('player');
 end);
 
-Handynotes_Pandaria.on('GET_ITEM_INFO_RECEIVED', function (itemId, success)
-  local info = pendingData[itemId];
-
-  if (info == nil) then return end
-
-  if (success) then
-    local itemInfo = {GetItemInfo(itemId)};
-
-    info.name = itemInfo[1];
-    Handynotes_Pandaria.yell('DATA_READY', info);
-  end
-
-  pendingData[itemId] = nil;
-end);
-
 local function setTextColor (text, color)
   return color .. text .. '|r';
+end
+
+local function queryItem (itemId, info)
+  local item = Item:CreateFromItemID(itemId);
+
+  if (item:IsItemEmpty()) then return end
+
+  item:ContinueOnItemLoad(function ()
+    local data = {GetItemInfo(itemId)};
+
+    info = info or {};
+    info.name = data[1];
+    info.icon = data[10];
+
+    Handynotes_Pandaria.yell('DATA_READY', info);
+  end);
 end
 
 local function getAchievementInfo (rareData)
@@ -1612,7 +1613,9 @@ local function getToyInfo (rareData)
     -- data is not cached yet
     if (toyName == nil) then
       toyName = 'waiting for data...';
-      pendingData[toy] = info;
+
+      queryItem(toy);
+
       info.icon = GetItemIcon(toy) or ICON_MAP.skullGreen;
     else
       info.icon = toyInfo[10] or ICON_MAP.skullGreen;
@@ -2252,3 +2255,37 @@ Handynotes_Pandaria.on('PLAYER_LOGIN', function ()
   Handynotes_Pandaria.funnel({'CRITERIA_UPDATE'}, 2, updateNodes);
   Handynotes_Pandaria.on({'NEW_TOY_ADDED', 'NEW_MOUNT_ADDED'}, updateNodes);
 end);
+--[[Handynotes_Pandaria.on('PLAYER_LOGIN', function ()
+  convertedData = nil;
+end);
+
+local rareInfo = Pandaria.rareData;
+local nodes = Pandaria.nodeData;
+
+--if true then return end
+
+local function nameCheck ()
+  for zone, zoneNodes in pairs(nodes) do
+    for coords, node in pairs(zoneNodes) do
+      local info = Handynotes_Pandaria.getNodeInfo(node);
+
+      if (info == nil) then
+        print(node.treasure, '-', node.rare);
+      end
+
+      if (info and info.name == nil) then
+        if (node.treasure ~= nil) then
+          print('no name for treasure:', node.treasure);
+        end
+
+        if (node.rare ~= nil) then
+          print('no name for rare:', node.rare);
+        end
+      end
+    end
+  end
+end
+
+Handynotes_Pandaria.on('PLAYER_STOPPED_MOVING', function ()
+  nameCheck();
+end);]]

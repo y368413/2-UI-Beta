@@ -22,7 +22,7 @@
 
 local database = {
     -- [followerTypeID] = { [missionID] = itemID }
-    [LE_FOLLOWER_TYPE_GARRISON_6_0] = {
+    [Enum.GarrisonFollowerType.FollowerType_6_0] = {
         -- WoD 要塞
         [684] = 128315, -- 可怕的恐魔: 军团勋章
         [683] = 128314, -- 暴雪嘉年华: 英雄的冰封装备
@@ -34,11 +34,11 @@ local database = {
         [682] = 128313, -- 食人魔的困境: 巨大的食人魔箱子
         [685] = 128316, -- 恐怖动物园: 大桶原油
     },
-    [LE_FOLLOWER_TYPE_SHIPYARD_6_2] = {
+    [Enum.GarrisonFollowerType.FollowerType_6_2] = {
         -- WoD 船坞
         -- 空
     },
-    [LE_FOLLOWER_TYPE_GARRISON_7_0] = {
+    [Enum.GarrisonFollowerType.FollowerType_7_0] = {
         -- LEG 职业大厅
         [1364] = 146938, -- 山地之王：至高岭部族徽章
         [1372] = 146935, -- 龙血：瓦拉加尔部族徽章
@@ -61,17 +61,17 @@ local database = {
         [1765] = 150924, -- 强化防线：破碎群岛高级贡品
         [1768] = 150924, -- 战争使者：破碎群岛高级贡品
     },
-    [LE_FOLLOWER_TYPE_GARRISON_8_0] = {
+    [Enum.GarrisonFollowerType.FollowerType_8_0] = {
         -- BfA 追随者
         -- 空
     },
 }
 
 local typeLocale = {
-    [LE_FOLLOWER_TYPE_GARRISON_6_0] = '6.0要塞任务',
-    [LE_FOLLOWER_TYPE_SHIPYARD_6_2] = '6.2船坞任务',
-    [LE_FOLLOWER_TYPE_GARRISON_7_0] = '7.0职业大厅任务',
-    [LE_FOLLOWER_TYPE_GARRISON_8_0] = '8.0追随者任务',
+    [Enum.GarrisonFollowerType.FollowerType_6_0] = '6.0要塞任务',
+    [Enum.GarrisonFollowerType.FollowerType_6_2] = '6.2船坞任务',
+    [Enum.GarrisonFollowerType.FollowerType_7_0] = '7.0职业大厅任务',
+    [Enum.GarrisonFollowerType.FollowerType_8_0] = '8.0追随者任务',
 }
 
 local function prettyPrint(typeID, itemID)

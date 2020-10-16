@@ -1044,7 +1044,7 @@ function CaerdonWardrobeMixin:GetTooltipInfo(item)
 			-- to prevent the expensive books from showing as learnable when I don't
 			-- know how to tell if they have recipes you need.
 			local isRecipe = item:GetCaerdonItemType() == CaerdonItemType.Recipe
-			if isRecipe and strmatch(lineText, L["Use: Re%-learn .*"]) then
+			if isRecipe and strmatch(lineText, "Use: Re%-learn .*") then
 				tooltipInfo.isRelearn = true
 			end
 

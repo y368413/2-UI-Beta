@@ -1,4 +1,4 @@
---## Author: Mikeprod  ## Version: 8.3
+--## Author: Mikeprod  ## Version: 9.0
 local hooks = {}
 
 local function Hook(source, target, secure)
@@ -158,7 +158,7 @@ local function GetFriendInfoById(id)
 			canCoop = CanCooperateWithGameAccount(accountInfo)
 		end
 	else
-		bnetIDAccount, accountName, _, _, characterName, bnetAccountId, client, isOnline, lastOnline, isAFK, isDND, _, _, _, _, wowProjectID, _, _, isFavorite, mobile = BNGetFriendInfo(id)
+		bnetIDAccount, accountName, _, _, characterName, bnetAccountId, client, isOnline, lastOnline, isAFK, isDND, _, _, _, _, wowProjectID, _, _, isFavorite, mobile = BNetAccountInfo(id)
 
 		if isOnline then
 			_, _, _, realmName, realmID, faction, _, class, _, zoneName, level, gameText, _, _, _, _, _, isGameAFK, isGameBusy, guid, wowProjectID, mobile = BNGetGameAccountInfo(bnetAccountId)
@@ -671,7 +671,7 @@ local function FriendGroups_Update(forceUpdate)
 
 	-- favorite friends online
 	for i = 1, numBNetFavoriteOnline do
-		local noteText = select(13,BNGetFriendInfo(i))
+		--local noteText = select(13,BNetAccountInfo(i))
 		local client = select(8,GetFriendInfoById(i))
 		
 		if (ShiGuangDB["FriendGroupsingame_only"] and client == BNET_CLIENT_WOW) or not ShiGuangDB["FriendGroupsingame_only"] then
@@ -679,7 +679,7 @@ local function FriendGroups_Update(forceUpdate)
 				BnetFriendGroups[i] = {}
 			end
 			
-			NoteAndGroups(noteText, BnetFriendGroups[i])
+			NoteAndGroups("^-^", BnetFriendGroups[i])
 			
 			for group in pairs(BnetFriendGroups[i]) do
 				IncrementGroup(group, true)
@@ -694,7 +694,7 @@ local function FriendGroups_Update(forceUpdate)
 	--favorite friends offline
 	for i = 1, numBNetFavoriteOffline do
 		local j = i + numBNetFavoriteOnline
-		local noteText = select(13,BNGetFriendInfo(j))
+		--local noteText = select(13,BNetAccountInfo(j))
 		local client = select(8,GetFriendInfoById(j))
 		
 		if (ShiGuangDB["FriendGroupsingame_only"] and client == BNET_CLIENT_WOW) or not ShiGuangDB["FriendGroupsingame_only"] then
@@ -702,7 +702,7 @@ local function FriendGroups_Update(forceUpdate)
 				BnetFriendGroups[j] = {}
 			end
 			
-			NoteAndGroups(noteText, BnetFriendGroups[j])
+			NoteAndGroups("*-*", BnetFriendGroups[j])
 			for group in pairs(BnetFriendGroups[j]) do
 				IncrementGroup(group)
 				 if not ShiGuangDB["FriendGroupsCollapsed"][group] and not ShiGuangDB["FriendGroupsHideOffline"] then
@@ -715,7 +715,8 @@ local function FriendGroups_Update(forceUpdate)
 	-- online Battlenet friends
 	for i = 1, numBNetOnline - numBNetFavoriteOnline do
 		local j = i + numBNetFavorite
-		local noteText = select(13,BNGetFriendInfo(j))
+		local accountInfo = C_BattleNet.GetFriendAccountInfo(j)
+		local noteText = accountInfo.note
 		local client = select(8,GetFriendInfoById(j))
 		
 		if (ShiGuangDB["FriendGroupsingame_only"] and client == BNET_CLIENT_WOW) or not ShiGuangDB["FriendGroupsingame_only"] then
@@ -751,7 +752,8 @@ local function FriendGroups_Update(forceUpdate)
 	-- offline Battlenet friends
 	for i = 1, numBNetOffline - numBNetFavoriteOffline do
 		local j = i + numBNetFavorite + numBNetOnline - numBNetFavoriteOnline
-		local noteText = select(13,BNGetFriendInfo(j))
+		local accountInfo = C_BattleNet.GetFriendAccountInfo(j)
+		local noteText = accountInfo.note
 		local client = select(8,GetFriendInfoById(j))
 		
 		if (ShiGuangDB["FriendGroupsingame_only"] and client == BNET_CLIENT_WOW) or not ShiGuangDB["FriendGroupsingame_only"] then
@@ -939,7 +941,7 @@ end
 local function InviteOrGroup(clickedgroup, invite)
 	local groups = {}
 	for i = 1, BNGetNumFriends() do
-		local presenceID, _, _, _, _, toonID, _, _, _, _, _, _, noteText = BNGetFriendInfo(i)
+		local presenceID, _, _, _, _, toonID, _, _, _, _, _, _, noteText = BNetAccountInfo(i)
 		local note = NoteAndGroups(noteText, groups)
 		if groups[clickedgroup] then
 			if invite and toonID then

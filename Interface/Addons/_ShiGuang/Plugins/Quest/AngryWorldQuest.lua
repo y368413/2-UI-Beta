@@ -1718,7 +1718,7 @@ function Mod:AddFilter(key, name, icon, default)
 end
 
 function Mod:AddCurrencyFilter(key, currencyID, default)
-	local currencyName, _, currencyTexture = GetCurrencyInfo(currencyID)
+	local currencyName, _, currencyTexture = C_CurrencyInfo.GetCurrencyInfo(currencyID)
 	local name = currencyName
 	local icon = currencyTexture
 
