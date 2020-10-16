@@ -580,12 +580,12 @@ local function everythingNeededExists(i)
 end
 
 local function getSpecialMessage()
-	local weekday, month, day, year = C_Calendar.GetDate()
-	if day == 30 and month == 8 and year == 2016 then
+	local currentDate = C_DateAndTime.GetCurrentCalendarTime()
+	if currentDate.monthDay == 30 and currentDate.month == 8 and currentDate.year == 2016 then
 		return o.strings["Happy Leveling"]
-	elseif day == 29 or day == 15 then
+	elseif currentDate.monthDay == 29 or currentDate.monthDay == 15 then
 		return o.strings["You're beautiful"]
-	elseif weekday == 1 then
+	elseif currentDate.weekday == 1 then
 		return o.strings["Happy Sunday"]
 	end
 end

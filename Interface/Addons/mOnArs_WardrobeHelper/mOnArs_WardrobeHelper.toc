@@ -1,11 +1,13 @@
-## Interface:  80300
+## Interface:  90001
 ## Title: mOnAr's WardrobeHelper
-## Version: 1.18.6
+## Version: 1.20
 ## Author: mOnAr
 ## Notes:
 ## SavedVariables: mOnWDSave
 ## SavedVariablesPerCharacter:
-## Dependencies: _ShiGuang
+
+libs\LibDBIcon-1.0\embeds.xml
+libs\LibDBIcon-1.0\LibDBIcon-1.0\lib.xml
 
 _GlobalOptions.lua
 Functions.lua
@@ -16,8 +18,13 @@ Categorization.lua
 
 localization\_Localization.global.lua
 localization\Localization.en.lua
+localization\Localization.ru.lua
+localization\Localization.pt.lua
+localization\Localization.de.lua
+localization\Localization.es.lua
 localization\Localization.cn.lua
 localization\Localization.tw.lua
+localization\Localization.fr.lua
 
 customCategories\Tier1.lua
 customCategories\Tier2.lua

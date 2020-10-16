@@ -4,6 +4,14 @@ Talentless:SetScript('OnEvent', function(self, event, ...) self[event](self, ...
 
 function Talentless:BAG_UPDATE_DELAYED() self:UpdateItems() end
 
+function Talentless.OnShow()
+	Talentless:RegisterEvent('BAG_UPDATE_DELAYED')
+	Talentless:UpdateItems()
+end
+
+function Talentless.OnHide()
+	Talentless:UnregisterEvent('BAG_UPDATE_DELAYED')
+end
 function Talentless:CreateItemButtons()
 	self.Items = {}
 	local OnEnter = function(self)
@@ -114,16 +122,16 @@ end
 function Talentless:ADDON_LOADED(addon)
 	if(addon == 'Blizzard_TalentUI') then
 		self:SetParent(PlayerTalentFrameTalents)
-		PlayerTalentFrame:HookScript('OnShow', function()	Talentless:RegisterEvent('BAG_UPDATE_DELAYED') Talentless:UpdateItems() end)
-		PlayerTalentFrame:HookScript('OnHide', function()	Talentless:UnregisterEvent('BAG_UPDATE_DELAYED') end)
+
+		PlayerTalentFrame:HookScript('OnShow', self.OnShow)
+		PlayerTalentFrame:HookScript('OnHide', self.OnHide)
 		--PlayerTalentFrameTalentsTutorialButton:Hide()
 		--PlayerTalentFrameTalentsTutorialButton.Show = function() end
 		--PlayerTalentFrameTalents.unspentText:ClearAllPoints()
 		--PlayerTalentFrameTalents.unspentText:SetPoint('TOP', 0, 24)
 		self:CreateItemButtons()
-		--if(UnitLevel('player') < 120 and not (IsTrialAccount() or IsVeteranTrialAccount())) then self:RegisterEvent('PLAYER_LEVEL_UP') end
+		--if(UnitLevel('player') < 110 and not (IsTrialAccount() or IsVeteranTrialAccount())) then self:RegisterEvent('PLAYER_LEVEL_UP') end
 		self:UnregisterEvent('ADDON_LOADED')
-		self:RegisterEvent('BAG_UPDATE_DELAYED')
-		self:UpdateItems()
+		self:OnShow()
 	end
 end

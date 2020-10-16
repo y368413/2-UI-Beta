@@ -217,7 +217,7 @@ function J_BarFrame:J_CreateNewbar(index)
 	bar.Background:SetTexture([[Interface\AddOns\_ShiGuang\Media\normTex]])
 	bar.Background:SetVertexColor(0.25, 0.25, 0.25, 1)
 
-	bar.BackgroundShadow = CreateFrame("Frame", nil, bar)
+	bar.BackgroundShadow = CreateFrame("Frame", nil, bar, "BackdropTemplate")
 	bar.BackgroundShadow:SetFrameStrata("BACKGROUND")
 	bar.BackgroundShadow:SetPoint("TOPLEFT", -4, 4)
 	bar.BackgroundShadow:SetPoint("BOTTOMRIGHT", 4, -4)
@@ -283,7 +283,7 @@ function J_BarFrame:J_ADDON_LOADED()
 			--["STRENGTH"] = { name = "力量" , FRAMEINDEX = 5, isEnable = false},
 			--["AGILITY"] = { name = "敏捷" , FRAMEINDEX = 5,isEnable = false},
 			--["INTELLECT"] = { name = "智力" , FRAMEINDEX = 5, isEnable = false},
-			["CRITCHANCE"] = { name = "暴击" , FRAMEINDEX = 1, isEnable = true},
+			--["CRITCHANCE"] = { name = "暴击" , FRAMEINDEX = 1, isEnable = true},
 			["HASTE"] = { name = "急速" , FRAMEINDEX = 2, isEnable = true},
 			["VERSATILITY"] = { name = "全能" , FRAMEINDEX = 3, isEnable = true},
 			--["MASTERY"] = { name = "精通" , FRAMEINDEX = 9, isEnable = false},

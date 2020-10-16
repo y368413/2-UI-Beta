@@ -54,7 +54,7 @@ local OnMouseUp = function(self, button)
 	end
 end
 
-local IconFrame = CreateFrame("Frame", "CCIconsFrame", UIParent)
+local IconFrame = CreateFrame("Frame", "CCIconsFrame", UIParent, "BackdropTemplate")
 IconFrame:SetPoint("CENTER", UIParent, "CENTER", 0, -120)
 IconFrame:SetWidth(43)
 IconFrame:SetHeight(43)

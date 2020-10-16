@@ -1018,7 +1018,7 @@ local IncentiveProgramToast = {
     end,
     
     CreateFrame = function(self)
-        local toastFrame = CreateFrame("Frame", "IncentiveProgramToastFrame", UIParent)
+        local toastFrame = CreateFrame("Frame", "IncentiveProgramToastFrame", UIParent, "BackdropTemplate")
         toastFrame:Hide()
         
         toastFrame:SetFrameStrata("HIGH")
@@ -1331,7 +1331,7 @@ local function getAlertText(tempKey)
     
     if ( string.find(tempKey, "H") ) then
         if ( returnString ) then
-            returnString = returnString.." | "..IncentiveProgram.TOAST_HEALER
+            returnString = returnString.."/"..IncentiveProgram.TOAST_HEALER
         else
             returnString = IncentiveProgram.TOAST_HEALER
         end

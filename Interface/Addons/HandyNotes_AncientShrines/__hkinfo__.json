@@ -1,0 +1,14 @@
+{
+    "target": "curse",
+    "searchName": "HandyNotes_AncientShrines",
+    "localName": "HandyNotes_AncientShrines",
+    "version": "HandyNotes_AncientShrines V2.0",
+    "fileName": "handynotes_ancientshrines",
+    "addonsMap": [
+        "HandyNotes_AncientShrines"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "name": "HandyNotes_AncientShrines",
+    "gameVersion": ""
+}

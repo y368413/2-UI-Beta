@@ -1,7 +1,7 @@
 local _, ns = ...
 local M, R, U, I = unpack(ns)
 
-hooksecurefunc("TextStatusBar_UpdateTextString", function(bar)   ----	  ÑªÁ¿°Ù·Ö±ÈÊı×Ö 
+hooksecurefunc("TextStatusBar_UpdateTextString", function(bar)   ----	  è¡€é‡ç™¾åˆ†æ¯”æ•°å­— 
 	local value = bar:GetValue()
 	local _, max = bar:GetMinMaxValues()
 	if bar.pctText then
@@ -43,7 +43,7 @@ function whoaUnitClass(healthbar, unit)
 		local value = healthbar:GetValue()
 		if max > min then value = (value - min) / (max - min) else value = 0 end
 		if value > 0.5 then r, g, b = 2*(1-value), 1, 0 else r, g, b = 1, 2*value, 0 end
-			--if UnitIsPlayer(unit) and UnitClass(unit) then  --°´Ö°Òµ×ÅÉ«
+			--if UnitIsPlayer(unit) and UnitClass(unit) then  --æŒ‰èŒä¸šç€è‰²
 				--local color = RAID_CLASS_COLORS[select(2, UnitClass(unit))]
 				--healthbar:SetStatusBarColor(color.r, color.g, color.b)
 			--else
@@ -302,7 +302,7 @@ hooksecurefunc("TextStatusBar_UpdateTextStringWithValues",function(self)
 			TargetFrameTextureFrameHealthBarText:Show();
 		end
 		for i, v in pairs({	TargetFrameHealthBar.LeftText, TargetFrameHealthBar.RightText, TargetFrameManaBar.LeftText, TargetFrameManaBar.RightText, TargetFrameTextureFrameManaBarText, TargetFrameManaBar }) do v:SetAlpha(0); end
-		if UnitIsGhost("target") then
+		if UnitIsGhost("target") and not UnitIsDead("target") then
 			TargetFrameTextureFrameHealthBarText:SetText(ghostText);
 		end
 	elseif not UnitIsDead("target") and not UnitIsGhost("target") then

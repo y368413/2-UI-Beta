@@ -1,0 +1,32 @@
+## Interface: 80300
+## Title: Mount Collector
+## Author: InSpectreGadget
+## SavedVariables: MountCollectorDB
+## Version: 1.8.2
+## DefaultState: enabled
+## X-Curse-Packaged-Version: 1.8.2
+## X-Curse-Project-Name: Mount Collector
+## X-Curse-Project-ID: mount-collector
+
+MountCollector.xml
+
+locales\enUS.lua
+locales\ruRU.lua
+
+locales\deDE.lua
+locales\esES.lua
+locales\esMX.lua
+locales\frFR.lua
+locales\itIT.lua
+locales\koKR.lua
+locales\ptBR.lua
+locales\zhCN.lua
+locales\zhTW.lua
+
+MountsDB.lua
+MountCollector.lua
+
+Config.lua
+
+AltCraftFrame.xml
+AltCraftFrame.lua

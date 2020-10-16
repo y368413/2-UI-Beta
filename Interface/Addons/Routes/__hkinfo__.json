@@ -1,0 +1,14 @@
+{
+    "target": "curse",
+    "searchName": "Routes",
+    "localName": "Routes",
+    "version": "v1.6.3-1-g53dc1e9-alpha-nolib",
+    "fileName": "routes",
+    "addonsMap": [
+        "Routes"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "name": "Routes",
+    "gameVersion": "8.2.0"
+}

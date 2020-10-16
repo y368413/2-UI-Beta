@@ -8,11 +8,16 @@ local pairs, next = pairs, next
 
 -- Custom colors
 oUF.colors.smooth = {1, 0, 0, .85, .8, .45, .1, .1, .1}
-oUF.colors.power.MANA = {0, .4, 1}
-oUF.colors.power.SOUL_SHARDS = {.58, .51, .79}
-oUF.colors.power.HOLY_POWER = {.88, .88, .06}
-oUF.colors.power.CHI = {0, 1, .59}
-oUF.colors.power.ARCANE_CHARGES = {.41, .8, .94}
+
+local function ReplacePowerColor(name, index, color)
+	oUF.colors.power[name] = color
+	oUF.colors.power[index] = oUF.colors.power[name]
+end
+ReplacePowerColor("MANA", 0, {0, .4, 1})
+ReplacePowerColor("SOUL_SHARDS", 7, {.58, .51, .79})
+ReplacePowerColor("HOLY_POWER", 9, {.88, .88, .06})
+ReplacePowerColor("CHI", 12, {0, 1, .59})
+ReplacePowerColor("ARCANE_CHARGES", 16, {.41, .8, .94})
 
 -- Various values
 local function retVal(self, val1, val2, val3, val4, val5)
@@ -61,7 +66,7 @@ function UF:CreateHealthBar(self)
 	health:SetPoint("TOPRIGHT", self)
 	local healthHeight
 	if mystyle == "PlayerPlate" then
-		healthHeight = MaoRUIPerDB["Nameplate"]["PPHealthHeights"]
+		healthHeight = MaoRUIPerDB["Nameplate"]["PPHealthHeight"]
 	elseif mystyle == "raid" then
 		if self.isPartyFrame then
 			healthHeight = MaoRUIPerDB["UFs"]["PartyHeight"]
@@ -80,8 +85,8 @@ function UF:CreateHealthBar(self)
 	health:SetStatusBarTexture(I.normTex)
 	health:SetStatusBarColor(.1, .1, .1)
 	health:SetFrameLevel(self:GetFrameLevel() - 2)
-	health.backdrop = M.CreateBDFrame(health, 0, true) -- don't mess up with libs
-	health.shadow = health.backdrop.Shadow
+	health.backdrop = M.SetBD(health, 0) -- don't mess up with libs
+	health.shadow = health.backdrop.__shadow
 	M:SmoothBar(health)
 
 	local bg = health:CreateTexture(nil, "BACKGROUND")
@@ -327,12 +332,14 @@ end
 
 function UF:CreateIcons(self)
 	local mystyle = self.mystyle
-	local parentFrame = CreateFrame("Frame", nil, self)
-	parentFrame:SetAllPoints()
-	parentFrame:SetFrameLevel(5)
-	local phase = parentFrame:CreateTexture(nil, "OVERLAY")
+	local phase = CreateFrame("Frame", nil, self)
+	phase:SetSize(22, 2)
 	phase:SetPoint("TOP", self.Health, 0, 12)
-	phase:SetSize(22, 22)
+	phase:SetFrameLevel(5)
+	phase:EnableMouse(true)
+	local icon = phase:CreateTexture(nil, "OVERLAY")
+	icon:SetAllPoints()
+	phase.Icon = icon
 	self.PhaseIndicator = phase
 
 	local ri = self:CreateTexture(nil, "OVERLAY")
@@ -441,13 +448,9 @@ function UF:CreateCastBar(self)
 	cb.Text = name
 	cb.OnUpdate = M.OnCastbarUpdate
 	cb.PostCastStart = M.PostCastStart
-	cb.PostChannelStart = M.PostCastStart
 	cb.PostCastStop = M.PostCastStop
-	cb.PostChannelStop = M.PostChannelStop
-	cb.PostCastFailed = M.PostCastFailed
-	cb.PostCastInterrupted = M.PostCastFailed
+	cb.PostCastFail = M.PostCastFailed
 	cb.PostCastInterruptible = M.PostUpdateInterruptible
-	cb.PostCastNotInterruptible = M.PostUpdateInterruptible
 
 	self.Castbar = cb
 end
@@ -730,7 +733,7 @@ end
 -- Class Powers
 local barWidth, barHeight = unpack(R.UFs.BarSize)
 
-function UF.PostUpdateClassPower(element, cur, max, diff, powerType)
+function UF.PostUpdateClassPower(element, cur, max, diff, powerType, chargedIndex)
 	if not cur or cur == 0 then
 		for i = 1, 6 do
 			element[i].bg:Hide()
@@ -761,6 +764,17 @@ function UF.PostUpdateClassPower(element, cur, max, diff, powerType)
 			element[i]:SetStatusBarColor(r, g, b)
 		end
 		element.prevColor = element.thisColor
+	end
+
+	if chargedIndex and chargedIndex ~= element.thisCharge then
+		local bar = element[chargedIndex]
+		element.chargeStar:SetParent(bar)
+		element.chargeStar:SetPoint("CENTER", bar)
+		element.chargeStar:Show()
+		element.thisCharge = chargedIndex
+	else
+		element.chargeStar:Hide()
+		element.thisCharge = nil
 	end
 end
 
@@ -815,7 +829,7 @@ function UF:CreateClassPower(self)
 		bars[i]:SetWidth((barWidth - 5*R.margin) / 6)
 		bars[i]:SetStatusBarTexture(I.normTex)
 		bars[i]:SetFrameLevel(self:GetFrameLevel() + 5)
-		M.CreateBDFrame(bars[i], 0, true)
+		M.SetBD(bars[i], 0)
 		if i == 1 then
 			bars[i]:SetPoint("BOTTOMLEFT")
 		else
@@ -836,8 +850,15 @@ function UF:CreateClassPower(self)
 		bars.colorSpec = true
 		bars.sortOrder = "asc"
 		bars.PostUpdate = UF.PostUpdateRunes
+		bars.__max = 6
 		self.Runes = bars
 	else
+		local chargeStar = bar:CreateTexture()
+		chargeStar:SetAtlas("VignetteKill")
+		chargeStar:SetSize(24, 24)
+		chargeStar:Hide()
+		bars.chargeStar = chargeStar
+
 		bars.PostUpdate = UF.PostUpdateClassPower
 		self.ClassPower = bars
 	end
@@ -851,7 +872,7 @@ function UF:StaggerBar(self)
 	stagger:SetPoint(unpack(R.UFs.BarPoint))
 	stagger:SetStatusBarTexture(I.normTex)
 	stagger:SetFrameLevel(self:GetFrameLevel() + 5)
-	M.CreateBDFrame(stagger, 0, true)
+	M.SetBD(stagger, 0)
 
 	local bg = stagger:CreateTexture(nil, "BACKGROUND")
 	bg:SetAllPoints()
@@ -885,7 +906,7 @@ function UF:CreateAltPower(self)
 	bar:SetPoint("TOPLEFT", self.Power, "BOTTOMLEFT", 0, -3)
 	bar:SetPoint("TOPRIGHT", self.Power, "BOTTOMRIGHT", 0, -3)
 	bar:SetHeight(2)
-	M.CreateBDFrame(bar, 0, true)
+	M.SetBD(bar, 0)
 
 	local text = M.CreateFS(bar, 14, "")
 	text:SetJustifyH("CENTER")
@@ -943,10 +964,8 @@ function UF:CreatePrediction(self)
 	oag:SetPoint("BOTTOMLEFT", self.Health, "BOTTOMRIGHT", -5, -2)
 
 	local hab = CreateFrame("StatusBar", nil, self)
-	hab:SetPoint("TOP")
-	hab:SetPoint("BOTTOM")
-	hab:SetPoint("RIGHT", self.Health:GetStatusBarTexture())
-	hab:SetWidth(self.Health:GetWidth())
+	hab:SetPoint("TOPLEFT", self.Health)
+	hab:SetPoint("BOTTOMRIGHT", self.Health:GetStatusBarTexture())
 	hab:SetReverseFill(true)
 	hab:SetStatusBarTexture(I.normTex)
 	hab:SetStatusBarColor(0, .5, .8, .5)
@@ -971,7 +990,7 @@ function UF:CreatePrediction(self)
 	}
 end
 
-function UF.PostUpdateAddPower(element, _, cur, max)
+function UF.PostUpdateAddPower(element, cur, max)
 	if element.Text and max > 0 then
 		local perc = cur/max * 100
 		if perc == 100 then
@@ -985,6 +1004,39 @@ function UF.PostUpdateAddPower(element, _, cur, max)
 	end
 end
 
+function UF:CreateAddPower(self)
+	local bar = CreateFrame("StatusBar", nil, self)
+	bar:SetPoint("TOPLEFT", self.Power, "BOTTOMLEFT", 0, -3)
+	bar:SetPoint("TOPRIGHT", self.Power, "BOTTOMRIGHT", 0, -3)
+	bar:SetHeight(4)
+	bar:SetStatusBarTexture(I.normTex)
+	M.SetBD(bar, 0)
+	bar.colorPower = true
+
+	local bg = bar:CreateTexture(nil, "BACKGROUND")
+	bg:SetAllPoints()
+	bg:SetTexture(I.normTex)
+	bg.multiplier = .25
+	local text = M.CreateFS(bar, 12, "", false, "CENTER", 1, -3)
+
+	self.AdditionalPower = bar
+	self.AdditionalPower.bg = bg
+	self.AdditionalPower.Text = text
+	self.AdditionalPower.PostUpdate = UF.PostUpdateAddPower
+	self.AdditionalPower.displayPairs = {
+		["DRUID"] = {
+			[1] = true,
+			[3] = true,
+			[8] = true,
+		},
+		["SHAMAN"] = {
+			[11] = true,
+		},
+		["PRIEST"] = {
+			[13] = true,
+		}
+	}
+end
 
 function UF:CreateSwing(self)
 	--if not MaoRUIPerDB["UFs"]["Castbars"] then return end

@@ -1,0 +1,6 @@
+﻿<Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="ElitismHelper.lua"/>
+	<Script file="KeystoneHelper.lua"/>
+	<Script file="LFR_of_the_past.lua"/>
+	<Include file="DamageEx\DamageEx.xml"/>
+</Ui>

@@ -159,7 +159,7 @@ function A:CreateLumos(self)
 	if not A.ChantLumos then return end
 
 	self.lumos = {}
-	local iconSize = (MaoRUIPerDB["Nameplate"]["PPWidth"] - R.margin*4)/5
+	local iconSize = (MaoRUIPerDB["Nameplate"]["PPWidth"]+2*R.mult - R.margin*4)/5
 	for i = 1, 5 do
 		local bu = CreateFrame("Frame", nil, self.Health)
 		bu:SetSize(iconSize, iconSize)
@@ -171,7 +171,7 @@ function A:CreateLumos(self)
 		fontParent:SetFrameLevel(bu:GetFrameLevel() + 6)
 		bu.Count = M.CreateFS(fontParent, 16, "", false, "BOTTOM", 0, -10)
 		if i == 1 then
-			bu:SetPoint("TOPLEFT", self.Power, "BOTTOMLEFT", 0, -R.margin)
+			bu:SetPoint("TOPLEFT", self.Power, "BOTTOMLEFT", -R.mult, -R.margin)
 		else
 			bu:SetPoint("LEFT", self.lumos[i-1], "RIGHT", R.margin, 0)
 		end

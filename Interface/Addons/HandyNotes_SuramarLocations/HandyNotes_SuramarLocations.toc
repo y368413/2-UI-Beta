@@ -1,0 +1,15 @@
+## Interface: 70000
+## Title: HandyNotes_SuramarLocations
+## Version: 0.0.1
+## Notes: Shows intresting places/object locations in Suramar
+## Author: Mauro P.
+## OptionalDeps: Ace3
+## RequiredDeps: HandyNotes
+## X-Embeds: Ace3
+## SavedVariables: SuramarLocationsDB
+
+#@no-lib-strip@
+embeds.xml
+#@end-no-lib-strip@
+
+HandyNotes_SuramarLocations.lua

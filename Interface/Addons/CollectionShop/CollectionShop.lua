@@ -3,8 +3,8 @@
 --------------------------------------------------------------------------------------------------------------------------------------------
 local NS = select( 2, ... );
 local L = NS.localization;
-NS.releasePatch = "8.3.0";
-NS.versionString = "4.02";
+NS.releasePatch = "9.0.1";
+NS.versionString = "4.03";
 NS.version = tonumber( NS.versionString );
 --
 NS.options = {};
@@ -23,6 +23,7 @@ NS.modeFiltersFlyout = {};
 NS.mode = nil;
 NS.modeName = nil;
 NS.modeColorCode = nil;
+NS.NUM_TRANSMOG_COLLECTION_TYPES = NS.Count(Enum.TransmogCollectionType);
 --
 NS.mountCollection = {};
 NS.petCollection = {};
@@ -953,7 +954,7 @@ NS.SetMode = function( mode, noReset )
 				auctionCategoryIndexes[AuctionCategories[2].subCategories[5].subCategories[7].name] = { 2, 5, 7 };
 				-- Categories
 				local categories,categoryName = {};
-				for i = 1, NUM_LE_TRANSMOG_COLLECTION_TYPES do
+				for i = 1, NS.NUM_TRANSMOG_COLLECTION_TYPES do
 					categoryName = C_TransmogCollection.GetCategoryInfo( i );
 					NS.appearanceCollection.categoryNames[i] = categoryName or false;
 					if categoryName and categoryName ~= TABARDSLOT and auctionCategoryIndexes[categoryName] then
@@ -1550,7 +1551,7 @@ end
 --------------------------------------------------------------------------------------------------------------------------------------------
 function NS.scan:Reset()
 	CollectionShopEventsFrame:UnregisterEvent( "AUCTION_HOUSE_BROWSE_RESULTS_UPDATED" );
-	CollectionShopEventsFrame:UnregisterEvent( "AUCTION_HOUSE_THROTTLED_SPECIFIC_SEARCH_READY" );
+	CollectionShopEventsFrame:UnregisterEvent( "AUCTION_HOUSE_THROTTLED_SYSTEM_READY" );
 	CollectionShopEventsFrame:UnregisterEvent( "ITEM_SEARCH_RESULTS_UPDATED" );
 	CollectionShopEventsFrame:UnregisterEvent( "REPLICATE_ITEM_LIST_UPDATE" );
 	-- Check if GETALL scan was interupted
@@ -1815,7 +1816,7 @@ function NS.scan:QueryBrowseSend()
 		query.itemClassFilters = self.query.itemClassFilters;
 		--
 		CollectionShopEventsFrame:RegisterEvent( "AUCTION_HOUSE_BROWSE_RESULTS_UPDATED" );
-		CollectionShopEventsFrame:RegisterEvent( "AUCTION_HOUSE_THROTTLED_SPECIFIC_SEARCH_READY" );
+		CollectionShopEventsFrame:RegisterEvent( "AUCTION_HOUSE_THROTTLED_SYSTEM_READY" );
 		C_AuctionHouse.SendBrowseQuery( query );
 	elseif self.query.attempts < self.query.maxAttempts then
 		-- Increment attempts, delay and reattempt
@@ -1868,8 +1869,8 @@ function NS.scan:OnBrowseResultsUpdated() -- AUCTION_HOUSE_BROWSE_RESULTS_UPDATE
 	-- Not really doing anything here right now.
 end
 --
-function NS.scan:OnThrottledSpecificSearchReady() -- AUCTION_HOUSE_THROTTLED_SPECIFIC_SEARCH_READY
-	CollectionShopEventsFrame:UnregisterEvent( "AUCTION_HOUSE_THROTTLED_SPECIFIC_SEARCH_READY" );
+function NS.scan:OnThrottledSystemReady() -- AUCTION_HOUSE_THROTTLED_SYSTEM_READY
+	CollectionShopEventsFrame:UnregisterEvent( "AUCTION_HOUSE_THROTTLED_SYSTEM_READY" );
 	if self.status ~= "scanning" then return end
 	self:QueryBrowseRetrieve();
 end
@@ -3850,7 +3851,7 @@ NS.Frame( "CollectionShopEventsFrame", UIParent, {
 				end
 			end
 		elseif	event == "AUCTION_HOUSE_BROWSE_RESULTS_UPDATED"				then	NS.scan:OnBrowseResultsUpdated();
-		elseif	event == "AUCTION_HOUSE_THROTTLED_SPECIFIC_SEARCH_READY"	then	NS.scan:OnThrottledSpecificSearchReady();
+		elseif	event == "AUCTION_HOUSE_THROTTLED_SYSTEM_READY"				then	NS.scan:OnThrottledSystemReady();
 		elseif	event == "ITEM_SEARCH_RESULTS_UPDATED"						then	NS.scan:OnItemSearchResultsUpdated();
 		elseif	event == "REPLICATE_ITEM_LIST_UPDATE"						then	NS.scan:OnReplicateItemListUpdate();
 		elseif	event == "CHAT_MSG_SYSTEM"									then	NS.scan:OnChatMsgSystem( ... );

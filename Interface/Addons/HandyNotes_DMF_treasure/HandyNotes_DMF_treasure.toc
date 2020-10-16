@@ -1,0 +1,14 @@
+## Interface: 80000
+## Title: HandyNotes_DMF_treasure
+## Notes: split so that you don't see spoilers, enable to see these markers
+## Author: Zyga
+## Version: 1
+## DefaultState: disabled
+## X-Category: Achievements
+## X-eMail: zyga211 @ gmail DOT com
+## SavedVariables: HandyNotes_DMF_treasureDB
+## RequiredDeps: HandyNotes
+
+handler.lua
+config.lua
+nodes.lua

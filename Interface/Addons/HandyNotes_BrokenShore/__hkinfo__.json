@@ -1,0 +1,14 @@
+{
+    "target": "curse",
+    "searchName": "HandyNotes - Broken Shore",
+    "localName": "HandyNotes_BrokenShore",
+    "version": "v1.35-nolib",
+    "fileName": "handynotes-broken-shore",
+    "addonsMap": [
+        "HandyNotes_BrokenShore"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "name": "HandyNotes - Broken Shore",
+    "gameVersion": ""
+}

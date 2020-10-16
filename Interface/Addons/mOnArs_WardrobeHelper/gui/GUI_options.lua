@@ -119,7 +119,7 @@ local function CreateTableRow(parent, rowHeight, N, text)
 	return row
 end
 
-local fr = CreateFrame("Frame", "mOnWD_OptionsFrame")
+local fr = CreateFrame("Frame", "mOnWD_OptionsFrame", nil, "BackdropTemplate")
 fr.tabItems = {}
 fr.tabOptions = {}
 fr:Hide()
@@ -198,7 +198,7 @@ fr.panel = panel
 fr.panel:SetPoint("TOPLEFT", fr, "TOPLEFT", 110, -10)
 fr.panel:SetPoint("BOTTOMRIGHT", fr, "BOTTOMRIGHT", -15, 39)
 
-local border = CreateFrame("Frame", nil, panel)
+local border = CreateFrame("Frame", nil, panel, "BackdropTemplate")
 border:SetPoint("TOPLEFT", 1, -27)
 border:SetPoint("BOTTOMRIGHT", -1, 3)
 border:SetBackdrop(
@@ -220,7 +220,7 @@ fr.panelSelect = panel
 fr.panelSelect:SetPoint("TOPLEFT", fr, "TOPLEFT", 15, -10)
 fr.panelSelect:SetPoint("BOTTOMRIGHT", fr.panel, "BOTTOMLEFT", -1, 0)
 
-local border = CreateFrame("Frame", nil, panel)
+local border = CreateFrame("Frame", nil, panel, "BackdropTemplate")
 border:SetPoint("TOPLEFT", 1, -27)
 border:SetPoint("BOTTOMRIGHT", -1, 3)
 border:SetBackdrop(

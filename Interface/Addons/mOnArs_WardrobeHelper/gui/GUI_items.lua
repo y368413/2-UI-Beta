@@ -95,16 +95,21 @@ local function createItemSlot(par, N)
 	return but
 end
 
-o.setDifficulty = function(difficulty)
-	if o.instances[o.selection.itemList.instance] == nil then
+o.refreshItemContent = function() 
+
+	local selectedInstance = o.instances[o.selection.itemList.instance]
+
+	if selectedInstance == nil then
 		return
 	end
 
 	local scrollbar = mOnWD_MainFrame.ItemFrame.scrollbar
 	local iframe = mOnWD_MainFrame.ItemFrame.contentFrame
-	local bosses = o.instances[o.selection.itemList.instance]["difficulties"][difficulty]["bosses"]
+	local bosses = o.instances[o.selection.itemList.instance]["difficulties"][o.selection.itemList.difficulty]["bosses"]
 
-	o.selection.itemList.difficulty = difficulty
+	local itemIconSize = 40
+	local leftBuffer_item = 25
+	local leftBuffer_bossName = 10
 
 	for i = 1, #iframe.Bosses do
 		if iframe.Bosses[i] then
@@ -129,10 +134,24 @@ o.setDifficulty = function(difficulty)
 		return
 	end
 
+	local longestName = ""
+
 	for k in pairs(bosses) do
 		table.insert(ordered_keys, k)
+		if string.len( k ) > string.len( longestName ) then
+			longestName = k
+		end
 	end
 	table.sort(ordered_keys)
+
+	local textWidthTester = iframe:CreateFontString("sizeTestingStringFrame", "OVERLAY", "GameFontNormalLarge")
+	textWidthTester:SetText(longestName)
+
+	if(textWidthTester:GetStringWidth()	+ (leftBuffer_bossName * 2) > mOnWD_MainFrame.ItemFrame:GetWidth()) then
+		mOnWD_MainFrame.ItemFrame:SetWidth(textWidthTester:GetStringWidth() + (leftBuffer_bossName * 2))
+	end
+
+	local maxItemsPerRow = math.floor((mOnWD_MainFrame.ItemFrame:GetWidth() - (leftBuffer_item*2)) / itemIconSize) 
 
 	local item = 1
 	local bossIndex = 0
@@ -148,20 +167,20 @@ o.setDifficulty = function(difficulty)
 			end
 			iframe.Bosses[bossIndex]:SetText(ordered_keys[i])
 			iframe.Bosses[bossIndex]:Show()
-			iframe.Bosses[bossIndex]:SetPoint("TOPLEFT", iframe, "TOPLEFT", 25, top)
-			top = top - 30
+			iframe.Bosses[bossIndex]:SetPoint("TOPLEFT", iframe, "TOPLEFT", leftBuffer_bossName, top)
+			top = top - iframe.Bosses[bossIndex]:GetHeight() - 10
 
-			local left = 0
+			local currentItem = 0
 			for j = 1, #bosses[ordered_keys[i]]["items"] do
-				if left >= 12 then
-					left = 0
-					top = top - 40
+				if currentItem >= maxItemsPerRow then
+					currentItem = 0
+					top = top - itemIconSize
 				end
 				local v = bosses[ordered_keys[i]]["items"][j]
 				if iframe.Items[item] == nil then
 					iframe.Items[item] = createItemSlot(iframe, item)
 				end
-				iframe.Items[item]:SetPoint("TOPLEFT", iframe, "TOPLEFT", 25 + left * 40, top)
+				iframe.Items[item]:SetPoint("TOPLEFT", iframe, "TOPLEFT", leftBuffer_item + (currentItem * itemIconSize), top)
 				GetItemInfo(v.id)
 				iframe.Items[item].texture:SetTexture(GetItemIcon(v.id))
 				iframe.Items[item].ItemID = v.id
@@ -170,15 +189,25 @@ o.setDifficulty = function(difficulty)
 				iframe.Items[item].Boss = ordered_keys[i]
 				iframe.Items[item].Index = j
 				iframe.Items[item]:Show()
-				left = left + 1
+				currentItem = currentItem + 1
 				item = item + 1
 			end
-			top = top - 40
+			top = top - itemIconSize - 10
 		end
 	end
 
-	scrollbar:SetMinMaxValues(1, math.max(-top - mOnWD_MainFrame.ItemFrame:GetHeight() + 200, 2))
+	scrollbar:SetMinMaxValues(1, math.max((-top + itemIconSize*2) - (mOnWD_MainFrame.ItemFrame:GetHeight()), 2))
 	scrollbar:SetValue(0)
+
+end
+
+o.setDifficulty = function(difficulty)
+	if o.instances[o.selection.itemList.instance] == nil then
+		return
+	end
+
+	o.selection.itemList.difficulty = difficulty
+	o.refreshItemContent()
 end
 
 local function clickDropdown(self)
@@ -218,8 +247,6 @@ o.GUIshowItems = function(instance)
 	o.selection.itemList.instance = instance
 	mOnWD_MainFrame.ItemFrame.difficultyID = {}
 	UIDropDownMenu_Initialize(mOnWD_ItemFrame_DropDown, initDropdown)
-	UIDropDownMenu_SetWidth(mOnWD_ItemFrame_DropDown, 100)
-	UIDropDownMenu_SetButtonWidth(mOnWD_ItemFrame_DropDown, 124)
 	UIDropDownMenu_SetSelectedID(mOnWD_ItemFrame_DropDown, 1)
 	UIDropDownMenu_JustifyText(mOnWD_ItemFrame_DropDown, "LEFT")
 	o.setDifficulty(first)
@@ -255,7 +282,7 @@ end
 --  Create UI
 ---------------------------------------------------------------
 
-local ff = CreateFrame("Frame", nil, f)
+local ff = CreateFrame("Frame", nil, f, "BackdropTemplate")
 f.ItemFrame = ff
 ff:Hide()
 ff:SetWidth(532)
@@ -267,15 +294,19 @@ h:SetWidth(400)
 h:SetHeight(68)
 h:SetPoint("TOP", 0, 12)
 ff:SetMovable(true)
+ff:SetResizable(true)
 ff:EnableMouse(true)
+ff:SetMinResize(315,165)
 ff:SetClampedToScreen(true)
 ff:RegisterForDrag("LeftButton")
 ff:SetScript("OnDragStart", ff.StartMoving)
 ff:SetScript("OnDragStop", ff.StopMovingOrSizing)
+
 ff.HeaderTexture = h
 ff.title = ff:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 ff.title:SetPoint("TOP", h, "TOP", 0, -15)
 ff.title:SetText("")
+
 ff:SetBackdrop(
 	{
 		bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
@@ -286,6 +317,27 @@ ff:SetBackdrop(
 		insets = {left = 11, right = 12, top = 12, bottom = 11}
 	}
 )
+ 
+-- Set up the main frame here
+ 
+local resizeButton = CreateFrame("Button", nil, ff)
+resizeButton:SetSize(16, 16)
+resizeButton:SetPoint("BOTTOMRIGHT")
+resizeButton:SetNormalTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")
+resizeButton:SetHighlightTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight")
+resizeButton:SetPushedTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Down")
+ 
+resizeButton:SetScript("OnMouseDown", function(self, button)
+    ff:StartSizing("BOTTOMRIGHT")
+    ff:SetUserPlaced(true)
+end)
+ 
+resizeButton:SetScript("OnMouseUp", function(self, button)
+	ff:StopMovingOrSizing()
+	o.refreshInstance(o.selection.itemList.instance)
+	o.refreshItemContent()
+end)
+
 
 local b = CreateFrame("Button", nil, ff, "UIPanelCloseButton")
 b:SetPoint("TOPRIGHT", ff, "TOPRIGHT", 8, 8)
@@ -300,8 +352,8 @@ b:SetScript(
 local b = CreateFrame("BUTTON")
 ff.bHide = b
 b:SetParent(ff)
-b:SetWidth(32)
-b:SetHeight(32)
+b:SetWidth(30)
+b:SetHeight(30)
 b:SetFrameStrata("DIALOG")
 b:SetPoint("BOTTOMLEFT", ff, "BOTTOMLEFT", 10, 10)
 b:SetNormalTexture("Interface\\Buttons\\UI-SpellbookIcon-PrevPage-Up.bpl")
@@ -320,8 +372,8 @@ local b = CreateFrame("BUTTON", "mOnWD_ItemFrame_bMiniList", ff, "UIPanelButtonT
 ff.bMiniList = b
 b:SetParent(ff)
 b:SetHeight(25)
-b:SetWidth(120)
-b:SetPoint("BOTTOMRIGHT", ff, "BOTTOMRIGHT", -40, 10)
+b:SetWidth(110)
+b:SetPoint("BOTTOMLEFT", ff, "BOTTOMLEFT", 170, 14)
 b:SetText(o.strings["Open MiniList"])
 b:SetScript(
 	"OnClick",
@@ -330,24 +382,19 @@ b:SetScript(
 	end
 )
 
-local fd = CreateFrame("Button", "mOnWD_ItemFrame_DropDown", ff, "UIDropDownMenuTemplate")
-fd:ClearAllPoints()
-fd:SetPoint("TOPLEFT", ff, "TOPLEFT", 10, 5)
-fd:Show()
-
 local scrollframe = CreateFrame("ScrollFrame", nil, ff)
 scrollframe:SetPoint("TOPLEFT", 10, -40)
 scrollframe:SetPoint("BOTTOMRIGHT", -10, 40)
 ff.scrollframe = scrollframe
 
 local scrollbar = CreateFrame("Slider", nil, scrollframe, "UIPanelScrollBarTemplate")
-scrollbar:SetPoint("TOPLEFT", ff, "TOPRIGHT", -30, -25)
-scrollbar:SetPoint("BOTTOMLEFT", ff, "BOTTOMRIGHT", -30, 25)
+scrollbar:SetPoint("TOPLEFT", ff, "TOPRIGHT", -30, -35)
+scrollbar:SetPoint("BOTTOMLEFT", ff, "BOTTOMRIGHT", -30, 35)
 scrollbar:SetMinMaxValues(1, 10000)
 scrollbar:SetValueStep(1)
 scrollbar.scrollStep = 1
 scrollbar:SetValue(0)
-scrollbar:SetWidth(16)
+scrollbar:SetWidth(15)
 scrollbar:SetScript(
 	"OnValueChanged",
 	function(self, value)
@@ -374,23 +421,33 @@ ff:SetScript(
 	end
 )
 
-local b = CreateFrame("BUTTON", "mOnWD_ItemFrame_bRefresh", ff, "UIPanelButtonTemplate")
+local fd = CreateFrame("Button", "mOnWD_ItemFrame_DropDown", ff, "UIDropDownMenuTemplate")
+fd:ClearAllPoints()
+UIDropDownMenu_SetWidth(fd, 90)
+fd:SetPoint("BOTTOMLEFT", ff, 20, 8)
+fd:Show()
+
+local b = CreateFrame("BUTTON", "mOnWD_ItemFrame_bRefresh", ff)
 ff.bRefresh = b
-b:SetPoint("TOPRIGHT", ff, "TOPRIGHT", -35, 5)
-b:SetText(o.strings["Refresh Instance"])
-b:SetHeight(25)
-b:SetWidth(120)
+b:SetParent(ff)
+b:SetWidth(35)
+b:SetHeight(35)
+b:SetFrameStrata("DIALOG")
+b:SetPoint("BOTTOMLEFT", ff, "BOTTOMLEFT", 140, 8)
+b:SetNormalTexture("Interface\\BUTTONS\\UI-RotationRight-Button-Up")
+b:SetPushedTexture("Interface\\BUTTONS\\UI-RotationRight-Button-Down")
+b:SetHighlightTexture("Interface\\Buttons\\UI-Common-MouseHilight.bpl", "ADD")
 b:SetScript(
 	"OnClick",
 	function()
 		o.refreshInstance(o.selection.itemList.instance)
-		o.setDifficulty(o.selection.itemList.difficulty)
+		o.refreshItemContent()
 	end
 )
 
 local b = CreateFrame("Button", nil, ff)
 ff.tutorial = b
-b:SetPoint("BOTTOMLEFT", ff, 40, 5)
+b:SetPoint("TOPLEFT", ff, 10, 10)
 b:SetWidth(40)
 b:SetHeight(40)
 b:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight", "ADD")

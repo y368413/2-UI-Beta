@@ -191,17 +191,17 @@ function MaxDps:AddStandardButton(button)
 		if type == 'action' then
 			local slot = button:GetAttribute('action');
 			if not slot or slot == 0 then
-				slot = ActionButton_GetPagedID(button);
+				--slot = ActionButton_GetPagedID(button);
 			end
 			if not slot or slot == 0 then
-				slot = ActionButton_CalculateAction(button);
+				--slot = ActionButton_CalculateAction(button);
 			end
 
-			if HasAction(slot) then
-				type, actionType = GetActionInfo(slot);
-			else
-				return
-			end
+			--if HasAction(slot) then
+				--type, actionType = GetActionInfo(slot);
+			--else
+				--return
+			--end
 		end
 
 		if type == 'macro' then

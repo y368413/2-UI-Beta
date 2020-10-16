@@ -1,0 +1,14 @@
+{
+    "target": "curse",
+    "searchName": "HandyNotes: Mysterious Camel Figurines",
+    "localName": "HandyNotes_CamelFigurines",
+    "version": "HandyNotes: Mysterious Camel Figurines v1.4",
+    "fileName": "handynotes-mysterious-camel-figurines",
+    "addonsMap": [
+        "HandyNotes_CamelFigurines"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "name": "HandyNotes: Mysterious Camel Figurines",
+    "gameVersion": ""
+}

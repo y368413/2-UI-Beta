@@ -1,0 +1,18 @@
+tag 8816f1424ecabce5bba76c28058d4d31fbe5f4db 8.4.9-release
+Author:	Hizuro <hizuro@gmx.net>
+Date:	Wed Oct 7 04:09:35 2020 +0200
+
+Tagging as 8.4.9-release
+
+commit 42ec37862ea2b1e7d04e8075eb4f7b9d74895293
+Author: Hizuro <hizuro@gmx.net>
+Date:   Wed Oct 7 04:08:59 2020 +0200
+
+    minor changes
+
+commit eab9bec0f83a70e18270c1cd35a4453f8c230d19
+Author: Hizuro <hizuro@gmx.net>
+Date:   Wed Oct 7 04:06:22 2020 +0200
+
+    udpate FarmHud_QuestArrow for shadowlands
+

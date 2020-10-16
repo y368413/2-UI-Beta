@@ -1,0 +1,60 @@
+1.0:
+ - Initial release
+
+1.1: 
+ - Fixed rep discount for vendor mounts
+ 
+1.2:
+ - 8.3 rares in Uldum/Vale are now filtered depending on which assault stage is currently active
+ 
+1.3:
+ - Added missing Darkshore warfront mounts
+ - Rarity integration
+ 
+1.3.1:
+ - Fix for Rarity integration for some items
+ - Added Option for disabling Rarity integration
+ 
+1.4:
+ - Added continent information and the list are now sorted per continent
+ - Added Palehide Direhorn
+ - Hide reputation requirement for vendor mounts if it has already been obtained
+ - Show current reputation level next to the required level if more reputation is required.
+ 
+1.5:
+ - Added TomTom integration. If you click on the NPC name, it now creates a waypoint to them (or for dungeon/raid bosses, a waypoint to the instance entrance). This only works if you are on the same continent. It can be enabled/disabled in addon options.
+ - Various tweaks to the tracking of whether a dungeon/raid boss has been defeated. It should now only mark as completed if you have defeated the boss on the relevant difficulty, not any difficulty.
+ - Fix for tracking of defeated bosses in Return to Karazhan
+ - Fix for Rarity integration with Vault of Archavon bosses
+ 
+1.6:
+ - Fix for raid encounters where NPC name is different to the encounter name
+ 
+1.7:
+ - Added Legion Paragon Cache Mounts
+ - Added permanent toggling of which sections are displayed. They can also be enabled/disabled in the addon options
+ - Added toggle to show mount name instead of item name
+ - Added per expansion toggling of mounts in addon options
+ - Separated dungeon and raid mounts
+ - Added toggle to show killed bosses
+ 
+1.7.1:
+ - Fix for 8.3 assault rares
+ 
+1.7.2:
+ - Added the 100% drop chance mounts from WoD world rares
+ 
+1.8:
+ - Added mounts that drop from rare spawns (Time-Lost Proto Drake, Aeonaxx, etc). These are now under their own category called Rare spawns which can be hidden like other categories
+ - Added Infinite Timereaver mount from Timewalking dungeons. This is under a new Holiday category and can also be hidden.
+ 
+1.8.1:
+ - Fix for minimap disappearing on changing other addon options
+ - Added Royal Snapdragon from Nazjatar Paragon chest
+ - Fix for Sharkbait Freehold mount to detect if boss is killed
+ - Fix for Mogu'shan Vaults / Throne of Thunder lockout detection
+ - Detection for whether World Boss Dunegorger Kraulok is up
+
+1.8.2:
+ - Fix for Warfront rare kill tracking
+ - Fix for Royal Snapdragon tracking
