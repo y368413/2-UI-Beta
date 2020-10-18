@@ -1502,7 +1502,7 @@ end
 
 function DraenorTreasures:QuestCheck()
     do
-        if ((IsQuestFlaggedCompleted(36386) == false) or (IsQuestFlaggedCompleted(36390) == false) or (IsQuestFlaggedCompleted(36389) == false) or (IsQuestFlaggedCompleted(36392) == false) or (IsQuestFlaggedCompleted(36388) == false) or (IsQuestFlaggedCompleted(36381) == false)) then
+        if ((C_QuestLog.IsQuestFlaggedCompleted(36386) == false) or (C_QuestLog.IsQuestFlaggedCompleted(36390) == false) or (C_QuestLog.IsQuestFlaggedCompleted(36389) == false) or (C_QuestLog.IsQuestFlaggedCompleted(36392) == false) or (C_QuestLog.IsQuestFlaggedCompleted(36388) == false) or (C_QuestLog.IsQuestFlaggedCompleted(36381) == false)) then
             nodes["SpiresOfArak"][43901500]={ "36395", "Elixir of Shadow Sight 1", "Elixir of Shadow Sight", "Elixir can be used at Shrine of Terrok for 1 of 6 i585 Weapons (see Gift of Anzu) Object will be removed as soon as you loot all Gifts of Anzu", "default", "treasure_soa","115463"}
             nodes["SpiresOfArak"][43802470]={ "36397", "Elixir of Shadow Sight 2", "Elixir of Shadow Sight", "Elixir can be used at Shrine of Terrok for 1 of 6 i585 Weapons (see Gift of Anzu) Object will be removed as soon as you loot all Gifts of Anzu", "default", "treasure_soa","115463"}
             nodes["SpiresOfArak"][69204330]={ "36398", "Elixir of Shadow Sight 3", "Elixir of Shadow Sight", "Elixir can be used at Shrine of Terrok for 1 of 6 i585 Weapons (see Gift of Anzu) Object will be removed as soon as you loot all Gifts of Anzu", "default", "treasure_soa","115463"}
@@ -1510,7 +1510,7 @@ function DraenorTreasures:QuestCheck()
             nodes["SpiresOfArak"][55602200]={ "36400", "Elixir of Shadow Sight 5", "Elixir of Shadow Sight", "Elixir can be used at Shrine of Terrok for 1 of 6 i585 Weapons (see Gift of Anzu) Object will be removed as soon as you loot all Gifts of Anzu", "default", "treasure_soa","115463"}
             nodes["SpiresOfArak"][53108450]={ "36401", "Elixir of Shadow Sight 6", "Elixir of Shadow Sight", "Elixir can be used at Shrine of Terrok for 1 of 6 i585 Weapons (see Gift of Anzu) Object will be removed as soon as you loot all Gifts of Anzu", "default", "treasure_soa","115463"}
         end
-        if (IsQuestFlaggedCompleted(36249) or IsQuestFlaggedCompleted(36250) or DraenorTreasures.db.profile.gorgrond_override == true) then
+        if (C_QuestLog.IsQuestFlaggedCompleted(36249) or C_QuestLog.IsQuestFlaggedCompleted(36250) or DraenorTreasures.db.profile.gorgrond_override == true) then
             --Gorgrond Lumber Mill is active if either of these Quest IDs are true
             nodes["Gorgrond"][49074846]={ "35952", "Aged Stone Container", "", "QuestID is missing, will stay active until manually disabled", "default", "treasure_gg_l","824"}
             nodes["Gorgrond"][42345477]={ "36003", "Aged Stone Container", "", "", "default", "treasure_gg_l","824"}
@@ -1538,7 +1538,7 @@ function DraenorTreasures:QuestCheck()
             nodes["Gorgrond"][53007906]={ "36713", "Unknown Petrified Egg", "", "", "default", "treasure_gg_l","824"}
             nodes["Gorgrond"][47245180]={ "36718", "Unknown Petrified Egg", "", "", "default", "treasure_gg_l","824"}
         end
-        if (IsQuestFlaggedCompleted(36251) or IsQuestFlaggedCompleted(36252) or DraenorTreasures.db.profile.gorgrond_override == true) then
+        if (C_QuestLog.IsQuestFlaggedCompleted(36251) or C_QuestLog.IsQuestFlaggedCompleted(36252) or DraenorTreasures.db.profile.gorgrond_override == true) then
             --Gorgrond Sparring Arena is active if either of these Quest IDs are true
             nodes["Gorgrond"][45634931]={ "36722", "Aged Stone Container", "", "", "default", "treasure_gg_b","824"}
             nodes["Gorgrond"][43224574]={ "36723", "Aged Stone Container", "", "", "default", "treasure_gg_b","824"}
@@ -1659,7 +1659,7 @@ function DraenorTreasures:HasBeenLooted(value)
     if (self.db.profile.alwaysshowtreasures and (string.find(value[6], "treasure") ~= nil)) then return false end
     if (self.db.profile.alwaysshowrares and (string.find(value[6], "treasure") == nil)) then return false end
     if (DraenorTreasures.db.char[value[1]] and self.db.profile.save) then return true end
-    if (IsQuestFlaggedCompleted(value[1])) then
+    if (C_QuestLog.IsQuestFlaggedCompleted(value[1])) then
         return true
     end
 

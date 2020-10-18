@@ -23,7 +23,6 @@ local point_format = "(%d+)\.([0-9]+):(.+):(.+):(.+):(.*)";
 local GameTooltip = _G.GameTooltip
 local GetQuestLogIndexByID = _G.GetQuestLogIndexByID
 local GetQuestLogLeaderBoard = _G.GetQuestLogLeaderBoard
-local IsQuestFlaggedCompleted = _G.IsQuestFlaggedCompleted
 local GetAchievementCriteriaInfo = _G.GetAchievementCriteriaInfo
 local GetAchievementInfo = _G.GetAchievementInfo
 --local GetGameTime = _G.GetGameTime
@@ -186,7 +185,7 @@ local function IsComplete(questID, questIndex)
         end
 	elseif (IsAdventure(questID) or IsFamily(questID) or IsArgus(questID) or IsBattler(questID) or IsNuisances(questID)
 			or IsMinions(questID)) then return false
-	else return IsQuestFlaggedCompleted(questID)
+	else return C_QuestLog.IsQuestFlaggedCompleted(questID)
 	end
 
 end

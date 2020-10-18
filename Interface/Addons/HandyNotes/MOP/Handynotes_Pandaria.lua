@@ -1,16 +1,16 @@
 --## Version: 1.4.3  ## Author: syndenbock  ## SavedVariables: Handynotes_PandariaDB
 local Pandaria = {}
-local Handynotes_Pandaria = {};
 
 Pandaria.HandyNotes = LibStub('AceAddon-3.0'):GetAddon('HandyNotes', true)
 if Pandaria.HandyNotes == nil then return end
 
+Pandaria.addon = {};
 -- event handling
 do
   local events = {};
   local addonFrame = CreateFrame('frame');
 
-  Handynotes_Pandaria.on = function (eventList, callback)
+  Pandaria.addon.on = function (eventList, callback)
     if (type(eventList) ~= 'table') then
       eventList = {eventList};
     end
@@ -38,7 +38,7 @@ do
 end
 
 -- event funnel
-Handynotes_Pandaria.funnel = function (eventList, timeSpan, callback)
+Pandaria.addon.funnel = function (eventList, timeSpan, callback)
   local flag = false;
 
   local funnel = function (...)
@@ -54,7 +54,7 @@ Handynotes_Pandaria.funnel = function (eventList, timeSpan, callback)
     end
   end
 
-  Handynotes_Pandaria.on(eventList, funnel);
+  Pandaria.addon.on(eventList, funnel);
 
   -- returning funnel for manual call
   return funnel;
@@ -64,11 +64,11 @@ end
 do
   local modules = {};
 
-  Handynotes_Pandaria.export = function (moduleName, module)
+  Pandaria.addon.export = function (moduleName, module)
     modules[moduleName] = module;
   end
 
-  Handynotes_Pandaria.import = function (moduleName)
+  Pandaria.addon.import = function (moduleName)
     return modules[moduleName];
   end
 end
@@ -77,13 +77,13 @@ end
 do
   local callbacks = {};
 
-  Handynotes_Pandaria.listen = function (message, callback)
+  Pandaria.addon.listen = function (message, callback)
     callbacks[message] = callbacks[message] or {};
 
     table.insert(callbacks[message], callback);
   end
 
-  Handynotes_Pandaria.yell = function (message, ...)
+  Pandaria.addon.yell = function (message, ...)
     local callbackList = callbacks[message];
 
     if (callbackList == nil) then return end
@@ -1249,7 +1249,7 @@ end
 local module = {};
 local hiddenNodes;
 
-Handynotes_Pandaria.on('PLAYER_LOGIN', function ()
+Pandaria.addon.on('PLAYER_LOGIN', function ()
   if (Handynotes_PandariaDB == nil) then
       Handynotes_PandariaDB = {
         hiddenNodes = {},
@@ -1278,7 +1278,7 @@ module.restoreAllNodes = function (zone)
   table.wipe(hiddenNodes);
 end
 
-Handynotes_Pandaria.export('nodeHider', module);
+Pandaria.addon.export('nodeHider', module);
 
 local function parseData ()
   local rareInfo = Pandaria.rareData;
@@ -1471,7 +1471,7 @@ local function parseData ()
   Pandaria.mountData = nil;
 end
 
-Handynotes_Pandaria.on('PLAYER_LOGIN', parseData);
+Pandaria.addon.on('PLAYER_LOGIN', parseData);
 
 
 local IsQuestFlaggedCompleted = _G.C_QuestLog.IsQuestFlaggedCompleted;
@@ -1482,7 +1482,7 @@ local playerFaction;
 local dataCache;
 local settings = {};
 
-local nodeHider = Handynotes_Pandaria.import('nodeHider');
+local nodeHider = Pandaria.addon.import('nodeHider');
 
 local ICON_MAP = {
   question = 'Interface\\Icons\\inv_misc_questionmark',
@@ -1502,11 +1502,11 @@ local COLOR_MAP = {
   yellow = '|cFFFFFF00',
 };
 
-Handynotes_Pandaria.listen('SETTINGS_LOADED', function (_settings)
+Pandaria.addon.listen('SETTINGS_LOADED', function (_settings)
   settings = _settings;
 end);
 
-Handynotes_Pandaria.on('PLAYER_LOGIN', function ()
+Pandaria.addon.on('PLAYER_LOGIN', function ()
   playerFaction = UnitFactionGroup('player');
 end);
 
@@ -1526,7 +1526,7 @@ local function queryItem (itemId, info)
     info.name = data[1];
     info.icon = data[10];
 
-    Handynotes_Pandaria.yell('DATA_READY', info);
+    Pandaria.addon.yell('DATA_READY', info);
   end);
 end
 
@@ -1856,7 +1856,7 @@ local module = {
   flush = flush,
 };
 
-Handynotes_Pandaria.export('infoProvider', module);
+Pandaria.addon.export('infoProvider', module);
 
 local HandyNotes = Pandaria.HandyNotes;
 local nodes = Pandaria.nodeData;
@@ -1865,8 +1865,8 @@ local settings;
 local tooltip;
 local dropdown;
 
-local infoProvider = Handynotes_Pandaria.import('infoProvider');
-local nodeHider = Handynotes_Pandaria.import('nodeHider');
+local infoProvider = Pandaria.addon.import('infoProvider');
+local nodeHider = Pandaria.addon.import('nodeHider');
 
 local function makeIterator (zones, isMinimap)
   local zoneIndex, zone = next(zones, nil);
@@ -1975,7 +1975,7 @@ function handler:OnLeave(uiMapId, coords)
   tooltip:Hide();
 end
 
-Handynotes_Pandaria.listen('DATA_READY', function (info, id)
+Pandaria.addon.listen('DATA_READY', function (info, id)
   if (currentInfo == info) then
     displayTooltip(nodeInfo);
   end
@@ -2124,7 +2124,7 @@ local function registerWithHandyNotes ()
   settings = Handynotes_PandariaDB.settings;
   validateSettings(settings, defaults);
 
-  Handynotes_Pandaria.yell('SETTINGS_LOADED', settings);
+  Pandaria.addon.yell('SETTINGS_LOADED', settings);
 
   local options = {
     type = "group",
@@ -2250,12 +2250,12 @@ local function registerWithHandyNotes ()
 end
 
 
-Handynotes_Pandaria.on('PLAYER_LOGIN', function ()
+Pandaria.addon.on('PLAYER_LOGIN', function ()
   registerWithHandyNotes();
-  Handynotes_Pandaria.funnel({'CRITERIA_UPDATE'}, 2, updateNodes);
-  Handynotes_Pandaria.on({'NEW_TOY_ADDED', 'NEW_MOUNT_ADDED'}, updateNodes);
+  Pandaria.addon.funnel({'CRITERIA_UPDATE'}, 2, updateNodes);
+  Pandaria.addon.on({'NEW_TOY_ADDED', 'NEW_MOUNT_ADDED'}, updateNodes);
 end);
---[[Handynotes_Pandaria.on('PLAYER_LOGIN', function ()
+--[[Pandaria.addon.on('PLAYER_LOGIN', function ()
   convertedData = nil;
 end);
 
@@ -2267,7 +2267,7 @@ local nodes = Pandaria.nodeData;
 local function nameCheck ()
   for zone, zoneNodes in pairs(nodes) do
     for coords, node in pairs(zoneNodes) do
-      local info = Handynotes_Pandaria.getNodeInfo(node);
+      local info = Pandaria.addon.getNodeInfo(node);
 
       if (info == nil) then
         print(node.treasure, '-', node.rare);
@@ -2286,6 +2286,6 @@ local function nameCheck ()
   end
 end
 
-Handynotes_Pandaria.on('PLAYER_STOPPED_MOVING', function ()
+Pandaria.addon.on('PLAYER_STOPPED_MOVING', function ()
   nameCheck();
 end);]]

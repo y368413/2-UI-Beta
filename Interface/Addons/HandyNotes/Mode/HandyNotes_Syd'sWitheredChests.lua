@@ -133,7 +133,7 @@ local function iter(t, prestate)
     -- Iterate over all values in the zone
     while state do
 	if value and (db.completed or not value.quest or 
-	    not (IsQuestFlaggedCompleted(value.quest) or value.completed))
+	    not (C_QuestLog.IsQuestFlaggedCompleted(value.quest) or value.completed))
 	    then
 	    return state, nil, icons[value.title], 
 	    db.iconScale, db.iconAlpha

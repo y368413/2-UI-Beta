@@ -163,14 +163,14 @@ local get_point_info = function(point)
 		local label = point.label or point.label2 or UNKNOWN
 		if ((point.portal or point.boat) == true and (point.lvl or point.quest)) then
 		if (point.portal and point.quest) then
-			if IsQuestFlaggedCompleted(point.quest) then
+			if C_QuestLog.IsQuestFlaggedCompleted(point.quest) then
 				icon = work_out_texture(point)
 			else
 				icon = MagePortalHorde	
 			end
 		end
 		if (point.boat and point.quest) then
-			if IsQuestFlaggedCompleted(point.quest) then
+			if C_QuestLog.IsQuestFlaggedCompleted(point.quest) then
 				icon = work_out_texture(point)
 			else
 				icon = "Interface\\AddOns\\HandyNotes\\Icons\\XBoatgrey"
@@ -277,9 +277,9 @@ end
 		if (point.lvl and UnitLevel("player") < point.lvl) then
 			tooltip:AddLine(L["Requires at least player level: "]..point.lvl, 1, 0, 0, true)
 		end
-		if (point.quest and profile.query_server and IsQuestFlaggedCompleted(point.quest) ==false and QuestTitleFromID[point.quest] ~= nil) then
+		if (point.quest and profile.query_server and C_QuestLog.IsQuestFlaggedCompleted(point.quest) ==false and QuestTitleFromID[point.quest] ~= nil) then
 			tooltip:AddLine(L["Unlocked with quest: ["]..QuestTitleFromID[point.quest].."] (ID: "..point.quest..")",1,0,0)
-		elseif (point.quest and profile.query_server and IsQuestFlaggedCompleted(point.quest) ==false and QuestTitleFromID[point.quest] == nil) then
+		elseif (point.quest and profile.query_server and C_QuestLog.IsQuestFlaggedCompleted(point.quest) ==false and QuestTitleFromID[point.quest] == nil) then
 			tooltip:AddLine(L["RETRIEVING DATA..."],1,0,1)	
 		end
 	else

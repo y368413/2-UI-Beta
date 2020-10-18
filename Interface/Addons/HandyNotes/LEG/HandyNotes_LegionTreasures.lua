@@ -47,13 +47,10 @@ local trimmed_icon = function(texture)
     return icon_cache[texture]
 end
 local atlas_texture = function(atlas, scale)
-    local texture, _, _, left, right, top, bottom = GetAtlasInfo(atlas)
+    atlas = C_Texture.GetAtlasInfo(atlas)
     return {
-        icon = texture,
-        tCoordLeft = left,
-        tCoordRight = right,
-        tCoordTop = top,
-        tCoordBottom = bottom,
+        icon = atlas.file,
+        tCoordLeft = atlas.leftTexCoord, tCoordRight = atlas.rightTexCoord, tCoordTop = atlas.topTexCoord, tCoordBottom = atlas.bottomTexCoord,
         scale = scale or 1,
     }
 end
@@ -102,9 +99,9 @@ local function work_out_label(point)
         if point.currency == 'ARTIFACT' then
             return ARTIFACT_LABEL
         end
-        local name, _, texture = GetCurrencyInfo(point.currency)
-        if name then
-            return name
+        local info = C_CurrencyInfo.GetCurrencyInfo(point.currency)
+        if info then
+            return info.name
         end
     end
     return fallback or UNKNOWN
@@ -130,9 +127,9 @@ local function work_out_texture(point)
                     return trimmed_icon(texture)
                 end
             else
-                local texture = select(3, GetCurrencyInfo(point.currency))
-                if texture then
-                    return trimmed_icon(texture)
+                local info = C_CurrencyInfo.GetCurrencyInfo(point.currency)
+                if info then
+                    return trimmed_icon(info.iconFileID)
                 end
             end
         end
@@ -204,7 +201,8 @@ local function handle_tooltip(tooltip, point)
             if point.currency == 'ARTIFACT' then
                 name = ARTIFACT_LABEL
             else
-                name = GetCurrencyInfo(point.currency)
+                local info = C_CurrencyInfo.GetCurrencyInfo(point.currency)
+                name = info and info.name
             end
             tooltip:AddDoubleLine(CURRENCY, name or point.currency)
         end
@@ -393,12 +391,12 @@ end
 
 do
     -- This is a custom iterator we use to iterate over every node in a given zone
-    local currentLevel, currentZone
+    local currentZone
     local function iter(t, prestate)
         if not t then return nil end
         local state, value = next(t, prestate)
         while state do -- Have we reached the end of this zone?
-            if value and LegionTreasures.should_show_point(state, value, currentZone, currentLevel) then
+            if value and LegionTreasures.should_show_point(state, value, currentZone) then
                 local label, icon, _, _, _, scale, alpha = get_point_info(value)
                 scale = (scale or 1) * (icon and icon.scale or 1) * LegionTreasures.db.icon_scale
                 return state, nil, icon, scale, LegionTreasures.db.icon_alpha * alpha
@@ -599,22 +597,19 @@ local allQuestsComplete = function(quests)
     if type(quests) == 'table' then
         -- if it's a table, only count as complete if all quests are complete
         for _, quest in ipairs(quests) do
-            if not IsQuestFlaggedCompleted(quest) then
+            if not C_QuestLog.IsQuestFlaggedCompleted(quest) then
                 return false
             end
         end
         return true
-    elseif IsQuestFlaggedCompleted(quests) then
+    elseif C_QuestLog.IsQuestFlaggedCompleted(quests) then
         return true
     end
 end
 
 local player_faction = UnitFactionGroup("player")
 local player_name = UnitName("player")
-LegionTreasures.should_show_point = function(coord, point, currentZone, currentLevel)
-    if point.level and point.level ~= currentLevel then
-        return false
-    end
+LegionTreasures.should_show_point = function(coord, point, currentZone)
     if LegionTreasures.hidden[currentZone] and LegionTreasures.hidden[currentZone][coord] then
         return false
     end
