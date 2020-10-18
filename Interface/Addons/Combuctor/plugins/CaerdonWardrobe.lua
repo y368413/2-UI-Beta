@@ -1,4 +1,4 @@
-﻿--## Author: Caerdon ## SavedVariables: CaerdonWardrobeConfig  ## Version: v2.8.2
+﻿--## Author: Caerdon ## SavedVariables: CaerdonWardrobeConfig  ## Version: v2.8.6
 	
 if GetLocale() == "zhCN" then
   CaerdonWardrobeBoA = "|cffe6cc80战网|r";

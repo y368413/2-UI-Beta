@@ -819,8 +819,8 @@ function AutoTeam:PLAYER_TARGET_CHANGED()
         g.npcName = name
         g.npcId = tonumber(npcid)
         local npcStr = g.npcId .. ""
-        if rematch.notableRedirects[g.npcId] then
-          g.npcId = rematch.notableRedirects[g.npcId]
+        if rematch.targetRedirects[g.npcId] then
+          g.npcId = rematch.targetRedirects[g.npcId]
           npcStr = npcStr .. "=>" .. g.npcId
         end
         if CFG.debug then
@@ -978,11 +978,11 @@ end
 function AutoTeam:updatePetListCache()
   if not isInited then
     --从rematch导入数据
-    local npcs = rematch.notableNPCs
+    local npcs = rematch.targetData
     for x = 1, #npcs do
-      if npcs[x] and npcs[x][3] then
-        if not AutoTeamData[npcs[x][1]] then
-          AutoTeamData[npcs[x][1]] = {}
+      if npcs[x] and npcs[x][7] then
+        if not AutoTeamData[npcs[x][3]] then
+          AutoTeamData[npcs[x][3]] = {}
         end
       end
     end

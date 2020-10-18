@@ -671,7 +671,8 @@ local function FriendGroups_Update(forceUpdate)
 
 	-- favorite friends online
 	for i = 1, numBNetFavoriteOnline do
-		--local noteText = select(13,BNetAccountInfo(i))
+		local accountInfo = C_BattleNet.GetFriendAccountInfo(i)
+		local noteText = accountInfo.note
 		local client = select(8,GetFriendInfoById(i))
 		
 		if (ShiGuangDB["FriendGroupsingame_only"] and client == BNET_CLIENT_WOW) or not ShiGuangDB["FriendGroupsingame_only"] then
@@ -679,7 +680,7 @@ local function FriendGroups_Update(forceUpdate)
 				BnetFriendGroups[i] = {}
 			end
 			
-			NoteAndGroups("^-^", BnetFriendGroups[i])
+			NoteAndGroups(noteText, BnetFriendGroups[i])
 			
 			for group in pairs(BnetFriendGroups[i]) do
 				IncrementGroup(group, true)
@@ -694,7 +695,8 @@ local function FriendGroups_Update(forceUpdate)
 	--favorite friends offline
 	for i = 1, numBNetFavoriteOffline do
 		local j = i + numBNetFavoriteOnline
-		--local noteText = select(13,BNetAccountInfo(j))
+		local accountInfo = C_BattleNet.GetFriendAccountInfo(j)
+		local noteText = accountInfo.note
 		local client = select(8,GetFriendInfoById(j))
 		
 		if (ShiGuangDB["FriendGroupsingame_only"] and client == BNET_CLIENT_WOW) or not ShiGuangDB["FriendGroupsingame_only"] then
@@ -702,7 +704,7 @@ local function FriendGroups_Update(forceUpdate)
 				BnetFriendGroups[j] = {}
 			end
 			
-			NoteAndGroups("*-*", BnetFriendGroups[j])
+			NoteAndGroups(noteText, BnetFriendGroups[j])
 			for group in pairs(BnetFriendGroups[j]) do
 				IncrementGroup(group)
 				 if not ShiGuangDB["FriendGroupsCollapsed"][group] and not ShiGuangDB["FriendGroupsHideOffline"] then
@@ -941,7 +943,7 @@ end
 local function InviteOrGroup(clickedgroup, invite)
 	local groups = {}
 	for i = 1, BNGetNumFriends() do
-		local presenceID, _, _, _, _, toonID, _, _, _, _, _, _, noteText = BNetAccountInfo(i)
+		local presenceID, _, _, _, _, toonID, _, _, _, _, _, _, noteText = C_BattleNet.GetFriendAccountInfo(i)
 		local note = NoteAndGroups(noteText, groups)
 		if groups[clickedgroup] then
 			if invite and toonID then
@@ -965,7 +967,7 @@ local function InviteOrGroup(clickedgroup, invite)
 			elseif not invite then
 				groups[clickedgroup] = nil
 				note = CreateNote(note, groups)
-				SetFriendNotes(i, note)
+				C_FriendList.SetFriendNotes(i, note)
 			end
 		end
 	end
