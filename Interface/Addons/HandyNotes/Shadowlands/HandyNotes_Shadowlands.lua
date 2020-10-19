@@ -4177,7 +4177,7 @@ sanctum.nodes[48606168] = Gateway({ label=L["eternal_gateway"], requires=T1 })
 -------------------------------------------------------------------------------
 
 local NECROLORD = Shadowlands.covenants.NEC
-
+local Clone = Shadowlands.Clone
 local map = Map({ id=1536, settings=true })
 local sanctum = Map({ id=1698 })
 

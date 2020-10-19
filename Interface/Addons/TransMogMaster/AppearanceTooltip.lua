@@ -48,7 +48,6 @@ function tooltip:ADDON_LOADED(addon)
         loot = true,
         encounterjournal = true,
         appearances_known = {},
-        scan_delay = 0.2,
     })
     db = _G["AppearanceTooltipDB"]
     AppearanceTooltip.db = db
@@ -515,32 +514,29 @@ AppearanceTooltip.modifiers = {
 ---
 
 do
-    local categoryID = 1
+    local scanned
     function AppearanceTooltip.UpdateSources()
-        --if categoryID > 28 then return AppearanceTooltip.Debug("Done updating") end
-        local categoryAppearances = C_TransmogCollection.GetCategoryAppearances(categoryID)
-        local acount, scount = 0, 0
-        for _, categoryAppearance in pairs(categoryAppearances) do
-            acount = acount + 1
-            local appearanceSources = C_TransmogCollection.GetAppearanceSources(categoryAppearance.visualID)
-            local known_any
-            for _, source in pairs(appearanceSources) do
-                if source.isCollected then
-                    scount = scount + 1
-                    -- it's only worth saving if we know the source
-                    known_any = true
+        if scanned then return end
+        for categoryID = 1, 28 do
+            local categoryAppearances = C_TransmogCollection.GetCategoryAppearances(categoryID)
+            for _, categoryAppearance in pairs(categoryAppearances) do
+                local appearanceSources = C_TransmogCollection.GetAppearanceSources(categoryAppearance.visualID)
+                local known_any
+                for _, source in pairs(appearanceSources) do
+                    if source.isCollected then
+                        -- it's only worth saving if we know the source
+                        known_any = true
+                    end
+                end
+                if known_any then
+                    AppearanceTooltip.db.appearances_known[categoryAppearance.visualID] = true
+                else
+                    -- cleaning up after unlearned appearances:
+                    AppearanceTooltip.db.appearances_known[categoryAppearance.visualID] = nil
                 end
             end
-            if known_any then
-                AppearanceTooltip.db.appearances_known[categoryAppearance.visualID] = true
-            else
-                -- cleaning up after unlearned appearances:
-                AppearanceTooltip.db.appearances_known[categoryAppearance.visualID] = nil
-            end
         end
-        --AppearanceTooltip.Debug("Updating sources in category", categoryID, "appearances", acount, "sources known", scount)
-        categoryID = categoryID + 1
-        C_Timer.After(db.scan_delay, AppearanceTooltip.UpdateSources)
+        scanned = true
     end
 end
 
@@ -597,9 +593,10 @@ function AppearanceTooltip.PlayerHasAppearance(itemLinkOrID)
     return false
 end
 
+--function AppearanceTooltip.Print(...) print("|cFF33FF99".. myfullname.. "|r:", ...) end
 
 local debugf = tekDebug and tekDebug:GetFrame(myname)
---function AppearanceTooltip.Debug(...) if debugf then debugf:AddMessage(string.join(", ", tostringall(...))) end end
+function AppearanceTooltip.Debug(...) if debugf then debugf:AddMessage(string.join(", ", tostringall(...))) end end
 
 function setDefaults(options, defaults)
     setmetatable(options, { __index = function(t, k)
@@ -1406,21 +1403,6 @@ local LAI = LibStub("LibAppropriateItems-1.0")
 
 local f = CreateFrame("Frame")
 f:SetScript("OnEvent", function(self, event, ...) if f[event] then return f[event](f, ...) end end)
-local hooks = {}
-function f:RegisterAddonHook(addon, callback)
-    if IsAddOnLoaded(addon) then
-        callback()
-    else
-        hooks[addon] = callback
-    end
-end
-function f:ADDON_LOADED(addon)
-    if hooks[addon] then
-        hooks[addon]()
-        hooks[addon] = nil
-    end
-end
-f:RegisterEvent("ADDON_LOADED")
 
 local function PrepareItemButton(button, point, offsetx, offsety)
     if button.appearancetooltipoverlay then
@@ -1540,7 +1522,7 @@ end)
 
 -- Encounter Journal frame
 
-f:RegisterAddonHook("Blizzard_EncounterJournal", function()
+local function HookEncounterJournal()
     hooksecurefunc("EncounterJournal_SetLootButton", function(item)
         if item.appearancetooltipoverlay then item.appearancetooltipoverlay:Hide() end
         if not AppearanceTooltip.db.encounterjournal then return end
@@ -1548,51 +1530,40 @@ f:RegisterAddonHook("Blizzard_EncounterJournal", function()
             UpdateOverlay(item, item.link, "TOPLEFT", 4, -4)
         end
     end)
-end)
+end
+if IsAddOnLoaded("Blizzard_EncounterJournal") then
+    HookEncounterJournal()
+else
+    function f:ADDON_LOADED(addon)
+        if addon == "Blizzard_EncounterJournal" then
+            HookEncounterJournal()
+            self:UnregisterEvent("ADDON_LOADED")
+        end
+    end
+    f:RegisterEvent("ADDON_LOADED")
+end
 
 -- Other addons:
 
 -- Inventorian
-f:RegisterAddonHook("Inventorian", function()
-    local AA = LibStub("AceAddon-3.0", true)
-    local inv = AA and AA:GetAddon("Inventorian", true)
-    if inv then
-        hooksecurefunc(inv.Item.prototype, "Update", function(self, ...)
-            UpdateContainerButton(self, self.bag)
-        end)
-    end
-end)
+local inv = LibStub("AceAddon-3.0"):GetAddon("Inventorian", true)
+if inv then
+    hooksecurefunc(inv.Item.prototype, "Update", function(self, ...)
+        UpdateContainerButton(self, self.bag)
+    end)
+end
 
 --Baggins:
-f:RegisterAddonHook("Baggins", function()
+if Baggins then
     hooksecurefunc(Baggins, "UpdateItemButton", function(baggins, bagframe, button, bag, slot)
         UpdateContainerButton(button, bag)
     end)
-end)
+end
 
---Bagnon:
-f:RegisterAddonHook("Bagnon", function()
-    hooksecurefunc(Bagnon.Item, "Update", function(frame)
+--Combuctor:
+if Combuctor then
+    hooksecurefunc(Combuctor.Item, "Update", function(frame)
         local bag = frame:GetBag()
         UpdateContainerButton(frame, bag)
     end)
-end)
-
-f:RegisterAddonHook("Butsu", function()
-    hooksecurefunc(Butsu, "LOOT_OPENED", function(self, event, autoloot)
-        if not self:IsShown() then return end
-        local items = GetNumLootItems()
-        if items > 0 then
-            for i=1, items do
-                local slot = _G["ButsuSlot" .. i]
-                if slot and slot.appearancetooltipoverlay then slot.appearancetooltipoverlay:Hide() end
-                if AppearanceTooltip.db.loot then
-                    local link = GetLootSlotLink(i)
-                    if slot and link then
-                        UpdateOverlay(slot, link, "RIGHT", -6)
-                    end
-                end
-            end
-        end
-    end)
-end)
+end

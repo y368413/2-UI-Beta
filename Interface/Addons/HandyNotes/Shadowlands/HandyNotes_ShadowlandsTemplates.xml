@@ -32,9 +32,9 @@
         </Texture>
       </Layer>
       <Layer level="ARTWORK">
-        <Texture parentKey="Icon" file="Interface\Addons\HandyNotes_Shadowlands\icons\icons.blp">
+        <Texture parentKey="Icon" file="Interface\Addons\HandyNotes\Icons\Trashpile.blp">
           <Size x="25" y="25"/>
-          <TexCoords left="0.38" right="0.5" top="0" bottom="0.06" />
+          <!--TexCoords left="0.38" right="0.5" top="0" bottom="0.06" /-->
           <Anchors>
             <Anchor point="TOPLEFT" x="4" y="-4"/>
           </Anchors>
