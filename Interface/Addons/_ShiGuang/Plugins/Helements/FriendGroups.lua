@@ -134,7 +134,6 @@ local function GetFriendInfoById(id)
 			bnetAccountId = accountInfo.bnetAccountID
 			isAFK = accountInfo.isAFK
 			isDND = accountInfo.isDND
-			zoneName = accountInfo.areaName
 			lastOnline = accountInfo.lastOnlineTime
 			battleTag = accountInfo.battleTag
 

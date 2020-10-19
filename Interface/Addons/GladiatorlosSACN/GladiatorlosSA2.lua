@@ -152,7 +152,7 @@
 			gsavers = {
 			order = 2,
 			type = "description",
-			name = "|cffFF7D0A 2.3.2 |r(|cFF00FF96 8.3.7 BFA|r)",
+			name = "|cffFF7D0A 2.3.2 |r(|cFF00FF96 9.0.1 Shadowlands|r)",
 			cmdHidden = true
 			},
 		},
@@ -244,7 +244,6 @@
 		spellID == 199086 or 		-- Warpath Stun
 		spellID == 202335 or 		-- Double Barrel Stun
 		spellID == 215652 or 		-- Shield of Virtue silence
-		spellID == 19577 or 		-- Intimidation (pet stun)
 		spellID == 302144 then 		-- Gladiator's Maledict
 		return true
 	end
@@ -269,7 +268,7 @@ function GSA:CanTalkHere()
 	--Disable By Location
 	local _,currentZoneType = IsInInstance()
 	local _,_,_,_,_,_,_,instanceMapID = GetInstanceInfo()
-	local isPvP = UnitIsWarModeDesired("player")
+	--local isPvP = UnitIsWarModeDesired("player")
 	playerCurrentZone = currentZoneType
 	if (not ((currentZoneType == "none" and gsadb.field and not gsadb.onlyFlagged) or 												-- World
 		--(currentZoneType == "none" and gsadb.field and (gsadb.onlyFlagged and UnitIsWarModeDesired("player"))) or

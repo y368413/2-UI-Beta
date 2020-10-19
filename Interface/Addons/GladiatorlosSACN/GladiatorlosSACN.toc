@@ -7,7 +7,7 @@
 ## Notes-zhTW: PVP技能語音提示
 ## Author: Abatorlos(of Spinebreaker), DuskAshes, superk521, zuhligan, Grit (Legion Update), Mini_Dragon, LordKuper + VV(2020-03-18)
 ## SavedVariables: GladiatorlosSADB
-## Version: 2.3.2
+## Version: SLB 2
 
 ## X-Repple: 2 UI
 
