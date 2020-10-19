@@ -811,7 +811,7 @@ function Arathi:OnInitialize()
         },
     }
 
-    self.db = LibStub("AceDB-3.0"):New("HandyNotesArathiDB", Arathi_defaults, "Default");
+    self.db = LibStub("AceDB-3.0"):New("HandyNotes_ArathiDB", Arathi_defaults, "Default");
     self:RegisterEvent("PLAYER_ENTERING_WORLD", "WorldEnter");
 	local name = UnitName("player");
 	local realm = GetRealmName();
@@ -922,7 +922,7 @@ function Arathi:ShowNode( mapFile, node )
 	if ( MYFACTION ~= nil and node["faction"] ~= nil and node["faction"] ~= MYFACTION ) then return false end
 	for i,q in pairs(node["questId"]) do
 		-- print( node["questId"][i] );
-		if ( IsQuestFlaggedCompleted( node["questId"][i] ) ) then return false end
+		if ( C_QuestLog.IsQuestFlaggedCompleted( node["questId"][i] ) ) then return false end
 	end
     return true
 end

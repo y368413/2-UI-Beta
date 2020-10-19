@@ -3,20 +3,17 @@ local SuramarTelemancy = {}
 local HandyNotes = LibStub("AceAddon-3.0"):GetAddon("HandyNotes")
 local HL = LibStub("AceAddon-3.0"):NewAddon("HandyNotes_SuramarTelemancy", "AceEvent-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("HandyNotes")
-SuramarTelemancy_HL = HL
+SuramarTelemancy.HL = HL
 
 local next = next
 local GameTooltip = GameTooltip
 local HandyNotes = HandyNotes
 
 local function work_out_texture(atlas)
-    local texture, _, _, left, right, top, bottom = GetAtlasInfo(atlas)
+    atlas = C_Texture.GetAtlasInfo(atlas)
     return {
-        icon = texture,
-        tCoordLeft = left,
-        tCoordRight = right,
-        tCoordTop = top,
-        tCoordBottom = bottom,
+        icon = atlas.file,
+        tCoordLeft = atlas.leftTexCoord, tCoordRight = atlas.rightTexCoord, tCoordTop = atlas.topTexCoord, tCoordBottom = atlas.bottomTexCoord,
     }
 end
 local enabled_texture = work_out_texture("MagePortalAlliance")
@@ -33,7 +30,7 @@ disabled_entrance_texture.b = 0
 local get_point_info = function(point)
     if point then
         local texture
-        if IsQuestFlaggedCompleted(point.quest) then
+        if C_QuestLog.IsQuestFlaggedCompleted(point.quest) then
             texture = point.entrance and enabled_entrance_texture or enabled_texture
         else
             texture = point.entrance and disabled_entrance_texture or disabled_texture
@@ -42,13 +39,13 @@ local get_point_info = function(point)
     end
 end
 local get_point_info_by_coord = function(uiMapId, coord)
-    return get_point_info(SuramarTelemancy_points[uiMapId] and SuramarTelemancy_points[uiMapId][coord])
+    return get_point_info(SuramarTelemancy.points[uiMapId] and SuramarTelemancy.points[uiMapId][coord])
 end
 
 local function handle_tooltip(tooltip, point)
     if point then
         tooltip:AddLine(point.label)
-        if IsQuestFlaggedCompleted(point.quest) then
+        if C_QuestLog.IsQuestFlaggedCompleted(point.quest) then
             tooltip:AddLine(ACTIVE_PETS, 0, 1, 0) -- Active
         else
             tooltip:AddLine(FACTION_INACTIVE, 1, 0, 0) -- Inactive
@@ -59,7 +56,7 @@ local function handle_tooltip(tooltip, point)
     tooltip:Show()
 end
 local handle_tooltip_by_coord = function(tooltip, uiMapId, coord)
-    return handle_tooltip(tooltip, SuramarTelemancy_points[uiMapId] and SuramarTelemancy_points[uiMapId][coord])
+    return handle_tooltip(tooltip, SuramarTelemancy.points[uiMapId] and SuramarTelemancy.points[uiMapId][coord])
 end
 
 ---------------------------------------------------------
@@ -90,7 +87,7 @@ local function createWaypoint(button, uiMapId, coord)
 end
 
 local function hideNode(button, uiMapId, coord)
-    SuramarTelemancy_hidden[uiMapId][coord] = true
+    SuramarTelemancy.hidden[uiMapId][coord] = true
     HL:Refresh()
 end
 
@@ -156,7 +153,7 @@ do
         while state do -- Have we reached the end of this zone?
             if value and SuramarTelemancy:ShouldShow(value) then
                 local label, icon = get_point_info(value)
-                return state, nil, icon, SuramarTelemancy_db.icon_scale, SuramarTelemancy_db.icon_alpha
+                return state, nil, icon, SuramarTelemancy.db.icon_scale, SuramarTelemancy.db.icon_alpha
             end
             state, value = next(t, state) -- Get next data
         end
@@ -165,19 +162,19 @@ do
     function HLHandler:GetNodes2(uiMapId, minimap)
         currentLevel = level
         currentZone = uiMapId
-        return iter, SuramarTelemancy_points[uiMapId], nil
+        return iter, SuramarTelemancy.points[uiMapId], nil
     end
     function SuramarTelemancy:ShouldShow(point)
-        if point.entrance and not SuramarTelemancy_db.entrances then
+        if point.entrance and not SuramarTelemancy.db.entrances then
             return false
         end
         if point.level and point.level ~= currentLevel then
             return false
         end
-        if point.hide_after and IsQuestFlaggedCompleted(point.hide_after) then
+        if point.hide_after and C_QuestLog.IsQuestFlaggedCompleted(point.hide_after) then
             return false
         end
-        if point.hide_before and not SuramarTelemancy_db.upcoming and not IsQuestFlaggedCompleted(point.hide_before) then
+        if point.hide_before and not SuramarTelemancy.db.upcoming and not C_QuestLog.IsQuestFlaggedCompleted(point.hide_before) then
             return false
         end
         return true
@@ -189,11 +186,11 @@ end
 
 function HL:OnInitialize()
     -- Set up our database
-    self.db = LibStub("AceDB-3.0"):New("HandyNotes_SuramarTelemancyDB", SuramarTelemancy_defaults)
-    SuramarTelemancy_db = self.db.profile
-    SuramarTelemancy_hidden = self.db.char.hidden
+    self.db = LibStub("AceDB-3.0"):New("HandyNotes_SuramarTelemancyDB", SuramarTelemancy.defaults)
+    SuramarTelemancy.db = self.db.profile
+    SuramarTelemancy.hidden = self.db.char.hidden
     -- Initialize our database with HandyNotes
-    HandyNotes:RegisterPluginDB("HandyNotes_SuramarTelemancy", HLHandler, SuramarTelemancy_options)
+    HandyNotes:RegisterPluginDB("HandyNotes_SuramarTelemancy", HLHandler, SuramarTelemancy.options)
 
     -- watch for LOOT_CLOSED
     self:RegisterEvent("LOOT_CLOSED")
@@ -208,7 +205,7 @@ function HL:LOOT_CLOSED()
 end
 
 
-SuramarTelemancy_defaults = {
+SuramarTelemancy.defaults = {
     profile = {
         icon_scale = 1.5,
         icon_alpha = 1.0,
@@ -217,13 +214,13 @@ SuramarTelemancy_defaults = {
     },
 }
 
-SuramarTelemancy_options = {
+SuramarTelemancy.options = {
     type = "group",
     name = "SuramarTelemancy",
-    get = function(info) return SuramarTelemancy_db[info[#info]] end,
+    get = function(info) return SuramarTelemancy.db[info[#info]] end,
     set = function(info, v)
-        SuramarTelemancy_db[info[#info]] = v
-        SuramarTelemancy_HL:SendMessage("HandyNotes_NotifyUpdate", "HandyNotes_SuramarTelemancy")
+        SuramarTelemancy.db[info[#info]] = v
+        SuramarTelemancy.HL:SendMessage("HandyNotes_NotifyUpdate", "HandyNotes_SuramarTelemancy")
     end,
     args = {
         icon = {
@@ -288,7 +285,7 @@ SuramarTelemancy_options = {
         },
     },
 --]]
-SuramarTelemancy_points = {
+SuramarTelemancy.points = {
     [680] = { -- Suramar
         [36204710] = { quest=40956, label=L["Ruins of Elune'eth"], hide_before=40956, }, -- Ruins of Elune'eth, storyline: Survey Says...
         [22903580] = { quest=42230, label=L["Falanaar"], hide_before=42228, }, -- Falanaar, storyline: Valewalker's Burden, hidden until Hidden City

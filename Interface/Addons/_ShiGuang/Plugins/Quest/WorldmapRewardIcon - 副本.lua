@@ -1,6 +1,27 @@
-﻿local RewardIcons_DisableBountyColors = false
+﻿
+local WorldQuestList = CreateFrame("Frame","WorldQuestsListFrame",WorldMapFrame)
 
+
+_G.WorldQuestList = WorldQuestList
 local CacheQuestItemReward = {}
+local CacheIsAnimaItem = {}
+local RewardIcons_DisableBountyColors = false
+local GetCurrentMapID, tonumber, C_TaskQuest, tinsert, abs, time, HaveQuestData, QuestUtils_IsQuestWorldQuest, bit, format, floor, pairs = function() return WorldMapFrame:GetMapID() or 0 end, tonumber, C_TaskQuest, tinsert, abs, time, HaveQuestData, QuestUtils_IsQuestWorldQuest, bit, format, floor, pairs
+local IsQuestComplete, IsQuestCriteriaForBounty = C_QuestLog.IsComplete, C_QuestLog.IsQuestCriteriaForBounty
+
+local function GetCurrencyInfo(id)
+	local data = C_CurrencyInfo.GetCurrencyInfo(id)
+	return data.name, nil, data.iconFileID
+end
+local function GetQuestLogTitle(id)
+	local data = C_QuestLog.GetInfo(id)
+	return data.title, data.level, data.suggestedGroup, data.isHeader, data.isCollapsed, data.isComplete, data.frequency, data.questID
+end
+local function GetQuestTagInfo(id)
+	local data = C_QuestLog.GetQuestTagInfo(id)
+	return data.tagID, data.tagName, data.worldQuestType, data.quality, data.isElite, data.tradeskillLineID, data.displayExpiration
+end
+
 local list = {
 	[1579] = 2164,
 	[1598] = 2163,
@@ -96,31 +117,71 @@ local LE = {
 	ITEM_SPELL_TRIGGER_ONUSE = ITEM_SPELL_TRIGGER_ONUSE,
 	ITEM_BIND_ON_EQUIP = ITEM_BIND_ON_EQUIP,
 	ARTIFACT_POWER = ARTIFACT_POWER,
-	--AZERITE = GetCurrencyInfo(1553),
-	--ORDER_RESOURCES_NAME_LEGION = GetCurrencyInfo(1220),
-	--ORDER_RESOURCES_NAME_BFA = GetCurrencyInfo(1560),
+	AZERITE = GetCurrencyInfo(1553),
+	ORDER_RESOURCES_NAME_LEGION = GetCurrencyInfo(1220),
+	ORDER_RESOURCES_NAME_BFA = GetCurrencyInfo(1560),
 }
+	local Zones = {
+		[619] = "Legion",
+		[790] = "Legion",
+		[630] = "Legion",
+		[627] = "Legion",
+		[641] = "Legion",
+		[680] = "Legion",
+		[650] = "Legion",
+		[634] = "Legion",
+		[646] = "Legion",
+		[905] = "Legion",
+		[885] = "Legion",
+		[882] = "Legion",
+		[830] = "Legion",
+	}
+	function WorldQuestList:IsLegionZone(mapID)
+		mapID = mapID or GetCurrentMapID()
+		if Zones[mapID] == "Legion" then
+			return true
+		else
+			return false
+		end
+	end
 
+	function WorldQuestList:IsBfaZone(mapID)
+		mapID = mapID or GetCurrentMapID()
+		if Zones[mapID] == "Bfa" then
+			return true
+		else
+			return false
+		end
+	end
+
+	function WorldQuestList:IsShadowlandsZone(mapID)
+		mapID = mapID or GetCurrentMapID()
+		if mapID >= 1525 then
+			return true
+		else
+			return false
+		end
+	end
 local GetCurrentMapID = function() return WorldMapFrame:GetMapID() or 0 end 
 local inspectScantip = CreateFrame("GameTooltip", "WorldmapRewardIconWorldQuestListInspectScanningTooltip", nil, "GameTooltipTemplate")
       inspectScantip:SetOwner(UIParent, "ANCHOR_NONE")
   
-function WorldQuestList_IsFactionCurrency(currencyID)
+function WorldQuestList:IsFactionCurrency(currencyID)
 	if list[currencyID or 0] then
 		return true
 	else
 		return false
 	end
 end  
-local function HookOnEnter(self)
-	self.pinFrameLevelType = "PIN_FRAME_LEVEL_TOPMOST"
-	self:ApplyFrameLevel()
-end
-local function HookOnLeave(self)
-	self.pinFrameLevelType = "PIN_FRAME_LEVEL_WORLD_QUEST"
-	self:ApplyFrameLevel()
-end
-
+	local function HookOnEnter(self)
+		self.pinFrameLevelType = "PIN_FRAME_LEVEL_TOPMOST"
+		self:ApplyFrameLevel()
+	end
+	local function HookOnLeave(self)
+		self.pinFrameLevelType = "PIN_FRAME_LEVEL_WORLD_QUEST"
+		self:ApplyFrameLevel()
+	end
+	
 	local function CreateMapTextOverlay(mapFrame,pinName)
 		local mapCanvas = mapFrame:GetCanvas()
 		local textsFrame = CreateFrame("Frame",nil,mapCanvas)
@@ -198,7 +259,10 @@ end
 		end	
 		return num
 	end
-function WorldQuestList_WQIcons_AddIcons(frame,pinName)
+
+
+	
+	function WorldQuestList:WQIcons_AddIcons(frame,pinName)
 		frame = frame or WorldMapFrame
 		local pins = frame.pinPools[pinName or "WorldMap_WorldQuestPinTemplate"]
 		if pins then
@@ -208,7 +272,7 @@ function WorldQuestList_WQIcons_AddIcons(frame,pinName)
 			local bountyMapID = frame:GetMapID() or 0
 			if bountyMapID == 1014 then bountyMapID = 876 
 			elseif bountyMapID == 1011 then bountyMapID = 875 end
-			local bounties = GetQuestBountyInfoForMapID(bountyMapID) or {}
+			local bounties = C_QuestLog.GetBountiesForMapID(bountyMapID) or {}
 			for _,bountyData in pairs(bounties) do
 				local t = C_TaskQuest.GetQuestTimeLeftMinutes(bountyData.questID) or 0
 				if t < 1440 then
@@ -218,6 +282,31 @@ function WorldQuestList_WQIcons_AddIcons(frame,pinName)
 				end
 				if IsQuestComplete(bountyData.questID) then
 					bountyData.completed = true
+				end
+			end
+			local mapsToHighlightCallings = {}
+			do
+				local p = 1
+				local questID = WorldQuestList:GetCallingQuests()
+				while questID do
+					local mapID = C_QuestLog.GetQuestAdditionalHighlights(questID)
+					if mapID and mapID ~= 0 then
+						local callingData = {questID = questID}
+
+						local t = C_TaskQuest.GetQuestTimeLeftMinutes(questID) or 0
+						if t < 1440 then
+							callingData.lowTime = true
+						elseif t < 2880 then
+							callingData.middleTime = true
+						end
+						if IsQuestComplete(questID) then
+							callingData.completed = true
+						end
+
+						mapsToHighlightCallings[mapID] = callingData
+					end
+					p = p + 1
+					questID = select(p,WorldQuestList:GetCallingQuests())
 				end
 			end
 			if isWorldMapFrame then
@@ -304,9 +393,9 @@ function WorldQuestList_WQIcons_AddIcons(frame,pinName)
 							amount = floor(numItems * (warMode and C_QuestLog.QuestHasWarModeBonus(obj.questID) and C_CurrencyInfo.DoesWarModeBonusApply(currencyID) and warModeBonus or 1))
 							ajustSize = 5
 							iconTexture, ajustMask = nil
-							--if WorldQuestList_IsAzeriteItemAtMaxLevel() then
-								--iconGray = true
-							--end
+							if WorldQuestList:IsAzeriteItemAtMaxLevel() then
+								iconGray = true
+							end
 							break
 						elseif currencyID == 1220 or currencyID == 1560 then	--OR
 							iconAtlas = "legionmission-icon-currency"
@@ -314,7 +403,7 @@ function WorldQuestList_WQIcons_AddIcons(frame,pinName)
 							amount = floor(numItems * (warMode and C_QuestLog.QuestHasWarModeBonus(obj.questID) and C_CurrencyInfo.DoesWarModeBonusApply(currencyID) and warModeBonus or 1))
 							iconTexture, ajustMask = nil
 							break
-						elseif WorldQuestList_IsFactionCurrency(currencyID or 0) then
+						elseif WorldQuestList:IsFactionCurrency(currencyID or 0) then
 							iconAtlas = "poi-workorders"
 							amount = numItems
 							amountIcon = texture
@@ -326,8 +415,8 @@ function WorldQuestList_WQIcons_AddIcons(frame,pinName)
 					if GetNumQuestLogRewards(obj.questID) > 0 then
 						local name,icon,numItems,quality,_,itemID = GetQuestLogRewardInfo(1,obj.questID)
 						if itemID then
-							local itemLevel = select(4,GetItemInfo(itemID))
-							if itemLevel > 60 then
+							local itemLevel = select(4,GetItemInfo(itemID)) or 0
+							if itemLevel > 60 or (itemLevel > 40 and not WorldQuestList:IsShadowlandsZone(bountyMapID)) then
 								iconAtlas = "Banker"
 								amount = 0
 								--iconAtlas = "ChallengeMode-icon-chest"
@@ -610,7 +699,7 @@ function WorldQuestList_WQIcons_AddIcons(frame,pinName)
 
 WorldMapFrame:RegisterCallback("WorldQuestsUpdate", function()
   if not MaoRUIPerDB["Misc"]["WorldQusetRewardIcons"] then return end
-	WorldQuestList_WQIcons_AddIcons()
+	WorldQuestList:WQIcons_AddIcons()
 end, WorldMapFrame)
 
 local WQIcons_FlightMapLoad = CreateFrame("Frame")
@@ -619,7 +708,7 @@ WQIcons_FlightMapLoad:SetScript("OnEvent",function (self, event, arg)
 	if arg == "Blizzard_FlightMap" and MaoRUIPerDB["Misc"]["WorldQusetRewardIcons"] then
 		self:UnregisterAllEvents()
 		FlightMapFrame:RegisterCallback("WorldQuestsUpdate", function()
-			WorldQuestList_WQIcons_AddIcons(FlightMapFrame,"FlightMap_WorldQuestPinTemplate")
+			WorldQuestList:WQIcons_AddIcons(FlightMapFrame,"FlightMap_WorldQuestPinTemplate")
 		end, self)
 	end
 end)
@@ -636,7 +725,7 @@ if WorldMap_WorldQuestPinMixin then
 	pcall(function() WorldMap_WorldQuestPinMixin.OnLoad(f) end)
 end
 
-function WorldQuestList_WQIcons_UpdateScale()
+function WorldQuestList:WQIcons_UpdateScale()
 	local pins = WorldMapFrame.pinPools["WorldMap_WorldQuestPinTemplate"]
 	if pins then
 		local startScale, endScale = defStartScale, defEndScale
@@ -670,7 +759,7 @@ end
 
 WorldMapFrame:RegisterCallback("WorldQuestsUpdate", function()
   if not MaoRUIPerDB["Misc"]["WorldQusetRewardIcons"] then return end
-	WorldQuestList_WQIcons_UpdateScale()
+	WorldQuestList:WQIcons_UpdateScale()
 end, WorldMapFrame)
 
 -------------------------------------------------------------------------------------------------------------------	WorldMapQuestBountyCount

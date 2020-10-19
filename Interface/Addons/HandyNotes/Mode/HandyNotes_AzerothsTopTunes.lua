@@ -21,7 +21,6 @@ local defaults = { profile = { completed = false, icon_scale = 1.4, icon_alpha =
 local _G = getfenv(0)
 
 local GameTooltip = _G.GameTooltip
-local GetQuestsCompleted = _G.GetQuestsCompleted
 local IsControlKeyDown = _G.IsControlKeyDown
 local gsub = _G.string.gsub
 local LibStub = _G.LibStub
@@ -226,7 +225,7 @@ function HandyNotes_AzerothsTopTunes:OnEnable()
 
 	HandyNotes:RegisterPluginDB("HandyNotes_AzerothsTopTunes", self, options)
 
-	completedQuests = GetQuestsCompleted(completedQuests)
+	completedQuests = C_QuestLog.GetQuestsCompleted(completedQuests)
 	db = LibStub("AceDB-3.0"):New("HandyNotes_AzerothsTopTunesDB", defaults, "Default").profile
 
 	HandyNotes_AzerothsTopTunes:Refresh()

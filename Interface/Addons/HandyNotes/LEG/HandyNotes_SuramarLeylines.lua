@@ -68,7 +68,7 @@ local function handle_tooltip(tooltip, point)
             end
         end
         if point.quest then
-            if IsQuestFlaggedCompleted(point.quest) then
+            if C_QuestLog.IsQuestFlaggedCompleted(point.quest) then
                 tooltip:AddLine(ACTIVE_PETS, 0, 1, 0) -- Active
             else
                 tooltip:AddLine(FACTION_INACTIVE, 1, 0, 0) -- Inactive
@@ -208,7 +208,7 @@ do
         if not point.quest then
             return true
         end
-        return not IsQuestFlaggedCompleted(point.quest)
+        return not C_QuestLog.IsQuestFlaggedCompleted(point.quest)
     end
 end
 

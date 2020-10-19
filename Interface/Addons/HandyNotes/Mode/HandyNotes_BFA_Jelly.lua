@@ -72,7 +72,7 @@ end
 local function handle_tooltip(tooltip, point)
     if point then
         tooltip:AddLine(point.label or DEFAULT_LABEL)
-        if point.quest and not IsQuestFlaggedCompleted(point.quest) then
+        if point.quest and not C_QuestLog.IsQuestFlaggedCompleted(point.quest) then
             tooltip:AddLine(NEED, 1, 0, 0)
         end
         if point.note then
@@ -321,7 +321,7 @@ HandyNotes_BFA_Jelly.should_show_point = function(coord, point, currentZone, cur
         return false
     end
     if (not HandyNotes_BFA_Jelly.db.found) then
-        if point.quest and IsQuestFlaggedCompleted(point.quest) then
+        if point.quest and C_QuestLog.IsQuestFlaggedCompleted(point.quest) then
             return false
         end
         if point.achievement then

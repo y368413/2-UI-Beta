@@ -252,7 +252,7 @@ local function iter(zone, prestate)
 
 	while coords do
 		if info and (db.completed or
-			((info.type ~= moss or (db.show_moss and info.type == moss)) and not IsQuestFlaggedCompleted(info.quest))
+			((info.type ~= moss or (db.show_moss and info.type == moss)) and not C_QuestLog.IsQuestFlaggedCompleted(info.quest))
 		) then
 			local icon = info.icon or default_icon
 			return

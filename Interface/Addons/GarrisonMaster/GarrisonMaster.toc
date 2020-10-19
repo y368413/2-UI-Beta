@@ -2,7 +2,7 @@
 ## Title: Garrison Master
 ## Title-zhCN: |cff00ff00[任务]|r收菜助手
 ## Title-zhTW: |cff00ff00[任务]|r收菜助手
-## Notes: Garrision missions UI tweaks.
+## Notes: Garrison missions UI tweaks.
 ## Notes-zhCN: 修改德拉诺要塞&职业大厅&海军任务指挥台任务界面，让其更加易用。
 ## Notes-zhTW: 修改德拉诺要塞&职业大厅&海军任务指挥台任务界面，让其更加易用。
 ## Author: foxlit+Oleg "Rowaa[SR13]" Volkov + Razor_Storm@NGACN + lteke
@@ -12,7 +12,7 @@
 ## SavedVariables: MasterPlanAG, SV_GarrisonMissionManager, IPMDB
 ## SavedVariablesPerCharacter: MasterPlanPC, SVPC_GarrisonMissionManager
 ## Version: 0.117 + V59 + 1.4.0.2 + 8.1.25
-## X-Version-Key: crystal
+## X-Version-Key: exarch
 
 ## X-Repple: 2 UI
 
@@ -21,6 +21,7 @@ Libs/Reframe.lua
 PlanA.lua
 Locale.lua
 Mark-50.lua
+Nine.lua
 GarrisonAPI-Data.lua
 GarrisonAPI.lua
 MasterPlan.lua
@@ -47,5 +48,5 @@ Broker.lua
 
 MoreRewardsFormOrderHall.lua
 InProgressMissions.lua
-## GarrisonSwitch.lua
+##GarrisonSwitch.lua
 GarrisonJK.lua

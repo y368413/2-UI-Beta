@@ -500,7 +500,7 @@ HandyNotes_HigherDimensionalLearning.should_show_point = function(coord, point, 
         return false
     end
     if (not HandyNotes_HigherDimensionalLearning.db.found) then
-        if point.quest and IsQuestFlaggedCompleted(point.quest) then
+        if point.quest and C_QuestLog.IsQuestFlaggedCompleted(point.quest) then
             return false
         end
         if point.achievement then

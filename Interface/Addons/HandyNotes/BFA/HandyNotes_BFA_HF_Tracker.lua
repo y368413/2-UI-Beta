@@ -14,7 +14,6 @@ local GetItemInfo = GetItemInfo
 local GetAchievementInfo = GetAchievementInfo
 local GetAchievementCriteriaInfo = GetAchievementCriteriaInfo
 local GetAchievementCriteriaInfoByID = GetAchievementCriteriaInfoByID
-local GetCurrencyInfo = GetCurrencyInfo
 local gl = GetLocale()
 NPC_Name_CacheDB = NPC_Name_CacheDB or {}
 Item_Name_CacheDB = Item_Name_CacheDB or {}
@@ -108,13 +107,10 @@ local trimmed_icon = function(texture)
     return icon_cache[texture]
 end
 local atlas_texture = function(atlas, scale)
-    local texture, _, _, left, right, top, bottom = GetAtlasInfo(atlas)
+    atlas = C_Texture.GetAtlasInfo(atlas)
     return {
-        icon = texture,
-        tCoordLeft = left,
-        tCoordRight = right,
-        tCoordTop = top,
-        tCoordBottom = bottom,
+        icon = atlas.file,
+        tCoordLeft = atlas.leftTexCoord, tCoordRight = atlas.rightTexCoord, tCoordTop = atlas.topTexCoord, tCoordBottom = atlas.bottomTexCoord,
         scale = scale or 1,
     }
 end
@@ -213,9 +209,9 @@ local function work_out_label(point, npcLine)
         if point.currency == 'ARTIFACT' then
             return ARTIFACT_LABEL
         end
-        local name, _, texture = GetCurrencyInfo(point.currency)
-        if name then
-            return name
+        local info = C_CurrencyInfo.GetCurrencyInfo(point.currency)
+        if info then
+            return info.name
         end
     end
     return fallback or UNKNOWN
@@ -252,9 +248,9 @@ local function work_out_texture(point)
                     return trimmed_icon(texture)
                 end
             else
-                local texture = select(3, GetCurrencyInfo(point.currency))
-                if texture then
-                    return trimmed_icon(texture)
+                local info = C_CurrencyInfo.GetCurrencyInfo(point.currency)
+                if info then
+                    return trimmed_icon(info.iconFileID)
                 end
             end
         end
@@ -370,7 +366,8 @@ local function handle_tooltip(tooltip, point)
             if point.currency == 'ARTIFACT' then
                 name = ARTIFACT_LABEL
             else
-                name = GetCurrencyInfo(point.currency)
+                local info = C_CurrencyInfo.GetCurrencyInfo(point.currency)
+                name = info and info.name
             end
             tooltip:AddDoubleLine(CURRENCY, name or point.currency)
         end

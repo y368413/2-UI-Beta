@@ -75,11 +75,11 @@ local info = {}
 --	Tooltip Hide
 --	-------------------------------------------------------------------------------------------
 	function HLHandler:OnLeave(uiMapID, coord)
-		if self:GetParent() == WorldMapFrame:GetCanvas() then
-		WorldMapTooltip:Hide()
-		else
+		--if self:GetParent() == WorldMapFrame:GetCanvas() then
+		--WorldMapTooltip:Hide()
+		--else
 		GameTooltip:Hide()
-		end
+		--end
 	end
 --	-------------------------------------------------------------------------------------------
 --	--	End of Tooltip

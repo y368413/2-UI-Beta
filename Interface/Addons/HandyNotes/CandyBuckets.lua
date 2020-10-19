@@ -641,7 +641,7 @@ CandyBuckets.PROVIDERS = {}
 
 CandyBuckets.COMPLETED_QUESTS = setmetatable({}, {
 	__index = function(self, questID)
-		local isCompleted = IsQuestFlaggedCompleted(questID)
+		local isCompleted = C_QuestLog.IsQuestFlaggedCompleted(questID)
 		if isCompleted then
 			rawset(self, questID, isCompleted)
 		end

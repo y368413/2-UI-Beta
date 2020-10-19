@@ -33,6 +33,7 @@ local ORDERHALL_ADDONS = {
 	["RENovate"] = false,
 }
 
+
 local TEXT_LEGION_MISSIONS = _G.EXPANSION_NAME6.." ".._G.GARRISON_MISSIONS
 
 local itemDifficulty do
@@ -104,15 +105,15 @@ end
 function InProgressMissions:SaveInProgressMissions()
 	self.saved = true
 	self:InitDB()
-	if UnitLevel("player") <= 90 then
+	if C_Garrison.GetLandingPageGarrisonType() == 0 then
 		IPMDB.profiles[self.profileName] = nil
 		return
 	end
 	local profile = wipe(IPMDB.profiles[self.profileName])
-	self:GetMissions(LE_FOLLOWER_TYPE_GARRISON_8_0, profile)
-	self:GetMissions(LE_FOLLOWER_TYPE_GARRISON_7_0, profile)
-	self:GetMissions(LE_FOLLOWER_TYPE_SHIPYARD_6_2, profile)
-	self:GetMissions(LE_FOLLOWER_TYPE_GARRISON_6_0, profile)
+	self:GetMissions(Enum.GarrisonFollowerType.FollowerType_8_0, profile)
+	self:GetMissions(Enum.GarrisonFollowerType.FollowerType_7_0, profile)
+	self:GetMissions(Enum.GarrisonFollowerType.FollowerType_6_2, profile)
+	self:GetMissions(Enum.GarrisonFollowerType.FollowerType_6_0, profile)
 	if not next(profile) then
 		IPMDB.profiles[self.profileName] = nil
 	end
@@ -143,13 +144,13 @@ do
 	end
 
 	local function CompareMissionTime(m1, m2)
-		if (m1.followerTypeID == LE_FOLLOWER_TYPE_GARRISON_8_0) == (m2.followerTypeID == LE_FOLLOWER_TYPE_GARRISON_8_0) then
+		if (m1.followerTypeID == Enum.GarrisonFollowerType.FollowerType_8_0) == (m2.followerTypeID == Enum.GarrisonFollowerType.FollowerType_8_0) then
 			if (m1.missionEndTime or 0) == (m2.missionEndTime or 0) then
 				return CompareMissionName(m1, m2)
 			else
 				return (m1.missionEndTime or 0) < (m2.missionEndTime or 0)
 			end
-		elseif (m1.followerTypeID == LE_FOLLOWER_TYPE_GARRISON_7_0) == (m2.followerTypeID == LE_FOLLOWER_TYPE_GARRISON_7_0) then
+		elseif (m1.followerTypeID == Enum.GarrisonFollowerType.FollowerType_7_0) == (m2.followerTypeID == Enum.GarrisonFollowerType.FollowerType_7_0) then
 			if (m1.missionEndTime or 0) == (m2.missionEndTime or 0) then
 				return CompareMissionName(m1, m2)
 			else
@@ -163,15 +164,15 @@ do
 	function InProgressMissions:UpdateMissions()
 		local garrisonType = C_Garrison.GetLandingPageGarrisonType()
 		wipe(self.missions)
-		if garrisonType == LE_GARRISON_TYPE_8_0 then
-			self:GetMissions(LE_FOLLOWER_TYPE_GARRISON_8_0, self.missions, true)
+		if garrisonType == Enum.GarrisonType.Type_8_0 then
+			self:GetMissions(Enum.GarrisonFollowerType.FollowerType_8_0, self.missions, true)
 		end
-		if garrisonType == LE_GARRISON_TYPE_7_0 or IPMDB.enableLegionMissions or C_Garrison.IsPlayerInGarrison(LE_GARRISON_TYPE_7_0) then
-			self:GetMissions(LE_FOLLOWER_TYPE_GARRISON_7_0, self.missions, true)
+		if garrisonType == Enum.GarrisonType.Type_7_0 or IPMDB.enableLegionMissions or C_Garrison.IsPlayerInGarrison(Enum.GarrisonType.Type_7_0) then
+			self:GetMissions(Enum.GarrisonFollowerType.FollowerType_7_0, self.missions, true)
 		end
-		if garrisonType == LE_GARRISON_TYPE_6_0 or IPMDB.enableGarrisonMissions or C_Garrison.IsPlayerInGarrison(LE_GARRISON_TYPE_6_0) then
-			self:GetMissions(LE_FOLLOWER_TYPE_SHIPYARD_6_2, self.missions, true)
-			self:GetMissions(LE_FOLLOWER_TYPE_GARRISON_6_0, self.missions, true)
+		if garrisonType == Enum.GarrisonType.Type_6_0 or IPMDB.enableGarrisonMissions or C_Garrison.IsPlayerInGarrison(Enum.GarrisonType.Type_6_0) then
+			self:GetMissions(Enum.GarrisonFollowerType.FollowerType_6_2, self.missions, true)
+			self:GetMissions(Enum.GarrisonFollowerType.FollowerType_6_0, self.missions, true)
 		end
 		self:UpdateInProgressTabText()
 	end
@@ -182,7 +183,7 @@ do
 			if name ~= self.profileName and not IPMDB.ignores[name] then
 				for i, mission in ipairs(missions) do
 					mission.followerTypeID = mission.followerTypeID or 0
-					if mission.followerTypeID >= LE_FOLLOWER_TYPE_GARRISON_8_0 or (mission.followerTypeID == LE_FOLLOWER_TYPE_GARRISON_7_0 and IPMDB.enableLegionMissions) or (mission.followerTypeID < LE_FOLLOWER_TYPE_GARRISON_7_0 and IPMDB.enableGarrisonMissions) then
+					if mission.followerTypeID >= Enum.GarrisonFollowerType.FollowerType_8_0 or (mission.followerTypeID == Enum.GarrisonFollowerType.FollowerType_7_0 and IPMDB.enableLegionMissions) or (mission.followerTypeID < Enum.GarrisonFollowerType.FollowerType_7_0 and IPMDB.enableGarrisonMissions) then
 						if type(mission) == "table" and type(mission.charText) == "string" then
 							tinsert(self.altMissions, mission)
 						end
@@ -288,7 +289,7 @@ local function Reward_Update(Reward, info)
 				Reward.Quantity:SetText(BreakUpLargeNumbers(math.floor(info.quantity / COPPER_PER_GOLD)))
 				Reward.Quantity:Show()
 			else
-				local currencyTexture = select(3, GetCurrencyInfo(info.currencyID))
+				local currencyTexture = C_CurrencyInfo.GetBasicCurrencyInfo(info.currencyID).icon
 				Reward.tooltip = BreakUpLargeNumbers(info.quantity).." |T"..currencyTexture..":0:0:0:-1|t "
 				Reward.Quantity:SetText(info.quantity)
 				Reward.Quantity:Show()
@@ -403,7 +404,7 @@ local function GarrisonLandingPageReportList_Update(...)
 			if (item.isBuilding) then
 				bgName = "GarrLanding-Building-"
 				button.Status:SetText(GARRISON_LANDING_STATUS_BUILDING)
-			elseif (item.followerTypeID == LE_FOLLOWER_TYPE_SHIPYARD_6_2) then
+			elseif (item.followerTypeID == Enum.GarrisonFollowerType.FollowerType_6_2) then
 				bgName = "GarrLanding-ShipMission-"
 			else
 				bgName = "GarrLanding-Mission-"
@@ -445,10 +446,10 @@ local function GarrisonLandingPageReportList_Update(...)
 				button.Title:SetWidth(322 - button.TimeLeft:GetWidth())
 				stopUpdate = false
 			end
-			if item.followerTypeID == LE_FOLLOWER_TYPE_GARRISON_8_0 then
+			if item.followerTypeID == Enum.GarrisonFollowerType.FollowerType_8_0 then
 				button.Level:SetText(item.level)
 			else
-				button.Level:SetText(item.iLevel and item.iLevel > 0 and item.iLevel or item.followerTypeID ~= LE_FOLLOWER_TYPE_SHIPYARD_6_2 and item.level or nil)
+				button.Level:SetText(item.iLevel and item.iLevel > 0 and item.iLevel or item.followerTypeID ~= Enum.GarrisonFollowerType.FollowerType_6_2 and item.level or nil)
 			end
 			if item.typeAtlas then
 				button.MissionTypeIcon:SetAtlas(item.typeAtlas)
@@ -471,7 +472,7 @@ local function GarrisonLandingPageReportList_Update(...)
 				button.Title:SetTextColor(unpack(TITLE_COLOR_NORMAL))
 				button.Level:SetTextColor(unpack(TITLE_COLOR_NORMAL))
 			end
-			if item.followerTypeID == LE_FOLLOWER_TYPE_SHIPYARD_6_2 then
+			if item.followerTypeID == Enum.GarrisonFollowerType.FollowerType_6_2 then
 				button.BG:SetVertexColor(0.9, 0.9, 1)
 			else
 				button.BG:SetVertexColor(1, 1, 1)
@@ -504,10 +505,10 @@ local function ScrollFrame_UpdateAvailable(...)
 			button.MissionTypeIcon:SetPoint("LEFT", button, 2, 0)
 			button.MissionTypeIcon:SetSize(MISSION_ICON_SIZE, MISSION_ICON_SIZE)
 			button.BG:SetVertexColor(1, 1, 1)
-			if item.followerTypeID == LE_FOLLOWER_TYPE_GARRISON_8_0 then
+			if item.followerTypeID == Enum.GarrisonFollowerType.FollowerType_8_0 then
 				button.Level:SetText(item.level)
 			else
-				button.Level:SetText(item.iLevel and item.iLevel > 0 and item.iLevel or item.followerTypeID ~= LE_FOLLOWER_TYPE_SHIPYARD_6_2 and item.level or nil)
+				button.Level:SetText(item.iLevel and item.iLevel > 0 and item.iLevel or item.followerTypeID ~= Enum.GarrisonFollowerType.FollowerType_6_2 and item.level or nil)
 			end
 			button.NumFollowers:SetText(item.numFollowers and string.rep(RANGE_INDICATOR, item.numFollowers) or nil)
 			rewardIndex = Rewards_Update(button, item) or 1
@@ -596,7 +597,7 @@ local function AddRewardText(item, rewardType)
 				if (reward.currencyID == 0) then
 					GameTooltip:AddLine(GetMoneyString(reward.quantity), 1, 1, 1)
 				else
-					local currencyTexture = select(3, GetCurrencyInfo(reward.currencyID))
+					local currencyTexture = C_CurrencyInfo.GetBasicCurrencyInfo(reward.currencyID).icon
 					GameTooltip:AddLine(AddIcon(BreakUpLargeNumbers(reward.quantity), currencyTexture), 1, 1, 1)
 				end
 			else
@@ -628,10 +629,10 @@ local function SetupMissionInfoTooltip(item, isAltMission, anchorFrame)
 	GameTooltip:SetText(item.isComplete and ERR_QUEST_OBJECTIVE_COMPLETE_S:format(item.name) or item.name)
 	-- level
 	local color = item.isRare and ITEM_QUALITY_COLORS[3] or ITEM_QUALITY_COLORS[1]
-	if item.followerTypeID == LE_FOLLOWER_TYPE_SHIPYARD_6_2 then
+	if item.followerTypeID == Enum.GarrisonFollowerType.FollowerType_6_2 then
 
 	else
-		-- if (item.followerTypeID == LE_FOLLOWER_TYPE_GARRISON_6_0 and item.level == 100) or (item.followerTypeID == LE_FOLLOWER_TYPE_GARRISON_7_0 and item.level == 110) and item.iLevel > 0 then
+		-- if (item.followerTypeID == Enum.GarrisonFollowerType.FollowerType_6_0 and item.level == 100) or (item.followerTypeID == Enum.GarrisonFollowerType.FollowerType_7_0 and item.level == 110) and item.iLevel > 0 then
 		if item.iLevel and item.iLevel > 0 then
 			GameTooltip:AddLine(format(FORMAT_TOOLTIP_ITEMLEVEL, item.level, item.iLevel), color.r, color.g, color.b)
 		elseif item.level then
@@ -670,7 +671,7 @@ local function SetupMissionInfoTooltip(item, isAltMission, anchorFrame)
 
 	if (item.followers ~= nil) then
 		GameTooltip:AddLine(" ");
-		GameTooltip:AddLine(item.followerTypeID == LE_FOLLOWER_TYPE_SHIPYARD_6_2 and _G.GARRISON_SHIPYARD_FOLLOWERS or _G.GARRISON_FOLLOWERS)
+		GameTooltip:AddLine(item.followerTypeID == Enum.GarrisonFollowerType.FollowerType_6_2 and _G.GARRISON_SHIPYARD_FOLLOWERS or _G.GARRISON_FOLLOWERS)
 		local id, info
 		local leftText, rightText
 		local icon
@@ -690,7 +691,7 @@ local function SetupMissionInfoTooltip(item, isAltMission, anchorFrame)
 			if type(info) == "table" then
 				leftText = nil
 				rightText = nil
-				if (info.followerTypeID == LE_FOLLOWER_TYPE_GARRISON_7_0 or info.followerTypeID == LE_FOLLOWER_TYPE_GARRISON_8_0) and info.abilities then
+				if (info.followerTypeID == Enum.GarrisonFollowerType.FollowerType_7_0 or info.followerTypeID == Enum.GarrisonFollowerType.FollowerType_8_0) and info.abilities then
 					leftText = MakeIcon(info.portraitIconID)
 					if info.isTroop then
 						leftText = leftText.." "..QualityColorText(info.name, info.quality)
@@ -708,7 +709,7 @@ local function SetupMissionInfoTooltip(item, isAltMission, anchorFrame)
 							end
 						end
 					end
-				elseif info.followerTypeID == LE_FOLLOWER_TYPE_SHIPYARD_6_2 then
+				elseif info.followerTypeID == Enum.GarrisonFollowerType.FollowerType_6_2 then
 					leftText = ""
 					if type(info.abilities) == "table" then
 						for k, abilityID in ipairs(info.abilities) do
@@ -721,7 +722,7 @@ local function SetupMissionInfoTooltip(item, isAltMission, anchorFrame)
 					end
 					leftText = leftText.." "..QualityColorText(info.name, info.quality or 2)
 				else
-					leftText = MakeIcon(info.portraitIconID)..QualityColorText(FORMAT_LEVEL:format(info.level >= 100 and info.iLevel or info.level or 0), info.quality or 2).." "..info.name
+					leftText = MakeIcon(info.portraitIconID)..QualityColorText(FORMAT_LEVEL:format(info.iLevel or info.level or 0), info.quality or 2).." "..info.name
 					if type(info.abilities) == "table" then
 						for k, abilityID in ipairs(info.abilities) do
 							if type(abilityID) == "number" and not C_Garrison.GetFollowerAbilityIsTrait(abilityID) then
@@ -1321,7 +1322,7 @@ end
 
 local function SlashCommandHandler(msg)
 	if not msg or msg:len() == 0 then
-		if C_Garrison.GetLandingPageGarrisonType() >= LE_GARRISON_TYPE_6_0 then
+		if C_Garrison.GetLandingPageGarrisonType() >= Enum.GarrisonType.Type_6_0 then
 			return _G.GarrisonLandingPageMinimapButton:Click()
 		end
 	end
@@ -1362,7 +1363,7 @@ do
 				if frame.info.currencyID == 0 then
 					GameTooltip:AddLine(GetMoneyString(frame.info.quantity), 1, 1, 1)
 				else
-					local currencyTexture = select(3, GetCurrencyInfo(frame.info.currencyID))
+					local currencyTexture = C_CurrencyInfo.GetBasicCurrencyInfo(frame.info.currencyID).icon
 					GameTooltip:AddLine(BreakUpLargeNumbers(frame.info.quantity).." |T"..currencyTexture..":0:0:0:-1:64:64:2:62:2:62|t ", 1, 1, 1)
 				end
 				-- GameTooltip:Show()
@@ -1374,7 +1375,8 @@ do
 				-- GameTooltip:Show()
 			end
 			if frame.info.successChance then
-				GameTooltip:AddLine((_G.SUCCESS..": %d%%"):format(frame.info.successChance), BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN].r, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN].g, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN].b)
+				local color = BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.WoWToken]
+				GameTooltip:AddLine((_G.SUCCESS..": %d%%"):format(frame.info.successChance), color.r, color.g, color.b)
 			end
 			GameTooltip:Show()
 		end
@@ -1524,7 +1526,7 @@ do
 				MissionAlert_SetReward(info.rewards[2], ex.reward2, math.min(info.successChance, 100))
 				ex.reward1:SetPoint("RIGHT", -48, 0)
 			end
-			if info.level and info.level > 100 and info.followers and #info.followers > 0 then
+			if info.level and info.level > 50 and info.followers and #info.followers > 0 then
 				local followerInfo, index
 				for i = 1, #info.followers do
 					index = i + (3 - #info.followers)
