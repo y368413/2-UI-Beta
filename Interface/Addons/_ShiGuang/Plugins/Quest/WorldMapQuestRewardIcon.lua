@@ -81,7 +81,7 @@ local LE = {
 }
 
 local GetCurrentMapID = function() return WorldMapFrame:GetMapID() or 0 end 
-local inspectScantip = CreateFrame("GameTooltip", ..."WorldQuestListInspectScanningTooltip", nil, "GameTooltipTemplate")
+local inspectScantip = CreateFrame("GameTooltip", "WorldQuestListInspectScanningTooltip", nil, "GameTooltipTemplate")
       inspectScantip:SetOwner(UIParent, "ANCHOR_NONE")
   
 function WorldQuestList_IsFactionCurrency(currencyID)
@@ -446,7 +446,7 @@ function WorldQuestList_WQIcons_AddIcons(frame,pinName)
 								inspectScantip:SetQuestLogItem("reward", 1, obj.questID)
 								local isAnima
 								for j=2, inspectScantip:NumLines() do
-									local tooltipLine = _G[GlobalAddonName.."WorldQuestListInspectScanningTooltipTextLeft"..j]
+									local tooltipLine = "WorldQuestListInspectScanningTooltipTextLeft"..j
 									local text = tooltipLine:GetText()
 									if text and text:find(ANIMA.."|r$") then
 										isAnima = 100

@@ -2,7 +2,8 @@
 	<Script file="MTG.lua"/>
 	<Script file="Mingy.lua"/>
 	<Script file="DarkmoonFaire.lua"/>
-	<!--Script file="AngryWorldQuest.lua"/-->
+	<Script file="AngryWorldQuest.lua"/>
+	<!--Script file="WorldMapQuestRewardIcon.lua"/-->
     <Button name="QuestBindingsButtonTemplate" virtual="true">
         <Size x="16" y="16"/>
         <Layers>
@@ -38,6 +39,7 @@
 			<OnLoad method="OnLoad"/>
 		</Scripts>
 	</Frame>
+
 
 	<!--Frame name='BetterWorldQuestPinTemplate' inherits='WorldMap_WorldQuestPinTemplate' mixin='BetterWorldQuestPinMixin' virtual='true'/>
 	<Script file='BetterWorldQuests.lua'/>
