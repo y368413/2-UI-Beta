@@ -1,24 +1,82 @@
 ﻿local RewardIcons_DisableBountyColors = false
 local RewardIcons_Size = 36
 
+local GetCurrentMapID, tonumber, C_TaskQuest, tinsert, abs, time, HaveQuestData, QuestUtils_IsQuestWorldQuest, bit, format, floor, pairs = 
+      function() return WorldMapFrame:GetMapID() or 0 end, tonumber, C_TaskQuest, tinsert, abs, time, HaveQuestData, QuestUtils_IsQuestWorldQuest, bit, format, floor, pairs
+local IsQuestComplete, IsQuestCriteriaForBounty = C_QuestLog.IsComplete, C_QuestLog.IsQuestCriteriaForBounty
+local function GetCurrencyInfo(id)
+	local data = C_CurrencyInfo.GetCurrencyInfo(id)
+	return data.name, nil, data.iconFileID
+end
+local function GetQuestTagInfo(id)
+	local data = C_QuestLog.GetQuestTagInfo(id)
+	return data.tagID, data.tagName, data.worldQuestType, data.quality, data.isElite, data.tradeskillLineID, data.displayExpiration
+end
+
 local CacheQuestItemReward = {}
 local CacheIsAnimaItem = {}
-local list = {
-	[1579] = 2164,
-	[1598] = 2163,
-	[1600] = 2157,
-	[1595] = 2156,
-	[1597] = 2103,
-	[1596] = 2158,
-	[1599] = 2159,
-	[1593] = 2160,
-	[1594] = 2162,
-	[1592] = 2161,
-	[1738] = 2373,
-	[1739] = 2400,
-	[1740] = 2391,
-	[1742] = 2391,
+	local list = {
+		[1579] = 2164,
+		[1598] = 2163,
+		
+		[1600] = 2157,
+		[1595] = 2156,
+		[1597] = 2103,
+		[1596] = 2158,
+		
+		[1599] = 2159,
+		[1593] = 2160,
+		[1594] = 2162,
+		[1592] = 2161,
+
+		[1738] = 2373,
+		[1739] = 2400,
+		[1740] = 2391,
+		[1742] = 2391,
+
+		[1804] = 2407,
+		[1805] = 2410,
+		[1806] = 2465,
+		[1807] = 2413,
+
+		[1837] = 2445,
+		[1838] = 2449,
+		[1839] = 2453,
+		[1840] = 2460,
+		[1841] = 2455,
+		[1842] = 2446,
+		[1843] = 2461,
+		[1844] = 2457,
+		[1845] = 2450,
+		[1846] = 2459,
+		[1847] = 2458,
+		[1848] = 2452,
+		[1849] = 2448,
+		[1850] = 2454,
+		[1851] = 2456,
+		[1852] = 2451,
+		[1853] = 2447,
 	}
+do
+	local prevTime = 0
+	local prevRes
+	function WorldQuestList_GetCallingQuests()
+		local nowTime = GetTime()
+		if (nowTime - prevTime < 15) and prevRes then
+			return unpack(prevRes)
+		end
+		prevTime = nowTime
+		prevRes = {}
+		for i=1,C_QuestLog.GetNumQuestLogEntries() do
+			local questID = C_QuestLog.GetQuestIDForLogIndex(i)
+			if questID ~= 0 and C_QuestLog.IsQuestCalling(questID) then
+				prevRes[#prevRes+1] = questID
+			end
+		end
+		return unpack(prevRes)
+	end
+end
+
 local SlotToIcon = {
 	["INVTYPE_HEAD"]="transmog-nav-slot-head",
 	["INVTYPE_NECK"]="Warlock-ReadyShard",
@@ -54,11 +112,8 @@ local GENERAL_MAPS = {	--1: continent A, 2: azeroth, 3: argus, 4: continent B
 	[12] = 4,
 	[13] = 4,
 	[101] = 4,
+	[1550] = 1,
 }
-local function GetCurrencyInfo(id)
-	local data = C_CurrencyInfo.GetCurrencyInfo(id)
-	return data.name, nil, data.iconFileID
-end
 local LE = {
 	LE_QUEST_TAG_TYPE_INVASION = Enum.QuestTagType.Invasion,
 	LE_QUEST_TAG_TYPE_DUNGEON = Enum.QuestTagType.Dungeon,
@@ -80,8 +135,16 @@ local LE = {
 	ORDER_RESOURCES_NAME_BFA = GetCurrencyInfo(1560),
 }
 
-local GetCurrentMapID = function() return WorldMapFrame:GetMapID() or 0 end 
-local inspectScantip = CreateFrame("GameTooltip", "WorldQuestListInspectScanningTooltip", nil, "GameTooltipTemplate")
+	function WorldQuestList_IsShadowlandsZone(mapID)
+		mapID = mapID or GetCurrentMapID()
+		if mapID >= 1525 then
+			return true
+		else
+			return false
+		end
+	end
+	
+local inspectScantip = CreateFrame("GameTooltip", "WorldmapRewardIconWorldQuestListInspectScanningTooltip", nil, "GameTooltipTemplate")
       inspectScantip:SetOwner(UIParent, "ANCHOR_NONE")
   
 function WorldQuestList_IsFactionCurrency(currencyID)
@@ -178,34 +241,7 @@ end
 		return num
 	end
 
-	function WorldQuestList_IsShadowlandsZone(mapID)
-		mapID = mapID or GetCurrentMapID()
-		if mapID >= 1525 then
-			return true
-		else
-			return false
-		end
-	end
-do
-	local prevTime = 0
-	local prevRes
-	function WorldQuestList_GetCallingQuests()
-		local nowTime = GetTime()
-		if (nowTime - prevTime < 15) and prevRes then
-			return unpack(prevRes)
-		end
-		prevTime = nowTime
-		prevRes = {}
-		for i=1,C_QuestLog.GetNumQuestLogEntries() do
-			local questID = C_QuestLog.GetQuestIDForLogIndex(i)
-			if questID ~= 0 and C_QuestLog.IsQuestCalling(questID) then
-				prevRes[#prevRes+1] = questID
-			end
-		end
-		return unpack(prevRes)
-	end
-end
-WorldQuestList_QuestIDtoMapID = {}
+
 function WorldQuestList_WQIcons_AddIcons(frame,pinName)
 		frame = frame or WorldMapFrame
 		local pins = frame.pinPools[pinName or "WorldMap_WorldQuestPinTemplate"]
@@ -446,7 +482,7 @@ function WorldQuestList_WQIcons_AddIcons(frame,pinName)
 								inspectScantip:SetQuestLogItem("reward", 1, obj.questID)
 								local isAnima
 								for j=2, inspectScantip:NumLines() do
-									local tooltipLine = "WorldQuestListInspectScanningTooltipTextLeft"..j
+									local tooltipLine = _G["WorldmapRewardIconWorldQuestListInspectScanningTooltipTextLeft"..j]								                       	
 									local text = tooltipLine:GetText()
 									if text and text:find(ANIMA.."|r$") then
 										isAnima = 100
@@ -614,7 +650,7 @@ function WorldQuestList_WQIcons_AddIcons(frame,pinName)
 					if not RewardIcons_DisableBountyColors then
 						obj.BountyRing:Hide()
 						for _,bountyData in pairs(bounties) do
-							if C_QuestLog.IsQuestCriteriaForBounty(obj.questID, bountyData.questID) and not bountyData.completed then
+							if IsQuestCriteriaForBounty(obj.questID, bountyData.questID) and not bountyData.completed then
 								obj.BountyRing:SetSize(RewardIcons_Size+8,RewardIcons_Size+8)
 								obj.BountyRing:Show()
 								if bountyData.lowTime and obj.BountyRing.WQL_color > 1 then
@@ -624,24 +660,6 @@ function WorldQuestList_WQIcons_AddIcons(frame,pinName)
 									obj.BountyRing:SetVertexColor(1,.5,0)
 									obj.BountyRing.WQL_color = 2
 								elseif not bountyData.lowTime and not bountyData.middleTime and obj.BountyRing.WQL_color > 3 then
-									obj.BountyRing:SetVertexColor(.3,1,.3)
-									obj.BountyRing.WQL_color = 3
-								end
-							end
-						end
-						local mapID = WorldQuestList_QuestIDtoMapID[obj.questID or 0]
-						if mapID then
-							local callingData = mapsToHighlightCallings[mapID]
-							if callingData and not callingData.completed then
-								obj.BountyRing:SetSize(64,64)
-								obj.BountyRing:Show()
-								if callingData.lowTime and obj.BountyRing.WQL_color > 1 then
-									obj.BountyRing:SetVertexColor(1,0,0)
-									obj.BountyRing.WQL_color = 1
-								elseif callingData.middleTime and obj.BountyRing.WQL_color > 2 then
-									obj.BountyRing:SetVertexColor(1,.5,0)
-									obj.BountyRing.WQL_color = 2
-								elseif not callingData.lowTime and not callingData.middleTime and obj.BountyRing.WQL_color > 3 then
 									obj.BountyRing:SetVertexColor(.3,1,.3)
 									obj.BountyRing.WQL_color = 3
 								end
@@ -715,7 +733,7 @@ if WorldMap_WorldQuestPinMixin then
 	pcall(function() WorldMap_WorldQuestPinMixin.OnLoad(f) end)
 end
 
-function WorldQuestList_WQIcons_UpdateScale()
+--[[function WorldQuestList_WQIcons_UpdateScale()
 	local pins = WorldMapFrame.pinPools["WorldMap_WorldQuestPinTemplate"]
 	if pins then
 		local startScale, endScale = defStartScale, defEndScale
@@ -749,4 +767,88 @@ end
 
 WorldMapFrame:RegisterCallback("WorldQuestsUpdate", function()
 	WorldQuestList_WQIcons_UpdateScale()
-end, WorldMapFrame)
+end, WorldMapFrame)]]
+---------------------------------------------------------------------------------------------------------	WorldMapQuestBountyCount Thanks WorldQuestTab
+WorldMapQuestBountyCount = {}
+function WorldMapQuestBountyCount:OnLoad()
+    self.bountyCounterPool = CreateFramePool("FRAME", self, "BountyCounterTemplate");
+    
+	-- Auto emisarry when clicking on one of the buttons
+	local bountyBoard = WorldMapFrame.overlayFrames[4];
+	self.bountyBoard = bountyBoard;
+	
+	hooksecurefunc(bountyBoard, "OnTabClick", function(self, tab) 
+		if (not MaoRUIPerDB["Misc"]["WorldQusetRewardIcons"] or tab.isEmpty) then return; end
+		WRWorldQuestFrame.autoEmisarryId = bountyBoard.bounties[tab.bountyIndex];
+	end, self)
+	
+	hooksecurefunc(bountyBoard, "RefreshSelectedBounty", function() 
+		if (MaoRUIPerDB["Misc"]["WorldQusetRewardIcons"]) then
+			self:UpdateBountyCounters();
+		end
+	end)
+		
+	-- Slight offset the tabs to make room for the counters
+	hooksecurefunc(bountyBoard, "AnchorBountyTab", function(self, tab) 
+		if (not MaoRUIPerDB["Misc"]["WorldQusetRewardIcons"]) then return end
+		local point, relativeTo, relativePoint, x, y = tab:GetPoint(1);
+		tab:SetPoint(point, relativeTo, relativePoint, x, y + 2);
+	end)
+end
+		
+function WorldMapQuestBountyCount:UpdateBountyCounters()
+	self.bountyCounterPool:ReleaseAll();
+	if (not MaoRUIPerDB["Misc"]["WorldQusetRewardIcons"]) then return end
+	if (not self.bountyInfo) then
+		self.bountyInfo = {};
+	end
+	for tab, v in pairs(self.bountyBoard.bountyTabPool.activeObjects) do
+		self:AddBountyCountersToTab(tab);
+	end
+end
+
+function WorldMapQuestBountyCount:RepositionBountyTabs()
+	for tab, v in pairs(self.bountyBoard.bountyTabPool.activeObjects) do
+		self.bountyBoard:AnchorBountyTab(tab);
+	end
+end
+
+function WorldMapQuestBountyCount:AddBountyCountersToTab(tab)
+	local bountyData = self.bountyBoard.bounties[tab.bountyIndex];
+	
+	if (bountyData) then
+		local progress, goal = self.bountyBoard:CalculateBountySubObjectives(bountyData);
+		if (progress == goal) then return end;
+		
+		-- Counters
+		local offsetAngle = 32;
+		local startAngle = 270;
+		
+		-- position of first counter
+		startAngle = startAngle - offsetAngle * (goal -1) /2
+		
+		for i=1, goal do
+			local counter = self.bountyCounterPool:Acquire();
+
+			local x = cos(startAngle) * 16;
+			local y = sin(startAngle) * 16;
+			counter:SetPoint("CENTER", tab.Icon, "CENTER", x, y);
+			counter:SetParent(tab);
+			counter:Show();
+			
+			-- Light nr of completed
+			if i <= progress then
+				counter.icon:SetTexCoord(0, 0.5, 0, 0.5);
+				counter.icon:SetVertexColor(1, 1, 1, 1);
+				counter.icon:SetDesaturated(false);
+			else
+				counter.icon:SetTexCoord(0, 0.5, 0, 0.5);
+				counter.icon:SetVertexColor(0.75, 0.75, 0.75, 1);
+				counter.icon:SetDesaturated(true);
+			end
+
+			-- Offset next counter
+			startAngle = startAngle + offsetAngle;
+		end
+	end
+end
