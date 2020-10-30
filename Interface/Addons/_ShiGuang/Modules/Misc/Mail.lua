@@ -4,9 +4,17 @@ local MISC = M:GetModule("Misc")
 
 local wipe, select, pairs, tonumber = wipe, select, pairs, tonumber
 local strsplit, strfind = strsplit, strfind
-local InboxItemCanDelete, DeleteInboxItem = InboxItemCanDelete, DeleteInboxItem
-local GetInboxHeaderInfo, GetInboxItem, GetItemInfo = GetInboxHeaderInfo, GetInboxItem, GetItemInfo
-local inboxItems = {}
+local InboxItemCanDelete, DeleteInboxItem, TakeInboxMoney, TakeInboxItem = InboxItemCanDelete, DeleteInboxItem, TakeInboxMoney, TakeInboxItem
+local GetInboxNumItems, GetInboxHeaderInfo, GetInboxItem, GetItemInfo = GetInboxNumItems, GetInboxHeaderInfo, GetInboxItem, GetItemInfo
+local C_Timer_After = C_Timer.After
+local C_Mail_HasInboxMoney = C_Mail.HasInboxMoney
+local C_Mail_IsCommandPending = C_Mail.IsCommandPending
+local ATTACHMENTS_MAX_RECEIVE, ERR_MAIL_DELETE_ITEM_ERROR = ATTACHMENTS_MAX_RECEIVE, ERR_MAIL_DELETE_ITEM_ERROR
+local NORMAL_STRING = GUILDCONTROL_OPTION16
+local OPENING_STRING = OPEN_ALL_MAIL_BUTTON_OPENING
+
+local mailIndex, timeToWait, totalCash, inboxItems = 0, .15, 0, {}
+local isGoldCollecting
 
 function MISC:MailBox_DelectClick()
 	local selectedID = self.id + (InboxFrame.pageNum-1)*7
@@ -53,9 +61,7 @@ function MISC:InboxItem_OnEnter()
 	end
 end
 
-function MISC:MailBox_ContactList()
-	local bars = {}
-	local barIndex = 0
+local contactList = {}
 
 	local bu = M.CreateGear(SendMailFrame)
 	bu:SetPoint("LEFT", SendMailNameEditBox, "RIGHT", -3, 0)
@@ -88,20 +94,18 @@ function MISC:MailBox_ContactList()
 		end
 	end
 
-	local function buttonOnClick(self)
-		local text = self.name:GetText() or ""
-		SendMailNameEditBox:SetText(text)
-	end
+function MISC:ContactButton_OnClick()
+	local text = self.name:GetText() or ""
+	SendMailNameEditBox:SetText(text)
+end
 
-	local function deleteOnClick(self)
-		MaoRUIDB["ContactList"][self.__owner.name:GetText()] = nil
-		self.__owner:Hide()
-		sortBars()
-		barIndex = barIndex - 1
-	end
+function MISC:ContactButton_Delete()
+	MaoRUIDB["ContactList"][self.__owner.name:GetText()] = nil
+	MISC:ContactList_Refresh()
+end
 
-	local function createContactBar(text, r, g, b)
-		local button = CreateFrame("Button", nil, list)
+function MISC:ContactButton_Create(parent, index)
+	local button = CreateFrame("Button", nil, parent)
 		button:SetSize(166, 21)
 		button.HL = button:CreateTexture(nil, "HIGHLIGHT")
 		button.HL:SetAllPoints()
@@ -110,15 +114,14 @@ function MISC:MailBox_ContactList()
 		button.name = M.CreateFS(button, 13, text, false, "LEFT", 12, 0)
 		button.name:SetPoint("RIGHT", button, "LEFT", 233, 0)
 		button.name:SetJustifyH("LEFT")
-		button.name:SetTextColor(r, g, b)
 	
 		button:RegisterForClicks("AnyUp")
-		button:SetScript("OnClick", buttonOnClick)
+	button:SetScript("OnClick", MISC.ContactButton_OnClick)
 	
 		button.delete = M.CreateButton(button, 21, 21, true, "Interface\\RAIDFRAME\\ReadyCheck-NotReady")
 		button.delete:SetPoint("LEFT", button, "RIGHT", 6, 0)
 		button.delete.__owner = button
-		button.delete:SetScript("OnClick", deleteOnClick)
+	button.delete:SetScript("OnClick", MISC.ContactButton_Delete)
 	
 		return button
 	end
@@ -197,6 +200,10 @@ function MISC:MailBox()
 		InboxTooMuchMail:ClearAllPoints()
 		InboxTooMuchMail:SetPoint("BOTTOM", MailFrame, "TOP", 0, 5)
 	end
+
+	MISC.GetMoneyString = M:GetModule("Infobar").GetMoneyString
+	MISC:CollectGoldButton()
+	MISC:CollectCurrentButton()
 end
 MISC:RegisterMisc("MailBox", MISC.MailBox)
 

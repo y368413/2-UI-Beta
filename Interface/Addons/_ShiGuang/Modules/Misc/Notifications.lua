@@ -454,6 +454,57 @@ function MISC:NVision_Init()
 	M:RegisterEvent("UPDATE_INSTANCE_INFO", MISC.NVision_Check)
 end
 
+-- Incompatible check
+local IncompatibleAddOns = {
+	["BigFoot"] = true,
+	["!!!163UI!!!"] = true,
+}
+local AddonDependency = {
+	["BigFoot"] = "!!!Libs",
+}
+function MISC:CheckIncompatible()
+	local IncompatibleList = {}
+	for addon in pairs(IncompatibleAddOns) do
+		if IsAddOnLoaded(addon) then
+			tinsert(IncompatibleList, addon)
+		end
+	end
+
+	if #IncompatibleList > 0 then
+		local frame = CreateFrame("Frame", nil, UIParent)
+		frame:SetPoint("TOP", 0, -200)
+		frame:SetFrameStrata("HIGH")
+		M.CreateMF(frame)
+		M.SetBD(frame)
+		M.CreateFS(frame, 18, U["FoundIncompatibleAddon"], true, "TOPLEFT", 10, -10)
+		M.CreateWatermark(frame)
+
+		local offset = 0
+		for _, addon in pairs(IncompatibleList) do
+			M.CreateFS(frame, 14, addon, false, "TOPLEFT", 10, -(50 + offset))
+			offset = offset + 24
+		end
+		frame:SetSize(300, 100 + offset)
+
+		local close = M.CreateButton(frame, 16, 16, true, I.closeTex)
+		close:SetPoint("TOPRIGHT", -10, -10)
+		close:SetScript("OnClick", function() frame:Hide() end)
+
+		local disable = M.CreateButton(frame, 150, 25, U["DisableIncompatibleAddon"])
+		disable:SetPoint("BOTTOM", 0, 10)
+		disable.text:SetTextColor(1, 0, 0)
+		disable:SetScript("OnClick", function()
+			for _, addon in pairs(IncompatibleList) do
+				DisableAddOn(addon, true)
+				if AddonDependency[addon] then
+					DisableAddOn(AddonDependency[addon], true)
+				end
+			end
+			ReloadUI()
+		end)
+	end
+end
+
 -- Init
 function MISC:AddAlerts()
 	MISC:SoloInfo()
@@ -462,6 +513,7 @@ function MISC:AddAlerts()
 	MISC:ExplosiveAlert()
 	MISC:PlacedItemAlert()
 	MISC:NVision_Init()
+	MISC:CheckIncompatible()
 end
 MISC:RegisterMisc("Notifications", MISC.AddAlerts)
 

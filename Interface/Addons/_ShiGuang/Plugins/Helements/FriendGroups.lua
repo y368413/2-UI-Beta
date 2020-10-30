@@ -207,14 +207,18 @@ local function FriendGroups_GetBNetButtonNameText(accountName, client, canCoop, 
 			coopLabel = CANNOT_COOPERATE_LABEL
 		end
 		local characterNameSuffix
-		if not level then
+		if (not level) or (level == currentExpansionMaxLevel) then
 			characterNameSuffix = coopLabel
 		else
 			characterNameSuffix= level.." "..coopLabel
 		end
 		if client == BNET_CLIENT_WOW then
-			local nameColor = ClassColourCode(class)
-			nameText = nameText.." "..nameColor.."("..characterNameSuffix..characterName..")"..FONT_COLOR_CODE_CLOSE
+			if not canCoop and ShiGuangDB["FriendGroupsgray_faction"] then
+				nameText = "|CFF949694"..nameText.." ".."("..characterNameSuffix..characterName..")".."|r"
+			else
+				local nameColor = ClassColourCode(class)
+				nameText = nameText.." "..nameColor.."("..characterNameSuffix..characterName..")"..FONT_COLOR_CODE_CLOSE
+			end
 		else
 			if ENABLE_COLORBLIND_MODE == "1" then
 				characterName = characterName..coopLabel
@@ -253,7 +257,11 @@ local function FriendGroups_UpdateFriendButton(button)
 				button.status:SetTexture(FRIENDS_TEXTURE_ONLINE)
 			end
 			nameColor = ClassColourCode(info.className, true) or FRIENDS_WOW_NAME_COLOR
-			nameText = info.name..", "..format(FRIENDS_LEVEL_TEMPLATE, info.level, info.className)
+			if info.level == currentExpansionMaxLevel then
+				nameText = info.name..", "..info.className
+			else
+				nameText = info.name..", "..format(FRIENDS_LEVEL_TEMPLATE, info.level, info.className)
+			end
 			if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
 				infoText = GetOnlineInfoText(BNET_CLIENT_WOW, info.mobile, info.rafLinkType, info.area)
 			end
@@ -1049,6 +1057,7 @@ frame:SetScript("OnEvent", function(self, event, ...)
 
 		if ShiGuangDB["FriendGroupsCollapsed"] == nil then ShiGuangDB["FriendGroupsCollapsed"] = {} end
 		if ShiGuangDB["FriendGroupsHideOffline"] == nil then ShiGuangDB["FriendGroupsHideOffline"] = true end
+		if ShiGuangDB["FriendGroupsgray_faction"] == nil then ShiGuangDB["FriendGroupsgray_faction"] = true end
 		if ShiGuangDB["FriendGroupsingame_only"] == nil then ShiGuangDB["FriendGroupsingame_only"] = false end
 		if ShiGuangDB["FriendGroupsshow_btag"] == nil then ShiGuangDB["FriendGroupsshow_btag"] = true end
 		if ShiGuangDB["FriendGroupssort_by_status"] == nil then ShiGuangDB["FriendGroupssort_by_status"] = true end

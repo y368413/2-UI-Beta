@@ -264,20 +264,19 @@ end
 
 -- Tab colors
 function module:UpdateTabColors(selected)
-	if self.glow:IsShown() then
-		if self.whisperIndex == 1 then
-			self.Text:SetTextColor(1, .5, 1)
-		elseif self.whisperIndex == 2 then
-			self.Text:SetTextColor(0, 1, .96)
-		else
-			self.Text:SetTextColor(1, .8, 0)
-		end
-	elseif selected then
+	if selected then
 		self.Text:SetTextColor(1, .8, 0)
 		self.whisperIndex = 0
 	else
 		self.Text:SetTextColor(.5, .5, .5)
-		self.whisperIndex = 0
+	end
+
+	if self.whisperIndex == 1 then
+		self.glow:SetVertexColor(1, .5, 1)
+	elseif self.whisperIndex == 2 then
+		self.glow:SetVertexColor(0, 1, .96)
+	else
+		self.glow:SetVertexColor(1, .8, 0)
 	end
 end
 
@@ -319,6 +318,7 @@ function module:OnLogin()
 
 	-- Default
 	SetCVar("chatStyle", "classic")
+	SetCVar("whisperMode", "inline") -- blizz reset this on NPE
 	M.HideOption(InterfaceOptionsSocialPanelChatStyle)
 	CombatLogQuickButtonFrame_CustomTexture:SetTexture(nil)
 
@@ -332,9 +332,9 @@ function module:OnLogin()
 
 	-- Lock chatframe
 	if MaoRUIPerDB["Chat"]["Lock"] then
-		self:UpdateChatSize()
 		hooksecurefunc("FCF_SavePositionAndDimensions", self.UpdateChatSize)
 		M:RegisterEvent("UI_SCALE_CHANGED", self.UpdateChatSize)
+		self:UpdateChatSize()
 	end
 
 	-- ProfanityFilter

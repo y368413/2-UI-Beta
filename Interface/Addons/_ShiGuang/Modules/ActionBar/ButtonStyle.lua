@@ -246,13 +246,9 @@ function Bar:StyleActionButton(button, cfg)
 		end
 	end
 	if hotkey then
-		if MaoRUIPerDB["Actionbar"]["Hotkeys"] then
-			hotkey:SetParent(overlay)
-			Bar:HookHotKey(button)
-			SetupFontString(hotkey, cfg.hotkey)
-		else
-			hotkey:Hide()
-		end
+		hotkey:SetParent(overlay)
+		Bar:HookHotKey(button)
+		SetupFontString(hotkey, cfg.hotkey)
 	end
 	if name then
 		if MaoRUIPerDB["Actionbar"]["Macro"] then
@@ -309,14 +305,12 @@ function Bar:StyleExtraActionButton(cfg)
 	--hotkey, count
 	local overlay = CreateFrame("Frame", nil, button)
 	overlay:SetAllPoints()
-	if MaoRUIPerDB["Actionbar"]["Hotkeys"] then
-		hotkey:SetParent(overlay)
-		Bar:HookHotKey(button)
-		cfg.hotkey.font = {I.Font[1], 13, I.Font[3]}
-		SetupFontString(hotkey, cfg.hotkey)
-	else
-		hotkey:Hide()
-	end
+
+	hotkey:SetParent(overlay)
+	Bar:HookHotKey(button)
+	cfg.hotkey.font = {I.Font[1], 13, I.Font[3]}
+	SetupFontString(hotkey, cfg.hotkey)
+
 	if MaoRUIPerDB["Actionbar"]["Count"] then
 		count:SetParent(overlay)
 		cfg.count.font = {I.Font[1], 16, I.Font[3]}
@@ -455,8 +449,6 @@ function Bar:ReskinBars()
 	Bar:StyleAllActionButtons(cfg)
 	-- Update hotkeys
 	hooksecurefunc("PetActionButton_SetHotkeys", Bar.UpdateHotKey)
-	if MaoRUIPerDB["Actionbar"]["Hotkeys"] then
-		Bar:UpdateStanceHotKey()
-		M:RegisterEvent("UPDATE_BINDINGS", Bar.UpdateStanceHotKey)
-	end
+	Bar:UpdateStanceHotKey()
+	M:RegisterEvent("UPDATE_BINDINGS", Bar.UpdateStanceHotKey)
 end

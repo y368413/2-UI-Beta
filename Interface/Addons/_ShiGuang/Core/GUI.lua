@@ -164,14 +164,16 @@ G.DefaultSettings = {
 		ChatBGType = 1,
 	},
 	Map = {
-		Coord = true,
+		DisableMap = false,
 		Clock = false,
 		CombatPulse = false,
 		MapScale = 1,
+		MaxMapScale = 1,
 		MinimapScale = 1,
 		ShowRecycleBin = false,
 		WhoPings = true,
 		MapReveal = false,
+		MapRevealGlow = true,
 		Calendar = false,
 		zrMMbordersize = 2,
 		zrMMbuttonsize = 18,
@@ -220,6 +222,7 @@ G.DefaultSettings = {
 		QuestIndicator = true,
 		NameOnlyMode = false,
 		PPGCDTicker = true,
+		ExecuteRatio = 0,
 	},
 	Skins = {
 		DBM = true,
@@ -262,6 +265,7 @@ G.DefaultSettings = {
 		HideJunkGuild = true,
 		AzeriteArmor = true,
 		OnlyArmorIcons = true,
+		ConduitInfo = true,
 		QuestCompleteAnnoce = false,
 	},
 	Misc = {
