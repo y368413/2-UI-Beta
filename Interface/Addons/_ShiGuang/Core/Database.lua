@@ -24,6 +24,7 @@ LE_ITEM_QUALITY_HEIRLOOM = Enum.ItemQuality.Heirloom
 -- Colors
 I.MyName = UnitName("player")
 I.MyRealm = GetRealmName()
+I.MyFullName = I.MyName.."-"..I.MyRealm
 I.MyClass = select(2, UnitClass("player"))
 I.MyFaction = UnitFactionGroup("player")
 I.ClassList = {}
@@ -55,6 +56,7 @@ I.QualityColors[LE_ITEM_QUALITY_COMMON] = {r = 0, g = 0, b = 0}
 -- Fonts
 I.Font = {STANDARD_TEXT_FONT, 12, "OUTLINE"}
 I.LineString = I.GreyColor.."---------------"
+I.NDuiString = "|cff0080ff|r"
 
 -- Textures
 local Media = "Interface\\Addons\\_ShiGuang\\Media\\"

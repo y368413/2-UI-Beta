@@ -12,7 +12,7 @@ local LE_GARRISON_TYPE_8_0 = Enum.GarrisonType.Type_8_0
 local LE_GARRISON_TYPE_9_0 = Enum.GarrisonType.Type_9_0
 
 function module:CreatePulse()
-	if not MaoRUIPerDB["Map"]["CombatPulse"] then return end
+	if not R.db["Map"]["CombatPulse"] then return end
 
 	local bg = M.SetBD(Minimap)
 	local anim = bg:CreateAnimationGroup()
@@ -283,7 +283,7 @@ local SetMrbarMicromenu = {
 
 
 function module:WhoPingsMyMap()
-	if not MaoRUIPerDB["Map"]["WhoPings"] then return end
+	if not R.db["Map"]["WhoPings"] then return end
 	local f = CreateFrame("Frame", nil, Minimap)
 	f:SetAllPoints()
 	f.text = M.CreateFS(f, 14, "", false, "TOP", 0, -3)
@@ -307,13 +307,13 @@ end
 
 function module:UpdateMinimapScale()
 	local size = Minimap:GetWidth()
-	local scale = MaoRUIPerDB["Map"]["MinimapScale"]
+	local scale = R.db["Map"]["MinimapScale"]
 	Minimap:SetScale(scale)
 	Minimap.mover:SetSize(size*scale, size*scale)
 end
 
 function module:ShowMinimapClock()
-	if MaoRUIPerDB["Map"]["Clock"] then
+	if R.db["Map"]["Clock"] then
 		if not TimeManagerClockButton then LoadAddOn("Blizzard_TimeManager") end
 		if not TimeManagerClockButton.styled then
 			TimeManagerClockButton:DisableDrawLayer("BORDER")
@@ -330,7 +330,7 @@ function module:ShowMinimapClock()
 end
 
 function module:ShowCalendar()
-	if MaoRUIPerDB["Map"]["Calendar"] then
+	if R.db["Map"]["Calendar"] then
 		if not GameTimeFrame.styled then
 			GameTimeFrame:SetNormalTexture(nil)
 			GameTimeFrame:SetPushedTexture(nil)

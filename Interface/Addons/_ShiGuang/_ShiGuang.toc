@@ -3,7 +3,7 @@
 ## Author: ShiGuang、TuTu、Siweia
 ## Notes: Time Flies...
 ## Version: 3.7.5
-## SavedVariables: MaoRUIDB,ShiGuangDB,CastbarsDB,CurrencyTrackingDB,VLegionToDo,AzeritePowerWeightsDB,WQADB
+## SavedVariables: MaoRUIDB,MaoRUIPlusDB,ShiGuangDB,CastbarsDB,CurrencyTrackingDB,VLegionToDo,AzeritePowerWeightsDB,WQADB
 ## SavedVariablesPerCharacter: MaoRUIPerDB,ShiGuangPerDB,DEX_SAVE
 ## X-Support: 9.0.1
 ## X-Repple: 2 UI

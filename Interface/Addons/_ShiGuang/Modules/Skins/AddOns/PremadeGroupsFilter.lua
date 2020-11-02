@@ -4,8 +4,8 @@ local S = M:GetModule("Skins")
 local TT = M:GetModule("Tooltip")
 
 function S:PGFSkin()
-	if not MaoRUIPerDB["Skins"]["BlizzardSkins"] then return end
-	if not MaoRUIPerDB["Skins"]["PGFSkin"] then return end
+	if not R.db["Skins"]["BlizzardSkins"] then return end
+	if not R.db["Skins"]["PGFSkin"] then return end
 	if not IsAddOnLoaded("PremadeGroupsFilter") then return end
 
 	local tipStyled

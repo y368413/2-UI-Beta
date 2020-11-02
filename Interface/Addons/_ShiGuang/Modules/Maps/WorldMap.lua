@@ -91,10 +91,10 @@ function module:SetupCoords()
 end
 
 function module:UpdateMapScale()
-	if self.isMaximized and self:GetScale() ~= MaoRUIPerDB["Map"]["MaxMapScale"] then
-		self:SetScale(MaoRUIPerDB["Map"]["MaxMapScale"])
-	elseif not self.isMaximized and self:GetScale() ~= MaoRUIPerDB["Map"]["MapScale"] then
-		self:SetScale(MaoRUIPerDB["Map"]["MapScale"])
+	if self.isMaximized and self:GetScale() ~= R.db["Map"]["MaxMapScale"] then
+		self:SetScale(R.db["Map"]["MaxMapScale"])
+	elseif not self.isMaximized and self:GetScale() ~= R.db["Map"]["MapScale"] then
+		self:SetScale(R.db["Map"]["MapScale"])
 	end
 end
 
@@ -116,7 +116,7 @@ function module:WorldMapScale()
 end
 
 function module:SetupWorldMap()
-	if MaoRUIPerDB["Map"]["DisableMap"] then return end
+	if R.db["Map"]["DisableMap"] then return end
 	if IsAddOnLoaded("Mapster") then return end
 	if IsAddOnLoaded("Leatrix_Maps") then return end
 
@@ -136,6 +136,7 @@ function module:SetupWorldMap()
 	self:SetupCoords()
 	self:MapReveal()
 end
+
 function module:OnLogin()
 	self:SetupWorldMap()
 	self:SetupMinimap()

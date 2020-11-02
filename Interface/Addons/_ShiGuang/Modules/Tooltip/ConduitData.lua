@@ -44,7 +44,7 @@ function TT:ConduitCollectionData()
 	end
 	M:RegisterEvent("SOULBIND_CONDUIT_COLLECTION_UPDATED", TT.Conduit_UpdateCollection)
 
-	if not MaoRUIPerDB["Tooltip"]["ConduitInfo"] then return end
+	if not R.db["Tooltip"]["ConduitInfo"] then return end
 
 	GameTooltip:HookScript("OnTooltipSetItem", TT.Conduit_CheckStatus)
 	ItemRefTooltip:HookScript("OnTooltipSetItem", TT.Conduit_CheckStatus)

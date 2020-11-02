@@ -2,7 +2,7 @@ local _, ns = ...
 local M, R, U, I = unpack(ns)
 
 tinsert(R.defaultThemes, function()
-	if not MaoRUIPerDB["Skins"]["PetBattle"] then return end
+	if not R.db["Skins"]["PetBattle"] then return end
 
 	local r, g, b, pairs = I.r, I.g, I.b, pairs
 

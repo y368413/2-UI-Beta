@@ -871,7 +871,7 @@ local function PowerTypeAscending()
 end
 
 local function AutoHidePlayerFrame(self,event, ...)
-	if (not MaoRUIPerDB["UFs"]["UFFade"]) or (ShiGuangPerDB.BHT == true) then return end
+	if (not R.db["UFs"]["UFFade"]) or (ShiGuangPerDB.BHT == true) then return end
 	--if (event == nil) then event = "TargetFrame or CharacterModelFrame toggled" end
 	if UnitHealth("player") < UnitHealthMax("player") * 0.99 or (powerTypeAscending and UnitPower("player") <= UnitPowerMax("player") * 0.99) or TargetFrame:IsShown() or UnitAffectingCombat("player") or CharacterFrame:IsShown() or ContainerFrame1:IsShown() then
 		if (not PlayerFrame:IsShown()) then

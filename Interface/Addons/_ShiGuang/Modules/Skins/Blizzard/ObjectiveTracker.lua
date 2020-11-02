@@ -240,7 +240,7 @@ tinsert(R.defaultThemes, function()
 		reskinHeader(header)
 	end
 
-	-- Minimize Button
+	--[[ Minimize Button
 	local mainMinimize = ObjectiveTrackerFrame.HeaderMenu.MinimizeButton
 	reskinMinimizeButton(mainMinimize)
 	mainMinimize.bg:SetBackdropBorderColor(1, .8, 0, .5)
@@ -250,5 +250,5 @@ tinsert(R.defaultThemes, function()
 		if minimize then
 			reskinMinimizeButton(minimize)
 		end
-	end
+	end]]
 end)

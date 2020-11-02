@@ -414,42 +414,12 @@ function S:ReskinRematchElements()
 	bg:SetPoint("TOPLEFT", border, 6, -5)
 	bg:SetPoint("BOTTOMRIGHT", border, -6, 5)
 
-	-- RematchNotes
-	local note = RematchNotes
-	M.StripTextures(note)
-	M.ReskinClose(note.CloseButton)
-	S:RematchLockButton(note.LockButton)
-	note.LockButton:SetPoint("TOPLEFT")
-
-	local content = note.Content
-	M.StripTextures(content)
-	M.ReskinScroll(content.ScrollFrame.ScrollBar)
-	local bg = M.CreateBDFrame(content.ScrollFrame, .25)
-	bg:SetPoint("TOPLEFT", 0, 5)
-	bg:SetPoint("BOTTOMRIGHT", 0, -2)
-	local bg = M.SetBD(content.ScrollFrame)
-	bg:SetAllPoints(note)
-	for _, icon in pairs({"Left", "Right"}) do
-		local bu = content[icon.."Icon"]
-		local mask = content[icon.."CircleMask"]
-		if mask then
-			mask:Hide()
-		else
-			bu:SetMask(nil)
-		end
-		M.ReskinIcon(bu)
-	end
-
-	M.Reskin(note.Controls.DeleteButton)
-	M.Reskin(note.Controls.UndoButton)
-	M.Reskin(note.Controls.SaveButton)
-
 	styled = true
 end
 
 function S:ReskinRematch()
-	if not MaoRUIPerDB["Skins"]["BlizzardSkins"] then return end
-	if not MaoRUIPerDB["Skins"]["Rematch"] then return end
+	if not R.db["Skins"]["BlizzardSkins"] then return end
+	if not R.db["Skins"]["Rematch"] then return end
 
 	local RematchJournal = RematchJournal
 	if not RematchJournal then return end
@@ -478,6 +448,43 @@ function S:ReskinRematch()
 		S:ReskinRematchElements()
 
 		RematchJournal.styled = true
+	end)
+
+	hooksecurefunc(RematchNotes, "OnShow", function(self)
+		if self.styled then return end
+
+		M.StripTextures(self)
+		M.ReskinClose(self.CloseButton)
+		S:RematchLockButton(self.LockButton)
+		self.LockButton:SetPoint("TOPLEFT")
+	
+		local content = self.Content
+		M.ReskinScroll(content.ScrollFrame.ScrollBar)
+		local bg = M.CreateBDFrame(content.ScrollFrame, .25)
+		bg:SetPoint("TOPLEFT", 0, 5)
+		bg:SetPoint("BOTTOMRIGHT", 0, -2)
+		local bg = M.SetBD(content.ScrollFrame)
+		bg:SetAllPoints(self)
+		local icons = {}
+		for _, icon in pairs({"Left", "Right"}) do
+			local bu = content[icon.."Icon"]
+			local mask = content[icon.."CircleMask"]
+			mask:Hide()
+			M.ReskinIcon(bu)
+			icons[bu] = bu:GetTexture()
+		end
+
+		-- fix content icon texture
+		M.StripTextures(content)
+		for bu, tex in pairs(icons) do
+			bu:SetTexture(tex)
+		end
+	
+		M.Reskin(self.Controls.DeleteButton)
+		M.Reskin(self.Controls.UndoButton)
+		M.Reskin(self.Controls.SaveButton)
+
+		self.styled = true
 	end)
 
 	hooksecurefunc(Rematch, "FillPetTypeIcon", function(_, texture, _, prefix)

@@ -1,0 +1,6 @@
+## Interface: 90001
+## Version: 1.1.5
+## Title: BFA Pet Quests
+## Author: Thomas Bemme
+## Notes: Checks for completed BFA pet quest with slash commands /petdone or /pd
+bfaPetQuest.lua
