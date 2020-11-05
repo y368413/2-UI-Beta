@@ -11,7 +11,7 @@ local function SetFrameSize(frame, size, num)
 	size = size or frame.buttonSize
 	num = num or frame.numButtons
 
-	local layout = MaoRUIPerDB["Actionbar"]["Style"]
+	local layout = R.db["Actionbar"]["Style"]
 	if layout ~= 1 then cfg = R.Bars.bar2 end
 
 	if layout == 1 then
@@ -61,7 +61,7 @@ end
 function Bar:CreateBar3()
 	local num = NUM_ACTIONBAR_BUTTONS
 	local buttonList = {}
-	local layout = MaoRUIPerDB["Actionbar"]["Style"]
+	local layout = R.db["Actionbar"]["Style"]
 	--if layout > 3 then cfg = R.Bars.bar2 end
 	if layout ~= 1 then cfg = R.Bars.bar2 end
 

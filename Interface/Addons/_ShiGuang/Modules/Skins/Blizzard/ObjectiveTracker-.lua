@@ -101,7 +101,7 @@ hooksecurefunc(QUEST_TRACKER_MODULE, "OnBlockHeaderClick", function(_, block)
 end)]]
 
 --[[ 任务名称职业着色 -------------------------------------------------------
- if  MaoRUIPerDB["Skins"]["QuestTrackerSkinTitle"] then
+ if  R.db["Skins"]["QuestTrackerSkinTitle"] then
     hooksecurefunc(QUEST_TRACKER_MODULE, "SetBlockHeader", function(_, block)
         --for i = 1, GetNumQuestWatches() do
 		    --local questID = GetQuestWatchInfo(i)

@@ -1,4 +1,4 @@
-﻿--## Author: Foxthorn  ## Version: 1.7.4
+﻿--## Author: Foxthorn  ## Version: 1.7.4   DialogKeyDB
 
 DialogKey = LibStub("AceAddon-3.0"):NewAddon("DialogKey", "AceConsole-3.0", "AceTimer-3.0", "AceEvent-3.0")
 

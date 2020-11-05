@@ -67,7 +67,7 @@ function MISC:OnLogin()
 	MISC:BlinkRogueHelper()
 	
 	----------------QuickQueue.lua----------------------
-	if MaoRUIPerDB["Misc"]["QuickQueue"] then
+	if R.db["Misc"]["QuickQueue"] then
 	  local QuickQueue = CreateFrame("Frame")
 	    QuickQueue:RegisterEvent("LFG_ROLE_CHECK_SHOW")
 	    QuickQueue:SetScript("OnEvent", function(self, event, ...) CompleteLFGRoleCheck(true) end)
@@ -102,7 +102,7 @@ function MISC:OnLogin()
 
 	-- Instant delete
 	hooksecurefunc(StaticPopupDialogs["DELETE_GOOD_ITEM"], "OnShow", function(self)
-		if MaoRUIPerDB["Misc"]["InstantDelete"] then
+		if R.db["Misc"]["InstantDelete"] then
 			self.editBox:SetText(DELETE_ITEM_CONFIRM_STRING)
 		end
 	end)
@@ -118,7 +118,7 @@ end
 
 -- Hide boss banner
 function MISC:ToggleBossBanner()
-	if MaoRUIPerDB["Misc"]["HideBanner"] then
+	if R.db["Misc"]["HideBanner"] then
 		BossBanner:UnregisterAllEvents()
 	else
 		BossBanner:RegisterEvent("BOSS_KILL")
@@ -128,7 +128,7 @@ end
 
 -- Hide boss emote
 function MISC:ToggleBossEmote()
-	if MaoRUIPerDB["Misc"]["HideBossEmote"] then
+	if R.db["Misc"]["HideBossEmote"] then
 		RaidBossEmoteFrame:UnregisterAllEvents()
 	else
 		RaidBossEmoteFrame:RegisterEvent("RAID_BOSS_EMOTE")
@@ -272,7 +272,7 @@ function MISC:UpdateScreenShot()
 		end)
 	end
 
-	if MaoRUIPerDB["Misc"]["Screenshot"] then
+	if R.db["Misc"]["Screenshot"] then
 		M:RegisterEvent("ACHIEVEMENT_EARNED", MISC.ScreenShotOnEvent)
 	else
 		MISC.ScreenShotFrame:Hide()
@@ -295,7 +295,7 @@ function MISC:DoFasterLoot()
 end
 
 function MISC:UpdateFasterLoot()
-	if MaoRUIPerDB["Misc"]["FasterLoot"] then
+	if R.db["Misc"]["FasterLoot"] then
 		M:RegisterEvent("LOOT_READY", MISC.DoFasterLoot)
 	else
 		M:UnregisterEvent("LOOT_READY", MISC.DoFasterLoot)
@@ -328,7 +328,7 @@ end
 -- Block invite from strangers
 function MISC:BlockStrangerInvite()
 	M:RegisterEvent("PARTY_INVITE_REQUEST", function(_, _, _, _, _, _, _, guid)
-		if MaoRUIPerDB["Misc"]["BlockInvite"] and not (C_BattleNet_GetGameAccountInfoByGUID(guid) or C_FriendList_IsFriend(guid) or IsGuildMember(guid)) then
+		if R.db["Misc"]["BlockInvite"] and not (C_BattleNet_GetGameAccountInfoByGUID(guid) or C_FriendList_IsFriend(guid) or IsGuildMember(guid)) then
 			DeclineGroup()
 			StaticPopup_Hide("PARTY_INVITE")
 		end
@@ -508,86 +508,6 @@ do
 	end
 
 	M:RegisterEvent("ADDON_LOADED", setupMisc)
-end
-
--- Temporary taint fix
-do
-	InterfaceOptionsFrameCancel:SetScript("OnClick", function()
-		InterfaceOptionsFrameOkay:Click()
-	end)
-
-	-- https://www.townlong-yak.com/bugs/Kjq4hm-DisplayModeCommunitiesTaint
-	if (UIDROPDOWNMENU_OPEN_PATCH_VERSION or 0) < 1 then
-		UIDROPDOWNMENU_OPEN_PATCH_VERSION = 1
-		hooksecurefunc("UIDropDownMenu_InitializeHelper", function(frame)
-			if UIDROPDOWNMENU_OPEN_PATCH_VERSION ~= 1 then return end
-
-			if UIDROPDOWNMENU_OPEN_MENU and UIDROPDOWNMENU_OPEN_MENU ~= frame and not issecurevariable(UIDROPDOWNMENU_OPEN_MENU, "displayMode") then
-				UIDROPDOWNMENU_OPEN_MENU = nil
-				local t, f, prefix, i = _G, issecurevariable, " \0", 1
-				repeat
-					i, t[prefix .. i] = i+1
-				until f("UIDROPDOWNMENU_OPEN_MENU")
-			end
-		end)
-	end
-
-	-- https://www.townlong-yak.com/bugs/YhgQma-SetValueRefreshTaint
-	if (COMMUNITY_UIDD_REFRESH_PATCH_VERSION or 0) < 1 then
-		COMMUNITY_UIDD_REFRESH_PATCH_VERSION = 1
-		local function CleanDropdowns()
-			if COMMUNITY_UIDD_REFRESH_PATCH_VERSION ~= 1 then
-				return
-			end
-			local f, f2 = FriendsFrame, FriendsTabHeader
-			local s = f:IsShown()
-			f:Hide()
-			f:Show()
-			if not f2:IsShown() then
-				f2:Show()
-				f2:Hide()
-			end
-			if not s then
-				f:Hide()
-			end
-		end
-		hooksecurefunc("Communities_LoadUI", CleanDropdowns)
-		hooksecurefunc("SetCVar", function(n)
-			if n == "lastSelectedClubId" then
-				CleanDropdowns()
-			end
-		end)
-	end
-
-	-- https://www.townlong-yak.com/bugs/Mx7CWN-RefreshOverread
-	if (UIDD_REFRESH_OVERREAD_PATCH_VERSION or 0) < 1 then
-		UIDD_REFRESH_OVERREAD_PATCH_VERSION = 1
-		local function drop(t, k)
-			local c = 42
-			t[k] = nil
-			while not issecurevariable(t, k) do
-				if t[c] == nil then
-					t[c] = nil
-				end
-				c = c + 1
-			end
-		end
-		hooksecurefunc("UIDropDownMenu_InitializeHelper", function()
-			if UIDD_REFRESH_OVERREAD_PATCH_VERSION ~= 1 then
-				return
-			end
-			for i = 1, UIDROPDOWNMENU_MAXLEVELS do
-				local d = _G["DropDownList"..i]
-				if d and d.numButtons then
-					for j = d.numButtons+1, UIDROPDOWNMENU_MAXBUTTONS do
-						local b, _ = _G["DropDownList"..i.."Button"..j]
-						_ = issecurevariable(b, "checked") or drop(b, "checked")
-						_ = issecurevariable(b, "notCheckable") or drop(b, "notCheckable")
-					end
-				end
-			end
-		end)
-	end
 end
 
 -- Select target when click on raid units

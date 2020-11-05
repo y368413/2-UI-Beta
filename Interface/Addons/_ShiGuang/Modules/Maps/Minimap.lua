@@ -6,9 +6,13 @@ local _G = _G
 local strmatch, strfind, strupper = string.match, string.find, string.upper
 local select, pairs, ipairs, unpack = select, pairs, ipairs, unpack
 local cr, cg, cb = I.r, I.g, I.b
+local LE_GARRISON_TYPE_6_0 = Enum.GarrisonType.Type_6_0
+local LE_GARRISON_TYPE_7_0 = Enum.GarrisonType.Type_7_0
+local LE_GARRISON_TYPE_8_0 = Enum.GarrisonType.Type_8_0
+local LE_GARRISON_TYPE_9_0 = Enum.GarrisonType.Type_9_0
 
 function module:CreatePulse()
-	if not MaoRUIPerDB["Map"]["CombatPulse"] then return end
+	if not R.db["Map"]["CombatPulse"] then return end
 
 	local bg = M.SetBD(Minimap)
 	local anim = bg:CreateAnimationGroup()
@@ -45,6 +49,15 @@ function module:CreatePulse()
 	end)
 end
 
+local function ToggleLandingPage(_, ...)
+	if InCombatLockdown() then UIErrorsFrame:AddMessage(I.InfoColor..ERR_NOT_IN_COMBAT) return end
+	if not C_Garrison.HasGarrison(...) then
+		UIErrorsFrame:AddMessage(I.InfoColor..CONTRIBUTION_TOOLTIP_UNLOCKED_WHEN_ACTIVE)
+		return
+	end
+	ShowGarrisonLandingPage(...)
+end
+
 function module:ReskinRegions()
 	-- Garrison
 	hooksecurefunc("GarrisonLandingPageMinimapButton_UpdateIcon", function(self)
@@ -61,18 +74,27 @@ function module:ReskinRegions()
 			RecycleBinToggleButton.settled = true
 		end
 	end)
-	if not (IsAddOnLoaded("GarrisonMissionManager") or IsAddOnLoaded("GarrisonMaster")) then
-		GarrisonLandingPageMinimapButton:RegisterForClicks("AnyUp")
-		GarrisonLandingPageMinimapButton:HookScript("OnClick", function(_, btn, down)
-			if btn == "MiddleButton" and not down then
-				HideUIPanel(GarrisonLandingPage)
-				ShowGarrisonLandingPage(LE_GARRISON_TYPE_7_0)
-			elseif btn == "RightButton" and not down then
-				HideUIPanel(GarrisonLandingPage)
-				ShowGarrisonLandingPage(LE_GARRISON_TYPE_6_0)
-			end
-		end)
-	end
+
+	local menuFrame = CreateFrame("Frame", "NDuiGarrisonTypeMenu", GarrisonLandingPageMinimapButton, "UIDropDownMenuTemplate")
+	local menuList = {
+		{text =	GARRISON_TYPE_9_0_LANDING_PAGE_TITLE, func = ToggleLandingPage, arg1 = LE_GARRISON_TYPE_9_0, notCheckable = true},
+		{text =	WAR_CAMPAIGN, func = ToggleLandingPage, arg1 = LE_GARRISON_TYPE_8_0, notCheckable = true},
+		{text =	ORDER_HALL_LANDING_PAGE_TITLE, func = ToggleLandingPage, arg1 = LE_GARRISON_TYPE_7_0, notCheckable = true},
+		{text =	GARRISON_LANDING_PAGE_TITLE, func = ToggleLandingPage, arg1 = LE_GARRISON_TYPE_6_0, notCheckable = true},
+	}
+	GarrisonLandingPageMinimapButton:HookScript("OnMouseDown", function(self, btn)
+		if btn == "RightButton" then
+			HideUIPanel(GarrisonLandingPage)
+			EasyMenu(menuList, menuFrame, self, -80, 0, "MENU", 1)
+		end
+	end)
+	GarrisonLandingPageMinimapButton:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_LEFT")
+		GameTooltip:SetText(self.title, 1, 1, 1)
+		GameTooltip:AddLine(self.description, nil, nil, nil, true)
+		GameTooltip:AddLine(U["SwitchGarrisonType"], nil, nil, nil, true)
+		GameTooltip:Show();
+	end)
 
 	-- QueueStatus Button
 	QueueStatusMinimapButton:ClearAllPoints()
@@ -261,7 +283,7 @@ local SetMrbarMicromenu = {
 
 
 function module:WhoPingsMyMap()
-	if not MaoRUIPerDB["Map"]["WhoPings"] then return end
+	if not R.db["Map"]["WhoPings"] then return end
 	local f = CreateFrame("Frame", nil, Minimap)
 	f:SetAllPoints()
 	f.text = M.CreateFS(f, 14, "", false, "TOP", 0, -3)
@@ -285,13 +307,13 @@ end
 
 function module:UpdateMinimapScale()
 	local size = Minimap:GetWidth()
-	local scale = MaoRUIPerDB["Map"]["MinimapScale"]
+	local scale = R.db["Map"]["MinimapScale"]
 	Minimap:SetScale(scale)
 	Minimap.mover:SetSize(size*scale, size*scale)
 end
 
 function module:ShowMinimapClock()
-	if MaoRUIPerDB["Map"]["Clock"] then
+	if R.db["Map"]["Clock"] then
 		if not TimeManagerClockButton then LoadAddOn("Blizzard_TimeManager") end
 		if not TimeManagerClockButton.styled then
 			TimeManagerClockButton:DisableDrawLayer("BORDER")
@@ -308,7 +330,7 @@ function module:ShowMinimapClock()
 end
 
 function module:ShowCalendar()
-	if MaoRUIPerDB["Map"]["Calendar"] then
+	if R.db["Map"]["Calendar"] then
 		if not GameTimeFrame.styled then
 			GameTimeFrame:SetNormalTexture(nil)
 			GameTimeFrame:SetPushedTexture(nil)

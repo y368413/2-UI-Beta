@@ -8,7 +8,7 @@ local fadeInTime, fadeOutTime, maxAlpha, elapsed, runtimer, animScale, iconSize,
 local GetTime, cooldowns, animating, watching = GetTime, {}, {}, {}
 
 function CDS:PulseCD()
-  if not MaoRUIPerDB["Misc"]["PulseCD"] then return end
+  if not R.db["Misc"]["PulseCD"] then return end
 
     local PulseCDAnchor = CreateFrame("Frame", "PulseCDAnchor", UIParent, "BackdropTemplate")
     PulseCDAnchor:SetSize(43, 43)
