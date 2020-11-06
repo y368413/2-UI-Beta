@@ -44,7 +44,7 @@ G.DefaultSettings = {
 	Auras = {
 		Reminder = true,
 		Totems = true,
-		VerticleTotems = true,
+		VerticalTotems = true,
 		TotemSize = 32,
 		ClassAuras = false,
 		ReverseBuffs = false,
@@ -679,6 +679,7 @@ G.TabList = {
 	U["Nameplate"],
 	U["RaidFrame"],
 	U["Auras"],
+	U["Profile"],
 	U["ChatFrame"],
 	U["Skins"],
 	U["Misc"],
@@ -840,6 +841,8 @@ G.OptionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{3, "Nameplate", "PPPowerHeight", U["PlayerPlate MPHeight"].."*", true, true, {1, 16, 1}, refreshNameplates},
 	},
 	[5] = {
+	},
+	[6] = {
 		{1, "Chat", "Outline", U["Font Outline"]},
 		{1, "Chat", "Sticky", U["Chat Sticky"].."*", true, false, nil, updateChatSticky},
 	{4, "ACCOUNT", "TimestampFormat", U["TimestampFormat"].."*", true, true, {DISABLE, "03:27 PM", "03:27:32 PM", "15:27", "15:27:32"}},
@@ -869,7 +872,7 @@ G.OptionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{2, "Chat", "Keyword", U["Whisper Keyword"].."*", true, false, nil, updateWhisperList},
 		{2, "ACCOUNT", "ChatFilterWhiteList", "|cff00cc4c"..U["ChatFilterWhiteList"].."*", true, true, nil, updateFilterWhiteList, U["ChatFilterWhiteListTip"]},
 	},
-	[6] = {
+	[7] = {
 		{1, "UFs", "UFFade", U["UFFade"]},
 		{1, "UFs", "UFClassIcon", U["UFClassIcon"], true},
 	  {1, "UFs", "UFPctText", U["UFPctText"], true, true},
@@ -908,7 +911,7 @@ G.OptionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{4, "ACCOUNT", "NumberFormat", U["Numberize"], true, false, {U["Number Type1"], U["Number Type2"], U["Number Type3"]}},
 		{2, "Misc", "DBMCount", U["Countdown Sec"].."*", true, true},
 	},
-	[7] = {
+	[8] = {
 	  --{1, "Misc", "RaidTool", "|cff00cc4c"..U["Raid Manger"]},
 		--{1, "Misc", "RMRune", U["Runes Check"].."*"},
 		--{1, "Misc", "EasyMarking", U["Easy Mark"].."*"},
@@ -952,7 +955,7 @@ G.OptionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "Misc", "CtrlIndicator", U["Shiftfreeze"]},
 		{1, "Misc", "BlinkRogueHelper", U["BlinkRogueHelper"], true},
 	},
-	[8] = {
+	[9] = {
 		{1, "Misc", "ParagonRep", U["ParagonRep"]},
 		{1, "Misc", "TradeTabs", U["TradeTabs"], true},
 		{1, "Misc", "PetFilter", U["Show PetFilter"], true, true},
@@ -1013,8 +1016,8 @@ end
 
 local function CreateTab(parent, i, name)
 	local tab = CreateFrame("Button", nil, parent, "BackdropTemplate")
-	tab:SetPoint("TOP", -310 + 88*(i-1) + R.mult, -121)
-	tab:SetSize(90, 30)
+	tab:SetPoint("TOP", -320 + 80*(i-1) + R.mult, -121)
+	tab:SetSize(80, 30)
 	M.CreateBD(tab, .3)
 	M.CreateFS(tab, 15, name, "system", "CENTER", 0, 0)
 	tab.index = i
@@ -1565,7 +1568,7 @@ local function OpenGUI()
 		guiPage[i]:SetScrollChild(guiPage[i].child)
 		CreateOption(i)
 	end
-	G:CreateProfileGUI(guiPage[15]) -- profile GUI
+	G:CreateProfileGUI(guiPage[5]) -- profile GUI
 	--[[local reset = M.CreateButton(f, 72, 21, "Reset")
 	reset:SetPoint("BOTTOM", -330, 66)
 	StaticPopupDialogs["RESET_NDUI"] = {

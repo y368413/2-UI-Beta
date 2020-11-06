@@ -364,6 +364,7 @@ local list = {
 		{AuraID = 311390, UnitID = "player"},	-- 疯狂：昆虫恐惧症，幻象
 		{AuraID = 306583, UnitID = "player"},	-- 灌铅脚步
 		{AuraID = 313698, UnitID = "player", Flash = true},	-- 泰坦之赐
+
 		{AuraID = 314478, UnitID = "player"},	-- 倾泻恐惧
 		{AuraID = 314483, UnitID = "player"},	-- 倾泻恐惧
 		{AuraID = 314411, UnitID = "player"},	-- 疑云密布

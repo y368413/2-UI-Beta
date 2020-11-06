@@ -385,6 +385,9 @@ end
 
 -- UI widgets
 do
+	-- Dropdown menu
+	M.EasyMenu = CreateFrame("Frame", "NDui_EasyMenu", UIParent, "UIDropDownMenuTemplate")
+
 	-- Fontstring
 	function M:CreateFS(size, text, color, anchor, x, y, r, g, b)
 		local fs = self:CreateFontString(nil, "OVERLAY")

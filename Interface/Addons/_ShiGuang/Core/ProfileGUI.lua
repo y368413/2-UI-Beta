@@ -81,6 +81,10 @@ StaticPopupDialogs["NDUI_DELETE_UNIT_PROFILE"] = {
 	button1 = YES,
 	button2 = NO,
 	OnAccept = function(self)
+		local name, realm = strsplit("-", self.text.text_arg1)
+		if MaoRUIDB["totalGold"][realm] and MaoRUIDB["totalGold"][realm][name] then
+			MaoRUIDB["totalGold"][realm][name] = nil
+		end
 		MaoRUIDB["ProfileIndex"][self.text.text_arg1] = nil
 	end,
 	OnShow = function(self)
@@ -98,7 +102,7 @@ StaticPopupDialogs["NDUI_DELETE_UNIT_PROFILE"] = {
 function G:CreateProfileIcon(bar, index, texture, title, description)
 	local button = CreateFrame("Button", nil, bar)
 	button:SetSize(32, 32)
-	button:SetPoint("RIGHT", -5 - (index-1)*37, 0)
+	button:SetPoint("RIGHT", -6 - (index-1)*36, 0)
 	M.PixelIcon(button, texture, true)
 	button.title = title
 	M.AddTooltip(button, "ANCHOR_RIGHT", description, "info")
@@ -183,7 +187,7 @@ function G:CreateProfileBar(parent, index)
 	local bar = M.CreateBDFrame(parent, .25)
 	bar:ClearAllPoints()
 	bar:SetPoint("TOPLEFT", 10, -10 - 45*(index-1))
-	bar:SetSize(570, 40)
+	bar:SetSize(600, 40)
 	bar.index = index
 	
 	local icon = CreateFrame("Frame", nil, bar)
@@ -274,8 +278,7 @@ function G:Delete_OnEnter()
 		text = name.."-"..realm
 	end
 
-	if MaoRUIDB["ProfileIndex"][text] then
-		self:SetText(text)
+	if MaoRUIDB["ProfileIndex"][text] or (MaoRUIDB["totalGold"][realm] and MaoRUIDB["totalGold"][realm][name]) then
 		StaticPopup_Show("NDUI_DELETE_UNIT_PROFILE", text, G:GetClassFromGoldInfo(name, realm))
 	else
 		UIErrorsFrame:AddMessage(I.InfoColor..U["Incorrect unit name"])
@@ -287,14 +290,20 @@ function G:Delete_OnEscape()
 end
 
 function G:CreateProfileGUI(parent)
+	--M.CreateFS(parent, 14, U["Profile Management"], "system", "TOPLEFT", 52, -40)
+	local description = M.CreateFS(parent, 14, U["Profile Description"], nil, "TOPLEFT", 52, -45)
+	description:SetPoint("TOPRIGHT", -90, -45)
+	description:SetWordWrap(true)
+	description:SetJustifyH("LEFT")
+	
 	local reset = M.CreateButton(parent, 120, 24, U["NDui Reset"])
-	reset:SetPoint("BOTTOMRIGHT", -10, 10)
+	reset:SetPoint("BOTTOMLEFT", 100, 90)
 	reset:SetScript("OnClick", function()
 		StaticPopup_Show("RESET_NDUI")
 	end)
 
 	local import = M.CreateButton(parent, 120, 24, U["Import"])
-	import:SetPoint("BOTTOMLEFT", 10, 10)
+	import:SetPoint("LEFT", reset, "RIGHT", 6, 0)
 	import:SetScript("OnClick", function()
 		parent:GetParent():Hide()
 		G:CreateDataFrame()
@@ -304,7 +313,7 @@ function G:CreateProfileGUI(parent)
 	end)
 
 	local export = M.CreateButton(parent, 120, 24, U["Export"])
-	export:SetPoint("LEFT", import, "RIGHT", 5, 0)
+	export:SetPoint("LEFT", import, "RIGHT", 6, 0)
 	export:SetScript("OnClick", function()
 		parent:GetParent():Hide()
 		G:CreateDataFrame()
@@ -313,14 +322,8 @@ function G:CreateProfileGUI(parent)
 		G:ExportGUIData()
 	end)
 
-	M.CreateFS(parent, 14, U["Profile Management"], "system", "TOPLEFT", 10, -10)
-	local description = M.CreateFS(parent, 14, U["Profile Description"], nil, "TOPLEFT", 10, -35)
-	description:SetPoint("TOPRIGHT", -10, -30)
-	description:SetWordWrap(true)
-	description:SetJustifyH("LEFT")
-
 	local delete = M.CreateEditBox(parent, 245, 26)
-	delete:SetPoint("BOTTOMLEFT", import, "TOPLEFT", 0, 10)
+	delete:SetPoint("LEFT", export, "RIGHT", 6, 0)
 	delete:HookScript("OnEnterPressed", G.Delete_OnEnter)
 	delete:HookScript("OnEscapePressed", G.Delete_OnEscape)
 	delete.title = U["DeleteUnitProfile"]
@@ -329,10 +332,10 @@ function G:CreateProfileGUI(parent)
 	G.currentProfile = MaoRUIDB["ProfileIndex"][I.MyFullName]
 
 	local numBars = 6
-	local panel = M.CreateBDFrame(parent, .25)
+	local panel = M.CreateBDFrame(parent, 0)
 	panel:ClearAllPoints()
-	panel:SetPoint("BOTTOMLEFT", delete, "TOPLEFT", 0, 10)
-	panel:SetWidth(parent:GetWidth() - 20)
+	panel:SetPoint("BOTTOMLEFT", reset, "TOPLEFT", 0, 10)
+	panel:SetWidth(parent:GetWidth() - 260)
 	panel:SetHeight(15 + numBars*45)
 	panel:SetFrameLevel(11)
 
