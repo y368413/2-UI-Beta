@@ -1,34 +1,4 @@
---[[BSD 3-Clause License
-
-Copyright (c) 2019, Thomas Bemme
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
-* Redistributions of source code must retain the above copyright notice, this
-  list of conditions and the following disclaimer.
-
-* Redistributions in binary form must reproduce the above copyright notice,
-  this list of conditions and the following disclaimer in the documentation
-  and/or other materials provided with the distribution.
-
-* Neither the name of the copyright holder nor the names of its
-  contributors may be used to endorse or promote products derived from
-  this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.]]--
-
-print("BfA Pet Quest loaded. Usage: /petdone ([c]ompleted) or /pd c[ompleted]")
+--[[## Version: 1.1.5 ## Author: Thomas Bemme]]
 bfaPetQuestDB = { -- questid, pet, item, TomTom coords--
     --Nazjatar
     {56446,56457,"Chomp","Leathery Venom Gland",71.8,51.0,1355},
@@ -91,7 +61,7 @@ local function bfaPetQuestCmd(msg, editbox)
     end
     local max=table.maxn(bfaPetQuestDB)
     for bfePetQuestIndex=1, max do
-        if not IsQuestFlaggedCompleted(bfaPetQuestDB[bfePetQuestIndex][index]) then
+        if not C_QuestLog.IsQuestFlaggedCompleted(bfaPetQuestDB[bfePetQuestIndex][index]) then
             if bfaPetQuestDB[bfePetQuestIndex][7]==NazjatarID then
                 bfaPetQuestCounters[1]=bfaPetQuestCounters[1]+1
             elseif bfaPetQuestDB[bfePetQuestIndex][7]==MechagonID then
@@ -113,7 +83,7 @@ local function bfaPetQuestCmd(msg, editbox)
 
     if msg=="c" then
         for bfePetQuestIndex=1, max do
-            if IsQuestFlaggedCompleted(bfaPetQuestDB[bfePetQuestIndex][index]) then
+            if C_QuestLog.IsQuestFlaggedCompleted(bfaPetQuestDB[bfePetQuestIndex][index]) then
                 if bfaPetQuestDB[bfePetQuestIndex][7]==NazjatarID then
                     bfaPetQuestCounters[3]=bfaPetQuestCounters[3]+1
                 elseif bfaPetQuestDB[bfePetQuestIndex][7]==MechagonID then

@@ -1,6 +1,7 @@
 ﻿<Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="MTG.lua"/>
 	<Script file="Mingy.lua"/>
+	<Script file="bfaPetQuest.lua"/>
 	<Script file="DarkmoonFaire.lua"/>
 	<Script file="AngryWorldQuest.lua"/>
 	<Script file="WorldMapQuestRewardIcon.lua"/>
