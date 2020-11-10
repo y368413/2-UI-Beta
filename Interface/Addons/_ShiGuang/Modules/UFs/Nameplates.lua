@@ -536,7 +536,7 @@ function UF:AddCreatureIcon(self)
 
 	local icon = iconFrame:CreateTexture(nil, "ARTWORK")
 	--icon:SetAtlas("VignetteKill")
-	icon:SetPoint("RIGHT", self, "LEFT", -3, -1)
+	icon:SetPoint("RIGHT", self, "LEFT", 0, 0)
 	icon:SetSize(21, 21)
 	icon:Hide()
 
