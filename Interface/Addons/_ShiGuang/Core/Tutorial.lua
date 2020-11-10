@@ -213,6 +213,7 @@ local function ForceDBMOptions()
 	DBM_AllSavedOptions["Default"]["SpecialWarningFontSize2"] = 36
 	MaoRUIDB["DBMRequest"] = false
 end
+
 -- Skada
 local function ForceSkadaOptions()
 	if not IsAddOnLoaded("Skada") then return end

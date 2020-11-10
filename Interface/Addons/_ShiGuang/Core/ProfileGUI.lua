@@ -276,6 +276,7 @@ function G:Delete_OnEnter()
 	if not realm then
 		realm = I.MyRealm
 		text = name.."-"..realm
+		self:SetText(text)
 	end
 
 	if MaoRUIDB["ProfileIndex"][text] or (MaoRUIDB["totalGold"][realm] and MaoRUIDB["totalGold"][realm][name]) then
@@ -290,12 +291,6 @@ function G:Delete_OnEscape()
 end
 
 function G:CreateProfileGUI(parent)
-	--M.CreateFS(parent, 14, U["Profile Management"], "system", "TOPLEFT", 52, -40)
-	local description = M.CreateFS(parent, 14, U["Profile Description"], nil, "TOPLEFT", 52, -45)
-	description:SetPoint("TOPRIGHT", -90, -45)
-	description:SetWordWrap(true)
-	description:SetJustifyH("LEFT")
-	
 	local reset = M.CreateButton(parent, 120, 24, U["NDui Reset"])
 	reset:SetPoint("BOTTOMLEFT", 100, 90)
 	reset:SetScript("OnClick", function()
@@ -321,6 +316,12 @@ function G:CreateProfileGUI(parent)
 		G.ProfileDataFrame.text:SetText(OKAY)
 		G:ExportGUIData()
 	end)
+
+	--M.CreateFS(parent, 14, U["Profile Management"], "system", "TOPLEFT", 52, -40)
+	local description = M.CreateFS(parent, 14, U["Profile Description"], nil, "TOPLEFT", 52, -45)
+	description:SetPoint("TOPRIGHT", -90, -45)
+	description:SetWordWrap(true)
+	description:SetJustifyH("LEFT")
 
 	local delete = M.CreateEditBox(parent, 245, 26)
 	delete:SetPoint("LEFT", export, "RIGHT", 6, 0)
