@@ -233,7 +233,7 @@ WallpaperKit:RegisterEvent("PLAYER_FLAGS_CHANGED")
 WallpaperKit:RegisterEvent("PLAYER_ENTERING_WORLD")
 WallpaperKit:RegisterEvent("PLAYER_LEAVING_WORLD")
 WallpaperKit:SetScript("OnEvent",function()
-  if not R.db["Misc"]["WallpaperKit"] then return end
+  if not MaoRUIPerDB["Misc"]["WallpaperKit"] then return end
 	if WallpaperKit:IsShown() then WallpaperKit:Disable() end
 	if UnitIsAFK("player") then WallpaperKit:Enable() AFK = true WallpaperKit:SetScript("OnUpdate", frame_OnUpdate) else AFK = false total = 0 WallpaperKit:SetScript("OnUpdate", nil) end  
 end)

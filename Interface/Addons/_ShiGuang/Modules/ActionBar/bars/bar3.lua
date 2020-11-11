@@ -205,7 +205,7 @@ function Bar:CreateBar3()
 
 	frame.buttonList = buttonList
 	SetFrameSize(frame, cfg.size, num)
-	
+
 	frame.frameVisibility = "[petbattle][overridebar][vehicleui][possessbar,@vehicle,exists][shapeshift] hide; show"
 	RegisterStateDriver(frame, "visibility", frame.frameVisibility)
 

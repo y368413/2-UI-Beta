@@ -1,0 +1,8 @@
+﻿## Interface: 90001
+## Title: wow_WeiDa
+## Title-zhCN: |c0066ffffwow_WeiDa魔兽世界日常答题辅助插件|r
+## Notes-zhCN: |cFF34A2F7把正确答案标记成蓝色。|r
+## Version: 3.0
+## Author: out_of_range, 高频变压器
+
+Code.lua

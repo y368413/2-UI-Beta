@@ -778,19 +778,19 @@ function WorldMapQuestBountyCount:OnLoad()
 	self.bountyBoard = bountyBoard;
 	
 	hooksecurefunc(bountyBoard, "OnTabClick", function(self, tab) 
-		if (not R.db["Misc"]["WorldQusetRewardIcons"] or tab.isEmpty) then return; end
+		if (not MaoRUIPerDB["Misc"]["WorldQusetRewardIcons"] or tab.isEmpty) then return; end
 		WRWorldQuestFrame.autoEmisarryId = bountyBoard.bounties[tab.bountyIndex];
 	end, self)
 	
 	hooksecurefunc(bountyBoard, "RefreshSelectedBounty", function() 
-		if (R.db["Misc"]["WorldQusetRewardIcons"]) then
+		if (MaoRUIPerDB["Misc"]["WorldQusetRewardIcons"]) then
 			self:UpdateBountyCounters();
 		end
 	end)
 		
 	-- Slight offset the tabs to make room for the counters
 	hooksecurefunc(bountyBoard, "AnchorBountyTab", function(self, tab) 
-		if (not R.db["Misc"]["WorldQusetRewardIcons"]) then return end
+		if (not MaoRUIPerDB["Misc"]["WorldQusetRewardIcons"]) then return end
 		local point, relativeTo, relativePoint, x, y = tab:GetPoint(1);
 		tab:SetPoint(point, relativeTo, relativePoint, x, y + 2);
 	end)
@@ -798,7 +798,7 @@ end
 		
 function WorldMapQuestBountyCount:UpdateBountyCounters()
 	self.bountyCounterPool:ReleaseAll();
-	if (not R.db["Misc"]["WorldQusetRewardIcons"]) then return end
+	if (not MaoRUIPerDB["Misc"]["WorldQusetRewardIcons"]) then return end
 	if (not self.bountyInfo) then
 		self.bountyInfo = {};
 	end

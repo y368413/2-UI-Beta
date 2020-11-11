@@ -36,7 +36,8 @@ WOD\HandyNotes_Draenor.lua
 # LEG
 #LEG\HandyNotes_SuramarLeylines.lua
 LEG\HandyNotes_SuramarTelemancy.lua
-LEG\HandyNotes_LegionTreasures.lua
+LEG\HandyNotes_Argus.lua
+##LEG\HandyNotes_LegionTreasures.lua
 
 # BFA
 BFA\HandyNotes_WarfrontRares.lua

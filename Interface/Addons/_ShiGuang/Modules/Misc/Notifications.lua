@@ -8,7 +8,9 @@ local GetInstanceInfo, PlaySound = GetInstanceInfo, PlaySound
 local IsPartyLFG, IsInRaid, IsInGroup, IsInInstance, IsInGuild = IsPartyLFG, IsInRaid, IsInGroup, IsInInstance, IsInGuild
 local UnitInRaid, UnitInParty, SendChatMessage = UnitInRaid, UnitInParty, SendChatMessage
 local UnitName, Ambiguate, GetTime = UnitName, Ambiguate, GetTime
-local GetSpellLink, GetSpellInfo = GetSpellLink, GetSpellInfo
+local GetSpellLink, GetSpellInfo, GetSpellCooldown = GetSpellLink, GetSpellInfo, GetSpellCooldown
+local GetActionInfo, GetMacroSpell, GetMacroItem = GetActionInfo, GetMacroSpell, GetMacroItem
+local GetItemInfo, GetItemInfoFromHyperlink = GetItemInfo, GetItemInfoFromHyperlink
 local C_VignetteInfo_GetVignetteInfo = C_VignetteInfo.GetVignetteInfo
 local C_Texture_GetAtlasInfo = C_Texture.GetAtlasInfo
 local C_ChatInfo_SendAddonMessage = C_ChatInfo.SendAddonMessage
@@ -461,7 +463,6 @@ local IncompatibleAddOns = {
 	["BigFoot"] = true,
 	["NDui"] = true,
 	["!!!163UI!!!"] = true,
-	["AzeriteTooltip"] = true,
 }
 local AddonDependency = {
 	["BigFoot"] = "!!!Libs",
@@ -509,6 +510,64 @@ function MISC:CheckIncompatible()
 	end
 end
 
+-- Send cooldown status
+local lastCDSend = 0
+function MISC:SendCurrentSpell(thisTime, spellID)
+	local start, duration = GetSpellCooldown(spellID)
+	local spellLink = GetSpellLink(spellID)
+	if start and duration > 0 then
+		local remain = start + duration - thisTime
+		SendChatMessage(format(U["CooldownRemaining"], spellLink, remain), msgChannel())
+	else
+		SendChatMessage(format(U["CooldownCompleted"], spellLink), msgChannel())
+	end
+end
+
+function MISC:SendCurrentItem(thisTime, itemID, itemLink)
+	local start, duration = GetItemCooldown(itemID)
+	if start and duration > 0 then
+		local remain = start + duration - thisTime
+		SendChatMessage(format(U["CooldownRemaining"], itemLink, remain), msgChannel())
+	else
+		SendChatMessage(format(U["CooldownCompleted"], itemLink), msgChannel())
+	end
+end
+
+function MISC:AnalyzeButtonCooldown()
+	if not R.db["Misc"]["SendActionCD"] then return end
+	if not IsInGroup() then return end
+
+	local thisTime = GetTime()
+	if thisTime - lastCDSend < 1.5 then return end
+	lastCDSend = thisTime
+
+	local spellType, id = GetActionInfo(self.action)
+	if spellType == "spell" then
+		MISC:SendCurrentSpell(thisTime, id)
+	elseif spellType == "item" then
+		local itemName, itemLink = GetItemInfo(id)
+		MISC:SendCurrentItem(thisTime, id, itemLink or itemName)
+	elseif spellType == "macro" then
+		local spellID = GetMacroSpell(id)
+		local _, itemLink = GetMacroItem(id)
+		local itemID = itemLink and GetItemInfoFromHyperlink(itemLink)
+		if spellID then
+			MISC:SendCurrentSpell(thisTime, spellID)
+		elseif itemID then
+			MISC:SendCurrentItem(thisTime, itemID, itemLink)
+		end
+	end
+end
+
+function MISC:SendCDStatus()
+	if not R.db["Actionbar"]["Enable"] then return end
+
+	local Bar = M:GetModule("Actionbar")
+	for _, button in pairs(Bar.buttons) do
+		button:HookScript("OnMouseWheel", MISC.AnalyzeButtonCooldown)
+	end
+end
+
 -- Init
 function MISC:AddAlerts()
 	MISC:SoloInfo()
@@ -518,6 +577,7 @@ function MISC:AddAlerts()
 	MISC:PlacedItemAlert()
 	MISC:NVision_Init()
 	MISC:CheckIncompatible()
+	MISC:SendCDStatus()
 end
 MISC:RegisterMisc("Notifications", MISC.AddAlerts)
 

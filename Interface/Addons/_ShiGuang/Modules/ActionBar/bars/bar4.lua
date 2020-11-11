@@ -236,8 +236,8 @@ function Bar:CreateBar4()
 				button:SetPoint("TOP", _G["MultiBarRightButton"..i-1], "BOTTOM", 0, -margin)
 			end
 		end
-         end
-	 
+	end
+
 	frame.buttonList = buttonList
 	SetFrameSize(frame, cfg.size, num)
 

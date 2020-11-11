@@ -245,7 +245,7 @@ end
 function A:RemoveSpellFromIgnoreList()
 	if IsAltKeyDown() and IsControlKeyDown() and self.spellID and R.db["AuraWatchList"]["IgnoreSpells"][self.spellID] then
 		R.db["AuraWatchList"]["IgnoreSpells"][self.spellID] = nil
-		print(format(U["RemoveFromIgnoreList"], "|cff0080ff|r", self.spellID))
+		print(format(U["RemoveFromIgnoreList"], I.NDuiString, self.spellID))
 	end
 end
 

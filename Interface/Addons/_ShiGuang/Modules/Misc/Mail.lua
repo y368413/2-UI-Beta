@@ -286,22 +286,26 @@ function MISC:MailBox_CreatButton(parent, width, height, text, anchor)
 	button:SetSize(width, height)
 	button:SetPoint(unpack(anchor))
 	button:SetText(text)
-	if R.db["Skins"]["BlizzardSkins"] then M.Reskin(button) end
 
 	return button
 end
 
 function MISC:CollectGoldButton()
 	OpenAllMail:ClearAllPoints()
-	OpenAllMail:SetPoint("TOPLEFT", InboxFrame, "TOPLEFT", 50, -35)
+	OpenAllMail:SetPoint("TOPLEFT", InboxFrame, "TOPLEFT", 50, -30)
 
-	local button = MISC:MailBox_CreatButton(InboxFrame, 120, 24, "", {"LEFT", OpenAllMail, "RIGHT", 3, 0})
+	local button = MISC:MailBox_CreatButton(InboxFrame, 80, 25, "", {"LEFT", OpenAllMail, "RIGHT", 0, 0})
 	button:SetScript("OnClick", MISC.MailBox_CollectAllGold)
 	button:SetScript("OnEnter", MISC.TotalCash_OnEnter)
 	button:SetScript("OnLeave", MISC.TotalCash_OnLeave)
-
+	
 	MISC.GoldButton = button
 	MISC:UpdateOpeningText()
+	
+	-------DelMailbutton----------------
+	local DelMailbutton = MISC:MailBox_CreatButton(InboxFrame, 80, 25, "", {"LEFT", button, "RIGHT", 0, 0})
+	DelMailbutton:SetText(MAIL_DELETEEMPTYMAILS)
+	DelMailbutton:SetScript("OnClick", function() SenduiCmd("/mbclean") end)
 end
 
 function MISC:MailBox_CollectAttachment()
@@ -343,15 +347,7 @@ function MISC:MailBox()
 		MISC.MailItem_AddDelete(itemButton, i)
 	end
 
-	-------DelMailbutton----------------
-	local DelMailbutton = CreateFrame("Button", nil, InboxFrame, "UIPanelButtonTemplate")
-	DelMailbutton:SetWidth(80)
-	DelMailbutton:SetHeight(26)
-	DelMailbutton:SetPoint("TOPRIGHT", InboxFrame, "TOPRIGHT", -66, 0)
-	DelMailbutton:SetText(MAIL_DELETEEMPTYMAILS)
-	DelMailbutton:SetScript("OnClick", function() SenduiCmd("/mbclean") end)
-
-		-- Tooltips for multi-items
+	-- Tooltips for multi-items
 	hooksecurefunc("InboxFrameItem_OnEnter", MISC.InboxItem_OnEnter)
 
 	-- Custom contact list
