@@ -6,7 +6,7 @@
 	<Script file="AngryWorldQuest.lua"/>
 	<Script file="WorldMapQuestRewardIcon.lua"/>
 
-    <Button name="QuestBindingsButtonTemplate" virtual="true">
+    <!--Button name="QuestBindingsButtonTemplate" virtual="true">
         <Size x="16" y="16"/>
         <Layers>
             <Layer level="ARTWORK">
@@ -23,7 +23,7 @@
             </OnClick>
         </Scripts>
     </Button>
-  <Script file="QuestBindings.lua"/>
+  <Script file="QuestBindings.lua"/-->
   
 	<Frame name="BountyCounterTemplate" virtual="true" hidden="false">
 		<Size x="10" y="10"/>
