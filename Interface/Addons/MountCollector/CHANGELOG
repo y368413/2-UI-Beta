@@ -58,3 +58,26 @@
 1.8.2:
  - Fix for Warfront rare kill tracking
  - Fix for Royal Snapdragon tracking
+ 
+1.8.3:
+ - Fix for tracking kills for Life-Binder's Handmaiden
+ - Added Lunarfall Cavedweller/Frostdeep Cavedweller rares for fishing up the turle mounts in the WoD Garrison
+ 
+1.8.4:
+ - Fix for tracking kills in ICC
+ 
+1.8.5:
+ - Fix some non-English localisation issues
+ 
+1.8.6:
+ - Fix for some Shadowlands pre-patch bugs
+ 
+1.8.7:
+ - Updated libraries to fix minimap icon bug after pre-patch
+
+1.8.8:
+ - Fix for SetBackdrop bug in LQTip library
+
+1.8.9:
+ - Fix for tracking kills on 10 Heroic
+ - Added some missing vendor mounts

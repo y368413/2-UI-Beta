@@ -3,7 +3,7 @@
 -- @Link   : https://dengsir.github.io
 -- @Date   : 9/20/2018, 6:11:06 PM
 
-local MAJOR, MINOR = 'Dropdown', 1
+local MAJOR, MINOR = 'Dropdown', 2
 local GUI = LibStub('tdGUI-1.0')
 local Dropdown, oldminor = GUI:NewClass(MAJOR, MINOR, 'Button')
 if not Dropdown then return end
@@ -73,6 +73,10 @@ function Dropdown:OnClick()
 end
 
 local function _GetItem(menuTable, value)
+    if type(menuTable) == 'function' then
+        local list = {}
+        menuTable = menuTable(list) or list
+    end
     for i, v in ipairs(menuTable) do
         if v.value == value then
             return v

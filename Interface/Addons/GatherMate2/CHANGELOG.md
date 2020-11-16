@@ -1,11 +1,6 @@
 # GatherMate2
 
-## [1.46.0](https://github.com/Nevcairiel/GatherMate2/tree/1.46.0) (2020-10-13)
-[Full Changelog](https://github.com/Nevcairiel/GatherMate2/compare/1.45.6...1.46.0) [Previous Releases](https://github.com/Nevcairiel/GatherMate2/releases)
+## [1.46.0-1-gbcf6a57](https://github.com/Nevcairiel/GatherMate2/tree/bcf6a57a51a44494ec64d8722e33442ed8f59651) (2020-11-14)
+[Full Changelog](https://github.com/Nevcairiel/GatherMate2/compare/1.46.0...bcf6a57a51a44494ec64d8722e33442ed8f59651) [Previous Releases](https://github.com/Nevcairiel/GatherMate2/releases)
 
-- Update TOC for 9.0  
-- Add Shadowlands fishing pools  
-- Add Shadowlands Mining and Herbalism nodes  
-- Use new mapRadius source on WoW 9.0 to avoid event spam  
-- Delegate classic tags to the classic script  
-- Migrate to GitHub Actions  
+- Fix mismatched mining artwork for Elementium and Pyrite  

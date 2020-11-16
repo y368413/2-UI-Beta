@@ -6,7 +6,7 @@ GridView.lua
 
 local MAJOR, MINOR = 'GridView', 5
 local GUI = LibStub('tdGUI-1.0')
-local GridView = GUI:NewClass(MAJOR, MINOR, 'Frame', 'Refresh', 'View', 'Select', 'Owner')
+local GridView = GUI:NewClass(MAJOR, MINOR, 'Frame', 'Refresh', 'View', 'Select', 'Owner', 'Backdrop')
 if not GridView then return end
 
 function GridView:Constructor()
