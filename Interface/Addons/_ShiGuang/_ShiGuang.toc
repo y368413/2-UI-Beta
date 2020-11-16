@@ -7,7 +7,7 @@
 ## SavedVariablesPerCharacter: MaoRUIPerDB,ShiGuangPerDB,DEX_SAVE
 ## X-Support: 9.0.1
 ## X-Repple: 2 UI
-## X-StatsVersion: 20201113
+## X-StatsVersion: 20201114
 ## X-LoadOn-Always: Delayed
 ## X-Website: https://github.com/y368413/2-UI
 ## X-Credits: abin, ape47, Coolkid, Elv, Freebaser, Haleth, Haste, Loshine, Monolit, Neal, Neavo, p3lim, Qulight, Ray, superk, Tukz, Tuller, Warbaby, yleaf, Zork, EK, Rubgrsch, siweia & "PaoPao"...
