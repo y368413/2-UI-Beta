@@ -1,0 +1,18 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+  <Include file="Core\Core.xml"/>
+  <Script file="HandyNotes_BattleForAzeroth.lua"/>
+  <Script file="HandyNotes_BattleForAzeroth\arathi_highlands.lua"/>
+  <Script file="HandyNotes_BattleForAzeroth\darkshore.lua"/>
+  <Script file="HandyNotes_BattleForAzeroth\drustvar.lua"/>
+  <Script file="HandyNotes_BattleForAzeroth\mechagon.lua"/>
+  <Script file="HandyNotes_BattleForAzeroth\nazjatar.lua"/>
+  <Script file="HandyNotes_BattleForAzeroth\nazmir.lua"/>
+  <Script file="HandyNotes_BattleForAzeroth\stormsong_valley.lua"/>
+  <Script file="HandyNotes_BattleForAzeroth\tiragarde_sound.lua"/>
+  <Script file="HandyNotes_BattleForAzeroth\uldum.lua"/>
+  <Script file="HandyNotes_BattleForAzeroth\vale.lua"/>
+  <Script file="HandyNotes_BattleForAzeroth\visions.lua"/>
+  <Script file="HandyNotes_BattleForAzeroth\voldun.lua"/>
+  <Script file="HandyNotes_BattleForAzeroth\zuldazar.lua"/>
+  <!-- <Script file="HandyNotes_BattleForAzeroth\operation_mechagon.lua"/> -->
+</Ui>
