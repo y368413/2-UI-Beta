@@ -1,6 +1,6 @@
-## Interface: 90001
+## Interface: 90002
 ## Author: Xinhuan
-## Version: v1.6.0 
+## Version: v1.6.1
 ## Title: HandyNotes
 ## Title-zhCN:|cff0080ff[地图]|r宝藏稀有
 ## Title-zhTW:|cff0080ff[地图]|r寶藏稀有
@@ -11,8 +11,6 @@
 ## Dependencies: _ShiGuang, Blizzard_FlightMap
 
 ## X-Repple: 2 UI
-
-WorldFlightMap.lua
 
 # Locale files
 Locales\Locales.xml
@@ -37,7 +35,7 @@ WOD\HandyNotes_Draenor.lua
 #LEG\HandyNotes_SuramarLeylines.lua
 LEG\HandyNotes_SuramarTelemancy.lua
 LEG\HandyNotes_Argus.lua
-##LEG\HandyNotes_LegionTreasures.lua
+LEG\HandyNotes_LegionTreasures.lua
 
 # BFA
 BFA\HandyNotes_WarfrontRares.lua
@@ -63,4 +61,4 @@ Mode\HandyNotes_PetDailies.lua
 # Others files
 CandyBuckets.lua
 BiggerBagChecker.lua
-# WorldFlightMap.lua
+WorldFlightMap.lua

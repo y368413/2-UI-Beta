@@ -12,47 +12,58 @@ local Minimap_OnClick = Minimap_OnClick;
 ns.QuestArrowToken = {};
 local LibHijackMinimap_Token,TrackingIndex,LibHijackMinimap,_ = {},{};
 local media, media_blizz = "Interface\\AddOns\\"..addon.."\\media\\", "Interface\\Minimap\\";
-local mps,MinimapMT,mouseOnKeybind,Dummy = {},getmetatable(_G.Minimap).__index;
+local mps,Minimap,MinimapMT,mouseOnKeybind,Dummy = {},_G.Minimap,getmetatable(_G.Minimap).__index;
 local minimapScripts,cardinalTicker,coordsTicker = {--[["OnMouseUp",]]"OnMouseDown","OnDragStart"};
 local playerDot_orig, playerDot_custom = "Interface\\Minimap\\MinimapArrow";
-local TrackingIndex,timeTicker={};
+local TrackingIndex,timeTicker = {};
+local knownProblematicAddOns, knownProblematicAddOnsDetected = {BasicMinimap=true},{};
 local SetPointToken,SetParentToken = {},{};
 local trackingTypes,trackingTypesStates,numTrackingTypes,trackingHookLocked = {},{},0,false;
-local anchoredFrames = { -- <name[string]>, <SetPoint[bool]>, <SetParent[bool]>
+--local MinimapFunctionHijacked = {"SetParent","ClearAllPoints","SetAllPoints","GetPoint","GetNumPoints"};
+local PrintTokens,rotationMode,IsOpened = {
+	FarmHud_QuestArrow = {}
+};
+local foreignObjects,anchoredFrames = {},{ -- <name[string]>
 	-- Blizzard
-	"TimeManagerClockButton",true,true,
-	"GameTimeFrame",true,true,
-	"TimerTracker",true,true,
-	"MinimapBackdrop",true,true,
-	"MinimapNorthTag",true,true,
-	"MinimapCompassTexture",true,true,
-	"MiniMapTracking",true,true,
-	"MinimapZoomIn",true,true,
-	"MinimapZoomOut",true,true,
-	"MinimapZoneText",true,false,
-	"MiniMapWorldMapButton",true,true,
-	"GarrisonLandingPageMinimapButton",true,true,
+	"TimeManagerClockButton", -- required if foreign addon changed
+	"GameTimeFrame", -- required if foreign addon changed
+	"TimerTracker",
+	"MinimapBackdrop", -- required if foreign addon changed
+	"MinimapNorthTag",
+	"MinimapCompassTexture",
+	"MiniMapTracking",
+	"MinimapZoomIn",
+	"MinimapZoomOut",
+	"MinimapZoneText",
+	"MiniMapWorldMapButton",
+	"GarrisonLandingPageMinimapButton",
 	-- MinimapButtonFrame
-	"MBB_MinimapButtonFrame",true,true,
+	--"MBB_MinimapButtonFrame",
 	-- SexyMap
-	"SexyMapCustomBackdrop",true,true,
-	"QueueStatusMinimapButton",true,true,
+	--"SexyMapCustomBackdrop",
+	"QueueStatusMinimapButton",
 	-- chinchilla minimap
-	"Chinchilla_Coordinates_Frame",true,true,
-	"Chinchilla_Location_Frame",true,true,
-	"Chinchilla_Compass_Frame",true,true,
-	"Chinchilla_Appearance_MinimapCorner1",true,true,
-	"Chinchilla_Appearance_MinimapCorner2",true,true,
-	"Chinchilla_Appearance_MinimapCorner3",true,true,
-	"Chinchilla_Appearance_MinimapCorner4",true,true,
+	"Chinchilla_Coordinates_Frame",
+	"Chinchilla_Location_Frame",
+	"Chinchilla_Compass_Frame",
+	"Chinchilla_Appearance_MinimapCorner1",
+	"Chinchilla_Appearance_MinimapCorner2",
+	"Chinchilla_Appearance_MinimapCorner3",
+	"Chinchilla_Appearance_MinimapCorner4",
 	-- obeliskminimap
-	"ObeliskMinimapZoneText",true,true,
-	"ObeliskMinimapInformationFrame",true,true,
+	"ObeliskMinimapZoneText",
+	"ObeliskMinimapInformationFrame",
 	-- Lorti-UI / Lorti-UI-Classic
-	"rBFS_BuffDragFrame",true,false,
-	"rBFS_DebuffDragFrame",true,false,
+	"rBFS_BuffDragFrame",
+	"rBFS_DebuffDragFrame",
 	-- BtWQuests
-	"BtWQuestsMinimapButton",true,true,
+	"BtWQuestsMinimapButton",
+	-- GW2_UI
+	"GwQuestTracker",
+	"GwAddonToggle",
+	"GwCalendarButton",
+	"GwGarrisonButton",
+	"GwMailButton",
 };
 local modifiers = {
 	A  = {LALT=1,RALT=1},
@@ -65,10 +76,12 @@ local modifiers = {
 	SL = {LSHIFT=1},
 	SR = {RSHIFT=1},
 };
+local minimapCreateTextureTable = {};
 
 do
 	local addon_short = "FH";
 	local colors = {"0099ff","00ff00","ff6060","44ffff","ffff00","ff8800","ff44ff","ffffff"};
+	local debugMode = "8.6.2-release" == "@".."project-version".."@";
 	local function colorize(...)
 		local t,c,a1 = {tostringall(...)},1,...;
 		if type(a1)=="boolean" then tremove(t,1); end
@@ -100,6 +113,15 @@ do
 		--print(colorize("<debug>",...));
 		ConsolePrint(date("|cff999999%X|r"),colorize(...));
 	end
+	function ns.debugPrint(...)
+		if not debugMode then return end
+		print(colorize("<debug>",...))
+	end
+	if debugMode then
+		_G[addon.."_GetNamespace"] = function()
+			return ns;
+		end
+	end
 end
 
 ns.IsClassic = IsClassic or IsClassicClient;
@@ -115,7 +137,7 @@ local function SetPlayerDotTexture(bool) -- executed by FarmHud:UpdateOptions(),
 	if FarmHudDB.player_dot=="blizz" or not bool then
 		tex = playerDot_custom or playerDot_orig;
 	end
-	MinimapMT.SetPlayerTexture(_G.Minimap,tex);
+	MinimapMT.SetPlayerTexture(Minimap,tex);
 end
 
 -- tracking options
@@ -169,57 +191,75 @@ local function TrackingTypes_Update(bool, id)
 	end
 end
 
+
+-- repalce CreateTexture function from Minimap to get access on nameless texture created by foreign addons; i hate such activity but forced to do...
+
+do
+	local Minimap_CreateTexture = Minimap.CreateTexture;
+	function Minimap:CreateTexture(...)
+		local byAddOn = ({strsplit("\\", ({strsplit("\n",debugstack())})[2] )})[3];
+		--ns.debug("<Minimap:CreateTexture>",byAddOn);
+		local tex = Minimap_CreateTexture(self,...);
+		tinsert(minimapCreateTextureTable,tex);
+		return tex;
+	end
+end
+
 -- dummyOnly; prevent changes by foreign addons while farmhud is visible
 
-local function dummyOnly_SetPoint(self,a,b,c,d,e)
-	return self[SetPointToken](self,a,(b==_G.Minimap or b=="Minimap") and Dummy or b,c,d,e);
+local function dummyOnly_SetPoint(self,point,relTo,relPoint,x,y)
+	if relTo==Minimap or relTo=="Minimap" then
+		relTo = Dummy
+	end
+	return self[SetPointToken](self,point,relTo,relPoint,x,y);
 end
 
 local function dummyOnly_SetParent(self,parent)
-	if parent==_G.Minimap or p=="Minimap" then
-		return self[SetParentToken](self,Dummy);
+	if parent==Minimap or parent=="Minimap" then
+		parent = Dummy;
 	end
 	return self[SetParentToken](self,parent);
 end
 
-local function objectToDummy(object,enable,doSetPoint,doSetParent)
-	local parent,fstrata,flevel,dlayer,dlevel = object:GetParent();
-	if doSetPoint then
-		if object[SetPointToken]==nil then
-			object[SetPointToken] = object.SetPoint;
-		end
-		local changed = false;
-		for p=1, (object:GetNumPoints()) do
-			local point,relTo,relPoint,x,y = object:GetPoint(p);
-			if enable==true and relTo==_G.Minimap then
- 				object[SetPointToken](object,point,Dummy,relPoint,x,y);
-				changed=true;
-			elseif enable==false and relTo==Dummy then
-				object[SetPointToken](object,point,_G.Minimap,relPoint,x,y);
-				changed=true;
-			end
-		end
-		if changed then
-			object.SetPoint = enable and dummyOnly_SetPoint or object[SetPointToken];
-		end
+local objSetPoint = {};
+local objSetParent = {};
+local function objectToDummy(object,enable,debugStr)
+	local changedSetParent,changedSetPoint,objType = false,false,object:GetObjectType()
+	if objSetParent[objType] == nil then
+		objSetParent[objType] = getmetatable(object).__index.SetParent;
 	end
-	if doSetParent then
-		if object.GetDrawLayer then
-			dlayer,dlevel = object:GetDrawLayer(); -- textures
+	if objSetPoint[objType]==nil then
+		objSetPoint[objType] = getmetatable(object).__index.SetPoint;
+	end
+
+	-- == parent == --
+
+	-- get strata/layer/level info
+	local fstrata,flevel,dlayer,dlevel
+	if object.GetDrawLayer then
+		dlayer,dlevel = object:GetDrawLayer(); -- textures
+	else
+		fstrata = object:GetFrameStrata(); -- frames
+		flevel = object:GetFrameLevel();
+	end
+
+	local parent = object:GetParent();
+	if enable==true and parent==Minimap then
+		objSetParent[objType](object,Dummy);
+		changedSetParent = true;
+	elseif enable==false and parent==Dummy then
+		objSetParent[objType](object,Minimap);
+		changedSetParent = true;
+	end
+
+	if changedSetParent then
+		-- replace SetParent function
+		if enable then
+			object[SetParentToken],object.SetParent = object.SetParent,dummyOnly_SetParent;
 		else
-			fstrata = object:GetFrameStrata(); -- frames
-			flevel = object:GetFrameLevel();
+			object.SetParent,object[SetParentToken] = object[SetParentToken],nil;
 		end
-		if object[SetParentToken]==nil then
-			object[SetParentToken] = object.SetParent;
-		end
-		if enable==true and parent==_G.Minimap then
-			object.SetParent = dummyOnly_SetParent;
-			object[SetParentToken](object,Dummy);
-		elseif enable==false and parent==Dummy then
-			object.SetParent = object[SetParentToken];
-			object[SetParentToken](object,_G.Minimap);
-		end
+		-- reapply strata/layer/level after change of parent
 		if dlayer then
 			object:SetDrawLayer(dlayer,dlevel);
 		else
@@ -227,11 +267,44 @@ local function objectToDummy(object,enable,doSetPoint,doSetParent)
 			object:SetFrameLevel(flevel);
 		end
 	end
-	return parent;
+
+	-- == anchors == --
+	local changedSetPoint = false; -- reset for SetPoint
+
+	-- search and change anchors on minimap
+	for p=1, (object:GetNumPoints()) do
+		local point,relTo,relPoint,x,y = object:GetPoint(p);
+		if enable==true and relTo==Minimap then
+			objSetPoint[objType](object,point,Dummy,relPoint,x,y);
+			changedSetPoint=true;
+		elseif enable==false and relTo==Dummy then
+			objSetPoint[objType](object,point,Minimap,relPoint,x,y);
+			changedSetPoint=true;
+		end
+	end
+
+	if changedSetPoint then
+		-- replace SetPoint function
+		if enable then
+			object[SetPointToken],object.SetPoint = object.SetPoint,dummyOnly_SetPoint;
+		else
+			object.SetPoint,object[SetPointToken] = object[SetPointToken],nil;
+		end
+	end
+
+	--ns.debug(object:GetDebugName(),debugStr,enable,changedSetParent and "SetParent" or "",changedSetPoint and "SetPoint" or "");
+
+	return changedSetParent,changedSetPoint;
 end
 
+local function IsHereBeDragonPins(obj)
+	if (obj.arrow and obj.point) or obj.keep==true then -- try to ignore HereBeDragonPins
+		return true;
+	end
+	return false;
+end
 
--- function replacements for _G.Minimap while FarmHud is enabled.
+-- function replacements for Minimap while FarmHud is enabled.
 -- Should prevent problems with repositioning of minimap buttons from other addons.
 local replacements = {
 	GetWidth = function() return Dummy:GetWidth() end,
@@ -346,13 +419,13 @@ function FarmHudMixin:SetScales(enabled)
 
 	local MinimapSize = size * FarmHudDB.hud_size;
 	local MinimapScaledSize =  MinimapSize / FarmHudDB.hud_scale;
-	MinimapMT.SetScale(_G.Minimap,FarmHudDB.hud_scale);
-	MinimapMT.SetSize(_G.Minimap,MinimapScaledSize, MinimapScaledSize);
+	MinimapMT.SetScale(Minimap,FarmHudDB.hud_scale);
+	MinimapMT.SetSize(Minimap,MinimapScaledSize, MinimapScaledSize);
 
 	self.cluster:SetScale(FarmHudDB.hud_scale);
 	self.cluster:SetSize(MinimapScaledSize, MinimapScaledSize);
-	self.cluster:SetFrameStrata(_G.Minimap:GetFrameStrata());
-	self.cluster:SetFrameLevel(_G.Minimap:GetFrameLevel());
+	self.cluster:SetFrameStrata(Minimap:GetFrameStrata());
+	self.cluster:SetFrameLevel(Minimap:GetFrameLevel());
 
 	local gcSize = MinimapSize * 0.432;
 	self.gatherCircle:SetSize(gcSize, gcSize);
@@ -388,7 +461,7 @@ function FarmHudMixin:UpdateScale()
 end
 
 function FarmHudMixin:UpdateForeignAddOns(state)
-	local Map = state and self.cluster or _G.Minimap;
+	local Map = state and self.cluster or Minimap;
 
 	if GatherMate2 then
 		GatherMate2:GetModule("Display"):ReparentMinimapPins(Map);
@@ -426,7 +499,7 @@ do
 		self:SetScales(true);
 
 		if IsKey(key,"background_alpha") then
-			MinimapMT.SetAlpha(_G.Minimap,FarmHudDB.background_alpha);
+			MinimapMT.SetAlpha(Minimap,FarmHudDB.background_alpha);
 		elseif IsKey(key,"player_dot") then
 			SetPlayerDotTexture(true);
 		elseif IsKey(key,"mouseoverinfo_color") then
@@ -459,7 +532,7 @@ do
 		elseif IsKey(key,"showDummy") then
 			Dummy:SetShown(FarmHudDB.showDummy);
 		elseif IsKey(key,"showDummyBg") then
-			Dummy.bg:SetShown(FarmHudDB.showDummyBg);
+			Dummy.bg:SetShown(FarmHudDB.showDummyBg and (not HybridMinimap or (HybridMinimap and not HybridMinimap:IsShown())) );
 		elseif key:find("tracking^%d+") and not ns.IsClassic() then
 			local _, id = strsplit("^",key);
 			id = tonumber(id);
@@ -477,16 +550,16 @@ do
 end
 
 function FarmHudMixin:OnShow()
-	Dummy:SetParent(_G.Minimap:GetParent());
-	Dummy:SetScale(_G.Minimap:GetScale());
-	Dummy:SetSize(_G.Minimap:GetSize());
-	Dummy:SetFrameStrata(_G.Minimap:GetFrameStrata());
-	Dummy:SetFrameLevel(_G.Minimap:GetFrameLevel());
+	Dummy:SetParent(Minimap:GetParent());
+	Dummy:SetScale(Minimap:GetScale());
+	Dummy:SetSize(Minimap:GetSize());
+	Dummy:SetFrameStrata(Minimap:GetFrameStrata());
+	Dummy:SetFrameLevel(Minimap:GetFrameLevel());
 	Dummy:ClearAllPoints();
-	for i=1, _G.Minimap:GetNumPoints() do
-		Dummy:SetPoint(_G.Minimap:GetPoint(i));
+	for i=1, Minimap:GetNumPoints() do
+		Dummy:SetPoint(Minimap:GetPoint(i));
 	end
-	Dummy.bg:SetShown(FarmHudDB.showDummyBg);
+	Dummy.bg:SetShown(FarmHudDB.showDummyBg and (not HybridMinimap or (HybridMinimap and not HybridMinimap:IsShown())) );
 	Dummy:SetShown(FarmHudDB.showDummy);
 	self.cluster:Show();
 
@@ -494,79 +567,105 @@ function FarmHudMixin:OnShow()
 	mps.anchors = {};
 	mps.childs = {};
 	mps.replacements = {};
-	mps.zoom = _G.Minimap:GetZoom();
-	mps.parent = _G.Minimap:GetParent();
-	mps.scale = _G.Minimap:GetScale();
-	mps.size = {_G.Minimap:GetSize()};
-	mps.strata = _G.Minimap:GetFrameStrata();
-	mps.level = _G.Minimap:GetFrameLevel();
-	mps.mouse = _G.Minimap:IsMouseEnabled();
-	mps.mousewheel = _G.Minimap:IsMouseWheelEnabled();
-	mps.alpha = _G.Minimap:GetAlpha();
+	mps.zoom = Minimap:GetZoom();
+	mps.parent = Minimap:GetParent();
+	mps.scale = Minimap:GetScale();
+	mps.size = {Minimap:GetSize()};
+	mps.strata = Minimap:GetFrameStrata();
+	mps.level = Minimap:GetFrameLevel();
+	mps.mouse = Minimap:IsMouseEnabled();
+	mps.mousewheel = Minimap:IsMouseWheelEnabled();
+	mps.alpha = Minimap:GetAlpha();
 
 	-- cache mouse enable state
-	local onmouseup = _G.Minimap:GetScript("OnMouseUp");
+	local onmouseup = Minimap:GetScript("OnMouseUp");
 	if onmouseup~=Minimap_OnClick then
 		mps.ommouseup = onmouseup;
-		MinimapMT.SetScript(_G.Minimap,"OnMouseUp",Minimap_OnClick);
+		MinimapMT.SetScript(Minimap,"OnMouseUp",Minimap_OnClick);
 	end
 
 	-- cache non original frame script entries from foreign addons
 	for _,action in ipairs(minimapScripts)do
-		local fnc = _G.Minimap:GetScript(action);
+		local fnc = Minimap:GetScript(action);
 		if fnc then
 			mps[action] = fnc;
-			MinimapMT.SetScript(_G.Minimap,action,nil);
+			MinimapMT.SetScript(Minimap,action,nil);
 		end
 	end
 
 	-- cache minimap anchors
-	for i=1, _G.Minimap:GetNumPoints() do
-		mps.anchors[i] = {_G.Minimap:GetPoint(i)};
+	for i=1, Minimap:GetNumPoints() do
+		mps.anchors[i] = {Minimap:GetPoint(i)};
 	end
 
+	--ns.debug("+","+","move child regions of a frame");
+	-- move child and regions of a frame to FarmHudDummy
+	for object,movedElements in pairs(foreignObjects) do
+		local parent,point
+		-- childs
+		local childs = {object:GetChildren()};
+		for i=1, #childs do
+			if not IsHereBeDragonPins(childs[i]) then
+				parent,point = objectToDummy(childs[i],true,"OnShow.GetChildren");
+				if parent or point then
+					tinsert(movedElements.childs,childs[i])
+				end
+			end
+		end
+
+		-- child textures/fontstrings
+		local regions = {object:GetRegions()};
+		for r=1, #regions do
+			parent,point = objectToDummy(regions[r],true,"OnShow.GetRegions");
+			if parent or point then
+				tinsert(movedElements.regions,regions[r]);
+			end
+		end
+	end
+
+	--ns.debug("+","+","move anchored frames by name table");
 	-- reanchor named frames that not have minimap as parent but anchored on it
 	mps.anchoredFrames = {};
-	for i=1, #anchoredFrames, 3 do
+	for i=1, #anchoredFrames do
 		if _G[anchoredFrames[i]] then
 			mps.anchoredFrames[i]=true;
-			objectToDummy(_G[anchoredFrames[i]],true,anchoredFrames[i+1],anchoredFrames[i+2]);
+			objectToDummy(_G[anchoredFrames[i]],true,"OnShow.anchoredFrames");
 		end
 	end
 
-	-- move child frames to dummy frame
-	local childs = {_G.Minimap:GetChildren()};
-	for i=1, #childs do
-		if not (childs[i].arrow and childs[i].point) or not childs[i].keep==true then -- try to ignore HereBeDragonPins
-			objectToDummy(childs[i],true,true,true);
+	--ns.debug("+","+","move anchored nameless textures", #minimapCreateTextureTable)
+	-- nameless textures
+	if #minimapCreateTextureTable>0 then
+		for i=1, #minimapCreateTextureTable do
+			objectToDummy(minimapCreateTextureTable[i],true,"OnShow.minimapCreateTextureTable");
 		end
-	end
-
-	-- move child textures to dummy frame; required by sexymap
-	local regions = {_G.Minimap:GetRegions()};
-	for r=1, #regions do
-		objectToDummy(regions[r],true,true,true);
 	end
 
 	-- move and change minimap for FarmHud
-	MinimapMT.ClearAllPoints(_G.Minimap);
-	MinimapMT.SetParent(_G.Minimap,FarmHud);
-	MinimapMT.SetPoint(_G.Minimap,"CENTER");
-	MinimapMT.SetFrameStrata(_G.Minimap,"BACKGROUND");
-	MinimapMT.SetFrameLevel(_G.Minimap,1);
-	MinimapMT.SetScale(_G.Minimap,1);
-	MinimapMT.SetZoom(_G.Minimap,0);
-	MinimapMT.SetAlpha(_G.Minimap,FarmHudDB.background_alpha);
+	Minimap:SetParent(FarmHud);
+	Minimap:ClearAllPoints();
+	-- sometimes SetPoint produce error "because[SetPoint would result in anchor family connection]"
+	local f, err = loadstring('Minimap:SetPoint("CENTER",0,0)');
+	if f then f(); else
+		Minimap:SetAllPoints(); -- but SetAllPoints results in an offset for somebody
+		Minimap:ClearAllPoints();
+		Minimap:SetPoint("CENTER",0,0); -- next try...
+	end
+	MinimapMT.SetFrameStrata(Minimap,"BACKGROUND");
+	MinimapMT.SetFrameLevel(Minimap,1);
+	MinimapMT.SetScale(Minimap,1);
+	MinimapMT.SetZoom(Minimap,0);
+	MinimapMT.SetAlpha(Minimap,FarmHudDB.background_alpha);
 
-	MinimapMT.EnableMouse(_G.Minimap,false);
-	MinimapMT.EnableMouseWheel(_G.Minimap,false);
+	MinimapMT.EnableMouse(Minimap,false);
+	MinimapMT.EnableMouseWheel(Minimap,false);
 
-	local mc_points = {_G.MinimapCluster:GetPoint(i)};
+	local mc_points = {MinimapCluster:GetPoint(i)};
 	if mc_points[2]==Minimap then
-		mps.mc_mouse = _G.MinimapCluster:IsMouseEnabled();
-		mps.mc_mousewheel = _G.MinimapCluster:IsMouseWheelEnabled();
-		_G.MinimapCluster:EnableMouse(false);
-		_G.MinimapCluster:EnableMouseWheel(false);
+		mps.mc_mouse = MinimapCluster:IsMouseEnabled();
+		mps.mc_mousewheel = MinimapCluster:IsMouseWheelEnabled();
+		MinimapCluster:EnableMouse(false);
+		MinimapCluster:EnableMouseWheel(false);
 	end
 
 	mps.rotation = GetCVar("rotateMinimap");
@@ -576,11 +675,11 @@ function FarmHudMixin:OnShow()
 		Minimap_UpdateRotationSetting();
 	end
 
-	-- function replacements for _G.Minimap while FarmHud is enabled.
+	-- function replacements for Minimap while FarmHud is enabled.
 	-- Should prevent problems with repositioning of minimap buttons from other addons.
 	for k,v in pairs(replacements)do
-		mps.replacements[k] = _G.Minimap[k];
-		_G.Minimap[k] = v;
+		mps.replacements[k] = Minimap[k];
+		Minimap[k] = v;
 	end
 
 	if FarmHud_ToggleSuperTrackedQuest and FarmHudDB.SuperTrackedQuest then
@@ -596,61 +695,77 @@ function FarmHudMixin:OnShow()
 	self:UpdateTime(FarmHudDB.time_show);
 end
 
-function FarmHudMixin:OnHide(force)
+function FarmHudMixin:OnHide()
 	if rotationMode ~= mps.rotation then
 		SetCVar("rotateMinimap", mps.rotation, "ROTATE_MINIMAP");
 		rotationMode = mps.rotation
 		Minimap_UpdateRotationSetting();
 	end
 
-	-- restore function replacements for _G.Minimap
+	-- restore function replacements for Minimap
 	for k in pairs(replacements)do
-		_G.Minimap[k] = mps.replacements[k];
+		Minimap[k] = mps.replacements[k];
 	end
 
-	MinimapMT.ClearAllPoints(_G.Minimap);
-	MinimapMT.SetParent(_G.Minimap,mps.parent);
-	MinimapMT.SetScale(_G.Minimap,mps.scale);
-	MinimapMT.SetSize(_G.Minimap,unpack(mps.size));
-	MinimapMT.SetFrameStrata(_G.Minimap,mps.strata);
-	MinimapMT.SetFrameLevel(_G.Minimap,mps.level);
-	MinimapMT.EnableMouse(_G.Minimap,mps.mouse);
-	MinimapMT.EnableMouseWheel(_G.Minimap,mps.mousewheel);
+	Minimap:SetParent(mps.parent);
+	Minimap.SetScale(Minimap,mps.scale);
+	MinimapMT.SetSize(Minimap,unpack(mps.size));
+	MinimapMT.SetFrameStrata(Minimap,mps.strata);
+	MinimapMT.SetFrameLevel(Minimap,mps.level);
+	MinimapMT.EnableMouse(Minimap,mps.mouse);
+	MinimapMT.EnableMouseWheel(Minimap,mps.mousewheel);
 
-	MinimapMT.SetAlpha(_G.Minimap,mps.alpha);
+	MinimapMT.SetAlpha(Minimap,mps.alpha);
 
 	Dummy.bg:Hide();
 	Dummy:Hide();
 	self.cluster:Hide();
 
 	if mps.ommouseup then
-		MinimapMT.SetScript(_G.Minimap,"OnMouseUp",mps.ommouseup);
+		MinimapMT.SetScript(Minimap,"OnMouseUp",mps.ommouseup);
 	end
 
 	for _,action in ipairs(minimapScripts)do
 		if type(mps[action])=="function" then
-			MinimapMT.SetScript(_G.Minimap,action,mps[action]);
+			MinimapMT.SetScript(Minimap,action,mps[action]);
 		end
 	end
 
+	Minimap:ClearAllPoints();
 	for i=1, #mps.anchors do
-		MinimapMT.SetPoint(_G.Minimap,unpack(mps.anchors[i]));
+		Minimap:SetPoint(unpack(mps.anchors[i]));
 	end
 
-	for i=1, #anchoredFrames, 3 do
+	--ns.debug("-","-","move child regions of a frame");
+	-- move child frames and regions (textures/fontstrings) of a frame back agian to Minimap
+	for object,movedElements in pairs(foreignObjects) do
+		-- childs
+		for i=1, #movedElements.childs do
+			objectToDummy(movedElements.childs[i],false,"OnHide.GetChildren");
+		end
+		wipe(movedElements.childs);
+
+		-- child textures/fontstrings
+		for r=1, #movedElements.regions do
+			objectToDummy(movedElements.regions[r],false,"OnHide.GetRegions");
+		end
+		wipe(movedElements.regions);
+	end
+
+	--ns.debug("-","-","move anchored frames by name table");
+	-- anchored frames by name
+	for i=1, #anchoredFrames do
 		if mps.anchoredFrames[i] then
-			objectToDummy(_G[anchoredFrames[i]],false,anchoredFrames[i+1],anchoredFrames[i+2]);
+			objectToDummy(_G[anchoredFrames[i]],false,"OnHide.anchoredFrames");
 		end
 	end
 
-	local childs = {Dummy:GetChildren()}; -- child frames
-	for i=1, #childs do
-		objectToDummy(childs[i],false,true,true);
-	end
-
-	local regions = {Dummy:GetRegions()}; -- child textures and more; mostly by sexymap
-	for r=1, #regions do
-		objectToDummy(regions[r],false,true,true);
+	--ns.debug("-","-","move anchored nameless textures")
+	-- nameless textures
+	if #minimapCreateTextureTable>0 then
+		for i=1, #minimapCreateTextureTable do
+			objectToDummy(minimapCreateTextureTable[i],false,"OnHide.minimapCreateTextureTable");
+		end
 	end
 
 	if mps.mc_mouse then
@@ -662,7 +777,7 @@ function FarmHudMixin:OnHide(force)
 
 	local maxLevels = Minimap:GetZoomLevels();
 	if mps.zoom>maxLevels then mps.zoom = maxLevels; end
-	MinimapMT.SetZoom(_G.Minimap,mps.zoom);
+	MinimapMT.SetZoom(Minimap,mps.zoom);
 
 	if FarmHud_ToggleSuperTrackedQuest and FarmHudDB.SuperTrackedQuest then
 		FarmHud_ToggleSuperTrackedQuest(ns.QuestArrowToken,false); -- FarmHud_QuestArrow
@@ -681,25 +796,72 @@ function FarmHudMixin:OnHide(force)
 	MinimapBackdrop:Show();
 end
 
+local function checkOnKnownProblematicAddOns()
+	wipe(knownProblematicAddOnsDetected);
+	for addOnName,bool in pairs(knownProblematicAddOns) do
+		if bool and (IsAddOnLoaded(addOnName)) then
+			tinsert(knownProblematicAddOnsDetected,addOnName);
+		end
+	end
+end
+
+--- RegisterForeignAddOnObject
+-- Register a frame or button or other type to help avoid problems with FarmHud.
+-- FarmHud check childs and regions of the object and change SetPoint anchored from Minimap to FarmHudDummy
+-- while FarmHud is enabled and OnHide back again.
+-- @object: object - a frame table that is anchored on Minimap and holds texture, fontstrings or other elements that should be moved to FarmHudDummy while FarmHud is enabled.
+-- @byAddOn: string - name of the addon. this will be disable warning message on toggle FarmHud.
+-- @return: boolean - true on success
+
+function FarmHudMixin:RegisterForeignAddOnObject(object,byAddOn)
+	local arg1Type,arg2Type = type(object),type(byAddOn);
+	assert(arg1Type=="table" and object.GetObjectType,"Argument #1 (called object) must be a table (frame,button,...), got "..arg1Type);
+	assert(arg2Type=="string","Argument #2 (called byAddOn) must be a string, got "..arg2Type);
+	foreignObjects[object] = {childs={},regions={},byAddOn=byAddOn};
+	if knownProblematicAddOns[byAddOn] then
+		knownProblematicAddOns[byAddOn] = nil; -- remove addon from knownProblematicAddOns table
+		checkOnKnownProblematicAddOns();
+	end
+	return false;
+end
+
 -- Toggle FarmHud display
 function FarmHudMixin:Toggle(force)
+	if #knownProblematicAddOnsDetected>0 then
+		ns.print("|cffffee00"..L["KnownProblematicAddOnDetected"].."|r","|cffff8000("..table.concat(knownProblematicAddOnsDetected,", ")..")|r")
+	end
 	if force==nil then
 		force = not self:IsShown();
+	end
+	if force and MinimapFunctionHijacked then
+		local isHijacked = {};
+		for i=1, #MinimapFunctionHijacked do
+			local k = MinimapFunctionHijacked[i];
+			--ns.debug("<check hijacking>",k,MinimapMT[k],Minimap[k],MinimapMT[k] ~= Minimap[k]);
+			if MinimapMT[k] ~= Minimap[k] then
+				local _,taintBy = issecurevariable(Minimap,k);
+				tinsert(isHijacked,k.." ("..(taintBy or UNKNOWN)..")");
+			end
+		end
+		if #isHijacked>0 then
+			ns.print("|cffffee00"..L["AnotherAddOnsHijackedFunc"].."|r",table.concat(isHijacked,", "));
+			return;
+		end
 	end
 	self:SetShown(force);
 end
 
 -- Toggle the mouse to check out herb / ore tooltips
 function FarmHudMixin:ToggleMouse(force)
-	if _G.Minimap:GetParent()==self then
-		if (force==nil and _G.Minimap:IsMouseEnabled()) or force then
-			MinimapMT.EnableMouse(_G.Minimap,false);
+	if Minimap:GetParent()==self then
+		if (force==nil and Minimap:IsMouseEnabled()) or force then
+			MinimapMT.EnableMouse(Minimap,false);
 			self.TextFrame.mouseWarn:Hide();
 			if not force then
 				mouseOnKeybind = true;
 			end
 		else
-			MinimapMT.EnableMouse(_G.Minimap,true);
+			MinimapMT.EnableMouse(Minimap,true);
 			self.TextFrame.mouseWarn:Show();
 			if not force then
 				mouseOnKeybind = false;
@@ -709,8 +871,8 @@ function FarmHudMixin:ToggleMouse(force)
 end
 
 function FarmHudMixin:ToggleBackground()
-	if _G.Minimap:GetParent()==self then
-		MinimapMT.SetAlpha(_G.Minimap,_G.Minimap:GetAlpha()==0 and FarmHudDB.background_alpha or 0);
+	if Minimap:GetParent()==self then
+		MinimapMT.SetAlpha(Minimap,Minimap:GetAlpha()==0 and FarmHudDB.background_alpha or 0);
 	end
 end
 
@@ -719,7 +881,7 @@ function FarmHudMixin:ToggleOptions()
 		ACD:Close(addon);
 	else
 		ACD:Open(addon);
-		ACD.OpenFrames[addon]:SetStatusText(GAME_VERSION_LABEL..CHAT_HEADER_SUFFIX.."8.4.9-release");
+		ACD.OpenFrames[addon]:SetStatusText(GAME_VERSION_LABEL..CHAT_HEADER_SUFFIX.."8.6.2-release");
 	end
 end
 
@@ -746,7 +908,7 @@ function FarmHudMixin:OnEvent(event,...)
 
 		self.gatherCircle:SetVertexColor(unpack(FarmHudDB.gathercircle_color));
 
-		local radius = _G.Minimap:GetWidth() * 0.214;
+		local radius = Minimap:GetWidth() * 0.214;
 		for i, v in ipairs(self.TextFrame.cardinalPoints) do
 			local label = v:GetText();
 			v.NWSE = strlen(label)==1;
@@ -780,8 +942,15 @@ function FarmHudMixin:OnEvent(event,...)
 			LibHijackMinimap = LibStub('LibHijackMinimap-1.0');
 			LibHijackMinimap:RegisterHijacker(addon,LibHijackMinimap_Token);
 		end
-	elseif event=="PLAYER_LOGOUT" then
-		self:Toggle(false);
+
+		if BasicMinimap and BasicMinimap.backdrop then
+			self:RegisterForeignAddOnObject(BasicMinimap.backdrop:GetParent(),"BasicMinimap");
+		end
+
+		checkOnKnownProblematicAddOns()
+	elseif event=="PLAYER_LOGOUT" and mps.rotation and rotationMode and rotationMode~=mps.rotation then
+		-- reset rotation on logout and reload if FarmHud was open
+		SetCVar("rotateMinimap", mps.rotation, "ROTATE_MINIMAP");
 	elseif event=="MODIFIER_STATE_CHANGED" and self:IsShown() then
 		local key, down = ...;
 		if not mouseOnKeybind and modifiers[FarmHudDB.holdKeyForMouseOn] and modifiers[FarmHudDB.holdKeyForMouseOn][key]==1 then
@@ -794,26 +963,28 @@ function FarmHudMixin:OnLoad()
 	Dummy = FarmHudMinimapDummy;
 	Dummy.bg:SetMask("interface/CHARACTERFRAME/TempPortraitAlphaMask");
 
-	hooksecurefunc(_G.Minimap,"SetPlayerTexture",function(_,texture)
+	self:RegisterForeignAddOnObject(Minimap,addon);
+
+	hooksecurefunc(Minimap,"SetPlayerTexture",function(_,texture)
 		if FarmHud:IsVisible() then
 			playerDot_custom = texture;
 			SetPlayerDotTexture(true);
 		end
 	end);
 
-	hooksecurefunc(_G.Minimap,"SetZoom",function(_,level)
+	hooksecurefunc(Minimap,"SetZoom",function(_,level)
 		if FarmHud:IsVisible() and level~=0 then
-			MinimapMT.SetZoom(_G.Minimap,0);
+			MinimapMT.SetZoom(Minimap,0);
 		end
 	end);
 
-	hooksecurefunc(_G.Minimap,"SetAlpha",function(_,level)
+	hooksecurefunc(Minimap,"SetAlpha",function(_,level)
 		if FarmHud:IsVisible() and FarmHudDB.background_alpha~=level then
-			MinimapMT.SetAlpha(_G.Minimap,FarmHudDB.background_alpha);
+			MinimapMT.SetAlpha(Minimap,FarmHudDB.background_alpha);
 		end
 	end);
 
-	hooksecurefunc(_G.Minimap,"SetMaskTexture",function(_,texture)
+	hooksecurefunc(Minimap,"SetMaskTexture",function(_,texture)
 		Dummy.bg:SetMask(texture);
 	end);
 
@@ -826,7 +997,7 @@ function FarmHudMixin:OnLoad()
 	end
 
 	function self.cluster:GetZoom()
-		return _G.Minimap:GetZoom();
+		return Minimap:GetZoom();
 	end
 
 	function self.cluster:SetZoom()

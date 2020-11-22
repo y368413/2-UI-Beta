@@ -154,7 +154,7 @@ local function GetUldumAssault ()
 end
 
 local function IsTimewalking()
-    local date = C_Calendar.GetDate()
+    local date = C_DateAndTime.GetCurrentCalendarTime()
 	local tw = false
 	for index=1,C_Calendar.GetNumDayEvents(0,date.monthDay) do
         local event = C_Calendar.GetHolidayInfo(0,date.monthDay,index)
@@ -190,11 +190,7 @@ function addon:GetNpcName(npcId)
     local npcName = _G[tooltip:GetName() .. 'TextLeft1']:GetText()
 
     if not npcName then
-        if MDL_DB_BOSSES[npcId] and MDL_DB_BOSSES[npcId].name then
-            npcName = LBB[MDL_DB_BOSSES[npcId].name] or MDL_DB_BOSSES[npcId].name
-        else
-            npcName = string.format('npc#%d', npcId)
-        end
+        npcName = string.format('npc#%d', npcId)
     end
 
     return npcName
@@ -307,7 +303,7 @@ function addon:GetItemSourceInfo(itemSource)
 			comment = (comment and (comment .. '   ') or '') .. L["title_cost"] .. BreakUpLargeNumbers(itemcost) .. L["curr_gold"]
 		end
     end
-	if (rarityEnabled and self.db.profile.rarity.hide == false) then
+	if (rarityEnabled and self.db.profile.rarity.hide == false) and not (itemSource.type == 'vendor') then
 		local lookupname
 		
 		if itemSource.rarityname ~= nil then
@@ -340,17 +336,12 @@ function addon:GetItemSourceInfo(itemSource)
 		end
 	end
     local raidSaveZone
-	if MDL_DB_ZONES[itemSource.zone_id] then
-		raidSaveZone = MDL_DB_ZONES[itemSource.zone_id].raid
+	if itemSource.instanceid then
+		raidSaveZone = GetRealZoneText(itemSource.instanceid)
 	else
 		raidSaveZone = zoneName
 	end
-	local raidSaveBoss
-	if MDL_DB_BOSSES[itemSource.npc_id] then
-		raidSaveBoss = MDL_DB_BOSSES[itemSource.npc_id].name
-	else
-		raidSaveBoss = npcName
-	end
+	local raidSaveBoss = npcName
     return zoneName, npcName, comment, raidSaveZone, raidSaveBoss, rarity
 end
 
@@ -406,6 +397,8 @@ function addon:BuildTooltipData()
 				diff = 14
 			elseif difficulty == 6 then
 				diff = 15
+			elseif difficulty == 5 then
+				diff = 15
 			else
 				diff = difficulty
 			end
@@ -427,6 +420,12 @@ function addon:BuildTooltipData()
                     numRemains = numRemains + 1
                 end
             end
+			
+			if encounterProgress == numBosses then
+				savedRaids[rname]['complete'] = 1
+			else
+				savedRaids[rname]['complete'] = 0
+			end
         end
     end
 	
@@ -449,7 +448,7 @@ function addon:BuildTooltipData()
             for _, itemSource in pairs(itemData.from) do
                 if not itemSource.faction or itemSource.faction == playerFaction then
                     if itemSource.level <= playerLevel then
-                        local zoneName, npcName, comment, raidSaveZone, raidSaveBoss, rarity = self:GetItemSourceInfo(itemSource)
+                        local zoneName, npcName, comment, raidSaveZone, raidSaveBoss, rarity, encounter_id = self:GetItemSourceInfo(itemSource)
 
                         local add = 0
 						local lockout = 0
@@ -458,14 +457,18 @@ function addon:BuildTooltipData()
 							if itemSource.subtype == "heroic" then
 								if savedRaids["dungeon-"..raidSaveZone .. "-23"] then
 									lockout = 1
-									if not savedRaids["dungeon-"..raidSaveZone .. "-23"][raidSaveBoss] then
+									if savedRaids["dungeon-"..raidSaveZone .. "-23"]['complete'] == 1 then
+										add = 0
+									elseif not savedRaids["dungeon-"..raidSaveZone .. "-23"][raidSaveBoss] then
 										add = 1
 									end
 								end
 								
 								if savedRaids["dungeon-"..raidSaveZone .. "-2"] then
 									lockout = 1
-									 if not savedRaids["dungeon-"..raidSaveZone .. "-2"][raidSaveBoss] then
+									 if savedRaids["dungeon-"..raidSaveZone .. "-2"]['complete'] == 1 then
+										add = 0
+									elseif not savedRaids["dungeon-"..raidSaveZone .. "-2"][raidSaveBoss] then
 										add = 1
 									end
 								end
@@ -475,7 +478,9 @@ function addon:BuildTooltipData()
 								end
 							elseif itemSource.subtype == "mythic" then
 								if savedRaids["dungeon-"..raidSaveZone .. "-23"] then
-									if not savedRaids["dungeon-"..raidSaveZone .. "-23"][raidSaveBoss] then
+									if savedRaids["dungeon-"..raidSaveZone .. "-23"]['complete'] == 1 then
+										add = 0
+									elseif not savedRaids["dungeon-"..raidSaveZone .. "-23"][raidSaveBoss] then
 										add = 1
 									end
 								else
@@ -490,7 +495,9 @@ function addon:BuildTooltipData()
 						elseif itemSource.type == 'raid' then
 							if itemSource.subtype == 'mythic' then
 								if savedRaids["raid-"..raidSaveZone .. "-16"] then
-									if not savedRaids["raid-"..raidSaveZone .. "-16"][raidSaveBoss] then
+									if savedRaids["raid-"..raidSaveZone .. "-16"]['complete'] == 1 then
+										add = 0
+									elseif not savedRaids["raid-"..raidSaveZone .. "-16"][raidSaveBoss] then
 										add = 1
 									end
 								else
@@ -499,14 +506,18 @@ function addon:BuildTooltipData()
 							elseif itemSource.subtype == 'heroic' then
 								if savedRaids["raid-"..raidSaveZone .. "-16"] then
 									lockout = 1
-									if (not savedRaids["raid-"..raidSaveZone .. "-16"][raidSaveBoss]) then
+									if savedRaids["raid-"..raidSaveZone .. "-16"]['complete'] == 1 then
+										add = 0
+									elseif (not savedRaids["raid-"..raidSaveZone .. "-16"][raidSaveBoss]) then
 										add = 1
 									end
 								end
 								
 								if savedRaids["raid-"..raidSaveZone .. "-15"] then
 									lockout = 1
-									if (not savedRaids["raid-"..raidSaveZone .. "-15"][raidSaveBoss]) then
+									if savedRaids["raid-"..raidSaveZone .. "-15"]['complete'] == 1 then
+										add = 0
+									elseif (not savedRaids["raid-"..raidSaveZone .. "-15"][raidSaveBoss]) then
 										add = 1
 									end
 								end
@@ -517,21 +528,27 @@ function addon:BuildTooltipData()
 							else
 								if savedRaids["raid-"..raidSaveZone .. "-16"] then
 									lockout = 1
-									if (not savedRaids["raid-"..raidSaveZone .. "-16"][raidSaveBoss]) then
+									if savedRaids["raid-"..raidSaveZone .. "-16"]['complete'] == 1 then
+										add = 0
+									elseif (not savedRaids["raid-"..raidSaveZone .. "-16"][raidSaveBoss]) then
 										add = 1
 									end
 								end
 								
 								if savedRaids["raid-"..raidSaveZone .. "-15"] then
 									lockout = 1
-									if (not savedRaids["raid-"..raidSaveZone .. "-15"][raidSaveBoss]) then
+									if savedRaids["raid-"..raidSaveZone .. "-15"]['complete'] == 1 then
+										add = 0
+									elseif (not savedRaids["raid-"..raidSaveZone .. "-15"][raidSaveBoss]) then
 										add = 1
 									end
 								end
 								
 								if savedRaids["raid-"..raidSaveZone .. "-14"] then
 									lockout = 1
-									if (not savedRaids["raid-"..raidSaveZone .. "-14"][raidSaveBoss]) then
+									if savedRaids["raid-"..raidSaveZone .. "-14"]['complete'] == 1 then
+										add = 0
+									elseif (not savedRaids["raid-"..raidSaveZone .. "-14"][raidSaveBoss]) then
 										add = 1
 									end
 								end
@@ -547,14 +564,14 @@ function addon:BuildTooltipData()
 								add = 1
 						elseif itemSource.subtype == 'bfaassault' then
 							if bfaassaultuldum == itemSource.bfaassault then
-								add = not IsQuestFlaggedCompleted(itemSource.quest_id)
-								killed = IsQuestFlaggedCompleted(itemSource.quest_id)
+								add = not C_QuestLog.IsQuestFlaggedCompleted(itemSource.quest_id)
+								killed = C_QuestLog.IsQuestFlaggedCompleted(itemSource.quest_id)
 							elseif bfaassaultvale == itemSource.bfaassault then
-								add = not IsQuestFlaggedCompleted(itemSource.quest_id)
-								killed = IsQuestFlaggedCompleted(itemSource.quest_id)
+								add = not C_QuestLog.IsQuestFlaggedCompleted(itemSource.quest_id)
+								killed = C_QuestLog.IsQuestFlaggedCompleted(itemSource.quest_id)
 							elseif not itemSource.bfaassault then
-								add = not IsQuestFlaggedCompleted(itemSource.quest_id)
-								killed = IsQuestFlaggedCompleted(itemSource.quest_id)
+								add = not C_QuestLog.IsQuestFlaggedCompleted(itemSource.quest_id)
+								killed = C_QuestLog.IsQuestFlaggedCompleted(itemSource.quest_id)
 							end	
 						elseif itemSource.type == 'world' and not itemSource.quest_id then
 							add = 1
@@ -569,8 +586,8 @@ function addon:BuildTooltipData()
 						elseif itemSource.type == 'holiday' and itemSource.subtype == 'timewalking' and timewalking and not itemSource.quest_id then
 							add = 1
 						elseif itemSource.quest_id then
-							add = not IsQuestFlaggedCompleted(itemSource.quest_id)
-							killed = IsQuestFlaggedCompleted(itemSource.quest_id)
+							add = not C_QuestLog.IsQuestFlaggedCompleted(itemSource.quest_id)
+							killed = C_QuestLog.IsQuestFlaggedCompleted(itemSource.quest_id)
 						end
 					
 					if itemSource.expansion == 'classic' and self.db.profile.hide_classic then

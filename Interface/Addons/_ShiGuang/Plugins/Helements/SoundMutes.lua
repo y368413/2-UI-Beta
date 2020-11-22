@@ -902,17 +902,6 @@ local SoundIDs = {
    567885 -- 156
 }
 
--- Print Message
-local function MAWS_Print(text, prefix)
-	local tag = "MuteAnnoyingWoWSounds"
-	local frame = DEFAULT_CHAT_FRAME
-	if prefix ~= false then
-		frame:AddMessage(("|cffffd480<|r|cffaaff80%s|r|cffffd480>|r %s"):format(tostring(tag), tostring(text)), 1, 0.46, 0.2)
-	else
-		frame:AddMessage(text, 1, 0.46, 0.2);
-	end
-end
-
 local function MuteAllSounds()
    count = 0
    customcount = 0
@@ -934,10 +923,5 @@ MuteAnnoyingWoWSoundsCore:RegisterEvent("PLAYER_LOGIN")
 MuteAnnoyingWoWSoundsCore:SetScript("OnEvent",
   function(self, event, ...)
    local count, customcount = MuteAllSounds()
-   if customcount > 0 then
-      MAWS_Print(count+customcount.." sounds have been muted. ("..customcount.." custom sounds)")
-   else 
-      MAWS_Print(count.." Sounds have been muted.")
-   end
 end)
 

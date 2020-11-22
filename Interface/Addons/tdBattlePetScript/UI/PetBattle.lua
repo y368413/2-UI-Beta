@@ -59,7 +59,7 @@ function Module:OnInitialize()
     end
 
     local AutoButton = CreateFrame('Button', 'tdBattlePetScriptAutoButton', SkipButton:GetParent(), 'UIPanelButtonTemplate') do
-        AutoButton:SetSize(50, 50) --SkipButton:GetSize()
+        AutoButton:SetSize(SkipButton:GetSize())
         AutoButton:SetPoint('LEFT', SkipButton, 'RIGHT')
         AutoButton:SetText(L['Auto'])
         AutoButton:SetEnabled(SkipButton:IsEnabled())
@@ -91,28 +91,28 @@ function Module:OnInitialize()
         ArtFrame2:SetSize(208, 32)
         ArtFrame2:SetPoint('CENTER', 0, -2)
 
-        --[[local Left = ArtFrame2:CreateTexture('nil', 'OVERLAY') do
+        local Left = ArtFrame2:CreateTexture('nil', 'OVERLAY') do
             Left:SetParent(ArtFrame2)
             Left:ClearAllPoints()
             Left:SetSize(32, 32)
-            Left:SetPoint('TOPLEFT')]]
-            --Left:SetTexture([[Interface\PetBattles\PassButtonFrame]])
-            --[[Left:SetTexCoord(0, 0.25, 0, 1)
+            Left:SetPoint('TOPLEFT')
+            Left:SetTexture([[Interface\PetBattles\PassButtonFrame]])
+            Left:SetTexCoord(0, 0.25, 0, 1)
         end
 
         local Right = ArtFrame2:CreateTexture('nil', 'OVERLAY') do
             Right:SetSize(32, 32)
-            Right:SetPoint('TOPRIGHT')]]
-            --Right:SetTexture([[Interface\PetBattles\PassButtonFrame]])
-            --[[Right:SetTexCoord(0.75, 1, 0, 1)
+            Right:SetPoint('TOPRIGHT')
+            Right:SetTexture([[Interface\PetBattles\PassButtonFrame]])
+            Right:SetTexCoord(0.75, 1, 0, 1)
         end
 
         local Middle = ArtFrame2:CreateTexture('nil', 'OVERLAY') do
             Middle:SetPoint('TOPLEFT', Left, 'TOPRIGHT')
-            Middle:SetPoint('BOTTOMRIGHT', Right, 'BOTTOMLEFT')]]
-            --Middle:SetTexture([[Interface\PetBattles\PassButtonFrame]])
-            --Middle:SetTexCoord(0.25, 0.75, 0, 1)
-        --end
+            Middle:SetPoint('BOTTOMRIGHT', Right, 'BOTTOMLEFT')
+            Middle:SetTexture([[Interface\PetBattles\PassButtonFrame]])
+            Middle:SetTexCoord(0.25, 0.75, 0, 1)
+        end
 
         SkipButton:SetFrameLevel(ArtFrame2:GetFrameLevel() + 10)
         AutoButton:SetFrameLevel(ArtFrame2:GetFrameLevel() + 10)
@@ -301,10 +301,10 @@ function Module:PetBattleFrame_UpdatePassButtonAndTimer()
     self.AutoButton:SetShown(pveBattle)
     self.ArtFrame2:SetShown(pveBattle)
 
-    --if pveBattle then
-        --self.SkipButton:ClearAllPoints()
-        --self.SkipButton:SetPoint('RIGHT', self.ArtFrame2, 'CENTER', 0, 2)
-    --end
+    if pveBattle then
+        self.SkipButton:ClearAllPoints()
+        self.SkipButton:SetPoint('RIGHT', self.ArtFrame2, 'CENTER', 0, 2)
+    end
 end
 
 function Module:OnAutoButtonClick()

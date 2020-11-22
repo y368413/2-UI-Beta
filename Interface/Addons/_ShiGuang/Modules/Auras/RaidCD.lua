@@ -139,7 +139,7 @@ local CreateBar = function()
 	bar.backdrop = CreateFrame("Frame", nil, bar)
 	bar.backdrop:SetPoint("TOPLEFT", -2, 2)
 	bar.backdrop:SetPoint("BOTTOMRIGHT", 2, -2)
-	M.CreateBD(bar.backdrop, 0.3)
+	M.CreateBD(bar, 0.3)
 	bar.backdrop:SetFrameStrata("BACKGROUND")
 
 	bar.bg = bar:CreateTexture(nil, "BACKGROUND")
@@ -162,7 +162,7 @@ local CreateBar = function()
 	bar.icon.backdrop = CreateFrame("Frame", nil, bar.icon)
 	bar.icon.backdrop:SetPoint("TOPLEFT", -2, 2)
 	bar.icon.backdrop:SetPoint("BOTTOMRIGHT", 2, -2)
-	M.CreateBD(bar.icon.backdrop, 0.6)
+	M.CreateBD(bar.icon, 0.6)
 	bar.icon.backdrop:SetFrameStrata("BACKGROUND")
 	return bar
 end
@@ -216,10 +216,9 @@ local OnEvent = function(self, event)
 		end
 	end
 	if event == "COMBAT_LOG_EVENT_UNFILTERED" then
-		local _, eventType, _, _, sourceName, sourceFlags = CombatLogGetCurrentEventInfo()
+		local _, eventType, _, _, sourceName, sourceFlags, _, _, _, _, _, spellId = CombatLogGetCurrentEventInfo()
 		if band(sourceFlags, filter) == 0 then return end
 		if eventType == "SPELL_RESURRECT" or eventType == "SPELL_CAST_SUCCESS" or eventType == "SPELL_AURA_APPLIED" then
-			local spellId = select(12, CombatLogGetCurrentEventInfo())
 			if sourceName then
 				sourceName = sourceName:gsub("-.+", "")
 			else

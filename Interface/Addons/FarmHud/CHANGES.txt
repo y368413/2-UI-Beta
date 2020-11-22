@@ -1,18 +1,30 @@
-tag 8816f1424ecabce5bba76c28058d4d31fbe5f4db 8.4.9-release
+tag 5ec5af7cd2bdc76fa75b3eaf73d3fccac5c95ee3 8.6.2-release
 Author:	Hizuro <hizuro@gmx.net>
-Date:	Wed Oct 7 04:09:35 2020 +0200
+Date:	Fri Nov 13 18:20:21 2020 +0100
 
-Tagging as 8.4.9-release
+Tagging as 8.6.2-release
 
-commit 42ec37862ea2b1e7d04e8075eb4f7b9d74895293
+commit 59b70ebd63210fa2a94d91b318fe9712b77c6154
 Author: Hizuro <hizuro@gmx.net>
-Date:   Wed Oct 7 04:08:59 2020 +0200
+Date:   Fri Nov 13 18:18:08 2020 +0100
+
+    next try
+
+commit 410bafec26a63e33eeb6f2197ba1002b98fdacf8
+Author: Hizuro <hizuro@gmx.net>
+Date:   Thu Nov 12 11:44:21 2020 +0100
 
     minor changes
 
-commit eab9bec0f83a70e18270c1cd35a4453f8c230d19
+commit fce6fc04bcec920ff713fbdb948a182464b6c6a0
 Author: Hizuro <hizuro@gmx.net>
-Date:   Wed Oct 7 04:06:22 2020 +0200
+Date:   Thu Nov 12 11:37:54 2020 +0100
 
-    udpate FarmHud_QuestArrow for shadowlands
+    Found and added a way to handle backdropFrame from BasicMinimap
+
+commit e5aee66ba48e0a49693d0473785f94f8994ed220
+Author: Hizuro <hizuro@gmx.net>
+Date:   Thu Nov 12 11:36:22 2020 +0100
+
+    added some frames to the table anchoredFrames for GW2_UI
 

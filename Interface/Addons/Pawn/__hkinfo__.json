@@ -2,7 +2,7 @@
     "target": "curse",
     "searchName": "Pawn",
     "localName": "Pawn",
-    "version": "2.4.1",
+    "version": "2.4.5",
     "fileName": "pawn",
     "addonsMap": [
         "Pawn"

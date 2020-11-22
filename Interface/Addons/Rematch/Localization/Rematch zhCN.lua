@@ -111,7 +111,7 @@ if GetLocale()=="zhCN" then
 	L["Teams named in %sWhite\124r have a target stored within them.\nTeams named in Gold do not.\n\n%sTo change pets or abilities in a team:\124r\n1) Load the team.\n2) Make any changes.\n3) Click Save at the bottom of the window."] = "队伍名是%s白色，\124r 表示该队伍有对应的目标。\n队伍名是金色，表示没有对应的目标。\n\n%s要更换队伍中的宠物或技能：\124r\n1) 加载该队伍\n2) 做出改动\n3) 点击窗口底部的保存按钮"
 
 -- Main.lua
-	L["Rematch"] = "Rematch 宠物战队"
+	L["Rematch"] = "Rematch"
 	L["Toggle Window"] = "开启/关闭窗口"
 	L["Auto Load"] = "自动加载队伍"
 	L["Team Notes"] = "队伍备注"
