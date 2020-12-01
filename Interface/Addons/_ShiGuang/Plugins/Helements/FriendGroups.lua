@@ -46,7 +46,7 @@ local GroupTotal = {}
 local GroupOnline = {}
 local GroupSorted = {}
 local FriendRequestString = string.sub(FRIEND_REQUESTS,1,-6)
-local currentExpansionMaxLevel = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE and 120 or 60 -- Make it dynamic somehow
+local currentExpansionMaxLevel = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE and 60 -- or 120 -- Make it dynamic somehow
 
 local FriendsScrollFrame
 local FriendButtonTemplate
@@ -167,7 +167,9 @@ local function GetFriendInfoById(id)
 	end
 
 	if realmName and realmName ~= "" then
-		zoneName = zoneName .. " - " .. realmName
+		if zoneName then
+			zoneName = zoneName .. " - " .. realmName
+		end
 	end
 
 	return accountName, characterName, class, level, isFavoriteFriend, isOnline, bnetAccountId, client, canCoop, wowProjectID, lastOnline, isAFK, isGameAFK, isDND, isGameBusy, mobile, zoneName, gameText, battleTag

@@ -672,7 +672,9 @@ function DialogKey:DisableQuestScrolling()		-- Frees up mouse wheel input again 
 		end
 	end
 	
-	if not found then UIParent:EnableMouseWheel(false) end
+	if not found and not UnitAffectingCombat("player") then
+		UIParent:EnableMouseWheel(false)
+	end
 end
 
 function DialogKey:HandleScroll(delta)			-- Run when the mouse wheel is trapped and the user scrolls it
