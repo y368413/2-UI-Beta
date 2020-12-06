@@ -42,7 +42,7 @@ L["Custom unit name"] = "Custom Unit Name"
 L["Dest unit"] = "Destination Unit"
 L["Dest type"] = "Destination Type"
 
-L["GladiatorlosSACredits"] = "Customizable PvP Announcer addon for vocalizing many important spells cast by your enemies.|n|n|cffFFF569Created by|r |cff9482C9Abatorlos|r |cffFFF569of Spinebreaker|r|n|cffFFF569Legion/BfA support by|r |cffC79C6EOrunno|r |cffFFF569of Moon Guard (With permission from zuhligan)|r|n|n|cffFFF569Special Thanks|r|n|cffA330C9superk521|r (Past Project Manager)|n|cffA330C9DuskAshes|r (Chinese Support)|n|cffA330C9N30Ex|r (Mists of Pandaria Support)|n|cffA330C9zuhligan|r (Warlords of Draenor & French Support)|n|cffA330C9jungwan2|r (Korean Support)|n|cffA330C9Mini_Dragon|r (Chinese support for WoD & Legion)|n|cffA330C9LordKuper|r (Russian support for Legion)|n|cffA330C9Tzanee - Wyrmrest Accord|r (Placeholder Voice Lines)|n|nAll feedback, questions, suggestions, and bug reports are welcome at the addon's page on Curse:|nhttps://wow.curseforge.com/projects/gladiatorlossa2"
+L["GladiatorlosSACredits"] = "Customizable PvP Announcer addon for vocalizing many important spells cast by your enemies.|n|n|cffFFF569Created by|r |cff9482C9Abatorlos|r |cffFFF569of Spinebreaker|r|n|cffFFF569Legion/BfA/Shadowlands support by|r |cFF00FF96Treasuretail|r |cffFFF569of Wyrmrest Accord (With permission from zuhligan)|r|n|n|cffFFF569Special Thanks|r|n|cffA330C9superk521|r (Past Project Manager)|n|cffA330C9DuskAshes|r (Chinese Support)|n|cffA330C9N30Ex|r (Mists of Pandaria Support; Shadowlands voice recordings)|n|cffA330C9zuhligan|r (Warlords of Draenor & French Support)|n|cffA330C9jungwan2|r (Korean Support)|n|cffA330C9Mini_Dragon|r (Chinese support for WoD & Legion)|n|cffA330C9LordKuper|r (Russian support for Legion)|n|cffA330C9Tzanee - Wyrmrest Accord|r (Placeholder Voice Lines)|n|nAll feedback, questions, suggestions, and bug reports are welcome at the addon's page on Curse:|nhttps://wow.curseforge.com/projects/gladiatorlossa2|nOR GitHub:|nhttps://github.com/Rhykes/GladiatorlosSA2"
 L["PVP Voice Alert"] = true
 L["Load Configuration"] = "<-- Load GSA2 Menus"
 L["Load Configuration Options"] = true
@@ -174,3 +174,53 @@ L["TankTauntsON_Desc"] = "Alerts the application of Intimidation: a damage ampli
 
 L["Connected"] = "Connected Alerts"
 L["Connected_Desc"] = "Plays a simple 'Connected' alert when certain very powerful cast-time abilities successfully complete their cast.|n|nGreater Pyroblast (|cff69CCF0Mage|r)|nChaos Bolt (|cff9482C9Warlock|r)"
+
+L["CovenantAbilities"] = "Covenant Abilities"
+
+L["FrostDK"] = "Frost"
+L["BloodDK"] = "Blood"
+L["UnholyDK"] = "Unholy"
+
+L["HavocDH"] = "Havoc"
+L["VengeanceDH"] = "Vengeance"
+
+L["FeralDR"] = "Feral"
+L["BalanceDR"] = "Balance"
+L["RestorationDR"] = "Restoration"
+L["GuardianDR"] = "Guardian"
+
+L["MarksmanshipHN"] = "Marksmanship"
+L["SurvivalHN"] = "Survival"
+L["BeastMasteryHN"] = "Beast Mastery"
+
+L["FrostMG"] = "Frost"
+L["FireMG"] = "Fire"
+L["ArcaneMG"] = "Arcane"
+
+L["MistweaverMN"] = "Mistweaver"
+L["WindwalkerMN"] = "Windwalker"
+L["BrewmasterMN"] = "Brewmaster"
+
+L["HolyPD"] = "Holy"
+L["RetributionPD"] = "Retribution"
+L["ProtectionPD"] = "Protection"
+
+L["HolyPR"] = "Holy"
+L["DisciplinePR"] = "Discipline"
+L["ShadowPR"] = "Shadow"
+
+L["OutlawRG"] = "Outlaw"
+L["AssassinationRG"] = "Assassination"
+L["SubtletyRG"] = "Subtlety"
+
+L["RestorationSH"] = "Restoration"
+L["EnhancementSH"] = "Enhancement"
+L["ElementalSH"] = "Elemental"
+
+L["DestructionWL"] = "Destruction"
+L["DemonologyWL"] = "Demonology"
+L["AfflictionWL"] = "Affliction"
+
+L["ArmsWR"] = "Arms"
+L["FuryWR"] = "Fury"
+L["ProtectionWR"] = "Protection"

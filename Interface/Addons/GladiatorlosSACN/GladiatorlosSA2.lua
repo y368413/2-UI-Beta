@@ -152,7 +152,7 @@
 			gsavers = {
 			order = 2,
 			type = "description",
-			name = "|cffFF7D0A 2.3.2 |r(|cFF00FF96 9.0.1 Shadowlands|r)",
+			name = "|cffFF7D0A SLB 3.0 |r(|cFF00FF96 9.0.2 Shadowlands|r)",
 			cmdHidden = true
 			},
 		},

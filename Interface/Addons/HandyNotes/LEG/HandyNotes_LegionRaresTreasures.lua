@@ -16,8 +16,8 @@ local HandyNotes = LibStub("AceAddon-3.0"):GetAddon("HandyNotes", true)
 if not HandyNotes then return end
 
 local iconDefaults = {
-    skull_grey = "Interface\\Addons\\HandyNotes_LegionRaresTreasures\\Artwork\\RareIcon.blp",
-    skull_blue = "Interface\\Addons\\HandyNotes_LegionRaresTreasures\\Artwork\\RareIconBlue.blp",
+    skull_grey = "Interface\\Addons\\HandyNotes\\\Icons\\Artwork\\icons\\skull_white.blp",
+    skull_blue = "Interface\\Addons\\HandyNotes\\\Icons\\Artwork\\icons\\skull_blue.blp",
     default = "Interface\\Icons\\TRADE_ARCHAEOLOGY_CHESTOFTINYGLASSANIMALS",
 --[[swprare = "Interface\\Icons\\Trade_Archaeology_Fossil_SnailShell",
     shrine = "Interface\\Icons\\inv_misc_statue_02",
@@ -927,8 +927,8 @@ local options = {
 function LegionRaresTreasures:OnInitialize()
     local defaults = {
         profile = {
-            icon_scale_treasures = 1.5,
-            icon_scale_rares = 2.0,
+            icon_scale_treasures = 1,
+            icon_scale_rares = 1.25,
             icon_alpha = 1.00,
             alwaysshowrares = false,
             alwaysshowtreasures = false,
