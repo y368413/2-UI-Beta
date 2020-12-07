@@ -1,7 +1,7 @@
 ﻿<Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="CCIcons.lua"/>
 	<Script file="Caravana.lua"/>.
-	<Script file="DialogKey.lua"/>
+	<!--Script file="DialogKey.lua"/>
 	<!--Script file="AutoInvite.lua"/-->
 	<Script file="SoundMutes.lua"/>
 	<!--Script file="TinyDPS.lua"/>
