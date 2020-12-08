@@ -221,9 +221,9 @@ noop translation lines in their files without overriding the default enUS
 strings. This allows us to keep all the locale files in sync with the exact
 same keys in the exact same order even before actual translations are done.
 
---
+--]]
 
-local LOCALES = {}
+--[[local LOCALES = {}
 
 local function NewLocale (locale)
     if LOCALES[locale] then return LOCALES[locale] end
@@ -610,8 +610,15 @@ end
 -------------------------------------------------------------------------------
 -------------------------------- ICONS & GLOWS --------------------------------
 -------------------------------------------------------------------------------
-local function Icon(name) return "Interface\\Addons\\HandyNotes\\Icons\\Artwork\\icons\\"..name..'.blp' end
-local function Glow(name) return "Interface\\Addons\\HandyNotes\\Icons\\Artwork\\glows\\"..name..'.blp' end
+
+local ICONS = "Interface\\Addons\\HandyNotes\\Icons\\core\\artwork\\icons"
+local GLOWS = "Interface\\Addons\\HandyNotes\\Icons\\core\\artwork\\glows"
+
+local function Icon(name) return ICONS..'\\'..name..'.blp' end
+local function Glow(name) return GLOWS..'\\'..name..'.blp' end
+
+local DEFAULT_ICON = 454046
+local DEFAULT_GLOW = Glow('square_icon')
 
 BattleForAzeroth.icons = { -- name => path
 
@@ -690,7 +697,7 @@ BattleForAzeroth.icons = { -- name => path
 local function GetIconPath(name)
     if type(name) == 'number' then return name end
     local info = BattleForAzeroth.icons[name]
-    return info and info[1] or 454046
+    return info and info[1] or DEFAULT_ICON
 end
 
 local function GetIconLink(name, size, offsetX, offsetY)
@@ -702,7 +709,7 @@ local function GetIconLink(name, size, offsetX, offsetY)
 end
 
 local function GetGlowPath(name)
-    if type(name) == 'number' then return Glow('square_icon') end
+    if type(name) == 'number' then return DEFAULT_GLOW end
     local info = BattleForAzeroth.icons[name]
     return info and info[2] or nil
 end
@@ -1119,6 +1126,35 @@ local function BootstrapDevelopmentEnvironment()
     local changed = {}
     local max_quest_id = 100000
 
+    C_Timer.After(2, function ()
+        -- Give some time for quest info to load in before we start
+        for id = 0, max_quest_id do quests[id] = C_QuestLog.IsQuestFlaggedCompleted(id) end
+        QTFrame:SetScript('OnUpdate', function ()
+            if GetTime() - lastCheck > 1 and BattleForAzeroth:GetOpt('show_debug_quest') then
+                for id = 0, max_quest_id do
+                    local s = C_QuestLog.IsQuestFlaggedCompleted(id)
+                    if s ~= quests[id] then
+                        changed[#changed + 1] = {time(), id, quests[id], s}
+                        quests[id] = s
+                    end
+                end
+                if #changed <= 10 then
+                    -- changing zones will sometimes cause thousands of quest
+                    -- ids to flip state, we do not want to report on those
+                    for i, args in ipairs(changed) do
+                        table.insert(history, 1, args)
+                    end
+                end
+                if #history > 100 then
+                    for i = #history, 101, -1 do
+                        history[i] = nil
+                    end
+                end
+                lastCheck = GetTime()
+                wipe(changed)
+            end
+        end)
+    end)
     -- Listen for LCTRL + LALT when the map is open to force display nodes
     local IQFrame = CreateFrame('Frame', "HandyNotes_BattleForAzerothIQ", WorldMapFrame)
     local groupPins = WorldMapFrame.pinPools.GroupMembersPinTemplate
@@ -2035,6 +2071,10 @@ function Node:Prepare()
             end
         end
     end
+
+    for reward in self:IterateRewards() do
+        reward:Prepare()
+    end
 end
 
 --[[
@@ -2311,6 +2351,10 @@ local Red = BattleForAzeroth.status.Red
 
 local function Icon(icon) return '|T'..icon..':0:0:1:-1|t ' end
 
+-- in zhCN¡¯s built-in font, ARHei.ttf, the glyph of U+2022 <bullet> is missing.
+-- use U+00B7 <middle dot> instead.
+local bullet = (GetLocale() == "zhCN" and "¡¤" or "?")
+
 -------------------------------------------------------------------------------
 ----------------------------------- REWARD ------------------------------------
 -------------------------------------------------------------------------------
@@ -2338,6 +2382,8 @@ function Reward:GetCategoryIcon() end
 function Reward:GetStatus() end
 function Reward:GetText() return UNKNOWN end
 
+function Reward:Prepare() end
+
 function Reward:Render(tooltip)
     local text = self:GetText()
     local status = self:GetStatus()
@@ -2346,6 +2392,11 @@ function Reward:Render(tooltip)
     local icon = self:GetCategoryIcon()
     if text and icon then
         text = Icon(icon)..text
+    end
+
+    -- Add indent if requested
+    if self.indent then
+        text = '   '..text
     end
 
     -- Render main line and optional status
@@ -2375,9 +2426,12 @@ function Section:Initialize(title)
     self.title = title
 end
 
+function Section:Prepare()
+    BattleForAzeroth.PrepareLinks(self.title)
+end
+
 function Section:Render(tooltip)
-    tooltip:AddLine(self.title..':')
-    tooltip:AddLine(' ')
+    tooltip:AddLine(BattleForAzeroth.RenderLinks(self.title, true)..':')
 end
 
 -------------------------------------------------------------------------------
@@ -2458,7 +2512,7 @@ function Achievement:GetLines()
         end
 
         local r, g, b = .6, .6, .6
-        local ctext = "   ? "..cname
+        local ctext = "   "..bullet.." "..cname
         if (completed or ccomp) then
             r, g, b = 0, 1, 0
         end
@@ -2661,6 +2715,7 @@ end
 -------------------------------------------------------------------------------
 
 local Transmog = Class('Transmog', Item)
+local CTC = C_TransmogCollection
 
 function Transmog:Initialize(attrs)
     Item.Initialize(self, attrs)
@@ -2671,16 +2726,16 @@ end
 
 function Transmog:IsObtained()
     -- Check if the player knows the appearance
-    if C_TransmogCollection.PlayerHasTransmog(self.item) then return true end
+    if CTC.PlayerHasTransmog(self.item) then return true end
 
     -- Verify the item drops for any of the players specs
     local specs = GetItemSpecInfo(self.item)
     if type(specs) == 'table' and #specs == 0 then return true end
 
     -- Verify the player can learn the item's appearance
-    local sourceID = select(2, C_TransmogCollection.GetItemInfo(self.item))
+    local sourceID = select(2, CTC.GetItemInfo(self.item))
     if sourceID then
-        local infoReady, canCollect = C_TransmogCollection.PlayerCanCollectSource(sourceID)
+        local infoReady, canCollect = CTC.PlayerCanCollectSource(sourceID)
         if infoReady and not canCollect then return true end
     end
 
@@ -2688,13 +2743,13 @@ function Transmog:IsObtained()
 end
 
 function Transmog:GetStatus()
-    local collected = C_TransmogCollection.PlayerHasTransmog(self.item)
+    local collected = CTC.PlayerHasTransmog(self.item)
     local status = collected and Green(L["known"]) or Red(L["missing"])
 
     if not collected then
         -- check if we can't learn this item
-        local sourceID = select(2, C_TransmogCollection.GetItemInfo(self.item))
-        if not (sourceID and select(2, C_TransmogCollection.PlayerCanCollectSource(sourceID))) then
+        local sourceID = select(2, CTC.GetItemInfo(self.item))
+        if not (sourceID and select(2, CTC.PlayerCanCollectSource(sourceID))) then
             status = Orange(L["unlearnable"])
         else
             -- check if the item doesn't drop
@@ -5881,8 +5936,9 @@ map.nodes[48002427] = Rare({
 ---------------------------------- ZONE RARES ---------------------------------
 -------------------------------------------------------------------------------
 
+local start = 09452400
 local function coord(x, y)
-    return 09452400 + x*2500000 + y*400
+    return start + x*2500000 + y*400
 end
 
 map.nodes[coord(0,0)] = Rare({
@@ -9523,8 +9579,9 @@ map.nodes[73908353] = Rare({
 ------------------------------- NEFERSET RARES --------------------------------
 -------------------------------------------------------------------------------
 
+local start = 45009400
 local function coord(x, y)
-    return 45009400 + x*2500000 + y*400
+    return start + x*2500000 + y*400
 end
 
 local NefRare = Class('NefersetRare', Rare, {
@@ -9958,6 +10015,9 @@ local pools = Map({id=1579, GetAssault=GetAssault})
 -------------------------------------------------------------------------------
 ------------------------------------ INTRO ------------------------------------
 -------------------------------------------------------------------------------
+
+local Intro = Class('Intro', BattleForAzeroth.node.Intro)
+
 Intro.note = L["vale_intro_note"]
 
 function Intro:IsCompleted()
