@@ -1,5 +1,4 @@
-﻿TransmogCleanup = CreateFrame("Frame")
-local TransmogCleanup = TransmogCleanup
+﻿local TransmogCleanup = CreateFrame("Frame")
 
 TransmogCleanupDB = {}
 TransmogCleanup.db = TransmogCleanupDB
@@ -151,7 +150,7 @@ local function iterateBagItems()
 
 				if status ~= nil then
 				if status and status > 0 then -- check if Can I Mog It checks the itemList
-						if TransmogCleanup.db.filters.onuse or not hasOnUseEffect then -- not (not addon.db.filters.onuse and hasOnUseEffect)
+						if TransmogCleanup.db.filters.onuse or not hasOnUseEffect then -- not (not TransmogCleanup.db.filters.onuse and hasOnUseEffect)
 					if ilvl <= TransmogCleanup.db.filters.ilvl then
 						if TransmogCleanup.db.filters.quality[quality] then
 							if TransmogCleanup.db.filters.bind[bind] then
@@ -488,9 +487,9 @@ local function createSellWindow()
 	ilvlSlider:SetWidth(190)
 	_G["TCSellWindowIlvlSliderText"]:SetText("最高出售装等")
 	_G["TCSellWindowIlvlSliderLow"]:SetText("1")
-	_G["TCSellWindowIlvlSliderHigh"]:SetText("316")
-	ilvlSlider:SetMinMaxValues(1, 316)
- 	ilvlSlider:SetValue(210)
+	_G["TCSellWindowIlvlSliderHigh"]:SetText(maxIlvl)
+	ilvlSlider:SetMinMaxValues(1, maxIlvl)
+ 	ilvlSlider:SetValue(maxIlvl-60)
 	ilvlSlider:SetValueStep(1)
 	ilvlSlider:SetHitRectInsets(0, 0, 0, 0) -- default from OptionsSliderTemplate: 0,0,-10,-10
 
