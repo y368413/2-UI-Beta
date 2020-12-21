@@ -10,12 +10,13 @@ local MistsOfPandaria = {}
 
 MistsOfPandaria.COLORS = {
     Blue = 'FF0066FF',
-    Green = 'FF00FF00',
     Gray = 'FF999999',
-    Red = 'FFFF0000',
+    Green = 'FF00FF00',
+    LightBlue = 'FF8080FF',
     Orange = 'FFFF8C00',
-    Yellow = 'FFFFFF00',
+    Red = 'FFFF0000',
     White = 'FFFFFFFF',
+    Yellow = 'FFFFFF00',
     --------------------
     NPC = 'FFFFFD00',
     Spell = 'FF71D5FF'
@@ -2525,7 +2526,7 @@ function Achievement:GetText()
 end
 
 function Achievement:GetStatus()
-    if not self.oneline then return end
+    if not self.oneline and self.criteria then return end
     return self:IsObtained() and Green(L['completed']) or Red(L['incomplete'])
 end
 
