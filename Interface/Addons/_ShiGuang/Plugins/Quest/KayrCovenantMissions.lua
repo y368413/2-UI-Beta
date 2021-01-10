@@ -1,4 +1,4 @@
-﻿-- 0.3.4
+﻿-- 0.3.5
 local max = _G["max"]
 local gsub = _G["gsub"]
 local hooksecurefunc = _G["hooksecurefunc"]
@@ -265,7 +265,6 @@ end
 
 KayrCovenantMissions:RegisterEvent("ADDON_LOADED")
 KayrCovenantMissions:SetScript("OnEvent", KayrCovenantMissions.ADDON_LOADED)
-
 -- ====================================================================================================================
 -- =	KayrCovenantMissions - Simple covenent mission success estimates for World of Warcraft: Shadowlands
 -- =	Copyright (c) Kvalyr - 2020-2021 - All Rights Reserved

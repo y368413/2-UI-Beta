@@ -65,6 +65,17 @@ function addon:GetOptions()
 				get = function(info)
 					return not self.db.profile.alreadyrun
 				end,
+				},  
+			verbosemode = {
+				name = L.opt_verbosemode,
+				desc = L.opt_verbosemode_desc,
+				type = 'toggle',
+				set = function(info, value)
+					self.db.profile.verbosemode = value
+				end,
+				get = function(info)
+					return self.db.profile.verbosemode
+				end,
 				}, 
 			hide = {
 				name = "Show/Hide Sources",
@@ -223,6 +234,28 @@ function addon:GetOptions()
 						get = function(info)
 							return not self.db.profile.hide_holiday
 						end,
+					}, 
+					slcovenantcache = {
+						name = L.opt_hideslcovenant,
+						desc = L.opt_hideslcovenant_desc,
+						type = 'toggle',
+						set = function(info, value)
+							self.db.profile.hide_slcovenant = not value
+						end,
+						get = function(info)
+							return not self.db.profile.hide_slcovenant
+						end,
+					}, 
+					treasure = {
+						name = L.opt_hidetreasure,
+						desc = L.opt_hidetreasure_desc,
+						type = 'toggle',
+						set = function(info, value)
+							self.db.profile.hide_treasure = not value
+						end,
+						get = function(info)
+							return not self.db.profile.hide_treasure
+						end,
 					},
 				},
 			},
@@ -316,6 +349,17 @@ function addon:GetOptions()
 						end,
 						get = function(info)
 							return not self.db.profile.hide_bfa
+						end,
+					},
+					sl = {
+						name = L.opt_hidesl,
+						desc = L.opt_hidesl_desc,
+						type = 'toggle',
+						set = function(info, value)
+							self.db.profile.hide_sl = not value
+						end,
+						get = function(info)
+							return not self.db.profile.hide_sl
 						end,
 					},
 				},

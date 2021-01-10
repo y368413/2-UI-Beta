@@ -1,0 +1,16 @@
+tag e918bf0916d76b5045552ca40eab4ef2348dc920 v2020.12.15.4
+Author:	Cilraaz <cilraaz@gmail.com>
+Date:	Tue Dec 15 15:58:35 2020 -0500
+
+commit e13015a16e604eeb213d06cdd092305e8d97857e
+Author: Cilraaz <cilraaz@gmail.com>
+Date:   Tue Dec 15 15:58:17 2020 -0500
+
+    build(TOC): v2020.12.15.4 release
+
+commit ff71fec07622726f72d264f7643a27a839694ed6
+Author: Cilraaz <cilraaz@gmail.com>
+Date:   Tue Dec 15 15:57:43 2020 -0500
+
+    fix(LSS): Bugfix when targeting a boss where the instance hasn't been indexed yet
+

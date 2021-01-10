@@ -284,7 +284,7 @@ function generateMaybeOutput(user)
 				local userMaxHealth = UnitHealthMax(user)
 				local msgAmount = round(amount / 10000,1)
 			local pct = Round(amount / userMaxHealth * 100)
-				if pct >= ElitismHelperDB.Threshold and pct >= minPct and ElitismHelperDB.Loud then
+				if pct >= ShiGuangDB.Threshold and pct >= minPct and ShiGuangDB.Loud then
 					if _i > 0 then
 						msg = msg.." & "..GetSpellLink(spellID).." "
 					else
@@ -392,7 +392,7 @@ SlashCmdList["ELITISMHELPER"] = function(msg,editBox)
 				ShiGuangDB.OutputMode = "yell"
 				print("Output set to yell always")
 			elseif argsFunc == "emote" then
-				ElitismHelperDB.OutputMode = "emote"
+				ShiGuangDB.OutputMode = "emote"
 				print("Output set to emote always")
 			elseif argsFunc == "self" then
 				ShiGuangDB.OutputMode = "self"
@@ -534,13 +534,9 @@ function ElitismFrame:ADDON_LOADED(event,addon)
 		ElitismFrame:RebuildTable()
 	end
 	
-	if not ShiGuangDB or not ShiGuangDB.Threshold  then
-		ShiGuangDB = {
-			Loud = true,
-			Threshold = 30,
-			OutputMode = "default"
-		}
-	end
+	if not ShiGuangDB.Loud then ShiGuangDB.Loud = true end
+	if not ShiGuangDB.Threshold then ShiGuangDB.Threshold = 30 end
+	if not ShiGuangDB.OutputMode then ShiGuangDB.OutputMode = "self" end
 	
 end
 
@@ -708,9 +704,9 @@ end
 function ElitismFrame:AuraApply(timestamp, eventType, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, spellId, spellName, spellSchool, auraType, auraAmount)
 	if (Auras[spellId] or (AurasNoTank[spellId] and UnitGroupRolesAssigned(dstName) ~= "TANK")) and UnitIsPlayer(dstName)  then
 		if auraAmount and ShiGuangDB.Loud then
-			maybeSendChatMessage("<EH> "..dstName.." got hit by "..GetSpellLink(spellId)..". "..auraAmount.." Stacks.")
+			maybeSendChatMessage("<EH> "..dstName.." → "..GetSpellLink(spellId)..". "..auraAmount.." Stacks.")
 		elseif ShiGuangDB.Loud then
-			maybeSendChatMessage("<EH> "..dstName.." got hit by "..GetSpellLink(spellId)..".")
+			maybeSendChatMessage("<EH> "..dstName.." → "..GetSpellLink(spellId)..".")
 		end
 	end
 end

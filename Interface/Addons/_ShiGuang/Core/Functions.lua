@@ -902,6 +902,16 @@ do
 		self:HookScript("OnEnter", M.Texture_OnEnter)
 		self:HookScript("OnLeave", M.Texture_OnLeave)
 	end
+
+	function M:ReskinFilterButton()
+		M.StripTextures(self)
+		M.Reskin(self)
+		self.Text:SetPoint("CENTER")
+		M.SetupArrow(self.Icon, "right")
+		self.Icon:SetPoint("RIGHT")
+		self.Icon:SetSize(14, 14)
+	end
+
 	function M:ReskinNavBar()
 		if self.navBarStyled then return end
 
@@ -962,6 +972,7 @@ do
 
 	function M:CreateCheckBox()
 		local cb = CreateFrame("CheckButton", nil, self, "InterfaceOptionsCheckButtonTemplate")
+		cb:SetScript("OnClick", nil) -- reset onclick handler
 		--M.ReskinCheck(cb)
 
 		cb.Type = "CheckBox"

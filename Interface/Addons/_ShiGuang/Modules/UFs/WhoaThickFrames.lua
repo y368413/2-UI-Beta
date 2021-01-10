@@ -376,13 +376,13 @@ hooksecurefunc("PlayerFrame_ToPlayerArt", function(self)
 		PlayerFrameGroupIndicatorRight:Hide();
 end)
 
---[[hooksecurefunc("TextStatusBar_UpdateTextStringWithValues", function()
+hooksecurefunc("TextStatusBar_UpdateTextStringWithValues", function()
 		for i = 1, 4 do
 		  PetFrameHealthBarText:SetText(" ");
 		  PetFrameHealthBarTextLeft:SetText(" ");
 		  PetFrameHealthBarTextRight:SetText(" ");
 		end
-end)]]
+end)
 
 --	Player vehicle frame.
 hooksecurefunc("PlayerFrame_ToVehicleArt", function(self, vehicleType)

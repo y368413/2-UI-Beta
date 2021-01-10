@@ -19,7 +19,7 @@ local COLOR_ITEM_TOOLTIP            = { 1, 1, 1 }
 local COLOR_ITEM_TOOLTIP_SOURCE     = { 1, 1, 0 }
 local COLOR_ITEM_TOOLTIP_SOURCE_2L  = { 1, 1, 0, 0, 1, 0 }
 
-local rarityEnabled, TomTomEnabled
+local rarityEnabled, TomTomEnabled, covenant
 
 local debugEnabled = 0
 
@@ -40,6 +40,8 @@ function addon:OnInitialize()
 			hide_vendor = false,
 			hide_paragon = false,
 			hide_zone = false,
+			hide_slcovenant = false,
+			hide_treasure = false,
 			
 			hide_classic = false,
 			hide_bc = false,
@@ -49,10 +51,12 @@ function addon:OnInitialize()
 			hide_wod = false,
 			hide_legion = false,
 			hide_bfa = false,
+			hide_sl = false,			
 			
 			alreadyrun = false,
 			
 			mountname = false,
+			verbosemode = false,
 			
 			rarity = {
                 hide = false,
@@ -176,6 +180,11 @@ local function GetValeAssault()
     end
 end
 
+local function GetCovenant()
+	local covenantID = C_Covenants.GetActiveCovenantID()
+	return covenantID
+end
+
 function addon:GetNpcName(npcId)
     local tooltip = self.scanTooltip
 
@@ -240,8 +249,10 @@ function addon:GetItemSourceInfo(itemSource)
 	local mapInfo = C_Map.GetMapInfo(itemSource.zone_id);
 	if ( mapInfo ) then
 		zoneName = mapInfo.name
-	elseif itemSource.type == 'expeditions' or itemSource.subtype == 'horrificvision' or itemSource.subtype == 'timewalking' then
+	elseif itemSource.type == 'expeditions' or itemSource.subtype == 'horrificvision' or itemSource.subtype == 'timewalking' or itemSource.type == 'slcovenant' then
 		zoneName = "HIDDEN"
+	elseif MDL_DB_ZONES[itemSource.zone_id] and MDL_DB_ZONES[itemSource.zone_id].raid then
+		zoneName = MDL_DB_ZONES[itemSource.zone_id].raid
 	end
 
     local npcName
@@ -251,11 +262,39 @@ function addon:GetItemSourceInfo(itemSource)
         npcName = "Random"
 	elseif itemSource.type == 'expeditions' then
         npcName = "Reward"
+	elseif itemSource.type == 'slcovenant' then
+        if itemSource.npc_id == -1 then
+			npcName = "Covenant Adventures"
+        elseif itemSource.npc_id == -2 then
+			npcName = "Covenant Cache"
+        elseif itemSource.npc_id == -3 then
+			npcName = "Campaign Quest"
+        elseif itemSource.npc_id == -4 then
+			if covenant == 1 then
+				npcName = "Path of Ascension"
+			elseif covenant == 2 then
+				npcName = "Ember Court"
+			elseif covenant == 3 then
+				npcName = "Queen's Conservatory"
+			elseif covenant == 4 then
+				npcName = "Abomination Factory"
+			else 
+				npcName = "Unavailable until a covenant is picked"
+			end
+        elseif itemSource.npc_id == -5 then
+			npcName = "Renown Vendor"
+        elseif itemSource.npc_id == -6 then
+			npcName = "Blood Mirror Network"
+		else
+			npcName = "Unknown"
+		end
 	elseif itemSource.subtype == 'timewalking' then
         npcName = "Timewalking Bosses"
     elseif itemSource.encounter_id then
 		local name, description, bossID, rootSectionID, link, journalInstanceID, dungeonEncounterID, instanceID = EJ_GetEncounterInfo(itemSource.encounter_id)
 		npcName = name
+	elseif itemSource.customnpcName then
+		npcName = itemSource.customnpcName
 	else
         npcName = self:GetNpcName(itemSource.npc_id)
     end
@@ -282,6 +321,8 @@ function addon:GetItemSourceInfo(itemSource)
 				if nextFriendThreshold ~= nil then
 					comment = (comment and (comment .. '   ') or '') .. friendName .. '  ' .. friendTextLevel .. ' / ' .. L["repl_bestfriend"]
 				end
+			elseif standingID == nil then
+				--Faction undiscovered
 			elseif standingID >= (repnum) then
 				--Meeting Rep Requirement, hide message
 			else
@@ -433,11 +474,12 @@ function addon:BuildTooltipData()
     local playerLevel = UnitLevel('player')
     local playerZoneName = GetRealZoneText()
 
-    local dungeonItems, raidItems, worldItems, rareItems, summonedItems, warfrontItems, bfaassaultItems, horrificvisionItems, expeditionsItems, zoneItems, vendorItems, paragonItems, garrisoninvasionItems, holidayItems = {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
+    local dungeonItems, raidItems, worldItems, rareItems, summonedItems, warfrontItems, bfaassaultItems, horrificvisionItems, expeditionsItems, treasureItems, slcovenantItems, zoneItems, vendorItems, paragonItems, garrisoninvasionItems, holidayItems = {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
 
 	local bfaassaultuldum = GetUldumAssault()
 	local bfaassaultvale = GetValeAssault()
 	local timewalking = IsTimewalking()
+	covenant = GetCovenant()
 
     local itemId, itemData
     for itemId, itemData in pairs(MDL_DB_MOUNTS) do
@@ -445,8 +487,11 @@ function addon:BuildTooltipData()
 			local itemName, itemLink = GetItemInfo(itemId)
             local dispName = (itemLink and itemLink:gsub('%[', ''):gsub('%]', ''):sub(1)) or itemName or string.format('item#%d', itemId)
             local itemSource
+			if self.db.profile.verbosemode then
+				print(itemName, itemId, itemData.spell_id)
+			end
             for _, itemSource in pairs(itemData.from) do
-                if not itemSource.faction or itemSource.faction == playerFaction then
+                if not itemSource.faction or itemSource.faction == playerFaction or debugEnabled == 1 then
                     if itemSource.level <= playerLevel then
                         local zoneName, npcName, comment, raidSaveZone, raidSaveBoss, rarity, encounter_id = self:GetItemSourceInfo(itemSource)
 
@@ -560,7 +605,10 @@ function addon:BuildTooltipData()
 							if add == 0 then
 								killed = 1
 							end
-						elseif (itemSource.subtype == 'summoned' or itemSource.subtype == 'warfront' or itemSource.subtype == 'horrificvision' or itemSource.type == 'expeditions' or itemSource.type == 'paragon') and not itemSource.quest_id then
+						elseif itemSource.quest_id then
+							add = not C_QuestLog.IsQuestFlaggedCompleted(itemSource.quest_id)
+							killed = C_QuestLog.IsQuestFlaggedCompleted(itemSource.quest_id)
+						elseif (itemSource.subtype == 'summoned' or itemSource.subtype == 'warfront' or itemSource.subtype == 'horrificvision' or itemSource.type == 'expeditions' or itemSource.type == 'paragon' or itemSource.type == 'slcovenant' or itemSource.type == 'treasure') then
 								add = 1
 						elseif itemSource.subtype == 'bfaassault' then
 							if bfaassaultuldum == itemSource.bfaassault then
@@ -573,21 +621,20 @@ function addon:BuildTooltipData()
 								add = not C_QuestLog.IsQuestFlaggedCompleted(itemSource.quest_id)
 								killed = C_QuestLog.IsQuestFlaggedCompleted(itemSource.quest_id)
 							end	
-						elseif itemSource.type == 'world' and not itemSource.quest_id then
+						elseif itemSource.type == 'world' then
 							add = 1
 						elseif itemSource.type == 'world' and itemSource.subtype == 'wq' and itemSource.quest_id then
 							add = C_TaskQuest.IsActive(itemSource.quest_id)
-						elseif itemSource.type == 'rare' and not itemSource.quest_id then
+						elseif itemSource.type == 'rare' then
 							add = 1
-						elseif itemSource.type == 'vendor' and not itemSource.quest_id then
+						elseif itemSource.type == 'vendor' then
 							add = 1
-						elseif itemSource.type == 'zone' and not itemSource.quest_id then
+						elseif itemSource.type == 'zone' then
 							add = 1
-						elseif itemSource.type == 'holiday' and itemSource.subtype == 'timewalking' and timewalking and not itemSource.quest_id then
+						elseif itemSource.type == 'holiday' and itemSource.subtype == 'timewalking' and timewalking then
 							add = 1
-						elseif itemSource.quest_id then
-							add = not C_QuestLog.IsQuestFlaggedCompleted(itemSource.quest_id)
-							killed = C_QuestLog.IsQuestFlaggedCompleted(itemSource.quest_id)
+						else
+							add = 1
 						end
 					
 					if itemSource.expansion == 'classic' and self.db.profile.hide_classic then
@@ -605,6 +652,21 @@ function addon:BuildTooltipData()
 					elseif itemSource.expansion == 'legion' and self.db.profile.hide_legion then
 						add = 0
 					elseif itemSource.expansion == 'bfa' and self.db.profile.hide_bfa then
+						add = 0
+					elseif itemSource.expansion == 'sl' and self.db.profile.hide_sl then
+						add = 0
+					end
+					
+					if itemSource.covenant then
+						if not (itemSource.covenant == covenant) then
+							add = 0
+						end
+						if debugEnabled == 1 then
+							add = 1
+						end
+					end
+					
+					if itemSource.type == 'slcovenant' and itemSource.npc_id == -4 and covenant == 0 then
 						add = 0
 					end
 
@@ -679,6 +741,18 @@ function addon:BuildTooltipData()
 							else
 								expeditionsItems[zoneName] = zoneData
 							end
+						elseif itemSource.type == 'treasure' then
+							if treasureItems[zoneName] then
+								zoneData = treasureItems[zoneName]
+							else
+								treasureItems[zoneName] = zoneData
+							end
+						elseif itemSource.type == 'slcovenant' then
+							if slcovenantItems[zoneName] then
+								zoneData = slcovenantItems[zoneName]
+							else
+								slcovenantItems[zoneName] = zoneData
+							end					   
 						elseif itemSource.type == 'vendor' then
 							if vendorItems[zoneName] then
 								zoneData = vendorItems[zoneName]
@@ -725,6 +799,8 @@ function addon:BuildTooltipData()
 		{ items = bfaassaultItems , title = 'bfaassault'  },
 		{ items = horrificvisionItems , title = 'horrificvision'  },
 		{ items = expeditionsItems , title = 'expeditions'  },
+		{ items = slcovenantItems , title = 'slcovenant'  },
+		{ items = treasureItems , title = 'treasure'  },
 		{ items = zoneItems , title = 'zone'  },
 		{ items = vendorItems , title = 'vendor'  },
 		{ items = paragonItems , title = 'paragon'  },
@@ -740,12 +816,12 @@ function addon:BuildAltCraftList()
 
     local itemId, itemData
     for itemId, itemData in pairs(MDL_DB_MOUNTS) do
-        if not playerItems[itemData.spell_id] and (not itemData.faction or itemData.faction == playerFaction) then
+        if (not playerItems[itemData.spell_id] and (not itemData.faction or itemData.faction == playerFaction)) or debugEnabled == 1 then
             local name, link, icon = table.s2k_select({ GetItemInfo(itemId) }, 1, 2, 10 )
 
             local itemSource
             for _, itemSource in pairs(itemData.from) do
-                if not itemSource.faction or itemSource.faction == playerFaction then
+                if not itemSource.faction or itemSource.faction == playerFaction or debugEnabled == 1 then
                     local zoneName, npcName, comment, rarity = self:GetItemSourceInfo(itemSource)
 
                     if added[itemId] then
@@ -885,13 +961,17 @@ function rarityChance(item)
 end
 
 local function addTomTomWaypoint(mapID, coordx, coordy, name)
-	if (TomTomEnabled and mapID ~= nil ) then
-		TomTom:AddWaypoint(mapID, coordx/100, coordy/100, {
-			title = name,
-			persistent = nil,
-			minimap = true,
-			world = true
-		})
+	if mapID ~= nil then
+		if (TomTomEnabled) then
+			TomTom:AddWaypoint(mapID, coordx/100, coordy/100, {
+				title = name,
+				persistent = nil,
+				minimap = true,
+				world = true
+			})
+		else
+			C_Map.SetUserWaypoint(UiMapPoint.CreateFromCoordinates(mapID, coordx/100, coordy/100))
+		end
 	end
 end
 
@@ -989,10 +1069,14 @@ function addon:UpdateTooltip(tooltip)
 									addTomTomWaypoint(secondData.items[1].coordzone, secondData.items[1].coordx, secondData.items[1].coordy, secondName)
                             end)
                         else
-                            if not titlePrinted then
+							if not titlePrinted then
                                 lineNo = tooltip:AddLine()
 								if continent == 'HIDDEN' then
-									tooltip:SetCell(lineNo, 1, string.format('%s', firstName), nil, nil, 4)
+									if firstName == 'HIDDEN' then
+										
+									else
+										tooltip:SetCell(lineNo, 1, string.format('%s', firstName), nil, nil, 4)
+									end
 								else
 									tooltip:SetCell(lineNo, 1, string.format('%s / %s', continent, firstName), nil, nil, 4)
 								end

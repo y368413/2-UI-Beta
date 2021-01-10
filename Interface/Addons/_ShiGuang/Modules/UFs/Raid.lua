@@ -234,10 +234,12 @@ local defaultSpellList = {
 }
 
 function UF:DefaultClickSets()
-	if not next(R.db["RaidClickSets"]) then
+	if not MaoRUIDB["RaidClickSets"][I.MyClass] then MaoRUIDB["RaidClickSets"][I.MyClass] = {} end
+
+	if not next(MaoRUIDB["RaidClickSets"][I.MyClass]) then
 		for k, v in pairs(defaultSpellList[I.MyClass]) do
 			local clickSet = keyList[k][2]..keyList[k][1]
-			R.db["RaidClickSets"][clickSet] = {keyList[k][1], keyList[k][2], v}
+			MaoRUIDB["RaidClickSets"][I.MyClass][clickSet] = {keyList[k][1], keyList[k][2], v}
 		end
 	end
 end
@@ -262,7 +264,7 @@ local onMouseString = "if not self:IsUnderMouse(false) then self:ClearBindings()
 
 local function setupMouseWheelCast(self)
 	local found
-	for _, data in pairs(R.db["RaidClickSets"]) do
+	for _, data in pairs(MaoRUIDB["RaidClickSets"][I.MyClass]) do
 		if strmatch(data[1], U["Wheel"]) then
 			found = true
 			break
@@ -281,7 +283,7 @@ end
 local function setupClickSets(self)
 	if self.clickCastRegistered then return end
 
-	for _, data in pairs(R.db["RaidClickSets"]) do
+	for _, data in pairs(MaoRUIDB["RaidClickSets"][I.MyClass]) do
 		local key, modKey, value = unpack(data)
 		if key == KEY_BUTTON1 and modKey == "SHIFT" then self.focuser = true end
 

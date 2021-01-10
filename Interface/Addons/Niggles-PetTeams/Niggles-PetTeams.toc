@@ -1,0 +1,22 @@
+## Interface: 90002
+## Title: Niggles: Pet Teams
+## Version: 4.01
+## Notes: Adds pet teams to the Pet Journal
+## Author: Nief of Bloodhoof (EU)
+## SavedVariables: NglPtDB
+
+Nglpt-enUS.lua
+Nglpt-core.lua
+Nglpt-menu.lua
+Nglpt-settings.lua
+Nglpt-imexport.lua
+Nglpt-pets.lua
+Nglpt-teams.lua
+Nglpt-tooltips.lua
+Nglpt-replace.lua
+Nglpt-send.lua
+Nglpt-strategy.lua
+Nglpt-edit.lua
+Nglpt-main.lua
+Nglpt-frames.lua
+Nglpt-frames.xml

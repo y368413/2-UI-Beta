@@ -1,0 +1,9 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+
+	
+	<Include file="Chat\Load_Chat.xml"/>
+	<Include file="ScoreBar\ScoreBar.xml"/>
+	<Include file="MVPmodel\MVPmodel.lua"/>
+	
+
+</Ui>

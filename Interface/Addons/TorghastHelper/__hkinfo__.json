@@ -1,0 +1,14 @@
+{
+    "target": "curse",
+    "searchName": "TorghastHelper",
+    "localName": "TorghastHelper",
+    "version": "v0.4.4",
+    "fileName": "torghasthelper",
+    "addonsMap": [
+        "TorghastHelper"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "name": "TorghastHelper",
+    "gameVersion": "9.0.2"
+}

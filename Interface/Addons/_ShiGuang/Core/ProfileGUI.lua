@@ -488,7 +488,7 @@ local function reloadDefaultSettings()
 			R.db[i] = j
 		end
 	end
-	R.db["BFA"] = true -- don't empty data on next loading
+	R.db["SL"] = true -- don't empty data on next loading
 end
 
 function G:ImportGUIData()

@@ -1,5 +1,5 @@
 local MAJOR = "LibQTip-1.0"
-local MINOR = 46 -- Should be manually increased
+local MINOR = 48 -- Should be manually increased
 local LibStub = _G.LibStub
 
 assert(LibStub, MAJOR .. " requires LibStub")
@@ -37,7 +37,12 @@ local geterrorhandler = _G.geterrorhandler
 ------------------------------------------------------------------------------
 -- Tables and locals
 ------------------------------------------------------------------------------
-lib.frameMetatable = lib.frameMetatable or {__index = CreateFrame("Frame")}
+if BackdropTemplateMixin and oldMinor and (oldMinor < 48) and lib.frameMetatable then
+    -- mix new BackdropTemplateMixin into frame metatable
+    Mixin(lib.frameMetatable["__index"], BackdropTemplateMixin)
+else
+    lib.frameMetatable = lib.frameMetatable or {__index = CreateFrame("Frame", nil, nil, BackdropTemplateMixin and "BackdropTemplate")}
+end
 
 lib.tipPrototype = lib.tipPrototype or setmetatable({}, lib.frameMetatable)
 lib.tipMetatable = lib.tipMetatable or {__index = lib.tipPrototype}
@@ -52,6 +57,7 @@ lib.activeTooltips = lib.activeTooltips or {}
 
 lib.tooltipHeap = lib.tooltipHeap or {}
 lib.frameHeap = lib.frameHeap or {}
+lib.timerHeap = lib.timerHeap or {}
 lib.tableHeap = lib.tableHeap or {}
 
 lib.onReleaseHandlers = lib.onReleaseHandlers or {}
@@ -163,12 +169,12 @@ function lib:IterateTooltips()
 end
 
 ------------------------------------------------------------------------------
--- Frame cache
+-- Frame cache (for lines and columns)
 ------------------------------------------------------------------------------
 local frameHeap = lib.frameHeap
 
 local function AcquireFrame(parent)
-	local frame = tremove(frameHeap) or CreateFrame("Frame")
+	local frame = tremove(frameHeap) or CreateFrame("Frame", nil, nil, BackdropTemplateMixin and "BackdropTemplate")
 	frame:SetParent(parent)
 	--[===[@debug@
 	usedFrames = usedFrames + 1
@@ -180,7 +186,6 @@ local function ReleaseFrame(frame)
 	frame:Hide()
 	frame:SetParent(nil)
 	frame:ClearAllPoints()
-	if not frame.SetBackdrop then _G.Mixin(frame, _G.BackdropTemplateMixin) end
 	frame:SetBackdrop(nil)
 
 	ClearFrameScripts(frame)
@@ -189,6 +194,26 @@ local function ReleaseFrame(frame)
 	--[===[@debug@
 	usedFrames = usedFrames - 1
 	--@end-debug@]===]
+end
+
+------------------------------------------------------------------------------
+-- Timer cache
+------------------------------------------------------------------------------
+local timerHeap = lib.timerHeap
+
+local function AcquireTimer(parent)
+	local frame = tremove(timerHeap) or CreateFrame("Frame")
+	frame:SetParent(parent)
+	return frame
+end
+
+local function ReleaseTimer(frame)
+	frame:Hide()
+	frame:SetParent(nil)
+
+	ClearFrameScripts(frame)
+
+	tinsert(timerHeap, frame)
 end
 
 ------------------------------------------------------------------------------
@@ -477,9 +502,8 @@ function ReleaseCell(cell)
 	cell:Hide()
 	cell:ClearAllPoints()
 	cell:SetParent(nil)
-	if not cell.SetBackdrop then _G.Mixin(cell, _G.BackdropTemplateMixin) end
 	cell:SetBackdrop(nil)
-	
+
 	ClearFrameScripts(cell)
 
 	cell._provider:ReleaseCell(cell)
@@ -517,7 +541,7 @@ function InitializeTooltip(tooltip, key)
 	-- (Re)set frame settings
 	----------------------------------------------------------------------
 	local backdrop = GameTooltip:GetBackdrop()
-	if not tooltip.SetBackdrop then _G.Mixin(tooltip, _G.BackdropTemplateMixin) end
+
 	tooltip:SetBackdrop(backdrop)
 
 	if backdrop then
@@ -671,19 +695,15 @@ end
 ------------------------------------------------------------------------------
 -- Scrollbar data and functions
 ------------------------------------------------------------------------------
-local sliderBackdrop = {
-	bgFile = [[Interface\Buttons\UI-SliderBar-Background]],
-	edgeFile = [[Interface\Buttons\UI-SliderBar-Border]],
+local BACKDROP_SLIDER_8_8 = BACKDROP_SLIDER_8_8 or {
+	bgFile = "Interface\\Buttons\\UI-SliderBar-Background",
+	edgeFile = "Interface\\Buttons\\UI-SliderBar-Border",
 	tile = true,
-	edgeSize = 8,
+	tileEdge = true,
 	tileSize = 8,
-	insets = {
-		left = 3,
-		right = 3,
-		top = 3,
-		bottom = 3
-	}
-}
+	edgeSize = 8,
+	insets = { left = 3, right = 3, top = 6, bottom = 6 },
+};
 
 local function slider_OnValueChanged(self)
 	self.scrollFrame:SetVerticalScroll(self:GetValue())
@@ -734,14 +754,13 @@ function tipPrototype:UpdateScrolling(maxheight)
 		self.scrollFrame:SetPoint("RIGHT", self, "RIGHT", -(TOOLTIP_PADDING + 20), 0)
 
 		if not self.slider then
-			local slider = CreateFrame("Slider", nil, self)
+			local slider = CreateFrame("Slider", nil, self, BackdropTemplateMixin and "BackdropTemplate")
 			slider.scrollFrame = self.scrollFrame
 
 			slider:SetOrientation("VERTICAL")
 			slider:SetPoint("TOPRIGHT", self, "TOPRIGHT", -TOOLTIP_PADDING, -TOOLTIP_PADDING)
 			slider:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -TOOLTIP_PADDING, TOOLTIP_PADDING)
-			if not slider.SetBackdrop then _G.Mixin(slider, _G.BackdropTemplateMixin) end
-			slider:SetBackdrop(sliderBackdrop)
+			slider:SetBackdrop(BACKDROP_SLIDER_8_8)
 			slider:SetThumbTexture([[Interface\Buttons\UI-SliderBar-Button-Vertical]])
 			slider:SetMinMaxValues(0, 1)
 			slider:SetValueStep(1)
@@ -1127,7 +1146,6 @@ function tipPrototype:AddSeparator(height, r, g, b, a)
 
 	line.height = height
 	line:SetHeight(height)
-	if not line.SetBackdrop then _G.Mixin(line, _G.BackdropTemplateMixin) end
 	line:SetBackdrop(GenericBackdrop)
 	line:SetBackdropColor(r or color.r, g or color.g, b or color.b, a or 1)
 
@@ -1139,7 +1157,7 @@ function tipPrototype:SetCellColor(lineNum, colNum, r, g, b, a)
 
 	if cell then
 		local sr, sg, sb, sa = self:GetBackdropColor()
-		if not cell.SetBackdrop then _G.Mixin(cell, _G.BackdropTemplateMixin) end
+
 		cell:SetBackdrop(GenericBackdrop)
 		cell:SetBackdropColor(r or sr, g or sg, b or sb, a or sa)
 	end
@@ -1150,7 +1168,6 @@ function tipPrototype:SetColumnColor(colNum, r, g, b, a)
 
 	if column then
 		local sr, sg, sb, sa = self:GetBackdropColor()
-		if not column.SetBackdrop then _G.Mixin(column, _G.BackdropTemplateMixin) end
 		column:SetBackdrop(GenericBackdrop)
 		column:SetBackdropColor(r or sr, g or sg, b or sb, a or sa)
 	end
@@ -1161,8 +1178,7 @@ function tipPrototype:SetLineColor(lineNum, r, g, b, a)
 
 	if line then
 		local sr, sg, sb, sa = self:GetBackdropColor()
-		
-		if not line.SetBackdrop then _G.Mixin(line, _G.BackdropTemplateMixin) end
+
 		line:SetBackdrop(GenericBackdrop)
 		line:SetBackdropColor(r or sr, g or sg, b or sb, a or sa)
 	end
@@ -1458,7 +1474,7 @@ function tipPrototype:SetAutoHideDelay(delay, alternateFrame, releaseHandler)
 
 	if delay > 0 then
 		if not timerFrame then
-			timerFrame = AcquireFrame(self)
+			timerFrame = AcquireTimer(self)
 			timerFrame:SetScript("OnUpdate", AutoHideTimerFrame_OnUpdate)
 
 			self.autoHideTimerFrame = timerFrame
@@ -1476,7 +1492,7 @@ function tipPrototype:SetAutoHideDelay(delay, alternateFrame, releaseHandler)
 		timerFrame.alternateFrame = nil
 		timerFrame:SetScript("OnUpdate", nil)
 
-		ReleaseFrame(timerFrame)
+		ReleaseTimer(timerFrame)
 	end
 end
 

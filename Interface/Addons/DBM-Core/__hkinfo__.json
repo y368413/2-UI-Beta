@@ -1,0 +1,33 @@
+{
+    "addonsMap": [
+        "DBM-Core",
+        "DBM-Brawlers",
+        "DBM-DefaultSkin",
+        "DBM-DMF",
+        "DBM-GUI",
+        "DBM-StatusBarTimers",
+        "DBM-WorldEvents",
+        "DBM-Party-Shadowlands",
+        "DBM-Shadowlands",
+        "DBM-CastleNathria"
+    ],
+    "interfaceMap": [],
+    "children": [
+        "DBM-Brawlers",
+        "DBM-DefaultSkin",
+        "DBM-DMF",
+        "DBM-GUI",
+        "DBM-StatusBarTimers",
+        "DBM-WorldEvents",
+        "DBM-Party-Shadowlands",
+        "DBM-Shadowlands",
+        "DBM-CastleNathria"
+    ],
+    "localName": "DBM-Core",
+    "searchName": "Deadly Boss Mods (DBM)",
+    "name": "Deadly Boss Mods (DBM)",
+    "fileName": "deadly-boss-mods",
+    "target": "curse",
+    "version": "9.0.17-9-g3c1e859",
+    "gameVersion": "9.0.2"
+}

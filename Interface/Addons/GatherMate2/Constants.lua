@@ -15,7 +15,7 @@ local node_ids = {
 	["Fishing"] = {
 		[NL["Floating Wreckage"]] 				= 101, -- treasure.tga
 		--[NL["Patch of Elemental Water"]] 		= 102, -- purewater.tga
-		[NL["Floating Debris"]]			= 103, -- debris.tga
+		[NL["Floating Debris"]]					= 103, -- debris.tga
 		--[NL["Oil Spill"]] 					= 104, -- oilspill.tga
 		[NL["Firefin Snapper School"]] 			= 105, -- firefin.tga
 		[NL["Greater Sagefish School"]] 		= 106, -- greatersagefish.tga
@@ -24,6 +24,7 @@ local node_ids = {
 		[NL["School of Deviate Fish"]] 			= 109, -- firefin.tga
 		[NL["Stonescale Eel Swarm"]] 			= 110, -- eel.tga
 		--[NL["Muddy Churning Water"]] 			= 111, -- ZG only fishing node
+		-- BC pools
 		[NL["Highland Mixed School"]] 			= 112, -- fishhook.tga
 		[NL["Pure Water"]] 						= 113, -- purewater.tga
 		[NL["Bluefish School"]] 				= 114, -- bluefish,tga
@@ -34,6 +35,7 @@ local node_ids = {
 		[NL["Sporefish School"]] 				= 118, -- sporefish.tga
 		[NL["Steam Pump Flotsam"]] 				= 119, -- steampump.tga
 		[NL["School of Tastyfish"]] 			= 120, -- net.tga
+		-- WotLK Pools
 		[NL["Borean Man O' War School"]]        = 121,
 		[NL["Deep Sea Monsterbelly School"]]	= 122,
 		[NL["Dragonfin Angelfish School"]]		= 123,
@@ -149,6 +151,7 @@ local node_ids = {
 		[NL["Lesser Bloodstone Deposit"]] 		= 218,
 		[NL["Incendicite Mineral Vein"]] 		= 219,
 		[NL["Indurium Mineral Vein"]]			= 220,
+-- bc nodes
 		[NL["Fel Iron Deposit"]] 				= 221,
 		[NL["Adamantite Deposit"]] 				= 222,
 		[NL["Rich Adamantite Deposit"]] 		= 223,
@@ -156,6 +159,7 @@ local node_ids = {
 		[NL["Large Obsidian Chunk"]] 			= 225, -- found only in AQ20/40
 		[NL["Small Obsidian Chunk"]] 			= 226, -- found only in AQ20/40
 		[NL["Nethercite Deposit"]] 				= 227,
+-- wrath nodes
 		[NL["Cobalt Deposit"]]					= 228,
 		[NL["Rich Cobalt Deposit"]]				= 229,
 		[NL["Titanium Vein"]]					= 230,
@@ -213,14 +217,14 @@ local node_ids = {
 		[NL["Rich Phaedrum Deposit"]]			= 276,
 		[NL["Oxxein Deposit"]]					= 277,
 		[NL["Rich Oxxein Deposit"]]				= 278,
-		[NL["Monolithic Oxxein Deposit"]]		= 279,
+		--[NL["Monolithic Oxxein Deposit"]]		= 279,
 		[NL["Elethium Deposit"]]				= 280,
 		[NL["Rich Elethium Deposit"]]			= 281,
 		[NL["Solenium Deposit"]]				= 282,
 		[NL["Rich Solenium Deposit"]]			= 283,
 		[NL["Sinvyr Deposit"]]					= 284,
 		[NL["Rich Sinvyr Deposit"]]				= 285,
-		[NL["Menacing Sinvyr Deposit"]]			= 286,
+		--[NL["Menacing Sinvyr Deposit"]]			= 286,
 	},
 	["Extract Gas"] = {
 		[NL["Windy Cloud"]] 					= 301,
@@ -263,6 +267,7 @@ local node_ids = {
 		[NL["Icecap"]] 							= 429,
 		--[NL["Bloodvine"]] 					= 430, -- zg bush loot
 		[NL["Black Lotus"]] 					= 431,
+-- bc nodes
 		[NL["Felweed"]] 						= 432,
 		[NL["Dreaming Glory"]] 					= 433,
 		[NL["Terocone"]] 						= 434,
@@ -274,6 +279,7 @@ local node_ids = {
 		[NL["Ragveil"]] 						= 440,
 		[NL["Flame Cap"]] 						= 441,
 		[NL["Netherdust Bush"]] 				= 442,
+-- wotlk nodes
 		[NL["Adder's Tongue"]]					= 443,
 		--[NL["Constrictor Grass"]]				= 444, -- drop form others
 		--[NL["Deadnettle"]]					= 445, --looted from other plants
@@ -405,6 +411,8 @@ local node_ids = {
 		-- 8.2.5
 		[NL["Jelly Deposit"]]					= 563,
 		[NL["Large Jelly Deposit"]]				= 564,
+		-- Shadowlands
+		[NL["Ground Wart"]]						= 565,
 	},
 	["Archaeology"] = {
 		-- cata archeolgy objects
@@ -492,15 +500,18 @@ local rare_spawns = {
 	[486] = {[485]=true,[487]=true,[488]=true,[491]=true,[492]=true}, -- anchor weed
 	[271] = {[270]=true}, -- rich osmenite deposit
 	[564] = {[563]=true}, -- large jelly deposit
-	[274] = {[273]=true}, -- rich laestrite deposit
+	[273] = {[275]=true,[276]=true,[277]=true,[278]=true,[282]=true,[283]=true,[284]=true,[285]=true}, -- laestrite deposit
+	[274] = {[273]=true,[275]=true,[276]=true,[277]=true,[278]=true,[282]=true,[283]=true,[284]=true,[285]=true}, -- rich laestrite deposit
 	[276] = {[275]=true}, -- rich phaedrum deposit
-	[278] = {[277]=true,[279]=true}, -- rich oxxein deposit
-	[279] = {[277]=true,[278]=true}, -- monolithic oxxein deposit
-	[281] = {[280]=true}, -- rich elethium deposit
+	[278] = {[277]=true}, -- rich oxxein deposit
+	[280] = {[273]=true,[274]=true,[275]=true,[276]=true,[277]=true,[278]=true,[282]=true,[283]=true,[284]=true,[285]=true}, -- elethium deposit
+	[281] = {[280]=true,[273]=true,[274]=true,[275]=true,[276]=true,[277]=true,[278]=true,[282]=true,[283]=true,[284]=true,[285]=true}, -- rich elethium deposit
 	[283] = {[282]=true}, -- rich solenium deposit
-	[285] = {[284]=true,[286]=true}, -- rich sinvyr deposit
-	[286] = {[284]=true,[285]=true}, -- menacing sinvyr deposit
+	[285] = {[284]=true}, -- rich sinvyr deposit
+	[494] = {[493]=true,[495]=true,[496]=true,[497]=true,[498]=true}, -- nightshade
+	[493] = {[495]=true,[496]=true,[497]=true,[498]=true}, -- death blossom shares spawn with zone-specific herbs
 }
+GatherMate.rareNodes = rare_spawns
 Collector.rareNodes = rare_spawns
 -- Format zone = { "Database", "new node id"}
 local nodeRemap = {
@@ -902,6 +913,7 @@ local node_textures = {
 		[562] = icon_path.."Treasure\\ancient_mana.tga",
 		[563] = icon_path.."Treasure\\honey.tga",
 		[564] = icon_path.."Treasure\\honey.tga",
+		[565] = icon_path.."Treasure\\hide.tga",
 	},
 	["Archaeology"] = {
 		[601] = icon_path.."Archaeology\\shovel.tga",

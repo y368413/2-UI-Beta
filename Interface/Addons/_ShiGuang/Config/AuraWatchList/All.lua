@@ -46,6 +46,7 @@ local module = M:GetModule("AurasTable")
 local list = {
 	["Spell Cooldown"] = {	-- 冷却计时组
 		{SpellID = 125439},	-- 宠物绷带
+		{SpellID = 339659},	-- 乘骑影犬
 	},
 	["ClassBar"] = {		-- 职业技能
 		--300% Drog
@@ -93,6 +94,8 @@ local list = {
 		{AuraID = 269279, UnitID = "player", Value = true},                 --回声防护
 	},
 	["Enchant Aura"] = {	-- 附魔及饰品组
+		--DK
+		{AuraID = 101568, UnitID = "player", Flash = true},	-- 灵界打击
 		--XD
 		{AuraID = 69369, UnitID = "player", Flash = true},	-- 掠食者的迅捷
 		--DH
@@ -158,6 +161,7 @@ local list = {
 		{AuraID = 325013, UnitID = "player"},	-- 晋升者之赐
 		{AuraID = 308495, UnitID = "player"},	-- 共鸣箭
 		{AuraID = 328908, UnitID = "player"},	-- 战斗冥想
+		{AuraID = 345499, UnitID = "player"},	-- 执政官的祝福
 		-- 炼金石
 		{AuraID = 60233, UnitID = "player"},	-- 敏捷
 		{AuraID = 60229, UnitID = "player"},	-- 力量
@@ -181,9 +185,10 @@ local list = {
 		{AuraID = 32182, UnitID = "player"},	-- 英勇
 		{AuraID = 80353, UnitID = "player"},	-- 时间扭曲
 		{AuraID = 264667, UnitID = "player"},	-- 原始狂怒
-		{AuraID = 178207, UnitID = "player"},	-- 鼓
+		{AuraID = 178207, UnitID = "player"},	-- 狂怒战鼓
 		{AuraID = 230935, UnitID = "player"},	-- 高山战鼓
 		{AuraID = 256740, UnitID = "player"},	-- 漩涡战鼓
+		{AuraID = 309658, UnitID = "player"},	-- 死亡凶蛮战鼓
 		{AuraID = 102364, UnitID = "player"},	-- 青铜龙的祝福
 		{AuraID = 292686, UnitID = "player"},	-- 制皮鼓
 		-- 团队增益或减伤
@@ -222,6 +227,7 @@ local list = {
 		{AuraID = 306583, UnitID = "player"},	-- 灌铅脚步
 		{AuraID = 313698, UnitID = "player", Flash = true},	-- 泰坦之赐
 		-- 常驻词缀
+		{AuraID = 342466, UnitID = "player"},	-- 狂妄吹嘘
 		{AuraID = 209858, UnitID = "player"},	-- 死疽溃烂
 		{AuraID = 240559, UnitID = "player"},	-- 重伤
 		{AuraID = 340880, UnitID = "player"},	-- 傲慢
@@ -241,15 +247,26 @@ local list = {
 		{AuraID = 335161, UnitID = "player"},	-- 通灵战潮，残存心能
 		{AuraID = 345323, UnitID = "player", Flash = true},	-- 通灵战潮，勇士之赐
 		{AuraID = 322746, UnitID = "player"},	-- 彼界，堕落之血
+		{AuraID = 323687, UnitID = "player", Flash = true},	-- 彼界，奥术闪电
+		{AuraID = 323692, UnitID = "player"},	-- 彼界，奥术易伤
+		{AuraID = 331379, UnitID = "player"},	-- 彼界，润滑剂
 		{AuraID = 327893, UnitID = "player", Flash = true},	-- 彼界，邦桑迪的热情
 		{AuraID = 339978, UnitID = "player", Flash = true},	-- 彼界，安抚迷雾
 		{AuraID = 323569, UnitID = "player", Flash = true},	-- 彼界，溅洒精魂
 		{AuraID = 328453, UnitID = "player"},	-- 晋升高塔，压迫
 		{AuraID = 335805, UnitID = "player", Flash = true},	-- 晋升高塔，执政官的壁垒
 		{AuraID = 325027, UnitID = "player", Flash = true},	-- 仙林，荆棘爆发
+		{AuraID = 334496, UnitID = "player"},	-- 仙林，催眠光粉
 		-- 团本
+		{AuraID = 342077, UnitID = "player"},	-- 回声定位，咆翼
+		{AuraID = 329725, UnitID = "player"},	-- 根除，毁灭者
+		{AuraID = 329298, UnitID = "player"},	-- 暴食胀气，毁灭者
+		{AuraID = 325936, UnitID = "player"},	-- 共享认知，勋爵
 		{AuraID = 346035, UnitID = "player"},	-- 眩目步法，猩红议会
 		{AuraID = 331636, UnitID = "player", Flash = true},	-- 黑暗伴舞，猩红议会
+		{AuraID = 335293, UnitID = "player"},	-- 锁链联结，泥拳
+		{AuraID = 327039, UnitID = "player"},	-- 喂食时间，德纳修斯
+		{AuraID = 327089, UnitID = "player"},	-- 喂食时间，德纳修斯
 	},
 	["Warning"] = { -- 目标重要光环组
 		-- 大幻象
@@ -260,15 +277,24 @@ local list = {
 		-- 5人本
 		{AuraID = 322773, UnitID = "target", Value = true},	-- 彼界，鲜血屏障
 		{AuraID = 320293, UnitID = "target", Value = true},	-- 伤逝剧场，融入死亡
+		{AuraID = 333737, UnitID = "target"},	-- 凋魂，凝结之疾
+		{AuraID = 328175, UnitID = "target"},	-- 凋魂，凝结之疾
 		{AuraID = 321368, UnitID = "target", Value = true},	-- 凋魂，冰缚之盾
 		{AuraID = 327416, UnitID = "target", Value = true},	-- 晋升，心能回灌
 		{AuraID = 345561, UnitID = "target", Value = true},	-- 晋升，生命连结
 		{AuraID = 323149, UnitID = "target", Value = true},	-- 仙林，黑暗之拥
 		{AuraID = 340191, UnitID = "target", Value = true},	-- 仙林，再生辐光
+		{AuraID = 323059, UnitID = "target", Flash = true},	-- 仙林，宗主之怒
+		{AuraID = 326771, UnitID = "target"},	-- 赎罪大厅，岩石监视者
+		{AuraID = 331275, UnitID = "target", Flash = true},	-- 剧场，不灭护卫
 		-- 团本
 		{AuraID = 345902, UnitID = "target"},	-- 破裂的联结，猎手
 		{AuraID = 334695, UnitID = "target"},	-- 动荡的能量，猎手
 		{AuraID = 346792, UnitID = "target"},	-- 罪触之刃，猩红议会
+		{AuraID = 331314, UnitID = "target"},	-- 毁灭冲击，泥拳
+		{AuraID = 341250, UnitID = "target"},	-- 恐怖暴怒，泥拳
+		{AuraID = 329636, UnitID = "target", Value = true},	-- 坚岩形态，干将
+		{AuraID = 329808, UnitID = "target", Value = true},	-- 坚岩形态，干将
 		-- PVP
 		{AuraID = 498, UnitID = "target"},		-- 圣佑术
 		{AuraID = 642, UnitID = "target"},		-- 圣盾术

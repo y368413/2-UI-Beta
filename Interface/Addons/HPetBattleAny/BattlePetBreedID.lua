@@ -7411,15 +7411,6 @@ hooksecurefunc("FloatingBattlePet_Show", BPBID_Hook_FBPTShow)
 -- HSFUpdate is handled in BattlePetBreedID's Core entirely because it is unrelated to tooltips
 
 
-
-
-
-
-
-
-
-
-
 --[[
 Written by: Hugh@Burning Blade-US and Simca@Malfurion-US
 
@@ -7511,7 +7502,7 @@ local wideWidth = panelWidth - 40
 -- Create title, version, author, and description fields
 local title = CreateFont("GameFontNormalLarge", "BattlePet BreedID")
 title:SetPoint("TOPLEFT", 16, -16)
-local ver = CreateFont("GameFontNormalSmall", "r218")
+local ver = CreateFont("GameFontNormalSmall", "v1.17.4")
 ver:SetPoint("BOTTOMLEFT", title, "BOTTOMRIGHT", 4, 0)
 local auth = CreateFont("GameFontNormalSmall", "by Simca@Malfurion and Hugh@Burning Blade")
 auth:SetPoint("BOTTOMLEFT", ver, "BOTTOMRIGHT", 3, 0)

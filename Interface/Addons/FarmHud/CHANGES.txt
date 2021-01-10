@@ -1,30 +1,12 @@
-tag 5ec5af7cd2bdc76fa75b3eaf73d3fccac5c95ee3 8.6.2-release
+tag 176f88e904fc78de9e2863da33239316a8be2846 8.7.3-release
 Author:	Hizuro <hizuro@gmx.net>
-Date:	Fri Nov 13 18:20:21 2020 +0100
+Date:	Fri Nov 27 02:56:18 2020 +0100
 
-Tagging as 8.6.2-release
+Tagging as 8.7.3-release
 
-commit 59b70ebd63210fa2a94d91b318fe9712b77c6154
+commit 0d8beb84e5d9c8a93ce0ba76785544f3899e9d2e
 Author: Hizuro <hizuro@gmx.net>
-Date:   Fri Nov 13 18:18:08 2020 +0100
+Date:   Fri Nov 27 02:56:06 2020 +0100
 
-    next try
-
-commit 410bafec26a63e33eeb6f2197ba1002b98fdacf8
-Author: Hizuro <hizuro@gmx.net>
-Date:   Thu Nov 12 11:44:21 2020 +0100
-
-    minor changes
-
-commit fce6fc04bcec920ff713fbdb948a182464b6c6a0
-Author: Hizuro <hizuro@gmx.net>
-Date:   Thu Nov 12 11:37:54 2020 +0100
-
-    Found and added a way to handle backdropFrame from BasicMinimap
-
-commit e5aee66ba48e0a49693d0473785f94f8994ed220
-Author: Hizuro <hizuro@gmx.net>
-Date:   Thu Nov 12 11:36:22 2020 +0100
-
-    added some frames to the table anchoredFrames for GW2_UI
+    minor changes in pkgmeta
 

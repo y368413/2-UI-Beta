@@ -2,6 +2,8 @@
 local addon,ns=...;
 local L=ns.L;
 local ACD = LibStub("AceConfigDialog-3.0");
+local HBD = LibStub("HereBeDragons-2.0")
+local HBDPins = LibStub("HereBeDragons-Pins-2.0")
 
 FarmHudMixin = {};
 
@@ -81,7 +83,7 @@ local minimapCreateTextureTable = {};
 do
 	local addon_short = "FH";
 	local colors = {"0099ff","00ff00","ff6060","44ffff","ffff00","ff8800","ff44ff","ffffff"};
-	local debugMode = "8.6.2-release" == "@".."project-version".."@";
+	local debugMode = "8.7.3-release" == "@".."project-version".."@";
 	local function colorize(...)
 		local t,c,a1 = {tostringall(...)},1,...;
 		if type(a1)=="boolean" then tremove(t,1); end
@@ -297,13 +299,6 @@ local function objectToDummy(object,enable,debugStr)
 	return changedSetParent,changedSetPoint;
 end
 
-local function IsHereBeDragonPins(obj)
-	if (obj.arrow and obj.point) or obj.keep==true then -- try to ignore HereBeDragonPins
-		return true;
-	end
-	return false;
-end
-
 -- function replacements for Minimap while FarmHud is enabled.
 -- Should prevent problems with repositioning of minimap buttons from other addons.
 local replacements = {
@@ -429,6 +424,7 @@ function FarmHudMixin:SetScales(enabled)
 
 	local gcSize = MinimapSize * 0.432;
 	self.gatherCircle:SetSize(gcSize, gcSize);
+	self.healCircle:SetSize(gcSize/2.11, gcSize/2.11);
 
 	local y = (self:GetHeight()*FarmHudDB.buttons_radius) * 0.5;
 	if (FarmHudDB.buttons_bottom) then y = -y; end
@@ -506,8 +502,12 @@ do
 			self.TextFrame.mouseWarn:SetTextColor(unpack(FarmHudDB.mouseoverinfo_color));
 		elseif IsKey(key,"gathercircle_show") then
 			self.gatherCircle:SetShown(FarmHudDB.gathercircle_show);
-		elseif IsKey(key,"gathercircle_color") or key=="gathetcircle_resetcolor" then
+		elseif IsKey(key,"gathercircle_color") or key=="gathercircle_resetcolor" then
 			self.gatherCircle:SetVertexColor(unpack(FarmHudDB.gathercircle_color));
+		elseif IsKey(key,"healcircle_show") then
+			self.healCircle:SetShown(FarmHudDB.healcircle_show);
+		elseif IsKey(key,"healcircle_color") or key=="healcircle_resetcolor" then
+			self.healCircle:SetVertexColor(unpack(FarmHudDB.healcircle_color));
 		elseif IsKey(key,"cardinalpoints_show") then
 			self:UpdateCardinalPoints(FarmHudDB.cardinalpoints_show);
 		elseif IsKey(key,"cardinalpoints_color1") or IsKey(key,"cardinalpoints_color2") then
@@ -550,6 +550,8 @@ do
 end
 
 function FarmHudMixin:OnShow()
+	trackEnableMouse = true;
+
 	Dummy:SetParent(Minimap:GetParent());
 	Dummy:SetScale(Minimap:GetScale());
 	Dummy:SetSize(Minimap:GetSize());
@@ -605,7 +607,7 @@ function FarmHudMixin:OnShow()
 		-- childs
 		local childs = {object:GetChildren()};
 		for i=1, #childs do
-			if not IsHereBeDragonPins(childs[i]) then
+			if not (HBDPins and HBDPins.minimapPins[childs[i]]) then -- ignore herebedragons pins
 				parent,point = objectToDummy(childs[i],true,"OnShow.GetChildren");
 				if parent or point then
 					tinsert(movedElements.childs,childs[i])
@@ -657,6 +659,7 @@ function FarmHudMixin:OnShow()
 	MinimapMT.SetZoom(Minimap,0);
 	MinimapMT.SetAlpha(Minimap,FarmHudDB.background_alpha);
 
+	suppressNextMouseEnable = true;
 	MinimapMT.EnableMouse(Minimap,false);
 	MinimapMT.EnableMouseWheel(Minimap,false);
 
@@ -693,6 +696,11 @@ function FarmHudMixin:OnShow()
 	self:UpdateCardinalPoints(FarmHudDB.cardinalpoints_show);
 	self:UpdateCoords(FarmHudDB.coords_show);
 	self:UpdateTime(FarmHudDB.time_show);
+
+	-- second try to suppress mouse enable state
+	suppressNextMouseEnable = true;
+	MinimapMT.EnableMouse(Minimap,false);
+	MinimapMT.EnableMouseWheel(Minimap,false);
 end
 
 function FarmHudMixin:OnHide()
@@ -701,6 +709,8 @@ function FarmHudMixin:OnHide()
 		rotationMode = mps.rotation
 		Minimap_UpdateRotationSetting();
 	end
+
+	trackEnableMouse = false;
 
 	-- restore function replacements for Minimap
 	for k in pairs(replacements)do
@@ -855,12 +865,14 @@ end
 function FarmHudMixin:ToggleMouse(force)
 	if Minimap:GetParent()==self then
 		if (force==nil and Minimap:IsMouseEnabled()) or force then
+			suppressNextMouseEnable = true;
 			MinimapMT.EnableMouse(Minimap,false);
 			self.TextFrame.mouseWarn:Hide();
 			if not force then
 				mouseOnKeybind = true;
 			end
 		else
+			suppressNextMouseEnable = true;
 			MinimapMT.EnableMouse(Minimap,true);
 			self.TextFrame.mouseWarn:Show();
 			if not force then
@@ -881,7 +893,7 @@ function FarmHudMixin:ToggleOptions()
 		ACD:Close(addon);
 	else
 		ACD:Open(addon);
-		ACD.OpenFrames[addon]:SetStatusText(GAME_VERSION_LABEL..CHAT_HEADER_SUFFIX.."8.6.2-release");
+		ACD.OpenFrames[addon]:SetStatusText(GAME_VERSION_LABEL..CHAT_HEADER_SUFFIX.."8.7.3-release");
 	end
 end
 
@@ -905,8 +917,12 @@ function FarmHudMixin:OnEvent(event,...)
 		if (FarmHudDB.gathercircle_show) then
 			self.gatherCircle:Show();
 		end
+		if (FarmHudDB.healcircle_show) then
+			self.healCircle:Show();
+		end
 
 		self.gatherCircle:SetVertexColor(unpack(FarmHudDB.gathercircle_color));
+		self.healCircle:SetVertexColor(unpack(FarmHudDB.healcircle_color));
 
 		local radius = Minimap:GetWidth() * 0.214;
 		for i, v in ipairs(self.TextFrame.cardinalPoints) do
@@ -986,6 +1002,14 @@ function FarmHudMixin:OnLoad()
 
 	hooksecurefunc(Minimap,"SetMaskTexture",function(_,texture)
 		Dummy.bg:SetMask(texture);
+	end);
+
+	hooksecurefunc(Minimap,"EnableMouse",function(_,bool)
+		if not trackEnableMouse or suppressNextMouseEnable then
+			suppressNextMouseEnable = false;
+			return
+		end
+		ns.print(L.PleaseReportThisMessage,"<EnableMouse>",bool,"|n"..debugstack());
 	end);
 
 	if not ns.IsClassic() then

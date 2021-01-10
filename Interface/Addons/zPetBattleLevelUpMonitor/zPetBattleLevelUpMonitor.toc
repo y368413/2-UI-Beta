@@ -1,4 +1,4 @@
-## Interface: 80300
+## Interface: 90002
 ## Version: 1.0.4+1.0.1
 ## Title: PetBattleLevelUpMonitor+PetToolTip
 ## Author: scdhao

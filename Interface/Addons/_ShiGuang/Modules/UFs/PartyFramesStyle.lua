@@ -309,7 +309,7 @@ end
 			unit = "Player"
 		end
 		if unit == "Player" then
-			local button = CreateFrame("BUTTON", "IconMarksPlayerIcon", GetClickFrame("PlayerFrame"), "SecureActionButtonTemplate")
+			local button = CreateFrame("BUTTON", "IconMarksPlayerIcon", GetClickFrame("PlayerFrame"), "secureActionButtonTemplate")
 			button:SetPoint("TOPRIGHT", "PlayerFrame", "TOPRIGHT", -150, 0)
 			button:SetBackdrop({ bgFile = "Interface/BUTTONS/WHITE8X8" })
 			button:SetWidth(17)
@@ -319,7 +319,7 @@ end
 			button:SetFrameLevel(128)
 			button:SetScript("OnEvent", IconMarks_OnEvent)
 		else	
-			local button = CreateFrame("BUTTON", "IconMarksParty"..i.."Icon", GetClickFrame("PartyMemberFrame"..i), "SecureActionButtonTemplate")
+			local button = CreateFrame("BUTTON", "IconMarksParty"..i.."Icon", GetClickFrame("PartyMemberFrame"..i), "secureActionButtonTemplate")
 			button:SetPoint("TOPRIGHT", "PartyMemberFrame"..i, "TOPRIGHT", -96, 0)
 			button:SetBackdrop({ bgFile = "Interface/BUTTONS/WHITE8X8" })
 			button:SetWidth(13)
