@@ -1768,7 +1768,7 @@ L["Portal to Vashj'ir"] = "传送到 瓦斯琪尔"
 L["Portal to Hyjal"] = "传送到 海加尔山"
 --巫妖王之怒
 L["Northrend, Crystalsong Forest"] = "诺森德, 晶歌森林"
-L["Portal to the Purple Parlor"] = "传送到 the Purple Parlor"
+L["Portal to the Purple Parlor"] = "传送到 紫色天台"
 L["Northrend, Howling Fjord"] = "诺森德, 嚎风峡湾"
 L["Northrend, Vengeance Landing"] = "诺森德, 复仇港"
 L["Northrend, Valgarde"] = "诺森德, Valgarde"
