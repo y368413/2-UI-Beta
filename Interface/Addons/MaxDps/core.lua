@@ -271,6 +271,7 @@ end
 function MaxDps:AZERITE_ESSENCE_ACTIVATED()
 	self:DisableRotation();
 end
+
 --修正部分日常（飞上目标坐骑杀怪的那种）MaxDps不工作的问题
 function MaxDps:UNIT_ENTERED_VEHICLE(_, unitTarget, showVehicleFrame)
     -- print("------UNIT_ENTERED_VEHICLE------"..unitTarget,showVehicleFrame,isControlSeat, vehicleUIIndicatorID, vehicleGUID, mayChooseExit, hasPitch)

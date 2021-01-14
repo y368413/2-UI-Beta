@@ -212,6 +212,7 @@ G.DefaultSettings = {
 		AKSProgress = true,
 		PPFadeout = true,
 		PPFadeoutAlpha = 0,
+		PPOnFire = false,
 		NameplateClassPower = false,
 		NameTextSize = 14,
 		HealthTextSize = 16,
@@ -222,6 +223,8 @@ G.DefaultSettings = {
 		NameOnlyMode = false,
 		PPGCDTicker = true,
 		ExecuteRatio = 0,
+		ColoredTarget = false,
+		TargetColor = {r=0, g=.6, b=1},
 	},
 	Skins = {
 		DBM = true,
@@ -289,7 +292,7 @@ G.DefaultSettings = {
 		FasterLoot = true,
 		AutoQuest = true,
 		HideTalking = true,
-		HideBanner = false,
+		HideBossBanner = false,
 		HideBossEmote = false,
 		PetFilter = true,
 		QuestNotification = false,
@@ -362,12 +365,12 @@ G.AccountSettings = {
 	KeystoneInfo = {},
 	AutoBubbles = false,
 	DisableInfobars = false,
-	PartyWatcherSpells = {},
 	ContactList = {},
 	CustomJunkList = {},
 	ProfileIndex = {},
 	ProfileNames = {},
 	Help = {},
+	PartySpells = {},
 }
 
 -- Initial settings
@@ -1181,16 +1184,17 @@ local function CreateOption(i)
 			end
 		-- Colorswatch
 		elseif optType == 5 then
-			local f = M.CreateColorSwatch(parent, name, NDUI_VARIABLE(key, value))
+			local swatch = M.CreateColorSwatch(parent, name, NDUI_VARIABLE(key, value))
 			local width = 80 + (horizon or 0)*120
 			if horizon2 then
-				dd:SetPoint("TOPLEFT", width, -offset + 33)
+				swatch:SetPoint("TOPLEFT", width, -offset + 33)
 			elseif horizon then
-				f:SetPoint("TOPLEFT", width, -offset + 33)
+				swatch:SetPoint("TOPLEFT", width, -offset + 33)
 			else
-				f:SetPoint("TOPLEFT", width, -offset - 3)
+				swatch:SetPoint("TOPLEFT", width, -offset - 3)
 				offset = offset + 36
 			end
+			swatch.__default = (key == "ACCOUNT" and G.AccountSettings[value]) or G.DefaultSettings[key][value]
 		-- Blank, no optType
 		else
 			if not key then

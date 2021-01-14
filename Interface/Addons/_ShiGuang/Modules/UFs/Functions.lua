@@ -366,7 +366,7 @@ function UF:UpdateTextScale()
 			if castbar then
 				castbar.Text:SetScale(scale)
 				castbar.Time:SetScale(scale)
-				if castbar.Lag then  castbar.Lag:SetScale(scale) end
+				if castbar.Lag then castbar.Lag:SetScale(scale) end
 			end
 		end
 	end

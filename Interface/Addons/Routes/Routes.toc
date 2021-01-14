@@ -16,12 +16,6 @@
 
 # Locale files
 Locales\Locale-enUS.lua
-Locales\Locale-deDE.lua
-Locales\Locale-esES.lua
-Locales\Locale-frFR.lua
-Locales\Locale-koKR.lua
-Locales\Locale-ptBR.lua
-Locales\Locale-ruRU.lua
 Locales\Locale-zhCN.lua
 Locales\Locale-zhTW.lua
 

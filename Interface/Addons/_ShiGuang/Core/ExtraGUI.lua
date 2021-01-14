@@ -344,7 +344,7 @@ function G:SetupClickCast(parent)
 		M.AddTooltip(icon, "ANCHOR_RIGHT", value, "system")
 		close:SetScript("OnClick", function()
 			bar:Hide()
-			R.db["RaidClickSets"][clickSet] = nil
+			MaoRUIDB["RaidClickSets"][I.MyClass][clickSet] = nil
 			barTable[clickSet] = nil
 			sortBars(barTable)
 		end)
@@ -381,7 +381,7 @@ function G:SetupClickCast(parent)
 		button1 = YES,
 		button2 = NO,
 		OnAccept = function()
-			R.db["RaidClickSets"] = nil
+			wipe(MaoRUIDB["RaidClickSets"][I.MyClass])
 			ReloadUI()
 		end,
 		whileDead = 1,
@@ -397,10 +397,10 @@ function G:SetupClickCast(parent)
 		if (not tonumber(value)) and value ~= "target" and value ~= "focus" and value ~= "follow" and not strmatch(value, "/") then UIErrorsFrame:AddMessage(I.InfoColor..U["Invalid Input"]) return end
 		if not modKey or modKey == NONE then modKey = "" end
 		local clickSet = modKey..key
-		if R.db["RaidClickSets"][clickSet] then UIErrorsFrame:AddMessage(I.InfoColor..U["Existing ClickSet"]) return end
+		if MaoRUIDB["RaidClickSets"][I.MyClass][clickSet] then UIErrorsFrame:AddMessage(I.InfoColor..U["Existing ClickSet"]) return end
 
-		R.db["RaidClickSets"][clickSet] = {key, modKey, value}
-		createBar(scroll.child, R.db["RaidClickSets"][clickSet])
+		MaoRUIDB["RaidClickSets"][I.MyClass][clickSet] = {key, modKey, value}
+		createBar(scroll.child, MaoRUIDB["RaidClickSets"][I.MyClass][clickSet])
 		clearEdit(options)
 	end
 
@@ -416,9 +416,13 @@ function G:SetupClickCast(parent)
 		clearEdit(options)
 	end)
 
-	for _, v in pairs(R.db["RaidClickSets"]) do
+	for _, v in pairs(MaoRUIDB["RaidClickSets"][I.MyClass]) do
 		createBar(scroll.child, v)
 	end
+end
+
+local function updatePartyWatcherSpells()
+	M:GetModule("UnitFrames"):UpdatePartyWatcherSpells()
 end
 
 function G:SetupPartyWatcher(parent)
@@ -427,6 +431,7 @@ function G:SetupPartyWatcher(parent)
 	if extraGUIs[guiName] then return end
 
 	local panel = createExtraGUI(parent, guiName, U["AddPartyWatcher"].."*", true)
+	panel:SetScript("OnHide", updatePartyWatcherSpells)
 
 	local barTable = {}
 	local ARCANE_TORRENT = GetSpellInfo(25046)
@@ -445,7 +450,11 @@ function G:SetupPartyWatcher(parent)
 		M.AddTooltip(icon, "ANCHOR_RIGHT", spellID, "system")
 		close:SetScript("OnClick", function()
 			bar:Hide()
-			MaoRUIDB["PartyWatcherSpells"][spellID] = nil
+			if R.PartySpells[spellID] then
+				MaoRUIDB["PartySpells"][spellID] = 0
+			else
+				MaoRUIDB["PartySpells"][spellID] = nil
+			end
 			barTable[spellID] = nil
 			sortBars(barTable)
 		end)
@@ -471,12 +480,13 @@ function G:SetupPartyWatcher(parent)
 	local scroll = G:CreateScroll(frame, 240, 410)
 	scroll.reset = M.CreateButton(frame, 70, 25, RESET)
 	scroll.reset:SetPoint("TOPLEFT", 10, -80)
+	scroll.reset.text:SetTextColor(1, 0, 0)
 	StaticPopupDialogs["RESET_NDUI_PARTYWATCHER"] = {
 		text = U["Reset your raiddebuffs list?"],
 		button1 = YES,
 		button2 = NO,
 		OnAccept = function()
-			wipe(MaoRUIDB["PartyWatcherSpells"])
+			wipe(MaoRUIDB["PartySpells"])
 			ReloadUI()
 		end,
 		whileDead = 1,
@@ -489,9 +499,9 @@ function G:SetupPartyWatcher(parent)
 		local spellID, duration = tonumber(options[1]:GetText()), tonumber(options[2]:GetText())
 		if not spellID or not duration then UIErrorsFrame:AddMessage(I.InfoColor..U["Incomplete Input"]) return end
 		if not GetSpellInfo(spellID) then UIErrorsFrame:AddMessage(I.InfoColor..U["Incorrect SpellID"]) return end
-		if MaoRUIDB["PartyWatcherSpells"][spellID] then UIErrorsFrame:AddMessage(I.InfoColor..U["Existing ID"]) return end
+		if MaoRUIDB["PartySpells"][spellID] and MaoRUIDB["PartySpells"][spellID] ~= 0 then UIErrorsFrame:AddMessage(I.InfoColor..U["Existing ID"]) return end
 
-		MaoRUIDB["PartyWatcherSpells"][spellID] = duration
+		MaoRUIDB["PartySpells"][spellID] = duration
 		createBar(scroll.child, spellID, duration)
 		clearEdit(options)
 	end
@@ -508,7 +518,47 @@ function G:SetupPartyWatcher(parent)
 		clearEdit(options)
 	end)
 
-	for spellID, duration in pairs(MaoRUIDB["PartyWatcherSpells"]) do
+	local menuList = {}
+	local function AddSpellFromPreset(_, spellID, duration)
+		options[1]:SetText(spellID)
+		options[2]:SetText(duration)
+		DropDownList1:Hide()
+	end
+
+	local index = 1
+	for class, value in pairs(R.PartySpellsDB) do
+		local color = M.HexRGB(M.ClassColor(class))
+		local localClassName = LOCALIZED_CLASS_NAMES_MALE[class]
+		menuList[index] = {text = color..localClassName, notCheckable = true, hasArrow = true, menuList = {}}
+
+		for spellID, duration in pairs(value) do
+			local spellName, _, texture = GetSpellInfo(spellID)
+			if spellName then
+				tinsert(menuList[index].menuList, {
+					text = spellName,
+					icon = texture,
+					tCoordLeft = .08,
+					tCoordRight = .92,
+					tCoordTop = .08,
+					tCoordBottom = .92,
+					arg1 = spellID,
+					arg2 = duration,
+					func = AddSpellFromPreset,
+					notCheckable = true,
+				})
+			end
+		end
+		index = index + 1
+	end
+	scroll.preset = M.CreateButton(frame, 55, 25, U["Preset"])
+	scroll.preset:SetPoint("RIGHT", scroll.clear, "LEFT", -5, 0)
+	scroll.preset.text:SetTextColor(1, .8, 0)
+	scroll.preset:SetScript("OnClick", function(self)
+		EasyMenu(menuList, M.EasyMenu, self, -100, 100, "MENU", 1)
+	end)
+
+	local UF = M:GetModule("UnitFrames")
+	for spellID, duration in pairs(UF.PartyWatcherSpells) do
 		createBar(scroll.child, spellID, duration)
 	end
 end

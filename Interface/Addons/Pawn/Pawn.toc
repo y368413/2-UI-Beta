@@ -16,13 +16,6 @@ VgerCore\VgerCore.lua
 Core.lua
 ItemIDs.lua
 Localization.lua
-Localization.deDE.lua
-Localization.es.lua
-Localization.frFR.lua
-Localization.itIT.lua
-Localization.koKR.lua
-Localization.ptBR.lua
-Localization.ruRU.lua
 Localization.zhCN.lua
 Localization.zhTW.lua
 UIStrings.lua

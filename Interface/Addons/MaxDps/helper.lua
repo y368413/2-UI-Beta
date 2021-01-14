@@ -1,4 +1,4 @@
---- @type MaxDps MaxDps
+ï»¿--- @type MaxDps MaxDps
 local _, MaxDps = ...;
 
 -- Global cooldown spell id
@@ -216,7 +216,7 @@ function MaxDps:CheckTalents()
 
 	for talentRow = 1, 7 do
 		for talentCol = 1, 3 do
-            --ĞŞÕıÔÚÍĞ¼ÓË¹ÌØÌì¸³»ñÈ¡²»ÕıÈ·µÄbug
+            --ä¿®æ­£åœ¨æ‰˜åŠ æ–¯ç‰¹å¤©èµ‹è·å–ä¸æ­£ç¡®çš„bug
 			local _, name, _, sel, _, id , unknown, row, column, known, grantedByAura = GetTalentInfo(talentRow, talentCol, 1);
 			if sel or grantedByAura then
 				self.PlayerTalents[id] = 1;

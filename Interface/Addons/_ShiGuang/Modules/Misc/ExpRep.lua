@@ -130,6 +130,7 @@ function MISC:ExpBar_UpdateTooltip()
 				name = name.." ("..currentRank.." / "..maxRank..")"
 			end
 			if not nextFriendThreshold then
+				barMax = barMin + 1e3
 				value = barMax - 1
 			end
 			standingtext = friendTextLevel

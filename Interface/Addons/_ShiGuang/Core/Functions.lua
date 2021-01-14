@@ -801,14 +801,14 @@ do
 		self.bg:SetBackdropColor(cr, cg, cb, .25)
 	end
 
-	local function resetTabAnchor(tab)
-		local text = tab.Text or _G[tab:GetName().."Text"]
+	function M:ResetTabAnchor()
+		local text = self.Text or (self.GetName and _G[self:GetName().."Text"])
 		if text then
-			text:SetPoint("CENTER", tab)
+			text:SetPoint("CENTER", self)
 		end
 	end
-	hooksecurefunc("PanelTemplates_DeselectTab", resetTabAnchor)
-	hooksecurefunc("PanelTemplates_SelectTab", resetTabAnchor)
+	hooksecurefunc("PanelTemplates_SelectTab", M.ResetTabAnchor)
+	hooksecurefunc("PanelTemplates_DeselectTab", M.ResetTabAnchor)
 
 	-- Handle scrollframe
 	local function Scroll_OnEnter(self)
