@@ -65,16 +65,17 @@ local function InitConfiDialog()
 
     conf["NoAlt" .. i].text:SetText("禁用替补")
     conf["Highest" .. i].text:SetText("最高血量")
+    conf["Lowest" .. i].text:SetText("最低血量")
 
     conf["UseGroup" .. i].text:SetText("使用宠物组")
 
-    conf["FilterHP" .. i .. "_1"].Label:SetText("血")
+    conf["FilterHP" .. i .. "_1"].Label:SetText("血量")
     conf["FilterHP" .. i .. "_2"].Label:SetText("-")
 
-    conf["FilterAttack" .. i .. "_1"].Label:SetText("攻")
+    conf["FilterAttack" .. i .. "_1"].Label:SetText("攻击")
     conf["FilterAttack" .. i .. "_2"].Label:SetText("-")
 
-    conf["FilterSpeed" .. i .. "_1"].Label:SetText("速")
+    conf["FilterSpeed" .. i .. "_1"].Label:SetText("速度")
     conf["FilterSpeed" .. i .. "_2"].Label:SetText("-")
   end
 end
@@ -87,7 +88,7 @@ function ALPTRematch:OpenSetting(key)
   local dialog =
     rematch:ShowDialog(
     "ALPTCConfigs",
-    490,
+    590,
     500,
     "换队参数设置",
     nil,
@@ -116,6 +117,7 @@ function ALPTRematch:OpenSetting(key)
     conf["MinLvl" .. i]:SetText(alpt.minLvl[i])
     conf["NoAlt" .. i]:SetChecked(alpt.noAlt[i])
     conf["Highest" .. i]:SetChecked(alpt.highest[i])
+    conf["Lowest" .. i]:SetChecked(alpt.lowest[i])
     conf["UseGroup" .. i]:SetChecked(alpt.useGroup[i])
 
     UIDropDownMenu_SetText(conf["Groups" .. i], alpt.groups[i] or "无")
@@ -145,6 +147,7 @@ function ALPTRematch:ConfigSave()
     end
     cfg.ignoreBreed[i] = conf["Breed" .. i]:GetChecked()
     cfg.highest[i] = conf["Highest" .. i]:GetChecked()
+    cfg.lowest[i] = conf["Lowest" .. i]:GetChecked()
     cfg.minLvl[i] = tonumber(conf["MinLvl" .. i]:GetText()) or 25
     if cfg.minLvl[i]>25 then
       cfg.minLvl[i] = 25
@@ -191,6 +194,12 @@ function ALPTRematch_DropDown(func)
   end
 end
 
+function ALPTRematch_HighestCheck(i)
+  conf["Lowest" .. i]:SetChecked(false)
+end
+function ALPTRematch_LowestCheck(i)
+  conf["Highest" .. i]:SetChecked(false)
+end
 function ALPTRematch_DropDown1()
   ALPTRematch_DropDown(ALPTRematch_OnSelect1)
 end

@@ -148,8 +148,15 @@ hooksecurefunc(
                 end
             end
 
-            local height = GameTooltip:GetHeight()
-            GameTooltip:SetAnchorType("ANCHOR_BOTTOMRIGHT", 0, height + 80)
+            local height =0
+            if BPBID_BreedTooltip then
+                height = height + BPBID_BreedTooltip:GetHeight()
+            end
+   
+            local width = GameTooltip:GetWidth()
+ 
+            GameTooltip:SetAnchorType("ANCHOR_BOTTOMLEFT", width, 0 - height)
+            
             GameTooltip:Show()
         end
     end

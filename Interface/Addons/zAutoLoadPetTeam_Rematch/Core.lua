@@ -55,7 +55,7 @@ rematch:InitModule(
   end
 )
 local function PrintMessage(msg)
-  if CFG.debug or CFG.showTeamMessage then
+  if CFG.debug or CFG.showTeamMessage or CFG.enableBattleTimer or CFG.enableXpLog then
     print(msg)
   end
 end
@@ -264,7 +264,7 @@ function AutoTeam:FillTeamData(team)
 
       local levelUpPet = rematch.topPicks[pickIndex]
       pickIndex = pickIndex + 1
-      if not levelUpPet or not C_PetJournal.PetIsSummonable(levelUpPet) then
+      if not levelUpPet or not rematch:IsPetPickable(levelUpPet) then
         loadin[i][1] = Alternates or 0
         if loadin[i][1] ~= 0 then
           petInTeam[loadin[i][1]] = true
@@ -344,7 +344,7 @@ function AutoTeam:LoadHighest(tcfg, petId, m)
         break
       end
 
-      if not (pt.attack == attackCur and pt.speed == speedCur) then
+      if not tcfg.ignoreBreed[m] and not (pt.attack == attackCur and pt.speed == speedCur) then
         break
       end
 
@@ -359,6 +359,56 @@ function AutoTeam:LoadHighest(tcfg, petId, m)
     petInTeam[lastPetId] = true
     if CFG.debug then
       print(m .. "号宠找到更高血量" .. minHealth)
+    end
+    return true
+  end
+  return false
+end
+
+
+function AutoTeam:LoadLowest(tcfg, petId, m)
+  if CFG.debug then
+    print(m .. "号宠尝试加载最低血量<" .. healthCur)
+  end
+  local samepets = PetListCache[speciesIDCur]
+  if samepets == nil or #samepets <= 1 then
+    if CFG.debug then
+      print(m .. "号宠无可替补宠")
+    end
+    return false
+  end
+
+  local minHealth = healthCur
+  local lastPetId = petId
+  for n = 1, #samepets do
+    repeat
+      local pt = samepets[n]
+      if petInTeam[pt.petID] then
+        break
+      end
+      self:getPetStatus(pt)
+      if pt.health <1 then
+        break
+      end
+      if pt.health >= minHealth then
+        break
+      end
+
+      if not tcfg.ignoreBreed[m] and not (pt.attack == attackCur and pt.speed == speedCur) then
+        break
+      end
+
+      minHealth = pt.health
+      lastPetId = pt.petID
+    until true
+  end
+
+  if minHealth < healthCur then
+    loadin[m][1] = lastPetId
+    petInTeam[petId] = false
+    petInTeam[lastPetId] = true
+    if CFG.debug then
+      print(m .. "号宠找到更低血量" .. minHealth)
     end
     return true
   end
@@ -530,19 +580,38 @@ function AutoTeam:PreLoadTeam(teamKey, isForce)
         if CFG.debug then
           print(m .. "号宠血量:" .. percentCur .. "%,检测血线:" .. percentMinCur .. "%")
         end
-        if percentCur > 99 then
-          break
+        local isPercentMatch = false;
+        if percentCur >= percentMinCur then     
+          isPercentMatch = true;     
         end
 
         local success = false
-        if percentCur >= percentMinCur then
-          --血量符合要求，看看是否加载最高血量
-          if tcfg.highest[m] then
-            g.isPetsReplaced[m] = self:LoadHighest(tcfg, pid, m)
-          end
+
+        if isPercentMatch then
           success = true
+          if tcfg.noAlt[m] then
+            break;
+          end
+          if not tcfg.lowest[m] and not tcfg.highest[m] then
+            break;
+          end
+
+          --血量符合要求，看看是否加载最低血量
+          if tcfg.lowest[m] then
+            g.isPetsReplaced[m] = self:LoadLowest(tcfg, pid, m)
+          else
+            --血量符合要求，看看是否加载最高血量
+            local checkHigest = tcfg.highest[m];
+            if percentCur>99 and (not tcfg.ignoreBreed[m] or tcfg.useGroup[m]) then
+              checkHigest  = false
+            end
+            if checkHigest then
+              g.isPetsReplaced[m] = self:LoadHighest(tcfg, pid, m)
+            end
+          end
           break --总是认为成功的
-        end
+        end  
+ 
         --不满血，先尝试同组替补
         if not tcfg.noAlt[m] and tcfg.useGroup[m] then
           success, g.isPetsReplaced[m] = self:LoadFromGroup(tcfg, m)
@@ -766,6 +835,17 @@ function AutoTeam:SelectTeamAfterBattle()
   if changed then
     AutoTeam:SelectTeam()
   else
+    if rematch.queueNeedsProcessed  then
+      C_Timer.After(
+        0.01,
+        function()
+          AutoTeam:SelectTeamAfterBattle()
+        end
+      )
+      return;
+    end
+
+
     g.delayCount = g.delayCount + 1
     if g.delayCount > 50 then
       g.delayCount = 0
@@ -819,8 +899,11 @@ function AutoTeam:PLAYER_TARGET_CHANGED()
         g.npcName = name
         g.npcId = tonumber(npcid)
         local npcStr = g.npcId .. ""
-        if rematch.targetRedirects[g.npcId] then
-          g.npcId = rematch.targetRedirects[g.npcId]
+
+        local redirectMap = rematch.targetRedirects or rematch.notableRedirects or {}
+
+        if redirectMap[g.npcId] then
+          g.npcId = redirectMap[g.npcId]
           npcStr = npcStr .. "=>" .. g.npcId
         end
         if CFG.debug then
@@ -976,16 +1059,27 @@ end
 
 --缓存宠物数据
 function AutoTeam:updatePetListCache()
+  if not settings then
+    return
+  end
   if not isInited then
     --从rematch导入数据
     local npcs = rematch.targetData
+    local idxcheck = 7
+    local idxid  = 3
+    if not npcs then
+      npcs = rematch.notableNPCs or {}
+      idxcheck = 3
+      idxid = 1
+    end
     for x = 1, #npcs do
-      if npcs[x] and npcs[x][7] then
-        if not AutoTeamData[npcs[x][3]] then
-          AutoTeamData[npcs[x][3]] = {}
+      if npcs[x] and npcs[x][idxcheck] then
+        if not AutoTeamData[npcs[x][idxid]] then
+          AutoTeamData[npcs[x][idxid]] = {}
         end
       end
     end
+ 
     BattleLog = {logs = {}, starttime = nil, endtime = date("%Y-%m-%d %H:%M:%S")}
     isInited = true
   end

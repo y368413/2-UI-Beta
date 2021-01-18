@@ -478,7 +478,7 @@ function G:SetupPartyWatcher(parent)
 	options[2] = G:CreateEditbox(frame, U["Cooldown*"], 120, -30, U["Cooldown Intro"])
 
 	local scroll = G:CreateScroll(frame, 240, 410)
-	scroll.reset = M.CreateButton(frame, 70, 25, RESET)
+	scroll.reset = M.CreateButton(frame, 60, 25, RESET)
 	scroll.reset:SetPoint("TOPLEFT", 10, -80)
 	scroll.reset.text:SetTextColor(1, 0, 0)
 	StaticPopupDialogs["RESET_NDUI_PARTYWATCHER"] = {
@@ -499,21 +499,22 @@ function G:SetupPartyWatcher(parent)
 		local spellID, duration = tonumber(options[1]:GetText()), tonumber(options[2]:GetText())
 		if not spellID or not duration then UIErrorsFrame:AddMessage(I.InfoColor..U["Incomplete Input"]) return end
 		if not GetSpellInfo(spellID) then UIErrorsFrame:AddMessage(I.InfoColor..U["Incorrect SpellID"]) return end
-		if MaoRUIDB["PartySpells"][spellID] and MaoRUIDB["PartySpells"][spellID] ~= 0 then UIErrorsFrame:AddMessage(I.InfoColor..U["Existing ID"]) return end
+		local modDuration = MaoRUIDB["PartySpells"][spellID]
+		if modDuration and modDuration ~= 0 or R.PartySpells[spellID] and not modDuration then UIErrorsFrame:AddMessage(I.InfoColor..U["Existing ID"]) return end
 
 		MaoRUIDB["PartySpells"][spellID] = duration
 		createBar(scroll.child, spellID, duration)
 		clearEdit(options)
 	end
 
-	scroll.add = M.CreateButton(frame, 70, 25, ADD)
+	scroll.add = M.CreateButton(frame, 60, 25, ADD)
 	scroll.add:SetPoint("TOPRIGHT", -10, -80)
 	scroll.add:SetScript("OnClick", function()
 		addClick(scroll, options)
 	end)
 
-	scroll.clear = M.CreateButton(frame, 70, 25, KEY_NUMLOCK_MAC)
-	scroll.clear:SetPoint("RIGHT", scroll.add, "LEFT", -10, 0)
+	scroll.clear = M.CreateButton(frame, 60, 25, KEY_NUMLOCK_MAC)
+	scroll.clear:SetPoint("RIGHT", scroll.add, "LEFT", -6, 0)
 	scroll.clear:SetScript("OnClick", function()
 		clearEdit(options)
 	end)
@@ -550,8 +551,8 @@ function G:SetupPartyWatcher(parent)
 		end
 		index = index + 1
 	end
-	scroll.preset = M.CreateButton(frame, 55, 25, U["Preset"])
-	scroll.preset:SetPoint("RIGHT", scroll.clear, "LEFT", -5, 0)
+	scroll.preset = M.CreateButton(frame, 60, 25, U["Preset"])
+	scroll.preset:SetPoint("RIGHT", scroll.clear, "LEFT", -6, 0)
 	scroll.preset.text:SetTextColor(1, .8, 0)
 	scroll.preset:SetScript("OnClick", function(self)
 		EasyMenu(menuList, M.EasyMenu, self, -100, 100, "MENU", 1)
@@ -631,12 +632,17 @@ function G:SetupNameplateFilter(parent)
 	end
 end
 
+local function updateCornerSpells()
+	M:GetModule("UnitFrames"):UpdateCornerSpells()
+end
+
 function G:SetupBuffIndicator(parent)
 	local guiName = "NDuiGUI_BuffIndicator"
 	toggleExtraGUI(guiName)
 	if extraGUIs[guiName] then return end
 
 	local panel = createExtraGUI(parent, guiName)
+	panel:SetScript("OnHide", updateCornerSpells)
 
 	local frameData = {
 		[1] = {text = U["RaidBuffWatch"].."*", offset = -5, width = 160, barList = {}},
@@ -668,7 +674,12 @@ function G:SetupBuffIndicator(parent)
 			if index == 1 then
 				MaoRUIDB["RaidAuraWatch"][spellID] = nil
 			else
-				MaoRUIDB["CornerBuffs"][I.MyClass][spellID] = nil
+				local value = R.CornerBuffs[I.MyClass][spellID]
+				if value then
+					MaoRUIDB["CornerSpells"][I.MyClass][spellID] = {}
+				else
+					MaoRUIDB["CornerSpells"][I.MyClass][spellID] = nil
+				end
 			end
 			frameData[index].barList[spellID] = nil
 			sortBars(frameData[index].barList)
@@ -694,9 +705,10 @@ function G:SetupBuffIndicator(parent)
 		else
 			anchor, r, g, b = parent.dd.Text:GetText(), parent.swatch.tex:GetColor()
 			showAll = parent.showAll:GetChecked() or nil
-			if MaoRUIDB["CornerBuffs"][I.MyClass][spellID] then UIErrorsFrame:AddMessage(I.InfoColor..U["Existing ID"]) return end
+			local modValue = MaoRUIDB["CornerSpells"][I.MyClass][spellID]
+			if (modValue and next(modValue)) or (R.CornerBuffs[I.MyClass][spellID] and not modValue) then UIErrorsFrame:AddMessage(I.InfoColor..U["Existing ID"]) return end
 			anchor = decodeAnchor[anchor]
-			MaoRUIDB["CornerBuffs"][I.MyClass][spellID] = {anchor, {r, g, b}, showAll}
+			MaoRUIDB["CornerSpells"][I.MyClass][spellID] = {anchor, {r, g, b}, showAll}
 		end
 		createBar(parent.child, index, spellID, anchor, r, g, b, showAll)
 		parent.box:SetText("")
@@ -711,7 +723,7 @@ function G:SetupBuffIndicator(parent)
 			if currentIndex == 1 then
 				MaoRUIDB["RaidAuraWatch"] = nil
 			else
-				MaoRUIDB["CornerBuffs"][I.MyClass] = nil
+				wipe(MaoRUIDB["CornerSpells"][I.MyClass])
 			end
 			ReloadUI()
 		end,
@@ -779,7 +791,8 @@ function G:SetupBuffIndicator(parent)
 			M.AddTooltip(showAll, "ANCHOR_RIGHT", U["ShowAllTip"], "info")
 			scroll.showAll = showAll
 
-			for spellID, value in pairs(MaoRUIDB["CornerBuffs"][I.MyClass]) do
+			local UF = M:GetModule("UnitFrames")
+			for spellID, value in pairs(UF.CornerSpells) do
 				local r, g, b = unpack(value[2])
 				createBar(scroll.child, index, spellID, value[1], r, g, b, value[3])
 			end

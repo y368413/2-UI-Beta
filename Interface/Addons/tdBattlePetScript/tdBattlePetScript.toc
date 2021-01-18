@@ -2,9 +2,9 @@
 ## Title: tdBattlePetScript
 ## Description: 自动宠物战斗
 ## Author: DengSir
-## Version: 9.0.1
+## Version: 9.0.2
 ## OptionalDeps: tdGUI, Ace3
-## SavedVariables: TD_DB_BATTLEPETSCRIPT_GLOBAL
+## SavedVariables: TD_DB_BATTLEPETSCRIPT_GLOBAL, BattleLog
 ## SavedVariablesPerCharacter: TD_DB_BATTLEPETSCRIPT_BATTLE_CACHE
 ## LoadManagers: AddonLoader
 ## X-LoadOn-Always: delayed

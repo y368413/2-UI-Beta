@@ -182,20 +182,9 @@
 					</Anchors>
 				</FontString>
 
-				<FontString parentKey="LabEquip" inherits="PBLMFont_H2" Text="装备经验加成：">
-					<Anchors>
-						<Anchor point="TOPLEFT" relativeKey="$parent.LabLeftCount" relativePoint="BOTTOMLEFT" x="0" y="-15" />
-					</Anchors>
-				</FontString>
-				<FontString parentKey="Equip" inherits="PBLMFont_H2" Text="">
-					<Anchors>
-						<Anchor point="LEFT" relativeKey="$parent.LabEquip" relativePoint="LEFT" x="150" y="-1" />
-					</Anchors>
-				</FontString>
-
 				<FontString parentKey="LabTeamName" inherits="PBLMFont_H2" Text="当前队伍名称:">
 					<Anchors>
-						<Anchor point="TOPLEFT" relativeKey="$parent.LabEquip" relativePoint="BOTTOMLEFT" x="0" y="-15" />
+						<Anchor point="TOPLEFT" relativeKey="$parent.LabLeftCount" relativePoint="BOTTOMLEFT" x="0" y="-15" />
 					</Anchors>
 				</FontString>
 				<FontString parentKey="TeamName" inherits="PBLMFont_H2" Text="">

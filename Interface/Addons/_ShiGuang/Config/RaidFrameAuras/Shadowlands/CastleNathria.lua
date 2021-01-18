@@ -5,7 +5,7 @@ local module = M:GetModule("AurasTable")
 local TIER = 9
 local INSTANCE = 1190 -- 纳斯利亚堡
 local BOSS
--- Credit: Luckyone, ElvUI
+
 BOSS = 2393 -- 啸翼
 module:RegisterDebuff(TIER, INSTANCE, BOSS, 328897) -- 抽干
 module:RegisterDebuff(TIER, INSTANCE, BOSS, 330713) -- 耳鸣之痛
@@ -20,6 +20,7 @@ module:RegisterDebuff(TIER, INSTANCE, BOSS, 334945) -- 深红痛击
 module:RegisterDebuff(TIER, INSTANCE, BOSS, 334852) -- 石化嚎叫
 
 BOSS = 2428 -- 饥饿的毁灭者
+module:RegisterDebuff(TIER, INSTANCE, BOSS, 340630) -- 小怪
 module:RegisterDebuff(TIER, INSTANCE, BOSS, 334228) -- 不稳定的喷发
 module:RegisterDebuff(TIER, INSTANCE, BOSS, 329298) -- 暴食瘴气
 
@@ -97,3 +98,5 @@ module:RegisterDebuff(TIER, INSTANCE, BOSS, 329951) -- 穿刺
 module:RegisterDebuff(TIER, INSTANCE, BOSS, 327039) -- 喂食时间
 module:RegisterDebuff(TIER, INSTANCE, BOSS, 327089) -- 喂食时间
 module:RegisterDebuff(TIER, INSTANCE, BOSS, 332794) -- 致命灵巧
+module:RegisterDebuff(TIER, INSTANCE, BOSS, 329906) -- 屠戮
+module:RegisterDebuff(TIER, INSTANCE, BOSS, 334016, 6) -- 落选者

@@ -48,10 +48,10 @@
 	</EditBox>
 
 	<Frame parentKey="ALPTCConfigs" parent="RematchDialog" hidden="true">
-		<Size x="490" y="500"/>
+		<Size x="590" y="500"/>
 		<Frames>
 			<Frame parentKey="Top">
-				<Size x="480" y="1"/>
+				<Size x="580" y="1"/>
 				<Anchors>
 					<Anchor point="TOP"/>
 				</Anchors>
@@ -69,7 +69,7 @@
 				</FontString>
 
 				<Texture inherits="_UI-Frame-InnerBotTile" parentKey="Line1">
-					<Size x="480" y="3"/>
+					<Size x="580" y="3"/>
 					<Anchors>
 						<Anchor point="TOPLEFT" relativeKey="$parent.Top" relativePoint="BOTTOMLEFT" x="0" y="-30"/>
 					</Anchors>
@@ -84,7 +84,7 @@
 
 
 				<Texture inherits="_UI-Frame-InnerBotTile" parentKey="Line2">
-					<Size x="480" y="3"/>
+					<Size x="580" y="3"/>
 					<Anchors>
 						<Anchor point="TOPLEFT" relativeKey="$parent.Line1" relativePoint="BOTTOMLEFT" x="0" y="-130"/>
 					</Anchors>
@@ -98,7 +98,7 @@
 				</FontString>
 
 				<Texture inherits="_UI-Frame-InnerBotTile" parentKey="Line3">
-					<Size x="480" y="3"/>
+					<Size x="580" y="3"/>
 					<Anchors>
 						<Anchor point="TOPLEFT" relativeKey="$parent.Line2" relativePoint="BOTTOMLEFT" x="0" y="-130"/>
 					</Anchors>
@@ -125,7 +125,7 @@
 
 			<EditBox parentKey="HP1" inherits="ALPTInputBoxTemplate">
 				<Anchors>
-					<Anchor point="LEFT" relativeKey="$parent.Lab1" relativePoint="LEFT" x="150" y="0"/>
+					<Anchor point="LEFT" relativeKey="$parent.Lab1" relativePoint="LEFT" x="250" y="0"/>
 				</Anchors>
 			</EditBox>
 
@@ -154,12 +154,29 @@
 				<Anchors>
 					<Anchor point="LEFT" relativeKey="$parent.NoAlt1" relativePoint="RIGHT" x="70" y="0"/>
 				</Anchors>
+				<Scripts>
+					<OnClick>
+						ALPTRematch_HighestCheck(1)
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton parentKey="Lowest1" inherits="UICheckButtonTemplate,RematchTooltipScripts">
+				<Size x="28" y="28"/>
+				<Anchors>
+					<Anchor point="LEFT" relativeKey="$parent.Highest1" relativePoint="RIGHT" x="70" y="0"/>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ALPTRematch_LowestCheck(1)
+					</OnClick>
+				</Scripts>
 			</CheckButton>
 
 			<CheckButton parentKey="UseGroup1" inherits="UICheckButtonTemplate,RematchTooltipScripts">
 				<Size x="28" y="28"/>
 				<Anchors>
-					<Anchor point="LEFT" relativeKey="$parent.Highest1" relativePoint="RIGHT" x="70" y="0"/>
+					<Anchor point="LEFT" relativeKey="$parent.Lowest1" relativePoint="RIGHT" x="70" y="0"/>
 				</Anchors>
 			</CheckButton>
 
@@ -180,7 +197,7 @@
 			<EditBox parentKey="FilterHP1_1" inherits="ALPTInputBoxTemplate">
 				<Size x="65" y="24"/>
 				<Anchors>
-					<Anchor point="LEFT" relativeKey="$parent.NoAlt1" relativePoint="LEFT" x="20" y="-35"/>
+					<Anchor point="LEFT" relativeKey="$parent.NoAlt1" relativePoint="LEFT" x="40" y="-35"/>
 				</Anchors>
 			</EditBox>
 			<EditBox parentKey="FilterHP1_2" inherits="ALPTInputBoxTemplate">
@@ -192,7 +209,7 @@
 
 			<EditBox parentKey="FilterAttack1_1" inherits="ALPTInputBoxTemplate">
 				<Anchors>
-					<Anchor point="LEFT" relativeKey="$parent.FilterHP1_2" relativePoint="RIGHT" x="25" y="0"/>
+					<Anchor point="LEFT" relativeKey="$parent.FilterHP1_2" relativePoint="RIGHT" x="62" y="0"/>
 				</Anchors>
 			</EditBox>
 			<EditBox parentKey="FilterAttack1_2" inherits="ALPTInputBoxTemplate">
@@ -203,7 +220,7 @@
 
 			<EditBox parentKey="FilterSpeed1_1" inherits="ALPTInputBoxTemplate">
 				<Anchors>
-					<Anchor point="LEFT" relativeKey="$parent.FilterAttack1_2" relativePoint="RIGHT" x="25" y="0"/>
+					<Anchor point="LEFT" relativeKey="$parent.FilterAttack1_2" relativePoint="RIGHT" x="63" y="0"/>
 				</Anchors>
 			</EditBox>
 			<EditBox parentKey="FilterSpeed1_2" inherits="ALPTInputBoxTemplate">
@@ -217,7 +234,7 @@
 
 			<EditBox parentKey="HP2" inherits="ALPTInputBoxTemplate">
 				<Anchors>
-					<Anchor point="LEFT" relativeKey="$parent.Lab2" relativePoint="LEFT" x="150" y="0"/>
+					<Anchor point="LEFT" relativeKey="$parent.Lab2" relativePoint="LEFT" x="250" y="0"/>
 				</Anchors>
 			</EditBox>
 
@@ -246,12 +263,29 @@
 				<Anchors>
 					<Anchor point="LEFT" relativeKey="$parent.NoAlt2" relativePoint="RIGHT" x="70" y="0"/>
 				</Anchors>
+				<Scripts>
+					<OnClick>
+						ALPTRematch_HighestCheck(2)
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton parentKey="Lowest2" inherits="UICheckButtonTemplate,RematchTooltipScripts">
+				<Size x="28" y="28"/>
+				<Anchors>
+					<Anchor point="LEFT" relativeKey="$parent.Highest2" relativePoint="RIGHT" x="70" y="0"/>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ALPTRematch_LowestCheck(2)
+					</OnClick>
+				</Scripts>
 			</CheckButton>
 
 			<CheckButton parentKey="UseGroup2" inherits="UICheckButtonTemplate,RematchTooltipScripts">
 				<Size x="28" y="28"/>
 				<Anchors>
-					<Anchor point="LEFT" relativeKey="$parent.Highest2" relativePoint="RIGHT" x="70" y="0"/>
+					<Anchor point="LEFT" relativeKey="$parent.Lowest2" relativePoint="RIGHT" x="70" y="0"/>
 				</Anchors>
 			</CheckButton>
 
@@ -272,7 +306,7 @@
 			<EditBox parentKey="FilterHP2_1" inherits="ALPTInputBoxTemplate">
 				<Size x="65" y="24"/>
 				<Anchors>
-					<Anchor point="LEFT" relativeKey="$parent.NoAlt2" relativePoint="LEFT" x="20" y="-35"/>
+					<Anchor point="LEFT" relativeKey="$parent.NoAlt2" relativePoint="LEFT" x="40" y="-35"/>
 				</Anchors>
 			</EditBox>
 			<EditBox parentKey="FilterHP2_2" inherits="ALPTInputBoxTemplate">
@@ -284,7 +318,7 @@
 
 			<EditBox parentKey="FilterAttack2_1" inherits="ALPTInputBoxTemplate">
 				<Anchors>
-					<Anchor point="LEFT" relativeKey="$parent.FilterHP2_2" relativePoint="RIGHT" x="25" y="0"/>
+					<Anchor point="LEFT" relativeKey="$parent.FilterHP2_2" relativePoint="RIGHT" x="62" y="0"/>
 				</Anchors>
 			</EditBox>
 			<EditBox parentKey="FilterAttack2_2" inherits="ALPTInputBoxTemplate">
@@ -295,7 +329,7 @@
 
 			<EditBox parentKey="FilterSpeed2_1" inherits="ALPTInputBoxTemplate">
 				<Anchors>
-					<Anchor point="LEFT" relativeKey="$parent.FilterAttack2_2" relativePoint="RIGHT" x="25" y="0"/>
+					<Anchor point="LEFT" relativeKey="$parent.FilterAttack2_2" relativePoint="RIGHT" x="63" y="0"/>
 				</Anchors>
 			</EditBox>
 			<EditBox parentKey="FilterSpeed2_2" inherits="ALPTInputBoxTemplate">
@@ -309,7 +343,7 @@
 
 			<EditBox parentKey="HP3" inherits="ALPTInputBoxTemplate">
 				<Anchors>
-					<Anchor point="LEFT" relativeKey="$parent.Lab3" relativePoint="LEFT" x="150" y="0"/>
+					<Anchor point="LEFT" relativeKey="$parent.Lab3" relativePoint="LEFT" x="250" y="0"/>
 				</Anchors>
 			</EditBox>
 
@@ -338,12 +372,29 @@
 				<Anchors>
 					<Anchor point="LEFT" relativeKey="$parent.NoAlt3" relativePoint="RIGHT" x="70" y="0"/>
 				</Anchors>
+				<Scripts>
+					<OnClick>
+						ALPTRematch_HighestCheck(3)
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton parentKey="Lowest3" inherits="UICheckButtonTemplate,RematchTooltipScripts">
+				<Size x="28" y="28"/>
+				<Anchors>
+					<Anchor point="LEFT" relativeKey="$parent.Highest3" relativePoint="RIGHT" x="70" y="0"/>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ALPTRematch_LowestCheck(3)
+					</OnClick>
+				</Scripts>
 			</CheckButton>
 
 			<CheckButton parentKey="UseGroup3" inherits="UICheckButtonTemplate,RematchTooltipScripts">
 				<Size x="28" y="28"/>
 				<Anchors>
-					<Anchor point="LEFT" relativeKey="$parent.Highest3" relativePoint="RIGHT" x="70" y="0"/>
+					<Anchor point="LEFT" relativeKey="$parent.Lowest3" relativePoint="RIGHT" x="70" y="0"/>
 				</Anchors>
 			</CheckButton>
 
@@ -364,7 +415,7 @@
 			<EditBox parentKey="FilterHP3_1" inherits="ALPTInputBoxTemplate">
 				<Size x="65" y="24"/>
 				<Anchors>
-					<Anchor point="LEFT" relativeKey="$parent.NoAlt3" relativePoint="LEFT" x="20" y="-35"/>
+					<Anchor point="LEFT" relativeKey="$parent.NoAlt3" relativePoint="LEFT" x="40" y="-35"/>
 				</Anchors>
 			</EditBox>
 			<EditBox parentKey="FilterHP3_2" inherits="ALPTInputBoxTemplate">
@@ -376,7 +427,7 @@
 
 			<EditBox parentKey="FilterAttack3_1" inherits="ALPTInputBoxTemplate">
 				<Anchors>
-					<Anchor point="LEFT" relativeKey="$parent.FilterHP3_2" relativePoint="RIGHT" x="25" y="0"/>
+					<Anchor point="LEFT" relativeKey="$parent.FilterHP3_2" relativePoint="RIGHT" x="62" y="0"/>
 				</Anchors>
 			</EditBox>
 			<EditBox parentKey="FilterAttack3_2" inherits="ALPTInputBoxTemplate">
@@ -387,7 +438,7 @@
 
 			<EditBox parentKey="FilterSpeed3_1" inherits="ALPTInputBoxTemplate">
 				<Anchors>
-					<Anchor point="LEFT" relativeKey="$parent.FilterAttack3_2" relativePoint="RIGHT" x="25" y="0"/>
+					<Anchor point="LEFT" relativeKey="$parent.FilterAttack3_2" relativePoint="RIGHT" x="63" y="0"/>
 				</Anchors>
 			</EditBox>
 			<EditBox parentKey="FilterSpeed3_2" inherits="ALPTInputBoxTemplate">

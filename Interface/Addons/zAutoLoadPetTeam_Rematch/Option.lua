@@ -968,18 +968,7 @@ function ALPTRematch:InitMacroOptions()
                         macro.useBandage = not macro.useBandage
                     end
                 },
-                summonWM = {
-                    type = "toggle",
-                    name = "如果在阿苏纳，使用“尾锚的宠物日志”",
-                    width = "full",
-                    order = newOrder(),
-                    get = function()
-                        return macro.summonWM
-                    end,
-                    set = function()
-                        macro.summonWM = not macro.summonWM
-                    end
-                },
+ 
                 target = {
                     type = "toggle",
                     name = "如果未选中目标，选中之前选中的可对战目标",
@@ -1118,6 +1107,9 @@ function ALPTRematch:CheckCFG(key)
     if cfg.highest and (cfg.highest[1] or cfg.highest[2] or cfg.highest[3]) then
       return
     end
+    if cfg.lowest and (cfg.lowest[1] or cfg.lowest[2] or cfg.lowest[3]) then
+        return
+      end
     if cfg.minLvl and (cfg.minLvl[1] ~= 25 or cfg.minLvl[2] ~= 25 or cfg.minLvl[3] ~= 25) then
       return
     end
@@ -1186,6 +1178,10 @@ function ALPTRematch:CheckCFG(key)
     if not cfg.highest then
       cfg.highest = {}
     end
+    if not cfg.lowest then
+        cfg.lowest = {}
+      end
+    
     if not cfg.minLvl then
       cfg.minLvl = {}
     end
@@ -1210,6 +1206,7 @@ function ALPTRematch:CheckCFG(key)
       cfg.healthCheck[i] = cfg.healthCheck[i] or 100
       cfg.ignoreBreed[i] = cfg.ignoreBreed[i] or false
       cfg.highest[i] = cfg.highest[i] or false
+      cfg.lowest[i] = cfg.lowest[i] or false
       cfg.minLvl[i] = cfg.minLvl[i] or 25
       cfg.useGroup[i] = cfg.useGroup[i] or false
       cfg.groups[i] = cfg.groups[i] or "无"

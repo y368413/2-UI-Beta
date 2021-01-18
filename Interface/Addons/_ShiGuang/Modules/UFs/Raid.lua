@@ -357,13 +357,38 @@ function UF:BuffIndicatorOnUpdate(elapsed)
 	M.CooldownOnUpdate(self, elapsed, true)
 end
 
+UF.CornerSpells = {}
+function UF:UpdateCornerSpells()
+	wipe(UF.CornerSpells)
+
+	for spellID, value in pairs(R.CornerBuffs[I.MyClass]) do
+		local modData = MaoRUIDB["CornerSpells"][I.MyClass]
+		if not (modData and modData[spellID]) then
+			local r, g, b = unpack(value[2])
+			UF.CornerSpells[spellID] = {value[1], {r, g, b}, value[3]}
+		end
+	end
+
+	for spellID, value in pairs(MaoRUIDB["CornerSpells"][I.MyClass]) do
+		if next(value) then
+			local r, g, b = unpack(value[2])
+			UF.CornerSpells[spellID] = {value[1], {r, g, b}, value[3]}
+		end
+	end
+end
+
+local bloodlustList = {}
+for _, spellID in pairs(R.bloodlustID) do
+	bloodlustList[spellID] = {"BOTTOMLEFT", {1, .8, 0}, true}
+end
+
 local found = {}
 local auraFilter = {"HELPFUL", "HARMFUL"}
 
 function UF:UpdateBuffIndicator(event, unit)
 	if event == "UNIT_AURA" and self.unit ~= unit then return end
 
-	local spellList = MaoRUIDB["CornerBuffs"][I.MyClass]
+	local spellList = UF.CornerSpells
 	local buttons = self.BuffIndicator
 	unit = self.unit
 
@@ -372,7 +397,7 @@ function UF:UpdateBuffIndicator(event, unit)
 		for i = 1, 32 do
 			local name, texture, count, _, duration, expiration, caster, _, _, spellID = UnitAura(unit, i, filter)
 			if not name then break end
-			local value = spellList[spellID]
+			local value = spellList[spellID] or (I.Role ~= "HEALER" and bloodlustList[spellID])
 			if value and (value[3] or caster == "player" or caster == "pet") then
 				local bu = buttons[value[1]]
 				if bu then

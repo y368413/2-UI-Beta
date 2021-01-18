@@ -85,7 +85,7 @@ frame:SetScript(
 function ALPTRematch:CanLevelUP()
   local level = UnitLevel("player")
   local areaid = C_Map.GetBestMapForUnit("player")
-  if level == 120 or IsXPUserDisabled() or areaid == 590 or areaid == 582 then
+  if level == 60 or IsXPUserDisabled() or areaid == 590 or areaid == 582 then
     return false
   else
     return true

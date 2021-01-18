@@ -26,7 +26,7 @@ end
 
 local function CanLevelUP()
   local level = UnitLevel("player")
-  if level == 120 or IsXPUserDisabled() then
+  if level == 60 or IsXPUserDisabled() then
     return false
   else
     return true
@@ -51,7 +51,6 @@ function PetBattleLevelUpMonitor_OnLoad(self)
   frame:RegisterEvent("PET_BATTLE_CLOSE")
   frame:RegisterEvent("PLAYER_TARGET_CHANGED")
   frame:RegisterEvent("PLAYER_ENTERING_WORLD")
-  frame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 end
 
 local function calcTeam()
@@ -101,60 +100,7 @@ local function calcXp()
     end
   end
 end
-
-local function calcHeirloom()
-  if not CanLevelUP()  then
-    return
-  end
  
-  xpIncr = 0
-  local hasHeir = false
-  local level = UnitLevel("player")
-  for i = 1, 17 do
-    local itemLink = GetInventoryItemLink("player", i)
-    if itemLink then
-      local itemID = tonumber(itemLink:match("item:(%d+)"))
-      if itemID and C_Heirloom.IsItemHeirloom(itemID) then
-        local _, _, _, _, _, _, _, _, minLevel, maxLevel = C_Heirloom.GetHeirloomInfo(itemID)
-        if not maxLevel then
-          C_Timer.After(
-            1,
-            function()
-              calcHeirloom()
-            end
-          )
-          return
-        end
- 
-        if level and maxLevel and level < maxLevel then
-          hasHeir = true
-          tooltip:ClearLines()
-          tooltip:SetHyperlink(itemLink)
-          for i = 1, tooltip:NumLines() do
-            local text = lines[i]:GetText()
-            if text then
-              if (text:match("经验值提高")) then
-                local percent = text:match("(%d+)")
-                if percent then
-                  xpIncr = xpIncr + percent
-                end
-                break
-              end
-            end
-          end
-        end
-      end
-    end
-  end
-  if hasHeir and xpIncr==0 then
-    C_Timer.After(
-      1,
-      function()
-        calcHeirloom()
-      end
-    )
-  end
-end
 
 function PetBattleLevelUpMonitor_OnEvent(self, event, ...)
   if event == "PLAYER_XP_UPDATE" then
@@ -166,11 +112,6 @@ function PetBattleLevelUpMonitor_OnEvent(self, event, ...)
     )
   elseif event == "PLAYER_ENTERING_WORLD" then
     lastXp = UnitXP("player")
-    calcHeirloom()
-  elseif event == "PLAYER_EQUIPMENT_CHANGED" then
-    calcHeirloom()
-  elseif event == "PLAYER_LEVEL_UP" then
-    calcHeirloom()
   elseif event == "PLAYER_TARGET_CHANGED" then
     if
       UnitExists("target") and not UnitIsPlayer("target") and not UnitIsEnemy("player", "target") and
@@ -254,8 +195,6 @@ local function Update()
     frame.XpLast:Hide()
     frame.LabLeftCount:Hide()
     frame.LeftCount:Hide()
-    frame.LabEquip:Hide()
-    frame.Equip:Hide()
     frame.LabTeamName:SetPoint("TOPLEFT", frame.PVP, "BOTTOMLEFT", -130, -100)
   else
     local level = UnitLevel("player")
@@ -275,13 +214,7 @@ local function Update()
     else
       frame.LeftCount:SetText(ORANGE_FONT_COLOR_CODE .. "待统计" .. FONT_COLOR_CODE_CLOSE)
     end
-    if xpIncr == 0 then
-      frame.Equip:SetText(RED_FONT_COLOR_CODE .. "无" .. FONT_COLOR_CODE_CLOSE)
-    elseif xpIncr < 50 then
-      frame.Equip:SetText(RED_FONT_COLOR_CODE .. xpIncr .. " %" .. FONT_COLOR_CODE_CLOSE)
-    else
-      frame.Equip:SetText(GREEN_FONT_COLOR_CODE .. xpIncr .. " %" .. FONT_COLOR_CODE_CLOSE)
-    end
+ 
   end
   local tk = RematchSettings.loadedTeam
   if tk then

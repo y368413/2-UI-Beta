@@ -228,6 +228,7 @@ function UF:OnLogin()
 		UF:UpdateTextScale()
 	if R.db["UFs"]["RaidFrame"] then
 		UF:AddClickSetsListener()
+		UF:UpdateCornerSpells()
 
 		-- Hide Default RaidFrame
 		if CompactRaidFrameManager_SetSetting then
@@ -450,7 +451,7 @@ function UF:OnLogin()
 					end
 
 					if not R.db["Mover"]["PartyPos"..specIndex] then
-						R.db["Mover"]["PartyPos"..specIndex] = {"TOPLEFT", UIParent, "TOPLEFT", 310, -120}
+						R.db["Mover"]["PartyPos"..specIndex] = {"TOPLEFT", "UIParent", "TOPLEFT", 310, -120}
 					end
 					if partyMover then
 						partyMover:ClearAllPoints()

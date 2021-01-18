@@ -1,5 +1,5 @@
 ## Interface: 90002
-## Version: 1.0.4+1.0.1
+## Version: 1.0.6+1.0.1
 ## Title: PetBattleLevelUpMonitor+PetToolTip
 ## Author: scdhao
 ## Notes: 宠物练级状态监控+宠物提示面板增强

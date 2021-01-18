@@ -3,7 +3,7 @@
 
 
     <Script file="LibBase64-1.0.lua" />
-    <Script file="LibCRC32-1.0.lua" />
+    <Script file="LibCRC32.lua" />
 
     <Include file="tdGUI\Load.xml" />
 </Ui>

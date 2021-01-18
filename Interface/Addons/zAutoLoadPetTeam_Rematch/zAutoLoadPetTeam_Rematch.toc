@@ -3,7 +3,7 @@
 ## Title-zhCN: AutoLoadPetTeam For Rematch
 ## Notes: 宠物自动换队-适配Rematch版
 ## Author: scdhao
-## Version: 2.0.4
+## Version: 2.1.6
 ## Dependencies: Rematch
 ## SavedVariables: BattleLog
 

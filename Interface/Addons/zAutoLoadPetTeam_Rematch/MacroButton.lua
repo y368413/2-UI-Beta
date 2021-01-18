@@ -25,7 +25,7 @@ local function CreateHelpButtons()
   buttonQuitGame:SetScript(
     "PreClick",
     function(btn, button)
-      if UnitLevel("player")==120 then
+      if UnitLevel("player")==60 then
         btn:SetAttribute("macrotext", "/quit")
       else
         btn:SetAttribute("macrotext", "")
@@ -105,16 +105,7 @@ local function createMacroText(btn)
         end
       end
     end
-
-    --尾锚
-    if config.summonWM and C_Map.GetBestMapForUnit("player") == 630 then
-      local startTime, duration = GetItemCooldown(122681)
-      if duration < 1 then
-        DebugPrint("召唤尾锚")
-        macro = macro .. "\n/use item:122681"
-      end
-    end
-
+ 
     local npcName, npcWithTeam, npcIdWithTeam = ALPTRematch:GetLastNpcData()
     local hasNpc = npcWithTeam and npcWithTeam ~= ""
     if hasNpc and config.target then
@@ -160,7 +151,7 @@ local function createMacroText(btn)
 
     if config.selectGossip and isTeamOk and UnitExists("target") and GossipFrame and GossipFrame:IsVisible() then
       DebugPrint("执行对话")
-      macro = macro .. "\n/script SelectGossipOption(1)"
+      macro = macro .. "\n/script C_GossipInfo.SelectOption(1)"
     end
     DebugPrint(config.extraScriptCmd)
     if config.extraScript and config.extraScriptCmd and config.extraScriptCmd ~= nil then
