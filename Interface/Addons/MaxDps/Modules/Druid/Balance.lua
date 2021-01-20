@@ -12,7 +12,7 @@ local UnitPower = UnitPower;
 local GetSpellCount = GetSpellCount;
 local LunarPower = Enum.PowerType.LunarPower;
 local GetHaste = GetHaste;
-local Druid = addonTable.Druid;
+local Druid = MaxDps_DruidTable.Druid;
 
 local Necrolord = Enum.CovenantType.Necrolord;
 local Venthyr = Enum.CovenantType.Venthyr;

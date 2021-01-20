@@ -83,7 +83,7 @@ function Module:OnInitialize()
         -- end)
 
         AutoButton.HotKey = AutoButton:CreateFontString(nil, 'OVERLAY', 'NumberFontNormalSmallGray')
-        AutoButton.HotKey:SetPoint('TOPRIGHT', -1, -2)
+        AutoButton.HotKey:SetPoint('TOPLEFT', 1, -2)
         AutoButton.HotKey:SetText('')
     end
 
