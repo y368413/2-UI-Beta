@@ -1,6 +1,6 @@
 ## Interface: 90002
 ## Author: p3lim
-## Version: 90000.19-Release
+## Version: 90000.22-Release
 ## Title: Interactive Wormholes
 ## Notes: Shows clickable locations on the World Map when interacting with gossip windows that offer teleportation
 ## OptionalDeps: LibStub, CallbackHandler-1.0, HereBeDragons, LibBabble-SubZone-3.0
@@ -29,4 +29,12 @@ locale\zhTW.lua
 marker.lua
 addon.lua
 
-modules\modules.xml
+modules\Footholds.lua
+modules\MoleMachine.lua
+modules\SilasSphere.lua
+modules\Stormflight.lua
+modules\UnderbellyPortals.lua
+modules\Vethir.lua
+modules\Warfronts.lua
+modules\Wormholes.lua
+modules\Maw.lua

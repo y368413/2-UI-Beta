@@ -2,7 +2,7 @@
 ## Title: Oribos Lap
 ## Notes: Tracks the number of times you have laped around Oribos.
 ## Author: Mattsta
-## Version: 0.1
+## Version: 0.3
 ## SavedVariables: OribosLap
 ## SavedVariablesPerCharacter: OribosLap_char
 

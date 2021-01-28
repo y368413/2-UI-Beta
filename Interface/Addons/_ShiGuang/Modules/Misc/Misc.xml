@@ -16,4 +16,7 @@
 	<!--Script file="FreeMountCD.lua"/-->
 	<Script file="xMerchant.lua"/>
 	<Script file="BlinkRogueHelper.lua"/>
+	
+	<Script file="LootSpecManager.lua"/>
+	<Script file="TalentManager.lua"/>
 </Ui>

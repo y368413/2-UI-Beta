@@ -1271,6 +1271,18 @@ do
 	end
 end
 
+-- Modules
+local plusmodules, plusinitQueue = {}, {}
+function M:RegisterPlusModule(name)
+	if plusmodules[name] then return end
+	local module = {}
+	module.name = name
+	plusmodules[name] = module
+
+	tinsert(plusinitQueue, module)
+	return module
+end
+
 	-- Function --
 function M:CreatStyleButton(id, parent, w, h, ap, frame, rp, x, y, l, alpha, bgF, r, g, b)
   local StyleButton = CreateFrame("Button", id, parent, "BackdropTemplate")

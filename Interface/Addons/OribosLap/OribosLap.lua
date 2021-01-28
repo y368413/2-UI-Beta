@@ -16,6 +16,7 @@ local updateInterval = 60;
 local fontColor = "12C0FF";
 
 local function dtToPrintableTime(dt)
+  if type(dt) ~= "number" then return nil; end
   local Mili = dt % 1;
   local nonMili = dt - Mili;
   local seconds = nonMili % 60;
@@ -210,9 +211,22 @@ local function OriLap_SetupOptionsMenu()
   checkbox.tooltipRequirement = "When enabled, will print the line for character stats."
 
   checkbox:SetPoint("TOPLEFT", 16, -112)
+  
+  ----Display As Percent
+  checkbox = CreateFrame("CheckButton", "OribosLap_DisplayPercent", frame, "InterfaceOptionsCheckButtonTemplate");
+  checkbox:SetScript("OnClick", function(self) OribosLap.displayPercent = not OribosLap.displayPercent; self:SetChecked(OribosLap.displayPercent); end);
+  checkbox:SetChecked(OribosLap.displayPercent);
+
+  OribosLap_DisplayPercentText:SetText("Display Stats as Percent");
+
+  checkbox.tooltipText = "Display Relative Stats as Percent"
+  checkbox.tooltipRequirement = "When enabled, will print relative stats as a percent of total laps."
+
+  checkbox:SetPoint("TOPLEFT", 16, -136)
 end
 
 frame:RegisterEvent("ADDON_LOADED");
+frame:RegisterEvent("ZONE_CHANGED_NEW_AREA");
 frame:SetScript("OnEvent", function(pSelf, pEvent, pUnit)
   if pEvent == "ADDON_LOADED" and pUnit == "OribosLap" then
     --OribosLap = nil;
@@ -231,6 +245,9 @@ frame:SetScript("OnEvent", function(pSelf, pEvent, pUnit)
       OribosLap.displayLapTime = false;
       OribosLap.announceRecordLap = true;
     end
+	if (OribosLap.displayPercent == nil) then
+	  OribosLap.displayPercent = false;
+	end
     if (OribosLap_char == nil) then
       OribosLap_char = {};
       OribosLap_char.bottom = 0;
@@ -243,76 +260,147 @@ frame:SetScript("OnEvent", function(pSelf, pEvent, pUnit)
     if OribosLap_char.fastest == nil then OribosLap_char.fastest = math.huge; end
     
     OriLap_SetupOptionsMenu();
+  elseif pEvent == "ZONE_CHANGED_NEW_AREA" then
+    lastPlayerMap = 0;
+    lastPlayerPos:SetXY(0,0);
   end
 end)
+
+----
+-- Print Function for displaying clockwise/counter-clockwise tendency.
+----
+local function DisplayDir(char_, acct_)
+	local str;
+	if acct_ then 
+	  if OribosLap.clock > OribosLap.counter then
+      if not OribosLap.displayPercent then
+        str = "clockwise |cFFFFFFFF"..OribosLap.clock - OribosLap.counter.."|r times more often.";
+      else
+        str = "clockwise |cFFFFFFFF"..string.format("%.1f",OribosLap.clock / (OribosLap.clock + OribosLap.counter) * 100).."%|r of the time.";
+      end
+	  elseif OribosLap.clock < OribosLap.counter then
+      if not OribosLap.displayPercent then
+        str = "counter-clockwise |cFFFFFFFF"..OribosLap.counter - OribosLap.clock.."|r times more often.";
+      else
+        str = "counter-clockwise |cFFFFFFFF"..string.format("%.1f",OribosLap.counter / (OribosLap.clock + OribosLap.counter) * 100).."%|r of the time.";
+      end
+	  else
+      str = "both directions equally!";
+	  end
+	  print("|cFF"..fontColor.."Across your account, you have lapped Oribos "..str.."|r");
+	end
+
+	if char_ then
+	  if OribosLap_char.clock > OribosLap_char.counter then
+      if not OribosLap.displayPercent then
+        str = "clockwise |cFFFFFFFF"..OribosLap_char.clock - OribosLap_char.counter.."|r times more often.";
+      else
+        str = "clockwise |cFFFFFFFF"..string.format("%.1f",OribosLap_char.clock / (OribosLap_char.clock + OribosLap_char.counter) * 100).."%|r of the time.";
+      end
+	  elseif OribosLap_char.clock < OribosLap_char.counter then
+      if not OribosLap.displayPercent then
+        str = "counter-clockwise |cFFFFFFFF"..OribosLap_char.counter - OribosLap_char.clock.."|r times more often.";
+      else
+        str = "counter-clockwise |cFFFFFFFF"..string.format("%.1f",OribosLap_char.counter / (OribosLap_char.clock + OribosLap_char.counter) * 100).."%|r of the time.";
+      end
+	  else
+      str = "both directions equally!";
+	  end
+	  print("|cFF"..fontColor.."On this character, you have lapped Oribos "..str.."|r");
+	end
+end
+
+----
+-- Print Function for displaying Ring of Fates/Transference tendency.
+----
+local function DisplayLevel(char_, acct_)
+  local str;
+  if acct_ then 
+    if OribosLap.top > OribosLap.bottom then
+      if not OribosLap.displayPercent then
+        str = "Ring of Transference |cFFFFFFFF"..OribosLap.top - OribosLap.bottom.."|r times more often.";
+      else
+        str = "Ring of Transference |cFFFFFFFF"..string.format("%.1f",OribosLap.top / (OribosLap.top + OribosLap.bottom) * 100).."%|r of the time.";
+      end
+    elseif OribosLap.top < OribosLap.bottom then
+      if not OribosLap.displayPercent then
+        str = "Ring of Fates |cFFFFFFFF"..OribosLap.bottom - OribosLap.top.."|r times more often.";
+      else
+        str = "Ring of Fates |cFFFFFFFF"..string.format("%.1f",OribosLap.bottom / (OribosLap.top + OribosLap.bottom) * 100).."%|r of the time.";
+      end
+    else
+      str = "both levels equally!";
+    end
+    print("|cFF"..fontColor.."Across your account, you have lapped "..str.."|r");
+  end
+  
+  if char_ then
+    if OribosLap_char.top > OribosLap_char.bottom then
+      if not OribosLap.displayPercent then
+        str = "the Ring of Transference |cFFFFFFFF"..OribosLap_char.top - OribosLap_char.bottom.."|r times more often.";
+      else
+        str = "the Ring of Transference |cFFFFFFFF"..string.format("%.1f",OribosLap_char.top / (OribosLap_char.top + OribosLap_char.bottom) * 100).."%|r of the time.";
+      end
+    elseif OribosLap_char.top < OribosLap_char.bottom then
+      if not OribosLap.displayPercent then
+        str = "the Ring of Fates |cFFFFFFFF"..OribosLap_char.bottom - OribosLap_char.top.."|r times more often.";
+      else
+        str = "the Ring of Transference |cFFFFFFFF"..string.format("%.1f",OribosLap_char.bottom / (OribosLap_char.top + OribosLap_char.bottom) * 100).."%|r of the time.";
+      end
+    else
+      str = "both levels equally!";
+    end
+    print("|cFF"..fontColor.."On this character, you have lapped "..str.."|r");
+  end
+end
+
+----
+-- Print Function for displaying fatest lap times.
+----
+local function DisplayFastest(char_, acct_)
+  if acct_ then 
+    print("|cFF"..fontColor.."Across your account, your fastest Oribos lap is |cFFFFFFFF"..dtToPrintableTime(OribosLap.fastest) or "nil".."|r.|r");
+  end
+  
+  if char_ then
+    print("|cFF"..fontColor.."On this character, your fastest Oribos lap is |cFFFFFFFF"..dtToPrintableTime(OribosLap_char.fastest) or "nil".."|r.|r");
+  end
+end
+
+----
+-- Print Function for displaying total laps.
+----
+local function DisplayLaps(char_, acct_)
+  if acct_ then 
+    print("|cFF"..fontColor.."Across your account, you have lapped Oribos |cFFFFFFFF"..(OribosLap.clock + OribosLap.counter).."|r times.|r");
+  end
+  
+  if char_ then
+    print("|cFF"..fontColor.."On this character, you have lapped Oribos |cFFFFFFFF"..(OribosLap_char.clock + OribosLap_char.counter).."|r times.|r");
+  end
+end
 
 frameDummy:SetScript("OnUpdate", OriLapUpdate);
 
 SLASH_ORIBOSLAP1 = '/orilap';
 function SlashCmdList.ORIBOSLAP(msg, editbox)
   if msg == "dir" then
-    local str;
-    if OribosLap.displayAcct then 
-      if OribosLap.clock > OribosLap.counter then
-        str = "clockwise |cFFFFFFFF"..math.abs(OribosLap.clock - OribosLap.counter).."|r times more often.";
-      elseif OribosLap.clock < OribosLap.counter then
-        str = "counter-clockwise |cFFFFFFFF"..math.abs(OribosLap.clock - OribosLap.counter).."|r times more often.";
-      else
-        str = "both directions equally!";
-      end
-      print("|cFF"..fontColor.."Across your account, you have lapped Oribos "..str.."|r");
-    end
-    
-    if OribosLap.displayChar then
-      if OribosLap_char.clock > OribosLap_char.counter then
-        str = "clockwise |cFFFFFFFF"..math.abs(OribosLap_char.clock - OribosLap_char.counter).."|r times more often.";
-      elseif OribosLap_char.clock < OribosLap_char.counter then
-        str = "counter-clockwise |cFFFFFFFF"..math.abs(OribosLap_char.clock - OribosLap_char.counter).."|r times more often.";
-      else
-        str = "both directions equally!";
-      end
-      print("|cFF"..fontColor.."On this character, you have lapped Oribos "..str.."|r");
-    end
-    
+    DisplayDir(OribosLap.displayChar, OribosLap.displayAcct);
   elseif msg == "level" then
-    local str;
-    if OribosLap.displayAcct then 
-      if OribosLap.top > OribosLap.bottom then
-        str = "Ring of Transference |cFFFFFFFF"..math.abs(OribosLap.top - OribosLap.bottom).."|r times more often.";
-      elseif OribosLap.top < OribosLap.bottom then
-        str = "Ring of Fates |cFFFFFFFF"..math.abs(OribosLap.top - OribosLap.bottom).."|r times more often.";
-      else
-        str = "both levels equally!";
-      end
-      print("|cFF"..fontColor.."Across your account, you have lapped "..str.."|r");
-    end
-    
-    if OribosLap.displayChar then
-      if OribosLap_char.top > OribosLap_char.bottom then
-        str = "the Ring of Transference |cFFFFFFFF"..math.abs(OribosLap_char.top - OribosLap_char.bottom).."|r times more often.";
-      elseif OribosLap_char.top < OribosLap_char.bottom then
-        str = "the Ring of Fates |cFFFFFFFF"..math.abs(OribosLap_char.top - OribosLap_char.bottom).."|r times more often.";
-      else
-        str = "both levels equally!";
-      end
-      print("|cFF"..fontColor.."On this character, you have lapped "..str.."|r");
-    end
-  
+    DisplayLevel(OribosLap.displayChar, OribosLap.displayAcct);
   elseif msg == "fastest" then
-    if OribosLap.displayAcct then 
-      print("|cFF"..fontColor.."Across your account, your fastest Oribos lap is |cFFFFFFFF"..OribosLap.fastest or "nil".."|r.|r");
-    end
-    
-    if OribosLap.displayChar then
-      print("|cFF"..fontColor.."On this character, your fastest Oribos lap is |cFFFFFFFF"..OribosLap_char.fastest or "nil".."|r.|r");
-    end
+    DisplayFastest(OribosLap.displayChar, OribosLap.displayAcct);
+  elseif msg == "alla" then
+    DisplayLaps(false, true);
+    DisplayFastest(false, true);
+    DisplayLevel(false, true);
+    DisplayDir(false, true);
+  elseif msg == "allc" then
+    DisplayLaps(true, false);
+    DisplayFastest(true, false);
+    DisplayLevel(true, false);
+    DisplayDir(true, false);
   else
-    if OribosLap.displayAcct then 
-      print("|cFF"..fontColor.."Across your account, you have lapped Oribos |cFFFFFFFF"..(OribosLap.clock + OribosLap.counter).."|r times.|r");
-    end
-    
-    if OribosLap.displayChar then
-      print("|cFF"..fontColor.."On this character, you have lapped Oribos |cFFFFFFFF"..(OribosLap_char.clock + OribosLap_char.counter).."|r times.|r");
-    end
+    DisplayLaps(OribosLap.displayChar, OribosLap.displayAcct);
   end
 end
