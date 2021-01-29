@@ -1,26 +1,26 @@
---## Author: Kreolix ## Version: 0.1
+ï»¿--## Author: Kreolix ## Version: 0.1
 local CMH = {}
 
 local DataTables = {}
 DataTables.EffectType = {
-    [0] = "½öÊÊÓÃÓÚ¼¼ÄÜ17",
-    [1] = "»÷É±",
-    [2] = "ÖÎÓú",
-    [3] = "»÷É±",
-    [4] = "ÖÎÓú",
+    [0] = "ä»…é€‚ç”¨äºæŠ€èƒ½17",
+    [1] = "å‡»æ€",
+    [2] = "æ²»æ„ˆ",
+    [3] = "å‡»æ€",
+    [4] = "æ²»æ„ˆ",
     [7] = "DoT",
     [8] = "HoT",
-    [9] = "³°·í",
-    [10] = "Ê§È¥Ä¿±ê",
-    [11] = "Ê©ÓÚÉËº¦±¶Êı",
-    [12] = "Ê©ÓÚÉËº¦±¶Êı",
-    [13] = "½ÓÊÜÉËº¦±¶Êı",
-    [14] = "½ÓÊÜÉËº¦±¶Êı",
-    [15] = "·´Éä",
-    [16] = "·´Éä",
-    [18] = "×î´óÖÎÁÆ±¶Êı",
-    [19] = "Ôì³É¶îÍâÉËº¦",
-    [20] = "¶îÍâÊÜµ½ÉËº¦"
+    [9] = "å˜²è®½",
+    [10] = "å¤±å»ç›®æ ‡",
+    [11] = "æ–½äºä¼¤å®³å€æ•°",
+    [12] = "æ–½äºä¼¤å®³å€æ•°",
+    [13] = "æ¥å—ä¼¤å®³å€æ•°",
+    [14] = "æ¥å—ä¼¤å®³å€æ•°",
+    [15] = "åå°„",
+    [16] = "åå°„",
+    [18] = "æœ€å¤§æ²»ç–—å€æ•°",
+    [19] = "é€ æˆé¢å¤–ä¼¤å®³",
+    [20] = "é¢å¤–å—åˆ°ä¼¤å®³"
 }
 
 DataTables.EffectTypeEnum = {
@@ -4690,6 +4690,7 @@ DataTables.SpellEffects = {
 	}
 }
 
+CMH.DataTables = DataTables
 
 local hooksecurefunc = _G["hooksecurefunc"]
 
@@ -4718,7 +4719,7 @@ local function setBoard(isCalcRandom)
     local missionPage = CovenantMissionFrame:GetMissionPage()
     --TODO: always show health
     missionPage.Board:ShowHealthValues()
-    local board = Board:new(missionPage, isCalcRandom)
+    local board = CMH.Board:new(missionPage, isCalcRandom)
     MissionHelper.missionHelperFrame.board = board
     return board
 end
@@ -4729,9 +4730,9 @@ function MissionHelper:simulateFight(isCalcRandom)
     local board = setBoard(isCalcRandom)
     board:simulate()
 
-    board.CombatLog = Board.CombatLog
-    board.HiddenCombatLog = Board.HiddenCombatLog
-    board.CombatLogEvents = Board.CombatLogEvents
+    board.CombatLog = CMH.Board.CombatLog
+    board.HiddenCombatLog = CMH.Board.HiddenCombatLog
+    board.CombatLogEvents = CMH.Board.CombatLogEvents
     return board
 
     --[[ TODO: board after fight
@@ -4741,7 +4742,7 @@ end
 
 function MissionHelper:findBestDisposition()
     local missionPage = CovenantMissionFrame:GetMissionPage()
-    local metaBoard = MetaBoard:new(missionPage, false)
+    local metaBoard = CMH.MetaBoard:new(missionPage, false)
 
     MissionHelper:clearBoard(missionPage)
     MissionHelper.missionHelperFrame.board = metaBoard:findBestDisposition()
@@ -4760,7 +4761,7 @@ end
 function MissionHelper:showResult(board)
     --print('hook show result')
     local combatLogMessageFrame = MissionHelper.missionHelperFrame.combatLogFrame.CombatLogMessageFrame
-    local combat_log = false and Board.HiddenCombatLog or Board.CombatLog
+    local combat_log = false and CMH.Board.HiddenCombatLog or CMH.Board.CombatLog
 
     MissionHelper:setResultHeader(board:constructResultString())
     MissionHelper:setResultInfo(board:getMyTeam())
@@ -4798,7 +4799,7 @@ function MissionHelper:hookShowRewardScreen(...)
     -- TODO: fix it
     -- my events log cleared somewhere. run it another time to compare blizz and my log
     --board:simulate()
-    --board.CombatLogEvents = Board.CombatLogEvents
+    --board.CombatLogEvents = CMH.Board.CombatLogEvents
     board.compareLogs = MissionHelper:compareLogs(board.CombatLogEvents, board.blizzardLog)
 end
 
@@ -4844,12 +4845,12 @@ MissionHelper:RegisterEvent("ADDON_LOADED")
 MissionHelper:SetScript("OnEvent", MissionHelper.ADDON_LOADED)
 
 function CMH:log(msg)
-    table.insert(Board.CombatLog, msg)
-    table.insert(Board.HiddenCombatLog, msg)
+    table.insert(CMH.Board.CombatLog, msg)
+    table.insert(CMH.Board.HiddenCombatLog, msg)
 end
 
 function CMH:debug_log(msg)
-    table.insert(Board.HiddenCombatLog, msg)
+    table.insert(CMH.Board.HiddenCombatLog, msg)
 end
 
 
@@ -4860,11 +4861,11 @@ local LVL_UP_ICON = "|TInterface\\petbattles\\battlebar-abilitybadge-strong-smal
 local SKULL_ICON = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_8:0|t"
 
 local Board = {Errors = {}, CombatLog = {}, HiddenCombatLog = {}, CombatLogEvents = {}}
-local TargetTypeEnum, EffectTypeEnum = DataTables.TargetTypeEnum, DataTables.EffectTypeEnum
+local TargetTypeEnum, EffectTypeEnum = CMH.DataTables.TargetTypeEnum, CMH.DataTables.EffectTypeEnum
 
 local function arrayForPrint(array)
     if not array then
-        for _, text in ipairs(Board.CombatLog) do print(text) end
+        for _, text in ipairs(CMH.Board.CombatLog) do print(text) end
         return 'EMPTY ARRAY'
     end
     local result = ''
@@ -4918,7 +4919,7 @@ function Board:new(missionPage, isCalcRandom)
     -- set enemy's units
     local enemies = C_Garrison.GetMissionCompleteEncounters(newObj.missionID)
     for i = 1, #enemies do
-        local enemyUnit = Unit:new(enemies[i])
+        local enemyUnit = CMH.Unit:new(enemies[i])
         --SELECTED_CHAT_FRAME:AddMessage("enemyUnitName = " .. enemyUnit.name)
         newObj.units[enemyUnit.boardIndex] = enemyUnit
         newObj.initialEnemiesHP = newObj.initialEnemiesHP + enemyUnit.currentHealth
@@ -4959,7 +4960,7 @@ function Board:new(missionPage, isCalcRandom)
                 info.isWinLvlUp = XPToLvlUp < newObj.winXP
             end
             if info.autoCombatSpells == nil then info.autoCombatSpells = follower.autoCombatSpells end
-            local myUnit = Unit:new(info)
+            local myUnit = CMH.Unit:new(info)
             --SELECTED_CHAT_FRAME:AddMessage("myUnitName = " .. myUnit.name)
             newObj.units[follower.boardIndex] = myUnit
             newObj.isEmpty = false
@@ -4984,9 +4985,9 @@ function Board:simulate()
             new_board = copy(self)
             new_board:fight()
             if new_board:isWin() then win_count = win_count + 1 end
-            Board.CombatLog = {}
-            Board.HiddenCombatLog = {}
-            Board.CombatLogEvents = {}
+            CMH.Board.CombatLog = {}
+            CMH.Board.HiddenCombatLog = {}
+            CMH.Board.CombatLogEvents = {}
         end
         self.probability = math.floor(100 * win_count/SIMULATE_ITERATIONS)
     elseif self.hasRandomSpells then
@@ -5000,7 +5001,7 @@ function Board:fight()
     local round = 1
     while self.isMissionOver == false and round < self.max_rounds do
         CMH:log('\n')
-        CMH:log("|c0000FF33»ØºÏ " .. round .. "|r")
+        CMH:log("|c0000FF33å›åˆ " .. round .. "|r")
         MissionHelper:addRound()
         local turnOrder = self:getTurnOrder()
 
@@ -5145,8 +5146,8 @@ function Board:makeUnitAction(round, boardIndex)
             local targetUnit = self.units[targetIndexes[1]]
             -- dead unit can reflect ...
             if targetUnit.reflect > 0 then
-                local eventTargetInfo = targetUnit:castSpellEffect(unit, {Effect = DataTables.EffectTypeEnum.Reflect, ID = -1}, {}, true)
-                MissionHelper:addEvent(spell.ID, DataTables.EffectTypeEnum.Reflect, targetUnit.boardIndex, {eventTargetInfo})
+                local eventTargetInfo = targetUnit:castSpellEffect(unit, {Effect = CMH.DataTables.EffectTypeEnum.Reflect, ID = -1}, {}, true)
+                MissionHelper:addEvent(spell.ID, CMH.DataTables.EffectTypeEnum.Reflect, targetUnit.boardIndex, {eventTargetInfo})
                 self:onUnitTakeDamage(spell.ID, targetUnit.boardIndex, eventTargetInfo)
             end
         end
@@ -5181,8 +5182,8 @@ end
 
 function Board:onUnitTakeDamage(spellID, casterBoardIndex, eventTargetInfo)
     if eventTargetInfo.newHealth == 0 then
-        MissionHelper:addEvent(spellID, DataTables.EffectTypeEnum.Died, casterBoardIndex, {eventTargetInfo})
-        CMH:log(string.format('|cFFFF7700 %s »÷É± %s |r', self.units[casterBoardIndex].name, self.units[eventTargetInfo.boardIndex].name))
+        MissionHelper:addEvent(spellID, CMH.DataTables.EffectTypeEnum.Died, casterBoardIndex, {eventTargetInfo})
+        CMH:log(string.format('|cFFFF7700 %s å‡»æ€ %s |r', self.units[casterBoardIndex].name, self.units[eventTargetInfo.boardIndex].name))
         self.isMissionOver = self:checkMissionOver()
     end
 end
@@ -5214,13 +5215,13 @@ function Board:getMyTeam()
     end
 
     if self.hasRandomSpells and self.isCalcRandom == false then
-        return "ÓĞËæ»úÄÜÁ¦£¬ÎŞ·¨×Ô¶¯Ä£Äâ£¬Çëµã»÷¡¾Ô¤²â¡¿°´Å¥¼ì²é½á¹û¡£"
+        return "æœ‰éšæœºèƒ½åŠ›ï¼Œæ— æ³•è‡ªåŠ¨æ¨¡æ‹Ÿï¼Œè¯·ç‚¹å‡»ã€é¢„æµ‹ã€‘æŒ‰é’®æ£€æŸ¥ç»“æœã€‚"
     end
 
     local isWin = self:isWin()
     local lostHP = self:getTotalLostHP(true)
-    local loseOrGain = lostHP >= 0 and 'Ê§È¥' or 'ÊÕµ½'
-    local warningText = self.hasRandomSpells and "|cFFFF0000ÓĞËæ»úÄÜÁ¦£¬Êµ¼ÊµÄÊ£ÓàÉúÃü¿ÉÄÜÓëÔ¤²âµÄ²»Í¬|r\n" or ''
+    local loseOrGain = lostHP >= 0 and 'å¤±å»' or 'æ”¶åˆ°'
+    local warningText = self.hasRandomSpells and "|cFFFF0000æœ‰éšæœºèƒ½åŠ›ï¼Œå®é™…çš„å‰©ä½™ç”Ÿå‘½å¯èƒ½ä¸é¢„æµ‹çš„ä¸åŒ|r\n" or ''
 
     local text = ''
     for i = 0, 4 do
@@ -5228,27 +5229,27 @@ function Board:getMyTeam()
             text = text .. constructString(self.units[i], isWin)
         end
     end
-    text = string.format("%sÎÒ·½¶ÓÎé:\n%s \n\n×Ü¼Æ %s HP = %s", warningText, text, loseOrGain, math.abs(lostHP))
+    text = string.format("%sæˆ‘æ–¹é˜Ÿä¼:\n%s \n\næ€»è®¡ %s HP = %s", warningText, text, loseOrGain, math.abs(lostHP))
 
     return text
 end
 
 function Board:constructResultString()
     if self.isEmpty then
-        return 'Ìí¼Ó»ï°é'
+        return 'æ·»åŠ ä¼™ä¼´'
     elseif self.hasRandomSpells and self.isCalcRandom == false then
         return ''
     elseif not self.isMissionOver then
-        return string.format('|cFFFF0000³¬¹ı100»ØºÏ£¬Ë­Ê¤Ë­Êä£¬È«¿´ÌìÃü|r', self.max_rounds)
+        return string.format('|cFFFF0000è¶…è¿‡100å›åˆï¼Œè°èƒœè°è¾“ï¼Œå…¨çœ‹å¤©å‘½|r', self.max_rounds)
     end
 
     local result = self:isWin()
     if self.probability == 100 and result then
-        return '|cFF00FF00 Ô¤²â½á¹û: Ê¤Àû |r'
+        return '|cFF00FF00 é¢„æµ‹ç»“æœ: èƒœåˆ© |r'
     elseif self.probability == 0 or (result == false and self.probability == 100) then
-        return '|cFFFF0000 Ô¤²â½á¹û: Ê§°Ü |r'
+        return '|cFFFF0000 é¢„æµ‹ç»“æœ: å¤±è´¥ |r'
     else
-        return string.format('|cFFFF7700 Ô¤²â½á¹û: Ê¤Àû (~%s%%) |r', self.probability)
+        return string.format('|cFFFF7700 é¢„æµ‹ç»“æœ: èƒœåˆ© (~%s%%) |r', self.probability)
     end
 end
 
@@ -5265,15 +5266,16 @@ function Board:getTargetIndexes(unit, targetType, lastTargetType, lastTargetInde
     -- update targets if skill has different effects target type
     if lastTargetType ~= targetType and targetType ~= TargetTypeEnum.lastTarget then
         local aliveUnits = self:getTargetableUnits()
-        return TargetManager:getTargetIndexes(unit.boardIndex, targetType, aliveUnits, unit.tauntedBy)
+        return CMH.TargetManager:getTargetIndexes(unit.boardIndex, targetType, aliveUnits, unit.tauntedBy)
     else
         return lastTargetIndexes
     end
 end
 
+CMH.Board = Board
 
 
-local BlizzEventType, EffectType = Enum.GarrAutoMissionEventType, DataTables.EffectTypeEnum
+local BlizzEventType, EffectType = Enum.GarrAutoMissionEventType, CMH.DataTables.EffectTypeEnum
 local CombatLogEvents = {}
 
 
@@ -5315,7 +5317,7 @@ function MissionHelper:addEvent(spellID, effectType, casterBoardIndex, targetInf
     --print('event ' .. #CombatLogEvents[#CombatLogEvents].events)
 end
 
-Board.CombatLogEvents = CombatLogEvents
+CMH.Board.CombatLogEvents = CombatLogEvents
 
 local Spell = {}
 function Spell:new(autoCombatSpell)
@@ -5335,7 +5337,7 @@ function Spell:new(autoCombatSpell)
 end
 
 function Spell:isStartsOnCooldown(spellID)
-    for _, ID in ipairs(DataTables.startsOnCooldownSpells) do
+    for _, ID in ipairs(CMH.DataTables.startsOnCooldownSpells) do
         if ID == spellID then return true end
     end
 
@@ -5343,7 +5345,7 @@ function Spell:isStartsOnCooldown(spellID)
 end
 
 function Spell:setEffects()
-    local effects = DataTables.SpellEffects[self.ID]
+    local effects = CMH.DataTables.SpellEffects[self.ID]
     if effects then
         self.effects = effects
     else
@@ -5392,11 +5394,14 @@ function Buff:decreaseRestTime()
     return self.duration
 end
 
+CMH.Spell = Spell
+CMH.Buff = Buff
+
 local TargetManager = {}
-local TargetTypeEnum = DataTables.TargetTypeEnum
+local TargetTypeEnum = CMH.DataTables.TargetTypeEnum
 
 local function getTargetPriority(sourceIndex, targetType, mainTarget)
-    local targets = DataTables.TargetPriorityByType[targetType][sourceIndex]
+    local targets = CMH.DataTables.TargetPriorityByType[targetType][sourceIndex]
     if mainTarget ~= nil then table.insert(targets, 1, mainTarget) end
     return targets
 end
@@ -5456,7 +5461,7 @@ end
 
 local function getAllAdjacentAllies(sourceIndex, targetType, boardUnits)
     local targets = {}
-    local adjacentTargets = DataTables.AdjacentAllies[sourceIndex]
+    local adjacentTargets = CMH.DataTables.AdjacentAllies[sourceIndex]
     for i = 1, #adjacentTargets do
         if boardUnits[adjacentTargets[i]] then
             table.insert(targets, adjacentTargets[i])
@@ -5468,7 +5473,7 @@ end
 local function getAllAdjacentEnemies(sourceIndex, targetType, boardUnits, mainTarget)
     -- TODO: if taunt?
     local targets = {}
-    local targetInfo = DataTables.AdjacentEnemies[sourceIndex]
+    local targetInfo = CMH.DataTables.AdjacentEnemies[sourceIndex]
     local aliveBlockerUnit = getMainTarget(targetInfo.blockerUnits, boardUnits)
 
     if aliveBlockerUnit ~= nil then
@@ -5505,7 +5510,7 @@ local function getClosestAllyCone(sourceIndex, targetType, boardUnits, mainTarge
     local targets = {}
     mainTarget = getSimpleTarget(sourceIndex, TargetTypeEnum.closestEnemy, boardUnits, mainTarget)[1]
     if mainTarget == nil then return {} end
-    local coneTargets = DataTables.ConeAllies[mainTarget]
+    local coneTargets = CMH.DataTables.ConeAllies[mainTarget]
     for i = 1, #coneTargets do
         if boardUnits[coneTargets[i]] then
             table.insert(targets, coneTargets[i])
@@ -5518,7 +5523,7 @@ local function getClosestEnemyCone(sourceIndex, targetType, boardUnits, mainTarg
     local targets = {}
     mainTarget = getSimpleTarget(sourceIndex, TargetTypeEnum.closestEnemy, boardUnits, mainTarget)[1]
     if mainTarget == nil then return {} end
-    local coneTargets = DataTables.ConeEnemies[mainTarget]
+    local coneTargets = CMH.DataTables.ConeEnemies[mainTarget]
     for i = 1, #coneTargets do
         if boardUnits[coneTargets[i]] then
             table.insert(targets, coneTargets[i])
@@ -5531,7 +5536,7 @@ local function getClosestEnemyLine(sourceIndex, targetType, boardUnits, mainTarg
     local targets = {}
     mainTarget = getSimpleTarget(sourceIndex, TargetTypeEnum.closestEnemy, boardUnits, mainTarget)[1]
     if mainTarget == nil then return {} end
-    local lineTargets = DataTables.LineEnemies[mainTarget]
+    local lineTargets = CMH.DataTables.LineEnemies[mainTarget]
     for i = 1, #lineTargets do
         if boardUnits[lineTargets[i]] then
             table.insert(targets, lineTargets[i])
@@ -5760,8 +5765,9 @@ function TargetManager:getTargetIndexes(sourceIndex, targetType, boardUnits, mai
     return func(sourceIndex, targetType, boardUnits, mainTarget)
 end
 
+CMH.TargetManager = TargetManager
 local Unit = {}
-local EffectTypeEnum, EffectType = DataTables.EffectTypeEnum, DataTables.EffectType
+local EffectTypeEnum, EffectType = CMH.DataTables.EffectTypeEnum, CMH.DataTables.EffectType
 
 local function isDamageEffect(effect, isAppliedBuff)
     return effect.Effect == EffectTypeEnum.Damage
@@ -5802,8 +5808,8 @@ function Unit:new(blizzardUnitInfo)
 end
 
 function Unit:getAttackType()
-    if DataTables.UnusualAttackType[self.ID] ~= nil then
-        return DataTables.UnusualAttackType[self.ID]
+    if CMH.DataTables.UnusualAttackType[self.ID] ~= nil then
+        return CMH.DataTables.UnusualAttackType[self.ID]
     elseif self.role == 1 or self.role == 5 then -- melee and tank
         return 11
     else
@@ -5821,13 +5827,13 @@ function Unit:setSpells(autoCombatSpells)
         cooldown = 0,
         flags = 0
     }
-    local autoAttackSpell = Spell:new(autoAttack)
+    local autoAttackSpell = CMH.Spell:new(autoAttack)
     table.insert(self.spells, autoAttackSpell)
 
     for _, autoCombatSpell in pairs(autoCombatSpells) do
         --broken spells
         if autoCombatSpell.autoCombatSpellID ~= 91 and autoCombatSpell.autoCombatSpellID ~= 109 and autoCombatSpell.autoCombatSpellID ~= 122 then
-            table.insert(self.spells, Spell:new(autoCombatSpell))
+            table.insert(self.spells, CMH.Spell:new(autoCombatSpell))
         end
     end
 end
@@ -5880,7 +5886,7 @@ function Unit:manageDoTHoT(sourceUnit, buff, isInitialPeriod)
 end
 
 function Unit:applyBuff(targetUnit, effect, effectBaseValue, duration, name)
-    table.insert(targetUnit.buffs, Buff:new(effect, effectBaseValue, self.boardIndex, duration, name))
+    table.insert(targetUnit.buffs, CMH.Buff:new(effect, effectBaseValue, self.boardIndex, duration, name))
     if effect.Effect == EffectTypeEnum.Taunt then
         targetUnit.tauntedBy = self.boardIndex
     elseif effect.Effect == EffectTypeEnum.Untargetable then
@@ -5901,7 +5907,7 @@ function Unit:getDamageMultiplier(targetUnit)
     for _, buff in pairs(self.buffs) do
         if buff.Effect == EffectTypeEnum.DamageDealtMultiplier or buff.Effect == EffectTypeEnum.DamageDealtMultiplier_2 then
             CMH:debug_log(string.format('self buff. effect = %s, baseValue = %s, spellID = %s, source = %s ',
-                    DataTables.EffectType[buff.Effect], buff.baseValue, buff.SpellID, buff.sourceIndex))
+                    CMH.DataTables.EffectType[buff.Effect], buff.baseValue, buff.SpellID, buff.sourceIndex))
             if buffs[buff.SpellID] == nil then
                 buffs[buff.SpellID] = buff.baseValue
             else
@@ -5912,7 +5918,7 @@ function Unit:getDamageMultiplier(targetUnit)
 
     for _, buff in pairs(targetUnit.buffs) do
         if buff.Effect == EffectTypeEnum.DamageTakenMultiplier or buff.Effect == EffectTypeEnum.DamageTakenMultiplier_2 then
-            CMH:debug_log('target buff ' .. DataTables.EffectType[buff.Effect] .. ' ' .. buff.baseValue)
+            CMH:debug_log('target buff ' .. CMH.DataTables.EffectType[buff.Effect] .. ' ' .. buff.baseValue)
             if buffs[buff.SpellID] == nil then
                 buffs[buff.SpellID] = buff.baseValue
             else
@@ -5922,7 +5928,7 @@ function Unit:getDamageMultiplier(targetUnit)
     end
 
     for _, value in pairs(buffs) do
-        multiplier = multiplier + value
+        multiplier = multiplier * (1 + value)
         if value > 0 then positive_multiplier = positive_multiplier * (1 + value) end
     end
 
@@ -5977,7 +5983,7 @@ function Unit:castSpellEffect(targetUnit, effect, spell, isAppliedBuff)
         value = self:getEffectBaseValue(effect)
         self:applyBuff(targetUnit, effect, value, spell.duration, spell.name)
         CMH:log(string.format('|c%s%s %s %s (%s)|r',
-            color, self.name, 'Ê¹ÓÃ ' .. EffectType[effect.Effect], targetUnit.name, value))
+            color, self.name, 'ä½¿ç”¨ ' .. EffectType[effect.Effect], targetUnit.name, value))
     end
 
     return {
@@ -6033,7 +6039,7 @@ function Unit:manageBuffs(sourceUnit)
                 buff = buff,
                 targetBoardIndex = self.boardIndex,
             })
-            CMH:log(string.format('|c000088CC%s È¥³ı %s À´×Ô %s|r',
+            CMH:log(string.format('|c000088CC%s å»é™¤ %s æ¥è‡ª %s|r',
                     tostring(sourceUnit.name), tostring(buff.name), tostring(self.name)))
             table.remove(self.buffs, i)
             if buff.Effect == EffectTypeEnum.Taunt then
@@ -6051,7 +6057,9 @@ function Unit:manageBuffs(sourceUnit)
     return removed_buffs
 end
 
+CMH.Unit = Unit
 local MetaBoard = {}
+CMH.MetaBoard = MetaBoard
 
 local function copy(obj, seen)
     if type(obj) ~= 'table' then return obj end
@@ -6082,7 +6090,7 @@ end
 
 function MetaBoard:new(missionPage, isCalcRandom)
     local newObj = {
-        baseBoard = Board:new(missionPage, isCalcRandom)
+        baseBoard = CMH.Board:new(missionPage, isCalcRandom)
     }
     self.__index = self
     setmetatable(newObj, self)
@@ -6102,9 +6110,9 @@ function MetaBoard:findBestDisposition()
             end
         end
 
-        Board.CombatLog = {}
-        Board.HiddenCombatLog = {}
-        Board.CombatLogEvents = {}
+        CMH.Board.CombatLog = {}
+        CMH.Board.HiddenCombatLog = {}
+        CMH.Board.CombatLogEvents = {}
     end
 
     return next(bestBoard) ~= nil and bestBoard or self.baseBoard
@@ -6233,7 +6241,7 @@ local function createPredictButton(resultInfoFrame)
     resultInfoFrame.predictButton = predictButton
         predictButton:SetSize(PREDICT_BUTTON_WIDTH, PREDICT_BUTTON_HEIGHT)
         predictButton:SetPoint("BOTTOMRIGHT", resultInfoFrame, "BOTTOMRIGHT", -PADDING, PADDING)
-        predictButton:SetText('Ô¤²â')
+        predictButton:SetText('é¢„æµ‹')
         predictButton:SetScript('onClick', onClick)
         predictButton:Hide()
 end
@@ -6245,8 +6253,8 @@ local function createBestDispositionButton(resultInfoFrame)
 
     local function onEnter(buttonFrame)
         GameTooltip:SetOwner(buttonFrame, "ANCHOR_TOPLEFT")
-        GameTooltip_AddNormalLine(GameTooltip, "ÓÅ»¯»ï°éÖÃ£¬¼õÉÙÉúÃüËğÊ§")
-        GameTooltip_AddColoredLine(GameTooltip, "Ö»ÓÅ»¯µ÷ÕûÌ¨ÉÏµÄ»ï°éÎ»ÖÃ", RED_FONT_COLOR)
+        GameTooltip_AddNormalLine(GameTooltip, "ä¼˜åŒ–ä¼™ä¼´ç½®ï¼Œå‡å°‘ç”Ÿå‘½æŸå¤±")
+        GameTooltip_AddColoredLine(GameTooltip, "åªä¼˜åŒ–è°ƒæ•´å°ä¸Šçš„ä¼™ä¼´ä½ç½®", RED_FONT_COLOR)
         GameTooltip:SetPoint("TOPLEFT", buttonFrame, "BOTTOMRIGHT", 0, 0);
         GameTooltip:Show()
     end
@@ -6259,7 +6267,7 @@ local function createBestDispositionButton(resultInfoFrame)
     resultInfoFrame.BestDispositionButton = BestDispositionButton
         BestDispositionButton:SetSize(PREDICT_BUTTON_WIDTH, PREDICT_BUTTON_HEIGHT)
         BestDispositionButton:SetPoint("BOTTOMRIGHT", resultInfoFrame, "BOTTOMRIGHT", -2*PADDING - PREDICT_BUTTON_WIDTH, PADDING)
-        BestDispositionButton:SetText('ÓÅ»¯Î»ÖÃ')
+        BestDispositionButton:SetText('ä¼˜åŒ–ä½ç½®')
         BestDispositionButton:SetScript('onClick', onClick)
         BestDispositionButton:SetScript('onEnter', onEnter)
         BestDispositionButton:SetScript('onLeave', onLeave)
@@ -6376,9 +6384,9 @@ function MissionHelper:clearFrames()
     MissionHelper:setResultHeader('')
     MissionHelper:setResultInfo('')
     MissionHelper:hidePredictButton()
-    Board.CombatLog = {}
-    Board.HiddenCombatLog = {}
-    Board.CombatLogEvents = {}
+    CMH.Board.CombatLog = {}
+    CMH.Board.HiddenCombatLog = {}
+    CMH.Board.CombatLogEvents = {}
 
 end
 

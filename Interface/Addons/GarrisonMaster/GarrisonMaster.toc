@@ -16,8 +16,6 @@
 
 ## X-Repple: 2 UI
 
-CovenantMissionHelper.lua
-
 LazyWidget.lua
 C_Garrison_cache.lua
 FindBestFollowersForMission.lua
