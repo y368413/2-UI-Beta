@@ -1,0 +1,13 @@
+## Interface: 90002
+## Title: World Boss Status
+## Version: v7.0
+## Author: Ludius of Caelestrasz-US
+## Notes: World Boss Status keeps track of the world bosses that you have defeated and bonus roll currencies on all your characters.
+## SavedVariables: WorldBossStatusDB
+
+enUS.lua
+zhCN.lua
+zhTW.lua
+
+WorldBossStatus.lua
+BossData.lua
