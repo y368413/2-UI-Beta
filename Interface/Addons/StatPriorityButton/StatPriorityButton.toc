@@ -1,7 +1,0 @@
-## Interface: 90002
-## Title: StatPriorityButton
-## Notes: This simple addon puts a button on your Character screen that, when clicked, shows you the most common stat priority for your class
-## Version: 9.6
-## Author: Nerino1
-StatPriorityButton.lua
-StatPriorityData.lua
