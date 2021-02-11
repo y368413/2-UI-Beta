@@ -53,12 +53,12 @@ function TalentNotes.createEditBoxes(baseFrame, talentFrame) -- Returns table co
 			box:SetAutoFocus(false)
 			box:SetCursorPosition(0)
 
-			box:SetBackdrop( {
+			--[[box:SetBackdrop( {
 					bgFile = "Interface/Tooltips/UI-Tooltip-Background", 
 					edgeFile = "Interface/buttons/white8x8", --"Interface/Tooltips/UI-Tooltip-Border", 
 					edgeSize = 1, --14,
 					insets = { left = 0, right = 0, top = 0, bottom = 0 } --{ left = 4, right = 4, top = 4, bottom = 4 }
-			} )
+			} )]]
 			box:SetBackdropColor(0,0,0,0.5)
 			box:SetBackdropBorderColor(0,0,0,0.75)
 			box:SetTextInsets(2, 2, 0, 0)
@@ -68,7 +68,7 @@ function TalentNotes.createEditBoxes(baseFrame, talentFrame) -- Returns table co
 			-- Scripts and Functions
 			function box:UpdateText(specIndex)
 				local _, playerClass = UnitClass("player")
-				local text = ShiGuangDB["editBoxes"][playerClass][specIndex][self.id] or "??"
+				local text = ShiGuangDB["editBoxes"][playerClass][specIndex][self.id] or " "
 				self:SetText(text)
 			end
 			function box:SaveText(specIndex)
@@ -131,7 +131,7 @@ function TalentNotes.createSpecButtons(baseFrame, talentFrame)
 			local _,_,_,iconPath = GetSpecializationInfo(specIndex)
 			local size = (rFrame:GetHeight()/specNum)
 			button:SetSize(size, size)
-			button:SetPoint("TOPRIGHT", rFrame, "TOPLEFT", 56, -(size*(specIndex-1)))
+			button:SetPoint("TOPRIGHT", rFrame, "TOPLEFT", 12, -(size*(specIndex-1)))
 			button:SetFrameStrata("HIGH")
 			button:SetNormalTexture(iconPath)
 			--button:StyleButton()
