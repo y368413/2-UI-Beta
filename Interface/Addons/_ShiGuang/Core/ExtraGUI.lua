@@ -786,7 +786,7 @@ function G:SetupBuffIndicator(parent)
 			local showAll = M.CreateCheckBox(frame)
 			showAll:SetPoint("LEFT", swatch, "RIGHT", 2, 0)
 			showAll:SetHitRectInsets(0, 0, 0, 0)
-			showAll.bg:SetBackdropBorderColor(1, .8, 0, .5)
+			--showAll.bg:SetBackdropBorderColor(1, .8, 0, .5)
 			showAll.title = U["Tips"]
 			M.AddTooltip(showAll, "ANCHOR_RIGHT", U["ShowAllTip"], "info")
 			scroll.showAll = showAll
