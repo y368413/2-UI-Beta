@@ -58,9 +58,9 @@ function TalentNotes.createEditBoxes(baseFrame, talentFrame) -- Returns table co
 					edgeFile = "Interface/buttons/white8x8", --"Interface/Tooltips/UI-Tooltip-Border", 
 					edgeSize = 1, --14,
 					insets = { left = 0, right = 0, top = 0, bottom = 0 } --{ left = 4, right = 4, top = 4, bottom = 4 }
-			} )]]
+			} )
 			box:SetBackdropColor(0,0,0,0.5)
-			box:SetBackdropBorderColor(0,0,0,0.75)
+			box:SetBackdropBorderColor(0,0,0,0.75)]]
 			box:SetTextInsets(2, 2, 0, 0)
 			box:SetFont(STANDARD_TEXT_FONT, 10) -- "Fonts/FRIZQT__.TTF", 11
 			--box:FontTemplate()
@@ -90,7 +90,7 @@ function TalentNotes.createEditBoxes(baseFrame, talentFrame) -- Returns table co
 					end
 				end
 			)
-			box:SetScript("OnEnter",
+			--[[box:SetScript("OnEnter",
 				function(self)
 					local tip = GameTooltip
 					tip:SetOwner(self, "ANCHOR_RIGHT")
@@ -104,7 +104,7 @@ function TalentNotes.createEditBoxes(baseFrame, talentFrame) -- Returns table co
 					local tip = GameTooltip
 					tip:Hide()
 				end
-			)
+			)]]
 		end
 	end
 	return boxes
@@ -128,7 +128,7 @@ function TalentNotes.createSpecButtons(baseFrame, talentFrame)
 			button.row = r
 			button.specIndex = specIndex
 
-			local _,_,_,iconPath = GetSpecializationInfo(specIndex)
+			--[[local _,_,_,iconPath = GetSpecializationInfo(specIndex)
 			local size = (rFrame:GetHeight()/specNum)
 			button:SetSize(size, size)
 			button:SetPoint("TOPRIGHT", rFrame, "TOPLEFT", 12, -(size*(specIndex-1)))
@@ -147,16 +147,16 @@ function TalentNotes.createSpecButtons(baseFrame, talentFrame)
 			disTex:SetSize(size, size)
 			disTex:SetAllPoints()
 			disTex:SetDesaturated(true)
-			button:SetDisabledTexture(disTex)
+			button:SetDisabledTexture(disTex)]]
 
 			if button.specIndex == GetSpecialization() then
 				button:Disable()
 			end
 
-			button:RegisterForClicks("LeftButtonUp")
+			--button:RegisterForClicks("LeftButtonUp")
 
 			--Scripts and Functions
-			function button:UpdateAble(specIndex)
+			--[[function button:UpdateAble(specIndex)
 				if specIndex then
 					if self.specIndex == specIndex then
 						self:Disable()
@@ -188,7 +188,7 @@ function TalentNotes.createSpecButtons(baseFrame, talentFrame)
 
 					self:UpdateButtonRow(self.specIndex)
 				end
-			)
+			)]]
 		end
 	end
 

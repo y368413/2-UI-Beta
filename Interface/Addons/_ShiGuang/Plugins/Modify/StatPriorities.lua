@@ -1,4 +1,41 @@
---"Release Version Jan 2021 for Patch 9.0.2" by Wyr3d
+﻿--"Release Version Jan 2021 for Patch 9.0.2" by Wyr3d
+
+local vars, Ld, La = {},{}, {}
+vars.L = setmetatable({},{
+    __index = function(t, s) return La[s] or Ld[s] or rawget(t,s) or s end
+})
+-- Ld means default (english) if no translation found. So we don't need a translation for "enUS" or "enGB".
+Ld["Agi"] = "Agi"
+Ld["Crit"] = "Crit"
+Ld["Haste"] = "Haste"
+Ld["Int"] = "Int"
+Ld["Mastery"] = "Mastery"
+Ld["Sta"] = "Stam"
+Ld["Str"] = "Str"
+Ld["Vers"] = "Vers"
+Ld["Armor"] = "Armor"
+
+if GetLocale() == "zhCN" then do end
+	La["Agi"] = "敏捷"
+	La["Haste"] = "急速"
+	La["Crit"] = "暴击"
+	La["Int"] = "智力"
+	La["Mastery"] = "精通"
+	La["Sta"] = "耐力"
+	La["Str"] = "力量"
+	La["Vers"] = "全能"
+	La["Armor"] = "盔甲"
+elseif GetLocale() == "zhTW" then do end
+	La["Agi"] = "敏捷"
+	La["Haste"] = "加速"
+	La["Crit"] = "致命"
+	La["Int"] = "智力"
+	La["Mastery"] = "精通"
+	La["Sta"] = "耐力"
+	La["Str"] = "力量"
+	La["Vers"] = "臨機"
+	La["Armor"] = "盔甲"
+end
 
 local Wyr3d_StatTable = {}
 Wyr3d_StatTable["DEATHKNIGHT-250"] = "Str > ilvl > Vers > Haste > Crit > Mast"
@@ -82,23 +119,34 @@ function Wyr3d_STATS:Update()
         local sId, specName = GetSpecializationInfo(GetSpecialization())
         local s = Wyr3d_StatTable[className .. "-" .. sId]
         if s then
-            s = gsub(s,"Strength","STR")
-            s = gsub(s,"Agility","AGI")
-            s = gsub(s,"Intelligence","INT")
-            s = gsub(s,"Stamina","STA")
+            s = gsub(s,"Strength","Str")
+            s = gsub(s,"Agility","Agi")
+            s = gsub(s,"Intellect","Int")
+            s = gsub(s,"Stamina","Stam")
+            s = gsub(s,"Versatility","Vers")
+      -- H.Sch For multiple language
+			s = gsub(s,"Int", vars.L["Int"])
+			s = gsub(s,"Crit", vars.L["Crit"])
+			s = gsub(s,"Str", vars.L["Str"])
+			s = gsub(s,"Agi", vars.L["Agi"])
+			s = gsub(s,"Stam", vars.L["Sta"])
+			s = gsub(s,"Vers", vars.L["Vers"])
+			s = gsub(s,"Haste", vars.L["Haste"])
+			s = gsub(s,"Mast", vars.L["Mastery"])
+			s = gsub(s,"Armor", vars.L["Armor"])
             Wyr3d_STATStxt:SetText(s) 
         end               
     end
 end
 
-Wyr3d_STATS:RegisterEvent("SPELLS_CHANGED") 
+--Wyr3d_STATS:RegisterEvent("SPELLS_CHANGED") 
 Wyr3d_STATS:RegisterEvent("ADDON_LOADED") 
 Wyr3d_STATS:SetScript("OnEvent", function(self, event)
     if event == "ADDON_LOADED" then
         Wyr3d_STATS:Update()
         PaperDollFrame:HookScript("OnShow", function() Wyr3d_STATS:Update() end)
     end
-    if event == "SPELLS_CHANGED" then
-            Wyr3d_STATS:Update()
-    end
+    --if event == "SPELLS_CHANGED" then
+            --Wyr3d_STATS:Update()
+    --end
 end)
