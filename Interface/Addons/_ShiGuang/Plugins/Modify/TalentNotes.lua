@@ -215,7 +215,7 @@ function TalentNotes.updateAllEditBoxText(editBoxes)
 	end
 end
 
-function TalentNotes.updateAllSpecButtons(buttons)
+--[[function TalentNotes.updateAllSpecButtons(buttons)
 	if buttons == nil then return end
 
 	local specIndex = GetSpecialization()
@@ -224,7 +224,7 @@ function TalentNotes.updateAllSpecButtons(buttons)
 			bv:UpdateAble(specIndex)
 		end
 	end
-end
+end]]
 
 local TNotesUI = TalentNotes.createBaseFrame()
 
@@ -273,5 +273,5 @@ end
 
 function TNotesUI:ACTIVE_TALENT_GROUP_CHANGED()
 	TalentNotes.updateAllEditBoxText(TNotesUI.editBoxes)
-	TalentNotes.updateAllSpecButtons(TNotesUI.specButtons)
+	--TalentNotes.updateAllSpecButtons(TNotesUI.specButtons)
 end
