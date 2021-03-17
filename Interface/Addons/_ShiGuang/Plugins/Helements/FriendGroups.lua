@@ -62,7 +62,7 @@ end
 local frame = CreateFrame("frame")
 frame:RegisterEvent("PLAYER_LOGIN")
 
-local function ClassColourCode(class, returnTable)
+function ClassColourCode(class, returnTable)
 	if not class then
 		return returnTable and FRIENDS_GRAY_COLOR or string.format("|cFF%02x%02x%02x", FRIENDS_GRAY_COLOR.r*255, FRIENDS_GRAY_COLOR.g*255, FRIENDS_GRAY_COLOR.b*255)
 	end
