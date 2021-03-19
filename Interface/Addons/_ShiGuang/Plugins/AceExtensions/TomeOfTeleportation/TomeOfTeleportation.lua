@@ -1080,7 +1080,7 @@ function TeleporterOpenFrame()
 				lastDest = destination	
 
 				-- Main button
-				local buttonFrame = TeleporterCreateReusableFrame("Button","TeleporterB",TeleporterParentFrame,"secureActionButtonTemplate")
+				local buttonFrame = TeleporterCreateReusableFrame("Button","TeleporterB",TeleporterParentFrame,"SecureActionButtonTemplate")
 				--buttonFrame:SetFrameStrata("MEDIUM")
 				buttonFrame:SetWidth(buttonWidth)
 				buttonFrame:SetHeight(buttonHeight)

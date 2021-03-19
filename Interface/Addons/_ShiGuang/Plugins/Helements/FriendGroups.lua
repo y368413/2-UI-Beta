@@ -356,7 +356,7 @@ function FriendGroups_UpdateFriendButton(button)
 			button.status:SetTexture(FRIENDS_TEXTURE_OFFLINE)
 			nameColor = FRIENDS_GRAY_COLOR
 			button.gameIcon:Hide()
-			if ( not lastOnline or lastOnline == 0 or time() - lastOnline >= ONE_YEAR ) then
+			if (not lastOnline or lastOnline == 0 or time() - lastOnline >= ONE_YEAR) then
 				infoText = FRIENDS_LIST_OFFLINE
 			else
 				infoText = string.format(BNET_LAST_ONLINE_TIME, FriendsFrame_GetLastOnline(lastOnline))
@@ -438,9 +438,9 @@ function FriendGroups_UpdateFriendButton(button)
 	-- finish setting up button if it's not a header
 	if nameText then
 		if button.buttonType ~= FRIENDS_BUTTON_TYPE_DIVIDER then
-		if button["text"] then
-			button.text:Hide()
-		end
+			if button["text"] then
+				button.text:Hide()
+			end
 			button.name:SetJustifyH("LEFT")
 			button.background:SetAlpha(1)
 			button.info:Show()
@@ -654,7 +654,7 @@ function FriendGroups_Update(forceUpdate)
 	if QuickJoinToastButton then
 		QuickJoinToastButton:UpdateDisplayedFriendCount()
 	end
-	if ( not FriendsListFrame:IsShown() and not forceUpdate) then
+	if (not FriendsListFrame:IsShown() and not forceUpdate) then
 		return
 	end
 
@@ -675,7 +675,7 @@ function FriendGroups_Update(forceUpdate)
 	local totalButtonHeight = 0
 	function AddButtonInfo(buttonType, id)
 		addButtonIndex = addButtonIndex + 1
-		if ( not FriendButtons[addButtonIndex] ) then
+		if not FriendButtons[addButtonIndex] then
 			FriendButtons[addButtonIndex] = { }
 		end
 		FriendButtons[addButtonIndex].buttonType = buttonType
