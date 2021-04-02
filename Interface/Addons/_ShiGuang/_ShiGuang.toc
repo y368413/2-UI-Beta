@@ -1,5 +1,5 @@
 ## Interface: 90005
-## Title:-|cFFFFFF00 2|r|cFFFF0000 UI |r-
+## Title:- |TInterface\Addons\_ShiGuang\Media\2UI:0|t -
 ## Author: ShiGuang、TuTu、Siweia
 ## Notes: Time Flies...
 ## Version: 3.9.3

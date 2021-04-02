@@ -3,7 +3,7 @@
 TransmogCleanupDB = {}
 TransmogCleanup.db = TransmogCleanupDB
 
-local version = "v9.0.1-1"
+local version = "v9.0.5-1"
 
 --------------------------------------------------------------------------------
 -- Upvalues
@@ -11,6 +11,7 @@ local version = "v9.0.1-1"
 
 local _G = _G
 local orgPrint = print
+local cimi = CanIMogIt
 local ItemUpgradeInfo = LibStub("LibItemUpgradeInfo-1.0")
 local C_Timer = C_Timer
 local CreateFrame = CreateFrame
@@ -53,7 +54,7 @@ local sellWindow = nil
 local scanningTooltip = nil
 local updateItemListThrottle = nil
 local lastWindowState = nil
-local maxIlvl = 155
+local maxIlvl = 233
 local itemQualities = {
 	{   1,    1,    1}, -- common
 	{0.12,    1,    0}, -- uncommon
@@ -76,28 +77,29 @@ local learnedTypes = {
 -- Functions
 
 local function isTransmogable(link)
-	return link and CanIMogIt:IsTransmogable(link)
+	return link and cimi:IsTransmogable(link)
 end
+
 local function getTransmogStatus(link)
-	local mogStatus = CanIMogIt:GetTooltipText(link)
+	local mogStatus = cimi:GetTooltipText(link)
 
 	if not mogStatus or type(mogStatus) ~= "string" then
 		--print(("|cff8080ff[幻化]|r忽略: %s."):format(link))  --Couldn't determine status of item
 		return
 	end
 
-	-- if CanIMogIt:TextIsKnown(mogStatus) then -- < Could just use this, but let's be independent
-	if mogStatus == CanIMogIt.KNOWN or
-		 mogStatus == CanIMogIt.KNOWN_FROM_ANOTHER_ITEM or
-		 mogStatus == CanIMogIt.KNOWN_BY_ANOTHER_CHARACTER or
-		 mogStatus == CanIMogIt.KNOWN_BUT_TOO_LOW_LEVEL or
-		 mogStatus == CanIMogIt.KNOWN_FROM_ANOTHER_ITEM_BUT_TOO_LOW_LEVEL or
-		 mogStatus == CanIMogIt.KNOWN_FROM_ANOTHER_ITEM_AND_CHARACTER then
+	-- if cimi:TextIsKnown(mogStatus) then -- < Could just use this, but let's be independent
+	if mogStatus == cimi.KNOWN or
+		 mogStatus == cimi.KNOWN_FROM_ANOTHER_ITEM or
+		 mogStatus == cimi.KNOWN_BY_ANOTHER_CHARACTER or
+		 mogStatus == cimi.KNOWN_BUT_TOO_LOW_LEVEL or
+		 mogStatus == cimi.KNOWN_FROM_ANOTHER_ITEM_BUT_TOO_LOW_LEVEL or
+		 mogStatus == cimi.KNOWN_FROM_ANOTHER_ITEM_AND_CHARACTER then
 		return 1
-	elseif mogStatus == CanIMogIt.NOT_TRANSMOGABLE or
-		   mogStatus:find(CanIMogIt.UNKNOWABLE_SOULBOUND) then
+	elseif mogStatus == cimi.NOT_TRANSMOGABLE or
+		   mogStatus:find(cimi.UNKNOWABLE_SOULBOUND) then
 		return 2
-	elseif mogStatus:find(CanIMogIt.UNKNOWABLE_BY_CHARACTER) then
+	elseif mogStatus:find(cimi.UNKNOWABLE_BY_CHARACTER) then
 		return 3
 	end
 	return nil
@@ -149,37 +151,37 @@ local function iterateBagItems()
 				local status = getTransmogStatus(link)
 
 				if status ~= nil then
-				if status and status > 0 then -- check if Can I Mog It checks the itemList
+					if status and status > 0 then -- check if Can I Mog It checks the itemList
 						if TransmogCleanup.db.filters.onuse or not hasOnUseEffect then -- not (not TransmogCleanup.db.filters.onuse and hasOnUseEffect)
-					if ilvl <= TransmogCleanup.db.filters.ilvl then
-						if TransmogCleanup.db.filters.quality[quality] then
-							if TransmogCleanup.db.filters.bind[bind] then
-								if TransmogCleanup.db.filters.learned[status] then
-									itemList[#itemList+1] = {link = link, ilvl = ilvl, bag = bag, slot = slot, status = status, price = vendorPrice}
+							if ilvl <= TransmogCleanup.db.filters.ilvl then
+								if TransmogCleanup.db.filters.quality[quality] then
+									if TransmogCleanup.db.filters.bind[bind] then
+										if TransmogCleanup.db.filters.learned[status] then
+											itemList[#itemList+1] = {link = link, ilvl = ilvl, bag = bag, slot = slot, status = status, price = vendorPrice}
+										else
+											--dbg(link, "learned", status)
+										end
+									else
+										--dbg(link, "bind", bind)
+									end
 								else
-									--print(link, "learned", status)
+									--dbg(link, "quality", quality)
 								end
 							else
-								--print(link, "bind", bind)
+								--dbg(link, "ilvl", ilvl, TransmogCleanup.db.filters.ilvl, ilvl < TransmogCleanup.db.filters.ilvl)
 							end
 						else
-							--print(link, "quality", quality)
+							--dbg(link, "hasOnUseEffect", hasOnUseEffect)
 						end
 					else
-						--print(link, "ilvl", ilvl, TransmogCleanup.db.filters.ilvl, ilvl < TransmogCleanup.db.filters.ilvl)
-						end
-					else
-						--print(link, "hasOnUseEffect", hasOnUseEffect)
+						--dbg(link, "status", status)
 					end
-					else
-						--print(link, "status", status)
-				end
 				else
-					--print(link, "transmoggable", transmoggable)
+					--dbg(link, "status ~= nil", status)
+				end
 			end
 		end
 	end
- end
 
 	return itemList
 end
@@ -209,21 +211,21 @@ local function sellItems()
 		if not isItemIgnored(item.link) then
 			if item.price > 0 then
 
-			local _, _, refundSec = GetContainerItemPurchaseInfo(item.bag, item.slot)
-			if refundSec then
-				print(("Not selling %s because it is still refundable. Please wait %s before selling it."):format(item.link, SecondsToTime(refundSec, true, true)))
-			else
-			if isVerboseModeEnabled() then
-				print(("售出 %s ,赚了 %s."):format(item.link, GetCoinTextureString(item.price)))
-			end
+				local _, _, refundSec = GetContainerItemPurchaseInfo(item.bag, item.slot)
+				if refundSec then
+					print(("Not selling %s because it is still refundable. Please wait %s before selling it."):format(item.link, SecondsToTime(refundSec, true, true)))
+				else
+					if isVerboseModeEnabled() then
+						print(("售出 %s 赚了 %s."):format(item.link, GetCoinTextureString(item.price)))
+					end
 
-			UseContainerItem(item.bag, item.slot)
-			itemsSold = itemsSold + 1
-			itemsSoldValue = itemsSoldValue + item.price
+					UseContainerItem(item.bag, item.slot)
+					itemsSold = itemsSold + 1
+					itemsSoldValue = itemsSoldValue + item.price
 
-			if isSafeModeEnabled() and i > 11 then
-				print(("为了避免你卖错,先出售 %d 件装备.你后悔可选择购回.点击出售按钮继续出售剩下的 %d 件装备."):format(i, #itemList - i))
-				break
+					if isSafeModeEnabled() and i > 11 then
+						print(("为了避免你卖错,先出售 %d 件装备.你后悔可选择购回.点击出售按钮继续出售剩下的 %d 件装备."):format(i, #itemList - i))
+						break
 					end
 				end
 			else

@@ -353,6 +353,7 @@ G.AccountSettings = {
 	RaidDebuffs = {},
 	Changelog = {},
 	totalGold = {},
+	ShowSlots = false,
 	RepairType = 1,
 	AutoSell = true,
 	GuildSortBy = 1,

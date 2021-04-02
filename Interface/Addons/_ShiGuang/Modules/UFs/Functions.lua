@@ -1011,27 +1011,30 @@ function UF:CreateExpRepBar(self)
 end
 
 function UF:CreatePrediction(self)
-	local mhpb = self:CreateTexture(nil, "BORDER", nil, 5)
+	local frame = CreateFrame("Frame", nil, self)
+	frame:SetAllPoints()
+
+	local mhpb = frame:CreateTexture(nil, "BORDER", nil, 5)
 	mhpb:SetWidth(1)
 	mhpb:SetTexture(I.normTex)
 	mhpb:SetVertexColor(0, 1, .5, .5)
 
-	local ohpb = self:CreateTexture(nil, "BORDER", nil, 5)
+	local ohpb = frame:CreateTexture(nil, "BORDER", nil, 5)
 	ohpb:SetWidth(1)
 	ohpb:SetTexture(I.normTex)
 	ohpb:SetVertexColor(0, 1, 0, .5)
 
-	local abb = self:CreateTexture(nil, "BORDER", nil, 5)
+	local abb = frame:CreateTexture(nil, "BORDER", nil, 5)
 	abb:SetWidth(1)
 	abb:SetTexture(I.normTex)
 	abb:SetVertexColor(.66, 1, 1, .7)
 
-	local abbo = self:CreateTexture(nil, "ARTWORK", nil, 1)
+	local abbo = frame:CreateTexture(nil, "ARTWORK", nil, 1)
 	abbo:SetAllPoints(abb)
 	abbo:SetTexture("Interface\\RaidFrame\\Shield-Overlay", true, true)
 	abbo.tileSize = 32
 
-	local oag = self:CreateTexture(nil, "ARTWORK", nil, 1)
+	local oag = frame:CreateTexture(nil, "ARTWORK", nil, 1)
 	oag:SetWidth(15)
 	oag:SetTexture("Interface\\RaidFrame\\Shield-Overshield")
 	oag:SetBlendMode("ADD")
@@ -1039,14 +1042,14 @@ function UF:CreatePrediction(self)
 	oag:SetPoint("TOPLEFT", self.Health, "TOPRIGHT", -5, 2)
 	oag:SetPoint("BOTTOMLEFT", self.Health, "BOTTOMRIGHT", -5, -2)
 
-	local hab = CreateFrame("StatusBar", nil, self)
+	local hab = CreateFrame("StatusBar", nil, frame)
 	hab:SetPoint("TOPLEFT", self.Health)
 	hab:SetPoint("BOTTOMRIGHT", self.Health:GetStatusBarTexture())
 	hab:SetReverseFill(true)
 	hab:SetStatusBarTexture(I.normTex)
 	hab:SetStatusBarColor(0, .5, .8, .5)
 
-	local ohg = self:CreateTexture(nil, "ARTWORK", nil, 1)
+	local ohg = frame:CreateTexture(nil, "ARTWORK", nil, 1)
 	ohg:SetWidth(15)
 	ohg:SetTexture("Interface\\RaidFrame\\Absorb-Overabsorb")
 	ohg:SetBlendMode("ADD")
@@ -1064,6 +1067,7 @@ function UF:CreatePrediction(self)
 		overHealAbsorbGlow = ohg,
 		maxOverflow = 1,
 	}
+	self.predicFrame = frame
 end
 
 function UF.PostUpdateAddPower(element, cur, max)
@@ -1088,6 +1092,7 @@ function UF:CreateAddPower(self)
 	bar:SetStatusBarTexture(I.normTex)
 	M.SetBD(bar, 0)
 	bar.colorPower = true
+	M:SmoothBar(bar)
 
 	local bg = bar:CreateTexture(nil, "BACKGROUND")
 	bg:SetAllPoints()
@@ -1174,8 +1179,8 @@ function UF:CreateQuakeTimer(self)
 end
 
 function UF:CreatePVPClassify(self)
-    local bu = self:CreateTexture(nil, "ARTWORK")
-    bu:SetSize(30, 30)
+	local bu = self:CreateTexture(nil, "ARTWORK")
+	bu:SetSize(30, 30)
 	bu:SetPoint("LEFT", self, "RIGHT", 5, -2)
 
 	self.PvPClassificationIndicator = bu

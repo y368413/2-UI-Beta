@@ -117,6 +117,10 @@ local list = {
 		{AuraID = 307496, UnitID = "player"},	-- 神圣觉醒药水
 		{AuraID = 307497, UnitID = "player"},	-- 死亡偏执药水
 		{AuraID = 344314, UnitID = "player"},	-- 心华之速药水
+		{AuraID = 307195, UnitID = "player"},	-- 隐秘精魂药水
+		{AuraID = 342890, UnitID = "player"},	-- 无拘移动药水
+		{AuraID = 322302, UnitID = "player"},	-- 献祭心能药水
+		{AuraID = 307160, UnitID = "player"},	-- 硬化暗影药水
 		-- 9.0饰品
 		{AuraID = 344231, UnitID = "player"},	-- 赤红陈酿
 		{AuraID = 345228, UnitID = "player"},	-- 角斗士徽章
@@ -165,6 +169,8 @@ local list = {
 		{AuraID = 328908, UnitID = "player"},	-- 战斗冥想
 		{AuraID = 345499, UnitID = "player"},	-- 执政官的祝福
 		{AuraID = 339461, UnitID = "player"},	-- 猎手坚韧
+		{AuraID = 325381, UnitID = "player", Flash = true},	-- 争先打击
+		{AuraID = 342774, UnitID = "player"},	-- 繁华原野
 		-- 炼金石
 		{AuraID = 60233, UnitID = "player"},	-- 敏捷
 		{AuraID = 60229, UnitID = "player"},	-- 力量
@@ -253,14 +259,16 @@ local list = {
 		{AuraID = 331399, UnitID = "player"},	-- 凋魂之殇，感染毒雨
 		{AuraID = 327401, UnitID = "player", Flash = true},	-- 通灵战潮，共受苦难
 		{AuraID = 323471, UnitID = "player", Flash = true},	-- 通灵战潮，切肉飞刀
+		{AuraID = 328181, UnitID = "player"},	-- 通灵战潮，凌冽之寒
 		{AuraID = 327397, UnitID = "player"},	-- 通灵战潮，严酷命运
 		{AuraID = 322681, UnitID = "player"},	-- 通灵战潮，肉钩
 		{AuraID = 335161, UnitID = "player"},	-- 通灵战潮，残存心能
 		{AuraID = 345323, UnitID = "player", Flash = true},	-- 通灵战潮，勇士之赐
 		{AuraID = 322746, UnitID = "player"},	-- 彼界，堕落之血
-		{AuraID = 323687, UnitID = "player", Flash = true},	-- 彼界，奥术闪电
 		{AuraID = 323692, UnitID = "player"},	-- 彼界，奥术易伤
 		{AuraID = 331379, UnitID = "player"},	-- 彼界，润滑剂
+		{AuraID = 320786, UnitID = "player"},	-- 彼界，势不可挡
+		{AuraID = 323687, UnitID = "player", Flash = true},	-- 彼界，奥术闪电
 		{AuraID = 327893, UnitID = "player", Flash = true},	-- 彼界，邦桑迪的热情
 		{AuraID = 339978, UnitID = "player", Flash = true},	-- 彼界，安抚迷雾
 		{AuraID = 323569, UnitID = "player", Flash = true},	-- 彼界，溅洒精魂
@@ -278,6 +286,7 @@ local list = {
 		{AuraID = 335293, UnitID = "player"},	-- 锁链联结，泥拳
 		{AuraID = 333913, UnitID = "player"},	-- 锁链联结，泥拳
 		{AuraID = 327039, UnitID = "player"},	-- 邪恶撕裂，干将
+		{AuraID = 344655, UnitID = "player"},	-- 震荡易伤，干将
 		{AuraID = 327089, UnitID = "player"},	-- 喂食时间，德纳修斯
 		{AuraID = 327796, UnitID = "player"},	-- 午夜猎手，德纳修斯
 	},

@@ -1,9 +1,10 @@
---## Version: 0.7.1 ## Author: romdeau23
+--## Version: 0.7.2 ## Author: romdeau23
 local MogPartialSets = {}
 
 MogPartialSets.frame = CreateFrame('Frame')
 MogPartialSets.loaded = false
 MogPartialSets.initialized = false
+MogPartialSets.configVersion = 7
 MogPartialSets.updateTimer = nil
 MogPartialSets.pendingModelUpdate = false
 MogPartialSets.pendingInvalidSetCacheClear = false
@@ -87,13 +88,16 @@ function MogPartialSets:initConfiguration()
         self:setDefaultConfiguration()
         return
     end
-                MogPartialSetsAddonConfig.ignoredSlotMap = {}
 
-                if MogPartialSetsAddonConfig.ignoreBracers then
-                    MogPartialSetsAddonConfig.ignoredSlotMap[Enum.InventoryType.IndexWristType] = true
-                end
+    local version = MogPartialSetsAddonConfig.version or 1
 
-                MogPartialSetsAddonConfig.ignoreBracers = nil
+    if
+        version < self.configVersion and not self:migrateConfiguration(version)
+        or version > self.configVersion
+    then
+        -- reset configuration if migration has failed or the addon was downgraded
+        self:setDefaultConfiguration()
+    end
 end
 
 function MogPartialSets:setDefaultConfiguration()
@@ -103,9 +107,41 @@ function MogPartialSets:setDefaultConfiguration()
         onlyFavorite = false,
         favoriteVariants = false,
         ignoredSlotMap = {},
+        splash = true,
     }
 end
 
+function MogPartialSets:migrateConfiguration(from)
+    return pcall(function ()
+        while from < self.configVersion do
+            if from == 1 then
+                -- v1 => v2
+                MogPartialSetsAddonConfig.onlyFavorite = false
+                MogPartialSetsAddonConfig.favoriteVariants = false
+            elseif from == 4 then
+                -- v4 => v5 (removes v3, v4)
+                MogPartialSetsAddonConfig.showHidden = nil
+                MogPartialSetsAddonConfig.showUnusable = nil
+                MogPartialSetsAddonConfig.ignoreBracers = false
+            elseif from == 5 then
+                -- v5 => v6
+                MogPartialSetsAddonConfig.ignoredSlotMap = {}
+
+                if MogPartialSetsAddonConfig.ignoreBracers then
+                    MogPartialSetsAddonConfig.ignoredSlotMap[Enum.InventoryType.IndexWristType] = true
+                end
+
+                MogPartialSetsAddonConfig.ignoreBracers = nil
+            elseif from == 6 then
+                MogPartialSetsAddonConfig.splash = true
+            end
+
+            from = from + 1
+        end
+
+        MogPartialSetsAddonConfig.version = self.configVersion
+    end)
+end
 
 function MogPartialSets:notifyConfigUpdated()
     self:refreshSetsFrame()
@@ -512,6 +548,8 @@ function MogPartialSets:updateUi()
         MogPartialSetsFilterFavoriteVariantsText,
         MogPartialSetsFilterMaxMissingPiecesEditBox,
         MogPartialSetsFilterMaxMissingPiecesText,
+        MogPartialSetsFilterSplashText,
+        MogPartialSetsFilterSplashButton,
         MogPartialSetsFilterIgnoredSlotsText,
         MogPartialSetsFilterIgnoreHeadButton,
         MogPartialSetsFilterIgnoreHeadText,
