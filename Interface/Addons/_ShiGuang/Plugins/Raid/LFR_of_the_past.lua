@@ -357,7 +357,7 @@ local function OnGossipShow()
 			Buttons = GossipFrame.buttons;
 		end
 		for i,button in ipairs(Buttons)do
-			if button:IsShown() then
+			if button:IsShown() and button.type=="Gossip" then
 				local buttonID = button:GetID()
 				local instanceID
 				if LFRofthepast.gossip2instance[NPC_ID] and #LFRofthepast.gossip2instance[NPC_ID]>0 then
@@ -401,10 +401,7 @@ local function OnGossipShow()
 					end
 
 						-- gossip text replacement
-						button:SetText(
-							data.instance[name]..showID.."\n"..
-							"|Tinterface\\lfgframe\\ui-lfg-icon-heroic:12:12:0:0:32:32:0:16:0:16|t ".."|cFF800000".._G.GENERIC_FRACTION_STRING:format(data.numEncounters[1],data.numEncounters[2])).."|r".. " || ".. "|cFF404040"..data.instance[name2].."|r"
-						);
+						button:SetText(data.instance[name]..showID.."\n".."|Tinterface\\lfgframe\\ui-lfg-icon-heroic:12:12:0:0:32:32:0:16:0:16|t ".. "|cFF404040"..data.instance[name2].."|r");  --.."|cFF800000".._G.GENERIC_FRACTION_STRING:format(data.numEncounters[1],data.numEncounters[2])).."|r".. " || "
 						-- gossip icon replacement
 						iconTexCoords[button.Icon] = {button.Icon:GetTexCoord()};
 						button.Icon:SetTexture("interface\\minimap\\raid");

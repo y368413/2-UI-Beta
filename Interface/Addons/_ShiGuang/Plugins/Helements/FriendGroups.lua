@@ -356,7 +356,7 @@ function FriendGroups_UpdateFriendButton(button)
 			button.status:SetTexture(FRIENDS_TEXTURE_OFFLINE)
 			nameColor = FRIENDS_GRAY_COLOR
 			button.gameIcon:Hide()
-			if (not lastOnline or lastOnline == 0 or time() - lastOnline >= ONE_YEAR) then
+			if ( not lastOnline or lastOnline == 0 or time() - lastOnline >= ONE_YEAR ) then
 				infoText = FRIENDS_LIST_OFFLINE
 			else
 				infoText = string.format(BNET_LAST_ONLINE_TIME, FriendsFrame_GetLastOnline(lastOnline))
@@ -438,9 +438,9 @@ function FriendGroups_UpdateFriendButton(button)
 	-- finish setting up button if it's not a header
 	if nameText then
 		if button.buttonType ~= FRIENDS_BUTTON_TYPE_DIVIDER then
-			if button["text"] then
-				button.text:Hide()
-			end
+		if button["text"] then
+			button.text:Hide()
+		end
 			button.name:SetJustifyH("LEFT")
 			button.background:SetAlpha(1)
 			button.info:Show()
@@ -654,7 +654,7 @@ function FriendGroups_Update(forceUpdate)
 	if QuickJoinToastButton then
 		QuickJoinToastButton:UpdateDisplayedFriendCount()
 	end
-	if (not FriendsListFrame:IsShown() and not forceUpdate) then
+	if ( not FriendsListFrame:IsShown() and not forceUpdate) then
 		return
 	end
 
@@ -675,7 +675,7 @@ function FriendGroups_Update(forceUpdate)
 	local totalButtonHeight = 0
 	function AddButtonInfo(buttonType, id)
 		addButtonIndex = addButtonIndex + 1
-		if not FriendButtons[addButtonIndex] then
+		if ( not FriendButtons[addButtonIndex] ) then
 			FriendButtons[addButtonIndex] = { }
 		end
 		FriendButtons[addButtonIndex].buttonType = buttonType
@@ -703,9 +703,12 @@ function FriendGroups_Update(forceUpdate)
 	-- favorite friends online
 	for i = 1, numBNetFavoriteOnline do
 		local accountInfo = C_BattleNet.GetFriendAccountInfo(i)
-		local noteText = accountInfo.note
 		local client = select(8,GetFriendInfoById(i))
+		local noteText;
 		
+		if accountInfo and accountInfo.note then
+			noteText = accountInfo.note;
+		end
 		if (ShiGuangDB["FriendGroupsingame_only"] and client == BNET_CLIENT_WOW) or not ShiGuangDB["FriendGroupsingame_only"] then
 			if not BnetFriendGroups[i] then
 				BnetFriendGroups[i] = {}
@@ -727,9 +730,12 @@ function FriendGroups_Update(forceUpdate)
 	for i = 1, numBNetFavoriteOffline do
 		local j = i + numBNetFavoriteOnline
 		local accountInfo = C_BattleNet.GetFriendAccountInfo(j)
-		local noteText = accountInfo.note
 		local client = select(8,GetFriendInfoById(j))
+		local noteText;
 		
+		if accountInfo and accountInfo.note then
+			noteText = accountInfo.note;
+		end
 		if (ShiGuangDB["FriendGroupsingame_only"] and client == BNET_CLIENT_WOW) or not ShiGuangDB["FriendGroupsingame_only"] then
 			if not BnetFriendGroups[j] then
 				BnetFriendGroups[j] = {}
@@ -749,9 +755,12 @@ function FriendGroups_Update(forceUpdate)
 	for i = 1, numBNetOnline - numBNetFavoriteOnline do
 		local j = i + numBNetFavorite
 		local accountInfo = C_BattleNet.GetFriendAccountInfo(j)
-		local noteText = accountInfo.note
+		local noteText;
 		local client = select(8,GetFriendInfoById(j))
 		
+		if accountInfo then
+			noteText = accountInfo.note
+		end
 		if (ShiGuangDB["FriendGroupsingame_only"] and client == BNET_CLIENT_WOW) or not ShiGuangDB["FriendGroupsingame_only"] then
 			if not BnetFriendGroups[j] then
 				BnetFriendGroups[j] = {}
@@ -767,28 +776,17 @@ function FriendGroups_Update(forceUpdate)
 			end
 		end
 	end
-	-- online WoW friends
-	for i = 1, numWoWOnline do
-		if not WowFriendGroups[i] then
-			WowFriendGroups[i] = {}
-		end
-		local note = C_FriendList.GetFriendInfoByIndex(i) and C_FriendList.GetFriendInfoByIndex(i).notes
-		NoteAndGroups(note, WowFriendGroups[i])
-		for group in pairs(WowFriendGroups[i]) do
-			IncrementGroup(group, true)
-			if not ShiGuangDB["FriendGroupsCollapsed"][group] then
-				buttonCount = buttonCount + 1
-				AddButtonInfo(FRIENDS_BUTTON_TYPE_WOW, i)
-			end
-		end
-	end
+
 	-- offline Battlenet friends
 	for i = 1, numBNetOffline - numBNetFavoriteOffline do
 		local j = i + numBNetFavorite + numBNetOnline - numBNetFavoriteOnline
 		local accountInfo = C_BattleNet.GetFriendAccountInfo(j)
-		local noteText = accountInfo.note
 		local client = select(8,GetFriendInfoById(j))
+		local noteText;
 		
+		if accountInfo and accountInfo.note then
+			noteText = accountInfo.note;
+		end
 		if (ShiGuangDB["FriendGroupsingame_only"] and client == BNET_CLIENT_WOW) or not ShiGuangDB["FriendGroupsingame_only"] then
 			if not BnetFriendGroups[j] then
 				BnetFriendGroups[j] = {}
@@ -801,6 +799,22 @@ function FriendGroups_Update(forceUpdate)
 					buttonCount = buttonCount + 1
 					AddButtonInfo(FRIENDS_BUTTON_TYPE_BNET, j)
 				end
+			end
+		end
+	end
+
+	-- online WoW friends
+	for i = 1, numWoWOnline do
+		if not WowFriendGroups[i] then
+			WowFriendGroups[i] = {}
+		end
+		local note = C_FriendList.GetFriendInfoByIndex(i) and C_FriendList.GetFriendInfoByIndex(i).notes
+		NoteAndGroups(note, WowFriendGroups[i])
+		for group in pairs(WowFriendGroups[i]) do
+			IncrementGroup(group, true)
+			if not ShiGuangDB["FriendGroupsCollapsed"][group] then
+				buttonCount = buttonCount + 1
+				AddButtonInfo(FRIENDS_BUTTON_TYPE_WOW, i)
 			end
 		end
 	end

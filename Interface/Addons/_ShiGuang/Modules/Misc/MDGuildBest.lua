@@ -97,12 +97,14 @@ function MISC:GuildBest_Update()
 	end
 
 	if not resize and hasAngryKeystones then
-		local schedule = AngryKeystones.Modules.Schedule.AffixFrame
+		local schedule = AngryKeystones.Modules.Schedule
 		frame:SetWidth(246)
 		frame:ClearAllPoints()
-		frame:SetPoint("BOTTOMLEFT", schedule, "TOPLEFT", 0, 10)
+		frame:SetPoint("BOTTOMLEFT", schedule.AffixFrame, "TOPLEFT", 0, 10)
 
 		self.WeeklyInfo.Child.ThisWeekLabel:SetPoint("TOP", -135, -25)
+		schedule.KeystoneText:SetScale(.0001)
+
 		local affix = self.WeeklyInfo.Child.Affixes[1]
 		if affix then
 			affix:ClearAllPoints()

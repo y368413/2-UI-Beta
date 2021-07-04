@@ -29,7 +29,9 @@ function BaudErrorFrame_OnLoad(self)
 		end
 	end	
 	SLASH_BaudErrorFrame1 = "/err"
-	seterrorhandler(BaudErrorFrameHandler)
+	local old_seterrorhandler = seterrorhandler
+	old_seterrorhandler(BaudErrorFrameHandler)
+	seterrorhandler = function() end
 end
 
 function BaudErrorFrame_OnEvent(self, event, ...)

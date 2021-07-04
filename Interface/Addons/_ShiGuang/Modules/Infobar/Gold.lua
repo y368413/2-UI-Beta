@@ -63,11 +63,11 @@ info.onEvent = function(self, event, arg1)
 	else								-- Gained Moeny
 		profit = profit + change
 	end
-	if MaoRUIDB["ShowSlots"] then
-		self.text:SetText(getSlotString())
-	else
+	--if MaoRUIDB["ShowSlots"] then
+		--self.text:SetText(getSlotString())
+	--else
 		self.text:SetText(module:GetMoneyString(newMoney))
-	end
+	--end
 
 	if not MaoRUIDB["totalGold"][myRealm] then MaoRUIDB["totalGold"][myRealm] = {} end
 	if not MaoRUIDB["totalGold"][myRealm][myName] then MaoRUIDB["totalGold"][myRealm][myName] = {} end
@@ -94,24 +94,23 @@ StaticPopupDialogs["RESETGOLD"] = {
 
 info.onMouseUp = function(self, btn)
 	if btn == "RightButton" then
-		if IsControlKeyDown() then
+		--if IsControlKeyDown() then
 			StaticPopup_Show("RESETGOLD")
-		else
-			MaoRUIDB["ShowSlots"] = not MaoRUIDB["ShowSlots"]
-			if MaoRUIDB["ShowSlots"] then
-				self:RegisterEvent("BAG_UPDATE")
-			else
-				self:UnregisterEvent("BAG_UPDATE")
-			end
-			self:onEvent()
-		end
+		--else
+			--MaoRUIDB["ShowSlots"] = not MaoRUIDB["ShowSlots"]
+			--if MaoRUIDB["ShowSlots"] then
+				--self:RegisterEvent("BAG_UPDATE")
+			--else
+				--self:UnregisterEvent("BAG_UPDATE")
+			--end
+			--self:onEvent()
+		--end
 	elseif btn == "MiddleButton" then
-		if InCombatLockdown() then UIErrorsFrame:AddMessage(I.InfoColor..ERR_NOT_IN_COMBAT) return end
-		ToggleCharacter("TokenFrame")
-
-	else
 		MaoRUIDB["AutoSell"] = not MaoRUIDB["AutoSell"]
 		self:onEnter()
+	else
+		if InCombatLockdown() then UIErrorsFrame:AddMessage(I.InfoColor..ERR_NOT_IN_COMBAT) return end
+		ToggleCharacter("TokenFrame")
 	end
 end
 

@@ -396,13 +396,13 @@ function ExtTransmog_RebuildFrame()
     WardrobeTransmogFrame.ModelScene:SetHeight(420);
     WardrobeTransmogFrame.Inset.BG:SetWidth(529);
 
-    WardrobeTransmogFrame.ModelScene.HeadButton:ClearAllPoints();
-    WardrobeTransmogFrame.ModelScene.HeadButton:SetPoint("TOP", WardrobeTransmogFrame.ModelScene, "TOP", -238, -41);
-    WardrobeTransmogFrame.ModelScene.HandsButton:ClearAllPoints();
-    WardrobeTransmogFrame.ModelScene.HandsButton:SetPoint("TOP", WardrobeTransmogFrame.ModelScene, "TOP", 235, -118);
+    --WardrobeTransmogFrame.ModelScene.HeadButton:ClearAllPoints();
+    --WardrobeTransmogFrame.ModelScene.HeadButton:SetPoint("TOP", WardrobeTransmogFrame.ModelScene, "TOP", -238, -41);
+    --WardrobeTransmogFrame.ModelScene.HandsButton:ClearAllPoints();
+    --WardrobeTransmogFrame.ModelScene.HandsButton:SetPoint("TOP", WardrobeTransmogFrame.ModelScene, "TOP", 235, -118);
 
-    WardrobeTransmogFrame.ModelScene.MainHandButton:ClearAllPoints();
-    WardrobeTransmogFrame.ModelScene.MainHandButton:SetPoint("TOP", WardrobeTransmogFrame.ModelScene, "BOTTOM", -26, -5);
+    --WardrobeTransmogFrame.ModelScene.MainHandButton:ClearAllPoints();
+    --WardrobeTransmogFrame.ModelScene.MainHandButton:SetPoint("TOP", WardrobeTransmogFrame.ModelScene, "BOTTOM", -26, -5);
     WardrobeTransmogFrame.ModelScene.SecondaryHandButton:ClearAllPoints();
     WardrobeTransmogFrame.ModelScene.SecondaryHandButton:SetPoint("TOP", WardrobeTransmogFrame.ModelScene, "BOTTOM", 27, -5);
     WardrobeTransmogFrame.ModelScene.MainHandEnchantButton:ClearAllPoints();

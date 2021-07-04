@@ -1,4 +1,4 @@
-## Interface: 90002
+## Interface: 90005
 ## Title: GladiatorlosSACN
 ## Title-zhCN: |cFF99CC01[PVP]|r技能语音
 ## Title-zhTW: |cFF99CC01[PVP]|r技能語音

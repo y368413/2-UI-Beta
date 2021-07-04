@@ -3,10 +3,11 @@
 -- Tome of Teleportation by Remeen.
 
 -- TODO:
--- More Battle for Azeroth items
 -- Improve speed
+-- Mythic dungeon teleports (Spell IDs not yet known)
 
 -- Low priority:
+-- Better UI
 -- Proper options dialog
 -- Special case strings start with number to force them to be sorted first.
 TeleporterHearthString = "0 Hearth"
