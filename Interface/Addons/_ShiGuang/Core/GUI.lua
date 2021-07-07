@@ -909,7 +909,7 @@ G.OptionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		--{1, "Misc", "HideBossEmote", U["HideBossEmote"].."*", nil, nil, toggleBossEmote},
 		--{1, "Misc", "HideErrors", U["Hide Error"].."*", true, true, nil, updateErrorBlocker},
 		--{1, "Chat", "AllowFriends", U["AllowFriendsSpam"].."*", false, false, nil, nil, U["AllowFriendsSpamTip"]},
-		{1, "Chat", "Lock", "|cff00cc4c"..U["Lock Chat"], true, false},
+		{1, "Chat", "Lock", "|cff00cc4c"..U["Lock Chat"], true, true},
 		{},--blank
 		{3, "Chat", "Matches", U["Keyword Match"].."*", false, false, {1, 3, 1}},
 		{3, "Chat", "ChatWidth", U["LockChatWidth"].."*", true, false, {200, 600, 1}, updateChatSize},
