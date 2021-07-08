@@ -20,6 +20,7 @@
 			[272819] = "drinking",
 			[279739] = "drinking",
 			--Was I drunk when I did this??
+			[345231] = "battlemaster",
 
 			-- Covenant Abilities
 			[310143] = "soulshape", -- Nightfae Signature
@@ -28,6 +29,7 @@
 			[327676] = "forgeborne", -- Forgeborne (Necrolord Soulbind)
 			[323095] = "UltimateForm", -- Necro
 			[323524] = "UltimateForm", -- Necro
+			[330752] = "AscendantPhial", -- Kyrian Kleia Soulbind debuff immunity for SOME REASON THIS IS A THING
 
 			-- Backlash (Aura Applied)
 			[87204] = "backlashFear", -- Vampiric Touch Dispel (Priest)
@@ -45,7 +47,7 @@
 			--[206977] = "bloodmirror",
 			--[207256] = "obliteration",
 			[207319] = "corpseShield",
-			--[207171] = "remorselessWinter",
+			[287254] = "remorselessWinter",
 			[212332] = "smash",
 			[212337] = "smash",
 			[91800] = "smash",
@@ -63,7 +65,7 @@
 			[187827] = "metamorphosis", -- Vengeance
 			[188501] = "spectralSight",
 			[196555] = "netherwalk",
-			[207810] = "netherBond",
+			--[207810] = "netherBond",
 
 			-- Druid (Aura Applied)
 			[102560] = "incarnationElune",
@@ -93,6 +95,8 @@
 			[108293] = "heartOfTheWild", -- Heart of the Wild
 			[108294] = "heartOfTheWild", -- Heart of the Wild
 			[323546] = "ravenousfrenzy", -- Venthyr
+			[22842] = "FrenziedRegen",
+			[132158] = "naturesSwiftness",
 
 			-- Hunter (Aura Applied)
 			[19263] = "deterrence",
@@ -110,6 +114,8 @@
 			[202748] = "survivalTactics", -- Survival Tactics (Honor Talent Feign Death Passive)
 			[212704] = "beastWithin", -- The Beast Within; Beastial Wrath Fear/Horror Immunity Honor Talent
 			[260402] = "doubletap",
+			[356727] = "spiderSting",
+			[357021] = "concussion", -- Consecutive Concussion
 
 			-- Mage (Aura Applied)
 			[45438] = "iceBlock",
@@ -142,10 +148,12 @@
 			[209584] = "zenFocusTea",
 			[202335] = "doubleBarrel", -- Double Barrel (Brewmaster Honor Talent that stuns)
 			[310454] = "weaponoforder", -- Kyrian
+			[353361] = "dematerialize",
 						
 			-- Paladin (Aura Applied)
 			[1022] = "handOfProtection", 
 			[1044] = "handOfFreedom",
+			[305395] = "handOfFreedom", -- PvP talent
 			[642] = "divineShield", 
 			[31884] = "avengingWrath", -- Protection/Retribution
 			--[31842] = "avengingWrath", -- Holy
@@ -203,6 +211,7 @@
 			[6770] = "sap",
 			[207736] = "shadowyDuel",
 			[1966] = "Feint", -- Feint
+			[199027] = "veilOfMidnight",
 			
 			-- Shaman (Aura Applied)
 			--[204288] = "earthShield",
@@ -214,6 +223,8 @@
 			[210918] = "etherealForm",
 			[108271] = "astralShift",
 			--[204293] = "spiritLink",
+			[335903] = "doomWinds",
+
 			
 			-- Warlock (Aura Applied)
 			[108416] = "darkPact",
@@ -281,7 +292,7 @@
 			[187827] = "metamorphDown",			--Metamorphosis (Vengeance)
 			[188501] = "sightsDown",			--Spectral Sight
 			[196555] = "netherwalkDown",		--Netherwalk
-			[207810] = "bondageDown",			--Nether Bond
+			--[207810] = "bondageDown",			--Nether Bond
 			[198111] = "temporalDown",			--Temporal Shield
 			[198144] = "iceFormDown",			--Ice Form
 			--[216113] = "fistingDown",			--Way of the Crane
@@ -359,6 +370,12 @@
 			[147833] = "interveneDown",
 			[323095] = "UltimateFormDown", -- Necrolord
 			[323524] = "UltimateFormDown",
+			[345231] = "battlemasterDown",
+			[330752] = "AscendantPhialDown", -- Kleia's nonsense
+			[132158] = "swiftnessDown",
+			[10060] = "infusionDown", -- Power Infusion
+			[335903] = "doomwindsDown",
+			[199027] = "veilOfMidnight",
 
 			-- COVENANTS
 			[310143] = "soulshapeDown", -- Nightfae Signature
@@ -418,6 +435,7 @@
 			[274282] = "middleMoon",
 			[274283] = "fullMoon",
 			[2637] = "hibernate", -- Hibernate
+			[329042] = "emeraldSlumber",
 			
 			-- Hunter (Spell Casting)
 			[982] = "revivePet",
@@ -444,26 +462,24 @@
 			[203286] = "greaterPyro",
 			[199786] = "glacialSpike",
 			[113724] = "ringOfFrost",
-			--[224968] = "_PHmarkOfAluneth",
 			[257537] = "ebonbolt",
 			[314793] = "mirrorsOfTorment",
 			[307443] = "radiantspark", -- Kyrian
-			[314791] = "shiftingpower", -- Nightfae
+			[353082] = "ringOfFire", -- and it burns burns burns
+			[353128] = "arcanosphere",
+			[352278] = "iceWall",
 			
 			-- Monk (Spell Casting)
-			--[205406] = "sheilunsGift",
 			[198898] = "craneSong",
 
 			-- Paladin (Spell Casting)
 			[20066] = "repentance",
 			[10326] = "turnEvil",
-			--[200652] = "tyrsDeliverance",
 			
 			-- Priest (Spell Casting)
 			[9484] = "shackleUndead", 
 			[605] = "MindControl",
 			[32375] = "massDispell",
-			--[207946] = "lightsWrath",
 			[265202] = "holyWordSalvation", -- Holy Word Salvation
 			[289666] = "greaterHeal", -- >:(
 			[325013] = "boonOfTheAscended",
@@ -482,12 +498,12 @@
 			[277778] = "hex", -- Zandalari Tendonripper
 			[277784] = "hex", -- Wicker Mongrel
 			[309328] = "hex", -- Living Honey
-			--[207778] = "giftOfTheQueen",
 			[191634] = "stormkeeper",
 			[320137] = "stormkeeper",
 			[210714] = "Icefury", -- Icefury
 			[320674] = "chainharvest", -- Venthyr
 			[328923] = "faetransfusion", -- Nightfae
+			[117014] = "ElementalBlast", -- oof
 			
 			-- Warlock (Spell Casting)
 			[710] = "banish",
@@ -506,11 +522,10 @@
 			[112869] = "summonDemon", -- Observer (Glyph)
 			[152108] = "Cataclysm",
 			[30283] = "shadowfury",
-			[30108] = "unstableAffliction",
+			[316099] = "unstableAffliction",
 			[116858] = "chaosBolt",
 			[6358] = "seduction",
 			[115268] = "seduction",
-			--[211714] = "_PHthalkiel",
 			[265187] = "DemonicTyrant", -- Summon Demonic Tyrant
 			[29893] = "CreateHealthstone",
 			[183601] = "CreateHealthstone",
@@ -519,6 +534,8 @@
 			[321792] = "impendingcatastrophe", -- Venthyr
 			[325640] = "soulrot", -- Nightfae
 			[264106] = "deathbolt",
+			[6353] = "soulFire",
+			[353753] = "bondsOfFel",
 
 			-- Warrior (Spell Casting)
 			[64382] = "shatteringthrow",
@@ -588,6 +605,7 @@
 			-- Connected (Big Beefy cast-time abilities that successfully connect.)
 			[203286] = "connected", -- Greater Pyro
 			[116858] = "connected", -- Chaos Bolt
+			[323673] = "connected", -- Mind Games
 			
 			-- Purges
 			[528] = "purge",		-- Dispel Magic (Priest)
@@ -636,9 +654,6 @@
 			[256948] = "SpatialRift", -- Spatial Rift (Void Elf)
 			[257040] = "SpatialRift2", -- Spatial Rift Teleport (Spatial Warp) (Void Elf)
 			[255654] = "BullRush", -- Bull Rush (Highmountain Racial)
-			-- Gladiator's Maledict :^)
-			--[302144] = "maledict",
-			--[305252] = "maledict", -- 8.2
 
 			-- Covenant (Cast Success)
 			[324631] = "fleshcraft", -- Necrolord signature
@@ -649,7 +664,7 @@
 			[47476] = "strangulate",
 			[47568] = "runeWeapon", -- Empowered Rune Weapon
 			[207127] = "runeWeapon", -- Hungering Rune Weapon
-			[207289] = "runeWeapon", -- Unholy Assault (Unholy)
+			[207289] = "unholyAssault", -- Unholy Assault (Unholy)
 			[49206] = "gargoyle", 			-- Summon Gargoyle
 			[207349] = "gargoyle",			-- Dark Arbiter
 			[77606] = "darkSimulacrum",
@@ -736,6 +751,8 @@
 			[327071] = "kindredfocus", -- Kyrian 1
 			[327022] = "kindredempowerment", -- Kyrian 2
 			[327037] = "kindredprotection", -- Kyrian 3
+			[18562] = "swiftmend",
+			[354654] = "groveProtection",
 			
 			-- Hunter (Cast Success)
 			[147362] = "counterShot",
@@ -744,7 +761,6 @@
 			[131894] = "murderOfCrows",
 			[121818] = "stampede",
 			[201430] = "stampede",
-			[202914] = "spiderSting",
 			[208652] = "direHawk",
 			[205691] = "direBasilisk",
 			[187707] = "muzzle",
@@ -765,6 +781,11 @@
 			[19577] = "intimidation", -- Intimidation
 			[324149] = "flayedshot", -- Venthyr
 			[328231] = "wildspirits", -- Nightfae
+			[212431] = "explosiveShot",
+			[19574] = "bestialWrath",
+			[356719] = "chimaeralSting",
+			[356707] = "wildKingdom",
+			[136] = "mendPet",
 			
 			-- Mage (Cast Success)
 			[2139] = "counterspell", 
@@ -785,6 +806,7 @@
 			[31661] = "DragonBreath", -- Dragon's Breath
 			[55342] = "mirrorImage",
 			[122] = "frostNova",
+			[314791] = "shiftingpower", -- Nightfae
 			
 			-- Monk (Cast Success)
 			[116841] = "tigersLust",
@@ -792,6 +814,7 @@
 			[123904] = "invokeXuen",
 			[115078] = "paralysis",
 			[116705] = "spearStrike",
+			[101643] = "Transcendence",
 			[119996] = "transfer",
 			[137639] = "stormEarthFire",
 			[115310] = "revival",
@@ -864,6 +887,7 @@
 			[325013] = "boonoftheascended", -- Kyrian
 			[324724] = "unholynova", -- Necrolord
 			[109964] = "spiritShell",
+			[64901] = "SymbolOfHope",
 
 			-- Rogue (Cast Success)
 			[2094] = "blind",
@@ -874,7 +898,6 @@
 			[79140] = "vendetta",
 			[207777] = "dismantle",
 			[200806] = "exsanguinate",
-			[198529] = "plunderArmor",
 			[408] = "kidney",
 			[199804] = "kidney",
 			--[185767] = "cannonballBarrage",
@@ -889,6 +912,7 @@
 			[323547] = "echoingreprimand", -- Kyrian
 			[323654] = "flagellation", -- Venthyr
 			[328547] = "serratedbonespikes", -- Necrolord
+			[5938] = "shiv",
 
 			-- Shaman (Cast Success)
 			[108281] = "ancestralGuidance",
@@ -902,6 +926,8 @@
 			[51490] = "thunderstorm",
 			[320125] = "echoingshock",
 			[326059] = "primordialwave", -- Necrolord
+			[356824] = "unleashWater", -- Unleash Shield (Water)
+			[356738] = "unleashEarth", -- Unleash Shield (Earth)
 			
 			-- Shaman (Totems)
 			[98008] = "spiritLinkTotem",
@@ -922,6 +948,7 @@
 			[8143] = "TremorTotem", -- Tremor Totem!
 			[16191] = "manaTideTotem",
 			[324386] = "vesperTotem",
+			[355630] = "staticFieldTotem",
 			
 			-- Warlock (Cast Success)
 			[6789] = "mortalCoil",
@@ -937,7 +964,9 @@
 			[251523] = "spellLock",
 			[251922] = "spellLock",
 			[288047] = "spellLock",
-			[119898] = "spellLock", -- OH LOOK ANOTHER ONE
+			[119898] = "spellLock",
+			[119898] = "spellLock",
+			[48018] = "DemonicCircle",
 			[48020] = "demonicCircleTeleport",
 			[111859] = "grimoireOfService",
 			[111895] = "grimoireOfService",
@@ -957,6 +986,10 @@
 			[312321] = "scouringTithe",
 			[205179] = "phantomsingularity",
 			[344566] = "RapidContagion",
+			[234153] = "DrainLife",
+			[328774] = "amplifyCurse",
+			[353294] = "shadowRift",
+			[353601] = "felObelisk",
 
 			-- Warrior (Cast Success)
 			[97462] = "commandingShout",

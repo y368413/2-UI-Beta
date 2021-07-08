@@ -1,4 +1,4 @@
-## Interface: 90005
+## Interface: 90100
 ## Title: GladiatorlosSACN
 ## Title-zhCN: |cFF99CC01[PVP]|r技能语音
 ## Title-zhTW: |cFF99CC01[PVP]|r技能語音
@@ -7,7 +7,7 @@
 ## Notes-zhTW: PVP技能語音提示
 ## Author: Abatorlos(of Spinebreaker), DuskAshes, superk521, zuhligan, Grit (Legion Update), Mini_Dragon, LordKuper + VV(2020-03-18)
 ## SavedVariables: GladiatorlosSADB
-## Version: SLB 2
+## Version: 3.6
 
 ## X-Repple: 2 UI
 
