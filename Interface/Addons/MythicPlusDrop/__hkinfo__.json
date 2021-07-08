@@ -1,0 +1,14 @@
+{
+    "target": "curse",
+    "searchName": "MythicPlusDrop",
+    "localName": "MythicPlusDrop",
+    "version": "MythicPlusDrop.v.4.4",
+    "fileName": "mythicplusdrop",
+    "addonsMap": [
+        "MythicPlusDrop"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "name": "MythicPlusDrop",
+    "gameVersion": "9.1.0"
+}

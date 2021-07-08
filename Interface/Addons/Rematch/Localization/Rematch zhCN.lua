@@ -1,7 +1,7 @@
 local _,L = ...
 
 if GetLocale()=="zhCN" then
-    L["Quality"] = "品质"
+
 -- New strings in 4.7.3
 	L["Shared Moveset"] = "公有技能组合"
 	L["In addition to the flyouts, show the numbers 1 and 2 on loaded abilities."] = "除了下拉框之外，在已选择的技能上也显示数字 1 和 2"
@@ -168,8 +168,8 @@ if GetLocale()=="zhCN" then
 -- Process\Filters.lua
 	L["Favorites"] = "偏好"
 	L["Types"] = "宠物类型"
-	L["Strong Vs"] = "重击"
-	L["Tough Vs"] = "被轻击"
+	L["Strong Vs"] = "重击对方"
+	L["Tough Vs"] = "被对方轻击"
 	L["Breed"] = "品种"
 	L["Similar"] = "相似"
 	L["Script"] = "脚本程序"

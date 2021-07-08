@@ -108,9 +108,12 @@ o.getSourceID = function(itemLink)
   DressUpModel:Undress()
   DressUpModel:TryOn(itemLink)
   for i = 1, 18 do
-    local sourceID = DressUpModel:GetSlotTransmogSources(i)
-    if sourceID and sourceID ~= 0 then
-      return sourceID
+    local transmogInfo = DressUpModel:GetItemTransmogInfo(i)
+    if transmogInfo then
+      local sourceID = transmogInfo.appearanceID
+      if sourceID and sourceID ~= 0 then
+        return sourceID
+      end
     end
   end
 end

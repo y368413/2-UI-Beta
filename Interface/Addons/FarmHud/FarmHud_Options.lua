@@ -15,7 +15,6 @@ local TrackingValues = {
 	["false"] = HIDE,
 	["client"] = L["TrackingOptionsLikeMinimap"]
 }
-
 local dbDefaults = {
 	hud_scale=1.4, text_scale=1.4, hud_size=1,
 	gathercircle_show=true,gathercircle_color={0,1,0,0.5},
@@ -39,7 +38,8 @@ local isAddOnsLoadedForOption = {
 }
 
 local function printFrames(key,value)
-	if type(key)=="table" then
+	local keyType = type(key);
+	if keyType=="table" then
 		if not FarmHud:IsVisible() then
 			ns.print("FarmHud must be enabled before use this option");
 			return;
@@ -49,13 +49,13 @@ local function printFrames(key,value)
 		local count = 0;
 		local regions = {Minimap:GetRegions()};
 		for r=1, #regions do
-			print("GetRegions()"," - ",regions[i]:GetDebugName());
+			print("GetRegions()"," - ",regions[r]:GetDebugName());
 			count = count + 1;
 		end
 
 		--ns.print("Search for unwanted frames anchored on minimap... (deep reverse search)");
 		for k,v in pairs(_G) do
-			if (not excludeFrames[key]) and (type(value)=="table") and (type(value[0])=="userdata") and (not (value:IsProtected() or value:IsForbidden())) then
+			if not (issecurevariable(_G,k)) and (not excludeFrames[key]) and (type(value)=="table") and (type(value[0])=="userdata") and (not (value:IsProtected() or value:IsForbidden())) then
 				if printFrames(k,v) then
 					count = count + 1;
 				end
@@ -75,11 +75,6 @@ local function printFrames(key,value)
 			ns.print("No elements found...");
 		end
 		return;
-	end
-
-	local secure, taint = issecurevariable(_G,k);
-	if secure then
-		return -- ignore elements from blizzard
 	end
 
 	for i=1, value:GetNumPoints() do
@@ -150,7 +145,7 @@ end
 
 local function optTracking(info,value)
 	local key = info[#info];
-	if not key:find("^tracking\^%d+$") then return end
+	if not key:find("^tracking^%d+$") then return end
 
 	if value~=nil then
 		FarmHudDB[key] = value;
@@ -478,14 +473,16 @@ local options = {
 					name = MISCELLANEOUS,
 					args = {
 						-- filled by function updateTrackingOptions
-					}
+					},
+					hidden = true,
 				},
 				townsfolk = {
 					type = "group", order = 3,
 					name = TOWNSFOLK_TRACKING_TEXT,
 					args = {
 						-- filled by function updateTrackingOptions
-					}
+					},
+					hidden = true,
 				}
 			}
 		},
@@ -554,8 +551,10 @@ local function updateTrackingOptions(info)
 		end
 		if data.level==2 then -- townfolk
 			options.args.tracking.args.townsfolk.args[key] = trackingOpts[textureId]
+			options.args.tracking.args.townsfolk.hidden=false;
 		else -- misc
 			options.args.tracking.args.misc.args[key] = trackingOpts[textureId];
+			options.args.tracking.args.misc.hidden=false;
 		end
 	end
 	return false;
@@ -597,18 +596,6 @@ function ns.RegisterOptions()
 	end
 
 	if not ns.IsClassic() then
-		-- migration
-		-- areaborder > archaeology
-		if FarmHudDB["tracking^535615"]==nil and FarmHudDB.areaborder_arch_show~=nil then
-			FarmHudDB["tracking^535615"] = (FarmHudDB.areaborder_arch_show=="blizz" and "client") or FarmHudDB.areaborder_arch_show
-			FarmHudDB.areaborder_arch_show = nil
-		end
-		-- areaborder > quest & task
-		if FarmHudDB["tracking^535616"]==nil and FarmHudDB.areaborder_quest_show~=nil then
-			FarmHudDB["tracking^535616"] = (FarmHudDB.areaborder_quest_show=="blizz" and "client") or FarmHudDB.areaborder_quest_show
-			FarmHudDB.areaborder_quest_show = nil
-		end
-
 		for id, data in pairs(trackingTypes)do
 			local v = FarmHudDB["tracking^"..id];
 			if not (v=="client" or v=="true" or v=="false") then

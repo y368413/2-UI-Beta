@@ -5,6 +5,19 @@ local settings, roster
 
 card.statButtons = {} -- frame pool of RematchPetCardStatTemplate buttons
 
+-- texCoords into Interface\GLUES\AccountUpgrade\AccountUpgradeBanners for each expansionID
+local expansionCoords = {
+    [0] = {0,0.1953125,0.5546875,0.9453125}, -- classic
+    [1] = {0.1953125,0.390625,0.5546875,0.9453125}, -- burning crusade
+    [2] = {0.1982421875,0.3935546875,0,0.390625}, -- wrath of the lich king
+    [3] = {0,0.1953125,0,0.390625}, -- cataclysm
+    [4] = {0.59375,0.7890625,0.53125,0.921875}, -- mists of pandaria
+    [5] = {0.791015625,0.986328125,0,0.390625}, -- warlords of draenor
+    [6] = {0.3955078125,0.5908203125,0.53125,0.921875}, -- legion
+    [7] = {0.3955078125,0.5908203125,0,0.390625}, -- battle for azeroth
+    [8] = {0.5927734375,0.7880859375,0,0.390625}, -- shadowlands
+}
+
 rematch:InitModule(function()
 	rematch.PetCard = card
 	settings = RematchSettings
@@ -173,6 +186,14 @@ function rematch:ShowPetCard(parent,petID,force)
 	info.LevelLabel:SetShown(showLevel)
 	info.Level:SetShown(showLevel)
 
+    -- update background if pet has an expansion
+    if petInfo.isObtainable and petInfo.expansionID and expansionCoords[petInfo.expansionID] then
+        info.ExpansionBackground:SetTexCoord(unpack(expansionCoords[petInfo.expansionID]))
+        info.ExpansionBackground:Show()
+    else
+        info.ExpansionBackground:Hide()
+    end
+
 	-- bottom of middle card info
 	local ybottom = 6
 	-- xp bar for pets that can battle under level 25
@@ -255,6 +276,11 @@ function rematch:ShowPetCard(parent,petID,force)
 			-- only PrepareForFanfare if fanfare ever observed to avoid loading Blizzard_Collections
 			if petInfo.needsFanfare then
 				middle.ModelScene:PrepareForFanfare(petInfo.needsFanfare)
+			else -- if pet was previous wrapped and no longer needs fanfare, hide wrapped actor
+				local wrappedActor = middle.ModelScene:GetActorByTag("wrapped")
+				if wrappedActor then
+					wrappedActor:Hide()
+				end
 			end
 		end
 	end

@@ -1,0 +1,14 @@
+{
+    "target": "curse",
+    "searchName": "Mount Collector",
+    "localName": "MountCollector",
+    "version": "MountCollector_v2.0.6.zip",
+    "fileName": "mount-collector",
+    "addonsMap": [
+        "MountCollector"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "name": "MountCollector",
+    "gameVersion": "9.1.0"
+}

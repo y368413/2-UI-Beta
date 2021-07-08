@@ -532,6 +532,10 @@ local queryAPIs = {
    Expansion = function(self)
       local speciesID = self.speciesID
       local expansionID
+      local idType = self.idType
+      if idType=="leveling" or idType=="random" or idType=="ignored" then
+         return
+      end
       -- first check if this is one of the species that doesn't fit into an expansion's range
       if expansionOutliers[speciesID] then
          expansionID = expansionOutliers[speciesID]
@@ -558,7 +562,7 @@ local queryAPIs = {
 -- addons are used in this priority: BattlePetBreedID, PetTracker_Breeds then LibPetBreedInfo-1.0
 function rematch:GetBreedSource()
    if breedSource==nil then
-      if IsAddOnLoaded("HPetBattleAny") then
+      if IsAddOnLoaded("BattlePetBreedID") then
          breedSource = "BattlePetBreedID"
          return "BattlePetBreedID"
       elseif IsAddOnLoaded("PetTracker_Breeds") and GetAddOnMetadata("PetTracker_Breeds","Version")~="7.1.4" then

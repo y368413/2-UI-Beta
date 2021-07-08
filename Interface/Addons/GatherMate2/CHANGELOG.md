@@ -1,6 +1,6 @@
 # GatherMate2
 
-## [1.46.6](https://github.com/Nevcairiel/GatherMate2/tree/1.46.6) (2020-12-18)
-[Full Changelog](https://github.com/Nevcairiel/GatherMate2/compare/1.46.5...1.46.6) [Previous Releases](https://github.com/Nevcairiel/GatherMate2/releases)
+## [1.46.8](https://github.com/Nevcairiel/GatherMate2/tree/1.46.8) (2021-06-29)
+[Full Changelog](https://github.com/Nevcairiel/GatherMate2/compare/1.46.7...1.46.8) [Previous Releases](https://github.com/Nevcairiel/GatherMate2/releases)
 
-- Track "Ground Wart" in Maldraxxus as Treasure  
+- Update TOC for 9.1  

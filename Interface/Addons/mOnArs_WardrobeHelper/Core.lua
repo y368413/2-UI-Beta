@@ -33,7 +33,11 @@ local TYPES = {
 	_G["TRANSMOG_SOURCE_3"],
 	_G["TRANSMOG_SOURCE_4"],
 	_G["TRANSMOG_SOURCE_5"],
-	_G["TRANSMOG_SOURCE_6"]
+	_G["TRANSMOG_SOURCE_6"],
+	"A",
+	"B",
+	"C",
+	"D"
 }
 
 TYPES[0] = "Other"
@@ -163,7 +167,7 @@ local function getUpdateHelper()
 			local newInstances = {}
 			local blockSize = 50 -- number of appearances to load at once. higher values may introduce lag
 			local counter = 0
-			for i = 1, 30 do
+			for i = 0, 29 do
 				local appearances = C_TransmogCollection.GetCategoryAppearances(i)
 				if appearances then
 					for j = 1, #appearances do
@@ -227,6 +231,7 @@ local function getUpdateHelper()
 											end
 										else
 											local type = TYPES[sourceType]
+											if type == nil then type = "UNKNOWN" end
 											local name, isWeapon, canEnchant, canMainHand, canOffHand = C_TransmogCollection.GetCategoryInfo(i)
 											if i < 10 then
 												name = '0' .. i .. ' - ' .. name

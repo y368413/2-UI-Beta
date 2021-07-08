@@ -675,7 +675,7 @@ function FriendGroups_Update(forceUpdate)
 	local totalButtonHeight = 0
 	function AddButtonInfo(buttonType, id)
 		addButtonIndex = addButtonIndex + 1
-		if ( not FriendButtons[addButtonIndex] ) then
+		if not FriendButtons[addButtonIndex] then
 			FriendButtons[addButtonIndex] = { }
 		end
 		FriendButtons[addButtonIndex].buttonType = buttonType
@@ -907,21 +907,21 @@ function FriendGroups_Update(forceUpdate)
 				end
 				if not ShiGuangDB["FriendGroupsHideOffline"] and not ShiGuangDB["FriendGroupsingame_only"] then
 					for i = numBNetFavoriteOnline + 1, numBNetFavorite do
-						if BnetFriendGroups[i][group] then
+						if BnetFriendGroups[i] and BnetFriendGroups[i][group] then
 							index = index + 1
 							FriendButtons[index].buttonType = FRIENDS_BUTTON_TYPE_BNET
 							FriendButtons[index].id = i
 						end
 					end
 					for i = numBNetOnline + numBNetFavoriteOffline + 1, numBNetTotal do
-						if BnetFriendGroups[i][group] then
+						if BnetFriendGroups[i] and BnetFriendGroups[i][group] then
 							index = index + 1
 							FriendButtons[index].buttonType = FRIENDS_BUTTON_TYPE_BNET
 							FriendButtons[index].id = i
 						end
 					end
 					for i = numWoWOnline + 1, numWoWTotal do
-						if WowFriendGroups[i][group] then
+						if WowFriendGroups[i] and WowFriendGroups[i][group] then
 							index = index + 1
 							FriendButtons[index].buttonType = FRIENDS_BUTTON_TYPE_WOW
 							FriendButtons[index].id = i

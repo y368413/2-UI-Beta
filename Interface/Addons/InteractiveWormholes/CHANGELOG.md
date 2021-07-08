@@ -1,6 +1,6 @@
-### Changes in 90000.22-Release:
+### Changes in 90100.24-Release:
 
-- Added: Support for Silas' Stone of Transportation
-- Changed: Map no longer changes if viewing a child zone of a given map
-- Fixed: NPCs showing no options when talking to them while map is open
+- Added: Korthia location to Shadowlands wormhole
+- Added: Russian translations (thanks @Hubbotu)
+- Changed: Update Interface version
 

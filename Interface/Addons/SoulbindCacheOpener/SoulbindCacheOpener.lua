@@ -1,6 +1,6 @@
--- Author: Nerino1
+ -- Author: Nerino1
 -- Create Date : 1/8/2021
--- Version 3.9
+-- Version 4.1
 
 local _, L = ...;
 SoulbindCacheOpener = {};
@@ -218,14 +218,6 @@ SoulbindCacheOpener.items = {
 		["id"] = 180983,
 		["button"] = nil
 	},
-	{	["name"] = "SoulbindCacheOpener_artisanssatchel", --Artisans Satchel"
-		["id"] = 180976,
-		["button"] = nil
-	},
-	{ 	["name"] = "SoulbindCacheOpener_artisanslargesatchel", --Artisans Large Satchel"
-		["id"] = 180979,
-		["button"] = nil
-	},
 	{ 	["name"] = "SoulbindCacheOpener_spirittenderssatchel", --Spirit Tenders Satchel"
 		["id"] = 180977,
 		["button"] = nil
@@ -277,6 +269,11 @@ SoulbindCacheOpener.items = {
 	},
 	{ 	["name"] = "ExtraGoodies_cacheofnathriantreasures", --Cache of Nathrian Treasures - ilvl 213"
 		["id"] = 184868,
+		["button"] = nil
+	},
+-- LFG Call to Arms
+	{ 	["name"] = "ExtraGoodies_veiledsatchelofcooperation", --Veiled Satchel of Cooperation"
+		["id"] = 184522,
 		["button"] = nil
 	}
 	

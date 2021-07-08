@@ -1,9 +1,10 @@
-## Interface: 90002
+## Interface: 90005
 ## Title: Oribos Lap
 ## Notes: Tracks the number of times you have laped around Oribos.
 ## Author: Mattsta
-## Version: 0.3
+## Version: 0.4
 ## SavedVariables: OribosLap
 ## SavedVariablesPerCharacter: OribosLap_char
 
 OribosLap.lua
+Locales\enUS.lua

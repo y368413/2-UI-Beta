@@ -105,6 +105,9 @@ rematch.targetData = {
 
     -- expansionID 8: Shadowlands
 
+    -- mapID 424: Pandaria
+    {8,424,176655,63435,4,25,3089,3090,3091}, -- Anthea (Temple Throwdown)
+
     -- mapID 1533: Bastion
     {8,1533,173131,61784,4,25,2972,2973,2974}, -- Stratios (Cliffs of Bastion)
     {8,1533,173133,61783,4,25,2968}, -- Jawbone (Mega Bite)
@@ -324,8 +327,8 @@ rematch.targetData = {
     {5,GARRISON_LOCATION_TOOLTIP,91363,38300,4,23,1648,1651,1649}, -- Kura Thunderhoof (Sprouts, Prince Charming, and Runts)
     {5,GARRISON_LOCATION_TOOLTIP,91364,38300,4,23,1654,1653,1652}, -- Kura Thunderhoof (Nicodemus, Brisby, and Jenner)
     {5,GARRISON_LOCATION_TOOLTIP,85420,36423,4,25,1473}, -- Carrotus Maximus
-    {5,GARRISON_LOCATION_TOOLTIP,85463,36423,4,25,1474}, -- Gorefu
-    {5,GARRISON_LOCATION_TOOLTIP,85419,36423,4,25,1472}, -- Gnawface
+    {5,GARRISON_LOCATION_TOOLTIP,89130,36423,4,25,1474}, -- Gorefu (was 85463)
+    {5,GARRISON_LOCATION_TOOLTIP,89131,36423,4,25,1472}, -- Gnawface (was 85419)
     -- mapID "Menagerie"
     {5,L["Menagerie"],79751,37644,4,25,1409}, -- Eleanor
     {5,L["Menagerie"],85629,37644,4,25,1500,1499}, -- Challenge Post (Tirs, Fiero)

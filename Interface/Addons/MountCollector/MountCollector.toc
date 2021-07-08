@@ -1,10 +1,10 @@
-## Interface: 90002
+## Interface: 90100
 ## Title: Mount Collector
 ## Author: InSpectreGadget
 ## SavedVariables: MountCollectorDB
-## Version: 2.0.5
+## Version: 2.0.6
 ## DefaultState: enabled
-## X-Curse-Packaged-Version: 2.0.5
+## X-Curse-Packaged-Version: 2.0.6
 ## X-Curse-Project-Name: Mount Collector
 ## X-Curse-Project-ID: mount-collector
 
