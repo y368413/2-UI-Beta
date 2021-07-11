@@ -3,7 +3,6 @@
 	<Script file="Mingy.lua"/>
 	<Script file="bfaPetQuest.lua"/>
 	<Script file="DarkmoonFaire.lua"/>
-	<Script file="TheGamesWePlay.lua"/>
 	<Script file="AngrierWorldQuests.lua"/>
 	<Script file="WorldMapQuestRewardIcon.lua"/>
 	<Frame name="BountyCounterTemplate" virtual="true" hidden="false">
