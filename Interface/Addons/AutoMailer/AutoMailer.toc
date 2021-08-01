@@ -1,4 +1,4 @@
-## Interface: 90002
+## Interface: 90005
 ## Title: AutoMailer
 ## Author: RainForDays
 ## Notes: Automatically Mail Items

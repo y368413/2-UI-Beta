@@ -1,3 +1,67 @@
+commit a137df875a60bba0b4d3af26bd74a3e90bdcff03
+Author: Kreolix <kreolix@yandex.ru>
+Date:   Mon Jul 19 19:05:09 2021 +0700
+
+    Fixed buttons localization
+
+commit a137df875a60bba0b4d3af26bd74a3e90bdcff03
+Author: Kreolix <kreolix@yandex.ru>
+Date:   Mon Jul 19 19:05:09 2021 +0700
+
+    Fixed buttons localization
+
+commit 1ac52e9cd4a9f43a0056151ea44245d0521b4dee
+Author: Kreolix <kreolix@yandex.ru>
+Date:   Sun Jul 18 19:46:12 2021 +0700
+
+    - Changed optimize algorithm. Now addon have two different options: Find the disposition with the maximum average left HP as a percentage and Find the disposition with the maximum of lowest left HP as a percentage. You can choose more suited variant for your purpose.
+    - Added more info on prediction screen
+    - Fixed new spells which starts on cooldown
+
+commit 1ac52e9cd4a9f43a0056151ea44245d0521b4dee
+Author: Kreolix <kreolix@yandex.ru>
+Date:   Sun Jul 18 19:46:12 2021 +0700
+
+    - Changed optimize algorithm. Now addon have two different options: Find the disposition with the maximum average left HP as a percentage and Find the disposition with the maximum of lowest left HP as a percentage. You can choose more suited variant for your purpose.
+    - Added more info on prediction screen
+    - Fixed new spells which starts on cooldown
+
+commit 9102fa69b677bca7c261f248165ba554cb3dfec1
+Author: Kreolix <kreolix@yandex.ru>
+Date:   Sun Jul 18 19:36:12 2021 +0700
+
+    Fixed bug with abilities "Increase max. health". It didn't increase current health.
+
+commit 25087009210bd000ed3ea1ed808eeb0b3ec19bfd
+Author: Kreolix <kreolix@yandex.ru>
+Date:   Sun Jul 18 19:34:55 2021 +0700
+
+    Fixed bug with mission "Catch the Anima Successors"
+
+commit 400059d2a5eb5af2edac1732b22a96135c5cf10b
+Author: Kreolix <kreolix@yandex.ru>
+Date:   Sun Jul 18 19:34:07 2021 +0700
+
+    Fixed bug with teleport from Covenant hall to Oribos
+
+commit a00e255dd7e816a71253cdecee544d14872b30a8
+Author: Kreolix <kreolix@yandex.ru>
+Date:   Sun Jul 18 19:31:18 2021 +0700
+
+    Added traditional Chinese translation (thanks to BNS333)
+
+commit fbfe08746c477505e68611b83b973dabe55f26a8
+Author: Kreolix <kreolix@yandex.ru>
+Date:   Fri Jul 2 11:12:11 2021 +0700
+
+    Fixed some rare visual bugs
+
+commit 696f48fd1888b7bf3a86bf21aff05a99e1c3973c
+Author: Kreolix <kreolix@yandex.ru>
+Date:   Fri Jul 2 11:11:26 2021 +0700
+
+    Fixed attack type of new units
+
 commit 3b7cc2d117451f0d3e84a985060e560c75e8a754
 Author: Kreolix <kreolix@yandex.ru>
 Date:   Wed Jun 30 21:59:01 2021 +0700

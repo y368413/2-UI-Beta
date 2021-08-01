@@ -1,0 +1,14 @@
+{
+    "target": "curse",
+    "searchName": "Pawn",
+    "localName": "Pawn",
+    "version": "2.5.21",
+    "fileName": "pawn",
+    "addonsMap": [
+        "Pawn"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "name": "Pawn",
+    "gameVersion": "9.1.0"
+}
