@@ -1,0 +1,14 @@
+{
+    "target": "curse",
+    "searchName": "CovenantMissionHelper",
+    "localName": "CovenantMissionHelper",
+    "version": "3.3.0",
+    "fileName": "covenantmissionhelper",
+    "addonsMap": [
+        "CovenantMissionHelper"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "name": "CovenantMissionHelper",
+    "gameVersion": "9.1.0"
+}

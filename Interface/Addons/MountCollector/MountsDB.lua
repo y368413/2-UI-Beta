@@ -4117,7 +4117,7 @@ MDL_DB_MOUNTS = {
         from = {
             {
                 itemname = 'Arboreal Gulper', type = 'rare', npc_id = 164112, quest_id = 59157,
-                continent = 'shadowlands', for_sort = 10, zone_id = 1565, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = 1565, expansion = 'sl',
                 coordzone = 1565, coordx = 32.48, coordy = 30.28, level = 60, 
             },
         },
@@ -4127,7 +4127,7 @@ MDL_DB_MOUNTS = {
         from = {
             {
                 itemname = 'Shimmermist Runner', type = 'treasure', customnpcName = 'Mistveil Tangle Area',
-                continent = 'shadowlands', for_sort = 10, zone_id = 1565, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = 1565, expansion = 'sl',
                 coordzone = 1565, coordx = 26.56, coordy = 59.22, level = 60, 
             },
         },
@@ -4137,7 +4137,7 @@ MDL_DB_MOUNTS = {
         from = {
             {
                 itemname = "Silky Shimmermoth", type = 'vendor', npc_id = 163714, cost = 5000, currency = 'anima', cond = 'ardenwealdsastage',
-                continent = "shadowlands", for_sort = 10, zone_id = 1565, expansion = "sl",
+                continent = "shadowlands", for_sort = 14, zone_id = 1565, expansion = "sl",
                 coordzone = 1565, coordx = 43, coordy = 47, level = 60, 
             },
         },
@@ -4147,7 +4147,7 @@ MDL_DB_MOUNTS = {
         from = {
             {
                 itemname = "Spinemaw Gladechewer", type = 'rare', npc_id = 164107, quest_id = 59145,
-                continent = "shadowlands", for_sort = 10, zone_id = 1565, expansion = "sl",
+                continent = "shadowlands", for_sort = 14, zone_id = 1565, expansion = "sl",
                 coordzone = 1565, coordx = 26.45, coordy = 54.32, level = 60, 
             },
         },
@@ -4157,7 +4157,7 @@ MDL_DB_MOUNTS = {
         from = {
             {
                 itemname = 'Swift Gloomhoof', type = 'rare', npc_id = 168135, cond = 'swiftgloomhoof', quest_id = 60306,
-                continent = 'shadowlands', for_sort = 10, zone_id = 1565, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = 1565, expansion = 'sl',
                 coordzone = 1565, coordx = 62.17, coordy = 52.18, level = 60, 
             },
         },
@@ -4167,7 +4167,7 @@ MDL_DB_MOUNTS = {
         from = {
             {
                 itemname = "Wild Glimmerfur Prowler", type = 'rare', npc_id = 168647, cond = 'summonnightfae', quest_id = 61632,
-                continent = "shadowlands", for_sort = 10, zone_id = 1565, expansion = "sl",
+                continent = "shadowlands", for_sort = 14, zone_id = 1565, expansion = "sl",
                 coordzone = 1565, coordx = 30.45, coordy = 55.55, level = 60, 
             },
         },
@@ -4177,7 +4177,7 @@ MDL_DB_MOUNTS = {
         from = {
             {
                 itemname = "Wildseed Cradle", type = 'treasure', customnpcName = 'Cache of the Moon',
-                continent = "shadowlands", for_sort = 10, zone_id = 1565, expansion = "sl",
+                continent = "shadowlands", for_sort = 14, zone_id = 1565, expansion = "sl",
                 coordzone = 1565, coordx = 63.9, coordy = 37.7, level = 60, 
             },
         },
@@ -4187,7 +4187,7 @@ MDL_DB_MOUNTS = {
         from = {
             {
                 itemname = 'Ascended Skymane', type = 'treasure', customnpcName = 'Cache of the Ascended', cond = 'ascendedskymane',
-                continent = 'shadowlands', for_sort = 10, zone_id = 1533, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = 1533, expansion = 'sl',
                 coordzone = 1533, coordx = 53.5, coordy = 88.2, level = 60, 
             },
         },
@@ -4197,7 +4197,7 @@ MDL_DB_MOUNTS = {
         from = {
             {
                 itemname = "Phalynx of Humility", type = 'treasure', customnpcName = 'Temple of Purity Treasure Chest', covenant = 1,
-                continent = "shadowlands", for_sort = 10, zone_id = 1533, expansion = "sl",
+                continent = "shadowlands", for_sort = 14, zone_id = 1533, expansion = "sl",
                 coordzone = 1533, coordx = 54, coordy = 73.6, level = 60, 
             },
         },
@@ -4207,7 +4207,7 @@ MDL_DB_MOUNTS = {
         from = {
             {
                 itemname = "Silverwind Larion", type = 'treasure', customnpcName = 'Vesper of the Silver Wind',
-                continent = "shadowlands", for_sort = 10, zone_id = 1533, expansion = "sl",
+                continent = "shadowlands", for_sort = 14, zone_id = 1533, expansion = "sl",
                 coordzone = 1533, coordx = 36.1, coordy = 26.6, level = 60, 
             },
         },
@@ -4217,7 +4217,7 @@ MDL_DB_MOUNTS = {
         from = {
             {
                 itemname = 'Sundancer', type = 'rare', npc_id = 170548,
-                continent = 'shadowlands', for_sort = 10, zone_id = 1533, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = 1533, expansion = 'sl',
                 coordzone = 1533, coordx = 61.37, coordy = 82.67, level = 60, 
             },
         },
@@ -4227,7 +4227,7 @@ MDL_DB_MOUNTS = {
         from = {
             {
                 itemname = 'Bonehoof Tauralus', type = 'rare', npc_id = 162586, quest_id = 58783,
-                continent = 'shadowlands', for_sort = 10, zone_id = 1536, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = 1536, expansion = 'sl',
                 coordzone = 1536, coordx = 44.41, coordy = 52.18, level = 60, 
             },
         },
@@ -4237,7 +4237,7 @@ MDL_DB_MOUNTS = {
         from = {
             {
                 itemname = 'Armored Bonehoof Tauralus', type = 'rare', npc_id = 168147, cond = 'summonnecrolord', quest_id = 58783,
-                continent = 'shadowlands', for_sort = 10, zone_id = 1536, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = 1536, expansion = 'sl',
                 coordzone = 1536, coordx = 50.67, coordy = 47.37, level = 60, 
             },
         },
@@ -4247,7 +4247,7 @@ MDL_DB_MOUNTS = {
         from = {
             {
                 itemname = "Bonecleaver's Skullboar", type = 'rare', npc_id = 168147, cond = 'summonnecrolord', quest_id = 58784,
-                continent = 'shadowlands', for_sort = 10, zone_id = 1536, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = 1536, expansion = 'sl',
                 coordzone = 1536, coordx = 50.67, coordy = 47.37, level = 60, 
             },
         },
@@ -4257,7 +4257,7 @@ MDL_DB_MOUNTS = {
         from = {
             {
                 itemname = 'Gorespine', type = 'rare', npc_id = 162690, quest_id = 58851, quest_id = 58851,
-                continent = 'shadowlands', for_sort = 10, zone_id = 1536, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = 1536, expansion = 'sl',
                 coordzone = 1536, coordx = 66.03, coordy = 35.32, level = 60, 
             },
         },
@@ -4267,7 +4267,7 @@ MDL_DB_MOUNTS = {
         from = {
             {
                 itemname = 'Predatory Plagueroc', type = 'rare', npc_id = 162741, cond = 'summonnecrolord', quest_id = 58872,
-                continent = 'shadowlands', for_sort = 10, zone_id = 1536, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = 1536, expansion = 'sl',
                 coordzone = 1536, coordx = 31.4, coordy = 35.4, level = 60, 
             },
         },
@@ -4277,7 +4277,7 @@ MDL_DB_MOUNTS = {
         from = {
             {
                 itemname = "Slime-Covered Reins of the Hulking Deathroc", type = 'rare', npc_id = 157309, cond = 'poolofmixedmonstrosities', quest_id = 61720,
-                continent = "shadowlands", for_sort = 10, zone_id = 1536, expansion = "sl",
+                continent = "shadowlands", for_sort = 14, zone_id = 1536, expansion = "sl",
                 coordzone = 1536, coordx = 58.21, coordy = 74.23, level = 60, 
             },
         },
@@ -4287,7 +4287,7 @@ MDL_DB_MOUNTS = {
         from = {
             {
                 itemname = "Blisterback Bloodtusk", type = 'rare', npc_id = 162819, quest_id = 58889,
-                continent = "shadowlands", for_sort = 10, zone_id = 1536, expansion = "sl",
+                continent = "shadowlands", for_sort = 14, zone_id = 1536, expansion = "sl",
                 coordzone = 1536, coordx = 33.6, coordy = 80.4, level = 60, 
             },
         },
@@ -4297,7 +4297,7 @@ MDL_DB_MOUNTS = {
         from = {
             {
                 itemname = "Blanchy's Reins", type = 'treasure', customnpcName = 'Dead Blanchy', cond = 'blanchy',
-                continent = 'shadowlands', for_sort = 10, zone_id = 1525, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = 1525, expansion = 'sl',
                 coordzone = 1525, coordx = 63.3, coordy = 42.9, level = 60, 
             },
         },
@@ -4307,7 +4307,7 @@ MDL_DB_MOUNTS = {
         from = {
             {
                 itemname = "Endmire Flyer Tether", type = 'rare', npc_id = 166521, quest_id = 59869,
-                continent = "shadowlands", for_sort = 10, zone_id = 1525, expansion = "sl",
+                continent = "shadowlands", for_sort = 14, zone_id = 1525, expansion = "sl",
                 coordzone = 1525, coordx = 62.6, coordy = 47.2, level = 60, 
             },
         },
@@ -4317,7 +4317,7 @@ MDL_DB_MOUNTS = {
         from = {
             {
                 itemname = 'Hopecrusher Gargon', type = 'rare', npc_id = 166679, quest_id = 59900,
-                continent = 'shadowlands', for_sort = 10, zone_id = 1525, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = 1525, expansion = 'sl',
                 coordzone = 1525, coordx = 52.6, coordy = 52.2, level = 60, 
             },
         },
@@ -4327,7 +4327,7 @@ MDL_DB_MOUNTS = {
         from = {
             {
                 itemname = "Horrid Dredwing", type = 'rare', npc_id = 165290, quest_id = 59612,
-                continent = "shadowlands", for_sort = 10, zone_id = 1525, expansion = "sl",
+                continent = "shadowlands", for_sort = 14, zone_id = 1525, expansion = "sl",
                 coordzone = 1525, coordx = 45.83, coordy = 79.34, level = 60, 
             },
         },
@@ -4337,7 +4337,7 @@ MDL_DB_MOUNTS = {
         from = {
             {
                 itemname = "Loyal Gorger", type = 'rare', npc_id = 160821, cond = "loyalgorger",
-                continent = "shadowlands", for_sort = 10, zone_id = 1525, expansion = "sl",
+                continent = "shadowlands", for_sort = 14, zone_id = 1525, expansion = "sl",
                 coordzone = 1525, coordx = 38.58, coordy = 72.15, level = 60, 
             },
         },
@@ -4347,7 +4347,7 @@ MDL_DB_MOUNTS = {
         from = {
             {
                 itemname = 'Mawsworn Soulhunter', type = 'rare', npc_id = 174827, --- quest_id = ,
-                continent = 'shadowlands', for_sort = 10, zone_id = 1543, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = 1543, expansion = 'sl',
                 coordzone = 1543, coordx = 5., coordy = 78, 
 				level = 60, 
             },
@@ -4359,7 +4359,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = 'Court Sinrunner', type = 'vendor', npc_id = 176066, cost = 30000,
 				repid = 2413, replevel = 8, reprequired = 1,
-                continent = 'shadowlands', for_sort = 10, zone_id = 1670, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = 1670, expansion = 'sl',
                 coordzone = 1670, coordx = 46.8, coordy = 77.2, level = 60, 
             },
         },
@@ -4370,7 +4370,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = 'Gilded Prowler', type = 'vendor', npc_id = 176064, cost = 30000,
 				repid = 2407, replevel = 8, reprequired = 1,
-                continent = 'shadowlands', for_sort = 10, zone_id = 1670, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = 1670, expansion = 'sl',
                 coordzone = 1670, coordx = 47.8, coordy = 75.4, level = 60, 
             },
         },
@@ -4381,7 +4381,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = 'Inquisition Gargon', type = 'vendor', npc_id = 176368, cost = 30000,
 				repid = 2439, replevel = 8, reprequired = 1,
-                continent = 'shadowlands', for_sort = 10, zone_id = 1670, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = 1670, expansion = 'sl',
                 coordzone = 1670, coordx = 46.6, coordy = 77.6, level = 60, 
             },
         },
@@ -4392,7 +4392,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = 'Lurid Bloodtusk', type = 'vendor', npc_id = 176067, cost = 30000,
 				repid = 2410, replevel = 8, reprequired = 1,
-                continent = 'shadowlands', for_sort = 10, zone_id = 1670, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = 1670, expansion = 'sl',
                 coordzone = 1670, coordx = 48, coordy = 76.2, level = 60, 
             },
         },
@@ -4403,7 +4403,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = 'Duskflutter Ardenmoth', type = 'vendor', npc_id = 176065, cost = 30000,
 				repid = 2465, replevel = 8, reprequired = 1,
-                continent = 'shadowlands', for_sort = 10, zone_id = 1670, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = 1670, expansion = 'sl',
                 coordzone = 1670, coordx = 47.6, coordy = 76.8, level = 60, 
             },
         },
@@ -4414,7 +4414,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = "Reins of the Colossal Slaughterclaw", type = 'paragon', npc_id = 173003,
 				repid = 2410, replevel = 8, reprequired = 1,
-                continent = "shadowlands", for_sort = 10, zone_id = 1536, expansion = "sl",
+                continent = "shadowlands", for_sort = 14, zone_id = 1536, expansion = "sl",
                 coordzone = 1536, coordx = 50.8, coordy = 53.4, level = 60, 
             },
         },
@@ -4425,7 +4425,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = "Amber Ardenmoth", type = 'paragon', npc_id = 158556,
 				repid = 2465, replevel = 8, reprequired = 1,
-                continent = "shadowlands", for_sort = 10, zone_id = 1565, expansion = "sl",
+                continent = "shadowlands", for_sort = 14, zone_id = 1565, expansion = "sl",
                 coordzone = 1565, coordx = 48.5, coordy = 50.4, level = 60, 
             },
         },
@@ -4435,7 +4435,7 @@ MDL_DB_MOUNTS = {
         from = {
             {
                 itemname = 'Dauntless Duskrunner', type = 'slcovenant', npc_id = -4,
-                continent = 'shadowlands', for_sort = 10, zone_id = -4, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = -4, expansion = 'sl',
                 level = 60, 
             },
         },
@@ -4445,7 +4445,7 @@ MDL_DB_MOUNTS = {
         from = {
             {
                 itemname = 'Gruesome Flayedwing', type = 'slcovenant', npc_id = -4,
-                continent = 'shadowlands', for_sort = 10, zone_id = -4, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = -4, expansion = 'sl',
                 level = 60, 
             },
         },
@@ -4455,7 +4455,7 @@ MDL_DB_MOUNTS = {
         from = {
             {
                 itemname = 'Pale Acidmaw', type = 'slcovenant', npc_id = -4,
-                continent = 'shadowlands', for_sort = 10, zone_id = -4, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = -4, expansion = 'sl',
                 level = 60, 
             },
         },
@@ -4465,7 +4465,7 @@ MDL_DB_MOUNTS = {
         from = {
             {
                 itemname = 'Silvertip Dredwing', type = 'slcovenant', npc_id = -4,
-                continent = 'shadowlands', for_sort = 10, zone_id = -4, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = -4, expansion = 'sl',
                 level = 60, 
             },
         },
@@ -4476,7 +4476,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = 'Phalynx of Courage', type = 'slcovenant', npc_id = -3,
 				covenant = 1,
-                continent = 'shadowlands', for_sort = 10, zone_id = -4, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = -4, expansion = 'sl',
                 level = 60, 
             },
         },
@@ -4487,7 +4487,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = 'Eternal Phalynx of Courage', type = 'slcovenant', npc_id = -3,
 				covenant = 1,
-                continent = 'shadowlands', for_sort = 10, zone_id = -4, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = -4, expansion = 'sl',
                 level = 60, 
             },
         },
@@ -4498,7 +4498,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = 'Phalynx of Purity', type = 'slcovenant', npc_id = -5, cost = 5000, currency = 'anima', cond = 'renown_23',
 				covenant = 1,
-                continent = 'shadowlands', for_sort = 10, zone_id = -4, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = -4, expansion = 'sl',
                 coordzone = 1533, coordx = 63.3, coordy = 30.6, level = 60, 
             },
         },
@@ -4509,7 +4509,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = 'Phalynx of Purity', type = 'slcovenant', npc_id = -5, cost = 5000, currency = 'anima', cond = 'renown_39',
 				covenant = 1,
-                continent = 'shadowlands', for_sort = 10, zone_id = -4, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = -4, expansion = 'sl',
                 coordzone = 1533, coordx = 63.3, coordy = 30.6, level = 60, 
             },
         },
@@ -4520,7 +4520,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = 'Phalynx of Loyalty', type = 'slcovenant', npc_id = -4,
 				covenant = 1,
-                continent = 'shadowlands', for_sort = 10, zone_id = -4, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = -4, expansion = 'sl',
                 level = 60, 
             },
         },
@@ -4531,7 +4531,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = 'Eternal Phalynx of Loyalty', type = 'slcovenant', npc_id = -4,
 				covenant = 1,
-                continent = 'shadowlands', for_sort = 10, zone_id = -4, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = -4, expansion = 'sl',
                 level = 60, 
             },
         },
@@ -4542,7 +4542,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = 'Eternal Phalynx of Humility', type = 'slcovenant', npc_id = -4,
 				covenant = 1,
-                continent = 'shadowlands', for_sort = 10, zone_id = -4, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = -4, expansion = 'sl',
                 level = 60, 
             },
         },
@@ -4553,7 +4553,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = 'War-Bred Tauralus', type = 'slcovenant', npc_id = -3,
 				covenant = 4,
-                continent = 'shadowlands', for_sort = 10, zone_id = -4, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = -4, expansion = 'sl',
                 level = 60, 
             },
         },
@@ -4564,7 +4564,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = 'Armored War-Bred Tauralus', type = 'slcovenant', npc_id = -3,
 				covenant = 4,
-                continent = 'shadowlands', for_sort = 10, zone_id = -4, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = -4, expansion = 'sl',
                 level = 60, 
             },
         },
@@ -4575,7 +4575,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = 'Plaguerot Tauralus', type = 'slcovenant', npc_id = -5, cost = 5000, currency = 'anima', cond = 'renown_23',
 				covenant = 4,
-                continent = 'shadowlands', for_sort = 10, zone_id = -4, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = -4, expansion = 'sl',
                 coordzone = 1536, coordx = 50.68, coordy = 71.38, level = 60, 
             },
         },
@@ -4586,7 +4586,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = 'Armored Plaguerot Tauralus', type = 'slcovenant', npc_id = -5, cost = 5000, currency = 'anima', cond = 'renown_39',
 				covenant = 4,
-                continent = 'shadowlands', for_sort = 10, zone_id = -4, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = -4, expansion = 'sl',
                 coordzone = 1536, coordx = 50.68, coordy = 71.38, level = 60, 
             },
         },
@@ -4597,7 +4597,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = 'Bonesewn Fleshroc', type = 'slcovenant', npc_id = -4,
 				covenant = 4,
-                continent = 'shadowlands', for_sort = 10, zone_id = -4, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = -4, expansion = 'sl',
                 level = 60, 
             },
         },
@@ -4608,7 +4608,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = 'Chosen Tauralus', type = 'slcovenant', npc_id = -4,
 				covenant = 4,
-                continent = 'shadowlands', for_sort = 10, zone_id = -4, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = -4, expansion = 'sl',
                 level = 60, 
             },
         },
@@ -4619,7 +4619,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = 'Armored Chosen Tauralus', type = 'slcovenant', npc_id = -4,
 				covenant = 4,
-                continent = 'shadowlands', for_sort = 10, zone_id = -4, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = -4, expansion = 'sl',
                 level = 60, 
             },
         },
@@ -4630,7 +4630,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = 'Dreamlight Runestag', type = 'slcovenant', npc_id = -3,
 				covenant = 3,
-                continent = 'shadowlands', for_sort = 10, zone_id = -4, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = -4, expansion = 'sl',
                 level = 60, 
             },
         },
@@ -4641,7 +4641,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = 'Enchanted Dreamlight Runestag', type = 'slcovenant', npc_id = -3,
 				covenant = 3,
-                continent = 'shadowlands', for_sort = 10, zone_id = -4, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = -4, expansion = 'sl',
                 level = 60, 
             },
         },
@@ -4652,7 +4652,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = 'Shadeleaf Runestag', type = 'slcovenant', npc_id = -5, cost = 5000, currency = 'anima', cond = 'renown_23',
 				covenant = 3,
-                continent = 'shadowlands', for_sort = 10, zone_id = -4, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = -4, expansion = 'sl',
                 coordzone = 1565, coordx = 46.37, coordy = 50.79, level = 60, 
             },
         },
@@ -4663,7 +4663,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = 'Enchanted Shadeleaf Runestag', type = 'slcovenant', npc_id = -5, cost = 5000, currency = 'anima', cond = 'renown_39',
 				covenant = 3,
-                continent = 'shadowlands', for_sort = 10, zone_id = -4, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = -4, expansion = 'sl',
                 coordzone = 1565, coordx = 46.37, coordy = 50.79, level = 60, 
             },
         },
@@ -4674,7 +4674,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = "Umbral Scythehorn", type = 'vendor', npc_id = 162447, cost = 5000, curr = 'anima', 
 				repid = 2464, reprequired = 1, replevel = 7, covenant = 3,
-                continent = "shadowlands", for_sort = 10, zone_id = -4 , expansion = "sl",
+                continent = "shadowlands", for_sort = 14, zone_id = -4 , expansion = "sl",
                 coordzone = 1565, coordx = 59.6, coordy = 52.9, level = 60, 
             },
         },
@@ -4685,7 +4685,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = "Winterborn Runestag", type = 'vendor', npc_id = 162447, cost = 5000, curr = 'anima',
 				repid = 2464, reprequired = 1, replevel = 7, covenant = 3,
-                continent = "shadowlands", for_sort = 10, zone_id = -4, expansion = "sl",
+                continent = "shadowlands", for_sort = 14, zone_id = -4, expansion = "sl",
                 coordzone = 1565, coordx = 59.6, coordy = 52.9, level = 60, 
             },
         },
@@ -4696,7 +4696,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = "Wakener's Runestag", type = 'slcovenant', npc_id = -4,
 				covenant = 3,
-                continent = 'shadowlands', for_sort = 10, zone_id = -4, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = -4, expansion = 'sl',
                 level = 60, 
             },
         },
@@ -4707,7 +4707,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = "Enchanted Wakener's Runestag", type = 'slcovenant', npc_id = -4,
 				covenant = 3,
-                continent = 'shadowlands', for_sort = 10, zone_id = -4, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = -4, expansion = 'sl',
                 level = 60, 
             },
         },
@@ -4718,7 +4718,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = "Vibrant Flutterwing", type = 'vendor', npc_id = 174766, currency = 'anima', cost = 5000,
 				repid = 2463, reprequired = 1, replevel = 7, covenant = 3,
-                continent = "shadowlands", for_sort = 10, zone_id = -4, expansion = "sl",
+                continent = "shadowlands", for_sort = 14, zone_id = -4, expansion = "sl",
                 coordzone = 1565, coordx = 56.04, coordy = 53.01, level = 60, 
             },
         },
@@ -4729,7 +4729,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = "Enchanted Winterborn Runestag", type = 'vendor', npc_id = 174766, currency = 'anima', cost = 5000,
 				repid = 2463, reprequired = 1, replevel = 7, covenant = 3,
-                continent = "shadowlands", for_sort = 10, zone_id = -4, expansion = "sl",
+                continent = "shadowlands", for_sort = 14, zone_id = -4, expansion = "sl",
                 coordzone = 1565, coordx = 56.04, coordy = 53.01, level = 60, 
             },
         },
@@ -4741,7 +4741,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = 'Crypt Gargon', type = 'slcovenant', npc_id = -3,
 				covenant = 2,
-                continent = 'shadowlands', for_sort = 10, zone_id = -4, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = -4, expansion = 'sl',
                 level = 60, 
             },
         },
@@ -4752,7 +4752,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = 'Battle Gargon Vrednic', type = 'slcovenant', npc_id = -3,
 				covenant = 2,
-                continent = 'shadowlands', for_sort = 10, zone_id = -4, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = -4, expansion = 'sl',
                 level = 60, 
             },
         },
@@ -4763,7 +4763,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = 'Sinfall Gargon', type = 'slcovenant', npc_id = -5, cost = 5000, currency = 'anima', cond = 'renown_23',
 				covenant = 2,
-                continent = 'shadowlands', for_sort = 10, zone_id = -4, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = -4, expansion = 'sl',
                 coordzone = 1525, coordx = 53.68, coordy = 24.90, level = 60, 
             },
         },
@@ -4774,7 +4774,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = 'Gravestone Battle Armor', type = 'slcovenant', npc_id = -5, cost = 5000, currency = 'anima', cond = 'renown_39',
 				covenant = 2,
-                continent = 'shadowlands', for_sort = 10, zone_id = -4, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = -4, expansion = 'sl',
                 coordzone = 1525, coordx = 53.68, coordy = 24.90, level = 60, 
             },
         },
@@ -4785,7 +4785,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = "Desire's Battle Gargon", type = 'slcovenant', npc_id = -4,
 				covenant = 2,
-                continent = 'shadowlands', for_sort = 10, zone_id = -4, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = -4, expansion = 'sl',
                 level = 60, 
             },
         },
@@ -4796,7 +4796,7 @@ MDL_DB_MOUNTS = {
             {
                 itemname = "Silessa's Battle Harness", type = 'slcovenant', npc_id = -6,
 				covenant = 2,
-                continent = 'shadowlands', for_sort = 10, zone_id = -4, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = -4, expansion = 'sl',
                 level = 60, 
             },
         },
@@ -4806,7 +4806,7 @@ MDL_DB_MOUNTS = {
         from = {
             {
                 itemname = "Gnawed Reins of the Battle-Bound Warhound", type = 'rare', npc_id = 162853, cond = 'theaterofpain',
-                continent = "shadowlands", for_sort = 10, zone_id = 1536,
+                continent = "shadowlands", for_sort = 14, zone_id = 1536,
 				expansion = "sl",
                 coordzone = 1536, coordx = 50, coordy = 47, level = 60,
             },
@@ -4817,7 +4817,7 @@ MDL_DB_MOUNTS = {
         from = {
             {
                 itemname = "Marrowfang's Reins", type = 'dungeon', subtype = 'mythic', npc_id = 166945,
-                continent = 'shadowlands', for_sort = 10, zone_id = 1666, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 14, zone_id = 1666, expansion = 'sl',
                 coordzone = 1533, coordx = 40, coordy = 55, level = 60, 
             },
         },
@@ -4827,7 +4827,7 @@ MDL_DB_MOUNTS = {
         from = {
             {
                 itemname = "Chittering Animite", type = 'slcovenant', npc_id = -1,
-                continent = "shadowlands", for_sort = 10, zone_id = -4, expansion = "sl",
+                continent = "shadowlands", for_sort = 14, zone_id = -4, expansion = "sl",
                 level = 60, 
             },
         },
@@ -4837,7 +4837,7 @@ MDL_DB_MOUNTS = {
         from = {
             {
                 itemname = "Darkwarren Hardshell", type = 'slcovenant', npc_id = -1,
-                continent = "shadowlands", for_sort = 10, zone_id = -4, expansion = "sl",
+                continent = "shadowlands", for_sort = 14, zone_id = -4, expansion = "sl",
                 level = 60, 
             },
         },
@@ -4847,7 +4847,7 @@ MDL_DB_MOUNTS = {
         from = {
             {
                 itemname = "Highwind Darkmane", type = 'slcovenant', npc_id = -1,
-                continent = "shadowlands", for_sort = 10, zone_id = -4, expansion = "sl",
+                continent = "shadowlands", for_sort = 14, zone_id = -4, expansion = "sl",
                 level = 60, 
             },
         },
@@ -4857,7 +4857,367 @@ MDL_DB_MOUNTS = {
         from = {
             {
                 itemname = "Warstitched Darkhound", type = 'slcovenant', npc_id = -1,
-                continent = "shadowlands", for_sort = 10, zone_id = -4, expansion = "sl",
+                continent = "shadowlands", for_sort = 14, zone_id = -4, expansion = "sl",
+                level = 60, 
+            },
+        },
+    },
+	[186485] = { -- Ascendant's Aquilon
+        spell_id = 353880,
+        from = {
+            {
+                itemname = "Ascendant's Aquilon", type = 'slcovenant', npc_id = 174937, covenant = 1, cond = 'renown_70', cost = 7500, currency = 'anima',
+                continent = "shadowlands", for_sort = 15, zone_id = -3, expansion = "sl",
+                coordzone = 1533, coordx = 67.4, coordy = 15, level = 60,
+            },
+        },
+    },
+	[186482] = { -- Elysian Aquilon
+        spell_id = 353875,
+        from = {
+            {
+                itemname = "Elysian Aquilon", type = 'slcovenant', npc_id = -1, covenant = 1, cond = 'renown_45',
+                continent = "shadowlands", for_sort = 15, zone_id = -3, expansion = "sl",
+                level = 60,
+            },
+        },
+    },
+	[186480] = { -- Battle-Hardened Aquilon
+        spell_id = 343550,
+        from = {
+            {
+                itemname = "Battle-Hardened Aquilon", type = 'vendor', npc_id = 179321, cost = 1000, currency = 'stygia', cond = 'ach_ontheoffensive', covenant = 1,
+                continent = "shadowlands", for_sort = 15, zone_id = 1961, expansion = "sl",
+                coordzone = 1961, coordx = 63.4, coordy = 23.4, level = 60,
+            },
+        },
+    },
+	[186483] = { -- Foresworn Aquilon
+        spell_id = 353877,
+        from = {
+            {
+                itemname = "Foresworn Aquilon", type = 'rare', npc_id = 180032, covenant = 1,
+                continent = "shadowlands", for_sort = 15, zone_id = 1961, expansion = "sl",
+                coordzone = 1961, coordx = 47, coordy = 36, level = 60,
+            },
+        },
+    },
+	[186643] = { -- Maelie, the Wanderer
+        spell_id = 354362,
+        from = {
+            {
+                itemname = "Maelie, the Wanderer", type = 'rare', npc_id = 179912, cond = 'maelie',
+                continent = "shadowlands", for_sort = 15, zone_id = 1961, expansion = "sl",
+                level = 60, 
+            },
+        },
+    },
+    [186638] = { -- Cartel Master's Gearglider
+        spell_id = 353263,
+        from = {
+            {
+                itemname = "Cartel Master's Gearglider", type = 'dungeon', npc_id = 180863,
+                continent = "shadowlands", for_sort = 15, zone_id = 1989, expansion = "sl",
+                coordzone = 1961, coordx = 69, coordy = 69, level = 60, 
+            },
+        },
+    },
+    [186637] = { -- Tazavesh Gearglider
+        spell_id = 346554,
+        from = {
+            {
+                itemname = "Tazavesh Gearglider", type = 'dungeon', npc_id = 180863, cond = 'ach_fakeittilyoumakeit',
+                continent = "shadowlands", for_sort = 15, zone_id = 1989, expansion = "sl",
+                coordzone = 1961, coordx = 69, coordy = 69, level = 60, 
+            },
+        },
+    },
+	[186490] = { -- Battlefield Swarmer
+        spell_id = 353885,
+        from = {
+            {
+                itemname = "Battlefield Swarmer", type = 'vendor', npc_id = 179321, cost = 1000, currency = 'stygia', cond = 'ach_ontheoffensive', covenant = 4,
+                continent = "shadowlands", for_sort = 15, zone_id = 1961, expansion = "sl",
+                coordzone = 1961, coordx = 63.4, coordy = 23.4, level = 60,
+            },
+        },
+    },
+	[186489] = { -- Lord of the Corpseflies
+        spell_id = 347250,
+        from = {
+            {
+                itemname = "Lord of the Corpseflies", type = 'rare', npc_id = 180042, covenant = 4,
+                continent = "shadowlands", for_sort = 15, zone_id = 1961, expansion = "sl",
+                coordzone = 1961, coordx = 60, coordy = 43, level = 60,
+            },
+        },
+    },
+	[186487] = { -- Maldraxxian Corpsefly
+        spell_id = 353883,
+        from = {
+            {
+                itemname = "Maldraxxian Corpsefly Harness", type = 'slcovenant', npc_id = -1, covenant = 4, cond = 'renown_45',
+                continent = "shadowlands", for_sort = 15, zone_id = -3, expansion = "sl",
+                level = 60,
+            },
+        },
+    },
+	[186488] = { -- Regal Corpsefly
+        spell_id = 353884,
+        from = {
+            {
+                itemname = "Regal Corpsefly Harness", type = 'slcovenant', npc_id = 172176, covenant = 4, cond = 'renown_70', cost = 7500, currency = 'anima',
+                continent = "shadowlands", for_sort = 15, zone_id = -3, expansion = "sl",
+                coordzone = 1536, coordx = 50.68, coordy = 71.38, level = 60,
+            },
+        },
+    },
+	[187183] = { -- Rampaging Mauler
+        spell_id = 356501,
+        from = {
+            {
+                itemname = "Rampaging Mauler", type = 'rare', npc_id = 179472,
+                continent = "shadowlands", for_sort = 15, zone_id = 1961, expansion = "sl",
+                coordzone = 1961, coordx = 52, coordy = 21, level = 60,
+            },
+        },
+    },
+	[186641] = { -- Tamed Mauler
+        spell_id = 347536,
+        from = {
+            {
+                itemname = "Tamed Mauler Harness", type = 'paragon', npc_id = 106902,
+                continent = "shadowlands", for_sort = 15, zone_id = 1961, expansion = "sl",
+                coordzone = 1961, coordx = 62.6, coordy = 22.6, level = 60,
+            },
+        },
+    },
+	[185996] = { -- Harvester's Dredwing
+        spell_id = 332904,
+        from = {
+            {
+                itemname = "Harvester's Dredwing Saddle", type = 'korthiaassault', npc_id = -2,
+                continent = "shadowlands", for_sort = 15, zone_id = 1543, expansion = "sl",
+                level = 60,
+            },
+        },
+    },
+	[186000] = { -- Wild Hunt Legsplitter
+        spell_id = 352441,
+        from = {
+            {
+                itemname = "Legsplitter War Harness", type = 'korthiaassault', npc_id = -3,
+                continent = "shadowlands", for_sort = 15, zone_id = 1543, expansion = "sl",
+                level = 60,
+            },
+        },
+    },
+	[186477] = { -- Pale Gravewing
+        spell_id = 353873,
+        from = {
+            {
+                itemname = "Pale Gravewing", type = 'vendor', npc_id = 179321, cost = 1000, currency = 'stygia', cond = 'ach_ontheoffensive', covenant = 2,
+                continent = "shadowlands", for_sort = 15, zone_id = 1961, expansion = "sl",
+                coordzone = 1961, coordx = 63.4, coordy = 23.4, level = 60,
+            },
+        },
+    },
+	[186476] = { -- Sinfall Gravewing
+        spell_id = 353872,
+        from = {
+            {
+                itemname = "Sinfall Gravewing", type = 'slcovenant', npc_id = -1, covenant = 2, cond = 'renown_45',
+                continent = "shadowlands", for_sort = 15, zone_id = -3, expansion = "sl",
+                level = 60,
+            },
+        },
+    },
+	[186478] = { -- Obsidian Gravewing
+        spell_id = 353866,
+        from = {
+            {
+                itemname = "Obsidian Gravewing", type = 'slcovenant', npc_id = 172176, covenant = 2, cond = 'renown_70', cost = 7500, currency = 'anima',
+                continent = "shadowlands", for_sort = 15, zone_id = -3, expansion = "sl",
+                coordzone = 1525, coordx = 30, coordy = 38, level = 60,
+            },
+        },
+    },
+	[186642] = { -- Vengeance
+        spell_id = 351195,
+        from = {
+            {
+                itemname = "Vengeance's Reins", type = 'raid', subtype = 'mythic', npc_id = 180828,
+                continent = "shadowlands", for_sort = 15, zone_id = 1998, expansion = "sl",
+                coordzone = 1543, coordx = 70, coordy = 32, level = 60,
+            },
+        },
+    },
+	[186659] = { -- Fallen Charger
+        spell_id = 354353,
+        from = {
+            {
+                itemname = "Fallen Charger's Reins", type = 'rare', npc_id = 179460,
+                continent = "shadowlands", for_sort = 15, zone_id = 1543, expansion = "sl",
+                coordzone = 1543, coordx = 36.6, coordy = 47.8, level = 60,
+            },
+        },
+    },
+	[186656] = { -- Sanctum Gloomcharger
+        spell_id = 354351,
+        from = {
+            {
+                itemname = "Sanctum Gloomcharger's Reins", type = 'raid', npc_id = 178738,
+                continent = "shadowlands", for_sort = 15, zone_id = 1998, expansion = "sl",
+                coordzone = 1543, coordx = 70, coordy = 32, level = 60,
+            },
+        },
+    },
+	[186657] = { -- Soulbound Gloomcharger
+        spell_id = 354352,
+        from = {
+            {
+                itemname = "Soulbound Gloomcharger's Reins", type = 'paragon', npc_id = 162804,
+                continent = "shadowlands", for_sort = 15, zone_id = 1543, expansion = "sl",
+                coordzone = 1543, coordx = 46.8, coordy = 41.6, level = 60,
+            },
+        },
+    },
+	[185973] = { -- Hand of Bahmethra
+        spell_id = 352309,
+        from = {
+            {
+                itemname = 'Chain of Bahmethra', type = 'treasure', customnpcName = 'Bahmeht Chain Links', cond = 'handofbahmethra',
+                continent = 'shadowlands', for_sort = 15, zone_id = 1543, expansion = 'sl',
+                level = 60, 
+            },
+        },
+    },
+	[186651] = { -- Dusklight Razorwing
+        spell_id = 354361,
+        from = {
+            {
+                itemname = 'Dusklight Razorwing', type = 'treasure', customnpcName = 'Lost Razorwing Eggs', cond = 'lostrazorwingeggs',
+                continent = 'shadowlands', for_sort = 15, zone_id = 1961, expansion = 'sl',
+                level = 60, 
+            },
+        },
+    },
+	[186649] = { -- Fierce Razorwing
+        spell_id = 354359,
+        from = {
+            {
+                itemname = "Fierce Razorwing", type = 'paragon', npc_id = 179321,
+                continent = "shadowlands", for_sort = 15, zone_id = 1961, expansion = "sl",
+                coordzone = 1961, coordx = 63.4, coordy = 23.4, level = 60,
+            },
+        },
+    },
+	[186652] = { -- Garnet Razorwing
+        spell_id = 354360,
+        from = {
+            {
+                itemname = "Garnet Razorwing", type = 'rare', npc_id = 180160,
+                continent = "shadowlands", for_sort = 15, zone_id = 1961, expansion = "sl",
+                coordzone = 1961, coordx = 56, coordy = 66, level = 60,
+            },
+        },
+    },
+	[186648] = { -- Soaring Razorwing
+        spell_id = 347251,
+        from = {
+            {
+                itemname = "Soaring Razorwing", type = 'vendor', npc_id = 178257, cost = 5000, currency = 'catalogedresearch',
+                continent = "shadowlands", for_sort = 15, zone_id = 1961, expansion = "sl",
+                coordzone = 1961, coordx = 62.6, coordy = 22.6, level = 60,
+            },
+        },
+    },
+	[186647] = { -- Amber Shardhide
+        spell_id = 354356,
+        from = {
+            {
+                itemname = "Amber Shardhide", type = 'vendor', npc_id = 179321, cost = 5000, currency = 'stygia',
+                continent = "shadowlands", for_sort = 15, zone_id = 1961, expansion = "sl", repid = 2470, reprequired = 1, replevel = 7,
+                coordzone = 1961, coordx = 63.4, coordy = 23.4, level = 60,
+            },
+        },
+    },
+	[186644] = { -- Beryl Shardhide
+        spell_id = 347810,
+        from = {
+            {
+                itemname = "Beryl Shardhide", type = 'paragon', npc_id = 179321,
+                continent = "shadowlands", for_sort = 15, zone_id = 1961, expansion = "sl",
+                coordzone = 1961, coordx = 63.4, coordy = 23.4, level = 60,
+            },
+        },
+    },
+	[186645] = { -- Crimson Shardhide
+        spell_id = 354357,
+        from = {
+            {
+                itemname = "Crimson Shardhide", type = 'rare', npc_id = 179684,
+                continent = "shadowlands", for_sort = 15, zone_id = 1961, expansion = "sl",
+                coordzone = 1961, coordx = 44.6, coordy = 29.6, level = 60,
+            },
+        },
+    },
+	[186646] = { -- Darkmaul
+        spell_id = 354358,
+        from = {
+            {
+                itemname = "Darkmaul", type = 'rare', npc_id = 180063,
+                continent = "shadowlands", for_sort = 15, zone_id = 1961, expansion = "sl",
+                coordzone = 1961, coordx = 42.6, coordy = 33, level = 60,
+            },
+        },
+    },
+	[186103] = { -- Undying Darkhound
+        spell_id = 352742,
+        from = {
+            {
+                itemname = "Undying Darkhound's Harness", type = 'korthiaassault', npc_id = -4,
+                continent = "shadowlands", for_sort = 5, zone_id = 1543, expansion = "sl",
+                level = 60,
+            },
+        },
+    },
+	[186495] = { -- Winter Wilderling
+        spell_id = 353858,
+        from = {
+            {
+                itemname = "Winter Wilderling's Harness", type = 'vendor', npc_id = 179321, cost = 1000, currency = 'stygia', cond = 'ach_ontheoffensive', covenant = 3,
+                continent = "shadowlands", for_sort = 15, zone_id = 1961, expansion = "sl",
+                coordzone = 1961, coordx = 63.4, coordy = 23.4, level = 60,
+            },
+        },
+    },
+	[186493] = { -- Ardenweald Wilderling
+        spell_id = 353856,
+        from = {
+            {
+                itemname = "Ardenweald Wilderling's Harness", type = 'slcovenant', npc_id = -1, covenant = 3, cond = 'renown_45',
+                continent = "shadowlands", for_sort = 15, zone_id = -3, expansion = "sl",
+                level = 60,
+            },
+        },
+    },
+	[186494] = { -- Autumnal Wilderling
+        spell_id = 353857,
+        from = {
+            {
+                itemname = "Autumnal Wilderling's Harness", type = 'slcovenant', npc_id = 174914, covenant = 3, cond = 'renown_70', cost = 7500, currency = 'anima',
+                continent = "shadowlands", for_sort = 15, zone_id = -3, expansion = "sl",
+                coordzone = 1701, coordx = 59.8, coordy = 32.8, level = 60,
+            },
+        },
+    },
+	[186651] = { -- Summer Wilderling
+        spell_id = 354361,
+        from = {
+            {
+                itemname = "Summer Wilderling's Harness", type = 'treasure', customnpcName = 'Talon-Pierced Mawsworn Lockbox',
+                continent = 'shadowlands', for_sort = 10, zone_id = 1961, expansion = 'sl',
                 level = 60, 
             },
         },

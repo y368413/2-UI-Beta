@@ -1,0 +1,14 @@
+{
+    "target": "curse",
+    "searchName": "Torghast TourGuide",
+    "localName": "TorghastTourguide",
+    "version": "V2.3.2",
+    "fileName": "torghast-tourguide",
+    "addonsMap": [
+        "TorghastTourguide"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "name": "TorghastTourguide",
+    "gameVersion": "9.1.0"
+}

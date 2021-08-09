@@ -182,6 +182,9 @@
 	GladiatorlosSACN:RegisterEvent("PLAYER_ENTERING_WORLD")
 	GladiatorlosSACN:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 	GladiatorlosSACN:RegisterEvent("UNIT_AURA")
+	GladiatorlosSACN:RegisterEvent("DUEL_REQUESTED")
+	GladiatorlosSACN:RegisterEvent("DUEL_FINISHED")
+	GladiatorlosSACN:RegisterEvent("CHAT_MSG_SYSTEM")
 	if not GSA_LANGUAGE[gsadb.path] then gsadb.path = GSA_LOCALEPATH[GetLocale()] end
 	self.throttled = {}
 	self.smarter = 0
@@ -446,4 +449,26 @@ end
 	else
 		return true
 	end
- end 
+ end
+
+ -- A player has requested to duel me
+function GladiatorlosSACN:DUEL_REQUESTED(event, playerName)
+	opponentName = playerName
+	duelingOn = true
+ end
+ 
+ --I requested a duel to my target
+ function GladiatorlosSACN:CHAT_MSG_SYSTEM(event, text)
+	if string.find(text, _G.ERR_DUEL_REQUESTED ) then
+		if (UnitExists("target")) then
+			duelingOn = true
+			opponentName = UnitName("target")
+		end
+	end
+ end
+ 
+  -- The duel finished or was canceled
+  function GladiatorlosSACN:DUEL_FINISHED(event)
+	opponentName = ""
+	duelingOn = false
+  end

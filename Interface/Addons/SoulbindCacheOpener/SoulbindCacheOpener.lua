@@ -1,6 +1,6 @@
  -- Author: Nerino1
 -- Create Date : 1/8/2021
--- Version 4.1
+-- Version 4.8
 
 local _, L = ...;
 SoulbindCacheOpener = {};
@@ -275,8 +275,184 @@ SoulbindCacheOpener.items = {
 	{ 	["name"] = "ExtraGoodies_veiledsatchelofcooperation", --Veiled Satchel of Cooperation"
 		["id"] = 184522,
 		["button"] = nil
-	}
+	},
 	
+-- Noblegarden
+	{ 	["name"] = "ExtraGoodies_brightlycoloredegg", --Brightly Colored Egg"
+		["id"] = 45072,
+		["button"] = nil
+	},
+	
+-- Added by Z	
+	{	["name"] = "ExtraGoodies_GreaterDarkmoonPetSupplies", --Greater Darkmoon Pet Supplies"
+		["id"] = 116062,
+		["button"] = nil
+	},
+	{ 	["name"] = "ExtraGoodies_TravelersPetSupplies", --Traveler's Pet Supplies"
+		["id"] = 122535,
+		["button"] = nil
+	},
+	{ 	["name"] = "ExtraGoodies_BigBagofPetSupplies", --Big Bag of Pet Supplies"
+		["id"] = 118697,
+		["button"] = nil
+	},
+	{ 	["name"] = "ExtraGoodies_DarkmoonPetSupplies", --Darkmoon Pet Supplies"
+		["id"] = 91086,
+		["button"] = nil
+	},	
+
+-- 9.1 Korthia
+	{ 	["name"] = "ExtraGoodies_tormentorscache", --Tormentor's Cache"
+		["id"] = 185972,
+		["button"] = nil
+	},	
+	
+	{ 	["name"] = "ExtraGoodies_AbandonedBrokerSatchel", --Abandoned Broker Satchel"
+		["id"] = 187354,
+		["button"] = nil
+	},
+-- Assault Rewards	
+	{ 	["name"] = "ExtraGoodies_WarChestoftheUndyingArmy", --War Chest of the Undying Army"
+		["id"] = 185992,
+		["button"] = nil
+	},
+	
+	{ 	["name"] = "ExtraGoodies_WarChestoftheWildHunt", --War Chest of the Wild Hunt"
+		["id"] = 185991,
+		["button"] = nil
+	}
+	,
+	{ 	["name"] = "ExtraGoodies_AscendedWarChest", --Ascended War Chest"
+		["id"] = 185993,
+		["button"] = nil
+	},
+	
+	{ 	["name"] = "ExtraGoodies_HarvestersWarChest", --Harvester's War Chest"
+		["id"] = 185990,
+		["button"] = nil
+	},
+	
+	{ 	["name"] = "ExtraGoodies_DeathsAdvanceWarChest", --Death's Advance War Chest"
+		["id"] = 186196,
+		["button"] = nil
+	},
+	{ 	["name"] = "ExtraGoodies_DeathsAdvanceWarChest2", --Death's Advance War Chest 2"
+		["id"] = 187543,
+		["button"] = nil
+	},
+-- Added by modrogon
+	{ 	["name"] = "ExtraGoodies_FeatherStuffedHelm", --Feather-Stuffed Helm"
+		["id"] = 187440,
+		["button"] = nil
+	},
+
+	{ 	["name"] = "ExtraGoodies_DivinersRuneChit", --Diviner's Rune Chit"
+		["id"] = 185963,
+		["button"] = nil
+	},
+	
+--	{ 	["name"] = "ExtraGoodies_Korthian Armaments", --Korthian Armaments"
+--		["id"] = 187187,
+--		["button"] = nil
+--	}
+
+	{ 	["name"] = "ExtraGoodies_TalonPiercedMawswornLockbox", --Talon-Pierced Mawsworn Lockbox"
+		["id"] = 187278,
+		["button"] = nil
+	},
+	
+--Korthia Cache
+
+	{ 	["name"] = "ExtraGoodies_KorthianMeatCache", --Korthian Meat Cache"
+		["id"] = 187577,
+		["button"] = nil
+	},
+	
+	{ 	["name"] = "ExtraGoodies_KorthianSkinningCache", --Korthian Skinning Cache"
+		["id"] = 187576,
+		["button"] = nil
+	},
+	
+	{ 	["name"] = "ExtraGoodies_KorthianFishingCache", --Korthian Fishing Cache"
+		["id"] = 187575,
+		["button"] = nil
+	},
+	
+	{ 	["name"] = "ExtraGoodies_MysteriousGiftfromVenari", --Mysterious Gift from Ve'nari"
+		["id"] = 187029,
+		["button"] = nil
+	},
+	
+	{ 	["name"] = "ExtraGoodies_BrokersOverflowingBucket", --Brokers' Overflowing Bucket"
+		["id"] = 187574,
+		["button"] = nil
+	},
+	
+	{ 	["name"] = "ExtraGoodies_FeedersHandandKey", --Feeder's Hand and Key"
+		["id"] = 186970,
+		["button"] = nil
+	},
+	
+	{ 	["name"] = "ExtraGoodies_CacheofSanctumTreasures226", --Cache of Sanctum Treasures - 226"
+		["id"] = 186531,
+		["button"] = nil
+	},
+	
+	{ 	["name"] = "ExtraGoodies_CacheofSanctumTreasures239", --Cache of Sanctum Treasures - 239"
+		["id"] = 186533,
+		["button"] = nil
+	},
+	
+	{ 	["name"] = "ExtraGoodies_CacheofSanctumTreasures239", --Brokers' Overflowing Bucket"
+		["id"] = 187574,
+		["button"] = nil
+	},
+	
+	{ 	["name"] = "ExtraGoodies_BrokersEnchantingMoteofPotentiation", --Brokers' Enchanting Mote of Potentiation"
+		["id"] = 187573,
+		["button"] = nil
+	},
+	
+	{ 	["name"] = "ExtraGoodies_BrokersHerbalismMoteofPotentiation", --Brokers' Herbalism Mote of Potentiation"
+		["id"] = 187572,
+		["button"] = nil
+	},
+	
+	{ 	["name"] = "ExtraGoodies_BrokersTailoringMoteofPotentiation", --Brokers' Tailoring Mote of Potentiation"
+		["id"] = 187569,
+		["button"] = nil
+	},
+	
+	{ 	["name"] = "ExtraGoodies_BrokersSkinningMoteofPotentiation", --Brokers' Skinning Mote of Potentiation"
+		["id"] = 187570,
+		["button"] = nil
+	},
+	
+	{ 	["name"] = "ExtraGoodies_BrokersMiningMoteofPotentiation", --Brokers' Mining Mote of Potentiation"
+		["id"] = 187571,
+		["button"] = nil
+	},
+	
+	{ 	["name"] = "ExtraGoodies_LostMemento", --Lost Memento"
+		["id"] = 187346,
+		["button"] = nil
+	},
+	
+	{ 	["name"] = "ExtraGoodies_MysteriousGiftfromVenari", --Mysterious Gift from Ve'nari"
+		["id"] = 187029,
+		["button"] = nil
+	},
+	
+	{ 	["name"] = "ExtraGoodies_GoldFilledBoot", --Gold Filled Boot"
+		["id"] = 186680,
+		["button"] = nil
+	},
+	
+	{ 	["name"] = "ExtraGoodies_GoldFilledCrate", --Gold Filled Crate"
+		["id"] = 186707,
+		["button"] = nil
+	}
+
 
 };
 

@@ -40,7 +40,7 @@ end
 local Wyr3d_StatTable = {}
 Wyr3d_StatTable["DEATHKNIGHT-250"] = "[Str]：ilvl > Vers > Haste > Crit > Mast"
 Wyr3d_StatTable["DEATHKNIGHT-251"] = "[Str]：Mast > Crit > Haste > Vers"
-Wyr3d_StatTable["DEATHKNIGHT-252"] = "[Str]：Mast > Haste > Crit > Vers"
+Wyr3d_StatTable["DEATHKNIGHT-252"] = "[Str]：Mast(60%+) > Haste(20%) > Crit > Vers"
 
 Wyr3d_StatTable["DRUID-102"] = "Int > Mast > Haste > Vers > Crit"
 Wyr3d_StatTable["DRUID-103"] = "Agil > Crit > Mast > Vers > Haste"

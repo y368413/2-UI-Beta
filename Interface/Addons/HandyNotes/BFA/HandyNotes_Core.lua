@@ -1,4 +1,4 @@
--------------------------------------------------------------------------------
+ï»¿-------------------------------------------------------------------------------
 ---------------------------------- NAMESPACE ----------------------------------
 -------------------------------------------------------------------------------
 
@@ -2513,9 +2513,9 @@ local Red = BattleForAzeroth.status.Red
 
 local function Icon(icon) return '|T'..icon..':0:0:1:-1|t ' end
 
--- in zhCN¡¯s built-in font, ARHei.ttf, the glyph of U+2022 <bullet> is missing.
+-- in zhCNâ€™s built-in font, ARHei.ttf, the glyph of U+2022 <bullet> is missing.
 -- use U+00B7 <middle dot> instead.
-local bullet = (GetLocale() == "zhCN" and "¡¤" or "?")
+local bullet = (GetLocale() == "zhCN" and "â†’" or "?")
 
 -------------------------------------------------------------------------------
 ----------------------------------- REWARD ------------------------------------

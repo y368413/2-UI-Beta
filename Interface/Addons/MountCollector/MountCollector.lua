@@ -35,6 +35,7 @@ function addon:OnInitialize()
 			hide_summoned = false,
 			hide_warfront = false,
 			hide_bfaassault = false,
+			hide_korthiaassault = false,
 			hide_horrificvision = false,
 			hide_expeditions = false,
 			hide_vendor = false,
@@ -71,7 +72,7 @@ function addon:OnInitialize()
             },
         },
     }, true)
-
+	
     self.ldb = LibStub('LibDataBroker-1.1'):NewDataObject(addonName, {
         type = 'launcher',
         icon = 'Interface\\ICONS\\ABILITY_MOUNT_GOLDENGRYPHON',
@@ -148,13 +149,44 @@ end
 
 local function GetUldumAssault ()
     local textures = C_MapExplorationInfo.GetExploredMapTextures(1527)
-    if textures and textures[1].fileDataIDs[1] == 3165083 then
-        return "AQR" -- left
-    elseif textures and textures[1].fileDataIDs[1] == 3165092 then
-        return "EMP" -- middle
-    elseif textures and textures[1].fileDataIDs[1] == 3165098 then
-        return "AMA" -- right
-    end
+    if textures then
+		if textures[1] then
+			if textures[1].fileDataIDs[1] == 3165083 then
+				return "AQR" -- left
+			elseif textures[1].fileDataIDs[1] == 3165092 then
+				return "EMP" -- middle
+			elseif textures[1].fileDataIDs[1] == 3165098 then
+				return "AMA" -- right
+			else 
+				return "NA"
+			end
+		else 
+			return "NA"
+		end
+    else
+		return "NA"
+	end
+end
+
+local function GetValeAssault()
+    local textures = C_MapExplorationInfo.GetExploredMapTextures(1530)
+    if textures then
+		if textures[1] then
+			if textures[1].fileDataIDs[1] == 3155826 then
+				return "MAN" -- left
+			elseif textures[1].fileDataIDs[1] == 3155832 then
+				return "MOG" -- middle
+			elseif textures[1].fileDataIDs[1] == 3155841 then
+				return "EMP" -- right
+			else 
+				return "NA"
+			end
+		else 
+			return "NA"
+		end
+    else
+		return "NA"
+	end
 end
 
 local function IsTimewalking()
@@ -167,17 +199,6 @@ local function IsTimewalking()
 		end
     end
 	return tw
-end
-
-local function GetValeAssault()
-    local textures = C_MapExplorationInfo.GetExploredMapTextures(1530)
-    if textures and textures[1].fileDataIDs[1] == 3155826 then
-        return "MAN" -- left
-    elseif textures and textures[1].fileDataIDs[1] == 3155832 then
-        return "MOG" -- middle
-    elseif textures and textures[1].fileDataIDs[1] == 3155841 then
-        return "EMP" -- right
-    end
 end
 
 local function GetCovenant()
@@ -256,8 +277,20 @@ function addon:GetItemSourceInfo(itemSource)
 	end
 
     local npcName
-    if itemSource.type == 'special' and itemSource.subtype ~= 'summoned' and itemSource.subtype ~= 'warfront' and itemSource.subtype ~= 'bfaassault' and itemSource.subtype ~= 'horrificvision' then
-        npcName = L['special_' .. itemSource.subtype]
+    if itemSource.type == 'korthiaassault' then
+		if itemSource.npc_id == 0 then
+			npcName = "Covenant Assaults"
+		elseif itemSource.npc_id == -1 then
+			npcName = "Kyrian Assault"
+		elseif itemSource.npc_id == -2 then
+			npcName = "Venthyr Assault"
+		elseif itemSource.npc_id == -3 then
+			npcName = "Night Fae Assault"
+		elseif itemSource.npc_id == -4 then
+			npcName = "Necrolords Assault"
+		else 
+			npcName = self:GetNpcName(itemSource.npc_id)
+		end
 	elseif itemSource.type == 'zone' then
         npcName = "Random"
 	elseif itemSource.type == 'expeditions' then
@@ -295,6 +328,8 @@ function addon:GetItemSourceInfo(itemSource)
 		npcName = name
 	elseif itemSource.customnpcName then
 		npcName = itemSource.customnpcName
+	elseif itemSource.type == 'special' and itemSource.subtype ~= 'summoned' and itemSource.subtype ~= 'warfront' and itemSource.subtype ~= 'bfaassault' and itemSource.subtype ~= 'horrificvision' then
+        npcName = L['special_' .. itemSource.subtype]
 	else
         npcName = self:GetNpcName(itemSource.npc_id)
     end
@@ -474,7 +509,7 @@ function addon:BuildTooltipData()
     local playerLevel = UnitLevel('player')
     local playerZoneName = GetRealZoneText()
 
-    local dungeonItems, raidItems, worldItems, rareItems, summonedItems, warfrontItems, bfaassaultItems, horrificvisionItems, expeditionsItems, treasureItems, slcovenantItems, zoneItems, vendorItems, paragonItems, garrisoninvasionItems, holidayItems = {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
+    local dungeonItems, raidItems, worldItems, rareItems, summonedItems, warfrontItems, bfaassaultItems, korthiaassaultItems, horrificvisionItems, expeditionsItems, treasureItems, slcovenantItems, zoneItems, vendorItems, paragonItems, garrisoninvasionItems, holidayItems = {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
 
 	local bfaassaultuldum = GetUldumAssault()
 	local bfaassaultvale = GetValeAssault()
@@ -608,7 +643,7 @@ function addon:BuildTooltipData()
 						elseif itemSource.quest_id then
 							add = not C_QuestLog.IsQuestFlaggedCompleted(itemSource.quest_id)
 							killed = C_QuestLog.IsQuestFlaggedCompleted(itemSource.quest_id)
-						elseif (itemSource.subtype == 'summoned' or itemSource.subtype == 'warfront' or itemSource.subtype == 'horrificvision' or itemSource.type == 'expeditions' or itemSource.type == 'paragon' or itemSource.type == 'slcovenant' or itemSource.type == 'treasure') then
+						elseif (itemSource.subtype == 'summoned' or itemSource.subtype == 'warfront' or itemSource.subtype == 'horrificvision' or itemSource.type == 'expeditions' or itemSource.type == 'paragon' or itemSource.type == 'slcovenant' or itemSource.type == 'treasure' or itemSource.type == 'korthiaassault') then
 								add = 1
 						elseif itemSource.subtype == 'bfaassault' then
 							if bfaassaultuldum == itemSource.bfaassault then
@@ -620,19 +655,21 @@ function addon:BuildTooltipData()
 							elseif not itemSource.bfaassault then
 								add = not C_QuestLog.IsQuestFlaggedCompleted(itemSource.quest_id)
 								killed = C_QuestLog.IsQuestFlaggedCompleted(itemSource.quest_id)
-							end	
+							end
+						elseif itemSource.type == 'world' and itemSource.subtype == 'wq' and itemSource.quest_id then
+							add = C_TaskQuest.IsActive(itemSource.quest_id)	
 						elseif itemSource.type == 'world' then
 							add = 1
-						elseif itemSource.type == 'world' and itemSource.subtype == 'wq' and itemSource.quest_id then
-							add = C_TaskQuest.IsActive(itemSource.quest_id)
 						elseif itemSource.type == 'rare' then
 							add = 1
 						elseif itemSource.type == 'vendor' then
 							add = 1
 						elseif itemSource.type == 'zone' then
 							add = 1
-						elseif itemSource.type == 'holiday' and itemSource.subtype == 'timewalking' and timewalking then
+						elseif itemSource.subtype == 'timewalking' and timewalking then
 							add = 1
+						elseif itemSource.subtype == 'timewalking' and not timewalking then
+							add = 0
 						else
 							add = 1
 						end
@@ -723,6 +760,13 @@ function addon:BuildTooltipData()
 							else
 								bfaassaultItems[zoneName] = zoneData
 							end
+						elseif itemSource.type == 'korthiaassault' then
+							if korthiaassaultItems[zoneName] then
+								zoneData = korthiaassaultItems[zoneName]
+							else
+								korthiaassaultItems[zoneName] = zoneData
+							end
+							
 						elseif itemSource.type == 'summoned' then
 							if summonedItems[zoneName] then
 								zoneData = summonedItems[zoneName]
@@ -797,6 +841,7 @@ function addon:BuildTooltipData()
 		{ items = summonedItems , title = 'summoned'  },
 		{ items = warfrontItems , title = 'warfront'  },
 		{ items = bfaassaultItems , title = 'bfaassault'  },
+		{ items = korthiaassaultItems , title = 'korthiaassault'  },
 		{ items = horrificvisionItems , title = 'horrificvision'  },
 		{ items = expeditionsItems , title = 'expeditions'  },
 		{ items = slcovenantItems , title = 'slcovenant'  },
@@ -976,7 +1021,7 @@ local function addTomTomWaypoint(mapID, coordx, coordy, name)
 end
 
 function addon:UpdateTooltip(tooltip)
-    tooltip:Clear()
+	tooltip:Clear()
 	
 	local loaded, finished
 	loaded, finished = IsAddOnLoaded("Rarity")

@@ -1,6 +1,9 @@
-## Interface: 90005
+## Interface: 90100
+## Interface-Retail: 90100
+## Interface-Classic: 11307
+## Interface-BC: 20501
 ## Title: FarmHud
-## Version: 8.8.0-release
+## Version: 8.8.1-release
 ## Notes: Turns your minimap into a hud for gathering resources!
 ## Author: Hizuro, CodeRedLin
 ## OptionalDeps: Ace3, CallbackHandler-1.0, LibDBIcon-1.0, LibStub, HereBeDragons

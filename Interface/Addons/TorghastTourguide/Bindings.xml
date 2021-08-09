@@ -1,0 +1,5 @@
+<Bindings>
+	<Binding name="TOGGLE_TORGHASTTOURGUIDE" header="TORGHASTTOURGUIDE" category="ADDONS">
+        	TorghastTourGuide_Toggle()
+	</Binding>
+</Bindings>

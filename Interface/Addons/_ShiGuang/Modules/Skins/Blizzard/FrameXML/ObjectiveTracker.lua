@@ -116,6 +116,50 @@ local function GetMawBuffsAnchor(frame)
 	end
 end
 
+local function container_OnClick(container)
+	local direc = GetMawBuffsAnchor(container)
+	if not container.lastDirec or container.lastDirec ~= direc then
+		container.List:ClearAllPoints()
+		if direc == "LEFT" then
+			container.List:SetPoint("TOPLEFT", container, "TOPRIGHT", 15, 1)
+		else
+			container.List:SetPoint("TOPRIGHT", container, "TOPLEFT", 15, 1)
+		end
+		container.lastDirec = direc
+	end
+end
+
+local function blockList_Show(self)
+	self.button:SetWidth(253)
+	self.button:SetButtonState("NORMAL")
+	self.button:SetPushedTextOffset(1.25, -1)
+	self.button:SetButtonState("PUSHED", true)
+	self.__bg:SetBackdropBorderColor(1, .8, 0, .7)
+end
+
+local function blockList_Hide(self)
+	self.__bg:SetBackdropBorderColor(0, 0, 0, 1)
+end
+
+local function ReskinMawBuffsContainer(container)
+	M.StripTextures(container)
+	container:GetPushedTexture():SetAlpha(0)
+	container:GetHighlightTexture():SetAlpha(0)
+	local bg = M.SetBD(container, 0, 13, -11, -3, 11)
+	M.CreateGradient(bg)
+	container:HookScript("OnClick", container_OnClick)
+
+	local blockList = container.List
+	M.StripTextures(blockList)
+	blockList.__bg = bg
+	local bg = M.SetBD(blockList)
+	bg:SetPoint("TOPLEFT", 7, -12)
+	bg:SetPoint("BOTTOMRIGHT", -7, 12)
+
+	blockList:HookScript("OnShow", blockList_Show)
+	blockList:HookScript("OnHide", blockList_Hide)
+end
+
 tinsert(R.defaultThemes, function()
 	if IsAddOnLoaded("!KalielsTracker") then return end
 
@@ -202,28 +246,9 @@ tinsert(R.defaultThemes, function()
 
 	hooksecurefunc("Scenario_ChallengeMode_SetUpAffixes", M.AffixesSetup)]]
 
-	-- Block in jail tower
-	local mawBuffsBlock = ScenarioBlocksFrame.MawBuffsBlock
-	local bg = M.SetBD(mawBuffsBlock, nil, 20, -10, -20, 10)
-
-	local blockContainer = mawBuffsBlock.Container
-	M.StripTextures(blockContainer)
-	blockContainer:GetPushedTexture():SetAlpha(0)
-	blockContainer:GetHighlightTexture():SetAlpha(0)
-
-	local blockList = blockContainer.List
-	M.StripTextures(blockList)
-	blockList.__bg = bg
-	local bg = M.SetBD(blockList)
-	bg:SetPoint("TOPLEFT", 7, -12)
-	bg:SetPoint("BOTTOMRIGHT", -7, 12)
-
-	blockList:HookScript("OnShow", function(self)
-		self.__bg:SetBackdropBorderColor(1, .8, 0, .7)
-	end)
-	blockList:HookScript("OnHide", function(self)
-		self.__bg:SetBackdropBorderColor(0, 0, 0, 1)
-	end)
+	-- Maw buffs container
+	ReskinMawBuffsContainer(ScenarioBlocksFrame.MawBuffsBlock.Container)
+	ReskinMawBuffsContainer(MawBuffsBelowMinimapFrame.Container)
 
 	-- Reskin Headers
 	local headers = {
@@ -250,18 +275,4 @@ tinsert(R.defaultThemes, function()
 			reskinMinimizeButton(minimize)
 		end
 	end]]
-
-	-- MawBuffsBlock
-	ScenarioBlocksFrame.MawBuffsBlock.Container:HookScript("OnClick", function(container)
-		local direc = GetMawBuffsAnchor(container)
-		if not container.lastDirec or container.lastDirec ~= direc then
-			container.List:ClearAllPoints()
-			if direc == "LEFT" then
-				container.List:SetPoint("TOPLEFT", container, "TOPRIGHT", 12, 0)
-			else
-				container.List:SetPoint("TOPRIGHT", container, "TOPLEFT", 12, 0)
-			end
-			container.lastDirec = direc
-		end
-	end)
 end)

@@ -25,6 +25,8 @@ if not LibStub or LibStub.minor < LIBSTUB_MINOR then
 		return self.libs[major], self.minors[major]
 	end
 	
-	function LibStub:IterateLibraries() return pairs(self.libs) end
+	function LibStub:IterateLibraries()
+		return pairs(self.libs)
+	end
 	setmetatable(LibStub, { __call = LibStub.GetLibrary })
 end

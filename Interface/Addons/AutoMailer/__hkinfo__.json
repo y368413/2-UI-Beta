@@ -1,0 +1,14 @@
+{
+    "target": "curse",
+    "searchName": "AutoMailer",
+    "localName": "AutoMailer",
+    "version": "AutoMailer.zip",
+    "fileName": "automailer",
+    "addonsMap": [
+        "AutoMailer"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "name": "AutoMailer",
+    "gameVersion": "9.0.2"
+}
