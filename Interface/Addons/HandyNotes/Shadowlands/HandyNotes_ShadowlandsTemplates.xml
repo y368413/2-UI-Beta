@@ -110,7 +110,6 @@
       </Slider>
     </Frames>
   </Frame>
-  <!--Script file="HandyNotes_Shadowlands.lua"/-->
   <Script file="common.lua"/>
   <Script file="zones\ardenweald.lua"/>
   <Script file="zones\bastion.lua"/>

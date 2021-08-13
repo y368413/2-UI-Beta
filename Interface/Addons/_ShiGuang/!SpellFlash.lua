@@ -167,17 +167,19 @@ end
 
 -- 按键扫描注册
 sfo:RegisterEvent("PLAYER_ENTERING_WORLD")
-function sfo:PLAYER_ENTERING_WORLD() thj.ScanKeyBindings(); end
 sfo:RegisterEvent("UPDATE_BINDINGS")
-function sfo:UPDATE_BINDINGS() thj.ScanKeyBindings(); end
 sfo:RegisterEvent("ACTIONBAR_PAGE_CHANGED")
-function sfo:ACTIONBAR_PAGE_CHANGED() thj.ScanKeyBindings(); end
 sfo:RegisterEvent("ACTIONBAR_SLOT_CHANGED")
-function sfo:ACTIONBAR_SLOT_CHANGED() thj.ScanKeyBindings(); end
 sfo:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
-function sfo:PLAYER_SPECIALIZATION_CHANGED() thj.ScanKeyBindings(); end
 sfo:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
+sfo:RegisterEvent("SPELL_UPDATE_ICON")
+function sfo:PLAYER_ENTERING_WORLD() thj.ScanKeyBindings(); end
+function sfo:UPDATE_BINDINGS() thj.ScanKeyBindings(); end
+function sfo:ACTIONBAR_PAGE_CHANGED() thj.ScanKeyBindings(); end
+function sfo:ACTIONBAR_SLOT_CHANGED() thj.ScanKeyBindings(); end --print("ACTIONBAR_SLOT_CHANGED")
+function sfo:PLAYER_SPECIALIZATION_CHANGED() thj.ScanKeyBindings(); end
 function sfo:UPDATE_SHAPESHIFT_FORM() thj.ScanKeyBindings(); end
+function sfo:SPELL_UPDATE_ICON() thj.ScanKeyBindings(); end -- print("SPELL_UPDATE_ICON")
 
 thj.dots = {};
 local function createBlock(pos, r, g, b)
@@ -197,10 +199,7 @@ createBlock(0, 1, 1, 0);
 local UnitClass = UnitClass;
 local wipe = table.wipe;
 --[[
-    /dump GetBindingKey("ACTIONBUTTON3");
-    /dump GetActionInfo(3);
-    /dump GetMacroSpell(127)
-    /dump GetSpellInfo(53600)
+    插件状态信息
 ]]
 thj.info = {
     key = nil,
@@ -215,7 +214,11 @@ local slotNames = {"", "", "", "", "", ""}
 local function UpdateSpell(spellId, spellName, key, page)
     thj.spells[spellId] = spellName
     thj.spells[spellName] = key
+    print("update -=> "..spellId.."="..spellName.."@"..key)
 end
+--[[
+    保存技能按键信息
+]]
 local function StoreKeybindInfo(page, bindingName, slot)
     local key1, key2 = GetBindingKey(bindingName);
     local key = key1 and key1 or key2;
@@ -226,7 +229,7 @@ local function StoreKeybindInfo(page, bindingName, slot)
         local spellName = GetSpellInfo(id);
         thj.spells[id] = spellName
         thj.spells[spellName] = key
-        -- print("SKI Spell->", key, id, spellName)
+        --print("SKI Spell->", key, id, spellName)
     elseif actionType == "macro" then
         local sID = GetMacroSpell(id)
         if not sID then return end
@@ -235,13 +238,15 @@ local function StoreKeybindInfo(page, bindingName, slot)
         thj.spells[spellName] = key
     elseif actionType == "item" then
         local item = GetItemInfo(id)
+        thj.spells["i_" .. id] = item;
+        thj.spells[item] = key
         -- ability = item and class.abilities[ item ]
         -- action = ability and ability.key
         if not action then end
     end
 end
 --[[
-    扫描状态条
+    扫描姿态条
 ]]
 local function ScanStanceBar()
     local _, _, classId = UnitClass('player');
@@ -266,16 +271,16 @@ end
 thj.fixSpells = function()
     -- thj.spells[317349] = thj.spells[330325]
 end
--- /run SFO.ScanKeyBindings()
--- /dump GetSpellInfo(317349)
--- 330325  317349 184367
--- SKI Spell-> ` 21562 真言术：韧
--- /dump GetActionBarPage()
+--[[
+    技能按键扫描
+]]
 thj.ScanKeyBindings = function()
-    wipe(thj.spells);
     -- print("--------扫描按键定义中-------")
+    -- wipe(thj.spells);
     local curPage = GetActionBarPage();
-    for i = 1, 12 do StoreKeybindInfo(curPage, "ACTIONBUTTON" .. i, i + (curPage - 1) * 12) end
+    for i = 1, 12 do
+        StoreKeybindInfo(curPage, "ACTIONBUTTON" .. i, i + (curPage - 1) * 12)
+    end
 
     for i = 25, 36 do
         StoreKeybindInfo(3, "MULTIACTIONBAR3BUTTON" .. i - 24, i)
@@ -312,8 +317,9 @@ thj.Repaint = function()
     local f = thj.info;
     local km = thj.keyMapping[f.key];
     if not km then
-        print("SpellFlashCore Error! -> spellId = " .. f.spellId ..
-                  ", spellName = " .. f.spellName .. ", key = " .. f.key)
+        print("SpellFlashCore Error! -> spellId = " .. (f.spellId or "nil") ..
+                  ", spellName = " .. (f.spellName or "nil") .. ", key = " ..
+                  (f.key or "nil"))
         return
     end
     -- r = ctrl alt shift
@@ -328,30 +334,36 @@ thj.Repaint = function()
     b = b / 255;
     dot:SetColorTexture(r, g, b);
 end
-
+--[[
+    设置战斗状态
+]]
 thj.SetCombat = function(flag)
     thj.info.isCombat = flag;
     thj.Repaint();
 end
+--[[
+    设置通道施法状态
+]]
 thj.SetChanneling = function(flag)
     thj.info.isChanneling = flag;
     thj.Repaint();
 end
-thj.ResetFlash = function() end
+--[[
+    根据按键进行技能提示
+]]
 thj.FlashKey = function(key)
     -- 战斗 或者 通道施法状态不响应
-    if not thj.info.isCombat and not thj.info.isChanneling then
-        return true
-    end
-    if not key then return false end
+    if not thj.info.isCombat and not thj.info.isChanneling then return end
+    if not key then return end
     thj.info.key = key;
     thj.Repaint();
-    return true;
+    return;
 end
-thj.ItemName = function(id) return id; end
-thj.FlashItem = function(key, color)
-    -- print("SFO->FlashItem", key)
-end
+--[[
+    API: 根据技能ID获取技能名称
+    @param id: 技能ID
+    @returns 技能名称
+]]
 thj.SpellName = function(id)
     if not id or id < 0 then return nil end
     -- print("SpellName->"..id)
@@ -365,22 +377,53 @@ thj.SpellName = function(id)
     return name;
 end
 --[[
-/dump SFO.spells[317349]
-/dump SFO.spells[330325]
-/dump SFO.keyMapping["1"]
-/run SFO.FlashKey('1')
-/run SFO.FlashAction(330325)
+    API: 根据技能名称提示技能
+    @param spellName: 技能名称
+    @param color: 忽视
 ]]
 thj.FlashAction = function(spellName, color)
     if not spellName then return end
     -- print("FlashAction->"..spellName)
     local key = thj.spells[spellName];
     if not key and thj.info.isCombat then
-        local link = GetSpellLink(spellName);
-        print("|cffff2020 技能 " .. link .. "未绑定按键！");
-        return 
+        local id = thj.info.spellId;
+        if not id then return end
+        local isItem = id:find("i_")
+        if isItem then
+            local link = GetSpellLink(spellName);
+            print("|cffff2020 技能 " .. link .. "未绑定按键！");
+        else
+            local _, link = GetItemInfo(spellName);
+            print("|cffff2020 物品 " .. link .. "未绑定按键！");
+        end
+        return
     end
     thj.FlashKey(key)
+end
+--[[
+    API: 根据物品ID获取物品名称
+    @param id: 物品ID
+    @returns 物品名称
+]]
+thj.ItemName = function(id)
+    if not id or id < 0 then return nil end
+    -- print("SpellName->"..id)
+    local name = thj.spells["i_" .. id];
+    if not name then
+        name = GetItemInfo(id);
+        thj.spells["i_" .. id] = name;
+    end
+    thj.info.spellId = "i_" .. id;
+    thj.info.spellName = name;
+    return name;
+end
+--[[
+    API: 根据物品名称提示物品使用
+    @param spellName: 物品名称
+    @param color: 忽视
+]]
+thj.FlashItem = function(spellName, color)
+    thj.FlashAction(spellName, color);
 end
 thj.StartQuesting = function() thj.info.isQuesting = true; end
 thj.StopQuesting = function() thj.info.isQuesting = false; end

@@ -1,12 +1,12 @@
-tag 3a18e0afe8ed330ce96c7a5675187124965925c8 V2.3.2
+tag f088dbd4595588d154b7fe6c3a64afcf7531a007 V2.4.2
 Author:	SLOKnightfall <SLOKnightfall@gmail.com>
-Date:	Mon Aug 2 08:54:05 2021 -0700
+Date:	Tue Aug 10 11:23:08 2021 -0700
 
--bugfix
+bugfix
 
-commit 07c44f5ad5368676f3282dcc60c955bfa8f9f9c5
+commit 037d985de2faaf2fb74e737ce10451a72d2a20e1
 Author: SLOKnightfall <SLOKnightfall@gmail.com>
-Date:   Mon Aug 2 08:53:35 2021 -0700
+Date:   Tue Aug 10 11:22:55 2021 -0700
 
-    -Fix for errors when checking for Hunter bounuses
+    -bugfix
 

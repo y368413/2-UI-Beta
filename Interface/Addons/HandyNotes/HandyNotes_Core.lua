@@ -2,13 +2,13 @@
 ---------------------------------- NAMESPACE ----------------------------------
 -------------------------------------------------------------------------------
 
-local _, BattleForAzeroth = ...
+local _, Core = ...
 
 -------------------------------------------------------------------------------
 ----------------------------------- COLORS ------------------------------------
 -------------------------------------------------------------------------------
 
-BattleForAzeroth.COLORS = {
+Core.COLORS = {
     Blue = 'FF0066FF',
     Gray = 'FF999999',
     Green = 'FF00FF00',
@@ -22,12 +22,12 @@ BattleForAzeroth.COLORS = {
     Spell = 'FF71D5FF'
 }
 
-BattleForAzeroth.color = {}
-BattleForAzeroth.status = {}
+Core.color = {}
+Core.status = {}
 
-for name, color in pairs(BattleForAzeroth.COLORS) do
-    BattleForAzeroth.color[name] = function (t) return string.format('|c%s%s|r', color, t) end
-    BattleForAzeroth.status[name] = function (t) return string.format('(|c%s%s|r)', color, t) end
+for name, color in pairs(Core.COLORS) do
+    Core.color[name] = function (t) return string.format('|c%s%s|r', color, t) end
+    Core.status[name] = function (t) return string.format('(|c%s%s|r)', color, t) end
 end
 
 -------------------------------------------------------------------------------
@@ -43,8 +43,8 @@ end
 local NameResolver = {
     cache = {},
     prepared = {},
-    preparer = CreateDatamineTooltip("HandyNotes_BattleForAzeroth_NamePreparer"),
-    resolver = CreateDatamineTooltip("HandyNotes_BattleForAzeroth_NameResolver")
+    preparer = CreateDatamineTooltip("HandyNotes_Core_NamePreparer"),
+    resolver = CreateDatamineTooltip("HandyNotes_Core_NameResolver")
 }
 
 function NameResolver:IsLink (link)
@@ -68,7 +68,7 @@ function NameResolver:Resolve (link)
 
     -- all npcs must be prepared ahead of time to avoid breaking the resolver
     if not self.prepared[link] then
-        BattleForAzeroth.Debug('ERROR: npc link not prepared:', link)
+        Core.Debug('ERROR: npc link not prepared:', link)
     end
 
     local name = self.cache[link]
@@ -76,8 +76,8 @@ function NameResolver:Resolve (link)
         self.resolver:SetHyperlink(link)
         name = _G[self.resolver:GetName().."TextLeft1"]:GetText() or UNKNOWN
         if name == UNKNOWN then
-            BattleForAzeroth.Debug('NameResolver returned UNKNOWN, recreating tooltip ...')
-            self.resolver = CreateDatamineTooltip("HandyNotes_BattleForAzeroth_NameResolver")
+            Core.Debug('NameResolver returned UNKNOWN, recreating tooltip ...')
+            self.resolver = CreateDatamineTooltip("HandyNotes_Core_NameResolver")
         else
             self.cache[link] = name
         end
@@ -113,7 +113,7 @@ local function RenderLinks(str, nameOnly)
             local name = NameResolver:Resolve(("unit:Creature-0-0-0-0-%d"):format(id))
             name = name..(suffix or '')
             if nameOnly then return name end
-            return BattleForAzeroth.color.NPC(name)
+            return Core.color.NPC(name)
         elseif type == 'achievement' then
             if nameOnly then
                 local _, name = GetAchievementInfo(id)
@@ -121,7 +121,7 @@ local function RenderLinks(str, nameOnly)
             else
                 local link = GetAchievementLink(id)
                 if link then
-                    return BattleForAzeroth.GetIconLink('achievement', 15)..link
+                    return Core.GetIconLink('achievement', 15)..link
                 end
             end
         elseif type == 'currency' then
@@ -136,7 +136,7 @@ local function RenderLinks(str, nameOnly)
         elseif type == 'faction' then
             local name = GetFactionInfoByID(id)
             if nameOnly then return name end
-            return BattleForAzeroth.color.NPC(name) -- TODO: colorize based on standing?
+            return Core.color.NPC(name) -- TODO: colorize based on standing?
         elseif type == 'item' then
             local name, link, _, _, _, _, _, _, _, icon = GetItemInfo(id)
             if link and icon then
@@ -148,13 +148,13 @@ local function RenderLinks(str, nameOnly)
             if name then
                 if nameOnly then return name end
                 local icon = (type == 'daily') and 'quest_ab' or 'quest_ay'
-                return BattleForAzeroth.GetIconLink(icon, 12)..BattleForAzeroth.color.Yellow('['..name..']')
+                return Core.GetIconLink(icon, 12)..Core.color.Yellow('['..name..']')
             end
         elseif type == 'spell' then
             local name, _, icon = GetSpellInfo(id)
             if name and icon then
                 if nameOnly then return name end
-                local spell = BattleForAzeroth.color.Spell('|Hspell:'..id..'|h['..name..']|h')
+                local spell = Core.color.Spell('|Hspell:'..id..'|h['..name..']|h')
                 return '|T'..icon..':0:0:1:-1|t '..spell
             end
         end
@@ -163,8 +163,8 @@ local function RenderLinks(str, nameOnly)
     -- render non-numeric ids
     links, _ = links:gsub('{(%l+):([^}]+)}', function (type, id)
         if type == 'wq' then
-            local icon = BattleForAzeroth.GetIconLink('world_quest', 16, 0, -1)
-            return icon..BattleForAzeroth.color.Yellow('['..id..']')
+            local icon = Core.GetIconLink('world_quest', 16, 0, -1)
+            return icon..Core.color.Yellow('['..id..']')
         end
         return type..'+'..id
     end)
@@ -208,7 +208,7 @@ end
 -------------------------------------------------------------------------------
 
 local function GetDatabaseTable(...)
-    local db = _G["HandyNotes_BattleForAzerothDB"]
+    local db = _G["HandyNotes_CoreDB"]
     for _, key in ipairs({...}) do
         if db[key] == nil then db[key] = {} end
         db = db[key]
@@ -235,7 +235,7 @@ local LOCALES = {}
 
 local function NewLocale (locale)
     if LOCALES[locale] then return LOCALES[locale] end
-    local L = AceLocale:NewLocale("HandyNotes_BattleForAzeroth", locale, (locale == 'enUS'), true)
+    local L = AceLocale:NewLocale("HandyNotes_Core", locale, (locale == 'enUS'), true)
     if not L then return end
     local wrapper = {}
     setmetatable(wrapper, {
@@ -256,7 +256,7 @@ local function AsTable (value, class)
     -- normalize to table of scalars
     if type(value) == 'nil' then return end
     if type(value) ~= 'table' then return {value} end
-    if class and BattleForAzeroth.IsInstance(value, class) then return {value} end
+    if class and Core.IsInstance(value, class) then return {value} end
     return value
 end
 
@@ -273,14 +273,14 @@ end
 
 -------------------------------------------------------------------------------
 
-BattleForAzeroth.AsIDTable = AsIDTable
-BattleForAzeroth.AsTable = AsTable
-BattleForAzeroth.GetDatabaseTable = GetDatabaseTable
-BattleForAzeroth.NameResolver = NameResolver
---BattleForAzeroth.NewLocale = NewLocale
-BattleForAzeroth.PlayerHasItem = PlayerHasItem
-BattleForAzeroth.PrepareLinks = PrepareLinks
-BattleForAzeroth.RenderLinks = RenderLinks
+Core.AsIDTable = AsIDTable
+Core.AsTable = AsTable
+Core.GetDatabaseTable = GetDatabaseTable
+Core.NameResolver = NameResolver
+--Core.NewLocale = NewLocale
+Core.PlayerHasItem = PlayerHasItem
+Core.PrepareLinks = PrepareLinks
+Core.RenderLinks = RenderLinks
 
 
 
@@ -289,9 +289,9 @@ BattleForAzeroth.RenderLinks = RenderLinks
 ------------------------------------ CLASS ------------------------------------
 -------------------------------------------------------------------------------
 
-BattleForAzeroth.Class = function (name, parent, attrs)
+Core.Class = function (name, parent, attrs)
     if type(name) ~= 'string' then error('name param must be a string') end
-    if parent and not BattleForAzeroth.IsClass(parent) then error('parent param must be a class') end
+    if parent and not Core.IsClass(parent) then error('parent param must be a class') end
 
     local Class = attrs or {}
     Class.getters = Class.getters or {}
@@ -360,11 +360,11 @@ end
 ----------------------------------- HELPERS -----------------------------------
 -------------------------------------------------------------------------------
 
-BattleForAzeroth.IsClass = function (class)
+Core.IsClass = function (class)
     return type(class) == 'table' and class.getters and class.setters
 end
 
-BattleForAzeroth.IsInstance = function (instance, class)
+Core.IsInstance = function (instance, class)
     if type(instance) ~= 'table' then return false end
     local function compare (c1, c2)
         if c2 == nil then return false end
@@ -374,7 +374,7 @@ BattleForAzeroth.IsInstance = function (instance, class)
     return compare(class, instance.__class)
 end
 
-BattleForAzeroth.Clone = function (instance, newattrs)
+Core.Clone = function (instance, newattrs)
     local clone = {}
     for k, v in pairs(instance) do clone[k] = v end
     if newattrs then
@@ -389,31 +389,31 @@ end
 -------------------------------------------------------------------------------
 
 
-local Addon = LibStub("AceAddon-3.0"):NewAddon("HandyNotes_BattleForAzeroth","AceBucket-3.0", "AceConsole-3.0", "AceEvent-3.0", "AceTimer-3.0")
+local Addon = LibStub("AceAddon-3.0"):NewAddon("HandyNotes_Core","AceBucket-3.0", "AceConsole-3.0", "AceEvent-3.0", "AceTimer-3.0")
 local HandyNotes = LibStub("AceAddon-3.0"):GetAddon("HandyNotes", true)
 local L = LibStub("AceLocale-3.0"):GetLocale("HandyNotes")
 if not HandyNotes then return end
 
-BattleForAzeroth.addon = Addon
-BattleForAzeroth.locale = L
-BattleForAzeroth.maps = {}
+Core.addon = Addon
+Core.locale = L
+Core.maps = {}
 
-_G["HandyNotes_BattleForAzeroth"] = Addon
+_G["HandyNotes_Core"] = Addon
 
 -------------------------------------------------------------------------------
 ----------------------------------- HELPERS -----------------------------------
 -------------------------------------------------------------------------------
 
-local DropdownMenu = CreateFrame("Frame", "HandyNotes_BattleForAzerothDropdownMenu")
+local DropdownMenu = CreateFrame("Frame", "HandyNotes_CoreDropdownMenu")
 DropdownMenu.displayMode = "MENU"
 local function InitializeDropdownMenu(level, mapID, coord)
     if not level then return end
-    local node = BattleForAzeroth.maps[mapID].nodes[coord]
+    local node = Core.maps[mapID].nodes[coord]
     local spacer = {text='', disabled=1, notClickable=1, notCheckable=1}
 
     if (level == 1) then
         UIDropDownMenu_AddButton({
-            text=BattleForAzeroth.plugin_name, isTitle=1, notCheckable=1
+            text=Core.plugin_name, isTitle=1, notCheckable=1
         }, level)
 
         UIDropDownMenu_AddButton(spacer, level)
@@ -434,7 +434,7 @@ local function InitializeDropdownMenu(level, mapID, coord)
                 func=function (button)
                     local x, y = HandyNotes:getXY(coord)
                     TomTom:AddWaypoint(mapID, x, y, {
-                        title = BattleForAzeroth.RenderLinks(node.label, true),
+                        title = Core.RenderLinks(node.label, true),
                         persistent = nil,
                         minimap = true,
                         world = true
@@ -473,7 +473,7 @@ end
 -------------------------------------------------------------------------------
 
 function Addon:OnEnter(mapID, coord)
-    local map = BattleForAzeroth.maps[mapID]
+    local map = Core.maps[mapID]
     local node = map.nodes[coord]
 
     if self:GetCenter() > UIParent:GetCenter() then
@@ -484,22 +484,22 @@ function Addon:OnEnter(mapID, coord)
 
     node:Render(GameTooltip, map:CanFocus(node))
     map:SetFocus(node, true, true)
-    BattleForAzeroth.MinimapDataProvider:RefreshAllData()
-    BattleForAzeroth.WorldMapDataProvider:RefreshAllData()
+    Core.MinimapDataProvider:RefreshAllData()
+    Core.WorldMapDataProvider:RefreshAllData()
     GameTooltip:Show()
 end
 
 function Addon:OnLeave(mapID, coord)
-    local map = BattleForAzeroth.maps[mapID]
+    local map = Core.maps[mapID]
     local node = map.nodes[coord]
     map:SetFocus(node, false, true)
-    BattleForAzeroth.MinimapDataProvider:RefreshAllData()
-    BattleForAzeroth.WorldMapDataProvider:RefreshAllData()
+    Core.MinimapDataProvider:RefreshAllData()
+    Core.WorldMapDataProvider:RefreshAllData()
     GameTooltip:Hide()
 end
 
 function Addon:OnClick(button, down, mapID, coord)
-    local map = BattleForAzeroth.maps[mapID]
+    local map = Core.maps[mapID]
     local node = map.nodes[coord]
     if button == "RightButton" and down then
         DropdownMenu.initialize = function (_, level)
@@ -515,27 +515,26 @@ function Addon:OnClick(button, down, mapID, coord)
 end
 
 function Addon:OnInitialize()
-    BattleForAzeroth.class = select(2, UnitClass('player'))
-    BattleForAzeroth.faction = UnitFactionGroup('player')
-    self.db = LibStub("AceDB-3.0"):New('HandyNotes_BattleForAzerothDB', BattleForAzeroth.optionDefaults, "Default")
+    Core.class = select(2, UnitClass('player'))
+    Core.faction = UnitFactionGroup('player')
+    self.db = LibStub("AceDB-3.0"):New('HandyNotes_CoreDB', Core.optionDefaults, "Default")
     self:RegisterEvent("PLAYER_ENTERING_WORLD", function ()
         self:UnregisterEvent("PLAYER_ENTERING_WORLD")
         self:ScheduleTimer("RegisterWithHandyNotes", 1)
     end)
 
     -- Add global groups to settings panel
-    BattleForAzeroth.CreateGlobalGroupOptions()
+    Core.CreateGlobalGroupOptions()
 
     -- Add quick-toggle menu button to top-right corner of world map
-    local template = "HandyNotes_BattleForAzerothWorldMapOptionsButtonTemplate"
-    BattleForAzeroth.world_map_button = LibStub("Krowi_WorldMapButtons-1.0"):Add(template, "DROPDOWNTOGGLEBUTTON")
-
+    local template = "HandyNotes_CoreWorldMapOptionsButtonTemplate"
+    Core.world_map_button = LibStub("Krowi_WorldMapButtons-1.0"):Add(template, "DROPDOWNTOGGLEBUTTON")
 
     -- Query localized expansion title
-    if not BattleForAzeroth.expansion then error('Expansion not set: HandyNotes_BattleForAzeroth') end
-    local expansion_name = EJ_GetTierInfo(BattleForAzeroth.expansion)
-    BattleForAzeroth.plugin_name = 'HandyNotes: '..expansion_name
-    BattleForAzeroth.options.name = ('%02d - '):format(BattleForAzeroth.expansion)..expansion_name
+    if not Core.expansion then error('Expansion not set: HandyNotes_Core') end
+    local expansion_name = EJ_GetTierInfo(Core.expansion)
+    Core.plugin_name = 'HandyNotes: '..expansion_name
+    Core.options.name = ('%02d - '):format(Core.expansion)..expansion_name
 end
 
 -------------------------------------------------------------------------------
@@ -547,7 +546,7 @@ function Addon:RegisterWithHandyNotes()
         local map, minimap, force
         local function iter(nodes, precoord)
             if not nodes then return nil end
-            if minimap and BattleForAzeroth:GetOpt('hide_minimap') then return nil end
+            if minimap and Core:GetOpt('hide_minimap') then return nil end
             local coord, node = next(nodes, precoord)
             while coord do -- Have we reached the end of this zone?
                 if node and (force or map:IsNodeEnabled(node, coord, minimap)) then
@@ -559,13 +558,13 @@ function Addon:RegisterWithHandyNotes()
             return nil, nil, nil, nil
         end
         function Addon:GetNodes2(mapID, _minimap)
-            if BattleForAzeroth:GetOpt('show_debug_map') then
-                BattleForAzeroth.Debug('Loading nodes for map: '..mapID..' (minimap='..tostring(_minimap)..')')
+            if Core:GetOpt('show_debug_map') then
+                Core.Debug('Loading nodes for map: '..mapID..' (minimap='..tostring(_minimap)..')')
             end
 
-            map = BattleForAzeroth.maps[mapID]
+            map = Core.maps[mapID]
             minimap = _minimap
-            force = BattleForAzeroth:GetOpt('force_nodes') or BattleForAzeroth.dev_force
+            force = Core:GetOpt('force_nodes') or Core.dev_force
 
             if map then
                 map:Prepare()
@@ -577,11 +576,11 @@ function Addon:RegisterWithHandyNotes()
         end
     end
 
-    if BattleForAzeroth:GetOpt('development') then
-        BattleForAzeroth.BootstrapDevelopmentEnvironment()
+    if Core:GetOpt('development') then
+        Core.BootstrapDevelopmentEnvironment()
     end
 
-    HandyNotes:RegisterPluginDB("HandyNotes_BattleForAzeroth", self, BattleForAzeroth.options)
+    HandyNotes:RegisterPluginDB("HandyNotes_Core", self, Core.options)
 
     -- Refresh in any cases where node status may have changed
     self:RegisterBucketEvent({
@@ -608,9 +607,9 @@ function Addon:Refresh()
     if self._refreshTimer then return end
     self._refreshTimer = C_Timer.NewTimer(0.1, function ()
         self._refreshTimer = nil
-        self:SendMessage("HandyNotes_NotifyUpdate", "HandyNotes_BattleForAzeroth")
-        BattleForAzeroth.MinimapDataProvider:RefreshAllData()
-        BattleForAzeroth.WorldMapDataProvider:RefreshAllData()
+        self:SendMessage("HandyNotes_NotifyUpdate", "HandyNotes_Core")
+        Core.MinimapDataProvider:RefreshAllData()
+        Core.WorldMapDataProvider:RefreshAllData()
     end)
 end
 
@@ -627,7 +626,7 @@ local function Glow(name) return GLOWS..'\\'..name..'.blp' end
 local DEFAULT_ICON = 454046
 local DEFAULT_GLOW = Glow('square_icon')
 
-BattleForAzeroth.icons = { -- name => path
+Core.icons = { -- name => path
 
     -- Red, Blue, Yellow, Purple, Green, Pink, Lime, Navy, Teal
     chest_bk = {Icon('chest_black'), Glow('chest')},
@@ -705,7 +704,7 @@ BattleForAzeroth.icons = { -- name => path
 
 local function GetIconPath(name)
     if type(name) == 'number' then return name end
-    local info = BattleForAzeroth.icons[name]
+    local info = Core.icons[name]
     return info and info[1] or DEFAULT_ICON
 end
 
@@ -719,19 +718,19 @@ end
 
 local function GetGlowPath(name)
     if type(name) == 'number' then return DEFAULT_GLOW end
-    local info = BattleForAzeroth.icons[name]
+    local info = Core.icons[name]
     return info and info[2] or nil
 end
 
-BattleForAzeroth.GetIconLink = GetIconLink
-BattleForAzeroth.GetIconPath = GetIconPath
-BattleForAzeroth.GetGlowPath = GetGlowPath
+Core.GetIconLink = GetIconLink
+Core.GetIconPath = GetIconPath
+Core.GetGlowPath = GetGlowPath
 
 -------------------------------------------------------------------------------
 ---------------------------------- DEFAULTS -----------------------------------
 -------------------------------------------------------------------------------
 
-BattleForAzeroth.optionDefaults = {
+Core.optionDefaults = {
     profile = {
         show_worldmap_button = true,
         -- visibility
@@ -751,6 +750,7 @@ BattleForAzeroth.optionDefaults = {
         show_pet_rewards = true,
         show_toy_rewards = true,
         show_transmog_rewards = true,
+        show_all_transmog_rewards = false,
         
         -- development
         development = false,
@@ -779,30 +779,30 @@ BattleForAzeroth.optionDefaults = {
 ----------------------------------- HELPERS -----------------------------------
 -------------------------------------------------------------------------------
 
-function BattleForAzeroth:GetOpt(n) return BattleForAzeroth.addon.db.profile[n] end
-function BattleForAzeroth:SetOpt(n, v) BattleForAzeroth.addon.db.profile[n] = v; BattleForAzeroth.addon:Refresh() end
+function Core:GetOpt(n) return Core.addon.db.profile[n] end
+function Core:SetOpt(n, v) Core.addon.db.profile[n] = v; Core.addon:Refresh() end
 
-function BattleForAzeroth:GetColorOpt(n)
-    local db = BattleForAzeroth.addon.db.profile
+function Core:GetColorOpt(n)
+    local db = Core.addon.db.profile
     return db[n..'_R'], db[n..'_G'], db[n..'_B'], db[n..'_A']
 end
 
-function BattleForAzeroth:SetColorOpt(n, r, g, b, a)
-    local db = BattleForAzeroth.addon.db.profile
+function Core:SetColorOpt(n, r, g, b, a)
+    local db = Core.addon.db.profile
     db[n..'_R'], db[n..'_G'], db[n..'_B'], db[n..'_A'] = r, g, b, a
-    BattleForAzeroth.addon:Refresh()
+    Core.addon:Refresh()
 end
 
 -------------------------------------------------------------------------------
 --------------------------------- OPTIONS UI ----------------------------------
 -------------------------------------------------------------------------------
 
-BattleForAzeroth.options = {
+Core.options = {
     type = "group",
     name = nil, -- populated in core.lua
     childGroups = "tab",
-    get = function(info) return BattleForAzeroth:GetOpt(info.arg) end,
-    set = function(info, v) BattleForAzeroth:SetOpt(info.arg, v) end,
+    get = function(info) return Core:GetOpt(info.arg) end,
+    set = function(info, v) Core:SetOpt(info.arg, v) end,
     args = {
         GeneralTab = {
             type = "group",
@@ -821,8 +821,8 @@ BattleForAzeroth.options = {
                     name = L["options_show_worldmap_button"],
                     desc = L["options_show_worldmap_button_desc"],
                     set = function(info, v)
-                        BattleForAzeroth:SetOpt(info.arg, v)
-                        BattleForAzeroth.world_map_button:Refresh()
+                        Core:SetOpt(info.arg, v)
+                        Core.world_map_button:Refresh()
                     end,
                     order = 2,
                     width = "full",
@@ -880,6 +880,14 @@ BattleForAzeroth.options = {
                     order = 11,
                     width = "full",
                 },
+                show_all_transmog_rewards = {
+                    type = "toggle",
+                    arg = "show_all_transmog_rewards",
+                    name = L["options_all_transmog_rewards"],
+                    desc = L["options_all_transmog_rewards_desc"],
+                    order = 12,
+                    width = "full",
+                },
                 VisibilityHeader = {
                     type = "header",
                     name = L["options_visibility_settings"],
@@ -924,8 +932,8 @@ BattleForAzeroth.options = {
                     order = 25,
                     width = "full",
                     func = function ()
-                        wipe(BattleForAzeroth.addon.db.char)
-                        BattleForAzeroth.addon:Refresh()
+                        wipe(Core.addon.db.char)
+                        Core.addon:Refresh()
                     end
                 },
                 FocusHeader = {
@@ -947,8 +955,8 @@ BattleForAzeroth.options = {
                     name = L["options_poi_color"],
                     desc = L["options_poi_color_desc"],
                     hasAlpha = true,
-                    set = function(_, ...) BattleForAzeroth:SetColorOpt('poi_color', ...) end,
-                    get = function() return BattleForAzeroth:GetColorOpt('poi_color') end,
+                    set = function(_, ...) Core:SetColorOpt('poi_color', ...) end,
+                    get = function() return Core:GetColorOpt('poi_color') end,
                     order = 32,
                 },
                 PATH_color = {
@@ -956,8 +964,8 @@ BattleForAzeroth.options = {
                     name = L["options_path_color"],
                     desc = L["options_path_color_desc"],
                     hasAlpha = true,
-                    set = function(_, ...) BattleForAzeroth:SetColorOpt('path_color', ...) end,
-                    get = function() return BattleForAzeroth:GetColorOpt('path_color') end,
+                    set = function(_, ...) Core:SetColorOpt('path_color', ...) end,
+                    get = function() return Core:GetColorOpt('path_color') end,
                     order = 33,
                 },
                 restore_poi_colors = {
@@ -967,9 +975,9 @@ BattleForAzeroth.options = {
                     order = 34,
                     width = "full",
                     func = function ()
-                        local df = BattleForAzeroth.optionDefaults.profile
-                        BattleForAzeroth:SetColorOpt('poi_color', df.poi_color_R, df.poi_color_G, df.poi_color_B, df.poi_color_A)
-                        BattleForAzeroth:SetColorOpt('path_color', df.path_color_R, df.path_color_G, df.path_color_B, df.path_color_A)
+                        local df = Core.optionDefaults.profile
+                        Core:SetColorOpt('poi_color', df.poi_color_R, df.poi_color_G, df.poi_color_B, df.poi_color_A)
+                        Core:SetColorOpt('path_color', df.path_color_R, df.path_color_G, df.path_color_B, df.path_color_A)
                     end
                 },
                 TooltipsHeader = {
@@ -997,7 +1005,7 @@ BattleForAzeroth.options = {
             type = "group",
             name = L["options_global"],
             desc = L["options_global_description"],
-            disabled = function () return BattleForAzeroth:GetOpt('per_map_settings') end,
+            disabled = function () return Core:GetOpt('per_map_settings') end,
             order = 1,
             args = {}
         },
@@ -1015,20 +1023,20 @@ BattleForAzeroth.options = {
 -- Display these groups in the global settings tab. They are the most common
 -- group options that players might want to customize.
 
-function BattleForAzeroth.CreateGlobalGroupOptions()
+function Core.CreateGlobalGroupOptions()
     for i, group in ipairs({
-        BattleForAzeroth.groups.RARE,
-        BattleForAzeroth.groups.TREASURE,
-        BattleForAzeroth.groups.PETBATTLE,
-        BattleForAzeroth.groups.MISC
+        Core.groups.RARE,
+        Core.groups.TREASURE,
+        Core.groups.PETBATTLE,
+        Core.groups.MISC
     }) do
-        BattleForAzeroth.options.args.GlobalTab.args['group_icon_'..group.name] = {
+        Core.options.args.GlobalTab.args['group_icon_'..group.name] = {
             type = "header",
-            name = function () return BattleForAzeroth.RenderLinks(group.label, true) end,
+            name = function () return Core.RenderLinks(group.label, true) end,
             order = i * 10,
         }
 
-        BattleForAzeroth.options.args.GlobalTab.args['icon_scale_'..group.name] = {
+        Core.options.args.GlobalTab.args['icon_scale_'..group.name] = {
             type = "range",
             name = L["options_scale"],
             desc = L["options_scale_desc"],
@@ -1038,7 +1046,7 @@ function BattleForAzeroth.CreateGlobalGroupOptions()
             order = i * 10 + 1,
         }
 
-        BattleForAzeroth.options.args.GlobalTab.args['icon_alpha_'..group.name] = {
+        Core.options.args.GlobalTab.args['icon_alpha_'..group.name] = {
             type = "range",
             name = L["options_opacity"],
             desc = L["options_opacity_desc"],
@@ -1056,7 +1064,7 @@ end
 
 local _INITIALIZED = {}
 
-function BattleForAzeroth.CreateGroupOptions (map, group)
+function Core.CreateGroupOptions (map, group)
     -- Check if we've already initialized this group
     if _INITIALIZED[group.name..map.id] then return end
     _INITIALIZED[group.name..map.id] = true
@@ -1066,7 +1074,7 @@ function BattleForAzeroth.CreateGroupOptions (map, group)
     if not map_info then return end
 
     -- Create map options group under zones tab
-    local options = BattleForAzeroth.options.args.ZonesTab.args['Zone_'..map.id]
+    local options = Core.options.args.ZonesTab.args['Zone_'..map.id]
     if not options then
         options = {
             type = "group",
@@ -1102,7 +1110,7 @@ function BattleForAzeroth.CreateGroupOptions (map, group)
                 }
             }
         }
-        BattleForAzeroth.options.args.ZonesTab.args['Zone_'..map.id] = options
+        Core.options.args.ZonesTab.args['Zone_'..map.id] = options
     end
 
     map._icons_order = map._icons_order or 0
@@ -1112,8 +1120,8 @@ function BattleForAzeroth.CreateGroupOptions (map, group)
         type = "toggle",
         get = function () return group:GetDisplay(map.id) end,
         set = function (info, v) group:SetDisplay(v, map.id) end,
-        name = function () return BattleForAzeroth.RenderLinks(group.label, true) end,
-        desc = function () return BattleForAzeroth.RenderLinks(group.desc) end,
+        name = function () return Core.RenderLinks(group.label, true) end,
+        desc = function () return Core.RenderLinks(group.desc) end,
         disabled = function () return not group:IsEnabled() end,
         width = 0.9,
         order = map._icons_order
@@ -1121,7 +1129,7 @@ function BattleForAzeroth.CreateGroupOptions (map, group)
 
     options.args.VisibilityGroup.args["header_"..group.name] = {
         type = "header",
-        name = function () return BattleForAzeroth.RenderLinks(group.label, true) end,
+        name = function () return Core.RenderLinks(group.label, true) end,
         order = map._visibility_order
     }
 
@@ -1175,32 +1183,32 @@ To enable all development settings and functionality:
 -- Register all addons objects for the CTRL+ALT handler
 local plugins = "HandyNotes_ZarPlugins"
 if _G[plugins] == nil then _G[plugins] = {} end
-_G[plugins][#_G[plugins] + 1] = BattleForAzeroth
+_G[plugins][#_G[plugins] + 1] = Core
 
 local function BootstrapDevelopmentEnvironment()
     _G['HandyNotes_ZarPluginsDevelopment'] = true
 
     -- Add development settings to the UI
-    BattleForAzeroth.options.args.GeneralTab.args.DevelopmentHeader = {
+    Core.options.args.GeneralTab.args.DevelopmentHeader = {
         type = "header",
         name = L["options_dev_settings"],
         order = 100,
     }
-    BattleForAzeroth.options.args.GeneralTab.args.show_debug_map = {
+    Core.options.args.GeneralTab.args.show_debug_map = {
         type = "toggle",
         arg = "show_debug_map",
         name = L["options_toggle_show_debug_map"],
         desc = L["options_toggle_show_debug_map_desc"],
         order = 101,
     }
-    BattleForAzeroth.options.args.GeneralTab.args.show_debug_quest = {
+    Core.options.args.GeneralTab.args.show_debug_quest = {
         type = "toggle",
         arg = "show_debug_quest",
         name = L["options_toggle_show_debug_quest"],
         desc = L["options_toggle_show_debug_quest_desc"],
         order = 102,
     }
-    BattleForAzeroth.options.args.GeneralTab.args.force_nodes = {
+    Core.options.args.GeneralTab.args.force_nodes = {
         type = "toggle",
         arg = "force_nodes",
         name = L["options_toggle_force_nodes"],
@@ -1209,22 +1217,22 @@ local function BootstrapDevelopmentEnvironment()
     }
 
     -- Print debug messages for each quest ID that is flipped
-    local QTFrame = CreateFrame('Frame', "HandyNotes_BattleForAzerothQT")
-    local history = BattleForAzeroth.GetDatabaseTable('quest_id_history')
+    local QTFrame = CreateFrame('Frame', "HandyNotes_CoreQT")
+    local history = Core.GetDatabaseTable('quest_id_history')
     local lastCheck = GetTime()
     local quests = {}
     local changed = {}
     local max_quest_id = 100000
 
     local function DebugQuest(...)
-        if BattleForAzeroth:GetOpt('show_debug_quest') then BattleForAzeroth.Debug(...) end
+        if Core:GetOpt('show_debug_quest') then Core.Debug(...) end
     end
 
     C_Timer.After(2, function ()
         -- Give some time for quest info to load in before we start
         for id = 0, max_quest_id do quests[id] = C_QuestLog.IsQuestFlaggedCompleted(id) end
         QTFrame:SetScript('OnUpdate', function ()
-            if GetTime() - lastCheck > 1 and BattleForAzeroth:GetOpt('show_debug_quest') then
+            if GetTime() - lastCheck > 1 and Core:GetOpt('show_debug_quest') then
                 for id = 0, max_quest_id do
                     local s = C_QuestLog.IsQuestFlaggedCompleted(id)
                     if s ~= quests[id] then
@@ -1253,7 +1261,7 @@ local function BootstrapDevelopmentEnvironment()
     end)
 
     -- Listen for LCTRL + LALT when the map is open to force display nodes
-    local IQFrame = CreateFrame('Frame', "HandyNotes_BattleForAzerothIQ", WorldMapFrame)
+    local IQFrame = CreateFrame('Frame', "HandyNotes_CoreIQ", WorldMapFrame)
     local groupPins = WorldMapFrame.pinPools.GroupMembersPinTemplate
     IQFrame:SetPropagateKeyboardInput(true)
     IQFrame:SetScript('OnKeyDown', function (_, key)
@@ -1312,8 +1320,8 @@ end
 
 -- Debug function that prints entries from the quest id history
 
-_G['HandyNotes_BattleForAzerothQuestHistory'] = function (count)
-    local history = BattleForAzeroth.GetDatabaseTable('quest_id_history')
+_G['HandyNotes_CoreQuestHistory'] = function (count)
+    local history = Core.GetDatabaseTable('quest_id_history')
     if #history == 0 then return print('Quest ID history is empty') end
     for i = 1, (count or 10) do
         if i > #history then break end
@@ -1335,7 +1343,7 @@ end
 -- map. This is helpful for determining which template a pin is coming from.
 
 local hidden = {}
-_G['HandyNotes_BattleForAzerothRemovePins'] = function ()
+_G['HandyNotes_CoreRemovePins'] = function ()
     for k, v in pairs(WorldMapFrame.pinPools) do
         if not hidden[k] then
             hidden[k] = true
@@ -1348,24 +1356,24 @@ end
 
 -------------------------------------------------------------------------------
 
-function BattleForAzeroth.Debug(...)
-    if not BattleForAzeroth.addon.db then return end
-    if BattleForAzeroth:GetOpt('development') then print(BattleForAzeroth.color.Blue('DEBUG:'), ...) end
+function Core.Debug(...)
+    if not Core.addon.db then return end
+    if Core:GetOpt('development') then print(Core.color.Blue('DEBUG:'), ...) end
 end
 
-function BattleForAzeroth.Warn(...)
-    if not BattleForAzeroth.addon.db then return end
-    if BattleForAzeroth:GetOpt('development') then print(BattleForAzeroth.color.Orange('WARN:'), ...) end
+function Core.Warn(...)
+    if not Core.addon.db then return end
+    if Core:GetOpt('development') then print(Core.color.Orange('WARN:'), ...) end
 end
 
-function BattleForAzeroth.Error(...)
-    if not BattleForAzeroth.addon.db then return end
-    if BattleForAzeroth:GetOpt('development') then print(BattleForAzeroth.color.Red('ERROR:'), ...) end
+function Core.Error(...)
+    if not Core.addon.db then return end
+    if Core:GetOpt('development') then print(Core.color.Red('ERROR:'), ...) end
 end
 
 -------------------------------------------------------------------------------
 
-_G['HandyNotes_BattleForAzerothScanQuestObjectives'] = function (start, end_)
+_G['HandyNotes_CoreScanQuestObjectives'] = function (start, end_)
     local function attemptObjectiveInfo (quest, index)
         local text, objectiveType, finished, fulfilled = GetQuestObjectiveInfo(quest, index, true)
         if text or objectiveType or finished or fulfilled then
@@ -1381,14 +1389,14 @@ _G['HandyNotes_BattleForAzerothScanQuestObjectives'] = function (start, end_)
 end
 
 -------------------------------------------------------------------------------
-BattleForAzeroth.BootstrapDevelopmentEnvironment = BootstrapDevelopmentEnvironment
+Core.BootstrapDevelopmentEnvironment = BootstrapDevelopmentEnvironment
 
 
 -------------------------------------------------------------------------------
 ---------------------------------- NAMESPACE ----------------------------------
 -------------------------------------------------------------------------------
 
-local Class = BattleForAzeroth.Class
+local Class = Core.Class
 
 local HBD = LibStub("HereBeDragons-2.0")
 local HBDPins = LibStub("HereBeDragons-Pins-2.0")
@@ -1430,12 +1438,12 @@ function Map:Initialize(attrs)
     })
 
     -- auto-register this map
-    if BattleForAzeroth.maps[self.id] then error('Map already registered: '..self.id) end
-    BattleForAzeroth.maps[self.id] = self
+    if Core.maps[self.id] then error('Map already registered: '..self.id) end
+    Core.maps[self.id] = self
 end
 
 function Map:AddNode(coord, node)
-    if not BattleForAzeroth.IsInstance(node, BattleForAzeroth.node.Node) then
+    if not Core.IsInstance(node, Core.node.Node) then
         error(format('All nodes must be instances of the Node() class: %d %s', coord, tostring(node)))
     end
 
@@ -1445,10 +1453,10 @@ function Map:AddNode(coord, node)
         fgroup[#fgroup + 1] = coord
     end
 
-    if node.group ~= BattleForAzeroth.groups.QUEST then
+    if node.group ~= Core.groups.QUEST then
         -- Initialize group defaults and UI controls for this map if the group does
         -- not inherit its settings and defaults from a parent map
-        if self.settings then BattleForAzeroth.CreateGroupOptions(self, node.group) end
+        if self.settings then Core.CreateGroupOptions(self, node.group) end
 
         -- Keep track of all groups associated with this map
         if not self.groups[node.group.name] then
@@ -1465,16 +1473,16 @@ function Map:AddNode(coord, node)
         local x, y = HandyNotes:getXY(coord)
         local wx, wy = HBD:GetWorldCoordinatesFromZone(x, y, self.id)
         if not (wx and wy) then
-            error(format('Missing map coords: (%d: %d) => (%d: ???)', self.id, coord, parent.id))
+            error(format('Missing world coords: (%d: %d) => ???', self.id, coord))
         end
         for i, parent in ipairs(node.parent) do
             -- Calculate parent zone coordinates and add node
             local px, py = HBD:GetZoneCoordinatesFromWorld(wx, wy, parent.id)
             if not (px and py) then
-                error(format('No parent coords for node: %d %s %d', coord, tostring(node), parent.id))
+                error(format('Missing map coords: (%d: %d) => (%d: ???)', self.id, coord, parent.id))
             end
-            local map = BattleForAzeroth.maps[parent.id] or Map({id=parent.id})
-            map.nodes[HandyNotes:getCoord(px, py)] = BattleForAzeroth.Clone(node, {pois=(parent.pois or false)})
+            local map = Core.maps[parent.id] or Map({id=parent.id})
+            map.nodes[HandyNotes:getCoord(px, py)] = Core.Clone(node, {pois=(parent.pois or false)})
         end
     end
 end
@@ -1505,16 +1513,16 @@ function Map:CanDisplay(node, coord, minimap)
     if not node.minimap and minimap then return false end
 
     -- Node may be faction restricted
-    if node.faction and node.faction ~= BattleForAzeroth.faction then return false end
+    if node.faction and node.faction ~= Core.faction then return false end
 
     return true
 end
 
 function Map:IsNodeEnabled(node, coord, minimap)
-    local db = BattleForAzeroth.addon.db
+    local db = Core.addon.db
 
     -- Check for dev force enable
-    if BattleForAzeroth:GetOpt('force_nodes') or BattleForAzeroth.dev_force then return true end
+    if Core:GetOpt('force_nodes') or Core.dev_force then return true end
 
     -- Check if we've been hidden by the user
     if db.char[self.id..'_coord_'..coord] then return false end
@@ -1557,12 +1565,12 @@ end
 ---------------------------- MINIMAP DATA PROVIDER ----------------------------
 -------------------------------------------------------------------------------
 
-local MinimapPinsKey = "HandyNotes_BattleForAzerothMinimapPins"
-local MinimapDataProvider = CreateFrame("Frame", "HandyNotes_BattleForAzerothMinimapDP")
-local MinimapPinTemplate = 'HandyNotes_BattleForAzerothMinimapPinTemplate'
+local MinimapPinsKey = "HandyNotes_CoreMinimapPins"
+local MinimapDataProvider = CreateFrame("Frame", "HandyNotes_CoreMinimapDP")
+local MinimapPinTemplate = 'HandyNotes_CoreMinimapPinTemplate'
 local MinimapPinMixin = {}
 
-_G['HandyNotes_BattleForAzerothMinimapPinMixin'] = MinimapPinMixin
+_G['HandyNotes_CoreMinimapPinMixin'] = MinimapPinMixin
 
 MinimapDataProvider.facing = GetPlayerFacing()
 MinimapDataProvider.pins = {}
@@ -1586,7 +1594,7 @@ function MinimapDataProvider:AcquirePin(template, ...)
     if pin then
         self.pool[pin] = nil -- remove it from the pool
     else
-        pin = CreateFrame("Button", "HandyNotes_BattleForAzerothPin"..(#self.pins + 1), Minimap, template)
+        pin = CreateFrame("Button", "HandyNotes_CorePin"..(#self.pins + 1), Minimap, template)
         pin.provider = self
         pin:OnLoad()
         pin:Hide()
@@ -1603,7 +1611,7 @@ function MinimapDataProvider:RefreshAllData()
     HBDPins:RemoveAllMinimapIcons(MinimapPinsKey)
     self:ReleaseAllPins()
 
-    local map = BattleForAzeroth.maps[HBD:GetPlayerZone()]
+    local map = Core.maps[HBD:GetPlayerZone()]
     if not map then return end
 
     for coord, node in pairs(map.nodes) do
@@ -1618,7 +1626,7 @@ function MinimapDataProvider:RefreshAllData()
             -- Render any POIs this icon has registered
             if node.pois and (node._focus or node._hover) then
                 for i, poi in ipairs(node.pois) do
-                    if not poi.quest or not C_QuestLog.IsQuestFlaggedCompleted(poi.quest) then
+                    if poi:IsEnabled() then
                         poi:Render(self, MinimapPinTemplate)
                     end
                 end
@@ -1675,11 +1683,11 @@ MinimapDataProvider:SetScript('OnUpdate', function ()
     end
 end)
 
-BattleForAzeroth.addon:RegisterEvent('MINIMAP_UPDATE_ZOOM', function (...)
+Core.addon:RegisterEvent('MINIMAP_UPDATE_ZOOM', function (...)
     MinimapDataProvider:RefreshAllData()
 end)
 
-BattleForAzeroth.addon:RegisterEvent('CVAR_UPDATE', function (_, varname)
+Core.addon:RegisterEvent('CVAR_UPDATE', function (_, varname)
     if varname == 'ROTATE_MINIMAP' then
         MinimapDataProvider:RefreshAllData()
     end
@@ -1690,10 +1698,10 @@ end)
 -------------------------------------------------------------------------------
 
 local WorldMapDataProvider = CreateFromMixins(MapCanvasDataProviderMixin)
-local WorldMapPinTemplate = 'HandyNotes_BattleForAzerothWorldMapPinTemplate'
+local WorldMapPinTemplate = 'HandyNotes_CoreWorldMapPinTemplate'
 local WorldMapPinMixin = CreateFromMixins(MapCanvasPinMixin)
 
-_G['HandyNotes_BattleForAzerothWorldMapPinMixin'] = WorldMapPinMixin
+_G['HandyNotes_CoreWorldMapPinMixin'] = WorldMapPinMixin
 
 function WorldMapDataProvider:RemoveAllData()
     if self:GetMap() then
@@ -1705,7 +1713,7 @@ function WorldMapDataProvider:RefreshAllData(fromOnShow)
     self:RemoveAllData()
 
     if not self:GetMap() then return end
-    local map = BattleForAzeroth.maps[self:GetMap():GetMapID()]
+    local map = Core.maps[self:GetMap():GetMapID()]
     if not map then return end
 
     for coord, node in pairs(map.nodes) do
@@ -1720,7 +1728,7 @@ function WorldMapDataProvider:RefreshAllData(fromOnShow)
             -- Render any POIs this icon has registered
             if node.pois and (node._focus or node._hover) then
                 for i, poi in ipairs(node.pois) do
-                    if not poi.quest or not C_QuestLog.IsQuestFlaggedCompleted(poi.quest) then
+                    if poi:IsEnabled() then
                         poi:Render(self:GetMap(), WorldMapPinTemplate)
                     end
                 end
@@ -1786,17 +1794,17 @@ end
 
 -------------------------------------------------------------------------------
 
-BattleForAzeroth.Map = Map
-BattleForAzeroth.MinimapDataProvider = MinimapDataProvider
-BattleForAzeroth.WorldMapDataProvider = WorldMapDataProvider
+Core.Map = Map
+Core.MinimapDataProvider = MinimapDataProvider
+Core.WorldMapDataProvider = WorldMapDataProvider
 
 
 -------------------------------------------------------------------------------
 ---------------------------------- NAMESPACE ----------------------------------
 -------------------------------------------------------------------------------
 
-local L = BattleForAzeroth.locale
-local Class = BattleForAzeroth.Class
+local L = Core.locale
+local Class = Core.Class
 
 -------------------------------------------------------------------------------
 ------------------------------------ GROUP ------------------------------------
@@ -1815,8 +1823,8 @@ function Group:Initialize(name, icon, attrs)
     self.desc = L["options_icons_"..name.."_desc"]
 
     -- Prepare any links in this group label/description
-    BattleForAzeroth.PrepareLinks(self.label)
-    BattleForAzeroth.PrepareLinks(self.desc)
+    Core.PrepareLinks(self.label)
+    Core.PrepareLinks(self.desc)
 
     if attrs then
         for k, v in pairs(attrs) do self[k] = v end
@@ -1843,27 +1851,26 @@ end
 
 -- Override to hide this group in the UI under certain circumstances
 function Group:IsEnabled()
-    if self.class and self.class ~= BattleForAzeroth.class then return false end
-    if self.faction and self.faction ~= BattleForAzeroth.faction then return false end
-    if self.display_option and not BattleForAzeroth:GetOpt(self.display_option) then return false end
+    if self.class and self.class ~= Core.class then return false end
+    if self.faction and self.faction ~= Core.faction then return false end
     return true
 end
 
 function Group:_GetOpt (option, default, mapID)
     local value
-    if BattleForAzeroth:GetOpt('per_map_settings') then
-        value = BattleForAzeroth:GetOpt(option..'_'..mapID)
+    if Core:GetOpt('per_map_settings') then
+        value = Core:GetOpt(option..'_'..mapID)
     else
-        value = BattleForAzeroth:GetOpt(option)
+        value = Core:GetOpt(option)
     end
     return (value == nil) and default or value
 end
 
 function Group:_SetOpt (option, value, mapID)
-    if BattleForAzeroth:GetOpt('per_map_settings') then
-        return BattleForAzeroth:SetOpt(option..'_'..mapID, value)
+    if Core:GetOpt('per_map_settings') then
+        return Core:SetOpt(option..'_'..mapID, value)
     end
-    return BattleForAzeroth:SetOpt(option, value)
+    return Core:SetOpt(option, value)
 end
 
 -- Get group settings
@@ -1878,17 +1885,17 @@ function Group:SetDisplay(v, mapID) self:_SetOpt(self.displayArg, v, mapID) end
 
 -------------------------------------------------------------------------------
 
-BattleForAzeroth.Group = Group
+Core.Group = Group
 
-BattleForAzeroth.GROUP_HIDDEN = {display=false}
-BattleForAzeroth.GROUP_HIDDEN75 = {alpha=0.75, display=false}
-BattleForAzeroth.GROUP_ALPHA75 = {alpha=0.75}
+Core.GROUP_HIDDEN = {display=false}
+Core.GROUP_HIDDEN75 = {alpha=0.75, display=false}
+Core.GROUP_ALPHA75 = {alpha=0.75}
 
-BattleForAzeroth.groups = {
+Core.groups = {
     PETBATTLE = Group('pet_battles', 'paw_y'),
     QUEST = Group('quests', 'quest_ay'),
-    RARE = Group('rares', 'skull_w', {defaults=BattleForAzeroth.GROUP_ALPHA75}),
-    TREASURE = Group('treasures', 'chest_gy', {defaults=BattleForAzeroth.GROUP_ALPHA75}),
+    RARE = Group('rares', 'skull_w', {defaults=Core.GROUP_ALPHA75}),
+    TREASURE = Group('treasures', 'chest_gy', {defaults=Core.GROUP_ALPHA75}),
     MISC = Group('misc', 454046),
 }
 
@@ -1896,7 +1903,7 @@ BattleForAzeroth.groups = {
 ---------------------------------- NAMESPACE ----------------------------------
 -------------------------------------------------------------------------------
 
-local Class = BattleForAzeroth.Class
+local Class = Core.Class
 
 -------------------------------------------------------------------------------
 --------------------------------- REQUIREMENT ---------------------------------
@@ -1965,7 +1972,7 @@ function Item:Initialize(id, count)
 end
 
 function Item:IsMet()
-    return BattleForAzeroth.PlayerHasItem(self.id, self.count)
+    return Core.PlayerHasItem(self.id, self.count)
 end
 
 -------------------------------------------------------------------------------
@@ -1999,7 +2006,7 @@ local WarMode = Class('WarMode', Requirement, {
 
 -------------------------------------------------------------------------------
 
-BattleForAzeroth.requirement = {
+Core.requirement = {
     Currency=Currency,
     GarrisonTalent=GarrisonTalent,
     Item=Item,
@@ -2013,11 +2020,11 @@ BattleForAzeroth.requirement = {
 ---------------------------------- NAMESPACE ----------------------------------
 -------------------------------------------------------------------------------
 
-local L = BattleForAzeroth.locale
-local Class = BattleForAzeroth.Class
-local Group = BattleForAzeroth.Group
-local IsInstance = BattleForAzeroth.IsInstance
-local Requirement = BattleForAzeroth.requirement.Requirement
+local L = Core.locale
+local Class = Core.Class
+local Group = Core.Group
+local IsInstance = Core.IsInstance
+local Requirement = Core.requirement.Requirement
 
 -------------------------------------------------------------------------------
 ------------------------------------ NODE -------------------------------------
@@ -2050,7 +2057,7 @@ local Node = Class('Node', nil, {
     alpha = 1,
     scale = 1,
     icon = "default",
-    group = BattleForAzeroth.groups.MISC
+    group = Core.groups.MISC
 })
 
 function Node:Initialize(attrs)
@@ -2060,10 +2067,10 @@ function Node:Initialize(attrs)
     end
 
     -- normalize table values
-    self.quest = BattleForAzeroth.AsTable(self.quest)
-    self.questDeps = BattleForAzeroth.AsTable(self.questDeps)
-    self.parent = BattleForAzeroth.AsIDTable(self.parent)
-    self.requires = BattleForAzeroth.AsTable(self.requires, Requirement)
+    self.quest = Core.AsTable(self.quest)
+    self.questDeps = Core.AsTable(self.questDeps)
+    self.parent = Core.AsIDTable(self.parent)
+    self.requires = Core.AsTable(self.requires, Requirement)
 
     -- ensure proper group is assigned
     if not IsInstance(self.group, Group) then
@@ -2077,11 +2084,11 @@ for this node.
 --]]
 
 function Node:GetDisplayInfo(mapID, minimap)
-    local icon = BattleForAzeroth.GetIconPath(self.icon)
+    local icon = Core.GetIconPath(self.icon)
     local scale = self.scale * self.group:GetScale(mapID)
     local alpha = self.alpha * self.group:GetAlpha(mapID)
 
-    if not minimap and WorldMapFrame.isMaximized and BattleForAzeroth:GetOpt('maximized_enlarged') then
+    if not minimap and WorldMapFrame.isMaximized and Core:GetOpt('maximized_enlarged') then
         scale = scale * 1.3 -- enlarge on maximized world map
     end
 
@@ -2155,7 +2162,7 @@ function Node:IsEnabled()
     if not self:PrerequisiteCompleted() then return false end
 
     -- Check completed state
-    if self.group == BattleForAzeroth.groups.QUEST or not BattleForAzeroth:GetOpt('show_completed_nodes') then
+    if self.group == Core.groups.QUEST or not Core:GetOpt('show_completed_nodes') then
         if self:IsCompleted() then return false end
     end
 
@@ -2202,29 +2209,29 @@ world map containing this node is opened.
 
 function Node:Prepare()
     -- verify chosen icon exists
-    if type(self.icon) == 'string' and BattleForAzeroth.icons[self.icon] == nil then
+    if type(self.icon) == 'string' and Core.icons[self.icon] == nil then
         error('unknown icon: '..self.icon)
     end
 
     -- initialize glow POI (if glow icon available)
 
     if not self.glow then
-        local icon = BattleForAzeroth.GetGlowPath(self.icon)
+        local icon = Core.GetGlowPath(self.icon)
         if icon then
-            self.glow = BattleForAzeroth.poi.Glow({ icon=icon })
+            self.glow = Core.poi.Glow({ icon=icon })
         end
     end
 
-    BattleForAzeroth.PrepareLinks(self.label)
-    BattleForAzeroth.PrepareLinks(self.sublabel)
-    BattleForAzeroth.PrepareLinks(self.note)
+    Core.PrepareLinks(self.label)
+    Core.PrepareLinks(self.sublabel)
+    Core.PrepareLinks(self.note)
 
     if self.requires then
         for i, req in ipairs(self.requires) do
             if IsInstance(req, Requirement) then
-                BattleForAzeroth.PrepareLinks(req:GetText())
+                Core.PrepareLinks(req:GetText())
             else
-                BattleForAzeroth.PrepareLinks(req)
+                Core.PrepareLinks(req)
             end
         end
     end
@@ -2244,7 +2251,7 @@ on the attributes set on this specific node, such as setting an `rlabel` or
 
 function Node:Render(tooltip, focusable)
     -- render the label text with NPC names resolved
-    tooltip:SetText(BattleForAzeroth.RenderLinks(self.label, true))
+    tooltip:SetText(Core.RenderLinks(self.label, true))
 
     local color, text
     local rlabel = self.rlabel or ''
@@ -2257,17 +2264,17 @@ function Node:Render(tooltip, focusable)
                 count = count + 1
             end
         end
-        color = (count == #self.quest) and BattleForAzeroth.status.Green or BattleForAzeroth.status.Gray
+        color = (count == #self.quest) and Core.status.Green or Core.status.Gray
         rlabel = rlabel..' '..color(tostring(count)..'/'..#self.quest)
     end
 
     if self.faction then
-        rlabel = rlabel..' '..BattleForAzeroth.GetIconLink(self.faction:lower(), 16, 1, -1)
+        rlabel = rlabel..' '..Core.GetIconLink(self.faction:lower(), 16, 1, -1)
     end
 
     if focusable then
         -- add an rlabel hint to use left-mouse to focus the node
-        local focus = BattleForAzeroth.GetIconLink('left_mouse', 12)..BattleForAzeroth.status.Gray(L["focus"])
+        local focus = Core.GetIconLink('left_mouse', 12)..Core.status.Gray(L["focus"])
         rlabel = (#rlabel > 0) and focus..' '..rlabel or focus
     end
 
@@ -2281,38 +2288,38 @@ function Node:Render(tooltip, focusable)
 
     -- optional text directly under label
     if self.sublabel then
-        tooltip:AddLine(BattleForAzeroth.RenderLinks(self.sublabel, true), 1, 1, 1)
+        tooltip:AddLine(Core.RenderLinks(self.sublabel, true), 1, 1, 1)
     end
 
     -- display item, spell or other requirements
     if self.requires then
         for i, req in ipairs(self.requires) do
             if IsInstance(req, Requirement) then
-                color = req:IsMet() and BattleForAzeroth.color.White or BattleForAzeroth.color.Red
+                color = req:IsMet() and Core.color.White or Core.color.Red
                 text = color(L["Requires"]..' '..req:GetText())
             else
-                text = BattleForAzeroth.color.Red(L["Requires"]..' '..req)
+                text = Core.color.Red(L["Requires"]..' '..req)
             end
-            tooltip:AddLine(BattleForAzeroth.RenderLinks(text, true))
+            tooltip:AddLine(Core.RenderLinks(text, true))
         end
     end
 
     -- additional text for the node to describe how to interact with the
     -- object or summon the rare
-    if self.note and BattleForAzeroth:GetOpt('show_notes') then
+    if self.note and Core:GetOpt('show_notes') then
         if self.requires or self.sublabel then tooltip:AddLine(" ") end
-        tooltip:AddLine(BattleForAzeroth.RenderLinks(self.note), 1, 1, 1, true)
+        tooltip:AddLine(Core.RenderLinks(self.note), 1, 1, 1, true)
     end
 
     -- all rewards (achievements, pets, mounts, toys, quests) that can be
     -- collected or completed from this node
-    if self.rewards and BattleForAzeroth:GetOpt('show_loot') then
+    if self.rewards and Core:GetOpt('show_loot') then
         local firstAchieve, firstOther = true, true
         for reward in self:IterateRewards() do
 
             -- Add a blank line between achievements and other rewards
-            local isAchieve = IsInstance(reward, BattleForAzeroth.reward.Achievement)
-            local isSpacer = IsInstance(reward, BattleForAzeroth.reward.Spacer)
+            local isAchieve = IsInstance(reward, Core.reward.Achievement)
+            local isSpacer = IsInstance(reward, Core.reward.Spacer)
             if isAchieve and firstAchieve then
                 tooltip:AddLine(" ")
                 firstAchieve = false
@@ -2336,7 +2343,7 @@ function Collectible.getters:label()
     if self.id then return ("{npc:%d}"):format(self.id) end
     if self.item then return ("{item:%d}"):format(self.item) end
     for reward in self:IterateRewards() do
-        if IsInstance(reward, BattleForAzeroth.reward.Achievement) then
+        if IsInstance(reward, Core.reward.Achievement) then
             return GetAchievementCriteriaInfoByID(reward.id, reward.criteria[1].id) or UNKNOWN
         end
     end
@@ -2355,7 +2362,7 @@ end
 local Intro = Class('Intro', Node, {
     icon = 'quest_ay',
     scale = 3,
-    group = BattleForAzeroth.groups.QUEST,
+    group = Core.groups.QUEST,
     minimap = false
 })
 
@@ -2395,7 +2402,7 @@ end
 local PetBattle = Class('PetBattle', NPC, {
     icon = 'paw_y',
     scale = 1.2,
-    group = BattleForAzeroth.groups.PETBATTLE
+    group = Core.groups.PETBATTLE
 })
 
 -------------------------------------------------------------------------------
@@ -2404,7 +2411,7 @@ local PetBattle = Class('PetBattle', NPC, {
 
 local Quest = Class('Quest', Node, {
     note = AVAILABLE_QUEST,
-    group = BattleForAzeroth.groups.QUEST
+    group = Core.groups.QUEST
 })
 
 function Quest:Initialize(attrs)
@@ -2426,7 +2433,7 @@ end
 
 local Rare = Class('Rare', NPC, {
     scale = 1.2,
-    group = BattleForAzeroth.groups.RARE
+    group = Core.groups.RARE
 })
 
 function Rare.getters:icon()
@@ -2434,7 +2441,7 @@ function Rare.getters:icon()
 end
 
 function Rare:IsEnabled()
-    if BattleForAzeroth:GetOpt('hide_done_rares') and self:IsCollected() then return false end
+    if Core:GetOpt('hide_done_rares') and self:IsCollected() then return false end
     return NPC.IsEnabled(self)
 end
 
@@ -2458,12 +2465,12 @@ end
 local Treasure = Class('Treasure', Node, {
     icon = 'chest_gy',
     scale = 1.3,
-    group = BattleForAzeroth.groups.TREASURE
+    group = Core.groups.TREASURE
 })
 
 function Treasure.getters:label()
     for reward in self:IterateRewards() do
-        if IsInstance(reward, BattleForAzeroth.reward.Achievement) then
+        if IsInstance(reward, Core.reward.Achievement) then
             return GetAchievementCriteriaInfoByID(reward.id, reward.criteria[1].id) or UNKNOWN
         end
     end
@@ -2485,7 +2492,7 @@ end
 
 -------------------------------------------------------------------------------
 
-BattleForAzeroth.node = {
+Core.node = {
     Node=Node,
     Collectible=Collectible,
     Intro=Intro,
@@ -2502,12 +2509,12 @@ BattleForAzeroth.node = {
 -------------------------------------------------------------------------------
 
 
-local Class = BattleForAzeroth.Class
-local L = BattleForAzeroth.locale
+local Class = Core.Class
+local L = Core.locale
 
-local Green = BattleForAzeroth.status.Green
-local Orange = BattleForAzeroth.status.Orange
-local Red = BattleForAzeroth.status.Red
+local Green = Core.status.Green
+local Orange = Core.status.Orange
+local Red = Core.status.Red
 
 -------------------------------------------------------------------------------
 
@@ -2530,8 +2537,9 @@ function Reward:Initialize(attrs)
 end
 
 function Reward:IsEnabled()
-    if self.class and self.class ~= BattleForAzeroth.class then return false end
-    if self.faction and self.faction ~= BattleForAzeroth.faction then return false end
+    if self.class and self.class ~= Core.class then return false end
+    if self.faction and self.faction ~= Core.faction then return false end
+    if self.display_option and not Core:GetOpt(self.display_option) then return false end
     return true
 end
 
@@ -2591,11 +2599,11 @@ end
 function Section:IsEnabled() return true end
 
 function Section:Prepare()
-    BattleForAzeroth.PrepareLinks(self.title)
+    Core.PrepareLinks(self.title)
 end
 
 function Section:Render(tooltip)
-    tooltip:AddLine(BattleForAzeroth.RenderLinks(self.title, true)..':')
+    tooltip:AddLine(Core.RenderLinks(self.title, true)..':')
 end
 
 -------------------------------------------------------------------------------
@@ -2614,8 +2622,6 @@ end
 --------------------------------- ACHIEVEMENT ---------------------------------
 -------------------------------------------------------------------------------
 
--- /run print(GetAchievementCriteriaInfo(ID, NUM))
-
 local Achievement = Class('Achievement', Reward)
 local GetCriteriaInfo = function (id, criteria)
     local results = {GetAchievementCriteriaInfoByID(id, criteria)}
@@ -2623,7 +2629,7 @@ local GetCriteriaInfo = function (id, criteria)
         if criteria <= GetAchievementNumCriteria(id) then
             results = {GetAchievementCriteriaInfo(id, criteria)}
         else
-            BattleForAzeroth.Error('unknown achievement criteria ('..id..', '..criteria..')')
+            Core.Error('unknown achievement criteria ('..id..', '..criteria..')')
             return UNKNOWN
         end
     end
@@ -2632,12 +2638,12 @@ end
 
 function Achievement:Initialize(attrs)
     Reward.Initialize(self, attrs)
-    self.criteria = BattleForAzeroth.AsIDTable(self.criteria)
+    self.criteria = Core.AsIDTable(self.criteria)
 end
 
 function Achievement:IsObtained()
     local _,_,_,completed,_,_,_,_,_,_,_,_,earnedByMe = GetAchievementInfo(self.id)
-    completed = completed and (not BattleForAzeroth:GetOpt('use_char_achieves') or earnedByMe)
+    completed = completed and (not Core:GetOpt('use_char_achieves') or earnedByMe)
     if completed then return true end
     if self.criteria then
         for i, c in ipairs(self.criteria) do
@@ -2686,9 +2692,9 @@ function Achievement:GetLines()
         local note, status = c.note
         if c.quest then
             if C_QuestLog.IsQuestFlaggedCompleted(c.quest) then
-                status = BattleForAzeroth.status.Green(L['defeated'])
+                status = Core.status.Green(L['defeated'])
             else
-                status = BattleForAzeroth.status.Red(L['undefeated'])
+                status = Core.status.Red(L['undefeated'])
             end
             note = note and (note..'  '..status) or status
         end
@@ -2736,11 +2742,12 @@ function Item:Initialize(attrs)
 end
 
 function Item:Prepare()
-    BattleForAzeroth.PrepareLinks(self.note)
+    Core.PrepareLinks(self.note)
 end
 
 function Item:IsObtained()
     if self.quest then return C_QuestLog.IsQuestFlaggedCompleted(self.quest) end
+    if self.bag then return Core.PlayerHasItem(self.item) end
     return true
 end
 
@@ -2750,13 +2757,18 @@ function Item:GetText()
         text = text..' ('..self.type..')'
     end
     if self.note then -- additional info
-        text = text..' ('..BattleForAzeroth.RenderLinks(self.note, true)..')'
+        text = text..' ('..Core.RenderLinks(self.note, true)..')'
     end
     return Icon(self.itemIcon)..text
 end
 
 function Item:GetStatus()
-    if self.quest then
+    if self.bag then
+        local collected = Core.PlayerHasItem(self.item)
+        return collected and Green(L['completed']) or Red(L['incomplete'])
+    elseif self.status then
+        return format('(%s)', self.status)
+    elseif self.quest then
         local completed = C_QuestLog.IsQuestFlaggedCompleted(self.quest)
         return completed and Green(L['completed']) or Red(L['incomplete'])
     elseif self.weekly then
@@ -2835,7 +2847,7 @@ end
 
 function Quest:GetText()
     local name = C_QuestLog.GetTitleForQuestID(self.id[1])
-    return BattleForAzeroth.GetIconLink('quest_ay', 13)..' '..(name or UNKNOWN)
+    return Core.GetIconLink('quest_ay', 13)..' '..(name or UNKNOWN)
 end
 
 function Quest:GetStatus()
@@ -2898,40 +2910,75 @@ function Transmog:Initialize(attrs)
         self.type = self.slot -- backwards compat
     end
 end
+function Transmog:Prepare()
+    Item.Prepare(self)
+    local sourceID = select(2, CTC.GetItemInfo(self.item))
+    if sourceID then CTC.PlayerCanCollectSource(sourceID) end
+    GetItemSpecInfo(self.item)
+    CTC.PlayerHasTransmog(self.item)
+end
 
-function Transmog:IsObtained()
-    -- Check if the player knows the appearance
+function Transmog:IsEnabled()
+    if not Item.IsEnabled(self) then return false end
+    if Core:GetOpt('show_all_transmog_rewards') then return true end
+    if not (self:IsLearnable() and self:IsObtainable()) then return false end
+    return true
+end
+
+function Transmog:IsKnown()
     if CTC.PlayerHasTransmog(self.item) then return true end
+    local appearanceID, sourceID = CTC.GetItemInfo(self.item)
+    if sourceID and CTC.PlayerHasTransmogItemModifiedAppearance(sourceID) then return true end
+    if appearanceID then
+        local sources = CTC.GetAppearanceSources(appearanceID)
+        if sources then
+            for i, source in pairs(sources) do
+                if source.isCollected then return true end
+            end
+        end
+    end
+    return false
+end
 
-    -- Verify the item drops for any of the players specs
-    local specs = GetItemSpecInfo(self.item)
-    if type(specs) == 'table' and #specs == 0 then return true end
-
-    -- Verify the player can learn the item's appearance
+function Transmog:IsLearnable()
     local sourceID = select(2, CTC.GetItemInfo(self.item))
     if sourceID then
         local infoReady, canCollect = CTC.PlayerCanCollectSource(sourceID)
-        if infoReady and not canCollect then return true end
+        if infoReady and not canCollect then return false end
     end
+    return true
+end
 
+function Transmog:IsObtainable()
+    if not Item.IsObtainable(self) then return false end
+    -- Cosmetic cloaks do not behave well with the GetItemSpecInfo() function.
+    -- They return an empty table even though you can get the item to drop.
+    local _, _, _, ilvl, _, _, _, _, equipLoc = GetItemInfo(self.item)
+    if not (ilvl == 1 and equipLoc == 'INVTYPE_CLOAK' and self.slot == L["cosmetic"]) then
+        -- Verify the item drops for any of the players specs
+        local specs = GetItemSpecInfo(self.item)
+        if type(specs) == 'table' and #specs == 0 then return false end
+    end
+    return true
+end
+
+function Transmog:IsObtained()
+    -- Check if the player knows the appearance
+    if self:IsKnown() then return true end
+    -- Verify the player can obtain and learn the item's appearance
+    if not (self:IsObtainable() and self:IsLearnable()) then return true end
     return false
 end
 
 function Transmog:GetStatus()
-    local collected = CTC.PlayerHasTransmog(self.item)
+    local collected = self:IsKnown()
     local status = collected and Green(L["known"]) or Red(L["missing"])
 
     if not collected then
-        -- check if we can't learn this item
-        local sourceID = select(2, CTC.GetItemInfo(self.item))
-        if not (sourceID and select(2, CTC.PlayerCanCollectSource(sourceID))) then
+        if not self:IsLearnable() then
             status = Orange(L["unlearnable"])
-        else
-            -- check if the item doesn't drop
-            local specs = GetItemSpecInfo(self.item)
-            if type(specs) == 'table' and #specs == 0 then
-                status = Orange(L["unobtainable"])
-            end
+        elseif not self:IsObtainable() then
+            status = Orange(L["unobtainable"])
         end
     end
 
@@ -2940,7 +2987,7 @@ end
 
 -------------------------------------------------------------------------------
 
-BattleForAzeroth.reward = {
+Core.reward = {
     Reward=Reward,
     Section=Section,
     Spacer=Spacer,
@@ -2987,7 +3034,7 @@ end
 -------------------------------------------------------------------------------
 
 local WorldMapOptionsButtonMixin = {}
-_G["HandyNotes_BattleForAzerothWorldMapOptionsButtonMixin"] = WorldMapOptionsButtonMixin
+_G["HandyNotes_CoreWorldMapOptionsButtonMixin"] = WorldMapOptionsButtonMixin
 
 function WorldMapOptionsButtonMixin:OnLoad()
     UIDropDownMenu_SetInitializeFunction(self.DropDown, function (dropdown, level)
@@ -2995,12 +3042,12 @@ function WorldMapOptionsButtonMixin:OnLoad()
     end)
     UIDropDownMenu_SetDisplayMode(self.DropDown, "MENU")
 
-    self.GroupDesc = CreateFrame('Frame', 'HandyNotes_BattleForAzerothGroupMenuSliderOption',
-        nil, 'HandyNotes_BattleForAzerothTextMenuOptionTemplate')
-    self.AlphaOption = CreateFrame('Frame', 'HandyNotes_BattleForAzerothAlphaMenuSliderOption',
-        nil, 'HandyNotes_BattleForAzerothSliderMenuOptionTemplate')
-    self.ScaleOption = CreateFrame('Frame', 'HandyNotes_BattleForAzerothScaleMenuSliderOption',
-        nil, 'HandyNotes_BattleForAzerothSliderMenuOptionTemplate')
+    self.GroupDesc = CreateFrame('Frame', 'HandyNotes_CoreGroupMenuSliderOption',
+        nil, 'HandyNotes_CoreTextMenuOptionTemplate')
+    self.AlphaOption = CreateFrame('Frame', 'HandyNotes_CoreAlphaMenuSliderOption',
+        nil, 'HandyNotes_CoreSliderMenuOptionTemplate')
+    self.ScaleOption = CreateFrame('Frame', 'HandyNotes_CoreScaleMenuSliderOption',
+        nil, 'HandyNotes_CoreSliderMenuOptionTemplate')
 end
 
 function WorldMapOptionsButtonMixin:OnMouseDown(button)
@@ -3017,19 +3064,19 @@ end
 
 function WorldMapOptionsButtonMixin:OnEnter()
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-    GameTooltip_SetTitle(GameTooltip, BattleForAzeroth.plugin_name)
+    GameTooltip_SetTitle(GameTooltip, Core.plugin_name)
     GameTooltip_AddNormalLine(GameTooltip, L["map_button_text"])
     GameTooltip:Show()
 end
 
 function WorldMapOptionsButtonMixin:Refresh()
-    local enabled = BattleForAzeroth:GetOpt('show_worldmap_button')
-    local map = BattleForAzeroth.maps[self:GetParent():GetMapID() or 0]
+    local enabled = Core:GetOpt('show_worldmap_button')
+    local map = Core.maps[self:GetParent():GetMapID() or 0]
     if enabled and map and map:HasEnabledGroups() then self:Show() else self:Hide() end
 end
 
 function WorldMapOptionsButtonMixin:InitializeDropDown(level)
-    local map, icon, iconLink = BattleForAzeroth.maps[self:GetParent():GetMapID()]
+    local map, icon, iconLink = Core.maps[self:GetParent():GetMapID()]
 
     if level == 1 then
         UIDropDownMenu_AddButton({
@@ -3052,13 +3099,13 @@ function WorldMapOptionsButtonMixin:InitializeDropDown(level)
                 end
 
                 if type(icon) == 'number' then
-                    iconLink = BattleForAzeroth.GetIconLink(icon, 12, 1, 0)..' '
+                    iconLink = Core.GetIconLink(icon, 12, 1, 0)..' '
                 else
-                    iconLink = BattleForAzeroth.GetIconLink(icon, 16)
+                    iconLink = Core.GetIconLink(icon, 16)
                 end
 
                 UIDropDownMenu_AddButton({
-                    text = iconLink..' '..BattleForAzeroth.RenderLinks(group.label, true),
+                    text = iconLink..' '..Core.RenderLinks(group.label, true),
                     isNotRadio = true,
                     keepShownOnClick = true,
                     hasArrow = true,
@@ -3085,27 +3132,27 @@ function WorldMapOptionsButtonMixin:InitializeDropDown(level)
             text = L["options_show_completed_nodes"],
             isNotRadio = true,
             keepShownOnClick = true,
-            checked = BattleForAzeroth:GetOpt('show_completed_nodes'),
+            checked = Core:GetOpt('show_completed_nodes'),
             func = function (button, option)
-                BattleForAzeroth:SetOpt('show_completed_nodes', button.checked)
+                Core:SetOpt('show_completed_nodes', button.checked)
             end
         })
         UIDropDownMenu_AddButton({
             text = L["options_toggle_hide_done_rare"],
             isNotRadio = true,
             keepShownOnClick = true,
-            checked = BattleForAzeroth:GetOpt('hide_done_rares'),
+            checked = Core:GetOpt('hide_done_rares'),
             func = function (button, option)
-                BattleForAzeroth:SetOpt('hide_done_rares', button.checked)
+                Core:SetOpt('hide_done_rares', button.checked)
             end
         })
         UIDropDownMenu_AddButton({
             text = L["options_toggle_use_char_achieves"],
             isNotRadio = true,
             keepShownOnClick = true,
-            checked = BattleForAzeroth:GetOpt('use_char_achieves'),
+            checked = Core:GetOpt('use_char_achieves'),
             func = function (button, option)
-                BattleForAzeroth:SetOpt('use_char_achieves', button.checked)
+                Core:SetOpt('use_char_achieves', button.checked)
             end
         })
 
@@ -3119,7 +3166,7 @@ function WorldMapOptionsButtonMixin:InitializeDropDown(level)
                 InterfaceOptionsFrame_Show()
                 InterfaceOptionsFrame_OpenToCategory('HandyNotes')
                 LibStub('AceConfigDialog-3.0'):SelectGroup(
-                    'HandyNotes', 'plugins', ADDON_NAME, 'ZonesTab', 'Zone_'..map.id
+                    'HandyNotes', 'plugins', 'HandyNotes', 'ZonesTab', 'Zone_'..map.id
                 )
             end
         })
@@ -3130,9 +3177,9 @@ function WorldMapOptionsButtonMixin:InitializeDropDown(level)
                     text = L["options_"..type.."_rewards"],
                     isNotRadio = true,
                     keepShownOnClick = true,
-                    checked = BattleForAzeroth:GetOpt('show_'..type..'_rewards'),
+                    checked = Core:GetOpt('show_'..type..'_rewards'),
                     func = function (button, option)
-                        BattleForAzeroth:SetOpt('show_'..type..'_rewards', button.checked)
+                        Core:SetOpt('show_'..type..'_rewards', button.checked)
                     end
                 }, 2)
             end
@@ -3140,7 +3187,7 @@ function WorldMapOptionsButtonMixin:InitializeDropDown(level)
             -- Get correct map ID to query/set options for
             local group = UIDROPDOWNMENU_MENU_VALUE
 
-            self.GroupDesc.Text:SetText(BattleForAzeroth.RenderLinks(group.desc))
+            self.GroupDesc.Text:SetText(Core.RenderLinks(group.desc))
             UIDropDownMenu_AddButton({ customFrame = self.GroupDesc }, 2)
             UIDropDownMenu_AddButton({
                 notClickable = true,
@@ -3171,7 +3218,7 @@ end
 ---------------------------------- NAMESPACE ----------------------------------
 -------------------------------------------------------------------------------
 
-local Class = BattleForAzeroth.Class
+local Class = Core.Class
 local HBD = LibStub('HereBeDragons-2.0')
 
 local ARROW = "Interface\\AddOns\\HandyNotes\\Icons\\Artwork\\arrow"
@@ -3201,6 +3248,37 @@ local POI = Class('POI')
 
 function POI:Initialize(attrs)
     for k, v in pairs(attrs) do self[k] = v end
+
+    -- normalize table values
+    self.quest = Core.AsTable(self.quest)
+    self.questDeps = Core.AsTable(self.questDeps)
+end
+
+function POI:IsCompleted()
+    if self.quest and self.questAny then
+        -- Completed if *any* attached quest ids are true
+        for i, quest in ipairs(self.quest) do
+            if C_QuestLog.IsQuestFlaggedCompleted(quest) then return true end
+        end
+    elseif self.quest then
+        -- Completed only if *all* attached quest ids are true
+        for i, quest in ipairs(self.quest) do
+            if not C_QuestLog.IsQuestFlaggedCompleted(quest) then return false end
+        end
+        return true
+    end
+    return false
+end
+
+function POI:IsEnabled()
+    -- Not enabled if any dependent quest ids are false
+    if self.questDeps then
+        for i, quest in ipairs(self.questDeps) do
+            if not C_QuestLog.IsQuestFlaggedCompleted(quest) then return false end
+        end
+    end
+
+    return not self:IsCompleted()
 end
 
 function POI:Render(map, template)
@@ -3213,8 +3291,8 @@ end
 function POI:Draw(pin, xy)
     local t = ResetPin(pin)
     local size = (pin.minimap and 10 or (pin.parentHeight * 0.012))
-    size = size * BattleForAzeroth:GetOpt('poi_scale')
-    t:SetVertexColor(unpack({BattleForAzeroth:GetColorOpt('poi_color')}))
+    size = size * Core:GetOpt('poi_scale')
+    t:SetVertexColor(unpack({Core:GetColorOpt('poi_color')}))
     t:SetTexture(CIRCLE)
     pin:SetSize(size, size)
     return HandyNotes:getXY(xy)
@@ -3273,7 +3351,7 @@ end
 
 function Path:Draw(pin, type, xy1, xy2)
     local t = ResetPin(pin)
-    t:SetVertexColor(unpack({BattleForAzeroth:GetColorOpt('path_color')}))
+    t:SetVertexColor(unpack({Core:GetColorOpt('path_color')}))
     t:SetTexture(type)
 
     -- constant size for minimaps, variable size for world maps
@@ -3281,8 +3359,8 @@ function Path:Draw(pin, type, xy1, xy2)
     local line_width = pin.minimap and 60 or (pin.parentHeight * 0.05)
 
     -- apply user scaling
-    size = size * BattleForAzeroth:GetOpt('poi_scale')
-    line_width = line_width * BattleForAzeroth:GetOpt('poi_scale')
+    size = size * Core:GetOpt('poi_scale')
+    line_width = line_width * Core:GetOpt('poi_scale')
 
     if type == CIRCLE then
         pin:SetSize(size, size)
@@ -3375,8 +3453,8 @@ function Arrow:Draw(pin, type, xy1, xy2)
     -- constant size for minimaps, variable size for world maps
     local head_length = pin.minimap and 40 or (pin.parentHeight * 0.04)
     local head_width = pin.minimap and 15 or (pin.parentHeight * 0.015)
-    head_length = head_length * BattleForAzeroth:GetOpt('poi_scale')
-    head_width = head_width * BattleForAzeroth:GetOpt('poi_scale')
+    head_length = head_length * Core:GetOpt('poi_scale')
+    head_width = head_width * Core:GetOpt('poi_scale')
     pin:SetSize(head_width, head_length)
 
     local x1, y1 = HandyNotes:getXY(xy1)
@@ -3400,7 +3478,7 @@ end
 
 -------------------------------------------------------------------------------
 
-BattleForAzeroth.poi = {
+Core.poi = {
     POI=POI,
     Glow=Glow,
     Path=Path,
@@ -3413,57 +3491,57 @@ BattleForAzeroth.poi = {
 -------------------------------------------------------------------------------
 
 
-local Class = BattleForAzeroth.Class
-local Group = BattleForAzeroth.Group
-local Map = BattleForAzeroth.Map
+local Class = Core.Class
+local Group = Core.Group
+local Map = Core.Map
 
-local Node = BattleForAzeroth.node.Node
-local Quest = BattleForAzeroth.node.Quest
-local Achievement = BattleForAzeroth.reward.Achievement
-
--------------------------------------------------------------------------------
-
-BattleForAzeroth.expansion = 8
+local Node = Core.node.Node
+local Quest = Core.node.Quest
+local Achievement = Core.reward.Achievement
 
 -------------------------------------------------------------------------------
 
-BattleForAzeroth.groups.ASSAULT_EVENT = Group('assault_events', 'peg_yw')
-BattleForAzeroth.groups.BOW_TO_YOUR_MASTERS = Group('bow_to_your_masters', 1850548, {defaults=BattleForAzeroth.GROUP_HIDDEN, faction='Horde'})
-BattleForAzeroth.groups.BRUTOSAURS = Group('brutosaurs', 1881827, {defaults=BattleForAzeroth.GROUP_HIDDEN})
-BattleForAzeroth.groups.CARVED_IN_STONE = Group('carved_in_stone', 134424, {defaults=BattleForAzeroth.GROUP_HIDDEN})
-BattleForAzeroth.groups.CATS_NAZJ = Group('cats_nazj', 454045)
-BattleForAzeroth.groups.COFFERS = Group('coffers', 'star_chest_g')
-BattleForAzeroth.groups.DAILY_CHESTS = Group('daily_chests', 'chest_bl', {defaults=BattleForAzeroth.GROUP_ALPHA75})
-BattleForAzeroth.groups.DRUST_FACTS = Group('drust_facts', 2101971, {defaults=BattleForAzeroth.GROUP_HIDDEN})
-BattleForAzeroth.groups.DUNE_RIDER = Group('dune_rider', 134962, {defaults=BattleForAzeroth.GROUP_HIDDEN})
-BattleForAzeroth.groups.EMBER_RELICS = Group('ember_relics', 514016, {defaults=BattleForAzeroth.GROUP_HIDDEN, faction='Alliance'})
-BattleForAzeroth.groups.GET_HEKD = Group('get_hekd', 1604165, {defaults=BattleForAzeroth.GROUP_HIDDEN})
-BattleForAzeroth.groups.HONEYBACKS = Group('honeybacks', 2066005, {defaults=BattleForAzeroth.GROUP_HIDDEN, faction='Alliance'})
-BattleForAzeroth.groups.HOPPIN_SAD = Group('hoppin_sad', 804969, {defaults=BattleForAzeroth.GROUP_HIDDEN})
-BattleForAzeroth.groups.LIFE_FINDS_A_WAY = Group('life_finds_a_way', 236192, {defaults=BattleForAzeroth.GROUP_HIDDEN})
-BattleForAzeroth.groups.LOCKED_CHEST = Group('locked_chest', 'chest_gy', {defaults=BattleForAzeroth.GROUP_ALPHA75})
-BattleForAzeroth.groups.MECH_CHEST = Group('mech_chest', 'chest_rd', {defaults=BattleForAzeroth.GROUP_ALPHA75})
-BattleForAzeroth.groups.MISC_NAZJ = Group('misc_nazj', 528288)
-BattleForAzeroth.groups.MUSHROOM_HARVEST = Group('mushroom_harvest', 1869654, {defaults=BattleForAzeroth.GROUP_HIDDEN})
-BattleForAzeroth.groups.PAKU_TOTEMS = Group('paku_totems', 'flight_point_y', {defaults=BattleForAzeroth.GROUP_HIDDEN, faction='Horde'})
-BattleForAzeroth.groups.PRISMATICS = Group('prismatics', 'crystal_p', {defaults=BattleForAzeroth.GROUP_HIDDEN})
-BattleForAzeroth.groups.RECRIG = Group('recrig', 'peg_bl')
-BattleForAzeroth.groups.SAUSAGE_SAMPLER = Group('sausage_sampler', 133200, {defaults=BattleForAzeroth.GROUP_HIDDEN, faction='Alliance'})
-BattleForAzeroth.groups.SCAVENGER_OF_THE_SANDS = Group('scavenger_of_the_sands', 135725, {defaults=BattleForAzeroth.GROUP_HIDDEN})
-BattleForAzeroth.groups.SECRET_SUPPLY = Group('secret_supplies', 'star_chest_b', {defaults=BattleForAzeroth.GROUP_HIDDEN75})
-BattleForAzeroth.groups.SHANTY_RAID = Group('shanty_raid', 1500866, {defaults=BattleForAzeroth.GROUP_HIDDEN})
-BattleForAzeroth.groups.SLIMES_NAZJ = Group('slimes_nazj', 132107)
-BattleForAzeroth.groups.SQUIRRELS = Group('squirrels', 237182, {defaults=BattleForAzeroth.GROUP_HIDDEN})
-BattleForAzeroth.groups.SUPPLY = Group('supplies', 'star_chest_g', {defaults=BattleForAzeroth.GROUP_HIDDEN75})
-BattleForAzeroth.groups.TALES_OF_DE_LOA = Group('tales_of_de_loa', 1875083, {defaults=BattleForAzeroth.GROUP_HIDDEN})
-BattleForAzeroth.groups.THREE_SHEETS = Group('three_sheets', 135999, {defaults=BattleForAzeroth.GROUP_HIDDEN})
-BattleForAzeroth.groups.TIDESAGE_LEGENDS = Group('tidesage_legends', 1500881, {defaults=BattleForAzeroth.GROUP_HIDDEN})
-BattleForAzeroth.groups.UPRIGHT_CITIZENS = Group('upright_citizens', 516667, {defaults=BattleForAzeroth.GROUP_HIDDEN, faction='Alliance'})
-BattleForAzeroth.groups.VISIONS_BUFFS = Group('visions_buffs', 132183)
-BattleForAzeroth.groups.VISIONS_CHEST = Group('visions_chest', 'chest_gy')
-BattleForAzeroth.groups.VISIONS_CRYSTALS = Group('visions_crystals', 'crystal_o')
-BattleForAzeroth.groups.VISIONS_MAIL = Group('visions_mail', 'envelope')
-BattleForAzeroth.groups.VISIONS_MISC = Group('visions_misc', 2823166)
+Core.expansion = 8
+
+-------------------------------------------------------------------------------
+
+Core.groups.ASSAULT_EVENT = Group('assault_events', 'peg_yw')
+Core.groups.BOW_TO_YOUR_MASTERS = Group('bow_to_your_masters', 1850548, {defaults=Core.GROUP_HIDDEN, faction='Horde'})
+Core.groups.BRUTOSAURS = Group('brutosaurs', 1881827, {defaults=Core.GROUP_HIDDEN})
+Core.groups.CARVED_IN_STONE = Group('carved_in_stone', 134424, {defaults=Core.GROUP_HIDDEN})
+Core.groups.CATS_NAZJ = Group('cats_nazj', 454045)
+Core.groups.COFFERS = Group('coffers', 'star_chest_g')
+Core.groups.DAILY_CHESTS = Group('daily_chests', 'chest_bl', {defaults=Core.GROUP_ALPHA75})
+Core.groups.DRUST_FACTS = Group('drust_facts', 2101971, {defaults=Core.GROUP_HIDDEN})
+Core.groups.DUNE_RIDER = Group('dune_rider', 134962, {defaults=Core.GROUP_HIDDEN})
+Core.groups.EMBER_RELICS = Group('ember_relics', 514016, {defaults=Core.GROUP_HIDDEN, faction='Alliance'})
+Core.groups.GET_HEKD = Group('get_hekd', 1604165, {defaults=Core.GROUP_HIDDEN})
+Core.groups.HONEYBACKS = Group('honeybacks', 2066005, {defaults=Core.GROUP_HIDDEN, faction='Alliance'})
+Core.groups.HOPPIN_SAD = Group('hoppin_sad', 804969, {defaults=Core.GROUP_HIDDEN})
+Core.groups.LIFE_FINDS_A_WAY = Group('life_finds_a_way', 236192, {defaults=Core.GROUP_HIDDEN})
+Core.groups.LOCKED_CHEST = Group('locked_chest', 'chest_gy', {defaults=Core.GROUP_ALPHA75})
+Core.groups.MECH_CHEST = Group('mech_chest', 'chest_rd', {defaults=Core.GROUP_ALPHA75})
+Core.groups.MISC_NAZJ = Group('misc_nazj', 528288)
+Core.groups.MUSHROOM_HARVEST = Group('mushroom_harvest', 1869654, {defaults=Core.GROUP_HIDDEN})
+Core.groups.PAKU_TOTEMS = Group('paku_totems', 'flight_point_y', {defaults=Core.GROUP_HIDDEN, faction='Horde'})
+Core.groups.PRISMATICS = Group('prismatics', 'crystal_p', {defaults=Core.GROUP_HIDDEN})
+Core.groups.RECRIG = Group('recrig', 'peg_bl')
+Core.groups.SAUSAGE_SAMPLER = Group('sausage_sampler', 133200, {defaults=Core.GROUP_HIDDEN, faction='Alliance'})
+Core.groups.SCAVENGER_OF_THE_SANDS = Group('scavenger_of_the_sands', 135725, {defaults=Core.GROUP_HIDDEN})
+Core.groups.SECRET_SUPPLY = Group('secret_supplies', 'star_chest_b', {defaults=Core.GROUP_HIDDEN75})
+Core.groups.SHANTY_RAID = Group('shanty_raid', 1500866, {defaults=Core.GROUP_HIDDEN})
+Core.groups.SLIMES_NAZJ = Group('slimes_nazj', 132107)
+Core.groups.SQUIRRELS = Group('squirrels', 237182, {defaults=Core.GROUP_HIDDEN})
+Core.groups.SUPPLY = Group('supplies', 'star_chest_g', {defaults=Core.GROUP_HIDDEN75})
+Core.groups.TALES_OF_DE_LOA = Group('tales_of_de_loa', 1875083, {defaults=Core.GROUP_HIDDEN})
+Core.groups.THREE_SHEETS = Group('three_sheets', 135999, {defaults=Core.GROUP_HIDDEN})
+Core.groups.TIDESAGE_LEGENDS = Group('tidesage_legends', 1500881, {defaults=Core.GROUP_HIDDEN})
+Core.groups.UPRIGHT_CITIZENS = Group('upright_citizens', 516667, {defaults=Core.GROUP_HIDDEN, faction='Alliance'})
+Core.groups.VISIONS_BUFFS = Group('visions_buffs', 132183)
+Core.groups.VISIONS_CHEST = Group('visions_chest', 'chest_gy')
+Core.groups.VISIONS_CRYSTALS = Group('visions_crystals', 'crystal_o')
+Core.groups.VISIONS_MAIL = Group('visions_mail', 'envelope')
+Core.groups.VISIONS_MISC = Group('visions_misc', 2823166)
 
 -------------------------------------------------------------------------------
 ---------------------------------- CALLBACKS ----------------------------------
@@ -3471,35 +3549,35 @@ BattleForAzeroth.groups.VISIONS_MISC = Group('visions_misc', 2823166)
 
 -- Listen for aura applied/removed events so we can refresh when the player
 -- enters and exits the alternate future
-BattleForAzeroth.addon:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED', function ()
+Core.addon:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED', function ()
     local _,e,_,_,_,_,_,_,t,_,_,s  = CombatLogGetCurrentEventInfo()
     if (e == 'SPELL_AURA_APPLIED' or e == 'SPELL_AURA_REMOVED') and
         t == UnitName('player') and s == 296644 then
-        C_Timer.After(1, function() BattleForAzeroth.addon:Refresh() end)
+        C_Timer.After(1, function() Core.addon:Refresh() end)
     end
 end)
 
-BattleForAzeroth.addon:RegisterEvent('QUEST_ACCEPTED', function (_, _, id)
+Core.addon:RegisterEvent('QUEST_ACCEPTED', function (_, _, id)
     if id == 56540 then
-        BattleForAzeroth.Debug('Vale assaults unlock detected')
-        C_Timer.After(1, function() BattleForAzeroth.addon:Refresh() end)
+        Core.Debug('Vale assaults unlock detected')
+        C_Timer.After(1, function() Core.addon:Refresh() end)
     end
 end)
 
-BattleForAzeroth.addon:RegisterEvent('QUEST_WATCH_UPDATE', function (_, index)
+Core.addon:RegisterEvent('QUEST_WATCH_UPDATE', function (_, index)
     local info = C_QuestLog.GetInfo(index)
     if info and info.questID == 56376 then
-        BattleForAzeroth.Debug('Uldum assaults unlock detected')
-        C_Timer.After(1, function() BattleForAzeroth.addon:Refresh() end)
+        Core.Debug('Uldum assaults unlock detected')
+        C_Timer.After(1, function() Core.addon:Refresh() end)
     end
 end)
 
-BattleForAzeroth.addon:RegisterEvent('UNIT_SPELLCAST_SUCCEEDED', function (...)
+Core.addon:RegisterEvent('UNIT_SPELLCAST_SUCCEEDED', function (...)
     -- Watch for a spellcast event that signals a ravenous slime was fed
     -- https://www.wowhead.com/spell=293775/schleimphage-feeding-tracker
     local _, source, _, spellID = ...
     if source == 'player' and spellID == 293775 then
-        C_Timer.After(1, function() BattleForAzeroth.addon:Refresh() end)
+        C_Timer.After(1, function() Core.addon:Refresh() end)
     end
 end)
 
@@ -3510,7 +3588,7 @@ end)
 local TimedEvent = Class('TimedEvent', Quest, {
     icon = "peg_yw",
     scale = 2,
-    group = BattleForAzeroth.groups.ASSAULT_EVENT,
+    group = Core.groups.ASSAULT_EVENT,
     note = ''
 })
 
@@ -3519,7 +3597,7 @@ function TimedEvent:PrerequisiteCompleted()
     return C_TaskQuest.GetQuestTimeLeftMinutes(self.quest[1])
 end
 
-BattleForAzeroth.node.TimedEvent = TimedEvent
+Core.node.TimedEvent = TimedEvent
 
 -------------------------------------------------------------------------------
 ------------------------------ WAR SUPPLY CRATES ------------------------------
@@ -3527,28 +3605,28 @@ BattleForAzeroth.node.TimedEvent = TimedEvent
 
 -- quest = 53640 (50 conquest looted for today)
 
-BattleForAzeroth.node.Supply = Class('Supply', Node, {
+Core.node.Supply = Class('Supply', Node, {
     icon = 'star_chest_g',
     scale = 1.5,
     label = L["supply_chest"],
-    rlabel = BattleForAzeroth.GetIconLink('war_mode_swords', 16),
+    rlabel = Core.GetIconLink('war_mode_swords', 16),
     note=L["supply_chest_note"],
-    requires = BattleForAzeroth.requirement.WarMode,
+    requires = Core.requirement.WarMode,
     rewards={ Achievement({id=12572}) },
-    group = BattleForAzeroth.groups.SUPPLY
+    group = Core.groups.SUPPLY
 })
 
-BattleForAzeroth.node.SecretSupply = Class('SecretSupply', BattleForAzeroth.node.Supply, {
+Core.node.SecretSupply = Class('SecretSupply', Core.node.Supply, {
     icon = 'star_chest_b',
-    group = BattleForAzeroth.groups.SECRET_SUPPLY,
+    group = Core.groups.SECRET_SUPPLY,
     label = L["secret_supply_chest"],
     note = L["secret_supply_chest_note"]
 })
 
-BattleForAzeroth.node.Coffer = Class('Coffer', Node, {
+Core.node.Coffer = Class('Coffer', Node, {
     icon = 'star_chest_g',
     scale = 1.5,
-    group = BattleForAzeroth.groups.COFFERS
+    group = Core.groups.COFFERS
 })
 
 -------------------------------------------------------------------------------
@@ -3563,7 +3641,7 @@ function VisionsMap:Prepare()
     self.phased = self.assault ~= nil
 end
 
-function VisionsMap:IsNodeEnabled(node, coord, minimap)
+function VisionsMap:CanDisplay(node, coord, minimap)
     local assault = node.assault
     if assault then
         assault = type(assault) == 'number' and {assault} or assault
@@ -3573,10 +3651,10 @@ function VisionsMap:IsNodeEnabled(node, coord, minimap)
         end
     end
 
-    return Map.IsNodeEnabled(self, node, coord, minimap)
+    return Map.CanDisplay(self, node, coord, minimap)
 end
 
-BattleForAzeroth.VisionsMap = VisionsMap
+Core.VisionsMap = VisionsMap
 
 -------------------------------------------------------------------------------
 -------------------------------- WARFRONT MAP ---------------------------------
@@ -3584,14 +3662,14 @@ BattleForAzeroth.VisionsMap = VisionsMap
 
 local WarfrontMap = Class('WarfrontMap', Map)
 
-function WarfrontMap:IsNodeEnabled(node, coord, minimap)
+function WarfrontMap:CanDisplay(node, coord, minimap)
     -- Disable nodes that are not available when the other faction controls
     if node.controllingFaction then
         local state = C_ContributionCollector.GetState(self.collector)
         local faction = (state == 1 or state == 2) and 'Alliance' or 'Horde'
         if faction ~= node.controllingFaction then return false end
     end
-    return Map.IsNodeEnabled(self, node, coord, minimap)
+    return Map.CanDisplay(self, node, coord, minimap)
 end
 
-BattleForAzeroth.WarfrontMap = WarfrontMap
+Core.WarfrontMap = WarfrontMap

@@ -46,6 +46,8 @@ function TTG_BonusListMixin:OnShow()
 end
 
 
+
+
 TTG_GemMixin = {}
 function TTG_GemMixin:OnEnter()
 	local id = self:GetID()
@@ -73,6 +75,18 @@ function TTG_ScoreMixin:OnClick()
 	end
 end
 
+function TTG_ScoreMixin:OnLoad()
+	self:RegisterForDrag("LeftButton");
+end
+
+function TTG_ScoreMixin:OnDragStart()
+	self:StartMoving();
+	addon.db.profile.customScorePosition = true
+end
+
+function TTG_ScoreMixin:OnDragStop()
+	self:StopMovingOrSizing()
+end
 
 -- speed optimizations (mostly so update functions are faster)
 local _G = getfenv(0);
@@ -231,7 +245,7 @@ local function GetHoarderTotal()
 	return total
 end
 
-function TTG_TimerMixin:CheckBouns()
+function TTG_TimerMixin:CheckBonus()
 	if not self.isCombat then return end
 
 	--Boss Bonuses
@@ -285,9 +299,9 @@ local function getBonusDefault()
 	 return list
 end
 
-local bounses = getBonusDefault()
+local Bonuses = getBonusDefault()
 function addon:ResetBonuses()
-	bounses =  getBonusDefault()
+	Bonuses =  getBonusDefault()
 	local current = addon.Statsdb.profile.current
 
 end
@@ -328,7 +342,7 @@ end
 
 
 function addon.CheckAnimaPowers(spellID)
-	if bounses.Highlander then 
+	if Bonuses.Highlander then 
 		local count = addon.GetAnimaPowerCount(spellID)
 		if count == 1 then
 			return true
@@ -349,32 +363,36 @@ local function updateAll()
 end
 
 function addon.CheckAnimaRarity(spellRarity)
-	return bounses.Pauper and spellRarity >= Enum.PlayerChoiceRarity.Epic
+	return Bonuses.Pauper and spellRarity >= Enum.PlayerChoiceRarity.Epic
 end
 
 
 function addon.Tracker:FlagFail(bonusName, silent)
-	if bounses[bonusName] and not silent and addon.db.profile.ShowBonusMessages then 
-		print(RED_FONT_COLOR..(L["Failed Bouns: %s"]):format(bonusName))
+	if addon.Statsdb.profile.current.TrackerMessages[bonusName] then return end
+	if Bonuses[bonusName] and not silent and addon.db.profile.ShowBonusMessages then 
+		print(RED_FONT_COLOR..(L["Failed Bonus: %s"]):format(bonusName))
 	end
 
-	bounses[bonusName][2] = false
-	bounses[bonusName][3] = 0
+	Bonuses[bonusName][2] = false
+	Bonuses[bonusName][3] = 0
+	addon.Statsdb.profile.current.TrackerMessages[bonusName] = true
 	--updateAll()
 end
 
 function addon.Tracker:FlagBonus(bonusName)
-	if bounses[bonusName] and addon.db.profile.ShowBonusMessages then 
-		print(GREEN_FONT_COLOR..(L["Gained Bouns: %s"]):format(bonusName))
+	if addon.Statsdb.profile.current.TrackerMessages[bonusName] then return end
+	if Bonuses[bonusName] and addon.db.profile.ShowBonusMessages then 
+		print(GREEN_FONT_COLOR..(L["Gained Bonus: %s"]):format(bonusName))
 	end
 
-	bounses[bonusName][2] = true
+	Bonuses[bonusName][2] = true
+	addon.Statsdb.profile.current.TrackerMessages[bonusName] = true
 	--updateAll()
 end
 
 
 local function checkBonusStatus(bonusName)
-	return bounses[bonusName][2]-- ~= false
+	return Bonuses[bonusName][2]-- ~= false
 end
 addon.checkBonusStatus = checkBonusStatus
 
@@ -397,7 +415,7 @@ local BuffName
 local RefugeOfTheDammedBuffID = 338907
 
 local armaments = {[294592] = true, [294609]= true, [294597]= true, [294578]= true, [294602]= true, [293025]= true}
-function addon.Tracker:CheckBouns()
+function addon.Tracker:CheckBonus()
 	local totalPowers = 0
 	if not BuffName then
 		local spell = Spell:CreateFromSpellID(RefugeOfTheDammedBuffID)
@@ -421,7 +439,7 @@ function addon.Tracker:CheckBouns()
 			end
 		end
 
-		if icon and maw_spellID and bounses.Pauper then
+		if icon and maw_spellID and Bonuses.Pauper then
 			local spellRarity = C_Spell.GetMawPowerBorderAtlasBySpellID(maw_spellID)
 			if checkBonusStatus("Pauper") and spellRarity == "jailerstower-animapowerlist-powerborder-purple"  then
 				addon.Tracker:FlagFail("Pauper")
@@ -484,15 +502,15 @@ local function getDeaths()
 end
 
 
-function addon.Tracker:GetBounsScore()
+function addon.Tracker:GetBonusScore()
 	local bonus = 0
 	addon.GetWidgetBonuses()
 
 	for i, name in ipairs(bonusList) do
-		if (bounses[name]) then		
-			--print(bounses[name])
-			local status = bounses[name][2]
-			local pts = bounses[name][3]
+		if (Bonuses[name]) then		
+			--print(Bonuses[name])
+			local status = Bonuses[name][2]
+			local pts = Bonuses[name][3]
 			if status == true then
 				bonus = bonus + pts
 			end
@@ -533,12 +551,12 @@ end
 
 function addon.UpdataeScoreFrame()
 	local currentStats = addon.Statsdb.profile.current
-	--addon.Tracker:CheckBouns()
+	--addon.Tracker:CheckBonus()
 	--GetTimeBonus()
 	local deaths = tonumber(getDeaths())
 	local DeathPenalty = deaths * -20
-	local bonus = addon.Tracker:GetBounsScore()
-	local completion = bounses["Completion"][3]
+	local bonus = addon.Tracker:GetBonusScore()
+	local completion = Bonuses["Completion"][3]
 	local timeBonus = currentStats.timeBonus    --- Actual bonus is partime/actualtime*30
 	--print(timeBonus)
 	local total = completion + bonus + DeathPenalty + timeBonus
@@ -572,9 +590,9 @@ function addon.UpdateBonusList()
 	--addon.GetWidgetBonuses()
 
 	for i, name in ipairs(bonusList) do
-		if (bounses[name]) then
-			local status = bounses[name][2]
-			local pts = bounses[name][3]
+		if (Bonuses[name]) then
+			local status = Bonuses[name][2]
+			local pts = Bonuses[name][3]
 			local bonusName = TTG_BonusList.name[i]
 			local bonusPoints = TTG_BonusList.points[i]
 			local overlay = TTG_BonusList.overlay[i]
@@ -619,7 +637,7 @@ function addon.UpdateBonusList()
 			end
 
 			local outputName = name
-			if bounses[name][4] then
+			if Bonuses[name][4] then
 				outputName = name.."*"
 				color = ORANGE_FONT_COLOR
 			end
@@ -633,17 +651,26 @@ function addon.UpdateBonusList()
 end
 
 function addon:ResetScoreLocation()
+	addon.db.profile.customScorePosition = false
+	addon:SetScoreLocation()
+
+end
+
+function addon:SetScoreLocation()
+	if addon.db.profile.customScorePosition then return end
+
 	local position = addon.db.profile.ScorePosition
+print("set")
 	TTG_ScoreFrame:ClearAllPoints()
 	if position == "LEFT" then
 
 		TTG_ScoreFrame:SetPoint("TOPRIGHT" , ScenarioStageBlock, "TOPLEFT", 10, 0 )
 	else
 		TTG_ScoreFrame:SetPoint("TOPLEFT" , ScenarioStageBlock, "TOPRIGHT", 40, 0 )
-
-
 	end
 end
+
+
 
 function addon:ResetBonusLocation()
 	local position = addon.db.profile.BonusPosition
@@ -663,7 +690,7 @@ function addon.GetWidgetBonuses()
 	local current = addon.Statsdb.profile.current  
 	current.FloorCompletion = current.FloorCompletion or {}
 	local FloorCompletion = current.FloorCompletion
-	for name, data in pairs(bounses) do
+	for name, data in pairs(Bonuses) do
 		local ids = data[1]
 		local Info = widgetTypeInfo.visInfoDataFunction(ids);
 

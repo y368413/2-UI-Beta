@@ -6,5 +6,4 @@
 	<Script file="LossOfControlFrame.lua"/>
 	<Script file="ObjectiveTracker.lua"/>
 	<Script file="PetBattleUI.lua"/>
-	<Script file="WorldMapFrame.lua"/>
 </Ui>

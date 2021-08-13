@@ -44,7 +44,7 @@ local function reskinHeader(header)
 	header.bg = bg -- accessable for other addons
 end
 
---[[local function reskinBarTemplate(bar)
+local function reskinBarTemplate(bar)
 	if bar.bg then return end
 
 	M.StripTextures(bar)
@@ -93,7 +93,7 @@ local function reskinTimerBar(_, _, line)
 	if not bar.bg then
 		reskinBarTemplate(bar)
 	end
-end]]
+end
 
 local function updateMinimizeButton(button, collapsed)
 	button.__texture:DoCollapse(collapsed)
@@ -171,18 +171,18 @@ tinsert(R.defaultThemes, function()
 
 	-- Reskin Progressbars
 	BonusObjectiveTrackerProgressBar_PlayFlareAnim = M.Dummy
-	--hooksecurefunc(QUEST_TRACKER_MODULE, "AddProgressBar", reskinProgressbar)
-	--hooksecurefunc(CAMPAIGN_QUEST_TRACKER_MODULE, "AddProgressBar", reskinProgressbar)
+	hooksecurefunc(QUEST_TRACKER_MODULE, "AddProgressBar", reskinProgressbar)
+	hooksecurefunc(CAMPAIGN_QUEST_TRACKER_MODULE, "AddProgressBar", reskinProgressbar)
 
-	--hooksecurefunc(BONUS_OBJECTIVE_TRACKER_MODULE, "AddProgressBar", reskinProgressbarWithIcon)
-	--hooksecurefunc(WORLD_QUEST_TRACKER_MODULE, "AddProgressBar", reskinProgressbarWithIcon)
-	--hooksecurefunc(SCENARIO_TRACKER_MODULE, "AddProgressBar", reskinProgressbarWithIcon)
+	hooksecurefunc(BONUS_OBJECTIVE_TRACKER_MODULE, "AddProgressBar", reskinProgressbarWithIcon)
+	hooksecurefunc(WORLD_QUEST_TRACKER_MODULE, "AddProgressBar", reskinProgressbarWithIcon)
+	hooksecurefunc(SCENARIO_TRACKER_MODULE, "AddProgressBar", reskinProgressbarWithIcon)
 
-	--hooksecurefunc(QUEST_TRACKER_MODULE, "AddTimerBar", reskinTimerBar)
-	--hooksecurefunc(SCENARIO_TRACKER_MODULE, "AddTimerBar", reskinTimerBar)
-	--hooksecurefunc(ACHIEVEMENT_TRACKER_MODULE, "AddTimerBar", reskinTimerBar)
+	hooksecurefunc(QUEST_TRACKER_MODULE, "AddTimerBar", reskinTimerBar)
+	hooksecurefunc(SCENARIO_TRACKER_MODULE, "AddTimerBar", reskinTimerBar)
+	hooksecurefunc(ACHIEVEMENT_TRACKER_MODULE, "AddTimerBar", reskinTimerBar)
 
-	--[[ Reskin Blocks
+	-- Reskin Blocks
 	hooksecurefunc("ScenarioStage_CustomizeBlock", function(block)
 		block.NormalBG:SetTexture("")
 		if not block.bg then
@@ -244,7 +244,7 @@ tinsert(R.defaultThemes, function()
 		end
 	end)
 
-	hooksecurefunc("Scenario_ChallengeMode_SetUpAffixes", M.AffixesSetup)]]
+	hooksecurefunc("Scenario_ChallengeMode_SetUpAffixes", M.AffixesSetup)
 
 	-- Maw buffs container
 	ReskinMawBuffsContainer(ScenarioBlocksFrame.MawBuffsBlock.Container)

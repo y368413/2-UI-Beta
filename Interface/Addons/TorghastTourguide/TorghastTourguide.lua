@@ -354,17 +354,18 @@ local defaults = {
 	profile = {
 		['*'] = true,
 		Font_Color = {["r"] = 0, ["g"]  =0, ["b"] = 0},
-	Font_Size = 12,
-	Font_Type ="FRITZQT",
-	ScorePosition = "LEFT",
-	BonusPosition = "BOTTOM",
-	BonusAutoHideTime = false,
-	BonusAutoHideTimeValue = 15,
-	BonusAutoHideCombat = false,
-			MMDB = { hide = false,
+		Font_Size = 12,
+		Font_Type ="FRITZQT",
+		ScorePosition = "LEFT",
+		BonusPosition = "BOTTOM",
+		BonusAutoHideTime = false,
+		BonusAutoHideTimeValue = 15,
+		BonusAutoHideCombat = false,
+				MMDB = { hide = false,
 				--minimap = {},
 			},
-
+		ShowBonusMessages = false,
+		customScorePosition = false,
 	}
 }
 
@@ -404,6 +405,7 @@ local function ResetCounts()
 			TotalPar = 0,
 			FloorCompletion = {},
 			TotalPar = 0,
+			TrackerMessages = {},
 		}
 
 	return defaults
@@ -460,25 +462,29 @@ local function Enable()
 	end
 	addon:ResetBonuses()
 	addon.InitScoreFrame()
+	addon:SetScoreLocation()
 end
 
 
 local function Disable()
-	addon:UnregisterEvent("UPDATE_MOUSEOVER_UNIT", "EventHandler")
-	addon:UnregisterEvent("CURSOR_UPDATE", "EventHandler")
-	addon:UnregisterEvent("BAG_UPDATE", "EventHandler")
-	addon:UnregisterEvent("CURRENCY_DISPLAY_UPDATE", "EventHandler")
+	addon:UnregisterEvent("JAILERS_TOWER_LEVEL_UPDATE")
+	addon:UnregisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 
-	addon:UnregisterEvent("PLAYER_DEAD", "EventHandler")
-	addon:UnregisterEvent("PLAYER_REGEN_ENABLED", "EventHandler")
-	addon:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED", "EventHandler")
+	addon:UnregisterEvent("UPDATE_MOUSEOVER_UNIT")
+	addon:UnregisterEvent("CURSOR_UPDATE")
+	addon:UnregisterEvent("BAG_UPDATE")
+	addon:UnregisterEvent("CURRENCY_DISPLAY_UPDATE")
+	addon:UnregisterEvent("PLAYER_DEAD")
+	addon:UnregisterEvent("PLAYER_REGEN_ENABLED")
+	addon:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+	addon:UnregisterEvent("NAME_PLATE_UNIT_ADDED")
+	addon:UnregisterEvent("FORBIDDEN_NAME_PLATE_UNIT_ADDED")
+	addon:UnregisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+	addon:UnregisterEvent("QUEST_TURNED_IN")
+	addon:UnregisterEvent("PLAYER_REGEN_ENABLED")
+	addon:UnregisterEvent("PLAYER_REGEN_DISABLED")
 
-	addon:UnregisterEvent("NAME_PLATE_UNIT_ADDED", "EventHandler")
-	addon:UnregisterEvent("FORBIDDEN_NAME_PLATE_UNIT_ADDED", "EventHandler")
-	addon:UnregisterEvent("UNIT_SPELLCAST_SUCCEEDED", "EventHandler")
-	addon:UnregisterEvent("QUEST_TURNED_IN", "EventHandler")
-	addon:UnregisterEvent("PLAYER_REGEN_ENABLED", "EventHandler")
-	addon:UnregisterEvent("PLAYER_REGEN_DISABLED", "EventHandler")
+
 
 	addon.Statsdb.profile.total.Time = addon.Statsdb.profile.total.CurrentTime
 	if frames.f then
@@ -558,7 +564,7 @@ function addon:CurrentPhantasma()
 end
 
 function addon:EventHandler(event, arg1, ...)
-	if finished then return end
+
 	if event == "PLAYER_ENTERING_WORLD" then
 		if IsInJailersTower() then 
 			Enable()
@@ -566,10 +572,11 @@ function addon:EventHandler(event, arg1, ...)
 		else
 			Disable()
 		end
-
-	elseif event == "PLAYER_REGEN_ENABLED" then
+	end
+	if finished  or not IsInJailersTower() then return end
+	if event == "PLAYER_REGEN_ENABLED" then
 		TTG_CombatTimer:Stop()
-		TTG_CombatTimer:CheckBouns()
+		TTG_CombatTimer:CheckBonus()
 		C_Timer.After(10, function() TTG_CombatTimer:Hide() end)
 
 	elseif event == "PLAYER_REGEN_DISABLED" then
@@ -609,7 +616,7 @@ function addon:EventHandler(event, arg1, ...)
 		C_Timer.After(0, function() addon:HookScript(PlayerChoiceFrame, "OnShow", function() C_Timer.After(0.2, addon.PowerShow) end)
 									addon:HookScript(PlayerChoiceFrame, "OnHide", function() C_Timer.After(0, addon.PowerHide) end)
 						end) 
-					
+		addon:UnregisterEvent("ADDON_LOADED")				
 	elseif event == "UPDATE_MOUSEOVER_UNIT" or event == "CURSOR_UPDATE"  then
 		C_Timer.After(0.1, addon.PowerTooltips)
 
@@ -623,7 +630,7 @@ function addon:EventHandler(event, arg1, ...)
 
 	elseif event == "PLAYER_DEAD" then
 			addon.Stats.IncreaseCounter("Deaths")
-			addon.Tracker:CheckBouns()
+			addon.Tracker:CheckBonus()
 	elseif event == "CURRENCY_DISPLAY_UPDATE" and arg1 == PHANTASMA_ID_NUMBER then 
 			local  quantity, quantityChange, quantityGainSource, quantityLostSource = ...
 			addon.Stats:SetPhantasma(quantityChange)
@@ -631,7 +638,7 @@ function addon:EventHandler(event, arg1, ...)
 
 	elseif event == "PLAYER_CHOICE_UPDATE" then
 			addon.Stats:AnimaGain()
-			addon.Tracker:CheckBouns()
+			addon.Tracker:CheckBonus()
 	elseif event == "NAME_PLATE_UNIT_ADDED" or event == "FORBIDDEN_NAME_PLATE_UNIT_ADDED"  then
 		--[[if arg1 then
 							local guid = UnitGUID(arg1)
@@ -692,15 +699,15 @@ function addon:EventHandler(event, arg1, ...)
 		local arg2, arg3 = ...
 		if arg1 == "player" and arg3 == FREEING_SPELLID then 
 			addon.Stats.IncreaseCounter("SoulsSaved")
-			addon.Tracker:CheckBouns()
+			addon.Tracker:CheckBonus()
 		elseif arg3 == OPEN_CHEST_SPELLID then 
 			addon.Stats.IncreaseCounter("Chests")
-			addon.Tracker:CheckBouns()
+			addon.Tracker:CheckBonus()
 		end
 
 	elseif event == "UNIT_AURA" then
 		addon.Stats:AnimaGain()
-		addon.Tracker:CheckBouns()
+		addon.Tracker:CheckBonus()
 
 	elseif event ==  "UNIT_TARGET" then
 		local unitClass = UnitClassification("target")
@@ -720,7 +727,7 @@ function addon:EventHandler(event, arg1, ...)
 
 	elseif event ==  "QUEST_TURNED_IN" then
 		addon.Stats.IncreaseCounter("QuestsCompleted")
-		addon.Tracker:CheckBouns()
+		addon.Tracker:CheckBonus()
 
 	elseif(event == "SCENARIO_COMPLETED") then 
 	end		
@@ -899,7 +906,7 @@ f:SetPoint("TOPLEFT",ScenarioStageBlock, "TOPLEFT" )
 	f.cellCount:SetPoint("LEFT",f.cellIcon, "RIGHT", 5, 0)
 
 	f.potionFrame = CreateFrame("Frame", nil, f)
-	f.potionFrame:SetFrameStrata("HIGH")
+	--f.potionFrame:SetFrameStrata("HIGH")
 	f.potionFrame:SetFrameLevel(50)
 	f.potionFrame:SetSize(30, 15)
 	f.potionFrame:SetPoint("BOTTOM", 45, 22)
@@ -918,7 +925,7 @@ f:SetPoint("TOPLEFT",ScenarioStageBlock, "TOPLEFT" )
 
 
 	f.infuserFrame = CreateFrame("Frame", nil, f)
-	f.infuserFrame:SetFrameStrata("HIGH")
+	--f.infuserFrame:SetFrameStrata("HIGH")
 	f.infuserFrame:SetSize(30, 15)
 	f.infuserFrame:SetPoint("BOTTOMRIGHT", 40, 22)
 	f.infuserButton = CreateFrame("Button", nil, f.infuserFrame, "SecureActionButtonTemplate")
