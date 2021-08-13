@@ -435,7 +435,7 @@ function UF:UpdateQuestUnit(_, unit)
 					end
 				elseif progress and not strmatch(text, THREAT_TOOLTIP) then
 					if floor(100 - progress) > 0 then
-						questProgress = progress  --.."%" -- lower priority on progress, keep looking
+						questProgress = 100 - progress  --.."%" -- lower priority on progress, keep looking
 					end
 				else
 					break

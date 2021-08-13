@@ -370,7 +370,7 @@ function MaxDps:GlowSpell(spellId)
 end
 
 local SFC = SpellFlashCore;
-print("SpellFlashCore = " .. (SFC and "true" or "false"))
+--print("SpellFlashCore = " .. (SFC and "true" or "false"))
 
 function MaxDps:GlowNextSpell(spellId)
 	self:GlowClear();
