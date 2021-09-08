@@ -1,3 +1,5 @@
+4.9 - Removed Duplicate, Added Death's Advance Supplies and Small Korthian Supply Chest
+
 4.8 - Added many openables from Korthia and table missions.
 
 4.7 - Added Talon-Pierced Mawsworn Lockbox

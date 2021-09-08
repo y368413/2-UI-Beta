@@ -1,6 +1,6 @@
  -- Author: Nerino1
 -- Create Date : 1/8/2021
--- Version 4.8
+-- Version 4.9
 
 local _, L = ...;
 SoulbindCacheOpener = {};
@@ -383,11 +383,6 @@ SoulbindCacheOpener.items = {
 		["button"] = nil
 	},
 	
-	{ 	["name"] = "ExtraGoodies_BrokersOverflowingBucket", --Brokers' Overflowing Bucket"
-		["id"] = 187574,
-		["button"] = nil
-	},
-	
 	{ 	["name"] = "ExtraGoodies_FeedersHandandKey", --Feeder's Hand and Key"
 		["id"] = 186970,
 		["button"] = nil
@@ -450,6 +445,16 @@ SoulbindCacheOpener.items = {
 	
 	{ 	["name"] = "ExtraGoodies_GoldFilledCrate", --Gold Filled Crate"
 		["id"] = 186707,
+		["button"] = nil
+	},
+	
+	{ 	["name"] = "ExtraGoodies_SmallKorthianSupplyChest", --Small Korthian Supply Chest"
+		["id"] = 187551,
+		["button"] = nil
+	},
+	
+	{ 	["name"] = "ExtraGoodies_DeathsAdvanceSupplies", --Death's Advance Supplies"
+		["id"] = 186650,
 		["button"] = nil
 	}
 

@@ -1,14 +1,6 @@
 {
     "target": "curse",
-    "searchName": "Soulbind Cache Opener",
+    "searchName": "SoulbindCacheOpener",
     "localName": "SoulbindCacheOpener",
-    "version": "Soulbind Cache Opener 4.8",
-    "fileName": "soulbind-cache-opener",
-    "addonsMap": [
-        "SoulbindCacheOpener"
-    ],
-    "interfaceMap": [],
-    "children": [],
-    "name": "SoulbindCacheOpener",
-    "gameVersion": "9.1.0"
+    "version": "4.9"
 }

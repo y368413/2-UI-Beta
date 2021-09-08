@@ -167,6 +167,8 @@ L["Armor Rating"] = "Armor Rating"
 L["Array"] = "Array"
 L["Ascending"] = "Aufsteigend"
 L["Assigned Role"] = "Zugewiesene Rolle"
+--[[Translation missing --]]
+L["Assigned Role Icon"] = "Assigned Role Icon"
 L["At Least One Enemy"] = "Zumindest ein Feind"
 --[[Translation missing --]]
 L["At missing Value"] = "At missing Value"
@@ -647,6 +649,8 @@ L["Heal Absorbed"] = "Heal Absorbed"
 L["Health"] = "Lebenspunkte"
 L["Health (%)"] = "Lebenspunkte (%)"
 --[[Translation missing --]]
+L["Health Deficit"] = "Health Deficit"
+--[[Translation missing --]]
 L["Heigan the Unclean"] = "Heigan the Unclean"
 L["Height"] = "Höhe"
 --[[Translation missing --]]
@@ -672,6 +676,10 @@ L["High Priestess Mar'li"] = "High Priestess Mar'li"
 --[[Translation missing --]]
 L["High Warlord Naj'entus"] = "High Warlord Naj'entus"
 L["Higher Than Tank"] = "Höher als der Tank"
+--[[Translation missing --]]
+L["Hit (%)"] = "Hit (%)"
+--[[Translation missing --]]
+L["Hit Rating"] = "Hit Rating"
 L["Holy Resistance"] = "Heiligwiderstand"
 L["Horde"] = "Horde"
 L["Hostile"] = "Feindlich"
@@ -1110,6 +1118,8 @@ L["Players and Pets"] = "Players and Pets"
 L["Poison"] = "Gift"
 L["Power"] = "Ressource"
 L["Power (%)"] = "Ressource (%)"
+--[[Translation missing --]]
+L["Power Deficit"] = "Power Deficit"
 L["Power Type"] = "Ressourcentyp"
 --[[Translation missing --]]
 L["Precision"] = "Precision"
@@ -1160,6 +1170,8 @@ L["Raid (Mythic)"] = "Raid (Mythic)"
 L["Raid (Normal)"] = "Raid (Normal)"
 --[[Translation missing --]]
 L["Raid (Timewalking)"] = "Raid (Timewalking)"
+--[[Translation missing --]]
+L["Raid Mark"] = "Raid Mark"
 --[[Translation missing --]]
 L["Raid Role"] = "Raid Role"
 L["Raid Warning"] = "Schlachtzugswarnung"
@@ -1509,6 +1521,8 @@ L["This aura was created with a newer version of WeakAuras."] = "Diese Aura wurd
 L["This aura was created with the Classic version of World of Warcraft."] = "This aura was created with the Classic version of World of Warcraft."
 --[[Translation missing --]]
 L["This aura was created with the retail version of World of Warcraft."] = "This aura was created with the retail version of World of Warcraft."
+--[[Translation missing --]]
+L["This import requires a newer WeakAuras version."] = "This import requires a newer WeakAuras version."
 --[[Translation missing --]]
 L["This is a modified version of your aura, |cff9900FF%s.|r"] = "This is a modified version of your aura, |cff9900FF%s.|r"
 --[[Translation missing --]]

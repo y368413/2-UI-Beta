@@ -487,6 +487,27 @@ local function GetBuffTriggerOptions(data, triggernum)
       order = 61.7,
       hidden = function() return not (trigger.type == "aura2" and trigger.unit ~= "multi" and CanHaveMatchCheck(trigger) and not trigger.useTotal) end
     },
+    fetchRole = {
+      type = "toggle",
+      name = L["Add Role Information"],
+      desc = L["This adds %role, %roleIcon as text replacements."],
+      order = 61.8,
+      width = WeakAuras.doubleWidth,
+      hidden = function()
+        return not (trigger.type == "aura2" and trigger.unit ~= "multi")
+               or WeakAuras.IsClassic() or WeakAuras.IsBCC()
+      end
+    },
+    fetchRaidMark = {
+      type = "toggle",
+      name = L["Add Raid Mark Information"],
+      desc = L["This adds %raidMark as text replacements."],
+      order = 61.9,
+      width = WeakAuras.doubleWidth,
+      hidden = function()
+        return not (trigger.type == "aura2" and trigger.unit ~= "multi")
+      end
+    },
     fetchTooltip = {
       type = "toggle",
       name = L["Use Tooltip Information"],

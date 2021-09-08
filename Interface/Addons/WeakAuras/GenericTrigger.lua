@@ -1632,6 +1632,7 @@ do
   local function swingTimerCheck(event, unit, guid, spell)
     if event ~= "PLAYER_EQUIPMENT_CHANGED" and unit and unit ~= "player" then return end
     Private.StartProfileSystem("generictrigger swing");
+    local now = GetTime()
     if event == "UNIT_ATTACK_SPEED" then
       local mainSpeedNew, offSpeedNew = UnitAttackSpeed("player")
       offSpeedNew = offSpeedNew or 0
@@ -1639,8 +1640,9 @@ do
         if mainSpeedNew ~= mainSpeed then
           timer:CancelTimer(mainTimer)
           local multiplier = mainSpeedNew / mainSpeed
-          local timeLeft = (lastSwingMain + swingDurationMain - GetTime()) * multiplier
+          local timeLeft = (lastSwingMain + swingDurationMain - now) * multiplier
           swingDurationMain = mainSpeedNew
+          mainSwingOffset = (lastSwingMain + swingDurationMain) - (now + timeLeft)
           mainTimer = timer:ScheduleTimerFixed(swingEnd, timeLeft, "main")
         end
       end
@@ -1648,7 +1650,7 @@ do
         if offSpeedNew ~= offSpeed then
           timer:CancelTimer(offTimer)
           local multiplier = offSpeedNew / mainSpeed
-          local timeLeft = (lastSwingOff + swingDurationOff - GetTime()) * multiplier
+          local timeLeft = (lastSwingOff + swingDurationOff - now) * multiplier
           swingDurationOff = offSpeedNew
           offTimer = timer:ScheduleTimerFixed(swingEnd, timeLeft, "off")
         end
@@ -1703,9 +1705,7 @@ do
       swingTimerFrame:RegisterEvent("PLAYER_ENTER_COMBAT");
       swingTimerFrame:RegisterEvent("PLAYER_LEAVE_COMBAT");
       swingTimerFrame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED");
-      if not WeakAuras.IsBCC() then
-        swingTimerFrame:RegisterUnitEvent("UNIT_ATTACK_SPEED", "player");
-      end
+      swingTimerFrame:RegisterUnitEvent("UNIT_ATTACK_SPEED", "player");
       swingTimerFrame:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", "player");
       if WeakAuras.IsClassic() or WeakAuras.IsBCC() then
         swingTimerFrame:RegisterUnitEvent("UNIT_SPELLCAST_START", "player")
@@ -4028,19 +4028,20 @@ WeakAuras.GetItemSubClassInfo = function(i)
   return GetItemSubClassInfo(classId, subClassId)
 end
 
-if WeakAuras.IsClassic() or WeakAuras.IsBCC() then
-  WeakAuras.GetCritChance = function()
-    return max(GetRangedCritChance(), GetCritChance())
+WeakAuras.GetCritChance = function()
+  -- Based on what the wow paper doll does
+  local spellCrit = 0
+  for i = 2, MAX_SPELL_SCHOOLS or 7 do -- MAX_SPELL_SCHOOLS is nil on classic_era
+    spellCrit = max(spellCrit, GetSpellCritChance(i))
   end
-else
-  WeakAuras.GetCritChance = function()
-    -- Based on what the wow paper doll does
-    local spellCrit = GetSpellCritChance(2)
-    for i = 3, MAX_SPELL_SCHOOLS do
-      spellCrit = min(spellCrit, GetSpellCritChance(i))
-    end
-    return max(spellCrit, GetRangedCritChance(), GetCritChance())
-  end
+  return max(spellCrit, GetRangedCritChance(), GetCritChance())
+end
+
+WeakAuras.GetHitChance = function()
+  local melee = (GetCombatRatingBonus(CR_HIT_MELEE) or 0) + (GetHitModifier() or 0)
+  local ranged = (GetCombatRatingBonus(CR_HIT_RANGED) or 0) + (GetHitModifier() or 0)
+  local spell = (GetCombatRatingBonus(CR_HIT_SPELL) or 0) + (GetSpellHitModifier() or 0)
+  return max(melee, ranged, spell)
 end
 
 

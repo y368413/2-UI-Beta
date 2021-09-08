@@ -22,6 +22,8 @@ local L = WeakAuras.L
 	L["%s Inset: %d%%"] = "%s內縮: %d%%"
 	L["%s is not a valid SubEvent for COMBAT_LOG_EVENT_UNFILTERED"] = "%s 不是 COMBAT_LOG_EVENT_UNFILTERED 的有效 SubEvent"
 	L["%s Keep Aspect Ratio"] = "%s保持寬高比例"
+	--[[Translation missing --]]
+	L["%s Texture"] = "%s Texture"
 	L["%s total auras"] = "總共 %s 個提醒效果"
 	L["%s Zoom: %d%%"] = "%s檢視大小: %d%%"
 	L["%s, Border"] = "%s, 邊框"
@@ -64,6 +66,10 @@ local L = WeakAuras.L
 	L["Add Option"] = "新增選項"
 	L["Add Overlay"] = "加上疊加圖層"
 	L["Add Property Change"] = "新增屬性變化"
+	--[[Translation missing --]]
+	L["Add Raid Mark Information"] = "Add Raid Mark Information"
+	--[[Translation missing --]]
+	L["Add Role Information"] = "Add Role Information"
 	L["Add Snippet"] = "新增程式碼片段"
 	L["Add Sub Option"] = "新增子選項"
 	L["Add to group %s"] = "加入到群組 %s"
@@ -696,6 +702,10 @@ Supports multiple entries, separated by commas
 	L["The type of trigger"] = "觸發類型"
 	L["Then "] = "(then) 則 "
 	L["Thickness"] = "粗細"
+	--[[Translation missing --]]
+	L["This adds %raidMark as text replacements."] = "This adds %raidMark as text replacements."
+	--[[Translation missing --]]
+	L["This adds %role, %roleIcon as text replacements."] = "This adds %role, %roleIcon as text replacements."
 	L["This adds %tooltip, %tooltip1, %tooltip2, %tooltip3 as text replacements."] = "這會加入 %tooltip, %tooltip1, %tooltip2, %tooltip3 用來替換文字。"
 	L["This display is currently loaded"] = "這個提醒效果已經載入"
 	L["This display is not currently loaded"] = "這個提醒效果尚未載入"

@@ -1,0 +1,29 @@
+## Interface: 90100
+## Title: Venture Plan
+## Notes: Interface improvements for Adventures.
+## Title-zhCN: |c0066ffffVenturePlan9.0随从任务|r
+## Notes-zhCN: |cFF34A2F79.0随从任务|r
+## Title-zhTW: |c0066ffffVenturePlan9.0隨從任務|r
+## Notes-zhTW: |cFF34A2F79.0隨從任務|r
+## Author: foxlit
+## Version: v5.9.9 修改版 2021.9.7
+## Contributors 注: 9.1新版数据贡献者: LostTemple1990, nyhjw, TekGoNos, Zhavvorsa, PositiveKoodoo, Sehra, Ostjaevel, Ashmelev, Dphennessy, Simca, Legenjerry, Dastey, Zealvurte, Gaboros, Many other who posted logs!
+## https://nga.178.com/read.php?tid=28076850
+## https://www.townlong-yak.com/addons/venture-plan
+## https://www.curseforge.com/wow/addons/venture-plan
+## SavedVariables: VP_MissionReports
+## SavedVariablesPerCharacter: VP_SPC
+
+Libs\Evie.lua
+libs\LibParse\LibParse.lua
+Locale.lua
+Util.lua
+Widgets.lua
+vs-spells.lua
+vs.lua
+aPaiXu.lua
+MissionList.lua
+MissionView.lua
+MissionComplete.lua
+Collector.lua
+Loader.lua
