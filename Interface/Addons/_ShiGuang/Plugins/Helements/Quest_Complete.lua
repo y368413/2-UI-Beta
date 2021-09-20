@@ -1,4 +1,6 @@
--- Version: 2019.10.28ÐÞ¸´°æ @ ¸ßÆµ±äÑ¹Æ÷ by NGA - for 8.2.5(v0.1)
+local _, ns = ...
+local M, R, U, I = unpack(ns)
+-- Version: 2019.10.28ï¿½Þ¸ï¿½ï¿½ï¿½ @ ï¿½ï¿½Æµï¿½ï¿½Ñ¹ï¿½ï¿½ by NGA - for 8.2.5(v0.1)
 -- Author: Shagu
 
 libnotify = {}
@@ -190,7 +192,7 @@ QuestCompleteNotification:SetScript("OnEvent", function(self, event, unit)
 		QuestCompleteNotification.queue = unit
 	elseif event == "UNIT_QUEST_LOG_CHANGED" and QuestCompleteNotification.queue and unit == "player" then
 		--local title, level, tag, header, collapsed, complete = GetQuestLogTitle(QuestCompleteNotification.queue)
-		if complete and MaoRUIPerDB["Misc"]["QuestCompleteAnnoce"] then
+		if complete and R.db["Misc"]["QuestCompleteAnnoce"] then
 			--libnotify:ShowPopup(title, nil, nil, tag)  --title, level, nil, tag
 			libnotify:ShowPopup(nil, nil, nil, nil)  --title, level, nil, tag
 			PlaySoundFile("Interface\\AddOns\\ShaguNotify\\textures\\complete.ogg", "Master")
