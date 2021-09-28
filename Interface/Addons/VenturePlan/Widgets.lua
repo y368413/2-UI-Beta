@@ -795,7 +795,7 @@ local function DoomRun_OnClick(self, button)
 	if button == "RightButton" then
 		U.StartMissionWithDelay(mid, g)
 	else
-		U.StoreMissionGroup(mid, g)
+		U.StoreMissionsGroup(mid, g)
 		PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON)
 	end
 	EV("I_MISSION_LIST_UPDATE")
@@ -805,7 +805,7 @@ local function DoomRun_OnShow(self)
 end
 local function TentativeGroupClear_OnClick(self)
 	local mid = S[self:GetParent()].missionID
-	U.StoreMissionGroup(mid, nil)
+	U.StoreMissionsGroup(mid, nil)
 	PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON)
 end
 local function getWastedRewards(r)
@@ -1321,7 +1321,7 @@ function Factory.CopyBoxUI(parent)
 	end)
 	t, f.CloseButton2 = f:CreateFontString(nil, "OVERLAY", "GameFontBlackSmall"), t
 	t:SetPoint("BOTTOMRIGHT", -16, 14)
-	t:SetText(GetAddOnMetadata(AN, "Title") .. " v" .. GetAddOnMetadata(AN, "Version"))
+	t:SetText(GetAddOnMetadata(AN, "Title") .. " " .. GetAddOnMetadata(AN, "Version"))
 	f.VersionText = t
 
 	f:SetScript("OnHide", function(self)
@@ -1550,7 +1550,7 @@ function Factory.MissionButton(parent)
 	s.Rewards = CreateObject("RewardBlock", cf, 48, 4)
 	s.Rewards.Container:SetPoint("TOP", 0, -4)
 	t = CreateObject("AchievementRewardIcon", cf)
-	t:SetPoint("RIGHT", cf, "TOPRIGHT", -25, -40)
+	t:SetPoint("RIGHT", cf, "TOPRIGHT", -8, -31)
 	s.AchievementReward = t
 	t = CreateFrame("Frame", nil, cf)
 	t:SetPoint("TOP", s.Name, "BOTTOM", 0, -6)

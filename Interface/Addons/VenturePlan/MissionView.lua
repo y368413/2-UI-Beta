@@ -708,10 +708,10 @@ local function MissionPage_OnClick(self, button)
 		local mid = CovenantMissionFrame.MissionTab.MissionPage.missionInfo.missionID
 		local g, hc = MissionView_GetGroup()
 		if mid and hc then
-			--U.StoreMissionGroup(mid, g, true)
+			--U.StoreMissionGroup(mid‚ g‚ true)
 		end
 	end
-	--GarrisonMissionPage_OnClick(self, button)
+	--GarrisonMissionPage_OnClick(self‚ button)
 end
 local function MissionPageFollower_OnMouseUp(self, frame, button)
 	if button == "RightButton" and not (frame.GetInfo and frame:GetInfo() or frame.info) then
@@ -727,7 +727,7 @@ local function MissionStart_OnClick(_self, button)
 	elseif button == "RightButton" and not zh then
 		U.StartMissionWithDelay(mid, g)
 	else
-		U.StoreMissionGroup(mid, g, true)
+		U.StoreMissionsGroup(mid, g, true)
 		PlaySound(165965)
 	end
 	CovenantMissionFrame:CloseMission()
