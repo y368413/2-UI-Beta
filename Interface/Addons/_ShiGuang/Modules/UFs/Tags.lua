@@ -35,11 +35,11 @@ local function ValueAndPercent(cur, per)
 end
 
 local function GetUnitHealthPerc(unit)
-	local unitMaxHealth = UnitHealthMax(unit)
+	local unitHealth, unitMaxHealth = UnitHealth(unit), UnitHealthMax(unit)
 	if unitMaxHealth == 0 then
-		return 0
+		return 0, unitHealth
 	else
-		return M:Round(UnitHealth(unit) / unitMaxHealth * 100, 1)
+		return M:Round(unitHealth / unitMaxHealth * 100, 1), unitHealth
 	end
 end
 
@@ -47,8 +47,7 @@ oUF.Tags.Methods["hp"] = function(unit)
 	if UnitIsDeadOrGhost(unit) or not UnitIsConnected(unit) then
 		return oUF.Tags.Methods["DDG"](unit)
 	else
-		local per = GetUnitHealthPerc(unit) or 0
-		local cur = UnitHealth(unit)
+		local per, cur = GetUnitHealthPerc(unit)
 		if (unit == "player" and not UnitHasVehicleUI(unit)) or unit == "target" or unit == "focus" then
 			return ValueAndPercent(cur, per)
 		else
@@ -59,10 +58,11 @@ end
 oUF.Tags.Events["hp"] = "UNIT_HEALTH UNIT_MAXHEALTH UNIT_NAME_UPDATE UNIT_CONNECTION PLAYER_FLAGS_CHANGED"
 
 oUF.Tags.Methods["power"] = function(unit)
-	local cur = UnitPower(unit)
-	local per = oUF.Tags.Methods["perpp"](unit) or 0
+	local cur, maxPower = UnitPower(unit), UnitPowerMax(unit)
+	local per = maxPower == 0 and 0 or M:Round(cur/maxPower * 100)
+
 	if (unit == "player" and not UnitHasVehicleUI(unit)) or unit == "target" or unit == "focus" then
-		if per < 100 and UnitPowerType(unit) == 0 then
+		if per < 100 and UnitPowerType(unit) == 0 and maxPower ~= 0 then
 			return M.Numb(cur).."/"..per
 		else
 			return M.Numb(cur)
@@ -168,11 +168,9 @@ oUF.Tags.Events["raidhp"] = "UNIT_HEALTH UNIT_MAXHEALTH UNIT_NAME_UPDATE UNIT_CO
 
 -- Nameplate tags
 oUF.Tags.Methods["nphp"] = function(unit)
-	local per = GetUnitHealthPerc(unit) or 0
+	local per, cur = GetUnitHealthPerc(unit)
 	if R.db["Nameplate"]["FullHealth"] then
-		local cur = UnitHealth(unit)
-		--return ValueAndPercent(cur, per)
-		return M.Numb(cur)
+		return ValueAndPercent(cur, per)
 	elseif per < 100 then
 		return ColorPercent(per)
 	end
@@ -195,6 +193,12 @@ oUF.Tags.Methods["nppp"] = function(unit)
 end
 oUF.Tags.Events["nppp"] = "UNIT_POWER_FREQUENT UNIT_MAXPOWER"
 
+local NPClassifies = {
+	rare = "  ",
+	elite = "  ",
+	rareelite = "  ",
+	worldboss = "  ",
+}
 oUF.Tags.Methods["nplevel"] = function(unit)
 	local level = UnitLevel(unit)
 	if level and level ~= UnitLevel("player") then
@@ -207,7 +211,8 @@ oUF.Tags.Methods["nplevel"] = function(unit)
 		level = ""
 	end
 
-	return level
+	local class = UnitClassification(unit)
+	return (class and NPClassifies[class] or "")..level
 end
 oUF.Tags.Events["nplevel"] = "UNIT_LEVEL PLAYER_LEVEL_UP UNIT_CLASSIFICATION_CHANGED"
 

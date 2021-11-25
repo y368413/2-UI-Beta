@@ -74,6 +74,7 @@ R.Tooltips = {
 
 -- 信息条
 R.Infobar = {
+	CustomAnchor	= false,											-- 自定义位置
 	Location		= true,												-- 区域信息
 	LocationPos		= {"TOP", UIParent,"TOP", 0, -3},					-- 区域信息位置
 	Spec			= true,												-- 天赋专精

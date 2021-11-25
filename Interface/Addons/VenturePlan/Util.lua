@@ -213,7 +213,7 @@ do -- Tentative Groups
 			StopBoardAnimations(CovenantMissionFrame.MissionTab.MissionPage.Board)
 		end
 	end
-	function U.StoreMissionsGroup(mid, gt, disbandGroups)
+	function U.StoreMissionGroup(mid, gt, disbandGroups)
 		if gt and next(gt) ~= nil then
 			local gn = {}
 			for k, v in pairs(gt) do
@@ -444,7 +444,7 @@ do -- delayStart
 	function U.StartMissionWithDelay(mid, g)
 		local mi, now = C_Garrison.GetBasicMissionInfo(mid), GetTime()
 		if mi then
-			U.StoreMissionsGroup(mid, g, true)
+			U.StoreMissionGroup(mid, g, true)
 			if mi.offerEndTime and (mi.offerEndTime-now) <= 4 then
 				U.SendTentativeGroup(mid)
 			else

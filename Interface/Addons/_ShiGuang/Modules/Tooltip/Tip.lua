@@ -10,7 +10,7 @@ local YOU, TARGET, AFK, DND, DEAD, PLAYER_OFFLINE = YOU, TARGET, AFK, DND, DEAD,
 local FOREIGN_SERVER_LABEL, INTERACTIVE_SERVER_LABEL = FOREIGN_SERVER_LABEL, INTERACTIVE_SERVER_LABEL
 local LE_REALM_RELATION_COALESCED, LE_REALM_RELATION_VIRTUAL = LE_REALM_RELATION_COALESCED, LE_REALM_RELATION_VIRTUAL
 local UnitIsPVP, UnitFactionGroup, UnitRealmRelationship, UnitGUID = UnitIsPVP, UnitFactionGroup, UnitRealmRelationship, UnitGUID
-local UnitIsConnected, UnitIsDeadOrGhost, UnitIsAFK, UnitIsDND = UnitIsConnected, UnitIsDeadOrGhost, UnitIsAFK, UnitIsDND
+local UnitIsConnected, UnitIsDeadOrGhost, UnitIsAFK, UnitIsDND, UnitReaction = UnitIsConnected, UnitIsDeadOrGhost, UnitIsAFK, UnitIsDND, UnitReaction
 local InCombatLockdown, IsShiftKeyDown, GetMouseFocus, GetItemInfo = InCombatLockdown, IsShiftKeyDown, GetMouseFocus, GetItemInfo
 local GetCreatureDifficultyColor, UnitCreatureType, UnitClassification = GetCreatureDifficultyColor, UnitCreatureType, UnitClassification
 local UnitIsWildBattlePet, UnitIsBattlePetCompanion, UnitBattlePetLevel = UnitIsWildBattlePet, UnitIsBattlePetCompanion, UnitBattlePetLevel
@@ -19,6 +19,7 @@ local GetRaidTargetIndex, UnitGroupRolesAssigned, GetGuildInfo, IsInGuild = GetR
 local C_PetBattles_GetNumAuras, C_PetBattles_GetAuraInfo = C_PetBattles.GetNumAuras, C_PetBattles.GetAuraInfo
 local C_ChallengeMode_GetDungeonScoreRarityColor = C_ChallengeMode.GetDungeonScoreRarityColor
 local C_PlayerInfo_GetPlayerMythicPlusRatingSummary = C_PlayerInfo.GetPlayerMythicPlusRatingSummary
+local GameTooltip_ClearMoney, GameTooltip_ClearStatusBars, GameTooltip_ClearProgressBars, GameTooltip_ClearWidgetSet = GameTooltip_ClearMoney, GameTooltip_ClearStatusBars, GameTooltip_ClearProgressBars, GameTooltip_ClearWidgetSet
 
 local classification = {
 	elite = " |cffcc8800"..ELITE.."|r",
@@ -26,7 +27,7 @@ local classification = {
 	rareelite = " |cffff99cc"..U["Rare"].."|r ".."|cffcc8800"..ELITE.."|r",
 	worldboss = " |cffff0000"..BOSS.."|r",
 }
-local npcIDstring = "ID: "..I.InfoColor.."%s"
+local npcIDstring = "%s "..I.InfoColor.."%s"
 
 function TT:GetUnit()
 	local _, unit = self and self:GetUnit()
@@ -115,6 +116,8 @@ function TT:InsertRoleFrame(role)
 end
 
 function TT:OnTooltipCleared()
+	if self:IsForbidden() then return end
+
 	if self.factionFrame and self.factionFrame:GetAlpha() ~= 0 then
 		self.factionFrame:SetAlpha(0)
 	end
@@ -122,6 +125,11 @@ function TT:OnTooltipCleared()
 		self.roleFrame:SetAlpha(0)
 		self.roleFrame.bg:SetAlpha(0)
 	end
+
+	GameTooltip_ClearMoney(self)
+	GameTooltip_ClearStatusBars(self)
+	GameTooltip_ClearProgressBars(self)
+	GameTooltip_ClearWidgetSet(self)
 end
 
 function TT.GetDungeonScore(score)
@@ -147,7 +155,8 @@ function TT:OnTooltipSetUnit()
 	local unit = TT.GetUnit(self)
 	local isShiftKeyDown = IsShiftKeyDown()
 	if UnitExists(unit) then
-		local hexColor = M.HexRGB(M.UnitColor(unit))
+		local r, g, b = M.UnitColor(unit)
+		local hexColor = M.HexRGB(r, g, b)
 		local ricon = GetRaidTargetIndex(unit)
 		local text = GameTooltipTextLeft1:GetText()
 		if ricon and ricon > 8 then ricon = nil end
@@ -252,15 +261,13 @@ function TT:OnTooltipSetUnit()
 			local guid = UnitGUID(unit)
 			local npcID = guid and M.GetNPCID(guid)
 			if npcID then
-				self:AddLine(format(npcIDstring, npcID))
+				local reaction = UnitReaction(unit, "player")
+				local standingText = reaction and hexColor.._G["FACTION_STANDING_LABEL"..reaction]
+				self:AddLine(format(npcIDstring, standingText or "", npcIDD))
 			end
 		end
 
-		if alive then
-			self.StatusBar:SetStatusBarColor(M.UnitColor(unit))
-		else
-			self.StatusBar:Hide()
-		end
+		self.StatusBar:SetStatusBarColor(r, g, b)
 
 		TT.InspectUnitSpecAndLevel(self, unit)
 		TT.ShowUnitMythicPlusScore(self, unit)
@@ -382,7 +389,7 @@ function TT:ReskinTooltip()
 	self:SetScale(R.db["Tooltip"]["Scale"])
 
 	if not self.tipStyled then
-		M.HideBackdrop(self) -- isNewPatch
+		self:HideBackdrop()
 		self:DisableDrawLayer("BACKGROUND")
 		self.bg = M.SetBD(self, .7)
 		self.bg:SetInside(self)
@@ -412,11 +419,6 @@ function TT:ReskinTooltip()
 			end
 		end
 	end
-end
-
-function TT:SharedTooltip_SetBackdropStyle()
-	if not self.tipStyled then return end
-	self:SetBackdrop(nil)
 end
 
 local function TooltipSetFont(font, size)
@@ -471,9 +473,6 @@ function TT:OnLogin()
 	hooksecurefunc("GameTooltip_ShowStatusBar", TT.GameTooltip_ShowStatusBar)
 	hooksecurefunc("GameTooltip_ShowProgressBar", TT.GameTooltip_ShowProgressBar)
 	hooksecurefunc("GameTooltip_SetDefaultAnchor", TT.GameTooltip_SetDefaultAnchor)
-	if not I.isNewPatch then
-		hooksecurefunc("SharedTooltip_SetBackdropStyle", TT.SharedTooltip_SetBackdropStyle)
-	end
 	hooksecurefunc("GameTooltip_AnchorComparisonTooltips", TT.GameTooltip_ComparisonFix)
 	TT:SetupTooltipFonts()
 	GameTooltip:HookScript("OnTooltipSetItem", TT.FixRecipeItemNameWidth)

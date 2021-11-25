@@ -2,6 +2,7 @@
 local M, R, U, I = unpack(ns)
 local G = M:RegisterModule("GUI")
 
+local unpack, strfind, gsub = unpack, strfind, gsub
 local tonumber, pairs, ipairs, next, type, tinsert = tonumber, pairs, ipairs, next, type, tinsert
 local cr, cg, cb = I.r, I.g, I.b
 local guiTab, guiPage, f = {}, {}
@@ -191,6 +192,7 @@ G.DefaultSettings = {
 	Nameplate = {
 		Enable = true,
 		maxAuras = 6,
+		PlateAuras = true,
 		AuraSize = 26,
 		AuraFilter = 3,
 		FriendlyCC = false,
@@ -198,8 +200,6 @@ G.DefaultSettings = {
 		TankMode = false,
 		TargetIndicator = 3,
 		InsideView = true,
-		PlateWidth = 168,
-		PlateHeight = 9,
 		CustomUnitColor = true,
 		CustomColor = {r=0, g=.8, b=.3},
 		UnitList = "",
@@ -223,8 +223,6 @@ G.DefaultSettings = {
 		PPFadeoutAlpha = 0,
 		PPOnFire = false,
 		NameplateClassPower = false,
-		NameTextSize = 14,
-		HealthTextSize = 16,
 		MinScale = 1,
 		MinAlpha = 0.8,
 		ColorBorder = true,
@@ -238,6 +236,24 @@ G.DefaultSettings = {
 		FocusColor = {r=1, g=.8, b=0},
 		CastbarGlow = true,
 		CastTarget = false,
+		FriendPlate = false,
+
+		PlateWidth = 190,
+		PlateHeight = 8,
+		PlateCBHeight = 6,
+		PlateCBOffset = 0,
+		CBTextSize = 14,
+		NameTextSize = 15,
+		HealthTextSize = 16,
+		HealthTextOffset = 5,
+		FriendPlateWidth = 160,
+		FriendPlateHeight = 8,
+		FriendPlateCBHeight = 6,
+		FriendPlateCBOffset = 0,
+		FriendCBTextSize = 14,
+		FriendNameSize = 14,
+		FriendHealthSize = 16,
+		FriendHealthOffset = 5,
 	},
 	Skins = {
 		DBM = true,
@@ -297,7 +313,7 @@ G.DefaultSettings = {
 		MissingStats = true,
 		SoloInfo = true,
 		RareAlerter = true,
-		AlertinChat = false,
+		RarePrint = true,
 		Focuser = true,
 		ExpRep = true,
 		Screenshot = true,
@@ -313,6 +329,7 @@ G.DefaultSettings = {
 		BrokenSpell = false,
 		FasterLoot = true,
 		AutoQuest = true,
+		IgnoreQuestNPC = {},
 		HideTalking = true,
 		HideBossBanner = false,
 		HideBossEmote = false,
@@ -340,6 +357,10 @@ G.DefaultSettings = {
 		FasterSkip = false,
 		EnhanceDressup = true,
 		QuestTool = true,
+		InfoStrLeft = "[guild][friend][ping][fps][zone]",
+		InfoStrRight = "[spec][dura][gold][time]",
+		InfoSize = 13,
+		MaxAddOns = 12,
 		QuickQueue = true,
 		--AltTabLfgNotification = false,
 		--CrazyCatLady = true,
@@ -503,6 +524,10 @@ local function setupNameplateFilter()
 	G:SetupNameplateFilter(guiPage[2])
 end
 
+local function setupNameplateSize()
+	G:SetupNameplateSize(guiPage[2])
+end
+
 local function setupPlateCastbarGlow()
 	G:PlateCastbarGlow(guiPage[5])
 end
@@ -515,6 +540,13 @@ end
 
 local function updateActionbarScale()
 	M:GetModule("Actionbar"):UpdateAllScale()
+end
+local function setupActionBar()
+	G:SetupActionBar(guiPage[1])
+end
+
+local function setupStanceBar()
+	G:SetupStanceBar(guiPage[1])
 end
 
 local function updateCustomBar()
@@ -537,6 +569,11 @@ local function updateEquipColor()
 			Bar.UpdateEquipItemColor(button)
 		end
 	end
+end
+
+local function toggleBarFader(self)
+	local name = gsub(self.__value, "Fader", "")
+	M:GetModule("Actionbar"):ToggleBarFader(name)
 end
 
 local function updateBuffFrame()
@@ -653,12 +690,20 @@ local function updateSimpleModeGroupBy()
 	end
 end
 
+local function updateRaidAuras()
+	M:GetModule("UnitFrames"):UpdateRaidAuras()
+end
+
 local function updateRaidHealthMethod()
 	M:GetModule("UnitFrames"):UpdateRaidHealthMethod()
 end
 
 local function updateSmoothingAmount()
 	M:SetSmoothingAmount(R.db["UFs"]["SmoothAmount"])
+end
+
+local function updateAllHeaders()
+	M:GetModule("UnitFrames"):UpdateAllHeaders()
 end
 
 local function updateMinimapScale()
@@ -711,6 +756,21 @@ end
 
 local function updateMarkerGrid()
 	M:GetModule("Misc"):RaidTool_UpdateGrid()
+end
+
+local function updateInfobarAnchor(self)
+	if self:GetText() == "" then
+		self:SetText(self.__default)
+		R.db[self.__key][self.__value] = self:GetText()
+	end
+
+	if not MaoRUIDB["DisableInfobars"] then
+		M:GetModule("Infobar"):Infobar_UpdateAnchor()
+	end
+end
+
+local function updateInfobarSize()
+	M:GetModule("Infobar"):UpdateInfobarSize()
 end
 
 local function updateSkinAlpha()
@@ -1085,7 +1145,7 @@ local function CreateTab(parent, i, name)
 	return tab
 end
 
-local function NDUI_VARIABLE(key, value, newValue)
+local function CheckUIOption(key, value, newValue)
 	if key == "ACCOUNT" then
 		if newValue ~= nil then
 			MaoRUIDB[value] = newValue
@@ -1098,6 +1158,14 @@ local function NDUI_VARIABLE(key, value, newValue)
 		else
 			return R.db[key][value]
 		end
+	end
+end
+
+G.needUIReload = nil
+
+local function CheckUIReload(name)
+	if not strfind(name, "%*") then
+		G.needUIReload = true
 	end
 end
 
@@ -1118,10 +1186,12 @@ local function CreateOption(i)
 				cb:SetPoint("TOPLEFT", 60, -offset)
 				offset = offset + 32
 			end
+			cb.__value = value
 			cb.name = M.CreateFS(cb, 14, name, false, "LEFT", 30, 0)
-			cb:SetChecked(NDUI_VARIABLE(key, value))
+			cb:SetChecked(CheckUIOption(key, value))
 			cb:SetScript("OnClick", function()
-				NDUI_VARIABLE(key, value, cb:GetChecked())
+				CheckUIOption(key, value, cb:GetChecked())
+				CheckUIReload(name)
 				if callback then callback() end
 			end)
 			if data and type(data) == "function" then
@@ -1137,6 +1207,9 @@ local function CreateOption(i)
 		elseif optType == 2 then
 			local eb = M.CreateEditBox(parent, 210, 23)
 			eb:SetMaxLetters(999)
+			eb.__key = key
+			eb.__value = value
+			eb.__default = (key == "ACCOUNT" and G.AccountSettings[value]) or G.DefaultSettings[key][value]
 			if horizon2 then
 				eb:SetPoint("TOPLEFT", 550, -offset + 32)
 			elseif horizon then
@@ -1145,14 +1218,16 @@ local function CreateOption(i)
 				eb:SetPoint("TOPLEFT", 60, -offset - 26)
 				offset = offset + 58
 			end
-			eb:SetText(NDUI_VARIABLE(key, value))
+			eb:SetText(CheckUIOption(key, value))
 			eb:HookScript("OnEscapePressed", function()
-				eb:SetText(NDUI_VARIABLE(key, value))
+				eb:SetText(CheckUIOption(key, value))
 			end)
-			eb:HookScript("OnEnterPressed", function()
-				NDUI_VARIABLE(key, value, eb:GetText())
-				if callback then callback() end
+			eb:HookScript("OnEnterPressed", function(self)
+				CheckUIOption(key, value, eb:GetText())
+				CheckUIReload(name)
+				if callback then callback(self) end
 			end)
+
 			M.CreateFS(eb, 14, name, "system", "CENTER", 0, 25)
 			eb.title = U["Tips"]
 			local tip = U["EditBox Tip"]
@@ -1172,14 +1247,15 @@ local function CreateOption(i)
 			end
 			local s = M.CreateSlider(parent, name, min, max, step, x, y)
 			s.__default = (key == "ACCOUNT" and G.AccountSettings[value]) or G.DefaultSettings[key][value]
-			s:SetValue(NDUI_VARIABLE(key, value))
+			s:SetValue(CheckUIOption(key, value))
 			s:SetScript("OnValueChanged", function(_, v)
 				local current = M:Round(tonumber(v), 2)
-				NDUI_VARIABLE(key, value, current)
+				CheckUIOption(key, value, current)
+				CheckUIReload(name)
 				s.value:SetText(current)
 				if callback then callback() end
 			end)
-			s.value:SetText(M:Round(NDUI_VARIABLE(key, value), 2))
+			s.value:SetText(M:Round(CheckUIOption(key, value), 2))
 			if tooltip then
 				s.title = U["Tips"]
 				M.AddTooltip(s, "ANCHOR_RIGHT", tooltip, "info")
@@ -1201,12 +1277,12 @@ local function CreateOption(i)
 				dd:SetPoint("TOPLEFT", 70, -offset - 26)
 				offset = offset + 58
 			end
-			dd.Text:SetText(data[NDUI_VARIABLE(key, value)])
+			dd.Text:SetText(data[CheckUIOption(key, value)])
 
 			local opt = dd.options
 			dd.button:HookScript("OnClick", function()
 				for num = 1, #data do
-					if num == NDUI_VARIABLE(key, value) then
+					if num == CheckUIOption(key, value) then
 						opt[num]:SetBackdropColor(1, .8, 0, .3)
 						opt[num].selected = true
 					else
@@ -1217,13 +1293,15 @@ local function CreateOption(i)
 			end)
 			for i in pairs(data) do
 				opt[i]:HookScript("OnClick", function()
-					NDUI_VARIABLE(key, value, i)
+					CheckUIOption(key, value, i)
+					CheckUIReload(name)
 					if callback then callback() end
 				end)
 				if value == "TexStyle" then
 					AddTextureToOption(opt, i) -- texture preview
 				end
 			end
+
 			M.CreateFS(dd, 14, name, "system", "CENTER", 0, 25)
 			if tooltip then
 				dd.title = U["Tips"]
@@ -1231,7 +1309,7 @@ local function CreateOption(i)
 			end
 		-- Colorswatch
 		elseif optType == 5 then
-			local swatch = M.CreateColorSwatch(parent, name, NDUI_VARIABLE(key, value))
+			local swatch = M.CreateColorSwatch(parent, name, CheckUIOption(key, value))
 			local width = 80 + (horizon or 0)*120
 			if horizon2 then
 				swatch:SetPoint("TOPLEFT", width, -offset + 33)
@@ -1282,7 +1360,10 @@ local function OpenGUI()
 	ok:SetScript("OnClick", function()
 		M:SetupUIScale()
 		f:Hide()
-		StaticPopup_Show("RELOAD_NDUI")
+		if G.needUIReload then
+			StaticPopup_Show("RELOAD_NDUI")
+			G.needUIReload = nil
+		end
 	end)
 
 	for i, name in pairs(G.TabList) do

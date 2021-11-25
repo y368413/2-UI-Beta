@@ -4,9 +4,10 @@ local G = M:GetModule("GUI")
 
 local _G = _G
 local unpack, pairs, ipairs, tinsert = unpack, pairs, ipairs, tinsert
-local min, max, strmatch, tonumber = min, max, strmatch, tonumber
+local min, max, strmatch, strfind, tonumber = min, max, strmatch, strfind, tonumber
 local GetSpellInfo, GetSpellTexture = GetSpellInfo, GetSpellTexture
 local GetInstanceInfo, EJ_GetInstanceInfo = GetInstanceInfo, EJ_GetInstanceInfo
+local IsControlKeyDown = IsControlKeyDown
 
 local function sortBars(barTable)
 	local num = 1
@@ -743,6 +744,8 @@ function G:SetupBuffIndicator(parent)
 		GameTooltip:Show()
 	end
 
+	local UF = M:GetModule("UnitFrames")
+
 	for index, value in ipairs(frameData) do
 		M.CreateFS(panel, 14, value.text, "system", "TOPLEFT", 20, value.offset)
 
@@ -797,7 +800,6 @@ function G:SetupBuffIndicator(parent)
 			M.AddTooltip(showAll, "ANCHOR_RIGHT", U["ShowAllTip"], "info")
 			scroll.showAll = showAll
 
-			local UF = M:GetModule("UnitFrames")
 			for spellID, value in pairs(UF.CornerSpells) do
 				local r, g, b = unpack(value[2])
 				createBar(scroll.child, index, spellID, value[1], r, g, b, value[3])
@@ -815,14 +817,16 @@ end
 local function sliderValueChanged(self, v)
 	local current = tonumber(format("%.0f", v))
 	self.value:SetText(current)
-	R.db["UFs"][self.__value] = current
+	R.db[self.__key][self.__value] = current
 	self.__update()
 end
 
-local function createOptionSlider(parent, title, minV, maxV, defaultV, x, y, value, func)
+local function createOptionSlider(parent, title, minV, maxV, defaultV, x, y, value, func, key)
 	local slider = M.CreateSlider(parent, title, minV, maxV, 1, x, y)
-	slider:SetValue(R.db["UFs"][value])
-	slider.value:SetText(R.db["UFs"][value])
+	if not key then key = "UFs" end
+	slider:SetValue(R.db[key][value])
+	slider.value:SetText(R.db[key][value])
+	slider.__key = key
 	slider.__value = value
 	slider.__update = func
 	slider.__default = defaultV

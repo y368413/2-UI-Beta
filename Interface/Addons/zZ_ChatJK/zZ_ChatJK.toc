@@ -1,0 +1,10 @@
+﻿## Interface: 90105
+## Title: zZ_ChatJK
+## Notes: zZ_ChatJK
+## Title-zhCN: |c0066ffffzZ_ChatJK聊天窗口监控|r
+## Notes-zhCN: |cFF34A2F7监控聊天窗口信息，当出现指定文字时报警。|r
+## Version: v9.7_2021.11.22
+## Author: 高频变压器
+## https://nga.178.com/read.php?tid=27489377
+
+zZ_ChatJK.lua

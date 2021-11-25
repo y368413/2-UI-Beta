@@ -2,29 +2,23 @@
 local EV, L, U, S = T.Evie, T.L, T.Util, T.Shadows
 
 local SetAchievementReward do
-	local aid, missionCreditCriteria = 14844, {}
 	function SetAchievementReward(ar, mid)
-		if not next(missionCreditCriteria) then
-			for i=1,GetAchievementNumCriteria(aid) do
-				local _, ct, com, _, _, _, _, asid, _, cid = GetAchievementCriteriaInfo(aid, i)
-				if ct == 174 and asid then
-					missionCreditCriteria[asid] = cid*2 + (com and 1 or 0)
-				end
-			end
+	    ar.assetID = mid
+		ar.achievementID = 14844
+		local Acs = {[2250]=1,[2251]=2,[2252]=3,[2253]=4,[2254]=5,[2255]=6,[2256]=7,[2258]=8,[2259]=9,[2260]=10}
+		if Acs[mid] then
+			ar:Show()
+			local com = select(3, GetAchievementCriteriaInfo(14844, Acs[mid]))
+			if ( com == false ) then
+		    	ar.icon:SetTexCoord(0.348, 0.578, 0.348, 0.535)
+			else
+				ar.icon:SetTexCoord(0.055, 0.289, 0.074, 0.262)
+	       end
+		else
+			ar:Hide()
 		end
-		local mc = missionCreditCriteria[mid]
-		if (mc or 1) % 2 == 1 then
-			return ar:Hide()
-		elseif select(3, GetAchievementCriteriaInfoByID(aid, mc/2)) then
-			missionCreditCriteria[mid] = mc + 1
-			return ar:Hide()
-		end
-		ar.assetID = mid
-		ar.achievementID = aid
-		ar:Show()
 	end
 end
-
 local MissionPage, MissionList
 function EV:GARRISON_MISSION_NPC_CLOSED()
 	if MissionList then

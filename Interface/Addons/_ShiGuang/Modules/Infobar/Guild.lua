@@ -10,7 +10,7 @@ local r, g, b = I.r, I.g, I.b
 local infoFrame, gName, gOnline, gApps, gRank, prevTime
 
 local wipe, sort, format, select = table.wipe, table.sort, format, select
-local CLASS_ICON_TCOORDS, SELECTED_DOCK_FRAME = CLASS_ICON_TCOORDS, SELECTED_DOCK_FRAME
+local SELECTED_DOCK_FRAME = SELECTED_DOCK_FRAME
 local LEVEL_ABBR, CLASS_ABBR, NAME, ZONE, RANK, GUILDINFOTAB_APPLICANTS, REMOTE_CHAT = LEVEL_ABBR, CLASS_ABBR, NAME, ZONE, RANK, GUILDINFOTAB_APPLICANTS, REMOTE_CHAT
 local IsAltKeyDown, IsShiftKeyDown, C_Timer_After, GetTime, Ambiguate, MouseIsOver = IsAltKeyDown, IsShiftKeyDown, C_Timer.After, GetTime, Ambiguate, MouseIsOver
 local MailFrame, MailFrameTab_OnClick, SendMailNameEditBox = MailFrame, MailFrameTab_OnClick, SendMailNameEditBox
@@ -78,8 +78,7 @@ function info:GuildPanel_UpdateButton(button)
 	local levelcolor = M.HexRGB(GetQuestDifficultyColor(level))
 	button.level:SetText(levelcolor..level)
 
-	local tcoords = CLASS_ICON_TCOORDS[class]
-	button.class:SetTexCoord(tcoords[1] + .022, tcoords[2] - .025, tcoords[3] + .022, tcoords[4] - .025)
+	M.ClassIconTexCoord(button.class, class)
 
 	local namecolor = M.HexRGB(M.ClassColor(class))
 	button.name:SetText(namecolor..name..status)
@@ -161,12 +160,22 @@ local function isPanelCanHide(self, elapsed)
 	end
 end
 
+local function updateInfoFrameAnchor(frame)
+	local relFrom, relTo, offset = module:GetTooltipAnchor(info)
+	frame:ClearAllPoints()
+	frame:SetPoint(relFrom, info, relTo, 0, offset)
+end
+
 function info:GuildPanel_Init()
-	if infoFrame then infoFrame:Show() return end
+	if infoFrame then
+		infoFrame:Show()
+		updateInfoFrameAnchor(infoFrame)
+		return
+	end
 
 	infoFrame = CreateFrame("Frame", "NDuiGuildInfobar", info)
 	infoFrame:SetSize(335, 495)
-	infoFrame:SetPoint("TOPLEFT", UIParent, 15, -30)
+	updateInfoFrameAnchor(infoFrame)
 	infoFrame:SetClampedToScreen(true)
 	infoFrame:SetFrameStrata("TOOLTIP")
 	local bg = M.SetBD(infoFrame)

@@ -1,11 +1,16 @@
  -- Author: Nerino1
 -- Create Date : 1/8/2021
--- Version 4.9
+-- Version 5.4
 
 local _, L = ...;
 SoulbindCacheOpener = {};
 
 SoulbindCacheOpener.items = {
+--Darkmoon Faire
+	{ 	["name"] = "SoulbindCacheOpener_RideTicketBook", --"Ride Ticket Book"
+		["id"] = 92788,
+		["button"] = nil
+	},
 --Kyrian
 	-- SoulBind
 	{ 	["name"] = "SoulbindCacheOpener_CleansingRiteMaterials", --"Cleansing Rite Materials"
@@ -433,11 +438,6 @@ SoulbindCacheOpener.items = {
 		["button"] = nil
 	},
 	
-	{ 	["name"] = "ExtraGoodies_MysteriousGiftfromVenari", --Mysterious Gift from Ve'nari"
-		["id"] = 187029,
-		["button"] = nil
-	},
-	
 	{ 	["name"] = "ExtraGoodies_GoldFilledBoot", --Gold Filled Boot"
 		["id"] = 186680,
 		["button"] = nil
@@ -456,8 +456,87 @@ SoulbindCacheOpener.items = {
 	{ 	["name"] = "ExtraGoodies_DeathsAdvanceSupplies", --Death's Advance Supplies"
 		["id"] = 186650,
 		["button"] = nil
-	}
+	},
+	
+	{ 	["name"] = "ExtraGoodies_GoldFilledHat", --Gold Filled Hat"
+		["id"] = 186706,
+		["button"] = nil
+	},
+	
+	{ 	["name"] = "ExtraGoodies_GoldFilledWashBucket", --Gold Filled Wash Bucket"
+		["id"] = 186688,
+		["button"] = nil
+	},
+	
+	{ 	["name"] = "ExtraGoodies_GoldFilledPaintBrushCup", --Gold Filled Paint Brush Cup"
+		["id"] = 186708,
+		["button"] = nil
+	},
+	
+	{ 	["name"] = "ExtraGoodies_GoldFilledChalice", --Gold Filled Chalice"
+		["id"] = 186705,
+		["button"] = nil
+	},
+	
+	{ 	["name"] = "ExtraGoodies_GoldFilledSatchel", --Gold Filled Satchel"
+		["id"] = 186691,
+		["button"] = nil
+	},
+	
+	{ 	["name"] = "ExtraGoodies_GoldFilledBarrel", --Gold Filled Barrel"
+		["id"] = 186690,
+		["button"] = nil
+	},
+	
+	{ 	["name"] = "ExtraGoodies_GoldFilledHelmet", --Gold Filled Helmet"
+		["id"] = 186692,
+		["button"] = nil
+	},
+	
+	{ 	["name"] = "ExtraGoodies_GoldFilledWheelbarrow", --Gold Filled Wheelbarrow"
+		["id"] = 186693,
+		["button"] = nil
+	},
+	
+	{ 	["name"] = "ExtraGoodies_SuppliesoftheArchivistsCodex", --Supplies of the Archivists' Codex"
+		["id"] = 187028,
+		["button"] = nil
+	},
+	
+	{ 	["name"] = "ExtraGoodies_StygicCluster", --Stygic Cluster"
+		["id"] = 187351,
+		["button"] = nil
+	},	
+	
 
+-- Brewfest
+
+	{ 	["name"] = "ExtraGoodies_KegShapedTreasureChest", --Keg-Shaped Treasure Chest"
+		["id"] = 117393,
+		["button"] = nil
+	},
+
+--Hallows end
+
+	{ 	["name"] = "ExtraGoodies_LootStuffedPumpkin", --Loot-Stuffed Pumpkin"
+		["id"] = 149574,
+		["button"] = nil
+	},
+	
+	{ 	["name"] = "ExtraGoodies_LootFilledPumpkinRare", --Loot-Filled Pumpkin (Rare)"
+		["id"] = 54516,
+		["button"] = nil
+	},
+	
+	{ 	["name"] = "ExtraGoodies_LootFilledPumpkinEpic", --Loot-Filled Pumpkin (Epic)"
+		["id"] = 117392,
+		["button"] = nil
+	},
+	
+	{ 	["name"] = "ExtraGoodies_HandfulofTreats", --Handful of Treats"
+		["id"] = 37586,
+		["button"] = nil
+	}
 
 };
 
@@ -568,9 +647,8 @@ function SoulbindCacheOpener:reset()
 end
 
 function SoulbindCacheOpener:AddButton()
-	self.frame:RegisterEvent("BAG_UPDATE");
-		self.frame:Show();
-		SoulbindCacheOpener:updateButtons();
+	self.frame:Show();
+	SoulbindCacheOpener:updateButtons();
 end
 
 function SoulbindCacheOpener:OnEvent(event, ...)
@@ -643,6 +721,7 @@ SoulbindCacheOpener.frame:SetMovable(true);
 SoulbindCacheOpener.frame:RegisterEvent("PLAYER_ENTERING_WORLD");
 SoulbindCacheOpener.frame:RegisterEvent("PLAYER_REGEN_ENABLED");
 SoulbindCacheOpener.frame:RegisterEvent("PLAYER_LOGIN");
+SoulbindCacheOpener.frame:RegisterEvent("BAG_UPDATE");
 
 SoulbindCacheOpener.frame:SetScript("OnEvent", function(self,event,...) SoulbindCacheOpener:OnEvent(event,...) end);
 SoulbindCacheOpener.frame:SetScript("OnShow", function(self,event,...) 

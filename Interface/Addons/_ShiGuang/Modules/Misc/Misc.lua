@@ -3,7 +3,7 @@ local M, R, U, I = unpack(ns)
 local MISC = M:RegisterModule("Misc")
 
 local _G = getfenv(0)
-local select, floor, unpack, tonumber, gsub, strsplit = select, floor, unpack, tonumber, gsub, strsplit
+local select, floor, unpack, tonumber, gsub = select, floor, unpack, tonumber, gsub
 local InCombatLockdown, IsModifiedClick, IsAltKeyDown = InCombatLockdown, IsModifiedClick, IsAltKeyDown
 local GetNumArchaeologyRaces = GetNumArchaeologyRaces
 local GetNumArtifactsByRace = GetNumArtifactsByRace
@@ -68,6 +68,7 @@ function MISC:OnLogin()
 	MISC:EnhanceDressup()
 	MISC:FuckTrainSound()
 	MISC:JerryWay()
+	MISC:BaudErrorFrameHelpTip()
 	
 	--MISC:CreateRM()
 	--MISC:FreeMountCD()
@@ -592,7 +593,7 @@ do
 		end
 	end
 
-	M:RegisterEvent("ADDON_LOADED", setupMisc)
+	--M:RegisterEvent("ADDON_LOADED", setupMisc) -- FIXME: collections is not dragable atm
 end
 
 -- Select target when click on raid units
@@ -707,6 +708,9 @@ function MISC:EnhanceDressup()
 	end)
 
 	M.AddTooltip(button, "ANCHOR_TOP", format(U["UndressButtonTip"], I.LeftButton, I.RightButton))
+
+	DressUpFrame.LinkButton:SetWidth(106)
+	DressUpFrame.LinkButton:SetText(SOCIAL_SHARE_TEXT)
 end
 
 function MISC:FuckTrainSound()
@@ -776,6 +780,30 @@ function MISC:JerryWay()
 		end
 	end
 	SLASH_NDUI_JERRY_WAY1 = "/way"
+end
+
+function MISC:BaudErrorFrameHelpTip()
+	if not IsAddOnLoaded("!BaudErrorFrame") then return end
+	local button, count = _G.BaudErrorFrameMinimapButton, _G.BaudErrorFrameMinimapCount
+	if not button then return end
+
+	local errorInfo = {
+		text = U["BaudErrorTip"],
+		buttonStyle = HelpTip.ButtonStyle.GotIt,
+		targetPoint = HelpTip.Point.TopEdgeCenter,
+		alignment = HelpTip.Alignment.Right,
+		offsetX = -15,
+		onAcknowledgeCallback = M.HelpInfoAcknowledge,
+		callbackArg = "BaudError",
+	}
+	hooksecurefunc(count, "SetText", function(_, text)
+		if not MaoRUIDB["Help"]["BaudError"] then
+			text = tonumber(text)
+			if text and text > 0 then
+				HelpTip:Show(button, errorInfo)
+			end
+		end
+	end)
 end
 
 --[[hooksecurefunc("TextStatusBar_UpdateTextStringWithValues",function(self,textString,value,_,maxValue)  ---	Custom status text format.

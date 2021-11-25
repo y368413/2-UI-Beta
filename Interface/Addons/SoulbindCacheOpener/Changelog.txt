@@ -1,3 +1,13 @@
+5.4 - Updated for 9.1.5
+
+5.3 - Handful of Treats
+
+5.2 - Removed duplicate gift from Ve'nari, added Stygic Cluster, Brewfest, Hallows End
+
+5.1 - Changed code to solve protected function error - thanks comiluv, Added Brewfest Keg-Shaped Treasure Chest
+
+5.0 - Added 'Gold Filled' Items
+
 4.9 - Removed Duplicate, Added Death's Advance Supplies and Small Korthian Supply Chest
 
 4.8 - Added many openables from Korthia and table missions.
