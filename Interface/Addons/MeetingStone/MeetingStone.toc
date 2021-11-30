@@ -1,9 +1,9 @@
 ## Interface: 90100
-## Version: 90005.03
+## Version: 90100.03
 ## Title: Meeting Stone
-## Title-zhCN: |cffff565e[网易]|r 集合石 修改版
+## Title-zhCN: |cffff565e[网易]|r 集合石
 ## Notes-zhCN: 帮助您更好的组建队伍
-## SavedVariables: MEETINGSTONE_UI_DB,MEETINGSTONE_UI_E_POINTS,MEETINGSTONE_UI_BLACKLISTEDLEADERS,MEETINGSTONE_UI_E_FILTERAD
+## SavedVariables: MEETINGSTONE_UI_DB
 ## SavedVariablesPerCharacter: MEETINGSTONE_CHARACTER_DB
 ## LoadManagers: AddonLoader
 ## X-LoadOn-Always: delayed

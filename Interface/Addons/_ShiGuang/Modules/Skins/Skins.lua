@@ -69,7 +69,7 @@ function S:OnLogin()
 	-- Add Skins
 	self:DBMSkin()
 	self:PGFSkin()
-	self:ReskinRematch()
+	--self:ReskinRematch()
 	self:LootEx()		-- 拾取增强
 	-- Register skin
 	local media = LibStub and LibStub("LibSharedMedia-3.0", true)

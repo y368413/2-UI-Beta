@@ -939,23 +939,26 @@ do
 
         if Hekili.freshFrame and not Hekili.Pause then
             local spec = Hekili.DB.profile.specs[ state.spec.id ]
-            local throttle = spec.throttleRefresh and ( 1 / spec.maxRefresh ) or 0.25
+            local throttle = spec.throttleRefresh and ( 1 / spec.maxRefresh ) or 1
 
-            if self.refreshTimer < 0 or ( self.superUpdate and ( self.id == "Primary" or self.id == "AOE" ) ) or self.criticalUpdate and ( now - self.lastUpdate >= throttle ) then
-                Hekili:ProcessHooks( self.id )
-                self.lastUpdate = now
-                self.criticalUpdate = false
-                self.superUpdate = false
+            if self.refreshTimer < 0 or self.superUpdate or self.criticalUpdate and ( now - self.lastUpdate >= throttle ) then
+                local success = Hekili:ProcessHooks( self.id )
+                
+                if success then
+                    self.lastUpdate = now
+                    self.criticalUpdate = false
+                    self.superUpdate = false
 
-                local refreshRate = max( throttle, state.combat == 0 and oocRefresh or icRefresh[ self.id ] )
+                    local refreshRate = max( throttle, state.combat == 0 and oocRefresh or icRefresh[ self.id ] )
 
-                if UnitChannelInfo( "player" ) then
-                    refreshRate = refreshRate * 2
+                    if UnitChannelInfo( "player" ) then
+                        refreshRate = refreshRate * 2
+                    end
+        
+                    self.refreshTimer = refreshRate
+
+                    table.wipe( self.eventsTriggered )
                 end
-    
-                self.refreshTimer = refreshRate
-
-                table.wipe( self.eventsTriggered )
                 
                 Hekili.freshFrame = false
             end
@@ -1325,9 +1328,7 @@ do
                 if ability.item then
                     start, duration = GetItemCooldown( ability.item )
                 else
-                    if ability.cooldown > 0 or ability.spendType ~= "runes" then
-                        start, duration = GetSpellCooldown( ability.id )
-                    end
+                    start, duration = GetSpellCooldown( ability.id )
                 end
 
                 if ability.gcd ~= "off" and start + duration < gExpires then
@@ -1335,14 +1336,9 @@ do
                     duration = gDuration
                 end
 
-                if i == 1 and conf.delays.extend and rec.time > 0 and rec.exact_time > max( now, start + duration ) then
-                    if rec.interrupt and rec.startCast then
-                        start = rec.startCast
-                        duration = rec.exact_time - start
-                    else
-                        start = start > 0 and start or state.gcd.lastStart
-                        duration = rec.exact_time - start
-                    end
+                if i == 1 and conf.delays.extend and rec.delay and rec.delay > 0 and rec.exact_time > max( now, start + duration ) then
+                    start = start > 0 and start or state.gcd.lastStart
+                    duration = rec.exact_time - start
                 end
 
                 if cd.lastStart ~= start or cd.lastDuration ~= duration then
@@ -1550,8 +1546,13 @@ do
     end
 
     local function Display_UpdatePerformance( self, now, used, newRecs )
+        if not InCombatLockdown() then
+            self.combatUpdates.last = 0
+            return
+        end
+
         if used == nil then return end        
-        used = used / 1000 -- ms to sec.
+        -- used = used / 1000 -- ms to sec.
 
         if self.combatTime.samples == 0 then
             self.combatTime.fastest = used
@@ -1561,13 +1562,15 @@ do
             self.combatTime.samples = 1
         else
             if used < self.combatTime.fastest then self.combatTime.fastest = used end
-            if used > self.combatTime.slowest then self.combatTime.slowest = used end
+            if used > self.combatTime.slowest then
+                self.combatTime.slowest = used
+            end
 
             self.combatTime.average = ( ( self.combatTime.average * self.combatTime.samples ) + used ) / ( self.combatTime.samples + 1 )
             self.combatTime.samples = self.combatTime.samples + 1
         end
 
-        if self.combatUpdates.samples == 0 then
+        if self.combatUpdates.samples == 0 or self.combatUpdates.last == 0 then
             if self.combatUpdates.last == 0 then
                 self.combatUpdates.last = now
             else
@@ -1608,7 +1611,7 @@ do
 
             self.combatUpdates.average = ( ( self.combatUpdates.average * self.combatUpdates.samples ) + interval ) / ( self.combatUpdates.samples + 1 )
             self.combatUpdates.samples = self.combatUpdates.samples + 1
-        end
+        end        
 
         self.successEvents = self.successEvents or {}
         self.failEvents = self.failEvents or {}
@@ -1619,7 +1622,6 @@ do
             if events[ k ] then events[ k ] = events[ k ] + 1
             else events[ k ] = 1 end
         end
-
     end
 
 
@@ -2489,16 +2491,16 @@ function Hekili:ShowDiagnosticTooltip( q )
     local fmt = ns.lib.Format
 
     -- Grab the default backdrop and copy it with a solid background.
-    local backdrop = GameTooltip:GetBackdrop()
+    -- local backdrop = GameTooltip:GetBackdrop()
 
-    if backdrop then
-        backdrop.bgFile = [[Interface\Buttons\WHITE8X8]]
-        --[[ tt:SetBackdrop(backdrop)
-        tt:SetBackdropColor(0, 0, 0, 1) ]]
-    end
+    -- if backdrop then
+    --    backdrop.bgFile = [[Interface\Buttons\WHITE8X8]]
+        -- tt:SetBackdrop(backdrop)
+        -- tt:SetBackdropColor(0, 0, 0, 1)
+    -- end
 
     tt:SetOwner(UIParent, "ANCHOR_CURSOR")
-    tt:SetText(class.abilities[q.actionName].name)
+    tt:SetText( class.abilities[q.actionName].name )
     tt:AddDoubleLine(q.listName .. " #" .. q.action, "+" .. ns.formatValue(round(q.time or 0, 2)), 1, 1, 1, 1, 1, 1)
 
     if q.resources and q.resources[q.resource_type] then

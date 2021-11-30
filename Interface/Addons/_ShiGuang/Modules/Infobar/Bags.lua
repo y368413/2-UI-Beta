@@ -3,7 +3,7 @@ local M, R, U, I = unpack(ns)
 if not R.Infobar.Bags then return end
 
 local module = M:GetModule("Infobar")
-local info = module:RegisterInfobar("Bags", R.Infobar.BagsPos)
+local info = module:RegisterInfobar("Bag", R.Infobar.BagsPos)
 		
 info.eventList = {
 	"BAG_UPDATE",

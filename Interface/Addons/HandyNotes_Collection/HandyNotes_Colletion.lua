@@ -18,8 +18,12 @@ local HandyNotes = LibStub('AceAddon-3.0'):GetAddon('HandyNotes')
 ---
 local Addon = LibStub('AceAddon-3.0'):NewAddon(NAME, 'AceEvent-3.0')
 
+-- Initialize map points, so we can move all data files at the end of .toc file.
+local points = {}
+
 -- Register our addon back to global namespace.
 this.Addon = Addon
 this.AceLocale = AceLocale
 this.HandyNotes = HandyNotes
 this.LibStub = LibStub
+this.points = points

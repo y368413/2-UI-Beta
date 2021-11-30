@@ -120,7 +120,7 @@ function MISC:RareAlert_Update(id)
 				local x, y = position:GetXY()
 				nameString = format(MISC.RareString, mapID, x*10000, y*10000, info.name, x*100, y*100, "")
 			end
-			print(currrentTime.." -> "..I.InfoColor.." → "..tex..(nameString or info.name or ""))
+			print(currrentTime.." -> "..I.InfoColor..tex..(nameString or info.name or ""))  --.." → "
 		end
 		if not R.db["Misc"]["RareAlertInWild"] or MISC.RareInstType == "none" then
 			PlaySoundFile("Interface\\Addons\\_ShiGuang\\Media\\Sounds\\Dadongda.ogg", "Master")

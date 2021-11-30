@@ -45,6 +45,7 @@ end
 
 local handlerCount = {}
 Hekili.ECount = handlerCount
+Hekili.IC = itemCallbacks
 
 
 local function GenericOnEvent( self, event, ... )
@@ -219,7 +220,7 @@ do
                 callbacks[ i ] = nil
             end
 
-            if state.set_bonus[ itemID ] > 0 then
+            if state.set_bonus[ itemID ] > 0 and not updatedEquippedItem then
                 updatedEquippedItem = true
                 C_Timer.After( 0.5, CheckForEquipmentUpdates )
             end
@@ -232,10 +233,10 @@ do
 end
 
 function Hekili:ContinueOnItemLoad( itemID, func )
-    --[[ if C_Item.IsItemDataCachedByID( itemID ) then
+    if C_Item.IsItemDataCachedByID( itemID ) and Hekili.PLAYER_ENTERING_WORLD then
         func( true )
         return
-    end ]]
+    end
 
     local callbacks = itemCallbacks[ itemID ] or {}
     insert( callbacks, func )
@@ -621,6 +622,7 @@ end
 
 do
     local gearInitialized = false
+    local lastUpdate = 0
 
     local function itemSorter( a, b )
         local action1, action2 = class.abilities[ a.action ].cooldown, class.abilities[ b.action ].cooldown
@@ -673,9 +675,19 @@ do
     end
 
     local wasWearing = {}
+    local updateIsQueued = false
 
     function ns.updateGear()
-        if not Hekili.PLAYER_ENTERING_WORLD then return end
+        if not Hekili.PLAYER_ENTERING_WORLD or GetTime() - lastUpdate < 1 then
+            if not updateIsQueued then
+                C_Timer.After( 1, ns.updateGear )
+                updateIsQueued = true
+            end
+            return
+        end
+
+        lastUpdate = GetTime()
+        updateIsQueued = false
 
         for thing in pairs( state.set_bonus ) do
             state.set_bonus[ thing ] = 0
@@ -871,7 +883,10 @@ do
         state.swings.mh_speed, state.swings.oh_speed = UnitAttackSpeed( "player" )
 
         if not gearInitialized then
-            C_Timer.After( 3, ns.updateGear )
+            if not updateIsQueued then
+                C_Timer.After( 1, ns.updateGear )
+                updateIsQueued = true
+            end
         else
             ns.ReadKeybindings()
         end
@@ -1165,9 +1180,7 @@ end )
 
 
 RegisterEvent( "CURRENT_SPELL_CAST_CHANGED", function( event, cancelled )
-    if cancelled then
-        Hekili:ForceUpdate( event, true )
-    end
+    Hekili:ForceUpdate( event, true )
 end )
 
 
@@ -1402,7 +1415,7 @@ local function CLEU_HANDLER( event, _, subtype, _, sourceGUID, sourceName, _, _,
     if death_events[ subtype ] then
         if ns.isTarget( destGUID ) then
             ns.eliminateUnit( destGUID, true )
-            Hekili:ForceUpdate( subtype )
+            -- Hekili:ForceUpdate( subtype )
 
         elseif ns.isMinion( destGUID ) then
             local npcid = destGUID:match("(%d+)-%x-$")
@@ -1603,7 +1616,7 @@ local function CLEU_HANDLER( event, _, subtype, _, sourceGUID, sourceName, _, _,
                 state.gcd.lastStart = max( state.gcd.lastStart, gcdStart )
             end            
 
-            if subtype ~= "SPELL_DAMAGE" then Hekili:ForceUpdate( subtype, true ) end
+            -- if subtype ~= "SPELL_DAMAGE" then Hekili:ForceUpdate( subtype, true ) end
         end
     end
 
@@ -2204,10 +2217,10 @@ end )
 
 
 if select( 2, UnitClass( "player" ) ) == "DRUID" then
-    local prowlOrder = { 8, 7, 2, 3, 4, 5, 6, 9, 10, 1 }
-    local catOrder = { 7, 8, 2, 3, 4, 5, 6, 9, 10, 1 }
-    local bearOrder = { 9, 3, 4, 5, 6, 2, 7, 8, 10, 1 }
-    local owlOrder = { 10, 2, 3, 4, 5, 6, 7, 8, 9, 1 }
+    local prowlOrder = { 8, 7, 1, 2, 3, 4, 5, 6, 9, 10 }
+    local catOrder = { 7, 8, 1, 2, 3, 4, 5, 6, 9, 10 }
+    local bearOrder = { 9, 1, 2, 3, 4, 5, 6, 7, 8, 10 }
+    local owlOrder = { 10, 1, 2, 3, 4, 5, 6, 7, 8, 9 }
 
     function Hekili:GetBindingForAction( key, display, i )
         if not key then return "" end

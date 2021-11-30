@@ -4,12 +4,16 @@
 ---
 
 local NAME, this = ...
+
 local LibStub = this.LibStub
 local HandyNotes = this.HandyNotes
 local Addon = this.Addon
 local Point = this.Point
 local API = this.API
+local Cache = this.Cache
+local Map = this.Map
 local GameTooltip = API.GameTooltip
+local DataProviderMixin = this.DataProviderMixin
 
 local HandyNotesPlugin = {}
 
@@ -28,9 +32,14 @@ function HandyNotesPlugin:OnEnter(uiMapId, coord)
   GameTooltip:SetOwner(self, tooltipPosition)
 
   -- Pass GameTooltip object and point data to another function, that will render tooltip.
-  Point:prepareTooltip(GameTooltip, this.points[uiMapId][coord])
+  Point:prepareTooltip(GameTooltip, this.points[uiMapId][coord], uiMapId)
   -- Display tooltip.
   GameTooltip:Show()
+
+  -- Set state (focus) on point, so we know, we have to render pois, if there are any.
+  this.points[uiMapId][coord]['hover'] = true
+  -- Render any POI / Path this point has.
+  DataProviderMixin:RefreshAllData()
 end
 
 ---
@@ -40,7 +49,15 @@ end
 --- @link https://github.com/Nevcairiel/HandyNotes/blob/master/HandyNotes.lua
 ---
 function HandyNotesPlugin:OnLeave(uiMapId, coord)
-  GameTooltip:Hide()
+  -- Keep tooltip visible when holding alt button.
+  if (API:IsAltKeyDown() == false) then
+    GameTooltip:Hide()
+  end
+
+  -- Unfocus point.
+  this.points[uiMapId][coord]['hover'] = false
+  -- Refreshing removes all icons and adds icons for points, that are active.
+  DataProviderMixin:RefreshAllData()
 end
 
 ---
@@ -50,9 +67,28 @@ end
 --- @link https://github.com/Nevcairiel/HandyNotes/blob/master/HandyNotes.lua
 ---
 function HandyNotesPlugin:OnClick(button, down, uiMapId, coord)
-  -- If icon is portal, we change map.
-  if (down == true and this.points[uiMapId][coord]['portal']) then
-    API:changeMap(this.points[uiMapId][coord]['portal'])
+  -- Left button actions.
+  if (button == 'LeftButton') then
+    -- If icon is portal, we change map.
+    if (down == true and this.points[uiMapId][coord]['portal']) then
+      API:changeMap(this.points[uiMapId][coord]['portal'])
+
+      return;
+    end
+
+    -- Waypoint creation on shift click.
+    if (API:IsShiftKeyDown() and down == false) then
+      Point:createWaypoint(uiMapId, coord)
+    end
+
+    -- Activation and deactivation of a point (displaying pois and paths even if we hover out).
+    local active = true
+    if (down == true and not this.points[uiMapId][coord]['portal']) then
+      if (this.points[uiMapId][coord]['active'] and this.points[uiMapId][coord]['active'] == true) then
+        active = false
+      end
+      this.points[uiMapId][coord]['active'] = active
+    end
   end
 end
 
@@ -79,19 +115,20 @@ do
     while coordinates do
       -- If we have any data for our point.
       if point then
-        local scale = this.Addon.db.profile.scale
-        local opacity = this.Addon.db.profile.opacity
+        local scale, opacity = Map:prepareSize(point)
 
-        -- Check, if we have scale or opacity configured in point and rewrite user config.
-        if (point.scale) then
-          scale = point.scale
-        end
-        if (point.opacity) then
-          opacity = point.opacity
+        -- Completion status for point.
+        local completed = Point:isCompleted(point)
+
+        -- Check, whether point should be shown.
+        local show = Map:showPoint(point, completed)
+
+        -- Change icon for npc / chest, if they were completed.
+        if (completed == true and (point.icon == 'chest' or point.icon == 'monster')) then
+          point.icon = point.icon .. '-completed'
         end
 
-        -- Validate, that quest is not completed or show completed option is checked.
-        if (Point:isCompleted(point) == false or this.Addon.db.profile.completed == true) then
+        if (show == true) then
           -- Create icon for to display on map.
           local icon = API:GetAtlasInfo(point.icon)
 
@@ -103,7 +140,7 @@ do
       coordinates, point = next(table, coordinates)
     end
 
-    return nil, nil, nil, nil
+    return nil, nil, nil, nil, nil
   end
 
   ---
@@ -111,7 +148,7 @@ do
   ---
   --- @param uiMapId
   ---   The zone ID we want data for.
-  --- @param minimap
+  --- @param _
   ---   Boolean indicating if we want to get nodes to display on the minimap.
   ---
   --- @return function iter()
@@ -119,7 +156,8 @@ do
   --- @return table point
   ---   Our points table for given map.
   ---
-  function HandyNotesPlugin:GetNodes2(uiMapId, minimap)
+  function HandyNotesPlugin:GetNodes2(uiMapId, _)
+    -- @todo handle minimap (second param).
     return iter, this.points[uiMapId], nil
   end
 end
@@ -133,6 +171,13 @@ end
 function Addon:OnInitialize()
   -- Set up our database.
   self.db = LibStub('AceDB-3.0'):New(NAME .. 'DB', this.defaults)
+  -- Our cache, so we don't have to query game api so much.
+  HandyNotes_CollectionCACHE = HandyNotes_CollectionCACHE or {}
+  self.cache = HandyNotes_CollectionCACHE
+  -- Our storage for completed stuff.
+  HandyNotes_CollectionSTATUS = HandyNotes_CollectionSTATUS or {}
+  self.status = HandyNotes_CollectionSTATUS
+  Cache:initialize()
   -- Initialize our database with HandyNotes.
   HandyNotes:RegisterPluginDB(NAME, HandyNotesPlugin, this.options)
 end
@@ -144,10 +189,16 @@ end
 --- @link https://www.wowace.com/projects/ace3/pages/getting-started#title-2-2
 ---
 function Addon:OnEnable()
+  -- Add our custom data provider for pois and paths.
+  API.WorldMapFrame:AddDataProvider(DataProviderMixin)
+
   self:RegisterEvent('CRITERIA_UPDATE', 'Refresh')
   self:RegisterEvent('CRITERIA_EARNED', 'Refresh')
   self:RegisterEvent('QUEST_TURNED_IN', 'Refresh')
   self:RegisterEvent('ACHIEVEMENT_EARNED', 'Refresh')
+  self:RegisterEvent('NEW_PET_ADDED', 'Refresh')
+  self:RegisterEvent('NEW_TOY_ADDED', 'Refresh')
+  self:RegisterEvent('NEW_MOUNT_ADDED', 'Refresh')
 end
 
 ---

@@ -5,13 +5,15 @@ local addonName, addon = ...
 -- will taint during combat
 local CloseGossip = C_GossipInfo.CloseGossip
 
-local showCallbacks, hideCallbacks
+local moduleCallbacks, hideCallbacks
 local markerPool = CreateObjectPool(addon.private.createMarker, addon.private.resetMarker)
 addon.private = nil -- it's called private for a reason
 
-local function renderMarkers()
-	for _, callback in next, showCallbacks do
-		callback(addon)
+local function getActiveModuleCallback()
+	for _, callbacks in next, moduleCallbacks do
+		if callbacks.showCondition(addon, addon:GetNPCID()) then
+			return callbacks.moduleCallback
+		end
 	end
 end
 
@@ -27,16 +29,10 @@ MapButton:SetAttribute('type', 'macro')
 MapButton:SetAttribute('macrotext', '/click QuestLogMicroButton')
 MapButton:SetAlpha(0)
 MapButton:HookScript('PreClick', function()
-	Handler:RegisterEvent('GOSSIP_CLOSED')
-	C_GossipInfo.CloseGossip = nop -- possibly destructive for other addons
-end)
-
-MapButton:HookScript('PostClick', function(self)
-	-- if WorldMapFrame:IsShown() then
-	-- 	WorldMapFrame:SetMapID(self.mapID)
-	-- end
-
-	renderMarkers()
+	local moduleCallback = getActiveModuleCallback()
+	if moduleCallback then
+		moduleCallback(addon, addon:GetNPCID())
+	end
 end)
 
 local Texture = MapButton:CreateTexture('$parentTexture', 'ARTWORK')
@@ -51,22 +47,31 @@ Highlight:SetSize(32, 25)
 Highlight:SetTexture([[Interface\Buttons\ButtonHilight-Square]])
 Highlight:SetBlendMode('ADD')
 
---[[ addon:Add(_callback_)
-Adds a new callback that will be triggered when interacting with an NPC that has gossip options.  
-The callback *must* return positively (`true`) whenever the map should be shown.
+--[[ addon:Add(_showCallback_, _markerCallback_)
+Adds callbacks that will be triggered when interacting with an NPC that has gossip options.  
+The _`showCondition`_ must return true for when the addon should activate its logic.  
+The _`moduleCallback`_ will be run to when the map is shown while the show condition is true.
 
 This is merely the event `GOSSIP_SHOW` with some pre-processing.
 
-* `callback` - function that will be called when interacting with a gossip NPC _(function)_
+* `showCondition`
    * signature:
-      * `self` - the [addon](Addon) namespace
+      * `self`  - the [addon](Addon) namespace
+      * `npcID` - ID of the interacting object (e.g. NPC)
+* `moduleCallback`
+   * signature:
+      * `self`  - the [addon](Addon) namespace
+      * `npcID` - ID of the interacting object (e.g. NPC)
 --]]
-function addon:Add(callback)
-	if(not showCallbacks) then
-		showCallbacks = {}
+function addon:Add(showCondition, moduleCallback)
+	if not moduleCallbacks then
+		moduleCallbacks = {}
 	end
 
-	table.insert(showCallbacks, callback)
+	table.insert(moduleCallbacks, {
+		showCondition = showCondition,
+		moduleCallback = moduleCallback,
+	})
 end
 
 --[[ addon:Remove(_callback_)
@@ -79,7 +84,7 @@ This is merely the event `GOSSIP_CLOSED` with some pre-processing.
       * `self` - the [addon](Addon) namespace
 --]]
 function addon:Remove(callback)
-	if(not hideCallbacks) then
+	if not hideCallbacks then
 		hideCallbacks = {}
 	end
 
@@ -90,7 +95,7 @@ end
 Removes all markers on the map.
 --]]
 function addon:RemoveAll()
-	if(markerPool) then
+	if markerPool then
 		markerPool:ReleaseAll()
 	end
 
@@ -183,7 +188,7 @@ Returns true/false if the option exists and was clicked.
 --]]
 function addon:SelectGossipLine(text)
 	for index, line in next, addon:GetLines() do
-		if(line:match(text)) then
+		if line:match(text) then
 			addon:SelectGossipIndex(index)
 			return true
 		end
@@ -201,21 +206,24 @@ function addon:SelectGossipIndex(index)
 end
 
 Handler:RegisterEvent('GOSSIP_SHOW')
-Handler:SetScript('OnEvent', function(self, event, ...)
-	if(event == 'GOSSIP_SHOW') then
-		table.wipe(lines)
+Handler:SetScript('OnEvent', function(self, event)
+	if event == 'GOSSIP_SHOW' then
+		local moduleCallback = getActiveModuleCallback()
+		if moduleCallback then
+			table.wipe(lines)
 
-		for _, info in next, C_GossipInfo.GetOptions() do
-			table.insert(lines, info.name)
-		end
+			for _, info in next, C_GossipInfo.GetOptions() do
+				table.insert(lines, info.name)
+			end
 
-		if WorldMapFrame:IsShown() or not (IsShiftKeyDown() or InCombatLockdown()) then
-			renderMarkers()
-		else
-			-- show the map button in the gossip whenever the user is in combat or holds shift
-			MapButton:SetAlpha(1)
+			if WorldMapFrame:IsShown() or not (IsShiftKeyDown() or InCombatLockdown()) then
+				moduleCallback(addon, addon:GetNPCID())
+			else
+				-- show the map button in the gossip whenever the user is in combat or holds shift
+				MapButton:SetAlpha(1)
+			end
 		end
-	elseif(event == 'GOSSIP_CLOSED') then
+	elseif event == 'GOSSIP_CLOSED' then
 		self:UnregisterEvent(event)
 		C_GossipInfo.CloseGossip = CloseGossip
 
@@ -229,7 +237,11 @@ Handler:SetScript('OnEvent', function(self, event, ...)
 end)
 
 WorldMapFrame:HookScript('OnHide', function()
-	if addon:IsActive() then
-		CloseGossip()
-	end
+	-- TODO: we only want to close the gossip if it was a player choice to close the world map,
+	--       this is an ugly hack to give the module logic some time to finish
+	C_Timer.After(0.1, function()
+		if not GossipFrame:IsShown() then
+			CloseGossip()
+		end
+	end)
 end)

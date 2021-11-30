@@ -4,7 +4,7 @@ local oUF = ns.oUF
 if not R.Infobar.System then return end
 
 local module = M:GetModule("Infobar")
-local info = module:RegisterInfobar("System", R.Infobar.SystemPos)
+local info = module:RegisterInfobar("Fps", R.Infobar.SystemPos)
 
 local ipairs, tinsert, wipe, sort = ipairs, tinsert, wipe, sort
 local format, floor, min, max = format, floor, min, max
@@ -127,7 +127,8 @@ info.onEnter = function(self)
 	local maxAddOns = R.db["Misc"]["MaxAddOns"]
 	local maxShown = isShiftKeyDown and #infoTable or min(maxAddOns, #infoTable)
 
-	GameTooltip:SetOwner(self, "ANCHOR_BOTTOM", 0, -15)
+	local _, anchor, offset = module:GetTooltipAnchor(info)
+	GameTooltip:SetOwner(self, "ANCHOR_"..anchor, 0, offset)
 	GameTooltip:ClearLines()
 
 	if self.showMemory or not scriptProfileStatus then

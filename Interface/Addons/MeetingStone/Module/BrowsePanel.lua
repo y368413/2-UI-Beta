@@ -51,7 +51,7 @@ function BrowsePanel:OnInitialize()
                 key = 'Title',
                 text = L['活动标题'],
                 style = 'LEFT',
-                width = 150,
+                width = 170,
                 showHandler = function(activity)
                     if activity:IsUnusable() then
                         return activity:GetSummary(), GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b
@@ -66,7 +66,7 @@ function BrowsePanel:OnInitialize()
                 key = 'ActivityName',
                 text = L['活动类型'],
                 style = 'LEFT',
-                width = 110,
+                width = 170,
                 showHandler = function(activity)
                     if activity:IsUnusable() then
                         return activity:GetName(), GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b
@@ -198,27 +198,19 @@ function BrowsePanel:OnInitialize()
                 end,
             },{
                 key = 'LeaderScore',
-                text = L['团长分数'],
-                width = 100,
-                showHandler = function(activity)
-                    local activityInfo = C_LFGList.GetSearchResultInfo(activity:GetID())
-                    if(activityInfo == nil) then
-                        return "---"
-                    end
-                    local leaderScore = activityInfo.leaderOverallDungeonScore
-                    if(leaderScore == nil) then
-                        return "---"
-                    end
-                    local color = C_ChallengeMode.GetDungeonScoreRarityColor(leaderScore);
-                    if(not color) then 
-                        color = HIGHLIGHT_FONT_COLOR; 
-                    end 
-                    return leaderScore,color.r,color.g,color.b
-                end
+                text = L['大秘评分'],
+                style = 'LEFT',
+                width = 90,
+                textHandler = function(activity)
+                    return activity:GetLeaderScore(), HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b
+                end,
+                sortHandler = function(activity)
+                    return 1/(activity:GetLeaderScore() + 1)
+                end,
             }, {
                 key = 'Summary',
                 text = L['说明'],
-                width = 128,
+                width = 170,
                 class = Addon:GetClass('SummaryGrid'),
                 formatHandler = function(grid, activity)
                     grid:SetActivity(activity)
@@ -235,28 +227,13 @@ function BrowsePanel:OnInitialize()
         end)
         ActivityList:SetCallback('OnSelectChanged', function(_, _, activity)
             self:UpdateSignUpButton(activity)
-        end)
-        ActivityList:SetCallback('OnItemDoubleClick', function(_, _, activity)
-            if Private_EnableQuickJoin then
-                local specId = GetSpecialization()
-                local role = select(5,GetSpecializationInfo(specId))
-                local damager = role == "DAMAGER";
-                local tank = role == "TANK";
-                local healer = role == "HEALER";
 
-                local searchResultInfo = C_LFGList.GetSearchResultInfo(activity:GetID())
+            --[=[@debug@
+            local info = C_LFGList.GetSearchResultInfo(activity:GetID())
 
-                if(damager) then
-                    print("已作为DPS申请"..searchResultInfo.name..","..activity:GetName())
-                end
-                if(tank) then
-                    print("已作为坦克申请"..searchResultInfo.name..","..activity:GetName())
-                end
-                if(healer) then
-                    print("已作为治疗申请"..searchResultInfo.name..","..activity:GetName())
-                end
-                C_LFGList.ApplyToGroup(activity:GetID(),tank,healer,damager)
-            end
+            DebugDataView.Text:SetText(info.comment)
+            DebugDataView:Show()
+            --@end-debug@]=]
         end)
         ActivityList:SetCallback('OnRefresh', function(ActivityList)
             local shownCount = ActivityList:GetShownCount()
@@ -276,6 +253,16 @@ function BrowsePanel:OnInitialize()
         end)
         ActivityList:SetCallback('OnItemMenu', function(_, itemButton, activity)
             self:ToggleActivityMenu(itemButton, activity)
+        end)
+        ActivityList:SetCallback('OnItemDoubleClick', function(_, itemButton, activity)
+            if Profile:GetSetting("DOUBLE_CLICK_JOIN") then
+                local usable, reason = self:CheckSignUpStatus(activity)
+                if usable then
+                    local specId = GetSpecialization()
+                    local role = select(5,GetSpecializationInfo(specId))
+                    C_LFGList.ApplyToGroup(activity:GetID(),role == "TANK",role == "HEALER",role == "DAMAGER")
+                end
+            end
         end)
         ActivityList:SetCallback('OnGridEnter_@', function(_, button, activity)
             if not (activity:IsSelf() or
@@ -373,24 +360,23 @@ function BrowsePanel:OnInitialize()
         ActivityDropdown:SetDefaultValue(0)
         ActivityDropdown:SetDefaultText(L['请选择活动类型'])
         ActivityDropdown:SetCallback('OnSelectChanged', function(_, data, ...)
-            -- OnSelectChanged will fire twice , the second fire's data is missing something.So only continue when data.activityId is valid
             if not self:InSet() then
                 if data.activityId then
                     C_LFGList.SetSearchToActivity(data.activityId)
-                    self:StartSet()
-                    self.ActivityDropdown:SetValue(data.value)
-                    self:EndSet()
                 else
                     C_LFGList.ClearSearchTextFields()
                 end
             end
+            self:StartSet()
+            self.ActivityDropdown:SetValue(GetActivityCode(nil, nil, data.categoryId))
+            self:EndSet()
         end)
     end
 
     local AdvFilterPanel = CreateFrame('Frame', nil, self, 'SimplePanelTemplate')
     do
         GUI:Embed(AdvFilterPanel, 'Refresh')
-        AdvFilterPanel:SetSize(200, 400)
+        AdvFilterPanel:SetSize(200, 320)
         AdvFilterPanel:SetPoint('TOPLEFT', MainPanel, 'TOPRIGHT', -2, -30)
         AdvFilterPanel:SetFrameLevel(ActivityList:GetFrameLevel() + 5)
         AdvFilterPanel:EnableMouse(true)
@@ -409,7 +395,6 @@ function BrowsePanel:OnInitialize()
     end
 
     local filters = {
-        {key = 'LeaderScore', text = L['团长大秘境评分'], min = 0, max = 3000, step = 1},
         {key = 'ItemLevel', text = L['装备等级'], min = 0, max = 500, step = 10},
         {key = 'BossKilled', text = L['Boss击杀数量'], min = 0, max = 15, step = 1},
         {key = 'Age', text = L['活动创建时长'], min = 0, max = 1440, step = 10},
@@ -443,17 +428,6 @@ function BrowsePanel:OnInitialize()
 
         table.insert(self.filters, Box)
     end
-    
-    local Box = Addon:GetClass('FilterBox'):New(AdvFilterPanel.Inset)
-    Box.Check:SetText("广告过滤(测试)")
-    Box.Check:SetChecked(_G["MEETINGSTONE_UI_E_FILTERAD"])
-    Box:SetCallback('OnChanged', function()
-        _G["MEETINGSTONE_UI_E_FILTERAD"] = Box.Check:GetChecked()
-        RefreshFilter()
-    end)
-    Box:SetPoint('TOPLEFT', self.filters[#self.filters], 'BOTTOMLEFT')
-    Box:SetPoint('TOPRIGHT', self.filters[#self.filters], 'BOTTOMRIGHT')
-    Box:HideInput()
 
     local ResetFilterButton = CreateFrame('Button', nil, AdvFilterPanel, 'UIPanelButtonTemplate')
     do
@@ -533,28 +507,8 @@ function BrowsePanel:OnInitialize()
 
     end
 
-    local quickJoinCheckBox = CreateFrame("CheckButton", "MeetingStone_QuickJoin", self, "UICheckButtonTemplate") do
-        quickJoinCheckBox:SetSize(24, 24)
-        quickJoinCheckBox:SetPoint('LEFT', LFGListFrame.SearchPanel.SearchBox, 'RIGHT', 10, 0)
-        MeetingStone_QuickJoinText:SetText("双击加入(专精职责)")
-        quickJoinCheckBox:SetScript("OnClick", function(self,event,arg1) 
-            if self:GetChecked() then
-                Private_EnableQuickJoin = true
-            else
-                Private_EnableQuickJoin = false
-            end
-            MEETINGSTONE_UI_E_POINTS.QuickJoin = Private_EnableQuickJoin
-          end)
-    end
-
-    if(MEETINGSTONE_UI_E_POINTS.QuickJoin ~= nil) then
-        quickJoinCheckBox:SetChecked(MEETINGSTONE_UI_E_POINTS.QuickJoin)
-        Private_EnableQuickJoin = MEETINGSTONE_UI_E_POINTS.QuickJoin
-    end
-
-    
-
-    local ActivityTotals = self:CreateFontString(nil, 'ARTWORK', 'GameFontHighlightRight') do
+    local ActivityTotals = self:CreateFontString(nil, 'ARTWORK', 'GameFontHighlightRight')
+    do
         ActivityTotals:SetPoint('BOTTOMRIGHT', MainPanel, -7, 7)
         ActivityTotals:SetFormattedText(L['活动总数：%d/%d'], 0, 0)
     end
@@ -707,6 +661,26 @@ function BrowsePanel:OnInitialize()
         AutoCompleteFrame:SetFrameLevel(self:GetFrameLevel() + 50)
     end
 
+    local doubleClickJoinCheckBox = GUI:GetClass('CheckBox'):New(self) do
+        doubleClickJoinCheckBox:SetSize(24, 24)
+        doubleClickJoinCheckBox:SetPoint('LEFT', SearchBox, 'RIGHT', 10, 0)
+        doubleClickJoinCheckBox:SetText("双击加入(专精职责)")
+        doubleClickJoinCheckBox:SetChecked(not not Profile:GetSetting("DOUBLE_CLICK_JOIN"))
+        doubleClickJoinCheckBox:SetScript("OnClick", function()
+            Profile:SetSetting("DOUBLE_CLICK_JOIN", doubleClickJoinCheckBox:GetChecked())
+        end)
+    end
+
+    local autoJoinCheckBox = GUI:GetClass('CheckBox'):New(self) do
+        autoJoinCheckBox:SetSize(24, 24)
+        autoJoinCheckBox:SetPoint('TOPLEFT', doubleClickJoinCheckBox, 'TOPLEFT', 0, 24)
+        autoJoinCheckBox:SetText("自动进组")
+        autoJoinCheckBox:SetChecked(not not Profile:GetSetting("AUTO_JOIN"))
+        autoJoinCheckBox:SetScript("OnClick", function()
+            Profile:SetSetting("AUTO_JOIN", autoJoinCheckBox:GetChecked())
+		end)
+    end
+
     self.AutoCompleteFrame = AutoCompleteFrame
     self.ActivityList = ActivityList
     self.ActivityDropdown = ActivityDropdown
@@ -808,6 +782,26 @@ function BrowsePanel:OnInitialize()
 
     LFGListFrame.SearchPanel.AutoCompleteFrame:Hide()
 
+    LFGInvitePopup:SetScript("OnShow",function()
+		if autoJoinCheckBox:GetChecked() then
+            local specId = GetSpecialization()
+            local role = select(5,GetSpecializationInfo(specId))
+			AcceptGroup(role == "TANK", role == "HEALER", role == "DAMAGER");
+            StaticPopupSpecial_Hide(LFGInvitePopup);
+		end
+	end)
+    
+	LFGListInviteDialog:SetScript("OnShow",function(self) 
+		 if autoJoinCheckBox:GetChecked() then
+			local _, status, _, _, role = C_LFGList.GetApplicationInfo(LFGListInviteDialog.resultID)
+			if status=="invited" then
+				LFGListInviteDialog.AcceptButton:Click()
+			end
+			if status=="inviteaccepted" then
+				LFGListInviteDialog.AcknowledgeButton:Click()
+			end
+		 end
+	end)
     -- LFGListApplicationDialog.SignUpButton:SetScript('OnClick', function(self)
     --     local dialog = self:GetParent()
     --     PlaySound(SOUNDKIT and SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON or 'igMainMenuOptionCheckBoxOn')
@@ -842,14 +836,6 @@ function BrowsePanel:OnShow()
     self.SearchBox:SetPoint('LEFT', self.ActivityDropdown, 'RIGHT', 20, 0)
     self.SearchBox:SetWidth(220)
 
-end
-
--- Restore EditBox anchor
-function BrowsePanel:OnHide()
-    self.SearchBox:ClearAllPoints();
-    self.SearchBox:SetParent(LFGListFrame.SearchPanel)
-    self.SearchBox:SetPoint('TOPLEFT', LFGListFrame.SearchPanel.CategoryName, 'BOTTOMLEFT', 4, -7)
-    self.SearchBox:SetWidth(319)
 end
 
 function BrowsePanel:OnEnable()
@@ -1047,63 +1033,63 @@ function BrowsePanel:ToggleActivityMenu(anchor, activity)
     local usable, reason = self:CheckSignUpStatus(activity)
 
     GUI:ToggleMenu(anchor, {
-        {
-            text = activity:GetName(),
-            isTitle = true,
-            notCheckable = true,
-        },
-        {
+        {text = activity:GetName(), isTitle = true, notCheckable = true}, {
+            text = L['申请加入'],
+            func = function()
+                self:SignUp(activity)
+            end,
+            disabled = not usable or activity:IsDelisted() or activity:IsApplication(),
+            tooltipTitle = not (activity:IsDelisted() or activity:IsApplication()) and L['申请加入'],
+            tooltipText = reason,
+            tooltipWhileDisabled = true,
+            tooltipOnButton = true,
+        }, {
             text = WHISPER_LEADER,
-            func = function() ChatFrame_SendTell(activity:GetLeader()) end,
-            disabled = not activity:GetLeader(),-- or not activity:IsApplication(),
+            func = function()
+                ChatFrame_SendTell(activity:GetLeader())
+            end,
+            disabled = not activity:GetLeader(), -- or not activity:IsApplication(),
             tooltipTitle = not activity:IsApplication() and WHISPER,
             tooltipText = not activity:IsApplication() and LFG_LIST_MUST_SIGN_UP_TO_WHISPER,
             tooltipOnButton = true,
             tooltipWhileDisabled = true,
-        },
-        {
+        }, {
             text = LFG_LIST_REPORT_GROUP_FOR,
             hasArrow = true,
             menuTable = {
                 {
                     text = L['不当的说明'],
-                    func = function() C_LFGList.ReportSearchResult(activity:GetID(), activity:IsMeetingStone() and 'lfglistcomment' or 'lfglistname') end,
-                },
-                {
+                    func = function()
+                        C_LFGList.ReportSearchResult(activity:GetID(),
+                                                     activity:IsMeetingStone() and 'lfglistcomment' or 'lfglistname')
+                    end,
+                }, {
                     text = LFG_LIST_BAD_DESCRIPTION,
-                    func = function() C_LFGList.ReportSearchResult(activity:GetID(), 'lfglistcomment') end,
+                    func = function()
+                        C_LFGList.ReportSearchResult(activity:GetID(), 'lfglistcomment')
+                    end,
                     disabled = activity:IsMeetingStone() or not activity:GetComment(),
-                },
-                {
+                }, {
                     text = LFG_LIST_BAD_VOICE_CHAT_COMMENT,
-                    func = function() C_LFGList.ReportSearchResult(activity:GetID(), 'lfglistvoicechat') end,
+                    func = function()
+                        C_LFGList.ReportSearchResult(activity:GetID(), 'lfglistvoicechat')
+                    end,
                     disabled = not activity:GetVoiceChat(),
-                },
-                {
+                }, {
                     text = LFG_LIST_BAD_LEADER_NAME,
-                    func = function() C_LFGList.ReportSearchResult(activity:GetID(), 'badplayername') end,
-                    disabled = not activity:GetLeader()
+                    func = function()
+                        C_LFGList.ReportSearchResult(activity:GetID(), 'badplayername')
+                    end,
+                    disabled = not activity:GetLeader(),
                 },
             },
-        },
-        {
-            text = L['拉黑队长名'],
-            func = function()
-               local name = C_LFGList.GetSearchResultInfo(activity:GetID()).leaderName
-               table.insert(MEETINGSTONE_UI_BLACKLISTEDLEADERS,name)
-               print("已加入"..name.."到黑名单")
-               BrowsePanel:DoSearch()
-            end,
-        },
-        -- {
+        }, -- {
         --     text = L['加入关键字过滤'],
         --     func = function()
         --         SettingPanel:AddSpamWord(activity:GetSummary() or activity:GetComment())
         --     end,
         -- },
-        {
-            text = CANCEL,
-        },
+        {text = CANCEL},
     }, 'cursor')
 end
 

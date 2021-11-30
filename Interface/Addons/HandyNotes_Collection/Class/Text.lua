@@ -3,9 +3,8 @@
 --- Handles text colorization.
 ---
 
-local NAME, this = ...
+local _, this = ...
 
-local t = this.AceLocale:GetLocale(NAME)
 local Text = {}
 
 ---
@@ -19,6 +18,7 @@ Text.colorList = {
   ['green'] = '00ff00',
   ['red'] = 'ff0000',
   ['yellow'] = 'ffff00',
+  ['orange'] = 'ff6600',
 }
 
 ---
@@ -33,6 +33,11 @@ Text.colorList = {
 ---   Returns colorized string.
 ---
 function Text:color(text, color)
+  -- Fallback, if we miss defining color.
+  if not self.colorList[color] then
+    return text
+  end
+
   return '|cff' .. self.colorList[color] .. text .. '|r'
 end
 
@@ -50,12 +55,11 @@ end
 ---   Blue color.
 ---
 function Text:color2rgb(name)
-  color = self.colorList[name]
+  local color = self.colorList[name]
 
   return tonumber('0x' .. color:sub(1, 2)),
          tonumber('0x' .. color:sub(3, 4)),
          tonumber('0x' .. color:sub(5, 6))
 end
 
-this.t = t
 this.Text = Text

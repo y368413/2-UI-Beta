@@ -2,7 +2,7 @@
     "target": "curse",
     "searchName": "Hekili",
     "localName": "Hekili",
-    "version": "v9.1.0-1.0.21a",
+    "version": "v9.1.5-1.0.4-alpha5",
     "fileName": "hekili",
     "addonsMap": [
         "Hekili"
@@ -10,5 +10,5 @@
     "interfaceMap": [],
     "children": [],
     "name": "Hekili",
-    "gameVersion": "9.1.0"
+    "gameVersion": "9.1.5"
 }

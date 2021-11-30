@@ -2,6 +2,13 @@
     "target": "curse",
     "searchName": "MeetingStone",
     "localName": "MeetingStone",
-    "version": "90002.03",
-    "fileName": "meetingstone"
+    "version": "90100.03",
+    "fileName": "meetingstone",
+    "addonsMap": [
+        "MeetingStone"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "name": "MeetingStone",
+    "gameVersion": "9.1.5"
 }

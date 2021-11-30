@@ -1,20 +1,14 @@
-## Interface: 90100
+## Interface: 90105
 ## Title: HandyNotes: Collection
 ## RequiredDeps: HandyNotes
-## SavedVariables: HandyNotes_CollectionDB
+## SavedVariables: HandyNotes_CollectionDB, HandyNotes_CollectionCACHE, HandyNotes_CollectionSTATUS
 ## DefaultState: enabled
 
 HandyNotes_Colletion.lua
+Class\Text.lua
 
 Translation\translations.xml
-Class\Text.lua
+Class.xml
 
 Data\Maps.lua
 Data\maps.xml
-
-Class\Configuration.lua
-Class\Icon.lua
-Class\API.lua
-Class\Loot.lua
-Class\Point.lua
-Class\HandyNotes.lua

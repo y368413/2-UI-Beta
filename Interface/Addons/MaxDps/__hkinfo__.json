@@ -2,6 +2,13 @@
     "target": "curse",
     "searchName": "MaxDps Rotation Helper",
     "localName": "MaxDps",
-    "version": "9.0.5.1",
-    "fileName": "maxdps-rotation-helper"
+    "version": "v9.1.5",
+    "fileName": "maxdps-rotation-helper",
+    "addonsMap": [
+        "MaxDps"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "name": "MaxDps Rotation Helper",
+    "gameVersion": "9.1.5"
 }

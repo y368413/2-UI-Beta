@@ -5,7 +5,12 @@
 
 local _, this = ...
 
-local API = this.API
+local Achievement = this.Achievement
+local Mount = this.Mount
+local Pet = this.Pet
+local Quest = this.Quest
+local Toy = this.Toy
+local Transmog = this.Transmog
 
 local Loot = {}
 
@@ -19,26 +24,56 @@ local Loot = {}
 ---   True, if all is completed, false otherwise.
 ---
 function Loot:isCompleted(loot)
-  local status = {}
+  self.status = {}
 
   -- Loop all items in loot.
   for key, value in pairs(loot) do
     if (key == 'achievement') then
       -- Loop all achievements.
       for id, achievement in pairs(value) do
-        table.insert(status, self:isAchievementCompleted(id, achievement))
+        table.insert(self.status, self:isAchievementCompleted(id, achievement))
       end
+    end
+    if (key == 'item') then
+      self:isItemCompleted(value)
     end
   end
 
   -- Loop all statuses, if anything is not done, return false.
-  for _, value in ipairs(status) do
+  for _, value in ipairs(self.status) do
     if (value == false) then
       return false
     end
   end
   -- Everything is done.
   return true
+end
+
+---
+--- Loops all items and checks, if they are completed.
+---
+--- @param items
+---   Table with all items.
+---
+function Loot:isItemCompleted(items)
+  -- Loop all items.
+  for id, item in pairs(items) do
+    if (item.mountId) then
+      table.insert(self.status, Mount:isCollected(item.mountId))
+    end
+    if (item.type == 'toy') then
+      table.insert(self.status, Toy:isCollected(id))
+    end
+    if (item.petId) then
+      table.insert(self.status, Pet:isCollected(item.petId))
+    end
+    if (item.type == 'transmog') then
+      table.insert(self.status, Transmog:isCollected(id))
+    end
+    if (item.questId) then
+      table.insert(self.status, Quest:isCompleted(item.questId))
+    end
+  end
 end
 
 ---
@@ -53,27 +88,27 @@ end
 ---   True, if achievement or its part is completed, false otherwise.
 ---
 function Loot:isAchievementCompleted(id, achievement)
-  if (API:isAchievementValid(id)) then
+  if (Achievement:isValid(id)) then
     -- We have count, so we have to check achievement criteria count.
     if (achievement.count) then
-      return API:isAchievementCountCompleted(id)
+      return Achievement:isCountCompleted(id)
     end
 
     -- We have criteriaId, so we have to check achievement criteria id.
     if (achievement.criteriaId and type(achievement.criteriaId) == 'number') then
-      return API:isAchievementCriteriaCompleted(id, achievement.criteriaId)
+      return Achievement:isCriteriaCompleted(id, achievement.criteriaId)
     end
 
     -- We have multiple criteriaId, so we have to check every criteria id.
     if (achievement.criteriaId and type(achievement.criteriaId) == 'table') then
       for _, criteriaId in pairs(achievement.criteriaId) do
-        if (API:isAchievementCriteriaCompleted(id, criteriaId)) then
+        if (Achievement:isCriteriaCompleted(id, criteriaId)) then
           return true
         end
       end
     end
 
-    return API:isAchievementCompleted(id)
+    return Achievement:isCompleted(id)
   end
 
   return false

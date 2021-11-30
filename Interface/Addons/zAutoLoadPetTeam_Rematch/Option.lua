@@ -968,7 +968,18 @@ function ALPTRematch:InitMacroOptions()
                         macro.useBandage = not macro.useBandage
                     end
                 },
- 
+                summonWM = {
+                    type = "toggle",
+                    name = "如果在阿苏纳，使用“尾锚的宠物日志”",
+                    width = "full",
+                    order = newOrder(),
+                    get = function()
+                        return macro.summonWM
+                    end,
+                    set = function()
+                        macro.summonWM = not macro.summonWM
+                    end
+                },
                 target = {
                     type = "toggle",
                     name = "如果未选中目标，选中之前选中的可对战目标",

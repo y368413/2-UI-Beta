@@ -134,13 +134,11 @@ local options = {
 							width = "full",
 						},
 
-						IgnoreClassRestrictions = {
+						QuickHideFloorToasts = {
 							order = 1.2,
-							name = "ff",--L["Ignore Class Restriction Filter"],
+							name = L["Quick Hide Floor Toasts"],
 							type = "toggle",
 							width = 1.3,
-							arg = "IgnoreClassRestrictions",
-							hidden = true,
 						},
 						showMiniMapIcon = {
 							order = 1.4,
@@ -247,6 +245,69 @@ local options = {
 							width = 1.3,
 							--func = function() addon:ResetBonusLocation() end,
 						},
+					},
+				},
+				anima_settings={
+					name = " ",
+					type = "group",
+					inline = true,
+					order = 3,
+					args={
+						Tooltip_Header = {
+							order = 1,
+							name = L["Anima Power Options"],
+							type = "header",
+							width = "full",
+						},
+						ImmediatePowerHide = {
+							order = 2,
+							name = L["Hide Power Window Immediately After Selection"],
+							type = "toggle",
+							width = 3,
+						},
+						HideOverlayInCombat = {
+							order = 3,
+							name = L["Hide Power Selection Window in Combat"],
+							type = "toggle",
+							width = 2.5,
+						},	
+						ShowOverlayAfterCombat = {
+							order = 4,
+							name = L["Show Power Selection Window after Combat"],
+							type = "toggle",
+							width = 2.5,
+						},	
+						HideToggleInCombat = {
+							order = 5,
+							name = L["Hide Power Selection Toggle in Combat"],
+							type = "toggle",
+							width = 3,
+						},	
+
+						ShowWeight = {
+							order = 6,
+							name = L["Show Weight Windows"],
+							type = "toggle",
+							width = 2.5,
+						},
+						FlashPower = {
+							order = 7,
+							name = L["Flash Flagged Powers"],
+							type = "toggle",
+							width = 1.5,
+						},
+						AutoSelect = {
+							order = 8,
+							name = L["Auto Select Flagged Powers"],
+							type = "toggle",
+							width = 1.5,
+						},
+						ShowSelectMessage = {
+							order = 9,
+							name = L["Show On Screen Selection Message"],
+							type = "toggle",
+							width = 1.5,
+						},			
 					},
 				},
 				tooltip_settings={
@@ -366,6 +427,11 @@ local defaults = {
 			},
 		ShowBonusMessages = false,
 		customScorePosition = false,
+		ImmediatePowerHide = false,
+		HideOverlayInCombat = false,
+		HideToggleInCombat = false,
+		ShowOverlayAfterCombat = false,
+		QuickHideFloorToasts= false,
 	}
 }
 
@@ -373,6 +439,13 @@ local noteDefaults = {
 	profile = {
 	}
 }
+
+local favDefaults = {
+	profile = {
+		favorites = {}
+	}
+}
+
 
 local function ResetCounts()
 	local defaults = {
@@ -406,8 +479,9 @@ local function ResetCounts()
 			FloorCompletion = {},
 			TotalPar = 0,
 			TrackerMessages = {},
-		}
 
+
+		}
 	return defaults
 end
 addon.Stats.ResetCounts = ResetCounts
@@ -445,6 +519,14 @@ local function Enable()
 	addon:RegisterEvent("QUEST_TURNED_IN", "EventHandler")
 	addon:RegisterEvent("PLAYER_REGEN_ENABLED", "EventHandler")
 	addon:RegisterEvent("PLAYER_REGEN_DISABLED", "EventHandler")
+	addon:RegisterEvent("SCENARIO_BONUS_OBJECTIVE_COMPLETE", "EventHandler")
+
+	addon:RegisterEvent("PLAYER_CHOICE_UPDATE", "EventHandler")
+
+	addon:RegisterEvent("DISPLAY_EVENT_TOASTS", "EventHandler")
+
+
+
 
 
 	if not addon.Statsdb.profile.current.CurentTime then 
@@ -456,18 +538,45 @@ local function Enable()
 	frames.f:SetScript("OnEvent", function(...) addon.EventHandler(...) end)
 
 	if PlayerChoiceFrame and not addon:IsHooked(PlayerChoiceFrame, "OnShow") then
-		addon:HookScript(PlayerChoiceFrame, "OnShow", function() C_Timer.After(0.2, addon.PowerShow) end)
-		addon:HookScript(PlayerChoiceFrame, "OnHide", function() C_Timer.After(0, addon.PowerHide) end)
+		addon:HookScript(PlayerChoiceFrame, "OnShow", function() 
+			if addon.db.profile.AutoSelect or  addon.db.profile.FlashPower  then
+				addon:AutoSelect()
+			end
+			C_Timer.After(0.1, addon.PowerShow)
 
+			if InCombatLockdown() and addon.db.profile.HideOverlayInCombat then
+				local onChoice = C_PlayerChoice.IsWaitingForPlayerChoiceResponse()
+				if onChoice then
+					--PlayerChoiceFrame:Hide()
+					--PlayerChoiceFrame:TryHide()
+					--HideUIPanel(PlayerChoiceFrame)      
+				end
+			end
+
+			
+			
+		end)
+		addon:HookScript(PlayerChoiceFrame, "OnHide", function() C_Timer.After(0, addon.PowerHide) end)
 	end
-	addon:ResetBonuses()
+	if PlayerChoiceFrame and not addon:IsHooked(PlayerChoiceFrame, "FadeOutAllOptions") then
+
+		addon:SecureHook(PlayerChoiceFrame, "FadeOutAllOptions", function() 
+			if addon.db.profile.ImmediatePowerHide then 
+				for optionFrame in PlayerChoiceFrame.optionPools:EnumerateActiveByTemplate(PlayerChoiceFrame.optionFrameTemplate) do
+					optionFrame:Hide();
+				end
+			end 
+		end)
+	end
+
 	addon.InitScoreFrame()
 	addon:SetScoreLocation()
+
 end
 
 
 local function Disable()
-	addon:UnregisterEvent("JAILERS_TOWER_LEVEL_UPDATE")
+	--addon:UnregisterEvent("JAILERS_TOWER_LEVEL_UPDATE")
 	addon:UnregisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 
 	addon:UnregisterEvent("UPDATE_MOUSEOVER_UNIT")
@@ -506,7 +615,7 @@ local function Disable()
 		TTG_ScoreFrame:Hide()
 		TTG_BonusList:Hide()
 		TTG_CombatTimer:Hide()
- 	end)
+	end)
 
 end
 	
@@ -563,8 +672,25 @@ function addon:CurrentPhantasma()
 	return 	addon.Statsdb.profile.current.currentPhantasma
 end
 
-function addon:EventHandler(event, arg1, ...)
+local function CheckPartyGUID(GUID)
+	local playerGUID = UnitGUID("player") --"partyN" 
+	local petGUID = UnitGUID("pet")
+	local party1GUID = UnitGUID("party1")
+	local party2GUID = UnitGUID("party2")
+	local party3GUID = UnitGUID("party3")
+	local party4GUID = UnitGUID("party4")
 
+
+	if GUID == playerGUID or GUID == party1GUID or GUID == party2GUID or GUID == party3GUID or GUID == party4GUID then
+		return true
+	else
+		return false
+	end
+
+end
+
+local last_rare_kill
+function addon:EventHandler(event, arg1, ...)
 	if event == "PLAYER_ENTERING_WORLD" then
 		if IsInJailersTower() then 
 			Enable()
@@ -573,13 +699,38 @@ function addon:EventHandler(event, arg1, ...)
 			Disable()
 		end
 	end
-	if finished  or not IsInJailersTower() then return end
+
+	if finished or not IsInJailersTower() then return end
+
 	if event == "PLAYER_REGEN_ENABLED" then
+		last_rare_kill = nil
 		TTG_CombatTimer:Stop()
 		TTG_CombatTimer:CheckBonus()
 		C_Timer.After(10, function() TTG_CombatTimer:Hide() end)
 
+		if addon.db.profile.ShowOverlayAfterCombat then
+			C_Timer.After(2, function() PlayerChoiceFrame:TryShow() end)
+		end
+
+		local onChoice = C_PlayerChoice.IsWaitingForPlayerChoiceResponse()
+		if onChoice then
+			PlayerChoiceToggleButton:Show()     
+		end
+
+
+
 	elseif event == "PLAYER_REGEN_DISABLED" then
+		if addon.db.profile.HideOverlayInCombat then
+			local onChoice = C_PlayerChoice.IsWaitingForPlayerChoiceResponse()
+			if onChoice and PlayerChoiceFrame:IsShown() then
+				PlayerChoiceFrame:OnSelectionMade()    
+			end
+		end
+
+		if addon.db.profile.HideToggleInCombat and not PlayerChoiceFrame:IsShown() then
+			PlayerChoiceToggleButton:Hide()
+		end
+
 		if addon.db.profile.ShowCombatTimer then 
 			TTG_CombatTimer:Show()
 			TTG_CombatTimer:Reset()
@@ -592,11 +743,14 @@ function addon:EventHandler(event, arg1, ...)
 		end
 
 	elseif event == "JAILERS_TOWER_LEVEL_UPDATE" then
+
 		currentFloor = arg1
 		runType = ...
 		--Enum.JailersTowerType
+		--addon:SetParTime(currentFloor)
 		if currentFloor == 1 then 
 			addon.Stats:InitRun()
+			addon.Tracker:Init()
 		else
 			addon.Stats.IncreaseCounter("FloorsCompleted")
 			addon.GetFloorSummary()
@@ -611,10 +765,16 @@ function addon:EventHandler(event, arg1, ...)
 			TTG_ScoreFrame.Timer:ScorePause()
 		end
 
+	elseif addon.db.profile.QuickHideFloorToasts and event == "DISPLAY_EVENT_TOASTS" then 
+		EventToastManagerFrame:CloseActiveToasts()
+
+	elseif event == "SCENARIO_BONUS_OBJECTIVE_COMPLETE" then
+	
+
 
 	elseif event == "ADDON_LOADED" and arg1 == "Blizzard_PlayerChoiceUI" and isEnabled then 
-		C_Timer.After(0, function() addon:HookScript(PlayerChoiceFrame, "OnShow", function() C_Timer.After(0.2, addon.PowerShow) end)
-									addon:HookScript(PlayerChoiceFrame, "OnHide", function() C_Timer.After(0, addon.PowerHide) end)
+		C_Timer.After(0, function() addon:HookScript(PlayerChoiceFrame, "OnShow", function() C_Timer.After(0.1, addon.PowerShow) end)
+									addon:HookScript(PlayerChoiceFrame, "OnHide", function() addon.PowerHide() end)
 						end) 
 		addon:UnregisterEvent("ADDON_LOADED")				
 	elseif event == "UPDATE_MOUSEOVER_UNIT" or event == "CURSOR_UPDATE"  then
@@ -637,8 +797,9 @@ function addon:EventHandler(event, arg1, ...)
 			addon.Statsdb.profile.current.currentPhantasma = quantity
 
 	elseif event == "PLAYER_CHOICE_UPDATE" then
-			addon.Stats:AnimaGain()
+			--addon.Stats:AnimaGain()
 			addon.Tracker:CheckBonus()
+
 	elseif event == "NAME_PLATE_UNIT_ADDED" or event == "FORBIDDEN_NAME_PLATE_UNIT_ADDED"  then
 		--[[if arg1 then
 							local guid = UnitGUID(arg1)
@@ -657,11 +818,15 @@ function addon:EventHandler(event, arg1, ...)
 		--print(CombatLogGetCurrentEventInfo())	
 		--if not destGUID then return end
 		local cid = self:GetCIDFromGUID(destGUID)
-		local playerGUID = UnitGUID("player")
+		local playerGUID = UnitGUID("player") --"partyN" 
 		local petGUID = UnitGUID("pet")
-
+		local party1GUID = UnitGUID("party1")
+		local party2GUID = UnitGUID("party2")
+		local party3GUID = UnitGUID("party3")
+		local party4GUID = UnitGUID("party4")
+--print("log")
 			--Revisit to count only player & pet kills?
-		if (subevent == "UNIT_DIED") and destGUID ~= playerGUID then
+		if (subevent == "UNIT_DIED") and not CheckPartyGUID(destGUID)  then
 			addon.Stats.IncreaseCounter("MobsKilled")
 			if (cid == 151353) then 
 				addon.Stats.IncreaseCounter("Mawrats")
@@ -670,6 +835,17 @@ function addon:EventHandler(event, arg1, ...)
 			elseif 	mobList[destGUID]  and mobList[destGUID] == "rare" then
 				mobList[destGUID] = nil
 				addon.Stats.IncreaseCounter("Rares")
+				--Check to see if a rare was previously killed and if DareDevil was completed
+				if last_rare_kill then
+					local current_time = time()
+					local diff = current_time - last_rare_kill
+					if diff < 10 then
+						addon.Tracker:FlagBonus("Daredevil")
+					end
+				end
+
+				last_rare_kill = time()
+
 			elseif 	mobList[destGUID]  and mobList[destGUID] == "boss" then
 				mobList[destGUID] = nil
 				addon.Stats.IncreaseCounter("Bosses")
@@ -686,9 +862,13 @@ function addon:EventHandler(event, arg1, ...)
 		elseif (subevent == "SPELL_AURA_REMOVED")  and destGUID == playerGUID and JAILERS_CHAINS_DEBUFF == spellID then
 			--TTG_ScoreFrame.Timer:Stop()
 
-		elseif (subevent == "SPELL_DAMAGE")  and destGUID == playerGUID and traps[spellID] then 
-			addon.Stats.IncreaseCounter("TrapSprung")
+		--elseif (subevent == "SPELL_DAMAGE")  and destGUID == playerGUID and traps[spellID] then 
+		elseif (subevent == "SPELL_DAMAGE")  and CheckPartyGUID(destGUID) then --not sourceGUID then --and traps[spellID] then 
+		--Source Guid has no value so probably environmental/trap	
+		if not string.find(sourceGUID, "-")  then
+			--addon.Stats.IncreaseCounter("TrapSprung")
 			addon.Tracker:FlagFail("Trapmaster")
+		end 
 
 		elseif (cid and ashen[cid])  and (sourceGUID == playerGUID or sourceGUID == petGUID) and not ashenCache[destGUID] then
 			ashenCache[destGUID] = true
@@ -697,7 +877,7 @@ function addon:EventHandler(event, arg1, ...)
 
 	elseif event == "UNIT_SPELLCAST_SUCCEEDED" then 
 		local arg2, arg3 = ...
-		if arg1 == "player" and arg3 == FREEING_SPELLID then 
+		if (arg1 == "player" or arg1 == "party1" or arg1 == "party2" or arg1 == "party3" or arg1 == "party4") and arg3 == FREEING_SPELLID then 
 			addon.Stats.IncreaseCounter("SoulsSaved")
 			addon.Tracker:CheckBonus()
 		elseif arg3 == OPEN_CHEST_SPELLID then 
@@ -738,6 +918,10 @@ function addon.RefreshConfig()
 	C_Timer.After(0.1,function()
 		addon.CreateRavinousPowerListFrame()
 		addon.CreateAnimaPowerListFrame()
+		addon.CreateBlessingListFrame()
+		addon.CreateTormentListFrame()
+		addon.SetUpBoxFrame()
+
 	end)
 
 end
@@ -748,6 +932,9 @@ function addon:OnInitialize()
 	TorghastTourgiudeDB.Options = TorghastTourgiudeDB.Options or {}
 	TorghastTourgiudeDB.Stats = TorghastTourgiudeDB.Stats or {}
 	TorghastTourgiudeDB.Weights_Notes = TorghastTourgiudeDB.Weights_Notes or {}
+	TorghastTourgiudeDB.Favorite_Powers = TorghastTourgiudeDB.Favorite_Powers or {}
+	TorghastTourgiudeDB.Floor_Par_Estimate = TorghastTourgiudeDB.Floor_Par_Estimate or {}
+	TorghastTourgiudeDB.Tracker = TorghastTourgiudeDB.Tracker or {}
 
 	self.db = LibStub("AceDB-3.0"):New(TorghastTourgiudeDB.Options, defaults, true)
 	self.Statsdb = LibStub("AceDB-3.0"):New(TorghastTourgiudeDB.Stats, statsDefaults, false)
@@ -755,6 +942,12 @@ function addon:OnInitialize()
 	self.Weights_Notesdb.RegisterCallback(self, "OnProfileChanged", "RefreshConfig")
 	self.Weights_Notesdb.RegisterCallback(self, "OnProfileCopied", "RefreshConfig")
 	self.Weights_Notesdb.RegisterCallback(self, "OnProfileReset", "RefreshConfig")
+
+
+	self.FavoritePowerdb = LibStub("AceDB-3.0"):New(TorghastTourgiudeDB.Favorite_Powers, favDefaults, false)
+	self.FavoritePowerdb.RegisterCallback(self, "OnProfileChanged", "RefreshConfig")
+	self.FavoritePowerdb.RegisterCallback(self, "OnProfileCopied", "RefreshConfig")
+	self.FavoritePowerdb.RegisterCallback(self, "OnProfileReset", "RefreshConfig")
 
 	Profile = self.db.profile
 	LibStub("AceConfigRegistry-3.0"):ValidateOptionsTable(options, addonName)
@@ -765,10 +958,19 @@ function addon:OnInitialize()
 	options.args.profile.args.profiles = LibStub('AceDBOptions-3.0'):GetOptionsTable(self.Weights_Notesdb)
 	options.args.profile.args.profiles.name = "Weights & Notes"
 
+
+	options.args.profile.args.profiles2 = LibStub('AceDBOptions-3.0'):GetOptionsTable(self.FavoritePowerdb)
+	options.args.profile.args.profiles2.name = "Favorite Powers"
+
+
 	  -- Add dual-spec support
 	local LibDualSpec = LibStub('LibDualSpec-1.0')
 	LibDualSpec:EnhanceDatabase(self.Weights_Notesdb, addonName)
 	LibDualSpec:EnhanceOptions(options.args.profile.args.profiles, self.Weights_Notesdb)
+
+
+	LibDualSpec:EnhanceDatabase(self.FavoritePowerdb, addonName)
+	LibDualSpec:EnhanceOptions(options.args.profile.args.profiles2, self.FavoritePowerdb)
 
 	TTG_MiniMap:Register("TTGMapMini", TTGLDB, Profile.MMDB)
 

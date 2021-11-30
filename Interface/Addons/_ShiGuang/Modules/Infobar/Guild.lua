@@ -7,15 +7,15 @@ local info = module:RegisterInfobar("Guild", R.Infobar.GuildPos)
 
 info.guildTable = {}
 local r, g, b = I.r, I.g, I.b
-local infoFrame, gName, gOnline, gApps, gRank, prevTime
+local infoFrame, gName, gOnline, gRank, prevTime
 
 local wipe, sort, format, select = table.wipe, table.sort, format, select
 local SELECTED_DOCK_FRAME = SELECTED_DOCK_FRAME
-local LEVEL_ABBR, CLASS_ABBR, NAME, ZONE, RANK, GUILDINFOTAB_APPLICANTS, REMOTE_CHAT = LEVEL_ABBR, CLASS_ABBR, NAME, ZONE, RANK, GUILDINFOTAB_APPLICANTS, REMOTE_CHAT
+local LEVEL_ABBR, CLASS_ABBR, NAME, ZONE, RANK, REMOTE_CHAT = LEVEL_ABBR, CLASS_ABBR, NAME, ZONE, RANK, REMOTE_CHAT
 local IsAltKeyDown, IsShiftKeyDown, C_Timer_After, GetTime, Ambiguate, MouseIsOver = IsAltKeyDown, IsShiftKeyDown, C_Timer.After, GetTime, Ambiguate, MouseIsOver
 local MailFrame, MailFrameTab_OnClick, SendMailNameEditBox = MailFrame, MailFrameTab_OnClick, SendMailNameEditBox
 local ChatEdit_ChooseBoxForSend, ChatEdit_ActivateChat, ChatFrame_OpenChat, ChatFrame_GetMobileEmbeddedTexture = ChatEdit_ChooseBoxForSend, ChatEdit_ActivateChat, ChatFrame_OpenChat, ChatFrame_GetMobileEmbeddedTexture
-local GetNumGuildMembers, GetGuildInfo, GetNumGuildApplicants, GetGuildRosterInfo, IsInGuild = GetNumGuildMembers, GetGuildInfo, GetNumGuildApplicants, GetGuildRosterInfo, IsInGuild
+local GetNumGuildMembers, GetGuildInfo, GetGuildRosterInfo, IsInGuild = GetNumGuildMembers, GetGuildInfo, GetGuildRosterInfo, IsInGuild
 local GetQuestDifficultyColor, GetRealZoneText, UnitInRaid, UnitInParty = GetQuestDifficultyColor, GetRealZoneText, UnitInRaid, UnitInParty
 local HybridScrollFrame_GetOffset, HybridScrollFrame_Update = HybridScrollFrame_GetOffset, HybridScrollFrame_Update
 local C_GuildInfo_GuildRoster = C_GuildInfo.GuildRoster
@@ -85,7 +85,7 @@ function info:GuildPanel_UpdateButton(button)
 
 	local zonecolor = I.GreyColor
 	if UnitInRaid(name) or UnitInParty(name) then
-		zonecolor = "|cff4c4cff"
+		zonecolor = I.InfoColor
 	elseif GetRealZoneText() == zone then
 		zonecolor = "|cff4cff4c"
 	end
@@ -187,7 +187,6 @@ function info:GuildPanel_Init()
 
 	gName = M.CreateFS(infoFrame, 16, "Guild", true, "TOPLEFT", 15, -10)
 	gOnline = M.CreateFS(infoFrame, 13, "Online", false, "TOPLEFT", 15, -35)
-	gApps = M.CreateFS(infoFrame, 13, "Applications", false, "TOPRIGHT", -15, -35)
 	gRank = M.CreateFS(infoFrame, 13, "Rank", false, "TOPLEFT", 15, -51)
 
 	local bu = {}
@@ -267,7 +266,6 @@ function info:GuildPanel_Refresh()
 
 	gName:SetText("|cff0099ff<"..(guildName or "")..">")
 	gOnline:SetText(format(I.InfoColor.."%s:".." %d/%d", GUILD_ONLINE_LABEL, online, total))
-	gApps:SetText(format(I.InfoColor..GUILDINFOTAB_APPLICANTS, GetNumGuildApplicants()))
 	gRank:SetText(I.InfoColor..RANK..": "..(guildRank or ""))
 
 	for i = 1, total do
@@ -356,7 +354,7 @@ info.onLeave = function()
 end
 
 info.onMouseUp = function()
-	--if InCombatLockdown() then UIErrorsFrame:AddMessage(I.InfoColor..ERR_NOT_IN_COMBAT) return end
+	--if InCombatLockdown() then UIErrorsFrame:AddMessage(I.InfoColor..ERR_NOT_IN_COMBAT) return end -- fix by LibShowUIPanel
 
 	if not IsInGuild() then return end
 	infoFrame:Hide()

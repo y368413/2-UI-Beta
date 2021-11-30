@@ -1,6 +1,5 @@
-### Changes in 90100.24-Release:
+### Changes in 90105.26-Release:
 
-- Added: Korthia location to Shadowlands wormhole
-- Added: Russian translations (thanks @Hubbotu)
+- Added: Support for new Animaflow Teleporter locations (thanks @jrowles)
 - Changed: Update Interface version
 

@@ -1,0 +1,14 @@
+{
+    "target": "curse",
+    "searchName": "SEquipment",
+    "localName": "SEquipment",
+    "version": "SEquipment1.0.3.zip",
+    "fileName": "sequipment",
+    "addonsMap": [
+        "SEquipment"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "name": "SEquipment",
+    "gameVersion": "9.1.5"
+}

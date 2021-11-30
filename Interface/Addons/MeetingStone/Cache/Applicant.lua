@@ -37,6 +37,8 @@ Applicant:InitAttr{
     'RoleID',
     'RoleName',
     'ActivityID',
+	'DungeonScore',
+    'BestDungeonScore',
 }
 
 local APPLICANT_HAD_RESULT = {
@@ -61,7 +63,8 @@ function Applicant:Constructor(id, index, activityId)
     local isNew = info.isNew
     local comment = info.comment
     local orderID = info.displayOrderID
-    local name, class, localizedClass, level, itemLevel, honorLevel, tank, healer, damage, assignedRole, relationship = C_LFGList.GetApplicantMemberInfo(id, index)
+    local name, class, localizedClass, level, itemLevel, honorLevel, tank, healer, damage, assignedRole, relationship, dungeonScore = C_LFGList.GetApplicantMemberInfo(id, index)
+    local bestDungeonScoreForEntry = C_LFGList.GetApplicantDungeonScoreForListing(id, index, activityId);
     local msg, isMeetingStone, progression, pvpRating, source  = DecodeDescriptionData(comment)
 
     self:SetID(id)
@@ -86,6 +89,8 @@ function Applicant:Constructor(id, index, activityId)
     self:SetIsDamage(damage)
     self:SetIsAssignedRole(assignedRole)
     self:SetRelationship(relationship)
+    self:SetDungeonScore(dungeonScore or 0)
+    self:SetBestDungeonScore(bestDungeonScoreForEntry)
 
     self:SetIsMeetingStone(isMeetingStone)
     self:SetPvPRating(isMeetingStone and tonumber(pvpRating) or 0)

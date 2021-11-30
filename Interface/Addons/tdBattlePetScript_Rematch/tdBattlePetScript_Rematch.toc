@@ -1,7 +1,7 @@
-## Interface: 90002
+## Interface: 90105
 ## Title: tdBattlePetScript Rematch
 ## Author: DengSir
-## Version: 90002.01
+## Version: 90100.01
 ## Dependencies: tdBattlePetScript, Rematch
 
 Load.xml

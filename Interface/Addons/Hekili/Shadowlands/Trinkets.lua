@@ -748,6 +748,19 @@ do
 
             item = 179356,
             toggle = "cooldowns",
+
+            self_buff = "shadowgrasp_totem",
+
+            handler = function ()
+                applyBuff( "shadowgrasp_totem" )
+            end,
+
+            auras = {
+                shadowgrasp_totem = {
+                    duration = 15,
+                    max_stack = 1,
+                }
+            }
         },
 
         siphoning_phylactery_shard = {
@@ -1320,6 +1333,27 @@ do
 
         unworthy = {
             id = 355951,
+            duration = 3600,
+            max_stack = 1,
+        },
+
+        -- Active Rune Word:  Blood
+        rune_word_blood = {
+            id = 359420,
+            duration = 3600,
+            max_stack = 1,
+        },
+
+        -- Active Rune Word:  Frost
+        rune_word_frost = {
+            id = 355724,
+            duration = 3600,
+            max_stack = 1,
+        },
+
+        -- Active Rune Word:  Unholy
+        rune_word_unholy = {
+            id = 359435,
             duration = 3600,
             max_stack = 1,
         },

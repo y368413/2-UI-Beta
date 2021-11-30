@@ -95,6 +95,38 @@
 			</Scripts>
 	</Frame>
 
+	<Frame name="TorghastTourFavoriteSelectionTemplate" virtual="true" hidden="false">
+		<KeyValues>
+			<KeyValue key="ignoreInLayout" value="true" type="boolean"/>
+		</KeyValues>
+		<Size x="40" y="40"/>
+		<Anchors>
+			<Anchor point="BOTTOMLEFT" x="40" y="-14" />
+		</Anchors>
+		<Layers>
+			<Layer level="OVERLAY">
+				<Texture parentKey="icon" atlas="collections-icon-favorites">
+					<Size x="35" y="35"/>
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnEnter>
+				if self.tooltipText then
+					GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+					GameTooltip:SetText(self.tooltipTitle,1,1,1);
+					GameTooltip:AddLine(self.tooltipText, nil, nil, nil, true);
+					GameTooltip:Show();
+				end
+			</OnEnter>
+			<OnLeave>
+				GameTooltip:Hide();
+			</OnLeave>
+			</Scripts>
+	</Frame>
 	<Button name="TorghastTourGuideBossButtonTemplate" virtual="true" hidden="true">
 		<Size x="300" y="50"/>
 		<Frames>
@@ -308,10 +340,13 @@
 					</Layer>
 				</Layers>
 				<Frames>
+
+
 					<Frame name="$parentIcon1" inherits="TorghastTourGuideSectionIconTemplate" parentKey="icon1" parentArray="icons">
 						<Anchors>
 							<Anchor point="RIGHT" x="5" y="0"/>
 						</Anchors>
+
 					</Frame>
 					<Frame name="$parentIcon2" inherits="TorghastTourGuideSectionIconTemplate" parentKey="icon2" parentArray="icons">
 						<Anchors>
@@ -902,7 +937,34 @@
 							</Frame>
 						</ScrollChild>
 					</ScrollFrame>
-
+					<ScrollFrame name="$parentAnimaPowerPriorityScrollFrame" useParentLevel="true" parentKey="animaPriorityScroll" inherits="UIPanelScrollFrameCodeTemplate" hidden="true" setAllPoints = "true">
+				<Size x="785" y="425"/>
+						<Anchors>
+							<Anchor point="BOTTOMRIGHT" x="-05" y="5"/>
+						</Anchors>
+						<Frames>
+							<Slider name="$parentScrollBar" inherits="TorghastTourGuideScrollBarTemplate"/>
+						</Frames>
+						<ScrollChild>
+							<Frame name="$parentScrollChild" parentKey="child" setAllPoints = "true">
+								<Size x="710" y="425"/>
+								<Anchors>
+									<Anchor point="BOTTOMRIGHT" x="-500" y="0"/>
+								</Anchors>
+								<Layers>
+									<Layer level="ARTWORK">
+										<FontString name="$parentDescription" inherits="GameFontBlack" justifyH="LEFT" parentKey="description">
+											<Size x="0" y="0"/>
+											<Anchors>
+												<Anchor point="TOPLEFT" x="2" y="-8"/>
+											</Anchors>
+											<Color r="0.25" g="0.1484375" b=".02" a="1"/>
+										</FontString>
+									</Layer>
+								</Layers>
+							</Frame>
+						</ScrollChild>
+					</ScrollFrame>
 					<Button name="$parentRareTab" inherits="TorghastTourGuideTabTemplate" parentKey="rareTab" id="4">
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parentAnimaPowerTab" relativePoint="BOTTOM" x="0" y="2"/>

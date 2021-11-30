@@ -105,13 +105,13 @@ do
         return petAction > 0 and petAction or nil
     end
 
-    function Hekili:PetBasedTargetDetectionIsReady()
+    function Hekili:PetBasedTargetDetectionIsReady( skipRange )
         if petSlot == 0 then return false, "Pet action not found in player action bars." end
         if not UnitExists( "pet" ) then return false, "No active pet." end
         if UnitIsDead( "pet" ) then return false, "Pet is dead." end
     
         -- If we have a target and the target is out of our pet's range, don't use pet detection.
-        if UnitExists( "target" ) and not IsActionInRange( petSlot, "target" ) then return false, "Player has target and player's target not in range of pet." end
+        if not skipRange and UnitExists( "target" ) and not IsActionInRange( petSlot, "target" ) then return false, "Player has target and player's target not in range of pet." end
         return true
     end
 
@@ -334,7 +334,12 @@ do
 
                             if excluded and type( excluded ) == "number" then
                                 -- If our table has a number, unit is ruled out only if the buff is present.
-                                excluded = FindUnitBuffByID( unit, excluded )
+                                if excluded < 0 then
+                                    -- We used a negative number to indicate that it's a debuff.
+                                    excluded = FindUnitDebuffByID( unit, -1 * excluded )
+                                else
+                                    excluded = FindUnitBuffByID( unit, excluded )
+                                end
                             end
 
                             if not excluded and checkPets then
@@ -370,10 +375,29 @@ do
             local db = spec and (spec.myTargetsOnly and myTargets or targets) or targets
 
             for guid, seen in pairs(db) do
-                local npcid = guid:match("(%d+)-%x-$")
-
                 if counted[ guid ] == nil then
-                    if not enemyExclusions[npcid] and ( spec.damageRange == 0 or ( not guidRanges[ guid ] or guidRanges[ guid ] <= spec.damageRange ) ) then
+                    local npcid = guid:match("(%d+)-%x-$")
+                    local excluded = enemyExclusions[ npcid ]
+
+                    -- If our table has a number, unit is ruled out only if the buff is present.
+                    if excluded and type( excluded ) == "number" then
+                        local unit = Hekili:GetUnitByGUID( guid )
+
+                        if unit then
+                            if UnitIsUnit( unit, "target" ) then
+                                excluded = false
+                            elseif excluded < 0 then
+                                -- We used a negative number to indicate that it's a debuff.
+                                excluded = FindUnitDebuffByID( unit, -1 * excluded )
+                            else
+                                excluded = FindUnitBuffByID( unit, excluded )
+                            end
+                        else
+                            excluded = false
+                        end
+                    end
+                    
+                    if not excluded and ( spec.damageRange == 0 or ( not guidRanges[ guid ] or guidRanges[ guid ] <= spec.damageRange ) ) then
                         Hekili.TargetDebug = format("%s    %-12s - %2d - %s\n", Hekili.TargetDebug, "dmg", guidRanges[ guid ] or 0, guid)
                         count = count + 1                    
                         counted[ guid ] = true

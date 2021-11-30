@@ -3,7 +3,6 @@ BuildEnv(...)
 
 ApplicantPanel = Addon:NewModule(CreateFrame('Frame', nil, ManagerPanel), 'ApplicantPanel', 'AceEvent-3.0', 'AceTimer-3.0')
 
-local AllMythicChallengeMaps = {691,695,699,703,705,709,713,717}
 
 local function _PartySortHandler(applicant)
     return applicant:GetNumMembers() > 1 and format('%08x', applicant:GetID())
@@ -24,7 +23,7 @@ local APPLICANT_LIST_HEADER = {
     {
         key = 'Name',
         text = L['角色名'],
-        width = 80,
+        width = 95,
         style = 'LEFT',
         showHandler = function(applicant)
             local color = applicant:GetResult() and RAID_CLASS_COLORS[applicant:GetClass()] or GRAY_FONT_COLOR
@@ -34,7 +33,7 @@ local APPLICANT_LIST_HEADER = {
     {
         key = 'Role',
         text = L['职责'],
-        width = 40,
+        width = 52,
         class = Addon:GetClass('RoleItem'),
         formatHandler = function(grid, applicant)
             grid:SetMember(applicant)
@@ -91,6 +90,21 @@ local APPLICANT_LIST_HEADER = {
             return _PartySortHandler(applicant) or tostring(9999 - applicant:GetItemLevel())
         end
     },
+    {
+        key = 'Score',
+        text = L['评分'],
+        width = 52,
+        showHandler = function(applicant)
+            
+            local info = applicant:GetBestDungeonScore() or {}
+            local mapScore = info.mapScore or 0
+            local text = format("|cffffffff%d/%d|r", applicant:GetDungeonScore(), mapScore)
+            return text
+        end,
+        sortHandler = function(applicant)
+            return _PartySortHandler(applicant) or tostring(9999 - applicant:GetDungeonScore())
+        end
+    },
     -- {
     --     key = 'PvPRating',
     --     text = L['PvP'],
@@ -120,30 +134,9 @@ local APPLICANT_LIST_HEADER = {
     --     end
     -- },
     {
-        key = 'MythicScore',
-        text = L['当前|总分'],
-        width = 90,
-        style = 'LEFT',
-        showHandler = function(applicant)
-            local id = applicant:GetID()
-            local index = applicant:GetIndex()
-            local activityID = applicant:GetActivityID()
-            local currentDungeonScore = C_LFGList.GetApplicantDungeonScoreForListing(id,index,692).mapScore
-            local totalDungeonScore = 0
-            for i=1,#AllMythicChallengeMaps do
-                totalDungeonScore = totalDungeonScore + C_LFGList.GetApplicantDungeonScoreForListing(id,index,AllMythicChallengeMaps[i]).mapScore
-            end
-            local color = C_ChallengeMode.GetDungeonScoreRarityColor(totalDungeonScore);
-            if(not color) then 
-                color = HIGHLIGHT_FONT_COLOR; 
-            end 
-            return currentDungeonScore.."|"..totalDungeonScore,color.r,color.g,color.b
-        end,
-    },
-    {
         key = 'Msg',
         text = L['描述'],
-        width = 138,
+        width = 152,
         style = 'LEFT',
         showHandler = function(applicant)
             if applicant:GetResult() then
@@ -156,7 +149,7 @@ local APPLICANT_LIST_HEADER = {
     {
         key = 'Option',
         text = L['操作'],
-        width = 90,
+        width = 130,
         class = Addon:GetClass('OperationGrid'),
         formatHandler = function(grid, applicant)
             grid:SetMember(applicant, CreatePanel:GetCurrentActivity():GetActivityID())
@@ -207,14 +200,16 @@ function ApplicantPanel:OnInitialize()
         end)
     end
 
-    -- local AutoInvite = GUI:GetClass('CheckBox'):New(self) do
-    --     AutoInvite:SetPoint('BOTTOMRIGHT', self, 'TOPLEFT', -80, 7)
-    --     AutoInvite:SetText(L['自动邀请'])
-    --     AutoInvite:SetScript('OnClick', function(AutoInvite)
-    --         local checked = AutoInvite:GetChecked()
-    --         self:SetAutoInvite(checked)
-    --     end)
-    -- end
+    local AutoInvite = GUI:GetClass('CheckBox'):New(self)
+    do
+        AutoInvite:SetPoint('BOTTOMRIGHT', self, 'TOPLEFT', -80, 7)
+        AutoInvite:SetText(L['自动邀请'])
+        AutoInvite:SetChecked(not not Profile:GetSetting('AUTO_INVITE_JOIN'))
+        AutoInvite:SetScript('OnClick', function()
+            Profile:SetSetting('AUTO_INVITE_JOIN', AutoInvite:GetChecked())
+            self:UpdateAutoInvite()
+        end)
+    end
 
     self.ApplicantList = ApplicantList
     self.AutoInvite = AutoInvite
@@ -232,6 +227,7 @@ function ApplicantPanel:LFG_LIST_APPLICANT_LIST_UPDATED(_, hasNewPending, hasNew
     self.hasNewPending = hasNewPending and hasNewPendingWithData and IsActivityManager()
     self:UpdateApplicantsList()
     self:SendMessage('MEETINGSTONE_NEW_APPLICANT_STATUS_UPDATE')
+    self:UpdateAutoInvite()
 end
 
 function ApplicantPanel:HasNewPending()
@@ -338,8 +334,36 @@ function ApplicantPanel:ToggleEventMenu(button, applicant)
     }, 'cursor')
 end
 
-function ApplicantPanel:SetAutoInvite(flag)
-    LFGListUtil_SetAutoAccept(flag)
+function ApplicantPanel:UpdateAutoInvite()
+    if self.AutoInvite:GetChecked() and UnitIsGroupLeader('player') then
+        local applicants = C_LFGList.GetApplicants() or {}
+        for k, v in pairs(applicants) do
+            if self:CheckCanInvite(v) then
+                C_LFGList.InviteApplicant(v)
+            end
+        end
+    end
+end
+
+function ApplicantPanel:CheckCanInvite(id)
+    local applicantInfo = C_LFGList.GetApplicantInfo(id)
+    local status = applicantInfo.applicationStatus
+    local numMembers = applicantInfo.numMembers
+
+    local numAllowed = select(ACTIVITY_RETURN_VALUES.maxPlayers, C_LFGList.GetActivityInfo(CreatePanel:GetCurrentActivity():GetActivityID()))
+    
+    if numAllowed == 0 then
+        numAllowed = MAX_RAID_MEMBERS
+    end
+
+    local currentCount = GetNumGroupMembers(LE_PARTY_CATEGORY_HOME)
+    local numInvited = C_LFGList.GetNumInvitedApplicantMembers()
+
+    if numMembers + currentCount + numInvited > numAllowed then
+        return
+    elseif status == 'applied' then
+        return true
+    end
 end
 
 function ApplicantPanel:CanInvite(applicant)
