@@ -430,7 +430,7 @@ function PhotoRobot.CreateConfig()
 	PhotoRobot.subtitle = PhotoRobot.panel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
 	PhotoRobot.subtitle:SetPoint("TOPLEFT", PhotoRobot.title, "BOTTOMLEFT", 0, -8)
 	PhotoRobot.subtitle:SetNonSpaceWrap(true)
-	PhotoRobot.subtitle:SetText("v 0.3.9")
+	PhotoRobot.subtitle:SetText("v 0.3.10")
 	PhotoRobot.subtitle:SetTextColor(1, 1, 1, 0.5)
 	
 	----------------------------------
@@ -498,8 +498,7 @@ function PhotoRobot.CreateConfig()
 	----------------------------------
 	local p1 = PhotoRobot.panel
 
-	--PhotoRobot.dropdown1 = CreateFrame("Frame", "PhotoRobotdropdown1", PhotoRobot.panel, "UIDropDownMenuTemplate")
-	PhotoRobot.dropdown1 = Lib_UIDropDownMenu_Create("PhotoRobotdropdown1", PhotoRobot.panel)
+	PhotoRobot.dropdown1 = CreateFrame("Frame", "PhotoRobotdropdown1", PhotoRobot.panel, "UIDropDownMenuTemplate")
 	PhotoRobot.dropdown1:SetPoint("TOPLEFT", PhotoRobot.checkbox3, "BOTTOMLEFT", -10, -30)
 	PhotoRobot.dropdown1:SetWidth(40)
 	PhotoRobot.dropdown1.font = PhotoRobot.dropdown1:CreateFontString("PhotoRobotdropdownFont", "ARTWORK", "GameFontNormalSmall")
@@ -885,7 +884,7 @@ function PhotoRobot:ADDON_LOADED(event, addon)
 		self.db = self.CopyDefaults(defaults, ShiGuangPerDB)
 		
 		self.CreateConfig()
-		Lib_UIDropDownMenu_SetText(self.dropdown1, self.db.fontSize)
+		UIDropDownMenu_SetText(self.dropdown1, self.db.fontSize)
 		self.colorButton.texture:SetTexture("Interface\\ChatFrame\\ChatFrameColorSwatch")
 		self.colorButton.texture:SetTexture(self.db.PhotoRobotr, self.db.PhotoRobotg, self.db.PhotoRobotb)
 		--self.checkbox1:SetChecked(self.db.ShowOnPartyAuras)

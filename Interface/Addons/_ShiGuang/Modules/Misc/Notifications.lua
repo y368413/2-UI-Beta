@@ -143,7 +143,7 @@ function MISC:RareAlert_CheckInstance()
 end
 
 function MISC:RareAlert()
-	MISC.RareString = "|Hworldmap:%d+:%d+:%d+|h[%s (%.1f, %.1f)%s]|h|r"
+	MISC.RareString = "|Hworldmap:%d+:%d+:%d+|h[%s] <%.1f, %.1f>%s|h|r"
 
 	if R.db["Misc"]["RareAlerter"] then
 		self:RareAlert_CheckInstance()
