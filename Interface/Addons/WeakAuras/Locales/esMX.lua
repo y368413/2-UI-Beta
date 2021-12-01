@@ -250,6 +250,8 @@ L["Block"] = "Bloquear"
 L["Block (%)"] = "Block (%)"
 --[[Translation missing --]]
 L["Block against Target (%)"] = "Block against Target (%)"
+--[[Translation missing --]]
+L["Block Value"] = "Block Value"
 L["Blocked"] = "Bloqueado"
 --[[Translation missing --]]
 L["Bloodlord Mandokir"] = "Bloodlord Mandokir"
@@ -267,6 +269,8 @@ L["Bounce with Decay"] = "Rebotar con amortiguación"
 L["Broodlord Lashlayer"] = "Broodlord Lashlayer"
 L["Brutallus"] = "Brutallus"
 L["Buff"] = "Beneficio"
+--[[Translation missing --]]
+L["Buff/Debuff"] = "Buff/Debuff"
 --[[Translation missing --]]
 L["Buffed/Debuffed"] = "Buffed/Debuffed"
 --[[Translation missing --]]
@@ -304,7 +308,21 @@ L["Character Stats"] = "Character Stats"
 L["Character Type"] = "Character Type"
 L["Charge gained/lost"] = "Carga ganada/perdida"
 --[[Translation missing --]]
-L["Charged Combo Point"] = "Charged Combo Point"
+L["Charged Combo Point (1)"] = "Charged Combo Point (1)"
+--[[Translation missing --]]
+L["Charged Combo Point (2)"] = "Charged Combo Point (2)"
+--[[Translation missing --]]
+L["Charged Combo Point (3)"] = "Charged Combo Point (3)"
+--[[Translation missing --]]
+L["Charged Combo Point (4)"] = "Charged Combo Point (4)"
+--[[Translation missing --]]
+L["Charged Combo Point 1"] = "Charged Combo Point 1"
+--[[Translation missing --]]
+L["Charged Combo Point 2"] = "Charged Combo Point 2"
+--[[Translation missing --]]
+L["Charged Combo Point 3"] = "Charged Combo Point 3"
+--[[Translation missing --]]
+L["Charged Combo Point 4"] = "Charged Combo Point 4"
 L["Charges"] = "Cargas"
 --[[Translation missing --]]
 L["Charges Changed Event"] = "Charges Changed Event"
@@ -436,7 +454,6 @@ L["Dodge"] = "Esquivar"
 L["Dodge (%)"] = "Esquivar (%)"
 --[[Translation missing --]]
 L["Dodge Rating"] = "Dodge Rating"
-L["Done"] = "Finalizado"
 L["Down"] = "Abajo"
 --[[Translation missing --]]
 L["Down, then Left"] = "Down, then Left"
@@ -745,6 +762,8 @@ L["In Combat"] = "En combate"
 --[[Translation missing --]]
 L["In Encounter"] = "In Encounter"
 L["In Group"] = "En grupo"
+--[[Translation missing --]]
+L["In Party"] = "In Party"
 L["In Pet Battle"] = "En duelo de mascotas"
 --[[Translation missing --]]
 L["In Raid"] = "In Raid"
@@ -1025,7 +1044,6 @@ L["Nefarian"] = "Nefarian"
 L["Netherspite"] = "Netherspite"
 L["Neutral"] = "Neutral"
 L["Never"] = "Nunca"
-L["Next"] = "Siguiente"
 --[[Translation missing --]]
 L["Next Combat"] = "Next Combat"
 --[[Translation missing --]]
@@ -1044,10 +1062,14 @@ L["Non-player Character"] = "Personaje No-Jugador"
 L["Normal"] = "Normal"
 --[[Translation missing --]]
 L["Not in Group"] = "Not in Group"
+--[[Translation missing --]]
+L["Not in Smart Group"] = "Not in Smart Group"
 L["Not on Cooldown"] = "No está en tiempo de reutilización"
 L["Not On Threat Table"] = "No se encuentra en la Tabla de Amenaza"
 --[[Translation missing --]]
 L["Note, that cross realm transmission is possible if you are on the same group"] = "Note, that cross realm transmission is possible if you are on the same group"
+--[[Translation missing --]]
+L["Note: Due to how complicated the swing timer behaviour is and the lack of APIs from Blizzard, results are inaccurate in edge cases."] = "Note: Due to how complicated the swing timer behaviour is and the lack of APIs from Blizzard, results are inaccurate in edge cases."
 --[[Translation missing --]]
 L["Note: 'Hide Alone' is not available in the new aura tracking system. A load option can be used instead."] = "Note: 'Hide Alone' is not available in the new aura tracking system. A load option can be used instead."
 --[[Translation missing --]]
@@ -1288,10 +1310,6 @@ L["Requesting display information from %s ..."] = "Requesting display informatio
 L["Require Valid Target"] = "Requiere un objetivo válido"
 L["Resist"] = "Resistir"
 L["Resisted"] = "Resistido"
-L["Resolve collisions dialog"] = "Resolver colisiones en diálogos"
-L["Resolve collisions dialog singular"] = "Resolver colisiones en diálogos singulares"
-L["Resolve collisions dialog startup"] = "Resolver diálogo de colisiones al iniciar"
-L["Resolve collisions dialog startup singular"] = "Resolver diálogo de colisiones singulares al iniciar"
 --[[Translation missing --]]
 L["Rested"] = "Rested"
 --[[Translation missing --]]
@@ -1457,6 +1475,8 @@ L["Spell"] = "Hechizo"
 L["Spell (Building)"] = "Hechizo (en curso)"
 L["Spell Activation Overlay Glow"] = "Activación de hechizo con superposición de brillo"
 --[[Translation missing --]]
+L["Spell Cast Succeeded"] = "Spell Cast Succeeded"
+--[[Translation missing --]]
 L["Spell Cost"] = "Spell Cost"
 --[[Translation missing --]]
 L["Spell Count"] = "Spell Count"
@@ -1475,6 +1495,8 @@ L["Spell Usable"] = "Spell Usable"
 L["Spin"] = "Girar"
 L["Spiral"] = "Espiral"
 L["Spiral In And Out"] = "Espiral hacia adentro y afuera"
+--[[Translation missing --]]
+L["Spirit"] = "Spirit"
 --[[Translation missing --]]
 L["Stack Count"] = "Stack Count"
 L["Stacks"] = "Acumulaciones"

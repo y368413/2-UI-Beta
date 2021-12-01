@@ -1669,10 +1669,14 @@ do
         if casting then
           casting = false
         end
-        if isAttacking then
-          swingStart("main")
-          swingTriggerUpdate()
-        end
+        -- check next frame
+        swingTimerFrame:SetScript("OnUpdate", function(self)
+          if isAttacking then
+            swingStart("main")
+            swingTriggerUpdate()
+          end
+          self:SetScript("OnUpdate", nil)
+        end)
       end
       if Private.reset_ranged_swing_spells[spell] then
         if WeakAuras.IsClassic() or WeakAuras.IsBCC() then
@@ -3344,9 +3348,7 @@ do
       castLatencyFrame = CreateFrame("Frame")
       castLatencyFrame:RegisterEvent("CURRENT_SPELL_CAST_CHANGED")
       castLatencyFrame:SetScript("OnEvent", function(event)
-        Private.StartProfileSystem("generictrigger")
-        WeakAuras.ScanEvents("CAST_LATENCY_UPDATE", "player")
-        Private.StopProfileSystem("generictrigger")
+        Private.LAST_CURRENT_SPELL_CAST_CHANGED = GetTime()
       end)
     end
   end
@@ -3665,6 +3667,19 @@ function GenericTrigger.GetAdditionalProperties(data, triggernum)
         ret = ret .. additional;
       end
     end
+  else
+    if (trigger.custom_type == "stateupdate") then
+      local variables = events[data.id][triggernum].tsuConditionVariables();
+      if (type(variables) == "table") then
+        for var, varData in pairs(variables) do
+          if (type(varData) == "table") then
+            if varData.display then
+              ret = ret .. "|cFFFF0000%".. triggernum .. "." .. var .. "|r - " .. varData.display .. "\n"
+            end
+          end
+        end
+      end
+    end
   end
 
   return ret;
@@ -3981,19 +3996,17 @@ do
   end
 end
 
+local findIdInLink = function(id, itemLink)
+  local findID = ":" .. tostring(id:trim())
+  return itemLink:find(findID .. ":", 1, true) or itemLink:find(findID .. "|", 1, true)
+end
+
 WeakAuras.CheckForItemBonusId = function(ids)
   for id in tostring(ids):gmatch('([^,]+)') do
-    id = ":" .. tostring(id:trim())
     for slot in pairs(Private.item_slot_types) do
       local itemLink = GetInventoryItemLink('player', slot)
-      if itemLink then
-        local _, endPos = itemLink:find(id, 1, true)
-        if endPos then
-          endPos = endPos +1
-          if (itemLink:sub(endPos, endPos) == ":" or itemLink:sub(endPos, endPos) == "|") then
-            return true
-          end
-        end
+      if itemLink and findIdInLink(id, itemLink) then
+        return true
       end
     end
   end
@@ -4004,19 +4017,12 @@ end
 WeakAuras.GetBonusIdInfo = function(ids, specificSlot)
   local checkSlots = specificSlot and {[specificSlot] = true} or Private.item_slot_types
   for id in tostring(ids):gmatch('([^,]+)') do
-    local findID = ":" .. tostring(id:trim())
     for slot in pairs(checkSlots) do
       local itemLink = GetInventoryItemLink('player', slot)
-      if itemLink then
-        local _, endPos = itemLink:find(id, 1, true)
-        if endPos then
-          endPos = endPos +1
-          if (itemLink:sub(endPos, endPos) == ":" or itemLink:sub(endPos, endPos) == "|") then
-            local itemID, _, _, _, icon = GetItemInfoInstant(itemLink)
-            local itemName = itemLink:match("%[(.*)%]")
-            return id, itemID, itemName, icon, slot, Private.item_slot_types[slot]
-          end
-        end
+      if itemLink and findIdInLink(id, itemLink) then
+        local itemID, _, _, _, icon = GetItemInfoInstant(itemLink)
+        local itemName = itemLink:match("%[(.*)%]")
+        return id, itemID, itemName, icon, slot, Private.item_slot_types[slot]
       end
     end
   end

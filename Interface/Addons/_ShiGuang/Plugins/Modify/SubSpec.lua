@@ -388,7 +388,7 @@ local function CreateUi()
 		{text = SUBSPEC_RIGHTSHIFT, notCheckable = true, func = MenuMoveRight},
 		{text = CALENDAR_DELETE_EVENT, notCheckable = true, func = MenuRemove}
 	}
-	Lib_UIDropDownMenu_Initialize(mainFrame.menuFrame, EasyMenu_Initialize, "MENU", nil, menuTexts)
+	UIDropDownMenu_Initialize(mainFrame.menuFrame, EasyMenu_Initialize, "MENU", nil, menuTexts)
 	menuButton:SetScript("OnClick", function() ToggleDropDownMenu(1, nil, mainFrame.menuFrame, menuButton, 0, 0, menuTexts, nil, nil); end)
 	menuButton:SetScript("OnHide", function(self)
 		self.index = 0

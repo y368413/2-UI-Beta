@@ -833,6 +833,43 @@ local function createOptionSlider(parent, title, minV, maxV, defaultV, x, y, val
 	slider:SetScript("OnValueChanged", sliderValueChanged)
 end
 
+local function updateDropdownHighlight(self)
+	local dd = self.__owner
+	for i = 1, #dd.__options do
+		local option = dd.options[i]
+		if i == R.db[dd.__key][dd.__value] then
+			option:SetBackdropColor(1, .8, 0, .3)
+			option.selected = true
+		else
+			option:SetBackdropColor(0, 0, 0, .3)
+			option.selected = false
+		end
+	end
+end
+
+local function updateDropdownState(self)
+	local dd = self.__owner
+	R.db[dd.__key][dd.__value] = self.index
+	if dd.__func then dd.__func() end
+end
+
+local function createOptionDropdown(parent, title, yOffset, options, tooltip, key, value, default, func)
+	local dd = G:CreateDropdown(parent, title, 40, yOffset, options, tooltip, 180, 28)
+	dd.__key = key
+	dd.__value = value
+	dd.__default = default
+	dd.__options = options
+	dd.__func = func
+	dd.Text:SetText(options[R.db[key][value]])
+
+	dd.button.__owner = dd
+	dd.button:HookScript("OnClick", updateDropdownHighlight)
+
+	for i = 1, #options do
+		dd.options[i]:HookScript("OnClick", updateDropdownState)
+	end
+end
+
 local function SetUnitFrameSize(self, unit)
 	local width = R.db["UFs"][unit.."Width"]
 	local healthHeight = R.db["UFs"][unit.."Height"]
@@ -1016,10 +1053,27 @@ function G:SetupCastbar(parent)
 	end)
 end
 
-local function createOptionCheck(parent, offset, text)
+local function toggleOptionCheck(self)
+	local value = R.db[self.__key][self.__value]
+	value = not value
+	self:SetChecked(value)
+	R.db[self.__key][self.__value] = value
+	if self.__callback then self:__callback() end
+end
+
+local function createOptionCheck(parent, offset, text, key, value, callback, tooltip)
 	local box = M.CreateCheckBox(parent)
-	box:SetPoint("TOPLEFT", 10, -offset)
+	box:SetPoint("TOPLEFT", 10, offset)
+	box:SetChecked(R.db[key][value])
+	box.__key = key
+	box.__value = value
+	box.__callback = callback
 	M.CreateFS(box, 14, text, false, "LEFT", 30, 0)
+	box:SetScript("OnClick", toggleOptionCheck)
+	if tooltip then
+		M.AddTooltip(box, "ANCHOR_RIGHT", tooltip, "info", true)
+	end
+
 	return box
 end
 local function refreshMajorSpells()

@@ -1,4 +1,4 @@
-## Interface: 90100
+## Interface: 90105
 ## Title: WeeklyDungeons
 ## Author: Kimpa
 ## Version: 1.6

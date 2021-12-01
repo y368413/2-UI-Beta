@@ -198,6 +198,8 @@ L["Blizzard Combat Text"] = "블리자드 전투 문자"
 L["Block"] = "방어함"
 L["Block (%)"] = "막음(%)"
 L["Block against Target (%)"] = "대상의 막음(%)"
+--[[Translation missing --]]
+L["Block Value"] = "Block Value"
 L["Blocked"] = "방패 막기"
 L["Bloodlord Mandokir"] = "혈군주 만도키르"
 L["Border"] = "테두리"
@@ -214,6 +216,8 @@ L["Broodlord Lashlayer"] = "용기대장 래쉬레이어"
 --[[Translation missing --]]
 L["Brutallus"] = "Brutallus"
 L["Buff"] = "강화 효과"
+--[[Translation missing --]]
+L["Buff/Debuff"] = "Buff/Debuff"
 L["Buffed/Debuffed"] = "강화 효과/약화 효과"
 L["Buru the Gorger"] = "먹보 부루"
 L["Can be used for e.g. checking if \"boss1target\" is the same as \"player\"."] = "예를 들어 \"우두머리1대상\"이 \"플레이어\"와 같은지 확인하는데 사용할 수 있습니다."
@@ -241,7 +245,22 @@ L["Channel (Spell)"] = "정신 집중"
 L["Character Stats"] = "캐릭터 상태"
 L["Character Type"] = "캐릭터 유형"
 L["Charge gained/lost"] = "충전량 획득/손실"
-L["Charged Combo Point"] = "충전된 연계 점수"
+--[[Translation missing --]]
+L["Charged Combo Point (1)"] = "Charged Combo Point (1)"
+--[[Translation missing --]]
+L["Charged Combo Point (2)"] = "Charged Combo Point (2)"
+--[[Translation missing --]]
+L["Charged Combo Point (3)"] = "Charged Combo Point (3)"
+--[[Translation missing --]]
+L["Charged Combo Point (4)"] = "Charged Combo Point (4)"
+--[[Translation missing --]]
+L["Charged Combo Point 1"] = "Charged Combo Point 1"
+--[[Translation missing --]]
+L["Charged Combo Point 2"] = "Charged Combo Point 2"
+--[[Translation missing --]]
+L["Charged Combo Point 3"] = "Charged Combo Point 3"
+--[[Translation missing --]]
+L["Charged Combo Point 4"] = "Charged Combo Point 4"
 L["Charges"] = "충전"
 --[[Translation missing --]]
 L["Charges Changed Event"] = "Charges Changed Event"
@@ -346,7 +365,6 @@ L["Distance"] = "거리"
 L["Dodge"] = "회피"
 L["Dodge (%)"] = "회피 (%)"
 L["Dodge Rating"] = "회피"
-L["Done"] = "완료"
 L["Down"] = "아래로"
 L["Down, then Left"] = "아래로, 왼쪽으로"
 L["Down, then Right"] = "아래로, 오른쪽으로"
@@ -580,6 +598,8 @@ L["Importing is disabled while in combat"] = "가져오기는 전투 중에는 �
 L["In Combat"] = "전투 중"
 L["In Encounter"] = "교전 중"
 L["In Group"] = "파티 중"
+--[[Translation missing --]]
+L["In Party"] = "In Party"
 L["In Pet Battle"] = "애완동물 대전 중"
 L["In Raid"] = "공격대 중"
 L["In Vehicle"] = "차량 탑승 중"
@@ -778,7 +798,6 @@ L["Nefarian"] = "네파리안"
 L["Netherspite"] = "Netherspite"
 L["Neutral"] = "중립"
 L["Never"] = "절대 안함"
-L["Next"] = "다음"
 L["Next Combat"] = "다음 전투"
 L["Next Encounter"] = "다음 교전"
 --[[Translation missing --]]
@@ -792,9 +811,13 @@ L["None"] = "없음"
 L["Non-player Character"] = "NPC"
 L["Normal"] = "일반"
 L["Not in Group"] = "파티에 속하지 않음"
+--[[Translation missing --]]
+L["Not in Smart Group"] = "Not in Smart Group"
 L["Not on Cooldown"] = "재사용 대기 중이 아닐 때"
 L["Not On Threat Table"] = "위협 수준 없음"
 L["Note, that cross realm transmission is possible if you are on the same group"] = "참고로, 같은 영역에 있다면 상호 영역 전송이 가능합니다."
+--[[Translation missing --]]
+L["Note: Due to how complicated the swing timer behaviour is and the lack of APIs from Blizzard, results are inaccurate in edge cases."] = "Note: Due to how complicated the swing timer behaviour is and the lack of APIs from Blizzard, results are inaccurate in edge cases."
 L["Note: 'Hide Alone' is not available in the new aura tracking system. A load option can be used instead."] = "참고: '혼자 숨기기'는 새로운 효과 추적 시스템에서 사용할 수 없습니다. 대신 불러오기 옵션을 사용하세요."
 --[[Translation missing --]]
 L["Note: The available text replacements for multi triggers match the normal triggers now."] = "Note: The available text replacements for multi triggers match the normal triggers now."
@@ -971,30 +994,6 @@ L["Requesting display information from %s ..."] = "%s의 디스플레이 정보 
 L["Require Valid Target"] = "유효 대상 필요"
 L["Resist"] = "저항"
 L["Resisted"] = "저항함"
-L["Resolve collisions dialog"] = [=[
-같은 이름을 가진 |cFF8800FFWeakAuras|r 디스플레이가 있습니다.
-
-애드온 표시를 위한 공간을 만들기 위해 당신의 디스플레이 이름을 변경해야 합니다.
-
-해결: |cFFFF0000]=]
-L["Resolve collisions dialog singular"] = [=[
-같은 이름을 가진 |cFF8800FFWeakAuras|r 디스플레이가 있습니다.
-
-애드온 표시를 위한 공간을 만들기 위해 당신의 디스플레이 이름을 변경해야 합니다.
-
-해결: |cFFFF0000]=]
-L["Resolve collisions dialog startup"] = [=[
-같은 이름을 가진 |cFF8800FFWeakAuras|r 디스플레이가 있습니다.
-
-애드온 표시를 위한 공간을 만들기 위해 당신의 디스플레이 이름을 변경해야 합니다.
-
-해결: |cFFFF0000]=]
-L["Resolve collisions dialog startup singular"] = [=[
-같은 이름을 가진 |cFF8800FFWeakAuras|r 디스플레이가 있습니다.
-
-애드온 표시를 위한 공간을 만들기 위해 당신의 디스플레이 이름을 변경해야 합니다.
-
-해결: |cFFFF0000]=]
 --[[Translation missing --]]
 L["Rested"] = "Rested"
 L["Rested Experience"] = "휴식 경험치"
@@ -1121,6 +1120,8 @@ L["Specific Unit"] = "특정 유닛"
 L["Spell"] = "주문"
 L["Spell (Building)"] = "주문 (공성)"
 L["Spell Activation Overlay Glow"] = "주문 활성화 강조 표시"
+--[[Translation missing --]]
+L["Spell Cast Succeeded"] = "Spell Cast Succeeded"
 L["Spell Cost"] = "주문 요건"
 L["Spell Count"] = "주문 횟수"
 L["Spell ID"] = "주문 ID"
@@ -1134,6 +1135,8 @@ L["Spell Usable"] = "주문 사용 가능"
 L["Spin"] = "회전"
 L["Spiral"] = "소용돌이"
 L["Spiral In And Out"] = "회전 소용돌이"
+--[[Translation missing --]]
+L["Spirit"] = "Spirit"
 L["Stack Count"] = "중첩 횟수"
 L["Stacks"] = "중첩"
 --[[Translation missing --]]

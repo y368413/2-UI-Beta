@@ -1,6 +1,23 @@
 {
-    "target": "curse",
-    "searchName": "WeakAuras 2",
+    "addonsMap": [
+        "WeakAuras",
+        "WeakAurasOptions",
+        "WeakAurasModelPaths",
+        "WeakAurasTemplates",
+        "WeakAurasArchive"
+    ],
+    "interfaceMap": [],
+    "children": [
+        "WeakAurasOptions",
+        "WeakAurasModelPaths",
+        "WeakAurasTemplates",
+        "WeakAurasArchive"
+    ],
     "localName": "WeakAuras",
-    "version": "3.7.0"
+    "searchName": "WeakAuras",
+    "name": "WeakAuras",
+    "fileName": "weakauras-2",
+    "target": "curse",
+    "version": "3.7.3-13-g7532147",
+    "gameVersion": "9.1.5"
 }

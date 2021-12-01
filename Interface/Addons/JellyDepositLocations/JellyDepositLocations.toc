@@ -1,4 +1,4 @@
-## Interface: 90002
+## Interface: 90105
 ## Title: Jelly Deposit Locations
 ## Notes: Adds Jelly Deposit Location Data to GatherMate2
 ## Author: Jacatola <jacobjdowning@gmail.com>

@@ -1,4 +1,4 @@
-## Interface: 90100
+## Interface: 90105
 ## Title: ExtUI-Friends
 ## Version: |cffffffffv1.0.0
 ## Author: 嚣张的扇贝

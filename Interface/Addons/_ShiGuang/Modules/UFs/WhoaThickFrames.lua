@@ -39,7 +39,7 @@ CreateBarPctText(FocusFrame, "RIGHT", "LEFT", -3, -8, "NumberFontNormalLarge", 3
 --for i = 1, 4 do CreateBarPctText(_G["PartyMemberFrame"..i], "LEFT", "RIGHT", 6, 0, "NumberFontNormal", 16) end
 --for i = 1, MAX_BOSS_FRAMES do CreateBarPctText(_G["Boss"..i.."TargetFrame"], "LEFT", "RIGHT", 8, 30, "NumberFontNormal", 36) end	
 
---[[	Player class colors.
+--	Player class colors.
 function whoaUnitClass(healthbar, unit)
 	if healthbar and not healthbar.lockValues and unit == healthbar.unit then
 		local min, max = healthbar:GetMinMaxValues()
@@ -67,11 +67,11 @@ end
 hooksecurefunc("UnitFrameHealthBar_Update", whoaUnitClass)
 hooksecurefunc("HealthBar_OnValueChanged", function(self)
 	whoaUnitClass(self, self.unit)
-end)]]
+end)
 
 -- palyer frame class color selector.
 function whoaUnitColor(unit)
-	--[[if (reactColor) then
+	--if (reactColor) then
 		if UnitIsTapDenied(unit) then
 			r, g, b = 0.5, 0.5, 0.5;
 		else
@@ -89,9 +89,9 @@ function whoaUnitColor(unit)
 				end
 			end
 		end
-	else
-		r, g, b = 0, 0.9, 0;
-	end]]
+	--else
+		--r, g, b = 0, 0.9, 0;
+	--end
 	if UnitIsPlayer(unit) then
 		if not UnitIsConnected(unit) then
 			r, g, b = 0.5, 0.5, 0.5;

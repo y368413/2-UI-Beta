@@ -1,0 +1,21 @@
+## Interface: 90105
+## Title: MostValuablePlayer
+## Author: JANY
+## Version: 9.0.5
+## Notes: MostValuablePlayer-20210612
+## SavedVariables: MVP_Settings,MVPLilst
+## X-Curse-Packaged-Version: v9.0.5 BFA
+## X-Curse-Project-Name: MostValuablePlayer
+## X-Curse-Project-ID: MostValuablePlayer
+## X-Curse-Repository-ID: MostValuablePlayer
+## OptionalDeps: LibStub, LibUIDropDownMenu
+
+
+
+localization.lua
+MostValuablePlayer.lua
+
+
+Modules\Load_Modules.xml
+
+MVPconfig.lua

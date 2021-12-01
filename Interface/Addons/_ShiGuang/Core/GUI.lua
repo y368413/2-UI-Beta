@@ -62,6 +62,7 @@ G.DefaultSettings = {
 		QuakeRing = false,
 	},
 	UFs = {
+		ShowAuras = true,
 		Arena = true,
 		Castbars = false,
 		SwingBar = false,
@@ -88,9 +89,14 @@ G.DefaultSettings = {
 		RaidHPMode = 1,
 		AurasClickThrough = false,
 		AutoAttack = true,
+		PetCombatText = true,
 		RaidClickSets = true,
 		ShowTeamIndex = false,
 		ClassPower = true,
+		CPWidth = 150,
+		CPHeight = 5,
+		CPxOffset = 12,
+		CPyOffset = -2,
 		QuakeTimer = true,
 		LagString = false,
 		RuneTimer = true,
@@ -120,21 +126,30 @@ G.DefaultSettings = {
 		ShowRaidDebuff = true,
 		RaidDebuffSize = 12,
 		SmartRaid = false,
+		Desaturate = true,
+		DebuffColor = true,
 
 		PlayerWidth = 245,
 		PlayerHeight = 24,
 		PlayerPowerHeight = 6,
 		PlayerPowerOffset = 2,
+		PlayerHPTag = 2,
+		PlayerMPTag = 4,
 		FocusWidth = 160,
 		FocusHeight = 21,
 		FocusPowerHeight = 3,
 		FocusPowerOffset = 2,
+		FocusHPTag = 2,
+		FocusMPTag = 4,
 		PetWidth = 100,
 		PetHeight = 16,
 		PetPowerHeight = 2,
+		PetHPTag = 4,
 		BossWidth = 120,
 		BossHeight = 21,
 		BossPowerHeight = 3,
+		BossHPTag = 5,
+		BossMPTag = 5,
 		CastingColor = {r=.8, g=.6, b=.1},  --r=.3, g=.7, b=1
 		NotInterruptColor = {r=.6, g=.6, b=.6},  --r=1, g=.5, b=.5
 		PlayerCBWidth = 240,
@@ -143,10 +158,23 @@ G.DefaultSettings = {
 		TargetCBHeight = 21,
 		FocusCBWidth = 245,
 		FocusCBHeight = 18,
+
+		PlayerBuffType = 1,
+		PlayerDebuffType = 1,
+		PlayerAurasPerRow = 9,
+		TargetBuffType = 2,
+		TargetDebuffType = 2,
+		TargetAurasPerRow = 9,
+		FocusBuffType = 3,
+		FocusDebuffType = 2,
+		FocusAurasPerRow = 8,
+		ToTBuffType = 1,
+		ToTDebuffType = 1,
+		ToTAurasPerRow = 5,
+		
 		PlayerFrameScale = 0.9,
 		UFPctText = true,
 		UFClassIcon = false,
-		UFFade = true,
 	},
 	Chat = {
 		Sticky = false,
@@ -211,7 +239,8 @@ G.DefaultSettings = {
 		PPHealthHeight = 0.1,
 		PPPowerHeight = 6,
 		PPPowerText = true,
-		FullHealth = false,
+		NameType = 5,
+		HealthType = 5,
 		SecureColor = {r=1, g=0, b=1},
 		TransColor = {r=1, g=.8, b=0},
 		InsecureColor = {r=1, g=0, b=0},
@@ -222,10 +251,11 @@ G.DefaultSettings = {
 		PPFadeout = true,
 		PPFadeoutAlpha = 0,
 		PPOnFire = false,
-		NameplateClassPower = false,
+		TargetPower = false,
 		MinScale = 1,
-		MinAlpha = 0.8,
-		ColorBorder = true,
+		MinAlpha = 1,
+		Desaturate = true,
+		DebuffColor = true,
 		QuestIndicator = true,
 		NameOnlyMode = false,
 		PPGCDTicker = true,
@@ -237,8 +267,10 @@ G.DefaultSettings = {
 		CastbarGlow = true,
 		CastTarget = false,
 		FriendPlate = false,
+		EnemyThru = false,
+		FriendlyThru = false,
 
-		PlateWidth = 190,
+		PlateWidth = 160,
 		PlateHeight = 8,
 		PlateCBHeight = 6,
 		PlateCBOffset = 0,
@@ -246,7 +278,7 @@ G.DefaultSettings = {
 		NameTextSize = 15,
 		HealthTextSize = 16,
 		HealthTextOffset = 5,
-		FriendPlateWidth = 160,
+		FriendPlateWidth = 150,
 		FriendPlateHeight = 8,
 		FriendPlateCBHeight = 6,
 		FriendPlateCBOffset = 0,
@@ -277,6 +309,7 @@ G.DefaultSettings = {
 		FontOutline = true,
 		Loot = true,
 		Shadow = true,
+		BgTex = true,
 		GreyBD = false,
 		FontScale = 1,
 		CastBarstyle = true,
@@ -286,6 +319,9 @@ G.DefaultSettings = {
 		CombatHide = true,
 		Cursor = true,
 		ClassColor = true,
+		CursorMode = 4,
+		ItemQuality = false,
+		TipAnchor = 4,
 		HideRank = false,
 		FactionIcon = true,
 		LFDRole = false,
@@ -319,6 +355,7 @@ G.DefaultSettings = {
 		Screenshot = true,
 		TradeTabs = true,
 		Interrupt = true,
+		InterruptAlert = true,
 		OwnInterrupt = true,
 		DispellAlert = false,
 		OwnDispell = true,
@@ -360,7 +397,8 @@ G.DefaultSettings = {
 		InfoStrLeft = "[spec][time][guild][friend][ping][fps][gold][dura][bag]",
 		InfoStrRight = "[zone]",
 		InfoSize = 13,
-		MaxAddOns = 12,
+		MaxAddOns = 21,
+		MenuButton = false,
 		QuickQueue = true,
 		--AltTabLfgNotification = false,
 		--CrazyCatLady = true,
@@ -647,12 +685,26 @@ local function refreshNameplates()
 	M:GetModule("UnitFrames"):RefreshAllPlates()
 end
 
+local function updateClickThru()
+	M:GetModule("UnitFrames"):UpdatePlateClickThru()
+end
+
 local function togglePlatePower()
 	M:GetModule("UnitFrames"):TogglePlatePower()
 end
 
 local function togglePlateVisibility()
 	M:GetModule("UnitFrames"):TogglePlateVisibility()
+end
+
+local function togglePlayerPlate()
+	refreshNameplates()
+	M:GetModule("UnitFrames"):TogglePlayerPlate()
+end
+
+local function toggleTargetClassPower()
+	refreshNameplates()
+	M:GetModule("UnitFrames"):ToggleTargetClassPower()
 end
 
 local function toggleGCDTicker()
@@ -673,6 +725,14 @@ end
 
 local function updateUFTextScale()
 	M:GetModule("UnitFrames"):UpdateTextScale()
+end
+
+local function toggleUFClassPower()
+	M:GetModule("UnitFrames"):ToggleUFClassPower()
+end
+
+local function toggleAllAuras()
+	M:GetModule("UnitFrames"):ToggleAllAuras()
 end
 
 local function updateRaidTextScale()
@@ -789,6 +849,7 @@ end
 -- Config
 local HeaderTag = "|cff00cc4c"
 local NewTag = "|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:0|t"
+G.HealthValues = {DISABLE, U["ShowHealthDefault"], U["ShowHealthCurMax"], U["ShowHealthCurrent"], U["ShowHealthPercent"], U["ShowHealthLoss"], U["ShowHealthLossPercent"]}
 
 G.TabList = {
 	U["Actionbar"],
@@ -837,7 +898,8 @@ G.OptionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 	},
 	[2] = {
 		{1, "Nameplate", "Enable", "|cff00cc4c"..U["Enable Nameplate"], nil, nil, setupNameplateFilter},
-		{1, "Nameplate", "FullHealth", U["Show FullHealth"].."*", true, nil, nil, refreshNameplates},
+		--{1, "Nameplate", "FullHealth", U["Show FullHealth"].."*", true, nil, nil, refreshNameplates},
+		{4, "Nameplate", "HealthType", NewTag..U["HealthValueType"].."*", true, nil, G.HealthValues, refreshNameplates},
 		{4, "Nameplate", "TargetIndicator", U["TargetIndicator"].."*", true, true, {DISABLE, U["TopArrow"], U["RightArrow"], U["TargetGlow"], U["TopNGlow"], U["RightNGlow"]}, refreshNameplates},
 		{1, "Nameplate", "FriendlyCC", U["Friendly CC"].."*"},
 		{1, "Nameplate", "HostileCC", U["Hostile CC"].."*", true},
@@ -1088,7 +1150,8 @@ G.OptionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 	  {1, "Misc", "FreeMountCD", "CD君(CN only)", true},
 		{},--blank
 		{1, "Tooltip", "CombatHide", U["Hide Tooltip"].."*"},
-		{1, "Tooltip", "Cursor", U["Follow Cursor"].."*", true},
+		--{1, "Tooltip", "Cursor", U["Follow Cursor"].."*", true},
+		{4, "Tooltip", "CursorMode", NewTag..U["Follow Cursor"].."*", true, nil, {DISABLE, U["LEFT"], U["TOP"], U["RIGHT"]}},
 		{1, "Tooltip", "ClassColor", U["Classcolor Border"].."*", true, true},
 		{1, "Tooltip", "HideTitle", U["Hide Title"].."*"},
 		{1, "Tooltip", "HideRank", U["Hide Rank"].."*", true},
@@ -1169,6 +1232,49 @@ local function CheckUIReload(name)
 	end
 end
 
+local function onCheckboxClick(self)
+	CheckUIOption(self.__key, self.__value, self:GetChecked())
+	CheckUIReload(self.__name)
+	if self.__callback then self:__callback() end
+end
+
+local function restoreEditbox(self)
+	self:SetText(CheckUIOption(self.__key, self.__value))
+end
+local function acceptEditbox(self)
+	CheckUIOption(self.__key, self.__value, self:GetText())
+	CheckUIReload(self.__name)
+	if self.__callback then self:__callback() end
+end
+
+local function onSliderChanged(self, v)
+	local current = M:Round(tonumber(v), 2)
+	CheckUIOption(self.__key, self.__value, current)
+	CheckUIReload(self.__name)
+	self.value:SetText(current)
+	if self.__callback then self:__callback() end
+end
+
+local function updateDropdownSelection(self)
+	local dd = self.__owner
+	for i = 1, #dd.__options do
+		local option = dd.options[i]
+		if i == CheckUIOption(dd.__key, dd.__value) then
+			option:SetBackdropColor(1, .8, 0, .3)
+			option.selected = true
+		else
+			option:SetBackdropColor(0, 0, 0, .3)
+			option.selected = false
+		end
+	end
+end
+local function updateDropdownClick(self)
+	local dd = self.__owner
+	CheckUIOption(dd.__key, dd.__value, self.index)
+	CheckUIReload(dd.__name)
+	if dd.__callback then dd:__callback() end
+end
+
 local function CreateOption(i)
 	local parent, offset = guiPage[i].child, 60
 
@@ -1186,14 +1292,13 @@ local function CreateOption(i)
 				cb:SetPoint("TOPLEFT", 60, -offset)
 				offset = offset + 32
 			end
+			cb.__key = key
 			cb.__value = value
+			cb.__name = name
+			cb.__callback = callback
 			cb.name = M.CreateFS(cb, 14, name, false, "LEFT", 30, 0)
 			cb:SetChecked(CheckUIOption(key, value))
-			cb:SetScript("OnClick", function()
-				CheckUIOption(key, value, cb:GetChecked())
-				CheckUIReload(name)
-				if callback then callback() end
-			end)
+			cb:SetScript("OnClick", onCheckboxClick)
 			if data and type(data) == "function" then
 				local bu = M.CreateGear(parent)
 				bu:SetPoint("LEFT", cb.name, "RIGHT", -2, 1)
@@ -1209,6 +1314,8 @@ local function CreateOption(i)
 			eb:SetMaxLetters(999)
 			eb.__key = key
 			eb.__value = value
+			eb.__name = name
+			eb.__callback = callback
 			eb.__default = (key == "ACCOUNT" and G.AccountSettings[value]) or G.DefaultSettings[key][value]
 			if horizon2 then
 				eb:SetPoint("TOPLEFT", 550, -offset + 32)
@@ -1219,14 +1326,8 @@ local function CreateOption(i)
 				offset = offset + 58
 			end
 			eb:SetText(CheckUIOption(key, value))
-			eb:HookScript("OnEscapePressed", function()
-				eb:SetText(CheckUIOption(key, value))
-			end)
-			eb:HookScript("OnEnterPressed", function(self)
-				CheckUIOption(key, value, eb:GetText())
-				CheckUIReload(name)
-				if callback then callback(self) end
-			end)
+			eb:HookScript("OnEscapePressed", restoreEditbox)
+			eb:HookScript("OnEnterPressed", acceptEditbox)
 
 			M.CreateFS(eb, 14, name, "system", "CENTER", 0, 25)
 			eb.title = U["Tips"]
@@ -1246,15 +1347,13 @@ local function CreateOption(i)
 				offset = offset + 58
 			end
 			local s = M.CreateSlider(parent, name, min, max, step, x, y)
+			s.__key = key
+			s.__value = value
+			s.__name = name
+			s.__callback = callback
 			s.__default = (key == "ACCOUNT" and G.AccountSettings[value]) or G.DefaultSettings[key][value]
 			s:SetValue(CheckUIOption(key, value))
-			s:SetScript("OnValueChanged", function(_, v)
-				local current = M:Round(tonumber(v), 2)
-				CheckUIOption(key, value, current)
-				CheckUIReload(name)
-				s.value:SetText(current)
-				if callback then callback() end
-			end)
+			s:SetScript("OnValueChanged", onSliderChanged)
 			s.value:SetText(M:Round(CheckUIOption(key, value), 2))
 			if tooltip then
 				s.title = U["Tips"]
@@ -1278,27 +1377,18 @@ local function CreateOption(i)
 				offset = offset + 58
 			end
 			dd.Text:SetText(data[CheckUIOption(key, value)])
+			dd.__key = key
+			dd.__value = value
+			dd.__name = name
+			dd.__options = data
+			dd.__callback = callback
+			dd.button.__owner = dd
+			dd.button:HookScript("OnClick", updateDropdownSelection)
 
-			local opt = dd.options
-			dd.button:HookScript("OnClick", function()
-				for num = 1, #data do
-					if num == CheckUIOption(key, value) then
-						opt[num]:SetBackdropColor(1, .8, 0, .3)
-						opt[num].selected = true
-					else
-						opt[num]:SetBackdropColor(0, 0, 0, .3)
-						opt[num].selected = false
-					end
-				end
-			end)
-			for i in pairs(data) do
-				opt[i]:HookScript("OnClick", function()
-					CheckUIOption(key, value, i)
-					CheckUIReload(name)
-					if callback then callback() end
-				end)
+			for i = 1, #data do
+				dd.options[i]:HookScript("OnClick", updateDropdownClick)
 				if value == "TexStyle" then
-					AddTextureToOption(opt, i) -- texture preview
+					AddTextureToOption(dd.options, i) -- texture preview
 				end
 			end
 

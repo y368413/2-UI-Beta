@@ -124,6 +124,18 @@ do
 			list[word] = true
 		end
 	end
+
+	-- Atlas info
+	function M:GetTextureStrByAtlas(info, sizeX, sizeY)
+		local file = info and info.file
+		if not file then return end
+
+		local width, height, txLeft, txRight, txTop, txBottom = info.width, info.height, info.leftTexCoord, info.rightTexCoord, info.topTexCoord, info.bottomTexCoord
+		local atlasWidth = width / (txRight-txLeft)
+		local atlasHeight = height / (txBottom-txTop)
+
+		return format("|T%s:%d:%d:0:0:%d:%d:%d:%d:%d:%d|t", file, (sizeX or 0), (sizeY or 0), atlasWidth, atlasHeight, atlasWidth*txLeft, atlasWidth*txRight, atlasHeight*txTop, atlasHeight*txBottom)
+	end
 end
 
 -- Color
@@ -446,10 +458,11 @@ do
 		end
 		GameTooltip:Show()
 	end
-	function M:AddTooltip(anchor, text, color)
+	function M:AddTooltip(anchor, text, color, showTips)
 		self.anchor = anchor
 		self.text = text
 		self.color = color
+		if showTips then self.title = U["Tips"] end
 		self:SetScript("OnEnter", Tooltip_OnEnter)
 		self:SetScript("OnLeave", M.HideTooltip)
 	end
@@ -1150,6 +1163,7 @@ do
 		bu:SetSize(26, 26)
 		local list = CreateFrame("Frame", nil, dd, "BackdropTemplate")
 		list:SetPoint("TOP", dd, "BOTTOM", 0, -2)
+		RaiseFrameLevel(list)
 		M.CreateBD(list, 0.85)
 		list:SetBackdropBorderColor(1, 1, 1, .85)
 		list:Hide()
@@ -1167,6 +1181,7 @@ do
 			local text = M.CreateFS(opt[i], 14, j, false, "LEFT", 5, 0)
 			text:SetPoint("RIGHT", -5, 0)
 			opt[i].text = j
+			opt[i].index = i
 			opt[i].__owner = dd
 			opt[i]:SetScript("OnClick", optOnClick)
 			opt[i]:SetScript("OnEnter", optOnEnter)

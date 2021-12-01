@@ -68,7 +68,7 @@ function S:OnLogin()
 	self:LoadAddOnSkins()
 	-- Add Skins
 	self:DBMSkin()
-	self:PGFSkin()
+	--self:PGFSkin()
 	--self:ReskinRematch()
 	self:LootEx()		-- 拾取增强
 	-- Register skin

@@ -762,7 +762,8 @@ Private.trigger_modes = {
 
 Private.debuff_types = {
   HELPFUL = L["Buff"],
-  HARMFUL = L["Debuff"]
+  HARMFUL = L["Debuff"],
+  BOTH = L["Buff/Debuff"]
 }
 
 Private.tooltip_count = {
@@ -773,7 +774,7 @@ Private.tooltip_count = {
 
 Private.aura_types = {
   BUFF = L["Buff"],
-  DEBUFF = L["Debuff"]
+  DEBUFF = L["Debuff"],
 }
 
 
@@ -1187,7 +1188,8 @@ Private.environmental_types = {
 Private.combatlog_flags_check_type = {
   Mine = L["Mine"],
   InGroup = L["In Group"],
-  NotInGroup = L["Not in Group"]
+  InParty = L["In Party"],
+  NotInGroup = L["Not in Smart Group"]
 }
 
 Private.combatlog_flags_check_reaction = {
@@ -2334,12 +2336,11 @@ Private.send_chat_message_types = {
   ERROR = L["Error Frame"]
 }
 
-if WeakAuras.IsRetail() then
-  Private.send_chat_message_types.TTS = L["Text-to-speech"]
-  Private.tts_voices = {}
-  for i, voiceInfo in pairs(C_VoiceChat.GetTtsVoices()) do
-    Private.tts_voices[voiceInfo.voiceID] = voiceInfo.name
-  end
+
+Private.send_chat_message_types.TTS = L["Text-to-speech"]
+Private.tts_voices = {}
+for i, voiceInfo in pairs(C_VoiceChat.GetTtsVoices()) do
+  Private.tts_voices[voiceInfo.voiceID] = voiceInfo.name
 end
 
 Private.group_aura_name_info_types = {
@@ -2398,6 +2399,8 @@ LSM:Register("sound", "Squeaky Toy Short", "Interface\\AddOns\\WeakAuras\\Media\
 LSM:Register("sound", "Error Beep", "Interface\\AddOns\\WeakAuras\\Media\\Sounds\\ErrorBeep.ogg")
 LSM:Register("sound", "Oh No", "Interface\\AddOns\\WeakAuras\\Media\\Sounds\\OhNo.ogg")
 LSM:Register("sound", "Double Whoosh", "Interface\\AddOns\\WeakAuras\\Media\\Sounds\\DoubleWhoosh.ogg")
+LSM:Register("sound", "Brass", "Interface\\AddOns\\WeakAuras\\Media\\Sounds\\Brass.mp3")
+LSM:Register("sound", "Glass", "Interface\\AddOns\\WeakAuras\\Media\\Sounds\\Glass.mp3")
 
 LSM:Register("sound", "Voice: Adds", "Interface\\AddOns\\WeakAuras\\Media\\Sounds\\Adds.ogg")
 LSM:Register("sound", "Voice: Boss", "Interface\\AddOns\\WeakAuras\\Media\\Sounds\\Boss.ogg")
@@ -2469,6 +2472,7 @@ LSM:Register("sound", "Wicked Female Laugh", PowerAurasSoundPath.."wlaugh.ogg")
 LSM:Register("sound", "Wolf Howl", PowerAurasSoundPath.."wolf5.ogg")
 LSM:Register("sound", "Yeehaw", PowerAurasSoundPath.."yeehaw.ogg")
 
+
 Private.sound_types = {
   [" custom"] = " " .. L["Custom"],
   [" KitID"] = " " .. L["Sound by Kit ID"]
@@ -2492,6 +2496,13 @@ LSM:Register("font", "Fira Mono Medium", "Interface\\Addons\\WeakAuras\\Media\\F
 
 -- register plain white border
 LSM:Register("border", "Square Full White", [[Interface\AddOns\WeakAuras\Media\Textures\Square_FullWhite.tga]])
+
+--
+LSM:Register("statusbar", "Clean", [[Interface\AddOns\WeakAuras\Media\Textures\Statusbar_Clean]])
+LSM:Register("statusbar", "Stripes", [[Interface\AddOns\WeakAuras\Media\Textures\Statusbar_Stripes]])
+LSM:Register("statusbar", "Thick Stripes", [[Interface\AddOns\WeakAuras\Media\Textures\Statusbar_Stripes_Thick]])
+LSM:Register("statusbar", "Thin Stripes", [[Interface\AddOns\WeakAuras\Media\Textures\Statusbar_Stripes_Thin]])
+LSM:Register("border", "Drop Shadow", [[Interface\AddOns\WeakAuras\Media\Textures\Border_DropShadow]])
 
 Private.duration_types = {
   seconds = L["Seconds"],

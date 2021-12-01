@@ -263,7 +263,7 @@ function TT:OnTooltipSetUnit()
 			if npcID then
 				local reaction = UnitReaction(unit, "player")
 				local standingText = reaction and hexColor.._G["FACTION_STANDING_LABEL"..reaction]
-				self:AddLine(format(npcIDstring, standingText or "", npcIDD))
+				self:AddLine(format(npcIDstring, standingText or "", npcID))
 			end
 		end
 
@@ -330,20 +330,31 @@ function TT:GameTooltip_ShowProgressBar()
 end
 
 -- Anchor and mover
+local cursorIndex = {
+	[1] = "ANCHOR_NONE",
+	[2] = "ANCHOR_CURSOR_LEFT",
+	[3] = "ANCHOR_CURSOR",
+	[4] = "ANCHOR_CURSOR_RIGHT"
+}
+local anchorIndex = {
+	[1] = "TOPLEFT",
+	[2] = "TOPRIGHT",
+	[3] = "BOTTOMLEFT",
+	[4] = "BOTTOMRIGHT",
+}
 local mover
 function TT:GameTooltip_SetDefaultAnchor(parent)
 	if self:IsForbidden() then return end
 	if not parent then return end
 
-	if R.db["Tooltip"]["Cursor"] then
-		self:SetOwner(parent, "ANCHOR_CURSOR_RIGHT")
-	else
+	local mode = R.db["Tooltip"]["CursorMode"]
+	self:SetOwner(parent, cursorIndex[mode])
+	if mode == 1 then
 		if not mover then
 			mover = M.Mover(self, U["Tooltip"], "GameTooltip", R.Tooltips.TipPos, 240, 120)
 		end
-		self:SetOwner(parent, "ANCHOR_NONE")
 		self:ClearAllPoints()
-		self:SetPoint("BOTTOMRIGHT", mover)
+		self:SetPoint(anchorIndex[R.db["Tooltip"]["TipAnchor"]], mover)
 	end
 end
 
@@ -409,7 +420,7 @@ function TT:ReskinTooltip()
 	end
 
 	M.SetBorderColor(self.bg)
-	if R.db["Tooltip"]["ClassColor"] and self.GetItem then
+	if R.db["Tooltip"]["ItemQuality"] and self.GetItem then
 		local _, item = self:GetItem()
 		if item then
 			local quality = select(3, GetItemInfo(item))
@@ -465,6 +476,12 @@ function TT:FixRecipeItemNameWidth()
 	end
 end
 
+function TT:ResetUnit(btn)
+	if btn == "LSHIFT" and UnitExists("mouseover") then
+		GameTooltip:SetUnit("mouseover")
+	end
+end
+
 function TT:OnLogin()
 	GameTooltip.StatusBar = GameTooltipStatusBar
 	GameTooltip:HookScript("OnTooltipCleared", TT.OnTooltipCleared)
@@ -484,6 +501,7 @@ function TT:OnLogin()
 	TT:AzeriteArmor()
 	TT:ConduitCollectionData()
 	TT:DominationRank()
+	M:RegisterEvent("MODIFIER_STATE_CHANGED", TT.ResetUnit)
 end
 
 -- Tooltip Skin Registration

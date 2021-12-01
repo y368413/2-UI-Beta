@@ -213,6 +213,8 @@ L["Blizzard Combat Text"] = "Texto de Combate da Blizzard"
 L["Block"] = "Bloquear"
 L["Block (%)"] = "Bloqueio (%)"
 L["Block against Target (%)"] = "Bloqueio contra o Alvo (%)"
+--[[Translation missing --]]
+L["Block Value"] = "Block Value"
 L["Blocked"] = "Bloqueado"
 L["Bloodlord Mandokir"] = "Sangrelorde Mandokir"
 L["Border"] = "Borda"
@@ -229,6 +231,8 @@ L["Broodlord Lashlayer"] = "Prolemestre Flagelador"
 --[[Translation missing --]]
 L["Brutallus"] = "Brutallus"
 L["Buff"] = "Buff"
+--[[Translation missing --]]
+L["Buff/Debuff"] = "Buff/Debuff"
 L["Buffed/Debuffed"] = "Buffado/Debuffado"
 L["Buru the Gorger"] = "Buru, o Banqueteador"
 L["Can be used for e.g. checking if \"boss1target\" is the same as \"player\"."] = "Pode ser usado, por exemplo, para checar se \"chefe1alvo\" é o mesmo que \"jogador\"."
@@ -255,7 +259,22 @@ L["Channel (Spell)"] = "Canal (Feitiço)"
 L["Character Stats"] = "Atributos do Personagem"
 L["Character Type"] = "Tipo de personagem"
 L["Charge gained/lost"] = "Carga ganha/perdida"
-L["Charged Combo Point"] = "Ponto de Combo Carregado"
+--[[Translation missing --]]
+L["Charged Combo Point (1)"] = "Charged Combo Point (1)"
+--[[Translation missing --]]
+L["Charged Combo Point (2)"] = "Charged Combo Point (2)"
+--[[Translation missing --]]
+L["Charged Combo Point (3)"] = "Charged Combo Point (3)"
+--[[Translation missing --]]
+L["Charged Combo Point (4)"] = "Charged Combo Point (4)"
+--[[Translation missing --]]
+L["Charged Combo Point 1"] = "Charged Combo Point 1"
+--[[Translation missing --]]
+L["Charged Combo Point 2"] = "Charged Combo Point 2"
+--[[Translation missing --]]
+L["Charged Combo Point 3"] = "Charged Combo Point 3"
+--[[Translation missing --]]
+L["Charged Combo Point 4"] = "Charged Combo Point 4"
 L["Charges"] = "Cargas"
 --[[Translation missing --]]
 L["Charges Changed Event"] = "Charges Changed Event"
@@ -402,8 +421,6 @@ L["Dodge"] = "Dodge"
 L["Dodge (%)"] = "Dodge (%)"
 --[[Translation missing --]]
 L["Dodge Rating"] = "Dodge Rating"
---[[Translation missing --]]
-L["Done"] = "Done"
 --[[Translation missing --]]
 L["Down"] = "Down"
 --[[Translation missing --]]
@@ -773,6 +790,8 @@ L["In Encounter"] = "In Encounter"
 --[[Translation missing --]]
 L["In Group"] = "In Group"
 --[[Translation missing --]]
+L["In Party"] = "In Party"
+--[[Translation missing --]]
 L["In Pet Battle"] = "In Pet Battle"
 --[[Translation missing --]]
 L["In Raid"] = "In Raid"
@@ -1085,7 +1104,6 @@ L["Netherspite"] = "Netherspite"
 --[[Translation missing --]]
 L["Neutral"] = "Neutral"
 L["Never"] = "Nunca"
-L["Next"] = "Próximo"
 --[[Translation missing --]]
 L["Next Combat"] = "Next Combat"
 --[[Translation missing --]]
@@ -1106,11 +1124,15 @@ L["Normal"] = "Normal"
 --[[Translation missing --]]
 L["Not in Group"] = "Not in Group"
 --[[Translation missing --]]
+L["Not in Smart Group"] = "Not in Smart Group"
+--[[Translation missing --]]
 L["Not on Cooldown"] = "Not on Cooldown"
 --[[Translation missing --]]
 L["Not On Threat Table"] = "Not On Threat Table"
 --[[Translation missing --]]
 L["Note, that cross realm transmission is possible if you are on the same group"] = "Note, that cross realm transmission is possible if you are on the same group"
+--[[Translation missing --]]
+L["Note: Due to how complicated the swing timer behaviour is and the lack of APIs from Blizzard, results are inaccurate in edge cases."] = "Note: Due to how complicated the swing timer behaviour is and the lack of APIs from Blizzard, results are inaccurate in edge cases."
 --[[Translation missing --]]
 L["Note: 'Hide Alone' is not available in the new aura tracking system. A load option can be used instead."] = "Note: 'Hide Alone' is not available in the new aura tracking system. A load option can be used instead."
 --[[Translation missing --]]
@@ -1369,14 +1391,6 @@ L["Require Valid Target"] = "Requer um alvo válido"
 L["Resist"] = "Resistir"
 L["Resisted"] = "Resistido"
 --[[Translation missing --]]
-L["Resolve collisions dialog"] = "Resolve collisions dialog"
---[[Translation missing --]]
-L["Resolve collisions dialog singular"] = "Resolve collisions dialog singular"
---[[Translation missing --]]
-L["Resolve collisions dialog startup"] = "Resolve collisions dialog startup"
---[[Translation missing --]]
-L["Resolve collisions dialog startup singular"] = "Resolve collisions dialog startup singular"
---[[Translation missing --]]
 L["Rested"] = "Rested"
 --[[Translation missing --]]
 L["Rested Experience"] = "Rested Experience"
@@ -1555,6 +1569,8 @@ L["Spell (Building)"] = "Feitiço (Construção)"
 --[[Translation missing --]]
 L["Spell Activation Overlay Glow"] = "Spell Activation Overlay Glow"
 --[[Translation missing --]]
+L["Spell Cast Succeeded"] = "Spell Cast Succeeded"
+--[[Translation missing --]]
 L["Spell Cost"] = "Spell Cost"
 --[[Translation missing --]]
 L["Spell Count"] = "Spell Count"
@@ -1576,6 +1592,8 @@ L["Spell Usable"] = "Spell Usable"
 L["Spin"] = "Girar"
 L["Spiral"] = "Espiral"
 L["Spiral In And Out"] = "Espiral dentro e fora"
+--[[Translation missing --]]
+L["Spirit"] = "Spirit"
 --[[Translation missing --]]
 L["Stack Count"] = "Stack Count"
 L["Stacks"] = "Pilhas"

@@ -1,4 +1,4 @@
-## Interface: 90002
+## Interface: 90105
 ## Title: FarmHud [QuestArrow]
 ## Version: 8.8.1-release
 ## Notes: Experimental way to suppress the quest arrow while FarmHud is active.

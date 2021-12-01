@@ -1,4 +1,4 @@
-## Interface: 11401
+## Interface: 90105
 ## Title: HandyNotes: Collection
 ## RequiredDeps: HandyNotes
 ## SavedVariables: HandyNotes_CollectionDB, HandyNotes_CollectionCACHE, HandyNotes_CollectionSTATUS
