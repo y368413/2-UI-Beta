@@ -1,4 +1,4 @@
---## Author: Urtgard  ## Version: v9.1.5-1
+--## Author: Urtgard  ## Version: v9.1.5-2
 WQAchievements = LibStub("AceAddon-3.0"):NewAddon("WQAchievements", "AceConsole-3.0", "AceTimer-3.0")
 local WQA = WQAchievements
 WQA.data = {}
@@ -1093,6 +1093,11 @@ do
 					{59825},
 					{60231}
 				}
+			},
+			{
+				name = "The World Beyond",
+				id = 14758,
+				criteriaType = "SPECIAL"
 			}
 		},
 		pets = {
@@ -1100,7 +1105,8 @@ do
 			{name = "Carpal", itemID = 183114, creatureID = 173847, source = {type = "ITEM", itemID = 183111}}
 		},
 		toys = {
-			{name = "Tithe Collector's Vessel", itemID = 180947, source = {type = "ITEM", itemID = 180947}}
+			{name = "Tithe Collector's Vessel", itemID = 180947, source = {type = "ITEM", itemID = 180947}},
+			{name = "Gormling in a Bag", itemID = 184487, source = {type = "ITEM", itemID = 184487}}
 		}
 	}
 	WQA.data[9] = shadowlands
@@ -1389,6 +1395,11 @@ function WQA:AddReward(list, rewardType, reward, emissary)
 	l = l.reward
 	if rewardType == "ACHIEVEMENT" then
 		if not l.achievement then l.achievement = {} end
+		for _, achievement in ipairs(l.achievement) do
+			if achievement.id == reward then
+				return
+			end
+		end
 		l.achievement[#l.achievement + 1] = {id = reward}
 	elseif rewardType == "CHANCE" then
 		if not l.chance then l.chance = {} end
@@ -1877,7 +1888,7 @@ function WQA:Reward()
 								if
 									self.db.profile.achievements["Variety is the Spice of Life"] == true and
 										not select(4, GetAchievementInfo(11189)) == true and
-										exp == 1 and
+										exp == 7 and
 										not mapID == 885 and
 										not mapID == 830 and
 										not mapID == 882
@@ -1886,9 +1897,13 @@ function WQA:Reward()
 								elseif
 									self.db.profile.achievements["Wide World of Quests"] == true and
 										not select(4, GetAchievementInfo(13144)) == true and
-										exp == 2
+										exp == 8
 								 then
 									self:AddRewardToQuest(questID, "ACHIEVEMENT", 13144)
+								elseif
+									self.db.profile.achievements["The World Beyond"] and not select(4, GetAchievementInfo(14758)) and exp == 9
+								 then
+									self:AddRewardToQuest(questID, "ACHIEVEMENT", 14758)
 								end
 							end
 
@@ -3005,7 +3020,8 @@ function WQA:Special()
 	if
 		(self.db.profile.achievements["Variety is the Spice of Life"] == true and
 			not select(4, GetAchievementInfo(11189)) == true) or
-			(self.db.profile.achievements["Wide World of Quests"] == true and not select(4, GetAchievementInfo(13144)) == true)
+			(self.db.profile.achievements["Wide World of Quests"] == true and not select(4, GetAchievementInfo(13144)) == true) or
+			(self.db.profile.achievements["The World Beyond"] and not select(4, GetAchievementInfo(14758)))
 	 then
 		self.event:RegisterEvent("QUEST_TURNED_IN")
 	end
@@ -3419,7 +3435,8 @@ WQA.ZoneIDList = {
 		1525, -- Revendreth
 		1533, -- Bastion
 		1536, -- Maldraxxus
-		1565 -- Ardenweald
+		1565, -- Ardenweald
+		1543 -- The Maw
 	}
 }
 
