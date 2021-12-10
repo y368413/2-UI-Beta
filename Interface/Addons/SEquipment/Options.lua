@@ -9,12 +9,16 @@ local DB={
     ShowTargetInfo = true,
     ShowTooltip = true,
     ShowWholeStat = true,
+    -- ShowEquipLevel = true,
+    ShowClassColorFrame = true,
 }
 local options = {
     {key = "ShowPlayerInfo"},
     {key = "ShowTargetInfo"},
     {key = "ShowTooltip"},
     {key = "ShowWholeStat"},
+    -- {key = "ShowEquipLevel"},
+    {key = "ShowClassColorFrame"},
 }
 
 local vars = CreateFrame("Frame")

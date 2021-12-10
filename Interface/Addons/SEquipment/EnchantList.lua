@@ -19,5 +19,4 @@ end
 
 function GetEnchantStat(id)
     return EnchantList[id]
-    
 end

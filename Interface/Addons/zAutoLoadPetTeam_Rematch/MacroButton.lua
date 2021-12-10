@@ -105,16 +105,7 @@ local function createMacroText(btn)
         end
       end
     end
-
-    --尾锚
-    if config.summonWM and C_Map.GetBestMapForUnit("player") == 630 then
-      local startTime, duration = GetItemCooldown(122681)
-      if duration < 1 then
-        DebugPrint("召唤尾锚")
-        macro = macro .. "\n/use item:122681"
-      end
-    end
-
+ 
     local npcName, npcWithTeam, npcIdWithTeam = ALPTRematch:GetLastNpcData()
     local hasNpc = npcWithTeam and npcWithTeam ~= ""
     if hasNpc and config.target then

@@ -601,9 +601,9 @@ end
 -- [[************************主体**************************]]
 local a = 0
 
-local PlayerFrame,ItemString_P,Tex_P,ILevel_P,Green_L_P,Green_R_P,Gem_P,TongYu_P,Miss_P = CreateSEFrame(CharacterFrame,"player")
+local PlayerFrame,ItemString_P,Tex_P,ILevel_P,Green_L_P,Green_R_P,Gem_P,TongYu_P,Miss_P = CreateSEFrame(PaperDollFrame,"player")
 PlayerFrame:SetBackdropBorderColor(0,0,0,1)
-PlayerFrame:SetPoint("LEFT",CharacterFrame:GetWidth(),0)
+PlayerFrame:SetPoint("LEFT",PaperDollFrame:GetWidth(),0)
 
 local TargetFrame,ItemString_T,Tex_T,ILevel_T,Green_L_T,Green_R_T,Gem_T,TongYu_T
 
@@ -618,6 +618,13 @@ EventFrame:SetScript("OnEvent",function (self,event,...)
     if event == "INSPECT_READY" then
         local inspecteeGUID = ...
         if inspecteeGUID == UnitGUID("target") and TargetFrame ~= nil and ItemString_T ~= nil and Tex_T ~= nil and ILevel_T ~= nil and Green_L_T ~= nil and Green_R_T ~= nil and Gem_T ~= nil and TongYu_T ~= nil and Miss_T ~= nil then
+            
+            if SEquipmentDB.ShowClassColorFrame == true then
+                TargetFrame:SetBackdropBorderColor(C_ClassColor.GetClassColor(UnitClassBase("target")).r,C_ClassColor.GetClassColor(UnitClassBase("target")).g,C_ClassColor.GetClassColor(UnitClassBase("target")).b,1)
+            else
+                TargetFrame:SetBackdropBorderColor(0,0,0,1)
+            end
+            
             ShowChangeItem("target",ItemString_T,Tex_T,ILevel_T,Green_L_T,Green_R_T,Gem_T,TongYu_T,Miss_T)
             if a == 0 then
                 ShowChangeItem("player",ItemString_P,Tex_P,ILevel_P,Green_L_P,Green_R_P,Gem_P,TongYu_P,Miss_P)
@@ -626,9 +633,15 @@ EventFrame:SetScript("OnEvent",function (self,event,...)
             if SEquipmentDB.ShowTargetInfo == true then
                 if SEquipmentDB.ShowPlayerInfo == true then
                     PlayerFrame:SetParent(InspectFrame)
-                    PlayerFrame:SetPoint("LEFT",InspectFrame:GetWidth()+201,0)
+                    PlayerFrame:SetPoint("LEFT",InspectFrame:GetWidth()+200,0)
                     ShowChangeItem("player",ItemString_P,Tex_P,ILevel_P,Green_L_P,Green_R_P,Gem_P,TongYu_P,Miss_P)
                     PlayerFrame:Show()
+
+                    if SEquipmentDB.ShowClassColorFrame == true then
+                        PlayerFrame:SetBackdropBorderColor(C_ClassColor.GetClassColor(UnitClassBase("player")).r,C_ClassColor.GetClassColor(UnitClassBase("player")).g,C_ClassColor.GetClassColor(UnitClassBase("player")).b,1)
+                    else
+                        PlayerFrame:SetBackdropBorderColor(0,0,0,1)
+                    end
                 else
                     PlayerFrame:Hide()
                 end
@@ -636,9 +649,15 @@ EventFrame:SetScript("OnEvent",function (self,event,...)
             else
                 if SEquipmentDB.ShowPlayerInfo == true then
                     PlayerFrame:SetParent(InspectFrame)
-                    PlayerFrame:SetPoint("LEFT",InspectFrame:GetWidth(),0)
+                    PlayerFrame:SetPoint("LEFT",InspectFrame:GetWidth()+1,0)
                     ShowChangeItem("player",ItemString_P,Tex_P,ILevel_P,Green_L_P,Green_R_P,Gem_P,TongYu_P,Miss_P)
                     PlayerFrame:Show()
+
+                    if SEquipmentDB.ShowClassColorFrame == true then
+                        PlayerFrame:SetBackdropBorderColor(C_ClassColor.GetClassColor(UnitClassBase("player")).r,C_ClassColor.GetClassColor(UnitClassBase("player")).g,C_ClassColor.GetClassColor(UnitClassBase("player")).b,1)
+                    else
+                        PlayerFrame:SetBackdropBorderColor(0,0,0,1)
+                    end
                 else
                     PlayerFrame:Hide()
                 end
@@ -654,6 +673,7 @@ EventFrame:SetScript("OnEvent",function (self,event,...)
         local addon = ...
         if addon == "Blizzard_InspectUI" then
             TargetFrame,ItemString_T,Tex_T,ILevel_T,Green_L_T,Green_R_T,Gem_T,TongYu_T,Miss_T = CreateSEFrame(InspectFrame,"target")
+            
             TargetFrame:SetBackdropBorderColor(0,0,0,1)
             TargetFrame:SetPoint("LEFT",InspectFrame:GetWidth(),0)
         end
@@ -665,14 +685,20 @@ EventFrame:SetScript("OnEvent",function (self,event,...)
     end
 end)
 
-CharacterFrame:HookScript("OnShow",function (self)
+PaperDollFrame:HookScript("OnShow",function (self)
     if SEquipmentDB.ShowPlayerInfo == true then
         if (InspectFrame and InspectFrame:IsShown() == false) or InspectFrame == nil then
-                PlayerFrame:SetParent(CharacterFrame)
-                PlayerFrame:SetPoint("LEFT",CharacterFrame:GetWidth(),0)
-                PlayerFrame:SetScale(CharacterFrame:GetHeight()/425)
+                PlayerFrame:SetParent(PaperDollFrame)
+                PlayerFrame:SetPoint("LEFT",PaperDollFrame:GetWidth()+2,0)
+                PlayerFrame:SetScale(PaperDollFrame:GetHeight()/425)
         end
         PlayerFrame:Show()
+
+        if SEquipmentDB.ShowClassColorFrame == true then
+            PlayerFrame:SetBackdropBorderColor(C_ClassColor.GetClassColor(UnitClassBase("player")).r,C_ClassColor.GetClassColor(UnitClassBase("player")).g,C_ClassColor.GetClassColor(UnitClassBase("player")).b,1)
+        else
+            PlayerFrame:SetBackdropBorderColor(0,0,0,1)
+        end
     else
         PlayerFrame:Hide()
     end
