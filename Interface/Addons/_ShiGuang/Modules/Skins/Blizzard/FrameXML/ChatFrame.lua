@@ -35,6 +35,9 @@ tinsert(R.defaultThemes, function()
 	BNToastFrame.TooltipFrame:HideBackdrop()
 	M.SetBD(BNToastFrame.TooltipFrame)
 
+	TimeAlertFrame:SetBackdrop(nil)
+	M.SetBD(TimeAlertFrame)
+
 	-- Battletag invite frame
 	local border, send, cancel = BattleTagInviteFrame:GetChildren()
 	border:Hide()

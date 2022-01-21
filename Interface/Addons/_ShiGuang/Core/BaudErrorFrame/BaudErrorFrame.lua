@@ -1,6 +1,7 @@
 ﻿local SelectedError = 1
 local ErrorList = {}
 local SoundTime = 0
+local EnableTaint = true
 local EnableSound = true
 ShiGuangDB.BaudErrorFrameConfig = ShiGuangDB.BaudErrorFrameConfig or {}
 
@@ -13,7 +14,9 @@ end
 
 function BaudErrorFrame_OnLoad(self)
 	self:RegisterEvent("VARIABLES_LOADED")
-		RegisterTaintEvents(self)  --enableTaint
+	if EnableTaint then
+		RegisterTaintEvents(self)
+	end
 
 	UIParent:UnregisterEvent("MACRO_ACTION_BLOCKED")
 	UIParent:UnregisterEvent("ADDON_ACTION_BLOCKED")
@@ -82,7 +85,7 @@ function BaudErrorFrameShowError(Error)
 end
 
 function BaudErrorFrameAdd(Error, Retrace)
-	if Error:match("script ran too long") then return end
+	if Error:match("script ran too long") and not EnableTaint then return end
 
 	for _, Value in pairs(ErrorList) do
 		if Value.Error == Error then
@@ -175,7 +178,12 @@ end
 
 function BaudErrorFrameEditBoxUpdate()
 	if ErrorList[SelectedError] then
-		BaudErrorFrameEditBox.TextShown = colorStack(ErrorList[SelectedError].Error.."\nCount: "..ErrorList[SelectedError].Count.."\n\nCall Stack:\n"..ErrorList[SelectedError].Stack)
+		local errorMsg = ErrorList[SelectedError].Error
+		local errorStr = strmatch(errorMsg, "near '(.*)'")
+		if errorStr and strbyte(errorStr) == 229 then -- fix utf8 str error
+			errorMsg = gsub(errorMsg, "('.*')$", "UTF8 string")
+		end
+		BaudErrorFrameEditBox.TextShown = colorStack(errorMsg.."\nCount: "..ErrorList[SelectedError].Count.."\n\nCall Stack:\n"..ErrorList[SelectedError].Stack)
 	else
 		BaudErrorFrameEditBox.TextShown = ""
 	end

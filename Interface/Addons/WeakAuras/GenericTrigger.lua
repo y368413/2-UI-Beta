@@ -1329,7 +1329,7 @@ function GenericTrigger.Add(data, region)
                     tinsert(trigger_subevents, subevent)
                     hasParam = true
                   end
-                elseif trueEvent:match("^UNIT_") then
+                elseif trueEvent:match("^UNIT_") or Private.UnitEventList[trueEvent] then
                   isUnitEvent = true
 
                   if string.lower(strsub(i, #i - 3)) == "pets" then
@@ -1596,7 +1596,7 @@ do
         skipNextAttack = ts
         skipNextAttackCount = select(4, ...)
       elseif(event == "SWING_DAMAGE" or event == "SWING_MISSED") then
-        if skipNextAttack == ts and tonumber(skipNextAttackCount) then
+        if tonumber(skipNextAttack) and (ts - skipNextAttack) < 0.04 and tonumber(skipNextAttackCount) then
           if skipNextAttackCount > 0 then
             skipNextAttackCount = skipNextAttackCount - 1
             return
@@ -2595,6 +2595,7 @@ function WeakAuras.WatchUnitChange(unit)
     watchUnitChange.unitRaidRole = {}
     watchUnitChange.inRaid = IsInRaid()
     watchUnitChange.nameplateFaction = {}
+    watchUnitChange.raidmark = {}
 
     WeakAuras.frames["Unit Change Frame"] = watchUnitChange;
     watchUnitChange:RegisterEvent("PLAYER_TARGET_CHANGED")
@@ -2611,14 +2612,17 @@ function WeakAuras.WatchUnitChange(unit)
     watchUnitChange:RegisterEvent("UNIT_FACTION")
     watchUnitChange:RegisterEvent("PLAYER_ENTERING_WORLD")
     watchUnitChange:RegisterEvent("UNIT_PET")
+    watchUnitChange:RegisterEvent("RAID_TARGET_UPDATE")
 
     watchUnitChange:SetScript("OnEvent", function(self, event, unit)
       Private.StartProfileSystem("generictrigger unit change");
       if event == "NAME_PLATE_UNIT_ADDED" or event == "NAME_PLATE_UNIT_REMOVED" then
         local newGuid = WeakAuras.UnitExistsFixed(unit) and UnitGUID(unit) or ""
+        local newMarker = GetRaidTargetIndex(unit) or 0
         if newGuid ~= watchUnitChange.unitChangeGUIDS[unit] then
           WeakAuras.ScanEvents("UNIT_CHANGED_" .. unit, unit)
           watchUnitChange.unitChangeGUIDS[unit] = newGuid
+          watchUnitChange.raidmark[unit] = newMarker
         end
         if event == "NAME_PLATE_UNIT_ADDED" then
           watchUnitChange.nameplateFaction[unit] = WeakAuras.GetPlayerReaction(unit)
@@ -2636,15 +2640,28 @@ function WeakAuras.WatchUnitChange(unit)
         if pet then
           WeakAuras.ScanEvents("UNIT_CHANGED_" .. pet, pet)
         end
+      elseif event == "RAID_TARGET_UPDATE" then
+        for unit, marker in pairs(watchUnitChange.raidmark) do
+          local newMarker = GetRaidTargetIndex(unit) or 0
+          if marker ~= newMarker then
+            watchUnitChange.raidmark[unit] = newMarker
+            WeakAuras.ScanEvents("UNIT_CHANGED_" .. unit, unit)
+          end
+        end
       else
         local inRaid = IsInRaid()
         local inRaidChanged = inRaid ~= watchUnitChange.inRaid
 
         for unit, guid in pairs(watchUnitChange.unitChangeGUIDS) do
           local newGuid = WeakAuras.UnitExistsFixed(unit) and UnitGUID(unit) or ""
-          if guid ~= newGuid or event == "PLAYER_ENTERING_WORLD" then
+          local newMarker = GetRaidTargetIndex(unit) or 0
+          if guid ~= newGuid
+          or newMarker ~= watchUnitChange.raidmark[unit]
+          or event == "PLAYER_ENTERING_WORLD"
+          then
             WeakAuras.ScanEvents("UNIT_CHANGED_" .. unit, unit)
             watchUnitChange.unitChangeGUIDS[unit] = newGuid
+            watchUnitChange.raidmark[unit] = newMarker
           elseif Private.multiUnitUnits.group[unit] then
             -- If in raid changed we send a UNIT_CHANGED for the group units
             if inRaidChanged then
@@ -2673,6 +2690,8 @@ function WeakAuras.WatchUnitChange(unit)
   end
   watchUnitChange.unitChangeGUIDS = watchUnitChange.unitChangeGUIDS or {}
   watchUnitChange.unitChangeGUIDS[unit] = UnitGUID(unit) or ""
+  watchUnitChange.raidmark = watchUnitChange.raidmark or {}
+  watchUnitChange.raidmark[unit] = GetRaidTargetIndex(unit) or 0
 end
 
 function WeakAuras.GetEquipmentSetInfo(itemSetName, partial)
@@ -2706,8 +2725,8 @@ do
   local bars = {}
   local nextExpire -- time of next expiring timer
   local recheckTimer -- handle of timer
-  local currentStage = 0
-
+  local currentStage = 0 -- can do 1>2>1>2>1>...
+  local currentStageTotal = 0 -- always 1>2>3>4>...
   local function dbmRecheckTimers()
     local now = GetTime()
     nextExpire = nil
@@ -2827,8 +2846,9 @@ do
       end
       WeakAuras.ScanEvents("DBM_TimerUpdate", id)
     elseif event == "DBM_SetStage" then
-      local mod, modId, stage, encounterId = ...
+      local mod, modId, stage, encounterId, stageTotal = ...
       currentStage = stage
+      currentStageTotal = stageTotal
       WeakAuras.ScanEvents("DBM_SetStage", ...)
     else -- DBM_Announce
       WeakAuras.ScanEvents(event, ...)
@@ -2872,7 +2892,7 @@ do
   end
 
   function WeakAuras.GetDBMStage()
-    return currentStage
+    return currentStage, currentStageTotal
   end
 
   function WeakAuras.GetDBMTimerById(id)

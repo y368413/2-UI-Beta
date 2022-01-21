@@ -1,0 +1,166 @@
+<Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd" xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="Blizzard_HeirloomCollection.lua" />
+	<Frame name="HeirloomHeaderTemplate" virtual="true">
+		<Size x="625" y="24" />
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture atlas="collections-slotheader" useAtlasSize="true">
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY">
+				<FontString parentKey="text" inherits="Fancy16Font">
+					<Color r="0.47" g="0.44" b="0.28" />
+					<Shadow>
+						<Offset>
+							<AbsDimension x="1" y="-1" />
+						</Offset>
+						<Color r="0" g="0" b="0" />
+					</Shadow>
+				</FontString>
+			</Layer>
+		</Layers>
+	</Frame>
+	<CheckButton name="HeirloomSpellButtonTemplate" inherits="CollectionsSpellButtonTemplate" virtual="true" hidden="true" motionScriptsWhileDisabled="true">
+		<Animations>
+			<AnimationGroup parentKey="upgradeGlowAnim" looping="NONE" setToFinalAlpha="true">
+				<Alpha childKey="glow" duration="1" smoothing="OUT" fromAlpha="1" toAlpha="0" />
+				<Alpha childKey="glow2" duration="1" smoothing="OUT" fromAlpha="1" toAlpha="0" />
+				<Rotation childKey="bling" duration="0.5" degrees="-90" />
+				<Alpha childKey="bling" duration="0.1667" toAlpha="0.5" />
+				<Alpha childKey="bling" startDelay="0.5" duration="0.3333" fromAlpha="0.5" toAlpha="0" />
+			</AnimationGroup>
+		</Animations>
+		<Layers>
+			<Layer>
+				<FontString parentKey="special" inherits="GameFontNormalSmall" justifyH="LEFT" maxLines="1">
+					<Size x="135" />
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeKey="$parent.name" relativePoint="BOTTOMLEFT" y="-1" />
+					</Anchors>
+				</FontString>
+			</Layer>
+			<Layer level="OVERLAY" textureSubLevel="2">
+				<Texture parentKey="glow" alpha="0" alphaMode="ADD" atlas="collections-upgradeglow" useAtlasSize="true">
+					<Anchors>
+						<Anchor point="CENTER" x="0" y="3" />
+					</Anchors>
+				</Texture>
+				<Texture parentKey="glow2" alpha="0" alphaMode="ADD" atlas="collections-upgradeglow" useAtlasSize="true">
+					<Anchors>
+						<Anchor point="CENTER" x="0" y="3" />
+					</Anchors>
+				</Texture>
+				<Texture parentKey="bling" alpha="0" file="interface\cooldown\star4" alphaMode="ADD">
+					<Size x="70" y="70" />
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+					<Color r="0.31373" g="0.627451" b="1" />
+				</Texture>
+				<Texture parentKey="pendingUpgradeGlow" alphaMode="ADD" atlas="collections-upgradeglow-blue" useAtlasSize="true">
+					<Anchors>
+						<Anchor point="CENTER" x="0" y="3" />
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY" textureSubLevel="3">
+				<Texture parentKey="levelBackground">
+					<Anchors>
+						<Anchor point="BOTTOM" relativePoint="BOTTOMRIGHT" x="-12" y="-3" />
+					</Anchors>
+				</Texture>
+				<FontString parentKey="level">
+					<Size x="29" y="18" />
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeKey="$parent.levelBackground" x="1" y="-1" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				CollectionsSpellButton_OnLoad(self, HeirloomsJournal_UpdateButton)
+			</OnLoad>
+			<OnClick>
+				HeirloomsJournalSpellButton_OnClick(self, button);
+			</OnClick>
+			<OnShow>
+				self:RegisterEvent("HEIRLOOMS_UPDATED");
+				CollectionsSpellButton_OnShow(self);
+			</OnShow>
+			<OnHide>
+				CollectionsSpellButton_OnHide(self);
+				self:UnregisterEvent("HEIRLOOMS_UPDATED");
+			</OnHide>
+			<OnEnter function="HeirloomsJournalSpellButton_OnEnter">
+			</OnEnter>
+		</Scripts>
+	</CheckButton>
+	<Frame name="HeirloomsJournal" mixin="HeirloomsMixin" setAllPoints="true" hidden="true" parent="CollectionsJournal">
+		<Frames>
+			<StatusBar parentKey="progressBar" inherits="CollectionsProgressBarTemplate" />
+			<EditBox name="$parentSearchBox" parentKey="SearchBox" inherits="SearchBoxTemplate" letters="40">
+				<Size x="115" y="20" />
+				<Anchors>
+					<Anchor point="TOPRIGHT" x="-107" y="-35" />
+				</Anchors>
+				<Scripts>
+					<OnTextChanged function="HeirloomsJournalSearchBox_OnTextChanged">
+					</OnTextChanged>
+				</Scripts>
+			</EditBox>
+			<Frame name="$parentFilterDropDown" parentKey="filterDropDown" inherits="UIDropDownMenuTemplate">
+				<Scripts>
+					<OnLoad function="HeirloomsJournalCollectedFilterDropDown_OnLoad">
+					</OnLoad>
+				</Scripts>
+			</Frame>
+			<Frame name="$parentClassDropDown" parentKey="classDropDown" inherits="UIDropDownMenuTemplate" enableMouse="true">
+				<Size x="93" y="22" />
+				<Anchors>
+					<Anchor point="TOPLEFT" x="54" y="-30" />
+				</Anchors>
+				<Scripts>
+					<OnLoad function="HeirloomsJournalClassFilterDropDown_OnLoad">
+					</OnLoad>
+				</Scripts>
+			</Frame>
+			<Frame parentKey="iconsFrame" inherits="CollectionsBackgroundTemplate">
+				<Layers>
+					<Layer level="BORDER" textureSubLevel="1">
+						<Texture parentKey="watermark" atlas="collections-watermark-heirloom" useAtlasSize="true">
+							<Anchors>
+								<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-33" y="17" />
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
+			</Frame>
+			<Frame parentKey="PagingFrame" inherits="CollectionsPagingFrameTemplate">
+				<Anchors>
+					<Anchor point="BOTTOM" x="21" y="43" />
+				</Anchors>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				self:OnLoad();
+			</OnLoad>
+			<OnEvent function="HeirloomsJournal_OnEvent">
+			</OnEvent>
+			<OnShow function="HeirloomsJournal_OnShow">
+			</OnShow>
+			<OnMouseWheel function="HeirloomsJournal_OnMouseWheel">
+			</OnMouseWheel>
+		</Scripts>
+	</Frame>
+	<Texture parentKey="BackgroundTile" horizTile="true" vertTile="true" atlas="collections-background-tile" useAtlasSize="true">
+		<Anchors>
+			<Anchor point="TOPLEFT" x="4" y="-4" />
+			<Anchor point="BOTTOMRIGHT" x="-4" y="4" />
+		</Anchors>
+	</Texture>
+</Ui>

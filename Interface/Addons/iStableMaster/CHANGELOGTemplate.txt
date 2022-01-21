@@ -1,0 +1,33 @@
+<h1>AlphaBuild V0.34b-RestructuredFolder</h1>
+<h3>@project-version@-SHA[@project-abbreviated-hash@]</h3>
+<h3>Marked as Alpha on Curseforge</h3>
+<p>The build is mostly stable.</p>
+<h2>Fixed Issues:</h2>
+<ul>
+<li>TBD</li>
+</ul>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2>New Features:&nbsp;</h2>
+<ul>
+<li>A few upgrades are maybe added to the search and sort functions, this is still a work in progress thing</li>
+</ul>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2>Changes:&nbsp;</h2>
+<p>&nbsp;</p>
+<ul>
+<li>Rebased project out of root/BestiaAzerothica to have a better build and deploy synergy</li>
+<li>TOC Version number changed from v0.34a to hopefully v0.34b using substitutions</li>
+</ul>
+<p><br /><br /></p>
+<h2>Known Issues:</h2>
+<ul>
+<li>Filters and Sorts not yet fully implemented</li>
+<li>Favourites not fully implemented</li>
+<li>Search Doesn't reset on Pet Drag</li>
+<li>Abilities sometimes dissapear from the tooltip in the scrolllist</li>
+<li>Multiclick in the Stabled Pets ScrollFrame can cause the slot to become corrupted forcing the user to reload the UI to regain the functionality.</li>
+</ul>
+<p>&nbsp;</p>
+<p>@project-version@-SHA[@project-abbreviated-hash@]</p>

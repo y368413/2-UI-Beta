@@ -42,20 +42,16 @@ insets = {left = -1, right = -1, top = -1, bottom = -1},
 }
 local timerBar = CreateFrame("StatusBar", nil, UIParent, "BackdropTemplate")
 timerBar:SetPoint("TOP", 0, -100);
-timerBar:SetSize(190, 9);
-timerBar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar", "BORDER");
-timerBar:SetStatusBarColor(1, 0.1, 0);
+timerBar:SetSize(180, 14);
+timerBar:SetStatusBarTexture("Interface\\AddOns\\zZ_ChatJK\\Media\\LiteStep", "BORDER");
+timerBar:SetStatusBarColor(0.89, 0.62, 0.17);
 timerBar:SetBackdrop(BD);
 timerBar:Hide();
 timerBar.Spark = timerBar:CreateTexture(nil, "OVERLAY")
 timerBar.Spark:SetTexture("Interface\\CastingBar\\UI-CastingBar-Spark");
-timerBar.Spark:SetSize(32, 32);
+timerBar.Spark:SetSize(32, 51);
 timerBar.Spark:SetBlendMode("ADD");
 timerBar.Spark:SetPoint("LEFT", timerBar:GetStatusBarTexture(), "RIGHT", -15, 0);
-timerBar.Border = timerBar:CreateTexture(nil, "ARTWORK");
-timerBar.Border:SetTexture("Interface\\CastingBar\\UI-CastingBar-Border");
-timerBar.Border:SetSize(256, 64);
-timerBar.Border:SetPoint("TOP", timerBar, 0, 28);
 timerBar.Text = timerBar:CreateFontString(nil, "OVERLAY");
 timerBar.Text:SetFontObject(GameFontHighlight);
 timerBar.Text:SetPoint("CENTER", timerBar, "CENTER", 0, 2);
@@ -342,17 +338,8 @@ if not MapIDs[mapID] then return end
 							SendChatMessage("→敲钟BOSS，战斗10秒后开始。", ChannelSet(Warning))
 						end
 					end
-			    	function timer7()
-						PlaySoundFile("Interface\\AddOns\\zZ_ChatJK\\Sound\\10战斗5秒后开始.ogg", "Master")
-						msg:AddMessage("敲钟BOSS，战斗5秒后开始。", 1, 0, 0)
-						if ChannelSet(Warning) == "SAY" then
-	        				print("|cffff80ff→敲钟BOSS，战斗5秒后开始。|r")
-						else
-							SendChatMessage("→敲钟BOSS，战斗5秒后开始。", ChannelSet(Warning))
-						end
-					end
 			    	function timer5()
-						PlaySoundFile("Interface\\AddOns\\zZ_ChatJK\\Sound\\11战斗5.ogg", "Master")
+						PlaySoundFile("Interface\\AddOns\\zZ_ChatJK\\Sound\\10战斗5.ogg", "Master")
 						msg:AddMessage("5", 1, 0, 0)
 						if ChannelSet(Warning) == "SAY" then
 	        				print("|cffff80ff→5|r")
@@ -361,7 +348,7 @@ if not MapIDs[mapID] then return end
 						end
 					end
 			    	function timer4()
-					    PlaySoundFile("Interface\\AddOns\\zZ_ChatJK\\Sound\\12战斗4.ogg", "Master")
+					    PlaySoundFile("Interface\\AddOns\\zZ_ChatJK\\Sound\\11战斗4.ogg", "Master")
 						msg:AddMessage("4", 1, 0, 0)
 						if ChannelSet(Warning) == "SAY" then
 	        				print("|cffff80ff→4|r")
@@ -370,7 +357,7 @@ if not MapIDs[mapID] then return end
 						end
 					end
 			    	function timer3()
-					    PlaySoundFile("Interface\\AddOns\\zZ_ChatJK\\Sound\\13战斗3.ogg", "Master")
+					    PlaySoundFile("Interface\\AddOns\\zZ_ChatJK\\Sound\\12战斗3.ogg", "Master")
 						msg:AddMessage("3", 1, 0, 0)
 						if ChannelSet(Warning) == "SAY" then
 	        				print("|cffff80ff→3|r")
@@ -379,7 +366,7 @@ if not MapIDs[mapID] then return end
 						end
 					end
 			    	function timer2()
-					    PlaySoundFile("Interface\\AddOns\\zZ_ChatJK\\Sound\\14战斗2.ogg", "Master")
+					    PlaySoundFile("Interface\\AddOns\\zZ_ChatJK\\Sound\\13战斗2.ogg", "Master")
 						msg:AddMessage("2", 1, 0, 0)
 						if ChannelSet(Warning) == "SAY" then
 	        				print("|cffff80ff→2|r")
@@ -388,7 +375,7 @@ if not MapIDs[mapID] then return end
 						end
 					end
 			    	function timer1()
-					    PlaySoundFile("Interface\\AddOns\\zZ_ChatJK\\Sound\\15战斗1.ogg", "Master")
+					    PlaySoundFile("Interface\\AddOns\\zZ_ChatJK\\Sound\\14战斗1.ogg", "Master")
 						msg:AddMessage("1", 1, 0, 0)
 						if ChannelSet(Warning) == "SAY" then
 	        				print("|cffff80ff→1|r")
@@ -397,7 +384,7 @@ if not MapIDs[mapID] then return end
 						end
 					end
 			    	function timer0()
-						PlaySoundFile("Interface\\AddOns\\zZ_ChatJK\\Sound\\16战斗开始.ogg", "Master")
+						PlaySoundFile("Interface\\AddOns\\zZ_ChatJK\\Sound\\15战斗开始.ogg", "Master")
 						msg:AddMessage("战斗开始！", 1, 0, 0)
 						if ChannelSet(Warning) == "SAY" then
 	        				print("|cffff80ff→战斗开始！|r")
@@ -406,10 +393,9 @@ if not MapIDs[mapID] then return end
 						end
 					end
 			    	C_Timer.After(2, timer60)
-					C_Timer.After(24,timer30)
-					C_Timer.After(34,timer20)
-					C_Timer.After(44,timer10)
-					C_Timer.After(52,timer7)
+					C_Timer.After(30,timer30)
+					C_Timer.After(40,timer20)
+					C_Timer.After(50,timer10)
 					C_Timer.After(55,timer5)
 					C_Timer.After(56,timer4)
 					C_Timer.After(57,timer3)
@@ -450,16 +436,16 @@ if not MapIDs[mapID] then return end
 				    end  
 				end
         	end
-			function ks()
-				timerBar:SetMinMaxValues(0, 300);
-				timeLeft = 300
-    			showBar()
-			end
-		    if k == "谦逊暮钟已被敲响！" or "勇气暮钟已被敲响！" or "纯洁暮钟已被敲响！" or "智慧暮钟已被敲响！" or "忠诚暮钟已被敲响！" then 
+			if k == "谦逊暮钟已被敲响！" or k == "勇气暮钟已被敲响！" or k == "纯洁暮钟已被敲响！" or k == "智慧暮钟已被敲响！" or k == "忠诚暮钟已被敲响！" or k == "晋升者议会已经集结！" then 
+			    local function ks()
+					timerBar:SetMinMaxValues(0, 300);
+					timeLeft = 300
+    				showBar()
+				end
 			   if k == "晋升者议会已经集结！" then timeLeft = 0 end;
 	           if timerBar:IsShown() then return end;
 			   C_Timer.After(0, ks)
-            end	
+            end		
 		end
     end
 end

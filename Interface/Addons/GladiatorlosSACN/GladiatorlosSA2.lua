@@ -10,6 +10,7 @@
  local CombatLogGetCurrentEventInfo = CombatLogGetCurrentEventInfo
  local canSpeakHere = false
  local playerCurrentZone = ""
+ local opponentName = ""
 
  local LSM_GSA_SOUNDFILES = {
 	["GSA-Demo"] = "Interface\\AddOns\\GladiatorlosSACN\\Voice\\Will-Demo.ogg",
@@ -66,6 +67,78 @@
  }
  self.GSA_TYPE = GSA_TYPE
 
+ -- TODO Clean up these arrays
+ local TrackedFriendlyDebuffs = {
+	 87204, 		-- Vampiric Touch Horrify
+	 196364, 	-- Unstable Affliction Silence
+	 1330, 		-- Garrote Silence
+	 1833, 		-- Cheap Shot
+	 6770, 		-- Sap
+	 3355, 		-- Freezing Trap
+	 212332, 	-- Smash (DK Abomination)
+	 212337,  	-- Powerful Smash (DK Abomination)
+	 91800,  	-- Gnaw (DK Ghoul)
+	 91797,  	-- Monstrous Claw (DK Ghoul)
+	 163505, 	-- Rake Stun
+	 199086, 	-- Warpath Stun
+	 202335, 	-- Double Barrel Stun
+	 215652, 	-- Shield of Virtue silence (Paladin)
+	 287254,		-- Remorseless Winter (Death Knight)
+	 357021,		-- Consecutive Concussion (Hunter)
+	 356727,		-- Spider Sting (Hunter)
+	 353084, 	-- Ring of Fire (Burning)
+
+	 -- Polymorph
+	 118, -- Sheep
+	 28271,-- Turtle
+	 28272, -- Pig
+	 61305, -- Black Cat
+	 61721, -- Rabbit
+	 61025, -- Serpent
+	 61780, -- Turkey
+	 161372, -- Peacock
+	 161355, -- Penguin
+	 161353, -- Polar Bear Cub
+	 161354, -- Monkey
+	 126819, -- Porcupine
+	 277787, -- Direhorn
+	 277792, -- Bumblebee
+
+	 --Hex (Shaman)
+	 51514, -- Frog
+	 210873, -- Compy
+	 211004, -- Spider
+	 211015, -- Cockroach
+	 211010, -- Snake
+	 269352, -- Skeletal Hatchling
+	 277778, -- Zandalari Tendonripper
+	 277784, -- Wicker Mongrel
+	 309328, -- Living Honey
+	 --
+	 82691, -- Ring of Frost (Debuff)
+	 5782, -- Fear (Warlock)
+	 118699, -- Fear (Warlock) for whatever reason the debuff ID is different
+	 33786, -- Cyclone (Druid)
+	 --[209753] = "success", -- Cyclone (Druid)
+	 19386, --Wyvern Sting (Hunter)
+	 20066, -- Repentence (Paladin)
+	 605, -- Mind Control (Priest)
+	 2637, -- Hibernate (Druid)/leave/lea
+	 1513, -- Scare Beast (Hunter)
+
+	 339, -- Entangling Roots
+	 235963 -- Entangling Roots PvP Talent
+ }
+
+ local EpicBGs = {
+	2118,	-- Wintergrasp [Epic]
+	30,		-- Alterac Valley
+	628,	-- Isle of Conquest
+	1280,	-- Southshore vs Tarren Mill
+	1191,	-- Trashcan
+	2197	-- Korrak's Revenge
+ }
+
  local dbDefaults = {
 	profile = {
 		all = false,
@@ -79,6 +152,7 @@
 		smartDisable = false,
 		outputUnlock = false,
 		output_menu = "MASTER",
+		seenExperimentalWarning = false;
 		
 		aruaApplied = false,
 		aruaRemoved = false,
@@ -153,7 +227,7 @@
 			gsavers = {
 			order = 2,
 			type = "description",
-			name = "|cffFF7D0A 3.9 |r(|cFF00FF96 9.1.0 Shadowlands|r)",
+			name = "|cffFF7D0A 3.12 |r(|cFF00FF96 9.1.5 Shadowlands|r)",
 			cmdHidden = true
 			},
 		},
@@ -232,38 +306,21 @@
 
  end
 
- -- Because arrays are for nerds
+ -- List of spells that need to be traked as Debuffs on ally players.
  function GSA:CheckFriendlyDebuffs(spellID)
-	if spellID == 87204 or			-- Vampiric Touch Horrify
-		spellID == 196364 or 		-- Unstable Affliction Silence
-		spellID == 1330 or 			-- Garrote Silence
-		spellID == 1833 or 			-- Cheap Shot
-		spellID == 6770 or 			-- Sap
-		spellID == 3355 or 			-- Freezing Trap
-		spellID == 212332 or 		-- Smash (DK Abomination)
-		spellID == 212337 or 		-- Powerful Smash (DK Abomination)
-		spellID == 91800 or 		-- Gnaw (DK Ghoul)
-		spellID == 91797 or 		-- Monstrous Claw (DK Ghoul)
-		spellID == 163505 or 		-- Rake Stun
-		spellID == 199086 or 		-- Warpath Stun
-		spellID == 202335 or 		-- Double Barrel Stun
-		spellID == 215652 or 		-- Shield of Virtue silence (Paladin)
-		spellID == 287254 or		-- Remorseless Winter (Death Knight)
-		spellID == 357021 or		-- Consecutive Concussion (Hunter)
-		spellID == 356727 then		-- Spider Sting (Hunter)
-		return true
-	end
+	 for k in pairs(TrackedFriendlyDebuffs) do
+		 if (TrackedFriendlyDebuffs[k] == spellID) then
+			 return true
+		 end
+	 end
 end
 
- -- Because arrays are for nerds
-function GSA:CheckForEpicBG(instanceMapID)	-- Determines if battleground is in list of epic bgs.
-	if instanceMapID == 2118 or		-- Wintergrasp [Epic]
-		instanceMapID == 30 or		-- Alterac Valley
-		instanceMapID == 628 or		-- Isle of Conquest
-		instanceMapID == 1280 or	-- Southshore vs Tarren Mill
-		instanceMapID == 1191 or	-- Trashcan
-		instanceMapID == 2197 then	-- Korrak's Revenge		
-		return true
+ -- List of battlegrounds that are Epic Battlegrounds
+function GSA:CheckForEpicBG(instanceMapID)
+	for k in pairs(EpicBGs) do
+		if (EpicBGs[k] == instanceMapID) then
+			return true
+		end
 	end
 end
 
@@ -278,7 +335,7 @@ function GSA:CanTalkHere()
 	playerCurrentZone = currentZoneType
 	duelingOn = false; -- Failsafe for when dueling events are skipped under unusual circumstances.
 
-	if (not ((currentZoneType == "none" and gsadb.field and not gsadb.onlyFlagged) or 												-- World
+	if (not ((currentZoneType == "none" and gsadb.field) or -- and not gsadb.onlyFlagged) or 						-- World
 		--(currentZoneType == "none" and gsadb.field and (gsadb.onlyFlagged and UnitIsWarModeDesired("player"))) or
 		(currentZoneType == "pvp" and gsadb.battleground and not self:CheckForEpicBG(instanceMapID)) or 	-- Battleground
 		(currentZoneType == "pvp" and gsadb.epicbattleground and self:CheckForEpicBG(instanceMapID)) or		-- Epic Battleground
@@ -360,14 +417,18 @@ end
 			 return
 		 end
 		 self:PlaySpell("auraApplied", spellID, sourceGUID, destGUID)
+		 return
 	 elseif (event == "SPELL_AURA_APPLIED" and (desttype[COMBATLOG_FILTER_FRIENDLY_UNITS] or desttype[COMBATLOG_FILTER_ME]) and (not gsadb.aonlyTF or destuid.target or destuid.focus) and not gsadb.aruaApplied) then
 		 if self:CheckFriendlyDebuffs(spellID) then
 			 self:PlaySpell("auraApplied", spellID, sourceGUID, destGUID)
+			 return
 		 end
 	 elseif (event == "SPELL_AURA_REMOVED" and desttype[COMBATLOG_FILTER_HOSTILE_PLAYERS] and (not gsadb.ronlyTF or destuid.target or destuid.focus) and not gsadb.aruaRemoved) then
 		 self:PlaySpell("auraRemoved", spellID, sourceGUID, destGUID)
+		 return
 	 elseif (event == "SPELL_CAST_START" and sourcetype[COMBATLOG_FILTER_HOSTILE_PLAYERS] and (not gsadb.conlyTF or sourceuid.target or sourceuid.focus) and not gsadb.castStart) then
 		 self:PlaySpell("castStart", spellID, sourceGUID, destGUID)
+		 return
 	 elseif (event == "SPELL_CAST_SUCCESS" and sourcetype[COMBATLOG_FILTER_HOSTILE_PLAYERS] and (not gsadb.sonlyTF or sourceuid.target or sourceuid.focus) and not gsadb.castSuccess) then
 		 if self:Throttle(tostring(spellID).."default", 0.05) then return end
 		 if gsadb.class and playerCurrentZone == "arena" then
@@ -375,17 +436,22 @@ end
 				 local c = self:ArenaClass(sourceGUID) -- PvP Trinket Class Callout
 				 if c then
 					 self:PlaySound(c);
+					 return
 				 end
 			 else
 				 self:PlaySpell("castSuccess", spellID, sourceGUID, destGUID)
+				 return
 			 end
 		 else
 			 self:PlaySpell("castSuccess", spellID, sourceGUID, destGUID)
+			 return
 		 end
 	 elseif (event == "SPELL_INTERRUPT" and desttype[COMBATLOG_FILTER_HOSTILE_PLAYERS] and not gsadb.interrupt) then
 		 self:PlaySpell ("friendlyInterrupt", spellID, sourceGUID, destGUID)
+		 return
 	 elseif (event == "SPELL_INTERRUPT" and (desttype[COMBATLOG_FILTER_FRIENDLY_UNITS] or desttype[COMBATLOG_FILTER_ME]) and not gsadb.interruptedfriendly) then
 		 self:PlaySpell ("friendlyInterrupted", spellID, sourceGUID, destGUID)
+		 return
 	 end
 
 
@@ -410,6 +476,7 @@ end
 				 if (css.existinglist ~= nil and css.existinglist ~= ('')) then
 					 local soundz = LSM:Fetch('sound', css.existinglist)
 					 PlaySoundFile(soundz, gsadb.output_menu)
+					 return
 				 else
 					 GSA.log (L["No sound selected for the Custom alert : |cffC41F4B"] .. css.name .. "|r.")
 				 end

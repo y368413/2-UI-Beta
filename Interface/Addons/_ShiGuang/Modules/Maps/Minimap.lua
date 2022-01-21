@@ -285,6 +285,200 @@ local SetMrbarMicromenu = {
 }
 
 
+function module:RecycleBin()
+	if not R.db["Map"]["ShowRecycleBin"] then return end
+
+	local blackList = {
+		["GameTimeFrame"] = true,
+		["MiniMapLFGFrame"] = true,
+		["BattlefieldMinimap"] = true,
+		["MinimapBackdrop"] = true,
+		["TimeManagerClockButton"] = true,
+		["FeedbackUIButton"] = true,
+		["MiniMapBattlefieldFrame"] = true,
+		["QueueStatusMinimapButton"] = true,
+		["GarrisonLandingPageMinimapButton"] = true,
+		["MinimapZoneTextButton"] = true,
+		["RecycleBinFrame"] = true,
+		["RecycleBinToggleButton"] = true,
+	}
+
+	local bu = CreateFrame("Button", "RecycleBinToggleButton", Minimap)
+	bu:SetSize(30, 30)
+	bu:SetPoint("BOTTOMRIGHT", 4, -6)
+	bu.Icon = bu:CreateTexture(nil, "ARTWORK")
+	bu.Icon:SetAllPoints()
+	bu.Icon:SetTexture(I.binTex)
+	bu:SetHighlightTexture(I.binTex)
+	M.AddTooltip(bu, "ANCHOR_LEFT", U["Minimap RecycleBin"], "white")
+
+	local width, height, alpha = 220, 40, .5
+	local bin = CreateFrame("Frame", "RecycleBinFrame", UIParent)
+	bin:SetPoint("BOTTOMRIGHT", bu, "BOTTOMLEFT", -3, 10)
+	bin:SetSize(width, height)
+	bin:Hide()
+
+	local tex = M.SetGradient(bin, "H", 0, 0, 0, 0, alpha, width, height)
+	tex:SetPoint("CENTER")
+	local topLine = M.SetGradient(bin, "H", cr, cg, cb, 0, alpha, width, R.mult)
+	topLine:SetPoint("BOTTOM", bin, "TOP")
+	local bottomLine = M.SetGradient(bin, "H", cr, cg, cb, 0, alpha, width, R.mult)
+	bottomLine:SetPoint("TOP", bin, "BOTTOM")
+	local rightLine = M.SetGradient(bin, "V", cr, cg, cb, alpha, alpha, R.mult, height + R.mult*2)
+	rightLine:SetPoint("LEFT", bin, "RIGHT")
+
+	local function hideBinButton()
+		bin:Hide()
+	end
+	local function clickFunc()
+		UIFrameFadeOut(bin, .5, 1, 0)
+		C_Timer_After(.5, hideBinButton)
+	end
+
+	local ignoredButtons = {
+		["GatherMatePin"] = true,
+		["HandyNotes.-Pin"] = true,
+	}
+	local function isButtonIgnored(name)
+		for addonName in pairs(ignoredButtons) do
+			if strmatch(name, addonName) then
+				return true
+			end
+		end
+	end
+
+	local isGoodLookingIcon = {
+		["Narci_MinimapButton"] = true,
+	}
+
+	local iconsPerRow = 10
+	local rowMult = iconsPerRow/2 - 1
+	local currentIndex, pendingTime, timeThreshold = 0, 5, 12
+	local buttons, numMinimapChildren = {}, 0
+	local removedTextures = {
+		[136430] = true,
+		[136467] = true,
+	}
+
+	local function ReskinMinimapButton(child, name)
+		for j = 1, child:GetNumRegions() do
+			local region = select(j, child:GetRegions())
+			if region:IsObjectType("Texture") then
+				local texture = region:GetTexture() or ""
+				if removedTextures[texture] or strfind(texture, "Interface\\CharacterFrame") or strfind(texture, "Interface\\Minimap") then
+					region:SetTexture(nil)
+				end
+				region:ClearAllPoints()
+				region:SetAllPoints()
+				if not isGoodLookingIcon[name] then
+					region:SetTexCoord(unpack(I.TexCoord))
+				end
+			end
+			child:SetSize(34, 34)
+			M.CreateSD(child, 3, 3)
+		end
+
+		tinsert(buttons, child)
+	end
+
+	local function KillMinimapButtons()
+		for _, child in pairs(buttons) do
+			if not child.styled then
+				child:SetParent(bin)
+				if child:HasScript("OnDragStop") then child:SetScript("OnDragStop", nil) end
+				if child:HasScript("OnDragStart") then child:SetScript("OnDragStart", nil) end
+				if child:HasScript("OnClick") then child:HookScript("OnClick", clickFunc) end
+
+				if child:IsObjectType("Button") then
+					child:SetHighlightTexture(I.bdTex) -- prevent nil function
+					child:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
+				elseif child:IsObjectType("Frame") then
+					child.highlight = child:CreateTexture(nil, "HIGHLIGHT")
+					child.highlight:SetAllPoints()
+					child.highlight:SetColorTexture(1, 1, 1, .25)
+				end
+
+				-- Naughty Addons
+				local name = child:GetName()
+				if name == "DBMMinimapButton" then
+					child:SetScript("OnMouseDown", nil)
+					child:SetScript("OnMouseUp", nil)
+				elseif name == "BagSync_MinimapButton" then
+					child:HookScript("OnMouseUp", clickFunc)
+				end
+
+				child.styled = true
+			end
+		end
+	end
+
+	local function CollectRubbish()
+		local numChildren = Minimap:GetNumChildren()
+		if numChildren ~= numMinimapChildren then
+			for i = 1, numChildren do
+				local child = select(i, Minimap:GetChildren())
+				local name = child and child.GetName and child:GetName()
+				if name and not child.isExamed and not blackList[name] then
+					if (child:IsObjectType("Button") or strmatch(strupper(name), "BUTTON")) and not isButtonIgnored(name) then
+						ReskinMinimapButton(child, name)
+					end
+					child.isExamed = true
+				end
+			end
+
+			numMinimapChildren = numChildren
+		end
+
+		KillMinimapButtons()
+
+		currentIndex = currentIndex + 1
+		if currentIndex < timeThreshold then
+			C_Timer_After(pendingTime, CollectRubbish)
+		end
+	end
+
+	local shownButtons = {}
+	local function SortRubbish()
+		if #buttons == 0 then return end
+
+		wipe(shownButtons)
+		for _, button in pairs(buttons) do
+			if next(button) and button:IsShown() then -- fix for fuxking AHDB
+				tinsert(shownButtons, button)
+			end
+		end
+
+		local numShown = #shownButtons
+		local row = numShown == 0 and 1 or M:Round((numShown + rowMult) / iconsPerRow)
+		local newHeight = row*37 + 3
+		bin:SetHeight(newHeight)
+		tex:SetHeight(newHeight)
+		rightLine:SetHeight(newHeight + 2*R.mult)
+
+		for index, button in pairs(shownButtons) do
+			button:ClearAllPoints()
+			if index == 1 then
+				button:SetPoint("BOTTOMRIGHT", bin, -3, 3)
+			elseif row > 1 and mod(index, row) == 1 or row == 1 then
+				button:SetPoint("RIGHT", shownButtons[index - row], "LEFT", -3, 0)
+			else
+				button:SetPoint("BOTTOM", shownButtons[index - 1], "TOP", 0, 3)
+			end
+		end
+	end
+
+	bu:SetScript("OnClick", function()
+		if bin:IsShown() then
+			clickFunc()
+		else
+			SortRubbish()
+			UIFrameFadeIn(bin, .5, 0, 1)
+		end
+	end)
+
+	CollectRubbish()
+end
+
 function module:WhoPingsMyMap()
 	if not R.db["Map"]["WhoPings"] then return end
 	local f = CreateFrame("Frame", nil, Minimap)
@@ -310,10 +504,21 @@ function module:WhoPingsMyMap()
 end
 
 function module:UpdateMinimapScale()
-	local size = Minimap:GetWidth()
+	local size = R.db["Map"]["MinimapSize"]
 	local scale = R.db["Map"]["MinimapScale"]
+	Minimap:SetSize(size, size)
 	Minimap:SetScale(scale)
-	Minimap.mover:SetSize(size*scale, size*scale)
+	if Minimap.mover then
+		Minimap.mover:SetSize(size*scale, size*scale)
+	end
+end
+
+function GetMinimapShape() -- LibDBIcon
+	if not module.initialized then
+		module:UpdateMinimapScale()
+		module.initialized = true
+	end
+	return "SQUARE"
 end
 
 function module:ShowMinimapClock()
@@ -421,7 +626,6 @@ function module:SetupMinimap()
 	-- Shape and Position
 	Minimap:ClearAllPoints()
 	Minimap:SetPoint(unpack(R.Minimap.Pos))
-	Minimap:SetSize(186, 186)
 	Minimap:SetFrameLevel(10)
 	Minimap:SetMaskTexture("Interface\\Buttons\\WHITE8X8")
 	DropDownList1:SetClampedToScreen(true)
@@ -463,6 +667,7 @@ function module:SetupMinimap()
 	-- Add Elements
 	self:CreatePulse()
 	self:ReskinRegions()
+	--self:RecycleBin()
 	self:WhoPingsMyMap()
 	self:ShowMinimapHelpInfo()
 

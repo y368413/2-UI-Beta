@@ -476,6 +476,8 @@ L["Eredar Twins"] = "Eredar Twins"
 L["Error"] = "Erreur"
 L["Error Frame"] = "Fenêtre d'erreur"
 --[[Translation missing --]]
+L["ERROR in '%s' unknown or incompatible sub element type '%s'"] = "ERROR in '%s' unknown or incompatible sub element type '%s'"
+--[[Translation missing --]]
 L["Error in aura '%s' in %s. trigger. All States table contains a non table at key: '%s'."] = "Error in aura '%s' in %s. trigger. All States table contains a non table at key: '%s'."
 L["Error not receiving display information from %s"] = "Erreur de non-réception d'informations d'affichage de %s"
 --[[Translation missing --]]
@@ -687,6 +689,8 @@ L["Include Pets"] = "Include Pets"
 L["Incoming Heal"] = "Soins en Cours"
 --[[Translation missing --]]
 L["Increase Precision Below"] = "Increase Precision Below"
+--[[Translation missing --]]
+L["Increases by one per stage or intermission."] = "Increases by one per stage or intermission."
 L["Information"] = "Information"
 L["Inherited"] = "Hérité"
 L["Instakill"] = "Mort instant."
@@ -750,6 +754,8 @@ L["Item Type Equipped"] = "Item Type Equipped"
 L["Jan'alai"] = "Jan'alai"
 --[[Translation missing --]]
 L["Jin'do the Hexxer"] = "Jin'do the Hexxer"
+--[[Translation missing --]]
+L["Journal Stage"] = "Journal Stage"
 --[[Translation missing --]]
 L["Kael'thas Sunstrider"] = "Kael'thas Sunstrider"
 --[[Translation missing --]]
@@ -835,6 +841,12 @@ L["Match Count"] = "taux de rencontre"
 --[[Translation missing --]]
 L["Match Count per Unit"] = "Match Count per Unit"
 L["Matches (Pattern)"] = "Correspond (format)"
+--[[Translation missing --]]
+L[ [=[Matches stage number of encounter journal.
+Intermissions are .5
+E.g. 1;2;1;2;2.5;3]=] ] = [=[Matches stage number of encounter journal.
+Intermissions are .5
+E.g. 1;2;1;2;2.5;3]=]
 --[[Translation missing --]]
 L["Max Char "] = "Max Char "
 L["Max Charges"] = "Charges Max"
@@ -1089,6 +1101,8 @@ L["Raid (Timewalking)"] = "Raid (Timewalking)"
 --[[Translation missing --]]
 L["Raid Mark"] = "Raid Mark"
 --[[Translation missing --]]
+L["Raid Mark Icon"] = "Raid Mark Icon"
+--[[Translation missing --]]
 L["Raid Role"] = "Raid Role"
 L["Raid Warning"] = "Avertissement de Raid"
 L["Raids"] = "Raids RdR"
@@ -1287,6 +1301,8 @@ L["Stack Count"] = "Nombre de Piles"
 L["Stacks"] = "Piles"
 --[[Translation missing --]]
 L["Stage"] = "Stage"
+--[[Translation missing --]]
+L["Stage Counter"] = "Stage Counter"
 L["Stagger Scale"] = "espacer"
 L["Stamina"] = "Endurance"
 L["Stance/Form/Aura"] = "Posture/Forme/Aura"
@@ -1378,6 +1394,8 @@ L["Third Value of Tooltip Text"] = "Troisième valeur du texte de l'info-bulle"
 L["This aura contains custom Lua code."] = "Cette aura contient du code Lua personnalisé."
 --[[Translation missing --]]
 L["This aura has legacy aura trigger(s), which are no longer supported."] = "This aura has legacy aura trigger(s), which are no longer supported."
+--[[Translation missing --]]
+L["This aura tried to show a tooltip on a anchoring restricted region"] = "This aura tried to show a tooltip on a anchoring restricted region"
 L["This aura was created with a newer version of WeakAuras."] = "Cette aura a été créée avec une nouvelle version de WeakAuras."
 --[[Translation missing --]]
 L["This aura was created with the Classic version of World of Warcraft."] = "This aura was created with the Classic version of World of Warcraft."
@@ -1452,6 +1470,8 @@ L["Trigger:"] = "Déclencheur :"
 L["Trivial (Low Level)"] = "Trivial (Low Level)"
 L["True"] = "Vrai"
 --[[Translation missing --]]
+L["Trying to repair broken conditions in %s likely caused by a WeakAuras bug."] = "Trying to repair broken conditions in %s likely caused by a WeakAuras bug."
+--[[Translation missing --]]
 L["Twin Emperors"] = "Twin Emperors"
 L["Type"] = "Type"
 L["Unaffected"] = "Non-affecté"
@@ -1479,6 +1499,8 @@ L["Usage:"] = "Utilisation:"
 --[[Translation missing --]]
 L["Use /wa minimap to show the minimap icon again."] = "Use /wa minimap to show the minimap icon again."
 L["Use Custom Color"] = "Utiliser couleur personnalisée"
+--[[Translation missing --]]
+L["Use Watched Faction"] = "Use Watched Faction"
 --[[Translation missing --]]
 L["Vaelastrasz the Corrupt"] = "Vaelastrasz the Corrupt"
 L["Value"] = "Valeur"

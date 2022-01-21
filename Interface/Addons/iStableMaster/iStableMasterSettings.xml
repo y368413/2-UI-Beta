@@ -1,0 +1,141 @@
+<Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="iStableMasterSettings.lua" />
+	
+		<Frame name="iStableMasterSettingsFrame" hidden="true">
+
+
+			<Layers>
+				<Layer level="OVERLAY">
+					<FontString name="$parentLabel1" inherits="GameFontNormal" text="OPTION 1.1">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
+								<Offset x="15" y="-20" />
+							</Anchor>
+						</Anchors>
+					</FontString>
+				</Layer>
+			</Layers>
+
+			<Frames>
+			<CheckButton name="$parentCheckbox1" inherits="OptionsCheckButtonTemplate" text="Checkbox 1">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentLabel1" relativePoint="BOTTOMLEFT">
+						<Offset x="15" y="-8" />
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString name="$parentHelpText" inherits="GameFontWhite" text="Checkbox 1 description" justifyV="TOP" justifyH="LEFT">
+							<Size>
+								<AbsDimension x="500" y="80" />
+							</Size>
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="$parentText" relativePoint="BOTTOMLEFT">
+									<Offset y="-10" />
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnLoad>
+						self.label = getglobal(self:GetName() .. "Text");
+						self.label:SetText("Checkbox 1 label");
+
+						--self.helpText = getglobal(self:GetName() .. "HelpText");
+						--self.helpText:SetText("Stance Bar Visible");
+					</OnLoad>
+					<OnClick function="">
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+		</Frames>
+			<Layers>
+				<Layer>
+					<FontString name="$parentLabel1_2" inherits="GameFontNormal" text="OPTION 1.2">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentCheckbox1HelpText" relativePoint="BOTTOMLEFT">
+								<Offset x="-35" y="-60" />
+							</Anchor>
+						</Anchors>
+					</FontString>
+				</Layer>
+			</Layers>
+			<Frames>
+			<CheckButton name="$parentCheckbox2" inherits="OptionsCheckButtonTemplate" text="Checkbox 2">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentLabel1_2" relativePoint="BOTTOMLEFT">
+						<Offset x="15" y="-8" />
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString name="$parentHelpText" inherits="GameFontWhite" text="Checkbox 2 description" justifyV="TOP" justifyH="LEFT">
+							<Size>
+								<AbsDimension x="500" y="80" />
+							</Size>
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="$parentText" relativePoint="BOTTOMLEFT">
+									<Offset y="-10" />
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnLoad>
+						self.label = getglobal(self:GetName() .. "Text");
+						self.label:SetText("Checkbox 2 label");
+
+						--self.helpText = getglobal(self:GetName() .. "HelpText");
+						--self.helpText:SetText("Show reputation while leveling");
+					</OnLoad>
+					<OnClick function="">
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+		</Frames>
+		<Layers>
+			<Layer>
+				<FontString name="$parentLabel2" inherits="GameFontNormal" text="OPTION 2">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentCheckbox2HelpText" relativePoint="BOTTOMLEFT">
+							<Offset x="-15" y="-60" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+
+		<Layers>
+			<Layer>
+				<FontString name="$parentLabel3" inherits="GameFontDisable" text="OPTION 3">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentLabel2" relativePoint="BOTTOMLEFT">
+							<Offset y="-20" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+
+
+		<Layers>
+			<Layer>
+				<FontString name="$parentLabel4" inherits="GameFontDisable" text="OPTION 4">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentLabel3" relativePoint="BOTTOMLEFT">
+							<Offset y="-20" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+
+		<Scripts>
+			<OnLoad function="iStableMasterSettingsFrame_OnLoad">
+			</OnLoad>
+		</Scripts>
+	</Frame>
+	
+</Ui>

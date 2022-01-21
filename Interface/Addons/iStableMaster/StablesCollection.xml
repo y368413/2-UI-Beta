@@ -1,0 +1,1048 @@
+<Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="StablesCollection.lua" />
+	<Script file="StablesCollectionMulti-TAB.lua" />
+	<Button name="HunterPetListButtonTemplate" virtual="true" motionScriptsWhileDisabled="true">
+		<Size x="208" y="46" />
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture parentKey="background" atlas="PetList-ButtonBackground" />
+			</Layer>
+			<Layer level="BORDER">
+				<Texture name="$parentIcon" parentKey="icon">
+					<Size x="38" y="38" />
+					<Anchors>
+						<Anchor point="LEFT" x="-42" y="0" />
+					</Anchors>
+				</Texture>
+				<Texture name="$parentPetTypeIcon" parentKey="petTypeIcon">
+					<Size x="90" y="44" />
+					<Anchors>
+						<Anchor point="BOTTOMRIGHT" x="-1" y="1" />
+					</Anchors>
+					<TexCoords left="0.0078125" right="0.7109375" top="0.74609375" bottom="0.91796875" />
+				</Texture>
+			</Layer>
+			<Layer textureSubLevel="-1">
+				<Texture name="$parentIconBorder" parentKey="iconBorder" hidden="true" file="Interface\Common\WhiteIconFrame">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeKey="$parent.icon" relativePoint="TOPLEFT" />
+						<Anchor point="BOTTOMRIGHT" relativeKey="$parent.icon" relativePoint="BOTTOMRIGHT" />
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer textureSubLevel="1">
+				<FontString name="$parentName" parentKey="name" inherits="GameFontNormal" justifyH="LEFT">
+					<Size x="147" y="25" />
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentIcon" relativePoint="TOPRIGHT" x="10" y="-3" />
+					</Anchors>
+				</FontString>
+				<FontString name="$parentSubName" parentKey="subName" inherits="GameFontNormalSmall" justifyH="LEFT">
+					<Size x="147" y="12" />
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentName" relativePoint="BOTTOMLEFT" x="0" y="-4" />
+					</Anchors>
+					<Color r="1" g="1" b="1" />
+				</FontString>
+			</Layer>
+			<Layer level="OVERLAY">
+				<Texture parentKey="selectedTexture" hidden="true" atlas="PetList-ButtonSelect" />
+			</Layer>
+			<Layer level="OVERLAY" textureSubLevel="2">
+				<FontString parentKey="new" inherits="GameFontHighlight" hidden="true" text="NEW_CAPS" wordwrap="false">
+					<Anchors>
+						<Anchor point="RIGHT" x="-15" y="0" />
+					</Anchors>
+					<Shadow>
+						<Color r="0.32" g="0.5" b="1" />
+					</Shadow>
+				</FontString>
+				<Texture parentKey="newGlow" hidden="true" atlas="collections-newglow">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeKey="$parent.new" x="-20" y="10" />
+						<Anchor point="BOTTOMRIGHT" relativeKey="$parent.new" x="20" y="-10" />
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button parentKey="dragButton">
+				<Size x="40" y="40" />
+				<Anchors>
+					<Anchor point="CENTER" relativeTo="$parentIcon" x="0" y="0" />
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<Texture parentKey="ActiveTexture" file="Interface\Buttons\CheckButtonHilight" alphaMode="ADD" />
+					</Layer>
+					<Layer level="OVERLAY" textureSubLevel="1">
+						<Texture name="$parentLevelBG" parentKey="levelBG" atlas="PetJournal-LevelBubble" useAtlasSize="true">
+							<Anchors>
+								<Anchor point="BOTTOMRIGHT" relativeTo="$parentIcon" relativePoint="BOTTOMRIGHT" x="3" y="-3" />
+							</Anchors>
+						</Texture>
+						<FontString name="$parentLevel" parentKey="level" inherits="GameFontNormalSmall">
+							<Size y="12" />
+							<Anchors>
+								<Anchor point="CENTER" relativeTo="$parentLevelBG" x="1" y="-1" />
+							</Anchors>
+						</FontString>
+						<Texture name="$parentFavorite" parentKey="favorite" atlas="PetJournal-FavoritesIcon" useAtlasSize="true">
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="$parentIcon" x="-8" y="8" />
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
+				<Frames>
+					<Cooldown parentKey="Cooldown" inherits="CooldownFrameTemplate" />
+				</Frames>
+				<Scripts>
+					<OnLoad>
+						--self:RegisterForDrag("LeftButton");
+						--self:RegisterForClicks("LeftButtonUp", "RightButtonUp");
+					</OnLoad>
+					<OnShow>
+						--self:RegisterEvent("SPELL_UPDATE_COOLDOWN");
+					</OnShow>
+					<OnHide>
+						--self:UnregisterEvent("SPELL_UPDATE_COOLDOWN");
+					</OnHide>
+					<OnEnter function="PetJournalDragButton_OnEnter">
+
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide">
+
+					</OnLeave>
+					<OnEvent function="PetJournalDragButton_OnEvent">
+
+					</OnEvent>
+					<OnDragStart function="PetJournalDragButton_OnDragStart">
+
+					</OnDragStart>
+				</Scripts>
+				<HighlightTexture name="$parentHighlight" file="Interface\Buttons\ButtonHilight-Square" alphaMode="ADD" />
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				--self:RegisterForClicks("LeftButtonUp", "RightButtonUp");
+				--self:RegisterForDrag("LeftButton");
+			</OnLoad>
+			<OnDragStart>
+				--PetJournalDragButton_OnDragStart(self.dragButton);
+			</OnDragStart>
+		</Scripts>
+		<HighlightTexture atlas="PetList-ButtonHighlight" />
+	</Button>
+	<Frame name="ActivePetsPresetsFrameTemplate" inherits="DefaultPanelTemplate" virtual="true" frameStrata="MEDIUM" frameLevel="199">
+		<Size>
+			<AbsDimension x="127" y="516" />
+		</Size>
+		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+			<BackgroundInsets>
+				<AbsInset left="11" right="12" top="12" bottom="11" />
+			</BackgroundInsets>
+			<TileSize>
+				<AbsValue val="32" />
+			</TileSize>
+			<EdgeSize>
+				<AbsValue val="32" />
+			</EdgeSize>
+		</Backdrop>
+		<Frames>
+			<Frame name="$parentBGTextures" inherits="InsetFrameTemplate" frameLevel="199">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="6" y="-24" />
+					<Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="-3" y="5" />
+					<Anchor point="TOPRIGHT" x="-3" y="-24" />
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture parentKey="BG" file="Interface\COMMON\bluemenu-main">
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="3" y="-35" />
+								<Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="3" y="3" />
+							</Anchors>
+							<TexCoords left="0" right="0.875" top="0.22" bottom="0.58333" />
+						</Texture>
+						<Texture parentKey="HeaderArt" file="Interface\COMMON\bluemenu-main">
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="3" y="-35" />
+								<Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="-3" y="-86" />
+							</Anchors>
+							<TexCoords left="0.25" right="1" top="0.083333" bottom="0.136666" />
+						</Texture>
+						<Texture parentKey="FooterArt" file="Interface\COMMON\bluemenu-main">
+							<Anchors>
+								<Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="-3" y="3" />
+								<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="3" y="42" />
+							</Anchors>
+							<TexCoords left="0.25" right="1" top="0.136666" bottom="0.083333" />
+						</Texture>
+					</Layer>
+				</Layers>
+			</Frame>
+			<Button inherits="UIPanelCloseButtonNoScripts">
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativeTo="$parent" relativePoint="TOPRIGHT" x="5" y="4" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						if(self:GetParent():IsShown()) then
+						self:GetParent():Hide();
+						else
+						self:GetParent():Show();
+						end
+					</OnClick>
+				</Scripts>
+			</Button>
+			<ScrollFrame name="$parentScrollFrame" inherits="UIPanelScrollFrameTemplate" useParentLevel="true">
+				<Size x="125" y="495" />
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="2" y="-58" />
+					<Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="0" y="0" />
+				</Anchors>
+				<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Gold-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+					<BackgroundInsets>
+						<AbsInset left="11" right="12" top="12" bottom="11" />
+					</BackgroundInsets>
+					<TileSize val="32" />
+					<EdgeSize val="32" />
+				</Backdrop>
+				<Scripts>
+					<OnLoad>
+						self.ScrollBar:Hide();
+					</OnLoad>
+				</Scripts>
+			</ScrollFrame>
+			<Button name="PresetBtn" parentKey="newSquadButton" text="">
+				<Size>
+					<AbsDimension x="0" y="42" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="StablesCollectionPresetsFrame" x="0" y="-21" />
+					<Anchor point="TOPRIGHT" relativeTo="StablesCollectionPresetsFrame" x="5" y="-21" />
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<Texture file="Interface\PaperDollInfoFrame\Character-Plus">
+							<Size x="18" y="18" />
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="10" y="-11" />
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnLoad>
+						--PresetBtn.text:SetTextColor(0,0.753,0,1)
+					</OnLoad>
+					<OnClick>
+						SaveActivePetsAsSquad();
+						
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\COMMON\bluemenu-main" desaturated="true">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="-3" y="0" />
+						<Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="0" y="0" />
+					</Anchors>
+					<TexCoords left="0" right="0.875" top="0.75" bottom="0.83333" />
+					<Color r="0" g="1" b="0" />
+				</NormalTexture>
+				<PushedTexture file="Interface\COMMON\bluemenu-main" desaturated="true">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="0" y="0" />
+						<Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="-5" y="0" />
+					</Anchors>
+					<TexCoords left="0" right="0.875" top="0.58333" bottom="0.66666" />
+					<Color r="0" g="1" b="0" />
+				</PushedTexture>
+				<HighlightTexture file="Interface\COMMON\bluemenu-main" desaturated="true">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="-3" y="-3" />
+						<Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="-3" y="-3" />
+					</Anchors>
+					<TexCoords left="0" right="0.875" top="0.83333" bottom="0.91666" />
+					<Color r="0.753" g="1" b="0.753" />
+				</HighlightTexture>
+				<ButtonText font="Fonts\FRIZQT__.TTF" text="New Squad" justifyH="LEFT">
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="LEFT" x="30" />
+					</Anchors>
+					<FontHeight val="12" />
+					<Color r="0" g="0.753" b="0" />
+				</ButtonText>
+				<PushedTextOffset x="-4" y="-4" />
+			</Button>
+		</Frames>
+	</Frame>
+	<Button name="SquadButtonTemplate" virtual="true" useParentLevel="true" text="">
+		<Size x="120" y="42" />
+		<Anchors>
+			<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="4" y="0" />
+			<Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="124" y="0" />
+		</Anchors>
+		<Layers>
+			<Layer parentKey="icon" level="OVERLAY" textureSubLevel="1">
+				<Texture name="$ParentSquadIcon" parentKey="SquadIcon" file="Interface\ICONS\Ability_Hunter_Pet_Assist">
+					<Size x="18" y="18" />
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="10" y="-11" />
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer parentKey="selected" hidden="true" level="OVERLAY" textureSubLevel="8">
+				<Texture name="$parentselectedOverlayTL" file="Interface\COMMON\bluemenu-main">
+					<Size x="14" y="14" />
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="5" y="-2" />
+					</Anchors>
+					<TexCoords left="0" right="0.25" top="0" bottom="0.061" />
+				</Texture>
+				<Texture name="$parentselectedOverlayTR" file="Interface\COMMON\bluemenu-main">
+					<Size x="14" y="14" />
+					<Anchors>
+						<Anchor point="TOPRIGHT" relativeTo="$parent" relativePoint="TOPRIGHT" x="-5" y="-2" />
+					</Anchors>
+					<TexCoords left="0.55" right="0.782" top="0" bottom="0.061" />
+				</Texture>
+				<Texture name="$parentselectedOverlayBL" file="Interface\COMMON\bluemenu-main">
+					<Size x="14" y="14" />
+					<Anchors>
+						<Anchor point="BOTTOMLEFT" relativeTo="$parent" relativePoint="BOTTOMLEFT" x="5" y="2" />
+					</Anchors>
+					<TexCoords left="0.25" right="0.5" top="0" bottom="0.07" />
+				</Texture>
+				<Texture name="$parentselectedOverlayBR" file="Interface\COMMON\bluemenu-main">
+					<Size x="14" y="14" />
+					<Anchors>
+						<Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="-5" y="2" />
+					</Anchors>
+					<TexCoords left="0" right="0.258" top="0.07" bottom="0.1332" />
+				</Texture>
+				<Texture name="$parentselectedOverlayR" file="Interface\COMMON\bluemenu-vert">
+					<Size x="14" y="14" />
+					<Anchors>
+						<Anchor point="RIGHT" relativeTo="$parent" relativePoint="RIGHT" x="-5" y="0" />
+					</Anchors>
+					<TexCoords left="0.5" right="0" top="0" bottom="1" />
+				</Texture>
+				<Texture name="$parentselectedOverlayL" file="Interface\COMMON\bluemenu-vert">
+					<Size x="14" y="14" />
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parent" relativePoint="LEFT" x="5" y="0" />
+					</Anchors>
+					<TexCoords left="0" right="0.5" top="0" bottom="1" />
+				</Texture>
+				<Texture name="$parentselectedOverlayH" file="Interface\COMMON\bluemenu-goldborder-horiz">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="19" y="-2" />
+						<Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="-19" y="-1" />
+					</Anchors>
+					<TexCoords left="0" right="1" top="0" bottom="0.786" />
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+					--self:SetTextColor(0,0.753,0);
+			</OnLoad>
+			<OnClick>
+
+			</OnClick>
+		</Scripts>
+		<NormalTexture file="Interface\COMMON\bluemenu-main">
+			<Anchors>
+				<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="-3" y="0" />
+				<Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="0" y="0" />
+			</Anchors>
+			<TexCoords left="0" right="0.875" top="0.75" bottom="0.83333" />
+		</NormalTexture>
+		<PushedTexture file="Interface\COMMON\bluemenu-main">
+			<Anchors>
+				<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="0" y="0" />
+				<Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="-5" y="0" />
+			</Anchors>
+			<TexCoords left="0" right="0.875" top="0.58333" bottom="0.66666" />
+		</PushedTexture>
+		<HighlightTexture file="Interface\COMMON\bluemenu-main" desaturated="true">
+			<Anchors>
+				<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="-3" y="-3" />
+				<Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="-3" y="-3" />
+			</Anchors>
+			<TexCoords left="0" right="0.875" top="0.83333" bottom="0.91666" />
+			<Color r="0.753" g="0.753" b="1" />
+		</HighlightTexture>
+		<ButtonText mixin="" font="Fonts\FRIZQT__.TTF" text="Beast Squad" justifyH="LEFT" maxLines="1">
+			<Anchors>
+				<Anchor point="LEFT" relativePoint="LEFT" x="30" />
+			</Anchors>
+			<FontHeight val="12" />
+			<Color r="0" g="0.753" b="0.753" />
+		</ButtonText>
+		<PushedTextOffset x="-2" y="-2" />
+	</Button>
+	<Frame name="StablesCollection" parentKey="StablesCollection" inherits="BackdropTemplate" secureMixin="" hidden="true" parent="UIParent" useParentLevel="true" frameStrata="HIGH" frameLevel="200">
+		<Size x="1" y="0.8">
+			<RelDimension x="602" y="914" />
+		</Size>
+		<Anchors>
+			<Anchor point="TOPLEFT" relativeTo="$parent" x="0" y="0" />
+			<Anchor point="BOTTOMRIGHT" relativeTo="$parent" x="0" y="0" />
+		</Anchors>
+		<Backdrop bgFile="Interface\FrameGeneral\UIFrameKyrianBackground" edgeFile="Interface\DialogFrame\UI-DialogBox-Border">
+			<BackgroundInsets>
+				<AbsInset left="11" right="12" top="12" bottom="11" />
+			</BackgroundInsets>
+			<TileSize val="32" />
+			<EdgeSize val="32" />
+		</Backdrop>
+		<Layers>
+			<Layer level="OVERLAY" />
+		</Layers>
+		<Frames>
+			<Button hidsen="true" name="OpenPresetsButton" inherits="NavButtonTemplate" parent="StablesCollection" frameLevel="2000" text="Beast Squads">
+				<Size x="133" y="26" />
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativeTo="StablesCollection" x="-20" y="-38" />
+				</Anchors>
+				<Layers>
+					<Layer>
+						<Texture parent="OpenPresetsButton" parentKey="ButtonFrameLeft" ignoreParentAlpha="true" file="Interface\FrameGeneral\UIFrameIconBorder">
+							<Size x="64" y="32" />
+							<Anchors>
+								<Anchor point="LEFT" relativeTo="OpenPresetsButton" x="-8" y="0" />
+							</Anchors>
+							<TexCoords left="0" right="0.4" top="0" bottom="0.5" />
+						</Texture>
+						<Texture parent="OpenPresetsButton" parentKey="ButtonFrameMiddle" ignoreParentAlpha="true" file="Interface\FrameGeneral\UIFrameIconBorder">
+							<Size x="86" y="32" />
+							<Anchors>
+								<Anchor point="CENTER" relativeTo="OpenPresetsButton" x="36" y="0" />
+							</Anchors>
+							<TexCoords left="0.1" right="0.4" top="0" bottom="0.5" />
+						</Texture>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnLoad>
+						OpenPresetsButton.arrowDown:SetHeight(OpenPresetsButton:GetHeight());
+						OpenPresetsButton.arrowUp:SetHeight(OpenPresetsButton:GetHeight());
+						OpenPresetsButton.arrowDown:Hide();
+
+						OpenPresetsButton.arrowDown:SetTexture("Interface\\HELPFRAME\\CS_HELPTEXTURES");
+						OpenPresetsButton.arrowDown:SetTexCoord(0.6448125,0.6868281,0.25,0.50);
+						OpenPresetsButton.arrowUp:SetTexture("Interface\\HELPFRAME\\CS_HELPTEXTURES");
+						--OpenPresetsButton.arrowUp:SetTexCoord(0.6328125,0.6738281,0,0.25);
+						OpenPresetsButton.arrowUp:SetTexCoord(0.6448125,0.6868281,0,0.25);
+					</OnLoad>
+					<OnClick>
+						if(StablesCollectionPresetsFrame:IsShown()) then
+
+						StablesCollectionPresetsFrame:Hide();
+						StablesCollection.presetFrameIsOpen = false;
+						else
+						StablesCollectionPresetsFrame:Show();
+						StablesCollection.presetFrameIsOpen = true;
+						PopulateSquadScrollFrame();
+						end
+						--print("Hello World");
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\HELPFRAME\CS_HELPTEXTURES">
+					<TexCoords left="0.45" right="0.65" top="0" bottom="0.25" />
+				</NormalTexture>
+				<PushedTexture file="Interface\HELPFRAME\CS_HELPTEXTURES">
+					<TexCoords left="0.45" right="0.65" top="0.25" bottom="0.5" />
+				</PushedTexture>
+				<HighlightTexture file="Interface\HelpFrame\CS_HELPTEXTURES" alphaMode="ADD">
+					<TexCoords left="0.45" right="0.65" top="0.5" bottom="0.75" />
+				</HighlightTexture>
+				<ButtonText name="$parentText" inherits="GameFontNormal" text="Presets" justifyH="LEFT">
+					<Size y="12" />
+					<Anchors>
+						<Anchor point="LEFT" x="20" y="0" />
+					</Anchors>
+				</ButtonText>
+			</Button>
+			<Button name="OptionsButton" parent="StablesCollection" text="">
+				<Size x="20" y="20" />
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativeTo="StablesCollection" x="-30" y="-2" />
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+
+					</OnLoad>
+					<OnClick>
+						--print("Hello World");
+						openiStablesMasterSettings();
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\BUTTONS\UI-OptionsButton" />
+				<PushedTexture file="Interface\BUTTONS\UI-OptionsButton" desaturated="true" />
+				<HighlightTexture file="Interface\BUTTONS\UI-OptionsButton" alphaMode="ADD" />
+			</Button>
+			<Frame name="StablesLeftFrame" parentKey="StablesLeftFrame" inherits="BackdropTemplate" setAllPoints="true" parent="StablesCollection" useParentLevel="true" frameStrata="HIGH" frameLevel="539">
+				<Size x="357" y="830" />
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativeTo="$parent" x="-5" y="-62" />
+					<Anchor point="BOTTOMRIGHT" relativeTo="$parent" x="-5" y="5" />
+				</Anchors>
+				<KeyValues>
+					<KeyValue key="backdropInfo" value="BACKDROP_DIALOG_32_32" keyType="string" type="global" />
+				</KeyValues>
+				<TitleRegion name="StablesLeftFrame" setAllPoints="true">
+					<Size>
+						<AbsDimension x="0" y="30" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT" />
+						<Anchor point="TOPRIGHT" />
+					</Anchors>
+				</TitleRegion>
+				<Backdrop bgFile="Interface\DRESSUPFRAME\DressingRoomHunter" edgeFile="">
+					<BackgroundInsets>
+						<RelInset left="18" right="9" top="12" bottom="11" />
+					</BackgroundInsets>
+					<TileSize val="256" />
+					<EdgeSize val="32" />
+				</Backdrop>
+				<HitRectInsets>
+					<AbsInset left="1" right="1" top="1" bottom="1" />
+				</HitRectInsets>
+				<Frames>
+					<Frame name="FrameLeftFrame" inherits="InsetFrameTemplate" parent="StablesLeftFrame" frameStrata="HIGH" frameLevel="540" enableMouse="true" propagateKeyboardInput="true">
+						<Size x="327" y="578" />
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent" x="0" y="0" />
+							<Anchor point="BOTTOMRIGHT" relativeTo="$parent" x="0" y="0" />
+						</Anchors>
+						<Backdrop edgeFile="Interface\DialogFrame\UI-DialogBox-Gold-Border" tile="true">
+							<BackgroundInsets>
+								<AbsInset left="11" right="12" top="12" bottom="11" />
+							</BackgroundInsets>
+							<TileSize val="32" />
+							<EdgeSize val="32" />
+						</Backdrop>
+						<Layers>
+							<Layer subLevel="1">
+								<Texture parentKey="Bg2" setAllPoints="true" hidden="false" file="Interface\DRESSUPFRAME\DressingRoomHunter">
+								<Size x="42" y="42" />
+									<Anchors>
+										<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="3" y="-3" />
+										<Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="-3" y="3" />
+									</Anchors>
+									<TexCoords left="0" right="0.9375" top="0" bottom="0.9828125" />
+									<Color r="1" g="1" b="1" a="1" />
+								</Texture>
+							</Layer>
+							<Layer subLevel="2">
+								<!--<Texture name="PetModelViewBackground" file="Interface\DRESSUPFRAME\DressingRoomHunter">
+									<Size x="42" y="42" />
+									<Anchors>
+										<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="3" y="-3" />
+										<Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="-3" y="3" />
+									</Anchors>
+									<TexCoords left="0" right="1.37" top="0" bottom="0.98" />
+									<Color r="1" g="1" b="1" a="1" />
+								</Texture>-->
+							</Layer>
+						</Layers>
+						<Frames>
+							<PlayerModel name="CollectionsPetStableModel" inherits="ModelWithZoomTemplate" mixin="PetStableModelFrameMixin" parent="FrameLeftFrame" frameStrata="HIGH" frameLevel="600">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="3" y="-3" />
+									<Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="-3" y="3" />
+								</Anchors>
+								<Backdrop bgFile="Interface\DRESSUPFRAME\DressingRoomHunter">
+									<BackgroundInsets>
+										<RelInset left="-5" right="0" top="-5" bottom="0" />
+									</BackgroundInsets>
+								</Backdrop>
+								<Frames>
+									<Button name="CollectionsPetStableModelRotateLeftButton" mixin="ModelControlRotateButtonMixin" frameStrata="DIALOG" frameLevel="20">
+										<Size>
+											<AbsDimension x="35" y="35" />
+										</Size>
+										<Anchors>
+											<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM" />
+										</Anchors>
+										<KeyValues>
+											<KeyValue key="rotateDirection" value="left" keyType="string" type="string" />
+										</KeyValues>
+										<NormalTexture file="Interface\Buttons\UI-RotationLeft-Button-Up" />
+										<PushedTexture file="Interface\Buttons\UI-RotationLeft-Button-Down" />
+										<HighlightTexture file="Interface\Buttons\ButtonHilight-Round" alphaMode="ADD" />
+									</Button>
+									<Button name="CollectionsPetStableModelRotateRightButton" mixin="ModelControlRotateButtonMixin" frameStrata="DIALOG" frameLevel="20">
+										<Size>
+											<AbsDimension x="35" y="35" />
+										</Size>
+										<Anchors>
+											<Anchor point="TOPLEFT" relativeTo="CollectionsPetStableModelRotateLeftButton" relativePoint="TOPRIGHT" />
+										</Anchors>
+										<KeyValues>
+											<KeyValue key="rotateDirection" value="right" keyType="string" type="string" />
+										</KeyValues>
+										<NormalTexture file="Interface\Buttons\UI-RotationRight-Button-Up" />
+										<PushedTexture file="Interface\Buttons\UI-RotationRight-Button-Down" />
+										<HighlightTexture file="Interface\Buttons\ButtonHilight-Round" alphaMode="ADD" />
+									</Button>
+									<Frame name="CollectionsPetStableModelShadow" inherits="ShadowOverlayTemplate" useParentLevel="true" frameStrata="DIALOG">
+										<Anchors>
+											<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="1" y="0" />
+											<Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="0" y="1" />
+										</Anchors>
+										<Backdrop>
+											<BackgroundInsets />
+											<EdgeSize />
+										</Backdrop>
+										<Scripts>
+											<OnLoad>
+												CollectionsPetStableModelShadow_OnLoad()
+											</OnLoad>
+										</Scripts>
+									</Frame>
+								</Frames>
+							</PlayerModel>
+						</Frames>
+					</Frame>
+				</Frames>
+				<Scripts>
+					<OnLoad>
+
+					</OnLoad>
+				</Scripts>
+			</Frame>
+			<Frame name="StablesRightFrame" inherits="BackdropTemplate" parent="StablesCollection" useParentLevel="true">
+				<Size x="266" y="824" />
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativeTo="StablesCollection" relativePoint="TOPLEFT" x="269" y="-62" />
+					<Anchor point="LEFT" relativeTo="StablesCollection" relativePoint="LEFT" x="3" y="-24" />
+					<Anchor point="BOTTOMLEFT" relativeTo="StablesCollection" x="3" y="5" />
+				</Anchors>
+				<KeyValues>
+					<KeyValue key="backdropInfo" value="BACKDROP_DIALOG_32_32" keyType="string" type="global" />
+				</KeyValues>
+				<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+					<BackgroundInsets>
+						<AbsInset left="11" right="12" top="12" bottom="11" />
+					</BackgroundInsets>
+					<TileSize val="32" />
+					<EdgeSize val="32" />
+				</Backdrop>
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString inherits="GameFontNormal" text="Stabled Pets">
+							<Size x="80" y="20" />
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="StablesRightFrame" x="8" y="-2" />
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Frames>
+					<Button name="$parentFilterBtn" parentKey="FilterDropDown" text="">
+						<Size x="80" y="20" />
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="StablesRightFrame" x="97" y="-12" />
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								StablesRightFrameFilterBtnFilterDropDown.button:Click();
+								ToggleDropDownMenu(1, 1, StablesRightFrameFilterBtnFilterDropDown, self, 0, 0);
+							</OnClick>
+						</Scripts>
+						<NormalTexture file="Interface\BUTTONS\UI-SILVER-BUTTON-UP">
+							<TexCoords left="0" right="0.6" top="0" bottom="1" />
+						</NormalTexture>
+						<PushedTexture file="Interface\BUTTONS\UI-SILVER-BUTTON-DOWN">
+							<TexCoords left="0" right="0.6" top="0" bottom="1" />
+						</PushedTexture>
+						<HighlightTexture file="Interface\BUTTONS\UI-SILVER-BUTTON-HIGHLIGHT" alphaMode="ADD">
+							<Size x="80" y="20" />
+							<TexCoords left="0" right="1" top="0" bottom="1" />
+						</HighlightTexture>
+						<ButtonText name="$parentText" text="Filter" justifyV="TOP" />
+						<NormalFont style="Tooltip_Small" />
+						<Layers>
+							<Layer level="ARTWORK" textureSubLevel="8">
+								<Texture parentKey="Arrow" file="Interface\ChatFrame\ChatFrameExpandArrow">
+									<Size x="10" y="12"/>
+									<Anchors>
+										<Anchor point="RIGHT" x="-5" y="0"/>
+									</Anchors>
+								</Texture>
+							</Layer>
+						</Layers>
+
+
+					</Button>
+					<Button name="$parentSortBtn" parentKey="SortDropDown" text="">
+						<Size x="80" y="20" />
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="StablesRightFrameFilterBtn" relativePoint="TOPRIGHT" x="3" y="0" />
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								StablesRightFrameSortBtnSortDropDown.button:Click();
+								ToggleDropDownMenu(1, 1, StablesRightFrameSortBtnSortDropDown, self, 0, 0);
+							</OnClick>
+						</Scripts>
+						<NormalTexture file="Interface\BUTTONS\UI-SILVER-BUTTON-UP">
+							<Size x="80" y="28" />
+							<TexCoords left="0" right="0.6" top="0" bottom="1" />
+						</NormalTexture>
+						<PushedTexture file="Interface\BUTTONS\UI-SILVER-BUTTON-DOWN">
+							<Size x="80" y="28" />
+							<TexCoords left="0" right="0.6" top="0" bottom="1" />
+						</PushedTexture>
+						<HighlightTexture file="Interface\BUTTONS\UI-SILVER-BUTTON-HIGHLIGHT" alphaMode="ADD">
+							<Size x="80" y="28" />
+							<TexCoords left="0" right="1" top="0" bottom="1" />
+						</HighlightTexture>
+						<ButtonText name="$parentText" text="Sort" justifyV="TOP" />
+						<NormalFont style="Tooltip_Small" />
+						<Layers>
+							<Layer level="ARTWORK" textureSubLevel="8">
+								<Texture parentKey="Arrow" file="Interface\ChatFrame\ChatFrameExpandArrow">
+									<Size x="10" y="12"/>
+									<Anchors>
+										<Anchor point="RIGHT" x="-5" y="0"/>
+									</Anchors>
+								</Texture>
+							</Layer>
+						</Layers>
+					</Button>
+					<Frame name="$parentBackdropContainer" inherits="InsetFrameTemplate" parent="StablesRightFrame">
+						<Size x="263" y="847" />
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="0" y="0" />
+							<Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="0" y="0" />
+						</Anchors>
+						<Layers>
+							<Layer>
+								<Texture name="PetScrollBG" setAllPoints="true" file="Interface\FrameGeneral\UI-Background-Marble" horizTile="true" vertTile="true">
+									<Size x="353" y="825" />
+									<Anchors>
+										<Anchor point="TOPLEFT" relativeTo="$parent" x="3" y="-3" />
+										<Anchor point="BOTTOMRIGHT" relativeTo="$parent" x="-3" y="3" />
+									</Anchors>
+								</Texture>
+							</Layer>
+						</Layers>
+					</Frame>
+					<EditBox name="$parentEditBox" enableMouseClicks="true" letters="42" autoFocus="false">
+						<Size x="100" y="32" />
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
+								<Offset x="24" y="-25" />
+							</Anchor>
+							<Anchor point="TOPRIGHT" relativeTo="$parent" relativePoint="TOPRIGHT">
+								<Offset x="-8" y="-25" />
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer level="BACKGROUND">
+								<Texture file="Interface\COMMON\Common-Input-Border">
+									<Size x="75" y="32" />
+									<Anchors>
+										<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
+											<Offset x="-21" y="-6" />
+										</Anchor>
+										<Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT">
+											<Offset x="5" y="-6" />
+										</Anchor>
+									</Anchors>
+								</Texture>
+								<Texture hidden="true" file="Interface\ChatFrame\UI-ChatInputBorder-Right">
+									<Size x="263" y="32" />
+									<Anchors>
+										<Anchor point="TOPRIGHT" relativeTo="$parent" relativePoint="TOPRIGHT" />
+										<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" />
+									</Anchors>
+								</Texture>
+							</Layer>
+							<Layer level="OVERLAY">
+								<Texture name="$parentMagnifiyingGlass" alpha="0.5" atlas="common-search-magnifyingglass">
+									<Size x="10" y="10" />
+									<Anchors>
+										<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
+											<Offset x="-12" y="-12" />
+										</Anchor>
+									</Anchors>
+								</Texture>
+							</Layer>
+						</Layers>
+						<Scripts>
+							<OnLoad>
+								self.lastSearchSubmitted = "";
+								OnSearchSubmit();
+							</OnLoad>
+						</Scripts>
+						<FontString inherits="ChatFontNormal" />
+					</EditBox>
+					<Button name="ClearSearchButton" inherits="UIPanelCloseButtonNoScripts" parent="StablesRightFrameEditBox" text="">
+						<Size x="10" y="10" />
+						<Anchors>
+							<Anchor point="TOPRIGHT" relativeTo="StablesRightFrameEditBox" x="0" y="-12" />
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								StablesRightFrameEditBox.lastSearchSubmitted = "";
+								SubmitSearch2(StablesRightFrameEditBox,StablesRightFrameEditBox.lastSearchSubmitted);
+								--StablesRightFrameEditBox:ClearFocus();
+							</OnClick>
+						</Scripts>
+						<NormalTexture alpha="0.5" atlas="common-search-clearbutton" />
+						<PushedTexture atlas="common-search-clearbutton" />
+						<HighlightTexture alphaMode="ADD" atlas="common-search-clearbutton" />
+					</Button>
+					<ScrollFrame name="ScrollFrame" parentKey="ScrollFrame" inherits="UIPanelScrollFrameTemplate2" parent="StablesRightFrame" frameLevel="600">
+						<Size x="236" y="788" />
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent" x="3" y="-55" />
+							<Anchor point="BOTTOMRIGHT" relativeTo="$parent" x="-27" y="4" />
+						</Anchors>
+						<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+							<BackgroundInsets>
+								<AbsInset left="11" right="12" top="12" bottom="11" />
+							</BackgroundInsets>
+							<TileSize val="32" />
+							<EdgeSize val="32" />
+						</Backdrop>
+					</ScrollFrame>
+				</Frames>
+				<Scripts>
+					<OnLoad>
+
+					</OnLoad>
+				</Scripts>
+			</Frame>
+			<Frame name="$parentFilterDropDown" inherits="UIDropDownMenuTemplate" parent="StablesRightFrameFilterBtn" frameStrata="HIGH" frameLevel="2000">
+				<Size x="80" y="20" />
+				<Anchors>
+					<Anchor point="CENTER" relativeTo="$parent" x="-40" y="0" />
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						--function="PetJournalFilterDropDown_OnLoad"&gt;
+						UIDropDownMenu_Initialize(self, StablesCollectionFilterDropDown_Initialize, "MENU");
+						self.button = StablesRightFrameFilterBtn;
+					</OnLoad>
+				</Scripts>
+			</Frame>
+			<Frame name="$parentSortDropDown" inherits="UIDropDownMenuTemplate" parent="StablesRightFrameSortBtn" frameStrata="HIGH" frameLevel="2000">
+				<Size x="80" y="20" />
+				<Anchors>
+					<Anchor point="CENTER" relativeTo="$parent" x="-40" y="0" />
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						--function="PetJournalFilterDropDown_OnLoad"&gt;
+						UIDropDownMenu_Initialize(self, StablesCollectionSortDropDown_Initialize, "MENU");
+						self.button = StablesRightFrameSortBtn;
+					</OnLoad>
+				</Scripts>
+			</Frame>
+			<Frame name="CardContainerFrame" parentKey="CardContainer" inherits="BackdropTemplate" parent="StablesCollection">
+				<Size x="570" y="825" />
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent" x="-50" y="-62" />
+					<Anchor point="BOTTOM" relativeTo="$parent" x="-50" y="5" />
+					<Anchor point="TOPLEFT" relativeTo="StablesRightFrame" relativePoint="TOPRIGHT" x="0" y="0" />
+					<Anchor point="TOPRIGHT" relativeTo="StablesLeftFrame" relativePoint="TOPLEFT" x="0" y="0" />
+				</Anchors>
+				<Backdrop bgFile="" edgeFile="">
+					<BackgroundInsets>
+						<AbsInset left="11" right="12" top="12" bottom="11" />
+					</BackgroundInsets>
+					<TileSize val="32" />
+					<EdgeSize val="32" />
+				</Backdrop>
+				<Frames>
+					<Frame name="$parentInsetFrame" inherits="InsetFrameTemplate" parent="CardContainerFrame">
+						<Size x="570" y="825" />
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent" x="0" y="0" />
+							<Anchor point="BOTTOMRIGHT" relativeTo="$parent" x="0" y="0" />
+						</Anchors>
+						<Layers>
+							<Layer Level="BACKGROUND" sublevel="2">
+								<Texture name="ActiveCardsContainerBg" file="Interface\FrameGeneral\UIFrameKyrianBackground">
+									<Size x="42" y="42" />
+									<Anchors>
+										<Anchor point="TOPLEFT" relativeTo="$parent" x="0" y="0" />
+										<Anchor point="BOTTOMRIGHT" relativeTo="$parent" x="0" y="0" />
+									</Anchors>
+								</Texture>
+							</Layer>
+						</Layers>
+					</Frame>
+				</Frames>
+			</Frame>
+			<Frame name="ButtonWrapper" parent="StablesCollection">
+				<Size x="192" y="44" />
+				<Anchors>
+					<Anchor point="TOP" relativeTo="StablesCollection" x="-9" y="-31" />
+				</Anchors>
+			</Frame>
+			<Button name="OpenStablesButton" inherits="UIPanelButtonTemplate" parent="ButtonWrapper" useParentLevel="true" enableMouseClicks="true" propagateKeyboardInput="true" text="Open Stables">
+				<Size x="133" y="26" />
+				<Anchors>
+					<Anchor point="CENTER" relativeTo="ButtonWrapper" x="0" y="0" />
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						StablesToggleButtonTextUpdate();
+					</OnLoad>
+					<OnClick>
+						--if(IsAtStableMaster()) then
+
+						--InteractUnit("Tassia Whisperglen");
+
+						--else
+
+						--if(PetStableFrame:IsShown() ~=true) then
+						--self:SetText("Close Stables");
+						--ShowUIPanel(PetStableFrame);
+						--else
+						--self:SetText("Open Stables");
+						--HideUIPanel(PetStableFrame);
+
+						--end
+						StablesToggleButtonTextUpdate();
+
+						--end
+						local point, relativeTo, relativePoint, xOfs, yOfs = PetStableFrame:GetPoint(1);
+
+						if(xOfs == -500) then
+
+						PetStableFrame:SetPoint("TOPLEFT",StablesCollection:GetParent():GetWidth()+50,-154);
+						else
+						PetStableFrame:SetPoint("TOPLEFT",-500,-204);
+						end
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Frame name="StablesCollectionInsetBorderFrame" inherits="InsetFrameTemplate" parent="StablesCollection" frameLevel="500">
+				<Size x="842" y="848" />
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="StablesCollection" relativePoint="TOPLEFT" x="3" y="-62" />
+					<Anchor point="BOTTOMRIGHT" relativeTo="StablesCollection" relativePoint="BOTTOMRIGHT" x="-6" y="5" />
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture name="StablesCollectionBackground" parentKey="Bg" file="Interface\Collections\CollectionsBackgroundTile" horizTile="true" vertTile="true">
+							<Size x="876" y="645" />
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="$parent" x="3" y="-3" />
+								<Anchor point="BOTTOMRIGHT" relativeTo="$parent" x="-3" y="3" />
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
+			</Frame>
+			<Frame name="StablesCollectionBackgroundInsetFrame" inherits="CollectionsBackgroundTemplateForStables" hidden="true" parent="StablesCollectionInsetBorderFrame" frameLevel="501">
+				<Layer level="BACKGROUND">
+					
+					<Texture parentKey="BGCornerBottomRight" hidden="true" ignoreParentAlpha="true" file="" atlas="collections-background-corner" useAtlasSize="true">
+						<Size x="86" y="86" />
+						<Anchors>
+							<Anchor point="BOTTOMRIGHT" relativeTo="StablesCollection" x="-3" y="6" />
+						</Anchors>
+						<TexCoords left="1" right="0" top="1" bottom="0" />
+					</Texture>
+					<Texture parentKey="BGCornerTopRight" hidden="true" ignoreParentAlpha="true" file="" atlas="collections-background-corner" useAtlasSize="true">
+						<Size x="86" y="86" />
+						<Anchors>
+							<Anchor point="TOPRIGHT" relativeTo="StablesCollection" x="-3" y="-63" />
+						</Anchors>
+						<TexCoords left="1" right="0" top="0" bottom="1" />
+					</Texture>
+					<Texture parentKey="BGCornerTopLeft" hidden="true" ignoreParentAlpha="true" file="" atlas="collections-background-corner" useAtlasSize="true">
+						<Size x="86" y="86" />
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="StablesCollection" x="3" y="-63" />
+						</Anchors>
+						<TexCoords left="0" right="1" top="0" bottom="1" />
+					</Texture>
+					<Texture parentKey="BGCornerBottomLeft" hidden="true" ignoreParentAlpha="true" file="" atlas="collections-background-corner" useAtlasSize="true">
+						<Size x="86" y="86" />
+						<Anchors>
+							<Anchor point="BOTTOMLEFT" relativeTo="StablesCollection" x="3" y="6" />
+						</Anchors>
+						<TexCoords left="0" right="1" top="1" bottom="0" />
+					</Texture>
+				</Layer>
+				<Size x="842" y="848" />
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="3" y="-3" />
+					<Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="-3" y="3" />
+				</Anchors>
+				<Backdrop bgFile="Interface\Collections\CollectionsBackgroundTile" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+					<BackgroundInsets>
+						<AbsInset left="11" right="12" top="12" bottom="11" />
+					</BackgroundInsets>
+					<TileSize val="256" />
+					<EdgeSize val="32" />
+				</Backdrop>
+				<Scripts>
+					<OnLoad>
+						StablesCollectionBackgroundInsetFrame_OnLoad()
+					</OnLoad>
+				</Scripts>
+			</Frame>
+			<Button name="$parentTab1" inherits="TabButtonTemplate" frameLevel="4" id="1" text="Stable Manager">
+				<Anchors>
+					<Anchor point="TOPLEFT" x="106" y="-31" />
+				</Anchors>
+				<KeyValues>
+					<KeyValue key="minWidth" value="57" keyType="string" type="number" />
+				</KeyValues>
+				<Scripts>
+					<OnClick>
+						StablesCollectionSetSubTab(self:GetParent(),1);
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="$parentTab2" inherits="TabButtonTemplate" frameLevel="4" id="2" text="Beast Tamer's Guide">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentTab1" relativePoint="RIGHT" x="8" y="0" />
+				</Anchors>
+				<KeyValues>
+					<KeyValue key="minWidth" value="57" keyType="string" type="number" />
+				</KeyValues>
+				<Scripts>
+					<OnClick>
+						StablesCollectionSetSubTab(self:GetParent(),2);
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Frame name="$parentPresetsFrame" inherits="ActivePetsPresetsFrameTemplate">
+				<Size x="127" y="516" />
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parent" relativePoint="RIGHT" x="-6" y="0" />
+				</Anchors>
+				<Layers>
+					<Layer />
+				</Layers>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				StablesCollection.presetFrameIsOpen = false;
+				StablesCollection_OnLoad(StablesCollection);
+			</OnLoad>
+			<OnShow function="StablesCollection_OnShow">
+
+			</OnShow>
+			<OnEvent function="StablesCollection_OnEvent">
+
+			</OnEvent>
+		</Scripts>
+	</Frame>
+</Ui>

@@ -496,6 +496,7 @@ do
 
 	-- Background texture
 	function M:CreateTex()
+		if not R.db["Skins"]["BgTex"] then return end
 		if self.__bgTex then return end
 
 		local frame = self
@@ -656,8 +657,7 @@ do
 		bu.Icon:SetTexture(616343)
 		bu:SetHighlightTexture(616343)
 		if tooltip then
-			bu.title = U["Tips"]
-			M.AddTooltip(bu, "ANCHOR_BOTTOMLEFT", tooltip, "info")
+			M.AddTooltip(bu, "ANCHOR_BOTTOMLEFT", tooltip, "info", true)
 		end
 
 		return bu
@@ -852,20 +852,6 @@ do
 	hooksecurefunc("PanelTemplates_DeselectTab", M.ResetTabAnchor)
 
 	-- Handle scrollframe
-	local function Scroll_OnEnter(self)
-		local thumb = self.thumb
-		if not thumb then return end
-		thumb.bg:SetBackdropColor(cr, cg, cb, .25)
-		thumb.bg:SetBackdropBorderColor(cr, cg, cb)
-	end
-
-	local function Scroll_OnLeave(self)
-		local thumb = self.thumb
-		if not thumb then return end
-		thumb.bg:SetBackdropColor(0, 0, 0, 0)
-		M.SetBorderColor(thumb.bg)
-	end
-
 	local function GrabScrollBarElement(frame, element)
 		local frameName = frame:GetDebugName()
 		return frame[element] or frameName and (_G[frameName..element] or strfind(frameName, element)) or nil
@@ -879,21 +865,17 @@ do
 		if thumb then
 			thumb:SetAlpha(0)
 			thumb:SetWidth(16)
-			self.thumb = thumb
-
 			local bg = M.CreateBDFrame(self, 0, true)
 			bg:SetPoint("TOPLEFT", thumb, 0, -2)
 			bg:SetPoint("BOTTOMRIGHT", thumb, 0, 4)
-			thumb.bg = bg
+			bg:SetBackdropColor(cr, cg, cb, .75)
 		end
 
 		local up, down = self:GetChildren()
 		M.ReskinArrow(up, "up")
 		M.ReskinArrow(down, "down")
-
-		self:HookScript("OnEnter", Scroll_OnEnter)
-		self:HookScript("OnLeave", Scroll_OnLeave)
 	end
+
 	-- Handle close button
 	function M:Texture_OnEnter()
 		if self:IsEnabled() then
@@ -966,10 +948,14 @@ do
 	function M:ReskinFilterButton()
 		M.StripTextures(self)
 		M.Reskin(self)
-		self.Text:SetPoint("CENTER")
-		M.SetupArrow(self.Icon, "right")
-		self.Icon:SetPoint("RIGHT")
-		self.Icon:SetSize(14, 14)
+		if self.Text then
+			self.Text:SetPoint("CENTER")
+		end
+		if self.Icon then
+			M.SetupArrow(self.Icon, "right")
+			self.Icon:SetPoint("RIGHT")
+			self.Icon:SetSize(14, 14)
+		end
 	end
 
 	function M:ReskinNavBar()
@@ -1199,6 +1185,9 @@ do
 	local function updatePicker()
 		local swatch = ColorPickerFrame.__swatch
 		local r, g, b = ColorPickerFrame:GetColorRGB()
+		r = M:Round(r, 2)
+		g = M:Round(g, 2)
+		b = M:Round(b, 2)
 		swatch.tex:SetVertexColor(r, g, b)
 		swatch.color.r, swatch.color.g, swatch.color.b = r, g, b
 	end
@@ -1235,8 +1224,9 @@ do
 		end
 	end
 
+	local whiteColor = {r=1, g=1, b=1}
 	function M:CreateColorSwatch(name, color)
-		color = color or {r=1, g=1, b=1}
+		color = color or whiteColor
 
 		local swatch = CreateFrame("Button", nil, self, "BackdropTemplate")
 		swatch:SetSize(18, 18)

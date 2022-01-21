@@ -1,0 +1,14 @@
+{
+    "target": "curse",
+    "searchName": "AutoTrackerAchievement",
+    "localName": "AutoTrackerAchievement",
+    "version": "AutoTrackerAchievement-9.1.5-fix01.zip",
+    "fileName": "autotrackerachievement",
+    "addonsMap": [
+        "AutoTrackerAchievement"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "name": "AutoTrackerAchievement",
+    "gameVersion": "9.1.5"
+}

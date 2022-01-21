@@ -1,4 +1,4 @@
-﻿--## Author: Foxthorn  ## Version: 1.8.0   DialogKeyDB
+﻿--## Author: Foxthorn  ## Version: 1.8.6   DialogKeyDB
 
 DialogKey = LibStub("AceAddon-3.0"):NewAddon("DialogKey", "AceConsole-3.0", "AceTimer-3.0", "AceEvent-3.0")
 
@@ -92,7 +92,7 @@ function DialogKey:ChatCommand(input)			-- Chat command handler
 	local args = {strsplit(" ", input:trim())}
 	
 	if args[1] == "v" or args[1] == "ver" or args[1] == "version" then
-		DialogKey:Print(GAME_VERSION_LABEL..": |cffffd7001.8.0|r")
+		DialogKey:Print(GAME_VERSION_LABEL..": |cffffd7001.8.6|r")
 	elseif args[1] == "add" or args[1] == "a" or args[1] == "watch" then
 		if args[2] then
 			DialogKey:WatchFrame(args[2])
@@ -752,7 +752,7 @@ function DialogKey:CreateOptionsFrame()		-- Constructs the options frame
 	
 	local subtitle = optionsContent:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
 	subtitle:SetFont(STANDARD_TEXT_FONT, 10)
-	subtitle:SetText("Version 1.8.0")
+	subtitle:SetText("Version 1.8.6")
 	subtitle:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 4, -8)
 	
 	optionsContent.keybindButtons = {}

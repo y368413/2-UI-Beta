@@ -1,6 +1,17 @@
 {
     "target": "curse",
-    "searchName": "Fake Achievement",
+    "searchName": "Real Achievement",
     "localName": "FakeAchievement",
-    "version": "2.6.6.6.1"
+    "version": "RealAchievement 2.6.6.6.1",
+    "fileName": "fake-achievement",
+    "addonsMap": [
+        "FakeAchievement-Mainline",
+        "FakeAchievement"
+    ],
+    "interfaceMap": [],
+    "children": [
+        "FakeAchievement-Mainline"
+    ],
+    "name": "Fake Achievement",
+    "gameVersion": "9.1.5"
 }

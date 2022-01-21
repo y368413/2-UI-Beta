@@ -1,0 +1,34 @@
+<Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd" xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="Blizzard_Collections.lua" />
+	<Script file="TabHookFrame.lua" />
+	<Script file="StablesCollection.lua" />
+	
+	<Button name="CollectionsJournalStablesTab" inherits="CharacterFrameTabButtonTemplate" virtual="true">
+		<Scripts>
+			<OnClick>
+				StablesCollectionsJournal_SetTab(self:GetParent(),self:GetID());
+				--CollectionsJournal.selectedTab = self:GetID();
+				PanelTemplates_SetTab(CollectionsJournal,self:GetID());
+				PlaySound(SOUNDKIT.UI_TOYBOX_TABS);
+				--StablesCollection_Show();
+			</OnClick>
+		</Scripts>
+	</Button>
+	<Frame name="CollectionsJournalAddOn" inherits="PortraitFrameTemplate" hidden="true" parent="UIParent" toplevel="true" frameStrata="HIGH" enableMouse="true">
+		<Size x="703" y="606" />
+		<Anchors>
+			<Anchor point="CENTER" x="0" y="0" />
+		</Anchors>
+		<Frames>
+			<Button name="CollectionsJournalTab6" inherits="CollectionsJournalStablesTab" id="6" text="STABLES">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="11" y="2" />
+				</Anchors>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnEvent function="TabHookFrame_OnEvent">
+			</OnEvent>
+		</Scripts>
+	</Frame>
+</Ui>

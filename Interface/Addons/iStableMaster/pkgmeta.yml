@@ -1,0 +1,56 @@
+package-as: iStableMaster
+enable-nolib-creation: no
+
+externals:
+    #BestiaAzerothica/Libs/WowAce: #Embedded
+    #   url: https://repos.wowace.com/wow/ace3/trunk/WowAce  #This works but blocks building as it includes all the libraries and the tests files some of which are .bat files that are not permitted.
+    #   tag: latest
+    BestiaAzerothica/Libs/Callback-Handler1.0: #Embedded
+       url: svn://svn.wowace.com/wow/callbackhandler/mainline/trunk/CallbackHandler-1.0
+       tag: latest
+    BestiaAzerothica/Libs/LibStub: #Embedded
+        url: https://repos.wowace.com/wow/libstub/trunk
+        tag: latest
+  
+  
+  
+
+ignore: # Files and directories beginning with a dot (such as .git) are automatically ignored, as is the pgkmeta file itself.
+    - iStableMaster.wowproj
+    - pkgemeta.yml
+    - Logs
+    - iStableMaster.wowsln.user
+    - iStableMaster.wowsln
+    - BestiaAzerothica
+    - Excluded
+    - Libs/WowAce/tests
+
+
+manual-changelog:
+     filename: CHANGELOG.txt
+	 markup-type: markdown
+
+license-output: LICENSE.txt
+
+tools-used:
+    #- data-tools
+    - AddonStudioForWoW4.0 - The UI engine used in this project, check out the discord for more
+    - Adobe Photoshop + blp integration - for art creation and manipulation
+    - BLPView - file extension install to allow windows to preview blp files. wowinterface.com
+    - Git - for version control
+    - Miro online infinite canvas - miro.com
+    - Microsoft Visual Studio Code - For lightweight changes to project and solution files etc.
+    - SourceTree App - To keep track of tags and branches
+    - Bitbucket secondary Remote Repository - for later multiplatform distribution
+    - World of Warcraft Toolkit - An extracted Toolkit provided to us through World of Warcraft command line
+
+# Unused tags below here
+
+#required-dependencies:
+    #- 221710-dear-cupcake
+#optional-dependencies:
+    #- 220002-junkit
+#move-folders:
+  #  BestiaAzerothica/*: iStableMaster     
+  #  KillerCupcakes/Modules/Fire: KillerCupcakesOnFire # This moves KillerCupcakes/Modules/Fire to the same level as KillerCupcakes, as KillerCupCakesOnFire
+  #  KillerCupcakes/Modules/Sky: KillerCupcakesInTheSky

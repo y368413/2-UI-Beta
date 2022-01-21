@@ -179,6 +179,7 @@ local list = {
 		{AuraID = 345499, UnitID = "player"},	-- 执政官的祝福
 		{AuraID = 339461, UnitID = "player"},	-- 猎手坚韧
 		{AuraID = 325381, UnitID = "player", Flash = true},	-- 争先打击
+		{AuraID = 351414, UnitID = "player", Flash = true},	-- 切肉者之眼
 		{AuraID = 342774, UnitID = "player"},	-- 繁华原野
 		{AuraID = 333218, UnitID = "player"},	-- 废土礼节
 		{AuraID = 336885, UnitID = "player"},	-- 抚慰阴影
@@ -187,6 +188,7 @@ local list = {
 		{AuraID = 333961, UnitID = "player"},	-- 行动的召唤：布隆
 		{AuraID = 333943, UnitID = "player"},	-- 源生重槌
 		{AuraID = 339928, UnitID = "player", Flash = true},	-- 残酷投射
+		{AuraID = 352917, UnitID = "player"},	-- 崭新决心
 		-- S2，心能/统御碎片
 		{AuraID = 357852, UnitID = "player"},	-- 激励
 		{AuraID = 356364, UnitID = "player"},	-- 冰冷的心

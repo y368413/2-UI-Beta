@@ -154,7 +154,6 @@ local configDefaults = {
 	hideUntrackedPOI = false,
 	hideFilteredPOI = true,
 	showContinentPOI = false,
-	showComparisonRight = false,
 	sortMethod = 2,
 	extendedInfo = false,
 	saveFilters = true,

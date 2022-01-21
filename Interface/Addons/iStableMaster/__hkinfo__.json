@@ -1,0 +1,14 @@
+{
+    "target": "curse",
+    "searchName": "iStableMaster",
+    "localName": "iStableMaster",
+    "version": "Alpha-V0.34d-[a032831]",
+    "fileName": "istablemaster",
+    "addonsMap": [
+        "iStableMaster"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "name": "iStableMaster",
+    "gameVersion": "9.1.5"
+}

@@ -375,14 +375,16 @@ Private.format_types = {
   },
   Unit = {
     display = L["Formats |cFFFF0000%unit|r"],
-    AddOptions = function(symbol, hidden, addOption, get)
-      addOption(symbol .. "_color", {
-        type = "select",
-        name = L["Color"],
-        width = WeakAuras.normalWidth,
-        values = Private.unit_color_types,
-        hidden = hidden,
-      })
+    AddOptions = function(symbol, hidden, addOption, get, withoutColor)
+      if not withoutColor then
+        addOption(symbol .. "_color", {
+          type = "select",
+          name = L["Color"],
+          width = WeakAuras.normalWidth,
+          values = Private.unit_color_types,
+          hidden = hidden,
+        })
+      end
       addOption(symbol .. "_realm_name", {
         type = "select",
         name = L["Realm Name"],
@@ -409,8 +411,8 @@ Private.format_types = {
         end
       })
     end,
-    CreateFormatter = function(symbol, get)
-      local color = get(symbol .. "_color", true)
+    CreateFormatter = function(symbol, get, withoutColor)
+      local color = not withoutColor and get(symbol .. "_color", true)
       local realm = get(symbol .. "_realm_name", "never")
       local abbreviate = get(symbol .. "_abbreviate", false)
       local abbreviateMax = get(symbol .. "_abbreviate_max", 8)
@@ -500,14 +502,16 @@ Private.format_types = {
   },
   guid = {
     display = L["Formats Player's |cFFFF0000%guid|r"],
-    AddOptions = function(symbol, hidden, addOption, get)
-      addOption(symbol .. "_color", {
-        type = "select",
-        name = L["Color"],
-        width = WeakAuras.normalWidth,
-        values = Private.unit_color_types,
-        hidden = hidden,
-      })
+    AddOptions = function(symbol, hidden, addOption, get, withoutColor)
+      if not withoutColor then
+        addOption(symbol .. "_color", {
+          type = "select",
+          name = L["Color"],
+          width = WeakAuras.normalWidth,
+          values = Private.unit_color_types,
+          hidden = hidden,
+        })
+      end
       addOption(symbol .. "_realm_name", {
         type = "select",
         name = L["Realm Name"],
@@ -533,8 +537,8 @@ Private.format_types = {
         end
       })
     end,
-    CreateFormatter = function(symbol, get)
-      local color = get(symbol .. "_color", true)
+    CreateFormatter = function(symbol, get, withoutColor)
+      local color = not withoutColor and get(symbol .. "_color", true)
       local realm = get(symbol .. "_realm_name", "never")
       local abbreviate = get(symbol .. "_abbreviate", false)
       local abbreviateMax = get(symbol .. "_abbreviate_max", 8)
@@ -1218,6 +1222,9 @@ Private.combatlog_raid_mark_check_type = {
   "|TInterface\\TARGETINGFRAME\\UI-RaidTargetingIcon_8:14|t " .. RAID_TARGET_8, -- Skull
   L["Any"]
 }
+
+Private.raid_mark_check_type = CopyTable(Private.combatlog_raid_mark_check_type)
+Private.raid_mark_check_type[9] = nil
 
 Private.orientation_types = {
   HORIZONTAL_INVERSE = L["Left to Right"],
@@ -2642,6 +2649,7 @@ end
 Private.update_categories = {
   {
     name = "anchor",
+    -- Note, these are special cased for child auras and considered arrangment
     fields = {
       "xOffset",
       "yOffset",
@@ -2760,6 +2768,8 @@ Private.internal_fields = {
   internalVersion = true,
   sortHybridTable = true,
   tocversion = true,
+  parent = true,
+  controlledChildren = true,
 }
 
 -- fields that are not included in exported data
@@ -2768,6 +2778,14 @@ Private.internal_fields = {
 Private.non_transmissable_fields = {
   controlledChildren = true,
   parent = true,
+  authorMode = true,
+  skipWagoUpdate = true,
+  ignoreWagoUpdate = true,
+  preferToUpdate = true,
+}
+
+-- For nested groups, we do transmit parent + controlledChildren
+Private.non_transmissable_fields_v2000 = {
   authorMode = true,
   skipWagoUpdate = true,
   ignoreWagoUpdate = true,

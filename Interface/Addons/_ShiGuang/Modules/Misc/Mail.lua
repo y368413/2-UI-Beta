@@ -190,8 +190,7 @@ function MISC:MailBox_ContactList()
 
 	local editbox = M.CreateEditBox(list, 120, 20)
 	editbox:SetPoint("TOPLEFT", 5, -25)
-	editbox.title = U["Tips"]
-	M.AddTooltip(editbox, "ANCHOR_BOTTOMRIGHT", I.InfoColor..U["AddContactTip"])
+	M.AddTooltip(editbox, "ANCHOR_BOTTOMRIGHT", I.InfoColor..U["AddContactTip"], true)
 	local swatch = M.CreateColorSwatch(list, "")
 	swatch:SetPoint("LEFT", editbox, "RIGHT", 5, 0)
 	local add = M.CreateButton(list, 42, 22, ADD, 14)

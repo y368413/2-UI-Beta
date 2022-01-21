@@ -1,0 +1,8 @@
+## Interface: 90105
+## Title: Better Item Preview
+## Author: Trelmarq
+## Version: 2.2.3
+## OptionalDeps: MogIt
+## SavedVariables: BetterItemPreview
+
+core.lua

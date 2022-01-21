@@ -1,0 +1,252 @@
+﻿<Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="AutoTrackerAchievement.lua" />
+	<Frame name="AutoTrackerAchievement" hidden="true" parent="UIParent" toplevel="true" enableMouse="true">
+		<Size>
+			<AbsDimension x="296" y="330" />
+		</Size>
+		<Anchors>
+			<Anchor point="CENTER">
+				<Offset x="-131" y="124" />
+			</Anchor>
+		</Anchors>
+		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+			<BackgroundInsets>
+				<AbsInset left="11" right="12" top="12" bottom="11" />
+			</BackgroundInsets>
+			<TileSize>
+				<AbsValue val="32" />
+			</TileSize>
+			<EdgeSize>
+				<AbsValue val="32" />
+			</EdgeSize>
+		</Backdrop>
+		<Layers>
+			<Layer>
+				<Texture urgency="5" name="AutoTrackerAchievementFrameHeader" file="Interface\DialogFrame\UI-DialogBox-Header">
+					<Size x="350" y="68" />
+					<Anchors>
+						<Anchor point="TOP">
+							<Offset y="12" />
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<FontString inherits="GameFontNormal" text="AutoTrackerAchievement">
+					<Anchors>
+						<Anchor point="TOP" relativeTo="AutoTrackerAchievementFrameHeader">
+							<Offset y="-15" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+			<Layer level="OVERLAY">
+				<FontString name="version" inherits="GameFontNormal" text="Version 7.3">
+					<Size>
+						<AbsDimension x="296" y="29" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset y="-20" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString inherits="GameFontNormal" text="by Garikover - EU Uldaman">
+					<Size>
+						<AbsDimension x="296" y="29" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset y="-40" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="Text1" inherits="GameFontNormal" text="" justifyH="LEFT">
+					<Size>
+						<AbsDimension x="93" y="30" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="55" y="-82" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="Text2" inherits="GameFontNormal" text="" justifyH="LEFT">
+					<Size>
+						<AbsDimension x="93" y="30" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="55" y="-118" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="Text3" inherits="GameFontNormal" text="" justifyH="LEFT">
+					<Size>
+						<AbsDimension x="93" y="30" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="55" y="-154" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="Text4" inherits="GameFontNormal" text="" justifyH="LEFT">
+					<Size>
+						<AbsDimension x="93" y="30" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="55" y="-190" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="Text5" inherits="GameFontNormal" text="" justifyH="LEFT">
+					<Size>
+						<AbsDimension x="93" y="30" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="55" y="-226" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<CheckButton name="$parent_CheckButton1" inherits="UICheckButtonTemplate" text="CheckButton1">
+				<Size>
+					<AbsDimension x="30" y="30" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="19" y="-82" />
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						Ata_CheckButton1_OnClick();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parent_CheckButton2" inherits="UICheckButtonTemplate" text="CheckButton2">
+				<Size>
+					<AbsDimension x="30" y="30" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="19" y="-118" />
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						Ata_CheckButton2_OnClick();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parent_CheckButton3" inherits="UICheckButtonTemplate" text="CheckButton3">
+				<Size>
+					<AbsDimension x="30" y="30" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="19" y="-154" />
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						Ata_CheckButton3_OnClick();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parent_CheckButton4" inherits="UICheckButtonTemplate" text="CheckButton4">
+				<Size>
+					<AbsDimension x="30" y="30" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="19" y="-190" />
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						Ata_CheckButton4_OnClick();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parent_CheckButton5" inherits="UICheckButtonTemplate" text="CheckButton5">
+				<Size>
+					<AbsDimension x="30" y="30" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="19" y="-226" />
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						Ata_CheckButton5_OnClick();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+			<Button inherits="UIPanelButtonTemplate" text="Reset">
+				<Size>
+					<AbsDimension x="101" y="34" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="19" y="-280" />
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						Ata_Button2_OnClick();
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button inherits="UIPanelButtonTemplate" text="Fermer">
+				<Size>
+					<AbsDimension x="101" y="34" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="126" y="-280" />
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						Ata_Button1_OnClick();
+					</OnClick>
+				</Scripts>
+			</Button>
+			<EditBox name="defautval" inherits="InputBoxTemplate" text="arg">
+				<Size>
+					<AbsDimension x="100" y="30" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="148" y="-226" />
+					</Anchor>
+				</Anchors>
+			</EditBox>
+			<Button inherits="UIPanelButtonTemplate" parent="AutoTrackerAchievement" text="Ok">
+				<Size>
+					<AbsDimension x="30" y="20" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="250" y="-231" />
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						Ata_Button3_OnClick();
+					</OnClick>
+				</Scripts>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				AutoTrackerAchievement_OnLoad(self);
+			</OnLoad>
+		</Scripts>
+	</Frame>
+</Ui>

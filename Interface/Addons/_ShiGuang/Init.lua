@@ -117,7 +117,7 @@ M:RegisterEvent("PLAYER_LOGIN", function()
 	-- Initial
 	M:SetupUIScale()
 	M:RegisterEvent("UI_SCALE_CHANGED", UpdatePixelScale)
-	M:SetSmoothingAmount(R.db["UFs"]["SmoothAmount"])
+	M:SetSmoothingAmount(MaoRUIDB["SmoothAmount"])
 	R.margin = 3
 
 	for _, module in next, initQueue do

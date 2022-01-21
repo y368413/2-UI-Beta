@@ -956,7 +956,7 @@ NS.SetMode = function( mode, noReset )
 				auctionCategoryIndexes[AuctionCategories[2].subCategories[5].subCategories[7].name] = { 2, 5, 7 };
 				-- Categories
 				local categories,categoryName = {};
-				for i = 1, NS.NUM_TRANSMOG_COLLECTION_TYPES do
+				for i = 1, NS.NUM_TRANSMOG_COLLECTION_TYPES - 1 do				--for i = 1, NS.NUM_TRANSMOG_COLLECTION_TYPES do
 					categoryName = C_TransmogCollection.GetCategoryInfo( i );
 					NS.appearanceCollection.categoryNames[i] = categoryName or false;
 					if categoryName and categoryName ~= TABARDSLOT and auctionCategoryIndexes[categoryName] then
@@ -2960,7 +2960,8 @@ NS.GetAppearanceSourceInfo = function( itemLink )
 	end
     NS.Model:Undress();
     NS.Model:TryOn( itemLink, slotId );
-    local sourceID = NS.Model:GetSlotTransmogSources( slotId );
+    local itemTransmogInfo = NS.Model:GetItemTransmogInfo(slotId);
+    local sourceID = itemTransmogInfo and itemTransmogInfo.appearanceID or Constants.Transmog.NoTransmogID;
     if sourceID then
 		local _,appearanceID = C_TransmogCollection.GetAppearanceSourceInfo( sourceID );
         return appearanceID, sourceID;
