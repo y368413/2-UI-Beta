@@ -27,7 +27,6 @@ local function ReskinChatScroll(self)
 end
 
 tinsert(R.defaultThemes, function()
-	--if not R.db["Skins"]["BlizzardSkins"] then return end
 
 	-- Battlenet toast frame
 	BNToastFrame:SetBackdrop(nil)
@@ -82,7 +81,6 @@ tinsert(R.defaultThemes, function()
 	ChatFrameToggleVoiceDeafenButton:SetSize(20, 20)
 	M.Reskin(ChatFrameToggleVoiceMuteButton)
 	ChatFrameToggleVoiceMuteButton:SetSize(20, 20)
-	--M.Reskin(ChatFrameMenuButton)
 	--ChatFrameMenuButton:SetSize(20, 20)
 	--ChatFrameMenuButton:SetNormalTexture(homeTex)
 	--ChatFrameMenuButton:SetPushedTexture(homeTex)

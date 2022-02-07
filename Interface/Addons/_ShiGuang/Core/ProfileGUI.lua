@@ -22,6 +22,16 @@ StaticPopupDialogs["RESET_NDUI"] = {
 	whileDead = 1,
 }
 
+StaticPopupDialogs["RESET_NDUI_HELPINFO"] = {
+	text = U["Reset NDui Helpinfo"],
+	button1 = YES,
+	button2 = NO,
+	OnAccept = function()
+		wipe(MaoRUIDB["Help"])
+	end,
+	whileDead = 1,
+}
+
 StaticPopupDialogs["NDUI_RESET_PROFILE"] = {
 	text = U["Reset current profile?"],
 	button1 = YES,

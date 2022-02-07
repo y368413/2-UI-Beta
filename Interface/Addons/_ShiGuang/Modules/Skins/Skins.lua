@@ -75,7 +75,7 @@ function S:OnLogin()
 	local media = LibStub and LibStub("LibSharedMedia-3.0", true)
 	if media then
 		media:Register("statusbar", "normTex", I.normTex)
-		media:Register("statusbar", "ShiGuang", [[Interface\Addons\_ShiGuang\Media\Modules\Raid\ColorBar]])
+		media:Register("statusbar", "_ShiGuang", [[Interface\Addons\_ShiGuang\Media\Modules\Raid\ColorBar]])
 		media:Register("statusbar", "HalfStyle", [[Interface\Addons\_ShiGuang\Media\Modules\Skada\YaSkada05]])
 		media:Register("statusbar", "AtlzSkada", [[Interface\Addons\_ShiGuang\Media\Modules\Skada\AtlzSkada]])
 		media:Register("statusbar", "Yaskada", [[Interface\Addons\_ShiGuang\Media\Modules\Skada\Yaskada]])
@@ -113,6 +113,7 @@ function S:GetToggleDirection()
 end
 
 local toggleFrames = {}
+
 local function CreateToggleButton(parent)
 	local bu = CreateFrame("Button", nil, parent)
 	bu:SetSize(20, 80)

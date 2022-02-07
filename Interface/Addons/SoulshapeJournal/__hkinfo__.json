@@ -2,6 +2,13 @@
     "target": "curse",
     "searchName": "Soulshape Journal",
     "localName": "SoulshapeJournal",
-    "version": "0.8",
-    "fileName": "soulshape-journal"
+    "version": "0.9.1",
+    "fileName": "soulshape-journal",
+    "addonsMap": [
+        "SoulshapeJournal"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "name": "SoulshapeJournal",
+    "gameVersion": "9.1.5"
 }

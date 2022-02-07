@@ -992,7 +992,7 @@ function UF:CreateBuffs(self)
 		bu["growth-x"] = "LEFT"
 		bu:ClearAllPoints()
 		bu:SetPoint("BOTTOMRIGHT", self.Health, -R.mult, R.mult)
-		bu.num = (self.isSimpleMode or not R.db["UFs"]["ShowRaidBuff"]) and 0 or 3
+		bu.num = (self.raidType == "simple" or not R.db["UFs"]["ShowRaidBuff"]) and 0 or 3
 		bu.size = R.db["UFs"]["RaidBuffSize"]
 		bu.CustomFilter = UF.RaidBuffFilter
 		bu.disableMouse = true
@@ -1518,7 +1518,6 @@ function UF:CreateSwing(self)
 end
 
 function UF:CreateQuakeTimer(self)
-	--if not R.db["UFs"]["Castbars"] then return end
 
 	local bar = CreateFrame("StatusBar", nil, self)
 	bar:SetSize(R.db["UFs"]["PlayerCBWidth"], R.db["UFs"]["PlayerCBHeight"])

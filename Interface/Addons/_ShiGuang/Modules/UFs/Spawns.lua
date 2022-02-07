@@ -16,7 +16,6 @@ end
 
 local function CreatePlayerStyle(self)
 	self.mystyle = "player"
-	--UF:CreateCastBar(self)
 	UF:CreateQuestSync(self)
 	--if R.db["UFs"]["Castbars"] then
 		--UF:ReskinMirrorBars()
@@ -29,7 +28,6 @@ end
 
 local function CreateTargetStyle(self)
 	self.mystyle = "target"
-	--UF:CreateCastBar(self)
 end
 
 local function CreateFocusStyle(self)

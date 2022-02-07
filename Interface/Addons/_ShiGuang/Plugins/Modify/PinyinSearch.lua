@@ -1229,7 +1229,7 @@ local addons = {
         local oldFunc =  NDui.cargBags.plugins["SearchBar"]
         NDui.cargBags.plugins["SearchBar"] = function(...)
             local searchBox = oldFunc(...)
-            if searchBox == NDui_BackpackBag.Search then
+            if searchBox == UI_BackpackBag.Search then
                 PinyinSearch.AttachEditBox(searchBox, PinyinSearch["Container"], true)
                 searchBox:HookScript("OnShow", function()
                     PinyinSearch["Container"]:Update()

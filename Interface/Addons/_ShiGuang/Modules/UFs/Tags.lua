@@ -241,7 +241,7 @@ oUF.Tags.Methods["npctitle"] = function(unit)
 	M.ScanTip:SetOwner(UIParent, "ANCHOR_NONE")
 	M.ScanTip:SetUnit(unit)
 
-	local title = _G[format("NDui_ScanTooltipTextLeft%d", GetCVarBool("colorblindmode") and 3 or 2)]:GetText()
+	local title = _G[format("UI_ScanTooltipTextLeft%d", GetCVarBool("colorblindmode") and 3 or 2)]:GetText()
 	if title and not strfind(title, "^"..LEVEL) then
 		return title
 	end

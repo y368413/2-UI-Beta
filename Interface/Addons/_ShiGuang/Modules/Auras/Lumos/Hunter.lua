@@ -285,7 +285,7 @@ PetHealthWarningFrame:SetScript("OnEvent",function(Event,Arg1,...)
 			PetHealthWarningFrame:SetWidth(450)
 			PetHealthWarningFrame:SetHeight(200)
 			PetHealthWarningFrame:SetPoint("CENTER",UIParent,"CENTER",0,360)	
-			PetHealthWarningFrame:SetFont("Interface\\addons\\Ace3\\ShiGuang\\Media\\Fonts\\RedCircl.TTF",36,"THICKOUTLINE")
+			PetHealthWarningFrame:SetFont("Interface\\addons\\Ace3\\_ShiGuang\\Media\\Fonts\\RedCircl.TTF",36,"THICKOUTLINE")
 			PetHealthWarningFrame:SetShadowColor(0.00,0.00,0.00,0.75)
 			PetHealthWarningFrame:SetShadowOffset(3.00,-3.00)
 			PetHealthWarningFrame:SetJustifyH("CENTER")		
@@ -298,7 +298,7 @@ PetHealthWarningFrame:SetScript("OnEvent",function(Event,Arg1,...)
 	end	
 	if(Event=="UNIT_HEALTH" and Arg1=="pet")then
 			if(floor((UnitHealth("pet")/UnitHealthMax("pet"))*100)<=PetHealthWarningFrame_Threshold and PetHealthWarningFrame_Warned==false)then
-				PlaySoundFile("Interface\\AddOns\\Ace3\\ShiGuang\\Media\\Sounds\\Beep.ogg")	
+				PlaySoundFile("Interface\\AddOns\\Ace3\\_ShiGuang\\Media\\Sounds\\Beep.ogg")	
 				PetHealthWarningFrame:AddMessage("- CRITICAL PET HEALTH -", 1, 0, 0, nil, 3)
 				PetHealthWarningFrame_Warned=true
 				return

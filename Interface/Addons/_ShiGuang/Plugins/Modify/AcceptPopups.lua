@@ -1,4 +1,4 @@
---[[
+﻿--[[
 
 ## Title: AcceptPopups
 ## Notes: Accepts a dialog for a day, week or month
@@ -12,6 +12,9 @@ IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
 OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
+
+1.5 (2022-01-17) by Dahk Celes
+- Options menu tooltips to describe each popup type.
 
 1.4 (2021-12-11) by Dahk Celes
 - Add popups from the options menu
@@ -118,7 +121,7 @@ do
 			if GameTooltip:GetOwner() ~= self then
 				GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
 			end
-			GameTooltip:AddLine("AcceptPopups")
+			--GameTooltip:AddLine("AcceptPopups")
 			GameTooltip:AddLine("|cffccccff" .. SHIFT_KEY_TEXT .. "|r|cff999999 - " .. DAYS_ABBR:format(AcceptPopupsOptions.shiftDays or 1))
 			GameTooltip:AddLine("|cffccccff" .. CTRL_KEY_TEXT .. "|r|cff999999 - " .. DAYS_ABBR:format(AcceptPopupsOptions.ctrlDays or 7))
 			GameTooltip:AddLine("|cffccccff" .. ALT_KEY_TEXT .. "|r|cff999999 - " .. DAYS_ABBR:format(AcceptPopupsOptions.altDays or 30))
@@ -158,17 +161,24 @@ do
 	StaticPopup2Button1:HookScript("PreClick", popupPreClick)
 
 	StaticPopup3Button1:HookScript("OnShow", popupOnShow)
-	StaticPopup2Button1:HookScript("OnHide", popupOnHide)
+	StaticPopup3Button1:HookScript("OnHide", popupOnHide)
 	StaticPopup3Button1:HookScript("PreClick", popupPreClick)
 end
 
 
 -------------------------
 -- Options Menu
+if GetLocale() == "zhCN" then
+  AcceptPopupsLocal = "|cffe6cc80[弹窗]|r自动确认";
+elseif GetLocale() == "zhTW" then
+  AcceptPopupsLocal = "|cffe6cc80[弹窗]|r自动确认";
+else
+  AcceptPopupsLocal = "AcceptPopups";
+end
 
 do
 	local panel = CreateFrame("Frame")
-	panel.name = "AcceptPopups"
+	panel.name = AcceptPopupsLocal
 	panel:Hide()
 	InterfaceOptions_AddCategory(panel)
 	
@@ -233,6 +243,9 @@ do
 					GameTooltip:AddLine("|n|cffffffff" .. KEY_BUTTON2 .. "|r|cffff6666 - " .. CANCEL)
 				else
 					GameTooltip:AddLine("|n|cffffffff" .. KEY_BUTTON2 .. "|r|cffff6666 - " .. REMOVE)
+				end
+				if StaticPopupDialogs[button.key] then
+					GameTooltip:AddLine("|n" .. StaticPopupDialogs[button.key].text, 0.5, 0.5, 0.5)
 				end
 				GameTooltip:Show()
 			end)
@@ -299,6 +312,9 @@ do
 			for __, key in ipairs(keys) do
 				info.text = key
 				info.arg1 = key
+				info.tooltipTitle = StaticPopupDialogs[key].text and key
+				info.tooltipText = StaticPopupDialogs[key].text
+				info.tooltipOnButton = true
 				UIDropDownMenu_AddButton(info, 2)
 			end
 		end

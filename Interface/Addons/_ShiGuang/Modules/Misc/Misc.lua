@@ -207,7 +207,7 @@ end
 
 -- Reanchor Vehicle
 function MISC:VehicleSeatMover()
-	local frame = CreateFrame("Frame", "NDuiVehicleSeatMover", UIParent)
+	local frame = CreateFrame("Frame", "UIVehicleSeatMover", UIParent)
 	frame:SetSize(125, 125)
 	M.Mover(frame, U["VehicleSeat"], "VehicleSeat", {"BOTTOMRIGHT", UIParent, -285, 21})
 
@@ -221,7 +221,7 @@ end
 
 -- Reanchor UIWidgetBelowMinimapContainerFrame
 function MISC:UIWidgetFrameMover()
-	local frame = CreateFrame("Frame", "NDuiUIWidgetMover", UIParent)
+	local frame = CreateFrame("Frame", "UIWidgetMover", UIParent)
 	frame:SetSize(210, 60)
 	M.Mover(frame, U["UIWidgetFrame"], "UIWidgetFrame", {"TOPRIGHT", Minimap, "BOTTOMRIGHT", 0, -43})
 
@@ -235,7 +235,7 @@ end
 
 -- Reanchor MawBuffsBelowMinimapFrame
 function MISC:MoveMawBuffsFrame()
-	local frame = CreateFrame("Frame", "NDuiMawBuffsMover", UIParent)
+	local frame = CreateFrame("Frame", "UIMawBuffsMover", UIParent)
 	frame:SetSize(235, 28)
 	local mover = M.Mover(frame, MAW_POWER_DESCRIPTION, "MawBuffs", {"TOPRIGHT", UIParent, -80, -225})
 	frame:SetPoint("TOPLEFT", mover, 4, 12)
@@ -270,7 +270,7 @@ end
 
 -- Reanchor ObjectiveTracker
 function MISC:MoveQuestTracker()
-	local frame = CreateFrame("Frame", "NDuiQuestMover", UIParent)
+	local frame = CreateFrame("Frame", "UIQuestMover", UIParent)
 	frame:SetSize(240, 43)
 	M.Mover(frame, U["QuestTracker"], "QuestTracker", {"TOPLEFT","UIParent","TOPLEFT",26,-21})
 
@@ -503,7 +503,7 @@ end
 
 -- Drag AltPowerbar
 do
-	local mover = CreateFrame("Frame", "NDuiAltBarMover", PlayerPowerBarAlt)
+	local mover = CreateFrame("Frame", "UIAltBarMover", PlayerPowerBarAlt)
 	mover:SetPoint("CENTER", UIParent, 0, -260)
 	mover:SetSize(20, 20)
 	M.CreateMF(PlayerPowerBarAlt, mover)
@@ -764,7 +764,7 @@ function MISC:JerryWay()
 		end
 	end
 
-	SlashCmdList["NDUI_JERRY_WAY"] = function(msg)
+	SlashCmdList["UI_JERRY_WAY"] = function(msg)
 		msg = gsub(msg, "(%d)[%.,] (%d)", "%1 %2")
 		local x, y, z = strmatch(msg, "(%S+)%s(%S+)(.*)")
 		if x and y then
@@ -782,7 +782,7 @@ function MISC:JerryWay()
 			end
 		end
 	end
-	SLASH_NDUI_JERRY_WAY1 = "/way"
+	SLASH_UI_JERRY_WAY1 = "/way"
 end
 
 function MISC:BaudErrorFrameHelpTip()
@@ -835,7 +835,7 @@ function MISC:QuickMenuButton()
 		{text = COPY_NAME, func = MISC.MenuButton_CopyName, color = {1, 0, 0}},
 	}
 
-	local frame = CreateFrame("Frame", "NDuiMenuButtonFrame", DropDownList1)
+	local frame = CreateFrame("Frame", "UIMenuButtonFrame", DropDownList1)
 	frame:SetSize(10, 10)
 	frame:SetPoint("TOPLEFT")
 	frame:Hide()

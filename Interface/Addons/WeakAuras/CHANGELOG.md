@@ -1,17 +1,21 @@
-# [3.7.6-4-gd1930c4a](https://github.com/WeakAuras/WeakAuras2/tree/d1930c4a860f857ab8d37372fe0b1bd93d1da170) (2022-01-19)
+# [3.7.8](https://github.com/WeakAuras/WeakAuras2/tree/3.7.8) (2022-01-27)
 
-[Full Changelog](https://github.com/WeakAuras/WeakAuras2/compare/3.7.6...d1930c4a860f857ab8d37372fe0b1bd93d1da170)
+[Full Changelog](https://github.com/WeakAuras/WeakAuras2/compare/3.7.7...3.7.8)
 
-InfusOnWoW (1):
+## Highlights
 
-- Fix validate not actually moving conditions
+ - Bug fixes 
 
-Stanzilla (2):
+## Commits
 
-- Update TOC for BCC Patch 2.5.3
-- Update WeakAurasModelPaths from wow.tools
+Translit (1):
 
-mrbuds (1):
+- additional WA logo textures (#3451)
 
-- Allow unitId filtering on various events, fixes #3432 (#3433)
+mrbuds (4):
+
+- fix cast trigger for tbc 2.5.3 #3448
+- Fixing transmission and add a 5mn expiration timer on linked auras
+- fix glow in templates
+- fix bad order of aurabar foreground when importing old version, #3449
 

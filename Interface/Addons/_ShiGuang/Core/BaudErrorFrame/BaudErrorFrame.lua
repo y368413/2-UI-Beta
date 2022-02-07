@@ -2,7 +2,6 @@
 local ErrorList = {}
 local SoundTime = 0
 local EnableTaint = true
-local EnableSound = true
 ShiGuangDB.BaudErrorFrameConfig = ShiGuangDB.BaudErrorFrameConfig or {}
 
 local function RegisterTaintEvents(self)
@@ -35,6 +34,35 @@ function BaudErrorFrame_OnLoad(self)
 	local old_seterrorhandler = seterrorhandler
 	old_seterrorhandler(BaudErrorFrameHandler)
 	seterrorhandler = function() end
+
+	local soundButton = CreateFrame("Frame", nil, BaudErrorFrame)
+	soundButton:SetSize(25, 25)
+	soundButton:SetPoint("TOPRIGHT", -10, -10)
+	local icon = soundButton:CreateTexture(nil, "ARTWORK")
+	icon:SetAllPoints()
+	icon:SetTexture([[Interface\COMMON\VOICECHAT-SPEAKER]])
+
+	local function updateColor()
+		if ShiGuangDB.BaudErrorFrameConfig.enableSound then
+			icon:SetVertexColor(1, 1, 0)
+		else
+			icon:SetVertexColor(1, 0, 0)
+		end
+	end
+
+	soundButton:SetScript("OnMouseUp", function(self)
+		ShiGuangDB.BaudErrorFrameConfig.enableSound = not ShiGuangDB.BaudErrorFrameConfig.enableSound
+		updateColor()
+		PlaySoundFile("Interface\\AddOns\\_ShiGuang\\Media\\Sounds\\Sonar.ogg", "Master")
+		self:GetScript("OnEnter")(self)
+	end)
+	soundButton:SetScript("OnShow", updateColor)
+	soundButton:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+		GameTooltip:AddLine(SOUND..": "..(ShiGuangDB.BaudErrorFrameConfig.enableSound and "|cff00ff00"..ENABLE or "|cffff0000"..DISABLE))
+		GameTooltip:Show()
+	end)
+	soundButton:SetScript("OnLeave", BaudErrorFrameMinimapButton_OnLeave)
 end
 
 function BaudErrorFrame_OnEvent(self, event, ...)
@@ -75,7 +103,7 @@ function BaudErrorFrameHandler(Error)
 end
 
 function BaudErrorFrameShowError(Error)
-	if not EnableSound then return end
+	if not ShiGuangDB.BaudErrorFrameConfig.enableSound then return end
 
 	if GetTime() > SoundTime then
 		--PlaySound(48942, "Master")
@@ -85,7 +113,7 @@ function BaudErrorFrameShowError(Error)
 end
 
 function BaudErrorFrameAdd(Error, Retrace)
-	if Error:match("script ran too long") and not EnableTaint then return end
+	if Error:match("script ran too long") and not enableTaint then return end
 
 	for _, Value in pairs(ErrorList) do
 		if Value.Error == Error then

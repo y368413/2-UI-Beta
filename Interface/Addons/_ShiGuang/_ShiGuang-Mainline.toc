@@ -1,9 +1,9 @@
 ## Interface: 90105
 ## Title:- |TInterface\Addons\_ShiGuang\Media\2UI:0|t -
-## Author: ShiGuang、TuTu、Siweia
+## Author: _ShiGuang、TuTu、Siweia
 ## Notes: Time Flies...
 ## Version: 4.0.1
-## SavedVariables: MaoRUIDB,MaoRUISetDB,ShiGuangDB,CastbarsDB,CurrencyTrackingDB,VLegionToDo,WQADB,CovenantForgeDB,CovenantForgeSavedPaths,CovenantForgeWeights
+## SavedVariables: MaoRUIDB,MaoRUISetDB,ShiGuangDB,CastbarsDB,CurrencyTrackingDB,VLegionToDo,WQADB,CovenantForgeDB,CovenantForgeSavedPaths,CovenantForgeWeights,AcceptPopupsUntil,AcceptPopupsOptions
 ## SavedVariablesPerCharacter: MaoRUIPerDB,ShiGuangPerDB,DEX_SAVE
 ## X-Support: 9.1.5
 ## X-Repple: 2 UI

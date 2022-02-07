@@ -185,7 +185,7 @@ do
 	local ITEM_SPELL_TRIGGER_ONEQUIP = ITEM_SPELL_TRIGGER_ONEQUIP
 	local RETRIEVING_ITEM_INFO = RETRIEVING_ITEM_INFO
 
-	local tip = CreateFrame("GameTooltip", "NDui_ScanTooltip", nil, "GameTooltipTemplate")
+	local tip = CreateFrame("GameTooltip", "UI_ScanTooltip", nil, "GameTooltipTemplate")
 	M.ScanTip = tip
 
 	function M:InspectItemTextures()
@@ -297,7 +297,7 @@ do
 				tip:SetHyperlink(link)
 			end
 
-			local firstLine = _G.NDui_ScanTooltipTextLeft1:GetText()
+			local firstLine = _G.UI_ScanTooltipTextLeft1:GetText()
 			if firstLine == RETRIEVING_ITEM_INFO then
 				return "tooSoon"
 			end
@@ -409,7 +409,7 @@ do
 	end
 
 	-- Dropdown menu
-	M.EasyMenu = CreateFrame("Frame", "NDui_EasyMenu", UIParent, "UIDropDownMenuTemplate")
+	M.EasyMenu = CreateFrame("Frame", "UI_EasyMenu", UIParent, "UIDropDownMenuTemplate")
 
 	-- Fontstring
 	function M:CreateFS(size, text, color, anchor, x, y, r, g, b)

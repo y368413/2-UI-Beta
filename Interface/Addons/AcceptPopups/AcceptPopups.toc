@@ -1,9 +1,0 @@
-## Interface: 90105
-## Title: AcceptPopups
-## Notes: Accepts a dialog for a day, week or month
-## Author: Dahk Celes (DDCorkum)
-## X-License: All rights reserved
-## Version: 1.4
-## SavedVariables: AcceptPopupsUntil, AcceptPopupsOptions
-
-AcceptPopups.lua

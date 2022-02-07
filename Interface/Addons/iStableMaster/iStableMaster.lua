@@ -35,7 +35,7 @@ if(l_iStableMasterDB["ActiveSorts"] == nil) then
 l_iStableMasterDB["ActiveSorts"] = { Sort = {AnySort = false, 
 											Name = 0, -- direction: -1 descending Z-A, 0 is off, 1 Ascending A-Z
 											Specialization = {Cunning = 1, Tenacity = 2,Ferocity = 3, Direction = 0}, -- Spec Order 1-3, direction -1 descending, 0 off, 1 ascending : Default case => 1,2,3,1 => Cunning above Tenacity above Ferocity if diretion < 0 order, is flipped.
-											Family = {["Aquiri"] = 1,["Basilisk"] = 2,["Bat"] = 3,["Bear"] = 4,["Beetle"] = 5,["Bird of Prey"] = 6,["Blood Beast"] = 7,["Boar"] = 8,["Camel"] = 9,["Carapid"] = 10,["Carrion Bird"] = 11,["Cat"] = 12,["Chimera"] = 13,["Clefthoof"] = 14,["Core Hound"] = 15, ["Courser"] = 16,["Crab"] = 17,["Crane"] = 18,["Crocolisk"] = 19,["Devilsaur"] = 20,["Direhorn"] = 21,["Dragonhaw"] = 22,
+											Family = {["Aquiri"] = 1,["Basilisk"] = 2,["Bat"] = 3,["Bear"] = 4,["Beetle"] = 5,["Bird of Prey"] = 6,["Blood Beast"] = 7,["Boar"] = 8,["Camel"] = 9,["Carapid"] = 10,["Carrion Bird"] = 11,["Cat"] = 12,["Chimaera"] = 13,["Clefthoof"] = 14,["Core Hound"] = 15, ["Courser"] = 16,["Crab"] = 17,["Crane"] = 18,["Crocolisk"] = 19,["Devilsaur"] = 20,["Direhorn"] = 21,["Dragonhaw"] = 22,
 ["Feathermane"] = 23,["Fox"] = 24,["Gorilla"] = 25,["Gruffhorn"] = 26,["Hound"] = 27,["Hydra"] = 28,["Hyena"] = 29,["Lizzard"] = 30,["Mammoth"] = 31,["Mechanical"] = 32,["Monkey"] = 33,["Moth"] = 34,["Oxen"] = 35,["Pterrordax"] = 36,["Raptor"] = 37,["Ravager"] = 38,["Ray"] = 39,["Riverbeast"] = 40,["Rodent"] = 41,["Scalehide"] = 42,["Scorpid"] = 43,["Serpent"] = 44,["Shale Beast"] = 45,["Spider"] = 46,["Spirit Beast"] = 47,
 ["Sporebat"] = 48,["Stag"] = 49,["Stone Hound"] = 50,["Tallstrider"] = 51,["Toad"] = 52,["Turtle"] = 53,["Warp Stalker"] = 54,["Wasp"] = 55, ["Water Strider"] = 56,["Wind Serpent"] = 57,["Wolf"] = 58,["Worm"] = 59, Direction = 0}, -- direction: -1 descending 58-1, 0 is off, 1 Ascending 1-58
 											Expansion = {Classic = 1, TBC = 2, WOTLK = 3, CATA = 4, MOP = 5, WOD = 6, LEGION = 7, BFA = 8, SL = 9, Direction = 0}, -- Expansion Order 1-9, direction -1 descending, 0 off, 1 ascending : Default case => 1,2,(...),9, -1 => Latest Expansions Above Earliest Expansions if diretion > 0, order is flipped.
@@ -58,7 +58,7 @@ if(iStableMasterDB["ActiveSorts"] == nil or forced == true) then
 l_iStableMasterDB["ActiveSorts"] = { Sort = {AnySort = false, 
 											Name = 0, -- direction: -1 descending Z-A, 0 is off, 1 Ascending A-Z
 											Specialization = {Cunning = 1, Tenacity = 2,Ferocity = 3, Direction = 0}, -- Spec Order 1-3, direction -1 descending, 0 off, 1 ascending : Default case => 1,2,3,1 => Cunning above Tenacity above Ferocity if diretion < 0 order, is flipped.
-											Family = {["Aquiri"] = 1,["Basilisk"] = 2,["Bat"] = 3,["Bear"] = 4,["Beetle"] = 5,["Bird of Prey"] = 6,["Blood Beast"] = 7,["Boar"] = 8,["Camel"] = 9,["Carapid"] = 10,["Carrion Bird"] = 11,["Cat"] = 12,["Chimera"] = 13,["Clefthoof"] = 14,["Core Hound"] = 15, ["Courser"] = 16,["Crab"] = 17,["Crane"] = 18,["Crocolisk"] = 19,["Devilsaur"] = 20,["Direhorn"] = 21,["Dragonhaw"] = 22,
+											Family = {["Aquiri"] = 1,["Basilisk"] = 2,["Bat"] = 3,["Bear"] = 4,["Beetle"] = 5,["Bird of Prey"] = 6,["Blood Beast"] = 7,["Boar"] = 8,["Camel"] = 9,["Carapid"] = 10,["Carrion Bird"] = 11,["Cat"] = 12,["Chimaera"] = 13,["Clefthoof"] = 14,["Core Hound"] = 15, ["Courser"] = 16,["Crab"] = 17,["Crane"] = 18,["Crocolisk"] = 19,["Devilsaur"] = 20,["Direhorn"] = 21,["Dragonhaw"] = 22,
 ["Feathermane"] = 23,["Fox"] = 24,["Gorilla"] = 25,["Gruffhorn"] = 26,["Hound"] = 27,["Hydra"] = 28,["Hyena"] = 29,["Lizzard"] = 30,["Mammoth"] = 31,["Mechanical"] = 32,["Monkey"] = 33,["Moth"] = 34,["Oxen"] = 35,["Pterrordax"] = 36,["Raptor"] = 37,["Ravager"] = 38,["Ray"] = 39,["Riverbeast"] = 40,["Rodent"] = 41,["Scalehide"] = 42,["Scorpid"] = 43,["Serpent"] = 44,["Shale Beast"] = 45,["Spider"] = 46,["Spirit Beast"] = 47,
 ["Sporebat"] = 48,["Stag"] = 49,["Stone Hound"] = 50,["Tallstrider"] = 51,["Toad"] = 52,["Turtle"] = 53,["Warp Stalker"] = 54,["Wasp"] = 55, ["Water Strider"] = 56,["Wind Serpent"] = 57,["Wolf"] = 58,["Worm"] = 59, Direction = 0}, -- direction: -1 descending 58-1, 0 is off, 1 Ascending 1-58
 											Expansion = {Classic = 1, TBC = 2, WOTLK = 3, CATA = 4, MOP = 5, WOD = 6, LEGION = 7, BFA = 8, SL = 9, Direction = 0}, -- Expansion Order 1-9, direction -1 descending, 0 off, 1 ascending : Default case => 1,2,(...),9, -1 => Latest Expansions Above Earliest Expansions if diretion > 0, order is flipped.
@@ -80,11 +80,11 @@ l_iStableMasterDB["ActiveSorts"] = { Sort = {AnySort = false,
 end
 
 
-function SetSortPriority(p1,p2,p3)
+function SetSortPriority(p1,p2,p3) -- bugged somehow I have no clue why but using nil still sets the filed to 0.
 
 if p1 == nil then
 
-elseif type(p1) == "number" then
+elseif type(p1) == "string" then
 iStableMasterDB["ActiveSorts"]["CurrentSort"].primary = p1;
 
 else
@@ -93,14 +93,14 @@ iStableMasterDB["ActiveSorts"]["CurrentSort"].primary = 0;
 end
 
 if p2 == nil then
-elseif type(p1) == "number" then
+elseif type(p2) == "string" then
 iStableMasterDB["ActiveSorts"]["CurrentSort"].secondary = p2;
 else
 iStableMasterDB["ActiveSorts"]["CurrentSort"].secondary = 0;
 end
 
 if p3 == nil then 
-elseif type(p1) == "number" then
+elseif type(p3) == "string" then
 iStableMasterDB["ActiveSorts"]["CurrentSort"].tertiary = p3;
 else
 iStableMasterDB["ActiveSorts"]["CurrentSort"].tertiary = 0;
@@ -163,6 +163,23 @@ iStableMasterDB["ActiveSorts"]["Sort"][sortby] = direction;
 end
 
 end
+
+function GetSortDirection(sortby)
+
+if(sortby == "Specialization" or sortby == "Expansion" or sortby == "Family") then
+
+return iStableMasterDB["ActiveSorts"]["Sort"][sortby]["Direction"];
+
+else
+return iStableMasterDB["ActiveSorts"]["Sort"][sortby];
+
+
+
+end
+
+end
+
+
 
 
 function SetSpecializationSort(l_Cunning,l_Tenacity,l_Ferocity,l_Direction) 
@@ -250,7 +267,7 @@ end
 if(l_iStableMasterDB["ActiveFilters"] == nil) then 
 l_iStableMasterDB["ActiveFilters"] = {Type = {AnyFilter = false,
 											 API_Databased = {FilterName = {Families = {Aquiri = false,Basilisk = false,Bat = false, Bear = false, Beetle = false,["Bird of Prey"] = false,["Blood Beast"] = false, Boar = false, Camel = false, Carapid = false,
-																							["Carrion Bird"] = false, Cat = false, Chimera = false, Clefthoof = false, ["Core Hound"] = false, Courser = false, Crab = false, Crane = false, Crocolisk = false, 
+																							["Carrion Bird"] = false, Cat = false, Chimaera = false, Clefthoof = false, ["Core Hound"] = false, Courser = false, Crab = false, Crane = false, Crocolisk = false, 
 																							Devilsaur = false, Direhorn = false, Dragonhaw = false,	Feathermane = false, Fox = false, Gorilla = false, Gruffhorn = false, Hound = false, Hydra = false, Hyena = false,
 																							Lizzard = false, Mammoth = false, Mechanical = false, Monkey = false, Moth = false, Oxen = false, Pterrordax = false, Raptor = false, Ravager = false, Ray = false,
 																							Riverbeast = false, Rodent = false, Scalehide = false, Scorpid = false, Serpent = false, ["Shale Beast"] = false, Spider = false, ["Spirit Beast"] = false,
@@ -269,7 +286,7 @@ function InitFilters(forced)
 if(iStableMasterDB["ActiveFilters"] == nil or forced) then
 l_iStableMasterDB["ActiveFilters"] = {Type = {AnyFilter = false,
 											 API_Databased = {FilterName = {Families = {Aquiri = false,Basilisk = false,Bat = false, Bear = false, Beetle = false,["Bird of Prey"] = false,["Blood Beast"] = false, Boar = false, Camel = false, Carapid = false,
-																							["Carrion Bird"] = false, Cat = false, Chimera = false, Clefthoof = false, ["Core Hound"] = false, Courser = false, Crab = false, Crane = false, Crocolisk = false, 
+																							["Carrion Bird"] = false, Cat = false, Chimaera = false, Clefthoof = false, ["Core Hound"] = false, Courser = false, Crab = false, Crane = false, Crocolisk = false, 
 																							Devilsaur = false, Direhorn = false, Dragonhaw = false,	Feathermane = false, Fox = false, Gorilla = false, Gruffhorn = false, Hound = false, Hydra = false, Hyena = false,
 																							Lizzard = false, Mammoth = false, Mechanical = false, Monkey = false, Moth = false, Oxen = false, Pterrordax = false, Raptor = false, Ravager = false, Ray = false,
 																							Riverbeast = false, Rodent = false, Scalehide = false, Scorpid = false, Serpent = false, ["Shale Beast"] = false, Spider = false, ["Spirit Beast"] = false,
@@ -286,6 +303,16 @@ end
 
 end
 
+function setContains(set, key)
+
+    --if(set[tostring(key)] == true or set[tostring(key)] == false) then
+	--return true;
+	--else	
+	--return false;
+	--end 
+	return set[key] ~= nil;
+end
+
 
 function SetFilterValue(type, value)
 
@@ -297,6 +324,15 @@ elseif type == "Tenacity" then
 iStableMasterDB["ActiveFilters"]["Type"].API_Databased.FilterName.Specializations[type] = value;
 elseif type == "Ferocity" then
 iStableMasterDB["ActiveFilters"]["Type"].API_Databased.FilterName.Specializations[type] = value;
+
+-- families
+
+
+elseif setContains(iStableMasterDB["ActiveFilters"]["Type"].API_Databased.FilterName.Families, type) then
+iStableMasterDB["ActiveFilters"]["Type"].API_Databased.FilterName.Families[type] = value;
+
+
+
 
 -- foods
 
@@ -343,7 +379,7 @@ end
 end
 
 function GetFilterValue(input)
-
+--print("GETTING IT", setContains(iStableMasterDB["ActiveFilters"]["Type"].API_Databased.FilterName.Families, type));
 if input == "AnyFilter" then
 return iStableMasterDB["ActiveFilters"]["Type"].AnyFilter;
 elseif input == "Cunning" then
@@ -354,6 +390,12 @@ elseif input == "Ferocity" then
 return iStableMasterDB["ActiveFilters"]["Type"].API_Databased.FilterName.Specializations[input];
 elseif input == "Diets" then
 return iStableMasterDB["ActiveFilters"]["Type"].API_Databased.FilterName.Diets;
+
+-- families
+
+elseif setContains(iStableMasterDB["ActiveFilters"]["Type"].API_Databased.FilterName.Families, input) then
+return iStableMasterDB["ActiveFilters"]["Type"].API_Databased.FilterName.Families[input];
+
 -- foods
 
 elseif input == "Bread" then
@@ -369,7 +411,7 @@ return iStableMasterDB["ActiveFilters"]["Type"].API_Databased.FilterName.Diets[i
 
 elseif input == "Raw Fish" then
 return iStableMasterDB["ActiveFilters"]["Type"].API_Databased.FilterName.Diets[input];
-elseif input == "Fungi" then
+elseif input == "Fungus" then
 return iStableMasterDB["ActiveFilters"]["Type"].API_Databased.FilterName.Diets[input];
 elseif input == "Mechanical Bits" then
 return iStableMasterDB["ActiveFilters"]["Type"].API_Databased.FilterName.Diets[input];
@@ -464,7 +506,7 @@ l_iStableMasterDB["SpecializationAbilities"] = {
 iStableMasterDB["SpecializationAbilities"] = l_iStableMasterDB["SpecializationAbilities"];
 
 
-l_DB_families = {"Aquiri","Basilisk","Bat","Bear","Beetle","Bird of Prey","Blood Beast","Boar","Camel","Carapid","Carrion Bird","Cat","Chimera","Clefthoof","Core Hound", "Courser","Crab","Crane","Crocolisk","Devilsaur","Direhorn","Dragonhaw",
+l_DB_families = {"Aquiri","Basilisk","Bat","Bear","Beetle","Bird of Prey","Blood Beast","Boar","Camel","Carapid","Carrion Bird","Cat","Chimaera","Clefthoof","Core Hound", "Courser","Crab","Crane","Crocolisk","Devilsaur","Direhorn","Dragonhaw",
 "Feathermane","Fox","Gorilla","Gruffhorn","Hound","Hydra","Hyena","Lizzard","Mammoth","Mechanical","Monkey","Moth","Oxen","Pterrordax","Raptor","Ravager","Ray","Riverbeast","Rodent","Scalehide","Scorpid","Serpent","Shale Beast","Spider","Spirit Beast",
 "Sporebat","Stag","Stone Hound","Tallstrider","Toad","Turtle","Warp Stalker","Wasp", "Water Strider","Wind Serpent","Wolf","Worm"};
 
@@ -870,9 +912,9 @@ function iStableMaster:OnInitialize()
 		-- Called when the addon is loaded
 
 		-- Print a message to the chat frame
-		self:Print("Version Number: Alpha V0.33, Please report bugs via https://www.curseforge.com/wow/addons/istablemaster/issues Any new feature requests should be requested in the same place as bug reports. You can see known issues here: https://www.curseforge.com/wow/addons/istablemaster/files ");
+		self:Print("Version Number: Alpha-V0.35a-[3f19ddc], Please report bugs via https://www.curseforge.com/wow/addons/istablemaster/issues Any new feature requests should be requested in the same place as bug reports. You can see known issues here: https://www.curseforge.com/wow/addons/istablemaster/files ");
 		
-
+	--	iStableMaster:Print("An Error has been spottet in your WTF folder: Please check the |cc00ff00f".." 'World of Warcraft\\_retail_\\WTF\\Account\\{accountnumber}\\SavedVariables\\iStableMaster.lua'".."|ccfffffff ".."while the game is closed and correct the family name for:".."AWESOME PET NAME".." Or delete the file, but this will reset all your preferences too");
 
 		
 		

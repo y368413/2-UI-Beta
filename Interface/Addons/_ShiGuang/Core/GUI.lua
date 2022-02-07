@@ -82,11 +82,11 @@ G.DefaultSettings = {
 		BuffFrame = true,
 		HideBlizBuff = false,
 		ReverseBuff = false,
-		ReverseBuffs = false,
+		ReverseBuff = false,
 		BuffSize = 30,
 		BuffsPerRow = 16,
 		ReverseDebuff = false,
-		ReverseDebuffs = false,
+		ReverseDebuff = false,
 		DebuffSize = 34,
 		DebuffsPerRow = 16,
 	},
@@ -835,6 +835,10 @@ end
 
 local function updateRaidHealthMethod()
 	M:GetModule("UnitFrames"):UpdateRaidHealthMethod()
+end
+
+local function toggleCastBarLatency()
+	M:GetModule("UnitFrames"):ToggleCastBarLatency()
 end
 
 local function updateSmoothingAmount()

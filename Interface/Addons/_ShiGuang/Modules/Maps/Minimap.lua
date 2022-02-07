@@ -575,18 +575,18 @@ function module:Minimap_OnMouseWheel(zoom)
 	end
 end
 
-local NDuiMiniMapTrackingDropDown = CreateFrame("Frame", "NDuiMiniMapTrackingDropDown", _G.UIParent, "UIDropDownMenuTemplate")
-NDuiMiniMapTrackingDropDown:SetID(1)
-NDuiMiniMapTrackingDropDown:SetClampedToScreen(true)
-NDuiMiniMapTrackingDropDown:Hide()
-NDuiMiniMapTrackingDropDown.noResize = true
-_G.UIDropDownMenu_Initialize(NDuiMiniMapTrackingDropDown, _G.MiniMapTrackingDropDown_Initialize, "MENU")
+local UIMiniMapTrackingDropDown = CreateFrame("Frame", "UIMiniMapTrackingDropDown", _G.UIParent, "UIDropDownMenuTemplate")
+UIMiniMapTrackingDropDown:SetID(1)
+UIMiniMapTrackingDropDown:SetClampedToScreen(true)
+UIMiniMapTrackingDropDown:Hide()
+UIMiniMapTrackingDropDown.noResize = true
+_G.UIDropDownMenu_Initialize(UIMiniMapTrackingDropDown, _G.MiniMapTrackingDropDown_Initialize, "MENU")
 
 function module:Minimap_OnMouseUp(btn)
 		if btn == "LeftButton" then 
 			if IsAltKeyDown() then ToggleFrame(WorldMapFrame) --Alt+鼠标左键点击显示大地图
 			elseif IsShiftKeyDown() then if InCombatLockdown() then UIErrorsFrame:AddMessage(I.InfoColor..ERR_NOT_IN_COMBAT) return end ToggleCalendar()
-			elseif IsControlKeyDown() then ToggleDropDownMenu(1, nil, NDuiMiniMapTrackingDropDown, "cursor")
+			elseif IsControlKeyDown() then ToggleDropDownMenu(1, nil, UIMiniMapTrackingDropDown, "cursor")
 			else Minimap_OnClick(self) --鼠标左键点击小地图显示Ping位置提示
 			end
 		elseif btn == "MiddleButton" then ToggleFrame(ObjectiveTrackerFrame)  --M:DropDown(MapMicromenu, MapMenuFrame, 0, 0) --鼠标中键显示系统菜单

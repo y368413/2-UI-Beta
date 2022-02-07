@@ -438,7 +438,7 @@ function UF:UpdateQuestUnit(_, unit)
 	M.ScanTip:SetUnit(unit)
 
 	for i = 2, M.ScanTip:NumLines() do
-		local textLine = _G["NDui_ScanTooltipTextLeft"..i]
+		local textLine = _G["UI_ScanTooltipTextLeft"..i]
 		local text = textLine and textLine:GetText()
 		if not text then break end
 
@@ -553,7 +553,7 @@ function UF:UpdateDungeonProgress(unit)
 end
 
 -- Unit classification
-local classify = {
+local NPClassifies = {
 	rare = {"Interface\\MINIMAP\\ObjectIcons", .391, .487, .644, .74},  --rare = {1, 1, 1, true},
 	elite = {"Interface\\MINIMAP\\Minimap_skull_elite", 0, 1, 0, 1},	--elite = {1, 1, 1},
 	rareelite = {"Interface\\MINIMAP\\ObjectIcons", .754, .875, .624, .749},	--rareelite = {1, .1, .1},
@@ -574,8 +574,8 @@ function UF:UpdateUnitClassify(unit)
 	if self.ClassifyIndicator then
 		local class = UnitClassification(unit)
 	  local level = UnitLevel(unit)
-		if (not self.isNameOnly) and class and classify[class] then
-			local tex, r, g, b, desature = unpack(classify[class])
+		if (not self.isNameOnly) and class and NPClassifies[class] then
+			local tex, r, g, b, desature = unpack(NPClassifies[class])
 			--self.ClassifyIndicator:SetVertexColor(r, g, b)
 			--self.ClassifyIndicator:SetDesaturated(desature)
 			

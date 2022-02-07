@@ -113,8 +113,9 @@ function StablesCollection_OnEvent(self, event, ...)
 			if(GetFilterValue("AnyFilter")) then
 				UpdateFilterSpecs(true);
 			else
-				HideEmptyScrollSlots();
-				MoveEmptySlotsToBottomOfScroll(); 
+				--HideEmptyScrollSlots();
+				--MoveEmptySlotsToBottomOfScroll(); 
+				MasterFilterSort();
 			end
 			PopulateSquadScrollFrame();
 			end
@@ -198,8 +199,9 @@ function StablesCollection_OnEvent(self, event, ...)
 				UpdateFilterSpecs(true);
 	else
 	 ShowEmptyScrollSlots();
-	 MoveEmptySlotsToBottomOfScroll();
-	 HideEmptyScrollSlots();
+	 --MoveEmptySlotsToBottomOfScroll();
+	 --HideEmptyScrollSlots();
+	 MasterFilterSort();
 	end
 	 SelectedPresetUpdate();
 	 end
@@ -980,7 +982,7 @@ for i=1, StablesCollectionScrollbarMaxChildren,1 do
 			--end
 		end
 	
-		--ScrollFrameArrElem["ScrollElementChild"..i]["PetIconFrame"]:SetBackdrop({bgFile="Interface\\AddOns\\iStableMaster\\BestiaAzerothica\\PetStable-Partsbuttonbg",
+		--ScrollFrameArrElem["ScrollElementChild"..i]["PetIconFrame"]:SetBackdrop({bgFile="Interface\\AddOns\\iStableMaster\\PetStable-Partsbuttonbg",
 		--         edgeFile="Interface\\AddOns\\ZurichosUI\\UI-DialogBox-Border-ZurichoUISilver1", tile=false,tileSize=64,edgeSize=32,
 		--         insets= {left=11,right=12,top=12,bottom=11}});
 
@@ -1027,7 +1029,7 @@ for i=1, StablesCollectionScrollbarMaxChildren,1 do
 			ScrollFrameArrElem["ScrollElementChild"..i]["PetIconTexture"]:SetTexture(nil);
 			--ScrollFrameArrElem["ScrollElementChild"..i]["PetIconTexture"]:SetColorTexture(nil);
 			ScrollFrameArrElem["ScrollElementChild"..i]["PetIconTexture"]:SetAlpha(1);
-			ScrollFrameArrElem["ScrollElementChild"..i]["PetIconTexture"]:SetTexture("Interface\\AddOns\\iStableMaster\\BestiaAzerothica\\PetStable-Partsbuttonbg");
+			ScrollFrameArrElem["ScrollElementChild"..i]["PetIconTexture"]:SetTexture("Interface\\AddOns\\iStableMaster\\PetStable-Partsbuttonbg");
 				
 			--ScrollFrameArrElem["ScrollElementChild"..i]["PetIconTexture"]:SetTexture("Interface\\PetStableFrame\\PetStable-Parts");
 			--ScrollFrameArrElem["ScrollElementChild"..i]["PetIconTexture"]:SetColorTexture(1,1,1,1);
@@ -1156,8 +1158,9 @@ elseif(iStableMasterOptionsDB["ScrollList"]["HideEmptyStableSlots"]) then
 	if(GetFilterValue("AnyFilter")) then
 				UpdateFilterSpecs(true);
 	else
-	MoveEmptySlotsToBottomOfScroll();
-	HideEmptyScrollSlots();
+	--MoveEmptySlotsToBottomOfScroll();
+	--HideEmptyScrollSlots();
+	MasterFilterSort();
 	end
 
 else
@@ -1166,15 +1169,17 @@ else
 			if(GetFilterValue("AnyFilter")) then
 				UpdateFilterSpecs(true);
 			else
-				HideEmptyScrollSlots();
-				MoveEmptySlotsToBottomOfScroll();
+				--HideEmptyScrollSlots();
+				--MoveEmptySlotsToBottomOfScroll();
+				MasterFilterSort();
 			end
 		else
 			if(GetFilterValue("AnyFilter")) then
 				UpdateFilterSpecs(true);
 			else
-				HideEmptyScrollSlots();
-				MoveEmptySlotsToBottomOfScroll();
+				--HideEmptyScrollSlots();
+				--MoveEmptySlotsToBottomOfScroll();
+				MasterFilterSort();
 				--ReOrderScrollFrame("default"); 
 				--ReOrderScrollFrame("newTalents",1); 
 			end
@@ -1292,8 +1297,9 @@ function SubmitSearch(self)
 		if(GetFilterValue("AnyFilter")) then
 				UpdateFilterSpecs(true);
 		else
-				HideEmptyScrollSlots();
-				MoveEmptySlotsToBottomOfScroll();
+				MasterFilterSort(input);
+				--HideEmptyScrollSlots();
+				--MoveEmptySlotsToBottomOfScroll();
 		end
 	else 
 	
@@ -1324,8 +1330,9 @@ function SubmitSearch2(self,input)
 		if(GetFilterValue("AnyFilter")) then
 				UpdateFilterSpecs(true);
 			else
-				HideEmptyScrollSlots();
-				MoveEmptySlotsToBottomOfScroll();
+				MasterFilterSort(input);
+				--HideEmptyScrollSlots();
+				--MoveEmptySlotsToBottomOfScroll();
 			end
 	else 
 	--ReOrderScrollFrame("searchString",input);
@@ -1435,8 +1442,9 @@ if(not IsAtStableMaster()) then
 			if(GetFilterValue("AnyFilter")) then
 				UpdateFilterSpecs(true);
 			else	
-				HideEmptyScrollSlots();
-				MoveEmptySlotsToBottomOfScroll();	 
+				--HideEmptyScrollSlots();
+				--MoveEmptySlotsToBottomOfScroll();	 
+				MasterFilterSort();
 			end
 end
 
@@ -1712,7 +1720,7 @@ function PopulateCardContainer()
 	ActivePetSlotsCards["ActiveSlot"..i] = {};
 	ActivePetSlotsCards["ActiveSlot"..i]["Socket"..i] = CreateFrame("Frame", "ActiveSlotSocket"..i,CardContainerFrame,"HunterPetCardBgTemplate")
 	ActivePetSlotsCards["ActiveSlot"..i]["Socket"..i]:SetSize(ElementSizeX,ElementSizeY);
-	ActivePetSlotsCards["ActiveSlot"..i]["Socket"..i]:SetBackdrop({bgFile="Interface\\AddOns\\iStableMaster\\BestiaAzerothica\\BestiaAzerothica_CardBackground2",
+	ActivePetSlotsCards["ActiveSlot"..i]["Socket"..i]:SetBackdrop({bgFile="Interface\\AddOns\\iStableMaster\\BestiaAzerothica_CardBackground2",
            edgeFile="", tile=false,tileSize=167,edgeSize=32,
            insets= {left=8,right=8,top=8,bottom=8}});
 
@@ -1988,7 +1996,7 @@ function PopulateActiveCards()
 --		ActivePetSlotsCards["ActiveSlot"..6]["Card"..6] = CreateFrame("Frame", "ActiveSlotCard"..6,_G["ActiveSlotSocket"..6],"HunterPetCardBgTemplate");
 		
 --		ActivePetSlotsCards["ActiveSlot"..6]["Card"..6]:SetSize(ElementSizeX,ElementSizeY);
---		ActivePetSlotsCards["ActiveSlot"..6]["Card"..6]:SetBackdrop({bgFile="Interface\\AddOns\\iStableMaster\\BestiaAzerothica\\BestiaAzerothica_CardBackground2",
+--		ActivePetSlotsCards["ActiveSlot"..6]["Card"..6]:SetBackdrop({bgFile="Interface\\AddOns\\iStableMaster\\BestiaAzerothica_CardBackground2",
 --           edgeFile="", tile=false,tileSize=167,edgeSize=32,
 --           insets= {left=8,right=8,top=8,bottom=8}});
 
@@ -2032,7 +2040,7 @@ function PopulateActiveCards()
 	for i=1,6,1 do
 	ActivePetSlotsCards["ActiveSlot"..i]["Card"..i] = CreateFrame("Frame", "ActiveSlotCard"..i,_G["ActiveSlotSocket"..i],"HunterPetCardBgTemplate");
 	ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]:SetSize(ElementSizeX,ElementSizeY);
-	ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]:SetBackdrop({bgFile="Interface\\AddOns\\iStableMaster\\BestiaAzerothica\\BestiaAzerothica_CardBackground2",
+	ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]:SetBackdrop({bgFile="Interface\\AddOns\\iStableMaster\\BestiaAzerothica_CardBackground2",
            edgeFile="", tile=false,tileSize=167,edgeSize=32,
            insets= {left=8,right=8,top=8,bottom=8}});
 	if(GlobalSpecialization == "Beast Mastery") then 
@@ -2095,7 +2103,7 @@ function PopulateActiveCards()
 	ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["NameFrame"]["FamilyName"] = ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["NameFrame"]:CreateFontString(nil,"OVERLAY","GameFontNormalSmall"); 
 	
 	ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["NameFrame"]["HeaderBg"] = ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["NameFrame"]:CreateTexture(nil,"BACKGROUND",nil,2);
-	ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["NameFrame"]["HeaderBg"]:SetTexture("Interface\\AddOns\\iStableMaster\\BestiaAzerothica\\HeaderShadeAndGlow.blp");
+	ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["NameFrame"]["HeaderBg"]:SetTexture("Interface\\AddOns\\iStableMaster\\HeaderShadeAndGlow.blp");
 	ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["NameFrame"]["HeaderBg"]:SetSize(ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["NameFrame"]:GetWidth(),32);
 	ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["NameFrame"]["HeaderBg"]:SetTexCoord(0.16,0.9,0.45,0.50);
 	ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["NameFrame"]["HeaderBg"]:SetPoint("TOPLEFT",ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["NameFrame"],"TOPLEFT",0,0);
@@ -2113,7 +2121,7 @@ function PopulateActiveCards()
 			ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["Abilities"]["FamilyFrame"]:SetPoint("BOTTOMRIGHT",ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["Abilities"],"BOTTOMRIGHT",-(ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["Abilities"]:GetWidth()/2)-2,0);
 			
 			ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["Abilities"]["FamilyFrame"]["HeaderBg"] = ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["Abilities"]["FamilyFrame"]:CreateTexture(nil,"BACKGROUND",nil,2);
-			ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["Abilities"]["FamilyFrame"]["HeaderBg"]:SetTexture("Interface\\AddOns\\iStableMaster\\BestiaAzerothica\\HeaderShadeAndGlow.blp");
+			ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["Abilities"]["FamilyFrame"]["HeaderBg"]:SetTexture("Interface\\AddOns\\iStableMaster\\HeaderShadeAndGlow.blp");
 			ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["Abilities"]["FamilyFrame"]["HeaderBg"]:SetSize(ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["Abilities"]["FamilyFrame"]:GetWidth(),24);
 			ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["Abilities"]["FamilyFrame"]["HeaderBg"]:SetTexCoord(0.16,0.9,0.45,0.50);
 			ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["Abilities"]["FamilyFrame"]["HeaderBg"]:SetPoint("TOPLEFT",ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["Abilities"]["FamilyFrame"],"TOPLEFT",4,0);
@@ -2134,7 +2142,7 @@ function PopulateActiveCards()
 			ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["Abilities"]["SpecFrame"]:SetPoint("BOTTOMRIGHT",ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["Abilities"],"BOTTOMRIGHT",0,0);
 			
 			ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["Abilities"]["SpecFrame"]["HeaderBg"] = ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["Abilities"]["SpecFrame"]:CreateTexture(nil,"BACKGROUND",nil,2);
-			ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["Abilities"]["SpecFrame"]["HeaderBg"]:SetTexture("Interface\\AddOns\\iStableMaster\\BestiaAzerothica\\HeaderShadeAndGlow.blp");
+			ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["Abilities"]["SpecFrame"]["HeaderBg"]:SetTexture("Interface\\AddOns\\iStableMaster\\HeaderShadeAndGlow.blp");
 			ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["Abilities"]["SpecFrame"]["HeaderBg"]:SetSize(ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["Abilities"]["SpecFrame"]:GetWidth(),24);
 			--ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["Abilities"]["SpecFrame"]["HeaderBg"]:SetTexCoord(0.16,0.9,0.425,0.63);
 			ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["Abilities"]["SpecFrame"]["HeaderBg"]:SetTexCoord(0.16,0.9,0.45,0.50);
@@ -2197,7 +2205,7 @@ function PopulateActiveCards()
 	ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["DietFrame"]:SetPoint("TOPLEFT",ActivePetSlotsCards["ActiveSlot"..i]["Card"..i],"BOTTOMLEFT",0,54);
 	
 	ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["DietFrame"]["HeaderBg"] = ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["DietFrame"]:CreateTexture(nil,"BACKGROUND",nil,2);
-	ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["DietFrame"]["HeaderBg"]:SetTexture("Interface\\AddOns\\iStableMaster\\BestiaAzerothica\\HeaderShadeAndGlow.blp");
+	ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["DietFrame"]["HeaderBg"]:SetTexture("Interface\\AddOns\\iStableMaster\\HeaderShadeAndGlow.blp");
 	ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["DietFrame"]["HeaderBg"]:SetSize((ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["DietFrame"]:GetWidth()-8),14);
 	ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["DietFrame"]["HeaderBg"]:SetTexCoord(0.16,0.9,0.45,0.50);
 	ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["DietFrame"]["HeaderBg"]:SetPoint("TOPLEFT",ActivePetSlotsCards["ActiveSlot"..i]["Card"..i]["DietFrame"],"TOPLEFT",12,13);
@@ -3735,15 +3743,17 @@ function ShowEmptyStableSlotsOnDragOnly(bool,state)
 			if(GetFilterValue("AnyFilter")) then
 				UpdateFilterSpecs(true);
 			else
-				HideEmptyScrollSlots();
-				MoveEmptySlotsToBottomOfScroll();
+				--HideEmptyScrollSlots();
+				--MoveEmptySlotsToBottomOfScroll();
+				MasterFilterSort("",false);
 			end
 		
 		elseif(state == "Down")then	
 			if(GetFilterValue("AnyFilter")) then
 				UpdateFilterSpecs(false);
 			else
-				ShowEmptyScrollSlots();
+				--ShowEmptyScrollSlots();
+				MasterFilterSort("",true);
 			end
 		
 		end
@@ -3981,8 +3991,14 @@ function StablesCollectionFilterDropDown_Initialize(self, level)
 				info.hasArrow = false;				
 				--info.text = ownedFamilies[i];				
 				info.text = l_DB_families[i];
-				info.func = function(_, _, _, value) end
-				info.checked = function() return false;	end
+				info.func = function(_, _, _, value)
+							
+							SetFilterValue(tostring(l_DB_families[i]), value);
+							UpdateScrollListMainCall();
+				
+				end
+				info.checked = GetFilterValue(tostring(l_DB_families[i]));
+				
 								
 				UIDropDownMenu_AddButton(info,level);				
 				
@@ -3994,13 +4010,56 @@ function StablesCollectionFilterDropDown_Initialize(self, level)
 				info.notCheckable = true;
 				info.text = CHECK_ALL;
 				info.func = function()
+								local layer = UIDROPDOWNMENU_MENU_VALUE["sublayer"];
+								local k = 1;
+									for j = 1, 19 or select(1,math.modf((StringKeyTableLengthI(l_DB_families)-1)/layer)) do
+									
+									--print(famperpagesnum);
+									
+									
+									k = k + 1;
+									local trimstart = 2;
+									if(select(1,math.modf((StringKeyTableLengthI(l_DB_families)-1)/layer)) < 19 ) then
+									trimstart = 1;
+									end
+
+									SetFilterValue(tostring(l_DB_families[layer*10+j]), true);
+									UpdateScrollListMainCall();
+
+									_G["DropDownList"..layer .."Button"..k+trimstart .."Check"]:Show();
+									_G["DropDownList"..layer .."Button"..k+trimstart .."UnCheck"]:Hide();
+									_G["DropDownList"..layer .."Button"..k+trimstart].checked = GetFilterValue(l_DB_families[layer*10+j]);
+									end
 								--C_PetJournal.SetAllPetTypesChecked(true);
 								--UIDropDownMenu_Refresh(PetJournalFilterDropDown, 1, 2);
+
+								
 							end
 				UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_VALUE["sublayer"]);
 	
 				info.text = UNCHECK_ALL;
 				info.func = function()
+								local layer = UIDROPDOWNMENU_MENU_VALUE["sublayer"];
+								local k = 1;
+									for j = 1, 19 or select(1,math.modf((StringKeyTableLengthI(l_DB_families)-1)/layer)) do
+									
+									--print(famperpagesnum);
+									
+									
+									k = k + 1;
+									local trimstart = 2;
+									if(select(1,math.modf((StringKeyTableLengthI(l_DB_families)-1)/layer)) < 19 ) then
+									trimstart = 1;
+									end
+
+									SetFilterValue(l_DB_families[layer*10+j], false);
+									UpdateScrollListMainCall();
+
+									_G["DropDownList"..layer .."Button"..k+trimstart .."Check"]:Hide();
+									_G["DropDownList"..layer .."Button"..k+trimstart .."UnCheck"]:Show();
+									_G["DropDownList"..layer .."Button"..k+trimstart].checked = GetFilterValue(tostring(l_DB_families[layer*10+j]));
+									end
+
 								--C_PetJournal.SetAllPetTypesChecked(false);
 								--UIDropDownMenu_Refresh(PetJournalFilterDropDown, 1, 2);
 							end
@@ -4071,8 +4130,14 @@ function StablesCollectionFilterDropDown_Initialize(self, level)
 				info.hasArrow = false;				
 				--info.text = ownedFamilies[i];				
 				info.text = l_DB_families[i];
-				info.func = function(_, _, _, value) end
-				info.checked = function() return false;	end
+				info.func = function(_, _, _, value) 
+				
+							SetFilterValue(l_DB_families[i], value);
+							UpdateScrollListMainCall();
+
+				end
+				info.checked = GetFilterValue(l_DB_families[i]);
+				
 				local lastIndex = 19;
 				if(StringKeyTableLengthI(l_DB_families)-1 < i+19) then
 					lastIndex = StringKeyTableLengthI(l_DB_families)-1;
@@ -4122,8 +4187,14 @@ function StablesCollectionFilterDropDown_Initialize(self, level)
 				info.hasArrow = false;				
 				--info.text = ownedFamilies[i];				
 				info.text = l_DB_families[i];
-				info.func = function(_, _, _, value) end
-				info.checked = function() return false;	end
+				info.func = function(_, _, _, value)
+				
+							SetFilterValue(l_DB_families[i], value);
+							UpdateScrollListMainCall();
+				
+				end
+				info.checked = GetFilterValue(l_DB_families[i]);
+				
 				local lastIndex = 19;
 				if(StringKeyTableLengthI(l_DB_families)-1 < i+19) then
 					lastIndex = StringKeyTableLengthI(l_DB_families)-1;
@@ -4431,7 +4502,7 @@ function StablesCollectionFilterDropDown_Initialize(self, level)
 			for i=1, #listOfOthers do
 			if(listOfOthers[i] == "Named") then
 
-			info.text = "Renamed";
+			info.text = "Re-named";
 			else
 			info.text = listOfOthers[i];
 			end
@@ -4561,7 +4632,155 @@ function StablesCollectionSortDropDown_Initialize(self, level)
 		UIDropDownMenu_AddButton(info, level);
 
 	elseif (level == 2 or nestingcheck) then
-	
+		for i = 1, #iStableMasterDB["ActiveSorts"]["ReverseLookUpIndex"] do
+			local direction = " - Ascending";
+
+			info.func = function(_, _, _, value) 
+			local sortpriority = {};
+			--	if type(GetSortPriority(1,2,3)) == "table" then
+			--		sortpriority = GetSortPriority(1,2,3);
+					--print(GetSortPriority(1));
+		--		elseif type(GetSortPriority(1,2,3)) == "boolean" then 
+					--print ("Bool DO SOMETHING!")
+		--			sortpriority = {};
+							
+
+							if iStableMasterDB["ActiveSorts"]["CurrentSort"].primary == 0 then
+			--						sortpriority[#sortpriority+1] = "ActiveSlots";
+							else
+			--						sortpriority[#sortpriority+1] = iStableMasterDB["ActiveSorts"]["CurrentSort"].primary;
+							end
+							
+							if iStableMasterDB["ActiveSorts"]["CurrentSort"].secondary == 0 then
+				--					sortpriority[#sortpriority+1] = "Family";
+							else
+				--					sortpriority[#sortpriority+1] = iStableMasterDB["ActiveSorts"]["CurrentSort"].secondary;
+
+							end
+					
+							
+							if(iStableMasterDB["ActiveSorts"]["CurrentSort"].tertiary == 0) then
+					--				sortpriority[#sortpriority+1] = "Name";
+							else
+							--		sortpriority[#sortpriority+1] = iStableMasterDB["ActiveSorts"]["CurrentSort"].tertiary;
+							end
+
+			--	else
+
+		--		end
+			--print(type( GetSortPriority(1,2,3) ), #sortpriority);
+		--	print(sortpriority[1],sortpriority[2],sortpriority[3]);
+			if(UIDROPDOWNMENU_MENU_VALUE["SubLevel"] == 1) then
+			--	SetSortPriority(iStableMasterDB["ActiveSorts"]["ReverseLookUpIndex"][i],sortpriority[2],sortpriority[3]);
+			SetSortPriority(iStableMasterDB["ActiveSorts"]["ReverseLookUpIndex"][i],nil,nil)
+			elseif(UIDROPDOWNMENU_MENU_VALUE["SubLevel"] == 2)then
+		--		SetSortPriority(sortpriority[1],iStableMasterDB["ActiveSorts"]["ReverseLookUpIndex"][i],sortpriority[3]);
+			SetSortPriority(nil,iStableMasterDB["ActiveSorts"]["ReverseLookUpIndex"][i],nil)
+			elseif(UIDROPDOWNMENU_MENU_VALUE["SubLevel"] == 3)then
+		--		SetSortPriority(sortpriority[1],sortpriority[2],iStableMasterDB["ActiveSorts"]["ReverseLookUpIndex"][i]);
+			SetSortPriority(nil,nil,iStableMasterDB["ActiveSorts"]["ReverseLookUpIndex"][i])
+			end
+				
+
+
+			--print((GetSortPriority(1,2,3)[UIDROPDOWNMENU_MENU_VALUE["SubLevel"]] == iStableMasterDB["ActiveSorts"]["ReverseLookUpIndex"][i]))
+			--if type(GetSortPriority(UIDROPDOWNMENU_MENU_VALUE["SubLevel"])) == "table" then
+			--SetSortDirection(iStableMasterDB["ActiveSorts"]["ReverseLookUpIndex"][i],GetSortDirection(iStableMasterDB["ActiveSorts"]["ReverseLookUpIndex"][i])*-1);
+				
+					--SetSortDirection(iStableMasterDB["ActiveSorts"]["ReverseLookUpIndex"][i],GetSortDirection(iStableMasterDB["ActiveSorts"]["ReverseLookUpIndex"][i]));
+			--			local p1 = "Family";
+			--			local p2 = "Specialization";
+			--			local p3 = "Name";
+			--			if(type(GetSortPriority(1,2,3)) == "table") then
+			--				p1 = GetSortPriority(1,2,3)[1];		
+			--			end
+			--			if(type(GetSortPriority(1,2,3)) == "table") then
+			--				p2 = GetSortPriority(1,2,3)[2]; -- not sure about this way of indexing				
+			--			end
+			---			if(type(GetSortPriority(1,2,3)) == "table") then
+			--				p3 = GetSortPriority(1,2,3)[3]; -- not sure about this way of indexing
+			--			end
+			--			--/run print(iStableMasterDB.ActiveSorts.CurrentSort.primary);
+			--			
+			--			if(UIDROPDOWNMENU_MENU_VALUE["SubLevel"] == 1) then
+			--			iStableMaster:Print("|cc224488f DEBUG: ".."|ccff2222fWarning:|cffffffff "..iStableMasterDB["ActiveSorts"]["ReverseLookUpIndex"][i],(p2 or "nil"),(p3 or "nil"));
+			--				SetSortPriority(iStableMasterDB["ActiveSorts"]["ReverseLookUpIndex"][i],p2,p3);
+							
+		--				elseif(UIDROPDOWNMENU_MENU_VALUE["SubLevel"]==2) then
+		--				iStableMaster:Print("|cc224488f DEBUG: ".."|ccff2222fWarning:|cffffffff "..(p1 or "nil"),iStableMasterDB["ActiveSorts"]["ReverseLookUpIndex"][i],(p3 or "nil"));
+		--					SetSortPriority(p1,iStableMasterDB["ActiveSorts"]["ReverseLookUpIndex"][i],p3);
+		--				elseif(UIDROPDOWNMENU_MENU_VALUE["SubLevel"]==3) then
+		--				iStableMaster:Print("|cc224488f DEBUG: ".."|ccff2222fWarning:|cffffffff "..(p1 or "nil"),(p2 or "nil"),iStableMasterDB["ActiveSorts"]["ReverseLookUpIndex"][i]);
+		--					SetSortPriority(p1,p2,iStableMasterDB["ActiveSorts"]["ReverseLookUpIndex"][i]);
+		--				else
+		--					--SetSortPriority("Family",nil,nil);
+		--						
+		--				end
+
+				
+
+		--	elseif(GetSortPriority(1,2,3)[UIDROPDOWNMENU_MENU_VALUE["SubLevel"]] == iStableMasterDB["ActiveSorts"]["ReverseLookUpIndex"][i]) then
+		--	SetSortDirection(iStableMasterDB["ActiveSorts"]["ReverseLookUpIndex"][i],GetSortDirection(iStableMasterDB["ActiveSorts"]["ReverseLookUpIndex"][i])*-1);
+		--	else
+		--				local p1 = "Family";
+		--				local p2 = nil;
+		--				local p3 = nil;
+		--				if(GetSortPriority(1) == "String") then
+		--					p1 = GetSortPriority(1);		
+		--				end
+		--				if(GetSortPriority(2) == "String") then
+		--					p2 = GetSortPriority(2); -- not sure about this way of indexing				
+		--				end
+		--				if(GetSortPriority(3) == "String") then
+		--					p3 = GetSortPriority(3); -- not sure about this way of indexing
+		--				end
+
+
+		--		if(UIDROPDOWNMENU_MENU_VALUE["SubLevel"] == 1) then
+		--			SetSortPriority(iStableMasterDB["ActiveSorts"]["ReverseLookUpIndex"][i],p2,p3);
+		--		elseif(UIDROPDOWNMENU_MENU_VALUE["SubLevel"]==2) then
+		--			SetSortPriority(p1,iStableMasterDB["ActiveSorts"]["ReverseLookUpIndex"][i],p3);
+		--		elseif(UIDROPDOWNMENU_MENU_VALUE["SubLevel"]==3) then
+		--			SetSortPriority(p1,p2,iStableMasterDB["ActiveSorts"]["ReverseLookUpIndex"][i]);
+		--		else
+		--			SetSortPriority(p1,p2,p3);
+
+		--		end
+		--	end
+			MasterFilterSort();
+			end;
+		
+			if GetSortDirection(iStableMasterDB["ActiveSorts"]["ReverseLookUpIndex"][i]) == 0 then
+			direction = " - No Direction";
+			elseif(GetSortDirection(iStableMasterDB["ActiveSorts"]["ReverseLookUpIndex"][i]) < 0) then
+			direction = " - Descending";
+			end
+			info.text = iStableMasterDB["ActiveSorts"]["ReverseLookUpIndex"][i]..direction;
+			--iStableMaster:Print("|cc224488f DEBUG: |cffffffff".. GetSortPriority(1,2,3)[UIDROPDOWNMENU_MENU_VALUE["SubLevel"]]);--GetSortingValue(GetSortPriority(UIDROPDOWNMENU_MENU_VALUE["SubLevel"])), "Comparing to:", iStableMasterDB["ActiveSorts"]["ReverseLookUpIndex"][i]);
+			
+			--if GetSortPriority(UIDROPDOWNMENU_MENU_VALUE["SubLevel"]) ~= "String" then
+			--info.checked = false;
+		--	else
+			
+			
+				if UIDROPDOWNMENU_MENU_VALUE["SubLevel"] == 3 then
+				info.checked = (iStableMasterDB.ActiveSorts.CurrentSort.tertiary == (iStableMasterDB["ActiveSorts"]["ReverseLookUpIndex"][i]));
+				elseif UIDROPDOWNMENU_MENU_VALUE["SubLevel"] == 2 then 
+				info.checked = (iStableMasterDB.ActiveSorts.CurrentSort.secondary == (iStableMasterDB["ActiveSorts"]["ReverseLookUpIndex"][i]));
+				elseif UIDROPDOWNMENU_MENU_VALUE["SubLevel"] == 1 then 
+				info.checked = (iStableMasterDB.ActiveSorts.CurrentSort.primary == (iStableMasterDB["ActiveSorts"]["ReverseLookUpIndex"][i]));
+				else
+				end
+				
+			
+			--info.checked = ((GetSortPriority(1,2,3)[UIDROPDOWNMENU_MENU_VALUE["SubLevel"]]) == (iStableMasterDB["ActiveSorts"]["ReverseLookUpIndex"][i]));
+		--	end
+			info.isNotRadio = false;
+			info.hasArrow = false;
+			info.notCheckable = false;
+			UIDropDownMenu_AddButton(info, level);
+
+		end	
 	end
 end
 
@@ -5111,9 +5330,9 @@ end
 
 function UpdateFilterSpecs(bool)
 if( GetFilterValue("AnyFilter")) then
-	MoveHiddenSpecsToBottomOfScroll(bool);
-	HideNonFilterSpecs(bool);
-	
+	--MoveHiddenSpecsToBottomOfScroll(bool);
+	--HideNonFilterSpecs(bool);
+	MasterFilterSort("",not bool);
 	
 
 end
@@ -5121,9 +5340,9 @@ end
 end
 function UpdateFilterDiets(bool)
 if( GetFilterValue("AnyFilter")) then
-	MoveHiddenDietsToBottomOfScroll(bool);
-	HideNonFilterDiets(bool);
-	
+	--MoveHiddenDietsToBottomOfScroll(bool);
+	--HideNonFilterDiets(bool);
+	MasterFilterSort("",not bool);
 	
 
 end
@@ -5138,8 +5357,9 @@ function UpdateScrollListMainCall()
 if(GetFilterValue("AnyFilter")) then
 				UpdateFilterSpecs(true);
 else
-				HideEmptyScrollSlots();
-				MoveEmptySlotsToBottomOfScroll();
+				--HideEmptyScrollSlots();
+				--MoveEmptySlotsToBottomOfScroll();
+				MasterFilterSort();
 
 end
 
@@ -5440,9 +5660,10 @@ end
 ------------------------------------------------------------
 
 
-function MasterFilterSort(input)
+function MasterFilterSort(input,shouldflip)
 --print(5443);
-
+-- Variable declaration
+local flip = shouldflip or false;
 local stack0 = {};
 local stack1 = {};
 local stack2 = {};
@@ -5450,13 +5671,17 @@ local stack3 = {};
 local point, relativeTo, relativePoint, xOfs, yOfs = ScrollFrameArrElem["ScrollElement0"]:GetPoint(1);
 	local ElementSizeY = ScrollFrameArrElem["ScrollElementSizeY"];
 
+do
 	ScrollFrameArrElem.length = StringKeyTableLength(ScrollFrameArrElem,"ScrollElement");
 	stack0.length = StringKeyTableLengthI(stack0)+1;
 	stack1.length = StringKeyTableLengthI(stack1)+1;
 	stack2.length = StringKeyTableLengthI(stack2)+1;
 	stack3.length = StringKeyTableLengthI(stack3)+1;
+	end
+	--Variable declaration END
 
 	-- Find All Empty Slots
+	do
 	for i = 1,ScrollFrameArrElem.length-1 do	
 		ScrollFrameArrElem["ScrollElement"..i]:Show();
 		if(ScrollFrameArrElem["ScrollElementChild"..i]["PetInfo"]["name"] == "N/A") then
@@ -5471,11 +5696,11 @@ local point, relativeTo, relativePoint, xOfs, yOfs = ScrollFrameArrElem["ScrollE
 
 		
 	end
-
+	end
 	if(GetFilterValue("AnyFilter")) then
 
 	-- DietsFilter
-
+	do
 		for i = 1,#stack1 do		
 			
 			local dietList = { GetStablePetFoodTypes(stack1[i]) };
@@ -5498,13 +5723,14 @@ local point, relativeTo, relativePoint, xOfs, yOfs = ScrollFrameArrElem["ScrollE
 
 			end
 		
-		
+		end
 		
 		end	
 			
 	
 		-- UpdateStack1
-		wipe(stack1);
+		do
+		--wipe(stack1);
 		stack1 = {};
 		--stack1.length = StringKeyTableLengthI(stack1);
 		for i = 1,#stack2 do	
@@ -5514,10 +5740,11 @@ local point, relativeTo, relativePoint, xOfs, yOfs = ScrollFrameArrElem["ScrollE
 		wipe(stack2);
 		stack2 = {};
 		--stack2.length = StringKeyTableLengthI(stack2);
+		end
 		-- Update Done
 		
 	-- SpecFilter
-
+	do
 		for i = 1,#stack1 do		
 	--		print(5519,stack1[i]);
 			if(GetFilterValue(ScrollFrameArrElem["ScrollElementChild"..stack1[i]]["PetInfo"]["talent"])) then
@@ -5529,82 +5756,291 @@ local point, relativeTo, relativePoint, xOfs, yOfs = ScrollFrameArrElem["ScrollE
 			--stack3.length = stack3.length+1;
 
 			end	
-		
+		end
 		
 		end	
 	--	print(5532);
 		-- UpdateStack1
-		wipe(stack1);
+		do
+		--wipe(stack1);
 		stack1 = {};
 		--stack1.length = StringKeyTableLengthI(stack1)+1;
 		for i = 1,#stack2 do	
 		stack1[#stack1+1] = stack2[i];
 		--stack1.length = stack1.length+1;
 		end
-		wipe(stack2);
+		--wipe(stack2);
 		stack2 = {};
 		--stack2.length = StringKeyTableLengthI(stack2)+1;
+		end
 		-- Update Done
 	
 	
 	
 	--print("5547");
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	-- FamilyFilter
+	do
+		for i = 1,#stack1 do		
+	--		print(5519,stack1[i]);
+			if(GetFilterValue(ScrollFrameArrElem["ScrollElementChild"..stack1[i]]["PetInfo"]["family"])) then
+
+			stack2[#stack2+1] = stack1[i];
+			--stack2.length = stack2.length+1;
+			else
+			stack3[#stack3+1] = stack1[i];
+			--stack3.length = stack3.length+1;
+
+			end	
+		end
+		
+		end	
+	--	print(5532);
+		-- UpdateStack1
+		do
+		--wipe(stack1);
+		stack1 = {};
+		--stack1.length = StringKeyTableLengthI(stack1)+1;
+		for i = 1,#stack2 do	
+		stack1[#stack1+1] = stack2[i];
+		--stack1.length = stack1.length+1;
+		end
+		--wipe(stack2);
+		stack2 = {};
+		--stack2.length = StringKeyTableLengthI(stack2)+1;
+		end
+		-- Update Done
+
+
+
+		-- RenamedFilter ( IF checked show renamed, if unchecked do not show renamed.) I should have a show renamed only too)
+	do
+		for i = 1,#stack1 do		
+	--		print(5519,stack1[i]);
+			-- if(GetFilterValue("Named") and ScrollFrameArrElem["ScrollElementChild"..stack1[i]]["PetInfo"]["name"] ~= ScrollFrameArrElem["ScrollElementChild"..stack1[i]]["PetInfo"]["family"]) then
+			if(GetFilterValue("Named") ) then
+			stack2[#stack2+1] = stack1[i];
+			--stack2.length = stack2.length+1;
+			elseif(not GetFilterValue("Named") and ScrollFrameArrElem["ScrollElementChild"..stack1[i]]["PetInfo"]["name"] ~= ScrollFrameArrElem["ScrollElementChild"..stack1[i]]["PetInfo"]["family"]) then
+			stack3[#stack3+1] = stack1[i];
+			--stack3.length = stack3.length+1;
+			else
+			stack2[#stack2+1] = stack1[i];
+
+			end	
+		end
+		
+		end	
+	--	print(5532);
+		-- UpdateStack1
+		do
+		--wipe(stack1);
+		stack1 = {};
+		--stack1.length = StringKeyTableLengthI(stack1)+1;
+		for i = 1,#stack2 do	
+		stack1[#stack1+1] = stack2[i];
+		--stack1.length = stack1.length+1;
+		end
+		--wipe(stack2);
+		stack2 = {};
+		--stack2.length = StringKeyTableLengthI(stack2)+1;
+		end
+		-- Update Done
+
+		-- ActiveSlotsFilter ( IF checked show Activeslots, if unchecked do not show Active Slots. I should have a show ActiveSlots only too?)
+	do
+		for i = 1,#stack1 do		
+	--		print(5519,stack1[i]);
+			-- if(GetFilterValue("Named") and ScrollFrameArrElem["ScrollElementChild"..stack1[i]]["PetInfo"]["name"] ~= ScrollFrameArrElem["ScrollElementChild"..stack1[i]]["PetInfo"]["family"]) then
+			if(iStableMasterOptionsDB["ScrollList"]["ShowActiveSlots"]) then
+			stack2[#stack2+1] = stack1[i];
+			--stack2.length = stack2.length+1;
+			elseif(not iStableMasterOptionsDB["ScrollList"]["ShowActiveSlots"] and stack1[i] <= GlobalActiveSlotLoopValue ) then
+
+--			if(i <= GlobalActiveSlotLoopValue) then
+--					ScrollFrameArrElem["ScrollElement"..i]:Hide();
+--					if(GlobalActiveSlotLoopValue == 6) then
+--					ScrollFrameArrElem["ScrollElement"..6]:Hide();
+--					firstScrollIndex = 7;
+--					else
+--					ScrollFrameArrElem["ScrollElement"..6]:Show();
+--					firstScrollIndex = 6;
+--					end
+				
+--				end
+--			else
+--				if(i <= 6) then
+--				ScrollFrameArrElem["ScrollElement"..i]:Show();
+--				firstScrollIndex = 1;					
+--				end
+
+			stack3[#stack3+1] = stack1[i];
+			--stack3.length = stack3.length+1;
+			else
+			stack2[#stack2+1] = stack1[i];
+
+			end	
+		end
+		
+		end	
+	--	print(5532);
+		-- UpdateStack1
+		do
+		--wipe(stack1);
+		stack1 = {};
+		--stack1.length = StringKeyTableLengthI(stack1)+1;
+		for i = 1,#stack2 do	
+		stack1[#stack1+1] = stack2[i];
+		--stack1.length = stack1.length+1;
+		end
+		--wipe(stack2);
+		stack2 = {};
+		--stack2.length = StringKeyTableLengthI(stack2)+1;
+		end
+		-- Update Done
+
+
+		-- FavouritesFilter
+	do
+		for i = 1,#stack1 do		
+	--		print(5519,stack1[i]);
+			if(GetFilterValue("Favourite")) then
+
+			stack2[#stack2+1] = stack1[i];
+			--stack2.length = stack2.length+1;
+			elseif(not GetFilterValue("Favourite") and ScrollFrameArrElem["ScrollElementChild"..stack1[i]]["PetInfo"]["favourite"]) then
+			stack3[#stack3+1] = stack1[i];
+			--stack3.length = stack3.length+1;
+			else
+			stack2[#stack2+1] = stack1[i];
+
+			end	
+		end
+		
+		end	
+	--	print(5532);
+		-- UpdateStack1
+		do
+		--wipe(stack1);
+		stack1 = {};
+		--stack1.length = StringKeyTableLengthI(stack1)+1;
+		for i = 1,#stack2 do	
+		stack1[#stack1+1] = stack2[i];
+		--stack1.length = stack1.length+1;
+		end
+		--wipe(stack2);
+		stack2 = {};
+		--stack2.length = StringKeyTableLengthI(stack2)+1;
+		end
+		-- Update Done
+
+
+
+	-- ExoticFilter ( IF checked show exotic, if unchecked do not show exotic.) I should have a show exotic only too)
+	do
+		for i = 1,#stack1 do		
+	--		print(5519,stack1[i]);
+			if(GetFilterValue("Exotic")) then
+
+			stack2[#stack2+1] = stack1[i];
+			--stack2.length = stack2.length+1;
+			elseif(not GetFilterValue("Exotic") and IsExotic(ScrollFrameArrElem["ScrollElementChild"..stack1[i]]["PetInfo"]["family"])) then
+			stack3[#stack3+1] = stack1[i];
+			--stack3.length = stack3.length+1;
+			
+			else
+			stack2[#stack2+1] = stack1[i];
+
+
+			end	
+		end
+		
+		end	
+	--	print(5532);
+		-- UpdateStack1
+		do
+		--wipe(stack1);
+		stack1 = {};
+		--stack1.length = StringKeyTableLengthI(stack1)+1;
+		for i = 1,#stack2 do	
+		stack1[#stack1+1] = stack2[i];
+		--stack1.length = stack1.length+1;
+		end
+		--wipe(stack2);
+		stack2 = {};
+		--stack2.length = StringKeyTableLengthI(stack2)+1;
+		end
+		-- Update Done
 	
 	
 	
 	end -- filtersend
 	-- sort filtered stack
 	-- This is where Search is included as the outer most layer.
-
+	
+		-- Sort Variable declaration and init
 		
-		local sortpriority = {} 
+		local sortpriority = {iStableMasterDB["ActiveSorts"]["CurrentSort"].primary,iStableMasterDB["ActiveSorts"]["CurrentSort"].secondary,iStableMasterDB["ActiveSorts"]["CurrentSort"].tertiary} 
 		if type(GetSortPriority(1,2,3)) == "table" then
-			sortpriority =  GetSortPriority(1,2,3);	
+			--sortpriority =  GetSortPriority(1,2,3);	
 		
 		end
-		print(sortpriority[1],sortpriority[2],sortpriority[3]);
+		--print(sortpriority[1],sortpriority[2],sortpriority[3]);
 		local subSortIntervals1 = {};
 		local subStack1 = {};
 		--subStack1.length = StringKeyTableLengthI(subStack1)+1;
 		local subSortIntervals2 = {};
 		local subStack2 = {};
-		subStack2.length = StringKeyTableLengthI(subStack2)+1;
+		--subStack2.length = StringKeyTableLengthI(subStack2)+1;
 		local subSortIntervals3 = {};
 		local subStack3 = {};
-		subStack3.length = StringKeyTableLengthI(subStack3)+1;
+		--subStack3.length = StringKeyTableLengthI(subStack3)+1;
 		local subSortIntervals4 = {};
 		local subStack4 = {};
-		subStack4.length = StringKeyTableLengthI(subStack4)+1;
+		--subStack4.length = StringKeyTableLengthI(subStack4)+1;
 		local subSortIntervals5 = {};
 		local subStack5 = {};
-		subStack5.length = StringKeyTableLengthI(subStack5)+1;
+		--subStack5.length = StringKeyTableLengthI(subStack5)+1;
 		local subSortIntervals6 = {};
 		local subStack6 = {};
-		subStack6.length = StringKeyTableLengthI(subStack6)+1;
+		--subStack6.length = StringKeyTableLengthI(subStack6)+1;
 		local subSortIntervals7 = {};
 		local subStack7 = {};
-		subStack7.length = StringKeyTableLengthI(subStack7)+1;
+	--	subStack7.length = StringKeyTableLengthI(subStack7)+1;
 		local subSortIntervals8 = {};
 		local subStack8 = {};
-		subStack8.length = StringKeyTableLengthI(subStack8)+1;
+	--	subStack8.length = StringKeyTableLengthI(subStack8)+1;
+
+		StackOfIndiciesAndWeights = {Weight = {}, Value={}, Param={}};
+
+		for i = 1,#stack1 do
+		StackOfIndiciesAndWeights.Weight[stack1[i]] = 0;
+		StackOfIndiciesAndWeights.Value[i] = stack1[i];
+		StackOfIndiciesAndWeights.Param[i] = nil;
+		end
+		subStack1ParamStack = {};
+		subStack2ParamStack = {};
+		subStack3ParamStack = {};
+		
+		-- Sort Variable declaration and init END
+		do
 
 		for i=0,3 do
 			
+			-- Drop subsortintervals. Instead we sort every time, and add weights that are spaced 205^i such that sorting by weights will sort all layers correctly. Reset the Weights every call at the very first thing in the loop.
+			repeat
+			if((input == "N/A" or input == nil or input == "") and i == 0) then 
+			--iStableMaster:Print("|cc224488f DEBUG: |fffffff"..""); 
+			--iStableMaster:Print("|cc884422f DEBUG: |ccfffffff".." "..(input or ""));
+			break end;
+			
+			
 
 			if(i == 0 and input ~= "N/A" and input ~= nil and input ~= "") then --search function here
+			
 			subStack1 = stack1;
-
-			local subStack1ParamStack = {};
+			--print("Substack length: " ..#subStack1)
+			
 				for j = 1,#subStack1  do 
 					if(string.find(ScrollFrameArrElem["ScrollElementChild"..subStack1[j]]["PetInfo"]["name"],input) ~= nil) then
 						--for h = 1,#subStack1  do 
@@ -5612,8 +6048,10 @@ local point, relativeTo, relativePoint, xOfs, yOfs = ScrollFrameArrElem["ScrollE
 							--if(string.find(ScrollFrameArrElem["ScrollElementChild"..subStack1[h]]["PetInfo"]["name"],input) == nil) then
 							
 								subStack1ParamStack[#subStack1ParamStack+1] = select(1,string.find(ScrollFrameArrElem["ScrollElementChild"..subStack1[j]]["PetInfo"]["name"],input));
+								--print("Name: "..ScrollFrameArrElem["ScrollElementChild"..subStack1[j]]["PetInfo"]["name"].." Score: "..subStack1ParamStack[#subStack1ParamStack].." Input: "..input);
+								subStack2ParamStack[#subStack2ParamStack+1] = select(2,string.find(ScrollFrameArrElem["ScrollElementChild"..subStack1[j]]["PetInfo"]["name"],input)) - select(1,string.find(ScrollFrameArrElem["ScrollElementChild"..subStack1[j]]["PetInfo"]["name"],input));
 								subStack2[#subStack2+1] = subStack1[j];
-								print(subStack1ParamStack[#subStack1ParamStack]);
+								--print("Test this output: " .. subStack1ParamStack[#subStack1ParamStack]);
 								
 								--subStack2.length = subStack2.length +1;
 								--print("paramstack length: "..subStack1ParamStack[#subStack1ParamStack]);
@@ -5622,24 +6060,108 @@ local point, relativeTo, relativePoint, xOfs, yOfs = ScrollFrameArrElem["ScrollE
 				
 				--	end
 					elseif(string.find(ScrollFrameArrElem["ScrollElementChild"..subStack1[j]]["PetInfo"]["name"],input) == nil) then
+							
+							
+							
+							
 							subStack3[#subStack3+1] = subStack1[j];
 							--subStack3.length = subStack3.length +1;
 					end
 				end
 
+				subStack2, subStack1ParamStack = BubbleSortTableAndParamtableByParamtable(subStack2,subStack1ParamStack,1);
+				--subStack3ParamStack = select(1,BubbleSortTableAndParamtableByParamtable(subStack2,subStack2ParamStack,-1));
+				for j = 1, #subStack2 do
+			--	 print("Name: "..ScrollFrameArrElem["ScrollElementChild"..subStack2[j]]["PetInfo"]["name"].." Score: "..subStack1ParamStack[j]);
+				end
+				for j = 1, #subStack3 do
+					if(#subStack1ParamStack == 0) then 
+		--				print("Name: "..ScrollFrameArrElem["ScrollElementChild"..subStack3[j]]["PetInfo"]["name"].." Score: "..1);
+					else 
+			--			print("Name: "..ScrollFrameArrElem["ScrollElementChild"..subStack3[j]]["PetInfo"]["name"].." Score: "..(subStack1ParamStack[1]+1));
+					end
+				end
+		--		for j=1, #subStack2 do
+				 
+	--				for k =1, #subStack2-1 do 
+	--				if(subStack1ParamStack[k] == subStack1ParamStack[k+1]) then 
+							
+		--					local swap;
+		--					local swapE;
+		--					local swapD;
+							--print("compare j: "..l_equivalentParamTable[j].." With j+1: ", l_equivalentParamTable[j+1]);
+	--						if(subStack2ParamStack[k] > subStack2ParamStack[k+1]) then
+							--swap
+	--						swap = subStack2[k];
+	---						subStack2[k] = subStack2[k+1];
+	--						subStack2[k+1] = swap;
 
+			
+
+	--						swapE = subStack2ParamStack[k];
+--							subStack2ParamStack[k] = subStack2ParamStack[k+1];
+		--					subStack2ParamStack[k+1] = swapE;
+							
+		--					swapD = subStack1ParamStack[k];
+		--					subStack1ParamStack[k] = subStack1ParamStack[k+1];
+		--					subStack1ParamStack[k+1] = swapD;
+		--					end
+		--				end
+		--				end
+		--		end
+
+
+
+				--print("Substack1 length: " ..#subStack1);
+			--	print("Substack2 length: " ..#subStack2);
+				--print("Substack3 length: " ..#subStack3);
 			-- when the search matching has been completed do a stable sort:
-			wipe(subStack1);
+			--wipe(subStack1);
 			--print(#subStack1ParamStack);
 			--for prntI=1, #subStack2 do
 			--print(subStack2[prntI]);
 			--end
-			--local tempStackForParams = subStack1ParamStack;			
-			subStack1, subStack1ParamStack = BubbleSortTableAndParamtableByParamtable(subStack2,subStack1ParamStack);
-			--subStack1.length = StringKeyTableLengthI(subStack1)+1;
-			for prntI=1, #subStack1 do
-			print(subStack1[prntI]);
+			--local tempStackForParams = subStack1ParamStack;		
+			local WorstMachedCharPos = 1;
+			for j = 1, #subStack2 do
+		
+			if ( WorstMachedCharPos <= subStack1ParamStack[j]) then 
+			WorstMachedCharPos = subStack1ParamStack[j]+1
 			end
+			--	print("|cff4b705a Name: "..ScrollFrameArrElem["ScrollElementChild"..subStack2[j]]["PetInfo"]["name"].." Score: ".. subStack1ParamStack[j]);
+
+			end
+
+			for j = 1, #subStack3 do
+								subStack2[#subStack2+1] = subStack3[j];
+								subStack1ParamStack[#subStack1ParamStack+1] = WorstMachedCharPos;
+				end 
+			for j = 1,#subStack2 do
+
+			--print("|cff4b705a Name: "..ScrollFrameArrElem["ScrollElementChild"..subStack1[j]]["PetInfo"]["name"].." Score: ".. subStack1ParamStack[j]);
+			end
+			subStack1, subStack1ParamStack = BubbleSortTableAndParamtableByParamtable(subStack2,subStack1ParamStack,1);
+			--print(#subStack1);
+				
+				
+			for j=1, #subStack1 do 
+		--	print("|cff4b705a Name: "..ScrollFrameArrElem["ScrollElementChild"..subStack1[j]]["PetInfo"]["name"].." Score: ".. subStack1ParamStack[j]);
+			end
+				-- subStack1, subStack1ParamStack = BubbleSortTableAndParamtableByParamtable(subStack2,subStack1ParamStack);
+				StackOfIndiciesAndWeights.Value = subStack1;
+				StackOfIndiciesAndWeights.Param = subStack1ParamStack;
+				--StackOfIndiciesAndWeights.Weight = StackOfIndiciesAndWeights[StackOfIndiciesAndWeights.Value[j]].Weight;
+				StackOfIndiciesAndWeights.Weight = weighted_Sorting(StackOfIndiciesAndWeights, i,subStack1);
+					--		print(#StackOfIndiciesAndWeights.Weight);
+							for j = 1, #StackOfIndiciesAndWeights.Weight do
+							--print("Index: "..StackOfIndiciesAndWeights.Value[j].."Weight: "..StackOfIndiciesAndWeights.Weight[j]);
+							end
+
+
+			--subStack1.length = StringKeyTableLengthI(subStack1)+1;
+			--for prntI=1, #subStack1 do
+			--print(subStack1[prntI]);
+			--end
 			--print(#tempStackForParams);
 			--/run MasterFilterSort("Boar")
 			
@@ -5647,12 +6169,15 @@ local point, relativeTo, relativePoint, xOfs, yOfs = ScrollFrameArrElem["ScrollE
 			--print(subStack3[prntI]);
 			--end
 			
+
+
+
 			--subSortIntervals1 = SetSubSortRanges(subStack1, "name");
-			subSortIntervals1 = SetSubSortRanges(subStack1, "search", subStack1ParamStack);
-			for j=1,#subSortIntervals1 do
-			print(table.concat(subSortIntervals1[j],"; "));
-			end
-			subStack8 = subStack3;
+			--subSortIntervals1 = SetSubSortRanges(subStack1, "search", subStack1ParamStack);
+			--for j=1,#subSortIntervals1 do
+			--print(table.concat(subSortIntervals1[j],"; "));
+			--end
+			--subStack8 = subStack3;
 			--for prntI=1, #subStack8 do
 			--print(subStack8[prntI]);
 			--end
@@ -5660,12 +6185,12 @@ local point, relativeTo, relativePoint, xOfs, yOfs = ScrollFrameArrElem["ScrollE
 			--subStack8.length = StringKeyTableLengthI(subStack8)+1;
 			
 			--wipe(subStack3);
-			subStack3 = {};
+			--subStack3 = {};
 			--print("Length of Substack8: "..#subStack8);
 			--subStack3.length = StringKeyTableLengthI(subStack3)+1;
 			--subSortIntervals8 = SetSubSortRanges(subStack8, "name");
 			--subSortIntervals8 = SetSubSortRanges(subStack8, "search", subStack1ParamStack);
-			wipe(subStack1ParamStack);
+			--wipe(subStack1ParamStack);
 			
 			elseif i == 1 then
 				if #subStack1+1 == 1 then -- checks if substack 1 is empty because i = 0 returned no matches
@@ -5689,1168 +6214,163 @@ local point, relativeTo, relativePoint, xOfs, yOfs = ScrollFrameArrElem["ScrollE
 			break;
 			else
 			--print("debug in loop"); 
+				if(i == 1) then 
+					iStableMaster:Print("|cfff88c00Attention:|cffffffff Sorting is still in development, and not everything is working as intended. It is also reccomended that you clear your saved variables in: |cc00ff00f".." 'World of Warcraft\\_retail_\\WTF\\Account\\{accountnumber}\\SavedVariables\\iStableMaster.lua' ".."|cffffffff For the best results.");		
+				end
 			end
   if(i~=0) then
-
+			subStack1 = stack1;
 
 			if type(GetSortPriority(1,2,3)) == "boolean" then
 			break;
 			end
-			print("im supposed to debug", i);
+--			print(sortpriority[i],i);
+		--	print("im supposed to debug", i);
 			if sortpriority[i] == "Expansions" then
-			
+				iStableMaster:Print("|cfff88c00Attention:|cffffffff Sorting of "..sortpriority[i].." are not yet implemented");			
 
 			elseif sortpriority[i] == "Specialization" then
-				print(sortpriority[i],i);
+				--print(sortpriority[i],i);
 			--Specialization = {Cunning = 1, Tenacity = 2,Ferocity = 3, Direction < 0 > Direction}
-				if(GetSortingValue("Specializations","Direction") > 0) then
-					
-						--print("Sorting too. subSortIntervals1 Length: ", #subSortIntervals1);
-					-- stack to sort alphabetically Descending order A-Z
-					-- find intervals to sort here
-					
-					if( #subSortIntervals1 > 0) then
-					--local indexMatchForIntervals = false;
-					--local rngIndex = 1;
-					--local numericIntervaltablecount = 1;
-				--	local intervalIdsStack = {};
-				--	local fillerstack = {};
-				--	for j = 1,#subSortIntervals1 do
-						
-				--		intervalIdsStack[#intervalIdsStack+1] = {};
-				--		fillerstack[#fillerstack+1] = {};
-				--		
-					
-			--		end
---					local subsortstack = {};
---					if(i==1) then
-
---						subsortstack = MakeSubSortStacks(subStack1, "name");
---					else
---						subsortstack = MakeSubSortStacks(subStack1, string.lower(sortpriority[i-1]));
---					end
-					local subStack1ParamStack = {};
-					local subStack2ParamStack = {};
-					local pairKVStack1Resort = {};
-					--for j = 1,#subSortIntervals1  do
-						--print(#subSortIntervals1,#subSortIntervals1[j]);
-				--	end
-					--subSortIntervals2 = {};
-
-					for j = 1,#subSortIntervals1  do -- should j be 1 or rng start? actually 1 but stack should be subSortIntervals1 oh no no no gotta think about this one.
-					--	print(subSortIntervals1[j]);
-						if #subSortIntervals1[j] > 1 then
-							
-							
-								
-								
-								--print("paramstack length: "..subStack1ParamStack[#subStack1ParamStack]);
-							
-					
-								subStack1ParamStack = {};
-								for jj=1,#subSortIntervals1[j] do
-									
-								
-									if( type(subSortIntervals1[j][jj]) == "number") then
-										subStack1ParamStack[#subStack1ParamStack+1] = GetSortingValue("Specializations",ScrollFrameArrElem["ScrollElementChild"..subSortIntervals1[j][jj]]["PetInfo"]["talent"]);
-										--print("ss1ps: "..subStack1ParamStack[#subStack1ParamStack]);
-									end
-								end
-
-							--for k=1,#subStack1ParamStack do
-							--subStack2ParamStack[#subStack2ParamStack+1] = subStack1ParamStack[k];
-							--print("ss2ps: "..subStack2ParamStack[#subStack2ParamStack]);
-							--end
-
-							subSortIntervals2[j] = select(1,BubbleSortTableAndParamtableByParamtable(subSortIntervals1[j],subStack1ParamStack));
-							--print("Spec:SubSortIntervals for j="..j..": "..table.concat(subSortIntervals2[j],"; "));
-						
-							for k=1,#subStack1 do
-								for kk=1,#subSortIntervals1[j] do
-									if subSortIntervals2[j][kk] == subStack1[k] then
-
-									pairKVStack1Resort[#pairKVStack1Resort+1] = k;
-									--print("k,v Resort: "..k,pairKVStack1Resort[#pairKVStack1Resort]);
-									end
-								end
-								
-							end
-						
-						
-						else
-							
-							subSortIntervals2[j] = subSortIntervals1[j];
-							for k=1,#subStack1 do
-								
-									if subSortIntervals2[j][1] == subStack1[k] then
-
-									pairKVStack1Resort[#pairKVStack1Resort+1] = k;
-									--print("k,v Resort: "..k,pairKVStack1Resort[#pairKVStack1Resort]);
-									end
-								
-								
-							end
-
-
-						end
-							
-					
-
-					end
-					
-					
-						
-					subStack2 = {};
-
-					--- this is the problem i never updated substack2 with the non resorted indicies, so i need to do that.
-
-					
-					
-					local SplicedCount = 0;
-					
-					
-
-
-					for j = 1,#subSortIntervals2 do
-				
-						for jj = 1,#subSortIntervals2[j]  do
-							if subSortIntervals2[j][jj] ~= nil then
-								if subStack2[#subStack2+1] == subStack1[pairKVStack1Resort[SplicedCount+1]] then
-								   subStack2[#subStack2+1] = subSortIntervals2[j][jj];
-								   SplicedCount = SplicedCount+1;
-                                   --print("k,v: "..#subStack2,subStack2[#subStack2]);
-								end
-
-							
-							
-							end
-						end
-
-
-					end
-					--print("substack1 length: "..#subStack1);
-					for j=1,#subStack1 do
-						if subStack2[j] == nil then
-						subStack2[j] = subStack1[j];
-						end
-						--print("This: "..subStack1[j]);
-					end
-
-
-					
-					
-					subStack1 = {};
-					subStack1 = subStack2;
-				
-					subStack2 = {};
-					
-					
-					-- I need to merge the intervals here.
-					subSortIntervals1 = SetSubSortRanges(subStack1, "talent"); 
-					
-					-- End of: Sort intervals seperately and concat to the previous ones in a loop
-
-
-					
-				
-
-				elseif(GetSortingValue("Specializations","Direction") < 0) then
-					
-					--print("Sorting too. subSortIntervals1 Length: ", #subSortIntervals1);
-					-- stack to sort alphabetically Descending order A-Z
-					-- find intervals to sort here
-					
-					if( #subSortIntervals1 > 0) then
-					--local indexMatchForIntervals = false;
-					--local rngIndex = 1;
-					--local numericIntervaltablecount = 1;
-				--	local intervalIdsStack = {};
-				--	local fillerstack = {};
-				--	for j = 1,#subSortIntervals1 do
-						
-				--		intervalIdsStack[#intervalIdsStack+1] = {};
-				--		fillerstack[#fillerstack+1] = {};
-				--		
-					
-			--		end
---					local subsortstack = {};
---					if(i==1) then
-
---						subsortstack = MakeSubSortStacks(subStack1, "name");
---					else
---						subsortstack = MakeSubSortStacks(subStack1, string.lower(sortpriority[i-1]));
---					end
-					local subStack1ParamStack = {};
-					local subStack2ParamStack = {};
-					local pairKVStack1Resort = {};
-					--for j = 1,#subSortIntervals1  do
-						--print(#subSortIntervals1,#subSortIntervals1[j]);
-				--	end
-					--subSortIntervals2 = {};
-
-					for j = 1,#subSortIntervals1  do -- should j be 1 or rng start? actually 1 but stack should be subSortIntervals1 oh no no no gotta think about this one.
-					--	print(subSortIntervals1[j]);
-						if #subSortIntervals1[j] > 1 then
-							
-							
-								
-								
-								--print("paramstack length: "..subStack1ParamStack[#subStack1ParamStack]);
-							
-					
-								subStack1ParamStack = {};
-								for jj=1,#subSortIntervals1[j] do
-									
-								
-									if( type(subSortIntervals1[j][jj]) == "number") then
-										subStack1ParamStack[#subStack1ParamStack+1] = GetSortingValue("Specializations",ScrollFrameArrElem["ScrollElementChild"..subSortIntervals1[j][jj]]["PetInfo"]["talent"]);
-										--print("ss1ps: "..subStack1ParamStack[#subStack1ParamStack]);
-									end
-								end
-
-							--for k=1,#subStack1ParamStack do
-							--subStack2ParamStack[#subStack2ParamStack+1] = subStack1ParamStack[k];
-							--print("ss2ps: "..subStack2ParamStack[#subStack2ParamStack]);
-							--end
-
-							subSortIntervals2[j] = select(1,BubbleSortTableAndParamtableByParamtable(subSortIntervals1[j],subStack1ParamStack,-1));
-							--print("Spec:SubSortIntervals for j="..j..": "..table.concat(subSortIntervals2[j],"; "));
-						
-							for k=1,#subStack1 do
-								for kk=1,#subSortIntervals1[j] do
-									if subSortIntervals2[j][kk] == subStack1[k] then
-
-									pairKVStack1Resort[#pairKVStack1Resort+1] = k;
-									--print("k,v Resort: "..k,pairKVStack1Resort[#pairKVStack1Resort]);
-									end
-								end
-								
-							end
-						
-						
-						else
-							
-							subSortIntervals2[j] = subSortIntervals1[j];
-							for k=1,#subStack1 do
-								
-									if subSortIntervals2[j][1] == subStack1[k] then
-
-									pairKVStack1Resort[#pairKVStack1Resort+1] = k;
-									--print("k,v Resort: "..k,pairKVStack1Resort[#pairKVStack1Resort]);
-									end
-								
-								
-							end
-
-
-						end
-							
-					
-
-					end
-					
-					
-						
-					subStack2 = {};
-
-					--- this is the problem i never updated substack2 with the non resorted indicies, so i need to do that.
-
-					
-					
-					local SplicedCount = 0;
-					
-					
-
-
-					for j = 1,#subSortIntervals2 do
-				
-						for jj = 1,#subSortIntervals2[j]  do
-							if subSortIntervals2[j][jj] ~= nil then
-								if subStack2[#subStack2+1] == subStack1[pairKVStack1Resort[SplicedCount+1]] then
-								   subStack2[#subStack2+1] = subSortIntervals2[j][jj];
-								   SplicedCount = SplicedCount+1;
-                                   --print("k,v: "..#subStack2,subStack2[#subStack2]);
-								end
-
-							
-							
-							end
-						end
-
-
-					end
-					--print("substack1 length: "..#subStack1);
-					for j=1,#subStack1 do
-						if subStack2[j] == nil then
-						subStack2[j] = subStack1[j];
-						end
-						--print("This: "..subStack1[j]);
-					end
-
-
-					
-					
-					subStack1 = {};
-					subStack1 = subStack2;
-				
-					subStack2 = {};
-					
-					
-					-- I need to merge the intervals here.
-					subSortIntervals1 = SetSubSortRanges(subStack1, "talent"); 
-					
-					-- End of: Sort intervals seperately and concat to the previous ones in a loop
-
-					
-					
-					
-
-
-					else
-
-					local subStack1ParamStack = {};
-					for j = 1,#subStack1  do 
+				subStack1ParamStack = {};
+				subStack2 = {};
+				for j = 1,#subStack1  do 
 								subStack1ParamStack[#subStack1ParamStack+1] = GetSortingValue("Specializations",ScrollFrameArrElem["ScrollElementChild"..subStack1[j]]["PetInfo"]["talent"]);
 								subStack2[#subStack2+1] = subStack1[j];
 								
-								print("paramstack length: "..subStack1ParamStack[#subStack1ParamStack]);
+								--print("paramstack length: "..subStack1ParamStack[#subStack1ParamStack]);
 							
 					
 					
 					end
 					subStack1 = {};
-					subStack1, subStack1ParamStack = BubbleSortTableAndParamtableByParamtable(subStack2,subStack1ParamStack,-1);
-					subSortIntervals1 = SetSubSortRanges(subStack1, "search", subStack1ParamStack);
+					subStack1, subStack1ParamStack = BubbleSortTableAndParamtableByParamtable(subStack2,subStack1ParamStack,GetSortingValue("Specializations","Direction"));
+					--subSortIntervals1 = SetSubSortRanges(subStack1, "search", subStack1ParamStack);
 					
-					end
-					
-				end
-				end
+
+				StackOfIndiciesAndWeights.Value = subStack1;
+				StackOfIndiciesAndWeights.Param = subStack1ParamStack;
+				--print(StackOfIndiciesAndWeights.Param);
+				--StackOfIndiciesAndWeights.Weight = StackOfIndiciesAndWeights[StackOfIndiciesAndWeights.Value[j]].Weight;
+				StackOfIndiciesAndWeights.Weight = weighted_Sorting(StackOfIndiciesAndWeights, i, subStack1);
+			
 
 
 			elseif sortpriority[i] == "Name" then
-				print(sortpriority[i],i);
+				--print(sortpriority[i],i);
 				
 			-- name sorting here
-				if(GetSortingValue("Name") > 0) then
-					
-					
-					print("Sorting too");
-					-- stack to sort alphabetically Ascending order A-Z
-					-- find intervals to sort here
-					
-					if( #subSortIntervals1 > 0) then
-					 --- this means that a search string exists and Name param is used 2 times.
-							-- therefor intervals already exist.	
-					--print("debug", #subSortIntervals1);
-					
-					
-					 
-					 --- maybe this should be done after each sort for most dynamic approach, why? because when going multiple layers down in sort, the ranges include multiple already sorted steps, if done additively rather than subtractively... which as i write this makes me change my opinion.
-						
-
-
-					
-
-					
-
-					-- done finding intervals to sort
-	
-					-- Find bubblesort params
-
-					--local subStack1ParamStack = {};
-					local indexMatchForIntervals = false;
-					local rngIndex = 1;
-					local numericIntervaltablecount = 1;
-					local intervalIdsStack = {};
-					local fillerstack = {};
-					for j = 1,#subSortIntervals1 do
-						
-						intervalIdsStack[#intervalIdsStack+1] = {};
-						fillerstack[#fillerstack+1] = {};
-						
-					
-					end
---					local subsortstack = {};
---					if(i==1) then
-
---						subsortstack = MakeSubSortStacks(subStack1, "name");
---					else
---						subsortstack = MakeSubSortStacks(subStack1, string.lower(sortpriority[i-1]));
---					end
-
-					for j = 1,#subSortIntervals1  do -- should j be 1 or rng start? actually 1 but stack should be subSortIntervals1 oh no no no gotta think about this one.
-						
-						if #subSortIntervals1[j] > 1 then
-						
-							subSortIntervals2[j] = NameSortAZ(subSortIntervals1[j]);
-							print("SubSortIntervals for j="..j..": "..table.concat(subSortIntervals2[j],"; "));
-						else
-							subSortIntervals2[j] = subSortIntervals1[j];
-						end
-
-
-
-					end	
-					
-
-					
-
---						for intervalcount = 1,#subSortIntervals1 do
-
---						if(subSortIntervals1[intervalcount][1] == nil or subSortIntervals1[intervalcount][2] == nil) then
---						break;
---						end
-
---						print(#subSortIntervals1);
---						print(subSortIntervals1[intervalcount][1], subSortIntervals1[intervalcount][2]);
-											
-											
---						if subSortIntervals1[intervalcount][1] >= j and subSortIntervals1[intervalcount][2] <= j then
-
---						indexMatchForIntervals = true 
-						
---						else
-
---						indexMatchForIntervals = false
-
---						end
---						if indexMatchForIntervals == true then
---		-- for alphabetical sort this is not nessecary
---			--				if(string.find(ScrollFrameArrElem["ScrollElementChild"..subStack1[j]]["PetInfo"]["name"],input) ~= nil) then -- replace with correct comparator
---			--					--for h = 1,#subStack1  do 
-			
---			--						--if(string.find(ScrollFrameArrElem["ScrollElementChild"..subStack1[h]]["PetInfo"]["name"],input) == nil) then
-									
---			--							subStack1ParamStack[#subStack1ParamStack+1] = select(1,string.find(ScrollFrameArrElem["ScrollElementChild"..subStack1[j]]["PetInfo"]["name"],input)); -- replace with correct comparator
---			--							subStack2[#subStack2+1] = j
---			--							--subStack2.length = subStack2.length +1;
---			--							print(subStack1ParamStack[#subStack1ParamStack]);
---			--						--end
---			--					--end			
-						
---			--				--	end
---			--				elseif(string.find(ScrollFrameArrElem["ScrollElementChild"..subStack1[j]]["PetInfo"]["name"],input) ~= nil) then -- replace with correct comparator
---			--					subStack3[#subStack3+1] = subStack1[j];
---			--					--subStack3.length = subStack3.length +1;
---			--				end
-							
---		-- Instead We split the stack into substacks
---						--print(subStack1[j]);
-						
-						
---						--AddToStacks
-
-
-
---						intervalIdsStack[numericIntervaltablecount][#intervalIdsStack[numericIntervaltablecount]+1] = subStack1[j];
---						numericIntervaltablecount = numericIntervaltablecount+1;
---												--then sort them
-
---													-- Then Add to Out Stack
-
---						else
---						--AddToOutStack
---						fillerstack[numericIntervaltablecount][#fillerstack[numericIntervaltablecount]+1] = subStack1[j];
---						end
-						
-					
-					--end
-				    --end
-
-					-- bubblesort params found
-					-- What to do with above that doesn't actually find bubblesort params but rather traces duplicates in a separate interval id table:
-					-- Sort intervals seperately and concat to the previous ones in a loop
+								
+					subStack1ParamStack = {};
 					subStack2 = {};
-					for j = 1,#subSortIntervals2 do
-					--print(intervalIdsStack[j]);
-					--subStack3 = NameSortAZ(intervalIdsStack[j]);
-					--	for k=1,#subStack3 do
-							
-					--		subStack2[#subStack2+1] = substack3[k];
-					--	end
-					--subStack3 = {};
-					--subStack3 = fillerstack[j];
-					--	for k=1,#subStack3 do
-							
-					--		subStack2[#subStack2+1] = substack3[k];
-					--	end
-					--subStack3 = {};
-					
-					--wipe(subStack3);
-						for jj = 1,#subSortIntervals2[j]  do
-							if subSortIntervals2[j][jj] ~= nil then
-							subStack2[#subStack2+1] = subSortIntervals2[j][jj];
-							--print("k,v: "..#subStack2,subStack2[#subStack2]);
-							end
-						end
-
-
-					end
-	
-
-					
-					--subStack2.length = StringKeyTableLengthI(subStack2)+1;
-					--wipe(subStack1);
-					subStack1 = {};
-					subStack1 = subStack2;
-					--subStack1.length = StringKeyTableLengthI(subStack1)+1;
-					--wipe(subStack2);
-					
-					--subStack2.length = StringKeyTableLengthI(subStack2)+1;
-					
-					-- I need to merge the intervals here.
-					
-					subSortIntervals1 = SetSubSortRanges(subStack2, "name");
-					subStack2 = {};
-					
-					-- End of: Sort intervals seperately and concat to the previous ones in a loop
-
-	
-					elseif(#subSortIntervals1 == 0) then
-					for j=1,#subStack1 do
-						--print(subStack1[j]);
-					end
+					if(GetSortingValue("Name") > 0) then
 					subStack2 = NameSortAZ(subStack1);
-					--print("sorting all by name");
-					--subStack2.length = StringKeyTableLengthI(subStack2)+1;
-					--wipe(subStack1);
-					subSortIntervals1 = SetSubSortRanges(subStack2, "name");
-					subStack1 = {};
-					subStack1 = subStack2;
-					--subStack1.length = StringKeyTableLengthI(subStack1)+1;
-					--wipe(subStack2);
-					subStack2 = {};
-					--subStack2.length = StringKeyTableLengthI(subStack2)+1;
-					
 					else
-					--
-					--  local tempTable = {};
-					--  tempTable.length = StringKeyTableLengthI(tempTable)+1;
-					--	for k,v in ipairs(subSortIntervals1) do 
-							
-					--		for kk=v[1],v[2] do
-					--			tempTable[tempTable.length] = subStack1[kk];
-					--			tempTable.length = tempTable.length+1;
-					--		end
-							
-							
-					
-					--	end
-					--	subStack2 = NameSortAZ(tempTable);
-					--	wipe(tempTable);
-					----subsort stacks after midpoint pivot  here
-					--  local tempTable = {};
-					--  tempTable.length = StringKeyTableLengthI(tempTable)+1;
-					--	for k,v in ipairs(subSortIntervals8) do 
-							
-					--		for kk=v[1],v[2] do
-					--			tempTable[tempTable.length] = subStack1[kk];
-					--			tempTable.length = tempTable.length+1;
-					--		end
-							
-							
-					
-					--	end
-					--	subStack2 = NameSortAZ(tempTable);
-					--	wipe(tempTable);
-
-
-					
-
+					subStack2 = NameSortZA(subStack1);
 					end
-					
-					
-					--subStack8 = subStack3;
-					--subStack8.length = StringKeyTableLengthI(subStack8)+1;
-					--wipe(subStack3);
-					--subStack3.length = StringKeyTableLengthI(subStack3)+1;
-					--subSortIntervals8 = SetSubSortRanges(subStack8, "name");
-
-				elseif(GetSortingValue("Name") < 0) then
-				print("Name < 0");
-				-- stack to sort alphabetically Descending order A-Z
-					-- find intervals to sort here
-					
-					if( #subSortIntervals1 > 0) then
-					 --- this means that a search string exists and Name param is used 2 times.
-							-- therefor intervals already exist.	
-					--print("debug", #subSortIntervals1);
-					
-					
-					 
-					 --- maybe this should be done after each sort for most dynamic approach, why? because when going multiple layers down in sort, the ranges include multiple already sorted steps, if done additively rather than subtractively... which as i write this makes me change my opinion.
-						
-
-
-					
-
-					
-
-					-- done finding intervals to sort
-	
-					-- Find bubblesort params
-
-					--local subStack1ParamStack = {};
-					local indexMatchForIntervals = false;
-					local rngIndex = 1;
-					local numericIntervaltablecount = 1;
-					local intervalIdsStack = {};
-					local fillerstack = {};
-					for j = 1,#subSortIntervals1 do
-						
-						intervalIdsStack[#intervalIdsStack+1] = {};
-						fillerstack[#fillerstack+1] = {};
-						
-					
-					end
---					local subsortstack = {};
---					if(i==1) then
-
---						subsortstack = MakeSubSortStacks(subStack1, "name");
---					else
---						subsortstack = MakeSubSortStacks(subStack1, string.lower(sortpriority[i-1]));
---					end
-
-					for j = 1,#subSortIntervals1  do -- should j be 1 or rng start? actually 1 but stack should be subSortIntervals1 oh no no no gotta think about this one.
-						
-						if #subSortIntervals1[j] > 1 then
-						
-							subSortIntervals2[j] = NameSortZA(subSortIntervals1[j]);
-							print("SubSortIntervals for j="..j..": "..table.concat(subSortIntervals2[j],"; "));
-						else
-							subSortIntervals2[j] = subSortIntervals1[j];
-						end
-
-
-
-					end	
-					
-
-					
-
---						for intervalcount = 1,#subSortIntervals1 do
-
---						if(subSortIntervals1[intervalcount][1] == nil or subSortIntervals1[intervalcount][2] == nil) then
---						break;
---						end
-
---						print(#subSortIntervals1);
---						print(subSortIntervals1[intervalcount][1], subSortIntervals1[intervalcount][2]);
-											
-											
---						if subSortIntervals1[intervalcount][1] >= j and subSortIntervals1[intervalcount][2] <= j then
-
---						indexMatchForIntervals = true 
-						
---						else
-
---						indexMatchForIntervals = false
-
---						end
---						if indexMatchForIntervals == true then
---		-- for alphabetical sort this is not nessecary
---			--				if(string.find(ScrollFrameArrElem["ScrollElementChild"..subStack1[j]]["PetInfo"]["name"],input) ~= nil) then -- replace with correct comparator
---			--					--for h = 1,#subStack1  do 
-			
---			--						--if(string.find(ScrollFrameArrElem["ScrollElementChild"..subStack1[h]]["PetInfo"]["name"],input) == nil) then
-									
---			--							subStack1ParamStack[#subStack1ParamStack+1] = select(1,string.find(ScrollFrameArrElem["ScrollElementChild"..subStack1[j]]["PetInfo"]["name"],input)); -- replace with correct comparator
---			--							subStack2[#subStack2+1] = j
---			--							--subStack2.length = subStack2.length +1;
---			--							print(subStack1ParamStack[#subStack1ParamStack]);
---			--						--end
---			--					--end			
-						
---			--				--	end
---			--				elseif(string.find(ScrollFrameArrElem["ScrollElementChild"..subStack1[j]]["PetInfo"]["name"],input) ~= nil) then -- replace with correct comparator
---			--					subStack3[#subStack3+1] = subStack1[j];
---			--					--subStack3.length = subStack3.length +1;
---			--				end
-							
---		-- Instead We split the stack into substacks
---						--print(subStack1[j]);
-						
-						
---						--AddToStacks
-
-
-
---						intervalIdsStack[numericIntervaltablecount][#intervalIdsStack[numericIntervaltablecount]+1] = subStack1[j];
---						numericIntervaltablecount = numericIntervaltablecount+1;
---												--then sort them
-
---													-- Then Add to Out Stack
-
---						else
---						--AddToOutStack
---						fillerstack[numericIntervaltablecount][#fillerstack[numericIntervaltablecount]+1] = subStack1[j];
---						end
-						
-					
-					--end
-				    --end
-
-					-- bubblesort params found
-					-- What to do with above that doesn't actually find bubblesort params but rather traces duplicates in a separate interval id table:
-					-- Sort intervals seperately and concat to the previous ones in a loop
-					subStack2 = {};
-					for j = 1,#subSortIntervals2 do
-					--print(intervalIdsStack[j]);
-					--subStack3 = NameSortAZ(intervalIdsStack[j]);
-					--	for k=1,#subStack3 do
-							
-					--		subStack2[#subStack2+1] = substack3[k];
-					--	end
-					--subStack3 = {};
-					--subStack3 = fillerstack[j];
-					--	for k=1,#subStack3 do
-							
-					--		subStack2[#subStack2+1] = substack3[k];
-					--	end
-					--subStack3 = {};
-					
-					--wipe(subStack3);
-						for jj = 1,#subSortIntervals2[j]  do
-							if subSortIntervals2[j][jj] ~= nil then
-							subStack2[#subStack2+1] = subSortIntervals2[j][jj];
-							--print("k,v: "..#subStack2,subStack2[#subStack2]);
-							end
-						end
-
-
-					end
-	
-
-					
-					--subStack2.length = StringKeyTableLengthI(subStack2)+1;
-					--wipe(subStack1);
-					subStack1 = {};
-					subStack1 = subStack2;
-					--subStack1.length = StringKeyTableLengthI(subStack1)+1;
-					--wipe(subStack2);
-					
-					--subStack2.length = StringKeyTableLengthI(subStack2)+1;
-					
-					-- I need to merge the intervals here.
-					--print(#subSortIntervals1);
-					--subSortIntervals1 = {};
-					subSortIntervals1 = SetSubSortRanges(subStack2, "name");
-					subStack2 = {};
-					for j=1,#subSortIntervals1 do
-					print(table.concat(subSortIntervals1[j],"; "));
-					end
-					-- End of: Sort intervals seperately and concat to the previous ones in a loop
-
-	
-					elseif(#subSortIntervals1 == 0) then
-					for j=1,#subStack1 do
-						--print(subStack1[j]);
-					end
-					subStack2 = NameSortAZ(subStack1);
-					--print("sorting all by name");
-					--subStack2.length = StringKeyTableLengthI(subStack2)+1;
-					--wipe(subStack1);
-					subSortIntervals1 = SetSubSortRanges(subStack2, "name");
-					subStack1 = {};
-					subStack1 = subStack2;
-					--subStack1.length = StringKeyTableLengthI(subStack1)+1;
-					--wipe(subStack2);
-					subStack2 = {};
-					--subStack2.length = StringKeyTableLengthI(subStack2)+1;
-					
-					else
-					--
-					--  local tempTable = {};
-					--  tempTable.length = StringKeyTableLengthI(tempTable)+1;
-					--	for k,v in ipairs(subSortIntervals1) do 
-							
-					--		for kk=v[1],v[2] do
-					--			tempTable[tempTable.length] = subStack1[kk];
-					--			tempTable.length = tempTable.length+1;
-					--		end
-							
-							print("Name");
-					
-					--	end
-					--	subStack2 = NameSortAZ(tempTable);
-					--	wipe(tempTable);
-					----subsort stacks after midpoint pivot  here
-					--  local tempTable = {};
-					--  tempTable.length = StringKeyTableLengthI(tempTable)+1;
-					--	for k,v in ipairs(subSortIntervals8) do 
-							
-					--		for kk=v[1],v[2] do
-					--			tempTable[tempTable.length] = subStack1[kk];
-					--			tempTable.length = tempTable.length+1;
-					--		end
-							
-							
-					
-					--	end
-					--	subStack2 = NameSortAZ(tempTable);
-					--	wipe(tempTable);
-
-
-					
-
-					end
-					
-					
-					--subStack8 = subStack3;
-					--subStack8.length = StringKeyTableLengthI(subStack8)+1;
-					--wipe(subStack3);
-					--subStack3.length = StringKeyTableLengthI(subStack3)+1;
-					--subSortIntervals8 = SetSubSortRanges(subStack8, "name");
-
-				end
-				--- this bit is troublesome, because i now need to prep for additional layers. If I just SetSubSortRanges based on Name the issue is that if it wasn't Name last time, i will unsort the previous one on the next one, while keeping this one intact.
-				-- So I somehow need to merge the SubSortIntervals by tracking its history, maybe I can use GetSortingValue(sortpriority[i-1]) beyond i = 0 when search true where it is Name.
-				-- Maybe a function that merges the interval by poking "holes" in the list, and adapts based on whether i is 1 or 2 and if search conditions were met. This needs to be repeated with the appropriate variance in each category or made completely independent with the get call.
-				--wipe(subStack1);
-				--subStack1 = subStack2;
-				--subStack1.length = StringKeyTableLengthI(subStack1)+1;
-				--subSortIntervals2 = subSortIntervals1;
-				--subSortIntervals1 = SetSubSortRanges(subStack1, "name");
-
-
-			elseif sortpriority[i] == "Family" then --- currently not trimmed properly and is just copy paste from talent.
-				print(sortpriority[i],i);
-			--Specialization = {Cunning = 1, Tenacity = 2,Ferocity = 3, Direction < 0 > Direction}
-				if(GetSortingValue("Family","Direction") > 0) then
-					
-						--print("Sorting too. subSortIntervals1 Length: ", #subSortIntervals1);
-					-- stack to sort alphabetically Descending order A-Z
-					-- find intervals to sort here
-					
-					if( #subSortIntervals1 > 0) then
-					--local indexMatchForIntervals = false;
-					--local rngIndex = 1;
-					--local numericIntervaltablecount = 1;
-				--	local intervalIdsStack = {};
-				--	local fillerstack = {};
-				--	for j = 1,#subSortIntervals1 do
-						
-				--		intervalIdsStack[#intervalIdsStack+1] = {};
-				--		fillerstack[#fillerstack+1] = {};
-				--		
-					
-			--		end
---					local subsortstack = {};
---					if(i==1) then
-
---						subsortstack = MakeSubSortStacks(subStack1, "name");
---					else
---						subsortstack = MakeSubSortStacks(subStack1, string.lower(sortpriority[i-1]));
---					end
-					local subStack1ParamStack = {};
-					local subStack2ParamStack = {};
-					local pairKVStack1Resort = {};
-					--for j = 1,#subSortIntervals1  do
-						--print(#subSortIntervals1,#subSortIntervals1[j]);
-				--	end
-					--subSortIntervals2 = {};
-
-					for j = 1,#subSortIntervals1  do -- should j be 1 or rng start? actually 1 but stack should be subSortIntervals1 oh no no no gotta think about this one.
-					--	print(subSortIntervals1[j]);
-						if #subSortIntervals1[j] > 1 then
-							
-							
-								
-								
-								--print("paramstack length: "..subStack1ParamStack[#subStack1ParamStack]);
-							
-					
-								subStack1ParamStack = {};
-								for jj=1,#subSortIntervals1[j] do
-									
-								
-									if( type(subSortIntervals1[j][jj]) == "number") then
-										subStack1ParamStack[#subStack1ParamStack+1] = GetSortingValue("Family",ScrollFrameArrElem["ScrollElementChild"..subSortIntervals1[j][jj]]["PetInfo"]["family"]);
-										--print("ss1ps: "..subStack1ParamStack[#subStack1ParamStack]);
-									end
-								end
-
-							--for k=1,#subStack1ParamStack do
-							--subStack2ParamStack[#subStack2ParamStack+1] = subStack1ParamStack[k];
-							--print("ss2ps: "..subStack2ParamStack[#subStack2ParamStack]);
-							--end
-
-							subSortIntervals2[j] = select(1,BubbleSortTableAndParamtableByParamtable(subSortIntervals1[j],subStack1ParamStack));
-							--print("Spec:SubSortIntervals for j="..j..": "..table.concat(subSortIntervals2[j],"; "));
-						
-							for k=1,#subStack1 do
-								for kk=1,#subSortIntervals1[j] do
-									if subSortIntervals2[j][kk] == subStack1[k] then
-
-									pairKVStack1Resort[#pairKVStack1Resort+1] = k;
-									--print("k,v Resort: "..k,pairKVStack1Resort[#pairKVStack1Resort]);
-									end
-								end
-								
-							end
-						
-						
-						else
-							
-							subSortIntervals2[j] = subSortIntervals1[j];
-							for k=1,#subStack1 do
-								
-									if subSortIntervals2[j][1] == subStack1[k] then
-
-									pairKVStack1Resort[#pairKVStack1Resort+1] = k;
-									--print("k,v Resort: "..k,pairKVStack1Resort[#pairKVStack1Resort]);
-									end
-								
-								
-							end
-
-
-						end
-							
-					
-
-					end
-					
-					
-						
-					subStack2 = {};
-
-					--- this is the problem i never updated substack2 with the non resorted indicies, so i need to do that.
-
-					
-					
-					local SplicedCount = 0;
-					
-					
-
-
-					for j = 1,#subSortIntervals2 do
-				
-						for jj = 1,#subSortIntervals2[j]  do
-							if subSortIntervals2[j][jj] ~= nil then
-								if subStack2[#subStack2+1] == subStack1[pairKVStack1Resort[SplicedCount+1]] then
-								   subStack2[#subStack2+1] = subSortIntervals2[j][jj];
-								   SplicedCount = SplicedCount+1;
-                                   --print("k,v: "..#subStack2,subStack2[#subStack2]);
-								end
-
-							
-							
-							end
-						end
-
-
-					end
-					--print("substack1 length: "..#subStack1);
-					for j=1,#subStack1 do
-						if subStack2[j] == nil then
-						subStack2[j] = subStack1[j];
-						end
-						--print("This: "..subStack1[j]);
-					end
-
-
-					
-					
-					subStack1 = {};
-					subStack1 = subStack2;
-				
-					subStack2 = {};
-					
-					
-					-- I need to merge the intervals here.
-					subSortIntervals1 = SetSubSortRanges(subStack1, "family"); 
-					
-					-- End of: Sort intervals seperately and concat to the previous ones in a loop
-
-
-					
-				
-
-				elseif(GetSortingValue("Family","Direction") < 0) then
-					
-					--print("Sorting too. subSortIntervals1 Length: ", #subSortIntervals1);
-					-- stack to sort alphabetically Descending order A-Z
-					-- find intervals to sort here
-					
-					if( #subSortIntervals1 > 0) then
-					--local indexMatchForIntervals = false;
-					--local rngIndex = 1;
-					--local numericIntervaltablecount = 1;
-				--	local intervalIdsStack = {};
-				--	local fillerstack = {};
-				--	for j = 1,#subSortIntervals1 do
-						
-				--		intervalIdsStack[#intervalIdsStack+1] = {};
-				--		fillerstack[#fillerstack+1] = {};
-				--		
-					
-			--		end
---					local subsortstack = {};
---					if(i==1) then
-
---						subsortstack = MakeSubSortStacks(subStack1, "name");
---					else
---						subsortstack = MakeSubSortStacks(subStack1, string.lower(sortpriority[i-1]));
---					end
-					local subStack1ParamStack = {};
-					local subStack2ParamStack = {};
-					local pairKVStack1Resort = {};
-					--for j = 1,#subSortIntervals1  do
-						--print(#subSortIntervals1,#subSortIntervals1[j]);
-				--	end
-					--subSortIntervals2 = {};
-
-					for j = 1,#subSortIntervals1  do -- should j be 1 or rng start? actually 1 but stack should be subSortIntervals1 oh no no no gotta think about this one.
-					--	print(subSortIntervals1[j]);
-						if #subSortIntervals1[j] > 1 then
-							
-							
-								
-								
-								--print("paramstack length: "..subStack1ParamStack[#subStack1ParamStack]);
-							
-					
-								subStack1ParamStack = {};
-								for jj=1,#subSortIntervals1[j] do
-									
-								
-									if( type(subSortIntervals1[j][jj]) == "number") then
-										subStack1ParamStack[#subStack1ParamStack+1] = GetSortingValue("Family",ScrollFrameArrElem["ScrollElementChild"..subSortIntervals1[j][jj]]["PetInfo"]["family"]);
-										--print("ss1ps: "..subStack1ParamStack[#subStack1ParamStack]);
-									end
-								end
-
-							--for k=1,#subStack1ParamStack do
-							--subStack2ParamStack[#subStack2ParamStack+1] = subStack1ParamStack[k];
-							--print("ss2ps: "..subStack2ParamStack[#subStack2ParamStack]);
-							--end
-
-							subSortIntervals2[j] = select(1,BubbleSortTableAndParamtableByParamtable(subSortIntervals1[j],subStack1ParamStack,-1));
-							--print("Spec:SubSortIntervals for j="..j..": "..table.concat(subSortIntervals2[j],"; "));
-						
-							for k=1,#subStack1 do
-								for kk=1,#subSortIntervals1[j] do
-									if subSortIntervals2[j][kk] == subStack1[k] then
-
-									pairKVStack1Resort[#pairKVStack1Resort+1] = k;
-									--print("k,v Resort: "..k,pairKVStack1Resort[#pairKVStack1Resort]);
-									end
-								end
-								
-							end
-						
-						
-						else
-							
-							subSortIntervals2[j] = subSortIntervals1[j];
-							for k=1,#subStack1 do
-								
-									if subSortIntervals2[j][1] == subStack1[k] then
-
-									pairKVStack1Resort[#pairKVStack1Resort+1] = k;
-									--print("k,v Resort: "..k,pairKVStack1Resort[#pairKVStack1Resort]);
-									end
-								
-								
-							end
-
-
-						end
-							
-					
-
-					end
-					
-					
-						
-					subStack2 = {};
-
-					--- this is the problem i never updated substack2 with the non resorted indicies, so i need to do that.
-
-					
-					
-					local SplicedCount = 0;
-					
-					
-
-
-					for j = 1,#subSortIntervals2 do
-				
-						for jj = 1,#subSortIntervals2[j]  do
-							if subSortIntervals2[j][jj] ~= nil then
-								if subStack2[#subStack2+1] == subStack1[pairKVStack1Resort[SplicedCount+1]] then
-								   subStack2[#subStack2+1] = subSortIntervals2[j][jj];
-								   SplicedCount = SplicedCount+1;
-                                   --print("k,v: "..#subStack2,subStack2[#subStack2]);
-								end
-
-							
-							
-							end
-						end
-
-
-					end
-					--print("substack1 length: "..#subStack1);
-					for j=1,#subStack1 do
-						if subStack2[j] == nil then
-						subStack2[j] = subStack1[j];
-						end
-						--print("This: "..subStack1[j]);
-					end
-
-
-					
-					
-					subStack1 = {};
-					subStack1 = subStack2;
-				
-					subStack2 = {};
-					
-					
-					-- I need to merge the intervals here.
-					subSortIntervals1 = SetSubSortRanges(subStack1, "family"); 
-					
-					-- End of: Sort intervals seperately and concat to the previous ones in a loop
-
-					
-					
-					
-
-
-					else
-
-					local subStack1ParamStack = {};
 					for j = 1,#subStack1  do 
-								subStack1ParamStack[#subStack1ParamStack+1] = GetSortingValue("Family",ScrollFrameArrElem["ScrollElementChild"..subStack1[j]]["PetInfo"]["family"]);
-								subStack2[#subStack2+1] = subStack1[j];
+								subStack1ParamStack[#subStack1ParamStack+1] = j;
+								--subStack2[#subStack2+1] = NameSortAZ(subStack1);
 								
 								--print("paramstack length: "..subStack1ParamStack[#subStack1ParamStack]);
 							
 					
 					
 					end
+
 					subStack1 = {};
-					subStack1, subStack1ParamStack = BubbleSortTableAndParamtableByParamtable(subStack2,subStack1ParamStack,-1);
-					subSortIntervals1 = SetSubSortRanges(subStack1, "search", subStack1ParamStack);
+					subStack1, subStack1ParamStack = BubbleSortTableAndParamtableByParamtable(subStack2,subStack1ParamStack,1);
+					--subSortIntervals1 = SetSubSortRanges(subStack1, "search", subStack1ParamStack);
+					
+
+				StackOfIndiciesAndWeights.Value = subStack1
+				StackOfIndiciesAndWeights.Param = subStack1ParamStack;
+			--	print(StackOfIndiciesAndWeights.Param);
+				--StackOfIndiciesAndWeights.Weight = StackOfIndiciesAndWeights[StackOfIndiciesAndWeights.Value[j]].Weight;
+				StackOfIndiciesAndWeights.Weight = weighted_Sorting(StackOfIndiciesAndWeights, i, subStack1);
+										
+
+			elseif sortpriority[i] == "Family" then 
+				--print(sortpriority[i],i);
+			
+				subStack1ParamStack = {};
+				subStack1 = {};
+				subStack1 = stack1;
+				subStack2 = {};
+				for j = 1,#subStack1 do 
+								subStack1ParamStack[#subStack1ParamStack+1] = GetSortingValue("Family",ScrollFrameArrElem["ScrollElementChild"..subStack1[j]]["PetInfo"]["family"]) or -1;
+								subStack2[#subStack2+1] = subStack1[j];
+								if(GetSortingValue("Family",ScrollFrameArrElem["ScrollElementChild"..subStack1[j]]["PetInfo"]["family"]) == nil) then 
+								--print(subStack1[j]);
+								--print(ScrollFrameArrElem["ScrollElementChild"..subStack1[j]]["PetInfo"].name);
+								iStableMaster:Print("An Error has been spottet in your WTF folder: Please check the |cc00ff00f".." 'World of Warcraft\\_retail_\\WTF\\Account\\{accountnumber}\\SavedVariables\\iStableMaster.lua'".."|ccfffffff ".."while the game is closed and correct the family name for:"..ScrollFrameArrElem["ScrollElementChild"..subStack1[j]]["PetInfo"].name.." Or delete the file, but this will reset all your preferences too");
+								end
+								--print("|cc3355fff paramstack["..#subStack1ParamStack.."]: "..subStack1ParamStack[#subStack1ParamStack]);
+								--print("|cc6622666 subStack2["..#subStack2.."]: "..subStack2[#subStack2]);
+					
 					
 					end
-					
-				end
-				end
+					subStack1 = {};
+					--print(#subStack2,#subStack1ParamStack);
+					subStack1, subStack1ParamStack = BubbleSortTableAndParamtableByParamtable(subStack2,subStack1ParamStack,GetSortingValue("Family","Direction"));
+			--		subSortIntervals1 = SetSubSortRanges(subStack1, "search", subStack1ParamStack);
+				
+				StackOfIndiciesAndWeights.Value = subStack1;
+				StackOfIndiciesAndWeights.Param = subStack1ParamStack;
+				--StackOfIndiciesAndWeights.Weight = StackOfIndiciesAndWeights[StackOfIndiciesAndWeights.Value[j]].Weight;
+				StackOfIndiciesAndWeights.Weight = weighted_Sorting(StackOfIndiciesAndWeights, i,subStack1);
+
 			elseif sortpriority[i] == "Diets" then
 
+			--- this might need a rework
+			--print(sortpriority[i],i);
+			
+				subStack1ParamStack = {};
+				subStack1 = {};
+				subStack1 = stack1;
+				subStack2 = {};
+				for j = 1,#subStack1 do 
+								subStack1ParamStack[#subStack1ParamStack+1] = GetSortingValue("Diet",ScrollFrameArrElem["ScrollElementChild"..subStack1[j]]["PetInfo"]["diet"]) or -1;
+								subStack2[#subStack2+1] = subStack1[j];
+								if(GetSortingValue("Diet",ScrollFrameArrElem["ScrollElementChild"..subStack1[j]]["PetInfo"]["diet"]) == nil) then 
+								--print(subStack1[j]);
+								--print(ScrollFrameArrElem["ScrollElementChild"..subStack1[j]]["PetInfo"].name);
+								iStableMaster:Print("|cc224488f DEBUG: ".."|ccff2222fWarning:|ccfffffff  An Error has been spottet in your WTF folder: Please check the |cc00ff00f".." 'World of Warcraft\\_retail_\\WTF\\Account\\{accountnumber}\\SavedVariables\\iStableMaster.lua'".."|ccfffffff ".."while the game is closed and correct the diet spelling for:"..ScrollFrameArrElem["ScrollElementChild"..subStack1[j]]["PetInfo"].diet.." Or delete the file, but this will reset all your preferences too");
+								end
+								--print("|cc3355fff paramstack["..#subStack1ParamStack.."]: "..subStack1ParamStack[#subStack1ParamStack]);
+								--print("|cc6622666 subStack2["..#subStack2.."]: "..subStack2[#subStack2]);
+					
+					
+					end
+					subStack1 = {};
+					--print(#subStack2,#subStack1ParamStack);
+					subStack1, subStack1ParamStack = BubbleSortTableAndParamtableByParamtable(subStack2,subStack1ParamStack,GetSortingValue("Diet","Direction"));
+			--		subSortIntervals1 = SetSubSortRanges(subStack1, "search", subStack1ParamStack);
+				
+				StackOfIndiciesAndWeights.Value = subStack1;
+				StackOfIndiciesAndWeights.Param = subStack1ParamStack;
+				--StackOfIndiciesAndWeights.Weight = StackOfIndiciesAndWeights[StackOfIndiciesAndWeights.Value[j]].Weight;
+				StackOfIndiciesAndWeights.Weight = weighted_Sorting(StackOfIndiciesAndWeights, i,subStack1);
 			elseif sortpriority[i] == "Favourites" then
-			elseif sortpriority[i] == "Exotic" then
-			elseif sortpriority[i] == "Renamed" then
-			elseif sortpriority[i] == "Rarity" then
-			elseif sortpriority[i] == "ActiveSlots" then
-			elseif sortpriority[i] == "AnimalCompanion" then
+			iStableMaster:Print("|cfff88c00Attention:|cffffffff Sorting of "..sortpriority[i].." are not yet implemented");		
 
+			elseif sortpriority[i] == "Exotic" then
+			iStableMaster:Print("|cfff88c00Attention:|cffffffff Sorting of "..sortpriority[i].." are not yet implemented");		
+			elseif sortpriority[i] == "Renamed" then
+			iStableMaster:Print("|cfff8c00Attention:|cffffffff Sorting of "..sortpriority[i].." are not yet implemented");		
+
+
+			elseif sortpriority[i] == "Rarity" then
+			iStableMaster:Print("|cfff88c00Attention:|cffffffff Sorting of "..sortpriority[i].." are not yet implemented");		
+			elseif sortpriority[i] == "ActiveSlots" then
+			iStableMaster:Print("|cfff88c00Attention:|cffffffff Sorting of "..sortpriority[i].." are not yet implemented");		
+			elseif sortpriority[i] == "AnimalCompanion" then
+			iStableMaster:Print("|cfff88c00Attention:|cffffffff Sorting of "..sortpriority[i].." are not yet implemented");		
 			end
 			
+			
+
+
 			--- THIS IS A PASTE FROM ABOVE IN ELSIF == "NAME", code below may be changed. This bit is troublesome, because i now need to prep for additional layers. If I just SetSubSortRanges based on Name the issue is that if it wasn't Name last time, i will unsort the previous one on the next one, while keeping this one intact.
 				-- So I somehow need to merge the SubSortIntervals by tracking its history, maybe I can use GetSortingValue(sortpriority[i-1]) beyond i = 0 when search true where it is Name.
 				-- Maybe a function that merges the interval by poking "holes" in the list, and adapts based on whether i is 1 or 2 and if search conditions were met. This needs to be repeated with the appropriate variance in each category or made completely independent with the get call.
@@ -6907,13 +6427,30 @@ local point, relativeTo, relativePoint, xOfs, yOfs = ScrollFrameArrElem["ScrollE
 			 
 	
   end
-	 
-
+	 --- This should take care of all itterations of Sort, as long as the SubStack 1 has been correctly set it should add the weights, here and then we sort the final thing based on the weights.
+					
+				if(subStack1 == {}) then 
+				
+				iStableMaster:Print("|cc224488f DEBUG: ".."|ccff2222fWarning:|cffffffff There is no subStack1 Saved for layer: "..i);
+				
+				else
+				-- subStack1, subStack1ParamStack = BubbleSortTableAndParamtableByParamtable(subStack2,subStack1ParamStack);
+				StackOfIndiciesAndWeights.Value = subStack1;
+				StackOfIndiciesAndWeights.Param = subStack1ParamStack;
+				--StackOfIndiciesAndWeights.Weight = StackOfIndiciesAndWeights[StackOfIndiciesAndWeights.Value[j]].Weight;
+				StackOfIndiciesAndWeights.Weight = weighted_Sorting(StackOfIndiciesAndWeights, i,subStack1);
+				
+				--print("Last weights: "..#StackOfIndiciesAndWeights.Weight);
+	
+				end
+	until true; 
 	end
-		 if(#subStack1~=0) then
-			 for mergerI=1,#subStack8 do
-			 subStack1[#subStack1+1] = subStack8[mergerI];
-			 end
+		
+		---- Deprecated merge
+		----- if(#subStack1~=0) then
+		----	 for mergerI=1,#subStack8 do
+		----	 subStack1[#subStack1+1] = subStack8[mergerI];
+		----	 end
 			--	print(#subStack1);
 			 --for i = 1,#subStack8 do
 				--print("subStack8: "..subStack8[i]);
@@ -6922,23 +6459,49 @@ local point, relativeTo, relativePoint, xOfs, yOfs = ScrollFrameArrElem["ScrollE
 				--print("To Be Stack 1: "..subStack1[i]);
 			 --end
 			
-			 wipe(stack1);
-			 stack1 = subStack1;
+		----	 wipe(stack1);
+		----	 stack1 = subStack1;
 			 --for i = 1,#stack1 do
 				--print(stack1[i]);
 			 --end
-			 stack1.length = StringKeyTableLengthI(stack1)+1;
+	----		 stack1.length = StringKeyTableLengthI(stack1)+1;
 			-- wipe(subStack1);
 			-- wipe(subStack2);
 			-- wipe(subStack8);
 		--	 for i = 1,#stack1 do
 			--	print(stack1[i]);
 		--	 end
-		end
+	---	end
+		--- DEPRECATION FIELD END
+		
+			--	print("#Weigth: " ..#StackOfIndiciesAndWeights.Weight);
+				sortOutParamStack = {};
+				for i=1, #stack1 do
+				sortOutParamStack[i] = StackOfIndiciesAndWeights.Weight[StackOfIndiciesAndWeights.Value[i]];
+					if(StackOfIndiciesAndWeights.Weight[StackOfIndiciesAndWeights.Value[i]] == nil) then 
+						sortOutParamStack[i] = 0;
+					end
+			--	print("|ccff44222 sortOutParamStack["..i.."]: "..sortOutParamStack[i]);
+				end
+				--stack1 = {};
+				
+				
+
+				stack1 =  select(1,BubbleSortTableAndParamtableByParamtable(StackOfIndiciesAndWeights.Value,sortOutParamStack,nil));
+				for j = 1, #stack1 do
+				
+				if(input == "N/A" or input == nil or input == "" and (StackOfIndiciesAndWeights.Weight[StackOfIndiciesAndWeights.Value[j]] == nil or ScrollFrameArrElem["ScrollElementChild"..StackOfIndiciesAndWeights.Value[j]]["PetInfo"]["name"] == nil or ScrollFrameArrElem["ScrollElementChild"..StackOfIndiciesAndWeights.Value[j]]["PetInfo"]["family"]) ) then 
+				else
+				--print("Weigths: " ..StackOfIndiciesAndWeights.Weight[StackOfIndiciesAndWeights.Value[j]]..", Name: "..ScrollFrameArrElem["ScrollElementChild"..StackOfIndiciesAndWeights.Value[j]]["PetInfo"]["name"]..", Spec: "..ScrollFrameArrElem["ScrollElementChild"..StackOfIndiciesAndWeights.Value[j]]["PetInfo"]["talent"]..", Family: "..ScrollFrameArrElem["ScrollElementChild"..StackOfIndiciesAndWeights.Value[j]]["PetInfo"]["family"]);
+				end
+				end		
+	
+	end
 	-- sort end
 	
 	-- join stacks
-	if(false)then--flip) then -- add empty either at top or bottom
+	do
+	if(flip)then--flip) then -- add empty either at top or bottom
 		for i = 1,#stack1 do -- Add the filtered and sorted elements to the Empty stack
 			stack0[#stack0+1] = stack1[i];
 			--stack0.length = stack0.length+1;
@@ -6961,7 +6524,8 @@ local point, relativeTo, relativePoint, xOfs, yOfs = ScrollFrameArrElem["ScrollE
 			--stack2.length = stack2.length+1;
 
 		end
-			for i = 1, #stack1 do
+		
+		for i = 1, #stack1 do
 			stack2[#stack2+1] = stack1[i];
 			--stack2.length = stack2.length+1;
 		end
@@ -6977,10 +6541,11 @@ local point, relativeTo, relativePoint, xOfs, yOfs = ScrollFrameArrElem["ScrollE
 	ScrollFrameArrElem["ScrollElement"..stack3[i]]:Hide();
 
 	end
-
+	end
 	--join stacks end
 
 	--MoveAllElements Into Place
+	do
 	for i = 1, #stack2 do
 			
 			--if(notverytrue) then
@@ -7011,7 +6576,7 @@ local point, relativeTo, relativePoint, xOfs, yOfs = ScrollFrameArrElem["ScrollE
 
 
 
-
+	end
 	--MoveAllElements Into Place End
 
 end
@@ -7138,7 +6703,7 @@ end
 			print(i,#tableIn, "i, Length");
 		if paramIn == "search" then		
 			--if #searchParamStack < 1 then break; end;
-			print("SetSubSortRanges()>compare i: "..searchParamStack[i-1].." With i+1: ", searchParamStack[i]);
+		--	print("SetSubSortRanges()>compare i: "..searchParamStack[i-1].." With i+1: ", searchParamStack[i]);
 			if searchParamStack[i] == searchParamStack[i-1] then
 				if i == #tableIn then
 					l_SubSortSets[currentInterval][#l_SubSortSets[currentInterval]+1] = tableIn[i];
@@ -7254,7 +6819,7 @@ function BubbleSortTableAndParamtableByParamtable(tableToSort,equivalentParamTab
 		for j=1,#l_tableToSort-1 do 
 			local swap;
 			local swapE;
-			print("compare j: "..l_equivalentParamTable[j].." With j+1: ", l_equivalentParamTable[j+1]);
+			--print("compare j: "..l_equivalentParamTable[j].." With j+1: ", l_equivalentParamTable[j+1]);
 			if(l_equivalentParamTable[j] < l_equivalentParamTable[j+1]) then
 			--swap
 			swap = l_tableToSort[j];
@@ -7285,7 +6850,7 @@ function BubbleSortTableAndParamtableByParamtable(tableToSort,equivalentParamTab
 		for j=1,#l_tableToSort-1 do 
 			local swap;
 			local swapE;
-			print("compare j: "..l_equivalentParamTable[j].." With j+1: ", l_equivalentParamTable[j+1]);
+			--print("compare j: "..l_equivalentParamTable[j].." With j+1: ", l_equivalentParamTable[j+1]);
 			if(l_equivalentParamTable[j] > l_equivalentParamTable[j+1]) then
 			--swap
 			swap = l_tableToSort[j];
@@ -7311,7 +6876,7 @@ function BubbleSortTableAndParamtableByParamtable(tableToSort,equivalentParamTab
 	end
 	end
 	for i=1,#l_tableToSort do
-		print("Params sorted: "..l_equivalentParamTable[i], "TableSorted: "..l_tableToSort[i]);
+		--print("Params sorted: "..l_equivalentParamTable[i], "TableSorted: "..l_tableToSort[i]);
 	end
 	return l_tableToSort, l_equivalentParamTable;
 
@@ -7321,8 +6886,156 @@ end
 
 
 
+-- weighted sorting -- i am unsure whether or not there should be 205 values at all times, or wether key with the same equity should have the same value.
+-- 0-204 [+1]
+-- 205-42.024 [+205]
+-- 42.025-8.615.124 [+42.025]
+-- 8.615.125-1.767.100.625 [+8.615.125]
 
+lastPass = -1;
+-- function weighted_Sorting(Table, ListTable, i) -- DataTable = Table, ListTable = list of indexes sorted/in order, i = sorting layer 
+function weighted_Sorting(TableWithKeys, i,subStack1) -- new way is to just parse in the values and weights through the same table, i sorting layer still.  I am now tainting the same value so arg is irrellevant but required
+ -- WeightIncrement = {8.615.125, 42.025, 205, 1};
+	--print("hello world");
+	--print(#TableWithKeys.Value, #TableWithKeys.Param, #TableWithKeys.Weight);
+ -- if ( Table[slot x].value == Table[slot x-1].value ) then do
 
+ --		ListTable[index - 1].weight =  ListTable[index].weight; elseif then 
+ 
+ --		ListTable[index - 1].weight = ListTable[index].weight + WeightIncrement[i];
+  if(i == 0 and lastPass ~= -1 )then
+
+  lastPass = -1;
+  
+
+  end
+ if(i == lastPass or i > 3 or i == nil) then return StackOfIndiciesAndWeights; end;
+ -- end
+
+ -- BubbleSortTableAndParamtableByParamtable(ListTable[index],ListTable[index].weight,inverse)  -- In the future the variable  for each parameter can be parsed here, so the each sort can be flipped individually
+ -- Implementation below this line ---
+ local index = i +1;
+
+-- WeightIncrement = {8615125, 42025, 205, 1};
+--  WeightIncrement = {74220378765625,1766100625, 42025, 1};
+  WeightIncrement = {100000000000,1000000, 1000, 1};
+ --print(WeightIncrement[index]);
+	-- input of recently sorted stack is parsed here.
+	local l_TableWithKeys = {Weight ={}};
+--print(l_TableWithKeys.Value[1]);
+	
+  for k =1, #subStack1-1,1 do -- from 205 (if that is the length) to 0. Need to double check index range is not never 0.
+  if(k == 1) then 
+ if(index <= 1 or StackOfIndiciesAndWeights.Weight[StackOfIndiciesAndWeights.Value[1]] == nil) then 
+ l_TableWithKeys.Weight[1] = WeightIncrement[index];
+ --print("This one too"..index..", "..WeightIncrement[index]);
+ else
+--	print("This one "..index..", "..StackOfIndiciesAndWeights.Weight[StackOfIndiciesAndWeights.Value[1]]);
+ l_TableWithKeys.Weight[1] = WeightIncrement[index] + StackOfIndiciesAndWeights.Weight[StackOfIndiciesAndWeights.Value[1]];
+ end
+ 
+ end
+   -- The  making sure exist is not relevant here anyway, setting and reseeting it before the layer loop.
+
+ --  if(ListTable[k-1].weight == nil) then  -- Make sure that there is a number to add an increment to
+--	ListTable[k-1].weight = 0;
+--	end
+ -- if(ListTable[k].weight == nil) then  -- Make sure that there is a number to add an increment to
+--	ListTable[k].weight = 0;
+--	end
+	
+
+  if ( StackOfIndiciesAndWeights.Param[StackOfIndiciesAndWeights.Value[k]] == StackOfIndiciesAndWeights.Param[StackOfIndiciesAndWeights.Value[k+1]] ) then -- Compare the value of sorting. -- NB: Define value or make it interpretable
+  l_TableWithKeys.Weight[k+1] =  l_TableWithKeys.Weight[k]; 
+ -- print(l_TableWithKeys.Weight[k+1], index, WeightIncrement[index]);
+  else
+  l_TableWithKeys.Weight[k+1] = l_TableWithKeys.Weight[k] + WeightIncrement[index]; 
+ -- print(l_TableWithKeys.Weight[k+1], index, WeightIncrement[index]);
+  end
+--print(l_TableWithKeys.Weight[k]);
+ end
+ lastPass = i;
+ for k=1,#l_TableWithKeys.Weight do 
+--	StackOfIndiciesAndWeights.Weight[k] = l_TableWithKeys.Weight[k] +  TableWithKeys.Weight[k];
+	--l_TableWithKeys.Weight[k] = (l_TableWithKeys.Weight[k] + TableWithKeys.Weight[k]);
+	if(StackOfIndiciesAndWeights.Weight[StackOfIndiciesAndWeights.Value[k]] ~= nil) then
+	StackOfIndiciesAndWeights.Weight[StackOfIndiciesAndWeights.Value[k]] =  StackOfIndiciesAndWeights.Weight[StackOfIndiciesAndWeights.Value[k]] + l_TableWithKeys.Weight[k];
+	 else
+	 StackOfIndiciesAndWeights.Weight[StackOfIndiciesAndWeights.Value[k]] = l_TableWithKeys.Weight[k];
+	 end
+--	 print("Returns: "..l_TableWithKeys.Weight[k], index, WeightIncrement[index]);
+ end
+ return StackOfIndiciesAndWeights;
+
+end
+
+function weighted_SortingTaint(i) -- new way is to just parse in the values and weights through the same table, i sorting layer still. 
+ -- WeightIncrement = {8.615.125, 42.025, 205, 1};
+	--print("hello world");
+	--print(#TableWithKeys.Value, #TableWithKeys.Param, #TableWithKeys.Weight);
+ -- if ( Table[slot x].value == Table[slot x-1].value ) then do
+
+ --		ListTable[index - 1].weight =  ListTable[index].weight; elseif then 
+ 
+ --		ListTable[index - 1].weight = ListTable[index].weight + WeightIncrement[i];
+  if(i == 0 and lastPass ~= -1 )then
+
+  lastPass = -1;
+  
+
+  end
+ if(i == lastPass or i > 3) then return TableWithKeys; end;
+ -- end
+
+ -- BubbleSortTableAndParamtableByParamtable(ListTable[index],ListTable[index].weight,inverse)  -- In the future the variable  for each parameter can be parsed here, so the each sort can be flipped individually
+ -- Implementation below this line ---
+ local index = i +1;
+
+ -- WeightIncrement = {8615125, 42025, 205, 1};
+--   WeightIncrement = {74220378765625,1766100625, 42025, 1};
+    WeightIncrement = {100000000000,1000000, 1000, 1};
+ print(WeightIncrement[index], index);
+	-- input of recently sorted stack is parsed here.
+	 l_TableWithKeys = TableWithKeys;
+--print(l_TableWithKeys.Value[1]);
+
+  for k =1, #l_TableWithKeys.Value-1,1 do -- from 205 (if that is the length) to 0. Need to double check index range is not never 0.
+  if(k == 1) then 
+ if(index <= 1) then 
+ TableWithKeys.Weight[1] = WeightIncrement[index];
+ else
+ print("This one"..TableWithKeys.Weight[1]);
+ TableWithKeys.Weight[1] = WeightIncrement[index] + TableWithKeys.Weight[1];
+ end
+ 
+ end
+   -- The  making sure exist is not relevant here anyway, setting and reseeting it before the layer loop.
+
+ --  if(ListTable[k-1].weight == nil) then  -- Make sure that there is a number to add an increment to
+--	ListTable[k-1].weight = 0;
+--	end
+ -- if(ListTable[k].weight == nil) then  -- Make sure that there is a number to add an increment to
+--	ListTable[k].weight = 0;
+--	end
+	
+
+  if ( l_TableWithKeys.Param[l_TableWithKeys.Value[k]] == l_TableWithKeys.Param[l_TableWithKeys.Value[k+1]] ) then -- Compare the value of sorting. -- NB: Define value or make it interpretable
+  l_TableWithKeys.Weight[k+1] =  l_TableWithKeys.Weight[k]; 
+  else
+  l_TableWithKeys.Weight[k+1] = l_TableWithKeys.Weight[k] + WeightIncrement[index]; 
+  print(l_TableWithKeys.Weight[k+1], index, WeightIncrement[index]);
+  end
+--print(l_TableWithKeys.Weight[k]);
+ end
+ lastPass = i;
+ for k=1,#l_TableWithKeys.Weight do 
+	TableWithKeys.Weight[k] = l_TableWithKeys.Weight[k] +  TableWithKeys.Weight[k];
+	--l_TableWithKeys.Weight[k] = (l_TableWithKeys.Weight[k] + TableWithKeys.Weight[k]);
+
+ end
+ return l_TableWithKeys;
+
+end
 
 
 --- END OF SECTION 

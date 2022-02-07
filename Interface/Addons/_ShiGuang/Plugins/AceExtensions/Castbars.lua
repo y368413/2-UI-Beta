@@ -1250,7 +1250,7 @@ function Castbars:OnInitialize()
                 Width = 260,
                 Height = 16,
                 Alpha = 1.0,
-                Texture = "ShiGuang",
+                Texture = "_ShiGuang",
                 BarColor = {0.14, 0.8, 0.85},
                 BarColorChanneling = {0.4, 0.2, 0.8},
                 BarColorShielded = {0.6, 0.6, 0.6},

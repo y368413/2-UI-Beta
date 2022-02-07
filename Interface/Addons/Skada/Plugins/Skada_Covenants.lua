@@ -329,9 +329,9 @@ end
 SkadaCovenants.addonPrefix = "DCOribos"
 SkadaCovenants.askMessage = "ASK"
 DCovenant = {
-    ["iconSize"] = 21,
+    ["iconSize"] = 30,
 }
-DCovenantLog = false --默认关闭目标是哪个盟约的在频道里提示
+DCovenantLog = false --默锟较关憋拷目锟斤拷锟斤拷锟侥革拷锟斤拷约锟斤拷锟斤拷频锟斤拷锟斤拷锟斤拷示
 
 local isAsked = false
 
