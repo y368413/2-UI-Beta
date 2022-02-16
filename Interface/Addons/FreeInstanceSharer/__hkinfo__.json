@@ -1,0 +1,14 @@
+{
+    "addonsMap": [
+        "FreeInstanceSharer"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "localName": "FreeInstanceSharer",
+    "searchName": "Free Instance Sharer",
+    "name": "Free Instance Sharer",
+    "fileName": "free-instance-sharer",
+    "target": "curse",
+    "version": "v9.1.5-3-g1d83383",
+    "gameVersion": "9.1.0"
+}

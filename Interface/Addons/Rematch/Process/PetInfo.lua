@@ -585,7 +585,7 @@ local queryAPIs = {
 -- addons are used in this priority: BattlePetBreedID, PetTracker_Breeds then LibPetBreedInfo-1.0
 function rematch:GetBreedSource()
    if breedSource==nil then
-      if IsAddOnLoaded("BattlePetBreedID") then
+      if IsAddOnLoaded("HPetBattleAny") then
          breedSource = "BattlePetBreedID"
          return "BattlePetBreedID"
       elseif IsAddOnLoaded("PetTracker_Breeds") and GetAddOnMetadata("PetTracker_Breeds","Version")~="7.1.4" then

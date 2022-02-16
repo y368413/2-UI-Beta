@@ -10,7 +10,7 @@
 ## Author-zhTW: 上官曉霧,Simca@Malfurion and Hugh@Burning Blade
 ## X-Date: 2020-11-06,2020-12-29T14:37:33Z
 ## Version: 2.2.17 + v1.17.5
-## SavedVariables: HPetSavesBP,BID_Options
+## SavedVariables: HPetSaves,BID_Options
 ## DefaultState: disabled
 
 ## X-Repple: 2 UI

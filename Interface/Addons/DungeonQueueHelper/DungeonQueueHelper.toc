@@ -1,0 +1,11 @@
+## Interface: 90100
+## Author: trykle
+## Version: 1
+
+##SavedVariables: Global_KilledList
+##SavedVariables: Global_AutoQueue
+##SavedVariables: Global_AutoEnter
+
+DungeonQueueHelperCore.lua
+DungeonQueueHelper.lua
+ 

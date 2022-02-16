@@ -4315,7 +4315,7 @@ Private.event_prototypes = {
         conditionEvents = {
           "SPELL_UPDATE_USABLE",
           "PLAYER_TARGET_CHANGED",
-          "UNIT_POWER_FREQUENT",
+          "UNIT_POWER_FREQUENT:player"
         },
       },
       {
@@ -4330,8 +4330,8 @@ Private.event_prototypes = {
         conditionEvents = {
           "SPELL_UPDATE_USABLE",
           "PLAYER_TARGET_CHANGED",
-          "UNIT_POWER_FREQUENT",
-        }
+          "UNIT_POWER_FREQUENT:player"
+        },
       },
       {
         name = "spellInRange",
@@ -4345,7 +4345,7 @@ Private.event_prototypes = {
         conditionEvents = {
           "PLAYER_TARGET_CHANGED",
           "WA_SPELL_RANGECHECK",
-        }
+        },
       },
       {
         hidden = true,
@@ -5448,6 +5448,7 @@ Private.event_prototypes = {
         display = L["Count"],
         desc = L["Only if BigWigs shows it on it's bar"],
         type = "string",
+        store = true,
         conditionType = "string",
       },
       {

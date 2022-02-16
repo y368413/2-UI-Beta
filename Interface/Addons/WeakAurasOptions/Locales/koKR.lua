@@ -58,6 +58,10 @@ local L = WeakAuras.L
 	L["A 48x48 pixels icon"] = "48x48 픽셀 아이콘"
 	L["A 64x64 pixels icon"] = "64x64 픽셀 아이콘"
 	L["A group that dynamically controls the positioning of its children"] = "포함된 개체들의 배열을 유동적으로 조절하는 그룹"
+	--[[Translation missing --]]
+	L[ [=[A timer will automatically be displayed according to default Interface Settings (overridden by some addons).
+Enable this setting if you want this timer to be hidden, or when using a WeakAuras text to display the timer]=] ] = [=[A timer will automatically be displayed according to default Interface Settings (overridden by some addons).
+Enable this setting if you want this timer to be hidden, or when using a WeakAuras text to display the timer]=]
 	L["A Unit ID (e.g., party1)."] = "유닛 ID (예, party1)."
 	L["Actions"] = "동작"
 	L["Add"] = "추가"
@@ -213,9 +217,6 @@ Off Screen]=] ] = "Aura가 화면 밖에 있음"
 	L["Controls the positioning and configuration of multiple displays at the same time"] = "여러 디스플레이의 위치 및 구성을 동시에 조절합니다"
 	L["Convert to New Aura Trigger"] = "새로운 Aura 활성 조건으로 변환"
 	L["Convert to..."] = "변환하기..."
-	L["Cooldown Edge"] = "재사용 대기시간 경계"
-	L["Cooldown Settings"] = "재사용 대기시간 설정"
-	L["Cooldown Swipe"] = "재사용 대기시간 바늘"
 	L["Copy"] = "복사"
 	L["Copy settings..."] = "설정 복사..."
 	L["Copy to all auras"] = "모든 aura에 복사"
@@ -318,6 +319,14 @@ UNIT_POWER_UPDATE, UNIT_AURA PLAYER_TARGET_CHANGED]=]
 	L["Else If"] = "Else If"
 	--[[Translation missing --]]
 	L["Else If Trigger %s"] = "Else If Trigger %s"
+	--[[Translation missing --]]
+	L["Enable \"Edge\" part of the overlay"] = "Enable \"Edge\" part of the overlay"
+	--[[Translation missing --]]
+	L["Enable \"swipe\" part of the overlay"] = "Enable \"swipe\" part of the overlay"
+	--[[Translation missing --]]
+	L["Enable Swipe"] = "Enable Swipe"
+	--[[Translation missing --]]
+	L["Enable the \"Swipe\" radial overlay"] = "Enable the \"Swipe\" radial overlay"
 	L["Enabled"] = "활성화됨"
 	L["End Angle"] = "종료 각도"
 	--[[Translation missing --]]
@@ -414,6 +423,16 @@ Supports multiple entries, separated by commas
 	L["Grid direction"] = "Grid direction"
 	L["Group"] = "그룹"
 	L["Group (verb)"] = "그룹시키기"
+	--[[Translation missing --]]
+	L[ [=[Group and anchor each auras by frame.
+
+- Nameplates: attach to nameplates per unit.
+- Unit Frames: attach to unit frame buttons per unit.
+- Custom Frames: choose which frame each region should be anchored to.]=] ] = [=[Group and anchor each auras by frame.
+
+- Nameplates: attach to nameplates per unit.
+- Unit Frames: attach to unit frame buttons per unit.
+- Custom Frames: choose which frame each region should be anchored to.]=]
 	L["Group aura count description"] = [=[디스플레이 조건을 충족하기 위해 주어진 효과에 영향을 받는 한명 이상의 %s원의 숫자.
 정수를 입력하면 (예. 5), 영향을 받는 공격대원의 숫자를 입력된 숫자와 비교합니다.
 소수 (예. 0.5), 분수 (예. 1/2), 또는 백분율 (예. 50%%)을 입력하면, %s원 중 일부가 영향을 받아야 합니다.
@@ -441,10 +460,11 @@ Supports multiple entries, separated by commas
 	L["Height"] = "높이"
 	L["Help"] = "도움말"
 	L["Hide"] = "숨기기"
-	L["Hide Cooldown Text"] = "재사용 대기시간 문자 숨기기"
 	L["Hide Glows applied by this aura"] = "이 효과가 적용하는 반짝임 숨기기"
 	L["Hide on"] = "숨기기"
 	L["Hide this group's children"] = "이 그룹의 자식 숨기기"
+	--[[Translation missing --]]
+	L["Hide Timer Text"] = "Hide Timer Text"
 	L["Hide When Not In Group"] = "파티에 없을 때 숨기기"
 	L["Horizontal Align"] = "가로 정렬"
 	L["Horizontal Bar"] = "가로 바"
@@ -507,6 +527,8 @@ Supports multiple entries, separated by commas
 	L["Invalid type for property '%s' in '%s'. Expected '%s'"] = "Invalid type for property '%s' in '%s'. Expected '%s'"
 	L["Inverse"] = "반대로"
 	L["Inverse Slant"] = "역 경사"
+	--[[Translation missing --]]
+	L["Invert the direction of progress"] = "Invert the direction of progress"
 	L["Is Boss Debuff"] = "우두머리 약화 효과일 때"
 	L["Is Stealable"] = "훔치기 가능할 때"
 	L["Justify"] = "정렬"
@@ -638,7 +660,6 @@ Supports multiple entries, separated by commas
 	L["Press Ctrl+C to copy the URL"] = "URL을 복사하려면 Ctrl+C를 누르세요"
 	--[[Translation missing --]]
 	L["Prevent Merging"] = "Prevent Merging"
-	L["Processed %i chars"] = "%i 문자 복사됨"
 	L["Progress Bar"] = "진행 바"
 	L["Progress Bar Settings"] = "진행 바 설정"
 	L["Progress Texture"] = "진행 텍스쳐"
@@ -698,9 +719,12 @@ Supports multiple entries, separated by commas
 	L["Shadow X Offset"] = "그림자 X 좌표"
 	L["Shadow Y Offset"] = "그림자 Y 좌표"
 	L["Shift-click to create chat link"] = "Shift+클릭 - 대화 링크 만들기"
+	--[[Translation missing --]]
+	L["Show \"Edge\""] = "Show \"Edge\""
+	--[[Translation missing --]]
+	L["Show \"Swipe\""] = "Show \"Swipe\""
 	L["Show all matches (Auto-clone)"] = "모든 일치 표시 (자동 복제)"
 	L["Show Border"] = "테두리 표시"
-	L["Show Cooldown"] = "재사용 대기시간 표시"
 	L["Show Glow"] = "반짝임 표시"
 	L["Show Icon"] = "아이콘 표시"
 	L["Show If Unit Does Not Exist"] = "유닛이 존재하지 않는 경우 표시"
@@ -781,6 +805,8 @@ Supports multiple entries, separated by commas
 	L["Stop Sound"] = "소리 중지"
 	L["Sub Elements"] = "하위 요소"
 	L["Sub Option %i"] = "하위 옵션 %i"
+	--[[Translation missing --]]
+	L["Swipe Overlay Settings"] = "Swipe Overlay Settings"
 	L["Temporary Group"] = "임시 그룹"
 	L["Text"] = "문자"
 	L["Text %s"] = "문자 %s"

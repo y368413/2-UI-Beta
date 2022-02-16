@@ -54,6 +54,10 @@ local L = WeakAuras.L
 	L["A 48x48 pixels icon"] = "Иконка 48х48 пикселей"
 	L["A 64x64 pixels icon"] = "Иконка 64х64 пикселей"
 	L["A group that dynamically controls the positioning of its children"] = "Группа, динамически изменяющая позиции своих индикаций"
+	--[[Translation missing --]]
+	L[ [=[A timer will automatically be displayed according to default Interface Settings (overridden by some addons).
+Enable this setting if you want this timer to be hidden, or when using a WeakAuras text to display the timer]=] ] = [=[A timer will automatically be displayed according to default Interface Settings (overridden by some addons).
+Enable this setting if you want this timer to be hidden, or when using a WeakAuras text to display the timer]=]
 	L["A Unit ID (e.g., party1)."] = [=[Введите идентификатор единицы (UID, Unit ID).
 Например: party4, raid7, arena3, boss2, nameplate6, target, focus, pet и др.]=]
 	L["Actions"] = "Действия"
@@ -199,9 +203,6 @@ Off Screen]=] ] = [=[Индикация за
 	L["Controls the positioning and configuration of multiple displays at the same time"] = "Управляет позиционированием и настройкой нескольких индикаций одновременно"
 	L["Convert to New Aura Trigger"] = "Преобразовать в новую версию триггера"
 	L["Convert to..."] = "Преобразовать в ..."
-	L["Cooldown Edge"] = "Эффект Edge (кромка)"
-	L["Cooldown Settings"] = "Настройки восстановления"
-	L["Cooldown Swipe"] = "Эффект Swipe (затемнение)"
 	L["Copy"] = "Копия"
 	L["Copy settings..."] = "Копировать настройки из ..."
 	L["Copy to all auras"] = "Копировать во все индикации"
@@ -291,6 +292,14 @@ UNIT_POWER  UNIT_AURA, PLAYER_TARGET_CHANGED]=]
 	L["eliding"] = "Скрытие текста при переполнении"
 	L["Else If"] = "Иначе Если"
 	L["Else If Trigger %s"] = "Иначе Если Триггер %s"
+	--[[Translation missing --]]
+	L["Enable \"Edge\" part of the overlay"] = "Enable \"Edge\" part of the overlay"
+	--[[Translation missing --]]
+	L["Enable \"swipe\" part of the overlay"] = "Enable \"swipe\" part of the overlay"
+	--[[Translation missing --]]
+	L["Enable Swipe"] = "Enable Swipe"
+	--[[Translation missing --]]
+	L["Enable the \"Swipe\" radial overlay"] = "Enable the \"Swipe\" radial overlay"
 	L["Enabled"] = "Включен"
 	L["End Angle"] = "Конечный угол"
 	L["End of %s"] = "Конец группы \"%s\""
@@ -373,6 +382,16 @@ Supports multiple entries, separated by commas
 	L["Grid direction"] = "Направление заполнения сетки"
 	L["Group"] = "Группа"
 	L["Group (verb)"] = "Группировать"
+	--[[Translation missing --]]
+	L[ [=[Group and anchor each auras by frame.
+
+- Nameplates: attach to nameplates per unit.
+- Unit Frames: attach to unit frame buttons per unit.
+- Custom Frames: choose which frame each region should be anchored to.]=] ] = [=[Group and anchor each auras by frame.
+
+- Nameplates: attach to nameplates per unit.
+- Unit Frames: attach to unit frame buttons per unit.
+- Custom Frames: choose which frame each region should be anchored to.]=]
 	L["Group aura count description"] = [=[Количество единиц заданного типа (|cFFE6CC80%s|r), к которым должен быть применен один или несколько вышеперечисленных эффектов, чтобы сработал триггер.
 
 Если указано целое число (10), то количество единиц, имеющих этот эффект, будет сравниваться с введенным числом.
@@ -401,10 +420,11 @@ Supports multiple entries, separated by commas
 	L["Height"] = "Высота"
 	L["Help"] = "Справка"
 	L["Hide"] = "Скрыть"
-	L["Hide Cooldown Text"] = "Скрыть отсчет времени"
 	L["Hide Glows applied by this aura"] = "Скрыть свечения, применённые этой индикацией"
 	L["Hide on"] = "Скрыть на"
 	L["Hide this group's children"] = "Скрыть индикации этой группы"
+	--[[Translation missing --]]
+	L["Hide Timer Text"] = "Hide Timer Text"
 	L["Hide When Not In Group"] = "Скрыть когда не в группе"
 	L["Horizontal Align"] = "Выравнивание по горизонтали"
 	L["Horizontal Bar"] = "Горизонтальная полоса"
@@ -453,6 +473,8 @@ Supports multiple entries, separated by commas
 	L["Invalid type for property '%s' in '%s'. Expected '%s'"] = "Неверный тип свойства %s в переменной %s. Требуется %s."
 	L["Inverse"] = "Инверсия"
 	L["Inverse Slant"] = "В обратную сторону"
+	--[[Translation missing --]]
+	L["Invert the direction of progress"] = "Invert the direction of progress"
 	L["Is Boss Debuff"] = "Применён боссом"
 	L["Is Stealable"] = "Может быть украден"
 	L["Justify"] = "Выравнивание"
@@ -574,7 +596,6 @@ Supports multiple entries, separated by commas
 	L["Press Ctrl+C to copy"] = "Нажмите Ctrl+C, чтобы скопировать"
 	L["Press Ctrl+C to copy the URL"] = "Нажмите Ctrl+C, чтобы скопировать URL-адрес"
 	L["Prevent Merging"] = "Не допускать слияние"
-	L["Processed %i chars"] = "Обработано %i |4символ:символа:символов;"
 	L["Progress Bar"] = "Полоса прогресса"
 	L["Progress Bar Settings"] = "Настройки полосы прогресса"
 	L["Progress Texture"] = "Текстура прогресса"
@@ -631,9 +652,12 @@ Supports multiple entries, separated by commas
 	L["Shadow X Offset"] = "Смещение тени по X"
 	L["Shadow Y Offset"] = "Смещение тени по Y"
 	L["Shift-click to create chat link"] = "Shift-клик для создания ссылки чата"
+	--[[Translation missing --]]
+	L["Show \"Edge\""] = "Show \"Edge\""
+	--[[Translation missing --]]
+	L["Show \"Swipe\""] = "Show \"Swipe\""
 	L["Show all matches (Auto-clone)"] = "Показать все совпадения (Автоклонирование)"
 	L["Show Border"] = "Показать границу"
-	L["Show Cooldown"] = "Показать восстановление"
 	L["Show Glow"] = "Показать свечение"
 	L["Show Icon"] = "Показать иконку"
 	L["Show If Unit Does Not Exist"] = "Показать при отсутствии единицы"
@@ -701,6 +725,8 @@ Supports multiple entries, separated by commas
 	L["Stop Sound"] = "Остановить вопроизведение звука"
 	L["Sub Elements"] = "Внутренние элементы"
 	L["Sub Option %i"] = "Внутренний параметр %i"
+	--[[Translation missing --]]
+	L["Swipe Overlay Settings"] = "Swipe Overlay Settings"
 	L["Temporary Group"] = "Временная группа"
 	L["Text"] = "Текст"
 	L["Text %s"] = "Текст %s"

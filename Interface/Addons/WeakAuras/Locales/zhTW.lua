@@ -113,6 +113,12 @@ L["Any Triggers"] = "任何一個觸發"
 L["AOE"] = "範圍技能 (AOE)"
 L["Arcane Resistance"] = "祕法抗性"
 L["Archimonde"] = "阿克蒙德"
+--[[Translation missing --]]
+L[ [=[Are you sure you want to run the |cffff0000EXPERIMENTAL|r repair tool?
+This will overwrite any changes you have made since the last database upgrade.
+Last upgrade: %s]=] ] = [=[Are you sure you want to run the |cffff0000EXPERIMENTAL|r repair tool?
+This will overwrite any changes you have made since the last database upgrade.
+Last upgrade: %s]=]
 L["Arena"] = "競技場"
 L["Armor (%)"] = "護甲值 (%)"
 L["Armor against Target (%)"] = "對目標的護甲值 (%)"
@@ -153,7 +159,6 @@ L["Auto"] = "自動"
 L["Autocast Shine"] = "自動投射光影"
 L["Automatic"] = "自動"
 L["Automatic Length"] = "自動長度"
-L["Automatic Repair Confirmation Dialog"] = "自訂修復確認對話框"
 L["Automatic Rotation"] = "自動旋轉"
 L["Avoidance (%)"] = "閃避 (%)"
 L["Avoidance Rating"] = "閃避分數"
@@ -616,7 +621,6 @@ L["Main Stat"] = "主屬性"
 L["Majordomo Executus"] = "管理者埃克索圖斯"
 L["Make sure you can trust the person who sent it!"] = "請確定你能信任傳送這段設定字串給你的人!"
 L["Malformed WeakAuras link"] = "格式錯誤的 WeakAuras 連結"
-L["Manual Repair Confirmation Dialog"] = "手動修復確認對話框"
 L["Manual Rotation"] = "手動旋轉"
 L["Marked First"] = "標記為第一個"
 L["Marked Last"] = "標記為最後一個"
@@ -995,7 +999,7 @@ L["Supports multiple entries, separated by commas. Group Zone IDs must be prefix
 L["Supremus"] = "瑟普莫斯"
 L["Swing"] = "揮動"
 L["Swing Timer"] = "揮動時間"
-L["Swipe"] = "轉圈動畫"
+L["Swipe"] = "揮動動畫"
 L["System"] = "系統"
 L["Tab "] = "標籤頁面"
 L["Talent"] = "天賦"
@@ -1132,6 +1136,14 @@ L["Warning: Full Scan auras checking for both name and spell id can't be convert
 L["Warning: Name info is now available via %affected, %unaffected. Number of affected group members via %unitCount. Some options behave differently now. This is not automatically adjusted."] = "警告: 現在改為使用 %affected, %unaffected 來取得名字資訊，使用 %unitCount 取得受影響的隊友數量。一些選項的行為已經和以往不同了，並且不會自動調整。"
 L["Warning: Tooltip values are now available via %tooltip1, %tooltip2, %tooltip3 instead of %s. This is not automatically adjusted."] = "警告: 現在改為使用 %tooltip1, %tooltip2, %tooltip3 來取得滑鼠提示中的值，而不是 %s。並且不會自動調整。"
 L["WeakAuras Built-In (63:42 | 3:07 | 10 | 2.4)"] = "WeakAuras 內建的 (63:42 | 3:07 | 10 | 2.4)"
+--[[Translation missing --]]
+L[ [=[WeakAuras has detected that it has been downgraded.
+Your saved auras may no longer work properly.
+Would you like to run the |cffff0000EXPERIMENTAL|r repair tool? This will overwrite any changes you have made since the last database upgrade.
+Last upgrade: %s]=] ] = [=[WeakAuras has detected that it has been downgraded.
+Your saved auras may no longer work properly.
+Would you like to run the |cffff0000EXPERIMENTAL|r repair tool? This will overwrite any changes you have made since the last database upgrade.
+Last upgrade: %s]=]
 L["WeakAuras has encountered an error during the login process. Please report this issue at https://github.com/WeakAuras/Weakauras2/issues/new."] = "WeakAuras 在登入的過程中遇到錯誤。請將這個問題回報到 https://github.com/WeakAuras/Weakauras2/issues/new"
 L["WeakAuras Profiling"] = "WeakAuras 效能分析"
 L["WeakAuras Profiling Report"] = "WeakAuras 分析報告"

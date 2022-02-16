@@ -119,6 +119,12 @@ L["Any Triggers"] = "아무 활성 조건 만족"
 L["AOE"] = "광역 범위 효과"
 L["Arcane Resistance"] = "비전 저항"
 L["Archimonde"] = "아키몬드"
+--[[Translation missing --]]
+L[ [=[Are you sure you want to run the |cffff0000EXPERIMENTAL|r repair tool?
+This will overwrite any changes you have made since the last database upgrade.
+Last upgrade: %s]=] ] = [=[Are you sure you want to run the |cffff0000EXPERIMENTAL|r repair tool?
+This will overwrite any changes you have made since the last database upgrade.
+Last upgrade: %s]=]
 L["Arena"] = "투기장"
 L["Armor (%)"] = "방어도(%)"
 L["Armor against Target (%)"] = "대상 방어도(%)"
@@ -164,8 +170,6 @@ L["Auto"] = "자동"
 L["Autocast Shine"] = "자동시전 빛남"
 L["Automatic"] = "자동"
 L["Automatic Length"] = "자동 길이"
---[[Translation missing --]]
-L["Automatic Repair Confirmation Dialog"] = "Automatic Repair Confirmation Dialog"
 L["Automatic Rotation"] = "자동 회전"
 L["Avoidance (%)"] = "광역회피(%)"
 L["Avoidance Rating"] = "광역회피"
@@ -728,8 +732,6 @@ L["Main Stat"] = "주 능력치"
 L["Majordomo Executus"] = "청지기 이그젝큐투스"
 L["Make sure you can trust the person who sent it!"] = "보낸 사람을 믿을 수 있는지 확인하세요!"
 L["Malformed WeakAuras link"] = "조작된 WeakAuras 링크"
---[[Translation missing --]]
-L["Manual Repair Confirmation Dialog"] = "Manual Repair Confirmation Dialog"
 L["Manual Rotation"] = "수동 회전"
 L["Marked First"] = "첫 번째로 표시"
 L["Marked Last"] = "마지막으로 표시"
@@ -1351,6 +1353,14 @@ L["Warning: Full Scan auras checking for both name and spell id can't be convert
 L["Warning: Name info is now available via %affected, %unaffected. Number of affected group members via %unitCount. Some options behave differently now. This is not automatically adjusted."] = "경고: %affected, %unaffected 를 통해 이름 정보를 사용할 수 있습니다. 영향을 받은 구성원의 수는 %unitCount 로 통합니다. 일부 옵션은 다르게 동작합니다. 이것은 자동으로 조정되지 않습니다."
 L["Warning: Tooltip values are now available via %tooltip1, %tooltip2, %tooltip3 instead of %s. This is not automatically adjusted."] = "경고: 툴팁 값은 이제 %s 대신 %tooltip1, %tooltip2, %tooltip3으로 사용할 수 있습니다. 이것은 자동으로 조정되지 않습니다."
 L["WeakAuras Built-In (63:42 | 3:07 | 10 | 2.4)"] = "WeakAuras 내장 (63:42 | 3:07 | 10 | 2.4)"
+--[[Translation missing --]]
+L[ [=[WeakAuras has detected that it has been downgraded.
+Your saved auras may no longer work properly.
+Would you like to run the |cffff0000EXPERIMENTAL|r repair tool? This will overwrite any changes you have made since the last database upgrade.
+Last upgrade: %s]=] ] = [=[WeakAuras has detected that it has been downgraded.
+Your saved auras may no longer work properly.
+Would you like to run the |cffff0000EXPERIMENTAL|r repair tool? This will overwrite any changes you have made since the last database upgrade.
+Last upgrade: %s]=]
 L["WeakAuras has encountered an error during the login process. Please report this issue at https://github.com/WeakAuras/Weakauras2/issues/new."] = "로그인 과정 중 WeakAuras에 문제가 발생했습니다. 이 문제를 https://github.com/WeakAuras/Weakauras2/issues/new 에 보고해주세요."
 L["WeakAuras Profiling"] = "WeakAuras 프로파일링"
 L["WeakAuras Profiling Report"] = "WeakAuras 프로파일링 보고서"

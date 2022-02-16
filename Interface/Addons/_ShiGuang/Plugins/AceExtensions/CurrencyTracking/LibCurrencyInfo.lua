@@ -1,6 +1,6 @@
 --[[
 Name: LibCurrencyInfo
-Revision: $Rev: 48 $
+Revision: $Rev: 50 $
 Maintainers: Arith
 Website: https://www.wowace.com/projects/libcurrencyinfo
 Dependencies: None
@@ -223,6 +223,7 @@ data.CurrencyByCategory = {
 --		1903, 	 -- Invisible Reward, 
 		1907, 	 -- Death's Advance	Grants reputation with the Death's Advance., 
 		1947, 	 -- Bonus Valor, 
+		1997,	 -- Archivists' Codex
 	},
 	[143] = { -- Battle for Azeroth
 		1299,	 -- Brawler's Gold
@@ -343,6 +344,9 @@ data.CurrencyByCategory = {
 		1971,	 -- Torghast - Scoreboard - Floor Par Time Floor 3
 		1972,	 -- Torghast - Scoreboard - Floor Par Time Floor 4
 		1976,	 -- Torghast - Scoreboard - Toast Display - Bonus - Phant Left Group
+		1980,	 -- Torghast - Scoreboard - Run Layer
+		1981,	 -- Torghast - Scoreboard - Run ID
+
 	},
 }
 
@@ -672,8 +676,12 @@ data.Currencies = {
 	[1972] = { id=1972, category=248, hidden=true }, -- Torghast - Scoreboard - Floor Par Time Floor 4
 	[1976] = { id=1976, category=248, hidden=true }, -- Torghast - Scoreboard - Toast Display - Bonus - Phant Left Group
 	[1977] = { id=1977, category=245 }, -- Stygian Ember
-
+	[1981] = { id=1980, category=248, hidden=true }, -- Torghast - Scoreboard - Run Layer
+	[1981] = { id=1981, category=248, hidden=true }, -- Torghast - Scoreboard - Run ID
+	[1997] = { id=1997, category=142 }, -- Archivists' Codex
 }
+
+
 
 
 

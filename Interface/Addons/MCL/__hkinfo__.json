@@ -1,0 +1,14 @@
+{
+    "addonsMap": [
+        "MCL"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "localName": "MCL",
+    "searchName": "Mount Collection Log | MCL",
+    "name": "Mount Collection Log | MCL",
+    "fileName": "mount-collection-log-mcl",
+    "target": "curse",
+    "version": "v1.045",
+    "gameVersion": "9.1.5"
+}

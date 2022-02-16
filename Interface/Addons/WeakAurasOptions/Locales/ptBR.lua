@@ -67,6 +67,10 @@ local L = WeakAuras.L
 	L["A 48x48 pixels icon"] = "Um ícone de 48x48 pixels"
 	L["A 64x64 pixels icon"] = "Um ícone de 64x64 pixels"
 	L["A group that dynamically controls the positioning of its children"] = "Um grupo que controla dinamicamente o posicionamentos dos seus elementos"
+	--[[Translation missing --]]
+	L[ [=[A timer will automatically be displayed according to default Interface Settings (overridden by some addons).
+Enable this setting if you want this timer to be hidden, or when using a WeakAuras text to display the timer]=] ] = [=[A timer will automatically be displayed according to default Interface Settings (overridden by some addons).
+Enable this setting if you want this timer to be hidden, or when using a WeakAuras text to display the timer]=]
 	L["A Unit ID (e.g., party1)."] = "O ID de uma unidade (por exemplo, grupo1)."
 	L["Actions"] = "Ações"
 	L["Add"] = "Adicionar"
@@ -238,12 +242,6 @@ Off Screen]=] ] = "Aura está fora da tela"
 	L["Convert to New Aura Trigger"] = "Convert to New Aura Trigger"
 	L["Convert to..."] = "Converter para..."
 	--[[Translation missing --]]
-	L["Cooldown Edge"] = "Cooldown Edge"
-	--[[Translation missing --]]
-	L["Cooldown Settings"] = "Cooldown Settings"
-	--[[Translation missing --]]
-	L["Cooldown Swipe"] = "Cooldown Swipe"
-	--[[Translation missing --]]
 	L["Copy"] = "Copy"
 	L["Copy settings..."] = "Copiar configurações"
 	--[[Translation missing --]]
@@ -357,6 +355,14 @@ Off Screen]=] ] = "Aura está fora da tela"
 	L["Else If"] = "Else If"
 	--[[Translation missing --]]
 	L["Else If Trigger %s"] = "Else If Trigger %s"
+	--[[Translation missing --]]
+	L["Enable \"Edge\" part of the overlay"] = "Enable \"Edge\" part of the overlay"
+	--[[Translation missing --]]
+	L["Enable \"swipe\" part of the overlay"] = "Enable \"swipe\" part of the overlay"
+	--[[Translation missing --]]
+	L["Enable Swipe"] = "Enable Swipe"
+	--[[Translation missing --]]
+	L["Enable the \"Swipe\" radial overlay"] = "Enable the \"Swipe\" radial overlay"
 	L["Enabled"] = "Habilitado"
 	--[[Translation missing --]]
 	L["End Angle"] = "End Angle"
@@ -483,6 +489,16 @@ Supports multiple entries, separated by commas
 	--[[Translation missing --]]
 	L["Group (verb)"] = "Group (verb)"
 	--[[Translation missing --]]
+	L[ [=[Group and anchor each auras by frame.
+
+- Nameplates: attach to nameplates per unit.
+- Unit Frames: attach to unit frame buttons per unit.
+- Custom Frames: choose which frame each region should be anchored to.]=] ] = [=[Group and anchor each auras by frame.
+
+- Nameplates: attach to nameplates per unit.
+- Unit Frames: attach to unit frame buttons per unit.
+- Custom Frames: choose which frame each region should be anchored to.]=]
+	--[[Translation missing --]]
 	L["Group aura count description"] = "Group aura count description"
 	--[[Translation missing --]]
 	L["Group by Frame"] = "Group by Frame"
@@ -510,13 +526,13 @@ Supports multiple entries, separated by commas
 	--[[Translation missing --]]
 	L["Hide"] = "Hide"
 	--[[Translation missing --]]
-	L["Hide Cooldown Text"] = "Hide Cooldown Text"
-	--[[Translation missing --]]
 	L["Hide Glows applied by this aura"] = "Hide Glows applied by this aura"
 	--[[Translation missing --]]
 	L["Hide on"] = "Hide on"
 	--[[Translation missing --]]
 	L["Hide this group's children"] = "Hide this group's children"
+	--[[Translation missing --]]
+	L["Hide Timer Text"] = "Hide Timer Text"
 	L["Hide When Not In Group"] = "Esconder quando em grupo"
 	L["Horizontal Align"] = "Alinhamento horizontal"
 	L["Horizontal Bar"] = "Barra Horizontal"
@@ -603,6 +619,8 @@ Supports multiple entries, separated by commas
 	L["Inverse"] = "Inverse"
 	--[[Translation missing --]]
 	L["Inverse Slant"] = "Inverse Slant"
+	--[[Translation missing --]]
+	L["Invert the direction of progress"] = "Invert the direction of progress"
 	L["Is Boss Debuff"] = "É Debuff de Chefe"
 	L["Is Stealable"] = "É Roubável"
 	L["Justify"] = "Justificar"
@@ -801,8 +819,6 @@ Supports multiple entries, separated by commas
 	L["Press Ctrl+C to copy the URL"] = "Press Ctrl+C to copy the URL"
 	--[[Translation missing --]]
 	L["Prevent Merging"] = "Prevent Merging"
-	--[[Translation missing --]]
-	L["Processed %i chars"] = "Processed %i chars"
 	L["Progress Bar"] = "Barra de Progresso"
 	--[[Translation missing --]]
 	L["Progress Bar Settings"] = "Progress Bar Settings"
@@ -892,10 +908,13 @@ Supports multiple entries, separated by commas
 	L["Shadow Y Offset"] = "Shadow Y Offset"
 	--[[Translation missing --]]
 	L["Shift-click to create chat link"] = "Shift-click to create chat link"
+	--[[Translation missing --]]
+	L["Show \"Edge\""] = "Show \"Edge\""
+	--[[Translation missing --]]
+	L["Show \"Swipe\""] = "Show \"Swipe\""
 	L["Show all matches (Auto-clone)"] = "Mostrar todas as correspondências"
 	--[[Translation missing --]]
 	L["Show Border"] = "Show Border"
-	L["Show Cooldown"] = "Mostrar Tempo de Recarga"
 	--[[Translation missing --]]
 	L["Show Glow"] = "Show Glow"
 	L["Show Icon"] = "Mostrar Ícone"
@@ -1002,6 +1021,8 @@ Supports multiple entries, separated by commas
 	L["Sub Elements"] = "Sub Elements"
 	--[[Translation missing --]]
 	L["Sub Option %i"] = "Sub Option %i"
+	--[[Translation missing --]]
+	L["Swipe Overlay Settings"] = "Swipe Overlay Settings"
 	L["Temporary Group"] = "Grupo temporário"
 	L["Text"] = "Texto"
 	L["Text %s"] = "Texto %s"

@@ -67,6 +67,10 @@ local L = WeakAuras.L
 	L["A 48x48 pixels icon"] = "Une icône de 48x48 pixels."
 	L["A 64x64 pixels icon"] = "Une icône de 64x64 pixels."
 	L["A group that dynamically controls the positioning of its children"] = "Un groupe qui contrôle dynamiquement le positionnement de ses enfants"
+	--[[Translation missing --]]
+	L[ [=[A timer will automatically be displayed according to default Interface Settings (overridden by some addons).
+Enable this setting if you want this timer to be hidden, or when using a WeakAuras text to display the timer]=] ] = [=[A timer will automatically be displayed according to default Interface Settings (overridden by some addons).
+Enable this setting if you want this timer to be hidden, or when using a WeakAuras text to display the timer]=]
 	L["A Unit ID (e.g., party1)."] = "Un identifiant d'unité (par.ex., groupe1)"
 	L["Actions"] = "Actions"
 	L["Add"] = "Ajouter"
@@ -236,9 +240,6 @@ Off Screen]=]
 	L["Controls the positioning and configuration of multiple displays at the same time"] = "Contrôle la position et la configuration de plusieurs affichages en même temps"
 	L["Convert to New Aura Trigger"] = "Convertir au nouveau déclencheur d'aura"
 	L["Convert to..."] = "Convertir en..."
-	L["Cooldown Edge"] = "Marge de la Recharge "
-	L["Cooldown Settings"] = "Paramètres du temps de recharge"
-	L["Cooldown Swipe"] = "Balayage du temps de recharge"
 	L["Copy"] = "Copier"
 	L["Copy settings..."] = "Copier les paramètres..."
 	L["Copy to all auras"] = "Copier toutes les auras"
@@ -346,6 +347,14 @@ UNIT_POWER, UNIT_AURA PLAYER_TARGET_CHANGED
 	L["Else If"] = "Else If"
 	--[[Translation missing --]]
 	L["Else If Trigger %s"] = "Else If Trigger %s"
+	--[[Translation missing --]]
+	L["Enable \"Edge\" part of the overlay"] = "Enable \"Edge\" part of the overlay"
+	--[[Translation missing --]]
+	L["Enable \"swipe\" part of the overlay"] = "Enable \"swipe\" part of the overlay"
+	--[[Translation missing --]]
+	L["Enable Swipe"] = "Enable Swipe"
+	--[[Translation missing --]]
+	L["Enable the \"Swipe\" radial overlay"] = "Enable the \"Swipe\" radial overlay"
 	L["Enabled"] = "Activé"
 	L["End Angle"] = "Angle de fin"
 	L["End of %s"] = "Fin de %s"
@@ -444,6 +453,16 @@ Supports multiple entries, separated by commas
 	L["Grid direction"] = "Direction de la grille"
 	L["Group"] = "Groupe"
 	L["Group (verb)"] = "Groupe (verbe)"
+	--[[Translation missing --]]
+	L[ [=[Group and anchor each auras by frame.
+
+- Nameplates: attach to nameplates per unit.
+- Unit Frames: attach to unit frame buttons per unit.
+- Custom Frames: choose which frame each region should be anchored to.]=] ] = [=[Group and anchor each auras by frame.
+
+- Nameplates: attach to nameplates per unit.
+- Unit Frames: attach to unit frame buttons per unit.
+- Custom Frames: choose which frame each region should be anchored to.]=]
 	L["Group aura count description"] = [=[Le nombre de membres du %s qui doivent être affectés par une ou plusieurs des auras sélectionnées pour que l'affichage soit déclenché.
 Si le nombre entré est un entier (ex. 5), le nombre de membres du raid affectés sera comparé au nombre entré.
 Si le nombre entré est decimal (ex. 0.5), une fraction (ex. 1/2), ou un pourcentage (ex. 50%%), alors cette fraction du %s doit être affectée.
@@ -474,11 +493,12 @@ Si le nombre entré est decimal (ex. 0.5), une fraction (ex. 1/2), ou un pourcen
 	L["Height"] = "Hauteur"
 	L["Help"] = "Aide"
 	L["Hide"] = "Cacher"
-	L["Hide Cooldown Text"] = "Cacher le texte du temps de recharge"
 	--[[Translation missing --]]
 	L["Hide Glows applied by this aura"] = "Hide Glows applied by this aura"
 	L["Hide on"] = "Cacher à"
 	L["Hide this group's children"] = "Cacher les enfants de ce groupe"
+	--[[Translation missing --]]
+	L["Hide Timer Text"] = "Hide Timer Text"
 	L["Hide When Not In Group"] = "Cacher hors d'un groupe"
 	L["Horizontal Align"] = "Aligner horizontalement"
 	L["Horizontal Bar"] = "Barre horizontale"
@@ -542,6 +562,8 @@ Si cette case est cochée, ce séparateur inclura du texte. Sinon, ce sera juste
 	L["Invalid type for property '%s' in '%s'. Expected '%s'"] = "Invalid type for property '%s' in '%s'. Expected '%s'"
 	L["Inverse"] = "Inverser"
 	L["Inverse Slant"] = "Inverser l'Inclinaison"
+	--[[Translation missing --]]
+	L["Invert the direction of progress"] = "Invert the direction of progress"
 	--[[Translation missing --]]
 	L["Is Boss Debuff"] = "Is Boss Debuff"
 	L["Is Stealable"] = "Est subtilisable "
@@ -692,7 +714,6 @@ Seule une unique valeur peut être choisie]=]
 	L["Press Ctrl+C to copy the URL"] = "Press Ctrl+C to copy the URL"
 	--[[Translation missing --]]
 	L["Prevent Merging"] = "Prevent Merging"
-	L["Processed %i chars"] = "%i caractères traité "
 	L["Progress Bar"] = "Barre de progression"
 	L["Progress Bar Settings"] = "Paramètres de la barre de progression"
 	L["Progress Texture"] = "Texture de progression"
@@ -757,9 +778,12 @@ Seule une unique valeur peut être choisie]=]
 	L["Shadow X Offset"] = "Décalage X de l'ombre"
 	L["Shadow Y Offset"] = "Décalage Y de l'ombre"
 	L["Shift-click to create chat link"] = "Maj-clic pour créer un lien de discussion"
+	--[[Translation missing --]]
+	L["Show \"Edge\""] = "Show \"Edge\""
+	--[[Translation missing --]]
+	L["Show \"Swipe\""] = "Show \"Swipe\""
 	L["Show all matches (Auto-clone)"] = "Montrer toutes correspondances (Auto-Clone)"
 	L["Show Border"] = "Afficher l'encadrement"
-	L["Show Cooldown"] = "Afficher le temps de recharge"
 	L["Show Glow"] = "Surbrillance"
 	L["Show Icon"] = "Afficher l'icône"
 	--[[Translation missing --]]
@@ -848,6 +872,8 @@ Seule une unique valeur peut être choisie]=]
 	L["Sub Elements"] = "Sub Elements"
 	--[[Translation missing --]]
 	L["Sub Option %i"] = "Sub Option %i"
+	--[[Translation missing --]]
+	L["Swipe Overlay Settings"] = "Swipe Overlay Settings"
 	L["Temporary Group"] = "Groupe temporaire"
 	L["Text"] = "Texte"
 	L["Text %s"] = "Texte %s"

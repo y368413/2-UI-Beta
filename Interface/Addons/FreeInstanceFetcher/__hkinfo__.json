@@ -1,0 +1,14 @@
+{
+    "addonsMap": [
+        "FreeInstanceFetcher"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "localName": "FreeInstanceFetcher",
+    "searchName": "Free Instance Fetcher",
+    "name": "Free Instance Fetcher",
+    "fileName": "free-instance-fetcher",
+    "target": "curse",
+    "version": "v9.1.10",
+    "gameVersion": "9.1.5"
+}
