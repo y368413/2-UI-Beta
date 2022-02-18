@@ -112,12 +112,9 @@ L["Any Triggers"] = "任意符合"
 L["AOE"] = "范围性伤害"
 L["Arcane Resistance"] = "奥术抗性"
 L["Archimonde"] = "阿克蒙德"
---[[Translation missing --]]
 L[ [=[Are you sure you want to run the |cffff0000EXPERIMENTAL|r repair tool?
 This will overwrite any changes you have made since the last database upgrade.
-Last upgrade: %s]=] ] = [=[Are you sure you want to run the |cffff0000EXPERIMENTAL|r repair tool?
-This will overwrite any changes you have made since the last database upgrade.
-Last upgrade: %s]=]
+Last upgrade: %s]=] ] = "确认运行|cffff0000实验性|r修复工具？运行后将会丢失上次数据库升级后的所有改动。上次升级：%s"
 L["Arena"] = "竞技场"
 L["Armor (%)"] = "护甲 (%)"
 L["Armor against Target (%)"] = "针对目标的护甲 (%)"
@@ -1089,8 +1086,7 @@ L["Trigger Update"] = "触发器更新"
 L["Trigger:"] = "触发器"
 L["Trivial (Low Level)"] = "低等级（灰色）"
 L["True"] = "真"
---[[Translation missing --]]
-L["Trying to repair broken conditions in %s likely caused by a WeakAuras bug."] = "Trying to repair broken conditions in %s likely caused by a WeakAuras bug."
+L["Trying to repair broken conditions in %s likely caused by a WeakAuras bug."] = "正在尝试修复由WeakAuras的Bug导致的，%s的损坏条件。"
 L["Twin Emperors"] = "双子皇帝"
 L["Type"] = "类型"
 L["Unaffected"] = "未受影响"
@@ -1135,14 +1131,10 @@ L["Warning: Full Scan auras checking for both name and spell id can't be convert
 L["Warning: Name info is now available via %affected, %unaffected. Number of affected group members via %unitCount. Some options behave differently now. This is not automatically adjusted."] = "警告：现在名称信息通过 %affected, %unaffected，受影响的团队成员数量通过 %unitCount 提供。一些选项的工作方式发生了变化，且不会自动进行调整。"
 L["Warning: Tooltip values are now available via %tooltip1, %tooltip2, %tooltip3 instead of %s. This is not automatically adjusted."] = "警告：鼠标提示值现在将通过 %tooltip1, %tooltip2, %tooltip3 显示（取代通过 %s ）。这些变化将不会自动调整。"
 L["WeakAuras Built-In (63:42 | 3:07 | 10 | 2.4)"] = "WeakAuras内置格式 （63:42 | 3:07 | 10 | 2.4）"
---[[Translation missing --]]
 L[ [=[WeakAuras has detected that it has been downgraded.
 Your saved auras may no longer work properly.
 Would you like to run the |cffff0000EXPERIMENTAL|r repair tool? This will overwrite any changes you have made since the last database upgrade.
-Last upgrade: %s]=] ] = [=[WeakAuras has detected that it has been downgraded.
-Your saved auras may no longer work properly.
-Would you like to run the |cffff0000EXPERIMENTAL|r repair tool? This will overwrite any changes you have made since the last database upgrade.
-Last upgrade: %s]=]
+Last upgrade: %s]=] ] = "WeakAuras监测到它的版本被降低。你已保存的光环可能无法再正常工作。是否要运行|cffff0000实验性|r修复工具？运行后将会丢失上次数据库升级后的所有改动。上次升级：%s"
 L["WeakAuras has encountered an error during the login process. Please report this issue at https://github.com/WeakAuras/Weakauras2/issues/new."] = "WeakAuras 在登录过程中遇到了一个错误，请于此处报告这个错误：https://github.com/WeakAuras/Weakauras2/issues/new"
 L["WeakAuras Profiling"] = "WeakAuras性能分析"
 L["WeakAuras Profiling Report"] = "WeakAuras性能分析报告"

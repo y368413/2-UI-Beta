@@ -562,7 +562,7 @@ local NPClassifies = {
 
 function UF:AddCreatureIcon(self)
 	local icon = self:CreateTexture(nil, "ARTWORK")
-	--icon:SetAtlas("VignetteKill")
+	--icon:SetAtlas("auctionhouse-icon-favorite")
 	icon:SetPoint("RIGHT", self.nameText, "LEFT", 0, 0)
 	icon:SetSize(21, 21)
 	icon:Hide()

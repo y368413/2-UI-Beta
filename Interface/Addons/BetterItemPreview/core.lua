@@ -27,20 +27,6 @@ BIP = LibStub("AceAddon-3.0"):NewAddon("Better Item Preview")
 
 --BIP_EVENTS:SetScript("OnEvent",BIP_EVENTS.OnEvent)
 
-BIP.typeSlotRef = {
-    [13] = 16,
-    [14] = 17,
-    [15] = 16,
-    [16] = 15,
-    [17] = 16,
-    [20] = 5,
-    [21] = 16,
-    [22] = 16,
-    [23] = 17,
-    [25] = 16,
-    [26] = 16,
-}
-
 function BIP:OnInitialize()
     local defaults = {
         profile = {
@@ -75,10 +61,28 @@ function BIP:OnInitialize()
     LibStub("AceConfigDialog-3.0"):AddToBlizOptions("Better Item Preview Options", "Options", "Better Item Preview")
     LibStub("AceConfigDialog-3.0"):AddToBlizOptions("Better Item Preview Profiles", "Profiles", "Better Item Preview")
 
+    local originalDressUpLink = DressUpLink
+    DressUpLink = function(link)
+        --This just checks if it's a recipe, and if so, extracts the link for the item it creates and resends that to this function.
+        ----If the resulting item isn't previewable, this will still do whatever it normally would've done in that case.
+        if (select(12,GetItemInfo(link))) == 9 then
+            local linkID = link:match("item:([0-9]+)")
+            local newLink = select(2,GetItemInfo((select(2,LibStub("LibRecipes-3.0"):GetRecipeInfo(linkID)))))
+            return DressUpLink(newLink)
+        end
+        return link and (DressUpItemLink(link) or DressUpBattlePetLink(link) or DressUpMountLink(link));
+    end
 
     local originalHandleModifiedItemClick = HandleModifiedItemClick
     --HandleModifiedItemClick = function(link, itemLocation, ...)
     HandleModifiedItemClick = function(link, itemLocation)
+
+        if (select(12,GetItemInfo(link))) == 9 then
+            local linkID = link:match("item:([0-9]+)")
+            local newLink = select(2,GetItemInfo((select(2,LibStub("LibRecipes-3.0"):GetRecipeInfo(linkID)))))
+            return HandleModifiedItemClick(newLink)
+        end
+
         local showReal = false
         local inspect = nil
 
@@ -91,27 +95,23 @@ function BIP:OnInitialize()
 			itemLocation = nil
 		end
 
-        if(InspectFrame and InspectFrame.unit and not showReal and not itemLocation) then
-            local slotID = C_Item.GetItemInventoryTypeByID(link)
-            slotID = BIP.typeSlotRef[slotID] or slotID
-
-            inspect = C_TransmogCollection.GetInspectItemTransmogInfoList()[slotID]
-            itemLocation = ItemLocation:CreateFromEquipmentSlot(slotID);
-        end
-
---        if inspect and showReal then
---            inspect = nil
---            itemLocation = nil
---        end
-
-        if IsModifiedClick("DRESSUP") and C_Item.IsDressableItemByID(link) then
-            if inspect and itemLocation and not showReal then
-                return BIP:DressUpItemLocationReal(itemLocation,inspect) or DressUpItemLink(link) or DressUpBattlePet(link) or DressUpMount(link)
-            elseif showReal and itemLocation then
-                return BIP:DressUpItemLocationReal(itemLocation) or DressUpItemLink(link) or DressUpBattlePet(link) or DressUpMount(link)
-            else
-                return DressUpItemLocation(itemLocation) or DressUpItemLink(link) or DressUpBattlePet(link) or DressUpMount(link)
+        if (InspectFrame and InspectFrame.unit and itemLocation == nil) then
+            local slotID = C_Transmog.GetSlotForInventoryType( C_Item.GetItemInventoryTypeByID( link ) + 1 )
+            local inspectInfo = C_TransmogCollection.GetInspectItemTransmogInfoList()[slotID]
+            if inspectInfo then
+                inspect = (select(6,C_TransmogCollection.GetAppearanceSourceInfo(inspectInfo.appearanceID)))
             end
+        end
+            
+        if inspect and showReal then
+            link = inspect
+            itemLocation = nil
+        elseif showReal then
+            itemLocation = nil
+        end
+            
+        if IsModifiedClick("DRESSUP") and C_Item.IsDressableItemByID(link) then
+            return DressUpItemLocation(itemLocation) or DressUpItemLink(link) or DressUpBattlePet(link) or DressUpMount(link)
         else
             originalHandleModifiedItemClick(link,itemLocation)
         end
@@ -119,20 +119,3 @@ function BIP:OnInitialize()
 
 end
 
-function BIP:DressUpItemLocationReal(itemLocation, ...)
-    directAppearance = ...
-    if( itemLocation and itemLocation:IsValid() ) then
-        local itemTransmogInfo
-        if directAppearance then
-            itemTransmogInfo = directAppearance
-        else
-            itemTransmogInfo = C_Item.GetCurrentItemTransmogInfo(itemLocation);
-            itemTransmogInfo:Clear()
-        end
-        -- non-equippable items won't have an appearanceID
-        if itemTransmogInfo.appearanceID ~= Constants.Transmog.NoTransmogID then
-            return DressUpItemTransmogInfo(itemTransmogInfo);
-        end
-    end
-    return false;
-end

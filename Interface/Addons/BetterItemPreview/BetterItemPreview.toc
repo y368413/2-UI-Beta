@@ -1,8 +1,9 @@
 ## Interface: 90105
 ## Title: Better Item Preview
 ## Author: Trelmarq
-## Version: 2.2.3
+## Version: 2.9.1
 ## OptionalDeps: MogIt
 ## SavedVariables: BetterItemPreview
 
+embeds.xml
 core.lua

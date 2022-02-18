@@ -2,7 +2,7 @@
 
 	The MIT License (MIT)
 
-	Copyright (c) 2021 Lars Norberg
+	Copyright (c) 2022 Lars Norberg
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,8 @@
 --]]
 -- Retrive addon folder name, and our local, private namespace.
 local MapShrinker = {}
+local string_format = string.format
+local string_gsub = string.gsub
 
 -- WoW API
 -----------------------------------------------------------
@@ -68,9 +70,9 @@ local Unstrip = function(object)
 	end
 end
 
-local GetFormattedCoordinates = function(x, y) return
-    string.gsub(string.format("|cfff0f0f0%.2f|r", x*100), "%.(.+)", "|cffa0a0a0.%1|r"),
-		string.gsub(string.format("|cfff0f0f0%.2f|r", y*100), "%.(.+)", "|cffa0a0a0.%1|r")
+local GetFormattedCoordinates = function(x, y)
+	return 	string_gsub(string_format("|cfff0f0f0%.2f|r", x*100), "%.(.+)", "|cffa0a0a0.%1|r"),
+			string_gsub(string_format("|cfff0f0f0%.2f|r", y*100), "%.(.+)", "|cffa0a0a0.%1|r")
 end 
 
 local CalculateScale = function() 
@@ -108,7 +110,7 @@ local Coords_OnUpdate = function(self, elapsed)
 	if (WorldMapFrame.ScrollContainer:IsMouseOver()) then 
 		cX, cY = WorldMapFrame.ScrollContainer:GetNormalizedCursorPosition()
 	end
-	if ((pX) and (pY) and (pX > 0) and (pY > 0)) then  
+	if ((pX) and (pY) and (pX > 0) and (pY > 0)) then 
 		self.Player:SetFormattedText("%s:|r   %s, %s", PLAYER, GetFormattedCoordinates(pX, pY))
 	else 
 		self.Player:SetText(" ")
@@ -166,13 +168,13 @@ local WorldMapFrame_Maximize = function(self)
 	WorldMapFrame:SetParent(UIParent)
 	WorldMapFrame:SetScale(1)
 
-	if (WorldMapFrame:GetAttribute("UIPanelLayout-area") ~= "center") then
-		SetUIPanelAttribute(WorldMapFrame, "area", "center")
-	end
+	--if (WorldMapFrame:GetAttribute("UIPanelLayout-area") ~= "center") then
+		--SetUIPanelAttribute(WorldMapFrame, "area", "center")
+	--end
 
-	if (WorldMapFrame:GetAttribute("UIPanelLayout-allowOtherPanels") ~= true) then
-		SetUIPanelAttribute(WorldMapFrame, "allowOtherPanels", true)
-	end
+	--if (WorldMapFrame:GetAttribute("UIPanelLayout-allowOtherPanels") ~= true) then
+		--SetUIPanelAttribute(WorldMapFrame, "allowOtherPanels", true)
+	--end
 
 	WorldMapFrame:OnFrameSizeChanged()
 
@@ -185,7 +187,7 @@ local WorldMapFrame_Maximize = function(self)
 	WorldMapFrameBg:Hide()
 	
 	WorldMapFrameCloseButton:ClearAllPoints()
-	WorldMapFrameCloseButton:SetPoint("TOPLEFT", 4, -70)
+	WorldMapFrameCloseButton:SetPoint("TOPLEFT", 21, -66)
 
 	WorldMapFrame_StripOverlays()
 
@@ -285,9 +287,9 @@ MapShrinker.StyleWorldMap = function(self)
 	QuestMapFrame:SetScript("OnHide", nil) 
 	QuestMapFrame.VerticalSeparator:Hide()
 
-	WorldMapFrame.BlackoutFrame.Blackout:SetTexture(nil)
-	WorldMapFrame.BlackoutFrame:EnableMouse(false)
-	WorldMapFrame.BorderFrame.MaximizeMinimizeFrame.MinimizeButton:SetParent(MapShrinker.UIHider)
+	--WorldMapFrame.BlackoutFrame.Blackout:SetTexture(nil)
+	--WorldMapFrame.BlackoutFrame:EnableMouse(false)
+	--WorldMapFrame.BorderFrame.MaximizeMinimizeFrame.MinimizeButton:SetParent(MapShrinker.UIHider)
 
 	local backdrop = CreateFrame("Frame", nil, WorldMapFrame, BackdropTemplateMixin and "BackdropTemplate")
 	backdrop:Hide()
@@ -389,12 +391,10 @@ end
 -- Initialization.
 -- This fires when the addon and its settings are loaded.
 MapShrinker.OnInit = function(self)
-	if (self:IsIncompatible()) then
-		return
-	end
+	--if (self:IsIncompatible()) then return end
 
 	-- Tell the environment what subfolder to find our media in.
-	self:SetMediaPath("Media")
+	--self:SetMediaPath("Media")
 
 	-- Create a frame to hide UI elements with.
 	self.UIHider = CreateFrame("Frame", nil, UIParent)
@@ -406,9 +406,7 @@ end
 -- This fires when most of the user interface has been loaded
 -- and most data is available to the user.
 MapShrinker.OnEnable = function(self)
-	if (self:IsIncompatible()) then
-		return
-	end
+	--if (self:IsIncompatible()) then return end
 	if (IsAddOnLoaded("Blizzard_WorldMap")) then
 		self:SetUpMap()
 	else
@@ -420,93 +418,6 @@ end
 -- Setup the environment
 -----------------------------------------------------------
 (function(self)
-	-- MapShrinker Default API
-	-- This mostly contains methods we always want available
-	-----------------------------------------------------------
-	local currentClientPatch, currentClientBuild = GetBuildInfo()
-	currentClientBuild = tonumber(currentClientBuild)
-
-	-- Let's create some constants for faster lookups
-	local MAJOR,MINOR,PATCH = string.split(".", currentClientPatch)
-
-	-- These are defined in FrameXML/BNet.lua
-	-- *Using blizzard constants if they exist,
-	-- using string parsing as a fallback.
-	MapShrinker.IsClassic = (WOW_PROJECT_ID) and (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC) or (tonumber(MAJOR) == 1)
-	MapShrinker.IsRetail = (WOW_PROJECT_ID) and (WOW_PROJECT_ID == WOW_PROJECT_MAINLINE) or (tonumber(MAJOR) >= 9)
-	MapShrinker.IsClassicTBC = tonumber(MAJOR) == 2
-	MapShrinker.IsRetailBFA = tonumber(MAJOR) == 8
-	MapShrinker.IsRetailShadowlands = tonumber(MAJOR) == 9
-	MapShrinker.CurrentClientBuild = currentClientBuild -- Expose the build number too
-
-	-- Set a relative subpath to look for media files in.
-	local Path
-	MapShrinker.SetMediaPath = function(self, path)
-		Path = path
-	end
-
-	-- Parse chat input arguments 
-	local parse = function(msg)
-		msg = string.gsub(msg, "^%s+", "") -- Remove spaces at the start.
-		msg = string.gsub(msg, "%s+$", "") -- Remove spaces at the end.
-		msg = string.gsub(msg, "%s+", " ") -- Replace all space characters with single spaces.
-		if (string.find(msg, "%s")) then
-			return string.split(" ", msg) -- If multiple arguments exist, split them into separate return values.
-		else
-			return msg
-		end
-	end 
-
-	-- This methods lets you register a chat command, and a callback function or private method name.
-	-- Your callback will be called as callback(MapShrinker, editBox, commandName, ...) where (...) are all the input parameters.
-	MapShrinker.RegisterChatCommand = function(_, command, callback)
-		command = string.gsub(command, "^\\", "") -- Remove any backslash at the start.
-		command = string.lower(command) -- Make it lowercase, keep it case-insensitive.
-		local name = string.upper("MapShrinker_CHATCOMMAND_"..command) -- Create a unique uppercase name for the command.
-		_G["SLASH_"..name.."1"] = "/"..command -- Register the chat command, keeping it lowercase.
-		SlashCmdList[name] = function(msg, editBox)
-			local func = MapShrinker[callback] or MapShrinker.OnChatCommand or callback
-			if (func) then
-				func(MapShrinker, editBox, command, parse(string.lower(msg)))
-			end
-		end 
-	end
-
-	MapShrinker.GetAddOnInfo = function(self, index)
-		local name, title, notes, loadable, reason, security, newVersion = GetAddOnInfo(index)
-		local enabled = not(GetAddOnEnableState(UnitName("player"), index) == 0) 
-		return name, title, notes, enabled, loadable, reason, security
-	end
-
-	-- Check if an addon exists in the addon listing and loadable on demand
-	MapShrinker.IsAddOnLoadable = function(self, target, ignoreLoD)
-		local target = string.lower(target)
-		for i = 1,GetNumAddOns() do
-			local name, title, notes, enabled, loadable, reason, security = self:GetAddOnInfo(i)
-			if string.lower(name) == target then
-				if loadable or ignoreLoD then
-					return true
-				end
-			end
-		end
-	end
-
-	-- This method lets you check if an addon WILL be loaded regardless of whether or not it currently is. 
-	-- This is useful if you want to check if an addon interacting with yours is enabled. 
-	-- My philosophy is that it's best to avoid addon dependencies in the toc file, 
-	-- unless your addon is a plugin to another addon, that is.
-	MapShrinker.IsAddOnEnabled = function(self, target)
-		local target = string.lower(target)
-		for i = 1,GetNumAddOns() do
-			local name, title, notes, enabled, loadable, reason, security = self:GetAddOnInfo(i)
-			if string.lower(name) == target then
-				if enabled and loadable then
-					return true
-				end
-			end
-		end
-	end
-
 	-- Event API
 	-----------------------------------------------------------
 	-- Proxy event registering to the addon namespace.

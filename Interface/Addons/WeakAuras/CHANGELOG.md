@@ -1,6 +1,12 @@
-# [3.7.8-13-gdb3bd18e](https://github.com/WeakAuras/WeakAuras2/tree/db3bd18e72b4a73210b965fb18b210af0311e74f) (2022-02-08)
+# [3.7.9](https://github.com/WeakAuras/WeakAuras2/tree/3.7.9) (2022-02-16)
 
-[Full Changelog](https://github.com/WeakAuras/WeakAuras2/compare/3.7.8...db3bd18e72b4a73210b965fb18b210af0311e74f)
+[Full Changelog](https://github.com/WeakAuras/WeakAuras2/compare/3.7.8...3.7.9)
+
+## Highlights
+
+ - Bug fixes 
+
+## Commits
 
 Adam Wendelin (2):
 
@@ -11,8 +17,9 @@ Causese (1):
 
 - store %count in the tooltip
 
-InfusOnWoW (4):
+InfusOnWoW (5):
 
+- Fix texts for AutomaticRepair vs ManualRepair
 - Fix unlocalized string in Anchor settings
 - Adjust {rt#} replacement to be compatible with DBM extended raid marks
 - Be less clever with Repair Dialog translations
