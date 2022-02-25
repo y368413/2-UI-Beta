@@ -1,4 +1,4 @@
-## Interface: 20502
+## Interface: 90200
 ## Author: Roadblock
 ## Title: New|cff00ff00MotD|r
 ## Notes: 'Guild Message of the Day' splash, with options.

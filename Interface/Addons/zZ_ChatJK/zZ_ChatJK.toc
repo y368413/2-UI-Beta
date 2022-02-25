@@ -1,4 +1,4 @@
-## Interface: 90105
+## Interface: 90200
 ## Title: zZ_ChatJK
 ## Notes: zZ_ChatJK
 ## Title-zhCN: |c0066ffffzZ_ChatJK聊天窗口监控|r

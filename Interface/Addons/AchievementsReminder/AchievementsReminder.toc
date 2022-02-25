@@ -1,4 +1,4 @@
-﻿## Interface: 90105
+## Interface: 90200
 ## Title: Achievements|cff7fff7fReminder|r - shows achievements by location
 ## Title-ruRU: Achievements|cff7fff7fReminder|r - Список достижений по локациям
 ## Author: Shurshik

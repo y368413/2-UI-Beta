@@ -498,6 +498,10 @@ L["Frame Selector"] = "Frame Selector"
 L["Frequency"] = "Frequency"
 L["Friendly"] = "우호적"
 L["Friendly Fire"] = "아군에게 준 피해"
+--[[Translation missing --]]
+L["Friendship Max Rank"] = "Friendship Max Rank"
+--[[Translation missing --]]
+L["Friendship Rank"] = "Friendship Rank"
 L["From"] = "출처"
 L["Frost Resistance"] = "냉기 저항"
 L["Full"] = "가득 찼을 때"
@@ -1184,6 +1188,8 @@ L["Summon"] = "소환"
 L["Supports multiple entries, separated by commas"] = "쉼표로 구분된 여러 항목을 지원합니다"
 L[ [=[Supports multiple entries, separated by commas
 ]=] ] = "쉼표로 구분된 여러 항목을 지원합니다"
+--[[Translation missing --]]
+L["Supports multiple entries, separated by commas. Escape ',' with \\"] = "Supports multiple entries, separated by commas. Escape ',' with \\"
 --[[Translation missing --]]
 L["Supports multiple entries, separated by commas. Group Zone IDs must be prefixed with 'g', e.g. g277."] = "Supports multiple entries, separated by commas. Group Zone IDs must be prefixed with 'g', e.g. g277."
 --[[Translation missing --]]

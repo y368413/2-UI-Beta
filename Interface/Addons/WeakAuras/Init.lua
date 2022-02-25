@@ -8,12 +8,12 @@ WeakAuras.halfWidth = WeakAuras.normalWidth / 2
 WeakAuras.doubleWidth = WeakAuras.normalWidth * 2
 
 local versionStringFromToc = GetAddOnMetadata("WeakAuras", "Version")
-local versionString = "3.7.9"
-local buildTime = "20220217233104"
+local versionString = "3.7.11-1-g33bc03b"
+local buildTime = "20220223020156"
 local isDevVersion = false
 
 --[==[@debug@
-if versionStringFromToc == "3.7.9" then
+if versionStringFromToc == "3.7.11-1-g33bc03b" then
   versionStringFromToc = "Dev"
   buildTime = "Dev"
   isDevVersion = true
@@ -27,7 +27,7 @@ local intendedWoWProject = WOW_PROJECT_MAINLINE
 intendedWoWProject = WOW_PROJECT_CLASSIC
 --@end-version-classic@]====]
 --[====[@version-bcc@
-intendedWoWProject = WOW_PROJECT_BURNING_CRUSADE_CLASSIC or 5 -- TODO: Remove when every flavor build has the constant
+intendedWoWProject = WOW_PROJECT_BURNING_CRUSADE_CLASSIC or WOW_PROJECT_MAINLINE
 --@end-version-bcc@]====]
 --@end-non-version-retail@]===]
 

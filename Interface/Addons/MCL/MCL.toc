@@ -1,4 +1,4 @@
-## Interface: 90105
+## Interface: 90200
 ## Title: MCL - Mount Collection Log
 ## Notes: A tool used to log collected mounts in a similiar way to Simple Armory.
 ## Version: 1.045

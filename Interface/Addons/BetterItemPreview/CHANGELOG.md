@@ -1,3 +1,13 @@
+## 3.0.0
+
+Bumped TOC for 9.2.0
+Fixed missing check for nil value
+
+
+## 2.9.2
+
+Better handling of recipe links
+
 ## 2.9.1
 
 Code block was accidentally removed which is needed to preview recipes from inventory

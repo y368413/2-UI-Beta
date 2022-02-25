@@ -1,4 +1,4 @@
-## Interface: 90105
+## Interface: 90200
 ## Title: Holiday Dungeon Helper
 ## Author: Witness
 ## Notes: A simple addon allows you to queue and enter holiday dungeons automatically. (/hdh)

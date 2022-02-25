@@ -1,5 +1,4 @@
-### Changes in 90105.26-Release:
+### Changes in 90200.27-Release:
 
-- Added: Support for new Animaflow Teleporter locations (thanks @jrowles)
 - Changed: Update Interface version
 

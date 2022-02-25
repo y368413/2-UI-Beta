@@ -653,9 +653,7 @@ do
         lastUpdate = GetTime()
         updateIsQueued = false
 
-        for thing in pairs( state.set_bonus ) do
-            state.set_bonus[ thing ] = 0
-        end
+        wipe( state.set_bonus )
 
         for _, hook in ipairs( GearHooks ) do
             if hook.reset then hook.reset() end
@@ -664,7 +662,7 @@ do
         wipe( wasWearing )
 
         for i, item in ipairs( state.items ) do
-            wasWearing[i] = item
+            wasWearing[ i ] = item
         end
 
         wipe( state.items )
@@ -675,6 +673,12 @@ do
                 if IsEquippedItem( GetItemInfo( item ) ) then
                     state.set_bonus[ set ] = state.set_bonus[ set ] + 1
                 end
+            end
+        end
+
+        for bonus, aura in pairs( class.setBonuses ) do
+            if GetPlayerAuraBySpellID( aura ) then
+                state.set_bonus[ bonus ] = 1
             end
         end
 
@@ -781,21 +785,38 @@ do
             ns.Tooltip:Hide()
         end
 
+        state.main_hand.size = 0
+        state.off_hand.size = 0
+    
         for i = 1, 19 do
             local item = GetInventoryItemID( 'player', i )
 
             if item then
                 state.set_bonus[ item ] = 1
-                local key = GetItemInfo( item )
+                local key, _, _, _, _, _, _, _, equipLoc = GetItemInfo( item )
                 if key then
                     key = formatKey( key )
                     state.set_bonus[ key ] = 1
                     gearInitialized = true
                 end
 
+                if i == 16 then
+                    if equipLoc == "INVTYPE_2HWEAPON" then
+                        state.main_hand.size = 2
+                    elseif equipLoc == "INVTYPE_WEAPON" or equipLoc == "INVTYPE_WEAPONMAINHAND" then
+                        state.main_hand.size = 1
+                    end
+                elseif i == 17 then
+                    if equipLoc == "INVTYPE_2HWEAPON" then
+                        state.off_hand.size = 2
+                    elseif equipLoc == "INVTYPE_WEAPON" or equipLoc == "INVTYPE_WEAPONOFFHAND" then
+                        state.off_hand.size = 1
+                    end
+                end
+
                 -- Fire any/all GearHooks (may be expansion-driven).
                 for _, hook in ipairs( GearHooks ) do
-                    hook.update( i, item )
+                    if hook.update then hook.update( i, item ) end
                 end
 
                 local usable = class.itemMap[ item ]
@@ -1066,6 +1087,7 @@ RegisterUnitEvent( "UNIT_SPELLCAST_START", "player", "target", function( event, 
     else
         state.target.updated = true
     end
+
     Hekili:ForceUpdate( event, true )
 end )
 

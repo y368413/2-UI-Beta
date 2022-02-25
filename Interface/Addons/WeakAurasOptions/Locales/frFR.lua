@@ -193,6 +193,10 @@ Off Screen]=]
 	L["Can be a Name or a Unit ID (e.g. party1). A name only works on friendly players in your group."] = "Peut être un nom ou un identifiant d'unité (par.ex..groupe1).Un nom ne fonctionne que sur les joueurs amicaux de votre groupe"
 	--[[Translation missing --]]
 	L["Can be a UID (e.g., party1)."] = "Can be a UID (e.g., party1)."
+	--[[Translation missing --]]
+	L["Can set to 0 if Columns * Width equal File Width"] = "Can set to 0 if Columns * Width equal File Width"
+	--[[Translation missing --]]
+	L["Can set to 0 if Rows * Height equal File Height"] = "Can set to 0 if Rows * Height equal File Height"
 	L["Cancel"] = "Annuler"
 	--[[Translation missing --]]
 	L["Cast by Player Character"] = "Cast by Player Character"
@@ -254,15 +258,11 @@ Off Screen]=]
 	L["Custom"] = "Personnalisé"
 	L["Custom Anchor"] = "Ancrage personnalisé"
 	--[[Translation missing --]]
-	L["Custom Background"] = "Custom Background"
-	--[[Translation missing --]]
 	L["Custom Check"] = "Custom Check"
 	L["Custom Code"] = "Code personnalisé"
 	--[[Translation missing --]]
 	L["Custom Color"] = "Custom Color"
 	L["Custom Configuration"] = "Configuration personnalisée"
-	--[[Translation missing --]]
-	L["Custom Foreground"] = "Custom Foreground"
 	L["Custom Frames"] = "Cadres personnalisés"
 	L["Custom Function"] = "Fonction personnalisée"
 	L["Custom Grow"] = "Surbrillance personnalisée"
@@ -400,6 +400,10 @@ UNIT_POWER, UNIT_AURA PLAYER_TARGET_CHANGED
 	L["False"] = "Faux"
 	L["Fetch Affected/Unaffected Names"] = "chercher concerné/Noms non-concernés"
 	--[[Translation missing --]]
+	L["File Height"] = "File Height"
+	--[[Translation missing --]]
+	L["File Width"] = "File Width"
+	--[[Translation missing --]]
 	L["Filter by Arena Spec"] = "Filter by Arena Spec"
 	L["Filter by Class"] = "Filtrer par Classe"
 	L["Filter by Group Role"] = "Filtrer par Rôle de Groupe"
@@ -429,10 +433,14 @@ Supports multiple entries, separated by commas
 	--[[Translation missing --]]
 	L["Frame Count"] = "Frame Count"
 	--[[Translation missing --]]
+	L["Frame Height"] = "Frame Height"
+	--[[Translation missing --]]
 	L["Frame Rate"] = "Frame Rate"
 	--[[Translation missing --]]
 	L["Frame Selector"] = "Frame Selector"
 	L["Frame Strata"] = "Strate du cadre"
+	--[[Translation missing --]]
+	L["Frame Width"] = "Frame Width"
 	L["Frequency"] = "Fréquence"
 	L["From Template"] = "D'après un modèle"
 	L["Full Circle"] = "Cercle Complet"
@@ -493,6 +501,8 @@ Si le nombre entré est decimal (ex. 0.5), une fraction (ex. 1/2), ou un pourcen
 	L["Height"] = "Hauteur"
 	L["Help"] = "Aide"
 	L["Hide"] = "Cacher"
+	--[[Translation missing --]]
+	L["Hide Background"] = "Hide Background"
 	--[[Translation missing --]]
 	L["Hide Glows applied by this aura"] = "Hide Glows applied by this aura"
 	L["Hide on"] = "Cacher à"
@@ -634,6 +644,8 @@ Plusieurs valeurs peuvent être choisies]=]
 	L["Multiselect single tooltip"] = [=[
 |cFF777777Ignoré|r - |cFF00FF00Unique|r - |cFF777777Multiple|r
 Seule une unique valeur peut être choisie]=]
+	--[[Translation missing --]]
+	L["Must be a power of 2"] = "Must be a power of 2"
 	L["Name Info"] = "Info du nom"
 	L["Name Pattern Match"] = "Correspondance de modèle de nom"
 	L["Name(s)"] = "Nom(s)"
@@ -762,9 +774,13 @@ Seule une unique valeur peut être choisie]=]
 	L["Row Width"] = "Row Width"
 	L["Rows"] = "Lignes"
 	L["Same"] = "Le même"
+	--[[Translation missing --]]
+	L["Same texture as Foreground"] = "Same texture as Foreground"
 	L["Scale"] = "Échelle"
 	L["Search"] = "Chercher"
 	L["Select the auras you always want to be listed first"] = "Choisissez les auras que vous voulez toujours voir apparaître en premier dans la liste"
+	--[[Translation missing --]]
+	L["Selected Frame"] = "Selected Frame"
 	L["Send To"] = "Envoyer vers"
 	L["Separator Text"] = "Texte Séparateur"
 	L["Separator text"] = "texte séparateur"

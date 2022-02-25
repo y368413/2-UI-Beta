@@ -173,6 +173,10 @@ Off Screen]=] ] = "Aura가 화면 밖에 있음"
 	L["Can be a Name or a Unit ID (e.g. party1). A name only works on friendly players in your group."] = "이름 또는 유닛 ID(예. party1)일 수 있습니다. 이름은 같은 파티의 우호적 플레이어에게만 작동합니다."
 	--[[Translation missing --]]
 	L["Can be a UID (e.g., party1)."] = "Can be a UID (e.g., party1)."
+	--[[Translation missing --]]
+	L["Can set to 0 if Columns * Width equal File Width"] = "Can set to 0 if Columns * Width equal File Width"
+	--[[Translation missing --]]
+	L["Can set to 0 if Rows * Height equal File Height"] = "Can set to 0 if Rows * Height equal File Height"
 	L["Cancel"] = "취소"
 	L["Cast by Player Character"] = "플레이어 캐릭터가 시전"
 	L["Cast by Players"] = "플레이어가 시전"
@@ -230,14 +234,11 @@ Off Screen]=] ] = "Aura가 화면 밖에 있음"
 	L["Crop Y"] = "Y 자르기"
 	L["Custom"] = "사용자 설정"
 	L["Custom Anchor"] = "사용자 앵커"
-	L["Custom Background"] = "배경 사용자 설정"
 	--[[Translation missing --]]
 	L["Custom Check"] = "Custom Check"
 	L["Custom Code"] = "사용자 정의 코드"
 	L["Custom Color"] = "사용자 설정 색상"
 	L["Custom Configuration"] = "사용자 설정 구성"
-	--[[Translation missing --]]
-	L["Custom Foreground"] = "Custom Foreground"
 	L["Custom Frames"] = "사용자 설정 프레임"
 	L["Custom Function"] = "사용자 설정 함수"
 	L["Custom Grow"] = "사용자 설정 성장"
@@ -374,6 +375,10 @@ UNIT_POWER_UPDATE, UNIT_AURA PLAYER_TARGET_CHANGED]=]
 	--[[Translation missing --]]
 	L["Fetch Affected/Unaffected Names"] = "Fetch Affected/Unaffected Names"
 	--[[Translation missing --]]
+	L["File Height"] = "File Height"
+	--[[Translation missing --]]
+	L["File Width"] = "File Width"
+	--[[Translation missing --]]
 	L["Filter by Arena Spec"] = "Filter by Arena Spec"
 	L["Filter by Class"] = "직업별 필터"
 	L["Filter by Group Role"] = "그룹 역할별 필터"
@@ -398,10 +403,14 @@ Supports multiple entries, separated by commas
 	L["Frame"] = "프레임"
 	--[[Translation missing --]]
 	L["Frame Count"] = "Frame Count"
+	--[[Translation missing --]]
+	L["Frame Height"] = "Frame Height"
 	L["Frame Rate"] = "프레임률"
 	--[[Translation missing --]]
 	L["Frame Selector"] = "Frame Selector"
 	L["Frame Strata"] = "프레임 우선순위"
+	--[[Translation missing --]]
+	L["Frame Width"] = "Frame Width"
 	--[[Translation missing --]]
 	L["Frequency"] = "Frequency"
 	L["From Template"] = "견본으로부터"
@@ -460,6 +469,8 @@ Supports multiple entries, separated by commas
 	L["Height"] = "높이"
 	L["Help"] = "도움말"
 	L["Hide"] = "숨기기"
+	--[[Translation missing --]]
+	L["Hide Background"] = "Hide Background"
 	L["Hide Glows applied by this aura"] = "이 효과가 적용하는 반짝임 숨기기"
 	L["Hide on"] = "숨기기"
 	L["Hide this group's children"] = "이 그룹의 자식 숨기기"
@@ -590,6 +601,8 @@ Supports multiple entries, separated by commas
 	L["Multiselect single tooltip"] = [=[
 |cFF777777무시|r - |cFF00FF00단일|r - |cFF777777다중|r
 일치하는 한 값만 선택할 수 있습니다]=]
+	--[[Translation missing --]]
+	L["Must be a power of 2"] = "Must be a power of 2"
 	L["Name Info"] = "이름 정보"
 	L["Name Pattern Match"] = "이름 패턴 일치"
 	L["Name(s)"] = "이름(s)"
@@ -703,9 +716,13 @@ Supports multiple entries, separated by commas
 	L["Row Width"] = "행 넓이"
 	L["Rows"] = "행"
 	L["Same"] = "동일한"
+	--[[Translation missing --]]
+	L["Same texture as Foreground"] = "Same texture as Foreground"
 	L["Scale"] = "크기 비율"
 	L["Search"] = "검색"
 	L["Select the auras you always want to be listed first"] = "목록에서 첫번째로 표시할 오라를 선택하세요"
+	--[[Translation missing --]]
+	L["Selected Frame"] = "Selected Frame"
 	L["Send To"] = "보내기..."
 	--[[Translation missing --]]
 	L["Separator Text"] = "Separator Text"

@@ -622,6 +622,10 @@ L["Frequency"] = "Frequency"
 L["Friendly"] = "Amigável"
 L["Friendly Fire"] = "Fogo Amigo"
 --[[Translation missing --]]
+L["Friendship Max Rank"] = "Friendship Max Rank"
+--[[Translation missing --]]
+L["Friendship Rank"] = "Friendship Rank"
+--[[Translation missing --]]
 L["From"] = "From"
 --[[Translation missing --]]
 L["Frost Resistance"] = "Frost Resistance"
@@ -1630,6 +1634,8 @@ L["Supports multiple entries, separated by commas"] = "Supports multiple entries
 L[ [=[Supports multiple entries, separated by commas
 ]=] ] = [=[Supports multiple entries, separated by commas
 ]=]
+--[[Translation missing --]]
+L["Supports multiple entries, separated by commas. Escape ',' with \\"] = "Supports multiple entries, separated by commas. Escape ',' with \\"
 --[[Translation missing --]]
 L["Supports multiple entries, separated by commas. Group Zone IDs must be prefixed with 'g', e.g. g277."] = "Supports multiple entries, separated by commas. Group Zone IDs must be prefixed with 'g', e.g. g277."
 --[[Translation missing --]]

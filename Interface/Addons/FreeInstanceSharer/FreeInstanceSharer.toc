@@ -1,13 +1,13 @@
-## Interface: 90100
+## Interface: 90200
 ## Title: |cff1572cfFree Instance Sharer|r
 ## Title-zhCN: |cff1572cf便利CD分享|r
 ## Notes: Simply sharing your saved instance to others.
 ## Notes-zhCN: 提供自动排队、组队、退组等功能，便利地共享副本CD。
 ## Author: LiangYuxuan
-## Version: v9.1.5-3-g1d83383
+## Version: v9.2.0
 ## SavedVariables: FreeInstanceSharerDB
 ## SavedVariablesPerCharacter: FISConfig
-## X-ReleaseDate: 2022-01-06T07:34:57Z
+## X-ReleaseDate: 2022-02-23T03:24:42Z
 ## X-License: MIT
 ## X-Curse-Project-ID: 319097
 ## X-WoWI-ID: 25931

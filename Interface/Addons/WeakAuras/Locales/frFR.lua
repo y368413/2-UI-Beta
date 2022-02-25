@@ -557,6 +557,10 @@ L["Frame Selector"] = "Frame Selector"
 L["Frequency"] = "Fréquence"
 L["Friendly"] = "Amical"
 L["Friendly Fire"] = "Tir ami"
+--[[Translation missing --]]
+L["Friendship Max Rank"] = "Friendship Max Rank"
+--[[Translation missing --]]
+L["Friendship Rank"] = "Friendship Rank"
 L["From"] = "De"
 L["Frost Resistance"] = "Résistance au givre"
 L["Full"] = "Plein"
@@ -1332,6 +1336,8 @@ L["Summon"] = "Invocation"
 L["Supports multiple entries, separated by commas"] = "Prend en charge plusieurs entrées, séparées par des virgules"
 L[ [=[Supports multiple entries, separated by commas
 ]=] ] = "Prend en charge plusieurs entrées, séparées par des virgules"
+--[[Translation missing --]]
+L["Supports multiple entries, separated by commas. Escape ',' with \\"] = "Supports multiple entries, separated by commas. Escape ',' with \\"
 --[[Translation missing --]]
 L["Supports multiple entries, separated by commas. Group Zone IDs must be prefixed with 'g', e.g. g277."] = "Supports multiple entries, separated by commas. Group Zone IDs must be prefixed with 'g', e.g. g277."
 --[[Translation missing --]]

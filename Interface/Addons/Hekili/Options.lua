@@ -262,6 +262,16 @@ local oneTimeFixes = {
     forceEnableEnhancedRecheckBoomkin_20210712 = function( p )
         p.specs[ 102 ].enhancedRecheck = true
     end,
+
+    updateMaxRefreshToNewSpecOptions_20220222 = function( p )
+        for id, spec in pairs( p.specs ) do
+            if spec.settings.maxRefresh then
+                spec.settings.combatRefresh = 1 / spec.settings.maxRefresh
+                spec.settings.regularRefresh = min( 1, 5 * spec.settings.combatRefresh )
+                spec.settings.maxRefresh = nil
+            end
+        end
+    end,
 }
 
 
@@ -525,7 +535,7 @@ local packTemplate = {
     builtIn = false,
 
     author = UnitName("player"),
-    desc = "===== 此技能列表使用Hekili汉化版创建 =====\n\n",
+    desc = "This is a package of action lists for Hekili.",
     source = "",
     date = date("%Y-%m-%d %H:%M"),
     warnings = "",
@@ -606,13 +616,13 @@ function Hekili:GetDefaults()
                 custom1 = {
                     key = "",
                     value = false,
-                    name = "自定义#1"
+                    name = "Custom #1"
                 },
 
                 custom2 = {
                     key = "",
                     value = false,
-                    name = "自定义#2"
+                    name = "Custom #2"
                 }
             },
 
@@ -643,7 +653,7 @@ function Hekili:GetDefaults()
                     enabled = true,
                     builtIn = true,
 
-                    name = "主显示",
+                    name = "Primary",
 
                     relativeTo = "SCREEN",
                     displayPoint = "TOP",
@@ -691,7 +701,7 @@ function Hekili:GetDefaults()
                     enabled = true,
                     builtIn = true,
 
-                    name = "爆发",
+                    name = "Cooldowns",
                     filter = 'cooldowns',
 
                     x = 0,
@@ -714,7 +724,7 @@ function Hekili:GetDefaults()
                     enabled = true,
                     builtIn = true,
 
-                    name = "防御",
+                    name = "Defensives",
                     filter = 'defensives',
 
                     x = -110,
@@ -737,7 +747,7 @@ function Hekili:GetDefaults()
                     enabled = true,
                     builtIn = true,
 
-                    name = "打断",
+                    name = "Interrupts",
                     filter = 'interrupts',
 
                     x = -55,
@@ -903,18 +913,18 @@ do
     local SF = SpellFlashCore
 
     local fontStyles = {
-        ["MONOCHROME"] = "单色",
-        ["MONOCHROME,OUTLINE"] = "单色，描边",
-        ["MONOCHROME,THICKOUTLINE"] = "单色，粗描边",
-        ["NONE"] = "无",
-        ["OUTLINE"] = "描边",
-        ["THICKOUTLINE"] = "粗描边"
+        ["MONOCHROME"] = "Monochrome",
+        ["MONOCHROME,OUTLINE"] = "Monochrome, Outline",
+        ["MONOCHROME,THICKOUTLINE"] = "Monochrome, Thick Outline",
+        ["NONE"] = "None",
+        ["OUTLINE"] = "Outline",
+        ["THICKOUTLINE"] = "Thick Outline"
     }
 
     local fontElements = {
         font = {
             type = "select",
-            name = "字体",
+            name = "Font",
             order = 1,
             width = 1.5,
             dialogControl = 'LSM30_Font',
@@ -923,7 +933,7 @@ do
 
         fontSize = {
             type = "range",
-            name = "尺寸",
+            name = "Size",
             order = 2,
             min = 8,
             max = 64,
@@ -933,7 +943,7 @@ do
 
         fontStyle = {
             type = "select",
-            name = "样式",
+            name = "Style",
             order = 3,
             values = fontStyles,
             width = 1.5
@@ -941,38 +951,38 @@ do
 
         color = {
             type = "color",
-            name = "颜色",
+            name = "Color",
             order = 4, 
             width = 1.5           
         }
     }
 
     local anchorPositions = {
-        TOP = '顶部',
-        TOPLEFT = '顶部左侧',
-        TOPRIGHT = '顶部右侧',
-        BOTTOM = '底部',
-        BOTTOMLEFT = '底部左侧',
-        BOTTOMRIGHT = '底部右侧',
-        LEFT = '左侧',
-        LEFTTOP = '左侧上部',
-        LEFTBOTTOM = '左侧下部',
-        RIGHT = '右侧',
-        RIGHTTOP = '右侧上部',
-        RIGHTBOTTOM = '右侧下部',
+        TOP = 'Top',
+        TOPLEFT = 'Top Left',
+        TOPRIGHT = 'Top Right',
+        BOTTOM = 'Bottom',
+        BOTTOMLEFT = 'Bottom Left',
+        BOTTOMRIGHT = 'Bottom Right',
+        LEFT = 'Left',
+        LEFTTOP = 'Left Top',
+        LEFTBOTTOM = 'Left Bottom',
+        RIGHT = 'Right',
+        RIGHTTOP = 'Right Top',
+        RIGHTBOTTOM = 'Right Bottom',
     }
 
 
     local realAnchorPositions = {
-        TOP = '顶部',
-        TOPLEFT = '顶部左侧',
-        TOPRIGHT = '顶部右侧',
-        BOTTOM = '底部',
-        BOTTOMLEFT = '底部左侧',
-        BOTTOMRIGHT = '底部右侧',
-        CENTER = "中间",
-        LEFT = '左侧',
-        RIGHT = '右侧',
+        TOP = 'Top',
+        TOPLEFT = 'Top Left',
+        TOPRIGHT = 'Top Right',
+        BOTTOM = 'Bottom',
+        BOTTOMLEFT = 'Bottom Left',
+        BOTTOMRIGHT = 'Bottom Right',
+        CENTER = "Center",
+        LEFT = 'Left',
+        RIGHT = 'Right',
     }
 
 
@@ -1090,23 +1100,23 @@ do
                 args = {
                     main = {
                         type = 'group',
-                        name = "主页",
-                        desc = "包括显示位置、图标、图标大小和形状等等。",
+                        name = "Main",
+                        desc = "Includes display position, icons, primary icon size/shape, etc.",
                         order = 1,
 
                         args = {
                             enabled = {
                                 type = "toggle",
-                                name = "启用",
-                                desc = "如果禁用，该显示区域在任何情况下都不会显示。",
+                                name = "Enabled",
+                                desc = "If disabled, this display will not appear under any circumstances.",
                                 order = 0.5,
                                 hidden = function () return name == "Primary" or name == "AOE" or name == "Cooldowns"  or name == "Defensives" or name == "Interrupts" end
                             },
 
                             elvuiCooldown = {
                                 type = "toggle",
-                                name = NewFeature .. " 使用ElvUI的冷却样式",
-                                desc = "如果安装了ElvUI，你可以在推荐队列中使用ElvUI的冷却样式。\n\n禁用此设置需要重新加载UI (|cFFFFD100/reload|r)。",
+                                name = NewFeature .. " Apply ElvUI Cooldown Style",
+                                desc = "If ElvUI is installed, you can apply the ElvUI cooldown style to your queued icons.\n\nDisabling this setting requires you to reload your UI (|cFFFFD100/reload|r).",
                                 width = "full",
                                 order = 0.51,
                                 hidden = function () return _G["ElvUI"] == nil end,
@@ -1114,8 +1124,8 @@ do
 
                             numIcons = {
                                 type = 'range',
-                                name = "图标显示",
-                                desc = "设置建议技能的显示数量。每个图标都会提前显示。",
+                                name = "Icons Shown",
+                                desc = "Specify the number of recommendations to show.  Each icon shows an additional step forward in time.",
                                 min = 1,
                                 max = 10,
                                 step = 1,
@@ -1136,18 +1146,18 @@ do
                             pos = {
                                 type = "group",
                                 inline = true,
-                                name = function( info ) rangeXY( info ); return "位置" end,
+                                name = function( info ) rangeXY( info ); return "Position" end,
                                 order = 10,
 
                                 args = {
                                     --[[
                                     relativeTo = {
                                         type = "select",
-                                        name = "锚定到",
+                                        name = "Anchored To",
                                         values = {
-                                            SCREEN = "屏幕",
-                                            PERSONAL = "角色资源条",
-                                            CUSTOM = "自定义"
+                                            SCREEN = "Screen",
+                                            PERSONAL = "Personal Resource Display",
+                                            CUSTOM = "Custom"
                                         },
                                         order = 1,
                                         width = 1.49,
@@ -1155,9 +1165,9 @@ do
 
                                     customFrame = {
                                         type = "input",
-                                        name = "自定义框架",
-                                        desc = "指定该自定义锚定位置框架的名称。\n" ..
-                                                "如果框架不存在，则不会显示。",
+                                        name = "Custom Frame",
+                                        desc = "Specify the name of the frame to which this display will be anchored.\n" ..
+                                                "If the frame does not exist, the display will not be shown.",
                                         order = 1.1,
                                         width = 1.49,
                                         hidden = function() return data.relativeTo ~= "CUSTOM" end,
@@ -1165,8 +1175,8 @@ do
 
                                     setParent = {
                                         type = "toggle",
-                                        name = "设置父对象为锚点",
-                                        desc = "如果勾选，则会在显示或隐藏锚点时同步显示隐藏。",
+                                        name = "Set Parent to Anchor",
+                                        desc = "If checked, the display will be shown/hidden when the anchor is shown/hidden.",
                                         order = 3.9,
                                         width = 1.49,
                                         hidden = function() return data.relativeTo == "SCREEN" end,
@@ -1182,8 +1192,8 @@ do
                                     x = {
                                         type = "range",
                                         name = "X",
-                                        desc = "设置该显示区域主图标相对于屏幕中心的水平位置。" ..
-                                            "负值代表显示区域向左移动，正值向右。",
+                                        desc = "Set the horizontal position for this display's primary icon relative to the center of the screen.  Negative " ..
+                                            "values will move the display left; positive values will move it to the right.",
                                         min = -512,
                                         max = 512,
                                         step = 1,
@@ -1195,8 +1205,8 @@ do
                                     y = {
                                         type = "range",
                                         name = "Y",
-                                        desc = "设置该显示区域主图标相对于屏幕中心的垂直位置。" ..
-                                            "负值代表显示区域向下移动，正值向上。",
+                                        desc = "Set the vertical position for this display's primary icon relative to the center of the screen.  Negative " ..
+                                            "values will move the display down; positive values will move it up.",
                                         min = -384,
                                         max = 384,
                                         step = 1,
@@ -1209,14 +1219,14 @@ do
 
                             primaryIcon = {
                                 type = "group",                                
-                                name = "主图标",
+                                name = "Primary Icon",
                                 inline = true,
                                 order = 15,
                                 args = {
                                     primaryWidth = {
                                         type = "range",
-                                        name = "宽度",
-                                        desc = "为你的" .. name .. "显示区域主图标设置显示宽度。",
+                                        name = "Width",
+                                        desc = "Specify the width of the primary icon for your " .. name .. " Display.",
                                         min = 10,
                                         max = 500,
                                         step = 1,
@@ -1227,8 +1237,8 @@ do
 
                                     primaryHeight = {
                                         type = "range",
-                                        name = "高度",
-                                        desc = "为你的" .. name .. "显示区域主图标设置显示高度。",
+                                        name = "Height",
+                                        desc = "Specify the height of the primary icon for your " .. name .. " Display.",
                                         min = 10,
                                         max = 500,
                                         step = 1,
@@ -1241,24 +1251,24 @@ do
 
                             advancedFrame = {
                                 type = "group",
-                                name = "框架层级",
+                                name = "Frame Layer",
                                 inline = true,
                                 order = 16,
                                 args = {
                                     frameStrata = {
                                         type = "select",
-                                        name = "层级",
-                                        desc =  "框架层级决定了在哪个图形层上绘制此显示区域。\n" ..
-                                            "默认层级是中间层。",
+                                        name = "Strata",
+                                        desc =  "Frame Strata determines which graphical layer that this display is drawn on.\n" ..
+                                                "The default layer is MEDIUM.",
                                         values = {
-                                            "背景层",
-                                            "底层",
-                                            "中间层",
-                                            "高层",
-                                            "对话框",
-                                            "全屏",
-                                            "全屏对话框",
-                                            "提示层"
+                                            "BACKGROUND",
+                                            "LOW",
+                                            "MEDIUM",
+                                            "HIGH",
+                                            "DIALOG",
+                                            "FULLSCREEN",
+                                            "FULLSCREEN_DIALOG",
+                                            "TOOLTIP"
                                         },
                                         width = 1.49,
                                         order = 1,
@@ -1266,9 +1276,9 @@ do
 
                                     frameLevel = {
                                         type = "range",
-                                        name = "优先级",
-                                        desc = "框架优先级决定了显示区域在当前层中的显示优先级。.\n\n" ..
-                                            "默认值是|cFFFFD10010|r.",
+                                        name = "Level",
+                                        desc = "Frame Level determines the display's position within its current layer.\n\n" ..
+                                                "Default value is |cFFFFD10010|r.",
                                         min = 1,
                                         max = 10000,
                                         step = 1,
@@ -1280,8 +1290,8 @@ do
 
                             zoom = {
                                 type = "range",
-                                name = "图标缩放",
-                                desc = "选择此显示区域中图标图案的缩放百分比（30%大约是暴雪的原始值）。",
+                                name = "Icon Zoom",
+                                desc = "Select the zoom percentage for the icon textures in this display. (Roughly 30% will trim off the default Blizzard borders.)",
                                 min = 0,
                                 max = 100,
                                 step = 1,
@@ -1292,9 +1302,9 @@ do
 
                             keepAspectRatio = {
                                 type = "toggle",
-                                name = "保持纵横比",
-                                desc = "如果主图标或队列中的图标不是正方形，勾选此项将无法图标缩放，" ..
-                                "变为裁切部分图标图案。",
+                                name = "Keep Aspect Ratio",
+                                desc = "If your primary or queued icons are not square, checking this option will prevent the icon textures from being " ..
+                                    "stretched and distorted, trimming some of the texture instead.",
                                 disabled = function( info, val )
                                     return not ( data.primaryHeight ~= data.primaryWidth or ( data.numIcons > 1 and data.queue.height ~= data.queue.width ) )
                                 end,
@@ -1306,8 +1316,8 @@ do
 
                     queue = {
                         type = "group",
-                        name = "队列",
-                        desc = "当显示区域显示多个技能图标时，在此对定位、大小、形状和位置进行设置。",
+                        name = "Queue",
+                        desc = "Includes anchoring, size, shape, and position settings when a display can show more than one icon.",
                         order = 2,
                         disabled = function ()
                             return data.numIcons == 1
@@ -1316,8 +1326,8 @@ do
                         args = {
                             elvuiCooldown = {
                                 type = "toggle",
-                                name = NewFeature .. " 使用ElvUI的冷却样式",
-                                desc = "如果安装了ElvUI，你可以在推荐队列中使用ElvUI的冷却样式。\n\n禁用此设置需要重新加载UI (|cFFFFD100/reload|r)。",
+                                name = NewFeature .. " Apply ElvUI Cooldown Style",
+                                desc = "If ElvUI is installed, you can apply the ElvUI cooldown style to your queued icons.\n\nDisabling this setting requires you to reload your UI (|cFFFFD100/reload|r).",
                                 width = "full",
                                 order = 0.5,
                                 hidden = function () return _G["ElvUI"] == nil end,
@@ -1325,8 +1335,8 @@ do
 
                             anchor = {
                                 type = 'select',
-                                name = '锚定到',
-                                desc = "选择主图标的锚定位置。",
+                                name = 'Anchor To',
+                                desc = "Select the point on the primary icon to which the queued icons will attach.",
                                 values = anchorPositions,
                                 width = "full",
                                 order = 1,
@@ -1334,8 +1344,8 @@ do
 
                             offsetX = {
                                 type = 'range',
-                                name = '队列水平偏移',
-                                desc = '设置主图标后方队列图标显示位置的水平偏移量（单位为像素）。',
+                                name = 'Queue Horizontal Offset',
+                                desc = 'Specify the offset (in pixels) for the queue, in relation to the anchor point on the primary icon for this display.',
                                 min = -100,
                                 max = 500,
                                 step = 1,
@@ -1345,8 +1355,8 @@ do
 
                             offsetY = {
                                 type = 'range',
-                                name = '队列垂直偏移',
-                                desc = '设置主图标后方队列图标显示位置的垂直偏移量（单位为像素）。',
+                                name = 'Queue Vertical Offset',
+                                desc = 'Specify the offset (in pixels) for the queue, in relation to the anchor point on the primary icon for this display.',
                                 min = -100,
                                 max = 500,
                                 step = 1,
@@ -1357,13 +1367,13 @@ do
 
                             direction = {
                                 type = 'select',
-                                name = '排列方向',
-                                desc = "设置队列图标的排列方向。",
+                                name = 'Direction',
+                                desc = "Select the direction for the icon queue.",
                                 values = {
-                                    TOP = '向上',
-                                    BOTTOM = '向下',
-                                    LEFT = '向左',
-                                    RIGHT = '向右'
+                                    TOP = 'Up',
+                                    BOTTOM = 'Down',
+                                    LEFT = 'Left',
+                                    RIGHT = 'Right'
                                 },
                                 width = "full",
                                 order = 5,
@@ -1372,8 +1382,8 @@ do
 
                             width = {
                                 type = 'range',
-                                name = '宽度',
-                                desc = "设置队列图标的宽度。",
+                                name = 'Width',
+                                desc = "Select the width of the queued icons.",
                                 min = 10,
                                 max = 500,
                                 step = 1,
@@ -1384,8 +1394,8 @@ do
 
                             height = {
                                 type = 'range',
-                                name = '高度',
-                                desc = "设置队列图标的高度。",
+                                name = 'Height',
+                                desc = "Select the height of the queued icons.",
                                 min = 10,
                                 max = 500,
                                 step = 1,
@@ -1396,8 +1406,8 @@ do
 
                             spacing = {
                                 type = 'range',
-                                name = '间距',
-                                desc = "设置队列图标的间距像素。",
+                                name = 'Spacing',
+                                desc = "Select the number of pixels between icons in the queue.",
                                 min = ( data.queue.direction == "LEFT" or data.queue.direction == "RIGHT" ) and -data.queue.width or -data.queue.height,
                                 max = 500,
                                 step = 1,
@@ -1409,16 +1419,16 @@ do
 
                     visibility = {
                         type = 'group',
-                        name = '透明度',
-                        desc = "PvE和PvP模式下不同的透明度设置。",
+                        name = 'Visibility',
+                        desc = "Visibility and transparency settings in PvE / PvP.",
                         order = 3,
 
                         args = {
 
                             advanced = {
                                 type = "toggle",
-                                name = "进阶设置",
-                                desc = "如果勾选，将提供更多关于透明度的细节选项。",
+                                name = "Advanced",
+                                desc = "If checked, options are provided to fine-tune display visibility and transparency.",
                                 width = "full",
                                 order = 1,
                             },
@@ -1446,8 +1456,8 @@ do
                                 args = {
                                     pveAlpha = {
                                         type = "range",
-                                        name = "PvE透明度",
-                                        desc = "设置在PvE战斗中显示区域的透明度。如果设置为0，该显示区域将不会在PvE战斗中显示。",
+                                        name = "PvE Alpha",
+                                        desc = "Set the transparency of the display when in PvE combat.  If set to 0, the display will not appear in PvE.",
                                         min = 0,
                                         max = 1,
                                         step = 0.01,
@@ -1456,8 +1466,8 @@ do
                                     },
                                     pvpAlpha = {
                                         type = "range",
-                                        name = "PvP透明度",
-                                        desc = "设置在PvP战斗中显示区域的透明度。如果设置为0，该显示区域将不会在PvP战斗中显示。",
+                                        name = "PvP Alpha",
+                                        desc = "Set the transparency of the display when in PvP combat.  If set to 0, the display will not appear in PvP.",
                                         min = 0,
                                         max = 1,
                                         step = 0.01,
@@ -1487,8 +1497,8 @@ do
                                 args = {
                                     always = {
                                         type = "range",                                        
-                                        name = "总是",
-                                        desc = "如果此项不是0，则在PvE区域无论是否在战斗中，该显示区域都将始终显示。",
+                                        name = "Always",
+                                        desc = "If non-zero, this display is always shown in PvE areas, both in and out of combat.",
                                         min = 0,
                                         max = 1,
                                         step = 0.01,
@@ -1498,8 +1508,8 @@ do
 
                                     combat = {
                                         type = "range",
-                                        name = "战斗",
-                                        desc = "如果此项不是0，则在PvE战斗中，该显示区域都将始终显示。",
+                                        name = "Combat",
+                                        desc = "If non-zero, this display is always shown in PvE combat.",
                                         min = 0,
                                         max = 1,
                                         step = 0.01,
@@ -1509,8 +1519,8 @@ do
 
                                     target = {
                                         type = "range",
-                                        name = "目标",
-                                        desc = "如果此项不是0，则当你有可攻击的PvE目标时，该显示区域都将始终显示。",
+                                        name = "Target",
+                                        desc = "If non-zero, this display is always shown when you have an attackable PvE target.",
                                         min = 0,
                                         max = 1,
                                         step = 0.01,
@@ -1520,8 +1530,8 @@ do
 
                                     combatTarget = {
                                         type = "range",
-                                        name = "战斗和目标",
-                                        desc = "如果此项不是0，则当你处于战斗状态，且拥有可攻击的PvE目标时，该显示区域都将始终显示。",
+                                        name = "Combat w/ Target",
+                                        desc = "If non-zero, this display is always shown when you are in combat and have an attackable PvE target.",
                                         min = 0,
                                         max = 1,
                                         step = 0.01,
@@ -1531,8 +1541,8 @@ do
 
                                     hideMounted = {
                                         type = "toggle",
-                                        name = "骑乘时隐藏",
-                                        desc = "如果勾选，则当你骑乘时，该显示区域隐藏（除非你在战斗中）。",
+                                        name = "Hide When Mounted",
+                                        desc = "If checked, the display will not be visible when you are mounted (unless you are in combat).",
                                         width = "full",
                                         order = 1.1,
                                     }
@@ -1560,8 +1570,8 @@ do
                                 args = {
                                     always = {
                                         type = "range",                                        
-                                        name = "总是",
-                                        desc = "如果此项不是0，则在PvP区域无论是否在战斗中，该显示区域都将始终显示。",
+                                        name = "Always",
+                                        desc = "If non-zero, this display is always shown in PvP areas, both in and out of combat.",
                                         min = 0,
                                         max = 1,
                                         step = 0.01,
@@ -1571,8 +1581,8 @@ do
 
                                     combat = {
                                         type = "range",
-                                        name = "战斗",
-                                        desc = "如果此项不是0，则在PvP战斗中，该显示区域都将始终显示。",
+                                        name = "Combat",
+                                        desc = "If non-zero, this display is always shown in PvP combat.",
                                         min = 0,
                                         max = 1,
                                         step = 0.01,
@@ -1582,8 +1592,8 @@ do
 
                                     target = {
                                         type = "range",
-                                        name = "目标",
-                                        desc = "如果此项不是0，则当你有可攻击的PvP目标时，该显示区域都将始终显示。",
+                                        name = "Target",
+                                        desc = "If non-zero, this display is always shown when you have an attackable PvP target.",
                                         min = 0,
                                         max = 1,
                                         step = 0.01,
@@ -1593,8 +1603,8 @@ do
 
                                     combatTarget = {
                                         type = "range",
-                                        name = "战斗和目标",
-                                        desc = "如果此项不是0，则当你处于战斗状态，且拥有可攻击的PvP目标时，该显示区域都将始终显示。",
+                                        name = "Combat w/ Target",
+                                        desc = "If non-zero, this is always shown when you are in combat and have an attackable PvP target.",
                                         min = 0,
                                         max = 1,
                                         step = 0.01,
@@ -1604,8 +1614,8 @@ do
 
                                     hideMounted = {
                                         type = "toggle",
-                                        name = "骑乘时隐藏",
-                                        desc = "如果勾选，则当你骑乘时，该显示区域隐藏（除非你在战斗中）。",
+                                        name = "Hide When Mounted",
+                                        desc = "If checked, the display will not be visible when you are mounted (unless you are in combat).",
                                         width = "full",
                                         order = 1.1,
                                     }
@@ -1616,21 +1626,21 @@ do
 
                     keybindings = {
                         type = "group",
-                        name = "绑定按键",
-                        desc = "显示技能图标上绑定按键文本的选项。",
+                        name = "Keybinds",
+                        desc = "Options for keybinding text on displayed icons.",
                         order = 7,
 
                         args = {
                             enabled = {
                                 type = "toggle",
-                                name = "启用",
+                                name = "Enabled",
                                 order = 1,
                                 width = 'full',                                
                             },
 
                             queued = {
                                 type = "toggle",
-                                name = "为队列图标启用",
+                                name = "Enabled for Queued Icons",
                                 order = 2,
                                 width = "full",
                                 disabled = function () return data.keybindings.enabled == false end,
@@ -1639,12 +1649,12 @@ do
                             pos = {
                                 type = "group",
                                 inline = true,
-                                name = function( info ) rangeIcon( info ); return "位置" end,
+                                name = function( info ) rangeIcon( info ); return "Position" end,
                                 order = 3,
                                 args = {
                                     anchor = {
                                         type = "select",
-                                        name = '锚点',
+                                        name = 'Anchor Point',
                                         order = 2,
                                         width = 'full',
                                         values = realAnchorPositions
@@ -1652,7 +1662,7 @@ do
 
                                     x = {
                                         type = "range",
-                                        name = "X轴偏移",
+                                        name = "X Offset",
                                         order = 3,
                                         width = "full",
                                         min = -max( data.primaryWidth, data.queue.width ),
@@ -1665,7 +1675,7 @@ do
 
                                     y = {
                                         type = "range",
-                                        name = "Y轴偏移",
+                                        name = "Y Offset",
                                         order = 4,
                                         width = "full",
                                         min = -max( data.primaryHeight, data.queue.height ),
@@ -1678,21 +1688,21 @@ do
                             textStyle = {
                                 type = "group",
                                 inline = true,
-                                name = "文本样式",
+                                name = "Text Style",
                                 order = 5,
                                 args = fontElements,
                             },
 
                             lowercase = {
                                 type = "toggle",
-                                name = "使用小写字母",
+                                name = "Use Lowercase",
                                 order = 5.1,
                                 width = "full",
                             },
 
                             separateQueueStyle = {
                                 type = "toggle",
-                                name = "队列图标使用不同的设置",
+                                name = "Use Different Settings for Queue",
                                 order = 6,
                                 width = "full",
                             },
@@ -1700,13 +1710,13 @@ do
                             queuedTextStyle = {
                                 type = "group",
                                 inline = true,
-                                name = "队列图标文本样式",
+                                name = "Queued Text Style",
                                 order = 7,
                                 hidden = function () return not data.keybindings.separateQueueStyle end,
                                 args = {
                                     queuedFont = {
                                         type = "select",
-                                        name = "字体",
+                                        name = "Font",
                                         order = 1,
                                         width = 1.5,
                                         dialogControl = 'LSM30_Font',
@@ -1715,7 +1725,7 @@ do
                             
                                     queuedFontSize = {
                                         type = "range",
-                                        name = "尺寸",
+                                        name = "Size",
                                         order = 2,
                                         min = 8,
                                         max = 64,
@@ -1725,7 +1735,7 @@ do
                             
                                     queuedFontStyle = {
                                         type = "select",
-                                        name = "样式",
+                                        name = "Style",
                                         order = 3,
                                         values = fontStyles,
                                         width = 1.5
@@ -1733,7 +1743,7 @@ do
                             
                                     queuedColor = {
                                         type = "color",
-                                        name = "颜色",
+                                        name = "Color",
                                         order = 4, 
                                         width = 1.5           
                                     }
@@ -1742,30 +1752,30 @@ do
 
                             queuedLowercase = {
                                 type = "toggle",
-                                name = "队列图标使用小写字母",
+                                name = "Use Lowercase in Queue",
                                 order = 7.1,
                                 width = "full",
                                 hidden = function () return not data.keybindings.separateQueueStyle end,
                             },
 
                             cPort = {
-                                name = NewFeature.."控制台端口",
+                                name = NewFeature.."ConsolePort",
                                 type = "group",
                                 inline = true,
                                 order = 10,
                                 args = {
                                     cPortOverride = {
                                         type = "toggle",
-                                        name = "使用控制台端口按键",
+                                        name = "Use ConsolePort Buttons",
                                         order = 6,
                                         width = "full",
                                     },
         
                                     cPortZoom = {
                                         type = "range",
-                                        name = "控制台端口按键缩放",
-                                        desc = "控制台端口图案周围通常有大量空白填充。" ..
-                                        "为了按键适配图标，放大会裁切一些图案。默认值为|cFFFFD1000.6|r。",
+                                        name = "ConsolePort Button Zoom",
+                                        desc = "The ConsolePort button textures generally have a significant amount of blank padding around them. " ..
+                                            "Zooming in removes some of this padding to help the buttons fit on the icon.  The default is |cFFFFD1000.6|r.",
                                         order = 7,
                                         min = 0,
                                         max = 1,
@@ -1781,32 +1791,32 @@ do
 
                     border = {
                         type = "group",
-                        name = "边框",
-                        desc = "启用/禁用和设置图标边框的颜色。\n\n" ..
-                        "如果使用了Masque或类似的图标美化插件，可能需要禁用此功能。",
+                        name = "Border",
+                        desc = "Enable/disable or set the color for icon borders.\n\n" ..
+                            "You may want to disable this if you use Masque or other tools to skin your Hekili icons.",
                         order = 4,
 
                         args = {
                             enabled = {
                                 type = "toggle",
-                                name = "启用",
-                                desc = "如果勾选，该显示区域中每个图标都会有窄边框。",
+                                name = "Enabled",
+                                desc = "If enabled, each icon in this display will have a thin border.",
                                 order = 1,
                                 width = "full",
                             },
 
                             fit = {
                                 type = "toggle",
-                                name = "内边框",
-                                desc = "如果勾选，当边框启用时，图标的边框将会在按钮的内部（而不是周围）。",
+                                name = "Border Inside",
+                                desc = "If enabled, when borders are enabled, the button's border will fit inside the button (instead of around it).",
                                 order = 2,
                                 width = "full",
                             },
 
                             thickness = {
                                 type = "range",
-                                name = NewFeature .. "边框粗细",
-                                desc = "设置边框的厚度（粗细）。默认值为1。",
+                                name = NewFeature .. " Border Thickness",
+                                desc = "Determines the thickness (width) of the border.  Default is 1.",
                                 softMin = 1,
                                 softMax = 20,
                                 step = 1,
@@ -1816,21 +1826,21 @@ do
 
                             coloring = {
                                 type = "select",
-                                name = "着色模式",
-                                desc = "设置边框颜色是系统颜色或自定义颜色。",
+                                name = "Coloring Mode",
+                                desc = "Specify whether to use class-colored borders or to specify a color.",
                                 width = "full",
                                 order = 3,
                                 values = {
-                                    class = "使用系统颜色",
-                                    custom = "设置自定义颜色"
+                                    class = "Use Class Color",
+                                    custom = "Specify a Custom Color"
                                 },
                                 disabled = function() return data.border.enabled == false end,
                             },
 
                             color = {
                                 type = "color",
-                                name = "边框颜色",
-                                desc = "当启用边框后，边框将使用此颜色。",
+                                name = "Border Color",
+                                desc = "When borders are enabled, the border will use this color.",
                                 order = 4,
                                 width = "full",
                                 disabled = function () return data.border.enabled == false end,
@@ -1841,29 +1851,29 @@ do
 
                     range = {
                         type = "group",
-                        name = "范围",
-                        desc = "设置范围检查警告的选项。",
+                        name = "Range",
+                        desc = "Preferences for range-check warnings, if desired.",
                         order = 5,
                         args = {
                             enabled = {
                                 type = "toggle",
-                                name = "启用",
-                                desc = "如果勾选，当你不在攻击距离内时，插件将进行红色高亮警告。",
+                                name = "Enabled",
+                                desc = "If enabled, the addon will provide a red warning highlight when you are not in range of your enemy.",
                                 width = "full",
                                 order = 1,
                             },
 
                             type = {
                                 type = "select",
-                                name = '范围监测',
-                                desc = "选择该显示区域使用的范围监测和警告提示类型。\n\n" ..
-                                "|cFFFFD100技能|r - 如果某个技能超出攻击范围，则该技能以红色高亮警告。\n\n" ..
-                                "|cFFFFD100近战|r - 如果你不在近战攻击范围，所有技能都以红色高亮警告。\n\n" ..
-                                "|cFFFFD100排除|r - 如果某个技能超出攻击范围，则不建议使用该技能。",
+                                name = 'Range Checking',
+                                desc = "Select the kind of range checking and range coloring to be used by this display.\n\n" ..
+                                    "|cFFFFD100Ability|r - Each ability is highlighted in red if that ability is out of range.\n\n" ..
+                                    "|cFFFFD100Melee|r - All abilities are highlighted in red if you are out of melee range.\n\n" ..
+                                    "|cFFFFD100Exclude|r - If an ability is not in-range, it will not be recommended.",
                                 values = {
-                                    ability = "每个技能",
-                                    melee = "近战范围",
-                                    xclude = "排除超出范围的技能"
+                                    ability = "Per Ability",
+                                    melee = "Melee Range",
+                                    xclude = "Exclude Out-of-Range"
                                 },
                                 width = "full",
                                 order = 2,
@@ -1874,23 +1884,23 @@ do
 
                     glow = {
                         type = "group",
-                        name = "高亮",
-                        desc = "设置高亮或覆盖的选项。",
+                        name = "Glows",
+                        desc = "Preferences for glows or overlays.",
                         order = 6,
                         args = {
                             enabled = {
                                 type = "toggle",
-                                name = "启用",
-                                desc = "如果启用，当队列中第一个技能具有高亮（或覆盖）的功能，也将在显示区域中同步高亮。",
+                                name = "Enabled",
+                                desc = "If enabled, when the ability for the first icon has an active glow (or overlay), it will also glow in this display.",
                                 width = "full",
                                 order = 1,
                             },
 
                             queued = {
                                 type = "toggle",
-                                name = "对队列图标启用",
-                                desc = "如果启用，具有高亮（或覆盖）功能的队列技能图标也将在队列中同步高亮。\n\n" ..
-                                "此项效果可能不理想，在未来的时间点，高亮状态可能不再正确。",
+                                name = "Enabled for Queued Icons",
+                                desc = "If enabled, abilities that have active glows (or overlays) will also glow in your queue.\n\n" ..
+                                    "This may not be ideal, the glow may no longer be correct by that point in the future.",
                                 width = "full",
                                 order = 2,
                                 disabled = function() return data.glow.enabled == false end,
@@ -1898,36 +1908,36 @@ do
 
                             mode = {
                                 type = "select",
-                                name = "高亮样式",
-                                desc = "设置显示区域的高亮样式。",
+                                name = "Glow Style",
+                                desc = "Select the glow style for your display.",
                                 width = "full",
                                 order = 3,
                                 values = {
-                                    default = "默认按钮高亮",
-                                    autocast = "自动闪光",
-                                    pixel = "像素发光",
+                                    default = "Default Button Glow",
+                                    autocast = "AutoCast Shine",
+                                    pixel = "Pixel Glow",
                                 },
                                 disabled = function() return data.glow.enabled == false end,
                             },
 
                             coloring = {
                                 type = "select",
-                                name = "着色模式",
-                                desc = "设置高亮效果的着色模式。",
+                                name = "Coloring Mode",
+                                desc = "Select the coloring mode for this glow effect.",
                                 width = "full",
                                 order = 4,
                                 values = {
-                                    default = "使用默认颜色",
-                                    class = "使用系统颜色",
-                                    custom = "设置自定义颜色"
+                                    default = "Use Default Color",
+                                    class = "Use Class Color",
+                                    custom = "Specify a Custom Color"
                                 },
                                 disabled = function() return data.glow.enabled == false end,
                             },
 
                             color = {
                                 type = "color",
-                                name = "高亮颜色",
-                                desc = "设置该显示区域的高亮颜色。",
+                                name = "Glow Color",
+                                desc = "Select the custom glow color for your display.",
                                 width = "full",
                                 order = 5,
                                 hidden = function() return data.glow.coloring ~= "custom" end,
@@ -1937,18 +1947,18 @@ do
 
                     flash = {
                         type = "group",
-                        name = "技能高光",
+                        name = "SpellFlash",
                         desc = function ()
                             if SF then
-                                return "如果勾选，插件可以在推荐使用某个技能时，在动作条技能图标上进行高光提示。"
+                                return "If enabled, the addon can highlight abilities on your action bars when they are recommended for use."
                             end
-                            return "此功能要求SpellFlash插件或库正常工作。"
+                            return "This feature requires the SpellFlash addon or library to function properly."
                         end,
                         order = 8,
                         args = {
                             warning = {
                                 type = "description",
-                                name = "此页设置不可用。原因是SpellFlash插件没有安装或被禁用。",
+                                name = "These settings are unavailable because the SpellFlash addon / library is not installed or is disabled.",
                                 order = 0,
                                 fontSize = "medium",
                                 width = "full",
@@ -1957,8 +1967,8 @@ do
 
                             enabled = {
                                 type = "toggle",
-                                name = "启用",
-                                desc = "如果勾选，插件将该显示区域的第一个推荐技能图标上显示彩色高光。",
+                                name = "Enabled",
+                                desc = "If enabled, the addon will place a colorful glow on the first recommended ability for this display.",
 
                                 width = "full",
                                 order = 1,
@@ -1967,8 +1977,8 @@ do
 
                             color = {
                                 type = "color",
-                                name = "颜色",
-                                desc = "设置技能高亮的高光颜色。",
+                                name = "Color",
+                                desc = "Specify a glow color for the SpellFlash highlight.",
                                 order = 2,
 
                                 width = "full",
@@ -1977,8 +1987,8 @@ do
 
                             size = {
                                 type = "range",
-                                name = "大小",
-                                desc = "设置技能高光的光晕大小。默认大小为|cFFFFD100240|r。",
+                                name = "Size",
+                                desc = "Specify the size of the SpellFlash glow.  The default size is |cFFFFD100240|r.",
                                 order = 3,
                                 min = 0,
                                 max = 240 * 8,
@@ -1989,8 +1999,8 @@ do
 
                             brightness = {
                                 type = "range",
-                                name = "亮度",
-                                desc = "设置技能高光的亮度。默认亮度为|cFFFFD100100|r。",
+                                name = "Brightness",
+                                desc = "Specify the brightness of the SpellFlash glow.  The default brightness is |cFFFFD100100|r.",
                                 order = 4,
                                 min = 0,
                                 max = 100,
@@ -2001,8 +2011,8 @@ do
 
                             blink = {
                                 type = "toggle",
-                                name = "闪烁",
-                                desc = "如果勾选，技能图标将以闪烁进行提示。默认值为|cFFFF0000禁用|r。",
+                                name = "Blink",
+                                desc = "If enabled, the whole action button will fade in and out.  The default is |cFFFF0000disabled|r.",
                                 order = 5,
                                 width = "full",
                                 hidden = function () return SF == nil end,
@@ -2010,8 +2020,8 @@ do
 
                             suppress = {
                                 type = "toggle",
-                                name = "显示区域隐藏",
-                                desc = "如果勾选，显示区域将被隐藏，仅通过技能高光功能进行技能推荐。",
+                                name = "Hide Display",
+                                desc = "If checked, the addon will not show this display and will make recommendations via SpellFlash only.",
                                 order = 10,
                                 width = "full",
                                 hidden = function () return SF == nil end,
@@ -2020,7 +2030,7 @@ do
 
                             globalHeader = {
                                 type = "header",
-                                name = "全局技能高光设置",
+                                name = "Global SpellFlash Settings",
                                 order = 20,
                                 width = "full",
                                 hidden = function () return SF == nil end,
@@ -2028,8 +2038,8 @@ do
 
                             texture = {
                                 type = "select",
-                                name = "纹理",
-                                desc = "勾选此选项将由插件覆盖所有框架上的技能高光纹理。此设置对所有显示框都通用。",
+                                name = "Texture",
+                                desc = "Your selection will override the SpellFlash texture on any frame flashed by the addon.  This setting is universal to all displays.",
                                 order = 21,
                                 width = "full",
                                 get = function()
@@ -2039,19 +2049,19 @@ do
                                     Hekili.DB.profile.flashTexture = value
                                 end,
                                 values = {
-                                    ["Interface\\Cooldown\\star4"] = "星光（默认）",                                    
-                                    ["Interface\\Cooldown\\ping4"] = "光环",
-                                    ["Interface\\Cooldown\\starburst"] = "星爆",
-                                    ["Interface\\AddOns\\Hekili\\Textures\\MonoCircle2"] = "单色细光环",
-                                    ["Interface\\AddOns\\Hekili\\Textures\\MonoCircle5"] = "单色粗光环",
+                                    ["Interface\\Cooldown\\star4"] = "Star (Default)",                                    
+                                    ["Interface\\Cooldown\\ping4"] = "Circle",
+                                    ["Interface\\Cooldown\\starburst"] = "Starburst",
+                                    ["Interface\\AddOns\\Hekili\\Textures\\MonoCircle2"] = "Monochrome Circle Thin",
+                                    ["Interface\\AddOns\\Hekili\\Textures\\MonoCircle5"] = "Monochrome Circle Thick",
                                 },
                                 hidden = function () return SF == nil end,
                             },
 
                             fixedSize = {
                                 type = "toggle",
-                                name = "固定大小",
-                                desc = "如果勾选，所有技能高光的缩放提示效果将被禁用。",
+                                name = "Fixed Size",
+                                desc = "If checked, the SpellFlash pulse (grow and shrink) animation will be suppressed for all displays.",
                                 order = 21,
                                 width = "full",
                                 get = function()
@@ -2065,8 +2075,8 @@ do
 
                             fixedBrightness = {
                                 type = "toggle",
-                                name = "固定亮度",
-                                desc = "如果勾选，所有技能高光的明暗提示效果将被禁用。",
+                                name = "Fixed Brightness",
+                                desc = "If checked, the SpellFlash glow will not dim and brighten for all displays.",
                                 order = 22,
                                 width = "full",
                                 get = function()
@@ -2082,22 +2092,22 @@ do
 
                     captions = {
                         type = "group",
-                        name = "提示",
-                        desc = "提示是动作条中偶尔使用的简短描述，用于该技能的说明。",
+                        name = "Captions",
+                        desc = "Captions are brief descriptions sometimes (rarely) used in action lists to describe why the action is shown.",
                         order = 9,
                         args = {
                             enabled = {
                                 type = "toggle",
-                                name = "启用",
-                                desc = "如果勾选，当显示框中第一个技能具有说明时，将显示该说明。",
+                                name = "Enabled",
+                                desc = "If enabled, when the first ability shown has a descriptive caption, the caption will be shown.",
                                 order = 1,
                                 width = "full",
                             },
 
                             queued = {
                                 type = "toggle",
-                                name = "对队列图标启用",
-                                desc = "如果勾选，将显示队列技能图标的说明（如果可用）。",
+                                name = "Enabled for Queued Icons",
+                                desc = "If enabled, descriptive captions will be shown for queued abilities, if appropriate.",
                                 order = 2,
                                 width = "full",                                
                                 disabled = function () return data.captions.enabled == false end,
@@ -2106,35 +2116,35 @@ do
                             position = {
                                 type = "group",
                                 inline = true,
-                                name = function( info ) rangeIcon( info ); return "位置" end,
+                                name = function( info ) rangeIcon( info ); return "Position" end,
                                 order = 3,
                                 args = {
                                     align = {
                                         type = "select",                                        
-                                        name = "对齐",
+                                        name = "Alignment",
                                         order = 1,
                                         width = "full",
                                         values = {
-                                            LEFT = "左对齐",
-                                            RIGHT = "右对齐",
-                                            CENTER = "居中对齐"
+                                            LEFT = "Left",
+                                            RIGHT = "Right",
+                                            CENTER = "Center"
                                         },
                                     },
 
                                     anchor = {
                                         type = "select",
-                                        name = '锚点',
+                                        name = 'Anchor Point',
                                         order = 2,
                                         width = 'full',
                                         values = {
-                                            TOP = '顶部',
-                                            BOTTOM = '底部',
+                                            TOP = 'Top',
+                                            BOTTOM = 'Bottom',
                                         }
                                     },
 
                                     x = {
                                         type = "range",
-                                        name = "X轴偏移",
+                                        name = "X Offset",
                                         order = 3,
                                         width = "full",
                                         step = 1,
@@ -2142,7 +2152,7 @@ do
 
                                     y = {
                                         type = "range",
-                                        name = "Y轴偏移",
+                                        name = "Y Offset",
                                         order = 4,
                                         width = "full",
                                         step = 1,
@@ -2153,7 +2163,7 @@ do
                             textStyle = {
                                 type = "group",
                                 inline = true,
-                                name = "文本",
+                                name = "Text",
                                 order = 4,
                                 args = fontElements,
                             },
@@ -2162,14 +2172,14 @@ do
 
                     targets = {
                         type = "group",
-                        name = "目标数",
-                        desc = "目标数量统计可以在显示框的第一个技能图标上。",
+                        name = "Targets",
+                        desc = "A target count indicator can be shown on the display's first recommendation.",
                         order = 10,
                         args = {
                             enabled = {
                                 type = "toggle",
-                                name = "启用",
-                                desc = "如果勾选，插件将在显示框上显示识别到的目标数。",
+                                name = "Enabled",
+                                desc = "If enabled, the addon will show the number of active (or virtual) targets for this display.",
                                 order = 1,
                                 width = "full",
                             },
@@ -2177,12 +2187,12 @@ do
                             pos = {
                                 type = "group",
                                 inline = true,
-                                name = function( info ) rangeIcon( info ); return "位置" end,
+                                name = function( info ) rangeIcon( info ); return "Position" end,
                                 order = 2,
                                 args = {
                                     anchor = {
                                         type = "select",
-                                        name = "锚定到",
+                                        name = "Anchor To",
                                         values = realAnchorPositions,
                                         order = 1,
                                         width = "full",
@@ -2190,7 +2200,7 @@ do
 
                                     x = {
                                         type = "range",
-                                        name = "X轴偏移",
+                                        name = "X Offset",
                                         min = -max( data.primaryWidth, data.queue.width ),
                                         max = max( data.primaryWidth, data.queue.width ),
                                         step = 1,
@@ -2200,7 +2210,7 @@ do
 
                                     y = {
                                         type = "range",
-                                        name = "Y轴偏移",
+                                        name = "Y Offset",
                                         min = -max( data.primaryHeight, data.queue.height ),
                                         max = max( data.primaryHeight, data.queue.height ),
                                         step = 1,
@@ -2213,7 +2223,7 @@ do
                             textStyle = {
                                 type = "group",
                                 inline = true,
-                                name = "文本",
+                                name = "Text",
                                 order = 3,
                                 args = fontElements,
                             },
@@ -2222,19 +2232,19 @@ do
 
                     delays = {
                         type = "group",
-                        name = "延时",
-                        desc = "当未来某个时间点建议使用某个技能时，使用着色或倒计时进行延时提示。" ..
-                            "",
+                        name = "Delays",
+                        desc = "When an ability is recommended some time in the future, a colored indicator or countdown timer can " ..
+                            "communicate that there is a delay.",
                         order = 11,
                         args = {
                             type = {
                                 type = "select",
-                                name = "提示方式",
-                                desc = "设置在施放该技能之前等待时间的提示方式。",                                
+                                name = "Indicator",
+                                desc = "Specify the type of indicator to use when you should wait before casting the ability.",                                
                                 values = {
-                                    __NA = "不提示",
-                                    ICON = "显示图标（颜色）",
-                                    TEXT = "显示文本（倒计时）",
+                                    __NA = "No Indicator",
+                                    ICON = "Show Icon (Color)",
+                                    TEXT = "Show Text (Countdown)",
                                 },                        
                                 width = "full",
                                 order = 1,
@@ -2242,16 +2252,16 @@ do
 
                             extend = {
                                 type = "toggle",
-                                name = "扩展冷却扫描",
-                                desc = "如果勾选，主图标的冷却扫描将不会刷新，直到该技能被使用。",
+                                name = "Extend Cooldown Sweep",
+                                desc = "If checked, the primary icon's cooldown sweep will continue until the ability should be used.",
                                 width = "full",
                                 order = 1.4,
                             },
 
                             fade = {
                                 type = "toggle",
-                                name = "无法使用则淡化",
-                                desc = "当你在施放该技能之前等待时，主图标将淡化，类似于某个技能缺少能量时。",
+                                name = "Fade as Unusable",
+                                desc = "Fade the primary icon when you should wait before using the ability, similar to when an ability is lacking required resources.",
                                 width = "full",
                                 order = 1.5
                             },
@@ -2259,12 +2269,12 @@ do
                             pos = {
                                 type = "group",
                                 inline = true,
-                                name = function( info ) rangeIcon( info ); return "位置" end,
+                                name = function( info ) rangeIcon( info ); return "Position" end,
                                 order = 2,
                                 args = {
                                     anchor = {
                                         type = "select",
-                                        name = '锚点',
+                                        name = 'Anchor Point',
                                         order = 2,
                                         width = 'full',
                                         values = realAnchorPositions
@@ -2272,7 +2282,7 @@ do
 
                                     x = {
                                         type = "range",
-                                        name = "X轴偏移",
+                                        name = "X Offset",
                                         order = 3,
                                         width = "full",
                                         min = -max( data.primaryWidth, data.queue.width ),
@@ -2282,7 +2292,7 @@ do
 
                                     y = {
                                         type = "range",
-                                        name = "Y轴偏移",
+                                        name = "Y Offset",
                                         order = 4,
                                         width = "full",
                                         min = -max( data.primaryHeight, data.queue.height ),
@@ -2295,7 +2305,7 @@ do
                             textStyle = {
                                 type = "group",
                                 inline = true,
-                                name = "文本",
+                                name = "Text",
                                 order = 3,
                                 args = fontElements,
                                 hidden = function () return data.delays.type ~= "TEXT" end,
@@ -2305,22 +2315,22 @@ do
 
                     indicators = {
                         type = "group",
-                        name = "扩展提示",
-                        desc = "扩展提示是当需要切换目标时或取消增益效果时的小图标。",
+                        name = "Indicators",
+                        desc = "Indicators are small icons that can indicate target-swapping or (rarely) cancelling auras.",
                         order = 11,
                         args = {
                             enabled = {
                                 type = "toggle",
-                                name = "启用",
-                                desc = "如果勾选，主图标上将会出现提示切换目标和取消效果的小图标。",
+                                name = "Enabled",
+                                desc = "If enabled, small indicators for target-swapping, aura-cancellation, etc. may appear on your primary icon.",
                                 order = 1,
                                 width = "full",
                             },
 
                             queued = {
                                 type = "toggle",
-                                name = "对队列图标启用",
-                                desc = "如果勾选，扩展提示也将适时地出现在队列图标上。",
+                                name = "Enabled for Queued Icons",
+                                desc = "If enabled, these indicators will appear on queued icons as well as the primary icon, when appropriate.",
                                 order = 2,
                                 width = "full",
                                 disabled = function () return data.indicators.enabled == false end,
@@ -2329,12 +2339,12 @@ do
                             pos = {
                                 type = "group",
                                 inline = true,
-                                name = function( info ) rangeIcon( info ); return "位置" end,
-                                order = 3,
+                                name = function( info ) rangeIcon( info ); return "Position" end,
+                                order = 2,
                                 args = {
                                     anchor = {
                                         type = "select",
-                                        name = "锚点",
+                                        name = "Anchor To",
                                         values = realAnchorPositions,
                                         order = 1,
                                         width = "full",
@@ -2342,7 +2352,7 @@ do
 
                                     x = {
                                         type = "range",
-                                        name = "X轴偏移",
+                                        name = "X Offset",
                                         min = -max( data.primaryWidth, data.queue.width ),
                                         max = max( data.primaryWidth, data.queue.width ),
                                         step = 1,
@@ -2352,7 +2362,7 @@ do
 
                                     y = {
                                         type = "range",
-                                        name = "Y轴偏移",
+                                        name = "Y Offset",
                                         min = -max( data.primaryHeight, data.queue.height ),
                                         max = max( data.primaryHeight, data.queue.height ),
                                         step = 1,
@@ -2375,7 +2385,7 @@ do
 
         local section = db.args.displays or {
             type = "group",
-            name = "显示",
+            name = "Displays",
             childGroups = "tree",
             cmdHidden = true,
             get = 'GetDisplayOption',
@@ -2385,10 +2395,10 @@ do
             args = {
                 header = {
                     type = "description",
-                    name = "Hekili拥有四个内置的显示框（蓝色标识），以用于显示不同类型的建议。" ..
-                        "以用于显示不同类型的建议。插件的建议通常基于（但不完全）" ..
-                        " SimulationCraft 模拟结果的技能优先级。" ..
-                        "你可以将判断实际情况与模拟结果进行比较得到最优解。",
+                    name = "Hekili has up to four built-in displays (identified in blue) that can display " ..
+                        "different kinds of recommendations.  The addons recommendations are based upon the " ..
+                        "Priorities that are generally (but not exclusively) based on SimulationCraft profiles " ..
+                        "so that you can compare your performance to the results of your simulations.",
                     fontSize = "medium",
                     width = "full",
                     order = 1,
@@ -2396,22 +2406,22 @@ do
 
                 displays = {
                     type = "header",
-                    name = "显示",
+                    name = "Displays",
                     order = 10,                    
                 },
 
 
                 nPanelHeader = {
                     type = "header",
-                    name = "通知栏",
+                    name = "Notification Panel",
                     order = 950,
                 },
 
                 nPanelBtn = {
                     type = "execute",
-                    name = "通知栏",
-                    desc = "当在战斗中更改或切换设置是，通知栏将提供简要的说明。" ..
-                        "",
+                    name = "Notification Panel",
+                    desc = "The Notification Panel provides brief updates when settings are changed or " ..
+                        "toggled while in combat.",
                     func = function ()
                         ACD:SelectGroup( "Hekili", "displays", "nPanel" )
                     end,
@@ -2420,32 +2430,32 @@ do
 
                 nPanel = {
                     type = "group",
-                    name = "|cFF1EFF00通知栏|r",
-                    desc = "当在战斗中更改或切换设置是，通知栏将提供简要的说明。" ..
-                        "",
+                    name = "|cFF1EFF00Notification Panel|r",
+                    desc = "The Notification Panel provides brief updates when settings are changed or " ..
+                        "toggled while in combat.",
                     order = 952,
                     get = GetNotifOption,
                     set = SetNotifOption,
                     args = {
                         enabled = {
                             type = "toggle",
-                            name = "启用",
+                            name = "Enabled",
                             order = 1,
                             width = "full",
                         },
 
                         posRow = {
                             type = "group",
-                            name = function( info ) rangeXY( info, true ); return "位置" end,
+                            name = function( info ) rangeXY( info, true ); return "Position" end,
                             inline = true,
                             order = 2,
                             args = {
                                 x = {
                                     type = "range",
                                     name = "X",
-                                    desc = "输入通知面板相对于屏幕中心的水平位置，" ..
-                                        "负值向左偏移，正值向右。" ..
-                                        "",
+                                    desc = "Enter the horizontal position of the notification panel, " ..
+                                        "relative to the center of the screen.  Negative values move the " ..
+                                        "panel left; positive values move the panel right.",
                                     min = -512,
                                     max = 512,
                                     step = 1,
@@ -2457,9 +2467,9 @@ do
                                 y = {
                                     type = "range",
                                     name = "Y",
-                                    desc = "输入通知面板相对于屏幕中心的垂直位置，" ..
-                                        "负值向下偏移，正值向上。" ..
-                                        "",
+                                    desc = "Enter the vertical position of the notification panel, " ..
+                                        "relative to the center of the screen.  Negative values move the " ..
+                                        "panel down; positive values move the panel up.",
                                     min = -384,
                                     max = 384,
                                     step = 1,
@@ -2472,13 +2482,13 @@ do
 
                         sizeRow = {
                             type = "group",
-                            name = "大小",
+                            name = "Size",
                             inline = true,
                             order = 3,
                             args = {
                                 width = {
                                     type = "range",
-                                    name = "宽度",
+                                    name = "Width",
                                     min = 50,
                                     max = 1000,
                                     step = 1,
@@ -2489,7 +2499,7 @@ do
 
                                 height = {
                                     type = "range",
-                                    name = "高度",
+                                    name = "Height",
                                     min = 20,
                                     max = 600,
                                     step = 1,
@@ -2503,7 +2513,7 @@ do
                         fontGroup = {
                             type = "group",
                             inline = true,
-                            name = "文字",
+                            name = "Text",
 
                             order = 5,
                             args = fontElements,
@@ -2513,20 +2523,20 @@ do
 
                 fontHeader = {
                     type = "header",
-                    name = "字体",
+                    name = "Fonts",
                     order = 960,
                 },
 
                 fontWarn = {
                     type = "description",
-                    name = "更改下面的字体将调整|cFFFF0000所有|r显示区域中的文字。\n" ..
-                             "如果想修改单独显示区域的文字，请选择对应的显示区域（左侧）后再设置字体。",
+                    name = "Changing the font below will modify |cFFFF0000ALL|r text on all displays.\n" ..
+                            "To modify one bit of text individually, select the Display (at left) and select the appropriate text.",
                     order = 960.01,
                 },
             
                 font = {
                     type = "select",
-                    name = "字体",
+                    name = "Font",
                     order = 960.1,
                     width = 1.5,
                     dialogControl = 'LSM30_Font',
@@ -2549,7 +2559,7 @@ do
         
                 fontSize = {
                     type = "range",
-                    name = "大小",
+                    name = "Size",
                     order = 960.2,
                     min = 8,
                     max = 64,
@@ -2573,15 +2583,15 @@ do
         
                 fontStyle = {
                     type = "select",
-                    name = "样式",
+                    name = "Style",
                     order = 960.3,
                     values = {
-                        ["MONOCHROME"] = "单色",
-                        ["MONOCHROME,OUTLINE"] = "单色，描边",
-                        ["MONOCHROME,THICKOUTLINE"] = "单色，粗描边",
-                        ["NONE"] = "无",
-                        ["OUTLINE"] = "描边",
-                        ["THICKOUTLINE"] = "粗描边"
+                        ["MONOCHROME"] = "Monochrome",
+                        ["MONOCHROME,OUTLINE"] = "Monochrome, Outline",
+                        ["MONOCHROME,THICKOUTLINE"] = "Monochrome, Thick Outline",
+                        ["NONE"] = "None",
+                        ["OUTLINE"] = "Outline",
+                        ["THICKOUTLINE"] = "Thick Outline"
                     },
                     get = function( info )
                         -- Display the information from Primary, Keybinds.
@@ -2602,7 +2612,7 @@ do
 
                 color = {
                     type = "color",
-                    name = "颜色",
+                    name = "Color",
                     order = 960.4,
                     get = function( info )
                         return unpack( Hekili.DB.profile.displays.Primary.keybindings.color )
@@ -2621,15 +2631,15 @@ do
 
                 shareHeader = {
                     type = "header",
-                    name = "分享",
+                    name = "Sharing",
                     order = 996,
                 },
 
                 shareBtn = {
                     type = "execute",
-                    name = "分享样式",
-                    desc = "你的显示样式可以通过导出这些字符串与其他插件用户分享。\n\n" ..
-                        "你也可以在这里导入他人分享的字符串。",
+                    name = "Share Styles",
+                    desc = "Your display styles can be shared with other addon users with these export strings.\n\n" ..
+                        "You can also import a shared export string here.",
                     func = function ()
                         ACD:SelectGroup( "Hekili", "displays", "shareDisplays" )
                     end,
@@ -2638,9 +2648,9 @@ do
 
                 shareDisplays = {
                     type = "group",
-                    name = "|cFF1EFF00分享样式|r",
-                    desc = "你的显示选项可以通过导出这些字符串与其他插件用户分享。\n\n" ..
-                        "你也可以在这里导入他人分享的字符串。",
+                    name = "|cFF1EFF00Share Styles|r",
+                    desc = "Your display options can be shared with other addon users with these export strings.\n\n" ..
+                        "You can also import a shared export string here.",
                     childGroups = "tab",
                     get = 'GetDisplayShareOption',
                     set = 'SetDisplayShareOption',
@@ -2648,7 +2658,7 @@ do
                     args = {
                         import = {
                             type = "group",
-                            name = "导入",
+                            name = "Import",
                             order = 1,
                             args = {
                                 stage0 = {
@@ -2659,7 +2669,7 @@ do
                                     args = {
                                         guide = {
                                             type = "description",
-                                            name = "选择保存的样式，或者在文本框中粘贴字符串。",
+                                            name = "Select a saved Style or paste an import string in the box provided.",
                                             order = 1,
                                             width = "full",
                                             fontSize = "medium",
@@ -2667,13 +2677,13 @@ do
 
                                         separator = {
                                             type = "header",
-                                            name = "导入字符串",
+                                            name = "Import String",
                                             order = 1.5,                                             
                                         },
 
                                         selectExisting = {
                                             type = "select",
-                                            name = "选择保存的样式",
+                                            name = "Select a Saved Style",
                                             order = 2,
                                             width = "full",
                                             get = function()
@@ -2687,7 +2697,7 @@ do
                                             values = function ()
                                                 local db = self.DB.global.styles
                                                 local values = {
-                                                    ["0000000000"] = "选择保存的样式"
+                                                    ["0000000000"] = "Select a Saved Style"
                                                 }
 
                                                 for k, v in pairs( db ) do
@@ -2700,7 +2710,7 @@ do
 
                                         importString = {
                                             type = "input",
-                                            name = "导入字符串",
+                                            name = "Import String",
                                             get = function () return shareDB.import end,
                                             set = function( info, val )
                                                 val = val:trim()
@@ -2713,19 +2723,19 @@ do
 
                                         btnSeparator = {
                                             type = "header",
-                                            name = "导入",
+                                            name = "Import",
                                             order = 4,
                                         },
 
                                         importBtn = {
                                             type = "execute",
-                                            name = "导入样式",
+                                            name = "Import Style",
                                             order = 5,
                                             func = function ()
                                                 shareDB.imported, shareDB.error = self:DeserializeStyle( shareDB.import )
 
                                                 if shareDB.error then
-                                                    shareDB.import = "无法解析当前的导入字符串。\n" .. shareDB.error
+                                                    shareDB.import = "The Import String provided could not be decompressed.\n" .. shareDB.error
                                                     shareDB.error = nil
                                                     shareDB.imported = {}
                                                 else
@@ -2762,7 +2772,7 @@ do
                                                 local o = ""
 
                                                 if #creates > 0 then
-                                                    o = o .. "导入的样式将创建以下的显示区域样式："
+                                                    o = o .. "The imported style will create the following display(s):  "
                                                     for i, display in orderedPairs( creates ) do
                                                         if i == 1 then o = o .. display
                                                         else o = o .. ", " .. display end
@@ -2771,7 +2781,7 @@ do
                                                 end
 
                                                 if #replaces > 0 then
-                                                    o = o .. "导入的样式将覆盖以下的显示区域样式："
+                                                    o = o .. "The imported style will overwrite the following display(s):  "
                                                     for i, display in orderedPairs( replaces ) do
                                                         if i == 1 then o = o .. display
                                                         else o = o .. ", " .. display end
@@ -2788,13 +2798,13 @@ do
 
                                         separator = {
                                             type = "header",
-                                            name = "应用更改",
+                                            name = "Apply Changes",
                                             order = 2,
                                         },
 
                                         apply = {
                                             type = "execute",
-                                            name = "应用更改",
+                                            name = "Apply Changes",
                                             order = 3,
                                             confirm = true,
                                             func = function ()
@@ -2813,7 +2823,7 @@ do
 
                                         reset = {
                                             type = "execute",
-                                            name = "重置",
+                                            name = "Reset",
                                             order = 4,
                                             func = function ()
                                                 shareDB.import = ""
@@ -2833,7 +2843,7 @@ do
                                     args = {
                                         note = {
                                             type = "description",
-                                            name = "导入的设置已经成功应用！\n\n如果有必要，点击重置重新开始。",
+                                            name = "Imported settings were successfully applied!\n\nClick Reset to start over, if needed.",
                                             order = 1,
                                             fontSize = "medium",
                                             width = "full",
@@ -2841,7 +2851,7 @@ do
 
                                         reset = {
                                             type = "execute",
-                                            name = "重置",
+                                            name = "Reset",
                                             order = 2,
                                             func = function ()
                                                 shareDB.import = ""
@@ -2859,7 +2869,7 @@ do
 
                         export = {
                             type = "group",
-                            name = "导出",
+                            name = "Export",
                             order = 2,
                             args = {
                                 stage0 = {
@@ -2870,7 +2880,7 @@ do
                                     args = {
                                         guide = {
                                             type = "description",
-                                            name = "选择要导出的显示样式，然后单击导出样式生成导出字符串。",
+                                            name = "Select the display style settings to export, then click Export Styles to generate an export string.",
                                             order = 1,
                                             fontSize = "medium",
                                             width = "full",
@@ -2878,19 +2888,19 @@ do
 
                                         displays = {
                                             type = "header",
-                                            name = "显示",
+                                            name = "Displays",
                                             order = 2,
                                         },
 
                                         exportHeader = {
                                             type = "header",
-                                            name = "导出",
+                                            name = "Export",
                                             order = 1000,
                                         },
 
                                         exportBtn = {
                                             type = "execute",
-                                            name = "导出样式",
+                                            name = "Export Style",
                                             order = 1001,
                                             func = function ()
                                                 local disps = {}
@@ -2946,7 +2956,7 @@ do
                                     args = {
                                         exportString = {
                                             type = "input",
-                                            name = "样式字符串",
+                                            name = "Style String",
                                             order = 1,
                                             multiline = 8,
                                             get = function () return shareDB.export end,
@@ -2957,8 +2967,8 @@ do
 
                                         instructions = {
                                             type = "description",
-                                            name = "你可以复制这些字符串用以分享所选的显示样式，" ..
-                                                "或者使用下方选项保存所选的显示样式在以后使用。",
+                                            name = "You can copy the above string to share your selected display style settings, or " ..
+                                                "use the options below to store these settings (to be retrieved at a later date).",
                                             order = 2,
                                             width = "full",
                                             fontSize = "medium"
@@ -2973,13 +2983,13 @@ do
                                             args = {
                                                 separator = {
                                                     type = "header",
-                                                    name = "保存样式",
+                                                    name = "Save Style",
                                                     order = 1,
                                                 },
 
                                                 exportName = {
                                                     type = "input",
-                                                    name = "样式名称",
+                                                    name = "Style Name",
                                                     get = function () return shareDB.styleName end,
                                                     set = function( info, val )
                                                         val = val:trim()
@@ -2991,13 +3001,13 @@ do
 
                                                 storeStyle = {
                                                     type = "execute",
-                                                    name = "保存导出字符串",
-                                                    desc = "通过保存导出字符串，你可以保存你的显示设置，并在以后需要时使用它们。\n\n" ..
-                                                        "即使使用不同的配置文件，也可以调用任意一个存储的样式。",
+                                                    name = "Store Export String",
+                                                    desc = "By storing your export string, you can save these display settings and retrieve them later if you make changes to your settings.\n\n" ..
+                                                        "The stored style can be retrieved from any of your characters, even if you are using different profiles.",
                                                     order = 3,
                                                     confirm = function ()
                                                         if shareDB.styleName and self.DB.global.styles[ shareDB.styleName ] ~= nil then
-                                                            return "已经存在名为'" .. shareDB.styleName .. "'的样式了 -- 覆盖它吗？"
+                                                            return "There is already a style with the name '" .. shareDB.styleName .. "' -- overwrite it?"
                                                         end
                                                         return false
                                                     end,
@@ -3062,7 +3072,7 @@ ns.ClassSettings = function ()
 
     local option = {
         type = 'group',
-        name = "职业/专精",
+        name = "Class/Specialization",
         order = 20,
         args = {},
         childGroups = "select",
@@ -3073,7 +3083,7 @@ ns.ClassSettings = function ()
 
     option.args.toggles = {
         type = 'group',
-        name = '切换',
+        name = 'Toggles',
         order = 10,
         inline = true,
         args = {
@@ -3101,7 +3111,7 @@ ns.ClassSettings = function ()
 
     option.args.settings = {
         type = 'group',
-        name = '设置',
+        name = 'Settings',
         order = 20,
         inline = true,
         args = {},
@@ -3167,8 +3177,8 @@ ns.AbilitySettings = function ()
                 toggle = {
                     type = 'select',
                     name = 'Require Active Toggle',
-                    desc = "设置此项后，插件在技能列表中使用必须的开关切换。" ..
-                        "当开关被关闭时，技能将被视为不可用，插件将假设它们处于冷却状态（除非另有设置）。",
+                    desc = "Specify a required toggle for this action to be used in the addon action list.  When toggled off, abilities are treated " ..
+                        "as unusable and the addon will pretend they are on cooldown (unless specified otherwise).",
                     width = 'full',
                     order = 2,
                     values = function ()
@@ -3187,7 +3197,7 @@ ns.AbilitySettings = function ()
                 clash = {
                     type = 'range',
                     name = 'Clash Value',
-                    desc = "如果设置大于0，插件将假设" .. k .. "拥有更快的冷却时间。" ..
+                    desc = "If set above zero, the addon will pretend " .. k .. " has come off cooldown this much sooner than it actually has.  " ..
                         "This can be helpful when an ability is very high priority and you want the addon to consider it a bit earlier than it would actually be ready.",
                     width = "full",
                     min = -1.5,
@@ -3777,7 +3787,7 @@ do
         local useName = class.abilityList[ v ] and class.abilityList[v]:match("|t (.+)$") or ability.name
 
         if not useName then
-            Hekili:Error( "当前技能%s(id:%d)没有可用选项。", ability.key or "不存在此ID", ability.id or 0 )
+            Hekili:Error( "No name available for %s (id:%d) in EmbedAbilityOption.", ability.key or "no_id", ability.id or 0 )
             useName = ability.key or ability.id or "???"
         end
 
@@ -3791,29 +3801,29 @@ do
         option.args = {
             disabled = {
                 type = "toggle",
-                name = function () return "禁用" .. ( ability.item and ability.link or k ) end,
-                desc = function () return "如果勾选，此技能将|cffff0000永远|r不会被插件推荐。" ..
-                    "如果其他技能依赖此技能" .. ( ability.item and ability.link or k ) .. "，那么可能会出现问题。" end,
+                name = function () return "Disable " .. ( ability.item and ability.link or k ) end,
+                desc = function () return "If checked, this ability will |cffff0000NEVER|r be recommended by the addon.  This can cause " ..
+                    "issues for some specializations, if other abilities depend on you using " .. ( ability.item and ability.link or k ) .. "." end,
                 width = 1.5,
                 order = 1,
             },
 
             boss = {
                 type = "toggle",
-                name = "仅用于BOSS战",
-                desc = "如果勾选，插件将不会推荐此技能" .. k .. "，除非你处于BOSS中。如果不勾选，" .. k .. "技能会在所有战斗中被推荐。",
+                name = "Boss Encounter Only",
+                desc = "If checked, the addon will not recommend " .. k .. " unless you are in a boss fight (or encounter).  If left unchecked, " .. k .. " can be recommended in any type of fight.",
                 width = 1.5,
                 order = 1.1,
             },                    
 
             keybind = {
                 type = "input",
-                name = "覆盖按键绑定文本",
-                desc = "如果设置此项，当推荐此技能时，插件将显示此文本，而不是自动检测到的绑定按键提示。" ..
-                "如果插件检测到错误的绑定按键，这将解决此问题。",
+                name = "Override Keybind Text",
+                desc = "If specified, the addon will show this text in place of the auto-detected keybind text when recommending this ability.  " ..
+                    "This can be helpful if the addon incorrectly detects your keybindings.",
                 validate = function( info, val )
                     val = val:trim()
-                    if val:len() > 6 then return "绑定按键文本的长度不应超过6个字符。" end
+                    if val:len() > 6 then return "Keybindings should be no longer than 6 characters in length." end
                     return true
                 end,
                 width = 1.5,
@@ -3822,9 +3832,9 @@ do
 
             toggle = {
                 type = "select",
-                name = "开关状态切换",
-                desc = "设置此项后，插件在技能列表中使用必须的开关切换。" ..
-                "当开关被关闭时，技能将被视为不可用，插件将假装它们处于冷却状态（除非另有设置）。",
+                name = "Require Toggle",
+                desc = "Specify a required toggle for this action to be used in the addon action list.  When toggled off, abilities are treated " ..
+                    "as unusable and the addon will pretend they are on cooldown (unless specified otherwise).",
                 width = 1.5,
                 order = 3,
                 values = function ()
@@ -3833,15 +3843,15 @@ do
                     local t = class.abilities[ v ].toggle or "none"
                     if t == "essences" then t = "covenants" end
 
-                    toggles.none = "无"
-                    toggles.default = "默认|cffffd100(" .. t .. ")|r"
-                    toggles.cooldowns = "爆发"
-                    toggles.essences = "盟约"
-                    toggles.defensives = "防御"
-                    toggles.interrupts = "打断"
-                    toggles.potions = "药剂"
-                    toggles.custom1 = "自定义1"
-                    toggles.custom2 = "自定义2"
+                    toggles.none = "None"
+                    toggles.default = "Default |cffffd100(" .. t .. ")|r"
+                    toggles.cooldowns = "Cooldowns"
+                    toggles.essences = "Covenants"
+                    toggles.defensives = "Defensives"
+                    toggles.interrupts = "Interrupts"
+                    toggles.potions = "Potions"
+                    toggles.custom1 = "Custom 1"
+                    toggles.custom2 = "Custom 2"
 
                     return toggles
                 end,
@@ -3849,8 +3859,8 @@ do
 
             targetMin = {
                 type = "range",
-                name = "最小目标数",
-                desc = "如果设置大于0，则只有监测到敌人数至少有" .. k .. "人的情况下，才会推荐此项。所有其他条件也必须满足。\n设置为0将忽略此项。",
+                name = "Minimum Targets",
+                desc = "If set above zero, the addon will only allow " .. k .. " to be recommended, if there are at least this many detected enemies.  All other action list conditions must also be met.\nSet to zero to ignore.",
                 width = 1.5,
                 min = 0,
                 max = 15,
@@ -3860,8 +3870,8 @@ do
 
             targetMax = {
                 type = "range",
-                name = "最大目标数",
-                desc = "如果设置大于0，则只有监测到敌人数小于" .. k .. "人的情况下，才会推荐此项。所有其他条件也必须满足。.\n设置为0将忽略此项。",
+                name = "Maximum Targets",
+                desc = "If set above zero, the addon will only allow " .. k .. " to be recommended if there are this many detected enemies (or fewer).  All other action list conditions must also be met.\nSet to zero to ignore.",
                 width = 1.5,
                 min = 0,
                 max = 15,
@@ -3871,9 +3881,9 @@ do
 
             clash = {
                 type = "range",
-                name = "冲突",
-                desc = "如果设置大于0，插件将假设" .. k .. "拥有更快的冷却时间。" ..
-                "当某个技能的优先级非常高，并且你希望插件更多地推荐它，而不是其他更快的可能技能是，此项会很有效。",
+                name = "Clash",
+                desc = "If set above zero, the addon will pretend " .. k .. " has come off cooldown this much sooner than it actually has.  " ..
+                    "This can be helpful when an ability is very high priority and you want the addon to prefer it over abilities that are available sooner.",
                 width = 3,
                 min = -1.5,
                 max = 1.5,
@@ -3917,29 +3927,29 @@ do
                 args = {
                     disabled = {
                         type = "toggle",
-                        name = function () return "禁用" .. ( ability.item and ability.link or k ) end,
-                        desc = function () return "如果勾选，此技能将|cffff0000永远|r不会被插件推荐。" ..
-                            "如果其他技能依赖此技能" .. ( ability.item and ability.link or k ) .. "，那么可能会出现问题。" end,
+                        name = function () return "Disable " .. ( ability.item and ability.link or k ) end,
+                        desc = function () return "If checked, this ability will |cffff0000NEVER|r be recommended by the addon.  This can cause " ..
+                            "issues for some specializations, if other abilities depend on you using " .. ( ability.item and ability.link or k ) .. "." end,
                         width = 1.5,
                         order = 1,
                     },
 
                     boss = {
                         type = "toggle",
-                        name = "仅用于BOSS战",
-                        desc = "如果勾选，插件将不会推荐此技能" .. k .. "，除非你处于BOSS中。如果不勾选，" .. k .. "技能会在所有战斗中被推荐。",
+                        name = "Boss Encounter Only",
+                        desc = "If checked, the addon will not recommend " .. k .. " unless you are in a boss fight (or encounter).  If left unchecked, " .. k .. " can be recommended in any type of fight.",
                         width = 1.5,
                         order = 1.1,
                     },                    
 
                     keybind = {
                         type = "input",
-                        name = "覆盖按键绑定文本",
-                        desc = "如果设置此项，当推荐此技能时，插件将显示此文本，而不是自动检测到的绑定按键提示。" ..
-                            "如果插件检测到错误的绑定按键，这将解决此问题。",
+                        name = "Override Keybind Text",
+                        desc = "If specified, the addon will show this text in place of the auto-detected keybind text when recommending this ability.  " ..
+                            "This can be helpful if the addon incorrectly detects your keybindings.",
                         validate = function( info, val )
                             val = val:trim()
-                            if val:len() > 6 then return "绑定按键文本的长度不应超过6个字符。" end
+                            if val:len() > 6 then return "Keybindings should be no longer than 6 characters in length." end
                             return true
                         end,
                         width = 1.5,
@@ -3948,9 +3958,9 @@ do
 
                     toggle = {
                         type = "select",
-                        name = "开关状态切换",
-                        desc = "设置此项后，插件在技能列表中使用必须的开关切换。" ..
-                            "当开关被关闭时，技能将被视为不可用，插件将假设它们处于冷却状态（除非另有设置）。",
+                        name = "Require Toggle",
+                        desc = "Specify a required toggle for this action to be used in the addon action list.  When toggled off, abilities are treated " ..
+                            "as unusable and the addon will pretend they are on cooldown (unless specified otherwise).",
                         width = 1.5,
                         order = 3,
                         values = function ()
@@ -3960,14 +3970,14 @@ do
                             if t == "essences" then t = "covenants" end
 
                             toggles.none = "None"
-                            toggles.default = "默认|cffffd100(" .. t .. ")|r"
-                            toggles.cooldowns = "爆发"
-                            toggles.essences = "盟约"
-                            toggles.defensives = "防御"
-                            toggles.interrupts = "打断"
-                            toggles.potions = "药剂"
-                            toggles.custom1 = "自定义1"
-                            toggles.custom2 = "自定义2"
+                            toggles.default = "Default |cffffd100(" .. t .. ")|r"
+                            toggles.cooldowns = "Cooldowns"
+                            toggles.essences = "Covenants"
+                            toggles.defensives = "Defensives"
+                            toggles.interrupts = "Interrupts"
+                            toggles.potions = "Potions"
+                            toggles.custom1 = "Custom 1"
+                            toggles.custom2 = "Custom 2"
 
                             return toggles
                         end,
@@ -3975,8 +3985,8 @@ do
 
                     targetMin = {
                         type = "range",
-                        name = "最小目标数",
-                        desc = "如果设置大于0，则只有监测到敌人数至少有" .. k .. "人的情况下，才会推荐此项。所有其他条件也必须满足。\n设置为0将忽略此项。",
+                        name = "Minimum Targets",
+                        desc = "If set above zero, the addon will only allow " .. k .. " to be recommended, if there are at least this many detected enemies.  All other action list conditions must also be met.\nSet to zero to ignore.",
                         width = 1.5,
                         min = 0,
                         max = 15,
@@ -3986,8 +3996,8 @@ do
 
                     targetMax = {
                         type = "range",
-                        name = "最大目标数",
-                        desc = "如果设置大于0，则只有监测到敌人数小于" .. k .. "人的情况下，才会推荐此项。所有其他条件也必须满足。.\n设置为0将忽略此项。",
+                        name = "Maximum Targets",
+                        desc = "If set above zero, the addon will only allow " .. k .. " to be recommended if there are this many detected enemies (or fewer).  All other action list conditions must also be met.\nSet to zero to ignore.",
                         width = 1.5,
                         min = 0,
                         max = 15,
@@ -3997,9 +4007,9 @@ do
 
                     clash = {
                         type = "range",
-                        name = "冲突",
-                        desc = "如果设置大于0，插件将假设" .. k .. "拥有更快的冷却时间。" ..
-                            "当某个技能的优先级非常高，并且你希望插件更多地推荐它，而不是其他更快的可能技能是，此项会很有效。",
+                        name = "Clash",
+                        desc = "If set above zero, the addon will pretend " .. k .. " has come off cooldown this much sooner than it actually has.  " ..
+                            "This can be helpful when an ability is very high priority and you want the addon to prefer it over abilities that are available sooner.",
                         width = 3,
                         min = -1.5,
                         max = 1.5,
@@ -4039,29 +4049,29 @@ do
         option.args = {
             disabled = {
                 type = "toggle",
-                name = function () return "禁用" .. ( ability.item and ability.link or k ) end,
-                desc = function () return "如果勾选，此技能将|cffff0000永远|r不会被插件推荐。" ..
-                    "如果其他技能依赖此技能" .. ( ability.item and ability.link or k ) .. "，那么可能会出现问题。" end,
+                name = function () return "Disable " .. ( ability.item and ability.link or k ) end,
+                desc = function () return "If checked, this ability will |cffff0000NEVER|r be recommended by the addon.  This can cause " ..
+                    "issues for some specializations, if other abilities depend on you using " .. ( ability.item and ability.link or k ) .. "." end,
                 width = 1.5,
                 order = 1,
             },
 
             boss = {
                 type = "toggle",
-                name = "仅用于BOSS战",
-                desc = "如果勾选，插件将不会推荐该物品" .. k .. "，除非你处于BOSS战。如果不选中，" .. k .. "物品会在所有战斗中被推荐。",
+                name = "Boss Encounter Only",
+                desc = "If checked, the addon will not recommend " .. k .. " via [Use Items] unless you are in a boss fight (or encounter).  If left unchecked, " .. k .. " can be recommended in any type of fight.",
                 width = 1.5,
                 order = 1.1,
             },
 
             keybind = {
                 type = "input",
-                name = "覆盖按键绑定文本",
-                desc = "如果设置此项，当推荐此技能时，插件将显示此文本，而不是自动检测到的绑定按键提示。" ..
-                    "如果插件检测到错误的绑定按键，这将解决此问题。",
+                name = "Override Keybind Text",
+                desc = "If specified, the addon will show this text in place of the auto-detected keybind text when recommending this ability.  " ..
+                    "This can be helpful if the addon incorrectly detects your keybindings.",
                 validate = function( info, val )
                     val = val:trim()
-                    if val:len() > 6 then return "绑定按键文本的长度不应超过6个字符。" end
+                    if val:len() > 6 then return "Keybindings should be no longer than 6 characters in length." end
                     return true
                 end,
                 width = 1.5,
@@ -4070,23 +4080,23 @@ do
 
             toggle = {
                 type = "select",
-                name = "开关状态切换",
-                desc = "设置此项后，插件在技能列表中使用必须的开关切换。" ..
-                    "当开关被关闭时，技能将被视为不可用，插件将假设它们处于冷却状态（除非另有设置）。",
+                name = "Require Toggle",
+                desc = "Specify a required toggle for this action to be used in the addon action list.  When toggled off, abilities are treated " ..
+                    "as unusable and the addon will pretend they are on cooldown (unless specified otherwise).",
                 width = 1.5,
                 order = 3,
                 values = function ()
                     table.wipe( toggles )
 
-                    toggles.none = "无"
-                    toggles.default = "默认" .. ( class.abilities[ v ].toggle and ( " |cffffd100(" .. class.abilities[ v ].toggle .. ")|r" ) or " |cffffd100（无）|r" )
-                    toggles.cooldowns = "爆发"
-                    toggles.essences = "盟约"
-                    toggles.defensives = "防御"
-                    toggles.interrupts = "打断"
-                    toggles.potions = "药剂"
-                    toggles.custom1 = "自定义1"
-                    toggles.custom2 = "自定义2"
+                    toggles.none = "None"
+                    toggles.default = "Default" .. ( class.abilities[ v ].toggle and ( " |cffffd100(" .. class.abilities[ v ].toggle .. ")|r" ) or " |cffffd100(none)|r" )
+                    toggles.cooldowns = "Cooldowns"
+                    toggles.essences = "Covenants"
+                    toggles.defensives = "Defensives"
+                    toggles.interrupts = "Interrupts"
+                    toggles.potions = "Potions"
+                    toggles.custom1 = "Custom 1"
+                    toggles.custom2 = "Custom 2"
 
                     return toggles
                 end,
@@ -4096,7 +4106,7 @@ do
                 type = "range",
                 name = "Clash",
                 desc = "If set above zero, the addon will pretend " .. k .. " has come off cooldown this much sooner than it actually has.  " ..
-                    "当某个技能的优先级非常高，并且你希望插件更多地推荐它，而不是其他更快的可能技能是，此项会很有效。",
+                    "This can be helpful when an ability is very high priority and you want the addon to prefer it over abilities that are available sooner.",
                 width = "full",
                 min = -1.5,
                 max = 1.5,
@@ -4106,8 +4116,8 @@ do
 
             targetMin = {
                 type = "range",
-                name = "最小目标数",
-                desc = "如果设置大于0，则只有检测到敌人数至少有" .. k .. "人的情况下，才会推荐此道具。\n设置为0将忽略此项。",
+                name = "Minimum Targets",
+                desc = "If set above zero, the addon will only allow " .. k .. " to be recommended via [Use Items] if there are at least this many detected enemies.\nSet to zero to ignore.",
                 width = 1.5,
                 min = 0,
                 max = 15,
@@ -4117,8 +4127,8 @@ do
 
             targetMax = {
                 type = "range",
-                name = "最大目标数",
-                desc = "如果设置大于0，则只有监测到敌人数小于" .. k .. "人的情况下，才会推荐此道具。\n设置为0将忽略此项。",
+                name = "Maximum Targets",
+                desc = "If set above zero, the addon will only allow " .. k .. " to be recommended via [Use Items] if there are this many detected enemies (or fewer).\nSet to zero to ignore.",
                 width = 1.5,
                 min = 0,
                 max = 15,
@@ -4157,7 +4167,7 @@ do
                     multiItem = {
                         type = "description",
                         name = function ()
-                            local output = "这些设置将应用于以下|cFF00FF00所有|r类似的PvP饰品：\n\n"
+                            local output = "These settings will apply to |cFF00FF00ALL|r of the following similar PvP trinkets:\n\n"
 
                             if ability.items then
                                 for i, itemID in ipairs( ability.items ) do
@@ -4176,29 +4186,29 @@ do
 
                     disabled = {
                         type = "toggle",
-                        name = function () return "禁用" .. ( ability.item and ability.link or k ) end,
-                        desc = function () return "如果勾选，此技能将|cffff0000永远|r不会被插件推荐。" ..
-                            "如果其他技能依赖此技能" .. ( ability.item and ability.link or k ) .. "，那么可能会出现问题。" end,
+                        name = function () return "Disable " .. ( ability.item and ability.link or k ) end,
+                        desc = function () return "If checked, this ability will |cffff0000NEVER|r be recommended by the addon.  This can cause " ..
+                            "issues for some specializations, if other abilities depend on you using " .. ( ability.item and ability.link or k ) .. "." end,
                         width = 1.5,
                         order = 1.05,
                     },
 
                     boss = {
                         type = "toggle",
-                        name = "仅用于BOSS战",
-                        desc = "如果勾选，插件将不会推荐该物品" .. k .. "，除非你处于BOSS战。如果不选中，" .. k .. "物品会在所有战斗中被推荐。",
+                        name = "Boss Encounter Only",
+                        desc = "If checked, the addon will not recommend " .. ( ability.item and ability.link or k ) .. " via [Use Items] unless you are in a boss fight (or encounter).  If left unchecked, " .. ( ability.item and ability.link or k ) .. " can be recommended in any type of fight.",
                         width = 1.5,
                         order = 1.1,
                     },
 
                     keybind = {
                         type = "input",
-                        name = "覆盖按键绑定文本",
-                        desc = "如果设置此项，当推荐此技能时，插件将显示此文本，而不是自动检测到的绑定按键提示。" ..
-                            "如果插件检测到错误的绑定按键，这将解决此问题。",
+                        name = "Override Keybind Text",
+                        desc = "If specified, the addon will show this text in place of the auto-detected keybind text when recommending this ability.  " ..
+                            "This can be helpful if the addon incorrectly detects your keybindings.",
                         validate = function( info, val )
                             val = val:trim()
-                            if val:len() > 6 then return "绑定按键文本的长度不应超过6个字符。" end
+                            if val:len() > 6 then return "Keybindings should be no longer than 6 characters in length." end
                             return true
                         end,
                         width = 1.5,
@@ -4207,23 +4217,23 @@ do
 
                     toggle = {
                         type = "select",
-                        name = "开关状态切换",
-                        desc = "设置此项后，插件在技能列表中使用必须的开关切换。" ..
-                            "当开关被关闭时，技能将被视为不可用，插件将假装它们处于冷却状态（除非另有设置）。",
+                        name = "Require Toggle",
+                        desc = "Specify a required toggle for this action to be used in the addon action list.  When toggled off, abilities are treated " ..
+                            "as unusable and the addon will pretend they are on cooldown (unless specified otherwise).",
                         width = 1.5,
                         order = 3,
                         values = function ()
                             table.wipe( toggles )
 
-                            toggles.none = "无"
-                            toggles.default = "默认" .. ( class.abilities[ v ].toggle and ( " |cffffd100(" .. class.abilities[ v ].toggle .. ")|r" ) or " |cffffd100（无）|r" )
-                            toggles.cooldowns = "爆发"
-                            toggles.essences = "盟约"
-                            toggles.defensives = "防御"
-                            toggles.interrupts = "打断"
-                            toggles.potions = "药剂"
-                            toggles.custom1 = "自定义1"
-                            toggles.custom2 = "自定义2"
+                            toggles.none = "None"
+                            toggles.default = "Default" .. ( class.abilities[ v ].toggle and ( " |cffffd100(" .. class.abilities[ v ].toggle .. ")|r" ) or " |cffffd100(none)|r" )
+                            toggles.cooldowns = "Cooldowns"
+                            toggles.essences = "Covenants"
+                            toggles.defensives = "Defensives"
+                            toggles.interrupts = "Interrupts"
+                            toggles.potions = "Potions"
+                            toggles.custom1 = "Custom 1"
+                            toggles.custom2 = "Custom 2"
 
                             return toggles
                         end,
@@ -4231,9 +4241,9 @@ do
 
                     --[[ clash = {
                         type = "range",
-                        name = "冲突",
+                        name = "Clash",
                         desc = "If set above zero, the addon will pretend " .. k .. " has come off cooldown this much sooner than it actually has.  " ..
-                            "当某个技能的优先级非常高，并且你希望插件更多地推荐它，而不是其他更快的可能技能是，此项会很有效。",
+                            "This can be helpful when an ability is very high priority and you want the addon to prefer it over abilities that are available sooner.",
                         width = "full",
                         min = -1.5,
                         max = 1.5,
@@ -4243,8 +4253,8 @@ do
 
                     targetMin = {
                         type = "range",
-                        name = "最小目标数",
-                        desc = "如果设置大于0，则只有监测到敌人数至少有" .. k .. "人的情况下，才会推荐此道具。\n设置为0将忽略此项。",
+                        name = "Minimum Targets",
+                        desc = "If set above zero, the addon will only allow " .. ( ability.item and ability.link or k ) .. " to be recommended via [Use Items] if there are at least this many detected enemies.\nSet to zero to ignore.",
                         width = 1.5,
                         min = 0,
                         max = 15,
@@ -4254,8 +4264,8 @@ do
 
                     targetMax = {
                         type = "range",
-                        name = "最大目标数",
-                        desc = "如果设置大于0，则只有监测到敌人数小于" .. k .. "人的情况下，才会推荐此道具。\n设置为0将忽略此项。",
+                        name = "Maximum Targets",
+                        desc = "If set above zero, the addon will only allow " .. ( ability.item and ability.link or k ) .. " to be recommended via [Use Items] if there are this many detected enemies (or fewer).\nSet to zero to ignore.",
                         width = 1.5,
                         min = 0,
                         max = 15,
@@ -4469,7 +4479,7 @@ do
 
         e = tlEntry( section .. "AddText" )
         e.type = "description"
-        e.name = "添加技能"
+        e.name = "Add Ability"
         e.fontSize = "medium"
         e.width = 1.35
         e.order = nToggles + 0.996
@@ -4523,7 +4533,7 @@ do
 
         e = tlEntry( section .. "ReloadText" )
         e.type = "description"
-        e.name = "重载默认值"
+        e.name = "Reload Defaults"
         e.fontSize = "medium"
         e.order = nToggles + 0.999
         e.width = 1.35
@@ -4570,14 +4580,14 @@ do
                     args = {
                         core = {
                             type = "group",
-                            name = "核心",
-                            desc = "对" .. specs[ id ] .. "职业专精的核心技能进行专门优化设置。",
+                            name = "Core",
+                            desc = "Core features and specialization options for " .. specs[ id ] .. ".",
                             order = 1,
                             args = {
                                 enabled = {
                                     type = "toggle",
-                                    name = "启用",
-                                    desc = "如果勾选，插件将基于" .. name .. "职业专精的优先级进行技能推荐。",
+                                    name = "Enabled",
+                                    desc = "If checked, the addon will provide priority recommendations for " .. name .. " based on the selected priority list.",
                                     order = 0,
                                     width = "full",
                                 },
@@ -4595,8 +4605,8 @@ do
 
                                 package = {
                                     type = "select",
-                                    name = "优先级",
-                                    desc = "插件在进行技能推荐时使用的优先级配置。",
+                                    name = "Priority",
+                                    desc = "The addon will use the selected package when making its priority recommendations.",
                                     order = 1,
                                     width = 2.85,
                                     values = function( info, val )
@@ -4609,7 +4619,7 @@ do
                                             end
                                         end
 
-                                        packs[ '(none)' ] = '（无）'
+                                        packs[ '(none)' ] = '(none)'
 
                                         return packs
                                     end,
@@ -4618,7 +4628,7 @@ do
                                 openPackage = {
                                     type = 'execute',
                                     name = "",
-                                    desc = "打开查看该优先级配置和技能列表。",
+                                    desc = "Open and view this priority pack and its action lists.",
                                     order = 1.1,
                                     width = 0.15,
                                     image = GetAtlasFile( "shop-games-magnifyingglass" ),
@@ -4643,8 +4653,8 @@ do
 
                                 potion = {
                                     type = "select",
-                                    name = "默认药剂",
-                                    desc = "进行药剂推荐时，插件将推荐此药剂，除非优先级配置中另有推荐。",
+                                    name = "Default Potion",
+                                    desc = "When recommending a potion, the addon will suggest this potion unless the action list specifies otherwise.",
                                     order = 2,
                                     width = 3,
                                     values = function ()
@@ -4673,24 +4683,24 @@ do
 
                         targets = {
                             type = "group",
-                            name = "目标识别",
-                            desc = "设置插件如何识别和统计敌人的数量。",
+                            name = "Targeting",
+                            desc = "Settings related to how enemies are identified and counted by the addon.",
                             order = 3,
                             args = {
                                 -- Nameplate Quasi-Group
                                 nameplates = {
                                     type = "toggle",
-                                    name = "使用姓名板监测",
-                                    desc = "如果勾选，插件将统计角色半径范围显示姓名板的所有敌人。" ..
-                                    "此设置通常适用于|cFFFF0000近战|r职业。",
+                                    name = "Use Nameplate Detection",
+                                    desc = "If checked, the addon will count any enemies with visible nameplates within a small radius of your character.  " ..
+                                        "This is typically desirable for |cFFFF0000melee|r specializations.",
                                     width = "full",
                                     order = 1,
                                 },
 
                                 nameplateRange = {
                                     type = "range",
-                                    name = "姓名板监测范围",
-                                    desc = "如果勾选|cFFFFD100使用姓名板监测|r，插件将统计角色半径范围内显示姓名板的所有敌人。",
+                                    name = "Nameplate Detection Range",
+                                    desc = "When |cFFFFD100Use Nameplate Detection|r is checked, the addon will count any enemies with visible nameplates within this radius of your character.",
                                     width = "full",
                                     hidden = function()
                                         return self.DB.profile.specs[ id ].nameplates == false
@@ -4715,23 +4725,23 @@ do
                                 -- Pet-Based Cluster Detection
                                 petbased = {
                                     type = "toggle",
-                                    name = "使用宠物范围监测",
+                                    name = "Use Pet-Based Detection",
                                     desc = function ()
-                                        local msg = "如果勾选并配置正确，当目标处于你宠物的攻击范围内时，插件也会将宠物附近的目标一并统计。"
+                                        local msg = "If checked and properly configured, the addon will count targets near your pet as valid targets, when your target is also within range of your pet."
 
                                         if Hekili:HasPetBasedTargetSpell() then
                                             local spell = Hekili:GetPetBasedTargetSpell()
                                             local name, _, tex = GetSpellInfo( spell )
                                             
-                                            msg = msg .. "\n\n|T" .. tex .. ":0|t |cFFFFD100" .. name .. "|r 位于你的动作条上且作用于" .. UnitClass("player") .. "的所有宠物。"
+                                            msg = msg .. "\n\n|T" .. tex .. ":0|t |cFFFFD100" .. name .. "|r is on your action bar and will be used for all your " .. UnitClass("player") .. " pets."
                                         else
-                                            msg = msg .. "\n\n|cFFFF0000必须在你的动作条上配置一个宠物技能。|r"
+                                            msg = msg .. "\n\n|cFFFF0000Requires pet ability on one of your action bars.|r"
                                         end
 
                                         if GetCVar( "nameplateShowEnemies" ) == "1" then
-                                            msg = msg .. "\n\n敌对姓名板已|cFF00FF00启用|r，将监测宠物附近的敌对目标。"
+                                            msg = msg .. "\n\nEnemy nameplates are |cFF00FF00enabled|r and will be used to detect targets near your pet."
                                         else
-                                            msg = msg .. "\n\n|cFFFF0000需要启用敌对姓名板。|r"
+                                            msg = msg .. "\n\n|cFFFF0000Requires enemy nameplates.|r"
                                         end
 
                                         return msg
@@ -4749,15 +4759,15 @@ do
                                         local out
 
                                         if not self:HasPetBasedTargetSpell() then
-                                            out = "想要基于宠物的监测生效，你必须将一个|cFF00FF00宠物技能|r配置到你的|cFF00FF00动作条|r上。\n\n"
+                                            out = "For pet-based detection to work, you must take an ability from your |cFF00FF00pet's spellbook|r and place it on one of |cFF00FF00your|r action bars.\n\n"
                                             local spells = Hekili:GetPetBasedTargetSpells()
 
                                             if not spells then return " " end
 
-                                            out = out .. "对于%s, 建议使用 |T%d:0|t |cFFFFD100%s|r，因为它的范围更广。它适用于你的所有宠物。"
+                                            out = out .. "For %s, |T%d:0|t |cFFFFD100%s|r is recommended due to its range.  It will work for all your pets."
 
                                             if spells.count > 1 then
-                                                out = out .. "\n备选项："
+                                                out = out .. "\nAlternative(s): "
                                             end
 
                                             local n = 0
@@ -4775,7 +4785,7 @@ do
                                                     elseif n ~= spells.count then
                                                         out = out .. "|T" .. tex .. ":0|t |cFFFFD100" .. name .. "|r, "
                                                     else
-                                                        out = out .. "以及|T" .. tex .. ":0|t |cFFFFD100" .. name .. "|r."
+                                                        out = out .. "and |T" .. tex .. ":0|t |cFFFFD100" .. name .. "|r."
                                                     end
                                                 end
                                             end
@@ -4783,9 +4793,9 @@ do
 
                                         if GetCVar( "nameplateShowEnemies" ) ~= "1" then
                                             if not out then
-                                                out = "|cFFFF0000警报！|r 基于宠物的目标监测必须启用|cFFFFD100敌对姓名板|r。"
+                                                out = "|cFFFF0000WARNING!|r  Pet-based target detection requires |cFFFFD100enemy nameplates|r to be enabled."
                                             else
-                                                out = out .. "\n\n|cFFFF0000警报！|r 基于宠物的目标监测必须启用|cFFFFD100敌对姓名板|r。"
+                                                out = out .. "\n\n|cFFFF0000WARNING!|r  Pet-based target detection requires |cFFFFD100enemy nameplates|r to be enabled."
                                             end
                                         end
                                         
@@ -4806,19 +4816,19 @@ do
                                 -- Damage Detection Quasi-Group
                                 damage = {
                                     type = "toggle",
-                                    name = "伤害敌人监测",
-                                    desc = "如果勾选，插件将统计过去几秒内你攻击（或被攻击）的敌人。" ..
-                                    "此项通常适用于|cFFFF0000远程|r职业。",
+                                    name = "Detect Damaged Enemies",
+                                    desc = "If checked, the addon will count any enemies that you've hit (or hit you) within the past several seconds as active enemies.  " ..
+                                        "This is typically desirable for |cFFFF0000ranged|r specializations.",
                                     width = "full",
                                     order = 4,                                    
                                 },
 
                                 damageDots = {
                                     type = "toggle",
-                                    name = "持续伤害敌人监测",
-                                    desc = "如果勾选，插件将统计一段时间内受到来自你的持续伤害（流血、中毒等）的敌人，即使他们不在附近或受到你的其他伤害。\n\n" ..
-                                    "此项可能不适用于近战职业专精，因为当你使用持续伤害技能后，敌人可能会超出攻击范围。如果同时使用|cFFFFD100姓名板监测|r，则不在姓名板监测范围内的敌人将被过滤。\n\n" ..
-                                    "对于拥有持续伤害技能的远程职业专精，建议启用此项。",
+                                    name = "Detect Dotted Enemies",
+                                    desc = "When checked, the addon will continue to count enemies who are taking damage from your damage over time effects (bleeds, etc.), even if they are not nearby or taking other damage from you.\n\n" ..
+                                        "This may not be ideal for melee specializations, as enemies may wander away after you've applied your dots/bleeds.  If used with |cFFFFD100Use Nameplate Detection|r, dotted enemies that are no longer in melee range will be filtered.\n\n" ..
+                                        "For ranged specializations with damage over time effects, this should be enabled.",
                                     width = 1.49,
                                     hidden = function () return self.DB.profile.specs[ id ].damage == false end,
                                     order = 5,
@@ -4826,9 +4836,9 @@ do
 
                                 damagePets = {
                                     type = "toggle",
-                                    name = "宠物伤害敌人监测",
-                                    desc = "如果勾选，插件将统计过去你秒内你的宠物或仆从攻击（或被攻击）的敌人。" ..
-                                    "如果你的宠物或仆从分散在战场各处，统计的目标数可能会有误差。",
+                                    name = "Detect Enemies Damaged by Pets",
+                                    desc = "If checked, the addon will count enemies that your pets or minions have hit (or hit you) within the past several seconds.  " ..
+                                        "This may give misleading target counts if your pet/minions are spread out over the battlefield.",
                                     width = 1.49,
                                     hidden = function () return self.DB.profile.specs[ id ].damage == false end,
                                     order = 5.1
@@ -4836,8 +4846,8 @@ do
 
                                 damageRange = {
                                     type = "range",
-                                    name = "过滤超出范围敌人",
-                                    desc = "如果设置为大于0，插件将尝试过滤掉上次监测后，当前已经超出范围的目标。此项是基于缓存数据的，可能不够准确。",
+                                    name = "Filter Damaged Enemies by Range",
+                                    desc = "If set above 0, the addon will attempt to avoid counting targets that were out of range when last seen.  This is based on cached data and may be inaccurate.",
                                     width = "full",
                                     hidden = function () return self.DB.profile.specs[ id ].damage == false end,
                                     min = 0,
@@ -4848,9 +4858,9 @@ do
 
                                 damageExpiration = {
                                     type = "range",
-                                    name = "伤害监测有效时间",
-                                    desc = "当勾选|cFFFFD100伤害敌人监测|r时，插件将在有效时间内持续标记受到伤害的敌人，直到他们被忽略或不再受到伤害。" ..
-                                        "如果敌人死亡或消失，他们也会被忽略。此项在处理敌人分散或超出攻击范围时很有效。",
+                                    name = "Damage Detection Timeout",
+                                    desc = "When |cFFFFD100Detect Damaged Enemies|r is checked, the addon will remember enemies until they have been ignored/undamaged for this amount of time.  " ..
+                                        "Enemies will also be forgotten if they die or despawn.  This is helpful when enemies spread out or move out of range.",
                                     width = "full",
                                     softMin = 3,
                                     min = 1,
@@ -4870,20 +4880,20 @@ do
 
                                 cycle = {
                                     type = "toggle",
-                                    name = "推荐切换目标",
-                                    desc = "当启用切换目标后，当你应该在不同的目标上使用某个技能是，插件会在技能图标上显示小图标(|TInterface\\Addons\\Hekili\\Textures\\Cycle:0|t)。" ..
-                                        "此项对某些直接对另一个目标造成伤害的职业专精（如踏风）效果很好，但是对于" ..
-                                        "某些需要保持对敌人持续伤害的职业专精（如痛苦）就效果稍差。此功能将在未来持续改进。",
+                                    name = "Recommend Target Swaps",
+                                    desc = "When target swapping is enabled, the addon may show an icon (|TInterface\\Addons\\Hekili\\Textures\\Cycle:0|t) when you should use an ability on a different target.  " ..
+                                        "This works well for some specs that simply want to apply a debuff to another target (like Windwalker), but can be less-effective for specializations that are concerned with " ..
+                                        "maintaining dots/debuffs based on their durations (like Affliction).  This feature is targeted for improvement in a future update.",
                                     width = "full",
                                     order = 8
                                 },
 
                                 cycle_min = {
                                     type = "range",
-                                    name = "最短死亡时间",
-                                    desc = "当启用|cffffd100推荐切换目标|r后，此项将设置死亡时间小于此值的目标将不进行推荐。" ..
-                                        "如果设置为5，插件将不推荐切换到将在5秒内死亡的目标。这将有助于避免对即将死亡的目标释放持续伤害技能。" ..
-                                        "\n\n设置为0时将统计所有监测到的目标。",
+                                    name = "Minimum Target Time-to-Die",
+                                    desc = "When |cffffd100Recommend Target Swaps|r is checked, this value determines which targets are counted for target swapping purposes.  If set to 5, the addon will " ..
+                                            "not recommend swapping to a target that will die in fewer than 5 seconds.  This can be beneficial to avoid applying damage-over-time effects to a target that will die " ..
+                                            "too quickly to be damaged by them.\n\nSet to 0 to count all detected targets.",
                                     width = "full",
                                     min = 0,
                                     max = 15,
@@ -4894,8 +4904,8 @@ do
 
                                 aoe = {
                                     type = "range",
-                                    name = "AOE显示框：最小目标数",
-                                    desc = "当监测到满足该数量的目标数时，将启用AOE显示框进行技能推荐。",
+                                    name = "AOE Display:  Minimum Targets",
+                                    desc = "When the AOE Display is shown, its recommendations will be made assuming this many targets are available.",
                                     width = "full",
                                     min = 2,
                                     max = 10,
@@ -4907,14 +4917,14 @@ do
 
                         toggles = {
                             type = "group",
-                            name = "开关",
-                            desc = "设置快速开关部分具体控制哪些技能。",
+                            name = "Toggles",
+                            desc = "Specify which abilities are controlled by each toggle keybind for this specialization.",
                             order = 2,
                             args = {
                                 toggleDesc = {
                                     type = "description",
-                                    name = "此页对开关中定义的各项开关类型中包含的技能进行细节设置。装备和饰品可以通过它们自己的部分（左侧）进行调整。\n\n" ..
-                                        "在开关中删除某个技能后，将使它|cFF00FF00启用|r，无论开关是否处于激活状态。",
+                                    name = "This section shows which Abilities are enabled/disabled when you toggle each category when in this specialization.  Gear and Trinkets can be adjusted via their own section (left).\n\n" ..
+                                        "Removing an ability from its toggle leaves it |cFF00FF00ENABLED|r regardless of whether the toggle is active.",
                                     fontSize = "medium",
                                     order = 1,
                                     width = 3,
@@ -4932,30 +4942,49 @@ do
 
                         performance = {
                             type = "group",
-                            name = "性能",
+                            name = NewFeature .. " Performance",
                             order = 10,
                             args = {
                                 throttleRefresh = {
                                     type = "toggle",
-                                    name = "限制刷新频率",
-                                    desc = "默认情况下，插件将在所有战斗时提供技能推荐。但是某些战斗发生得太突然，会导致更高的CPU使用率导致游戏性能降低。" ..
-                                        "\n\n如果勾选|cffffd100刷新限频|r，你可以设置本职业专精的|cffffd100最大刷新频率|r。" ..
-                                        "",
+                                    name = NewFeature .. " Throttle Updates",
+                                    desc = "By default, the addon will update its recommendations immediately following |cffff0000critical|r combat events, within |cffffd1000.1|rs of routine combat events, or every |cffffd1000.5|rs.\n" ..
+                                        "If |cffffd100Throttle Updates|r is checked, you can specify the |cffffd100RCombat Refresh Interval|r and |cff00ff00Regular Refresh Interval|r for this specialization.",
                                     order = 1,
-                                    width = 1
+                                    width = "full",
                                 },
 
-                                maxRefresh = {
+                                perfSpace01 = {
+                                    type = "description",
+                                    name = " ",
+                                    order = 1.05,
+                                    width = "full"
+                                },
+
+                                regularRefresh = {
                                     type = "range",
-                                    name = "最大刷新频率",
-                                    desc = "设置插件每秒刷新推荐技能的最大次数。\n\n" ..
-                                        "如果设置为|cffffd1004|r，插件刷新推荐次数的频率不会超过|cffffd1000.25|r/秒。\n\n" ..
-                                        "如果设置为|cffffd10020|r，插件刷新推荐次数的频率不会超过|cffffd1000.05|r/秒。\n\n" ..
-                                        "插件在战斗中的刷新次数通常为5-7次/秒。",
+                                    name = NewFeature .. " Regular Refresh Interval",
+                                    desc = "In the absence of combat events, this addon will allow itself to update according to the specified interval.  Specifying a higher value may reduce CPU usage but will result in slower updates, though " ..
+                                        "combat events will always force the addon to update more quickly.\n\nIf set to |cffffd1001.0|rs, the addon will not provide new updates until 1 second after its last update (unless forced by a combat event).\n\n" ..
+                                        "Default value:  |cffffd1000.1|rs.",
                                     order = 1.1,
-                                    width = 2,
-                                    min = 4,
-                                    max = 20,
+                                    width = 1.5,
+                                    min = 0.05,
+                                    max = 0.5,
+                                    step = 1,
+                                    hidden = function () return self.DB.profile.specs[ id ].throttleRefresh == false end,
+                                },
+
+                                combatRefresh = {
+                                    type = "range",
+                                    name = NewFeature .. " Combat Refresh Interval",
+                                    desc = "When routine combat events occur, the addon will update more frequently than its Regular Refresh Interval.  Specifying a higher value may reduce CPU usage but will result in slower updates, though " ..
+                                        "critical combat events will always force the addon to update more quickly.\n\nIf set to |cffffd1000.2|rs, the addon will not provide new updates until 0.2 seconds after its last update (unless forced by a critical combat event).\n\n" ..
+                                        "Default value:  |cffffd1000.5|rs.",
+                                    order = 1.2,
+                                    width = 1.5,
+                                    min = 0.05,
+                                    max = 0.5,
                                     step = 1,
                                     hidden = function () return self.DB.profile.specs[ id ].throttleRefresh == false end,
                                 },
@@ -4969,24 +4998,25 @@ do
 
                                 throttleTime = {
                                     type = "toggle",
-                                    name = "最大刷新时间",
-                                    desc = "默认情况下，插件将花费时间来生成显示框内的推荐技能。" ..
-                                        "但是在面对复杂的战斗场景或者优先级列表时，可能会占用更多的时间，影响FPS。\n\n如果选择|cffffd100限制时间|r，则可以设置插件在生成推荐技能的|cffffd100最大刷新时间|r。" ..
-                                        "",
+                                    name = NewFeature .. " Throttle Time",
+                                    desc = "By default, when the addon needs to generate new recommendations, it will use up to |cffffd10010ms|r per frame or up to half a frame, whichever is lower.  If you get 60 FPS, that is 1 second / 60 frames, which equals equals 16.67ms.  " ..
+                                        "Half of 16.67 is ~|cffffd1008ms|r, so the addon could use up to ~8ms per frame until it has successfully updated its recommendations for all visible displays.  If more time is needed, the work will be split across multiple frames.\n\n" ..
+                                        "If you choose to |cffffd100Throttle Time|r, you can specify the |cffffd100Maximum Update Time|r the addon should use per frame.",
                                     order = 2,
                                     width = 1,
                                 },
 
                                 maxTime = {
                                     type = "range",
-                                    name = "最大刷新时间（毫秒）",
-                                    desc = "设置插件在刷新推荐节能时可以使用的最大时间（毫秒）。\n\n" ..
-                                    "如果设置为|cffffd10010|r，则刷新推荐技能的计算不影响每秒100帧的系统。\n（1秒/100帧=10毫秒）\n\n" ..
-                                    "如果设置为|cffffd10016|r，则刷新推荐技能的计算不影响每秒60帧的系统。\n（1秒/60帧=16.7毫秒）\n\n" ..
-                                    "无论此项如何设置，插件都将始终生成第一个推荐技能。",
+                                    name = NewFeature .. " Maximum Update Time (ms)",
+                                    desc = "Specify the maximum amount of time (in milliseconds) that the addon can use |cffffd100per frame|r when updating its recommendations.\n\n" ..
+                                        "If set to |cffffd10010|r, then recommendations should not impact a 100 FPS system (1 second / 100 frames = 10ms).\n" ..
+                                        "If set to |cffffd10016|r, then recommendations should not impact a 60 FPS system (1 second / 60 frames = 16.7ms).\n\n" ..
+                                        "If you set this value too low, the addon can take more frames to update its recommendations and may feel delayed.  " ..
+                                        "If set too high, the addon will do more work each frame, finishing faster but potentially impacting your FPS.  The default value is |cffffd10010ms|r.",
                                     order = 2.1,
-                                    min = 5,
-                                    max = 1000,
+                                    min = 2,
+                                    max = 100,
                                     width = 2,
                                     hidden = function () return self.DB.profile.specs[ id ].throttleTime == false end,
                                 },
@@ -5010,9 +5040,9 @@ do
 
                                 enhancedRecheck = {
                                     type = "toggle",
-                                    name = "额外复检",
-                                    desc = "当插件无法推荐某个技能时，则会在未来重新检查是否满足推荐条件。如果勾选，此项会在插件将对拥有变量的技能进行额外推荐检查。" ..
-                                    "这可能会使用更多的CPU，但可以降低插件无法给出技能推荐的概率。",
+                                    name = "Enhanced Recheck",
+                                    desc = "When the addon cannot recommend an ability at the present time, it rechecks action's conditions at a few points in the future.  If checked, this feature will enable the addon to do additional checking on entries that use the 'variable' feature.  " ..
+                                        "This may use slightly more CPU, but can reduce the likelihood that the addon will fail to make a recommendation.",
                                     width = "full",
                                     order = 5,
                                 }
@@ -5035,7 +5065,7 @@ do
 
                     options.args.core.plugins.settings.prefHeader = {
                         type = "header",
-                        name = "特殊选项",
+                        name = "Preferences",
                         order = 100.1,
                     }
 
@@ -5058,19 +5088,19 @@ do
                 end
 
                 -- Toggles
-                BuildToggleList( options, id, "cooldowns",  "爆发" )
-                BuildToggleList( options, id, "essences",   "盟约" )
-                BuildToggleList( options, id, "interrupts", "功能性/打断" )
-                BuildToggleList( options, id, "defensives", "防御",   "防御开关通常用于坦克职业专精，" ..
-                "在战斗中面对各种情况，你可能希望打开和关闭减伤技能的推荐。" ..
-                "DPS玩家可能也希望增强自己的存活能力，可以将减伤技能添加到自己的自定义配置中。" ..
-                                                                            "" ..
-                                                                            "" )
+                BuildToggleList( options, id, "cooldowns",  "Cooldowns" )
+                BuildToggleList( options, id, "essences",   "Covenants" )
+                BuildToggleList( options, id, "interrupts", "Utility / Interrupts" )
+                BuildToggleList( options, id, "defensives", "Defensives",   "The defensive toggle is generally intended for tanking specializations, " ..
+                                                                            "as you may want to turn on/off recommendations for damage mitigation abilities " ..
+                                                                            "for any number of reasons during a fight.  DPS players may want to add their own " ..
+                                                                            "defensive abilities, but would also need to add the abilities to their own custom " ..
+                                                                            "priority packs." )
                 BuildToggleList( options, id, "custom1", function ()
-                    return specProf.custom1Name or "自定义1"
+                    return specProf.custom1Name or "Custom 1"
                 end )
                 BuildToggleList( options, id, "custom2", function ()
-                    return specProf.custom2Name or "自定义2"
+                    return specProf.custom2Name or "Custom 2"
                 end )
 
                 db.plugins.specializations[ sName ] = options
@@ -5291,8 +5321,8 @@ do
 
         local packs = db.args.packs or {
             type = "group",
-            name = "优先级配置",
-            desc = "优先级配置（或指令集）是一组操作列表，基于每个职业专精提供技能推荐。",
+            name = "Priorities",
+            desc = "Priorities (or action packs) are bundles of action lists used to make recommendations for each specialization.",
             get = 'GetPackOption',
             set = 'SetPackOption',
             order = 65,
@@ -5300,38 +5330,38 @@ do
             args = {
                 packDesc = {
                     type = "description",
-                    name = "优先级配置（或指令集）是一组操作列表，基于每个职业专精提供技能推荐。" ..
-                    "它们可以自定义和共享。|cFFFF0000导入SimulationCraft优先级通常需要在导入之前进行一些转换，" ..
-                    "才能够应用于插件。不支持导入和自定义已过期的优先级配置。|r",
+                    name = "Priorities (or action packs) are bundles of action lists used to make recommendations for each specialization.  " ..
+                        "They can be customized and shared.  |cFFFF0000Imported SimulationCraft priorities often require some translation before " ..
+                        "they will work with this addon.  No support is offered for customized or imported priorities.|r",
                     order = 1,
                     fontSize = "medium",
                 },
 
                 newPackHeader = {
                     type = "header",
-                    name = "创建新的配置",
+                    name = "Create a New Priority",
                     order = 200
                 },
 
                 newPackName = {
                     type = "input",
-                    name = "配置名称",
-                    desc = "输入唯一的配置名称。允许使用字母、数字、空格、下划线和撇号。（译者加入了中文支持）",
+                    name = "Priority Name",
+                    desc = "Enter a new, unique name for this package.  Only alphanumeric characters, spaces, underscores, and apostrophes are allowed.",
                     order = 201,
                     width = "full",
                     validate = function( info, val )
                         val = val:trim()
-                        if rawget( Hekili.DB.profile.packs, val ) then return "请确保配置名称唯一。"
-                        elseif val == "UseItems" then return "UseItems是系统保留名称。"
-                        elseif val == "(none)" then return "别耍小聪明，你这愚蠢的土拨鼠。"
-                        elseif val:find( "[^a-zA-Z0-9 _'()一-龥]" ) then return "配置名称允许使用字母、数字、空格、下划线和撇号。（译者加入了中文支持）" end
+                        if rawget( Hekili.DB.profile.packs, val ) then return "Please specify a unique pack name."
+                        elseif val == "UseItems" then return "UseItems is a reserved name."
+                        elseif val == "(none)" then return "Don't get smart, missy."
+                        elseif val:find( "[^a-zA-Z0-9 _']" ) then return "Only alphanumeric characters, spaces, underscores, and apostrophes are allowed in pack names." end
                         return true
                     end,
                 },
 
                 newPackSpec = {
                     type = "select",
-                    name = "职业专精",
+                    name = "Specialization",
                     order = 202,
                     width = "full",
                     values = specs,
@@ -5339,7 +5369,7 @@ do
 
                 createNewPack = {
                     type = "execute",
-                    name = "创建新配置",
+                    name = "Create New Pack",
                     order = 203,
                     disabled = function()
                         return packControl.newPackName == "" or packControl.newPackSpec == ""
@@ -5355,15 +5385,15 @@ do
 
                 shareHeader = {
                     type = "header",
-                    name = "分享",
+                    name = "Sharing",
                     order = 100,
                 },
 
                 shareBtn = {
                     type = "execute",
-                    name = "分享优先级配置",
-                    desc = "每个优先级配置都可以使用导出字符串分享给其他本插件用户。\n\n" ..
-                    "你也可以在这里导入他人分享的字符串。",
+                    name = "Share Priorities",
+                    desc = "Each Priority can be shared with other addon users with these export strings.\n\n" ..
+                        "You can also import a shared export string here.",
                     func = function ()
                         ACD:SelectGroup( "Hekili", "packs", "sharePacks" )
                     end,
@@ -5372,9 +5402,9 @@ do
 
                 sharePacks = {
                     type = "group",
-                    name = "|cFF1EFF00分享优先级配置|r",
-                    desc = "你的优先级配置可以通过导出字符串分享给其他本插件用户。\n\n" ..
-                    "你也可以在这里导入他人分享的字符串。",
+                    name = "|cFF1EFF00Share Priorities|r",
+                    desc = "Your Priorities can be shared with other addon users with these export strings.\n\n" ..
+                        "You can also import a shared export string here.",
                     childGroups = "tab",
                     get = 'GetPackShareOption',
                     set = 'SetPackShareOption',
@@ -5382,7 +5412,7 @@ do
                     args = {
                         import = {
                             type = "group",
-                            name = "导入",
+                            name = "Import",
                             order = 1,
                             args = {
                                 stage0 = {
@@ -5393,7 +5423,7 @@ do
                                     args = {
                                         guide = {
                                             type = "description",
-                                            name = "先将优先级配置的字符串粘贴到这里。",
+                                            name = "Paste a Priority import string here to begin.",
                                             order = 1,
                                             width = "full",
                                             fontSize = "medium",
@@ -5401,13 +5431,13 @@ do
 
                                         separator = {
                                             type = "header",
-                                            name = "导入字符串",
+                                            name = "Import String",
                                             order = 1.5,                                             
                                         },
 
                                         importString = {
                                             type = "input",
-                                            name = "导入字符串",
+                                            name = "Import String",
                                             get = function () return shareDB.import end,
                                             set = function( info, val )
                                                 val = val:trim()
@@ -5420,19 +5450,19 @@ do
 
                                         btnSeparator = {
                                             type = "header",
-                                            name = "导入",
+                                            name = "Import",
                                             order = 4,
                                         },
 
                                         importBtn = {
                                             type = "execute",
-                                            name = "导入优先级配置",
+                                            name = "Import Priority",
                                             order = 5,
                                             func = function ()
                                                 shareDB.imported, shareDB.error = self:DeserializeActionPack( shareDB.import )
 
                                                 if shareDB.error then
-                                                    shareDB.import = "无法解析当前的导入字符串。\n" .. shareDB.error
+                                                    shareDB.import = "The Import String provided could not be decompressed.\n" .. shareDB.error
                                                     shareDB.error = nil
                                                     shareDB.imported = {}
                                                 else
@@ -5456,7 +5486,7 @@ do
                                         packName = {
                                             type = "input",
                                             order = 1,
-                                            name = "配置名称",
+                                            name = "Pack Name",
                                             get = function () return shareDB.imported.name end,
                                             set = function ( info, val ) shareDB.imported.name = val:trim() end,
                                             width = "full",
@@ -5465,7 +5495,7 @@ do
                                         packDate = {
                                             type = "input",
                                             order = 2,
-                                            name = "生成日期",
+                                            name = "Pack Date",
                                             get = function () return tostring( shareDB.imported.date ) end,
                                             set = function () end,
                                             width = "full",
@@ -5475,8 +5505,8 @@ do
                                         packSpec = {
                                             type = "input",
                                             order = 3,
-                                            name = "配置职业专精",
-                                            get = function () return select( 2, GetSpecializationInfoByID( shareDB.imported.payload.spec or 0 ) ) or "无需对应职业专精" end,
+                                            name = "Pack Specialization",
+                                            get = function () return select( 2, GetSpecializationInfoByID( shareDB.imported.payload.spec or 0 ) ) or "No Specialization Set" end,
                                             set = function () end,
                                             width = "full",
                                             disabled = true,
@@ -5496,17 +5526,17 @@ do
                                                 local o
 
                                                 if #listNames == 0 then
-                                                    o = "导入的优先级配置不包含任何技能列表。"
+                                                    o = "The imported Priority has no lists included."
                                                 elseif #listNames == 1 then
-                                                    o = "导入的优先级配置含有一个技能列表：" .. listNames[1] .. "。"
+                                                    o = "The imported Priority has one action list:  " .. listNames[1] .. "."
                                                 elseif #listNames == 2 then
-                                                    o = "导入的优先级配置包含两个技能列表：" .. listNames[1] .. " 和 " .. listNames[2] .. "。"
+                                                    o = "The imported Priority has two action lists:  " .. listNames[1] .. " and " .. listNames[2] .. "."
                                                 else
-                                                    o = "导入的优先级配置包含以下技能列表："
+                                                    o = "The imported Priority has the following lists included:  "
                                                     for i, name in ipairs( listNames ) do
                                                         if i == 1 then o = o .. name
-                                                        elseif i == #listNames then o = o .. "，和" .. name .. "。"
-                                                        else o = o .. "，" .. name end
+                                                        elseif i == #listNames then o = o .. ", and " .. name .. "."
+                                                        else o = o .. ", " .. name end
                                                     end
                                                 end
 
@@ -5519,19 +5549,19 @@ do
 
                                         separator = {
                                             type = "header",
-                                            name = "应用更改",
+                                            name = "Apply Changes",
                                             order = 10,
                                         },
 
                                         apply = {
                                             type = "execute",
-                                            name = "应用更改",
+                                            name = "Apply Changes",
                                             order = 11,
                                             confirm = function ()
                                                 if rawget( self.DB.profile.packs, shareDB.imported.name ) then
-                                                    return "你已经拥有名为“" .. shareDB.imported.name .. "”的优先级配置。\n覆盖它吗？"
+                                                    return "You already have a \"" .. shareDB.imported.name .. "\" Priority.\nOverwrite it?"
                                                 end
-                                                return "确定从导入的数据创建名为“" .. shareDB.imported.name .. "”的优先级配置吗？"
+                                                return "Create a new Priority named \"" .. shareDB.imported.name .. "\" from the imported data?"
                                             end,
                                             func = function ()
                                                 self.DB.profile.packs[ shareDB.imported.name ] = shareDB.imported.payload
@@ -5549,7 +5579,7 @@ do
 
                                         reset = {
                                             type = "execute",
-                                            name = "重置",
+                                            name = "Reset",
                                             order = 12,
                                             func = function ()
                                                 shareDB.import = ""
@@ -5569,7 +5599,7 @@ do
                                     args = {
                                         note = {
                                             type = "description",
-                                            name = "导入的设置已经成功应用！\n\n如果有必要，点击重置重新开始。",
+                                            name = "Imported settings were successfully applied!\n\nClick Reset to start over, if needed.",
                                             order = 1,
                                             fontSize = "medium",
                                             width = "full",
@@ -5577,7 +5607,7 @@ do
 
                                         reset = {
                                             type = "execute",
-                                            name = "重置",
+                                            name = "Reset",
                                             order = 2,
                                             func = function ()
                                                 shareDB.import = ""
@@ -5595,12 +5625,12 @@ do
 
                         export = {
                             type = "group",
-                            name = "导出",
+                            name = "Export",
                             order = 2,
                             args = {
                                 guide = {
                                     type = "description",
-                                    name = "请选择要导出的优先级配置。",
+                                    name = "Select a Priority pack to export.",
                                     order = 1,
                                     fontSize = "medium",
                                     width = "full",
@@ -5608,7 +5638,7 @@ do
 
                                 actionPack = {
                                     type = "select",
-                                    name = "优先级配置",
+                                    name = "Priorities",
                                     order = 2,
                                     values = function ()
                                         local v = {}
@@ -5626,7 +5656,7 @@ do
 
                                 exportString = {
                                     type = "input",
-                                    name = "导出优先级配置字符串（CTRL+A全选，CTRL+C复制）",
+                                    name = "Priority Export String (CTRL+A to Select, CTRL+C to Copy)",
                                     order = 3,
                                     get = function ()
                                         if rawget( Hekili.DB.profile.packs, shareDB.actionPack ) then
@@ -5660,7 +5690,7 @@ do
             if data.spec and class.specs[ data.spec ] and not data.hidden then
                 packs.plugins.links.packButtons = packs.plugins.links.packButtons or {
                     type = "header",
-                    name = "已安装的配置",
+                    name = "Installed Packs",
                     order = 10,
                 }
 
@@ -5685,14 +5715,14 @@ do
                     args = {
                         pack = {
                             type = "group",
-                            name = data.builtIn and ( BlizzBlue .. "摘要|r" ) or "摘要",
+                            name = data.builtIn and ( BlizzBlue .. "Summary|r" ) or "Summary",
                             order = 1,
                             args = {
                                 isBuiltIn = {
                                     type = "description",
                                     name = function ()
-                                        return BlizzBlue .. "这是个默认的优先级配置。当插件更新时，它将会自动更新。" ..
-                                        "如果想要自定义调整技能优先级，请点击|TInterface\\Addons\\Hekili\\Textures\\WhiteCopy:0|t创建一个副本后操作|r。"
+                                        return BlizzBlue .. "This is a default priority package.  It will be automatically updated when the addon is updated.  If you want to customize this priority, " ..
+                                            "make a copy by clicking |TInterface\\Addons\\Hekili\\Textures\\WhiteCopy:0|t.|r"
                                     end,
                                     fontSize = "medium",
                                     width = 3,
@@ -5711,10 +5741,10 @@ do
                                     type = "toggle",
                                     name = function ()
                                         local p = rawget( Hekili.DB.profile.packs, pack )
-                                        if p and p.builtIn then return BlizzBlue .. "激活|r" end
-                                        return "激活"
+                                        if p and p.builtIn then return BlizzBlue .. "Active|r" end
+                                        return "Active"
                                     end,
-                                    desc = "如果勾选，插件将会在职业专精对应时使用该优先级配置进行技能推荐。",
+                                    desc = "If checked, the addon's recommendations for this specialization are based on this priority package.",
                                     order = 0.2,
                                     width = 3,
                                     get = function ()
@@ -5749,15 +5779,15 @@ do
 
                                 packName = {
                                     type = "input",
-                                    name = "配置名称",
+                                    name = "Priority Name",
                                     order = 0.25,
                                     width = 2.7,
                                     validate = function( info, val )
                                         val = val:trim()
-                                        if rawget( Hekili.DB.profile.packs, val ) then return "请确保配置名称唯一。"
-                                        elseif val == "UseItems" then return "UseItems是系统保留名称。"
-                                        elseif val == "(none)" then return "别耍小聪明，你这愚蠢的土拨鼠。"
-                                        elseif val:find( "[^a-zA-Z0-9 _'()一-龥]" ) then return "配置名称允许使用字母、数字、空格、下划线和撇号。（译者加入了中文支持）" end
+                                        if rawget( Hekili.DB.profile.packs, val ) then return "Please specify a unique pack name."
+                                        elseif val == "UseItems" then return "UseItems is a reserved name."
+                                        elseif val == "(none)" then return "Don't get smart, missy."
+                                        elseif val:find( "[^a-zA-Z0-9 _'()]" ) then return "Only alphanumeric characters, spaces, parentheses, underscores, and apostrophes are allowed in pack names." end
                                         return true
                                     end,
                                     get = function() return pack end,
@@ -5784,13 +5814,13 @@ do
                                 copyPack = {
                                     type = "execute",
                                     name = "",
-                                    desc = "拷贝配置",
+                                    desc = "Copy Priority",
                                     order = 0.26, 
                                     width = 0.15,
                                     image = [[Interface\AddOns\Hekili\Textures\WhiteCopy]],
                                     imageHeight = 20,
                                     imageWidth = 20,
-                                    confirm = function () return "确定创建此优先级配置的副本吗？" end,
+                                    confirm = function () return "Create a copy of this priority pack?" end,
                                     func = function ()
                                         local p = rawget( Hekili.DB.profile.packs, pack )
                                         
@@ -5821,7 +5851,7 @@ do
                                 reloadPack = {
                                     type = "execute",
                                     name = "",
-                                    desc = "重载配置",
+                                    desc = "Reload Priority",
                                     order = 0.27,
                                     width = 0.15,
                                     image = GetAtlasFile( "transmog-icon-revert" ),
@@ -5829,7 +5859,7 @@ do
                                     imageWidth = 25,
                                     imageHeight = 24,
                                     confirm = function ()
-                                        return "确定从默认值重载此优先级配置吗？"
+                                        return "Reload this priority pack from defaults?"
                                     end,
                                     hidden = not data.builtIn,
                                     func = function ()
@@ -5844,14 +5874,14 @@ do
                                 deletePack = {
                                     type = "execute",
                                     name = "",
-                                    desc = "删除配置",
+                                    desc = "Delete Priority",
                                     order = 0.27,
                                     width = 0.15,
                                     image = GetAtlasFile( "communities-icon-redx" ),
                                     imageCoords = GetAtlasCoords( "communities-icon-redx" ),
                                     imageHeight = 24,
                                     imageWidth = 24,
-                                    confirm = function () return "确定删除此优先级配置吗？" end,
+                                    confirm = function () return "Delete this priority package?" end,
                                     func = function ()
                                         local defPack
 
@@ -5885,7 +5915,7 @@ do
 
                                 spec = {
                                     type = "select",
-                                    name = "对应职业专精",
+                                    name = "Specialization",
                                     order = 1,
                                     width = 3,
                                     values = specs,
@@ -5917,7 +5947,7 @@ do
 
                                 desc = {
                                     type = "input",
-                                    name = "说明",
+                                    name = "Description",
                                     multiline = 15,
                                     order = 2,
                                     width = "full",
@@ -5927,9 +5957,9 @@ do
 
                         profile = {
                             type = "group",
-                            name = "文件",
-                            desc = "如果此优先级配置是通过SimulationCraft配置文件生成的，则可以在这里保存和查看该配置文件。" ..
-                            "还可以重新导入该配置文件，或使用较新的文件覆盖旧的文件。",
+                            name = "Profile",
+                            desc = "If this Priority was generated with a SimulationCraft profile, the profile can be stored " ..
+                                "or retrieved here.  The profile can also be re-imported or overwritten with a newer profile.",
                             order = 2,
                             args = {
                                 signature = {
@@ -5940,9 +5970,9 @@ do
                                     args = {
                                         source = {
                                             type = "input",
-                                            name = "来源",
-                                            desc = "如果优先级配置基于SimulationCraft文件或职业指南，" ..
-                                            "最好提供来源的链接（尤其是分享之前）。",
+                                            name = "Source",
+                                            desc = "If the Priority is based on a SimulationCraft profile or a popular guide, it is a " ..
+                                                "good idea to provide a link to the source (especially before sharing).",
                                             order = 1,
                                             width = 3,
                                         },
@@ -5956,17 +5986,17 @@ do
 
                                         author = {
                                             type = "input",
-                                            name = "作者",
-                                            desc = "创建新的优先级配置时，作业信息将自动填写。" ..
-                                            "你可以在这里修改作者信息。",
+                                            name = "Author",
+                                            desc = "The author field is automatically filled out when creating a new Priority.  " ..
+                                                "You can update it here.",
                                             order = 2,
                                             width = 2,
                                         },
 
                                         date = {
                                             type = "input",
-                                            name = "最后更新",
-                                            desc = "调整此优先级配置的技能列表时，此日期将自动更新。",
+                                            name = "Last Updated",
+                                            desc = "This date is automatically updated when any changes are made to the action lists for this Priority.",
                                             width = 1,
                                             order = 3,
                                             set = function () end,
@@ -5982,8 +6012,8 @@ do
 
                                 profile = {
                                     type = "input",
-                                    name = "文件",
-                                    desc = "如果此优先级配置的技能列表是来自于SimulationCraft文件的，那么该文件就在这里。",
+                                    name = "Profile",
+                                    desc = "If this pack's action lists were imported from a SimulationCraft profile, the profile is included here.",
                                     order = 4,
                                     multiline = 20,
                                     width = "full",
@@ -5993,7 +6023,7 @@ do
                                     type = "description",
                                     name = function ()
                                         local p = rawget( Hekili.DB.profile.packs, pack )
-                                        return "|cFFFFD100导入记录|r\n" .. ( p.warnings or "" ) .. "\n\n"
+                                        return "|cFFFFD100Import Log|r\n" .. ( p.warnings or "" ) .. "\n\n"
                                     end,
                                     order = 5,
                                     fontSize = "medium",
@@ -6006,8 +6036,8 @@ do
 
                                 reimport = {
                                     type = "execute",
-                                    name = "导入",
-                                    desc = "从文件信息中重建技能列表。",
+                                    name = "Import",
+                                    desc = "Rebuild the action list(s) from the profile above.",
                                     order = 5,
                                     func = function ()
                                         local p = rawget( Hekili.DB.profile.packs, pack )
@@ -6038,14 +6068,14 @@ do
                         lists = {
                             type = "group",
                             childGroups = "select",
-                            name = "技能列表",
-                            desc = "技能列表用于确定在合适的时机推荐使用正确的技能。",
+                            name = "Action Lists",
+                            desc = "Action Lists are used to determine which abilities should be used at what time.",
                             order = 3,
                             args = {
                                 listName = {
                                     type = "select",
-                                    name = "技能列表",
-                                    desc = "选择要查看或修改的技能列表。",
+                                    name = "Action List",
+                                    desc = "Select the action list to view or modify.",
                                     order = 1,
                                     width = 2.7,
                                     values = function ()
@@ -6081,7 +6111,7 @@ do
                                 newListBtn = {
                                     type = "execute",
                                     name = "",
-                                    desc = "创建新的技能列表",
+                                    desc = "Create a New Action List",
                                     order = 1.1,
                                     width = 0.15,
                                     image = "Interface\\AddOns\\Hekili\\Textures\\GreenPlus",
@@ -6097,7 +6127,7 @@ do
                                 delListBtn = {
                                     type = "execute",
                                     name = "",
-                                    desc = "删除当前技能列表",
+                                    desc = "Delete this Action List",
                                     order = 1.2,
                                     width = 0.15,
                                     image = RedX,
@@ -6105,7 +6135,7 @@ do
                                     -- imageCoords = GetAtlasCoords( "communities-icon-redx" ),
                                     imageHeight = 20,
                                     imageWidth = 20,
-                                    confirm = function() return "确定删除这个技能列表吗？" end,
+                                    confirm = function() return "Delete this action list?" end,
                                     disabled = function () return packControl.listName == "default" or packControl.listName == "precombat" end,
                                     func = function ()
                                         local p = rawget( Hekili.DB.profile.packs, pack )
@@ -6124,9 +6154,9 @@ do
 
                                 actionID = {
                                     type = "select",
-                                    name = "项目",
-                                    desc = "在此技能列表中选择要修改的项目。\n\n" ..
-                                    "红色项目表示被禁用、没有技能列表、条件错误或执行指令被禁用/忽略的技能。",
+                                    name = "Entry",
+                                    desc = "Select the entry to modify in this action list.\n\n" ..
+                                        "Entries in red are disabled, have no action set, have a conditional error, or use actions that are disabled/toggled off.",
                                     order = 2,
                                     width = 2.4,
                                     values = function ()
@@ -6183,7 +6213,7 @@ do
 
                                                 elseif entry.action == "call_action_list" or entry.action == "run_action_list" then
                                                     if not entry.list_name or not rawget( data.lists, entry.list_name ) then
-                                                        desc = "|cff00ccff（无设置）|r"
+                                                        desc = "|cff00ccff(not set)|r"
                                                         warning = true
                                                     else
                                                         desc = "|cff00ccff" .. entry.list_name .. "|r"
@@ -6315,7 +6345,7 @@ do
                                     imageWidth = 20,
                                     width = 0.15,
                                     order = 2.4,
-                                    confirm = function() return "确定删除这个项目吗？" end,
+                                    confirm = function() return "Delete this entry?" end,
                                     func = function ()
                                         local id = tonumber( packControl.actionID )
                                         local p = rawget( Hekili.DB.profile.packs, pack )
@@ -6363,16 +6393,16 @@ do
                                             args = { ]]
                                                 enabled = {
                                                     type = "toggle",
-                                                    name = "启用",
-                                                    desc = "如果禁用此项，即使满足条件，也不会显示此项目。",
+                                                    name = "Enabled",
+                                                    desc = "If disabled, this entry will not be shown even if its criteria are met.",
                                                     order = 3.0,
                                                     width = "full",
                                                 },
 
                                                 action = {
                                                     type = "select",
-                                                    name = "指令（技能）",
-                                                    desc = "选择满足项目条件时推荐进行的操作指令。",
+                                                    name = "Action",
+                                                    desc = "Select the action that will be recommended when this entry's criteria are met.",
                                                     values = class.abilityList,
                                                     order = 3.1,
                                                     width = 1.5,
@@ -6380,10 +6410,10 @@ do
 
                                                 caption = {
                                                     type = "input",
-                                                    name = "标题",
-                                                    desc = "标题是|cFFFF0000非常简短|r的描述，可以出现在推荐技能的图标上。\n\n" ..
-                                                    "这有助于理解为何在此刻推荐此技能。\n\n" ..
-                                                    "需要在每个显示框上启用标题。",
+                                                    name = "Caption",
+                                                    desc = "Captions are |cFFFF0000very|r short descriptions that can appear on the icon of a recommended ability.\n\n" ..
+                                                        "This can be useful for understanding why an ability was recommended at a particular time.\n\n" ..
+                                                        "Requires Captions to be Enabled on each display.",
                                                     order = 3.2,
                                                     width = 1.5,
                                                     validate = function( info, val )
@@ -6401,7 +6431,7 @@ do
 
                                                 list_name = {
                                                     type = "select",
-                                                    name = "技能列表",
+                                                    name = "Action List",
                                                     values = function ()
                                                         local e = GetListEntry( pack )
                                                         local v = {}
@@ -6430,10 +6460,10 @@ do
 
                                                 buff_name = {
                                                     type = "select",
-                                                    name = "Buff名称",
+                                                    name = "Buff Name",
                                                     order = 3.2,
                                                     width = 1.5,
-                                                    desc = "选择要取消的Buff。",
+                                                    desc = "Specify the buff to remove.",
                                                     values = class.auraList,
                                                     hidden = function ()
                                                         local e = GetListEntry( pack )
@@ -6443,7 +6473,7 @@ do
 
                                                 potion = {
                                                     type = "select",
-                                                    name = "位置",
+                                                    name = "Potion",
                                                     order = 3.2,
                                                     -- width = "full",
                                                     values = class.potionList,
@@ -6456,7 +6486,7 @@ do
 
                                                 sec = {
                                                     type = "input",
-                                                    name = "秒",
+                                                    name = "Seconds",
                                                     order = 3.2,
                                                     width = 1.2,
                                                     hidden = function ()
@@ -6467,10 +6497,10 @@ do
 
                                                 max_energy = {
                                                     type = "toggle",
-                                                    name = "最大连击点数",
+                                                    name = "Max Energy",
                                                     order = 3.2,
                                                     width = 1.2,
-                                                    desc = "勾选后此项后，将要求玩家有足够大的连击点数激发凶猛撕咬的全部伤害加成。",
+                                                    desc = "When checked, this entry will require that the player have enough energy to trigger Ferocious Bite's full damage bonus.",
                                                     hidden = function ()
                                                         local e = GetListEntry( pack )
                                                         return e.action ~= "ferocious_bite"
@@ -6479,9 +6509,9 @@ do
 
                                                 description = {
                                                     type = "input",
-                                                    name = "说明",
-                                                    desc = "这里允许你提供解释此项目的说明。当你暂停并用鼠标悬停时，将显示此处的文本，以便查看推荐此项目的原因。" ..
-                                                        "",
+                                                    name = "Description",
+                                                    desc = "This allows you to provide text that explains this entry, which will show when you Pause and mouseover the ability to see " ..
+                                                        "why this entry was recommended.",
                                                     order = 3.205,
                                                     width = "full",
                                                 },
@@ -6495,15 +6525,15 @@ do
 
                                                 var_name = {
                                                     type = "input",
-                                                    name = "变量名",
+                                                    name = "Variable Name",
                                                     order = 3.3,
                                                     width = 1.5,
-                                                    desc = "指定此变量的名称。变量名必须使用小写字母，且除了下划线之外不允许其他符号。",
+                                                    desc = "Specify a name for this variable.  Variables must be lowercase with no spaces or symbols aside from the underscore.",
                                                     validate = function( info, val )
-                                                        if val:len() < 3 then return "变量名的长度必须不少于3个字符。" end
+                                                        if val:len() < 3 then return "Variables must be at least 3 characters in length." end
 
                                                         local check = formatKey( val )
-                                                        if check ~= val then return "输入的字符无效。请重试。" end
+                                                        if check ~= val then return "Invalid characters entered.  Try again." end
 
                                                         return true
                                                     end,
@@ -6515,22 +6545,22 @@ do
 
                                                 op = {
                                                     type = "select",
-                                                    name = "操作",
+                                                    name = "Operation",
                                                     values = {
-                                                        add = "数值加法",
-                                                        ceil = "数值上限",
-                                                        default = "设置默认值",
-                                                        div = "数值除法",
-                                                        floor = "数值下限",
-                                                        max = "最大值",
-                                                        min = "最小值",
-                                                        mod = "数值取余",
-                                                        mul = "数值乘法",
-                                                        pow = "数值幂运算",
-                                                        reset = "重置为默认值",
-                                                        set = "设置数值为",
-                                                        setif = "如果…设置数值为",
-                                                        sub = "数值减法",
+                                                        add = "Add Value",
+                                                        ceil = "Ceiling of Value",
+                                                        default = "Set Default Value",
+                                                        div = "Divide Value",
+                                                        floor = "Floor of Value",
+                                                        max = "Maximum of Values",
+                                                        min = "Minimum of Values",
+                                                        mod = "Modulo of Value",
+                                                        mul = "Multiply Value",
+                                                        pow = "Raise Value to X Power",
+                                                        reset = "Reset to Default",
+                                                        set = "Set Value",
+                                                        setif = "Set Value If...",
+                                                        sub = "Subtract Value",
                                                     },
                                                     order = 3.31,
                                                     width = 1.5,
@@ -6553,11 +6583,11 @@ do
                                                                 local e = Hekili.DB.profile.packs[ pack ].lists[ packControl.listName ][ n ]
 
                                                                 local ability = e and e.action and class.abilities[ e.action ]
-                                                                ability = ability and ability.name or "未设置"
+                                                                ability = ability and ability.name or "Not Set"
 
-                                                                return "归集到下一个项目(" .. ability ..")"
+                                                                return "Pool for Next Entry (" .. ability ..")"
                                                             end,
-                                                            desc = "如果勾选，插件将归集资源，直到下一个技能有足够的资源可供使用。",
+                                                            desc = "If checked, the addon will pool resources until the next entry has enough resources to use.",
                                                             order = 5,
                                                             width = 1.5,
                                                             hidden = function ()
@@ -6568,9 +6598,9 @@ do
 
                                                         wait = {
                                                             type = "input",
-                                                            name = "归集时间",
-                                                            desc = "以秒为单位指定时间，需要是数字或计算结果为数字的表达式。\n" ..
-                                                            "默认值为|cFFFFD1000.5|r。表达式示例为|cFFFFD100energy.time_to_max|r。",
+                                                            name = "Pooling Time",
+                                                            desc = "Specify the time, in seconds, as a number or as an expression that evaluates to a number.\n" ..
+                                                                "Default is |cFFFFD1000.5|r.  An example expression would be |cFFFFD100energy.time_to_max|r.",
                                                             order = 6,
                                                             width = 1.5,
                                                             multiline = 3,
@@ -6582,8 +6612,8 @@ do
 
                                                         extra_amount = {
                                                             type = "input",
-                                                            name = "额外归集",
-                                                            desc = "指定除了下一项目所需的资源外，还需要额外归集的资源量。",
+                                                            name = "Extra Pooling",
+                                                            desc = "Specify the amount of extra resources to pool in addition to what is needed for the next entry.",
                                                             order = 6,
                                                             width = 1.5,
                                                             hidden = function ()
@@ -6600,7 +6630,7 @@ do
 
                                                 criteria = {
                                                     type = "input",
-                                                    name = "条件",
+                                                    name = "Conditions",
                                                     order = 3.6,
                                                     width = "full",
                                                     multiline = 6,
@@ -6639,8 +6669,8 @@ do
 
                                                 value = {
                                                     type = "input",
-                                                    name = "数值",
-                                                    desc = "提供调用此变量时要存储（或计算）的数值。",
+                                                    name = "Value",
+                                                    desc = "Provide the value to store (or calculate) when this variable is invoked.",
                                                     order = 3.61,
                                                     width = "full",
                                                     multiline = 3,
@@ -6683,8 +6713,8 @@ do
 
                                                 value_else = {
                                                     type = "input",
-                                                    name = "不满足时数值",
-                                                    desc = "提供不满足此变量条件时要存储（或计算）的数值。",
+                                                    name = "Value Else",
+                                                    desc = "Provide the value to store (or calculate) if this variable's conditions are not met.",
                                                     order = 3.62,
                                                     width = "full",
                                                     multiline = 3,
@@ -6728,8 +6758,8 @@ do
 
                                                 showModifiers = {
                                                     type = "toggle",
-                                                    name = "显示设置项",
-                                                    desc = "如果勾选，可以调整更多的设置项和条件。",
+                                                    name = "Show Modifiers",
+                                                    desc = "If checked, some additional modifiers and conditions may be set.",
                                                     order = 20,
                                                     width = "full",
                                                     hidden = function ()
@@ -6748,16 +6778,16 @@ do
                                                     args = {
                                                         cycle_targets = {
                                                             type = "toggle",
-                                                            name = "循环目标",
-                                                            desc = "如果勾选，插件将检查每个可用目标，并提示切换目标。",
+                                                            name = "Cycle Targets",
+                                                            desc = "If checked, the addon will check each available target and show whether to switch targets.",
                                                             order = 1,
                                                             width = "single",
                                                         },
 
                                                         max_cycle_targets = {
                                                             type = "input",
-                                                            name = "最大循环目标数",
-                                                            desc = "如果勾选循环目标，插件将监测指定数量的目标。",
+                                                            name = "Max Cycle Targets",
+                                                            desc = "If cycle targets is checked, the addon will check up to the specified number of targets.",
                                                             order = 2,
                                                             width = "double",
                                                             disabled = function( info )
@@ -6782,20 +6812,20 @@ do
                                                     args = {
                                                         enable_moving = {
                                                             type = "toggle",
-                                                            name = "监测移动",
-                                                            desc = "如果勾选，仅当角色的移动状态与设置匹配时，才会推荐此项目。",
+                                                            name = "Check Movement",
+                                                            desc = "If checked, this entry can only be recommended when your character movement matches the setting.",
                                                             order = 1,
                                                         },
 
                                                         moving = {
                                                             type = "select",
-                                                            name = "移动状态",
-                                                            desc = "如果设置，仅当你的移动状态与设置匹配时，才会推荐此项目。",
+                                                            name = "Movement",
+                                                            desc = "If set, this entry can only be recommended when your movement matches the setting.",
                                                             order = 2,
                                                             width = "double",
                                                             values = {
-                                                                [0]  = "站立",
-                                                                [1]  = "移动"
+                                                                [0]  = "Stationary",
+                                                                [1]  = "Moving"
                                                             },
                                                             disabled = function( info )
                                                                 local e = GetListEntry( pack )
@@ -6819,22 +6849,22 @@ do
                                                     args = {
                                                         use_off_gcd = {
                                                             type = "toggle",
-                                                            name = "不占用GCD",
-                                                            desc = "如果勾选，即使处于全局冷却（GCD）中，也可以监测此项目。",
+                                                            name = "Use Off GCD",
+                                                            desc = "If checked, this entry can be checked even if the global cooldown (GCD) is active.",
                                                             order = 1,
                                                             width = 0.99,
                                                         },
                                                         use_while_casting = {
                                                             type = "toggle",
-                                                            name = "施法中可用",
-                                                            desc = "如果勾选，即使你已经在施法或引导，也可以监测此项目。",
+                                                            name = "Use While Casting",
+                                                            desc = "If checked, this entry can be checked even if you are already casting or channeling.",
                                                             order = 2,
                                                             width = 0.99
                                                         },
                                                         only_cwc = {
                                                             type = "toggle",
-                                                            name = "引导时使用",
-                                                            desc = "如果勾选，只有在你引导其他技能时才能使用此项目（如暗影牧师的灼烧梦魇）。",
+                                                            name = "During Channel",
+                                                            desc = "If checked, this entry can only be used if you are channeling another spell.",
                                                             order = 3,
                                                             width = 0.99
                                                         }
@@ -6862,8 +6892,8 @@ do
 
                                                         line_cd = {
                                                             type = "input",
-                                                            name = "强制冷却时间",
-                                                            desc = "如果设置，则强制在上次使用此项目后一定时间后，才会再次被推荐。",
+                                                            name = "Entry Cooldown",
+                                                            desc = "If set, this entry cannot be recommended unless this time has passed since the last time the ability was used.",
                                                             order = 1,
                                                             width = "full", 
                                                             --[[ disabled = function( info )
@@ -6888,8 +6918,8 @@ do
                                                     args = {
                                                         strict = {
                                                             type = "toggle",
-                                                            name = "严谨/时间不敏感",
-                                                            desc = "如果勾选，插件将认为此项目不在乎时间，并且在不满足条件时，不会尝试推荐链接的技能列表中的操作。",
+                                                            name = "Strict / Time Insensitive",
+                                                            desc = "If checked, the addon will assume this entry is not time-sensitive and will not test actions in the linked priority list if criteria are not presently met.",
                                                             order = 1,
                                                             width = "full",                                                            
                                                         }                                                    
@@ -6948,14 +6978,14 @@ do
                                     args = {
                                         newListName = {
                                             type = "input",
-                                            name = "列表名",
+                                            name = "List Name",
                                             order = 1,
                                             validate = function( info, val )
                                                 local p = rawget( Hekili.DB.profile.packs, pack )
 
-                                                if val:len() < 2 then return "技能列表名的长度至少为2个字符。"
-                                                elseif rawget( p.lists, val ) then return "已存在同名的技能列表。"
-                                                elseif val:find( "[^a-zA-Z0-9一-龥_]" ) then return "技能列表仅能使用字母、数字、字符和下划线。" end
+                                                if val:len() < 2 then return "Action list names should be at least 2 characters in length."
+                                                elseif rawget( p.lists, val ) then return "There is already an action list by that name."
+                                                elseif val:find( "[^a-zA-Z0-9_]" ) then return "Only alphanumeric characters and underscores can be used in list names." end
                                                 return true
                                             end,
                                             width = 3,
@@ -6970,7 +7000,7 @@ do
 
                                         createList = {
                                             type = "execute",
-                                            name = "添加列表",
+                                            name = "Add List",
                                             disabled = function() return packControl.newListName == nil end,
                                             func = function ()
                                                 local p = rawget( Hekili.DB.profile.packs, pack )
@@ -6989,7 +7019,7 @@ do
 
                                         cancel = {
                                             type = "execute",
-                                            name = "取消",
+                                            name = "Cancel",
                                             func = function ()
                                                 packControl.makingNew = false
                                             end,
@@ -7008,7 +7038,7 @@ do
                                     args = {
                                         createEntry = {
                                             type = "execute",
-                                            name = "创建新项目",
+                                            name = "Create New Entry",
                                             order = 1,
                                             func = function ()
                                                 local p = rawget( Hekili.DB.profile.packs, pack )
@@ -7025,12 +7055,12 @@ do
 
                         export = {
                             type = "group",
-                            name = "导出",
+                            name = "Export",
                             order = 4,
                             args = {
                                 exportString = {
                                     type = "input",
-                                    name = "导出字符串（CTRL+A全部选中，CTRL+C复制）",
+                                    name = "Export String (CTRL+A to Select, CTRL+C to Copy)",
                                     get = function( info )
                                         return self:SerializeActionPack( pack )
                                     end,
@@ -7163,14 +7193,14 @@ do
 
         db.args.toggles = db.args.toggles or {
             type = 'group',
-            name = '快捷切换',
+            name = 'Toggles',
             order = 20,
             get = GetToggle,
             set = SetToggle,
             args = {
                 info = {
                     type = "description",
-                    name = "设置不同的切换快捷键，可以让你在紧张的战斗中，在不同的输出建议和显示方式中进行切换。",
+                    name = "Toggles are keybindings that you can use to direct the addon's recommendations and how they are presented.",
                     order = 0.5,
                     fontSize = "medium",
                 },
@@ -7179,27 +7209,27 @@ do
                     type = "group",
                     name = "",
                     inline = true,
-                    order = 1,
+                    order = 2,
                     args = {
                         key = {
                             type = "keybinding",
-                            name = "爆发",
-                            desc = "设置一个按键对爆发技能是否推荐进行开/关。",
+                            name = "Cooldowns",
+                            desc = "Set a key to toggle cooldown recommendations on/off.",
                             order = 1,
                         },
 
                         value = {
                             type = "toggle",
-                            name = "启用爆发技能",
-                            desc = "如果勾选，将推荐标记为爆发的技能。",
+                            name = "Show Cooldowns",
+                            desc = "If checked, abilities marked as cooldowns can be recommended.",
                             order = 2,                            
                         },
 
                         separate = {
                             type = "toggle",
-                            name = NewFeature .. "启用单独显示",
-                            desc = "如果勾选，爆发技能将在爆发显示区域中单独显示。\n\n" ..
-                                "这是一项实验性功能，可能对某些职业专精不起作用。",
+                            name = NewFeature .. " Show Separately",
+                            desc = "If checked, cooldown abilities will be shown separately in your Cooldowns Display.\n\n" ..
+                                "This is an experimental feature and may not work well for some specializations.",
                             order = 3,
                         },
 
@@ -7219,8 +7249,8 @@ do
 
                         override = {
                             type = "toggle",
-                            name = "嗜血凌驾",
-                            desc = "如果勾选，当嗜血（或类似效果）激活时，即使未启用爆发，插件也会推荐爆发技能。",
+                            name = "Bloodlust Override",
+                            desc = "If checked, when Bloodlust (or similar effects) are active, the addon will recommend cooldown abilities even if Show Cooldowns is not checked.",
                             order = 4,
                         }
                     }
@@ -7234,22 +7264,22 @@ do
                     args = {
                         key = {
                             type = "keybinding",
-                            name = "盟约",
-                            desc = "设置一个按键对盟约建议进行开/关。",
+                            name = "Covenants",
+                            desc = "Set a key to toggle Covenant recommendations on/off.",
                             order = 1,
                         },
 
                         value = {
                             type = "toggle",
-                            name = "启用盟约技能",
-                            desc = "如果勾选，将推荐来自盟约的技能。",
+                            name = "Show Covenants",
+                            desc = "If checked, abilities from Covenants can be recommended.",
                             order = 2,                            
                         },
 
                         override = {
                             type = "toggle",
-                            name = "爆发凌驾",
-                            desc = "如果勾选，当爆发被启用，即使未勾选启用盟约，插件也会推荐盟约技能。",
+                            name = "Cooldowns Override",
+                            desc = "If checked, when Cooldowns are enabled, the addon will also recommend Covenants even if Show Covenants is not checked.",
                             order = 3,
                         },
                     }
@@ -7263,25 +7293,25 @@ do
                     args = {
                         key = {
                             type = "keybinding",
-                            name = "防御",
-                            desc = "设置一个按键对防御/减伤建议进行开/关。\n" ..
-                                "\n此项仅适用于坦克专精。",
+                            name = "Defensives",
+                            desc = "Set a key to toggle defensive/mitigation recommendations on/off.\n" ..
+                                "\nThis applies only to tanking specializations.",
                             order = 1,
                         },
 
                         value = {
                             type = "toggle",
-                            name = "启用防御技能",
-                            desc = "如果勾选，将推荐标记为防御的技能。\n" ..
-                                "\n此项仅适用于坦克专精。",
+                            name = "Show Defensives",
+                            desc = "If checked, abilities marked as defensives can be recommended.\n" ..
+                                "\nThis applies only to tanking specializations.",
                             order = 2,                            
                         },
 
                         separate = {
                             type = "toggle",
-                            name = "启用单独显示",
-                            desc = "如果勾选，防御/减伤技能建议将在防御显示区域中单独显示。\n" ..
-                                "\n此项仅适用于坦克专精。",
+                            name = "Show Separately",
+                            desc = "If checked, defensive/mitigation abilities will be shown separately in your Defensives Display.\n" ..
+                                "\nThis applies only to tanking specializations.",
                             order = 3,
                         }
                     }
@@ -7295,22 +7325,22 @@ do
                     args = {
                         key = {
                             type = "keybinding",
-                            name = "打断",
-                            desc = "设置一个按键对打断建议进行开/关。",
+                            name = "Interrupts",
+                            desc = "Set a key to use for toggling interrupts on/off.",
                             order = 1,                            
                         },
 
                         value = {
                             type = "toggle",
-                            name = "启用打断技能",
-                            desc = "如果勾选，将推荐标记为打断的技能。",
+                            name = "Show Interrupts",
+                            desc = "If checked, abilities marked as interrupts can be recommended.",
                             order = 2,
                         },
 
                         separate = {
                             type = "toggle",
-                            name = "启用单独显示",
-                            desc = "如果勾选，打断技能建议将在打断显示区域中单独显示（如果启用）。",
+                            name = "Show Separately",
+                            desc = "If checked, interrupt abilities will be shown separately in the Interrupts Display only (if enabled).",
                             order = 3,
                         }
                     }
@@ -7324,15 +7354,15 @@ do
                     args = {
                         key = {
                             type = "keybinding",
-                            name = "药剂",
-                            desc = "设置一个按键对药剂建议进行开/关。",
+                            name = "Potions",
+                            desc = "Set a key to toggle potion recommendations on/off.",
                             order = 1,
                         },
 
                         value = {
                             type = "toggle",
-                            name = "启用药剂",
-                            desc = "如果勾选，将推荐药剂。",
+                            name = "Show Potions",
+                            desc = "If checked, abilities marked as potions can be recommended.",
                             order = 2,
                         },
                     }
@@ -7340,7 +7370,7 @@ do
 
                 displayModes = {
                     type = "header",
-                    name = "显示模式",
+                    name = "Display Modes",
                     order = 10,
                 },
 
@@ -7352,22 +7382,22 @@ do
                     args = {
                         key = {
                             type = 'keybinding',
-                            name = '切换显示模式',
-                            desc = "按下此快捷键将会循环启用你在下方勾选的显示模式。",
+                            name = 'Display Mode',
+                            desc = "Pressing this binding will cycle your Display Mode through the options checked below.",
                             order = 1,
                             width = 1,
                         },
 
                         value = {
                             type = "select",
-                            name = "当前显示模式",
-                            desc = "选择你当前的显示模式。",
+                            name = "Current Display Mode",
+                            desc = "Select your current Display Mode.",
                             values = {
-                                automatic = "自动",
-                                single = "单目标",
-                                aoe = "AOE（多目标）",
-                                dual = "固定式双显",
-                                reactive = "响应式双显"
+                                automatic = "Automatic",
+                                single = "Single-Target",
+                                aoe = "AOE (Multi-Target)",
+                                dual = "Fixed Dual Display",
+                                reactive = "Reactive Dual Display"
                             },
                             width = 2,
                             order = 1.02,
@@ -7375,7 +7405,7 @@ do
 
                         modeLB2 = {
                             type = "description",
-                            name = "勾选想要使用的 |cFFFFD100显示模式|r 。当你按下 |cFFFFD100切换显示模式|r 快捷键时，插件将切换到你下一个选中的显示模式。",
+                            name = "Select the |cFFFFD100Display Modes|r that you wish to use.  Each time you press your |cFFFFD100Display Mode|r keybinding, the addon will switch to the next checked mode.",
                             fontSize = "medium",
                             width = "full",
                             order = 1.03
@@ -7383,26 +7413,26 @@ do
 
                         automatic = {
                             type = "toggle",
-                            name = "自动",
-                            desc = "如果勾选，显示模式将切换到自动模式。\n\n主要显示区域将根据检测到的敌人数量进行技能建议（根据你的当前职业专精）。",
+                            name = "Automatic",
+                            desc = "If checked, the Display Mode toggle can select Automatic mode.\n\nThe Primary display shows recommendations based upon the detected number of enemies (based on your specialization's options).",
                             width = 1.5,
                             order = 1.1,
                         },
 
                         single = {
                             type = "toggle",
-                            name = "单目标",
-                            desc = "如果勾选，显示模式将切换到单目标模式。\n\n主要显示区域将以单目标输出进行技能建议（即使检测到多目标）。",
+                            name = "Single-Target",
+                            desc = "If checked, the Display Mode toggle can select Single-Target mode.\n\nThe Primary display shows recommendations as though you have one target (even if more targets are detected).",
                             width = 1.5,
                             order = 1.2,
                         },
 
                         aoe = {
                             type = "toggle",
-                            name = "AOE（多目标）",
+                            name = "AOE (Multi-Target)",
                             desc = function ()
-                                return format( "如果勾选，显示模式将切换到AOE模式。\n\n主要显示区域将以多(%d)目标输出进行技能建议（即使检测到的目标没那么多）。\n\n" ..
-                                                "目标数量在专业化选项中进行设置。", self.DB.profile.specs[ state.spec.id ].aoe or 3 )
+                                return format( "If checked, the Display Mode toggle can select AOE mode.\n\nThe Primary display shows recommendations as though you have at least |cFFFFD100%d|r targets (even if fewer are detected).\n\n" ..
+                                                "The number of targets is set in your specialization's options.", self.DB.profile.specs[ state.spec.id ].aoe or 3 )
                             end,
                             width = 1.5,
                             order = 1.3,
@@ -7410,10 +7440,10 @@ do
 
                         dual = {
                             type = "toggle",
-                            name = "固定式双显",
+                            name = "Fixed Dual Display",
                             desc = function ()
-                                return format( "如果勾选，显示模式切换到双显示模式。\n\n主显示区域显示单目标输出技能建议，同时AOE显示区域显示多目标输出技能建议（即使检测到的目标没那么多）。\n\n" ..
-                                                "AOE目标数量在专业化选项中进行设置。", self.DB.profile.specs[ state.spec.id ].aoe or 3 )
+                                return format( "If checked, the Display Mode toggle can select Dual Display mode.\n\nThe Primary display shows single-target recommendations and the AOE display shows recommendations for |cFFFFD100%d|r or more targets (even if fewer are detected).\n\n" ..
+                                                "The number of AOE targets is set in your specialization's options.", self.DB.profile.specs[ state.spec.id ].aoe or 3 )
                             end,
                             width = 1.5,
                             order = 1.4,
@@ -7421,9 +7451,9 @@ do
 
                         reactive = {
                             type = "toggle",
-                            name = "响应式双显",
+                            name = "Reactive Dual Display",
                             desc = function ()
-                                return format( "如果勾选，显示模式将可以切换到响应模式。\n\n主显示区域显示单目标输出技能建议，AOE显示区域在检测到其他目标之前，都将保持隐藏。", self.DB.profile.specs[ state.spec.id ].aoe or 3 )
+                                return format( "If checked, the Display Mode toggle can select Reactive mode.\n\nThe Primary display shows single-target recommendations, while the AOE display remains hidden until/unless |cFFFFD100%d|r or more targets are detected.", self.DB.profile.specs[ state.spec.id ].aoe or 3 )
                             end,
                             width = 1.5,
                             order = 1.5,
@@ -7450,7 +7480,7 @@ do
 
                 troubleshooting = {
                     type = "header",
-                    name = "故障排除",
+                    name = "Troubleshooting",
                     order = 20,                    
                 },
 
@@ -7462,15 +7492,15 @@ do
                     args = {
                         key = {
                             type = 'keybinding',
-                            name = function () return Hekili.Pause and "取消暂停" or "暂停" end,
-                            desc =  "设置一个按键使你的指令列表暂停。当前显示区域将被冻结，" ..
-                                    "你可以将鼠标悬停在每个技能图标上，查看有关该技能的操作信息。\n\n" ..
-                                    "同时还将创建一个快照，可用于故障排除和错误报告。",
+                            name = function () return Hekili.Pause and "Unpause" or "Pause" end,
+                            desc =  "Set a key to pause processing of your action lists. Your current display(s) will freeze, " ..
+                                    "and you can mouseover each icon to see information about the displayed action.\n\n" ..
+                                    "This will also create a Snapshot that can be used for troubleshooting and error reporting.",
                             order = 1,
                         },
                         value = {
                             type = 'toggle',
-                            name = '启用暂停',
+                            name = 'Pause',
                             order = 2,
                         },
                     }
@@ -7484,8 +7514,8 @@ do
                     args = {
                         key = {
                             type = 'keybinding',
-                            name = '快照',
-                            desc = "设置一个快捷键，生成一个可在快照页面中查看的快照（不暂停）。这对于测试和调试非常有用。",
+                            name = 'Snapshot',
+                            desc = "Set a key to make a snapshot (without pausing) that can be viewed on the Snapshots tab.  This can be useful information for testing and debugging.",
                             order = 1,
                         },
                     }
@@ -7493,7 +7523,7 @@ do
 
                 customHeader = {
                     type = "header",
-                    name = "自定义",
+                    name = "Custom",
                     order = 30,
                 },
 
@@ -7505,22 +7535,22 @@ do
                     args = {
                         key = {
                             type = "keybinding",
-                            name = "自定义#1",
-                            desc = "设置一个按键切换自定义集。",
+                            name = "Custom #1",
+                            desc = "Set a key to toggle your first custom set.",
                             order = 1,
                         },
 
                         value = {
                             type = "toggle",
-                            name = "启用自定义#1",
-                            desc = "如果勾选，将推荐自定义#1中的技能。",
+                            name = "Show Custom #1",
+                            desc = "If checked, abilities linked to Custom #1 can be recommended.",
                             order = 2,
                         },
 
                         name = {
                             type = "input",
-                            name = "自定义#1名称",
-                            desc = "设置自定义的描述性名称。",
+                            name = "Custom #1 Name",
+                            desc = "Specify a descriptive name for this custom toggle.",
                             order = 3
                         }
                     }
@@ -7534,22 +7564,22 @@ do
                     args = {
                         key = {
                             type = "keybinding",
-                            name = "自定义#2",
-                            desc = "设置一个按键切换第二个自定义集合。",
+                            name = "Custom #2",
+                            desc = "Set a key to toggle your second custom set.",
                             order = 1,
                         },
 
                         value = {
                             type = "toggle",
-                            name = "启用自定义#2",
-                            desc = "如果勾选，将推荐自定义#2中的技能。",
+                            name = "Show Custom #2",
+                            desc = "If checked, abilities linked to Custom #2 can be recommended.",
                             order = 2,
                         },
 
                         name = {
                             type = "input",
-                            name = "自定义#2名称",
-                            desc = "设置自定义的描述性名称。",
+                            name = "Custom #1 Name",
+                            desc = "Specify a descriptive name for this custom toggle.",
                             order = 3
                         }
                     }
@@ -7609,7 +7639,6 @@ end
 do
     -- Generate a spec skeleton.
     local listener = CreateFrame( "Frame" )
-
     Hekili:ProfileFrame( "SkeletonListener", listener )
 
     local indent = ""
@@ -8155,12 +8184,12 @@ do
 
         db.args.errors = {
             type = "group",
-            name = "警告信息",
+            name = "Warnings",
             order = 99,
             args = {
                 errName = {
                     type = "select",
-                    name = "警告标签",
+                    name = "Warning Identifier",
                     width = "full",
                     order = 1,
 
@@ -8182,7 +8211,7 @@ do
 
                 errorInfo = {
                     type = "input",
-                    name = "警告信息",
+                    name = "Warning Information",
                     width = "full",
                     multiline = 10,
                     order = 2,
@@ -8298,7 +8327,7 @@ function Hekili:GenerateProfile()
     local toggles
     for k, v in orderedPairs( self.DB.profile.toggles ) do
         if type( v ) == "table" and rawget( v, "value" ) ~= nil then
-            if toggles then toggles = format( "%s\n    %s = %s %s", toggles, k, tostring( v.value ), ( v.separate and "[separate]" or "" ) )
+            if toggles then toggles = format( "%s\n    %s = %s %s", toggles, k, tostring( v.value ), ( v.separate and "[separate]" or ( k ~= "cooldowns" and v.override and self.DB.profile.toggles.cooldowns.value and "[overridden]" ) or "" ) )
             else toggles = format( "%s = %s", k, tostring( v.value ) ) end
         end
     end
@@ -8376,21 +8405,21 @@ function Hekili:GetOptions()
         args = {
             general = {
                 type = "group",
-                name = "通用",
+                name = "General",
                 order = 10,
                 childGroups = "tab",
                 args = {
                     enabled = {
                         type = "toggle",
-                        name = "启用",
-                        desc = "启用或禁用插件。",
+                        name = "Enabled",
+                        desc = "Enables or disables the addon.",
                         order = 1
                     },
 
                     minimapIcon = {
                         type = "toggle",
-                        name = "隐藏小地图图标",
-                        desc = "如果勾选，小地图旁的图标将被隐藏。",
+                        name = "Hide Minimap Icon",
+                        desc = "If checked, the minimap icon will be hidden.",
                         order = 2,
                     },
 
@@ -8408,8 +8437,8 @@ function Hekili:GetOptions()
                     supporters = {
                         type = "description",
                         name = function ()
-                            return "|cFF00CCFF感谢我们的支持者！|r\n\n" .. ns.Patrons .. ".\n\n" ..
-                                "若提交Bug报告，请访问 |cFFFFD100Issue Reporting|r 页面。\n\n"
+                            return "|cFF00CCFFTHANK YOU TO OUR SUPPORTERS!|r\n\n" .. ns.Patrons .. ".\n\n" ..
+                                "Please see the |cFFFFD100Issue Reporting|r tab for information about reporting bugs.\n\n"
                         end,
                         fontSize = "medium",
                         order = 6,
@@ -8526,14 +8555,14 @@ function Hekili:GetOptions()
 
             abilities = {
                 type = "group",
-                name = "技能",
+                name = "Abilities",
                 order = 80,
                 childGroups = "select",
                 args = {
                     spec = {
                         type = "select",
-                        name = "职业专精",
-                        desc = "这些选项对应你当前选择的职业专精。",
+                        name = "Specialization",
+                        desc = "These options apply to your selected specialization.",
                         order = 0.1,
                         width = "full",
                         set = SetCurrentSpec,
@@ -8548,14 +8577,14 @@ function Hekili:GetOptions()
 
             items = {
                 type = "group",
-                name = "装备和饰品",
+                name = "Gear and Trinkets",
                 order = 81,
                 childGroups = "select",
                 args = {
                     spec = {
                         type = "select",
-                        name = "职业专精",
-                        desc = "这些选项对应你当前选择的职业专精。",
+                        name = "Specialization",
+                        desc = "These options apply to your selected specialization.",
                         order = 0.1,
                         width = "full",
                         set = SetCurrentSpec,
@@ -8570,21 +8599,21 @@ function Hekili:GetOptions()
 
             issues = {
                 type = "group",
-                name = "报告问题",
+                name = "Issue Reporting",
                 order = 85,
                 args = {
                     header = {
                         type = "description",
-                        name = "如果你发现了插件的技术问题，请通过下面的链接提交问题报告。" ..
-                        "提交报告时，需要包含你的职业专精、职业专精、盟约和装备，下方文字可方便地复制和粘贴。" ..
-                        "如果你提交对插件的建议，最好能提供快照（其中将包含以上信息）。",
+                        name = "If you are having a technical issue with the addon, please submit an issue report via the link below.  When submitting your report, please include the information " ..
+                            "below (specialization, talents, traits, gear), which can be copied and pasted for your convenience.  If you have a concern about the addon's recommendations, it is preferred " ..
+                            "that you provide a Snapshot (which will include this information) instead.",
                         order = 10,
                         fontSize = "medium",
                         width = "full",
                     },
                     profile = {
                         type = "input",
-                        name = "角色信息数据",
+                        name = "Character Data",
                         order = 20,
                         width = "full",
                         multiline = 10,
@@ -8593,7 +8622,7 @@ function Hekili:GetOptions()
                     },
                     link = {
                         type = "input",
-                        name = "链接",
+                        name = "Link",
                         order = 30,
                         width = "full",
                         get = function() return "http://github.com/Hekili/hekili/issues" end,
@@ -8605,30 +8634,30 @@ function Hekili:GetOptions()
 
             snapshots = {
                 type = "group",
-                name = "快照",
+                name = "Snapshots",
                 order = 86,
                 args = {
                     autoSnapshot = {
                         type = "toggle",
-                        name = "自动快照",
-                        desc = "如果勾选，插件将在推荐技能失败时自动创建快照。\n\n" ..
-                        "自动快照每次战斗只能创建一次。",
+                        name = "Auto Snapshot",
+                        desc = "If checked, the addon will automatically create a snapshot whenever it failed to generate a recommendation.\n\n" ..
+                            "This automatic snapshot can only occur once per episode of combat.",
                         order = 1,
                         width = "full",
                     },
 
                     screenshot = {
                         type = "toggle",
-                        name = "屏幕截图",
-                        desc = "如果勾选，当你手动创建快照时，也将创建一张屏幕截图。\n\n" ..
-                        "将这两个文件与问题报告一起提交，对为修正问题提供有用的信息。",
+                        name = "Take Screenshot",
+                        desc = "If checked, the addon will take a screenshot when you manually create a snapshot.\n\n" ..
+                            "Submitting both with your issue tickets will provide useful information for investigation purposes.",
                         order = 2,
                         width = "full",
                     },
 
                     prefHeader = {
                         type = "header",
-                        name = "快照/疑难解答",
+                        name = "Snapshots / Troubleshooting",
                         order = 2.5,
                         width = "full"
                     },
@@ -8636,13 +8665,13 @@ function Hekili:GetOptions()
                     header = {
                         type = "description",
                         name = function()
-                            return "快照是插件对一组技能进行推荐的决策过程的日志。如果你对插件的推荐技能有疑问，可通过查看快照确认推荐给你的具体原因。" ..
-                            "\n\n" ..                            
-                            "快照只会捕获特定时间点的信息，因此你必须在看到推荐技能时创建快照。" ..
-                            "你可以通过使用|cffffd100创建快照|r快捷键（|cffffd100" .. ( Hekili.DB.profile.toggles.snapshot.key or "尚未绑定" ) .. "|r）快速创建快照。\n\n" ..
-                            "你还可以使用|cffffd100暂停|r快捷键（|cffffd100" .. ( Hekili.DB.profile.toggles.pause.key or "尚未绑定" ) .. "|r）冻结插件当前的推荐技能。" ..
-                            "暂停后你可以鼠标悬停在显示框上，查看这些推荐技能的条件。再次按下暂停可以让插件继续运行。\n\n" ..
-                            "最后，使用本页顶部的设置，你可以让插件在没有正确推荐技能时自动生成快照。\n"
+                            return "Snapshots are logs of the addon's decision-making process for a set of recommendations.  If you have questions about -- or disagree with -- the addon's recommendations, " ..
+                            "reviewing a snapshot can help identify what factors led to the specific recommendations that you saw.\n\n" ..                            
+                            "Snapshots only capture a specific point in time, so snapshots have to be taken at the time you saw the specific recommendations that you are concerned about.  You can generate " ..
+                            "snapshots by using the |cffffd100Snapshot|r binding ( |cffffd100" .. ( Hekili.DB.profile.toggles.snapshot.key or "NOT BOUND" ) .. "|r ) from the Toggles section.\n\n" ..
+                            "You can also freeze the addon's recommendations using the |cffffd100Pause|r binding ( |cffffd100" .. ( Hekili.DB.profile.toggles.pause.key or "NOT BOUND" ) .. "|r ).  Doing so will freeze the addon's recommendations, allowing you to mouseover the display " ..
+                            "and see which conditions were met to display those recommendations.  Press Pause again to unfreeze the addon.\n\n" ..
+                            "Finally, using the settings at the bottom of this panel, you can ask the addon to automatically generate a snapshot for you when no recommendations were able to be made.\n"
                         end,
                         fontSize = "medium",
                         order = 10,
@@ -8651,8 +8680,8 @@ function Hekili:GetOptions()
 
                     Display = {
                         type = "select",
-                        name = "显示快照",
-                        desc = "选择想要显示的快照（如果有创建的快照）。",
+                        name = "Display",
+                        desc = "Select the display to show (if any snapshots have been taken).",
                         order = 11,
                         values = function( info )
                             local displays = snapshots.displays
@@ -8675,7 +8704,7 @@ function Hekili:GetOptions()
                     SnapID = {
                         type = "select",
                         name = "#",
-                        desc = "选择某个想要查看的快照编号。",
+                        desc = "Select which snapshot to show for the selected display.",
                         order = 12,
                         values = function( info )
                             for k, v in pairs( ns.snapshots ) do
@@ -8699,14 +8728,14 @@ function Hekili:GetOptions()
                     
                     Snapshot = {
                         type = 'input',
-                        name = "屏幕截图",
-                        desc = "复制此文本后粘贴到文本编辑器或剪贴板中进行查看。",
+                        name = "Snapshot",
+                        desc = "Copy this text and paste into a text editor or into Pastebin to review.",
                         order = 13,
                         get = function( info )
                             local display = snapshots.display
                             local snap = display and snapshots.snap[ display ]
 
-                            return snap and ( "点击后依次按CTRL+A和CTRL+C，复制截图地址。\n\n" .. ns.snapshots[ display ][ snap ] )
+                            return snap and ( "Click here and press CTRL+A, CTRL+C to copy the snapshot.\n\n" .. ns.snapshots[ display ][ snap ] )
                         end,
                         set = function() end,
                         width = "full"
@@ -9017,12 +9046,12 @@ function Hekili:SetOption( info, input, ... )
                 if profile['Mode Status'] == 1 or profile['Mode Status'] == 2 then
                     -- Check that the current mode is supported.
                     profile['Mode Status'] = 0
-                    self:Print("快捷键已更新；恢复到单目标。")
+                    self:Print("Switch type updated; reverting to single-target.")
                 end
             elseif input == 1 then
                 if profile['Mode Status'] == 1 or profile['Mode Status'] == 3 then
                     profile['Mode Status'] = 0
-                    self:Print("快捷键已更新；恢复到单目标。")
+                    self:Print("Switch type updated; reverting to single-target.")
                 end
             end
 
@@ -9055,7 +9084,7 @@ function Hekili:SetOption( info, input, ... )
                 local import = ns.deserializeActionList( input )
 
                 if not import or type( import ) == 'string' then
-                    Hekili:Print("无法从当前输入的字符串导入。")
+                    Hekili:Print("Unable to import from given input string.")
                     return
                 end
 
@@ -9104,7 +9133,7 @@ function Hekili:SetOption( info, input, ... )
                     local import = ns.deserializeActionList( input )
 
                     if not import or type( import ) == 'string' then
-                        Hekili:Print("无法从当前的导入字符串导入。")
+                        Hekili:Print("Unable to import from given import string.")
                         return
                     end
 
@@ -9120,14 +9149,14 @@ function Hekili:SetOption( info, input, ... )
                     local import, warnings = self:ImportSimulationCraftActionList( input )
 
                     if warnings then
-                        Hekili:Print( "|cFFFF0000警告：|r\n在导入技能列表时发生以下问题。" )
+                        Hekili:Print( "|cFFFF0000WARNING:|r\nThe following issues were noted during actionlist import." )
                         for i = 1, #warnings do
                             Hekili:Print( warnings[i] )
                         end
                     end
 
                     if not import then
-                        Hekili:Print( "未成功导入任何指令。" )
+                        Hekili:Print( "No actions were successfully imported." )
                         return
                     end
 
@@ -9262,8 +9291,8 @@ do
 
             elseif input:trim() == 'skeleton' then
                 self:StartListeningForSkeleton()
-                self:Print( "插件现在将开始采职业专精信息。选择所有职业专精并使用所有技能以获得最佳效果。" )
-                self:Print( "更多的详细信息，请参见骨骼页面。")
+                self:Print( "Addon will now gather specialization information.  Select all talents and use all abilities for best results." )
+                self:Print( "See the Skeleton tab for more information. ")
                 Hekili.Skeleton = ""
             end
 
@@ -9284,7 +9313,7 @@ do
             self:RestoreDefaults()
             -- ns.convertDisplays()
             self:BuildUI()
-            self:Print("已恢复默认的显示框和技能列表。")
+            self:Print("Default displays and action lists restored.")
             return
         
         end
@@ -9509,12 +9538,12 @@ do
                 -- This also prepares the priorities table with relevant priority names.
 
                 if n < 2 then
-                    Hekili:Print( "要使用此功能，你的职业专精下必须具有多个优先级配置。" )
+                    Hekili:Print( "You must have multiple priorities for your specialization to use this feature." )
                     return
                 end
 
                 if not args[2] then
-                    local output = "你必须提供优先级配置的名称（区分大小写）。\n有效选项是"
+                    local output = "You must provide the priority name (case sensitive).\nValid options are"
                     for i, priority in ipairs( priorities ) do
                         output = output .. format( " %s%s|r%s", Hekili.DB.profile.packs[ priority ].builtIn and BlizzBlue or "|cFFFFD100", priority, i == #priorities and "." or "," )
                     end
@@ -9536,7 +9565,7 @@ do
                     end
                 end
 
-                local output = format( "未找到匹配的优先级配置'%s'。\n有效选项是", raw )
+                local output = format( "No match found for priority '%s'.\nValid options are", raw )
 
                 for i, priority in ipairs( priorities ) do
                     output = output .. format( " %s%s|r%s", Hekili.DB.profile.packs[ priority ].builtIn and BlizzBlue or "|cFFFFD100", priority, i == #priorities and "." or "," )
@@ -9562,16 +9591,16 @@ do
                 self.DB.profile.enabled = enable
     
                 if enable then
-                    Hekili:Print( "插件|cFFFFD100已启用|r。" )
+                    Hekili:Print( "Addon |cFFFFD100ENABLED|r." )
                     self:Enable()
                 else
-                    Hekili:Print( "插件|cFFFFD100已禁用|r。" )
+                    Hekili:Print( "Addon |cFFFFD100DISABLED|r." )
                     self:Disable()
                 end
 
             elseif ( "move" ):match( "^" .. args[1] ) or ( "unlock" ):match( "^" .. args[1] ) then
                 if InCombatLockdown() then
-                    Hekili:Print( "在战斗中无法激活移动功能。" )
+                    Hekili:Print( "Movers cannot be activated while in combat." )
                     return
                 end
 
@@ -9584,7 +9613,7 @@ do
                 if Hekili.Config then
                     ns.StopConfiguration()
                 else
-                    Hekili:Print( "显示框未解锁。请使用|cFFFFD100/hek move|r或者|cFFFFD100/hek unlock|r指令允许拖动。" )
+                    Hekili:Print( "Displays are not unlocked.  Use |cFFFFD100/hek move|r or |cFFFFD100/hek unlock|r to allow click-and-drag." )
                 end
             end
         else
@@ -9784,7 +9813,7 @@ function Hekili:DeserializeActionPack( str )
     local serial = StringToTable( str, true )
 
     if not serial or type( serial ) == "string" or serial.type ~= "package" then
-        return serial or "无法从提供的字符串还原优先级配置。"
+        return serial or "Unable to restore Priority from the provided string."
     end
 
     serial.payload.builtIn = false
@@ -9806,13 +9835,13 @@ function Hekili:SerializeStyle( ... )
         local dispName = select( i, ... )
         local display = rawget( self.DB.profile.displays, dispName )
 
-        if not display then return "尝试序列化无效的显示框（" .. dispName .. "）" end
+        if not display then return "Attempted to serialize an invalid display (" .. dispName .. ")" end
 
         serial.payload[ dispName ] = tableCopy( display )
         hasPayload = true
     end
 
-    if not hasPayload then return "没有选中用于导出的显示框。" end
+    if not hasPayload then return "No displays selected to export." end
     return TableToString( serial, true )
 end
 
@@ -10490,7 +10519,7 @@ do
         end
 
         if n > 0 then
-            table.insert( warnings, "以下效果已在技能列表中使用，但无法在插件数据库中找到：" )
+            table.insert( warnings, "The following auras were used in the action list but were not found in the addon database:" )
             for k in orderedPairs( missing ) do
                 table.insert( warnings, " - " .. k )
             end
@@ -10511,33 +10540,26 @@ function Hekili:TogglePause( ... )
 
     if not self.Pause then
         self.ActiveDebug = true
-
-        for i, display in pairs( ns.UI.Displays ) do
-            if self:IsDisplayActive( i ) and display.alpha > 0 then
-                self:ProcessHooks( i )
-            end
-        end
-
+        Hekili.Update()
+        self.ActiveDebug = false
         self.Pause = true
         
-        if self:SaveDebugSnapshot() then
+        --[[ if self:SaveDebugSnapshot() then
             if not warnOnce then
-                self:Print( "快照已保存；快照可通过/hekili查看（直到重载UI）。" )
+                self:Print( "Snapshot saved; snapshots are viewable via /hekili (until you reload your UI)." )
                 warnOnce = true
             else
-                self:Print( "快照已保存。" )
+                self:Print( "Snapshot saved." )
             end
-        end
+        end ]]
         
-        self.ActiveDebug = false
     else
         self.Pause = false
+        self.ActiveDebug = false
 
         -- Discard the active update thread so we'll definitely start fresh at next update.
-        local primary = ns.UI.Displays[ "Primary" ]
-
-        if primary and primary.activeThread then
-            primary.activeThread = nil
+        if HekiliDisplayPrimary and HekiliDisplayPrimary.activeThread then
+            HekiliDisplayPrimary.activeThread = nil
         end
     end
 
@@ -10551,8 +10573,8 @@ function Hekili:TogglePause( ... )
         end
     end
 
-    self:Print( ( not self.Pause and "取消" or "" ) .. "暂停。" )
-    self:Notify( ( not self.Pause and "取消" or "" ) .. "暂停。" )
+    self:Print( ( not self.Pause and "UN" or "" ) .. "PAUSED." )
+    self:Notify( ( not self.Pause and "UN" or "" ) .. "PAUSED" )
 
 end
 
@@ -10564,22 +10586,10 @@ function Hekili:MakeSnapshot( dispName, isAuto )
     end
 
     self.ActiveDebug = true
-    local success = false
-
-    for i, display in pairs( ns.UI.Displays ) do
-        if self:IsDisplayActive( i ) and display.alpha > 0 and ( dispName == nil or display.id == dispName ) then
-            self:ProcessHooks( i )
-            self:SaveDebugSnapshot( i )
-            success = true
-        end
-    end
-
+    Hekili.Update()
     self.ActiveDebug = false
 
-    if success then
-        self:Print( "快照已保存。" )
-        self:Print( "快照已保存；快照可通过/hekili查看（直到重载UI）。" )
-    end
+    HekiliDisplayPrimary.activeThread = nil
 end
 
 
@@ -10602,16 +10612,16 @@ do
     }
 
     local modeIndex = {
-        automatic = { 1, "自动" },
-        single = { 2, "单目标" },
-        aoe = { 3, "AOE（多目标）" },
-        dual = { 4, "固定式双显" },
-        reactive = { 5, "响应式双显" },
+        automatic = { 1, "Automatic" },
+        single = { 2, "Single-Target" },
+        aoe = { 3, "AOE (Multi-Target)" },
+        dual = { 4, "Fixed Dual" },
+        reactive = { 5, "Reactive Dual" },
     }
 
     local toggles = setmetatable( {
-        custom1 = "自定义#1",
-        custom2 = "自定义#2",
+        custom1 = "Custom #1",
+        custom2 = "Custom #2",
     }, {
         __index = function( t, k )
             if k == "essences" then k = "covenants" end
@@ -10627,16 +10637,16 @@ do
         mode = lower( mode:trim() )
         
         if not modeIndex[ mode ] then
-            Hekili:Print( "切换模式失败：'%s'不是有效的显示模式。\n请尝试使用|cFFFFD100自动|r，|cFFFFD100单目标|r，|cFFFFD100AOE|r，|cFFFFD100双显|r，或者|cFFFFD100响应|r模式。" )
+            Hekili:Print( "SetMode failed:  '%s' is not a valid mode.\nTry |cFFFFD100automatic|r, |cFFFFD100single|r, |cFFFFD100aoe|r, |cFFFFD100dual|r, or |cFFFFD100reactive|r." )
             return
         end
 
         self.DB.profile.toggles.mode.value = mode
 
         if self.DB.profile.notifications.enabled then
-            self:Notify( "切换显示模式为：" .. modeIndex[ mode ][2] )
+            self:Notify( "Mode: " .. modeIndex[ mode ][2] )
         else
-            self:Print( modeIndex[ mode ][2] .. "模式已激活。" )
+            self:Print( modeIndex[ mode ][2] .. " mode activated." )
         end        
     end
 
@@ -10667,9 +10677,9 @@ do
             end
 
             if self.DB.profile.notifications.enabled then
-                self:Notify( "切换显示模式为：" .. modeIndex[ toggle.value ][2] )
+                self:Notify( "Mode: " .. modeIndex[ toggle.value ][2] )
             else
-                self:Print( modeIndex[ toggle.value ][2] .. "模式已激活。" )
+                self:Print( modeIndex[ toggle.value ][2] .. " mode activated." )
             end
 
         elseif name == 'pause' then
@@ -10686,9 +10696,9 @@ do
             if toggle.name then toggles[ name ] = toggle.name end
 
             if self.DB.profile.notifications.enabled then
-                self:Notify( toggles[ name ] .. ": " .. ( toggle.value and "打开" or "关闭" ) )
+                self:Notify( toggles[ name ] .. ": " .. ( toggle.value and "ON" or "OFF" ) )
             else
-                self:Print( toggles[ name ].. ( toggle.value and " |cFF00FF00启用|r。" or " |cFFFF0000禁用|r。" ) )
+                self:Print( toggles[ name ].. ( toggle.value and " |cFF00FF00ENABLED|r." or " |cFFFF0000DISABLED|r." ) )
             end
         end
 

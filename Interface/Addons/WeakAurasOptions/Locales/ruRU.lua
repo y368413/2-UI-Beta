@@ -165,6 +165,10 @@ Off Screen]=] ] = [=[Индикация за
 	L["Can be a Name or a Unit ID (e.g. party1). A name only works on friendly players in your group."] = "Введите имя или идентификатор единицы (Unit ID). Имена работают только для игроков, находящихся в вашей группе."
 	L["Can be a UID (e.g., party1)."] = [=[Введите идентификатор единицы (UID, Unit ID).
 Например: party4, raid7, arena3, boss2, nameplate6, target, focus, pet и др.]=]
+	--[[Translation missing --]]
+	L["Can set to 0 if Columns * Width equal File Width"] = "Can set to 0 if Columns * Width equal File Width"
+	--[[Translation missing --]]
+	L["Can set to 0 if Rows * Height equal File Height"] = "Can set to 0 if Rows * Height equal File Height"
 	L["Cancel"] = "Отмена"
 	L["Cast by Player Character"] = "Применён игроком"
 	L["Cast by Players"] = "Применён игроком"
@@ -215,12 +219,10 @@ Off Screen]=] ] = [=[Индикация за
 	L["Crop Y"] = "Обрезать по Y"
 	L["Custom"] = "Самостоятельно"
 	L["Custom Anchor"] = "Свое крепление"
-	L["Custom Background"] = "Свой задний план"
 	L["Custom Check"] = "Свое условие"
 	L["Custom Code"] = "Свой код"
 	L["Custom Color"] = "Цвет"
 	L["Custom Configuration"] = "Настройки пользователя"
-	L["Custom Foreground"] = "Свой передний план"
 	L["Custom Frames"] = "Свои кадры"
 	L["Custom Function"] = "Своя функция"
 	L["Custom Grow"] = "Свой способ заполнения"
@@ -339,6 +341,10 @@ UNIT_POWER  UNIT_AURA, PLAYER_TARGET_CHANGED]=]
 	L["Fallback Icon"] = "Резервная иконка"
 	L["False"] = "Ложь"
 	L["Fetch Affected/Unaffected Names"] = "Извлечь имена задействованных и незадействованных игроков"
+	--[[Translation missing --]]
+	L["File Height"] = "File Height"
+	--[[Translation missing --]]
+	L["File Width"] = "File Width"
 	L["Filter by Arena Spec"] = "Фильтр по специализации"
 	L["Filter by Class"] = "Фильтр по классу"
 	L["Filter by Group Role"] = "Фильтр по роли"
@@ -363,9 +369,13 @@ Supports multiple entries, separated by commas
 	L["Found a Bug?"] = "Нашли ошибку?"
 	L["Frame"] = "Кадр"
 	L["Frame Count"] = "Количество кадров"
+	--[[Translation missing --]]
+	L["Frame Height"] = "Frame Height"
 	L["Frame Rate"] = "Частота смены кадров"
 	L["Frame Selector"] = "Выбор кадра"
 	L["Frame Strata"] = "Слой кадра"
+	--[[Translation missing --]]
+	L["Frame Width"] = "Frame Width"
 	L["Frequency"] = "Частота"
 	L["From Template"] = "Из шаблона"
 	L["Full Circle"] = "Полный круг"
@@ -420,6 +430,8 @@ Supports multiple entries, separated by commas
 	L["Height"] = "Высота"
 	L["Help"] = "Справка"
 	L["Hide"] = "Скрыть"
+	--[[Translation missing --]]
+	L["Hide Background"] = "Hide Background"
 	L["Hide Glows applied by this aura"] = "Скрыть свечения, применённые этой индикацией"
 	L["Hide on"] = "Скрыть на"
 	L["Hide this group's children"] = "Скрыть индикации этой группы"
@@ -531,6 +543,8 @@ Supports multiple entries, separated by commas
 	L["Multiselect single tooltip"] = [=[
 |cFF777777Ничего|r - |cFF00FF00Одно|r - |cFF777777Несколько|r
 Можно выбрать только одно соответствующее значение]=]
+	--[[Translation missing --]]
+	L["Must be a power of 2"] = "Must be a power of 2"
 	L["Name Info"] = "Информация о названии"
 	L["Name Pattern Match"] = "Совпадение названия с образцом"
 	L["Name(s)"] = "Название"
@@ -638,9 +652,13 @@ Supports multiple entries, separated by commas
 	L["Row Width"] = "Ширина строки"
 	L["Rows"] = "Строки"
 	L["Same"] = "Похожие"
+	--[[Translation missing --]]
+	L["Same texture as Foreground"] = "Same texture as Foreground"
 	L["Scale"] = "Масштаб"
 	L["Search"] = "Поиск"
 	L["Select the auras you always want to be listed first"] = "Выберите индикации для гибридной позиции"
+	--[[Translation missing --]]
+	L["Selected Frame"] = "Selected Frame"
 	L["Send To"] = "Отправить"
 	L["Separator Text"] = "Текст разделителя"
 	L["Separator text"] = "Текст разделителя"

@@ -1190,7 +1190,7 @@ L["wrigglemortis_note"] = "拉动 {npc:164179} 刷新稀有。"
 L["night_mare_note"] = [[
 前往塞兹仙林，并沿着西北悬崖的树根路前往破损的车。在那可以在地面上拾取 {item:181243}。
 
-把此物品带给位于闪瀑盆地的 {npc:165704}。用10个 {item:173204} 和她交换一个 {item:181242}。|cFFFF8C00如果她不在这里，你必须完成|cFFFFFD00戈姆蛴围栏的麻烦|r和|cFFFFFD00捣蛋的林鬼|r任务线。|r
+把此物品带给位于闪瀑盆地的 {npc:165704}。用10个 {item:173204} 和她交换一个 {item:181242}。|cFFFF8C00如果她不在这里，你必须完成 |cFFFFFD00戈姆蛴围栏的麻烦|r 和 |cFFFFFD00捣蛋的林鬼|r 任务线。|r
 
 接下来，和森林之心的 {npc:160262} 交谈兑换 {item:181242} 为 {item:178675}。如果你不是法夜的话，与守卫交谈让她出来。使用此物品得到 {spell:327083} 增益，可以让你看见 {npc:168135}。
 ]]
@@ -1392,27 +1392,27 @@ L["consumption_note"] = [[
 
 |cFFFF0000*{npc:179758} 在此稀有战斗中将不会刷新并被吞噬。*|r
 ]]
-L["darkmaul_note"] = "从入侵的渊菇收集 {item:187153} 并喂食给 {npc:180063}。你必须完成事件10次获得坐骑。"
-L["dislodged_nest_note"] = "点击附近的剧毒之蛾获得 {spell:355181}。使用 {spell:355131} 额外动作按钮给 {npc:178547} 来获得控制和骑上它进入巢所在的树中。"
-L["escaped_wilderling_note"] = "点击 {npc:180014} 开始驯服事件。"
-L["flayedwing_transporter_note"] = "点击 {npc:178633} 飞向和飞离绝密宝库。"
-L["fleshwing_note"] = "和 {npc:180079} 交谈开始收集事件。"
-L["forgotten_feather_note"] = "从守护者的休憩跳下来到漂浮的一个小岛上。"
-L["konthrogz_note"] = "在吞噬者的传送门事件中出现。事件可能在刻希亚许多地方出现。"
-L["korthia_limited_rare"] = "|cFFFF8C00此稀有某些天不可用。|r"
-L["krelva_note"] = "80% 血量会移动到其它平台，60% 血量会移动到主陆地。|cFFFF8C00你必须击杀稀有 60% 血量才能获得奖励！|r"
-L["kroke_note"] = "击杀区域内 {npc:179029} 直到他出现。{npc:179029} 不在的天内不会刷新。"
-L["maelie_wanderer"] = "{npc:179912} 将在当天固定位置出现。使用 {spell:355862} 他，需要6天交互，然后回到 {npc:179930} 获得坐骑。"
-L["malbog_note"] = "和 {npc:179729} 交谈获得 {spell:355078} 并跟随脚印直到你找到血肉遗骸。"
-L["offering_box_note"] = "需要 {item:187033}，可以在附近废墟的西侧墙顶部找到。"
-L["pop_quiz_note"] = "突击测验事件将在地图上随机出现。点击废弃的帷幕之杖并回答 {npc:180162} 的问题。"
-L["razorwing_note"] = "交付区域内吞噬者掉落的10个 {item:187054}。"
-L["reliwik_note"] = "点击纯净的的刀翼兽之卵并击杀它。"
-L["spectral_bound_chest"] = "点击附近的3个幽魂钥匙解锁宝箱。"
-L["spectral_bound_note"] = "幽魂束缚宝箱"
-L["stonecrusher_note"] = "和 {npc:179974} 交谈开始事件。"
-L["towering_exterminator_note"] = "在渊誓传送门事件出现。事件可能在刻希亚许多地方出现。"
-L["worldcracker_note"] = "和 {npc:180028} 交谈触发护送事件。"
+L['darkmaul_note'] = '从入侵的渊菇收集 {item:187153} 并喂食给 {npc:180063}。你必须完成事件10次获得坐骑。'
+L['dislodged_nest_note'] = '点击附近的剧毒之蛾获得 {spell:355181}。给 {npc:178547} 使用额外动作按钮 {spell:355131} 获得控制并骑上它让其撞击巢穴所在的树干。'
+L['escaped_wilderling_note'] = '点击 {npc:180014} 开始驯服事件。'
+L['flayedwing_transporter_note'] = '点击 {npc:178633} 飞向和飞离绝密宝库。'
+L['fleshwing_note'] = '和 {npc:180079} 交谈开始收集事件。'
+L['forgotten_feather_note'] = '从守护者的休憩跳下来到漂浮的一个小岛上。'
+L['konthrogz_note'] = '在吞噬者的传送门事件中出现。事件可能在刻希亚许多地方出现。'
+L['korthia_limited_rare'] = '|cFFFF8C00此稀有某些天不可用。|r'
+L['krelva_note'] = '80% 血量会移动到其它平台，60% 血量会移动到主陆地。|cFFFF8C00你必须击杀稀有 60% 血量才能获得奖励！|r'
+L['kroke_note'] = '击杀区域内 {npc:179029} 直到他出现。{npc:179029} 不在的天内不会刷新。'
+L['maelie_wanderer'] = '{npc:179912} 将在当天固定位置出现。使用 {spell:355862} 他，需要6天交互，然后回到 {npc:179930} 获得坐骑。'
+L['malbog_note'] = '和 {npc:179729} 交谈获得 {spell:355078} 并跟随脚印直到你找到血肉遗骸。'
+L['offering_box_note'] = '需要 {item:187033}，可以在附近废墟的西侧墙顶部找到。'
+L['pop_quiz_note'] = '突击测验事件将在地图上随机出现。点击废弃的帷幕之杖并回答 {npc:180162} 的问题。'
+L['razorwing_note'] = '交付区域内吞噬者掉落的10个 {item:187054}。'
+L['reliwik_note'] = '点击纯净的的刀翼兽之卵并击杀它。'
+L['spectral_bound_chest'] = '点击附近的3个幽魂钥匙解锁宝箱。'
+L['spectral_bound_note'] = '幽魂束缚宝箱'
+L['stonecrusher_note'] = '和 {npc:179974} 交谈开始事件。'
+L['towering_exterminator_note'] = '在渊誓传送门事件出现。事件可能在刻希亚许多地方出现。'
+L['worldcracker_note'] = '和 {npc:180028} 交谈触发护送事件。'
 
 L["archivist_key_note"] = "从 {npc:178257} 购买 %s 解锁。"
 L["korthian_shrine_note"] = "点击神龛获得 {spell:352367} 可以看到隐藏的路径到达祭坛。"
@@ -1453,14 +1453,14 @@ L["mawsworn_cache_note"] = "这3个独立宝箱每个都可以出现在特定位
 L["pile_of_bones"] = "骨堆"
 L["relic_cache"] = "圣物宝箱"
 L["shardhide_stash"] = "碎皮贮藏"
-L["korthia_shared_chest_note"] = "你可以每天收集5个宝箱收集圣物，额外的宝箱可能包含传奇水晶和装备绑定装备代币。"
+L['korthia_shared_chest_note'] = '可以拾取5次获得圣物。进度每30分钟重置，使它们有效地不受限制。'
 L["unusual_nest"] = "异常材料之巢"
 L["unusual_nest_note"] = "全部5个巢每天都可以拾取。"
 
 L["options_icons_invasive_mawshroom_desc"] = "显示入侵的渊菇的位置。"
 L["options_icons_invasive_mawshroom"] = "入侵的渊菇"
-L["options_icons_korthia_dailies_desc"] = "显示未标记日常宝箱的位置。"
-L["options_icons_korthia_dailies"] = "隐藏宝箱"
+L['options_icons_korthia_dailies_desc'] = '显示未标记圣物宝箱的位置。'
+L['options_icons_korthia_dailies'] = '圣物宝箱'
 L["options_icons_mawsworn_cache_desc"] = "显示渊誓之箱的位置。"
 L["options_icons_mawsworn_cache"] = "渊誓之箱"
 L["options_icons_nest_materials_desc"] = "显示异常材料之巢的位置。"
@@ -1561,7 +1561,7 @@ L["rotgut_note"] = "腐肠、残躯、更多碎块。来战吧。"
 L["amalgamation_of_filth_note"] = "当世界任务 {wq:脏活累活：爆破计划} 可做时点击一个垃圾箱并使用 {spell:324115} 进入水里。"
 L["amalgamation_of_light_note"] = "移动全部三个镜子陷阱释放稀有。"
 L["amalgamation_of_sin_note"] = "在世界任务 {wq:唤起罪业} 期间，拾取能量催化剂有机会获得 {item:180376} 并使用它召唤稀有。"
-L["bog_beast_note"] = "世界任务 {wq:又脏又乱} 期间有机率刷新后给 {npc:166206} 使用 {item:177880}。"
+L["bog_beast_note"] = "世界任务 {wq:又脏又乱} 期间有几率刷新后给 {npc:166206} 使用 {item:177880}。"
 L["endlurker_note"] = "在微光裂隙顶上点击 {npc:165229} 尸体附近的心能之桩并使用 {spell:321826}。"
 L["executioner_aatron_note"] = "击杀三个附近的 {npc:166715} 移除 {spell:324872}。"
 L["executioner_adrastia_note"] = "解救周围地区 {npc:161299} 并保护他们直到消失。{npc:161310} 将最后出现并压制反叛。"
@@ -1633,6 +1633,7 @@ L["broken_mirror"] = "残破的镜子"
 L["broken_mirror_note"] = "每天将会激活一组3个残破的镜子。使用一个 {item:181363} 修复每个镜子并打开其中的 |cFFFFFD00被遗忘的宝箱|r。"
 L["broken_mirror_crypt"] = "墓穴内。"
 L["broken_mirror_elite"] = "有精英怪的小房间内。"
+L['broken_mirror_group'] = '组'
 L["broken_mirror_house"] = "房屋内。"
 L["broken_mirror_61818"] = "有 {npc:173699} 的小房间内。"
 L["broken_mirror_61819"] = "小房间内的一层。"
@@ -1652,7 +1653,6 @@ L["dekaris_note"] = "在一块凸起的大岩石上。"
 L["deomen_note"] = "进入密室南边的房间并激活锁控制以接近他。"
 L["drifting_sorrow_note"] = "在悬浮宝珠附近击杀 {npc:175246} 激活首领。"
 L["ekphoras_note"] = "和3名其他玩家，站在平台的角落并施放 {spell:330650} 召唤稀有。"
-L["etherwyrm_label"] = "注能的以太浮蛇囚笼"
 L["etherwyrm_note"] = "需要法夜突袭激活。击杀位于裂隙的 {npc:179030} 获得 {item:186190}。在荒芜洞窟洞穴（裂隙以外）（当突袭未激活时在 {npc:175821} 处）的以太浮蛇囚笼使用钥匙。"
 L["fallen_charger_note"] = "在区域范围内的大喊之后，它会选择两条路径中的任何一条，直到它到达刻希亚并在那里消失。"
 L["ikras_note"] = "在破灭堡飞来飞去。这里是攻击他的好位置。"
@@ -1682,12 +1682,9 @@ L["exos_note"] = [[
 组合全部三个铭刻制造 {item:182329}，可以用来在统御祭坛召唤稀有。使用 {npc:173892} 到达上层。
 ]]
 
-L["soul_well_note"] = "接住从灵魂之井喷发而出的冥殇。"
-L["obliterated_soul_shards_note"] = "在桥上收集 {item:177834}。"
-
-L["animaflow_teleporter_note"] = "激活即可直接前往噬渊其他位置。"
-L["chaotic_riftstone_note"] = "激活 {spell:344157} 快速穿过噬渊。"
-L["venari_note"] = [[
+L['animaflow_teleporter_note'] = '激活即可直接前往噬渊其他位置。'
+L['chaotic_riftstone_note'] = '激活 {spell:344157} 快速穿过噬渊。'
+L['venari_note'] = [[
 使用 {currency:1767} 购买噬渊和托加斯特升级。
 
 |cFFFF8C00帐号通用托加斯特升级在小号上显示不完整！|r
@@ -1773,20 +1770,16 @@ L["rift_hidden_cache"] = "隙隐宝箱"
 L["options_icons_rift_hidden_cache"] = "隙隐宝箱"
 L["options_icons_rift_hidden_cache_desc"] = "显示 |cFFFFFF00裂隙|r 内隙隐宝箱的位置。"
 
-L["options_icons_bonus_boss"] = "奖励精英"
-L["options_icons_bonus_boss_desc"] = "显示奖励精英位置。"
-L["options_icons_bonus_event"] = "奖励事件"
-L["options_icons_bonus_event_desc"] = "显示奖励事件位置。"
-L["options_icons_riftstone"] = "{npc:174962}"
-L["options_icons_riftstone_desc"] = "显示混乱裂隙石传送者位置。"
-L["options_icons_grapples"] = "{npc:176308}"
-L["options_icons_grapples_desc"] = "显示 {item:184653} 升级 {npc:176308} 的位置。"
-L["options_icons_maw_lore"] = "噬渊学识"
-L["options_icons_maw_lore_desc"] = "显示 {achievement:14761} 成就中噬渊学识的位置。"
-L["options_icons_stygia_nexus"] = "冥殇枢纽"
-L["options_icons_stygia_nexus_desc"] = "显示 {item:184168} 坐骑所需的枢纽位置。"
-L["options_icons_stygian_caches"] = "冥殇宝箱"
-L["options_icons_stygian_caches_desc"] = "显示获取额外冥殇的宝箱位置。"
+L['options_icons_bonus_boss'] = '奖励精英'
+L['options_icons_bonus_boss_desc'] = '显示奖励精英位置。'
+L['options_icons_riftstone'] = '{npc:174962}'
+L['options_icons_riftstone_desc'] = '显示混乱裂隙石传送者位置。'
+L['options_icons_grapples'] = '{npc:176308}'
+L['options_icons_grapples_desc'] = '显示 {item:184653} 升级 {npc:176308} 的位置。'
+L['options_icons_stygia_nexus'] = '冥殇枢纽'
+L['options_icons_stygia_nexus_desc'] = '显示 {item:184168} 坐骑所需的枢纽位置。'
+L['options_icons_stygian_caches'] = '冥殇宝箱'
+L['options_icons_stygian_caches_desc'] = '显示获取额外冥殇的宝箱位置。'
 
 L["cov_assault_only"] = "只在%s突袭期间可用。"
 
@@ -1824,6 +1817,143 @@ L["tormentors_note"] = [[
 
 {item:185972} 每周只可以拾取一次，其中包含50个 {currency:1906}。
 ]]
+
+-------------------------------------------------------------------------------
+-------------------------------- ZERETH MORTIS --------------------------------
+-------------------------------------------------------------------------------
+
+L['corrupted_architect_note'] = '攻击 {npc:183958} 和 {npc:183961} 激活稀有。'
+L['dune_dominance_note'] = '{achievement:15392} 成就中全部3个稀有精英在此位置刷新。'
+L['feasting_note'] = '有时会在返回该地点之前巡逻该区域。'
+L['furidian_note'] = '激活区域内三个 |cFFFFFD00强化钥匙|r，然后解锁 |cFFFFFD00可疑之怒宝箱|r。'
+L['garudeon_note'] = '从周围地区收集 {npc:183562} 并使用 {spell:362655} 喂食给 {npc:183554}。三个吃饱后，{npc:180924} 将激活。'
+L['gluttonous_overgrowth_note'] = '摧毁周围全部 {npc:184048} 激活此稀有。'
+L['hirukon_note'] = [[
+引诱 {npc:180978} 到上面，需要制造一个 {item:187923}。
+
+1. 在周围水域钓一个 {item:187662}。
+
+2. 从赞加沼泽的盘牙水库 |cFFFFFD00刺鼻的团豚群|r 内钓一个 {item:187915}。渔点在进入洞穴时的右侧。
+
+3. 从纳沙塔尔的凯尔雅之墓飞行点附近的 |cFFFFFD00跳跳鱼群|r 内钓一个 {item:187922}。
+
+4. 从烁光海床的纳舒拉平台（34.7, 75.0）二楼的平台拾取一个（非常隐蔽）{item:187916}。
+
+5. {npc:182194} 位于玛卓克萨斯的兵主之座的南边池塘。问她制作完成 {item:187923}。
+
+6. 使用 {item:187923}，可以让你看到 |cFFFFFD00元水母群|r 渔点在 {npc:180978} 附近15分钟。在此钓鱼召唤 {npc:180978} 到上面。
+]] -- Breaking my rule of no coords in the notes for this one
+L['protector_first_ones_note'] = '需要两名玩家。将匹配的符文带到每个控制台（在周围区域找到）来打开屏障。'
+L['the_engulfer_note'] = '保护 {npc:183505} 直到 {npc:183516} 从裂隙中跳出。'
+L['zatojin_note'] = '吸引附近的 {npc:183721} 并让他们获得20层 {spell:362976} 直到你有 {spell:362983}。当你瘫痪时必须站在 {npc:183774} 尸体上，{npc:183764} 会注意你。'
+
+L['architects_reserve_note'] = '完成位于朝圣者的恩典 {npc:180630} 的 {quest:64829} 任务线。之后一天，完成 {npc:181273} 的 {quest:65426} 任务线解锁宝藏。'
+L['bushel_of_produce_note'] = '击杀1个 {npc:182368} 到北边它会被 {spell:360945} 获得自身增益。击杀更多 {npc:182368} （无需增益）直到你获得5层，然后击破门获得宝藏。'
+L['crushed_crate_note'] = '拾取在宝藏上方倒下的柱子上的 {item:189767}。把它交给 {npc:185151} 换取 {item:189768} 可以打破坠落的岩石。'
+L['domination_cache_note'] = '区域内的 {npc:181403} 和 {npc:182426} 有低几率掉落 {item:189704}。'
+L['drowned_broker_supplies_note'] = '和 {npc:181059} 交谈控制附近的 {npc:185282}。'
+L['forgotten_protovault_note'] = '只在 {wq:呱了} 世界任务期间可用。'
+L['grateful_boon_note'] = '不能飞很难到达；使用 {spell:300728} 或 {spell:111771} 上山。安抚全部12个区域内生物和 {npc:185293} 将出现宝藏。'
+L['library_vault_note'] = '在词汇岩窟点击石板直到找到正确的 {spell:362062} 增益来打开宝藏。'
+L['mistaken_ovoid_note'] = '维度瀑布洞窟内，需要收集5个 {item:190239}，然后带给 {npc:185280}。它会稍微挪动位置让你拾取宝藏。'
+L['ripened_protopear_note'] = '开始 {quest:64641} 任务线获得繁花铸造厂访问权限。收集其中的5个 {spell:367180}（绿色云雾）并把它们给 {npc:185416} 授粉。'
+L['sphere_treasure_note'] = '小心地跳上球体，直到到达宝藏。'
+L['submerged_chest_note'] = '吸收南侧的 |cFFFFFD00危险的能量宝珠|r，然后与宝藏附近的 |cFFFFFD00被遗忘的水泵|r 互动。'
+L['symphonic_vault_note'] = '检查 {npc:183998} 听到四个声音的序列。每个 {npc:183950} 在房间里播放单一的声音。按照匹配顺序与他们互动解锁宝藏。'
+L['template_archive_note'] = '推动房间内 {npc:183339} 到 {npc:183337} 阻挡路径获得宝藏。'
+L['undulating_foliage_note'] = [[
+按下四个 {npc:185390} 激活化生之庭中央房间的传送器。
+
+· |cFFFFFD00化生之庭的锁|r 外面的后边
+· 庭院西南侧房间内
+· {npc:181652} 南边的房间内
+· 在庭院的东南房间内
+]]
+
+L['prying_eye_discovery'] = '窥探之眼的发现'
+L['prying_eye_discovery_note'] = '飞行解锁后容易到达。'
+L['pulp_covered_relic'] = '被粘浆覆盖的圣物'
+L['sandworn_chest'] = '沙蚀宝箱'
+L['sandworn_chest_note'] = '从区域内怪物拾取5个 {item:190198} 组合成 {item:190197}。'
+
+L['cache_avian_nest'] = '元鸟之巢'
+L['cache_cypher_bound'] = '密文束缚的宝箱'
+L['cache_discarded_automa'] = '被抛弃的自动体残片'
+L['cache_forgotten_vault'] = '被遗忘的宝库'
+L['cache_mawsworn_supply'] = '渊誓补给宝箱'
+L['cache_tarachnid_eggs'] = '元蛛卵'
+
+L['cache_cantaric'] = '声乐宝箱'
+L['cache_fugueal'] = '赋格宝箱'
+L['cache_glissandian'] = '滑音宝箱'
+L['cache_mezzonic'] = '中音宝箱'
+L['cache_toccatian'] = '弹奏宝箱'
+
+L['schematic_treasure_note'] = '|cFFFF8C00如果尚未解锁合成，此宝藏将不包含原生体结构图。如果您已经拾取了宝藏，会在附近的地面上找到结构图。|r'
+L['schematic_treasure_mount_note'] = '|cFFFF8C00此结构图在附近的一次性宝藏中找到。如果在解锁坐骑合成之前打开宝藏，结构图会在这里找到。|r'
+L['schematic_treasure_pet_note'] = '|cFFFF8C00此结构图在附近的一次性宝藏中找到。如果在解锁宠物合成之前打开宝藏，结构图会在这里找到。|r'
+L['schematic_bronze_helicid_note'] = '双周任务 {quest:65324} 的 {item:190610} 有几率发现。'
+L['schematic_ambystan_darter_note'] = '隐藏在水下 {npc:185312} 旁边。'
+L['schematic_bronzewing_vespoid_note'] = '孕育栖地内。'
+L['schematic_buzz_note'] = '{npc:185265} 内有几率发现。'
+L['schematic_darkened_vombata_note'] = '浮空笼子内。'
+L['schematic_deathrunner_note'] = '获得作为一部分 {spell:366367} 解锁任务线。'
+L['schematic_desertwing_hunter_note'] = '位于柱顶。 '
+L['schematic_fierce_scarabid_note'] = '藏在 {npc:181870} 站立的平台下面。'
+L['schematic_forged_spiteflyer_note'] = '元蜂蜂巢群上延伸。 '
+L['schematic_genesis_crawler_note'] = '源生凹室入口顶上发现。'
+L['schematic_goldplate_bufonid_note'] = '{npc:178803} 小几率掉落。'
+L['schematic_heartbond_lupine_note'] = '{npc:179939} 小几率掉落。'
+L['schematic_leaping_leporid_note'] = '在一棵漂浮的树上发现。'
+L['schematic_microlicid_note'] = '在浮空树最低的树枝上，在一些树叶下面。'
+L['schematic_pale_regal_cervid_note'] = '研究 {npc:181397} 的全部密文获得 {achievement:15402}。'
+L['schematic_prototickles_note'] = '附在 {npc:180978} 稀有藤蔓内的浮动链上。 '
+L['schematic_raptora_swooper_note'] = '塑形之厅内发现。'
+L['schematic_resonant_echo_note'] = '|cFFFFFD00原初之歌的晶化回响|r 内几率发现。'
+L['schematic_russet_bufonid_note'] = '{item:187780} 巅峰宝箱内几率发现。'
+L['schematic_scarlet_helicid_note'] = '在拱形建筑物顶上发现。'
+L['schematic_shelly_note'] = '位于词汇岩窟书架的背面。需要传送技能才能爬上书架。'
+L['schematic_tarachnid_creeper_note'] = '无尽流沙的小型建筑物内。'
+L['schematic_terror_jelly_note'] = '位于坡道旁边的方形塔顶上。 '
+L['schematic_tunneling_vombata_note'] = '魂灵音室建筑群内一条堵塞的隧道中的一些瓦砾旁边。'
+L['schematic_vespoid_flutterer_note'] = '共振群山的第一位点层一堆沙子上延伸。'
+
+L['concordance_excitable'] = '可激发的索引台'
+L['concordance_mercurial'] = '善变索引台'
+L['concordance_tranquil'] = '宁静索引台'
+L['concordance_note'] = '阅读每个索引解锁位于|cFFFFFD00流亡洞穴|r 的 |cFFFFFD00知识控制台|r 条目。'
+
+L['echoed_jiro_note'] = '耗费 {npc:181059} 能量获得临时增益。需要 {npc:181397} 的 |cFFFFFD00创音词|r 研究。'
+
+L['bygone_elemental_note'] = '{npc:181221} 可以代替区域内的任何 {npc:179007} 位置刷新。'
+L['gaiagantic_note'] = '只在 {npc:177958} 提供 {quest:64785} 日常任务时刷新。'
+L['misaligned_enforcer_note'] = '巡逻该地区，然后在路线尽头消失。'
+L['overcharged_vespoid_note'] = '可以代替区域内任何群体的一部分刷新。'
+L['runethief_xylora_note'] = '朝圣者的恩典区域内潜伏刷新。'
+
+L['patient_bufonid_note'] = '扎雷殁提斯故事的进展直到 {npc:180950} 提供 {quest:65727}。每天完成任务，将 {npc:185798} 引出池塘。'
+L['patient_bufonid_note_day1'] = '从区域内的元蜂收集15个 {item:190852}。'
+L['patient_bufonid_note_day2'] = '从拍卖行购买30个 {item:172053}。'
+L['patient_bufonid_note_day3'] = '从拍卖行购买200个 {item:173202}。'
+L['patient_bufonid_note_day4'] = '从拍卖行购买10个 {item:173037}。'
+L['patient_bufonid_note_day5'] = '从区域内的怪物收集5个 {item:187704}。'
+L['patient_bufonid_note_day6'] = '从朝圣者的恩典附近的 {npc:185748} 购买5个 {item:190880}。'
+L['patient_bufonid_note_day7'] = '从塔扎维什地下城的 {npc:180114} 购买1个 {item:187171}。'
+
+L['options_icons_code_creature'] = '{achievement:15211}'
+L['options_icons_code_creature_desc'] = '显示 {achievement:15211} 成就中生物的位置。'
+L['options_icons_concordances'] = '知识索引'
+L['options_icons_concordances_desc'] = '显示知识索引控制台的位置。'
+L['options_icons_echoed_jiros'] = '回声机若'
+L['options_icons_echoed_jiros_desc'] = '显示 |cFFFFFD00回声机若|r 提供增益的位置。'
+L['options_icons_exile_tales'] = '{achievement:15509}'
+L['options_icons_exile_tales_desc'] = '显示 {achievement:15509} 成就中传说的位置。'
+L['options_icons_protoform_schematics'] = '原生体结构图'
+L['options_icons_protoform_schematics_desc'] = '显示坐骑和宠物结构图的位置。'
+L['options_icons_puzzle_caches'] = '谜题宝箱'
+L['options_icons_puzzle_caches_desc'] = '显示谜题宝箱可能的位置。'
+L['options_icons_zereth_caches'] = '密文宝箱'
+L['options_icons_zereth_caches_desc'] = '显示密文宝箱可能的位置。'
 
 -------------------------------------------------------------------------------
 ----------------------------------- ICECROWN ----------------------------------

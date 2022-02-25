@@ -33,6 +33,8 @@ L["UNTRACKABLE_TOOLTIP_CLICK_ME"] = "Click to mark %s as collected if you alread
 L["WARNING_NOT_NIGHT_FAE"] = "You're not a member of the Night Fae,\nyou can't collect new soulshapes at this time."
 L["Available since"] = true
 L["Soulshape Journal"] = true -- Addon title, you may translate it but it's not necessary
+L["BLIZZARD_MAP_PIN_TOOLTIP"] = "<Ctrl + click to add a map pin for this location>"
+L["TOMTOM_WAYPOINT_TOOLTIP"] = "<Shift + click to add a TomTom waypoint for this location>"
 
 -- Labels
 L["Loot"] = true
@@ -86,6 +88,8 @@ L["Stygian Lockbox"] = true
 L["Riftbound Cache"] = true
 L["Wildseed Root Grain"] = true
 L["Repaired Riftkey"] = true
+L["Spectral Feed"] = true
+L["Lost Comb"] = true
 
 -- NPC Names (could be translated automatically through the API?)
 L["Lost Soul"] = true
@@ -106,6 +110,8 @@ L["Valfir the Unrelenting"] = true
 L["Spindlenose"] = true
 L["Shopkeeper"] = true
 L["Mystic Rainbowhorn"] = true
+L["Olea Manu"] = true
+L["Shifting Stargorger"] = true
 
 -- Others
 L["Burning Crusade Timewalking"] = true
@@ -174,7 +180,7 @@ L["Goat Soul"] = true
 L["Goat Soul Guide"] = "Can drop from any Covenant Calling chest, not only from Night Fae's."
 
 L["Gryphon Soul"] = true
-L["Gryphon Soul Guide"] = "Occasional reward from a win in Skirmish, Arena, Random Battleground or Rated Battleground."
+L["Gryphon Soul Guide"] = "Occasional reward from a win in Skirmish, Arena, Random Battleground, Rated Battleground or Comp Stomp Brawl."
 
 L["Gulper Soul"] = true
 L["Gulper Soul Guide"] = "Obtainable with spirits of any quality, but use only one %s."
@@ -260,3 +266,37 @@ L["Wolfhawk Soul Guide"] = "You need to use Soulshape to cross the barrier."
 
 L["Wyvern Soul"] = true
 L["Yak Soul"] = true
+
+-- 9.2 Soulshapes
+
+L["Armadillo Soul"] = true
+L["Bat Soul"] = true
+
+L["Bee Soul"] = true
+L["Bee Soul Guide"] = "The soulshape-colored comb is located on top of a hive. Requires flying."
+
+L["Brutosaur Soul"] = true
+L["Cervid Soul"] = true
+L["Dragonhawk Soul"] = true
+L["Elekk Soul"] = true
+L["Gromit Soul"] = true
+
+L["Penguin Soul"] = true
+L["Penguin Soul Guide"] = "On top of the metal orb. Interact with the penguin Lost Soul to obtain the soulshape. Requires flying."
+
+L["Pig Soul"] = true
+L["Ray Soul"] = true
+L["Scorpid Soul"] = true
+
+L["Sheep Soul"] = true
+L["Sheep Soul Guide"] = "Multiple spawn locations. Interact with the sheep Lost Soul to obtain the soulshape."
+
+L["Silithid Soul"] = true
+L["Snail Soul"] = true
+L["Tallstrider Soul"] = true
+
+L["Unknown Guide"] = "Source of this soulshape is currently unknown."
+L["Torghast 9.2 Soulshape Guide"] = "This soul can be freed during a Torghast run in layers 12 and higher."
+
+-- Tooltips on maps
+L["Spectral Feed Tooltip"] = "Spectral Feed is a glowing blue sack of grain on the ground, respawning every 1-2 hours. Upon clicking it, you get the item in your bags, with a 10 minutes duration, that is consumed on use."

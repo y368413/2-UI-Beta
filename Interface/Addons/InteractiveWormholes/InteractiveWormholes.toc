@@ -1,12 +1,13 @@
-## Interface: 90105
+## Interface: 90200
 ## Author: p3lim
-## Version: 90105.26-Release
+## Version: 90200.27-Release
 ## Title: Interactive Wormholes
 ## Notes: Shows clickable locations on the World Map when interacting with gossip windows that offer teleportation
 ## OptionalDeps: LibStub, CallbackHandler-1.0, HereBeDragons, LibBabble-SubZone-3.0
 
 ## X-Curse-Project-ID: 101522
 ## X-WoWI-ID: 24119
+## X-Wago-ID: RqGYQOGg
 
 libs\LibStub\LibStub.lua
 libs\CallbackHandler-1.0\CallbackHandler-1.0.lua

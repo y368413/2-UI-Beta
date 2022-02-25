@@ -1,4 +1,4 @@
-﻿--## Author: Lars "Goldpaw" Norberg ## Version: 1.0.25-Release
+﻿--## Author: Lars "Goldpaw" Norberg ## Version: 1.0.26-Release
 
 -- Using the Combuctor way to retrieve names, namespaces and stuff
 local MODULE =  ...

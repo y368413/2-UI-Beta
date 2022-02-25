@@ -288,6 +288,8 @@ local function SimToLua( str, modifier )
     -- Address equipped.number => equipped[number]
     str = str:gsub("%.(%d+)%.", "[%1].")
     str = str:gsub("equipped%.(%d+)", "equipped[%1]")
+    str = str:gsub("main_hand%.(%d[a-z0-9_]+)", "main_hand['%1']")
+    str = str:gsub("off_hand%.(%d[a-z0-9_]+)", "off_hand['%1']")
     str = str:gsub("lowest_vuln_within%.(%d+)", "lowest_vuln_within[%1]")
     str = str:gsub("%.in([^a-zA-Z0-9_])", "['in']%1" )
     str = str:gsub("%.in$", "['in']" )
@@ -940,6 +942,9 @@ local function SimCToSnapshot( str, modifier )
 
     -- Address equipped.number => equipped[number]
     str = str:gsub("equipped%.(%d+)", "equipped[%1]")
+    str = str:gsub("main_hand%.(%d[a-zA-Z0-9_]+)", "main_hand['%1']")
+    str = str:gsub("off_hand%.(%d[a-zA-Z0-9_]+)", "off_hand['%1']")
+    str = str:gsub("equipped%.(%d+)", "equipped[%1]")
     str = str:gsub("lowest_vuln_within%.(%d+)", "lowest_vuln_within[%1]")
     str = str:gsub("%.in([^a-zA-Z0-9_])", "['in']%1" )
     str = str:gsub("%.in$", "['in']" )
@@ -1422,6 +1427,8 @@ function scripts:LoadScripts()
 
             for list, lData in pairs( pData.lists ) do
                 for action, data in ipairs( lData ) do
+                    Hekili:Yield( "Loading " .. pack .. " - " .. list .. " - " .. action )
+
                     local scriptID = pack .. ":" .. list .. ":" .. action
 
                     local script = ConvertScript( data, true, scriptID )
@@ -1512,10 +1519,10 @@ function scripts:LoadScripts()
 end
 
 
-function Hekili:LoadScripts()
+function Hekili:LoadScripts()    
     self.Scripts:LoadScripts()
     self:UpdateUseItems()
-    self:UpdateDisplayVisibility()
+    -- self:UpdateDisplayVisibility()
 end
 
 

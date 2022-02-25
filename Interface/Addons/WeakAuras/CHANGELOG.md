@@ -1,42 +1,8 @@
-# [3.7.9](https://github.com/WeakAuras/WeakAuras2/tree/3.7.9) (2022-02-16)
+# [3.7.11-1-g33bc03b4](https://github.com/WeakAuras/WeakAuras2/tree/33bc03b4a13cf2356658e9f456f63e64bee74c2e) (2022-02-23)
 
-[Full Changelog](https://github.com/WeakAuras/WeakAuras2/compare/3.7.8...3.7.9)
+[Full Changelog](https://github.com/WeakAuras/WeakAuras2/compare/3.7.11...33bc03b4a13cf2356658e9f456f63e64bee74c2e)
 
-## Highlights
+mrbuds (1):
 
- - Bug fixes 
-
-## Commits
-
-Adam Wendelin (2):
-
-- Add items that reset swing timer for TBC
-- Let slam cast not interrupt swing timer
-
-Causese (1):
-
-- store %count in the tooltip
-
-InfusOnWoW (5):
-
-- Fix texts for AutomaticRepair vs ManualRepair
-- Fix unlocalized string in Anchor settings
-- Adjust {rt#} replacement to be compatible with DBM extended raid marks
-- Be less clever with Repair Dialog translations
-- Fix class colored option not being available
-
-asaka-wa (1):
-
-- Adjust icon cooldown option text (#3468)
-
-asakawa (1):
-
-- Swap single quotes to double and escape inverted commas within strings
-
-mrbuds (4):
-
-- import string: remove editbox workaround it seems it is not needed anymore, tested on SL, TBC, SoM
-- fix unload of frame_update & rangecheck conditions
-- fix possible Lua error in text formatter
-- make condition events use RegisterUnitEvent when possible (#3470)
+- fix unpackaged copy of weakauras not working on 9.2 WOW_PROJECT_MAINLINE value changed from 5 to 1 in 9.2
 

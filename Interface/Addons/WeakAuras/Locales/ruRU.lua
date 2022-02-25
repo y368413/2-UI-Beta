@@ -441,6 +441,10 @@ L["Frame Selector"] = "Выбор кадра"
 L["Frequency"] = "Частота"
 L["Friendly"] = "Дружественный"
 L["Friendly Fire"] = "Урон по союзникам"
+--[[Translation missing --]]
+L["Friendship Max Rank"] = "Friendship Max Rank"
+--[[Translation missing --]]
+L["Friendship Rank"] = "Friendship Rank"
 L["From"] = "От"
 L["Frost Resistance"] = "Сопротивление магии льда"
 L["Full"] = "Полный"
@@ -1012,6 +1016,8 @@ L["Supports multiple entries, separated by commas"] = "Можно указать
 L[ [=[Supports multiple entries, separated by commas
 ]=] ] = [=[Можно указать несколько значений, разделенных запятыми.
 ]=]
+--[[Translation missing --]]
+L["Supports multiple entries, separated by commas. Escape ',' with \\"] = "Supports multiple entries, separated by commas. Escape ',' with \\"
 L["Supports multiple entries, separated by commas. Group Zone IDs must be prefixed with 'g', e.g. g277."] = [=[ID группы игровых зон должен иметь префикс g. Например: g227
 
 Можно указать несколько значений, разделенных запятыми.]=]

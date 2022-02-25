@@ -160,6 +160,8 @@ Off Screen]=] ] = [=[提醒效果
 	L["Browse Wago, the largest collection of auras."] = "請瀏覽 Wago 網站，有大量的提醒效果。"
 	L["Can be a Name or a Unit ID (e.g. party1). A name only works on friendly players in your group."] = "可以是名字或單位 ID (例如 party1)。只有同隊伍中的友方玩家才能使用名字。"
 	L["Can be a UID (e.g., party1)."] = "可以是單位 ID (例如 party1) 。"
+	L["Can set to 0 if Columns * Width equal File Width"] = "無法設置為0如果欄*寬等同列寬"
+	L["Can set to 0 if Rows * Height equal File Height"] = "無法設置為0如果行*高等同列高"
 	L["Cancel"] = "取消"
 	L["Cast by Player Character"] = "玩家角色施放"
 	L["Cast by Players"] = "玩家施放"
@@ -210,12 +212,10 @@ Off Screen]=] ] = [=[提醒效果
 	L["Crop Y"] = "裁剪Y"
 	L["Custom"] = "自訂"
 	L["Custom Anchor"] = "自訂對齊"
-	L["Custom Background"] = "自訂背景"
 	L["Custom Check"] = "自訂檢查"
 	L["Custom Code"] = "自訂程式碼"
 	L["Custom Color"] = "自訂顏色"
 	L["Custom Configuration"] = "自訂設定選項"
-	L["Custom Foreground"] = "自訂前景"
 	L["Custom Frames"] = "自訂框架"
 	L["Custom Function"] = "自訂函數"
 	L["Custom Grow"] = "自訂增長"
@@ -324,6 +324,8 @@ UNIT_POWER, UNIT_AURA PLAYER_TARGET_CHANGED]=]
 	L["Fallback Icon"] = "缺少圖示時要顯示的圖示"
 	L["False"] = "否 (False)"
 	L["Fetch Affected/Unaffected Names"] = "取得受影響/未受影響的名字"
+	L["File Height"] = "列高"
+	L["File Width"] = "列寬"
 	L["Filter by Arena Spec"] = "依競技場專精過濾"
 	L["Filter by Class"] = "依職業過濾"
 	L["Filter by Group Role"] = "依角色職責過濾"
@@ -346,9 +348,11 @@ Supports multiple entries, separated by commas
 	L["Found a Bug?"] = "發現 Bug?"
 	L["Frame"] = "框架"
 	L["Frame Count"] = "影格數量"
+	L["Frame Height"] = "框架高度"
 	L["Frame Rate"] = "影格幀數"
 	L["Frame Selector"] = "框架選擇器"
 	L["Frame Strata"] = "框架層級"
+	L["Frame Width"] = "框架寬度"
 	L["Frequency"] = "頻率"
 	L["From Template"] = "從範本建立 (**推薦**)"
 	L["Full Circle"] = "完整循環"
@@ -365,16 +369,11 @@ Supports multiple entries, separated by commas
 	L["Grid direction"] = "網格方向"
 	L["Group"] = "群組"
 	L["Group (verb)"] = "群組"
-	--[[Translation missing --]]
 	L[ [=[Group and anchor each auras by frame.
 
 - Nameplates: attach to nameplates per unit.
 - Unit Frames: attach to unit frame buttons per unit.
-- Custom Frames: choose which frame each region should be anchored to.]=] ] = [=[Group and anchor each auras by frame.
-
-- Nameplates: attach to nameplates per unit.
-- Unit Frames: attach to unit frame buttons per unit.
-- Custom Frames: choose which frame each region should be anchored to.]=]
+- Custom Frames: choose which frame each region should be anchored to.]=] ] = "按框架對每個光環進行分組和定位。 - 名條：附在每個單位的名條上。 - 單元框架：每個單元附加到單元框架按鈕。 - 自定義框架：選擇每個區域應定位到哪個框架。"
 	L["Group aura count description"] = [=[要觸發這個提醒效果，必須有 %s 個成員受到一個或多個指定光環的影響。
 如果輸入的數字是整數 (例如 5)，受到影響的團隊成員數量會和輸入的數字做比較。
 如果輸入的數字是小數 (例如 0.5)、分數 (例如 1/2) 或百分比 (例如 50%%)，那麼 %s 的部分必須受到影響。
@@ -401,6 +400,7 @@ Supports multiple entries, separated by commas
 	L["Height"] = "高度"
 	L["Help"] = "說明"
 	L["Hide"] = "隱藏"
+	L["Hide Background"] = "隱藏背景"
 	L["Hide Glows applied by this aura"] = "隱藏這個光環所套用的發光效果"
 	L["Hide on"] = "隱藏"
 	L["Hide this group's children"] = "隱藏這個群組的子項目"
@@ -507,6 +507,7 @@ Supports multiple entries, separated by commas
 只要符合其中任何一個都會被載入]=]
 	L["Multiselect single tooltip"] = [=[|cFF777777忽略|r - |cFF00FF00單一|r - |cFF777777多個|r
 只有符合這一個值的時候會被載入]=]
+	L["Must be a power of 2"] = "必須是2的倍數"
 	L["Name Info"] = "名稱訊息"
 	L["Name Pattern Match"] = "名稱模式符合"
 	L["Name(s)"] = "名稱"
@@ -612,9 +613,11 @@ Supports multiple entries, separated by commas
 	L["Row Width"] = "列寬度"
 	L["Rows"] = "列"
 	L["Same"] = "相同"
+	L["Same texture as Foreground"] = "與前景相同的材質"
 	L["Scale"] = "縮放大小"
 	L["Search"] = "搜尋"
 	L["Select the auras you always want to be listed first"] = "選擇永遠要列在前面的特效"
+	L["Selected Frame"] = "已選框架"
 	L["Send To"] = "發送到"
 	L["Separator Text"] = "分隔線文字"
 	L["Separator text"] = "分隔線文字"

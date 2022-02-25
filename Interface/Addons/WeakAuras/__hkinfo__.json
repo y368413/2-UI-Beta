@@ -2,7 +2,7 @@
     "target": "curse",
     "searchName": "WeakAuras",
     "localName": "WeakAuras",
-    "version": "3.7.9",
+    "version": "3.7.11-1-g33bc03b",
     "fileName": "weakauras-2",
     "addonsMap": [
         "WeakAuras",
@@ -19,5 +19,5 @@
         "WeakAurasArchive"
     ],
     "name": "WeakAuras 2",
-    "gameVersion": "9.1.5"
+    "gameVersion": "9.2.0"
 }

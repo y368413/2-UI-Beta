@@ -2,7 +2,7 @@
     "target": "curse",
     "searchName": "Interactive Wormholes",
     "localName": "InteractiveWormholes",
-    "version": "90105.26-Release",
+    "version": "90200.27-Release",
     "fileName": "interactivewormholes",
     "addonsMap": [
         "InteractiveWormholes"
@@ -10,5 +10,5 @@
     "interfaceMap": [],
     "children": [],
     "name": "InteractiveWormholes",
-    "gameVersion": "9.1.5"
+    "gameVersion": "9.2.0"
 }

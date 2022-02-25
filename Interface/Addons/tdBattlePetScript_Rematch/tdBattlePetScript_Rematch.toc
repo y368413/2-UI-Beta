@@ -1,4 +1,4 @@
-## Interface: 90105
+## Interface: 90200
 ## Title: tdBattlePetScript Rematch
 ## Author: DengSir
 ## Version: 90100.01

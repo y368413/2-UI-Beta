@@ -2,7 +2,7 @@
 ---------------------------------- NAMESPACE ----------------------------------
 -------------------------------------------------------------------------------
 
-local ADDON_NAME, shadowlands = ...
+local _, shadowlands = ...
 local Class = shadowlands.Class
 local Group = shadowlands.Group
 local L = shadowlands.locale
