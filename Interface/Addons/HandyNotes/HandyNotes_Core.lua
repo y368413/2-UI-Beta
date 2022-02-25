@@ -593,7 +593,7 @@ end
 
 function Addon:Refresh()
     if self._refreshTimer then return end
-    self._refreshTimer = C_Timer.NewTimer(0.1, function ()
+    self._refreshTimer = C_Timer.NewTimer(0.1, function()
         self._refreshTimer = nil
         self:SendMessage("HandyNotes_NotifyUpdate", "HandyNotes_Core")
         Core.MinimapDataProvider:RefreshAllData()
@@ -922,7 +922,7 @@ Core.options = {
                     desc = L["options_restore_hidden_nodes_desc"],
                     order = 25,
                     width = "full",
-                    func = function ()
+                    func = function()
                         wipe(Core.addon.db.char)
                         Core.addon:Refresh()
                     end
@@ -1216,10 +1216,12 @@ local function BootstrapDevelopmentEnvironment()
         if Core:GetOpt('show_debug_quest') then Core.Debug(...) end
     end
 
-    C_Timer.After(2, function ()
+    C_Timer.After(2, function()
         -- Give some time for quest info to load in before we start
-        for id = 0, max_quest_id do quests[id] = C_QuestLog.IsQuestFlaggedCompleted(id) end
-        QTFrame:SetScript('OnUpdate', function ()
+        for id = 0, max_quest_id do
+            quests[id] = C_QuestLog.IsQuestFlaggedCompleted(id)
+        end
+        QTFrame:SetScript('OnUpdate', function()
             if GetTime() - lastCheck > 1 and Core:GetOpt('show_debug_quest') then
                 for id = 0, max_quest_id do
                     local s = C_QuestLog.IsQuestFlaggedCompleted(id)
@@ -1265,7 +1267,7 @@ local function BootstrapDevelopmentEnvironment()
             groupPins:GetNextActive():Hide()
         end
     end)
-    IQFrame:SetScript('OnKeyUp', function (_, key)
+    IQFrame:SetScript('OnKeyUp', function(_, key)
         if key == 'LCTRL' or key == 'LALT' then
             IQFrame:SetPropagateKeyboardInput(true)
             for i, _ns in ipairs(_G[plugins]) do
@@ -3523,13 +3525,13 @@ function Arrow:Draw(pin, type, xy1, xy2)
         local mapID = HBD:GetPlayerZone()
         local wx1, wy1 = HBD:GetWorldCoordinatesFromZone(x1, y1, mapID)
         local wx2, wy2 = HBD:GetWorldCoordinatesFromZone(x2, y2, mapID)
-        pin.rotation = -math.atan2(wy2-wy1, wx2-wx1) + (math.pi / 2)
+        pin.rotation = -math.atan2(wy2 - wy1, wx2 - wx1) + (math.pi / 2)
     else
         local x1p = x1 * pin.parentWidth
         local x2p = x2 * pin.parentWidth
         local y1p = y1 * pin.parentHeight
         local y2p = y2 * pin.parentHeight
-        pin.rotation = -math.atan2(y2p-y1p, x2p-x1p) - (math.pi / 2)
+        pin.rotation = -math.atan2(y2p - y1p, x2p - x1p) - (math.pi / 2)
     end
     pin.texture:SetRotation(pin.rotation)
 

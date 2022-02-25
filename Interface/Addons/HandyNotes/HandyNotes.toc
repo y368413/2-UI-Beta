@@ -40,12 +40,15 @@ MOP\zones\timeless_isle.lua
 
 # WOD
 WOD\HandyNotes_DraenorTreasures.lua
+# WOD\HandyNotes_AzerothsTopTunes.lua
 
 # LEG
 LEG\HandyNotes_SuramarLeylines.lua
 LEG\HandyNotes_SuramarTelemancy.lua
 LEG\HandyNotes_Argus.lua
 LEG\HandyNotes_LegionRaresTreasures.lua
+LEG\HandyNotes_HigherDimensionalLearning.lua
+# LEG\HandyNotes_Syd'sWitheredChests.lua
 
 # BFA
 BFA\common.lua
@@ -80,7 +83,6 @@ Mode\HandyNotes_MoleMachine.lua
 Mode\HandyNotes_LightningPaw.lua
 Mode\HandyNotes_Universal_Explorer.lua
 Mode\HandyNotes_TravelGuide.lua
-Mode\HandyNotes_HigherDimensionalLearning.lua
 Mode\HandyNotes_PetDailies.lua
 
 # Others files
