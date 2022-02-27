@@ -1,0 +1,8 @@
+## Interface: 90105
+## Title: TransmogWishList
+## Notes: A lightweight wish list for transmog appearances.
+## Author: LanceDH
+## Version: 9.0.02
+## SavedVariables: TWLDB
+
+TransmogWishList.xml

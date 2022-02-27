@@ -1,4 +1,4 @@
-﻿--------------------------------------------------------
+--------------------------------------------------------
 -- Namespaces
 --------------------------------------------------------
 local MCL, core = ...;
@@ -30,6 +30,7 @@ local function InitMounts()
 			if(j.mounts) then
 				for t = 1, #j.mounts do
 					local MCL_cMount = C_MountJournal.GetMountFromItem(j.mounts[t])
+					--print(j.mounts[t])
 					if MCL_cMount == nil then
 						C_Timer.After(0, InitMounts)
 						return
@@ -38,13 +39,13 @@ local function InitMounts()
 			end
 		end
 	end
-	print("所有坐骑已载入!")
+	print("Mounts Initialized!")
 	MCL_Load.CreateMenu()
 end
 
 function MCL_Load:Toggle()
 	if not MCLFrame then
-		print(">>> MCL 加载中, 请稍候 <<<")
+		print(">>> Initializing MCL, Please wait <<<")
 		InitMounts()
 		return
 	end
@@ -353,15 +354,13 @@ function MCL_Load:CreateMenu()
 	local MCL_playerFactionStr = UnitFactionGroup("player")
 	if MCL_playerFactionStr == "Alliance" then
 		MCL_playerFaction = 1
-		MCL_playerFactionStr = "联盟"
 	else
 		MCL_playerFaction = 0
-		MCL_playerFactionStr = "部落"
 	end
 
 	MCL_totalCollected = 0
 
-	local MCL_classic, MCL_tbc, MCL_wotlk, MCL_cata, MCL_mop, MCL_wod, MCL_legion, MCL_bfa, MCL_sl, MCL_racial, MCL_professions, MCL_pvp, MCL_worldevents, MCL_promotion, MCL_other, MCL_unobtainable = SetTabs(MCL_MF, 16, "经典", "燃烧的远征", "巫妖王之怒", "大地的裂变", "熊猫人之谜", "德拉诺之王", "军团再临", "争霸艾泽拉斯", "暗影国度", MCL_playerFactionStr, "专业", "PVP", "世界事件", "促销", "其他", "绝版");
+	local MCL_classic, MCL_tbc, MCL_wotlk, MCL_cata, MCL_mop, MCL_wod, MCL_legion, MCL_bfa, MCL_sl, MCL_racial, MCL_professions, MCL_pvp, MCL_worldevents, MCL_promotion, MCL_other, MCL_unobtainable = SetTabs(MCL_MF, 16, "Classic", "TBC", "WOTLK", "CATA", "MOP", "WOD", "LEGION", "BFA", "SL", MCL_playerFactionStr, "Professions", "PVP", "WorldEvents", "Promotion", "Other", "Unobtainable");
 
 	local MCL_sections = {
 		MCL_classic,
@@ -382,22 +381,22 @@ function MCL_Load:CreateMenu()
 		MCL_unobtainable
 	}
 	local MCL_sectionStrings = {
-		"经典",
-		"燃烧的远征",
-		"巫妖王之怒",
-		"大地的裂变",
-		"熊猫人之谜",
-		"德拉诺之王",
-		"军团再临",
-		"争霸艾泽拉斯",
-		"暗影国度",
+		"Classic",
+		"TBC",
+		"WOTLK",
+		"CATA",
+		"MOP",
+		"WOD",
+		"LEGION",
+		"BFA",
+		"SL",
 		MCL_playerFactionStr,
-		"专业",
+		"Professions",
 		"PVP",
-		"世界事件",
-		"促销",
-		"其他",
-		"绝版"
+		"WorldEvents",
+		"Promotion",
+		"Other",
+		"Unobtainable"
 	}
 
 -- update "frame" with new information to display
@@ -509,7 +508,7 @@ function MCL_Load:CreateMenu()
 				end
 			end
 		end
-		MCL_MF.title:SetText("Mount Collection Log |  已收集 "..MCL_totalCollected);
+		MCL_MF.title:SetText("Mount Collection Log |  Collected "..MCL_totalCollected);
 	end
 	LoadData()
 	MCL_MF:SetScript("OnShow", function()

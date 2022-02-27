@@ -2,5 +2,13 @@
     "target": "curse",
     "searchName": "AchievementsReminder",
     "localName": "AchievementsReminder",
-    "fileName": "achievementsreminder"
+    "fileName": "achievementsreminder",
+    "version": "9.152",
+    "addonsMap": [
+        "AchievementsReminder"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "name": "AchievementsReminder",
+    "gameVersion": "9.1.5"
 }

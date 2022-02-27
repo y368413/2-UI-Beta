@@ -1,6 +1,14 @@
 {
     "target": "curse",
-    "searchName": "HolidayDungeonHelper",
+    "searchName": "Holiday Dungeon Helper",
     "localName": "HolidayDungeonHelper",
-    "version": "90105"
+    "version": "1.0.3",
+    "fileName": "holiday-dungeon-helper",
+    "addonsMap": [
+        "HolidayDungeonHelper"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "name": "HolidayDungeonHelper",
+    "gameVersion": "9.1.5"
 }

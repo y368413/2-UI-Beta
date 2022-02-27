@@ -1,0 +1,14 @@
+{
+    "target": "curse",
+    "searchName": "Enchant Me",
+    "localName": "EnchantMe",
+    "version": "0.2.1",
+    "fileName": "enchant-me",
+    "addonsMap": [
+        "EnchantMe"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "name": "EnchantMe",
+    "gameVersion": "9.2.0"
+}

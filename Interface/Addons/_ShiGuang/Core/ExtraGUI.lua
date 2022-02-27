@@ -36,7 +36,7 @@ end
 
 local function createExtraGUI(parent, name, title, bgFrame)
 	local frame = CreateFrame("Frame", name, parent)
-		 local bgTexture = frame:CreateTexture("name", "BACKGROUND")
+	local bgTexture = frame:CreateTexture("name", "BACKGROUND")
     bgTexture:SetTexture("Interface\\Destiny\\EndscreenBG");  --FontStyles\\FontStyleGarrisons
     --bgTexture:SetTexCoord(740,950,0,600/1024);
     bgTexture:SetAllPoints();
@@ -1168,6 +1168,77 @@ local function createOptionSwatch(parent, name, key, value, x, y)
 	swatch.__default = G.DefaultSettings[key][value]
 end
 
+function G:SetupSwingBars(parent)
+	local guiName = "NDuiGUI_SwingSetup"
+	toggleExtraGUI(guiName)
+	if extraGUIs[guiName] then return end
+
+	local panel = createExtraGUI(parent, guiName, U["UFs SwingBar"].."*")
+	local scroll = G:CreateScroll(panel, 260, 540)
+
+	local UF = M:GetModule("UnitFrames")
+	local parent, offset = scroll.child, -10
+	local frame = _G.oUF_Player
+
+	local function configureSwingBars()
+		if not frame then return end
+
+		local width, height = R.db["UFs"]["SwingWidth"], R.db["UFs"]["SwingHeight"]
+		frame.Swing:SetSize(width, height)
+		frame.Swing.Offhand:SetHeight(height)
+		frame.Swing.mover:SetSize(width, height)
+		frame.Swing.mover:Show()
+
+		frame.Swing.Text:SetShown(R.db["UFs"]["SwingTimer"])
+		frame.Swing.TextMH:SetShown(R.db["UFs"]["SwingTimer"])
+		frame.Swing.TextOH:SetShown(R.db["UFs"]["SwingTimer"])
+	end
+
+	createOptionCheck(parent, offset, U["UFs SwingTimer"], "UFs", "SwingTimer", configureSwingBars, U["SwingTimer Tip"])
+	createOptionSlider(parent, U["Width"], 50, 1000, 275, offset-70, "SwingWidth", configureSwingBars)
+	createOptionSlider(parent, U["Height"], 1, 50, 3, offset-140, "SwingHeight", configureSwingBars)
+
+	panel:HookScript("OnHide", function()
+		local mover = frame and frame.Swing and frame.Swing.mover
+		if mover then mover:Hide() end
+	end)
+end
+
+function G:SetupBagFilter(parent)
+	local guiName = "NDuiGUI_BagFilterSetup"
+	toggleExtraGUI(guiName)
+	if extraGUIs[guiName] then return end
+
+	local panel = createExtraGUI(parent, guiName, U["BagFilterSetup"].."*")
+	local scroll = G:CreateScroll(panel, 260, 540)
+
+	local filterOptions = {
+		[1] = "FilterJunk",
+		[2] = "FilterConsumable",
+		[3] = "FilterAzerite",
+		[4] = "FilterEquipment",
+		[5] = "FilterEquipSet",
+		[6] = "FilterLegendary",
+		[7] = "FilterCollection",
+		[8] = "FilterFavourite",
+		[9] = "FilterGoods",
+		[10] = "FilterQuest",
+		[11] = "FilterAnima",
+		[12] = "FilterRelic",
+	}
+
+	local BAG = M:GetModule("Bags")
+	local function updateAllBags()
+		BAG:UpdateAllBags()
+	end
+
+	local offset = 10
+	for _, value in ipairs(filterOptions) do
+		createOptionCheck(scroll, -offset, U[value], "Bags", value, updateAllBags)
+		offset = offset + 35
+	end
+end
+
 local function refreshMajorSpells()
 	M:GetModule("UnitFrames"):RefreshMajorSpells()
 end
@@ -1255,7 +1326,7 @@ function G:PlateCastbarGlow(parent)
 end
 
 function G:SetupNameplateSize(parent)
-	local guiName = "NDuiGUI_PlateSizeSetup"
+	local guiName = "UIGUI_PlateSizeSetup"
 	toggleExtraGUI(guiName)
 	if extraGUIs[guiName] then return end
 
@@ -1284,7 +1355,7 @@ function G:SetupNameplateSize(parent)
 end
 
 function G:SetupActionBar(parent)
-	local guiName = "NDuiGUI_ActionBarSetup"
+	local guiName = "UIGUI_ActionBarSetup"
 	toggleExtraGUI(guiName)
 	if extraGUIs[guiName] then return end
 
@@ -1326,7 +1397,7 @@ function G:SetupActionBar(parent)
 end
 
 function G:SetupStanceBar(parent)
-	local guiName = "NDuiGUI_StanceBarSetup"
+	local guiName = "UIGUI_StanceBarSetup"
 	toggleExtraGUI(guiName)
 	if extraGUIs[guiName] then return end
 
@@ -1342,7 +1413,7 @@ function G:SetupStanceBar(parent)
 end
 
 function G:SetupUFClassPower(parent)
-	local guiName = "NDuiGUI_ClassPowerSetup"
+	local guiName = "UIGUI_ClassPowerSetup"
 	toggleExtraGUI(guiName)
 	if extraGUIs[guiName] then return end
 
@@ -1415,12 +1486,12 @@ end
 
 function G:SetupActionbarStyle(parent)
 	local maxButtons = 6
-	local size, padding = 30, 3
+	local size, padding = 26, 1
 
 	local frame = CreateFrame("Frame", "UIActionbarStyleFrame", parent.child)
 	frame:SetSize((size+padding)*maxButtons + padding, size + 2*padding)
-	frame:SetPoint("TOPRIGHT", -85, -15)
-	M.CreateBDFrame(frame, .25)
+	frame:SetPoint("TOPRIGHT", 100, -60)
+	--M.CreateBDFrame(frame, .25)
 
 	local Bar = M:GetModule("Actionbar")
 

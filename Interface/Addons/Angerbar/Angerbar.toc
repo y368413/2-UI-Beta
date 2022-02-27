@@ -1,0 +1,10 @@
+## Interface: 90105
+## Title: |cffA6FFFFAngry Bar|r
+## Title-zhCN: |cff02F78E[职业]|r战士怒气条
+## Title-zhTW: |cff02F78E[職業]|r戰士怒氣條
+## Author: y368413
+## Version: 1.01
+## SavedVariables: AngerDB
+## X-Repple: 2UI
+
+Angerbar.lua

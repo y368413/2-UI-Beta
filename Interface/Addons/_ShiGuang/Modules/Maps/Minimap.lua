@@ -303,14 +303,21 @@ function module:RecycleBin()
 		["RecycleBinToggleButton"] = true,
 	}
 
+	local function updateRecycleTip(bu)
+		bu.text = I.RightButton..U["AutoHide"]..": "..(MaoRUIDB["AutoRecycle"] and "|cff55ff55"..VIDEO_OPTIONS_ENABLED or "|cffff5555"..VIDEO_OPTIONS_DISABLED)
+	end
+
 	local bu = CreateFrame("Button", "RecycleBinToggleButton", Minimap)
 	bu:SetSize(30, 30)
 	bu:SetPoint("BOTTOMRIGHT", 4, -6)
+	bu:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 	bu.Icon = bu:CreateTexture(nil, "ARTWORK")
 	bu.Icon:SetAllPoints()
 	bu.Icon:SetTexture(I.binTex)
 	bu:SetHighlightTexture(I.binTex)
-	M.AddTooltip(bu, "ANCHOR_LEFT", U["Minimap RecycleBin"], "white")
+	bu.title = I.InfoColor..U["Minimap RecycleBin"]
+	M.AddTooltip(bu, "ANCHOR_LEFT")
+	updateRecycleTip(bu)
 
 	local width, height, alpha = 220, 40, .5
 	local bin = CreateFrame("Frame", "RecycleBinFrame", UIParent)
@@ -330,9 +337,11 @@ function module:RecycleBin()
 	local function hideBinButton()
 		bin:Hide()
 	end
-	local function clickFunc()
-		UIFrameFadeOut(bin, .5, 1, 0)
-		C_Timer_After(.5, hideBinButton)
+	local function clickFunc(force)
+		if force == 1 or MaoRUIDB["AutoRecycle"] then
+			UIFrameFadeOut(bin, .5, 1, 0)
+			C_Timer_After(.5, hideBinButton)
+		end
 	end
 
 	local ignoredButtons = {
@@ -467,13 +476,19 @@ function module:RecycleBin()
 		end
 	end
 
-	bu:SetScript("OnClick", function()
-		if bin:IsShown() then
-			clickFunc()
-		else
-			SortRubbish()
-			UIFrameFadeIn(bin, .5, 0, 1)
-		end
+	bu:SetScript("OnClick", function(_, btn)
+		--if btn == "RightButton" then
+			--MaoRUIDB["AutoRecycle"] = not MaoRUIDB["AutoRecycle"]
+			--updateRecycleTip(bu)
+			--bu:GetScript("OnEnter")(bu)
+		--else
+			if bin:IsShown() then
+				clickFunc(1)
+			else
+				SortRubbish()
+				UIFrameFadeIn(bin, .5, 0, 1)
+			end
+		--end
 	end)
 
 	CollectRubbish()
@@ -495,7 +510,7 @@ function module:WhoPingsMyMap()
 	anim.fader:SetStartDelay(3)
 
 	M:RegisterEvent("MINIMAP_PING", function(_, unit)
-		if unit == "player" then return end -- ignore player ping
+		if UnitIsUnit(unit, "player") then return end -- ignore player ping
 		anim:Stop()
 		f.text:SetText(GetUnitName(unit))
 		f.text:SetTextColor(M.ClassColor(select(2, UnitClass(unit))))

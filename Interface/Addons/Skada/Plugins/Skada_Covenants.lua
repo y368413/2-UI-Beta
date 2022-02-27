@@ -331,7 +331,7 @@ SkadaCovenants.askMessage = "ASK"
 DCovenant = {
     ["iconSize"] = 30,
 }
-DCovenantLog = false --Ĭ�Ϲر�Ŀ�����ĸ���Լ����Ƶ������ʾ
+DCovenantLog = false --？
 
 local isAsked = false
 

@@ -16,14 +16,6 @@ end
 
 local function CreatePlayerStyle(self)
 	self.mystyle = "player"
-	UF:CreateQuestSync(self)
-	--if R.db["UFs"]["Castbars"] then
-		--UF:ReskinMirrorBars()
-		--UF:ReskinTimerTrakcer(self)
-	--end
-	if not R.db["Misc"]["ExpRep"] then UF:CreateExpRepBar(self) end
-	if R.db["UFs"]["SwingBar"] then UF:CreateSwing(self) end
-	if R.db["UFs"]["QuakeTimer"] then UF:CreateQuakeTimer(self) end
 end
 
 local function CreateTargetStyle(self)
@@ -329,6 +321,7 @@ function UF:OnLogin()
 			end
 		end
 
+		UF:ToggleSwingBars()
 		UF:ToggleUFClassPower()
 		UF:UpdateTextScale()
 		UF:ToggleAllAuras()

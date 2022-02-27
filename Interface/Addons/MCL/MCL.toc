@@ -1,7 +1,7 @@
 ## Interface: 90200
 ## Title: MCL - Mount Collection Log
 ## Notes: A tool used to log collected mounts in a similiar way to Simple Armory.
-## Version: 1.045
+## Version: 1.046a
 ## DefaultState: enabled
 ## LoadWith: Blizzard_Collections
 ## SavedVariables: MCL

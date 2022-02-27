@@ -683,6 +683,12 @@ local filteredStyle = {
 	["arena"] = true,
 }
 
+local replaceEncryptedIcons = {
+	[368078] = 348567, -- 移速
+	[368079] = 348567, -- 移速
+	[368103] = 648208, -- 急速
+	[368243] = 237538, -- CD
+}
 function UF.PostUpdateIcon(element, _, button, _, _, duration, expiration, debuffType)
 	if duration then button.iconbg:Show() end
 
@@ -718,6 +724,11 @@ function UF.PostUpdateIcon(element, _, button, _, _, duration, expiration, debuf
 			button:SetScript("OnUpdate", nil)
 			button.timer:Hide()
 		end
+	end
+
+	local newTexture = replaceEncryptedIcons[button.spellID]
+	if newTexture then
+		button.icon:SetTexture(newTexture)
 	end
 end
 
@@ -1479,14 +1490,27 @@ function UF:CreateAddPower(self)
 	}
 end
 
+function UF:ToggleSwingBars()
+	local frame = _G.oUF_Player
+	if not frame then return end
+
+	if R.db["UFs"]["SwingBar"] then
+		if not frame:IsElementEnabled("Swing") then
+			frame:EnableElement("Swing")
+		end
+	elseif frame:IsElementEnabled("Swing") then
+		frame:DisableElement("Swing")
+	end
+end
+
 function UF:CreateSwing(self)
-	--if not R.db["UFs"]["Castbars"] then return end
+	local width, height = R.db["UFs"]["SwingWidth"], R.db["UFs"]["SwingHeight"]
 
 	local bar = CreateFrame("StatusBar", nil, self)
-	local width = R.db["UFs"]["PlayerCBWidth"] - R.db["UFs"]["PlayerCBHeight"] - 5
-	bar:SetSize(width, 3)
-	createBarMover(bar, U["UFs SwingBar"], "Swing", {"CENTER", UIParent, "CENTER", 0, -250})
-	--bar:SetPoint("TOP", self.Castbar.mover, "BOTTOM", 0, -3)
+	bar:SetSize(width, height)
+	bar.mover = M.Mover(bar, U["UFs SwingBar"], "Swing", {"CENTER", UIParent, "CENTER", 0, -250})
+	bar:ClearAllPoints()
+	bar:SetPoint("CENTER", bar.mover)
 
 	local two = CreateFrame("StatusBar", nil, bar)
 	two:Hide()
@@ -1501,14 +1525,16 @@ function UF:CreateSwing(self)
 	local off = CreateFrame("StatusBar", nil, bar)
 	off:Hide()
 	off:SetPoint("TOPLEFT", bar, "BOTTOMLEFT", 0, -3)
-	off:SetPoint("BOTTOMRIGHT", bar, "BOTTOMRIGHT", 0, -6)
+	off:SetPoint("TOPRIGHT", bar, "BOTTOMRIGHT", 0, -3)
+	off:SetHeight(height)
 	M.CreateSB(off, true, .8, .8, .8)
 
-	if R.db["UFs"]["SwingTimer"] then
-		bar.Text = M.CreateFS(bar, 11, "")
-		bar.TextMH = M.CreateFS(main, 11, "")
-		bar.TextOH = M.CreateFS(off, 11, "", false, "CENTER", 1, -5)
-	end
+	bar.Text = M.CreateFS(bar, 11, "")
+	bar.Text:SetShown(R.db["UFs"]["SwingTimer"])
+	bar.TextMH = M.CreateFS(main, 11, "")
+	bar.TextMH:SetShown(R.db["UFs"]["SwingTimer"])
+	bar.TextOH = M.CreateFS(off, 11, "", false, "CENTER", 1, -5)
+	bar.TextOH:SetShown(R.db["UFs"]["SwingTimer"])
 
 	self.Swing = bar
 	self.Swing.Twohand = two

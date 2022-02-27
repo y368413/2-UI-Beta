@@ -120,7 +120,7 @@ function A:UpdateAuras(button, index)
 		A.UpdateTimer(button, 0)
 	else
 		button.timeLeft = nil
-		button.timer:SetText("^-^")
+		button.timer:SetText("|cff00ff00^-^|r")
 	end
 
 	if count and count > 1 then

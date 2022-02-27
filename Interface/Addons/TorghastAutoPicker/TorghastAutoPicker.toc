@@ -1,0 +1,9 @@
+## Interface: 90105
+## Title: TorghastAutoPicker
+## Notes: Automatically select powers when running Torghast
+## Author: Dacaver-Tichondrius
+## Version: v1.0
+## SavedVariables: TorghastAutoPickerDB
+
+TorghastAutoPicker.lua
+embeds.xml
