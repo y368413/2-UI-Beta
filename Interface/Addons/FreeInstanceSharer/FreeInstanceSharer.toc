@@ -4,10 +4,10 @@
 ## Notes: Simply sharing your saved instance to others.
 ## Notes-zhCN: 提供自动排队、组队、退组等功能，便利地共享副本CD。
 ## Author: LiangYuxuan
-## Version: v9.2.0
+## Version: v9.2.0-1-gaf173fa
 ## SavedVariables: FreeInstanceSharerDB
 ## SavedVariablesPerCharacter: FISConfig
-## X-ReleaseDate: 2022-02-23T03:24:42Z
+## X-ReleaseDate: 2022-03-02T02:17:26Z
 ## X-License: MIT
 ## X-Curse-Project-ID: 319097
 ## X-WoWI-ID: 25931

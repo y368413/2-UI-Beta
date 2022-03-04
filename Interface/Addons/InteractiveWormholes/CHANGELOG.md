@@ -1,4 +1,5 @@
-### Changes in 90200.27-Release:
+### Changes in 90200.28-Release:
 
-- Changed: Update Interface version
+- Fixed: Gossip map button not working correctly
+- Fixed: Map being closed if it was already open before "opening a wormhole"
 

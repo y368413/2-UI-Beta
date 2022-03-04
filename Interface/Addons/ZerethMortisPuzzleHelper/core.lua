@@ -238,7 +238,7 @@ sliderHeadText:SetText("SCALE")
 
 local optionsVersionText =  aura_env.settingsFrame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
 optionsVersionText:SetPoint("BOTTOM",  aura_env.settingsFrame, "BOTTOM", 0, 10)
-optionsVersionText:SetText("ZMPH 1.2")
+optionsVersionText:SetText("ZMPH 1.5")
 optionsVersionText:SetFont(fontMain, 12, "OUTLINE")
 
 local groupEnabled = CreateFrame('Frame', nil, aura_env.settingsFrame, 'BackdropTemplate')
@@ -587,7 +587,7 @@ function aura_env.puzzle3()
                                 if x ~= pickInt and x>i and not used[t] and not used[i] and not used[x] then
                                     if (solve(pickInt,i,x)) then
                                         solveCount = solveCount + 1;
-                                                                       
+                                        
                                         table.insert(draws,{pickInt,solveCount})
                                         table.insert(draws,{i,solveCount})
                                         table.insert(draws,{x,solveCount})
@@ -608,7 +608,7 @@ function aura_env.puzzle3()
             end
             
             for i = 1, #draws do
-            drawSolution(draws[i][1],draws[i][2])
+                drawSolution(draws[i][1],draws[i][2])
             end
             
             if #used ~= 9 then
@@ -648,7 +648,10 @@ function aura_env.puzzle1()
             frameAddBg(widget,backdrop2, {0,0,0,0.1}, {1,1,1,0.3})
         end
         if hidden then
-            widget:Hide()
+            --widget:Hide()
+            widget:SetBackdrop(nil)
+            widget:SetBackdropColor(nil)
+            widget:SetBackdropBorderColor(nil)
         end
         widget.glow = false;
         widget.draw = false;
@@ -664,8 +667,10 @@ function aura_env.puzzle1()
         texture:Hide()
         if type==2 then 
             texture:SetTexCoord(0.1,0.90,0.1,0.90)
-            texture:SetVertexColor(0.4, 0.4, 0.6, 1.0)
+            -- texture:SetVertexColor(0.4, 0.4, 0.6, 1.0)
             texture:SetSize(28, 28)
+            
+            texture:Show()
         end
         return texture
     end
@@ -750,67 +755,144 @@ function aura_env.puzzle1()
                 end 
             end   
             
-            local function drawLine(node)
-                if node.draw then
-                    node.texture:Hide()
-                    node.draw = false;
-                else
+            local function drawLine(node,act)
+                if act then
                     node.texture:Show()
                     node.draw = true
+                else
+                    node.texture:Hide()
+                    node.draw = false;
                 end
             end
             
-            local function setNode(button, set, dir, i)
+            local function setNode(button, set)
                 button.text:SetText(set)
                 button.text:SetPoint("CENTER")          
                 button.texture:Show();   
                 LibGlow.ButtonGlow_Start(button) 
                 button:Show();
-                if dir == 1 then
-                    if i < 10 then
-                        drawLine(groupButtons.buttonsPuzzle[1][i])
-                        for x=1,9 do drawLine(groupButtons.buttons[i][x]) end
-                    else
-                        for x=1,9 do drawLine(groupButtons.buttonsPuzzle[2][x]) end
+                button.texture:SetVertexColor(0.4, 0.4, 0.6, 1.0)
+            end
+            
+            local function reverseNode(node)
+                if node then return false end
+                if node == false then return true end            
+            end
+            
+            local function checkSolve(board,r1,r2)
+                local simBoard = {}
+                local countTick = 0
+                
+                for y=1,10 do 
+                    simBoard[y] = {}
+                    for x=1,10 do 
+                        simBoard[y][x] = board[y][x]
                     end
                 end
                 
-                if dir == 2 then
-                    
-                    drawLine(groupButtons.buttonsPuzzle[2][i])
-                    if i>1 then
-                        for y=1,9 do 
-                            drawLine(groupButtons.buttons[10-y][i-1])
+                --sim actions
+                for y=1,10 do
+                    if board[y][1] == r1 then 
+                        countTick = countTick + 1
+                        for x=1,10 do 
+                            simBoard[y][x] = reverseNode(simBoard[y][x])
                         end
-                    else
-                        for y=1,9 do 
-                            drawLine(groupButtons.buttonsPuzzle[1][y])
+                    end
+                end
+                
+                for x=1,10 do
+                    if board[10][x] == r2 then 
+                        countTick = countTick + 1
+                        for y=1,10 do 
+                            simBoard[y][x] = reverseNode(simBoard[y][x])
                         end
+                    end
+                end
+                
+                --check solve
+                local solved = countTick <= 7;
+                
+                for y=1,10 do
+                    for x=1,10 do 
+                        if simBoard[y][x] then solved = false;break; end
+                    end
+                end
+                
+                return solved 
+            end
+            
+            local function drawBoard(board)
+                for y=1,9 do 
+                    for x=1,9 do
+                        drawLine(groupButtons.buttons[y][x], board[y][x+1])
+                    end
+                end
+                for x=1,9 do 
+                    drawLine(groupButtons.buttonsPuzzle[1][x], board[x][1])
+                end
+                drawLine(groupButtons.buttonsPuzzle[2][1], board[10][1])
+                for x=2,10 do 
+                    drawLine(groupButtons.buttonsPuzzle[2][x], board[10][x])
+                end
+                
+            end
+            
+            local board = {}
+            for y=1,9 do 
+                board[y] = {}
+                for x=1,10 do
+                    board[y][x] = groupButtons.buttonsPuzzle[1][y].glow
+                end
+            end
+            board[10] = {}
+            for x=1,10 do
+                board[10][x] = groupButtons.buttonsPuzzle[2][1].glow
+            end
+            for x=1,10 do
+                if groupButtons.buttonsPuzzle[2][x].glow ~= board[10][1] then
+                    for y=1,10 do
+                        board[y][x] = reverseNode(board[y][x])
                     end
                 end
             end
             
-            local set = 1;
+            drawBoard(board)
+            
+            for y = 1, 2 do
+                for x = 1, 10 do
+                    groupButtons.buttonsSolve[y][x].texture:Hide()
+                    groupButtons.buttonsSolve[y][x]:Hide(); 
+                end
+            end
+            
+            --v1.5 solution
             local rev1 = line1 <= 5
             local rev2 = true
             
+            if checkSolve(board,true,true) then rev1 = true;rev2 = true; end
+            if checkSolve(board,true,false) then rev1 = true; rev2 = false; end
+            if checkSolve(board,false,true) then rev1 = false; rev2 = true; end
+            if checkSolve(board,false,false) then rev1 = false; rev2 = false; end
+            
+            local set = 1;
+            
             for i=1, 9 do
                 if groupButtons.buttonsPuzzle[1][i].glow == rev1 then 
-                    setNode(groupButtons.buttonsSolve[1][i],set,1,i)    
+                    setNode(groupButtons.buttonsSolve[1][i],set)    
                     set = set + 1
                 end
             end
             if groupButtons.buttonsPuzzle[2][1].glow == rev1 then
-                setNode(groupButtons.buttonsSolve[1][10],set,1,10)    
+                setNode(groupButtons.buttonsSolve[1][10],set)    
                 set = set + 1
-                rev2 = false
-            end
+            end           
             for i=1, 10 do
                 if groupButtons.buttonsPuzzle[2][i].glow == rev2 then 
-                    setNode(groupButtons.buttonsSolve[2][i],set,2,i)  
+                    setNode(groupButtons.buttonsSolve[2][i],set)  
                     set = set + 1
                 end
             end
+            
             for y = 1, 2 do
                 for x = 1, 10 do
                     if ((y == 1 and x < 10) or y == 2) then
@@ -831,10 +913,13 @@ function aura_env.puzzle1()
                         LibGlow.ButtonGlow_Stop(groupButtons.buttonsPuzzle[y][x])                    
                     end
                     
-                    groupButtons.buttonsSolve[y][x].texture:Hide();
+                    groupButtons.buttonsSolve[y][x].texture:Show();
                     groupButtons.buttonsSolve[y][x].glow = false
                     groupButtons.buttonsSolve[y][x].draw = false;
-                    groupButtons.buttonsSolve[y][x]:Hide(); 
+                    groupButtons.buttonsSolve[y][x]:Show(); 
+                    groupButtons.buttonsSolve[y][x].texture:SetVertexColor(1,1,1,1)
+                    groupButtons.buttonsSolve[y][x].text:SetText("")
+                    LibGlow.ButtonGlow_Stop(groupButtons.buttonsSolve[y][x]) 
                 end 
             end       
             for y = 1, 9 do 
@@ -845,7 +930,6 @@ function aura_env.puzzle1()
             end 
     end)
 end
-
 
 function aura_env.puzzle2()
     
@@ -934,6 +1018,7 @@ function aura_env.puzzle2()
     end)
     
     solveButton:SetScript("OnClick", function(self)
+            
             local function nextTick(sim, x, y)
                 local dir = {{0,0},{1,0},{-1,0},{0,1},{0,-1}}
                 if (x>=1 and x <=5 and y>=1 and y <=5) then
@@ -948,39 +1033,60 @@ function aura_env.puzzle2()
                 return sim;
             end
             
-            local nodes = {0,0,0,0}
             local solved = false;
-            --up, bottom, left, right
-            local edgeCheck = {0,0,0,0}
             --x,y,sx,sy
             local direction = {[1] = {0, 1, 1, 1},[2] = {0, -1, 1, 5},[3] = {1,0, 1, 1},[4] = {-1,0, 5, 1}}
             --[y,x,dir]
-            local startNodes = {}
             
-            for i=1,5 do 
-                if groupButtons.buttons[1][i].glow then edgeCheck[1] = edgeCheck[1] + 1; nodes[1]=nodes[1]+1;table.insert(startNodes,{1+direction[1][2],i,1}) else nodes[1]=0  end
-                if groupButtons.buttons[5][i].glow then edgeCheck[2] = edgeCheck[2] + 1; nodes[2]=nodes[2]+1;table.insert(startNodes,{5+direction[2][2],i,2}) else nodes[2]=0  end
-                if groupButtons.buttons[i][1].glow then edgeCheck[3] = edgeCheck[3] + 1; nodes[3]=nodes[3]+1;table.insert(startNodes,{i,1+direction[3][1],3}) else nodes[3]=0  end
-                if groupButtons.buttons[i][5].glow then edgeCheck[4] = edgeCheck[4] + 1; nodes[4]=nodes[4]+1;table.insert(startNodes,{i,5+direction[4][1],4}) else nodes[4]=0  end
-                for x=1,4 do
-                    if nodes[x]>=3 then table.insert(startNodes,{direction[x][4] + math.abs(direction[x][1] * (i-2)) , direction[x][3]  + math.abs(direction[x][2] * (i-2)),x}) end
+            -- Angle traps FIX 1.4 update
+            local preMoves = {{},}
+            local anglePos = {
+                {{1,3},{2,1},{2,2},{{1,1},{1,2}}}, -- topleft
+                {{1,2},{2,2},{3,1},{{1,1},{2,1}}}, -- topleft
+                {{1,4},{2,4},{3,5},{{1,5},{2,5}}}, -- topright
+                {{1,3},{2,4},{2,5},{{1,4},{1,5}}}, -- topright
+                {{4,1},{4,2},{5,3},{{5,1},{5,2}}}, -- bottomleft
+                {{3,1},{4,2},{5,2},{{4,1},{5,1}}}, -- bottomleft
+                {{4,4},{4,5},{5,3},{{5,4},{5,5}}}, -- bottomright
+                {{3,5},{4,4},{5,4},{{4,5},{5,5}}}, -- bottomright
+                --
+                {{1,1},{1,2},{2,1},{{1,1}}}, -- topleft
+                {{4,1},{5,1},{5,2},{{5,1}}}, -- bottomleft
+                {{1,4},{1,5},{2,5},{{1,5}}}, -- topright
+                {{5,4},{5,5},{4,5},{{5,5}}} -- bottomright
+            }
+            
+            for i=1,#anglePos do
+                local angleTrap = true
+                for p=1,3 do
+                    local y = anglePos[i][p][1]
+                    local x = anglePos[i][p][2]
+                    if not groupButtons.buttons[y][x].glow then angleTrap = false end
+                end
+                if angleTrap then
+                    table.insert(preMoves,anglePos[i][4])
                 end
             end
-            
-            for i=1,4 do
-                if edgeCheck[i] == 0 then table.insert(startNodes,{-1,-1,i}) end
-            end
-            
-            if groupButtons.buttons[1][1].glow then table.insert(startNodes, {1,1,1});table.insert(startNodes, {1,1,3}) end  
-            if groupButtons.buttons[5][1].glow then table.insert(startNodes, {5,1,2});table.insert(startNodes, {5,1,3}) end
-            if groupButtons.buttons[1][5].glow then table.insert(startNodes, {1,5,3});table.insert(startNodes, {1,5,4}) end
-            if groupButtons.buttons[5][5].glow then table.insert(startNodes, {5,5,4});table.insert(startNodes, {5,5,4}) end
             
             local function copy(group)
                 local s = {{},{},{},{},{}}
                 for y=1,5 do
                     for x=1,5 do
                         if group.buttons[y][x].glow then 
+                            s[y][x] = true
+                        else
+                            s[y][x] = false
+                        end
+                    end
+                end
+                return s
+            end
+            
+            local function copy2(g)
+                local s = {{},{},{},{},{}}
+                for y=1,5 do
+                    for x=1,5 do
+                        if g[y][x] then 
                             s[y][x] = true
                         else
                             s[y][x] = false
@@ -1003,51 +1109,103 @@ function aura_env.puzzle2()
                 return result
             end
             
-            if #startNodes > 0 then
-                for v=1, #startNodes do
-                    if not solved then
-                        local moves = 0
-                        local path = {}
-                        local id = startNodes[v][3]
-                        local simulation = copy(groupButtons)
-                        
-                        local x = startNodes[v][2]
-                        local y = startNodes[v][1]
-                        if (x ~= -1 and y ~= -1) then 
-                            moves = moves + 1
-                            path[moves] = {x,y}
-                            simulation = nextTick(simulation,x,y)
-                        end
-                        
-                        for times=0, 4 do
-                            for i=0,4 do
-                                local x1 = direction[id][3]+math.abs(direction[id][2] * i) + direction[id][1] * times
-                                local y1 = direction[id][4]+math.abs(direction[id][1] * i) + direction[id][2] * times
-                                if simulation[y1][x1] then
-                                    moves = moves + 1
-                                    path[moves] = {x1+direction[id][1],y1+direction[id][2]}
-                                    simulation = nextTick(simulation,x1+direction[id][1],y1+direction[id][2])
+            for r=1, #preMoves do
+                local rMoves = 0
+                local rPath = {}
+                local preSimulation = copy(groupButtons)
+                for ps=1, #preMoves[r] do
+                    rMoves = rMoves + 1
+                    rPath[rMoves] = {preMoves[r][ps][2],preMoves[r][ps][1]}
+                    preSimulation = nextTick(preSimulation,preMoves[r][ps][2],preMoves[r][ps][1])
+                end
+                
+                --up, bottom, left, right
+                local edgeCheck = {0,0,0,0}
+                local nodes = {0,0,0,0}
+                local startNodes = {}
+                
+                for i=1,5 do 
+                    if preSimulation[1][i] then edgeCheck[1] = edgeCheck[1] + 1; nodes[1]=nodes[1]+1;table.insert(startNodes,{1+direction[1][2],i,1}) else nodes[1]=0  end
+                    if preSimulation[5][i] then edgeCheck[2] = edgeCheck[2] + 1; nodes[2]=nodes[2]+1;table.insert(startNodes,{5+direction[2][2],i,2}) else nodes[2]=0  end
+                    if preSimulation[i][1] then edgeCheck[3] = edgeCheck[3] + 1; nodes[3]=nodes[3]+1;table.insert(startNodes,{i,1+direction[3][1],3}) else nodes[3]=0  end
+                    if preSimulation[i][5] then edgeCheck[4] = edgeCheck[4] + 1; nodes[4]=nodes[4]+1;table.insert(startNodes,{i,5+direction[4][1],4}) else nodes[4]=0  end
+                    for x=1,4 do
+                        if nodes[x]>=3 then table.insert(startNodes,{direction[x][4] + math.abs(direction[x][1] * (i-2)) , direction[x][3]  + math.abs(direction[x][2] * (i-2)),x}) end
+                    end
+                end
+                
+                for i=1,4 do
+                    if edgeCheck[i] == 0 then table.insert(startNodes,{-1,-1,i}) end
+                end
+                
+                if preSimulation[1][1] then table.insert(startNodes, {1,1,1});table.insert(startNodes, {1,1,3}) end  
+                if preSimulation[5][1] then table.insert(startNodes, {5,1,2});table.insert(startNodes, {5,1,3}) end
+                if preSimulation[1][5] then table.insert(startNodes, {1,5,3});table.insert(startNodes, {1,5,4}) end
+                if preSimulation[5][5] then table.insert(startNodes, {5,5,4});table.insert(startNodes, {5,5,4}) end
+                
+                for i=1,5 do 
+                    if preSimulation[1][i] then table.insert(startNodes,{1,i,1}) end
+                    if preSimulation[5][i] then table.insert(startNodes,{5,i,2}) end
+                    if preSimulation[i][1] then table.insert(startNodes,{i,1,3}) end
+                    if preSimulation[i][5] then table.insert(startNodes,{i,5,4}) end
+                end
+                
+                if #startNodes > 0 then
+                    for v=1, #startNodes do
+                        if not solved then
+                            local moves = 0
+                            local path = {}
+                            local id = startNodes[v][3]
+                            local simulation = copy2(preSimulation)
+                            
+                            local x = startNodes[v][2]
+                            local y = startNodes[v][1]
+                            if (x ~= -1 and y ~= -1) then 
+                                moves = moves + 1
+                                path[moves] = {x,y}
+                                simulation = nextTick(simulation,x,y)
+                            end
+                            
+                            for times=0, 4 do
+                                for i=0,4 do
+                                    local x1 = direction[id][3]+math.abs(direction[id][2] * i) + direction[id][1] * times
+                                    local y1 = direction[id][4]+math.abs(direction[id][1] * i) + direction[id][2] * times
+                                    if simulation[y1][x1] then
+                                        moves = moves + 1
+                                        path[moves] = {x1+direction[id][1],y1+direction[id][2]}
+                                        simulation = nextTick(simulation,x1+direction[id][1],y1+direction[id][2])
+                                    end
                                 end
                             end
-                        end
-                        
-                        if moves <= 5 and checkSolution(simulation) then
-                            resetForm()
                             
-                            for i=1, moves do
-                                local x2 = path[i][1]
-                                local y2 = path[i][2]
-                                groupButtons.buttons[y2][x2]:SetBackdropColor(unpack({0.2,0.8,0.2,1}))
-                                groupButtons.buttons[y2][x2]:SetBackdropBorderColor(unpack({1,1,1,1}))
-                                groupButtons.buttons[y2][x2].texture:Hide()
-                                groupButtons.buttons[y2][x2].text:SetText(i)
-                                groupButtons.buttons[y2][x2]:SetScript("OnEnter", function() end)
-                                groupButtons.buttons[y2][x2]:SetScript("OnLeave", function() end)
-                            end
-                            solved = true
-                        end 
-                    end
-                end    
+                            if moves+rMoves <= 5 and checkSolution(simulation) then
+                                resetForm()
+                                
+                                for i=1, moves do
+                                    local x2 = path[i][1]
+                                    local y2 = path[i][2]
+                                    groupButtons.buttons[y2][x2]:SetBackdropColor(unpack({0.2,0.8,0.2,1}))
+                                    groupButtons.buttons[y2][x2]:SetBackdropBorderColor(unpack({1,1,1,1}))
+                                    groupButtons.buttons[y2][x2].texture:Hide()
+                                    groupButtons.buttons[y2][x2].text:SetText(i+rMoves)
+                                    groupButtons.buttons[y2][x2]:SetScript("OnEnter", function() end)
+                                    groupButtons.buttons[y2][x2]:SetScript("OnLeave", function() end)
+                                end
+                                for i=1,rMoves do
+                                    local x2 = rPath[i][1]
+                                    local y2 = rPath[i][2]
+                                    groupButtons.buttons[y2][x2]:SetBackdropColor(unpack({0.2,0.8,0.2,1}))
+                                    groupButtons.buttons[y2][x2]:SetBackdropBorderColor(unpack({1,1,1,1}))
+                                    groupButtons.buttons[y2][x2].texture:Hide()
+                                    groupButtons.buttons[y2][x2].text:SetText(i)
+                                    groupButtons.buttons[y2][x2]:SetScript("OnEnter", function() end)
+                                    groupButtons.buttons[y2][x2]:SetScript("OnLeave", function() end)
+                                end
+                                solved = true
+                            end 
+                        end
+                    end  
+                end                
             end                
             
             if not solved then

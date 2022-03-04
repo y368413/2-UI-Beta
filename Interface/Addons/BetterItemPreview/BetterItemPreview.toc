@@ -1,0 +1,9 @@
+## Interface: 90200
+## Title: Better Item Preview
+## Author: Trelmarq
+## Version: 3.0.0
+## OptionalDeps: MogIt
+## SavedVariables: BetterItemPreview
+
+embeds.xml
+core.lua

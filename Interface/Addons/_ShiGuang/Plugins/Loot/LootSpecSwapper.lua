@@ -1,4 +1,4 @@
---## Author: Cilraaz ## Version: v2020.12.15.4
+--## Author: Cilraaz ## Version: 9.2.0.01
 local LootSpecSwapper = {}
 
 function LSS_CreateOptionsPanel()
@@ -17,7 +17,7 @@ function LSS_CreateOptionsPanel()
   -- Version Info
   local versionLabel = configFrame:CreateFontString(nil, 'ARTWORK', 'GameFontNormalSmall')
   versionLabel:SetPoint('BOTTOMLEFT', titleLabel, 'BOTTOMRIGHT', 8, 0)
-  versionLabel:SetText('v2020.12.15.4')
+  versionLabel:SetText('9.2.0.01')
 
   -- Author Info
   local authorLabel = configFrame:CreateFontString(nil, 'ARTWORK', 'GameFontNormalSmall')
@@ -151,7 +151,6 @@ function LSS_CreateOptionsPanel()
 
 end
 
-
 -- Create our base frame
 local lssFrame = CreateFrame("frame")
 LootSpecSwapper.frame = lssFrame
@@ -170,6 +169,39 @@ local difficultyNames = {
   ["16"] = "Raid Mythic",
   ["17"] = "Raid LFR",
   ["23"] = "Dungeon Mythic"
+}
+
+-- Table for boss names that don't match the Encounter Journal encounter name
+local bossFixes = {
+  -- Dungeons
+  ["Milificent Manastorm"] = "The Manastorms",
+  ["Millhouse Manastorm"] = "The Manastorms",
+  ["Halkias"] = "Halkias, the Sin-Stained Goliath",
+  ["Azules"] = "Kin-Tara",
+  ["Devos"] = "Devos, Paragon of Doubt",
+  ["Stitchflesh's Creation"] = "Surgeon Stitchflesh",
+  ["Dessia the Decapitator"] = "An Affront of Challengers",
+  ["Paceran the Virulent"] = "An Affront of Challengers",
+  ["Sathel the Accursed"] = "An Affront of Challengers",
+  -- Raids
+  --- World Bosses
+  ["Valinor"] = "Valinor, the Light of Eons",
+  --- Castle Nathria
+  ["Margore"] = "Huntsman Altimor",
+  ["Kael'thas Sunstrider"] = "Sun King's Salvation",
+  ["High Torturor Darithos"] = "Sun King's Salvation",
+  ["Bleakwing Assassin"] = "Sun King's Salvation",
+  ["Vile Occultist"] = "Sun King's Salvation",
+  ["Castellan Niklaus"] = "The Council of Blood",
+  ["Baroness Frieda"] = "The Council of Blood",
+  ["Lord Stavros"] = "The Council of Blood",
+  ["General Kaal"] = "Stone Legion Generals",
+  ["General Grashaal"] = "Stone Legion Generals",
+  --- Sanctum of Domination
+  ["Eye of the Jailer"] = "The Eye of the Jailer",
+  ["Kyra"] = "The Nine",
+  ["Signe"] = "The Nine",
+  ["Skyja"] = "The Nine",
 }
 
 -- Generic Variables
@@ -224,21 +256,25 @@ lssFrame:SetScript("OnEvent", function(self, event)
   if (event == "PLAYER_TARGET_CHANGED") then
     if (not UnitIsDead("target")) then
       local currMapID = (C_Map.GetBestMapForUnit("player")) or 0
+      local EJInstanceID = EJ_GetInstanceForMap(currMapID)
       local targetName = UnitName("target")
       if not targetName then return end
+      if not (targetName == "General Kaal" and EJInstanceID == 1189) then
+        if bossFixes[targetName] then targetName = bossFixes[targetName] end
+      end
 
       if ShiGuangPerDB.perDifficulty then
         local _,_,diff = GetInstanceInfo()
         if diff then
           if ShiGuangPerDB.specPerBoss[diff] then
-            if ShiGuangPerDB.specPerBoss[diff][currMapID] then
-              newSpec = ShiGuangPerDB.specPerBoss[diff][currMapID][targetName]
+            if ShiGuangPerDB.specPerBoss[diff][EJInstanceID] then
+              newSpec = ShiGuangPerDB.specPerBoss[diff][EJInstanceID][targetName]
             end
           end
         end
       else
-        if ShiGuangPerDB.specPerBoss.allDifficulties[currMapID] then
-          newSpec = ShiGuangPerDB.specPerBoss.allDifficulties[currMapID][targetName]
+        if ShiGuangPerDB.specPerBoss.allDifficulties[EJInstanceID] then
+          newSpec = ShiGuangPerDB.specPerBoss.allDifficulties[EJInstanceID][targetName]
         end
       end
       if newSpec then
@@ -263,7 +299,7 @@ lssFrame:SetScript("OnEvent", function(self, event)
       inDefaultSpecAlready = true
     end
   end
-  if (newSpec and ((GetLootSpecialization()) ~= newSpec)) then
+  if (newSpec and GetLootSpecialization() ~= newSpec) then
     if (newSpec == -1) then
       SetLootSpecialization(0)
       printOutput("Loot Spec Swapper: CHANGED LOOT SPEC TO FOLLOW CURRENT SPEC")
@@ -285,14 +321,14 @@ function lssFrame.SlashCommandHandler(cmd)
       if (currSpec == 0) then
         printOutput("Loot Spec Swapper: You must set a spec first (right-click your character frame).")
       else
-        local _,_,_,_,_,_,currMapID = EJ_GetInstanceInfo()
+        local EJInstanceID = EncounterJournal.instanceID
         if ShiGuangPerDB.perDifficulty then
           local diff = EJ_GetDifficulty()
           if diff then
-            ShiGuangPerDB.specPerBoss[diff][currMapID][currTarget] = currSpec
+            ShiGuangPerDB.specPerBoss[diff][EJInstanceID][currTarget] = currSpec
           end
         else
-          ShiGuangPerDB.specPerBoss.allDifficulties[currMapID][currTarget] = currSpec
+          ShiGuangPerDB.specPerBoss.allDifficulties[EJInstanceID][currTarget] = currSpec
         end
       end
     end
@@ -343,14 +379,14 @@ function lssFrame.SlashCommandHandler(cmd)
   elseif cmd and string.lower(cmd) == "forget" then
     local currTarget = overrideTarget or UnitName("target")
     if (type(currTarget) == "string") then
-      local _,_,_,_,_,_,currMapID = EJ_GetInstanceInfo()
+      local EJInstanceID = EncounterJournal.instanceID
       if ShiGuangPerDB.perDifficulty then
         local diff = EJ_GetDifficulty()
         if diff then
-          ShiGuangPerDB.specPerBoss[diff][currMapID][currTarget] = nil
+          ShiGuangPerDB.specPerBoss[diff][EJInstanceID][currTarget] = nil
         end
       else
-        ShiGuangPerDB.specPerBoss.allDifficulties[currMapID][currTarget] = nil
+        ShiGuangPerDB.specPerBoss.allDifficulties[EJInstanceID][currTarget] = nil
       end
     end
   elseif cmd and string.lower(cmd) == "forgetdefault" then
@@ -387,17 +423,17 @@ journalRestoreButton:SetScript("OnClick",function(self)
   ShiGuangPerDB.LSSminimized = false
 end)
 journalSaveButton:SetScript("OnClick",function(self, button)
-  local _,_,_,_,_,_,EJInstanceID = EJ_GetInstanceInfo()
+  local EJInstanceID = EncounterJournal.instanceID
   if (not EncounterJournalEncounterFrameInfoCreatureButton1) or (not EncounterJournalEncounterFrameInfoCreatureButton1.name) or (not EJInstanceID) then
     printOutput("Select a boss first.")
     return
   end
   if (button == "RightButton") then
-    overrideTarget = EncounterJournalEncounterFrameInfoCreatureButton1.name
+    overrideTarget = EJ_GetEncounterInfo(EncounterJournal.encounterID)
     lssFrame.SlashCommandHandler("forget")
     overrideTarget = nil
   else
-    overrideTarget = EncounterJournalEncounterFrameInfoCreatureButton1.name
+    overrideTarget = EJ_GetEncounterInfo(EncounterJournal.encounterID)
     overrideSpec = firstSpec
     local selectedSpec = nil
     if ShiGuangPerDB.perDifficulty then
@@ -537,10 +573,14 @@ end
 
 journalSaveButton:SetScript("OnUpdate",function(self)
   if (self:IsVisible()) then
-    local bossName = EncounterJournalEncounterFrameInfoCreatureButton1.name
-    local _,_,_,_,_,_,EJInstanceID = EJ_GetInstanceInfo()
+    local bossID = EncounterJournal.encounterID
+    local bossName = ""
+    if bossID ~= nil then
+      bossName = EJ_GetEncounterInfo(EncounterJournal.encounterID)
+    end
+    local EJInstanceID = EncounterJournal.instanceID
 
-    if (type(bossName) == "string") then
+    if (type(bossName) == "string" and bossName ~= "") then
       local bossSpec
       if ShiGuangPerDB.perDifficulty then
         local diff = EJ_GetDifficulty()
@@ -603,6 +643,7 @@ loadframe:SetScript("OnEvent",function(self,event,addon)
     end
   end
 
+  if addon == "LootSpecSwapper" then
     -- Create defaults
     ShiGuangPerDB.specPerBoss = ShiGuangPerDB.specPerBoss or {}
     ShiGuangPerDB.specPerBoss.allDifficulties = ShiGuangPerDB.specPerBoss.allDifficulties or {}
@@ -622,4 +663,5 @@ loadframe:SetScript("OnEvent",function(self,event,addon)
 
     -- Create Options Panel
     LSS_CreateOptionsPanel()
+  end
 end)

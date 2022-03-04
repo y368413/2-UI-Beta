@@ -176,7 +176,7 @@ F.addonPrefix = "\124cFF70B8FF" .. addonName .. "\124r: "
 F.addonLocaleName = "\124cFF70B8FF便利CD获取\124r: "
 F.addonVersion = GetAddOnMetadata(addonName, 'Version')
 --[==[@debug@
-if F.addonVersion == 'v9.2.0' then
+if F.addonVersion == 'v9.2.0-1-g2ece3f8' then
     F.addonVersion = 'Dev'
 end
 --@end-debug@]==]

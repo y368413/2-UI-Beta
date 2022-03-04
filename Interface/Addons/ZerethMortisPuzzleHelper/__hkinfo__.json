@@ -1,6 +1,14 @@
 {
     "target": "curse",
-    "searchName": "ZerethMortisPuzzleHelper",
+    "searchName": "Zereth Mortis Puzzle Helper",
     "localName": "ZerethMortisPuzzleHelper",
-    "version": "1.2"
+    "version": "v1.5",
+    "fileName": "zereth-mortis-puzzle-helper",
+    "addonsMap": [
+        "ZerethMortisPuzzleHelper"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "name": "ZerethMortisPuzzleHelper",
+    "gameVersion": "9.2.0"
 }
