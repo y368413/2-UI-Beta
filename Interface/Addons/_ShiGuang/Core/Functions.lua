@@ -1127,7 +1127,6 @@ end
 			icon.border:SetTexture("")
 		end
 	end
-end
 
 -- GUI elements
 do

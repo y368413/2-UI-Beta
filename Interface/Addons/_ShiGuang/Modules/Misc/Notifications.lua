@@ -228,7 +228,12 @@ function MISC:InterruptAlert_Update(...)
 			end
 
 			if sourceSpellID and destSpellID then
-				SendChatMessage(format(infoText, sourceName..GetSpellLink(sourceSpellID), destName..GetSpellLink(destSpellID)), msgChannel())
+				--SendChatMessage(format(infoText, sourceName..GetSpellLink(sourceSpellID), destName..GetSpellLink(destSpellID)), msgChannel())
+				SendChatMessage(format(infoText, GetSpellLink(destSpellID)), msgChannel())
+				   if R.db["Misc"]["InterruptSound"] then
+				      PlaySoundFile("Interface\\Addons\\_ShiGuang\\Media\\Sounds\\ShutupFool.ogg", "Master")
+				   end
+
 			end
 		end
 	end

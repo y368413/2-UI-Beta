@@ -1,0 +1,18 @@
+﻿## Interface: 90200
+## Title: |cff00ff00a|rLoot
+## Author: |cff44ff44 Aene|r - BurningBlade EU
+## Version: 1.0.4
+## Credits:Blue
+## SavedVariables: aLootCFG, ItemsTable
+
+# Libs
+Libs\LibStub\LibStub.lua
+Libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
+Libs\LibSharedMedia-3.0\lib.xml
+Libs\AceGUI-3.0\AceGUI-3.0.xml
+Libs\AceGUI-3.0-SharedMediaWidgets\widget.xml
+Libs\AceConfig-3.0\AceConfig-3.0.xml
+Libs\LibAnim\LibAnim.lua
+
+aLoot.xml
+

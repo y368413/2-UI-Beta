@@ -1,0 +1,56 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\..\FrameXML\UI.xsd">
+<frame name="aLootFrameAnimations" hidden="true" virtual="true" enableMouse="false">
+	<Animations>
+		<AnimationGroup parentKey="FadeIn">
+			<Alpha parentKey="Alpha" fromAlpha="0" toAlpha="1" duration=".5" order="1"/>
+		</AnimationGroup>
+		<AnimationGroup parentKey="Anime">
+			<Alpha parentKey="Alpha" fromAlpha="0" toAlpha="1" duration=".5" order="1"/>
+			<Alpha parentKey="Wait"  fromAlpha="1" toAlpha="1" duration="4" order="2"/>
+			<Alpha parentKey="Alpha" fromAlpha="1" toAlpha="0" duration=".5" order="3"/>
+			<Scripts>
+					<OnFinished>
+						self:GetParent():Hide();
+					</OnFinished>
+				</Scripts>
+		</AnimationGroup>
+	</Animations>
+</frame>
+
+<Button name="aLootFrameAnimationTemplate" hidden="true" virtual="true">
+	<Layers>
+		<Layer level="BACKGROUND">
+			<Texture parentKey="Icon">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
+				</Anchors>
+			</Texture>
+		</Layer>
+	</Layers>
+	<Animations>
+		<AnimationGroup parentKey="AnimOut">
+			<Alpha parentKey="Alpha" fromAlpha=".5" toAlpha="0" duration="0.6" order="1"/>
+		</AnimationGroup>
+		<AnimationGroup parentKey="AnimIn">
+			<Alpha parentKey="Alpha" fromAlpha="0" toAlpha=".5" duration="1" order="1"/>
+		</AnimationGroup>
+		<AnimationGroup parentKey="AnimRight">
+			<Translation parentKey="Translation" offsetX="25" offsetY="0" duration="1" order="1"/>
+		</AnimationGroup>
+		<AnimationGroup parentKey="AnimDown">
+			<Translation parentKey="Translation" offsetX="0" offsetY="25" duration="1" order="1"/>
+		</AnimationGroup>
+	</Animations>
+</Button>
+
+<Script file="Config.lua"/>
+<Script file="aLoot.lua"/>
+
+<Frame name="aLoot" frameStrata="HIGH" toplevel="true" movable="true" enableMouse="true" clampedToScreen="true" parent="UIParent" mixin="lootFrameMixin" alpha="1" hidden="true">
+	<Scripts>
+		<OnLoad method="OnLoad"/>
+		<OnEvent method="OnEvent"/>
+	</Scripts>
+</Frame>
+</Ui>
