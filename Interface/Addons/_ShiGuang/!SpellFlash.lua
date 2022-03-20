@@ -455,7 +455,7 @@ thj.StartQuesting = function() thj.info.isQuesting = true; end
 thj.StopQuesting = function() thj.info.isQuesting = false; end
 
 
--- 战士盾反助手统计
+--[[ 战士盾反助手统计
 local SRE = thj.createFrame("srEvt", thj.frame);
 local myName = UnitName("player")
 local Spell = {Berserk = 18499, SpellReflection = 23920}
@@ -476,10 +476,7 @@ btnSR:SetAttribute("macrotext", "/cast 法术反射")
 local spellMeta = {}
 local toDebugBosses = {["穆厄扎拉"] = true}
 SRE:RegisterEvent("UNIT_SPELLCAST_START")
---[[
-/dump UnitName("nameplate3")
-/dump UnitName("nameplate3target")
-]]
+
 local LSF = thj;
 local function doCounter(meta)
     if not meta.counterSpell then return end
@@ -526,9 +523,7 @@ function SRE:UNIT_SPELLCAST_SUCCEEDED(frame, casterID, evtID, spellID)
     end
     LSF.Repaint();
 end
---[[
-    添加需要处理的法术列表 334748
-]]
+--   添加需要处理的法术列表 334748
 local function addSingleSpell(spellID, counterSpell, delay)
     if not counterSpell then return end
     delay = delay or 0;
@@ -657,7 +652,7 @@ addSingleSpell(330875) -- Spirit Frost
 addSingleSpell(330810) -- Bind Soul
 addSingleSpell(332550) -- Soul Touch
 -- =统御圣所=--
-addSingleSpell(350453, true)
+addSingleSpell(350453, true)]]
 --[[
 
 320462

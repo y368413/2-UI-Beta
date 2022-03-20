@@ -40,10 +40,12 @@ local font = "Fonts\\ARKai_T.TTF"
 local frames={}
 local backdrop={
     bgFile="Interface\\Tooltips\\UI-Tooltip-Background",
+    -- edgeFile = "Interface\\Buttons\\WHITE8x8",
+    -- edgeSize=2,
     edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+    edgeSize=10,
     tile=true,
     tileSize=8,
-    edgeSize=10,
     insets={ left=2,right=2,top=2,bottom=2},
 }
 -- 创建框体函数
@@ -189,13 +191,14 @@ function CreateSEFrame(parent,unit)
     return MainFrame,ItemString,Tex,HeadFrame.ItemString,Green_L,Green_R,GemFrame.ItemString,TongYuFrame.ItemString,WarnMissFrame.ItemString
 end
 -- 获取装备链接与名字
+-- 从目标player/target，装备位置获取装备链接，然后由装备链接获取装备详细信息（包括名字、链接、品质、等级、类型）
 function GetInvList(unit)
     local InvLink = {}
     local InvName = {}
     for key, value in pairs(SESlots_G) do
-        local ItemLocation = GetInventoryItemLink(unit,value.index)
+        local ItemLocation = GetInventoryItemLink(unit,value.index)--获取装备链接
         if ItemLocation ~= nil then
-            InvName[key] = GetItemInfo(ItemLocation)
+            InvName[key] = GetItemInfo(ItemLocation)--获取装备详细信息
             InvLink[key] = ItemLocation
         else
             InvLink[key] = ""
@@ -205,7 +208,7 @@ function GetInvList(unit)
 
     return InvName,InvLink
 end
--- 获取插槽数目（区分统御与其他宝石）
+-- 获取总插槽数目（区分统御与其他宝石）
 function GetGemsAll(unit)
     local number,TongYuNumber,n = 0,0,1
     local NullGemsList = {}
@@ -213,7 +216,7 @@ function GetGemsAll(unit)
     local stats = {}
     for key, value in pairs(SESlots_G) do
         if InvLink[key] ~= "" then
-          stats = GetItemStats(InvLink[key])
+          stats = GetItemStats(InvLink[key])--获取单个装备的属性信息
           local LinkInfo = GetInfomation(InvLink[key])
           for k , v in pairs(stats) do
               if string.find(k,"EMPTY_SOCKET_") and ( not string.find(k,"EMPTY_SOCKET_DOMINATION")) then
@@ -424,9 +427,17 @@ function CutInvName(InvName)
     return NameList
 end
 -- 获取装备品质与等级（目前传家宝等级获取不稳定）
-function GetInvInfo(InvLink)
+-- 获取平均装等
+-- 双手武器按15个计算，单手按16个计算
+-- 没有武器装备按16个计算
+-- 双手斧、双手剑、长柄、法杖、
+function GetInvInfo(InvLink,unit)
     local ItemQuality = {}
     local ItemLevel = {}
+    local sumLevel = 0
+    local avgLevel = 0
+    local _,InvLinkC = GetInvList(unit)
+    local aaa
     for key, value in pairs(InvLink) do
 
         if value ~= "" then
@@ -434,20 +445,34 @@ function GetInvInfo(InvLink)
             local itemLevel = GetDetailedItemLevelInfo(value)
             ItemQuality[key] = itemQuality
             ItemLevel[key] = itemLevel
+            -- 获取全身装备总装等
+            sumLevel = sumLevel + itemLevel
+            -- print(itemLevel)
         else
             ItemQuality[key] = ""
             ItemLevel[key] = ""
         end
     end
+    if InvLinkC[15] ~= "" then
+        _,_,_,_,_,_,_,_,_,_,_,_,aaa= GetItemInfo(InvLinkC[15])
+    end
 
-    return ItemQuality,ItemLevel
+    if InvLinkC[16] == "" and (aaa == 1 or aaa == 2 or aaa == 3 or aaa == 5 or aaa == 6 or aaa == 8 or aaa == 10 or aaa == 18 or aaa == 20) then
+        avgLevel = sumLevel/15
+    else
+        avgLevel = sumLevel/16
+    end
+    -- print(avgLevel)
+    -- print(sumLevel)
+    return ItemQuality,ItemLevel,avgLevel
 end
+
 -- 获取装备品质颜色
 function GetInvColor(ItemQuality)
     local r,g,b,a
     if ItemQuality ~= "" then
         r,g,b=GetItemQualityColor(ItemQuality)
-        a=0.8
+        a=1
     else
         r,g,b,a=0,0,0,0
     end
@@ -531,7 +556,7 @@ end
 function ShowChangeItem(unit,ItemString,Tex,ILevel,Green_L,Green_R,Gem,TongYu,Miss)
     local InvName,InvLink = GetInvList(unit)
     local NameList = CutInvName(InvName)
-    local ItemQuality,ItemLevel = GetInvInfo(InvLink)
+    local ItemQuality,ItemLevel,avgLevel = GetInvInfo(InvLink,unit)
     local Stats,CritNumber,HasteNumber,MasteryNumber,VersatilityNumber = GetInvStats(InvLink,SESlots_G_G)
     local GreenAll = {CritNumber,HasteNumber,MasteryNumber,VersatilityNumber}
     local SpecName,SpecNumber = GetSpec(unit)
@@ -542,13 +567,8 @@ function ShowChangeItem(unit,ItemString,Tex,ILevel,Green_L,Green_R,Gem,TongYu,Mi
     local GemRealNumber,TongYuInfo,TongYuRealNumber,GemStat = GetGems(unit)
     local GemAlls,TongYuAlls,NullGemsList = GetGemsAll(unit)
     local EnchantLine,GemsLine = "",""
-    local _,AvgItemLevelEquipped
-    if unit == "player" then
-        _,AvgItemLevelEquipped = GetAverageItemLevel()
-    elseif  unit == "target" then
-        AvgItemLevelEquipped = C_PaperDollInfo.GetInspectItemLevel(unit)
-    end
-    ILevel:SetText(("装等:%.1f"):format(AvgItemLevelEquipped).."  ".."天赋:"..SpecName)
+
+    ILevel:SetText(("装等:%.1f"):format(avgLevel).."  ".."天赋:"..SpecName)
     Gem:SetText("附魔:"..EnchantNumber.."/"..EnchantActuallyNmuber.."宝石:"..GemAlls.."/"..GemRealNumber.."".."统御:"..TongYuAlls.."/"..TongYuRealNumber)
     Gem:SetTextColor(1,0.9,0,0.7)
 
@@ -603,7 +623,7 @@ local a = 0
 
 local PlayerFrame,ItemString_P,Tex_P,ILevel_P,Green_L_P,Green_R_P,Gem_P,TongYu_P,Miss_P = CreateSEFrame(PaperDollFrame,"player")
 PlayerFrame:SetBackdropBorderColor(0,0,0,1)
-PlayerFrame:SetPoint("LEFT",PaperDollFrame:GetWidth(),0)
+PlayerFrame:SetPoint("LEFT",PaperDollFrame:GetWidth()+2,0)
 
 local TargetFrame,ItemString_T,Tex_T,ILevel_T,Green_L_T,Green_R_T,Gem_T,TongYu_T
 
@@ -633,7 +653,7 @@ EventFrame:SetScript("OnEvent",function (self,event,...)
             if SEquipmentDB.ShowTargetInfo == true then
                 if SEquipmentDB.ShowPlayerInfo == true then
                     PlayerFrame:SetParent(InspectFrame)
-                    PlayerFrame:SetPoint("LEFT",InspectFrame:GetWidth()+200,0)
+                    PlayerFrame:SetPoint("LEFT",InspectFrame:GetWidth()+203,0)
                     ShowChangeItem("player",ItemString_P,Tex_P,ILevel_P,Green_L_P,Green_R_P,Gem_P,TongYu_P,Miss_P)
                     PlayerFrame:Show()
 
@@ -649,7 +669,7 @@ EventFrame:SetScript("OnEvent",function (self,event,...)
             else
                 if SEquipmentDB.ShowPlayerInfo == true then
                     PlayerFrame:SetParent(InspectFrame)
-                    PlayerFrame:SetPoint("LEFT",InspectFrame:GetWidth()+1,0)
+                    PlayerFrame:SetPoint("LEFT",InspectFrame:GetWidth()+2,0)
                     ShowChangeItem("player",ItemString_P,Tex_P,ILevel_P,Green_L_P,Green_R_P,Gem_P,TongYu_P,Miss_P)
                     PlayerFrame:Show()
 
@@ -675,7 +695,7 @@ EventFrame:SetScript("OnEvent",function (self,event,...)
             TargetFrame,ItemString_T,Tex_T,ILevel_T,Green_L_T,Green_R_T,Gem_T,TongYu_T,Miss_T = CreateSEFrame(InspectFrame,"target")
             
             TargetFrame:SetBackdropBorderColor(0,0,0,1)
-            TargetFrame:SetPoint("LEFT",InspectFrame:GetWidth(),0)
+            TargetFrame:SetPoint("LEFT",InspectFrame:GetWidth()+2,0)
         end
     end
 

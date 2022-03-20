@@ -1,11 +1,0 @@
-<Bindings>
-  <Binding name="BaudManifest" header="BaudManifest">
-    BaudManifestToggleDisplay(1);
-  </Binding>
-  <Binding name="BaudManifestToggleBank">
-    BaudManifestToggleDisplay(2);
-  </Binding>
-  <Binding name="BaudManifestToggleChars">
-    BaudManifestToggleChars();
-  </Binding>
-</Bindings>

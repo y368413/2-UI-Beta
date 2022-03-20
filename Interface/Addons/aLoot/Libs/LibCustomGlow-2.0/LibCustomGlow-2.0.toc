@@ -1,4 +1,4 @@
-## Interface: 90005
+## Interface: 90200
 ## Title: Lib: CustomGlow
 ## Notes: Creates custom glow functions
 ## Author: deezo

@@ -2,7 +2,7 @@
     "target": "curse",
     "searchName": "Pawn",
     "localName": "Pawn",
-    "version": "2.5.32 (WoW 9.2.0)",
+    "version": "2.5.33",
     "fileName": "pawn",
     "addonsMap": [
         "Pawn"

@@ -1,4 +1,4 @@
-## Interface: 40300
+## Interface: 90200
 ## Title: LibParse
 ## Notes: Encodes and Decodes between Lua tables and JSON/CSV.
 ## Author: Sapu94

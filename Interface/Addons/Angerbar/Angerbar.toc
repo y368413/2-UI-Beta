@@ -1,4 +1,4 @@
-## Interface: 90105
+## Interface: 90200
 ## Title: |cffA6FFFFAngry Bar|r
 ## Title-zhCN: |cff02F78E[职业]|r战士怒气条
 ## Title-zhTW: |cff02F78E[職業]|r戰士怒氣條

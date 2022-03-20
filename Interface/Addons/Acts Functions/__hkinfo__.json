@@ -2,6 +2,13 @@
     "target": "curse",
     "searchName": "Act's Functions",
     "localName": "Acts Functions",
-    "version": "2.0.6",
-    "fileName": "acts-functions"
+    "version": "v2.0.9",
+    "fileName": "acts-functions",
+    "addonsMap": [
+        "Acts Functions"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "name": "Acts Functions",
+    "gameVersion": "9.2.0"
 }

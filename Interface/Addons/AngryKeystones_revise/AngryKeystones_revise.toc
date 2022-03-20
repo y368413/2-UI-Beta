@@ -1,6 +1,6 @@
 # README: 这个插件主要是针对大米部分一些功能的修改。比如在不打开背包的情况下，放入插入大秘境钥石。
 # 并且在打开钥石孔或打大秘境的时候，折叠一些无关的追踪窗口。也可用用来保存你平时的追踪窗口状态。
-## Interface: 90105
+## Interface: 90200
 ## Title: Angry Keystones revise
 ## Author: 嚣张的扇贝
 ## Notes: Customization of some special functions. For example, without opening the backpack, insert the keyStone; automatically fold the tracking frame, etc.

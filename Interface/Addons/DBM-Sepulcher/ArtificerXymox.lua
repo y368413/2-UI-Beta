@@ -1,11 +1,11 @@
 local mod	= DBM:NewMod(2470, "DBM-Sepulcher", nil, 1195)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20220223031308")
+mod:SetRevision("20220313224350")
 mod:SetCreatureID(183501)
 mod:SetEncounterID(2553)
 mod:SetUsedIcons(1, 2, 3, 5, 6, 7, 8)
-mod:SetHotfixNoticeRev(20220123000000)
+mod:SetHotfixNoticeRev(20220308000000)
 mod:SetMinSyncRevision(20220123000000)
 --mod.respawnTime = 29
 
@@ -33,11 +33,11 @@ mod:RegisterEventsInCombat(
  or (ability.id = 365682 or ability.id = 364040) and type = "begincast"
  or ability.id = 364030 and type = "cast"
 --]]
---Genesis Relic
+--Forerunner Relic
 mod:AddTimerLine(DBM:EJ_GetSectionInfo(24215))
-local specWarnGenesisRings						= mod:NewSpecialWarningDodgeCount(363520, nil, nil, nil, 2, 2)
+local specWarnForerunnerRings					= mod:NewSpecialWarningDodgeCount(363520, nil, nil, nil, 2, 2)
 
-local timerGenesisRingsCD						= mod:NewNextCountTimer(30, 363520, nil, nil, nil, 3)
+local timerForerunnerRingsCD					= mod:NewNextCountTimer(30, 363520, nil, nil, nil, 3)
 --Stage One: Cartel Xy
 mod:AddTimerLine(DBM:EJ_GetSectionInfo(24588))
 local warnDimensionalTear						= mod:NewTargetNoFilterAnnounce(362615, 3, nil, nil, 67833)
@@ -53,15 +53,15 @@ local yellGlyphofRelocationFades				= mod:NewShortFadesYell(362803)
 local specWarnGlyphofRelocationTaunt			= mod:NewSpecialWarningTaunt(362803, nil, nil, nil, 1, 2)
 local specWarnStasisTrap						= mod:NewSpecialWarningDodge(362882, nil, nil, nil, 2, 2)
 local yellStasisTrap							= mod:NewYell(362882)--Failing to dodge it
-local specWarnHyperlightSpark					= mod:NewSpecialWarningCount(362849, nil, nil, nil, 2, 2)
+local specWarnHyperlightSpark					= mod:NewSpecialWarningCount(362849, nil, 206794, nil, 2, 2)--Short Text "Nova"
 
-local timerDimensionalTearCD					= mod:NewNextTimer(8, 362615, 327770, nil, nil, 3)
+local timerDimensionalTearCD					= mod:NewNextTimer(8, 362615, 67833, nil, nil, 3)
 local timerCartelEliteCD						= mod:NewCDTimer(28.8, 363485, nil, nil, nil, 1, nil, DBM_COMMON_L.MYTHIC_ICON)
 local timerGlyphofRelocationCD					= mod:NewCDCountTimer(60, 362801, nil, nil, nil, 5, nil, DBM_COMMON_L.TANK_ICON)
 local timerGlyphExplostion						= mod:NewTargetTimer(5, 362803, nil, nil, nil, 2, nil, DBM_COMMON_L.HEALER_ICON)
 local timerStasisTrapCD							= mod:NewCDTimer(30, 362882, nil, nil, nil, 3)--28-32. it attemts to average 30 but has ~2 in either direction for some reason
-local timerHyperlightSparknovaCD				= mod:NewCDCountTimer(30, 362849, nil, nil, nil, 2, nil, DBM_COMMON_L.HEALER_ICON)--28-34
---local berserkTimer							= mod:NewBerserkTimer(600)
+local timerHyperlightSparknovaCD				= mod:NewCDCountTimer(30, 362849, 206794, nil, nil, 2, nil, DBM_COMMON_L.HEALER_ICON)--28-34
+local berserkTimer								= mod:NewBerserkTimer(600)
 
 mod:AddSetIconOption("SetIconOnWormhole", 362615, true, false, {1, 2})
 mod:AddSetIconOption("SetIconGlyphofRelocation", 362803, false, false, {3})
@@ -99,22 +99,215 @@ mod.vb.tearIcon = 1
 mod.vb.sparkCount = 0
 mod.vb.ringCount = 0
 mod.vb.glyphCount = 0
+local difficultyName = mod:IsMythic() and "mythic" or mod:IsHeroic() and "heroic" or mod:IsNormal() and "normmal" or "lfr"
+--This table may seem excessive, especially in phasess where they are all same (why not just go if phase 2 = then timer == 37)
+--The reason being they aren't ALWAYS the same, case and point glyph in stage 1, rings in stage 4 heroic
+--Want to be able to update timers faster on fly if fight continues to get hotfixes, this gives most rapidly changable knobs
+local allTimers = {
+	["lfr"] = {
+		[1] = {--Unchanged
+			--Rings
+			[364465] = 42.8,
+			--Glyph of Relocation
+			[362801] = 42.8,
+			--Stasis Trap
+			[362885] = 42.8,
+			--Hyperlight Sparknova
+			[362849] = 42.8,
+		},
+		[2] = {--Gets a little slower
+			--Rings
+			[364465] = 42.8,
+			--Glyph of Relocation
+			[362801] = 42.8,
+			--Stasis Trap
+			[362885] = 42.8,
+			--Hyperlight Sparknova
+			[362849] = 42.8,
+		},
+		[3] = {--Gets even slower
+			--Rings
+			[364465] = 42.8,
+			--Glyph of Relocation
+			[362801] = 42.8,
+			--Stasis Trap
+			[362885] = 42.8,
+			--Hyperlight Sparknova
+			[362849] = 42.8,
+		},
+		[4] = {
+			--Rings
+			[364465] = 42.8,
+			--Glyph of Relocation
+			[362801] = 42.8,
+			--Stasis Trap
+			[362885] = 42.8,
+			--Hyperlight Sparknova
+			[362849] = 42.8,
+		},
+	},
+	["normal"] = {
+		[1] = {--Unchanged
+			--Rings
+			[364465] = 30,
+			--Glyph of Relocation
+			[362801] = 60,--It's supposed to be 30 too, but when other abilities are also 30, it causes this spell to skip casts
+			--Stasis Trap
+			[362885] = 30,
+			--Hyperlight Sparknova
+			[362849] = 30,
+		},
+		[2] = {--Gets a little slower
+			--Rings
+			[364465] = 37.4,
+			--Glyph of Relocation
+			[362801] = 37.4,
+			--Stasis Trap
+			[362885] = 37.4,
+			--Hyperlight Sparknova
+			[362849] = 37.4,
+		},
+		[3] = {--Gets even slower
+			--Rings
+			[364465] = 37.4,
+			--Glyph of Relocation
+			[362801] = 37.4,
+			--Stasis Trap
+			[362885] = 37.4,
+			--Hyperlight Sparknova
+			[362849] = 37.4,
+		},
+		[4] = {
+			--Rings
+			[364465] = 42.8,
+			--Glyph of Relocation
+			[362801] = 42.8,
+			--Stasis Trap
+			[362885] = 42.8,
+			--Hyperlight Sparknova
+			[362849] = 42.8,
+		},
+	},
+	["heroic"] = {
+		[1] = {--Unchanged
+			--Rings
+			[364465] = 30,
+			--Glyph of Relocation
+			[362801] = 60,--It's supposed to be 30 too, but when other abilities are also 30, it causes this spell to skip casts
+			--Stasis Trap
+			[362885] = 30,
+			--Hyperlight Sparknova
+			[362849] = 30,
+		},
+		[2] = {--Gets a little slower
+			--Rings
+			[364465] = 33.3,
+			--Glyph of Relocation
+			[362801] = 33.3,
+			--Stasis Trap
+			[362885] = 33.3,
+			--Hyperlight Sparknova
+			[362849] = 33.3,
+		},
+		[3] = {--Gets even slower
+			--Rings
+			[364465] = 33.3,
+			--Glyph of Relocation
+			[362801] = 33.3,
+			--Stasis Trap
+			[362885] = 33.3,
+			--Hyperlight Sparknova
+			[362849] = 33.3,
+		},
+		[4] = {
+			--Rings
+			[364465] = 40,
+			--Glyph of Relocation
+			[362801] = 40,--assumed not confirmed
+			--Stasis Trap
+			[362885] = 40,
+			--Hyperlight Sparknova
+			[362849] = 38.6,--Shorter than others?
+		},
+	},
+	["mythic"] = {
+		[1] = {--Original
+			--Rings
+			[364465] = 30,
+			--Glyph of Relocation
+			[362801] = 30,
+			--Stasis Trap
+			[362885] = 30,
+			--Hyperlight Sparknova
+			[362849] = 30,
+		},
+		[2] = {--Assumed unchanged, hotfixes said non mythic
+			--Rings
+			[364465] = 30,
+			--Glyph of Relocation
+			[362801] = 30,
+			--Stasis Trap
+			[362885] = 30,
+			--Hyperlight Sparknova
+			[362849] = 30,
+		},
+		[3] = {--Assumed unchanged, hotfixes said non mythic
+			--Rings
+			[364465] = 30,
+			--Glyph of Relocation
+			[362801] = 30,
+			--Stasis Trap
+			[362885] = 30,
+			--Hyperlight Sparknova
+			[362849] = 30,
+		},
+		[4] = {--Assumed has original change to 33 that was applied to all difficulties
+			--Rings
+			[364465] = 33,
+			--Glyph of Relocation
+			[362801] = 33,
+			--Stasis Trap
+			[362885] = 33,
+			--Hyperlight Sparknova
+			[362849] = 33,
+		},
+	},
+}
 
 function mod:OnCombatStart(delay)
 	self:SetStage(1)
 	self.vb.sparkCount = 0
 	self.vb.ringCount = 0
 	self.vb.glyphCount = 0
-	timerDimensionalTearCD:Start(8-delay)
-	timerHyperlightSparknovaCD:Start(14-delay, 1)
-	timerStasisTrapCD:Start(21-delay)
-	timerGenesisRingsCD:Start(26-delay, 1)
+	--For the time being, initial pull timers stil same on all difficulties
+	--This will probably be changed soon enough :D
+	if not self:IsLFR() then
+		--These are same in 3 modes
+		timerDimensionalTearCD:Start(7.9-delay)
+		timerHyperlightSparknovaCD:Start(14-delay, 1)
+		timerStasisTrapCD:Start(21-delay)
+		timerForerunnerRingsCD:Start(26-delay, 1)
+		timerGlyphofRelocationCD:Start(39.9-delay, 1)
+	end
 	if self:IsMythic() then
+		difficultyName = "mythic"
 		timerCartelEliteCD:Start(13.4-delay)
 		timerRiftBlastsCD:Start(13.6-delay)
-		timerGlyphofRelocationCD:Start(44.4-delay, 1)--Only different on pull, it's 40 on phase changes like other modes
+		berserkTimer:Start(600-delay)
 	else
-		timerGlyphofRelocationCD:Start(40-delay, 1)--TODO, recheck
+		if self:IsHeroic() then
+			difficultyName = "heroic"
+		elseif self:IsNormal() then
+			difficultyName = "normal"
+		else
+			difficultyName = "lfr"
+			timerDimensionalTearCD:Start(11-delay)
+			timerHyperlightSparknovaCD:Start(20-delay, 1)
+			timerStasisTrapCD:Start(30-delay)
+			timerForerunnerRingsCD:Start(37.1-delay, 1)
+			timerGlyphofRelocationCD:Start(57.1-delay, 1)
+		end
+
 	end
 --	if self.Options.InfoFrame then
 --		DBM.InfoFrame:SetHeader(DBM:GetSpellInfo(328897))
@@ -135,11 +328,17 @@ function mod:OnCombatEnd()
 	end
 end
 
---[[
 function mod:OnTimerRecovery()
-
+	if self:IsMythic() then
+		difficultyName = "mythic"
+	elseif self:IsHeroic() then
+		difficultyName = "heroic"
+	elseif self:IsNormal() then
+		difficultyName = "normal"
+	else
+		difficultyName = "lfr"
+	end
 end
---]]
 
 function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
@@ -161,12 +360,22 @@ function mod:SPELL_CAST_START(args)
 --		timerRiftBlastsCD:Start()
 	elseif spellId == 362801 then
 		self.vb.glyphCount = self.vb.glyphCount + 1
-		timerGlyphofRelocationCD:Start(nil, self.vb.glyphCount+1)
+		if self.vb.phase then
+			local timer = allTimers[difficultyName][self.vb.phase][spellId]
+			if timer then
+				timerGlyphofRelocationCD:Start(timer, self.vb.glyphCount+1)
+			end
+		end
 	elseif spellId == 362849 then
 		self.vb.sparkCount = self.vb.sparkCount + 1
 		specWarnHyperlightSpark:Show(self.vb.sparkCount)
 		specWarnHyperlightSpark:Play("aesoon")
-		timerHyperlightSparknovaCD:Start(nil, self.vb.sparkCount+1)
+		if self.vb.phase then
+			local timer = allTimers[difficultyName][self.vb.phase][spellId]
+			if timer then
+				timerHyperlightSparknovaCD:Start(timer, self.vb.sparkCount+1)
+			end
+		end
 	elseif spellId == 364040 then
 		if self:AntiSpam(2, 2) then
 			warnHyperlightAscension:Show()
@@ -182,27 +391,31 @@ function mod:SPELL_CAST_SUCCESS(args)
 	if (spellId == 362885 or spellId == 366752) and self:AntiSpam(10, 3) then--362885 verified on heroic
 		specWarnStasisTrap:Show()
 		specWarnStasisTrap:Play("watchstep")
-		timerStasisTrapCD:Start()
+		if self.vb.phase then
+			local timer = allTimers[difficultyName][self.vb.phase][362885]
+			if timer then
+				timerStasisTrapCD:Start(timer)
+			end
+		end
 	elseif spellId == 364040 then
 		if self.Options.NPAuraOnAscension then
 			DBM.Nameplate:Hide(true, args.sourceGUID, spellId)
 		end
 	elseif spellId == 362721 then
 		self.vb.tearIcon = 1
---		timerDimensionalTearCD:Start()--Not used second time per phase?
 	elseif spellId == 363258 then--Decipher Relic, Slightly faster than SPELL_CAST_START/APPLIED
 		warnDecipherRelic:Show()
 		--Stop timers
-		timerGenesisRingsCD:Stop()
+		timerForerunnerRingsCD:Stop()
 		timerCartelEliteCD:Stop()
 		timerRiftBlastsCD:Stop()
 		timerDimensionalTearCD:Stop()
 		timerGlyphofRelocationCD:Stop()
 		timerHyperlightSparknovaCD:Stop()
 		timerStasisTrapCD:Stop()
-		--Only scan for acolytes and mark them with skull and cross, then stop scanning
+		--Only scan for acolytes and overseers and mark them with skull and cross, then stop scanning
 		if self.Options.SetIconOnHyperlightAdds then
-			self:ScanForMobs(184140, 0, 8, 2, {184140, 184143}, 12, "SetIconOnHyperlightAdds")
+			self:ScanForMobs(184140, 0, 8, 2, {184140, 184143, 184792}, 12, "SetIconOnHyperlightAdds")
 		end
 		--Secondary scan that's marking Debilitators with 6 5 and 4
 		if self.Options.SetIconOnHyperlightAdds then
@@ -210,11 +423,14 @@ function mod:SPELL_CAST_SUCCESS(args)
 		end
 	elseif spellId == 364465 then
 		self.vb.ringCount = self.vb.ringCount + 1
-		specWarnGenesisRings:Show(self.vb.ringCount)
-		specWarnGenesisRings:Play("watchwave")
-		--More data needed, no phase 3 data for mythic, and did heroic change to also not be 30 anymore?
-		local timer = self:IsMythic() and (self.vb.phase == 1 and 33 or self.vb.phase == 2 and 40) or 30
-		timerGenesisRingsCD:Start(timer, self.vb.ringCount+1)
+		specWarnForerunnerRings:Show(self.vb.ringCount)
+		specWarnForerunnerRings:Play("watchwave")
+		if self.vb.phase then
+			local timer = allTimers[difficultyName][self.vb.phase][spellId]
+			if timer then
+				timerForerunnerRingsCD:Start(timer, self.vb.ringCount+1)
+			end
+		end
 	elseif spellId == 364030 then
 		if not castsPerGUID[args.sourceGUID] then--Shouldn't happen, but failsafe
 			castsPerGUID[args.sourceGUID] = 0
@@ -245,22 +461,36 @@ function mod:SPELL_CAST_SUCCESS(args)
 		self.vb.glyphCount = 0
 		warnDecipherRelic:Show()
 		--Stop timers
-		timerGenesisRingsCD:Stop()
+		timerForerunnerRingsCD:Stop()
 		timerCartelEliteCD:Stop()
 		timerRiftBlastsCD:Stop()
 		timerDimensionalTearCD:Stop()
 		timerGlyphofRelocationCD:Stop()
 		timerHyperlightSparknovaCD:Stop()
 		timerStasisTrapCD:Stop()
-		--Restart Timers (exactly same as pull)
-		timerDimensionalTearCD:Start(8)
-		timerHyperlightSparknovaCD:Start(14, 1)
-		timerStasisTrapCD:Start(21)
-		timerGenesisRingsCD:Start(26, 1)
-		timerGlyphofRelocationCD:Start(40, 1)
 		if self:IsMythic() then
+			timerHyperlightSparknovaCD:Start(15.5, 1)
+			timerDimensionalTearCD:Start(22)
+			timerStasisTrapCD:Start(23)
+			timerForerunnerRingsCD:Start(28, 1)
+			timerGlyphofRelocationCD:Start(44, 1)
+			--TODO: Could be changed since other stuff was, review!
 			timerCartelEliteCD:Start(12)
 			timerRiftBlastsCD:Start(12.2)
+		elseif self:IsHeroic() then
+			--Timers on non mythic even more altered on P4 start with march 3rd hotfixes
+			timerHyperlightSparknovaCD:Start(18.6, 1)
+			timerStasisTrapCD:Start(28)
+			timerDimensionalTearCD:Start(33.3)
+			timerForerunnerRingsCD:Start(36, 1)
+			timerGlyphofRelocationCD:Start(53.3, 1)
+		else--Normal, LFR are same here
+			--Timers on non mythic even more altered on P4 start with march 3rd hotfixes
+			timerHyperlightSparknovaCD:Start(20, 1)
+			timerStasisTrapCD:Start(30)
+			timerDimensionalTearCD:Start(35.7)
+			timerForerunnerRingsCD:Start(38.5, 1)
+			timerGlyphofRelocationCD:Start(57.1, 1)
 		end
 	end
 end
@@ -344,15 +574,37 @@ function mod:SPELL_AURA_REMOVED(args)
 		self.vb.ringCount = 0
 		self.vb.glyphCount = 0
 		warnDecipherRelicOver:Show()
-		--Restart Timers (exactly same as pull)
-		timerDimensionalTearCD:Start(8)
-		timerHyperlightSparknovaCD:Start(14, 1)
-		timerStasisTrapCD:Start(21)
-		timerGenesisRingsCD:Start(26, 1)
-		timerGlyphofRelocationCD:Start(40, 1)
 		if self:IsMythic() then
+			--Restart Timers (exactly same as pull)
+			timerDimensionalTearCD:Start(8)
+			timerHyperlightSparknovaCD:Start(14, 1)
+			timerStasisTrapCD:Start(21)
+			timerForerunnerRingsCD:Start(26, 1)
+			timerGlyphofRelocationCD:Start(40, 1)
+			--Mythic Only
 			timerCartelEliteCD:Start(12)
 			timerRiftBlastsCD:Start(12.2)
+		elseif self:IsHeroic() then
+			--Initial timers are slowed now as of march 3rd hotfixe
+			timerDimensionalTearCD:Start(8.8)
+			timerHyperlightSparknovaCD:Start(15.5, 1)
+			timerStasisTrapCD:Start(23.3)
+			timerForerunnerRingsCD:Start(28.8, 1)
+			timerGlyphofRelocationCD:Start(44.4, 1)
+		elseif self:IsNormal() then
+			--Initial timers are even more slowed as of march 3rd hotfixe
+			timerDimensionalTearCD:Start(10)
+			timerHyperlightSparknovaCD:Start(17.5, 1)
+			timerStasisTrapCD:Start(26.2)
+			timerForerunnerRingsCD:Start(32.5, 1)
+			timerGlyphofRelocationCD:Start(50, 1)
+		else--LFR
+			--Initial timers are even more slowed as of march 3rd hotfixe
+			timerDimensionalTearCD:Start(11.4)
+			timerHyperlightSparknovaCD:Start(20, 1)
+			timerStasisTrapCD:Start(30)
+			timerForerunnerRingsCD:Start(37.1, 1)
+			timerGlyphofRelocationCD:Start(57.1, 1)
 		end
 	elseif spellId == 362615 or spellId == 362614 then
 		if self.Options.SetIconOnWormhole then
