@@ -66,7 +66,7 @@ local function showRealDate(curseDate)
 end
 
 DBM = {
-	Revision = parseCurseDate("20220315103557"),
+	Revision = parseCurseDate("20220320094330"),
 }
 -- The string that is shown as version
 if isRetail then
@@ -8780,6 +8780,10 @@ do
 
 	function bossModPrototype:NewSpecialWarningYouPos(text, optionDefault, ...)
 		return newSpecialWarning(self, "youpos", text, nil, optionDefault, ...)
+	end
+
+	function bossModPrototype:NewSpecialWarningYouPosCount(text, optionDefault, ...)
+		return newSpecialWarning(self, "youposcount", text, nil, optionDefault, ...)
 	end
 
 	function bossModPrototype:NewSpecialWarningSoakPos(text, optionDefault, ...)

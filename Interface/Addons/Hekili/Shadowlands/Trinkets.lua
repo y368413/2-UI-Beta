@@ -4,12 +4,13 @@
 local addon, ns = ...
 local Hekili = _G[ addon ]
 
+local state = Hekili.State
 local all = Hekili.Class.specs[ 0 ]
 
 
 -- 9.0 Trinkets
 do
-    -- Trinket auras (not on-use effects)    
+    -- Trinket auras (not on-use effects)
     all:RegisterAuras( {
         anima_field = {
             id = 345535,
@@ -595,7 +596,7 @@ do
             gcd = "spell",
 
             item = 178715,
-            
+
             nobuff = "mistcaller_ocarina",
 
             handler = function ()
@@ -769,7 +770,7 @@ do
             gcd = "off",
 
             item = 178783,
-            
+
             handler = function ()
                 applyBuff( "charged_phylactery" )
             end,
@@ -941,7 +942,7 @@ do
                 if equipped[ 175732 ] then return 175732 end
                 return 181357
             end,
-            items = { 175732, 181357 },            
+            items = { 175732, 181357 },
             toggle = "cooldowns",
 
             handler = function ()
@@ -1049,7 +1050,7 @@ do
             gcd = "off",
 
             item = 186425,
-            
+
             handler = function ()
                 if spec.mistweaver then gainChargeTime( "renewing_mist", 7 )
                 elseif class.druid and spec.restoration then gainChargeTime( "swiftmend", 7.9 )
@@ -1118,7 +1119,7 @@ do
             channeled = true,
             cooldown = 120,
             gcd = "spell",
-            
+
             toggle = "cooldowns",
             item = 186428,
 
@@ -1253,7 +1254,7 @@ do
             cast = 0,
             cooldown = 150,
             gcd = "off",
-            
+
             item = 185902,
             toggle = "cooldowns",
 
@@ -1619,66 +1620,6 @@ do
                 }
             }
         },
-        cache_of_acquired_treasures = {
-            cast = 0,
-            cooldown = 180,
-            gcd = "off",
-
-            item = 188265,
-
-            toggle = "cooldowns",
-
-            usable = function()
-                return buff.acquired_sword.up or buff.acquired_axe.up or buff.acquired_wand.up
-            end,
-
-            handler = function()
-                if buff.acquired_sword.up then
-                    applyBuff( "acquired_sword_haste" )
-                elseif buff.acquired_axe.up then
-                    applyBuff( "acquired_axe_driver" )
-                end
-                removeBuff( "acquired_sword" )
-                removeBuff( "acquired_axe" )
-                removeBuff( "acquired_wand" )
-            end,
-
-            auras = {
-                acquired_sword = {
-                    id = 368657,
-                    duration = 12,
-                    max_stack = 1,
-                },
-                acquired_sword_haste = {
-                    id = 368649,
-                    duration = 25,
-                    max_stack = 10,
-                    copy = "acquired_sword_driver"
-                },
-                acquired_axe = {
-                    id = 368656,
-                    duration = 12,
-                    max_stack = 1,
-                },
-                acquired_axe_driver = {
-                    id = 368650,
-                    duration = 25,
-                    max_stack = 1,
-                    copy = "acquired_axe_buff"
-                },
-                vicious_wound = {
-                    id = 368651,
-                    duration = 3,
-                    max_stack = 1,
-                    copy = "acquired_axe_bleed"
-                },
-                acquired_wand = {
-                    id = 368654,
-                    duration = 12,
-                    max_stack = 1,
-                },
-            }
-        },
         the_lions_roar = {
             cast = 3,
             channeled = true,
@@ -1849,5 +1790,214 @@ do
             duration = 10,
             max_stack = 1,
         },
+    } )
+end
+
+
+do
+    local treasure_auras = {
+        [368657] = "acquired_sword",
+        [368656] = "acquired_axe",
+        [368654] = "acquired_wand"
+    }
+
+    local treasure_applied = {
+        acquired_sword = 0,
+        acquired_axe = 0,
+        acquired_wand = 0,
+    }
+
+    local f = CreateFrame("Frame")
+    f:RegisterEvent( "COMBAT_LOG_EVENT_UNFILTERED" )
+
+    f:SetScript( "OnEvent", function( event )
+        if not state.equipped.cache_of_acquired_treasures then return end
+
+        if event == "COMBAT_LOG_EVENT_UNFILTERED" then
+            local _, subtype, _, sourceGUID, sourceName, _, _, destGUID, destName, destFlags, _, spellID, spellName = CombatLogGetCurrentEventInfo()
+
+            if destGUID == state.GUID and ( subtype == "SPELL_AURA_APPLIED" or subtype == "SPELL_AURA_REFRESH" or subtype == "SPELL_AURA_APPLIED_DOSE" ) then
+                local treasure = treasure_auras[ spellID ]
+                if treasure then treasure_applied[ treasure ] = GetTime() end
+            end
+        end
+    end )
+
+    Hekili:ProfileFrame( "TreasureFrame", f )
+
+
+    local function generate_treasure( t )
+        local key = t.key
+        local id = class.auras[ key ] and class.auras[ key ].id
+
+        if id then
+            local name, _, count, _, duration, expires, caster = GetPlayerAuraBySpellID( id )
+
+            if name then
+                local applied = treasure_applied[ key ]
+                local now = GetTime()
+
+                duration = 12
+
+                if applied + duration < now then
+                    expires = now + duration
+                end
+
+                t.count = max( 1, count )
+                t.expires = expires
+                t.applied = expires - duration
+                t.caster = caster
+
+                return
+            end
+        end
+
+        t.count = 0
+        t.expires = 0
+        t.applied = 0
+        t.caster = "nobody"
+    end
+
+
+    -- Cache of Acquired Treasures, special detection.
+    all:RegisterAbility( "cache_of_acquired_treasures", {
+        cast = 0,
+        cooldown = 180,
+        gcd = "off",
+
+        item = 188265,
+
+        toggle = "cooldowns",
+
+        buff = "acquired_treasure",
+
+        handler = function()
+            if buff.acquired_sword.up then
+                applyBuff( "acquired_sword_haste" )
+            elseif buff.acquired_axe.up then
+                applyBuff( "acquired_axe_driver" )
+            end
+            removeBuff( "acquired_sword" )
+            removeBuff( "acquired_axe" )
+            removeBuff( "acquired_wand" )
+        end,
+
+        auras = {
+            acquired_sword = {
+                id = 368657,
+                duration = 12,
+                max_stack = 1,
+                generate = generate_treasure,
+            },
+            acquired_sword_haste = {
+                id = 368649,
+                duration = 25,
+                max_stack = 10,
+                copy = "acquired_sword_driver"
+            },
+            acquired_axe = {
+                id = 368656,
+                duration = 12,
+                max_stack = 1,
+                generate = generate_treasure,
+            },
+            acquired_axe_driver = {
+                id = 368650,
+                duration = 25,
+                max_stack = 1,
+                copy = "acquired_axe_buff"
+            },
+            vicious_wound = {
+                id = 368651,
+                duration = 3,
+                max_stack = 1,
+                copy = "acquired_axe_bleed"
+            },
+            acquired_wand = {
+                id = 368654,
+                duration = 12,
+                max_stack = 1,
+                generate = generate_treasure,
+            },
+            acquired_treasure = {
+                alias = { "acquired_sword", "acquired_axe", "acquired_wand" },
+                aliasMode = "first",
+                aliasType = "buff",
+                duration = 12,
+            }
+        }
+    } )
+end
+
+
+do
+    all:RegisterAbility( "gavel_of_the_first_arbiter", {
+        cast = 0,
+        cooldown = 240,
+        gcd = "off",
+
+        item = 189862,
+
+        -- toggle = "cooldowns",
+
+        handler = function()
+            -- Spawns an enemy, kill to receive buff.
+        end,
+
+        auras = {
+            boon_of_looming_winter_active = {
+                id = 368693,
+                duration = 60,
+                max_stack = 1,
+            },
+
+            boon_of_looming_winter_absorb = {
+                id = 368698,
+                duration = 15,
+                max_stack = 1,
+            },
+
+            boon_of_harvested_hope_active = {
+                id = 368695,
+                duration = 60,
+                max_stack = 1,
+            },
+
+            boon_of_harvested_hope_damage = {
+                id = 368701,
+                duration = 3,
+                max_stack = 1,
+            },
+
+            boon_of_divine_command_active = {
+                id = 368694,
+                duration = 60,
+                max_stack = 1,
+            },
+
+            boon_of_divine_command_damage = {
+                id = 368699,
+                duration = 15,
+                max_stack = 1,
+            },
+
+            boon_of_assured_victory_active = {
+                id = 368696,
+                duration = 60,
+                max_stack = 1,
+            },
+
+            rotting_decay = {
+                id = 368700,
+                duration = 8,
+                max_stack = 1,
+            },
+
+            boon_of_the_end_active = {
+                id = 368697,
+                duration = 60,
+                max_stack = 1,
+            },
+        }
     } )
 end

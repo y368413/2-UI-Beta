@@ -141,12 +141,12 @@ L.options = {
 							aLootInfoFrameBase:EnableMouse(true)
 							aLootInfoFrameBase.value:Show()
 							aLootInfoFrameBase.border:Show()
-							--aLootInfoFrameBase:Show()
+							aLootInfoFrameBase:Show()
 						else
 							aLootInfoFrameBase:EnableMouse(false)
 							aLootInfoFrameBase.value:Hide()
 							aLootInfoFrameBase.border:Hide()
-							--aLootInfoFrameBase:Hide()
+							aLootInfoFrameBase:Hide()
 						end								
 					end,
 				},

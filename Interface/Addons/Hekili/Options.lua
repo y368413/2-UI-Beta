@@ -305,12 +305,20 @@ local oneTimeFixes = {
             end
         end
         if sendMsg then
-            C_Timer.After( 5, function() 
+            C_Timer.After( 5, function()
                 if Hekili.DB.profile.notifications.enabled then Hekili:Notify( "Some specialization options were reset.", 6 ) end
                 Hekili:Print( "Some specialization options were reset to default; this can occur once per profile/specialization." )
             end )
         end
         p.runOnce.forceReloadClassDefaultOptions_20220306 = nil
+    end,
+
+    forceDeleteBrokenMultiDisplay_20220319 = function( p )
+        if rawget( p.displays, "Multi" ) then
+            p.displays.Multi = nil
+        end
+
+        p.runOnce.forceDeleteBrokenMultiDisplay_20220319 = nil
     end,
 }
 
@@ -992,6 +1000,9 @@ do
 
     function Hekili:SetMultiDisplayOption( info, val, v2, v3, v4 )
         multiSet = true
+
+        local orig = info[ 2 ]
+
         for display, active in pairs( multiDisplays ) do
             if active then
                 info[ 2 ] = display
@@ -999,7 +1010,8 @@ do
             end
         end
         QueueRebuildUI()
-        info[ 2 ] = "Multi"
+        info[ 2 ] = orig
+
         multiSet = false
     end
 
@@ -1170,6 +1182,8 @@ do
         local tab = getOptionTable( info )
 
         local display = info[2]
+        display = display == "Multi" and "Primary" or display
+
         local data = display and Hekili.DB.profile.displays[ display ]
 
         if data then
@@ -1237,8 +1251,11 @@ do
 
                     _, _, setfunc = GetOptionData( db, info )
 
-                    if type( setfunc ) == "string" then Hekili[ setfunc ]( Hekili, info, val, v2, v3, v4 )
-                    elseif type( setfunc ) == "function" then setfunc( info, val, v2, v3, v4 ) end
+                    if type( setfunc ) == "string" then
+                        Hekili[ setfunc ]( Hekili, info, val, v2, v3, v4 )
+                    elseif type( setfunc ) == "function" then
+                        setfunc( info, val, v2, v3, v4 )
+                    end
                 end
             end
 
@@ -1266,7 +1283,7 @@ do
                 option, getfunc, _, descfunc = GetOptionData( db, info )
 
                 if not output then
-                    output = option and type( option.desc ) == "function" and option.desc( info ) or option.desc or ""
+                    output = option and type( option.desc ) == "function" and ( option.desc( info ) or "" ) or ( option.desc or "" )
                     if output:len() > 0 then output = output .. "\n" end
                 end
 
@@ -1299,7 +1316,7 @@ do
                     else
                         val = option.values[ val ] or val
                     end
-                    
+
                     if type( val ) == "number" then
                         if val % 1 == 0 then
                             val = format( "|cFFFFD100%d|r", val )
@@ -1370,7 +1387,7 @@ do
             elseif inf and v.type ~= "description" then
                 info[ #info + 1 ] = k
                 v.desc = WrapDesc( db, info )
-                v.set = WrapSetter( db, info )
+                if rawget( v, "set" ) then v.set = WrapSetter( db, info ) end
                 info[ #info ] = nil
             end
         end
@@ -1612,7 +1629,7 @@ do
                             },
 
                             primaryIcon = {
-                                type = "group",                                
+                                type = "group",
                                 name = "主图标",
                                 inline = true,
                                 order = 15,
@@ -1656,11 +1673,11 @@ do
                                         softMax = 100,
                                         max = 200,
                                         step = 1,
-        
+
                                         width = 1.49,
                                         order = 4,
                                     },
-        
+
                                     keepAspectRatio = {
                                         type = "toggle",
                                         name = "保持纵横比",
@@ -1671,7 +1688,7 @@ do
                                         end,
                                         width = 1.49,
                                         order = 5,
-                                    },                                    
+                                    },
                                 },
                             },
 
@@ -1752,7 +1769,7 @@ do
                                         order = 10,
                                         width = 1.49
                                     },
-        
+
                                     height = {
                                         type = 'range',
                                         name = '高度',
@@ -1781,7 +1798,7 @@ do
                                         width = 1.49,
                                         order = 1,
                                     },
-        
+
                                     direction = {
                                         type = 'select',
                                 	name = '排列方向',
@@ -1813,7 +1830,7 @@ do
                                         width = 1.49,
                                         order = 2,
                                     },
-        
+
                                     offsetY = {
                                         type = 'range',
                                         name = '队列垂直偏移',
@@ -1831,7 +1848,7 @@ do
                                         order = 2.2,
                                         width = "full",
                                     },
-        
+
                                     spacing = {
                                         type = 'range',
                                 	name = '间距',
@@ -2741,7 +2758,7 @@ do
                                 order = 1.2,
                                 width = "full",
                             },
-                            
+
                             type = {
                                 type = "select",
                                 name = "提示方式",
@@ -4638,7 +4655,7 @@ do
         local toggles = {}
 
         for k, v in pairs( class.abilities ) do
-            if v.item and not abilities[ v.itemKey or v.key ] then
+            if k == "potion" or v.item and not abilities[ v.itemKey or v.key ] then
                 local name = class.itemList[ v.item ] or v.name
                 if name then abilities[ name ] = v.itemKey or v.key end
             end
@@ -8862,11 +8879,10 @@ function Hekili:GenerateProfile()
         end
     end
 
-    local toggles
+    local toggles = ""
     for k, v in orderedPairs( self.DB.profile.toggles ) do
         if type( v ) == "table" and rawget( v, "value" ) ~= nil then
-            if toggles then toggles = format( "%s\n    %s = %s %s", toggles, k, tostring( v.value ), ( v.separate and "[separate]" or ( k ~= "cooldowns" and v.override and self.DB.profile.toggles.cooldowns.value and "[overridden]" ) or "" ) )
-            else toggles = format( "%s = %s", k, tostring( v.value ) ) end
+            toggles = format( "%s%s    %s = %s %s", toggles, toggles:len() > 0 and "\n" or "", k, tostring( v.value ), ( v.separate and "[separate]" or ( k ~= "cooldowns" and v.override and self.DB.profile.toggles.cooldowns.value and "[overridden]" ) or "" ) )
         end
     end
 
@@ -10324,7 +10340,7 @@ end
 
 
 function ns.serializeDisplay( display )
-    if not Hekili.DB.profile.displays[ display ] then return nil end
+    if not rawget( Hekili.DB.profile.displays, display ) then return nil end
     local serial = tableCopy( Hekili.DB.profile.displays[ display ] )
 
     -- Change actionlist IDs to actionlist names so we can validate later.

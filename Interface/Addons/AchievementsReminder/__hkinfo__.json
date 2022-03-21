@@ -3,12 +3,12 @@
     "searchName": "AchievementsReminder",
     "localName": "AchievementsReminder",
     "fileName": "achievementsreminder",
-    "version": "9.152",
+    "version": "9.153",
     "addonsMap": [
         "AchievementsReminder"
     ],
     "interfaceMap": [],
     "children": [],
     "name": "AchievementsReminder",
-    "gameVersion": "9.1.5"
+    "gameVersion": "9.2.0"
 }

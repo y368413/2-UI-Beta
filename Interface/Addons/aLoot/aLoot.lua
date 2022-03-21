@@ -39,14 +39,20 @@ local GetItemInfo = GetItemInfo
 local C_Timer_After = C_Timer.After
 
 local ITEM_QUALITY_COLORS = ITEM_QUALITY_COLORS
-local LOOT_UPDATE_INTERVAL = 0.5
-	
+
 local info_frame_scale	= 2
 local info_frame_offset	= 6
 local info_frame_width	= 120
 local info_frame_height	= 25
 	
 lootFrameMixin = {}
+
+local function MultiCheck(check, ...)
+	for i = 1, select("#", ...) do
+		if check == select(i, ...) then return true end  
+	end  
+	return false  
+end
 							
 local function CreateMyText(self, font, fontsize, outline, layer, align, justifyH, shadow)
 	local text = self:CreateFontString(nil, layer or "OVERLAY", nil, 7)
@@ -150,9 +156,6 @@ local function ResetInfoFrameFunction(framePool, frame)
 	if frame.AnimIn:IsPlaying() then
 		frame.AnimIn:Stop()
 	end
-	--if frame.scale:IsPlaying() then
-	--	frame.scale:Stop()
-	--end
 	if frame.AnimDown:IsPlaying() then
 		frame.AnimDown:Stop()
 	end
@@ -162,27 +165,25 @@ local function ResetInfoFrameFunction(framePool, frame)
 	frame:ClearAllPoints()
 	frame:SetPoint("TOP", aLootInfoFrameBase, "TOP", 0, 0)
 	frame.AnimIn.Alpha:SetDuration(L.config.info_frame_speed)
-	--frame.scale.width:SetDuration(L.config.info_frame_speed)
-	--frame.scale.height:SetDuration(L.config.info_frame_speed)
 	frame.AnimDown.Translation:SetDuration(L.config.info_frame_speed)
 	frame.createdAt = nil
 	frame.guid = nil
 	frame.expired = false
 end
 
-local function AddFrameToPool(self, icon, text, fast)
-	local lastFrame = self.infoFrameActiveFrames.last
+local function AddFrameToPool(icon, text, fast)
+	local lastFrame = aLootInfoFrameBase.infoFrameActiveFrames.last
 	if lastFrame ~= nil and lastFrame.AnimIn:IsPlaying() then
 		C_Timer_After(lastFrame.AnimIn:GetDuration(), function()
-			if lastFrame ~= nil and lastFrame.guid == self.guid then
-				AddFrameToPool(self, icon, text, true)
+			if lastFrame ~= nil and lastFrame.guid == aLootInfoFrameBase.guid then
+				AddFrameToPool(icon, text, true)
 			end
 		end)
 		return
 	end
 		
-	local newFrame = self.infoFrameActiveFrames:Acquire()
-	
+	local newFrame = aLootInfoFrameBase.infoFrameActiveFrames:Acquire()
+		
 	newFrame.shadow = CreateFrame("Frame", nil, newFrame, "BackdropTemplate")
 	newFrame.shadow:SetFrameLevel(newFrame:GetFrameLevel())
 	newFrame.shadow:ClearAllPoints()
@@ -204,7 +205,6 @@ local function AddFrameToPool(self, icon, text, fast)
 	newFrame.desc:SetText(text)
 	newFrame.desc:Show()
 
-
 	newFrame.currentScale = info_frame_scale
 	newFrame.scale = CreateAnimationGroup(newFrame)
 	newFrame.scale.width = newFrame.scale:CreateAnimation("Width")
@@ -212,11 +212,9 @@ local function AddFrameToPool(self, icon, text, fast)
 	newFrame.scale.height = newFrame.scale:CreateAnimation("Height")
 	newFrame.scale.height:SetDuration(L.config.info_frame_speed)
 		
-	--newFrame:SetMouseClickEnabled(false)
 	newFrame:EnableMouse(false)
-	--newFrame:SetSize(newFrame.desc:GetStringWidth() + info_frame_height + 3, info_frame_height)
 	newFrame.createdAt = GetTime()
-	newFrame.guid = self.guid
+	newFrame.guid = aLootInfoFrameBase.guid
 	
 	-- AnimeIn
 	if fast then
@@ -225,8 +223,8 @@ local function AddFrameToPool(self, icon, text, fast)
 		newFrame.scale.height:SetDuration(L.config.info_frame_speed/2)
 	end
 	
-	newFrame:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", 0, 0)	
-	SetFrameScale(newFrame, newFrame.desc:GetStringWidth() + info_frame_height + 3, info_frame_height, info_frame_scale, 1)
+	newFrame:SetPoint("BOTTOMLEFT", aLootInfoFrameBase, "BOTTOMLEFT", 0, 0)	
+	SetFrameScale(newFrame, newFrame.desc:GetStringWidth() + info_frame_height + 2, info_frame_height, info_frame_scale, 1)
 	newFrame.AnimIn.Alpha:SetFromAlpha(0)
 	newFrame.AnimIn.Alpha:SetToAlpha(L.config.info_frame_alpha)
 	newFrame.AnimIn:Play()
@@ -256,7 +254,7 @@ local function AddFrameToPool(self, icon, text, fast)
 		end)
 	end
 
-	self.infoFrameActiveFrames.last = newFrame
+	aLootInfoFrameBase.infoFrameActiveFrames.last = newFrame
 end
 
 local function StartOnUpdateScript()
@@ -264,8 +262,19 @@ local function StartOnUpdateScript()
 		aLootInfoFrameBase.infoFrameActiveFrames = CreateFramePool("Button", aLootInfoFrameBase, "aLootFrameAnimationTemplate", ResetInfoFrameFunction)
 		aLootInfoFrameBase.infoFrameActiveFrames.last = nil
 	end
-		
-	if aLootInfoFrameBase:GetScript("OnUpdate") == nil	then
+	
+	-- uloz poziciu ak sa prave nastavovala
+	if L.config.unlock_infoFrame then
+		L.config.unlock_infoFrame = false
+		aLootInfoFrameBase:EnableMouse(false)
+		aLootInfoFrameBase.value:Hide()
+		aLootInfoFrameBase.border:Hide()
+		aLootInfoFrameBase:Hide()
+		LibStub("AceConfigRegistry-3.0"):NotifyChange("aLoot")
+	end
+	
+	if aLootInfoFrameBase:GetScript("OnUpdate") == nil then
+		aLootInfoFrameBase:Show()
 		aLootInfoFrameBase:SetScript("OnUpdate", function(self, elapsed)
 			if self.infoFrameActiveFrames:GetNumActive() > 0 then
 				local sortedFrames = {}
@@ -294,6 +303,7 @@ local function StartOnUpdateScript()
 			else
 				aLootInfoFrameBase.infoFrameActiveFrames:ReleaseAll()
 				aLootInfoFrameBase.infoFrameActiveFrames.last = nil
+				aLootInfoFrameBase:Hide()
 				aLootInfoFrameBase:SetScript("OnUpdate", nil)
 			end
 		end)
@@ -304,7 +314,7 @@ local function ShowFlashFrame(frame, icon, lootName)
 	if frame.Anime:IsPlaying() then
 		frame.Anime:Stop()
 	end
-	--frame:SetMouseClickEnabled(false)
+	
 	frame:EnableMouse(false)
 	frame.value:SetText(lootName)
 	frame.icon:SetTexture(icon or 939375)
@@ -367,12 +377,16 @@ local function OnLeave(self)
 	ResetCursor()
 end
 
-local function OnClick(self)
-	if IsModifiedClick() then
-		HandleModifiedItemClick(GetLootSlotLink(self:GetID()))
+local function OnClick(self, button)
+	if button == "RightButton" then
+		OpenAllBags()
 	else
-		StaticPopup_Hide('CONFIRM_LOOT_DISTRIBUTION')
-		LootSlot(self:GetID())
+		if IsModifiedClick() then
+			HandleModifiedItemClick(GetLootSlotLink(self:GetID()))
+		else
+			StaticPopup_Hide('CONFIRM_LOOT_DISTRIBUTION')
+			LootSlot(self:GetID())
+		end
 	end
 end
 
@@ -394,17 +408,21 @@ local function OnLootClosed(self)
 	end
 end
 
-local function OnLootReady()
+local function OnLootReady(autoloot)
 	if not myLootFrameBase.lootReadyIsOpened then
-		myLootFrameBase.lootReadyIsOpened = true
 		local numLootItems = GetNumLootItems()
-		for i = numLootItems, 1, -1 do
-			LootSlot(i)
-		end
+		
+		myLootFrameBase.lootReadyIsOpened = true
+				
+		if numLootItems > 0 then
+			for i = numLootItems, 1, -1 do
+				LootSlot(i)
+			end
 
-		if L.config.speedLoot_text then
-			StartOnUpdateScript()
-			AddFrameToPool(aLootInfoFrameBase, 133784, "|cff00bbffLooted|r "..numLootItems.." |cff00bbffitems|r")
+			if L.config.speedLoot_text then
+				StartOnUpdateScript()
+				AddFrameToPool(133784, "|cff00bbffLooted|r "..numLootItems.." |cff00bbffitems|r")
+			end
 		end
 	end
 end
@@ -463,7 +481,7 @@ local function createSlot(self, id)
 		frame.border = CreateMyBackdrop(frame, 1, 0, 0, 0, 1,"Interface\\Buttons\\WHITE8x8", 0, 0, 0, .7, 5, 0, 0, 0, 0.6)
 		frame.border.shadow:Show()
 				
-		frame.currentScale = 1.4
+		--frame.currentScale = 1
 		frame.scale = CreateAnimationGroup(frame)
 		frame.scale.width = frame.scale:CreateAnimation("Width")
 		frame.scale.width:SetDuration(.3)
@@ -502,42 +520,61 @@ local function createSlot(self, id)
 	return frame
 end
 
-local function UpdateSlot(self, i)
-	if (LootSlotHasItem(i) or (self.AutoLootTable and self.AutoLootTable[i])) then
-		local lootIcon, lootName, lootQuantity, currencyID, lootQuality, locked, isQuestItem, questID, isActive
-		local slot = self.slots[i] or createSlot(self, i)
-		
+local function CheckFreeSpace(lootLink, lootQuantity)
+	local itemFamily = GetItemFamily(lootLink)
+	for bagID = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
+		local numberOfFreeSlots, bagType = GetContainerNumFreeSlots(bagID)
+		if (not bagType or bagType == 0) or (itemFamily and bit.band(itemFamily, bagType) > 0) then
+			if numberOfFreeSlots > 0 then
+				return true, numberOfFreeSlots
+			end
+		end
+	end
+
+	local itemCount = GetItemCount(lootLink)
+	if itemCount > 0 then
+		local itemStackCount = select(8, GetItemInfo(lootLink))
+		if itemStackCount > 1 then
+			local remainingSpace = (itemStackCount - itemCount) % itemStackCount
+			--print(itemCount, remainingSpace)
+			if remainingSpace >= lootQuantity then
+				return true, numberOfFreeSlots
+			end
+		end
+	end
+
+	return false, 0
+end
+
+local function UpdateSlot(self, slotIndex)
+	if LootSlotHasItem(slotIndex) then
+		--[[
+		lootQuality = 0 Poor, 1 Common, 2 Uncommon, 3 Rare, 4 Epic, 5 Legendary, 6 Artifact
+		itemLink = GetLootSlotLink(slotIndex)
+		itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice = GetItemInfo(itemID or "itemString" or "itemName" or "itemLink")
+		lootName, lootIcon, lootQuantity, lootQuality = CurrencyContainerUtil.GetCurrencyContainerInfo(currencyID, lootQuantity, lootName, lootIcon, lootQuality)
+		]]--
+		local isFreeSpaceInBags, numberOfFreeSlots
+		local slot = self.slots[slotIndex] or createSlot(self, slotIndex)
+		local lootIcon, lootName, lootQuantity, currencyID, lootQuality, locked, isQuestItem, questID, isActive = GetLootSlotInfo(slotIndex)
+		local slotType = GetLootSlotType(slotIndex)	-- 0: LOOT_SLOT_NONE, 1: LOOT_SLOT_ITEM, 2 LOOT_SLOT_MONEY, 3 LOOT_SLOT_CURRENCY
+		local lootLink = GetLootSlotLink(slotIndex)
+				
 		slot.currentScale = 1
 		
-		if (self.AutoLootTable) then
-			local entry = self.AutoLootTable[i]
-			if( entry.hide ) then
-				slot:Hide()
-				return;
-			else
-				lootIcon = entry.texture
-				lootName = entry.item
-				lootQuantity = entry.quantity
-				lootQuality = entry.quality
-				locked = entry.locked
-				isQuestItem = entry.isQuestIte
-				questID = entry.questId
-				isActive = entry.isActive
-			end
+		-- goldy a currency sa nelootuje do baglu preto automaticky je miesto
+		--print("---------------------------------------")
+		if slotType == 2 or slotType == 3 then
+			isFreeSpaceInBags = true
 		else
-			lootIcon, lootName, lootQuantity, currencyID, lootQuality, locked, isQuestItem, questID, isActive = GetLootSlotInfo(i)
+			isFreeSpaceInBags, numberOfFreeSlots = CheckFreeSpace(lootLink, lootQuantity)
 		end
 		
-		local slotType = GetLootSlotType(i)
-		--[[lootQuality = 0 Poor, 1 Common, 2 Uncommon, 3 Rare, 4 Epic, 5 Legendary, 6 Artifact
-			slotType = 0: LOOT_SLOT_NONE, 1: LOOT_SLOT_ITEM, 2 LOOT_SLOT_MONEY, 3 LOOT_SLOT_CURRENCY
-			local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice = GetItemInfo(GetLootSlotLink(i))
-			lootName, lootIcon, lootQuantity, lootQuality = CurrencyContainerUtil.GetCurrencyContainerInfo(currencyID, lootQuantity, lootName, lootIcon, lootQuality)
-			itemLink = GetLootSlotLink(i)
-			itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice = GetItemInfo(itemID or "itemString" or "itemName" or "itemLink")
-		]]--
-		
-		if (L.config.autoLoot["gold"] and slotType == 2) 
+		--print(isFreeSpaceInBags, numberOfFreeSlots)
+				
+		if isFreeSpaceInBags and
+			((C_CVar.GetCVarBool("autoLootDefault") and not IsModifiedClick("AUTOLOOTTOGGLE")) 
+			or (L.config.autoLoot["gold"] and slotType == 2) 
 			or (L.config.autoLoot["currency"] and slotType == 3)
 			or (L.config.autoLoot["quest"] and (isQuestItem or questID))
 			or (L.config.autoLoot["poor"] and lootQuality == 0)
@@ -545,17 +582,21 @@ local function UpdateSlot(self, i)
 			or (L.config.autoLoot["uncommon"] and lootQuality == 2)
 			or (L.config.autoLoot["rare"] and lootQuality == 3)
 			or (L.config.autoLoot["epic"] and lootQuality == 4)
-			or (L.config.autoLoot["legendary"] and lootQuality == 5) then
-				LootSlot(i)
+			or (L.config.autoLoot["legendary"] and lootQuality == 5)) then
+				LootSlot(slotIndex)
 				local text = ''
-				if lootQuantity and lootQuantity > 0 then
+				if lootQuantity and lootQuantity > 1 then
 					text = "|cffFFFFFF"..lootQuantity.." x |r"
 				end
 				if slotType == 2 then
 					lootName = string_gsub(lootName, "\n", " ")
 				end
-				AddFrameToPool(aLootInfoFrameBase, lootIcon, text .. ITEM_QUALITY_COLORS[lootQuality].hex .. lootName  .."|r")
 				
+				slot.lootNameInPool = text .. ITEM_QUALITY_COLORS[lootQuality].hex .. lootName  .."|r"
+				slot.lootIconInPool = lootIcon
+				
+				AddFrameToPool(slot.lootIconInPool, slot.lootNameInPool)
+				--print(slot.lootNameInPool)
 				if (L.config.flash["user"] and L.ItemsTable[lootName] and L.ItemsTable[lootName].enable)
 					or (L.config.flash["quest"] and (isQuestItem or questID))
 					or (L.config.flash["legendary"] and lootQuality == 5) then
@@ -563,6 +604,11 @@ local function UpdateSlot(self, i)
 					PlaySoundFile(LSM:Fetch(LSM.MediaType.SOUND, L.config.flash_sound), "Master")
 				end
 			return
+		else
+			if not aLootFlashFrameBase.Anime:IsPlaying() then
+				ShowFlashFrame(aLootFlashFrameBase, nil, "|cffff0000" .. ERR_INV_FULL  .."|r")
+				PlaySoundFile(LSM:Fetch(LSM.MediaType.SOUND, L.config.flash_sound), "Master")
+			end
 		end
 		
 		if lootIcon then
@@ -571,6 +617,7 @@ local function UpdateSlot(self, i)
 			if slot.FadeIn:IsPlaying() then
 				slot.FadeIn:Stop()
 			end
+			
 			local color = ITEM_QUALITY_COLORS[lootQuality]
 						
 			-- create name			
@@ -660,13 +707,12 @@ local function UpdateSlot(self, i)
 				slot.questTexture:Hide()
 			end
 					
-			slot:Enable()
-			
+			slot:Enable()	
 		else
 			slot.icon:SetTexture("Interface\\Icons\\INV_Misc_Herb_AncientLichen")
 			slot.count:Hide()
 			slot.border.shadow:Hide()
-			self:SetScript("OnUpdate", OnUpdateLootFrame)
+			--a pokus o loot ?
 			slot:Disable()	
 		end
 		
@@ -677,59 +723,19 @@ local function UpdateSlot(self, i)
 		--slot.AnimIn:SetScript("OnFinished", function(self)
 		--	self:GetParent().border:Show()
 		--end)
-	elseif self.slots[i] then
-		self.slots[i]:Hide()
-	end
-end
-
-function OnUpdateLootFrame(self, elapsed)
-	self.timeSinceUpdate = (self.timeSinceUpdate or 0) + elapsed
-	if( self.AutoLootTable )then
-		if( self.AutoLootDelay > 0 ) then
-			self.AutoLootDelay = self.AutoLootDelay - elapsed
-			self.timeSinceUpdate = 0
-			self.AutoLootCurrentIdx = 1
-		elseif( self.timeSinceUpdate >  LOOTFRAME_AUTOLOOT_RATE ) then
-			local entry = self.AutoLootTable[self.AutoLootCurrentIdx]
-			if( entry and not entry.roll and not entry.locked) then
-				self.AutoLootTable[self.AutoLootCurrentIdx].hide = true
-			end
-			self.AutoLootCurrentIdx = self.AutoLootCurrentIdx +1
-			self.timeSinceUpdate = 0
-			if( self.AutoLootCurrentIdx > #self.AutoLootTable ) then
-				self:SetScript("OnUpdate", nil)
-				self.timeSinceUpdate = nil
-				self.AutoLootTable = nil
-				OnLootClosed(self)
-			end
-		end
-	elseif ( self.timeSinceUpdate >= LOOT_UPDATE_INTERVAL ) then
-		self:SetScript("OnUpdate", nil)
-		self.timeSinceUpdate = nil
-		for i = 1, self.numLootItems do
-			UpdateSlot(self, i)
-		end
+	elseif self.slots[slotIndex] then
+		self.slots[slotIndex]:Hide()
 	end
 end
 
 local function OnLootOpened(self, ...)
 	local autoLoot, isFromItem = ...
+		
 	StartOnUpdateScript()
 	
-	if L.config.speedLoot or (C_CVar.GetCVarBool("autoLootDefault") and IsModifiedClick("AUTOLOOTTOGGLE")) then autoLoot = false end
+	self.lootReadyIsOpened = true
 	self.numLootItems = 0
-	
-	if( autoLoot ) then
-		if( not self.AutoLootTable )then
-			self.AutoLootTable = GetLootInfo()
-		end
-		self:SetScript("OnUpdate", OnUpdateLootFrame)
-		self.AutoLootDelay = LOOTFRAME_AUTOLOOT_DELAY
-	else
-		self.AutoLootDelay = 0
-		self.AutoLootTable = nil
-	end
-	
+			
 --	self:Show()
 	if ( isFromItem ) then
 		PlaySound(SOUNDKIT.UI_CONTAINER_ITEM_OPEN)
@@ -743,18 +749,10 @@ local function OnLootOpened(self, ...)
 		self:ClearAllPoints()
 		self:SetPoint("TOPLEFT", nil, "BOTTOMLEFT", x - (L.config.iconSize / 2), y + (L.config.iconSize / 2))
 		self:GetCenter()
-		self:Raise()
-	else
-		-- defaultna pozicia je ulozena cez WOW API
-		--self:ClearAllPoints()
-		--self:SetPoint("CENTER", UIParent, "CENTER", 0, 100)		
+		self:Raise()	
 	end
 	
-	if ( self.AutoLootTable ) then
-		self.numLootItems = #self.AutoLootTable
-	else
-		self.numLootItems = GetNumLootItems()
-	end
+	self.numLootItems = GetNumLootItems()
 	
 	if self.numLootItems > 0 then
 		for i = 1, self.numLootItems do
@@ -768,12 +766,17 @@ end
 
 local function OnLootSlotCleared(self, ...)
 	local slot = ...
-	if not self:IsShown() then return end
-	if self.slots[slot] then
-		self.slots[slot]:Hide()
-		self.slots[slot].currentScale = 1.4
+--[[	if not L.config.speedLoot and self.slots[slot].lootIconInPool then
+		AddFrameToPool(self.slots[slot].lootIconInPool, self.slots[slot].lootNameInPool)
+		self.slots[slot].lootIconInPool = nil
+		self.slots[slot].lootNameInPool = nil
 	end
-	anchorSlots(self)
+]]--	
+	if self:IsShown() and self.slots[slot] and self.slots[slot]:IsShown() then
+		self.slots[slot]:Hide()
+		--self.slots[slot].currentScale = 1.4
+		anchorSlots(self)
+	end
 end
 
 function OnShowLootFrameBase(self)
@@ -791,13 +794,7 @@ end
 function OnHideLootFrameBase(self)
 	CloseLoot()
 	--StaticPopup_Hide('CONFIRM_LOOT_DISTRIBUTION')
-	--MasterLooterFrame:Hide()
-
-	if( self.AutoLootTable )then
-		self:SetScript("OnUpdate", nil)
-		self.timeSinceUpdate = nil
-		self.AutoLootTable = nil
-	end
+	--MasterLooterFrame:Hide()	
 end
 
 local function OnAddonLoaded(self, ...)
@@ -843,7 +840,6 @@ local function OnAddonLoaded(self, ...)
 		lootFrameBase:SetScript("OnDragStop", function(self) self:StopMovingOrSizing() end)
 		lootFrameBase:RegisterForDrag("LeftButton")
 		
-		--lootFrameBase:SetMouseClickEnabled(false)
 		lootFrameBase:EnableMouse(false)
 		lootFrameBase:SetScript("OnMouseDown", function(self, button)
 			if button == "RightButton" then --and not InCombatLockdown() then
@@ -861,6 +857,7 @@ local function OnAddonLoaded(self, ...)
 		lootFrameBase:SetScript("OnHide", OnHideLootFrameBase)
 		
 		_G.LootFrame:UnregisterAllEvents()
+			
 		table_insert(_G.UISpecialFrames, "lootFrameBase")
 		hooksecurefunc(_G.MasterLooterFrame, 'Hide', _G.MasterLooterFrame.ClearAllPoints)
 		
@@ -869,7 +866,7 @@ local function OnAddonLoaded(self, ...)
 		local infoFrameBase = CreateFrame("Frame", "aLootInfoFrameBase", UIParent)
 		infoFrameBase:SetSize(info_frame_width, info_frame_height)
 		infoFrameBase:SetPoint("CENTER", UIParent, "CENTER", 400, 0)
-		infoFrameBase:Show()
+		infoFrameBase:Hide()
 		
 		infoFrameBase.border = CreateMyBackdrop(infoFrameBase, 1, 0, 0, 0, 1,"Interface\\Buttons\\WHITE8x8", 0, 0, 0, .7, 4, 0, 0, 0, 0.6)
 		infoFrameBase.border:Hide()
@@ -885,7 +882,6 @@ local function OnAddonLoaded(self, ...)
 		infoFrameBase:SetScript("OnDragStop", function(self) self:StopMovingOrSizing() end)
 		infoFrameBase:RegisterForDrag("LeftButton")
 		
-		--infoFrameBase:SetMouseClickEnabled(false)
 		infoFrameBase:EnableMouse(false)
 		infoFrameBase:SetScript("OnMouseDown", function(self, button)
 			if button == "RightButton" then --and not InCombatLockdown() then
@@ -893,6 +889,7 @@ local function OnAddonLoaded(self, ...)
 				self:EnableMouse(false)
 				self.value:Hide()
 				self.border:Hide()
+				self:Hide()
 				L.config.unlock_infoFrame = false
 				LibStub("AceConfigRegistry-3.0"):NotifyChange("aLoot")
 			end
@@ -938,7 +935,6 @@ local function OnAddonLoaded(self, ...)
 		flashFrameBase:SetScript("OnDragStop", function(self) self:StopMovingOrSizing() end)
 		flashFrameBase:RegisterForDrag("LeftButton")
 		
-		--flashFrameBase:SetMouseClickEnabled(false)
 		flashFrameBase:EnableMouse(false)
 		flashFrameBase:SetScript("OnMouseDown", function(self, button)
 			if button == "RightButton" then --and not InCombatLockdown() then
@@ -966,7 +962,7 @@ local function OnAddonLoaded(self, ...)
 			local _, _, cmd, args = string.find(msg, "%s?(%w+)%s?(.*)")
 			if ( cmd == "test" ) then
 				StartOnUpdateScript()
-				AddFrameToPool(aLootInfoFrameBase, 133641, "|cff00bbffLoot complete|r")
+				AddFrameToPool(133641, "|cff00bbffLoot complete|r")
 				ShowFlashFrame(aLootFlashFrameBase, nil, "lootName")
 			else
 				LibStub('AceConfigDialog-3.0'):Open("aLoot")
@@ -994,14 +990,26 @@ function lootFrameMixin:ConfigUpdate(event)
 end
 
 function lootFrameMixin:OnEvent(event, ...)
+	--print(event)
 	if ( event == "ADDON_LOADED" ) then
 		OnAddonLoaded(self, ...)
 	
 	elseif ( event == "PLAYER_LOGIN" ) then
-		--print(event)
-		
+	
+	
+	elseif ( event == "UI_ERROR_MESSAGE" ) then
+		local errorType, message = ...
+		if myLootFrameBase.lootReadyIsOpened then
+			if MultiCheck(message, ERR_INV_FULL, ERR_ITEM_MAX_COUNT, ERR_LOOT_LOCKED, ERR_LOOT_STUNNED, ERR_LOOT_NO_UI, ERR_LOOT_WHILE_INVULNERABLE, ERR_NO_LOOT) then
+				if not aLootFlashFrameBase.Anime:IsPlaying() then
+					ShowFlashFrame(aLootFlashFrameBase, nil, "|cffff0000" .. message  .."|r")
+					PlaySoundFile(LSM:Fetch(LSM.MediaType.SOUND, L.config.flash_sound), "Master")
+				end
+			end
+		end
+
 	elseif ( event == "LOOT_READY" and L.config.speedLoot and not IsModifiedClick("AUTOLOOTTOGGLE") ) then
-		OnLootReady(myLootFrameBase, ...)
+		OnLootReady(...)
 		
 	elseif ( event == "LOOT_OPENED" and (not L.config.speedLoot or (L.config.speedLoot and IsModifiedClick("AUTOLOOTTOGGLE")))) then
 		OnLootOpened(myLootFrameBase, ...)
@@ -1011,10 +1019,8 @@ function lootFrameMixin:OnEvent(event, ...)
 				
 	elseif ( event == "LOOT_CLOSED" ) then
 		myLootFrameBase.lootReadyIsOpened = false
-		if( not myLootFrameBase.AutoLootTable ) then
-			OnLootClosed(myLootFrameBase)
-		end
-				
+		OnLootClosed(myLootFrameBase)
+						
 	elseif ( event == "OPEN_MASTER_LOOT_LIST" ) then
 		MasterLooterFrame_Show(_G.LootFrame.selectedLootButton)
 		--ToggleDropDownMenu(1, nil, GroupLootDropDown, LootFrame.selectedLootButton, 0, 0)		--LootFrame.selectedSlot
@@ -1029,6 +1035,7 @@ function lootFrameMixin:OnLoad()
 	for _, event in pairs({
 		"ADDON_LOADED",
 		"PLAYER_LOGIN",
+		"UI_ERROR_MESSAGE",
 		"LOOT_READY",
 		"LOOT_OPENED",
 		"LOOT_SLOT_CLEARED",
