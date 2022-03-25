@@ -1098,6 +1098,21 @@ end
 		end
 	end
 
+	function M:GetRoleTex()
+		if self == "TANK" then
+			return I.tankTex
+		elseif self == "DPS" or self == "DAMAGER" then
+			return I.dpsTex
+		elseif self == "HEALER" then
+			return I.healTex
+		end
+	end
+
+	function M:ReskinSmallRole(role)
+		self:SetTexture(M.GetRoleTex(role))
+		self:SetTexCoord(0, 1, 0, 1)
+	end
+
 	function M:ReskinRole(role)
 		if self.background then self.background:SetTexture("") end
 		local cover = self.cover or self.Cover

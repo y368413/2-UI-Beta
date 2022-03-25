@@ -3546,7 +3546,15 @@ function Private.ApplyFrameLevel(region, frameLevel)
   local subforegroundIndex = 0
   if region.subRegions then
     for index, subRegion in pairs(region.subRegions) do
-      subRegion:SetFrameLevel(frameLevel + index)
+      if subRegion.type == "subbackground" then
+        subRegion:SetFrameLevel(frameLevel + index)
+      end
+    end
+
+    for index, subRegion in pairs(region.subRegions) do
+      if subRegion.type ~= "subbackground" then
+        subRegion:SetFrameLevel(frameLevel + index)
+      end
     end
   end
 end
@@ -5077,6 +5085,13 @@ function Private.ReplaceLocalizedRaidMarkers(txt)
       start  = lastChar
     end
   end
+end
+
+-- WORKAROUND
+-- UnitPlayerControlled doesn't work if the target is "too" far away
+function Private.UnitPlayerControlledFixed(unit)
+  local guid = UnitGUID(unit)
+  return guid and guid:sub(1, 6) == "Player"
 end
 
 do

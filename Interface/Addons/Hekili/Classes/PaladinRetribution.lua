@@ -34,7 +34,7 @@ if UnitClassBase( "player" ) == "PALADIN" then
 
             interval = 5,
             value = 1,
-        },        
+        },
     } )
     spec:RegisterResource( Enum.PowerType.Mana )
 

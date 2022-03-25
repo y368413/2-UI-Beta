@@ -88,7 +88,7 @@ local specTemplate = {
             boss = false,
             criteria = nil
         }
-    },                    
+    },
     settings = {},
     cooldowns = {},
     utility = {},
@@ -297,7 +297,7 @@ local HekiliSpecMixin = {
                         -- Copy to class table as well.
                         class.auras[ a.name ] = a
                     end
-                    
+
                     if self.pendingItemSpells[ a.name ] then
                         local items = self.pendingItemSpells[ a.name ]
 
@@ -770,7 +770,7 @@ local HekiliSpecMixin = {
             for _, itemID in ipairs( data.items ) do
                 class.itemMap[ itemID ] = ability
             end
-        end        
+        end
 
         if a.castableWhileCasting or a.funcs.castableWhileCasting then
             self.canCastWhileCasting = true
@@ -841,7 +841,7 @@ local HekiliSpecMixin = {
     end,
 
     -- option should be an AceOption table.
-    RegisterSetting = function( self, key, value, option )        
+    RegisterSetting = function( self, key, value, option )
         table.insert( self.settings, {
             name = key,
             default = value,
@@ -849,7 +849,7 @@ local HekiliSpecMixin = {
         } )
 
         option.order = 100 + #self.settings
-        
+
         option.get = option.get or function( info )
             local setting = info[ #info ]
             local val = Hekili.DB.profile.specs[ self.id ].settings[ setting ]
@@ -878,7 +878,7 @@ function Hekili:RestoreDefaults()
     for k, v in pairs( class.packs ) do
         local existing = rawget( p.packs, k )
 
-        if not existing or not existing.version or existing.version < v.version then            
+        if not existing or not existing.version or existing.version < v.version then
             local data = self:DeserializeActionPack( v.import )
 
             if data and type( data ) == 'table' then
@@ -912,7 +912,7 @@ function Hekili:RestoreDefaults()
             msg = "" .. msg .. ", 和 |cFFFFD100" .. changed[ #changed ] .. "|r优先级更新完成。"
         end
 
-        if msg then C_Timer.After( 5, function() 
+        if msg then C_Timer.After( 5, function()
             if Hekili.DB.profile.notifications.enabled then Hekili:Notify( msg, 6 ) end
             Hekili:Print( msg )
         end ) end
@@ -966,7 +966,7 @@ function Hekili:NewSpecialization( specID, isRanged )
     if not specID or specID < 0 then return end
 
     local id, name, _, texture, role, pClass
-    
+
     if specID > 0 then id, name, _, texture, role, pClass = GetSpecializationInfoByID( specID )
     else id = specID end
 
@@ -1036,6 +1036,12 @@ function Hekili:NewSpecialization( specID, isRanged )
 end
 
 
+function Hekili:GetSpecialization( specID )
+    if not specID then return class.specs[ 0 ] end
+    return class.specs[ specID ]
+end
+
+
 class.file = UnitClassBase( "player" )
 local all = Hekili:NewSpecialization( 0, "All", "Interface\\Addons\\Hekili\\Textures\\LOGO-WHITE.blp" )
 
@@ -1078,14 +1084,14 @@ all:RegisterAuras( {
         id = 194249,
         duration = 15,
         max_stack = 1,
-    },    
+    },
 
     adrenaline_rush = {
         id = 13750,
         duration = 20,
         max_stack = 1,
     },
-    
+
     -- Bloodlusts
     ancient_hysteria = {
         id = 90355,
@@ -1520,14 +1526,14 @@ all:RegisterAuras( {
 
     arcane_pulse = {
         id = 260369,
-        duration = 12,        
+        duration = 12,
     },
 
     fireblood = {
         id = 273104,
         duration = 8,
     },
-   
+
     out_of_range = {
         generate = function ()
             local oor = buff.out_of_range
@@ -1551,13 +1557,13 @@ all:RegisterAuras( {
         duration = 10,
         generate = function( t )
             local max_events = GetActiveLossOfControlDataCount()
-            
+
             if max_events > 0 then
                 local spell, start, duration, remains = "none", 0, 0, 0
 
                 for i = 1, max_events do
                     local event = GetActiveLossOfControlData( i )
-                    
+
                     if event.lockoutSchool == 0 and event.startTime and event.startTime > 0 and event.timeRemaining and event.timeRemaining > 0 and event.startTime > start and event.timeRemaining > remains then
                         spell = event.spellID
                         start = event.startTime
@@ -1687,18 +1693,18 @@ all:RegisterAuras( {
                     t.caster = "nobody"
                     return
                 end
-            
+
             else
                 local i = 1
                 local name, _, count, debuffType, duration, expirationTime = UnitDebuff( "player", i, "RAID" )
-    
+
                 while( name ) do
                     if debuffType == "Magic" then break end
-    
+
                     i = i + 1
                     name, _, count, debuffType, duration, expirationTime = UnitDebuff( "player", i, "RAID" )
                 end
-    
+
                 if name then
                     t.count = count > 0 and count or 1
                     t.expires = expirationTime > 0 and expirationTime or query_time + 5
@@ -1706,7 +1712,7 @@ all:RegisterAuras( {
                     t.caster = "nobody"
                     return
                 end
-            
+
             end
 
             t.count = 0
@@ -1813,7 +1819,7 @@ all:RegisterPotions( {
     potion_of_spectral_agility = {
         item = 171270,
         buff = "potion_of_spectral_agility",
-        copy = "spectral_agility",        
+        copy = "spectral_agility",
     },
     potion_of_spiritual_clarity = {
         item = 171272,
@@ -1889,9 +1895,9 @@ all:RegisterPotions( {
     },
     superior_steelskin_potion = {
         item = 168501,
-        buff = 'superior_steelskin_potion',        
+        buff = 'superior_steelskin_potion',
     },
-    
+
     -- 8.0
     battle_potion_of_agility = {
         item = 163223,
@@ -2275,7 +2281,7 @@ all:RegisterAbilities( {
         cooldown = 180,
         gcd = "off",
 
-        toggle = "defensives",        
+        toggle = "defensives",
     },
 
     shadowmeld = {
@@ -2343,7 +2349,7 @@ all:RegisterAbilities( {
         toggle = "cooldowns",
 
         -- usable = function () return race.dark_iron_dwarf end,
-        handler = function () applyBuff( "fireblood" ) end,            
+        handler = function () applyBuff( "fireblood" ) end,
     },
 
 
@@ -2383,7 +2389,7 @@ all:RegisterAbilities( {
         name = "|cff00ccff[取消指令]|r",
         cast = 0,
         cooldown = 0,
-        gcd = "off",        
+        gcd = "off",
     },
 
     variable = {
@@ -2402,6 +2408,28 @@ all:RegisterAbilities( {
 
         startsCombat = false,
         toggle = "potions",
+
+        item = function ()
+            local potion = args.potion or args.name
+            if not potion or potion == default then potion = class.potion end
+            potion = class.potions[ potion ]
+
+            if potion then return potion.item end
+        end,
+        bagItem = true,
+
+        timeToReady = function ()
+            local potion = args.potion or args.name
+            if not potion or potion == "default" then potion = class.potion end
+            potion = class.potions[ potion ]
+
+            if potion then
+                local start, dur = GetItemCooldown( potion.item )
+                return max( 0, start + dur - query_time )
+            end
+
+            return 3600
+        end,
 
         handler = function ()
             local potion = args.potion or args.name
@@ -2534,12 +2562,12 @@ do
         cast = 0,
         cooldown = 0,
         gcd = 'off',
-        
+
         item = 158075,
         essence = true,
 
         toggle = "essences",
-        
+
         usable = function () return false, "你装备的心能效果在其他地方已被使用，或它不是主动技能。" end
     } )
 end
