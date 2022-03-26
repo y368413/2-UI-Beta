@@ -1177,7 +1177,7 @@ do
 		eb:SetAutoFocus(false)
 		eb:SetTextInsets(5, 5, 0, 0)
 		eb:SetFont(I.Font[1], I.Font[2]+2, I.Font[3])
-		eb.bg = M.CreateBDFrame(eb, .25, true)
+		eb.bg = M.CreateBDFrame(eb, 0, true)
 		eb.bg:SetAllPoints()
 		eb:SetScript("OnEscapePressed", editBoxClearFocus)
 		eb:SetScript("OnEnterPressed", editBoxClearFocus)

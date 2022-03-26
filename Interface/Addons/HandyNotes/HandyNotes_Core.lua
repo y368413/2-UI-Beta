@@ -577,7 +577,7 @@ function Addon:RegisterWithHandyNotes()
         'CRITERIA_UPDATE', -- criteria progress
         'LOOT_CLOSED', -- loot window closed
         'PLAYER_MONEY', -- player earned gold
-        'PLAYER_REGEN_ENABLED', -- exited combat
+        --'PLAYER_REGEN_ENABLED', -- exited combat
         'QUEST_TURNED_IN', -- complete button pressed or WQ completed
         'SHOW_LOOT_TOAST_UPGRADE', -- special loot obtained w/ upgrades
         'SHOW_LOOT_TOAST', -- special loot obtained
