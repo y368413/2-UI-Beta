@@ -617,16 +617,9 @@ end)
 
 -- Callbacks
 local function setupCastbar()
-	G:SetupCastbar(guiPage[4])
+	G:SetupCastbar(guiPage[9])
 end
 
-local function setupClassPower()
-	G:SetupUFClassPower(guiPage[3])
-end
-
-local function setupUFAuras()
-	G:SetupUFAuras(guiPage[3])
-end
 
 local function setupSwingBars()
 	G:SetupSwingBars(guiPage[1])
@@ -680,7 +673,7 @@ local function setupPlateCastbarGlow()
 end
 
 local function setupBuffFrame()
-	G:SetupBuffFrame(guiPage[7])
+	G:SetupBuffFrame(guiPage[9])
 end
 
 local function setupAuraWatch()
@@ -1048,13 +1041,13 @@ G.OptionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "UFs", "SpecRaidPos", U["Spec RaidPos"], nil, nil, nil, nil, U["SpecRaidPosTip"]},
 	},
 	[3] = {
-		{1, "Nameplate", "Enable", HeaderTag..U["Enable Nameplate"], nil, nil, nil, setupNameplateSize, refreshNameplates},
+		{1, "Nameplate", "Enable", HeaderTag..U["Enable Nameplate"], nil, nil, setupNameplateSize, refreshNameplates},
 		{1, "Nameplate", "FriendPlate", U["FriendPlate"].."*", true, nil, nil, refreshNameplates, U["FriendPlateTip"]},
 		{1, "Nameplate", "NameOnlyMode", U["NameOnlyMode"].."*", true, true, nil, nil, U["NameOnlyModeTip"]},
 		{4, "Nameplate", "NameType", U["NameTextType"].."*", nil, nil, {DISABLE, U["Tag:name"], U["Tag:levelname"], U["Tag:rarename"], U["Tag:rarelevelname"]}, refreshNameplates, U["PlateLevelTagTip"]},
 		{4, "Nameplate", "HealthType", U["HealthValueType"].."*", true, nil, G.HealthValues, refreshNameplates, U["100PercentTip"]},
 		{4, "Nameplate", "AuraFilter", U["NameplateAuraFilter"].."*", true, true, {U["BlackNWhite"], U["PlayerOnly"], U["IncludeCrowdControl"]}, refreshNameplates},
-		--{1, "Nameplate", "PlateAuras", HeaderTag..U["PlateAuras"].."*", nil, nil, nil, setupNameplateFilter, refreshNameplates},
+		--{1, "Nameplate", "PlateAuras", HeaderTag..U["PlateAuras"].."*", nil, nil, setupNameplateFilter, refreshNameplates},
 		--{1, "Nameplate", "Desaturate", U["DesaturateIcon"].."*", true, nil, nil, refreshNameplates, U["DesaturateIconTip"]},
 		--{1, "Nameplate", "DebuffColor", U["DebuffColor"].."*", true, true, nil, refreshNameplates, U["DebuffColorTip"]},
 		{3, "Nameplate", "maxAuras", U["Max Auras"].."*", nil, nil, {1, 20, 1}, refreshNameplates},
