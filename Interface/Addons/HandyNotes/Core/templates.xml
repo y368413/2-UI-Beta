@@ -110,5 +110,4 @@
       </Slider>
     </Frames>
   </Frame>
-  <Script file="HandyNotes_Core.lua"/>
 </Ui>

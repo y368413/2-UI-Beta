@@ -588,7 +588,7 @@ local packTemplate = {
     builtIn = false,
 
     author = UnitName("player"),
-    desc = "This is a package of action lists for Hekili.",
+    desc = "这个技能优先级配置基于Hekili汉化版制作。",
     source = "",
     date = tonumber( date("%Y%M%D.%H%M") ),
     warnings = "",
@@ -2894,7 +2894,7 @@ do
 
         local section = db.args.displays or {
             type = "group",
-            name = "显示",
+            name = "显示框架",
             childGroups = "tree",
             cmdHidden = true,
             get = 'GetDisplayOption',
@@ -2904,9 +2904,8 @@ do
             args = {
                 header = {
                     type = "description",
-                    name = "Hekili拥有四个内置的显示框（蓝色标识），以用于显示不同类型的建议。" ..
-                        "以用于显示不同类型的建议。插件的建议通常基于（但不完全）" ..
-                        " SimulationCraft 模拟结果的技能优先级。" ..
+                    name = "Hekili拥有五个内置的显示框（蓝色标识），以用于显示不同类型的建议。" ..
+                        "插件的建议通常基于（但不完全）SimulationCraft模拟结果的技能优先级。" ..
                         "你可以将判断实际情况与模拟结果进行比较得到最优解。",
                     fontSize = "medium",
                     width = "full",
@@ -2915,7 +2914,7 @@ do
 
                 displays = {
                     type = "header",
-                    name = "显示",
+                    name = "显示框架",
                     order = 10,                    
                 },
 
@@ -3397,7 +3396,7 @@ do
 
                                         displays = {
                                             type = "header",
-                                            name = "显示",
+                                            name = "显示框架",
                                             order = 2,
                                         },
 
@@ -3999,7 +3998,7 @@ do
             local import, warnings = self:ParseActionList( list )
 
             if warnings then
-                AddWarning( "WARNING:  The import for '" .. name .. "' required some automated changes." )
+                AddWarning( "警告：导入'" .. name .. "'列表需要一些自动修改。" )
 
                 for i, warning in ipairs( warnings ) do
                     AddWarning( warning )
@@ -4032,18 +4031,18 @@ do
         end
 
         if not use_items_found and not ( trinket1_found and trinket2_found ) then
-            AddWarning( "This profile is missing support for generic trinkets.  It is recommended that every priority includes either:\n" ..
-                " - [Use Items], which includes any trinkets not explicitly included in the priority; or\n" ..
-                " - [Trinket 1] and [Trinket 2], which will recommend the trinket for the numbered slot." )
+            AddWarning( "此配置文件缺少对通用饰品的支持。建议每个优先级都需要包括：\n" ..
+                " - [使用物品]，包含任何没有包含在优先级中的饰品，或者\n" ..
+                " - [饰品1]和[饰品2]，这样做将推荐对应饰品装备栏中的饰品。" )
         end
 
         if not output.default then output.default = {} end
         if not output.precombat then output.precombat = {} end
 
         if count == 0 then
-            AddWarning( "No action lists were imported from this profile." )
+            AddWarning( "未能从当前配置文件导入任何操作指令列表。" )
         else
-            AddWarning( "Imported " .. count .. " action lists." )
+            AddWarning( "成功导入了" .. count .. "个操作指令列表。" )
         end
 
         return output, impControl.warnings
@@ -5621,11 +5620,11 @@ do
                         -- Test Option for Separate Cooldowns
                         noFeignedCooldown = {
                             type = "toggle",
-                            name = NewFeature .. " Cooldown: Show Separately - Use Actual Cooldowns",
-                            desc = "If checked, when using the Cooldown: Show Separately feature and Cooldowns are enabled, the addon will |cFFFF0000NOT|r pretend your " ..
-                                "cooldown abilities are fully on cooldown.  This may help resolve scenarios where abilities become desynchronized due to behavior differences " ..
-                                "between the Cooldowns display and your other displays.\n\n" ..
-                                "See |cFFFFD100Toggles|r > |cFFFFD100Cooldowns|r for the |cFFFFD100Cooldown: Show Separately|r feature.",
+                            name = NewFeature .. "爆发：单独显示 - 使用真实冷却",
+                            desc = "如果勾选，当启用单独的爆发技能显示窗体，且启用爆发时，插件|cFFFF0000不会|r假定你的爆发技能处于就绪状态。" ..
+                                "这可能有助于解决爆发技能的冷却状态与实际不同步，而导致的推荐技能不准确的问题。" ..
+                                "\n\n" ..
+                                "需要开启|cFFFFD100快捷切换|r > |cFFFFD100爆发|r模块中的|cFFFFD100启用单独显示|r功能。",
                             order = 1.051,
                             width = "full",
                             disabled = function ()
@@ -10632,179 +10631,179 @@ local function Sanitize( segment, i, line, warnings )
 
     i, times = i:gsub( "==", "=" )
     if times > 0 then
-        table.insert( warnings, "Line " .. line .. ": Corrected equality check from '==' to '=' (" .. times .. "x)." )
+        table.insert( warnings, "第" .. line .. "行：将相等的判定符号由'=='更改为'='(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "([^%%])[ ]*%%[ ]*([^%%])", "%1 / %2" )
     if times > 0 then
-        table.insert( warnings, "Line " .. line .. ": Converted SimC syntax % to Lua division operator (/) (" .. times .. "x)." )
+        table.insert( warnings, "第" .. line .. "行：将SimC语法中的%转换为Lua语法的(/)(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "%%%%", "%%" )
     if times > 0 then
-        table.insert( warnings, "Line " .. line .. ": Converted SimC syntax %% to Lua modulus operator (%) (" .. times .. "x)." )
+        table.insert( warnings, "第" .. line .. "行：将Simc语法中的%%转换为Lua语法的(%)(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "covenant%.([%w_]+)%.enabled", "covenant.%1" )
     if times > 0 then
-        table.insert( warnings, "Line " .. line .. ": Converted 'covenant.X.enabled' to 'covenant.X' (" .. times .. "x)." )
+        table.insert( warnings, "第" .. line .. "行：将'covenant.X.enabled'转换为'covenant.X'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "talent%.([%w_]+)([%+%-%*%%/%&%|= ()<>])", "talent.%1.enabled%2" )
     if times > 0 then
-        table.insert( warnings, "Line " .. line .. ": Converted 'talent.X' to 'talent.X.enabled' (" .. times .. "x)." )
+        table.insert( warnings, "第" .. line .. "行：将'talent.X'转换为'talent.X.enabled'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "talent%.([%w_]+)$", "talent.%1.enabled" )
     if times > 0 then
-        table.insert( warnings, "Line " .. line .. ": Converted 'talent.X' to 'talent.X.enabled' at EOL (" .. times .. "x)." )
+        table.insert( warnings, "第" .. line .. "行：将'talent.X'转换为'talent.X.enabled'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "legendary%.([%w_]+)([%+%-%*%%/%&%|= ()<>])", "legendary.%1.enabled%2" )
     if times > 0 then
-        table.insert( warnings, "Line " .. line .. ": Converted 'legendary.X' to 'legendary.X.enabled' (" .. times .. "x)." )
+        table.insert( warnings, "第" .. line .. "行：将'legendary.X'转换为'legendary.X.enabled'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "legendary%.([%w_]+)$", "legendary.%1.enabled" )
     if times > 0 then
-        table.insert( warnings, "Line " .. line .. ": Converted 'legendary.X' to 'legendary.X.enabled' at EOL (" .. times .. "x)." )
+        table.insert( warnings, "第" .. line .. "行：将'legendary.X'转换为'legendary.X.enabled'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "([^%.])runeforge%.([%w_]+)([%+%-%*%%/=%&%| ()<>])", "%1runeforge.%2.enabled%3" )
     if times > 0 then
-        table.insert( warnings, "Line " .. line .. ": Converted 'runeforge.X' to 'runeforge.X.enabled' (" .. times .. "x)." )
+        table.insert( warnings, "第" .. line .. "行：将'runeforge.X'转换为'runeforge.X.enabled'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "([^%.])runeforge%.([%w_]+)$", "%1runeforge.%2.enabled" )
     if times > 0 then
-        table.insert( warnings, "Line " .. line .. ": Converted 'runeforge.X' to 'runeforge.X.enabled' at EOL (" .. times .. "x)." )
+        table.insert( warnings, "第" .. line .. "行：将'runeforge.X'转换为'runeforge.X.enabled'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "^runeforge%.([%w_]+)([%+%-%*%%/%&%|= ()<>)])", "runeforge.%1.enabled%2" )
     if times > 0 then
-        table.insert( warnings, "Line " .. line .. ": Converted 'runeforge.X' to 'runeforge.X.enabled' (" .. times .. "x)." )
+        table.insert( warnings, "第" .. line .. "行：将'runeforge.X'转换为'runeforge.X.enabled'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "^runeforge%.([%w_]+)$", "runeforge.%1.enabled" )
     if times > 0 then
-        table.insert( warnings, "Line " .. line .. ": Converted 'runeforge.X' to 'runeforge.X.enabled' at EOL (" .. times .. "x)." )
+        table.insert( warnings, "第" .. line .. "行：将'runeforge.X'转换为'runeforge.X.enabled'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "rune_word%.([%w_]+)([%+%-%*%%/%&%|= ()<>])", "buff.rune_word_%1.up%2" )
     if times > 0 then
-        table.insert( warnings, "Line " .. line .. ": Converted 'rune_word.X' to 'buff.rune_word_X.up' (" .. times .. "x)." )
+        table.insert( warnings, "第" .. line .. "行：将'rune_word.X'转换为'buff.rune_word_X.up'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "rune_word%.([%w_]+)$", "buff.rune_word_%1.up" )
     if times > 0 then
-        table.insert( warnings, "Line " .. line .. ": Converted 'rune_word.X' to 'buff.rune_word_X.up' at EOL (" .. times .. "x)." )
+        table.insert( warnings, "第" .. line .. "行：将'rune_word.X'转换为'buff.rune_word_X.up'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "rune_word%.([%w_]+)%.enabled([%+%-%*%%/%&%|= ()<>])", "buff.rune_word_%1.up%2" )
     if times > 0 then
-        table.insert( warnings, "Line " .. line .. ": Converted 'rune_word.X.enabled' to 'buff.rune_word_X.up' (" .. times .. "x)." )
+        table.insert( warnings, "第" .. line .. "行：将'rune_word.X.enabled'转换为'buff.rune_word_X.up'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "rune_word%.([%w_]+)%.enabled$", "buff.rune_word_%1.up" )
     if times > 0 then
-        table.insert( warnings, "Line " .. line .. ": Converted 'rune_word.X.enabled' to 'buff.rune_word_X.up' at EOL (" .. times .. "x)." )
+        table.insert( warnings, "第" .. line .. "行：将'rune_word.X.enabled'转换为'buff.rune_word_X.up'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "([^a-z0-9_])conduit%.([%w_]+)([%+%-%*%%/&|= ()<>)])", "%1conduit.%2.enabled%3" )
     if times > 0 then
-        table.insert( warnings, "Line " .. line .. ": Converted 'conduit.X' to 'conduit.X.enabled' (" .. times .. "x)." )
+        table.insert( warnings, "第" .. line .. "行：将'conduit.X'转换为'conduit.X.enabled'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "([^a-z0-9_])conduit%.([%w_]+)$", "%1conduit.%2.enabled" )
     if times > 0 then
-        table.insert( warnings, "Line " .. line .. ": Converted 'conduit.X' to 'conduit.X.enabled' at EOL (" .. times .. "x)." )
+        table.insert( warnings, "第" .. line .. "行：将'conduit.X'转换为'conduit.X.enabled'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "soulbind%.([%w_]+)([%+%-%*%%/&|= ()<>)])", "soulbind.%1.enabled%2" )
     if times > 0 then
-        table.insert( warnings, "Line " .. line .. ": Converted 'soulbind.X' to 'soulbind.X.enabled' (" .. times .. "x)." )
+        table.insert( warnings, "第" .. line .. "行：将'soulbind.X'转换为'soulbind.X.enabled'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "soulbind%.([%w_]+)$", "soulbind.%1.enabled" )
     if times > 0 then
-        table.insert( warnings, "Line " .. line .. ": Converted 'soulbind.X' to 'soulbind.X.enabled' at EOL (" .. times .. "x)." )
+        table.insert( warnings, "第" .. line .. "行：将'soulbind.X'转换为'soulbind.X.enabled'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "pet%.[%w_]+%.([%w_]+)%.", "%1." )
     if times > 0 then
-        table.insert( warnings, "Line " .. line .. ": Converted 'pet.X.Y...' to 'Y...' (" .. times .. "x)." )
+        table.insert( warnings, "第" .. line .. "行：将'pet.X.Y...'转换为'Y...'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "(essence%.[%w_]+)%.([%w_]+)%.rank(%d)", "(%1.%2&%1.rank>=%3)" )
     if times > 0 then
-        table.insert( warnings, "Line " .. line .. ": Converted 'essence.X.[major|minor].rank#' to '(essence.X.[major|minor]&essence.X.rank>=#)' (" .. times .. "x)." )
+        table.insert( warnings, "第" .. line .. "行：将'essence.X.[major|minor].rank#'转换为'(essence.X.[major|minor]&essence.X.rank>=#)'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "pet%.[%w_]+%.[%w_]+%.([%w_]+)%.", "%1." )
     if times > 0 then
-        table.insert( warnings, "Line " .. line .. ": Converted 'pet.X.Y.Z...' to 'Z...' (" .. times .. "x)." )
+        table.insert( warnings, "第" .. line .. "行：将'pet.X.Y.Z...'转换为'Z...'(" .. times .. "次)。" )
     end
 
     -- target.1.time_to_die is basically the end of an encounter.
     i, times = i:gsub( "target%.1%.time_to_die", "time_to_die" )
     if times > 0 then
-        table.insert( warnings, "Line " .. line .. ": Converted 'target.1.time_to_die' to 'time_to_die' (" .. times .."x)." )
+        table.insert( warnings, "第" .. line .. "行：将'target.1.time_to_die'转换为'time_to_die' (" .. times .."x)." )
     end
 
     -- target.time_to_pct_XX.remains is redundant, Monks.
     i, times = i:gsub( "time_to_pct_(%d+)%.remains", "time_to_pct_%1" )
     if times > 0 then
-        table.insert( warnings, "Line " .. line .. ": Converted 'time_to_pct_XX.remains' to 'time_to_pct_XX' (" .. times .. "x)." )
+        table.insert( warnings, "第" .. line .. "行：将'time_to_pct_XX.remains'转换为'time_to_pct_XX'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "trinket%.1%.", "trinket.t1." )
     if times > 0 then
-        table.insert( warnings, "Line " .. line .. ": Converted 'trinket.1.X' to 'trinket.t1.X' (" .. times .. "x)." )
+        table.insert( warnings, "第" .. line .. "行：将'trinket.1.X'转换为'trinket.t1.X'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "trinket%.2%.", "trinket.t2." )
     if times > 0 then
-        table.insert( warnings, "Line " .. line .. ": Converted 'trinket.2.X' to 'trinket.t2.X' (" .. times .. "x)." )
+        table.insert( warnings, "第" .. line .. "行：将'trinket.2.X'转换为'trinket.t2.X'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "trinket%.([%w_][%w_][%w_]+)%.cooldown", "cooldown.%1" )
     if times > 0 then
-        table.insert( warnings, "Line " .. line .. ": Converted 'trinket.abc.cooldown' to 'cooldown.abc' (" .. times .. "x)." )
+        table.insert( warnings, "第" .. line .. "行：将'trinket.abc.cooldown'转换为'cooldown.abc'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "min:[a-z0-9_%.]+(,?$?)", "%1" )
     if times > 0 then
-        table.insert( warnings, "Line " .. line .. ": Removed min:X check (not available in emulation) (" .. times .. "x)." )
+        table.insert( warnings, "第" .. line .. "行：移除min:X检测（模拟中不可用）(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "([%|%&]position_back)", "" )
     if times > 0 then
-        table.insert( warnings, "Line " .. line .. ": Removed position_back check (not available in emulation) (" .. times .. "x)." )
+        table.insert( warnings, "第" .. line .. "行：移除position_back检测（模拟中不可用）(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "(position_back[%|%&]?)", "" )
     if times > 0 then
-        table.insert( warnings, "Line " .. line .. ": Removed position_back check (not available in emulation) (" .. times .. "x)." )
+        table.insert( warnings, "第" .. line .. "行：移除position_back检测（模拟中不可用）(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "max:[a-z0-9_%.]+(,?$?)", "%1" )
     if times > 0 then
-        table.insert( warnings, "Line " .. line .. ": Removed max:X check (not available in emulation) (" .. times .. "x)." )
+        table.insert( warnings, "第" .. line .. "行：移除max:X检测（模拟中不可用）(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "(incanters_flow_time_to%.%d+)(^%.)", "%1.any%2")
     if times > 0 then
-        table.insert( warnings, "Line " .. line .. ": Converted directionless 'incanters_flow_time_to.X' to 'incanters_flow_time_to.X.any' (" .. times .. "x)." )
+        table.insert( warnings, "第" .. line .. "行：将不起效的'incanters_flow_time_to.X'转换为'incanters_flow_time_to.X.any'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "exsanguinated%.([a-z0-9_]+)", "debuff.%1.exsanguinated" )
     if times > 0 then
-        table.insert( warnings, "Line " .. line .. ": Converted 'exsanguinated.X' to 'debuff.X.exsanguinated' (" .. times .. "x).")
+        table.insert( warnings, "第" .. line .. "行：将'exsanguinated.X'转换为'debuff.X.exsanguinated'(" .. times .. "次)。")
     end
 
     i, times = i:gsub( "time_to_sht%.(%d+)%.plus", "time_to_sht_plus.%1" )
     if times > 0 then
-        table.insert( warnings, "Line " .. line .. ": Converted 'time_to_sht.X.plus' to 'time_to_sht_plus.X' (" .. times .. "x).")
+        table.insert( warnings, "第" .. line .. "行：将'time_to_sht.X.plus'转换为'time_to_sht_plus.X'(" .. times .. "次)。")
     end
 
     if segment == 'c' then
@@ -10825,7 +10824,7 @@ local function Sanitize( segment, i, line, warnings )
             end
 
             if times > 0 then
-                table.insert( warnings, "Line " .. line .. ": Converted non-specific 'target' to 'target.unit' (" .. times .. "x)." )
+                table.insert( warnings, "第" .. line .. "行：将不确定的'target'转换为'target.unit'(" .. times .. "次)。" )
             end
             i = i:gsub( '\v', token )
         end
@@ -10849,7 +10848,7 @@ local function Sanitize( segment, i, line, warnings )
         end
 
         if times > 0 then
-            table.insert( warnings, "Line " .. line .. ": Converted non-specific 'player' to 'player.unit' (" .. times .. "x)." )
+            table.insert( warnings, "第" .. line .. "行：将不确定的'player'转换为'player.unit'(" .. times .. "次)。" )
         end
         i = i:gsub( '\v', token )
     end
@@ -10993,7 +10992,7 @@ do
                         i = start .. repl .. finish
                         times = times + 1
                     end
-                    table.insert( warnings, "Line " .. line .. ": Removed unnecessary expel_harm cooldown check from action entry for jab (" .. times .. "x)." )
+                    table.insert( warnings, "第" .. line .. "行：移除不必要的驱散伤害冷却检测(" .. times .. "次)。" )
                 end
             end
 
@@ -11009,7 +11008,7 @@ do
                     i = start .. enemies .. finish
                     times = times + 1
                 end
-                table.insert( warnings, "Line " .. line .. ": Replaced unsupported '" .. token .. "' with '" .. enemies .. "' (" .. times .. "x)." )
+                table.insert( warnings, "第 " .. line .. "行：转换'" .. token .. "'到'" .. enemies .. "'(" .. times .. "次)。" )
             end ]]
 
             if i:sub(1, 13) == 'fists_of_fury' then
@@ -11028,7 +11027,7 @@ do
                         i = start .. repl .. finish
                         times = times + 1
                     end
-                    table.insert( warnings, "Line " .. line .. ": Removed unnecessary energy cap check from action entry for fists_of_fury (" .. times .. "x)." )
+                    table.insert( warnings, "第" .. line .. "行：移除不必要的能量上限检测(" .. times .. "次)。" )
                 end
             end
 
@@ -11048,7 +11047,7 @@ do
                             result.action = class.abilities[ ability ] and class.abilities[ ability ].key or ability
                         end
                     elseif not ignore_actions[ ability ] then
-                        table.insert( warnings, "Line " .. line .. ": Unsupported action '" .. ability .. "'." )
+                        table.insert( warnings, "第" .. line .. "行：不支持的操作指令'" .. ability .. "'。" )
                         result.action = ability
                     end
 
@@ -11104,7 +11103,7 @@ do
                 end
 
                 if result.action == "use_item" then
-                    table.insert( warnings, "Line " .. line .. ": Unsupported use_item action [ " .. ( result.effect_name or result.name or "unknown" ) .. "]; entry disabled." )
+                    table.insert( warnings, "第" .. line .. "行：不支持的使用道具指令[ " .. ( result.effect_name or result.name or "未知" ) .. "]或没有权限。" )
                     result.action = nil
                     result.enabled = false
                 end
@@ -11116,7 +11115,7 @@ do
                     result.sec = "cooldown." .. result.name .. ".remains"
                     result.name = nil
                 else
-                    table.insert( warnings, "Line " .. line .. ": Unable to convert wait_for_cooldown,name=X to wait,sec=cooldown.X.remains; entry disabled." )
+                    table.insert( warnings, "第" .. line .. "行：无法转换wait_for_cooldown,name=X到wait,sec=cooldown.X.remains或没有权限。" )
                     result.action = wait
                     result.enabled = false
                 end
@@ -11189,8 +11188,8 @@ function Hekili:TogglePause( ... )
         end
     end
 
-    self:Print( ( not self.Pause and "UN" or "" ) .. "PAUSED." )
-    self:Notify( ( not self.Pause and "UN" or "" ) .. "PAUSED" )
+    self:Print( ( not self.Pause and "解除" or "" ) .. "暂停。" )
+    self:Notify( ( not self.Pause and "解除" or "" ) .. "暂停。" )
 
 end
 

@@ -2833,8 +2833,11 @@ local mt_default_cooldown = {
             return ability.recharge or ability.cooldown or 0
 
         elseif k == "time_to_max_charges" or k == "full_recharge_time" then
-            if raw then return ( ( ability.charges or 1 ) - t.true_charges_fractional ) * t.duration end
-            return ( ( ability.charges or 1 ) - t.charges_fractional ) * t.duration
+            if not raw and ( state:IsDisabled( t.key ) or ability.disabled ) then
+                return 0
+            end
+
+            return ( ( ability.charges or 1 ) - ( raw and t.true_charges_fractional or t.charges_fractional ) ) * t.duration
 
         elseif k == "remains" then
             if t.key == "global_cooldown" then
@@ -4582,7 +4585,7 @@ local mt_default_action = {
             return ability.charges or 0
 
         elseif k == "time_to_max_charges" or k == "full_recharge_time" then
-            return ( ( ability.charges or 1 ) - state.cooldown[ t.action ].charges_fractional ) * ( ability.recharge or ability.cooldown )
+            return state.cooldown[ t.action ].full_recharge_time
 
         elseif k == "ready_time" then
             return state:IsUsable( t.action ) and state:TimeToReady( t.action ) or 999
@@ -5499,10 +5502,9 @@ do
             if ability.impact then ability.impact() end
             self:StartCombat()
 
-        elseif e.type == "AURA_EXPIRATION" then
-            if e.func then e.func( e.data ) end
-
         end
+
+        if e.func then e.func( e.data ) end
 
         state.this_action = curr_action
         state:RemoveEvent( e )

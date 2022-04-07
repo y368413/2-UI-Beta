@@ -934,7 +934,9 @@ do
 
             self.recTimer = self.recTimer - elapsed
 
-            if not self:IsThreadLocked() and ( self.NewRecommendations or self.recTimer < 0 ) then
+            if self.NewRecommendations then self.TextureUpdateNeeded = true end
+
+            if not self:IsThreadLocked() and ( self.TextureUpdateNeeded or self.recTimer < 0 ) then
                 local alpha = self.alpha
 
                 for i, b in ipairs( self.Buttons ) do
@@ -955,7 +957,7 @@ do
                             self.HasRecommendations = true
                         end
 
-                        if action ~= b.lastAction or self.NewRecommendations then
+                        if action ~= b.lastAction or self.TextureUpdateNeeded or not b.Image then
                             if ability.item then
                                 b.Image = b.Recommendation.texture or ability.texture or select( 10, GetItemInfo( ability.item ) )
                             else
@@ -1043,7 +1045,7 @@ do
                 self.recTimer = 0.1
                 self.alphaCheck = 0.5
 
-                if not self:IsThreadLocked() then self:RefreshCooldowns() end
+                self:RefreshCooldowns()
             end
 
             local postRecs = debugprofilestop()
@@ -1579,27 +1581,25 @@ do
         end
 
         function d:RefreshCooldowns()
-            local gStart, gDuration = GetSpellCooldown( 61304 )
+            local gStart, gDuration, _, gModRate = GetSpellCooldown( 61304 )
             local gExpires = gStart + gDuration
 
             local now = GetTime()
             local conf = Hekili.DB.profile.displays[ self.id ]
 
             for i, rec in ipairs( self.Recommendations ) do
-                if not rec.actionName then
-                    break
-                end
+                local button = self.Buttons[ i ]
 
-                local ability = class.abilities[ rec.actionName ]
-                local cd = self.Buttons[ i ].Cooldown
+                if button.Action then
+                    local cd = button.Cooldown
+                    local ability = button.Ability
 
-                if ability then
-                    local start, duration = 0, 0
+                    local start, duration, enabled, modRate = 0, 0, 1, 1
 
                     if ability.item then
-                        start, duration = GetItemCooldown( ability.item )
+                        start, duration, enabled, modRate = GetItemCooldown( ability.item )
                     else
-                        start, duration = GetSpellCooldown( ability.id )
+                        start, duration, enabled, modRate = GetSpellCooldown( ability.id )
                     end
 
                     if ability.gcd ~= "off" and start + duration < gExpires then
@@ -1612,8 +1612,10 @@ do
                         duration = rec.exact_time - start
                     end
 
-                    if cd.lastStart ~= start or cd.lastDuration ~= duration then
-                        cd:SetCooldown( start, duration )
+                    if enabled and enabled == 0 then
+                        cd:Clear()
+                    elseif cd.lastStart ~= start or cd.lastDuration ~= duration then
+                        cd:SetCooldown( start, duration, modRate )
                         cd.lastStart = start
                         cd.lastDuration = duration
                     end
@@ -1696,15 +1698,6 @@ do
 
             elseif alphaUpdateEvents[ event ] then
                 self:UpdateAlpha()
-
-            elseif event == "SPELLS_CHANGED" then
-                for i, b in ipairs( self.Buttons ) do
-                    if not b.Ability.item then
-                        b.Image = b.Ability.texture or GetSpellTexture( b.Action )
-                        b.Texture:SetTexture( b.Image )
-                    end
-                end
-                self.NewRecommendations = true
 
             end
 
@@ -2162,11 +2155,6 @@ do
 
     function Hekili:ForceUpdate( event, super )
         self.freshFrame = false
-
-        if super then
-            state.player.updated = true
-            state.target.updated = true
-        end
 
         HekiliDisplayPrimary.criticalUpdate = true
         if super then HekiliDisplayPrimary.superUpdate = true end
