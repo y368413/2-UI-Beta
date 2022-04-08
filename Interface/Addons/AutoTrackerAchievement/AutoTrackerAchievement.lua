@@ -1,8 +1,10 @@
--- ////////////////
--- Commande SLASH
--- ////////////////
+
+local pStatusBar = 200
+
 SLASH_ATA1 = '/ata';
-function AtaCommand(msg, editbox)
+SlashCmdList["ATA"] = AtaCommand;
+
+function AtaCommand(msg)
 	listeHF = 0;
 	if msg == 'clean' then CleanTrackList()
 	elseif msg == 'help' or msg == '' then
@@ -16,11 +18,11 @@ function AtaCommand(msg, editbox)
 		print(L["ata mount"]);
 	elseif msg == 'config' then
 		AutoTrackerAchievement:Show();
-		if AutoTrackerAchievementDB["Arena"] == true then AutoTrackerAchievement_CheckButton1:SetChecked(true); end
-		if AutoTrackerAchievementDB["Raid"] == true then AutoTrackerAchievement_CheckButton2:SetChecked(true); end
-		if AutoTrackerAchievementDB["Region"] == true then AutoTrackerAchievement_CheckButton3:SetChecked(true); end
-		if AutoTrackerAchievementDB["Donjon"] == true then AutoTrackerAchievement_CheckButton4:SetChecked(true); end
-		if AutoTrackerAchievementDB["defaut"] == true then AutoTrackerAchievement_CheckButton5:SetChecked(true); end
+		AutoTrackerAchievement_CheckButton1:SetChecked(AutoTrackerAchievementDB["Arena"]);
+		AutoTrackerAchievement_CheckButton2:SetChecked(AutoTrackerAchievementDB["Raid"]);
+		AutoTrackerAchievement_CheckButton3:SetChecked(AutoTrackerAchievementDB["Region"]);
+		AutoTrackerAchievement_CheckButton4:SetChecked(AutoTrackerAchievementDB["Donjon"]);
+		AutoTrackerAchievement_CheckButton5:SetChecked(AutoTrackerAchievementDB["defaut"]);
 	elseif msg == 'debug' then
 		if select(1, UnitName("player")) == "Garikover" then
 			AutoTrackerAchievementDB["debug"] = (AutoTrackerAchievementDB["debug"] == false and true or false);
@@ -28,6 +30,7 @@ function AtaCommand(msg, editbox)
 		end
 	elseif msg == 'mount' then CheckMount(false)
 	elseif msg == 'mount full' then CheckMount(true)
+	elseif msg == 'test' then CheckTest(false)
 	elseif msg == 'check' then CheckBestRaid()
 	elseif msg == 'reset' then AutoTrackerAchievementDB = AutoTrackerAchievementDB_Defaut;	
 	elseif msg == 'get' then AchievementListConstructor()
@@ -44,7 +47,7 @@ function AtaCommand(msg, editbox)
 	else print(L["Commande non reconnue"]);
 	end	
 end
-SlashCmdList["ATA"] = AtaCommand;
+
 
 -- ////////////////
 -- Données
@@ -890,20 +893,20 @@ local GetMapName = {
 	[806] = 'Trial of Valor',
 	[807] = 'Trial of Valor',
 	[808] = 'Trial of Valor',
-	[809] = 'Karazhan',
-	[810] = 'Karazhan',
-	[811] = 'Karazhan',
-	[812] = 'Karazhan',
-	[813] = 'Karazhan',
-	[814] = 'Karazhan',
-	[815] = 'Karazhan',
-	[816] = 'Karazhan',
-	[817] = 'Karazhan',
-	[818] = 'Karazhan',
-	[819] = 'Karazhan',
-	[820] = 'Karazhan',
-	[821] = 'Karazhan',
-	[822] = 'Karazhan',
+	[809] = 'Karazhan (Legion)',
+	[810] = 'Karazhan (Legion)',
+	[811] = 'Karazhan (Legion)',
+	[812] = 'Karazhan (Legion)',
+	[813] = 'Karazhan (Legion)',
+	[814] = 'Karazhan (Legion)',
+	[815] = 'Karazhan (Legion)',
+	[816] = 'Karazhan (Legion)',
+	[817] = 'Karazhan (Legion)',
+	[818] = 'Karazhan (Legion)',
+	[819] = 'Karazhan (Legion)',
+	[820] = 'Karazhan (Legion)',
+	[821] = 'Karazhan (Legion)',
+	[822] = 'Karazhan (Legion)',
 	[823] = 'Pit of Saron',
 	[824] = 'Islands',
 	[825] = 'Wailing Caverns',
@@ -1937,7 +1940,7 @@ local GetAchievementList = {
 		['Violet Hold'] = {['MM'] = {10554,10553,},}, -- Fort Pourpre (Legion)
 		['Eye of Azshara'] = {['MM'] = {10456,10458,10457,},}, -- Œil d'Azshara
 		['Neltharion\'s Lair'] = {['MM'] = {10996,10875,},}, -- Repaire de Neltharion
-		['Karazhan (Legion)'] = {['MM'] = {11335,11433,11338,11746,11432,11430,},}, -- Retour à Karazhan
+		['Karazhan (Legion)'] = {['MM'] = {11335,11433,11338,11432,11430,},}, -- Retour à Karazhan
 		['Halls of Valor'] = {['MM'] = {10542,10543,10544,},}, -- Salles des Valeureux
 		['The Seat of the Triumvirate'] = {['MM'] = {12004,12005,12009,},}, -- Le siège du Triumvirat
 		-- Raid
@@ -1970,7 +1973,7 @@ local GetAchievementList = {
 		['Temple of Sethraliss'] = {['MM'] = {12508,12507,12503,},}, -- Horde -- Temple de Sephraliss
 		['The Underrot'] = {['MM'] = {12549,12498,12499,},}, -- Horde -- Les tréfonds Putrides
 		['Kings\' Rest'] = {['MM'] = {12723,12722,},}, -- Horde -- Repos des rois
-		['Operation: Mechagon'] = {['MM'] = {13624,13698,13706,13723,13545,},},
+		['Mechagon'] = {['MM'] = {13624,13698,13706,13723,13545,},},
 		-- Islands
 		['Dread Chain'] = {13095, 13096, 13097, 13098, 13142, 13125, 12597, 13120, 12594, 13134, 12595, 13126, 13132, 13128, 13122, 13141, 12596, 13121, 13129, 13127,},
 		['The Rotting Mire'] = {13103, 13104, 13105, 13106, 13142, 13125, 12597, 13120, 12594, 13134, 12595, 13126, 13132, 13128, 13122, 13141, 12596, 13121, 13129, 13127,},
@@ -2121,7 +2124,7 @@ local Mount = {
 
 
 }
-	
+
 -- ////////////////
 -- Fonctions XML
 -- ////////////////
@@ -2162,37 +2165,41 @@ end
 
 -- FONCTION DE CHARGEMENT
 function AutoTrackerAchievement_OnLoad(self)
+	-- INIT
 	self:RegisterEvent("ADDON_LOADED");
+	self:RegisterEvent("VARIABLES_LOADED");
+	-- Travel
+	self:RegisterEvent("PLAYER_ENTERING_WORLD");
 	self:RegisterEvent("ZONE_CHANGED_NEW_AREA");
 	--self:RegisterEvent("ZONE_CHANGED");
-	self:RegisterEvent("PLAYER_ENTERING_WORLD");
-	self:RegisterEvent("VARIABLES_LOADED");
+	-- Tracking
 	self:RegisterEvent("QUEST_ACCEPTED");
 	self:SetScript("OnEvent", eventHandler);
 end
 
 function eventHandler(self, event, arg1,...)
+
+	-- Check if save exists
+	if AutoTrackerAchievementDB == nil then AutoTrackerAchievementDB = AutoTrackerAchievementDB_Defaut end
+
+	-- Script
 	DebugPrint("Event = " .. event)
 	AtaLocalisation(GetLocale())
 	if arg1 == "AutoTrackerAchievement" and event == "ADDON_LOADED" then
-		print("Achievement Tracker : OK");
-		if AutoTrackerAchievementDB == nil then
-			print(L["Creation de la sauvegarde"]);
-			AutoTrackerAchievementDB = AutoTrackerAchievementDB_Defaut;
-		elseif AutoTrackerAchievementDB["version"] == nil or AutoTrackerAchievementDB["version"] < AutoTrackerAchievementDB_Defaut["version"] then
+		DebugPrint("Achievement Tracker : OK")
+		if AutoTrackerAchievementDB["version"] == nil or AutoTrackerAchievementDB["version"] < AutoTrackerAchievementDB_Defaut["version"] then
 			print(L["Mise a jour"]);
-			-- sauvegarde des anciens parametres
+			-- Save old config
 			AutoTrackerAchievementDB_Old = AutoTrackerAchievementDB
-			-- ajustement des parametres
-			AutoTrackerAchievementDB = AutoTrackerAchievementDB_Defaut		
-			-- inserer une restauration des donnees
+			-- Insert new variables
+			AutoTrackerAchievementDB = AutoTrackerAchievementDB_Defaut
+			-- Update new variables to old value
 			for i1,v1 in pairs(AutoTrackerAchievementDB) do
 				if AutoTrackerAchievementDB_Old[i1] ~= nil then AutoTrackerAchievementDB[i1] = AutoTrackerAchievementDB_Old[i1] end
 			end
 		end
-	end
-	if event == "ZONE_CHANGED_NEW_AREA" then AchievementListConstructor();
-	--elseif event == "ZONE_CHANGED" then AchievementListConstructor();
+	elseif event == "ZONE_CHANGED_NEW_AREA" then
+		AchievementListConstructor();
 	end
 	ModificationFrame()
 end
@@ -2200,16 +2207,16 @@ end
 
 -- FONCTIONS RECURRENTES
 function CleanTrackList()
-	local achievlisted = {GetTrackedAchievements()};	
+	local achievlisted = {GetTrackedAchievements()};
 	for i=1,#achievlisted do
 		RemoveTrackedAchievement(achievlisted[i])
 	end
 	DebugPrint("Nettoyage liste")
 end
 function SaveTrackList(msg)
-	local achievlisted = {GetTrackedAchievements()};	
+	local achievlisted = {GetTrackedAchievements()};
 	name = string.gsub(msg, "save ", "");
-	
+
 	if AutoTrackerAchievementDB["debug"] == true and name ~= "" then
 		print("Sauvegarde : " .. name);
 		AutoTrackerAchievementDB["Favoris"][name] = achievlisted;
@@ -2267,7 +2274,7 @@ function SaveTrackQuests()
 			table.insert(listequetes, questID)
 			local wasRemoved = C_QuestLog.RemoveQuestWatch(questID)
 			DebugPrint("Save " .. GetQuestLink(questID))
-			
+
 		end
 	end
 end
@@ -2283,6 +2290,7 @@ function LoadTrackQuests()
 end
 
 -- FONCTION PRINCIPALE
+
 function AchievementListConstructor()
 
 	local difficulty = select(3, GetInstanceInfo())
@@ -2300,15 +2308,17 @@ function AchievementListConstructor()
 	DebugPrint('Difficulté = ' .. difficulty)
 	DebugPrint('Zone = '.. ZoneName)
 
-	ListeHF = (GetFactionAchievementList[ZoneName] ~= nil) and GetFactionAchievementList[ZoneName][UnitFactionGroup("player")] or nil
+	-- World (0) or Normal Dungeons (1)
+	if GetFactionAchievementList[ZoneName] ~= nil then
+		ListeHF = GetFactionAchievementList[ZoneName][UnitFactionGroup("player")]
+	else
+		ListeHF = nil
+	end
+
 	ListeHF = concatArray(ListeHF, GetAchievementList[ZoneName])
 
-	-- World (0) or Normal Dungeons (1)
-	if difficulty <= 1 then
-		ListeHF = concatArray(ListeHF, GetAchievementList[ZoneName])
-
 	-- Heroic (2) dungeons
-	elseif difficulty == 2 then
+	if difficulty == 2 then
 		ListeHF = concatArray(ListeHF, GetAchievementList[ZoneName]['NM'])
 		ListeHF = concatArray(ListeHF, GetAchievementList[ZoneName]['HM'])
 
@@ -2330,11 +2340,13 @@ function AchievementListConstructor()
 	end
 
 	ListeHF = concatArray(ListeHF, GetAchievementListFromCategory(GetCategorie[IdZone]))
-		
+
 	if ListeHF ~= nil then nbtracked = DisplayAchievementsList(ListeHF) end
-	
+
+	DebugPrint('ListeHF = ' .. tablelength(ListeHF))
+
 	-- Defaut si aucune quetes en suivi
-	if AutoTrackerAchievementDB["defaut"] == true and AutoTrackerAchievementDB["defautliste"] ~= 0 and difficulty == 0 and C_QuestLog.GetNumQuestWatches() == 0 then
+	if AutoTrackerAchievementDB["defaut"] == true and AutoTrackerAchievementDB["defautliste"] ~= 0 and difficulty == 0 and C_QuestLog.GetNumQuestWatches() == 0 and tablelength(ListeHF) == 0 then
 		if nbtracked == nil or nbtracked == 0 then LoadTrackList(AutoTrackerAchievementDB["defautliste"]) end
 	end
 end
@@ -2410,7 +2422,6 @@ end
 -- Vérifier les montures
 function CheckMount()
 	local iLocked;
-	local a;
 	local nbMount = 0;
 	PrintMessage(AtaColor.Yellow .. 'Check Mount to Farm')
 	
@@ -2448,8 +2459,94 @@ function CheckMount()
 	
 end
 
+-- Vérifier les stuffs
+function CheckSets()
+
+	local listStuff = {}
+
+	sets = C_TransmogSets.GetBaseSets();
+	for i, set in ipairs(sets) do
+
+		sources = C_TransmogSets.GetAllSourceIDs(set.setID)
+		for j, source in ipairs(sources) do
+			local categoryID, visualID, canEnchant, icon, isCollected, itemLink, transmogLink, itemType, itemSubTypeIndex = C_TransmogCollection.GetAppearanceSourceInfo(source)
+			-- itemType => 1 normal, 3 pvp, nil legendary
+			if isCollected == false and itemType == 1 then
+				local drops = C_TransmogCollection.GetAppearanceSourceDrops(source)
+				local itemID = tonumber(string.match(itemLink, 'item:([^:]*):'))
+				local itemDifficulty = tonumber(string.match(itemLink, 'item:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:([^:]*):'))
+				--print("-- " .. itemLink .. " - " .. itemType)
+				if drops ~= nil then
+					for k=1, #drops do
+						local inst = drops[k]
+
+						if #inst.difficulties == 0 then
+							if itemDifficulty == nil then inst.difficulties[1] = "Normal" else inst.difficulties[1] = itemDifficulty end
+						end
+
+						for l=1,#inst.difficulties do
+							local dif = inst.difficulties[l]
+							local instance = inst.instance
+							local boss = inst.encounter
+							if listStuff[instance] == nil then listStuff[instance] = {} end
+							if listStuff[instance][boss] == nil then listStuff[instance][boss] = {} end
+							if listStuff[instance][boss][dif] == nil then listStuff[instance][boss][dif] = 0 end
+							listStuff[instance][boss][dif] = listStuff[instance][boss][dif] + 1
+						end
+					end
+				end
+			end
+		end
+	end
+
+	for instanceName, bosses in pairs(listStuff) do
+		print(instanceName)
+		for bossName, difficulties in pairs(bosses) do
+			for diff, q in pairs(difficulties) do
+				print("---- " .. bossName .. " - " .. q .. " in " .. diff)
+			end
+		end
+	end
+
+end
+
+-- Fonction de test
+function CheckTest()
+	pStatusBar = pStatusBar + 30
+	print(pStatusBar)
+
+	local r, g, b = 0, 204, 0
+	local x, y = 0, 180
+	print('Couleurs : ', r, g, b)
+
+	local border = CreateFrame("StatusBar",nil,ObjectiveTrackerFrame)
+	border:SetStatusBarTexture('Interface/AchievementFrame/UI-Achievement-ProgressBar-Border')
+	border:SetWidth(282) -- Set these to whatever height/width is needed
+	border:SetHeight(30) -- for your Texture
+	border:SetPoint("CENTER",x,y) --214
+	border:Show()
+
+	local progress = CreateFrame("StatusBar",nil,border)
+	progress:SetStatusBarTexture('Interface/TargetingFrame/UI-StatusBar')
+	progress:SetStatusBarColor(r/255,g/255,b/255);
+	progress:SetFrameStrata("BACKGROUND")
+	progress:SetWidth(235) -- Set these to whatever height/width is needed
+	progress:SetHeight(14) -- for your Texture
+	progress:SetPoint("TOPLEFT",5,-5)
+	progress:Show()
+end
+
+--
 function PrintMessage(s)
 	print(AtaColor.Green.."ATA : |r " .. s);
+end
+
+function tablelength(T)
+	local count = 0
+	if T ~= nil then
+		for _ in pairs(T) do count = count + 1 end
+	end
+	return count
 end
 
 -- ////////////////

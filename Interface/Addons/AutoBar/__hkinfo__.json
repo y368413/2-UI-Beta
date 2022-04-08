@@ -1,0 +1,14 @@
+{
+    "addonsMap": [
+        "AutoBar"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "localName": "AutoBar",
+    "searchName": "AutoBar",
+    "name": "AutoBar",
+    "fileName": "auto-bar",
+    "target": "curse",
+    "version": "AutoBar_9.2.0.00.zip",
+    "gameVersion": "9.2.0"
+}

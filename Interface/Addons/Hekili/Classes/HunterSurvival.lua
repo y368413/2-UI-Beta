@@ -1349,13 +1349,10 @@ if UnitClassBase( "player" ) == "HUNTER" then
             start = function ()
                 removeBuff( "flame_infusion" )
 
-                if buff.mad_bombadier.up then
-                    gainCharges( "wildfire_bomb", 1 )
-                end
             end,
 
             impact = function ()
-                if buff.mad_bombardier.up then
+                if not talent.wildfire_infusion.enabled and buff.mad_bombardier.up then
                     gainCharges( "wildfire_bomb", 1 )
                     removeBuff( "mad_bombardier" )
                 end

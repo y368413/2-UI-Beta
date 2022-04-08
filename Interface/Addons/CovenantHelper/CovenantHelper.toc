@@ -1,0 +1,21 @@
+## Interface: 90200
+## Author: 非酋克星-遗忘海岸
+## Version: 1.6.0
+## Title: Covenant Helper
+## SavedVariables: CovenantHelperDB
+
+LibAceConfigHelper.lua
+
+Localization\deDE.lua
+Localization\zhCN.lua
+Localization\zhTW.lua
+Localization\enUS.lua
+
+Init.lua
+
+Base\Config.lua
+Base\Display.lua
+Base\Dialog.lua
+
+General\EquipmentSet.lua
+General\SoulBind.lua

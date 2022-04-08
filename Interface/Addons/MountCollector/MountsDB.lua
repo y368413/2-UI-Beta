@@ -5217,8 +5217,280 @@ MDL_DB_MOUNTS = {
         from = {
             {
                 itemname = "Summer Wilderling's Harness", type = 'treasure', customnpcName = 'Talon-Pierced Mawsworn Lockbox',
-                continent = 'shadowlands', for_sort = 10, zone_id = 1961, expansion = 'sl',
+                continent = 'shadowlands', for_sort = 15, zone_id = 1961, expansion = 'sl',
                 level = 60, 
+            },
+        },
+    },
+		[187677] = { -- Genesis Crawler
+        spell_id = 359401,
+        from = {
+            {
+                itemname = "Genesis Crawler", type = 'treasure', customnpcName = 'Protoform Synthesis',
+                continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
+                coordzone = 1970, coordx = 31.5, coordy = 50.3, level = 60, 
+            },
+        },
+    },
+		[187679] = { -- Ineffable Skitterer
+        spell_id = 359403,
+        from = {
+            {
+                itemname = "Ineffable Skitterer", type = 'treasure', customnpcName = 'Protoform Synthesis',
+                continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
+                coordzone = 1970, coordx = 34.6, coordy = 48.8, level = 60, 
+            },
+        },
+    },
+		[187678] = { -- Tarachnid Creeper
+        spell_id = 359402,
+        from = {
+            {
+                itemname = "Tarachnid Creeper", type = 'treasure', customnpcName = 'Protoform Synthesis',
+                continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
+                coordzone = 1970, level = 60, 
+            },
+        },
+    },
+		[187663] = { -- Bronzewing Vespoid
+        spell_id = 359364,
+        from = {
+            {
+                itemname = "Bronzewing Vespoid", type = 'treasure', customnpcName = 'Protoform Synthesis',
+                continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
+                coordzone = 1970, level = 60, 
+            },
+        },
+    },
+		[187665] = { -- Buzz
+        spell_id = 359366,
+        from = {
+            {
+                itemname = "Buzz", type = 'treasure', customnpcName = 'Protoform Synthesis',
+                continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
+                coordzone = 1970, level = 60, 
+            },
+        },
+    },
+		[187664] = { -- Forged Spiteflyer
+        spell_id = 359367,
+        from = {
+            {
+                itemname = "Forged Spiteflyer", type = 'treasure', customnpcName = 'Protoform Synthesis',
+                continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
+                coordzone = 1970, level = 60, 
+            },
+        },
+    },
+		[187660] = { -- Vespoid Flutterer
+        spell_id = 342678,
+        from = {
+            {
+                itemname = "Vespoid Flutterer", type = 'treasure', customnpcName = 'Protoform Synthesis',
+                continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
+                coordzone = 1970, level = 60, 
+            },
+        },
+    },
+		[187666] = { -- Desertwing Hunter
+        spell_id = 342668,
+        from = {
+            {
+                itemname = "Desertwing Hunter", type = 'treasure', customnpcName = 'Protoform Synthesis',
+                continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
+                coordzone = 1970, level = 60, 
+            },
+        },
+    },
+		[187667] = { -- Mawdapted Raptora
+        spell_id = 359372,
+        from = {
+            {
+                itemname = "Mawdapted Raptora", type = 'treasure', customnpcName = 'Protoform Synthesis',
+                continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
+                coordzone = 1970, level = 60, 
+            },
+        },
+    },
+		[187668] = { -- Raptora Swooper
+        spell_id = 359373,
+        from = {
+            {
+                itemname = "Raptora Swooper", type = 'treasure', customnpcName = 'Protoform Synthesis',
+                continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
+                coordzone = 1970, level = 60, 
+            },
+        },
+    },
+		[190580] = { -- Heartbond Lupine
+        spell_id = 367673,
+        from = {
+            {
+                itemname = "Heartbond Lupine", type = 'treasure', customnpcName = 'Protoform Synthesis',
+                continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
+                coordzone = 1970, level = 60, 
+            },
+        },
+    },
+		[190768] = { -- Zereth Overseer
+        spell_id = 368158,
+        from = {
+            {
+                itemname = "Fractal Cypher of the Zereth Overseer", type = 'raid', subtype = 'mythic', npc_id = 180990,
+                continent = "shadowlands", for_sort = 15, zone_id = 2061, expansion = "sl",
+                coordzone = 1970, coordx = 70, coordy = 32, level = 60,
+            },
+        },
+    },
+		[187670] = { -- Bronze Helicid
+        spell_id = 359376,
+        from = {
+            {
+                itemname = "Bronze Helicid", type = 'treasure', customnpcName = 'Protoform Synthesis',
+                continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
+                coordzone = 1970, level = 60, 
+            },
+        },
+    },
+		[187672] = { -- Scarlet Helicid
+        spell_id = 359378,
+        from = {
+            {
+                itemname = "Scarlet Helicid", type = 'treasure', customnpcName = 'Protoform Synthesis',
+                continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
+                coordzone = 1970, level = 60, 
+            },
+        },
+    },
+		[187669] = { -- Serenade
+        spell_id = 346719,
+        from = {
+            {
+                itemname = "Serenade", type = 'treasure', customnpcName = 'Protoform Synthesis',
+                continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
+                coordzone = 1970, level = 60, 
+            },
+        },
+    },
+		[187671] = { -- Unsuccessful Prototype Fleetpod
+        spell_id = 359377,
+        from = {
+            {
+                itemname = "Unsuccessful Prototype Fleetpod", type = 'treasure', customnpcName = 'Protoform Synthesis',
+                continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
+                coordzone = 1970, level = 60, 
+            },
+        },
+    },
+		[187632] = { -- Adorned Vombata
+        spell_id = 359232,
+        from = {
+            {
+                itemname = "Adorned Vombata", type = 'treasure', customnpcName = 'Protoform Synthesis',
+                continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
+                coordzone = 1970, level = 60, 
+            },
+        },
+    },
+		[187630] = { -- Curious Crystalsniffer
+        spell_id = 359230,
+        from = {
+            {
+                itemname = "Curious Crystalsniffer", type = 'treasure', customnpcName = 'Protoform Synthesis',
+                continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
+                coordzone = 1970, level = 60, 
+            },
+        },
+    },
+		[187631] = { -- Darkened Vombata 
+        spell_id = 359231,
+        from = {
+            {
+                itemname = "Darkened Vombata", type = 'treasure', customnpcName = 'Protoform Synthesis',
+                continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
+                coordzone = 1970, level = 60, 
+            },
+        },
+    },
+		[187629] = { -- Heartlight Vombata
+        spell_id = 359229,
+        from = {
+            {
+                itemname = "Heartlight Vombata", type = 'vendor', npc_id = 182257, currency = 'anima', cost = 5000,
+				repid = 2478, reprequired = 1, replevel = 7,
+                continent = "shadowlands", for_sort = 16, zone_id = 1970, expansion = "sl",
+                coordzone = 1970, coordx = 34.8, coordy = 64.2, level = 60, 
+            },
+        },
+    },
+		[190771] = { -- Carcinized Zerethsteed
+        spell_id = 359545,
+        from = {
+            {
+                itemname = "Fractal Cypher of the Carcinized Zerethsteed", type = 'raid', subtype = 'heroic', npc_id = 180990,
+                continent = "shadowlands", for_sort = 15, zone_id = 2061, expansion = "sl",
+                coordzone = 1970, coordx = 70, coordy = 32, level = 60, cond = 'aotc',
+            },
+        },
+    },
+		[187676] = { -- Deepstar Aurelid
+        spell_id = 342680,
+        from = {
+            {
+                itemname = "Deepstar Polyp", type = 'rare', npc_id = 180978,
+                continent = "shadowlands", for_sort = 16, zone_id = 1970, expansion = "sl",
+                coordzone = 1970, coordx = 51.6, coordy = 74.6, level = 60,
+            },
+        },
+    },
+		[190765] = { -- Colossal Plaguespew Mawrat
+        spell_id = 368105,
+        from = {
+            {
+                itemname = "Iska's Mawrat Leash", type = 'rare', npc_id = 182120,
+                continent = "shadowlands", for_sort = 16, zone_id = 1970, expansion = "sl",
+                coordzone = 1970, coordx = 63.2, coordy = 26, level = 60,
+            },
+        },
+    },
+		[188700] = { -- Colossal Umbrahide Mawrat
+        spell_id = 363178,
+        from = {
+            {
+                itemname = "Sturdy Silver Mawrat Harness", type = 'zone',
+                continent = "shadowlands", for_sort = 16, zone_id = 1911, expansion = "sl",
+                level = 60, cond = 'torghast13',
+            },
+        },
+    },
+		[190766] = { -- Colossal Wraithbound Mawrat
+        spell_id = 368128,
+        from = {
+            {
+                itemname = "Spectral Mawrat's Tail", type = 'treasure', customnpcName = 'Mawsworn Supply Chest',
+                continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
+                coordzone = 1970, level = 60, 
+            },
+        },
+    },
+		[187638] = { -- Deathrunner
+        spell_id = 359278,
+        from = {
+            {
+                itemname = "Deathrunner", type = 'treasure', customnpcName = 'Protoform Synthesis',
+                continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
+                coordzone = 1970, level = 60, 
+            },
+        },
+    },
+	[187640] = { -- Anointed Protostag
+        spell_id = 359276,
+        from = {
+            {
+                itemname = "Anointed Protostag Reins", type = 'vendor', npc_id = 182257, currency = 'anima', cost = 5000,
+				repid = 2478, reprequired = 1, replevel = 7,
+                continent = "shadowlands", for_sort = 16, zone_id = 1970, expansion = "sl",
+                coordzone = 1970, coordx = 34.8, coordy = 64.2, level = 60, 
             },
         },
     },

@@ -1,55 +1,15 @@
-if not(GetLocale() == "ptBR") then
+if GetLocale() ~= "ptBR" then
   return
 end
 
 local L = WeakAuras.L
 
 -- WeakAuras
-L["   • %d auras added"] = "• %d auras adicionadas"
-L["   • %d auras deleted"] = "• %d auras removidas"
-L["   • %d auras modified"] = "• %d auras modificadas"
 L[ [=[ Filter formats: 'Name', 'Name-Realm', '-Realm'. 
 
 Supports multiple entries, separated by commas
 ]=] ] = "Formatos de filtro: 'Nome', 'Nome-Reino', '-Reino'. Suporta várias entradas, separadas por vírgulas."
-L["%s - %i. Trigger"] = "%s - %i. Ativar"
-L["%s - Alpha Animation"] = "%s - Animação da transparência"
-L["%s - Color Animation"] = "%s - Animação da cor"
-L["%s - Condition Custom Chat"] = "%s - Condição do Chat Personalizado"
---[[Translation missing --]]
-L["%s - Custom Anchor"] = "%s - Custom Anchor"
---[[Translation missing --]]
-L["%s - Custom Grow"] = "%s - Custom Grow"
---[[Translation missing --]]
-L["%s - Custom Sort"] = "%s - Custom Sort"
-L["%s - Custom Text"] = "%s - Texto personalizado"
-L["%s - Finish"] = "%s - Finalização"
-L["%s - Finish Action"] = "%s - Ação de fim"
-L["%s - Finish Custom Text"] = "%s - Texto personalizado de fim"
-L["%s - Init Action"] = "%s - Ação de início"
-L["%s - Main"] = "%s - Principal"
-L["%s - Rotate Animation"] = "%s - Animação de rotação"
-L["%s - Scale Animation"] = "%s - Animação de escala"
-L["%s - Start"] = "%s - Começo"
-L["%s - Start Action"] = "%s - Ação de começo"
-L["%s - Start Custom Text"] = "%s - Texto personalizado de começo"
-L["%s - Translate Animation"] = "%s - Animação de translado"
-L["%s - Trigger Logic"] = "%s - Lógica de gatilho"
---[[Translation missing --]]
-L["%s Custom Variables"] = "%s Custom Variables"
-L["%s Duration Function"] = "%s Função de duração"
-L["%s Icon Function"] = "%s Função de ícone"
-L["%s Name Function"] = "%s Função de nome"
 L["%s Overlay Color"] = "%s Cor de Sobreposição"
---[[Translation missing --]]
-L["%s Overlay Function"] = "%s Overlay Function"
---[[Translation missing --]]
-L["%s Stacks Function"] = "%s Stacks Function"
-L["%s Texture Function"] = "%s Função de texture"
-L["%s total auras"] = "%s auras totais"
-L["%s Trigger Function"] = "%s Função de gatilho"
---[[Translation missing --]]
-L["%s Untrigger Function"] = "%s Untrigger Function"
 L["* Suffix"] = "* Sufixo"
 L["/wa help - Show this message"] = "/wa help - Mostrar essa mensagem"
 L["/wa minimap - Toggle the minimap icon"] = "/wa minimap - Mostrar/esconder o ícone de minimapa"
@@ -300,8 +260,6 @@ L["Chat Frame"] = "Quadro do bate-papo"
 L["Chat Message"] = "Mensagem de bate-papo"
 --[[Translation missing --]]
 L["Chess Event"] = "Chess Event"
-L["Children:"] = "Criança:"
-L["Choose a category"] = "Escolha uma categoria"
 L["Chromaggus"] = "Chromaggus"
 L["Circle"] = "Círculo"
 --[[Translation missing --]]
@@ -335,11 +293,12 @@ L["Cooldown Ready Event (Slot)"] = "Cooldown Ready Event (Slot)"
 --[[Translation missing --]]
 L["Cooldown/Charges/Count"] = "Cooldown/Charges/Count"
 --[[Translation missing --]]
+L["Could not load WeakAuras Archive, the addon is %s"] = "Could not load WeakAuras Archive, the addon is %s"
+--[[Translation missing --]]
 L["Count"] = "Count"
 --[[Translation missing --]]
 L["Counter Clockwise"] = "Counter Clockwise"
 L["Create"] = "Criar"
-L["Create a Copy"] = "Criar uma cópia"
 L["Critical"] = "Crítico"
 --[[Translation missing --]]
 L["Critical (%)"] = "Critical (%)"
@@ -640,8 +599,6 @@ L["Friendship Max Rank"] = "Friendship Max Rank"
 --[[Translation missing --]]
 L["Friendship Rank"] = "Friendship Rank"
 --[[Translation missing --]]
-L["From"] = "From"
---[[Translation missing --]]
 L["Frost Resistance"] = "Frost Resistance"
 --[[Translation missing --]]
 L["Full"] = "Full"
@@ -787,19 +744,9 @@ L["Ignore Self"] = "Ignore Self"
 --[[Translation missing --]]
 L["Illidan Stormrage"] = "Illidan Stormrage"
 L["Immune"] = "Imune"
---[[Translation missing --]]
-L["Import"] = "Import"
---[[Translation missing --]]
-L["Import as Copy"] = "Import as Copy"
---[[Translation missing --]]
-L["Import as Update"] = "Import as Update"
---[[Translation missing --]]
-L["Import Group"] = "Import Group"
---[[Translation missing --]]
-L["Import in progress"] = "Import in progress"
 L["Important"] = "Importante"
 --[[Translation missing --]]
-L["Importing is disabled while in combat"] = "Importing is disabled while in combat"
+L["Importing will start after combat ends."] = "Importing will start after combat ends."
 L["In Combat"] = "Em Combate"
 L["In Encounter"] = "Em Encontro"
 L["In Group"] = "Em Grupo"
@@ -870,12 +817,6 @@ L["Island Expedition (Mythic)"] = "Island Expedition (Mythic)"
 L["Island Expedition (Normal)"] = "Island Expedition (Normal)"
 --[[Translation missing --]]
 L["Island Expeditions (PvP)"] = "Island Expeditions (PvP)"
---[[Translation missing --]]
-L["It might not work correctly on Classic!"] = "It might not work correctly on Classic!"
---[[Translation missing --]]
-L["It might not work correctly on Retail!"] = "It might not work correctly on Retail!"
---[[Translation missing --]]
-L["It might not work correctly with your version!"] = "It might not work correctly with your version!"
 L["Item"] = "Item"
 --[[Translation missing --]]
 L["Item Bonus Id"] = "Item Bonus Id"
@@ -995,8 +936,6 @@ L["Maiden of Virtue"] = "Maiden of Virtue"
 L["Main Stat"] = "Main Stat"
 --[[Translation missing --]]
 L["Majordomo Executus"] = "Majordomo Executus"
---[[Translation missing --]]
-L["Make sure you can trust the person who sent it!"] = "Make sure you can trust the person who sent it!"
 --[[Translation missing --]]
 L["Malformed WeakAuras link"] = "Malformed WeakAuras link"
 --[[Translation missing --]]
@@ -1128,8 +1067,6 @@ L["Next Encounter"] = "Next Encounter"
 --[[Translation missing --]]
 L["Nightbane"] = "Nightbane"
 --[[Translation missing --]]
-L["No Children"] = "No Children"
---[[Translation missing --]]
 L["No Extend"] = "No Extend"
 L["No Instance"] = "Fora da instância"
 --[[Translation missing --]]
@@ -1196,6 +1133,8 @@ L["Opaque"] = "Opaque"
 L["Opera Hall"] = "Opera Hall"
 --[[Translation missing --]]
 L["Option Group"] = "Option Group"
+--[[Translation missing --]]
+L["Options could not be loaded, the addon is %s"] = "Options could not be loaded, the addon is %s"
 --[[Translation missing --]]
 L["Options will finish loading after combat ends."] = "Options will finish loading after combat ends."
 --[[Translation missing --]]
@@ -1496,8 +1435,6 @@ L["Show Absorb"] = "Show Absorb"
 --[[Translation missing --]]
 L["Show CD of Charge"] = "Show CD of Charge"
 --[[Translation missing --]]
-L["Show Code"] = "Show Code"
---[[Translation missing --]]
 L["Show GCD"] = "Show GCD"
 --[[Translation missing --]]
 L["Show Global Cooldown"] = "Show Global Cooldown"
@@ -1725,23 +1662,9 @@ L["Third"] = "Third"
 --[[Translation missing --]]
 L["Third Value of Tooltip Text"] = "Third Value of Tooltip Text"
 --[[Translation missing --]]
-L["This aura contains custom Lua code."] = "This aura contains custom Lua code."
---[[Translation missing --]]
 L["This aura has legacy aura trigger(s), which are no longer supported."] = "This aura has legacy aura trigger(s), which are no longer supported."
 --[[Translation missing --]]
 L["This aura tried to show a tooltip on a anchoring restricted region"] = "This aura tried to show a tooltip on a anchoring restricted region"
---[[Translation missing --]]
-L["This aura was created with a newer version of WeakAuras."] = "This aura was created with a newer version of WeakAuras."
---[[Translation missing --]]
-L["This aura was created with the Classic version of World of Warcraft."] = "This aura was created with the Classic version of World of Warcraft."
---[[Translation missing --]]
-L["This aura was created with the retail version of World of Warcraft."] = "This aura was created with the retail version of World of Warcraft."
---[[Translation missing --]]
-L["This import requires a newer WeakAuras version."] = "This import requires a newer WeakAuras version."
---[[Translation missing --]]
-L["This is a modified version of your aura, |cff9900FF%s.|r"] = "This is a modified version of your aura, |cff9900FF%s.|r"
---[[Translation missing --]]
-L["This is a modified version of your group, |cff9900FF%s.|r"] = "This is a modified version of your group, |cff9900FF%s.|r"
 --[[Translation missing --]]
 L["Threat Percent"] = "Threat Percent"
 L["Threat Situation"] = "Situação de ameaça"
@@ -1857,7 +1780,6 @@ L["Up"] = "Acima"
 L["Up, then Left"] = "Up, then Left"
 --[[Translation missing --]]
 L["Up, then Right"] = "Up, then Right"
-L["Update Auras"] = "Atualizar Auras"
 --[[Translation missing --]]
 L["Usage:"] = "Usage:"
 --[[Translation missing --]]
@@ -1878,8 +1800,6 @@ L["Values/Remaining Time below this value are displayed as no progress."] = "Val
 L["Versatility (%)"] = "Versatility (%)"
 --[[Translation missing --]]
 L["Versatility Rating"] = "Versatility Rating"
---[[Translation missing --]]
-L["Version: "] = "Version: "
 --[[Translation missing --]]
 L["Viscidus"] = "Viscidus"
 --[[Translation missing --]]
@@ -1924,8 +1844,6 @@ L["Weapon"] = "Arma"
 L["Weapon Enchant"] = "Weapon Enchant"
 --[[Translation missing --]]
 L["Weapon Enchant / Fishing Lure"] = "Weapon Enchant / Fishing Lure"
---[[Translation missing --]]
-L["What do you want to do?"] = "What do you want to do?"
 L["Whisper"] = "Sussurro"
 --[[Translation missing --]]
 L["Whole Area"] = "Whole Area"
@@ -1942,8 +1860,6 @@ L["X-Offset"] = "X-Offset"
 L["Yell"] = "Gritar"
 --[[Translation missing --]]
 L["Y-Offset"] = "Y-Offset"
---[[Translation missing --]]
-L["You already have this group/aura. Importing will create a duplicate."] = "You already have this group/aura. Importing will create a duplicate."
 --[[Translation missing --]]
 L["Your next encounter will automatically be profiled."] = "Your next encounter will automatically be profiled."
 --[[Translation missing --]]

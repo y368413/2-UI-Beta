@@ -1,0 +1,14 @@
+{
+    "addonsMap": [
+        "CovenantHelper"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "localName": "CovenantHelper",
+    "searchName": "Covenant Helper",
+    "name": "Covenant Helper",
+    "fileName": "covenant-helper",
+    "target": "curse",
+    "version": "1.6.0",
+    "gameVersion": "9.1.5"
+}

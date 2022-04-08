@@ -377,12 +377,14 @@ local HekiliSpecMixin = {
         setfenv( func, state )
         self.stateExprs[ key ] = func
         class.stateExprs[ key ] = func
+        CommitKey( key )
     end,
 
     RegisterStateFunction = function( self, key, func )
         setfenv( func, state )
         self.stateFuncs[ key ] = func
         class.stateFuncs[ key ] = func
+        CommitKey( key )
     end,
 
     RegisterStateTable = function( self, key, data )
@@ -400,6 +402,7 @@ local HekiliSpecMixin = {
 
         self.stateTables[ key ] = data
         class.stateTables[ key ] = data
+        CommitKey( key )
     end,
 
     RegisterGear = function( self, key, ... )
@@ -414,6 +417,7 @@ local HekiliSpecMixin = {
         end
 
         self.gear[ key ] = gear
+        CommitKey( key )
     end,
 
     -- Check for the set bonus based on hidden aura instead of counting the number of equipped items.
@@ -421,6 +425,7 @@ local HekiliSpecMixin = {
     -- The alternative is *probably* to treat sets based on bonusIDs.
     RegisterSetBonus = function( self, key, spellID )
         self.setBonuses[ key ] = spellID
+        CommitKey( key )
     end,
 
     RegisterSetBonuses = function( self, ... )
@@ -440,9 +445,11 @@ local HekiliSpecMixin = {
             if type( data.copy ) == "table" then
                 for _, key in ipairs( data.copy ) do
                     self.potions[ key ] = data
+                    CommitKey( key )
                 end
             else
                 self.potions[ data.copy ] = data
+                CommitKey( data.copy )
             end
         end
 
@@ -460,6 +467,7 @@ local HekiliSpecMixin = {
                 return true
             end )
         end
+        CommitKey( potion )
     end,
 
     RegisterPotions = function( self, potions )
@@ -816,6 +824,7 @@ local HekiliSpecMixin = {
     end,
 
     RegisterPet = function( self, token, id, spell, duration )
+        CommitKey( token )
         self.pets[ token ] = {
             id = type( id ) == 'function' and setfenv( id, state ) or id,
             token = token,
@@ -827,6 +836,7 @@ local HekiliSpecMixin = {
     RegisterTotem = function( self, token, id )
         self.totems[ token ] = id
         self.totems[ id ] = token
+        CommitKey( token )
     end,
 
 
@@ -842,6 +852,7 @@ local HekiliSpecMixin = {
 
     -- option should be an AceOption table.
     RegisterSetting = function( self, key, value, option )
+        CommitKey( key )
         table.insert( self.settings, {
             name = key,
             default = value,
@@ -866,6 +877,7 @@ local HekiliSpecMixin = {
 
     -- For faster variables.
     RegisterVariable = function( self, key, func )
+        CommitKey( key )
         self.variables[ key ] = setfenv( func, state )
     end,
 }
@@ -5811,14 +5823,16 @@ function Hekili:SpecializationChanged()
         class.stateExprs[ k ] = nil
     end
 
+    self.currentSpec = nil
+    self.currentSpecOpts = nil
     for i, specID in ipairs( specs ) do
         local spec = class.specs[ specID ]
 
         if spec then
             if specID == currentID then
                 self.currentSpec = spec
-                self.currentSpecOpts = self.DB.profile.specs[ specID ]
-                state.settings.spec = self.DB.profile.specs[ specID ]
+                self.currentSpecOpts = rawget( self.DB.profile.specs, specID )
+                state.settings.spec = self.currentSpecOpts
 
                 state.spec.canCastWhileCasting = spec.canCastWhileCasting
                 state.spec.castableWhileCasting = spec.castableWhileCasting
@@ -5940,10 +5954,12 @@ function Hekili:SpecializationChanged()
             end
 
             if spec.id > 0 then
-                local s = Hekili.DB.profile.specs[ spec.id ]
+                local s = rawget( Hekili.DB.profile.specs, spec.id )
 
+                if s then
                 for k, v in pairs( spec.settings ) do
                     if s.settings[ v.name ] == nil then s.settings[ v.name ] = v.default end
+                    end
                 end
             end
         end

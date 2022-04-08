@@ -1,53 +1,15 @@
-if not(GetLocale() == "koKR") then
+if GetLocale() ~= "koKR" then
   return
 end
 
 local L = WeakAuras.L
 
 -- WeakAuras
-L["   • %d auras added"] = "• aura %d개 추가됨"
-L["   • %d auras deleted"] = "• aura %d개 삭제됨"
-L["   • %d auras modified"] = "• aura %d개 수정됨"
 L[ [=[ Filter formats: 'Name', 'Name-Realm', '-Realm'. 
 
 Supports multiple entries, separated by commas
 ]=] ] = "필터 형식: '이름', '이름-서버', '-서버'. 쉼표로 구분된 여러 항목 지원합니다"
-L["%s - %i. Trigger"] = "%s - %i. 활성 조건"
-L["%s - Alpha Animation"] = "%s - 투명도 애니메이션"
-L["%s - Color Animation"] = "%s - 색상 애니메이션"
-L["%s - Condition Custom Chat"] = "%s - 조건 사용자 설정 대화"
---[[Translation missing --]]
-L["%s - Custom Anchor"] = "%s - Custom Anchor"
---[[Translation missing --]]
-L["%s - Custom Grow"] = "%s - Custom Grow"
---[[Translation missing --]]
-L["%s - Custom Sort"] = "%s - Custom Sort"
-L["%s - Custom Text"] = "%s - 사용자 설정 문자"
-L["%s - Finish"] = "%s - 종료"
-L["%s - Finish Action"] = "%s - 종료 동작"
-L["%s - Finish Custom Text"] = "%s - 종료 사용자 설정 문자"
-L["%s - Init Action"] = "%s - 초기 동작"
-L["%s - Main"] = "%s - 메인"
-L["%s - Rotate Animation"] = "%s - 회전 애니메이션"
-L["%s - Scale Animation"] = "%s - 크기 비율 애니메이션"
-L["%s - Start"] = "%s - 시작"
-L["%s - Start Action"] = "%s - 시작 동작"
-L["%s - Start Custom Text"] = "%s - 시작 사용자 설정 문자"
-L["%s - Translate Animation"] = "%s - 변환 애니메이션"
-L["%s - Trigger Logic"] = "%s - 활성 조건 논리"
---[[Translation missing --]]
-L["%s Custom Variables"] = "%s Custom Variables"
-L["%s Duration Function"] = "%s 지속시간 함수"
-L["%s Icon Function"] = "%s 아이콘 함수"
-L["%s Name Function"] = "%s 이름 함수"
 L["%s Overlay Color"] = "%s 오버레이 색상"
---[[Translation missing --]]
-L["%s Overlay Function"] = "%s Overlay Function"
-L["%s Stacks Function"] = "%s 중첩 함수"
-L["%s Texture Function"] = "%s 텍스쳐 함수"
-L["%s total auras"] = "총 %s개 효과"
-L["%s Trigger Function"] = "%s 활성 조건 함수"
-L["%s Untrigger Function"] = "%s 비활성 조건 함수"
 L["* Suffix"] = "* 접미사"
 L["/wa help - Show this message"] = "/wa help - 이 메시지 보이기"
 L["/wa minimap - Toggle the minimap icon"] = "/wa minimap - 미니맵 아이콘 토글"
@@ -286,8 +248,6 @@ L["Chat Frame"] = "대화창"
 L["Chat Message"] = "대화 메시지"
 --[[Translation missing --]]
 L["Chess Event"] = "Chess Event"
-L["Children:"] = "자식:"
-L["Choose a category"] = "카테고리 선택"
 L["Chromaggus"] = "크로마구스"
 L["Circle"] = "동그라미"
 L["Clamp"] = "더미"
@@ -312,10 +272,11 @@ L["Cooldown Ready Event (Item)"] = "재사용 준비 이벤트 (아이템)"
 L["Cooldown Ready Event (Slot)"] = "재사용 준비 이벤트 (아이템 칸)"
 --[[Translation missing --]]
 L["Cooldown/Charges/Count"] = "Cooldown/Charges/Count"
+--[[Translation missing --]]
+L["Could not load WeakAuras Archive, the addon is %s"] = "Could not load WeakAuras Archive, the addon is %s"
 L["Count"] = "횟수"
 L["Counter Clockwise"] = "반시계 방향"
 L["Create"] = "생성"
-L["Create a Copy"] = "생성 복사"
 L["Critical"] = "치명타"
 L["Critical (%)"] = "치명타 (%)"
 L["Critical Rating"] = "치명타 및 극대화"
@@ -516,7 +477,6 @@ L["Friendly Fire"] = "아군에게 준 피해"
 L["Friendship Max Rank"] = "Friendship Max Rank"
 --[[Translation missing --]]
 L["Friendship Rank"] = "Friendship Rank"
-L["From"] = "출처"
 L["Frost Resistance"] = "냉기 저항"
 L["Full"] = "가득 찼을 때"
 --[[Translation missing --]]
@@ -611,14 +571,10 @@ L["Ignore Self"] = "본인 무시"
 --[[Translation missing --]]
 L["Illidan Stormrage"] = "Illidan Stormrage"
 L["Immune"] = "면역"
-L["Import"] = "가져오기"
-L["Import as Copy"] = "복사본 가져 오기"
-L["Import as Update"] = "업데이트 가져 오기"
-L["Import Group"] = "그룹 가져오기"
-L["Import in progress"] = "진행 중인 가져오기"
 --[[Translation missing --]]
 L["Important"] = "Important"
-L["Importing is disabled while in combat"] = "가져오기는 전투 중에는 비활성화됩니다."
+--[[Translation missing --]]
+L["Importing will start after combat ends."] = "Importing will start after combat ends."
 L["In Combat"] = "전투 중"
 L["In Encounter"] = "교전 중"
 L["In Group"] = "파티 중"
@@ -662,11 +618,6 @@ L["Island Expedition (Heroic)"] = "군도 탐험 (영웅)"
 L["Island Expedition (Mythic)"] = "군도 탐험 (신화)"
 L["Island Expedition (Normal)"] = "군도 탐험 (일반)"
 L["Island Expeditions (PvP)"] = "군도 탐험 (PvP)"
---[[Translation missing --]]
-L["It might not work correctly on Classic!"] = "It might not work correctly on Classic!"
---[[Translation missing --]]
-L["It might not work correctly on Retail!"] = "It might not work correctly on Retail!"
-L["It might not work correctly with your version!"] = "버전에 따라 제대로 작동하지 않을 수도 있습니다!"
 L["Item"] = "아이템"
 L["Item Bonus Id"] = "아이템 보너스 ID"
 L["Item Bonus Id Equipped"] = "착용한 아이템 보너스 ID"
@@ -748,7 +699,6 @@ L["Magtheridon's Lair"] = "Magtheridon's Lair"
 L["Maiden of Virtue"] = "Maiden of Virtue"
 L["Main Stat"] = "주 능력치"
 L["Majordomo Executus"] = "청지기 이그젝큐투스"
-L["Make sure you can trust the person who sent it!"] = "보낸 사람을 믿을 수 있는지 확인하세요!"
 L["Malformed WeakAuras link"] = "조작된 WeakAuras 링크"
 L["Manual Rotation"] = "수동 회전"
 L["Marked First"] = "첫 번째로 표시"
@@ -834,7 +784,6 @@ L["Next Combat"] = "다음 전투"
 L["Next Encounter"] = "다음 교전"
 --[[Translation missing --]]
 L["Nightbane"] = "Nightbane"
-L["No Children"] = "자식 없음"
 --[[Translation missing --]]
 L["No Extend"] = "No Extend"
 L["No Instance"] = "인스턴스가 아닐 때"
@@ -887,6 +836,8 @@ L["Opaque"] = "불투명"
 --[[Translation missing --]]
 L["Opera Hall"] = "Opera Hall"
 L["Option Group"] = "옵션 그룹"
+--[[Translation missing --]]
+L["Options could not be loaded, the addon is %s"] = "Options could not be loaded, the addon is %s"
 L["Options will finish loading after combat ends."] = "옵션은 전투가 끝난 후 로딩을 완료합니다."
 --[[Translation missing --]]
 L["Options will open after the login process has completed."] = "Options will open after the login process has completed."
@@ -1090,7 +1041,6 @@ L["Shift-Click to resume addon execution."] = "쉬프트-클릭으로 애드온 
 L["Show"] = "표시"
 L["Show Absorb"] = "흡수 표시"
 L["Show CD of Charge"] = "충전량 재사용 대기시간 표시"
-L["Show Code"] = "코드 표시"
 L["Show GCD"] = "전역 재사용 대기시간 표시"
 L["Show Global Cooldown"] = "전역 재사용 대기시간 표시"
 --[[Translation missing --]]
@@ -1260,17 +1210,9 @@ L["Thick Outline"] = "굵은 외곽선"
 L["Thickness"] = "굵기"
 L["Third"] = "세 번째"
 L["Third Value of Tooltip Text"] = "툴팁 문자의 세 번째 값"
-L["This aura contains custom Lua code."] = "이 aura는 사용자 정의 Lua 코드를 포함합니다."
 L["This aura has legacy aura trigger(s), which are no longer supported."] = "이 aura는 더 이상 지원되지 않는 과거의 aura 활성 조건을 포함하고 있습니다."
 --[[Translation missing --]]
 L["This aura tried to show a tooltip on a anchoring restricted region"] = "This aura tried to show a tooltip on a anchoring restricted region"
-L["This aura was created with a newer version of WeakAuras."] = "이 효과는 WeakAuras의 새로운 버전으로 만들어졌습니다."
-L["This aura was created with the Classic version of World of Warcraft."] = "이 효과는 월드 오브 워크래프트 클래식 버전 으로 만들어졌습니다."
-L["This aura was created with the retail version of World of Warcraft."] = "이 효과는 월드 오브 워크래프트 리테일 버전 으로 만들어졌습니다."
---[[Translation missing --]]
-L["This import requires a newer WeakAuras version."] = "This import requires a newer WeakAuras version."
-L["This is a modified version of your aura, |cff9900FF%s.|r"] = "|cff9900FF%s.|r 이것은 귀하의 효과를 수정한 것입니다."
-L["This is a modified version of your group, |cff9900FF%s.|r"] = "|cff9900FF%s.|r 이것은 귀하의 그룹을 수정한 버전입니다."
 L["Threat Percent"] = "위협 수준 백분율"
 L["Threat Situation"] = "위협 수준 상황"
 L["Threat Value"] = "위협 수준 수치"
@@ -1348,7 +1290,6 @@ L["Unlimited"] = "무제한"
 L["Up"] = "위로"
 L["Up, then Left"] = "위로, 왼쪽으로"
 L["Up, then Right"] = "위로, 오른쪽으로"
-L["Update Auras"] = "효과 갱신"
 L["Usage:"] = "사용법:"
 L["Use /wa minimap to show the minimap icon again."] = "/wa minimap 을 사용하여 미니맵 아이콘을 다시 표시합니다."
 L["Use Custom Color"] = "사용자 설정 색상 사용"
@@ -1360,7 +1301,6 @@ L["Values/Remaining Time above this value are displayed as full progress."] = "�
 L["Values/Remaining Time below this value are displayed as no progress."] = "이 값 미만인 값/남은 시간은 진행되지 않음으로 표시됩니다."
 L["Versatility (%)"] = "유연성 (%)"
 L["Versatility Rating"] = "유연성"
-L["Version: "] = "버전:"
 L["Viscidus"] = "비시디우스"
 L["Visibility"] = "표시"
 L["Visions of N'Zoth"] = "느조스의 환영"
@@ -1389,7 +1329,6 @@ L["WeakAuras Profiling Report"] = "WeakAuras 프로파일링 보고서"
 L["Weapon"] = "무기"
 L["Weapon Enchant"] = "무기 마법부여"
 L["Weapon Enchant / Fishing Lure"] = "무기 마법부여 / 낚시 미끼"
-L["What do you want to do?"] = "무엇을 하고 싶나요?"
 L["Whisper"] = "귓속말"
 L["Whole Area"] = "전체 영역"
 L["Width"] = "너비"
@@ -1400,7 +1339,6 @@ L["Writing to the WeakAuras table is not allowed."] = "WeakAuras table에 작성
 L["X-Offset"] = "X-좌표"
 L["Yell"] = "외침"
 L["Y-Offset"] = "Y-좌표"
-L["You already have this group/aura. Importing will create a duplicate."] = "이미 이 그룹/효과가 있습니다. 가져오기를 수행하면 복제본이 만들어집니다."
 L["Your next encounter will automatically be profiled."] = "다음 교전은 자동으로 프로파일링됩니다."
 --[[Translation missing --]]
 L["Your next instance of combat will automatically be profiled."] = "Your next instance of combat will automatically be profiled."

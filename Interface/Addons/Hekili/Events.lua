@@ -1071,7 +1071,6 @@ RegisterUnitEvent( "UNIT_SPELLCAST_SUCCEEDED", "player", "target", function( eve
         Hekili:RemoveHold( ability.key, true )
     end
 
-    state[ unit ].updated = true
 end )
 
 
@@ -1083,9 +1082,6 @@ RegisterUnitEvent( "UNIT_SPELLCAST_START", "player", "target", function( event, 
             Hekili:RemoveHold( ability.key, true )
         end
 
-        state.player.updated = true
-    else
-        state.target.updated = true
     end
 
     Hekili:ForceUpdate( event, true )
@@ -1100,9 +1096,6 @@ RegisterUnitEvent( "UNIT_SPELLCAST_CHANNEL_START", "player", nil, function( even
             Hekili:RemoveHold( ability.key, true )
         end
 
-        state.player.updated = true
-    else
-        state.target.updated = true
     end
     Hekili:ForceUpdate( event, true )
 end )
@@ -1116,9 +1109,6 @@ RegisterUnitEvent( "UNIT_SPELLCAST_CHANNEL_STOP", "player", "target", function( 
             Hekili:RemoveHold( ability.key, true )
         end
 
-        state.player.updated = true
-    else
-        state.target.updated = true
     end
     Hekili:ForceUpdate( event, true )
 end )
@@ -1132,9 +1122,6 @@ RegisterUnitEvent( "UNIT_SPELLCAST_STOP", "player", "target", function( event, u
             Hekili:RemoveHold( ability.key, true )
         end
 
-        state.player.updated = true
-    else
-        state.target.updated = true
     end
     Hekili:ForceUpdate( event, true )
 end )
@@ -1177,7 +1164,6 @@ RegisterUnitEvent( "UNIT_SPELLCAST_DELAYED", "player", nil, function( event, uni
             end
         end
 
-        state.player.updated = true
         Hekili:ForceUpdate( event )
     end
 end )
@@ -1214,8 +1200,7 @@ end ) ]]
 
 
 -- Update due to player totems.
-RegisterEvent( "PLAYER_TOTEM_UPDATE", function( event, totem )
-    state.player.updated = true
+RegisterEvent( "PLAYER_TOTEM_UPDATE", function( event )
     Hekili:ForceUpdate( event )
 end )
 
@@ -1266,7 +1251,6 @@ local function UNIT_POWER_FREQUENT( event, unit, power )
 
     end
 
-    state.player.updated = true
     Hekili:ForceUpdate( event, true )
 end
 Hekili:ProfileCPU( "UNIT_POWER_UPDATE", UNIT_POWER_FREQUENT )
@@ -1308,23 +1292,44 @@ local autoAuraKey = setmetatable( {}, {
 } )
 
 
-RegisterUnitEvent( "UNIT_AURA", "player", "target", function( event, unit )
-    if UnitIsUnit( unit, "player" ) then
-        state.player.updated = true
-
-    elseif UnitIsUnit( unit, "target" ) then
-        state.target.updated = true
-
+do
+    local ScrapeUnitAuras = Hekili.ScrapeUnitAuras
+    local StoreMatchingAuras = Hekili.StoreMatchingAuras
+    RegisterUnitEvent( "UNIT_AURA", "player", "target", function( event, unit, full, data )
+        if full then
+            ScrapeUnitAuras( unit, false, event )
+            return
+        end
+        local harmful, helpful
+        for _, info in ipairs( data ) do
+            if unit == "player" or info.isFromPlayerOrPlayerPet then
+                local id = info.spellId
+                local aura = class.auras[ id ]
+                if aura then
+                    if info.isHelpful then
+                        helpful = helpful or { count = 0 }
+                        helpful[ id ] = aura.key
+                        helpful.count = helpful.count + 1
+                    else
+                        harmful = harmful or { count = 0 }
+                        harmful[ id ] = aura.key
+                        harmful.count = harmful.count + 1
+                    end
+                end
+            end
     end
+        if helpful then StoreMatchingAuras( unit, helpful, "HELPFUL", select( 2, UnitAuraSlots( unit, "HELPFUL" ) ) ) end
+        if harmful then StoreMatchingAuras( unit, harmful, "HARMFUL", select( 2, UnitAuraSlots( unit, "HARMFUL" ) ) ) end
 end )
 
 
 RegisterEvent( "PLAYER_TARGET_CHANGED", function( event )
-    Hekili.ScrapeUnitAuras( "target", true )
-    state.target.updated = false
+        ScrapeUnitAuras( "target", true )
+
     ns.getNumberTargets( true )
     Hekili:ForceUpdate( event, true )
 end )
+end
 
 
 
@@ -1430,11 +1435,11 @@ local countPets = false
 
 function Hekili:UpdateDamageDetectionForCLEU()
     local profile = self.DB.profile
-    local spec = profile.specs[ state.spec.id ]
+    local spec = rawget( profile.specs, state.spec.id )
 
-    countDamage = spec.damage or false
-    countDots = spec.damageDots or false
-    countPets = spec.damagePets or false
+    countDamage = spec and spec.damage or false
+    countDots = spec and spec.damageDots or false
+    countPets = spec and spec.damagePets or false
 end
 
 
@@ -1681,14 +1686,12 @@ local function CLEU_HANDLER( event, _, subtype, _, sourceGUID, sourceName, _, _,
 
         if aura_events[ subtype ] then
             if subtype == "SPELL_CAST_SUCCESS" or state.GUID == destGUID then
-                state.player.updated = true
                 if class.abilities[ spellID ] or class.auras[ spellID ] then
                     Hekili:ForceUpdate( subtype, true )
                 end
             end
 
             if UnitGUID( 'target' ) == destGUID then
-                state.target.updated = true
                 if class.auras[ spellID ] then Hekili:ForceUpdate( subtype ) end
             end
         end
@@ -2266,7 +2269,7 @@ if select( 2, UnitClass( "player" ) ) == "DRUID" then
         local override = state.spec.id
         local overrideType = ability and ability.item and "items" or "abilities"
 
-        override = override and self.DB.profile.specs[ override ]
+        override = override and rawget( self.DB.profile.specs, override )
         override = override and override[ overrideType ][ key ]
         override = override and override.keybind
 
@@ -2340,7 +2343,7 @@ elseif select( 2, UnitClass( "player" ) ) == "ROGUE" then
         local override = state.spec.id
         local overrideType = ability and ability.item and "items" or "abilities"
 
-        override = override and self.DB.profile.specs[ override ]
+        override = override and rawget( self.DB.profile.specs, override )
         override = override and override[ overrideType ][ key ]
         override = override and override.keybind
 
@@ -2409,7 +2412,7 @@ else
         local override = state.spec.id
         local overrideType = ability and ability.item and "items" or "abilities"
 
-        override = override and self.DB.profile.specs[ override ]
+        override = override and rawget( self.DB.profile.specs, override )
         override = override and override[ overrideType ][ key ]
         override = override and override.keybind
 

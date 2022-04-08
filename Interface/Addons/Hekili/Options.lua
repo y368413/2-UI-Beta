@@ -4040,9 +4040,9 @@ do
         if not output.precombat then output.precombat = {} end
 
         if count == 0 then
-            AddWarning( "未能从当前配置文件导入任何操作指令列表。" )
+            AddWarning( "未能从当前配置文件导入任何技能列表。" )
         else
-            AddWarning( "成功导入了" .. count .. "个操作指令列表。" )
+            AddWarning( "成功导入了" .. count .. "个技能列表。" )
         end
 
         return output, impControl.warnings
@@ -8047,7 +8047,7 @@ do
                         key = {
                             type = 'keybinding',
                             name = function () return Hekili.Pause and "取消暂停" or "暂停" end,
-                            desc =  "设置一个按键使你的指令列表暂停。当前显示区域将被冻结，" ..
+                            desc =  "设置一个按键使你的技能列表暂停。当前显示区域将被冻结，" ..
                                     "你可以将鼠标悬停在每个技能图标上，查看有关该技能的操作信息。\n\n" ..
                                     "同时还将创建一个快照，可用于故障排除和错误报告。",
                             order = 1,

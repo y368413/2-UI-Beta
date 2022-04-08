@@ -1,0 +1,14 @@
+{
+    "addonsMap": [
+        "MythicDungeonTools"
+    ],
+    "interfaceMap": [],
+    "children": [],
+    "localName": "MythicDungeonTools",
+    "searchName": "Mythic Dungeon Tools",
+    "name": "Mythic Dungeon Tools",
+    "fileName": "mythic-dungeon-tools",
+    "target": "curse",
+    "version": "v3.8.9",
+    "gameVersion": "9.2.0"
+}

@@ -547,6 +547,8 @@ state.IsSpellKnown = IsSpellKnown
 state.IsSpellKnownOrOverridesKnown = IsSpellKnownOrOverridesKnown
 state.IsUsableItem = IsUsableItem
 state.IsUsableSpell = IsUsableSpell
+state.UnitAura = UnitAura
+state.UnitAuraSlots = UnitAuraSlots
 state.UnitBuff = UnitBuff
 state.UnitCanAttack = UnitCanAttack
 state.UnitCastingInfo = UnitCastingInfo
@@ -2733,7 +2735,9 @@ local mt_default_cooldown = {
             end
         end
 
-        local raw = ( state.display ~= "Primary" and state.display ~= "AOE" ) or ( profile.toggles.cooldowns.value and profile.toggles.cooldowns.separate and profile.specs[ state.spec.id ].noFeignedCooldown )
+        local noFeignCD = rawget( profile.specs, state.spec.id )
+        noFeignCD = noFeignCD and noFeignCD.noFeignedCooldown
+        local raw = ( state.display ~= "Primary" and state.display ~= "AOE" ) or ( profile.toggles.cooldowns.value and profile.toggles.cooldowns.separate and noFeignCD )
 
         if k:sub(1, 5) == "true_" then
             k = k:sub(6)
@@ -2780,7 +2784,7 @@ local mt_default_cooldown = {
 
             end
 
-            t.duration = max( duration or 0, ability.cooldown or 0, ability.recharge or 0 ) or 0
+            t.duration = max( duration or 0, ability.cooldown or 0, ability.recharge or 0 )
             t.expires = start and ( start + duration ) or 0
             t.true_duration = true_duration
             t.true_expires = start and ( start + true_duration ) or 0
@@ -2820,8 +2824,12 @@ local mt_default_cooldown = {
             return t[k]
 
         elseif k == "charges" then
-            if not raw and ( state:IsDisabled( t.key ) or ability.disabled ) then
+            if not raw then
+                if not state:IsKnown( t.key ) then
+                    return ability.charges or 1
+                elseif ( state:IsDisabled( t.key ) or ability.disabled ) then
                 return 0
+                end
             end
 
             return floor( t.charges_fractional )
@@ -2833,11 +2841,15 @@ local mt_default_cooldown = {
             return ability.recharge or ability.cooldown or 0
 
         elseif k == "time_to_max_charges" or k == "full_recharge_time" then
-            if not raw and ( state:IsDisabled( t.key ) or ability.disabled ) then
+            if not raw then
+                if not state:IsKnown( t.key ) then
                 return 0
+                elseif ( state:IsDisabled( t.key ) or ability.disabled ) then
+                    return ( ability.charges or 1 ) * t.duration
+                end
             end
 
-            return ( ( ability.charges or 1 ) - ( raw and t.true_charges_fractional or t.charges_fractional ) ) * t.duration
+            return ( ( ability.charges or 1 ) - ( raw and t.true_charges_fractional or t.charges_fractional ) ) * max( ability.cooldown, t.true_duration )
 
         elseif k == "remains" then
             if t.key == "global_cooldown" then
@@ -2846,8 +2858,9 @@ local mt_default_cooldown = {
 
             -- If the ability is toggled off in the profile, we may want to fake its CD.
             -- Revisit this if I add base_cooldown to the ability tables.
-            if not raw and ( state:IsDisabled( t.key ) or ability.disabled ) then
-                return ability.cooldown
+            if not raw then
+                if not state:IsKnown( t.key ) then return 0
+                elseif ( state:IsDisabled( t.key ) or ability.disabled ) then return ability.cooldown end
             end
 
             local bonus_cdr = 0
@@ -2856,8 +2869,10 @@ local mt_default_cooldown = {
             return max( 0, t.expires - state.query_time - bonus_cdr )
 
         elseif k == "charges_fractional" then
-            if not state:IsKnown( t.key ) then return 1 end
-            if not raw and ( state:IsDisabled( t.key ) or ability.disabled ) then return 0 end
+            if not raw then
+                if not state:IsKnown( t.key ) then return ability.charges or 1
+                elseif state:IsDisabled( t.key ) or ability.disabled then return 0 end
+            end
 
             if ability.charges and ability.charges > 1 then
                 -- run this ad-hoc rather than with every advance.
@@ -2882,7 +2897,6 @@ local mt_default_cooldown = {
 
             return t.remains > 0 and ( 1 - ( t.remains / ability.cooldown ) ) or 1
 
-        --
         elseif k == "recharge_time" then
             if not ability.charges then return t.duration or 0 end
             return t.recharge
@@ -4910,12 +4924,70 @@ local autoAuraKey = setmetatable( {}, {
 
 
 do
-    local scraped = {}
+    local UnitAuraBySlot = UnitAuraBySlot
+    function state.StoreMatchingAuras( unit, auras, filter, ... )
+        local n = auras.count
+        auras.count = nil
+        local db = ns.auras[ unit ][ filter == "HELPFUL" and "buff" or "debuff" ]
+        for k, v in pairs( auras ) do
+            local aura = class.auras[ v ]
+            local key = aura.key
+            local a = db[ key ] or {}
 
-    function state.ScrapeUnitAuras( unit, newTarget )
+            a.key              = key
+            a.name             = nil
+            a.lastCount        = a.count or 0
+            a.lastApplied      = a.applied or 0
+            a.last_application = max( 0, a.applied or 0, a.last_application or 0 )
+            a.last_expiry      = max( 0, a.expires or 0, a.last_expiry or 0 )
+            a.count            = 0
+            a.expires          = 0
+            a.applied          = 0
+            a.duration         = aura.duration or a.duration
+            a.caster           = "nobody"
+            a.timeMod          = 1
+            a.v1               = 0
+            a.v2               = 0
+            a.v3               = 0
+            a.unit             = unit
+            db[ key ] = a
+        end
+        for i = select( "#", ... ), 1, -1 do
+            local slot = select( i, ... )
+            local name, _, count, _, duration, expires, caster, _, _, spellID, _, _, _, _, timeMod, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10 = UnitAuraBySlot( unit, slot )
+            local key = auras[ spellID ]
+            if key and name and ( unit == "player" or caster and ( UnitIsUnit( caster, "player" ) or UnitIsUnit( caster, "pet" ) ) ) then
+                local a = db[ key ]
+                if expires == 0 then
+                    expires = GetTime() + 3600
+                    duration = 7200
+                end
+                a.name     = name
+                a.count    = count > 0 and count or 1
+                a.duration = duration
+                a.expires  = expires
+                a.applied  = expires - duration
+                a.caster   = caster
+                a.timeMod  = timeMod
+                a.v1       = v1
+                a.v2       = v2
+                a.v3       = v3
+                a.v4       = v4
+                a.v5       = v5
+                a.v6       = v6
+                a.v7       = v7
+                a.v8       = v8
+                a.v9       = v9
+                a.v10      = v10
+                n = n - 1
+                if n == 0 then break end
+            end
+        end
+    end
+    Hekili.StoreMatchingAuras = state.StoreMatchingAuras
+    function state.ScrapeUnitAuras( unit, newTarget, why )
         local db = ns.auras[ unit ]
 
-        if scraped[ unit ] then
             for k,v in pairs( db.buff ) do
                 v.name = nil
                 v.lastCount = newTarget and 0 or v.count
@@ -4952,12 +5024,9 @@ do
                 v.unit = unit
             end
 
-            scraped[ unit ] = false
-        end
 
         if not UnitExists( unit ) then return end
 
-        scraped[ unit ] = true
 
         local i = 1
         while ( true ) do
@@ -6542,7 +6611,8 @@ do
         if self.holds[ spell ] then return true, "on hold" end
 
         local profile = Hekili.DB.profile
-        local spec = profile.specs[ state.spec.id ]
+        local spec = rawget( profile.specs, state.spec.id )
+        if not spec then return true end
 
         local option = ability.item and spec.items[ spell ] or spec.abilities[ spell ]
 
@@ -6577,7 +6647,8 @@ do
         spell = ability.key
 
         local profile = Hekili.DB.profile
-        local spec = profile.specs[ state.spec.id ]
+        local spec = rawget( profile.specs, state.spec.id )
+        if not spec then return true end
         local option = ability.item and spec.items[ spell ] or spec.abilities[ spell ]
         local toggle = option.toggle
         if not toggle or toggle == "default" then toggle = ability.toggle end
@@ -6974,7 +7045,8 @@ function state:IsReadyNow( action )
 
     action = a.key
     local profile = Hekili.DB.profile
-    local spec = profile.specs[ state.spec.id ]
+    local spec = rawget( profile.specs, state.spec.id )
+    if not spec then return false end
     local option = spec.abilities[ action ]
     local clash = option.clash or 0
 
@@ -7020,7 +7092,8 @@ function state:ClashOffset( action )
     action = a.key
 
     local profile = Hekili.DB.profile
-    local spec = profile.specs[ state.spec.id ]
+    local spec = rawget( profile.specs, state.spec.id )
+    if not spec then return true end
     local option = spec.abilities[ action ]
 
     return ns.callHook( "clash", option.clash, action )
@@ -7031,4 +7104,4 @@ for k, v in pairs( state ) do
     ns.commitKey( k )
 end
 
-ns.attr = { "serenity", "active", "active_enemies", "my_enemies", "active_flame_shock", "adds", "agility", "air", "armor", "attack_power", "bonus_armor", "cast_delay", "cast_time", "casting", "cooldown_react", "cooldown_remains", "cooldown_up", "crit_rating", "deficit", "distance", "down", "duration", "earth", "enabled", "energy", "execute_time", "fire", "five", "focus", "four", "gcd", "hardcasts", "haste", "haste_rating", "health", "health_max", "health_pct", "intellect", "level", "mana", "mastery_rating", "mastery_value", "max_nonproc", "max_stack", "maximum_energy", "maximum_focus", "maximum_health", "maximum_mana", "maximum_rage", "maximum_runic", "melee_haste", "miss_react", "moving", "mp5", "multistrike_pct", "multistrike_rating", "one", "pct", "rage", "react", "regen", "remains", "resilience_rating", "runic", "seal", "spell_haste", "spell_power", "spirit", "stack", "stack_pct", "stacks", "stamina", "strength", "this_action", "three", "tick_damage", "tick_dmg", "tick_time", "ticking", "ticks", "ticks_remain", "time", "time_to_die", "time_to_max", "travel_time", "two", "up", "water", "weapon_dps", "weapon_offhand_dps", "weapon_offhand_speed", "weapon_speed", "single", "aoe", "cleave", "percent", "last_judgment_target", "unit", "ready", "refreshable", "pvptalent", "conduit", "legendary", "runeforge", "covenant", "soulbind", "enabled" }
+ns.attr = { "serenity", "active", "active_enemies", "my_enemies", "active_flame_shock", "adds", "agility", "air", "armor", "attack_power", "bonus_armor", "cast_delay", "cast_time", "casting", "cooldown_react", "cooldown_remains", "cooldown_up", "crit_rating", "deficit", "distance", "down", "duration", "earth", "enabled", "energy", "execute_time", "fire", "five", "focus", "four", "gcd", "hardcasts", "haste", "haste_rating", "health", "health_max", "health_pct", "intellect", "level", "mana", "mastery_rating", "mastery_value", "max_nonproc", "max_stack", "maximum_energy", "maximum_focus", "maximum_health", "maximum_mana", "maximum_rage", "maximum_runic", "melee_haste", "miss_react", "moving", "mp5", "multistrike_pct", "multistrike_rating", "one", "pct", "rage", "react", "regen", "remains", "resilience_rating", "runic", "seal", "spell_haste", "spell_power", "spirit", "stack", "stack_pct", "stacks", "stamina", "strength", "this_action", "three", "tick_damage", "tick_dmg", "tick_time", "ticking", "ticks", "ticks_remain", "time", "time_to_die", "time_to_max", "travel_time", "two", "up", "water", "weapon_dps", "weapon_offhand_dps", "weapon_offhand_speed", "weapon_speed", "single", "aoe", "cleave", "percent", "last_judgment_target", "unit", "ready", "refreshable", "pvptalent", "conduit", "legendary", "runeforge", "covenant", "soulbind", "enabled", "full_recharge_time", "time_to_max_charges", "remains_guess", "execute", "actual", "current", "cast_regen", "boss" }

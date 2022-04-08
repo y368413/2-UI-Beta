@@ -1,10 +1,10 @@
-lightweight tag 9321c27d6f497adeac42bc7aefdbeed7c0f350b3 9.2.1
-Author:	lgonnot <loic.gonnot@gmail.com>
-Date:	Sun Mar 13 21:52:59 2022 +0100
+lightweight tag 86e4b0993d080e7e88dbf5e1a3c6d64fa9638f60 9.2.1-fix02
+Author:	Garikover <loic.gonnot@gmail.com>
+Date:	Sun Apr 3 21:49:10 2022 +0200
 
-commit 9321c27d6f497adeac42bc7aefdbeed7c0f350b3
-Author: lgonnot <loic.gonnot@gmail.com>
-Date:   Sun Mar 13 21:52:59 2022 +0100
+commit 86e4b0993d080e7e88dbf5e1a3c6d64fa9638f60
+Author: Garikover <loic.gonnot@gmail.com>
+Date:   Sun Apr 3 21:49:10 2022 +0200
 
-    Adding Island Expedition from BFA
+    Fix SavedVariables bug
 

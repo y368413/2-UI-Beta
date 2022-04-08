@@ -4,6 +4,8 @@ local L = LibStub("AceLocale-3.0"):NewLocale(addonName, "enUS", true)
 if not L then return end
 
 L["btn_restore_all"] = "Restore all"
+L["cond_aotc"] = "Ahead Of The Curve achievement"
+L["cond_torghast13"] = "Torghast Layer 13+"
 L["cond_0_keepers"] = "0 Keepers"
 L["cond_25_mins"] = "25 minutes"
 L["cond_3_drakes_up"] = "3 Drakes up"

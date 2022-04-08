@@ -33,7 +33,7 @@ LibStub("AceTimer-3.0"):Embed(WeakAurasTimers)
 Private.maxTimerDuration = 604800; -- A week, in seconds
 local maxUpTime = 4294967; -- 2^32 / 1000
 
--- The worlds simplest callback system
+-- The worlds simplest callback system.
 -- That supports 1:N, but no deregistration and breaks if registrating in a callback
 Private.callbacks = {}
 Private.callbacks.events = {}
@@ -91,7 +91,7 @@ function Private.LoadOptions(msg)
       local loaded, reason = LoadAddOn("WeakAurasOptions");
       if not(loaded) then
         reason = string.lower("|cffff2020" .. _G["ADDON_" .. reason] .. "|r.")
-        WeakAuras.prettyPrint("Options could not be loaded, the addon is " .. reason);
+        WeakAuras.prettyPrint(string.format(L["Options could not be loaded, the addon is %s"], reason));
         return false;
       end
     end
@@ -959,7 +959,8 @@ do -- Archive stuff
       if not IsAddOnLoaded("WeakAurasArchive") then
         local ok, reason = LoadAddOn("WeakAurasArchive")
         if not ok then
-          error("Could not load WeakAuras Archive, reason: |cFFFF00" .. (reason or "UNKNOWN"))
+          reason = string.lower("|cffff2020" .. _G["ADDON_" .. reason] .. "|r.")
+          error(string.format(L["Could not load WeakAuras Archive, the addon is %s"], reason))
         end
       end
       Archivist:Initialize(WeakAurasArchive)
@@ -1192,9 +1193,8 @@ loadedFrame:SetScript("OnEvent", function(self, event, addon)
   end
 end)
 
-function WeakAuras.SetImporting(b)
+function Private.SetImporting(b)
   importing = b;
-  Private.RefreshTooltipButtons()
 end
 
 function WeakAuras.IsImporting()
@@ -1478,6 +1478,7 @@ local function scanForLoadsImpl(toCheck, event, arg1, ...)
 
   local changed = 0;
   local shouldBeLoaded, couldBeLoaded;
+  local parentsToCheck = {}
   wipe(toLoad);
   wipe(toUnload);
 
@@ -1500,11 +1501,17 @@ local function scanForLoadsImpl(toCheck, event, arg1, ...)
       if(shouldBeLoaded and not loaded[id]) then
         changed = changed + 1;
         toLoad[id] = true;
+        for parent in Private.TraverseParents(data) do
+          parentsToCheck[parent.id] = true
+        end
       end
 
       if(loaded[id] and not shouldBeLoaded) then
         toUnload[id] = true;
         changed = changed + 1;
+        for parent in Private.TraverseParents(data) do
+          parentsToCheck[parent.id] = true
+        end
       end
       if(shouldBeLoaded) then
         loaded[id] = true;
@@ -1522,19 +1529,25 @@ local function scanForLoadsImpl(toCheck, event, arg1, ...)
     Private.FinishLoadUnload();
   end
 
-  -- This iterates over all auras and could be optimized to only check
-  -- parents of children that have changed. (A further optimization would be to distinguish
-  -- between auras that changed from unloaded to loaded and vice versa.
-  -- The complicated bit is that a full check must be done if the group memberships changed,
-  -- and currently this function handles that too.
-  for id, data in pairs(db.displays) do
+  Private.ScanForLoadsGroup(parentsToCheck)
+  Private.callbacks:Fire("ScanForLoads")
+
+  wipe(toLoad);
+  wipe(toUnload)
+end
+
+function Private.ScanForLoadsGroup(toCheck)
+  for id in pairs(toCheck) do
+    local data = WeakAuras.GetData(id)
     if(data.controlledChildren) then
       if(#data.controlledChildren > 0) then
-        local any_loaded;
+        local any_loaded = false;
         for child in Private.TraverseLeafs(data) do
           if(loaded[child.id] ~= nil) then
             any_loaded = true;
             break;
+          else
+            any_loaded = nil
           end
         end
         loaded[id] = any_loaded;
@@ -1543,11 +1556,6 @@ local function scanForLoadsImpl(toCheck, event, arg1, ...)
       end
     end
   end
-
-  Private.callbacks:Fire("ScanForLoads")
-
-  wipe(toLoad);
-  wipe(toUnload)
 end
 
 function Private.ScanForLoads(toCheck, event, arg1, ...)
@@ -1686,6 +1694,9 @@ function Private.Resume()
 
   UnloadAll();
   scanForLoadsImpl();
+  if loadEvents["GROUP"] then
+    Private.ScanForLoadsGroup(loadEvents["GROUP"])
+  end
 
   Private.ResumeAllDynamicGroups();
 end
@@ -1786,7 +1797,9 @@ function WeakAuras.Delete(data)
       if parentData.sortHybridTable then
         parentData.sortHybridTable[id] = nil
       end
-      Private.ClearAuraEnvironment(data.parent);
+      for parent in Private.TraverseParents(data) do
+        Private.ClearAuraEnvironment(parent.id);
+      end
     end
   end
 
@@ -2046,7 +2059,7 @@ end
 
 local function RepairDatabase(loginAfter)
   local coro = coroutine.create(function()
-    WeakAuras.SetImporting(true)
+    Private.SetImporting(true)
     -- set db version to current code version
     db.dbVersion = WeakAuras.InternalVersion()
     -- reinstall snapshots from history
@@ -2061,7 +2074,7 @@ local function RepairDatabase(loginAfter)
       end
     end
     db.displays = newDB
-    WeakAuras.SetImporting(false)
+    Private.SetImporting(false)
     -- finally, login
     Private.Login()
   end)
@@ -2125,13 +2138,13 @@ end
 
 function Private.SyncParentChildRelationships(silent)
   -- 1. Find all auras where data.parent ~= nil or data.controlledChildren ~= nil
-  --    If an aura has both, then remove data.parent
   --    If an aura has data.parent which doesn't exist, then remove data.parent
   --    If an aura has data.parent which doesn't have data.controlledChildren, then remove data.parent
   -- 2. For each aura with data.controlledChildren, iterate through the list of children and remove entries where:
   --    The child doesn't exist in the database
   --    The child ID is duplicated in data.controlledChildren (only the first will be kept)
   --    The child's data.parent points to a different parent
+  --    The parent is a dynamic group and the child is a group/dynamic group
   --    Otherwise, mark the child as having a valid parent relationship
   -- 3. For each aura with data.parent, remove data.parent if it was not marked to have a valid relationship in 2.
   local parents = {}
@@ -2139,14 +2152,7 @@ function Private.SyncParentChildRelationships(silent)
   local childHasParent = {}
   for id, data in pairs(db.displays) do
     if data.parent then
-      if data.controlledChildren then
-        if not silent then
-          prettyPrint("Detected corruption in saved variables: "..id.." is a group that thinks it's a parent.")
-        end
-        -- A display cannot have both children and a parent
-        data.parent = nil
-        parents[id] = data
-      elseif not db.displays[data.parent] then
+      if not db.displays[data.parent] then
         if not(silent) then
           prettyPrint("Detected corruption in saved variables: "..id.." has a nonexistent parent.")
         end
@@ -2160,7 +2166,8 @@ function Private.SyncParentChildRelationships(silent)
       else
         children[id] = data
       end
-    elseif data.controlledChildren then
+    end
+    if data.controlledChildren then
       parents[id] = data
     end
   end
@@ -2168,6 +2175,7 @@ function Private.SyncParentChildRelationships(silent)
   for id, data in pairs(parents) do
     local groupChildren = {}
     local childrenToRemove = {}
+    local dynamicGroup = data.regionType == "dynamicgroup"
     for index, childID in ipairs(data.controlledChildren) do
       local child = children[childID]
       if not child then
@@ -2179,6 +2187,13 @@ function Private.SyncParentChildRelationships(silent)
         if not silent then
           prettyPrint("Detected corruption in saved variables: "..id.." thinks it controls "..childID.." which it does not.")
         end
+        childrenToRemove[index] = true
+      elseif dynamicGroup and child.controlledChildren then
+        if not silent then
+          prettyPrint("Detected corruption in saved variables: "..id.." is a dynamic group and controls "..childID.." which is a group/dynamicgroup.")
+        end
+        child.parent = nil
+        children[child.id] = nil
         childrenToRemove[index] = true
       elseif groupChildren[childID] then
         if not silent then
@@ -2582,6 +2597,14 @@ local function pAdd(data, simpleChange)
   end
 
   data.uid = data.uid or WeakAuras.GenerateUniqueID()
+  if db.displays[id] and db.displays[id].uid ~= data.uid then
+    print("Improper? arguments to WeakAuras.Add - id", id, "is assigned to a different uid.", data.uid, db.displays[id].uid)
+  end
+  if UIDtoID[data.uid] and UIDtoID[data.uid] ~= id then
+    print("Improper? arguments to WeakAuras.Add - uid is assigned to a id. Uid:", data.uid, "assigned too:", UIDtoID[data.uid], "assigning now to", data.id)
+  end
+
+
   local otherID = UIDtoID[data.uid]
   if not otherID then
     UIDtoID[data.uid] = id
@@ -2603,12 +2626,15 @@ local function pAdd(data, simpleChange)
   else
     if (data.controlledChildren) then
       Private.ClearAuraEnvironment(id);
-      if data.parent then
-        Private.ClearAuraEnvironment(data.parent);
+      for parent in Private.TraverseParents(data) do
+        Private.ClearAuraEnvironment(parent.id);
       end
       db.displays[id] = data;
       WeakAuras.SetRegion(data);
-    else
+      Private.ScanForLoadsGroup({[id] = true});
+      loadEvents["GROUP"] = loadEvents["GROUP"] or {}
+      loadEvents["GROUP"][id] = true
+    else -- Non group aura
       local visible
       if (WeakAuras.IsOptionsOpen()) then
         visible = Private.FakeStatesFor(id, false)
@@ -2621,8 +2647,8 @@ local function pAdd(data, simpleChange)
       end
 
       Private.ClearAuraEnvironment(id);
-      if data.parent then
-        Private.ClearAuraEnvironment(data.parent);
+      for parent in Private.TraverseParents(data) do
+        Private.ClearAuraEnvironment(parent.id);
       end
 
       db.displays[id] = data;
@@ -4060,6 +4086,10 @@ local function ReplaceValuePlaceHolders(textStr, region, customFunc, state, form
     if custom then
       value = WeakAuras.EnsureString(custom[index])
     end
+
+    if formatter then
+      value = formatter(value, state)
+    end
   else
     local variable = Private.dynamic_texts[textStr];
     if (not variable) then
@@ -4236,7 +4266,7 @@ function Private.ReplacePlaceHolders(textStr, region, customFunc, useHiddenState
   if (endPos == 2) then
     if string.byte(textStr, 1) == 37 then
       local symbol = string.sub(textStr, 2)
-      local value = (regionState.show or useHiddenStates) and ReplaceValuePlaceHolders(symbol, region, customFunc, regionState, formatters[symbol]);
+      local value = ValueForSymbol(symbol, region, customFunc, regionState, regionStates, useHiddenStates, formatters);
       if (value) then
         textStr = tostring(value);
       end
@@ -4355,7 +4385,7 @@ function Private.CreateFormatters(input, getter, withoutColor)
     if not seenSymbols[symbol] then
       local triggerNum, sym = string.match(symbol, "(.+)%.(.+)")
       sym = sym or symbol
-      if sym == "c" or sym == "i" then
+      if sym == "i" then
         -- Do nothing
       else
         local default = (sym == "p" or sym == "t") and "timed" or "none"
@@ -5262,8 +5292,8 @@ do
     end
 
     if data.controlledChildren then
-      for _, children in ipairs(data.controlledChildren) do
-        Traverse(WeakAuras.GetData(children), true, includeGroups, includeLeafs)
+      for _, child in ipairs(data.controlledChildren) do
+        Traverse(WeakAuras.GetData(child), true, includeGroups, includeLeafs)
       end
     end
   end
@@ -5290,6 +5320,14 @@ do
 
   local function TraverseAll(data)
     return Traverse(data, true, true, true)
+  end
+
+  local function TraverseParents(data)
+    while data.parent do
+      local parentData = WeakAuras.GetData(data.parent)
+      coroutine.yield(parentData)
+      data = parentData
+    end
   end
 
   -- Only non-group auras, not include self
@@ -5320,6 +5358,10 @@ do
   -- All Children and self
   function Private.TraverseAll(data)
     return coroutine.wrap(TraverseAll), data
+  end
+
+  function Private.TraverseParents(data)
+    return coroutine.wrap(TraverseParents), data
   end
 end
 

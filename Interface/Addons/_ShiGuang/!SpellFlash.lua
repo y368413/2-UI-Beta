@@ -19,6 +19,7 @@ thj.spells = {}
 thj.items = {}
 thj.keyMapping = {}
 
+local lastUpdate = 0;
 thj.createFrame = function(name, parent)
     local f = CreateFrame("Frame", name, parent or UIParent);
     f:SetScript("OnEvent", function(self, evtName, ...)
@@ -33,6 +34,15 @@ thj.createFrame = function(name, parent)
             end
         end
     end)
+    f:SetScript("OnUpdate", function(self, elapsed)
+        lastUpdate = lastUpdate + elapsed;
+        if lastUpdate > 1 then
+            -- print("OnUpdate.elapsed = ", lastUpdate)
+            lastUpdate = 0;
+            thj.isMounted = IsMounted("player");
+            thj.Repaint();
+        end
+    end)
     return f;
 end
 
@@ -45,7 +55,6 @@ sfo:SetFrameLevel(10000)
 sfo:SetSize(SIZE, SIZE);
 
 thj.frame = sfo;
-
 
 --[[
     CombatLogGetCurrentEventInfo()
@@ -306,7 +315,7 @@ local function getSpellColor(key)
         g = km.key / 255;
     end
     -- b = 标志位：战斗状态 | 通道施法
-    b = (f.isCombat and 1 or 0) * 0xC0 + (f.isChanneling and 1 or 0) * 0x30;
+    b = ((f.isCombat and not thj.isMounted) and 1 or 0) * 0xC0 + (f.isChanneling and 1 or 0) * 0x30;
     b = b / 255;
     return r, g, b;
 end

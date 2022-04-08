@@ -2,9 +2,9 @@
 ## Title: Mount Collector
 ## Author: InSpectreGadget
 ## SavedVariables: MountCollectorDB
-## Version: 2.1.4
+## Version: 2.2.0
 ## DefaultState: enabled
-## X-Curse-Packaged-Version: 2.1.4
+## X-Curse-Packaged-Version: 2.2.0
 ## X-Curse-Project-Name: Mount Collector
 ## X-Curse-Project-ID: mount-collector
 

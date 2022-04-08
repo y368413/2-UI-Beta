@@ -522,17 +522,20 @@ do
                             hidden = function () return Hekili.State.spec.id ~= i end,
                         } )
                         insert( menuData, {
-                            text = "Recommend Target Swaps",
+                            text = "推荐切换目标",
                             func = function ()
-                                Hekili.DB.profile.specs[ i ].cycle = not Hekili.DB.profile.specs[ i ].cycle
+                                local spec = rawget( Hekili.DB.profile.specs, i )
+                                if spec then
+                                    spec.cycle = not spec.cycle
                                 if Hekili.DB.profile.notifications.enabled then
-                                    Hekili:Notify( "Recommend Target Swaps: " .. ( Hekili.DB.profile.specs[ i ].cycle and "ON" or "OFF" ) )
+                                    Hekili:Notify( "推荐切换目标：" .. ( Hekili.DB.profile.specs[ i ].cycle and "开" or "关" ) )
                                 else
-                                    self:Print( "Recommend Target Swaps: " .. ( Hekili.DB.profile.specs[ i ].cycle and " |cFF00FF00ENABLED|r." or " |cFFFF0000DISABLED|r." ) )
+                                    self:Print( "推荐切换目标：" .. ( Hekili.DB.profile.specs[ i ].cycle and " |cFF00FF00启用|r" or " |cFFFF0000禁用|r。" ) )
+                                    end
                                 end
                             end,
                             checked = function ()
-                                return Hekili.DB.profile.specs[ i ].cycle
+                                return spec.cycle
                             end,
                             hidden = function () return Hekili.State.spec.id ~= i end,
                         } )
@@ -549,9 +552,9 @@ do
                                             setting.info.set( menu.args, not setting.info.get( menu.args ) )
 
                                             if Hekili.DB.profile.notifications.enabled then
-                                                Hekili:Notify( setting.info.name .. ": " .. ( setting.info.get( menu.args ) and "ON" or "OFF" ) )
+                                                Hekili:Notify( setting.info.name .. "：" .. ( setting.info.get( menu.args ) and "开" or "关" ) )
                                             else
-                                                self:Print( setting.info.name .. ": " .. ( setting.info.get( menu.args ) and " |cFF00FF00ENABLED|r." or " |cFFFF0000DISABLED|r." ) )
+                                                self:Print( setting.info.name .. "：" .. ( setting.info.get( menu.args ) and " |cFF00FF00启用|r" or " |cFFFF0000禁用|r" ) )
                                             end
                                         end,
                                         checked = function ()
@@ -2099,9 +2102,15 @@ do
                     end
                 end
             end
+        else
+            for _, display in pairs( displays ) do
+                if display.Active then
+                    display:Deactivate()
+                end
+            end
         end
 
-        for i, d in pairs(ns.UI.Displays) do
+        for i, d in pairs( displays ) do
             d:UpdateAlpha()
         end
     end
@@ -2296,7 +2305,9 @@ do
         local kbAnchor = conf.keybindings.anchor or "TOPRIGHT"
         b.Keybinding:ClearAllPoints()
         b.Keybinding:SetPoint( kbAnchor, b, kbAnchor, conf.keybindings.x or 0, conf.keybindings.y or 0 )
-        b.Keybinding:SetSize( 0, 0 )
+        b.Keybinding:SetSize( b:GetWidth(), b:GetHeight() / 2 )
+        b.Keybinding:SetJustifyH( kbAnchor:match("RIGHT") and "RIGHT" or ( kbAnchor:match( "LEFT" ) and "LEFT" or "CENTER" ) )
+        b.Keybinding:SetJustifyV( kbAnchor:match("TOP") and "TOP" or ( kbAnchor:match( "BOTTOM" ) and "BOTTOM" or "MIDDLE" ) )
         b.Keybinding:SetTextColor( unpack( queued and conf.keybindings.queuedColor or conf.keybindings.color ) )
 
         local kbText = b.Keybinding:GetText()
@@ -2516,7 +2527,7 @@ do
         end )
 
         b:SetScript( "OnLeave", function(self)
-            GameTooltip:Hide()
+            HekiliTooltip:Hide()
         end )
 
         Hekili:ProfileFrame( bName, b )
@@ -2740,7 +2751,7 @@ local key_cache = setmetatable( {}, {
 function Hekili:ShowDiagnosticTooltip( q )
     if not q.actionName or not class.abilities[ q.actionName ].name then return end
 
-    local tt = GameTooltip
+    local tt = HekiliTooltip
     local fmt = ns.lib.Format
 
     tt:SetOwner( UIParent, "ANCHOR_CURSOR" )
@@ -2784,8 +2795,7 @@ function Hekili:ShowDiagnosticTooltip( q )
         tt:AddLine(" ")
         tt:AddLine("Time Script")
 
-        local Text = Format(q.ReadyScript)
-        tt:AddLine(fmt.FormatCode(Text, 0, SyntaxColors), 1, 1, 1, 1)
+        tt:AddLine(fmt.FormatCode(q.ReadyScript, 0, SyntaxColors), 1, 1, 1, 1)
 
         if q.ReadyElements then
             tt:AddLine("Values")
@@ -2801,8 +2811,7 @@ function Hekili:ShowDiagnosticTooltip( q )
         tt:AddLine(" ")
         tt:AddLine("Action Criteria")
 
-        local Text = Format(q.ActScript)
-        tt:AddLine(fmt.FormatCode(Text, 0, SyntaxColors), 1, 1, 1, 1)
+        tt:AddLine(fmt.FormatCode(q.ActScript, 0, SyntaxColors), 1, 1, 1, 1)
 
         if q.ActElements then
             tt:AddLine(" ")
@@ -2826,6 +2835,7 @@ function Hekili:ShowDiagnosticTooltip( q )
         end
     end
 
+    tt:SetMinimumWidth( 400 )
     tt:Show()
 end
 
