@@ -1,6 +1,10 @@
  -- Author: Nerino1
 -- Create Date : 1/8/2021
+<<<<<<< Updated upstream
 -- Version 5.4
+=======
+-- Version 4.1
+>>>>>>> Stashed changes
 
 local _, L = ...;
 SoulbindCacheOpener = {};
@@ -280,6 +284,7 @@ SoulbindCacheOpener.items = {
 	{ 	["name"] = "ExtraGoodies_veiledsatchelofcooperation", --Veiled Satchel of Cooperation"
 		["id"] = 184522,
 		["button"] = nil
+<<<<<<< Updated upstream
 	},
 	
 -- Noblegarden
@@ -325,6 +330,8 @@ SoulbindCacheOpener.items = {
 	{ 	["name"] = "ExtraGoodies_WarChestoftheWildHunt", --War Chest of the Wild Hunt"
 		["id"] = 185991,
 		["button"] = nil
+=======
+>>>>>>> Stashed changes
 	}
 	,
 	{ 	["name"] = "ExtraGoodies_AscendedWarChest", --Ascended War Chest"

@@ -427,6 +427,7 @@ local function OnGossipHide()
 end
 
 GossipFrame:HookScript("OnHide",OnGossipHide);
+<<<<<<< Updated upstream
 
 ------------------------------------------------------ create into tooltip for raids
 
@@ -471,6 +472,8 @@ QueueStatusFrame:HookScript("OnShow",function(parent)
 	end
 end);
 
+=======
+>>>>>>> Stashed changes
 QueueStatusFrame:HookScript("OnHide",function(parent)
 	GameTooltip:Hide();
 end);

@@ -1,8 +1,17 @@
 local CovenantMissionHelper, CMH = ...
 local hooksecurefunc = _G["hooksecurefunc"]
+<<<<<<< Updated upstream
 local MissionHelper = MissionHelper
 local L = MissionHelper.L
 local CurrentTypeID = 1813
+=======
+
+local ADDON, Addon = ...
+local L = LibStub('AceLocale-3.0'):GetLocale(ADDON)
+
+MissionHelper = CreateFrame("Frame", "MissionHelper", UIParent)
+MissionHelper.isLoaded = false
+>>>>>>> Stashed changes
 
 local function registerHook()
     -- open/close mission
@@ -157,8 +166,13 @@ function MissionHelper:addBaseXPToRewards(rewards)
         icon = 894556,
         followerXP = self.info.xp,
         title = L['Base XP'],
+<<<<<<< Updated upstream
         tooltip = '+' .. self.info.xp .. ' ' .. L['XP'] ..
                 '\n+' .. string.format("%3d", self.info.xp / (self.info.durationSeconds / 3600)) .. L['XP/hour'],
+=======
+        tooltip = '+' .. self.info.xp .. L[' XP\n+']
+                .. string.format("%3d", self.info.xp / (self.info.durationSeconds / 3600)) ..L['XP/hour'],
+>>>>>>> Stashed changes
     }
 
     local Reward = self.Rewards[#rewards + 1]
@@ -176,9 +190,15 @@ function MissionHelper:addXPPerHour(followerTypeID)
     if type(self) ~= 'table' then return end
 
     for _, mission in pairs(self) do
+<<<<<<< Updated upstream
         if mission.costCurrencyTypesID == CurrentTypeID and mission.rewards[1] and mission.rewards[1].followerXP then
             mission.rewards[1].tooltip = mission.rewards[1].tooltip ..
                     '\n+' .. string.format("%3d", mission.rewards[1].followerXP / (mission.durationSeconds / 3600)) .. L['XP/hour']
+=======
+        if mission.rewards[1].followerXP then
+            mission.rewards[1].tooltip = mission.rewards[1].tooltip .. '\n' ..
+                    '+' .. string.format("%3d", mission.rewards[1].followerXP / (mission.durationSeconds / 3600)) ..L['XP/hour']
+>>>>>>> Stashed changes
         end
     end
 end

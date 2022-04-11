@@ -1,6 +1,9 @@
 local CovenantMissionHelper, CMH = ...
 local L = MissionHelper.L
 
+local ADDON, Addon = ...
+local L = LibStub('AceLocale-3.0'):GetLocale(ADDON)
+
 local SIMULATE_ITERATIONS = 100
 local MAX_ROUNDS = 100
 local MAX_RANDOM_ROUNDS = 50
@@ -151,14 +154,18 @@ function Board:fight(round)
 
     while self.isMissionOver == false and round < self.max_rounds do
         CMH:log('\n')
+<<<<<<< Updated upstream
         CMH:log(GREEN_FONT_COLOR:WrapTextInColorCode(L["Round"] .. ' ' .. round))
+=======
+        CMH:log(L["|c0000FF33Round "] .. round .. "|r")
+>>>>>>> Stashed changes
         MissionHelper:addRound()
         local turnOrder = self:getTurnOrder()
 
         local removed_effects = self:manageBuffsFromDeadUnits()
         local enemy_turn = false
         for _, boardIndex in pairs(turnOrder) do
-            CMH:debug_log('turn for index ' .. boardIndex)
+            CMH:debug_log(L['turn for index '] .. boardIndex)
             if boardIndex > 4 and enemy_turn == false then
                 enemy_turn = true
                 CMH:log('\n')
@@ -248,7 +255,7 @@ function Board:getTargetableUnits(sourceIndex)
     for i = 0, 12 do
         table.insert(result, i, self:isTargetableUnit(sourceIndex, i))
     end
-    CMH:debug_log("targetableUnits -> " .. arrayForPrint(result))
+    CMH:debug_log(L["targetableUnits -> "] .. arrayForPrint(result))
     return result
 end
 
@@ -274,7 +281,7 @@ function Board:getTurnOrder()
         table.insert(order, unit.boardIndex)
     end
 
-    CMH:debug_log("turn order -> " .. arrayForPrint(order))
+    CMH:debug_log(L["turn order -> "] .. arrayForPrint(order))
     return order
 end
 
@@ -290,13 +297,13 @@ function Board:makeUnitAction(round, boardIndex)
 
     for _, spell in pairs(unit:getAvailableSpells()) do
         if self.isMissionOver then break end
-        CMH:debug_log("Spell: " .. spell.name .. ' (' .. #spell.effects .. ')')
+        CMH:debug_log(L["Spell: "] .. spell.name .. ' (' .. #spell.effects .. ')')
         lastTargetType = -1
 
         for _, effect in pairs(spell.effects) do
             targetIndexes = self:getTargetIndexes(unit, effect.TargetType, lastTargetType, targetIndexes)
-            CMH:debug_log("Effect: " .. effect.Effect .. ', TargetType: ' .. effect.TargetType)
-            CMH:debug_log("targetIndexes -> " .. arrayForPrint(targetIndexes))
+            CMH:debug_log(L["Effect: "] .. effect.Effect .. L[', TargetType: '] .. effect.TargetType)
+            CMH:debug_log(L["targetIndexes -> "] .. arrayForPrint(targetIndexes))
 
             local targetInfo = {}
             for _, targetIndex in pairs(targetIndexes) do
@@ -358,8 +365,12 @@ function Board:onUnitTakeDamage(spellID, casterBoardIndex, eventTargetInfo, effe
     -- unit died
     if eventTargetInfo.newHealth == 0 then
         MissionHelper:addEvent(spellID, CMH.DataTables.EffectTypeEnum.Died, casterBoardIndex, {eventTargetInfo})
+<<<<<<< Updated upstream
         CMH:log(ORANGE_FONT_COLOR:WrapTextInColorCode(string.format('%s %s %s ',
                 self.units[casterBoardIndex].name, L['kill'], self.units[eventTargetInfo.boardIndex].name)))
+=======
+        CMH:log(string.format(L['|cFFFF7700 %s kill %s |r'], self.units[casterBoardIndex].name, self.units[eventTargetInfo.boardIndex].name))
+>>>>>>> Stashed changes
         self.isMissionOver = self:checkMissionOver()
     end
 end
@@ -381,6 +392,7 @@ function Board:getTotalLostHP(isWin)
     return startHP - restHP
 end
 
+<<<<<<< Updated upstream
 function Board:getTotalRemainingPercentHP(isWin)
     local restHP = 0
     local _start, _end, startHP = 0, 4, self.initialAlliesHP
@@ -436,6 +448,15 @@ local function constructString(unit, isWin)
     if (isWin and unit.isWinLvlUp) or (not isWin and unit.isLoseLvlUp) then result = LVL_UP_ICON .. result end
     if unit.currentHealth == 0 then result = SKULL_ICON .. result end
     return '    ' .. result
+=======
+function Board:getMyTeam()
+    local function constructString(unit, isWin)
+        local result = unit.name .. L['. HP = '] .. unit.currentHealth .. '/' .. unit.maxHealth .. '\n'
+        --result = unit.isWinLvlUp and result .. ' (Level Up)\n' or result .. '\n'
+        if (isWin and unit.isWinLvlUp) or (not isWin and unit.isLoseLvlUp) then result = LVL_UP_ICON .. result end
+        if unit.currentHealth == 0 then result = SKULL_ICON .. result end
+        return '    ' .. result
+>>>>>>> Stashed changes
     end
 
 function Board:getResultInfo()
@@ -448,8 +469,12 @@ function Board:getResultInfo()
     local isWin = self:isWin()
     local lostHP = self:getTotalLostHP(true)
     local loseOrGain = lostHP >= 0 and L['LOST'] or L['RECEIVED']
+<<<<<<< Updated upstream
     local warningText = self.hasRandomSpells and RED_FONT_COLOR:WrapTextInColorCode(
             L["Units have random abilities. Actual rest HP may not be the same as predicted"]) or ''
+=======
+    local warningText = self.hasRandomSpells and L["|cFFFF0000Units have random abilities. Actual rest HP may not be the same as predicted|r\n"] or ''
+>>>>>>> Stashed changes
 
     local text = ''
     local avgPercentHP = 0
@@ -490,6 +515,10 @@ function Board:getResultInfo()
         )
         text = text .. '\n\n\n\n' ..enemyInfo .. '\n\n' .. total
     end
+<<<<<<< Updated upstream
+=======
+    text = string.format(L["%sMy units:\n%s \n\nTOTAL %s HP = %s"], warningText, text, loseOrGain, math.abs(lostHP))
+>>>>>>> Stashed changes
 
     return text
 end
@@ -500,16 +529,28 @@ function Board:constructResultString()
     elseif self.hasRandomSpells and self.isCalcRandom == false then
         return ''
     elseif not self.isMissionOver then
+<<<<<<< Updated upstream
         return RED_FONT_COLOR:WrapTextInColorCode(string.format(L['More than %s rounds. Winner is undefined'], self.max_rounds))
+=======
+        return string.format(L['|cFFFF0000More than %s rounds. Winner is undefined|r'], self.max_rounds)
+>>>>>>> Stashed changes
     end
 
     local result = self:isWin()
     if self.probability == 100 and result then
+<<<<<<< Updated upstream
         return GREEN_FONT_COLOR:WrapTextInColorCode(L['WIN'])
     elseif self.probability == 0 or (result == false and self.probability == 100) then
         return RED_FONT_COLOR:WrapTextInColorCode(L['LOSE'])
     else
         return ORANGE_FONT_COLOR:WrapTextInColorCode(string.format(L['WIN'] .. ' (~%s%%)', self.probability))
+=======
+        return L['|cFF00FF00 Predicted result: WIN |r']
+    elseif self.probability == 0 or (result == false and self.probability == 100) then
+        return L['|cFFFF0000 Predicted result: LOSE |r']
+    else
+        return string.format(L['|cFFFF7700 Predicted result: WIN (~%s%%) |r'], self.probability)
+>>>>>>> Stashed changes
     end
 end
 

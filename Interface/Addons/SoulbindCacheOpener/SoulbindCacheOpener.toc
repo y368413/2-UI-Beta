@@ -1,6 +1,12 @@
+<<<<<<< Updated upstream
 ## Interface: 90200
 ## Title: Soulbind Cache Opener
 ## Version: 5.4
+=======
+## Interface: 90005
+## Title: Soulbind Cache Opener
+## Version: 4.1
+>>>>>>> Stashed changes
 ## Author: Nerino1	
 ## Notes: Adds a movable button to easily open Soulbind Rewards, Callings Rewards and Table Mission Caches and more!
 ## SavedVariablesPerCharacter: SoulbindCacheOpenerDB

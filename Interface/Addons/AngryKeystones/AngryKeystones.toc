@@ -8,8 +8,15 @@
 ## Version: 0.23.0
 ## Author: Ermad + 嚣张的扇贝
 ## SavedVariables: AngryKeystones_Config, AngryKeystones_Data
+<<<<<<< Updated upstream
 ## SavedVariablesPerCharacter: AngryKeystones_CharacterConfig, AngryKeystones_revise_Config, AngryKeystones_revise_Data
 ## X-Packaged-Version: v0.24.0
+=======
+## SavedVariablesPerCharacter: AngryKeystones_CharacterConfig
+## X-Packaged-Version: v0.19.9
+
+## X-Repple: 2 UI
+>>>>>>> Stashed changes
 
 Core.lua
 Locale.lua

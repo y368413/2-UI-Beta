@@ -9,6 +9,8 @@
 Init.lua
 locales.xml
 
+Locale\zhCN.lua
+
 DataTables.lua
 CovenantMissionHelper.lua
 Board.lua

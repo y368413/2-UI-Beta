@@ -2,6 +2,9 @@ local CovenantMissionHelper, CMH = ...
 local MissionHelperFrame = _G["MissionHelperFrame"]
 local L = MissionHelper.L
 
+local ADDON, Addon = ...
+local L = LibStub('AceLocale-3.0'):GetLocale(ADDON)
+
 function MissionHelperFrame:updateMissionHeader(missionInfo)
     if self.board and self.board.missionID == missionInfo.missionID then return end
 
@@ -13,9 +16,15 @@ function MissionHelperFrame:updateMissionHeader(missionInfo)
     end
 
     self.missionHeader.Level:SetText(missionInfo.missionScalar)
+<<<<<<< Updated upstream
     self.missionHeader.Duration:SetText(L['Duration'] .. ': ' ..tostring(missionInfo.duration))
     if missionInfo.offerTimeRemaining and not missionInfo.canBeCompleted then
         self.missionHeader.OfferTime:SetText(L['Offer time'] .. ': ' .. tostring(missionInfo.offerTimeRemaining))
+=======
+    self.missionHeader.Duration:SetText(L['Duration: '] .. tostring(missionInfo.duration))
+    if missionInfo.offerTimeRemaining and not missionInfo.canBeCompleted then
+        self.missionHeader.OfferTime:SetText(L['Offer time: '] .. tostring(missionInfo.offerTimeRemaining))
+>>>>>>> Stashed changes
     end
 end
 

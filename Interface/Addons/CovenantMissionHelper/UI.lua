@@ -2,6 +2,9 @@ local CovenantMissionHelper, CMH = ...
 local MissionHelper = _G["MissionHelper"]
 local L = MissionHelper.L
 
+local ADDON, Addon = ...
+local L = LibStub('AceLocale-3.0'):GetLocale(ADDON)
+
 local MAX_FRAME_WIDTH = 500
 local PADDING = 20
 local MISSION_HEADER_HEIGHT = 90
@@ -179,6 +182,7 @@ local function createBestDispositionByPercentButton(frame)
     local function onEnter(self)
         GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT")
         GameTooltip:SetPoint("TOPLEFT", self, "BOTTOMRIGHT", 0, 0)
+<<<<<<< Updated upstream
 
         if self:IsEnabled() then
             GameTooltip_AddNormalLine(GameTooltip, L["Change the order of your troops to minimize HP loss"])
@@ -188,6 +192,9 @@ local function createBestDispositionByPercentButton(frame)
             GameTooltip_AddColoredLine(GameTooltip, L["Addon doesn't support "] .. L['"Optimize" if units have random abilities'], RED_FONT_COLOR)
         end
 
+=======
+        GameTooltip_AddNormalLine(GameTooltip, L["Simulate mission 50 times to find approximate success rate"])
+>>>>>>> Stashed changes
         GameTooltip:Show()
     end
 
@@ -195,6 +202,7 @@ local function createBestDispositionByPercentButton(frame)
         GameTooltip_Hide()
     end
 
+<<<<<<< Updated upstream
     local BestDispositionByPercentButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     frame.BestDispositionByPercentButton = BestDispositionByPercentButton
         BestDispositionByPercentButton:SetSize(BUTTON_WIDTH, BUTTON_HEIGHT)
@@ -205,6 +213,18 @@ local function createBestDispositionByPercentButton(frame)
         BestDispositionByPercentButton:SetScript('onEnter', onEnter)
         BestDispositionByPercentButton:SetScript('onLeave', onLeave)
         BestDispositionByPercentButton:Hide()
+=======
+    local predictButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+    frame.predictButton = predictButton
+        predictButton:SetSize(BUTTON_WIDTH, BUTTON_HEIGHT)
+        predictButton:SetPoint("LEFT", frame, "CENTER", PADDING/2, 0)
+        predictButton:SetText(L['Simulate'])
+        predictButton:SetMotionScriptsWhileDisabled(true)
+        predictButton:SetScript('onClick', onClick)
+        predictButton:SetScript('onEnter', onEnter)
+        predictButton:SetScript('onLeave', onLeave)
+        predictButton:Hide()
+>>>>>>> Stashed changes
 end
 
 local function createBestDispositionByMinPercentButton(frame)
@@ -219,7 +239,10 @@ local function createBestDispositionByMinPercentButton(frame)
         if self:IsEnabled() then
             GameTooltip_AddNormalLine(GameTooltip, L["Change the order of your troops to minimize HP loss"])
             GameTooltip_AddColoredLine(GameTooltip, L["It shuffles only units on board and doesn't consider others"], RED_FONT_COLOR)
+<<<<<<< Updated upstream
             GameTooltip_AddColoredLine(GameTooltip, L["Find the disposition with the maximum of lowest left HP as a percentage"], GRAY_FONT_COLOR)
+=======
+>>>>>>> Stashed changes
         else
             GameTooltip_AddColoredLine(GameTooltip, L["Addon doesn't support "] .. L['"Optimize" if units have random abilities'], RED_FONT_COLOR)
         end
@@ -231,6 +254,7 @@ local function createBestDispositionByMinPercentButton(frame)
         GameTooltip_Hide()
     end
 
+<<<<<<< Updated upstream
     local BestDispositionByMinPercentButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     frame.BestDispositionByMinPercentButton = BestDispositionByMinPercentButton
         BestDispositionByMinPercentButton:SetSize(BUTTON_WIDTH, BUTTON_HEIGHT)
@@ -270,6 +294,18 @@ local function createPredictButton(frame)
         predictButton:SetScript('onEnter', onEnter)
         predictButton:SetScript('onLeave', onLeave)
         predictButton:Hide()
+=======
+    local BestDispositionButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+    frame.BestDispositionButton = BestDispositionButton
+        BestDispositionButton:SetSize(BUTTON_WIDTH, BUTTON_HEIGHT)
+        BestDispositionButton:SetPoint("RIGHT", frame, "CENTER", -PADDING/2, 0)
+        BestDispositionButton:SetText(L['Optimize'])
+        BestDispositionButton:SetMotionScriptsWhileDisabled(true)
+        BestDispositionButton:SetScript('onClick', onClick)
+        BestDispositionButton:SetScript('onEnter', onEnter)
+        BestDispositionButton:SetScript('onLeave', onLeave)
+        BestDispositionButton:Hide()
+>>>>>>> Stashed changes
 end
 
 local function createButtonsFrame(mainFrame)

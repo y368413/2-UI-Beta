@@ -46,6 +46,10 @@ local GroupTotal = {}
 local GroupOnline = {}
 local GroupSorted = {}
 local FriendRequestString = string.sub(FRIEND_REQUESTS,1,-6)
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 local currentExpansionMaxLevel = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE and 60
 
 local FriendsScrollFrame
@@ -141,7 +145,6 @@ function GetFriendInfoById(id)
 			battleTag = accountInfo.battleTag
 
 			local gameAccountInfo = accountInfo.gameAccountInfo
-
 			if gameAccountInfo then
 				isOnline = gameAccountInfo.isOnline
 				isGameAFK = gameAccountInfo.isGameAFK
@@ -356,7 +359,7 @@ function FriendGroups_UpdateFriendButton(button)
 			button.status:SetTexture(FRIENDS_TEXTURE_OFFLINE)
 			nameColor = FRIENDS_GRAY_COLOR
 			button.gameIcon:Hide()
-			if ( not lastOnline or lastOnline == 0 or time() - lastOnline >= ONE_YEAR ) then
+			if (not lastOnline or lastOnline == 0 or time() - lastOnline >= ONE_YEAR) then
 				infoText = FRIENDS_LIST_OFFLINE
 			else
 				infoText = string.format(BNET_LAST_ONLINE_TIME, FriendsFrame_GetLastOnline(lastOnline))
@@ -411,7 +414,11 @@ function FriendGroups_UpdateFriendButton(button)
 			header.RightArrow:Hide()
 		end
 		nameText = nil
+<<<<<<< Updated upstream
 	elseif button.buttonType == FRIENDS_BUTTON_TYPE_INVITE then
+=======
+	elseif (button.buttonType == FRIENDS_BUTTON_TYPE_INVITE) then
+>>>>>>> Stashed changes
 		local scrollFrame = FriendsScrollFrame
 		local invite = scrollFrame.invitePool:Acquire()
 		invite:SetParent(scrollFrame.ScrollChild)
@@ -485,6 +492,10 @@ function FriendGroups_UpdateFriends()
 	for i = 1, numButtons do
 		local button = buttons[i]
 		local index = offset + i
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 		if index <= numFriendButtons then
 			button.index = index
 			local height = FriendGroups_UpdateFriendButton(button)
@@ -509,8 +520,11 @@ function FriendGroups_UpdateFriends()
 	end
 end
 
+<<<<<<< Updated upstream
 
 
+=======
+>>>>>>> Stashed changes
 function CreateNote(note, groups)
 	local value = ""
 	if note then
@@ -531,6 +545,10 @@ function NoteAndGroups(note, groups)
 	end
 	return strsplit("#", note)
 end
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 function FillGroups(groups, note, ...)
 	wipe(groups)
 	local n = select('#', ...)
@@ -546,6 +564,11 @@ function FillGroups(groups, note, ...)
 end
 
 
+<<<<<<< Updated upstream
+=======
+
+
+>>>>>>> Stashed changes
 function IncrementGroup(group, online)
 	if not GroupTotal[group] then
 		GroupCount = GroupCount + 1
@@ -1052,6 +1075,10 @@ function FriendGroups_OnEnter(self)
 		return
 	end
 end
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 function HookButtons()
 	local scrollFrame = FriendsScrollFrame
 	local buttons = scrollFrame.buttons
