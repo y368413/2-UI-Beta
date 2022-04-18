@@ -1184,9 +1184,9 @@ end
 -- This will also factor in target caps and TTD restrictions.
 state.spell_targets = setmetatable( {}, {
     __index = function( t, k )
+        if state.active_enemies == 1 then return 1 end
         local ability = class.abilities[ k ]
-
-        if not ability or state.active_enemies == 1 then return state.active_enemies end
+        if not ability then return 1 end
 
         local n = state.active_enemies
 
@@ -3989,7 +3989,13 @@ do
     end
 
 
-    state.variable = setmetatable( {}, {
+    local defaultValue = 0
+    function state:SetDefaultVariable( value )
+        if value == nil then value = 0 end
+        defaultValue = value
+    end
+    state.variable = setmetatable( {
+    }, {
         __index = function( t, var )
             local debug = Hekili.ActiveDebug
 
@@ -4002,16 +4008,16 @@ do
             local now = state.query_time
 
             if Hekili.LoadingScripts then
-                return 0
+                return defaultValue
             end
 
             if not db[ var ] then
                 if debug then Hekili:Debug( "No such variable '%s'.", var ) end
                 Hekili:Error( "Variable '%s' referenced in %s but is undefined.", var, state.scriptID )
-                return 0
+                return defaultValue
             end
 
-            state.variable[ var ] = 0
+            state.variable[ var ] = defaultValue
 
             local data = db[ var ]
             local parent = state.scriptID
@@ -4019,8 +4025,7 @@ do
             -- If we're checking variable with no script loaded, don't bother.
             if not parent or parent == "NilScriptID" then return 0 end
 
-            local default = 0
-            local value = 0
+            local value = defaultValue
 
             local which_mod = "value"
 
@@ -4369,16 +4374,16 @@ local mt_default_debuff = {
             return rawget( t, k )
 
         elseif k == "up" or k == "ticking" then
-            return t.remains > 0
+            return t.applied <= state.query_time and t.expires > state.query_time
 
         elseif k == "i_up" or k == "rank" then
             return t.up and 1 or 0
 
         elseif k == "down" then
-            return not t.up
+            return t.remains == 0
 
         elseif k == "remains" then
-            return max( 0, t.expires - state.query_time )
+            return t.applied <= state.query_time and max( 0, t.expires - state.query_time ) or 0
 
         elseif k == "refreshable" then
             -- if state.isCyclingTargets( nil, t.key ) then return true end
@@ -4392,7 +4397,7 @@ local mt_default_debuff = {
             if t.up then return ( t.count ) else return 0 end
 
         elseif k == "react" then
-            if t.expires > state.query_time then
+            if t.applied <= state.query_time and t.expires > state.query_time then
                 return t.count
             end
             return 0
@@ -7091,9 +7096,8 @@ function state:ClashOffset( action )
     if not a then return 0 end
     action = a.key
 
-    local profile = Hekili.DB.profile
-    local spec = rawget( profile.specs, state.spec.id )
-    if not spec then return true end
+    local spec = rawget( Hekili.DB.profile.specs, state.spec.id )
+    if not spec then return 0 end
     local option = spec.abilities[ action ]
 
     return ns.callHook( "clash", option.clash, action )

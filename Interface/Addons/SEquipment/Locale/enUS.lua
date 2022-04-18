@@ -1,15 +1,25 @@
-Scorpio "BaseConfig.Locale.enUS" ""
-local L = _Locale("enUS",true)
+--========================================================--
+--               SEquipment US Locale                     --
+--                                                        --
+-- Author      :  汐染晨风                                 --
+-- Create Date :  2022/04/12                              --
+--========================================================--
 
-if not L then
-    return
-end
+--========================================================--
+Scorpio             "BaseConfig.Locale.enUS"              ""
+--========================================================--
+local L = _Locale("enUS", true)
+-----------------------------------------------------------
+--                      Locale                           --
+-----------------------------------------------------------
+
+if not L then return end
 
 L["Home"]                           = "Home"
 L["General"]                        = "General"
     L["Font Set"]                   = "Font Set"
         L["Font"]                   = "Font"
-        L["Font Size"]              = "Size"
+        L["Frame Scale"]            = "Scale"
     L["Level Set"]                  = "Level Show Set"
         L["Show"]                   = "Show"
         L["Size"]                   = "Size"
@@ -22,7 +32,7 @@ L["General"]                        = "General"
         L["Level GB"]               = "Guild Bank"
         L["Level Chat"]             = "Chat"
 L["Player"]                         = "Player"
-    L["Show Player Module"]         = "Show Player Module"
+    L["Show List Module"]         = "Show List Module"
     L["Show Level Module"]          = "Show Level Module"
     L["Show Specialization"]        = "Show Specialization Module"
     L["Show Slots"]                 = "Show SlotsPart Module"
@@ -52,16 +62,23 @@ L["Legs"]                           = "LEG"
 L["Feet"]                           = "FEE"
 L["Wrist"]                          = "WRI"
 L["Hands"]                          = "HAN"
-L["Finger1"]                        = "FIN"
-L["Finger2"]                        = "FIN"
-L["Trinket1"]                       = "TRI"
-L["Trinket2"]                       = "TRI"
+L["Finger"]                         = "FIN"
+L["Trinket"]                        = "TRI"
 L["Back"]                           = "BAC"
 L["Main Hand"]                      = "MHA"
 L["Off Hand"]                       = "OHA"
-
-
-
+L["TOP"]                            = "TOP"
+L["BOTTOM"]                         = "BOTTOM"
+L["LEFT"]                           = "LEFT"
+L["RIGHT"]                          = "RIGHT"
+L["CENTER"]                         = "CENTER"
+L["TOPLEFT"]                        = "TOPLEFT"
+L["TOPRIGHT"]                       = "TOPRIGHT"
+L["BOTTOMLEFT"]                     = "BOTTOMLEFT"
+L["BOTTOMRIGHT"]                    = "BOTTOMRIGHT"
+L["Gem"]                            = "GemNum"
+L["Suit"]                           = "SuitNum"
+L["Empty GemSlot"]                  = "Empty GemSlot"
 
 
 
@@ -69,11 +86,11 @@ L["Off Hand"]                       = "OHA"
 --                   ChangeLog                  --
 --------------------------------------------------
 L["Log"]                            = "ChangeLog\n"
-L["Log1 Time"]                      = "2022/4/7"
-L["Log1 Version"]                   = "V2.0.2\n"
-L["Log1 Text"]                      = "1.Changed the way to get the equipment level, now get the level on the prompt box directly to make sure it is displayed correctl7\n"
-                                        .."2.Fixed an issue where players could not get information when viewing the teammate panel in a team or team, and now they can be obtained correctly\n"
-                                        -- .."3.Adjust the display order of the target observation frame, and now it is correctly placed after the Blizzard_InspectUI is loaded, and the error that the InspectPaperDollFrame frame cannot be found will not be reported\n"
-                                        -- .."4.Some bloated code was removed as smaller functions were added\n"
-                                        -- .."5.The home page is now replaced with a changelog page, showing details of future releases\n"
-                                        -- .."6.Update version number V2.0.1, this version is an emergency repair version, which is a minor version update\n"
+L["Log1 Time"]                      = "2022/4/14"
+L["Log1 Version"]                   = "V2.1.5\n"
+L["Log1 Text"]    = "1.Solved the problem of plug-in polluting blz, and it will be abnormal when switching its own panel\n"
+    -- .. "2.Adjusted the border a little bit, and now the information is a little bit inline, which is what V1.0.0 started to do\n"
+    -- .. "3.Fixed the display rules for gem enchantment information\n"
+    -- .. "4.Changed the set display style to now show the number of sets instead of the number of sets activated\n"
+    -- .. "5.Consolidated player and target options, now they use unified options\n"
+    -- .. "6.Update version number V2.1.0, this version is a medium version update, fixes a lot of errors and code redundancy\n"

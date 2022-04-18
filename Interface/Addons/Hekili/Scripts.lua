@@ -865,7 +865,7 @@ do
         local output = ""
 
         -- So at this point, we've broken our string into all of its components.  Now let's iterate through and fix it up.
-        local i = 1
+        i = 1
 
         while( i <= #results ) do
             local prev, piece, next = i > 1 and results[i-1] or nil, results[i], i < #results and results[i+1] or nil
@@ -908,8 +908,9 @@ do
                         local func, warn = Hekili:Loadstring( "return " .. ( SimToLua( piece.s ) or "" ) )
                         if func then
                             setfenv( func, state )
-                            -- maximum warningness
+                            state:SetDefaultVariable( 1 )
                             local pass, val = pcall( func )
+                            state:SetDefaultVariable( 0 )
                             if not pass and not piece.s:match("variable") then
                                 local safepiece = piece.s:gsub( "%%", "%%%%" )
                                 Hekili:Error( "Unable to compile '" .. safepiece:gsub("%%", "%%%%") .. "' - " .. val .. " (pcall-n)\n\nFrom: " .. esString:gsub( "%%", "%%%%" ) )
@@ -932,7 +933,9 @@ do
                         local func, warn = Hekili:Loadstring( "return " .. ( SimToLua( piece.s ) or "" ) )
                         if func  then
                             setfenv( func, state )
+                            state:SetDefaultVariable( 1 )
                             local pass, val = pcall( func )
+                            state:SetDefaultVariable( 0 )
                             if not pass and not piece.s:match("variable") then
                                 local safepiece = piece.s:gsub( "%%", "%%%%" )
                                 Hekili:Error( "Unable to compile '" .. safepiece:gsub("%%", "%%%%") .. "' - " .. val .. " (pcall-b)\nFrom: " .. esString:gsub( "%%", "%%%%" ) )
@@ -1219,8 +1222,10 @@ local function ConvertScript( node, hasModifiers, header )
     end ]]
 
     if sf and not e then
+        state:SetDefaultVariable( 1 )
         local success, msg = pcall( sf )
         if not success then e = msg end
+        state:SetDefaultVariable( 0 )
     end
     if e then e = e:match( ":(%d+: .*)" ) or e end
 

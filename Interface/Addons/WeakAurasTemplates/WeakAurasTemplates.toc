@@ -1,7 +1,7 @@
 ## Interface: 90200
 ## Title: WeakAuras Templates
 ## Author: The WeakAuras Team
-## Version: 3.7.16-26-g8f138a1
+## Version: 3.7.16-31-gc818034
 ## Notes: Templates for WeakAuras
 ## X-Category: Interface Enhancements
 ## Globe-Main: WeakAuras

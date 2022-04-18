@@ -860,13 +860,8 @@ end
 -- This is the workhorse function that constructs the profile
 function Simulationcraft:PrintSimcProfile(debugOutput, noBags, showMerchant, links)
   -- addon metadata
-<<<<<<< Updated upstream
   local versionComment = '# SimC Addon ' .. '9.2.0'
   local simcVersionWarning = '# Requires SimulationCraft 920-01 or newer'
-=======
-  local versionComment = '# SimC Addon ' .. '9.0.5-01'
-  local simcVersionWarning = '# Requires SimulationCraft 901-01 or newer'
->>>>>>> Stashed changes
 
   -- Basic player info
   local _, realmName, _, _, _, _, region, _, _, realmLatinName, _ = LibRealmInfo:GetRealmInfoByUnit('player')

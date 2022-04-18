@@ -1,4 +1,4 @@
-if not WeakAuras.IsCorrectVersion() then return end
+if not WeakAuras.IsCorrectVersion() or not WeakAuras.IsLibsOK() then return end
 
 if GetLocale() ~= "zhTW" then
   return
@@ -189,6 +189,7 @@ Off Screen]=] ] = [=[提醒效果
 	L["Bar Texture"] = "進度條材質"
 	L["Big Icon"] = "大圖示"
 	L["Blend Mode"] = "混合模式"
+	L["Blizzard Cooldown Reduction"] = "暴雪冷卻減少"
 	L["Blue Rune"] = "藍色符文"
 	L["Blue Sparkle Orb"] = "藍色光球"
 	L["Border"] = "邊框"
@@ -250,6 +251,7 @@ Off Screen]=] ] = [=[提醒效果
 	L["Controls the positioning and configuration of multiple displays at the same time"] = "同時控制多個提醒效果的位置和設定"
 	L["Convert to New Aura Trigger"] = "轉換成新的光環觸發"
 	L["Convert to..."] = "轉換成..."
+	L["Cooldown Reduction changes the duration of seconds instead of showing the real time seconds."] = "冷卻減少會更改秒數的持續時間，而不是顯示實時秒數。"
 	L["Copy"] = "複製"
 	L["Copy settings..."] = "複製設定..."
 	L["Copy to all auras"] = "複製到全部的光環"
@@ -553,8 +555,7 @@ Supports multiple entries, separated by commas
 	L["Model"] = "模組"
 	L["Model %s"] = "模組 %s"
 	L["Model Settings"] = "模組設定"
-	--[[Translation missing --]]
-	L["ModelPaths could not be loaded, the addon is %s"] = "ModelPaths could not be loaded, the addon is %s"
+	L["ModelPaths could not be loaded, the addon is %s"] = "模組路徑無法載入，此插件為 %s"
 	L["Move Above Group"] = "移至群組上方"
 	L["Move Below Group"] = "移至群組下方"
 	L["Move Down"] = "往下移動"
@@ -767,8 +768,7 @@ Supports multiple entries, separated by commas
 	L["Sub Option %i"] = "子選項 %i"
 	L["Summary"] = "總結"
 	L["Swipe Overlay Settings"] = "揮動疊層設定"
-	--[[Translation missing --]]
-	L["Templates could not be loaded, the addon is %s"] = "Templates could not be loaded, the addon is %s"
+	L["Templates could not be loaded, the addon is %s"] = "範本無法載入，此插件為 %s"
 	L["Temporary Group"] = "暫時性的群組"
 	L["Text"] = "文字"
 	L["Text %s"] = "文字 %s"

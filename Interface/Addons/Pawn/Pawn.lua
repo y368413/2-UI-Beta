@@ -1,21 +1,13 @@
 ﻿-- Pawn by Vger-Azjol-Nerub
 -- www.vgermods.com
-<<<<<<< Updated upstream
 -- © 2006-2022 Travis Spomer.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
-=======
--- © 2006-2021 Green Eclipse.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
->>>>>>> Stashed changes
 -- See Readme.htm for more information.
 
 --
 -- Main non-UI code
 ------------------------------------------------------------
 
-<<<<<<< Updated upstream
-PawnVersion = 2.0535
-=======
-PawnVersion = 2.0416
->>>>>>> Stashed changes
+PawnVersion = 2.0537
 
 -- Pawn requires this version of VgerCore:
 local PawnVgerCoreVersionRequired = 1.13
@@ -274,7 +266,13 @@ function PawnInitialize()
 	if GameTooltip.SetWeeklyReward then
 		hooksecurefunc(GameTooltip, "SetWeeklyReward", function(self, ...) PawnUpdateTooltip("GameTooltip", "SetWeeklyReward", ...) end)
 	end
-	hooksecurefunc(GameTooltip, "Hide", function(self, ...) PawnLastHoveredItem = nil end)
+	hooksecurefunc(GameTooltip, "Hide",
+		function(self, ...)
+			PawnLastHoveredItem = nil
+			-- Hacky fix to prevent the green tooltip border from "leaking" if the next thing that is hovered over is not an item.
+			-- (Without this, hovering over an upgrade item and then a spell button would still get you a green border.)
+			if PawnCommon.ColorTooltipBorder then PawnSetTooltipBorderColor(GameTooltip, 1, 1, 1) end
+		end)
 
 	-- World quest embedded tooltips
 	hooksecurefunc("EmbeddedItemTooltip_SetItemByQuestReward",

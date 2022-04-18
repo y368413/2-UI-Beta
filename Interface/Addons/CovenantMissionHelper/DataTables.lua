@@ -1,8 +1,5 @@
 local CovenantMissionHelper, CMH = ...
 
-local ADDON, Addon = ...
-local L = LibStub('AceLocale-3.0'):GetLocale(ADDON)
-
 local DataTables = {}
 
 DataTables.Criteria = {
@@ -11,24 +8,24 @@ DataTables.Criteria = {
 }
 
 DataTables.EffectType = {
-    [0] = L["for spellID = 17 only"],
-    [1] = L["damage"],
-    [2] = L["heal"],
-    [3] = L["damage"],
-    [4] = L["heal"],
-    [7] = L["DoT"],
-    [8] = L["HoT"],
-    [9] = L["Taunt"],
-    [10] = L["Untargetable"],
-    [11] = L["Damage dealt multiplier"],
-    [12] = L["Damage dealt multiplier"],
-    [13] = L["Damage taken multiplier"],
-    [14] = L["Damage taken multiplier"],
-    [15] = L["Reflect"],
-    [16] = L["Reflect"],
-    [18] = L["Maximum health multiplier"],
-    [19] = L["Additional damage dealt"],
-    [20] = L["Additional receive damage"]
+    [0] = "for spellID = 17 only",
+    [1] = "damage",
+    [2] = "heal",
+    [3] = "damage",
+    [4] = "heal",
+    [7] = "DoT",
+    [8] = "HoT",
+    [9] = "Taunt",
+    [10] = "Untargetable",
+    [11] = "Damage dealt multiplier",
+    [12] = "Damage dealt multiplier",
+    [13] = "Damage taken multiplier",
+    [14] = "Damage taken multiplier",
+    [15] = "Reflect",
+    [16] = "Reflect",
+    [18] = "Maximum health multiplier",
+    [19] = "Additional damage dealt",
+    [20] = "Additional receive damage"
 }
 
 DataTables.EffectTypeEnum = {

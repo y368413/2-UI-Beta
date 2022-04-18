@@ -1,4 +1,4 @@
-if not WeakAuras.IsCorrectVersion() then return end
+if not WeakAuras.IsCorrectVersion() or not WeakAuras.IsLibsOK() then return end
 
 if GetLocale() ~= "zhCN" then
   return
@@ -197,6 +197,8 @@ Off Screen]=] ] = "光环在屏幕外"
 	L["Bar Texture"] = "进度条材质"
 	L["Big Icon"] = "大图标"
 	L["Blend Mode"] = "混合模式"
+	--[[Translation missing --]]
+	L["Blizzard Cooldown Reduction"] = "Blizzard Cooldown Reduction"
 	L["Blue Rune"] = "蓝色符文"
 	L["Blue Sparkle Orb"] = "蓝色闪光宝珠"
 	L["Border"] = "边框"
@@ -258,6 +260,8 @@ Off Screen]=] ] = "光环在屏幕外"
 	L["Controls the positioning and configuration of multiple displays at the same time"] = "同时控制多个图示的位置和设定"
 	L["Convert to New Aura Trigger"] = "转换为新的光环触发器"
 	L["Convert to..."] = "转换为..."
+	--[[Translation missing --]]
+	L["Cooldown Reduction changes the duration of seconds instead of showing the real time seconds."] = "Cooldown Reduction changes the duration of seconds instead of showing the real time seconds."
 	L["Copy"] = "拷贝"
 	L["Copy settings..."] = "拷贝设置"
 	L["Copy to all auras"] = "拷贝至所有的光环"
@@ -564,8 +568,7 @@ Supports multiple entries, separated by commas
 	L["Model"] = "模型"
 	L["Model %s"] = "模型 %s"
 	L["Model Settings"] = "模型设置"
-	--[[Translation missing --]]
-	L["ModelPaths could not be loaded, the addon is %s"] = "ModelPaths could not be loaded, the addon is %s"
+	L["ModelPaths could not be loaded, the addon is %s"] = "无法载入Model Paths：%s"
 	L["Move Above Group"] = "移动上方的组"
 	L["Move Below Group"] = "移动下方的组"
 	L["Move Down"] = "向下移"
@@ -778,8 +781,7 @@ Supports multiple entries, separated by commas
 	L["Sub Option %i"] = "子选项 %i"
 	L["Summary"] = "总结"
 	L["Swipe Overlay Settings"] = "冷却刷覆盖层设置"
-	--[[Translation missing --]]
-	L["Templates could not be loaded, the addon is %s"] = "Templates could not be loaded, the addon is %s"
+	L["Templates could not be loaded, the addon is %s"] = "无法载入Templates：%s"
 	L["Temporary Group"] = "临时组"
 	L["Text"] = "文字"
 	L["Text %s"] = "文本 %s"
@@ -803,10 +805,8 @@ Supports multiple entries, separated by commas
 	L["This adds %raidMark as text replacements."] = "这将添加 %raidMark 作为文本替换。"
 	L["This adds %role, %roleIcon as text replacements."] = "这将添加 %role, %roleIcon 作为文本替换。"
 	L["This adds %tooltip, %tooltip1, %tooltip2, %tooltip3 as text replacements."] = "这将添加 %tooltip, %tooltip1, %tooltip2, %tooltip3 作为文本替换。"
-	--[[Translation missing --]]
 	L[ [=[This aura contains custom Lua code.
-Make sure you can trust the person who sent it!]=] ] = [=[This aura contains custom Lua code.
-Make sure you can trust the person who sent it!]=]
+Make sure you can trust the person who sent it!]=] ] = "此光环包含自定义Lua代码。请确认你可以信任发送它的人！"
 	L["This display is currently loaded"] = "此显示内容已加载"
 	L["This display is not currently loaded"] = "此显示内容未加载"
 	L["This is a modified version of your aura, |cff9900FF%s.|r"] = "这是一个你光环的修改版本，|cff9900FF%s.|r"

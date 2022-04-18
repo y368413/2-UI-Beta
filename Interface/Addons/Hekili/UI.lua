@@ -535,6 +535,7 @@ do
                                 end
                             end,
                             checked = function ()
+                                local spec = rawget( Hekili.DB.profile.specs, i )
                                 return spec.cycle
                             end,
                             hidden = function () return Hekili.State.spec.id ~= i end,

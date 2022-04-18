@@ -3,7 +3,7 @@
 -- © 2006-2022 Travis Spomer.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
 -- See Readme.htm for more information.
 
--- 
+--
 -- Russian resources
 ------------------------------------------------------------
 
@@ -414,6 +414,7 @@ For more information on customizing Pawn, please see the help file (Readme.htm) 
 		["SpellDamage3"] = "^Если на персонаже: Увеличивает урон и объем исцеления от магических заклинаний и эффектов максимум на # ед%.$",
 		["SpellDamage4"] = "^%+# к урону от заклинаний$",
 		["SpellDamage5"] = "^UNUSED$",
+		["SpellDamage6"] = "^UNUSED$",
 		["SpellDamageAndHealing"] = "^Если на персонаже: Усиливает исходящее исцеление максимум на # ед%., а урон от магических эффектов и заклинаний – максимум на # ед%.$",
 		["SpellDamageAndHealing2"] = "^Если на персонаже: Усиливает исцеление от магических заклинаний и эффектов максимум на # ед%. и увеличивает урон от них максимум на # ед%.$",
 		["SpellDamageAndHealingEnchant"] = "^BUG IN GAME$",
@@ -772,7 +773,7 @@ end
 end
 
 if GetLocale() == "ruRU" then
-	PawnUseThisLocalization()	
+	PawnUseThisLocalization()
 end
 
 -- After using this localization or deciding that we don't need it, remove it from memory.

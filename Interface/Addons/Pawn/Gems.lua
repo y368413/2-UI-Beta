@@ -1,12 +1,8 @@
 ﻿-- Pawn by Vger-Azjol-Nerub
 -- www.vgermods.com
-<<<<<<< Updated upstream
 -- © 2006-2022 Travis Spomer.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
-=======
--- © 2006-2021 Green Eclipse.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
->>>>>>> Stashed changes
 -- See Readme.htm for more information.
--- 
+--
 -- Gem information
 ------------------------------------------------------------
 
@@ -282,7 +278,6 @@ PawnGemQualityLevels =
 	{ 0, PawnGemData1 },
 }
 
-<<<<<<< Updated upstream
 PawnMetaGemQualityLevels =
 {
 	{0, {} }, -- There are no meta gems anymore.
@@ -291,6 +286,3 @@ PawnMetaGemQualityLevels =
 PawnMinimumItemLevelToConsiderGems = 144 -- Sockets on items below this ilvl are ignored by default
 
 end -- if VgerCore.IsShadowlands
-=======
-PawnMinimumItemLevelToConsiderGems = 144 -- Sockets on items below this ilvl are ignored by default
->>>>>>> Stashed changes

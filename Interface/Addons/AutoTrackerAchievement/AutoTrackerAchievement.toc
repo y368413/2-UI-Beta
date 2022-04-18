@@ -6,5 +6,4 @@
 ## Notes-enEN: Automatically add in the tracklist achievements of the area
 ## SavedVariables: AutoTrackerAchievementDB
 
-AutoTrackerAchievement.xml
 AutoTrackerAchievement.lua

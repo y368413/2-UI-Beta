@@ -1,6 +1,8 @@
 ## Interface: 90200
-## Version: V2.0.2
 ## Title: |cff87CEEBS|r|cffEF5555E|r|cffA0522DQ|r|cff6ED73AU|r|cffFE4500I|r|cff3399EAP|r|cffFFFFFFment|r
+## Author: 汐染晨风
+## Version: V2.1.5
+## Notes: A plugin for observing Equipmentlist based on Scorpio
 ## Dependencies: Scorpio
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
@@ -8,32 +10,16 @@
 ## SavedVariablesPerCharacter: SEquipment_DB_Char
 
 # Localization files
-
 Locale\enUS.lua
 Locale\zhCN.lua
-
 
 # Config files
 Config.lua
 
-
 # Page files
-UIMenu\MainInterface.lua
-UIMenu\Home.lua
-UIMenu\General.lua
-Containers\Bag.lua
-Containers\BagAddons.lua
-Containers\Bank.lua
-Containers\GuildNew.lua
-Containers\Chat.lua
-Containers\PaperDollFrame.lua
-
-# Player files
-Player\PlayerListFrame.lua
-Player\Config.lua
-Player\Player.lua
-
-# Target files
-Target\TargetListFrame.lua
-Target\Config.lua
-Target\Target.lua
+MainInterface.lua
+Home.lua
+General.lua
+SetItemLevel.lua
+UnitOption.lua
+SetItemList.lua

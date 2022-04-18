@@ -24,7 +24,11 @@ end
 --     Data Collection    --
 ----------------------------
 local standardFont
+local leftbrackets = "("
+local rightbrackets = ")"
 if _Locale("zhCN") then
+    leftbrackets = "（"
+    rightbrackets = "）"
     standardFont="Fonts\\ARKai_T.ttf"
 elseif _Locale("zhTW") then
     standardFont = "Fonts\\blei00d.TTF"
@@ -53,10 +57,10 @@ SEFontStyle={
 }
 -- 纹理路径
 TexturePath={
-    [[Interface\AddOns\SEquipment\statsicons\CRIT]],
-    [[Interface\AddOns\SEquipment\statsicons\HASTE]],
-    [[Interface\AddOns\SEquipment\statsicons\MASTERY]],
-    [[Interface\AddOns\SEquipment\statsicons\VERSATILITY]],
+    [[Interface\AddOns\SEquipment\Media\CRIT]],
+    [[Interface\AddOns\SEquipment\Media\HASTE]],
+    [[Interface\AddOns\SEquipment\Media\MASTERY]],
+    [[Interface\AddOns\SEquipment\Media\VERSATILITY]],
 }
 StatsName = {
     L["Crit"],
@@ -74,7 +78,44 @@ ItemLocation = {
     "TOP","BOTTOM","LEFT","RIGHT","CENTER",
     "TOPLEFT","TOPRIGHT","BOTTOMLEFT","BOTTOMRIGHT",
 }
-
+-- 不要模仿
+local Parts = {
+    L["Head"],      L["Neck"],      L["Shoulders"], "",
+    L["Chest"],     L["Waist"],     L["Legs"],      L["Feet"],
+    L["Wrist"],     L["Hands"],     L["Finger"],    L["Trinket"],
+    L["Main Hand"], L["Off Hand"],  L["Main Hand"], L["Back"],
+    L["Main Hand"], "",             "",             L["Chest"],
+    L["Main Hand"], L["Off Hand"],  L["Off Hand"],  "",
+    "",             L["Main Hand"], "",             "",
+}
+--裝備清單
+SlotButton = {
+    { index = 1, name = HEADSLOT, },
+    { index = 2, name = NECKSLOT, },
+    { index = 3, name = SHOULDERSLOT, },
+    { index = 5, name = CHESTSLOT, },
+    { index = 6, name = WAISTSLOT, },
+    { index = 7, name = LEGSSLOT, },
+    { index = 8, name = FEETSLOT, },
+    { index = 9, name = WRISTSLOT, },
+    { index = 10, name = HANDSSLOT, },
+    { index = 11, name = FINGER0SLOT, },
+    { index = 12, name = FINGER1SLOT, },
+    { index = 13, name = TRINKET0SLOT, },
+    { index = 14, name = TRINKET1SLOT, },
+    { index = 15, name = BACKSLOT, },
+    { index = 16, name = MAINHANDSLOT, },
+    { index = 17, name = SECONDARYHANDSLOT, },
+}
+-- local EnchantParts = {
+--     [5]  = { 1, CHESTSLOT },
+--     [8]  = { 1, FEETSLOT },
+--     [11] = { 1, FINGER0SLOT },
+--     [12] = { 1, FINGER1SLOT },
+--     [15] = { 1, BACKSLOT },
+--     [16] = { 1, MAINHANDSLOT },
+--     [17] = { 1, SECONDARYHANDSLOT },
+-- }
 ----------------------------
 --        MainDialog      --
 --only one,can be defined --
@@ -204,7 +245,6 @@ Style.RegisterSkin("SETreeNode",{
 --    Frame,Texture,Text  --
 ----------------------------
 class "StatsIconFrame"      { Frame }
-class "StatsIconText"       { FontString }
 Style.UpdateSkin("Default",{
     [StatsIconFrame]                = {
         backdrop={
@@ -283,20 +323,9 @@ Style.UpdateSkin("Default",{
             location                = { Anchor("LEFT") },
             font                    = {
                 font                = SEFontStyle[1].value,
-                -- font                = SEFontStyle[_SVDB.FontStyleSet].value,
-                height              = 15,
+                height              = 14,
             }
-        },
-    -- })
-    -- Style.UpdateSkin("Default",{
-        [StatsIconText]             = {
-            location                = { Anchor("CENTER") },
-            font                    = {
-                font                = SEFontStyle[1].value,
-                -- font                = SEFontStyle[_SVDB.FontStyleSet].value,
-                height              = 15,
-            }
-        },
+        }
     })
 -- end
 -----------------------------------------------------------
@@ -305,109 +334,98 @@ Style.UpdateSkin("Default",{
 
 ----------------------------
 --      GetEquipInfo      --
---    Name,Link,Quality   --
+--  Name,Quality,EquipLoc --
 ----------------------------
-function GetEquipInfo(unit)
-    local EquipInfoList = {}
-    for i = 1, 17, 1 do
-        local EachItem = {
-            "",-- name
-            "",-- link
-            "",-- quality
-        }
-        if unit and GetInventoryItemLink(unit,i) then
-            EachItem[1],EachItem[2],EachItem[3]=GetItemInfo(GetInventoryItemLink(unit,i))
-            if i ~= 4 then
-                -- 获取非空装备列表,空插槽被忽略
-                table.insert(EquipInfoList,EachItem)
-            end
+function Get_Item_Info(link)
+    local name      = ""
+    local quality   = ""
+    local itemType  = ""
+    local equipLoc  = ""
+    if link then
+        name,_,quality  = GetItemInfo(link)
+        itemType        = select(6,GetItemInfo(link))
+        local invType   = C_Item.GetItemInventoryTypeByID(link)
+        if invType ~= 0 then
+            equipLoc    = Parts[invType]
         end
+        return name,quality,itemType,equipLoc
+    else
+        return name,quality,itemType,equipLoc
     end
-    return EquipInfoList
 end
 ----------------------------
 -- GetAvgItemLevelEquiped --
+--       Only Target      --
 ----------------------------
-function GetAvgItemLevelEquiped(unit)
-    local AvgItemLevelEquiped = "未知"
-    if unit == "player" then
-        _,AvgItemLevelEquiped = GetAverageItemLevel()
-    elseif unit == "target" then
-        AvgItemLevelEquiped = C_PaperDollInfo.GetInspectItemLevel(unit)
-    end
-    if AvgItemLevelEquiped ~= "未知" then
+function Get_Inspect_Item_Level(unit)
+    local AvgItemLevelEquiped =  C_PaperDollInfo.GetInspectItemLevel(unit)
+    if AvgItemLevelEquiped then
         return ("%.1f"):format(AvgItemLevelEquiped)
+    else
+        return ""
     end
-    return AvgItemLevelEquiped
 end
 ----------------------------
 --    GetEquipedGemInfo   --
---        Number,ID       --
+--       Enchant,Gem      --
 ----------------------------
-function GetEquipedGemInfo(links)
-    local AllGemInfo = {}
-    local GemNumber= 0
-    for _,va in ipairs(links) do
-        local LinkInfo = {}
-        local EachGemInfo = {
-            1,--Gem1
-            1,--Gem2
-            1,--Gem3
-            1,--Gem4
-            0,--ItemID
-        }
-        if va[2] ~= "" and va[2] ~= nil then
-            for k, v in pairs({strsplit(":", va[2])}) do
-                if #v > 0 then
-                    LinkInfo[k] = v
-                else
-                    LinkInfo[k]=1
-                end
-                if k==7 then
-                    break;
-                end
-            end
-            for key, value in pairs(LinkInfo) do
-                -- key>2,直接开始遍历宝石
-                -- 如果存在宝石,则存入宝石的ID,否则存入的value为 1
-                if key==4 and value ~= 1 then
-                    EachGemInfo[1]=value
-                    GemNumber=GemNumber+1
-                elseif key==5 and value ~= 1 then
-                    EachGemInfo[2]=value
-                    GemNumber=GemNumber+1
-                elseif key==6 and value ~= 1 then
-                    EachGemInfo[3]=value
-                    GemNumber=GemNumber+1
-                elseif key==7 and value ~= 1 then
-                    EachGemInfo[4]=value
-                    GemNumber=GemNumber+1
-                elseif key == 2 then
-                    EachGemInfo[5] = value
-                end
-            end
-        end
-        table.insert(AllGemInfo,EachGemInfo)
+function Get_Equiped_Info(link)
+    local Enchant           = 0
+    local Gem1              = 0
+    local Gem2              = 0
+    local Gem3              = 0
+    local Gem4              = 0
+    local ExistGemNumber    = 0
+    if not link then
+        return Enchant,Gem1,Gem2,Gem3,Gem4,ExistGemNumber
     end
-    return AllGemInfo,GemNumber
+    local linkinfo          = {}--非返回值
+    for i, v in pairs({strsplit(":", link)}) do
+        if #v > 0 then
+            linkinfo[i]     = v
+        else
+            linkinfo[i]     = 1
+        end
+        if i == 7 then
+            break;
+        end
+    end
+    for k, v in pairs(linkinfo) do
+        -- key>1,直接开始遍历宝石跟附魔
+        -- 如果存在宝石,则存入宝石的ID,否则存入的value为 1
+        if k == 4 and v ~= 1 then
+            Gem1            = v
+            ExistGemNumber  = ExistGemNumber + 1
+        elseif k == 5 and v ~= 1 then
+            Gem2            = v
+            ExistGemNumber  = ExistGemNumber + 1
+        elseif k == 6 and v ~= 1 then
+            Gem3            = v
+            ExistGemNumber  = ExistGemNumber + 1
+        elseif k == 7 and v ~= 1 then
+            Gem4            = v
+            ExistGemNumber  = ExistGemNumber + 1
+        elseif k == 3 and v ~= 1 then
+            Enchant         = v
+        end
+    end
+    return Enchant,Gem1,Gem2,Gem3,Gem4,ExistGemNumber
 end
 ----------------------------
 --       GetSpecInfo      --
---      Number,ID,Icon    --
+--     Name,ID,IconID     --
 ----------------------------
-function GetSpecInfo(unit)
-    local SpecInfo = {
-        0,-- ID
-        "",-- name
-        0,-- IconID
-    }
-    if GetInspectSpecialization(unit) and unit == "target" then
-        SpecInfo[1],SpecInfo[2],_,SpecInfo[3] = GetSpecializationInfoByID(GetInspectSpecialization(unit))
+function Get_Spec_Info(unit)
+    local name      = ""
+    local id        = 0
+    local iconId    = 0
+    if GetInspectSpecialization(unit) and unit ~= "player" then
+        id,name,_,iconId = GetSpecializationInfoByID(GetInspectSpecialization(unit))
     elseif UnitClass(unit) and GetSpecialization() and unit == "player" then
-        local _,_,ClassID = UnitClass(unit)
-        SpecInfo[1],SpecInfo[2],_,SpecInfo[3] = GetSpecializationInfoForClassID(ClassID,GetSpecialization())
+        local _,_,ClassID = UnitClass("player")
+        id,name,_,iconId = GetSpecializationInfoForClassID(ClassID,GetSpecialization())
     end
-    return SpecInfo
+    return name,id,iconId
 end
 ----------------------------
 --     GetEachEquipInfo   --
@@ -426,101 +444,71 @@ local Sockets = {
     EMPTY_SOCKET_PUNCHCARDYELLOW,   EMPTY_SOCKET_RED,
     EMPTY_SOCKET_YELLOW,
 }
-local Parts = {
-    L["Head"],L["Neck"],L["Shoulders"],0,L["Chest"],L["Waist"],L["Legs"],L["Feet"],L["Wrist"],
-    L["Hands"],L["Finger1"],L["Finger2"],L["Trinket1"],L["Trinket2"],L["Back"],L["Main Hand"],L["Off Hand"],
-}
-function GetEachEquipInfo(unit)
-    local AllItem={}
+function GetEachEquipInfo(link)
     local CritNumber            = 0
     local HasteNumber           = 0
     local MasteryNumber         = 0
     local VersaNumber           = 0
-    local NormalGemNumber       = 0
-    local SetNumber             = 0
-    for i = 1, 17, 1 do
-        local EachItem={
-            0,-- CritNumber
-            0,-- HasteNumber
-            0,-- MasteryNumber
-            0,-- VersaNumber
-            "",-- ItemLevel
-            false,-- IsNullGem
-            Parts[i],--SlotName
-            i,--SlotID
-            "",--套装词条
-        }
-        for _,left,right in GetGameTooltipLines("InventoryItem",unit,i,false,true) do
-            if left then
-                -- 爆击词条
-                if string.find(left,STAT_CRITICAL_STRIKE) and string.find(left,"+") then
-                    EachItem[1]=tonumber(string.match(left,"%d+"))
-                    CritNumber=CritNumber+tonumber(string.match(left,"%d+"))
-                
-                -- 急速词条
-                elseif string.find(left,STAT_HASTE) and string.find(left,"+") then
-                    EachItem[2]=tonumber(string.match(left,"%d+"))
-                    HasteNumber=HasteNumber+tonumber(string.match(left,"%d+"))
-                
-                -- 精通词条
-                elseif string.find(left,STAT_MASTERY) and string.find(left,"+") then
-                    EachItem[3]=tonumber(string.match(left,"%d+"))
-                    MasteryNumber=MasteryNumber+tonumber(string.match(left,"%d+"))
-                
-                -- 全能词条
-                elseif string.find(left,STAT_VERSATILITY) and string.find(left,"+") then
-                    EachItem[4]=tonumber(string.match(left,"%d+"))
-                    VersaNumber=VersaNumber+tonumber(string.match(left,"%d+"))
-                
-                -- 物品装等
-                elseif string.find(left,ITEM_LEVEL) then
-                    EachItem[5]=tonumber(string.match(left,"%d+"))
+    local EmptyGemNumber        = 0     --未镶嵌宝石数量
+    local ItemLevel             = 0
+    local EnchantInfo           = ""
+    local isPVPSet              = false --查看是否为具有PVP属性
+    local ItemSetId             = ""
+    if (not link) then
+        return ItemLevel, CritNumber, HasteNumber, MasteryNumber, VersaNumber, EmptyGemNumber, EnchantInfo, isPVPSet, ItemSetId
+    end
+    -- 拿到套装的ID,不是套装的返回值为 nil
+    ItemSetId                   = select(16,GetItemInfo(link))
+    -- 保持返回值一致性
+    if ItemSetId == nil then ItemSetId = "" end
+    for _,left,right in GetGameTooltipLines("Hyperlink",link) do
+        if left then
+            -- 拿到附魔信息
+            if string.match(left, ENCHANTS) then
+                EnchantInfo = left
+            end
+            -- 爆击词条
+            if string.find(left,STAT_CRITICAL_STRIKE) and string.find(left,"+") then
+                CritNumber      = CritNumber + tonumber(string.match(left,"%d+"))
 
-                -- 宝石数目
-                elseif IsDominationGem(left,Sockets) then
-                    EachItem[6]=true
-                    NormalGemNumber=NormalGemNumber+1
-                -- 查看套装件数
-                elseif string.find(left,"/5") and EachItem[5] >= 239 then
-                    SetNumber = SetNumber + 1
-                end
+            -- 急速词条
+            elseif string.find(left,STAT_HASTE) and string.find(left,"+") then
+                HasteNumber     = HasteNumber + tonumber(string.match(left, "%d+"))
+
+            -- 精通词条
+            elseif string.find(left,STAT_MASTERY) and string.find(left,"+") then
+                MasteryNumber   = MasteryNumber + tonumber(string.match(left, "%d+"))
+
+            -- 全能词条
+            elseif string.find(left,STAT_VERSATILITY) and string.find(left,"+") then
+                VersaNumber     = VersaNumber + tonumber(string.match(left, "%d+"))
+
+            -- 物品装等
+            elseif string.find(left,ITEM_LEVEL) then
+                ItemLevel       = tonumber(string.match(left,"%d+"))
+
+            -- 未镶嵌宝石数目
+            elseif IsDominationGem(left,Sockets) then
+                EmptyGemNumber  = EmptyGemNumber + 1
+            
+            -- 判断此装备是否有PVP效果
+            elseif string.find(left,"PvP") then
+                isPVPSet = true
             end
         end
-        -- 忽略了没有装备的插槽
-        if (type(EachItem[5]) == "number" and EachItem[5] > 0 and i ~= 4) then
-            table.insert(AllItem,EachItem)
-        end
     end
-    return AllItem,CritNumber,HasteNumber,MasteryNumber,VersaNumber,NormalGemNumber,SetNumber
+    return ItemLevel, CritNumber, HasteNumber, MasteryNumber, VersaNumber, EmptyGemNumber, EnchantInfo, isPVPSet, ItemSetId
 end
+-- local textlefttext = gsub(ENCHANTED_TOOLTIP_LINE, "%%s", ".+")
+-- print(textlefttext)
 -- 判断表中有无元素
 function IsDominationGem(meta,table)
-    local Boolean = false
-    for index, value in ipairs(table) do
+    for _, value in ipairs(table) do
         if tostring(meta) == tostring(value) then
-            Boolean = true
+            return true
         end
     end
-    return Boolean
-end
-----------------------------
---     GetQualityColor    --
---          r,g,b         --
-----------------------------
-function GetQualityColor(table)
-    local Colors = {}
-    for index,value in ipairs(table) do
-        local Color = {
-            r=0,
-            g=0,
-            b=0,
-        }
-        if value[3]~="" and value[3] ~= nil then
-            Color.r,Color.g,Color.b=GetItemQualityColor(value[3])
-            Colors[index] = Color
-        end
-    end
-    return Colors
+    return false
 end
 ----------------------------
 --     GetStatsPercent    --
@@ -578,7 +566,7 @@ local BaseStats = {
     [73]  = { 0.5,      4,      5,},
 }
 function GetStatsPercent(number,statsname,unit,SpecID)
-    if not BaseStats[SpecID[1]] then
+    if not BaseStats[SpecID] then
         return ""
     end
     local _,_,raceID = UnitRace(unit)
@@ -603,8 +591,8 @@ function GetStatsPercent(number,statsname,unit,SpecID)
         else
             Percent = 126
         end
-        if statsname == 3 and BaseStats[SpecID[1]][1] then
-            Percent = Percent * BaseStats[SpecID[1]][1] --XXX精通系数 GetMasteryEffect()
+        if statsname == 3 and BaseStats[SpecID][1] then
+            Percent = Percent * BaseStats[SpecID][1] --XXX精通系数 GetMasteryEffect()
         end
     elseif statsname == 2 then
         -- 急速
@@ -641,8 +629,8 @@ function GetStatsPercent(number,statsname,unit,SpecID)
             Percent = 126
         end
     end
-    if statsname == 1 and BaseStats[SpecID[1]][3] then
-        Percent = Percent + BaseStats[SpecID[1]][3]
+    if statsname == 1 and BaseStats[SpecID][3] then
+        Percent = Percent + BaseStats[SpecID][3]
         if raceID == 10 or raceID == 4 or raceID == 12 then
             Percent = Percent + 1
         end
@@ -650,8 +638,8 @@ function GetStatsPercent(number,statsname,unit,SpecID)
         if raceID == 7 then
             Percent = Percent + 1
         end
-    elseif statsname == 3 and BaseStats[SpecID[1]][2] then
-        Percent = Percent + BaseStats[SpecID[1]][2]
+    elseif statsname == 3 and BaseStats[SpecID][2] then
+        Percent = Percent + BaseStats[SpecID][2]
     elseif statsname == 4 then
         if raceID == 28 or raceID == 32 then
             Percent = Percent + 1
@@ -663,76 +651,104 @@ end
 ----------------------------
 --      Pure Function     --
 ----------------------------
-function GetNameLongMax(table)
-    local max = 1
-    for _, value in ipairs(table) do
-        if value[1] ~= nil then
-            if max == 1 then
-                max = #(value[1])
-            end
-            if max < #(value[1]) then
-                max = #(value[1])
-            end
+function Sum_Table(table)
+    local sum = 0
+    for index, value in ipairs(table) do
+        if value then
+            sum = sum + tonumber(value)
         end
     end
-    return max
+    return sum
 end
-
-----------------------------
--- Get Container ItemInfo --
---   Level,Part,Quality   --
-----------------------------
-function SEGetContainerItemInfo(itemLink)
-    local Color
-    local itemQuality = select(3,GetItemInfo(itemLink))
-    local itemLevel = select(1,GetDetailedItemLevelInfo(itemLink))
-    local itemType = select(6,GetItemInfo(itemLink))
-    local itemEquipLoc = select(9,GetItemInfo(itemLink))
-    local LocName = _G[itemEquipLoc]
-    if itemQuality then
-        Color = ITEM_QUALITY_COLORS[itemQuality].hex
+function Get_Max_String_Width(table)
+    local String = 0
+    for _, value in ipairs(table) do
+        if value > String then
+            String = value
+        end
     end
-    return Color,itemType,LocName,itemLevel
+    return String
+end
+function Get_Same_Mate(list)
+    local currentValue = {}
+    local resultTable = {}
+    for _, value in ipairs(list) do
+        -- 判断是否在当前表中
+        local boolean = true
+        for _, v in ipairs(currentValue) do
+            if v == value then
+                boolean = false
+                break
+            end
+        end
+        while boolean do
+            -- 不在当前表则嵌入表
+            table.insert(currentValue, value)
+            local time = 0
+            -- 找到相同元素
+            for i, v in ipairs(list) do
+                if v == value then
+                    time = time + 1
+                end
+            end
+            if time >= 1 then
+                table.insert(resultTable, value..leftbrackets..time..rightbrackets)
+            end
+            -- 防止死循环
+            break
+        end
+    end
+    return resultTable
 end
 ----------------------------
 -- Set Level To Container --
 --   Level,Part,Quality   --
 ----------------------------
-function ShowItemLevelAndPart(bag,number)
-    if not bag.size then
-        return
-    end
-    for i = 1, bag.size do
-        local button = _G[bag:GetName().."Item"..i]
-        Per_ShowItemLevel(button,number)
-    end
-end
-
-function Per_ShowItemLevel(self,number)
-    local itemLink = GetContainerItemLink(self:GetParent():GetID(),self:GetID())
-    Min_ShowItemLevel(itemLink,number,self)
-end
-
-function Min_ShowItemLevel(link,number,self)
-    local Colors,itemType,LocName,itemLevel
-    if link then
-        Colors,itemType,LocName,itemLevel = SEGetContainerItemInfo(link)
-    end
-    local levelshowLeveltext = FontString("levelshowLeveltext",self)
-    if (itemType == WEAPON  or itemType == ARMOR) and _SVDB.IsLevelShow[number] then
-        Style[levelshowLeveltext]    = {
-            text = Colors..tostring(itemLevel),
-            location = { Anchor(ItemLocation[_SVDB.LevelSetPartLocation[number]])},
-            font        = {
-                font    = SEFontStyle[_SVDB.FontStyleSet].value,
-                height  = _SVDB.LevelSetPartSize[number],
-                monochrome = false,
-                outline = "NORMAL"
-            },
+function Set_Per_Item_Level(self,link,number)
+    local leveltext                             = FontString("leveltext",self)
+    local parttext                              = FontString("parttext",self)
+    if link and _SVDB.IsLevelShow[number] then
+        local name,quality,itemType,equipLoc    = Get_Item_Info(link)
+        if not (itemType == WEAPON or itemType == ARMOR) then
+            Style[leveltext]                    = {
+                text                            = "",
+            }
+            Style[parttext]                     = {
+                text                            = "",
+            }
+            return
+        end
+        local itemlevel                         = select(1,GetEachEquipInfo(link))
+        if itemlevel == 0 then
+            itemlevel                           = ""
+        end
+        local SET_ITEM_QUALITY_COLOR            = ITEM_QUALITY_COLORS[quality].hex
+        Style[leveltext]                        = {
+            text                                = SET_ITEM_QUALITY_COLOR..tostring(itemlevel),
+            location                            = { Anchor(ItemLocation[_SVDB.LevelSetPartLocation[number]])},
+            font                                = {
+                font                            = SEFontStyle[_SVDB.FontStyleSet].value,
+                height                          = _SVDB.LevelSetPartSize[number],
+                monochrome                      = false,
+                outline                         = "NORMAL"
+            }
+        }
+        Style[parttext]                         = {
+            text                                = SET_ITEM_QUALITY_COLOR..equipLoc,
+            location                            = { Anchor("TOP")},
+            font                                = {
+                font                            = SEFontStyle[_SVDB.FontStyleSet].value,
+                height                          = 14,
+                monochrome                      = false,
+                outline                         = "NORMAL"
+            }
         }
     else
-        Style[levelshowLeveltext]    = {
-            text = "",
+        Style[leveltext]                        = {
+            text                                = "",
+        }
+        Style[parttext]                         = {
+            text                                = "",
         }
     end
 end

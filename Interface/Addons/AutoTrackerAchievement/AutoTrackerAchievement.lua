@@ -1,67 +1,22 @@
 
-local pStatusBar = 200
-
-SLASH_ATA1 = '/ata';
-SlashCmdList["ATA"] = AtaCommand;
-
-function AtaCommand(msg)
-	listeHF = 0;
-	if msg == 'clean' then CleanTrackList()
-	elseif msg == 'help' or msg == '' then
-		print("AtA commands :");
-		print(L["ata config"]);
-		print(L["ata check"]);
-		print(L["ata clean"]);
-		print(L["ata save"]);
-		print(L["ata load"]);
-		print(L["ata defaut"]);
-		print(L["ata mount"]);
-	elseif msg == 'config' then
-		AutoTrackerAchievement:Show();
-		AutoTrackerAchievement_CheckButton1:SetChecked(AutoTrackerAchievementDB["Arena"]);
-		AutoTrackerAchievement_CheckButton2:SetChecked(AutoTrackerAchievementDB["Raid"]);
-		AutoTrackerAchievement_CheckButton3:SetChecked(AutoTrackerAchievementDB["Region"]);
-		AutoTrackerAchievement_CheckButton4:SetChecked(AutoTrackerAchievementDB["Donjon"]);
-		AutoTrackerAchievement_CheckButton5:SetChecked(AutoTrackerAchievementDB["defaut"]);
-	elseif msg == 'debug' then
-		if select(1, UnitName("player")) == "Garikover" then
-			AutoTrackerAchievementDB["debug"] = (AutoTrackerAchievementDB["debug"] == false and true or false);
-			print("Ata Debug mode : ",AutoTrackerAchievementDB["debug"]);
-		end
-	elseif msg == 'mount' then CheckMount(false)
-	elseif msg == 'mount full' then CheckMount(true)
-	elseif msg == 'test' then CheckTest(false)
-	elseif msg == 'check' then CheckBestRaid()
-	elseif msg == 'reset' then AutoTrackerAchievementDB = AutoTrackerAchievementDB_Defaut;	
-	elseif msg == 'get' then AchievementListConstructor()
-	elseif string.find(msg, 'save ') == 1 then SaveTrackList(msg);
-	elseif string.find(msg, 'load ') == 1 then LoadTrackList(msg);
-	elseif string.find(msg, 'defaut ') == 1 then DefautTrackList(msg);
-	elseif string.find(msg, 'category ') == 1 then
-		subCat = string.gsub(msg, "category ", "");
-		idTable = GetCategoryList()
-		for key,value in ipairs(idTable) do
-			title, parentCategoryID, flags = GetCategoryInfo(value)
-			if parentCategoryID == tonumber(subCat) then print(value, title) end
-		end
-	else print(L["Commande non reconnue"]);
-	end	
-end
-
-
 -- ////////////////
--- Données
+--      DATA
 -- ////////////////
+
 local AutoTrackerAchievementDB_Defaut = {
-	["Arena"] = true,
-	["Raid"] = true,
-	["Region"] = true,
-	["Donjon"] = true,
+	["arena"] = true,
+	["raid"] = true,
+	["region"] = true,
+	["dungeon"] = true,
+	["progressBar"] = true,
+	["progressBarREF"] = "CENTER",
+	["progressBarX"] = 0,
+	["progressBarY"] = -200,
 	["defaut"] = true,
 	["defautliste"] = "",
 	["Favoris"] = {},
 	["debug"] = false,
-	["version"] = 7.0,
+	["version"] = 9.2,
 }
 
 local AtaDiff = {
@@ -91,15 +46,15 @@ local AtaDiff = {
 	-- 22 - Not used.
 	-- 23 - Mythic 5-player Instance.
 	-- 24 - Timewalker 5-player Instance.
-	
-	}
+
+}
 
 local AtaColor = {
 	Green = "|cFF00FF00",
 	Red = "|cFFFF0000",
 	Blue = "|cFF0000FF",
 	Yellow = "|cFFFFFF00",
-	}
+}
 
 local GetMapName = {
 
@@ -714,10 +669,10 @@ local GetMapName = {
 	[622] = 'Stormshield',
 	[623] = 'Hillsbrad Foothills (Southshore vs. Tarren Mill)',
 	[624] = 'Warspear',
-	[626] = 'Dalaran',
-	[627] = 'Dalaran',
-	[628] = 'Dalaran',
-	[629] = 'Dalaran',
+	[626] = 'Dalaran (Broken Isles)',
+	[627] = 'Dalaran (Broken Isles)',
+	[628] = 'Dalaran (Broken Isles)',
+	[629] = 'Dalaran (Broken Isles)',
 	[630] = 'Azsuna',
 	[631] = 'Nar\'thalas Academy',
 	[632] = 'Oceanus Cove',
@@ -1685,7 +1640,7 @@ local GetMapName = {
 	[2061] = 'Sepulcher of the First Ones',
 	[2066] = 'Zereth Mortis',
 }
-	
+
 local GetCategorie = {
 
 	--CategoryParent
@@ -1699,7 +1654,7 @@ local GetCategorie = {
 	['Deeprun Tram'] = 15202, -- Brawlers Alliance
 	['Brawl\'gar Arena'] = 15202, -- Brawlers Horde
 	-- Battlegrounds
-	['Arathi Basin'] = 14802,	
+	['Arathi Basin'] = 14802,
 	['Alterac Valley'] = 14801,
 	['Eye of the Storm'] = 14803,
 	['Warsong Gulch'] = 14804,
@@ -1722,303 +1677,303 @@ local GetCategorie = {
 
 
 }
-	
+
 local GetAchievementList = {
 	-- VANILLA
-		-- Régions
-		['Arathi Highlands'] = {4896,},
-		['Badlands'] = {4900,5444,},
-		['Blade\'s Edge Mountains'] = {1193,1276,},
-		['Blasted Lands'] = {4909,},
-		['Burning Steppes'] = {4901,},
-		['Desolace'] = {4930,},
-		['Eastern Plaguelands'] = {4892,},
-		['Felwood'] = {4931,},
-		['Netherstorm'] = {1194,},
-		['Northern Stranglethorn'] = {4906,},
-		['Searing Gorge'] = {4910,},
-		['Sholazar Basin'] = {39,938,},
-		['Silithus'] = {4934,},
-		['Swamp of Sorrows'] = {4904,},
-		['Tanaris'] = {4935,},
-		['The Cape of Stranglethorn'] = {4905,},
-		['The Hinterlands'] = {4897,},
-		['The Storm Peaks'] = {38,1428,},
-		['Thousand Needles'] = {4938,},
-		['Un\'Goro Crater'] = {4939,},
-		['Western Plaguelands'] = {4893,},
-		['Winterspring'] = {4940,5443,},
-		['Zangarmarsh'] = {1190,},
-		['Azshara']  = {5547,5448,5546,},
-		['Darkshore'] = {5453,},
-		-- Dungeons
-		-- Raid
+	-- Régions
+	['Arathi Highlands'] = {4896,},
+	['Badlands'] = {4900,5444,},
+	['Blade\'s Edge Mountains'] = {1193,1276,},
+	['Blasted Lands'] = {4909,},
+	['Burning Steppes'] = {4901,},
+	['Desolace'] = {4930,},
+	['Eastern Plaguelands'] = {4892,},
+	['Felwood'] = {4931,},
+	['Netherstorm'] = {1194,},
+	['Northern Stranglethorn'] = {4906,},
+	['Searing Gorge'] = {4910,},
+	['Sholazar Basin'] = {39,938,},
+	['Silithus'] = {4934,},
+	['Swamp of Sorrows'] = {4904,},
+	['Tanaris'] = {4935,},
+	['The Cape of Stranglethorn'] = {4905,},
+	['The Hinterlands'] = {4897,},
+	['The Storm Peaks'] = {38,1428,},
+	['Thousand Needles'] = {4938,},
+	['Un\'Goro Crater'] = {4939,},
+	['Western Plaguelands'] = {4893,},
+	['Winterspring'] = {4940,5443,},
+	['Zangarmarsh'] = {1190,},
+	['Azshara']  = {5547,5448,5546,},
+	['Darkshore'] = {5453,},
+	-- Dungeons
+	-- Raid
 
 	-- BURNING CRUSADE
-		-- Régions
-		['Terokkar Forest'] = {1275,},
-		['Nagrand'] = {939,},
-		['Shadowmoon Valley'] = {1195,},
-		-- Dungeons
-		-- Raid
+	-- Régions
+	['Terokkar Forest'] = {1275,},
+	['Nagrand'] = {939,},
+	['Shadowmoon Valley'] = {1195,},
+	-- Dungeons
+	-- Raid
 
 	-- LICH KING
-		-- Régions
-		['Zul\'Drak'] = {36,1596,},
-		['Dragonblight'] = {1277,547,},
-		['Borean Tundra'] = {561,},
-		['Icecrown'] = {40,},
-		-- Dungeons
-		['Utgarde Keep'] = {['HM'] = {1919,},},
-		['The Nexus'] = {['HM'] = {2150,2036,2037,},},
-		['Azjol-Nerub'] = {['HM'] = {1860,1296,1297,},},
-		['Ahn\'kahet: The Old Kingdom'] = {['HM'] = {1862,2038,2056,},},
-		['Drak\'Tharon Keep'] = {['HM'] = {2151,2057,2039,},},
-		['The Violet Hold'] = {['HM'] = {2041,1865,2153,1816,},},
-		['Gundrak'] = {['HM'] = {2058,2152,2040,1864,},},
-		['Halls of Stone'] = {['HM'] = {2151,1866,2155,},},
-		['Utgarde Pinnacle'] = {['HM'] = {2043,2156,2157,1873,1790,},},
-		['The Oculus'] = {['HM'] = {1871,1868,2046,2044,2045,},},
-		['Halls of Lightning'] = {['HM'] = {1834,2042,1867,},},
-		['Trial of the Champion'] = {['HM'] = {3802,3804,3803,},},
-		['The Culling of Stratholme'] = {['HM'] = {1872,1817,},},
-		['Pit of Saron'] = {['HM'] = {4525,4524,},},
-		['The Forge of Souls'] = {['HM'] = {4522,4523,},},
-		['Halls of Reflection'] = {['HM'] = {4526,},},
-		-- Raid
-		['Onyxia\'s Lair'] = {
-			['10'] = {4402,4404,4403,},
-			['25'] = {4405,4407,4406,},
-		},
-		['Vault of Archavon'] = {
-			['10'] = {4016,},
-			['25'] = {4017,},
-		},
-		['The Eye of Eternity'] = {
-			['10'] = {1874,2148},
-			['25'] = {1875,2149},
-		},
-		['The Obsidian Sanctum'] = {
-			['10'] = {2049,2050,2051,624,2047},
-			['25'] = {2052,2053,2054,1877,2048},
-		},
-		['Naxxramas'] = {
-			['10'] = {1997,1858,1856,2178,2176,1996,2182,2146,2184,578},
-			['25'] = {2140,1859,1857,2179,2177,2139,2183,2147,2185,579},
-		},
-		['Ulduar'] = {
-			['10'] = {2907,2909,3056,2905,2911,2925,2927,2930,2923,2919,2933,3058,2937,2934,2931,2947,2945,2941,2940,2939,2951,2959,2953,2955,3006,3076,2961,3182,2963,2967,3176,2971,2977,2975,2973,2982,2980,3179,2989,3180,3138,3181,2996,3159,3015,3008,3012,3014,3003},
-			['25'] = {2908,2910,3057,2906,2912,2926,2928,2929,2924,2921,3059,2938,2936,2932,2948,2946,2944,2943,2942,2952,2960,2954,2956,3007,3077,2962,3184,2965,2968,3183,2972,2978,2976,2974,2983,2981,3187,3237,3189,2995,3188,2997,3164,3016,3010,3013,3017,3002},
-		},
-		['Trial of the Crusader'] = {
-			['10'] = {3917,3797,3936,3996,3799,3800},
-			['25'] = {3916,3813,3937,3997,3815,3816},
-		},
-		['Icecrown Citadel'] = {
-			['10'] = {4534,4535,4536,4537,4538,4577,4578,4582,4539,4579,4580,4581,4601},
-			['25'] = {4610,4611,4612,4613,4614,4615,4616,4617,4618,4619,4620,4622,4621},
-		},
+	-- Régions
+	['Zul\'Drak'] = {36,1596,},
+	['Dragonblight'] = {1277,547,},
+	['Borean Tundra'] = {561,},
+	['Icecrown'] = {40,},
+	-- Dungeons
+	['Utgarde Keep'] = {['HM'] = {1919,},},
+	['The Nexus'] = {['HM'] = {2150,2036,2037,},},
+	['Azjol-Nerub'] = {['HM'] = {1860,1296,1297,},},
+	['Ahn\'kahet: The Old Kingdom'] = {['HM'] = {1862,2038,2056,},},
+	['Drak\'Tharon Keep'] = {['HM'] = {2151,2057,2039,},},
+	['The Violet Hold'] = {['HM'] = {2041,1865,2153,1816,},},
+	['Gundrak'] = {['HM'] = {2058,2152,2040,1864,},},
+	['Halls of Stone'] = {['HM'] = {2151,1866,2155,},},
+	['Utgarde Pinnacle'] = {['HM'] = {2043,2156,2157,1873,1790,},},
+	['The Oculus'] = {['HM'] = {1871,1868,2046,2044,2045,},},
+	['Halls of Lightning'] = {['HM'] = {1834,2042,1867,},},
+	['Trial of the Champion'] = {['HM'] = {3802,3804,3803,},},
+	['The Culling of Stratholme'] = {['HM'] = {1872,1817,},},
+	['Pit of Saron'] = {['HM'] = {4525,4524,},},
+	['The Forge of Souls'] = {['HM'] = {4522,4523,},},
+	['Halls of Reflection'] = {['HM'] = {4526,},},
+	-- Raid
+	['Onyxia\'s Lair'] = {
+		['10'] = {4402,4404,4403,},
+		['25'] = {4405,4407,4406,},
+	},
+	['Vault of Archavon'] = {
+		['10'] = {4016,},
+		['25'] = {4017,},
+	},
+	['The Eye of Eternity'] = {
+		['10'] = {1874,2148},
+		['25'] = {1875,2149},
+	},
+	['The Obsidian Sanctum'] = {
+		['10'] = {2049,2050,2051,624,2047},
+		['25'] = {2052,2053,2054,1877,2048},
+	},
+	['Naxxramas'] = {
+		['10'] = {1997,1858,1856,2178,2176,1996,2182,2146,2184,578},
+		['25'] = {2140,1859,1857,2179,2177,2139,2183,2147,2185,579},
+	},
+	['Ulduar'] = {
+		['10'] = {2907,2909,3056,2905,2911,2925,2927,2930,2923,2919,2933,3058,2937,2934,2931,2947,2945,2941,2940,2939,2951,2959,2953,2955,3006,3076,2961,3182,2963,2967,3176,2971,2977,2975,2973,2982,2980,3179,2989,3180,3138,3181,2996,3159,3015,3008,3012,3014,3003},
+		['25'] = {2908,2910,3057,2906,2912,2926,2928,2929,2924,2921,3059,2938,2936,2932,2948,2946,2944,2943,2942,2952,2960,2954,2956,3007,3077,2962,3184,2965,2968,3183,2972,2978,2976,2974,2983,2981,3187,3237,3189,2995,3188,2997,3164,3016,3010,3013,3017,3002},
+	},
+	['Trial of the Crusader'] = {
+		['10'] = {3917,3797,3936,3996,3799,3800},
+		['25'] = {3916,3813,3937,3997,3815,3816},
+	},
+	['Icecrown Citadel'] = {
+		['10'] = {4534,4535,4536,4537,4538,4577,4578,4582,4539,4579,4580,4581,4601},
+		['25'] = {4610,4611,4612,4613,4614,4615,4616,4617,4618,4619,4620,4622,4621},
+	},
 
 	-- CATACLYSM
-		-- Régions
-		['Mount Hyjal'] = {4870,5869,4959,5864,5868,5861,5483,5865,5862,5860,},
-		['Vashj\'ir'] = {4975,5452,},
-		['Twilight Highlands'] = {5451,4960,},
-		['Molten Front'] = {5870,5872,5874,5859,5866,5871,5867,},
-		['Uldum'] = {4872,4961,5317,},
-		['Deepholm'] = {4871,5445,5450,5446,5447,5449,},
-		-- Dungeons
-		['Blackrock Caverns'] = {['HM'] = {5281,5282,5283,5284,},},
-		['Lost City of the Tol\'vir'] = {['HM'] = {5290,5291,5292,},},
-		['Grim Batol'] = {['HM'] = {5297,5298,},},
-		['Throne of the Tides'] = {['HM'] = {5285,5286,},},
-		['End Time'] = {['HM'] = {5995,6130,},},
-		['The Vortex Pinnacle'] = {['HM'] = {5288,5289,},},
-		['The Stonecore'] = {['HM'] = {5287,},},
-		['Hour of Twilight'] = {['HM'] = {},},
-		['Well of Eternity'] = {['HM'] = {6127,6070,},},
-		['Halls of Origination'] = {['HM'] = {5294,5295,5293,5296,},},
-		['Zul\'Aman'] = {['HM'] = {5761,5750,5760,5858,},},
-		['Zul\'Gurub'] = {['HM'] = {5744,5743,5759,5762,},},
-		-- Raid
-		['Blackwing Lair'] = {['NM'] = {5306,5309,5307,5310,5308,4849,4842},},
-		['The Bastion of Twilight'] = {['NM'] = {4852,5312,5311,4850},},
-		['Throne of the Four Winds'] = {['NM'] = {5304,5305,4851},},
-		['Firelands'] = {['NM'] = {5810,5813,5829,5821,5855,5799,5830,5802},},
-		['Dragon Soul'] = {['NM'] = {6174,6180,6128,6105,6133,6107,6175,6084},},
+	-- Régions
+	['Mount Hyjal'] = {4870,5869,4959,5864,5868,5861,5483,5865,5862,5860,},
+	['Vashj\'ir'] = {4975,5452,},
+	['Twilight Highlands'] = {5451,4960,},
+	['Molten Front'] = {5870,5872,5874,5859,5866,5871,5867,},
+	['Uldum'] = {4872,4961,5317,},
+	['Deepholm'] = {4871,5445,5450,5446,5447,5449,},
+	-- Dungeons
+	['Blackrock Caverns'] = {['HM'] = {5281,5282,5283,5284,},},
+	['Lost City of the Tol\'vir'] = {['HM'] = {5290,5291,5292,},},
+	['Grim Batol'] = {['HM'] = {5297,5298,},},
+	['Throne of the Tides'] = {['HM'] = {5285,5286,},},
+	['End Time'] = {['HM'] = {5995,6130,},},
+	['The Vortex Pinnacle'] = {['HM'] = {5288,5289,},},
+	['The Stonecore'] = {['HM'] = {5287,},},
+	['Hour of Twilight'] = {['HM'] = {},},
+	['Well of Eternity'] = {['HM'] = {6127,6070,},},
+	['Halls of Origination'] = {['HM'] = {5294,5295,5293,5296,},},
+	['Zul\'Aman'] = {['HM'] = {5761,5750,5760,5858,},},
+	['Zul\'Gurub'] = {['HM'] = {5744,5743,5759,5762,},},
+	-- Raid
+	['Blackwing Lair'] = {['NM'] = {5306,5309,5307,5310,5308,4849,4842},},
+	['The Bastion of Twilight'] = {['NM'] = {4852,5312,5311,4850},},
+	['Throne of the Four Winds'] = {['NM'] = {5304,5305,4851},},
+	['Firelands'] = {['NM'] = {5810,5813,5829,5821,5855,5799,5830,5802},},
+	['Dragon Soul'] = {['NM'] = {6174,6180,6128,6105,6133,6107,6175,6084},},
 
 	-- MYSTS OF PANDARIA
-		-- Régions
-		['Kun-Lai Summit'] = {6537,7286,},
-		['Dread Wastes'] = {6540,7316,7312,7313,},
-		['Townlong Steppes'] = {6539,7297,7298,7288,7299,},
-		['Vale of Eternal Blossoms'] = {7315,7317,7319,7320,},
-		['Valley of the Four Winds'] = {6301,7295,},
-		['Isle of Thunder'] = {8099,8103,8104,8108,8109,8111,8114,8116,8118,8120,8101,8105,8107,8110,8112,8115,8117,8119,8212},
-		['Isle of Giants'] = {8123,},
-		['Timeless Isle'] = {8714,8726,8729,8712,8728,8730,8727,8723,8784,8722,8725,8724,8743,},
-		-- Scenario
-		['Arena of Annihilation'] = {7273,7272},
-		['Crypt of Forgotten Kings'] = {7275,7276},
-		['Brewmoon Festival'] = {6930,6931},
-		['Theramore\'s Fall (A)'] = {7527,7526},
-		['Theramore\'s Fall (H)'] = {7530,7529},
-		['Greenstone Village'] = {7266,7267},
-		['A Brewing Storm'] = {7261,7258,7257},
-		['Unga Ingoo'] = {7231,7232,7239,7248},
-		['Lion\'s Landing (A)'] = {8011,8012},
-		['Domination Point (H)'] = {8014,8015},
-		['A Little Patience'] = {7989,7990,7991,7992,7993},
-		['Dagger in the Dark'] = {7984,7986,7987},
-		['Assault on Zan\'vess'] = {8017,8016},
-		['Thunder King\'s Citadel'] = {8106,},
-		['Dark Heart of Pandaria'] = {8319,},
-		['Battle on the High Seas'] = {8347,},
-		['Blood in the Snow'] = {8329,8330,},
-		['The Secrets of Ragefire'] = {8295,},
-		-- Dungeons
-		['Stormstout Brewery'] = {['HM'] = {6420,6400,6089,6402,},},
-		['Shado-Pan Monastery'] = {['HM'] = {6477,6472, 6471,},},
-		['Scarlet Monastery'] = {['HM'] = {6929,6946,6928,},},
-		['Mogu\'shan Palace'] = {['HM'] = {6478,6736,6713,},},
-		['Gate of the Setting Sun'] = {['HM'] = {6476,6479,6945,},},
-		['Scarlet Halls'] = {['HM'] = {6427,6684,},},
-		['Scholomance'] = {['HM'] = {6531,6394,6396,6821,},},
-		['Siege of Niuzao Temple'] = {['HM'] = {6822,6688,6485,},},
-		['Temple of the Jade Serpent'] = {['HM'] = {6460,6475,6671,},},
-		-- Raid
-		['Mogu\'shan Vaults'] = {['NM'] = {6455,7056,6687,6823,6674,6686,},},
-		['Heart of Fear'] = {['NM'] = {6553,6937,6922,6683,6518,6936,},},
-		['Terrace of Endless Spring'] = {['NM'] = {6824,6825,6717,6933,},},
-		['Throne of Thunder'] = {['NM'] = {8094,8038,8073,8077,8082,8097,8098,8037,8081,8087,8086,8090,},},
-		['Siege of Orgrimmar'] = {['NM'] = {8537,8529,8461,8448,8530,8520,8462,8543,8459,8527,8531,8453,8536,8538,8521,8532,8528,8679,},},
+	-- Régions
+	['Kun-Lai Summit'] = {6537,7286,},
+	['Dread Wastes'] = {6540,7316,7312,7313,},
+	['Townlong Steppes'] = {6539,7297,7298,7288,7299,},
+	['Vale of Eternal Blossoms'] = {7315,7317,7319,7320,},
+	['Valley of the Four Winds'] = {6301,7295,},
+	['Isle of Thunder'] = {8099,8103,8104,8108,8109,8111,8114,8116,8118,8120,8101,8105,8107,8110,8112,8115,8117,8119,8212},
+	['Isle of Giants'] = {8123,},
+	['Timeless Isle'] = {8714,8726,8729,8712,8728,8730,8727,8723,8784,8722,8725,8724,8743,},
+	-- Scenario
+	['Arena of Annihilation'] = {7273,7272},
+	['Crypt of Forgotten Kings'] = {7275,7276},
+	['Brewmoon Festival'] = {6930,6931},
+	['Theramore\'s Fall (A)'] = {7527,7526},
+	['Theramore\'s Fall (H)'] = {7530,7529},
+	['Greenstone Village'] = {7266,7267},
+	['A Brewing Storm'] = {7261,7258,7257},
+	['Unga Ingoo'] = {7231,7232,7239,7248},
+	['Lion\'s Landing (A)'] = {8011,8012},
+	['Domination Point (H)'] = {8014,8015},
+	['A Little Patience'] = {7989,7990,7991,7992,7993},
+	['Dagger in the Dark'] = {7984,7986,7987},
+	['Assault on Zan\'vess'] = {8017,8016},
+	['Thunder King\'s Citadel'] = {8106,},
+	['Dark Heart of Pandaria'] = {8319,},
+	['Battle on the High Seas'] = {8347,},
+	['Blood in the Snow'] = {8329,8330,},
+	['The Secrets of Ragefire'] = {8295,},
+	-- Dungeons
+	['Stormstout Brewery'] = {['HM'] = {6420,6400,6089,6402,},},
+	['Shado-Pan Monastery'] = {['HM'] = {6477,6472, 6471,},},
+	['Scarlet Monastery'] = {['HM'] = {6929,6946,6928,},},
+	['Mogu\'shan Palace'] = {['HM'] = {6478,6736,6713,},},
+	['Gate of the Setting Sun'] = {['HM'] = {6476,6479,6945,},},
+	['Scarlet Halls'] = {['HM'] = {6427,6684,},},
+	['Scholomance'] = {['HM'] = {6531,6394,6396,6821,},},
+	['Siege of Niuzao Temple'] = {['HM'] = {6822,6688,6485,},},
+	['Temple of the Jade Serpent'] = {['HM'] = {6460,6475,6671,},},
+	-- Raid
+	['Mogu\'shan Vaults'] = {['NM'] = {6455,7056,6687,6823,6674,6686,},},
+	['Heart of Fear'] = {['NM'] = {6553,6937,6922,6683,6518,6936,},},
+	['Terrace of Endless Spring'] = {['NM'] = {6824,6825,6717,6933,},},
+	['Throne of Thunder'] = {['NM'] = {8094,8038,8073,8077,8082,8097,8098,8037,8081,8087,8086,8090,},},
+	['Siege of Orgrimmar'] = {['NM'] = {8537,8529,8461,8448,8530,8520,8462,8543,8459,8527,8531,8453,8536,8538,8521,8532,8528,8679,},},
 
 	-- DRAENOR
-		-- Régions
-		['Gorgrond'] = {8939,9400,9401,9402,9659,9607,9659,9656,9655,9667,9663,9658,9678,9654,},
-		['Frostfire Ridge'] = {8937,9533,9535,9534,9710,9711,9536,9537,},
-		['Shadowmoon Valley (Draenor)'] = {8938,9433,8845,9434,9483,9437,9435,9433,9481,9436,9479,9432,},
-		['Nagrand (Draenor)'] = {8942,9615,9617,9541,9548,9610,},
-		['Talador'] = {8940,9632,9638,9674,9434,9636,9634,9637,9632,9638,9636,9635,9633,9486,},
-		['Spires of Arak'] = {8941,9613,9612,9600,9571,9601,},
-		['Tanaan Jungle'] = {10261,10260,10069,10061,10262,10070,},
-		-- Dungeons
-		['Auchindoun'] = {['HM'] = {9552,9023,9551,},}, -- Auchindoun
-		['Grimrail Depot'] = {['HM'] = {9024,9007,},}, -- Dêpot de Tristerail
-		['The Everbloom'] = {['HM'] = {9017,9493,9223,},}, -- La Flore éternelle
-		['Bloodmaul Slag Mines'] = {['HM'] = {9008,8993,9005,},}, -- Mine de la Masse-Sanglante
-		['Skyreach'] = {['HM'] = {9033,9035,9034,9036,},}, -- Orée-du-ciel
-		['Iron Docks'] = {['HM'] = {9082,9083,9081,},}, -- Quais de Fer
-		['Shadowmoon Burial Grounds'] = {['HM'] = {9025,9026,9018,},}, -- Terres sacrées de Ombrelune
-		['Upper Blackrock Spire'] = {['HM'] = {9057,9058,9045,9056},}, -- Sommets du Pic Rochenoire
-		-- Raid
-		['Highmaul'] = {['NM'] = {8948,8947,8974,8958,8975,8976,8977,},},
-		['Blackrock Foundry'] = {['NM'] = {8979,8980,8930,8983,8982,8978,8929,8981,8984,8952,},},
-		['Hellfire Citadel'] = {['NM'] = {10013,10012,10020,10087,10073,9979,10057,10030,9989,10086,10026,9988,9972,},},
+	-- Régions
+	['Gorgrond'] = {8939,9400,9401,9402,9659,9607,9659,9656,9655,9667,9663,9658,9678,9654,},
+	['Frostfire Ridge'] = {8937,9533,9535,9534,9710,9711,9536,9537,},
+	['Shadowmoon Valley (Draenor)'] = {8938,9433,8845,9434,9483,9437,9435,9433,9481,9436,9479,9432,},
+	['Nagrand (Draenor)'] = {8942,9615,9617,9541,9548,9610,},
+	['Talador'] = {8940,9632,9638,9674,9434,9636,9634,9637,9632,9638,9636,9635,9633,9486,},
+	['Spires of Arak'] = {8941,9613,9612,9600,9571,9601,},
+	['Tanaan Jungle'] = {10261,10260,10069,10061,10262,10070,},
+	-- Dungeons
+	['Auchindoun'] = {['HM'] = {9552,9023,9551,},}, -- Auchindoun
+	['Grimrail Depot'] = {['HM'] = {9024,9007,},}, -- Dêpot de Tristerail
+	['The Everbloom'] = {['HM'] = {9017,9493,9223,},}, -- La Flore éternelle
+	['Bloodmaul Slag Mines'] = {['HM'] = {9008,8993,9005,},}, -- Mine de la Masse-Sanglante
+	['Skyreach'] = {['HM'] = {9033,9035,9034,9036,},}, -- Orée-du-ciel
+	['Iron Docks'] = {['HM'] = {9082,9083,9081,},}, -- Quais de Fer
+	['Shadowmoon Burial Grounds'] = {['HM'] = {9025,9026,9018,},}, -- Terres sacrées de Ombrelune
+	['Upper Blackrock Spire'] = {['HM'] = {9057,9058,9045,9056},}, -- Sommets du Pic Rochenoire
+	-- Raid
+	['Highmaul'] = {['NM'] = {8948,8947,8974,8958,8975,8976,8977,},},
+	['Blackrock Foundry'] = {['NM'] = {8979,8980,8930,8983,8982,8978,8929,8981,8984,8952,},},
+	['Hellfire Citadel'] = {['NM'] = {10013,10012,10020,10087,10073,9979,10057,10030,9989,10086,10026,9988,9972,},},
 
 	-- LEGION
-		-- Régions
-		['Azsuna'] = {11261,10665,11256,},
-		['Val\'sharah'] = {11262,10666,11258,},
-		['Highmountain'] = {11264,10667,11257,},
-		['Stormheim'] = {11263,10668,11259,},
-		['Suramar'] = {11265,10669,11260,},
-		['Dalaran (Legion)'] = {11066,},
-		['Broken Shore'] = {11681,11543,11841,11802,11731,11737,11735,11732,11738,11736,11607},
-		['Eredath'] = {12084,12101,12102,12103,12104,12069,12074,12077,12078,12028,},
-		['Antoran Wastes'] = {12084,12101,12102,12103,12104,12069,12074,12077,12078,12028,},
-		['Krokuun'] = {12084,12101,12102,12103,12104,12069,12074,12077,12078,12028,},
-		['Argus'] = {12084,12101,12102,12103,12104,12069,12074,12077,12078,12028,},
-		-- Dungeons
-		['Black Rook Hold'] = {['MM'] = {10709,10710,10711,},}, -- Bastion du Freux
-		['Cathedral of Eternal Night'] = {['MM'] = {11768,11703,11769,},}, -- Cathedrale de la Nuit éternelle
-		['Vault of the Wardens'] = {['MM'] = {10679,10707,10680,},}, -- Caveau des gardiennes
-		['Court of Stars'] = {['MM'] = {10610,10611,},}, -- Cour des étoiles
-		['Darkheart Thicket'] = {['MM'] = {10769,10766,},}, -- Fourré Sombrecoeur
-		['Helmouth Cliffs'] = {['MM'] = {10413,10411,10412,},}, -- Gueule des âmes
-		['The Arcway'] = {['MM'] = {10773,10775,10776,},}, -- L'Arcavia
-		['Violet Hold'] = {['MM'] = {10554,10553,},}, -- Fort Pourpre (Legion)
-		['Eye of Azshara'] = {['MM'] = {10456,10458,10457,},}, -- Œil d'Azshara
-		['Neltharion\'s Lair'] = {['MM'] = {10996,10875,},}, -- Repaire de Neltharion
-		['Karazhan (Legion)'] = {['MM'] = {11335,11433,11338,11432,11430,},}, -- Retour à Karazhan
-		['Halls of Valor'] = {['MM'] = {10542,10543,10544,},}, -- Salles des Valeureux
-		['The Seat of the Triumvirate'] = {['MM'] = {12004,12005,12009,},}, -- Le siège du Triumvirat
-		-- Raid
-		['The Emerald Nightmare'] = {['NM'] = {10555, 10772,10753,10663,10755,10771,10830,},},
-		['Trial of Valor'] = {['NM'] = {11337,11387,11386,11377,},},
-		['The Nighthold'] = {['NM'] = {10575,10817,10851,10696,10699,10754,10829,10697,10704,10678,10742,},},
-		['Tomb of Sargeras'] = {['NM'] = {11770,11696,11683,11724,11773,11676,11675,11699,11674,},},
-		['Antorus, the Burning Throne'] = {['NM'] = {12257, 11948, 12065, 11949, 12030, 11915, 11928, 12046, 12067, 11930, 12129,},},
+	-- Régions
+	['Azsuna'] = {11261,10665,11256,},
+	['Val\'sharah'] = {11262,10666,11258,},
+	['Highmountain'] = {11264,10667,11257,},
+	['Stormheim'] = {11263,10668,11259,},
+	['Suramar'] = {11265,10669,11260,},
+	['Dalaran (Broken Isles)'] = {11066,},
+	['Broken Shore'] = {11681,11543,11841,11802,11731,11737,11735,11732,11738,11736,11607},
+	['Eredath'] = {12084,12101,12102,12103,12104,12069,12074,12077,12078,12028,},
+	['Antoran Wastes'] = {12084,12101,12102,12103,12104,12069,12074,12077,12078,12028,},
+	['Krokuun'] = {12084,12101,12102,12103,12104,12069,12074,12077,12078,12028,},
+	['Argus'] = {12084,12101,12102,12103,12104,12069,12074,12077,12078,12028,},
+	-- Dungeons
+	['Black Rook Hold'] = {['MM'] = {10709,10710,10711,},}, -- Bastion du Freux
+	['Cathedral of Eternal Night'] = {['MM'] = {11768,11703,11769,},}, -- Cathedrale de la Nuit éternelle
+	['Vault of the Wardens'] = {['MM'] = {10679,10707,10680,},}, -- Caveau des gardiennes
+	['Court of Stars'] = {['MM'] = {10610,10611,},}, -- Cour des étoiles
+	['Darkheart Thicket'] = {['MM'] = {10769,10766,},}, -- Fourré Sombrecoeur
+	['Helmouth Cliffs'] = {['MM'] = {10413,10411,10412,},}, -- Gueule des âmes
+	['The Arcway'] = {['MM'] = {10773,10775,10776,},}, -- L'Arcavia
+	['Violet Hold'] = {['MM'] = {10554,10553,},}, -- Fort Pourpre (Legion)
+	['Eye of Azshara'] = {['MM'] = {10456,10458,10457,},}, -- Œil d'Azshara
+	['Neltharion\'s Lair'] = {['MM'] = {10996,10875,},}, -- Repaire de Neltharion
+	['Karazhan (Legion)'] = {['MM'] = {11335,11433,11338,11432,11430,},}, -- Retour à Karazhan
+	['Halls of Valor'] = {['MM'] = {10542,10543,10544,},}, -- Salles des Valeureux
+	['The Seat of the Triumvirate'] = {['MM'] = {12004,12005,12009,},}, -- Le siège du Triumvirat
+	-- Raid
+	['The Emerald Nightmare'] = {['NM'] = {10555, 10772,10753,10663,10755,10771,10830,},},
+	['Trial of Valor'] = {['NM'] = {11337,11387,11386,11377,},},
+	['The Nighthold'] = {['NM'] = {10575,10817,10851,10696,10699,10754,10829,10697,10704,10678,10742,},},
+	['Tomb of Sargeras'] = {['NM'] = {11770,11696,11683,11724,11773,11676,11675,11699,11674,},},
+	['Antorus, the Burning Throne'] = {['NM'] = {12257, 11948, 12065, 11949, 12030, 11915, 11928, 12046, 12067, 11930, 12129,},},
 
 	-- BATTLE FOR AZEROTH
-		-- Régions
-		['Tiragarde Sound'] = {12939,13050,12556,13058,13057,12852,},
-		['Stormsong Valley'] = {12940,13047,13042,13045,13046,13054,12558,13051,12853,},
-		['Drustvar'] = {12941,12557,13094,12995,13087,13083,13064,12941,},
-		['Nazmir'] = {12942,13048,13023,12561,12771,},
-		['Zuldazar'] = {12944,13048,13035,12559,12851,},
-		['Vol\'dun'] = {12943,13011,12560,12849,},
-		['Mechagon Island'] = {13696, 13776,13489,13470,13556,13479,13708,13625,13477,13474,13476,13693,13473,13478,13475,13482,13695},
-		['Nazjatar'] = {13712,13699,13549,13691,13626,13836,13692,13715,13713,13720,13722,13694,13690,13635,13695,},
-		['Uldum (N\'Zoth)'] = {14159,14158,14160,},
-		['Vale of Eternal Blossoms (N\'Zoth)'] = {14159,14158,14160,},
-		-- Dungeons
-		['Freehold'] = {['MM'] = {12548,12998,12550,},}, -- Alliance -- Port-Liberté
-		['Tol Dagor'] = {['MM'] = {12462,12457,},}, -- Alliance -- Tol Dagor
-		['Waycrest Manor'] = {['MM'] = {12490,12495,12489,},}, -- Alliance -- Manoir Malvoie
-		['Shrine of the Storm'] = {['MM'] = {12600,12602,12601,},}, -- Alliance -- Sanctuaire des Tempêtes
-		['Siege of Boralus'] = {['MM'] = {12726,12727,12489,},}, -- Alliance -- Siège de Boralus
-		['Atal\'Dazar'] = {['MM'] = {12273,12272,12270,},}, -- Horde -- Atal'Dazar
-		['The MOTHERLODE!!'] = {['MM'] = {12854,12855,},}, -- Horde -- le Filon !
-		['Temple of Sethraliss'] = {['MM'] = {12508,12507,12503,},}, -- Horde -- Temple de Sephraliss
-		['The Underrot'] = {['MM'] = {12549,12498,12499,},}, -- Horde -- Les tréfonds Putrides
-		['Kings\' Rest'] = {['MM'] = {12723,12722,},}, -- Horde -- Repos des rois
-		['Mechagon'] = {['MM'] = {13624,13698,13706,13723,13545,},},
-		-- Islands
-		['Dread Chain'] = {13095, 13096, 13097, 13098, 13142, 13125, 12597, 13120, 12594, 13134, 12595, 13126, 13132, 13128, 13122, 13141, 12596, 13121, 13129, 13127,},
-		['The Rotting Mire'] = {13103, 13104, 13105, 13106, 13142, 13125, 12597, 13120, 12594, 13134, 12595, 13126, 13132, 13128, 13122, 13141, 12596, 13121, 13129, 13127,},
-		['Un\'gol Ruins'] = {12590, 12589, 12591, 12592, 13142, 13125, 12597, 13120, 12594, 13134, 12595, 13126, 13132, 13128, 13122, 13141, 12596, 13121, 13129, 13127,},
-		['Whispering Reef'] = {13119, 13118, 13116, 13115, 13142, 13125, 12597, 13120, 12594, 13134, 12595, 13126, 13132, 13128, 13122, 13141, 12596, 13121, 13129, 13127,},
-		['Havenswood'] = {13396, 13397, 13398, 13400, 13142, 13125, 12597, 13120, 12594, 13134, 12595, 13126, 13132, 13128, 13122, 13141, 12596, 13121, 13129, 13127,},
-		['Snowblossom Village'] = {13581, 13582, 13583, 13584, 13142, 13125, 12597, 13120, 12594, 13134, 12595, 13126, 13132, 13128, 13122, 13141, 12596, 13121, 13129, 13127,},
-		['Molten Cay'] = {13099, 13100, 13101, 13102, 13142, 13125, 12597, 13120, 12594, 13134, 12595, 13126, 13132, 13128, 13122, 13141, 12596, 13121, 13129, 13127,},
-		['Skittering Hollow'] = {13107, 13108, 13109, 13110, 13142, 13125, 12597, 13120, 12594, 13134, 12595, 13126, 13132, 13128, 13122, 13141, 12596, 13121, 13129, 13127,},
-		['Verdant Wilds'] = {13111, 13112, 13113, 13114, 13142, 13125, 12597, 13120, 12594, 13134, 12595, 13126, 13132, 13128, 13122, 13141, 12596, 13121, 13129, 13127,},
-		['Jorundall'] = {13389, 13394, 13395, 13399, 13142, 13125, 12597, 13120, 12594, 13134, 12595, 13126, 13132, 13128, 13122, 13141, 12596, 13121, 13129, 13127,},
-		['Crestfall'] = {13577, 13578, 13579, 13580, 13142, 13125, 12597, 13120, 12594, 13134, 12595, 13126, 13132, 13128, 13122, 13141, 12596, 13121, 13129, 13127,},
-		-- 13142, 13125, 12597, 13120, 12594, 13134, 12595, 13126, 13132, 13128, 13122, 13141, 12596, 13121, 13129, 13127,
+	-- Régions
+	['Tiragarde Sound'] = {12939,13050,12556,13058,13057,12852,},
+	['Stormsong Valley'] = {12940,13047,13042,13045,13046,13054,12558,13051,12853,},
+	['Drustvar'] = {12941,12557,13094,12995,13087,13083,13064,12941,},
+	['Nazmir'] = {12942,13048,13023,12561,12771,},
+	['Zuldazar'] = {12944,13048,13035,12559,12851,},
+	['Vol\'dun'] = {12943,13011,12560,12849,},
+	['Mechagon Island'] = {13696, 13776,13489,13470,13556,13479,13708,13625,13477,13474,13476,13693,13473,13478,13475,13482,13695},
+	['Nazjatar'] = {13712,13699,13549,13691,13626,13836,13692,13715,13713,13720,13722,13694,13690,13635,13695,},
+	['Uldum (N\'Zoth)'] = {14159,14158,14160,},
+	['Vale of Eternal Blossoms (N\'Zoth)'] = {14159,14158,14160,},
+	-- Dungeons
+	['Freehold'] = {['MM'] = {12548,12998,12550,},}, -- Alliance -- Port-Liberté
+	['Tol Dagor'] = {['MM'] = {12462,12457,},}, -- Alliance -- Tol Dagor
+	['Waycrest Manor'] = {['MM'] = {12490,12495,12489,},}, -- Alliance -- Manoir Malvoie
+	['Shrine of the Storm'] = {['MM'] = {12600,12602,12601,},}, -- Alliance -- Sanctuaire des Tempêtes
+	['Siege of Boralus'] = {['MM'] = {12726,12727,12489,},}, -- Alliance -- Siège de Boralus
+	['Atal\'Dazar'] = {['MM'] = {12273,12272,12270,},}, -- Horde -- Atal'Dazar
+	['The MOTHERLODE!!'] = {['MM'] = {12854,12855,},}, -- Horde -- le Filon !
+	['Temple of Sethraliss'] = {['MM'] = {12508,12507,12503,},}, -- Horde -- Temple de Sephraliss
+	['The Underrot'] = {['MM'] = {12549,12498,12499,},}, -- Horde -- Les tréfonds Putrides
+	['Kings\' Rest'] = {['MM'] = {12723,12722,},}, -- Horde -- Repos des rois
+	['Mechagon'] = {['MM'] = {13624,13698,13706,13723,13545,},},
+	-- Islands
+	['Dread Chain'] = {13095, 13096, 13097, 13098, 13142, 13125, 12597, 13120, 12594, 13134, 12595, 13126, 13132, 13128, 13122, 13141, 12596, 13121, 13129, 13127,},
+	['The Rotting Mire'] = {13103, 13104, 13105, 13106, 13142, 13125, 12597, 13120, 12594, 13134, 12595, 13126, 13132, 13128, 13122, 13141, 12596, 13121, 13129, 13127,},
+	['Un\'gol Ruins'] = {12590, 12589, 12591, 12592, 13142, 13125, 12597, 13120, 12594, 13134, 12595, 13126, 13132, 13128, 13122, 13141, 12596, 13121, 13129, 13127,},
+	['Whispering Reef'] = {13119, 13118, 13116, 13115, 13142, 13125, 12597, 13120, 12594, 13134, 12595, 13126, 13132, 13128, 13122, 13141, 12596, 13121, 13129, 13127,},
+	['Havenswood'] = {13396, 13397, 13398, 13400, 13142, 13125, 12597, 13120, 12594, 13134, 12595, 13126, 13132, 13128, 13122, 13141, 12596, 13121, 13129, 13127,},
+	['Snowblossom Village'] = {13581, 13582, 13583, 13584, 13142, 13125, 12597, 13120, 12594, 13134, 12595, 13126, 13132, 13128, 13122, 13141, 12596, 13121, 13129, 13127,},
+	['Molten Cay'] = {13099, 13100, 13101, 13102, 13142, 13125, 12597, 13120, 12594, 13134, 12595, 13126, 13132, 13128, 13122, 13141, 12596, 13121, 13129, 13127,},
+	['Skittering Hollow'] = {13107, 13108, 13109, 13110, 13142, 13125, 12597, 13120, 12594, 13134, 12595, 13126, 13132, 13128, 13122, 13141, 12596, 13121, 13129, 13127,},
+	['Verdant Wilds'] = {13111, 13112, 13113, 13114, 13142, 13125, 12597, 13120, 12594, 13134, 12595, 13126, 13132, 13128, 13122, 13141, 12596, 13121, 13129, 13127,},
+	['Jorundall'] = {13389, 13394, 13395, 13399, 13142, 13125, 12597, 13120, 12594, 13134, 12595, 13126, 13132, 13128, 13122, 13141, 12596, 13121, 13129, 13127,},
+	['Crestfall'] = {13577, 13578, 13579, 13580, 13142, 13125, 12597, 13120, 12594, 13134, 12595, 13126, 13132, 13128, 13122, 13141, 12596, 13121, 13129, 13127,},
+	-- 13142, 13125, 12597, 13120, 12594, 13134, 12595, 13126, 13132, 13128, 13122, 13141, 12596, 13121, 13129, 13127,
 
-		-- Raid
-		['Uldir'] = {['NM'] = {12551,12938,12828,12830,12937,12823,12772,12836},}, -- Uldir
-		['Dazar\'alor'] = {['NM'] = {13316,13345,13410,13431,13425,13325,13383,13401,13430,},}, -- Bataille de Dazar'alor
-		['Crucible of Storms'] = {['NM'] = {13506,13501,},}, -- Creuset des Tempêtes
-		['Eternal Palace'] = {['NM'] = {13684,13628,13633,13716,13767,13629,13724,13768,},}, -- Palais éternel
-		['Ny\'Alotha'] = {['NM'] = {14019,14037,14023,14026,13999,14147,14008,14024,13990,14139,14038,14148,},}, -- Ny'Alotha, la cité en éveil
+	-- Raid
+	['Uldir'] = {['NM'] = {12551,12938,12828,12830,12937,12823,12772,12836},}, -- Uldir
+	['Dazar\'alor'] = {['NM'] = {13316,13345,13410,13431,13425,13325,13383,13401,13430,},}, -- Bataille de Dazar'alor
+	['Crucible of Storms'] = {['NM'] = {13506,13501,},}, -- Creuset des Tempêtes
+	['Eternal Palace'] = {['NM'] = {13684,13628,13633,13716,13767,13629,13724,13768,},}, -- Palais éternel
+	['Ny\'Alotha'] = {['NM'] = {14019,14037,14023,14026,13999,14147,14008,14024,13990,14139,14038,14148,},}, -- Ny'Alotha, la cité en éveil
 
 	-- SHADOWLANDS
-		-- Régions
-		['The Maw'] = {15054, 14738, 14761, 14943, 14744, 14742, 14660, 14746, 14747, 14663, 14743, 14659, 14658, 14745, 15001, 15035, 15044, 15042, 15036, 15039, 15000, 15034, 15033, 15032},
-		['Bastion'] = {14737, 14311, 14801, 14307, 14851, 14303, 14514,},
-		['Maldraxxus'] = {14802, 14312, 14308, 14799, 14305, 14513,},
-		['Ardenweald'] = {14304, 14313, 14788, 14779, 14353, 14309, 14774,},
-		['Revendreth'] = {14306, 14798, 14314, 14276, 14310, 14771, 13878, 14856, 14512,},
-		['Torghast'] = {15054, 15043, 14778, 15089, 15093, 15095, 15105, 14468, 14570, 15096, 14498, 15327, 15067, 14469, 14809, 15094, 15092, 15091, 14471, 14470, 14483, 14463, 14493, 15076, 14776, 14478, 14568, 14810, 14569, 14473, 15068, 15075, 14472, 14488, 14773, 14571, 14808, 14521, 14848,},
-		['Korthia'] = {15107, 15066, 15099, 15053, 15055, 15056, 15057},
-		['Zereth Mortis'] = {15509, 15229, 15392, 15331, 15502, 15514, 15513, 15391, 15224, 15512, 15542, 15406, 15407, 15411, 15410},
-		-- Dungeons
-		['Plaguefall'] = {['MM'] = {14415, 14296, 14347, 14292, 14369, 14414,},},
-		['Tazavesh'] = {['MM'] = {15178, 15190, 15179, 15109, 15106, 15177,},},
-		['Sanguine Depths'] = {['MM'] = {14289, 14199, 14290, 14286, 14197, 14198,},},
-		['The Necrotic Wake'] = {['MM'] = {14368, 14295, 14320, 14285, 14366, 14367,},},
-		['Mists of Tirna Scithe'] = {['MM'] = {14413, 14291, 14375, 14503, 14412, 14371,},},
-		['Spires of Ascension'] = {['MM'] = {14327, 14325, 14323, 14331, 14324, 14326,},},
-		['De Other Side'] = {['MM'] = {14409, 14354, 14606, 14374, 14373, 14408,},},
-		['Halls of Atonement'] = {['MM'] = {14567, 14411, 14352, 14284, 14370, 14410,},},
-		['Theater of Pain'] = {['MM'] = {14417, 14607, 14533, 14297, 14372, 14416,},},
-		-- Raid
-		['Sanctum of Domination'] = {['NM'] = {15065, 15058, 15132, 14998, 15126, 15124, 15123, 15122, 15125, 15133, 15003, 15108, 15105, 15131,}, }, -- Sanctum de Domination
-		['Castle Nathria'] = {['NM'] = {14293, 14608, 14610, 14294, 14525, 14376, 14524, 14619, 14617, 14523,}, }, -- Chateau Nathria
-		['Sepulcher of the First Ones'] = {['NM'] = {15399, 15492, 15397, 15494, 15416, 15400, 15419, 15401, 15418, 15398, 15396, 15315, 15493, 15381, 15386, 15417, 15478, 15490,}, }, -- Chateau Nathria
+	-- Régions
+	['The Maw'] = {15054, 14738, 14761, 14943, 14744, 14742, 14660, 14746, 14747, 14663, 14743, 14659, 14658, 14745, 15001, 15035, 15044, 15042, 15036, 15039, 15000, 15034, 15033, 15032},
+	['Bastion'] = {14737, 14311, 14801, 14307, 14851, 14303, 14514,},
+	['Maldraxxus'] = {14802, 14312, 14308, 14799, 14305, 14513,},
+	['Ardenweald'] = {14304, 14313, 14788, 14779, 14353, 14309, 14774,},
+	['Revendreth'] = {14306, 14798, 14314, 14276, 14310, 14771, 13878, 14856, 14512,},
+	['Torghast'] = {15054, 15043, 14778, 15089, 15093, 15095, 15105, 14468, 14570, 15096, 14498, 15327, 15067, 14469, 14809, 15094, 15092, 15091, 14471, 14470, 14483, 14463, 14493, 15076, 14776, 14478, 14568, 14810, 14569, 14473, 15068, 15075, 14472, 14488, 14773, 14571, 14808, 14521, 14848,},
+	['Korthia'] = {15107, 15066, 15099, 15053, 15055, 15056, 15057},
+	['Zereth Mortis'] = {15509, 15229, 15392, 15331, 15502, 15514, 15513, 15391, 15224, 15512, 15542, 15406, 15407, 15411, 15410},
+	-- Dungeons
+	['Plaguefall'] = {['MM'] = {14415, 14296, 14347, 14292, 14369, 14414,},},
+	['Tazavesh'] = {['MM'] = {15178, 15190, 15179, 15109, 15106, 15177,},},
+	['Sanguine Depths'] = {['MM'] = {14289, 14199, 14290, 14286, 14197, 14198,},},
+	['The Necrotic Wake'] = {['MM'] = {14368, 14295, 14320, 14285, 14366, 14367,},},
+	['Mists of Tirna Scithe'] = {['MM'] = {14413, 14291, 14375, 14503, 14412, 14371,},},
+	['Spires of Ascension'] = {['MM'] = {14327, 14325, 14323, 14331, 14324, 14326,},},
+	['De Other Side'] = {['MM'] = {14409, 14354, 14606, 14374, 14373, 14408,},},
+	['Halls of Atonement'] = {['MM'] = {14567, 14411, 14352, 14284, 14370, 14410,},},
+	['Theater of Pain'] = {['MM'] = {14417, 14607, 14533, 14297, 14372, 14416,},},
+	-- Raid
+	['Sanctum of Domination'] = {['NM'] = {15065, 15058, 15132, 14998, 15126, 15124, 15123, 15122, 15125, 15133, 15003, 15108, 15105, 15131,}, }, -- Sanctum de Domination
+	['Castle Nathria'] = {['NM'] = {14293, 14608, 14610, 14294, 14525, 14376, 14524, 14619, 14617, 14523,}, }, -- Chateau Nathria
+	['Sepulcher of the First Ones'] = {['NM'] = {15399, 15492, 15397, 15494, 15416, 15400, 15419, 15401, 15418, 15398, 15396, 15315, 15493, 15381, 15386, 15417, 15478, 15490,}, }, -- Chateau Nathria
 
 }
 
@@ -2070,142 +2025,199 @@ local GetFactionAchievementList = {
 	['Drustvar'] = { ["Alliance"] = {}, ["Horde"] = {13435},},
 }
 
-local Mount = {
-	-- Vanilla
-	{17481,"Baron Vaillefendre",'Stratholme',AtaDiff["5NM"]}, -- Destrier de Vaillefrendre
-	{26054,"Trash AQ40",'Temple of Ahn\'Qiraj',AtaDiff["25NM"]}, -- Cristal de résonance qiraji rouge
-	{26055,"Trash AQ40",'Temple of Ahn\'Qiraj',AtaDiff["25NM"]}, -- Cristal de résonance qiraji jaune
-	{25953,"Trash AQ40",'Temple of Ahn\'Qiraj',AtaDiff["25NM"]}, -- Cristal de résonance qiraji bleu
-	{26056,"Trash AQ40",'Temple of Ahn\'Qiraj',AtaDiff["25NM"]}, -- Cristal de résonance qiraji vert
-	-- Burning Crusade
-	{41252,"Anzu",'Sethekk Halls',AtaDiff["25NM"]}, -- Rênes du seigneur corbeau
-	{46628,"Kael'thas Haut-Soleil",'Magisters\' Terrace',AtaDiff["25NM"]}, -- Faucon-pérégrin blanc rapide
-	{36702,"Attumen le Veneur",'Karazhan',AtaDiff["25NM"]}, -- Rênes de cheval de guerre embrasé
-	{40192,"Kael'thas Haut-Soleil",'The Eye',AtaDiff["25NM"]}, -- Cendres d'Al'ar
-	-- Wrath of the Lich
-	{59996,"Skadi le Brutal",'Utgarde Pinnacle',AtaDiff["5NM"]}, -- Rênes de proto-drake bleu
-	{59569,"Corrupteur infini",'The Culling of Stratholme',AtaDiff["5NM"]}, -- Rênes de drake bronze
-	{61467,"Caveau d’Archavon",'Vault of Archavon',AtaDiff["10NM"]}, -- Rênes de grand mammouth de guerre noir (horde)
-	{61465,"Caveau d’Archavon",'Vault of Archavon',AtaDiff["10NM"]}, -- Rênes de grand mammouth de guerre noir (alliance)
-	{59567,"Malygos",'The Eye of Eternity',AtaDiff["10NM"]}, -- Rênes de drake azur
-	{59568,"Malygos",'The Eye of Eternity',AtaDiff["10NM"]}, -- Rênes de drake bleu
-	{59571,"Sartharion + 3D",'The Obsidian Sanctum',AtaDiff["25NM"]}, -- Rênes de drake du Crépuscule
-	{59650,"Sartharion + 3D",'The Obsidian Sanctum',AtaDiff["10NM"]}, -- Rênes de drake noir
-	{69395,"Onyxia",'Onyxia\'s Lair',AtaDiff["25NM"]}, -- Rênes de drake onyxien
-	{63796,"Yogg Saron",'Ulduar',AtaDiff["25NM"]}, -- Tête de Mimiron
-	{72286,"Lich King",'Icecrown Citadel',AtaDiff["25HM"]}, -- Rênes d'Invincible
-	--Cataclysm
-	{88742,"Altairus",'The Vortex Pinnacle',AtaDiff["5HM"]}, -- Rênes de drake du vent du Nord
-	{88746,"Peau-de-Pierre",'The Stonecore',AtaDiff["5NM"]}, -- Rênes de drake de pierre vitrifiée
-	{68824,"Grande prêtresse Kilnara",'Zul\'Gurub',AtaDiff["5HM"]}, -- Panthère zulienne rapide
-	{96491,"Seigneur sanglant Mandokir",'Zul\'Gurub',AtaDiff["5HM"]}, -- Raptor razzashi cuirassé
-	{98204,"Zul'Aman",'	Zul\'Aman',AtaDiff["5HM"]}, -- Ours de bataille amani
-	{88744,"Al’Akir",'Throne of the Four Winds',AtaDiff["10NM"]}, -- Rênes de drake du vent du Sud
-	{101542,"Alysrazor",'Firelands',AtaDiff["10NM"]}, -- Serres-de-Flammes d’Alysrazor
-	{97493,"Ragnaros",'Firelands',AtaDiff["10NM"]}, -- Oeuf fumant de Millagazor
-	{110039,"Ultraxion",'Dragon Soul',AtaDiff["10NM"]}, -- Expérience 12-B
-	{107842,"Aile-de-mort",'Dragon Soul',AtaDiff["10NM"]}, -- Rênes de drake flamboyant
-	{107845,"Aile-de-mort",'Dragon Soul',AtaDiff["10HM"]}, -- Suivante de la Lieuse-de-vie
-	-- Mysts of Pandaria
-	{127170,"Elegon",'Mogu\'shan Vaults',AtaDiff["10NM"]}, -- Rênes de serpent-nuage astral
-	{136471,"Horridon",'Throne of Thunder',AtaDiff["10NM"]}, -- Rejeton d’Horridon
-	{139448,"Ji Kun",'Throne of Thunder',AtaDiff["10NM"]}, -- Etreinte de Ji Kun
-	{148417,"Garrosh Hurlenfer",'Siege of Orgrimmar',AtaDiff["FlexNormal"]}, -- Mastodonte kor’kron
-	-- Warlords of Draenor
-	{116660,"Main Noire",'Hellfire Citadel',AtaDiff["Mythic"]}, -- Destructeur sabot de fer
-	{123890,"Archimonde",'Hellfire Citadel',AtaDiff["Mythic"]}, -- Annihilateur en gangracier
-	-- Legion
-	{142236,"Attumen",'Karazhan (Legion)',AtaDiff["5NM"]}, -- Rênes éternelles de Minuit
-	{137574,"Gul'Dan",'The Nighthold',AtaDiff["FlexNormal"]}, -- Noyau de brasier infernal
-	{137575,"Gul'Dan",'The Nighthold',AtaDiff["Mythic"]}, -- Noyau de flammes dévorantes
-	{143643,"Maîtresse Sassz'ine",'Tomb of Sargeras',AtaDiff["FlexNormal"]}, -- Ver abyssal
-	{152789,"Argus l'Annihilateur",'Antorus, the Burning Throne',AtaDiff["Mythic"]}, -- Ur'zul entravé
-	-- Shadowlands
-
-
-}
-
 -- ////////////////
--- Fonctions XML
--- ////////////////
-function Ata_CheckButton1_OnClick() -- Arena
-	if AutoTrackerAchievementDB["Arena"] == true then AutoTrackerAchievementDB["Arena"] = false else AutoTrackerAchievementDB["Arena"] = true end
-	if AutoTrackerAchievementDB["debug"] == true then print("Arena",AutoTrackerAchievementDB["Arena"]); end
-end
-function Ata_CheckButton2_OnClick() -- Raid
-	if AutoTrackerAchievementDB["Raid"] == true then AutoTrackerAchievementDB["Raid"] = false else AutoTrackerAchievementDB["Raid"] = true end
-	if AutoTrackerAchievementDB["debug"] == true then print("Raids",AutoTrackerAchievementDB["Raid"]); end
-end
-function Ata_CheckButton3_OnClick() -- Region
-	if AutoTrackerAchievementDB["Region"] == true then AutoTrackerAchievementDB["Region"] = false else AutoTrackerAchievementDB["Region"] = true end
-	if AutoTrackerAchievementDB["debug"] == true then print("Region",AutoTrackerAchievementDB["Region"]); end
-end
-function Ata_CheckButton4_OnClick() -- Donjon
-	if AutoTrackerAchievementDB["Donjon"] == true then AutoTrackerAchievementDB["Donjon"] = false else AutoTrackerAchievementDB["Donjon"] = true end
-	if AutoTrackerAchievementDB["debug"] == true then print("Donjon",AutoTrackerAchievementDB["Donjon"]); end
-end
-function Ata_CheckButton5_OnClick() -- defaut
-	if AutoTrackerAchievementDB["defaut"] == true then AutoTrackerAchievementDB["defaut"] = false else AutoTrackerAchievementDB["defaut"] = true end
-	if AutoTrackerAchievementDB["debug"] == true then print("defaut",AutoTrackerAchievementDB["defaut"]); end
-end
-function Ata_Button1_OnClick()
-	AutoTrackerAchievement:Hide();
-end
-function Ata_Button2_OnClick()
-	DebugPrint("Reset")
-	AutoTrackerAchievementDB = AutoTrackerAchievementDB_Defaut;
-end
-function Ata_Button3_OnClick()
-	DefautTrackList(defautval:GetText());
-end
-
--- ////////////////
--- Processus passif
+--      FRAME
 -- ////////////////
 
--- FONCTION DE CHARGEMENT
-function AutoTrackerAchievement_OnLoad(self)
-	-- INIT
-	self:RegisterEvent("ADDON_LOADED");
-	self:RegisterEvent("VARIABLES_LOADED");
-	-- Travel
-	self:RegisterEvent("PLAYER_ENTERING_WORLD");
-	self:RegisterEvent("ZONE_CHANGED_NEW_AREA");
-	--self:RegisterEvent("ZONE_CHANGED");
-	-- Tracking
-	self:RegisterEvent("QUEST_ACCEPTED");
-	self:SetScript("OnEvent", eventHandler);
-end
+function eventHandler(self, event, ...)
 
-function eventHandler(self, event, arg1,...)
-
-	-- Check if save exists
-	if AutoTrackerAchievementDB == nil then AutoTrackerAchievementDB = AutoTrackerAchievementDB_Defaut end
-
-	-- Script
-	DebugPrint("Event = " .. event)
 	AtaLocalisation(GetLocale())
-	if arg1 == "AutoTrackerAchievement" and event == "ADDON_LOADED" then
-		DebugPrint("Achievement Tracker : OK")
-		if AutoTrackerAchievementDB["version"] == nil or AutoTrackerAchievementDB["version"] < AutoTrackerAchievementDB_Defaut["version"] then
-			print(L["Mise a jour"]);
-			-- Save old config
-			AutoTrackerAchievementDB_Old = AutoTrackerAchievementDB
-			-- Insert new variables
+	if event == "VARIABLES_LOADED" then
+		if AutoTrackerAchievementDB == nil then
 			AutoTrackerAchievementDB = AutoTrackerAchievementDB_Defaut
-			-- Update new variables to old value
-			for i1,v1 in pairs(AutoTrackerAchievementDB) do
-				if AutoTrackerAchievementDB_Old[i1] ~= nil then AutoTrackerAchievementDB[i1] = AutoTrackerAchievementDB_Old[i1] end
+		else
+			local AutoTrackerAchievementDB_temp = AutoTrackerAchievementDB
+			AutoTrackerAchievementDB = {}
+			for key,value in pairs(AutoTrackerAchievementDB_Defaut) do
+				if AutoTrackerAchievementDB_temp[key] ~= nil then
+					AutoTrackerAchievementDB[key] = AutoTrackerAchievementDB_temp[key]
+				elseif AutoTrackerAchievementDB_Defaut[key] ~= nil then
+					AutoTrackerAchievementDB[key] = AutoTrackerAchievementDB_Defaut[key]
+				end
 			end
 		end
-	elseif event == "ZONE_CHANGED_NEW_AREA" then
+	elseif event == "PLAYER_ENTERING_WORLD" or event == "ZONE_CHANGED_NEW_AREA" then
+		DebugPrint("Affichage")
 		AchievementListConstructor();
 	end
-	ModificationFrame()
+	DebugPrint("Event = " .. event)
 end
 
+local progressBar = CreateFrame("StatusBar", nil, UIParent) -- ObjectiveTrackerFrame
+progressBar:SetStatusBarTexture('Interface\\TargetingFrame\\UI-StatusBar')
+progressBar:SetStatusBarColor(0, 0.35, 0);
+progressBar:SetFrameStrata("BACKGROUND")
+progressBar:SetWidth(235)
+progressBar:SetHeight(14) -- for your Texture
+-- Drag and Drop
+progressBar:SetMovable(true)
+progressBar:EnableMouse(true)
+progressBar:RegisterForDrag("LeftButton")
+progressBar:SetScript("OnDragStart", progressBar.StartMoving)
+progressBar:SetScript("OnDragStop", function(self, button)
+	self:StopMovingOrSizing();
+	point, relativeTo, relativePoint, xOfs, yOfs = progressBar:GetPoint()
+	AutoTrackerAchievementDB.progressBarREF = point
+	AutoTrackerAchievementDB.progressBarX = xOfs
+	AutoTrackerAchievementDB.progressBarY = yOfs
+end)
+-- Text
+progressBar.text = progressBar:CreateFontString(nil, "OVERLAY", "GameFontNormal");
+progressBar.text:SetFont("MORPHEUS", 8, "OUTLINE")
+progressBar.text:SetPoint("CENTER");
+progressBar.text:SetText("0/0");
+-- Border
+progressBar.border = CreateFrame("StatusBar", nil, progressBar)
+progressBar.border:SetStatusBarTexture('Interface/AchievementFrame/UI-Achievement-ProgressBar-Border')
+progressBar.border:SetWidth(282) -- Set these to whatever height/width is needed
+progressBar.border:SetHeight(35) -- for your Texture
+progressBar.border:SetPoint("TOPLEFT",-5,6)
+-- Events
+progressBar:RegisterEvent("VARIABLES_LOADED"); -- Addon status
+progressBar:RegisterEvent("PLAYER_ENTERING_WORLD"); -- Travel
+progressBar:RegisterEvent("ZONE_CHANGED_NEW_AREA"); -- Travel
+--progressBar:RegisterEvent("ZONE_CHANGED"); -- Travel
+progressBar:RegisterEvent("ACHIEVEMENT_EARNED"); -- Update
+progressBar:RegisterEvent("QUEST_ACCEPTED");
+progressBar:SetScript("OnEvent", eventHandler);
+progressBar:Hide()
 
--- FONCTIONS RECURRENTES
+local guiFont = "GameFontHighlight"
+local guiPanel = CreateFrame("Frame")
+guiPanel.name = "AutoTrackerAchievement"              -- see panel fields
+guiPanel.title = guiPanel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+guiPanel.title:SetPoint("TOPLEFT", 10, -10)
+guiPanel.title:SetText(guiPanel.name)
+-- Title Category 1
+guiPanel.category1 = guiPanel:CreateFontString(nil, "ARTWORK", "GameFontHighlightLarge")
+guiPanel.category1:SetPoint("TOPLEFT", 10, select(5,guiPanel.title:GetPoint()) - 30)
+guiPanel.category1:SetText("Use Achievement detection in...")
+-- Arena checkbox
+guiPanel.arena = CreateFrame("CheckButton", "checkBoxArena", guiPanel, "ChatConfigCheckButtonTemplate");
+guiPanel.arena:SetPoint("TOPLEFT", 10, select(5,guiPanel.category1:GetPoint()) - 30)
+guiPanel.arena.title = guiPanel.arena:CreateFontString(nil, "ARTWORK", guiFont)
+guiPanel.arena.title:SetPoint("TOPLEFT", 25, -5)
+guiPanel.arena.title:SetText("Arena")
+-- Raid checkbox
+guiPanel.raid = CreateFrame("CheckButton", "checkBoxRaid", guiPanel, "ChatConfigCheckButtonTemplate");
+guiPanel.raid:SetPoint("TOPLEFT", 10, select(5,guiPanel.arena:GetPoint()) - 30)
+guiPanel.raid.title = guiPanel.raid:CreateFontString(nil, "ARTWORK", guiFont)
+guiPanel.raid.title:SetPoint("TOPLEFT", 25, -5)
+guiPanel.raid.title:SetText("Raids")
+-- Zone checkbox
+guiPanel.region = CreateFrame("CheckButton", "checkBoxRegion", guiPanel, "ChatConfigCheckButtonTemplate");
+guiPanel.region:SetPoint("TOPLEFT", 10, select(5,guiPanel.raid:GetPoint()) - 30)
+guiPanel.region.title = guiPanel.region:CreateFontString(nil, "ARTWORK", guiFont)
+guiPanel.region.title:SetPoint("TOPLEFT", 25, -5)
+guiPanel.region.title:SetText("Zones")
+-- Dungeons & Scenarios checkbox
+guiPanel.dungeon = CreateFrame("CheckButton", "checkBoxDungeon", guiPanel, "ChatConfigCheckButtonTemplate");
+guiPanel.dungeon:SetPoint("TOPLEFT", 10, select(5,guiPanel.region:GetPoint()) - 30)
+guiPanel.dungeon.title = guiPanel.dungeon:CreateFontString(nil, "ARTWORK", guiFont)
+guiPanel.dungeon.title:SetPoint("TOPLEFT", 25, -5)
+guiPanel.dungeon.title:SetText("Dungeons & Scenarios")
+
+-- Title Category 1
+guiPanel.category2 = guiPanel:CreateFontString(nil, "ARTWORK", "GameFontHighlightLarge")
+guiPanel.category2:SetPoint("TOPLEFT", 10, select(5,guiPanel.dungeon:GetPoint()) - 40)
+guiPanel.category2:SetText("Options...")
+-- Option ProgressBar
+guiPanel.progressBar = CreateFrame("CheckButton", "checkBoxProgressBar", guiPanel, "ChatConfigCheckButtonTemplate");
+guiPanel.progressBar:SetPoint("TOPLEFT", 10, select(5,guiPanel.category2:GetPoint()) - 30)
+guiPanel.progressBar.title = guiPanel.progressBar:CreateFontString(nil, "ARTWORK", guiFont)
+guiPanel.progressBar.title:SetPoint("TOPLEFT", 25, -5)
+guiPanel.progressBar.title:SetText("Progress Bar")
+-- Reset ProgressBar progressBarPosition
+guiPanel.progressBarPositionReset = CreateFrame("Button", "progressBarResetPositionButton", guiPanel, "UIPanelButtonTemplate");
+guiPanel.progressBarPositionReset:SetPoint("TOPLEFT", 200, select(5,guiPanel.progressBar:GetPoint()))
+guiPanel.progressBarPositionReset:SetWidth(100)
+guiPanel.progressBarPositionReset:SetScript("OnClick", function(self)
+	AutoTrackerAchievementDB.progressBarREF = AutoTrackerAchievementDB_Defaut.progressBarREF
+	AutoTrackerAchievementDB.progressBarX = AutoTrackerAchievementDB_Defaut.progressBarX
+	AutoTrackerAchievementDB.progressBarY = AutoTrackerAchievementDB_Defaut.progressBarY
+	progressBar:ClearAllPoints()
+	progressBar:SetPoint(AutoTrackerAchievementDB_Defaut.progressBarREF,AutoTrackerAchievementDB_Defaut.progressBarX,AutoTrackerAchievementDB_Defaut.progressBarY)
+end)
+guiPanel.progressBarPositionReset:SetText("Reset Position")
+
+InterfaceOptions_AddCategory(guiPanel)
+
+function guiPanel.okay()
+	AutoTrackerAchievementDB['arena'] = guiPanel.arena:GetChecked()
+	AutoTrackerAchievementDB['raid'] = guiPanel.raid:GetChecked()
+	AutoTrackerAchievementDB['region'] = guiPanel.region:GetChecked()
+	AutoTrackerAchievementDB['dungeon'] = guiPanel.dungeon:GetChecked()
+	AutoTrackerAchievementDB['progressBar'] = guiPanel.progressBar:GetChecked()
+end
+
+function guiPanel.refresh ()
+	guiPanel.arena:SetChecked(AutoTrackerAchievementDB['arena'])
+	guiPanel.raid:SetChecked(AutoTrackerAchievementDB['raid'])
+	guiPanel.region:SetChecked(AutoTrackerAchievementDB['region'])
+	guiPanel.dungeon:SetChecked(AutoTrackerAchievementDB['dungeon'])
+	guiPanel.progressBar:SetChecked(AutoTrackerAchievementDB['progressBar'])
+end
+
+-- ////////////////
+--      SLASH
+-- ////////////////
+
+function AtaCommand(msg)
+	listeHF = 0;
+	if msg == 'clean' then CleanTrackList()
+	elseif msg == 'show' then progressBar:Show()
+	elseif msg == 'hide' then progressBar:Hide()
+	elseif msg == 'help' or msg == '' then
+		print("AtA commands :");
+		print(L["ata config"]);
+		print(L["ata check"]);
+		print(L["ata clean"]);
+		print(L["ata save"]);
+		print(L["ata load"]);
+		print(L["ata defaut"]);
+		print(L["ata mount"]);
+	elseif msg == 'config' then InterfaceOptionsFrame_OpenToCategory(guiPanel);InterfaceOptionsFrame_OpenToCategory(guiPanel);
+	elseif msg == 'debug' then
+		if select(1, UnitName("player")) == "Garikover" then
+			AutoTrackerAchievementDB["debug"] = (AutoTrackerAchievementDB["debug"] == false and true or false);
+			print("Ata Debug mode : ",AutoTrackerAchievementDB["debug"]);
+		end
+	elseif msg == 'test' then
+	elseif msg == 'check' then CheckBestRaid()
+	elseif msg == 'reset' then AutoTrackerAchievementDB = AutoTrackerAchievementDB_Defaut;
+	elseif msg == 'get' then AchievementListConstructor()
+	elseif string.find(msg, 'save ') == 1 then SaveTrackList(msg);
+	elseif string.find(msg, 'load ') == 1 then LoadTrackList(msg);
+	elseif string.find(msg, 'defaut ') == 1 then DefautTrackList(msg);
+	elseif string.find(msg, 'category ') == 1 then
+		subCat = string.gsub(msg, "category ", "");
+		idTable = GetCategoryList()
+		for key,value in ipairs(idTable) do
+			title, parentCategoryID, flags = GetCategoryInfo(value)
+			if parentCategoryID == tonumber(subCat) then print(value, title) end
+		end
+	else print(L["Commande non reconnue"]);
+	end
+end
+
+SLASH_ATA1 = '/ata';
+SlashCmdList["ATA"] = AtaCommand;
+
+
+-- ////////////////
+--    FUNCTIONS
+-- ////////////////
+
 function CleanTrackList()
 	local achievlisted = {GetTrackedAchievements()};
 	for i=1,#achievlisted do
@@ -2228,12 +2240,11 @@ function SaveTrackList(msg)
 	end
 end
 function LoadTrackList(msg)
+	DebugPrint("Chargement de la liste")
 	name = string.gsub(msg, "load ", "");
 	if AutoTrackerAchievementDB["Favoris"][name] ~= nil then
-	Liste = AutoTrackerAchievementDB["Favoris"][name];
-	DisplayAchievementsList(Liste);
-	else
-	print(L["Pas de liste de ce nom"]);
+		Liste = AutoTrackerAchievementDB["Favoris"][name];
+		DisplayAchievementsList(Liste);
 	end
 end
 function DeleteTrackList(msg)
@@ -2243,6 +2254,7 @@ function DeleteTrackList(msg)
 	NewTab = {}
 end
 function DefautTrackList(msg)
+	DebugPrint("Chargement de la liste par défaut")
 	name = string.gsub(msg, "defaut ", "");
 	if AutoTrackerAchievementDB["Favoris"][name] ~= nil then
 		AutoTrackerAchievementDB["defautliste"] = name
@@ -2250,18 +2262,6 @@ function DefautTrackList(msg)
 	else
 		print(L["Pas de liste de ce nom"]);
 	end
-end
-function DebugPrint(s)
-	if AutoTrackerAchievementDB["debug"] == true then print(s); end
-end
-function concatArray(t1, t2)
-	if t1 ~= nil and t2 ~= nil then
-		for i = 1, #t1 do table.insert(t2, t1[i]) end
-	elseif t1 ~= nil then
-		t2 = t1
-	end
-
-	return t2
 end
 
 -- Tracking des quetes
@@ -2341,9 +2341,12 @@ function AchievementListConstructor()
 
 	ListeHF = concatArray(ListeHF, GetAchievementListFromCategory(GetCategorie[IdZone]))
 
-	if ListeHF ~= nil then nbtracked = DisplayAchievementsList(ListeHF) end
-
-	DebugPrint('ListeHF = ' .. tablelength(ListeHF))
+	if ListeHF ~= nil then
+		tracked, hidden, completed = DisplayAchievementsList(ListeHF)
+		UpdateProgressBar(completed, #ListeHF)
+	else
+		UpdateProgressBar(0, 0)
+	end
 
 	-- Defaut si aucune quetes en suivi
 	if AutoTrackerAchievementDB["defaut"] == true and AutoTrackerAchievementDB["defautliste"] ~= 0 and difficulty == 0 and C_QuestLog.GetNumQuestWatches() == 0 and tablelength(ListeHF) == 0 then
@@ -2351,11 +2354,6 @@ function AchievementListConstructor()
 	end
 end
 
--- ////////////////
---    Afficheurs
--- ////////////////
-
--- Print the incomplete achievements in specific category
 function GetAchievementListFromCategory(cat)
 	if cat ~= nil then
 		local list = {}
@@ -2368,23 +2366,52 @@ function GetAchievementListFromCategory(cat)
 	end
 end
 
+-- ////////////////
+--    Afficheurs
+-- ////////////////
+
 -- Print the incomplete achievements in specific list and and them to the tracking list
 function DisplayAchievementsList(list)
 	local tracked = 0
+	local hidden = 0
 	local completed = 0
 	for i=1,#list do
 		if GetAchievementInfo(list[i]) ~= nil then
 			DebugPrint(i .. ' - ' .. GetAchievementLink(list[i]) .. ' (' .. list[i] .. ')')
-			if not select(4, GetAchievementInfo(list[i])) and tracked < 10 then
-				AddTrackedAchievement(select(1, GetAchievementInfo(list[i])));
-				tracked = tracked +1
+			if not select(4, GetAchievementInfo(list[i]))then
+				if tracked < 10 then
+					AddTrackedAchievement(select(1, GetAchievementInfo(list[i])));
+					tracked = tracked +1
+				else
+					hidden = hidden +1
+				end
 			else
 				completed = completed + 1
 			end
 		end
 	end
-	if i == completed then print(L["Zone clean"]); end
-	return tracked
+	return tracked, hidden, completed
+end
+
+function UpdateProgressBar(c, t)
+	DebugPrint("Update ProgressBar")
+	progressBar:ClearAllPoints()
+	progressBar:SetPoint(AutoTrackerAchievementDB.progressBarREF, AutoTrackerAchievementDB.progressBarX, AutoTrackerAchievementDB.progressBarY)
+	if AutoTrackerAchievementDB['progressBar'] == true then
+		if t == 0 then
+			progressBar:Show()
+		elseif c == t then
+			progressBar.text:SetText("Achievements : full complete")
+			progressBar:SetMinMaxValues(0,1)
+			progressBar:SetValue(1)
+			progressBar:Show()
+		else
+			progressBar:SetMinMaxValues(0,t)
+			progressBar:SetValue(c)
+			progressBar.text:SetText("Achievements : " .. c .. "/" .. t)
+			progressBar:Show()
+		end
+	end
 end
 
 -- Trouver le raid le plus rentable en HF
@@ -2417,46 +2444,6 @@ function CheckBestRaid()
 		PrintMessage(AtaColor.Red .. value[2] .. '|r ' .. AtaColor.Yellow .. value[1] .. '|r ' .. '[' .. value[3] .. ']')
 	end
 
-end
-
--- Vérifier les montures
-function CheckMount()
-	local iLocked;
-	local nbMount = 0;
-	PrintMessage(AtaColor.Yellow .. 'Check Mount to Farm')
-	
-	if GetLocale() == "frFR" then a = true end
-		
-	for j=1,#Mount do
-		for i=1, C_MountJournal.GetNumMounts() do
-			
-			local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, isFactionSpecific, faction, hideOnChar, isCollected, mountID = C_MountJournal.GetDisplayedMountInfo(i)
-						
-			-- Vérification si la monture est dans le tableau et si on la possède
-			if spellID == Mount[j][1] and isCollected == false then
-			
-				-- Check si zone vérouillé
-				iLocked = false
-				for a=1,GetNumSavedInstances() do 
-					local n,_,_,d,l = GetSavedInstanceInfo(a)
-					if (string.find(n, Mount[j][3]) and l == true) then iLocked = true end
-				end
-				
-				if iLocked == false then
-					PrintMessage(AtaColor.Yellow .. Mount[j][3].."|r ["..Mount[j][4][2].."]"..(a and (" > ".. Mount[j][2]) or ""))
-					nbMount = nbMount + 1;
-				end
-			
-			end
-		end		
-	end
-	
-	if nbMount > 0 then
-		print(AtaColor.Green.."ATA : |r "..nbMount.." left");
-	else
-		print(AtaColor.Green.."ATA : |r Finish");
-	end
-	
 end
 
 -- Vérifier les stuffs
@@ -2510,43 +2497,28 @@ function CheckSets()
 
 end
 
--- Fonction de test
-function CheckTest()
-	pStatusBar = pStatusBar + 30
-	print(pStatusBar)
-
-	local r, g, b = 0, 204, 0
-	local x, y = 0, 180
-	print('Couleurs : ', r, g, b)
-
-	local border = CreateFrame("StatusBar",nil,ObjectiveTrackerFrame)
-	border:SetStatusBarTexture('Interface/AchievementFrame/UI-Achievement-ProgressBar-Border')
-	border:SetWidth(282) -- Set these to whatever height/width is needed
-	border:SetHeight(30) -- for your Texture
-	border:SetPoint("CENTER",x,y) --214
-	border:Show()
-
-	local progress = CreateFrame("StatusBar",nil,border)
-	progress:SetStatusBarTexture('Interface/TargetingFrame/UI-StatusBar')
-	progress:SetStatusBarColor(r/255,g/255,b/255);
-	progress:SetFrameStrata("BACKGROUND")
-	progress:SetWidth(235) -- Set these to whatever height/width is needed
-	progress:SetHeight(14) -- for your Texture
-	progress:SetPoint("TOPLEFT",5,-5)
-	progress:Show()
-end
 
 --
 function PrintMessage(s)
 	print(AtaColor.Green.."ATA : |r " .. s);
 end
-
 function tablelength(T)
 	local count = 0
 	if T ~= nil then
 		for _ in pairs(T) do count = count + 1 end
 	end
 	return count
+end
+function DebugPrint(s)
+	if AutoTrackerAchievementDB["debug"] == true then print(s); end
+end
+function concatArray(t1, t2)
+	if t1 ~= nil and t2 ~= nil then
+		for i = 1, #t1 do table.insert(t2, t1[i]) end
+	elseif t1 ~= nil then
+		t2 = t1
+	end
+	return t2
 end
 
 -- ////////////////
@@ -2558,7 +2530,6 @@ L = {};
 	if lang == "frFR" then
 		L["Pas de liste de ce nom"] = "Pas de liste de ce nom";
 		L["Creation de la sauvegarde"] = "Creation de la sauvegarde";
-		L["Mise à jour"] = "Mise à jour";
 		L["Nom de sauvegarde invalide"] = "Nom de sauvegarde invalide";
 		L["Liste sauvegardee"] = "Liste sauvegardee";
 		L["Zone sans Haut-faits"] = "Zone sans Haut-faits";
@@ -2577,11 +2548,11 @@ L = {};
 		L["ata raid cata"] = debut_ligne .. "|cFF00FF00/ata {bwd,bot,tfw,firelands,ds}";
 		L["ata raid pandaria"] = debut_ligne .. "|cFF00FF00/ata {mv,hof,tes,tot,soo}";
 		-- UI
-		Text1:SetText("Arene")
-		Text2:SetText("Raids")
-		Text3:SetText("Regions")
-		Text4:SetText("Donjons et Scenarios")
-		Text5:SetText("sinon")
+		--Text1:SetText("Arene")
+		--Text2:SetText("Raids")
+		--Text3:SetText("Regions")
+		--Text4:SetText("Donjons et Scenarios")
+		--Text5:SetText("sinon")
 	else -- lang == "enEN"
 		L["Pas de liste de ce nom"] = "No tracklist with this name";
 		L["Creation de la sauvegarde"] = "Generating variables";
@@ -2604,16 +2575,11 @@ L = {};
 		L["ata raid cata"] = debut_ligne .. "|cFF00FF00/ata {bwd,bot,tfw,firelands,ds}";
 		L["ata raid pandaria"] = debut_ligne .. "|cFF00FF00/ata {mv,hof,tes,tot,soo}";
 		-- UI
-		Text1:SetText("Arena")
-		Text2:SetText("Raids")
-		Text3:SetText("Zones")
-		Text4:SetText("Dungeons and Scenarios")
-		Text5:SetText("else")
+		--Text1:SetText("Arena")
+		--Text2:SetText("Raids")
+		--Text3:SetText("Zones")
+		--Text4:SetText("Dungeons and Scenarios")
+		--Text5:SetText("else")
 	end
 
-end
-
-function ModificationFrame()
-	defautval:SetText(AutoTrackerAchievementDB["defautliste"])
-	version:SetText("Version " .. AutoTrackerAchievementDB["version"])
 end

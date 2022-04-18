@@ -76,6 +76,8 @@ L["Add Missing Auras"] = "Añadir auras perdidas"
 L["Additional Trigger Replacements"] = "Remplazos de disparadores adicionales"
 L["Affected"] = "Afectado"
 L["Affected Unit Count"] = "Recuento de unidades afectadas"
+--[[Translation missing --]]
+L["Afk"] = "Afk"
 L["Aggro"] = "Amenaza"
 L["Agility"] = "Agilidad"
 L["Ahn'Qiraj"] = "Ahn'Qiraj"
@@ -224,6 +226,8 @@ L["Black Wing Lair"] = "Black Wing Lair"
 --[[Translation missing --]]
 L["Blizzard (2h | 3m | 10s | 2.4)"] = "Blizzard (2h | 3m | 10s | 2.4)"
 L["Blizzard Combat Text"] = "Texto de Combate de Blizzard"
+--[[Translation missing --]]
+L["Blizzard Cooldown Reduction"] = "Blizzard Cooldown Reduction"
 L["Block"] = "Bloqueo"
 --[[Translation missing --]]
 L["Block (%)"] = "Block (%)"
@@ -354,6 +358,8 @@ L["Cooldown Ready Event (Item)"] = "Cooldown Ready Event (Item)"
 --[[Translation missing --]]
 L["Cooldown Ready Event (Slot)"] = "Cooldown Ready Event (Slot)"
 --[[Translation missing --]]
+L["Cooldown Reduction changes the duration of seconds instead of showing the real time seconds."] = "Cooldown Reduction changes the duration of seconds instead of showing the real time seconds."
+--[[Translation missing --]]
 L["Cooldown/Charges/Count"] = "Cooldown/Charges/Count"
 --[[Translation missing --]]
 L["Could not load WeakAuras Archive, the addon is %s"] = "Could not load WeakAuras Archive, the addon is %s"
@@ -444,6 +450,8 @@ L["Dispel Failed"] = "Disipar Fallido"
 L["Display"] = "Display"
 --[[Translation missing --]]
 L["Distance"] = "Distance"
+--[[Translation missing --]]
+L["Do Not Disturb"] = "Do Not Disturb"
 L["Dodge"] = "Esquivar"
 --[[Translation missing --]]
 L["Dodge (%)"] = "Dodge (%)"

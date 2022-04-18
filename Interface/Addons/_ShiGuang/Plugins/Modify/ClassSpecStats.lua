@@ -17,7 +17,6 @@ Ld["Vers"] = "Vers"
 Ld["Armor"] = "Armor"
 
 if GetLocale() == "zhCN" then do end
-<<<<<<< Updated upstream
 	La["Agi"] = "æ•æ·"
 	La["Haste"] = "æ€¥é€Ÿ"
 	La["Crit"] = "æš´å‡»"
@@ -37,27 +36,6 @@ elseif GetLocale() == "zhTW" then do end
 	La["Str"] = "åŠ›é‡"
 	La["Vers"] = "è‡¨æ©Ÿ"
 	La["Armor"] = "ç›”ç”²"
-=======
-	La["Agi"] = "Ãô½Ý"
-	La["Haste"] = "¼±ËÙ"
-	La["Crit"] = "±©»÷"
-	La["Int"] = "ÖÇÁ¦"
-	La["Mastery"] = "¾«Í¨"
-	La["Sta"] = "ÄÍÁ¦"
-	La["Str"] = "Á¦Á¿"
-	La["Vers"] = "È«ÄÜ"
-	La["Armor"] = "¿ø¼×"
-elseif GetLocale() == "zhTW" then do end
-	La["Agi"] = "Ãô½Ý"
-	La["Haste"] = "¼ÓËÙ"
-	La["Crit"] = "ÖÂÃü"
-	La["Int"] = "ÖÇÁ¦"
-	La["Mastery"] = "¾«Í¨"
-	La["Sta"] = "ÄÍÁ¦"
-	La["Str"] = "Á¦Á¿"
-	La["Vers"] = "ÅR™C"
-	La["Armor"] = "¿ø¼×"
->>>>>>> Stashed changes
 end
 
 local sFrameInit = false

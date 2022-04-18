@@ -144,8 +144,6 @@ do
             channeled = true,
             cooldown = function () return equipped.relic_of_the_first_ones and 96 or 120 end,
             gcd = "spell",
-            
-            toggle = "essences",
 
             startsCombat = false,
             texture = 3586267,

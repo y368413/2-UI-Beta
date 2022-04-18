@@ -71,6 +71,8 @@ L["Additional Trigger Replacements"] = [=[Дополнительные шабл�
 ]=]
 L["Affected"] = "Задействованные"
 L["Affected Unit Count"] = "Кол-во задейств-х единиц"
+--[[Translation missing --]]
+L["Afk"] = "Afk"
 L["Aggro"] = "Агро"
 L["Agility"] = "Ловкость"
 L["Ahn'Qiraj"] = "Ан'Кираж"
@@ -99,12 +101,13 @@ L["Any Triggers"] = "Любые триггеры"
 L["AOE"] = "Урон по области (AOE)"
 L["Arcane Resistance"] = "Сопротивление тайной магии"
 L["Archimonde"] = "Архимонд"
---[[Translation missing --]]
 L[ [=[Are you sure you want to run the |cffff0000EXPERIMENTAL|r repair tool?
 This will overwrite any changes you have made since the last database upgrade.
-Last upgrade: %s]=] ] = [=[Are you sure you want to run the |cffff0000EXPERIMENTAL|r repair tool?
-This will overwrite any changes you have made since the last database upgrade.
-Last upgrade: %s]=]
+Last upgrade: %s]=] ] = [=[Вы уверены, что хотите запустить |cFFFF0000ЭКСПЕРИМЕНТАЛЬНОЕ|r средство восстановления данных?
+
+Все изменения, выполненные вами с момента последнего обновления базы данных, будут утеряны.
+
+Дата последнего обновления: %s]=]
 L["Arena"] = "Арена"
 L["Armor (%)"] = "Броня"
 L["Armor against Target (%)"] = "Броня против текущей цели"
@@ -171,11 +174,12 @@ L["Black Temple"] = "Черный храм"
 L["Black Wing Lair"] = "Логово Крыла Тьмы"
 L["Blizzard (2h | 3m | 10s | 2.4)"] = "Blizzard:  2ч. | 3м. | 10с. | 2.4"
 L["Blizzard Combat Text"] = "Текст боя Blizzard"
-L["Block"] = "Блок"
-L["Block (%)"] = "Блок"
-L["Block against Target (%)"] = "Блок против текущей цели"
 --[[Translation missing --]]
-L["Block Value"] = "Block Value"
+L["Blizzard Cooldown Reduction"] = "Blizzard Cooldown Reduction"
+L["Block"] = "Блок"
+L["Block (%)"] = "Вероятность блока"
+L["Block against Target (%)"] = "Блок против текущей цели"
+L["Block Value"] = "Показатель блока"
 L["Blocked"] = "Заблокировано"
 L["Bloodlord Mandokir"] = "Мандокир Повелитель Крови"
 L["Border"] = "Граница"
@@ -253,9 +257,10 @@ L["Cooldown Progress (Slot)"] = "Восстановление (ячейка)"
 L["Cooldown Ready Event"] = "Восстановление завершено"
 L["Cooldown Ready Event (Item)"] = "Восстановление завершено (предмет)"
 L["Cooldown Ready Event (Slot)"] = "Восстановление завершено (ячейка)"
-L["Cooldown/Charges/Count"] = "Восстановление / Заряды / Количество"
 --[[Translation missing --]]
-L["Could not load WeakAuras Archive, the addon is %s"] = "Could not load WeakAuras Archive, the addon is %s"
+L["Cooldown Reduction changes the duration of seconds instead of showing the real time seconds."] = "Cooldown Reduction changes the duration of seconds instead of showing the real time seconds."
+L["Cooldown/Charges/Count"] = "Восстановление / Заряды / Количество"
+L["Could not load WeakAuras Archive, the addon is %s"] = "Не удалось загрузить WeakAuras Archive. Причина - %s"
 L["Count"] = "Счетчик"
 L["Counter Clockwise"] = "Против часовой стрелки"
 L["Create"] = "Создание"
@@ -277,7 +282,7 @@ L["Curse"] = "Проклятие"
 L["Custom"] = "Самостоятельно"
 L["Custom Check"] = "Свое условие"
 L["Custom Color"] = "Цвет"
-L["Custom Configuration"] = "Настройки пользователя"
+L["Custom Configuration"] = "Конфигурация пользователя"
 L["Custom Function"] = "Своя функция"
 L["Daakara"] = "Даакара"
 L["Damage"] = "Урон"
@@ -314,6 +319,8 @@ L["Dispel"] = "Рассеивание"
 L["Dispel Failed"] = "Рассеивание не удалось"
 L["Display"] = "Отображение"
 L["Distance"] = "Расстояние"
+--[[Translation missing --]]
+L["Do Not Disturb"] = "Do Not Disturb"
 L["Dodge"] = "Уклонение"
 L["Dodge (%)"] = "Уклонение"
 L["Dodge Rating"] = "Показатель уклонения"
@@ -502,8 +509,7 @@ L["Ignore Self"] = "Не учитывать себя"
 L["Illidan Stormrage"] = "Иллидан Ярость Бури"
 L["Immune"] = "Невосприимчивость"
 L["Important"] = "Важно"
---[[Translation missing --]]
-L["Importing will start after combat ends."] = "Importing will start after combat ends."
+L["Importing will start after combat ends."] = "Импорт начнется после окончания боя."
 L["In Combat"] = "В бою"
 L["In Encounter"] = "В сражении с боссом"
 L["In Group"] = "В группе"
@@ -718,8 +724,7 @@ L["Onyxia's Lair"] = "Логово Ониксии"
 L["Opaque"] = "Непрозрачность"
 L["Opera Hall"] = "Оперный зал"
 L["Option Group"] = "Группа параметров"
---[[Translation missing --]]
-L["Options could not be loaded, the addon is %s"] = "Options could not be loaded, the addon is %s"
+L["Options could not be loaded, the addon is %s"] = "Не удалось загрузить WeakAuras Options. Причина - %s"
 L["Options will finish loading after combat ends."] = "Параметры загрузятся после окончания боя."
 L["Options will open after the login process has completed."] = "Параметры откроются после завершения процесса входа в игру."
 L["Orbit"] = "Вращение по орбите"
@@ -944,8 +949,7 @@ L["Specific Unit"] = "Конкретная единица"
 L["Spell"] = "Заклинание"
 L["Spell (Building)"] = "Заклинание (строение)"
 L["Spell Activation Overlay Glow"] = "Свечение иконки при активации заклинания"
---[[Translation missing --]]
-L["Spell Cast Succeeded"] = "Spell Cast Succeeded"
+L["Spell Cast Succeeded"] = "Применение заклинания успешно"
 L["Spell Cost"] = "Стоимость заклинания"
 L["Spell Count"] = "Количество заклинаний"
 L["Spell ID"] = "ID заклинания"
@@ -955,8 +959,7 @@ L["Spell IDs:"] = "ID заклинаний:"
 L["Spell in Range"] = "В зоне действия (заклинание)"
 L["Spell Known"] = "Заклинание известно"
 L["Spell Name"] = "Название заклинания"
---[[Translation missing --]]
-L["Spell School"] = "Spell School"
+L["Spell School"] = "Школа магии"
 L["Spell Usable"] = "Заклинание доступно"
 L["Spin"] = "Вращение"
 L["Spiral"] = "Спираль"
@@ -988,8 +991,7 @@ L["Supports multiple entries, separated by commas"] = "Можно указать
 L[ [=[Supports multiple entries, separated by commas
 ]=] ] = [=[Можно указать несколько значений, разделенных запятыми.
 ]=]
---[[Translation missing --]]
-L["Supports multiple entries, separated by commas. Escape ',' with \\"] = "Supports multiple entries, separated by commas. Escape ',' with \\"
+L["Supports multiple entries, separated by commas. Escape ',' with \\"] = "Можно указать несколько значений, разделенных запятыми. Если название уже содержит запятую, экранируйте ее при помощи символа \\"
 L["Supports multiple entries, separated by commas. Group Zone IDs must be prefixed with 'g', e.g. g277."] = [=[ID группы игровых зон должен иметь префикс g. Например: g227
 
 Можно указать несколько значений, разделенных запятыми.]=]
@@ -1081,7 +1083,7 @@ L["Trigger Update"] = "При изменении состояния тригге
 L["Trigger:"] = "Триггер:"
 L["Trivial (Low Level)"] = "Тривиальный (низкий уровень)"
 L["True"] = "Истина"
-L["Trying to repair broken conditions in %s likely caused by a WeakAuras bug."] = "Попытка восстановить поврежденные условия в индикации %s, причиной которых стал баг аддона."
+L["Trying to repair broken conditions in %s likely caused by a WeakAuras bug."] = "Попытка восстановить поврежденные условия в индикации %s, причиной которых стала ошибка аддона."
 L["Twin Emperors"] = "Императоры-близнецы"
 L["Type"] = "Тип"
 L["Unaffected"] = "Незадействованные"
@@ -1124,14 +1126,14 @@ L["Warning: Full Scan auras checking for both name and spell id can't be convert
 L["Warning: Name info is now available via %affected, %unaffected. Number of affected group members via %unitCount. Some options behave differently now. This is not automatically adjusted."] = "|cFFFFCC00Примечение.|r Теперь имена задействованных и незадействованных игроков доступны посредством %affected и %unaffected; количество задействованных участников группы - %unitCount. Некоторые параметры работают иначе. Эти изменения автоматически не применяются."
 L["Warning: Tooltip values are now available via %tooltip1, %tooltip2, %tooltip3 instead of %s. This is not automatically adjusted."] = "|cFFFFCC00Примечение.|r Теперь значения из текста подсказки доступны посредством %tooltip1, %tooltip2 и %tooltip3. Это изменение автоматически не применяется."
 L["WeakAuras Built-In (63:42 | 3:07 | 10 | 2.4)"] = "WeakAuras (встроенный):  63:42 | 3:07 | 10 | 2.4"
---[[Translation missing --]]
 L[ [=[WeakAuras has detected that it has been downgraded.
 Your saved auras may no longer work properly.
 Would you like to run the |cffff0000EXPERIMENTAL|r repair tool? This will overwrite any changes you have made since the last database upgrade.
-Last upgrade: %s]=] ] = [=[WeakAuras has detected that it has been downgraded.
-Your saved auras may no longer work properly.
-Would you like to run the |cffff0000EXPERIMENTAL|r repair tool? This will overwrite any changes you have made since the last database upgrade.
-Last upgrade: %s]=]
+Last upgrade: %s]=] ] = [=[WeakAuras обнаружил, что версия аддона была понижена (осуществлен downgrade). Ваши индикации могут больше не работать должным образом.
+
+Запустить |cFFFF0000ЭКСПЕРИМЕНТАЛЬНОЕ|r средство восстановления данных? Все изменения, выполненные вами с момента последнего обновления базы данных, будут утеряны.
+
+Дата последнего обновления: %s]=]
 L["WeakAuras has encountered an error during the login process. Please report this issue at https://github.com/WeakAuras/Weakauras2/issues/new."] = "Во время процесса входа в игру возникла ошибка. Пожалуйста, сообщите об этой проблеме по адресу https://github.com/WeakAuras/Weakauras2/issues/new."
 L["WeakAuras Profiling"] = "Профилирование WeakAuras"
 L["WeakAuras Profiling Report"] = "Отчёт профилирования"

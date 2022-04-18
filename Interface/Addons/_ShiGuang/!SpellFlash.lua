@@ -251,7 +251,7 @@ thj.ScanKeyBindings = function()
     ScanStanceBar();
 end
 
-print("-hotkeys @ 666 ---------------------------------")
+--print("-hotkeys @ 666 ---------------------------------")
 local sfo = thj.frame
 -- 按键扫描注册
 sfo:RegisterEvent("PLAYER_ENTERING_WORLD")

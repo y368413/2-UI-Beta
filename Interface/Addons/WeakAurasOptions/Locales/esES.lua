@@ -1,4 +1,4 @@
-if not WeakAuras.IsCorrectVersion() then return end
+if not WeakAuras.IsCorrectVersion() or not WeakAuras.IsLibsOK() then return end
 
 if GetLocale() ~= "esES" then
   return
@@ -287,6 +287,8 @@ Off Screen]=]
 	L["Big Icon"] = "Big Icon"
 	L["Blend Mode"] = "Modo de Mezcla"
 	--[[Translation missing --]]
+	L["Blizzard Cooldown Reduction"] = "Blizzard Cooldown Reduction"
+	--[[Translation missing --]]
 	L["Blue Rune"] = "Blue Rune"
 	--[[Translation missing --]]
 	L["Blue Sparkle Orb"] = "Blue Sparkle Orb"
@@ -391,6 +393,8 @@ Off Screen]=]
 	L["Convert to New Aura Trigger"] = "Convert to New Aura Trigger"
 	--[[Translation missing --]]
 	L["Convert to..."] = "Convert to..."
+	--[[Translation missing --]]
+	L["Cooldown Reduction changes the duration of seconds instead of showing the real time seconds."] = "Cooldown Reduction changes the duration of seconds instead of showing the real time seconds."
 	--[[Translation missing --]]
 	L["Copy"] = "Copy"
 	--[[Translation missing --]]

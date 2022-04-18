@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 local CovenantMissionHelper, CMH = ...
 local L = MissionHelper.L
 
@@ -21,13 +20,6 @@ local L = MissionHelper.L
 ---@field spells
 ---@field passive_spell
 ---@field buffs
-=======
-CovenantMissionHelper, CMH = ...
-
-local ADDON, Addon = ...
-local L = LibStub('AceLocale-3.0'):GetLocale(ADDON)
-
->>>>>>> Stashed changes
 local Unit = {}
 local EffectTypeEnum, EffectType = CMH.DataTables.EffectTypeEnum, CMH.DataTables.EffectType
 
@@ -86,11 +78,7 @@ end
 function Unit:setSpells(autoCombatSpells)
     -- auto attack is spell
     local autoAttack = {
-<<<<<<< Updated upstream
         autoCombatSpellID = self:getAttackType(autoCombatSpells),
-=======
-        autoCombatSpellID = self:getAttackType(),
->>>>>>> Stashed changes
         name = L['Auto Attack'],
         duration = 0,
         cooldown = 0,
@@ -188,7 +176,7 @@ function Unit:getDamageMultiplier(targetUnit)
     local multiplier, positive_multiplier, multiplier_2 = 1, 1, 1
     for _, buff in pairs(self.buffs) do
         if buff.Effect == EffectTypeEnum.DamageDealtMultiplier or buff.Effect == EffectTypeEnum.DamageDealtMultiplier_2 then
-            CMH:debug_log(string.format(L['self buff. effect = %s, baseValue = %s, spellID = %s, source = %s '],
+            CMH:debug_log(string.format('self buff. effect = %s, baseValue = %s, spellID = %s, source = %s ',
                     CMH.DataTables.EffectType[buff.Effect], buff.baseValue, buff.SpellID, buff.sourceIndex))
             multiplier = multiplier + buff.baseValue
 
@@ -204,7 +192,7 @@ function Unit:getDamageMultiplier(targetUnit)
 
     for _, buff in pairs(targetUnit.buffs) do
         if buff.Effect == EffectTypeEnum.DamageTakenMultiplier or buff.Effect == EffectTypeEnum.DamageTakenMultiplier_2 then
-            CMH:debug_log(L['target buff '] .. CMH.DataTables.EffectType[buff.Effect] .. ' ' .. buff.baseValue)
+            CMH:debug_log('target buff ' .. CMH.DataTables.EffectType[buff.Effect] .. ' ' .. buff.baseValue)
             multiplier_2 = multiplier_2 + buff.baseValue
             --[[
             if buffs[buff.SpellID] == nil then
@@ -222,7 +210,7 @@ function Unit:getDamageMultiplier(targetUnit)
     end
 --]]
     multiplier = multiplier * multiplier_2
-    if multiplier ~= 1 then CMH:debug_log(L['damage multiplier = '] .. multiplier .. L[' pos. multiplier = '] .. multiplier_2) end
+    if multiplier ~= 1 then CMH:debug_log('damage multiplier = ' .. multiplier .. ' pos. multiplier = ' .. multiplier_2) end
     return math.max(multiplier, 0), multiplier_2
 end
 
@@ -239,7 +227,7 @@ function Unit:getAdditionalDamage(targetUnit)
             result = result + buff.baseValue
         end
     end
-    if result ~= 0 then CMH:debug_log(L['additional damage = '] .. result) end
+    if result ~= 0 then CMH:debug_log('additional damage = ' .. result) end
     return result
 end
 
@@ -252,32 +240,21 @@ function Unit:castSpellEffect(targetUnit, effect, spell, isAppliedBuff)
     if isDamageEffect(effect, isAppliedBuff) then
         value = self:calculateEffectValue(targetUnit, effect)
         targetUnit.currentHealth = math.max(0, targetUnit.currentHealth - value)
-<<<<<<< Updated upstream
         CMH:log(color:WrapTextInColorCode(string.format('%s %s %s %s %s%s (%s %s -> %s)',
             self.name, L[EffectType[effect.Effect]], targetUnit.name, L['for'], value, L['.'], L['HP'], oldTargetHP, targetUnit.currentHealth)))
-=======
-        CMH:log(string.format(L['|c%s%s %s %s for %s. (HP %s -> %s)|r'],
-            color, self.name, EffectType[effect.Effect], targetUnit.name, value, oldTargetHP, targetUnit.currentHealth))
->>>>>>> Stashed changes
 
     -- heal
     elseif effect.Effect == EffectTypeEnum.Heal or effect.Effect == EffectTypeEnum.Heal_2
             or (effect.Effect == EffectTypeEnum.HoT and isAppliedBuff == true) then
         value = self:calculateEffectValue(targetUnit, effect)
         targetUnit.currentHealth = math.min(targetUnit.maxHealth, targetUnit.currentHealth + value)
-<<<<<<< Updated upstream
         CMH:log(color:WrapTextInColorCode(string.format('%s %s %s %s %s%s (%s %s -> %s)',
             self.name, L[EffectType[effect.Effect]], targetUnit.name, L['for'], value, L['.'], L['HP'], oldTargetHP, targetUnit.currentHealth)))
-=======
-        CMH:log(string.format(L['|c%s%s %s %s for %s. (HP %s -> %s)|r'],
-            color, self.name, EffectType[effect.Effect], targetUnit.name, value, oldTargetHP, targetUnit.currentHealth))
->>>>>>> Stashed changes
 
     -- Maximum health multiplier
     elseif effect.Effect == EffectTypeEnum.MaxHPMultiplier then
         value = self:calculateEffectValue(targetUnit, effect)
         targetUnit.maxHealth = targetUnit.maxHealth + value
-<<<<<<< Updated upstream
         targetUnit.currentHealth = math.min(targetUnit.maxHealth, targetUnit.currentHealth + value)
         CMH:log(color:WrapTextInColorCode(string.format('%s %s %s %s %s',
             self.name, L[EffectType[effect.Effect]], targetUnit.name, L['for'], value)))
@@ -286,15 +263,6 @@ function Unit:castSpellEffect(targetUnit, effect, spell, isAppliedBuff)
         self:applyBuff(targetUnit, effect, value, spell.duration, spell.name)
         CMH:log(color:WrapTextInColorCode(string.format('%s %s %s %s (%s)',
             self.name, L['apply'], L[EffectType[effect.Effect]], targetUnit.name, value)))
-=======
-        CMH:log(string.format(L['|c%s%s %s %s for %s|r'],
-            color, self.name, EffectType[effect.Effect], targetUnit.name, value))
-    else
-        value = self:getEffectBaseValue(effect)
-        self:applyBuff(targetUnit, effect, value, spell.duration, spell.name)
-        CMH:log(string.format('|c%s%s %s %s (%s)|r',
-            color, self.name, L['apply '] .. EffectType[effect.Effect], targetUnit.name, value))
->>>>>>> Stashed changes
     end
 
     return {
@@ -338,9 +306,9 @@ function Unit:manageBuffs(sourceUnit)
     while i <= #self.buffs do
         local buff = self.buffs[i]
         if buff.sourceIndex == sourceUnit.boardIndex then
-            CMH:debug_log(L['targetUnit = '] .. self.boardIndex ..
-                    L[' buff effect = '] .. buff.Effect .. L[' duration = '] .. tostring(buff.duration) ..
-                    L[' period = '] .. tostring(buff.currentPeriod))
+            CMH:debug_log('targetUnit = ' .. self.boardIndex ..
+                    ' buff effect = ' .. buff.Effect .. ' duration = ' .. tostring(buff.duration) ..
+                    ' period = ' .. tostring(buff.currentPeriod))
             self:manageDoTHoT(sourceUnit, buff, false)
             buff:decreaseRestTime()
         end
@@ -351,13 +319,8 @@ function Unit:manageBuffs(sourceUnit)
                 buff = buff,
                 targetBoardIndex = self.boardIndex,
             })
-<<<<<<< Updated upstream
             CMH:log(BLUE_FONT_COLOR:WrapTextInColorCode(string.format('%s %s %s %s %s',
                     tostring(sourceUnit.name), L['remove'], tostring(buff.name), L['from'], tostring(self.name))))
-=======
-            CMH:log(string.format(L['|c000088CC%s remove %s from %s|r'],
-                    tostring(sourceUnit.name), tostring(buff.name), tostring(self.name)))
->>>>>>> Stashed changes
             table.remove(self.buffs, i)
             if buff.Effect == EffectTypeEnum.Taunt then
                 self.tauntedBy = nil
