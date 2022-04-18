@@ -962,17 +962,6 @@ do
 		self:HookScript("OnLeave", M.Texture_OnLeave)
 	end
 
-	function M:ReskinFilterReset()
-		M.StripTextures(self)
-		self:ClearAllPoints()
-		self:SetPoint("TOPRIGHT", -5, 10)
-
-		local tex = self:CreateTexture(nil, "ARTWORK")
-		tex:SetInside(nil, 2, 2)
-		tex:SetTexture(I.closeTex)
-		tex:SetVertexColor(1, 0, 0)
-	end
-
 	function M:ReskinFilterButton()
 		M.StripTextures(self)
 		M.Reskin(self)
@@ -983,9 +972,6 @@ do
 			M.SetupArrow(self.Icon, "right")
 			self.Icon:SetPoint("RIGHT")
 			self.Icon:SetSize(14, 14)
-		end
-		if I.isNewPatch and self.ResetButton then
-			M.ReskinFilterReset(self.ResetButton)
 		end
 	end
 
