@@ -18,7 +18,22 @@ thj.info = {
 thj.spells = {}
 thj.items = {}
 thj.keyMapping = {}
-
+thj.meta = {
+    spellUpgrade = {
+        -- ZS
+        ["浴血奋战"] = "嗜血",
+        ["碎甲猛击"] = "怒击",
+        -- DH
+        ["死亡横扫"] = "刃舞",
+        ["毁灭"] = "混乱打击"
+        -- LR
+    },
+    shapeShiftFormMapping = {[0] = 0, [1] = 96, [2] = 72, [3] = 108}
+}
+local _, clzName = UnitClass('player');
+if (clzName == "PRIEST") then
+    thj.meta.shapeShiftFormMapping[1] = 0
+end
 local lastUpdate = 0;
 thj.createFrame = function(name, parent)
     local f = CreateFrame("Frame", name, parent or UIParent);
@@ -139,7 +154,7 @@ local keyMapping = {
     ["PAGEDOWN"] = 34,
     ["HOME"] = 36,
     ["END"] = 35
-}
+} 
 local km = thj.keyMapping;
 for k, v in pairs(keyMapping) do
     km[k] = {key = v}
@@ -173,6 +188,10 @@ local function StoreKeybindInfo(page, bindingName, slot)
         local spellName = GetSpellInfo(id);
         thj.spells[id] = spellName
         thj.spells[spellName] = key
+        local upgradedSpell = thj.meta.spellUpgrade[spellName];
+        if (upgradedSpell) then
+            thj.spells[upgradedSpell] = key
+        end
         -- print("SKI Spell->", key, id, spellName)
     elseif actionType == "macro" then
         local sID = GetMacroSpell(id)
@@ -217,13 +236,22 @@ end
 -- /dump GetSpellInfo(317349)
 -- 330325  317349 184367
 -- SKI Spell-> ` 21562 真言术：韧
--- /dump GetActionBarPage()
+-- /dump GetActionBarPage() 
 thj.ScanKeyBindings = function()
     wipe(thj.spells);
     -- print("--------扫描按键定义中-------")
     local curPage = GetActionBarPage();
-    for i = 1, 12 do
-        StoreKeybindInfo(curPage, "ACTIONBUTTON" .. i, i + (curPage - 1) * 12)
+    local shapeShiftForm = GetShapeshiftForm();
+    if shapeShiftForm > 0 then
+        for i = 1, 12 do
+            StoreKeybindInfo(curPage, "ACTIONBUTTON" .. i,
+                             i + thj.meta.shapeShiftFormMapping[shapeShiftForm]);
+        end
+    else
+        for i = 1, 12 do
+            StoreKeybindInfo(curPage, "ACTIONBUTTON" .. i,
+                             i + (curPage - 1) * 12)
+        end
     end
 
     for i = 25, 36 do
@@ -242,16 +270,24 @@ thj.ScanKeyBindings = function()
         StoreKeybindInfo(6, "MULTIACTIONBAR1BUTTON" .. i - 60, i)
     end
 
-    -- page 7-10
-    -- for i = 72, 119 do
-    --     StoreKeybindInfo(7 + floor((i - 72) / 12),
-    --                      "ACTIONBUTTON" .. (1 + (i - 72) % 12), i + 1)
-    -- end
-
+    -- 变身技能覆盖
+    --[[
+        cat; 1=human 73=cat  97=bear  109=catkin
+    ]]
     ScanStanceBar();
 end
+-- /dump SpellFlashCore.FindBar()
+thj.FindBar = function()
+    for i = 0, 9 do
+        local slot = i * 12 + 1;
+        local type, id = GetActionInfo(slot);
+        if id then
+            local name = GetSpellInfo(id);
+            print(slot, "-=>", id, name)
+        end
+    end
+end
 
---print("-hotkeys @ 666 ---------------------------------")
 local sfo = thj.frame
 -- 按键扫描注册
 sfo:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -266,6 +302,10 @@ sfo:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 function sfo:PLAYER_SPECIALIZATION_CHANGED() thj.ScanKeyBindings(); end
 sfo:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
 function sfo:UPDATE_SHAPESHIFT_FORM() thj.ScanKeyBindings(); end
+sfo:RegisterEvent("CURRENT_SPELL_CAST_CHANGED")
+function sfo:CURRENT_SPELL_CAST_CHANGED(_, flag)
+    if flag then thj.ScanKeyBindings(); end
+end
 
 --[[ 创建UI ]]
 local sfo = thj.frame;
@@ -281,11 +321,11 @@ tx2:SetColorTexture(1, 1, 0);
 tx2:SetSize(SIZE, SIZE);
 tx2:SetPoint("TOPLEFT", tx, "TOPRIGHT", 0, 0)
 thj.txAlt = tx2;
-local text = sfo:CreateFontString()
+--[[local text = sfo:CreateFontString()
 text:SetFont(STANDARD_TEXT_FONT, 16, "OUTLINE")
 text:SetText("-")
 text:SetPoint("TOPLEFT", tx2, "TOPRIGHT", 5, 0)
-thj.debugger = text;
+thj.debugger = text;]]
 --[[
     注册重绘方法
     /dump SpellFlashCore.info
@@ -406,8 +446,21 @@ end
     @param spellName: 技能名称
 ]]
 thj.FlashAction = function(spellName)
-    if not spellName then return end
-    local key = thj.spells[spellName];
+    local key;
+    if type(spellName) ~= "table" then
+        -- print("FlashAction->" .. spellName)
+        if not spellName then return end
+        key = thj.spells[spellName];
+    else
+        -- print("FlashTableAction->", spellName[1])
+        for k, v in pairs(spellName) do
+            local name = GetSpellInfo(v);
+            -- print("FlashTableAction->", k, v, name, thj.spells[v])
+            key = thj.spells[name];
+            -- 如果key不为空，则跳出循环
+            if key then break end
+        end
+    end
     if not key and thj.info.isCombat and thj.info.spellID then
         local id = thj.info.spellID;
         print("|cffff2020 Spell: " .. spellName .. " not found!|r")

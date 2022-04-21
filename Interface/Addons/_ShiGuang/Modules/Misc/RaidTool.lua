@@ -704,7 +704,7 @@ function MISC:RaidTool_Init()
 	--MISC:RaidTool_ReadyCheck(frame)
 	--MISC:RaidTool_Marker(frame)
 	--MISC:RaidTool_BuffChecker(frame)
-	MISC:RaidTool_CreateMenu(frame)
+	--MISC:RaidTool_CreateMenu(frame)
 
 	--MISC:RaidTool_EasyMarker()
 	--MISC:RaidTool_WorldMarker()
