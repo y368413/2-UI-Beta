@@ -1354,6 +1354,24 @@ do
         return newFunc
     end
 
+    local function GetDeepestSetter( db, info )
+        local position = db.Multi.Multi
+        local setter
+
+        for i = 3, #info - 1 do
+            local key = info[ i ]
+            position = position.args[ key ]
+
+            local setfunc = rawget( position, "set" )
+
+            if setfunc and type( setfunc ) == "function" then
+                setter = setfunc
+            end
+        end
+
+        return setter
+    end
+
     MakeMultiDisplayOption = function( db, t, inf )
         local info = {}
 
@@ -1384,10 +1402,18 @@ do
             elseif v.type == "group" then
                 info[ #info + 1 ] = k
                 MakeMultiDisplayOption( db, v.args, info )
+                info[ #info ] = nil
             elseif inf and v.type ~= "description" then
                 info[ #info + 1 ] = k
                 v.desc = WrapDesc( db, info )
-                if rawget( v, "set" ) then v.set = WrapSetter( db, info ) end
+
+                if rawget( v, "set" ) then
+                    v.set = WrapSetter( db, info )
+                else
+                    local setfunc = GetDeepestSetter( db, info )
+                    if setfunc then v.set = WrapSetter( db, info ) end
+                end
+
                 info[ #info ] = nil
             end
         end
@@ -4416,7 +4442,7 @@ do
 
         for k, v in orderedPairs( abilities ) do
             local ability = class.abilities[ v ]
-            local useName = class.abilityList[ v ] and class.abilityList[v]:match("|t (.+)$") or ability.name
+            local useName = class.abilityList[ v ] and class.abilityList[v]:match("\|t (.+)$") or ability.name
 
             if not useName then
                 Hekili:Error( "No name available for %s (id:%d) in EmbedAbilityOptions.", ability.key or "no_id", ability.id or 0 )
@@ -4827,7 +4853,7 @@ do
             local a = class.abilities[ k ]
             if a and ( a.id > 0 or a.id < -100 ) and a.id ~= 61304 and not a.item then
                 if settings.abilities[ k ].toggle == section or a.toggle == section and settings.abilities[ k ].toggle == 'default' then
-                    tAbilities[ k ] = v
+                    tAbilities[ k ] = class.abilityList[ k ] or v
                 end
             end
         end
@@ -4898,7 +4924,7 @@ do
                     local desc
                     if a then
                         if a.item then desc = a.link or a.name
-                        else desc = a.name end
+                        else desc = class.abilityList[ a.key ] or a.name end
                     end
                     desc = desc or ability
 
@@ -4925,7 +4951,7 @@ do
                     local a = class.abilities[ ability ]
                     if a then
                         if a.item then return a.link or a.name end
-                        return a.name
+                        return class.abilityList[ a.key ] or a.name
                     end
                     return ability
                 end
@@ -11041,7 +11067,8 @@ do
 
                     if ability and ( ability == "use_item" or class.abilities[ ability ] ) then
                         if ability == "pocketsized_computation_device" then ability = "cyclotronic_blast" end
-                        if ability == "any_dnd" or ability == "wound_spender" then
+                        -- Stub abilities that are replaced sometimes.
+                        if ability == "any_dnd" or ability == "wound_spender" or ability == "summon_pet" then
                             result.action = ability
                         else
                             result.action = class.abilities[ ability ] and class.abilities[ ability ].key or ability

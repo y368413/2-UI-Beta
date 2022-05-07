@@ -1,19 +1,9 @@
 {
+    "ignore": false,
+    "status": "",
     "target": "curse",
-    "localName": "FarmHud",
     "searchName": "FarmHud",
-    "fileName": "farmhud",
+    "localName": "FarmHud",
     "version": "8.8.1-release",
-    "addonsMap": [
-        "FarmHud",
-        "FarmHud_QuestArrow"
-    ],
-    "interfaceMap": [],
-    "children": [
-        "FarmHud_QuestArrow"
-    ],
-    "name": "FarmHud",
-    "gameVersion": "9.1.0",
-    "ignore": true,
-    "status": ""
+    "fileName": "farmhud"
 }

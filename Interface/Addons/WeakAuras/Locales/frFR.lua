@@ -5,10 +5,14 @@ end
 local L = WeakAuras.L
 
 -- WeakAuras
+--[[Translation missing --]]
 L[ [=[ Filter formats: 'Name', 'Name-Realm', '-Realm'. 
 
 Supports multiple entries, separated by commas
-]=] ] = "Formats de filtre : Nom, 'Serveur-Nom', 'Serveur-'. Supporte les entrées multiples, séparées par des virgules"
+Can use \ to escape -.]=] ] = [=[ Filter formats: 'Name', 'Name-Realm', '-Realm'. 
+
+Supports multiple entries, separated by commas
+Can use \ to escape -.]=]
 L["%s Overlay Color"] = "%s couleur de la superposition"
 L["* Suffix"] = "* Suffixe"
 L["/wa help - Show this message"] = "/wa help - Affiche ce message"
@@ -34,10 +38,16 @@ L[ [=[• |cff00ff00Player|r, |cff00ff00Target|r, |cff00ff00Focus|r, and |cff00f
 |cffffff00*|r Yellow Unit settings will create clones for each matching unit while this trigger is providing Dynamic Info to the Aura.]=] ] = [=[• |cff00ff00Joueur|r, |cff00ff00Cible|r, |cff00ff00Focalisation|r, and |cff00ff00Animal de compagnie|r 
 correspondent directement à ces identifiants d'unités individuelles. • |cff00ff00Unité spécifique|r vous permet de fournir un identifiant d'unité spécifique valide à surveiller. |cffff0000Note|r : Le jeu ne déclenchera pas d'événements pour tous les identifiants d'unités valides, ce qui rendra certains d'entre eux non traçables par ce déclencheur. • |cffffff00Groupe|r, |cffffff00Raid|r, |cffffff00Boss|r, |cffffff00Arène|r, et |cffffff00Nameplate|r peut correspondre à plusieurs identifiant d'unité. • Le |cffffff00groupe intelligent|r s'adapte à votre type de groupe actuel, en ne faisant correspondre que le "joueur" en solo, les unités du "groupe" (y compris le "joueur") dans un groupe ou les unités du "raid" dans un raid. |cffffff00*|r Les paramètres de l'unité jaune créeront des clones pour chaque unité correspondante pendant que ce déclencheur fournit des informations dynamiques à l'Aura.]=]
 L["10 Man Raid"] = "Raid 10 Joueurs"
+--[[Translation missing --]]
+L["10 Player Raid"] = "10 Player Raid"
 L["10 Player Raid (Heroic)"] = "Raid 10 Joueurs (Héroïque)"
 L["10 Player Raid (Normal)"] = "Raid 10 Joueurs (Normal)"
 L["20 Man Raid"] = "Raid 20 Joueurs"
+--[[Translation missing --]]
+L["20 Player Raid"] = "20 Player Raid"
 L["25 Man Raid"] = "Raid 25 Joueurs"
+--[[Translation missing --]]
+L["25 Player Raid"] = "25 Player Raid"
 L["25 Player Raid (Heroic)"] = "Raid 25 Joueurs (Héroïque)"
 L["25 Player Raid (Normal)"] = "Raid 25 Joueurs (Normal)"
 L["40 Man Raid"] = "Raid 40 Personnes"
@@ -152,6 +162,8 @@ L["Background"] = "Arrière-plan"
 L["Background Color"] = "Couleur d'arrière-plan"
 L["Bar Color"] = "Couleur de barre"
 L["Baron Geddon"] = "Baron Geddon"
+--[[Translation missing --]]
+L["Battle for Azeroth"] = "Battle for Azeroth"
 L["Battle.net Whisper"] = "Message Battle.net"
 L["Battleground"] = [=[Champ De Bataille 
 ]=]
@@ -198,6 +210,8 @@ L["Brutallus"] = "Brutallus"
 L["Buff"] = "Amélioration"
 L["Buff/Debuff"] = "Amélioration / affaiblissement"
 L["Buffed/Debuffed"] = "Amélioré/Affaiblit"
+--[[Translation missing --]]
+L["Burning Crusade"] = "Burning Crusade"
 L["Buru the Gorger"] = "Buru Grandgosier"
 L["Can be used for e.g. checking if \"boss1target\" is the same as \"player\"."] = "Peut être utilisé pour par exemple vérifier si l'unité \"boss1target\" est la même que \"player\"."
 L["Cancel"] = "Annuler"
@@ -214,6 +228,8 @@ L["Caster Name"] = "Nom du Lanceur de sort "
 L["Caster Realm"] = "Royaume du Lanceur de sort"
 L["Caster Unit"] = "Unité lanceur de sort"
 L["Caster's Target"] = "Cible du Lanceur de sort"
+--[[Translation missing --]]
+L["Cataclysm"] = "Cataclysm"
 L["Ceil"] = "Cellule"
 L["Center"] = "Centre"
 L["Centered Horizontal"] = "Centré horizontalement"
@@ -243,6 +259,8 @@ L["Circle"] = "Cercle"
 L["Clamp"] = "Attache"
 L["Class"] = "Classe"
 L["Class and Specialization"] = "Classe et spécialisation"
+--[[Translation missing --]]
+L["Classic"] = "Classic"
 L["Classification"] = "Classification"
 L["Clockwise"] = "Sens horaire"
 L["Clone per Event"] = "Clone pour chaque Évènement"
@@ -348,6 +366,8 @@ L["Dodge Rating"] = "Pourcentage Esquive"
 L["Down"] = "Bas"
 L["Down, then Left"] = "Bas puis Gauche"
 L["Down, then Right"] = "Bas puis Droite"
+--[[Translation missing --]]
+L["Dragonflight"] = "Dragonflight"
 L["Drain"] = "Drain"
 L["Dropdown Menu"] = "Menu Déroulant"
 L["Dungeon (Heroic)"] = "Donjon (Héroïque)"
@@ -513,6 +533,8 @@ L["Grid"] = "Grille"
 L["Grobbulus"] = "Grobbulus"
 L["Group"] = "Groupe"
 L["Group Arrangement"] = "Arrangement du Groupe"
+--[[Translation missing --]]
+L["Group Type"] = "Group Type"
 L["Grow"] = "Grandir"
 --[[Translation missing --]]
 L["Gruul the Dragonkiller"] = "Gruul the Dragonkiller"
@@ -545,6 +567,8 @@ L["Health Deficit"] = "Health Deficit"
 --[[Translation missing --]]
 L["Heigan the Unclean"] = "Heigan the Unclean"
 L["Height"] = "Hauteur"
+--[[Translation missing --]]
+L["Heroic Party"] = "Heroic Party"
 --[[Translation missing --]]
 L["Hex Lord Malacrass"] = "Hex Lord Malacrass"
 L["Hide"] = "Cacher"
@@ -704,6 +728,8 @@ L["Legacy RGB Gradient"] = "Dégradé RVB Hérité"
 L["Legacy RGB Gradient Pulse"] = "Impulsion de Dégradé RVB héritée"
 --[[Translation missing --]]
 L["Legacy Spellname"] = "Legacy Spellname"
+--[[Translation missing --]]
+L["Legion"] = "Legion"
 L["Length"] = "Longueur"
 --[[Translation missing --]]
 L["Leotheras the Blind"] = "Leotheras the Blind"
@@ -774,6 +800,8 @@ L["Miss"] = "Raté"
 L["Miss Type"] = "Type de raté"
 L["Missed"] = "Raté"
 L["Missing"] = "Manquant"
+--[[Translation missing --]]
+L["Mists of Pandaria"] = "Mists of Pandaria"
 L["Moam"] = "Moam"
 L["Model"] = "Modèle"
 --[[Translation missing --]]
@@ -828,6 +856,8 @@ L["No Profiling information saved."] = "Aucune information de profilage enregist
 L["None"] = "Aucun"
 L["Non-player Character"] = "Personnage non-joueur"
 L["Normal"] = "Normal"
+--[[Translation missing --]]
+L["Normal Party"] = "Normal Party"
 L["Not in Group"] = "N'est pas en groupe"
 L["Not in Smart Group"] = "N'est pas dans un petit groupe"
 L["Not on Cooldown"] = "Pas en recharge"
@@ -1076,6 +1106,8 @@ L["Shade of Akama"] = "Shade of Akama"
 --[[Translation missing --]]
 L["Shade of Aran"] = "Shade of Aran"
 L["Shadow Resistance"] = "Résistance à l'ombre"
+--[[Translation missing --]]
+L["Shadowlands"] = "Shadowlands"
 L["Shake"] = "Secouer"
 --[[Translation missing --]]
 L["Shazzrah"] = "Shazzrah"
@@ -1183,7 +1215,6 @@ L["Stance/Form/Aura"] = "Posture/Forme/Aura"
 L["Standing"] = "Standing"
 --[[Translation missing --]]
 L["Star Shake"] = "Star Shake"
-L["Start"] = "Démarrer"
 --[[Translation missing --]]
 L["Start Now"] = "Start Now"
 L["Status"] = "Statut"
@@ -1375,6 +1406,8 @@ L["Void Reaver"] = "Void Reaver"
 L["War Mode Active"] = "Mode de Guerre Actif"
 L["Warfront (Heroic)"] = "Front de guerre (Héroïque)"
 L["Warfront (Normal)"] = "Front de guerre (Normal)"
+--[[Translation missing --]]
+L["Warlords of Draenor"] = "Warlords of Draenor"
 L["Warning"] = "Attention"
 --[[Translation missing --]]
 L["Warning for unknown aura:"] = "Warning for unknown aura:"
@@ -1410,6 +1443,8 @@ L["Width"] = "Largeur"
 L["Wobble"] = "Osciller"
 L["World Boss"] = "Boss de Monde"
 L["Wrap"] = "Emballage, absorbe"
+--[[Translation missing --]]
+L["Wrath of the Lich King"] = "Wrath of the Lich King"
 --[[Translation missing --]]
 L["Writing to the WeakAuras table is not allowed."] = "Writing to the WeakAuras table is not allowed."
 L["X-Offset"] = "Décalage X"

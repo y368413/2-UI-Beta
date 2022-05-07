@@ -367,6 +367,10 @@ L["Earthrager"] = "대지전복자"
 L["Ebonclaw Worg"] = "흑단발톱 검은늑대"
 L["Echelon"] = "에첼론"
 L["Edit"] = "편집"
+--[[Translation missing --]]
+--[[ L["Efficiency Score"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["EfficiencyScoreTip"] = ""--]] 
 L["Elder Leaxa"] = "장로 리악사"
 L["Elemental"] = "정령"
 L["Elfyra"] = "엘피라"

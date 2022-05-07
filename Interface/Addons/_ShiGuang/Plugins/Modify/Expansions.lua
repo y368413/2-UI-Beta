@@ -1,6 +1,6 @@
 -- ## Author: null  ## Version: 0.0.1
 -- 资料片版本文本  1-9  
-local expacText = {
+local _expacText = {
   '经典旧世(或未分类)',
 	'燃烧的远征(2)',
 	'巫妖王之怒(3)',
@@ -14,7 +14,23 @@ local expacText = {
 
 -- 输出资料片文本
 local function setExpacText(tooltip,expacID,frameType,itemType,itemSubType)
-  local headerText = expacText[expacID+1].."/"..itemType.."/"..itemSubType;  --"\n"..expacText[expacID+1].."→"..itemType.."→"..itemSubType
+  local expacText = "nil"
+  local itemTypeText = "nil"
+  local itemSubTypeText = "nil"
+  
+  if (expacID ~= nil) then 
+  	expacText = _expacText[expacID+1]
+  end
+  
+  if (itemType ~= nil) then
+    itemTypeText = itemType 
+  end
+  
+  if (itemSubType ~= nil) then  
+  	itemSubTypeText = itemSubType
+  end
+  	
+  local headerText = expacText.."/"..itemTypeText.."/"..itemSubTypeText;  --"\n"..expacText[expacID+1].."→"..itemType.."→"..itemSubType
   tooltip:AddLine(headerText);
 end;
 

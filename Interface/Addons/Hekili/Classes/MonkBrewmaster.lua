@@ -429,8 +429,8 @@ if UnitClassBase( "player" ) == "MONK" then
     end
 
     -- Use register event so we can access local data.
-    spec:RegisterEvent( "COMBAT_LOG_EVENT_UNFILTERED", function ()
-        trackBrewmasterDamage( "COMBAT_LOG_EVENT_UNFILTERED", CombatLogGetCurrentEventInfo() )
+    spec:RegisterCombatLogEvent( function( ... )
+        trackBrewmasterDamage( "COMBAT_LOG_EVENT_UNFILTERED", ... )
     end )
 
     spec:RegisterEvent( "PLAYER_REGEN_ENABLED", function ()

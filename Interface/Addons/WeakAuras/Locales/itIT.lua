@@ -5,11 +5,14 @@ end
 local L = WeakAuras.L
 
 -- WeakAuras
+--[[Translation missing --]]
 L[ [=[ Filter formats: 'Name', 'Name-Realm', '-Realm'. 
 
 Supports multiple entries, separated by commas
-]=] ] = [=[Formattazione filtro: 'Nome', 'Nome-Reame', '-Reame'.
- Supporta scelte multiple, separate dalla virgola]=]
+Can use \ to escape -.]=] ] = [=[ Filter formats: 'Name', 'Name-Realm', '-Realm'. 
+
+Supports multiple entries, separated by commas
+Can use \ to escape -.]=]
 L["%s Overlay Color"] = "%s Colore Overlay"
 L["* Suffix"] = "* Suffisso"
 L["/wa help - Show this message"] = "/wa help - Mostra questo messaggio"
@@ -48,11 +51,17 @@ L[ [=[• |cff00ff00Player|r, |cff00ff00Target|r, |cff00ff00Focus|r, and |cff00f
 |cffffff00*|r Yellow Unit settings will create clones for each matching unit while this trigger is providing Dynamic Info to the Aura.]=]
 L["10 Man Raid"] = "Incursione da 10 giocatori"
 --[[Translation missing --]]
+L["10 Player Raid"] = "10 Player Raid"
+--[[Translation missing --]]
 L["10 Player Raid (Heroic)"] = "10 Player Raid (Heroic)"
 --[[Translation missing --]]
 L["10 Player Raid (Normal)"] = "10 Player Raid (Normal)"
 L["20 Man Raid"] = "incursione da 20 giocatori"
+--[[Translation missing --]]
+L["20 Player Raid"] = "20 Player Raid"
 L["25 Man Raid"] = "Incursione da 25 giocatori"
+--[[Translation missing --]]
+L["25 Player Raid"] = "25 Player Raid"
 --[[Translation missing --]]
 L["25 Player Raid (Heroic)"] = "25 Player Raid (Heroic)"
 --[[Translation missing --]]
@@ -192,6 +201,8 @@ L["Background Color"] = "Colore Sfondo"
 L["Bar Color"] = "Colore Barra"
 --[[Translation missing --]]
 L["Baron Geddon"] = "Baron Geddon"
+--[[Translation missing --]]
+L["Battle for Azeroth"] = "Battle for Azeroth"
 L["Battle.net Whisper"] = "Sussurri di Battle.net"
 L["Battleground"] = "Campo di battaglia"
 --[[Translation missing --]]
@@ -250,6 +261,8 @@ L["Buff"] = "Buff"
 L["Buff/Debuff"] = "Buff/Debuff"
 L["Buffed/Debuffed"] = "Buffato/Debuffato"
 --[[Translation missing --]]
+L["Burning Crusade"] = "Burning Crusade"
+--[[Translation missing --]]
 L["Buru the Gorger"] = "Buru the Gorger"
 L["Can be used for e.g. checking if \"boss1target\" is the same as \"player\"."] = "Può essere usato per esempio per controllare se \"boss1target\" sia uguale a \"player\"."
 L["Cancel"] = "Cancella"
@@ -272,6 +285,8 @@ L["Caster Realm"] = "Caster Realm"
 L["Caster Unit"] = "Caster Unit"
 --[[Translation missing --]]
 L["Caster's Target"] = "Caster's Target"
+--[[Translation missing --]]
+L["Cataclysm"] = "Cataclysm"
 --[[Translation missing --]]
 L["Ceil"] = "Ceil"
 L["Center"] = "Centro"
@@ -315,6 +330,8 @@ L["Circle"] = "Cerchio"
 L["Clamp"] = "Clamp"
 L["Class"] = "Classe"
 L["Class and Specialization"] = "Classe e Specializzazione"
+--[[Translation missing --]]
+L["Classic"] = "Classic"
 --[[Translation missing --]]
 L["Classification"] = "Classification"
 L["Clockwise"] = "Senso Orario"
@@ -469,6 +486,8 @@ L["Down"] = "Down"
 L["Down, then Left"] = "Down, then Left"
 --[[Translation missing --]]
 L["Down, then Right"] = "Down, then Right"
+--[[Translation missing --]]
+L["Dragonflight"] = "Dragonflight"
 --[[Translation missing --]]
 L["Drain"] = "Drain"
 --[[Translation missing --]]
@@ -715,6 +734,8 @@ L["Group"] = "Group"
 --[[Translation missing --]]
 L["Group Arrangement"] = "Group Arrangement"
 --[[Translation missing --]]
+L["Group Type"] = "Group Type"
+--[[Translation missing --]]
 L["Grow"] = "Grow"
 --[[Translation missing --]]
 L["Gruul the Dragonkiller"] = "Gruul the Dragonkiller"
@@ -758,6 +779,8 @@ L["Health Deficit"] = "Health Deficit"
 L["Heigan the Unclean"] = "Heigan the Unclean"
 --[[Translation missing --]]
 L["Height"] = "Height"
+--[[Translation missing --]]
+L["Heroic Party"] = "Heroic Party"
 --[[Translation missing --]]
 L["Hex Lord Malacrass"] = "Hex Lord Malacrass"
 --[[Translation missing --]]
@@ -987,6 +1010,8 @@ L["Legacy RGB Gradient Pulse"] = "Legacy RGB Gradient Pulse"
 --[[Translation missing --]]
 L["Legacy Spellname"] = "Legacy Spellname"
 --[[Translation missing --]]
+L["Legion"] = "Legion"
+--[[Translation missing --]]
 L["Length"] = "Length"
 --[[Translation missing --]]
 L["Leotheras the Blind"] = "Leotheras the Blind"
@@ -1091,6 +1116,8 @@ L["Missed"] = "Missed"
 --[[Translation missing --]]
 L["Missing"] = "Missing"
 --[[Translation missing --]]
+L["Mists of Pandaria"] = "Mists of Pandaria"
+--[[Translation missing --]]
 L["Moam"] = "Moam"
 --[[Translation missing --]]
 L["Model"] = "Model"
@@ -1184,6 +1211,8 @@ L["None"] = "None"
 L["Non-player Character"] = "Non-player Character"
 --[[Translation missing --]]
 L["Normal"] = "Normal"
+--[[Translation missing --]]
+L["Normal Party"] = "Normal Party"
 --[[Translation missing --]]
 L["Not in Group"] = "Not in Group"
 --[[Translation missing --]]
@@ -1587,6 +1616,8 @@ L["Shade of Aran"] = "Shade of Aran"
 --[[Translation missing --]]
 L["Shadow Resistance"] = "Shadow Resistance"
 --[[Translation missing --]]
+L["Shadowlands"] = "Shadowlands"
+--[[Translation missing --]]
 L["Shake"] = "Shake"
 --[[Translation missing --]]
 L["Shazzrah"] = "Shazzrah"
@@ -1746,8 +1777,6 @@ L["Stance/Form/Aura"] = "Stance/Form/Aura"
 L["Standing"] = "Standing"
 --[[Translation missing --]]
 L["Star Shake"] = "Star Shake"
---[[Translation missing --]]
-L["Start"] = "Start"
 --[[Translation missing --]]
 L["Start Now"] = "Start Now"
 --[[Translation missing --]]
@@ -2031,6 +2060,8 @@ L["Warfront (Heroic)"] = "Warfront (Heroic)"
 --[[Translation missing --]]
 L["Warfront (Normal)"] = "Warfront (Normal)"
 --[[Translation missing --]]
+L["Warlords of Draenor"] = "Warlords of Draenor"
+--[[Translation missing --]]
 L["Warning"] = "Warning"
 --[[Translation missing --]]
 L["Warning for unknown aura:"] = "Warning for unknown aura:"
@@ -2074,6 +2105,8 @@ L["Wobble"] = "Wobble"
 L["World Boss"] = "World Boss"
 --[[Translation missing --]]
 L["Wrap"] = "Wrap"
+--[[Translation missing --]]
+L["Wrath of the Lich King"] = "Wrath of the Lich King"
 --[[Translation missing --]]
 L["Writing to the WeakAuras table is not allowed."] = "Writing to the WeakAuras table is not allowed."
 --[[Translation missing --]]

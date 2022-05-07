@@ -195,32 +195,16 @@ MDT.dungeonEnemies[dungeonIndex] = {
          [11] = {
             ["sublevel"] = 1;
             ["inspiring"] = true;
-            ["y"] = -218.86009082913;
-            ["g"] = 8;
             ["x"] = 724.72843450479;
+            ["g"] = 8;
+            ["y"] = -218.86009082913;
          };
       };
       ["id"] = 165111;
       ["spells"] = {
          [323020] = {};
-         [323043] = {};
-         [324859] = {};
-         [132951] = {};
          [322968] = {};
-         [317898] = {};
-         [224729] = {};
-         [132466] = {};
-         [320297] = {};
-         [322967] = {};
-         [288865] = {};
       };
-      ["scale"] = 1;
-      ["health"] = 40050;
-      ["name"] = "Drust Spiteclaw";
-      ["displayId"] = 86207;
-      ["creatureType"] = "Aberration";
-      ["level"] = 60;
-      ["count"] = 2;
       ["characteristics"] = {
          ["Taunt"] = true;
          ["Incapacitate"] = true;
@@ -234,6 +218,13 @@ MDT.dungeonEnemies[dungeonIndex] = {
          ["Stun"] = true;
          ["Fear"] = true;
       };
+      ["count"] = 2;
+      ["health"] = 40050;
+      ["displayId"] = 86207;
+      ["creatureType"] = "Aberration";
+      ["level"] = 60;
+      ["name"] = "Drust Spiteclaw";
+      ["scale"] = 1;
    };
    [2] = {
       ["clones"] = {
@@ -263,27 +254,22 @@ MDT.dungeonEnemies[dungeonIndex] = {
       };
       ["id"] = 164929;
       ["spells"] = {
-         [288865] = {};
-         [326868] = {};
          [321952] = {};
          [321968] = {};
          [322486] = {};
          [300155] = {};
-         [132466] = {};
-         [322487] = {};
-         [132951] = {};
       };
       ["stealthDetect"] = true;
-      ["scale"] = 1;
-      ["health"] = 192240;
-      ["name"] = "Tirnenn Villager";
-      ["displayId"] = 95618;
-      ["creatureType"] = "Elemental";
-      ["level"] = 60;
-      ["count"] = 7;
       ["characteristics"] = {
          ["Taunt"] = true;
       };
+      ["count"] = 7;
+      ["health"] = 192240;
+      ["displayId"] = 95618;
+      ["creatureType"] = "Elemental";
+      ["level"] = 60;
+      ["name"] = "Tirnenn Villager";
+      ["scale"] = 1;
    };
    [4] = {
       ["clones"] = {
@@ -320,9 +306,9 @@ MDT.dungeonEnemies[dungeonIndex] = {
          [4] = {
             ["sublevel"] = 1;
             ["inspiring"] = true;
-            ["y"] = -169.08351920718;
-            ["g"] = 7;
             ["x"] = 743.91693290735;
+            ["g"] = 7;
+            ["y"] = -169.08351920718;
          };
          [5] = {
             ["y"] = -178.29477824649;
@@ -339,43 +325,35 @@ MDT.dungeonEnemies[dungeonIndex] = {
       };
       ["id"] = 164921;
       ["spells"] = {
-         [288865] = {};
-         [322938] = {};
-         [317898] = {};
-         [35079] = {};
-         [121308] = {};
-         [132951] = {};
-         [322767] = {};
-         [326319] = {};
-         [201657] = {};
-         [224729] = {};
-         [326868] = {};
-         [320297] = {};
-         [325748] = {};
-         [322939] = {};
+         [322938] = {
+            ["interruptible"] = true;
+         };
+         [326319] = {
+            ["interruptible"] = true;
+         };
       };
-      ["scale"] = 1;
-      ["health"] = 72090;
-      ["name"] = "Drust Harvester";
-      ["displayId"] = 95613;
-      ["creatureType"] = "Humanoid";
-      ["level"] = 60;
-      ["count"] = 4;
       ["characteristics"] = {
          ["Taunt"] = true;
          ["Incapacitate"] = true;
          ["Root"] = true;
-         ["Fear"] = true;
-         ["Imprison"] = true;
-         ["Polymorph"] = true;
-         ["Mind Control"] = true;
-         ["Sap"] = true;
-         ["Silence"] = true;
-         ["Stun"] = true;
-         ["Slow"] = true;
-         ["Disorient"] = true;
          ["Repentance"] = true;
+         ["Mind Control"] = true;
+         ["Polymorph"] = true;
+         ["Disorient"] = true;
+         ["Sap"] = true;
+         ["Stun"] = true;
+         ["Silence"] = true;
+         ["Slow"] = true;
+         ["Imprison"] = true;
+         ["Fear"] = true;
       };
+      ["count"] = 4;
+      ["health"] = 72090;
+      ["displayId"] = 95613;
+      ["creatureType"] = "Humanoid";
+      ["level"] = 60;
+      ["name"] = "Drust Harvester";
+      ["scale"] = 1;
    };
    [8] = {
       ["clones"] = {
@@ -388,9 +366,9 @@ MDT.dungeonEnemies[dungeonIndex] = {
          [2] = {
             ["sublevel"] = 1;
             ["inspiring"] = true;
-            ["y"] = -226.7915197378;
-            ["g"] = 13;
             ["x"] = 562.196083724;
+            ["g"] = 13;
+            ["y"] = -226.7915197378;
          };
          [4] = {
             ["y"] = -326.35936085876;
@@ -419,9 +397,9 @@ MDT.dungeonEnemies[dungeonIndex] = {
          [9] = {
             ["y"] = -210.90529134184;
             ["x"] = 490.85862653514;
-            ["sublevel"] = 1;
-            ["g"] = 21;
             ["inspiring"] = true;
+            ["g"] = 21;
+            ["sublevel"] = 1;
          };
          [18] = {
             ["y"] = -157.40480041127;
@@ -492,40 +470,31 @@ MDT.dungeonEnemies[dungeonIndex] = {
       };
       ["id"] = 163058;
       ["spells"] = {
-         [288865] = {};
-         [317898] = {};
-         [324742] = {};
-         [331721] = {};
-         [324859] = {};
-         [132951] = {};
          [324736] = {};
-         [224729] = {};
-         [331718] = {};
-         [320297] = {};
-         [326868] = {};
          [324737] = {};
+         [331718] = {};
       };
-      ["scale"] = 1;
-      ["health"] = 92115;
-      ["name"] = "Mistveil Defender";
-      ["displayId"] = 95256;
-      ["creatureType"] = "Humanoid";
-      ["level"] = 60;
-      ["count"] = 4;
       ["characteristics"] = {
          ["Taunt"] = true;
          ["Incapacitate"] = true;
          ["Root"] = true;
-         ["Fear"] = true;
+         ["Repentance"] = true;
          ["Polymorph"] = true;
          ["Disorient"] = true;
          ["Sap"] = true;
-         ["Silence"] = true;
+         ["Imprison"] = true;
          ["Stun"] = true;
          ["Slow"] = true;
-         ["Imprison"] = true;
-         ["Repentance"] = true;
+         ["Silence"] = true;
+         ["Fear"] = true;
       };
+      ["count"] = 4;
+      ["health"] = 92115;
+      ["displayId"] = 95256;
+      ["creatureType"] = "Humanoid";
+      ["level"] = 60;
+      ["name"] = "Mistveil Defender";
+      ["scale"] = 1;
    };
    [16] = {
       ["clones"] = {
@@ -574,22 +543,23 @@ MDT.dungeonEnemies[dungeonIndex] = {
       };
       ["id"] = 167111;
       ["spells"] = {
-         [288865] = {};
-         [326046] = {};
-         [132466] = {};
-         [132951] = {};
-         [340544] = {};
+         [326046] = {
+            ["interruptible"] = true;
+         };
+         [340544] = {
+            ["interruptible"] = true;
+         };
       };
-      ["scale"] = 1;
-      ["health"] = 96120;
-      ["name"] = "Spinemaw Staghorn";
-      ["displayId"] = 94190;
-      ["creatureType"] = "Beast";
-      ["level"] = 60;
-      ["count"] = 5;
       ["characteristics"] = {
          ["Taunt"] = true;
       };
+      ["count"] = 5;
+      ["health"] = 96120;
+      ["displayId"] = 94190;
+      ["creatureType"] = "Beast";
+      ["level"] = 60;
+      ["name"] = "Spinemaw Staghorn";
+      ["scale"] = 1;
    };
    [17] = {
       ["clones"] = {
@@ -626,9 +596,9 @@ MDT.dungeonEnemies[dungeonIndex] = {
          [8] = {
             ["sublevel"] = 1;
             ["inspiring"] = true;
-            ["x"] = 242.63865578527;
-            ["g"] = 36;
             ["y"] = -350.41728636588;
+            ["g"] = 36;
+            ["x"] = 242.63865578527;
          };
          [9] = {
             ["y"] = -340.79569034318;
@@ -675,35 +645,29 @@ MDT.dungeonEnemies[dungeonIndex] = {
       };
       ["id"] = 167113;
       ["spells"] = {
-         [288865] = {};
-         [320297] = {};
-         [317898] = {};
          [325418] = {};
-         [132951] = {};
-         [224729] = {};
-         [201657] = {};
       };
-      ["scale"] = 1;
-      ["health"] = 80100;
-      ["name"] = "Spinemaw Acidgullet";
-      ["displayId"] = 94205;
-      ["creatureType"] = "Beast";
-      ["level"] = 60;
-      ["count"] = 4;
       ["characteristics"] = {
          ["Taunt"] = true;
          ["Incapacitate"] = true;
          ["Root"] = true;
-         ["Fear"] = true;
+         ["Imprison"] = true;
          ["Polymorph"] = true;
          ["Mind Control"] = true;
          ["Sap"] = true;
-         ["Stun"] = true;
+         ["Disorient"] = true;
          ["Silence"] = true;
          ["Slow"] = true;
-         ["Disorient"] = true;
-         ["Imprison"] = true;
+         ["Stun"] = true;
+         ["Fear"] = true;
       };
+      ["count"] = 4;
+      ["health"] = 80100;
+      ["displayId"] = 94205;
+      ["creatureType"] = "Beast";
+      ["level"] = 60;
+      ["name"] = "Spinemaw Acidgullet";
+      ["scale"] = 1;
    };
    [9] = {
       ["clones"] = {
@@ -770,25 +734,8 @@ MDT.dungeonEnemies[dungeonIndex] = {
       };
       ["id"] = 166301;
       ["spells"] = {
-         [288865] = {};
-         [317898] = {};
-         [324742] = {};
-         [324859] = {};
-         [325748] = {};
          [324987] = {};
-         [325021] = {};
-         [224729] = {};
-         [320297] = {};
-         [132951] = {};
-         [326868] = {};
       };
-      ["scale"] = 1;
-      ["health"] = 72090;
-      ["name"] = "Mistveil Stalker";
-      ["displayId"] = 93762;
-      ["creatureType"] = "Beast";
-      ["level"] = 60;
-      ["count"] = 4;
       ["characteristics"] = {
          ["Taunt"] = true;
          ["Incapacitate"] = true;
@@ -796,12 +743,19 @@ MDT.dungeonEnemies[dungeonIndex] = {
          ["Polymorph"] = true;
          ["Disorient"] = true;
          ["Sap"] = true;
-         ["Fear"] = true;
+         ["Imprison"] = true;
          ["Silence"] = true;
          ["Slow"] = true;
          ["Stun"] = true;
-         ["Imprison"] = true;
+         ["Fear"] = true;
       };
+      ["count"] = 4;
+      ["health"] = 72090;
+      ["displayId"] = 93762;
+      ["creatureType"] = "Beast";
+      ["level"] = 60;
+      ["name"] = "Mistveil Stalker";
+      ["scale"] = 1;
    };
    [18] = {
       ["clones"] = {
@@ -856,9 +810,9 @@ MDT.dungeonEnemies[dungeonIndex] = {
          [3] = {
             ["sublevel"] = 1;
             ["inspiring"] = true;
-            ["x"] = 227.54388692983;
-            ["g"] = 33;
             ["y"] = -433.22213957064;
+            ["g"] = 33;
+            ["x"] = 227.54388692983;
          };
          [6] = {
             ["y"] = -342.25681426448;
@@ -875,74 +829,109 @@ MDT.dungeonEnemies[dungeonIndex] = {
       };
       ["id"] = 172312;
       ["spells"] = {
-         [288865] = {};
-         [317898] = {};
          [326021] = {};
-         [132951] = {};
-         [326022] = {};
-         [224729] = {};
-         [336407] = {};
-         [336416] = {};
-         [320297] = {};
       };
-      ["scale"] = 1;
-      ["health"] = 80100;
-      ["name"] = "Spinemaw Gorger";
-      ["displayId"] = 94197;
-      ["creatureType"] = "Beast";
-      ["level"] = 60;
-      ["count"] = 4;
       ["characteristics"] = {
          ["Taunt"] = true;
          ["Incapacitate"] = true;
          ["Root"] = true;
-         ["Fear"] = true;
+         ["Imprison"] = true;
          ["Polymorph"] = true;
          ["Mind Control"] = true;
          ["Sap"] = true;
-         ["Stun"] = true;
+         ["Disorient"] = true;
          ["Silence"] = true;
          ["Slow"] = true;
-         ["Disorient"] = true;
-         ["Imprison"] = true;
+         ["Stun"] = true;
+         ["Fear"] = true;
       };
+      ["count"] = 4;
+      ["health"] = 80100;
+      ["displayId"] = 94197;
+      ["creatureType"] = "Beast";
+      ["level"] = 60;
+      ["name"] = "Spinemaw Gorger";
+      ["scale"] = 1;
    };
-   [15] = {
+   [31] = {
       ["clones"] = {
+         [7] = {
+            ["y"] = -360.34000456753;
+            ["x"] = 227.3942445839;
+            ["sublevel"] = 1;
+         };
          [1] = {
-            ["y"] = -272.25255797372;
-            ["x"] = 399.66159501543;
+            ["y"] = -96.78569240847;
+            ["x"] = 755.78568673565;
+            ["sublevel"] = 1;
+         };
+         [2] = {
+            ["y"] = -166.65478252852;
+            ["x"] = 785.42863542628;
+            ["sublevel"] = 1;
+         };
+         [4] = {
+            ["y"] = -121.16311081151;
+            ["x"] = 605.67295393427;
+            ["sublevel"] = 1;
+         };
+         [8] = {
+            ["y"] = -419.7958783211;
+            ["x"] = 247.13855083738;
+            ["sublevel"] = 1;
+         };
+         [9] = {
+            ["y"] = -418.69603628781;
+            ["x"] = 123.99963004443;
+            ["sublevel"] = 1;
+         };
+         [5] = {
+            ["y"] = -252.51881795335;
+            ["x"] = 399.00611583425;
+            ["sublevel"] = 1;
+         };
+         [10] = {
+            ["y"] = -349.0105061098;
+            ["x"] = 136.19409001991;
+            ["sublevel"] = 1;
+         };
+         [3] = {
+            ["y"] = -202.36905740335;
+            ["x"] = 676.85722018835;
+            ["sublevel"] = 1;
+         };
+         [6] = {
+            ["y"] = -317.08983548475;
+            ["x"] = 290.83463572369;
             ["sublevel"] = 1;
          };
       };
-      ["characteristics"] = {
-         ["Taunt"] = true;
+      ["include"] = {
+         ["affix"] = 130;
+         ["level"] = 10;
       };
-      ["id"] = 164501;
-      ["spells"] = {
-         [288865] = {};
-         [321828] = {};
-         [336499] = {};
-         [132951] = {};
-         [336813] = {};
-         [321834] = {};
-         [336759] = {};
-         [341709] = {};
-         [132466] = {};
-         [336752] = {};
-         [321471] = {};
-         [326868] = {};
-      };
-      ["isBoss"] = true;
-      ["encounterID"] = 2402;
-      ["instanceID"] = 1184;
-      ["health"] = 560700;
-      ["name"] = "Mistcaller";
-      ["displayId"] = 96451;
-      ["creatureType"] = "Humanoid";
-      ["level"] = 60;
       ["count"] = 0;
+      ["modelPosition"] = {
+         [1] = 0;
+         [2] = 0;
+         [3] = 0.75;
+      };
       ["scale"] = 1;
+      ["spells"] = {
+         [366406] = {};
+         [368103] = {};
+         [366409] = {};
+      };
+      ["ignoreFortified"] = true;
+      ["bonusSpell"] = 368240;
+      ["name"] = "Vy Relic";
+      ["badCreatureModel"] = true;
+      ["health"] = 33022;
+      ["displayId"] = 103111;
+      ["creatureType"] = "Mechanical";
+      ["level"] = 62;
+      ["id"] = 185680;
+      ["iconTexture"] = 4335643;
    };
    [5] = {
       ["clones"] = {
@@ -973,25 +962,19 @@ MDT.dungeonEnemies[dungeonIndex] = {
       };
       ["id"] = 164926;
       ["spells"] = {
-         [324922] = {};
-         [288865] = {};
-         [325027] = {};
-         [324923] = {};
          [324909] = {};
-         [132951] = {};
-         [326868] = {};
-         [324859] = {};
+         [324923] = {};
       };
-      ["scale"] = 1;
-      ["health"] = 136170;
-      ["name"] = "Drust Boughbreaker";
-      ["displayId"] = 95615;
-      ["creatureType"] = "Aberration";
-      ["level"] = 60;
-      ["count"] = 6;
       ["characteristics"] = {
          ["Taunt"] = true;
       };
+      ["count"] = 6;
+      ["health"] = 136170;
+      ["displayId"] = 95615;
+      ["creatureType"] = "Aberration";
+      ["level"] = 60;
+      ["name"] = "Drust Boughbreaker";
+      ["scale"] = 1;
    };
    [10] = {
       ["clones"] = {
@@ -1004,9 +987,9 @@ MDT.dungeonEnemies[dungeonIndex] = {
          [3] = {
             ["sublevel"] = 1;
             ["inspiring"] = true;
-            ["x"] = 454.87070884858;
-            ["g"] = 19;
             ["y"] = -273.34277691405;
+            ["g"] = 19;
+            ["x"] = 454.87070884858;
          };
          [1] = {
             ["y"] = -267.23052444898;
@@ -1029,24 +1012,8 @@ MDT.dungeonEnemies[dungeonIndex] = {
       };
       ["id"] = 166304;
       ["spells"] = {
-         [288865] = {};
-         [317898] = {};
-         [325226] = {};
-         [324859] = {};
-         [132951] = {};
-         [224729] = {};
-         [325224] = {};
-         [320297] = {};
-         [326868] = {};
          [325223] = {};
       };
-      ["scale"] = 1;
-      ["health"] = 64080;
-      ["name"] = "Mistveil Stinger";
-      ["displayId"] = 95198;
-      ["creatureType"] = "Beast";
-      ["level"] = 60;
-      ["count"] = 4;
       ["characteristics"] = {
          ["Taunt"] = true;
          ["Incapacitate"] = true;
@@ -1054,12 +1021,19 @@ MDT.dungeonEnemies[dungeonIndex] = {
          ["Polymorph"] = true;
          ["Disorient"] = true;
          ["Sap"] = true;
-         ["Fear"] = true;
+         ["Imprison"] = true;
          ["Silence"] = true;
          ["Slow"] = true;
          ["Stun"] = true;
-         ["Imprison"] = true;
+         ["Fear"] = true;
       };
+      ["count"] = 4;
+      ["health"] = 64080;
+      ["displayId"] = 95198;
+      ["creatureType"] = "Beast";
+      ["level"] = 60;
+      ["name"] = "Mistveil Stinger";
+      ["scale"] = 1;
    };
    [20] = {
       ["clones"] = {
@@ -1085,9 +1059,9 @@ MDT.dungeonEnemies[dungeonIndex] = {
             ["sublevel"] = 1;
             ["inspiring"] = true;
             ["patrol"] = {};
-            ["x"] = 246.49360986455;
-            ["g"] = 31;
             ["y"] = -375.27209742022;
+            ["g"] = 31;
+            ["x"] = 246.49360986455;
          };
          [4] = {
             ["y"] = -325.42986634963;
@@ -1124,9 +1098,9 @@ MDT.dungeonEnemies[dungeonIndex] = {
             ["sublevel"] = 1;
             ["inspiring"] = true;
             ["patrol"] = {};
-            ["x"] = 227.95541533445;
-            ["g"] = 37;
             ["y"] = -321.35706954182;
+            ["g"] = 37;
+            ["x"] = 227.95541533445;
          };
          [6] = {
             ["y"] = -337.86932981949;
@@ -1149,35 +1123,29 @@ MDT.dungeonEnemies[dungeonIndex] = {
       };
       ["id"] = 167116;
       ["spells"] = {
-         [326868] = {};
-         [317898] = {};
          [326090] = {};
-         [326092] = {};
-         [132951] = {};
-         [224729] = {};
-         [288865] = {};
       };
-      ["scale"] = 1;
-      ["health"] = 64080;
-      ["name"] = "Spinemaw Reaver";
-      ["displayId"] = 95692;
-      ["creatureType"] = "Beast";
-      ["level"] = 60;
-      ["count"] = 4;
       ["characteristics"] = {
          ["Taunt"] = true;
          ["Incapacitate"] = true;
          ["Root"] = true;
-         ["Fear"] = true;
+         ["Imprison"] = true;
          ["Polymorph"] = true;
          ["Mind Control"] = true;
          ["Sap"] = true;
-         ["Silence"] = true;
+         ["Disorient"] = true;
          ["Stun"] = true;
          ["Slow"] = true;
-         ["Disorient"] = true;
-         ["Imprison"] = true;
+         ["Silence"] = true;
+         ["Fear"] = true;
       };
+      ["count"] = 4;
+      ["health"] = 64080;
+      ["displayId"] = 95692;
+      ["creatureType"] = "Beast";
+      ["level"] = 60;
+      ["name"] = "Spinemaw Reaver";
+      ["scale"] = 1;
    };
    [30] = {
       ["clones"] = {
@@ -1232,27 +1200,31 @@ MDT.dungeonEnemies[dungeonIndex] = {
             ["sublevel"] = 1;
          };
       };
-      ["scale"] = 1;
+      ["include"] = {
+         ["affix"] = 130;
+         ["level"] = 10;
+      };
+      ["health"] = 33022;
+      ["modelPosition"] = {
+         [1] = 0;
+         [2] = 0;
+         [3] = 0.75;
+      };
       ["id"] = 185685;
       ["spells"] = {
          [368243] = {};
          [366297] = {};
          [366288] = {};
       };
-      ["count"] = 0;
-      ["level"] = 62;
-      ["name"] = "Urh Relic";
-      ["displayId"] = 105134;
-      ["badCreatureModel"] = true;
-      ["health"] = 33022;
-      ["bonusSpell"] = 368239;
-      ["creatureType"] = "Mechanical";
-      ["modelPosition"] = {
-         [1] = 0;
-         [2] = 0;
-         [3] = 0.75;
-      };
       ["ignoreFortified"] = true;
+      ["bonusSpell"] = 368239;
+      ["name"] = "Urh Relic";
+      ["badCreatureModel"] = true;
+      ["count"] = 0;
+      ["displayId"] = 105134;
+      ["creatureType"] = "Mechanical";
+      ["level"] = 62;
+      ["scale"] = 1;
       ["iconTexture"] = 4335642;
    };
    [21] = {
@@ -1263,201 +1235,32 @@ MDT.dungeonEnemies[dungeonIndex] = {
             ["sublevel"] = 1;
          };
       };
+      ["scale"] = 1;
       ["characteristics"] = {
          ["Taunt"] = true;
       };
-      ["id"] = 164517;
       ["spells"] = {
-         [343724] = {};
-         [247121] = {};
-         [212792] = {};
-         [342132] = {};
-         [268756] = {};
-         [117952] = {};
-         [337989] = {};
-         [185763] = {};
-         [323710] = {};
-         [322563] = {};
-         [259491] = {};
-         [124280] = {};
-         [326263] = {};
-         [327092] = {};
-         [115196] = {};
-         [122] = {};
-         [1490] = {};
-         [113746] = {};
-         [228287] = {};
-         [205369] = {};
-         [327095] = {};
-         [589] = {};
-         [327096] = {};
-         [323654] = {};
-         [115994] = {};
-         [106830] = {};
-         [194310] = {};
-         [196414] = {};
-         [322253] = {};
-         [337235] = {};
-         [31589] = {};
-         [408] = {};
-         [1943] = {};
-         [2094] = {};
-         [48045] = {};
-         [186439] = {};
-         [115804] = {};
-         [197277] = {};
-         [210824] = {};
-         [328506] = {};
          [322450] = {};
-         [48181] = {};
-         [5211] = {};
-         [345466] = {};
-         [202347] = {};
-         [326278] = {};
          [322709] = {};
-         [228358] = {};
-         [56222] = {};
-         [208086] = {};
-         [326281] = {};
-         [20549] = {};
-         [262115] = {};
-         [289308] = {};
-         [34914] = {};
-         [188389] = {};
-         [308498] = {};
-         [2120] = {};
-         [853] = {};
-         [274074] = {};
-         [313663] = {};
-         [198813] = {};
-         [5760] = {};
-         [288865] = {};
-         [323673] = {};
-         [335467] = {};
-         [1513] = {};
-         [236299] = {};
-         [337253] = {};
-         [322527] = {};
-         [317491] = {};
-         [322655] = {};
-         [122470] = {};
+         [337235] = {};
          [322465] = {};
-         [280773] = {};
-         [155625] = {};
-         [3409] = {};
-         [322658] = {};
-         [210833] = {};
-         [196840] = {};
-         [51514] = {};
-         [345546] = {};
-         [255937] = {};
-         [326868] = {};
-         [329737] = {};
-         [12323] = {};
-         [1776] = {};
-         [339301] = {};
-         [196364] = {};
-         [137619] = {};
-         [102359] = {};
-         [260369] = {};
-         [331016] = {};
-         [51714] = {};
-         [316099] = {};
-         [331866] = {};
-         [211793] = {};
-         [325216] = {};
-         [324260] = {};
-         [132951] = {};
-         [212431] = {};
-         [35079] = {};
-         [198590] = {};
-         [271920] = {};
-         [255909] = {};
-         [5246] = {};
-         [321712] = {};
-         [329127] = {};
-         [108366] = {};
-         [8122] = {};
-         [228354] = {};
-         [64044] = {};
-         [105771] = {};
-         [191587] = {};
-         [157736] = {};
-         [87204] = {};
-         [79140] = {};
-         [105421] = {};
-         [164812] = {};
-         [146739] = {};
-         [322098] = {};
-         [205708] = {};
-         [206760] = {};
-         [204242] = {};
-         [337255] = {};
-         [325733] = {};
-         [214621] = {};
-         [77505] = {};
-         [312321] = {};
-         [15487] = {};
-         [321973] = {};
-         [55078] = {};
-         [12654] = {};
-         [281721] = {};
-         [117526] = {};
-         [155722] = {};
-         [58180] = {};
-         [61391] = {};
-         [337251] = {};
-         [257284] = {};
-         [17877] = {};
-         [322614] = {};
-         [164815] = {};
-         [322550] = {};
-         [135299] = {};
-         [322654] = {};
-         [255723] = {};
          [337249] = {};
-         [45524] = {};
-         [115078] = {};
-         [25771] = {};
-         [316220] = {};
-         [339] = {};
-         [328275] = {};
-         [6788] = {};
-         [118699] = {};
-         [1604] = {};
-         [2818] = {};
-         [324073] = {};
-         [51490] = {};
-         [107079] = {};
-         [273977] = {};
-         [132169] = {};
-         [5116] = {};
-         [345569] = {};
-         [55095] = {};
-         [14914] = {};
-         [226757] = {};
-         [8680] = {};
-         [1161] = {};
-         [78675] = {};
-         [226943] = {};
-         [271788] = {};
-         [337220] = {};
-         [32390] = {};
-         [132466] = {};
-         [307871] = {};
-         [190925] = {};
-         [325203] = {};
+         [322527] = {};
+         [326281] = {};
+         [322550] = {};
+         [322614] = {};
+         [337255] = {};
       };
       ["isBoss"] = true;
       ["encounterID"] = 2405;
       ["instanceID"] = 1184;
+      ["count"] = 0;
       ["health"] = 560700;
-      ["name"] = "Tred'ova";
       ["displayId"] = 95809;
       ["creatureType"] = "Beast";
       ["level"] = 60;
-      ["count"] = 0;
-      ["scale"] = 1;
+      ["name"] = "Tred'ova";
+      ["id"] = 164517;
    };
    [11] = {
       ["clones"] = {
@@ -1500,9 +1303,9 @@ MDT.dungeonEnemies[dungeonIndex] = {
          [9] = {
             ["y"] = -199.49650611763;
             ["x"] = 396.55506619545;
-            ["sublevel"] = 1;
-            ["g"] = 23;
             ["inspiring"] = true;
+            ["g"] = 23;
+            ["sublevel"] = 1;
          };
          [5] = {
             ["y"] = -318.18112181009;
@@ -1531,9 +1334,9 @@ MDT.dungeonEnemies[dungeonIndex] = {
          [12] = {
             ["y"] = -138.5741311695;
             ["x"] = 527.62344445229;
-            ["sublevel"] = 1;
-            ["g"] = 25;
             ["inspiring"] = true;
+            ["g"] = 25;
+            ["sublevel"] = 1;
          };
          [11] = {
             ["y"] = -240.18125988013;
@@ -1544,39 +1347,29 @@ MDT.dungeonEnemies[dungeonIndex] = {
       };
       ["id"] = 166276;
       ["spells"] = {
-         [288865] = {};
          [331743] = {};
-         [331747] = {};
-         [324859] = {};
-         [331748] = {};
-         [132951] = {};
-         [224729] = {};
-         [317898] = {};
-         [320297] = {};
-         [326868] = {};
-         [324742] = {};
       };
-      ["scale"] = 1;
-      ["health"] = 88110;
-      ["name"] = "Mistveil Guardian";
-      ["displayId"] = 95261;
-      ["creatureType"] = "Humanoid";
-      ["level"] = 60;
-      ["count"] = 4;
       ["characteristics"] = {
          ["Taunt"] = true;
          ["Incapacitate"] = true;
          ["Root"] = true;
-         ["Fear"] = true;
+         ["Repentance"] = true;
          ["Polymorph"] = true;
          ["Disorient"] = true;
          ["Sap"] = true;
-         ["Silence"] = true;
+         ["Imprison"] = true;
          ["Stun"] = true;
          ["Slow"] = true;
-         ["Imprison"] = true;
-         ["Repentance"] = true;
+         ["Silence"] = true;
+         ["Fear"] = true;
       };
+      ["count"] = 4;
+      ["health"] = 88110;
+      ["displayId"] = 95261;
+      ["creatureType"] = "Humanoid";
+      ["level"] = 60;
+      ["name"] = "Mistveil Guardian";
+      ["scale"] = 1;
    };
    [22] = {
       ["clones"] = {
@@ -1588,24 +1381,20 @@ MDT.dungeonEnemies[dungeonIndex] = {
       };
       ["id"] = 173720;
       ["spells"] = {
-         [288865] = {};
          [340305] = {};
          [340300] = {};
          [340304] = {};
-         [340311] = {};
-         [132951] = {};
-         [326868] = {};
       };
-      ["scale"] = 1.4;
-      ["health"] = 320400;
-      ["name"] = "Mistveil Gorgegullet";
-      ["displayId"] = 98502;
-      ["creatureType"] = "Beast";
-      ["level"] = 60;
-      ["count"] = 16;
       ["characteristics"] = {
          ["Taunt"] = true;
       };
+      ["count"] = 16;
+      ["health"] = 320400;
+      ["displayId"] = 98502;
+      ["creatureType"] = "Beast";
+      ["level"] = 60;
+      ["name"] = "Mistveil Gorgegullet";
+      ["scale"] = 1.4;
    };
    [3] = {
       ["clones"] = {
@@ -1624,9 +1413,9 @@ MDT.dungeonEnemies[dungeonIndex] = {
          [2] = {
             ["sublevel"] = 1;
             ["inspiring"] = true;
-            ["x"] = 734.43450479233;
-            ["g"] = 3;
             ["y"] = -122.64924181963;
+            ["g"] = 3;
+            ["x"] = 734.43450479233;
          };
          [4] = {
             ["y"] = -180.79637092404;
@@ -1643,9 +1432,9 @@ MDT.dungeonEnemies[dungeonIndex] = {
          [9] = {
             ["sublevel"] = 1;
             ["inspiring"] = true;
-            ["y"] = -153.85731387527;
-            ["g"] = 10;
             ["x"] = 661.2268370607;
+            ["g"] = 10;
+            ["y"] = -153.85731387527;
          };
          [5] = {
             ["y"] = -170.0610647765;
@@ -1674,39 +1463,31 @@ MDT.dungeonEnemies[dungeonIndex] = {
       };
       ["id"] = 164920;
       ["spells"] = {
-         [288865] = {};
-         [317898] = {};
-         [121308] = {};
-         [132951] = {};
          [322557] = {};
-         [224729] = {};
          [322569] = {};
-         [320297] = {};
-         [326868] = {};
-         [324859] = {};
       };
-      ["scale"] = 1;
-      ["health"] = 72090;
-      ["name"] = "Drust Soulcleaver";
-      ["displayId"] = 95612;
-      ["creatureType"] = "Humanoid";
-      ["level"] = 60;
-      ["count"] = 4;
       ["characteristics"] = {
          ["Taunt"] = true;
          ["Incapacitate"] = true;
          ["Root"] = true;
-         ["Fear"] = true;
-         ["Imprison"] = true;
-         ["Polymorph"] = true;
-         ["Mind Control"] = true;
-         ["Sap"] = true;
-         ["Stun"] = true;
-         ["Silence"] = true;
-         ["Slow"] = true;
-         ["Disorient"] = true;
          ["Repentance"] = true;
+         ["Mind Control"] = true;
+         ["Polymorph"] = true;
+         ["Disorient"] = true;
+         ["Sap"] = true;
+         ["Silence"] = true;
+         ["Stun"] = true;
+         ["Slow"] = true;
+         ["Imprison"] = true;
+         ["Fear"] = true;
       };
+      ["count"] = 4;
+      ["health"] = 72090;
+      ["displayId"] = 95612;
+      ["creatureType"] = "Humanoid";
+      ["level"] = 60;
+      ["name"] = "Drust Soulcleaver";
+      ["scale"] = 1;
    };
    [6] = {
       ["clones"] = {
@@ -1716,35 +1497,31 @@ MDT.dungeonEnemies[dungeonIndex] = {
             ["sublevel"] = 1;
          };
       };
+      ["scale"] = 1;
       ["characteristics"] = {
          ["Taunt"] = true;
       };
-      ["id"] = 164567;
       ["spells"] = {
-         [321010] = {};
-         [326868] = {};
          [331440] = {};
          [323149] = {};
          [323138] = {};
-         [328756] = {};
          [323146] = {};
          [321005] = {};
-         [288865] = {};
-         [132466] = {};
-         [323057] = {};
-         [321006] = {};
-         [132951] = {};
+         [323057] = {
+            ["interruptible"] = true;
+         };
+         [328756] = {};
       };
       ["isBoss"] = true;
       ["encounterID"] = 2400;
       ["instanceID"] = 1184;
+      ["count"] = 0;
       ["health"] = 961200;
-      ["name"] = "Ingra Maloch";
       ["displayId"] = 95497;
       ["creatureType"] = "Humanoid";
       ["level"] = 60;
-      ["count"] = 0;
-      ["scale"] = 1;
+      ["name"] = "Ingra Maloch";
+      ["id"] = 164567;
    };
    [12] = {
       ["clones"] = {
@@ -1793,16 +1570,16 @@ MDT.dungeonEnemies[dungeonIndex] = {
          [10] = {
             ["y"] = -232.01052513634;
             ["x"] = 436.88567111215;
-            ["sublevel"] = 1;
-            ["g"] = 24;
             ["inspiring"] = true;
+            ["g"] = 24;
+            ["sublevel"] = 1;
          };
          [3] = {
             ["y"] = -323.95612204626;
             ["x"] = 448.62417832755;
-            ["sublevel"] = 1;
-            ["g"] = 16;
             ["inspiring"] = true;
+            ["g"] = 16;
+            ["sublevel"] = 1;
          };
          [6] = {
             ["y"] = -198.86770003116;
@@ -1819,21 +1596,10 @@ MDT.dungeonEnemies[dungeonIndex] = {
       };
       ["id"] = 166299;
       ["spells"] = {
-         [324859] = {};
-         [324742] = {};
-         [317898] = {};
-         [324914] = {};
-         [132951] = {};
-         [224729] = {};
-         [288865] = {};
+         [324914] = {
+            ["interruptible"] = true;
+         };
       };
-      ["scale"] = 1;
-      ["health"] = 76095;
-      ["name"] = "Mistveil Tender";
-      ["displayId"] = 95908;
-      ["creatureType"] = "Humanoid";
-      ["level"] = 60;
-      ["count"] = 4;
       ["characteristics"] = {
          ["Taunt"] = true;
          ["Incapacitate"] = true;
@@ -1841,12 +1607,19 @@ MDT.dungeonEnemies[dungeonIndex] = {
          ["Polymorph"] = true;
          ["Disorient"] = true;
          ["Sap"] = true;
-         ["Fear"] = true;
+         ["Imprison"] = true;
          ["Silence"] = true;
          ["Slow"] = true;
          ["Stun"] = true;
-         ["Imprison"] = true;
+         ["Fear"] = true;
       };
+      ["count"] = 4;
+      ["health"] = 76095;
+      ["displayId"] = 95908;
+      ["creatureType"] = "Humanoid";
+      ["level"] = 60;
+      ["name"] = "Mistveil Tender";
+      ["scale"] = 1;
    };
    [24] = {
       ["clones"] = {
@@ -1860,504 +1633,18 @@ MDT.dungeonEnemies[dungeonIndex] = {
       ["spells"] = {
          [340189] = {};
          [340160] = {};
-         [132951] = {};
          [340208] = {};
-         [288865] = {};
       };
-      ["scale"] = 1.4;
+      ["characteristics"] = {
+         ["Taunt"] = true;
+      };
+      ["count"] = 16;
       ["health"] = 320400;
-      ["name"] = "Mistveil Matriarch";
       ["displayId"] = 98569;
       ["creatureType"] = "Dragonkin";
       ["level"] = 60;
-      ["count"] = 16;
-      ["characteristics"] = {
-         ["Taunt"] = true;
-      };
-   };
-   [23] = {
-      ["clones"] = {
-         [1] = {
-            ["y"] = -332.00281137005;
-            ["x"] = 448.99161612781;
-            ["g"] = 16;
-            ["sublevel"] = 1;
-         };
-         [2] = {
-            ["y"] = -314.81670091805;
-            ["x"] = 548.80328108812;
-            ["g"] = 15;
-            ["sublevel"] = 1;
-         };
-         [3] = {
-            ["y"] = -150.004790601;
-            ["x"] = 413.19076191944;
-            ["g"] = 28;
-            ["sublevel"] = 1;
-         };
-      };
-      ["id"] = 166304;
-      ["spells"] = {
-         [288865] = {};
-         [317898] = {};
-         [325226] = {};
-         [324859] = {};
-         [132951] = {};
-         [224729] = {};
-         [325224] = {};
-         [320297] = {};
-         [326868] = {};
-         [325223] = {};
-      };
-      ["scale"] = 1;
-      ["health"] = 64080;
-      ["name"] = "Mistveil Stinger";
-      ["displayId"] = 95198;
-      ["creatureType"] = "Beast";
-      ["level"] = 60;
-      ["count"] = 4;
-      ["characteristics"] = {
-         ["Taunt"] = true;
-         ["Incapacitate"] = true;
-         ["Root"] = true;
-         ["Polymorph"] = true;
-         ["Disorient"] = true;
-         ["Sap"] = true;
-         ["Fear"] = true;
-         ["Silence"] = true;
-         ["Slow"] = true;
-         ["Stun"] = true;
-         ["Imprison"] = true;
-      };
-   };
-   [25] = {
-      ["clones"] = {
-         [1] = {
-            ["y"] = -303.39401456739;
-            ["x"] = 329.77738274742;
-            ["week"] = {
-               [6] = true;
-               [2] = true;
-               [10] = true;
-               [1] = true;
-               [5] = true;
-               [9] = true;
-            };
-            ["sublevel"] = 1;
-         };
-         [2] = {
-            ["y"] = -89.714339544828;
-            ["x"] = 646.86834775473;
-            ["week"] = {
-               [11] = true;
-               [7] = true;
-               [8] = true;
-               [3] = true;
-               [12] = true;
-               [4] = true;
-            };
-            ["sublevel"] = 1;
-         };
-      };
-      ["powers"] = {
-         [356828] = {
-            ["tank"] = true;
-            ["dps"] = true;
-         };
-         [356827] = {
-            ["dps"] = true;
-            ["healer"] = true;
-         };
-         [357524] = {
-            ["tank"] = true;
-            ["dps"] = true;
-            ["healer"] = true;
-         };
-         [357778] = {
-            ["tank"] = true;
-         };
-         [357556] = {
-            ["healer"] = true;
-         };
-      };
-      ["id"] = 179891;
-      ["spells"] = {
-         [358970] = {};
-         [355719] = {};
-         [358784] = {};
-         [358968] = {};
-         [355806] = {};
-      };
-      ["scale"] = 1.5;
-      ["name"] = "Soggodon the Breaker";
-      ["ignoreFortified"] = true;
-      ["count"] = 0;
-      ["displayId"] = 98535;
-      ["creatureType"] = "Humanoid";
-      ["level"] = 62;
-      ["health"] = 358540;
-      ["iconTexture"] = 2103898;
-   };
-   [13] = {
-      ["clones"] = {
-         [7] = {
-            ["y"] = -200.28720961236;
-            ["x"] = 405.25296299538;
-            ["g"] = 23;
-            ["sublevel"] = 1;
-         };
-         [1] = {
-            ["y"] = -273.93324703416;
-            ["x"] = 540.08607896763;
-            ["g"] = 17;
-            ["sublevel"] = 1;
-         };
-         [2] = {
-            ["y"] = -278.79553808876;
-            ["x"] = 448.99483143288;
-            ["g"] = 19;
-            ["sublevel"] = 1;
-         };
-         [4] = {
-            ["y"] = -319.19777619622;
-            ["x"] = 454.8720851145;
-            ["g"] = 16;
-            ["sublevel"] = 1;
-         };
-         [8] = {
-            ["y"] = -230.95621233534;
-            ["x"] = 445.84709803941;
-            ["g"] = 24;
-            ["sublevel"] = 1;
-         };
-         [9] = {
-            ["y"] = -146.48570804587;
-            ["x"] = 531.66205105747;
-            ["g"] = 25;
-            ["sublevel"] = 1;
-         };
-         [5] = {
-            ["y"] = -296.05721816238;
-            ["x"] = 496.7058621177;
-            ["g"] = 18;
-            ["sublevel"] = 1;
-         };
-         [3] = {
-            ["y"] = -310.49101544067;
-            ["x"] = 556.25307904612;
-            ["g"] = 15;
-            ["sublevel"] = 1;
-         };
-         [6] = {
-            ["y"] = -180.80234269842;
-            ["x"] = 448.79284684852;
-            ["g"] = 22;
-            ["sublevel"] = 1;
-         };
-      };
-      ["id"] = 166275;
-      ["spells"] = {
-         [324859] = {};
-         [324742] = {};
-         [317898] = {};
-         [132466] = {};
-         [324776] = {};
-         [132951] = {};
-         [224729] = {};
-         [288865] = {};
-      };
-      ["scale"] = 1;
-      ["health"] = 84105;
-      ["name"] = "Mistveil Shaper";
-      ["displayId"] = 95051;
-      ["creatureType"] = "Humanoid";
-      ["level"] = 60;
-      ["count"] = 4;
-      ["characteristics"] = {
-         ["Taunt"] = true;
-         ["Incapacitate"] = true;
-         ["Root"] = true;
-         ["Fear"] = true;
-         ["Polymorph"] = true;
-         ["Disorient"] = true;
-         ["Sap"] = true;
-         ["Stun"] = true;
-         ["Silence"] = true;
-         ["Slow"] = true;
-         ["Imprison"] = true;
-         ["Repentance"] = true;
-      };
-   };
-   [26] = {
-      ["clones"] = {
-         [1] = {
-            ["y"] = -169.39402663733;
-            ["x"] = 565.77752389867;
-            ["week"] = {
-               [6] = true;
-               [2] = true;
-               [10] = true;
-               [1] = true;
-               [5] = true;
-               [9] = true;
-            };
-            ["sublevel"] = 1;
-         };
-         [2] = {
-            ["y"] = -179.65580028353;
-            ["x"] = 667.04336516818;
-            ["week"] = {
-               [11] = true;
-               [7] = true;
-               [8] = true;
-               [3] = true;
-               [12] = true;
-               [4] = true;
-            };
-            ["sublevel"] = 1;
-         };
-      };
-      ["powers"] = {
-         [357747] = {
-            ["healer"] = true;
-         };
-         [357609] = {
-            ["dps"] = true;
-         };
-         [357863] = {
-            ["tank"] = true;
-         };
-         [357604] = {
-            ["tank"] = true;
-         };
-         [357706] = {
-            ["dps"] = true;
-         };
-         [357575] = {
-            ["tank"] = true;
-            ["dps"] = true;
-            ["healer"] = true;
-         };
-         [357847] = {
-            ["healer"] = true;
-         };
-      };
-      ["id"] = 179890;
-      ["spells"] = {
-         [355714] = {};
-         [356923] = {};
-         [358971] = {};
-         [356925] = {};
-      };
-      ["scale"] = 1.5;
-      ["name"] = "Executioner Varruth";
-      ["ignoreFortified"] = true;
-      ["count"] = 0;
-      ["displayId"] = 92418;
-      ["creatureType"] = "Humanoid";
-      ["level"] = 61;
-      ["health"] = 336131;
-      ["iconTexture"] = 237552;
-   };
-   [7] = {
-      ["clones"] = {
-         [1] = {
-            ["y"] = -112.82878382784;
-            ["x"] = 617.3735357427;
-            ["sublevel"] = 1;
-         };
-      };
-      ["id"] = 164804;
-      ["spells"] = {
-         [321772] = {};
-         [288865] = {};
-         [323137] = {};
-         [323059] = {};
-         [323250] = {};
-         [132951] = {};
-         [323177] = {};
-         [326868] = {};
-      };
-      ["scale"] = 1;
-      ["health"] = 224280;
-      ["name"] = "Droman Oulfarran";
-      ["displayId"] = 95564;
-      ["creatureType"] = "Elemental";
-      ["level"] = 60;
-      ["count"] = 0;
-      ["characteristics"] = {
-         ["Taunt"] = true;
-      };
-   };
-   [27] = {
-      ["clones"] = {
-         [1] = {
-            ["y"] = -179.65580028353;
-            ["x"] = 667.04336516818;
-            ["week"] = {
-               [6] = true;
-               [2] = true;
-               [10] = true;
-               [1] = true;
-               [5] = true;
-               [9] = true;
-            };
-            ["sublevel"] = 1;
-         };
-         [2] = {
-            ["y"] = -169.39402663733;
-            ["x"] = 565.77752389867;
-            ["week"] = {
-               [11] = true;
-               [7] = true;
-               [8] = true;
-               [3] = true;
-               [12] = true;
-               [4] = true;
-            };
-            ["sublevel"] = 1;
-         };
-      };
-      ["powers"] = {
-         [357864] = {
-            ["dps"] = true;
-         };
-         [357889] = {
-            ["healer"] = true;
-         };
-         [357848] = {
-            ["dps"] = true;
-         };
-         [357900] = {
-            ["healer"] = true;
-         };
-         [357839] = {
-            ["tank"] = true;
-         };
-         [357897] = {
-            ["tank"] = true;
-         };
-         [357575] = {
-            ["tank"] = true;
-            ["dps"] = true;
-            ["healer"] = true;
-         };
-      };
-      ["id"] = 179446;
-      ["spells"] = {
-         [355732] = {};
-         [358967] = {};
-         [355707] = {};
-         [355737] = {};
-      };
-      ["scale"] = 1.5;
-      ["name"] = "Incinerator Arkolath";
-      ["ignoreFortified"] = true;
-      ["count"] = 0;
-      ["displayId"] = 100718;
-      ["creatureType"] = "Humanoid";
-      ["level"] = 61;
-      ["health"] = 336131;
-      ["iconTexture"] = 236297;
-   };
-   [14] = {
-      ["clones"] = {
-         [1] = {
-            ["y"] = -254.56328650313;
-            ["x"] = 487.53105356577;
-            ["sublevel"] = 1;
-         };
-      };
-      ["id"] = 173714;
-      ["spells"] = {
-         [326868] = {};
-         [340289] = {};
-         [340279] = {};
-         [340288] = {};
-         [340283] = {};
-         [132951] = {};
-      };
+      ["name"] = "Mistveil Matriarch";
       ["scale"] = 1.4;
-      ["health"] = 320400;
-      ["name"] = "Mistveil Nightblossom";
-      ["displayId"] = 55772;
-      ["creatureType"] = "Elemental";
-      ["level"] = 60;
-      ["count"] = 16;
-      ["characteristics"] = {
-         ["Taunt"] = true;
-      };
-   };
-   [28] = {
-      ["clones"] = {
-         [1] = {
-            ["y"] = -89.714339544828;
-            ["x"] = 646.86834775473;
-            ["week"] = {
-               [6] = true;
-               [2] = true;
-               [10] = true;
-               [1] = true;
-               [5] = true;
-               [9] = true;
-            };
-            ["sublevel"] = 1;
-         };
-         [2] = {
-            ["y"] = -303.39401456739;
-            ["x"] = 329.77738274742;
-            ["week"] = {
-               [11] = true;
-               [7] = true;
-               [8] = true;
-               [3] = true;
-               [12] = true;
-               [4] = true;
-            };
-            ["sublevel"] = 1;
-         };
-      };
-      ["powers"] = {
-         [357815] = {
-            ["dps"] = true;
-            ["healer"] = true;
-         };
-         [357817] = {
-            ["tank"] = true;
-         };
-         [357842] = {
-            ["healer"] = true;
-         };
-         [357820] = {
-            ["tank"] = true;
-         };
-         [357825] = {
-            ["dps"] = true;
-         };
-         [357834] = {
-            ["dps"] = true;
-            ["tank"] = true;
-         };
-         [357829] = {
-            ["healer"] = true;
-         };
-      };
-      ["id"] = 179892;
-      ["spells"] = {
-         [358894] = {};
-         [356666] = {};
-         [355710] = {};
-         [356414] = {};
-      };
-      ["scale"] = 1.5;
-      ["name"] = "Oros Coldheart";
-      ["ignoreFortified"] = true;
-      ["count"] = 0;
-      ["displayId"] = 97237;
-      ["creatureType"] = "Humanoid";
-      ["level"] = 61;
-      ["health"] = 336131;
-      ["iconTexture"] = 136213;
    };
    [19] = {
       ["clones"] = {
@@ -2430,9 +1717,9 @@ MDT.dungeonEnemies[dungeonIndex] = {
          [21] = {
             ["sublevel"] = 1;
             ["inspiring"] = true;
-            ["y"] = -341.48873731284;
-            ["g"] = 40;
             ["x"] = 152.19753656149;
+            ["g"] = 40;
+            ["y"] = -341.48873731284;
          };
          [11] = {
             ["y"] = -443.8638755203;
@@ -2455,9 +1742,9 @@ MDT.dungeonEnemies[dungeonIndex] = {
          [6] = {
             ["sublevel"] = 1;
             ["inspiring"] = true;
-            ["x"] = 288.10690576578;
-            ["g"] = 30;
             ["y"] = -386.80690446101;
+            ["g"] = 30;
+            ["x"] = 288.10690576578;
          };
          [12] = {
             ["y"] = -438.22422931528;
@@ -2474,9 +1761,9 @@ MDT.dungeonEnemies[dungeonIndex] = {
          [13] = {
             ["sublevel"] = 1;
             ["inspiring"] = true;
-            ["x"] = 238.98033974052;
-            ["g"] = 38;
             ["y"] = -299.70769548024;
+            ["g"] = 38;
+            ["x"] = 238.98033974052;
          };
          [7] = {
             ["y"] = -439.79024826278;
@@ -2490,10 +1777,10 @@ MDT.dungeonEnemies[dungeonIndex] = {
             ["g"] = 38;
             ["sublevel"] = 1;
          };
-         [15] = {
-            ["y"] = -299.10507650975;
-            ["x"] = 235.13277774943;
-            ["g"] = 38;
+         [23] = {
+            ["y"] = -345.51564447796;
+            ["x"] = 158.23215488952;
+            ["g"] = 40;
             ["sublevel"] = 1;
          };
          [19] = {
@@ -2502,42 +1789,517 @@ MDT.dungeonEnemies[dungeonIndex] = {
             ["g"] = 40;
             ["sublevel"] = 1;
          };
-         [23] = {
-            ["y"] = -345.51564447796;
-            ["x"] = 158.23215488952;
-            ["g"] = 40;
+         [15] = {
+            ["y"] = -299.10507650975;
+            ["x"] = 235.13277774943;
+            ["g"] = 38;
             ["sublevel"] = 1;
          };
       };
       ["id"] = 167117;
       ["spells"] = {
-         [288865] = {};
-         [317898] = {};
-         [132951] = {};
-         [224729] = {};
          [326018] = {};
       };
-      ["scale"] = 0.6;
-      ["health"] = 16020;
-      ["name"] = "Spinemaw Larva";
-      ["displayId"] = 94208;
-      ["creatureType"] = "Beast";
-      ["level"] = 60;
-      ["count"] = 1;
       ["characteristics"] = {
          ["Taunt"] = true;
          ["Incapacitate"] = true;
          ["Root"] = true;
-         ["Fear"] = true;
+         ["Imprison"] = true;
          ["Polymorph"] = true;
          ["Disorient"] = true;
          ["Sap"] = true;
-         ["Stun"] = true;
+         ["Mind Control"] = true;
          ["Silence"] = true;
          ["Slow"] = true;
-         ["Mind Control"] = true;
-         ["Imprison"] = true;
+         ["Stun"] = true;
+         ["Fear"] = true;
       };
+      ["count"] = 1;
+      ["health"] = 16020;
+      ["displayId"] = 94208;
+      ["creatureType"] = "Beast";
+      ["level"] = 60;
+      ["name"] = "Spinemaw Larva";
+      ["scale"] = 0.6;
+   };
+   [25] = {
+      ["clones"] = {
+         [1] = {
+            ["y"] = -303.39401456739;
+            ["x"] = 329.77738274742;
+            ["sublevel"] = 1;
+            ["week"] = {
+               [6] = true;
+               [2] = true;
+               [10] = true;
+               [1] = true;
+               [5] = true;
+               [9] = true;
+            };
+         };
+         [2] = {
+            ["y"] = -89.714339544828;
+            ["x"] = 646.86834775473;
+            ["sublevel"] = 1;
+            ["week"] = {
+               [11] = true;
+               [7] = true;
+               [8] = true;
+               [3] = true;
+               [12] = true;
+               [4] = true;
+            };
+         };
+      };
+      ["powers"] = {
+         [356828] = {
+            ["dps"] = true;
+            ["tank"] = true;
+         };
+         [356827] = {
+            ["healer"] = true;
+            ["dps"] = true;
+         };
+         [357524] = {
+            ["tank"] = true;
+            ["dps"] = true;
+            ["healer"] = true;
+         };
+         [357778] = {
+            ["tank"] = true;
+         };
+         [357556] = {
+            ["healer"] = true;
+         };
+      };
+      ["id"] = 179891;
+      ["spells"] = {
+         [358970] = {};
+         [355719] = {};
+         [358784] = {};
+         [358968] = {};
+         [355806] = {};
+      };
+      ["include"] = {
+         ["affix"] = 128;
+         ["level"] = 10;
+      };
+      ["name"] = "Soggodon the Breaker";
+      ["count"] = 0;
+      ["ignoreFortified"] = true;
+      ["health"] = 358540;
+      ["displayId"] = 98535;
+      ["creatureType"] = "Humanoid";
+      ["level"] = 62;
+      ["scale"] = 1.5;
+      ["iconTexture"] = 2103898;
+   };
+   [13] = {
+      ["clones"] = {
+         [7] = {
+            ["y"] = -200.28720961236;
+            ["x"] = 405.25296299538;
+            ["g"] = 23;
+            ["sublevel"] = 1;
+         };
+         [1] = {
+            ["y"] = -273.93324703416;
+            ["x"] = 540.08607896763;
+            ["g"] = 17;
+            ["sublevel"] = 1;
+         };
+         [2] = {
+            ["y"] = -278.79553808876;
+            ["x"] = 448.99483143288;
+            ["g"] = 19;
+            ["sublevel"] = 1;
+         };
+         [4] = {
+            ["y"] = -319.19777619622;
+            ["x"] = 454.8720851145;
+            ["g"] = 16;
+            ["sublevel"] = 1;
+         };
+         [8] = {
+            ["y"] = -230.95621233534;
+            ["x"] = 445.84709803941;
+            ["g"] = 24;
+            ["sublevel"] = 1;
+         };
+         [9] = {
+            ["y"] = -146.48570804587;
+            ["x"] = 531.66205105747;
+            ["g"] = 25;
+            ["sublevel"] = 1;
+         };
+         [5] = {
+            ["y"] = -296.05721816238;
+            ["x"] = 496.7058621177;
+            ["g"] = 18;
+            ["sublevel"] = 1;
+         };
+         [3] = {
+            ["y"] = -310.49101544067;
+            ["x"] = 556.25307904612;
+            ["g"] = 15;
+            ["sublevel"] = 1;
+         };
+         [6] = {
+            ["y"] = -180.80234269842;
+            ["x"] = 448.79284684852;
+            ["g"] = 22;
+            ["sublevel"] = 1;
+         };
+      };
+      ["id"] = 166275;
+      ["spells"] = {
+         [324859] = {};
+         [324776] = {
+            ["interruptible"] = true;
+         };
+      };
+      ["characteristics"] = {
+         ["Taunt"] = true;
+         ["Incapacitate"] = true;
+         ["Root"] = true;
+         ["Repentance"] = true;
+         ["Polymorph"] = true;
+         ["Disorient"] = true;
+         ["Sap"] = true;
+         ["Imprison"] = true;
+         ["Silence"] = true;
+         ["Slow"] = true;
+         ["Stun"] = true;
+         ["Fear"] = true;
+      };
+      ["count"] = 4;
+      ["health"] = 84105;
+      ["displayId"] = 95051;
+      ["creatureType"] = "Humanoid";
+      ["level"] = 60;
+      ["name"] = "Mistveil Shaper";
+      ["scale"] = 1;
+   };
+   [26] = {
+      ["clones"] = {
+         [1] = {
+            ["y"] = -169.39402663733;
+            ["x"] = 565.77752389867;
+            ["sublevel"] = 1;
+            ["week"] = {
+               [6] = true;
+               [2] = true;
+               [10] = true;
+               [1] = true;
+               [5] = true;
+               [9] = true;
+            };
+         };
+         [2] = {
+            ["y"] = -179.65580028353;
+            ["x"] = 667.04336516818;
+            ["sublevel"] = 1;
+            ["week"] = {
+               [11] = true;
+               [7] = true;
+               [8] = true;
+               [3] = true;
+               [12] = true;
+               [4] = true;
+            };
+         };
+      };
+      ["powers"] = {
+         [357747] = {
+            ["healer"] = true;
+         };
+         [357609] = {
+            ["dps"] = true;
+         };
+         [357863] = {
+            ["tank"] = true;
+         };
+         [357847] = {
+            ["healer"] = true;
+         };
+         [357706] = {
+            ["dps"] = true;
+         };
+         [357575] = {
+            ["tank"] = true;
+            ["dps"] = true;
+            ["healer"] = true;
+         };
+         [357604] = {
+            ["tank"] = true;
+         };
+      };
+      ["id"] = 179890;
+      ["spells"] = {
+         [355714] = {};
+         [358971] = {};
+         [356925] = {};
+         [356923] = {};
+      };
+      ["include"] = {
+         ["affix"] = 128;
+         ["level"] = 10;
+      };
+      ["name"] = "Executioner Varruth";
+      ["count"] = 0;
+      ["ignoreFortified"] = true;
+      ["health"] = 336131;
+      ["displayId"] = 92418;
+      ["creatureType"] = "Humanoid";
+      ["level"] = 61;
+      ["scale"] = 1.5;
+      ["iconTexture"] = 237552;
+   };
+   [27] = {
+      ["clones"] = {
+         [1] = {
+            ["y"] = -179.65580028353;
+            ["x"] = 667.04336516818;
+            ["sublevel"] = 1;
+            ["week"] = {
+               [6] = true;
+               [2] = true;
+               [10] = true;
+               [1] = true;
+               [5] = true;
+               [9] = true;
+            };
+         };
+         [2] = {
+            ["y"] = -169.39402663733;
+            ["x"] = 565.77752389867;
+            ["sublevel"] = 1;
+            ["week"] = {
+               [11] = true;
+               [7] = true;
+               [8] = true;
+               [3] = true;
+               [12] = true;
+               [4] = true;
+            };
+         };
+      };
+      ["powers"] = {
+         [357864] = {
+            ["dps"] = true;
+         };
+         [357889] = {
+            ["healer"] = true;
+         };
+         [357575] = {
+            ["tank"] = true;
+            ["dps"] = true;
+            ["healer"] = true;
+         };
+         [357900] = {
+            ["healer"] = true;
+         };
+         [357839] = {
+            ["tank"] = true;
+         };
+         [357848] = {
+            ["dps"] = true;
+         };
+         [357897] = {
+            ["tank"] = true;
+         };
+      };
+      ["id"] = 179446;
+      ["spells"] = {
+         [355732] = {};
+         [358967] = {};
+         [355707] = {};
+         [355737] = {};
+      };
+      ["include"] = {
+         ["affix"] = 128;
+         ["level"] = 10;
+      };
+      ["name"] = "Incinerator Arkolath";
+      ["count"] = 0;
+      ["ignoreFortified"] = true;
+      ["health"] = 336131;
+      ["displayId"] = 100718;
+      ["creatureType"] = "Humanoid";
+      ["level"] = 61;
+      ["scale"] = 1.5;
+      ["iconTexture"] = 236297;
+   };
+   [7] = {
+      ["clones"] = {
+         [1] = {
+            ["y"] = -112.82878382784;
+            ["x"] = 617.3735357427;
+            ["sublevel"] = 1;
+         };
+      };
+      ["id"] = 164804;
+      ["spells"] = {
+         [321772] = {};
+         [323137] = {};
+         [323059] = {};
+         [323177] = {};
+      };
+      ["characteristics"] = {
+         ["Taunt"] = true;
+      };
+      ["count"] = 0;
+      ["health"] = 224280;
+      ["displayId"] = 95564;
+      ["creatureType"] = "Elemental";
+      ["level"] = 60;
+      ["name"] = "Droman Oulfarran";
+      ["scale"] = 1;
+   };
+   [14] = {
+      ["clones"] = {
+         [1] = {
+            ["y"] = -254.56328650313;
+            ["x"] = 487.53105356577;
+            ["sublevel"] = 1;
+         };
+      };
+      ["id"] = 173714;
+      ["spells"] = {
+         [340289] = {};
+         [340279] = {};
+      };
+      ["characteristics"] = {
+         ["Taunt"] = true;
+      };
+      ["count"] = 16;
+      ["health"] = 320400;
+      ["displayId"] = 55772;
+      ["creatureType"] = "Elemental";
+      ["level"] = 60;
+      ["name"] = "Mistveil Nightblossom";
+      ["scale"] = 1.4;
+   };
+   [28] = {
+      ["clones"] = {
+         [1] = {
+            ["y"] = -89.714339544828;
+            ["x"] = 646.86834775473;
+            ["sublevel"] = 1;
+            ["week"] = {
+               [6] = true;
+               [2] = true;
+               [10] = true;
+               [1] = true;
+               [5] = true;
+               [9] = true;
+            };
+         };
+         [2] = {
+            ["y"] = -303.39401456739;
+            ["x"] = 329.77738274742;
+            ["sublevel"] = 1;
+            ["week"] = {
+               [11] = true;
+               [7] = true;
+               [8] = true;
+               [3] = true;
+               [12] = true;
+               [4] = true;
+            };
+         };
+      };
+      ["powers"] = {
+         [357815] = {
+            ["healer"] = true;
+            ["dps"] = true;
+         };
+         [357817] = {
+            ["tank"] = true;
+         };
+         [357842] = {
+            ["healer"] = true;
+         };
+         [357829] = {
+            ["healer"] = true;
+         };
+         [357825] = {
+            ["dps"] = true;
+         };
+         [357834] = {
+            ["tank"] = true;
+            ["dps"] = true;
+         };
+         [357820] = {
+            ["tank"] = true;
+         };
+      };
+      ["id"] = 179892;
+      ["spells"] = {
+         [358894] = {};
+         [356666] = {};
+         [355710] = {};
+         [356414] = {};
+      };
+      ["include"] = {
+         ["affix"] = 128;
+         ["level"] = 10;
+      };
+      ["name"] = "Oros Coldheart";
+      ["count"] = 0;
+      ["ignoreFortified"] = true;
+      ["health"] = 336131;
+      ["displayId"] = 97237;
+      ["creatureType"] = "Humanoid";
+      ["level"] = 61;
+      ["scale"] = 1.5;
+      ["iconTexture"] = 136213;
+   };
+   [23] = {
+      ["clones"] = {
+         [1] = {
+            ["y"] = -332.00281137005;
+            ["x"] = 448.99161612781;
+            ["g"] = 16;
+            ["sublevel"] = 1;
+         };
+         [2] = {
+            ["y"] = -314.81670091805;
+            ["x"] = 548.80328108812;
+            ["g"] = 15;
+            ["sublevel"] = 1;
+         };
+         [3] = {
+            ["y"] = -150.004790601;
+            ["x"] = 413.19076191944;
+            ["g"] = 28;
+            ["sublevel"] = 1;
+         };
+      };
+      ["id"] = 166304;
+      ["spells"] = {
+         [325223] = {};
+      };
+      ["characteristics"] = {
+         ["Taunt"] = true;
+         ["Incapacitate"] = true;
+         ["Root"] = true;
+         ["Polymorph"] = true;
+         ["Disorient"] = true;
+         ["Sap"] = true;
+         ["Imprison"] = true;
+         ["Silence"] = true;
+         ["Slow"] = true;
+         ["Stun"] = true;
+         ["Fear"] = true;
+      };
+      ["count"] = 4;
+      ["health"] = 64080;
+      ["displayId"] = 95198;
+      ["creatureType"] = "Beast";
+      ["level"] = 60;
+      ["name"] = "Mistveil Stinger";
+      ["scale"] = 1;
    };
    [29] = {
       ["clones"] = {
@@ -2592,102 +2354,61 @@ MDT.dungeonEnemies[dungeonIndex] = {
             ["sublevel"] = 1;
          };
       };
-      ["scale"] = 1;
-      ["id"] = 185683;
-      ["spells"] = {
-         [368078] = {};
-         [366566] = {};
+      ["include"] = {
+         ["affix"] = 130;
+         ["level"] = 10;
       };
-      ["count"] = 0;
-      ["level"] = 62;
-      ["health"] = 33022;
-      ["displayId"] = 101046;
-      ["badCreatureModel"] = true;
       ["name"] = "Wo Relic";
-      ["bonusSpell"] = 368241;
-      ["creatureType"] = "Mechanical";
       ["modelPosition"] = {
          [1] = 0;
          [2] = 0;
          [3] = 0.6;
       };
-      ["ignoreFortified"] = true;
-      ["iconTexture"] = 4335644;
-   };
-   [31] = {
-      ["clones"] = {
-         [7] = {
-            ["y"] = -360.34000456753;
-            ["x"] = 227.3942445839;
-            ["sublevel"] = 1;
-         };
-         [1] = {
-            ["y"] = -96.78569240847;
-            ["x"] = 755.78568673565;
-            ["sublevel"] = 1;
-         };
-         [2] = {
-            ["y"] = -166.65478252852;
-            ["x"] = 785.42863542628;
-            ["sublevel"] = 1;
-         };
-         [4] = {
-            ["y"] = -121.16311081151;
-            ["x"] = 605.67295393427;
-            ["sublevel"] = 1;
-         };
-         [8] = {
-            ["y"] = -419.7958783211;
-            ["x"] = 247.13855083738;
-            ["sublevel"] = 1;
-         };
-         [9] = {
-            ["y"] = -418.69603628781;
-            ["x"] = 123.99963004443;
-            ["sublevel"] = 1;
-         };
-         [5] = {
-            ["y"] = -252.51881795335;
-            ["x"] = 399.00611583425;
-            ["sublevel"] = 1;
-         };
-         [10] = {
-            ["y"] = -349.0105061098;
-            ["x"] = 136.19409001991;
-            ["sublevel"] = 1;
-         };
-         [3] = {
-            ["y"] = -202.36905740335;
-            ["x"] = 676.85722018835;
-            ["sublevel"] = 1;
-         };
-         [6] = {
-            ["y"] = -317.08983548475;
-            ["x"] = 290.83463572369;
-            ["sublevel"] = 1;
-         };
-      };
-      ["id"] = 185680;
+      ["id"] = 185683;
       ["spells"] = {
-         [368103] = {};
-         [366406] = {};
-         [366409] = {};
+         [368078] = {};
+         [366566] = {};
       };
-      ["scale"] = 1;
+      ["ignoreFortified"] = true;
+      ["bonusSpell"] = 368241;
       ["health"] = 33022;
-      ["level"] = 62;
-      ["name"] = "Vy Relic";
-      ["displayId"] = 103111;
       ["badCreatureModel"] = true;
       ["count"] = 0;
-      ["bonusSpell"] = 368240;
+      ["displayId"] = 101046;
       ["creatureType"] = "Mechanical";
-      ["modelPosition"] = {
-         [1] = 0;
-         [2] = 0;
-         [3] = 0.75;
+      ["level"] = 62;
+      ["scale"] = 1;
+      ["iconTexture"] = 4335644;
+   };
+   [15] = {
+      ["clones"] = {
+         [1] = {
+            ["y"] = -272.25255797372;
+            ["x"] = 399.66159501543;
+            ["sublevel"] = 1;
+         };
       };
-      ["ignoreFortified"] = true;
-      ["iconTexture"] = 4335643;
+      ["scale"] = 1;
+      ["characteristics"] = {
+         ["Taunt"] = true;
+      };
+      ["spells"] = {
+         [321828] = {
+            ["interruptible"] = true;
+         };
+         [336499] = {};
+         [341709] = {};
+         [321834] = {};
+      };
+      ["isBoss"] = true;
+      ["encounterID"] = 2402;
+      ["instanceID"] = 1184;
+      ["count"] = 0;
+      ["health"] = 560700;
+      ["displayId"] = 96451;
+      ["creatureType"] = "Humanoid";
+      ["level"] = 60;
+      ["name"] = "Mistcaller";
+      ["id"] = 164501;
    };
 };

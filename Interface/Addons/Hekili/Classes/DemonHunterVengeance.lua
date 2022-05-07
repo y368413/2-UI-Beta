@@ -292,7 +292,7 @@ if UnitClassBase( "player" ) == "DEMONHUNTER" then
 
     local queued_frag_modifier = 0
 
-    spec:RegisterHook( "COMBAT_LOG_EVENT_UNFILTERED", function( event, _, subtype, _, sourceGUID, sourceName, _, _, destGUID, destName, destFlags, _, spellID, spellName )
+    spec:RegisterHook( "COMBAT_LOG_EVENT_UNFILTERED", function( _, subtype, _, sourceGUID, sourceName, _, _, destGUID, destName, destFlags, _, spellID, spellName )
         if sourceGUID == GUID then
             if subtype == "SPELL_CAST_SUCCESS" then
                 -- Fracture:  Generate 2 frags.

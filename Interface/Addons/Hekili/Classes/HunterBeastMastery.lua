@@ -714,7 +714,7 @@ if UnitClassBase( "player" ) == "HUNTER" then
         trapUnits[ #trapUnits + 1 ] = "nameplate" .. i
     end
 
-    spec:RegisterHook( "COMBAT_LOG_EVENT_UNFILTERED", function( event, _, subtype, _, sourceGUID, sourceName, _, _, destGUID, destName, destFlags, _, spellID, spellName )
+    spec:RegisterHook( "COMBAT_LOG_EVENT_UNFILTERED", function( _, subtype, _, sourceGUID, sourceName, _, _, destGUID, destName, destFlags, _, spellID, spellName )
         if subtype == "SPELL_CAST_SUCCESS" and sourceGUID == GUID and spellID == 187698 and legendary.soulforge_embers.enabled then
             -- Capture all boss/elite targets present at this time as valid trapped targets.
             table.wipe( tar_trap_targets )

@@ -323,7 +323,7 @@ if UnitClassBase( "player" ) == "MONK" then
     local ESSENCE_FONT    = 191840
     local RENEWING_MIST   = 119611
 
-    spec:RegisterHook( "COMBAT_LOG_EVENT_UNFILTERED", function( event, _, subtype, _, sourceGUID, sourceName, _, _, destGUID, destName, destFlags, _, spellID, spellName )
+    spec:RegisterHook( "COMBAT_LOG_EVENT_UNFILTERED", function( _, subtype, _, sourceGUID, sourceName, _, _, destGUID, destName, destFlags, _, spellID, spellName )
         if sourceGUID == GUID then
             if subtype == "SPELL_CAST_SUCCESS" and spellID == 107428 and talent.rising_mists.enabled then
                 mistweaver.extend_hots()

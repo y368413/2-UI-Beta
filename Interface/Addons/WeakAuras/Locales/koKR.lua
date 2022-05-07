@@ -5,10 +5,14 @@ end
 local L = WeakAuras.L
 
 -- WeakAuras
+--[[Translation missing --]]
 L[ [=[ Filter formats: 'Name', 'Name-Realm', '-Realm'. 
 
 Supports multiple entries, separated by commas
-]=] ] = "필터 형식: '이름', '이름-서버', '-서버'. 쉼표로 구분된 여러 항목 지원합니다"
+Can use \ to escape -.]=] ] = [=[ Filter formats: 'Name', 'Name-Realm', '-Realm'. 
+
+Supports multiple entries, separated by commas
+Can use \ to escape -.]=]
 L["%s Overlay Color"] = "%s 오버레이 색상"
 L["* Suffix"] = "* 접미사"
 L["/wa help - Show this message"] = "/wa help - 이 메시지 보이기"
@@ -40,10 +44,16 @@ L[ [=[• |cff00ff00Player|r, |cff00ff00Target|r, |cff00ff00Focus|r, and |cff00f
 
 |cffffff00*|r Yellow Unit settings will create clones for each matching unit while this trigger is providing Dynamic Info to the Aura.]=]
 L["10 Man Raid"] = "10인 공격대"
+--[[Translation missing --]]
+L["10 Player Raid"] = "10 Player Raid"
 L["10 Player Raid (Heroic)"] = "10인 공격대 (영웅)"
 L["10 Player Raid (Normal)"] = "10인 공격대 (일반)"
 L["20 Man Raid"] = "20인 공격대"
+--[[Translation missing --]]
+L["20 Player Raid"] = "20 Player Raid"
 L["25 Man Raid"] = "25인 공격대"
+--[[Translation missing --]]
+L["25 Player Raid"] = "25 Player Raid"
 L["25 Player Raid (Heroic)"] = "25인 공격대 (영웅)"
 L["25 Player Raid (Normal)"] = "25인 공격대 (일반)"
 L["40 Man Raid"] = "40인 공격대"
@@ -159,6 +169,8 @@ L["Background"] = "배경"
 L["Background Color"] = "배경 색상"
 L["Bar Color"] = "바 색상"
 L["Baron Geddon"] = "남작 게돈"
+--[[Translation missing --]]
+L["Battle for Azeroth"] = "Battle for Azeroth"
 L["Battle.net Whisper"] = "Battle.net 귓속말"
 L["Battleground"] = "전장"
 L["Battleguard Sartura"] = "전투감시병 살투라"
@@ -203,6 +215,8 @@ L["Buff"] = "강화 효과"
 --[[Translation missing --]]
 L["Buff/Debuff"] = "Buff/Debuff"
 L["Buffed/Debuffed"] = "강화 효과/약화 효과"
+--[[Translation missing --]]
+L["Burning Crusade"] = "Burning Crusade"
 L["Buru the Gorger"] = "먹보 부루"
 L["Can be used for e.g. checking if \"boss1target\" is the same as \"player\"."] = "예를 들어 \"우두머리1대상\"이 \"플레이어\"와 같은지 확인하는데 사용할 수 있습니다."
 L["Cancel"] = "취소"
@@ -219,6 +233,8 @@ L["Caster Name"] = "시전자 이름"
 L["Caster Realm"] = "시전자 서버"
 L["Caster Unit"] = "시전 유닛"
 L["Caster's Target"] = "시전자의 대상"
+--[[Translation missing --]]
+L["Cataclysm"] = "Cataclysm"
 L["Ceil"] = "천장"
 L["Center"] = "중앙"
 L["Centered Horizontal"] = "수평 중앙"
@@ -257,6 +273,8 @@ L["Circle"] = "동그라미"
 L["Clamp"] = "더미"
 L["Class"] = "직업"
 L["Class and Specialization"] = "직업 및 전문화"
+--[[Translation missing --]]
+L["Classic"] = "Classic"
 L["Classification"] = "직업전문화"
 L["Clockwise"] = "시계 방향"
 L["Clone per Event"] = "이벤트별 복제"
@@ -355,6 +373,8 @@ L["Dodge Rating"] = "회피"
 L["Down"] = "아래로"
 L["Down, then Left"] = "아래로, 왼쪽으로"
 L["Down, then Right"] = "아래로, 오른쪽으로"
+--[[Translation missing --]]
+L["Dragonflight"] = "Dragonflight"
 L["Drain"] = "마력 소진"
 L["Dropdown Menu"] = "드롭다운 메뉴"
 L["Dungeon (Heroic)"] = "던전 (영웅)"
@@ -510,6 +530,8 @@ L["Grid"] = "Grid"
 L["Grobbulus"] = "그라불루스"
 L["Group"] = "그룹"
 L["Group Arrangement"] = "그룹 편성"
+--[[Translation missing --]]
+L["Group Type"] = "Group Type"
 L["Grow"] = "성장"
 --[[Translation missing --]]
 L["Gruul the Dragonkiller"] = "Gruul the Dragonkiller"
@@ -540,6 +562,8 @@ L["Health (%)"] = "생명력 (%)"
 L["Health Deficit"] = "Health Deficit"
 L["Heigan the Unclean"] = "부정의 헤이건"
 L["Height"] = "높이"
+--[[Translation missing --]]
+L["Heroic Party"] = "Heroic Party"
 --[[Translation missing --]]
 L["Hex Lord Malacrass"] = "Hex Lord Malacrass"
 L["Hide"] = "숨기기"
@@ -679,6 +703,8 @@ L["Legacy RGB Gradient"] = "과거의 RGB 그라디언트"
 L["Legacy RGB Gradient Pulse"] = "과거의 RGB 그라디언트 맥박"
 --[[Translation missing --]]
 L["Legacy Spellname"] = "Legacy Spellname"
+--[[Translation missing --]]
+L["Legion"] = "Legion"
 L["Length"] = "길이"
 --[[Translation missing --]]
 L["Leotheras the Blind"] = "Leotheras the Blind"
@@ -743,6 +769,8 @@ L["Miss"] = "빗나감"
 L["Miss Type"] = "적중 실패 유형"
 L["Missed"] = "적중 실패"
 L["Missing"] = "누락"
+--[[Translation missing --]]
+L["Mists of Pandaria"] = "Mists of Pandaria"
 L["Moam"] = "모암"
 L["Model"] = "모델"
 --[[Translation missing --]]
@@ -799,6 +827,8 @@ L["No Profiling information saved."] = "저장된 프로파일링 정보가 없�
 L["None"] = "없음"
 L["Non-player Character"] = "NPC"
 L["Normal"] = "일반"
+--[[Translation missing --]]
+L["Normal Party"] = "Normal Party"
 L["Not in Group"] = "파티에 속하지 않음"
 --[[Translation missing --]]
 L["Not in Smart Group"] = "Not in Smart Group"
@@ -1043,6 +1073,8 @@ L["Shade of Akama"] = "Shade of Akama"
 --[[Translation missing --]]
 L["Shade of Aran"] = "Shade of Aran"
 L["Shadow Resistance"] = "암흑 저항"
+--[[Translation missing --]]
+L["Shadowlands"] = "Shadowlands"
 L["Shake"] = "흔들기"
 L["Shazzrah"] = "샤즈라"
 L["Shift-Click to resume addon execution."] = "쉬프트-클릭으로 애드온 실행을 다시 시작합니다."
@@ -1144,7 +1176,6 @@ L["Stance/Form/Aura"] = "태세/변신/효과"
 --[[Translation missing --]]
 L["Standing"] = "Standing"
 L["Star Shake"] = "별모양 흔들림"
-L["Start"] = "시작"
 L["Start Now"] = "지금 시작"
 L["Status"] = "상태"
 L["Stolen"] = "훔침"
@@ -1317,6 +1348,8 @@ L["Void Reaver"] = "Void Reaver"
 L["War Mode Active"] = "전쟁 모드 활성화"
 L["Warfront (Heroic)"] = "격전지 (영웅)"
 L["Warfront (Normal)"] = "격전지 (일반)"
+--[[Translation missing --]]
+L["Warlords of Draenor"] = "Warlords of Draenor"
 L["Warning"] = "경고"
 L["Warning for unknown aura:"] = "알 수 없는 효과에 대한 경고:"
 L["Warning: Full Scan auras checking for both name and spell id can't be converted."] = "경고: 이름 및 주문 ID를 모두 확인하는 완전 효과 검사는 변환할 수 없습니다."
@@ -1343,6 +1376,8 @@ L["Width"] = "너비"
 L["Wobble"] = "흔들기"
 L["World Boss"] = "월드 보스"
 L["Wrap"] = "구속"
+--[[Translation missing --]]
+L["Wrath of the Lich King"] = "Wrath of the Lich King"
 L["Writing to the WeakAuras table is not allowed."] = "WeakAuras table에 작성은 허용되지 않습니다."
 L["X-Offset"] = "X-좌표"
 L["Yell"] = "외침"

@@ -2,9 +2,9 @@
 ## Title: |cff1572cfFree Instance Fetcher|r
 ## Title-zhCN: |cff1572cf便利CD获取|r
 ## Author: LiangYuxuan
-## Version: v9.2.1-3-g0e7ff19
+## Version: v9.2.1-4-g59e91b0
 ## SavedVariables: FIFConfig
-## X-ReleaseDate: 2022-04-09T02:16:48Z
+## X-ReleaseDate: 2022-04-14T02:38:33Z
 ## X-License: GPL-3.0
 ## X-Curse-Project-ID: 415572
 ## X-WoWI-ID: 25930

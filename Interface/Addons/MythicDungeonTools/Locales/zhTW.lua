@@ -371,6 +371,10 @@ L["Earthrager"] = "地怒者"
 L["Ebonclaw Worg"] = "黑爪座狼"
 L["Echelon"] = "艾谢朗"
 L["Edit"] = "編輯"
+--[[Translation missing --]]
+--[[ L["Efficiency Score"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["EfficiencyScoreTip"] = ""--]] 
 L["Elder Leaxa"] = "长者莉娅克萨"
 L["Elemental"] = "元素"
 L["Elfyra"] = "艾尔菲拉"

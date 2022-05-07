@@ -21,6 +21,10 @@ local L = WeakAuras.L
 	L["%s - Alpha Animation"] = "%s - 透明度动画"
 	L["%s - Color Animation"] = "%s - 颜色动画"
 	L["%s - Condition Custom Chat %s"] = "%s - 条件自定义聊天文本 %s"
+	--[[Translation missing --]]
+	L["%s - Condition Custom Check %s"] = "%s - Condition Custom Check %s"
+	--[[Translation missing --]]
+	L["%s - Condition Custom Code %s"] = "%s - Condition Custom Code %s"
 	L["%s - Custom Anchor"] = "%s - 自定义锚点"
 	L["%s - Custom Grow"] = "%s - 自定义发光"
 	L["%s - Custom Sort"] = "%s - 自定义排序"
@@ -40,6 +44,8 @@ local L = WeakAuras.L
 	L["%s - Trigger Logic"] = "%s - 触发器逻辑"
 	L["%s %s, Lines: %d, Frequency: %0.2f, Length: %d, Thickness: %d"] = "%s %s，行数：%d，频率：%0.2f，长度：%d，粗细：%d"
 	L["%s %s, Particles: %d, Frequency: %0.2f, Scale: %0.2f"] = "%s %s，粒子数：%d，频率：%0.2f，缩放：%0.2f"
+	--[[Translation missing --]]
+	L["%s %u. Overlay Function"] = "%s %u. Overlay Function"
 	L["%s Alpha: %d%%"] = "%s 透明度：%d%%"
 	L[ [=[%s auras will be added.
 ]=] ] = [=[%s个光环将被添加。
@@ -56,7 +62,6 @@ local L = WeakAuras.L
 	L["%s is not a valid SubEvent for COMBAT_LOG_EVENT_UNFILTERED"] = "%s不是COMBAT_LOG_EVENT_UNFILTERED的有效子事件"
 	L["%s Keep Aspect Ratio"] = "%s 保持宽高比"
 	L["%s Name Function"] = "%s 名称函数"
-	L["%s Overlay Function"] = "%s 覆盖层函数"
 	L["%s Stacks Function"] = "%s 层数函数"
 	L["%s Texture"] = "%s 材质"
 	L["%s Texture Function"] = "%s 材质函数"
@@ -71,6 +76,8 @@ local L = WeakAuras.L
 	L["(Right click to rename)"] = "（右键点击以重命名）"
 	L[", "] = "，"
 	L["|c%02x%02x%02x%02xCustom Color|r"] = "|c%02x%02x%02x%02x自定义颜色|r"
+	--[[Translation missing --]]
+	L["|cff999999Triggers tracking multiple units will default to being active even while no affected units are found without a Unit Count or Match Count setting applied.|r"] = "|cff999999Triggers tracking multiple units will default to being active even while no affected units are found without a Unit Count or Match Count setting applied.|r"
 	L["|cFFE0E000Note:|r This sets the description only on '%s'"] = "|cFFE0E000注意：|r此操作只会设置'%s'的描述"
 	L["|cFFE0E000Note:|r This sets the URL on all selected auras"] = "|cFFE0E000注意：|r此操作会设置所有已选择光环的URL"
 	L["|cFFE0E000Note:|r This sets the URL on this group and all its members."] = "|cFFE0E000注意：|r此操作会设置群组与所有子项目的URL"
@@ -115,6 +122,8 @@ local L = WeakAuras.L
 Enable this setting if you want this timer to be hidden, or when using a WeakAuras text to display the timer]=] ] = "冷却文本会根据原生界面设置（可能被某些插件改动）自动显示。当你想隐藏冷却文本时，或者使用WeakAuras文本替代冷却文本时，启用此设置。"
 	L["A Unit ID (e.g., party1)."] = "单位 ID（如 party1）。"
 	L["Actions"] = "动作"
+	--[[Translation missing --]]
+	L["Active Aura Filters and Info"] = "Active Aura Filters and Info"
 	L["Add"] = "添加"
 	L["Add %s"] = "添加 %s"
 	L["Add a new display"] = "添加一个新的图示"
@@ -124,8 +133,6 @@ Enable this setting if you want this timer to be hidden, or when using a WeakAur
 	L["Add Option"] = "添加选项"
 	L["Add Overlay"] = "添加覆盖层"
 	L["Add Property Change"] = "添加属性修改"
-	L["Add Raid Mark Information"] = "添加团队标记信息"
-	L["Add Role Information"] = "添加职责信息"
 	L["Add Snippet"] = "添加片段"
 	L["Add Sub Option"] = "添加子选项"
 	L["Add to group %s"] = "添加到组％s"
@@ -134,6 +141,8 @@ Enable this setting if you want this timer to be hidden, or when using a WeakAur
 	L["Add Trigger"] = "添加触发器"
 	L["Additional Events"] = "额外事件"
 	L["Advanced"] = "高级"
+	--[[Translation missing --]]
+	L["Affected Unit Filters and Info"] = "Affected Unit Filters and Info"
 	L["Align"] = "对齐"
 	L["Alignment"] = "对齐"
 	L["All of"] = "全部"
@@ -197,8 +206,7 @@ Off Screen]=] ] = "光环在屏幕外"
 	L["Bar Texture"] = "进度条材质"
 	L["Big Icon"] = "大图标"
 	L["Blend Mode"] = "混合模式"
-	--[[Translation missing --]]
-	L["Blizzard Cooldown Reduction"] = "Blizzard Cooldown Reduction"
+	L["Blizzard Cooldown Reduction"] = "原生冷却速度提高"
 	L["Blue Rune"] = "蓝色符文"
 	L["Blue Sparkle Orb"] = "蓝色闪光宝珠"
 	L["Border"] = "边框"
@@ -221,8 +229,8 @@ Off Screen]=] ] = "光环在屏幕外"
 	L["Can set to 0 if Columns * Width equal File Width"] = "如果列x宽度=文件宽度，可以设为0"
 	L["Can set to 0 if Rows * Height equal File Height"] = "如果行x高度=文件高度，可以设为0"
 	L["Cancel"] = "取消"
-	L["Cast by Player Character"] = "玩家角色施放"
-	L["Cast by Players"] = "玩家施放"
+	--[[Translation missing --]]
+	L["Cast by a Player Character"] = "Cast by a Player Character"
 	L["Categories to Update"] = "即将更新的类"
 	L["Center"] = "中间"
 	L["Chat Message"] = "聊天信息"
@@ -260,8 +268,7 @@ Off Screen]=] ] = "光环在屏幕外"
 	L["Controls the positioning and configuration of multiple displays at the same time"] = "同时控制多个图示的位置和设定"
 	L["Convert to New Aura Trigger"] = "转换为新的光环触发器"
 	L["Convert to..."] = "转换为..."
-	--[[Translation missing --]]
-	L["Cooldown Reduction changes the duration of seconds instead of showing the real time seconds."] = "Cooldown Reduction changes the duration of seconds instead of showing the real time seconds."
+	L["Cooldown Reduction changes the duration of seconds instead of showing the real time seconds."] = "冷却速度提高将改变每秒的持续时间，而并非显示真实的冷却时间。"
 	L["Copy"] = "拷贝"
 	L["Copy settings..."] = "拷贝设置"
 	L["Copy to all auras"] = "拷贝至所有的光环"
@@ -376,8 +383,10 @@ UNIT_POWER, UNIT_AURA PLAYER_TARGET_CHANGED]=]
 	L["Expand all non-loaded displays"] = "展开所有未载入的图示"
 	L["Expand all pending Import"] = "展开所有待定的导入"
 	L["Expansion is disabled because this group has no children"] = "由于此组没有子项目，所以无法进行扩展"
-	L["Export to Lua table..."] = "导出为 Lua 表格..."
-	L["Export to string..."] = "导出为字符串"
+	--[[Translation missing --]]
+	L["Export debug table..."] = "Export debug table..."
+	--[[Translation missing --]]
+	L["Export..."] = "Export..."
 	L["Exporting"] = "导出"
 	L["External"] = "外部"
 	L["Extra Height"] = "额外高度"
@@ -389,17 +398,29 @@ UNIT_POWER, UNIT_AURA PLAYER_TARGET_CHANGED]=]
 	L["Fallback Icon"] = "后备图标"
 	L["False"] = "假"
 	L["Fetch Affected/Unaffected Names"] = "获取受影响的/未受影响的名称"
+	--[[Translation missing --]]
+	L["Fetch Raid Mark Information"] = "Fetch Raid Mark Information"
+	--[[Translation missing --]]
+	L["Fetch Role Information"] = "Fetch Role Information"
+	--[[Translation missing --]]
+	L["Fetch Tooltip Information"] = "Fetch Tooltip Information"
 	L["File Height"] = "文件高度"
 	L["File Width"] = "文件宽度"
+	--[[Translation missing --]]
+	L["Filter based on the spell Name string."] = "Filter based on the spell Name string."
 	L["Filter by Arena Spec"] = "根据竞技场专精过滤"
 	L["Filter by Class"] = "根据职业过滤"
 	L["Filter by Group Role"] = "根据团队职责过滤"
 	L["Filter by Nameplate Type"] = "根据姓名版类型过滤"
 	L["Filter by Raid Role"] = "根据团队职责过滤"
+	--[[Translation missing --]]
+	L["Filter by Unit Name"] = "Filter by Unit Name"
 	L[ [=[Filter formats: 'Name', 'Name-Realm', '-Realm'.
 
 Supports multiple entries, separated by commas
 ]=] ] = "过滤格式：'名称'，'名称-服务器'，'-服务器'。支持多个条目，由英文逗号分隔。"
+	--[[Translation missing --]]
+	L["Filter to only dispellable de/buffs of the given type(s)"] = "Filter to only dispellable de/buffs of the given type(s)"
 	L["Find Auras"] = "寻找光环"
 	L["Finish"] = "结束"
 	L["Fire Orb"] = "火焰宝珠"
@@ -711,6 +732,8 @@ Supports multiple entries, separated by commas
 	L["Show \"Edge\""] = "显示\"边缘\""
 	L["Show \"Swipe\""] = "显示\"刷\""
 	L["Show all matches (Auto-clone)"] = "列出所有符合的(自动复制)"
+	--[[Translation missing --]]
+	L["Show and Clone Settings"] = "Show and Clone Settings"
 	L["Show Border"] = "显示边框"
 	L["Show Glow"] = "显示发光效果"
 	L["Show Icon"] = "显示图标"
@@ -764,6 +787,8 @@ Supports multiple entries, separated by commas
 	L["Specialization"] = "专精"
 	L["Specific Unit"] = "指定单位"
 	L["Spell ID"] = "法术ID"
+	--[[Translation missing --]]
+	L["Spell Selection Filters"] = "Spell Selection Filters"
 	L["Stack Count"] = "层数"
 	L["Stack Info"] = "层数信息"
 	L["Stagger"] = "交错"
@@ -803,10 +828,20 @@ Supports multiple entries, separated by commas
 	L["Then "] = "然后"
 	L["Thickness"] = "粗细"
 	L["This adds %raidMark as text replacements."] = "这将添加 %raidMark 作为文本替换。"
-	L["This adds %role, %roleIcon as text replacements."] = "这将添加 %role, %roleIcon 作为文本替换。"
-	L["This adds %tooltip, %tooltip1, %tooltip2, %tooltip3 as text replacements."] = "这将添加 %tooltip, %tooltip1, %tooltip2, %tooltip3 作为文本替换。"
+	--[[Translation missing --]]
+	L["This adds %role, %roleIcon as text replacements. Does nothing if the unit is not a group member."] = "This adds %role, %roleIcon as text replacements. Does nothing if the unit is not a group member."
+	--[[Translation missing --]]
+	L["This adds %tooltip, %tooltip1, %tooltip2, %tooltip3 as text replacements and also allows filtering based on the tooltip content/values."] = "This adds %tooltip, %tooltip1, %tooltip2, %tooltip3 as text replacements and also allows filtering based on the tooltip content/values."
 	L[ [=[This aura contains custom Lua code.
 Make sure you can trust the person who sent it!]=] ] = "此光环包含自定义Lua代码。请确认你可以信任发送它的人！"
+	--[[Translation missing --]]
+	L[ [=[This aura was created with a different version (%s) of World of Warcraft.
+It might not work correctly!]=] ] = [=[This aura was created with a different version (%s) of World of Warcraft.
+It might not work correctly!]=]
+	--[[Translation missing --]]
+	L[ [=[This aura was created with a newer version of WeakAuras.
+It might not work correctly with your version!]=] ] = [=[This aura was created with a newer version of WeakAuras.
+It might not work correctly with your version!]=]
 	L["This display is currently loaded"] = "此显示内容已加载"
 	L["This display is not currently loaded"] = "此显示内容未加载"
 	L["This is a modified version of your aura, |cff9900FF%s.|r"] = "这是一个你光环的修改版本，|cff9900FF%s.|r"
@@ -851,8 +886,6 @@ Make sure you can trust the person who sent it!]=] ] = "此光环包含自定义
 	L["Unit Count"] = "单位计数"
 	L["Unit Frame"] = "单位框体"
 	L["Unit Frames"] = "单位框架"
-	L["Unit Name Filter"] = "单位名称过滤方式"
-	L["UnitName Filter"] = "单位名称过滤"
 	L["Unknown property '%s' found in '%s'"] = "发现'%2$s'的未知属性'%1$s'"
 	L["Unlike the start or finish animations, the main animation will loop over and over until the display is hidden."] = "不同于开始或结束动画，主动画将不停循环，直到图示被隐藏。"
 	L["Update"] = "更新"
@@ -870,9 +903,8 @@ Make sure you can trust the person who sent it!]=] ] = "此光环包含自定义
 	L["Use SetTransform"] = "使用 SetTransform 方法"
 	L["Use Texture"] = "使用材质"
 	L["Use tooltip \"size\" instead of stacks"] = "使用来自鼠标提示的层数信息"
-	L["Use Tooltip Information"] = "使用鼠标提示信息"
-	L["Used in Auras:"] = "在下列光环中被使用："
 	L["Used in auras:"] = "在下列光环中被使用："
+	L["Used in Auras:"] = "在下列光环中被使用："
 	L["Uses UnitIsVisible() to check if in range. This is polled every second."] = "使用UnitIsVisible()检查是否在范围内，每秒检查一次。"
 	L["Value %i"] = "值 %i"
 	L["Values are in normalized rgba format."] = "数值为标准化的 RGBA 格式"

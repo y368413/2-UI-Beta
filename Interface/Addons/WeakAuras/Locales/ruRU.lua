@@ -5,12 +5,14 @@ end
 local L = WeakAuras.L
 
 -- WeakAuras
+--[[Translation missing --]]
 L[ [=[ Filter formats: 'Name', 'Name-Realm', '-Realm'. 
 
 Supports multiple entries, separated by commas
-]=] ] = [=[Формат записи: Имя, Имя-Игровой мир, -Игровой мир.
+Can use \ to escape -.]=] ] = [=[ Filter formats: 'Name', 'Name-Realm', '-Realm'. 
 
-Можно указать несколько значений, разделенных запятыми.]=]
+Supports multiple entries, separated by commas
+Can use \ to escape -.]=]
 L["%s Overlay Color"] = "%s (цвет наложения)"
 L["* Suffix"] = "Символ * вместо названия"
 L["/wa help - Show this message"] = "/wa help - показать данное сообщение"
@@ -45,10 +47,16 @@ L[ [=[• |cff00ff00Player|r, |cff00ff00Target|r, |cff00ff00Focus|r, and |cff00f
 
 |cffffff00*|r Yellow Unit settings will create clones for each matching unit while this trigger is providing Dynamic Info to the Aura.]=]
 L["10 Man Raid"] = "Рейд на 10 игроков"
+--[[Translation missing --]]
+L["10 Player Raid"] = "10 Player Raid"
 L["10 Player Raid (Heroic)"] = "Рейд на 10 игроков (героический)"
 L["10 Player Raid (Normal)"] = "Рейд на 10 игроков (обычный)"
 L["20 Man Raid"] = "Рейд на 20 игроков"
+--[[Translation missing --]]
+L["20 Player Raid"] = "20 Player Raid"
 L["25 Man Raid"] = "Рейд на 25 игроков"
+--[[Translation missing --]]
+L["25 Player Raid"] = "25 Player Raid"
 L["25 Player Raid (Heroic)"] = "Рейд на 25 игроков (героический)"
 L["25 Player Raid (Normal)"] = "Рейд на 25 игроков (обычный)"
 L["40 Man Raid"] = "Рейд на 40 игроков"
@@ -158,6 +166,8 @@ L["Background"] = "Задний план"
 L["Background Color"] = "Цвет заднего плана"
 L["Bar Color"] = "Цвет полосы"
 L["Baron Geddon"] = "Барон Геддон"
+--[[Translation missing --]]
+L["Battle for Azeroth"] = "Battle for Azeroth"
 L["Battle.net Whisper"] = "Шепот в сети Battle.net"
 L["Battleground"] = "Поле боя"
 L["Battleguard Sartura"] = "Боевой страж Сартура"
@@ -197,6 +207,8 @@ L["Brutallus"] = "Бруталл"
 L["Buff"] = "Бафф"
 L["Buff/Debuff"] = "Бафф / Дебафф"
 L["Buffed/Debuffed"] = "Есть бафф / дебафф"
+--[[Translation missing --]]
+L["Burning Crusade"] = "Burning Crusade"
 L["Buru the Gorger"] = "Буру Ненасытный"
 L["Can be used for e.g. checking if \"boss1target\" is the same as \"player\"."] = [=[Используется для проверки того факта, что две единицы - одна и та же сущность, объект.
 Например: выбрав в качестве единицы игрока и указав для данного параметра значение "boss1target", можно определить, являетесь ли вы целью босса.]=]
@@ -213,6 +225,8 @@ L["Caster Name"] = "Имя заклинателя"
 L["Caster Realm"] = "Игровой мир заклинателя"
 L["Caster Unit"] = "Заклинатель"
 L["Caster's Target"] = "Цель заклинателя"
+--[[Translation missing --]]
+L["Cataclysm"] = "Cataclysm"
 L["Ceil"] = "Ceil (к большему целому)"
 L["Center"] = "Центр"
 L["Centered Horizontal"] = "Горизонтально по центру"
@@ -241,6 +255,8 @@ L["Circle"] = "Круг"
 L["Clamp"] = "Закрепить (растянуть края)"
 L["Class"] = "Класс"
 L["Class and Specialization"] = "Класс и специализация"
+--[[Translation missing --]]
+L["Classic"] = "Classic"
 L["Classification"] = "Классификация"
 L["Clockwise"] = "По часовой стрелке"
 L["Clone per Event"] = "Клон для каждого события"
@@ -327,6 +343,8 @@ L["Dodge Rating"] = "Показатель уклонения"
 L["Down"] = "Вниз"
 L["Down, then Left"] = "Вниз, затем влево"
 L["Down, then Right"] = "Вниз, затем вправо"
+--[[Translation missing --]]
+L["Dragonflight"] = "Dragonflight"
 L["Drain"] = "Вытягивание"
 L["Dropdown Menu"] = "Выпадающее меню"
 L["Dungeon (Heroic)"] = "Подземелье (героическое)"
@@ -428,10 +446,8 @@ L["Frame Selector"] = "Выбор кадра"
 L["Frequency"] = "Частота"
 L["Friendly"] = "Дружественный"
 L["Friendly Fire"] = "Урон по союзникам"
---[[Translation missing --]]
-L["Friendship Max Rank"] = "Friendship Max Rank"
---[[Translation missing --]]
-L["Friendship Rank"] = "Friendship Rank"
+L["Friendship Max Rank"] = "Максимальный рейтинг дружбы"
+L["Friendship Rank"] = "Рейтинг дружбы"
 L["Frost Resistance"] = "Сопротивление магии льда"
 L["Full"] = "Полный"
 L["Full Bar"] = "Вся полоса"
@@ -455,6 +471,8 @@ L["Grid"] = "Сетка"
 L["Grobbulus"] = "Гроббулус"
 L["Group"] = "Группа"
 L["Group Arrangement"] = "Порядок и позиции индикаций в группе"
+--[[Translation missing --]]
+L["Group Type"] = "Group Type"
 L["Grow"] = "Рост"
 L["Gruul the Dragonkiller"] = "Груул Драконобой"
 L["Gruul's Lair"] = "Логово Груула"
@@ -477,6 +495,8 @@ L["Health (%)"] = "Здоровье (%)"
 L["Health Deficit"] = "Потерянное здоровье"
 L["Heigan the Unclean"] = "Хейган Нечестивый"
 L["Height"] = "Высота"
+--[[Translation missing --]]
+L["Heroic Party"] = "Heroic Party"
 L["Hex Lord Malacrass"] = "Повелитель проклятий Малакрасс"
 L["Hide"] = "Скрыть"
 L["Hide 0 cooldowns"] = "Скрыть 0"
@@ -591,6 +611,8 @@ L["Legacy Looking for Raid"] = "Поиск рейда (до патча 5.4)"
 L["Legacy RGB Gradient"] = "Градиент RGB"
 L["Legacy RGB Gradient Pulse"] = "Градиентная пульсация RGB"
 L["Legacy Spellname"] = "Название заклинания (устаревший)"
+--[[Translation missing --]]
+L["Legion"] = "Legion"
 L["Length"] = "Длина"
 L["Leotheras the Blind"] = "Леотерас Слепец"
 L["Level"] = "Уровень"
@@ -644,6 +666,8 @@ L["Miss"] = "Промах"
 L["Miss Type"] = "Тип промаха"
 L["Missed"] = "Промах"
 L["Missing"] = "Эффект отсутствует"
+--[[Translation missing --]]
+L["Mists of Pandaria"] = "Mists of Pandaria"
 L["Moam"] = "Моам"
 L["Model"] = "Модель"
 L["Modern Blizzard (1h 3m | 3m 7s | 10s | 2.4)"] = "Blizzard (современный):  1ч. 3м. | 3м. 7с. | 10с. | 2.4"
@@ -691,6 +715,8 @@ L["No Profiling information saved."] = "Нет данных профилиров
 L["None"] = "Нет"
 L["Non-player Character"] = "Неигровой персонаж (NPC)"
 L["Normal"] = "Обычный"
+--[[Translation missing --]]
+L["Normal Party"] = "Normal Party"
 L["Not in Group"] = "Не в группе"
 --[[Translation missing --]]
 L["Not in Smart Group"] = "Not in Smart Group"
@@ -894,6 +920,8 @@ L["Set Minimum Progress"] = "Задать мин. прогресс"
 L["Shade of Akama"] = "Тень Акамы"
 L["Shade of Aran"] = "Тень Арана"
 L["Shadow Resistance"] = "Сопротивление темной магии"
+--[[Translation missing --]]
+L["Shadowlands"] = "Shadowlands"
 L["Shake"] = "Дрожь"
 L["Shazzrah"] = "Шаззрах"
 L["Shift-Click to resume addon execution."] = "Shift-клик возобновит выполнение аддона."
@@ -975,7 +1003,6 @@ L["Stamina"] = "Выносливость"
 L["Stance/Form/Aura"] = "Стойка / Облик / Аура"
 L["Standing"] = "Отношение"
 L["Star Shake"] = "Дрожь в виде звезды"
-L["Start"] = "Начать"
 L["Start Now"] = "Начать сейчас"
 L["Status"] = "Статус"
 L["Stolen"] = "Кража"
@@ -1120,6 +1147,8 @@ L["Void Reaver"] = "Страж Бездны"
 L["War Mode Active"] = "Включен режим войны"
 L["Warfront (Heroic)"] = "Фронт (героический)"
 L["Warfront (Normal)"] = "Фронт (обычный)"
+--[[Translation missing --]]
+L["Warlords of Draenor"] = "Warlords of Draenor"
 L["Warning"] = "Предупреждение"
 L["Warning for unknown aura:"] = "Предупреждение для неизвестной индикации."
 L["Warning: Full Scan auras checking for both name and spell id can't be converted."] = "|cFFFFCC00Предупреждение.|r Триггер с функцией Полного сканирования, проверяющий как название эффекта, так и ID заклинания, нельзя преобразовать."
@@ -1146,6 +1175,8 @@ L["Width"] = "Ширина"
 L["Wobble"] = "Колебание"
 L["World Boss"] = "Мировой босс"
 L["Wrap"] = "Переносить слова"
+--[[Translation missing --]]
+L["Wrath of the Lich King"] = "Wrath of the Lich King"
 L["Writing to the WeakAuras table is not allowed."] = "Запись в таблицу WeakAuras запрещена."
 L["X-Offset"] = "Смещение по X"
 L["Yell"] = "Крик"

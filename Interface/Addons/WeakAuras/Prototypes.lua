@@ -116,7 +116,7 @@ else
 end
 
 local constants = {
-  nameRealmFilterDesc = L[" Filter formats: 'Name', 'Name-Realm', '-Realm'. \n\nSupports multiple entries, separated by commas\n"],
+  nameRealmFilterDesc = L[" Filter formats: 'Name', 'Name-Realm', '-Realm'. \n\nSupports multiple entries, separated by commas\nCan use \\ to escape -."],
 }
 
 if WeakAuras.IsClassic() or WeakAuras.IsBCC() then
@@ -1326,7 +1326,7 @@ Private.load_prototype = {
     },
     {
       name = "ingroup",
-      display = L["In Group"],
+      display = L["Group Type"],
       type = "multiselect",
       width = WeakAuras.normalWidth,
       init = "arg",
@@ -1671,8 +1671,6 @@ Private.load_prototype = {
       init = "arg",
       control = "WeakAurasSortedDropdown",
       events = {"PLAYER_DIFFICULTY_CHANGED", "ZONE_CHANGED", "ZONE_CHANGED_INDOORS", "ZONE_CHANGED_NEW_AREA"},
-      enable = WeakAuras.IsRetail(),
-      hidden = not WeakAuras.IsRetail(),
     },
     {
       name = "role",
@@ -2260,7 +2258,7 @@ Private.event_prototypes = {
         type = "select",
         values = function()
           local ret = {}
-          for i = 0, 8 do
+          for i = 1, 8 do
             ret[i] = GetText("FACTION_STANDING_LABEL"..i, UnitSex("player"))
           end
           return ret
@@ -8655,7 +8653,7 @@ Private.event_prototypes = {
       },
       {
         name = "ingroup",
-        display = L["In Group"],
+        display = L["Group Type"],
         type = "multiselect",
         values = "group_types",
         init = "WeakAuras.GroupType()",
