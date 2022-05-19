@@ -193,9 +193,6 @@ function info:FriendsPanel_Init()
 	infoFrame:SetScript("OnLeave", function(self)
 		self:SetScript("OnUpdate", isPanelCanHide)
 	end)
-	infoFrame:SetScript("OnHide", function()
-		if M.EasyMenu:IsShown() then M.EasyMenu:Hide() end
-	end)
 
 	M.CreateFS(infoFrame, 16, "|cff0099ff"..FRIENDS_LIST, nil, "TOPLEFT", 15, -10)
 	infoFrame.friendCountText = M.CreateFS(infoFrame, 14, "-/-", nil, "TOPRIGHT", -15, -12)

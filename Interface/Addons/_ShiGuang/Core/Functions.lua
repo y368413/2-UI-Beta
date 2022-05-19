@@ -603,7 +603,7 @@ do
 		self.bg = M.CreateBDFrame(self)
 		self.bg:SetAllPoints()
 		self.Icon = self:CreateTexture(nil, "ARTWORK")
-		self.Icon:SetInside()
+		self.Icon:SetInside(self.bg)
 		self.Icon:SetTexCoord(unpack(I.TexCoord))
 		if texture then
 			local atlas = strmatch(texture, "Atlas:(.+)$")
@@ -617,7 +617,7 @@ do
 			self:EnableMouse(true)
 			self.HL = self:CreateTexture(nil, "HIGHLIGHT")
 			self.HL:SetColorTexture(1, 1, 1, .25)
-			self.HL:SetInside()
+			self.HL:SetInside(self.bg)
 		end
 	end
 
@@ -962,6 +962,17 @@ do
 		self:HookScript("OnLeave", M.Texture_OnLeave)
 	end
 
+	function M:ReskinFilterReset()
+		M.StripTextures(self)
+		self:ClearAllPoints()
+		self:SetPoint("TOPRIGHT", -5, 10)
+
+		local tex = self:CreateTexture(nil, "ARTWORK")
+		tex:SetInside(nil, 2, 2)
+		tex:SetTexture(I.closeTex)
+		tex:SetVertexColor(1, 0, 0)
+	end
+
 	function M:ReskinFilterButton()
 		M.StripTextures(self)
 		M.Reskin(self)
@@ -972,6 +983,9 @@ do
 			M.SetupArrow(self.Icon, "right")
 			self.Icon:SetPoint("RIGHT")
 			self.Icon:SetSize(14, 14)
+		end
+		if I.isNewPatch and self.ResetButton then
+			M.ReskinFilterReset(self.ResetButton)
 		end
 	end
 

@@ -187,6 +187,7 @@ function UF:UpdateColor(_, unit)
 	local healthPerc = UnitHealth(unit) / (UnitHealthMax(unit) + .0001) * 100
 	local targetColor = R.db["Nameplate"]["TargetColor"]
 	local focusColor = R.db["Nameplate"]["FocusColor"]
+	local dotColor = R.db["Nameplate"]["DotColor"]
 	local r, g, b
 
 	if not UnitIsConnected(unit) then
@@ -198,6 +199,8 @@ function UF:UpdateColor(_, unit)
 			r, g, b = focusColor.r, focusColor.g, focusColor.b
 		elseif isCustomUnit then
 			r, g, b = customColor.r, customColor.g, customColor.b
+		elseif self.Auras.hasTheDot then
+			r, g, b = dotColor.r, dotColor.g, dotColor.b
 		elseif isPlayer and isFriendly then
 			if R.db["Nameplate"]["FriendlyCC"] then
 				r, g, b = M.UnitColor(unit)
@@ -1026,6 +1029,8 @@ function UF:PostUpdatePlates(event, unit)
 		UF.RefreshPlateType(self, unit)
 	elseif event == "NAME_PLATE_UNIT_REMOVED" then
 		self.npcID = nil
+		self.tarBy:SetText("")
+		self.tarByTex:Hide()
 	end
 
 	if event ~= "NAME_PLATE_UNIT_REMOVED" then

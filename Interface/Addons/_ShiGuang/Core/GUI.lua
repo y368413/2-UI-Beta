@@ -133,6 +133,7 @@ G.DefaultSettings = {
 		AutoAttack = true,
 		FCTOverHealing = false,
 		PetCombatText = true,
+		ScrollingCT = false,
 		RaidClickSets = true,
 		TeamIndex = false,
 		ClassPower = true,
@@ -290,6 +291,7 @@ G.DefaultSettings = {
 		MapReveal = false,
 		MapRevealGlow = true,
 		Calendar = false,
+		EasyVolume = true,
 		zrMMbordersize = 2,
 		zrMMbuttonsize = 18,
 		zrMMbuttonpos = "Bottom",
@@ -351,6 +353,9 @@ G.DefaultSettings = {
 		BlockDBM = true,
 		Dispellable = true,
 		UnitTargeted = false,
+		ColorByDot = false,
+		ColorDots = "",
+		DotColor = {r=1, g=.5, b=.2},
 
 		PlateWidth = 160,
 		PlateHeight = 8,
@@ -463,7 +468,7 @@ G.DefaultSettings = {
 		OnlyCompleteRing = false,
 		ExplosiveCount = false,
 		ExplosiveCache = {},
-		PlacedItemAlert = false,
+		SpellItemAlert = false,
 		RareAlertInWild = false,
 		ParagonRep = true,
 		InstantDelete = true,
@@ -786,6 +791,10 @@ local function updatePowerUnitList()
 	M:GetModule("UnitFrames"):CreatePowerUnitTable()
 end
 
+local function refreshColorDots()
+	M:GetModule("UnitFrames"):RefreshColorDots()
+end
+
 local function refreshNameplates()
 	M:GetModule("UnitFrames"):RefreshAllPlates()
 end
@@ -884,6 +893,10 @@ local function refreshPlateByEvents()
 	M:GetModule("UnitFrames"):RefreshPlateByEvents()
 end
 
+local function updateScrollingFont()
+	M:GetModule("UnitFrames"):UpdateScrollingFont()
+end
+
 local function updateMinimapScale()
 	M:GetModule("Maps"):UpdateMinimapScale()
 end
@@ -910,6 +923,10 @@ end
 
 local function updateSoloInfo()
 	M:GetModule("Misc"):SoloInfo()
+end
+
+local function updateSpellItemAlert()
+	M:GetModule("Misc"):SpellItemAlert()
 end
 
 local function updateQuestNotification()
@@ -988,7 +1005,7 @@ G.TabList = {
 G.OptionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 	[1] = {
 		{1, "Actionbar", "Enable", HeaderTag..U["Enable Actionbar"]}, --, nil, nil, setupActionBar
-		{1, "Actionbar", "MicroMenu", U["Micromenu"], true},
+		{1, "Actionbar", "MicroMenu", U["Micromenu"], true, nil, nil, nil, U["MicroMenuTip"]},
 		{1, "Actionbar", "ShowStance", U["ShowStanceBar"], true, true, setupStanceBar},
 		{1, "Actionbar", "Bar4Fader", U["Bar4 Fade"].."*", nil, nil, nil, toggleBarFader},
 		{1, "Actionbar", "Bar5Fader", U["Bar5 Fade"].."*", true, nil, nil, toggleBarFader},
@@ -1214,14 +1231,12 @@ G.OptionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "Misc", "InstAlertOnly", U["InstAlertOnly"].."*", true, nil, nil, updateInterruptAlert, U["InstAlertOnlyTip"]},
 		{},--blank
 		{1, "Misc", "ExplosiveCount", U["Explosive Alert"].."*", nil, nil, nil, updateExplosiveAlert, U["ExplosiveAlertTip"]},
-		{1, "Misc", "PlacedItemAlert", U["Placed Item Alert"].."*", true},
-		{1, "Misc", "SoloInfo", U["SoloInfo"].."*", true, true, nil, nil, updateSoloInfo},
+		{1, "Misc", "SoloInfo", U["SoloInfo"].."*", true, nil, nil, nil, updateSoloInfo},
 		{1, "Misc", "NzothVision", U["NzothVision"]},
 		{1, "Misc", "RareAlerter", "|cff00cc4c"..U["Rare Alert"].."*", true, false, nil, nil, updateRareAlert},
 		{1, "Misc", "RarePrint", U["Alert In Chat"].."*", true, true},
 		{1, "Misc", "RareAlertInWild", U["RareAlertInWild"].."*"},
-	  {1, "Misc", "PlacedItemAlert", U["Placed Item Alert"], true},
-	  {1, "Misc", "InterruptSound", U["Interrupt Alarm"], true, true},
+	  {1, "Misc", "InterruptSound", U["Interrupt Alarm"], true},
 	  --{1, "Misc", "CrazyCatLady", U["Death Alarm"]},
 	  {1, "Misc", "AutoMark", U["Auto Mark"]},
 	  {1, "Misc", "kAutoOpen", U["kAutoOpen"], true},

@@ -387,8 +387,9 @@ function G:ExportGUIData()
 			for key, value in pairs(VALUE) do
 				if type(value) == "table" then
 					if value.r then
+						text = text..";"..KEY..":"..key
 						for k, v in pairs(value) do
-							text = text..";"..KEY..":"..key..":"..k..":"..v
+							text = text..":"..k..":"..v
 						end
 					elseif key == "ExplosiveCache" then
 						text = text..";"..KEY..":"..key..":EMPTYTABLE"
@@ -416,10 +417,10 @@ function G:ExportGUIData()
 						for _, v in ipairs(value) do
 							text = text..":"..tostring(v)
 						end
-					elseif key == "FavouriteItems" then
+					elseif key == "CustomItems" or key == "CustomNames" then
 						text = text..";"..KEY..":"..key
-						for itemID in pairs(value) do
-							text = text..":"..tostring(itemID)
+						for k, v in pairs(value) do
+							text = text..":"..k..":"..v
 						end
 					end
 				else
@@ -451,13 +452,17 @@ function G:ExportGUIData()
 				end
 			end
 		elseif KEY == "CornerSpells" then
+			text = text..";ACCOUNT:"..KEY
 			for class, value in pairs(VALUE) do
-				for spellID, data in pairs(value) do
-					if not bloodlustFilter[spellID] and class == I.MyClass then
-						local anchor, color, filter = unpack(data)
-						anchor = anchor or ""
-						color = color or {"", "", ""}
-						text = text..";ACCOUNT:"..KEY..":"..class..":"..spellID..":"..anchor..":"..color[1]..":"..color[2]..":"..color[3]..":"..tostring(filter or false)
+				if class == I.MyClass then
+					text = text..":"..class
+					for spellID, data in pairs(value) do
+						if not bloodlustFilter[spellID] then
+							local anchor, color, filter = unpack(data)
+							anchor = anchor or ""
+							color = color or {"", "", ""}
+							text = text..":"..spellID..":"..anchor..":"..color[1]..":"..color[2]..":"..color[3]..":"..tostring(filter or false)
+						end
 					end
 				end
 			end
@@ -470,16 +475,18 @@ function G:ExportGUIData()
 				end
 			end
 		elseif KEY == "ContactList" then
+			text = text..";ACCOUNT:"..KEY
 			for name, color in pairs(VALUE) do
 				local r, g, b = strsplit(":", color)
 				r = M:Round(r, 2)
 				g = M:Round(g, 2)
 				b = M:Round(b, 2)
-				text = text..";ACCOUNT:"..KEY..":"..name..":"..r..":"..g..":"..b
+				text = text..":"..name..":"..r..":"..g..":"..b
 			end
 		elseif KEY == "ProfileIndex" or KEY == "ProfileNames" then
+			text = text..";ACCOUNT:"..KEY
 			for k, v in pairs(VALUE) do
-				text = text..";ACCOUNT:"..KEY..":"..k..":"..v
+				text = text..":"..k..":"..v
 			end
 		elseif VALUE == true or VALUE == false or accountStrValues[KEY] then
 			text = text..";ACCOUNT:"..KEY..":"..tostring(VALUE)
@@ -537,9 +544,11 @@ function G:ImportGUIData()
 		elseif arg1 == "EMPTYTABLE" then
 			R.db[key][value] = {}
 		elseif strfind(value, "Color") and (arg1 == "r" or arg1 == "g" or arg1 == "b") then
-			local color = select(4, strsplit(":", option))
+			local colors = {select(3, strsplit(":", option))}
 			if R.db[key][value] then
-				R.db[key][value][arg1] = tonumber(color)
+				for i = 1, #colors, 2 do
+					R.db[key][value][colors[i]] = tonumber(colors[i+1])
+				end
 			end
 		elseif key == "AuraWatchList" then
 			if value == "Switcher" then
@@ -563,10 +572,10 @@ function G:ImportGUIData()
 				if not R.db[key][value] then R.db[key][value] = {} end
 				R.db[key][value][arg1] = {idType, spellID, unit, caster, stack, amount, timeless, combat, text, flash}
 			end
-		elseif value == "FavouriteItems" then
-			local items = {select(3, strsplit(":", option))}
-			for _, itemID in next, items do
-				R.db[key][value][tonumber(itemID)] = true
+		elseif value == "CustomItems" or value == "CustomNames" then
+			local results = {select(3, strsplit(":", option))}
+			for i = 1, #results, 2 do
+				R.db[key][value][tonumber(results[i])] = tonumber(results[i+1]) or results[i+1]
 			end
 		elseif key == "Mover" or key == "AuraWatchMover" then
 			local relFrom, parent, relTo, x, y = select(3, strsplit(":", option))
@@ -606,17 +615,23 @@ function G:ImportGUIData()
 					MaoRUIDB[value][tonumber(arg1)][tonumber(spellID)] = true
 				end
 			elseif value == "CornerSpells" then
-				local class, spellID, anchor, r, g, b, filter = select(3, strsplit(":", option))
-				spellID = tonumber(spellID)
-				r = tonumber(r)
-				g = tonumber(g)
-				b = tonumber(b)
-				filter = toBoolean(filter)
-				if not MaoRUIDB[value][class] then MaoRUIDB[value][class] = {} end
-				if anchor == "" then
-					MaoRUIDB[value][class][spellID] = {}
-				else
-					MaoRUIDB[value][class][spellID] = {anchor, {r, g, b}, filter}
+				local results = {select(3, strsplit(":", option))}
+				local class = results[1]
+				if class == I.MyClass then
+					for i = 2, #results, 6 do
+						local spellID, anchor, r, g, b, filter = results[i], results[i+1], results[i+2], results[i+3], results[i+4], results[i+5]
+						spellID = tonumber(spellID)
+						r = tonumber(r)
+						g = tonumber(g)
+						b = tonumber(b)
+						filter = toBoolean(filter)
+						if not MaoRUIDB[value][class] then MaoRUIDB[value][class] = {} end
+						if anchor == "" then
+							MaoRUIDB[value][class][spellID] = {}
+						else
+							MaoRUIDB[value][class][spellID] = {anchor, {r, g, b}, filter}
+						end
+					end
 				end
 			elseif value == "PartySpells" then
 				local options = {strsplit(":", option)}
@@ -629,14 +644,20 @@ function G:ImportGUIData()
 					spellID = options[index]
 				end
 			elseif value == "ContactList" then
-				local name, r, g, b = select(3, strsplit(":", option))
-				MaoRUIDB[value][name] = r..":"..g..":"..b
+				local names = {select(3, strsplit(":", option))}
+				for i = 1, #names, 4 do
+					MaoRUIDB[value][names[i]] = names[i+1]..":"..names[i+2]..":"..names[i+3]
+				end
 			elseif value == "ProfileIndex" then
-				local name, index = select(3, strsplit(":", option))
-				MaoRUIDB[value][name] = tonumber(index)
+				local results = {select(3, strsplit(":", option))}
+				for i = 1, #results, 2 do
+					MaoRUIDB[value][results[i]] = tonumber(results[i+1])
+				end
 			elseif value == "ProfileNames" then
-				local index, name = select(3, strsplit(":", option))
-				MaoRUIDB[value][tonumber(index)] = name
+				local results = {select(3, strsplit(":", option))}
+				for i = 1, #results, 2 do
+					MaoRUIDB[value][tonumber(results[i])] = results[i+1]
+				end
 			end
 		elseif tonumber(arg1) then
 			if value == "DBMCount" then
@@ -646,6 +667,7 @@ function G:ImportGUIData()
 			end
 		end
 	end
+	ReloadUI()
 end
 
 local function updateTooltip()
@@ -697,7 +719,6 @@ function G:CreateDataFrame()
 		button2 = NO,
 		OnAccept = function()
 			G:ImportGUIData()
-			ReloadUI()
 		end,
 		whileDead = 1,
 	}

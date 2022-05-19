@@ -315,7 +315,7 @@ function MISC:RaidTool_BuffChecker(parent)
 		if debugMode then
 			print(text)
 		else
-			SendChatMessage(text, IsPartyLFG() and "INSTANCE_CHAT" or IsInRaid() and "RAID" or "PARTY")
+			SendChatMessage(text, MISC:GetMsgChannel())
 		end
 	end
 
@@ -704,7 +704,7 @@ function MISC:RaidTool_Init()
 	--MISC:RaidTool_ReadyCheck(frame)
 	--MISC:RaidTool_Marker(frame)
 	--MISC:RaidTool_BuffChecker(frame)
-	--MISC:RaidTool_CreateMenu(frame)
+	MISC:RaidTool_CreateMenu(frame)
 
 	--MISC:RaidTool_EasyMarker()
 	--MISC:RaidTool_WorldMarker()
