@@ -234,22 +234,25 @@ function MISC:InterruptAlert_Update(...)
 			if infoText == U["BrokenSpell"] then
 				if auraType and auraType == AURA_TYPE_BUFF or blackList[spellID] then return end
 				sourceSpellID, destSpellID = extraskillID, spellID
+				if sourceSpellID and destSpellID then
+					SendChatMessage(format(infoText, sourceName..GetSpellLink(sourceSpellID), destName..GetSpellLink(destSpellID)), msgChannel())
+				end
 			elseif infoText == U["Interrupt"] then
 				if R.db["Misc"]["OwnInterrupt"] and sourceName ~= I.MyName and not I:IsMyPet(sourceFlags) then return end
 				sourceSpellID, destSpellID = spellID, extraskillID
+				if sourceSpellID and destSpellID then
+					SendChatMessage(format(infoText, GetSpellLink(destSpellID)), msgChannel())
+				end
 			else
 				if R.db["Misc"]["OwnDispell"] and sourceName ~= I.MyName and not I:IsMyPet(sourceFlags) then return end
 				sourceSpellID, destSpellID = spellID, extraskillID
+				if sourceSpellID and destSpellID then
+					SendChatMessage(format(infoText, GetSpellLink(destSpellID)), msgChannel())
+				end
 			end
-
-			if sourceSpellID and destSpellID then
-				--SendChatMessage(format(infoText, sourceName..GetSpellLink(sourceSpellID), destName..GetSpellLink(destSpellID)), msgChannel())
-				SendChatMessage(format(infoText, GetSpellLink(destSpellID)), msgChannel())
-				   if R.db["Misc"]["InterruptSound"] then
-				      PlaySoundFile("Interface\\Addons\\_ShiGuang\\Media\\Sounds\\ShutupFool.ogg", "Master")
-				   end
-
-			end
+				if R.db["Misc"]["InterruptSound"] then
+				    PlaySoundFile("Interface\\Addons\\_ShiGuang\\Media\\Sounds\\ShutupFool.ogg", "Master")
+				end
 		end
 	end
 end
