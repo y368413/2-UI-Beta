@@ -156,6 +156,8 @@ function MISC:NakedIcon()
 	bu:SetSize(21, 21)
 	bu:SetPoint("LEFT", PaperDollSidebarTab1, "RIGHT", 80, -2)
 	M.PixelIcon(bu, "Interface\\ICONS\\SPELL_SHADOW_TWISTEDFAITH", true)
+	bu.bg:SetPoint("TOPLEFT", 2, -3)
+	bu.bg:SetPoint("BOTTOMRIGHT", 0, -2)
 	M.AddTooltip(bu, "ANCHOR_RIGHT", U["Get Naked"])
 
 	local function UnequipItemInSlot(i)

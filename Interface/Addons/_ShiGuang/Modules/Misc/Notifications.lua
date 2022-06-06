@@ -416,8 +416,7 @@ function MISC:ItemAlert_CheckGroup()
 end
 
 function MISC:SpellItemAlert()
-	local faction = UnitFactionGroup("player")
-	MISC.factionSpell = faction == "Alliance" and 32182 or 2825
+	MISC.factionSpell = I.MyFaction == "Alliance" and 32182 or 2825
 	MISC.factionSpell = GetSpellLink(MISC.factionSpell)
 
 	if R.db["Misc"]["SpellItemAlert"] then

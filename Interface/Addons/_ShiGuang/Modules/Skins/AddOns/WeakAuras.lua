@@ -4,7 +4,7 @@ local S = M:GetModule("Skins")
 
 local pairs, unpack = pairs, unpack
 
-local function UpdateIconBgAlpha(icon, alpha)
+local function UpdateIconBgAlpha(icon, _, _, _, alpha)
 	icon.bg:SetAlpha(alpha)
 	if icon.bg.__shadow then
 		icon.bg.__shadow:SetAlpha(alpha)
@@ -34,29 +34,29 @@ local function UpdateIconTexCoord(icon)
 	icon.isCutting = nil
 end
 
+local function ReskinWAIcon(icon)
+	UpdateIconTexCoord(icon)
+	hooksecurefunc(icon, "SetTexCoord", UpdateIconTexCoord)
+	icon.bg = M.SetBD(icon, 0)
+	icon.bg:SetFrameLevel(0)
+	hooksecurefunc(icon, "SetVertexColor", UpdateIconBgAlpha)
+end
+
 local function Skin_WeakAuras(f, fType)
 	if fType == "icon" then
 		if not f.styled then
-			UpdateIconTexCoord(f.icon)
-			hooksecurefunc(f.icon, "SetTexCoord", UpdateIconTexCoord)
-			f.bg = M.SetBD(f, 0)
-			f.bg:SetFrameLevel(0)
-			f.icon.bg = f.bg
-			hooksecurefunc(f.icon, "SetAlpha", UpdateIconBgAlpha)
-
+			ReskinWAIcon(f.icon)
 			f.styled = true
 		end
 	elseif fType == "aurabar" then
 		if not f.styled then
 			f.bg = M.SetBD(f.bar, 0)
 			f.bg:SetFrameLevel(0)
-			UpdateIconTexCoord(f.icon)
-			hooksecurefunc(f.icon, "SetTexCoord", UpdateIconTexCoord)
-			f.iconFrame:SetAllPoints(f.icon) -- needs review
-			M.SetBD(f.iconFrame)
-
+			ReskinWAIcon(f.icon)
 			f.styled = true
 		end
+
+		f.icon.bg:SetShown(not not f.iconVisible)
 	end
 end
 

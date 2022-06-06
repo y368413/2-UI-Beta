@@ -380,6 +380,12 @@ local accountStrValues = {
 	["IgnoredButtons"] = true,
 }
 
+local booleanTable = {
+	["CustomUnits"] = true,
+	["PowerUnits"] = true,
+	["DotSpells"] = true,
+}
+
 function G:ExportGUIData()
 	local text = "UISettings:"..I.Version..":"..I.MyName..":"..I.MyClass
 	for KEY, VALUE in pairs(R.db) do
@@ -421,6 +427,11 @@ function G:ExportGUIData()
 						text = text..";"..KEY..":"..key
 						for k, v in pairs(value) do
 							text = text..":"..k..":"..v
+						end
+					elseif booleanTable[key] then
+						text = text..";"..KEY..":"..key
+						for k, v in pairs(value) do
+							text = text..":"..k..":"..tostring(v)
 						end
 					end
 				else
@@ -519,12 +530,20 @@ local function reloadDefaultSettings()
 	R.db["SL"] = true -- don't empty data on next loading
 end
 
+local function IsOldProfileVersion(version)
+	local major, minor, patch = strsplit(".", version)
+	major = tonumber(major)
+	minor = tonumber(minor)
+	patch = tonumber(patch)
+	return major < 7 and (minor < 23 or (minor == 23 and patch < 2))
+end
+
 function G:ImportGUIData()
 	local profile = G.ProfileDataFrame.editBox:GetText()
 	if M:IsBase64(profile) then profile = M:Decode(profile) end
 	local options = {strsplit(";", profile)}
-	local title, _, _, class = strsplit(":", options[1])
-	if title ~= "UISettings" then
+	local title, version, _, class = strsplit(":", options[1])
+	if title ~= "UISettings" or IsOldProfileVersion(version) then
 		UIErrorsFrame:AddMessage(I.InfoColor..U["Import data error"])
 		return
 	end
@@ -571,6 +590,11 @@ function G:ImportGUIData()
 				flash = toBoolean(flash)
 				if not R.db[key][value] then R.db[key][value] = {} end
 				R.db[key][value][arg1] = {idType, spellID, unit, caster, stack, amount, timeless, combat, text, flash}
+			end
+		elseif booleanTable[value] then
+			local results = {select(3, strsplit(":", option))}
+			for i = 1, #results, 2 do
+				R.db[key][value][tonumber(results[i]) or results[i]] = toBoolean(results[i+1])
 			end
 		elseif value == "CustomItems" or value == "CustomNames" then
 			local results = {select(3, strsplit(":", option))}
