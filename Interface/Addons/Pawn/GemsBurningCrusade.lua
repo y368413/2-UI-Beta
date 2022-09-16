@@ -13,7 +13,7 @@ if VgerCore.IsBurningCrusade then
 --========================================
 -- Colored level 60 common-quality vendor gems
 --========================================
-local PawnGemDataCommon =
+local PawnGemData60Common =
 {
 
 
@@ -54,7 +54,7 @@ local PawnGemDataCommon =
 --========================================
 -- Colored level 70 uncommon-quality gems
 --========================================
-local PawnGemDataUncommon =
+local PawnGemData70Uncommon =
 {
 
 
@@ -131,7 +131,7 @@ local PawnGemDataUncommon =
 --========================================
 -- Colored level 70 rare-quality gems
 --========================================
-local PawnGemDataRare =
+local PawnGemData70Rare =
 {
 
 
@@ -158,7 +158,7 @@ local PawnGemDataRare =
 { ID = 24061, R = true, Y = true, Stats = { HitRating = 4, Agility = 4 } }, -- Glinting Noble Topaz
 { ID = 31867, R = true, Y = true, Stats = { SpellHitRating = 4, SpellDamage = 5 } }, -- Veiled Noble Topaz
 { ID = 31868, R = true, Y = true, Stats = { CritRating = 4, Ap = 8 } }, -- Wicked Noble Topaz
--- { ID = 35316, R = true, Y = true, Stats = { SpellHasteRating = 4, SpellDamage = 5 } }, -- Reckless Noble Topaz (PHASE 5)
+{ ID = 35316, R = true, Y = true, Stats = { SpellHasteRating = 4, SpellDamage = 5 } }, -- Reckless Noble Topaz (PHASE 5)
 
 
 ------------------------------------------------------------
@@ -172,7 +172,7 @@ local PawnGemDataRare =
 { ID = 24052, Y = true, Stats = { DefenseRating = 8 } }, -- Thick Dawnstone
 { ID = 24053, Y = true, Stats = { ResilienceRating = 8 } }, -- Mystic Dawnstone
 { ID = 31861, Y = true, Stats = { SpellHitRating = 8 } }, -- Great Dawnstone
--- { ID = 35315, Y = true, Stats = { SpellHasteRating = 8 } }, -- Quick Dawnstone (PHASE 5)
+{ ID = 35315, Y = true, Stats = { SpellHasteRating = 8 } }, -- Quick Dawnstone (PHASE 5)
 
 
 ------------------------------------------------------------
@@ -184,7 +184,7 @@ local PawnGemDataRare =
 { ID = 24066, Y = true, B = true, Stats = { SpellCritRating = 4, SpellPenetration = 5 } }, -- Radiant Talasite
 { ID = 24067, Y = true, B = true, Stats = { CritRating = 4, Stamina = 6 } }, -- Jagged Talasite
 { ID = 33782, Y = true, B = true, Stats = { ResilienceRating = 4, Stamina = 6 } }, -- Steady Talasite
--- { ID = 35318, Y = true, B = true, Stats = { SpellHasteRating = 4, Stamina = 6 } }, -- Forceful Talasite (PHASE 5)
+{ ID = 35318, Y = true, B = true, Stats = { SpellHasteRating = 4, Stamina = 6 } }, -- Forceful Talasite (PHASE 5)
 
 
 ------------------------------------------------------------
@@ -207,7 +207,7 @@ local PawnGemDataRare =
 { ID = 24057, R = true, B = true, Stats = { Healing = 9, SpellDamage = 3, Mp5 = 2 } }, -- Royal Nightseye
 { ID = 31863, R = true, B = true, Stats = { Ap = 8, Stamina = 6 } }, -- Balanced Nightseye
 { ID = 31865, R = true, B = true, Stats = { Ap = 8, Mp5 = 2 } }, -- Infused Nightseye
--- { ID = 35707, R = true, B = true, Stats = { DodgeRating = 4, Stamina = 6 } }, -- Regal Nightseye (PHASE 5)
+{ ID = 35707, R = true, B = true, Stats = { DodgeRating = 4, Stamina = 6 } }, -- Regal Nightseye (PHASE 5)
 
 
 }
@@ -216,7 +216,7 @@ local PawnGemDataRare =
 --========================================
 -- Colored level 70 epic-quality gems (PHASE 3+)
 --========================================
-local PawnGemDataEpic =
+local PawnGemData70Epic =
 {
 
 
@@ -257,7 +257,7 @@ local PawnGemDataEpic =
 { ID = 32208, Y = true, Stats = { DefenseRating = 10 } }, -- Thick Lionseye
 { ID = 32209, Y = true, Stats = { ResilienceRating = 10 } }, -- Mystic Lionseye
 { ID = 32210, Y = true, Stats = { SpellHitRating = 10 } }, -- Great Lionseye
--- { ID = 35761, Y = true, Stats = { SpellHasteRating = 10 } }, -- Quick Lionseye (PHASE 5)
+{ ID = 35761, Y = true, Stats = { SpellHasteRating = 10 } }, -- Quick Lionseye (PHASE 5)
 
 
 ------------------------------------------------------------
@@ -292,7 +292,7 @@ local PawnGemDataEpic =
 { ID = 32214, R = true, B = true, Stats = { Ap = 10, Mp5 = 2 } }, -- Infused Shadowsong Amethyst
 { ID = 32215, R = true, B = true, Stats = { SpellDamage = 6, Stamina = 7 } }, -- Glowing Shadowsong Amethyst
 { ID = 32216, R = true, B = true, Stats = { Healing = 11, SpellDamage = 4, Mp5 = 2 } }, -- Royal Shadowsong Amethyst
--- { ID = 37503, R = true, B = true, Stats = { Healing = 11, SpellDamage = 4, Spirit = 5 } }, -- Purified Shadowsong Amethyst (PHASE 5)
+{ ID = 37503, R = true, B = true, Stats = { Healing = 11, SpellDamage = 4, Spirit = 5 } }, -- Purified Shadowsong Amethyst (PHASE 5)
 
 
 }
@@ -301,7 +301,7 @@ local PawnGemDataEpic =
 --========================================
 -- Level 70 crafted meta gems
 --========================================
-local PawnMetaGemDataRare =
+local PawnMetaGemData70Rare =
 {
 
 	
@@ -313,26 +313,29 @@ local PawnMetaGemDataRare =
 { ID = 25890, Stats = { SpellCritRating = 14 } }, -- Destructive Skyfire Diamond
 { ID = 25894, Stats = { Ap = 24 } }, -- Swift Skyfire Diamond
 { ID = 34220, Stats = { SpellCritRating = 12 } }, -- Chaotic Skyfire Diamond
--- { ID = 35501, Stats = { DefenseRating = 12 } }, -- Eternal Earthstorm Diamond (PHASE 5)
--- { ID = 35503, Stats = { SpellDamage = 14 } }, -- Ember Skyfire Diamond (PHASE 5)
+{ ID = 35501, Stats = { DefenseRating = 12 } }, -- Eternal Earthstorm Diamond (PHASE 5)
+{ ID = 35503, Stats = { SpellDamage = 14 } }, -- Ember Skyfire Diamond (PHASE 5)
 
 
 }
+
+
+--========================================
 
 
 PawnGemQualityLevels =
 {
-	{ 151, PawnGemDataEpic }, -- Tier 6 (PHASE 3) (T4 / Karazhan is 115; T5 is 133; T6 is 151; Sunwell is 154)
-	{ 100, PawnGemDataRare }, -- Lowest-level level 70 item; heroic dungeons
-	{ 90, PawnGemDataUncommon }, -- Zangarmarsh gear gets green gems
-	{ 0, PawnGemDataCommon }, -- Hellfire Peninsula gear gets white gems
+	{ 151, PawnGemData70Epic }, -- Tier 6 (PHASE 3) (T4 / Karazhan is 115; T5 is 133; T6 is 151; Sunwell is 154)
+	{ 100, PawnGemData70Rare }, -- Lowest-level level 70 item; heroic dungeons
+	{ 90, PawnGemData70Uncommon }, -- Zangarmarsh gear gets green gems
+	{ 0, PawnGemData60Common }, -- Hellfire Peninsula gear gets white gems
 }
 
 PawnMetaGemQualityLevels =
 {
-	{ 0, PawnMetaGemDataRare },
+	{ 0, PawnMetaGemData70Rare },
 }
 
 PawnMinimumItemLevelToConsiderGems = 100
-	
+
 end -- if VgerCore.IsBurningCrusade

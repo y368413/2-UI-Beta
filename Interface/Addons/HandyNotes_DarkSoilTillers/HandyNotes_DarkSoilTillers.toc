@@ -1,5 +1,5 @@
-## Interface: 90200
-## Version: 1.06
+## Interface: 90207
+## Version: 1.08
 ## Title: Dark Soil
 ## Title-deDE: Dunkle Erde
 ## Title-esES: Tierra Oscura

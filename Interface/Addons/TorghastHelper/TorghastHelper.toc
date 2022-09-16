@@ -1,7 +1,7 @@
 ## Title: TorghastHelper
 ## Version: 0.4.4
 ## Author: Ignifazius
-## Interface: 90200
+## Interface: 90207
 ## SavedVariablesPerCharacter: AlwaysDisplayAnimaPowers, svShowBuffName, svShowDescription
 ## Notes: Adds some useful information to your tooltips in Torghast
 ## Notes-deDE: Fügt in Torghast einige hilfreiche Informationen zum Tooltip hinzu

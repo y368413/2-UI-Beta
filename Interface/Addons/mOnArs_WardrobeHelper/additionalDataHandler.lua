@@ -153,6 +153,7 @@ o.addAdditionalData = function(instances, useCoroutine)
     instances = {}
   end
 
+  local transmogLocation = TransmogUtil.CreateTransmogLocation(INVSLOT_WRIST,0,0)
   for k, data in pairs(o.additionalData) do
     for instanceName, vv in pairs(o.categorization) do
       if vv[3] == k then
@@ -163,7 +164,7 @@ o.addAdditionalData = function(instances, useCoroutine)
               local itemLink = o.createLink(itemID, diffData.linkDifficulty)
               local appearanceID = o.getAppearanceID(itemLink)
               if appearanceID and o.isArmorAppropriateForPlayer(itemLink) then
-                local sources = C_TransmogCollection.GetAppearanceSources(appearanceID)
+                local sources = C_TransmogCollection.GetAppearanceSources(appearanceID, 0, transmogLocation)
                 if sources then
                   local collected = o.isCollected(sources) and (mOnWDSave.completionistMode == false)
                   collected = collected or (o.isCollected(sources, itemID) and mOnWDSave.completionistMode)

@@ -1,5 +1,5 @@
-## Interface: 90200
-## Version: 1.03
+## Interface: 90207
+## Version: 1.05
 ## Title: Springfur Alpaca
 ## Title-deDE: Frühlingsfellalpaka
 ## Title-esES: Alpaca de pelaje primaveral

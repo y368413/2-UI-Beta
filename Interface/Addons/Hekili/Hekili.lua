@@ -6,7 +6,7 @@ Hekili = LibStub("AceAddon-3.0"):NewAddon( "Hekili", "AceConsole-3.0", "AceSeria
 Hekili.Version = GetAddOnMetadata( "Hekili", "Version" )
 
 local format = string.format
-local upper  = string.upper
+local insert, concat = table.insert, table.concat
 
 if Hekili.Version == ( "@" .. "project-version" .. "@" ) then
     Hekili.Version = format( "Dev-%s (%s)", GetBuildInfo(), date( "%Y%m%d" ) )
@@ -29,7 +29,7 @@ do
     end
 
 	ns.cpuProfile = cpuProfileDB
-	
+
 
 	local frameProfileDB = {}
 
@@ -73,7 +73,7 @@ Hekili.Class = {
     powers = {},
 	gear = {},
     setBonuses = {},
-	
+
 	knownAuraAttributes = {},
 
     stateExprs = {},
@@ -173,13 +173,13 @@ function Hekili:SetupDebug( display )
     }
     active_debug = debug[ current_display ]
 	active_debug.index = 1
-	
+
 	lastIndent = 0
-	
+
 	local pack = self.State.system.packName
 
     if not pack then return end
-    
+
 	self:Debug( "New Recommendations for [ %s ] requested at %s ( %.2f ); using %s( %s ) priority.", display, date( "%H:%M:%S"), GetTime(), self.DB.profile.packs[ pack ].builtIn and "built-in " or "", pack )
 end
 
@@ -187,7 +187,7 @@ end
 function Hekili:Debug( ... )
     if not self.ActiveDebug then return end
 	if not active_debug then return end
-	
+
 	local indent, text = ...
 	local start
 
@@ -217,10 +217,6 @@ function Hekili:SaveDebugSnapshot( dispName )
 
 	for k, v in pairs( debug ) do
 		if not dispName or dispName == k then
-			if not snapshots[ k ] then
-				snapshots[ k ] = {}
-			end
-
 			for i = #v.log, v.index, -1 do
 				v.log[ i ] = nil
 			end
@@ -239,6 +235,7 @@ function Hekili:SaveDebugSnapshot( dispName )
                 local aura = class.auras[ spellId ]
                 local key = aura and aura.key
                 if key and not state.auras.player.buff[ key ] then key = key .. " [MISSING]" end
+
                 auraString = format( "%s\n   %6d - %-40s - %3d - %-6.2f", auraString, spellId, key or ( "*" .. formatKey( name ) ), count > 0 and count or 1, expirationTime > 0 and ( expirationTime - now ) or 3600 )
             end
 
@@ -252,6 +249,7 @@ function Hekili:SaveDebugSnapshot( dispName )
                 local aura = class.auras[ spellId ]
                 local key = aura and aura.key
                 if key and not state.auras.player.debuff[ key ] then key = key .. " [MISSING]" end
+
                 auraString = format( "%s\n   %6d - %-40s - %3d - %-6.2f", auraString, spellId, key or ( "*" .. formatKey( name ) ), count > 0 and count or 1, expirationTime > 0 and ( expirationTime - now ) or 3600 )
             end
 
@@ -260,50 +258,82 @@ function Hekili:SaveDebugSnapshot( dispName )
                 auraString = auraString .. "\n\ntarget_auras:  target does not exist"
             else
                 auraString = auraString .. "\n\ntarget_buffs:"
-                
+
                 for i = 1, 40 do
                     local name, _, count, debuffType, duration, expirationTime, source, _, _, spellId, canApplyAura, isBossDebuff, castByPlayer = UnitBuff( "target", i )
-    
+
                     if not name then break end
-    
+
                     local aura = class.auras[ spellId ]
                     local key = aura and aura.key
                     if key and not state.auras.target.buff[ key ] then key = key .. " [MISSING]" end
+
                     auraString = format( "%s\n   %6d - %-40s - %3d - %-6.2f", auraString, spellId, key or ( "*" .. formatKey( name ) ), count > 0 and count or 1, expirationTime > 0 and ( expirationTime - now ) or 3600 )
                 end
-    
+
                 auraString = auraString .. "\n\ntarget_debuffs:"
 
                 for i = 1, 40 do
                     local name, _, count, debuffType, duration, expirationTime, source, _, _, spellId, canApplyAura, isBossDebuff, castByPlayer = UnitDebuff( "target", i, "PLAYER" )
-    
+
                     if not name then break end
-    
+
                     local aura = class.auras[ spellId ]
                     local key = aura and aura.key
                     if key and not state.auras.target.debuff[ key ] then key = key .. " [MISSING]" end
+
                     auraString = format( "%s\n   %6d - %-40s - %3d - %-6.2f", auraString, spellId, key or ( "*" .. formatKey( name ) ), count > 0 and count or 1, expirationTime > 0 and ( expirationTime - now ) or 3600 )
                 end
             end
 
             auraString = auraString .. "\n\n"
 
-            table.insert( v.log, 1, auraString )
+            insert( v.log, 1, auraString )
             if Hekili.TargetDebug and Hekili.TargetDebug:len() > 0 then
-                table.insert( v.log, 1, "targets:\n" .. Hekili.TargetDebug )
+                insert( v.log, 1, "targets:\n" .. Hekili.TargetDebug )
             end
-            table.insert( v.log, 1, self:GenerateProfile() )
-            table.insert( snapshots[ k ], table.concat( v.log, "\n" ) )
-            
+            insert( v.log, 1, self:GenerateProfile() )
+
+            local custom = ""
+
+            local pack = self.DB.profile.packs[ state.system.packName ]
+            if not pack.builtIn then
+                custom = format( " |cFFFFA700(Custom: %s[%d])|r", state.spec.name, state.spec.id )
+            end
+
+            local overview = format( "%s%s; %s|r", state.system.packName, custom, dispName )
+            local recs = Hekili.DisplayPool[ dispName ].Recommendations
+
+            for i, rec in ipairs( recs ) do
+                if not rec.actionName then
+                    if i == 1 then
+                        overview = format( "%s - |cFF666666N/A|r", overview )
+                    end
+                    break
+                end
+                overview = format( "%s%s%s|cFFFFD100(%0.2f)|r", overview, ( i == 1 and " - " or ", " ), class.abilities[ rec.actionName ].name, rec.time )
+            end
+
+            insert( v.log, 1, overview )
+
+            local snap = {
+                header = "|cFFFFD100[" .. date( "%H:%M:%S" ) .. "]|r " .. overview,
+                log = concat( v.log, "\n" ),
+                data = ns.tableCopy( v.log ),
+                recs = {}
+            }
+
+            insert( snapshots, snap )
             snapped = true
 		end
     end
 
-    if snapped and Hekili.DB.profile.screenshot then
-        Screenshot()
+    if snapped then
+        if Hekili.DB.profile.screenshot then Screenshot() end
+        return true
     end
 
-    return snapped
+    return false
 end
 
 Hekili.Snapshots = ns.snapshots

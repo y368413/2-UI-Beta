@@ -1,4 +1,4 @@
-## Interface: 90200
+## Interface: 90207
 ## Title: AutoLoadPetTeam For Rematch
 ## Title-zhCN: AutoLoadPetTeam For Rematch
 ## Notes: 宠物自动换队-适配Rematch版

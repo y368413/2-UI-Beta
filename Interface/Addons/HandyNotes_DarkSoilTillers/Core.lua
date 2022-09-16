@@ -3,7 +3,7 @@
 
                                               Dark Soil
 
-                                       v1.06 - 20th March 2022
+                                     v1.08 - 15th September 2022
                                 Copyright (C) Taraezor / Chris Birch
 
                                 ----o----(||)----oo----(||)----o----

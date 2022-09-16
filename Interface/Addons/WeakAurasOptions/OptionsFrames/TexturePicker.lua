@@ -1,4 +1,4 @@
-if not WeakAuras.IsCorrectVersion() or not WeakAuras.IsLibsOK() then return end
+if not WeakAuras.IsLibsOK() then return end
 local AddonName, OptionsPrivate = ...
 
 -- Lua APIs
@@ -9,7 +9,6 @@ local pairs, next, type = pairs, next, type
 local CreateFrame = CreateFrame
 
 local AceGUI = LibStub("AceGUI-3.0")
-local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 
 local WeakAuras = WeakAuras
 local L = WeakAuras.L

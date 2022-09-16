@@ -111,6 +111,8 @@ panel.opts = {
 	{ "check", "ShowNotesOnce", L["Only Once Per Team"], L["Only display notes automatically the first time entering battle, until another team is loaded."], "ShowNotesInBattle" },
 	{ "check", "BoringLoreFont", L["Alternate Lore Font"], L["Use a more normal-looking font for lore text on the back of the pet card."], nil, true, true },
 	{ "check", "ShowSpeciesID", L["Show Species ID & Ability ID"], L["Display the numerical species ID of a pet as a stat on their pet card and the numerical ability ID on ability tooltips."] },
+	{ "widget", "NotesFont" },
+	{ "check", "HideNoteButtons", L["Hide Notes Buttons In Battle UI"], L["Hide the notes buttons on the upper corners of the pets in the battle UI when the pet they're attached to has notes."], nil, true },
 	{ "header", L["Team Options"], 10 },
 	{ "check", "LoadHealthiest", L["Load Healthiest Pets"], L["When a team loads, if any pet is injured or dead and there's another version with more health \124cffffffffand identical stats\124r, load the healthier version.\n\nPets in the leveling queue are exempt from this option.\n\n\124cffffffffNote:\124r This is only when a team loads. It will not automatically swap in healthier pets when you leave battle."] },
 	{ "check", "LoadHealthiestAny", L["Allow Any Version"], L["Instead of choosing only the healthiest pet with identical stats, choose the healthiest version of the pet regardless of stats."], "LoadHealthiest" },

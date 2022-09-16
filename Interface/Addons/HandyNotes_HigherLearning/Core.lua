@@ -3,7 +3,7 @@
 
                                            Higher Learning
 
-                                       v1.06 - 20th March 2022
+                                     v1.08 - 15th September 2022
                                 Copyright (C) Taraezor / Chris Birch
 
                                 ----o----(||)----oo----(||)----o----
@@ -49,7 +49,8 @@ setmetatable( L, { __index = function( L, key ) return key end } )
 local realm = GetNormalizedRealmName() -- On a fresh login this will return null
 ns.oceania = { AmanThul = true, Barthilas = true, Caelestrasz = true, DathRemar = true,
 			Dreadmaul = true, Frostmourne = true, Gundrak = true, JubeiThos = true, 
-			Khazgoroth = true, Nagrand = true, Saurfang = true, Thaurissan = true}			
+			Khazgoroth = true, Nagrand = true, Saurfang = true, Thaurissan = true,
+			Yojamba = true, Remulos = true, Arugal = true,}			
 if ns.oceania[realm] then
 	ns.locale = "enGB"
 end

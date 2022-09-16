@@ -1,0 +1,10 @@
+lightweight tag 7e03e358c953834d9014e9d912b4ed56ef947b0f v1.0.3
+Author:	romdeau23 <romdeau23@gmail.com>
+Date:	Sat Aug 20 12:43:40 2022 +0200
+
+commit 7e03e358c953834d9014e9d912b4ed56ef947b0f
+Author: romdeau23 <romdeau23@gmail.com>
+Date:   Sat Aug 20 12:43:40 2022 +0200
+
+    Update TOC for 9.2.7
+

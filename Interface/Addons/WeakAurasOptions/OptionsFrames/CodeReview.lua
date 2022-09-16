@@ -1,4 +1,4 @@
-if not WeakAuras.IsCorrectVersion() or not WeakAuras.IsLibsOK() then return end
+if not WeakAuras.IsLibsOK() then return end
 local AddonName, OptionsPrivate = ...
 
 -- Lua APIs
@@ -119,7 +119,6 @@ local function ConstructCodeReview(frame)
     self.codeTree:SetTree(data);
     self.codeTree:SelectByValue(firstEntry.value)
 
-    WeakAuras.ShowOptions();
     frame.window = "codereview";
     frame:UpdateFrameVisible()
   end

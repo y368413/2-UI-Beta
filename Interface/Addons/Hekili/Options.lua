@@ -8,17 +8,13 @@ local class = Hekili.Class
 local scripts = Hekili.Scripts
 local state = Hekili.State
 
-local format, lower, match, upper = string.format, string.lower, string.match, string.upper
+local format, lower, match = string.format, string.lower, string.match
 local insert, remove, sort, wipe = table.insert, table.remove, table.sort, table.wipe
 
 local callHook = ns.callHook
-local getSpecializationID = ns.getSpecializationID
 
-local GetResourceKey = ns.GetResourceKey
 local SpaceOut = ns.SpaceOut
 
-local escapeMagic = ns.escapeMagic
-local fsub = ns.fsub
 local formatKey = ns.formatKey
 local orderedPairs = ns.orderedPairs
 local tableCopy = ns.tableCopy
@@ -26,11 +22,10 @@ local tableCopy = ns.tableCopy
 local GetItemInfo = ns.CachedGetItemInfo
 
 -- Atlas/Textures
-local AddTexString, GetTexString, AtlasToString, GetAtlasFile, GetAtlasCoords = ns.AddTexString, ns.GetTexString, ns.AtlasToString, ns.GetAtlasFile, ns.GetAtlasCoords
+local AtlasToString, GetAtlasFile, GetAtlasCoords = ns.AtlasToString, ns.GetAtlasFile, ns.GetAtlasCoords
 
 
 local ACD = LibStub( "AceConfigDialog-3.0" )
-local LDB = LibStub( "LibDataBroker-1.1", true )
 local LDBIcon = LibStub( "LibDBIcon-1.0", true )
 
 
@@ -38,7 +33,7 @@ local NewFeature = "|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:0|
 local GreenPlus = "Interface\\AddOns\\Hekili\\Textures\\GreenPlus"
 local RedX = "Interface\\AddOns\\Hekili\\Textures\\RedX"
 local BlizzBlue = "|cFF00B4FF"
-local ClassColor = C_ClassColor.GetClassColor(class.file)
+local ClassColor = C_ClassColor.GetClassColor( class.file )
 
 
 -- Interrupts
@@ -1139,15 +1134,14 @@ do
     local function rangeXY( info, notif )
         local tab = getOptionTable( info, notif )
 
-        local monitor = ( tonumber( GetCVar( 'gxMonitor' ) ) or 0 ) + 1
         local resolutions = { GetScreenResolutions() }
-        local resolution = resolutions[ GetCurrentResolution() ] or GetCVar( "gxWindowedResolution" )
+        local resolution = resolutions[ GetCurrentResolution() ] or GetCVar( "gxWindowedResolution" ) or "1280x720"
         local width, height = resolution:match( "(%d+)x(%d+)" )
 
         width = tonumber( width )
         height = tonumber( height )
 
-        for i, str in ipairs( resolutions ) do
+        for _, str in ipairs( resolutions ) do
             local w, h = str:match( "(%d+)x(%d+)" )
             w, h = tonumber( w ), tonumber( h )
 
@@ -1989,7 +1983,7 @@ do
                                         max = 1,
                                         step = 0.01,
                                         width = 1.49,
-                                        order = 2,
+                                        order = 3,
                                     },
 
                                     break01 = {
@@ -2007,7 +2001,7 @@ do
                                         max = 1,
                                         step = 0.01,
                                         width = 1.49,
-                                        order = 3,
+                                        order = 2,
                                     },
 
                                     combatTarget = {
@@ -2069,7 +2063,7 @@ do
                                         max = 1,
                                         step = 0.01,
                                         width = 1.49,
-                                        order = 2,
+                                        order = 3,
                                     },
 
                                     break01 = {
@@ -2087,7 +2081,7 @@ do
                                         max = 1,
                                         step = 0.01,
                                         width = 1.49,
-                                        order = 3,
+                                        order = 2,
                                     },
 
                                     combatTarget = {
@@ -2303,7 +2297,7 @@ do
 
                             thickness = {
                                 type = "range",
-                                name = NewFeature .. "边框粗细",
+                                name = "边框粗细",
                                 desc = "设置边框的厚度（粗细）。默认值为1。",
                                 softMin = 1,
                                 softMax = 20,
@@ -3439,7 +3433,7 @@ do
                                             func = function ()
                                                 local disps = {}
                                                 for key, share in pairs( shareDB.displays ) do
-                                                    if share then table.insert( disps, key ) end
+                                                    if share then insert( disps, key ) end
                                                 end
 
                                                 shareDB.export = self:SerializeStyle( unpack( disps ) )
@@ -3563,7 +3557,7 @@ do
 
                                         restart = {
                                             type = "execute",
-                                            name = "Restart",
+                                            name = "重新开始",
                                             order = 4,
                                             func = function ()
                                                 shareDB.styleName = ""
@@ -3671,14 +3665,14 @@ ns.AbilitySettings = function ()
 
     local option = {
         type = 'group',
-        name = "Abilities and Items",
+        name = "技能和道具",
         order = 65,
         childGroups = 'select',
         args = {
             heading = {
                 type = 'description',
-                name = "These settings allow you to make minor changes to abilities that can impact how this addon makes its recommendations.  Read the " ..
-                    "tooltips carefully, as some options can result in odd or undesirable behavior if misused.\n",
+                name = "这些设置可对影响插件如何进行技能推荐进行细微的调整。" ..
+                    "请仔细阅读提示，因为如果滥用某些选项可能会导致奇怪或不希望发生的情况。\n",
                 order = 1,
                 width = "full",
             }
@@ -3703,15 +3697,15 @@ ns.AbilitySettings = function ()
             args = {
                 exclude = {
                     type = 'toggle',
-                    name = function () return 'Disable ' .. ( ability.item and ability.link or k ) end,
-                    desc = function () return "If checked, this ability will |cFFFF0000NEVER|r be recommended by the addon.  This can cause issues for some classes or " ..
-                        "specializations, if other abilities depend on you using " .. ( ability.item and ability.link or k ) .. "." end,
+                    name = function () return '禁用' .. ( ability.item and ability.link or k ) end,
+                    desc = function () return "如果勾选，此技能将|cFFFF0000永远|r不会被推荐。" ..
+                        "如果其他技能依赖你使用" .. ( ability.item and ability.link or k ) .. "，这可能会导致该专精无法获得任何技能推荐。" end,
                     width = 'full',
                     order = 1
                 },
                 toggle = {
                     type = 'select',
-                    name = 'Require Active Toggle',
+                    name = '需要主动启用',
                     desc = "设置此项后，插件在技能列表中使用必须的开关切换。" ..
                         "当开关被关闭时，技能将被视为不可用，插件将假设它们处于冷却状态（除非另有设置）。",
                     width = 'full',
@@ -3731,9 +3725,9 @@ ns.AbilitySettings = function ()
                 },
                 clash = {
                     type = 'range',
-                    name = 'Clash Value',
+                    name = '缓冲数值',
                     desc = "如果设置大于0，插件将假设" .. k .. "拥有更快的冷却时间。" ..
-                        "This can be helpful when an ability is very high priority and you want the addon to consider it a bit earlier than it would actually be ready.",
+                        "当一个技能的优先级非常高并且你希望插件在它实际准备好之前考虑它时，这可能会很有帮助。",
                     width = "full",
                     min = -1.5,
                     max = 1.5,
@@ -3751,7 +3745,7 @@ ns.AbilitySettings = function ()
 
                 itemHeader = {
                     type = "description",
-                    name = "|cFFFFD100Usable Items|r",
+                    name = "|cFFFFD100可用道具|r",
                     order = 20,
                     fontSize = "medium",
                     width = "full",
@@ -3760,9 +3754,9 @@ ns.AbilitySettings = function ()
 
                 itemDescription = {
                     type = "description",
-                    name = function () return "This ability requires that " .. ( ability.link or ability.name ) .. " is equipped.  This item can be recommended via |cFF00CCFF[Use Items]|r in your " ..
-                        "action lists.  If you do not want the addon to recommend this ability via |cff00ccff[Use Items]|r, you can disable it here.  " ..
-                        "You can also specify a minimum or maximum number of targets for the item to be used.\n" end,
+                    name = function () return "这个技能需要已装备" .. ( ability.link or ability.name ) .. "。这个道具可以在你的技能列表中使用|cFF00CCFF[使用道具]|r进行装备。" ..
+                        "如果你不希望插件通过|cff00ccff[使用道具]|r来获取这个技能，可以在此处禁用它。" ..
+                        "你还可以为要使用的项目设定最小或最大的目标数量。\n" end,
                     order = 21,
                     width = "full",
                     hidden = function() return ability.item == nil end,
@@ -3790,7 +3784,7 @@ ns.AbilitySettings = function ()
 
             abOption.args.listHeader = abOption.args.listHeader or {
                 type = "description",
-                name = "|cFFFFD100Action Lists|r",
+                name = "|cFFFFD100技能列表|r",
                 order = 50,
                 fontSize = "medium",
                 width = "full",
@@ -3799,7 +3793,7 @@ ns.AbilitySettings = function ()
 
             abOption.args.listDescription = abOption.args.listDescription or {
                 type = "description",
-                name = "This ability is listed in the action list(s) below.  You can disable any entries here, if desired.",
+                name = "此技能被罗列在下方的技能列表中。如果你认为必要，可以在此处禁用任何技能。",
                 order = 51,
                 width = "full",
             }
@@ -3814,7 +3808,7 @@ ns.AbilitySettings = function ()
             local entries = 51
 
             for i, list in ipairs( Hekili.DB.profile.actionLists ) do
-                if list.Name ~= "Usable Items" then
+                if list.Name ~= "可用道具" then
                     for a, action in ipairs( list.Actions ) do
                         if action.Ability == v then
                             entries = entries + 1
@@ -3822,8 +3816,8 @@ ns.AbilitySettings = function ()
                             local toggle = option.args[ v ].args[ i .. ':' .. a ] or {}
 
                             toggle.type = "toggle"
-                            toggle.name = "Disable " .. ( ability.item and ability.link or k ) .. " (#|cFFFFD100" .. a .. "|r) in |cFFFFD100" .. ( list.Name or "Unnamed List" ) .. "|r"
-                            toggle.desc = "This ability is used in entry #" .. a .. " of the |cFFFFD100" .. list.Name .. "|r action list."
+                            toggle.name = "禁用" .. ( list.Name or "无名列表" ) .. "中的" .. ( ability.item and ability.link or k ) .. " (#|cFFFFD100" .. a .. "|r)"
+                            toggle.desc = "这个技能被使用在|cFFFFD100" .. list.Name .. "|r中的第" .. a .. "号。"
                             toggle.order = entries
                             toggle.width = "full"
                             toggle.hidden = false
@@ -3854,16 +3848,15 @@ ns.TrinketSettings = function ()
 
     local option = {
         type = 'group',
-        name = "Trinkets/Gear",
+        name = "饰品/装备",
         order = 22,
         args = {
             heading = {
                 type = 'description',
-                name = "These settings apply to trinkets/gear that are used via the [Use Items] action in your action lists.  Instead of " ..
-                    "manually editing your action lists, you can enable/disable specific trinkets or require a minimum or maximum number of " ..
-                    "enemies before allowing the trinket to be used.\n\n" ..
-                    "|cFFFFD100If your action list has a specific entry for a certain trinket with specific criteria, you will likely want to disable " ..
-                    "the trinket here.|r",
+                name = "这些设置适用于通过技能列表中的[使用道具]指令使用饰品和装备。" ..
+                    "除了手动编辑你的技能列表，你可以在这里启用或禁用特定的饰品，或者设置使用该饰品要求的最小或最大的敌人数量。" ..
+                    "\n\n" ..
+                    "|cFFFFD100如果你的技能列表中包含具有特定使用条件的特殊饰品，你可以在这里禁用这些饰品。|r",
                 order = 1,
                 width = "full",
             }
@@ -3894,7 +3887,7 @@ ns.TrinketSettings = function ()
             for i, list in ipairs( Hekili.DB.profile.actionLists ) do
                 local entries = 100
 
-                if list.Name ~= 'Usable Items' then
+                if list.Name ~= '可用道具' then
                     for a, action in ipairs( list.Actions ) do
                         if action.Ability == setting.key then
                             entries = entries + 1
@@ -3903,10 +3896,10 @@ ns.TrinketSettings = function ()
                             local name = type( setting.name ) == 'function' and setting.name() or setting.name
 
                             toggle.type = "toggle"
-                            toggle.name = "Disable " .. name .. " in |cFFFFD100" .. ( list.Name or "(no list name)" ) .. " (#" .. a .. ")|r"
-                            toggle.desc = "This item is used in entry #" .. a .. " of the |cFFFFD100" .. list.Name .. "|r action list.\n\n" ..
-                                "This usually means that there is class- or spec-specific criteria for using this item.  If you do not want this item " ..
-                                "to be recommended via this action list, check this box."
+                            toggle.name = "禁用|cFFFFD100" .. ( list.Name or "(没有列表名称)" ) .. "|r中的第" .. a .. "号" .. name .. "。"
+                            toggle.desc = "此道具位于技能列表|cFFFFD100" .. list.Name .. "|r中的第" .. a .. "号。\n\n" ..
+                                "这通常意味着使用该道具需要特定条件或特殊区域等苛刻的条件。" ..
+                                "如果你不想该技能列表推荐该道具，请勾选此框。"
                             toggle.order = entries
                             toggle.width = "full"
                             toggle.hidden = false
@@ -3937,7 +3930,7 @@ do
     local impControl = {
         name = "",
         source = UnitName( "player" ) .. " @ " .. GetRealmName(),
-        apl = "Paste your SimulationCraft action priority list or profile here.",
+        apl = "在此处粘贴您的SimulationCraft操作优先级列表或配置文件。",
 
         lists = {},
         warnings = ""
@@ -4096,12 +4089,10 @@ end
 
 
 local snapshots = {
-    displays = {},
     snaps = {},
     empty = {},
 
-    display = "none",
-    snap = {},
+    selected = 0
 }
 
 
@@ -4354,7 +4345,7 @@ do
                 "如果插件检测到错误的绑定按键，这将解决此问题。",
                 validate = function( info, val )
                     val = val:trim()
-                    if val:len() > 6 then return "绑定按键文本的长度不应超过6个字符。" end
+                    if val:len() > 20 then return "绑定按键文本的长度不应超过20个字符。" end
                     return true
                 end,
                 width = 1.5,
@@ -4426,6 +4417,11 @@ do
         db.args.abilities.plugins.actions[ v ] = option
     end
 
+
+
+    local testFrame = CreateFrame( "Frame" )
+    testFrame.Texture = testFrame:CreateTexture()
+
     function Hekili:EmbedAbilityOptions( db )
         db = db or self.Options
         if not db then return end
@@ -4442,7 +4438,7 @@ do
 
         for k, v in orderedPairs( abilities ) do
             local ability = class.abilities[ v ]
-            local useName = class.abilityList[ v ] and class.abilityList[v]:match("\|t (.+)$") or ability.name
+            local useName = class.abilityList[ v ] and class.abilityList[v]:match("|t (.+)$") or ability.name
 
             if not useName then
                 Hekili:Error( "No name available for %s (id:%d) in EmbedAbilityOptions.", ability.key or "no_id", ability.id or 0 )
@@ -4469,22 +4465,8 @@ do
                         type = "toggle",
                         name = "仅用于BOSS战",
                         desc = "如果勾选，插件将不会推荐此技能" .. k .. "，除非你处于BOSS中。如果不勾选，" .. k .. "技能会在所有战斗中被推荐。",
-                        width = 1.5,
+                        width = 1,
                         order = 1.1,
-                    },
-
-                    keybind = {
-                        type = "input",
-                        name = "覆盖按键绑定文本",
-                        desc = "如果设置此项，当推荐此技能时，插件将显示此文本，而不是自动检测到的绑定按键提示。" ..
-                            "如果插件检测到错误的绑定按键，这将解决此问题。",
-                        validate = function( info, val )
-                            val = val:trim()
-                            if val:len() > 6 then return "绑定按键文本的长度不应超过6个字符。" end
-                            return true
-                        end,
-                        width = 1.5,
-                        order = 2,
                     },
 
                     toggle = {
@@ -4492,8 +4474,8 @@ do
                         name = "开关状态切换",
                         desc = "设置此项后，插件在技能列表中使用必须的开关切换。" ..
                             "当开关被关闭时，技能将被视为不可用，插件将假设它们处于冷却状态（除非另有设置）。",
-                        width = 1.5,
-                        order = 3,
+                        width = 1,
+                        order = 1.2,
                         values = function ()
                             table.wipe( toggles )
 
@@ -4514,26 +4496,33 @@ do
                         end,
                     },
 
+                    lineBreak1 = {
+                        type = "description",
+                        name = " ",
+                        width = "full",
+                        order = 1.9
+                    },
+
                     targetMin = {
                         type = "range",
                         name = "最小目标数",
                         desc = "如果设置大于0，则只有监测到敌人数至少有" .. k .. "人的情况下，才会推荐此项。所有其他条件也必须满足。\n设置为0将忽略此项。",
-                        width = 1.5,
+                        width = 1,
                         min = 0,
                         max = 15,
                         step = 1,
-                        order = 3.1,
+                        order = 2,
                     },
 
                     targetMax = {
                         type = "range",
                         name = "最大目标数",
                         desc = "如果设置大于0，则只有监测到敌人数小于" .. k .. "人的情况下，才会推荐此项。所有其他条件也必须满足。.\n设置为0将忽略此项。",
-                        width = 1.5,
+                        width = 1,
                         min = 0,
                         max = 15,
                         step = 1,
-                        order = 3.2,
+                        order = 2.1,
                     },
 
                     clash = {
@@ -4541,12 +4530,108 @@ do
                         name = "冲突",
                         desc = "如果设置大于0，插件将假设" .. k .. "拥有更快的冷却时间。" ..
                             "当某个技能的优先级非常高，并且你希望插件更多地推荐它，而不是其他更快的可能技能时，此项会很有效。",
-                        width = 3,
+                        width = 1,
                         min = -1.5,
                         max = 1.5,
                         step = 0.05,
-                        order = 4,
+                        order = 2.2,
                     },
+
+                    lineBreak2 = {
+                        type = "description",
+                        name = "",
+                        width = "full",
+                        order = 2.9,
+                    },
+
+                    keybind = {
+                        type = "input",
+                        name = "技能按键文字",
+                        desc = "如果设置此项，插件将在推荐此技能时显示此处的文字，替代自动检测到的技能绑定按键的名称。" ..
+                            "如果插件检测你的按键绑定出现问题，此设置能够有所帮助。",
+                        validate = function( info, val )
+                            val = val:trim()
+                            if val:len() > 6 then return "技能按键文字长度不应超过6个字符。" end
+                            return true
+                        end,
+                        width = 1.5,
+                        order = 3,
+                    },
+
+                    noIcon = {
+                        type = "input",
+                        name = "替换图标",
+                        desc = "如果设置此项，插件将尝试加载此处的图像作为技能图标，替代默认图标。此处可设置图标ID或图像文件的路径。\n\n" ..
+                            "此处留空后按下回车重置为默认图标。",
+                        icon = function()
+                            local options = Hekili:GetActiveSpecOption( "abilities" )
+                            return options and options[ v ] and options[ v ].icon or nil
+                        end,
+                        validate = function( info, val )
+                            val = val:trim()
+                            testFrame.Texture:SetTexture( "?" )
+                            testFrame.Texture:SetTexture( val )
+                            return testFrame.Texture:GetTexture() ~= "?"
+                        end,
+                        set = function( info, val )
+                            val = val:trim()
+                            if val:len() == 0 then val = nil end
+
+                            local options = Hekili:GetActiveSpecOption( "abilities" )
+                            options[ v ].icon = val
+                        end,
+                        hidden = function()
+                            local options = Hekili:GetActiveSpecOption( "abilities" )
+                            return ( options and rawget( options, v ) and options[ v ].icon )
+                        end,
+                        width = 1.5,
+                        order = 3.1,
+                    },
+
+                    hasIcon = {
+                        type = "input",
+                        name = "Icon Replacement",
+                        desc = "If specified, the addon will attempt to load this texture instead of the default icon.  This can be a texture ID or a path to a texture file.\n\n" ..
+                            "Leave blank and press Enter to reset to the default icon.",
+                        icon = function()
+                            local options = Hekili:GetActiveSpecOption( "abilities" )
+                            return options and options[ v ] and options[ v ].icon or nil
+                        end,
+                        validate = function( info, val )
+                            val = val:trim()
+                            testFrame.Texture:SetTexture( "?" )
+                            testFrame.Texture:SetTexture( val )
+                            return testFrame.Texture:GetTexture() ~= "?"
+                        end,
+                        get = function()
+                            local options = Hekili:GetActiveSpecOption( "abilities" )
+                            return options and rawget( options, v ) and options[ v ].icon
+                        end,
+                        set = function( info, val )
+                            val = val:trim()
+                            if val:len() == 0 then val = nil end
+
+                            local options = Hekili:GetActiveSpecOption( "abilities" )
+                            options[ v ].icon = val
+                        end,
+                        hidden = function()
+                            local options = Hekili:GetActiveSpecOption( "abilities" )
+                            return not ( options and rawget( options, v ) and options[ v ].icon )
+                        end,
+                        width = 1.3,
+                        order = 3.2,
+                    },
+
+                    showIcon = {
+                        type = 'description',
+                        name = "",
+                        image = function()
+                            local options = Hekili:GetActiveSpecOption( "abilities" )
+                            return options and rawget( options, v ) and options[ v ].icon
+                        end,
+                        width = 0.2,
+                        order = 3.3,
+                    }
                 }
             }
 
@@ -4597,12 +4682,12 @@ do
 
             keybind = {
                 type = "input",
-                name = "覆盖按键绑定文本",
-                desc = "如果设置此项，当推荐此技能时，插件将显示此文本，而不是自动检测到的绑定按键提示。" ..
-                    "如果插件检测到错误的绑定按键，这将解决此问题。",
+                name = "技能按键文字",
+                desc = "如果设置此项，插件将在推荐此技能时显示此处的文字，替代自动检测到的技能绑定按键的名称。" ..
+                    "如果插件检测你的按键绑定出现问题，此设置能够有所帮助。",
                 validate = function( info, val )
                     val = val:trim()
-                    if val:len() > 6 then return "绑定按键文本的长度不应超过6个字符。" end
+                    if val:len() > 6 then return "技能按键文字长度不应超过6个字符。" end
                     return true
                 end,
                 width = 1.5,
@@ -4734,12 +4819,12 @@ do
 
                     keybind = {
                         type = "input",
-                        name = "覆盖按键绑定文本",
-                        desc = "如果设置此项，当推荐此技能时，插件将显示此文本，而不是自动检测到的绑定按键提示。" ..
-                            "如果插件检测到错误的绑定按键，这将解决此问题。",
+                        name = "技能按键文字",
+                        desc = "如果设置此项，插件将在推荐此技能时显示此处的文字，替代自动检测到的技能绑定按键的名称。" ..
+                            "如果插件检测你的按键绑定出现问题，此设置能够有所帮助。",
                         validate = function( info, val )
                             val = val:trim()
-                            if val:len() > 6 then return "绑定按键文本的长度不应超过6个字符。" end
+                            if val:len() > 6 then return "技能按键文字长度不应超过6个字符。" end
                             return true
                         end,
                         width = 1.5,
@@ -5183,10 +5268,8 @@ do
                                     type = 'execute',
                                     name = "",
                                     desc = "打开查看该优先级配置和技能列表。",
-                                    order = 1.1,
-                                    width = 0.15,
-                                    image = GetAtlasFile( "shop-games-magnifyingglass" ),
-                                    imageCoords = GetAtlasCoords( "shop-games-magnifyingglass" ),
+                                    image = GetAtlasFile( "communities-icon-searchmagnifyingglass" ),
+                                    imageCoords = GetAtlasCoords( "communities-icon-searchmagnifyingglass" ),
                                     imageHeight = 24,
                                     imageWidth = 24,
                                     disabled = function( info, val )
@@ -5196,6 +5279,8 @@ do
                                     func = function ()
                                         ACD:SelectGroup( "Hekili", "packs", self.DB.profile.specs[ id ].package )
                                     end,
+                                    order = 1.1,
+                                    width = 0.15,
                                 },
 
                                 blankLine1 = {
@@ -5374,7 +5459,7 @@ do
                                     desc = "如果勾选，插件将统计过去几秒内你攻击（或被攻击）的敌人。" ..
                                     "此项通常适用于|cFFFF0000远程|r职业。",
                                     width = "full",
-                                    order = 4,                                    
+                                    order = 4,
                                 },
 
                                 damageDots = {
@@ -6012,7 +6097,7 @@ do
                                         separator = {
                                             type = "header",
                                             name = "导入字符串",
-                                            order = 1.5,                                             
+                                            order = 1.5,
                                         },
 
                                         importString = {
@@ -6098,7 +6183,7 @@ do
                                                 local listNames = {}
 
                                                 for k, v in pairs( shareDB.imported.payload.lists ) do
-                                                    table.insert( listNames, k )
+                                                    insert( listNames, k )
                                                 end
 
                                                 table.sort( listNames )
@@ -6395,7 +6480,7 @@ do
                                     type = "execute",
                                     name = "",
                                     desc = "拷贝配置",
-                                    order = 0.26, 
+                                    order = 0.26,
                                     width = 0.15,
                                     image = [[Interface\AddOns\Hekili\Textures\WhiteCopy]],
                                     imageHeight = 20,
@@ -6851,8 +6936,8 @@ do
                                         local data = p.lists[ packControl.listName ]
                                         local actionID = tonumber( packControl.actionID )
 
-                                        local a = table.remove( data, actionID )
-                                        table.insert( data, actionID - 1, a )
+                                        local a = remove( data, actionID )
+                                        insert( data, actionID - 1, a )
                                         packControl.actionID = format( "%04d", actionID - 1 )
 
                                         local listName = format( "%s:%s:", pack, packControl.listName )
@@ -6879,8 +6964,8 @@ do
                                         local data = p.lists[ packControl.listName ]
                                         local actionID = tonumber( packControl.actionID )
 
-                                        local a = table.remove( data, actionID )
-                                        table.insert( data, actionID + 1, a )
+                                        local a = remove( data, actionID )
+                                        insert( data, actionID + 1, a )
                                         packControl.actionID = format( "%04d", actionID + 1 )
 
                                         local listName = format( "%s:%s:", pack, packControl.listName )
@@ -6906,7 +6991,7 @@ do
                                     func = function()
                                         local data = rawget( self.DB.profile.packs, pack )
                                         if data then
-                                            table.insert( data.lists[ packControl.listName ], { {} } )
+                                            insert( data.lists[ packControl.listName ], { {} } )
                                             packControl.actionID = format( "%04d", #data.lists[ packControl.listName ] )
                                         else
                                             packControl.actionID = "0001"
@@ -6930,7 +7015,7 @@ do
                                         local id = tonumber( packControl.actionID )
                                         local p = rawget( Hekili.DB.profile.packs, pack )
 
-                                        table.remove( p.lists[ packControl.listName ], id )
+                                        remove( p.lists[ packControl.listName ], id )
 
                                         if not p.lists[ packControl.listName ][ id ] then id = id - 1; packControl.actionID = format( "%04d", id ) end
                                         if not p.lists[ packControl.listName ][ id ] then packControl.actionID = "zzzzzzzzzz" end
@@ -7530,7 +7615,7 @@ do
                                                         local id = tonumber( packControl.actionID )
                                                         local p = rawget( Hekili.DB.profile.packs, pack )
 
-                                                        table.remove( p.lists[ packControl.listName ], id )
+                                                        remove( p.lists[ packControl.listName ], id )
 
                                                         if not p.lists[ packControl.listName ][ id ] then id = id - 1; packControl.actionID = format( "%04d", id ) end
                                                         if not p.lists[ packControl.listName ][ id ] then packControl.actionID = "zzzzzzzzzz" end
@@ -7622,7 +7707,7 @@ do
                                             order = 1,
                                             func = function ()
                                                 local p = rawget( Hekili.DB.profile.packs, pack )
-                                                table.insert( p.lists[ packControl.listName ], {} )
+                                                insert( p.lists[ packControl.listName ], {} )
                                                 packControl.actionID = format( "%04d", #p.lists[ packControl.listName ] )
                                             end,
                                         }
@@ -7702,8 +7787,6 @@ do
         end
     end
 
-
-    local ACD = LibStub( "AceConfigDialog-3.0" )
 
     local modeTypes = {
         oneAuto = 1,
@@ -8403,7 +8486,7 @@ do
                                 local a = abilities[ token ] or {}
 
                                 -- a.key = token
-                                a.desc = GetSpellDescription()
+                                a.desc = GetSpellDescription( spellID )
                                 if a.desc then a.desc = a.desc:gsub( "\n", " " ):gsub( "\r", " " ):gsub( " ", " " ) end
                                 a.id = spellID
                                 a.spend = cost
@@ -8489,7 +8572,7 @@ do
                                 local a = abilities[ token ] or {}
 
                                 -- a.key = token
-                                a.desc = GetSpellDescription()
+                                a.desc = GetSpellDescription( spellID )
                                 if a.desc then a.desc = a.desc:gsub( "\n", " " ):gsub( "\r", " " ):gsub( " ", " " ) end
                                 a.id = spellID
                                 a.spend = cost
@@ -9254,67 +9337,45 @@ do
                         width = "full",
                     },
 
-                    Display = {
-                        type = "select",
-                        name = "显示快照",
-                        desc = "选择想要显示的快照（如果有创建的快照）。",
-                        order = 11,
-                        values = function( info )
-                            local displays = snapshots.displays
-
-                            for k in pairs( ns.snapshots ) do
-                                displays[k] = k
-                            end
-
-                            return displays
-                        end,
-                        set = function( info, val )
-                            snapshots.display = val
-                        end,
-                        get = function( info )
-                            return snapshots.display
-                        end,
-                        width = 2.6
-                    },
-
                     SnapID = {
                         type = "select",
-                        name = "#",
-                        desc = "选择某个想要查看的快照编号。",
-                        order = 12,
+                        name = "选择快照",
+                        desc = "选择要导出的快照。",
                         values = function( info )
-                            for k, v in pairs( ns.snapshots ) do
-                                snapshots.snaps[ k ] = snapshots.snaps[ k ] or {}
-
-                                for idx in pairs( v ) do
-                                    snapshots.snaps[ k ][ idx ] = idx
+                            if #ns.snapshots == 0 then
+                                snapshots.snaps[ 0 ] = "未生成任何快照。"
+                            else
+                                snapshots.snaps[ 0 ] = nil
+                                for i, snapshot in ipairs( ns.snapshots ) do
+                                    snapshots.snaps[ i ] = "|cFFFFD100" .. i .. ".|r " .. snapshot.header
                                 end
                             end
 
-                            return snapshots.display and snapshots.snaps[ snapshots.display ] or snapshots.empty
+                            return snapshots.snaps
                         end,
                         set = function( info, val )
-                            snapshots.snap[ snapshots.display ] = val
+                            snapshots.selected = val
                         end,
                         get = function( info )
-                            return snapshots.snap[ snapshots.display ]
+                            return snapshots.selected
                         end,
-                        width = 0.7
+                        order = 12,
+                        width = "full",
+                        disabled = function() return #ns.snapshots == 0 end,
                     },
 
                     Snapshot = {
                         type = 'input',
-                        name = "屏幕截图",
-                        desc = "复制此文本后粘贴到文本编辑器或剪贴板中进行查看。",
-                        order = 13,
+                        name = "导出快照",
+                        desc = "点击此处后依次按下CTRL+A、CTRL+C复制快照。\n\n粘贴到文本编辑器后查看或者上传问题回报网站。",
+                        order = 20,
                         get = function( info )
-                            local display = snapshots.display
-                            local snap = display and snapshots.snap[ display ]
-
-                            return snap and ( "点击后依次按CTRL+A和CTRL+C，复制截图地址。\n\n" .. ns.snapshots[ display ][ snap ] )
+                            if snapshots.selected == 0 then return "" end
+                            return ns.snapshots[ snapshots.selected ].log
                         end,
                         set = function() end,
-                        width = "full"
+                        width = "full",
+                        hidden = function() return snapshots.selected == 0 or #ns.snapshots == 0 end,
                     },
                 }
             },
@@ -9545,7 +9606,7 @@ end
 
 
 function Hekili:SetOption( info, input, ... )
-    local category, depth, option, subcategory = info[1], #info, info[#info], nil
+    local category, depth, option = info[1], #info, info[#info]
     local Rebuild, RebuildUI, RebuildScripts, RebuildOptions, RebuildCache, Select
     local profile = Hekili.DB.profile
 
@@ -9731,8 +9792,8 @@ function Hekili:SetOption( info, input, ... )
                     end
 
                     import.Name = list.Name
-                    table.remove( profile.actionLists, listID )
-                    table.insert( profile.actionLists, listID, import )
+                    remove( profile.actionLists, listID )
+                    insert( profile.actionLists, listID, import )
                     -- profile.actionLists[ listID ] = import
                     Rebuild = true
 
@@ -9796,8 +9857,8 @@ function Hekili:SetOption( info, input, ... )
 
                 elseif option == 'Move' then
                     action[ option ] = nil
-                    local placeholder = table.remove( list.Actions, actID )
-                    table.insert( list.Actions, input, placeholder )
+                    local placeholder = remove( list.Actions, actID )
+                    insert( list.Actions, input, placeholder )
                     Rebuild, Select = true, 'A'..input
 
                 elseif option == 'Script' or option == 'Args' then
@@ -10329,48 +10390,58 @@ local function decodeB64(str)
     return table.concat(bit8, "", 1, decoded_size)
 end
 
-local Compresser = LibStub:GetLibrary("LibCompress");
+
+local Compresser = LibStub:GetLibrary("LibCompress")
 local Encoder = Compresser:GetChatEncodeTable()
-local Serializer = LibStub:GetLibrary("AceSerializer-3.0");
+
+local LibDeflate = LibStub:GetLibrary("LibDeflate")
+local ldConfig = { level = 5 }
+
+local Serializer = LibStub:GetLibrary("AceSerializer-3.0")
+
 
 
 local function TableToString(inTable, forChat)
-    local serialized = Serializer:Serialize(inTable);
-    local compressed = Compresser:CompressHuffman(serialized);
-    if(forChat) then
-        return encodeB64(compressed);
-    else
-        return Encoder:Encode(compressed);
-    end
+    local serialized = Serializer:Serialize( inTable )
+    local compressed = LibDeflate:CompressDeflate( serialized, ldConfig )
+
+    return format( "Hekili:%s", forChat and ( LibDeflate:EncodeForPrint( compressed ) ) or ( LibDeflate:EncodeForWoWAddonChannel( compressed ) ) )
 end
 
 
 local function StringToTable(inString, fromChat)
-    local decoded;
-    if(fromChat) then
-        decoded = decodeB64(inString);
+    local modern = false
+    if inString:sub( 1, 7 ) == "Hekili:" then
+        modern = true
+        inString = inString:sub( 8 )
+    end
+
+    local decoded, decompressed, errorMsg
+
+    if modern then
+        decoded = fromChat and LibDeflate:DecodeForPrint(inString) or LibDeflate:DecodeForWoWAddonChannel(inString)
+        if not decoded then return "无法解码。" end
+
+        decompressed = LibDeflate:DecompressDeflate(decoded)
+        if not decompressed then return "无法解码该字符串。" end
     else
-        decoded = Encoder:Decode(inString);
+        decoded = fromChat and decodeB64(inString) or Encoder:Decode(inString)
+        if not decoded then return "无法解码。" end
+
+        decompressed, errorMsg = Compresser:Decompress(decoded);
+        if not decompressed then return "无法解码的字符串：" .. errorMsg end
     end
-    local decompressed, errorMsg = Compresser:Decompress(decoded);
-    if not(decompressed) then
-        return "Error decompressing: "..errorMsg;
-    end
+
     local success, deserialized = Serializer:Deserialize(decompressed);
-    if not(success) then
-        return "Error deserializing "..deserialized;
-    end
-    return deserialized;
+    if not success then return "无法解码解压缩的字符串：" .. deserialized end
+
+    return deserialized
 end
 
 
 function ns.serializeDisplay( display )
     if not rawget( Hekili.DB.profile.displays, display ) then return nil end
     local serial = tableCopy( Hekili.DB.profile.displays[ display ] )
-
-    -- Change actionlist IDs to actionlist names so we can validate later.
-    if serial.precombatAPL ~= 0 then serial.precombatAPL = Hekili.DB.profile.actionLists[ serial.precombatAPL ].Name end
-    if serial.defaultAPL ~= 0 then serial.defaultAPL = Hekili.DB.profile.actionLists[ serial.defaultAPL ].Name end
 
     return TableToString( serial, true )
 end
@@ -10657,179 +10728,179 @@ local function Sanitize( segment, i, line, warnings )
 
     i, times = i:gsub( "==", "=" )
     if times > 0 then
-        table.insert( warnings, "第" .. line .. "行：将相等的判定符号由'=='更改为'='(" .. times .. "次)。" )
+        insert( warnings, "第" .. line .. "行：将相等的判定符号由'=='更改为'='(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "([^%%])[ ]*%%[ ]*([^%%])", "%1 / %2" )
     if times > 0 then
-        table.insert( warnings, "第" .. line .. "行：将SimC语法中的%转换为Lua语法的(/)(" .. times .. "次)。" )
+        insert( warnings, "第" .. line .. "行：将SimC语法中的%转换为Lua语法的(/)(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "%%%%", "%%" )
     if times > 0 then
-        table.insert( warnings, "第" .. line .. "行：将Simc语法中的%%转换为Lua语法的(%)(" .. times .. "次)。" )
+        insert( warnings, "第" .. line .. "行：将Simc语法中的%%转换为Lua语法的(%)(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "covenant%.([%w_]+)%.enabled", "covenant.%1" )
     if times > 0 then
-        table.insert( warnings, "第" .. line .. "行：将'covenant.X.enabled'转换为'covenant.X'(" .. times .. "次)。" )
+        insert( warnings, "第" .. line .. "行：将'covenant.X.enabled'转换为'covenant.X'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "talent%.([%w_]+)([%+%-%*%%/%&%|= ()<>])", "talent.%1.enabled%2" )
     if times > 0 then
-        table.insert( warnings, "第" .. line .. "行：将'talent.X'转换为'talent.X.enabled'(" .. times .. "次)。" )
+        insert( warnings, "第" .. line .. "行：将'talent.X'转换为'talent.X.enabled'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "talent%.([%w_]+)$", "talent.%1.enabled" )
     if times > 0 then
-        table.insert( warnings, "第" .. line .. "行：将'talent.X'转换为'talent.X.enabled'(" .. times .. "次)。" )
+        insert( warnings, "第" .. line .. "行：将'talent.X'转换为'talent.X.enabled'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "legendary%.([%w_]+)([%+%-%*%%/%&%|= ()<>])", "legendary.%1.enabled%2" )
     if times > 0 then
-        table.insert( warnings, "第" .. line .. "行：将'legendary.X'转换为'legendary.X.enabled'(" .. times .. "次)。" )
+        insert( warnings, "第" .. line .. "行：将'legendary.X'转换为'legendary.X.enabled'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "legendary%.([%w_]+)$", "legendary.%1.enabled" )
     if times > 0 then
-        table.insert( warnings, "第" .. line .. "行：将'legendary.X'转换为'legendary.X.enabled'(" .. times .. "次)。" )
+        insert( warnings, "第" .. line .. "行：将'legendary.X'转换为'legendary.X.enabled'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "([^%.])runeforge%.([%w_]+)([%+%-%*%%/=%&%| ()<>])", "%1runeforge.%2.enabled%3" )
     if times > 0 then
-        table.insert( warnings, "第" .. line .. "行：将'runeforge.X'转换为'runeforge.X.enabled'(" .. times .. "次)。" )
+        insert( warnings, "第" .. line .. "行：将'runeforge.X'转换为'runeforge.X.enabled'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "([^%.])runeforge%.([%w_]+)$", "%1runeforge.%2.enabled" )
     if times > 0 then
-        table.insert( warnings, "第" .. line .. "行：将'runeforge.X'转换为'runeforge.X.enabled'(" .. times .. "次)。" )
+        insert( warnings, "第" .. line .. "行：将'runeforge.X'转换为'runeforge.X.enabled'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "^runeforge%.([%w_]+)([%+%-%*%%/%&%|= ()<>)])", "runeforge.%1.enabled%2" )
     if times > 0 then
-        table.insert( warnings, "第" .. line .. "行：将'runeforge.X'转换为'runeforge.X.enabled'(" .. times .. "次)。" )
+        insert( warnings, "第" .. line .. "行：将'runeforge.X'转换为'runeforge.X.enabled'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "^runeforge%.([%w_]+)$", "runeforge.%1.enabled" )
     if times > 0 then
-        table.insert( warnings, "第" .. line .. "行：将'runeforge.X'转换为'runeforge.X.enabled'(" .. times .. "次)。" )
+        insert( warnings, "第" .. line .. "行：将'runeforge.X'转换为'runeforge.X.enabled'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "rune_word%.([%w_]+)([%+%-%*%%/%&%|= ()<>])", "buff.rune_word_%1.up%2" )
     if times > 0 then
-        table.insert( warnings, "第" .. line .. "行：将'rune_word.X'转换为'buff.rune_word_X.up'(" .. times .. "次)。" )
+        insert( warnings, "第" .. line .. "行：将'rune_word.X'转换为'buff.rune_word_X.up'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "rune_word%.([%w_]+)$", "buff.rune_word_%1.up" )
     if times > 0 then
-        table.insert( warnings, "第" .. line .. "行：将'rune_word.X'转换为'buff.rune_word_X.up'(" .. times .. "次)。" )
+        insert( warnings, "第" .. line .. "行：将'rune_word.X'转换为'buff.rune_word_X.up'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "rune_word%.([%w_]+)%.enabled([%+%-%*%%/%&%|= ()<>])", "buff.rune_word_%1.up%2" )
     if times > 0 then
-        table.insert( warnings, "第" .. line .. "行：将'rune_word.X.enabled'转换为'buff.rune_word_X.up'(" .. times .. "次)。" )
+        insert( warnings, "第" .. line .. "行：将'rune_word.X.enabled'转换为'buff.rune_word_X.up'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "rune_word%.([%w_]+)%.enabled$", "buff.rune_word_%1.up" )
     if times > 0 then
-        table.insert( warnings, "第" .. line .. "行：将'rune_word.X.enabled'转换为'buff.rune_word_X.up'(" .. times .. "次)。" )
+        insert( warnings, "第" .. line .. "行：将'rune_word.X.enabled'转换为'buff.rune_word_X.up'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "([^a-z0-9_])conduit%.([%w_]+)([%+%-%*%%/&|= ()<>)])", "%1conduit.%2.enabled%3" )
     if times > 0 then
-        table.insert( warnings, "第" .. line .. "行：将'conduit.X'转换为'conduit.X.enabled'(" .. times .. "次)。" )
+        insert( warnings, "第" .. line .. "行：将'conduit.X'转换为'conduit.X.enabled'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "([^a-z0-9_])conduit%.([%w_]+)$", "%1conduit.%2.enabled" )
     if times > 0 then
-        table.insert( warnings, "第" .. line .. "行：将'conduit.X'转换为'conduit.X.enabled'(" .. times .. "次)。" )
+        insert( warnings, "第" .. line .. "行：将'conduit.X'转换为'conduit.X.enabled'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "soulbind%.([%w_]+)([%+%-%*%%/&|= ()<>)])", "soulbind.%1.enabled%2" )
     if times > 0 then
-        table.insert( warnings, "第" .. line .. "行：将'soulbind.X'转换为'soulbind.X.enabled'(" .. times .. "次)。" )
+        insert( warnings, "第" .. line .. "行：将'soulbind.X'转换为'soulbind.X.enabled'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "soulbind%.([%w_]+)$", "soulbind.%1.enabled" )
     if times > 0 then
-        table.insert( warnings, "第" .. line .. "行：将'soulbind.X'转换为'soulbind.X.enabled'(" .. times .. "次)。" )
+        insert( warnings, "第" .. line .. "行：将'soulbind.X'转换为'soulbind.X.enabled'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "pet%.[%w_]+%.([%w_]+)%.", "%1." )
     if times > 0 then
-        table.insert( warnings, "第" .. line .. "行：将'pet.X.Y...'转换为'Y...'(" .. times .. "次)。" )
+        insert( warnings, "第" .. line .. "行：将'pet.X.Y...'转换为'Y...'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "(essence%.[%w_]+)%.([%w_]+)%.rank(%d)", "(%1.%2&%1.rank>=%3)" )
     if times > 0 then
-        table.insert( warnings, "第" .. line .. "行：将'essence.X.[major|minor].rank#'转换为'(essence.X.[major|minor]&essence.X.rank>=#)'(" .. times .. "次)。" )
+        insert( warnings, "第" .. line .. "行：将'essence.X.[major|minor].rank#'转换为'(essence.X.[major|minor]&essence.X.rank>=#)'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "pet%.[%w_]+%.[%w_]+%.([%w_]+)%.", "%1." )
     if times > 0 then
-        table.insert( warnings, "第" .. line .. "行：将'pet.X.Y.Z...'转换为'Z...'(" .. times .. "次)。" )
+        insert( warnings, "第" .. line .. "行：将'pet.X.Y.Z...'转换为'Z...'(" .. times .. "次)。" )
     end
 
     -- target.1.time_to_die is basically the end of an encounter.
     i, times = i:gsub( "target%.1%.time_to_die", "time_to_die" )
     if times > 0 then
-        table.insert( warnings, "第" .. line .. "行：将'target.1.time_to_die'转换为'time_to_die' (" .. times .."x)." )
+        insert( warnings, "第" .. line .. "行：将'target.1.time_to_die'转换为'time_to_die' (" .. times .."x)." )
     end
 
     -- target.time_to_pct_XX.remains is redundant, Monks.
     i, times = i:gsub( "time_to_pct_(%d+)%.remains", "time_to_pct_%1" )
     if times > 0 then
-        table.insert( warnings, "第" .. line .. "行：将'time_to_pct_XX.remains'转换为'time_to_pct_XX'(" .. times .. "次)。" )
+        insert( warnings, "第" .. line .. "行：将'time_to_pct_XX.remains'转换为'time_to_pct_XX'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "trinket%.1%.", "trinket.t1." )
     if times > 0 then
-        table.insert( warnings, "第" .. line .. "行：将'trinket.1.X'转换为'trinket.t1.X'(" .. times .. "次)。" )
+        insert( warnings, "第" .. line .. "行：将'trinket.1.X'转换为'trinket.t1.X'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "trinket%.2%.", "trinket.t2." )
     if times > 0 then
-        table.insert( warnings, "第" .. line .. "行：将'trinket.2.X'转换为'trinket.t2.X'(" .. times .. "次)。" )
+        insert( warnings, "第" .. line .. "行：将'trinket.2.X'转换为'trinket.t2.X'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "trinket%.([%w_][%w_][%w_]+)%.cooldown", "cooldown.%1" )
     if times > 0 then
-        table.insert( warnings, "第" .. line .. "行：将'trinket.abc.cooldown'转换为'cooldown.abc'(" .. times .. "次)。" )
+        insert( warnings, "第" .. line .. "行：将'trinket.abc.cooldown'转换为'cooldown.abc'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "min:[a-z0-9_%.]+(,?$?)", "%1" )
     if times > 0 then
-        table.insert( warnings, "第" .. line .. "行：移除min:X检测（模拟中不可用）(" .. times .. "次)。" )
+        insert( warnings, "第" .. line .. "行：移除min:X检测（模拟中不可用）(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "([%|%&]position_back)", "" )
     if times > 0 then
-        table.insert( warnings, "第" .. line .. "行：移除position_back检测（模拟中不可用）(" .. times .. "次)。" )
+        insert( warnings, "第" .. line .. "行：移除position_back检测（模拟中不可用）(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "(position_back[%|%&]?)", "" )
     if times > 0 then
-        table.insert( warnings, "第" .. line .. "行：移除position_back检测（模拟中不可用）(" .. times .. "次)。" )
+        insert( warnings, "第" .. line .. "行：移除position_back检测（模拟中不可用）(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "max:[a-z0-9_%.]+(,?$?)", "%1" )
     if times > 0 then
-        table.insert( warnings, "第" .. line .. "行：移除max:X检测（模拟中不可用）(" .. times .. "次)。" )
+        insert( warnings, "第" .. line .. "行：移除max:X检测（模拟中不可用）(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "(incanters_flow_time_to%.%d+)(^%.)", "%1.any%2")
     if times > 0 then
-        table.insert( warnings, "第" .. line .. "行：将不起效的'incanters_flow_time_to.X'转换为'incanters_flow_time_to.X.any'(" .. times .. "次)。" )
+        insert( warnings, "第" .. line .. "行：将不起效的'incanters_flow_time_to.X'转换为'incanters_flow_time_to.X.any'(" .. times .. "次)。" )
     end
 
     i, times = i:gsub( "exsanguinated%.([a-z0-9_]+)", "debuff.%1.exsanguinated" )
     if times > 0 then
-        table.insert( warnings, "第" .. line .. "行：将'exsanguinated.X'转换为'debuff.X.exsanguinated'(" .. times .. "次)。")
+        insert( warnings, "第" .. line .. "行：将'exsanguinated.X'转换为'debuff.X.exsanguinated'(" .. times .. "次)。")
     end
 
     i, times = i:gsub( "time_to_sht%.(%d+)%.plus", "time_to_sht_plus.%1" )
     if times > 0 then
-        table.insert( warnings, "第" .. line .. "行：将'time_to_sht.X.plus'转换为'time_to_sht_plus.X'(" .. times .. "次)。")
+        insert( warnings, "第" .. line .. "行：将'time_to_sht.X.plus'转换为'time_to_sht_plus.X'(" .. times .. "次)。")
     end
 
     if segment == 'c' then
@@ -10850,7 +10921,7 @@ local function Sanitize( segment, i, line, warnings )
             end
 
             if times > 0 then
-                table.insert( warnings, "第" .. line .. "行：将不确定的'target'转换为'target.unit'(" .. times .. "次)。" )
+                insert( warnings, "第" .. line .. "行：将不确定的'target'转换为'target.unit'(" .. times .. "次)。" )
             end
             i = i:gsub( '\v', token )
         end
@@ -10874,7 +10945,7 @@ local function Sanitize( segment, i, line, warnings )
         end
 
         if times > 0 then
-            table.insert( warnings, "第" .. line .. "行：将不确定的'player'转换为'player.unit'(" .. times .. "次)。" )
+            insert( warnings, "第" .. line .. "行：将不确定的'player'转换为'player.unit'(" .. times .. "次)。" )
         end
         i = i:gsub( '\v', token )
     end
@@ -10895,12 +10966,12 @@ local function strsplit( str, delimiter )
     local delim_from, delim_to = string.find( str, delimiter, from )
 
     while delim_from do
-        table.insert( result, string.sub( str, from, delim_from - 1 ) )
+        insert( result, string.sub( str, from, delim_from - 1 ) )
         from = delim_to + 1
         delim_from, delim_to = string.find( str, delimiter, from )
     end
 
-    table.insert( result, string.sub( str, from ) )
+    insert( result, string.sub( str, from ) )
     return result
 end
 
@@ -11018,7 +11089,7 @@ do
                         i = start .. repl .. finish
                         times = times + 1
                     end
-                    table.insert( warnings, "第" .. line .. "行：移除不必要的驱散伤害冷却检测(" .. times .. "次)。" )
+                    insert( warnings, "第" .. line .. "行：移除不必要的驱散伤害冷却检测(" .. times .. "次)。" )
                 end
             end
 
@@ -11034,7 +11105,7 @@ do
                     i = start .. enemies .. finish
                     times = times + 1
                 end
-                table.insert( warnings, "第 " .. line .. "行：转换'" .. token .. "'到'" .. enemies .. "'(" .. times .. "次)。" )
+                insert( warnings, "第 " .. line .. "行：转换'" .. token .. "'到'" .. enemies .. "'(" .. times .. "次)。" )
             end ]]
 
             if i:sub(1, 13) == 'fists_of_fury' then
@@ -11053,7 +11124,7 @@ do
                         i = start .. repl .. finish
                         times = times + 1
                     end
-                    table.insert( warnings, "第" .. line .. "行：移除不必要的能量上限检测(" .. times .. "次)。" )
+                    insert( warnings, "第" .. line .. "行：移除不必要的能量上限检测(" .. times .. "次)。" )
                 end
             end
 
@@ -11074,7 +11145,7 @@ do
                             result.action = class.abilities[ ability ] and class.abilities[ ability ].key or ability
                         end
                     elseif not ignore_actions[ ability ] then
-                        table.insert( warnings, "第" .. line .. "行：不支持的操作指令'" .. ability .. "'。" )
+                        insert( warnings, "第" .. line .. "行：不支持的操作指令'" .. ability .. "'。" )
                         result.action = ability
                     end
 
@@ -11130,7 +11201,7 @@ do
                 end
 
                 if result.action == "use_item" then
-                    table.insert( warnings, "第" .. line .. "行：不支持的使用道具指令[ " .. ( result.effect_name or result.name or "未知" ) .. "]或没有权限。" )
+                    insert( warnings, "第" .. line .. "行：不支持的使用道具指令[ " .. ( result.effect_name or result.name or "未知" ) .. "]或没有权限。" )
                     result.action = nil
                     result.enabled = false
                 end
@@ -11142,8 +11213,8 @@ do
                     result.sec = "cooldown." .. result.name .. ".remains"
                     result.name = nil
                 else
-                    table.insert( warnings, "第" .. line .. "行：无法转换wait_for_cooldown,name=X到wait,sec=cooldown.X.remains或没有权限。" )
-                    result.action = wait
+                    insert( warnings, "第" .. line .. "行：无法转换wait_for_cooldown,name=X到wait,sec=cooldown.X.remains或没有权限。" )
+                    result.action = "wait"
                     result.enabled = false
                 end
             end
@@ -11161,13 +11232,13 @@ do
                 result.cancel_if = nil
             end
 
-            table.insert( output, result )
+            insert( output, result )
         end
 
         if n > 0 then
-            table.insert( warnings, "以下效果已在技能列表中使用，但无法在插件数据库中找到：" )
+            insert( warnings, "以下效果已在技能列表中使用，但无法在插件数据库中找到：" )
             for k in orderedPairs( missing ) do
-                table.insert( warnings, " - " .. k )
+                insert( warnings, " - " .. k )
             end
         end
 

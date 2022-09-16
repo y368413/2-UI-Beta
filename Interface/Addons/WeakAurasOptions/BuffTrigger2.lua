@@ -1,4 +1,4 @@
-if not WeakAuras.IsCorrectVersion() or not WeakAuras.IsLibsOK() then return end
+if not WeakAuras.IsLibsOK() then return end
 local AddonName, OptionsPrivate = ...
 
 local L = WeakAuras.L
@@ -7,7 +7,7 @@ local function getAuraMatchesLabel(name)
   local ids = WeakAuras.spellCache.GetSpellsMatching(name)
   if ids then
     local numMatches = 0
-    for id, _ in pairs(ids) do
+    for _ in pairs(ids) do
       numMatches = numMatches + 1
     end
     return tostring(numMatches)
@@ -21,7 +21,7 @@ local function getAuraMatchesList(name)
   if ids then
     local descText = ""
     for id, _ in pairs(ids) do
-      local name, _, icon = GetSpellInfo(id)
+      local _, _, icon = GetSpellInfo(id)
       if icon then
         if descText == "" then
           descText = "|T"..icon..":0|t: "..id
@@ -113,8 +113,7 @@ local function CreateNameOptions(aura_options, data, trigger, size, isExactSpell
 
     if isExactSpellId then
       aura_options[iconOption].name = function()
-        local name = GetSpellInfo(WeakAuras.SafeToNumber(trigger[optionKey] and trigger[optionKey][i]))
-        return name
+        return GetSpellInfo(WeakAuras.SafeToNumber(trigger[optionKey] and trigger[optionKey][i]))
       end
       aura_options[iconOption].image = function()
         local icon = select(3, GetSpellInfo(trigger[optionKey] and trigger[optionKey][i]))
@@ -204,6 +203,14 @@ local function GetBuffTriggerOptions(data, triggernum)
       return trigger.useMatch_count
     else
       return trigger.matchesShowOn == "showOnMatches"
+    end
+  end
+
+  local function HasMatchPerUnitCount(trigger)
+    if trigger.type == "aura2" and IsGroupTrigger(trigger)
+      and trigger.showClones and trigger.combinePerUnit and trigger.perUnitMode ~= "unaffected"
+    then
+      return trigger.useMatchPerUnit_count
     end
   end
 
@@ -557,7 +564,7 @@ local function GetBuffTriggerOptions(data, triggernum)
     },
     use_castByPlayer = {
       type = "toggle",
-      name = function(input)
+      name = function()
         local value = trigger.use_castByPlayer
         if value == nil then return L["Cast by a Player Character"]
         elseif value == false then return "|cFFFF0000 "..L["Negator"].." "..L["Cast by a Player Character"]
@@ -717,7 +724,7 @@ local function GetBuffTriggerOptions(data, triggernum)
       width = WeakAuras.doubleWidth,
       hidden = function()
         return not (trigger.type == "aura2" and trigger.unit ~= "multi")
-               or WeakAuras.IsClassic() or WeakAuras.IsBCC()
+               or WeakAuras.IsClassicOrBCCOrWrath()
       end
     },
     fetchRaidMark = {
@@ -733,7 +740,7 @@ local function GetBuffTriggerOptions(data, triggernum)
     use_includePets = {
       type = "toggle",
       width = WeakAuras.normalWidth,
-      name = WeakAuras.newFeatureString .. L["Include Pets"],
+      name = L["Include Pets"],
       order = 66.1,
       hidden = function() return
         not (trigger.type == "aura2" and (trigger.unit == "group" or trigger.unit == "raid" or trigger.unit == "party"))
@@ -743,7 +750,7 @@ local function GetBuffTriggerOptions(data, triggernum)
       type = "select",
       values = OptionsPrivate.Private.include_pets_types,
       width = WeakAuras.normalWidth,
-      name = WeakAuras.newFeatureString .. L["Include Pets"],
+      name = L["Include Pets"],
       order = 66.15,
       hidden = function() return not (trigger.type == "aura2" and (trigger.unit == "group" or trigger.unit == "raid" or trigger.unit == "party") and trigger.use_includePets) end,
     },
@@ -757,6 +764,45 @@ local function GetBuffTriggerOptions(data, triggernum)
                     and (trigger.unit == "group" or trigger.unit == "raid" or trigger.unit == "party") and not trigger.use_includePets)
       end
     },
+
+    useActualSpec = {
+      type = "toggle",
+      width = WeakAuras.normalWidth,
+      name = L["Filter by Specialization"],
+      desc = L["Requires LibSpecialization, that is e.g. a up-to date WeakAuras version"],
+      order = 66.3,
+      hidden = function() return
+        not (trigger.type == "aura2" and (trigger.unit == "group" or trigger.unit == "raid" or trigger.unit == "party")
+        and WeakAuras.IsRetail())
+      end,
+    },
+    actualSpec = {
+      type = "multiselect",
+      width = WeakAuras.normalWidth,
+      name = L["Actual Spec"],
+      desc = L["Requires syncing the specialization via LibSpecialization."],
+      values = OptionsPrivate.Private.spec_types_all,
+      hidden = function()
+        return not (trigger.type == "aura2"
+                    and (trigger.unit == "group" or trigger.unit == "raid" or trigger.unit == "party")
+                    and trigger.useActualSpec
+                    and WeakAuras.IsRetail())
+      end,
+      order = 66.4
+    },
+    actualSpecSpace = {
+      type = "description",
+      name = "",
+      order = 66.5,
+      width = WeakAuras.normalWidth,
+      hidden = function()
+        return not (trigger.type == "aura2"
+                    and (trigger.unit == "group" or trigger.unit == "raid" or trigger.unit == "party")
+                    and not trigger.useActualSpec
+                    and WeakAuras.IsRetail())
+      end
+    },
+
     useGroupRole = {
       type = "toggle",
       width = WeakAuras.normalWidth,
@@ -764,7 +810,7 @@ local function GetBuffTriggerOptions(data, triggernum)
       order = 67.1,
       hidden = function() return
         not (trigger.type == "aura2" and (trigger.unit == "group" or trigger.unit == "raid" or trigger.unit == "party"))
-        or WeakAuras.IsClassic() or WeakAuras.IsBCC()
+        or WeakAuras.IsClassicOrBCC()
       end
     },
     group_role = {
@@ -772,7 +818,10 @@ local function GetBuffTriggerOptions(data, triggernum)
       width = WeakAuras.normalWidth,
       name = L["Group Role"],
       values = OptionsPrivate.Private.role_types,
-      hidden = function() return not (trigger.type == "aura2" and (trigger.unit == "group" or trigger.unit == "raid" or trigger.unit == "party") and trigger.useGroupRole) end,
+      hidden = function() return
+        not (trigger.type == "aura2" and (trigger.unit == "group" or trigger.unit == "raid" or trigger.unit == "party") and trigger.useGroupRole)
+        or WeakAuras.IsClassicOrBCC()
+      end,
       order = 67.2
     },
     group_roleSpace = {
@@ -780,12 +829,15 @@ local function GetBuffTriggerOptions(data, triggernum)
       name = "",
       order = 67.2,
       width = WeakAuras.normalWidth,
-      hidden = function() return not (trigger.type == "aura2" and (trigger.unit == "group" or trigger.unit == "raid" or trigger.unit == "party") and not trigger.useGroupRole) end
+      hidden = function() return
+        not (trigger.type == "aura2" and (trigger.unit == "group" or trigger.unit == "raid" or trigger.unit == "party") and not trigger.useGroupRole)
+        or WeakAuras.IsClassicOrBCC()
+      end
     },
     useRaidRole = {
       type = "toggle",
       width = WeakAuras.normalWidth,
-      name = WeakAuras.newFeatureString .. L["Filter by Raid Role"],
+      name = L["Filter by Raid Role"],
       order = 67.1,
       hidden = function() return
         not (trigger.type == "aura2" and (trigger.unit == "group" or trigger.unit == "raid" or trigger.unit == "party"))
@@ -797,7 +849,10 @@ local function GetBuffTriggerOptions(data, triggernum)
       width = WeakAuras.normalWidth,
       name = L["Raid Role"],
       values = OptionsPrivate.Private.raid_role_types,
-      hidden = function() return not (trigger.type == "aura2" and (trigger.unit == "group" or trigger.unit == "raid" or trigger.unit == "party") and trigger.useRaidRole) end,
+      hidden = function() return
+        not (trigger.type == "aura2" and (trigger.unit == "group" or trigger.unit == "raid" or trigger.unit == "party") and trigger.useRaidRole)
+        or WeakAuras.IsRetail()
+      end,
       order = 67.2
     },
     raid_roleSpace = {
@@ -813,7 +868,7 @@ local function GetBuffTriggerOptions(data, triggernum)
     useArenaSpec = {
       type = "toggle",
       width = WeakAuras.normalWidth,
-      name = WeakAuras.newFeatureString .. L["Filter by Arena Spec"],
+      name = L["Filter by Arena Spec"],
       order = 67.3,
       hidden = function() return
         not (WeakAuras.IsRetail() and trigger.type == "aura2" and trigger.unit == "arena")
@@ -877,7 +932,7 @@ local function GetBuffTriggerOptions(data, triggernum)
       type = "input",
       width = WeakAuras.normalWidth,
       name = L["Filter by Unit Name"],
-      desc = L["Filter formats: 'Name', 'Name-Realm', '-Realm'.\n\nSupports multiple entries, separated by commas\n"],
+      desc = L["Filter formats: 'Name', 'Name-Realm', '-Realm'.\n\nSupports multiple entries, separated by commas\nCan use \\ to escape -."],
       order = 68.5,
       hidden = function()
         return not (trigger.type == "aura2"
@@ -1071,6 +1126,45 @@ local function GetBuffTriggerOptions(data, triggernum)
       hidden = function() return not (trigger.type == "aura2" and HasMatchCount(trigger)) end,
       validate = ValidateNumeric,
       desc = L["Counts the number of matches over all units."]
+    },
+    useMatchPerUnit_count = {
+      type = "toggle",
+      width = WeakAuras.normalWidth,
+      name = L["Match Count per Unit"],
+      hidden = function() return not (trigger.type == "aura2" and IsGroupTrigger(trigger)
+        and trigger.showClones and trigger.combinePerUnit and trigger.perUnitMode ~= "unaffected") end,
+      order = 71.6
+    },
+    useMatchPerUnit_countSpace = {
+      type = "description",
+      name = "",
+      order = 71.7,
+      width = WeakAuras.normalWidth,
+      hidden = function()
+        if trigger.type == "aura2" and IsGroupTrigger(trigger)
+          and trigger.showClones and trigger.combinePerUnit and trigger.perUnitMode ~= "unaffected" then
+            return trigger.useMatchPerUnit_count
+        end
+        return true
+      end
+    },
+    matchPerUnit_countOperator = {
+      type = "select",
+      name = L["Operator"],
+      order = 71.8,
+      width = WeakAuras.halfWidth,
+      values = OptionsPrivate.Private.operator_types,
+      hidden = function() return not (HasMatchPerUnitCount(trigger)) end,
+      desc = L["Counts the number of matches per unit."]
+    },
+    matchPerUnit_count = {
+      type = "input",
+      name = L["Count"],
+      order = 71.9,
+      width = WeakAuras.halfWidth,
+      hidden = function() return not (HasMatchPerUnitCount(trigger)) end,
+      validate = ValidateNumeric,
+      desc = L["Counts the number of matches per unit."]
     },
     showClones = {
       type = "toggle",

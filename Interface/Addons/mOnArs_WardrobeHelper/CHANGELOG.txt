@@ -1,4 +1,8 @@
-﻿== 1.21 ==
+﻿== 1.22 ==
+ * updated TOC
+ * dirty fixes for 9.2.5
+
+== 1.21 ==
  * updated TOC
  * fixes for 9.1
 

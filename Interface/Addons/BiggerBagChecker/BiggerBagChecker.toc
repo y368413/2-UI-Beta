@@ -1,0 +1,18 @@
+## Interface: 90207
+## Title: BiggerBagChecker
+## Version: v1.4.5-release2
+## Author: KyrosKrane Sylvanblade
+## Notes: Tracks your progress for the "Going to Need a Bigger Bag" achievement.
+
+## X-Curse-Project-ID: 292022
+## X-WoWI-ID: 24595
+## X-Wago-ID: VBNBEaGx
+
+
+BiggerBagChecker.lua
+localization\enUS.lua
+localization\deDE.lua
+localization\frFR.lua
+localization\ruRU.lua
+localization\zhTW.lua 
+localization\zhCN.lua 

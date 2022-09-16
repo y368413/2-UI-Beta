@@ -18,7 +18,7 @@ Imports an aura from a table, which may or may not be encoded as a B64 string.
 If target is installed data, or is a uid which points to installed data, then the import will be an update to that aura
 
 ]]--
-if not WeakAuras.IsCorrectVersion() or not WeakAuras.IsLibsOK() then return end
+if not WeakAuras.IsLibsOK() then return end
 local AddonName, Private = ...
 
 -- Lua APIs
@@ -27,15 +27,11 @@ local tostring, string_char, strsplit = tostring, string.char, strsplit
 local pairs, type, unpack = pairs, type, unpack
 local error = error
 local bit_band, bit_lshift, bit_rshift = bit.band, bit.lshift, bit.rshift
-local coroutine = coroutine
 
 local WeakAuras = WeakAuras;
 local L = WeakAuras.L;
 
 local versionString = WeakAuras.versionString;
-
-local regionOptions = WeakAuras.regionOptions;
-local regionTypes = WeakAuras.regionTypes;
 
 -- Local functions
 local decodeB64, GenerateUniqueID
@@ -447,7 +443,7 @@ function ShowTooltip(lines)
   ItemRefTooltip:Show()
 end
 
-local delayedImport = CreateFrame("FRAME")
+local delayedImport = CreateFrame("Frame")
 
 local function ImportNow(data, children, target, sender)
   if InCombatLockdown() then

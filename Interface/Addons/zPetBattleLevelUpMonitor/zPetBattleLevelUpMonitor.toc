@@ -1,4 +1,4 @@
-## Interface: 90200
+## Interface: 90207
 ## Version: 1.0.6+1.0.1
 ## Title: PetBattleLevelUpMonitor+PetToolTip
 ## Author: scdhao

@@ -515,10 +515,12 @@ function ns.FindUnitBuffByID( unit, id, filter )
     if unit == "player" then return GetPlayerAuraBySpellID( id ) end
 
     local playerOrPet = false
+
     if filter == "PLAYER|PET" then
         playerOrPet = true
         filter = nil
     end
+
     local i = 1
     local name, icon, count, debuffType, duration, expirationTime, caster, stealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, nameplateShowAll, timeMod, value1, value2, value3 = UnitBuff( unit, i, filter )
 
@@ -536,10 +538,12 @@ function ns.FindUnitDebuffByID( unit, id, filter )
     if unit == "player" then return GetPlayerAuraBySpellID( id ) end
 
     local playerOrPet = false
+
     if filter == "PLAYER|PET" then
         playerOrPet = true
         filter = nil
     end
+
     local i = 1
     local name, icon, count, debuffType, duration, expirationTime, caster, stealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, nameplateShowAll, timeMod, value1, value2, value3 = UnitDebuff( unit, i, filter )
 

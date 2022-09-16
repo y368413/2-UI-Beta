@@ -1,6 +1,6 @@
-## Interface: 90200
+## Interface: 90207
 ## Title: TorghastTourgide
-## Version: V2.5.3
+## Version: 2.6.3
 ## Author: SLOKnightfall
 ## Notes: Handy Info About Torghast
 ## Notes-zhCN: 托加斯特便捷指南

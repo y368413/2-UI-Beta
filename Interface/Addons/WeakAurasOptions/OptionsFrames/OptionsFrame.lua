@@ -1,4 +1,4 @@
-if not WeakAuras.IsCorrectVersion() or not WeakAuras.IsLibsOK() then return end
+if not WeakAuras.IsLibsOK() then return end
 local AddonName, OptionsPrivate = ...
 
 -- Lua APIs
@@ -7,8 +7,8 @@ local pairs, type, error = pairs, type, error
 local _G = _G
 
 -- WoW APIs
-local GetScreenWidth, GetScreenHeight, CreateFrame, GetAddOnInfo, PlaySound, IsAddOnLoaded, LoadAddOn, UnitName
-  = GetScreenWidth, GetScreenHeight, CreateFrame, GetAddOnInfo, PlaySound, IsAddOnLoaded, LoadAddOn, UnitName
+local GetScreenWidth, GetScreenHeight, CreateFrame, UnitName
+  = GetScreenWidth, GetScreenHeight, CreateFrame, UnitName
 
 local AceGUI = LibStub("AceGUI-3.0")
 local AceConfig = LibStub("AceConfig-3.0")
@@ -89,7 +89,7 @@ local function CreateFrameSizer(frame, callback, position)
     xOffset2, yOffset2 = -6, -6
   end
 
-  local handle = CreateFrame("BUTTON", nil, frame)
+  local handle = CreateFrame("Button", nil, frame)
   handle:SetPoint(position, frame)
   handle:SetSize(25, 25)
   handle:EnableMouse()
@@ -133,12 +133,12 @@ local minWidth = 750
 local minHeight = 240
 
 function OptionsPrivate.CreateFrame()
-  local WeakAuras_DropDownMenu = CreateFrame("frame", "WeakAuras_DropDownMenu", nil, "UIDropDownMenuTemplate")
+  CreateFrame("Frame", "WeakAuras_DropDownMenu", nil, "UIDropDownMenuTemplate")
   local frame
   local db = OptionsPrivate.savedVars.db
   local odb = OptionsPrivate.savedVars.odb
   -------- Mostly Copied from AceGUIContainer-Frame--------
-  frame = CreateFrame("FRAME", "WeakAurasOptions", UIParent, BackdropTemplateMixin and "BackdropTemplate")
+  frame = CreateFrame("Frame", "WeakAurasOptions", UIParent, "BackdropTemplate")
 
   tinsert(UISpecialFrames, frame:GetName())
   frame:SetBackdrop({
@@ -180,7 +180,7 @@ function OptionsPrivate.CreateFrame()
       data.region:Collapse()
       data.region:OptionsClosed()
       if WeakAuras.clones[id] then
-        for cloneId, cloneRegion in pairs(WeakAuras.clones[id]) do
+        for _, cloneRegion in pairs(WeakAuras.clones[id]) do
           cloneRegion:Collapse()
           cloneRegion:OptionsClosed()
         end
@@ -217,7 +217,7 @@ function OptionsPrivate.CreateFrame()
   local close = CreateDecoration(frame)
   close:SetPoint("TOPRIGHT", -30, 12)
 
-  local closebutton = CreateFrame("BUTTON", nil, close, "UIPanelCloseButton")
+  local closebutton = CreateFrame("Button", nil, close, "UIPanelCloseButton")
   closebutton:SetPoint("CENTER", close, "CENTER", 1, -1)
   closebutton:SetScript("OnClick", WeakAuras.HideOptions)
 
@@ -281,6 +281,7 @@ function OptionsPrivate.CreateFrame()
       self.update.frame:Hide()
       self.texteditor.frame:Hide()
       self.codereview.frame:Hide()
+      self.debugLog.frame:Hide()
       if self.newView then
         self.newView.frame:Hide()
       end
@@ -356,6 +357,11 @@ function OptionsPrivate.CreateFrame()
       else
         self.update.frame:Hide()
       end
+      if self.window == "debuglog" then
+        self.debugLog.frame:Show()
+      else
+        self.debugLog.frame:Hide()
+      end
       if self.window == "default" then
         if self.loadProgessVisible then
           self.loadProgress:Show()
@@ -375,7 +381,7 @@ function OptionsPrivate.CreateFrame()
     end
   end
 
-  local minimizebutton = CreateFrame("BUTTON", nil, minimize)
+  local minimizebutton = CreateFrame("Button", nil, minimize)
   minimizebutton:SetWidth(30)
   minimizebutton:SetHeight(30)
   minimizebutton:SetPoint("CENTER", minimize, "CENTER", 1, -1)
@@ -412,7 +418,7 @@ function OptionsPrivate.CreateFrame()
   tipFrame.frame:Hide()
   frame.tipFrame = tipFrame
 
-  local tipPopup = CreateFrame("Frame", nil, frame, BackdropTemplateMixin and "BackdropTemplate")
+  local tipPopup = CreateFrame("Frame", nil, frame, "BackdropTemplate")
   tipPopup:SetFrameStrata("FULLSCREEN")
   tipPopup:SetBackdrop({
     bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
@@ -438,7 +444,7 @@ function OptionsPrivate.CreateFrame()
   tipPopupLabel:SetJustifyH("LEFT")
   tipPopupLabel:SetJustifyV("TOP")
 
-  local urlWidget = CreateFrame("EDITBOX", nil, tipPopup, "InputBoxTemplate")
+  local urlWidget = CreateFrame("EditBox", nil, tipPopup, "InputBoxTemplate")
   urlWidget:SetFont(STANDARD_TEXT_FONT, 12)
   urlWidget:SetPoint("TOPLEFT", tipPopupLabel, "BOTTOMLEFT", 6, 0)
   urlWidget:SetPoint("TOPRIGHT", tipPopupLabel, "BOTTOMRIGHT", 0, 0)
@@ -491,7 +497,7 @@ function OptionsPrivate.CreateFrame()
   addFooter(L["Find Auras"], [[Interface\AddOns\WeakAuras\Media\Textures\wagoupdate_logo.tga]], "https://wago.io",
             L["Browse Wago, the largest collection of auras."])
 
-  if not WeakAurasCompanion then
+  if not OptionsPrivate.Private.CompanionData.slugs then
     addFooter(L["Update Auras"], [[Interface\AddOns\WeakAuras\Media\Textures\wagoupdate_refresh.tga]], "https://weakauras.wtf",
             L["Keep your Wago imports up to date with the Companion App."])
   end
@@ -542,11 +548,12 @@ function OptionsPrivate.CreateFrame()
   frame.texteditor = OptionsPrivate.TextEditor(frame)
   frame.codereview = OptionsPrivate.CodeReview(frame)
   frame.update = OptionsPrivate.UpdateFrame(frame)
+  frame.debugLog = OptionsPrivate.DebugLog(frame)
 
   frame.moversizer, frame.mover = OptionsPrivate.MoverSizer(frame)
 
   -- filter line
-  local filterInput = CreateFrame("editbox", "WeakAurasFilterInput", frame, "SearchBoxTemplate")
+  local filterInput = CreateFrame("EditBox", "WeakAurasFilterInput", frame, "SearchBoxTemplate")
   filterInput:SetScript("OnTextChanged", function(self)
     SearchBoxTemplate_OnTextChanged(self)
     OptionsPrivate.SortDisplayButtons(filterInput:GetText())
@@ -668,10 +675,8 @@ function OptionsPrivate.CreateFrame()
   -- override SetScroll to make children visible as needed
   local oldSetScroll = buttonsScroll.SetScroll
   buttonsScroll.SetScroll = function(self, value)
-    if self:GetScrollPos() ~= value then
-      oldSetScroll(self, value)
-      self.LayoutFunc(self.content, self.children, true)
-    end
+    oldSetScroll(self, value)
+    self.LayoutFunc(self.content, self.children, true)
   end
 
   function buttonsScroll:SetScrollPos(top, bottom)
@@ -1064,11 +1069,17 @@ function OptionsPrivate.CreateFrame()
 
   frame.ClearPicks = function(self, noHide)
     OptionsPrivate.Private.PauseAllDynamicGroups()
-    if type(frame.pickedDisplay) == "string" then
-      displayButtons[frame.pickedDisplay]:ClearPick(noHide)
-    else
-      for i, childId in pairs(tempGroup.controlledChildren) do
-        displayButtons[childId]:ClearPick(noHide)
+    for id, button in pairs(displayButtons) do
+      button:ClearPick(true)
+      if not noHide then
+        button:PriorityHide(1)
+      end
+    end
+    if not noHide then
+      for id, button in pairs(displayButtons) do
+        if button.data.controlledChildren then
+          button:RecheckVisibility()
+        end
       end
     end
 
@@ -1145,9 +1156,9 @@ function OptionsPrivate.CreateFrame()
       containerScroll:AddChild(simpleLabel)
 
       local button = AceGUI:Create("WeakAurasNewButton")
-      button:SetTitle(L["From Template"])
+      button:SetTitle(L["Premade Auras"])
       button:SetDescription(L["Offer a guided way to create auras for your character"])
-      button:SetIcon("Interface\\Icons\\INV_Misc_Book_06")
+      button:SetIcon("Interface\\Icons\\Inv_misc_book_09")
       button:SetClick(function()
         OptionsPrivate.OpenTriggerTemplate(nil, self:GetTargetAura())
       end)
@@ -1369,7 +1380,7 @@ function OptionsPrivate.CreateFrame()
       alreadySelected[child.id] = true
     end
 
-    for index, id in ipairs(batchSelection) do
+    for _, id in ipairs(batchSelection) do
       if not alreadySelected[id] then
         displayButtons[id]:Pick()
         tinsert(tempGroup.controlledChildren, id)

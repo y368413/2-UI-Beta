@@ -1,4 +1,4 @@
-## Interface: 90200
+## Interface: 90207
 ## Title: LiteBuff
 ## Title-zhTW: |cffff0000[必备]|rBuff监视
 ## Title-zhCN: |cffff0000[必备]|rBuff监视

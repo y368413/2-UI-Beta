@@ -1,5 +1,5 @@
 local MAJOR_VERSION = "LibGetFrame-1.0"
-local MINOR_VERSION = 36
+local MINOR_VERSION = 39
 if not LibStub then error(MAJOR_VERSION .. " requires LibStub.") end
 local lib = LibStub:NewLibrary(MAJOR_VERSION, MINOR_VERSION)
 if not lib then return end
@@ -255,7 +255,18 @@ local function Init(noDelay)
     GetFramesCacheListener:RegisterEvent("PLAYER_ENTERING_WORLD")
     GetFramesCacheListener:RegisterEvent("GROUP_ROSTER_UPDATE")
     GetFramesCacheListener:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT")
-    GetFramesCacheListener:SetScript("OnEvent", function() ScanForUnitFrames(false) end)
+    GetFramesCacheListener:RegisterEvent("UNIT_PET")
+    GetFramesCacheListener:SetScript(
+        "OnEvent",
+        function(event, unit)
+            if event == "UNIT" then
+                if not (UnitIsUnit("player") or UnitInParty(unit) or UnitInRaid(unit)) then
+                    return
+                end
+            end
+            ScanForUnitFrames(false)
+        end
+    )
     ScanForUnitFrames(noDelay)
 end
 
@@ -331,29 +342,46 @@ function lib.GetUnitNameplate(unit)
     local nameplate = C_NamePlate.GetNamePlateForUnit(unit)
     if nameplate then
         -- credit to Exality for https://wago.io/explosiveorbs
-        if nameplate.unitFrame and nameplate.unitFrame.Health then
+        if  nameplate.unitFrame
+        and nameplate.unitFrame.Health
+        then
           -- elvui
           return nameplate.unitFrame.Health
-        elseif nameplate.unitFramePlater then
+        elseif nameplate.unitFramePlater
+           and nameplate.unitFramePlater.healthBar
+        then
           -- plater
           return nameplate.unitFramePlater.healthBar
-        elseif nameplate.kui then
+        elseif nameplate.kui
+           and nameplate.kui.HealthBar
+        then
           -- kui
           return nameplate.kui.HealthBar
-        elseif nameplate.extended then
+        elseif nameplate.extended
+           and nameplate.extended.visual
+           and nameplate.extended.visual.healthbar
+        then
           -- tidyplates
-          --nameplate.extended.visual.healthbar:SetHeight(tidyplatesHeight)
           return nameplate.extended.visual.healthbar
-        elseif nameplate.TPFrame then
+        elseif nameplate.TPFrame
+           and nameplate.TPFrame.visual
+           and nameplate.TPFrame.visual.healthbar
+        then
           -- tidyplates: threat plates
           return nameplate.TPFrame.visual.healthbar
-        elseif nameplate.unitFrame then
+        elseif nameplate.unitFrame
+           and nameplate.unitFrame.Health
+        then
           -- bdui nameplates
           return nameplate.unitFrame.Health
-        elseif nameplate.ouf then
+        elseif nameplate.ouf
+           and nameplate.ouf.Health
+        then
           -- bdNameplates
           return nameplate.ouf.Health
-        elseif nameplate.UnitFrame then
+        elseif nameplate.UnitFrame
+           and nameplate.UnitFrame.healthBar
+        then
           -- default
           return nameplate.UnitFrame.healthBar
         else

@@ -942,6 +942,7 @@ do
 
             if not self:IsThreadLocked() and ( self.TextureUpdateNeeded or self.recTimer < 0 ) then
                 local alpha = self.alpha
+                local options = Hekili:GetActiveSpecOption( "abilities" )
 
                 for i, b in ipairs( self.Buttons ) do
                     b.Recommendation = self.Recommendations[ i ]
@@ -965,7 +966,8 @@ do
                             if ability.item then
                                 b.Image = b.Recommendation.texture or ability.texture or select( 10, GetItemInfo( ability.item ) )
                             else
-                                b.Image = b.Recommendation.texture or ability.texture or GetSpellTexture( ability.id )
+                                local override = options and rawget( options, action )
+                                b.Image = override and override.icon or b.Recommendation.texture or ability.texture or GetSpellTexture( ability.id )
                             end
                             b.Texture:SetTexture( b.Image )
                             b.Texture:SetTexCoord( unpack( b.texCoords ) )
@@ -1342,8 +1344,24 @@ do
                         else
                             local aFlash = ability.flash
                             if aFlash then
-                                if LSF.Flashable( aFlash ) then
-                                    LSF.FlashAction( aFlash, self.flashColor )
+                                local flashable = false
+
+                                if type( aFlash ) == "table" then
+                                    local lastSpell
+                                    for _, spell in ipairs( aFlash ) do
+                                        lastSpell = spell
+                                        if LSF.Flashable( spell ) then
+                                            flashable = true
+                                            break
+                                        end
+                                    end
+                                    aFlash = lastSpell
+                                else
+                                    flashable = LSF.Flashable( aFlash )
+                                end
+
+                                if flashable then
+                                    LSF.FlashAction( aFlash, self.flashColor, conf.flash.size, conf.flash.brightness, conf.flash.blink, nil, conf.flash.texture )
                                 elseif conf.flash.suppress and not self.flashWarnings[ aFlash ] then
                                     self.flashWarnings[ aFlash ] = true
                                     Hekili:Error( "|cffff0000WARNING|r - Could not flash recommended action '" .. aFlash .. "' (" .. self.id .. ")." )
@@ -2179,8 +2197,6 @@ do
 
 
     local LSM = LibStub("LibSharedMedia-3.0", true)
-    local LRC = LibStub("LibRangeCheck-2.0")
-    local LSR = LibStub("SpellRange-1.0")
 
     function Hekili:CreateButton( dispID, id )
         local d = dPool[ dispID ]
@@ -2285,10 +2301,11 @@ do
         local capAnchor = conf.captions.anchor or "BOTTOM"
         b.Caption:ClearAllPoints()
         b.Caption:SetPoint( capAnchor, b, capAnchor, conf.captions.x or 0, conf.captions.y or 0 )
-        b.Caption:SetSize( b:GetWidth(), max( 12, b:GetHeight() / 2 ) )
-        b.Caption:SetJustifyV( capAnchor )
+        b.Caption:SetHeight( b:GetHeight() / 2 )
+        b.Caption:SetJustifyV( capAnchor:match("RIGHT") and "RIGHT" or ( capAnchor:match( "LEFT" ) and "LEFT" or "CENTER" ) )
         b.Caption:SetJustifyH( conf.captions.align or "CENTER" )
         b.Caption:SetTextColor( unpack( conf.captions.color ) )
+        b.Caption:SetWordWrap( false )
 
         local capText = b.Caption:GetText()
         b.Caption:SetText( nil )
@@ -2306,10 +2323,11 @@ do
         local kbAnchor = conf.keybindings.anchor or "TOPRIGHT"
         b.Keybinding:ClearAllPoints()
         b.Keybinding:SetPoint( kbAnchor, b, kbAnchor, conf.keybindings.x or 0, conf.keybindings.y or 0 )
-        b.Keybinding:SetSize( b:GetWidth(), b:GetHeight() / 2 )
+        b.Keybinding:SetHeight( b:GetHeight() / 2 )
         b.Keybinding:SetJustifyH( kbAnchor:match("RIGHT") and "RIGHT" or ( kbAnchor:match( "LEFT" ) and "LEFT" or "CENTER" ) )
         b.Keybinding:SetJustifyV( kbAnchor:match("TOP") and "TOP" or ( kbAnchor:match( "BOTTOM" ) and "BOTTOM" or "MIDDLE" ) )
         b.Keybinding:SetTextColor( unpack( queued and conf.keybindings.queuedColor or conf.keybindings.color ) )
+        b.Keybinding:SetWordWrap( false )
 
         local kbText = b.Keybinding:GetText()
         b.Keybinding:SetText( nil )
@@ -2398,10 +2416,11 @@ do
             local tarAnchor = conf.targets.anchor or "BOTTOM"
             b.Targets:ClearAllPoints()
             b.Targets:SetPoint( tarAnchor, b, tarAnchor, conf.targets.x or 0, conf.targets.y or 0 )
-            b.Targets:SetSize( b:GetWidth(), b:GetHeight() / 2 )
+            b.Targets:SetHeight( b:GetHeight() / 2 )
             b.Targets:SetJustifyH( tarAnchor:match("RIGHT") and "RIGHT" or ( tarAnchor:match( "LEFT" ) and "LEFT" or "CENTER" ) )
             b.Targets:SetJustifyV( tarAnchor:match("TOP") and "TOP" or ( tarAnchor:match( "BOTTOM" ) and "BOTTOM" or "MIDDLE" ) )
             b.Targets:SetTextColor( unpack( conf.targets.color ) )
+            b.Targets:SetWordWrap( false )
 
             local tText = b.Targets:GetText()
             b.Targets:SetText( nil )
@@ -2437,7 +2456,7 @@ do
             local delayAnchor = conf.delays.anchor or "TOPLEFT"
             b.DelayText:ClearAllPoints()
             b.DelayText:SetPoint( delayAnchor, b, delayAnchor, conf.delays.x, conf.delays.y or 0 )
-            b.DelayText:SetSize( b:GetWidth(), b:GetHeight() / 2 )
+            b.DelayText:SetHeight( b:GetHeight() / 2 )
 
             b.DelayText:SetJustifyH( delayAnchor:match( "RIGHT" ) and "RIGHT" or ( delayAnchor:match( "LEFT" ) and "LEFT" or "CENTER") )
             b.DelayText:SetJustifyV( delayAnchor:match( "TOP" ) and "TOP" or ( delayAnchor:match( "BOTTOM" ) and "BOTTOM" or "MIDDLE") )

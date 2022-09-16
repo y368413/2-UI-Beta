@@ -1,0 +1,12 @@
+tag 28420debdd4549a3ba06d2828bb0b6bdf6df7614 v8
+Author:	David Lynch <kemayo@gmail.com>
+Date:	Sun Sep 4 14:06:41 2022 -0500
+
+Tagging v8
+
+commit 644723b504c970b82af96cb53d4ff91cf6cf5934
+Author: David Lynch <kemayo@gmail.com>
+Date:   Sun Sep 4 13:51:54 2022 -0500
+
+    TOC for 9.2.7
+

@@ -1,10 +1,124 @@
 <Ui>
 
+    <!-- minimap button -->
+    <Button name="ProtoformSynthesisFieldJournalMinimapButton" parent="Minimap" toplevel="true" hidden="true">
+        <Size x="31" y="31"/>
+        <Anchors>
+            <Anchor point="CENTER"/>
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="Icon" file="Interface\Icons\inv_progenitorwombatmount">
+                    <Size x="23" y="23"/>
+                    <Anchors>
+                        <Anchor point="CENTER"/>
+                    </Anchors>
+                </Texture>
+                <MaskTexture parentKey="CircleMask" file="Interface\CharacterFrame\TempPortraitAlphaMask">
+                    <Size x="23" Y="23"/>
+                    <Anchors>
+                        <Anchor point="CENTER" relativeKey="$parent.Icon" relativePoint="CENTER"/>
+                    </Anchors>
+                    <MaskedTextures>
+                        <MaskedTexture childKey="Icon"/>
+                    </MaskedTextures>
+                </MaskTexture>
+            </Layer>
+            <Layer level="BORDER">
+                <Texture parentKey="Border" file="Interface\Minimap\Minimap-TrackingBorder">
+                    <Size x="53" y="53"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="HIGHLIGHT">
+                <Texture parentKey="Highlight" file="Interface\Minimap\UI-Minimap-ZoomButton-Highlight" alphaMode="ADD" setAllPoints="true"/>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnLoad>
+                self:SetFrameLevel(self:GetFrameLevel()+3)
+                self:RegisterForDrag("LeftButton")
+            </OnLoad>
+            <OnEnter>
+                self:OnEnter()
+            </OnEnter>
+            <OnLeave>
+                self:OnLeave()
+            </OnLeave>
+            <OnMouseDown>
+                self:OnMouseDown()
+            </OnMouseDown>
+            <OnMouseUp>
+                self:OnMouseUp()
+            </OnMouseUp>
+            <OnClick>
+                self:OnClick()
+            </OnClick>
+            <OnDragStart>
+                self:OnDragStart()
+            </OnDragStart>
+            <OnDragStop>
+                self:OnDragStop()
+            </OnDragStop>
+        </Scripts>
+    </Button>
+
+    <!-- template for settings list buttons -->
+    <Button name="ProtoformSynthesisFieldJournalSettingsTemplate" virtual="true">
+        <Size x="200" y="28"/>
+        <Frames>
+            <CheckButton parentKey="CheckButton">
+                <Size x="26" y="26"/>
+                <Anchors>
+                    <Anchor point="LEFT" x="2" y="0"/>
+                </Anchors>
+                <NormalTexture file="Interface\Buttons\UI-CheckBox-Up"/>
+                <PushedTexture file="Interface\Buttons\UI-CheckBox-Down"/>
+                <HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD"/>
+                <CheckedTexture file="Interface\Buttons\UI-CheckBox-Check"/>
+                <DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled"/>
+                <Scripts>
+                    <OnEnter>
+                        self:GetParent().Text:SetTextColor(1,1,1)
+                    </OnEnter>
+                    <OnLeave>
+                        self:GetParent().Text:SetTextColor(1,0.82,0)
+                    </OnLeave>
+                    <OnClick>
+                        ProtoformSynthesisFieldJournal.SettingsCheckButtonOnClick(self)
+                    </OnClick>
+                </Scripts>
+            </CheckButton>
+        </Frames>
+        <Layers>
+            <Layer level="ARTWORK">
+                <FontString parentKey="Text" inherits="GameFontHighlight" justifyH="LEFT" justifyV="TOP">
+                    <Anchors>
+                        <Anchor point="LEFT" x="30" y="0"/>
+                        <Anchor point="RIGHT" x="-8" y="0"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+    </Button>
+
+    <!-- template for reagent buttons on the item lists -->
     <Frame name="ProtoformSynthesisFieldJournalReagentButtonTemplate" virtual="true">
         <Size x="64" y="16"/>
         <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="Highlight" hidden="true">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="8" y="0"/>
+                        <Anchor point="BOTTOMRIGHT" x="-2" y="0"/>
+                    </Anchors>
+                    <Color r="0.5" g="0.75" b="1" a="0.15"/>
+                </Texture>
+            </Layer>
             <Layer level="ARTWORK">
-                <Texture parentKey="Icon" file="Interface\Icons\inv_misc_celestial map">
+                <Texture parentKey="Icon" file="Interface\Icons\inv_progenitor_protoformsynthesis">
                     <Size x="16" y="16"/>
                     <Anchors>
                         <Anchor point="LEFT"/>
@@ -20,7 +134,7 @@
                         <MaskedTexture childKey="Icon"/>
                     </MaskedTextures>
                 </MaskTexture>
-                <FontString parentKey="Text" inherits="GameFontHighlightSmall" text="0/300">
+                <FontString parentKey="Text" inherits="GameFontHighlightSmall">
                     <Anchors>
                         <Anchor point="LEFT" x="20" y="0"/>
                     </Anchors>
@@ -38,15 +152,16 @@
             </Layer>
         </Layers>
         <Scripts>
-            <OnLoad>
-                if self.reagentIcon then
-                    self.Icon:SetTexture(self.reagentIcon)
-                end
-            </OnLoad>
+            <OnEnter>
+                ProtoformSynthesisFieldJournal.ReagentButtonOnEnter(self)
+            </OnEnter>
+            <OnLeave>
+                ProtoformSynthesisFieldJournal.ReagentButtonOnLeave(self)
+            </OnLeave>
         </Scripts>
     </Frame>
 
-    <!-- Template for the list buttons -->
+    <!-- template for the item list buttons -->
     <Button name="ProtoformSynthesisFieldJournalListTemplate" inherits="TooltipBorderBackdropTemplate" clipChildren="true" virtual="true">
         <Size x="200" y="48"/>
         <Layers>
@@ -69,7 +184,7 @@
                 </MaskTexture>
             </Layer>
             <Layer level="ARTWORK">
-                <FontString parentKey="Name" inherits="GameFontNormal" text="Archetype of Petness" justifyH="LEFT" wordwrap="false">
+                <FontString parentKey="Name" inherits="GameFontNormal" justifyH="LEFT" wordwrap="false">
                     <Anchors>
                         <Anchor point="LEFT" x="48" y="12"/>
                         <!-- <Anchor point="TOPRIGHT" x="-8" y="-10"/> -->
@@ -79,27 +194,18 @@
         </Layers>
         <Frames>
             <Frame parentKey="MoteButton" inherits="ProtoformSynthesisFieldJournalReagentButtonTemplate">
-                <KeyValues>
-                    <KeyValue key="reagentIcon" value="Interface\Icons\inv_progenitor_protoformsynthesis"/>
-                </KeyValues>
                 <Anchors>
                     <Anchor point="BOTTOMLEFT" x="48" y="6"/>
                 </Anchors>
             </Frame>
-            <Frame parentKey="GlimmerButton" inherits="ProtoformSynthesisFieldJournalReagentButtonTemplate">
-                <KeyValues>
-                    <KeyValue key="reagentIcon" value="Interface\Icons\spell_progenitor_orb2"/>
-                </KeyValues>
+            <Frame parentKey="LatticeButton" inherits="ProtoformSynthesisFieldJournalReagentButtonTemplate">
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.MoteButton" relativePoint="RIGHT"/>
                 </Anchors>
             </Frame>
-            <Frame parentKey="LatticeButton" inherits="ProtoformSynthesisFieldJournalReagentButtonTemplate">
-                <KeyValues>
-                    <KeyValue key="reagentIcon" value="Interface\Icons\inv_misc_celestial map"/>
-                </KeyValues>
+            <Frame parentKey="GlimmerButton" inherits="ProtoformSynthesisFieldJournalReagentButtonTemplate">
                 <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent.GlimmerButton" relativePoint="RIGHT"/>
+                    <Anchor point="LEFT" relativeKey="$parent.LatticeButton" relativePoint="RIGHT"/>
                 </Anchors>
             </Frame>
         </Frames>
@@ -119,35 +225,106 @@
         </Scripts>
     </Button>
 
-    <!-- Main frame -->
+    <!-- template for panel tabs below bottom of frame -->
+    <Button name="ProtoformSynthesisFieldJournalPanelTabTemplate" virtual="true">
+        <Size x="90" y="36"/>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="Left" file="Interface\AddOns\ProtoformSynthesisFieldJournal\textures\panelTabs">
+                    <Size x="20" y="36"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT"/>
+                    </Anchors>
+                    <TexCoords left="0" right="0.15625" top="0" bottom="0.28125"/>
+                </Texture>
+                <Texture parentKey="Right" file="Interface\AddOns\ProtoformSynthesisFieldJournal\textures\panelTabs">
+                    <Size x="20" y="36"/>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT"/>
+                    </Anchors>
+                    <TexCoords left="0.84375" right="1" top="0" bottom="0.28125"/>
+                </Texture>
+                <Texture parentKey="Middle" file="Interface\AddOns\ProtoformSynthesisFieldJournal\textures\panelTabs">
+                    <Size x="0" y="36"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Left" relativePoint="TOPRIGHT"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.Right" relativePoint="TOPLEFT"/>
+                    </Anchors>
+                    <TexCoords left="0.15625" right="0.84375" top="0" bottom="0.28125"/>
+                </Texture>
+            </Layer>
+            <Layer level="BORDER">
+                <Texture parentKey="Highlight" file="Interface\AddOns\ProtoformSynthesisFieldJournal\textures\panelTabs" alphaMode="ADD">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="4" y="0"/>
+                        <Anchor point="BOTTOMRIGHT" x="-3" y="2"/>
+                    </Anchors>
+                    <TexCoords left="0" right="1" top="0.8125" bottom="0.9609375"/>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK">
+                <FontString parentKey="Text" inherits="GameFontNormalSmall">
+                    <Size x="78" y="10"/>
+                    <Anchors>
+                        <Anchor point="CENTER"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnEnter>
+                self.Text:SetTextColor(1,1,1)
+                self.Highlight:Show()
+            </OnEnter>
+            <OnLeave>
+                self.Highlight:Hide()
+                self.Text:SetTextColor(unpack(self.properties.textColor))
+            </OnLeave>
+            <OnMouseDown>
+                self.Text:SetPoint(unpack(self.properties.textCenterDown))
+            </OnMouseDown>
+            <OnMouseUp>
+                self.Text:SetPoint(unpack(self.properties.textCenter))
+            </OnMouseUp>
+            <OnShow>
+                self:GetScript("OnLeave")(self)
+            </OnShow>
+            <OnClick>
+                ProtoformSynthesisFieldJournal.PanelTabs.OnClick(self)
+            </OnClick>
+        </Scripts>
+    </Button>
+
+    <!-- main frame -->
     <Frame name="ProtoformSynthesisFieldJournal" parent="UIParent" movable="true" resizable="true" toplevel="true" clampedToScreen="true" inherits="BasicFrameTemplate" hidden="true">
         <Size x="300" y="400"/>
         <Anchors>
             <Anchor point="CENTER"/>
         </Anchors>
         <Frames>
-            <Frame parentKey="Bottom" inherits="InsetFrameTemplate">
-                <Size x="0" y="24"/>
+            <Frame parentKey="PanelTabs">
+                <Size x="100" y="32"/>
                 <Anchors>
-                    <Anchor point="BOTTOMLEFT" x="4" y="5"/>
-                    <Anchor point="BOTTOMRIGHT" x="-30" y="5"/>
+                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="24" y="0"/>
+                    <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="-6" y="0"/>
                 </Anchors>
-                <Layers>
-                    <Layer level="ARTWORK">
-                        <FontString parentKey="Note" inherits="GameFontNormalSmall" text="Only reagents in bags or reagent bank are counted" wordwrap="false">
-                            <Anchors>
-                                <Anchor point="TOPLEFT" x="4" y="-4"/>
-                                <Anchor point="BOTTOMRIGHT" x="-4" y="4"/>
-                            </Anchors>
-                            <Color r="0.65" g="0.65" b="0.65"/>
-                        </FontString>
-                    </Layer>
-                </Layers>
-                <Scripts>
-                    <OnLoad>
-                        self.Bg:SetDrawLayer("BACKGROUND",1)
-                    </OnLoad>
-                </Scripts>
+                <Frames>
+                    <Button parentArray="Tabs" parentKey="PetTab" inherits="ProtoformSynthesisFieldJournalPanelTabTemplate" id="1">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" x="0" y="0"/>
+                        </Anchors>
+                    </Button>
+                    <Button parentArray="Tabs" parentKey="MountTab" inherits="ProtoformSynthesisFieldJournalPanelTabTemplate" id="2">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.PetTab" relativePoint="TOPRIGHT" x="0" y="0"/>
+                        </Anchors>
+                    </Button>
+                    <Button parentArray="Tabs" parentKey="SettingsTab" inherits="ProtoformSynthesisFieldJournalPanelTabTemplate" id="3">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.MountTab" relativePoint="TOPRIGHT" x="0" y="0"/>
+                        </Anchors>
+                    </Button>
+                </Frames>
             </Frame>
             <Button parentKey="ResizeGrip">
                 <Size x="16" y="16"/>
@@ -166,11 +343,18 @@
                 <HighlightTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Highlight"/>
                 <PushedTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Down"/>
             </Button>
-            <ProtoformSynthesisFieldJournalAutoScrollFrame parentKey="List">
+            <ProtoformSynthesisFieldJournalAutoScrollFrame parentKey="List" hidden="true">
                 <Size x="280" y="503"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" x="4" y="-24"/>
-                    <Anchor point="BOTTOMRIGHT" x="-6" y="31"/>
+                    <Anchor point="BOTTOMRIGHT" x="-6" y="5"/>
+                </Anchors>
+            </ProtoformSynthesisFieldJournalAutoScrollFrame>
+            <ProtoformSynthesisFieldJournalAutoScrollFrame parentKey="Settings" hidden="true">
+                <Size x="280" y="503"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="4" y="-24"/>
+                    <Anchor point="BOTTOMRIGHT" x="-6" y="5"/>
                 </Anchors>
             </ProtoformSynthesisFieldJournalAutoScrollFrame>
         </Frames>
@@ -194,10 +378,10 @@
                 self:OnHide()
             </OnHide>
             <OnMouseDown>
-                self:StartMoving()
+                self:OnMouseDown()
             </OnMouseDown>
             <OnMouseUp>
-                self:StopMovingOrSizing()
+                self:OnMouseUp()
             </OnMouseUp>
         </Scripts>
     </Frame>

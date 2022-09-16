@@ -644,6 +644,7 @@ if UnitClassBase( 'player' ) == 'WARRIOR' then
             toggle = "defensives",
 
             readyTime = function ()
+                if settings.overlap_ignore_pain then return end
                 if buff.ignore_pain.up and buff.ignore_pain.v1 > 0.3 * stat.attack_power * 3.5 * ( 1 + stat.versatility_atk_mod / 100 ) then
                     return buff.ignore_pain.remains - gcd.max
                 end
@@ -867,7 +868,9 @@ if UnitClassBase( 'player' ) == 'WARRIOR' then
             startsCombat = false,
             texture = 132110,
 
-            nobuff = "shield_block",
+            nobuff = function()
+                if not settings.stack_shield_block or not legendary.reprisal.enabled then return "shield_block" end
+            end,
 
             handler = function ()
                 applyBuff( "shield_block" )
@@ -1079,6 +1082,23 @@ if UnitClassBase( 'player' ) == 'WARRIOR' then
         width = "full"
     } )
 
+    spec:RegisterSetting( "overlap_ignore_pain", false, {
+        name = "叠加|T1377132:0|t无视苦痛",
+        desc = "如果勾选，默认优先级将会在|T1377132:0|t无视苦痛持续时再次推荐它。此设置可能会导致你在减伤上花费更多的怒气。",
+        type = "toggle",
+        width = "full"
+    } )
+    spec:RegisterSetting( "stack_shield_block", false, {
+        name = "使用复仇心切获取|T132110:0|t盾牌格挡",
+        desc = function()
+            return "如果勾选，插件将会推荐使用复仇心切获取|T132110:0|t盾牌格挡的玩法。\n\n" ..
+            "此设置可避免在盾牌格挡有2层充能时被错误使用，浪费冷却恢复的时间。\n\n" ..
+            ( state.legendary.reprisal.enabled and "|cFF00FF00" or "|cFFFF0000" ) ..
+            "必须装备|T236317:0|t复仇心切（传说之力）|r"
+        end,
+        type = "toggle",
+        width = "full"
+    } )
     spec:RegisterSetting( "heroic_charge", false, {
         name = "使用英勇冲锋连击",
         desc = "如果勾选，优先级配置将检查此项的状态，以确定是否能连续使用英勇飞跃+冲锋的连携。\n\n" ..

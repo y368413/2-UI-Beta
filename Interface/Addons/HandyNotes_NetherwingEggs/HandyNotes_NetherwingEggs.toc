@@ -1,5 +1,5 @@
-## Interface: 90200
-## Version: 1.08
+## Interface: 90207
+## Version: 1.10
 ## Author: Taraezor
 ## Title: Netherwing Eggs
 ## Title-deDE: Eier der Netherschwingen

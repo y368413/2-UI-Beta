@@ -187,5 +187,7 @@ local function updateWhoList()
 		end
 	end
 end
+if not I.isNewPatch then
 hooksecurefunc("WhoList_Update", updateWhoList)
 hooksecurefunc(WhoListScrollFrame, "update", updateWhoList)
+end

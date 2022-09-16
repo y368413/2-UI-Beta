@@ -492,8 +492,10 @@ local HekiliSpecMixin = {
         self.recheck = func
     end,
 
-    RegisterHook = function( self, hook, func )
-        if hook ~= "COMBAT_LOG_EVENT_UNFILTERED" then func = setfenv( func, state ) end
+    RegisterHook = function( self, hook, func, noState )
+        if not ( noState == true or hook == "COMBAT_LOG_EVENT_UNFILTERED" and noState == nil ) then
+            func = setfenv( func, state )
+        end
         self.hooks[ hook ] = self.hooks[ hook ] or {}
         insert( self.hooks[ hook ], func )
     end,
@@ -505,19 +507,20 @@ local HekiliSpecMixin = {
             funcs = {},
         }, {
             __index = function( t, k )
-                if t.funcs[ k ] then return t.funcs[ k ]() end
-                if k == "lastCast" then return state.history.casts[ t.key ] or t.realCast end
-                if k == "lastUnit" then return state.history.units[ t.key ] or t.realUnit end
                 local setup = rawget( t, "onLoad" )
                 if setup then
                     t.onLoad = nil
                     setup( t )
                     return t[ k ]
                 end
+                if t.funcs[ k ] then return t.funcs[ k ]() end
+                if k == "lastCast" then return state.history.casts[ t.key ] or t.realCast end
+                if k == "lastUnit" then return state.history.units[ t.key ] or t.realUnit end
             end,
         } )
 
         a.key = ability
+        a.from = self.id
 
         if not data.id then
             if data.item then
@@ -1013,8 +1016,10 @@ function Hekili:NewSpecialization( specID, isRanged )
         return nil
     end
 
+    local token = getSpecializationKey( id )
     local spec = class.specs[ id ] or {
         id = id,
+        key = token,
         name = name,
         texture = texture,
         role = role,

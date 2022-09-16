@@ -5,21 +5,21 @@ local scaling = ns.scaling
 
 -- The EggID was used in my original AddOn to provide am item link in chat
 
-points[70] = {	-- Dustwallow Marsh
+points[ns.dustwallowMarsh] = {	-- Dustwallow Marsh
 	[46501715] = { "Dart's Nest", "Darting Hatchling", 48118 },
 	[47981907] = { "Dart's Nest", "Darting Hatchling", 48118 },
 	[48011426] = { "Dart's Nest", "Darting Hatchling", 48118 },
 	[49171736] = { "Dart's Nest", "Darting Hatchling", 48118 },
 }
 
-points[10] = {	-- Northern Barrens
+points[ns.northernBarrens] = {	-- Northern Barrens
 	[60951976] = { "Takk's Nest", "Leaping Hatchling", 48112 },
 	[62762018] = { "Takk's Nest", "Leaping Hatchling", 48112 },
 	[64172300] = { "Takk's Nest", "Leaping Hatchling", 48112 },
 	[64942860] = { "Takk's Nest", "Leaping Hatchling", 48112 },
 }
 
-points[78] = {	-- Un'Goro Crater
+points[ns.unGoroCrater] = {	-- Un'Goro Crater
 	[62067336] = { "Ravasaur Matriarch's Nest", "Ravasaur Hatchling", 48122, "Under the foliage" },
 	[62096523] = { "Ravasaur Matriarch's Nest", "Ravasaur Hatchling", 48122 },
 	[62976308] = { "Ravasaur Matriarch's Nest", "Ravasaur Hatchling", 48122, "Under the foliage" },
@@ -28,7 +28,7 @@ points[78] = {	-- Un'Goro Crater
 }
 
 -- A code hack will differentiate between the two. The first is for general use, the other only for inside the cave
-points[56] = {	-- Wetlands
+points[ns.wetlands] = {	-- Wetlands
 	[69373491] = { "Cave Entrance", "Raptor Ridge", 48124, "Razormaw Matriarch's Nest" },
 	[70032915] = { "Razormaw Matriarch's Nest", "Razormaw Hatchling", 48124, "Veer to the right" },
 }

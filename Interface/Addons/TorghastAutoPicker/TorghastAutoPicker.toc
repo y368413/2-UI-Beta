@@ -1,4 +1,4 @@
-## Interface: 90200
+## Interface: 90207
 ## Title: TorghastAutoPicker
 ## Notes: Automatically select powers when running Torghast
 ## Author: Dacaver-Tichondrius

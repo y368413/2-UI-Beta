@@ -3,7 +3,7 @@
 
                                      Adorable Raptor Hatchlings
 
-                                       v1.05 - 20th March 2022
+                                     v1.07 - 14th September 2022
                                 Copyright (C) Taraezor / Chris Birch
 
                                 ----o----(||)----oo----(||)----o----
@@ -50,7 +50,8 @@ setmetatable( L, { __index = function( L, key ) return key end } )
 local realm = GetNormalizedRealmName() -- On a fresh login this will return null
 ns.oceania = { AmanThul = true, Barthilas = true, Caelestrasz = true, DathRemar = true,
 			Dreadmaul = true, Frostmourne = true, Gundrak = true, JubeiThos = true, 
-			Khazgoroth = true, Nagrand = true, Saurfang = true, Thaurissan = true}			
+			Khazgoroth = true, Nagrand = true, Saurfang = true, Thaurissan = true,
+			Yojamba = true, Remulos = true, Arugal = true,}			
 if ns.oceania[realm] then
 	ns.locale = "enGB"
 end
@@ -507,9 +508,16 @@ function pluginHandler:OnClick(button, down, mapFile, coord)
 end
 
 do
-	continents[12] = true	-- Kalimdor
-	continents[13] = true	-- Eastern Kingdoms
-
+	local _, _, _, version = GetBuildInfo()
+	ns.kalimdor = (version < 40000) and 1414 or 12
+	ns.easternKingdom = (version < 40000) and 1415 or 13
+	ns.dustwallowMarsh = (version < 40000) and 1445 or 70
+	ns.northernBarrens = (version < 40000) and 1413 or 10
+	ns.unGoroCrater = (version < 40000) and 1449 or 78
+	ns.wetlands = (version < 40000) and 1437 or 56
+	continents[ns.kalimdor] = true
+	continents[ns.easternKingdom] = true
+	
     local bucket = CreateFrame("Frame")
     bucket.elapsed = 0
     bucket:SetScript("OnUpdate", function(self, elapsed)
@@ -545,7 +553,7 @@ do
 						return coord, nil, ns.textures[ns.db.icon_choice], ns.db.icon_scale * ns.scaling[ns.db.icon_choice], ns.db.icon_alpha
 					end
 				else
-					if ns.insideCave == false then
+					if ns.insideCave == false or ns.CurrentMap == ns.kalimdor then
 						return coord, nil, ns.textures[ns.db.icon_choice], ns.db.icon_scale * ns.scaling[ns.db.icon_choice], ns.db.icon_alpha
 					end
 				end
@@ -554,6 +562,7 @@ do
 		end
 	end
 	function pluginHandler:GetNodes2(mapID)
+		ns.CurrentMap = mapID
 		return iterator, ns.points[mapID]
 	end
 end
@@ -628,6 +637,7 @@ function pluginHandler:OnEnable()
 		printPC("HandyNotes is out of date")
 		return
 	end
+	
 	for continentMapID in next, continents do
 		local children = C_Map.GetMapChildrenInfo(continentMapID, nil, true)
 		for _, map in next, children do

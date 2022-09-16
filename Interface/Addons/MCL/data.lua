@@ -46,7 +46,7 @@ core.sectionNames = {
 	},
 	Alliance = {
 		name = "Alliance",
-		category = {"Pandaren", "Human", "Gnome", "Dwarf", "Draenei", "Night Elf", "Worgen"}
+		category = {"Pandaren", "Human", "Gnome", "Dwarf", "Dark Iron Dwarf", "Draenei", "Night Elf", "Worgen"}
 	},
 	Professions = {
 		name = "Professions",
@@ -66,11 +66,15 @@ core.sectionNames = {
 	},
 	Other = {
 		name = "Other",
-		category = {"Guild Vendor", "BMAH", "Mount Collection", "Exalted Reputations", "Toy", "Heirlooms"}
+		category = {"Guild Vendor", "BMAH", "Mount Collection", "Exalted Reputations", "Toy", "Heirlooms", "Paladin", "Warlock"}
 	},
 	Unobtainable = {
 		name = "Unobtainable",
 		category = {"Mythic +","Scroll of Resurrection", "Challenge Mode", "Recruit-A-Friend", "Ahead of the Curve", "Brawler's Guild", "Arena Mounts | TBC - WOD", "Arena Mounts | LEGION - SL", "Azeroth Choppers", "Original Epic Mounts", "Old Promotion Mounts", "Unobtainable Raid Mounts", "BrewFest"}
+	},
+	Overview = {
+		name = "Overview",
+		category = {"Classic", "TBC", "WOTLK", "CATA", "MOP", "WOD", "LEGION", "BFA", "SL", "Faction", "Professions", "PVP", "WorldEvents", "Promotion", "Other", "Unobtainable"}
 	}
 }
 core.mountList = {
@@ -78,8 +82,8 @@ core.mountList = {
 		name = "SL",
 		Achievement = {
 			name = "Achievement",
-			mounts = {186654, 186637, 184183, 182596, 186653, 184166, 186655, 187673, 187682},
-			mountID = {15491, 1549}
+			mounts = {186654, 186637, 184183, 182596, 186653, 184166, 186655, 187673, 192557},
+			mountID = {15491, 1549, 1576}
 		},
 		Vendor = {
 			name = "Vendor",
@@ -618,6 +622,11 @@ core.mountList = {
 			mounts = {18785, 18786, 18787, 5864, 5872, 5873},
 			mountID = {}
 		},
+		DarkIronDwarf = {
+			name = "Dark Iron Dwarf",
+			mounts = {191123},
+			mountID = {}
+		},
 		Gnome = {
 			name = "Gnome",
 			mounts = {18772, 18773, 18774, 8563, 8595, 13322, 13321},
@@ -663,7 +672,7 @@ core.mountList = {
 		},
 		Bloodelf = {
 			name = "Blood Elf",
-			mounts = {28936, 29223, 29224, 28927, 29220, 29221, 29222},
+			mounts = {28936, 29223, 29224, 28927, 29220, 29221, 29222, 191566},
 			mountID = {}
 		},
 		Goblin = {
@@ -739,13 +748,12 @@ core.mountList = {
 		},
 		ViciousSaddle = {
 			name = "Vicious Saddle",
-			mounts = { 102533, 70910, 116778, 124540, 140348, 140354, 143649, 142235, 142437, 152869, 163124, 165020, 163121, 173713, 184013, 186179, 70909, 102514, 116777, 124089, 140353, 140350, 143648, 142234, 142237, 152870, 163123, 163122, 173714, 186178, 187642, 187644, 187681, 187680				
-			},
+			mounts = { 102533, 70910, 116778, 124540, 140348, 140354, 143649, 142235, 142437, 152869, 163124, 165020, 163121, 173713, 184013, 186179, 70909, 102514, 116777, 124089, 140353, 140350, 143648, 142234, 142237, 152870, 163123, 163122, 173714, 186178, 187681, 187680, 187642, 187644},
 			mountID = {}
 		},
 		Gladiator = {
 			name = "Gladiator",
-			mounts = {189507},
+			mounts = {191290},
 			mountID = {}
 		},
 		Halaa = {
@@ -822,7 +830,7 @@ core.mountList = {
 		BlizzardStore = {
 			name = "Blizzard Store",
 			mounts = {54811, 69846, 78924, 95341, 97989, 107951, 112326, 122469, 147901, 156564, 160589, 166775, 166774, 166776},
-			mountID = {1266, 1267, 1290, 1346, 1291, 1456, 1330, 1531}
+			mountID = {1266, 1267, 1290, 1346, 1291, 1456, 1330, 1531, 1581}
 		},
 		Blizzcon = {
 			name = "Blizzcon",
@@ -832,7 +840,7 @@ core.mountList = {
 		CollectorsEdition = {
 			name = "Collector's Edition",
 			mounts = {85870, 109013, 128425, 153539, 153540},
-			mountID = {1289}
+			mountID = {1289, 1556}
 		},
 		WowClassic = {
 			name = "WoW Classic",
@@ -916,13 +924,23 @@ core.mountList = {
 			name = "Guild Vendor",
 			mounts = {63125, 62298, 67107, 85666, 116666},
 			mountID = {}
+		},
+		Paladin = {
+			name="Paladin",
+			mounts = {47179},
+			mountID = {41, 84, 149, 150, 350, 351, 367, 368, 1046, 1047, 1568}
+		},
+		Warlock = {
+			name="Warlock",
+			mounts = {},
+			mountID = {17, 83},
 		}
 	},
 	Unobtainable = {
 		name = "Unobtainable",
 		MythicPlus = {
 			name = "Mythic +",
-			mounts = {182717, 187525, 174836},
+			mounts = {182717, 187525, 174836, 187682},
 			mountID = {}
 		},
 		ScrollOfResurrection = {
@@ -957,7 +975,7 @@ core.mountList = {
 		},
 		Arena2 = {
 			name = "Arena Mounts | LEGION - SL",
-			mounts = {141843, 141844, 141845, 141846, 141847, 141848, 153493, 156879, 156880, 156881, 156884, 183937, 186177},
+			mounts = {141843, 141844, 141845, 141846, 141847, 141848, 153493, 156879, 156880, 156881, 156884, 183937, 186177, 189507},
 			mountID = {}
 		},
 		DCAzerothChopper = {

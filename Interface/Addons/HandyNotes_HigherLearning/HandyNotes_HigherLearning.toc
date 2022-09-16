@@ -1,5 +1,5 @@
-## Interface: 90200
-## Version: 1.06
+## Interface: 90207
+## Version: 1.08
 ## Title: Higher Learning
 ## Title-deDE: Höheres Studium
 ## Title-esES: Conocimiento Superior

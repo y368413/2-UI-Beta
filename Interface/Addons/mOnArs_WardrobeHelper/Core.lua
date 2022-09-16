@@ -167,11 +167,12 @@ local function getUpdateHelper()
 			local newInstances = {}
 			local blockSize = 50 -- number of appearances to load at once. higher values may introduce lag
 			local counter = 0
+			local transmogLocation = TransmogUtil.CreateTransmogLocation(INVSLOT_WRIST,0,0)
 			for i = 0, 29 do
-				local appearances = C_TransmogCollection.GetCategoryAppearances(i)
+				local appearances = C_TransmogCollection.GetCategoryAppearances(i, transmogLocation)
 				if appearances then
 					for j = 1, #appearances do
-						local sources = C_TransmogCollection.GetAppearanceSources(appearances[j].visualID)
+						local sources = C_TransmogCollection.GetAppearanceSources(appearances[j].visualID, 0, transmogLocation)
 						if sources then
 							local collected = (mOnWDSave.completionistMode == false) and (o.isCollected(sources) == true)
 							if collected and mOnWDSave.disableProgress then
@@ -185,7 +186,7 @@ local function getUpdateHelper()
 									if o.isBlacklisted(itemID) == false then
 										-- 1 = Boss Raid Drops
 										if sourceType == 1 then
-											local drops = C_TransmogCollection.GetAppearanceSourceDrops(sources[m].sourceID)
+											local drops = C_TransmogCollection.GetAppearanceSourceDrops(sources[m].sourceID, transmogLocation)
 											for k = 1, #drops do
 												local inst = drops[k]
 												if newInstances[inst.instance] == nil then
@@ -232,7 +233,7 @@ local function getUpdateHelper()
 										else
 											local type = TYPES[sourceType]
 											if type == nil then type = "UNKNOWN" end
-											local name, isWeapon, canEnchant, canMainHand, canOffHand = C_TransmogCollection.GetCategoryInfo(i)
+											local name, isWeapon, canEnchant, canMainHand, canOffHand = C_TransmogCollection.GetCategoryInfo(i, transmogLocation)
 											if i < 10 then
 												name = '0' .. i .. ' - ' .. name
 											else
@@ -300,7 +301,7 @@ local function getUpdateHelper()
 							newInstances[categoryName]["difficulties"][difficultyName]["bosses"][bossName]["items"] = {}
 							for i = 1, #boss do
 								local item = boss[i]
-								local sources = C_TransmogCollection.GetAppearanceSources(item.visualID)
+								local sources = C_TransmogCollection.GetAppearanceSources(item.visualID, 0, transmogLocation)
 								if sources then
 									local collected = o.isCollected(sources) and (mOnWDSave.completionistMode == false)
 									collected = collected or (o.isCollected(sources, item.id) and mOnWDSave.completionistMode)
@@ -399,10 +400,11 @@ o.refreshInstance = function(instance)
 	if o.instances[instance] == nil then
 		return
 	end
+	local transmogLocation = TransmogUtil.CreateTransmogLocation(INVSLOT_WRIST,0,0)
 	for difficulty, bosses in pairs(o.instances[instance]["difficulties"]) do
 		for boss, items in pairs(bosses["bosses"]) do
 			for i = #items["items"], 1, -1 do
-				local sources = C_TransmogCollection.GetAppearanceSources(items["items"][i].visualID)
+				local sources = C_TransmogCollection.GetAppearanceSources(items["items"][i].visualID, 0, transmogLocation)
 				if o.isBlacklisted(items["items"][i].id) then
 					table.remove(items["items"], i)
 					o.instances[instance]["total"] = o.instances[instance]["total"] - 1

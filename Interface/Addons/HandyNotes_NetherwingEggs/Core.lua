@@ -3,7 +3,7 @@
 
                                            Netherwing Eggs
 
-                                       v1.08 - 20th March 2022
+                                     v1.10 - 14th September 2022
                                 Copyright (C) Taraezor / Chris Birch
 
                                 ----o----(||)----oo----(||)----o----
@@ -46,7 +46,7 @@ local realm = GetNormalizedRealmName() -- On a fresh login this will return null
 ns.oceania = { AmanThul = true, Barthilas = true, Caelestrasz = true, DathRemar = true,
 			Dreadmaul = true, Frostmourne = true, Gundrak = true, JubeiThos = true, 
 			Khazgoroth = true, Nagrand = true, Saurfang = true, Thaurissan = true,
-			Yojamba = true, Remulos = true, Felstriker = true, Arugal = true,}			
+			Yojamba = true, Remulos = true, Arugal = true,}			
 if ns.oceania[realm] then
 	ns.locale = "enGB"
 end
@@ -425,8 +425,8 @@ end
 
 do
 	local _, _, _, version = GetBuildInfo()
-	ns.outland = (version < 30000) and 1945 or 101
-	ns.valley = (version < 30000) and 1948 or 104
+	ns.outland = (version < 40000) and 1945 or 101
+	ns.valley = (version < 40000) and 1948 or 104
 	continents[ns.outland] = true
 
     local bucket = CreateFrame("Frame")

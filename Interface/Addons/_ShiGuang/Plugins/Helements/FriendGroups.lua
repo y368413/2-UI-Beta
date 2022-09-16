@@ -1,4 +1,4 @@
---## Author: Mikeprod  ## Version: 9.2.0
+--## Author: Mikeprod  ## Version: 9.2.7
 local hooks = {}
 
 function Hook(source, target, secure)
@@ -356,7 +356,7 @@ function FriendGroups_UpdateFriendButton(button)
 			button.status:SetTexture(FRIENDS_TEXTURE_OFFLINE)
 			nameColor = FRIENDS_GRAY_COLOR
 			button.gameIcon:Hide()
-			if ( not lastOnline or lastOnline == 0 or time() - lastOnline >= ONE_YEAR ) then
+			if (not lastOnline or lastOnline == 0 or time() - lastOnline >= ONE_YEAR) then
 				infoText = FRIENDS_LIST_OFFLINE
 			else
 				infoText = string.format(BNET_LAST_ONLINE_TIME, FriendsFrame_GetLastOnline(lastOnline))
