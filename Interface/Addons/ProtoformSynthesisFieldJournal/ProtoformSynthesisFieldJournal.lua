@@ -10,7 +10,7 @@ local DEBUG_MODE = false
 ProtoformSynthesisFieldJournalSettings = {} -- global settings (becomes settings)
 
 BINDING_HEADER_PROTOFORMSYNTHESISFIELDJOURNAL = L["Protoform Synthesis Field Journal"]
-BINDING_NAME_PROTOFORMSYNTHESISFIELDJOURNAL_TOGGLE = L["Toggle Window"]
+BINDING_NAME_PROTOFORMSYNTHESISFIELDJOURNAL_TOGGLE = L["Toggle Protoform Synthesis Field Journal"]
 
 SLASH_PROTOFORMSYNTHESISFIELDJOURNAL1 = "/psfj"
 SlashCmdList["PROTOFORMSYNTHESISFIELDJOURNAL"] = function() psfj:Toggle() end
@@ -176,8 +176,7 @@ function psfj:PLAYER_LOGIN()
     -- adjust frame
     self.TitleText:SetText(L["Protoform Synthesis Field Journal"])
     self.TitleText:SetPoint("TOP",-6,-5)
-    self:SetMinResize(330,196)
-    self:SetMaxResize(1024,768)
+    self:SetResizeBounds(330,196,1024,768)
     if self:GetWidth()<330 then
         self:SetWidth(330)
     end
@@ -704,7 +703,7 @@ end
 
 function minimapButton:Update()
     local angle = settings.minimapPosition or 160
-    self:SetPoint("TOPLEFT",Minimap,"TOPLEFT",52-(80*cos(angle)),(80*sin(angle))-52)
+    self:SetPoint("CENTER",Minimap,"CENTER",(105*cos(angle)),(105*sin(angle)))
     self:SetShown(settings.showMinimapButton and true)
 end
 
@@ -743,8 +742,8 @@ end
 
 function minimapButton:OnDragUpdate(elapsed)
 	local x,y = GetCursorPosition()
-	local minX,minY = Minimap:GetLeft(), Minimap:GetBottom()
 	local scale = Minimap:GetEffectiveScale()
-    settings.minimapPosition = math.deg(math.atan2(y/scale-minY-70,minX-x/scale+70))
+	local minX,minY = Minimap:GetCenter()
+    settings.minimapPosition = math.deg(math.atan2(y/scale-minY,x/scale-minX))
     self:Update()
 end

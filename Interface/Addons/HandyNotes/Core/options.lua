@@ -81,7 +81,7 @@ end
 
 Core.options = {
     type = 'group',
-    name = nil, -- populated in Core.lua
+    name = nil, -- populated in core.lua
     childGroups = 'tab',
     get = function(info) return Core:GetOpt(info.arg) end,
     set = function(info, v) Core:SetOpt(info.arg, v) end,

@@ -4,7 +4,9 @@
   <Script file='Class\API.lua'/>
   <Script file='Class\Status.lua'/>
   <Script file='Class\Cache.lua'/>
+  <Script file='Class\Currency.lua'/>
   <Script file='Class\Player.lua'/>
+  <Script file='Class\Profession.lua'/>
   <Script file='Class\Item.lua'/>
   <Script file='Class\Quest.lua'/>
   <Script file='Class\Loot\Achievement.lua'/>
@@ -13,6 +15,7 @@
   <Script file='Class\Loot\Toy.lua'/>
   <Script file='Class\Loot\Transmog.lua'/>
   <Script file='Class\Loot.lua'/>
+  <Script file='Class\Summary.lua'/>
   <Script file='Class\Requirements.lua'/>
   <Script file='Class\Point.lua'/>
   <Script file='Class\Map.lua'/>

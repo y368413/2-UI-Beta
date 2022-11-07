@@ -1,10 +1,12 @@
-## Interface: 90207
+## Interface: 100000
 ## Title: Acts Functions
 ## Author: Actuarius
-## Version: 2.0.9
+## Version: 2.1.0
 ## SavedVariables: actSettings
 ## SavedVariablesPerCharacter: actMounts
 
-init.lua
+core\init.lua
+core\variables.lua
+core\functions.lua
 config.lua
 main.lua

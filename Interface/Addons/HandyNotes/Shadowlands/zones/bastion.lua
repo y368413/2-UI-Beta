@@ -1,31 +1,34 @@
 -------------------------------------------------------------------------------
 ---------------------------------- NAMESPACE ----------------------------------
 -------------------------------------------------------------------------------
-local _, shadowlands = ...
-local Class = shadowlands.Class
-local L = shadowlands.locale
-local Map = shadowlands.Map
+local _, Shadowlands = ...
+local Class = Shadowlands.Class
+local L = Shadowlands.locale
+local Map = Shadowlands.Map
 
-local Collectible = shadowlands.node.Collectible
-local Node = shadowlands.node.Node
-local PetBattle = shadowlands.node.PetBattle
-local Rare = shadowlands.node.Rare
-local Treasure = shadowlands.node.Treasure
+local Collectible = Shadowlands.node.Collectible
+local Node = Shadowlands.node.Node
+local PetBattle = Shadowlands.node.PetBattle
+local Rare = Shadowlands.node.Rare
+local Soulshape = Shadowlands.node.Soulshape
+local Squirrel = Shadowlands.node.Squirrel
+local Treasure = Shadowlands.node.Treasure
 
-local Achievement = shadowlands.reward.Achievement
-local Item = shadowlands.reward.Item
-local Mount = shadowlands.reward.Mount
-local Pet = shadowlands.reward.Pet
-local Transmog = shadowlands.reward.Transmog
-local Toy = shadowlands.reward.Toy
+local Achievement = Shadowlands.reward.Achievement
+local Item = Shadowlands.reward.Item
+local Mount = Shadowlands.reward.Mount
+local Pet = Shadowlands.reward.Pet
+local Transmog = Shadowlands.reward.Transmog
+local Toy = Shadowlands.reward.Toy
 
-local Path = shadowlands.poi.Path
-local POI = shadowlands.poi.POI
+local Path = Shadowlands.poi.Path
+local POI = Shadowlands.poi.POI
 
 -------------------------------------------------------------------------------
 
-local KYRIAN = shadowlands.covenants.KYR
-local NECROLORD = shadowlands.covenants.NEC
+local KYRIAN = Shadowlands.covenants.KYR
+local NECROLORD = Shadowlands.covenants.NEC
+local NIGHTFAE = Shadowlands.covenants.FAE
 
 local map = Map({id = 1533, settings = true})
 
@@ -36,7 +39,7 @@ local map = Map({id = 1533, settings = true})
 map.nodes[32592336] = Rare({
     id = 171211,
     quest = 61083,
-    requires = shadowlands.requirement.Item(180613),
+    requires = Shadowlands.requirement.Item(180613),
     note = L['aspirant_eolis_note'],
     rewards = {
         Achievement({id = 14307, criteria = 50613}),
@@ -144,7 +147,8 @@ map.nodes[66004367] = Rare({
             65844451, -- Mercia's Legacy: Chapter Seven
             66214333, -- Mercia's Legacy: Chapter Seven
             67394283, -- Mercia's Legacy: Chapter Seven
-            67604342 -- Mercia's Legacy: Chapter Seven
+            67604342, -- Mercia's Legacy: Chapter Seven
+            65304440 -- Mercia's Legacy: Chapter Seven
         })
     }
 }) -- Collector Astorestes
@@ -152,7 +156,7 @@ map.nodes[66004367] = Rare({
 map.nodes[56904778] = Rare({
     id = 171010,
     quest = 60999,
-    requires = shadowlands.requirement.Item(180651),
+    requires = Shadowlands.requirement.Item(180651),
     note = L['corrupted_clawguard_note'],
     rewards = {Achievement({id = 14307, criteria = 50615})},
     pois = {
@@ -255,7 +259,7 @@ map.nodes[42908265] = Rare({
     id = 158659,
     quest = {57705, 57708},
     note = L['herculon_note'],
-    requires = shadowlands.requirement.Item(172451, 10),
+    requires = Shadowlands.requirement.Item(172451, 10),
     rewards = {
         Achievement({id = 14307, criteria = 50582})
         -- https://www.wowhead.com/object=336428/aspirants-chest
@@ -295,7 +299,7 @@ map.nodes[22432285] = Rare({
     label = GetAchievementCriteriaInfoByID(14307, 50618) or UNKNOWN,
     quest = 61634,
     covenant = KYRIAN,
-    requires = shadowlands.requirement.GarrisonTalent(1241, L['anima_channeled']),
+    requires = Shadowlands.requirement.GarrisonTalent(1241, L['anima_channeled']),
     note = L['sotiros_orstus_note'],
     rewards = {
         Achievement({id = 14307, criteria = 50618}),
@@ -352,7 +356,7 @@ map.nodes[53498868] = Rare({
     label = GetAchievementCriteriaInfoByID(14307, 50619),
     note = L['ascended_council_note'],
     rewards = {
-        Achievement({id = 14307, criteria = 50619}), shadowlands.reward.Spacer(),
+        Achievement({id = 14307, criteria = 50619}), Shadowlands.reward.Spacer(),
         Achievement({id = 14734, criteria = {49818, 49815, 49816, 49819, 49817}}),
         Mount({item = 183741, id = 1426}) -- Ascended Skymane
     },
@@ -380,7 +384,7 @@ map.nodes[40635306] = Rare({
     id = 167078,
     quest = {60314, 62197},
     covenant = KYRIAN,
-    requires = shadowlands.requirement.GarrisonTalent(1238, L['anima_channeled']),
+    requires = Shadowlands.requirement.GarrisonTalent(1238, L['anima_channeled']),
     note = L['wingflayer_note'],
     rewards = {
         Achievement({id = 14307, criteria = 50600}), Item({item = 182749}) -- Regurgitated Kyrian Wings
@@ -407,7 +411,7 @@ map.nodes[46114536] = Treasure({
 
 map.nodes[35834811] = Treasure({
     quest = 61053,
-    requires = shadowlands.requirement.Item(180536),
+    requires = Shadowlands.requirement.Item(180536),
     note = L['broken_flute'],
     rewards = {
         Achievement({id = 14311, criteria = 50055}), Item({item = 180064}) -- Ascended Flute
@@ -429,7 +433,7 @@ map.nodes[61061510] = Treasure({
 
 map.nodes[51471795] = Treasure({
     quest = 61052,
-    requires = shadowlands.requirement.Item(180534),
+    requires = Shadowlands.requirement.Item(180534),
     note = L['experimental_construct_part'],
     rewards = {
         Achievement({id = 14311, criteria = 50054}),
@@ -445,7 +449,7 @@ map.nodes[51471795] = Treasure({
 
 map.nodes[35085805] = Treasure({
     quest = 60893,
-    requires = shadowlands.requirement.Spell(333063),
+    requires = Shadowlands.requirement.Spell(333063),
     note = L['gift_of_agthia'],
     rewards = {
         Achievement({id = 14311, criteria = 50058}), Item({item = 180063}) -- Unearthly Chime
@@ -455,7 +459,7 @@ map.nodes[35085805] = Treasure({
 
 map.nodes[70473645] = Treasure({
     quest = 60892,
-    requires = shadowlands.requirement.Spell(333045),
+    requires = Shadowlands.requirement.Spell(333045),
     note = L['gift_of_chyrus'],
     rewards = {
         Achievement({id = 14311, criteria = 50060}), Toy({item = 183988}) -- Bondable Val'kyr Diadem
@@ -465,7 +469,7 @@ map.nodes[70473645] = Treasure({
 
 map.nodes[27602179] = Treasure({
     quest = 60895,
-    requires = shadowlands.requirement.Spell(333070),
+    requires = Shadowlands.requirement.Spell(333070),
     note = L['gift_of_devos'],
     rewards = {
         Achievement({id = 14311, criteria = 50062}), Item({item = 179977}) -- Benevolent Gong
@@ -480,7 +484,7 @@ map.nodes[27602179] = Treasure({
 
 map.nodes[40601890] = Treasure({
     quest = 60894,
-    requires = shadowlands.requirement.Spell(333068),
+    requires = Shadowlands.requirement.Spell(333068),
     note = L['gift_of_thenios'],
     rewards = {
         Achievement({id = 14311, criteria = 50061}),
@@ -493,7 +497,7 @@ map.nodes[40601890] = Treasure({
 
 map.nodes[64877114] = Treasure({
     quest = 60890,
-    requires = shadowlands.requirement.Spell(332785),
+    requires = Shadowlands.requirement.Spell(332785),
     note = L['gift_of_vesiphone'],
     rewards = {
         Achievement({id = 14311, criteria = 50059}),
@@ -523,7 +527,7 @@ map.nodes[59336092] = Treasure({
 
 map.nodes[56481714] = Treasure({
     quest = 61150,
-    requires = shadowlands.requirement.Item(180797),
+    requires = Shadowlands.requirement.Item(180797),
     note = L['memorial_offering'],
     rewards = {Achievement({id = 14311, criteria = 50056})},
     pois = {
@@ -566,7 +570,7 @@ map.nodes[40504980] = Treasure({
 
 map.nodes[36012652] = Treasure({
     quest = 61183, -- 61229 (mallet forged) 61191 (vesper rung)
-    requires = shadowlands.requirement.Item(180858),
+    requires = Shadowlands.requirement.Item(180858),
     label = L['vesper_of_silver_wind'],
     note = L['vesper_of_silver_wind_note'],
     rewards = {
@@ -604,7 +608,7 @@ map.nodes[34806280] = PetBattle({
     id = 173131,
     note = L['stratios_note'],
     rewards = {
-        Achievement({id = 14625, criteria = 49416}), shadowlands.reward.Spacer(),
+        Achievement({id = 14625, criteria = 49416}), Shadowlands.reward.Spacer(),
         Achievement({id = 14868, criteria = 9, oneline = true}), -- Aquatic
         Achievement({id = 14869, criteria = 9, oneline = true}), -- Beast
         Achievement({id = 14870, criteria = 9, oneline = true}), -- Critter
@@ -627,7 +631,7 @@ map.nodes[51393833] = PetBattle({
     id = 173130,
     note = L['zolla_note'],
     rewards = {
-        Achievement({id = 14625, criteria = 49415}), shadowlands.reward.Spacer(),
+        Achievement({id = 14625, criteria = 49415}), Shadowlands.reward.Spacer(),
         Achievement({id = 14868, criteria = 7, oneline = true}), -- Aquatic
         Achievement({id = 14869, criteria = 7, oneline = true}), -- Beast
         Achievement({id = 14870, criteria = 7, oneline = true}), -- Critter
@@ -645,7 +649,7 @@ map.nodes[54555609] = PetBattle({
     id = 173129,
     note = L['thenia_note'],
     rewards = {
-        Achievement({id = 14625, criteria = 49414}), shadowlands.reward.Spacer(),
+        Achievement({id = 14625, criteria = 49414}), Shadowlands.reward.Spacer(),
         Achievement({id = 14868, criteria = 8, oneline = true}), -- Aquatic
         Achievement({id = 14869, criteria = 8, oneline = true}), -- Beast
         Achievement({id = 14870, criteria = 8, oneline = true}), -- Critter
@@ -665,7 +669,7 @@ map.nodes[54555609] = PetBattle({
 
 map.nodes[34753001] = Collectible({
     icon = 1022951,
-    group = shadowlands.groups.BLESSINGS,
+    group = Shadowlands.groups.BLESSINGS,
     label = '{spell:327976}',
     note = L['count_your_blessings_note'],
     rewards = {Achievement({id = 14767, criteria = 49946})}
@@ -673,7 +677,7 @@ map.nodes[34753001] = Collectible({
 
 map.nodes[53832886] = Collectible({
     icon = 1022951,
-    group = shadowlands.groups.BLESSINGS,
+    group = Shadowlands.groups.BLESSINGS,
     label = '{spell:327974}',
     note = L['count_your_blessings_note'],
     rewards = {Achievement({id = 14767, criteria = 49944})}
@@ -681,7 +685,7 @@ map.nodes[53832886] = Collectible({
 
 map.nodes[45285979] = Collectible({
     icon = 1022951,
-    group = shadowlands.groups.BLESSINGS,
+    group = Shadowlands.groups.BLESSINGS,
     label = '{spell:327975}',
     note = L['count_your_blessings_note'],
     rewards = {Achievement({id = 14767, criteria = 49945})}
@@ -693,7 +697,7 @@ map.nodes[45285979] = Collectible({
 
 map.nodes[32171776] = Collectible({
     icon = 3536181,
-    group = shadowlands.groups.VESPERS,
+    group = Shadowlands.groups.VESPERS,
     label = L['vesper_of_loyalty'],
     note = L['vespers_ascended_note'],
     rewards = {Achievement({id = 14734, criteria = 49817})}
@@ -701,7 +705,7 @@ map.nodes[32171776] = Collectible({
 
 map.nodes[33325980] = Collectible({
     icon = 3536181,
-    group = shadowlands.groups.VESPERS,
+    group = Shadowlands.groups.VESPERS,
     label = L['vesper_of_courage'],
     note = L['vespers_ascended_note'],
     rewards = {Achievement({id = 14734, criteria = 49815})}
@@ -709,7 +713,7 @@ map.nodes[33325980] = Collectible({
 
 map.nodes[39132038] = Collectible({
     icon = 3536181,
-    group = shadowlands.groups.VESPERS,
+    group = Shadowlands.groups.VESPERS,
     label = L['vesper_of_wisdom'],
     note = L['vespers_ascended_note'],
     rewards = {Achievement({id = 14734, criteria = 49819})}
@@ -717,7 +721,7 @@ map.nodes[39132038] = Collectible({
 
 map.nodes[64326980] = Collectible({
     icon = 3536181,
-    group = shadowlands.groups.VESPERS,
+    group = Shadowlands.groups.VESPERS,
     label = L['vesper_of_purity'],
     note = L['vespers_ascended_note'],
     rewards = {Achievement({id = 14734, criteria = 49818})}
@@ -725,7 +729,7 @@ map.nodes[64326980] = Collectible({
 
 map.nodes[71933896] = Collectible({
     icon = 3536181,
-    group = shadowlands.groups.VESPERS,
+    group = Shadowlands.groups.VESPERS,
     label = L['vesper_of_humility'],
     note = L['vespers_ascended_note'],
     rewards = {Achievement({id = 14734, criteria = 49816})}
@@ -739,7 +743,7 @@ local AnimaShard = Class('AnimaShard', Node, {
     label = L['anima_shard'],
     icon = 'crystal_b',
     scale = 1.5,
-    group = shadowlands.groups.ANIMA_SHARD,
+    group = Shadowlands.groups.ANIMA_SHARD,
     rewards = {
         Achievement({
             id = 14339,
@@ -852,7 +856,7 @@ map.nodes[60552554] = AnimaShard({
 local Hymn = Class('Hymn', Collectible, {
     icon = 'scroll',
     note = L['hymn_note'],
-    group = shadowlands.groups.HYMNS
+    group = Shadowlands.groups.HYMNS
 })
 
 local COURAGE = Hymn({
@@ -901,3 +905,48 @@ map.nodes[42202370] = WISDOM
 map.nodes[42502560] = WISDOM
 map.nodes[42902730] = WISDOM
 map.nodes[43182813] = WISDOM
+
+-------------------------------------------------------------------------------
+------------------ TO ALL THE SQUIRRELS I'VE LOVED AND LOST -------------------
+-------------------------------------------------------------------------------
+
+map.nodes[54901350] = Squirrel({
+    id = 170242,
+    rewards = {Achievement({id = 14731, criteria = 50248})},
+    pois = {POI({48202300, 56201320, 54801360, 54801340})}
+}) -- Dreadfur Kit
+
+map.nodes[37702750] = Squirrel({
+    id = 170006,
+    rewards = {Achievement({id = 14731, criteria = 50249})},
+    pois = {POI({24603020, 24603020, 24603020, 37402740, 37602760})}
+}) -- Darkened Wyrmling
+
+map.nodes[48007780] = Squirrel({
+    id = 168397,
+    rewards = {Achievement({id = 14731, criteria = 50250})},
+    pois = {
+        POI({
+            40605360, 41805460, 43205360, 43405540, 43405560, 45004420,
+            45604580, 45805600, 46805900, 47207280, 47407740, 47407760,
+            47607740, 47607880, 48007760, 48407520, 48407620, 48603040,
+            48605060, 48607640, 48806440, 49007660, 49205000, 52407120,
+            52607100, 53405680, 54006440, 55202980, 56402620, 57605540,
+            57605560, 57804720, 58604020, 58804460, 59409380, 59609380,
+            59804000, 59805140, 60009320, 60808020, 60808600, 62803160
+        })
+    }
+}) -- Soulwing Flitter
+
+-------------------------------------------------------------------------------
+--------------------------------- SOULSHAPES ----------------------------------
+-------------------------------------------------------------------------------
+
+map.nodes[50004700] = Soulshape({
+    id = 181682,
+    icon = 645906,
+    note = L['soulshape_otter_soul'],
+    rewards = {
+        Item({item = 187818, quest = 64959, covenant = NIGHTFAE}) -- Otter Soul
+    }
+}) -- Otter Soul

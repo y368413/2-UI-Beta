@@ -20,7 +20,7 @@ _G[NAME .. 'PinMixin'] = PinMixin
 ---
 function PinMixin:OnLoad()
   -- We need to change frame level, because with default one, icons are not seen.
-  self:UseFrameLevelType('PIN_FRAME_LEVEL_AREA_POI')
+  self:UseFrameLevelType('PIN_FRAME_LEVEL_MAP_LINK')
 end
 
 ---
@@ -41,10 +41,11 @@ function PinMixin:OnAcquired(coord, prevCoord)
   if (not prevCoord) then
     -- Create texture for our point.
     local texture = self.texture
-    texture:SetAtlas(Icon.list['poi'])
-    -- Set size and scale.
-    self:SetSize(16, 16)
-    self:ApplyCurrentScale()
+    texture:SetTexture(Icon.list['poi'])
+    texture:SetTexCoord(0, 1, 0, 1)
+    texture:SetVertexColor(0, 0, 255)
+    -- Set size.
+    self:SetSize(12, 12)
     -- Position poi on map.
     self:SetPosition(pointX, pointY)
   end
@@ -78,6 +79,8 @@ function PinMixin:OnAcquired(coord, prevCoord)
     local texture = self.texture
     -- @todo change to something more appealing, temporary value.
     texture:SetAtlas('CGuy_AOIFollowsCamera')
+    texture:SetTexCoord(0, 1, 0, 1)
+    texture:SetVertexColor(1, 1, 1, 1)
     -- Set size and scale.
     self:SetSize(length, 2)
     -- Angle must be negative to change direction of rotation.

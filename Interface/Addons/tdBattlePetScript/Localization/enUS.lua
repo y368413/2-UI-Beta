@@ -1,6 +1,6 @@
---[===[@debug@
+--[=[@debug@
 local L = LibStub('AceLocale-3.0'):NewLocale(..., 'enUS', true)
---@end-debug@]===]
+--@end-debug@]=]
 --@non-debug@
 local L = LibStub('AceLocale-3.0'):NewLocale(..., 'enUS', true, true)
 --@end-non-debug@
@@ -42,9 +42,9 @@ L["OPTION_SETTINGS_AUTOBUTTON_HOTKEY"] = "Auto button hotkey"
 L["OPTION_SETTINGS_HIDE_MINIMAP"] = "Hide minimap"
 L["OPTION_SETTINGS_HIDE_MINIMAP_TOOLTIP"] = "Changing this setting requires reloading the UI. Do you want to continue?"
 L["OPTION_SETTINGS_HIDE_SELECTOR_NO_SCRIPT"] = "The script selector is not displayed when there is no script"
-L["OPTION_SETTINGS_LOCK_SCRIPT_SELECTOR"] = "Lock script selector"
+L["OPTION_SETTINGS_LOCK_SCRIPT_SELECTOR"] = "Lock the script selector"
 L["OPTION_SETTINGS_NO_WAIT_DELETE_SCRIPT"] = "Do not wait for the script to be deleted"
-L["OPTION_SETTINGS_RESET_FRAMES"] = "Reset the size and position of all panels"
+L["OPTION_SETTINGS_RESET_FRAMES"] = "Reset the panel size and position"
 L["OPTION_SETTINGS_TEST_BREAK"] = "Debug: Action test break script"
 L["Options"] = true
 L["PLUGINALLINONE_NOTES"] = "This script can be used in all pet battles."
@@ -54,8 +54,8 @@ L["PLUGINBASE_TEAM_ALLY"] = "Ally"
 L["PLUGINBASE_TEAM_ENEMY"] = "Enemy"
 L["PLUGINBASE_TITLE"] = "Base"
 L["PLUGINBASE_TOOLTIP_CREATE_SCRIPT"] = "Base: Create a script for the current match"
-L["PLUGINFIRSTENEMY_NOTES"] = "This script selector matches the first enemy of the battle."
-L["PLUGINFIRSTENEMY_NOTIFY"] = "Discover that you have previously used the modified version of tdBattlePetScript, and have migrated some of the scripts from the modified version of the Base selector to the FirstEnemy selector."
+L["PLUGINFIRSTENEMY_NOTES"] = "This script selector binds the script to the first enemy in the battle."
+L["PLUGINFIRSTENEMY_NOTIFY"] = "Discover that you've previously used the modified version of tdBattlePetScript and have migrated some of the scripts for the modified Base Selector to firstEnemy Selector."
 L["PLUGINFIRSTENEMY_TITLE"] = "First enemy"
 L["Run"] = true
 L["Save success"] = true
@@ -82,7 +82,7 @@ L["TOOLTIP_CREATE_OR_DEBUG_SCRIPT"] = "Create or debug script"
 L["Update to version: "] = true
 
 
---[===[@debug@
+--[=[@debug@
 -- @import@
 L['ADDON_NAME'] = 'Battle pet script'
 L['Auto'] = true
@@ -159,4 +159,4 @@ L['TOGGLE_SCRIPT_SELECTOR'] = 'Toggle script selector'
 L['TOOLTIP_CREATE_OR_DEBUG_SCRIPT'] = 'Create or debug script'
 L['Update to version: '] = true
 -- @end-import@
---@end-debug@]===]
+--@end-debug@]=]

@@ -10,8 +10,8 @@ local function reskinQuestIcon(button)
 
 	if not button.styled then
 		button:SetSize(26, 26)
-		button:SetNormalTexture("")
-		button:SetPushedTexture("")
+		button:SetNormalTexture(0)
+		button:SetPushedTexture(0)
 		button:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
 		local icon = button.icon or button.Icon
 		if icon then
@@ -74,7 +74,7 @@ local function reskinProgressbarWithIcon(_, _, line)
 		bar:SetPoint("LEFT", 22, 0)
 		reskinBarTemplate(bar)
 
-		icon:SetMask(nil)
+		icon:SetMask("")
 		icon.bg = M.ReskinIcon(icon, true)
 		icon:ClearAllPoints()
 		icon:SetPoint("TOPLEFT", bar, "TOPRIGHT", 5, 0)
@@ -216,8 +216,8 @@ tinsert(R.defaultThemes, function()
 	hooksecurefunc("ScenarioSpellButton_UpdateCooldown", function(spellButton)
 		if not spellButton.styled then
 			local bg = M.ReskinIcon(spellButton.Icon)
-			spellButton:SetNormalTexture(nil)
-			spellButton:SetPushedTexture(nil)
+			spellButton:SetNormalTexture(0)
+			spellButton:SetPushedTexture(0)
 			local hl = spellButton:GetHighlightTexture()
 			hl:SetColorTexture(1, 1, 1, .25)
 			hl:SetInside(bg)
@@ -256,9 +256,10 @@ tinsert(R.defaultThemes, function()
 		ObjectiveTrackerBlocksFrame.AchievementHeader,
 		ObjectiveTrackerBlocksFrame.ScenarioHeader,
 		ObjectiveTrackerBlocksFrame.CampaignQuestHeader,
+		ObjectiveTrackerBlocksFrame.ProfessionHeader, -- isNewPatch
 		BONUS_OBJECTIVE_TRACKER_MODULE.Header,
 		WORLD_QUEST_TRACKER_MODULE.Header,
-		ObjectiveTrackerFrame.BlocksFrame.UIWidgetsHeader
+		ObjectiveTrackerFrame.BlocksFrame.UIWidgetsHeader,
 	}
 	for _, header in pairs(headers) do
 		reskinHeader(header)

@@ -45,8 +45,7 @@ L["%s - %s%s"] = "%s - %s%s"
 L["Anima Cell"] = "Animazelle"
 --[[Translation missing --]]
 --[[ L["Anima Power Options"] = "Anima Power Options"--]] 
---[[Translation missing --]]
---[[ L["Anima Powers"] = "Anima Powers"--]] 
+L["Anima Powers"] = "Animaboni"
 --[[Translation missing --]]
 --[[ L["Auto Hide Bonus List"] = "Auto Hide Bonus List"--]] 
 --[[Translation missing --]]
@@ -67,8 +66,7 @@ L["Anima Cell"] = "Animazelle"
 --[[ L["BOSSLINK"] = "Boss Link: https://www.wowhead.com/npc=%s"--]] 
 --[[Translation missing --]]
 --[[ L["Bottom"] = "Bottom"--]] 
---[[Translation missing --]]
---[[ L["Box of Many Things"] = "Box of Many Things"--]] 
+L["Box of Many Things"] = "Kiste der Zahllosen Dinge"
 --[[Translation missing --]]
 --[[ L["Clear Notes"] = "Clear Notes"--]] 
 --[[Translation missing --]]
@@ -133,16 +131,13 @@ L["Anima Cell"] = "Animazelle"
 --[[ L["Notes:"] = "Notes:"--]] 
 --[[Translation missing --]]
 --[[ L["Number of Torments Per Layer"] = "Number of Torments Per Layer"--]] 
---[[Translation missing --]]
---[[ L["Obscuring Essence Potion"] = "Obscuring Essence Potion"--]] 
+L["Obscuring Essence Potion"] = "Trank der verhüllenden Essenz"
 --[[Translation missing --]]
 --[[ L["Options"] = "Options"--]] 
 --[[Translation missing --]]
 --[[ L["Pauper  +10pts"] = "Pauper  +10pts"--]] 
---[[Translation missing --]]
---[[ L["Phantasmic Infuser"] = "Phantasmic Infuser"--]] 
---[[Translation missing --]]
---[[ L["Plundered Anima Cell"] = "Plundered Anima Cell"--]] 
+L["Phantasmic Infuser"] = "Phantasmatischer Infusor"
+L["Plundered Anima Cell"] = "Geplünderte Animazelle"
 --[[Translation missing --]]
 --[[ L["Point Value"] = "Point Value"--]] 
 --[[Translation missing --]]
@@ -157,12 +152,10 @@ L["Anima Cell"] = "Animazelle"
 --[[ L["Quick Hide Floor Toasts"] = "Quick Hide Floor Toasts"--]] 
 --[[Translation missing --]]
 --[[ L["Rares"] = "Rares"--]] 
---[[Translation missing --]]
---[[ L["Ravenous Anima Cell"] = "Ravenous Anima Cell"--]] 
+L["Ravenous Anima Cell"] = "Unersättliche Animazelle"
 --[[Translation missing --]]
 --[[ L["Ravenous Anima Cell Powers"] = "Ravenous Anima Cell Powers"--]] 
---[[Translation missing --]]
---[[ L["Requisitioned Anima Cell"] = "Requisitioned Anima Cell"--]] 
+L["Requisitioned Anima Cell"] = "Requirierte Animazelle"
 --[[Translation missing --]]
 --[[ L["Reset Score Location"] = "Reset Score Location"--]] 
 --[[Translation missing --]]

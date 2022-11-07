@@ -58,7 +58,6 @@ function MISC:OnLogin()
 	MISC:UpdateScreenShot()
 	MISC:UpdateFasterLoot()
 	MISC:TradeTargetInfo()
-	MISC:MoveQuestTracker()
 	MISC:BlockStrangerInvite()
 	MISC:ToggleBossBanner()
 	MISC:ToggleBossEmote()
@@ -70,11 +69,12 @@ function MISC:OnLogin()
 	MISC:BaudErrorFrameHelpTip()
 	MISC:EnhancedPicker()
 	MISC:UpdateMaxZoomLevel()
-	
+	MISC:MoveBlizzFrames()
+
 	--MISC:CreateRM()
 	--MISC:FreeMountCD()
-	MISC:xMerchant()
-	MISC:BlinkRogueHelper()
+	--MISC:xMerchant()
+	--MISC:BlinkRogueHelper()
 	
 	----------------QuickQueue.lua----------------------
 	if R.db["Misc"]["QuickQueue"] then
@@ -91,6 +91,15 @@ function MISC:OnLogin()
 			PlayerTalentFrame:UnregisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 		end)
 	end
+
+	-- Always show altpower value
+	hooksecurefunc("UnitPowerBarAlt_SetUp", function(self)
+		local statusFrame = self.statusFrame
+		if statusFrame.enabled then
+			statusFrame:Show()
+			statusFrame.Hide = statusFrame.Show
+		end
+	end)
 
 	-- Auto chatBubbles
 	if MaoRUIDB["AutoBubbles"] then
@@ -212,7 +221,7 @@ function MISC:VehicleSeatMover()
 	M.Mover(frame, U["VehicleSeat"], "VehicleSeat", {"BOTTOMRIGHT", UIParent, -285, 21})
 
 	hooksecurefunc(VehicleSeatIndicator, "SetPoint", function(self, _, parent)
-		if parent == "MinimapCluster" or parent == MinimapCluster then
+		if parent ~= frame then
 			self:ClearAllPoints()
 			self:SetPoint("TOPLEFT", frame)
 		end
@@ -275,29 +284,6 @@ function MISC:MoveTicketStatusFrame()
 		if relF == "TOPRIGHT" then
 			self:ClearAllPoints()
 			self:SetPoint("TOP", UIParent, "TOP", -400, -20)
-		end
-	end)
-end
-
--- Reanchor ObjectiveTracker
-function MISC:MoveQuestTracker()
-	local frame = CreateFrame("Frame", "UIQuestMover", UIParent)
-	frame:SetSize(240, 43)
-	M.Mover(frame, U["QuestTracker"], "QuestTracker", {"TOPLEFT","UIParent","TOPLEFT",26,-21})
-
-	local tracker = ObjectiveTrackerFrame
-	tracker:ClearAllPoints()
-	tracker:SetPoint("TOPRIGHT", frame)
-	tracker:SetHeight(GetScreenHeight()*.75)
-	tracker:SetClampedToScreen(false)
-	tracker:SetMovable(true)
-	if tracker:IsMovable() then tracker:SetUserPlaced(true) end
-
-	if not I.isNewPatch then return end
-	hooksecurefunc(tracker, "SetPoint", function(self, _, parent)
-		if parent ~= frame then
-			self:ClearAllPoints()
-			self:SetPoint("TOPRIGHT", frame)
 		end
 	end)
 end
@@ -443,40 +429,6 @@ do
 	end
 	M:RegisterEvent("ARCHAEOLOGY_SURVEY_CAST", updateArcTitle)
 	M:RegisterEvent("ARCHAEOLOGY_FIND_COMPLETE", updateArcTitle)
-end
-
--- Drag AltPowerbar
-do
-	local mover = CreateFrame("Frame", "UIAltBarMover", PlayerPowerBarAlt)
-	mover:SetPoint("CENTER", UIParent, 0, -260)
-	mover:SetSize(20, 20)
-	M.CreateMF(PlayerPowerBarAlt, mover)
-	hooksecurefunc(PlayerPowerBarAlt, "SetPoint", function(_, _, parent)
-		if parent ~= mover then
-			PlayerPowerBarAlt:ClearAllPoints()
-			PlayerPowerBarAlt:SetPoint("CENTER", mover)
-		end
-	end)
-	hooksecurefunc("UnitPowerBarAlt_SetUp", function(self)
-		local statusFrame = self.statusFrame
-		if statusFrame.enabled then
-			statusFrame:Show()
-			statusFrame.Hide = statusFrame.Show
-		end
-	end)
-
-	local altPowerInfo = {
-		text = U["Drag AltBar Tip"],
-		buttonStyle = HelpTip.ButtonStyle.GotIt,
-		targetPoint = HelpTip.Point.RightEdgeCenter,
-		onAcknowledgeCallback = M.HelpInfoAcknowledge,
-		callbackArg = "AltPower",
-	}
-	PlayerPowerBarAlt:HookScript("OnEnter", function(self)
-		if not MaoRUIDB["Help"]["AltPower"] then
-			HelpTip:Show(self, altPowerInfo)
-		end
-	end)
 end
 
 -- ALT+RightClick to buy a stack
@@ -760,6 +712,10 @@ function MISC:MenuButton_GuildInvite()
 	GuildInvite(MISC.MenuButtonName)
 end
 
+function MISC:MenuButton_Whisper()
+	ChatFrame_SendTell(MISC.MenuButtonName)
+end
+
 function MISC:QuickMenuButton()
 	if not R.db["Misc"]["MenuButton"] then return end
 
@@ -767,13 +723,14 @@ function MISC:QuickMenuButton()
 		{text = ADD_FRIEND, func = MISC.MenuButton_AddFriend, color = {0, .6, 1}},
 		{text = gsub(CHAT_GUILD_INVITE_SEND, HEADER_COLON, ""), func = MISC.MenuButton_GuildInvite, color = {0, .8, 0}},
 		{text = COPY_NAME, func = MISC.MenuButton_CopyName, color = {1, 0, 0}},
+		{text = WHISPER, func = MISC.MenuButton_Whisper, color = {1, .5, 1}},
 	}
 
 	local frame = CreateFrame("Frame", "UIMenuButtonFrame", DropDownList1)
 	frame:SetSize(10, 10)
 	frame:SetPoint("TOPLEFT")
 	frame:Hide()
-	for i = 1, 3 do
+	for i = 1, 4 do
 		local button = CreateFrame("Button", nil, frame)
 		button:SetSize(25, 10)
 		button:SetPoint("TOPLEFT", frame, (i-1)*28 + 2, -2)
@@ -869,7 +826,7 @@ function MISC:EnhancedPicker()
 	colorBar:SetPoint("BOTTOM", 0, 38)
 
 	local count = 0
-	for name, class in pairs(I.ClassList) do
+	for class, name in pairs(LOCALIZED_CLASS_NAMES_MALE) do
 		local value = I.ClassColors[class]
 		if value then
 			local bu = M.CreateButton(colorBar, 22, 22, true)
@@ -906,25 +863,7 @@ function MISC:UpdateMaxZoomLevel()
 	SetCVar("cameraDistanceMaxZoomFactor", R.db["Misc"]["MaxZoom"])
 end
 
---[[hooksecurefunc("TextStatusBar_UpdateTextStringWithValues",function(self,textString,value,_,maxValue)  ---	Custom status text format.
-	if self.RightText and value and maxValue>0 and not self.showPercentage and GetCVar("statusTextDisplay")=="BOTH" then
-		self.RightText:SetText(M.Numb(value))
-		if value == 0 then self.RightText:SetText(" "); end
-	end
-	if maxValue>0 and GetCVar("statusTextDisplay")=="NUMERIC" then 
-     if maxValue == value then textString:SetText(M.Numb(maxValue))
-     else textString:SetText(M.Numb(value) .." / "..M.Numb(maxValue))
-       --textString:SetText(tostring(math.ceil((value / maxValue) * 100)).."% "..maxValue.." ")
-     end 
-   end
-end)]]
-
-local hall = CreateFrame("Frame")
-hall:RegisterEvent("ADDON_LOADED")
-hall:SetScript("OnEvent", function(self, event, addon)
-	if event == "ADDON_LOADED" and addon == "Blizzard_OrderHallUI" then
-		M.HideObject(OrderHallCommandBar)
-		--GarrisonLandingPageTutorialBox:SetClampedToScreen(true)
-		self:UnregisterEvent("ADDON_LOADED")
-	end
-end)
+-- Move and save blizz frames
+function MISC:MoveBlizzFrames()
+	--M:BlizzFrameMover(CharacterFrame)
+end

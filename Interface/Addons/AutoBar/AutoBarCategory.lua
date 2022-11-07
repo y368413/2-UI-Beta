@@ -91,13 +91,13 @@ function ABGCode.RawListToItemIDList(p_raw_list)
 end
 
 
--- Convert list of negative numbered spellId to spellName.
+-- Convert list of negative numbered spell_id to spellName.
 local function PTSpellIDsToSpellName(p_cast_list)
 --print("PTSpellIDsToSpellName castList " .. tostring(p_cast_list))
 
 	for i = 1, # p_cast_list do
-		local spellId = p_cast_list[i] * -1
-		p_cast_list[i] = GetSpellInfo(spellId)
+		local spell_id = p_cast_list[i] * -1
+		p_cast_list[i] = GetSpellInfo(spell_id)
 	end
 	return p_cast_list
 end
@@ -887,6 +887,8 @@ function ABGCode.InitializeAllCategories()
 	AutoBarCategoryList["Muffin.Gear.Trinket"] = ItemsCategory:new("Muffin.Gear.Trinket", "INV_Misc_OrnateBox", "Muffin.Gear.Trinket")
 
 	AutoBarCategoryList["Misc.Lockboxes"] = ItemsCategory:new("Misc.Lockboxes", "INV_Trinket_Naxxramas06", "Misc.Lockboxes")
+
+	AutoBarCategoryList["Misc.Unlock"] = ItemsCategory:new("Misc.Unlock", "INV_Trinket_Naxxramas06", "Misc.Unlock")
 
 	AutoBarCategoryList["Misc.Usable.BossItem"] = ItemsCategory:new("Misc.Usable.BossItem", "INV_BannerPVP_02", "Misc.Usable.BossItem")
 

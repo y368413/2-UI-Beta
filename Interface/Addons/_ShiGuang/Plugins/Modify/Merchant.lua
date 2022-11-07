@@ -405,7 +405,7 @@ local function BuildButtons()
 		button.overlay:SetPoint("TOP",button,"TOP",0,(-15-(v.y or 0)))
 		button.overlay:SetTexture(v.texture)
 		button.overlay:SetTexCoord(unpack(v.coord))
-		button.Flash.flasher = button.Flash:CreateAnimationGroup()
+		--[[button.Flash.flasher = button.Flash:CreateAnimationGroup()
 		local fade1 = button.Flash.flasher:CreateAnimation("Alpha")
 		fade1:SetDuration(0.5)
 		fade1:SetToAlpha(1)
@@ -419,7 +419,7 @@ local function BuildButtons()
 		button:SetScript("OnClick",function(self,button)
 			MerchantFrame_SetFilter(MerchantFrame,v.filter)
 			SetPushed(GetMerchantFilter())			
-		end)
+		end)]]
 	end
 end
 

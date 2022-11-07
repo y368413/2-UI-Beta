@@ -25,6 +25,16 @@ function module:TabSetAlpha(alpha)
 	end
 end
 
+local function updateChatAnchor(self, _, _, _, x, y)
+	if not R.db["Chat"]["Lock"] then return end
+	if not (x == 0 and y == 21) then
+		self:ClearAllPoints()
+		self:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 0, 21)
+		self:SetWidth(R.db["Chat"]["ChatWidth"])
+		self:SetHeight(R.db["Chat"]["ChatHeight"])
+	end
+end
+
 local isScaling = false
 function module:UpdateChatSize()
 	if not R.db["Chat"]["Lock"] then return end
@@ -92,13 +102,15 @@ function module:SkinChat()
 	local name = self:GetName()
 	local fontStyle, fontSize, _= self:GetFont()
 	--self:SetClampRectInsets(0, 0, 0, 0)
-	self:SetMaxResize(I.ScreenWidth, I.ScreenHeight)
-	self:SetMinResize(120, 60)
+	if not I.isNewPatch then
+		self:SetMaxResize(I.ScreenWidth, I.ScreenHeight)
+		self:SetMinResize(120, 60)
+	end
 	if R.db["Chat"]["Outline"] then
 	  self:SetFont(fontFile or fontStyle, fontSize, "OUTLINE")
 	  self:SetShadowColor(0, 0, 0, 0)
 	else
-	  self:SetFont(fontFile or fontStyle, fontSize)
+	  self:SetFont(fontFile or fontStyle, fontSize, "")
 	  --self:SetShadowOffset(1, -1)
 	end
 	self:SetClampRectInsets(0, 0, 0, 0)
@@ -432,10 +444,9 @@ function module:OnLogin()
 
 	-- Default
 	if CHAT_OPTIONS then CHAT_OPTIONS.HIDE_FRAME_ALERTS = true end -- only flash whisper
-	SetCVar("chatStyle", "classic")
+	SetCVar("chatStyle", "classic") -- todo: hide chatStyle option
 	SetCVar("chatMouseScroll", 1) -- enable mousescroll
 	--SetCVar("whisperMode", "inline") -- blizz reset this on NPE
-	M.HideOption(InterfaceOptionsSocialPanelChatStyle)
 	CombatLogQuickButtonFrame_CustomTexture:SetTexture(nil)
 
 	-- Add Elements
@@ -452,11 +463,7 @@ function module:OnLogin()
 	if R.db["Chat"]["Lock"] then
 		module:UpdateChatSize()
 		M:RegisterEvent("UI_SCALE_CHANGED", module.UpdateChatSize)
-		if I.isNewPatch then
-			hooksecurefunc(ChatFrame1, "SetPoint", updateChatAnchor)
-		else
-			hooksecurefunc("FCF_SavePositionAndDimensions", module.UpdateChatSize)
-			FCF_SavePositionAndDimensions(ChatFrame1)
-		end
+		hooksecurefunc(ChatFrame1, "SetPoint", updateChatAnchor)
+		FCF_SavePositionAndDimensions(ChatFrame1)
 	end
 end

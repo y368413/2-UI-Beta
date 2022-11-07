@@ -1,5 +1,6 @@
 CaerdonWardrobeConfigMixin = {}
 
+local _, NS = ...
 local components, pendingConfig
 
 CAERDON_CONFIG_LABEL = "Caerdon Wardrobe... and more!"
@@ -23,18 +24,31 @@ function CaerdonWardrobeConfigMixin:OnLoad()
 	self.name = "|cff00ff00[背包]|r属性增强"  --Caerdon Wardrobe
 	self.okay = self.OnSave
 
-	InterfaceOptions_AddCategory(self)
+	self.OnCommit = self.okay;
+	self.OnDefault = self.default;
+	self.OnRefresh = self.refresh;
+
+	local category, layout = Settings.RegisterCanvasLayoutCategory(self, self.name, self.name);
+	category.ID = self.name;
+	Settings.RegisterAddOnCategory(category);
+
+	-- Any anchors assigned to the frame will be disposed. Intended anchors need to be provided through
+	-- the layout object. If no anchor points are provided, the frame will be anchored to TOPLEFT (0,0)
+	-- and BOTTOMRIGHT (0,0).
+	-- layout:AddAnchorPoint("TOPLEFT", 10, -10);
+	-- layout:AddAnchorPoint("BOTTOMRIGHT", -10, 10);
+	
 end
 
 function CaerdonWardrobeConfigMixin:OnEvent(event, ...)
-	BlizzardOptionsPanel_OnEvent(self, event, ...);
+	-- BlizzardOptionsPanel_OnEvent(self, event, ...);
 
 	if ( event == "VARIABLES_LOADED" ) then
 		self.variablesLoaded = true;
 		self:UnregisterEvent(event);
 
-		if not CaerdonWardrobeConfig or CaerdonWardrobeConfig.Version ~= GetDefaultConfig().Version then
-			CaerdonWardrobeConfig = CopyTable(GetDefaultConfig())
+		if not CaerdonWardrobeConfig or CaerdonWardrobeConfig.Version ~= NS:GetDefaultConfig().Version then
+			CaerdonWardrobeConfig = CopyTable(NS:GetDefaultConfig())
 		end
 	
 		CaerdonWardrobe:RefreshItems()
@@ -48,7 +62,7 @@ function CaerdonWardrobeConfigMixin:OnSave()
 	end, geterrorhandler())
 end
 
-function GetDefaultConfig()
+function NS:GetDefaultConfig()
 	return {
 		Version = 21,
 		

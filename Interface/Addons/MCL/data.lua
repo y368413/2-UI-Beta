@@ -845,7 +845,7 @@ core.mountList = {
 		WowClassic = {
 			name = "WoW Classic",
 			mounts = {},
-			mountID = {1444}
+			mountID = {1444, 1602}
 		},
 		anniversary = {
 			name = "WoW Anniversary Mounts",
@@ -902,7 +902,7 @@ core.mountList = {
 		},
 		MountCollection = {
 			name = "Mount Collection",
-			mounts = {44178, 44843, 44842, 98104, 91802, 98259, 69226, 87776, 137614, 163981, 118676},
+			mounts = {44178, 44843, 44842, 98104, 91802, 98259, 69226, 87776, 137614, 163981, 118676, 198654},
 			mountID = {}
 		},
 		ExaltedReputations = {

@@ -22,14 +22,18 @@ function cql:PLAYER_LOGIN()
     cql.log:Initialize() -- should be called before OnSizeChanged so all HybridScrollFrame buttons created for max height
     --cql.options:UpdateColors()
     -- set min/max height
-    cql:SetMinResize(667,300)
-    cql:SetMaxResize(667,700) -- if this changes, change in XML too
+    if select(4,GetBuildInfo())>=100000 then
+        cql:SetResizeBounds(667,300,667,700)
+    else
+        cql:SetMinResize(667,300)
+        cql:SetMaxResize(667,700) -- if this changes, change in XML too
+    end
     -- script handlers for main window
     cql:SetScript("OnSizeChanged",cql.OnSizeChanged) -- not defined in XML to give HybridScrollFrame a chance to initialize above
     cql:OnSizeChanged(self:GetWidth(),self:GetHeight()) -- directly call the OnSizeChanged to set log/detail height
     -- BasicFrameTemplate stuff
     cql.CloseButton:SetScript("OnKeyDown",cql.CloseButtonOnKeyDown)
-    cql.TitleText:SetText(QUEST_LOG)
+    --cql.TitleText:SetText(QUEST_LOG)
     -- setup override to take over default quest toggle key/microbutton if needed
     cql:UpdateOverrides()
     cql:RegisterEvent("UPDATE_BINDINGS")

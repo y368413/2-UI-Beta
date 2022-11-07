@@ -10,7 +10,6 @@ local BlzFrames = {
 
 	-- Blizz Frames
 	["AddonList"] = false,
-	["AudioOptionsFrame"] = false,
 	["ChannelFrame"] = false,
 	["ChatConfigFrame"] = false,
 	["DressUpFrame"] = false,
@@ -19,7 +18,6 @@ local BlzFrames = {
 	["GuildInviteFrame"] = false,
 	["GuildRegistrarFrame"] = false,
 	["HelpFrame"] = false,
-	["InterfaceOptionsFrame"] = false,
 	["ItemTextFrame"] = false,
 	["LootFrame"] = false,
 	["MailFrame"] = false,
@@ -29,6 +27,7 @@ local BlzFrames = {
 	["PaperDollFrame"] = true,
 	["PetitionFrame"] = false,
 	["PetStableFrame"] = false,
+	["ProfessionsFrame"] = false,
 	["PVEFrame"] = false,
 	["QuestFrame"] = false,
 	["RaidParentFrame"] = false,
@@ -42,11 +41,19 @@ local BlzFrames = {
 	["TokenFrame"] = true,
 	["TradeFrame"] = false,
 	["TutorialFrame"] = false,
-	["VideoOptionsFrame"] = false,
+	["SettingsPanel"] = false,
 	-- Other AddOns
 	["BaudErrorFrame"] = false,
 	--["eCB_OptionFrame"] = false,
 }
+if I.isNewPatch then
+	BlzFrames["SettingsPanel"] = false
+	BlzFrames["ProfessionsFrame"] = false
+else
+	BlzFrames["AudioOptionsFrame"] = false
+	BlzFrames["InterfaceOptionsFrame"] = false
+	BlzFrames["VideoOptionsFrame"] = false
+end
 
 -- Frame Existing Check
 local function IsFrameExists()
@@ -77,8 +84,9 @@ local lodFrames = {
 	Blizzard_Collections		= { ["WardrobeFrame"] = false, ["WardrobeOutfitEditFrame"] = false },
 	Blizzard_CovenantRenown		= { ["CovenantRenownFrame"] = false, },
 	Blizzard_CovenantSanctum	= { ["CovenantSanctumFrame"] = false, },
-	Blizzard_Communities		= { ["CommunitiesFrame"] = false, ["CommunitiesSettingsDialog"] = false, ["CommunitiesGuildLogFrame"] = false, ["CommunitiesTicketManagerDialog"] = false, ["CommunitiesAvatarPickerDialog"] = false, ["CommunitiesFrame.NotificationSettingsDialog"] = false, ["ClubFinderCommunityAndGuildFinderFrame.RequestToJoinFrame"] = false},
+	--Blizzard_Communities		= { ["CommunitiesFrame"] = false, ["CommunitiesSettingsDialog"] = false, ["CommunitiesGuildLogFrame"] = false, ["CommunitiesTicketManagerDialog"] = false, ["CommunitiesAvatarPickerDialog"] = false, ["CommunitiesFrame.NotificationSettingsDialog"] = false, ["ClubFinderCommunityAndGuildFinderFrame.RequestToJoinFrame"] = false},
 	Blizzard_FlightMap			= { ["FlightMapFrame"] = false },
+	Blizzard_GenericTraitUI		= { ["GenericTraitFrame"] = false },
 	Blizzard_GMSurveyUI			= { ["GMSurveyFrame"] = false },
 	Blizzard_GuildBankUI		= { ["GuildBankFrame"] = false, ["GuildBankEmblemFrame"] = true },
 	Blizzard_GuildControlUI		= { ["GuildControlUI"] = false },

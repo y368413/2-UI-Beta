@@ -147,13 +147,13 @@ AutoBar.frame:SetScript("OnEvent",
 			return
 		end
 
-		if(AutoBar.db.account.throttle_event_limit > 0) then
+		if(AutoBarDB2.settings.throttle_event_limit > 0) then
 			local timer_name = event .. "_last_tick"
 			local now = GetTime()
 			AutoBar[timer_name] = AutoBar[timer_name] or 0
 
-			if ((now - AutoBar[timer_name]) < AutoBar.db.account.throttle_event_limit) then
-				if (AutoBar.db.account.log_throttled_events) then print ("Skipping " .. event .. "(" .. AutoBar[timer_name] .. ", " .. now .. ")", ...) end
+			if ((now - AutoBar[timer_name]) < AutoBarDB2.settings.throttle_event_limit) then
+				if (AutoBarDB2.settings.log_throttled_events) then print (" AutoBar Skipping " .. event .. "(" .. AutoBar[timer_name] .. ", " .. now .. ")", ...) end
 				return
 			end
 			AutoBar[timer_name] = now
@@ -234,9 +234,8 @@ function AutoBar:InitializeZero()
 	AutoBar.currentPlayer = UnitName("player") .. " - " .. GetRealmName();
 	_, AutoBar.CLASS = UnitClass("player")
 	AutoBar.NiceClass = string.sub(AutoBar.CLASS, 1, 1) .. string.lower(string.sub(AutoBar.CLASS, 2))
-	AutoBar.CLASSPROFILE = "_" .. AutoBar.CLASS;
 
-	AutoBar:RegisterDB("AutoBarDB", nil, "class")
+	AutoBar.version = GetAddOnMetadata(ADDON_NAME, "Version")
 
 	AutoBar.InitializeDB()
 	AutoBar:InitializeOptions()
@@ -252,7 +251,7 @@ function AutoBar:InitializeZero()
 	AutoBar.frame:RegisterEvent("LEARNED_SPELL_IN_TAB")
 	AutoBar.frame:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", "player")
 
-	if(AutoBar.db.account.handle_spell_changed) then
+	if(AutoBarDB2.settings.handle_spell_changed) then
 		AutoBar.frame:RegisterEvent("SPELLS_CHANGED")
 	end
 	AutoBar.frame:RegisterEvent("ACTIONBAR_UPDATE_USABLE")
@@ -435,7 +434,7 @@ function ABGCode.events.PLAYER_ENTERING_WORLD()
 	end
 
 
-	if(AutoBar.db.account.hack_PetActionBarFrame) then
+	if(AutoBarDB2.settings.hack_PetActionBarFrame) then
 		PetActionBarFrame:EnableMouse(false);
 	end
 
@@ -555,7 +554,7 @@ end
 function ABGCode.events.SPELLS_CHANGED(p_arg1)
 	ABGCode.LogEventStart("SPELLS_CHANGED")
 
-	if(AutoBar.db.account.handle_spell_changed) then
+	if(AutoBarDB2.settings.handle_spell_changed) then
 		ABGCS.ABScheduleUpdate(tick.UpdateSpellsID)
 	end
 
@@ -586,7 +585,7 @@ function ABGCode.events.PLAYER_REGEN_DISABLED(p_arg1)
 
 	AutoBar.inCombat = true
 	if (InCombatLockdown()) then
-		print("PLAYER_REGEN_DISABLED called while InCombatLockdown")
+		print("AutoBar PLAYER_REGEN_DISABLED called while InCombatLockdown")
 	end
 
 	if (AutoBar.moveButtonsMode) then
@@ -649,7 +648,7 @@ function ABGCode.events.UPDATE_BATTLEFIELD_STATUS()
 		end
 		if (AutoBar.inBG ~= bgStatus) then
 			AutoBar.inBG = bgStatus
-			ABGCS.UpdateActive();
+			ABGCS.ABScheduleUpdate(tick.UpdateActiveID)
 		end
 	end
 
@@ -729,10 +728,10 @@ function AutoBar.Initialize()
 	if (Masque and not AutoBar.MasqueGroup) then
 		local group = Masque:Group("AutoBar")
 		AutoBar.MasqueGroup = group
-		group.SkinID = AutoBar.db.account.SkinID or "Blizzard"
-		group.Gloss = AutoBar.db.account.Gloss
-		group.Backdrop = AutoBar.db.account.Backdrop
-		group.Colors = AutoBar.db.account.Colors or {}
+		group.SkinID = AutoBarDB2.skin.SkinID or "Blizzard"
+		group.Gloss = AutoBarDB2.skin.Gloss
+		group.Backdrop = AutoBarDB2.skin.Backdrop
+		group.Colors = AutoBarDB2.skin.Colors or {}
 	end
 
 	ABGCode.InitializeAllCategories()
@@ -912,10 +911,10 @@ function AutoBar:SetDraggingObject(fromObject)
 end
 
 
---/dump AutoBar.db.account.barList["AutoBarClassBarBasic"].buttonKeys[16]
+--/dump AutoBarDB2.account.barList["AutoBarClassBarBasic"].buttonKeys[16]
 --/dump AutoBar.moveButtonsMode
---/script AutoBar.db.account.logEvents = true
---/script AutoBar.db.account.logEvents = nil
+--/script AutoBarDB2.settings.log_events = true
+--/script AutoBarDB2.settings.log_events = false
 --/script LibStub("LibKeyBound-1.0"):SetColorKeyBoundMode(0.75, 1, 0, 0.5)
 --/script DEFAULT_CHAT_FRAME:AddMessage("" .. tostring())
 --/print GetMouseFocus():GetName()
@@ -933,7 +932,7 @@ end
 function AutoBar:StupidLog(p_text)
 
 	if (StupidLogEnabled) then
-		AutoBar.db.account.stupidlog = AutoBar.db.account.stupidlog .. p_text
+		AutoBarDB2.stupidlog = AutoBarDB2.stupidlog .. p_text
 	end
 
 end
@@ -1054,7 +1053,7 @@ end
 
 
 function AutoBar:ABSchedulerTick()
- --if (tick.ScheduledUpdate ~= tick.UpdateCompleteID) then print("AutoBar:ABSchedulerTick", "ScheduledUpdate:", ABGData.TickScheduler.ScheduledUpdate); end;
+ 	--if (tick.ScheduledUpdate ~= tick.UpdateCompleteID) then print("AutoBar:ABSchedulerTick", "ScheduledUpdate:", ABGData.TickScheduler.ScheduledUpdate); end;
 	C_Timer.After(ABSchedulerTickLength, AutoBar.ABSchedulerTick)
 
 	--If we're in combat, catch it on the next tick so we don't cause a hitch in gameplay
@@ -1069,17 +1068,24 @@ function AutoBar:ABSchedulerTick()
 	if(tick.ScheduledUpdate == tick.UpdateCategoriesID) then
 		tick.ScheduledUpdate = ABGCS.UpdateCategories(tick.BehaveTicker);
 	elseif(tick.ScheduledUpdate == tick.UpdateSpellsID) then
-		tick.ScheduledUpdate = ABGCS:UpdateSpells(tick.BehaveTicker);
+		tick.ScheduledUpdate = ABGCS.UpdateSpells(tick.BehaveTicker);
 	elseif(tick.ScheduledUpdate == tick.UpdateObjectsID) then
-		tick.ScheduledUpdate = ABGCS:UpdateObjects(tick.BehaveTicker);
+		tick.ScheduledUpdate = ABGCS.UpdateObjects(tick.BehaveTicker);
+
 	elseif(tick.ScheduledUpdate == tick.UpdateItemsID) then
-		tick.ScheduledUpdate = ABGCS:UpdateItems(tick.BehaveTicker);
+		tick.ScheduledUpdate = ABGCS.UpdateItems(tick.BehaveTicker);
+
 	elseif(tick.ScheduledUpdate == tick.UpdateAttributesID) then
-		tick.ScheduledUpdate = ABGCS:UpdateAttributes(tick.BehaveTicker);
+		tick.ScheduledUpdate = ABGCS.UpdateAttributes(tick.BehaveTicker);
+
+	elseif(tick.ScheduledUpdate == tick.UpdateActiveID) then
+		tick.ScheduledUpdate = ABGCS.UpdateActive(tick.BehaveTicker);
+
 	elseif(tick.ScheduledUpdate == tick.UpdateButtonsID) then
 		tick.ScheduledUpdate = ABGCS.UpdateButtons(tick.BehaveTicker);
 	else
-print("     ", "Not sure what's happening", tick.ScheduledUpdate)
+		print("AutoBar : Invalid tick ID", tick.ScheduledUpdate)
+		tick.ScheduledUpdate = tick.UpdateCompleteID
 	end
 
 
@@ -1118,7 +1124,7 @@ function ABGCode.UpdateCategories(p_behaviour)
 	return ret;
 end
 
-function ABGCS:UpdateSpells(p_behaviour)
+function ABGCS.UpdateSpells(p_behaviour)
 	ABGCode.LogEventStart("ABGCS:UpdateSpells")
 
 	AutoBarSearch.stuff:ScanSpells()
@@ -1136,26 +1142,28 @@ function ABGCS:UpdateSpells(p_behaviour)
 	return ret;
 end
 
-function ABGCS:UpdateObjects(p_behaviour)
+function ABGCS.UpdateObjects(p_behaviour)
 
 	ABGCode.LogEventStart("ABGCS:UpdateObjects")
 	local barLayoutDBList = AutoBar.barLayoutDBList
 	local bar
 	for barKey, barDB in pairs(barLayoutDBList) do
-		if (barDB.enabled and barDB[AutoBar.CLASS]) then
---print("UpdateObjects barKey " .. tostring(barKey) .. " AutoBar.CLASS " .. tostring(AutoBar.CLASS) .. " barDB[AutoBar.CLASS] " .. tostring(barDB[AutoBar.CLASS]))
+		local matches_class = (barDB["allowed_class"] == "*") or (barDB["allowed_class"] == AutoBar.CLASS)
+		--print("UpdateObjects", barKey, barDB["allowed_class"] .. " == " .. AutoBar.CLASS, matches_class)
+		if (barDB.enabled and matches_class) then
+			--print("UpdateObjects barKey " .. tostring(barKey) .. " AutoBar.CLASS " .. tostring(AutoBar.CLASS) .. " barDB[AutoBar.CLASS] " .. tostring(barDB[AutoBar.CLASS]))
 			if (AutoBar.barList[barKey]) then
 				AutoBar.barList[barKey]:UpdateObjects()
 			else
 				AutoBar.barList[barKey] = AutoBar.Class.Bar:new(barKey)
---print("UpdateObjects barKey " .. tostring(barKey) .. " Name " .. tostring(AutoBar.barList[barKey].barName))
+				--print("     UpdateObjects barKey " .. tostring(barKey) .. " Name " .. tostring(AutoBar.barList[barKey].barName))
 			end
 			bar = AutoBar.barList[barKey]
 			LibStickyFrames:SetFrameEnabled(bar.frame, true)
 			LibStickyFrames:SetFrameHidden(bar.frame, bar.sharedLayoutDB.hide)
 			LibStickyFrames:SetFrameText(bar.frame, bar.barName)
 		elseif (AutoBar.barList[barKey]) then
---print("UpdateObjects barKey " .. tostring(barKey) .. " Hide " .. tostring(AutoBar.barList[barKey].barName))
+			--print("UpdateObjects barKey " .. tostring(barKey) .. " Hide " .. tostring(AutoBar.barList[barKey].barName))
 			bar = AutoBar.barList[barKey]
 			bar.frame:Hide()
 			LibStickyFrames:SetFrameEnabled(bar.frame)
@@ -1178,7 +1186,7 @@ function ABGCS:UpdateObjects(p_behaviour)
 end
 
 
-function ABGCS:UpdateItems(p_behaviour)
+function ABGCS.UpdateItems(p_behaviour)
 
 	ABGCode.LogEventStart("ABGCS:UpdateItems")
 
@@ -1202,7 +1210,7 @@ end
 
 -- Based on the current Scan results, update the Button and Popup Attributes
 -- Create Popup Buttons as needed
-function ABGCS:UpdateAttributes(p_behaviour)
+function ABGCS.UpdateAttributes(p_behaviour)
 	ABGCode.LogEventStart("ABGCS:UpdateAttributes")
 	for _bar_key, bar in pairs(AutoBar.barList) do
 		bar:UpdateAttributes()
@@ -1224,7 +1232,7 @@ function ABGCS.UpdateActive(p_behaviour)
 		bar:RefreshLayout()
 	end
 
-	ABGCS:UpdateButtons(p_behaviour)
+	ABGCS.UpdateButtons(p_behaviour)
 
 	ABGCode.LogEventEnd("ABGCS.UpdateActive", tostring(p_behaviour))
 

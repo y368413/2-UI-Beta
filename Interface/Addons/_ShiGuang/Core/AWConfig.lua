@@ -193,6 +193,8 @@ local function CreatePanel()
 
 	local slotIndex = {
 		[6] = INVTYPE_WAIST,
+		[8] = INVTYPE_FEET,
+		[10] = INVTYPE_HAND,
 		[11] = INVTYPE_FINGER.."1",
 		[12] = INVTYPE_FINGER.."2",
 		[13] = INVTYPE_TRINKET.."1",
@@ -387,7 +389,7 @@ local function CreatePanel()
 			Option[8] = G:CreateCheckBox(tabs[i].Page, U["Combat"], 200, -95, U["Combat Intro"])
 			Option[9] = G:CreateEditbox(tabs[i].Page, U["Text"], 340, -90, U["Text Intro"])
 			Option[10] = G:CreateCheckBox(tabs[i].Page, U["Flash"], 280, -95, U["Flash Intro"])
-			Option[11] = G:CreateDropdown(tabs[i].Page, U["Slot*"], 140, -30, {slotIndex[6], slotIndex[11], slotIndex[12], slotIndex[13], slotIndex[14], slotIndex[15]}, U["Slot Intro"])
+			Option[11] = G:CreateDropdown(tabs[i].Page, U["Slot*"], 140, -30, {slotIndex[6], slotIndex[8], slotIndex[10], slotIndex[11], slotIndex[12], slotIndex[13], slotIndex[14], slotIndex[15]}, U["Slot Intro"])
 			Option[12] = G:CreateDropdown(tabs[i].Page, U["Totem*"], 140, -30, {U["TotemSlot"].."1", U["TotemSlot"].."2", U["TotemSlot"].."3", U["TotemSlot"].."4"}, U["Totem Intro"])
 
 			for j = 2, 12 do Option[j]:Hide() end
@@ -419,8 +421,8 @@ local function CreatePanel()
 			end
 			Option[13] = G:CreateEditbox(tabs[i].Page, U["IntID*"], 20, -30, U["IntID Intro"])
 			Option[14] = G:CreateEditbox(tabs[i].Page, U["Duration*"], 140, -30, U["Duration Intro"])
-			Option[15] = G:CreateDropdown(tabs[i].Page, U["Trigger"].."*", 260, -30, {"OnAuraGain", "OnCastSuccess", "UnitCastSucceed"}, U["Trigger Intro"], 130, 30)
-			Option[16] = G:CreateDropdown(tabs[i].Page, U["Unit*"], 420, -30, {"Player", "All"}, U["Trigger Unit Intro"])
+			Option[15] = G:CreateDropdown(tabs[i].Page, U["Trigger"].."*", 260, -30, {"OnAuraGain", "OnCastSuccess", "UnitCastSucceed"}, U["Trigger Intro"], 180, 30)
+			Option[16] = G:CreateDropdown(tabs[i].Page, U["Unit*"], 470, -30, {"Player", "All"}, U["Trigger Unit Intro"])
 			Option[17] = G:CreateEditbox(tabs[i].Page, U["ItemID"], 20, -95, U["ItemID Intro"])
 		end
 
@@ -434,7 +436,7 @@ local function CreatePanel()
 			end
 		end)
 
-		local slotTable = {6, 11, 12, 13, 14, 15}
+		local slotTable = {6, 8, 10, 11, 12, 13, 14, 15}
 		local add = M.CreateButton(tabs[i].Page, 60, 25, ADD)
 		add:SetPoint("TOPRIGHT", -30, -90)
 		add:SetScript("OnClick", function()

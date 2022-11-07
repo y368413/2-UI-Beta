@@ -9,7 +9,7 @@ local guiTab, guiPage, f = {}, {}
 
 -- Default Settings
 G.DefaultSettings = {
-	SL = false,
+	DF = false,
 	Mover = {},
 	InternalCD = {},
 	AuraWatchMover = {},
@@ -30,7 +30,6 @@ G.DefaultSettings = {
 		Style = 8,
 		Bar4Fader = false,
 		Bar5Fader = false,
-		Scale = 1,
 		BindType = 1,
 		OverrideWA = false,
 		MicroMenu = true,
@@ -70,6 +69,19 @@ G.DefaultSettings = {
 		BarStanceSize = 30,
 		BarStanceFont = 12,
 		BarStancePerRow = 10,
+
+		Bar6Size = 34,
+		Bar6Font = 12,
+		Bar6Num = 12,
+		Bar6PerRow = 12,
+		Bar7Size = 34,
+		Bar7Font = 12,
+		Bar7Num = 12,
+		Bar7PerRow = 12,
+		Bar8Size = 34,
+		Bar8Font = 12,
+		Bar8Num = 12,
+		Bar8PerRow = 12,
 	},
 	Auras = {
 		Reminder = true,
@@ -115,22 +127,21 @@ G.DefaultSettings = {
 		SMRGroups = 6,
 		SMRDirec = 1,
 		InstanceAuras = true,
-		DispellOnly = false,
+		DispellType = 1,
 		RaidDebuffScale = 1,
 		SpecRaidPos = false,
 		RaidHealthColor = 2,
-		HorizonRaid = false,
-		HorizonParty = false,
-		ReverseRaid = false,
 		ShowSolo = false,
 		RaidWidth = 88,
 		RaidHeight = 16,
 		RaidPowerHeight = 2,
 		RaidHPMode = 1,
-		AurasClickThrough = false,
+		AuraClickThru = false,
+		CombatText = true,
 		HotsDots = true,
 		AutoAttack = true,
 		FCTOverHealing = false,
+		FCTFontSize = 18,
 		PetCombatText = true,
 		ScrollingCT = false,
 		RaidClickSets = true,
@@ -182,6 +193,7 @@ G.DefaultSettings = {
 		HideTip = false,
 		DescRole = true,
 		PlayerAbsorb = false,
+		AutoBuffs = false,
 
 		PlayerWidth = 245,
 		PlayerHeight = 24,
@@ -286,6 +298,7 @@ G.DefaultSettings = {
 	},
 	Map = {
 		DisableMap = false,
+		DisableMinimap = false,
 		Clock = false,
 		CombatPulse = false,
 		MapScale = 1,
@@ -308,6 +321,8 @@ G.DefaultSettings = {
 		maxAuras = 6,
 		PlateAuras = true,
 		AuraSize = 26,
+		FontSize = 14,
+		SizeRatio = .5,
 		AuraFilter = 3,
 		FriendlyCC = false,
 		HostileCC = true,
@@ -528,7 +543,6 @@ G.AccountSettings = {
 	ChatFilterList = "%*",
 	ChatFilterWhiteList = "",
 	TimestampFormat = 1,
-	NameplateFilter = {[1]={}, [2]={}},
 	RaidDebuffs = {},
 	Changelog = {},
 	totalGold = {},
@@ -545,8 +559,6 @@ G.AccountSettings = {
 	DBMRequest = false,
 	SkadaRequest = false,
 	BWRequest = false,
-	RaidAuraWatch = {},
-	RaidClickSets = {}, -- deprecated
 	ClickSets = {},
 	TexStyle = 3,
 	KeystoneInfo = {},
@@ -564,6 +576,10 @@ G.AccountSettings = {
 	SmoothAmount = .25,
 	AutoRecycle = true,
 	IgnoredButtons = "",
+	RaidBuffsWhite = {},
+	RaidDebuffsBlack = {},
+	NameplateWhite = {},
+	NameplateBlack = {},
 }
 
 -- Initial settings
@@ -612,6 +628,29 @@ loader:RegisterEvent("ADDON_LOADED")
 loader:SetScript("OnEvent", function(self, _, addon)
 	if addon ~= "_ShiGuang" then return end
 
+	-- Transfer old data START
+	if MaoRUIDB["NameplateFilter"] then
+		if MaoRUIDB["NameplateFilter"][1] then
+			if not MaoRUIDB["NameplateWhite"] then MaoRUIDB["NameplateWhite"] = {} end
+			for spellID, value in pairs(MaoRUIDB["NameplateFilter"][1]) do
+				MaoRUIDB["NameplateWhite"][spellID] = value
+			end
+		end
+		if MaoRUIDB["NameplateFilter"][2] then
+			if not MaoRUIDB["NameplateBlack"] then MaoRUIDB["NameplateBlack"] = {} end
+			for spellID, value in pairs(MaoRUIDB["NameplateFilter"][2]) do
+				MaoRUIDB["NameplateBlack"][spellID] = value
+			end
+		end
+	end
+	if MaoRUIDB["RaidAuraWatch"] then
+		if not MaoRUIDB["RaidBuffsWhite"] then MaoRUIDB["RaidBuffsWhite"] = {} end
+		for spellID in pairs(MaoRUIDB["RaidAuraWatch"]) do
+			MaoRUIDB["RaidBuffsWhite"][spellID] = true
+		end
+	end
+	-- Transfer old data END
+
 	InitialSettings(G.AccountSettings, MaoRUIDB)
 	if not next(MaoRUISetDB) then
 		for i = 1, 5 do MaoRUISetDB[i] = {} end
@@ -623,27 +662,13 @@ loader:SetScript("OnEvent", function(self, _, addon)
 
 	if MaoRUIDB["ProfileIndex"][I.MyFullName] == 1 then
 		R.db = MaoRUIPerDB
-		if not R.db["SL"] then
+		if not R.db["DF"] then
 			wipe(R.db)
-			R.db["SL"] = true
+			R.db["DF"] = true
 		end
 	else
 		R.db = MaoRUISetDB[MaoRUIDB["ProfileIndex"][I.MyFullName] - 1]
 	end
-	-- Transfer old data START
-	if R.db["Nameplate"] and R.db["Nameplate"]["UnitList"] then
-		if not R.db["Nameplate"]["CustomUnits"] then
-			R.db["Nameplate"]["CustomUnits"] = {}
-		end
-		M.SplitList(R.db["Nameplate"]["CustomUnits"], R.db["Nameplate"]["UnitList"])
-	end
-	if R.db["Nameplate"] and R.db["Nameplate"]["ColorDots"] then
-		if not R.db["Nameplate"]["DotSpells"] then
-			R.db["Nameplate"]["DotSpells"] = {}
-		end
-		M.SplitList(R.db["Nameplate"]["DotSpells"], R.db["Nameplate"]["ColorDots"])
-	end
-	-- Transfer old data END
 	InitialSettings(G.DefaultSettings, R.db, true)
 
 	M:SetupUIScale(true)
@@ -656,6 +681,10 @@ loader:SetScript("OnEvent", function(self, _, addon)
 		I.normTex = G.TextureList[MaoRUIDB["TexStyle"]].texture
 	end
 
+	if not R.db["Map"]["DisableMinimap"] then
+		GetMinimapShape = M.GetMinimapShape
+	end
+
 	self:UnregisterAllEvents()
 end)
 
@@ -664,6 +693,13 @@ local function setupCastbar()
 	G:SetupCastbar(guiPage[9])
 end
 
+local function setupClassPower()
+	G:SetupUFClassPower(guiPage[3])
+end
+
+local function setupUFAuras()
+	G:SetupUFAuras(guiPage[3])
+end
 
 local function setupSwingBars()
 	G:SetupSwingBars(guiPage[1])
@@ -693,8 +729,16 @@ local function setupClickCast()
 	G:SetupClickCast(guiPage[2])
 end
 
-local function setupBuffIndicator()
-	G:SetupBuffIndicator(guiPage[2])
+local function setupDebuffsIndicator()
+	G:SetupDebuffsIndicator(guiPage[2])
+end
+
+local function setupBuffsIndicator()
+	G:SetupBuffsIndicator(guiPage[2])
+end
+
+local function setupSpellsIndicator()
+	G:SetupSpellsIndicator(guiPage[2])
 end
 
 local function setupPartyWatcher()
@@ -735,7 +779,7 @@ end
 
 local function setupAuraWatch()
 	f:Hide()
-	SlashCmdList["NDUI_AWCONFIG"]()
+	SlashCmdList["UI_AWCONFIG"]()
 end
 
 local function setupActionBar()
@@ -881,20 +925,16 @@ local function toggleUFClassPower()
 	M:GetModule("UnitFrames"):ToggleUFClassPower()
 end
 
+local function togglePortraits()
+	M:GetModule("UnitFrames"):TogglePortraits()
+end
+
 local function toggleAllAuras()
 	M:GetModule("UnitFrames"):ToggleAllAuras()
 end
 
 local function updateRaidTextScale()
 	M:GetModule("UnitFrames"):UpdateRaidTextScale()
-end
-
-local function refreshRaidFrameIcons()
-	M:GetModule("UnitFrames"):RefreshRaidFrameIcons()
-end
-
-local function updateRaidAuras()
-	M:GetModule("UnitFrames"):UpdateRaidAuras()
 end
 
 local function updateRaidHealthMethod()
@@ -936,6 +976,10 @@ end
 
 local function updateScrollingFont()
 	M:GetModule("UnitFrames"):UpdateScrollingFont()
+end
+
+local function updateRaidAurasOptions()
+	M:GetModule("UnitFrames"):RaidAuras_UpdateOptions()
 end
 
 local function updateMinimapScale()
@@ -1045,7 +1089,7 @@ G.TabList = {
 
 G.OptionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 	[1] = {
-		{1, "Actionbar", "Enable", HeaderTag..U["Enable Actionbar"]}, --, nil, nil, setupActionBar
+		{1, "Actionbar", "Enable", HeaderTag..U["Enable Actionbar"], nil, nil, setupActionBar},
 		{1, "Actionbar", "MicroMenu", U["Micromenu"], true, nil, nil, nil, U["MicroMenuTip"]},
 		{1, "Actionbar", "ShowStance", U["ShowStanceBar"], true, true, setupStanceBar},
 		{1, "Actionbar", "Bar4Fader", U["Bar4 Fade"].."*", nil, nil, nil, toggleBarFader},
@@ -1053,7 +1097,7 @@ G.OptionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		--{},--blank
 		{1, "Actionbar", "CustomBar", HeaderTag..U["Enable CustomBar"], nil, nil, nil, nil, U["CustomBarTip"]},
 		{1, "Actionbar", "BarXFader", U["CustomBarFader"].."*", true, nil, nil, toggleBarFader},
-		{4, "Actionbar", "Style", U["Actionbar Style"], true, true, {"-- 2*(3+12+3) --", "-- 2*(6+12+6) --", "-- 2*6+3*12+2*6 --", "-- 3*12 --", "-- 2*(12+6) --", "-- 3*(4+12+4) --", "-- What --", "-- MR --", "-- PVP2 --", "-- Cool --", "-- JK --"}},  --nop
+		--{4, "Actionbar", "Style", U["Actionbar Style"], true, true, {"-- 2*(3+12+3) --", "-- 2*(6+12+6) --", "-- 2*6+3*12+2*6 --", "-- 3*12 --", "-- 2*(12+6) --", "-- 3*(4+12+4) --", "-- What --", "-- MR --", "-- PVP2 --", "-- Cool --", "-- JK --"}},  --nop
 		{3, "Actionbar", "CustomBarButtonSize", U["ButtonSize"].."*", false, false, {24, 60, 1}, updateCustomBar},
 		{3, "Actionbar", "CustomBarNumButtons", U["MaxButtons"].."*", true, false, {1, 12, 1}, updateCustomBar},
 		{3, "Actionbar", "CustomBarNumPerRow", U["ButtonsPerRow"].."*", true, true, {1, 12, 1}, updateCustomBar},
@@ -1090,24 +1134,23 @@ G.OptionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "UFs", "PartyWatcher", HeaderTag..U["UFs PartyWatcher"], true, nil, setupPartyWatcher, nil, U["PartyWatcherTip"]},
 		{1, "UFs", "PWOnRight", U["PartyWatcherOnRight"].."*", true, true, nil, updatePartyElements},
 		{1, "UFs", "PartyWatcherSync", U["PartyWatcherSync"], nil, nil, nil, nil, U["PartyWatcherSyncTip"]},
-		{1, "UFs", "ShowRaidDebuff", U["ShowRaidDebuff"].."*", true, nil, nil, updateRaidAuras, U["ShowRaidDebuffTip"]},
-		{1, "UFs", "ShowRaidBuff", U["ShowRaidBuff"].."*", true, true, nil, updateRaidAuras, U["ShowRaidBuffTip"]},
-		{3, "UFs", "RaidDebuffSize", U["RaidDebuffSize"].."*", nil, nil, {5, 30, 1}, updateRaidAuras},
-		{3, "UFs", "RaidBuffSize", U["RaidBuffSize"].."*", true, nil, {5, 30, 1}, updateRaidAuras},
-		{3, "UFs", "RaidDebuffScale", U["RaidDebuffScale"].."*", true, true, {.8, 2, .1}, refreshRaidFrameIcons},
-		{4, "UFs", "BuffIndicatorType", U["BuffIndicatorType"].."*", nil, nil, {U["BI_Blocks"], U["BI_Icons"], U["BI_Numbers"]}, refreshRaidFrameIcons},
+		{1, "UFs", "ShowRaidDebuff", U["ShowRaidDebuff"].."*", true, nil, nil, setupDebuffsIndicator, updateRaidAurasOptions, U["ShowRaidDebuffTip"]},
+		{1, "UFs", "ShowRaidBuff", U["ShowRaidBuff"].."*", true, true, nil, setupBuffsIndicator, updateRaidAurasOptions, U["ShowRaidBuffTip"]},
+		{3, "UFs", "RaidDebuffSize", U["RaidDebuffSize"].."*", nil, nil, {5, 30, 1}, updateRaidAurasOptions},
+		{3, "UFs", "RaidBuffSize", U["RaidBuffSize"].."*", true, nil, {5, 30, 1}, updateRaidAurasOptions},
+		{3, "UFs", "RaidDebuffScale", U["RaidDebuffScale"].."*", true, true, {.8, 2, .1}, updateRaidAurasOptions},
+		{4, "UFs", "BuffIndicatorType", U["BuffIndicatorType"].."*", nil, nil, {U["BI_Blocks"], U["BI_Icons"], U["BI_Numbers"]}, updateRaidAurasOptions},
 		{4, "UFs", "RaidHealthColor", U["HealthColor"].."*", true, nil, {U["Default Dark"], U["ClassColorHP"], U["GradientHP"]}, updateRaidTextScale},
 		{4, "UFs", "RaidHPMode", U["HealthValueType"].."*", true, true, {DISABLE, U["ShowHealthPercent"], U["ShowHealthCurrent"], U["ShowHealthLoss"], U["ShowHealthLossPercent"]}, updateRaidTextScale, U["100PercentTip"]},
-		{3, "UFs", "BuffIndicatorScale", U["BuffIndicatorScale"].."*", nil, nil, {.8, 2, .1}, refreshRaidFrameIcons},
+		{3, "UFs", "BuffIndicatorScale", U["BuffIndicatorScale"].."*", nil, nil, {.8, 2, .1}, updateRaidAurasOptions},
 		{3, "UFs", "RaidTextScale", U["UFTextScale"].."*", true, nil, {.8, 1.5, .05}, updateRaidTextScale},
 		{3, "UFs", "HealthFrequency", U["HealthFrequency"].."*", true, true, {.1, .5, .05}, updateRaidHealthMethod, U["HealthFrequencyTip"]},
 		{},--blank		
 		{1, "UFs", "InstanceAuras", HeaderTag..U["Instance Auras"], nil, nil, setupRaidDebuffs, nil, U["InstanceAurasTip"]},
-		{1, "UFs", "DispellOnly", U["DispellableOnly"].."*", true, nil, nil, nil, U["DispellableOnlyTip"]},
 		{1, "UFs", "AurasClickThrough", U["RaidAuras ClickThrough"], true, true, nil, nil, U["ClickThroughTip"]},
 		{1, "UFs", "RaidClickSets", HeaderTag..U["Enable ClickSets"], nil, nil, setupClickCast},
 		{1, "UFs", "AutoRes", HeaderTag..U["UFs AutoRes"], true},
-		{1, "UFs", "RaidBuffIndicator", HeaderTag..U["RaidBuffIndicator"], true, true, setupBuffIndicator, nil, U["RaidBuffIndicatorTip"]},
+		{1, "UFs", "RaidBuffIndicator", HeaderTag..U["RaidBuffIndicator"], true, true, setupBuffsIndicator, nil, U["RaidBuffIndicatorTip"]},
 		{1, "UFs", "ShowSolo", U["ShowSolo"].."*", nil, nil, nil, updateAllHeaders, U["ShowSoloTip"]},
 		{1, "UFs", "SmartRaid", HeaderTag..U["SmartRaid"].."*", true, nil, nil, updateAllHeaders, U["SmartRaidTip"]},
 		{1, "UFs", "TeamIndex", U["RaidFrame TeamIndex"].."*", true, true, nil, updateTeamIndex},
@@ -1153,8 +1196,8 @@ G.OptionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		--{3, "Nameplate", "HarmHeight", NewTag..U["PlateHarmHeight"].."*", true, nil, {1, 500, 1}, updateClickableSize},
 		--{3, "Nameplate", "HelpWidth", NewTag..U["PlateHelpWidth"].."*", true, true, {1, 500, 1}, updateClickableSize},
 		--{3, "Nameplate", "HelpHeight", NewTag..U["PlateHelpHeight"].."*", nil, nil, {1, 500, 1}, updateClickableSize},
-		{1, "Nameplate", "CVarOnlyNames", NewTag..U["CVarOnlyNames"], true, nil, nil, updatePlateCVars, U["CVarOnlyNamesTip"]},
-		{1, "Nameplate", "CVarShowNPCs", NewTag..U["CVarShowNPCs"].."*", true, true, nil, updatePlateCVars, U["CVarShowNPCsTip"]},
+		{1, "Nameplate", "CVarOnlyNames", NewTag..U["CVarOnlyNames"], nil, nil, nil, updatePlateCVars, U["CVarOnlyNamesTip"]},
+		{1, "Nameplate", "CVarShowNPCs", NewTag..U["CVarShowNPCs"].."*", true, nil, nil, updatePlateCVars, U["CVarShowNPCsTip"]},
 		{1, "Nameplate", "ColoredTarget", HeaderTag..U["ColoredTarget"].."*", nil, nil, nil, nil, U["ColoredTargetTip"]},
 		{1, "Nameplate", "ColoredFocus", HeaderTag..U["ColoredFocus"].."*", true, nil, nil, nil, U["ColoredFocusTip"]},
 		{5, "Nameplate", "TargetColor", U["TargetNP Color"].."*"},
@@ -1197,9 +1240,9 @@ G.OptionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "UFs", "UFFade", U["UFFade"]},
 		{1, "UFs", "UFClassIcon", U["UFClassIcon"], true},
 		{1, "UFs", "UFPctText", U["UFPctText"], true, true},
-		{1, "Misc", "xMerchant", U["xMerchant"]},
-		{1, "Misc", "WallpaperKit", U["WallpaperKit"], true},
-		{1, "Skins", "FlatMode", U["FlatMode"], true, true},
+		--{1, "Misc", "xMerchant", U["xMerchant"]},
+		{1, "Misc", "WallpaperKit", U["WallpaperKit"]},
+		{1, "Skins", "FlatMode", U["FlatMode"], true},
 		{},--blank
 		{1, "Map", "DisableMap", "|cffff0000"..U["DisableMap"], nil, nil, nil, nil, U["DisableMapTip"]},
 		{1, "Map", "MapRevealGlow", U["MapRevealGlow"].."*", true, nil, nil, nil, U["MapRevealGlowTip"]},
@@ -1481,7 +1524,7 @@ local function CreateOption(i)
 	local parent, offset = guiPage[i].child, 40
 
 	for _, option in pairs(G.OptionList[i]) do
-		local optType, key, value, name, horizon, horizon2, data, callback, tooltip = unpack(option)
+		local optType, key, value, name, horizon, horizon2, data, callback, tooltip, disabled = unpack(option)
 		-- Checkboxes
 		if optType == 1 then
 			local cb = M.CreateCheckBox(parent)
@@ -1509,6 +1552,7 @@ local function CreateOption(i)
 			if tooltip then
 				M.AddTooltip(cb, "ANCHOR_RIGHT", tooltip, "info", true)
 			end
+			if disabled then cb:Hide() end
 		-- Editbox
 		elseif optType == 2 then
 			local eb = M.CreateEditBox(parent, 210, 23)
@@ -1618,7 +1662,7 @@ local function CreateOption(i)
 end
 
 
-StaticPopupDialogs["RELOAD_NDUI"] = {
+StaticPopupDialogs["RELOAD_UI"] = {
 	text = U["ReloadUI Required"],
 	button1 = APPLY,
 	button2 = CLASS_TRIAL_THANKS_DIALOG_CLOSE_BUTTON,
@@ -1631,8 +1675,8 @@ local function OpenGUI()
 	if f then f:Show() return end
 
 	-- Main Frame
-	f = CreateFrame("Frame", "NDuiGUI", UIParent)
-	tinsert(UISpecialFrames, "NDuiGUI")
+	f = CreateFrame("Frame", "UIGUI", UIParent)
+	tinsert(UISpecialFrames, "UIGUI")
 	local bgTexture = f:CreateTexture("name", "BACKGROUND")
 	bgTexture:SetTexture("Interface\\Destiny\\UI-Destiny");  --FontStyles\\FontStyleGarrisons
 	bgTexture:SetTexCoord(0,1,0,600/1024);
@@ -1656,7 +1700,7 @@ local function OpenGUI()
 		M:SetupUIScale()
 		f:Hide()
 		if G.needUIReload then
-			StaticPopup_Show("RELOAD_NDUI")
+			StaticPopup_Show("RELOAD_UI")
 			G.needUIReload = nil
 		end
 	end)

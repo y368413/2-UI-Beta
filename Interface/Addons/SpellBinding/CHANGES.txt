@@ -1,0 +1,258 @@
+commit 2be5127a2d4018a364a331977a8a1f7f6c87f877
+Author: Lombra <Lombra@users.noreply.github.com>
+Date:   Sat Oct 29 16:25:39 2022 +0200
+
+    Update external URLs
+
+commit 22208ee7819b0d022f1dac63c57f01c03acbf8ed
+Author: Lombra <Lombra@users.noreply.github.com>
+Date:   Sat Oct 29 16:15:34 2022 +0200
+
+    Update for WoW 10.0
+
+commit 4342d8798d430a3e8ae5f154df7ffb5d350703d2
+Author: Lombra <Lombra@users.noreply.github.com>
+Date:   Sat Oct 29 16:12:21 2022 +0200
+
+    Add `.gitignore`
+
+commit d8f040f26d6b1ef507de8220da35a9c9d39217be
+Author: Lombra <Lombra@users.noreply.github.com>
+Date:   Sat Oct 29 16:04:46 2022 +0200
+
+    Create README.md
+
+commit b7a56eaef479bf83400fe62b0e8a65d9f2802c63
+Author: Lombra <Lombra@users.noreply.github.com>
+Date:   Thu Oct 15 18:08:03 2020 +0000
+
+    - Use BackdropTemplate for stuff.
+    - Update TOC interface version.
+
+commit a0dd4a0bc1afa80d0e9d611cc00923109ec50f81
+Author: Lombra <Lombra@users.noreply.github.com>
+Date:   Mon Sep 3 12:52:25 2018 +0000
+
+    - Don't wrap too long binding names in bindings list.
+    - ToC bump.
+
+commit 5ce48881d196292e719cedde86ffdb458e3ca7fb
+Author: Lombra <Lombra@users.noreply.github.com>
+Date:   Wed Apr 18 23:50:09 2018 +0000
+
+    - Fix Github externals URL.
+
+commit 073375694aea1c33565437aa32e517576e639fa8
+Author: Lombra <Lombra@users.noreply.github.com>
+Date:   Thu Oct 5 17:09:55 2017 +0000
+
+commit e35db2f5e6f1f8bb56f058d7b1d21f1f6d3fd089
+Author: Lombra <Lombra@users.noreply.github.com>
+Date:   Mon Sep 25 16:38:20 2017 +0000
+
+    - Update externals URLs
+
+commit 0d9b89202cb76c4c1a898a8139023d5f46a99e95
+Author: Lombra <Lombra@users.noreply.github.com>
+Date:   Wed Aug 30 14:44:07 2017 +0000
+
+    - Update for 7.3 sound API changes.
+    - ToC bump.
+    - Update externals URLs.
+
+commit d7b193cc60b5ff71ca3f3ed895a02e821c526881
+Author: lombra <Lombra@users.noreply.github.com>
+Date:   Mon Nov 3 23:03:09 2014 +0000
+
+    Tagging as 1.0.0.
+
+commit 07e11ed48a1e181e77bc75d327e8e1a846ef74a8
+Author: lombra <Lombra@users.noreply.github.com>
+Date:   Mon Nov 3 02:39:51 2014 +0000
+
+    - Update bindings and grid icons when spell or macro icons change.
+    - Remove the Reverse sets button again.
+    - Remove some unused code.
+
+commit 468c352d136941c990ab7378ac004e278b43b8fb
+Author: lombra <Lombra@users.noreply.github.com>
+Date:   Wed Oct 29 18:14:06 2014 +0000
+
+    - Rename Custom module to Grid and attempt to import the settings.
+    - Pull LibDualSpec from Phanx' library mirror with externals instead of hard embedding.
+
+commit 6654d6387d75439c739c3d80fcaa6e5591d89e2a
+Author: lombra <Lombra@users.noreply.github.com>
+Date:   Wed Oct 22 01:03:16 2014 +0000
+
+    Tagging as Beta 0.1.0. Yay for new beta naming scheme.
+
+commit dcc1214928250c18e2a6ecd3c6c4f7f02b33ceaf
+Author: lombra <Lombra@users.noreply.github.com>
+Date:   Wed Oct 15 00:42:55 2014 +0000
+
+    - Updates for 6.0.
+
+commit b228452f0f896336078877bc1642f7ada580ba29
+Author: lombra <Lombra@users.noreply.github.com>
+Date:   Thu Sep 11 23:26:57 2014 +0000
+
+    - Reverse set iteration direction. (as not to having to iterate all tables backwards) Set priorities will end up reversed as a result. Top is still top prio.
+    - Added temporary Reverse button to Sets tab to easily reverse priorities.
+    - Improve binding conflict feedback logic.
+    - Add click binds to lowest prio set instead of always global.
+    - Use better method of displaying the appropriate bindings in Custom tab.
+    - Don't allow deactivating the last active set.
+
+commit 0ef7c4eed9186b89f60043525c545b31d3619dea
+Author: lombra <Lombra@users.noreply.github.com>
+Date:   Sun Sep 7 22:41:18 2014 +0000
+
+    - Change some of the text feedback to hopefully make it a bit clearer.
+    - Include every occurrence of each action in the Binding list instead of only the highest one.
+    - Properly take modifier into account when displaying conflicting bindings.
+    - Don't consider override bindings from other addons when displaying conflicting bindings.
+
+commit 9ccd20e146914cc905955e16b58b21e5377a20ba
+Author: lombra <Lombra@users.noreply.github.com>
+Date:   Fri Aug 1 16:03:39 2014 +0000
+
+    - Show feedback message regarding conflicts when changing set of an existing binding without changing the key.
+    - Close dropdown menus and hide binding dialogs when their parent frames are hidden and when entering combat.
+
+commit 924a3df258f29d5a21684e32d9a245e228affa9c
+Author: lombra <Lombra@users.noreply.github.com>
+Date:   Sat Jul 26 12:44:48 2014 +0000
+
+    - Reverse binding set order also for Bindings and Custom dropdowns to put highest prio on top.
+    - Fix an issue with scrolling the Bindings tab.
+
+commit 18ad91c3b52e82df0e4bc2b03c9d56dc1ef2226b
+Author: lombra <Lombra@users.noreply.github.com>
+Date:   Sat Jul 19 15:50:13 2014 +0000
+
+    Tagging as Beta 2
+
+commit 8471730f777e4b1f9e80ffcb383ce97d2634d9aa
+Author: lombra <Lombra@users.noreply.github.com>
+Date:   Sat Jul 19 15:29:45 2014 +0000
+
+    - Implement Libra.
+    - Scopes are now referred to as binding sets.
+    - Add various hints all over the UI.
+    - Add objects to lowest priority active set instead of global set when dropped on empty space.
+    - Don't accept dropped objects when no sets are active.
+    - Reverse the order of sets in the Bindings and Binding set (formerly Scoping) UIs to indicate that topmost = top priority.
+    - Add LibDataBroker launcher.
+    - Register mouse clicks on press instead of release.
+    - Remove old database upgrade code.
+    - Add some static icons for click bindings and default bindings.
+    - Fix various issues with the formerly-Scoping UI.
+
+commit f5254a874d907b5e24b8ef82b65d7bcaf8625b5c
+Author: lombra <Lombra@users.noreply.github.com>
+Date:   Mon Oct 21 09:32:11 2013 +0000
+
+    - Move Bind click button ever so slightly.
+    - Band aid for slider brokenness.
+    - Move Custom tab next to Bindings tabs.
+    - ToC bump.
+
+commit 52dc6e7d2d4de9cbb646cefd4322b468cac43c03
+Author: lombra <Lombra@users.noreply.github.com>
+Date:   Sun Aug 18 20:22:08 2013 +0000
+
+    Tagging as Beta 1
+
+commit d1ffa4fb033821f865e55ff24748f78f869b1058
+Author: lombra <Lombra@users.noreply.github.com>
+Date:   Sun Aug 18 20:19:03 2013 +0000
+
+    - Initialize key font string with font object so it doesn't error.
+
+commit a9eb508e8f629e2b95f556f6d0547fe055363ed0
+Author: lombra <Lombra@users.noreply.github.com>
+Date:   Sun Aug 18 19:49:45 2013 +0000
+
+    - Remove (not just unbind) binding from previous scope when moving to new scope.
+    - Grey out bindings in Bindings list that aren't active.
+
+commit 357dd661a9703a2dd1ed58dd72422580de751a76
+Author: lombra <Lombra@users.noreply.github.com>
+Date:   Sun Aug 18 18:23:11 2013 +0000
+
+    - Display more useful text when there is a binding conflict.
+    - Use sliders instead of editboxes to set grid size for the custom view.
+
+commit 5c177bdf1d915ef7e74951c62221da7c989a8d22
+Author: lombra <Lombra@users.noreply.github.com>
+Date:   Fri Aug 16 21:47:46 2013 +0000
+
+    - Allow max 2 keys bound per action per scope. Now referred to as primary and secondary.
+    - Change database structure. Existing saved variables will be upgraded on load until beta/release.
+    - Block mouse input while combat overlay is shown.
+    - Add support for binding button clicks. Click 'Bind click' in Bindings view, then click a button using the mouse button to use for the binding.
+
+commit 2016c922deab35076ff1ec628ea9db1efa30bd9d
+Author: lombra <Lombra@users.noreply.github.com>
+Date:   Sun Aug 4 00:23:59 2013 +0000
+
+    - Fix "Will replace x" for spells.
+
+commit f4f37e5aebc7aaef8421b799207d55bdf30d62b9
+Author: lombra <Lombra@users.noreply.github.com>
+Date:   Fri Aug 2 21:15:21 2013 +0000
+
+    - List all bindings in tooltips.
+    - Fix tooltip appearing under certain circumstances when the frame is hidden.
+    - Indicate that bindings will not be active when selecting certain scope.
+
+commit cf6173e06089b2c7a777d8fe5b3573b61096b959
+Author: lombra <Lombra@users.noreply.github.com>
+Date:   Sun Jul 28 00:48:39 2013 +0000
+
+    - Clean up some scroll list code.
+
+commit f5866589191c7eaf1beb57491d2ac1c95bc4253e
+Author: lombra <Lombra@users.noreply.github.com>
+Date:   Sat Jul 27 23:28:50 2013 +0000
+
+commit 19896d38049437b2c0665ec11a14e796ffb545d4
+Author: lombra <Lombra@users.noreply.github.com>
+Date:   Thu Jul 25 14:06:00 2013 +0000
+
+    - Finishing touches.
+    - Correctly include AceDBUI.
+
+commit 09e07fe09098679185b5f2107740105e89566479
+Author: lombra <Lombra@users.noreply.github.com>
+Date:   Tue Jul 23 16:51:51 2013 +0000
+
+    - Looooots more work. Mostly in a finished state by now.
+
+commit 96de54d38a26e03a12244ab6574ee08e8cc69abf
+Author: lombra <Lombra@users.noreply.github.com>
+Date:   Mon Jul 22 00:15:04 2013 +0000
+
+    - Remove bindings from previous scope if binding to different scope.
+
+commit 2c50230be9882c143aad87d1be954628ef2f847b
+Author: lombra <Lombra@users.noreply.github.com>
+Date:   Sun Jul 21 13:03:36 2013 +0000
+
+    - lots of work, dual spec profiling implemented
+
+commit 8a674d7be97cdf1f94b272a52b92f9b7bea315e7
+Author: lombra <Lombra@users.noreply.github.com>
+Date:   Fri Jul 19 01:14:12 2013 +0000
+
+    work work
+    - Scoping is now partially implemented.
+
+commit 014273fb6144bf29b0e2d11e231d878b97f05ab6
+Author: lombra <Lombra@users.noreply.github.com>
+Date:   Wed Jul 17 17:31:17 2013 +0000
+
+    - Initial commit.
+    - Several features are NYI!
+

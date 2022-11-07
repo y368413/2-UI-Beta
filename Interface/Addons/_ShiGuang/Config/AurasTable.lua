@@ -84,17 +84,11 @@ function module:AddDeprecatedGroup()
 	wipe(R.DeprecatedAuras)
 end
 
--- RaidFrame spells
-local RaidBuffs = {}
-function module:AddClassSpells(list)
-	for class, value in pairs(list) do
-		RaidBuffs[class] = value
-	end
-end
-
 -- RaidFrame debuffs
 local RaidDebuffs = {}
-function module:RegisterDebuff(_, instID, _, spellID, level)
+function module:RegisterDebuff(tierID, instID, _, spellID, level)
+	if tierID == 10 and not I.isBeta then return end
+
 	local instName = EJ_GetInstanceInfo(instID)
 	if not instName then
 		if I.isDeveloper then print("Invalid instance ID: "..instID) end
@@ -161,24 +155,21 @@ function module:CheckMajorSpells()
 	end
 end
 
-local function checkNameplateFilter(index)
-	local VALUE = (index == 1 and R.WhiteList) or (index == 2 and R.BlackList)
-	if VALUE then
-		for spellID in pairs(VALUE) do
-			local name = GetSpellInfo(spellID)
-			if name then
-				if MaoRUIDB["NameplateFilter"][index][spellID] then
-					MaoRUIDB["NameplateFilter"][index][spellID] = nil
-				end
-			else
-				if I.isDeveloper then print("Invalid nameplate filter ID: "..spellID) end
+local function CheckNameplateFilter(list, key)
+	for spellID in pairs(list) do
+		local name = GetSpellInfo(spellID)
+		if name then
+			if MaoRUIDB[key][spellID] then
+				MaoRUIDB[key][spellID] = nil
 			end
+		else
+			if I.isDeveloper then print("Invalid nameplate filter ID: "..spellID) end
 		end
+	end
 
-		for spellID, value in pairs(MaoRUIDB["NameplateFilter"][index]) do
-			if value == false and VALUE[spellID] == nil then
-				MaoRUIDB["NameplateFilter"][index][spellID] = nil
-			end
+	for spellID, value in pairs(MaoRUIDB[key]) do
+		if value == false and list[spellID] == nil then
+			MaoRUIDB[key][spellID] = nil
 		end
 	end
 end
@@ -197,8 +188,8 @@ local function cleanupNameplateUnits(VALUE)
 end
 
 function module:CheckNameplateFilters()
-	checkNameplateFilter(1)
-	checkNameplateFilter(2)
+	CheckNameplateFilter(R.WhiteList, "NameplateWhite")
+	CheckNameplateFilter(R.BlackList, "NameplateBlack")
 	cleanupNameplateUnits("CustomUnits")
 	cleanupNameplateUnits("PowerUnits")
 end
@@ -220,7 +211,6 @@ function module:OnLogin()
 	RaidDebuffs[0] = {} -- OTHER spells
 	module:AddDeprecatedGroup()
 	R.AuraWatchList = AuraWatchList
-	R.RaidBuffs = RaidBuffs
 	R.RaidDebuffs = RaidDebuffs
 
 	module:CheckPartySpells()

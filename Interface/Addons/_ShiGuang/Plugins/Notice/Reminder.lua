@@ -528,11 +528,11 @@ end)
 CombatNotificationAlertFrame:SetScript("OnUpdate", function(self, elapsed)
     CombatNotificationAlertFrame.timer = CombatNotificationAlertFrame.timer + elapsed
     if (CombatNotificationAlertFrame.timer > CombatNotificationAlertFrame.totalTime) then CombatNotificationAlertFrame:Hide() end
-    if (CombatNotificationAlertFrame.timer <= 0.6) then
-        CombatNotificationAlertFrame:SetAlpha(CombatNotificationAlertFrame.timer * 2)
-    elseif (CombatNotificationAlertFrame.timer > 0.8) then
-        CombatNotificationAlertFrame:SetAlpha(1 - CombatNotificationAlertFrame.timer / CombatNotificationAlertFrame.totalTime)
-    end
+    --if (CombatNotificationAlertFrame.timer <= 0.6) then
+        --CombatNotificationAlertFrame:SetAlpha(CombatNotificationAlertFrame.timer * 2)
+    --elseif (CombatNotificationAlertFrame.timer > 0.8) then
+        --CombatNotificationAlertFrame:SetAlpha(1 - CombatNotificationAlertFrame.timer / CombatNotificationAlertFrame.totalTime)
+    --end
 end)
 CombatNotificationAlertFrame:SetScript("OnEvent", function(self, event)
     CombatNotificationAlertFrame:Hide()

@@ -1,33 +1,37 @@
 -------------------------------------------------------------------------------
 ---------------------------------- NAMESPACE ----------------------------------
 -------------------------------------------------------------------------------
-local _, shadowlands = ...
-local L = shadowlands.locale
-local Class = shadowlands.Class
-local Map = shadowlands.Map
+local _, Shadowlands = ...
+local Class = Shadowlands.Class
+local L = Shadowlands.locale
+local Map = Shadowlands.Map
 
-local Collectible = shadowlands.node.Collectible
-local NPC = shadowlands.node.NPC
-local Node = shadowlands.node.Node
-local PetBattle = shadowlands.node.PetBattle
-local Rare = shadowlands.node.Rare
-local Treasure = shadowlands.node.Treasure
+local Collectible = Shadowlands.node.Collectible
+local Node = Shadowlands.node.Node
+local NPC = Shadowlands.node.NPC
+local PetBattle = Shadowlands.node.PetBattle
+local Rare = Shadowlands.node.Rare
+local Soulshape = Shadowlands.node.Soulshape
+local Squirrel = Shadowlands.node.Squirrel
+local Treasure = Shadowlands.node.Treasure
 
-local Achievement = shadowlands.reward.Achievement
-local Item = shadowlands.reward.Item
-local Mount = shadowlands.reward.Mount
-local Pet = shadowlands.reward.Pet
-local Transmog = shadowlands.reward.Transmog
-local Toy = shadowlands.reward.Toy
+local Achievement = Shadowlands.reward.Achievement
+local Item = Shadowlands.reward.Item
+local Mount = Shadowlands.reward.Mount
+local Pet = Shadowlands.reward.Pet
+local Toy = Shadowlands.reward.Toy
+local Transmog = Shadowlands.reward.Transmog
 
-local Arrow = shadowlands.poi.Arrow
-local Path = shadowlands.poi.Path
-local POI = shadowlands.poi.POI
+local Arrow = Shadowlands.poi.Arrow
+local Path = Shadowlands.poi.Path
+local POI = Shadowlands.poi.POI
 
 -------------------------------------------------------------------------------
 
-local NECROLORD = shadowlands.covenants.NEC
-local VENTHYR = shadowlands.covenants.VEN
+local NECROLORD = Shadowlands.covenants.NEC
+local VENTHYR = Shadowlands.covenants.VEN
+local NIGHTFAE = Shadowlands.covenants.FAE
+
 local map = Map({id = 1525, settings = true})
 
 -------------------------------------------------------------------------------
@@ -143,7 +147,7 @@ map.nodes[32641545] = Rare({
     id = 159496,
     quest = 61618,
     covenant = VENTHYR,
-    requires = shadowlands.requirement.GarrisonTalent(1259, L['anima_channeled']),
+    requires = Shadowlands.requirement.GarrisonTalent(1259, L['anima_channeled']),
     note = L['madalav_note'],
     rewards = {
         Transmog({item = 180489, slot = L['1h_sword']}), -- Forgemaster's Many-Fold Rapier
@@ -168,7 +172,7 @@ map.nodes[45847919] = Rare({
     id = 165290,
     quest = 59612,
     covenant = VENTHYR,
-    requires = shadowlands.requirement.GarrisonTalent(1256, L['anima_channeled']),
+    requires = Shadowlands.requirement.GarrisonTalent(1256, L['anima_channeled']),
     note = L['harika_note'],
     rewards = {
         Transmog({item = 183720, slot = L['leather']}), -- Dredbatskin Jerkin
@@ -200,7 +204,7 @@ map.nodes[61717949] = Rare({
 map.nodes[21803590] = Rare({
     id = 160640,
     quest = 58210,
-    requires = shadowlands.requirement.Item(177223),
+    requires = Shadowlands.requirement.Item(177223),
     note = L['innervus_note'],
     rewards = {
         Achievement({id = 14310, criteria = 48801}),
@@ -308,7 +312,7 @@ map.nodes[43007910] = Rare({
 map.nodes[38607200] = Rare({
     id = 160821,
     quest = 58259,
-    requires = shadowlands.requirement.Item(173939),
+    requires = Shadowlands.requirement.Item(173939),
     note = L['worldedge_gorger_note'],
     rewards = {
         Achievement({id = 14310, criteria = 48805}), Item({
@@ -381,7 +385,7 @@ map.nodes[37726925] = Treasure({
 
 map.nodes[29693723] = Treasure({
     quest = 62198,
-    requires = shadowlands.requirement.Currency(1820, 30),
+    requires = Shadowlands.requirement.Currency(1820, 30),
     rewards = {
         Achievement({id = 14314, criteria = 50081}), Toy({item = 182780}) -- Muckpool Cookpot
     }
@@ -425,7 +429,7 @@ map.nodes[63367398] = Treasure({
 
 map.nodes[57374337] = Treasure({
     quest = 62063,
-    requires = shadowlands.requirement.Currency(1820, 99),
+    requires = Shadowlands.requirement.Currency(1820, 99),
     note = L['the_count_note'],
     rewards = {
         Achievement({id = 14314, criteria = 50078}),
@@ -480,7 +484,7 @@ map.nodes[39945249] = PetBattle({
     id = 173315,
     note = L['sylla_note'],
     rewards = {
-        Achievement({id = 14625, criteria = 49408}), shadowlands.reward.Spacer(),
+        Achievement({id = 14625, criteria = 49408}), Shadowlands.reward.Spacer(),
         Achievement({id = 14868, criteria = 1, oneline = true}), -- Aquatic
         Achievement({id = 14869, criteria = 1, oneline = true}), -- Beast
         Achievement({id = 14870, criteria = 1, oneline = true}), -- Critter
@@ -498,7 +502,7 @@ map.nodes[61354121] = PetBattle({
     id = 173331,
     note = L['addius_note'],
     rewards = {
-        Achievement({id = 14625, criteria = 49406}), shadowlands.reward.Spacer(),
+        Achievement({id = 14625, criteria = 49406}), Shadowlands.reward.Spacer(),
         Achievement({id = 14868, criteria = 3, oneline = true}), -- Aquatic
         Achievement({id = 14869, criteria = 3, oneline = true}), -- Beast
         Achievement({id = 14870, criteria = 3, oneline = true}), -- Critter
@@ -516,7 +520,7 @@ map.nodes[67626608] = PetBattle({
     id = 173324,
     note = L['eyegor_note'],
     rewards = {
-        Achievement({id = 14625, criteria = 49407}), shadowlands.reward.Spacer(),
+        Achievement({id = 14625, criteria = 49407}), Shadowlands.reward.Spacer(),
         Achievement({id = 14868, criteria = 2, oneline = true}), -- Aquatic
         Achievement({id = 14869, criteria = 2, oneline = true}), -- Beast
         Achievement({id = 14870, criteria = 2, oneline = true}), -- Critter
@@ -537,7 +541,7 @@ map.nodes[67626608] = PetBattle({
 local Carriage = Class('Carriage', NPC, {
     icon = 'horseshoe_g',
     scale = 1.2,
-    group = shadowlands.groups.CARRIAGE
+    group = Shadowlands.groups.CARRIAGE
 })
 
 map.nodes[50217067] = Carriage({
@@ -635,12 +639,12 @@ map.nodes[47694787] = Carriage({
 local Sinrunner = Class('Sinrunner', NPC, {
     icon = 'horseshoe_o',
     scale = 1.2,
-    group = shadowlands.groups.SINRUNNER
+    group = Shadowlands.groups.SINRUNNER
 })
 
 map.nodes[41304731] = Sinrunner({
     id = 174032,
-    requires = shadowlands.requirement.Currency(1820, 5),
+    requires = Shadowlands.requirement.Currency(1820, 5),
     rewards = {Achievement({id = 14770, criteria = {50175, 50176}})},
     pois = {
         Path({
@@ -659,7 +663,7 @@ map.nodes[41304731] = Sinrunner({
 
 map.nodes[39464455] = Sinrunner({
     id = 174032,
-    requires = shadowlands.requirement.Currency(1820, 5),
+    requires = Shadowlands.requirement.Currency(1820, 5),
     rewards = {Achievement({id = 14770, criteria = {50175, 50176}})},
     pois = {
         Path({
@@ -677,7 +681,7 @@ map.nodes[39464455] = Sinrunner({
 
 map.nodes[40153776] = Sinrunner({
     id = 174032,
-    requires = shadowlands.requirement.Currency(1820, 5),
+    requires = Shadowlands.requirement.Currency(1820, 5),
     rewards = {Achievement({id = 14770, criteria = {50175, 50176}})},
     pois = {
         Path({
@@ -694,7 +698,7 @@ map.nodes[40153776] = Sinrunner({
 
 map.nodes[60346271] = Sinrunner({
     id = 174032,
-    requires = shadowlands.requirement.Currency(1820, 5),
+    requires = Shadowlands.requirement.Currency(1820, 5),
     rewards = {Achievement({id = 14770, criteria = 50174})},
     pois = {
         Path({
@@ -712,7 +716,7 @@ map.nodes[60346271] = Sinrunner({
 
 map.nodes[55246221] = Sinrunner({
     id = 174032,
-    requires = shadowlands.requirement.Currency(1820, 5),
+    requires = Shadowlands.requirement.Currency(1820, 5),
     rewards = {Achievement({id = 14770, criteria = 50174})},
     pois = {
         Path({
@@ -728,7 +732,7 @@ map.nodes[55246221] = Sinrunner({
 
 map.nodes[71624105] = Sinrunner({
     id = 174032,
-    requires = shadowlands.requirement.Currency(1820, 5),
+    requires = Shadowlands.requirement.Currency(1820, 5),
     rewards = {Achievement({id = 14770, criteria = 50177})},
     pois = {
         Path({
@@ -745,7 +749,7 @@ map.nodes[71624105] = Sinrunner({
 
 map.nodes[77394882] = Sinrunner({
     id = 174032,
-    requires = shadowlands.requirement.Currency(1820, 5),
+    requires = Shadowlands.requirement.Currency(1820, 5),
     rewards = {Achievement({id = 14770, criteria = 50177})},
     pois = {
         Path({
@@ -760,7 +764,7 @@ map.nodes[77394882] = Sinrunner({
 
 map.nodes[76365372] = Sinrunner({
     id = 174032,
-    requires = shadowlands.requirement.Currency(1820, 5),
+    requires = Shadowlands.requirement.Currency(1820, 5),
     rewards = {Achievement({id = 14770, criteria = 50177})},
     pois = {
         Path({
@@ -774,7 +778,7 @@ map.nodes[76365372] = Sinrunner({
 
 map.nodes[69635800] = Sinrunner({
     id = 174032,
-    requires = shadowlands.requirement.Currency(1820, 5),
+    requires = Shadowlands.requirement.Currency(1820, 5),
     rewards = {Achievement({id = 14770, criteria = 50177})},
     pois = {
         Path({
@@ -787,7 +791,7 @@ map.nodes[69635800] = Sinrunner({
 
 map.nodes[48836885] = Sinrunner({
     id = 174032,
-    requires = shadowlands.requirement.Currency(1820, 5),
+    requires = Shadowlands.requirement.Currency(1820, 5),
     rewards = {Achievement({id = 14770, criteria = 50175})},
     pois = {
         Path({
@@ -807,7 +811,7 @@ map.nodes[48836885] = Sinrunner({
 
 map.nodes[54926234] = Sinrunner({
     id = 174032,
-    requires = shadowlands.requirement.Currency(1820, 5),
+    requires = Shadowlands.requirement.Currency(1820, 5),
     rewards = {Achievement({id = 14770, criteria = 50175})},
     pois = {
         Path({
@@ -824,7 +828,7 @@ map.nodes[54926234] = Sinrunner({
 
 map.nodes[53535504] = Sinrunner({
     id = 174032,
-    requires = shadowlands.requirement.Currency(1820, 5),
+    requires = Shadowlands.requirement.Currency(1820, 5),
     rewards = {Achievement({id = 14770, criteria = 50175})},
     pois = {
         Path({
@@ -839,7 +843,7 @@ map.nodes[53535504] = Sinrunner({
 
 map.nodes[44035641] = Sinrunner({
     id = 174032,
-    requires = shadowlands.requirement.Currency(1820, 5),
+    requires = Shadowlands.requirement.Currency(1820, 5),
     rewards = {Achievement({id = 14770, criteria = 50175})},
     pois = {
         Path({
@@ -857,8 +861,8 @@ map.nodes[44035641] = Sinrunner({
 local Dredbat = Class('Dredbat', NPC, {
     id = 161015,
     icon = 'flight_point_g',
-    group = shadowlands.groups.DREDBATS,
-    requires = shadowlands.requirement.Currency(1820, 5),
+    group = Shadowlands.groups.DREDBATS,
+    requires = Shadowlands.requirement.Currency(1820, 5),
     rewards = {Achievement({id = 14769, criteria = {id = 1, qty = true}})}
 })
 
@@ -888,7 +892,7 @@ for _, coord in ipairs(SOULS) do
         icon = 'peg_yw',
         scale = 1,
         note = L['fugitive_soul_note'],
-        group = shadowlands.groups.FUGITIVES,
+        group = Shadowlands.groups.FUGITIVES,
         rewards = {
             Achievement({
                 id = 14274,
@@ -909,7 +913,7 @@ for _, coord in ipairs(RITUALISTS) do
         icon = 'peg_bk',
         scale = 1.2,
         note = L['avowed_ritualist_note'],
-        group = shadowlands.groups.FUGITIVES,
+        group = Shadowlands.groups.FUGITIVES,
         rewards = {
             Achievement({
                 id = 14274,
@@ -926,79 +930,205 @@ end
 local Inquisitor = Class('Inquisitor', NPC, {
     icon = 'peg_rd',
     scale = 1.3,
-    group = shadowlands.groups.INQUISITORS,
+    group = Shadowlands.groups.INQUISITORS,
     pois = {POI({72995199})} -- Archivist Fane
 })
 
 map.nodes[76185212] = Inquisitor({
     id = 159151,
     note = L['inquisitor_note'],
-    requires = shadowlands.requirement.Item(172999),
+    requires = Shadowlands.requirement.Item(172999),
     rewards = {Achievement({id = 14276, criteria = 48136})}
 }) -- Inquisitor Traian
 
 map.nodes[64714638] = Inquisitor({
     id = 156918,
     note = L['inquisitor_note'],
-    requires = shadowlands.requirement.Item(172998),
+    requires = Shadowlands.requirement.Item(172998),
     rewards = {Achievement({id = 14276, criteria = 48135})}
 }) -- Inquisitor Otilia
 
 map.nodes[67274339] = Inquisitor({
     id = 156919,
     note = L['inquisitor_note'],
-    requires = shadowlands.requirement.Item(172997),
+    requires = Shadowlands.requirement.Item(172997),
     rewards = {Achievement({id = 14276, criteria = 48134})}
 }) -- Inquisitor Petre
 
 map.nodes[69764722] = Inquisitor({
     id = 156916,
     note = L['inquisitor_note'],
-    requires = shadowlands.requirement.Item(172996),
+    requires = Shadowlands.requirement.Item(172996),
     rewards = {Achievement({id = 14276, criteria = 48133})}
 }) -- Inquisitor Sorin
 
 map.nodes[75304415] = Inquisitor({
     id = 159152,
     note = L['high_inquisitor_note'],
-    requires = shadowlands.requirement.Item(173000),
+    requires = Shadowlands.requirement.Item(173000),
     rewards = {Achievement({id = 14276, criteria = 48137})}
 }) -- High Inquisitor Gabi
 
 map.nodes[71254236] = Inquisitor({
     id = 159153,
     note = L['high_inquisitor_note'],
-    requires = shadowlands.requirement.Item(173001),
+    requires = Shadowlands.requirement.Item(173001),
     rewards = {Achievement({id = 14276, criteria = 48138})}
 }) -- High Inquisitor Radu
 
 map.nodes[72085313] = Inquisitor({
     id = 159155,
     note = L['high_inquisitor_note'],
-    requires = shadowlands.requirement.Item(173006),
+    requires = Shadowlands.requirement.Item(173006),
     rewards = {Achievement({id = 14276, criteria = 48140})}
 }) -- High Inquisitor Dacian
 
 map.nodes[69775225] = Inquisitor({
     id = 159154,
     note = L['high_inquisitor_note'],
-    requires = shadowlands.requirement.Item(173005),
+    requires = Shadowlands.requirement.Item(173005),
     rewards = {Achievement({id = 14276, criteria = 48139})}
 }) -- High Inquisitor Magda
 
 map.nodes[69664542] = Inquisitor({
     id = 159157,
     note = L['grand_inquisitor_note'],
-    requires = shadowlands.requirement.Item(173008),
+    requires = Shadowlands.requirement.Item(173008),
     rewards = {Achievement({id = 14276, criteria = 48142})}
 }) -- Grand Inquisitor Aurica
 
 map.nodes[64485273] = Inquisitor({
     id = 159156,
     note = L['grand_inquisitor_note'],
-    requires = shadowlands.requirement.Item(173007),
+    requires = Shadowlands.requirement.Item(173007),
     rewards = {Achievement({id = 14276, criteria = 48141})}
 }) -- Grand Inquisitor Nicu
+
+-------------------------------------------------------------------------------
+--------------------------------- CRYPT KICKER --------------------------------
+-------------------------------------------------------------------------------
+
+map.nodes[72384967] = NPC({
+    id = 176056,
+    icon = 133706,
+    group = Shadowlands.groups.CRYPT_KICKER,
+    note = L['bell_of_shame_note'],
+    requires = Shadowlands.requirement.Quest(57928), -- Atonement Crypt Key
+    rewards = {
+        Achievement({
+            id = 14273,
+            criteria = ({
+                id = 1,
+                qty = true,
+                suffix = L['atonement_crypts_opened']
+            })
+        })
+    }
+}) -- Bell of Shame (Gahiji the Tomb Raider)
+
+local AtonementCrypt = Node({
+    label = L['atonement_crypt_label'],
+    icon = 'peg_gn',
+    scale = 1.2,
+    group = Shadowlands.groups.CRYPT_KICKER,
+    note = L['atonement_crypt_note'],
+    requires = Shadowlands.requirement.Quest(57928), -- Atonement Crypt Key
+    rewards = {
+        Achievement({
+            id = 14273,
+            criteria = ({
+                id = 1,
+                qty = true,
+                suffix = L['atonement_crypts_opened']
+            })
+        })
+    }
+}) -- Atonement Crypt
+
+map.nodes[68615334] = AtonementCrypt
+map.nodes[68925414] = AtonementCrypt
+map.nodes[68985535] = AtonementCrypt
+map.nodes[69065330] = AtonementCrypt
+map.nodes[69645376] = AtonementCrypt
+map.nodes[69815460] = AtonementCrypt
+map.nodes[69815523] = AtonementCrypt
+map.nodes[70235457] = AtonementCrypt
+map.nodes[70245522] = AtonementCrypt
+map.nodes[70405378] = AtonementCrypt
+map.nodes[70885403] = AtonementCrypt
+map.nodes[70915574] = AtonementCrypt
+map.nodes[70945491] = AtonementCrypt
+
+local AtonementCryptKey = Node({
+    label = L['atonement_crypt_key_label'],
+    icon = 'peg_bl',
+    scale = 1.0,
+    group = Shadowlands.groups.CRYPT_KICKER,
+    note = L['atonement_crypt_key_note'],
+    requires = Shadowlands.requirement.Quest(57928), -- Atonement Crypt Key
+    rewards = {
+        Achievement({
+            id = 14273,
+            criteria = ({
+                id = 1,
+                qty = true,
+                suffix = L['atonement_crypts_opened']
+            })
+        })
+    }
+}) -- Atonement Crypt Key
+
+map.nodes[67024378] = AtonementCryptKey
+map.nodes[69664544] = AtonementCryptKey
+map.nodes[70875231] = AtonementCryptKey
+map.nodes[71314407] = AtonementCryptKey
+map.nodes[71444970] = AtonementCryptKey
+map.nodes[72544471] = AtonementCryptKey
+map.nodes[72714666] = AtonementCryptKey
+map.nodes[73064493] = AtonementCryptKey
+map.nodes[73344700] = AtonementCryptKey
+map.nodes[73554968] = AtonementCryptKey
+map.nodes[74454970] = AtonementCryptKey
+map.nodes[75104712] = AtonementCryptKey
+
+-------------------------------------------------------------------------------
+------------------ TO ALL THE SQUIRRELS I'VE LOVED AND LOST -------------------
+-------------------------------------------------------------------------------
+
+map.nodes[70907650] = Squirrel({
+    id = 174844,
+    rewards = {Achievement({id = 14731, criteria = 50264})},
+    pois = {
+        POI({
+            700407640, 700407660, 700807660, 710007640, 720407740, 720607860,
+            720807800
+        })
+    }
+}) -- Shardling
+
+map.nodes[39004930] = Squirrel({
+    id = 165767,
+    rewards = {Achievement({id = 14731, criteria = 50265})},
+    pois = {
+        POI({
+            27204460, 27404240, 28004420, 28404320, 28804500, 29203940,
+            29404440, 30003780, 30203980, 30403880, 31403940, 31404040,
+            31604060, 33404140, 38404920, 38404960, 38804900, 38805140,
+            39204980, 39405220, 39405400, 39605200, 39805360, 39805540,
+            40004960, 40005280, 40005560, 40404900, 40604920, 40605480,
+            58207660, 58607620, 59206820, 59206880, 59207320, 59406960,
+            59407660, 59408000, 59606780, 59806700, 59806940, 59806960,
+            60006620, 60007120, 60007340, 60007660, 60007840, 60207220,
+            60207600, 60207900, 60807720, 61006680, 61006780, 61407620, 61807900
+        })
+    }
+}) -- Emaciated Bat
+
+map.nodes[56005800] = Squirrel({
+    id = 174646,
+    rewards = {Achievement({id = 14731, criteria = 50266})},
+    pois = {POI({56005820, 56205880})}
+}) -- Murky Creeper
 
 -------------------------------------------------------------------------------
 -------------------------------- BROKEN MIRRORS -------------------------------
@@ -1030,15 +1160,15 @@ local MIRRORS = {
 
 local BrokenMirror = Class('BrokenMirror', Node, {
     label = L['broken_mirror'],
-    requires = shadowlands.requirement.Item(181363),
-    group = shadowlands.groups.BROKEN_MIRROR,
+    requires = Shadowlands.requirement.Item(181363),
+    group = Shadowlands.groups.BROKEN_MIRROR,
     scale = 1.5,
     rewards = {
         Transmog({item = 183972, slot = L['dagger']}), -- Forgotten Venthyr Winged Kris
         Transmog({item = 183973, slot = L['dagger']}), -- Lost Winged Ritual Kris
         Transmog({item = 183976, slot = L['dagger']}), -- Rogue Researcher's Dagger
         Transmog({item = 183978, slot = L['dagger']}), -- Silver-Etched Hopebreaker Dirk
-        shadowlands.reward.Spacer(), Transmog({item = 181121, slot = L['cloth']}), -- Soulbreaker's Burnished Vestments
+        Shadowlands.reward.Spacer(), Transmog({item = 181121, slot = L['cloth']}), -- Soulbreaker's Burnished Vestments
         Transmog({item = 181122, slot = L['cloth']}), -- Soulbreaker's Burnished Slippers
         Transmog({item = 181123, slot = L['cloth']}), -- Soulbreaker's Burnished Handwraps
         Transmog({item = 181124, slot = L['cloth']}), -- Soulbreaker's Burnished Hood
@@ -1074,10 +1204,10 @@ local BrokenMirror = Class('BrokenMirror', Node, {
         Transmog({item = 181028, slot = L['plate']}), -- Dread Sentinel's Burnished Girdle
         Transmog({item = 181029, slot = L['plate']}), -- Dread Sentinel's Burnished Vambraces
         Transmog({item = 181030, slot = L['cloak']}), -- Dread Sentinel's Burnished Cloak
-        shadowlands.reward.Spacer(), Transmog({item = 183707, slot = L['cosmetic']}), -- Mantle of Burnished Blades
+        Shadowlands.reward.Spacer(), Transmog({item = 183707, slot = L['cosmetic']}), -- Mantle of Burnished Blades
         Transmog({item = 183710, slot = L['cosmetic']}), -- Burnished Sinstone Chain
         Transmog({item = 183711, slot = L['cosmetic']}), -- Burnished Crypt Keeper's Mantle
-        shadowlands.reward.Spacer(), Pet({item = 183855, id = 3012}), -- Stony's Infused Ruby
+        Shadowlands.reward.Spacer(), Pet({item = 183855, id = 3012}), -- Stony's Infused Ruby
         Mount({item = 183798, id = 1389}) -- Silessa's Battle Harness
     }
 })
@@ -1107,7 +1237,7 @@ for i = 1, 4 do
             quest = mirror.quest,
             fgroup = 'broken_mirror_' .. i,
             rlabel = '(' .. L['broken_mirror_group'] .. ' ' .. i .. ') ' ..
-                shadowlands.GetIconLink(VENTHYR.icon, 13),
+                Shadowlands.GetIconLink(VENTHYR.icon, 13),
             note = mirror.note .. '\n\n' .. L['broken_mirror_note']
         })
     end
@@ -1158,9 +1288,9 @@ local Blanchy = Class('Blanchy', Collectible, {
 function Blanchy.getters:note()
     local function status(i)
         if C_QuestLog.IsQuestFlaggedCompleted(self.quest[i]) then
-            return shadowlands.status.Green(i)
+            return Shadowlands.status.Green(i)
         else
-            return shadowlands.status.Red(i)
+            return Shadowlands.status.Red(i)
         end
     end
 
@@ -1175,3 +1305,23 @@ function Blanchy.getters:note()
 end
 
 map.nodes[62874341] = Blanchy()
+
+-------------------------------------------------------------------------------
+--------------------------------- SOULSHAPES ----------------------------------
+-------------------------------------------------------------------------------
+
+map.nodes[63184276] = Soulshape({
+    id = 181660,
+    icon = 2027864,
+    note = L['soulshape_chicken_note'],
+    rewards = {
+        Item({item = 187813, quest = 64941, covenant = NIGHTFAE}) -- Chicken Soul
+    }
+}) -- Chicken Soul
+
+map.nodes[63756169] = Node({
+    label = L['spectral_feed_label'],
+    icon = 134058,
+    covenant = NIGHTFAE,
+    note = L['spectral_feed_note']
+}) -- Spectral Feed

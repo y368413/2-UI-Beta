@@ -28,7 +28,7 @@ end
 local function ForceDefaultSettings()
   --/console cvar_defaul
   local PlayerFrame = _G["PlayerFrame"]
-  if (PlayerFrame and not PlayerFrame_IsAnimatedOut(PlayerFrame)) then
+  if (PlayerFrame) then --and not PlayerFrame_IsAnimatedOut(PlayerFrame)
   PlayerFrame:ClearAllPoints() PlayerFrame:SetPoint("RIGHT",UIParent,"CENTER", -150, -250) PlayerFrame:SetUserPlaced(true)  --PlayerFrame:SetScale(0.8) 
   end
   local TargetFrame = _G["TargetFrame"]
@@ -36,7 +36,7 @@ local function ForceDefaultSettings()
   TargetFrame:ClearAllPoints() TargetFrame:SetPoint("LEFT",UIParent,"CENTER", 150, -250) TargetFrame:SetUserPlaced(true)  --TargetFrame:SetScale(0.8) 
   end
   TargetFrameToT:ClearAllPoints() TargetFrameToT:SetPoint("LEFT",TargetFrame,"BOTTOMRIGHT", -43, 21)
-  TargetFrameToTTextureFrameName:ClearAllPoints() TargetFrameToTTextureFrameName:SetPoint("LEFT",TargetFrameToT,"Top", -8, -43)
+  --TargetFrameToTTextureFrameName:ClearAllPoints() TargetFrameToTTextureFrameName:SetPoint("LEFT",TargetFrameToT,"Top", -8, -43)
   PetFrameHealthBarText:SetPoint("BOTTOMRIGHT", PetFrame, "LEFT", 3,-6)  
   PetFrameManaBarText:SetPoint("TOPRIGHT", PetFrame, "LEFT", 3, -6)
   PetFrameManaBarText:SetTextColor(0, 1, 1)
@@ -65,7 +65,7 @@ local function ForceDefaultSettings()
   SHOW_MULTI_ACTIONBAR_2="1" --右下方动作条 
   SHOW_MULTI_ACTIONBAR_3 = "0" --右动作条1
   SHOW_MULTI_ACTIONBAR_4 = "0" --右动作条2
-  InterfaceOptions_UpdateMultiActionBars() --刷新动作条
+  --InterfaceOptions_UpdateMultiActionBars() --刷新动作条
 	SetCVar("enableFloatingCombatText", 0)
 	SetCVar("floatingCombatTextCombatState", 0)
 	SetCVar("showTargetOfTarget",1) --目标的目标
@@ -355,7 +355,6 @@ local function YesTutor()
 	MaoRUIDB["SkadaRequest"] = true
 	MaoRUIDB["BWRequest"] = true
 	ForceAddonSkins()
-	MaoRUIDB["ResetDetails"] = true
 	MaoRUIDB["YesTutor"] = false
 end
 
@@ -491,9 +490,7 @@ SLASH_SHIGUANG1 = "/loadmr"
 
 -----------------------------------------
 function module:OnLogin()
-	-- Hide options
-	M.HideOption(Display_UseUIScale)
-	M.HideOption(Display_UIScaleSlider)
+	-- todo: hide UIScale options
 
 	-- Tutorial and settings
 	DefaultSettings()

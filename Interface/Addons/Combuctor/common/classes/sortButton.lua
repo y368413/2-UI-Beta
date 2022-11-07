@@ -1,4 +1,4 @@
-﻿--[[
+--[[
 	sortButton.lua
 		A style agnostic item sorting button
 --]]
@@ -29,30 +29,14 @@ end
 
 function SortButton:OnClick(button)
 	self:SetChecked(nil)
-	if IsControlKeyDown() and DepositReagentBank then return DepositReagentBank() end
+
+	if button == 'RightButton' and DepositReagentBank then
+		return DepositReagentBank()
+	end
+
 	local frame = self:GetParent()
 	if not frame:IsCached() then
-		---------------Thanks Siweia  么么哒·~~~~
-		if button == 'RightButton' then
-		  SetSortBagsRightToLeft(false)      --整理向左边背包移动
-		  --SetInsertItemsLeftToRight(false)  --新增物品自动进入最右边背包
-			frame:SortItems()  --SortBags()
-		  C_Timer.After(.3, function()
-			for bag = 0, 4 do
-				for slot = 1, GetContainerNumSlots(bag) do
-					local texture, _, locked = GetContainerItemInfo(bag, slot)
-					if texture and not locked then
-						_G.PickupContainerItem(bag, slot)
-						_G.PickupContainerItem(bag, GetContainerNumSlots(bag)+1 - slot)
-					end
-				end
-			end
-		  end)
-		else
-		  SetSortBagsRightToLeft(true)      --整理向左边背包移动
-		  --SetInsertItemsLeftToRight(true)  --新增物品自动进入最左边背包
-		  frame:SortItems()   --SortBags()
-		end
+		frame:SortItems()
 	end
 end
 

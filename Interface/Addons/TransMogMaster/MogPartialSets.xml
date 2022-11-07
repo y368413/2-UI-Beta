@@ -114,7 +114,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <CheckButton name="$parentToggleButton" inherits="OptionsCheckButtonTemplate">
+            <CheckButton name="$parentToggleButton" inherits="OptionsBaseCheckButtonTemplate">
                 <Size x="24" y="24"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="12" y="-10"/>
@@ -127,7 +127,7 @@
                     </OnClick>
                 </Scripts>
             </CheckButton>
-            <CheckButton name="$parentOnlyFavoriteButton" inherits="OptionsCheckButtonTemplate">
+            <CheckButton name="$parentOnlyFavoriteButton" inherits="OptionsBaseCheckButtonTemplate">
                 <Size x="24" y="24"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="12" y="-32"/>
@@ -140,7 +140,7 @@
                     </OnClick>
                 </Scripts>
             </CheckButton>
-            <CheckButton name="$parentFavoriteVariantsButton" inherits="OptionsCheckButtonTemplate">
+            <CheckButton name="$parentFavoriteVariantsButton" inherits="OptionsBaseCheckButtonTemplate">
                 <Size x="24" y="24"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="12" y="-54"/>
@@ -174,7 +174,7 @@
                     </OnTextChanged>
                 </Scripts>
             </EditBox>
-            <CheckButton name="$parentIgnoreHeadButton" inherits="OptionsCheckButtonTemplate">
+            <CheckButton name="$parentIgnoreHeadButton" inherits="OptionsBaseCheckButtonTemplate">
                 <Size x="24" y="24"/>
                 <HitRectInsets>
                     <AbsInset left="0" right="-35" top="0" bottom="0"/>
@@ -187,7 +187,7 @@
                     <OnClick>MogPartialSetsAddon:setIgnoredSlot(Enum.InventoryType.IndexHeadType, self:GetChecked())</OnClick>
                 </Scripts>
             </CheckButton>
-            <CheckButton name="$parentIgnoreCloakButton" inherits="OptionsCheckButtonTemplate">
+            <CheckButton name="$parentIgnoreCloakButton" inherits="OptionsBaseCheckButtonTemplate">
                 <Size x="24" y="24"/>
                 <HitRectInsets>
                     <AbsInset left="0" right="-35" top="0" bottom="0"/>
@@ -200,7 +200,7 @@
                     <OnClick>MogPartialSetsAddon:setIgnoredSlot(Enum.InventoryType.IndexCloakType, self:GetChecked())</OnClick>
                 </Scripts>
             </CheckButton>
-            <CheckButton name="$parentIgnoreBracersButton" inherits="OptionsCheckButtonTemplate">
+            <CheckButton name="$parentIgnoreBracersButton" inherits="OptionsBaseCheckButtonTemplate">
                 <Size x="24" y="24"/>
                 <HitRectInsets>
                     <AbsInset left="0" right="-35" top="0" bottom="0"/>
@@ -213,7 +213,7 @@
                     <OnClick>MogPartialSetsAddon:setIgnoredSlot(Enum.InventoryType.IndexWristType, self:GetChecked())</OnClick>
                 </Scripts>
             </CheckButton>
-            <CheckButton name="$parentIgnoreBootsButton" inherits="OptionsCheckButtonTemplate">
+            <CheckButton name="$parentIgnoreBootsButton" inherits="OptionsBaseCheckButtonTemplate">
                 <Size x="24" y="24"/>
                 <HitRectInsets>
                     <AbsInset left="0" right="-35" top="0" bottom="0"/>

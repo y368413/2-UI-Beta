@@ -212,11 +212,10 @@ function module:OnLogin()
 	hooksecurefunc(ActionBarButtonEventsFrameMixin, "RegisterFrame", module.RegisterActionButton)
 
 	-- Hide Default Cooldown
-	SetCVar("countdownForCooldowns", 0)
-	M.HideOption(InterfaceOptionsActionBarsPanelCountdownCooldowns)
+	SetCVar("countdownForCooldowns", 0) -- todo: hide default option
 end
 
---------------Fivecombo-----------------------------------------------
+--[[------------Fivecombo-----------------------------------------------
 local OverlayedSpellID = {};
 OverlayedSpellID["ROGUE"] = {
 	408,   --Éö»÷
@@ -305,4 +304,4 @@ hooksecurefunc(ActionBarButtonEventsFrameMixin, "RegisterFrame", function(self, 
 		M.HideOverlayGlow(parent);
 	end	
   end);
-end)
+end)]]

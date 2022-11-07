@@ -18,22 +18,36 @@ thj.info = {
 thj.spells = {}
 thj.items = {}
 thj.keyMapping = {}
+local _, clzName = UnitClass('player');
 thj.meta = {
+    clzName = clzName,
     spellUpgrade = {
+        -- SM
+        ["风切"] = "风暴打击",
         -- ZS
         ["浴血奋战"] = "嗜血",
         ["碎甲猛击"] = "怒击",
         -- DH
         ["死亡横扫"] = "刃舞",
-        ["毁灭"] = "混乱打击"
+        ["毁灭"] = "混乱打击",
         -- LR
+        ["信息素炸弹"] = "野火炸弹",
+        ["散射炸弹"] = "野火炸弹",
+        ["动荡炸弹"] = "野火炸弹",
+        --QS
+        -- ["圣殿骑士的裁决"]=""
     },
-    shapeShiftFormMapping = {[0] = 0, [1] = 96, [2] = 72, [3] = 108}
+    -- 姿态 & 动作条映射
+    shapeShiftFormMapping = {
+        -- 小德
+        DRUID = {[0] = 0, [1] = 96, [2] = 72, [3] = 108},
+        -- 牧师-暗影形态
+        PRIEST = {[0] = 0, [1] = 0},
+        -- 萨满-变狼
+        SHAMAN = {[0] = 0, [1] = 0},
+        PALADIN = {[0] = 0, [1] = 0, [2] = 0, [3] = 0, [4] = 0}
+    }
 }
-local _, clzName = UnitClass('player');
-if (clzName == "PRIEST") then
-    thj.meta.shapeShiftFormMapping[1] = 0
-end
 local lastUpdate = 0;
 thj.createFrame = function(name, parent)
     local f = CreateFrame("Frame", name, parent or UIParent);
@@ -75,6 +89,12 @@ thj.frame = sfo;
     CombatLogGetCurrentEventInfo()
 
 ]]
+thj.SpellBook = {
+    -- ZS
+    Berserk = 18499,
+    SpellReflection = 23920
+
+}
 
 local insert, remove, sort, unpack, wipe = table.insert, table.remove,
                                            table.sort, table.unpack, table.wipe
@@ -234,6 +254,7 @@ thj.fixSpells = function()
 end
 -- /run SpellFlashCore.ScanKeyBindings()
 -- /dump GetSpellInfo(317349)
+--  /dump GetShapeshiftForm()
 -- 330325  317349 184367
 -- SKI Spell-> ` 21562 真言术：韧
 -- /dump GetActionBarPage() 
@@ -245,7 +266,7 @@ thj.ScanKeyBindings = function()
     if shapeShiftForm > 0 then
         for i = 1, 12 do
             StoreKeybindInfo(curPage, "ACTIONBUTTON" .. i,
-                             i + thj.meta.shapeShiftFormMapping[shapeShiftForm]);
+                             i + thj.meta.shapeShiftFormMapping[thj.meta.clzName][shapeShiftForm]);
         end
     else
         for i = 1, 12 do
@@ -431,10 +452,11 @@ end
 ]]
 thj.SpellName = function(id)
     if not id or id < 0 then return nil end
-    -- print("SpellName->"..id)
+    --print("SpellName->" .. id)
     local name = thj.spells[id];
     if not name then
         name = GetSpellInfo(id);
+        if not name then print("Get Spell Name failed->" .. id) end
         thj.spells[id] = name;
     end
     thj.info.spellID = id;
@@ -447,12 +469,17 @@ end
 ]]
 thj.FlashAction = function(spellName)
     local key;
-    if type(spellName) ~= "table" then
-        -- print("FlashAction->" .. spellName)
+    if type(spellName) == "number" then
+        local realName = thj.SpellName(spellName)
+        print("FlashNumAction->" .. spellName .. ", real = " .. realName)
+        if not realName then return end
+        key = thj.spells[realName];
+    elseif type(spellName) ~= "table" then
+        --print("FlashAction->" .. spellName)
         if not spellName then return end
         key = thj.spells[spellName];
     else
-        -- print("FlashTableAction->", spellName[1])
+        --print("FlashTableAction->", spellName[1])
         for k, v in pairs(spellName) do
             local name = GetSpellInfo(v);
             -- print("FlashTableAction->", k, v, name, thj.spells[v])
@@ -468,7 +495,10 @@ thj.FlashAction = function(spellName)
     end
     thj.FlashKey(key)
 end
-thj.Flashable = function() return true end;
+thj.Flashable = function(spell)
+    if not thj.spells[spell] then return false end
+    return true
+end;
 --[[
     API: 根据技能名称提示技能
     @param spellName: 技能名称

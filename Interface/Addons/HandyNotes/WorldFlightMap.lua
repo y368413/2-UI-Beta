@@ -231,7 +231,7 @@ function WorldFlightMapProvider:OnEvent(event, ...)
 
 		self:SetTaxiState(false)
 
-		CloseTaxiMap()
+		-- CloseTaxiMap()
 		if self:GetMap():IsShown() and not InCombatLockdown() then
 			ToggleWorldMap()
 		end
@@ -345,7 +345,7 @@ function WorldFlightMapProvider:HighlightRouteToPin(pin)
 
 		if startPin and destPin then
 			local Line = self.linePool:Acquire()
-			Line:SetNonBlocking(true)
+			-- Line:SetNonBlocking(true)
 			Line:SetAtlas('_UI-Taxi-Line-horizontal')
 			Line:SetThickness(32)
 			Line:SetStartPoint('CENTER', startPin)

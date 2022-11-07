@@ -8,6 +8,7 @@ local _, this = ...
 local API = this.API
 local Cache = this.Cache
 local HandyNotes = this.HandyNotes
+local Currency = this.Currency
 local Item = this.Item
 local Achievement = this.Achievement
 local Mount = this.Mount
@@ -37,12 +38,13 @@ function Point:isCompleted(data)
     return true
   end
 
-  -- Check, if all every piece of loot is completed.
-  if (data.loot) then
-    return Loot:isCompleted(data.loot)
+  -- If point doesn't have anything (items or achievements), consider it completed.
+  if (data.loot == nil) then
+    return true
   end
 
-  return false
+  -- Check, if all every piece of loot is completed.
+  return Loot:isCompleted(data.loot)
 end
 
 ---
@@ -57,15 +59,6 @@ end
 function Point:prepareName(data)
   local name = data.name
   -- If there is no name, try to load name from game.
-
-  -- Try to load map name.
-  if name == nil and data.portal then
-    name = Cache:get(data.portal, 'mapName')
-    if (name == nil) then
-      name = API:getMapName(data.portal)
-      Cache:set(data.portal, name, 'mapName')
-    end
-  end
 
   -- Try to load NPC name.
   if name == nil and data.npcId ~= nil then
@@ -109,7 +102,7 @@ function Point:prepareTooltip(GameTooltip, data, uiMapId)
   self.GameTooltip:SetText(name)
   -- Add note to tooltip.
 
-  -- @todo perhaps move this to another file to be selfsustaining?
+  -- @todo perhaps move this to another file to be self-sustaining?
   -- If we have a note, we need to check if we should replace placeholder strings with real values.
   if data.note then
     -- Extract characters between [] and evaluate id and type ie [item(1234)].
@@ -129,6 +122,9 @@ function Point:prepareTooltip(GameTooltip, data, uiMapId)
       if type == 'quest' then
         data.note = data.note:gsub('%[' .. type .. '%(' .. id .. '%)%]', API:getTitleForQuestID(id))
       end
+      if type == 'currency' then
+        data.note = data.note:gsub('%[' .. type .. '%(' .. id .. '%)%]', Currency:getLink(id))
+      end
     end
   end
 
@@ -144,11 +140,10 @@ function Point:prepareTooltip(GameTooltip, data, uiMapId)
   -- Add waypoint info to tooltip.
   self:prepareWaypointTooltip(uiMapId)
   -- Add note about keeping tooltip opened.
-  if (not data.portal) then
-    -- @todo need to figure out how to allow link click in tooltips. Disabled until then.
-    -- self.GameTooltip:AddLine(Text:color(t['point_tooltip'], 'green'), nil, nil, nil, true)
-    return
-  end
+
+  -- @todo need to figure out how to allow link click in tooltips. Disabled until then.
+  -- self.GameTooltip:AddLine(Text:color(t['point_tooltip'], 'green'), nil, nil, nil, true)
+  return
 end
 
 ---
@@ -269,7 +264,7 @@ function Point:prepareAchievementTooltip(id, achievement)
       color = 'green'
     end
 
-    self.GameTooltip:AddDoubleLine('  ' .. name, achievementStatus, 255, 255, 255, Text:color2rgb(color))
+    self.GameTooltip:AddDoubleLine('     ' .. name, achievementStatus, 255, 255, 255, Text:color2rgb(color))
 
     -- We can quit here, because achievement with count and criteria id doesn't exist (hopefully).
     return
@@ -286,7 +281,7 @@ function Point:prepareAchievementTooltip(id, achievement)
         color = 'green'
       end
 
-      self.GameTooltip:AddDoubleLine('  ' .. Achievement:getCriteriaName(id, achievement.criteriaId), achievementStatus, 255, 255, 255, Text:color2rgb(color))
+      self.GameTooltip:AddDoubleLine('     ' .. Achievement:getCriteriaName(id, achievement.criteriaId), achievementStatus, 255, 255, 255, Text:color2rgb(color))
 
       -- If we assigned single criteria, there wont be multi criteria and we can quit.
       return
@@ -304,7 +299,7 @@ function Point:prepareAchievementTooltip(id, achievement)
           color = 'green'
         end
 
-        self.GameTooltip:AddDoubleLine('  ' .. Achievement:getCriteriaName(id, criteriaId), achievementStatus, 255, 255, 255, Text:color2rgb(color))
+        self.GameTooltip:AddDoubleLine('     ' .. Achievement:getCriteriaName(id, criteriaId), achievementStatus, 255, 255, 255, Text:color2rgb(color))
       end
     end
   end

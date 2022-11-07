@@ -3,7 +3,7 @@
 	<Script file="Mingy.lua"/>
 	<Script file="bfaPetQuest.lua"/>
 	<Script file="DarkmoonFaire.lua"/>
-	<Script file="AngrierWorldQuests.lua"/>
+	<!--Script file="AngrierWorldQuests.lua"/-->
 	<Script file="WorldMapQuestRewardIcon.lua"/>
 	<Frame name="BountyCounterTemplate" virtual="true" hidden="false">
 		<Size x="10" y="10"/>
@@ -44,6 +44,6 @@
             </OnClick>
         </Scripts>
     </Button>
-  <Script file="QuestBindings.lua"/>
+  <!--Script file="QuestBindings.lua"/-->
   <Include file="ClassicQuestLog\ClassicQuestLog.xml"/>
 </Ui>

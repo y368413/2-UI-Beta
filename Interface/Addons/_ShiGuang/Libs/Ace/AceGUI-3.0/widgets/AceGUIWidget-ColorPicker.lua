@@ -11,6 +11,9 @@ local pairs = pairs
 -- WoW APIs
 local CreateFrame, UIParent = CreateFrame, UIParent
 
+--[[-----------------------------------------------------------------------------
+Support functions
+-------------------------------------------------------------------------------]]
 local function ColorCallback(self, r, g, b, a, isAlpha)
 	if not self.HasAlpha then
 		a = 1
@@ -162,6 +165,10 @@ local function Constructor()
 	text:SetPoint("LEFT", colorSwatch, "RIGHT", 2, 0)
 	text:SetPoint("RIGHT")
 
+	--local highlight = frame:CreateTexture(nil, "HIGHLIGHT")
+	--highlight:SetTexture(136810) -- Interface\\QuestFrame\\UI-QuestTitleHighlight
+	--highlight:SetBlendMode("ADD")
+	--highlight:SetAllPoints(frame)
 
 	local widget = {
 		colorSwatch = colorSwatch,

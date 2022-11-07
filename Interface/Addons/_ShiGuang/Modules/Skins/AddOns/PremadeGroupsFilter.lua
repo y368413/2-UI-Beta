@@ -41,34 +41,39 @@ function S:PGFSkin()
 		M.Reskin(self.ResetButton)
 		M.Reskin(self.RefreshButton)
 		M.ReskinDropDown(self.Difficulty.DropDown)
-		M.StripTextures(self.Advanced)
 		M.ReskinInput(self.Expression)
 		M.ReskinInput(self.Sorting.SortingExpression)
 		if self.MoveableToggle then
 			M.ReskinArrow(self.MoveableToggle, "left")
 			self.MoveableToggle:SetPoint("TOPLEFT", 5, -5)
 		end
-		if self.MinimizeButton then
-			M.ReskinArrow(self.MinimizeButton, "down")
-			self.MinimizeButton:ClearAllPoints()
-			self.MinimizeButton:SetPoint("RIGHT", self.CloseButton, "LEFT", -3, 0)
-			M.ReskinArrow(self.MaximizeButton, "up")
-			self.MaximizeButton:ClearAllPoints()
-			self.MaximizeButton:SetPoint("RIGHT", self.CloseButton, "LEFT", -3, 0)
+		local button = self.MaxMinButtonFrame
+		if button.MinimizeButton then
+			M.ReskinArrow(button.MinimizeButton, "down")
+			button.MinimizeButton:ClearAllPoints()
+			button.MinimizeButton:SetPoint("RIGHT", self.CloseButton, "LEFT", -3, 0)
+			M.ReskinArrow(button.MaximizeButton, "up")
+			button.MaximizeButton:ClearAllPoints()
+			button.MaximizeButton:SetPoint("RIGHT", self.CloseButton, "LEFT", -3, 0)
 		end
 
-		local names = {"Difficulty", "Ilvl", "Noilvl", "Defeated", "Members", "Tanks", "Heals", "Dps"}
+		local names = {"Difficulty", "Defeated", "Members", "Tanks", "Heals", "Dps", "MPRating", "PVPRating"}
 		for _, name in pairs(names) do
-			local check = self[name].Act
-			if check then
-				check:SetSize(26, 26)
-				check:SetPoint("TOPLEFT", 5, -3)
-				M.ReskinCheck(check)
-			end
-			local input = self[name].Min
-			if input then
-				M.ReskinInput(input)
-				M.ReskinInput(self[name].Max)
+			local frame = self[name]
+			if frame then
+				local check = frame.Act
+				if check then
+					check:SetSize(26, 26)
+					check:SetPoint("TOPLEFT", 5, -3)
+					M.ReskinCheck(check)
+				end
+				local input = frame.Min
+				if input then
+					M.ReskinInput(input)
+					M.ReskinInput(frame.Max)
+				end
+			else
+				print(name)
 			end
 		end
 

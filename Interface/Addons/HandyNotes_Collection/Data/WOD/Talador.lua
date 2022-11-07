@@ -5,9 +5,28 @@
 
 local _, this = ...
 
+local Player = this.Player
 local t = this.t
 local map = this.maps['talador']
 local subMap = this.maps['tomb_of_souls']
+
+-- Alliance quest IDs for required quests.
+local RequiredQuests = {
+  -- Assault on Shattrath Harbor
+  ['assault on shattrath harbor'] = 36649,
+  -- Assault on the Heart of Shattrath
+  ['assault on the heart of shattrath'] = 36685,
+}
+
+-- Horde quest IDs.
+if (Player:isHorde() == true) then
+  RequiredQuests = {
+    -- Assault on Shattrath Harbor
+    ['assault on shattrath harbor'] = 36667,
+    -- Assault on the Heart of Shattrath
+    ['assault on the heart of shattrath'] = 36699,
+  }
+end
 
 -- Define NPCs we are going to use in multiple points.
 local Silthide = {
@@ -24,7 +43,7 @@ local Silthide = {
 
 local Voidtalon = {
   name = t['edge_of_reality'],
-  icon = 'monster',
+  icon = 'portal',
   note = t['edge_of_reality_note'],
   loot = {
     item = {
@@ -632,6 +651,531 @@ local points = {
     },
   },
 
+  --- Treasures
+  -- Bonechewer Remnants
+  [33307680] = {
+    name = t['bonechewer_remnants_title'],
+    questId = 34259,
+    icon = 'chest',
+    loot = {
+      achievement = {
+        -- Grand Treasure Hunter
+        [9728] = { count = true },
+      },
+    },
+  },
+
+  -- Bonechewer Spear
+  [37707470] = {
+    name = t['bonechewer_spear_title'],
+    questId = 34148,
+    icon = 'chest',
+    note = t['in_cave'],
+    POI = { 36607540 },
+    loot = {
+      item = {
+        -- Warpstalker-Scale Grips
+        [112371] = { type = 'transmog' },
+      },
+    },
+  },
+
+  -- Treasure of Ango'rosh
+  [38308450] = {
+    name = t['treasure_of_angorosh_title'],
+    questId = 34257,
+    icon = 'chest',
+    loot = {
+      achievement = {
+        -- Grand Treasure Hunter
+        [9728] = { count = true },
+      },
+    },
+  },
+
+  -- Aarko's Family Treasure
+  [36509610] = {
+    name = t['aarkos_family_treasure_title'],
+    questId = 34182,
+    icon = 'chest',
+    note = t['aarkos_family_treasure_note'],
+    loot = {
+      item = {
+        -- Aarko's Antique Crossbow
+        [117567] = { type = 'transmog' },
+      },
+    },
+  },
+
+  -- Farmer's Bounty
+  [35409660] = {
+    name = t['farmers_bounty_title'],
+    questId = 34249,
+    icon = 'chest',
+    loot = {
+      achievement = {
+        -- Grand Treasure Hunter
+        [9728] = { count = true },
+      },
+    },
+  },
+
+  -- Light of the Sea
+  [38201240] = {
+    name = t['light_of_the_sea_title'],
+    questId = 34258,
+    icon = 'chest',
+    loot = {
+      achievement = {
+        -- Grand Treasure Hunter
+        [9728] = { count = true },
+      },
+    },
+  },
+
+  -- Luminous Shell
+  [52602950] = {
+    name = t['luminous_shell_title'],
+    questId = 34235,
+    icon = 'chest',
+    loot = {
+      achievement = {
+        -- Grand Treasure Hunter
+        [9728] = { count = true },
+      },
+      item = {
+        -- Snail Shell Necklace
+        [116132] = { subtype = t['neck'] },
+      },
+    },
+  },
+
+  -- Draenei Weapons
+  [55206670] = {
+    name = t['draenei_weapons_title'],
+    questId = 34253,
+    icon = 'chest',
+    loot = {
+      achievement = {
+        -- Grand Treasure Hunter
+        [9728] = { count = true },
+      },
+      item = {
+        -- Surplus Auchenai Weaponry
+        [116118] = { },
+      },
+    },
+  },
+
+  -- Amethyl Crystal
+  [62103240] = {
+    name = t['amethyl_crystal_title'],
+    questId = 34236,
+    icon = 'chest',
+    loot = {
+      achievement = {
+        -- Grand Treasure Hunter
+        [9728] = { count = true },
+      },
+      item = {
+        -- Amethyl Crystal
+        [116131] = { },
+      },
+    },
+  },
+
+  -- Barrel of Fish
+  [62404800] = {
+    name = t['barrel_of_fish_title'],
+    questId = 34252,
+    icon = 'chest',
+    loot = {
+      achievement = {
+        -- Grand Treasure Hunter
+        [9728] = { count = true },
+      },
+    },
+  },
+
+  -- Bright Coin
+  [73505140] = {
+    name = t['bright_coin_title'],
+    questId = 34471,
+    icon = 'chest',
+    note = t['bright_coin_note'],
+    loot = {
+      achievement = {
+        -- Grand Treasure Hunter
+        [9728] = { count = true },
+      },
+      item = {
+        -- Bright Coin
+        [116127] = { subtype = t['trinket'] },
+      },
+    },
+  },
+
+  -- Lightbearer
+  [68805620] = {
+    name = t['lightbearer_title'],
+    questId = 34101,
+    icon = 'chest',
+    loot = {
+      achievement = {
+        -- Grand Treasure Hunter
+        [9728] = { count = true },
+      },
+    },
+  },
+
+  -- Burning Blade Cache
+  [70100710] = {
+    name = t['burning_blade_cache_title'],
+    questId = 36937,
+    icon = 'chest',
+  },
+
+  -- Relic of Aruuna
+  [75804470] = {
+    name = t['relic_of_aruuna_title'],
+    questId = 34250,
+    icon = 'chest',
+    loot = {
+      achievement = {
+        -- Grand Treasure Hunter
+        [9728] = { count = true },
+      },
+    },
+  },
+
+  -- Relic of Telmor
+  [47009170] = {
+    name = t['relic_of_telmor_title'],
+    questId = 34256,
+    icon = 'chest',
+    loot = {
+      achievement = {
+        -- Grand Treasure Hunter
+        [9728] = { count = true },
+      },
+    },
+  },
+
+  -- Charred Sword
+  [77005000] = {
+    name = t['charred_sword_title'],
+    questId = 34248,
+    icon = 'chest',
+    loot = {
+      achievement = {
+        -- Grand Treasure Hunter
+        [9728] = { count = true },
+      },
+      item = {
+        -- Blazegrease Greatsword
+        [116116] = { type = 'transmog' },
+      },
+    },
+  },
+
+  -- Foreman's Lunchbox
+  [57402870] = {
+    name = t['foremans_lunchbox_title'],
+    questId = 34238,
+    icon = 'chest',
+    loot = {
+      achievement = {
+        -- Grand Treasure Hunter
+        [9728] = { count = true },
+      },
+      item = {
+        -- Tasty Talador Lunch
+        [116120] = { type = 'toy' },
+      },
+    },
+  },
+
+  -- Deceptia's Smoldering Boots
+  [58801210] = {
+    name = t['deceptias_smoldering_boots_title'],
+    questId = 33933,
+    icon = 'chest',
+    loot = {
+      achievement = {
+        -- Grand Treasure Hunter
+        [9728] = { count = true },
+      },
+      item = {
+        -- Deceptia's Smoldering Boots
+        [108743] = { type = 'toy' },
+      },
+    },
+  },
+
+  -- Webbed Sac
+  [65408860] = {
+    name = t['webbed_sac_title'],
+    questId = 34255,
+    icon = 'chest',
+    note = t['in_cave'] .. '\n\n' .. t['upper_note'],
+    POI = { 61308410 },
+    loot = {
+      achievement = {
+        -- Grand Treasure Hunter
+        [9728] = { count = true },
+      },
+    },
+  },
+
+  -- Rusted Lockbox
+  [66008510] = {
+    name = t['rusted_lockbox_title'],
+    questId = 34276,
+    icon = 'chest',
+    note = t['in_cave'] .. '\n\n' .. t['rusted_lockbox_note'],
+    POI = { 61308410 },
+    loot = {
+      achievement = {
+        -- Grand Treasure Hunter
+        [9728] = { count = true },
+      },
+    },
+  },
+
+  -- Curious Deathweb Egg
+  [66508690] = {
+    name = t['curious_deathweb_egg_title'],
+    questId = 34239,
+    icon = 'chest',
+    note = t['in_cave'] .. '\n\n' .. t['curious_deathweb_egg_note'],
+    POI = { 61308410 },
+    loot = {
+      achievement = {
+        -- Grand Treasure Hunter
+        [9728] = { count = true },
+      },
+      item = {
+        -- Giant Deathweb Egg
+        [117569] = { type = 'toy' },
+      },
+    },
+  },
+
+  -- Iron Box
+  [64607920] = {
+    name = t['iron_box_title'],
+    questId = 34251,
+    icon = 'chest',
+    loot = {
+      achievement = {
+        -- Grand Treasure Hunter
+        [9728] = { count = true },
+      },
+      item = {
+        -- Gordunni Skullthumper
+        [117571] = { type = 'transmog' },
+      },
+    },
+  },
+
+  -- Ketya's Stash
+  [54002760] = {
+    name = t['ketyas_stash_title'],
+    questId = 34290,
+    icon = 'chest',
+    note = t['in_cave'],
+    POI = { 53202600 },
+    loot = {
+      achievement = {
+        -- Grand Treasure Hunter
+        [9728] = { count = true },
+      },
+      item = {
+        -- Stonegrinder
+        [116402] = { petId = 1515 },
+      },
+    },
+  },
+
+  -- Rook's Tacklebox
+  [64901330] = {
+    name = t['rooks_tacklebox_title'],
+    questId = 34232,
+    icon = 'chest',
+    loot = {
+      achievement = {
+        -- Grand Treasure Hunter
+        [9728] = { count = true },
+      },
+      item = {
+        -- Rook's Lucky Fishin' Line
+        [116117] = { },
+      },
+    },
+  },
+
+  -- Jug of Aged Ironwine
+  [65501140] = {
+    name = t['jug_of_aged_ironwine_title'],
+    questId = 34233,
+    icon = 'chest',
+    note = t['in_cave'],
+    POI = { 64800930 },
+    loot = {
+      achievement = {
+        -- Grand Treasure Hunter
+        [9728] = { count = true },
+      },
+    },
+  },
+
+  -- Keluu's Belongings
+  [75704140] = {
+    name = t['keluus_belongings_title'],
+    questId = 34261,
+    icon = 'chest',
+    loot = {
+      achievement = {
+        -- Grand Treasure Hunter
+        [9728] = { count = true },
+      },
+    },
+  },
+
+  -- Pure Crystal Dust
+  [78201470] = {
+    name = t['pure_crystal_dust_title'],
+    questId = 34263,
+    icon = 'chest',
+    note = t['in_cave'] .. '\n\n' .. t['upper_note'],
+    POI = { 75302240 },
+    loot = {
+      achievement = {
+        -- Grand Treasure Hunter
+        [9728] = { count = true },
+      },
+      item = {
+        -- Iridium Inlaid Band
+        [117572] = { subtype = t['ring'] },
+      },
+    },
+  },
+
+  -- Aruuna Mining Cart
+  [81803490] = {
+    name = t['aruuna_mining_cart_title'],
+    questId = 34260,
+    icon = 'chest',
+    note = t['in_cave'] .. '\n\n' .. t['aruuna_mining_cart_note'],
+    POI = { 78103560 },
+    loot = {
+      achievement = {
+         -- Grand Treasure Hunter
+        [9728] = { count = true },
+      },
+    },
+  },
+
+  -- Soulbinder's Reliquary
+  [39505510] = {
+    name = t['soulbinders_reliquary_title'],
+    questId = 34254,
+    icon = 'chest',
+    note = t['in_cave'],
+    POI = { 41205990 },
+    loot = {
+      achievement = {
+        -- Grand Treasure Hunter
+        [9728] = { count = true },
+      },
+      item = {
+        -- Auchenai Soulbinder's Signet
+        [117570] = { subtype = t['ring'] },
+      },
+    },
+  },
+
+  -- Iron Scout
+  [75103610] = {
+    npcId = 75644,
+    questId = 33649,
+    icon = 'chest',
+    note = t['iron_scout_note'],
+  },
+
+  -- Gift of the Ancients
+  [28407420] = {
+    name = t['gift_of_the_ancients_title'],
+    questId = 36829,
+    icon = 'chest',
+    note = t['in_cave'] .. '\n\n' .. t['gift_of_the_ancients_note'],
+    POI = { 27807550 },
+    loot = {
+      achievement = {
+        -- Grand Treasure Hunter
+        [9728] = { count = true },
+      },
+      item = {
+        -- Signet Ring of Gehs'taal
+        [118686] = { subtype = t['ring'] },
+      },
+    },
+  },
+
+  -- Isaari's Cache
+  [57207530] = {
+    name = t['isaaris_cache_title'],
+    questId = 34134,
+    icon = 'chest',
+    requirement = {
+      faction = 'Alliance',
+    },
+    loot = {
+      achievement = {
+        -- Grand Treasure Hunter
+        [9728] = { count = true },
+      },
+      item = {
+        -- Deathweb Toxin Vial
+        [117563] = { subtype = t['neck'] },
+      },
+    },
+  },
+
+  -- Yuuri's Gift
+  [40608950] = {
+    name = t['yuuris_gift_title'],
+    questId = 34140,
+    icon = 'chest',
+    requirement = {
+      quest = {
+        -- Nightmare in the Tomb
+        [33530] = { },
+      },
+    },
+    loot = {
+      achievement = {
+        -- Grand Treasure Hunter
+        [9728] = { count = true },
+      },
+    },
+  },
+
+  -- Teroclaw Nest
+  [39807670] = {
+    name = t['teroclaw_nest_title'],
+    questId = 35162,
+    icon = 'chest',
+    note = t['teroclaw_nest_note'],
+    POI = { 39307770, 54105630, 70803200, 70903550, 72403700, 72803560, 73503070, 74303400, 74602930 },
+    loot = {
+      item = {
+        -- Teroclaw Hatchling
+        [112699] = { petId = 1416 },
+      },
+    },
+  },
+
   --- Pet Battles
   -- Taralune
   [49008040] = {
@@ -639,6 +1183,8 @@ local points = {
     icon = 'pet',
     loot = {
       achievement = {
+        -- An Awfully Big Adventure
+        [9069] = { criteriaId = 27002 },
         -- Taming Draenor
         [9724] = { criteriaId = 27016 },
       },
@@ -649,7 +1195,7 @@ local points = {
   -- Knight Pepe
   [51006330] = {
     name = t['knight_pepe_title'],
-    icon = 'chest',
+    icon = 'achievement',
     note = t['knight_pepe_note'],
     questId = 39266,
     loot = {
@@ -660,6 +1206,91 @@ local points = {
       item = {
         -- A Tiny Plated Helm
         [127869] = { },
+      },
+    },
+  },
+
+  -- Poor Communication
+  [35804045] = {
+    name = t['poor_communication_title'],
+    icon = 'achievement',
+    POI = {
+      37884390, 37084292, 37484104, 34343990, 33784069, 33623975, 41314212, 41984631, 41984631, 43724682, 32833524,
+      36104176, 36564226, 33993690, 34764064,
+    },
+    note = t['poor_communication_note'] .. '\n\n' .. t['missive'],
+    requirement = {
+      quest = {
+        [RequiredQuests['assault on the heart of shattrath']] = { state = 'active' },
+      },
+    },
+    loot = {
+      -- Poor Communication
+      achievement = {
+        [9637] = { count = true },
+      },
+    },
+  },
+
+  -- United We Stand
+  [45402430] = {
+    name = t['united_we_stand_title'],
+    icon = 'achievement',
+    POI = {
+      37001440, 37801880, 37602100, 43602260, 41202020, 46802080, 47202360, 44402780, 43402980, 46802760, 48402980,
+      46803220, 45603680, 35201660,
+    },
+    note = t['united_we_stand_note'] .. '\n\n' .. t['missive'],
+    requirement = {
+      quest = {
+        [RequiredQuests['assault on shattrath harbor']] = { state = 'active' },
+      },
+    },
+    loot = {
+      -- United We Stand
+      achievement = {
+        [9636] = { count = true },
+      },
+    },
+  },
+
+  -- Bobbing for Orcs
+  [45402100] = {
+    name = t['bobbing_for_orcs_title'],
+    icon = 'achievement',
+    POI = { 43002220, 47402230 },
+    note = t['bobbing_for_orcs_note'] .. '\n\n' .. t['missive'],
+    requirement = {
+      quest = {
+        [RequiredQuests['assault on shattrath harbor']] = { state = 'active' },
+      },
+    },
+    loot = {
+      -- Bobbing for Orcs
+      achievement = {
+        [9635] = { count = true },
+      },
+    },
+  },
+
+  -- The Power Is Yours
+  [34204330] = {
+    name = t['power_is_yours_title'],
+    icon = 'achievement',
+    POI = {
+      33394030, 32803650, 33734896, 32092389, 43564606, 38384248, 38293737, 34743959, 34973750, 33673600, 36954470,
+      34733980,
+    },
+    note = t['power_is_yours_note'] .. '\n\n' .. t['missive'],
+  requirement = {
+    quest = {
+      [RequiredQuests['assault on the heart of shattrath']] = { state = 'active' },
+    },
+  },
+    loot = {
+      -- The Power Is Yours
+      achievement = {
+        [9632] = { },
       },
     },
   },
@@ -675,6 +1306,22 @@ local subPoints = {
       item = {
         -- Shirzir's Sticky Slippers
         [112370] = { type = 'transmog' },
+      },
+    },
+  },
+  -- Soulbinder's Reliquary
+  [28303500] = {
+    name = t['soulbinders_reliquary_title'],
+    questId = 34254,
+    icon = 'chest',
+    loot = {
+      achievement = {
+        -- Grand Treasure Hunter
+        [9728] = { count = true },
+      },
+      item = {
+        -- Auchenai Soulbinder's Signet
+        [117570] = { subtype = t['ring'] },
       },
     },
   },

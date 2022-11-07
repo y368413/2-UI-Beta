@@ -254,8 +254,50 @@ do
 		end
 	end
 
+	local slotData = {gems={},essence={}}
 	function M.GetItemLevel(link, arg1, arg2, fullScan)
 		if fullScan then
+			if I.isBeta then
+
+			local data = C_TooltipInfo.GetInventoryItem(arg1, arg2)
+			if data then
+				wipe(slotData.gems)
+				wipe(slotData.essence) -- todo: no chance to test it yet
+				slotData.iLvl = nil
+				slotData.enchantText = nil
+
+				local num = 0
+				for i = 2, #data.lines do
+					local lineData = data.lines[i]
+					local argVal = lineData and lineData.args
+					if argVal then
+						if not slotData.iLvl then
+							local text = argVal[2] and argVal[2].stringVal
+							local found = text and strfind(text, itemLevelString)
+							if found then
+								local level = strmatch(text, "(%d+)%)?$")
+								slotData.iLvl = tonumber(level) or 0
+							end
+						else
+							local lineInfo = argVal[4] and argVal[4].field
+							if lineInfo == "enchantID" then
+								local enchant = argVal[2] and argVal[2].stringVal
+								slotData.enchantText = strmatch(enchant, enchantString)
+							elseif lineInfo == "gemIcon" then
+								num = num + 1
+								slotData.gems[num] = argVal[4].intVal
+							elseif lineInfo == "socketType" then
+								num = num + 1
+								slotData.gems[num] = format("Interface\\ItemSocketingFrame\\UI-EmptySocket-%s", argVal[4].stringVal)
+							end
+						end
+					end
+				end
+				return slotData
+
+				end
+			else
+
 			tip:SetOwner(UIParent, "ANCHOR_NONE")
 			tip:SetInventoryItem(arg1, arg2)
 
@@ -280,8 +322,39 @@ do
 			end
 
 			return slotInfo
+
+			end
 		else
 			if iLvlDB[link] then return iLvlDB[link] end
+
+			if I.isBeta then
+
+			local data
+			if arg1 and type(arg1) == "string" then
+				data = C_TooltipInfo.GetInventoryItem(arg1, arg2)
+			elseif arg1 and type(arg1) == "number" then
+				data = C_TooltipInfo.GetBagItem(arg1, arg2)
+			else
+				data = C_TooltipInfo.GetHyperlink(link, nil, nil, true)
+			end
+			if data then
+				for i = 2, 5 do
+					local lineData = data.lines[i]
+					if not lineData then break end
+					local argVal = lineData.args
+					if argVal then
+						local text = argVal[2] and argVal[2].stringVal
+						local found = text and strfind(text, itemLevelString)
+						if found then
+							local level = strmatch(text, "(%d+)%)?$")
+							iLvlDB[link] = tonumber(level)
+							break
+						end
+					end
+				end
+			end
+
+			else
 
 			tip:SetOwner(UIParent, "ANCHOR_NONE")
 			if arg1 and type(arg1) == "string" then
@@ -308,6 +381,8 @@ do
 					iLvlDB[link] = tonumber(level)
 					break
 				end
+			end
+
 			end
 
 			return iLvlDB[link]
@@ -390,7 +465,6 @@ do
 	end
 
 	function M:HideOption()
-		if not self then return end -- isNewPatch
 		self:SetAlpha(0)
 		self:SetScale(.0001)
 	end
@@ -403,6 +477,7 @@ do
 		"RightInset",
 		"NineSlice",
 		"BG",
+		"Bg",
 		"border",
 		"Border",
 		"Background",
@@ -542,11 +617,7 @@ do
 
 		local tex = self:CreateTexture(nil, "BACKGROUND")
 		tex:SetTexture(I.bdTex)
-		if I.isNewPatch then
-			tex:SetGradient(orientation, CreateColor(r, g, b, a1), CreateColor(r, g, b, a2))
-		else
-			tex:SetGradientAlpha(orientation, r, g, b, a1, r, g, b, a2)
-		end
+		tex:SetGradient(orientation, CreateColor(r, g, b, a1), CreateColor(r, g, b, a2))
 		if width then tex:SetWidth(width) end
 		if height then tex:SetHeight(height) end
 
@@ -622,11 +693,7 @@ do
 		if R.db["Skins"]["FlatMode"] then
 			tex:SetVertexColor(.3, .3, .3, .25)
 		else
-			if I.isNewPatch then
-				tex:SetGradient("Vertical", gradientFrom, gradientTo)
-			else
-				tex:SetGradientAlpha("Vertical", 0, 0, 0, .5, .3, .3, .3, .3)
-			end
+			tex:SetGradient("Vertical", gradientFrom, gradientTo)
 		end
 
 		return tex
@@ -662,8 +729,10 @@ do
 	end
 
 	-- Handle icons
+	local x1, x2, y1, y2 = unpack(I.TexCoord)
+
 	function M:ReskinIcon(shadow)
-		self:SetTexCoord(unpack(I.TexCoord))
+		self:SetTexCoord(x1, x2, y1, y2)
 		local bg = M.CreateBDFrame(self, .25) -- exclude from opacity control
 		if shadow then M.CreateSD(bg) end
 		return bg
@@ -674,7 +743,7 @@ do
 		self.bg:SetAllPoints()
 		self.Icon = self:CreateTexture(nil, "ARTWORK")
 		self.Icon:SetInside(self.bg)
-		self.Icon:SetTexCoord(unpack(I.TexCoord))
+		self.Icon:SetTexCoord(x1, x2, y1, y2)
 		if texture then
 			local atlas = strmatch(texture, "Atlas:(.+)$")
 			if atlas then
@@ -706,7 +775,6 @@ do
 		bu.Icon:SetAllPoints()
 		bu.Icon:SetTexture(I.gearTex)
 		bu.Icon:SetTexCoord(0, .5, 0, .5)
-		bu.Icon:SetVertexColor(1, 0, 0, 1)
 		bu:SetHighlightTexture(I.gearTex)
 		bu:GetHighlightTexture():SetTexCoord(0, .5, 0, .5)
 
@@ -738,15 +806,15 @@ do
 
 	local AtlasToQuality = {
 		["error"] = 99,
-		["uncollected"] = LE_ITEM_QUALITY_POOR,
-		["gray"] = LE_ITEM_QUALITY_POOR,
-		["white"] = LE_ITEM_QUALITY_COMMON,
-		["green"] = LE_ITEM_QUALITY_UNCOMMON,
-		["blue"] = LE_ITEM_QUALITY_RARE,
-		["purple"] = LE_ITEM_QUALITY_EPIC,
-		["orange"] = LE_ITEM_QUALITY_LEGENDARY,
-		["artifact"] = LE_ITEM_QUALITY_ARTIFACT,
-		["account"] = LE_ITEM_QUALITY_HEIRLOOM,
+		["uncollected"] = Enum.ItemQuality.Poor,
+		["gray"] = Enum.ItemQuality.Poor,
+		["white"] = Enum.ItemQuality.Common,
+		["green"] = Enum.ItemQuality.Uncommon,
+		["blue"] = Enum.ItemQuality.Rare,
+		["purple"] = Enum.ItemQuality.Epic,
+		["orange"] = Enum.ItemQuality.Legendary,
+		["artifact"] = Enum.ItemQuality.Artifact,
+		["account"] = Enum.ItemQuality.Heirloom,
 	}
 	local function updateIconBorderColorByAtlas(self, atlas)
 		local atlasAbbr = atlas and strmatch(atlas, "%-(%w+)$")
@@ -754,8 +822,10 @@ do
 		local color = I.QualityColors[quality or 1]
 		self.__owner.bg:SetBackdropBorderColor(color.r, color.g, color.b)
 	end
+
+	local greyRGB = I.QualityColors[0].r
 	local function updateIconBorderColor(self, r, g, b)
-		if not r or (r==.65882 and g==.65882 and b==.65882) or (r>.99 and g>.99 and b>.99) then
+		if not r or r == greyRGB or (r>.99 and g>.99 and b>.99) then
 			r, g, b = 0, 0, 0
 		end
 		self.__owner.bg:SetBackdropBorderColor(r, g, b)
@@ -763,6 +833,11 @@ do
 	local function resetIconBorderColor(self, texture)
 		if not texture then
 			self.__owner.bg:SetBackdropBorderColor(0, 0, 0)
+		end
+	end
+	local function resetIconBorder(button, quality)
+		if not quality then
+			button.IconBorder:Hide()
 		end
 	end
 	function M:ReskinIconBorder(needInit, useAtlas)
@@ -782,6 +857,10 @@ do
 			end
 		end
 		hooksecurefunc(self, "Hide", resetIconBorderColor)
+
+		if self.__owner.SetItemButtonQuality then
+			hooksecurefunc(self.__owner, "SetItemButtonQuality", resetIconBorder)
+		end
 	end
 
 	local CLASS_ICON_TCOORDS = CLASS_ICON_TCOORDS
@@ -892,10 +971,10 @@ do
 		"Center",
 	}
 	function M:Reskin(noHighlight, override)
-		if self.SetNormalTexture and not override then self:SetNormalTexture(I.blankTex) end
-		if self.SetHighlightTexture then self:SetHighlightTexture(I.blankTex) end
-		if self.SetPushedTexture then self:SetPushedTexture(I.blankTex) end
-		if self.SetDisabledTexture then self:SetDisabledTexture(I.blankTex) end
+		if self.SetNormalTexture and not override then self:SetNormalTexture(0) end
+		if self.SetHighlightTexture then self:SetHighlightTexture(0) end
+		if self.SetPushedTexture then self:SetPushedTexture(0) end
+		if self.SetDisabledTexture then self:SetDisabledTexture(0) end
 
 		local buttonName = self.GetName and self:GetName()
 		for _, region in pairs(blizzRegions) do
@@ -939,29 +1018,100 @@ do
 	hooksecurefunc("PanelTemplates_DeselectTab", M.ResetTabAnchor)
 
 	-- Handle scrollframe
-	local function GrabScrollBarElement(frame, element)
-		local frameName = frame:GetDebugName()
-		return frame[element] or frameName and (_G[frameName..element] or strfind(frameName, element)) or nil
+	local function Thumb_OnEnter(self)
+		local thumb = self.thumb or self
+		thumb.bg:SetBackdropColor(cr, cg, cb, .75)
+	end
+	local function Thumb_OnLeave(self)
+		local thumb = self.thumb or self
+		if thumb.__isActive then return end
+		thumb.bg:SetBackdropColor(cr, cg, cb, .25)
+	end
+	local function Thumb_OnMouseDown(self)
+		local thumb = self.thumb or self
+		thumb.__isActive = true
+		thumb.bg:SetBackdropColor(cr, cg, cb, .75)
+	end
+	local function Thumb_OnMouseUp(self)
+		local thumb = self.thumb or self
+		thumb.__isActive = nil
+		thumb.bg:SetBackdropColor(cr, cg, cb, .25)
+	end
+
+	local function updateScrollArrow(arrow)
+		if not arrow.__texture then return end
+
+		if arrow:IsEnabled() then
+			arrow.__texture:SetVertexColor(1, 1, 1)
+		else
+			arrow.__texture:SetVertexColor(.5, .5, .5)
+		end
+	end
+	local function updateTrimScrollArrow(self, atlas)
+		local arrow = self.__owner
+		if not arrow.__texture then return end
+
+		if atlas == arrow.disabledTexture then
+			arrow.__texture:SetVertexColor(.5, .5, .5)
+		else
+			arrow.__texture:SetVertexColor(1, 1, 1)
+		end
+	end
+
+	local function reskinScrollArrow(self, direction, minimal)
+		if not self then return end
+
+		if self.Texture then
+			self.Texture:SetAlpha(0)
+			if self.Overlay then self.Overlay:SetAlpha(0) end
+			if minimal then self:SetHeight(17) end
+		else
+			M.StripTextures(self)
+		end
+
+		local tex = self:CreateTexture(nil, "ARTWORK")
+		tex:SetAllPoints()
+		M.SetupArrow(tex, direction)
+		self.__texture = tex
+
+		self:HookScript("OnEnter", M.Texture_OnEnter)
+		self:HookScript("OnLeave", M.Texture_OnLeave)
+
+		if self.Texture then
+			if minimal then return end
+			self.Texture.__owner = self
+			hooksecurefunc(self.Texture, "SetAtlas", updateTrimScrollArrow)
+			updateTrimScrollArrow(self.Texture, self.Texture:GetAtlas())
+		else
+			hooksecurefunc(self, "Enable", updateScrollArrow)
+			hooksecurefunc(self, "Disable", updateScrollArrow)
+		end
 	end
 
 	function M:ReskinScroll()
 		M.StripTextures(self:GetParent())
 		M.StripTextures(self)
 
-		local thumb = GrabScrollBarElement(self, "ThumbTexture") or GrabScrollBarElement(self, "thumbTexture") or self.GetThumbTexture and self:GetThumbTexture()
+		local thumb = self:GetThumbTexture()
 		if thumb then
 			thumb:SetAlpha(0)
-			thumb:SetWidth(16)
-			local bg = M.CreateBDFrame(self, 0, true)
-			bg:SetPoint("TOPLEFT", thumb, 0, -2)
-			bg:SetPoint("BOTTOMRIGHT", thumb, 0, 4)
-			bg:SetBackdropColor(cr, cg, cb, .75)
+			thumb.bg = M.CreateBDFrame(thumb, .25)
+			thumb.bg:SetBackdropColor(cr, cg, cb, .25)
+			thumb.bg:SetPoint("TOPLEFT", thumb, 4, -1)
+			thumb.bg:SetPoint("BOTTOMRIGHT", thumb, -4, 1)
+			self.thumb = thumb
+
+			self:HookScript("OnEnter", Thumb_OnEnter)
+			self:HookScript("OnLeave", Thumb_OnLeave)
+			self:HookScript("OnMouseDown", Thumb_OnMouseDown)
+			self:HookScript("OnMouseUp", Thumb_OnMouseUp)
 		end
 
 		local up, down = self:GetChildren()
-		M.ReskinArrow(up, "up")
-		M.ReskinArrow(down, "down")
+		reskinScrollArrow(up, "up")
+		reskinScrollArrow(down, "down")
 	end
+
 
 	-- Handle close button
 	function M:Texture_OnEnter()
@@ -1021,7 +1171,7 @@ do
 		local dis = self:GetDisabledTexture()
 		dis:SetVertexColor(0, 0, 0, .3)
 		dis:SetDrawLayer("OVERLAY")
-		dis:SetAllPoints()
+		dis:SetInside()
 
 		local tex = self:CreateTexture(nil, "ARTWORK")
 		tex:SetAllPoints()
@@ -1086,7 +1236,6 @@ do
 	end
 	-- Handle slider
 	function M:ReskinSlider(vertical)
-		if self.SetBackdrop then self:SetBackdrop(nil) end -- isNewPatch
 		M.StripTextures(self)
 
 		local bg = M.CreateBDFrame(self, 0, true)
@@ -1154,7 +1303,7 @@ do
 		--end
 		return bg
 	end
-end
+
 
 	function M:AffixesSetup()
 		for _, frame in ipairs(self.Affixes) do
@@ -1236,6 +1385,7 @@ end
 			icon.border:SetTexture("")
 		end
 	end
+end
 
 -- GUI elements
 do

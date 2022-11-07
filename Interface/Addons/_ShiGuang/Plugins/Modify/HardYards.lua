@@ -208,12 +208,12 @@ HardYards:SetScript("OnUpdate", function()
 		DoTheHardYards("target", true)
 		if (ShiGuangPerDB.HardYardsshow == true) then
 			HardYards.rangeText:SetText(hy_range)
-			HardYards.rangeText:SetTextColor(nil,nil,nil,1)
+			HardYards.rangeText:SetTextColor(0,0,0,1)  --nil,nil,nil
 			HardYards:SetSize(HardYards.rangeText:GetWidth()*1.2, HardYards.rangeText:GetHeight()*1.3)
 		end
 	else
 		if HardYards.rangeText then
-		  HardYards.rangeText:SetTextColor(nil,nil,nil,0)
+		  HardYards.rangeText:SetTextColor(1,1,1,0)  --nil,nil,nil
 		else
 		  return
 		end
@@ -264,7 +264,7 @@ SlashCmdList[ "HardYards" ] = function(options)
 		end
 	elseif (firstParm3 == "hid") then
 		ShiGuangPerDB.HardYardsshow = false
-		HardYards.rangeText:SetTextColor(nil,nil,nil,0)
+		HardYards.rangeText:SetTextColor(0,0,0,0)  --nil,nil,nil
 	elseif (firstParm3 == "sho") then
 		ShiGuangPerDB.HardYardsshow = true
 	end

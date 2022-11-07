@@ -37,7 +37,7 @@ end
 
 local function IsInCovenant(covenant)
 	return function()
-		return C_Covenants.GetActiveCovenantID() == covenant
+		return C_Covenants and C_Covenants.GetActiveCovenantID() == covenant
 	end
 end
 
@@ -88,12 +88,15 @@ local function OnDayAtContinent(day, continent)
 end
 
 local function CreateDestination(zone, spells)	
-	for i, spell in ipairs(spells) do
-		spell.zone = zone
-		tinsert(TeleporterDefaultSpells, spell)
+	if zone then
+		for i, spell in ipairs(spells) do
+			if TeleporterIsUnsupportedItem(spell) ~= 1 then
+				spell.zone = zone
+				tinsert(TeleporterDefaultSpells, spell)
+			end
+		end
 	end
 end
-
 
 local function PrintZoneIndex(name)
 	for i = 1, 10000 do
@@ -108,12 +111,12 @@ end
 
 local function LocZone(name, mapID)
 	if mapID == 0 then
-		PrintZoneIndex(name)		
+		--PrintZoneIndex(name)		
 		return name
 	else
 		local mapInfo =	C_Map.GetMapInfo(mapID)
 		if not mapInfo then
-			PrintZoneIndex(name)	
+			--PrintZoneIndex(name)	
 			return name
 		end
 		local locName = mapInfo.name
@@ -173,11 +176,16 @@ CreateDestination(
 		CreateItem(168907),				-- Holographic Digitalization Hearthstone 全息数字化炉石
 		CreateItem(165669),				-- Lunar Elder's Hearthstone  春节长者的炉石 285362
 		CreateItem(165670),				-- Peddlefeet's Lovely Hearthstone  小匹德菲特的可爱炉石
+		CreateItem(169064),				-- Mountebank's Colorful Cloak
 		CreateItem(172179),				-- Eternal Traveler's Hearthstone  永恒旅者的炉石
 		CreateConditionalItem(180290, IsInCovenant(3)),	-- Night Fae Hearthstone
 		CreateConditionalItem(182773, IsInCovenant(4)),	-- Necrolord Hearthstone
 		CreateConditionalItem(183716, IsInCovenant(2)),	-- Venthyr Sinstone
 		CreateConditionalItem(184353, IsInCovenant(1)),	-- Kyrian Hearthstone
+		CreateItem(188952),				-- Dominated Hearthstone
+		CreateItem(190237),				-- Broker Translocation Matrix
+		CreateItem(193588),				-- Timewalker's Hearthstone
+		CreateItem(200630),				-- Ohn'ir Windsage's Hearthstone
 	})
 	
 CreateDestination(
@@ -189,7 +197,8 @@ CreateDestination(
 CreateDestination(
 	TeleporterFlightString,
 	{ 
-		CreateConditionalItem(141605, AllowWhistle) 	-- Flight Master's Whistle
+		CreateConditionalItem(141605, AllowWhistle), 	-- Flight Master's Whistle
+		CreateConditionalItem(168862, AllowWhistle), 	-- G.E.A.R. Tracking Beacon
 	})
 	
 CreateDestination(
@@ -507,6 +516,7 @@ CreateDestination(
 		CreateItem(22631),		-- Atiesh, Greatstaff of the Guardian
 		CreateItem(22632),		-- Atiesh, Greatstaff of the Guardian
 		CreateItem(142469), 	-- Violet Seal of the Grand Magus
+		CreateChallengeSpell(373262), -- Path of the Fallen Guardian
 	})
 	
 CreateDestination(
@@ -532,6 +542,7 @@ CreateDestination(
 	LocZone("Mechagon", 1490),
 	{
 		CreateConsumable(167075),	-- Ultrasafe Transporter: Mechagon
+		CreateChallengeSpell(373274)	-- Path of the Scrappy Prince
 	})
 	
 CreateDestination(
@@ -610,6 +621,7 @@ CreateDestination(
 		CreateSpell(147420),								-- One With Nature
 		CreateItem(64457), 									-- The Last Relic of Argus
 		CreateConditionalItem(136849, IsClass("DRUID")),	-- Nature's Beacon
+		CreateItem(189827)									-- Cartel Xy's Proof of Initiation
 	})
 
 CreateDestination(
@@ -636,6 +648,9 @@ CreateDestination(
 		CreateChallengeSpell(354468),	-- Path of the Scheming Loa
 		CreateChallengeSpell(354469),	-- Path of the Stone Warden
 		CreateChallengeSpell(367416),	-- Path of the Streetwise Merchant
+		CreateChallengeSpell(373190),	-- Path of the Sire
+		CreateChallengeSpell(373191),	-- Path of the Tormented Soul
+		CreateChallengeSpell(373192)	-- Path of the First Ones
 	})
 	
 CreateDestination(
@@ -719,8 +734,7 @@ CreateDestination(
 CreateDestination(
 	LocZone("The Shadowlands", 1550),
 	{
-		CreateItem(172924),		-- Wormhole Generator: Shadowlands
-		CreateItem(189827)		-- Cartel Xy's Proof of Initiation	(Might be in the wrong category)
+		CreateItem(172924),		-- Wormhole Generator: Shadowlands		
 	})
 
 CreateDestination(

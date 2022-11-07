@@ -19,6 +19,55 @@ TransmogTokens = {
 local t = TransmogTokens;
 local L = t.L;
 
+-- This is a one-time call to get a "transmogLocation" object, which we don't actually care about,
+-- but some functions require it now.
+
+local HEAD = "INVTYPE_HEAD"
+local SHOULDER = "INVTYPE_SHOULDER"
+local BODY = "INVTYPE_BODY"
+local CHEST = "INVTYPE_CHEST"
+local ROBE = "INVTYPE_ROBE"
+local WAIST = "INVTYPE_WAIST"
+local LEGS = "INVTYPE_LEGS"
+local FEET = "INVTYPE_FEET"
+local WRIST = "INVTYPE_WRIST"
+local HAND = "INVTYPE_HAND"
+local CLOAK = "INVTYPE_CLOAK"
+local WEAPON = "INVTYPE_WEAPON"
+local SHIELD = "INVTYPE_SHIELD"
+local WEAPON_2HAND = "INVTYPE_2HWEAPON"
+local WEAPON_MAIN_HAND = "INVTYPE_WEAPONMAINHAND"
+local RANGED = "INVTYPE_RANGED"
+local RANGED_RIGHT = "INVTYPE_RANGEDRIGHT"
+local WEAPON_OFF_HAND = "INVTYPE_WEAPONOFFHAND"
+local HOLDABLE = "INVTYPE_HOLDABLE"
+local TABARD = "INVTYPE_TABARD"
+local BAG = "INVTYPE_BAG"
+
+local inventorySlotsMap = {
+    [HEAD] = {1},
+    [SHOULDER] = {3},
+    [BODY] = {4},
+    [CHEST] = {5},
+    [ROBE] = {5},
+    [WAIST] = {6},
+    [LEGS] = {7},
+    [FEET] = {8},
+    [WRIST] = {9},
+    [HAND] = {10},
+    [CLOAK] = {15},
+    [WEAPON] = {16, 17},
+    [SHIELD] = {17},
+    [WEAPON_2HAND] = {16, 17},
+    [WEAPON_MAIN_HAND] = {16},
+    [RANGED] = {16},
+    [RANGED_RIGHT] = {16},
+    [WEAPON_OFF_HAND] = {17},
+    [HOLDABLE] = {17},
+    [TABARD] = {19},
+}
+local transmogLocation = TransmogUtil.GetTransmogLocation(inventorySlotsMap[HEAD][1], Enum.TransmogType.Appearance, Enum.TransmogModification.Main)
+
 t.tooltipCache = {
 	["active"] = false,
 	["lastTooltip"] = nil,
@@ -498,7 +547,7 @@ TransmogTokens.getSource = function(itemLink)
     local itemID, _, _, slotName = GetItemInfoInstant(itemLink);
     local slots = t.INVENTORY_SLOTS[slotName];
 
-    if not slots or not IsDressableItem(itemLink) then
+    if not slots or not C_Item.IsDressableItemByID(itemID) then
     	return;
     end
 
@@ -507,9 +556,12 @@ TransmogTokens.getSource = function(itemLink)
 
 	for i, slot in pairs(slots) do
     	model:TryOn(itemLink, slot);
-		local source = model:GetSlotTransmogSources(slot);
-
-		if source ~= 0 then
+		--local source = model:GetSlotTransmogSources(slot);
+        local transmogInfo = CanIMogIt.DressUpModel:GetItemTransmogInfo(slot)
+        if transmogInfo and 
+            transmogInfo.appearanceID ~= nil and
+            transmogInfo.appearanceID ~= 0 then
+            source = transmogInfo.appearanceID
 			return source;
 		end
 	end
@@ -524,7 +576,7 @@ TransmogTokens.getAppearanceID = function(itemLink)
 end
 
 TransmogTokens.hasApperance = function(appearanceID)
-    local sources = C_TransmogCollection.GetAppearanceSources(appearanceID);
+    local sources = C_TransmogCollection.GetAppearanceSources(appearanceID, 1, transmogLocation);
 
     if sources then
         for i, source in pairs(sources) do

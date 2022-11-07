@@ -1,4 +1,4 @@
---## Author: Cilraaz ## Version: 9.2.0.01
+--## Author: Cilraaz ## Version: 10.0.0.01
 local LootSpecSwapper = {}
 
 function LSS_CreateOptionsPanel()
@@ -17,7 +17,7 @@ function LSS_CreateOptionsPanel()
   -- Version Info
   local versionLabel = configFrame:CreateFontString(nil, 'ARTWORK', 'GameFontNormalSmall')
   versionLabel:SetPoint('BOTTOMLEFT', titleLabel, 'BOTTOMRIGHT', 8, 0)
-  versionLabel:SetText('9.2.0.01')
+  versionLabel:SetText('10.0.0.01')
 
   -- Author Info
   local authorLabel = configFrame:CreateFontString(nil, 'ARTWORK', 'GameFontNormalSmall')
@@ -173,7 +173,7 @@ local difficultyNames = {
 
 -- Table for boss names that don't match the Encounter Journal encounter name
 local bossFixes = {
-  -- Dungeons
+  -- Dungeons (SL)
   ["Milificent Manastorm"] = "The Manastorms",
   ["Millhouse Manastorm"] = "The Manastorms",
   ["Halkias"] = "Halkias, the Sin-Stained Goliath",
@@ -183,10 +183,22 @@ local bossFixes = {
   ["Dessia the Decapitator"] = "An Affront of Challengers",
   ["Paceran the Virulent"] = "An Affront of Challengers",
   ["Sathel the Accursed"] = "An Affront of Challengers",
+  -- Dungeons (DF)
+  ["Rira Hackclaw"] = "Hackclaw's War-Band",
+  ["Gashtooth"] = "Hackclaw's War-Band",
+  ["Tricktotem"] = "Hackclaw's War-Band",
+  ["Erkhart Stormvein"] = "Kyrakka and Erkhart Stormvein",
+  ["Teera"] = "Teera and Maruuk",
+  ["Maruuk"] = "Teera and Maruuk",
+  ["Baelog"] = "The Lost Dwarves",
+  ["Eric \"The Swift\""] = "The Lost Dwarves",
+  ["Olaf"] = "The Lost Dwarves",
   -- Raids
-  --- World Bosses
+  --- World Bosses (SL)
   ["Valinor"] = "Valinor, the Light of Eons",
-  --- Castle Nathria
+  ["Mor'geth"] = "Mor'geth, Tormentor of the Damned",
+  ["Sav'thul"] = "Antros",
+  --- Castle Nathria (SL)
   ["Margore"] = "Huntsman Altimor",
   ["Kael'thas Sunstrider"] = "Sun King's Salvation",
   ["High Torturor Darithos"] = "Sun King's Salvation",
@@ -197,11 +209,26 @@ local bossFixes = {
   ["Lord Stavros"] = "The Council of Blood",
   ["General Kaal"] = "Stone Legion Generals",
   ["General Grashaal"] = "Stone Legion Generals",
-  --- Sanctum of Domination
+  --- Sanctum of Domination (SL)
   ["Eye of the Jailer"] = "The Eye of the Jailer",
   ["Kyra"] = "The Nine",
   ["Signe"] = "The Nine",
   ["Skyja"] = "The Nine",
+  --- Sepulcher of the First Ones (SL)
+  ["Vigilant Custodian"] = "Vigilant Guardian",
+  ["Skolex"] = "Skolex, the Insatiable Ravener",
+  ["Dausegne"] = "Dausegne, the Fallen Oracle",
+  ["Prototype of War"] = "Prototype Pantheon",
+  ["Prototype of Duty"] = "Prototype Pantheon",
+  ["Lihuvim"] = "Lihuvim, Principal Architect",
+  ["Halondrus"] = "Halondrus the Reclaimer",
+  ["Mal'Ganis"] = "Lords of Dread",
+  ["Kin'tessa"] = "Lords of Dread",
+  --- World Bosses (DF)
+  ["Strunraan"] = "Strunraan, The Sky's Misery",
+  ["Basrikron"] = "Basrikron, The Shale Wing",
+  ["Bazual"] = "Bazual, The Dreaded Flame",
+  ["Liskanoth"] = "Liskanoth, The Futurebane",
 }
 
 -- Generic Variables
@@ -332,7 +359,7 @@ function lssFrame.SlashCommandHandler(cmd)
         end
       end
     end
-  elseif cmd and string.lower(cmd) == "setdefault" then
+  elseif cmd and string.lower(cmd) == "setspecafter" then
     local currSpec = (GetLootSpecialization())
     if (type(currSpec) == "number") then
       if (currSpec == 0) then
@@ -341,10 +368,10 @@ function lssFrame.SlashCommandHandler(cmd)
         ShiGuangPerDB.afterLootSpec = currSpec
       end
     end
-    printOutput("Loot Spec Swapper: Set default spec to follow your currently selected loot spec.")
-  elseif cmd and string.lower(cmd) == "setdefaulttofollow" then
+    printOutput("Loot Spec Swapper: Set your after loot spec to your currently selected loot spec.")
+  elseif cmd and string.lower(cmd) == "setactualafter" then
     ShiGuangPerDB.afterLootSpec = -1
-    printOutput("Loot Spec Swapper: Set default spec to follow your actual spec.")
+    printOutput("Loot Spec Swapper: Set your after loot spec to your actual spec.")
   elseif cmd and string.lower(cmd) == "list" then
     printOutput("Loot Spec Swapper: List")
     if ShiGuangPerDB.perDifficulty then
@@ -411,6 +438,10 @@ function lssFrame.SlashCommandHandler(cmd)
   elseif cmd and string.lower(cmd) == "reset" then
     printOutput("Resetting Loot Spec Swapper.")
     ShiGuangPerDB.specPerBoss = nil
+    ShiGuangPerDB.afterLootSpec = 0
+    ShiGuangPerDB.globalSilence = false
+    ShiGuangPerDB.perDifficulty = false
+    ShiGuangPerDB.disabled = false
     ReloadUI()
   else
     printOutput("Command not found: "..cmd.."\nLoot Spec Swapper: Usage:\n/lss toggle | quiet | list | diff | forget | setdefault | forgetdefault | setdefaulttofollow | reset")
@@ -463,7 +494,7 @@ journalDefaultButton:SetScript("OnClick",function(self, button)
   if (button == "RightButton") then
     lssFrame.SlashCommandHandler("forgetdefault")
   else
-    lssFrame.SlashCommandHandler("setdefault")
+    lssFrame.SlashCommandHandler("setspecafter")
   end
 end)
 journalDefaultButton:RegisterForClicks("AnyDown")
@@ -626,6 +657,8 @@ loadframe:SetScript("OnEvent",function(self,event,addon)
     journalRestoreButton:SetParent(EncounterJournal)
     journalRestoreButton:ClearAllPoints()
     journalRestoreButton:SetPoint("TOP",EncounterJournal,"TOP",340,-4)
+    journalRestoreButton:SetFrameStrata(EncounterJournalCloseButton:GetFrameStrata())
+    journalRestoreButton:SetFrameLevel(EncounterJournalCloseButton:GetFrameLevel() + 100)
     if (ShiGuangPerDB.LSSminimized) then fClose:Click() end
     for i=1,maxSpecs do
       local id, _, _, icon = GetSpecializationInfoForClassID(classID, i)

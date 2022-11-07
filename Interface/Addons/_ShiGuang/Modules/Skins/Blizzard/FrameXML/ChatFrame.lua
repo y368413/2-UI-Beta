@@ -50,7 +50,7 @@ tinsert(R.defaultThemes, function()
 
 	QuickJoinToastButton.FriendsButton:SetTexture(friendTex)
 	QuickJoinToastButton.QueueButton:SetTexture(queueTex)
-	QuickJoinToastButton:SetHighlightTexture("")
+	QuickJoinToastButton:SetHighlightTexture(0)
 	hooksecurefunc(QuickJoinToastButton, "ToastToFriendFinished", function(self)
 		self.FriendsButton:SetShown(not self.displayedToast)
 	end)
@@ -94,13 +94,17 @@ tinsert(R.defaultThemes, function()
 	M.Reskin(ChannelFrame.NewButton)
 	M.Reskin(ChannelFrame.SettingsButton)
 	M.ReskinScroll(ChannelFrame.ChannelList.ScrollBar)
-	M.ReskinScroll(ChannelFrame.ChannelRoster.ScrollFrame.scrollBar)
+	if I.isNewPatch then
+		M.ReskinTrimScroll(ChannelFrame.ChannelRoster.ScrollBar)
+	else
+		M.ReskinScroll(ChannelFrame.ChannelRoster.ScrollFrame.scrollBar)
+	end
 
 	hooksecurefunc(ChannelFrame.ChannelList, "Update", function(self)
 		for i = 1, self.Child:GetNumChildren() do
 			local tab = select(i, self.Child:GetChildren())
 			if not tab.styled and tab:IsHeader() then
-				tab:SetNormalTexture("")
+				tab:SetNormalTexture(0)
 				tab.bg = M.CreateBDFrame(tab, .25)
 				tab.bg:SetAllPoints()
 

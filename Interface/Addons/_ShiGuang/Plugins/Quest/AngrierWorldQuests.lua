@@ -576,8 +576,8 @@ SLASH_ANGRIERWORLDQUESTS1 = "/awq"
 SLASH_ANGRIERWORLDQUESTS2 = "/angrierworldquests"
 function SlashCmdList.ANGRIERWORLDQUESTS(msg, editbox)
 	if optionPanel then
-		InterfaceOptionsFrame_OpenToCategory(optionPanel)
-		InterfaceOptionsFrame_OpenToCategory(optionPanel)
+		Settings.OpenToCategory(optionPanel)
+		Settings.OpenToCategory(optionPanel)
 	end
 end
 

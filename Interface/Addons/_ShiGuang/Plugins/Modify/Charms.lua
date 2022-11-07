@@ -147,12 +147,11 @@ DESTROY:SetScript("OnEvent", function(_, event, ...)
    end
 end)]]
 
-------------------------------------------------------------------------------- DressingSlots
---## Version: 1.3.8 ## Author: Crinseth
+---------- DressingSlots--## Version: 1.4.0 ## Author: Crinseth
+local version, build, date, tocversion = GetBuildInfo()
 --local undressButton
 local toggleSheatheButton
 --local resizeButton
-
 --[[ Undress button
 undressButton = CreateFrame("Button", nil, DressUpFrame.OutfitDetailsPanel, "UIPanelButtonTemplate")
 undressButton:SetSize(80, 21)
@@ -162,7 +161,6 @@ undressButton:SetScript("OnClick", function()
     DressUpFrame.ModelScene:GetPlayerActor():Undress()
     PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK)
 end)]]
-
 -- Toggle sheathe button
 toggleSheatheButton = CreateFrame("Button", nil, DressUpFrame.OutfitDetailsPanel, "UIPanelButtonTemplate")
 toggleSheatheButton:SetSize(80, 21)
@@ -173,7 +171,6 @@ toggleSheatheButton:SetPoint("RIGHT", DressUpFrameResetButton, "LEFT", -82,0)
     playerActor:SetSheathed(not playerActor:GetSheathed())
     PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK)
 end)]]
-
 toggleSheatheButton:Disable()
 toggleSheatheButton:SetScript("OnClick", function()
 	DressUpFrame.ModelScene:GetPlayerActor():SetModelByUnit("target", false, true)
@@ -187,7 +184,6 @@ toggleSheatheButton:SetScript("OnEvent", function()
 		toggleSheatheButton:Disable() 
 	end
 end)
-
 --[[ Resize window button
 resizeButton = CreateFrame("Button", nil, DressUpFrame)
 resizeButton:SetSize(16, 16)
@@ -210,15 +206,19 @@ end)
 DressUpFrame.ResetButton:HookScript("OnShow", function ()
     resizeButton:Show()
 end)]]
-
--- Hook onto PlayerActor creation in order to hook onto its functions
-local _SetupPlayerForModelScene = SetupPlayerForModelScene
-function SetupPlayerForModelScene(...)
+-- Hook onto DressUpFrame ConfigureSize in order to provide resize functionality
+local _ConfigureSize = DressUpFrame.ConfigureSize
+function DressUpFrame:ConfigureSize(isMinimized)
+    local result = _ConfigureSize(self, isMinimized)
     -- Resize stuff
-    DressUpFrameCancelButton:SetPoint("BOTTOMRIGHT", -20, 4)
+    DressUpFrameCancelButton:SetPoint("BOTTOMRIGHT", -14, 4)
     DressUpFrame:SetResizable(true)
-    DressUpFrame:SetMinResize(334, 423)
-    DressUpFrame:SetMaxResize(DressUpFrame:GetTop() * 0.8, DressUpFrame:GetTop())
+    if tocversion < 100000 then
+        DressUpFrame:SetMinResize(334, 423)
+        DressUpFrame:SetMaxResize(DressUpFrame:GetTop() * 0.8, DressUpFrame:GetTop())
+    else
+        DressUpFrame:SetResizeBounds(334, 423, DressUpFrame:GetTop() * 0.8, DressUpFrame:GetTop())
+    end
     if DressHeight and DressHeight <= DressUpFrame:GetTop() and DressWidth <= (DressUpFrame:GetTop()) then
         DressUpFrame:SetSize(DressWidth, DressHeight)
         UpdateUIPanelPositions(self)
@@ -236,9 +236,8 @@ function SetupPlayerForModelScene(...)
         DressWidth = nil
         minimize(self)
     end)
-    return _SetupPlayerForModelScene(...)
+    return result
 end
-
 local _Acquire = DressUpFrame.OutfitDetailsPanel.slotPool.Acquire
 function DressUpFrame.OutfitDetailsPanel.slotPool:Acquire()
     local frame, isNew = _Acquire(self)
@@ -273,7 +272,6 @@ function DressUpFrame.OutfitDetailsPanel.slotPool:Acquire()
     end
     return frame, isNew
 end
-
 local SLOTS = {
 	"HeadSlot",
 	"ShoulderSlot",
@@ -299,32 +297,24 @@ local HIDDEN_SOURCES = {
 	[83203] = true, -- tabard
 	[84223] = true, -- waist
 }
-
 local buttons = {}
-
 local updateSlots
 local makePrimarySlotButton
 local makeSecondarySlotButton
 
---if not ShowSlots then
-    --ShowSlots = false
---end
-
+--if not ShowSlots then ShowSlots = false end
 -- Toggle buttons visibility
 local function showButtons(show)
     for slot, slotButtons in pairs(buttons) do
         for i, button in ipairs(slotButtons) do
-            if show then
-                if i == 1 then
-                    button:Show()
-                end
+            if show and ShowSlots then
+                button:Show()
             else
                 button:Hide()
             end
         end
     end
 end
-
 -- Button click event
 local function onClick(self, button)
 	if button == "RightButton" then
@@ -344,7 +334,6 @@ local function onClick(self, button)
 		HandleModifiedItemClick(self.item)
 	end
 end
-
 local function secondaryOnClick(self, button)
 	if button == "RightButton" then
         local playerActor = DressUpFrame.ModelScene:GetPlayerActor()
@@ -358,7 +347,6 @@ local function secondaryOnClick(self, button)
 		HandleModifiedItemClick(self.item)
 	end
 end
-
 -- Button hover event
 local function onEnter(self)
 	GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
@@ -368,7 +356,6 @@ local function onEnter(self)
 		GameTooltip:SetText(self.text or _G[string.upper(self.slot)])
 	end
 end
-
 -- Button size constants
 local buttonSize = 35
 local secondaryButtonSize = 25
@@ -376,7 +363,6 @@ local buttonSizeWithPadding = buttonSize + 5
 local sideInsetLeft = 10
 local sideInsetRight = 12
 local topInset = -80
-
 -- Create item slot buttons
 makePrimarySlotButton = function(i, slot)
     local button = CreateFrame("Button", nil, DressUpFrame)
@@ -411,7 +397,6 @@ makePrimarySlotButton = function(i, slot)
 
     return button
 end
-
 makeSecondarySlotButton = function(i, slot)
     local button = CreateFrame("Button", nil, DressUpFrame)
     button.slot = slot
@@ -445,7 +430,6 @@ makeSecondarySlotButton = function(i, slot)
 
     return button
 end
-
 for i, slot in ipairs(SLOTS) do
     local primaryButton = makePrimarySlotButton(i, slot)
     local secondaryButton = makeSecondarySlotButton(i, slot)
@@ -456,7 +440,6 @@ for i, slot in ipairs(SLOTS) do
         masqueGroup:AddButton(secondaryButton)
     end
 end
-
 --[[ Settings dropdown
 settingsDropdown = CreateFrame("Frame", "DressingSlotsSettingsDropdown", nil, "UIDropDownMenuTemplate")
 settingsDropdown.initialize = function(self, level)
@@ -492,7 +475,6 @@ showSettingsButton:SetScript("OnClick", function(self)
     ToggleDropDownMenu(1, nil, settingsDropdown, self, 0, 0)
     PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 end)]]
-
 -- Updates slot buttons content based on PlayerActor
 updateSlots = function()
     local playerActor = DressUpFrame.ModelScene:GetPlayerActor()
@@ -520,7 +502,7 @@ updateSlots = function()
 			    secondaryButton.text = UNKNOWN
 			    secondaryButton.icon:SetTexture(icon or [[Interface\Icons\INV_Misc_QuestionMark]])
 			    secondaryButton:Enable()
-                if DressUpFrame.ResetButton:IsShown() then
+                if DressUpFrame.ResetButton:IsShown() and ShowSlots then
                     secondaryButton:Show()
                 end
             else
@@ -529,14 +511,12 @@ updateSlots = function()
         end
     end
 end
-
 -- Hook onto save button update events to trigger slot updates
 local _DressUpFrameOutfitDropDown_UpdateSaveButton = DressUpFrameOutfitDropDown.UpdateSaveButton
 function DressUpFrameOutfitDropDown:UpdateSaveButton(...)
     updateSlots()
     return _DressUpFrameOutfitDropDown_UpdateSaveButton(self, ...)
 end
-
 DressUpFrame.ResetButton:HookScript("OnHide", function ()
     showButtons(false)
 end)
@@ -544,160 +524,55 @@ DressUpFrame.ResetButton:HookScript("OnShow", function ()
     showButtons(true)
 end)
 
-
---## Title: Extended Transmog UI  ## Author: Germbread ## Version: 1.1.1
-local ExtTransmogUI = CreateFrame("Frame")
-ExtTransmogUI:RegisterEvent("ADDON_LOADED")
-ExtTransmogUI:SetScript("OnEvent",function(self,event,addon)
-    if addon=="Blizzard_Collections" then
-		ExtTransmogUI:UnregisterEvent("ADDON_LOADED")
-		WardrobeFrame:SetWidth(1200);
-    --WardrobeFrame:SetScale(0.82);
-    WardrobeTransmogFrame.Inset.BG:SetWidth(529);
-    WardrobeTransmogFrame:SetWidth(535);
-    WardrobeTransmogFrame.ModelScene:ClearAllPoints();
-    WardrobeTransmogFrame.ModelScene:SetPoint("TOP", WardrobeTransmogFrame, "TOP", 0, -4);
-    WardrobeTransmogFrame.ModelScene:SetWidth(420);
-    WardrobeTransmogFrame.ModelScene:SetHeight(420);
-    
-    --WardrobeTransmogFrame.HeadButton:ClearAllPoints();
-    --WardrobeTransmogFrame.HeadButton:SetPoint("TOP", WardrobeTransmogFrame.ModelScene, "TOP", -238, -41);
-    WardrobeTransmogFrame.WristButton:ClearAllPoints();
-    WardrobeTransmogFrame.WristButton:SetPoint("TOP", WardrobeTransmogFrame.ModelScene, "TOP", 235, -88);
-    WardrobeTransmogFrame.HandsButton:ClearAllPoints();
-    WardrobeTransmogFrame.HandsButton:SetPoint("TOP", WardrobeTransmogFrame.ModelScene, "TOP", 235, -142);
-    WardrobeTransmogFrame.ShoulderButton:ClearAllPoints();
-    WardrobeTransmogFrame.ShoulderButton:SetPoint("TOP", WardrobeTransmogFrame.ModelScene, "TOP", -238, -88);
-	
-    --SecondaryShoulderButton
-	--WardrobeTransmogFrame.SecondaryShoulderButton:ClearAllPoints();
-    --WardrobeTransmogFrame.SecondaryShoulderButton:SetPoint("TOP", WardrobeTransmogFrame.ModelScene, "TOP", -270, -130);
-    
-    WardrobeTransmogFrame.ToggleSecondaryAppearanceCheckbox:ClearAllPoints();
-    WardrobeTransmogFrame.ToggleSecondaryAppearanceCheckbox:SetPoint("BOTTOMLEFT", WardrobeTransmogFrame.ModelScene, "TOP", 38, 3);
-
-    WardrobeTransmogFrame.MainHandButton:ClearAllPoints();
-    WardrobeTransmogFrame.MainHandButton:SetPoint("TOP", WardrobeTransmogFrame.ModelScene, "BOTTOM", -26, -5);
-    WardrobeTransmogFrame.SecondaryHandButton:ClearAllPoints();
-    WardrobeTransmogFrame.SecondaryHandButton:SetPoint("TOP", WardrobeTransmogFrame.ModelScene, "BOTTOM", 27, -5);
-    WardrobeTransmogFrame.MainHandEnchantButton:ClearAllPoints();
-    WardrobeTransmogFrame.MainHandEnchantButton:SetPoint("BOTTOM", WardrobeTransmogFrame.ModelScene.MainHandButton, "BOTTOM", 0, -20);
-    WardrobeTransmogFrame.SecondaryHandEnchantButton:ClearAllPoints();
-    WardrobeTransmogFrame.SecondaryHandEnchantButton:SetPoint("BOTTOM", WardrobeTransmogFrame.ModelScene.SecondaryHandButton, "BOTTOM", 0, -20); 
-    
-    UIPanelWindows["WardrobeFrame"].width = 1200;   
-    
-    	--[[ General Settings --
-    WardrobeFrame:SetWidth(1650);
-	WardrobeFrame:SetHeight(900);
-
-	--WardrobeTransmogFrame--
-	WardrobeTransmogFrame:SetWidth(950);
-	WardrobeTransmogFrame:SetHeight(785);
-	
-	WardrobeTransmogFrame.Inset.BG:SetWidth(770);
-	WardrobeTransmogFrame.Inset.BG:SetHeight(760);
-
-	--WardrobeTransmogFrame.Model--
-    WardrobeTransmogFrame.ModelScene:SetWidth(760);
-    WardrobeTransmogFrame.ModelScene:SetHeight(750);																
-	
-    WardrobeTransmogFrame.ModelScene:ClearAllPoints();
-    WardrobeTransmogFrame.ModelScene:SetPoint("TOP", WardrobeTransmogFrame, "TOP", 0, -4);
-
-
-
-	--Helm
-    WardrobeTransmogFrame.HeadButton:ClearAllPoints();
-    WardrobeTransmogFrame.HeadButton:SetPoint("TOP", WardrobeTransmogFrame.ModelScene, "TOP", -320, -80);
-	WardrobeTransmogFrame.HeadButton:SetScale(1.25);
-
-
-	-- Shoulders
-	-- dual pauldron box
-	WardrobeTransmogFrame.ToggleSecondaryAppearanceCheckbox:ClearAllPoints();
-	WardrobeTransmogFrame.ToggleSecondaryAppearanceCheckbox:SetPoint("TOP", WardrobeTransmogFrame.ModelScene, "TOP", -450, -15);
-	
-	--Shoulder
-	WardrobeTransmogFrame.ShoulderButton:ClearAllPoints();
-    WardrobeTransmogFrame.ShoulderButton:SetPoint("TOP", WardrobeTransmogFrame.ModelScene, "TOP", -320, -130);
-	WardrobeTransmogFrame.ShoulderButton:SetScale(1.25);
-	
-    --SecondaryShoulderButton
-	WardrobeTransmogFrame.SecondaryShoulderButton:ClearAllPoints();
-    WardrobeTransmogFrame.SecondaryShoulderButton:SetPoint("TOP", WardrobeTransmogFrame.ModelScene, "TOP", -270, -130);
-	WardrobeTransmogFrame.SecondaryShoulderButton:SetScale(1.25);
-	
-	--Cloak
-	WardrobeTransmogFrame.BackButton:ClearAllPoints();
-    WardrobeTransmogFrame.BackButton:SetPoint("TOP", WardrobeTransmogFrame.ModelScene, "TOP", -320, -180);
-	WardrobeTransmogFrame.BackButton:SetScale(1.25);
-	
-	--Chest
-	WardrobeTransmogFrame.ChestButton:ClearAllPoints();
-    WardrobeTransmogFrame.ChestButton:SetPoint("TOP", WardrobeTransmogFrame.ModelScene, "TOP", -320, -230);
-	WardrobeTransmogFrame.ChestButton:SetScale(1.25);
-	
-	
-	--Shirt
-	WardrobeTransmogFrame.ShirtButton:ClearAllPoints();
-    WardrobeTransmogFrame.ShirtButton:SetPoint("TOP", WardrobeTransmogFrame.ModelScene, "TOP", -320, -280);
-	WardrobeTransmogFrame.ShirtButton:SetScale(1.25);
-	
-	--Tabby
-	WardrobeTransmogFrame.TabardButton:ClearAllPoints();
-    WardrobeTransmogFrame.TabardButton:SetPoint("TOP", WardrobeTransmogFrame.ModelScene, "TOP", -320, -330);
-	WardrobeTransmogFrame.TabardButton:SetScale(1.25);
-	
-	--Bracers
-	WardrobeTransmogFrame.WristButton:ClearAllPoints();
-    WardrobeTransmogFrame.WristButton:SetPoint("TOP", WardrobeTransmogFrame.ModelScene, "TOP", -320, -380);
-	WardrobeTransmogFrame.WristButton:SetScale(1.25);
-	
-	--Gloves
-    WardrobeTransmogFrame.HandsButton:ClearAllPoints();
-	WardrobeTransmogFrame.HandsButton:SetScale(1.25);
-    WardrobeTransmogFrame.HandsButton:SetPoint("TOP", WardrobeTransmogFrame.ModelScene, "TOP", 320, -80);
-	
-	--Belt
-	WardrobeTransmogFrame.WaistButton:ClearAllPoints();
-	WardrobeTransmogFrame.WaistButton:SetScale(1.25);
-    WardrobeTransmogFrame.WaistButton:SetPoint("TOP", WardrobeTransmogFrame.ModelScene, "TOP", 320, -130);
-	
-	--Legs
-	WardrobeTransmogFrame.LegsButton:ClearAllPoints();
-	
-	WardrobeTransmogFrame.LegsButton:SetScale(1.25);
-    WardrobeTransmogFrame.LegsButton:SetPoint("TOP", WardrobeTransmogFrame.ModelScene, "TOP", 320, -180);
-	
-	--Boots
-	
-	WardrobeTransmogFrame.FeetButton:ClearAllPoints();
-	WardrobeTransmogFrame.FeetButton:SetScale(1.25);
-    WardrobeTransmogFrame.FeetButton:SetPoint("TOP", WardrobeTransmogFrame.ModelScene, "TOP", 320, -230);
-
-	
-
-	--MH
-    WardrobeTransmogFrame.MainHandButton:ClearAllPoints();
-	WardrobeTransmogFrame.MainHandButton:SetScale(1.25);
-    WardrobeTransmogFrame.MainHandButton:SetPoint("TOP", WardrobeTransmogFrame.ModelScene, "BOTTOM", 320, 200);]]
-	
-    WardrobeTransmogFrame.MainHandEnchantButton:ClearAllPoints();
-	--WardrobeTransmogFrame.MainHandEnchantButton:SetScale(1.25);
-    WardrobeTransmogFrame.MainHandEnchantButton:SetPoint("RIGHT", WardrobeTransmogFrame.MainHandButton, "LEFT", 0, 0);
-	
-	
-	--OH
-	--WardrobeTransmogFrame.SecondaryHandButton:ClearAllPoints();
-	--WardrobeTransmogFrame.SecondaryHandButton:SetScale(1.25);
-    --WardrobeTransmogFrame.SecondaryHandButton:SetPoint("TOP", WardrobeTransmogFrame.ModelScene, "BOTTOM", 320, 120);
-	
-    WardrobeTransmogFrame.SecondaryHandEnchantButton:ClearAllPoints();
-	--WardrobeTransmogFrame.SecondaryHandEnchantButton:SetScale(1.25);
-    WardrobeTransmogFrame.SecondaryHandEnchantButton:SetPoint("LEFT", WardrobeTransmogFrame.SecondaryHandButton, "RIGHT", 0, 0);
-	end
-end)
+--	KayrWiderTransmogUI
+KayrWiderTransmogUI = _G["CreateFrame"]("Frame", "KayrWiderTransmogUI", UIParent)
+KayrWiderTransmogUI.initDone = false
+function KayrWiderTransmogUI:ADDON_LOADED(event, addon)
+    if addon == "Blizzard_Collections" then
+        KayrWiderTransmogUI:Init()
+    end
+end
+function KayrWiderTransmogUI.Adjust()
+    local WardrobeFrame = _G["WardrobeFrame"]
+    local WardrobeTransmogFrame = _G["WardrobeTransmogFrame"]
+    local initialParentFrameWidth = WardrobeFrame:GetWidth() -- Expecting 965
+    local desiredParentFrameWidth = 1200
+    local parentFrameWidthIncrease = desiredParentFrameWidth - initialParentFrameWidth
+    WardrobeFrame:SetWidth(desiredParentFrameWidth)
+    local initialTransmogFrameWidth = WardrobeTransmogFrame:GetWidth()
+    local desiredTransmogFrameWidth = initialTransmogFrameWidth + parentFrameWidthIncrease
+    WardrobeTransmogFrame:SetWidth(desiredTransmogFrameWidth)
+    -- These frames are built using absolute sizes instead of relative points for some reason. Let's stick with that..
+    local power = 10 ^ 0
+    local insetWidth = math.floor(initialTransmogFrameWidth - WardrobeTransmogFrame.ModelScene:GetWidth() * power) / power
+    WardrobeTransmogFrame.Inset.BG:SetWidth(WardrobeTransmogFrame.Inset.Bg:GetWidth() - insetWidth)
+    WardrobeTransmogFrame.ModelScene:SetWidth(WardrobeTransmogFrame:GetWidth() - insetWidth)
+    -- Move HEADSLOT -- Other slots in the left column are attached relative to it
+    WardrobeTransmogFrame.HeadButton:SetPoint("TOP", -235, -40)
+    -- Move HANDSSLOT -- Other slots in the right column are attached relative to it
+    WardrobeTransmogFrame.HandsButton:SetPoint("TOP", 238, -118)
+    -- -- Move MAINHANDSLOT
+    WardrobeTransmogFrame.MainHandButton:SetPoint("BOTTOM", -26, 23)
+    WardrobeTransmogFrame.MainHandEnchantButton:SetPoint("CENTER", -26, -230)
+    -- -- Move SECONDARYHANDSLOT
+    WardrobeTransmogFrame.SecondaryHandButton:SetPoint("BOTTOM", 27, 23)
+    WardrobeTransmogFrame.SecondaryHandEnchantButton:SetPoint("CENTER", 27, -230)
+    -- Move Separate Shoulder checkbox
+    WardrobeTransmogFrame.ToggleSecondaryAppearanceCheckbox:SetPoint("BOTTOMLEFT", WardrobeTransmogFrame, "BOTTOMLEFT", 580, 15)
+    -- Ease constraints on zooming out
+    -- Default probably varies by player race but who cares, just let the player zoom out
+    local function ExtendZoomDistance()
+        WardrobeTransmogFrame.ModelScene.activeCamera.maxZoomDistance = 5
+    end
+    WardrobeTransmogFrame.ModelScene:SetScript("OnShow", function() _G["C_Timer"].After(0.25, ExtendZoomDistance) end)
+end
+function KayrWiderTransmogUI:Init()
+    local WardrobeTransmogFrame = _G["WardrobeTransmogFrame"]
+    _G["hooksecurefunc"](WardrobeTransmogFrame, "Update", KayrWiderTransmogUI.Adjust)
+    KayrWiderTransmogUI.initDone = true
+end
+KayrWiderTransmogUI:RegisterEvent("ADDON_LOADED")
+KayrWiderTransmogUI:SetScript("OnEvent", KayrWiderTransmogUI.ADDON_LOADED)
 
 --[[local AutoViewDistance = CreateFrame("Frame", "AutoViewDistance")
 AutoViewDistance:RegisterEvent("LOADING_SCREEN_DISABLED") 

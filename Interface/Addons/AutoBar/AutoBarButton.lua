@@ -6,7 +6,7 @@
 -- http://muffinmangames.com
 --
 
---local _, AB = ... -- Pulls back the Addon-Local Variables and store them locally.
+local _, AB = ... -- Pulls back the Addon-Local Variables and store them locally.
 
 local AutoBar = AutoBar
 local AutoBarSearch = AutoBarSearch  --TODO: This shouldn't be a global at all
@@ -271,10 +271,10 @@ local function UpdateHandlers(frame)
 		end
 	end
 
-	local buttonData = AutoBar.db.char.buttonDataList[buttonKey]
+	local buttonData = AutoBar.char.buttonDataList[buttonKey]
 	if (not buttonData) then
 		buttonData = {}
-		AutoBar.db.char.buttonDataList[buttonKey] = buttonData
+		AutoBar.char.buttonDataList[buttonKey] = buttonData
 	end
 
 	buttonData.arrangeOnUse = itemId
@@ -354,8 +354,6 @@ end
 	end
 
 	local buttonItems = AutoBarSearch.items:GetList(buttonKey)
-	local buttonWidth = layoutDB.buttonWidth
-	local buttonHeight = layoutDB.buttonHeight
 	local relativePoint = popupHeader
 	for popupButtonIndex = popupIndexStart, nItems, 1 do
 		local popupButton = AutoBar.Class.PopupButton:GetPopupButton(self, popupButtonIndex, popupHeader, popupKeyHandler)
@@ -374,8 +372,8 @@ end
 
 		-- Attach to edge of previous popupButtonFrame or the popupHeader
 		popupButtonFrame:ClearAllPoints()
-		popupButtonFrame:SetHeight(buttonHeight)
-		popupButtonFrame:SetWidth(buttonWidth)
+		popupButtonFrame:SetHeight(ABGData.default_button_height)
+        popupButtonFrame:SetWidth(ABGData.default_button_width)
 		popupButtonFrame:Raise()
 		popupButtonFrame:SetScale(1)
 		if (relativePoint == popupHeader) then
@@ -416,8 +414,8 @@ end
 
 	popupHeader:ClearAllPoints()
 --- ToDo: fix for orientation
---			popupHeader:SetWidth(buttonWidth + paddingX * 2)
---			popupHeader:SetHeight((buttonHeight + paddingY) * (nItems - 1) + paddingY)
+--			popupHeader:SetWidth(ABGData.default_button_width + paddingX * 2)
+--			popupHeader:SetHeight((ABGData.default_button_height + paddingY) * (nItems - 1) + paddingY)
 	popupHeader:SetWidth(2)
 	popupHeader:SetHeight(2)
 	popupHeader:SetScale(1)
@@ -452,7 +450,7 @@ function AutoBarButton.prototype:GetHierarchicalSetting(setting)
 	if (db[setting] ~= nil) then
 		return db[setting]
 	end
-	db = AutoBar.db.account
+	db = AutoBarDB2.account
 	if (db[setting] ~= nil) then
 		return db[setting]
 	end
@@ -563,7 +561,7 @@ function AutoBarButton.prototype:SetupButton()
 			local wrapped = frame.UpdateIcon
 			-- Trigger Updating on the Anchor Button
 			if (wrapped and (not arrangeOnUse)) then
-				local _header, preBody, postBody = popupHeader:UnwrapScript(frame, "OnAttributeChanged")  --ToDo: Remove this?
+				local _header, _preBody, _postBody = popupHeader:UnwrapScript(frame, "OnAttributeChanged")  --ToDo: Remove this?
 			elseif ((not wrapped) and arrangeOnUse) then
 				frame.UpdateIcon = UpdateIcon	-- Update Icon
 				frame.UpdateHandlers = UpdateHandlers	-- Update Handlers: Tooltip
@@ -581,8 +579,8 @@ function AutoBarButton.prototype:SetupButton()
 			popupHeader:Hide()
 		end
 
-		--if (buttonKey == "AutoBarButtonCharge") then print("move_mode",AutoBar.moveButtonsMode, "showEmpty", AutoBar.db.account.showEmptyButtons, "Alwaysshow", self.buttonDB.alwaysShow, "enabled", self.buttonDB.enabled ) end;
-		if ((AutoBar.moveButtonsMode or AutoBar.db.account.showEmptyButtons or self.buttonDB.alwaysShow) and self.buttonDB.enabled) then
+		--if (buttonKey == "AutoBarButtonCharge") then print("move_mode",AutoBar.moveButtonsMode, "showEmpty", AutoBarDB2.settings.show_empty_buttons, "Alwaysshow", self.buttonDB.alwaysShow, "enabled", self.buttonDB.enabled ) end;
+		if ((AutoBar.moveButtonsMode or AutoBarDB2.settings.show_empty_buttons or self.buttonDB.alwaysShow) and self.buttonDB.enabled) then
 			frame:Show()
 			--if (buttonKey == "AutoBarButtonCharge") then print("Showing Frame", "self[1]", self[1]); end;
 			if (self[1]) then
@@ -659,7 +657,7 @@ function AutoBarButton.prototype:SetupAttributes(button, bag, slot, spell, macro
 
 	local targeted, castSpell, itemsRightClick
 	local buttonDB = self.buttonDB	-- Use base button info for popups as well
-	local selfCastRightClick = AutoBar.db.account.selfCastRightClick
+	local selfCastRightClick = AutoBarDB2.settings.self_cast_right_click
 
 	-- Set up special conditions from Category attributes
 	local categoryInfo = AutoBarCategoryList[category]
@@ -754,7 +752,7 @@ function AutoBarButton.prototype:SetupAttributes(button, bag, slot, spell, macro
 		-- The matched spell to cast on RightClick
 		if (itemsRightClick and itemsRightClick[itemId]) then
 			castSpell = itemsRightClick[itemId]
-			selfCastRightClick = nil
+			selfCastRightClick = false
 --AutoBar:Print("AutoBarButton.prototype:SetupAttributes category " .. category .. " castSpell " .. tostring(castSpell))
 		end
 		-- Special spell to cast on RightClick
@@ -778,7 +776,7 @@ function AutoBarButton.prototype:SetupAttributes(button, bag, slot, spell, macro
 			-- Tooltip
 			frame:SetAttribute("itemLink", itemLink)
 		elseif (bag and slot) then
-			local itemLink = GetContainerItemLink(bag, slot)
+			local itemLink = AB.GetContainerItemLink(bag, slot)
 			frame:SetAttribute("itemLink", itemLink)
 ---			if (buttonDB.shuffle) then
 ---				itemLink = bag .. " " .. slot
@@ -829,8 +827,8 @@ function AutoBarButton.prototype:SetupAttributes(button, bag, slot, spell, macro
 
 			-- Tooltip
 			local spellInfo = AutoBarSearch.spells[spell]
-			if (spellInfo and spellInfo.spellLink) then
-				frame:SetAttribute("itemLink", spellInfo.spellLink)
+			if (spellInfo and spellInfo.spell_link) then
+				frame:SetAttribute("itemLink", spellInfo.spell_link)
 			end
 		elseif (castSpell) then
 			-- Set castSpell as default if nothing else is available
@@ -839,9 +837,9 @@ function AutoBarButton.prototype:SetupAttributes(button, bag, slot, spell, macro
 			frame:SetAttribute("spell", castSpell)
 
 			-- Tooltip
-			local spellInfo = AutoBarSearch.spells[castSpell].spellLink
-			if (spellInfo.spellLink) then
-				frame:SetAttribute("itemLink", spellInfo.spellLink)
+			local spellInfo = AutoBarSearch.spells[castSpell].spell_link
+			if (spellInfo.spell_link) then
+				frame:SetAttribute("itemLink", spellInfo.spell_link)
 			end
 		else
 			frame:SetAttribute("type", nil)
@@ -873,14 +871,14 @@ end
 --
 
 --function AutoBarButton:SetTooltip(button)
---AutoBar:Print("SetTooltip " .. tostring(self.needsTooltip) .. " button " .. tostring(button) .. " button " .. tostring(button) .. " showTooltip " .. tostring(AutoBar.db.account.showTooltip) .. " self.needsTooltip " .. tostring(self.needsTooltip))
+--AutoBar:Print("SetTooltip " .. tostring(self.needsTooltip) .. " button " .. tostring(button) .. " button " .. tostring(button) .. " showTooltip " .. tostring(AutoBarDB2.settings.show_tooltip) .. " self.needsTooltip " .. tostring(self.needsTooltip))
 --	local isAutoBarButton = self.class and self.class.buttonDB
 --
 --	if (isAutoBarButton and self.GetHotkey) then
 --		LibKeyBound:Set(self)
 --	end
---	local noTooltip = not (AutoBar.db.account.showTooltip and self.needsTooltip or AutoBar.moveButtonsMode)
---	noTooltip = noTooltip or (InCombatLockdown() and not AutoBar.db.account.showTooltipCombat) or (button == "OnLeave")
+--	local noTooltip = not (AutoBarDB2.settings.show_tooltip and self.needsTooltip or AutoBar.moveButtonsMode)
+--	noTooltip = noTooltip or (InCombatLockdown() and not AutoBarDB2.settings.show_tooltip_in_combat) or (button == "OnLeave")
 --	if (noTooltip) then
 --		self.updateTooltip = nil
 --		GameTooltip:Hide()
@@ -928,7 +926,7 @@ end
 --				end
 --			end
 --			self.updateTooltip = TOOLTIP_UPDATE_TIME
---			if (AutoBar.db.account.showTooltipExtended) then
+--			if (AAutoBarDB2.settings.showTooltipExtended) then
 --				print("GameTooltip_ShowCompareItem")
 --				GameTooltip_ShowCompareItem()
 --			end
@@ -938,7 +936,7 @@ end
 --
 --			if (spellName) then
 --				local spellInfo = AutoBarSearch.spells[spellName]
---				GameTooltip:SetSpellBookItem(spellInfo.spellId, spellInfo.spellTab)
+--				GameTooltip:SetSpellBookItem(spellInfo.spell_id, spellInfo.spellTab)
 --			end
 --			self.updateTooltip = TOOLTIP_UPDATE_TIME
 --		end
@@ -1002,7 +1000,7 @@ end
 -- Add category to the end of the buttons list
 function AutoBarButton.prototype:AddCategory(p_category_name)
 	if not AutoBarCategoryList[p_category_name] then
-		ABGCode:LogWarning("AutoBar: Attempted to add nonexistent Category:", p_category_name)
+		ABGCode.LogWarning("AutoBar: Attempted to add nonexistent Category:", p_category_name)
 	end
 	for _, category in ipairs(self) do
 		if (category == p_category_name) then
@@ -1074,10 +1072,10 @@ AutoBar.Class["AutoBarButtonPoisonLethal"] = AutoBarButtonPoisonLethal
 function AutoBarButtonPoisonLethal.prototype:init(parentBar, buttonDB)
 	AutoBarButtonPoisonLethal.super.prototype.init(self, parentBar, buttonDB)
 
-	if (ABGData.is_vanilla_wow or ABGData.is_bcc_wow) then
-		self:AddCategory("Muffin.Poison.Lethal")
-	elseif (ABGData.is_mainline_wow) then
+	if (ABGData.is_mainline_wow) then
 		self:AddCategory("Spell.Poison.Lethal")
+	else --(ABGData.is_vanilla_wow or ABGData.is_bcc_wow) then
+		self:AddCategory("Muffin.Poison.Lethal")
 	end
 end
 
@@ -1087,10 +1085,10 @@ AutoBar.Class["AutoBarButtonPoisonNonlethal"] = AutoBarButtonPoisonNonlethal
 function AutoBarButtonPoisonNonlethal.prototype:init(parentBar, buttonDB)
 	AutoBarButtonPoisonNonlethal.super.prototype.init(self, parentBar, buttonDB)
 
-	if (ABGData.is_vanilla_wow or ABGData.is_bcc_wow) then
-		self:AddCategory("Muffin.Poison.Nonlethal")
-	elseif (ABGData.is_mainline_wow) then
+	if (ABGData.is_mainline_wow) then
 		self:AddCategory("Spell.Poison.Nonlethal")
+	else --(ABGData.is_vanilla_wow or ABGData.is_bcc_wow) then
+		self:AddCategory("Muffin.Poison.Nonlethal")
 	end
 
 end
@@ -1165,12 +1163,12 @@ function AutoBarButtonBuffWeapon.prototype:init(parentBar, buttonDB)
 	self:AddCategory("Consumable.Weapon Buff")
 	self:AddCategory("Spell.Buff.Weapon")
 
-	if (ABGData.is_vanilla_wow or ABGData.is_bcc_wow) then
-		self:AddCategory("Muffin.Poison.Lethal")
-		self:AddCategory("Muffin.Poison.Nonlethal")
-	elseif (ABGData.is_mainline_wow) then
+	if (ABGData.is_mainline_wow) then
 		self:AddCategory("Spell.Poison.Lethal")
 		self:AddCategory("Spell.Poison.Nonlethal")
+	else --(ABGData.is_vanilla_wow or ABGData.is_bcc_wow) then
+		self:AddCategory("Muffin.Poison.Lethal")
+		self:AddCategory("Muffin.Poison.Nonlethal")
 	end
 
 end
@@ -1186,10 +1184,10 @@ function AutoBarButtonClassBuff.prototype:init(parentBar, buttonDB)
 end
 
 function AutoBarButtonClassBuff.prototype:SetupAttributes(button, bag, slot, spell, macroId, p_type_id, p_info_data, itemId, itemData)
-	local selfCastRightClick = AutoBar.db.account.selfCastRightClick
-	AutoBar.db.account.selfCastRightClick = nil
+	local selfCastRightClick = AutoBarDB2.settings.self_cast_right_click
+	AutoBarDB2.settings.self_cast_right_click = nil
 	AutoBarButtonClassBuff.super.prototype.SetupAttributes(self, button, bag, slot, spell, macroId, p_type_id, p_info_data, itemId, itemData)
-	AutoBar.db.account.selfCastRightClick = selfCastRightClick
+	AutoBarDB2.settings.self_cast_right_click = selfCastRightClick
 end
 
 local AutoBarButtonClassPets2 = AceOO.Class(AutoBarButton)
@@ -1228,12 +1226,12 @@ function AutoBarButtonConjure.prototype:init(parentBar, buttonDB)
 	if (AutoBar.CLASS == "MAGE") then
 		self:AddCategory("Spell.Mage.Conjure Food")
 		self:AddCategory("Spell.Mage.Create Manastone")
-		if (ABGData.is_vanilla_wow or ABGData.is_bcc_wow) then
+		if (not ABGData.is_mainline_wow) then --(ABGData.is_vanilla_wow or ABGData.is_bcc_wow) then
 			self:AddCategory("Spell.Mage.Conjure Water")
 		end
 	elseif (AutoBar.CLASS == "WARLOCK") then
 		self:AddCategory("Spell.Warlock.Create Healthstone")
-		if (ABGData.is_vanilla_wow or ABGData.is_bcc_wow) then
+		if (not ABGData.is_mainline_wow) then --(ABGData.is_vanilla_wow or ABGData.is_bcc_wow) then
 			self:AddCategory("Spell.Warlock.Create Soulstone")
 		end
 
@@ -1693,7 +1691,11 @@ function AutoBarButtonHearth.prototype:init(parentBar, buttonDB)
 		self:AddCategory("Spell.AncientDalaranPortals")
 	end
 
+	if (AutoBarCategoryList["Muffin.Misc.Hearth"]) then
+		self:AddCategory("Muffin.Misc.Hearth")
+	end
 	self:AddCategory("Misc.Hearth")
+
 	if (ABGData.is_mainline_wow) then
 		AutoBarCategoryList["Muffin.Toys.Hearth"].only_favourites = buttonDB.only_favourite_hearth
 
@@ -1968,7 +1970,7 @@ function AutoBarButtonTotemAir.prototype:UpdateCooldown()
 
 		if (start and duration and enabled and start > 0 and duration > 0) then
 			self.frame.cooldown:Show() -- ToDo: necessary?
-			CooldownFrame_Set(self.frame.cooldown, start, duration, enabled)
+			CooldownFrame_Set(self.frame.cooldown, start, duration, 1)
 		else
 			CooldownFrame_Set(self.frame.cooldown, 0, 0, 0)
 		end
@@ -2187,8 +2189,8 @@ AutoBar.Class["AutoBarButtonWater"] = AutoBarButtonWater
 function AutoBarButtonWater.prototype:init(parentBar, buttonDB)
 	AutoBarButtonWater.super.prototype.init(self, parentBar, buttonDB)
 
-	if (AutoBar.CLASS == "MAGE" and not buttonDB.disableConjure) then
-		self:AddCategory("Spell.Mage.Conjure Water")
+	if (AutoBar.CLASS == "MAGE" and not buttonDB.disableConjure and not ABGData.is_mainline_wow) then
+			self:AddCategory("Spell.Mage.Conjure Water")
 	end
 
 	if (ABGCode.ClassUsesMana(AutoBar.CLASS)) then
@@ -2230,6 +2232,17 @@ function AutoBarButtonWaterBuff.prototype:init(parentBar, buttonDB)
 end
 
 
+if (LE_EXPANSION_WRATH_OF_THE_LICH_KING and LE_EXPANSION_LEVEL_CURRENT >= LE_EXPANSION_WRATH_OF_THE_LICH_KING) then
+
+	local AutoBarButtonMillHerbs = AceOO.Class(AutoBarButton)
+	AutoBar.Class["AutoBarButtonMillHerbs"] = AutoBarButtonMillHerbs
+
+	function AutoBarButtonMillHerbs.prototype:init(parentBar, buttonDB)
+		AutoBarButtonMillHerbs.super.prototype.init(self, parentBar, buttonDB)
+
+		self:AddCategory("Muffin.Herbs.Millable")
+	end
+end
 -------------------------------------------------------------------
 --
 -- WoW Classic
@@ -2267,7 +2280,6 @@ if (ABGData.is_vanilla_wow or ABGData.is_bcc_wow) then
 
 		self:AddCategory("Spell.Track")
 	end
-
 
 elseif (ABGData.is_mainline_wow) then
 
@@ -2329,15 +2341,6 @@ elseif (ABGData.is_mainline_wow) then
 		AutoBarButtonGuildSpell.super.prototype.init(self, parentBar, buttonDB)
 
 		self:AddCategory("Spell.Guild")
-	end
-
-	local AutoBarButtonMillHerbs = AceOO.Class(AutoBarButton)
-	AutoBar.Class["AutoBarButtonMillHerbs"] = AutoBarButtonMillHerbs
-
-	function AutoBarButtonMillHerbs.prototype:init(parentBar, buttonDB)
-		AutoBarButtonMillHerbs.super.prototype.init(self, parentBar, buttonDB)
-
-		self:AddCategory("Muffin.Herbs.Millable")
 	end
 
 	local AutoBarButtonSunsongRanch = AceOO.Class(AutoBarButton)
@@ -2423,8 +2426,8 @@ elseif (ABGData.is_mainline_wow) then
 		end
 		self:AddCategory("Toys.ToyBox")
 
-		if (not AutoBar.db.char.buttonDataList[buttonDB.buttonKey]) then
-			AutoBar.db.char.buttonDataList[buttonDB.buttonKey] = {}
+		if (not AutoBar.char.buttonDataList[buttonDB.buttonKey]) then
+			AutoBar.char.buttonDataList[buttonDB.buttonKey] = {}
 		end
 
 		if(buttonDB.toybox_only_show_favourites == nil) then buttonDB.toybox_only_show_favourites = false end
@@ -2511,10 +2514,10 @@ elseif (ABGData.is_mainline_wow) then
 		AutoBarButtonMount.super.prototype.init(self, parentBar, buttonDB)
 	--print("AutoBarButtonMount.prototype:init");
 
-		local buttonData = AutoBar.db.char.buttonDataList[buttonDB.buttonKey]
+		local buttonData = AutoBar.char.buttonDataList[buttonDB.buttonKey]
 		if (not buttonData) then
 			buttonData = {}
-			AutoBar.db.char.buttonDataList[buttonDB.buttonKey] = buttonData
+			AutoBar.char.buttonDataList[buttonDB.buttonKey] = buttonData
 		end
 
 		if(buttonDB.mount_show_qiraji == nil) then buttonDB.mount_show_qiraji = false end
@@ -2598,7 +2601,7 @@ elseif (ABGData.is_mainline_wow) then
 					spellIconList[spell_name] = icon
 					AutoBarSearch:RegisterSpell(spell_name, spell_id, true)
 					local spellInfo = AutoBarSearch.spells[spell_name]
-					spellInfo.spellLink = "spell:" .. spell_id
+					spellInfo.spell_link = "spell:" .. spell_id
 					category.castList[# category.castList + 1] = spell_name
 				end
 
@@ -2721,7 +2724,7 @@ elseif (ABGData.is_mainline_wow) then
 	--			spellIconList[spellName] = icon
 	--			AutoBarSearch:RegisterSpell(spellName, spellID, true)
 	--			local spellInfo = AutoBarSearch.spells[spellName]
-	--			spellInfo.spellLink = "spell:" .. spellID
+	--			spellInfo.spell_link = "spell:" .. spellID
 	--			category.castList[index] = spellName
 			end
 		end

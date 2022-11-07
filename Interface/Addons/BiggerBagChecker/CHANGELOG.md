@@ -1,8 +1,8 @@
 # BiggerBagChecker
 
-## [v1.4.5-release2](https://github.com/KyrosKrane/BiggerBagChecker/tree/v1.4.5-release2) (2022-09-05)
-[Full Changelog](https://github.com/KyrosKrane/BiggerBagChecker/compare/v1.4.5-release...v1.4.5-release2) [Previous Releases](https://github.com/KyrosKrane/BiggerBagChecker/releases)
+## [v1.4.8-release](https://github.com/KyrosKrane/BiggerBagChecker/tree/v1.4.8-release) (2022-11-03)
+[Full Changelog](https://github.com/KyrosKrane/BiggerBagChecker/compare/v1.4.7-release...v1.4.8-release) [Previous Releases](https://github.com/KyrosKrane/BiggerBagChecker/releases)
 
-- Fix spacing in name  
-- Prepare for Wago.io packaging  
-- Update addon description to something more ... well, descriptive. :)  
+- Fix line endings  
+- Fix a leaked global function  
+- Fix Classic check  

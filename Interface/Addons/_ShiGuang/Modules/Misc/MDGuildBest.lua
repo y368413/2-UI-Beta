@@ -127,7 +127,7 @@ end
 
 function MISC.GuildBest_OnLoad(event, addon)
 	if addon == "Blizzard_ChallengesUI" then
-		hooksecurefunc("ChallengesFrame_Update", MISC.GuildBest_Update)
+		hooksecurefunc(ChallengesFrame, "Update", MISC.GuildBest_Update)
 		MISC:KeystoneInfo_Create()
 		ChallengesFrame.WeeklyInfo.Child.WeeklyChest:HookScript("OnEnter", MISC.KeystoneInfo_WeeklyRuns)
 
@@ -171,7 +171,7 @@ end
 
 function MISC:KeystoneInfo_Create()
 	local texture = select(10, GetItemInfo(158923)) or 525134
-	local iconColor = I.QualityColors[LE_ITEM_QUALITY_EPIC or 4]
+	local iconColor = I.QualityColors[Enum.ItemQuality.Epic or 4]
 	local button = CreateFrame("Frame", nil, ChallengesFrame.WeeklyInfo, "BackdropTemplate")
 	button:SetPoint("BOTTOMLEFT", 2, 67)
 	button:SetSize(31, 31)

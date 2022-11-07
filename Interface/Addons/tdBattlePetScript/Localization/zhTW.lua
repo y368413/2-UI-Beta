@@ -2,9 +2,9 @@
 local L = LibStub('AceLocale-3.0'):NewLocale('tdBattlePetScript', 'zhTW')
 if not L then return end
 
---[===[@debug@
+--[=[@debug@
 --[[
---@end-debug@]===]
+--@end-debug@]=]
 --[[Translation missing --]]
 --[[ L["ADDON_NAME"] = ""--]] 
 --[[Translation missing --]]
@@ -150,6 +150,6 @@ if not L then return end
 --[[Translation missing --]]
 --[[ L["Update to version: "] = ""--]] 
 
---[===[@debug@
+--[=[@debug@
 --]]
---@end-debug@]===]
+--@end-debug@]=]

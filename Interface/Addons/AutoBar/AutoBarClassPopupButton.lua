@@ -10,6 +10,7 @@
 --GLOBALS: InCombatLockdown, GameTooltip, CreateFrame, SecureHandlerWrapScript
 
 local AutoBar = AutoBar
+local ABGData = AutoBarGlobalDataObject
 
 local AceOO = MMGHACKAceLibrary("AceOO-2.0")
 local L = AutoBarGlobalDataObject.locale
@@ -55,8 +56,8 @@ end
 
 
 local function funcOnEnter(self)
-	local noTooltip = not (AutoBar.db.account.showTooltip and self.needsTooltip or AutoBar.moveButtonsMode)
-	noTooltip = noTooltip or (InCombatLockdown() and not AutoBar.db.account.showTooltipCombat)
+	local noTooltip = not (AutoBarDB2.settings.show_tooltip and self.needsTooltip or AutoBar.moveButtonsMode)
+	noTooltip = noTooltip or (InCombatLockdown() and not AutoBarDB2.settings.show_tooltip_in_combat)
 	if (noTooltip) then
 		self.UpdateTooltip = nil
 		GameTooltip:Hide()
@@ -83,7 +84,8 @@ function AutoBar.Class.PopupButton.prototype:CreateButtonFrame()
 	local frame = CreateFrame("Button", popupButtonName, popupKeyHandler or popupHeader, "ActionButtonTemplate SecureActionButtonTemplate SecureHandlerBaseTemplate")
 	self.frame = frame
 	frame.class = self
-	frame:RegisterForClicks("AnyUp")
+	frame:SetMouseClickEnabled()
+	frame:RegisterForClicks("AnyUp", "AnyDown")
 
 	frame:SetFrameRef("popupHeader", popupHeader)
 	frame.popupHeader = popupHeader
@@ -92,11 +94,9 @@ function AutoBar.Class.PopupButton.prototype:CreateButtonFrame()
 	SecureHandlerWrapScript(frame, "OnEnter", frame, [[ self:GetFrameRef("popupHeader"):Show() ]])
 	SecureHandlerWrapScript(frame, "OnLeave", frame, [[ self:GetFrameRef("popupHeader"):Hide() ]])
 
-	local buttonWidth = self.parentBar.buttonWidth or 36
-	local buttonHeight = self.parentBar.buttonHeight or 36
 	frame:ClearAllPoints()
-	frame:SetWidth(buttonWidth)
-	frame:SetHeight(buttonHeight)
+	frame:SetWidth(ABGData.default_button_width)
+	frame:SetHeight(ABGData.default_button_height)
 
 ---	frame:SetScript("PostClick", self.PostClick)
 

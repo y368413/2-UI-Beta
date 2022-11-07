@@ -41,6 +41,7 @@ end
 function TT:HideLines()
 	for i = 3, self:NumLines() do
 		local tiptext = _G["GameTooltipTextLeft"..i]
+		if not tiptext then break end
 		local linetext = tiptext:GetText()
 		if linetext then
 			if linetext == PVP then
@@ -65,9 +66,30 @@ function TT:HideLines()
 	end
 end
 
+local FACTION_COLORS = {
+	[FACTION_ALLIANCE] = "|cff4080ff%s|r",
+	[FACTION_HORDE] = "|cffff5040%s|r",
+}
+function TT:UpdateFactionLine(lineData)
+	if self:IsForbidden() then return end
+	if not self:IsTooltipType(Enum.TooltipDataType.Unit) then return end
+
+	local linetext = lineData.leftText
+	if linetext == PVP then
+		return true
+	elseif FACTION_COLORS[linetext] then
+		if R.db["Tooltip"]["FactionIcon"] then
+			return true
+		else
+			lineData.leftText = format(FACTION_COLORS[linetext], linetext)
+		end
+	end
+end
+
 function TT:GetLevelLine()
 	for i = 2, self:NumLines() do
 		local tiptext = _G["GameTooltipTextLeft"..i]
+		if not tiptext then break end
 		local linetext = tiptext:GetText()
 		if linetext and strfind(linetext, LEVEL) then
 			return tiptext
@@ -141,7 +163,8 @@ end
 function TT:OnTooltipSetUnit()
 	if self:IsForbidden() then return end
 	if R.db["Tooltip"]["CombatHide"] and InCombatLockdown() then self:Hide() return end
-	TT.HideLines(self)
+
+	if not I.isBeta then TT.HideLines(self) end
 
 	local unit = TT.GetUnit(self)
 	if not unit or not UnitExists(unit) then return end
@@ -257,10 +280,14 @@ function TT:OnTooltipSetUnit()
 		end
 	end
 
-	self.StatusBar:SetStatusBarColor(r, g, b)
+	if not I.isBeta then
+		self.StatusBar:SetStatusBarColor(r, g, b)
+	end
 
 	TT.InspectUnitSpecAndLevel(self, unit)
 	TT.ShowUnitMythicPlusScore(self, unit)
+	TT.ScanTargets(self, unit)
+	TT.PetInfo_Setup(self, unit)
 end
 
 function TT:StatusBar_OnValueChanged(value)
@@ -277,6 +304,20 @@ function TT:StatusBar_OnValueChanged(value)
 		self:SetStatusBarColor(.6, .6, .6) -- Wintergrasp building
 	else
 		self.text:SetText(M.Numb(value).."/"..M.Numb(max))
+	end
+end
+
+function TT:RefreshStatusBar(value)
+	if not self.text then
+		self.text = M.CreateFS(self, 12, "")
+	end
+	local unit = self.guid and UnitTokenFromGUID(self.guid)
+	local unitHealthMax = unit and UnitHealthMax(unit)
+	if unitHealthMax and unitHealthMax ~= 0 then
+		self.text:SetText(M.Numb(value*unitHealthMax).."/"..M.Numb(unitHealthMax))
+		self:SetStatusBarColor(M.UnitColor(unit))
+	else
+		self.text:SetFormattedText("%d%%", value*100)
 	end
 end
 
@@ -444,11 +485,13 @@ function TT:SetupTooltipFonts()
 end
 
 function TT:FixRecipeItemNameWidth()
+	if not self.GetName then return end
+
 	local name = self:GetName()
 	for i = 1, self:NumLines() do
 		local line = _G[name.."TextLeft"..i]
 		if line:GetHeight() > 40 then
-			line:SetWidth(line:GetWidth() + 1)
+			line:SetWidth(line:GetWidth() + 2)
 		end
 	end
 end
@@ -471,27 +514,36 @@ function TT:FixStoneSoupError()
 end
 
 function TT:OnLogin()
-	GameTooltip.StatusBar = GameTooltipStatusBar
+	if not GameTooltip.StatusBar then -- isBeta
+		GameTooltip.StatusBar = GameTooltipStatusBar
+	end
 	GameTooltip:HookScript("OnTooltipCleared", TT.OnTooltipCleared)
-	GameTooltip:HookScript("OnTooltipSetUnit", TT.OnTooltipSetUnit)
-	GameTooltip.StatusBar:SetScript("OnValueChanged", TT.StatusBar_OnValueChanged)
+	if I.isBeta then
+		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, TT.OnTooltipSetUnit)
+		hooksecurefunc(GameTooltip.StatusBar, "SetValue", TT.RefreshStatusBar)
+		TooltipDataProcessor.AddLinePreCall(Enum.TooltipDataLineType.None, TT.UpdateFactionLine)
+
+		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, TT.FixRecipeItemNameWidth)
+	else
+		GameTooltip:HookScript("OnTooltipSetUnit", TT.OnTooltipSetUnit)
+		GameTooltip.StatusBar:SetScript("OnValueChanged", TT.StatusBar_OnValueChanged)
+
+		hooksecurefunc("GameTooltip_AnchorComparisonTooltips", TT.GameTooltip_ComparisonFix)
+		GameTooltip:HookScript("OnTooltipSetItem", TT.FixRecipeItemNameWidth)
+		ItemRefTooltip:HookScript("OnTooltipSetItem", TT.FixRecipeItemNameWidth)
+		EmbeddedItemTooltip:HookScript("OnTooltipSetItem", TT.FixRecipeItemNameWidth)
+	end
 	hooksecurefunc("GameTooltip_ShowStatusBar", TT.GameTooltip_ShowStatusBar)
 	hooksecurefunc("GameTooltip_ShowProgressBar", TT.GameTooltip_ShowProgressBar)
 	hooksecurefunc("GameTooltip_SetDefaultAnchor", TT.GameTooltip_SetDefaultAnchor)
-	hooksecurefunc("GameTooltip_AnchorComparisonTooltips", TT.GameTooltip_ComparisonFix)
 	TT:SetupTooltipFonts()
-	GameTooltip:HookScript("OnTooltipSetItem", TT.FixRecipeItemNameWidth)
-	ItemRefTooltip:HookScript("OnTooltipSetItem", TT.FixRecipeItemNameWidth)
-	EmbeddedItemTooltip:HookScript("OnTooltipSetItem", TT.FixRecipeItemNameWidth)
 	TT:FixStoneSoupError()
 
 	-- Elements
 	TT:ReskinTooltipIcons()
 	TT:SetupTooltipID()
-	TT:TargetedInfo()
 	TT:AzeriteArmor()
 	TT:ConduitCollectionData()
-	TT:DominationRank()
 	M:RegisterEvent("MODIFIER_STATE_CHANGED", TT.ResetUnit)
 end
 
@@ -547,6 +599,10 @@ TT:RegisterTooltips("_ShiGuang", function()
 	}
 	for _, f in pairs(tooltips) do
 		f:HookScript("OnShow", TT.ReskinTooltip)
+	end
+
+	if SettingsTooltip then
+		TT.ReskinTooltip(SettingsTooltip)
 	end
 
 	-- DropdownMenu

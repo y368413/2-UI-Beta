@@ -3078,3 +3078,92 @@ L["maw_mad_note"] = "在墮滅堡附近隨機奔跑, 總是在這裡重生."
 L["nilganihmaht_note"] = "你必須蒐集5個戒指, 並且把它們帶給在裂隙中的 {npc:179572} ."
 L["options_icons_nilganihmaht"] = "{npc:179572}"
 L["options_icons_nilganihmaht_desc"] = "顯示 {spell:354354} 坐騎部件的位置."
+
+
+
+---------------BC
+L['netherwing_egg'] = '{item:32506}'
+L['options_icons_netherwing_eggs'] = '{achievement:898}'
+L['options_icons_netherwing_eggs_desc'] = nil
+-----------------WLK
+L['area_spawn'] = '在周邊地區出現。'
+
+L['squirrels_note'] = nil
+L['options_icons_squirrels'] = '{achievement:2557}'
+L['options_icons_squirrels_desc'] = nil
+
+L['achievement_friend_or_fowl_desc'] = nil
+L['note_devouring_maggot'] = nil
+L['dalaran_sewers'] = nil
+L['in_nexus'] = nil
+
+-----------------DF
+-------------------------------------------------------------------------------
+-------------------------------- DRAGON ISLES ---------------------------------
+-------------------------------------------------------------------------------
+
+L['dragon_glyph'] = nil
+L['options_icons_dragon_glyph'] = nil
+L['options_icons_dragon_glyph_desc'] = nil
+
+L['dragonscale_expedition_flag'] = nil
+L['flags_placed'] = nil
+L['options_icons_flag'] = '{achievement:15890}'
+L['options_icons_flag_desc'] = nil
+
+L['options_icons_kite'] = '{achievement:16584}'
+L['options_icons_kite_desc'] = nil
+
+L['disturbed_dirt'] = nil
+L['options_icons_disturbed_dirt'] = nil
+L['options_icons_disturbed_dirt_desc'] = nil
+
+L['scout_pack'] = nil
+L['options_icons_scout_pack'] = nil
+L['options_icons_scout_pack_desc'] = nil
+
+-------------------------------------------------------------------------------
+------------------------------- THE AZURE SPAN --------------------------------
+-------------------------------------------------------------------------------
+
+L['blisterhide_note'] = nil
+L['gnarls_note'] = nil
+L['high_shaman_rotknuckle_note'] = nil
+L['snarglebone_note'] = nil
+L['trilvarus_loreweaver_note'] = nil
+
+L['forgotten_jewel_box_note'] = nil
+
+-------------------------------------------------------------------------------
+------------------------------ OHN'AHRAN PLAINS -------------------------------
+-------------------------------------------------------------------------------
+
+L['shade_of_grief_note'] = nil
+
+L['nokhud_warspear_note'] = nil
+L['slightly_chewed_duck_egg_note'] = nil
+
+L['lizi_note'] = nil
+L['lizi_note_day1'] = nil
+L['lizi_note_day2'] = nil
+L['lizi_note_day3'] = nil
+L['lizi_note_day4'] = nil
+L['lizi_note_day5'] = nil
+
+-------------------------------------------------------------------------------
+--------------------------------- THALDRASZUS ---------------------------------
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+------------------------------ THE WAKING SHORE -------------------------------
+-------------------------------------------------------------------------------
+
+L['brundin_the_dragonbane_note'] = nil
+L['shasith_note'] = nil
+
+L['onyx_gem_cluster_note'] = nil
+L['replica_dragon_goblet_note'] = nil
+
+L['fullsails_supply_chest'] = nil
+L['hidden_hornswog_hoard'] = '隱藏的角蛙寶箱'
+L['hidden_hornswog_hoard_note'] = nil

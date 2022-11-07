@@ -2,233 +2,125 @@ local addonName, addon = ...
 local L = _G.LibStub("AceLocale-3.0"):NewLocale(addonName, "ruRU")
 if not L then return end
 
---[[Translation missing --]]
---[[ L["- Requires UI Reload"] = "- Requires UI Reload"--]] 
+L["- Requires UI Reload"] = "Требуется перезагрузка пользовательского интерфейса"
 L[ [=[%s - 
 %s:
 %s]=] ] = "%s - %s: %s"
 L["%s - %s%s"] = "%s - %s%s"
 L["%s Count"] = "%s Итог"
---[[Translation missing --]]
---[[ L["%sAnima Powers Collected: %s"] = "%sAnima Powers Collected: %s"--]] 
---[[Translation missing --]]
---[[ L["%sAshen Phylactery Broken: %s"] = "%sAshen Phylactery Broken: %s"--]] 
---[[Translation missing --]]
---[[ L["%sChests Opened: %s"] = "%sChests Opened: %s"--]] 
---[[Translation missing --]]
---[[ L["%sDeaths: %s"] = "%sDeaths: %s"--]] 
---[[Translation missing --]]
---[[ L["%sFloors Climbed: %s"] = "%sFloors Climbed: %s"--]] 
---[[Translation missing --]]
---[[ L["%sMawrats Killed: %s"] = "%sMawrats Killed: %s"--]] 
---[[Translation missing --]]
---[[ L["%sMobs Killed: %s"] = "%sMobs Killed: %s"--]] 
---[[Translation missing --]]
---[[ L["%sPhantasma Collected: %s"] = "%sPhantasma Collected: %s"--]] 
---[[Translation missing --]]
---[[ L["%sQuests Completed: %s"] = "%sQuests Completed: %s"--]] 
---[[Translation missing --]]
---[[ L["%sSouls Collected: %s"] = "%sSouls Collected: %s"--]] 
---[[Translation missing --]]
---[[ L["%sSuccessful Runs: %s"] = "%sSuccessful Runs: %s"--]] 
---[[Translation missing --]]
---[[ L["%sTime Spent: %s"] = "%sTime Spent: %s"--]] 
---[[Translation missing --]]
---[[ L["%sTimes Tarragrue Released: %s"] = "%sTimes Tarragrue Released: %s"--]] 
+L["%sAnima Powers Collected: %s"] = "%sСобрано сил Анимы: %s"
+L["%sAshen Phylactery Broken: %s"] = "%sУничтожено филактерий с прахом: %s"
+L["%sChests Opened: %s"] = "%sСундуков открыто: %s"
+L["%sDeaths: %s"] = "%sСмертей: %s"
+L["%sFloors Climbed: %s"] = "%sЭтажей пройдено: %s"
+L["%sMawrats Killed: %s"] = "%sУбито крыс Утробы: %s"
+L["%sMobs Killed: %s"] = "%sПротивников убито: %s"
+L["%sPhantasma Collected: %s"] = "%sСобрано фантазмы: %s"
+L["%sQuests Completed: %s"] = "%sЗаданий завершено: %s"
+L["%sSouls Collected: %s"] = "%sДуш собрано: %s"
+L["%sSuccessful Runs: %s"] = "%sУспешных забегов: %s"
+L["%sTime Spent: %s"] = "%sВремени потрачено: %s"
+L["%sTimes Tarragrue Released: %s"] = "%sТаррагр был выпущен: %s"
 --[[Translation missing --]]
 --[[ L["%sTraps Sprung: %s"] = "%sTraps Sprung: %s"--]] 
---[[Translation missing --]]
---[[ L["|c%s[%s] auto-selected"] = "|c%s[%s] auto-selected"--]] 
---[[Translation missing --]]
---[[ L["Always"] = "Always"--]] 
+L["|c%s[%s] auto-selected"] = "|c%s[%s] автоматически выбрано"
+L["Always"] = "Обычно"
 L["Anima Cell"] = "Клетка с анимой"
---[[Translation missing --]]
---[[ L["Anima Power Options"] = "Anima Power Options"--]] 
---[[Translation missing --]]
---[[ L["Anima Powers"] = "Anima Powers"--]] 
---[[Translation missing --]]
---[[ L["Auto Hide Bonus List"] = "Auto Hide Bonus List"--]] 
---[[Translation missing --]]
---[[ L["Auto Hide Bonus List In Combat"] = "Auto Hide Bonus List In Combat"--]] 
---[[Translation missing --]]
---[[ L["Auto Select Flagged Powers"] = "Auto Select Flagged Powers"--]] 
---[[Translation missing --]]
---[[ L["Blessings"] = "Blessings"--]] 
---[[Translation missing --]]
---[[ L["Bonuses: %s"] = "Bonuses: %s"--]] 
---[[Translation missing --]]
---[[ L["Bosses"] = "Bosses"--]] 
---[[Translation missing --]]
---[[ L["Bosses Ability"] = "Bosses Ability"--]] 
---[[Translation missing --]]
---[[ L["Bosses: %s - Rares: %s - Mawrats: %s"] = "Bosses: %s - Rares: %s - Mawrats: %s"--]] 
---[[Translation missing --]]
---[[ L["BOSSLINK"] = "Boss Link: https://www.wowhead.com/npc=%s"--]] 
---[[Translation missing --]]
---[[ L["Bottom"] = "Bottom"--]] 
---[[Translation missing --]]
---[[ L["Box of Many Things"] = "Box of Many Things"--]] 
---[[Translation missing --]]
---[[ L["Clear Notes"] = "Clear Notes"--]] 
---[[Translation missing --]]
---[[ L["Clear Weights"] = "Clear Weights"--]] 
---[[Translation missing --]]
---[[ L["Click |c%s[%s]"] = "Click |c%s[%s]"--]] 
---[[Translation missing --]]
---[[ L["Click to set weight & note"] = "Click to set weight & note"--]] 
---[[Translation missing --]]
---[[ L["Click to use %s"] = "Click to use %s"--]] 
---[[Translation missing --]]
---[[ L["Completion: %s"] = "Completion: %s"--]] 
---[[Translation missing --]]
---[[ L["CURRENT RUN:"] = "CURRENT RUN:"--]] 
---[[Translation missing --]]
---[[ L["Description"] = "Description"--]] 
---[[Translation missing --]]
---[[ L["Display Options"] = "Display Options"--]] 
+L["Anima Power Options"] = "Опции способностей анимы"
+L["Anima Powers"] = "Способности анимы"
+L["Auto Hide Bonus List"] = "Автоскрытие списка бонусов"
+L["Auto Hide Bonus List In Combat"] = "Автоскрытие списка бонусов в бою"
+L["Auto Select Flagged Powers"] = "Автоматический выбор отмеченных способностей"
+L["Blessings"] = "Благословения"
+L["Bonuses: %s"] = "Бонусы: %s"
+L["Bosses"] = "Боссы"
+L["Bosses Ability"] = "Способности боссов"
+L["Bosses: %s - Rares: %s - Mawrats: %s"] = "Боссы: %s - Редкие: %s - Крысы Утробы: %s"
+L["BOSSLINK"] = "Ссылка на босса: https://www.wowhead.com/npc=%s"
+L["Bottom"] = "Снизу"
+L["Box of Many Things"] = "Шкатулка многих тайн"
+L["Clear Notes"] = "Очистить заметки"
+L["Clear Weights"] = "Очистить значимость"
+L["Click |c%s[%s]"] = "Нажмите |c%s[%s]"
+L["Click to set weight & note"] = "Нажмите, чтобы установить значимость и заметку"
+L["Click to use %s"] = "Нажмите для использования %s"
+L["Completion: %s"] = "Завершение: %s"
+L["CURRENT RUN:"] = "ТЕКУЩИЙ ЗАБЕГ:"
+L["Description"] = "Описание"
+L["Display Options"] = "Опции отображения"
 L["Dropped Anima Cell"] = "Брошенная клетка с анимой"
---[[Translation missing --]]
---[[ L["Failed Bonus: %s"] = "Failed Bonus: %s"--]] 
+L["Failed Bonus: %s"] = "Неудавшийся бонус: %s"
 --[[Translation missing --]]
 --[[ L["Failed Bouns: %s"] = ""--]] 
---[[Translation missing --]]
---[[ L["Favorite Priority"] = "Favorite Priority"--]] 
---[[Translation missing --]]
---[[ L["Favorite Priority Order"] = "Favorite Priority Order"--]] 
---[[Translation missing --]]
---[[ L["Flash Flagged Powers"] = "Flash Flagged Powers"--]] 
---[[Translation missing --]]
---[[ L["Floor"] = "Floor"--]] 
---[[Translation missing --]]
---[[ L["Font Color"] = "Font Color"--]] 
---[[Translation missing --]]
---[[ L["Font Size"] = "Font Size"--]] 
---[[Translation missing --]]
---[[ L["Gained Bonus: %s"] = "Gained Bonus: %s"--]] 
+L["Favorite Priority"] = "Избранный приоритет"
+L["Favorite Priority Order"] = "Порядок приоритета избранных"
+L["Flash Flagged Powers"] = "Подсвечивать отмеченные способности"
+L["Floor"] = "Этаж"
+L["Font Color"] = "Цвет шрифта"
+L["Font Size"] = "Размер шрифта"
+L["Gained Bonus: %s"] = "Полученный бонус: %s"
 --[[Translation missing --]]
 --[[ L["Gained Bouns: %s"] = ""--]] 
---[[Translation missing --]]
---[[ L["General Options"] = "General Options"--]] 
---[[Translation missing --]]
---[[ L["GUIDELINK"] = "Guide Link: https://www.wowhead.com/guides/torghast-floor-boss-strategies-abilities-tips-tricks"--]] 
---[[Translation missing --]]
---[[ L["Hide Power Selection Toggle in Combat"] = "Hide Power Selection Toggle in Combat"--]] 
---[[Translation missing --]]
---[[ L["Hide Power Selection Window in Combat"] = "Hide Power Selection Window in Combat"--]] 
---[[Translation missing --]]
---[[ L["Hide Power Window Immediately After Selection"] = "Hide Power Window Immediately After Selection"--]] 
---[[Translation missing --]]
---[[ L["Highlander + 15pts"] = "Highlander + 15pts"--]] 
---[[Translation missing --]]
---[[ L["Layer %s:"] = "Layer %s:"--]] 
---[[Translation missing --]]
---[[ L["Left"] = "Left"--]] 
---[[Translation missing --]]
---[[ L["No Data Available"] = "No Data Available"--]] 
---[[Translation missing --]]
---[[ L["No priority Powers Available"] = "No priority Powers Available"--]] 
---[[Translation missing --]]
---[[ L["Notes:"] = "Notes:"--]] 
---[[Translation missing --]]
---[[ L["Number of Torments Per Layer"] = "Number of Torments Per Layer"--]] 
---[[Translation missing --]]
---[[ L["Obscuring Essence Potion"] = "Obscuring Essence Potion"--]] 
---[[Translation missing --]]
---[[ L["Options"] = "Options"--]] 
---[[Translation missing --]]
---[[ L["Pauper  +10pts"] = "Pauper  +10pts"--]] 
---[[Translation missing --]]
---[[ L["Phantasmic Infuser"] = "Phantasmic Infuser"--]] 
---[[Translation missing --]]
---[[ L["Plundered Anima Cell"] = "Plundered Anima Cell"--]] 
---[[Translation missing --]]
---[[ L["Point Value"] = "Point Value"--]] 
---[[Translation missing --]]
---[[ L["Position of Bonus List"] = "Position of Bonus List"--]] 
---[[Translation missing --]]
---[[ L["Position of Score Frame"] = "Position of Score Frame"--]] 
---[[Translation missing --]]
---[[ L["Power Notes"] = "Power Notes"--]] 
---[[Translation missing --]]
---[[ L["Power Weight"] = "Power Weight"--]] 
---[[Translation missing --]]
---[[ L["Quick Hide Floor Toasts"] = "Quick Hide Floor Toasts"--]] 
---[[Translation missing --]]
---[[ L["Rares"] = "Rares"--]] 
+L["General Options"] = "Общие настройки"
+L["GUIDELINK"] = "Ссылка на гайд: https://www.wowhead.com/guides/torghast-floor-boss-strategies-abilities-tips-tricks"
+L["Hide Power Selection Toggle in Combat"] = "Скрыть переключатель выбора способностей в бою"
+L["Hide Power Selection Window in Combat"] = "Скрыть окно выбора способностей в бою"
+L["Hide Power Window Immediately After Selection"] = "Скрыть окно способностей незамедлительно после выбора"
+L["Highlander + 15pts"] = "Горец + 15очк"
+L["Layer %s:"] = "Слой %s:"
+L["Left"] = "Слева"
+L["No Data Available"] = "Нет доступных данных"
+L["No priority Powers Available"] = "Нет доступных приоритетных способностей"
+L["Notes:"] = "Заметки:"
+L["Number of Torments Per Layer"] = "Количество мучений на слой"
+L["Obscuring Essence Potion"] = "Зелье скрытой сущности"
+L["Options"] = "Опции"
+L["Pauper  +10pts"] = "Бедняк +10очк"
+L["Phantasmic Infuser"] = "Нагнетатель фантазмы"
+L["Plundered Anima Cell"] = "Клетка с награбленной анимой"
+L["Point Value"] = "Значение очков"
+L["Position of Bonus List"] = "Позиция списка бонусов"
+L["Position of Score Frame"] = "Позиция фрейма счета"
+L["Power Notes"] = "Заметки способности"
+L["Power Weight"] = "Значимость способности"
+L["Quick Hide Floor Toasts"] = "Быстрое скрытие уведомления о этаже"
+L["Rares"] = "Редкие противники"
 L["Ravenous Anima Cell"] = "Клетка с голодной анимой"
---[[Translation missing --]]
---[[ L["Ravenous Anima Cell Powers"] = "Ravenous Anima Cell Powers"--]] 
---[[Translation missing --]]
---[[ L["Requisitioned Anima Cell"] = "Requisitioned Anima Cell"--]] 
---[[Translation missing --]]
---[[ L["Reset Score Location"] = "Reset Score Location"--]] 
---[[Translation missing --]]
---[[ L["Reset Stats"] = "Reset Stats"--]] 
---[[Translation missing --]]
---[[ L["Right"] = "Right"--]] 
---[[Translation missing --]]
---[[ L["Score Tracker Options"] = "Score Tracker Options"--]] 
---[[Translation missing --]]
---[[ L["Score type"] = "Score type"--]] 
---[[Translation missing --]]
---[[ L["Score:"] = "Score:"--]] 
---[[Translation missing --]]
---[[ L["Select Font"] = "Select Font"--]] 
---[[Translation missing --]]
---[[ L["Set Power Weight & Note"] = "Set Power Weight & Note"--]] 
---[[Translation missing --]]
---[[ L["Settings"] = "Settings"--]] 
---[[Translation missing --]]
---[[ L["Show Bonus Status Messages"] = "Show Bonus Status Messages"--]] 
---[[Translation missing --]]
---[[ L["Show Combat Timer"] = "Show Combat Timer"--]] 
---[[Translation missing --]]
---[[ L["Show Minimap Icon"] = "Show Minimap Icon"--]] 
---[[Translation missing --]]
---[[ L["Show On Screen Selection Message"] = "Show On Screen Selection Message"--]] 
---[[Translation missing --]]
---[[ L["Show Power Selection Window after Combat"] = "Show Power Selection Window after Combat"--]] 
---[[Translation missing --]]
---[[ L["Show Rare Ability Drop Tooltips"] = "Show Rare Ability Drop Tooltips"--]] 
---[[Translation missing --]]
---[[ L["Show Ravenous Anima Cell Tooltips"] = "Show Ravenous Anima Cell Tooltips"--]] 
---[[Translation missing --]]
---[[ L["Show Score Frame"] = "Show Score Frame"--]] 
---[[Translation missing --]]
---[[ L["Show Weight Windows"] = "Show Weight Windows"--]] 
---[[Translation missing --]]
---[[ L["STATS"] = "STATS"--]] 
---[[Translation missing --]]
---[[ L["Stats"] = "Stats"--]] 
+L["Ravenous Anima Cell Powers"] = "Способности клетки с голодной анимой"
+L["Requisitioned Anima Cell"] = "Реквизированная клетка с анимой"
+L["Reset Score Location"] = "Сбросить расположение счета"
+L["Reset Stats"] = "Сбросить статистику"
+L["Right"] = "Справа"
+L["Score Tracker Options"] = "Опции отслеживания результатов"
+L["Score type"] = "Тип счета"
+L["Score:"] = "Счет:"
+L["Select Font"] = "Выберите шрифт"
+L["Set Power Weight & Note"] = "Установить значимость и заметку способности"
+L["Settings"] = "Настройки"
+L["Show Bonus Status Messages"] = "Показать сообщения о состоянии бонуса"
+L["Show Combat Timer"] = "Показать таймер боя"
+L["Show Minimap Icon"] = "Показать кнопку у миникарты"
+L["Show On Screen Selection Message"] = "Показать сообщение о выборе на экране"
+L["Show Power Selection Window after Combat"] = "Показать окно выбора способностей после выхода из боя"
+L["Show Rare Ability Drop Tooltips"] = "Показать всплывающие подсказки о выпадении редких способностей"
+L["Show Ravenous Anima Cell Tooltips"] = "Показать всплывающие подсказки для клетки с голодной анимой"
+L["Show Score Frame"] = "Показать фрейм счета"
+L["Show Weight Windows"] = "Показать окна значимости"
+L["STATS"] = "СТАТИСТИКА"
+L["Stats"] = "Статистика"
 L["Tips & Tricks"] = "Советы и хитрости"
---[[Translation missing --]]
---[[ L["Toggle Guide"] = "Toggle Guide"--]] 
---[[Translation missing --]]
---[[ L["Tooltip Options"] = "Tooltip Options"--]] 
---[[Translation missing --]]
---[[ L["Torghast Mobs"] = "Torghast Mobs"--]] 
---[[Translation missing --]]
---[[ L["Torghast Scoring"] = "Torghast Scoring"--]] 
+L["Toggle Guide"] = "Переключение руководства"
+L["Tooltip Options"] = "Опции всплывающей подсказки"
+L["Torghast Mobs"] = "Противники Торгаста"
+L["Torghast Scoring"] = "Подсчет очков Торгаста"
 L["Torghast Upgrades"] = "Улучшения для Торгаста"
---[[Translation missing --]]
---[[ L["Torment_Count"] = [=[Layers 1-5:   0
-Layers 6-7:   1
-Layers 8-9:   2
-Layer 10:       3
-Layer 11:       4
-Layer 12:       5]=]--]] 
---[[Translation missing --]]
---[[ L["Torments"] = "Torments"--]] 
---[[Translation missing --]]
---[[ L["Total "] = "Total "--]] 
---[[Translation missing --]]
---[[ L["TOTALS:"] = "TOTALS:"--]] 
---[[Translation missing --]]
---[[ L["Upgrades"] = "Upgrades"--]] 
---[[Translation missing --]]
---[[ L["Weight:"] = "Weight:"--]] 
---[[Translation missing --]]
---[[ L["WoWHead Links"] = "WoWHead Links"--]] 
+L["Torment_Count"] = "Уровни 1-5: 0 Уровни 6-7: 1 Уровни 8-9: 2 Уровни 10: 3 Уровень 11: 4 Уровень 12: 5"
+L["Torments"] = "Мучения"
+L["Total "] = "Суммарная"
+L["TOTALS:"] = "СУММАРНАЯ:"
+L["Upgrades"] = "Улучшения"
+L["Weight:"] = "Значимость:"
+L["WoWHead Links"] = "WoWHead Ссылки"
 
 -- Boss_Tips
 L["Baritas_Tip1"] = "Существа, порожденные Связью душ, имеют много здоровья, но любой вид контроля, который работает на нежить, мгновенно уничтожит их."

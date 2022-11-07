@@ -386,6 +386,10 @@ function MCL_Load:overviewStats(aFrame, total, collected)
 	if ((collected/total)*100) < 33 then
 		MyStatusBar:SetStatusBarColor(0.929, 0.007, 0.019)
 	end
+
+	if collected == total then
+		MyStatusBar:SetStatusBarColor(0, 0.5, 0.9) --blue
+	end
 	--MyStatusBar:SetStatusBarColor(0.1, 0.9, 0.1)
 	MyStatusBar.bg = MyStatusBar:CreateTexture(nil, "BACKGROUND")
 	MyStatusBar.bg:SetTexture("Interface\\TARGETINGFRAME\\UI-StatusBar")
@@ -414,13 +418,17 @@ function MCL_Load:expanStats(aFrame, total, collected, expT)
 	MyStatusBar:SetWidth(495)
 	MyStatusBar:SetHeight(10)
 	MyStatusBar:SetPoint("TOP", aFrame, "TOPLEFT", 270, -17)
-	MyStatusBar:SetStatusBarColor(0.1, 0.9, 0.1)
+	MyStatusBar:SetStatusBarColor(0, 0.5, 0.9)
+	
 
 	if ((collected/total)*100) < 66 then
 		MyStatusBar:SetStatusBarColor(0.941, 0.658, 0.019)
 	end
 	if ((collected/total)*100) < 33 then
 		MyStatusBar:SetStatusBarColor(0.929, 0.007, 0.019)
+	end
+	if collected == total then
+		MyStatusBar:SetStatusBarColor(0, 0.5, 0.9) --blue
 	end
 	MyStatusBar.bg = MyStatusBar:CreateTexture(nil, "BACKGROUND")
 	MyStatusBar.bg:SetTexture("Interface\\TARGETINGFRAME\\UI-StatusBar")
@@ -443,12 +451,16 @@ end
 
 function MCL_Load:expanStats_Update(MyStatusBar, total, collected, expT)
 	MyStatusBar:SetStatusBarColor(0.1, 0.9, 0.1)
+	MyStatusBar:SetValue((collected/total)*100)
 	MyStatusBar.Text:SetText(collected.."/"..total.." ("..math.floor(((collected/total)*100)).."%)")	
 	if ((collected/total)*100) < 66 then
 		MyStatusBar:SetStatusBarColor(0.941, 0.658, 0.019)
 	end
 	if ((collected/total)*100) < 33 then
 		MyStatusBar:SetStatusBarColor(0.929, 0.007, 0.019)
+	end
+	if collected == total then
+		MyStatusBar:SetStatusBarColor(0, 0.5, 0.9) --blue
 	end
 	return myStatusBar
 end
@@ -473,6 +485,9 @@ function MCL_Load:sectionStats(aFrame, total, collected)
 	end
 	if ((collected/total)*100) < 33 then
 		MyStatusBar:SetStatusBarColor(0.929, 0.007, 0.019)
+	end
+	if collected == total then
+		MyStatusBar:SetStatusBarColor(0, 0.5, 0.9) --blue
 	end
 	MyStatusBar.bg = MyStatusBar:CreateTexture(nil, "BACKGROUND")
 	MyStatusBar.bg:SetTexture("Interface\\TARGETINGFRAME\\UI-StatusBar")

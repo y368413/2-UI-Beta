@@ -33,7 +33,7 @@ function OwnerSelector:OnClick(button)
 		if drop then
 			drop:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 0, -11)
 			drop:SetChildren(function()
-				--drop:Add {text = L.SelectCharacter, isTitle = true }
+				drop:Add {text = L.SelectCharacter, isTitle = true }
 
 				for id in Addon:IterateOwners() do
 					local owner = Addon:GetOwnerInfo(id)

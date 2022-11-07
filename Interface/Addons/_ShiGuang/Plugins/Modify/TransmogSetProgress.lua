@@ -183,8 +183,8 @@ TSP_EventFrame:SetScript("OnEvent", function(self, event, ...) self[event](self,
 
 function TSP_EventFrame:ADDON_LOADED(loaded)
 	if (loaded == "Blizzard_Collections") and (loaded ~= "TransmogSetProgress") then 
-		hooksecurefunc(WardrobeCollectionFrameScrollFrame, "Update", UpdateButtons);
-		hooksecurefunc(WardrobeCollectionFrameScrollFrame, "update", UpdateButtons);
+		--hooksecurefunc(WardrobeCollectionFrameScrollFrame, "Update", UpdateButtons);
+		--hooksecurefunc(WardrobeCollectionFrameScrollFrame, "update", UpdateButtons);
 		
 		TSP_SetsDataProvider = CreateFromMixins(WardrobeSetsDataProviderMixin);
 		TSP_EventFrame:RegisterEvent("TRANSMOG_COLLECTION_UPDATED");

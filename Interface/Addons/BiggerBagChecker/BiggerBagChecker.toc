@@ -1,6 +1,6 @@
-## Interface: 90207
+## Interface: 100000
 ## Title: BiggerBagChecker
-## Version: v1.4.5-release2
+## Version: v1.4.8-release
 ## Author: KyrosKrane Sylvanblade
 ## Notes: Tracks your progress for the "Going to Need a Bigger Bag" achievement.
 

@@ -45,13 +45,10 @@ function libnotify:CreateFrame()
         self.stateA = self.stateA + self.modifyA/50
         self.stateB = self.stateB + self.modifyB/50
 
-        self.glow:SetGradientAlpha("HORIZONTAL",
-          self.stateA, self.stateA, self.stateA, self.stateA,
-          self.stateB, self.stateB, self.stateB, self.stateB)
 
-        self.shine:SetGradientAlpha("VERTICAL",
-          self.stateA, self.stateA, self.stateA, self.stateA,
-          self.stateB, self.stateB, self.stateB, self.stateB)
+        self.glow:SetGradient("HORIZONTAL", CreateColor(self.stateA, self.stateA, self.stateA, self.stateA), CreateColor(self.stateB, self.stateB, self.stateB, self.stateB))
+
+        self.shine:SetGradient("VERTICAL", CreateColor(self.stateA, self.stateA, self.stateA, self.stateA), CreateColor(self.stateB, self.stateB, self.stateB, self.stateB))
 
         if self.stateA < 0 and self.stateB < 0 then
           self.animate = false

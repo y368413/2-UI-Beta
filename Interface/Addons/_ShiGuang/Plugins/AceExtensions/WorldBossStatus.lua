@@ -424,10 +424,10 @@ function WorldBossStatus:ToggleMinimapButton(info, value)
 	LDBIcon:Refresh("WorldBossStatus")
 end
 
---function WorldBossStatus:ShowOptions()
---	InterfaceOptionsFrame_OpenToCategory(WorldBossStatus.optionsFrame)
---	InterfaceOptionsFrame_OpenToCategory(WorldBossStatus.OptionsFrame)
---end
+function WorldBossStatus:ShowOptions()
+	Settings.OpenToCategory(WorldBossStatus.optionsFrame)
+	Settings.OpenToCategory(WorldBossStatus.OptionsFrame)
+end
 
 function WorldBossStatus:OnInitialize()
 	self.db = LibStub("AceDB-3.0"):New("WorldBossStatusDB", defaults, true)

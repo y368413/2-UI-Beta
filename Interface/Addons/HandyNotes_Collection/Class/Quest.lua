@@ -49,4 +49,17 @@ function Quest:isCompleted(id)
   return API:isQuestFlaggedCompleted(id)
 end
 
+---
+--- Checks, whether quest is active in quest tab.
+---
+--- @param id
+---   Quest ID.
+---
+--- @return boolean
+---   True, if quest is active, false otherwise.
+---
+function Quest:isActive(id)
+  return API:isOnQuest(id)
+end
+
 this.Quest = Quest

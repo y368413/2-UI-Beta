@@ -608,7 +608,7 @@ local points = {
         -- Jungle Treasure Master
         [10070] = { criteriaId = 28360 },
       },
-    }
+    },
   },
 
   -- Thromma the Gutslicer
@@ -1084,7 +1084,7 @@ local points = {
       item = {
         -- Minor Blackfang Challenge Totem
         [124093] = { },
-      }
+      },
     },
     note = t['akrrilo_note'],
     -- Vendor
@@ -1106,7 +1106,7 @@ local points = {
       item = {
         -- Major Blackfang Challenge Totem
         [124094] = { },
-      }
+      },
     },
     note = t['rendarr_note'],
     -- Vendor
@@ -2137,10 +2137,23 @@ local points = {
   [26103160] = {
     npcId = 94601,
     icon = 'pet',
+    note = t['battle_pets_note'],
     loot = {
       achievement = {
         -- Tiny Terrors in Tanaan
         [10052] = { criteriaId = 28796 },
+      },
+      item = {
+        -- Fel-Touched Battle-Training Stone
+        [127755] = { },
+        -- Zangar Spore
+        [118101] = { petId = 1536 },
+        -- Seaborne Spore
+        [118105] = { petId = 1539 },
+        -- Periwinkle Calf
+        [127754] = { petId = 1663 },
+        -- Nightmare Bell
+        [127753] = { petId = 1664 },
       },
     },
   },
@@ -2149,10 +2162,23 @@ local points = {
   [53106520] = {
     npcId = 94637,
     icon = 'pet',
+    note = t['battle_pets_note'],
     loot = {
       achievement = {
         -- Tiny Terrors in Tanaan
         [10052] = { criteriaId = 28797 },
+      },
+      item = {
+        -- Fel-Touched Battle-Training Stone
+        [127755] = { },
+        -- Zangar Spore
+        [118101] = { petId = 1536 },
+        -- Seaborne Spore
+        [118105] = { petId = 1539 },
+        -- Periwinkle Calf
+        [127754] = { petId = 1663 },
+        -- Nightmare Bell
+        [127753] = { petId = 1664 },
       },
     },
   },
@@ -2161,12 +2187,24 @@ local points = {
   [25107620] = {
     npcId = 94638,
     icon = 'pet',
-    note = t['in_cave'],
+    note = t['in_cave'] .. '\n\n' .. t['battle_pets_note'],
     POI = { 29607060 },
     loot = {
       achievement = {
         -- Tiny Terrors in Tanaan
         [10052] = { criteriaId = 28798 },
+      },
+      item = {
+        -- Fel-Touched Battle-Training Stone
+        [127755] = { },
+        -- Zangar Spore
+        [118101] = { petId = 1536 },
+        -- Seaborne Spore
+        [118105] = { petId = 1539 },
+        -- Periwinkle Calf
+        [127754] = { petId = 1663 },
+        -- Nightmare Bell
+        [127753] = { petId = 1664 },
       },
     },
   },
@@ -2175,10 +2213,23 @@ local points = {
   [31403810] = {
     npcId = 94639,
     icon = 'pet',
+    note = t['battle_pets_note'],
     loot = {
       achievement = {
         -- Tiny Terrors in Tanaan
         [10052] = { criteriaId = 28799 },
+      },
+      item = {
+        -- Fel-Touched Battle-Training Stone
+        [127755] = { },
+        -- Zangar Spore
+        [118101] = { petId = 1536 },
+        -- Seaborne Spore
+        [118105] = { petId = 1539 },
+        -- Periwinkle Calf
+        [127754] = { petId = 1663 },
+        -- Nightmare Bell
+        [127753] = { petId = 1664 },
       },
     },
   },
@@ -2187,10 +2238,23 @@ local points = {
   [55908080] = {
     npcId = 94640,
     icon = 'pet',
+    note = t['battle_pets_note'],
     loot = {
       achievement = {
         -- Tiny Terrors in Tanaan
         [10052] = { criteriaId = 28800 },
+      },
+      item = {
+        -- Fel-Touched Battle-Training Stone
+        [127755] = { },
+        -- Zangar Spore
+        [118101] = { petId = 1536 },
+        -- Seaborne Spore
+        [118105] = { petId = 1539 },
+        -- Periwinkle Calf
+        [127754] = { petId = 1663 },
+        -- Nightmare Bell
+        [127753] = { petId = 1664 },
       },
     },
   },
@@ -2199,10 +2263,23 @@ local points = {
   [43208450] = {
     npcId = 94641,
     icon = 'pet',
+    note = t['battle_pets_note'],
     loot = {
       achievement = {
         -- Tiny Terrors in Tanaan
         [10052] = { criteriaId = 28801 },
+      },
+      item = {
+        -- Fel-Touched Battle-Training Stone
+        [127755] = { },
+        -- Zangar Spore
+        [118101] = { petId = 1536 },
+        -- Seaborne Spore
+        [118105] = { petId = 1539 },
+        -- Periwinkle Calf
+        [127754] = { petId = 1663 },
+        -- Nightmare Bell
+        [127753] = { petId = 1664 },
       },
     },
   },
@@ -2211,10 +2288,23 @@ local points = {
   [57703740] = {
     npcId = 94642,
     icon = 'pet',
+    note = t['battle_pets_note'],
     loot = {
       achievement = {
         -- Tiny Terrors in Tanaan
         [10052] = { criteriaId = 28802 },
+      },
+      item = {
+        -- Fel-Touched Battle-Training Stone
+        [127755] = { },
+        -- Zangar Spore
+        [118101] = { petId = 1536 },
+        -- Seaborne Spore
+        [118105] = { petId = 1539 },
+        -- Periwinkle Calf
+        [127754] = { petId = 1663 },
+        -- Nightmare Bell
+        [127753] = { petId = 1664 },
       },
     },
   },
@@ -2223,10 +2313,23 @@ local points = {
   [42307180] = {
     npcId = 94643,
     icon = 'pet',
+    note = t['battle_pets_note'],
     loot = {
       achievement = {
         -- Tiny Terrors in Tanaan
         [10052] = { criteriaId = 28803 },
+      },
+      item = {
+        -- Fel-Touched Battle-Training Stone
+        [127755] = { },
+        -- Zangar Spore
+        [118101] = { petId = 1536 },
+        -- Seaborne Spore
+        [118105] = { petId = 1539 },
+        -- Periwinkle Calf
+        [127754] = { petId = 1663 },
+        -- Nightmare Bell
+        [127753] = { petId = 1664 },
       },
     },
   },
@@ -2235,10 +2338,23 @@ local points = {
   [54002990] = {
     npcId = 94644,
     icon = 'pet',
+    note = t['battle_pets_note'],
     loot = {
       achievement = {
         -- Tiny Terrors in Tanaan
         [10052] = { criteriaId = 28804 },
+      },
+      item = {
+        -- Fel-Touched Battle-Training Stone
+        [127755] = { },
+        -- Zangar Spore
+        [118101] = { petId = 1536 },
+        -- Seaborne Spore
+        [118105] = { petId = 1539 },
+        -- Periwinkle Calf
+        [127754] = { petId = 1663 },
+        -- Nightmare Bell
+        [127753] = { petId = 1664 },
       },
     },
   },
@@ -2247,10 +2363,23 @@ local points = {
   [16004480] = {
     npcId = 94645,
     icon = 'pet',
+    note = t['battle_pets_note'],
     loot = {
       achievement = {
         -- Tiny Terrors in Tanaan
         [10052] = { criteriaId = 28805 },
+      },
+      item = {
+        -- Fel-Touched Battle-Training Stone
+        [127755] = { },
+        -- Zangar Spore
+        [118101] = { petId = 1536 },
+        -- Seaborne Spore
+        [118105] = { petId = 1539 },
+        -- Periwinkle Calf
+        [127754] = { petId = 1663 },
+        -- Nightmare Bell
+        [127753] = { petId = 1664 },
       },
     },
   },
@@ -2259,10 +2388,23 @@ local points = {
   [44004570] = {
     npcId = 94646,
     icon = 'pet',
+    note = t['battle_pets_note'],
     loot = {
       achievement = {
         -- Tiny Terrors in Tanaan
         [10052] = { criteriaId = 28806 },
+      },
+      item = {
+        -- Fel-Touched Battle-Training Stone
+        [127755] = { },
+        -- Zangar Spore
+        [118101] = { petId = 1536 },
+        -- Seaborne Spore
+        [118105] = { petId = 1539 },
+        -- Periwinkle Calf
+        [127754] = { petId = 1663 },
+        -- Nightmare Bell
+        [127753] = { petId = 1664 },
       },
     },
   },
@@ -2271,10 +2413,23 @@ local points = {
   [46405300] = {
     npcId = 94647,
     icon = 'pet',
+    note = t['battle_pets_note'],
     loot = {
       achievement = {
         -- Tiny Terrors in Tanaan
         [10052] = { criteriaId = 28807 },
+      },
+      item = {
+        -- Fel-Touched Battle-Training Stone
+        [127755] = { },
+        -- Zangar Spore
+        [118101] = { petId = 1536 },
+        -- Seaborne Spore
+        [118105] = { petId = 1539 },
+        -- Periwinkle Calf
+        [127754] = { petId = 1663 },
+        -- Nightmare Bell
+        [127753] = { petId = 1664 },
       },
     },
   },
@@ -2283,10 +2438,23 @@ local points = {
   [48003500] = {
     npcId = 94648,
     icon = 'pet',
+    note = t['battle_pets_note'],
     loot = {
       achievement = {
         -- Tiny Terrors in Tanaan
         [10052] = { criteriaId = 28810 },
+      },
+      item = {
+        -- Fel-Touched Battle-Training Stone
+        [127755] = { },
+        -- Zangar Spore
+        [118101] = { petId = 1536 },
+        -- Seaborne Spore
+        [118105] = { petId = 1539 },
+        -- Periwinkle Calf
+        [127754] = { petId = 1663 },
+        -- Nightmare Bell
+        [127753] = { petId = 1664 },
       },
     },
   },
@@ -2295,10 +2463,23 @@ local points = {
   [48503130] = {
     npcId = 94649,
     icon = 'pet',
+    note = t['battle_pets_note'],
     loot = {
       achievement = {
         -- Tiny Terrors in Tanaan
         [10052] = { criteriaId = 28808 },
+      },
+      item = {
+        -- Fel-Touched Battle-Training Stone
+        [127755] = { },
+        -- Zangar Spore
+        [118101] = { petId = 1536 },
+        -- Seaborne Spore
+        [118105] = { petId = 1539 },
+        -- Periwinkle Calf
+        [127754] = { petId = 1663 },
+        -- Nightmare Bell
+        [127753] = { petId = 1664 },
       },
     },
   },
@@ -2307,10 +2488,23 @@ local points = {
   [75403740] = {
     npcId = 94650,
     icon = 'pet',
+    note = t['battle_pets_note'],
     loot = {
       achievement = {
         -- Tiny Terrors in Tanaan
         [10052] = { criteriaId = 28809 },
+      },
+      item = {
+        -- Fel-Touched Battle-Training Stone
+        [127755] = { },
+        -- Zangar Spore
+        [118101] = { petId = 1536 },
+        -- Seaborne Spore
+        [118105] = { petId = 1539 },
+        -- Periwinkle Calf
+        [127754] = { petId = 1663 },
+        -- Nightmare Bell
+        [127753] = { petId = 1664 },
       },
     },
   },

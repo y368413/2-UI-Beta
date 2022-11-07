@@ -129,8 +129,8 @@ function cql.log:UpdateListButton(button,info)
         button.check:Hide()
         button.groupmates:Hide()
         local isCollapsed = collapsedHeaders[info.title]
-        button:SetNormalTexture(isCollapsed and "Interface\\Buttons\\UI-PlusButton-Up" or "Interface\\Buttons\\UI-MinusButton-Up")
-        button:SetHighlightTexture("Interface\\Buttons\\UI-PlusButton-Hilight")
+        button.expand:SetTexture(isCollapsed and "Interface\\Buttons\\UI-PlusButton-Up" or "Interface\\Buttons\\UI-MinusButton-Up")
+        button.expand:Show()
         -- special styling for campaign quest headers
         if info.campaignID then
             -- repurpose selected background to blue for alliance/red for horde
@@ -164,8 +164,8 @@ function cql.log:UpdateListButton(button,info)
         --else
             --button:SetText(format("  %s",info.title))
         --end
-        button:SetNormalTexture("")
-        button:SetHighlightTexture("")
+        button.expand:Hide()
+        button.expandHighlight:Hide()
         -- if quest is tracked, show a check
         if C_QuestLog.GetQuestWatchType(info.questID) then
             maxWidth = maxWidth - 16
@@ -326,6 +326,10 @@ function cql.log:ListButtonOnEnter()
     local info = self.index and cql.log.quests[self.index]
     if not info then return end
 
+    if self.expand:IsVisible() then
+        self.expandHighlight:Show()
+    end
+
     -- only campaign headers are shown; the rest of headers have no template
     if info.isHeader then
         if info.campaignID then -- for campaign headers, show its tooltip
@@ -440,6 +444,7 @@ end
 
 function cql.log:ListButtonOnLeave()
     cql.campaignTooltip:Hide()
+    self.expandHighlight:Hide()
     GameTooltip:Hide()
     local index = self.index
     local info = index and cql.log.quests[index]

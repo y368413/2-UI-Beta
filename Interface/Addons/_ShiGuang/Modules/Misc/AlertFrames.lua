@@ -92,34 +92,13 @@ function MISC:AlertFrame_AdjustPosition()
 	end
 end
 
-local function MoveTalkingHead()
-	local TalkingHeadFrame = _G.TalkingHeadFrame
-
-	TalkingHeadFrame.ignoreFramePositionManager = true
-	TalkingHeadFrame:ClearAllPoints()
-	TalkingHeadFrame:SetPoint("BOTTOM", 0, 210)
-
-	for index, alertFrameSubSystem in ipairs(AlertFrame.alertFrameSubSystems) do
-		if alertFrameSubSystem.anchorFrame and alertFrameSubSystem.anchorFrame == TalkingHeadFrame then
-			tremove(AlertFrame.alertFrameSubSystems, index)
-		end
-	end
-end
-
 local function NoTalkingHeads()
 	if not R.db["Misc"]["HideTalking"] then return end
 
-	hooksecurefunc(TalkingHeadFrame, "Show", function(self)
+	_G.TalkingHeadFrame:UnregisterAllEvents() -- needs review
+	hooksecurefunc(_G.TalkingHeadFrame, "Show", function(self)
 		self:Hide()
 	end)
-end
-
-local function TalkingHeadOnLoad(event, addon)
-	if addon == "Blizzard_TalkingHeadUI" then
-		MoveTalkingHead()
-		NoTalkingHeads()
-		M:UnregisterEvent(event, TalkingHeadOnLoad)
-	end
 end
 
 function MISC:AlertFrame_Setup()
@@ -141,11 +120,8 @@ function MISC:AlertFrame_Setup()
 	hooksecurefunc(AlertFrame, "UpdateAnchors", MISC.AlertFrame_UpdateAnchor)
 	hooksecurefunc("GroupLootContainer_Update", MISC.UpdatGroupLootContainer)
 
-	if IsAddOnLoaded("Blizzard_TalkingHeadUI") then
-		MoveTalkingHead()
+	if TalkingHeadFrame then
 		NoTalkingHeads()
-	else
-		M:RegisterEvent("ADDON_LOADED", TalkingHeadOnLoad)
 	end
 end
 MISC:RegisterMisc("AlertFrame", MISC.AlertFrame_Setup)

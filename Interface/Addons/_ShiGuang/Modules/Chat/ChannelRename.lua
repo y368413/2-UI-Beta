@@ -29,6 +29,7 @@ end
 
 function module:UpdateChannelNames(text, ...)
 	if strfind(text, INTERFACE_ACTION_BLOCKED) and not I.isDeveloper then return end
+	if strfind(text, "NO QUALITY ") then return end -- blizz forgot to remove debug code
 
 	local r, g, b = ...
 	if R.db["Chat"]["WhisperColor"] and strfind(text, U["Tell"].." |H[BN]*player.+%]") then
@@ -44,7 +45,9 @@ function module:UpdateChannelNames(text, ...)
 	-- Timestamp
 	if MaoRUIDB["TimestampFormat"] > 1 then
 		local locTime, realmTime = GetCurrentTime()
-		local oldTimeStamp = CHAT_TIMESTAMP_FORMAT and gsub(BetterDate(CHAT_TIMESTAMP_FORMAT, locTime), "%[([^]]*)%]", "%%[%1%%]")
+		local defaultTimestamp = GetCVar("showTimestamps")
+		if defaultTimestamp == "none" then defaultTimestamp = nil end
+		local oldTimeStamp = defaultTimestamp and gsub(BetterDate(defaultTimestamp, locTime), "%[([^]]*)%]", "%%[%1%%]")
 		if oldTimeStamp then
 			text = gsub(text, oldTimeStamp, "")
 		end

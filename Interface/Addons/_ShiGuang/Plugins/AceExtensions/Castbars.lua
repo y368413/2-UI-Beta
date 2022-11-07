@@ -486,12 +486,12 @@ function Castbars:FrameCustomize(frame)
 		frame.text = _G[frameName]["Text"];
 	end
 
-	frame.text:ClearAllPoints();
+	--[[frame.text:ClearAllPoints();
     if (frameType == "Castbar") then
         frame.text:SetPoint("LEFT", frame.statusBar, "LEFT", 5, 0.25);
     elseif (frameType == "Mirror") then
         frame.text:SetPoint("CENTER", frame.statusBar, "CENTER", 0, 0.25);
-    end
+    end]]
 
     -- Adjust Icon Texture
     if (frame.icon) then
@@ -1236,7 +1236,7 @@ function Castbars:ChatCommand(cmd)
             end
         end
     else
-        InterfaceOptionsFrame_OpenToCategory(CASTBARS_STYLE_TITLE);
+        Settings.OpenToCategory(CASTBARS_STYLE_TITLE);
     end
 end
 
@@ -1346,26 +1346,26 @@ function Castbars:OnInitialize()
     self.playerClass = select(2, UnitClass("player"));
 
     -- Prevent the UIParent from moving the CastingBarFrame around
-    UIPARENT_MANAGED_FRAME_POSITIONS["CastingBarFrame"] = nil;
+    --UIPARENT_MANAGED_FRAME_POSITIONS["CastingBarFrame"] = nil;
 
     -- Reset player and pet casting bars in case another addon have 
     -- messed with them before this addons loads
-    CastingBarFrame_OnLoad(CastingBarFrame, "player", true, false);
-    PetCastingBarFrame_OnLoad(PetCastingBarFrame);
+    --CastingBarFrame_OnLoad(CastingBarFrame, "player", true, false);
+    --PetCastingBarFrame_OnLoad(PetCastingBarFrame);
 
     -- Create target casting bar
     CreateFrame("StatusBar", "TargetCastingBarFrame", UIParent, "CastingBarFrameTemplate");
     TargetCastingBarFrame:RegisterEvent("PLAYER_TARGET_CHANGED");
-    CastingBarFrame_OnLoad(TargetCastingBarFrame, "target", false, true);
+    --CastingBarFrame_OnLoad(TargetCastingBarFrame, "target", false, true);
 
     -- Create focus casting bar
     CreateFrame("StatusBar", "FocusCastingBarFrame", UIParent, "CastingBarFrameTemplate");
     FocusCastingBarFrame:RegisterEvent("PLAYER_FOCUS_CHANGED");
-    CastingBarFrame_OnLoad(FocusCastingBarFrame, "focus", false, true);
+    --CastingBarFrame_OnLoad(FocusCastingBarFrame, "focus", false, true);
 
     -- Register additional events on CastingBarFrame
-    CastingBarFrame:RegisterEvent("UNIT_SPELLCAST_SENT");
-    CastingBarFrame:RegisterEvent("ACTIONBAR_UPDATE_COOLDOWN");
+    --CastingBarFrame:RegisterEvent("UNIT_SPELLCAST_SENT");
+    --CastingBarFrame:RegisterEvent("ACTIONBAR_UPDATE_COOLDOWN");
 
     -- Setup table with all frames
     self.frames = {CastingBarFrame, PetCastingBarFrame, TargetCastingBarFrame, FocusCastingBarFrame, MirrorTimer1, MirrorTimer2, MirrorTimer3};

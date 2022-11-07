@@ -381,6 +381,13 @@ local accountStrValues = {
 	["IgnoredButtons"] = true,
 }
 
+local spellBooleanValues = {
+	["RaidBuffsWhite"] = true,
+	["RaidDebuffsBlack"] = true,
+	["NameplateWhite"] = true,
+	["NameplateBlack"] = true,
+}
+
 local booleanTable = {
 	["CustomUnits"] = true,
 	["PowerUnits"] = true,
@@ -445,22 +452,15 @@ function G:ExportGUIData()
 	end
 
 	for KEY, VALUE in pairs(MaoRUIDB) do
-		if KEY == "RaidAuraWatch" then
+		if spellBooleanValues[KEY] then
 			text = text..";ACCOUNT:"..KEY
-			for spellID in pairs(VALUE) do
-				text = text..":"..spellID
+			for spellID, value in pairs(VALUE) do
+				text = text..":"..spellID..":"..tostring(value)
 			end
 		elseif KEY == "RaidDebuffs" then
 			for instName, value in pairs(VALUE) do
 				for spellID, prio in pairs(value) do
 					text = text..";ACCOUNT:"..KEY..":"..instName..":"..spellID..":"..prio
-				end
-			end
-		elseif KEY == "NameplateFilter" then
-			for index, value in pairs(VALUE) do
-				text = text..";ACCOUNT:"..KEY..":"..index
-				for spellID in pairs(value) do
-					text = text..":"..spellID
 				end
 			end
 		elseif KEY == "CornerSpells" then
@@ -537,7 +537,7 @@ local function reloadDefaultSettings()
 			R.db[i] = j
 		end
 	end
-	R.db["SL"] = true -- don't empty data on next loading
+	R.db["DF"] = true -- don't empty data on next loading
 end
 
 local function IsOldProfileVersion(version)
@@ -630,20 +630,15 @@ function G:ImportGUIData()
 				R.db[key][value] = arg1
 			end
 		elseif key == "ACCOUNT" then
-			if value == "RaidAuraWatch" then
-				local spells = {select(3, strsplit(":", option))}
-				for _, spellID in next, spells do
-					MaoRUIDB[value][tonumber(spellID)] = true
+			if spellBooleanValues[value] then
+				local results = {select(3, strsplit(":", option))}
+				for i = 1, #results, 2 do
+					MaoRUIDB[value][tonumber(results[i])] = toBoolean(results[i+1])
 				end
 			elseif value == "RaidDebuffs" then
 				local instName, spellID, priority = select(3, strsplit(":", option))
 				if not MaoRUIDB[value][instName] then MaoRUIDB[value][instName] = {} end
 				MaoRUIDB[value][instName][tonumber(spellID)] = tonumber(priority)
-			elseif value == "NameplateFilter" then
-				local spells = {select(4, strsplit(":", option))}
-				for _, spellID in next, spells do
-					MaoRUIDB[value][tonumber(arg1)][tonumber(spellID)] = true
-				end
 			elseif value == "CornerSpells" then
 				local results = {select(3, strsplit(":", option))}
 				local class = results[1]

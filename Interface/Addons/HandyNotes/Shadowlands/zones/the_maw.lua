@@ -1,34 +1,35 @@
 -------------------------------------------------------------------------------
 ---------------------------------- NAMESPACE ----------------------------------
 -------------------------------------------------------------------------------
-local _, shadowlands = ...
-local Class = shadowlands.Class
-local L = shadowlands.locale
-local Map = shadowlands.RiftMap
+local _, Shadowlands = ...
+local Class = Shadowlands.Class
+local L = Shadowlands.locale
+local Map = Shadowlands.RiftMap
 
-local Collectible = shadowlands.node.Collectible
-local NPC = shadowlands.node.NPC
-local Rare = shadowlands.node.Rare
-local Treasure = shadowlands.node.Treasure
+local Collectible = Shadowlands.node.Collectible
+local NPC = Shadowlands.node.NPC
+local Rare = Shadowlands.node.Rare
+local Treasure = Shadowlands.node.Treasure
 
-local Achievement = shadowlands.reward.Achievement
-local Item = shadowlands.reward.Item
-local Mount = shadowlands.reward.Mount
-local Pet = shadowlands.reward.Pet
-local Quest = shadowlands.reward.Quest
-local Section = shadowlands.reward.Section
-local Toy = shadowlands.reward.Toy
-local Transmog = shadowlands.reward.Transmog
+local Achievement = Shadowlands.reward.Achievement
+local Item = Shadowlands.reward.Item
+local Mount = Shadowlands.reward.Mount
+local Pet = Shadowlands.reward.Pet
+local Quest = Shadowlands.reward.Quest
+local Section = Shadowlands.reward.Section
+local Spacer = Shadowlands.reward.Spacer
+local Toy = Shadowlands.reward.Toy
+local Transmog = Shadowlands.reward.Transmog
 
-local Arrow = shadowlands.poi.Arrow
-local Line = shadowlands.poi.Line
-local Path = shadowlands.poi.Path
-local POI = shadowlands.poi.POI
+local Arrow = Shadowlands.poi.Arrow
+local Line = Shadowlands.poi.Line
+local Path = Shadowlands.poi.Path
+local POI = Shadowlands.poi.POI
 
-local KYRIAN = shadowlands.covenants.KYR
-local NECROLORD = shadowlands.covenants.NEC
-local NIGHTFAE = shadowlands.covenants.FAE
-local VENTHYR = shadowlands.covenants.VEN
+local KYRIAN = Shadowlands.covenants.KYR
+local NECROLORD = Shadowlands.covenants.NEC
+local NIGHTFAE = Shadowlands.covenants.FAE
+local VENTHYR = Shadowlands.covenants.VEN
 
 -------------------------------------------------------------------------------
 ------------------------------------- MAP -------------------------------------
@@ -74,7 +75,7 @@ end
 ------------------------------------ INTRO ------------------------------------
 -------------------------------------------------------------------------------
 
-local MawIntro = Class('MawIntro', shadowlands.node.Intro, {
+local MawIntro = Class('MawIntro', Shadowlands.node.Intro, {
     quest = 62907, -- Eye of the Jailor activation
     label = L['return_to_the_maw'],
     note = L['maw_intro_note']
@@ -102,7 +103,7 @@ map.nodes[25923116] = Rare({
     quest = 57482,
     noassault = NIGHTFAE,
     note = L['dekaris_note'],
-    rlabel = shadowlands.status.LightBlue('+80 ' .. L['rep']),
+    rlabel = Shadowlands.status.LightBlue('+80 ' .. L['rep']),
     rewards = {
         Achievement({id = 14744, criteria = 49841}),
         Transmog({item = 186222, slot = L['mail']}) -- Grips of the Coldheart Adjutant
@@ -114,7 +115,7 @@ map.nodes[19324172] = Rare({
     quest = 60788,
     noassault = NIGHTFAE,
     note = L['apholeias_note'],
-    rlabel = shadowlands.status.LightBlue('+100 ' .. L['rep']),
+    rlabel = Shadowlands.status.LightBlue('+100 ' .. L['rep']),
     rewards = {
         Achievement({id = 14744, criteria = 49842}),
         Item({item = 184106, note = L['ring']}), -- Gimble
@@ -126,7 +127,7 @@ map.nodes[39014119] = Rare({
     id = 157833,
     quest = 57469,
     noassault = KYRIAN,
-    rlabel = shadowlands.status.LightBlue('+100 ' .. L['rep']),
+    rlabel = Shadowlands.status.LightBlue('+100 ' .. L['rep']),
     rewards = {
         Achievement({id = 14744, criteria = 49843}),
         Transmog({item = 186223, slot = L['mail']}), -- Coif of the Molten Horror
@@ -137,7 +138,7 @@ map.nodes[39014119] = Rare({
 map.nodes[27731305] = Rare({
     id = 171317,
     quest = 61106,
-    rlabel = shadowlands.status.LightBlue('+80 ' .. L['rep']),
+    rlabel = Shadowlands.status.LightBlue('+80 ' .. L['rep']),
     rewards = {
         Achievement({id = 14744, criteria = 49844}),
         Transmog({item = 183887, slot = L['1h_sword']}) -- Suirhtaned, Blade of the Heir
@@ -151,7 +152,7 @@ map.nodes[60964805] = Rare({
     id = 160770,
     quest = 62281,
     note = L['in_cave'],
-    rlabel = shadowlands.status.LightBlue('+100 ' .. L['rep']),
+    rlabel = Shadowlands.status.LightBlue('+100 ' .. L['rep']),
     rewards = {
         Achievement({id = 14744, criteria = 49845}),
         Transmog({item = 186220, slot = L['mail']}) -- Stygian Chestcage
@@ -161,7 +162,7 @@ map.nodes[60964805] = Rare({
 map.nodes[49128175] = Rare({
     id = 158025,
     quest = 62282,
-    rlabel = shadowlands.status.LightBlue('+80 ' .. L['rep']),
+    rlabel = Shadowlands.status.LightBlue('+80 ' .. L['rep']),
     rewards = {
         Achievement({id = 14744, criteria = 49846}),
         Transmog({item = 186611, slot = L['leather']}), -- Taraxis Treads
@@ -187,7 +188,7 @@ map.nodes[28086058] = Rare({
     id = 170711,
     quest = 60909,
     noassault = NECROLORD,
-    rlabel = shadowlands.status.LightBlue('+100 ' .. L['rep']),
+    rlabel = Shadowlands.status.LightBlue('+100 ' .. L['rep']),
     rewards = {
         Achievement({id = 14744, criteria = 49847}),
         Transmog({item = 186209, slot = L['cloth']}) -- Blood-Spattered Gloves of Death
@@ -198,7 +199,7 @@ map.nodes[23765341] = Rare({
     id = 170774,
     quest = 60915,
     noassault = NIGHTFAE,
-    rlabel = shadowlands.status.LightBlue('+100 ' .. L['rep']),
+    rlabel = Shadowlands.status.LightBlue('+100 ' .. L['rep']),
     rewards = {
         Achievement({id = 14744, criteria = 49848}),
         Transmog({item = 186563, slot = L['polearm']}) -- Spear of the Impaler
@@ -209,7 +210,7 @@ map.nodes[42342108] = Rare({
     id = 169827,
     quest = 60666,
     note = L['ekphoras_note'],
-    rlabel = shadowlands.status.LightBlue('+100 ' .. L['rep']),
+    rlabel = Shadowlands.status.LightBlue('+100 ' .. L['rep']),
     rewards = {
         Achievement({id = 14744, criteria = 49849}),
         Item({item = 184105, note = L['ring']}), -- Gyre
@@ -221,7 +222,7 @@ map.nodes[19194608] = Rare({ -- was 27584966
     id = 154330,
     quest = 57509,
     noassault = NIGHTFAE,
-    rlabel = shadowlands.status.LightBlue('+80 ' .. L['rep']),
+    rlabel = Shadowlands.status.LightBlue('+80 ' .. L['rep']),
     rewards = {
         Achievement({id = 14744, criteria = 49850}),
         Transmog({item = 186212, slot = L['cloth']}), -- Eternas' Braided Waistcord
@@ -233,7 +234,7 @@ map.nodes[20586935] = Rare({
     id = 170303,
     quest = 62260,
     note = L['exos_note'],
-    rlabel = shadowlands.status.LightBlue('+100 ' .. L['rep']),
+    rlabel = Shadowlands.status.LightBlue('+100 ' .. L['rep']),
     fgroup = 'nilganihmaht_group',
     rewards = {
         Achievement({id = 14744, criteria = 49851}),
@@ -276,7 +277,7 @@ map.nodes[30775000] = Rare({
     id = 175012,
     quest = 62788,
     note = L['ikras_note'],
-    rlabel = shadowlands.status.LightBlue('+100 ' .. L['rep']),
+    rlabel = Shadowlands.status.LightBlue('+100 ' .. L['rep']),
     rewards = {
         Achievement({id = 14744, criteria = 50621}),
         Transmog({item = 186214, slot = L['leather']}) -- Maw Snakeskin Boots
@@ -286,7 +287,7 @@ map.nodes[30775000] = Rare({
 map.nodes[16945102] = Rare({
     id = 162849,
     quest = 60987,
-    rlabel = shadowlands.status.LightBlue('+100 ' .. L['rep']),
+    rlabel = Shadowlands.status.LightBlue('+100 ' .. L['rep']),
     rewards = {
         Achievement({id = 14744, criteria = 49852}),
         Transmog({item = 185892, slot = L['2h_sword']}), -- Stygia-Etched Decapitator
@@ -301,7 +302,7 @@ map.nodes[45507376] = Rare({
     id = 158278,
     quest = 57573,
     note = L['in_small_cave'],
-    rlabel = shadowlands.status.LightBlue('+80 ' .. L['rep']),
+    rlabel = Shadowlands.status.LightBlue('+80 ' .. L['rep']),
     rewards = {
         Achievement({id = 14744, criteria = 49853}),
         Transmog({item = 186236, slot = L['leather']}) -- Devourer's Shadehide Jerkin
@@ -311,7 +312,7 @@ map.nodes[45507376] = Rare({
 map.nodes[48801830] = Rare({
     id = 164064,
     quest = 60667,
-    rlabel = shadowlands.status.LightBlue('+80 ' .. L['rep']),
+    rlabel = Shadowlands.status.LightBlue('+80 ' .. L['rep']),
     rewards = {
         Achievement({id = 14744, criteria = 49854}),
         Transmog({item = 186238, slot = L['cloth']}) -- Mantle of the Prime Collector
@@ -322,7 +323,7 @@ map.nodes[23692139] = Rare({
     id = 172577,
     quest = 61519,
     note = L['orophea_note'],
-    rlabel = shadowlands.status.LightBlue('+80 ' .. L['rep']),
+    rlabel = Shadowlands.status.LightBlue('+80 ' .. L['rep']),
     rewards = {
         Achievement({id = 14744, criteria = 49855}),
         Transmog({item = 186211, slot = L['cloth']}), -- Pantaloons of the Condemned Bard
@@ -336,7 +337,7 @@ map.nodes[23692139] = Rare({
 map.nodes[32946646] = Rare({
     id = 170634,
     quest = 60884,
-    rlabel = shadowlands.status.LightBlue('+100 ' .. L['rep']),
+    rlabel = Shadowlands.status.LightBlue('+100 ' .. L['rep']),
     rewards = {
         Achievement({id = 14744, criteria = 49856}),
         Item({item = 183066, quest = 63160}), -- Korrath's Grimoire: Aleketh
@@ -351,7 +352,7 @@ map.nodes[35974156] = Rare({
     id = 166398,
     quest = 60834,
     noassault = KYRIAN,
-    rlabel = shadowlands.status.LightBlue('+80 ' .. L['rep']),
+    rlabel = Shadowlands.status.LightBlue('+80 ' .. L['rep']),
     rewards = {
         Achievement({id = 14744, criteria = 49857}),
         Transmog({item = 186613, slot = L['mail']}) -- Rhovus' Linked Greaves
@@ -363,7 +364,7 @@ map.nodes[28701204] = Rare({
     quest = 60789, -- 62722?
     note = L['talaporas_note'],
     noassault = VENTHYR,
-    rlabel = shadowlands.status.LightBlue('+100 ' .. L['rep']),
+    rlabel = Shadowlands.status.LightBlue('+100 ' .. L['rep']),
     rewards = {
         Achievement({id = 14744, criteria = 49858}),
         Transmog({item = 184107, slot = L['cloak']}), -- Borogove Cloak
@@ -375,7 +376,7 @@ map.nodes[27397152] = Rare({
     id = 170731,
     quest = 60914,
     noassault = NECROLORD,
-    rlabel = shadowlands.status.LightBlue('+100 ' .. L['rep']),
+    rlabel = Shadowlands.status.LightBlue('+100 ' .. L['rep']),
     rewards = {
         Achievement({id = 14744, criteria = 49859}),
         Transmog({item = 186234, slot = L['plate']}) -- Girdle of the Death Speaker
@@ -397,7 +398,7 @@ map.nodes[37446212] = Rare({
     quest = 61568,
     noassault = NECROLORD,
     note = L['yero_note'],
-    rlabel = shadowlands.status.LightBlue('+80 ' .. L['rep']),
+    rlabel = Shadowlands.status.LightBlue('+80 ' .. L['rep']),
     rewards = {
         Achievement({id = 14744, criteria = 49860}),
         Transmog({item = 186228, slot = L['plate']}) -- Helm of the Skittish Hero
@@ -433,7 +434,7 @@ map.nodes[66404400] = Rare({
 map.nodes[36034433] = Rare({
     id = 179853,
     quest = 64276,
-    rlabel = shadowlands.GetIconLink('portal_gy', 20, 4, 1),
+    rlabel = Shadowlands.GetIconLink('portal_gy', 20, 4, 1),
     note = L['rift_rare_only_note'],
     rift = 2,
     rewards = {
@@ -446,8 +447,8 @@ map.nodes[36034433] = Rare({
 map.nodes[49307274] = Rare({
     id = 179851,
     quest = 64272,
-    rlabel = shadowlands.status.LightBlue(L['plus_research']) ..
-        shadowlands.GetIconLink('portal_gy', 20, 4, 1),
+    rlabel = Shadowlands.status.LightBlue(L['plus_research']) ..
+        Shadowlands.GetIconLink('portal_gy', 20, 4, 1),
     note = L['rift_rare_only_note'],
     rewards = {
         Achievement({id = 15107, criteria = 52293}),
@@ -472,7 +473,7 @@ map.nodes[49307274] = Rare({
 map.nodes[27672526] = Rare({
     id = 179735,
     quest = 64232,
-    rlabel = shadowlands.GetIconLink('portal_gy', 20, 4, 1),
+    rlabel = Shadowlands.GetIconLink('portal_gy', 20, 4, 1),
     note = L['rift_rare_only_note'],
     fgroup = 'nilganihmaht_group',
     rift = 2,
@@ -491,7 +492,7 @@ map.nodes[27672526] = Rare({
 
 map.nodes[69214521] = Treasure({
     quest = 64256,
-    rlabel = shadowlands.status.LightBlue(L['plus_research']),
+    rlabel = Shadowlands.status.LightBlue(L['plus_research']),
     rewards = {
         Achievement({id = 15099, criteria = 52243}),
         Item({item = 185902, note = L['trinket']}), -- Iron Maiden's Toolkit
@@ -523,7 +524,7 @@ map.nodes[66526129] = Treasure({
 -------------------------------------------------------------------------------
 
 local Lore = Class('MawLore', Treasure, {
-    rlabel = shadowlands.status.LightBlue('+150 ' .. L['rep']),
+    rlabel = Shadowlands.status.LightBlue('+150 ' .. L['rep']),
     IsCompleted = function(self)
         if C_QuestLog.IsOnQuest(self.quest[1]) then return true end
         return Treasure.IsCompleted(self)
@@ -565,8 +566,8 @@ map.nodes[19363340] = Lore({
 local BonusBoss = Class('BonusBoss', NPC, {
     icon = 'peg_rd',
     scale = 1.8,
-    group = shadowlands.groups.BONUS_BOSS,
-    rlabel = shadowlands.status.LightBlue('+40 ' .. L['rep'])
+    group = Shadowlands.groups.BONUS_BOSS,
+    rlabel = Shadowlands.status.LightBlue('+40 ' .. L['rep'])
 })
 
 map.nodes[28204450] = BonusBoss({
@@ -770,11 +771,11 @@ map.nodes[40705959] = BonusBoss({
 ------------------------------ CHAOTIC RIFTSTONES -----------------------------
 -------------------------------------------------------------------------------
 
-local Riftstone = Class('Riftstone', shadowlands.node.NPC, {
+local Riftstone = Class('Riftstone', Shadowlands.node.NPC, {
     id = 174962,
     scale = 1.3,
-    group = shadowlands.groups.RIFTSTONE,
-    requires = shadowlands.requirement.Venari(63177),
+    group = Shadowlands.groups.RIFTSTONE,
+    requires = Shadowlands.requirement.Venari(63177),
     note = L['chaotic_riftstone_note']
 })
 
@@ -818,12 +819,12 @@ map.nodes[19776617] = Riftstone({
 -------------------------------------------------------------------------------
 
 map.nodes[48284145] = NPC({
-    group = shadowlands.groups.RIFTSTONE,
+    group = Shadowlands.groups.RIFTSTONE,
     icon = 'portal_bl',
     id = 172925,
     minimap = false,
     note = L['animaflow_teleporter_note'],
-    requires = shadowlands.requirement.Venari(61600),
+    requires = Shadowlands.requirement.Venari(61600),
     scale = 1.3,
     pois = {
         Arrow({48284145, 33935677}), -- Perdition Hold
@@ -857,10 +858,10 @@ local GRAPPLES = {
 
 for _, coord in ipairs(GRAPPLES) do
     map.nodes[coord] = NPC({
-        group = shadowlands.groups.GRAPPLES,
+        group = Shadowlands.groups.GRAPPLES,
         icon = 'peg_bk',
         id = 176308,
-        requires = shadowlands.requirement.Venari(63217),
+        requires = Shadowlands.requirement.Venari(63217),
         scale = 1.25
     })
 end
@@ -869,13 +870,13 @@ end
 ------------------------------- STYGIAN CACHES --------------------------------
 -------------------------------------------------------------------------------
 
-local Cache = Class('Cache', shadowlands.node.Node, {
-    group = shadowlands.groups.STYGIAN_CACHES,
+local Cache = Class('Cache', Shadowlands.node.Node, {
+    group = Shadowlands.groups.STYGIAN_CACHES,
     icon = 'chest_nv',
     label = L['stygian_cache'],
     note = L['stygian_cache_note'],
     scale = 1.3,
-    rewards = {shadowlands.reward.Currency({id = 1767, note = '48'})}
+    rewards = {Shadowlands.reward.Currency({id = 1767, note = '48'})}
 })
 
 map.nodes[15705050] = Cache()
@@ -919,10 +920,10 @@ pitl.nodes[46896760] = Cache({parent = map.id})
 -- }
 
 local Nexus = Class('StygiaNexus', NPC, {
-    group = shadowlands.groups.STYGIA_NEXUS,
+    group = Shadowlands.groups.STYGIA_NEXUS,
     icon = 'peg_gn',
     id = 177632,
-    requires = shadowlands.requirement.Item(184870),
+    requires = Shadowlands.requirement.Item(184870),
     scale = 1.25,
     rift = 2 -- can see in both phases
 })
@@ -1031,11 +1032,11 @@ pitl.nodes[67185536] = Nexus({
 ---------------------------- HELGARDE SUPPLY CACHE ----------------------------
 -------------------------------------------------------------------------------
 
-local HELGARDE = shadowlands.node.Node({
+local HELGARDE = Shadowlands.node.Node({
     quest = 62682,
     label = L['helgarde_supply'],
     note = L['helgarde_supply_note'],
-    group = shadowlands.groups.HELGARDE_CACHE,
+    group = Shadowlands.groups.HELGARDE_CACHE,
     icon = 'chest_gy',
     scale = 0.8,
     rewards = {
@@ -1088,7 +1089,7 @@ local tower_cache = L['mawsworn_cache_tower_note'] .. '\n\n' ..
 local MawswornC = Class('MawswornC', Treasure, {
     label = L['mawsworn_cache'],
     note = ramp_cache,
-    group = shadowlands.groups.MAWSWORN_CACHE,
+    group = Shadowlands.groups.MAWSWORN_CACHE,
     assault = NECROLORD,
     rewards = {
         Achievement({id = 15039, criteria = {id = 1, qty = true}}),
@@ -1132,7 +1133,7 @@ map.nodes[33795741] = MAW_CACHE7
 
 local RiftCache = Class('RiftCache', Treasure, {
     label = L['rift_hidden_cache'],
-    group = shadowlands.groups.RIFT_HIDDEN_CACHE,
+    group = Shadowlands.groups.RIFT_HIDDEN_CACHE,
     rift = 1,
     assault = NIGHTFAE,
     rewards = {
@@ -1168,8 +1169,8 @@ map.nodes[22624623] = RIFT_CACHE6
 
 local Vessel = Class('AnimaVessel', Treasure, {
     label = L['stolen_anima_vessel'],
-    rlabel = shadowlands.status.LightBlue(L['plus_research']),
-    group = shadowlands.groups.ANIMA_VESSEL
+    rlabel = Shadowlands.status.LightBlue(L['plus_research']),
+    group = Shadowlands.groups.ANIMA_VESSEL
 })
 
 -- In the rift
@@ -1245,13 +1246,13 @@ local FAE_VESSEL2 = Vessel({
 }) -- object=368953
 
 -- In the rift
-map.nodes[47437620] = shadowlands.Clone(RIFT_VESSEL1, {note = L['in_cave']})
-map.nodes[47798651] = shadowlands.Clone(RIFT_VESSEL1, {note = L['nexus_cave_roar']})
-map.nodes[51008544] = shadowlands.Clone(RIFT_VESSEL1, {note = L['nexus_cave_howl']})
+map.nodes[47437620] = Shadowlands.Clone(RIFT_VESSEL1, {note = L['in_cave']})
+map.nodes[47798651] = Shadowlands.Clone(RIFT_VESSEL1, {note = L['nexus_cave_roar']})
+map.nodes[51008544] = Shadowlands.Clone(RIFT_VESSEL1, {note = L['nexus_cave_howl']})
 map.nodes[32404309] = RIFT_VESSEL2
 map.nodes[35704620] = RIFT_VESSEL2
 map.nodes[36264215] = RIFT_VESSEL2
-map.nodes[38474846] = shadowlands.Clone(RIFT_VESSEL2, {note = L['in_cave']})
+map.nodes[38474846] = Shadowlands.Clone(RIFT_VESSEL2, {note = L['in_cave']})
 map.nodes[44554761] = RIFT_VESSEL2
 map.nodes[27464950] = RIFT_VESSEL3
 -- Necrolord Assault
@@ -1270,7 +1271,7 @@ map.nodes[27801950] = VEN_VESSEL1
 map.nodes[26201960] = VEN_VESSEL2
 map.nodes[29601160] = VEN_VESSEL2
 map.nodes[32701480] = VEN_VESSEL2
-ext.nodes[73685062] = shadowlands.Clone(VEN_VESSEL2, {parent = map.id})
+ext.nodes[73685062] = Shadowlands.Clone(VEN_VESSEL2, {parent = map.id})
 -- Kyrian Assault
 map.nodes[32594092] = KYR_VESSEL1
 map.nodes[32604340] = KYR_VESSEL1
@@ -1293,8 +1294,8 @@ map.nodes[22704850] = FAE_VESSEL2
 -------------------------------- WHO SENT YOU ---------------------------------
 -------------------------------------------------------------------------------
 
-local Blackguard = Class('MawswornBlackguard', shadowlands.node.Node, {
-    group = shadowlands.groups.MAWSWORN_BLACKGUARD,
+local Blackguard = Class('MawswornBlackguard', Shadowlands.node.Node, {
+    group = Shadowlands.groups.MAWSWORN_BLACKGUARD,
     icon = 'peg_yw',
     id = 183173,
     label = L['mawsworn_blackguard'],
@@ -1355,7 +1356,7 @@ local Vault = Class('ZovaalVault', NPC, {
     quest = 64283,
     icon = 'star_chest_g',
     scale = 2,
-    group = shadowlands.groups.ZOVAAL_VAULT,
+    group = Shadowlands.groups.ZOVAAL_VAULT,
     note = L['zovault_note'],
     rift = 1,
     rewards = {
@@ -1369,6 +1370,262 @@ map.nodes[33006630] = Vault({pois = {Arrow({33006630, 44545150})}})
 map.nodes[47257968] = Vault({pois = {Arrow({47257968, 44545150})}})
 map.nodes[62176427] = Vault({pois = {Arrow({62176427, 44545150})}})
 map.nodes[66405820] = Vault({pois = {Arrow({66405820, 44545150})}})
+
+-------------------------------------------------------------------------------
+------------------------------ COVENANT ASSAULTS ------------------------------
+-------------------------------------------------------------------------------
+
+local NECROLORD_ASSAULT_REWARDS = {
+    Achievement({id = 15000, criteria = 51720}), -- United Front
+    Spacer(), Achievement({
+        id = 15032,
+        criteria = {
+            52000, -- Dead On Their Feet
+            52001, -- Here's an Axe, Get to Work!
+            52002, -- You and What Army
+            52003, -- An Embarrassment of Corpses
+            52004, -- Putting a Plan Together
+            52005, -- Centurions March!
+            52006, -- Pulling His Chain
+            52007, -- Splash Damage
+            52008, -- Get to the Point
+            52009 -- Somebody Feed Kevin
+        }
+    }), -- Breaking Their Hold
+    Spacer(), Achievement({
+        id = 15037,
+        criteria = {
+            52044, -- Cutter Fin
+            52045, -- Kearnen the Blade
+            52046, -- Winslow Swan
+            52047, -- Boil Master Yetch
+            52048 -- Flytrap
+        }
+    }), -- This Army
+    Spacer(), Achievement({
+        id = 15039,
+        criteria = ({
+            id = 1,
+            qty = true,
+            suffix = L['necrolord_assault_quantity_note']
+        })
+    }), -- Up For Grabs
+    Spacer(), Section('{item:185992}'), Mount({item = 186103, id = 1477}), -- Undying Darkhound
+    Pet({item = 186557, id = 3114}) -- Fodder
+}
+
+local VENTHYR_ASSAULT_REWARDS = {
+    Achievement({id = 15000, criteria = 51721}), -- United Front
+    Spacer(), Achievement({
+        id = 15033,
+        criteria = {
+            52017, -- Terrorizing the Tremaculum
+            52018, -- Weapons of the Tremaculum
+            52019, -- That's a Good Trick
+            52020, -- Fangcrack's Fan Club
+            52021, -- A Tea for Every Occasion
+            52022, -- Duelist's Challenge
+            52023, -- If Even One is Worthy
+            52024, -- They Grow Up So Quickly
+            52025, -- The Skyhunt
+            52026 -- Wrath of the Party Hearld
+        }
+    }), -- Taking the Tremaculum
+    Spacer(), Achievement({
+        id = 15042,
+        criteria = {
+            52065, -- Simone
+            52066, -- Laurent
+            52067, -- Archivist Fane
+            52068, -- The Countess
+            52069, -- Kael'thas Sunstrider
+            52070, -- Lost Sybille
+            52071, -- Vulca
+            52072 -- Iven
+        }
+    }), -- Tea for the Troubled
+    Spacer(), Achievement({
+        id = 15043,
+        criteria = ({
+            id = 1,
+            qty = true,
+            suffix = L['venthyr_assault_quantity_note']
+        })
+    }), -- Hoarder of Torghast
+    Spacer(), Section('{item:185990}'), Mount({item = 185996, id = 1378}) -- Harvester's Dreadwing
+}
+
+local NIGHT_FAE_ASSAULT_REWARDS = {
+    Achievement({id = 15000, criteria = 51722}), -- United Front
+    Spacer(), Achievement({
+        id = 15001,
+        criteria = ({
+            id = 1,
+            qty = true,
+            suffix = L['night_fae_assault_quantity_note']
+        })
+    }), -- Jailer's Personal Stash
+    Spacer(), Achievement({
+        id = 15036,
+        criteria = {
+            52031, -- Clean Out the Crucible
+            52032, -- Looming Darkness
+            52033, -- No Soul Left Behind
+            52034, -- Snail Stomping
+            52035, -- Just Don't Ask Me to Spell It
+            52036, -- Double Dromans
+            52037, -- That's Going to Sting
+            52038, -- The Soul Blade
+            52039, -- A Shady Place
+            52040 -- Heavy Handed Tactics
+        }
+    }), -- Rooting Out the Evil
+    Spacer(), Achievement({
+        id = 15044,
+        criteria = {
+            52078, -- Elder Gwenna
+            52079, -- Foreman Thorodir
+            52080, -- Te'zan
+            52081, -- Warden Casad
+            52082, -- Kivarr
+            52083 -- Guardian Kota
+        }
+    }), -- Krrprripripkraak's Heroes
+    Spacer(), Section('{item:185991}'), Mount({item = 186000, id = 1476}), -- Wild Hunt Legsplitter
+    Pet({item = 186547, id = 3116}), -- Invasive Buzzer
+    Item({item = 185052, quest = 63608, covenant = NIGHTFAE}) -- Hippo Soul
+}
+
+local KYRIAN_ASSAULT_REWARDS = {
+    Achievement({id = 15000, criteria = 51723}), -- United Front
+    Spacer(), Achievement({
+        id = 15004,
+        criteria = ({
+            id = 1,
+            qty = true,
+            suffix = L['kyrian_assault_quantity_note1']
+        })
+    }), -- A Sly Fox
+    Spacer(), Achievement({
+        id = 15034,
+        criteria = {
+            52010, -- Mine's Bigger
+            52011, -- Heart and Soul,
+            52012, -- No One Floats Down Here
+            52013, -- Encouraging Words
+            52014, -- Courage of the Soul
+            52015, -- Saved By The Bells
+            52016, -- United In Pride
+            52041, -- The Ember Count
+            52042, -- Kill The Flame
+            52043 -- The Dreadful Blend
+        }
+    }), -- Wings Against the Flames
+    Spacer(), Achievement({
+        id = 15041,
+        criteria = ({
+            id = 1,
+            qty = true,
+            suffix = L['kyrian_assault_quantity_note2']
+        })
+    }), -- The Zovaal Shuffle
+    Spacer(), Section('{item:185993}'), Pet({item = 186546, id = 3103}), -- Copperback Etherwyrm
+    Toy({item = 187185}) -- Vesper of Faith
+}
+
+-------------------------------------------------------------------------------
+
+local ASSAULTS = {
+    [NECROLORD.assault] = NECROLORD_ASSAULT_REWARDS,
+    [VENTHYR.assault] = VENTHYR_ASSAULT_REWARDS,
+    [NIGHTFAE.assault] = NIGHT_FAE_ASSAULT_REWARDS,
+    [KYRIAN.assault] = KYRIAN_ASSAULT_REWARDS
+}
+
+local assaultHandled = false
+
+hooksecurefunc(GameTooltip, 'Show', function(self)
+    if assaultHandled then return end
+    local owner = self:GetOwner()
+    if owner and owner.questID then
+        local rewards = ASSAULTS[owner.questID]
+        if rewards and #rewards > 0 then
+            for i, reward in ipairs(rewards) do
+                if reward:IsEnabled() then reward:Render(self) end
+            end
+            assaultHandled = true
+            self:AddLine(' ') -- add blank line after rewards
+            self:Show()
+        end
+    end
+end)
+
+hooksecurefunc(GameTooltip, 'ClearLines',
+    function(self) assaultHandled = false end)
+
+-------------------------------------------------------------------------------
+
+local Assault = Class('Assault', Shadowlands.node.Node, {
+    scale = 1.5,
+    group = Shadowlands.groups.COVENANT_ASSAULTS,
+    IsEnabled = function(self)
+        return not C_QuestLog.IsOnMap(self.assault_quest)
+    end,
+    getters = {
+        sublabel = function(self)
+            local sublabel
+            local region = GetCVar('portal')
+            if region == 'US' then
+                sublabel = L['assault_sublabel_US']
+            elseif region == 'EU' then
+                sublabel = L['assault_sublabel_EU']
+            elseif region == 'CN' then
+                sublabel = L['assault_sublabel_CN']
+            else
+                sublabel = ''
+            end
+            return sublabel
+        end,
+        rlabel = function(self)
+            local completed = C_QuestLog.IsQuestFlaggedCompleted(
+                self.assault_quest)
+            local color = completed and Shadowlands.status.Green or Shadowlands.status.Gray
+            return color(L['weekly'])
+        end
+    }
+})
+
+map.nodes[33865473] = Assault({
+    label = L['necrolord_assault'],
+    icon = 3257749,
+    assault_quest = NECROLORD.assault,
+    note = L['necrolord_assault_note'],
+    rewards = NECROLORD_ASSAULT_REWARDS
+}) -- Necrolord Assault
+
+map.nodes[29461808] = Assault({
+    label = L['venthyr_assault'],
+    icon = 3257751,
+    assault_quest = VENTHYR.assault,
+    note = L['venthyr_assault_note'],
+    rewards = VENTHYR_ASSAULT_REWARDS
+}) -- Venthyr Assault
+
+map.nodes[22004412] = Assault({
+    label = L['night_fae_assault'],
+    icon = 3257750,
+    assault_quest = NIGHTFAE.assault,
+    note = L['night_fae_assault_note'],
+    rewards = NIGHT_FAE_ASSAULT_REWARDS
+}) -- Night Fae Assault
+
+map.nodes[41134541] = Assault({
+    label = L['kyrian_assault'],
+    icon = 3257748,
+    assault_quest = KYRIAN.assault,
+    note = L['kyrian_assault_note'],
+    rewards = KYRIAN_ASSAULT_REWARDS
+}) -- Kryian Assault
 
 -------------------------------------------------------------------------------
 -------------------------------- NILGANIHMAHT ---------------------------------
@@ -1395,10 +1652,10 @@ local Nilganihmaht = Class('Nilganihmaht', Collectible, {
 
 function Nilganihmaht.getters:note()
     local function status(i, item)
-        if shadowlands.PlayerHasItem(item) then
-            return shadowlands.status.Green(i)
+        if Shadowlands.PlayerHasItem(item) then
+            return Shadowlands.status.Green(i)
         else
-            return shadowlands.status.Red(i)
+            return Shadowlands.status.Red(i)
         end
     end
 
@@ -1429,10 +1686,10 @@ local StoneRing = Class('StoneRing', Collectible, {
 
 function StoneRing.getters:note()
     local function status(i, item)
-        if shadowlands.PlayerHasItem(item) then
-            return shadowlands.status.Green(i)
+        if Shadowlands.PlayerHasItem(item) then
+            return Shadowlands.status.Green(i)
         else
-            return shadowlands.status.Red(i)
+            return Shadowlands.status.Red(i)
         end
     end
 
@@ -1476,7 +1733,7 @@ local SilverRing = Class('SilverRing', Collectible, {
     -- quest=64207,
     icon = 1043909,
     item = 186607,
-    requires = shadowlands.requirement.Item(186727, 4), -- Seal Breaker Key
+    requires = Shadowlands.requirement.Item(186727, 4), -- Seal Breaker Key
     fgroup = 'nilganihmaht_group',
     rewards = {
         Item({item = 186607, bag = true}) -- Nilganimahts Silver Ring
@@ -1490,9 +1747,9 @@ local SilverRing = Class('SilverRing', Collectible, {
 function SilverRing.getters:note()
     local function status(i, quest)
         if C_QuestLog.IsQuestFlaggedCompleted(quest) then
-            return shadowlands.status.Green(i)
+            return Shadowlands.status.Green(i)
         else
-            return shadowlands.status.Red(i)
+            return Shadowlands.status.Red(i)
         end
     end
 
@@ -1514,7 +1771,7 @@ map.nodes[66045739] = SilverRing()
 ---------------------------------- TORMENTORS ---------------------------------
 -------------------------------------------------------------------------------
 
-map.nodes[85375524] = Class('Tormentor', shadowlands.node.Node, {
+map.nodes[85375524] = Class('Tormentor', Shadowlands.node.Node, {
     label = L['tormentors'],
     note = L['tormentors_note'],
     icon = 'tormentor',
@@ -1566,7 +1823,7 @@ map.nodes[85375524] = Class('Tormentor', shadowlands.node.Node, {
         Transmog({item = 186235, slot = L['plate'], note = '{npc:178886}'}), -- Shadow-Wreathed Vambraces
         Transmog({item = 186233, slot = L['plate'], note = '{npc:177981}'}), -- Spaulders of the Skyborn Damned
         Pet({item = 186449, id = 3117, note = '{npc:177979}'}), -- Amaranthine Stinger
-        shadowlands.reward.Spacer(), shadowlands.reward.Section('{item:185972}'), -- Tormentor's Cache
+        Spacer(), Shadowlands.reward.Section('{item:185972}'), -- Tormentor's Cache
         Transmog({item = 186977, slot = L['cosmetic'], indent = true}), -- Beastcaller's Skull Crescent
         Transmog({item = 186978, slot = L['cosmetic'], indent = true}), -- Borrowed Eye Crescent
         Transmog({item = 186562, slot = L['cosmetic'], indent = true}), -- Tormentor's Manacled Backplate
@@ -1575,7 +1832,7 @@ map.nodes[85375524] = Class('Tormentor', shadowlands.node.Node, {
     getters = {
         rlabel = function(self)
             local completed = C_QuestLog.IsQuestFlaggedCompleted(63854)
-            local color = completed and shadowlands.status.Green or shadowlands.status.Gray
+            local color = completed and Shadowlands.status.Green or Shadowlands.status.Gray
             return color(L['weekly'])
         end
     }
@@ -1589,7 +1846,7 @@ map.nodes[23184238] = Collectible({
     id = 179038,
     quest = 64000,
     icon = 3046536,
-    requires = shadowlands.requirement.Item(186190),
+    requires = Shadowlands.requirement.Item(186190),
     note = L['etherwyrm_note'],
     assault = NIGHTFAE,
     rift = 2,
@@ -1651,14 +1908,14 @@ map.nodes[46914169] = NPC({
     note = L['venari_note'],
     rewards = {
         Achievement({id = 14895, oneline = true}), -- 'Ghast Five
-        Section(C_Map.GetMapInfo(1543).name), shadowlands.reward.Spacer(),
+        Section(C_Map.GetMapInfo(1543).name), Spacer(),
         Item({item = 184613, quest = 63177, note = L['Apprehensive']}), -- Encased Riftwalker Essence
         Item({item = 184653, quest = 63217, note = L['Tentative']}), -- Animated Levitating Chain
         Item({item = 180949, quest = 61600, note = L['Tentative']}), -- Animaflow Stabilizer
         Item({item = 184605, quest = 63092, note = L['Tentative']}), -- Sigil of the Unseen
         Item({item = 184588, quest = 63091, note = L['Ambivalent']}), -- Soul-Stabilizing Talisman
         Item({item = 184870, note = L['Appreciative']}), -- Stygia Dowser
-        shadowlands.reward.Spacer(), Section(L['torghast']), shadowlands.reward.Spacer(),
+        Spacer(), Section(L['torghast']), Spacer(),
         Item({item = 184620, quest = 63202, note = L['Apprehensive']}), -- Vessel of Unforunate Spirits
         Item({item = 184615, quest = 63183, note = L['Apprehensive']}), -- Extradimensional Pockets
         Item({item = 184901, quest = 63523, note = L['Apprehensive']}), -- Broker Traversal Enhancer

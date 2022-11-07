@@ -1,4 +1,4 @@
---## Author: Hizuro ## Version: 1.3.5-release
+--## Author: Hizuro ## Version: 1.3.8-release
 local LFRofthepast = {};
 LFRofthepast.npcID = {};
 LFRofthepast.npcs = {};

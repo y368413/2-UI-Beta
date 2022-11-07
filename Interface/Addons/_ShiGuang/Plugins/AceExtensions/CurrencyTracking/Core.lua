@@ -1,4 +1,4 @@
-﻿-- $Id: Constants.lua 247 2022-08-21 13:59:28Z arithmandar $
+﻿-- $Id: Constants.lua 251 2022-11-03 15:35:33Z arithmandar $
 local _G = getfenv(0)
 local string = _G.string
 -- Libraries
@@ -8,7 +8,7 @@ local GetBuildInfo = _G.GetBuildInfo
 local GetSpellTexture, GetSpellInfo, GetItemInfo, GetItemCount = _G.GetSpellTexture, _G.GetSpellInfo, _G.GetItemInfo, _G.GetItemCount
 local constants = {}
 
-local WoWClassicEra, WoWClassicTBC, WoWWOTLKC, WoWRetail
+local WoWClassicEra, WoWClassicTBC, WoWWOTLKC, WoWRetail, WoWDragonflight
 local wowversion  = select(4, GetBuildInfo())
 if wowversion < 20000 then
 	WoWClassicEra = true
@@ -16,10 +16,10 @@ elseif wowversion < 30000 then
 	WoWClassicTBC = true
 elseif wowversion < 40000 then 
 	WoWWOTLKC = true
-elseif wowversion > 90000 then
+elseif wowversion < 100000 then
 	WoWRetail = true
 else
-	-- n/a
+	WoWDragonflight = true
 end
 
 constants.defaults = {
@@ -41,10 +41,7 @@ constants.defaults = {
 		bgalpha = 0.1,
 		tooltip_alpha = 0.9,
 		tooltip_scale = 1,
-		currencies = {
-				[1767] = true,
-				[1813] = true,
-	  },
+		currencies = {},
 		items = {},
 		maxItems = 0, -- 0 means un-limited
 		--optionsCopied = false,
@@ -91,7 +88,7 @@ end
 -- below to force currency category to be displayed in specific order
 constants.currencyCategories = {
 	--251, -- Dragon Racing UI (Hidden)
-	--250, -- Dragonflight
+	250, -- Dragonflight
 	248, -- Torghast
 	245, -- Shadowlands
 	143, -- Battle for Azeroth
@@ -192,8 +189,6 @@ else
 		"CHAT_MSG_MONEY",
 	}
 end
-
-
 
 
 -- $Id: Items.lua 248 2022-08-21 14:29:45Z arithmandar $
@@ -4766,7 +4761,7 @@ items.quest = { -- quest item which is stable
 }
 ]]
 
--- $Id: Core.lua 242 2022-07-23 08:25:29Z arithmandar $
+-- $Id: Core.lua 251 2022-11-03 15:35:33Z arithmandar $
 -----------------------------------------------------------------------
 -- Upvalued Lua API.
 -----------------------------------------------------------------------
@@ -5315,7 +5310,7 @@ local function createCurrencyFrame()
 	
 	local nf = _G["CurrencyTrackingFrame"]
 	if not nf then nf = CreateFrame("Frame", "CurrencyTrackingFrame") end
-	nf:SetParent("UIParent")
+	nf:SetParent(UIParent)
 	nf:SetWidth(200)
 	nf:SetHeight(20)
 	nf.Texture = nf:CreateTexture(nil, "BACKGROUND")

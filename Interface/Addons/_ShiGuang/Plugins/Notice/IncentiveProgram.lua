@@ -612,7 +612,7 @@ local IncentiveProgramMenu = {
             
             IncentiveProgram:SetCount(IncentiveProgram:GetDungeon():GetShortageCount()) --Refresh Count
         elseif ( arg1 == IncentiveProgram.ContextMenu["INTERFACE_PANEL"] ) then
-			InterfaceOptionsFrame_OpenToCategory(IncentiveProgramInterfacePanel) 
+			Settings.OpenToCategory(IncentiveProgramInterfacePanel) 
 		end
     end,
   
@@ -876,14 +876,14 @@ local IncentiveProgramFrame = {
         ipFrame.leftGradiant:SetHeight(14)
         ipFrame.leftGradiant:SetPoint("LEFT", 0, -5)
         ipFrame.leftGradiant:SetColorTexture(1,0,0,1)
-        ipFrame.leftGradiant:SetGradientAlpha("Horizontal", 0, 0, 0, 0.2, 0, 0, 0, 1)
+        ipFrame.leftGradiant:SetGradient("HORIZONTAL", CreateColor(0, 0, 0, 0.2), CreateColor(0, 0, 0, 1))
         
         ipFrame.rightGradiant = ipFrame:CreateTexture(nil, "BORDER")
         ipFrame.rightGradiant:SetWidth(16)
         ipFrame.rightGradiant:SetHeight(14)
         ipFrame.rightGradiant:SetPoint("RIGHT", 0, -5)
         ipFrame.rightGradiant:SetColorTexture(1,0,0,1)
-        ipFrame.rightGradiant:SetGradientAlpha("Horizontal", 0, 0, 0, 1, 0, 0, 0, 0.2)
+        ipFrame.rightGradiant:SetGradient("HORIZONTAL", CreateColor(0, 0, 0, 1), CreateColor(0, 0, 0, 0.2))
         
         ipFrame.text = ipFrame:CreateFontString(nil, "ARTWORK", "GameFontWhite")
         ipFrame.text:SetJustifyH("CENTER")
@@ -1936,7 +1936,7 @@ local function createInterfacePanel()
     InterfaceAddOnsList_Update();
 	
 	--test
-	--InterfaceOptionsFrame_OpenToCategory(IncentiveProgramInterfacePanel) 
+	--Settings.OpenToCategory(IncentiveProgramInterfacePanel) 
 end
 
 IncentiveProgram.CreateInterfacePanel = createInterfacePanel
@@ -1959,7 +1959,7 @@ function SlashCmdList.INCENTIVEPROGRAM(msg, editbox)
     --IncentiveProgram:GetSettings():SetSetting(IncentiveProgram.Settings["HIDE_IN_PARTY"], false)
     --IncentiveProgram:GetSettings():SetSetting(IncentiveProgram.Settings["HIDE_ALWAYS"], false)
     --IncentiveProgram:GetFrame():ShowFrame()
-	InterfaceOptionsFrame_OpenToCategory(IncentiveProgramInterfacePanel) 
+	Settings.OpenToCategory(IncentiveProgramInterfacePanel) 
 end
 function eventFrame:OnEvent(event, ...)
     if ( event == "VARIABLES_LOADED" ) then

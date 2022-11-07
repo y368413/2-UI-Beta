@@ -30,6 +30,7 @@ function Bar:UpdateStanceBar()
 			else
 				button:SetPoint("LEFT", frame.buttons[i-1], "RIGHT", margin, 0)
 			end
+			button.SetPoint = M.Dummy
 		end
 		Bar:UpdateFontSize(button, fontSize)
 	end
@@ -46,27 +47,12 @@ function Bar:CreateStancebar()
 
 	local buttonList = {}
 	local frame = CreateFrame("Frame", "UI_ActionBarStance", UIParent, "SecureHandlerStateTemplate")
-	if (R.db["Actionbar"]["Style"] == 7) or (R.db["Actionbar"]["Style"] == 8) or (R.db["Actionbar"]["Style"] == 10) then
-		--frame.Pos = {"BOTTOM", UIParent, "BOTTOM", -120, 82}
-		frame.mover = M.Mover(frame, U["StanceBar"], "StanceBar", {"BOTTOM", UIParent, "BOTTOM", -120, 82})
-	elseif (R.db["Actionbar"]["Style"] == 4) or (R.db["Actionbar"]["Style"] == 6) then
-		--frame.Pos = {"BOTTOM", UIParent, "BOTTOM", -42, 120}
-		frame.mover = M.Mover(frame, U["StanceBar"], "StanceBar", {"BOTTOM", UIParent, "BOTTOM", -42, 120})
-	elseif R.db["Actionbar"]["Style"] == 3 then
-		--frame.Pos = {"BOTTOM", UIParent, "BOTTOM", -295, 82}
-		frame.mover = M.Mover(frame, U["StanceBar"], "StanceBar", {"BOTTOM", UIParent, "BOTTOM", -295, 82})
-	else
-		--frame.Pos = {"BOTTOM", UIParent, "BOTTOM", -62, 82}
-		frame.mover = M.Mover(frame, U["StanceBar"], "StanceBar", {"BOTTOM", UIParent, "BOTTOM", -62, 82})
-	end
+	frame.mover = M.Mover(frame, U["StanceBar"], "StanceBar", {"BOTTOMLEFT", _G.UI_ActionBar2, "TOPLEFT", 0, margin})
 	Bar.movers[8] = frame.mover
 
 	-- StanceBar
-	StanceBarFrame:SetParent(frame)
-	StanceBarFrame:EnableMouse(false)
-	StanceBarLeft:SetTexture(nil)
-	StanceBarMiddle:SetTexture(nil)
-	StanceBarRight:SetTexture(nil)
+	StanceBar:SetParent(frame)
+	StanceBar:EnableMouse(false)
 
 	for i = 1, num do
 		local button = _G["StanceButton"..i]
@@ -75,10 +61,8 @@ function Bar:CreateStancebar()
 	end
 
 	-- PossessBar
-	PossessBarFrame:SetParent(frame)
-	PossessBarFrame:EnableMouse(false)
-	PossessBackground1:SetTexture(nil)
-	PossessBackground2:SetTexture(nil)
+	PossessActionBar:SetParent(frame)
+	PossessActionBar:EnableMouse(false)
 
 	for i = 1, NUM_POSSESS_SLOTS do
 		local button = _G["PossessButton"..i]

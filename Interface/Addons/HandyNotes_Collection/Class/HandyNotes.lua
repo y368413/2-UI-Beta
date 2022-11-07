@@ -11,7 +11,9 @@ local Addon = this.Addon
 local Point = this.Point
 local API = this.API
 local Cache = this.Cache
+local Icon = this.Icon
 local Map = this.Map
+local Summary = this.Summary
 local GameTooltip = API.GameTooltip
 local DataProviderMixin = this.DataProviderMixin
 
@@ -69,13 +71,6 @@ end
 function HandyNotesPlugin:OnClick(button, down, uiMapId, coord)
   -- Left button actions.
   if (button == 'LeftButton') then
-    -- If icon is portal, we change map.
-    if (down == true and this.points[uiMapId][coord]['portal']) then
-      API:changeMap(this.points[uiMapId][coord]['portal'])
-
-      return;
-    end
-
     -- Waypoint creation on shift click.
     if (API:IsShiftKeyDown() and down == false) then
       Point:createWaypoint(uiMapId, coord)
@@ -83,7 +78,7 @@ function HandyNotesPlugin:OnClick(button, down, uiMapId, coord)
 
     -- Activation and deactivation of a point (displaying pois and paths even if we hover out).
     local active = true
-    if (down == true and not this.points[uiMapId][coord]['portal']) then
+    if (down == true) then
       if (this.points[uiMapId][coord]['active'] and this.points[uiMapId][coord]['active'] == true) then
         active = false
       end
@@ -117,20 +112,34 @@ do
       if point then
         local scale, opacity = Map:prepareSize(point)
 
+        -- Fill up summary point, if we have any.
+        if (point.summary) then
+          point.name = API:getMapName(point.summary)
+          point.icon = 'summary'
+          point.loot = Summary:preparePoint(this.points[point.summary])
+        end
+
         -- Completion status for point.
         local completed = Point:isCompleted(point)
 
         -- Check, whether point should be shown.
-        local show = Map:showPoint(point, completed)
-
-        -- Change icon for npc / chest, if they were completed.
-        if (completed == true and (point.icon == 'chest' or point.icon == 'monster')) then
-          point.icon = point.icon .. '-completed'
-        end
+        local show = Map:showPoint(completed)
 
         if (show == true) then
           -- Create icon for to display on map.
-          local icon = API:GetAtlasInfo(point.icon)
+          local icon = {
+            icon = Icon.list[point.icon],
+            r = 255,
+            g = 0,
+            b = 0,
+          }
+
+          -- Change icon color, if they were completed.
+          if (completed == true) then
+            icon.r = 0
+            icon.g = 255
+            icon.b = 0
+          end
 
           return coordinates, nil, icon, scale, opacity
         end
@@ -157,7 +166,7 @@ do
   ---   Our points table for given map.
   ---
   function HandyNotesPlugin:GetNodes2(uiMapId, _)
-    -- @todo handle minimap (second param).
+    -- @todo Handle minimap (second param).
     return iter, this.points[uiMapId], nil
   end
 end

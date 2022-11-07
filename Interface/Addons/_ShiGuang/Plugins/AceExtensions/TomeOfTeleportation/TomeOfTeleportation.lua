@@ -42,6 +42,38 @@ local SortDownIconOffset = 0
 local AddItemButton = nil
 local AddSpellButton = nil
 
+-- I'm not going to attempt any prefixes with different character sets. I may have missed some variations.
+-- Some of these are odd - inconsistent translations in-game?
+local HiddenPrefixes = 
+{
+	-- German
+	"Pfad der ",
+	"Pfad des ",
+	-- English
+	"Path of the ",
+	-- Spanish
+	"Camino de los  ",
+	"Senda de ",
+	"Senda de las ",
+	"Senda de los ",
+	"Senda del ",
+	-- French
+	"Chemin du ",
+	"Voie de ",
+	"Voie des ",
+	"Voie du ",
+	-- Italian
+	"Sentiero del ",
+	"Via degli ",
+	"Via dei ",
+	"Via del ",
+	"Via dell'",
+	-- Brazilian Portugese
+	"Caminho da ",
+	"Caminho do ",
+	"Caminho dos ",
+}
+
 _G["BINDING_HEADER_TOMEOFTELEPORTATION"] = TOMEOFTELEPORTATIONTITLE
 _G["BINDING_NAME_TOMEOFTELEPORTATIONSHOW"] = "    "..TOMEOFTELEPORTATIONTITLE
 
@@ -604,13 +636,18 @@ local function CanUseSpell(spell)
 	
 	local haveSpell = false
 	local haveToy = false
-	local toyUsable =  C_ToyBox.IsToyUsable(spellId)
+	local toyUsable =  false
+	if C_ToyBox then
+		toyUsable = C_ToyBox.IsToyUsable(spellId)
+	end
 	-- C_ToyBox.IsToyUsable returns nil if the toy hasn't been loaded yet.
 	if toyUsable == nil then		
 		toyUsable = true
 	end
-	if isItem then
-		haveToy = PlayerHasToy(spellId) and toyUsable
+	if isItem then		
+		if toyUsable then
+			haveToy = PlayerHasToy(spellId) and toyUsable
+		end
 		haveSpell = GetItemCount( spellId ) > 0 or haveToy
 	else
 		haveSpell = IsSpellKnown( spellId )
@@ -963,7 +1000,7 @@ local function FindValidSpells()
 
 		spell.toySpell = nil
 		if isItem then
-			if PlayerHasToy(spellId) then
+			if C_ToyBox and PlayerHasToy(spellId) then
 				spell.toySpell = GetItemSpell(spellId)
 			end			
 		end
@@ -974,6 +1011,19 @@ local function FindValidSpells()
 	end
 	
 	return validSpells
+end
+
+local function CleanupName(name)
+	local hide = GetOption("hidePrefixes")
+	if hide == 1 or hide == "1" then
+		for index, prefix in pairs(HiddenPrefixes) do
+			local foundIndex = strfind(name, prefix)
+			if foundIndex == 1 then
+				name = "…" .. strsub(name, strlen(prefix))
+			end
+		end
+	end
+	return name
 end
 
 function TeleporterOpenFrame()
@@ -1621,9 +1671,61 @@ function dataobj:OnClick(button)
 end]]
 
 function TeleporterAddSpell(id, dest)
-	TeleporterSpells[#TeleporterSpells + 1] = {spellId = id, spellType = ST_Spell, zone = dest}
+	if dest then
+		TeleporterSpells[#TeleporterSpells + 1] = {spellId = id, spellType = ST_Spell, zone = dest}
+	end
 end
 
 function TeleporterAddItem(id, dest)
-	TeleporterSpells[#TeleporterSpells + 1] = {spellId = id, spellType = ST_Item, zone = dest}
+	if dest then
+		TeleporterSpells[#TeleporterSpells + 1] = {spellId = id, spellType = ST_Item, zone = dest}
+	end
+end
+
+-- These values aren't accurate, but are good enough for this addon.
+local HighestItemNumber = nil
+local HighestSpellNumber = nil
+
+local function GetHighestItem()
+	if not HighestItemNumber then
+		local _,_,_,version = GetBuildInfo()
+		if version > 100000 then
+			-- Dragonflight
+			HighestItemNumber = 999999
+		elseif version > 90000 then
+			-- Shadowlands
+			HighestItemNumber = 195000
+		else
+			-- Classic
+			HighestItemNumber = 58480
+		end
+	end
+	return HighestItemNumber
+end
+
+local function GetHighestSpell()
+	if not HighestSpellNumber then
+		local _,_,_,version = GetBuildInfo()
+		if version > 100000 then
+			-- Dragonflight
+			HighestSpellNumber = 999999
+		elseif version > 90000 then
+			-- Shadowlands
+			HighestSpellNumber = 999999	-- Don't need to set this until I add some Dragonflight spells
+		else
+			-- Classic
+			HighestSpellNumber = 88340
+		end
+	end
+	return HighestSpellNumber
+end
+
+function TeleporterIsUnsupportedItem(spell)
+	if spell.spellType == ST_Item and spell.spellId > GetHighestItem() then
+		return 1
+	elseif (spell.spellType == ST_Spell or spell.spellType == ST_Challenge) and spell.spellId > GetHighestSpell() then
+		return 1
+	else
+		return 0
+	end
 end

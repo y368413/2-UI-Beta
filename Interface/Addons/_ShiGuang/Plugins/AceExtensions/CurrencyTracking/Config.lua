@@ -1,4 +1,4 @@
-﻿-- $Id: Config.lua 242 2022-07-23 08:25:29Z arithmandar $
+﻿-- $Id: Config.lua 252 2022-11-04 08:27:53Z arithmandar $
 -----------------------------------------------------------------------
 -- Upvalued Lua API.
 -----------------------------------------------------------------------
@@ -61,7 +61,6 @@ local function orderedpairs(t, f)
 	return orderednext, keys
 end
 
-
 -- /////////////////////////////////////////////////////////
 -- Options
 -- /////////////////////////////////////////////////////////
@@ -106,13 +105,13 @@ local function getAboutPanel()
 								version = {
 									order = 21,
 									type = "description",
-									name = GAME_VERSION_LABEL..HEADER_COLON.." v7.02",
+									name = GAME_VERSION_LABEL..HEADER_COLON.." v7.03",
 									width = "full",
 								},
 								update = {
 									order = 22, 
 									type = "description",
-									name = UPDATE..HEADER_COLON.." 2022-08-21T14:39:55Z",
+									name = UPDATE..HEADER_COLON.." 2022-11-04T16:12:22Z",
 									width = "full",
 								},
 								author = {
@@ -511,6 +510,7 @@ local function openOptions(openItems)
 	-- open the profiles tab before, so the menu expands
 	InterfaceOptionsFrame_OpenToCategory(CurrencyTracking.optionsFrames.Profiles)
 	InterfaceOptionsFrame_OpenToCategory(CurrencyTracking.optionsFrames.Profiles) -- yes, run twice to force the tre get expanded
+	InterfaceOptionsFrame_OpenToCategory(CurrencyTracking.optionsFrames.General)
 	if (openItems) then
 		InterfaceOptionsFrame_OpenToCategory(CurrencyTracking.optionsFrames.Items)
 	else
@@ -520,7 +520,9 @@ local function openOptions(openItems)
 			InterfaceOptionsFrame_OpenToCategory(CurrencyTracking.optionsFrames.Currencies)
 		end
 	end
-	InterfaceOptionsFrame:Raise()
+	if InterfaceOptionsFrame then
+		InterfaceOptionsFrame:Raise()
+	end
 end
 
 function CurrencyTracking:OpenOptions(openItems) 

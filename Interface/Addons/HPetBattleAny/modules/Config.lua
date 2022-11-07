@@ -245,7 +245,7 @@ function HPetOption:InitButtons()
 	for key,value in pairs(self.Buttons) do
 		-- pre settings
 		if value.type == "CheckButton" then
-			value.inherits = "OptionsCheckButtonTemplate"
+			value.inherits = "OptionsBaseCheckButtonTemplate"
 		elseif value.type == "Slider" then
 			value.inherits = "OptionsSliderTemplate"
 		elseif value.type == "EditBox" then

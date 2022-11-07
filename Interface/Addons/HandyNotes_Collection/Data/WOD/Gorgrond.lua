@@ -70,7 +70,7 @@ local Alkali = {
 
 local Voidtalon = {
   name = t['edge_of_reality'],
-  icon = 'monster',
+  icon = 'portal',
   note = t['edge_of_reality_note'],
   loot = {
     item = {
@@ -595,7 +595,7 @@ local points = {
         -- Resonant Hidecrystal of the Gorger
         [118229] = { subtype = t['trinket'] },
       },
-    }
+    },
   },
 
   -- Gelgor of the Blue Flame
@@ -1154,6 +1154,8 @@ local points = {
     icon = 'pet',
     loot = {
       achievement = {
+        -- An Awfully Big Adventure
+        [9069] = { criteriaId = 26978 },
         -- Taming Draenor
         [9724] = { criteriaId = 27011 },
       },
@@ -1164,7 +1166,7 @@ local points = {
   -- Ninja Pepe
   [47504130] = {
     name = t['ninja_pepe_title'],
-    icon = 'chest',
+    icon = 'achievement',
     note = t['ninja_pepe_note'],
     questId = 39267,
     loot = {
@@ -1182,7 +1184,7 @@ local points = {
   -- Attack plans of In Plain Sight achievement
   [45802720] = {
     name = t['attack_plans_title'],
-    icon = 'chest',
+    icon = 'achievement',
     note = t['attack_plans_crane'] .. '\n\n' .. t['multiple_spawn_plans'],
     loot = {
       achievement = {
@@ -1193,7 +1195,7 @@ local points = {
   },
   [48202700] = {
     name = t['attack_plans_title'],
-    icon = 'chest',
+    icon = 'achievement',
     note = t['attack_plans_tower'] .. '\n\n' .. t['multiple_spawn_plans'],
     loot = {
       achievement = {
@@ -1204,7 +1206,7 @@ local points = {
   },
   [45202520] = {
     name = t['attack_plans_title'],
-    icon = 'chest',
+    icon = 'achievement',
     note = t['attack_plans_tracks'] .. '\n\n' .. t['multiple_spawn_plans'],
     loot = {
       achievement = {
@@ -1215,7 +1217,7 @@ local points = {
   },
   [49002400] = {
     name = t['attack_plans_title'],
-    icon = 'chest',
+    icon = 'achievement',
     note = t['attack_plans_crane'] .. '\n\n' .. t['multiple_spawn_plans'],
     loot = {
       achievement = {

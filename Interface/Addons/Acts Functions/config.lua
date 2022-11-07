@@ -5,24 +5,9 @@
 
 local ADDON_NAME, namespace = ...;
 local functions = namespace.functions;
+local variables = namespace.variables;
 local actConfigWindow = CreateFrame("FRAME", "ActConfigWindow", UIParent);
 local loadFrame = CreateFrame("FRAME");
-
-local itemQuality = {
-	{	
-		name = "|cFF00FF00Uncommon|r",
-		number = 2
-	},
-	{
-		name = "|cFF0000FFRare|r",
-		number = 3
-	},
-	{
-		name = "|cFFA335EEEpic|r",
-		number = 4
-	}
-};
-
 
 -----------------------
 --FUNCTION DEFINITIONS-
@@ -43,23 +28,22 @@ end
 local function qualityDropDownFactory(frame, frameDropDown, x_loc, y_loc, title)
 	frame:SetPoint("TOPLEFT", x_loc, y_loc);
 	frame:SetSize(100,200);
-	
+
 	frame.dropDown = frameDropDown;
 	frame.dropDown:SetPoint("CENTER", frame, "CENTER", 0, -20);
-	
+
 	frame.dropDown.displayMode = "MENU";
 	UIDropDownMenu_SetText(frame.dropDown, title);
-	
+
 	frame.dropDown.onClick = function(self, arg1, arg2, checked)
 		frame.dropDown.quality = self.value;
-		-- print(self.value);
 	end
-	
+
 	frame.dropDown.initialize = function(self, level)
 		local info = UIDropDownMenu_CreateInfo();
-		
-		for i = 1, #itemQuality do
-			item = itemQuality[i];
+
+		for i = 1, #variables.itemQuality do
+			local item = variables.itemQuality[i];
 			_,_,_,hex = GetItemQualityColor(item.number);
 			info.text = item.name;
 			info.func = self.onClick;
@@ -74,7 +58,7 @@ end
 local function editBoxFactory(frame, frameEditbox, x, y, title)
 	frame:SetPoint("TOPLEFT", actConfigWindow, "TOPLEFT", x, y);
 	frame:SetSize(100,200);
-	
+
 	--Create and set title of the setting.
 	frame.title = frame:CreateFontString(nil,"OVERLAY");
 	frame.title:SetFontObject("GameFontHighLight");
@@ -91,31 +75,11 @@ local function editBoxFactory(frame, frameEditbox, x, y, title)
 	frame.editBox:SetMaxLetters(4);
 end
 
---Function for finding a mount ID by a given name.
-local function getMountID(name)
-	for _, v in pairs(C_MountJournal.GetMountIDs()) do
-		local creatureName, _, _, _, _, _, _, _, _, _, _, mountID = C_MountJournal.GetMountInfoByID(v);
-		if	(creatureName == name) then
-			return mountID;
-		end
-	end
-end
-
---Function for checking if a mount ID is valid.
-local function knownMount(mountID)
-	if not mountID then
-		return false;
-	end
-
-	local _, _, _, _, isUsable, _, _, _, _, _, isCollected = C_MountJournal.GetMountInfoByID(mountID);
-	return isCollected and isUsable;
-end
-
 --Function for creating the mount setting frames.
 local function mountEditBoxFactory(frame, frameEditbox, x, y, title, checkName)
 	frame:SetPoint("TOPLEFT", actConfigWindow, "TOPLEFT", x, y);
 	frame:SetSize(100,200);
-	
+
 	--Create and set title of the setting.
 	frame.title = frame:CreateFontString(nil,"OVERLAY");
 	frame.title:SetFontObject("GameFontHighLight");
@@ -131,9 +95,9 @@ local function mountEditBoxFactory(frame, frameEditbox, x, y, title, checkName)
 
 	frame.editBox:SetScript("OnEnterPressed", function(self)
 		local name = frame.editBox:GetText();
-		local id = getMountID(name);
-		
-		if not knownMount(id) then
+		local id = functions.getMountID(name);
+
+		if not functions.knownMount(id) then
 			print("Invalid mount name!");
 		else
 			frame.editBox.mountID = id;
@@ -143,7 +107,7 @@ local function mountEditBoxFactory(frame, frameEditbox, x, y, title, checkName)
 	end);
 
 	local checkbutton = CreateFrame("CheckButton", checkName, frame, "ChatConfigCheckButtonTemplate");
-	checkbutton:SetPoint("LEFT", frame, "LEFT", -20, 5);
+	checkbutton:SetPoint("LEFT", frame, "LEFT", -42, -15);
 	checkbutton.tooltip = "Enable/Disable this setting.";
 end
 
@@ -153,26 +117,30 @@ local function updateConfigWindow()
 	actConfigWindow.minQuality.dropDown.quality = actSettings.minQuality;
 	actConfigWindow.maxQuality.dropDown.quality = actSettings.maxQuality;
 
+	actConfigWindow.dragonFlyingMount.editBox.mountID = actSettings.dragonFlyingMount;
 	actConfigWindow.defaultMount.editBox.mountID = actSettings.defaultMount;
 	actConfigWindow.groundMount.editBox.mountID = actSettings.groundMount;
 	actConfigWindow.altMount.editBox.mountID = actSettings.altMount;
 	actConfigWindow.ctrlMount.editBox.mountID = actSettings.ctrlMount;
-	
+
 	_G["actDeArmor"]:SetChecked(actSettings.deArmor);
 	_G["actDeWeapon"]:SetChecked(actSettings.deWeapon);
 
+	_G["actDragonflyingMount"]:SetChecked(actMounts.dragonFlyingMountBool);
 	_G["actDefaultMount"]:SetChecked(actMounts.defaultMountBool);
 	_G["actGroundMount"]:SetChecked(actMounts.groundMountBool);
 	_G["actAltMount"]:SetChecked(actMounts.altMountBool);
 	_G["actCtrlMount"]:SetChecked(actMounts.ctrlMountBool);
 	_G["actShiftMount"]:SetChecked(actMounts.shiftMountBool);
 
+	local dragonFlying,_ = C_MountJournal.GetMountInfoByID(actMounts.dragonFlyingMount);
 	local normal,_ = C_MountJournal.GetMountInfoByID(actMounts.defaultMount);
 	local ground,_ = C_MountJournal.GetMountInfoByID(actMounts.groundMount);
 	local alt,_ = C_MountJournal.GetMountInfoByID(actMounts.altMount);
 	local ctrl,_ = C_MountJournal.GetMountInfoByID(actMounts.ctrlMount);
 	local shift,_ = C_MountJournal.GetMountInfoByID(actMounts.shiftMount);
 
+	actConfigWindow.dragonFlyingMount.editBox:SetText(dragonFlying);
 	actConfigWindow.defaultMount.editBox:SetText(normal);
 	actConfigWindow.groundMount.editBox:SetText(ground);
 	actConfigWindow.altMount.editBox:SetText(alt);
@@ -186,7 +154,12 @@ local function saveData()
 	local minQuality = actConfigWindow.minQuality.dropDown.quality;
 	local maxQuality = actConfigWindow.maxQuality.dropDown.quality;
 
-	local defaultMount = actConfigWindow.defaultMount.editBox.mountID; 
+	local dragonFlyingMount = actConfigWindow.dragonFlyingMount.editBox.mountID;
+	if not (dragonFlyingMount == nil or dragonFlyingMount == 0) then
+		actMounts.dragonFlyingMount = dragonFlyingMount;
+	end
+
+	local defaultMount = actConfigWindow.defaultMount.editBox.mountID;
 	if not (defaultMount == nil or defaultMount == 0) then
 		actMounts.defaultMount = defaultMount;
 	end
@@ -196,7 +169,7 @@ local function saveData()
 		actMounts.groundMount = groundMount;
 	end
 
-	local altMount = actConfigWindow.altMount.editBox.mountID; 
+	local altMount = actConfigWindow.altMount.editBox.mountID;
 	if not (altMount == nil or altMount == 0) then
 		actMounts.altMount = altMount;
 	end
@@ -210,7 +183,7 @@ local function saveData()
 	if not (shiftMount == nil or shiftMount == 0) then
 		actMounts.shiftMount = shiftMount;
 	end
-	
+
 	if
 		minIlvl == 0 or
 		minQuality == 0 or
@@ -218,16 +191,17 @@ local function saveData()
 		minQuality > maxQuality
 	then
 		print("Error, invalid values");
-		
+
 		return;
 	end
-	
+
 	actSettings.minIlvl = minIlvl;
 	actSettings.minQuality = minQuality;
 	actSettings.maxQuality = maxQuality;
 	actSettings.deArmor = _G["actDeArmor"]:GetChecked();
 	actSettings.deWeapon = _G["actDeWeapon"]:GetChecked();
 
+	actMounts.dragonFlyingMountBool = _G["actDragonflyingMount"]:GetChecked();
 	actMounts.defaultMountBool = _G["actDefaultMount"]:GetChecked();
 	actMounts.groundMountBool = _G["actGroundMount"]:GetChecked();
 	actMounts.altMountBool = _G["actAltMount"]:GetChecked();
@@ -244,20 +218,23 @@ local function setValuesToDefault()
 	_G["actDeArmor"]:SetChecked(false);
 	_G["actDeWeapon"]:SetChecked(false);
 
-	_G["actDefaultMount"]:SetChecked(false);
+	_G["actDragonflyingMount"]:SetChecked(true);
+	_G["actDefaultMount"]:SetChecked(true);
 	_G["actGroundMount"]:SetChecked(false);
-	_G["actAltMount"]:SetChecked(false);
-	_G["actCtrlMount"]:SetChecked(false);
-	_G["actShiftMount"]:SetChecked(false);
+	_G["actAltMount"]:SetChecked(true);
+	_G["actCtrlMount"]:SetChecked(true);
+	_G["actShiftMount"]:SetChecked(true);
 
+	local dragonFlying, _ = C_MountJournal.GetMountInfoByID(1589);
 	local default,_ = C_MountJournal.GetMountInfoByID(1222);
 	local ground, _ = C_MountJournal.GetMountInfoByID(1222);
 	local alt,_ = C_MountJournal.GetMountInfoByID(1039);
 	local ctrl,_ = C_MountJournal.GetMountInfoByID(460);
 	local shift,_ = C_MountJournal.GetMountInfoByID(407);
 
+	actConfigWindow.dragonFlyingMount.editBox:SetText(dragonFlying);
 	actConfigWindow.defaultMount.editBox:SetText(default);
-	actConfigWindow.groundMountMount.editBox:SetText(ground);
+	actConfigWindow.groundMount.editBox:SetText(ground);
 	actConfigWindow.altMount.editBox:SetText(alt);
 	actConfigWindow.ctrlMount.editBox:SetText(ctrl);
 	actConfigWindow.shiftMount.editBox:SetText(shift);
@@ -285,8 +262,8 @@ end);
 
 
 --Add config to standard wow interface window.
-actConfigWindow.name = "Act's Functions";
-InterfaceOptions_AddCategory(actConfigWindow);
+local category = Settings.RegisterCanvasLayoutCategory(actConfigWindow, "Act's Functions");
+Settings.RegisterAddOnCategory(category);
 
 --Create checkboxes.
 createCheckbutton("actDeArmor", actConfigWindow, 12, -30, "Toggle Armor Disenchant", "If checked the addon will DE armor.");
@@ -307,25 +284,29 @@ actConfigWindow.maxQuality.dropDown = CreateFrame("frame", nil, actConfigWindow.
 qualityDropDownFactory(actConfigWindow.maxQuality, actConfigWindow.maxQuality.dropDown, -35, -85, "Maximum Quality");
 
 --Create mount editboxes
+actConfigWindow.dragonFlyingMount = CreateFrame("Frame", nil, actConfigWindow);
+actConfigWindow.dragonFlyingMount.editBox = CreateFrame("EditBox", nil, actConfigWindow.dragonFlyingMount, "InputBoxTemplate");
+mountEditBoxFactory(actConfigWindow.dragonFlyingMount, actConfigWindow.dragonFlyingMount.editBox, 45, -130, "Dragonflying Mount:", "actDragonflyingMount");
+
 actConfigWindow.defaultMount = CreateFrame("Frame", nil, actConfigWindow);
 actConfigWindow.defaultMount.editBox = CreateFrame("EditBox", nil, actConfigWindow.defaultMount, "InputBoxTemplate");
-mountEditBoxFactory(actConfigWindow.defaultMount, actConfigWindow.defaultMount.editBox, 30, -130, "Default Mount:", "actDefaultMount");
+mountEditBoxFactory(actConfigWindow.defaultMount, actConfigWindow.defaultMount.editBox, 45, -170, "Default Mount:", "actDefaultMount");
 
 actConfigWindow.groundMount = CreateFrame("Frame", nil, actConfigWindow);
 actConfigWindow.groundMount.editBox = CreateFrame("Editbox", nil, actConfigWindow.groundMount, "InputBoxTemplate");
-mountEditBoxFactory(actConfigWindow.groundMount, actConfigWindow.groundMount.editBox, 30, -170, "Ground Mount:", "actGroundMount");
+mountEditBoxFactory(actConfigWindow.groundMount, actConfigWindow.groundMount.editBox, 45, -210, "Ground Mount:", "actGroundMount");
 
 actConfigWindow.altMount = CreateFrame("Frame", nil, actConfigWindow);
 actConfigWindow.altMount.editBox = CreateFrame("EditBox", nil, actConfigWindow.altMount, "InputBoxTemplate");
-mountEditBoxFactory(actConfigWindow.altMount, actConfigWindow.altMount.editBox, 30, -210, "ALT Mount:", "actAltMount");
+mountEditBoxFactory(actConfigWindow.altMount, actConfigWindow.altMount.editBox, 45, -250, "ALT Mount:", "actAltMount");
 
 actConfigWindow.ctrlMount = CreateFrame("Frame", nil, actConfigWindow);
 actConfigWindow.ctrlMount.editBox = CreateFrame("EditBox", nil, actConfigWindow.ctrlMount, "InputBoxTemplate");
-mountEditBoxFactory(actConfigWindow.ctrlMount, actConfigWindow.ctrlMount.editBox, 30, -250, "CTRL Mount:", "actCtrlMount");
+mountEditBoxFactory(actConfigWindow.ctrlMount, actConfigWindow.ctrlMount.editBox, 45, -290, "CTRL Mount:", "actCtrlMount");
 
 actConfigWindow.shiftMount = CreateFrame("Frame", nil, actConfigWindow);
 actConfigWindow.shiftMount.editBox = CreateFrame("EditBox", nil, actConfigWindow.shiftMount, "InputBoxTemplate");
-mountEditBoxFactory(actConfigWindow.shiftMount, actConfigWindow.shiftMount.editBox, 30, -290, "SHIFT Mount:", "actShiftMount");
+mountEditBoxFactory(actConfigWindow.shiftMount, actConfigWindow.shiftMount.editBox, 45, -330, "SHIFT Mount:", "actShiftMount");
 
 
 --Create and set title of the setting.
@@ -334,10 +315,9 @@ actConfigWindow.title:SetFontObject("GameFontNormalLarge");
 actConfigWindow.title:SetPoint("TOPLEFT", actConfigWindow, "TOPLEFT", 15, -5);
 actConfigWindow.title:SetText(GetAddOnMetadata("Acts Functions", "Title") .. " version: " .. GetAddOnMetadata("Acts Functions", "Version"));
 
-actConfigWindow:SetScript("OnShow", function(self) updateConfigWindow(); end);
-actConfigWindow.default = function(self) setValuesToDefault(); end;
-actConfigWindow.okay = function(self) saveData(); end;
 actConfigWindow:Hide();
+actConfigWindow:SetScript("OnShow", function(self) updateConfigWindow(); end);
+actConfigWindow:SetScript("OnHide", function(self) saveData(); end);
 
 
 -----------------------
@@ -347,8 +327,5 @@ actConfigWindow:Hide();
 
 --Create a "global" config toggle function so the settings window can be opened from the init.lua file code.
 function functions.toggleActConfig()
-	InterfaceOptionsFrame_OpenToCategory(actConfigWindow.name);
-	if not actConfigWindow:IsShown() then
-		InterfaceOptionsFrame_OpenToCategory(actConfigWindow.name);
-	end
+	Settings.OpenToCategory(category:GetID());
 end

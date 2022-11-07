@@ -246,7 +246,7 @@ end
 ---   Quest ID.
 ---
 --- @return boolean
----   True if it was completed, false if not or id is wrong
+---   True if it was completed, false if not or id is wrong.
 ---
 function API:isQuestFlaggedCompleted(id)
   if not id then
@@ -254,6 +254,25 @@ function API:isQuestFlaggedCompleted(id)
   end
 
   return C_QuestLog.IsQuestFlaggedCompleted(id)
+end
+
+---
+--- Check, whether quest is active or not.
+---
+--- @link https://wowpedia.fandom.com/wiki/API_C_QuestLog.IsOnQuest
+---
+--- @param id
+---   Quest ID.
+---
+--- @return boolean
+---   True if it is active, false otherwise.
+---
+function API:isOnQuest(id)
+  if not id then
+    return false
+  end
+
+  return C_QuestLog.IsOnQuest(id)
 end
 
 ---
@@ -510,6 +529,7 @@ end
 --- Checks, whether character can collect transmog or not (ie, mage can't collect plate).
 ---
 --- @link https://wowpedia.fandom.com/wiki/API_C_TransmogCollection.PlayerCanCollectSource
+--- @link https://www.townlong-yak.com/framexml/live/CollectionsUtil.lua
 ---
 --- @param id
 ---   Item ID of an item we are checking.
@@ -520,7 +540,12 @@ end
 function API:playerCanCollectSource(id)
   local _, sourceId = self:getTransmogInfo(id)
 
-  local hasItemData, canCollect = C_TransmogCollection.PlayerCanCollectSource(sourceId)
+  -- Check, if we actually have and id.
+  if (sourceId == nil) then
+    return false
+  end
+
+  local hasItemData, canCollect = CollectionWardrobeUtil.PlayerCanCollectSource(sourceId)
 
   if (hasItemData == true and canCollect == true) then
     return true
@@ -570,20 +595,6 @@ function API:getMapName(id)
   end
 
   return C_Map.GetMapInfo(id).name
-end
-
----
---- If map is open, we change it to another one (usable for portals to another map, ie. dungeons or raids).
----
---- @link https://wowpedia.fandom.com/wiki/UiMapID
----
---- @param id
----   Map id (uiMapID).
----
-function API:changeMap(id)
-  if self.WorldMapFrame:IsShown() then
-    self.WorldMapFrame:SetMapID(id)
-  end
 end
 
 ---
@@ -725,6 +736,71 @@ end
 ---
 function API:getContainerItemID(bagId, slot)
   return GetContainerItemID(bagId, slot)
+end
+
+---
+--- Returns indexes for player professions.
+---
+--- @link https://wowpedia.fandom.com/wiki/API_GetProfessions
+---
+--- @return number
+---   Index of first profession.
+--- @return number
+---   Index of second profession.
+--- @return number
+---   Index of archaeology profession.
+--- @return number
+---   Index of fishing profession.
+--- @return number
+---   Index of cooking profession.
+---
+function API:getProfessions()
+  local prof1, prof2, archaeology, fishing, cooking = GetProfessions()
+
+  return prof1, prof2, archaeology, fishing, cooking
+end
+
+---
+--- Returns details about given profession index.
+---
+--- @link https://wowpedia.fandom.com/wiki/API_GetProfessionInfo
+---
+--- @param index
+---   Index of the profession.
+---
+--- @return string
+---   Profession name.
+--- @return string
+---   Profession icon.
+--- @return number
+---   Profession level.
+---
+function API:getProfessionInfo(index)
+  local name, icon, skillLevel = GetProfessionInfo(index)
+
+  return name, icon, skillLevel
+end
+
+---
+--- Returns details about given currency ID.
+---
+--- @link https://wowpedia.fandom.com/wiki/API_C_CurrencyInfo.GetCurrencyInfo
+---
+--- @param currencyId
+---   ID of a currency.
+---
+--- @return table
+---   Currency name and icon.
+---
+function API:getCurrencyInfo(currencyId)
+  local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(currencyId)
+
+  local currency = {
+    name = currencyInfo.name,
+    icon = currencyInfo.iconFileID,
+  }
+
+  return currency
 end
 
 this.API = API

@@ -1,10 +1,14 @@
-lightweight tag f32cdb0e6b5c6dad49d4ed4a962f535edd7c89f1 2.6.3
+tag 503ba7f7e208c28157ea3716bbf0955163bae597 2.7
 Author:	SLOKnightfall <SLOKnightfall@gmail.com>
-Date:	Thu Mar 24 17:25:22 2022 -0700
+Date:	Sun Oct 30 17:37:07 2022 -0700
 
-commit f32cdb0e6b5c6dad49d4ed4a962f535edd7c89f1
+Dragonflight Prepatch Update
+
+commit 529b7f70b3c969729ec017395b5d94c34a800994
 Author: SLOKnightfall <SLOKnightfall@gmail.com>
-Date:   Thu Mar 24 17:25:22 2022 -0700
+Date:   Sun Oct 30 17:35:31 2022 -0700
 
-    Bugfix
+    Dragonflight prepatch updates
+    -Removed the box of many things preview from the tourguide due to errors
+    -Clicking requisitioned powers from the summary window no longer works
 

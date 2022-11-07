@@ -549,7 +549,6 @@ local IncompatibleAddOns = {
 	["AuroraClassic"] = true, -- my own addon
 	["DomiRank"] = true, -- my own addon
 	["MDGuildBest"] = true, -- my own addon
-	["SexyMap"] = true,
 }
 local AddonDependency = {
 	["BigFoot"] = "!!!Libs",

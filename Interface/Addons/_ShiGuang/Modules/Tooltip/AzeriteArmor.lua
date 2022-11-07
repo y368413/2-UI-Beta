@@ -58,6 +58,8 @@ function TT:Azerite_UpdateTier(link)
 end
 
 function TT:Azerite_UpdateItem()
+	if not self.GetItem then return end
+
 	local link = select(2, self:GetItem())
 	if not link then return end
 
@@ -107,9 +109,14 @@ function TT:AzeriteArmor()
 	if not R.db["Tooltip"]["AzeriteArmor"] then return end
 	if IsAddOnLoaded("AzeriteTooltip") then return end
 
-	GameTooltip:HookScript("OnTooltipSetItem", TT.Azerite_UpdateItem)
-	ItemRefTooltip:HookScript("OnTooltipSetItem", TT.Azerite_UpdateItem)
-	ShoppingTooltip1:HookScript("OnTooltipSetItem", TT.Azerite_UpdateItem)
-	EmbeddedItemTooltip:HookScript("OnTooltipSetItem", TT.Azerite_UpdateItem)
-	GameTooltipTooltip:HookScript("OnTooltipSetItem", TT.Azerite_UpdateItem)
+	if I.isBeta then
+		-- todo: update via C_TooltipInfo, requires on shopping tooltip
+		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, TT.Azerite_UpdateItem)
+	else
+		GameTooltip:HookScript("OnTooltipSetItem", TT.Azerite_UpdateItem)
+		ItemRefTooltip:HookScript("OnTooltipSetItem", TT.Azerite_UpdateItem)
+		ShoppingTooltip1:HookScript("OnTooltipSetItem", TT.Azerite_UpdateItem)
+		EmbeddedItemTooltip:HookScript("OnTooltipSetItem", TT.Azerite_UpdateItem)
+		GameTooltipTooltip:HookScript("OnTooltipSetItem", TT.Azerite_UpdateItem)
+	end
 end

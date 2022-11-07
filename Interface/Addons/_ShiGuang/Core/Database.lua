@@ -10,16 +10,7 @@ I.Support = GetAddOnMetadata("_ShiGuang", "X-Support")
 I.Client = GetLocale()
 I.ScreenWidth, I.ScreenHeight = GetPhysicalScreenSize()
 I.isNewPatch = select(4, GetBuildInfo()) >= 100000 -- 10.0
-
--- Deprecated
-LE_ITEM_QUALITY_POOR = Enum.ItemQuality.Poor
-LE_ITEM_QUALITY_COMMON = Enum.ItemQuality.Common
-LE_ITEM_QUALITY_UNCOMMON = Enum.ItemQuality.Uncommon
-LE_ITEM_QUALITY_RARE = Enum.ItemQuality.Rare
-LE_ITEM_QUALITY_EPIC = Enum.ItemQuality.Epic
-LE_ITEM_QUALITY_LEGENDARY = Enum.ItemQuality.Legendary
-LE_ITEM_QUALITY_ARTIFACT = Enum.ItemQuality.Artifact
-LE_ITEM_QUALITY_HEIRLOOM = Enum.ItemQuality.Heirloom
+I.isBeta = select(4, GetBuildInfo()) == 100002 -- 10.0.2
 
 -- Colors
 I.MyName = UnitName("player")
@@ -53,8 +44,8 @@ for index, value in pairs(qualityColors) do
 	I.QualityColors[index] = {r = value.r, g = value.g, b = value.b}
 end
 I.QualityColors[-1] = {r = 0, g = 0, b = 0}
-I.QualityColors[LE_ITEM_QUALITY_POOR] = {r = .61, g = .61, b = .61}
-I.QualityColors[LE_ITEM_QUALITY_COMMON] = {r = 0, g = 0, b = 0}
+I.QualityColors[Enum.ItemQuality.Poor] = {r = COMMON_GRAY_COLOR.r, g = COMMON_GRAY_COLOR.g, b = COMMON_GRAY_COLOR.b}
+I.QualityColors[Enum.ItemQuality.Common] = {r = 0, g = 0, b = 0}
 I.QualityColors[99] = {r = 1, g = 0, b = 0}
 
 -- Fonts
@@ -65,7 +56,6 @@ I.UIString = "|cff0080ff*|r"
 -- Textures
 local Media = "Interface\\Addons\\_ShiGuang\\Media\\"
 I.bdTex = "Interface\\ChatFrame\\ChatFrameBackground"
-I.blankTex = Media.."blankTex"
 I.glowTex = Media.."glowTex"
 I.normTex = Media.."normTex"
 I.gradTex = Media.."gradTex"
@@ -73,6 +63,7 @@ I.flatTex = Media.."flatTex"
 I.bgTex = Media.."bgTex"
 I.arrowTex = Media.."Modules\\Raid\\Arrow"  --"Interface\\BUTTONS\\UI-MicroStream-Red.blp"
 I.starTex = Media.."Hutu\\star"
+I.flagTex = Media.."Hutu\\flag"
 I.MicroTex = Media.."Hutu\\"
 I.rolesTex = Media.."Hutu\\RoleIcons"  --UI-LFG-ICON-ROLES
 I.tankTex = Media.."Hutu\\Tank"

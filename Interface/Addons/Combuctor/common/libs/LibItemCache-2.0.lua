@@ -1,4 +1,4 @@
-local Lib = LibStub:NewLibrary('LibItemCache-2.0', 32)
+local Lib = LibStub:NewLibrary('LibItemCache-2.0', 34)
 if not Lib then return end
 
 local PLAYER, FACTION, REALM, REALMS
@@ -9,6 +9,7 @@ local PET_STRING = '^' .. strrep('%d+:', 7) .. '%d+$'
 local KEYSTONE_LINK  = '|c.+|Hkeystone:.+|h.+|h|r'
 local KEYSTONE_STRING = '^' .. strrep('%d+:', 6) .. '%d+$'
 local EMPTY_FUNC = function() end
+local KEYRING = -2
 
 local FindRealms = function()
 	if not REALM then
@@ -40,7 +41,18 @@ Events:Embed(Lib)
 Lib:RegisterEvent('BANKFRAME_OPENED', function() Lib.AtBank = true; Lib:SendMessage('CACHE_BANK_OPENED') end)
 Lib:RegisterEvent('BANKFRAME_CLOSED', function() Lib.AtBank = false; Lib:SendMessage('CACHE_BANK_CLOSED') end)
 
-if CanUseVoidStorage then
+if C_PlayerInteractionManager then
+	Lib:RegisterEvent('PLAYER_INTERACTION_MANAGER_FRAME_SHOW', function(_,frame)
+		if frame == Enum.PlayerInteractionType.VoidStorageBanker then
+		 Lib.AtVault = true; Lib:SendMessage('CACHE_VAULT_OPENED')
+		end
+	end)
+	Lib:RegisterEvent('PLAYER_INTERACTION_MANAGER_FRAME_HIDE', function(_,frame)
+		if frame == Enum.PlayerInteractionType.VoidStorageBanker then
+		 Lib.AtVault = false; Lib:SendMessage('CACHE_VAULT_CLOSED')
+		end
+	end)
+elseif CanUseVoidStorage then
 	Lib:RegisterEvent('VOID_STORAGE_OPEN', function() Lib.AtVault = true; Lib:SendMessage('CACHE_VAULT_OPENED') end)
 	Lib:RegisterEvent('VOID_STORAGE_CLOSE', function() Lib.AtVault = false; Lib:SendMessage('CACHE_VAULT_CLOSED') end)
 end
@@ -147,7 +159,7 @@ function Lib:GetBagInfo(owner, bag)
 		if bag == REAGENTBANK_CONTAINER then
 			item.cost = GetReagentBankCost()
 			item.owned = IsReagentBankUnlocked()
-		elseif bag == KEYRING_CONTAINER then
+		elseif bag == KEYRING then
 			item.count = HasKey and HasKey() and GetContainerNumSlots(bag)
 			item.free = item.count and item.free and (item.count + item.free - 32)
 		elseif bag > BACKPACK_CONTAINER then
@@ -172,9 +184,9 @@ function Lib:GetBagInfo(owner, bag)
 		item.count = INVSLOT_LAST_EQUIPPED
 		item.owned = true
 	else
-		item.owned = item.owned or (bag >= KEYRING_CONTAINER and bag <= NUM_BAG_SLOTS) or item.id or item.link
+		item.owned = item.owned or (bag >= KEYRING and bag <= NUM_BAG_SLOTS) or item.id or item.link
 
-		if bag == KEYRING_CONTAINER then
+		if bag == KEYRING then
 			item.family = 9
 		elseif bag <= BACKPACK_CONTAINER then
 			item.count = item.count or item.owned and GetContainerNumSlots(bag)
@@ -370,7 +382,7 @@ function Lib:IsBackpackBag(bag)
 end
 
 function Lib:IsKeyring(bag)
-	return bag == KEYRING_CONTAINER
+	return bag == KEYRING
 end
 
 function Lib:IsBank(bag)

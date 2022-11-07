@@ -1,4 +1,4 @@
-﻿--## Version: 9.2.34 ## Author: lteke
+﻿--## Version: 10.0.36 ## Author: lteke
 local InProgressMissions = {}
 
 InProgressMissions.frame = InProgressMissions.frame or CreateFrame("Frame", nil, _G.WorldFrame)
@@ -34,50 +34,13 @@ local ORDERHALL_ADDONS = {
 	["RENovate"] = false,
 }
 
+local tinsert = tinsert
 local GFT = Enum.GarrisonFollowerType
+local GarrisonLandingPageReport
+local GarrisonLandingPageReportList
 
 local TEXT_LEGION_MISSIONS = _G.EXPANSION_NAME6.." ".._G.GARRISON_MISSIONS
 local TEXT_BFA_MISSIONS = _G.EXPANSION_NAME7.." ".._G.GARRISON_MISSIONS
-
-local itemDifficulty do
-	local tooltip
-	local function GetItemDifficulty(id)
-		if not tooltip then
-			tooltip = CreateFrame("GameTooltip")
-			tooltip.leftLines = {}
-			for i = 1, 2 do
-				local L,R = tooltip:CreateFontString(), tooltip:CreateFontString()
-				L:SetFontObject(GameFontNormal)
-				R:SetFontObject(GameFontNormal)
-				tooltip:AddFontStrings(L,R)
-				tooltip.leftLines[i] = L
-			end
-		end
-		tooltip:SetOwner(_G.WorldFrame, "ANCHOR_NONE")
-		tooltip:ClearLines()
-		tooltip:SetItemByID(id)
-		local text = tooltip.leftLines[2]:GetText()
-		tooltip:Hide()
-		return text and text:match("([^%p]+)", 11)
-	end
-
-	itemDifficulty = setmetatable({}, {__index =
-		function(self, key)
-			if type(key) ~= "number" then return end
-			local text = GetItemDifficulty(key)
-			if text then
-				for i = 1, 10 do
-					if text == _G["PLAYER_DIFFICULTY"..i] then
-						self[key] = text
-						return text
-					end
-				end
-			end
-			self[key] = false
-			return false
-		end
-	})
-end
 
 local events = InProgressMissions.events
 
@@ -236,6 +199,7 @@ do
 		if not temp then return end
 		for k, mission in pairs(temp) do
 			if type(mission) == "table" then
+				mission.isAltMission = false
 				mission.description = ""
 				mission.charText = self.playerNameText.."-"..GetRealmName()
 				mission.followerInfo = GetMissionFollowerAbilitiesInfo(mission)
@@ -420,215 +384,206 @@ local function GetFollowerIndicator(item)
 	return result
 end
 
-local function GarrisonLandingPageReportList_Update(...)
-
-	local items = InProgressMissions.missions
-	local numItems = #items
-	local scrollFrame = InProgressMissions.listScroll
-	local offset = HybridScrollFrame_GetOffset(scrollFrame)
-	local buttons = scrollFrame.buttons
-	local numButtons = #buttons
-
-	local stopUpdate = true
-
-	if (numItems == 0 and #InProgressMissions.altMissions == 0) then
-		GarrisonLandingPageReport.List.EmptyMissionText:SetText(GARRISON_EMPTY_IN_PROGRESS_LIST)
+local function MissionButton_SetLayout(button, isTabProgress)
+	if isTabProgress then
+		button.Reward1:SetPoint("RIGHT", -68, 0)
+		button.Status:SetPoint("BOTTOMRIGHT", -8, 3)
 	else
-		GarrisonLandingPageReport.List.EmptyMissionText:SetText(nil)
+		button.CompletedCheck:Hide()
+		button.CompletedOverlay:Hide()
+		button.NumFollowers:Hide()
+		button.Reward1:SetPoint("RIGHT", -5, 0)
+		button.Title:SetTextColor(unpack(TITLE_COLOR_NORMAL))
+		button.Level:SetTextColor(unpack(TITLE_COLOR_NORMAL))
+		button.BG:SetVertexColor(1, 1, 1)
 	end
-
-	local baseTime = GetServerTime()
-	local button, index, item, altMissionIndex, t
-	for i = 1, numButtons do
-		button = buttons[i]
-		index = offset + i
-		item = items[index]
-
-		if item then
-			altMissionIndex = nil
-			if item.missionEndTime then
-				item.isComplete = (item.missionEndTime - baseTime) < 0
-			end
-		else
-			altMissionIndex = index - numItems
-			item = InProgressMissions.altMissions[altMissionIndex]
-			if item and item.missionEndTime then
-				item.isComplete = (item.missionEndTime - baseTime) < 0
-			end
-		end
-
-		if ( item ) then
-			button.id = altMissionIndex and -altMissionIndex or index
-			local bgName
-			if (item.isBuilding) then
-				bgName = "GarrLanding-Building-"
-				button.Status:SetText(GARRISON_LANDING_STATUS_BUILDING)
-			elseif (item.followerTypeID == GFT.FollowerType_6_2) then
-				bgName = "GarrLanding-ShipMission-"
-			else
-				bgName = "GarrLanding-Mission-"
-				button.Status:SetText(nil)
-			end
-			button.Title:SetText(item.name)
-
-			if (item.isComplete) then
-				-- bgName = bgName.."Complete"
-				bgName = bgName.."InProgress"
-				button.CompletedCheck:Show()
-				button.CompletedOverlay:Show()
-				if item.isBuilding then
-					button.MissionType:SetText(GARRISON_LANDING_BUILDING_COMPLEATE)
-				else
-					button.MissionType:SetText(altMissionIndex and (item.charText or _G.UNKNOWN) or InProgressMissions.playerNameText)
-				end
-				button.Title:SetWidth(290)
-			else
-				bgName = bgName.."InProgress"
-				button.CompletedCheck:Hide()
-				button.CompletedOverlay:Hide()
-				if (item.isBuilding) then
-					button.MissionType:SetText(GARRISON_BUILDING_IN_PROGRESS.." - "..GARRISON_BUILDING_LEVEL_LABEL_TOOLTIP:format(item.buildingLevel))
-					button.TimeLeft:SetText(item.timeLeft)
-					button.TimeLeft:SetTextColor(unpack(TIME_COLORS[4]))
-				else
-					button.MissionType:SetText(altMissionIndex and (item.charText or _G.UNKNOWN) or InProgressMissions.playerNameText)
-					t = item.missionEndTime - baseTime
-					if t > 107999 then -- 30hr
-						button.TimeLeft:SetFormattedText(FORMAT_DURATION_DAYS, t / 86400)
-					elseif t > 5459 then
-						button.TimeLeft:SetFormattedText(FORMAT_DURATION_HOURS, t / 3600)
-					elseif t > 59 then
-						button.TimeLeft:SetFormattedText(FORMAT_DURATION_MINUTES, t / 60)
-					else
-						button.TimeLeft:SetFormattedText(FORMAT_DURATION_SECONDS, t)
-					end
-					button.TimeLeft:SetTextColor(unpack(TIME_COLORS[not t and 1 or t > 18000 and 2 or t > 5459 and 3 or t > 599 and 4 or t > 59 and 5 or 6]))
-				end
-				button.Title:SetWidth(322 - button.TimeLeft:GetWidth())
-				stopUpdate = false
-			end
-			if item.followerTypeID == GFT.FollowerType_8_0 then
-				button.Level:SetText(item.level)
-			elseif item.followerTypeID == GFT.FollowerType_9_0 then
-				button.Level:SetText(nil)
-			else
-				button.Level:SetText(item.iLevel and item.iLevel > 0 and item.iLevel or item.followerTypeID ~= GFT.FollowerType_6_2 and item.level or nil)
-			end
-			if item.typeAtlas then
-				button.MissionTypeIcon:SetAtlas(item.typeAtlas)
-			elseif item.typeIcon then
-				button.MissionTypeIcon:SetTexture(item.typeIcon)
-			else
-				button.MissionTypeIcon:SetTexture(nil)
-			end
-			button.MissionTypeIcon:SetShown(not item.isBuilding and item.followerTypeID < GFT.FollowerType_9_0)
-			--button.NumFollowers:SetText(item.numFollowers and string.rep(RANGE_INDICATOR, item.numFollowers) or nil)
-			if item.followerTypeID == GFT.FollowerType_9_0 then
-				button.NumFollowers:Hide()
-			else
-				button.NumFollowers:SetText(GetFollowerIndicator(item))
-				button.NumFollowers:Show()
-			end
-			button.EncounterIcon:SetShown(item.followerTypeID == GFT.FollowerType_9_0)
-			if item.followerTypeID == GFT.FollowerType_9_0 and item.encounterIconInfo then
-				button.EncounterIcon:SetEncounterInfo(item.encounterIconInfo)
-			end
-			button.Status:SetShown(item.isBuilding and not item.isComplete)
-			button.TimeLeft:SetShown(not item.isComplete)
-
-			button.BG:SetAtlas(bgName, true)
-			if altMissionIndex then
-				button.Title:SetTextColor(unpack(TITLE_COLOR_ALT))
-				button.Level:SetTextColor(unpack(TITLE_COLOR_ALT))
-			else
-				button.Title:SetTextColor(unpack(TITLE_COLOR_NORMAL))
-				button.Level:SetTextColor(unpack(TITLE_COLOR_NORMAL))
-			end
-			if item.followerTypeID == GFT.FollowerType_6_2 then
-				button.BG:SetVertexColor(0.9, 0.9, 1)
-			else
-				button.BG:SetVertexColor(1, 1, 1)
-			end
-			Rewards_Update(button, item)
-
-			button:Show()
-		else
-			button:Hide()
-		end
-	end
-
-	local totalHeight = (numItems + #InProgressMissions.altMissions) * scrollFrame.buttonHeight
-	local displayedHeight = numButtons * scrollFrame.buttonHeight
-	HybridScrollFrame_Update(scrollFrame, totalHeight, displayedHeight)
-
-	return stopUpdate
 end
 
-local function ScrollFrame_UpdateAvailable(...)
-	local items = GarrisonLandingPageReport.List.AvailableItems or {}
-	local item
-	local rewardIndex
-	for i, button in ipairs(InProgressMissions.listScroll.buttons) do
-		if items[button.id] and button:IsShown() then
-			item = items[button.id]
-			button.Title:SetTextColor(unpack(TITLE_COLOR_NORMAL))
-			button.Level:SetTextColor(unpack(TITLE_COLOR_NORMAL))
-			button.MissionTypeIcon:ClearAllPoints()
-			button.MissionTypeIcon:SetPoint("LEFT", button, 2, 0)
-			button.MissionTypeIcon:SetSize(MISSION_ICON_SIZE, MISSION_ICON_SIZE)
-			button.BG:SetVertexColor(1, 1, 1)
-			button.CompletedCheck:Hide()
-			button.CompletedOverlay:Hide()
-			if item.followerTypeID == GFT.FollowerType_8_0 then
-				button.Level:SetText(item.level)
-			elseif item.followerTypeID == GFT.FollowerType_9_0 then
-				button.Level:SetText(nil)
+local function MissionButton_Update(button, item)
+	local baseTime = GetServerTime()
+	local stopUpdate = true
+
+	if item.missionEndTime then
+		item.isComplete = (item.missionEndTime - baseTime) < 0
+	end
+
+	local bgName
+	if (item.isBuilding) then
+		bgName = "GarrLanding-Building-"
+		button.Status:SetText(GARRISON_LANDING_STATUS_BUILDING)
+	elseif (item.followerTypeID == GFT.FollowerType_6_2) then
+		bgName = "GarrLanding-ShipMission-"
+	else
+		bgName = "GarrLanding-Mission-"
+		button.Status:SetText(nil)
+	end
+	button.Status:SetShown(item.isBuilding and not item.isComplete)
+
+	bgName = bgName.."InProgress"
+
+	button.Title:SetText(item.name)
+
+	if (item.isComplete) then
+		button.CompletedCheck:Show()
+		button.CompletedOverlay:Show()
+		if item.isBuilding then
+			button.MissionType:SetText(GARRISON_LANDING_BUILDING_COMPLEATE)
+		else
+			button.MissionType:SetText(item.isAltMission and (item.charText or _G.UNKNOWN) or InProgressMissions.playerNameText)
+		end
+		button.Title:SetWidth(290)
+	else -- in progress
+		button.CompletedCheck:Hide()
+		button.CompletedOverlay:Hide()
+		if (item.isBuilding) then
+			button.MissionType:SetText(GARRISON_BUILDING_IN_PROGRESS.." - "..GARRISON_BUILDING_LEVEL_LABEL_TOOLTIP:format(item.buildingLevel))
+			button.TimeLeft:SetText(item.timeLeft)
+			button.TimeLeft:SetTextColor(unpack(TIME_COLORS[4]))
+		else
+			button.MissionType:SetText(item.isAltMission and (item.charText or _G.UNKNOWN) or InProgressMissions.playerNameText)
+			t = (item.missionEndTime or 0) - baseTime
+			if t > 107999 then -- 30hr
+				button.TimeLeft:SetFormattedText(FORMAT_DURATION_DAYS, t / 86400)
+			elseif t > 5459 then
+				button.TimeLeft:SetFormattedText(FORMAT_DURATION_HOURS, t / 3600)
+			elseif t > 59 then
+				button.TimeLeft:SetFormattedText(FORMAT_DURATION_MINUTES, t / 60)
 			else
-				button.Level:SetText(item.followerTypeID ~= GFT.FollowerType_9_0 and item.iLevel and item.iLevel > 0 and item.iLevel or item.followerTypeID ~= GFT.FollowerType_6_2 and item.level or nil)
+				button.TimeLeft:SetFormattedText(FORMAT_DURATION_SECONDS, t)
 			end
-			if item.followerTypeID == GFT.FollowerType_9_0 then
-				button.NumFollowers:SetText(nil)
-			else
-				button.NumFollowers:SetText(item.numFollowers and string.rep(RANGE_INDICATOR, item.numFollowers) or nil)
-			end
-			rewardIndex = Rewards_Update(button, item) or 1
-			if rewardIndex < 0 then
-				rewardIndex = 1
-			end
-			button.Status:SetPoint("BOTTOMRIGHT", button.Rewards[rewardIndex], "BOTTOMLEFT", -4, 0)
+			button.TimeLeft:SetTextColor(unpack(TIME_COLORS[not t and 1 or t > 18000 and 2 or t > 5459 and 3 or t > 599 and 4 or t > 59 and 5 or 6]))
+		end
+		button.Title:SetWidth(322 - button.TimeLeft:GetWidth())
+		stopUpdate = false
+	end
+	button.TimeLeft:SetShown(not item.isComplete)
+
+	if item.followerTypeID == GFT.FollowerType_8_0 then
+		button.Level:SetText(item.level)
+	elseif item.followerTypeID == GFT.FollowerType_9_0 then
+		button.Level:SetText(nil)
+	else
+		button.Level:SetText(item.iLevel and item.iLevel > 0 and item.iLevel or item.followerTypeID ~= GFT.FollowerType_6_2 and item.level or nil)
+	end
+
+	if item.typeAtlas then
+		button.MissionTypeIcon:SetAtlas(item.typeAtlas)
+	elseif item.typeIcon then
+		button.MissionTypeIcon:SetTexture(item.typeIcon)
+	else
+		button.MissionTypeIcon:SetTexture(nil)
+	end
+	button.MissionTypeIcon:SetShown(not item.isBuilding and item.followerTypeID < GFT.FollowerType_9_0)
+
+	if item.followerTypeID == GFT.FollowerType_9_0 then
+		button.NumFollowers:Hide()
+	else
+		button.NumFollowers:SetText(GetFollowerIndicator(item))
+		button.NumFollowers:Show()
+	end
+
+	button.EncounterIcon:SetShown(item.followerTypeID == GFT.FollowerType_9_0)
+	if item.followerTypeID == GFT.FollowerType_9_0 then
+		if item.encounterIconInfo then
+			button.EncounterIcon:SetEncounterInfo(item.encounterIconInfo)
+		else
+			button.EncounterIcon:SetEncounterInfo(C_Garrison.GetMissionEncounterIconInfo(item.missionID))
+		end
+	end
+
+	button.BG:SetAtlas(bgName, true)
+	if item.isAltMission then
+		button.Title:SetTextColor(unpack(TITLE_COLOR_ALT))
+		button.Level:SetTextColor(unpack(TITLE_COLOR_ALT))
+	else
+		button.Title:SetTextColor(unpack(TITLE_COLOR_NORMAL))
+		button.Level:SetTextColor(unpack(TITLE_COLOR_NORMAL))
+	end
+	if item.followerTypeID == GFT.FollowerType_6_2 then
+		button.BG:SetVertexColor(0.9, 0.9, 1)
+	else
+		button.BG:SetVertexColor(1, 1, 1)
+	end
+
+	Rewards_Update(button, item)
+end
+
+local function GarrisonLandingPageReport_SetElementInitializer()
+	local view = GarrisonLandingPageReportList.ScrollBox:GetView()
+	view:GetPadding():SetRight(GarrisonLandingPageReportList.ScrollBar:GetWidth())
+	view.templateInfos["GarrisonLandingPageReportMissionTemplate"] = nil
+	view.elementExtent = nil
+	view:SetElementInitializer("GarrisonLandingPageReportMissionTemplateIPM", function(button, elementData)
+		if GarrisonLandingPageReport.selectedTab == GarrisonLandingPageReport.InProgress then
+			MissionButton_Update(button, elementData)
+		else
+			GarrisonLandingPageReportList_InitButtonAvailable(button, elementData)
 			if _G.MasterPlan then
 				button.Status:Hide()
 			else
-				button.Status:SetText(item.offerEndTime and RAID_INSTANCE_EXPIRES:format(item.offerTimeRemaining) or nil)
+				local reward = (button.Reward3:IsShown() and button.Reward3) or (button.Reward2:IsShown() and button.Reward2) or (button.Reward1:IsShown() and button.Reward1)
+				button.Status:SetPoint("BOTTOMRIGHT", reward, "BOTTOMLEFT", -4, 0)
+				button.Status:SetText(elementData.offerEndTime and RAID_INSTANCE_EXPIRES:format(elementData.offerTimeRemaining) or nil)
 				button.Status:Show()
 			end
+		end
+	end)
+end
+
+local function GarrisonLandingPageReportList_Update(fullUpdate)
+	local items = GarrisonLandingPageReportList.items
+	if not items then return end
+
+	if #items == 0 then
+		local emptyMissionText = GarrisonLandingPage.garrTypeID == Enum.GarrisonType.Type_9_0 and COVENANT_MISSIONS_EMPTY_IN_PROGRESS or GARRISON_EMPTY_IN_PROGRESS_LIST;
+		GarrisonLandingPageReportList.EmptyMissionText:SetText(emptyMissionText);
+	else
+		GarrisonLandingPageReportList.EmptyMissionText:SetText(nil);
+	end
+
+	local dataProvider = InProgressMissions.scrollBox:GetDataProvider();
+	if fullUpdate or not dataProvider or #items ~= dataProvider:GetSize() then
+		dataProvider = CreateDataProvider(items);
+		InProgressMissions.scrollBox:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition);
+	else
+		for _, button in pairs(InProgressMissions.scrollBox:GetView():GetFrames()) do
+			MissionButton_Update(button, button:GetMission())
 		end
 	end
 end
 
-local function ScrollFrame_UpdateItems()
+local function GarrisonLandingPageReportList_UpdateItems()
 	InProgressMissions:UpdateMissions()
 	local isTabProgress = GarrisonLandingPageReport.selectedTab == GarrisonLandingPageReport.InProgress
-	for k, button in pairs(InProgressMissions.listScroll.buttons) do
-		button.MissionTypeIcon:ClearAllPoints()
-		button.MissionTypeIcon:SetPoint("LEFT", button, 2, 0)
-		button.MissionTypeIcon:SetSize(MISSION_ICON_SIZE, MISSION_ICON_SIZE)
-		for i = 1, #button.Rewards do
-			button.Rewards[i]:ClearAllPoints()
-			if i == 1 then
-				button.Rewards[i]:SetPoint("RIGHT", isTabProgress and -68 or -5, -0)
-			else
-				button.Rewards[i]:SetPoint("RIGHT", button.Rewards[i - 1], "LEFT", - MISSION_REWARD_SIZE / 11, 0)
-			end
-		end
-		if isTabProgress then
-			button.Status:SetPoint("BOTTOMRIGHT", -8, 3)
-		end
-	end
 	if isTabProgress then
-		GarrisonLandingPageReportList_Update()
 	else
 		InProgressMissions:HideMenu()
+	end
+
+	local garrTypeID = GarrisonLandingPage.garrTypeID;
+	if not garrTypeID then return end
+	local availableMissions = C_Garrison.GetAvailableMissions(GetPrimaryGarrisonFollowerType(garrTypeID));
+	GarrisonLandingPageReportList.AvailableItems = GarrisonLandingPageReportMission_FilterOutCombatAllyMissions(availableMissions);
+	Garrison_SortMissions(GarrisonLandingPageReportList.AvailableItems);
+
+	local items = GarrisonLandingPageReportList.items or {}
+	wipe(items)
+	for _, mission in ipairs(InProgressMissions.missions) do
+		tinsert(items, CopyTable(mission, true))
+	end
+	for _, mission in ipairs(InProgressMissions.altMissions) do
+		mission.isAltMission = true
+		tinsert(items, CopyTable(mission, true))
+	end
+	GarrisonLandingPageReportList.items = items;
+
+	local availableString = garrTypeID == Enum.GarrisonType.Type_9_0 and COVENANT_MISSIONS_AVAILABLE or GARRISON_LANDING_AVAILABLE;
+	GarrisonLandingPageReport.Available.Text:SetFormattedText(availableString, #GarrisonLandingPageReportList.AvailableItems);
+
+	if ( GarrisonLandingPageReport.selectedTab == GarrisonLandingPageReport.InProgress ) then
+		GarrisonLandingPageReportList_Update(true);
+	else
+		GarrisonLandingPageReportList_UpdateAvailable();
 	end
 end
 
@@ -658,43 +613,43 @@ local function QualityColorText(text, quality)
 end
 
 local function AddRewardText(item, rewardType)
-		for id, reward in pairs(item[rewardType]) do
-			if (reward.quality) then
-				GameTooltip:AddLine(QualityColorText(reward.title or _G.UNKNOWN, reward.quality + 1))
-			elseif (reward.itemID) then
-				local itemName, _, itemQuality, _, _, _, _, _, _, itemTexture = GetItemInfo(reward.itemID)
-				if itemName then
-					itemName = MakeIcon(itemTexture, QualityColorText(itemName, itemQuality))
-					local difficulty = itemDifficulty[reward.itemID]
-					if difficulty then
-						itemName = itemName..FORMAT_REWARD_DIFFICULTY:format(difficulty)
-					end
-					local quantity = reward.quantity and reward.quantity > 1 and FLAG_COUNT_TEMPLATE:format(reward.quantity) or ""
-					if quantity then
-						itemName = itemName.." "..quantity
-					end
-					GameTooltip:AddLine(itemName, 1, 1, 1)
+	for id, reward in pairs(item[rewardType]) do
+		if (reward.quality) then
+			GameTooltip:AddLine(QualityColorText(reward.title or _G.UNKNOWN, reward.quality + 1))
+		elseif (reward.itemID) then
+			local itemName, _, itemQuality, _, _, _, _, _, _, itemTexture = GetItemInfo(reward.itemID)
+			if itemName then
+				itemName = MakeIcon(itemTexture, QualityColorText(itemName, itemQuality))
+				-- local difficulty = itemDifficulty[reward.itemID]
+				-- if difficulty then
+				-- 	itemName = itemName..FORMAT_REWARD_DIFFICULTY:format(difficulty)
+				-- end
+				local quantity = reward.quantity and reward.quantity > 1 and FLAG_COUNT_TEMPLATE:format(reward.quantity) or ""
+				if quantity then
+					itemName = itemName.." "..quantity
 				end
-			elseif (reward.followerXP) then
-				GameTooltip:AddLine(QualityColorText(GARRISON_REWARD_XP_FORMAT:format(BreakUpLargeNumbers(reward.followerXP)), reward.followerXP >= FOLLOWER_XP_THRESHOLD and 2 or 1))
-			elseif (reward.currencyID and reward.quantity) then
-				if (reward.currencyID == 0) then
-					GameTooltip:AddLine(GetMoneyString(reward.quantity), 1, 1, 1)
-				else
-					local currencyInfo = C_CurrencyInfo.GetBasicCurrencyInfo(reward.currencyID)
-					if currencyInfo then
-						GameTooltip:AddLine(MakeIcon(currencyInfo.icon)..QualityColorText(" "..currencyInfo.name.." ", currencyInfo.quality or 1)..FLAG_COUNT_TEMPLATE:format(reward.quantity), 1, 1, 1)
-					else
-						GameTooltip:AddLine(_G.UNKNOWN.." ".._G.CURRENCY.." ("..reward.currencyID..") "..FLAG_COUNT_TEMPLATE:format(reward.quantity), 1, 1, 1)
-					end
-				end
-			else
-				GameTooltip:AddLine(reward.title, 1, 1, 1)
+				GameTooltip:AddLine(itemName, 1, 1, 1)
 			end
+		elseif (reward.followerXP) then
+			GameTooltip:AddLine(QualityColorText(GARRISON_REWARD_XP_FORMAT:format(BreakUpLargeNumbers(reward.followerXP)), reward.followerXP >= FOLLOWER_XP_THRESHOLD and 2 or 1))
+		elseif (reward.currencyID and reward.quantity) then
+			if (reward.currencyID == 0) then
+				GameTooltip:AddLine(GetMoneyString(reward.quantity), 1, 1, 1)
+			else
+				local currencyInfo = C_CurrencyInfo.GetBasicCurrencyInfo(reward.currencyID)
+				if currencyInfo then
+					GameTooltip:AddLine(MakeIcon(currencyInfo.icon)..QualityColorText(" "..currencyInfo.name.." ", currencyInfo.quality or 1)..FLAG_COUNT_TEMPLATE:format(reward.quantity), 1, 1, 1)
+				else
+					GameTooltip:AddLine(_G.UNKNOWN.." ".._G.CURRENCY.." ("..reward.currencyID..") "..FLAG_COUNT_TEMPLATE:format(reward.quantity), 1, 1, 1)
+				end
+			end
+		else
+			GameTooltip:AddLine(reward.title, 1, 1, 1)
 		end
+	end
 end
 
-local function SetupMissionInfoTooltip(item, isAltMission, anchorFrame)
+local function SetupMissionInfoTooltip(item, anchorFrame)
 
 	if _G.CovenantMissionFrame and _G.CovenantMissionFrameFollowers:IsVisible() then
 		return
@@ -702,20 +657,21 @@ local function SetupMissionInfoTooltip(item, isAltMission, anchorFrame)
 
 	if anchorFrame then
 		GameTooltip:SetOwner(anchorFrame, "ANCHOR_BOTTOMRIGHT", 2, anchorFrame:GetHeight() * 2)
+		GameTooltip:ClearLines()
 	else
 		GameTooltip:ClearLines()
 	end
 
 	if ( item.isBuilding ) then
-		GameTooltip:SetText(item.name)
-		GameTooltip:AddLine(GARRISON_BUILDING_LEVEL_LABEL_TOOLTIP:format(item.buildingLevel), 1, 1, 1)
+		GameTooltip:SetText(item.name);
+		GameTooltip:AddLine(string.format(GARRISON_BUILDING_LEVEL_LABEL_TOOLTIP, item.buildingLevel), 1, 1, 1);
 		if(item.isComplete) then
-			GameTooltip:AddLine(COMPLETE, 1, 1, 1)
+			GameTooltip:AddLine(COMPLETE, 1, 1, 1);
 		else
-			GameTooltip:AddLine(tostring(item.timeLeft), 1, 1, 1)
+			GameTooltip:AddLine(tostring(item.timeLeft), 1, 1, 1);
 		end
-		GameTooltip:Show()
-		return
+		GameTooltip:Show();
+		return;
 	end
 
 	local isAutoCombatant = item.followerTypeID == GFT.FollowerType_9_0 -- Shadowlands
@@ -747,21 +703,23 @@ local function SetupMissionInfoTooltip(item, isAltMission, anchorFrame)
 
 	local successChance = item.successChance or item.missionID and C_Garrison.GetMissionSuccessChance(item.missionID)
 
-	GameTooltip:AddLine(" ")
-	local caption = REWARDS
-	if not isAutoCombatant and successChance then
-		caption = caption..(" (%d%%)"):format(math.min(successChance, 100))
-	end
-	GameTooltip:AddLine(caption)
-	AddRewardText(item, "rewards")
-
-	if item.overmaxRewards and next(item.overmaxRewards) and item.hasBonusEffect then
-		local caption = BONUS_REWARDS
-		if successChance and successChance > 100 then
-			caption = caption..(" (%d%%)"):format(successChance - 100)
+	if next(item.rewards) then
+		GameTooltip:AddLine(" ")
+		local caption = REWARDS
+		if not isAutoCombatant and successChance then
+			caption = caption..(" (%d%%)"):format(math.min(successChance, 100))
 		end
 		GameTooltip:AddLine(caption)
-		AddRewardText(item, "overmaxRewards")
+		AddRewardText(item, "rewards")
+
+		if item.overmaxRewards and next(item.overmaxRewards) and item.hasBonusEffect then
+			local caption = BONUS_REWARDS
+			if successChance and successChance > 100 then
+				caption = caption..(" (%d%%)"):format(successChance - 100)
+			end
+			GameTooltip:AddLine(caption)
+			AddRewardText(item, "overmaxRewards")
+		end
 	end
 
 	if (item.followers ~= nil) then
@@ -828,60 +786,12 @@ local function SetupMissionInfoTooltip(item, isAltMission, anchorFrame)
 			end
 		end
 	end
-	GameTooltip:Show();
-end
-
-local function GarrisonLandingPageReportMission_OnEnter(self, button)
-	if GarrisonLandingPageReport.selectedTab ~= GarrisonLandingPageReport.InProgress then
-		return InProgressMissions.GarrisonLandingPageReportMission_OnEnter(self, button)
-	end
-
-	if not self.id then return end
-
-	local missionInfo
-	local isAltMission = self.id < 0
-	if isAltMission then
-		missionInfo = InProgressMissions.altMissions[-self.id]
-	else
-		missionInfo = InProgressMissions.missions[self.id]
-	end
-
-	if missionInfo then
-		SetupMissionInfoTooltip(missionInfo, isAltMission, self)
-	end
+	return true
+	-- GameTooltip:Show();
 end
 
 local function GarrisonMissionButton_SetInProgressTooltip(missionInfo, showRewards)
 	SetupMissionInfoTooltip(missionInfo)
-end
-
-local function GarrisonLandingPageReportMission_OnClick(self, button)
-	if GarrisonLandingPageReport.selectedTab ~= GarrisonLandingPageReport.InProgress then
-		-- return InProgressMissions.GarrisonLandingPageReportMission_OnClick(self, button)
-		return
-	end
-
-	if button ~= "RightButton" then
-		--return self.id > 0 and InProgressMissions.GarrisonLandingPageReportMission_OnClick(self, button)
-		local item = InProgressMissions.missions[self.id]
-		if item and item.missionID then
-			if IsModifiedClick("CHATLINK") then
-				local missionLink = C_Garrison.GetMissionLink(item.missionID)
-				if missionLink then
-					ChatEdit_InsertLink(missionLink)
-					return
-				end
-			else
-				C_Garrison.CastSpellOnMission(item.missionID)
-			end
-		end
-	else
-		InProgressMissions:CreateMenu()
-		local anchor = InProgressMissions.listScroll
-		local uiScale, x, y = _G.UIParent:GetEffectiveScale(), GetCursorPosition()
-		x, y = x / uiScale - anchor:GetLeft() - 35, y / uiScale - anchor:GetBottom() - 5
-		ToggleDropDownMenu(1, nil, InProgressMissions.menu, anchor:GetName(), x, y)
-	end
 end
 
 local function FlipTexture(texture, horizontal)
@@ -893,17 +803,17 @@ local function FlipTexture(texture, horizontal)
     end
 end
 
---local function ListScroll_OnScroll(self)
---	if GameTooltip:IsVisible() then
---		GameTooltip:Hide()
---		for k, button in pairs(InProgressMissions.listScroll.buttons) do
---			if button:IsVisible() and button:IsMouseOver() then
---				GarrisonLandingPageReportMission_OnEnter(button)
---				break
---			end
---		end
---	end
---end
+-- local function ListScroll_OnScroll(self)
+-- 	if GameTooltip:IsVisible() then
+-- 		GameTooltip:Hide()
+-- 		for k, button in pairs(InProgressMissions.listScroll.buttons) do
+-- 			if button:IsVisible() and button:IsMouseOver() then
+-- 				GarrisonLandingPageReportMission_OnEnter(button)
+-- 				break
+-- 			end
+-- 		end
+-- 	end
+-- end
 
 local function CreateQuantityFont()
 	if not _G.GarrisonReportFontRewardQuantity then
@@ -920,8 +830,135 @@ local function CreateQuantityFont()
 	end
 end
 
-local function UpdateItemInfoHandler(self)
-	if InProgressMissions.listScroll:IsVisible() then
+local function MissionButton_GetMission(button)
+	return button:GetElementData()
+	-- local elementData = button:GetElementData()
+	-- if type(elementData) == "number" then
+	-- 	return GarrisonLandingPageReportList.items[elementData]
+	-- else
+	-- 	return elementData
+	-- end
+end
+
+local function MissionButton_OnShow(button)
+	MissionButton_SetLayout(button, GarrisonLandingPageReport.selectedTab == GarrisonLandingPageReport.InProgress)
+end
+
+local function MissionButton_OnEnter(button, mouseButton)
+	if GarrisonLandingPageReport.selectedTab ~= GarrisonLandingPageReport.InProgress then
+		return GarrisonLandingPageReportMission_OnEnter(button, mouseButton)
+	end
+
+	local item = button:GetMission()
+	if not item then return end
+	if SetupMissionInfoTooltip(item, button) then
+		if button.UpdateTooltip then
+			button.UpdateTooltip = nil
+		else
+			button.UpdateTooltip = MissionButton_OnEnter
+		end
+		GameTooltip:Show()
+	end
+end
+
+local function MissionButton_OnClick(button, mouseButton)
+	if mouseButton == "LeftButton" and IsModifiedClick("CHATLINK") then
+		local item = button:GetMission()
+		if not item then return end
+		local missionLink = C_Garrison.GetMissionLink(item.missionID);
+		if missionLink then
+			ChatEdit_InsertLink(missionLink);
+		end
+	end
+end
+
+local function MissionButton_OnMouseUp(button, mouseButton)
+	if GarrisonLandingPageReport.selectedTab ~= GarrisonLandingPageReport.InProgress then return end
+
+	if mouseButton == "RightButton" then
+		InProgressMissions:CreateMenu()
+		local anchor = InProgressMissions.scrollBox
+		local uiScale, x, y = _G.UIParent:GetEffectiveScale(), GetCursorPosition()
+		ToggleDropDownMenu(1, nil, InProgressMissions.menu, anchor:GetName(), x / uiScale - 35, y / uiScale - 5)
+	end
+end
+
+local function MissionButtonReward_OnEnter(frame)
+	if (frame.bonusAbilityID) then
+		frame.UpdateTooltip = nil;
+		local tooltip = GarrisonBonusAreaTooltip;
+		GarrisonBonusArea_Set(tooltip.BonusArea, GARRISON_BONUS_EFFECT_TIME_ACTIVE, frame.bonusAbilityDuration, frame.bonusAbilityIcon, frame.bonusAbilityName, frame.bonusAbilityDescription);
+		tooltip:ClearAllPoints();
+		tooltip:SetPoint("BOTTOMLEFT", frame, "TOPRIGHT");
+		tooltip:SetHeight(tooltip.BonusArea:GetHeight());
+		tooltip:Show();
+		return;
+	end
+
+	local info = frame.info or frame
+	if info then
+		GameTooltip:SetOwner(frame, "ANCHOR_RIGHT")
+		frame.UpdateTooltip = MissionButtonReward_OnEnter
+		if info.itemLink then
+			GameTooltip:SetHyperlink(info.itemLink)
+		elseif info.itemID then
+			GameTooltip:SetItemByID(info.itemID)
+		elseif info.currencyID then
+			if info.currencyID > 0 then
+				GameTooltip:SetCurrencyByID(info.currencyID)
+			else -- Money
+				GameTooltip:SetText(info.title)
+				GameTooltip:AddLine(GetMoneyString(info.quantity), 1, 1, 1)
+				GameTooltip:Show()
+			end
+		else
+			if info.title then
+				GameTooltip:SetText(info.title)
+			end
+			if info.tooltip then
+				GameTooltip:AddLine(info.tooltip, 1, 1, 1, true)
+			end
+			GameTooltip:Show()
+		end
+	end
+end
+
+local function MissionButtonReward_OnLeave(frame)
+	frame.UpdateTooltip = nil
+	GarrisonBonusAreaTooltip:Hide()
+	GameTooltip:Hide()
+end
+
+function InProgressMissions:MissionButton_OnLoad(button)
+	button.MissionTypeBG = button:CreateTexture(nil, "BACKGROUND", "Spellbook-TextBackground", 1)
+	button.MissionTypeBG:ClearAllPoints()
+	button.MissionTypeBG:SetPoint("TOPLEFT", button.MissionType, -5, 4)
+	button.MissionTypeBG:SetPoint("BOTTOMLEFT", button.MissionType, -5, -2)
+	button.MissionTypeBG:SetWidth(130)
+	button.MissionTypeBG:SetBlendMode("BLEND")
+	button.MissionTypeBG:SetVertexColor(0, 0, 0, 0.6)
+	for i, reward in ipairs(button.Rewards) do
+		reward:SetScript("OnEnter", MissionButtonReward_OnEnter)
+		reward:SetScript("OnLeave", MissionButtonReward_OnLeave)
+	end
+	FlipTexture(button.MissionTypeBG)
+
+	CreateQuantityFont()
+	for i, reward in ipairs(button.Rewards) do
+		reward.Quantity:SetFontObject("GarrisonReportFontRewardQuantity")
+		reward.Success:SetFontObject("GarrisonReportFontRewardQuantity")
+	end
+
+	button.GetMission = MissionButton_GetMission
+	button:SetScript("OnShow", MissionButton_OnShow)
+	button:SetScript("OnEnter", MissionButton_OnEnter)
+	button:SetScript("OnLeave", MissionButtonReward_OnLeave)
+	button:SetScript("OnMouseUp", MissionButton_OnMouseUp)
+	button:SetScript("OnClick", MissionButton_OnClick)
+end
+
+local function UpdateItemInfoHandler(self, ...)
+	if InProgressMissions.scrollBox:IsVisible() then
 		InProgressMissions:RegisterEvent("GET_ITEM_INFO_RECEIVED")
 	else
 		InProgressMissions:UnregisterEvent("GET_ITEM_INFO_RECEIVED")
@@ -929,105 +966,15 @@ local function UpdateItemInfoHandler(self)
 end
 
 function InProgressMissions:UpdateInProgressTabText()
-	if _G.GarrisonLandingPageReport then
+	if GarrisonLandingPageReport then
 		local text = GarrisonLandingPageReport.InProgress.Text
 		text:SetText((_G.GARRISON_LANDING_IN_PROGRESS.." (%d)"):format(#self.missions, #self.altMissions))
 	end
 end
 
 function InProgressMissions:Refresh()
-	if _G.GarrisonLandingPageReport then
-		ScrollFrame_UpdateItems()
-	end
-end
-
-function InProgressMissions:MissionButton_SetStyle()
-	CreateQuantityFont()
-	for k, button in pairs(self.listScroll.buttons) do
-		if type(button) == "table" and button:GetObjectType() == "Button" then
-			button:SetHeight(MISSION_BUTTON_HEIGHT)
-		end
-	end
-	HybridScrollFrame_CreateButtons(self.listScroll, "GarrisonLandingPageReportMissionTemplate", 0, 0)
-	for k, button in pairs(self.listScroll.buttons) do
-		if type(button) == "table" and button:GetObjectType() == "Button" then
-			button:SetHeight(MISSION_BUTTON_HEIGHT)
-			button.Title:SetFontObject("GameFontHighlightMed2")
-			button.Title:SetPoint("TOPLEFT", 42, -3.5)
-			button.MissionType:ClearAllPoints()
-			button.MissionType:SetPoint("BOTTOMLEFT", 61, 4)
-			button.MissionType:SetTextColor(GARRISON_MISSION_TYPE_FONT_COLOR.r, GARRISON_MISSION_TYPE_FONT_COLOR.g, GARRISON_MISSION_TYPE_FONT_COLOR.b)
-			button.MissionTypeIcon:ClearAllPoints()
-			button.MissionTypeIcon:SetPoint("LEFT", button, 2, 0)
-			button.MissionTypeIcon:SetSize(MISSION_ICON_SIZE, MISSION_ICON_SIZE)
-			button.MissionTypeIcon:SetAlpha(0.7)
-			button.MissionTypeBG = button:CreateTexture(nil, "BACKGROUND", "Spellbook-TextBackground", 1)
-			button.MissionTypeBG:ClearAllPoints()
-			button.MissionTypeBG:SetPoint("TOPLEFT", button.MissionType, -5, 4)
-			button.MissionTypeBG:SetPoint("BOTTOMLEFT", button.MissionType, -5, -2)
-			button.MissionTypeBG:SetWidth(130)
-			button.MissionTypeBG:SetBlendMode("BLEND")
-			button.MissionTypeBG:SetVertexColor(0, 0, 0, 0.6)
-			FlipTexture(button.MissionTypeBG)
-			button.CompletedCheck = button:CreateTexture(nil, "ARTWORK")
-			button.CompletedCheck:SetSize(40, 30)
-			button.CompletedCheck:SetPoint("RIGHT", button, -10, -1)
-			button.CompletedCheck:SetAtlas("Adventures-Checkmark")
-			button.CompletedCheck:Hide()
-			button.CompletedOverlay = button:CreateTexture(nil, "BACKGROUND", nil, 7)
-			button.CompletedOverlay:SetAllPoints(button.BG)
-			button.CompletedOverlay:SetBlendMode("ADD")
-			button.CompletedOverlay:SetTexture(136810)
-			button.CompletedOverlay:SetDesaturated(true)
-			button.CompletedOverlay:SetTexCoord(0, 0.4, 0, 1)
-			button.CompletedOverlay:SetVertexColor(1, 0.9, 0.35)
-			button.CompletedOverlay:SetAlpha(0.7)
-			button.CompletedOverlay:Hide()
-			button.EncounterIcon:ClearAllPoints()
-			button.EncounterIcon:SetPoint("LEFT", button, 5, 0)
-			button.EncounterIcon:SetScale(0.9)
-			button.TimeLeft:SetFontObject("GameFontNormalMed2")
-			button.TimeLeft:SetPoint("TOPRIGHT", -3, -4)
-			button.BG:ClearAllPoints()
-			button.BG:SetPoint("TOPLEFT", button, 0, 0)
-			button.BG:SetPoint("BOTTOMRIGHT", button, 0, 0.725)
-			for i = 1, #button.Rewards do
-				button.Rewards[i]:SetSize(MISSION_REWARD_SIZE, MISSION_REWARD_SIZE)
-				button.Rewards[i].Icon:SetSize(MISSION_REWARD_SIZE * 0.92, MISSION_REWARD_SIZE * 0.92)
-				for j, r in pairs({button.Rewards[i]:GetRegions()}) do
-					if r:GetObjectType() == "Texture" and r:GetAtlas() then
-						r:SetSize(MISSION_REWARD_SIZE * 1.1, MISSION_REWARD_SIZE * 1.1)
-					end
-				end
-				button.Rewards[i].Quantity:SetFontObject("GarrisonReportFontRewardQuantity")
-				button.Rewards[i].Quantity:ClearAllPoints()
-				button.Rewards[i].Quantity:SetPoint("BOTTOMRIGHT", button.Rewards[i].Icon, 2, -1)
-				button.Rewards[i].Quantity:SetJustifyH("RIGHT")
-				button.Rewards[i].IconBorder:ClearAllPoints()
-				button.Rewards[i].IconBorder:SetPoint("TOPLEFT", 1, -1)
-				button.Rewards[i].IconBorder:SetPoint("BOTTOMRIGHT", -1, 1)
-				button.Rewards[i].Success = button.Rewards[i]:CreateFontString(nil, "ARTWORK", "GarrisonReportFontRewardQuantity")
-				button.Rewards[i].Success:SetPoint("TOPLEFT", -2, 2)
-				button.Rewards[i].Success:SetTextColor(0.9, 0.9, 0.9)
-				button.Rewards[i]:SetScript("OnEnter", _G.GarrisonMissionPage_RewardOnEnter)
-			end
-			if not button.Level then
-				button.Level = button:CreateFontString(nil, "ARTWORK", "GameFontHighlightMed2")
-				-- button.Level:SetPoint("TOP", button.MissionTypeIcon, 0, -4)
-				button.Level:SetPoint("CENTER", button.MissionTypeIcon, 0, 2)
-				button.Level:SetTextColor(unpack(TITLE_COLOR_NORMAL))
-			end
-			if not button.NumFollowers then
-				button.NumFollowers = button:CreateFontString(nil, "ARTWORK", "FriendsFont_UserText")
-				button.NumFollowers:SetPoint("BOTTOM", button.MissionTypeIcon, 0, 3)
-				button.NumFollowers:SetTextColor(button.Title:GetTextColor())
-				button.NumFollowers:SetAlpha(0.7)
-			end
-			button.Status:SetPoint("BOTTOMRIGHT", -8, 3)
-			button:SetScript("OnEnter", GarrisonLandingPageReportMission_OnEnter)
-			button:SetScript("OnClick", GarrisonLandingPageReportMission_OnClick)
-			button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-		end
+	if GarrisonLandingPageReport and GarrisonLandingPageReport:IsVisible() then
+		GarrisonLandingPageReportList_UpdateItems()
 	end
 end
 
@@ -1045,6 +992,7 @@ do
 		if name then
 			IPMDB.ignores[name] = not checked or nil
 			InProgressMissions:UpdateAltMissions()
+			InProgressMissions:Refresh()
 		end
 	end
 
@@ -1054,6 +1002,7 @@ do
 		if name then
 			IPMDB.sortMethod = name
 			InProgressMissions:UpdateAltMissions()
+			InProgressMissions:Refresh()
 		end
 	end
 
@@ -1062,6 +1011,7 @@ do
 		wipe(IPMDB.ignores)
 		wipe(IPMDB.profiles)
 		InProgressMissions:UpdateAltMissions()
+		InProgressMissions:Refresh()
 	end
 
 	local function Reset_OnClick(self)
@@ -1210,6 +1160,8 @@ do
 end
 
 function InProgressMissions:Init()
+	GarrisonLandingPageReport = _G.GarrisonLandingPageReport
+	GarrisonLandingPageReportList = _G.GarrisonLandingPageReportList
 	self.missions = {}
 	self:InitDB()
 	TIME_COLORS = {
@@ -1223,40 +1175,33 @@ function InProgressMissions:Init()
 	self:UpdateAltMissions()
 
 	self:CreateMenu()
-	_G.GarrisonLandingPageReport:HookScript("OnHide", function()
+	GarrisonLandingPageReport:HookScript("OnHide", function()
 		InProgressMissions:HideMenu()
 		wipe(InProgressMissions.missions)
 		StaticPopup_Hide("InProgressMissions_CONFIRM_RESET")
 	end)
-	-- self.listScroll.scrollBar:HookScript("OnValueChanged", ListScroll_OnScroll)
-	_G.GarrisonLandingPageReportList_Update = GarrisonLandingPageReportList_Update
-	self.GarrisonLandingPageReportMission_OnEnter = _G.GarrisonLandingPageReportMission_OnEnter
-	hooksecurefunc("GarrisonLandingPageReportMission_OnEnter", function(...)
-		GarrisonLandingPageReportMission_OnEnter(...)
-	end)
-	hooksecurefunc("GarrisonLandingPageReportList_UpdateItems", ScrollFrame_UpdateItems)
-	hooksecurefunc("GarrisonLandingPageReportList_UpdateAvailable", ScrollFrame_UpdateAvailable)
-	hooksecurefunc(GarrisonLandingPageReport.InProgress.Text, "SetFormattedText", function(self)
-			InProgressMissions:UpdateInProgressTabText()
-	end)
-	self.listScroll = GarrisonLandingPageReport.List.listScroll
-	hooksecurefunc("GarrisonMissionButton_SetInProgressTooltip", GarrisonMissionButton_SetInProgressTooltip)
 
-	self.listScroll:HookScript("OnShow", UpdateItemInfoHandler)
-	self.listScroll:HookScript("OnHide", UpdateItemInfoHandler)
+	self.scrollBox = GarrisonLandingPageReportList.ScrollBox
+
+	GarrisonLandingPageReport_SetElementInitializer()
+	_G.GarrisonLandingPageReportList_InitButton = MissionButton_Update
+	_G.GarrisonLandingPageReportList_Update = GarrisonLandingPageReportList_Update
+	_G.GarrisonLandingPageReportList_UpdateItems = GarrisonLandingPageReportList_UpdateItems
+
+	self.scrollBox:HookScript("OnShow", UpdateItemInfoHandler)
+	self.scrollBox:HookScript("OnHide", UpdateItemInfoHandler)
 	UpdateItemInfoHandler()
 
-	GarrisonLandingPageReportListListScrollFrame:HookScript("OnMouseUp", function(frame, button)
+	GarrisonLandingPageReportList.ScrollBox:HookScript("OnMouseUp", function(frame, button)
 		if button == "RightButton" then
-			GarrisonLandingPageReportMission_OnClick(frame, button)
+			MissionButton_OnMouseUp(frame, button)
 		end
 	end)
 
-	self:HookOrderHallMissionFrame()
-	self:HookBFAMissionFrame()
+	-- self:HookOrderHallMissionFrame()
+	-- self:HookBFAMissionFrame()
 	self:HookCovenantMissionFrame()
 
-	self:MissionButton_SetStyle()
 	self.Init = function() end
 end
 
@@ -1270,24 +1215,20 @@ local function CreateButtonText(button)
 	return text
 end
 
-local function MissionsScrollFrame_SetExpiresText(ScrollFrame)
-	if ScrollFrame:IsVisible() and not InProgressMissions:OrderHallAddonExists() then
-		local info, text
-		for i, button in ipairs(ScrollFrame.buttons) do
-			info = button.info
-			text = buttonText[button] or CreateButtonText(button)
-			if info then
-				local expire = not info.inProgress and info.offerEndTime and RAID_INSTANCE_EXPIRES:format(info.offerTimeRemaining) or nil
-				if info.xp then
-					expire = QualityColorText(GARRISON_REWARD_XP_FORMAT:format(info.xp), 1).." "..(expire or "")
-				end
-				-- text:SetText(info.offerEndTime and RAID_INSTANCE_EXPIRES:format(info.offerTimeRemaining) or nil)
-				text:SetText(expire)
-				text:Show()
-			else
-				text:Hide()
-			end
+local function GarrisonMissionFrameMissionButton_SetExpiresText(button, info)
+	if InProgressMissions:OrderHallAddonExists() then return end
+
+	local text = buttonText[button] or CreateButtonText(button)
+	if info then
+		local expire = not info.inProgress and info.offerEndTime and RAID_INSTANCE_EXPIRES:format(info.offerTimeRemaining) or nil
+		if info.xp then
+			expire = QualityColorText(GARRISON_REWARD_XP_FORMAT:format(info.xp), 1).." "..(expire or "")
 		end
+		-- text:SetText(info.offerEndTime and RAID_INSTANCE_EXPIRES:format(info.offerTimeRemaining) or nil)
+		text:SetText(expire)
+		text:Show()
+	else
+		text:Hide()
 	end
 end
 
@@ -1309,75 +1250,64 @@ function InProgressMissions:HookBFAMissionFrame()
 	end
 end
 
-local function CovenantMissionFrameMissionsButton_OnEnter(self)
-	local missionInfo = self.info
-	if not missionInfo then return end
+local function CovenantMissionFrameMissionsButton_OnEnter(button)
+	local item = button:GetElementData()
+	if not item then return end
 
-	_G.CovenantMissionButton_OnEnter(self)
+	_G.CovenantMissionButton_OnEnter(button)
 
-	if missionInfo.inProgress or missionInfo.canBeCompleted then
-		SetupMissionInfoTooltip(missionInfo)
-	end
-end
+	if item.inProgress or item.canBeCompleted then
+		if SetupMissionInfoTooltip(item) then
 
-function InProgressMissions:CovenantMissionFrame_SetStyle()
-	if not self.CovenantMissionsScrollFrame then return end
-	self.CovenantMissionsScrollFrame.buttons[1]:SetHeight(COVENANTMISSION_BUTTONHEIGHT)
-	HybridScrollFrame_CreateButtons(self.CovenantMissionsScrollFrame, "CovenantMissionListButtonTemplate", 13, -8, nil, nil, nil, -4)
-	for i, button in ipairs(self.CovenantMissionsScrollFrame.buttons) do
-		button:SetHeight(COVENANTMISSION_BUTTONHEIGHT)
-		button.ButtonBG:ClearAllPoints()
-		button.ButtonBG:SetPoint("TOPLEFT", 0, 0)
-		button.ButtonBG:SetPoint("BOTTOMRIGHT", 0, 0)
-		button.Highlight:ClearAllPoints()
-		button.Highlight:SetPoint("TOPLEFT", 0, 0)
-		button.Highlight:SetPoint("BOTTOMRIGHT", 0, 0)
-		button.Level:ClearAllPoints()
-		button.Level:SetPoint("CENTER", button, "LEFT", 40, 0)
-		button.Level:SetScale(0.9)
-		button.EncounterIcon:ClearAllPoints()
-		button.EncounterIcon:SetPoint("CENTER", button, "LEFT", 110, 0)
-		button.EncounterIcon:SetScale(0.8)
-		button.Title:SetScale(0.9)
-		button.Summary:SetScale(0.85)
-		button:SetScript("OnEnter", CovenantMissionFrameMissionsButton_OnEnter)
-	end
-end
-
-function InProgressMissions:CovenantMissionFrame_FixMissionButtonOnEnter()
-	for i, button in ipairs(self.CovenantMissionsScrollFrame.buttons) do
-		button:SetScript("OnEnter", CovenantMissionFrameMissionsButton_OnEnter)
-	end
-end
-
-function InProgressMissions:CovenantMissionFrame_SetRewardStyle()
-	local scrollFrame = self.CovenantMissionsScrollFrame
-	local expireText, rAnchor
-	for i, button in ipairs(scrollFrame.buttons) do
-		rAnchor = nil
-		for j, reward in ipairs(button.Rewards) do
-			if reward:IsVisible() then
-				reward:SetScale(0.75)
-				reward:ClearAllPoints()
-				if j == 1 then
-					reward:SetPoint("RIGHT", button, "RIGHT", -30, 0)
-				elseif rAnchor then -- j > 1
-					reward:SetPoint("RIGHT", rAnchor, "LEFT", 10, 0)
-				end
-				rAnchor = reward
-			end
-		end
-		expireText = buttonText[button]
-		if expireText then
-			expireText:ClearAllPoints()
-			expireText:SetPoint("BOTTOM", 0, 7)
-			if rAnchor then
-				expireText:SetPoint("RIGHT", rAnchor, "LEFT", -2, 0)
-			else
-				expireText:SetPoint("RIGHT", button, "RIGHT", -35, 0)
-			end
+			GameTooltip:Show()
 		end
 	end
+end
+
+local function CovenantMissionFrameMissionButtonRewards_SetStyle(button, item)
+	local rAnchor
+	for j, reward in ipairs(button.Rewards) do
+		if reward:IsShown() then
+			reward:SetScale(0.75)
+			reward:ClearAllPoints()
+			if j == 1 then
+				reward:SetPoint("RIGHT", button, "RIGHT", -30, 0)
+			elseif rAnchor then -- j > 1
+				reward:SetPoint("RIGHT", rAnchor, "LEFT", 10, 0)
+			end
+			rAnchor = reward
+		end
+	end
+	local expireText = buttonText[button]
+	if expireText then
+		expireText:ClearAllPoints()
+		expireText:SetPoint("BOTTOM", 0, 7)
+		if rAnchor then
+			expireText:SetPoint("RIGHT", rAnchor, "LEFT", -2, 0)
+		else
+			expireText:SetPoint("RIGHT", button, "RIGHT", -35, 0)
+		end
+	end
+end
+
+
+local function CovenantMissionFrameMissionButton_SetStyle(button, item)
+	button:SetHeight(COVENANTMISSION_BUTTONHEIGHT)
+	button.ButtonBG:ClearAllPoints()
+	button.ButtonBG:SetPoint("TOPLEFT", 0, 0)
+	button.ButtonBG:SetPoint("BOTTOMRIGHT", 0, 0)
+	button.Highlight:ClearAllPoints()
+	button.Highlight:SetPoint("TOPLEFT", 0, 0)
+	button.Highlight:SetPoint("BOTTOMRIGHT", 0, 0)
+	button.Level:ClearAllPoints()
+	button.Level:SetPoint("CENTER", button, "LEFT", 40, 0)
+	button.Level:SetScale(0.9)
+	button.EncounterIcon:ClearAllPoints()
+	button.EncounterIcon:SetPoint("CENTER", button, "LEFT", 110, 0)
+	button.EncounterIcon:SetScale(0.8)
+	button.Title:SetScale(0.9)
+	button.Summary:SetScale(0.85)
+	button:SetScript("OnEnter", CovenantMissionFrameMissionsButton_OnEnter)
 end
 
 do -- CovenantMissionFrame Smooth Scroll
@@ -1416,39 +1346,12 @@ do -- CovenantMissionFrame Smooth Scroll
 	end
 end
 
-local function CovenantMissionReward_OnEnter(frame)
-	if frame.info then
-		GameTooltip:SetOwner(frame, "ANCHOR_RIGHT")
-		if frame.info.itemLink then
-			GameTooltip:SetHyperlink(frame.info.itemLink)
-		elseif frame.info.itemID then
-			GameTooltip:SetItemByID(frame.info.itemID)
-		elseif frame.info.currencyID then
-			if frame.info.currencyID > 0 then
-				GameTooltip:SetCurrencyByID(frame.info.currencyID)
-			else -- Money
-				GameTooltip:SetText(frame.info.title)
-				GameTooltip:AddLine(GetMoneyString(frame.info.quantity), 1, 1, 1)
-				GameTooltip:Show()
-			end
-		else
-			if frame.info.title then
-				GameTooltip:SetText(frame.info.title)
-			end
-			if frame.info.tooltip then
-				GameTooltip:AddLine(frame.info.tooltip, 1, 1, 1, true)
-			end
-			GameTooltip:Show()
-		end
-	end
-end
-
 local function CovenantMissionFrame_ShowMission(frame, info)
 	for i, button in ipairs(InProgressMissions.CovenantMissionRewards) do
 		local reward = info.rewards[i]
 		button.info = reward
 		if reward then
-			button:EnableMouse(true)
+			button:SetMouseMotionEnabled(true)
 			button:SetAlpha(1)
 			button.iconBorder:Hide()
 			if reward.itemID then
@@ -1467,14 +1370,10 @@ local function CovenantMissionFrame_ShowMission(frame, info)
 				button.icon:SetTexture(reward.icon or nil)
 			end
 		else
-			button:EnableMouse(false)
+			button:SetMouseMotionEnabled(false)
 			button:SetAlpha(0)
 		end
 	end
-end
-
-local function CovenantMissionReward_OnLeave(frame)
-	GameTooltip:Hide()
 end
 
 function InProgressMissions:CovenantMissionAddRewardsIcons()
@@ -1484,8 +1383,8 @@ function InProgressMissions:CovenantMissionAddRewardsIcons()
 	self.CovenantMissionRewards = {}
 	local reward
 	reward = CreateFrame("Frame", nil, self.CovenantMissionPage.Stage.MouseOverTitleFrame)
-	reward:SetScript("OnEnter", CovenantMissionReward_OnEnter)
-	reward:SetScript("OnLeave", CovenantMissionReward_OnLeave)
+	reward:SetScript("OnEnter", MissionButtonReward_OnEnter)
+	reward:SetScript("OnLeave", MissionButtonReward_OnLeave)
 	reward:SetPoint("BOTTOMRIGHT", titleText, "BOTTOMRIGHT", 0, -6)
 	reward:SetSize(20, 20)
 	reward.icon = reward:CreateTexture(nil, "ARTWORK", nil, 6)
@@ -1495,8 +1394,8 @@ function InProgressMissions:CovenantMissionAddRewardsIcons()
 	reward.iconBorder:SetTexture("Interface\\Common\\WhiteIconFrame")
 	self.CovenantMissionRewards[1] = reward
 	reward = CreateFrame("Frame", nil, self.CovenantMissionPage.Stage.MouseOverTitleFrame)
-	reward:SetScript("OnEnter", CovenantMissionReward_OnEnter)
-	reward:SetScript("OnLeave", CovenantMissionReward_OnLeave)
+	reward:SetScript("OnEnter", MissionButtonReward_OnEnter)
+	reward:SetScript("OnLeave", MissionButtonReward_OnLeave)
 	reward:SetPoint("BOTTOMRIGHT", self.CovenantMissionRewards[1], "BOTTOMLEFT", -3, 0)
 	reward:SetSize(20, 20)
 	reward.icon = reward:CreateTexture(nil, nil, nil, 6)
@@ -1508,27 +1407,26 @@ function InProgressMissions:CovenantMissionAddRewardsIcons()
 end
 
 function InProgressMissions:HookCovenantMissionFrame()
-	if _G.CovenantMissionFrameMissionsListScrollFrame and not self.CovenantMissionsScrollFrame then
-		self.CovenantMissionsScrollFrame = _G.CovenantMissionFrameMissionsListScrollFrame
-		hooksecurefunc(_G.CovenantMissionFrame.MissionTab.MissionList, "Update", function()
-			MissionsScrollFrame_SetExpiresText(self.CovenantMissionsScrollFrame)
-			if IPMDB.improveCovenantMissionUI or IPMDB.improveCovenantMissionUI == nil then
-				self:CovenantMissionFrame_SetRewardStyle()
-			end
-		end)
-	end
-	if IPMDB.improveCovenantMissionUI or IPMDB.improveCovenantMissionUI == nil then
-		self:CovenantMissionFrame_SetStyle()
-		self:CovenantMissionFrame_EnableSmoothScroll()
-	else
-		self:CovenantMissionFrame_FixMissionButtonOnEnter()
-		hooksecurefunc("GarrisonMissionButton_OnEnter", function(self) -- Fix wrong OnEnter function
-			if _G.CovenantMissionFrame and _G.CovenantMissionFrame:IsVisible() then
-				CovenantMissionFrameMissionsButton_OnEnter(self)
-			end
-		end)
-	end
 	if _G.CovenantMissionFrame then
+		if IPMDB.improveCovenantMissionUI or IPMDB.improveCovenantMissionUI == nil then
+			local function InitializedFrame(_, button, elementData)
+				if not button.ipm then
+					button.ipm = true
+					CovenantMissionFrameMissionButton_SetStyle(button, elementData)
+				end
+				GarrisonMissionFrameMissionButton_SetExpiresText(button, elementData)
+				CovenantMissionFrameMissionButtonRewards_SetStyle(button, elementData)
+			end
+			_G.CovenantMissionFrameMissions.ScrollBox:RegisterCallback("OnInitializedFrame", InitializedFrame, self)
+
+			local view = _G.CovenantMissionFrameMissions.ScrollBox:GetView()
+			view.elementExtent = COVENANTMISSION_BUTTONHEIGHT
+			view.templateInfos["CovenantMissionListButtonTemplate"].height = view.elementExtent
+			view.templateInfos["CovenantMissionListButtonTemplate"].extent = view.elementExtent
+
+			_G.CovenantMissionFrameMissions.ScrollBox.wheelPanScalar = 1.5
+			_G.CovenantMissionFrameMissions.ScrollBar.wheelPanScalar = 1.5
+		end
 		self:CovenantMissionAddRewardsIcons()
 		hooksecurefunc(_G.CovenantMissionFrame, "ShowMission", CovenantMissionFrame_ShowMission)
 	end
@@ -1550,7 +1448,7 @@ function events:ADDON_LOADED(event, name, ...)
 			self:Init()
 		end
 	elseif name == "Blizzard_OrderHallUI" then
-		self:HookOrderHallMissionFrame()
+		-- self:HookOrderHallMissionFrame()
 	elseif name and ORDERHALL_ADDONS[name] ~= nil then
 		ORDERHALL_ADDONS[name] = true
 	end
@@ -1558,8 +1456,8 @@ end
 
 local function OnMissionUpdate()
 	InProgressMissions.missionUpdated = false
-	InProgressMissions:Refresh()
 	InProgressMissions:SaveInProgressMissions()
+	InProgressMissions:Refresh()
 end
 
 function InProgressMissions:QueueSaveInProgressMissions(value)
@@ -1602,29 +1500,23 @@ function InProgressMissions:GET_ITEM_INFO_RECEIVED(event, ...)
 	local items
 	local selectedTab = GarrisonLandingPageReport.selectedTab
 	if selectedTab == GarrisonLandingPageReport.InProgress then
-		--items = GarrisonLandingPageReport.List.items or {}
-		items = self.missions
+		items = GarrisonLandingPageReportList.items
 	elseif selectedTab == GarrisonLandingPageReport.Available then
-		items = GarrisonLandingPageReport.List.AvailableItems or {}
+		items = GarrisonLandingPageReportList.AvailableItems
 	end
 	if not items then return end
 
-	local item
-	for k, button in pairs(self.listScroll.buttons) do
-		if type(button.id) == "number" then
-			if button.id < 0 then
-				item = InProgressMissions.altMissions[-button.id]
-			else
-				item = items[button.id]
-			end
-			if item then
-				Rewards_Update(button, item)
-			end
-		end
+	local elementData
+	for _, button in pairs(InProgressMissions.scrollBox:GetView():GetFrames()) do
+		Rewards_Update(button, button:GetMission())
 	end
 end
 
-InProgressMissions.frame:SetScript("OnEvent", function(self, event, ...) events[event](InProgressMissions, event, ...) end)
+InProgressMissions.frame:SetScript("OnEvent", function(self, event, ...)
+	-- if event ~= "ADDON_LOADED" then print(GetTime(), event, ...) end
+	events[event](InProgressMissions, event, ...)
+end)
+
 for event, func in pairs(events) do
 	if type(func) == "function" then
 		InProgressMissions.frame:RegisterEvent(event)

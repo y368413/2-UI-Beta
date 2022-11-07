@@ -1,4 +1,4 @@
-﻿--## Author: Vladinator  ## Version: 9.0.1.201029
+﻿--## Author: Vladinator  ## Version: 10.0.0.221028
 
 local CandyBuckets = {}
 CandyBuckets.modules = CandyBuckets.modules or {}
@@ -43,11 +43,11 @@ CandyBuckets.modules["hallow"] = {
 		{ quest = 29001, side = 3, [198] = {42.70, 45.60} },
 		{ quest = 29016, side = 3, [249] = {26.60, 7.30} },
 		{ quest = 29017, side = 3, [249] = {54.70, 33.00} },
-		{ quest = 32020, side = 2, [418] = {28.63, 47.90} },
+		{ quest = 32020, side = 2, [418] = {28.25, 50.74} },
 		{ quest = 32022, side = 2, [392] = {58.30, 76.90} },
-		{ quest = 32034, side = 3, [418] = {53.49, 76.50} },
-		{ quest = 32036, side = 3, [418] = {79.81, 0.84} },
-		{ quest = 32047, side = 2, [418] = {63.75, 20.32} },
+		{ quest = 32034, side = 3, [418] = {51.45, 77.33} },
+		{ quest = 32036, side = 3, [418] = {75.96, 6.96} },
+		{ quest = 32047, side = 2, [418] = {61.03, 25.14} },
 		{ quest = 32052, side = 1, [393] = {37.30, 67.10} },
 		{ quest = 29019, side = 2, [207] = {51.20, 50.00} },
 		{ quest = 29020, side = 1, [207] = {47.40, 51.70} },
@@ -569,7 +569,7 @@ CandyBuckets.modules["midsummer"] = {
 		{ quest = 32496, side = 1, extra = 1, [390] = {77.90, 33.90} },
 		{ quest = 32497, side = 3, extra = 2, [422] = {56.07, 69.58} },
 		{ quest = 32498, side = 3, extra = 2, [371] = {47.20, 47.20} },
-		{ quest = 32499, side = 3, extra = 2, [418] = {77.75, 03.53} },
+		{ quest = 32499, side = 3, extra = 2, [418] = {74.06, 9.46} },
 		{ quest = 32500, side = 3, extra = 2, [379] = {71.10, 90.90} },
 		{ quest = 32501, side = 3, extra = 2, [388] = {71.50, 56.30} },
 		{ quest = 32502, side = 3, extra = 2, [376] = {51.81, 51.32} },
@@ -610,7 +610,7 @@ CandyBuckets.modules["midsummer"] = {
 		"^%s*[Ee][Hh][Rr][Tt]%s+[Dd][Ii][Ee]%s+[Ff][Ll][Aa][Mm][Mm][Ee]%s*$",
 		"^%s*[Hh][Oo][Nn][Rr][Aa][Rr]%s+[Ll][Aa]%s+[Ll][Ll][Aa][Mm][Aa]%s*$",
 		"^%s*[Hh][Oo][Nn][Oo][Rr][Ee][Rr]%s+[Ll][Aa]%s+[Ff][Ll][Aa][Mm][Mm][Ee]%s*$",
-		"^%s*[Oo][Nn][Oo][Rr][Aa]%s+[Ii][Ll]%s+[Ff][Aa][Ll][òò]%s*$",
+		"^%s*[Oo][Nn][Oo][Rr][Aa]%s+[Ii][Ll]%s+[Ff][Aa][Ll][Òò]%s*$",
 		"^%s*[Rr][Ee][Vv][Ee][Rr][Ee][Nn][Cc][Ii][Ee]%s+[Aa]%s+[Cc][Hh][Aa][Mm][Aa]%s*$",
 		"^%s*[Пп][Оо][Кк][Лл][Оо][Нн][Ее][Нн][Ии][Ее]%s+[Оо][Гг][Нн][Юю]%s*$",
 		"^%s*불꽃에%s+경의를%s*$",
@@ -805,16 +805,57 @@ do
 		end,
 	})
 
-	local supportedAddons = ""
+	-- C_Map.SetUserWaypoint (9.0.1)
+	table.insert(waypointAddons, {
+		name = "Waypoint",
+		standard = true,
+		---@param self CandyBucketsWaypointAddOn
+		---@param poi CandyBucketsMapPosition
+		---@param wholeModule? boolean
+		func = function(self, poi, wholeModule)
+			if wholeModule then
+				self:funcAll(poi.quest.module)
+			else
+				local uiMapID = poi:GetMap():GetMapID()
+				local x, y = poi:GetPosition()
+				local childUiMapID, childX, childY = GetLowestLevelMapFromMapID(uiMapID, x, y)
+				local mapInfo = C_Map.GetMapInfo(childUiMapID)
+				if not C_Map.CanSetUserWaypointOnMap(childUiMapID) then
+					return format("Can't make a waypoint to %s. Enter the continent then try again.", mapInfo.name)
+				end
+				C_Map.SetUserWaypoint({ uiMapID = childUiMapID, position = { x = childX, y = childY } })
+			end
+			return true
+		end,
+		---@param self CandyBucketsWaypointAddOn
+		---@param module CandyBucketsModule
+		funcAll = function(self, module)
+			for i = 1, #CandyBuckets.QUESTS do
+				local quest = CandyBuckets.QUESTS[i]
+				if quest.module == module then
+					for uiMapID, coords in pairs(quest) do
+						if type(uiMapID) == "number" and type(coords) == "table" then
+							if C_Map.CanSetUserWaypointOnMap(uiMapID) then
+								C_Map.SetUserWaypoint({ uiMapID = uiMapID, position = { x = coords[1]/100, y = coords[2]/100 } })
+								return true
+							end
+						end
+					end
+				end
+			end
+			return "Can't make a waypoint to any destination."
+		end,
+	})
+
+	local supportedAddons = {} ---@type string[]
 	local supportedAddonsWarned = false
-	for i = 1, #waypointAddons do
-		supportedAddons = supportedAddons .. waypointAddons[i].name .. " "
-	end
+	for k, v in ipairs(waypointAddons) do supportedAddons[k] = v.name end
+	supportedAddons = table.concat(supportedAddons, " ") ---@diagnostic disable-line: cast-local-type
 
 	function CandyBuckets:GetWaypointAddon()
 		for i = 1, #waypointAddons do
 			local waypoint = waypointAddons[i]
-			if IsAddOnLoaded(waypoint.name) then
+			if waypoint.standard or IsAddOnLoaded(waypoint.name) then
 				return waypoint
 			end
 		end
@@ -834,7 +875,7 @@ do
 		local status, err = pcall(function() return waypoint:func(poi, wholeModule) end)
 		if not status or err ~= true then
 			if not silent then
-				DEFAULT_CHAT_FRAME:AddMessage("Unable to set waypoint using " .. waypoint.name .. (type(err) == "string" and ": " .. err or ""), 1, 1, 0)
+				DEFAULT_CHAT_FRAME:AddMessage(format("Unable to set waypoint%s%s", waypoint.standard and "" or format(" using %s", waypoint.name), type(err) == "string" and format(": %s", err) or "."), 1, 1, 0)
 			end
 			return false
 		end
@@ -868,8 +909,8 @@ function CandyBucketsDataProviderMixin:RefreshAllData(fromOnShow)
 	local map = self:GetMap()
 	local uiMapID = map:GetMapID()
 	local childUiMapIDs = CandyBuckets.PARENT_MAP[uiMapID]
-	local tempVector = {}
-	local questPOIs
+	local tempVector = {} ---@type Vector2DMixin
+	local questPOIs ---@type table<CandyBucketsQuest, Vector2DMixin>?
 
 	if IsModifierKeyDown() then
 		questPOIs = {}
@@ -877,14 +918,15 @@ function CandyBucketsDataProviderMixin:RefreshAllData(fromOnShow)
 
 	for i = 1, #CandyBuckets.QUESTS do
 		local quest = CandyBuckets.QUESTS[i]
-		local poi, poi2
+		local poi ---@type Vector2DMixin?
+		local poi2 ---@type Vector2DMixin?
 
 		if not childUiMapIDs then
-			poi = quest[uiMapID]
+			poi = quest[uiMapID] ---@type Vector2DMixin?
 
 		else
 			for childUiMapID, _ in pairs(childUiMapIDs) do
-				poi = quest[childUiMapID]
+				poi = quest[childUiMapID] ---@type Vector2DMixin?
 
 				if poi then
 					local translateKey = uiMapID .. "," .. childUiMapID
@@ -1207,9 +1249,9 @@ function addon:CheckCalendar()
 				ongoing = curHour >= event.startTime.hour and (curHour > event.startTime.hour or curMinute >= event.startTime.minute)
 			elseif event.sequenceType == "END" then
 				ongoing = curHour <= event.endTime.hour and (curHour < event.endTime.hour or curMinute <= event.endTime.minute)
-				-- TODO: linger for 3 hours extra just in case event is active but not in the calendar
+				-- TODO: linger for 12 hours extra just in case event is active but not in the calendar due to timezone differences
 				if not ongoing then
-					local paddingHour = max(0, curHour - 3)
+					local paddingHour = max(0, curHour - 12)
 					ongoing = paddingHour <= event.endTime.hour and (paddingHour < event.endTime.hour or curMinute <= event.endTime.minute)
 				end
 			end
@@ -1279,8 +1321,8 @@ function addon:QueryCalendar(check)
 end
 
 function addon:IsDeliveryLocationExpected(questID)
-	local questCollection = {}
-	local questName
+	local questCollection = {} ---@type CandyBucketsEvalPositionQuestInfo[]
+	local questName ---@type string?
 
 	for i = 1, #CandyBuckets.QUESTS do
 		local quest = CandyBuckets.QUESTS[i]
@@ -1293,9 +1335,9 @@ function addon:IsDeliveryLocationExpected(questID)
 		questName = C_QuestLog.GetTitleForQuestID(questID)
 
 		if questName then
-			local missingFromModule
+			local missingFromModule ---@type CandyBucketsModule?
 
-			for name, module in pairs(CandyBuckets.modules) do
+			for _, module in pairs(CandyBuckets.modules) do
 				if module.loaded == true then
 					for _, pattern in pairs(module.patterns) do
 						if questName:match(pattern) then
@@ -1359,8 +1401,13 @@ function addon:IsDeliveryLocationExpected(questID)
 		
 					distance = sqrt(dd)
 				end
-		
-				if distance > 0.02 then
+
+				local mapWidth, mapHeight = C_Map.GetMapWorldSize(uiMapID)
+				local mapSize = min(mapWidth, mapHeight)
+				local mapScale = mapSize > 0 and 100/mapSize or 0
+				local warnDistanceForMap = mapScale > 0 and mapScale or 0.05 -- we convert the actual map size into the same scale as we use for the distance - fallback to 0.05 if we're missing data
+
+				if distance > warnDistanceForMap then
 					ret.has, ret.success, ret.data = true, false, { quest = quest, uiMapID = uiMapID, x = pos.x, y = pos.y, distance = distance }
 				else
 					ret.has, ret.success = true, true
@@ -1446,7 +1493,7 @@ end
 function addon:QUEST_TURNED_IN(event, questID)
 	CandyBuckets.COMPLETED_QUESTS[questID] = true
 	local success, info, checkedNumQuestPOIs = addon:IsDeliveryLocationExpected(questID)
-	if success == false then
+	if success == false and info then
 		DEFAULT_CHAT_FRAME:AddMessage(format("|cffFFFFFF%s|r quest |cffFFFFFF%s#%d|r turned in at the wrong location. You were at |cffFFFFFF%d/%d/%.2f/%.2f|r roughly |cffFFFFFF%.2f|r units away from the expected %s. Please screenshot/copy this message and report it to the author. Thanks!", addonName, info.quest.module.event, questID, CandyBuckets.FACTION, info.uiMapID, info.x * 100, info.y * 100, info.distance * 100, checkedNumQuestPOIs and checkedNumQuestPOIs > 1 and checkedNumQuestPOIs .. " locations" or "location"), 1, 1, 0)
 	end
 	if addon:RemoveQuestPois(questID) then

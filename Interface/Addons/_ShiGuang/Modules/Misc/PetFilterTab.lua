@@ -38,11 +38,7 @@ function MISC:PetTabs_Click(button)
 end
 
 function MISC:PetTabs_Create()
-	if I.isNewPatch then
-		PetJournal.ScrollBox:SetPoint("TOPLEFT", PetJournalLeftInset, 3, -60)
-	else
-		PetJournalListScrollFrame:SetPoint("TOPLEFT", PetJournalLeftInset, 3, -60)
-	end
+	PetJournal.ScrollBox:SetPoint("TOPLEFT", PetJournalLeftInset, 3, -60)
 
 	-- Create the pet type buttons, sorted according weakness
 	-- Humanoid > Dragonkin > Magic > Flying > Aquatic > Elemental > Mechanical > Beast > Critter > Undead

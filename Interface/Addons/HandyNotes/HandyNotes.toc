@@ -1,13 +1,13 @@
-## Interface: 90207
+## Interface: 100000
 ## Author: Xinhuan
-## Version: v1.6.8
+## Version: v1.6.10
 ## Title: HandyNotes
 ## Title-zhCN:|cff0080ff[地图]|r宝藏稀有
 ## Title-zhTW:|cff0080ff[地图]|r寶藏稀有
 ## Notes: Handynotes with Achievments+Treasures+Toys+Mounts
 ## Notes-zhCN: 稀有、宝藏、坐骑、玩具将会在地图上标记出，并判定是否已击杀过。并替换自带飞行地图，使之更加方便详细。
 ## Notes-zhTW: 稀有、宝藏、坐骑、玩具将会在地图上标记出，并判定是否已擊殺過。并替换自带飞行地图，使之更加方便详细。
-## SavedVariables: HandyNotesDB, HandyNotes_HandyNotesDB, HandyNotes_CoreDB, HandyNotes_LostAndFoundDB, HNMoleMachineConfig, HandyNotes_PetDailiesDB, HandyNotes_Universal_ExplorerDB, HandyNotes_TravelGuideDB, HandyNotes_HigherDimensionalLearningDB, HandyNotes_WitheredChestsDB, HandyNotes_OribosDB, HandyNotesArgusDB, HandyNotes_SuramarTelemancyDB, HandyNotes_SuramarLeylinesDB
+## SavedVariables: HandyNotesDB, HandyNotes_HandyNotesDB, HandyNotes_CoreDB, HandyNotes_LostAndFoundDB, HNMoleMachineConfig, HandyNotes_PetDailiesDB, HandyNotes_Universal_ExplorerDB, HandyNotes_TravelGuideDB, HandyNotes_HigherDimensionalLearningDB, HandyNotes_WitheredChestsDB, HandyNotes_OribosDB, HandyNotesArgusDB, HandyNotes_SuramarTelemancyDB, HandyNotes_SuramarLeylinesDB,HandyNotes_WrathOfTheLichKingDB,HandyNotes_WarlordsOfDraenorDB
 ## Dependencies: _ShiGuang, Blizzard_FlightMap
 
 ## X-Repple: 2 UI
@@ -26,8 +26,30 @@ HandyNotes_WorldMapButton.lua
 # Core Mods
 Core\core.xml
 
+# BC
+BC\common.lua
+BC\zones\blades_edge.lua
+BC\zones\hellfire_peninsula.lua
+BC\zones\nagrand.lua
+BC\zones\netherstorm.lua
+BC\zones\shadowmoon_valley.lua
+BC\zones\terokkar_forest.lua
+BC\zones\zangarmarsh.lua
+# WLK
+WLK\common.lua
+WLK\zones\borean_tundra.lua
+WLK\zones\dragonblight.lua
+WLK\zones\grizzly_hills.lua
+WLK\zones\howling_fjord.lua
+WLK\zones\icecrown.lua
+WLK\zones\sholazar_basin.lua
+WLK\zones\storm_peaks.lua
+WLK\zones\zuldrak.lua
+WLK\zones\dalaran.lua
+  
 # MOP
-MOP\HandyNotes_LostAndFound.lua
+# MOP\HandyNotes_LostAndFound.lua
+MOP\common.lua
 MOP\zones\dread_wastes.lua
 MOP\zones\jade_forest.lua
 MOP\zones\krasarang_wilds.lua
@@ -37,17 +59,37 @@ MOP\zones\vale_of_eternal_blossoms.lua
 MOP\zones\valley_of_the_four_winds.lua
 MOP\zones\isle_of_thunder.lua
 MOP\zones\timeless_isle.lua
+MOP\zones\veiled_stair.lua
 
 # WOD
-WOD\HandyNotes_DraenorTreasures.lua
+WOD\common.lua
+WOD\zones\frostfire.lua
+WOD\zones\gorgrond.lua
+WOD\zones\nagrand.lua
+WOD\zones\shadowmoon.lua
+WOD\zones\spires.lua
+WOD\zones\talador.lua
+WOD\zones\tanaan_jungle.lua
+# WOD\HandyNotes_DraenorTreasures.lua
 # WOD\HandyNotes_AzerothsTopTunes.lua
 
 # LEG
-LEG\HandyNotes_SuramarLeylines.lua
-LEG\HandyNotes_SuramarTelemancy.lua
-LEG\HandyNotes_Argus.lua
-LEG\HandyNotes_LegionRaresTreasures.lua
-LEG\HandyNotes_HigherDimensionalLearning.lua
+LEG\common.lua
+LEG\zones\antoran_wastes.lua
+LEG\zones\azsuna.lua
+LEG\zones\broken_shore.lua
+LEG\zones\dalaran.lua
+LEG\zones\eredath.lua
+LEG\zones\highmountain.lua
+LEG\zones\krokuun.lua
+LEG\zones\stormheim.lua
+LEG\zones\suramar.lua
+LEG\zones\valsharah.lua
+# LEG\HandyNotes_SuramarLeylines.lua
+# LEG\HandyNotes_SuramarTelemancy.lua
+# LEG\HandyNotes_Argus.lua
+# LEG\HandyNotes_LegionRaresTreasures.lua
+# LEG\HandyNotes_HigherDimensionalLearning.lua
 # LEG\HandyNotes_Syd'sWitheredChests.lua
 
 # BFA
@@ -74,15 +116,24 @@ Shadowlands\zones\korthia.lua
 Shadowlands\zones\maldraxxus.lua
 Shadowlands\zones\revendreth.lua
 Shadowlands\zones\the_maw.lua
+Shadowlands\zones\torghast.lua
 Shadowlands\zones\zereth_mortis.lua
-Shadowlands\HandyNotes_Oribos.lua
+#Shadowlands\HandyNotes_Oribos.lua
 
+#Dragonflight
+
+DF\common.lua
+DF\zones\azure_span.lua
+DF\zones\ohnahran_plains.lua
+DF\zones\thaldraszus.lua
+DF\zones\waking_shores.lua
+  
 # Mode files
 Mode\HandyNotes_ScarabCoffers.lua
 Mode\HandyNotes_MoleMachine.lua
 Mode\HandyNotes_LightningPaw.lua
 Mode\HandyNotes_Universal_Explorer.lua
-Mode\HandyNotes_TravelGuide.lua
+#Mode\HandyNotes_TravelGuide.lua
 Mode\HandyNotes_PetDailies.lua
 
 # Others files

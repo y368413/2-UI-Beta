@@ -1,4 +1,4 @@
-﻿--## Version: v33  ## Author: Kemayo
+﻿--## Version: v34.1  ## Author: Kemayo
 local AppearanceTooltip = {}
 local GetScreenWidth = GetScreenWidth
 local GetScreenHeight = GetScreenHeight
@@ -1569,7 +1569,7 @@ local tokens = newCheckbox(panel, 'tokens', '可预览套装', "Show previews fo
 
 local zoomWorn = newCheckbox(panel, 'zoomWorn', '仅显示该装备部位', "Zoom in on the part of your model which wears the item")
 local zoomHeld = newCheckbox(panel, 'zoomHeld', '不保持手持状态', "Zoom in on the held item being previewed, without seeing your character")
-local zoomMasked = newCheckbox(panel, 'zoomMasked', 'Mask out model while zoomed', "Hide the details of your player model while you're zoomed (like the transmog wardrobe does)")
+local zoomMasked = newCheckbox(panel, 'zoomMasked', '放大时屏蔽模型', "Hide the details of your player model while you're zoomed (like the transmog wardrobe does)")
 
 local modifier = newDropdown(panel, 'modifier', "设置组合功能键", {
     Alt = "Alt",
@@ -1579,7 +1579,7 @@ local modifier = newDropdown(panel, 'modifier', "设置组合功能键", {
 })
 UIDropDownMenu_SetWidth(modifier, 100)
 
-local anchor = newDropdown(panel, 'anchor', "Side of the tooltip to attach to, depending on where on the screen it's showing", {
+local anchor = newDropdown(panel, 'anchor', "附着在提示框的某一侧，取决于它在屏幕的位置。", {
     vertical = "↑ / ↓",
     horizontal = "← / →",
 })
@@ -1656,7 +1656,7 @@ do
     panel:Hide()
     panel:SetAllPoints()
     panel.name = "Overlays"
-    panel.parent = myname
+    panel.parent = "AppearanceTooltip"
 
     local title = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
     title:SetPoint("TOPLEFT", 16, -16)
@@ -1813,14 +1813,27 @@ local function UpdateContainerButton(button, bag, slot)
     end)
 end
 
-hooksecurefunc("ContainerFrame_Update", function(container)
-    local bag = container:GetID()
-    local name = container:GetName()
-    for i = 1, container.size, 1 do
-        local button = _G[name .. "Item" .. i]
-        UpdateContainerButton(button, bag)
+if _G.ContainerFrame_Update then
+    hooksecurefunc("ContainerFrame_Update", function(container)
+        local bag = container:GetID()
+        local name = container:GetName()
+        for i = 1, container.size, 1 do
+            local button = _G[name .. "Item" .. i]
+            UpdateContainerButton(button, bag)
+        end
+    end)
+else
+    local update = function(frame)
+        for _, itemButton in frame:EnumerateValidItems() do
+            UpdateContainerButton(itemButton, itemButton:GetBagID(), itemButton:GetID())
+        end
     end
-end)
+    -- can't use ContainerFrameUtil_EnumerateContainerFrames because it depends on the combined bags setting
+    hooksecurefunc(ContainerFrameCombinedBags, "UpdateItems", update)
+    for _, frame in ipairs(UIParent.ContainerFrames) do
+        hooksecurefunc(frame, "UpdateItems", update)
+    end
+end
 
 hooksecurefunc("BankFrameItemButton_Update", function(button)
     if not button.isBag then
@@ -1847,18 +1860,35 @@ end)
 
 -- Loot frame
 
-hooksecurefunc("LootFrame_UpdateButton", function(index)
-    local button = _G["LootButton"..index]
-    if not button then return end
-    if button.appearancetooltipoverlay then button.appearancetooltipoverlay:Hide() end
-    if not AppearanceTooltip.db.loot then return end
-    if button:IsEnabled() and button.slot then
-        local link = GetLootSlotLink(button.slot)
+if _G.LootFrame_UpdateButton then
+    hooksecurefunc("LootFrame_UpdateButton", function(index)
+        local button = _G["LootButton"..index]
+        if not button then return end
+        if button.appearancetooltipoverlay then button.appearancetooltipoverlay:Hide() end
+        if not AppearanceTooltip.db.loot then return end
+        if button:IsEnabled() and button.slot then
+            local link = GetLootSlotLink(button.slot)
+            if link then
+                UpdateOverlay(button, link)
+            end
+        end
+    end)
+else
+    local function handleSlot(frame)
+        if not frame.Item then return end
+        if frame.Item.appearancetooltipoverlay then frame.Item.appearancetooltipoverlay:Hide() end
+        if not AppearanceTooltip.db.loot then return end
+        local data = frame:GetElementData()
+        if not (data and data.slotIndex) then return end
+        local link = GetLootSlotLink(data.slotIndex)
         if link then
-            UpdateOverlay(button, link)
+            UpdateOverlay(frame.Item, link)
         end
     end
-end)
+    LootFrame.ScrollBox:RegisterCallback("OnUpdate", function(...)
+        LootFrame.ScrollBox:ForEachFrame(handleSlot)
+    end)
+end
 
 -- Encounter Journal frame
 
@@ -1901,33 +1931,54 @@ f:RegisterAddonHook("Blizzard_Collections", function()
         end
         return string.sub(text, 1, -2)
     end
-    local function update(self)
-        local offset = HybridScrollFrame_GetOffset(self)
-        local buttons = self.buttons
-        for i = 1, #buttons do
-            local button = buttons[i]
-            if button.appearancetooltipoverlay then button.appearancetooltipoverlay.text:SetText("") end
-            if AppearanceTooltip.db.setjournal and button:IsShown() then
-                local setID = button.setID
-                if not button.appearancetooltipoverlay then
-                    button.appearancetooltipoverlay = CreateFrame("Frame", nil, button)
-                    button.appearancetooltipoverlay.text = button.appearancetooltipoverlay:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-                    button.appearancetooltipoverlay:SetAllPoints()
-                    button.appearancetooltipoverlay.text:SetPoint("BOTTOMRIGHT", -2, 2)
-                    button.appearancetooltipoverlay:Show()
+    if WardrobeCollectionFrame.SetsCollectionFrame.ScrollFrame then
+        local function update(self)
+            local offset = HybridScrollFrame_GetOffset(self)
+            local buttons = self.buttons
+            for i = 1, #buttons do
+                local button = buttons[i]
+                if button.appearancetooltipoverlay then button.appearancetooltipoverlay.text:SetText("") end
+                if AppearanceTooltip.db.setjournal and button:IsShown() then
+                    local setID = button.setID
+                    if not button.appearancetooltipoverlay then
+                        button.appearancetooltipoverlay = CreateFrame("Frame", nil, button)
+                        button.appearancetooltipoverlay.text = button.appearancetooltipoverlay:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+                        button.appearancetooltipoverlay:SetAllPoints()
+                        button.appearancetooltipoverlay.text:SetPoint("BOTTOMRIGHT", -2, 2)
+                        button.appearancetooltipoverlay:Show()
+                    end
+                    button.appearancetooltipoverlay.text:SetText(buildSetText(setID))
                 end
-                button.appearancetooltipoverlay.text:SetText(buildSetText(setID))
             end
         end
+        hooksecurefunc(WardrobeCollectionFrame.SetsCollectionFrame.ScrollFrame, "Update", update)
+        hooksecurefunc(WardrobeCollectionFrame.SetsCollectionFrame.ScrollFrame, "update", update)
+    else
+        local function handleSlot(frame)
+            if frame.appearancetooltipoverlay then frame.appearancetooltipoverlay.text:SetText("") end
+            if AppearanceTooltip.db.setjournal and frame:IsShown() then
+                local data = frame:GetElementData()
+                local setID = data.setID
+                if not frame.appearancetooltipoverlay then
+                    frame.appearancetooltipoverlay = CreateFrame("Frame", nil, frame)
+                    frame.appearancetooltipoverlay.text = frame.appearancetooltipoverlay:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+                    frame.appearancetooltipoverlay:SetAllPoints()
+                    frame.appearancetooltipoverlay.text:SetPoint("BOTTOMRIGHT", -2, 2)
+                    frame.appearancetooltipoverlay:Show()
+                end
+                frame.appearancetooltipoverlay.text:SetText(buildSetText(setID))
+            end
+        end
+        WardrobeCollectionFrame.SetsCollectionFrame.ListContainer.ScrollBox:RegisterCallback("OnUpdate", function(...)
+            WardrobeCollectionFrame.SetsCollectionFrame.ListContainer.ScrollBox:ForEachFrame(handleSlot)
+        end)
     end
-    hooksecurefunc(WardrobeCollectionFrame.SetsCollectionFrame.ScrollFrame, "Update", update)
-    hooksecurefunc(WardrobeCollectionFrame.SetsCollectionFrame.ScrollFrame, "update", update)
 end)
 
--- Combuctor:
+--[[ Combuctor:
 f:RegisterAddonHook("Combuctor", function()
     hooksecurefunc(Combuctor.Item, "Update", function(frame)
         local bag = frame:GetBag()
         UpdateContainerButton(frame, bag)
     end)
-end)
+end)]]

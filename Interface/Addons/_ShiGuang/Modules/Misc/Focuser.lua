@@ -74,6 +74,7 @@ function MISC:Focuser()
 	f:SetAttribute("type1", "macro")
 	f:SetAttribute("macrotext", "/focus mouseover")
 	SetOverrideBindingClick(FocuserButton, true, modifier.."-BUTTON"..mouseButton, "FocuserButton")
+	f:RegisterForClicks("LeftButtonDown")
 
 	hooksecurefunc("CreateFrame", MISC.Focuser_CreateFrameHook)
 	MISC:Focuser_OnEvent()

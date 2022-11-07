@@ -6,6 +6,7 @@
 local _, this = ...
 
 local API = this.API
+local t = this.t
 
 ---
 --- Cache storage for data, so we won't have to query WoW API so much.
@@ -69,7 +70,11 @@ end
 ---   Type of cache, we are storing to (achievement, item etc.). Can be omitted.
 ---
 function Cache:set(id, data, type)
-  if not type and data ~= nil then
+  if (data == nil or data == t['fetching_data']) then
+    return
+  end
+
+  if not type then
     HandyNotes_CollectionCACHE[id] = data
     return
   end
@@ -79,9 +84,7 @@ function Cache:set(id, data, type)
     HandyNotes_CollectionCACHE[type] = {}
   end
 
-  if (data ~= nil) then
-    HandyNotes_CollectionCACHE[type][id] = data
-  end
+  HandyNotes_CollectionCACHE[type][id] = data
 end
 
 ---

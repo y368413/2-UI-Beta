@@ -13,6 +13,9 @@ OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
+1.6 (2022-10-30) by Dahk Celes
+- Updates for WoW Dragonflight
+
 1.5 (2022-01-17) by Dahk Celes
 - Options menu tooltips to describe each popup type.
 
@@ -201,7 +204,7 @@ do
 	
 	local scrollChild = CreateFrame("Frame")
 	scrollParent:SetScrollChild(scrollChild)
-	scrollChild:SetWidth(InterfaceOptionsFramePanelContainer:GetWidth()-18)
+	scrollChild:SetWidth((InterfaceOptionsFramePanelContainer or SettingsPanel.Container.SettingsCanvas):GetWidth()-18)
 	
 	function panel.default()
 		for key, date in pairs(AcceptPopupsUntil) do
@@ -447,7 +450,9 @@ do
 	panel:SetScript("OnHide", panelOnHide)
 
 	function SlashCmdList.ACCEPTPOPUPS()
-		InterfaceAddOnsList_Update()	-- https://github.com/Stanzilla/WoWUIBugs/issues/89
+		if InterfaceAddOnsList_Update and (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC or WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC) then
+			InterfaceAddOnsList_Update()	-- https://github.com/Stanzilla/WoWUIBugs/issues/89
+		end
 		InterfaceOptionsFrame_OpenToCategory(panel)
 	end
 	SLASH_ACCEPTPOPUPS1 = "/acceptpopups"

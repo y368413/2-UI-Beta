@@ -317,7 +317,22 @@
                     </Anchors>
                     <Color r="0.7" g="0.7" b="0.7"/>
                 </FontString>
+                <!-- expand/collapse texture to left -->
+                <Texture parentKey="expand" file="Interface\Buttons\UI-MinusButton-UP" hidden="true">
+                    <Size x="16" y="16"/>
+                    <Anchors>
+                        <Anchor point="LEFT" x="3" y="0"/>
+                    </Anchors>
+                </Texture>
 			</Layer>
+            <Layer level="OVERLAY">
+                <Texture parentKey="expandHighlight" file="Interface\Buttons\UI-PlusButton-Hilight" alphaMode="ADD" hidden="true">
+                    <Size x="16" y="16"/>
+                    <Anchors>
+                        <Anchor point="LEFT" x="3" y="0"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
 		</Layers>
 		<!-- quest title/header normalText is shifted to right 20 -->
 		<ButtonText parentKey="normalText" nonspacewrap="true">
@@ -326,7 +341,7 @@
 				<Anchor point="LEFT" x="20" y="0"/>
 			</Anchors> 
 		</ButtonText>
-		<NormalTexture file="Interface\Buttons\UI-MinusButton-UP">
+		<!-- <NormalTexture file="Interface\Buttons\UI-MinusButton-UP">
 			<Size x="16" y="16"/>
 			<Anchors>
 				<Anchor point="LEFT" x="3" y="0"/>
@@ -337,7 +352,7 @@
 			<Anchors>
 				<Anchor point="LEFT" x="3" y="0"/>
 			</Anchors>
-		</HighlightTexture>
+		</HighlightTexture> -->
 		<NormalFont style="GameFontNormalLeft"/>
 		<HighlightFont style="GameFontHighlightLeft"/>
 		<DisabledFont style="GameFontHighlightLeft"/>
@@ -579,13 +594,12 @@
                 <Size x="298" y="403"/>
                 <Layers>
                     <Layer level="ARTWORK">
-                        <Texture parentKey="headerBack" file="Interface\QuestFrame\QuestMapLogAtlas">
+                        <Texture parentKey="headerBack"  atlas="StoryHeader-BG">
                             <Size x="300" y="58"/>
                             <Anchors>
                                 <Anchor point="TOPLEFT" x="-8" y="0"/>
                                 <Anchor point="TOPRIGHT" x="8" y="0"/>
                             </Anchors>
-                            <TexCoords left="0.283203" right="0.537109" top="0.785156" bottom="0.841797"/>
                         </Texture>
                         <FontString parentKey="headerTitle" inherits="GameFontHighlightMedium">
                             <Anchors>

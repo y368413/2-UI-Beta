@@ -3,27 +3,27 @@
 --- Icon class for defining icons and their look.
 ---
 
-local _, this = ...
+local NAME, this = ...
 
 local Icon = {}
+
+---
+--- Path to folder with icons.
+---
+Icon.path = 'Interface\\Addons\\' .. NAME .. '\\gfx\\'
 
 ---
 --- List of icons we are going to use in our addon on map.
 ---
 Icon.list = {
-  ['chest'] = 'Warfronts-FieldMapIcons-Neutral-Mine',
-  ['chest-completed'] = 'Warfronts-FieldMapIcons-Alliance-Mine',
-  ['monster'] = 'Warfronts-BaseMapIcons-Horde-Barracks',
-  ['monster-completed'] = 'Warfronts-BaseMapIcons-Alliance-Barracks',
-  ['achievement'] = 'storyheader-cheevoicon',
-  ['default'] = 'map-markeddefeated',
-  ['poi'] = 'map-markeddefeated',
-  ['pet'] = 'wildbattlepetcapturable',
-  ['quest'] = 'questnormal',
-  ['door-up'] = 'poi-door-up',
-  ['door-right'] = 'poi-door-right',
-  ['door-down'] = 'poi-door-down',
-  ['door-left'] = 'poi-door-left',
+  ['default'] = Icon.path .. 'dot.blp',
+  ['achievement'] = Icon.path .. 'achievement.blp',
+  ['chest'] = Icon.path .. 'treasure.blp',
+  ['monster'] = Icon.path .. 'monster.blp',
+  ['pet'] = Icon.path .. 'pet.blp',
+  ['poi'] = Icon.path .. 'dot.blp',
+  ['portal'] = Icon.path .. 'portal.blp',
+  ['summary'] = Icon.path .. 'summary.blp',
 }
 
 this.Icon = Icon

@@ -243,6 +243,7 @@ local BREAKABLE_PICK = 4
 local BREAKABLE_COMBINE = 5
 
 local BagUpdateCheckDelay = 0.1
+local PickLockFinishedDelay = 1
 local nextCheck = {}
 for i=0,NUM_BAG_SLOTS do
 	nextCheck[i] = -1
@@ -261,6 +262,10 @@ local showingTooltip = nil
 
 Breakables.optionsFrame = {}
 Breakables.justClicked = false
+Breakables.justClickedBag = -1
+Breakables.justClickedSlot = -1
+Breakables.justPickedBag = -1
+Breakables.justPickedSlot = -1
 
 function Breakables:OnInitialize()
 	self.defaults = {
@@ -327,19 +332,35 @@ function Breakables:InitLDB()
 
 		if ldbButton then
 			function ldbButton:OnTooltipShow()
-				self:AddLine(L["Breakables"] .. " v1.8.6")
+				self:AddLine(L["Breakables"] .. " v1.9.1")
 				self:AddLine(L["Click to open Breakables options."], 1, 1, 1)
 			end
 		end
 	end
 end
 
-function Breakables:OnEnable()
+function Breakables:SetCapabilities()
 	CanMill = IsUsableSpell(GetSpellInfo(MillingId))
 	CanProspect = IsUsableSpell(GetSpellInfo(ProspectingId))
 	CanDisenchant = IsUsableSpell(GetSpellInfo(DisenchantId))
 	CanPickLock = IsUsableSpell(GetSpellInfo(PickLockId))
+end
 
+function Breakables:OnSpellsChanged()
+	local couldMill = CanMill
+	local couldProspect = CanProspect
+	local couldDisenchant = CanDisenchant
+	local couldPick = CanPickLock
+	self:SetCapabilities()
+
+	if couldMill ~= CanMill or couldProspect ~= CanProspect or couldDisenchant ~= CanDisenchant or couldPick ~= CanPickLock then
+		self:SetupButtons()
+	end
+end
+
+function Breakables:OnEnable()
+	self:SetCapabilities()
+	
 	self.EnchantingLevel = 0
 
 	LibStub("AceConfig-3.0"):RegisterOptionsTable("Breakables", self:GetOptions(), "breakables")
@@ -356,7 +377,16 @@ function Breakables:OnEnable()
 
 	self:RegisterEvents()
 
-	if CanMill or CanProspect or CanDisenchant or CanPickLock then
+	self:SetupButtons()
+end
+
+local canBreakSomething = function()
+	return CanMill or CanProspect or CanDisenchant or CanPickLock
+end
+
+function Breakables:SetupButtons()
+	numEligibleProfessions = 0
+	if canBreakSomething() then
 		if CanMill then
 			numEligibleProfessions = numEligibleProfessions + 1
 		end
@@ -382,7 +412,7 @@ function Breakables:OnEnable()
 		end
 		self.frame:SetScript("OnUpdate", self.frame.OnUpdateFunc)
 	else
-		self:UnregisterAllEvents()
+		self:CreateButtonFrame()
 	end
 end
 
@@ -411,14 +441,13 @@ function Breakables:RegisterEvents()
 	self:RegisterEvent("PLAYER_REGEN_ENABLED", "OnLeaveCombat")
 
 	self:RegisterEvent("MODIFIER_STATE_CHANGED", "FindBreakables")
+	self:RegisterEvent("SPELLS_CHANGED", "OnSpellsChanged")
 
-	if CanDisenchant and ShouldHookTradeskillUpdate then
+	if ShouldHookTradeskillUpdate then
 		self:RegisterEvent("TRADE_SKILL_UPDATE", "OnTradeSkillUpdate")
 	end
 
-	if CanPickLock then
-		self:RegisterEvent("CHAT_MSG_OPENING", "OnBagItemLockPicked")
-	end
+	self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED", "OnSpellCastSucceeded")
 
 	if UnitCanPetBattle then
 		self:RegisterEvent("PET_BATTLE_OPENING_START", "PetBattleStarted")
@@ -484,12 +513,24 @@ function Breakables:OnLeaveCombat()
 end
 
 function Breakables:OnTradeSkillUpdate()
+	if not CanDisenchant then
+		return
+	end
+
 	self:GetEnchantingLevel()
 	self:FindBreakables()
 end
 
-function Breakables:OnBagItemLockPicked()
+function Breakables:OnSpellCastSucceeded(evt, unit, guid, spell)
+	if spell ~= PickLockId or not CanPickLock then
+		return
+	end
+
+	self.justPickedBag = self.justClickedBag
+	self.justPickedSlot = self.justClickedSlot
+
 	self:FindBreakables()
+	nextCheck[0] = GetTime() + PickLockFinishedDelay
 end
 
 function Breakables:PetBattleStarted()
@@ -752,84 +793,86 @@ function Breakables:GetOptions()
 				hidden = function() return not IsIgnoringAnything() end,
 				order = 31,
 			},
-		},
-	}
-
-	if CanDisenchant then
-		opts.args.showSoulbound = {
-			type = "toggle",
-			name = L["Show soulbound items"],
-			desc = L["Whether or not to display soulbound items as breakables."],
-			get = function(info)
-				return self.settings.showSoulbound
-			end,
-			set = function(info, v)
-				self.settings.showSoulbound = v
-				if info.uiType == "cmd" then
-					print("|cff33ff99Breakables|r: set |cffffff78showSoulbound|r to " .. tostring(self.settings.showSoulbound))
-				end
-				self:FindBreakables()
-			end,
-			order = 20,
-		}
-		if GetNumEquipmentSets or C_EquipmentSet then
-			opts.args.hideEqManagerItems = {
+			showSoulbound = {
 				type = "toggle",
-				name = L["Hide Eq. Mgr items"],
-				desc = L["Whether or not to hide items that are part of an equipment set in the game's equipment manager."],
+				name = L["Show soulbound items"],
+				desc = L["Whether or not to display soulbound items as breakables."],
 				get = function(info)
-					return self.settings.hideEqManagerItems
+					return self.settings.showSoulbound
 				end,
 				set = function(info, v)
-					self.settings.hideEqManagerItems = v
+					self.settings.showSoulbound = v
 					if info.uiType == "cmd" then
-						print("|cff33ff99Breakables|r: set |cffffff78hideEqManagerItems|r to " .. tostring(self.settings.hideEqManagerItems))
+						print("|cff33ff99Breakables|r: set |cffffff78showSoulbound|r to " .. tostring(self.settings.showSoulbound))
 					end
 					self:FindBreakables()
 				end,
 				hidden = function()
-					return not self.settings.showSoulbound
+					return not CanDisenchant
 				end,
-				order = 21,
-			}
-		end
-		if ShouldShowTabardControls then
-			opts.args.hideTabards = {
-				type = "toggle",
-				name = L["Hide Tabards"],
-				desc = L["Whether or not to hide tabards from the disenchantable items list."],
-				get = function(info)
-					return self.settings.hideTabards
-				end,
-				set = function(info, v)
-					self.settings.hideTabards = v
-					if info.uiType == "cmd" then
-						print("|cff33ff99Breakables|r: set |cffffff78hideTabards|r to " .. tostring(self.settings.hideTabards))
-					end
-					self:FindBreakables()
-				end,
-				order = 22,
-			}
-		end
+				order = 20,
+			},
+		},
+	}
 
-		if not IgnoreEnchantingSkillLevelForDisenchant then
-			opts.args.ignoreEnchantingSkillLevel = {
-				type = "toggle",
-				name = L["Ignore Enchanting skill level"],
-				desc = L["Whether or not items should be shown when Breakables thinks you don't have the appropriate skill level to disenchant it."],
-				get = function(info)
-					return self.settings.ignoreEnchantingSkillLevel
-				end,
-				set = function(info, v)
-					self.settings.ignoreEnchantingSkillLevel = v
-					self:FindBreakables()
-					if info.uiType == "cmd" then
-						print("|cff33ff99Breakables|r: set |cffffff78ignoreEnchantingSkillLevel|r to " .. tostring(self.settings.ignoreEnchantingSkillLevel))
-					end
-				end,
-				order = 10,
-			}
-		end
+	if GetNumEquipmentSets or C_EquipmentSet then
+		opts.args.hideEqManagerItems = {
+			type = "toggle",
+			name = L["Hide Eq. Mgr items"],
+			desc = L["Whether or not to hide items that are part of an equipment set in the game's equipment manager."],
+			get = function(info)
+				return self.settings.hideEqManagerItems
+			end,
+			set = function(info, v)
+				self.settings.hideEqManagerItems = v
+				if info.uiType == "cmd" then
+					print("|cff33ff99Breakables|r: set |cffffff78hideEqManagerItems|r to " .. tostring(self.settings.hideEqManagerItems))
+				end
+				self:FindBreakables()
+			end,
+			hidden = function()
+				return not CanDisenchant and not self.settings.showSoulbound
+			end,
+			order = 21,
+		}
+	end
+
+	if ShouldShowTabardControls then
+		opts.args.hideTabards = {
+			type = "toggle",
+			name = L["Hide Tabards"],
+			desc = L["Whether or not to hide tabards from the disenchantable items list."],
+			get = function(info)
+				return self.settings.hideTabards
+			end,
+			set = function(info, v)
+				self.settings.hideTabards = v
+				if info.uiType == "cmd" then
+					print("|cff33ff99Breakables|r: set |cffffff78hideTabards|r to " .. tostring(self.settings.hideTabards))
+				end
+				self:FindBreakables()
+			end,
+			order = 22,
+		}
+	end
+
+	if not IgnoreEnchantingSkillLevelForDisenchant then
+		opts.args.ignoreEnchantingSkillLevel = {
+			type = "toggle",
+			name = L["Ignore Enchanting skill level"],
+			desc = L["Whether or not items should be shown when Breakables thinks you don't have the appropriate skill level to disenchant it."],
+			get = function(info)
+				return self.settings.ignoreEnchantingSkillLevel
+			end,
+			set = function(info, v)
+				self.settings.ignoreEnchantingSkillLevel = v
+				self:FindBreakables()
+				if info.uiType == "cmd" then
+					print("|cff33ff99Breakables|r: set |cffffff78ignoreEnchantingSkillLevel|r to " .. tostring(self.settings.ignoreEnchantingSkillLevel))
+				end
+			end,
+			order = 10,
+		}
 	end
 
 	if UnitCanPetBattle then
@@ -862,6 +905,11 @@ function Breakables:CreateButtonFrame()
 		self.buttonFrame = {}
 	end
 
+	for i=numEligibleProfessions+1,#self.buttonFrame do
+		self.buttonFrame[i]:ClearAllPoints()
+		self.buttonFrame[i]:Hide()
+	end
+
 	for i=1,numEligibleProfessions do
 		if not self.buttonFrame[i] then
 			self.buttonFrame[i] = CreateFrame("Button", "BREAKABLES_BUTTON_FRAME"..i, self.frame, "SecureActionButtonTemplate")
@@ -884,7 +932,7 @@ function Breakables:CreateButtonFrame()
 			frame:SetHeight(buttonSize)
 
 			frame:EnableMouse(true)
-			frame:RegisterForClicks("LeftButtonUp")
+			frame:RegisterForClicks("LeftButtonUp", "LeftButtonDown")
 
 			if not frame.OnMouseDownFunc then
 				frame.OnMouseDownFunc = function(frame) self:OnMouseDown(frame) end
@@ -992,6 +1040,10 @@ function Breakables:FindBreakables(bag)
 		return
 	end
 
+	if not canBreakSomething() then
+		return
+	end
+
 	if self.bCombat then
 		self.bPendingUpdate = true
 		return
@@ -1054,7 +1106,7 @@ function Breakables:FindBreakables(bag)
 						btn:SetWidth(buttonSize)
 						btn:SetHeight(buttonSize)
 						btn:EnableMouse(true)
-						btn:RegisterForClicks("AnyUp")
+						btn:RegisterForClicks("AnyUp", "AnyDown")
 
 						btn:SetAttribute("type1", "spell")
 
@@ -1212,6 +1264,9 @@ function Breakables:OnLeaveBreakableButton()
 end
 
 function Breakables:PostClickedBreakableButton(this)
+	self.justClickedBag = this.bag
+	self.justClickedSlot = this.slot
+
 	if this.type == BREAKABLE_HERB or this.type == BREAKABLE_ORE or this.type == BREAKABLE_DE or this.type == BREAKABLE_COMBINE then
 		self.justClicked = true
 	end
@@ -1225,12 +1280,17 @@ function Breakables:FindBreakablesInBag(bagId)
 		for slotId=1,GetContainerNumSlots(bagId) do
 			local found = self:FindBreakablesInSlot(bagId, slotId)
 			if found then
-				local addedToExisting = self:MergeBreakables(found, foundBreakables)
+				if bagId ~= self.justPickedBag or slotId ~= self.justPickedSlot then
+					local addedToExisting = self:MergeBreakables(found, foundBreakables)
 
-				if not addedToExisting then
-					foundBreakables[i] = found
-					i = i + 1
+					if not addedToExisting then
+						foundBreakables[i] = found
+						i = i + 1
+					end
 				end
+			elseif bagId == self.justPickedBag and slotId == self.justPickedSlot then
+				self.justPickedBag = -1
+				self.justPickedSlot = -1
 			end
 		end
 	end

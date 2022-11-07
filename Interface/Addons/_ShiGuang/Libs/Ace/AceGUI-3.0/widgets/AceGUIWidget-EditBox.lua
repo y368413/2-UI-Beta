@@ -1,4 +1,6 @@
-
+--[[-----------------------------------------------------------------------------
+EditBox Widget
+-------------------------------------------------------------------------------]]
 local Type, Version = "EditBox", 28
 local AceGUI = LibStub and LibStub("AceGUI-3.0", true)
 if not AceGUI or (AceGUI:GetWidgetVersion(Type) or 0) >= Version then return end
@@ -12,6 +14,9 @@ local GetCursorInfo, ClearCursor, GetSpellInfo = GetCursorInfo, ClearCursor, Get
 local CreateFrame, UIParent = CreateFrame, UIParent
 local _G = _G
 
+--[[-----------------------------------------------------------------------------
+Support functions
+-------------------------------------------------------------------------------]]
 if not AceGUIEditBoxInsertLink then
 	-- upgradeable hook
 	hooksecurefunc("ChatEdit_InsertLink", function(...) return _G.AceGUIEditBoxInsertLink(...) end)
@@ -39,6 +44,9 @@ local function HideButton(self)
 	self.editbox:SetTextInsets(0, 0, 3, 3)
 end
 
+--[[-----------------------------------------------------------------------------
+Scripts
+-------------------------------------------------------------------------------]]
 local function Control_OnEnter(frame)
 	frame.obj:Fire("OnEnter")
 end
@@ -106,6 +114,9 @@ local function Button_OnClick(frame)
 	EditBox_OnEnterPressed(editbox)
 end
 
+--[[-----------------------------------------------------------------------------
+Methods
+-------------------------------------------------------------------------------]]
 local methods = {
 	["OnAcquire"] = function(self)
 		-- height is controlled by SetLabel
@@ -190,6 +201,9 @@ local methods = {
 	end
 }
 
+--[[-----------------------------------------------------------------------------
+Constructor
+-------------------------------------------------------------------------------]]
 local function Constructor()
 	local num  = AceGUI:GetNextWidgetNum(Type)
 	local frame = CreateFrame("Frame", nil, UIParent)

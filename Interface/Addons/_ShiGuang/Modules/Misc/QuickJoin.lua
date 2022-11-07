@@ -403,19 +403,30 @@ function MISC:AddPGFSortingExpression()
 			bu:SetPoint("BOTTOM", PGFDialog.__sortBu[i-1], "TOP", 0, 3)
 		end
 	end
+
+	if PremadeGroupsFilterSettings then
+		PremadeGroupsFilterSettings.classBar = false
+		PremadeGroupsFilterSettings.classCircle = false
+		PremadeGroupsFilterSettings.leaderCrown = false
+		PremadeGroupsFilterSettings.ratingInfo = false
+	end
 end
 
 function MISC:QuickJoin()
 	if not R.db["Misc"]["QuickJoin"] then return end
 
-	for i = 1, 10 do
-		local bu = _G["LFGListSearchPanelScrollFrameButton"..i]
-		if bu then
-			bu.Name:SetFontObject(Game14Font)
-			bu.ActivityName:SetFontObject(Game12Font)
-			bu:HookScript("OnDoubleClick", MISC.HookApplicationClick)
+	hooksecurefunc(LFGListFrame.SearchPanel.ScrollBox, "Update", function(self)
+		for i = 1, self.ScrollTarget:GetNumChildren() do
+			local child = select(i, self.ScrollTarget:GetChildren())
+			if child.Name and not child.hooked then
+				child.Name:SetFontObject(Game14Font)
+				child.ActivityName:SetFontObject(Game12Font)
+				child:HookScript("OnDoubleClick", MISC.HookApplicationClick)
+
+				child.hooked = true
+			end
 		end
-	end
+	end)
 	MISC:QuickJoin_ShowTips()
 
 	hooksecurefunc("LFGListInviteDialog_Accept", function()

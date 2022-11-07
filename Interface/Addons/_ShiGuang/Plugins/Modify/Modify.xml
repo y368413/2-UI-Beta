@@ -1,11 +1,11 @@
 ﻿<Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="Charms.lua"/>
-	<Script file="MacroMr.lua"/>
+	<!--Script file="MacroMr.lua"/-->
 	<Script file="rlTools.lua"/>
 	<Script file="SubSpec.lua"/>
 	<Script file="Merchant.lua"/>
 	<Script file="HardYards.lua"/>
-	<Script file="NomiCakes.lua"/>
+	<!--Script file="NomiCakes.lua"/-->
 	<Script file="Expansions.lua"/>
 	<Script file="Talentless.lua"/>
 	<Script file="ColorFrames.lua"/>

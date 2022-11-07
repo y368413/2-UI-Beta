@@ -1,6 +1,6 @@
 --[[
 Name: LibCurrencyInfo
-Revision: $Rev: 63 $
+Revision: $Rev: 71 $
 Maintainers: Arith
 Website: https://www.wowace.com/projects/libcurrencyinfo
 Dependencies: None
@@ -46,7 +46,7 @@ data.CurrencyByCategory = {
 		391, -- Tol Barad Commendation
 		1602, -- Conquest, this one is actually under Hidden
 		1792, -- Honor, Used to purchase Unrated PvP equipment in Stormwind and Orgrimmar.
-
+		2123, -- Bloody Tokens
 	},
 	[21] = { -- Wrath of the Lich King
 		61, -- Dalaran Jewelcrafter's Token
@@ -236,7 +236,18 @@ data.CurrencyByCategory = {
 		2000,	 -- Motes of Fate	
 		2002,	-- Renown-Maruuk Centaur
 		2021,	-- Renown-Dragonscale Expedition
+		2023,	-- Dragon Isles Blacksmithing Knowledge
+		2024,	-- Dragon Isles Alchemy Knowledge
+		2025,	-- Dragon Isles Leatherworking Knowledge
+		2026,	-- Dragon Isles Tailoring Knowledge
+		2027,	-- Dragon Isles Engineering Knowledge
+		2028,	-- Dragon Isles Inscription Knowledge
+		2029,	-- Dragon Isles Jewelcrafting Knowledge
+		2030,	-- Dragon Isles Enchanting Knowledge
 		2031,	-- Dragonscale Expedition
+		2033,	-- Dragon Isles Skinning Knowledge
+		2034,	-- Dragon Isles Herbalism Knowledge
+		2035,	-- Dragon Isles Mining Knowledge
 		2036,	-- Ancient Waygate Energy
 		2087,	-- Renown-Tuskarr
 		2088,	-- Renown-Valdrakken
@@ -371,19 +382,12 @@ data.CurrencyByCategory = {
 	[250] = {
 		2003,	-- Dragon Isles Supplies
 		2011,	-- Effigy Adornments
-		2023,	-- Dragon Isles Blacksmithing Knowledge
-		2024,	-- Dragon Isles Alchemy Knowledge
-		2025,	-- Dragon Isles Leatherworking Knowledge
-		2026,	-- Dragon Isles Tailoring Knowledge
-		2027,	-- Dragon Isles Engineering Knowledge
-		2028,	-- Dragon Isles Inscription Knowledge
-		2029,	-- Dragon Isles Jewelcrafting Knowledge
-		2030,	-- Dragon Isles Enchanting Knowledge
-		2033,	-- Dragon Isles Skinning Knowledge
-		2034,	-- Dragon Isles Herbalism Knowledge
-		2035,	-- Dragon Isles Mining Knowledge
 		2045,	-- Dragon Glyph Embers
 		2073,	-- [AC] Major Faction Test Currency
+		2105,	-- Purified Arcane Energy
+		2118,	-- Elemental Overflow
+		2122,	-- Storm Sigil
+		2134,	-- Cobalt Assembly
 	},
 	[251] = {
 		2016,	-- Dragon Racing - Scoreboard - Race Complete Time
@@ -447,7 +451,47 @@ data.CurrencyByCategory = {
 		2097,	-- Dragon Racing - Personal Best Record - Thaldraszus 03 Hard
 		2098,	-- Dragon Racing - Personal Best Record - Thaldraszus 04 Easy
 		2099,	-- Dragon Racing - Personal Best Record - Thaldraszus 04 Hard
-		2100,	-- Dragon Racing - Versioning
+		2100,	--Dragon Racing - Versioning [DNT]
+		2101,	--Dragon Racing - Personal Best Record - Thaldraszus 05 Easy
+		2102,	--Dragon Racing - Personal Best Record - Thaldraszus 05 Hard
+		2103,	--Dragon Racing - Personal Best Record - Thaldraszus 06 Easy
+		2104,	--Dragon Racing - Personal Best Record - Thaldraszus 06 Hard
+		2110,	--Dragon Racing - Personal Best Record - Ohn'ahran Plains MP 1
+		2111,	--Dragon Racing - Personal Best Record - Azure Span MP 1
+		2119,	--Dragon Racing - Personal Best Record - Ohn'ahran Plains 07 Easy
+		2120,	--Dragon Racing - Personal Best Record - Ohn'ahran Plains 07 Hard
+		2124,	--Dragon Racing - Scoreboard - Race Complete Time - Fraction 10
+		2125,	--Dragon Racing - Scoreboard - Race Complete Time - Fraction 100
+		2126,	--Dragon Racing - Scoreboard - Race Complete Time -Silver Fract 10
+		2128,	--Dragon Racing - Scoreboard - Race Complete Time -Silver Fract100
+		2129,	--Dragon Racing - Scoreboard - Race Complete Time - Gold Fract 10
+		2130,	--Dragon Racing - Scoreboard - Race Complete Time - Gold Fract 100
+		2131,	--Dragon Racing - Scoreboard - Personal Best Time - Fraction 10
+		2132,	--Dragon Racing - Scoreboard - Personal Best Time - Fraction 100
+		2133,	--Dragonriding - Accepting Passengers [DNT]
+		2154,	--Dragon Racing - Personal Best Record - Waking Shores 01 Test
+		2155,	--Dragon Racing - Best Time Display - Whole
+		2156,	--Dragon Racing - Best Time Display - Fraction 1
+		2157,	--Dragon Racing - Best Time Display - Fraction 10
+		2158,	--Dragon Racing - Best Time Display - Fraction 100
+		2159,	--Dragon Racing - Best Time Display - Advanced - Whole
+		2160,	--Dragon Racing - Best Time Display - Advanced - Fraction 1
+		2161,	--Dragon Racing - Best Time Display - Advanced - Fraction 10
+		2162,	--Dragon Racing - Best Time Display - Advanced - Fraction 100
+	},
+	[252] = {
+		2113,	--Tuskarr - Fishing Net - Location 01 - Net 01 - Loot
+		2114,	--Tuskarr - Fishing Net - Location 01 - Net 04 (Quest) - Loot
+		2115,	--Tuskarr - Fishing Net - Location 01 - Net 02 - Loot
+		2116,	--Tuskarr - Fishing Net - Location 01 - Net 03 - Loot
+		2135,	--Tuskarr - Fishing Net - Location 02 - Net 01 - Loot
+		2136,	--Tuskarr - Fishing Net - Location 02 - Net 02 - Loot
+		2137,	--Tuskarr - Fishing Net - Location 03 - Net 01 - Loot
+		2138,	--Tuskarr - Fishing Net - Location 03 - Net 02 - Loot
+		2139,	--Tuskarr - Fishing Net - Location 04 - Net 01 - Loot
+		2140,	--Tuskarr - Fishing Net - Location 04 - Net 02 - Loot
+		2141,	--Tuskarr - Fishing Net - Location 05 - Net 01 - Loot
+		2142,	--Tuskarr - Fishing Net - Location 05 - Net 02 - Loot
 	},
 }
 
@@ -471,6 +515,7 @@ data.CurrencyCategories = {
 	[248] = { enUS="Torghast",deDE="Torghast",esES="Torghast",esMX="Torghast",frFR="Tourment",itIT="Torgast",koKR="토르가스트",ptBR="Thanator",ruRU="Торгаст",zhCN="托加斯特",zhTW="托迦司", hide=true, },
 	[250] = { enUS="Dragonflight",deDE="Dragonflight",esES="Dragonflight",esMX="Dragonflight",frFR="Vol draconique",itIT="Dragonflight",koKR="용군단",ptBR="Revoada Dragônica",ruRU="Dragonflight",zhCN="巨龙时代",zhTW="巨龍軍團", },
 	[251] = { enUS="Dragon Racing UI (Hidden)",deDE="Dragon Racing UI (Hidden)",esES="Dragon Racing UI (Hidden)",esMX="Dragon Racing UI (Hidden)",frFR="Dragon Racing UI (Hidden)",itIT="Dragon Racing UI (Hidden)",koKR="Dragon Racing UI (Hidden)",ptBR="Dragon Racing UI (Hidden)",ruRU="Dragon Racing UI (Hidden)",zhCN="Dragon Racing UI (Hidden)",zhTW="Dragon Racing UI (Hidden)",hide=true, },
+	[252] = { enUS="Tuskarr - Fishing Nets (Hidden)",deDE="Tuskarr - Fishing Nets (Hidden)",esES="Tuskarr - Fishing Nets (Hidden)",esMX="Tuskarr - Fishing Nets (Hidden)",frFR="Tuskarr - Fishing Nets (Hidden)",itIT="Tuskarr - Fishing Nets (Hidden)",koKR="Tuskarr - Fishing Nets (Hidden)",ptBR="Tuskarr - Fishing Nets (Hidden)",ruRU="Tuskarr - Fishing Nets (Hidden)",zhCN="Tuskarr - Fishing Nets (Hidden)",zhTW="Tuskarr - Fishing Nets (Hidden)",hide=true, },
 }
 
 data.Currencies = {
@@ -798,18 +843,18 @@ data.Currencies = {
 	[2020] = { id=2020, category=251, hidden=true }, -- Dragon Racing - Scoreboard - Race Complete Time - Gold
 	[2021] = { id=2021, category=142, }, -- Renown-Dragonscale Expedition
 	[2022] = { id=2022, category=251, hidden=true }, -- Dragon Racing - Multiplayer Race Placement
-	[2023] = { id=2023, category=250, }, -- Dragon Isles Blacksmithing Knowledge
-	[2024] = { id=2024, category=250, }, -- Dragon Isles Alchemy Knowledge
-	[2025] = { id=2025, category=250, }, -- Dragon Isles Leatherworking Knowledge
-	[2026] = { id=2026, category=250, }, -- Dragon Isles Tailoring Knowledge
-	[2027] = { id=2027, category=250, }, -- Dragon Isles Engineering Knowledge
-	[2028] = { id=2028, category=250, }, -- Dragon Isles Inscription Knowledge
-	[2029] = { id=2029, category=250, }, -- Dragon Isles Jewelcrafting Knowledge
-	[2030] = { id=2030, category=250, }, -- Dragon Isles Enchanting Knowledge
+	[2023] = { id=2023, category=142, }, -- Dragon Isles Blacksmithing Knowledge
+	[2024] = { id=2024, category=142, }, -- Dragon Isles Alchemy Knowledge
+	[2025] = { id=2025, category=142, }, -- Dragon Isles Leatherworking Knowledge
+	[2026] = { id=2026, category=142, }, -- Dragon Isles Tailoring Knowledge
+	[2027] = { id=2027, category=142, }, -- Dragon Isles Engineering Knowledge
+	[2028] = { id=2028, category=142, }, -- Dragon Isles Inscription Knowledge
+	[2029] = { id=2029, category=142, }, -- Dragon Isles Jewelcrafting Knowledge
+	[2030] = { id=2030, category=142, }, -- Dragon Isles Enchanting Knowledge
 	[2031] = { id=2031, category=142, }, -- Dragonscale Expedition
-	[2033] = { id=2033, category=250, }, -- Dragon Isles Skinning Knowledge
-	[2034] = { id=2034, category=250, }, -- Dragon Isles Herbalism Knowledge
-	[2035] = { id=2035, category=250, }, -- Dragon Isles Mining Knowledge
+	[2033] = { id=2033, category=142, }, -- Dragon Isles Skinning Knowledge
+	[2034] = { id=2034, category=142, }, -- Dragon Isles Herbalism Knowledge
+	[2035] = { id=2035, category=142, }, -- Dragon Isles Mining Knowledge
 	[2036] = { id=2036, category=142, }, -- Ancient Waygate Energy
 	[2037] = { id=2037, category=251, hidden=true }, -- Dragon Racing - Scoreboard - Race Complete Time -Silver Fraction
 	[2038] = { id=2038, category=251, hidden=true }, -- Dragon Racing - Scoreboard - Race Complete Time - Gold Fraction
@@ -872,6 +917,69 @@ data.Currencies = {
 	[2098] = { id=2098, category=251, hidden=true }, -- Dragon Racing - Personal Best Record - Thaldraszus 04 Easy
 	[2099] = { id=2099, category=251, hidden=true }, -- Dragon Racing - Personal Best Record - Thaldraszus 04 Hard
 	[2100] = { id=2100, category=251, hidden=true }, -- Dragon Racing - Versioning
+	[2101] = { id=2101, category=251, hidden=true }, -- Dragon Racing - Personal Best Record - Thaldraszus 05 Easy
+	[2102] = { id=2102, category=251, hidden=true }, -- Dragon Racing - Personal Best Record - Thaldraszus 05 Hard
+	[2103] = { id=2103, category=251, hidden=true }, -- Dragon Racing - Personal Best Record - Thaldraszus 06 Easy
+	[2104] = { id=2104, category=251, hidden=true }, -- Dragon Racing - Personal Best Record - Thaldraszus 06 Hard
+	[2105] = { id=2105, category=250, }, -- Purified Arcane Energy
+	[2106] = { id=2106, category=142, hidden=true }, -- Valdrakken Accord
+	[2107] = { id=2107, category=142, hidden=true }, -- Artisan's Consortium
+	[2108] = { id=2108, category=142, hidden=true }, -- Maruuk Centaur
+	[2109] = { id=2109, category=142, hidden=true }, -- Iskaara Tuskarr
+	[2110] = { id=2110, category=251, hidden=true }, -- Dragon Racing - Personal Best Record - Ohn'ahran Plains MP 1
+	[2111] = { id=2111, category=251, hidden=true }, -- Dragon Racing - Personal Best Record - Azure Span MP 1
+	[2113] = { id=2113, category=252, hidden=true }, -- Tuskarr - Fishing Net - Location 01 - Net 01 - Loot
+	[2114] = { id=2114, category=252, hidden=true }, -- Tuskarr - Fishing Net - Location 01 - Net 04 (Quest) - Loot
+	[2115] = { id=2115, category=252, hidden=true }, -- Tuskarr - Fishing Net - Location 01 - Net 02 - Loot
+	[2116] = { id=2116, category=252, hidden=true }, -- Tuskarr - Fishing Net - Location 01 - Net 03 - Loot
+	[2118] = { id=2118, category=250, }, -- Elemental Overflow
+	[2119] = { id=2119, category=251, hidden=true }, -- Dragon Racing - Personal Best Record - Ohn'ahran Plains 07 Easy
+	[2120] = { id=2120, category=251, hidden=true }, -- Dragon Racing - Personal Best Record - Ohn'ahran Plains 07 Hard
+	[2122] = { id=2122, category=250, }, -- Storm Sigil
+	[2123] = { id=2123, category=2, }, -- Bloody Tokens
+	[2124] = { id=2124, category=251, hidden=true }, -- Dragon Racing - Scoreboard - Race Complete Time - Fraction 10
+	[2125] = { id=2125, category=251, hidden=true }, -- Dragon Racing - Scoreboard - Race Complete Time - Fraction 100
+	[2126] = { id=2126, category=251, hidden=true }, -- Dragon Racing - Scoreboard - Race Complete Time -Silver Fract 10
+	[2128] = { id=2128, category=251, hidden=true }, -- Dragon Racing - Scoreboard - Race Complete Time -Silver Fract100
+	[2129] = { id=2129, category=251, hidden=true }, -- Dragon Racing - Scoreboard - Race Complete Time - Gold Fract 10
+	[2130] = { id=2130, category=251, hidden=true }, -- Dragon Racing - Scoreboard - Race Complete Time - Gold Fract 100
+	[2131] = { id=2131, category=251, hidden=true }, -- Dragon Racing - Scoreboard - Personal Best Time - Fraction 10
+	[2132] = { id=2132, category=251, hidden=true }, -- Dragon Racing - Scoreboard - Personal Best Time - Fraction 100
+	[2133] = { id=2133, category=251, hidden=true }, -- Dragonriding - Accepting Passengers [DNT]
+	[2134] = { id=2134, category=250, }, -- Cobalt Assembly
+	[2135] = { id=2135, category=252, hidden=true }, -- Tuskarr - Fishing Net - Location 02 - Net 01 - Loot
+	[2136] = { id=2136, category=252, hidden=true }, -- Tuskarr - Fishing Net - Location 02 - Net 02 - Loot
+	[2137] = { id=2137, category=252, hidden=true }, -- Tuskarr - Fishing Net - Location 03 - Net 01 - Loot
+	[2138] = { id=2138, category=252, hidden=true }, -- Tuskarr - Fishing Net - Location 03 - Net 02 - Loot
+	[2139] = { id=2139, category=252, hidden=true }, -- Tuskarr - Fishing Net - Location 04 - Net 01 - Loot
+	[2140] = { id=2140, category=252, hidden=true }, -- Tuskarr - Fishing Net - Location 04 - Net 02 - Loot
+	[2141] = { id=2141, category=252, hidden=true }, -- Tuskarr - Fishing Net - Location 05 - Net 01 - Loot
+	[2142] = { id=2142, category=252, hidden=true }, -- Tuskarr - Fishing Net - Location 05 - Net 02 - Loot
+	[2148] = { id=2148, category=142, hidden=true }, -- Red Whelp (Fire Shot)
+	[2149] = { id=2149, category=142, hidden=true }, -- Red Whelp (Lobbing Fire Nova)
+	[2150] = { id=2150, category=142, hidden=true }, -- Red Whelp (Curing Whiff)
+	[2151] = { id=2151, category=142, hidden=true }, -- Red Whelp (Mending Breath)
+	[2152] = { id=2152, category=142, hidden=true }, -- Red Whelp (Sleepy Ruby Warmth)
+	[2153] = { id=2153, category=142, hidden=true }, -- Red Whelp (Under Red Wings)
+	[2154] = { id=2154, category=251, hidden=true }, -- Dragon Racing - Personal Best Record - Waking Shores 01 Test
+	[2155] = { id=2155, category=251, hidden=true }, -- Dragon Racing - Best Time Display - Whole
+	[2156] = { id=2156, category=251, hidden=true }, -- Dragon Racing - Best Time Display - Fraction 1
+	[2157] = { id=2157, category=251, hidden=true }, -- Dragon Racing - Best Time Display - Fraction 10
+	[2158] = { id=2158, category=251, hidden=true }, -- Dragon Racing - Best Time Display - Fraction 100
+	[2159] = { id=2159, category=251, hidden=true }, -- Dragon Racing - Best Time Display - Advanced - Whole
+	[2160] = { id=2160, category=251, hidden=true }, -- Dragon Racing - Best Time Display - Advanced - Fraction 1
+	[2161] = { id=2161, category=251, hidden=true }, -- Dragon Racing - Best Time Display - Advanced - Fraction 10
+	[2162] = { id=2162, category=251, hidden=true }, -- Dragon Racing - Best Time Display - Advanced - Fraction 100
+	[2165] = { id=2165, category=142, hidden=true }, -- Profession - Public Order Capacity - Blacksmithing
+	[2166] = { id=2166, category=142, hidden=true }, -- Inspiration Catalyst Account-Wide Currency
+	[2167] = { id=2167, category=142, hidden=true }, -- Inspiration Catalyst Anti-Currency
+	[2169] = { id=2169, category=142, hidden=true }, -- Profession - Public Order Capacity - Leatherworking
+	[2170] = { id=2170, category=142, hidden=true }, -- Profession - Public Order Capacity - Alchemy
+	[2171] = { id=2171, category=142, hidden=true }, -- Profession - Public Order Capacity - Tailoring
+	[2172] = { id=2172, category=142, hidden=true }, -- Profession - Public Order Capacity - Engineering
+	[2173] = { id=2173, category=142, hidden=true }, -- Profession - Public Order Capacity - Enchanting
+	[2174] = { id=2174, category=142, hidden=true }, -- Profession - Public Order Capacity - Jewelcrafting
+	[2175] = { id=2175, category=142, hidden=true }, -- Profession - Public Order Capacity - Inscription
 
 }
 

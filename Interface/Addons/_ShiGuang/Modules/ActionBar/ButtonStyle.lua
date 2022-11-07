@@ -7,6 +7,7 @@ local Bar = M:GetModule("Actionbar")
 local _G = getfenv(0)
 local pairs, gsub, unpack = pairs, gsub, unpack
 local IsEquippedAction = IsEquippedAction
+local NUM_STANCE_SLOTS = NUM_STANCE_SLOTS or 10
 
 local function CallButtonFunctionByName(button, func, ...)
 	if button and func and button[func] then
@@ -186,6 +187,9 @@ function Bar:HookHotKey(button)
 	if button.UpdateHotkeys then
 		hooksecurefunc(button, "UpdateHotkeys", Bar.UpdateHotKey)
 	end
+	if button.SetHotkeys then
+		hooksecurefunc(button, "SetHotkeys", Bar.UpdateHotKey)
+	end
 end
 
 function Bar:UpdateEquipItemColor()
@@ -226,6 +230,7 @@ function Bar:StyleActionButton(button, cfg)
 	local checkedTexture
 	if button.GetCheckedTexture then checkedTexture = button:GetCheckedTexture() end
 	local floatingBG = _G[buttonName.."FloatingBG"]
+	local NormalTexture = _G[buttonName.."NormalTexture"]
 
 	--pet stuff
 	local petShine = _G[buttonName.."Shine"]
@@ -234,6 +239,12 @@ function Bar:StyleActionButton(button, cfg)
 	--hide stuff
 	if floatingBG then floatingBG:Hide() end
 	if NewActionTexture then NewActionTexture:SetTexture(nil) end
+	if button.SlotArt then button.SlotArt:Hide() end
+	if button.RightDivider then button.RightDivider:Hide() end
+	if button.SlotBackground then button.SlotBackground:Hide() end
+	if button.IconMask then button.IconMask:Hide() end
+	if NormalTexture then NormalTexture:SetAlpha(0) end
+	if button.SpellHighlightTexture then button.SpellHighlightTexture:SetOutside() end
 
 	--backdrop
 	SetupBackdrop(icon)
@@ -303,6 +314,7 @@ function Bar:StyleExtraActionButton(cfg)
 	local count = _G[buttonName.."Count"]
 	local buttonstyle = button.style --artwork around the button
 	local cooldown = _G[buttonName.."Cooldown"]
+	local NormalTexture = _G[buttonName.."NormalTexture"]
 
 	button:SetPushedTexture(I.textures.pushed) --force it to gain a texture
 	local normalTexture = button:GetNormalTexture()
@@ -321,6 +333,8 @@ function Bar:StyleExtraActionButton(cfg)
 	SetupTexture(highlightTexture, cfg.highlightTexture, "SetHighlightTexture", button)
 	SetupTexture(checkedTexture, cfg.checkedTexture, "SetCheckedTexture", button)
 	highlightTexture:SetColorTexture(1, 1, 1, .25)
+	if NormalTexture then NormalTexture:SetAlpha(0) end
+	if button.IconMask then button.IconMask:Hide() end
 
 	--cooldown
 	SetupCooldown(cooldown, cfg.cooldown)
@@ -362,6 +376,9 @@ function Bar:StyleAllActionButtons(cfg)
 		Bar:StyleActionButton(_G["MultiBarRightButton"..i], cfg)
 		Bar:StyleActionButton(_G["MultiBarLeftButton"..i], cfg)
 		Bar:StyleActionButton(_G["UI_ActionBarXButton"..i], cfg)
+		Bar:StyleActionButton(_G["MultiBar5Button"..i], cfg)
+		Bar:StyleActionButton(_G["MultiBar6Button"..i], cfg)
+		Bar:StyleActionButton(_G["MultiBar7Button"..i], cfg)
 	end
 	for i = 1, 6 do
 		Bar:StyleActionButton(_G["OverrideActionBarButton"..i], cfg)
@@ -383,9 +400,8 @@ function Bar:StyleAllActionButtons(cfg)
 	--extra action button
 	Bar:StyleExtraActionButton(cfg)
 	--spell flyout
-	SpellFlyoutBackgroundEnd:SetTexture(nil)
-	SpellFlyoutHorizontalBackground:SetTexture(nil)
-	SpellFlyoutVerticalBackground:SetTexture(nil)
+	SpellFlyout.Background:SetAlpha(0)
+
 	local function checkForFlyoutButtons()
 		local i = 1
 		local button = _G["SpellFlyoutButton"..i]
@@ -428,14 +444,14 @@ function Bar:ReskinBars()
 			},
 		},
 		checkedTexture = {
-			file = "",
+			file = 0,
 			points = {
 				{"TOPLEFT", R.mult, -R.mult},
 				{"BOTTOMRIGHT", -R.mult, R.mult},
 			},
 		},
 		highlightTexture = {
-			file = "",
+			file = 0,
 			points = {
 				{"TOPLEFT", R.mult, -R.mult},
 				{"BOTTOMRIGHT", -R.mult, R.mult},
@@ -471,7 +487,6 @@ function Bar:ReskinBars()
 	}
 	Bar:StyleAllActionButtons(cfg)
 	-- Update hotkeys
-	hooksecurefunc("PetActionButton_SetHotkeys", Bar.UpdateHotKey)
 	Bar:UpdateStanceHotKey()
 	M:RegisterEvent("UPDATE_BINDINGS", Bar.UpdateStanceHotKey)
 end

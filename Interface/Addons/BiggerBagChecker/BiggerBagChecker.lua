@@ -9,7 +9,7 @@
 --#########################################
 
 -- Timeless Isle doesn't exist on WoW Classic, so if a user runs this on Classic, just return at once.
-local IsClassic = select(4, GetBuildInfo()) < 20000
+local IsClassic = select(4, GetBuildInfo()) < 40000
 if IsClassic then return end
 
 
@@ -17,7 +17,7 @@ if IsClassic then return end
 --# Main code
 --#########################################
 
-local select, tonumber = select, tonumber
+local addonName, BBC = ...
 
 local L = {}
 
@@ -174,7 +174,7 @@ local TimelessTooltipHeadlinePrinted -- tells us if we started adding to a toolt
 
 ---------------------------------------------
 
-function updateLocale(loc)
+function BBC.updateLocale(loc)
 	for k,v in pairs(loc) do
 		if v == true then
 			L[k] = k

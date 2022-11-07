@@ -23,7 +23,7 @@ tinsert(R.defaultThemes, function()
 	local function UpdateHighlight(self)
 		local highlight = self:GetHighlightTexture()
 		highlight:SetColorTexture(1, 1, 1, .25)
-		highlight:SetInside()
+		highlight:SetInside(self.bg)
 	end
 
 	local function UpdateCosmetic(self)
@@ -40,8 +40,8 @@ tinsert(R.defaultThemes, function()
 		slot.IconOverlay:SetAtlas("CosmeticIconFrame")
 		slot.IconOverlay:SetInside()
 		local popout = slot.popoutButton
-		--popout:SetNormalTexture("")
-		--popout:SetHighlightTexture("")
+		--popout:SetNormalTexture(0)
+		--popout:SetHighlightTexture(0)
 
 		local arrow = popout:CreateTexture(nil, "OVERLAY")
 		arrow:SetSize(14, 14)
@@ -68,34 +68,4 @@ tinsert(R.defaultThemes, function()
 		UpdateCosmetic(button)
 		UpdateHighlight(button)
 	end)
-end)
-hooksecurefunc("SetItemButtonQuality", function(button, quality, itemIDOrLink, suppressOverlays)
-	if itemIDOrLink then
-		if IsArtifactRelicItem(itemIDOrLink) then
-			button.IconBorder:SetTexture("Interface\\Artifacts\\RelicIconFrame");
-		else
-			button.IconBorder:SetTexture("Interface\\AddOns\\_ShiGuang\\Media\\WhiteIconFrame");
-		end
-		
-		if not suppressOverlays and C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemIDOrLink) then
-			button.IconOverlay:SetAtlas("AzeriteIconFrame");
-			button.IconOverlay:Show();
-		else
-			button.IconOverlay:Hide();
-		end
-	else
-		button.IconBorder:SetTexture("Interface\\AddOns\\_ShiGuang\\Media\\WhiteIconFrame");
-		button.IconOverlay:Hide();
-	end
-
-	if quality then
-		if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
-			button.IconBorder:Show();
-			button.IconBorder:SetVertexColor(BAG_ITEM_QUALITY_COLORS[quality].r, BAG_ITEM_QUALITY_COLORS[quality].g, BAG_ITEM_QUALITY_COLORS[quality].b);
-		else
-			button.IconBorder:Hide();
-		end
-	else
-		button.IconBorder:Hide();
-	end
 end)

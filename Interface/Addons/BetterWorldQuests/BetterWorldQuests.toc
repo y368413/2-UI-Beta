@@ -1,0 +1,19 @@
+## Interface: 100000
+## Author: p3lim
+## Version: 100000.16-Release
+## Title: Better World Quests
+## Notes: Improves the World Quest POIs on the map
+## OptionalDeps: LibStub, CallbackHandler-1.0, HereBeDragons
+## SavedVariables: BetterWorldQuestsMigrate
+
+## X-Curse-Project-ID: 302035
+## X-WoWI-ID: 24797
+## X-Wago-ID: RBKppvKE
+
+libs\LibStub\LibStub.lua
+libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
+libs\HereBeDragons\HereBeDragons-2.0.lua
+
+BetterWorldQuests.xml
+
+PinProvider.lua

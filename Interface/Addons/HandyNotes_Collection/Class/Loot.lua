@@ -89,6 +89,11 @@ end
 ---
 function Loot:isAchievementCompleted(id, achievement)
   if (Achievement:isValid(id)) then
+    -- Check, whether whole achievement is completed.
+    if (Achievement:isCompleted(id)) then
+      return true
+    end
+
     -- We have count, so we have to check achievement criteria count.
     if (achievement.count) then
       return Achievement:isCountCompleted(id)
@@ -107,8 +112,6 @@ function Loot:isAchievementCompleted(id, achievement)
         end
       end
     end
-
-    return Achievement:isCompleted(id)
   end
 
   return false

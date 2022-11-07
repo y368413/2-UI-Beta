@@ -8,6 +8,8 @@ local _, this = ...
 local API = this.API
 local Item = this.Item
 local Achievement = this.Achievement
+local Player = this.Player
+local Profession = this.Profession
 local Quest = this.Quest
 local Text = this.Text
 local t = this.t
@@ -32,23 +34,26 @@ function Requirements:prepare(GameTooltip, requirements)
 
   -- Type is achievement, quest etc.
   for type, data in pairs(requirements) do
+    if (type == 'faction') then
+        self:prepareFactionRequirement(data)
+    end
     if (type == 'quest') then
-      -- Cycle all items.
-      for questId, _ in pairs(data) do
-        self:prepareQuestRequirement(questId)
-      end
+      self:prepareQuestRequirements(data)
     end
     if (type == 'achievement') then
-      -- Cycle all items.
+      -- Cycle all achievements.
       for _, achievementId in ipairs(data) do
         self:prepareAchievementRequirement(achievementId)
       end
     end
     if (type == 'reputation') then
-      -- Cycle all items.
+      -- Cycle all reputations.
       for reputationId, reputation in pairs(data) do
         self:prepareReputationRequirement(reputationId, reputation)
       end
+    end
+    if (type == 'profession') then
+      self:prepareProfessionRequirement(data)
     end
     if (type == 'item') then
       -- Cycle all items.
@@ -60,18 +65,43 @@ function Requirements:prepare(GameTooltip, requirements)
 end
 
 ---
+--- Cycles all quest requirements and calls evaluation for single quest.
+---
+--- @param quests
+---   Array with quests requirements.
+---
+function Requirements:prepareQuestRequirements(quests)
+  for questId, data in pairs(quests) do
+    self:prepareQuestRequirement(questId, data)
+  end
+end
+
+---
 --- Prepares requirement tooltip display for quest.
 ---
 --- @param questId
 ---   Quest ID from journal.
+--- @param data
+---   Quest data, like state (completed / active).
 ---
-function Requirements:prepareQuestRequirement(questId)
+function Requirements:prepareQuestRequirement(questId, data)
   local color = 'red'
   local status = t['incomplete']
 
-  if (Quest:isCompleted(questId)) then
-    color = 'green'
-    status = t['completed']
+  -- Quest must be completed.
+  if (not data.state or data.state == 'completed') then
+    if (Quest:isCompleted(questId)) then
+      color = 'green'
+      status = t['completed']
+    end
+  -- Quest must be active in journal.
+  elseif (data.state == 'active') then
+    status = t['inactive']
+
+    if (Quest:isActive(questId)) then
+      color = 'green'
+      status = t['active']
+    end
   end
 
   -- Quest name.
@@ -147,6 +177,45 @@ function Requirements:prepareItemRequirement(itemId)
   if (Item:isInBag(itemId) == true) then
     color = 'green'
     status = t['collected']
+  end
+
+  self.GameTooltip:AddDoubleLine(text, status, nil, nil, nil, Text:color2rgb(color))
+end
+
+---
+--- Prepares requirement tooltip display for faction.
+---
+--- @param faction
+---   Faction name (Horde or Alliance).
+---
+function Requirements:prepareFactionRequirement(faction)
+  local color = 'red'
+
+  if ((faction:lower() == 'horde' and Player:isHorde() == true) or (faction:lower() == 'alliance' and Player:isHorde() == false)) then
+    color = 'green'
+  end
+
+  self.GameTooltip:AddDoubleLine(t['faction'], faction, nil, nil, nil, Text:color2rgb(color))
+end
+
+---
+--- Prepares profession tooltip display for items.
+---
+--- @param profession
+---   Profession name. Works only for non-main professions at the moment.
+---
+function Requirements:prepareProfessionRequirement(profession)
+  local color = 'red'
+  local status = t['inactive']
+  local text = Text:color(profession, 'white')
+  local profIndex = Profession:isLearned(profession)
+
+  if (profIndex ~= false) then
+    local name, icon, level = API:getProfessionInfo(profIndex)
+    icon = '|T' .. icon .. ':0:0:0:-1|t '
+    color = 'green'
+    status = t['active'] .. ' (' .. level .. ')'
+    text = icon .. Text:color(name, 'white')
   end
 
   self.GameTooltip:AddDoubleLine(text, status, nil, nil, nil, Text:color2rgb(color))

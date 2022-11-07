@@ -121,14 +121,14 @@ targeticon:SetScript("OnMouseDown", function(self, button)
 		end
 	end
 end)
-hooksecurefunc("TargetFrame_Update", function()
+--[[hooksecurefunc("TargetFrame_Update", function()
 	if UnitIsPlayer("target") then
 		TargetClassIcon:SetTexCoord(unpack(CLASS_ICON_TCOORDS[select(2, UnitClass("target"))]))
 		targeticon:Show()
 	else
 		targeticon:Hide()
 	end
-end)
+end)]]
 
 --[[宠物目标
 local ToPetFrame = CreateFrame("Button", "UFP_ToPetFrame", PetFrame, "SecureUnitButtonTemplate, SecureHandlerAttributeTemplate");

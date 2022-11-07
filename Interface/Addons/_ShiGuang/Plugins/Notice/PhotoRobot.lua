@@ -574,7 +574,7 @@ function PhotoRobot.CreateConfig()
 	PhotoRobot.testFont2:SetText("4.9")
 	PhotoRobot.testFont2:SetTextColor(PhotoRobot.db.PhotoRobotr, PhotoRobot.db.PhotoRobotg, PhotoRobot.db.PhotoRobotb, PhotoRobot.db.a)
 	
-	PhotoRobot.colorButton = CreateFrame("Button", nil, p1, "OptionsCheckButtonTemplate")
+	PhotoRobot.colorButton = CreateFrame("Button", nil, p1, "OptionsBaseCheckButtonTemplate")
 	local frame = PhotoRobot.colorButton
 	frame:SetPoint("TOPLEFT", PhotoRobot.dropdown1, "BOTTOMLEFT", 20, -10)
 	frame:SetHighlightTexture("Interface\\Buttons\\CheckButtonHilight")

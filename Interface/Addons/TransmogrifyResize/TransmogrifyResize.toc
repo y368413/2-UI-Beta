@@ -1,0 +1,7 @@
+## Title: TransmogrifyResize
+## Version: 1.2
+## Author: Eskiso
+## Interface: 100000
+## DefaultState: Enabled
+
+TransmogrifyResize.lua

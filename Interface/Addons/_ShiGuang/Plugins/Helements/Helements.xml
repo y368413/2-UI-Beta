@@ -6,7 +6,7 @@
 	<Script file="SoundMutes.lua"/>
 	<!--Script file="TinyDPS.lua"/>
 	<Script file="WhoPulled.lua"/-->
-	<Script file="FriendGroups.lua"/>
+	<!--Script file="FriendGroups.lua"/>
 	<Script file="ShowChanceBar.lua"/>
-	<Script file="Quest_Complete.lua"/>
+	<Script file="Quest_Complete.lua"/-->
 </Ui>

@@ -143,8 +143,24 @@ info.onEnter = function(self)
 			local slotIcon = localSlots[i][4]
 			GameTooltip:AddDoubleLine(slotIcon..localSlots[i][2], cur.."%", 1,1,1, getDurabilityColor(cur, 100))
 
+			if I.isBeta then
+
+			local data = C_TooltipInfo.GetInventoryItem("player", slot)
+			if data then
+				local argVal = data.args and data.args[7]
+				if argVal and argVal.field == "repairCost" then
+					totalCost = totalCost + argVal.intVal
+				end
+			end
+
+			else
+
 			M.ScanTip:SetOwner(UIParent, "ANCHOR_NONE")
-			totalCost = totalCost + select(3, M.ScanTip:SetInventoryItem("player", slot))
+			local repairCost = select(3, M.ScanTip:SetInventoryItem("player", slot))
+			repairCost = repairCost or 0
+			totalCost = totalCost + repairCost
+
+			end
 		end
 	end
 
@@ -209,7 +225,19 @@ local function merchantClose()
 	M:UnregisterEvent("MERCHANT_CLOSED", merchantClose)
 end
 
+local autoRepairInfo = {
+	text = U["AutoRepairInfo"],
+	buttonStyle = HelpTip.ButtonStyle.GotIt,
+	targetPoint = HelpTip.Point.RightEdgeCenter,
+	onAcknowledgeCallback = M.HelpInfoAcknowledge,
+	callbackArg = "AutoRepair",
+}
+
 local function merchantShow()
+	if not MaoRUIDB["Help"]["AutoRepair"] then
+		HelpTip:Show(MerchantFrame, autoRepairInfo)
+	end
+
 	if IsShiftKeyDown() or MaoRUIDB["RepairType"] == 0 or not CanMerchantRepair() then return end
 	autoRepair()
 	M:RegisterEvent("UI_ERROR_MESSAGE", checkBankFund)

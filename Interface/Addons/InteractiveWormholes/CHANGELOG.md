@@ -1,4 +1,7 @@
-### Changes in 90200.29-Release:
+### Changes in 100000.30-Release:
 
-- Added: Zereth Mortis wormhole location
+- Added: Arrow indicators on the cosmic map
+- Changed: Complete rewrite
+- Changed: Update Interface version
+- Removed: Map button in gossip windows
 

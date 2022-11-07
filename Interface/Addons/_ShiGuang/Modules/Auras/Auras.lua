@@ -19,11 +19,7 @@ function A:HideBlizBuff()
 	if not R.db["Auras"]["BuffFrame"] and not R.db["Auras"]["HideBlizBuff"] then return end
 
 	M.HideObject(_G.BuffFrame)
-	if I.isNewPatch then
-		M.HideObject(_G.DebuffFrame)
-	else
-		M.HideObject(_G.TemporaryEnchantFrame)
-	end
+	M.HideObject(_G.DebuffFrame)
 end
 
 function A:BuildBuffFrame()
@@ -322,7 +318,7 @@ function A:CreateAuraIcon(button)
 	M.CreateBD(button, .25)
 	M.CreateSD(button)
 
-	button:RegisterForClicks("RightButtonUp")
+	button:RegisterForClicks("RightButtonDown")
 	button:SetScript("OnAttributeChanged", A.OnAttributeChanged)
 	button:HookScript("OnMouseDown", A.RemoveSpellFromIgnoreList)
 	button:SetScript("OnEnter", A.Button_OnEnter)

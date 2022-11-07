@@ -186,20 +186,20 @@ function module:OnLogin()
 
 	-- Hide Default Cooldown
 	SetCVar("countdownForCooldowns", 0)
-	M.HideOption(InterfaceOptionsActionBarsPanelCountdownCooldowns)
+	--M.HideOption(InterfaceOptionsActionBarsPanelCountdownCooldowns)
 end
 
 --------------Fivecombo-----------------------------------------------
 local OverlayedSpellID = {};
 OverlayedSpellID["ROGUE"] = {
-	408,   --Éö»÷
-	1943,  --¸îÁÑ
-	2098,  --´Ì¹Ç
-	5171,  --ÇÐ¸î
-	8647,  --ÆÆ¼×
-	26679, --ÖÂÃüÍ¶ÖÀ
-	32645, --¶¾ÉË
-	73651, --»Ö¸´
+	408,   --ï¿½ï¿½ï¿½ï¿½
+	1943,  --ï¿½ï¿½ï¿½ï¿½
+	2098,  --ï¿½Ì¹ï¿½
+	5171,  --ï¿½Ð¸ï¿½
+	8647,  --ï¿½Æ¼ï¿½
+	26679, --ï¿½ï¿½ï¿½ï¿½Í¶ï¿½ï¿½
+	32645, --ï¿½ï¿½ï¿½ï¿½
+	73651, --ï¿½Ö¸ï¿½
 	193316,
 	195452,
 	196819,
@@ -207,10 +207,10 @@ OverlayedSpellID["ROGUE"] = {
 	206237,
 };
 OverlayedSpellID["DRUID"] = {
-	1079,   --¸îÁÑ
-	22568,  --¸îËé
-	22570,  --Ð×ÃÍËºÒ§
-	52610,  --Ò°ÂùÅØÏø
+	1079,   --ï¿½ï¿½ï¿½ï¿½
+	22568,  --ï¿½ï¿½ï¿½ï¿½
+	22570,  --ï¿½ï¿½ï¿½ï¿½ËºÒ§
+	52610,  --Ò°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 };
 
 local function IsOverlayedSpell(spellID)
@@ -248,7 +248,7 @@ hooksecurefunc(ActionBarButtonEventsFrameMixin, "RegisterFrame", function(self, 
 	self.comboEventFrame:SetScript("OnEvent", function(self, event, ...)
 	local parent = self:GetParent();
 	local spellType, id, subType  = GetActionInfo(parent.action);
-	-- Èç¹ûÊÇÏµÍ³×ÔÉíµÄÌáÊ¾£¬¾Í²»ÔÙ´¦Àí
+	-- ï¿½ï¿½ï¿½ï¿½ï¿½ÏµÍ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½Í²ï¿½ï¿½Ù´ï¿½ï¿½ï¿½
 	if ( spellType == "spell" and IsSpellOverlayed(id) ) then
 		return;
 	elseif (spellType == "macro") then

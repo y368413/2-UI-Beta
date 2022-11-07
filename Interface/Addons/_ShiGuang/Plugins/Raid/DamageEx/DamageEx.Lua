@@ -617,7 +617,7 @@ end
 
 function DEX_doLog(ani)
 	local thetime = GetTime() - ani.starttime;
-	if thetime < DEX_logTime and thetime > 0 then
+	if thetime < DEX_logTime and thetime >= 0 then
 		ani.FObject:SetAlpha(1);
 	else
 		if thetime < DEX_logTime + 3 then

@@ -241,10 +241,10 @@ hookPetJournal.init = function()
 	end)
 	--------------- "PJSTooltip"
 		--滚动条
-		for i = 1, 12 do
-			_G["PetJournalListScrollFrameButton"..i].dragButton:HookScript("OnEnter",hookPetJournal.PJSTooltip)
-			_G["PetJournalListScrollFrameButton"..i].dragButton:HookScript("OnLeave",GameTooltip_Hide)
-		end
+		--for i = 1, 12 do
+			--_G["PetJournalListScrollFrameButton"..i].dragButton:HookScript("OnEnter",hookPetJournal.PJSTooltip)
+			--_G["PetJournalListScrollFrameButton"..i].dragButton:HookScript("OnLeave",GameTooltip_Hide)
+		--end
 		--loadout	
 		for i = 1, 3 do
 			_G["PetJournalLoadoutPet"..i].dragButton:HookScript("OnEnter",hookPetJournal.PJSTooltip)

@@ -1,13 +1,14 @@
-## Interface: 90207
+## Interface: 100000
 ## Author: Parnic
 ## Name: Breakables
 ## Title: Breakables |cff7fff7f-Ace3-|r
 ## Notes: Tracks herbs/ore/items that can be broken into component pieces
-## Version: v1.8.6
+## Version: v1.9.1
 ## SavedVariables: BreakablesDB
 ## OptionalDeps: Ace3, LibBabble-Inventory-3.0, Masque
 ## X-Curse-Project-ID: 16629
 ## X-WoWI-ID: 17929
+## X-Wago-ID: rkGrlA6y
 
 #@no-lib-strip@
 embeds.xml

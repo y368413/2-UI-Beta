@@ -1,4 +1,4 @@
-﻿--## Version: r2.14a ## SavedVariables: Gypsy_Options
+﻿--## Version: r2.15b ## SavedVariables: Gypsy_Options
 
 Gypsy = {}
 Gypsy.Players = {}
@@ -238,6 +238,8 @@ function Gypsy.getInventory(player)
 		if(GetInventoryItemLink(player, 13) == nil) then checkedEverything = false else inventory.trinket1 = GetInventoryItemLink(player, 13) end
 		if(GetInventoryItemLink(player, 14) == nil) then checkedEverything = false else inventory.trinket2 = GetInventoryItemLink(player, 14) end
 		if(GetInventoryItemLink(player, 15) == nil) then checkedEverything = false else inventory.back = GetInventoryItemLink(player, 15) end
+		if(GetInventoryItemLink(player, 16) == nil) then checkedEverything = false else inventory.mainhand = GetInventoryItemLink(player, 16) end
+		--if(GetInventoryItemLink(player, 17) == nil) then checkedEverything = false else inventory.mainhand = GetInventoryItemLink(player, 17) end
 		
 		return checkedEverything, inventory
 end
@@ -251,7 +253,7 @@ end
 
 function Gypsy.isWearable(item)
 	local itemInfo = {GetItemInfo(item)}
-	if (Gypsy.getItemSlot ~= "M") then
+	if (Gypsy.getItemSlot ~= "MISC") then
 		--wearables
 		if itemInfo[13] == Gypsy.Itemclass or itemInfo[13] == 0 or (itemInfo[13] == 1 and (itemInfo[9] == "INVTYPE_BACK" or itemInfo[9] == "INVTYPE_CLOAK")) then return true end
 		-- weapons
@@ -300,10 +302,10 @@ function Gypsy.getItemSlot(item)
 		if string.len(snipper) > 2 then 
 			return snipper
 		else
-			return "M"
+			return "MISC"
 		end
 	else
-		return "M"
+		return "MISC"
 	end
 end
 
@@ -320,7 +322,7 @@ function Gypsy.checkUseful(item, looter)
 	local itemslot = string.lower(Gypsy.getItemSlot(item))
 	--print("checking item: " .. itemInfo[1] .. " (slot: " .. itemslot .. ")")
 	--print("looter: " .. looter)
-	if itemInfo[3] == 4 then
+	if (itemInfo[3] == 4 or itemInfo[3] == 3) then
 		if (string.lower(itemslot) ~= "finger" and string.lower(itemslot) ~= "trinket" ) then
 			--regular itemslot
 			if Gypsy.Players[looter].inventory[itemslot] ~= nil and Gypsy.Players[UnitName("player")].inventory[itemslot] ~= nil then 
@@ -381,6 +383,12 @@ function Gypsy.lootRoutine(...)
 	local msg, _, _, _, sender = ...
 	local item = Gypsy.extractItemlink(msg)
 	local looter = sender
+  if (Gypsy.Players[looter] == nil) then
+    looter = string.sub(looter, 1, string.len(looter) - (string.len(GetRealmName())+1))
+    if (Gypsy.Players[looter] ~= nil) then
+      print("Looter now found!")
+    end
+  end
 	--print("looter and player inspected?")
 	if (string.find(msg, "bonus") == nil and Gypsy.Players[looter] ~= nil and Gypsy.Players[looter].isInspected and Gypsy.Players[UnitName("player")].isInspected and looter ~= UnitName("player")) then
 		--print("true, isWearable?")
@@ -764,6 +772,6 @@ Gypsy.Gamehook:RegisterEvent("CHAT_MSG_ADDON")
 Gypsy.Gamehook:SetScript("onUpdate", Gypsy.managePlayers)
 Gypsy.Gamehook:SetScript("onEvent", Gypsy.evt)
 Gypsy.initFrameContainer()
-
+Gypsy.FrameHeader:Hide()
 Gypsy.MockForLocal = {GetItemInfo(152055)}
 Gypsy.localizedGem, Gypsy.localizedRelic =  Gypsy.MockForLocal[6],Gypsy.MockForLocal[7]

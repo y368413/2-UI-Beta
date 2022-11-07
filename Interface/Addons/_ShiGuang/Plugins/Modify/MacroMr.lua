@@ -142,7 +142,7 @@ local function OptionbuttonOnClick(id,button)
 end
 
 local function CreateButton(id,name)
-    local f = CreateFrame("Button",nil,MrMacroFrame,"OptionsButtonTemplate")
+    local f = CreateFrame("Button",nil,MrMacroFrame,"UIPanelButtonTemplate")  --OptionsButtonTemplate
     f:SetSize(125,22)
 	f:RegisterForClicks("LeftButtonUp","RightButtonUp")
     f:SetText(name)
@@ -170,7 +170,7 @@ local function MrMacroShowMacro()
 end
 
 function CreateMrMacroButton()
-	local button = CreateFrame('BUTTON',nil,MacroFrame,"OptionsButtonTemplate")
+	local button = CreateFrame('BUTTON',nil,MacroFrame,"UIPanelButtonTemplate")  --OptionsButtonTemplate
 	button:SetSize(100,21)
 	button:SetText("常用宏推荐")
 	button:SetPoint("BOTTOMRIGHT",MacroFrame,"BOTTOM",11,5)
@@ -256,7 +256,7 @@ function createText()
 	f.textframe = CreateFrame("Frame",nil,f)
 	f.textframe:SetPoint("TOPLEFT",f.scroll,"BOTTOMLEFT",0,-98)
 	f.textframe:SetPoint("BOTTOMRIGHT",f,"BOTTOMRIGHT",-12,45)
-	f.textframe:SetBackdrop({
+	--[[f.textframe:SetBackdrop({
 		bgFile = "Interface\\Buttons\\UI-SliderBar-Background",
 		edgeFile = "Interface\\Buttons\\UI-SliderBar-Border",
 		edgeSize = 6,
@@ -266,7 +266,7 @@ function createText()
 			top = 4,
 			bottom = 5
 		}
-	})
+	})]]
 	f.textscroll = CreateFrame("ScrollFrame","chatframescroll",f.textframe,"UIPanelScrollFrameTemplate")
 	f.textscroll:SetPoint("TOPLEFT",f.textframe,"TOPLEFT",5,-5)
 	f.textscroll:SetPoint("BOTTOMRIGHT",f.textframe,"BOTTOMRIGHT",-25,5)
@@ -298,7 +298,7 @@ function createNote()
 	f.noteframe = CreateFrame("Frame",nil,f)
 	f.noteframe:SetPoint("TOPLEFT",f.scroll,"BOTTOMLEFT",45,-8)
 	f.noteframe:SetPoint("BOTTOMRIGHT",f.textframe,"TOPRIGHT",0,0)
-	f.noteframe:SetBackdrop({
+	--[[f.noteframe:SetBackdrop({
 		bgFile = "Interface\\Buttons\\UI-SliderBar-Background",
 		edgeFile = "Interface\\Buttons\\UI-SliderBar-Border",
 		edgeSize = 6,
@@ -308,7 +308,7 @@ function createNote()
 			top = 4,
 			bottom = 5
 		}
-	})
+	})]]
 	f.notescroll = CreateFrame("ScrollFrame","chatframescroll",f.noteframe,"UIPanelScrollFrameTemplate")
 	f.notescroll:SetPoint("TOPLEFT",f.noteframe,"TOPLEFT",5,-5)
 	f.notescroll:SetPoint("BOTTOMRIGHT",f.noteframe,"BOTTOMRIGHT",-25,5)

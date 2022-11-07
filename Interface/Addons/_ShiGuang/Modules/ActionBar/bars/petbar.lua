@@ -5,60 +5,25 @@ local Bar = M:GetModule("Actionbar")
 local _G = _G
 local tinsert = tinsert
 local cfg = R.Bars.petbar
-local margin, padding = R.Bars.margin, R.Bars.padding
-
-local function SetFrameSize(frame, size, num)
-	size = size or frame.buttonSize
-	num = num or frame.numButtons
-
-	frame:SetWidth(num*size + (num-1)*margin + 2*padding)
-	frame:SetHeight(size + 2*padding)
-	if not frame.mover then
-		frame.mover = M.Mover(frame, U["Pet Actionbar"], "PetBar", frame.Pos)
-	else
-		frame.mover:SetSize(frame:GetSize())
-	end
-
-	if not frame.SetFrameSize then
-		frame.buttonSize = size
-		frame.numButtons = num
-		frame.SetFrameSize = SetFrameSize
-	end
-end
+local margin = R.Bars.margin
 
 function Bar:CreatePetbar()
 	local num = NUM_PET_ACTION_SLOTS
 	local buttonList = {}
 
 	local frame = CreateFrame("Frame", "UI_ActionBarPet", UIParent, "SecureHandlerStateTemplate")
-	if R.db["Actionbar"]["Style"] == 3 then
-	    frame.Pos = {"BOTTOM", UIParent, "BOTTOM", 370, 84}
-	elseif (R.db["Actionbar"]["Style"] == 4) or (R.db["Actionbar"]["Style"] == 6) then
-	    frame.Pos = {"BOTTOM", UIParent, "BOTTOM", 80, 120}
-	else
-	    frame.Pos = {"BOTTOM", UIParent, "BOTTOM", 100, 84}
-	end
+	frame.mover = M.Mover(frame, U["Pet Actionbar"], "PetBar", {"BOTTOM", _G.UI_ActionBar2, "TOP", 0, margin})
+	Bar.movers[7] = frame.mover
 
-	PetActionBarFrame:SetParent(frame)
-	PetActionBarFrame:EnableMouse(false)
-	SlidingActionBarTexture0:SetTexture(nil)
-	SlidingActionBarTexture1:SetTexture(nil)
+	PetActionBar:SetParent(frame)
+	PetActionBar:EnableMouse(false)
 
 	for i = 1, num do
 		local button = _G["PetActionButton"..i]
 		tinsert(buttonList, button)
 		tinsert(Bar.buttons, button)
-		button:ClearAllPoints()
-		if i == 1 then
-			button:SetPoint("LEFT", frame, padding, 0)
-		else
-			local previous = _G["PetActionButton"..i-1]
-			button:SetPoint("LEFT", previous, "RIGHT", margin, 0)
-		end
 	end
-
-	frame.buttonList = buttonList
-	SetFrameSize(frame, cfg.size, num)
+	frame.buttons = buttonList
 
 	frame.frameVisibility = "[petbattle][overridebar][vehicleui][possessbar,@vehicle,exists][shapeshift] hide; [pet] show; hide"
 	RegisterStateDriver(frame, "visibility", frame.frameVisibility)

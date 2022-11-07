@@ -1,0 +1,15 @@
+lightweight tag 6a700a12e760fb887d585ea2ed4130f105e20abf 2.1.0
+Author:	peflut <14377286+ActuariusSilvermoon@users.noreply.github.com>
+Date:	Wed Oct 26 15:43:22 2022 +0200
+
+commit 6a700a12e760fb887d585ea2ed4130f105e20abf
+Author: peflut <14377286+ActuariusSilvermoon@users.noreply.github.com>
+Date:   Wed Oct 26 15:43:22 2022 +0200
+
+    Added new variables file to store variables used within addon.
+    Added new functions file to store functions used within addon.
+    Added functionality for dragonflying mounts.
+    Mount up function has been changed and will now check if registered mount is usable by player, otherwise it will move on in mount priority hiarchy.
+    Made addon save config values after config window is closed, as save button no longer exists.
+    Fixed hunter tracking functionality.
+

@@ -18,8 +18,7 @@ L["Hide if no breakables"] = "沒有物品可分解時隱藏"
 L["Hide Tabards"] = "隱藏外袍"
 L["Hold shift and left-click to drag the Breakables bar around."] = "按住 Shift+滑鼠左鍵拖曳移動分解快捷列的位置。"
 L["How many breakable buttons to display next to the profession button at maximum"] = "專業按鈕旁最多顯示幾個可分解物品按鈕。"
---[[Translation missing --]]
-L["Ignore Enchanting skill level"] = "Ignore Enchanting skill level"
+L["Ignore Enchanting skill level"] = "無視附魔技能等級"
 L["Ignore list"] = "忽略清單"
 L["Items that have been right-clicked to exclude from the breakable list. Un-check the box to remove the item from the ignore list."] = "這是曾被點右鍵從可分解清單中排除的物品，取消勾選可以將物品移出忽略清單。"
 L["Left"] = "左"
@@ -39,8 +38,7 @@ L["Welcome"] = [=[感謝使用 |cff33ff99Breakables|r! 請輸入 |cffffff78/brk|
 
 有任何功能需求或問題，請 email |cff33ff99breakables@parnic.com|r 或造訪 |cffffff78curse.com|r 或 |cffffff78wowinterface.com|r 網頁並留言。
 ]=]
---[[Translation missing --]]
-L["Whether or not items should be shown when Breakables thinks you don't have the appropriate skill level to disenchant it."] = "Whether or not items should be shown when Breakables thinks you don't have the appropriate skill level to disenchant it."
+L["Whether or not items should be shown when Breakables thinks you don't have the appropriate skill level to disenchant it."] = "當Breakables認為您沒有適當的技能等級來分解物品時，是否應該顯示物品。"
 L["Whether or not to display soulbound items as breakables."] = "是否要顯示靈魂綁定的物品，視為可供分解的物品。"
 L["Whether or not to hide items that are part of an equipment set in the game's equipment manager."] = "是否要隱藏裝備管理員的套裝設定中所包含的物品。"
 L["Whether or not to hide tabards from the disenchantable items list."] = "是否要在可分解的物品清單中隱藏外袍。"

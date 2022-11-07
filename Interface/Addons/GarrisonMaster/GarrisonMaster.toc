@@ -47,5 +47,6 @@ LandingCache.lua
 LandingAlts.lua
 
 MoreRewardsFormOrderHall.lua
+InProgressMissions.xml
 InProgressMissions.lua
 GarrisonJK.lua

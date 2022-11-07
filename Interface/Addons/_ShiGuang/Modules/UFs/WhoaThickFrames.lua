@@ -398,7 +398,7 @@ function whoaUpdateAuraPositions(self, auraName, numAuras, numOppositeAuras, lar
 		end
 	end
 end
-hooksecurefunc("TargetFrame_UpdateAuraPositions", whoaUpdateAuraPositions)
+--hooksecurefunc("TargetFrame_UpdateAuraPositions", whoaUpdateAuraPositions)
 function UpdateBuffAnchor(self, buffName, index, numDebuffs, anchorIndex, size, offsetX, offsetY, mirrorVertically)
 	local point, relativePoint;
 	local startY, auraOffsetY;
@@ -770,7 +770,7 @@ function whoaTargetFrames (self, forceNormalTexture)
 	end
 		self.healthbar:SetStatusBarTexture("Interface\\Addons\\_ShiGuang\\Media\\Modules\\UFs\\UI-StatusBar");
 end
-hooksecurefunc("TargetFrame_CheckClassification", whoaTargetFrames)
+--hooksecurefunc("TargetFrame_CheckClassification", whoaTargetFrames)
 
 -- Mana texture
 function whoaManaBar (manaBar)

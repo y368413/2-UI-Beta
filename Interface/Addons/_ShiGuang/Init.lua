@@ -121,6 +121,7 @@ end
 
 M:RegisterEvent("PLAYER_LOGIN", function()
 	-- Initial
+	SetCVar("ActionButtonUseKeyDown", 1)
 	M:SetupUIScale()
 	M:RegisterEvent("UI_SCALE_CHANGED", UpdatePixelScale)
 	M:SetSmoothingAmount(MaoRUIDB["SmoothAmount"])
@@ -135,6 +136,8 @@ M:RegisterEvent("PLAYER_LOGIN", function()
 	end
 
 	M.Modules = modules
+
+	if M.InitCallback then M:InitCallback() end
 end)
 
 _G[addonName] = ns

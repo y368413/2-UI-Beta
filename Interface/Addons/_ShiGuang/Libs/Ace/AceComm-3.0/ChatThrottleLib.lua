@@ -1,3 +1,28 @@
+--
+-- ChatThrottleLib by Mikk
+--
+-- Manages AddOn chat output to keep player from getting kicked off.
+--
+-- ChatThrottleLib:SendChatMessage/:SendAddonMessage functions that accept
+-- a Priority ("BULK", "NORMAL", "ALERT") as well as prefix for SendChatMessage.
+--
+-- Priorities get an equal share of available bandwidth when fully loaded.
+-- Communication channels are separated on extension+chattype+destination and
+-- get round-robinned. (Destination only matters for whispers and channels,
+-- obviously)
+--
+-- Will install hooks for SendChatMessage and SendAddonMessage to measure
+-- bandwidth bypassing the library and use less bandwidth itself.
+--
+--
+-- Fully embeddable library. Just copy this file into your addon directory,
+-- add it to the .toc, and it's done.
+--
+-- Can run as a standalone addon also, but, really, just embed it! :-)
+--
+-- LICENSE: ChatThrottleLib is released into the Public Domain
+--
+
 local CTL_VERSION = 24
 
 local _G = _G
@@ -91,6 +116,12 @@ function Ring:Remove(obj)
 end
 
 
+
+-----------------------------------------------------------------------
+-- Recycling bin for pipes
+-- A pipe is a plain integer-indexed queue of messages
+-- Pipes normally live in Rings of pipes  (3 rings total, one per priority)
+
 ChatThrottleLib.PipeBin = nil -- pre-v19, drastically different
 local PipeBin = setmetatable({}, {__mode="k"})
 
@@ -109,6 +140,11 @@ local function NewPipe()
 end
 
 
+
+
+-----------------------------------------------------------------------
+-- Recycling bin for messages
+
 ChatThrottleLib.MsgBin = nil -- pre-v19, drastically different
 local MsgBin = setmetatable({}, {__mode="k"})
 
@@ -126,6 +162,12 @@ local function NewMsg()
 	end
 	return {}
 end
+
+
+-----------------------------------------------------------------------
+-- ChatThrottleLib:Init
+-- Initialize queues, set up frame for OnUpdate, etc
+
 
 function ChatThrottleLib:Init()
 
@@ -184,6 +226,10 @@ function ChatThrottleLib:Init()
 	self.nBypass = 0
 end
 
+
+-----------------------------------------------------------------------
+-- ChatThrottleLib.Hook_SendChatMessage / .Hook_SendAddonMessage
+
 local bMyTraffic = false
 
 function ChatThrottleLib.Hook_SendChatMessage(text, chattype, language, destination, ...)
@@ -205,6 +251,12 @@ function ChatThrottleLib.Hook_SendAddonMessage(prefix, text, chattype, destinati
 	self.avail = self.avail - size
 	self.nBypass = self.nBypass + size	-- just a statistic
 end
+
+
+
+-----------------------------------------------------------------------
+-- ChatThrottleLib:UpdateAvail
+-- Update self.avail with how much bandwidth is currently available
 
 function ChatThrottleLib:UpdateAvail()
 	local now = GetTime()
@@ -232,6 +284,13 @@ function ChatThrottleLib:UpdateAvail()
 	return avail
 end
 
+
+-----------------------------------------------------------------------
+-- Despooling logic
+-- Reminder:
+-- - We have 3 Priorities, each containing a "Ring" construct ...
+-- - ... made up of N "Pipe"s (1 for each destination/pipename)
+-- - and each pipe contains messages
 
 function ChatThrottleLib:Despool(Prio)
 	local ring = Prio.Ring
@@ -330,6 +389,11 @@ function ChatThrottleLib.OnUpdate(this,delay)
 
 end
 
+
+
+
+-----------------------------------------------------------------------
+-- Spooling logic
 
 function ChatThrottleLib:Enqueue(prioname, pipename, msg)
 	local Prio = self.Prio[prioname]
@@ -450,4 +514,21 @@ function ChatThrottleLib:SendAddonMessage(prio, prefix, text, chattype, target, 
 end
 
 
+
+
+-----------------------------------------------------------------------
+-- Get the ball rolling!
+
 ChatThrottleLib:Init()
+
+--[[ WoWBench debugging snippet
+if(WOWB_VER) then
+	local function SayTimer()
+		print("SAY: "..GetTime().." "..arg1)
+	end
+	ChatThrottleLib.Frame:SetScript("OnEvent", SayTimer)
+	ChatThrottleLib.Frame:RegisterEvent("CHAT_MSG_SAY")
+end
+]]
+
+

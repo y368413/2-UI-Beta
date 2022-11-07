@@ -1846,7 +1846,7 @@ end
 
 local function CreateCheckbox( name, x, y, label, tooltip )
 
-	local check = CreateFrame( "CheckButton", name, frame, "ChatConfigCheckButtonTemplate" ) --"OptionsCheckButtonTemplate" )
+	local check = CreateFrame( "CheckButton", name, frame, "ChatConfigCheckButtonTemplate" ) --"OptionsBaseCheckButtonTemplate" )
 	_G[ name .. "Text" ]:SetText( label )
 	check.tooltip = tooltip
 	check:SetPoint( "TOPLEFT", x, y )

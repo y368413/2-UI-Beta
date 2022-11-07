@@ -38,6 +38,11 @@ StaticPopupDialogs["RESETGOLD"] = {
 	end,
 	whileDead = 1,
 }
+
+local menuList = {
+	{text = M.HexRGB(1, .8, 0)..REMOVE_WORLD_MARKERS.."!!!", notCheckable = true, func = function() StaticPopup_Show("RESETGOLD") end},
+}
+
 local function getClassIcon(class)
 	local c1, c2, c3, c4 = unpack(CLASS_ICON_TCOORDS[class])
 	c1, c2, c3, c4 = (c1+.03)*50, (c2-.03)*50, (c3+.03)*50, (c4-.03)*50
@@ -153,7 +158,7 @@ info.onEnter = function(self)
 	GameTooltip:AddLine(" ")
 	GameTooltip:AddDoubleLine(TOTAL..":", module:GetMoneyString(totalGold), .6,.8,1, 1,1,1)
 
-	for i = 1, GetNumWatchedTokens() do
+	for i = 1, 10 do -- seems unlimit, but use 10 for now, needs review
 		local currencyInfo = C_CurrencyInfo_GetBackpackCurrencyInfo(i)
 		if not currencyInfo then break end
 		local name, count, icon, currencyID = currencyInfo.name, currencyInfo.quantity, currencyInfo.iconFileID, currencyInfo.currencyTypesID
@@ -197,6 +202,30 @@ local function startSelling()
 			end
 		end
 	end
+end
+
+if I.isBeta then
+
+function startSelling()
+	if stop then return end
+	for bag = 0, 4 do
+		for slot = 1, C_Container.GetContainerNumSlots(bag) do
+			if stop then return end
+			local info = C_Container.GetContainerItemInfo(bag, slot)
+			if info then
+				local quality, link, noValue, itemID = info.quality, info.hyperlink, info.hasNoValue, info.itemID
+				local isInSet = C_Container.GetContainerItemEquipmentSetInfo(bag, slot)
+				if link and not noValue and not isInSet and not BAG:IsPetTrashCurrency(itemID) and (quality == 0 or MaoRUIDB["CustomJunkList"][itemID]) and not cache["b"..bag.."s"..slot] then
+					cache["b"..bag.."s"..slot] = true
+					C_Container.UseContainerItem(bag, slot)
+					C_Timer_After(.15, startSelling)
+					return
+				end
+			end
+		end
+	end
+end
+
 end
 
 local function updateSelling(event, ...)

@@ -31,6 +31,27 @@ function M:RestoreMF()
 	end
 end
 
+function M:UpdateBlizzFrame()
+	if InCombatLockdown() then return end
+	if self.isRestoring then return end
+	self.isRestoring = true
+	M.RestoreMF(self)
+	self.isRestoring = nil
+end
+
+function M:RestoreBlizzFrame()
+	if IsControlKeyDown() then
+		R.db["TempAnchor"][self:GetName()] = nil
+		UpdateUIPanelPositions(self)
+	end
+end
+
+function M:BlizzFrameMover(frame)
+	M.CreateMF(frame, nil, true)
+	hooksecurefunc(frame, "SetPoint", M.UpdateBlizzFrame)
+	frame:HookScript("OnMouseUp", M.RestoreBlizzFrame)
+end
+
 -- Frame Mover
 local MoverList, f = {}
 local updater
@@ -362,4 +383,105 @@ function MISC:OnLogin()
 	updater:SetScript("OnUpdate", function()
 		MISC.UpdateTrimFrame(updater.__owner)
 	end)
+
+	--MISC:DisableBlizzardMover()
+end
+
+-- Disable blizzard edit mode
+local function isUnitFrameEnable()
+	return R.db["UFs"]["Enable"]
+end
+
+local function isBuffEnable()
+	return R.db["Auras"]["BuffFrame"] or R.db["Auras"]["HideBlizBuff"]
+end
+
+local function isActionbarEnable()
+	return R.db["Actionbar"]["Enable"]
+end
+
+local function isCastbarEnable()
+	return R.db["UFs"]["Enable"] and R.db["UFs"]["Castbars"]
+end
+
+local function isPartyEnable()
+	return R.db["UFs"]["RaidFrame"] and R.db["UFs"]["PartyFrame"]
+end
+
+local function isRaidEnable()
+	return R.db["UFs"]["RaidFrame"]
+end
+
+local function isArenaEnable()
+	return R.db["UFs"]["Enable"] and R.db["UFs"]["Arena"]
+end
+
+local function isTalkingHeadHidden()
+	return R.db["Misc"]["HideTalking"]
+end
+
+local ignoredFrames = {
+	-- ActionBars
+	["StanceBar"] = isActionbarEnable,
+	["EncounterBar"] = isActionbarEnable,
+	["PetActionBar"] = isActionbarEnable,
+	["PossessActionBar"] = isActionbarEnable,
+	["MainMenuBarVehicleLeaveButton"] = isActionbarEnable,
+	["MultiBarBottomLeft"] = isActionbarEnable,
+	["MultiBarBottomRight"] = isActionbarEnable,
+	["MultiBarLeft"] = isActionbarEnable,
+	["MultiBarRight"] = isActionbarEnable,
+	["MultiBar5"] = isActionbarEnable,
+	["MultiBar6"] = isActionbarEnable,
+	["MultiBar7"] = isActionbarEnable,
+	-- Auras
+	["BuffFrame"] = isBuffEnable,
+	["DebuffFrame"] = isBuffEnable,
+	-- UnitFrames
+	["PlayerFrame"] = isUnitFrameEnable,
+	["PlayerCastingBarFrame"] = isCastbarEnable,
+	["FocusFrame"] = isUnitFrameEnable,
+	["TargetFrame"] = isUnitFrameEnable,
+	["BossTargetFrameContainer"] = isUnitFrameEnable,
+	["PartyFrame"] = isPartyEnable,
+	["CompactRaidFrameContainer"] = isRaidEnable,
+	["ArenaEnemyFramesContainer"] = isArenaEnabled,
+	-- Misc
+	["MinimapCluster"] = function() return not R.db["Map"]["DisableMinimap"] end,
+	["GameTooltipDefaultContainer"] = function() return true end,
+	["TalkingHeadFrame"] = isTalkingHeadHidden,
+}
+
+function MISC:DisableBlizzardMover()
+	local editMode = _G.EditModeManagerFrame
+
+	-- remove the initial registers
+	local registered = editMode.registeredSystemFrames
+	for i = #registered, 1, -1 do
+		local name = registered[i]:GetName()
+		local ignore = ignoredFrames[name]
+
+		if ignore and ignore() then
+			tremove(editMode.registeredSystemFrames, i)
+		end
+	end
+
+	-- account settings will be tainted
+	local mixin = editMode.AccountSettings
+	if isCastbarEnable() then mixin.RefreshCastBar = M.Dummy end
+	if isBuffEnable() then mixin.RefreshAuraFrame = M.Dummy end
+	if isRaidEnable() then mixin.RefreshRaidFrames = M.Dummy end
+	if isArenaEnable() then mixin.RefreshArenaFrames = M.Dummy end
+	if isPartyEnable() then mixin.RefreshPartyFrames = M.Dummy end
+	if isTalkingHeadHidden() then mixin.RefreshTalkingHeadFrame = M.Dummy end
+	if isUnitFrameEnable() then
+		mixin.ResetTargetAndFocus = M.Dummy
+		mixin.RefreshTargetAndFocus = M.Dummy
+		mixin.RefreshBossFrames = M.Dummy
+	end
+	if isActionbarEnable() then
+		mixin.RefreshEncounterBar = M.Dummy
+	--	mixin.RefreshActionBarShown = M.Dummy -- taint, needs review
+		mixin.RefreshVehicleLeaveButton = M.Dummy
+	end
 end

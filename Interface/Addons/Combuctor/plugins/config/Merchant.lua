@@ -1,15 +1,24 @@
 CaerdonWardrobeConfigMerchantMixin = CreateFromMixins(CaerdonWardrobeConfigPanelMixin)
-CAERDON_MERCHANT_LABEL = "Merchant"
-CAERDON_MERCHANT_SUBTEXT = "These are settings that apply to vendors."
+function CaerdonWardrobeConfigMerchantMixin:GetTitle()
+    return "Merchant"
+    --self.name = "商店"  --Merchant
+    --self.parent = "|cff00ff00[背包]|r属性增强"  --Caerdon Wardrobe
+end
 
-function CaerdonWardrobeConfigMerchantMixin:OnLoad()
-    self.name = "商店"  --Merchant
-    self.parent = "|cff00ff00[背包]|r属性增强"  --Caerdon Wardrobe
-	self.options = {
-        showLearnable = { text = "Show items learnable for current toon", tooltip = "Highlights items that can be learned and used for transmog by your current toon.", default = GetDefaultConfig().Icon.ShowLearnable.Merchant and "1" or "0" },
-        showLearnableByOther = { text = "Show items learnable for a different toon", tooltip = "Highlights items that can be learned and used for transmog but not by your current toon.", default = GetDefaultConfig().Icon.ShowLearnableByOther.Merchant and "1" or "0" },
-        showBindingText = { text = "Show binding text", tooltip = "Show binding text on items based on General configuration.", default = GetDefaultConfig().Binding.ShowStatus.Merchant and "1" or "0" },
+function CaerdonWardrobeConfigMerchantMixin:Register()
+    self:Init()
+
+    self.options = {
+        showLearnable = { key = "merchantShowLearnable", text = "Show items learnable for current toon", tooltip = "Highlights items that can be learned and used for transmog by your current toon.", configSection="Icon", configSubsection="ShowLearnable", configValue="Merchant" },
+        showLearnableByOther = { key = "merchantShowLearnableByOther", text = "Show items learnable for a different toon", tooltip = "Highlights items that can be learned and used for transmog but not by your current toon.", configSection="Icon", configSubsection="ShowLearnableByOther", configValue="Merchant" },
+        showBindingText = { key = "merchantShowBindingText", text = "Show binding text", tooltip = "Show binding text on items based on General configuration.", configSection="Binding", configSubsection="ShowStatus", configValue="Merchant" },
 	}
 
-	InterfaceOptionsPanel_OnLoad(self);
+    self:ConfigureSection("|cff00ff00[背包]|r属性增强", "MerchantSection")  --self:GetTitle()
+
+    self:ConfigureCheckboxNew(self.options["showLearnable"])
+    self:ConfigureCheckboxNew(self.options["showLearnableByOther"])
+    self:ConfigureCheckboxNew(self.options["showBindingText"])
 end
+
+SettingsRegistrar:AddRegistrant(function () CaerdonWardrobeConfigMerchantMixin:Register() end)

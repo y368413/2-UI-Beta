@@ -8,7 +8,7 @@ local _, AB = ... -- Pulls back the Addon-Local Variables and store them locally
 
 local print, select, ipairs, tostring, pairs, tonumber, string = print, select, ipairs, tostring, pairs, tonumber, string
 
-AutoBar = MMGHACKAceLibrary("AceAddon-2.0"):new("AceDB-2.0");
+AutoBar = {}
 AutoBar.warning_log = {}
 
 -- All global code with be a child of this table.
@@ -39,8 +39,21 @@ AutoBarGlobalDataObject = {
 	is_mainline_wow = (WOW_PROJECT_ID == WOW_PROJECT_MAINLINE),
 	is_vanilla_wow = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC),
 	is_bcc_wow = (WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC),
+	is_wrath_wow = (WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC),
+
+	default_button_width = 36,
+	default_button_height = 36,
 
 }
+
+local api_version_temp = strsplittable(".", GetBuildInfo())
+AutoBarGlobalDataObject.API_VERSION = tonumber(api_version_temp[1])
+AutoBarGlobalDataObject.API_SUBVERSION = tonumber(api_version_temp[2])
+
+if(AutoBarGlobalDataObject.API_VERSION >= 10) then	-- Dragonflight+
+	AutoBarGlobalDataObject.default_button_width = 45
+	AutoBarGlobalDataObject.default_button_height = 45
+end
 
 
 -- List of [spellName] = <GetSpellInfo Name>
@@ -112,6 +125,13 @@ function AB.Dump(o, p_max_depth)
 	end
 end
 
+function AB.NVL(p_1, p_2)
+	if(p_1 ~= nil) then
+		return p_1
+	end
+
+	return p_2
+end
 
 local function table_pack(...)
   return { n = select("#", ...), ... }
@@ -214,6 +234,14 @@ function AutoBarGlobalCodeSpace.IsUsableItem(p_item_id)
 --	is_usable_item_cache[p_item_id] = is_usable or is_usable_item_cache[p_item_id] or usable_items_override_set[p_item_id];
 
 --	return is_usable_item_cache[p_item_id], not_enough_mana;
+end
+
+function AB.ClearNormalTexture(p_frame)
+	if (p_frame.ClearNormalTexture) then
+		p_frame:ClearNormalTexture()
+	else
+		p_frame:SetNormalTexture(nil)
+	end
 end
 
 
@@ -358,12 +386,12 @@ local event_name_colour = "|cFFFFFF7F"
 
 function AutoBarGlobalCodeSpace.LogEvent(p_event_name, p_arg1)
 	local memory
-	if (AutoBar.db.account.logMemory) then
+	if (AutoBarDB2.settings.log_memory) then
 		UpdateAddOnMemoryUsage()
 		memory = GetAddOnMemoryUsage("AutoBar")
 		print(p_event_name, "memory" , memory)
 	end
-	if (AutoBar.db.account.logEvents) then
+	if (AutoBarDB2.settings.log_events) then
 		if (p_arg1) then
 			memory = memory or ""
 			print(event_name_colour .. p_event_name .. "|r", "arg1" , p_arg1, "time:", GetTime(), memory)
@@ -376,13 +404,13 @@ end
 function AutoBarGlobalCodeSpace.LogEventStart(p_event_name)
 	local memory
 
-	if (AutoBar.db.account.logMemory) then
+	if (AutoBarDB2.settings.log_memory) then
 		UpdateAddOnMemoryUsage()
 		memory = GetAddOnMemoryUsage("AutoBar")
 		logMemory[p_event_name] = memory
 	end
 
-	if (AutoBar.db.account.performance) then
+	if (AutoBarDB2.settings.performance) then
 		if (logItems[p_event_name]) then
 			--print(p_event_name, "restarted before previous completion")
 		else
@@ -391,20 +419,20 @@ function AutoBarGlobalCodeSpace.LogEventStart(p_event_name)
 		end
 	end
 
-	if (AutoBar.db.account.logEvents) then
+	if (AutoBarDB2.settings.log_events) then
 			memory = memory or ""
 			print(event_name_colour .. p_event_name .. "|r", "time:", debugprofilestop(), memory)
 	end
 end
 
 function AutoBarGlobalCodeSpace.LogEventEnd(p_event_name, p_arg1)	--ToDo: There can actually be multiple args
-	if (AutoBar.db.account.performance) then
+	if (AutoBarDB2.settings.performance) then
 		if (logItems[p_event_name]) then
 			local elapsed = debugprofilestop() - logItems[p_event_name]
 			-- if (p_event_name == "SPELLS_CHANGED") then
 			-- 	print(p_event_name, p_arg1, elapsed, "=", debugprofilestop(), " - ", logItems[p_event_name])
 			-- end
-			if (elapsed > AutoBarDB2.performance_threshold) then
+			if (elapsed > AutoBarDB2.settings.performance_threshold) then
 				print(event_name_colour .. p_event_name .. "|r", (p_arg1 or ""), "time:", elapsed)
 			end
 		--else
@@ -412,7 +440,7 @@ function AutoBarGlobalCodeSpace.LogEventEnd(p_event_name, p_arg1)	--ToDo: There 
 			logItems[p_event_name] = nil
 		end
 	end
-	if (AutoBar.db.account.logMemory) then
+	if (AutoBarDB2.settings.log_memory) then
 		UpdateAddOnMemoryUsage()
 		local memory = GetAddOnMemoryUsage("AutoBar")
 		local deltaMemory = memory - (logMemory[p_event_name] or 0)
@@ -429,13 +457,46 @@ function AutoBarGlobalCodeSpace.GetCategoryItemDB(p_category_key, p_item_index)
 	return AutoBarDB2.custom_categories[p_category_key].items[p_item_index]
 end
 
+-- Support multiple APi versions
+AB.GetContainerNumSlots = GetContainerNumSlots or C_Container.GetContainerNumSlots
+AB.GetContainerItemID = GetContainerItemID or C_Container.GetContainerItemID
+AB.GetContainerItemLink = GetContainerItemLink or C_Container.GetContainerItemLink
+
+
+if (AutoBarGlobalDataObject.is_mainline_wow) then
+-------------------------------------------------------------------
+--
+-- WoW Retail
+--
+-------------------------------------------------------------------
+
+	--This should query a global guid registry and then the specific ones if not found.
+	function AutoBarGlobalCodeSpace.InfoFromGUID(p_guid)
+		return AutoBarSearch.macro_text[p_guid] or AutoBarSearch.toys[p_guid];
+	end
+
+	function AutoBarGlobalCodeSpace.PlayerHasToy(p_item_id)
+		return PlayerHasToy(p_item_id);
+	end
+
+	function AutoBarGlobalCodeSpace.GetSpellLink(p_spell, p_rank)
+		local spell = GetSpellLink(p_spell, p_rank)
+
+		if spell == "" then
+			spell = nil;
+		end
+
+		return spell;
+
+	end
 
 -------------------------------------------------------------------
 --
 -- WoW Classic
 --
 -------------------------------------------------------------------
-if (AutoBarGlobalDataObject.is_vanilla_wow or AutoBarGlobalDataObject.is_bcc_wow) then
+
+else --(AutoBarGlobalDataObject.is_vanilla_wow or AutoBarGlobalDataObject.is_bcc_wow) then
 
 	function AutoBarGlobalCodeSpace.InfoFromGUID(p_guid)
 		return AutoBarSearch.macro_text[p_guid];
@@ -464,34 +525,5 @@ if (AutoBarGlobalDataObject.is_vanilla_wow or AutoBarGlobalDataObject.is_bcc_wow
 		return spell_link;
 
 	end
-
-elseif (AutoBarGlobalDataObject.is_mainline_wow) then
--------------------------------------------------------------------
---
--- WoW Retail
---
--------------------------------------------------------------------
-
-	--This should query a global guid registry and then the specific ones if not found.
-	function AutoBarGlobalCodeSpace.InfoFromGUID(p_guid)
-		return AutoBarSearch.macro_text[p_guid] or AutoBarSearch.toys[p_guid];
-	end
-
-	function AutoBarGlobalCodeSpace.PlayerHasToy(p_item_id)
-		return PlayerHasToy(p_item_id);
-	end
-
-	function AutoBarGlobalCodeSpace.GetSpellLink(p_spell, p_rank)
-		local spell = GetSpellLink(p_spell, p_rank)
-
-		if spell == "" then
-			spell = nil;
-		end
-
-		return spell;
-
-	end
-
-
 end
 
