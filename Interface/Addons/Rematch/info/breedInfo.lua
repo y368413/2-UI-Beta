@@ -25,7 +25,7 @@ local breedNames = {nil,nil,"B/B","P/P","S/S","H/H","H/P","P/S","H/S","P/B","S/B
 -- addons are used in this priority: BattlePetBreedID, PetTracker_Breeds then LibPetBreedInfo-1.0
 function rematch.breedInfo:GetBreedSource()
     if breedSource==nil then -- can be false if a prior search for a source didn't find any
-        if settings.BreedSource=="HPetBattleAny" and C_AddOns.IsAddOnLoaded("BattlePHPetBattleAnyetBreedID") then
+        if settings.BreedSource=="HPetBattleAny" and C_AddOns.IsAddOnLoaded("HPetBattleAny") then
             breedSource = "HPetBattleAny"
         elseif settings.BreedSource=="PetTracker" and C_AddOns.IsAddOnLoaded("PetTracker") and C_AddOns.GetAddOnMetadata("PetTracker","Version")~="10.2.7" then
             breedSource = "PetTracker"

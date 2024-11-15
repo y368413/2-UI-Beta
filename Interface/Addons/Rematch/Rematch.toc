@@ -6,10 +6,10 @@
 ## SavedVariables: Rematch5Settings, Rematch5SavedTeams, Rematch5SavedGroups, Rematch5SavedTargets, Rematch4Saved, Rematch4Settings, RematchSaved, RematchSettings
 ## IconTexture: Interface\AddOns\Rematch\textures\icon
 ## AddonCompartmentFunc: RematchToggleWindow
-## DefaultState: disabled
 
 localization\localization.lua
 localization\localization-zhTW.lua
+localization\localization-zhCN.lua
 
 main\constants.lua
 main\events.lua

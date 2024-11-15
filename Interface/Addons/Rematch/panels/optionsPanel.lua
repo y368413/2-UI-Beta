@@ -574,7 +574,7 @@ function rematch.optionsPanel.funcs:BreedSource(value)
 end
 
 function rematch.optionsPanel.funcs:BreedFormat(value)
-    if value==C.BREED_FORMAT_ICONS and settings.BreedSource=="BattlePetBreedID" then
+    if value==C.BREED_FORMAT_ICONS and settings.BreedSource=="HPetBattleAny" then
         settings.BreedSource = "PetTracker" -- if changing to Icons and source isn't PetTracker, change source to PetTracker
         rematch.breedInfo:ResetBreedSource()
     end
