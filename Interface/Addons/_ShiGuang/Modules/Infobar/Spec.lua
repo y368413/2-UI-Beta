@@ -68,12 +68,10 @@ info.onEnter = function(self)
 		end
 	end
 
-	if I.isNewPatch then
-		local configID = C_ClassTalents.GetLastSelectedSavedConfigID(specID)
-		local info = configID and C_Traits.GetConfigInfo(configID)
-		if info and info.name then
-			GameTooltip:AddLine("   ("..info.name..")", 1,1,1)
-		end
+	local configID = C_ClassTalents.GetLastSelectedSavedConfigID(specID)
+	local info = configID and C_Traits.GetConfigInfo(configID)
+	if info and info.name then
+		GameTooltip:AddLine("   ("..info.name..")", 1,1,1)
 	end
 
 	if C_SpecializationInfo_CanPlayerUsePVPTalentUI() then
@@ -122,8 +120,8 @@ end
 
 local function refreshDefaultLootSpec()
 	if not currentSpecIndex or currentSpecIndex == 5 then return end
-	local mult = I.isNewPatch and (3 + numSpecs) or numSpecs
-	newMenu[numLocal - mult].text = format(LOOT_SPECIALIZATION_DEFAULT, select(2, GetSpecializationInfo(currentSpecIndex)))
+	local mult = 3 + numSpecs
+	newMenu[numLocal - mult].text = format(LOOT_SPECIALIZATION_DEFAULT, (select(2, GetSpecializationInfo(currentSpecIndex))) or NONE)
 end
 
 local function selectCurrentConfig(_, configID, specID)
@@ -202,25 +200,21 @@ local function BuildSpecMenu()
 		end
 	end
 
-	if I.isNewPatch then
-		tinsert(newMenu, seperatorMenu)
-		tinsert(newMenu, {text = GetSpellInfo(384255), isTitle = true, notCheckable = true})
-		tinsert(newMenu, {text = BLUE_FONT_COLOR:WrapTextInColorCode(TALENT_FRAME_DROP_DOWN_STARTER_BUILD), func = selectCurrentConfig,
-			arg1 = STARTER_BUILD,	checked = function() return C_ClassTalents.GetStarterBuildActive() end,
-		})
-	end
+	tinsert(newMenu, seperatorMenu)
+	tinsert(newMenu, {text = C_Spell.GetSpellName(384255), isTitle = true, notCheckable = true})
+	tinsert(newMenu, {text = BLUE_FONT_COLOR:WrapTextInColorCode(TALENT_FRAME_DROP_DOWN_STARTER_BUILD), func = selectCurrentConfig,
+		arg1 = STARTER_BUILD,	checked = function() return C_ClassTalents.GetStarterBuildActive() end,
+	})
 
 	numLocal = #newMenu
 
 	refreshDefaultLootSpec()
 	M:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED", refreshDefaultLootSpec)
 
-	if I.isNewPatch then
-		refreshAllTraits()
-		M:RegisterEvent("TRAIT_CONFIG_DELETED", refreshAllTraits)
-		M:RegisterEvent("TRAIT_CONFIG_UPDATED", refreshAllTraits)
-		M:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED", refreshAllTraits)
-	end
+	refreshAllTraits()
+	M:RegisterEvent("TRAIT_CONFIG_DELETED", refreshAllTraits)
+	M:RegisterEvent("TRAIT_CONFIG_UPDATED", refreshAllTraits)
+	M:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED", refreshAllTraits)
 end
 
 info.onMouseUp = function(self, btn)
@@ -228,7 +222,7 @@ info.onMouseUp = function(self, btn)
 
 	if btn == "LeftButton" then
 		--if InCombatLockdown() then UIErrorsFrame:AddMessage(I.InfoColor..ERR_NOT_IN_COMBAT) return end -- fix by LibShowUIPanel
-		ToggleTalentFrame(2)
+		PlayerSpellsUtil.ToggleClassTalentOrSpecFrame()
 	else
 		BuildSpecMenu()
 		EasyMenu(newMenu, M.EasyMenu, self, -80, 100, "MENU", 1)

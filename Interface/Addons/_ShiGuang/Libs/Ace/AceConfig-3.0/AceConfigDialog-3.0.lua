@@ -1,13 +1,8 @@
---- AceConfigDialog-3.0 generates AceGUI-3.0 based windows based on option tables.
--- @class file
--- @name AceConfigDialog-3.0
--- @release $Id: AceConfigDialog-3.0.lua 1292 2022-09-29 08:00:11Z nevcairiel $
-
 local LibStub = LibStub
 local gui = LibStub("AceGUI-3.0")
 local reg = LibStub("AceConfigRegistry-3.0")
 
-local MAJOR, MINOR = "AceConfigDialog-3.0", 85
+local MAJOR, MINOR = "AceConfigDialog-3.0", 86
 local AceConfigDialog, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not AceConfigDialog then return end
@@ -31,9 +26,6 @@ local math_min, math_max, math_floor = math.min, math.max, math.floor
 
 local emptyTbl = {}
 
---[[
-	 xpcall safecall implementation
-]]
 local xpcall = xpcall
 
 local function errorhandler(err)
@@ -47,24 +39,6 @@ local function safecall(func, ...)
 end
 
 local width_multiplier = 170
-
---[[
-Group Types
-  Tree 	- All Descendant Groups will all become nodes on the tree, direct child options will appear above the tree
-        - Descendant Groups with inline=true and thier children will not become nodes
-
-  Tab	- Direct Child Groups will become tabs, direct child options will appear above the tab control
-        - Grandchild groups will default to inline unless specified otherwise
-
-  Select- Same as Tab but with entries in a dropdown rather than tabs
-
-
-  Inline Groups
-    - Will not become nodes of a select group, they will be effectivly part of thier parent group seperated by a border
-    - If declared on a direct child of a root node of a select group, they will appear above the group container control
-    - When a group is displayed inline, all descendants will also be inline members of the group
-
-]]
 
 -- Recycling functions
 local new, del, copy
@@ -94,13 +68,6 @@ do
 		wipe(t)
 		pool[t] = true
 	end
---	function cached()
---		local n = 0
---		for k in pairs(pool) do
---			n = n + 1
---		end
---		return n
---	end
 end
 
 -- picks the first non-nil value and returns it
@@ -147,6 +114,7 @@ local stringIsLiteral = {
 	width = true,
 	image = true,
 	fontSize = true,
+	tooltipHyperlink = true
 }
 
 --Is Never a function or method
@@ -228,51 +196,6 @@ local function GetOptionsMemberValue(membername, option, options, path, appName,
 	end
 end
 
---[[calls an options function that could be inherited, method name or function ref
-local function CallOptionsFunction(funcname ,option, options, path, appName, ...)
-	local info = new()
-
-	local func
-	local group = options
-	local handler
-
-	--build the info table containing the path
-	-- pick up functions while traversing the tree
-	if group[funcname] ~= nil then
-		func = group[funcname]
-	end
-	handler = group.handler or handler
-
-	for i, v in ipairs(path) do
-		group = GetSubOption(group, v)
-		info[i] = v
-		if group[funcname] ~= nil then
-			func =  group[funcname]
-		end
-		handler = group.handler or handler
-	end
-
-	info.options = options
-	info[0] = appName
-	info.arg = option.arg
-
-	local a, b, c ,d
-	if type(func) == "string" then
-		if handler and handler[func] then
-			a,b,c,d = handler[func](handler, info, ...)
-		else
-			error(string.format("Method %s doesn't exist in handler for type func", func))
-		end
-	elseif type(func) == "function" then
-		a,b,c,d = func(info, ...)
-	end
-	del(info)
-	return a,b,c,d
-end
---]]
-
---tables to hold orders and names for options being sorted, will be created with new()
---prevents needing to call functions repeatedly while sorting
 local tempOrders
 local tempNames
 
@@ -301,11 +224,6 @@ local function compareOptions(a,b)
 	return OrderA < OrderB
 end
 
-
-
---builds 2 tables out of an options group
--- keySort, sorted keys
--- opts, combined options from .plugins and args
 local function BuildSortedOptionsTable(group, keySort, opts, options, path, appName)
 	tempOrders = new()
 	tempNames = new()
@@ -393,10 +311,6 @@ local function CleanUserData(widget, event)
 	end
 end
 
--- - Gets a status table for the given appname and options path.
--- @param appName The application name as given to `:RegisterOptionsTable()`
--- @param path The path to the options (a table with all group keys)
--- @return
 function AceConfigDialog:GetStatusTable(appName, path)
 	local status = self.Status
 
@@ -423,10 +337,6 @@ function AceConfigDialog:GetStatusTable(appName, path)
 	return status.status
 end
 
---- Selects the specified path in the options window.
--- The path specified has to match the keys of the groups in the table.
--- @param appName The application name as given to `:RegisterOptionsTable()`
--- @param ... The path to the key that should be selected
 function AceConfigDialog:SelectGroup(appName, ...)
 	local path = new()
 
@@ -501,6 +411,14 @@ local function OptionOnMouseOver(widget, event)
 	local tooltip = AceConfigDialog.tooltip
 
 	tooltip:SetOwner(widget.frame, "ANCHOR_TOPRIGHT")
+
+	local tooltipHyperlink = GetOptionsMemberValue("tooltipHyperlink", opt, options, path, appName)
+	if tooltipHyperlink then
+		tooltip:SetHyperlink(tooltipHyperlink)
+		tooltip:Show()
+		return
+	end
+
 	local name = GetOptionsMemberValue("name", opt, options, path, appName)
 	local desc = GetOptionsMemberValue("desc", opt, options, path, appName)
 	local usage = GetOptionsMemberValue("usage", opt, options, path, appName)
@@ -1556,24 +1474,6 @@ local function GroupSelected(widget, event, uniquevalue)
 
 	del(feedpath)
 end
-
-
-
---[[
--- INTERNAL --
-This function will feed one group, and any inline child groups into the given container
-Select Groups will only have the selection control (tree, tabs, dropdown) fed in
-and have a group selected, this event will trigger the feeding of child groups
-
-Rules:
-	If the group is Inline, FeedOptions
-	If the group has no child groups, FeedOptions
-
-	If the group is a tab or select group, FeedOptions then add the Group Control
-	If the group is a tree group FeedOptions then
-		its parent isnt a tree group:  then add the tree control containing this and all child tree groups
-		if its parent is a tree group, its already a node on a tree
---]]
 
 function AceConfigDialog:FeedGroup(appName,options,container,rootframe,path, isRoot)
 	local group = options

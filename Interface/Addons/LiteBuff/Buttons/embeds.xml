@@ -6,7 +6,7 @@
 	<Script file="DeathKnight\HornOfWinter.lua"/>
 
 	<Script file="Druid\ShapeShift.lua"/>	
-	<!--<Script file="Druid\MarkOfTheWild.lua"/>-->
+	<Script file="Druid\MarkOfTheWild.lua"/>
 
 	<Script file="Hunter\Pets.lua"/>
 	<Script file="Hunter\Traps.lua"/>
@@ -16,8 +16,8 @@
     <Script file="Mage\Portal.lua"/>
   	<Script file="Mage\ConjureRefreshment.lua"/>
 
-	<!--<Script file="Paladin\Seals.lua"/>-->
-	<Script file="Paladin\Blessings.lua"/>
+	<!--<Script file="Paladin\Seals.lua"/>-->wd
+	<!--<Script file="Paladin\Blessings.lua"/>-->
 	<Script file="Paladin\BeaconOfLight.lua"/>
 
 	<!--<Script file="Priest\ShadowForm.lua"/>-->
@@ -41,6 +41,6 @@
     <Script file="Common\CrystalOfInsanity.lua"/>
     <Script file="Common\LightforgedRune.lua"/>
 	<!--<Script file="Common\Alchemy.lua"/>-->
-    <!--Script file="Common\IntelliMount.lua"/-->
+    <Script file="Common\IntelliMount.lua"/>
 
 </Ui>

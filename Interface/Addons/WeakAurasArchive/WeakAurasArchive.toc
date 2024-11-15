@@ -1,9 +1,8 @@
-## Interface: 100000
+## Interface: 110005
 ## Title: WeakAuras Archive
 ## Author: The WeakAuras Team
-## Version: 5.0.5
+## Version: 5.17.5
+## IconTexture: Interface\AddOns\WeakAuras\Media\Textures\icon.blp
 ## LoadOnDemand: 1
 ## SavedVariables: WeakAurasArchive
 ## Dependencies: WeakAuras
-
-WeakAurasArchive.lua

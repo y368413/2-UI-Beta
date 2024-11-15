@@ -1,8 +1,12 @@
 if not WeakAuras.IsLibsOK() then return end
-local AddonName, OptionsPrivate = ...
+---@type string
+local AddonName = ...
+---@class OptionsPrivate
+local OptionsPrivate = select(2, ...)
 
 local L = WeakAuras.L;
-local GetAtlasInfo = WeakAuras.IsClassic() and GetAtlasInfo or C_Texture.GetAtlasInfo
+local GetAtlasInfo = WeakAuras.IsClassicEra() and GetAtlasInfo or C_Texture.GetAtlasInfo
+
 local function createOptions(id, data)
   local options = {
     __title = L["Progress Texture Settings"],
@@ -19,13 +23,19 @@ local function createOptions(id, data)
       width = 0.15,
       order = 2,
       func = function()
-        OptionsPrivate.OpenTexturePicker(data, {}, {
+        local path = {}
+        local paths = {}
+        for child in OptionsPrivate.Private.TraverseLeafsOrAura(data) do
+          paths[child.id] = path
+        end
+        OptionsPrivate.OpenTexturePicker(data, paths, {
           texture = "foregroundTexture",
           color = "foregroundColor",
-          rotation = "rotation",
+          texRotation = "rotation",
+          auraRotation = "auraRotation",
           mirror = "mirror",
           blendMode = "blendMode"
-        }, OptionsPrivate.Private.texture_types);
+        }, OptionsPrivate.Private.texture_types, nil, true)
       end,
       imageWidth = 24,
       imageHeight = 24,
@@ -46,13 +56,19 @@ local function createOptions(id, data)
       width = 0.15,
       order = 6,
       func = function()
-        OptionsPrivate.OpenTexturePicker(data, {}, {
+        local path = {}
+        local paths = {}
+        for child in OptionsPrivate.Private.TraverseLeafsOrAura(data) do
+          paths[child.id] = path
+        end
+        OptionsPrivate.OpenTexturePicker(data, paths, {
           texture = "backgroundTexture",
           color = "backgroundColor",
-          rotation = "rotation",
+          texRotation = "rotation",
+          auraRotation = "auraRotation",
           mirror = "mirror",
           blendMode = "blendMode"
-        }, OptionsPrivate.Private.texture_types);
+        }, OptionsPrivate.Private.texture_types, nil, true)
       end,
       disabled = function() return data.sameTexture; end,
       imageWidth = 24,
@@ -94,6 +110,7 @@ local function createOptions(id, data)
     },
     backgroundOffset = {
       type = "range",
+      control = "WeakAurasSpinBox",
       width = WeakAuras.normalWidth,
       name = L["Background Offset"],
       min = 0,
@@ -137,6 +154,7 @@ local function createOptions(id, data)
     },
     user_x = {
       type = "range",
+      control = "WeakAurasSpinBox",
       width = WeakAuras.normalWidth,
       order = 42,
       name = L["Re-center X"],
@@ -147,6 +165,7 @@ local function createOptions(id, data)
     },
     user_y = {
       type = "range",
+      control = "WeakAurasSpinBox",
       width = WeakAuras.normalWidth,
       order = 44,
       name = L["Re-center Y"],
@@ -157,6 +176,7 @@ local function createOptions(id, data)
     },
     startAngle = {
       type = "range",
+      control = "WeakAurasSpinBox",
       width = WeakAuras.normalWidth,
       order = 42,
       name = L["Start Angle"],
@@ -167,6 +187,7 @@ local function createOptions(id, data)
     },
     endAngle = {
       type = "range",
+      control = "WeakAurasSpinBox",
       width = WeakAuras.normalWidth,
       order = 44,
       name = L["End Angle"],
@@ -177,6 +198,7 @@ local function createOptions(id, data)
     },
     crop_x = {
       type = "range",
+      control = "WeakAurasSpinBox",
       width = WeakAuras.normalWidth,
       name = L["Crop X"],
       order = 46,
@@ -194,6 +216,7 @@ local function createOptions(id, data)
     },
     crop_y = {
       type = "range",
+      control = "WeakAurasSpinBox",
       width = WeakAuras.normalWidth,
       name = L["Crop Y"],
       order = 47,
@@ -209,17 +232,9 @@ local function createOptions(id, data)
         OptionsPrivate.ResetMoverSizer();
       end,
     },
-    rotation = {
-      type = "range",
-      width = WeakAuras.normalWidth,
-      name = L["Rotation"],
-      order = 52,
-      min = 0,
-      max = 360,
-      bigStep = 1
-    },
     alpha = {
       type = "range",
+      control = "WeakAurasSpinBox",
       width = WeakAuras.normalWidth,
       name = L["Alpha"],
       order = 48,
@@ -227,6 +242,27 @@ local function createOptions(id, data)
       max = 1,
       bigStep = 0.01,
       isPercent = true
+    },
+    rotation = {
+      type = "range",
+      control = "WeakAurasSpinBox",
+      width = WeakAuras.normalWidth,
+      name = L["Texture Rotation"],
+      desc = L["Uses Texture Coordinates to rotate the texture."],
+      order = 52,
+      min = 0,
+      max = 360,
+      bigStep = 1
+    },
+    auraRotation = {
+      type = "range",
+      control = "WeakAurasSpinBox",
+      width = WeakAuras.normalWidth,
+      name = L["Rotation"],
+      order = 53,
+      min = 0,
+      max = 360,
+      bigStep = 1
     },
     smoothProgress = {
       type = "toggle",
@@ -251,6 +287,7 @@ local function createOptions(id, data)
     },
     slant = {
       type = "range",
+      control = "WeakAurasSpinBox",
       width = WeakAuras.normalWidth,
       name = L["Slant Amount"],
       order = 55.4,
@@ -274,18 +311,12 @@ local function createOptions(id, data)
       hidden = function() return not data.slanted or data.orientation == "CLOCKWISE" or data.orientation == "ANTICLOCKWISE" end,
       values = OptionsPrivate.Private.slant_mode
     },
-    spacer = {
-      type = "header",
-      name = "",
-      order = 56
-    },
     endHeader = {
       type = "header",
       order = 100,
       name = "",
     },
   };
-  options = WeakAuras.regionPrototype.AddAdjustedDurationOptions(options, data, 57);
 
   local overlayInfo = OptionsPrivate.Private.GetOverlayInfo(data);
   if (overlayInfo and next(overlayInfo)) then
@@ -329,6 +360,7 @@ local function createOptions(id, data)
 
   return {
     progresstexture = options,
+    progressOptions = OptionsPrivate.commonOptions.ProgressOptions(data),
     position = OptionsPrivate.commonOptions.PositionOptions(id, data),
   };
 end
@@ -372,10 +404,6 @@ local function ApplyTransform(x, y, region)
   end
 
   -- 5) Rotate texture by user-defined value
-  --[[local x_tmp = region.cos_rotation * x - region.sin_rotation * y
-  local y_tmp = region.sin_rotation * x + region.cos_rotation * y
-  x = x_tmp
-  y = y_tmp]]
   x, y = region.cos_rotation * x - region.sin_rotation * y, region.sin_rotation * x + region.cos_rotation * y
 
   -- 6) Translate texture-coords back to (0,0)
@@ -503,9 +531,10 @@ local function modifyThumbnail(parent, borderframe, data, fullModify, size)
   region.mirror_h = data.mirror;
   region.scale_x = 1 + (data.crop_x or 0.41);
   region.scale_y = 1 + (data.crop_y or 0.41);
-  region.rotation = data.rotation or 0;
-  region.cos_rotation = cos(region.rotation);
-  region.sin_rotation = sin(region.rotation);
+  region.texRotation = data.rotation or 0
+  region.auraRotation = data.auraRotation or 0
+  region.cos_rotation = cos(region.texRotation)
+  region.sin_rotation = sin(region.texRotation)
   region.user_x = -1 * (data.user_x or 0);
   region.user_y = data.user_y or 0;
   region.aspect = 1;
@@ -525,7 +554,9 @@ local function modifyThumbnail(parent, borderframe, data, fullModify, size)
 
         foreground:SetTexCoord(ULx, ULy, LLx, LLy, URx, URy, LRx, LRy);
         foreground:SetWidth(region:GetWidth() * progress);
+        foreground:SetRotation(region.auraRotation / 180 * math.pi)
         background:SetTexCoord(ULx, ULy, LLx, LLy, URx, URy, LRx, LRy);
+        background:SetRotation(region.auraRotation / 180 * math.pi)
       end
     else
       function region:SetValue(progress)
@@ -540,7 +571,9 @@ local function modifyThumbnail(parent, borderframe, data, fullModify, size)
 
         foreground:SetTexCoord(ULx, ULy, LLx, LLy, URx , URy , LRx , LRy );
         foreground:SetWidth(region:GetWidth() * progress);
+        foreground:SetRotation(region.auraRotation / 180 * math.pi)
         background:SetTexCoord(ULx, ULy, LLx, LLy, URx_, URy_, LRx_, LRy_);
+        background:SetRotation(region.auraRotation / 180 * math.pi)
       end
     end
   end
@@ -559,7 +592,9 @@ local function modifyThumbnail(parent, borderframe, data, fullModify, size)
 
         foreground:SetTexCoord(ULx, ULy, LLx, LLy, URx, URy, LRx, LRy);
         foreground:SetWidth(region:GetWidth() * progress);
+        foreground:SetRotation(region.auraRotation / 180 * math.pi)
         background:SetTexCoord(ULx, ULy, LLx, LLy, URx, URy, LRx, LRy);
+        background:SetRotation(region.auraRotation / 180 * math.pi)
       end
     else
       function region:SetValue(progress)
@@ -574,7 +609,9 @@ local function modifyThumbnail(parent, borderframe, data, fullModify, size)
 
         foreground:SetTexCoord(ULx , ULy , LLx , LLy , URx, URy, LRx, LRy);
         foreground:SetWidth(region:GetWidth() * progress);
+        foreground:SetRotation(region.auraRotation / 180 * math.pi)
         background:SetTexCoord(ULx_, ULy_, LLx_, LLy_, URx, URy, LRx, LRy);
+        background:SetRotation(region.auraRotation / 180 * math.pi)
       end
     end
   end
@@ -594,7 +631,9 @@ local function modifyThumbnail(parent, borderframe, data, fullModify, size)
 
         foreground:SetTexCoord(ULx, ULy, LLx, LLy, URx, URy, LRx, LRy);
         foreground:SetHeight(region:GetHeight() * progress);
+        foreground:SetRotation(region.auraRotation / 180 * math.pi)
         background:SetTexCoord(ULx, ULy, LLx, LLy, URx, URy, LRx, LRy);
+        background:SetRotation(region.auraRotation / 180 * math.pi)
       end
     else
       function region:SetValue(progress)
@@ -609,7 +648,9 @@ local function modifyThumbnail(parent, borderframe, data, fullModify, size)
 
         foreground:SetTexCoord(ULx, ULy, LLx, LLy, URx, URy, LRx, LRy);
         foreground:SetHeight(region:GetHeight() * progress);
+        foreground:SetRotation(region.auraRotation / 180 * math.pi)
         background:SetTexCoord(ULx_, ULy_, LLx, LLy, URx_, URy_, LRx, LRy);
+        background:SetRotation(region.auraRotation / 180 * math.pi)
       end
     end
   end
@@ -629,7 +670,9 @@ local function modifyThumbnail(parent, borderframe, data, fullModify, size)
 
         foreground:SetTexCoord(ULx, ULy, LLx, LLy, URx, URy, LRx, LRy);
         foreground:SetHeight(region:GetHeight() * progress);
+        foreground:SetRotation(region.auraRotation / 180 * math.pi)
         background:SetTexCoord(ULx, ULy, LLx, LLy, URx, URy, LRx, LRy);
+        background:SetRotation(region.auraRotation / 180 * math.pi)
       end
     else
       function region:SetValue(progress)
@@ -644,7 +687,9 @@ local function modifyThumbnail(parent, borderframe, data, fullModify, size)
 
         foreground:SetTexCoord(ULx, ULy, LLx, LLy, URx, URy, LRx, LRy);
         foreground:SetHeight(region:GetHeight() * progress);
+        foreground:SetRotation(region.auraRotation / 180 * math.pi)
         background:SetTexCoord(ULx, ULy, LLx_, LLy_, URx, URy, LRx_, LRy_);
+        background:SetRotation(region.auraRotation / 180 * math.pi)
       end
     end
   end
@@ -657,8 +702,8 @@ local function modifyThumbnail(parent, borderframe, data, fullModify, size)
       endAngle = endAngle + 360;
     end
 
-    backgroundSpinner:SetProgress(region, startAngle, endAngle);
-    foregroundSpinner:SetProgress(region, startAngle, endAngle);
+    backgroundSpinner:SetProgress(startAngle, endAngle);
+    foregroundSpinner:SetProgress(startAngle, endAngle);
 
     function region:SetValue(progress)
       region.progress = progress;
@@ -678,9 +723,9 @@ local function modifyThumbnail(parent, borderframe, data, fullModify, size)
       local pAngle = (endAngle - startAngle) * progress + startAngle;
 
       if (clockwise) then
-        foregroundSpinner:SetProgress(region, startAngle, pAngle);
+        foregroundSpinner:SetProgress(startAngle, pAngle);
       else
-        foregroundSpinner:SetProgress(region, pAngle, endAngle);
+        foregroundSpinner:SetProgress(pAngle, endAngle);
       end
     end
   end
@@ -823,8 +868,11 @@ local templates = {
   },
 }
 
-if WeakAuras.IsClassic() then
+if WeakAuras.IsClassicEra() then
   table.remove(templates, 2)
 end
 
-WeakAuras.RegisterRegionOptions("progresstexture", createOptions, createIcon, L["Progress Texture"], createThumbnail, modifyThumbnail, L["Shows a texture that changes based on duration"], templates);
+OptionsPrivate.registerRegions = OptionsPrivate.registerRegions or {}
+table.insert(OptionsPrivate.registerRegions, function()
+  OptionsPrivate.Private.RegisterRegionOptions("progresstexture", createOptions, createIcon, L["Progress Texture"], createThumbnail, modifyThumbnail, L["Shows a texture that changes based on duration"], templates);
+end)

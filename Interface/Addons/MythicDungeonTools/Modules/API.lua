@@ -5,12 +5,11 @@ local MDT = MDT
 do
   local dungeonCountCache = {}
 
-  --- Usage: local count, maxCountNormal, maxCountTeeming, teemingCount = MDT:GetEnemyForcers(npcId)
+  --- Usage: local count, maxCountNormal, maxCountTeeming, teemingCount = MDT:GetEnemyForces(npcId)
   --- Prefers to find the npc in the current dungeon of the player
   --- @param npcId number
   --- @return number | nil, number | nil, number | nil, number | nil
   function MDT:GetEnemyForces(npcId)
-
     local zoneId = C_Map.GetBestMapForUnit("player")
     local dungeonIdx = self.zoneIdToDungeonIdx[zoneId]
 
@@ -36,7 +35,7 @@ do
       end
     end
 
-    for i = 1, self:GetNumDungeons() do
+    for i, _ in pairs(MDT.dungeonList) do
       if dungeonCountCache[i] and dungeonCountCache[i][npcId] then
         local cached = dungeonCountCache[i][npcId]
         return cached.count, cached.maxCountNormal, cached.maxCountTeeming, cached.teemingCount

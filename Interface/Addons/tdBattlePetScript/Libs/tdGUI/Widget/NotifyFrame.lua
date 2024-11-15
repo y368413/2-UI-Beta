@@ -3,7 +3,7 @@
 -- @Link   : https://dengsir.github.io
 -- @Date   : 9/22/2018, 11:26:58 AM
 
-local MAJOR, MINOR = 'NotifyFrame', 2
+local MAJOR, MINOR = 'NotifyFrame', 3
 local GUI = LibStub('tdGUI-1.0')
 local NotifyFrame, oldminor, ns = GUI:NewClass(MAJOR, MINOR, 'Button', 'Backdrop')
 if not NotifyFrame then return end
@@ -258,6 +258,9 @@ function NotifyManager:Update()
     end)
     notify:SetOptions(opts)
     notify:FadeIn()
+    if opts.duration ~= -1 then
+        C_Timer.After(opts.duration or 5, function() notify:FadeOut() end)
+    end
 
     table.insert(ns.used, notify)
 
@@ -278,7 +281,7 @@ function GUI:Notify(opts)
             error(format([[bad argument opts.type to 'Notify' (ONCE|DAY)]]), 2)
         end
         if type(opts.storage) ~= 'table' then
-            error(format([[bad argument opts.storage to 'Notify' (string expected, got %s)]], type(opts.storage)), 2)
+            error(format([[bad argument opts.storage to 'Notify' (table expected, got %s)]], type(opts.storage)), 2)
         end
         if not opts.id then
             error(format([[bad argument opts.storage to 'Notify']]), 2)

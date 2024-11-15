@@ -12,7 +12,6 @@ local Collectible = MistsOfPandaria.node.Collectible
 local Lorewalker = MistsOfPandaria.node.Lorewalker
 
 local Achievement = MistsOfPandaria.reward.Achievement
-local Mount = MistsOfPandaria.reward.Mount
 local Transmog = MistsOfPandaria.reward.Transmog
 local Item = MistsOfPandaria.reward.Item
 local Pet = MistsOfPandaria.reward.Pet
@@ -77,8 +76,9 @@ map.nodes[51317128] = Rare({
     }
 }) -- Progenitus
 
-map.nodes[53855330] = Rare({
+map.nodes[35815321] = Rare({
     id = 69998,
+    quest = 32610, -- 32626
     rewards = {
         Achievement({id = 8103, criteria = 22824}), -- Champions of Lei Shen
         ritualstone
@@ -214,14 +214,6 @@ map.nodes[49942065] = Rare({
         Transmog({item = 94823, slot = L['2h_axe']}) -- Drakkari Decapitator
     }
 }) -- Incomplete Drakkari Colossus
-
-map.nodes[57993733] = Rare({
-    id = 69099,
-    rewards = {
-        Achievement({id = 8028}), -- Praise the Sun!
-        Mount({item = 95057, id = 542})
-    }
-}) -- Nalak <The Storm Lord>
 
 -------------------------------------------------------------------------------
 --------------------------------- LOREWALKER ----------------------------------

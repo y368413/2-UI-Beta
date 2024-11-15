@@ -2,18 +2,11 @@ local _, T = ...
 if T.Mark ~= 50 then return end
 local G, L, EV = T.Garrison, T.L, T.Evie
 local countFreeFollowers = G.countFreeFollowers
-
-local Nine = T.Nine or _G
-local C_Garrison = Nine.C_Garrison
+local GameTooltip = T.NotGameTooltip or GameTooltip
 
 local function HookOnShow(self, OnShow)
 	self:HookScript("OnShow", OnShow)
 	if self:IsVisible() then OnShow(self) end
-end
-local function HideOwnedGameTooltip(self)
-	if GameTooltip:IsOwned(self) then
-		GameTooltip:Hide()
-	end
 end
 
 local mechanicsFrame = CreateFrame("Frame")
@@ -73,7 +66,7 @@ local CreateMechanicButton, Mechanic_SetTrait do
 		f.Border:Hide()
 		f:SetScript("OnClick", Mechanic_OnClick)
 		f:SetScript("OnEnter", Mechanic_OnEnter)
-		f:SetScript("OnLeave", HideOwnedGameTooltip)
+		f:SetScript("OnLeave", T.HideOwnedGameTooltip)
 		return f
 	end
 	function Mechanic_SetTrait(self, id, info)
@@ -273,12 +266,13 @@ end
 
 local function UpgradeItem_SetItem(self, id)
 	self.itemID = id
-	local count, itemName, _, itemQuality, _, _, _, _, _, _, itemTexture = GetItemCount(id), GetItemInfo(id)
+	local count, itemName, _, itemQuality, _, _, _, _, _, _, itemTexture = C_Item.GetItemCount(id), C_Item.GetItemInfo(id)
 	if itemName then
 		self.Icon:SetTexture(itemTexture)
 		self.Name:SetText(itemName)
 		self.Count:SetText(count > 1 and count or "")
-		self.Name:SetTextColor(GetItemQualityColor(itemQuality))
+		local qc = ITEM_QUALITY_COLORS[itemQuality] or HIGHLIGHT_FONT_COLOR
+		self.Name:SetTextColor(qc.r, qc.g, qc.b)
 		self.ItemLevel:SetFormattedText("")
 	end
 	self:SetAttribute("macrotext", SLASH_STOPSPELLTARGET1 .. "\n" .. SLASH_USE1 .. " item:" .. id)
@@ -316,7 +310,7 @@ local function UpgradeItem_OnEvent(self)
 	end
 end
 local upgradeItems = setmetatable({}, {__index=function(self, i)
-	local b = CreateFrame("Button", nil, UpgradesFrame, "GarrisonFollowerItemButtonTemplate,SecureActionButtonTemplate")
+	local b = T.TenSABT(CreateFrame("Button", nil, UpgradesFrame, "GarrisonFollowerItemButtonTemplate,InsecureActionButtonTemplate"))
 	b.Count = b:CreateFontString(nil, "ARTWORK", "GameFontHighlightOutline")
 	b.Count:SetPoint("BOTTOMRIGHT", b.Icon, "BOTTOMRIGHT", -1, 2)
 	b:SetAttribute("type", "macro")
@@ -411,11 +405,12 @@ local CreateClassSpecButton, ClassSpecButton_Set do
 			tipLoader.job = job
 			tipLoader:Show()
 		end
+		GameTooltip.NineSlice:SetCenterColor(0,0,0)
 	end
 	function EV:MP_REROLL_PROSPECTS_READY()
-		local mf = GetMouseFocus()
-		if mf and GameTooltip:GetOwner() == mf and not mf:IsForbidden() and mf:GetScript("OnEnter") == ClassSpecButton_OnEnter then
-			ClassSpecButton_OnEnter(mf)
+		local to = not GameTooltip:IsForbidden() and GameTooltip:IsVisible() and GameTooltip:GetOwner()
+		if to and not to:IsForbidden() and to:GetScript("OnEnter") == ClassSpecButton_OnEnter then
+			ClassSpecButton_OnEnter(to)
 		end
 	end
 	function CreateClassSpecButton(parent)
@@ -424,7 +419,7 @@ local CreateClassSpecButton, ClassSpecButton_Set do
 		f.Icon = f:CreateTexture()
 		f.Icon:SetAllPoints()
 		f:SetScript("OnEnter", ClassSpecButton_OnEnter)
-		f:SetScript("OnLeave", HideOwnedGameTooltip)
+		f:SetScript("OnLeave", T.HideOwnedGameTooltip)
 		return f
 	end
 	function ClassSpecButton_Set(self, info)
@@ -562,7 +557,7 @@ local SpecAffinityFrame = CreateFrame("Frame") do
 			end
 			GameTooltip:Show()
 		end)
-		f:SetScript("OnLeave", HideOwnedGameTooltip)
+		f:SetScript("OnLeave", T.HideOwnedGameTooltip)
 	end
 	local loader = T.MissionsUI.CreateLoader(SpecAffinityFrame, 6, 3, 6)
 	loader:SetPoint("TOPRIGHT", SpecAffinityFrame, "BOTTOMRIGHT", 0, -2)
@@ -570,7 +565,7 @@ local SpecAffinityFrame = CreateFrame("Frame") do
 		local p = SpecAffinityFrame:GetParent()
 		local os = p and p:GetScript("OnShow")
 		if os then
-			os(p) -- TODO: Really need a better way to force follower frame update.
+			os(p)
 			SpecAffinityFrame:ShowFor(p, SpecAffinityFrame.info)
 		end
 	end
@@ -581,6 +576,8 @@ local SpecAffinityFrame = CreateFrame("Frame") do
 		self:ClearAllPoints()
 		owner.XPText:SetPoint("TOPRIGHT", -74, -17)
 		if owner.Class then
+			owner.Class:ClearAllPoints()
+			owner.Class:SetPoint("TOPRIGHT", -10, -10)
 			owner.Class:SetAlpha(1)
 		end
 	end
@@ -601,6 +598,9 @@ local SpecAffinityFrame = CreateFrame("Frame") do
 		ClassSpecButton_Set(self.ClassSpec, fi)
 		owner.XPText:SetPoint("TOPRIGHT", self, "TOPLEFT", -4, -4)
 		if owner.Class then
+			-- GarrisonFollowerTabMixin:SetupXPBar, which runs after this, reanchors .XPText relative to .Class (9.0+)
+			owner.Class:ClearAllPoints()
+			owner.Class:SetPoint("TOPLEFT", self, "TOPLEFT", -4, 4)
 			owner.Class:SetAlpha(0)
 		end
 		local best, job = fi.isCollected and fi.level == T.FOLLOWER_LEVEL_CAP and fi.quality >= 4
@@ -682,7 +682,7 @@ for i=1,3 do
 		m.icon:SetPoint("BOTTOM")
 		m:Hide()
 		m:SetScript("OnEnter", MoIMark_OnEnter)
-		m:SetScript("OnLeave", HideOwnedGameTooltip)
+		m:SetScript("OnLeave", T.HideOwnedGameTooltip)
 		recruitMarks[i] = m
 	end
 end
@@ -690,6 +690,11 @@ local rpLoader = T.MissionsUI.CreateLoader(GarrisonRecruitSelectFrame.FollowerSe
 rpLoader:SetPoint("TOPRIGHT", GarrisonRecruitSelectFrame, -46, -38)
 local function Recruit_ProspectCompare(aw, bw)
 	local a, b = aw.clones, bw.clones
+	if (not a) ~= (not b) then
+		return not b
+	elseif not a then
+		return aw:GetID() > bw:GetID()
+	end
 	local ac, bc = a.cR, b.cR
 	if ac == bc then
 		ac, bc = a.crR and a.crR.nR or a.cR, b.crR and b.crR.nR or b.cR
@@ -712,14 +717,17 @@ local function Recruit_ProspectCompare(aw, bw)
 	return ac > bc
 end
 function EV:MP_RECRUIT_PROSPECTS_READY(data)
-	for i=1,data and 3 or 0 do
-		local m = GarrisonRecruitSelectFrame.FollowerSelection["Recruit" .. i].MoIMark
-		m.clones = G.AnnotateCloneProspects(data[i].clones)
-		m:Show()
+	for i=1, #recruitMarks do
+		recruitMarks[i]:Hide()
 	end
-	if data then
+	if data and #data > 0 then
+		for i=1, #data do
+			local m = GarrisonRecruitSelectFrame.FollowerSelection["Recruit" .. i].MoIMark
+			m.clones = G.AnnotateCloneProspects(data[i].clones)
+			m:Show()
+		end
 		table.sort(recruitMarks, Recruit_ProspectCompare)
-		for i=1,3 do
+		for i=1, #data do
 			local m, base = recruitMarks[i], i == 1 and 12 or i == 2 and 6 or 1
 			m.icon:SetTexture(("Interface/PvPRankBadges/PvPRank%02d"):format(base + (m.ceR and 2 or m.crR and 1 or 0)))
 		end
@@ -727,8 +735,13 @@ function EV:MP_RECRUIT_PROSPECTS_READY(data)
 end
 local function Recruit_ProspectsUpdate(waiting)
 	if not waiting then
-		local followers, rf, tinfo = C_Garrison.GetAvailableRecruits(), GarrisonRecruitSelectFrame.FollowerSelection, G.GetFollowerTraits()
-		for i=1,3 do
+		local followers = C_Garrison.GetAvailableRecruits()
+		if not followers or #followers < 1 then
+			EV("MP_RECRUIT_PROSPECTS_READY", nil)
+			return
+		end
+		local rf, tinfo = GarrisonRecruitSelectFrame.FollowerSelection, G.GetFollowerTraits()
+		for i=1,#followers do
 			local f, ff = followers[i], rf["Recruit" .. i]
 			local afid, ico = T.Affinities[f.followerID], ff.Affinity
 			if afid and afid > 0 then
@@ -827,37 +840,69 @@ end
 GarrisonThreatCountersFrame:SetScript("OnShow", GarrisonThreatCountersFrame.Hide)
 GarrisonThreatCountersFrame:Hide()
 
-local function Recruiter_ShowTraitTooltip(self)
-	GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-	G.SetTraitTooltip(GameTooltip, self.value)
+local function Recruiter_ShowTraitTooltip(self, entry)
+	GameTooltip:SetOwner(self, "ANCHOR_NONE")
+	GameTooltip:SetPoint("TOPLEFT", self, "TOPRIGHT", 10, 6)
+	G.SetTraitTooltip(GameTooltip, entry.data.id)
 	GameTooltip:Show()
+	self:SetScript("OnHide", T.HideOwnedGameTooltip)
 end
-local function Recruiter_ShowCounterTooltip(self)
-	GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-	G.SetThreatTooltip(GameTooltip, self.value)
+local function Recruiter_ShowCounterTooltip(self, entry)
+	GameTooltip:SetOwner(self, "ANCHOR_NONE")
+	GameTooltip:SetPoint("TOPLEFT", self, "TOPRIGHT", 10, 6)
+	G.SetThreatTooltip(GameTooltip, entry.data.id)
 	GameTooltip:Show()
+	self:SetScript("OnHide", T.HideOwnedGameTooltip)
 end
-local function Recruiter_DropDownInitHook(_, level)
-	local lf, bn
-	if level == 2 then
-		lf, bn = DropDownList2, "DropDownList2Button"
-	elseif level == 1 and #GarrisonRecruiterFrame.Pick.entries > 0 then
-		lf, bn = DropDownList1, "DropDownList1Button"
-	end
-	for i=1,lf and lf.numButtons or 0 do
-		local b = _G[bn .. i]
-		local entry = b.arg1
-		if type(entry) == "table" and entry.id then
-			b.tooltipOnButton, b.tooltipTitle, b.tooltipText = level == 2 and Recruiter_ShowTraitTooltip or Recruiter_ShowCounterTooltip
-		end
-	end
+local function Recruiter_HideTooltip(self)
+	T.HideOwnedGameTooltip(self)
 end
-hooksecurefunc("GarrisonRecruiterFrame_Init", Recruiter_DropDownInitHook)
-if GarrisonRecruiterFramePickThreatDropDown:IsVisible() then
-	hooksecurefunc(GarrisonRecruiterFramePickThreatDropDown, "initialize", Recruiter_DropDownInitHook)
+local function Recruiter_IsChecked(entry)
+	return GarrisonRecruiterFrame.Pick.selectedID == entry.id
 end
+local function Recruiter_SetChecked(entry)
+	GarrisonRecruiterFrame_SetAbilityPreference(entry)
+end
+local function Recruiter_UpdatePickMenu()
+	if GarrisonRecruitSelectFrame:IsShown() or not GarrisonRecruiterFrame.Pick:IsShown() then return end
+	GarrisonRecruiterFrame.Pick.ThreatDropdown:SetupMenu(function(_, rootDescription)
+		rootDescription:SetTag("MENU_GARRISON_RECRUITER_THREAT");
 
-local GarrisonFollowerList_SortFollowers = GarrisonFollowerList_SortFollowers
+		for _, category in pairs(GarrisonRecruiterFrame.categoriesTable) do
+			local categoryEntry = GarrisonRecruiterFrame.Pick.categories[category];
+			if #categoryEntry.entries > 0 then
+				categoryEntry.id = category;
+
+				local submenu = rootDescription:CreateButton(category);
+
+				for _, entry in pairs(categoryEntry.entries) do
+					local checkbox = submenu:CreateCheckbox(entry.name, Recruiter_IsChecked, Recruiter_SetChecked, entry);
+					checkbox:SetOnEnter(Recruiter_ShowTraitTooltip)
+					checkbox:SetOnLeave(Recruiter_HideTooltip)
+					checkbox:SetResponse(MenuResponse.CloseAll)
+				end
+			end
+		end
+
+		for _, entry in pairs(GarrisonRecruiterFrame.Pick.entries) do
+			local checkbox = rootDescription:CreateCheckbox(entry.name, Recruiter_IsChecked, Recruiter_SetChecked, entry);
+			checkbox:SetOnEnter(Recruiter_ShowCounterTooltip)
+			checkbox:SetOnLeave(Recruiter_HideTooltip)
+			checkbox:SetResponse(MenuResponse.CloseAll)
+		end
+	end);
+end
+hooksecurefunc("GarrisonRecruiterFrame_OnShow", Recruiter_UpdatePickMenu)
+GarrisonRecruiterFrame:HookScript("OnShow", Recruiter_UpdatePickMenu)
+if GarrisonRecruiterFrame:IsVisible() then Recruiter_UpdatePickMenu() end
+GarrisonRecruiterFrame.Pick.Radio1:SetHitRectInsets(-4, -90, -4, -4)
+GarrisonRecruiterFrame.Pick.Radio2:SetHitRectInsets(-4, -90, -4, -4)
+hooksecurefunc("GarrisonRecruiterFrame_SetAbilityPreference", function(entry)
+	if entry and entry.name then
+		GarrisonRecruiterFrame.Pick.ThreatDropdown:SetText(entry.name)
+	end
+end)
+
 local specialSearchQueries = {["duplicate counters"]="dup", [(L"Duplicate counters"):lower()]="dup", ["upgradable gear"]="up", [(L"Upgradable gear"):lower()]="up", ["redundant"]="red", [(L"Redundant"):lower()]="red"} do
 	local sc = C_Garrison.GetFollowerAbilityName(79)
 	if sc then
@@ -872,165 +917,181 @@ function searchLoader:OnFinish()
 	end
 	self.list = nil
 end
-function _G.GarrisonFollowerList_SortFollowers(followerList)
-	local searchString = followerList.SearchBox and followerList.SearchBox:GetText() or ""
-	local ws = followerList.SearchBox and followerList.SearchBox.MPWarning
+function GarrisonMissionFrameFollowers:DoesFollowerMatchFilters(...)
+	local fi, searchString = ...
+	local ws = self.SearchBox and self.SearchBox.MPWarning
 	if ws then
 		ws:Hide()
-	elseif followerList.SearchBox then
-		ws = followerList.SearchBox:CreateFontString(nil, "OVERLAY", "GameFontRed")
+	elseif self.SearchBox then
+		ws = self.SearchBox:CreateFontString(nil, "OVERLAY", "GameFontRed")
 		ws:SetWidth(250)
 		ws:SetPoint("TOP", 0, -100)
-		followerList.SearchBox.MPWarning = ws
+		self.SearchBox.MPWarning = ws
 	end
 	
-	if searchString:match("/") and searchString:match("[^%s/]") then
-		local showUncollected, list, s = followerList.showUncollected, followerList.followersList, {}
-		for qs in searchString:gmatch("[^/]+") do
-			s[#s+1] = qs
-		end
-		wipe(list)
-		for i=1, #followerList.followers do
-			local fi = followerList.followers[i]
-			if showUncollected or fi.isCollected then
+	
+	local isQueryString = type(searchString) == "string"
+	if isQueryString and self.mpCachedSearchString ~= searchString then
+		self.mpCachedSearchString = searchString
+		local isDisjunction = isQueryString and (searchString:match("/") and searchString:match("[^%s/]"))
+		local isComplexFilter = isQueryString and ((searchString:match("[!;+]") and searchString:match("[^%s;+!]")) or specialSearchQueries[searchString:lower()])
+		self.mpCachedSearch = nil
+		if not (isDisjunction or isComplexFilter) then
+			for i=1,#self.followers do
+				self.followers[i].mpSearchMatched = nil
+			end
+			self.mpCachedSearch = nil
+		elseif isDisjunction then
+			local s = {}
+			for qs in searchString:gmatch("[^/]+") do
+				s[#s+1] = qs
+			end
+			for i=1,#self.followers do
+				local matched, fid = false, self.followers[i].followerID
 				for j=1,#s do
-					if C_Garrison.SearchForFollower(fi.followerID, s[j]) then
-						list[#list+1] = i
+					if C_Garrison.SearchForFollower(fid, s[j]) then
+						matched = true
 						break
 					end
 				end
+				self.followers[i].mpSearchMatched = matched
 			end
-		end
-	elseif (searchString:match("[!;+]") and searchString:match("[^%s;+!]")) or specialSearchQueries[searchString:lower()] then
-		local showUncollected, list, q, ns, s = followerList.showUncollected, followerList.followersList, {}, {}
-		local filterADup, filterIDup, filterRed, filterScav, dupSet, filterUp, upW, upA, redFollowers, badQuery
+			self.mpCachedSearch = true
+		elseif isComplexFilter then
+			local showUncollected, q, ns, s = self.showUncollected, {}, {}
+			local filterADup, filterIDup, filterRed, filterScav, dupSet, filterUp, upW, upA, redFollowers, badQuery
 		
-		for rqs in searchString:gmatch("[^;]+") do
-			local neg, pl, qs = rqs:match("^%s*(!?)(%+?)%s*(.-)%s*$")
-			local ql = qs:lower()
-			local sq = specialSearchQueries[ql]
-			if (qs or "") == "" then
-			elseif sq == "dup" then
-				if pl ~= "+" then
-					filterADup, badQuery = neg == "!", badQuery or (filterADup == (neg ~= "!"))
-				else
-					filterIDup, badQuery = neg == "!", badQuery or (filterIDup == (neg ~= "!"))
-				end
-			elseif sq == "up" then
-				filterUp, showUncollected, badQuery = neg == "", false, badQuery or (filterUp == (neg ~= ""))
-			elseif sq == "red" then
-				filterRed, showUncollected, badQuery = neg == "", false, badQuery or (filterRed == (neg ~= ""))
-			elseif sq == "scavenger" and rqs ~= searchString then
-				filterScav, showUncollected, badQuery = neg == "", false, badQuery or (filterScav == (neg ~= ""))
-			elseif pl == "+" then
-				s = s or {}
-				s[#s+1] = ql:gsub("[-%%%[%]().+*?]", "%%%0")
-				s[-#s], ns[-#s] = qs, neg == "!"
-			else
-				q[#q+1], ns[#q+1] = ql, neg == "!"
-			end
-		end
-		local hasDupFilter = filterADup ~= nil or filterIDup ~= nil
-		
-		if badQuery then
-			wipe(list)
-		elseif hasDupFilter or filterUp ~= nil or filterRed ~= nil or filterScav ~= nil or #q > 1 or ns[1] or (s and #s > 0) then
-			local nf, ni = #followerList.followers, 1
-			wipe(list)
-			for i=1,nf do
-				local f = followerList.followers[i]
-				local id, ok, spec = f.followerID, showUncollected or f.isCollected, T.SpecCounters[f.classSpec]
-				for j=1,ok and #q or 0 do
-					if (not C_Garrison.SearchForFollower(id, q[j])) ~= ns[j] then
-						ok = false
-						break
-					end
-				end
-				if ok and (filterUp ~= nil) then
-					if not upA then
-						upW, upA = G.GetUpgradeRange()
-					end
-					if f.level < T.FOLLOWER_LEVEL_CAP then
-						ok = false
+			for rqs in searchString:gmatch("[^;]+") do
+				local neg, pl, qs = rqs:match("^%s*(!?)(%+?)%s*(.-)%s*$")
+				local ql = qs:lower()
+				local sq = specialSearchQueries[ql]
+				if (qs or "") == "" then
+				elseif sq == "dup" then
+					if pl ~= "+" then
+						filterADup, badQuery = neg == "!", badQuery or (filterADup == (neg ~= "!"))
 					else
-						local _weaponItemID, weaponItemLevel, _armorItemID, armorItemLevel = C_Garrison.GetFollowerItems(f.followerID)
-						ok = (weaponItemLevel < upW or armorItemLevel < upA) == filterUp
+						filterIDup, badQuery = neg == "!", badQuery or (filterIDup == (neg ~= "!"))
 					end
+				elseif sq == "up" then
+					filterUp, showUncollected, badQuery = neg == "", false, badQuery or (filterUp == (neg ~= ""))
+				elseif sq == "red" then
+					filterRed, showUncollected, badQuery = neg == "", false, badQuery or (filterRed == (neg ~= ""))
+				elseif sq == "scavenger" and rqs ~= searchString then
+					filterScav, showUncollected, badQuery = neg == "", false, badQuery or (filterScav == (neg ~= ""))
+				elseif pl == "+" then
+					s = s or {}
+					s[#s+1] = ql:gsub("[-%%%[%]().+*?]", "%%%0")
+					s[-#s], ns[-#s] = qs, neg == "!"
+				else
+					q[#q+1], ns[#q+1] = ql, neg == "!"
 				end
-				if ok and (filterScav ~= nil) then
-					if f.hasScavengerTrait == nil then
-						local id = f.followerID
-						local a, b, c = C_Garrison.GetFollowerTraitAtIndex(id, 1), C_Garrison.GetFollowerTraitAtIndex(id, 2), C_Garrison.GetFollowerTraitAtIndex(id, 3)
-						f.hasScavengerTrait = (a == 79) or (b == 79) or (c == 79)
-					end
-					ok = f.hasScavengerTrait == filterScav
+			end
+			local hasDupFilter = filterADup ~= nil or filterIDup ~= nil
+		
+			if badQuery then
+				for i=1,#self.followers do
+					self.followers[i].mpSearchMatched = false
 				end
-				for i=1,s and ok and #s or 0 do
-					local ok2, qm = false, s[i]
-					for j=1,#spec do
-						local _, n, _, d = G.GetMechanicInfo(spec[j] or 10)
-						if n:lower():match(qm) or d:lower():match(qm) then
-							ok2 = true
+			elseif hasDupFilter or filterUp ~= nil or filterRed ~= nil or filterScav ~= nil or #q > 1 or ns[1] or (s and #s > 0) then
+				for i=1, #self.followers do
+					local f = self.followers[i]
+					local id, ok, spec = f.followerID, showUncollected or f.isCollected, T.SpecCounters[f.classSpec]
+					for j=1,ok and #q or 0 do
+						if (not C_Garrison.SearchForFollower(id, q[j])) ~= ns[j] then
+							ok = false
 							break
 						end
 					end
-					if (not (ok2 or C_Garrison.SearchForFollower(id, s[-i]))) ~= ns[-i] then
-						ok = false
-						break
-					end
-				end
-				if ok and hasDupFilter then
-					if not dupSet then
-						dupSet = {}
-						for j=(filterIDup ~= nil) and 1 or 2, (filterADup ~= nil) and 2 or 1 do
-							for k,v in pairs(G.GetDoubleCounters(j > 1)) do
-								if k > 0 and #v > 1 then
-									for i=1,#v do
-										dupSet[v[i]] = j
-									end
-								end
-							end
+					if ok and (filterUp ~= nil) then
+						if not upA then
+							upW, upA = G.GetUpgradeRange()
+						end
+						if f.level < T.FOLLOWER_LEVEL_CAP then
+							ok = false
+						else
+							local _weaponItemID, weaponItemLevel, _armorItemID, armorItemLevel = C_Garrison.GetFollowerItems(f.followerID)
+							ok = (weaponItemLevel < upW or armorItemLevel < upA) == filterUp
 						end
 					end
-					local ds = dupSet[id]
-					ok = (filterIDup == nil or filterIDup == (ds == nil)) and
-					     (filterADup == nil or filterADup == (ds ~= 2))
-				end
-				if ok and filterRed ~= nil then
-					if redFollowers == nil then
-						redFollowers = false
-						local groups, job = G.GetBestGroupInfo(f.followerTypeID, false, true)
-						if groups then
-							redFollowers = {}
-							for _, mi, b in G.MoIMissions(f.followerTypeID, groups) do
-								if b and G.IsInterestedInMoI(mi) then
-									local muf = b and b.used
-									for j=1, muf and mi.s[2] or 0 do
-										if muf % (2^j) >= 2^(j-1) and b[j] then
-											redFollowers[b[j]] = mi[1]
+					if ok and (filterScav ~= nil) then
+						if f.hasScavengerTrait == nil then
+							local id = f.followerID
+							local a, b, c = C_Garrison.GetFollowerTraitAtIndex(id, 1), C_Garrison.GetFollowerTraitAtIndex(id, 2), C_Garrison.GetFollowerTraitAtIndex(id, 3)
+							f.hasScavengerTrait = (a == 79) or (b == 79) or (c == 79)
+						end
+						ok = f.hasScavengerTrait == filterScav
+					end
+					for i=1,s and ok and #s or 0 do
+						local ok2, qm = false, s[i]
+						for j=1,#spec do
+							local _, n, _, d = G.GetMechanicInfo(spec[j] or 10)
+							if n:lower():match(qm) or d:lower():match(qm) then
+								ok2 = true
+								break
+							end
+						end
+						if (not (ok2 or C_Garrison.SearchForFollower(id, s[-i]))) ~= ns[-i] then
+							ok = false
+							break
+						end
+					end
+					if ok and hasDupFilter then
+						if not dupSet then
+							dupSet = {}
+							for j=(filterIDup ~= nil) and 1 or 2, (filterADup ~= nil) and 2 or 1 do
+								for k,v in pairs(G.GetDoubleCounters(j > 1)) do
+									if k > 0 and #v > 1 then
+										for i=1,#v do
+											dupSet[v[i]] = j
 										end
 									end
 								end
 							end
-						else
-							searchLoader:SetParent(followerList)
-							searchLoader:SetPoint("TOP", ws, "BOTTOM", 0, -2)
-							searchLoader.job, searchLoader.list = job, followerList
-							searchLoader:Show()
-							ws:Show()
-							ws:SetText((L"Computing, please wait."))
 						end
+						local ds = dupSet[id]
+						ok = (filterIDup == nil or filterIDup == (ds == nil)) and
+						     (filterADup == nil or filterADup == (ds ~= 2))
 					end
-					ok = redFollowers and f.status ~= GARRISON_FOLLOWER_INACTIVE and ((not redFollowers[id]) == filterRed) or false
-				end
-				if ok then
-					list[ni], ni = i, ni + 1
+					if ok and filterRed ~= nil then
+						if redFollowers == nil then
+							redFollowers = false
+							local groups, job = G.GetBestGroupInfo(f.followerTypeID, false, true)
+							if groups then
+								redFollowers = {}
+								for _, mi, b in G.MoIMissions(f.followerTypeID, groups) do
+									if b and G.IsInterestedInMoI(mi) then
+										local muf = b and b.used
+										for j=1, muf and mi.s[2] or 0 do
+											if muf % (2^j) >= 2^(j-1) and b[j] then
+												redFollowers[b[j]] = mi[1]
+											end
+										end
+									end
+								end
+							else
+								searchLoader:SetParent(self)
+								searchLoader:SetPoint("TOP", ws, "BOTTOM", 0, -2)
+								searchLoader.job, searchLoader.list = job, self
+								searchLoader:Show()
+								ws:Show()
+								ws:SetText((L"Computing, please wait."))
+							end
+						end
+						ok = redFollowers and f.status ~= GARRISON_FOLLOWER_INACTIVE and ((not redFollowers[id]) == filterRed) or false
+					end
+					self.followers[i].mpSearchMatched = not not ok
 				end
 			end
+			self.mpCachedSearch = true
 		end
 	end
-	
-	return GarrisonFollowerList_SortFollowers(followerList)
+	if isQueryString and self.mpCachedSearch then
+		if (not fi.isCollected and not self.showUncollected) then
+			return false
+		end
+		return fi.mpSearchMatched == true
+	end
+	return GarrisonFollowerList.DoesFollowerMatchFilters(self, ...)
 end
 GarrisonMissionFrameFollowers.SearchBox:SetMaxLetters(0)
 GarrisonLandingPage.FollowerList.SearchBox:SetMaxLetters(0)
@@ -1070,7 +1131,7 @@ do -- Weapon/Armor upgrades and rerolls
 				GameTooltip:Show()
 			end
 			gear:SetScript("OnEnter", OnEnter)
-			gear:SetScript("OnLeave", HideOwnedGameTooltip)
+			gear:SetScript("OnLeave", T.HideOwnedGameTooltip)
 			for i=1,2 do
 				local b = CreateFrame("Button", nil, gear)
 				b:SetSize(62, 24)
@@ -1084,7 +1145,7 @@ do -- Weapon/Armor upgrades and rerolls
 				b:SetText("!")
 				b:GetFontString():ClearAllPoints()
 				b:SetScript("OnClick", OnClick)
-				b:SetScript("OnLeave", HideOwnedGameTooltip)
+				b:SetScript("OnLeave", T.HideOwnedGameTooltip)
 				b:SetScript("OnEnter", OnEnter)
 				b:SetMotionScriptsWhileDisabled(true)
 				b:SetPushedTextOffset(0, 2)
@@ -1102,8 +1163,8 @@ do -- Weapon/Armor upgrades and rerolls
 				local avail = C_Garrison.GetFollowerStatus(id) ~= GARRISON_FOLLOWER_ON_MISSION
 				local canWeapon, canArmor = avail and not not G.GetUpgradeItems(wil, true), avail and not not G.GetUpgradeItems(ail, false)
 				items.weapon.itemLevel, items.armor.itemLevel = wil, ail
-				items.weapon:SetNormalTexture(GetItemIcon(wid))
-				items.armor:SetNormalTexture(GetItemIcon(aid))
+				items.weapon:SetNormalTexture(C_Item.GetItemIconByID(wid))
+				items.armor:SetNormalTexture(C_Item.GetItemIconByID(aid))
 				items.weapon:SetText(wil)
 				items.armor:SetText(ail)
 				items.weapon:SetEnabled(canWeapon)
@@ -1126,9 +1187,7 @@ do -- Weapon/Armor upgrades and rerolls
 				if SpellCanTargetGarrisonFollower() then
 					GarrisonFollower_AttemptUpgrade(items.followerID)
 				end
-				if GameTooltip:IsOwned(self) then
-					GameTooltip:Hide()
-				end
+				T.HideOwnedGameTooltip(self)
 			end
 			local buttons = {}
 			for i in ("122274 122273 122272 118354 118475 118474 122275 122584 122580 122582 122583 128314"):gmatch("%d+") do
@@ -1140,7 +1199,7 @@ do -- Weapon/Armor upgrades and rerolls
 			end
 			function reroll:Sync(keepShown)
 				keepShown = keepShown and not self.wasHidden
-				local x = 0
+				local x, GetItemCount = 0, C_Item.GetItemCount
 				for i=1,#buttons do
 					local b = buttons[i]
 					if GetItemCount(b.itemID) > 0 or (keepShown and b:IsShown()) then
@@ -1335,6 +1394,7 @@ do -- Equipment
 		pf:SetScript("OnHide", CP_Detach)
 		pf:SetScript("OnEnter", CP_OnEnter)
 		pf:SetScript("OnLeave", CP_OnLeave)
+		T.TenSABT(pf)
 		ef:HookScript("OnShow", CP_Attach)
 		ef:SetScript("OnReceiveDrag", nil)
 		pf:SetAttribute("type", "macro")
@@ -1397,7 +1457,7 @@ do -- Ship equipment
 			return a.itemID < b.itemID
 		end)
 		function reroll:Sync()
-			local x = 0
+			local x, GetItemCount = 0, C_Item.GetItemCount
 			for i=1,#buttons do
 				local b = buttons[i]
 				if GetItemCount(b.itemID) > 0 then

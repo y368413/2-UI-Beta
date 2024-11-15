@@ -5,6 +5,8 @@ local G = M:GetModule("GUI")
 local r, g, b = I.r, I.g, I.b
 local pairs, floor = pairs, math.floor
 local f
+local GetSpellName = C_Spell.GetSpellName
+local GetSpellTexture = C_Spell.GetSpellTexture
 
 -- Elements
 local function labelOnEnter(self)
@@ -149,12 +151,12 @@ local function CreatePanel()
 	f.Complete:SetPoint("RIGHT", f.Close, "LEFT", -10, 0)
 	f.Complete:SetScript("OnClick", function()
 		f:Hide()
-		StaticPopup_Show("RELOAD_NDUI")
+		StaticPopup_Show("RELOAD_UI")
 	end)
 
 	f.Reset = M.CreateButton(f, 120, 25, "Reset?")
 	f.Reset:SetPoint("BOTTOMLEFT", 25, 15)
-	StaticPopupDialogs["RESET_NDUI_AWLIST"] = {
+	StaticPopupDialogs["RESET_UI_AWLIST"] = {
 		text = U["Reset your AuraWatch List?"],
 		button1 = YES,
 		button2 = NO,
@@ -166,7 +168,7 @@ local function CreatePanel()
 		whileDead = 1,
 	}
 	f.Reset:SetScript("OnClick", function()
-		StaticPopup_Show("RESET_NDUI_AWLIST")
+		StaticPopup_Show("RESET_UI_AWLIST")
 	end)
 
 	local barTable = {}
@@ -200,6 +202,8 @@ local function CreatePanel()
 		[13] = INVTYPE_TRINKET.."1",
 		[14] = INVTYPE_TRINKET.."2",
 		[15] = INVTYPE_CLOAK,
+		[16] = INVTYPE_WEAPONMAINHAND,
+		[17] = INVTYPE_WEAPONOFFHAND,
 	}
 
 	local function iconOnEnter(self)
@@ -215,7 +219,7 @@ local function CreatePanel()
 
 	local function AddAura(parent, index, data)
 		local typeID, spellID, unitID, caster, stack, amount, timeless, combat, text, flash = unpack(data)
-		local name, _, texture = GetSpellInfo(spellID)
+		local name, texture = GetSpellName(spellID), GetSpellTexture(spellID)
 		if typeID == "SlotID" then
 			texture = GetInventoryItemTexture("player", spellID)
 			name = slotIndex[spellID]
@@ -271,9 +275,9 @@ local function CreatePanel()
 
 	local function AddInternal(parent, index, data)
 		local intID, duration, trigger, unit, itemID = unpack(data)
-		local name, _, texture = GetSpellInfo(intID)
+		local name, texture = GetSpellName(intID), GetSpellTexture(intID)
 		if itemID then
-			name = GetItemInfo(itemID)
+			name = C_Item.GetItemInfo(itemID)
 		end
 
 		local bar = CreateFrame("Frame", nil, parent, "BackdropTemplate")
@@ -389,7 +393,7 @@ local function CreatePanel()
 			Option[8] = G:CreateCheckBox(tabs[i].Page, U["Combat"], 200, -95, U["Combat Intro"])
 			Option[9] = G:CreateEditbox(tabs[i].Page, U["Text"], 340, -90, U["Text Intro"])
 			Option[10] = G:CreateCheckBox(tabs[i].Page, U["Flash"], 280, -95, U["Flash Intro"])
-			Option[11] = G:CreateDropdown(tabs[i].Page, U["Slot*"], 140, -30, {slotIndex[6], slotIndex[8], slotIndex[10], slotIndex[11], slotIndex[12], slotIndex[13], slotIndex[14], slotIndex[15]}, U["Slot Intro"])
+			Option[11] = G:CreateDropdown(tabs[i].Page, U["Slot*"], 140, -30, {slotIndex[6], slotIndex[8], slotIndex[10], slotIndex[11], slotIndex[12], slotIndex[13], slotIndex[14], slotIndex[15], slotIndex[16], slotIndex[17]}, U["Slot Intro"])
 			Option[12] = G:CreateDropdown(tabs[i].Page, U["Totem*"], 140, -30, {U["TotemSlot"].."1", U["TotemSlot"].."2", U["TotemSlot"].."3", U["TotemSlot"].."4"}, U["Totem Intro"])
 
 			for j = 2, 12 do Option[j]:Hide() end
@@ -436,7 +440,7 @@ local function CreatePanel()
 			end
 		end)
 
-		local slotTable = {6, 8, 10, 11, 12, 13, 14, 15}
+		local slotTable = {6, 8, 10, 11, 12, 13, 14, 15, 16, 17}
 		local add = M.CreateButton(tabs[i].Page, 60, 25, ADD)
 		add:SetPoint("TOPRIGHT", -30, -90)
 		add:SetScript("OnClick", function()
@@ -451,7 +455,7 @@ local function CreatePanel()
 
 				if not typeID then UIErrorsFrame:AddMessage(I.InfoColor..U["Choose a Type"]) return end
 				if (typeID == "AuraID" and (not spellID or not unitID)) or (typeID == "SpellID" and not spellID) or (typeID == "SlotID" and not slotID) or (typeID == "TotemID" and not totemID) then UIErrorsFrame:AddMessage(I.InfoColor..U["Incomplete Input"]) return end
-				if (typeID == "AuraID" or typeID == "SpellID") and not GetSpellInfo(spellID) then UIErrorsFrame:AddMessage(I.InfoColor..U["Incorrect SpellID"]) return end
+				if (typeID == "AuraID" or typeID == "SpellID") and not GetSpellName(spellID) then UIErrorsFrame:AddMessage(I.InfoColor..U["Incorrect SpellID"]) return end
 
 				local realID = spellID or slotID or totemID
 				if R.db["AuraWatchList"][i][realID] then UIErrorsFrame:AddMessage(I.InfoColor..U["Existing ID"]) return end
@@ -462,7 +466,7 @@ local function CreatePanel()
 			elseif i == 10 then
 				local intID, duration, trigger, unit, itemID = tonumber(Option[13]:GetText()), tonumber(Option[14]:GetText()), Option[15].Text:GetText(), Option[16].Text:GetText(), tonumber(Option[17]:GetText())
 				if not intID or not duration or not trigger or not unit then UIErrorsFrame:AddMessage(I.InfoColor..U["Incomplete Input"]) return end
-				if intID and not GetSpellInfo(intID) then UIErrorsFrame:AddMessage(I.InfoColor..U["Incorrect SpellID"]) return end
+				if intID and not GetSpellName(intID) then UIErrorsFrame:AddMessage(I.InfoColor..U["Incorrect SpellID"]) return end
 				if R.db["InternalCD"][intID] then UIErrorsFrame:AddMessage(I.InfoColor..U["Existing ID"]) return end
 
 				R.db["InternalCD"][intID] = {intID, duration, trigger, unit, itemID}
@@ -496,8 +500,8 @@ local function CreatePanel()
 	M:RegisterEvent("PLAYER_REGEN_DISABLED", showLater)
 end
 
-SlashCmdList["NDUI_AWCONFIG"] = function()
+SlashCmdList["UI_AWCONFIG"] = function()
 	if InCombatLockdown() then UIErrorsFrame:AddMessage(I.InfoColor..ERR_NOT_IN_COMBAT) return end
 	CreatePanel()
 end
-SLASH_NDUI_AWCONFIG1 = "/awc"
+SLASH_UI_AWCONFIG1 = "/awc"

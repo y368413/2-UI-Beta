@@ -1,5 +1,7 @@
-## Interface: 100000
-## Version: 1.07
+## Interface: 110005
+## Version: 2.01
+## Author: Taraezor
+## IconTexture: Interface\Icons\Inv_alpacamount_yellow
 ## Title: Springfur Alpaca
 ## Title-deDE: Frühlingsfellalpaka
 ## Title-esES: Alpaca de pelaje primaveral
@@ -12,24 +14,25 @@
 ## Title-ruRU: Курчавая альпака
 ## Title-zhCN: 春裘羊驼
 ## Title-zhTW: 春裘羊駝
-## Author: Taraezor
-## Notes: Helps you find the |cFF0070DEFrühlingsfellalpaka|r in Uldum
-## Notes-deDE: Hilft Ihnen, die |cFF0070DEDunkle Erde|r im Uldum zu finden
-## Notes-esES: Te ayuda a encontrar la |cFF0070DEAlpaca de pelaje primaveral|r en el Uldum
-## Notes-esMX: Te ayuda a encontrar la |cFF0070DEAlpaca de pelaje primaveral|r en el Uldum
-## Notes-frFR: Vous aide à trouver la |cFF0070DEAlpaga toison-vernale|r dans la Uldum
-## Notes-itIT: Ti aiuta a trovare la |cFF0070DEAlpaca Primopelo|r nella Uldum
-## Notes-koKR: 울둠에서 |cFF0070DE봄털 알파카|r 찾을 수 있도록 도와줍니다.
-## Notes-ptBR: Ajude a encontrar o |cFF0070DEAlpaca Lã de Primavera|r no Uldum
-## Notes-ptPT: Ajude a encontrar o |cFF0070DEAlpaca Lã de Primavera|r no Uldum
-## Notes-ruRU: Помогите найти |cFF0070DEКурчавая альпака|r в Ульдум
-## Notes-zhCN: 帮助寻奥丹姆|cFF0070DE春裘羊驼
-## Notes-zhTW: 幫助尋奧丹姆|cFF0070DE春裘羊駝
-## X-Category: Map & Minimap
-## X-Curse-Project-ID: 502415
-## X-WoWI-ID: 26113
+## Notes: |cFFF4A460Helps you find the |cFFD2691ESpringfur Alpaca|cFFF4A460 in Uldum
+## Notes-deDE: |cFFF4A460Hilft Ihnen, das |cFFD2691EFrühlingsfellalpaka|cFFF4A460 in Uldum zu erhalten
+## Notes-esES: |cFFF4A460Te ayuda a obtener el |cFFD2691EAlpaca de pelaje primaveral|cFFF4A460 en Uldum
+## Notes-esMX: |cFFF4A460Te ayuda a obtener el |cFFD2691EAlpaca de pelaje primaveral|cFFF4A460 en Uldum
+## Notes-frFR: |cFFF4A460Il vous aide à obtenir |cFFD2691El'alpaga toison-vernale|cFFF4A460 en Uldum
+## Notes-itIT: |cFFF4A460Ti aiuta a ottenere la |cFFD2691EAlpaca Primopelo|cFFF4A460 a Uldum
+## Notes-koKR: |cFFF4A460울둠에서 |cFFD2691E봄털 알파카|cFFF4A460를 얻는 데 도움이 됩니다.
+## Notes-ptBR: |cFFF4A460Ajuda você a obter o |cFFD2691EAlpaca Lã de Primavera|cFFF4A460 em Uldum
+## Notes-ptPT: |cFFF4A460Ajuda você a obter o |cFFD2691EAlpaca Lã de Primavera|cFFF4A460 em Uldum
+## Notes-ruRU: |cFFF4A460Помогает вам получить |cFFD2691EКурчавая альпака|cFFF4A460 в Ульдум
+## Notes-zhCN: |cFFF4A460帮助您获取奥丹姆中的|cFFD2691E春裘羊驼
+## Notes-zhTW: |cFFF4A460幫助您獲取奧丹姆中的|cFFD2691E春裘羊駝
 ## RequiredDeps: HandyNotes
-## SavedVariables: HandyNotes_AlpacaDB
+## SavedVariables: HandyNotes_SpringfurAlpacaDB
+## AddonCompartmentFunc: HandyNotes_SpringfurAlpaca_OnAddonCompartmentClick
+## AddonCompartmentFuncOnEnter: HandyNotes_SpringfurAlpaca_OnAddonCompartmentEnter
+## AddonCompartmentFuncOnLeave: HandyNotes_SpringfurAlpaca_OnAddonCompartmentLeave
+## X-Curse-Project-ID: 502415
+## X-Wago-ID: 5bGooYG0
 
 Core.lua
 Data.lua

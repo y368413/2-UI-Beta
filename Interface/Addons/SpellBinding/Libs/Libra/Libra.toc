@@ -1,9 +1,0 @@
-## Interface: 100000
-
-## Title: Libra
-## Version: @project-version@
-## Author: Lombra
-
-Libs\LibStub\LibStub.lua
-
-Libra\Libra.xml

@@ -7,6 +7,12 @@
 
 local _, addon = ...
 local L = addon.L
+local GetSpellInfo = GetSpellInfo or function(id)
+	local info = C_Spell.GetSpellInfo(id)
+	if info then
+		return info.name, nil, info.iconID, info.castTime, info.minRange, info.maxRange, info.spellID, info.originalIconID;
+	end
+end;
 
 local AURA_NAME = GetSpellInfo(127230)
 local CONFLICTS = addon:BuildSpellList(nil, 127230, 105689, 105691, 105693, 105694, 105696, 242551, 188031, 188034, 188035, 188033, 251839, 251837, 251836, 251838, 298841, 298836, 298837, 298839).conflicts
@@ -14,12 +20,12 @@ local CONFLICTS = addon:BuildSpellList(nil, 127230, 105689, 105691, 105693, 1056
 local crystalName, crystalLink
 
 local button = addon:CreateActionButton("CrystalOfInsanity", L["crystal of insanity"], nil, 3600, "PLAYER_AURA", "ITEM")
-button:SetItem(147707)
-button:RequireItem(147707)
+button:SetItem(211495)
+button:RequireItem(211495)
 button:SetFlyProtect("type", "item")
 button.icon.text:Hide()
 
-LibItemQuery:QueryItem(147707, button, 1)
+LibItemQuery:QueryItem(211495, button, 1)
 
 function button:OnItemInfoReceived(itemId, name, link, quality, iLevel, reqLevel, class, subclass, maxStack, equipSlot, texture)
 	self:SetAttribute("item", name)

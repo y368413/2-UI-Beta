@@ -1,7 +1,7 @@
 -------------------------------------------------------------------------------
 -- Premade Groups Filter
 -------------------------------------------------------------------------------
--- Copyright (C) 2022 Elotheon-Arthas-EU
+-- Copyright (C) 2024 Bernhard Saumweber
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,13 +22,10 @@ local PGF = select(2, ...)
 local L = PGF.L
 local C = PGF.C
 
-function PGF.Macro(exp)
-    local dialog = PremadeGroupsFilterDialog
-    if dialog and dialog:IsVisible() then
-        PGF.Dialog_Reset()
-        dialog.Expression.EditBox:SetText(exp)
-        PGF.Dialog_Expression_OnTextChanged(dialog.Expression.EditBox)
-        dialog.RefreshButton:Click()
+function PGF.Macro(expression, sorting)
+    if PGF.Dialog and PGF.Dialog:IsVisible() then
+        PGF.Dialog:UpdateExpression(expression, sorting)
+        PGF.Dialog.RefreshButton:Click()
     end
 end
 

@@ -110,7 +110,7 @@ end
 
 function CCIconsFrame:COMBAT_LOG_EVENT_UNFILTERED(timestamp, event, hide, sourceguid, sourcename, sourceflags, sourcerf, destguid, destname, destflags, destrf, id, name)
 	if (event == "SPELL_AURA_APPLIED") and Database[id] then
-		IconFrame.Icon:SetTexture(GetSpellTexture(id))
+		IconFrame.Icon:SetTexture(C_Spell.s(id))
 		IconFrame.Text:SetText(name)
 		IconFrame.CD:SetCooldown(GetTime(), Database[id])
 		if (not IconFrame:IsVisible()) then IconFrame:Show() end

@@ -1,6 +1,6 @@
 ﻿-- Pawn by Vger-Azjol-Nerub
 -- www.vgermods.com
--- © 2006-2022 Travis Spomer.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
+-- © 2006-2024 Travis Spomer.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
 -- See Readme.htm for more information.
 --
 -- Gem information
@@ -255,6 +255,79 @@ local PawnGemData16 =
 }
 
 
+local PawnGemData52 =
+{
+
+-- Requires ilvl 200
+-- These are the tier-3 quality (ilvl 415) versions of the gems
+{ ID = 192902, R = true, Y = true, B = true, Stats = { CritRating = 26, HasteRating = 26 } }, -- Crafty Queen's Ruby
+{ ID = 192905, R = true, Y = true, B = true, Stats = { Versatility = 26, MasteryRating = 26 } }, -- Zen Mystic Sapphire
+{ ID = 192908, R = true, Y = true, B = true, Stats = { HasteRating = 26, Versatility = 26 } }, -- Energized Vibrant Emerald
+{ ID = 192912, R = true, Y = true, B = true, Stats = { MasteryRating = 26, CritRating = 26 } }, -- Sensei's Sundered Onyx
+{ ID = 192916, R = true, Y = true, B = true, Stats = { Stamina = 75 } }, -- Solid Eternity Amber
+
+}
+
+
+local PawnGemData102 =
+{
+
+-- Requires ilvl 200
+-- These are the tier-3 quality (ilvl 415) versions of the gems
+{ ID = 192919, R = true, Y = true, B = true, Stats = { CritRating = 70, HasteRating = 33 } }, -- Crafty Alexstraszite
+{ ID = 192922, R = true, Y = true, B = true, Stats = { CritRating = 70, MasteryRating = 33 } }, -- Sensei's Alexstraszite
+{ ID = 192925, R = true, Y = true, B = true, Stats = { CritRating = 70, Versatility = 33 } }, -- Radiant Alexstraszite
+{ ID = 192928, R = true, Y = true, B = true, Stats = { CritRating = 88 } }, -- Deadly Alexstraszite
+{ ID = 192932, R = true, Y = true, B = true, Stats = { Versatility = 70, CritRating = 33 } }, -- Radiant Malygite
+{ ID = 192935, R = true, Y = true, B = true, Stats = { Versatility = 70, HasteRating = 33 } }, -- Energized Malygite
+{ ID = 192938, R = true, Y = true, B = true, Stats = { Versatility = 70, MasteryRating = 33 } }, -- Zen Malygite
+{ ID = 192942, R = true, Y = true, B = true, Stats = { Versatility = 88 } }, -- Stormy Malygite
+{ ID = 192945, R = true, Y = true, B = true, Stats = { HasteRating = 70, CritRating = 33 } }, -- Crafty Ysemerald
+{ ID = 192948, R = true, Y = true, B = true, Stats = { HasteRating = 70, MasteryRating = 33 } }, -- Keen Ysemerald
+{ ID = 192952, R = true, Y = true, B = true, Stats = { HasteRating = 70, Versatility = 33 } }, -- Energized Ysemerald
+{ ID = 192955, R = true, Y = true, B = true, Stats = { HasteRating = 88 } }, -- Quick Ysemerald
+{ ID = 192958, R = true, Y = true, B = true, Stats = { MasteryRating = 70, CritRating = 33 } }, -- Sensei's Neltharite
+{ ID = 192961, R = true, Y = true, B = true, Stats = { MasteryRating = 70, HasteRating = 33 } }, -- Keen Neltharite
+{ ID = 192964, R = true, Y = true, B = true, Stats = { MasteryRating = 70, Versatility = 33 } }, -- Zen Neltharite
+{ ID = 192967, R = true, Y = true, B = true, Stats = { MasteryRating = 88 } }, -- Fractured Neltharite
+{ ID = 192970, R = true, Y = true, B = true, Stats = { Stamina = 102, CritRating = 33 } }, -- Jagged Nozdorite
+{ ID = 192973, R = true, Y = true, B = true, Stats = { Stamina = 102, HasteRating = 33 } }, -- Forceful Nozdorite
+{ ID = 192976, R = true, Y = true, B = true, Stats = { Stamina = 102, MasteryRating = 33 } }, -- Puissant Nozdorite
+{ ID = 192979, R = true, Y = true, B = true, Stats = { Stamina = 102, Versatility = 33 } }, -- Steady Nozdorite
+
+}
+
+
+local PawnGemData196 =
+{
+
+-- Requires ilvl 200
+-- These are the tier-3 quality (ilvl 577) versions of the gems
+{ ID = 213455, R = true, Y = true, B = true, Stats = { CritRating = 147, HasteRating = 49 } }, -- Quick Ruby
+{ ID = 213458, R = true, Y = true, B = true, Stats = { CritRating = 147, MasteryRating = 49 } }, -- Masterful Ruby
+{ ID = 213461, R = true, Y = true, B = true, Stats = { CritRating = 147, Versatility = 49 } }, -- Versatile Ruby
+{ ID = 213464, R = true, Y = true, B = true, Stats = { CritRating = 176 } }, -- Deadly Ruby
+{ ID = 213467, R = true, Y = true, B = true, Stats = { Versatility = 147, CritRating = 49 } }, -- Deadly Sapphire
+{ ID = 213470, R = true, Y = true, B = true, Stats = { Versatility = 147, HasteRating = 49 } }, -- Quick Sapphire
+{ ID = 213473, R = true, Y = true, B = true, Stats = { Versatility = 147, MasteryRating = 49 } }, -- Masterful Sapphire
+{ ID = 213476, R = true, Y = true, B = true, Stats = { Versatility = 176 } }, -- Versatile Sapphire
+{ ID = 213479, R = true, Y = true, B = true, Stats = { HasteRating = 147, CritRating = 49 } }, -- Deadly Emerald
+{ ID = 213482, R = true, Y = true, B = true, Stats = { HasteRating = 147, MasteryRating = 49 } }, -- Masterful Emerald
+{ ID = 213485, R = true, Y = true, B = true, Stats = { HasteRating = 147, Versatility = 49 } }, -- Versatile Emerald
+{ ID = 213488, R = true, Y = true, B = true, Stats = { HasteRating = 176 } }, -- Quick Emerald
+{ ID = 213491, R = true, Y = true, B = true, Stats = { MasteryRating = 147, CritRating = 49 } }, -- Deadly Onyx
+{ ID = 213494, R = true, Y = true, B = true, Stats = { MasteryRating = 147, HasteRating = 49 } }, -- Quick Onyx
+{ ID = 213497, R = true, Y = true, B = true, Stats = { MasteryRating = 147, Versatility = 49 } }, -- Versatile Onyx
+{ ID = 213500, R = true, Y = true, B = true, Stats = { MasteryRating = 176 } }, -- Masterful Onyx
+{ ID = 213503, R = true, Y = true, B = true, Stats = { Stamina = 147, CritRating = 49 } }, -- Deadly Amber
+{ ID = 213506, R = true, Y = true, B = true, Stats = { Stamina = 147, HasteRating = 49 } }, -- Quick Amber
+{ ID = 213509, R = true, Y = true, B = true, Stats = { Stamina = 147, MasteryRating = 49 } }, -- Masterful Amber
+{ ID = 213512, R = true, Y = true, B = true, Stats = { Stamina = 147, Versatility = 49 } }, -- Versatile Amber
+{ ID = 213517, R = true, Y = true, B = true, Stats = { Stamina = 275 } }, -- Solid Amber
+
+}
+
+
 --========================================
 
 -- The master list of all tables of Pawn gem data
@@ -269,6 +342,9 @@ local PawnGemData16 =
 
 PawnGemQualityLevels =
 {
+	{ 584, PawnGemData196 }, -- The War Within raid finder (593 for mythic dungeons)
+	{ 398, PawnGemData102 }, -- Vault of the Incarnates
+	{ 315, PawnGemData52 }, -- Mythic Fated Shadowlands epics are 311; tier-1 green Dragonflight gems are 385
 	{ 175, PawnGemData16 }, -- Rank 1 crafted Shadowlands legendaries (177 is rank 4 covenant armor)
 	{ 144, PawnGemData12 }, -- Mythic Ny'alotha is 140
 	{ 115, PawnGemData7 }, -- Azshara's Eternal Palace heroic
@@ -278,11 +354,9 @@ PawnGemQualityLevels =
 	{ 0, PawnGemData1 },
 }
 
-PawnMetaGemQualityLevels =
-{
-	{0, {} }, -- There are no meta gems anymore.
-}
+PawnMetaGemQualityLevels = nil
+PawnCogwheelQualityLevels = nil
 
-PawnMinimumItemLevelToConsiderGems = 144 -- Sockets on items below this ilvl are ignored by default
+PawnMinimumItemLevelToConsiderGems = 571 -- Sockets on items below this ilvl are ignored by default
 
 end -- if VgerCore.IsMainline

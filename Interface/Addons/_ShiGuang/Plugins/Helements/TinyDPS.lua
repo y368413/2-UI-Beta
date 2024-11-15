@@ -1857,7 +1857,7 @@ local BossIDs = {
 ------------------------------------------------------------------------------------------------------------------------
 -- Localization --
 ------------------------------------------------------------------------------------------------------------------------
-if IsAddOnLoaded('Skada') then return end
+if C_AddOns.IsAddOnLoaded('Skada') then return end
 
 local tdpsL = {}
 
@@ -3136,7 +3136,7 @@ local function toggleMinimapButton()
 end
 
 --local function ver()
-  --echo(tdpsL.helpVersion.." "..GetAddOnMetadata("TinyDPS", "Version").." by Sideshow (formerly) and Talyrius")
+  --echo(tdpsL.helpVersion.." "..C_AddOns.GetAddOnMetadata("TinyDPS", "Version").." by Sideshow (formerly) and Talyrius")
 --end
 
 local function slashhelp()
@@ -4083,7 +4083,7 @@ end
 
 tdpsFrame:RegisterEvent("ADDON_LOADED")
 tdpsFrame:SetScript("OnEvent", function(self, event)
-  --local addonVer = GetAddOnMetadata("TinyDPS", "Version")
+  --local addonVer = C_AddOns.GetAddOnMetadata("TinyDPS", "Version")
 
   -- global version mismatch
   --if curVer ~= tdps.version and tonumber(tdps.version) < 0.935 then

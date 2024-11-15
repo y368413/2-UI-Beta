@@ -1,0 +1,22 @@
+<Ui>
+
+    <Script file="Main.lua"/>
+
+    <Frame name="FamilyFamiliarHelperFrame" parent="UIParent" frameStrata="HIGH" clampedToScreen="true" movable="true" mixin="FamilyFamiliarHelperMainMixin" inherits="BasicFrameTemplate" hidden="true">
+        <Size x="460" y="368"/>
+        <Anchors>
+            <Anchor point="CENTER"/>
+        </Anchors>
+        <Scripts>
+            <OnLoad method="OnLoad"/>
+            <OnMouseDown method="OnMouseDown"/>
+            <OnMouseUp method="OnMouseUp"/>
+            <OnShow method="OnShow"/>
+            <OnHide method="OnHide"/>
+            <OnEvent method="OnEvent"/>
+        </Scripts>
+    </Frame>
+
+    <GameTooltip name="FamilyFamiliarHelperTooltip" parent="UIParent" clampedToScreen="true" inherits="GameTooltipTemplate"/>
+
+</Ui>

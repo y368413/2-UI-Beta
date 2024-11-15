@@ -1,7 +1,7 @@
 ﻿-- Mini Dragon(projecteurs@gmail.com)
 -- Last update: Jan 29, 2015
 
-local L = LibStub("AceLocale-3.0"):NewLocale("GladiatorlosSA", "zhTW")
+local L = LibStub("AceLocale-3.0"):NewLocale("GladiatorlosSACN", "zhTW")
 if not L then return end
 
 L["Spell_CastSuccess"] = "施法成功"

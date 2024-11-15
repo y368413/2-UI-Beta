@@ -1,0 +1,127 @@
+<Ui>
+    <Script file="ProgressPanel.lua"/>
+
+    <Texture name="FamilyFamiliarHelperProgressListIconTemplate" file="Interface\Icons\Pet_Type_Beast" alpha="0.2" virtual="true">
+        <Size x="22" y="22"/>
+    </Texture>
+
+    <Button name="FamilyFamiliarHelperProgressListButtonTemplate" mixin="FamilyFamiliarHelperProgressListButtonMixin" virtual="true">
+        <Size x="437" y="20"/>
+        <Layers>
+            <Layer level="BORDER">
+                <Texture parentKey="Highlight" setAllPoints="true" hidden="true" alphaMode="ADD">
+                    <Color r="0.25" g="0.75" b="1" a="0.15"/>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK">
+                <FontString parentKey="Name" inherits="GameFontHighlight" justifyH="LEFT" wordwrap="false" text="NPC Name">
+                    <Size x="162" y="20"/>
+                    <Anchors>
+                        <Anchor point="LEFT" x="4" y="0"/>
+                    </Anchors>
+                </FontString>
+                <Texture parentArray="Icons" inherits="FamilyFamiliarHelperProgressListIconTemplate"/>
+                <Texture parentArray="Icons" inherits="FamilyFamiliarHelperProgressListIconTemplate"/>
+                <Texture parentArray="Icons" inherits="FamilyFamiliarHelperProgressListIconTemplate"/>
+                <Texture parentArray="Icons" inherits="FamilyFamiliarHelperProgressListIconTemplate"/>
+                <Texture parentArray="Icons" inherits="FamilyFamiliarHelperProgressListIconTemplate"/>
+                <Texture parentArray="Icons" inherits="FamilyFamiliarHelperProgressListIconTemplate"/>
+                <Texture parentArray="Icons" inherits="FamilyFamiliarHelperProgressListIconTemplate"/>
+                <Texture parentArray="Icons" inherits="FamilyFamiliarHelperProgressListIconTemplate"/>
+                <Texture parentArray="Icons" inherits="FamilyFamiliarHelperProgressListIconTemplate"/>
+                <Texture parentArray="Icons" inherits="FamilyFamiliarHelperProgressListIconTemplate"/>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnLoad method="OnLoad"/>
+            <OnEnter method="OnEnter"/>
+            <OnLeave method="OnLeave"/>
+        </Scripts>
+    </Button>
+
+    <Button name="FamilyFamiliarHelperProgressHeaderTemplate" mixin="FamilyFamiliarHelperProgressHeaderMixin" virtual="true">
+        <Size x="28" y="28"/>
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture parentKey="Icon" file="Interface\PetBattles\PetIcon-Beast" setAllPoints="true">
+                    <Color r="0.5" g="0.5" b="0.5"/>
+                    <TexCoords left="0.4921875" right="0.796875" top="0.50390625" bottom="0.65625"/>
+                </Texture>
+                <FontString parentKey="Text" inherits="GameFontNormalLargeOutline" text="0">
+                    <Anchors>
+                        <Anchor point="CENTER"/>
+                    </Anchors>
+                    <Color r="1" g="1" b="1"/>
+                </FontString>
+            </Layer>
+            <Layer level="HIGHLIGHT">
+                <Texture parentKey="Highlight" file="Interface\PetBattles\PetBattleHUD" setAllPoints="true" alphaMode="ADD">
+                    <TexCoords left="0.884765625" right="0.943359375" top="0.681640625" bottom="0.798828125"/>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnEnter method="OnEnter"/>
+            <OnLeave method="OnLeave"/>
+        </Scripts>
+    </Button>
+
+    <Frame parentKey="ProgressPanel" parent="FamilyFamiliarHelperFrame" mixin="FamilyFamiliarHelperProgressPanelMixin" inherits="InsetFrameTemplate" hidden="true">
+        <Size x="450" y="200"/>
+        <Anchors>
+            <Anchor point="TOPLEFT" x="5" y="-25"/>
+            <Anchor point="TOPRIGHT" x="-7" y="-25"/>
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND" textureSubLevel="2">
+                <Texture parentKey="Back" file="Interface\FrameGeneral\UI-Background-Marble" horizTile="true" vertTile="true" setAllPoints="true"/>
+            </Layer>
+            <Layer level="ARTWORK">
+                <FontString parentKey="TotalLabel" inherits="GameFontNormalLarge" text="TOTAL">
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="BOTTOM" x="-66" y="-8"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <!-- round header buttons at bottom of panel; positioned in the OnLoad -->
+            <Button parentArray="HeaderButtons" inherits="FamilyFamiliarHelperProgressHeaderTemplate" id="1"/>
+            <Button parentArray="HeaderButtons" inherits="FamilyFamiliarHelperProgressHeaderTemplate" id="2"/>
+            <Button parentArray="HeaderButtons" inherits="FamilyFamiliarHelperProgressHeaderTemplate" id="3"/>
+            <Button parentArray="HeaderButtons" inherits="FamilyFamiliarHelperProgressHeaderTemplate" id="4"/>
+            <Button parentArray="HeaderButtons" inherits="FamilyFamiliarHelperProgressHeaderTemplate" id="5"/>
+            <Button parentArray="HeaderButtons" inherits="FamilyFamiliarHelperProgressHeaderTemplate" id="6"/>
+            <Button parentArray="HeaderButtons" inherits="FamilyFamiliarHelperProgressHeaderTemplate" id="7"/>
+            <Button parentArray="HeaderButtons" inherits="FamilyFamiliarHelperProgressHeaderTemplate" id="8"/>
+            <Button parentArray="HeaderButtons" inherits="FamilyFamiliarHelperProgressHeaderTemplate" id="9"/>
+            <Button parentArray="HeaderButtons" inherits="FamilyFamiliarHelperProgressHeaderTemplate" id="10"/>
+            <Button parentArray="ListButtons" inherits="FamilyFamiliarHelperProgressListButtonTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="5" y="-6"/>
+                </Anchors>
+            </Button>
+            <Button parentKey="BackButton" text="BACK" mixin="FamilyFamiliarHelperProgressBackMixin">
+                <Size x="80" y="26"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="0" y="-3"/>
+                </Anchors>
+                <NormalTexture file="Interface\Buttons\UI-Silver-Button-Up">
+                    <TexCoords left="0" right="0.625" top="0" bottom="0.8125"/>
+                </NormalTexture>
+                <PushedTexture file="Interface\Buttons\UI-Silver-Button-Down">
+                    <TexCoords left="0" right="0.625" top="0" bottom="0.8125"/>
+                </PushedTexture>
+                <NormalFont style="GameFontNormal"/>
+        		<HighlightFont style="GameFontHighlight"/>
+                <Scripts>
+                    <OnClick method="OnClick"/>
+                </Scripts>
+            </Button>
+        </Frames>
+        <Scripts>
+            <OnLoad method="OnLoad"/>
+        </Scripts>
+    </Frame>
+
+</Ui>

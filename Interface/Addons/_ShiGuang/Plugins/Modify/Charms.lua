@@ -1,5 +1,11 @@
 ﻿local _, ns = ...
 local M, R, U, I = unpack(ns)
+
+-- 功能简介：行事历以周一为起始。https://www.curseforge.com/wow/addons/startcalendaronmonday
+local scomFrame = CreateFrame("Frame")
+scomFrame:RegisterEvent("ADDON_LOADED")
+scomFrame:SetScript("OnEvent", function() CALENDAR_FIRST_WEEKDAY=2 end)
+
 --[[--------------Item Selling## Author: Spencer Sohn----------------------
 local ItemSelling = StaticPopupDialogs["CONFIRM_MERCHANT_TRADE_TIMER_REMOVAL"] 
 ItemSelling.OnAccept=nil 
@@ -131,8 +137,8 @@ DESTROY:RegisterEvent("BAG_UPDATE_DELAYED")
 DESTROY:RegisterEvent("CHAT_MSG_LOOT")
 DESTROY:SetScript("OnEvent", function(_, event, ...)
    for bags = 0, 4 do
-      for slots = 1, GetContainerNumSlots(bags) do
-         local itemLink, linkID = GetContainerItemLink(bags, slots), GetContainerItemID(bags, slots)
+      for slots = 1, C_Container.GetContainerNumSlots(bags) do
+         local itemLink, linkID = GetContainerItemLink(bags, slots), C_Container.GetContainerItemID(bags, slots)
          if (itemLink and linkID) then
             if (select(11, GetItemInfo(itemLink)) ~= nil and select(2, GetContainerItemInfo(bags, slots)) ~= nil) then
                local itemName, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _ = GetItemInfo(linkID) 
@@ -147,7 +153,7 @@ DESTROY:SetScript("OnEvent", function(_, event, ...)
    end
 end)]]
 
----------- DressingSlots--## Version: 1.4.0 ## Author: Crinseth
+---------- DressingSlots--## Version: 1.4.3 ## Author: Crinseth
 local version, build, date, tocversion = GetBuildInfo()
 --local undressButton
 local toggleSheatheButton
@@ -512,10 +518,10 @@ updateSlots = function()
     end
 end
 -- Hook onto save button update events to trigger slot updates
-local _DressUpFrameOutfitDropDown_UpdateSaveButton = DressUpFrameOutfitDropDown.UpdateSaveButton
-function DressUpFrameOutfitDropDown:UpdateSaveButton(...)
+local _DressUpFrameOutfitDropdown_UpdateSaveButton = DressUpFrameOutfitDropdown.UpdateSaveButton
+function DressUpFrameOutfitDropdown:UpdateSaveButton(...)
     updateSlots()
-    return _DressUpFrameOutfitDropDown_UpdateSaveButton(self, ...)
+    return _DressUpFrameOutfitDropdown_UpdateSaveButton(self, ...)
 end
 DressUpFrame.ResetButton:HookScript("OnHide", function ()
     showButtons(false)

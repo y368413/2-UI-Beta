@@ -31,11 +31,11 @@ icon:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -framemult * 2, framemult * 2
 
 -- Utility Functions
 local function tcount(tab)
-    local n = 0
-    for _ in pairs(tab) do
-        n = n + 1
-    end
-    return n
+	local n = 0
+	for _ in pairs(tab) do
+		n = n + 1
+	end
+	return n
 end
 
 local function memoize(f)
@@ -61,45 +61,45 @@ local function memoize(f)
 end
 
 local function GetPetActionIndexByName(name)
-    for i=1, NUM_PET_ACTION_SLOTS, 1 do
-        if (GetPetActionInfo(i) == name) then
-            return i
-        end
-    end
-    return nil
+	for i = 1, NUM_PET_ACTION_SLOTS, 1 do
+		if GetPetActionInfo(i) == name then
+			return i
+		end
+	end
+	return nil
 end
 
 -- Cooldown/Animation
-local function OnUpdate(_,update)
-    elapsed = elapsed + update
-    if (elapsed > 0.05) then
-        for i,v in pairs(watching) do
-            if (GetTime() >= v[1] + 0.5) then
-                local getCooldownDetails
-                if (v[2] == "spell") then
-                    getCooldownDetails = memoize(function()
-                        local start, duration, enabled = GetSpellCooldown(v[3])
+local function OnUpdate(_, update)
+	elapsed = elapsed + update
+	if elapsed > 0.05 then
+		for i, v in pairs(watching) do
+			if GetTime() >= v[1] + 0.5 then
+				local getCooldownDetails
+				if v[2] == "spell" then
+					getCooldownDetails = memoize(function()
+                        local start, duration, enabled = C_Spell.GetSpellCooldown(v[3])
                         return {
-                            name = GetSpellInfo(v[3]),
-                            texture = GetSpellTexture(v[3]),
+                            name = C_Spell.GetSpellInfo(v[3]),
+                            texture = C_Spell.GetSpellTexture(v[3]),
                             start = start,
                             duration = duration,
                             enabled = enabled
                         }
                     end)
-                elseif (v[2] == "item") then
-                    getCooldownDetails = memoize(function()
-                        local start, duration, enabled = GetItemCooldown(i)
+				elseif v[2] == "item" then
+					getCooldownDetails = memoize(function()
+                        local start, duration, enabled = C_Item.GetItemCooldown(i)
                         return {
-                            name = GetItemInfo(i),
+                            name = C_Item.GetItemInfo(i),
                             texture = v[3],
                             start = start,
                             duration = duration,
                             enabled = enabled
                         }
                     end)
-                elseif (v[2] == "pet") then
-                    getCooldownDetails = memoize(function()
+				elseif v[2] == "pet" then
+					getCooldownDetails = memoize(function()
                         local name, texture = GetPetActionInfo(v[3])
                         local start, duration, enabled = GetPetActionCooldown(v[3])
                         return {
@@ -130,7 +130,7 @@ local function OnUpdate(_,update)
 		for i, getCooldownDetails in pairs(cooldowns) do
             local cooldown = getCooldownDetails()
             local remaining = cooldown.duration - (GetTime() - cooldown.start)
-            if remaining <= 0 then
+            if remaining <= 0.2 then
                 tinsert(animating, {cooldown.texture, cooldown.isPet, cooldown.name})
                 cooldowns[i] = nil
             end
@@ -188,72 +188,65 @@ function frame:SPELL_UPDATE_COOLDOWN()
 end
 frame:RegisterEvent("SPELL_UPDATE_COOLDOWN")
 
-function frame:UNIT_SPELLCAST_SUCCEEDED(unit,lineID,spellID)
-    if (unit == "player") then
-        watching[spellID] = {GetTime(),"spell",spellID}
-        if (not self:IsMouseEnabled()) then
-            self:SetScript("OnUpdate", OnUpdate)
-        end
-    end
+function frame:UNIT_SPELLCAST_SUCCEEDED(unit, _, spellID)
+	if unit == "player" then
+		local texture = C_Spell.GetSpellTexture(spellID)
+		local t1 = GetInventoryItemTexture("player", 13)
+		local t2 = GetInventoryItemTexture("player", 14)
+		if texture == t1 or texture == t2 then return end -- Fix wrong buff cd for trinket
+		watching[spellID] = {GetTime(), "spell", spellID}
+		self:SetScript("OnUpdate", OnUpdate)
+	end
 end
 frame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 
 function frame:COMBAT_LOG_EVENT_UNFILTERED()
-    local _,event,_,_,_,sourceFlags,_,_,_,_,_,spellID = CombatLogGetCurrentEventInfo()
-    if (event == "SPELL_CAST_SUCCESS") then
-        if (bit.band(sourceFlags,COMBATLOG_OBJECT_TYPE_PET) == COMBATLOG_OBJECT_TYPE_PET and bit.band(sourceFlags,COMBATLOG_OBJECT_AFFILIATION_MINE) == COMBATLOG_OBJECT_AFFILIATION_MINE) then
-            local name = GetSpellInfo(spellID)
-            local index = GetPetActionIndexByName(name)
-            if (index and not select(7,GetPetActionInfo(index))) then
-                watching[spellID] = {GetTime(),"pet",index}
-            elseif (not index and spellID) then
-                watching[spellID] = {GetTime(),"spell",spellID}
-            else
-                return
-            end
-            if (not self:IsMouseEnabled()) then
-                self:SetScript("OnUpdate", OnUpdate)
-            end
-        end
-    end
+	local _, eventType, _, _, _, sourceFlags, _, _, _, _, _, spellID = CombatLogGetCurrentEventInfo()
+	if eventType == "SPELL_CAST_SUCCESS" then
+		if (bit.band(sourceFlags, COMBATLOG_OBJECT_TYPE_PET) == COMBATLOG_OBJECT_TYPE_PET and bit.band(sourceFlags, COMBATLOG_OBJECT_AFFILIATION_MINE) == COMBATLOG_OBJECT_AFFILIATION_MINE) then
+			local name = C_Spell.GetSpellInfo(spellID)
+			local index = GetPetActionIndexByName(name)
+			if index and not select(7, GetPetActionInfo(index)) then
+				watching[spellID] = {GetTime(), "pet", index}
+			elseif not index and spellID then
+				watching[spellID] = {GetTime(), "spell", spellID}
+			else
+				return
+			end
+			self:SetScript("OnUpdate", OnUpdate)
+		end
+	end
 end
 frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 
 function frame:PLAYER_ENTERING_WORLD()
-    local inInstance,instanceType = IsInInstance()
-    if (inInstance and instanceType == "arena") then
-        self:SetScript("OnUpdate", nil)
-        wipe(cooldowns)
-        wipe(watching)
-    end
+	local _, instanceType = IsInInstance()
+	if instanceType == "arena" then
+		self:SetScript("OnUpdate", nil)
+		wipe(cooldowns)
+		wipe(watching)
+	end
 end
 frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 
 hooksecurefunc("UseAction", function(slot)
-    local actionType,itemID = GetActionInfo(slot)
-    if (actionType == "item") then
-        local texture = GetActionTexture(slot)
-        watching[itemID] = {GetTime(),"item",texture}
-    end
+	local actionType, itemID = GetActionInfo(slot)
+	if actionType == "item" then
+		local texture = GetActionTexture(slot)
+		watching[itemID] = {GetTime(), "item", texture}
+	end
 end)
 
 hooksecurefunc("UseInventoryItem", function(slot)
-    local itemID = GetInventoryItemID("player", slot);
-    if (itemID) then
-        local texture = GetInventoryItemTexture("player", slot)
-        watching[itemID] = {GetTime(),"item",texture}
-    end
-end)
-hooksecurefunc("UseContainerItem", function(bag,slot)
-    local itemID = GetContainerItemID(bag, slot)
-    if (itemID) then
-        local texture = select(10, GetItemInfo(itemID))
-        watching[itemID] = {GetTime(),"item",texture}
-    end
+	local itemID = GetInventoryItemID("player", slot)
+	if itemID then
+		local texture = GetInventoryItemTexture("player", slot)
+		watching[itemID] = {GetTime(), "item", texture}
+	end
 end)
 
 SlashCmdList.PulseCD = function()
-	tinsert(animating, {GetSpellTexture(87214)})
+	tinsert(animating, {C_Spell.GetSpellTexture(87214)})
 	--PlaySoundFile([[Interface\AddOns\ShestakUI\Media\Sounds\Proc.ogg]], "Master")
 	frame:SetScript("OnUpdate", OnUpdate)
 end

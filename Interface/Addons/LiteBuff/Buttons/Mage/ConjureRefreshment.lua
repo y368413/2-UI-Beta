@@ -2,6 +2,12 @@
 if select(2, UnitClass("player")) ~= "MAGE" then return end
 local _, addon = ...
 local L = addon.L
+local GetSpellInfo = GetSpellInfo or function(id)
+	local info = C_Spell.GetSpellInfo(id)
+	if info then
+		return info.name, nil, info.iconID, info.castTime, info.minRange, info.maxRange, info.spellID, info.originalIconID;
+	end
+end;
 
 local _SPELL = GetSpellInfo(42955)
 

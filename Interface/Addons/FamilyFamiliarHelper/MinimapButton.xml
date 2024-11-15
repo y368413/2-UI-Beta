@@ -1,0 +1,53 @@
+<Ui>
+    <Script file="MinimapButton.lua"/>
+
+    <Button name="FamilyFamiliarHelperMinimapButton" mixin="FamilyFamiliarHelperMinimapButtonMixin" parent="Minimap" toplevel="true" registerForClicks="AnyUp" hidden="true">
+        <Size x="31" y="31"/>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="Icon" file="Interface\Icons\Icon_PetFamily_Beast">
+                    <Size x="23" y="23"/>
+                    <Anchors>
+                        <Anchor point="CENTER"/>
+                    </Anchors>
+                </Texture>
+				<MaskTexture parentKey="CircleMask" file="Interface\CharacterFrame\TempPortraitAlphaMask" hWrapMode="CLAMPTOBLACKADDITIVE" vWrapMode="CLAMPTOBLACKADDITIVE">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeKey="$parent.Icon"/>
+						<Anchor point="BOTTOMRIGHT" relativeKey="$parent.Icon"/>
+					</Anchors>
+					<MaskedTextures>
+						<MaskedTexture childKey="Icon"/>
+					</MaskedTextures>
+				</MaskTexture>
+            </Layer>
+            <Layer level="BORDER">
+                <Texture parentKey="Border" file="Interface\Minimap\MiniMap-TrackingBorder">
+                    <Size x="53" y="53"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="HIGHLIGHT">
+                <Texture file="Interface\Minimap\UI-Minimap-ZoomButton-Highlight" alphaMode="ADD">
+                    <Size x="31" y="31"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="1" y="-1"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnEnter method="OnEnter"/>
+            <OnLeave method="OnLeave"/>
+            <OnMouseDown method="OnMouseDown"/>
+            <OnMouseUp method="OnMouseUp"/>
+            <OnShow method="OnMouseUp"/>
+            <OnDragStart method="OnDragStart"/>
+            <OnDragStop method="OnDragStop"/>
+            <OnClick method="OnClick"/>
+        </Scripts>
+    </Button>
+
+</Ui>

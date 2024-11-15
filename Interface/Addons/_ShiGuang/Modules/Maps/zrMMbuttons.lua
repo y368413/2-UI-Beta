@@ -83,6 +83,7 @@ function zrMM:CreateButtonFrame()
     Minimap.manualTarget['ZygorGuidesViewerMapIcon'] = true
     Minimap.manualTarget['PeggledMinimapIcon'] = true
     Minimap.manualTarget['EnxMiniMapIcon'] = true
+    Minimap.manualTarget['addoncompartmentframe'] = true
 
     Minimap.ignoreFrames['zrButtonFrame'] = true
     Minimap.ignoreFrames['GameTimeFrame'] = true
@@ -92,22 +93,26 @@ function zrMM:CreateButtonFrame()
     Minimap.ignoreFrames["FeedbackUIButton"] = true
     Minimap.ignoreFrames["HelpOpenTicketButton"] = true
     Minimap.ignoreFrames["MiniMapBattlefieldFrame"] = true
-		Minimap.ignoreFrames["GarrisonLandingPageMinimapButton"] = true
-		Minimap.ignoreFrames["MinimapZoneTextButton"] = true
+    Minimap.ignoreFrames["GarrisonLandingPageMinimapButton"] = true
+    Minimap.ignoreFrames["MinimapZoneTextButton"] = true
     Minimap.ignoreFrames['MinimapVoiceChatFrame'] = true
     Minimap.ignoreFrames['TimeManagerClockButton'] = true
-    Minimap.ignoreFrames['MiniMapTrackingFrame'] = true
+    --Minimap.ignoreFrames['MiniMapTrackingFrame'] = true
     Minimap.ignoreFrames['MiniMapMailFrame'] = true
     Minimap.ignoreFrames['COHCMinimapButton'] = true
     Minimap.ignoreFrames['MinimapZoomIn'] = true
     Minimap.ignoreFrames['MinimapZoomOut'] = true
-    Minimap.ignoreFrames['MiniMapTrackingButton'] = true
-    Minimap.ignoreFrames['MiniMapTracking'] = true
+    --Minimap.ignoreFrames['MiniMapTrackingButton'] = true
+    --Minimap.ignoreFrames['MiniMapTracking'] = true
+    Minimap.ignoreFrames['MinimapCluster.Tracking'] = true
+    Minimap.ignoreFrames['MinimapCluster.Tracking.Button'] = true
+    Minimap.ignoreFrames['QueueStatusButton'] = true
     Minimap.ignoreFrames['QueueStatusMinimapButton'] = true
     Minimap.ignoreFrames['QueueStatusMinimapButtonDropDownButton'] = true
     Minimap.ignoreFrames['BaudErrorFrameMinimapButton'] = true
+    Minimap.ignoreFrames['TTMinimapButton'] = true
 
-    hideTextures['Interface\\Minimap\\MiniMap-TrackingBorder'] = true
+    --hideTextures['Interface\\Minimap\\MiniMap-TrackingBorder'] = true
     hideTextures['Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight'] = true
     hideTextures['Interface\\Minimap\\UI-Minimap-Background'] = true 
     hideTextures[136430] = true 
@@ -159,18 +164,18 @@ function zrMM:CreateButtonFrame()
 		
 		if zrMM.buttonPosChanged == true then
 			Minimap.buttonFrame:ClearAllPoints()
-			if (R.db["Map"]["zrMMbuttonpos"] == "Top") then
+			if (R.db["Map"]["zrMMbuttonpos"] == 1) then
 				Minimap.buttonFrame:SetSize(Minimap:GetWidth(),R.db["Map"]["zrMMbuttonsize"])
-				Minimap.buttonFrame:SetPoint("BOTTOMLEFT", Minimap, "TOPLEFT", 3, 6)
-			elseif (R.db["Map"]["zrMMbuttonpos"] == "Right") then
+				Minimap.buttonFrame:SetPoint("BOTTOMLEFT", Minimap, "TOPLEFT", 2, 3)
+			elseif (R.db["Map"]["zrMMbuttonpos"] == 4) then
 				Minimap.buttonFrame:SetSize(R.db["Map"]["zrMMbuttonsize"],Minimap:GetHeight())
-				Minimap.buttonFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 6, 0)
-			elseif (R.db["Map"]["zrMMbuttonpos"] == "Bottom") then
+				Minimap.buttonFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 3, -1)
+			elseif (R.db["Map"]["zrMMbuttonpos"] == 2) then
 				Minimap.buttonFrame:SetSize(Minimap:GetWidth(),R.db["Map"]["zrMMbuttonsize"])
 				Minimap.buttonFrame:SetPoint("TOPRIGHT", Minimap, "BOTTOMRIGHT", -3, -6)
-			elseif (R.db["Map"]["zrMMbuttonpos"] == "Left") then
+			elseif (R.db["Map"]["zrMMbuttonpos"] == 3) then
 				Minimap.buttonFrame:SetSize(R.db["Map"]["zrMMbuttonsize"],Minimap:GetHeight())
-				Minimap.buttonFrame:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -6, 0)		
+				Minimap.buttonFrame:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -3, -1)		
 			end
 			zrMM.buttonPosChanged = false
 		end
@@ -184,9 +189,9 @@ function zrMM:CreateButtonFrame()
                 f:SetAlpha(0)
             end
 			if (f:IsShown()) then
-				if (R.db["Map"]["zrMMbuttonpos"] == "Top") then
+				if (R.db["Map"]["zrMMbuttonpos"] == 1) then
 					if (last) then
-						if buttonCount == 10 then
+						if buttonCount == 9 then
 							f:SetPoint("BOTTOMLEFT", first, "TOPLEFT", 0, R.db["Map"]["zrMMbordersize"]*2)
 							buttonCount = 0
 						else
@@ -196,21 +201,21 @@ function zrMM:CreateButtonFrame()
 						f:SetPoint("BOTTOMLEFT", Minimap.buttonFrame, "BOTTOMLEFT", -2, 0)
 						first = f
 					end
-				elseif (R.db["Map"]["zrMMbuttonpos"] == "Bottom") then
+				elseif (R.db["Map"]["zrMMbuttonpos"] == 2) then
 					if (last) then
-						if buttonCount == 8 then
-							f:SetPoint("TOPRIGHT", first, "BOTTOMRIGHT", R.db["Map"]["zrMMbuttonsize"]+R.db["Map"]["zrMMbordersize"]*2, -R.db["Map"]["zrMMbordersize"]*2)
+						if buttonCount == 9 then
+							f:SetPoint("TOPRIGHT", first, "BOTTOMRIGHT", 0, -R.db["Map"]["zrMMbordersize"]*2)
 							buttonCount = 0
 						else
 							f:SetPoint("TOPRIGHT", last, "TOPLEFT", -R.db["Map"]["zrMMbordersize"]*2, 0)     
 						end
 					else
-						f:SetPoint("TOPRIGHT", Minimap.buttonFrame, "TOPRIGHT", -24, 0)
+						f:SetPoint("TOPRIGHT", Minimap.buttonFrame, "TOPRIGHT", 2, 0)
 						first = f
 					end
-				elseif (R.db["Map"]["zrMMbuttonpos"] == "Right") then
+				elseif (R.db["Map"]["zrMMbuttonpos"] == 4) then
 					if (last) then
-						if buttonCount == 10 then
+						if buttonCount == 9 then
 							f:SetPoint("TOPLEFT", first, "TOPRIGHT", R.db["Map"]["zrMMbordersize"]*2, 0)
 							buttonCount = 0
 						else
@@ -220,9 +225,9 @@ function zrMM:CreateButtonFrame()
 						f:SetPoint("TOPLEFT", Minimap.buttonFrame, "TOPLEFT", 0, 0)
 						first = f
 					end
-				elseif (R.db["Map"]["zrMMbuttonpos"] == "Left") then
+				elseif (R.db["Map"]["zrMMbuttonpos"] == 3) then
 					if (last) then
-						if buttonCount == 10 then
+						if buttonCount == 9 then
 							f:SetPoint("TOPRIGHT", first, "TOPLEFT", -R.db["Map"]["zrMMbordersize"]*2, 0)
 							buttonCount = 0
 						else
@@ -252,12 +257,12 @@ function zrMM:CreateButtonFrame()
                     r[o]:Hide()
                 elseif (not strfind(tex,"WHITE8x8")) then
                     local coord = table.concat({r[o]:GetTexCoord()})
-                    if (coord == "00011011") then
-                        r[o]:SetTexCoord(0.3, 0.7, 0.3, 0.7)
-                        if (n == "DugisOnOffButton") then
-                            r[o]:SetTexCoord(0.25, 0.75, 0.2, 0.7)
-                        end
-                    end
+                    --if (coord == "00011011") then
+                        --r[o]:SetTexCoord(0.3, 0.7, 0.3, 0.7)
+                        --if (n == "DugisOnOffButton") then
+                            --r[o]:SetTexCoord(0.25, 0.75, 0.2, 0.7)
+                        --end
+                    --end
                 end
             end
         end

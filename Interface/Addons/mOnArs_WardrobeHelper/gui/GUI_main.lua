@@ -136,6 +136,19 @@ b:SetScript(
 	end
 )
 
+local b = CreateFrame("BUTTON", "mOnWD_MainFrame_bCurrentInstance", f, "UIPanelButtonTemplate")
+f.bInstance = b
+b:SetPoint("RIGHT", mOnWD_MainFrame_bCurrentInstance, "LEFT", -10, 0)
+b:SetText(o.strings["Settings"])
+b:SetHeight(25)
+b:SetWidth(75)
+b:SetScript(
+	"OnClick",
+	function()
+		o.GUIshowOptions()
+	end
+)
+
 local ff = CreateFrame("FRAME", nil, f)
 ff:Show()
 f.RowFrame = ff

@@ -203,7 +203,7 @@ local CreateBar = function()
 end
 
 local StartTimer = function(name, spellId)
-	local spell, _, icon = GetSpellInfo(spellId)
+	local spell, _, icon = C_Spell.GetSpellInfo(spellId)
 	if charges and spellId == 20484 then
 		for _, v in pairs(Ressesbars) do
 			UpdateCharges(v)
@@ -340,7 +340,7 @@ local OnEvent = function(self, event)
 end
 
 for spell in pairs(R.RaidSpells) do
-	if not GetSpellInfo(spell) then print("|cffff0000XXX → ["..tostring(spell).."]|r") end
+	if not C_Spell.GetSpellInfo(spell) then print("|cffff0000XXX → ["..tostring(spell).."]|r") end
 end
 
 local RaidCD = CreateFrame("Frame")

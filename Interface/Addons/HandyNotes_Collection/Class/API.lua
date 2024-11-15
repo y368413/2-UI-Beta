@@ -7,7 +7,7 @@
 --- changes any game api.
 ---
 
-local _, this = ...
+local NAME, this = ...
 local Icon = this.Icon
 local t = this.t
 
@@ -57,6 +57,12 @@ API.MapCanvasDataProviderMixin = MapCanvasDataProviderMixin
 ---
 API.MapCanvasPinMixin = MapCanvasPinMixin
 
+--- Blizzard settings.
+---
+--- @link https://github.com/Gethe/wow-ui-source/blob/live/Interface/SharedXML/Settings/Blizzard_Settings.lua
+---
+API.Settings = Settings
+
 ---
 --- Constant with number of bag slots.
 ---
@@ -64,6 +70,11 @@ API.MapCanvasPinMixin = MapCanvasPinMixin
 --- @link https://www.townlong-yak.com/framexml/9.1.0/Constants.lua#212
 ---
 API.BagSlots = NUM_BAG_SLOTS
+
+---
+--- Constant with translated string for 'close' text from game client.
+---
+API.closeLabel = CLOSE
 
 ---
 --- Gets game build version for caching purposes.
@@ -142,9 +153,9 @@ end
 ---   Name of the spell.
 ---
 function API:getSpellName(id)
- local name = GetSpellInfo(id)
+ local spell = C_Spell.GetSpellInfo(id)
 
-  return name
+  return spell.name
 end
 
 ---
@@ -545,7 +556,7 @@ function API:playerCanCollectSource(id)
     return false
   end
 
-  local hasItemData, canCollect = CollectionWardrobeUtil.PlayerCanCollectSource(sourceId)
+  local hasItemData, canCollect = C_TransmogCollection.PlayerCanCollectSource(sourceId)
 
   if (hasItemData == true and canCollect == true) then
     return true
@@ -684,9 +695,9 @@ end
 ---   StandingId representing the current standing (eg. 4 for Neutral, 5 for Friendly).
 ---
 function API:getFactionInfoByID(factionId)
- local name, _, standingId = GetFactionInfoByID(factionId)
+  local factionData = C_Reputation.GetFactionDataByID(factionId)
 
-  return name, standingId
+  return factionData.name, factionData.reaction
 end
 
 ---
@@ -717,7 +728,7 @@ end
 ---   The number of slots in the specified bag, or 0 if there is no bag in the given slot.
 ---
 function API:getContainerNumSlots(bagId)
-  return GetContainerNumSlots(bagId)
+  return C_Container.GetContainerNumSlots(bagId)
 end
 
 ---
@@ -735,7 +746,7 @@ end
 ---   Item ID of the item held in the container slot, nil if there is no item in the container slot.
 ---
 function API:getContainerItemID(bagId, slot)
-  return GetContainerItemID(bagId, slot)
+  return C_Container.GetContainerItemID(bagId, slot)
 end
 
 ---
@@ -801,6 +812,82 @@ function API:getCurrencyInfo(currencyId)
   }
 
   return currency
+end
+
+---
+--- Creates frame for contextual menu.
+---
+--- @link https://wowpedia.fandom.com/wiki/API_CreateFrame
+--- @link https://wowpedia.fandom.com/wiki/UI_Object_UIDropDownMenu
+---
+--- @return table
+---   Frame with menu display mode.
+---
+function API:prepareMenu()
+  local menu = CreateFrame('Frame', NAME .. 'ContextualMenu')
+  menu.displayMode = 'MENU'
+
+  return menu
+end
+
+---
+--- Prepares button object that will be filled with text and logic.
+---
+--- @link https://wowpedia.fandom.com/wiki/API_UIDropDownMenu_CreateInfo
+---
+--- @return table
+---   Empty table, that we need to fill with values.
+---
+function API:menuButtonPrepare()
+  return UIDropDownMenu_CreateInfo()
+end
+
+---
+--- Adds blank line 'button' to contextual menu.
+---
+--- @link https://wowpedia.fandom.com/wiki/API_UIDropDownMenu_AddButton
+---
+function API:menuAddSpacer()
+  UIDropDownMenu_AddSpace()
+end
+
+---
+--- Adds button to menu. Used in initialization function.
+---
+--- @link https://wowpedia.fandom.com/wiki/API_UIDropDownMenu_AddButton
+---
+--- @param button
+---   Table containing button data (like text, functions etc.).
+---
+function API:menuAddButton(button)
+  -- No button in contextual menu is checkbox.
+  button.notCheckable = 1
+
+  -- Add button.
+  UIDropDownMenu_AddButton(button)
+end
+
+---
+--- Closes contextual menu.
+---
+--- @link https://wowpedia.fandom.com/wiki/Using_UIDropDownMenu
+---
+function API:closeMenu()
+  CloseDropDownMenus()
+end
+
+---
+--- Opens contextual menu.
+---
+--- @link https://wowpedia.fandom.com/wiki/API_ToggleDropDownMenu
+---
+--- @param name
+---   Menu name to be opened.
+--- @param anchor
+---   Name of anchor, we are closing (eg. addon name).
+---
+function API:openMenu(name, anchor)
+  ToggleDropDownMenu(1, nil, name, anchor, 0, 0)
 end
 
 this.API = API

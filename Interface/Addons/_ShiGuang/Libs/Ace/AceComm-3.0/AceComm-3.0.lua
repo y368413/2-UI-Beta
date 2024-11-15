@@ -9,7 +9,7 @@
 -- make into AceComm.
 -- @class file
 -- @name AceComm-3.0
--- @release $Id: AceComm-3.0.lua 1284 2022-09-25 09:15:30Z nevcairiel $
+-- @release $Id: AceComm-3.0.lua 1333 2024-05-05 16:24:39Z nevcairiel $
 
 --[[ AceComm-3.0
 
@@ -20,7 +20,7 @@ TODO: Time out old data rotting around from dead senders? Not a HUGE deal since 
 local CallbackHandler = LibStub("CallbackHandler-1.0")
 local CTL = assert(ChatThrottleLib, "AceComm-3.0 requires ChatThrottleLib")
 
-local MAJOR, MINOR = "AceComm-3.0", 12
+local MAJOR, MINOR = "AceComm-3.0", 14
 local AceComm,oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not AceComm then return end
@@ -50,9 +50,6 @@ AceComm.multipart_reassemblers = nil
 -- the multipart message spool: indexed by a combination of sender+distribution+
 AceComm.multipart_spool = AceComm.multipart_spool or {}
 
---- Register for Addon Traffic on a specified prefix
--- @param prefix A printable character (\032-\255) classification of the message (typically AddonName or AddonNameEvent), max 16 characters
--- @param method Callback to call on message reception: Function reference, or method name (string) to call on self. Defaults to "OnCommReceived"
 function AceComm:RegisterComm(prefix, method)
 	if method == nil then
 		method = "OnCommReceived"
@@ -72,14 +69,6 @@ end
 
 local warnedPrefix=false
 
---- Send a message over the Addon Channel
--- @param prefix A printable character (\032-\255) classification of the message (typically AddonName or AddonNameEvent)
--- @param text Data to send, nils (\000) not allowed. Any length.
--- @param distribution Addon channel, e.g. "RAID", "GUILD", etc; see SendAddonMessage API
--- @param target Destination for some distributions; see SendAddonMessage API
--- @param prio OPTIONAL: ChatThrottleLib priority, "BULK", "NORMAL" or "ALERT". Defaults to "NORMAL".
--- @param callbackFn OPTIONAL: callback function to be called as each chunk is sent. receives 3 args: the user supplied arg (see next), the number of bytes sent so far, and the number of bytes total to send.
--- @param callbackArg: OPTIONAL: first arg to the callback function. nil will be passed if not specified.
 function AceComm:SendCommMessage(prefix, text, distribution, target, prio, callbackFn, callbackArg)
 	prio = prio or "NORMAL"	-- pasta's reference implementation had different prio for singlepart and multipart, but that's a very bad idea since that can easily lead to out-of-sequence delivery!
 	if not( type(prefix)=="string" and
@@ -93,12 +82,12 @@ function AceComm:SendCommMessage(prefix, text, distribution, target, prio, callb
 
 	local textlen = #text
 	local maxtextlen = 255  -- Yes, the max is 255 even if the dev post said 256. I tested. Char 256+ get silently truncated. /Mikk, 20110327
-	local queueName = prefix..distribution..(target or "")
+	local queueName = prefix
 
 	local ctlCallback = nil
 	if callbackFn then
-		ctlCallback = function(sent)
-			return callbackFn(callbackArg, sent, textlen)
+		ctlCallback = function(sent, sendResult)
+			return callbackFn(callbackArg, sent, textlen, sendResult)
 		end
 	end
 
@@ -136,12 +125,9 @@ function AceComm:SendCommMessage(prefix, text, distribution, target, prio, callb
 		CTL:SendAddonMessage(prio, prefix, MSG_MULTI_LAST..chunk, distribution, target, queueName, ctlCallback, textlen)
 	end
 end
-
-
 ----------------------------------------
 -- Message receiving
 ----------------------------------------
-
 do
 	local compost = setmetatable({}, {__mode = "k"})
 	local function new()
@@ -164,14 +150,7 @@ do
 	function AceComm:OnReceiveMultipartFirst(prefix, message, distribution, sender)
 		local key = prefix.."\t"..distribution.."\t"..sender	-- a unique stream is defined by the prefix + distribution + sender
 		local spool = AceComm.multipart_spool
-
-		--[[
-		if spool[key] then
-			lostdatawarning(prefix,sender,"First")
-			-- continue and overwrite
-		end
-		--]]
-
+		
 		spool[key] = message  -- plain string for now
 	end
 
@@ -219,12 +198,6 @@ do
 		end
 	end
 end
-
-
-
-
-
-
 ----------------------------------------
 -- Embed CallbackHandler
 ----------------------------------------
@@ -268,8 +241,6 @@ AceComm.frame = AceComm.frame or CreateFrame("Frame", "AceComm30Frame")
 AceComm.frame:SetScript("OnEvent", OnEvent)
 AceComm.frame:UnregisterAllEvents()
 AceComm.frame:RegisterEvent("CHAT_MSG_ADDON")
-
-
 ----------------------------------------
 -- Base library stuff
 ----------------------------------------
@@ -281,8 +252,6 @@ local mixins = {
 	"SendCommMessage",
 }
 
--- Embeds AceComm-3.0 into the target object making the functions from the mixins list available on target:..
--- @param target target object to embed AceComm-3.0 in
 function AceComm:Embed(target)
 	for k, v in pairs(mixins) do
 		target[v] = self[v]

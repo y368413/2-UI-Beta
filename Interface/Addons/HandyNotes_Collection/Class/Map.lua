@@ -37,18 +37,27 @@ function Map:prepareSize(point)
 end
 
 ---
---- Decides, if point should be shown on map
+--- Decides, if point should be shown on map.
 ---
 --- @param completed
 ---   Bool, if everything on this point has been completed.
+--- @param uiMapId
+---   Map, where we want to create waypoint.
+--- @param coord
+---   Coordinates on map, where we will be placing waypoint.
 ---
 --- @return boolean
 ---   True, if we should display point, false otherwise.
 ---
-function Map:showPoint(completed)
+function Map:showPoint(completed, uiMapId, coord)
   local show = false
   if (this.Addon.db.profile.showCollection == true and (completed == false or this.Addon.db.profile.completed == true)) then
     show = true
+  end
+
+  -- Manually hidden points.
+  if ((this.Addon.db.global[uiMapId] and this.Addon.db.global[uiMapId][coord] == true) or (this.Addon.db.char[uiMapId] and this.Addon.db.char[uiMapId][coord] == true)) then
+    show = false
   end
 
   return show

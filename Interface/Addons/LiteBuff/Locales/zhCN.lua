@@ -15,6 +15,7 @@ BINDING_NAME_LITEBUFF_MOUNT_UNDERWATER = "水下坐骑";
 BINDING_NAME_LITEBUFF_MOUNT_NOFLY = "地面坐骑";
 BINDING_NAME_LITEBUFF_MOUNT_AUCTION = "拍卖坐骑";
 BINDING_NAME_LITEBUFF_MOUNT_TRANSMOG = "幻化坐骑"
+BINDING_NAME_LITEBUFF_MOUNT_MAIL = "邮箱坐骑";
 
 local _, addon = ...
 addon.L = {
@@ -66,6 +67,6 @@ addon.L = {
 	["shouts"] = "怒吼",
 	["general options"] = "一般选项",
 	["disable buttons"] = "禁用按钮",
-	["crystal of insanity"] = "低语水晶",
-    ["Lightning-Forged Augment Rune"] = "雷铸调和符文"
+	["crystal of insanity"] = "合剂道具",
+	["Lightning-Forged Augment Rune"] = "符文道具"
 }

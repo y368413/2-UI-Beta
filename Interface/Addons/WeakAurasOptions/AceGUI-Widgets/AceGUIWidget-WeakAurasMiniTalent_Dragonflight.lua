@@ -1,8 +1,15 @@
+---@type string
+local AddonName = ...
+---@class OptionsPrivate
+local OptionsPrivate = select(2, ...)
+
 if not WeakAuras.IsLibsOK() then
   return
 end
 
-local widgetType, widgetVersion = "WeakAurasMiniTalent", 2
+local keepOpenForReload = {}
+
+local widgetType, widgetVersion = "WeakAurasMiniTalent", 3
 local AceGUI = LibStub and LibStub("AceGUI-3.0", true)
 if not AceGUI or (AceGUI:GetWidgetVersion(widgetType) or 0) >= widgetVersion then
   return
@@ -15,7 +22,7 @@ local buttonSizePadded = 45
 local function Button_ShowToolTip(self)
   if self.spellId then
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-    GameTooltip:SetSpellByID(self.spellId)
+    GameTooltip:SetSpellByID(self.spellId, false, false, true)
   end
 end
 local function Button_HideToolTip()
@@ -215,6 +222,7 @@ end
 local methods = {
   OnAcquire = function(self)
     self:SetDisabled(false)
+    self.acquired = true
   end,
 
   OnRelease = function(self)
@@ -224,6 +232,7 @@ local methods = {
     self.linePool:ReleaseAll()
     self.value = nil
     self.list = nil
+    self.acquired = false
   end,
 
   SetList = function(self, list)
@@ -244,14 +253,14 @@ local methods = {
         self.talentIdToButton[talentId] = button
         local spellId = data[2]
         button.spellId = spellId
-        local icon = select(3, GetSpellInfo(spellId))
+        local icon = select(8, OptionsPrivate.Private.ExecEnv.GetSpellInfo(spellId))
         if icon then
           button:SetNormalTexture(icon)
         end
-        local multiTalent, multiTalentTotal = 0, 0
-        button.posX, button.posY, multiTalent, multiTalentTotal = unpack(data[3])
-        button.posX = button.posX / 10 - extraOffset.offsetX
-        button.posY = button.posY / 10 - extraOffset.offsetY
+        local multiTalent, multiTalentTotal, subTreePosition = 0, 0, nil
+        button.posX, button.posY, multiTalent, multiTalentTotal, subTreePosition = unpack(data[3])
+        button.posX = button.posX / 10 - (extraOffset and extraOffset.offsetX or 0)
+        button.posY = button.posY / 10 - (extraOffset and extraOffset.offsetY or 0)
         if multiTalentTotal > 1 then
           if multiTalent == 1 then
             button.offset = "left"
@@ -261,6 +270,9 @@ local methods = {
         else
           button.offset = nil
         end
+        if subTreePosition then
+          button.side = subTreePosition == 1 and "left" or "right"
+        end
         button.targets = data[4]
         button:UpdateTexture()
         button:ClearAllPoints()
@@ -269,33 +281,53 @@ local methods = {
     end
 
     -- zoom both panel in their center
-    local talentWidth = 1612
-    local talentHeight = 856
+    local isSubTree = self.list[1001]
+    local talentWidth
+    local talentHeight
     local talentIconSize = 36
-    local LeftPannelCenter = { x = talentWidth / 4, y = talentHeight / 2 }
-    local RightPannelCenter = { x = (talentWidth / 4) * 3, y = talentHeight / 2 }
-    local pannelScaleW = 1.5
-    local pannelScaleH = 1.5
-    self.scale = self.saveSize.fullWidth / talentWidth
-    for _, b in pairs(self.buttons) do
-      if b.posX < talentWidth / 2 then -- left pannel
-        b.posX = b.posX - LeftPannelCenter.x
-        b.posX = b.posX * pannelScaleW
-        b.posX = b.posX + LeftPannelCenter.x - talentIconSize / 2
-        b.posY = b.posY - LeftPannelCenter.y
-        b.posY = b.posY * pannelScaleH
-        b.posY = b.posY + LeftPannelCenter.y * pannelScaleH
-      else                     -- right pannel
-        b.posX = b.posX - RightPannelCenter.x
-        b.posX = b.posX * pannelScaleW
-        b.posX = b.posX + RightPannelCenter.x + talentIconSize / 2
-        b.posY = b.posY - RightPannelCenter.y
-        b.posY = b.posY * pannelScaleH
-        b.posY = b.posY + RightPannelCenter.y * pannelScaleH
+    local scale
+    if not isSubTree then
+      talentWidth = 1612
+      talentHeight = 856
+      local cutmid = 120
+      local LeftPanelCenter = { x = (talentWidth / 2 - cutmid) / 2, y = talentHeight / 2 }
+      local RightPanelCenter = { x = ((talentWidth / 2 + cutmid) + talentWidth) / 2 , y = talentHeight / 2 }
+      scale = 1.3
+      for _, b in pairs(self.buttons) do
+        if b.posX < talentWidth / 2 then -- left panel
+          b.posX = b.posX - LeftPanelCenter.x
+          b.posX = b.posX * scale
+          b.posX = b.posX + LeftPanelCenter.x - talentIconSize / 2
+          b.posY = b.posY - LeftPanelCenter.y
+          b.posY = b.posY * scale
+          b.posY = b.posY + LeftPanelCenter.y * scale
+        else                     -- right panel
+          b.posX = b.posX - RightPanelCenter.x
+          b.posX = b.posX * scale
+          b.posX = b.posX + RightPanelCenter.x + talentIconSize / 2
+          b.posY = b.posY - RightPanelCenter.y
+          b.posY = b.posY * scale
+          b.posY = b.posY + RightPanelCenter.y * scale
+        end
+      end
+    else
+      talentWidth = 200
+      talentHeight = 300
+      local midLeft, midRight = talentWidth / 4, (talentWidth / 4) * 3
+      scale = 0.3
+      for _, b in pairs(self.buttons) do
+        b.posX = b.posX * scale
+        b.posY = b.posY * scale
+        b.posY = b.posY + 10
+        if b.side == "left" then
+          b.posX = b.posX + midLeft
+        else
+          b.posX = b.posX + midRight
+        end
       end
     end
-
-    self.saveSize.fullHeight = talentHeight * self.scale * pannelScaleW
+    self.scale = self.saveSize.fullWidth / talentWidth
+    self.saveSize.fullHeight = talentHeight * self.scale * scale
     if self.list[999] then
       self.background:SetAtlas(self.list[999])
       self.background:SetBlendMode("ADD")
@@ -331,11 +363,15 @@ local methods = {
   SetLabel = function(self, text) end,
   SetMultiselect = function(self, multi) end,
 
-  ToggleView = function(self)
-    if not self.open then
-      self.open = true
+  ToggleView = function(self, force)
+    if force ~= nil then
+      self.open = force
     else
-      self.open = nil
+      if not self.open then
+        self.open = true
+      else
+        self.open = nil
+      end
     end
     TalentFrame_Update(self)
     self.parent:DoLayout()
@@ -397,6 +433,30 @@ local function Constructor()
     widget[method] = func
   end
   talentFrame.obj = widget
+
+  local function OnBeforeReload()
+    if widget.acquired then
+      local user = widget:GetUserDataTable()
+      if user and user.path then
+        keepOpenForReload[user.path[#user.path]] = widget.open
+      end
+    end
+  end
+
+  local function OnAfterReload()
+    if widget.acquired then
+      local user = widget:GetUserDataTable()
+      if user and user.path then
+        if keepOpenForReload[user.path[#user.path]] then
+          widget:ToggleView(true)
+          keepOpenForReload[user.path[#user.path]] = nil
+        end
+      end
+    end
+  end
+
+  OptionsPrivate.Private.callbacks:RegisterCallback("BeforeReload", OnBeforeReload)
+  OptionsPrivate.Private.callbacks:RegisterCallback("AfterReload", OnAfterReload)
 
   return AceGUI:RegisterAsWidget(widget)
 end

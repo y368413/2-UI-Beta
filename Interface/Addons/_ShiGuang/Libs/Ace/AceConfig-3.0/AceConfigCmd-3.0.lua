@@ -320,28 +320,15 @@ local function keybindingValidateFunc(text)
 	return s
 end
 
--- handle() - selfrecursing function that processes input->optiontable
--- - depth - starts at 0
--- - retfalse - return false rather than produce error if a match is not found (used by inlined groups)
-
 local function handle(info, inputpos, tab, depth, retfalse)
 
 	if not(type(tab)=="table" and type(tab.type)=="string") then err(info,inputpos) end
-
-	-------------------------------------------------------------------
-	-- Grab hold of handler,set,get,func,etc if set (and remember old ones)
-	-- Note that we do NOT validate if method names are correct at this stage,
-	-- the handler may change before they're actually used!
 
 	local oldhandler,oldhandler_at = getparam(info,inputpos,tab,depth,"handler",handlertypes,handlermsg)
 	local oldset,oldset_at = getparam(info,inputpos,tab,depth,"set",functypes,funcmsg)
 	local oldget,oldget_at = getparam(info,inputpos,tab,depth,"get",functypes,funcmsg)
 	local oldfunc,oldfunc_at = getparam(info,inputpos,tab,depth,"func",functypes,funcmsg)
 	local oldvalidate,oldvalidate_at = getparam(info,inputpos,tab,depth,"validate",functypes,funcmsg)
-	--local oldconfirm,oldconfirm_at = getparam(info,inputpos,tab,depth,"confirm",functypes,funcmsg)
-
-	-------------------------------------------------------------------
-	-- Act according to .type of this table
 
 	if tab.type=="group" then
 		------------ group --------------------------------------------
@@ -720,26 +707,6 @@ local function handle(info, inputpos, tab, depth, retfalse)
 	end
 end
 
---- Handle the chat command.
--- This is usually called from a chat command handler to parse the command input as operations on an aceoptions table.\\
--- AceConfigCmd uses this function internally when a slash command is registered with `:CreateChatCommand`
--- @param slashcmd The slash command WITHOUT leading slash (only used for error output)
--- @param appName The application name as given to `:RegisterOptionsTable()`
--- @param input The commandline input (as given by the WoW handler, i.e. without the command itself)
--- @usage
--- MyAddon = LibStub("AceAddon-3.0"):NewAddon("MyAddon", "AceConsole-3.0")
--- -- Use AceConsole-3.0 to register a Chat Command
--- MyAddon:RegisterChatCommand("mychat", "ChatCommand")
---
--- -- Show the GUI if no input is supplied, otherwise handle the chat input.
--- function MyAddon:ChatCommand(input)
---   -- Assuming "MyOptions" is the appName of a valid options table
---   if not input or input:trim() == "" then
---     LibStub("AceConfigDialog-3.0"):Open("MyOptions")
---   else
---     LibStub("AceConfigCmd-3.0").HandleCommand(MyAddon, "mychat", "MyOptions", input)
---   end
--- end
 function AceConfigCmd:HandleCommand(slashcmd, appName, input)
 
 	local optgetter = cfgreg:GetOptionsTable(appName)
@@ -762,10 +729,6 @@ function AceConfigCmd:HandleCommand(slashcmd, appName, input)
 	handle(info, 1, options, 0)  -- (info, inputpos, table, depth)
 end
 
---- Utility function to create a slash command handler.
--- Also registers tab completion with AceTab
--- @param slashcmd The slash command WITHOUT leading slash (only used for error output)
--- @param appName The application name as given to `:RegisterOptionsTable()`
 function AceConfigCmd:CreateChatCommand(slashcmd, appName)
 	if not AceConsole then
 		AceConsole = LibStub(AceConsoleName)
@@ -778,10 +741,6 @@ function AceConfigCmd:CreateChatCommand(slashcmd, appName)
 	end
 end
 
---- Utility function that returns the options table that belongs to a slashcommand.
--- Designed to be used for the AceTab interface.
--- @param slashcmd The slash command WITHOUT leading slash (only used for error output)
--- @return The options table associated with the slash command (or nil if the slash command was not registered)
 function AceConfigCmd:GetChatCommandOptions(slashcmd)
 	return commands[slashcmd]
 end

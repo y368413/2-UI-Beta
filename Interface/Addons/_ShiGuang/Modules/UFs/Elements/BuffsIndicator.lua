@@ -10,15 +10,15 @@ function UF:UpdateRaidBuffsWhite()
 	wipe(UF.RaidBuffsWhite)
 
 	for spellID in pairs(R.RaidBuffsWhite) do
-		local name = GetSpellInfo(spellID)
+		local name = C_Spell.GetSpellName(spellID)
 		if name then
-			if MaoRUIDB["RaidBuffsWhite"][spellID] == nil then
+			if MaoRUISetDB["RaidBuffsWhite"][spellID] == nil then
 				UF.RaidBuffsWhite[spellID] = true
 			end
 		end
 	end
 
-	for spellID, value in pairs(MaoRUIDB["RaidBuffsWhite"]) do
+	for spellID, value in pairs(MaoRUISetDB["RaidBuffsWhite"]) do
 		if value then
 			UF.RaidBuffsWhite[spellID] = true
 		end

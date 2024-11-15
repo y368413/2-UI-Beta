@@ -11,6 +11,12 @@ local NONE = "|cff808080"..NONE.."|r"
 local _, addon = ...
 local L = addon.L
 local templates = addon.templates
+local GetSpellInfo = GetSpellInfo or function(id)
+	local info = C_Spell.GetSpellInfo(id)
+	if info then
+		return info.name, nil, info.iconID, info.castTime, info.minRange, info.maxRange, info.spellID, info.originalIconID;
+	end
+end;
 
 local function Button_OnTooltipText(self, tooltip)
 	tooltip:AddLine(L["affected target"]..(addon:GetColoredUnitName(self.affectedUnit) or NONE), 1, 1, 1, 1)
@@ -42,20 +48,8 @@ local function Button_OnUpdateTimer(self, spell)
 			end
 		end
     end
-function Aby_UnitAura_Proxy(UnitAuraFunc, unit, indexOrName, filterOrNil, filter, ...)
-    --if type(indexOrName) == "number" then
-    --    return UnitAuraFunc(unit, indexOrName, filterOrNil, filter, ...)
-    --else
-        for i = 1, 40 do
-            local name, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, v1, nameplateShowAll, timeMod, value1, value2, value3, v3, v4, v5 = UnitAuraFunc(unit, i, filterOrNil, filter, ...)
-            if not name then return end
-            if name == indexOrName then return name, nil, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, v1, nameplateShowAll, timeMod, value1, value2, value3, v3, v4, v5 end
-        end
-    --end
-end
-function Aby_UnitAura(unit, indexOrName, filterOrNil, filter, ...) return Aby_UnitAura_Proxy(UnitAura, unit, indexOrName, filterOrNil, filter, ...) end
 
-    if self.alertMissing then
+    if self.alertMissing and U1GetCfgValue and U1GetCfgValue("LiteBuff", "alertMissing") then
         if self.alertMissing ~= 1 and Aby_UnitAura("player", self.alertMissing, nil, "HELPFUL") then return end
         if not self.alertIcon then
             self.alertIcon = CreateFrame("CheckButton", "LiteBuffAlertFrame", self, "ActionButtonTemplate")

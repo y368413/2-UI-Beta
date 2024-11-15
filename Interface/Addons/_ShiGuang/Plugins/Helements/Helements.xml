@@ -1,12 +1,10 @@
 ﻿<Ui xmlns="http://www.blizzard.com/wow/ui/">
-	<Script file="CCIcons.lua"/>
-	<Script file="Caravana.lua"/>.
-	<!--Script file="DialogKey.lua"/>
-	<Script file="AutoInvite.lua"/-->
+	<!--Script file="CCIcons.lua"/>
 	<Script file="SoundMutes.lua"/>
-	<!--Script file="TinyDPS.lua"/>
-	<Script file="WhoPulled.lua"/-->
-	<!--Script file="FriendGroups.lua"/>
-	<Script file="ShowChanceBar.lua"/>
-	<Script file="Quest_Complete.lua"/-->
+	<Script file="TinyDPS.lua"/>
+	<Script file="WhoPulled.lua"/>
+	<Script file="ShowChanceBar.lua"/-->
+	<Script file="RepSwitch.lua"/>
+	<Script file="kAutoOpen.lua"/>
+	<!--Script file="phisFactionSwitcher.lua"/-->
 </Ui>

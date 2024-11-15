@@ -1,14 +1,11 @@
 <Ui>
 	<Script File="RematchEx.lua"/>
-	<EditBox name="ALPTInputBoxTemplate" enableMouse="true" autoFocus="false" virtual="true">
+	<EditBox name="ALPTInputBoxTemplate" enableMouse="true" autoFocus="false" virtual="true" inherits="RematchBorderBackdropTemplate">
 		<Size x="50" y="24"/>
 		<TextInsets>
 			<AbsInset left="6" right="6"/>
 		</TextInsets>
-		<Backdrop edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-			<EdgeSize val="16"/>
-			<BorderColor r="0.5" g="0.5" b="0.5"/>
-		</Backdrop>
+
 		<Layers>
 			<Layer level="BACKGROUND">
 				<Texture>
@@ -35,7 +32,7 @@
 		<Scripts>
 			<OnEscapePressed>
 				self:ClearFocus()
-				Rematch:HideDialog()
+				Rematch.dialog:HideDialog()
 			</OnEscapePressed>
 			<OnChar>
 				ALPTRematch.PreferencesOnChar(self)
@@ -47,7 +44,7 @@
 		<FontString inherits="GameFontHighlight" justifyV="MIDDLE" justifyH="CENTER" />
 	</EditBox>
 
-	<Frame parentKey="ALPTCConfigs" parent="RematchDialog" hidden="true">
+	<Frame parentKey="ALPTCConfigs" parent="RematchDialogCanvas" hidden="true">
 		<Size x="590" y="500"/>
 		<Frames>
 			<Frame parentKey="Top">

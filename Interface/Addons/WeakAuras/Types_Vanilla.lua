@@ -1,7 +1,10 @@
 if not WeakAuras.IsLibsOK() then return end
---- @type string, Private
-local AddonName, Private = ...
+---@type string
+local AddonName = ...
+---@class Private
+local Private = select(2, ...)
 
+---@class WeakAuras
 local WeakAuras = WeakAuras;
 local L = WeakAuras.L;
 
@@ -12,16 +15,11 @@ function Private.InitializeEncounterAndZoneLists()
   end
   local raids = {
     {
-      L["Black Wing Lair"],
+      L["World Bosses"],
       {
-          { L["Razorgore the Untamed"], 610 },
-          { L["Vaelastrasz the Corrupt"], 611 },
-          { L["Broodlord Lashlayer"], 612 },
-          { L["Firemaw"], 613 },
-          { L["Ebonroc"], 614 },
-          { L["Flamegor"], 615 },
-          { L["Chromaggus"], 616 },
-          { L["Nefarian"], 617 }
+        { L["Kazzak"], 3026 },
+        { L["Azuregos"], 3027 },
+        { L["Onyxia"], 1084 }
       }
     },
     {
@@ -37,6 +35,19 @@ function Private.InitializeEncounterAndZoneLists()
         { L["Golemagg the Incinerator"], 670 },
         { L["Majordomo Executus"], 671 },
         { L["Ragnaros"], 672 }
+      }
+    },
+    {
+      L["Black Wing Lair"],
+      {
+          { L["Razorgore the Untamed"], 610 },
+          { L["Vaelastrasz the Corrupt"], 611 },
+          { L["Broodlord Lashlayer"], 612 },
+          { L["Firemaw"], 613 },
+          { L["Ebonroc"], 614 },
+          { L["Flamegor"], 615 },
+          { L["Chromaggus"], 616 },
+          { L["Nefarian"], 617 }
       }
     },
     {
@@ -80,12 +91,6 @@ function Private.InitializeEncounterAndZoneLists()
       }
     },
     {
-      L["Onyxia's Lair"],
-      {
-        { L["Onyxia"], 1084 }
-      }
-    },
-    {
       L["Naxxramas"],
       {
         -- The Arachnid Quarter
@@ -111,6 +116,7 @@ function Private.InitializeEncounterAndZoneLists()
       }
     }
   }
+
   for _, raid in ipairs(raids) do
     encounter_list = ("%s|cffffd200%s|r\n"):format(encounter_list, raid[1])
     for _, boss in ipairs(raid[2]) do
@@ -124,4 +130,8 @@ end
 
 function Private.get_encounters_list()
   return encounter_list
+end
+
+function Private.get_zoneId_list()
+  return ""
 end

@@ -1,5 +1,8 @@
 if not WeakAuras.IsLibsOK() then return end
-local AddonName, OptionsPrivate = ...
+---@type string
+local AddonName = ...
+---@class OptionsPrivate
+local OptionsPrivate = select(2, ...)
 
 local L = WeakAuras.L
 
@@ -29,7 +32,7 @@ local function filterAnimPresetTypes(intable, id)
     for key, value in pairs(intable) do
       local preset = OptionsPrivate.Private.anim_presets[key];
       if(preset) then
-        if not((preset.use_scale and not region.Scale) or (preset.use_rotate and not region.Rotate)) then
+        if not((preset.use_scale and not region.Scale) or (preset.use_rotate and not region.SetAnimRotation)) then
           ret[key] = value;
         end
       end
@@ -144,18 +147,6 @@ function OptionsPrivate.GetAnimationOptions(data)
         values = function() return filterAnimPresetTypes(anim_start_preset_types, id) end,
         hidden = function() return data.animation.start.type ~= "preset" end
       },
-      start_duration_type_no_choice = {
-        type = "select",
-        width = WeakAuras.halfWidth,
-        name = L["Time in"],
-        order = 33,
-        values = duration_types_no_choice,
-        disabled = true,
-        hidden = function()
-          return data.animation.start.type ~= "custom" or OptionsPrivate.Private.CanHaveDuration(data)
-        end,
-        get = function() return "seconds" end
-      },
       start_duration_type = {
         type = "select",
         width = WeakAuras.halfWidth,
@@ -163,7 +154,7 @@ function OptionsPrivate.GetAnimationOptions(data)
         order = 33,
         values = duration_types,
         hidden = function()
-          return data.animation.start.type ~= "custom" or not OptionsPrivate.Private.CanHaveDuration(data)
+          return data.animation.start.type ~= "custom"
         end
       },
       start_duration = {
@@ -196,6 +187,7 @@ function OptionsPrivate.GetAnimationOptions(data)
       },
       start_easeStrength = {
         type = "range",
+        control = "WeakAurasSpinBox",
         width = WeakAuras.normalWidth,
         name = L["Ease Strength"],
         order = 33.8,
@@ -223,6 +215,7 @@ function OptionsPrivate.GetAnimationOptions(data)
       -- text editor added below
       start_alpha = {
         type = "range",
+        control = "WeakAurasSpinBox",
         width = WeakAuras.doubleWidth,
         name = L["Alpha"],
         order = 36,
@@ -250,6 +243,7 @@ function OptionsPrivate.GetAnimationOptions(data)
       -- texteditor added below
       start_x = {
         type = "range",
+        control = "WeakAurasSpinBox",
         width = WeakAuras.normalWidth,
         name = L["X Offset"],
         order = 40,
@@ -261,6 +255,7 @@ function OptionsPrivate.GetAnimationOptions(data)
       },
       start_y = {
         type = "range",
+        control = "WeakAurasSpinBox",
         width = WeakAuras.normalWidth,
         name = L["Y Offset"],
         order = 41,
@@ -294,6 +289,7 @@ function OptionsPrivate.GetAnimationOptions(data)
       -- texteditor added below
       start_scalex = {
         type = "range",
+        control = "WeakAurasSpinBox",
         width = WeakAuras.normalWidth,
         name = L["X Scale"],
         order = 44,
@@ -307,6 +303,7 @@ function OptionsPrivate.GetAnimationOptions(data)
       },
       start_scaley = {
         type = "range",
+        control = "WeakAurasSpinBox",
         width = WeakAuras.normalWidth,
         name = L["Y Scale"],
         order = 45,
@@ -324,7 +321,7 @@ function OptionsPrivate.GetAnimationOptions(data)
         name = L["Rotate In"],
         order = 46,
         hidden = function()
-          return (data.animation.start.type ~= "custom" or not OptionsPrivate.Private.EnsureRegion(id).Rotate)
+          return (data.animation.start.type ~= "custom" or not OptionsPrivate.Private.EnsureRegion(id).SetAnimRotation)
         end
       },
       start_rotateType = {
@@ -334,12 +331,13 @@ function OptionsPrivate.GetAnimationOptions(data)
         order = 47,
         values = anim_rotate_types,
         hidden = function()
-          return (data.animation.start.type ~= "custom" or not OptionsPrivate.Private.EnsureRegion(id).Rotate)
+          return (data.animation.start.type ~= "custom" or not OptionsPrivate.Private.EnsureRegion(id).SetAnimRotation)
         end
       },
       -- texteditor added below
       start_rotate = {
         type = "range",
+        control = "WeakAurasSpinBox",
         width = WeakAuras.doubleWidth,
         name = L["Angle"],
         order = 48,
@@ -347,7 +345,7 @@ function OptionsPrivate.GetAnimationOptions(data)
         softMax = 360,
         bigStep = 3,
         hidden = function()
-          return (data.animation.start.type ~= "custom" or not OptionsPrivate.Private.EnsureRegion(id).Rotate)
+          return (data.animation.start.type ~= "custom" or not OptionsPrivate.Private.EnsureRegion(id).SetAnimRotation)
         end
       },
       start_use_color = {
@@ -412,18 +410,6 @@ function OptionsPrivate.GetAnimationOptions(data)
         values = function() return filterAnimPresetTypes(anim_main_preset_types, id) end,
         hidden = function() return data.animation.main.type ~= "preset" end
       },
-      main_duration_type_no_choice = {
-        type = "select",
-        width = WeakAuras.halfWidth,
-        name = L["Time in"],
-        order = 53,
-        values = duration_types_no_choice,
-        disabled = true,
-        hidden = function()
-          return data.animation.main.type ~= "custom" or OptionsPrivate.Private.CanHaveDuration(data)
-        end,
-        get = function() return "seconds" end
-      },
       main_duration_type = {
         type = "select",
         width = WeakAuras.halfWidth,
@@ -431,7 +417,7 @@ function OptionsPrivate.GetAnimationOptions(data)
         order = 53,
         values = duration_types,
         hidden = function()
-          return data.animation.main.type ~= "custom" or not OptionsPrivate.Private.CanHaveDuration(data)
+          return data.animation.main.type ~= "custom"
         end
       },
       main_duration = {
@@ -467,6 +453,7 @@ function OptionsPrivate.GetAnimationOptions(data)
       },
       main_easeStrength = {
         type = "range",
+        control = "WeakAurasSpinBox",
         width = WeakAuras.normalWidth,
         name = L["Ease Strength"],
         order = 53.8,
@@ -494,6 +481,7 @@ function OptionsPrivate.GetAnimationOptions(data)
       -- texteditor added below
       main_alpha = {
         type = "range",
+        control = "WeakAurasSpinBox",
         width = WeakAuras.doubleWidth,
         name = L["Alpha"],
         order = 56,
@@ -521,6 +509,7 @@ function OptionsPrivate.GetAnimationOptions(data)
       -- texteditor added below
       main_x = {
         type = "range",
+        control = "WeakAurasSpinBox",
         width = WeakAuras.normalWidth,
         name = L["X Offset"],
         order = 60,
@@ -532,6 +521,7 @@ function OptionsPrivate.GetAnimationOptions(data)
       },
       main_y = {
         type = "range",
+        control = "WeakAurasSpinBox",
         width = WeakAuras.normalWidth,
         name = L["Y Offset"],
         order = 61,
@@ -563,6 +553,7 @@ function OptionsPrivate.GetAnimationOptions(data)
       -- texteditor added below
       main_scalex = {
         type = "range",
+        control = "WeakAurasSpinBox",
         width = WeakAuras.normalWidth,
         name = L["X Scale"],
         order = 64,
@@ -576,6 +567,7 @@ function OptionsPrivate.GetAnimationOptions(data)
       },
       main_scaley = {
         type = "range",
+        control = "WeakAurasSpinBox",
         width = WeakAuras.normalWidth,
         name = L["Y Scale"],
         order = 65,
@@ -593,7 +585,7 @@ function OptionsPrivate.GetAnimationOptions(data)
         name = L["Rotate"],
         order = 66,
         hidden = function()
-          return (data.animation.main.type ~= "custom" or not OptionsPrivate.Private.EnsureRegion(id).Rotate)
+          return (data.animation.main.type ~= "custom" or not OptionsPrivate.Private.EnsureRegion(id).SetAnimRotation)
         end
       },
       main_rotateType = {
@@ -603,12 +595,13 @@ function OptionsPrivate.GetAnimationOptions(data)
         order = 67,
         values = anim_rotate_types,
         hidden = function()
-          return (data.animation.main.type ~= "custom" or not OptionsPrivate.Private.EnsureRegion(id).Rotate)
+          return (data.animation.main.type ~= "custom" or not OptionsPrivate.Private.EnsureRegion(id).SetAnimRotation)
         end
       },
       -- text editor added below
       main_rotate = {
         type = "range",
+        control = "WeakAurasSpinBox",
         width = WeakAuras.doubleWidth,
         name = L["Angle"],
         order = 68,
@@ -616,7 +609,7 @@ function OptionsPrivate.GetAnimationOptions(data)
         softMax = 360,
         bigStep = 3,
         hidden = function()
-          return (data.animation.main.type ~= "custom" or not OptionsPrivate.Private.EnsureRegion(id).Rotate)
+          return (data.animation.main.type ~= "custom" or not OptionsPrivate.Private.EnsureRegion(id).SetAnimRotation)
         end
       },
       main_use_color = {
@@ -709,6 +702,7 @@ function OptionsPrivate.GetAnimationOptions(data)
       },
       finish_easeStrength = {
         type = "range",
+        control = "WeakAurasSpinBox",
         width = WeakAuras.normalWidth,
         name = L["Ease Strength"],
         order = 73.8,
@@ -736,6 +730,7 @@ function OptionsPrivate.GetAnimationOptions(data)
       -- texteditor added below
       finish_alpha = {
         type = "range",
+        control = "WeakAurasSpinBox",
         width = WeakAuras.doubleWidth,
         name = L["Alpha"],
         order = 76,
@@ -763,6 +758,7 @@ function OptionsPrivate.GetAnimationOptions(data)
       -- texteditor added below
       finish_x = {
         type = "range",
+        control = "WeakAurasSpinBox",
         width = WeakAuras.normalWidth,
         name = L["X Offset"],
         order = 80,
@@ -774,6 +770,7 @@ function OptionsPrivate.GetAnimationOptions(data)
       },
       finish_y = {
         type = "range",
+        control = "WeakAurasSpinBox",
         width = WeakAuras.normalWidth,
         name = L["Y Offset"],
         order = 81,
@@ -805,6 +802,7 @@ function OptionsPrivate.GetAnimationOptions(data)
       -- texteditor added below
       finish_scalex = {
         type = "range",
+        control = "WeakAurasSpinBox",
         width = WeakAuras.normalWidth,
         name = L["X Scale"],
         order = 84,
@@ -818,6 +816,7 @@ function OptionsPrivate.GetAnimationOptions(data)
       },
       finish_scaley = {
         type = "range",
+        control = "WeakAurasSpinBox",
         width = WeakAuras.normalWidth,
         name = L["Y Scale"],
         order = 85,
@@ -835,7 +834,7 @@ function OptionsPrivate.GetAnimationOptions(data)
         name = L["Rotate Out"],
         order = 86,
         hidden = function()
-          return (data.animation.finish.type ~= "custom" or not OptionsPrivate.Private.EnsureRegion(id).Rotate)
+          return (data.animation.finish.type ~= "custom" or not OptionsPrivate.Private.EnsureRegion(id).SetAnimRotation)
         end
       },
       finish_rotateType = {
@@ -845,12 +844,13 @@ function OptionsPrivate.GetAnimationOptions(data)
         order = 87,
         values = anim_rotate_types,
         hidden = function()
-           return (data.animation.finish.type ~= "custom" or not OptionsPrivate.Private.EnsureRegion(id).Rotate)
+           return (data.animation.finish.type ~= "custom" or not OptionsPrivate.Private.EnsureRegion(id).SetAnimRotation)
           end
       },
       -- texteditor added below
       finish_rotate = {
         type = "range",
+        control = "WeakAurasSpinBox",
         width = WeakAuras.doubleWidth,
         name = L["Angle"],
         order = 88,
@@ -858,7 +858,7 @@ function OptionsPrivate.GetAnimationOptions(data)
         softMax = 360,
         bigStep = 3,
         hidden = function()
-          return (data.animation.finish.type ~= "custom" or not OptionsPrivate.Private.EnsureRegion(id).Rotate)
+          return (data.animation.finish.type ~= "custom" or not OptionsPrivate.Private.EnsureRegion(id).SetAnimRotation)
         end
       },
       finish_use_color = {
@@ -947,7 +947,7 @@ function OptionsPrivate.GetAnimationOptions(data)
   local function hideStartRotateFunc()
     return data.animation.start.type ~= "custom"
            or data.animation.start.rotateType ~= "custom"
-           or not (data.animation.start.use_rotate and OptionsPrivate.Private.EnsureRegion(id).Rotate)
+           or not (data.animation.start.use_rotate and OptionsPrivate.Private.EnsureRegion(id).SetAnimRotation)
   end
   OptionsPrivate.commonOptions.AddCodeOption(animation.args, data, L["Custom Function"], "start_rotateFunc",
                           "https://github.com/WeakAuras/WeakAuras2/wiki/Custom-Code-Blocks#rotate",
@@ -994,7 +994,7 @@ function OptionsPrivate.GetAnimationOptions(data)
   local function hideMainRotateFunc()
     return data.animation.main.type ~= "custom"
            or data.animation.main.rotateType ~= "custom"
-           or not (data.animation.main.use_rotate and OptionsPrivate.Private.EnsureRegion(id).Rotate)
+           or not (data.animation.main.use_rotate and OptionsPrivate.Private.EnsureRegion(id).SetAnimRotation)
   end
   OptionsPrivate.commonOptions.AddCodeOption(animation.args, data, L["Custom Function"], "main_rotateFunc",
                           "https://github.com/WeakAuras/WeakAuras2/wiki/Custom-Code-Blocks#rotate",
@@ -1040,7 +1040,7 @@ function OptionsPrivate.GetAnimationOptions(data)
   local function hideFinishRotateFunc()
     return data.animation.finish.type ~= "custom"
            or data.animation.finish.rotateType ~= "custom"
-           or not (data.animation.finish.use_rotate and OptionsPrivate.Private.EnsureRegion(id).Rotate)
+           or not (data.animation.finish.use_rotate and OptionsPrivate.Private.EnsureRegion(id).SetAnimRotation)
   end
   OptionsPrivate.commonOptions.AddCodeOption(animation.args, data, L["Custom Function"], "finish_rotateFunc",
                           "https://github.com/WeakAuras/WeakAuras2/wiki/Custom-Code-Blocks#rotate",

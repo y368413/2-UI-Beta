@@ -1,12 +1,18 @@
 if not WeakAuras.IsLibsOK() then return end
 
-if GetLocale() ~= "ruRU" then
+if (GAME_LOCALE or GetLocale()) ~= "ruRU" then
   return
 end
 
 local L = WeakAuras.L
 
 -- WeakAuras/Templates
+	L["(Dwarf)"] = "(Дворф)"
+	L["(Dwarf/Human)"] = "(Дворф/Человек)"
+	L["(Human)"] = "(Человек)"
+	L["(Night Elf)"] = "(Ночной эльф)"
+	L["(Troll)"] = "(Тролль)"
+	L["(Undead)"] = "(Нежить)"
 	L["Abilities"] = "Способности"
 	L["Add Triggers"] = "Добавить триггеры"
 	L["Always Active"] = "Всегда активный триггер"
@@ -43,11 +49,11 @@ local L = WeakAuras.L
 	L["Charge Tracking"] = "Отслеживание заряда"
 	L["cooldown"] = "(восстановление)"
 	L["Cooldown Tracking"] = "Отслеживание восстановления"
-	--[[Translation missing --]]
-	L["Cooldowns"] = "Cooldowns"
+	L["Cooldowns"] = "Восстановление"
 	L["Create Auras"] = "Создать"
 	L["debuff"] = "(дебафф)"
 	L["Debuffs"] = "Дебаффы"
+	L["dps buff"] = "(бафф урона)"
 	L["General"] = "Общее"
 	L["Health"] = "Здоровье"
 	L["Highlight while action is queued."] = "Выделяет индикацию, если действие в очереди."
@@ -60,6 +66,7 @@ local L = WeakAuras.L
 	L["Highlight while spell is active."] = "Выделяет индикацию, если заклинание активно."
 	L["Hold CTRL to create multiple auras at once"] = "Удерживайте Ctrl для создания нескольких индикаций"
 	L["Keeps existing triggers intact"] = "Сохраняет существующие триггеры нетронутыми"
+	L["Master Channeler Rune"] = "(руна Мастер-чаротворец)"
 	L["Next"] = "Далее"
 	L["Only show the aura if the target has the debuff."] = "Показывает индикацию, только когда на цели есть дебафф."
 	L["Only show the aura when the item is on cooldown."] = "Показывает индикацию, только когда предмет восстанавливается."
@@ -71,7 +78,7 @@ local L = WeakAuras.L
 	L["Other cooldown"] = "(восстановление, остальные)"
 	L["Pet alive"] = "Питомец жив"
 	L["Pet Behavior"] = "Поведение питомца"
-	L["PvP Talents"] = "PvP таланты"
+	L["regen buff"] = "(бафф восстановления маны)"
 	L["Replace all existing triggers"] = "Заменяет все существующие триггеры"
 	L["Replace Triggers"] = "Заменить триггеры"
 	L["Resources"] = "Ресурсы"

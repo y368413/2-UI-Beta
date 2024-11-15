@@ -1833,7 +1833,7 @@ local points = {
     questId = 38755,
     name = t['spoils_of_war_treasure'],
     icon = 'chest',
-    note = t['spoils_of_war_note'],
+    note = t['hut_note'],
     loot = {
       achievement = {
         -- Jungle Treasure Master

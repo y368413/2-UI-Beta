@@ -43,6 +43,10 @@ local function ReskinWAIcon(icon)
 	hooksecurefunc(icon, "SetVertexColor", UpdateIconBgAlpha)
 end
 
+local function ResetBGLevel(frame)
+	frame.bg:SetFrameLevel(0)
+end
+
 local function Skin_WeakAuras(f, fType)
 	if fType == "icon" then
 		if not f.styled then
@@ -54,6 +58,7 @@ local function Skin_WeakAuras(f, fType)
 			f.bg = M.SetBD(f.bar, 0)
 			f.bg:SetFrameLevel(0)
 			ReskinWAIcon(f.icon)
+			hooksecurefunc(f, "SetFrameStrata", ResetBGLevel)
 			f.styled = true
 		end
 
@@ -64,14 +69,20 @@ end
 local function ReskinWA()
 	if not R.db["Skins"]["WeakAuras"] then return end
 
-	local function OnPrototypeCreate(region)
-		Skin_WeakAuras(region, region.regionType)
+	if not WeakAuras or not WeakAuras.Private then
+		return
 	end
-	local function OnPrototypeModifyFinish(_, region)
-		Skin_WeakAuras(region, region.regionType)
+
+	if WeakAuras.Private.regionPrototype then
+		local function OnPrototypeCreate(region)
+			Skin_WeakAuras(region, region.regionType)
+		end
+		local function OnPrototypeModifyFinish(_, region)
+			Skin_WeakAuras(region, region.regionType)
+		end
+		hooksecurefunc(WeakAuras.Private.regionPrototype, "create", OnPrototypeCreate)
+		hooksecurefunc(WeakAuras.Private.regionPrototype, "modifyFinish", OnPrototypeModifyFinish)
 	end
-	hooksecurefunc(WeakAuras.regionPrototype, "create", OnPrototypeCreate)
-	hooksecurefunc(WeakAuras.regionPrototype, "modifyFinish", OnPrototypeModifyFinish)
 end
 
 S:RegisterSkin("WeakAuras", ReskinWA)

@@ -4,8 +4,11 @@
 local addon, ns = ...
 local Hekili = _G[ addon ]
 
-local state = Hekili.State
+local class, state = Hekili.Class, Hekili.State
 local all = Hekili.Class.specs[ 0 ]
+
+local FindPlayerAuraByID = ns.FindPlayerAuraByID
+local RegisterEvent = ns.RegisterEvent
 
 
 -- 9.0 Trinkets
@@ -833,11 +836,11 @@ do
             no_icd = true,
 
             handler = function ()
-                applyBuff( "soul_ignition" )
+                applyBuff( "soul_ignition_345211" )
             end,
 
             auras = {
-                soul_ignition = {
+                soul_ignition_345211 = {
                     id = 345211,
                     duration = 15,
                     max_stack = 1
@@ -1467,13 +1470,23 @@ do
             gcd = "off",
 
             item = 188253,
+            no_icd = function () return buff.the_fourth_rune.down end,
+
+            toggle = function () return buff.the_fourth_rune.up and "cooldowns" or nil end,
 
             handler = function ()
                 if buff.the_first_rune.up then applyBuff( "the_second_rune" )
                 elseif buff.the_second_rune.up then applyBuff( "the_third_rune" )
                 elseif buff.the_third_rune.up then applyBuff( "the_fourth_rune" )
-                elseif buff.the_fourth_rune.up then applyBuff( "the_final_rune" )
-                else applyBuff( "the_first_rune" ) end
+                elseif buff.the_fourth_rune.up then
+                    removeBuff( "the_first_rune" )
+                    removeBuff( "the_second_rune" )
+                    removeBuff( "the_third_rune" )
+                    removeBuff( "the_fourth_rune" )
+                    applyBuff( "the_final_rune" )
+                else
+                    applyBuff( "the_first_rune" )
+                end
             end,
 
             auras = {
@@ -1570,10 +1583,12 @@ do
                 setCooldown( "global_cooldown", 3 )
             end,
 
+            self_buff = "heart_of_the_swarm",
+
             auras = {
                 heart_of_the_swarm = {
                     -- id = ???,
-                    -- May need to use GetPlayerAuraBySpellID.
+                    -- May need to use FindPlayerAuraByID.
                     duration = 3,
                     max_stack = 1,
                 },
@@ -1730,6 +1745,18 @@ do
             handler = function()
             end,
         },
+        eternal_gladiators_resonator = {
+            cast = 0,
+            cooldown = 120,
+            gcd = "off",
+
+            item = 192303,
+
+            toggle = "cooldowns",
+
+            handler = function()
+            end,
+        },
         cosmic_gladiators_fastidious_resolve = {
             cast = 0,
             cooldown = 180,
@@ -1740,7 +1767,7 @@ do
             toggle = "cooldowns",
 
             handler = function()
-                applyBuff( "the_first_sigil" )
+                applyBuff( "gladiators_fastidious_resolve" )
             end,
 
             auras = {
@@ -1750,6 +1777,19 @@ do
                     max_stack = 1,
                 }
             }
+        },
+        eternal_gladiators_fastidious_resolve = {
+            cast = 0,
+            cooldown = 180,
+            gcd = "off",
+
+            item = 192301,
+
+            toggle = "cooldowns",
+
+            handler = function()
+                applyBuff( "gladiators_fastidious_resolve" )
+            end,
         },
         cosmic_gladiators_eternal_aegis = {
             cast = 0,
@@ -1772,6 +1812,19 @@ do
                 }
             }
         },
+        eternal_gladiators_eternal_aegis = {
+            cast = 0,
+            cooldown = 120,
+            gcd = "off",
+
+            item = 192304,
+
+            toggle = "defensives",
+
+            handler = function()
+                applyBuff( "gladiators_eternal_aegis" )
+            end,
+        },
         cosmic_gladiators_devouring_malediction = {
             cast = 3,
             channeled = true,
@@ -1782,6 +1835,99 @@ do
 
             toggle = "cooldowns",
         },
+        eternal_gladiators_devouring_malediction = {
+            cast = 3,
+            channeled = true,
+            cooldown = 180,
+            gcd = "spell",
+
+            item = 192305,
+        },
+
+        bloodstained_handkerchief = {
+            cast = 0,
+            cooldown = 60,
+            gcd = "off",
+
+            item = 142159,
+
+            cycle = "cruel_garrote",
+
+            handler = function()
+                applyDebuff( "target", "cruel_garrote" )
+            end,
+
+            auras = {
+                cruel_garrote = {
+                    id = 230011,
+                    duration = 3600,
+                    max_stack = 1,
+                }
+            }
+        },
+        fleshrenders_meathook = {
+            cast = 0,
+            cooldown = 120,
+            gcd = "off",
+
+            item = 110002,
+
+            toggle = "cooldowns",
+
+            handler = function()
+                applyBuff( "haste" )
+            end,
+
+            auras = {
+                haste = {
+                    id = 165531,
+                    duration = 20,
+                    max_stack = 1,
+                }
+            }
+        },
+        kihras_adrenaline_injector = {
+            cast = 0,
+            cooldown = 120,
+            gcd = "off",
+
+            item = 109997,
+
+            toggle = "cooldowns",
+
+            handler = function()
+                applyBuff( "mastery" )
+            end,
+
+            auras = {
+                mastery = {
+                    id = 165485,
+                    duration = 20,
+                    max_stack = 1,
+                }
+            }
+        },
+        enforcers_stun_grenade = {
+            cast = 0,
+            cooldown = 120,
+            gcd = "off",
+
+            item = 110017,
+
+            toggle = "cooldowns",
+
+            handler = function()
+                applyBuff( "versatility" )
+            end,
+
+            auras = {
+                versatility = {
+                    id = 165534,
+                    duration = 20,
+                    max_stack = 1,
+                }
+            }
+        }
     } )
 
     all:RegisterAuras( {
@@ -1807,10 +1953,10 @@ do
         acquired_wand = 0,
     }
 
-    local f = CreateFrame("Frame")
-    f:RegisterEvent( "COMBAT_LOG_EVENT_UNFILTERED" )
+    -- local f = CreateFrame("Frame")
+    -- f:RegisterEvent( "COMBAT_LOG_EVENT_UNFILTERED" )
 
-    f:SetScript( "OnEvent", function( event )
+    RegisterEvent( "COMBAT_LOG_EVENT_UNFILTERED", function( event )
         if not state.equipped.cache_of_acquired_treasures then return end
 
         if event == "COMBAT_LOG_EVENT_UNFILTERED" then
@@ -1823,25 +1969,18 @@ do
         end
     end )
 
-    Hekili:ProfileFrame( "TreasureFrame", f )
-
 
     local function generate_treasure( t )
         local key = t.key
         local id = class.auras[ key ] and class.auras[ key ].id
 
         if id then
-            local name, _, count, _, duration, expires, caster = GetPlayerAuraBySpellID( id )
+            local name, _, count, _, _, _, caster = FindPlayerAuraByID( id )
 
             if name then
                 local applied = treasure_applied[ key ]
-                local now = GetTime()
-
-                duration = 12
-
-                if applied + duration < now then
-                    expires = now + duration
-                end
+                local duration = 12
+                local expires = applied + duration
 
                 t.count = max( 1, count )
                 t.expires = expires

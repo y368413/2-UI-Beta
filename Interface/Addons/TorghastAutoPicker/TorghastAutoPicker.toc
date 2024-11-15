@@ -4,6 +4,7 @@
 ## Author: Dacaver-Tichondrius
 ## Version: v1.0
 ## SavedVariables: TorghastAutoPickerDB
+## DefaultState: disabled
 
 TorghastAutoPicker.lua
 embeds.xml

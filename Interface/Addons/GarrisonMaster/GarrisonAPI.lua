@@ -5,16 +5,7 @@ getmetatable(L).__call = function(_,k) if T.L then L = T.L return L(k) end retur
 local FOLLOWER_ITEM_LEVEL_CAP, MENTOR_FOLLOWER, INF = T.FOLLOWER_ITEM_LEVEL_CAP, T.MENTOR_FOLLOWER, math.huge
 local FOLLOWER_LEVEL_CAP, FOLLOWER_LEVEL_BASE = T.FOLLOWER_LEVEL_CAP, T.FOLLOWER_LEVEL_BASE
 local unfreeStatusOrder = {[GARRISON_FOLLOWER_WORKING]=2, [GARRISON_FOLLOWER_INACTIVE]=1}
-
-local Nine = T.Nine or _G
-local C_Garrison = Nine.C_Garrison
-
-local function getShoppingTooltips(tip)
-	local GameTooltip = _G.GameTooltip
-	if tip[0] == GameTooltip[0] and not GameTooltip:IsForbidden() then
-		return GameTooltip.shoppingTooltips
-	end
-end
+local GameTooltip = T.NotGameTooltip or GameTooltip
 
 hooksecurefunc(C_Garrison, "MarkMissionComplete", function(mid)
 	EV("MP_MARK_MISSION_COMPLETE", mid)
@@ -278,7 +269,7 @@ local dropFollowers, missionEndTime = {}, {} do -- Start/Available capture
 		end
 	end
 	local function pushStart(id, f1, f2, f3)
-		local mi, _, cgr = C_Garrison.GetBasicMissionInfo(id), Nine.GetCurrencyInfo(824)
+		local mi, cgr = C_Garrison.GetBasicMissionInfo(id), C_CurrencyInfo.GetCurrencyInfo(824).quantity
 		if not mi or (cgr or 0) < (mi.cost or 0) then
 			releaseQueued(id)
 			EV("MP_MISSION_REJECT", id, f1, f2, f3)
@@ -307,7 +298,7 @@ local dropFollowers, missionEndTime = {}, {} do -- Start/Available capture
 		if next(startQueue) then
 			C_Timer.After(0.5, startQueuePing)
 		end
-		api.SuppressFollowerEvents(1) --FIXME: MP doesn't use false-start for ship groups
+		api.SuppressFollowerEvents(1)
 		for k, v in pairs(startQueue) do
 			pushStart(k, v[1], v[2], v[3])
 		end
@@ -410,7 +401,7 @@ local function SetFollowerInfo(t)
 	if um > 10 then T.config.goldRewardThreshold = 0 end
 	for k,v in pairs(dropFollowers) do
 		local f = ft[k]
-		if not f.missionEndTime then
+		if f and not f.missionEndTime then
 			f.status, f.missionEndTime = GARRISON_FOLLOWER_ON_MISSION, missionEndTime[v]
 		end
 	end
@@ -573,7 +564,7 @@ do -- api.GetMechanicInfo(mid/tex)
 	end
 end
 function api.GetMissionThreats(missionID)
-	local ret, rn, en = {}, 1, select(8,C_Garrison.GetMissionInfo(missionID))
+	local ret, rn, en = {}, 1, C_Garrison.GetMissionDeploymentInfo(missionID).enemies
 	for i=1,#en do
 		local mech = en[i].mechanics
 		for i=1,#mech do
@@ -617,8 +608,8 @@ function api.GetFMLevel(fmInfo, mentor)
 	return fmInfo and (mentor and mentor >= fmInfo.iLevel and mentor or fmInfo.level == FOLLOWER_LEVEL_CAP and fmInfo.iLevel > 600 and fmInfo.iLevel or fmInfo.level) or 0
 end
 function api.GetLevelEfficiency(fLevel, mLevel)
-	local ld, md = (mLevel or 0) - fLevel, mLevel and (mLevel > 600 and 15 or 3) or 0
-	return ld <= 0 and 1 or ld < md and (md-ld)/md or 0
+	local ld, md, fl = (mLevel or 0) - fLevel, mLevel and (mLevel > 600 and 15 or 3) or 0, T.XP_EFFICIENCY_FLOOR or 0
+	return ld <= 0 and 1 or ld < md and math.max(fl, (md-ld)/md) or fl
 end
 function api.GetFollowerLevelDescription(fid, mlvl, fi, mentor, mid, gi)
 	local fi = fi or api.GetFollowerInfo()[fid]
@@ -694,6 +685,7 @@ do -- CompleteMissions/AbortCompleteMissions
 	local curSalvage, curPlayerXP = {[114120]=0, [114119]=0, [114116]=0, [140590]=0, [139593]=0}, {}
 	local curState, curIndex, completionStep, lastAction, delayIndex, delayMID
 	local function checkSalvage(addRewards)
+		local GetItemCount = C_Item.GetItemCount
 		for k,v in pairs(curSalvage) do
 			local nv = GetItemCount(k) or 0
 			if addRewards and nv > v then
@@ -746,7 +738,8 @@ do -- CompleteMissions/AbortCompleteMissions
 				if v.currencyID then
 					local rew, cur, tmax, _ = v.quantity * api.GetRewardMultiplier(mi, v.currencyID)
 					if v.currencyID > 0 then
-						_, cur, _, _, _, tmax = Nine.GetCurrencyInfo(v.currencyID)
+						local ci = C_CurrencyInfo.GetCurrencyInfo(v.currencyID)
+						cur, tmax = ci.quantity, ci.maxQuantity
 					else
 						cur, tmax = GetMoney(), 1e11-1
 					end
@@ -1018,7 +1011,7 @@ do -- PrepareAllMissionGroups/GetMissionGroups {sc xp gr ti p1 p2 p3 xp pb}
 				return msd[mid]
 			end
 			
-			local baseCurrency, curID, chestXP, _, baseXP = 0, -1, 0, C_Garrison.GetMissionInfo(mid)
+			local baseCurrency, curID, chestXP, baseXP = 0, -1, 0, C_Garrison.GetMissionDeploymentInfo(mid).xp
 			for k,r in pairs(mi.rewards) do
 				if r.currencyID and not T.TraitStack[curID] then
 					baseCurrency, curID = r.quantity, r.currencyID
@@ -1528,11 +1521,11 @@ end
 function api.IsLevelAppropriateToken(itemID)
 	local ts = T.TokenSlots[itemID]
 	if ts then
-		local _, _, _, tl = GetItemInfo(itemID)
+		local _, _, _, tl = C_Item.GetItemInfo(itemID)
 		if not tl then return end
 		for s=ts, ts + (ts > 10 and 1 or 0) do
 			local iid = GetInventoryItemID("player", s)
-			local l = iid and select(4, GetItemInfo(iid))
+			local l = iid and select(4, C_Item.GetItemInfo(iid))
 			if l and l <= tl then
 				return true
 			end
@@ -1607,6 +1600,7 @@ do -- api.GetSuggestedGroupsMenu(mi, f1, f2, f3)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 		api.SetGroupTooltip(GameTooltip, g, mi)
 		GameTooltip:Show()
+		return T.HideOwnedGameTooltip
 	end
 	local function addToMenu(mm, groups, mi, primary)
 		for i=1,#groups do
@@ -1620,7 +1614,7 @@ do -- api.GetSuggestedGroupsMenu(mi, f1, f2, f3)
 			elseif rt == 824 and rq > 0 then
 				res = floor(g[1]*rq/100) .. " |TInterface\\Garrison\\GarrisonCurrencyIcons:20:20:0:-2:128:128:12:52:12:52|t"
 			elseif rt == 823 and rq > 0 then
-				res = floor(g[1]*rq/100) .. " |T" .. select(3,Nine.GetCurrencyInfo(rt)) .. ":14:14:0:0:64:64:4:60:4:60|t"
+				res = floor(g[1]*rq/100) .. " |T" .. C_CurrencyInfo.GetBasicCurrencyInfo(rt).icon .. ":14:14:0:0:64:64:4:60:4:60|t"
 			elseif rt == 0 and rq > 0 then
 				local r = g[1]*rq/100
 				res = GetMoneyString(r - r % 1e4)
@@ -1754,17 +1748,18 @@ do -- api.GetSuggestedGroupsMenu(mi, f1, f2, f3)
 end
 
 do -- api.GetUpgradeItems(ilevel, isArmor)
-	local function walk(ilvl, t, pos)
+	local function walk(GetItemCount, ilvl, t, pos)
 		for i=pos,#t,2 do
 			if t[i+1] > ilvl and GetItemCount(t[i]) > 0 then
-				return t[i], walk(ilvl, t, i + 2)
+				return t[i], walk(GetItemCount, ilvl, t, i + 2)
 			end
 		end
 	end
 	function api.GetUpgradeItems(ilevel, isWeapon)
-		return walk(ilevel, T.ItemLevelUpgrades[isWeapon and "WEAPON" or "ARMOR"], 1)
+		return walk(C_Item.GetItemCount, ilevel, T.ItemLevelUpgrades[isWeapon and "WEAPON" or "ARMOR"], 1)
 	end
 	function api.GetUpgradeRange()
+		local GetItemCount = C_Item.GetItemCount
 		local t, rW, rA  = T.ItemLevelUpgrades.WEAPON
 		for i=1,2 do
 			local limit = 0
@@ -1788,7 +1783,7 @@ function api.ExtendMissionInfoWithXPRewardData(mi, force)
 		bmul, extra, mi.successChance = api.GetBuffsXPMultiplier(pb), exp, mi.successChance or sc
 	end
 	if base == nil then
-		_, base = C_Garrison.GetMissionInfo(mi.missionID)
+		base = C_Garrison.GetMissionDeploymentInfo(mi.missionID).xp
 	end
 	if mentor == nil then
 		local _, milvl = C_Garrison.GetPartyMentorLevels(mi.missionID)
@@ -2344,7 +2339,8 @@ do -- +api.GetSuggestedMissionUpgradeGroups(missions, ojob, f1, f2, f3)
 					end
 				end
 			end
-			local _, _, _, _, env, _, _, en = C_Garrison.GetMissionInfo(mid)
+			local mdi = C_Garrison.GetMissionDeploymentInfo(mid)
+			local env, en = mdi.environmentTexture, mdi.enemies
 			s = {
 				mi.level == FOLLOWER_LEVEL_CAP and mi.iLevel > 600 and mi.iLevel or mi.level,
 				mi.numFollowers,
@@ -2554,9 +2550,9 @@ function api.GetMoIRewardIcon(rid)
 	if rid == 0 then
 		return "|TInterface\\Icons\\INV_Misc_Coin_01:14:14:0:0:64:64:4:60:4:60|t"
 	elseif rid < 2000 then
-		return "|T" .. (select(3,Nine.GetCurrencyInfo(rid)) or "Interface/Icons/Temp") .. ":14:14:0:0:64:64:4:60:4:60|t"
+		return "|T" .. (C_CurrencyInfo.GetBasicCurrencyInfo(rid).icon or "Interface/Icons/Temp") .. ":14:14:0:0:64:64:4:60:4:60|t"
 	else
-		return "|T" .. (GetItemIcon(rid) or "Interface/Icons/Temp") .. ":14:14:0:0:64:64:4:60:4:60|t"
+		return "|T" .. (C_Item.GetItemIconByID(rid) or "Interface/Icons/Temp") .. ":14:14:0:0:64:64:4:60:4:60|t"
 	end
 	return ""
 end
@@ -2698,8 +2694,6 @@ function api.SetClassSpecTooltip(self, specId, specName, ab1, ab2)
 		end
 	end
 	
-	self:SetBackdropColor(0,0,0)
-	
 	local novel, inact, _, rerollDesc = api.CountUniqueRerolls(c, fi and fi.followerID)
 	if novel > 0 or inact > 0 then
 		self:AddDoubleLine(L"Unique ability rerolls:", rerollDesc)
@@ -2797,14 +2791,14 @@ local prefixTip do
 	end
 end
 function api.SetItemTooltip(tip, id)
-	local cs = T.TokenSlots[id]
+	local cs = T.TokenSlots[id] or C_Item.GetItemInventoryTypeByID(id)
 	tip:SetItemByID(id)
-	local sta = getShoppingTooltips(tip)
-	if cs and sta then
+	local sta = cs and cs ~= 0 and tip.shoppingTooltips
+	if sta then
 		T.SetModifierSensitiveTip(api.SetItemTooltip, tip, id)
 		local st1, st2 = sta[1], sta[2]
 		if IsModifiedClick("COMPAREITEMS") or GetCVarBool("alwaysCompareItems") then
-			local ofsFrame, oy = GameTooltip, -8
+			local ofsFrame, oy = tip, -8
 			if GetInventoryItemID("player", cs) then
 				st1:SetOwner(tip, "ANCHOR_NONE")
 				st1:SetPoint("TOPRIGHT", tip, "TOPLEFT", -2, oy)
@@ -2840,7 +2834,7 @@ local function doSetCurrencyTraitTip(owner, id, tip)
 end
 function api.SetCurrencyTraitTip(tip, id, ftype)
 	local ts = T[ftype == 2 and "ShipTraitStack" or "TraitStack"][id]
-	local sta = getShoppingTooltips(tip)
+	local sta = tip.shoppingTooltips
 	if ts and sta and sta[1] then
 		doSetCurrencyTraitTip(tip, ts, sta[1])
 	end
@@ -2852,7 +2846,7 @@ function api.SetGroupTooltip(tip, g, mi)
 	elseif rt == 0 then
 		rl = GetMoneyString(rq - rq % 1e4)
 	elseif rt > 0 then
-		rl = rq .. " |T" .. (select(3,Nine.GetCurrencyInfo(rt)) or "Interface/Icons/Temp") .. ":14:14:0:0:64:64:4:60:4:60|t"
+		rl = rq .. " |T" .. (C_CurrencyInfo.GetCurrencyInfo(rt).iconFileID or "Interface/Icons/Temp") .. ":14:14:0:0:64:64:4:60:4:60|t"
 	end
 	tip:AddDoubleLine(g[1] .. "% |cffc0c0c0(" .. SecondsToTime(g[4]) .. ")", rl)
 	local finfo, ml = api.GetFollowerInfo(), api.GetFMLevel(mi)
@@ -2880,7 +2874,7 @@ function api.SetUpGroupTooltip(tip, g, mi)
 		if cid == 0 then
 			cq = GetMoneyString(cq - cq % 1e4)
 		elseif cid > 0 then
-			cq = cq .. " |T" .. (select(3,Nine.GetCurrencyInfo(cid)) or "Interface/Icons/Temp") .. ":14:14:0:0:64:64:4:60:4:60|t"
+			cq = cq .. " |T" .. (C_CurrencyInfo.GetBasicCurrencyInfo(cid).icon or "Interface/Icons/Temp") .. ":14:14:0:0:64:64:4:60:4:60|t"
 		else
 			cid = nil
 		end
@@ -2906,7 +2900,7 @@ function api.SetUpGroupTooltip(tip, g, mi)
 	end
 	if (g.cval or 0) > 0 then
 		local r = g.cslot == 3 and g.cval .. " |TInterface\\Garrison\\GarrisonCurrencyIcons:14:14:0:0:128:128:12:52:12:52|t" or GetMoneyString(g.cval)
-		tip:AddLine(REWARDS .. ": |cffffffff" .. r) --TODO
+		tip:AddLine(REWARDS .. ": |cffffffff" .. r)
 	end
 end
 function api.GetUnderLevelledFollower(g, mi)
@@ -3154,7 +3148,7 @@ function api.GetMissionPoolIdentity(mt)
 	end
 
 	local ls, mp = T.config.legendStep, T.InterestPool
-	local c2, c3 = ls > 0 or Nine.IsQuestFlaggedCompleted(35998), ls > 1 or Nine.IsQuestFlaggedCompleted(36013)
+	local c2, c3 = ls > 0 or C_QuestLog.IsQuestFlaggedCompleted(35998), ls > 1 or C_QuestLog.IsQuestFlaggedCompleted(36013)
 	T.config.legendStep = c3 and 2 or c2 and 1 or nil
 	local ng = not (C_Garrison.GetOwnedBuildingInfoAbbrev(25) == 36 or C_Garrison.GetOwnedBuildingInfoAbbrev(22) == 36)
 	
@@ -3256,7 +3250,8 @@ do -- api.GetBestGroupInfo()
 		return fi, rtid
 	end
 	local function runRecruitProspects(rt, yield)
-		for i=1,#rt do
+		local nrt = #rt
+		for i=1, nrt do
 			local fi, ct = rt[i]
 			fi.useMarks, fi.clones, ct = {}, {}, T.SpecCounters[fi.classSpec]
 			local c1, c2 = fi.counters[1], fi.counters[2] or 0
@@ -3285,7 +3280,7 @@ do -- api.GetBestGroupInfo()
 		for k,v in pairs(groups) do
 			gc[k] = v.variants
 		end
-		for i=1,3 do
+		for i=1, nrt do
 			local t, c = {}, {}
 			for k,v in pairs(rt[i].clones) do
 				c[k] = v.useMarks

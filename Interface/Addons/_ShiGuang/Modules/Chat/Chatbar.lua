@@ -1,6 +1,8 @@
 ﻿local _, ns = ...
 local M, R, U, I = unpack(ns)
 local module = M:GetModule("Chat")
+local tinsert, pairs = tinsert, pairs
+local C_GuildInfo_IsGuildOfficer = C_GuildInfo.IsGuildOfficer
 local gsub, gmatch, ipairs, select= string.gsub, string.gmatch, ipairs, select
 
 ------------------------------------------------------------------------------------- 属性通报 ----------------------------------------
@@ -294,7 +296,7 @@ local chatSwitchInfo = {
 }
 
 local function chatSwitchTip()
-	if not MaoRUIDB["Help"]["ChatSwitch"] then
+	if not MaoRUISetDB["Help"]["ChatSwitch"] then
 		HelpTip:Show(ChatFrame1, chatSwitchInfo)
 	end
 end
@@ -444,13 +446,13 @@ function module:Chatbar()
 	local roll = AddButton(.8, 1, .6, Chatbar_rollText)  --LOOT_ROLL
 	roll:SetAttribute("type", "macro")
 	roll:SetAttribute("macrotext", "/roll")
-	roll:RegisterForClicks("AnyDown")
+	roll:RegisterForClicks("AnyUp", "AnyDown")
 
 	-- COMBATLOG
 	--local combat = AddButton(1, 1, 0, BINDING_NAME_TOGGLECOMBATLOG)
 	--combat:SetAttribute("type", "macro")
 	--combat:SetAttribute("macrotext", "/combatlog")
-	--combat:RegisterForClicks("AnyDown")
+	--combat:RegisterForClicks("AnyUp", "AnyDown")
 	
 	-- WORLD CHANNEL
 	if GetCVar("portal") == "CN" then

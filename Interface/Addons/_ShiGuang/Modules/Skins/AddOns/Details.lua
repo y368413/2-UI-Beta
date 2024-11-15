@@ -10,7 +10,7 @@ local function SetupInstance(instance)
 		instance.wasHidden = true
 	end
 	-- reset texture if using Details default texture
-	local needReset = instance.row_info.texture == "BantoBar"
+	local needReset = instance.row_info.texture == "Details Hyanda" -- details change it from 'BantoBar'
 	instance:ChangeSkin("Minimalistic")
 	instance:InstanceWallpaper(false)
 	instance:DesaturateMenu(true)
@@ -114,7 +114,7 @@ local function ReskinDetails()
 	end
 
 	-- Numberize
-	local current = MaoRUIDB["NumberFormat"]
+	local current = MaoRUISetDB["NumberFormat"]
 	if current < 3 then
 		Details.numerical_system = current
 		Details:SelectNumericalSystem()

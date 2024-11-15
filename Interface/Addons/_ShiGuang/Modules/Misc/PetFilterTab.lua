@@ -79,7 +79,7 @@ end
 function MISC:PetTabs_Init()
 	if not R.db["Misc"]["PetFilter"] then return end
 
-	if IsAddOnLoaded("Blizzard_Collections") then
+	if C_AddOns.IsAddOnLoaded("Blizzard_Collections") then
 		MISC:PetTabs_Create()
 	else
 		M:RegisterEvent("ADDON_LOADED", MISC.PetTabs_Load)

@@ -1,0 +1,26 @@
+## Interface: 110000
+## Title: ZamestoTV Delves
+## Title-ruRU: ZamestoTV Вылазки
+## Notes: Chests and Power-ups
+## Notes-ruRU: Сундуки и усиления
+## Author: ZamestoTV
+## IconTexture: Interface\AddOns\ZamestoTV_Delves\Icons\goblin
+## Version: 1.4.1
+## DefaultState: enabled
+## X-Category: Map
+## SavedVariables: HandyNotes_DelvesDB
+## RequiredDeps: HandyNotes
+## OptionalDeps: 
+## DefaultState: Enabled
+
+#@no-lib-strip@
+embeds.xml
+#@end-no-lib-strip@
+
+Localization/ruRU.lua
+Localization/enUS.lua
+Localization/deDE.lua
+
+handler.lua
+config.lua
+Delves.lua

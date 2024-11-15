@@ -1,0 +1,8 @@
+## Interface: 110005
+## Title: SimpleMinimapBlip
+## Author: cc27
+## Notes: Modify the appearance of tracking icons on the minimap.  Enable command: /smb on, Disable command: /smb off 
+## Notes-zhCN: 修改小地图追踪点图标的样式。启用命令 /smb on，禁用命令 /smb off   
+## IconTexture: Interface\AddOns\SimpleMinimapBlip\icon.tga
+
+SimpleMinimapBlip.lua

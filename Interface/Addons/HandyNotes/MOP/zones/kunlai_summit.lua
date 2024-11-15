@@ -27,7 +27,7 @@ local map = Map({id = 379, settings = true})
 ------------------------------------ RARES ------------------------------------
 -------------------------------------------------------------------------------
 
-map.nodes[75006760] = Rare({
+map.nodes[75116750] = Rare({
     id = 69842,
     note = L['zandalari_warbringer_note'],
     rewards = {
@@ -41,16 +41,6 @@ map.nodes[75006760] = Rare({
         Mount({item = 94231, id = 536}) -- Reins of the Jade Primordial Direhorn
     }
 }) -- Zandalari Warbringer
-
-map.nodes[57006460] = Rare({
-    id = 60491,
-    rewards = {
-        Mount({item = 87771, id = 473}), Achievement({id = 6480}), -- Settle Down, Bro
-        Achievement({id = 6926, criteria = 19136}) -- Tranquil Master
-
-    },
-    pois = {POI({53916474})}
-}) -- Sha of Anger
 
 map.nodes[40804240] = Rare({
     id = 50817,
@@ -171,7 +161,7 @@ map.nodes[36667984] = Rare({
     }
 }) -- Ski'thik
 
-map.nodes[73807740] = Rare({
+map.nodes[74147879] = Rare({
     id = 50769,
     note = L['multiple_spawns'],
     rewards = {
@@ -187,7 +177,7 @@ map.nodes[73807740] = Rare({
         Transmog({item = 87620, slot = L['plate']}), -- Bracers of the Frozen Summit
         Transmog({item = 87621, slot = L['plate']}) -- Wristguards of Great Fortune
     },
-    pois = {POI({74407920, 73207640})}
+    pois = {POI({74407920, 73207640, 73807740})}
 }) -- Zai the Outcast
 
 -------------------------------------------------------------------------------
@@ -223,11 +213,11 @@ local sprites_cloth_chest = Treasure({
     quest = 31412,
     rewards = {
         Achievement({id = 7284, criteria = {id = 1, qty = true}}), -- Is Another Man's Treasure
-        Transmog({item = 86221}), -- Wise Sprite Cloak
-        Transmog({item = 86222}), -- Precise Sprite Cloak
-        Transmog({item = 86223}), -- Agile Sprite Cloak
-        Transmog({item = 86224}), -- Steadfast Sprite Cape
-        Transmog({item = 86225}) -- Strong Sprite Cloak
+        Transmog({item = 86221, slot = L['cloak']}), -- Wise Sprite Cloak
+        Transmog({item = 86222, slot = L['cloak']}), -- Precise Sprite Cloak
+        Transmog({item = 86223, slot = L['cloak']}), -- Agile Sprite Cloak
+        Transmog({item = 86224, slot = L['cloak']}), -- Steadfast Sprite Cape
+        Transmog({item = 86225, slot = L['cloak']}) -- Strong Sprite Cloak
     }
 }) -- Sprite's Cloth Chest
 map.nodes[73137356] = sprites_cloth_chest

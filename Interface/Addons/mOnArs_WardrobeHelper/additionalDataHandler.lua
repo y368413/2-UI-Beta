@@ -58,8 +58,163 @@ local classArmorTypeMap = {
   ["ROGUE"] = LEATHER,
   ["SHAMAN"] = MAIL,
   ["WARLOCK"] = CLOTH,
-  ["WARRIOR"] = PLATE
+  ["WARRIOR"] = PLATE,
+  ["EVOKER"] = MAIL
 }
+
+local Axe1H = Enum.ItemWeaponSubclass.Axe1H
+local Axe2H = Enum.ItemWeaponSubclass.Axe2H
+local Bows = Enum.ItemWeaponSubclass.Bows
+local Guns = Enum.ItemWeaponSubclass.Guns
+local Mace1H = Enum.ItemWeaponSubclass.Mace1H
+local Mace2H = Enum.ItemWeaponSubclass.Mace2H
+local Polearm = Enum.ItemWeaponSubclass.Polearm
+local Sword1H = Enum.ItemWeaponSubclass.Sword1H
+local Sword2H = Enum.ItemWeaponSubclass.Sword2H
+local Warglaive = Enum.ItemWeaponSubclass.Warglaive
+local Staff	= Enum.ItemWeaponSubclass.Staff
+local Bearclaw = Enum.ItemWeaponSubclass.Bearclaw	
+local Catclaw = Enum.ItemWeaponSubclass.Catclaw
+local Unarmed = Enum.ItemWeaponSubclass.AxeUnarmed1H
+local Generic = Enum.ItemWeaponSubclass.Generic
+local Dagger = Enum.ItemWeaponSubclass.Dagger
+local Thrown = Enum.ItemWeaponSubclass.Thrown
+local Obsolete3 = Enum.ItemWeaponSubclass.Obsolete3
+local Crossbow = Enum.ItemWeaponSubclass.Crossbow
+local Wand = Enum.ItemWeaponSubclass.Wand
+local Fishingpole = Enum.ItemWeaponSubclass.Fishingpole
+
+local PresetTransmogs = {
+	["DEATHKNIGHT"] = {
+		Axe1H,
+		Axe2H,
+		Mace1H,
+		Mace2H,
+		Sword1H,
+		Sword2H,
+		Polearm,
+	},
+  ["DEMONHUNTER"] = {
+		Axe1H,
+		Sword1H,
+		Unarmed,
+    Warglaive,
+  },
+	["DRUID"] = {
+		Dagger,
+		Mace1H,
+		Mace2H,
+		Staff,
+		Polearm,
+		Unarmed,
+	},
+  ["EVOKER"] = {
+		Dagger,
+		Axe1H,
+		Axe2H,
+		Mace1H,
+		Mace2H,
+		Sword1H,
+		Sword2H,
+		Staff,
+		Guns,
+  },
+	["HUNTER"] = {
+		Dagger,
+		Axe1H,
+		Axe2H,
+		Sword1H,
+		Sword2H,
+		Staff,
+		Polearm,
+		Guns,
+		Bows,
+		Crossbow,
+		Unarmed,
+	},
+	["MAGE"] = {
+		Dagger,
+		Sword1H,
+		Wand,
+		Staff,
+	},
+  ["MONK"] = {
+		Axe1H,
+		Sword1H,
+		Mace1H,
+		Unarmed,
+		Staff,
+		Polearm,
+  },
+	["PALADIN"] = {
+		Axe1H,
+		Axe2H,
+		Mace1H,
+		Mace2H,
+		Sword1H,
+		Sword2H,
+		Polearm,
+    SHIELD,
+	},
+	["PRIEST"] = {
+		Dagger,
+		Mace1H,
+		Wand,
+		Staff,
+	},
+	["ROGUE"] = {
+		Dagger,
+		Axe1H,
+		Mace1H,
+		Sword1H,
+		Guns,
+		Bows,
+		Crossbow,
+		Unarmed,
+	},
+	["SHAMAN"] = {
+		Dagger,
+		Axe1H,
+		Axe2H,
+		Mace1H,
+		Mace2H,
+		Staff,
+		Unarmed,
+    SHIELD,
+	},
+	["WARLOCK"] = {
+		Dagger,
+		Sword1H,
+		Wand,
+		Staff,
+	},
+	["WARRIOR"] = {
+		Dagger,
+		Axe1H,
+		Axe2H,
+		Mace1H,
+		Mace2H,
+		Sword1H,
+		Sword2H,
+		Staff,
+		Polearm,
+		Guns,
+		Bows,
+		Crossbow,
+		Unarmed,
+    SHIELD,
+	},
+}
+
+local function has_value (tab, val)
+  for index, value in ipairs(tab) do
+      if value == val then
+          return true
+      end
+  end
+
+  return false
+end
 
 o.getPlayerArmorTypeName = function()
   local playerArmorTypeID = classArmorTypeMap[select(2, UnitClass("player"))]
@@ -86,6 +241,7 @@ o.isArmorSubClassID = function(subClassID, itemLink)
   return select(1, GetItemSubClassInfo(4, subClassID)) == itemSubClass
 end
 
+-- shield "\124cff0070dd\124Hitem:28316::::::::70:::::\124h[Aegis of the Sunbird]\124h\124r"
 o.isArmorAppropriateForPlayer = function(itemLink)
   local playerArmorTypeID = o.getPlayerArmorTypeName()
   local slotName = o.getItemSlotName(itemLink)
@@ -99,6 +255,15 @@ o.isArmorAppropriateForPlayer = function(itemLink)
   if armorTypeSlots[slotName] and isArmorCosmetic == false then
     return playerArmorTypeID == o.getItemSubClassName(itemLink)
   else
+    if (slotName == SHIELD) then
+      return has_value(PresetTransmogs[select(2, UnitClass("player"))], SHIELD)
+    end
+
+    local itemID, itemType, itemSubType, itemEquipLoc, icon, classID, subclassID = GetItemInfoInstant(itemLink)
+    if classID == 2 then
+      return has_value(PresetTransmogs[select(2, UnitClass("player"))], subclassID)
+    end
+
     return true
   end
 end

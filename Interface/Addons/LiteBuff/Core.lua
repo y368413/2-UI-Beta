@@ -7,9 +7,20 @@
 
 local type = type
 local tinsert = tinsert
-local GetSpellInfo = GetSpellInfo
+local GetSpellInfo = GetSpellInfo or function(id)
+	local info = C_Spell.GetSpellInfo(id)
+	if info then
+		return info.name, nil, info.iconID, info.castTime, info.minRange, info.maxRange, info.spellID, info.originalIconID;
+	end
+end;
 local select = select
-local UnitBuff = UnitBuff
+local UnitBuff = UnitBuff or function(unitToken, index, filter)
+	local auraData = C_UnitAuras.GetBuffDataByIndex(unitToken, index, filter)
+	if (not auraData) then
+		return nil
+	end
+	return AuraUtil.UnpackAuraData(auraData)
+end
 local GetNumShapeshiftForms = GetNumShapeshiftForms
 local GetShapeshiftFormInfo = GetShapeshiftFormInfo
 local UnitName = UnitName
@@ -28,7 +39,7 @@ local RAID_CLASS_COLORS = RAID_CLASS_COLORS
 
 local addonName, addon = ...
 _G["LiteBuff"] = addon
-addon.version = GetAddOnMetadata(addonName, "Version") or "2.0"
+addon.version = "4.60"
 
 local actionButtons = {} -- All created action buttons
 local InitCallbacks = {} -- Registered functions to be called when ADDON_LOADED fires for this addon, after addon data are intialized
@@ -158,25 +169,17 @@ function addon:UpdateSpellListIcons(spellList)
 	end
 end
 
-function Aby_UnitAura_Proxy(UnitAuraFunc, unit, indexOrName, filterOrNil, filter, ...)
-    --if type(indexOrName) == "number" then
-    --    return UnitAuraFunc(unit, indexOrName, filterOrNil, filter, ...)
-    --else
-        for i = 1, 40 do
-            local name, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, v1, nameplateShowAll, timeMod, value1, value2, value3, v3, v4, v5 = UnitAuraFunc(unit, i, filterOrNil, filter, ...)
-            if not name then return end
-            if name == indexOrName then return name, nil, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, v1, nameplateShowAll, timeMod, value1, value2, value3, v3, v4, v5 end
-        end
-    --end
-end
-function Aby_UnitBuff(unit, indexOrName, filterOrNil, filter, ...) return Aby_UnitAura_Proxy(UnitBuff, unit, indexOrName, filterOrNil, filter, ...) end
-
 -- Retrieves buff remain time
 function addon:GetUnitBuffTimer(unit, buff, mine)
 	if unit and buff then
-		local name, _, _, count, _, _, expires, caster = Aby_UnitBuff(unit, buff)
-		if name and (not mine or caster == "player") then
-			return expires or 0, count or 1
+		for i = 1, 40 do
+			local name, _, count, _, _, expires, caster = UnitBuff(unit, i)
+			if not name then return end
+			if name == buff then
+				if not mine or caster == "player" then
+					return expires or 0, count or 1
+				end
+			end
 		end
 	end
 end

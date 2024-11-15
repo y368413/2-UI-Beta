@@ -1,7 +1,10 @@
-### Changes in 100000.30-Release:
+### Changes in 110000.50-Release:
 
-- Added: Arrow indicators on the cosmic map
-- Changed: Complete rewrite
+- Added: 11 new Mole Machine locations
+- Changed: Moved the "Shadowforge City" Mole Machine location slightly to avoid overlapping
+- Changed: Use zone name for Mole Machine "Masonary" location (Blackrock Mountain)
+- Changed: Use a unique icon for random locations
 - Changed: Update Interface version
-- Removed: Map button in gossip windows
+- Fixed: Undiscovered Mole Machine locations sometimes showing up
+- Fixed: Flight points disappearing from the map
 

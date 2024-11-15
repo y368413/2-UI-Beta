@@ -8,6 +8,8 @@ Gypsy.inspectCycle = 0
 Gypsy.ExAn = false
 Gypsy.Gamehook = CreateFrame("Frame", nil, nil)
 
+local GetItemInfo, GetInventoryItemLink, GetInventoryItemCooldown = C_Item.GetItemInfo, GetInventoryItemLink, GetInventoryItemCooldown
+local GetSpellName, GetSpellTexture = C_Spell.GetSpellName, C_Spell.GetSpellTexture
 --Iteminfo 
 	--[3] quality
 	--[4] ilvl
@@ -245,9 +247,9 @@ function Gypsy.getInventory(player)
 end
 
 function Gypsy.extractItemlink(msg)
-	local s_start = string.find(msg, "|")
-	local s_end = string.find(msg, "|h|r") + 3
-	local s_itemname = string.sub(msg, s_start, s_end)
+	--local s_start = string.find(msg, "|")
+	--local s_end = string.find(msg, "|h|r") + 3
+	local s_itemname = string.match(msg, "|%x+|Hitem:.-|h.-|h|r")  --s_start, s_end
 	return s_itemname
 end
 
@@ -386,7 +388,7 @@ function Gypsy.lootRoutine(...)
   if (Gypsy.Players[looter] == nil) then
     looter = string.sub(looter, 1, string.len(looter) - (string.len(GetRealmName())+1))
     if (Gypsy.Players[looter] ~= nil) then
-      print("Looter now found!")
+      --print("Looter now found!")
     end
   end
 	--print("looter and player inspected?")
@@ -568,6 +570,7 @@ function Gypsy.getItemClass()
 	if UC[2] == "MONK" then return 2 end
 	if UC[2] == "DRUID" then return 2 end
 	if UC[2] == "DEMONHUNTER" then return 2 end
+	if UC[2] == "EVOKER" then return 2 end
 end
 
 --function Gypsy.createCondition(con1, operator, con2, item, looter) -- not finished. Not sure if I'm going to implement the dynamic system again.

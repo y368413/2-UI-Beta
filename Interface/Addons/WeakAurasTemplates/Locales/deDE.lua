@@ -1,12 +1,18 @@
 if not WeakAuras.IsLibsOK() then return end
 
-if GetLocale() ~= "deDE" then
+if (GAME_LOCALE or GetLocale()) ~= "deDE" then
   return
 end
 
 local L = WeakAuras.L
 
 -- WeakAuras/Templates
+	L["(Dwarf)"] = "(Zwerg)"
+	L["(Dwarf/Human)"] = "(Zwerg/Mensch)"
+	L["(Human)"] = "(Mensch)"
+	L["(Night Elf)"] = "(Nachtelf)"
+	L["(Troll)"] = "(Troll)"
+	L["(Undead)"] = "(Untot)"
 	L["Abilities"] = "Fähigkeiten"
 	L["Add Triggers"] = "Auslöser hinzufügen"
 	L["Always Active"] = "Immer aktiv"
@@ -71,6 +77,8 @@ local L = WeakAuras.L
 	L["Create Auras"] = "Auren erstellen"
 	L["debuff"] = "Schwächungszauber"
 	L["Debuffs"] = "Debuffs"
+	--[[Translation missing --]]
+	L["dps buff"] = "dps buff"
 	L["General"] = "Allgemein"
 	L["Health"] = "Gesundheit"
 	--[[Translation missing --]]
@@ -92,6 +100,8 @@ local L = WeakAuras.L
 	--[[Translation missing --]]
 	L["Hold CTRL to create multiple auras at once"] = "Hold CTRL to create multiple auras at once"
 	L["Keeps existing triggers intact"] = "Verändert existierende Auslöser nicht"
+	--[[Translation missing --]]
+	L["Master Channeler Rune"] = "Master Channeler Rune"
 	L["Next"] = "Nächste"
 	--[[Translation missing --]]
 	L["Only show the aura if the target has the debuff."] = "Only show the aura if the target has the debuff."
@@ -111,7 +121,8 @@ local L = WeakAuras.L
 	L["Other cooldown"] = "Other cooldown"
 	L["Pet alive"] = "Begleiter am Leben"
 	L["Pet Behavior"] = "Begleiterverhalten"
-	L["PvP Talents"] = "PvP-Talente"
+	--[[Translation missing --]]
+	L["regen buff"] = "regen buff"
 	L["Replace all existing triggers"] = "Ersetzt alle vorhandenen Auslöser "
 	L["Replace Triggers"] = "Auslöser ersetzen"
 	L["Resources"] = "Ressourcen"

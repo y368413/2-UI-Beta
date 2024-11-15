@@ -3,6 +3,12 @@ if select(2, UnitClass("player")) ~= "MAGE" then return end
 
 local _, addon = ...
 local L = addon.L
+local GetSpellInfo = GetSpellInfo or function(id)
+	local info = C_Spell.GetSpellInfo(id)
+	if info then
+		return info.name, nil, info.iconID, info.castTime, info.minRange, info.maxRange, info.spellID, info.originalIconID;
+	end
+end;
 
 local spellFOTele = {
     1, -- Horde
@@ -71,17 +77,6 @@ local update = function()
         for count, tbl in next, spellList2 do
             button:SetAttribute('spell2List'..count, tbl.spell)
         end
-        -- local name, desc, numSlots, isKnown = GetFlyoutInfo(spellFOPortal)
-        -- if(isKnown) then
-        --     local count = 0
-        --     for slot = 1, numSlots do
-        --         local spellID, overrideSpellID, isKnown, spellName, slotSpecID = GetFlyoutSlotInfo(spellFOPortal, slot)
-        --         if(isKnown) then
-        --             count = count + 1
-        --             button:SetAttribute('spell2List'..count, spellName)
-        --         end
-        --     end
-        -- end
 
         if(not button:IsShown()) then button:Show() end
         button:SetScrollable(spellList, 'spell1', _scrollSnippet)

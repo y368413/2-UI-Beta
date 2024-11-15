@@ -1,12 +1,16 @@
-## Interface: 100000
-## Title: tdBattlePetScript
-## Description: 自动宠物战斗
-## Author: DengSir
-## Version: 10.0.0
-## OptionalDeps: tdGUI, Ace3
+## Interface: 110002
+## Title: Pet Battle Scripts
+## Notes: Battle Pet Combat Scripting
+## Author: axc450
+## Version: v1.10.6
+## OptionalDeps: Ace3, Rematch, ElvUI
 ## SavedVariables: TD_DB_BATTLEPETSCRIPT_GLOBAL
 ## SavedVariablesPerCharacter: TD_DB_BATTLEPETSCRIPT_BATTLE_CACHE
 ## LoadManagers: AddonLoader
 ## X-LoadOn-Always: delayed
+## X-Curse-Project-ID: 699660
+## X-Wago-ID: WYK9036L
+## X-WoWI-ID: 26435
+## DefaultState: disabled
 
 Load.xml

@@ -1,5 +1,5 @@
 -- Targets.lua
--- June 2014
+-- July 2024
 
 local addon, ns = ...
 local Hekili = _G[addon]
@@ -9,6 +9,7 @@ local state = Hekili.State
 
 local FindUnitBuffByID = ns.FindUnitBuffByID
 local FindUnitDebuffByID = ns.FindUnitDebuffByID
+local FindExclusionAuraByID
 
 local targetCount = 0
 local targets = {}
@@ -21,7 +22,7 @@ local counted = {}
 
 local formatKey = ns.formatKey
 local orderedPairs = ns.orderedPairs
-local FeignEvent = ns.FeignEvent
+local FeignEvent, RegisterEvent = ns.FeignEvent, ns.RegisterEvent
 
 local format = string.format
 local insert, remove, wipe = table.insert, table.remove, table.wipe
@@ -72,21 +73,49 @@ do
 
     local petSpells = {
         HUNTER = {
-            [288962] = true,
-            [16827]  = true,
-            [17253]  = true,
-            [49966]  = true,
+            [288962] = 10,
+            [17253]  = 5,
+            [16827]  = 5,
+            [159953] = 5,
+            [49966]  = 5,
+            [263863] = 7,
+            [50433]  = 7,
+            [24423]  = 7,
+            [160060] = 7,
+            [50285]  = 7,
+            [263840] = 7,
+            [263856] = 7,
+            [263861] = 7,
+            [279362] = 7,
+            [160018] = 7,
+            [263853] = 7,
+            [263423] = 7,
+            [54680]  = 7,
+            [344352] = 7,
+            [50245]  = 7,
+            [263857] = 7,
+            [263854] = 7,
+            [263852] = 7,
+            [160065] = 7,
+            [263858] = 7,
+            [341118] = 7,
+            [35346]  = 7,
+            [160067] = 7,
 
-            count    = 4
+            best     = 288962,
+            count    = 28
         },
 
         WARLOCK = {
-            [6360]  = true, -- Whiplash (Succubus)
-            [54049] = true, -- Shadow Bite (Felhunter)
-            [7814]  = true, -- Lash of Pain (Succubus)
-            [30213] = true, -- Legion Strike (Felguard)
+            [6360]   = 10,
+            [7814]   = 7,
+            [30213]  = 7,
+            [115625] = 7,
+            [54049]  = 7,
+            [115778] = 7,
 
-            count   = 4
+            best     = 6360,
+            count    = 6
         }
     }
 
@@ -125,7 +154,7 @@ do
         local spells = petSpells[ myClass ]
         local success = false
 
-        for i = 1, 120 do
+        for i = 1, 180 do
             local slotType, spell = GetActionInfo( i )
 
             if slotType and spell and spells[ spell ] then
@@ -164,76 +193,98 @@ local enemyExclusions = {
     [177117] = 355790,    -- Ner'zhul: Orb of Torment (Protected by Eternal Torment)
     [176581] = true,      -- Painsmith:  Spiked Ball
     [186150] = true,      -- Soul Fragment (Gavel of the First Arbiter)
+    [185685] = true,      -- Season 3 Relics
+    [185680] = true,      -- Season 3 Relics
+    [185683] = true,      -- Season 3 Relics
+    [183501] = 367573,    -- Xy'mox: Genesis Bulwark
+    [166969] = true,      -- Frieda
+    [166970] = true,      -- Stavros
+    [166971] = true,      -- Niklaus
+    [168113] = 329606,    -- Grashaal (when shielded)
+    [168112] = 329636,    -- Kaal (when shielded)
+    [193760] = true,      -- Surging Ruiner (Raszageth) -- gives bad range information.
+    [204560] = true,      -- Incorporeal Being
+    [229296] = true       -- Orb of Ascendance (TWW S1 Affix)
 }
 
+local requiredForInclusion = {
+    [131825] = 260805,    -- Focusing Iris (damage on others is wasted)
+    [131823] = 260805,    -- Same
+    [131824] = 206805,    -- Same
+}
 
-local f = CreateFrame("Frame")
-f:RegisterEvent( "NAME_PLATE_UNIT_ADDED" )
-f:RegisterEvent( "NAME_PLATE_UNIT_REMOVED" )
-f:RegisterEvent( "UNIT_FLAGS" )
+if Hekili.IsDev then
+    -- Add these exclusions only in development copies, until a solution is built for funnelers vs. non-funnelers.
+    enemyExclusions[202971] = 404705 -- Null Glimmer
+    enemyExclusions[202969] = 404705 -- Empty Recollection
+end
 
-f:SetScript( "OnEvent", function( self, event, unit )
+RegisterEvent( "NAME_PLATE_UNIT_ADDED", function( event, unit )
+    local id = UnitGUID( unit )
+
     if UnitIsFriend( "player", unit ) then
-        if event ~= "UNIT_FLAGS" then return end
-        local id = UnitGUID( unit )
-        ns.eliminateUnit( id, true )
-
-        npGUIDs[unit] = nil
-        npUnits[id]   = nil
+        npGUIDs[ unit ] = nil
+        npUnits[ id ] = nil
         return
     end
 
-    if event == "NAME_PLATE_UNIT_ADDED" then
-        local id = UnitGUID( unit )
-        npGUIDs[unit] = id
-        npUnits[id]   = unit
+    npGUIDs[ unit ] = id
+    npUnits[ id ]   = unit
+end )
 
-    elseif event == "NAME_PLATE_UNIT_REMOVED" then
-        local id = npGUIDs[ unit ] or UnitGUID( unit )
-        npGUIDs[unit] = nil
-        if npUnits[id] and npUnits[id] == unit then
-            npUnits[id] = nil
-        end
+RegisterEvent( "NAME_PLATE_UNIT_REMOVED", function( event, unit )
+    local storedGUID = npGUIDs[ unit ]
+    local id = UnitGUID( unit )
+
+    npGUIDs[ unit ] = nil
+
+    if npUnits[ id ] and npUnits[ id ] == unit then npUnits[ id ] = nil end
+    if npUnits[ storedGUID ] and npUnits[ storedGUID ] == unit then npUnits[ storedGUID ] = nil end
+end )
+
+RegisterEvent( "UNIT_FLAGS", function( event, unit )
+    if unit == "player" or UnitIsUnit( unit, "player" ) then return end
+
+    if UnitIsFriend( "player", unit ) then
+        local id = UnitGUID( unit )
+        ns.eliminateUnit( id )
+
+        npGUIDs[ unit ] = nil
+        npUnits[ id ]   = nil
     end
 end )
 
-Hekili:ProfileFrame( "NamePlateWatcherFrame", f )
 
-
-
-
-
-local RC = LibStub("LibRangeCheck-2.0")
+local RC = LibStub( "LibRangeCheck-3.0" )
+local LSR = LibStub( "SpellRange-1.0" )
 
 local lastCount = 1
 local lastStationary = 1
-local lastCycle = 0
-
-local guidRanges = {}
 
 
 -- Chromie Time impacts phasing as well.
 local chromieTime = false
 
 do
-    local ct = CreateFrame( "Frame" )
-
-    ct:RegisterEvent( "CHROMIE_TIME_OPEN" )
-    ct:RegisterEvent( "CHROMIE_TIME_CLOSE" )
-    ct:RegisterEvent( "PLAYER_ENTERING_WORLD" )
+    local IsPlayerInChromieTime = C_PlayerInfo.IsPlayerInChromieTime
 
     local function UpdateChromieTime()
-        chromieTime = C_PlayerInfo.IsPlayerInChromieTime()
+        chromieTime = IsPlayerInChromieTime()
     end
 
-    ct:SetScript( "OnEvent", function( self, event, login, reload )
+    local function ChromieCheck( self, event, login, reload )
         if event ~= "PLAYER_ENTERING_WORLD" or login or reload then
-            chromieTime = C_PlayerInfo.IsPlayerInChromieTime()
+            chromieTime = IsPlayerInChromieTime()
             C_Timer.After( 2, UpdateChromieTime )
         end
-    end )
+    end
 
-    Hekili:ProfileFrame( "ChromieFrame", ct )
+    if not Hekili.IsDragonflight() then
+        RegisterEvent( "CHROMIE_TIME_OPEN", ChromieCheck )
+        RegisterEvent( "CHROMIE_TIME_CLOSE", ChromieCheck )
+    end
+
+    RegisterEvent( "PLAYER_ENTERING_WORLD", ChromieCheck )
 end
 
 
@@ -241,18 +292,14 @@ end
 local warmode = false
 
 do
-    local wm = CreateFrame( "Frame" )
-
-    wm:RegisterEvent( "UI_INFO_MESSAGE" )
-    wm:RegisterEvent( "PLAYER_ENTERING_WORLD" )
-
-    wm:SetScript( "OnEvent", function( self, event, login, reload )
+    local function CheckWarMode( event, login, reload )
         if event ~= "PLAYER_ENTERING_WORLD" or login or reload then
             warmode = C_PvP.IsWarModeDesired()
         end
-    end )
+    end
 
-    Hekili:ProfileFrame( "WarModeFrame", wm )
+    RegisterEvent( "UI_INFO_MESSAGE", CheckWarMode )
+    RegisterEvent( "PLAYER_ENTERING_WORLD", CheckWarMode )
 end
 
 
@@ -268,73 +315,116 @@ local function UnitInPhase( unit )
 end
 
 
+--[[
+
+For targeting, let's keep more of the settings static to reduce overhead with target counting.
+
+We have:
+1. Count Nameplates
+   - Spell
+   - Filter UnitAffectingCombat
+   -
+
+]]--
+
+
 do
     function ns.iterateTargets()
         return next, counted, nil
     end
 
-    local function FindExclusionAuraByID( unit, spellID )
+    FindExclusionAuraByID = function( unit, spellID )
         if spellID < 0 then
-            return FindUnitDebuffByID( unit, -spellID ) ~= nil
+            return FindUnitDebuffByID( unit, -1 * spellID ) ~= nil
         end
         return FindUnitBuffByID( unit, spellID ) ~= nil
     end
 
     -- New Nameplate Proximity System
-    function ns.getNumberTargets( targetChanged )
-        local now = GetTime()
-
-        if now - lastCycle < 0.2 and not targetChanged then return lastCount, lastStationary end
-        lastCycle = now
-
-        if now - Hekili.lastAudit > 1 then
-            -- Kick start the damage-based target detection filter.
-            Hekili.AuditorStalled = true
-            ns.Audit()
+    function ns.getNumberTargets( forceUpdate )
+        if not forceUpdate then
+            return lastCount, lastStationary
         end
 
-        local showNPs = GetCVar( "nameplateShowEnemies" ) == "1"
+        local debugging = true
+        local details = nil
+        local showNPs = GetCVar( "nameplateShowEnemies" ) == "1" and GetCVar( "nameplateShowAll" ) == "1"
 
         wipe( counted )
 
         local count, stationary = 0, 0
-
-        Hekili.TargetDebug = ""
+        if debugging then details = format( "Nameplates are %s.", showNPs and "enabled" or "disabled" ) end
 
         local spec = state.spec.id
         spec = spec and rawget( Hekili.DB.profile.specs, spec )
 
-        if spec then
-            local checkPets = showNPs and spec.petbased and Hekili:PetBasedTargetDetectionIsReady()
-            local checkPlates = showNPs and spec.nameplates
+        local inRaid = IsInRaid()
+        local inGroup = GetNumGroupMembers() > 0
 
+        local FriendCheck = inRaid and UnitInRaid or UnitInParty
+
+        local checkPets = showNPs and spec and spec.petbased and Hekili:PetBasedTargetDetectionIsReady()
+        -- local filterPlates = showNPs and spec and spec.rangeFilter and class.specs[ state.spec.id ].rangeFilter
+
+        local checkPlates = showNPs and spec and spec.nameplates and ( spec.nameplateRange or class.specs[ state.spec.id ].nameplateRange or 10 )
+
+        --[[ if rangeCheck == "Auto" then
+            rangeChecker = spec.ranges.Auto[2]
+            rangeCheck = true
+        else
+            rangeChecker = spec.ranges[ rangeCheck ][ 1 ]
+        end ]]
+
+        if spec then
             if checkPets or checkPlates then
                 for unit, guid in pairs( npGUIDs ) do
-                    if UnitExists( unit ) and not UnitIsDead( unit ) and UnitCanAttack( "player", unit ) and UnitInPhase( unit ) and UnitHealth( unit ) > 1 and ( UnitIsPVP( "player" ) or not UnitIsPlayer( unit ) ) then
+                    if UnitExists( unit ) and not UnitIsDead( unit ) and UnitCanAttack( "player", unit ) and UnitInPhase( unit ) and UnitHealth( unit ) > 1 and ( not inGroup or not FriendCheck( unit ) ) and ( UnitIsPVP( "player" ) or not UnitIsPlayer( unit ) ) then
+                        local excluded = not UnitIsUnit( unit, "target" )
                         local npcid = guid:match( "(%d+)-%x-$" )
-                        npcid = tonumber(npcid)
+                        npcid = tonumber( npcid )
 
-                        local excluded = enemyExclusions[ npcid ]
+                        local _, range = nil, -1
 
-                        -- If our table has a number, unit is ruled out only if the buff is present.
-                        if excluded and type( excluded ) == "number" then
-                            excluded = FindExclusionAuraByID( unit, excluded )
+                        if debugging then details = format( "%s\n - Checking nameplate list for %s [ %s ] %s.", details, unit, guid, UnitName( unit ) ) end
+
+                        if excluded then
+                            if requiredForInclusion[ npcid ] then
+                                excluded = not FindExclusionAuraByID( unit, requiredForInclusion[ npcid ] )
+                            else
+                                excluded = enemyExclusions[ npcid ]
+                            end
+
+                            -- If our table has a number, unit is ruled out only if the buff is present.
+                            if excluded and type( excluded ) == "number" then
+                                excluded = FindExclusionAuraByID( unit, excluded )
+
+                                if debugging and excluded then
+                                    details = format( "%s\n    - Excluded by aura.", details )
+                                end
+                            end
+
+                            if not excluded and checkPets then
+                                excluded = not Hekili:TargetIsNearPet( unit )
+
+                                if debugging and excluded then
+                                    details = format( "%s\n    - Excluded by pet range.", details )
+                                end
+                            end
+
+                            if not excluded and checkPlates then
+                                local _, maxR = RC:GetRange( unit )
+                                excluded = maxR ~= nil and maxR > checkPlates
+
+                                if debugging and excluded then
+                                    details = format( "%s\n  - 由于距离限制而被排除 (%d > %d)。", details, maxR, checkPlates )
+                                end
+                            end
+
+                            if not excluded and showNPs and spec.damageOnScreen and not npUnits[ guid ] then
+                                excluded = true
+                                if debugging then details = format( "%s\n  - 由于屏幕内姓名板限制而被排除。", details ) end
+                            end
                         end
-
-                        if not excluded and checkPets then
-                            excluded = not Hekili:TargetIsNearPet( unit )
-                        end
-
-                        local _, range
-                        if not excluded and checkPlates then
-                            _, range = RC:GetRange( unit )
-                            guidRanges[ guid ] = range
-
-                            excluded = range and range > spec.nameplateRange or false
-                        end
-
-                        -- Always count your target.
-                        if UnitIsUnit( unit, "target" ) then excluded = false end
 
                         if not excluded then
                             local rate, n = Hekili:GetTTD( unit )
@@ -347,7 +437,7 @@ do
                                 stationary = stationary + 1
                             end
 
-                            Hekili.TargetDebug = format( "%s    %-12s - %2d - %s - %.2f - %d - %s %s\n", Hekili.TargetDebug, unit, range or 0, guid, rate or 0, n or 0, unit and UnitName( unit ) or "Unknown", ( moving and "(moving)" or "" ) )
+                            if debugging then details = format( "%s\n    %-12s - %2d - %s - %.2f - %d - %s %s\n", details, unit, range or -1, guid, rate or -1, n or -1, unit and UnitName( unit ) or "Unknown", ( moving and "(moving)" or "" ) ) end
                         end
                     end
 
@@ -358,30 +448,50 @@ do
                     local guid = UnitGUID( unit )
 
                     if guid and counted[ guid ] == nil then
-                        if UnitExists( unit ) and not UnitIsDead( unit ) and UnitCanAttack( "player", unit ) and UnitInPhase( unit ) and UnitHealth( unit ) > 1 and ( UnitIsPVP( "player" ) or not UnitIsPlayer( unit ) ) then
+                        if UnitExists( unit ) and not UnitIsDead( unit ) and UnitCanAttack( "player", unit ) and UnitAffectingCombat( unit ) and UnitInPhase( unit ) and UnitHealth( unit ) > 1 and ( not inGroup or not FriendCheck( unit ) ) and ( UnitIsPVP( "player" ) or not UnitIsPlayer( unit ) ) then
+                            local excluded = not UnitIsUnit( unit, "target" )
+
                             local npcid = guid:match( "(%d+)-%x-$" )
                             npcid = tonumber(npcid)
 
-                            local excluded = enemyExclusions[ npcid ]
+                            local _, range = nil, -1
 
-                            if excluded and type( excluded ) == "number" then
-                                excluded = FindExclusionAuraByID( unit, excluded )
+                            if debugging then details = format( "%s\n - 检测中 %s [ %s ] %s。", details, unit, guid, UnitName( unit ) ) end
+
+                            if excluded then
+                                excluded = enemyExclusions[ npcid ]
+
+                                -- If our table has a number, unit is ruled out only if the buff is present.
+                                if excluded and type( excluded ) == "number" then
+                                    excluded = FindExclusionAuraByID( unit, excluded )
+
+                                    if debugging and excluded then
+                                        details = format( "%s\n  - 由于光环限制而被排除。", details )
+                                    end
+                                end
+
+                                if not excluded and checkPets then
+                                    excluded = not Hekili:TargetIsNearPet( unit )
+
+                                    if debugging and excluded then
+                                        details = format( "%s\n  - 由于宠物攻击距离而被排除。", details )
+                                    end
+                                end
+
+                                if not excluded and checkPlates then
+                                    local _, maxR = RC:GetRange( unit )
+                                    excluded = maxR ~= nil and maxR > checkPlates
+
+                                    if debugging and excluded then
+                                        details = format( "%s\n  - 由于距离限制而被排除(%d > %d)。", details, maxR, checkPlates )
+                                    end
+                                end
+
+                                if not excluded and spec.damageOnScreen and showNPs and not npUnits[ guid ] then
+                                    excluded = true
+                                    if debugging then details = format( "%s\n  - 由于屏幕内姓名板限制而被排除。", details ) end
+                                end
                             end
-
-                            if not excluded and checkPets then
-                                excluded = not Hekili:TargetIsNearPet( unit )
-                            end
-
-                            local _, range
-                            if not excluded and checkPlates then
-                                _, range = RC:GetRange( unit )
-                                guidRanges[ guid ] = range
-
-                                excluded = range and range > spec.nameplateRange or false
-                            end
-
-                            -- Always count your target.
-                            if UnitIsUnit( unit, "target" ) then excluded = false end
 
                             if not excluded then
                                 local rate, n = Hekili:GetTTD(unit)
@@ -394,7 +504,7 @@ do
                                     stationary = stationary + 1
                                 end
 
-                                Hekili.TargetDebug = format( "%s    %-12s - %2d - %s - %.2f - %d - %s %s\n", Hekili.TargetDebug, unit, range or 0, guid, rate or 0, n or 0, unit and UnitName( unit ) or "Unknown", ( moving and "(moving)" or "" ) )
+                                if debugging then details = format( "%s\n    %-12s - %2d - %s - %.2f - %d - %s %s\n", details, unit, range or -1, guid, rate or -1, n or -1, unit and UnitName( unit ) or "Unknown", ( moving and "(moving)" or "" ) ) end
                             end
 
                             counted[ guid ] = counted[ guid ] or false
@@ -404,7 +514,7 @@ do
             end
         end
 
-        if not spec or spec.damage or ( not spec.nameplates and not spec.petbased ) or not showNPs then
+        if not spec or spec.damage or not checkPets and not checkPlates then
             local db = spec and (spec.myTargetsOnly and myTargets or targets) or targets
 
             for guid, seen in pairs(db) do
@@ -412,27 +522,45 @@ do
                     local npcid = guid:match("(%d+)-%x-$")
                     npcid = tonumber(npcid)
 
-                    local excluded = enemyExclusions[ npcid ]
+                    local range
 
-                    local unit
+                    local unit = Hekili:GetUnitByGUID( guid ) or UnitTokenFromGUID( guid )
+                    local excluded = false
 
-                    -- If our table has a number, unit is ruled out only if the buff is present.
-                    if excluded and type( excluded ) == "number" then
-                        unit = Hekili:GetUnitByGUID( guid )
+                    if unit and not UnitIsUnit( unit, "target" ) then
+                        excluded = enemyExclusions[ npcid ]
 
-                        if unit then
-                            if UnitIsUnit( unit, "target" ) then
-                                excluded = false
-                            else
-                                if excluded and type( excluded ) == "number" then
-                                    excluded = FindExclusionAuraByID( unit, excluded )
-                                end
+                        if debugging then details = format( "%s\n - 检测中 %s [ %s ] #%s。", details, unit, guid, UnitName( unit ) ) end
+
+                        -- If our table has a number, unit is ruled out only if the buff is present.
+                        if excluded and type( excluded ) == "number" then
+                            excluded = FindExclusionAuraByID( unit, excluded )
+
+                            if debugging and excluded then
+                                details = format( "%s\n  - 由于光环而被排除。", details )
                             end
-                            excluded = false
+                        end
+
+                        if not excluded and inGroup and FriendCheck( unit ) then
+                            excluded = true
+                            if debugging then details = format( "%s\n  - 由于友善目标而被排除。", details ) end
+                        end
+
+                        if not excluded and checkPets then
+                            excluded = not Hekili:TargetIsNearPet( unit )
+
+                            if debugging and excluded then
+                                details = format( "%s\n  - 由于宠物攻击距离而被排除。", details )
+                            end
                         end
                     end
 
-                    if not excluded and ( spec.damageRange == 0 or ( not guidRanges[ guid ] or guidRanges[ guid ] <= spec.damageRange ) ) then
+                    if not excluded and spec.damageOnScreen and showNPs and not npUnits[ guid ] then
+                        excluded = true
+                        if debugging then details = format( "%s\n  - 由于屏幕内姓名板限制而被排除。", details ) end
+                    end
+
+                    if not excluded then
                         count = count + 1
                         counted[ guid ] = true
 
@@ -442,7 +570,7 @@ do
                             stationary = stationary + 1
                         end
 
-                        Hekili.TargetDebug = format("%s    %-12s - %2d - %s %s\n", Hekili.TargetDebug, "dmg", guidRanges[ guid ] or 0, guid, ( moving and "(moving)" or "" ) )
+                        if debugging then details = format("%s\n    %-12s - %s %s\n", details, "dmg", guid, ( moving and "(moving)" or "" ) ) end
                     else
                         counted[ guid ] = false
                     end
@@ -452,7 +580,7 @@ do
 
         local targetGUID = UnitGUID( "target" )
         if targetGUID then
-            if counted[ targetGUID ] == nil and UnitExists("target") and not UnitIsDead("target") and UnitCanAttack("player", "target") and UnitInPhase("target") and (UnitIsPVP("player") or not UnitIsPlayer("target")) then
+            if counted[ targetGUID ] == nil and UnitExists( "target" ) and not UnitIsDead( "target" ) and UnitCanAttack( "player", "target" ) and UnitInPhase( "target" ) and ( UnitIsPVP( "player" ) or not UnitIsPlayer( "target" ) ) then
                 count = count + 1
                 counted[ targetGUID ] = true
 
@@ -462,7 +590,7 @@ do
                     stationary = stationary + 1
                 end
 
-                Hekili.TargetDebug = format("%s    %-12s - %2d - %s %s\n", Hekili.TargetDebug, "target", 0, targetGUID, ( moving and "(moving)" or "" ) )
+                if debugging then details = format("%s\n    %-12s - %2d - %s %s\n", details, "target", 0, targetGUID, ( moving and "(moving)" or "" ) ) end
             else
                 counted[ targetGUID ] = false
             end
@@ -473,15 +601,19 @@ do
         if count ~= lastCount or stationary ~= lastStationary then
             lastCount = count
             lastStationary = stationary
-            Hekili:ForceUpdate( "TARGET_COUNT_CHANGED" )
+            if Hekili:GetToggleState( "mode" ) == "reactive" then HekiliDisplayAOE:UpdateAlpha() end
+        end
+
+        if details then
+            Hekili.TargetDebug = details
         end
 
         return count, stationary
     end
 end
 
-function Hekili:GetNumTargets()
-    return ns.getNumberTargets()
+function Hekili:GetNumTargets( forceUpdate )
+    return ns.getNumberTargets( forceUpdate )
 end
 
 
@@ -490,7 +622,7 @@ function ns.dumpNameplateInfo()
 end
 
 
-function ns.updateTarget(id, time, mine)
+function ns.updateTarget( id, time, mine )
     local spec = rawget( Hekili.DB.profile.specs, state.spec.id )
     if not spec or not spec.damage then return end
 
@@ -517,13 +649,18 @@ function ns.updateTarget(id, time, mine)
             end
         end
     else
+        if state.empowerment.start > 0 and state.empowerment.finish > GetTime() then
+            -- Don't expire targets mid-empowerment cast.
+            return
+        end
+
         if targets[id] then
-            targetCount = max(0, targetCount - 1)
+            targetCount = max( 0, targetCount - 1 )
             targets[id] = nil
         end
 
         if myTargets[id] then
-            myTargetCount = max(0, myTargetCount - 1)
+            myTargetCount = max( 0, myTargetCount - 1 )
             myTargets[id] = nil
         end
 
@@ -533,7 +670,7 @@ end
 
 ns.reportTargets = function()
     for k, v in pairs(targets) do
-        Hekili:Print("Saw " .. k .. " exactly " .. GetTime() - v .. " seconds ago.")
+        Hekili:Print("在 " .. GetTime() - v .. " 秒前侦测到了" .. k .. "。" )
     end
 end
 
@@ -608,7 +745,7 @@ ns.trackDebuff = function(spell, target, time, application)
         if debuffs[spell][target] then
             -- Remove it.
             debuffs[spell][target] = nil
-            debuffCount[spell] = max(0, debuffCount[spell] - 1)
+            debuffCount[spell] = max( 0, debuffCount[spell] - 1 )
         end
     else
         if not debuffs[spell][target] then
@@ -672,11 +809,12 @@ ns.compositeDebuffCount = function( ... )
     return n
 end
 
-ns.conditionalDebuffCount = function(req1, req2, ...)
+ns.conditionalDebuffCount = function(req1, req2, req3, ...)
     local n = 0
 
     req1 = class.auras[req1] and class.auras[req1].id
     req2 = class.auras[req2] and class.auras[req2].id
+    req3 = class.auras[req3] and class.auras[req3].id
 
     for i = 1, select("#", ...) do
         local debuff = select(i, ...)
@@ -685,9 +823,7 @@ ns.conditionalDebuffCount = function(req1, req2, ...)
 
         if debuff then
             for unit in pairs(debuff) do
-                local reqExp =
-                    (req1 and debuffs[req1] and debuffs[req1][unit]) or (req2 and debuffs[req2] and debuffs[req2][unit])
-                if reqExp then
+                if (req1 and debuffs[req1] and debuffs[req1][unit]) or (req2 and debuffs[req2] and debuffs[req2][unit]) or (req3 and debuffs[req3] and debuffs[req3][unit]) then
                     n = n + 1
                 end
             end
@@ -731,124 +867,199 @@ ns.isWatchedDebuff = function(spell)
     return debuffs[spell] ~= nil
 end
 
-ns.eliminateUnit = function(id, force)
+ns.eliminateUnit = function( id, force )
     ns.updateMinion(id)
     ns.updateTarget(id)
 
-    lastCycle = 0
-
-    guidRanges[id] = nil
-
     if force then
         for k, v in pairs( debuffs ) do
-            if v[ id ] then ns.trackDebuff( k, id ) end
+            if v[ id ] then
+                ns.trackDebuff( k, id )
+            end
         end
     end
 
     ns.callHook( "UNIT_ELIMINATED", id )
 end
 
-local incomingDamage = {}
-local incomingHealing = {}
 
-ns.storeDamage = function(time, damage, physical)
-    if damage and damage > 0 then
-        table.insert(incomingDamage, {t = time, damage = damage, physical = physical})
-    end
-end
-ns.storeHealing = function(time, healing)
-    table.insert(incomingHealing, {t = time, healing = healing})
-end
+do
+    local damage = {
+        [1] = 0,
+        [5] = 0,
+        [10] = 0,
+    }
 
-ns.damageInLast = function(t, physical)
-    local dmg = 0
-    local start = GetTime() - min(t, 15)
+    local physical = {
+        [1] = 0,
+        [5] = 0,
+        [10] = 0
+    }
 
-    for k, v in pairs(incomingDamage) do
-        if v.t > start and (physical == nil or v.physical == physical) then
-            dmg = dmg + v.damage
+    local magical = {
+        [1] = 0,
+        [5] = 0,
+        [10] = 0
+    }
+
+    local healing = {
+        [1] = 0,
+        [5] = 0,
+        [10] = 0
+    }
+
+    ns.storeDamage = function( _, dam, isPhysical )
+        if dam and dam > 0 then
+            local db = isPhysical and physical or magical
+
+            db[ 1 ] = db[ 1 ] + dam
+            damage[ 1 ] = damage[ 1 ] + dam
+
+            C_Timer.After( 1, function()
+                db[ 1 ] = db[ 1 ] - dam
+                damage[ 1 ] = damage[ 1 ] - dam
+            end )
+
+            db[ 5 ] = db[ 5 ] + dam
+            damage[ 5 ] = damage[ 5 ] + dam
+
+            C_Timer.After( 5, function()
+                db[ 5 ] = db[ 5 ] - dam
+                damage[ 5 ] = damage[ 5 ] - dam
+            end )
+
+            db[ 10 ] = db[ 10 ] + dam
+            damage[ 10 ] = damage[ 10 ] + dam
+
+            C_Timer.After( 10, function()
+                db[ 10 ] = db[ 10 ] - dam
+                damage[ 10 ] = damage[ 10 ] - dam
+            end )
         end
     end
 
-    return dmg
-end
+    ns.damageInLast = function( seconds, isPhysical )
+        local db
+        if isPhysical == nil then db = damage
+        elseif isPhysical == true then db = physical
+        else db = magical end
 
-function ns.healingInLast(t)
-    local heal = 0
-    local start = GetTime() - min(t, 15)
+        if db[ seconds ] then return db[ seconds ] end
 
-    for k, v in pairs(incomingHealing) do
-        if v.t > start then
-            heal = heal + v.healing
+        if seconds < 1 then
+            return db[ 1 ] * ( seconds / 1 )
+        end
+
+        if seconds < 5 then
+            return db[ 1 ] + ( db[ 5 ] - db[ 1 ] ) * ( seconds - 1 ) / 5
+        end
+
+        if seconds < 10 then
+            return db[ 5 ] + ( db[ 10 ] - db[ 5 ] ) * ( seconds - 5 ) / 10
+        end
+
+        return db[ 10 ] * seconds / 10
+    end
+
+    ns.storeHealing = function( _, amount )
+        if amount and amount > 0 then
+            healing[ 1 ] = healing[ 1 ] + amount
+            C_Timer.After( 1, function() healing[ 1 ] = healing[ 1 ] - amount end )
+
+            healing[ 5 ] = healing[ 5 ] + amount
+            C_Timer.After( 5, function() healing[ 5 ] = healing[ 5 ] - amount end )
+
+            healing[ 10 ] = healing[ 10 ] + amount
+            C_Timer.After( 10, function() healing[ 10 ] = healing[ 10 ] - amount end )
         end
     end
 
-    return heal
+    ns.healingInLast = function( seconds )
+        if healing[ seconds ] then return healing[ seconds ] end
+
+        if seconds < 1 then
+            return healing[ 1 ] * ( seconds / 1 )
+        end
+
+        if seconds < 5 then
+            return healing[ 1 ] + ( healing[ 5 ] - healing[ 1 ] ) * ( seconds - 1 ) / 5
+        end
+
+        if seconds < 10 then
+            return healing[ 5 ] + ( healing[ 10 ] - healing[ 5 ] ) * ( seconds - 5 ) / 10
+        end
+
+        return healing[ 10 ] * seconds / 10
+    end
+
+    ns.sanitizeDamageAndHealing = function()
+        physical[ 1 ] = max( 0, physical[ 1 ] )
+        physical[ 5 ] = max( 0, physical[ 5 ] )
+        physical[ 10 ] = max( 0, physical[ 10 ] )
+
+        magical[ 1 ] = max( 0, magical[ 1 ] )
+        magical[ 5 ] = max( 0, magical[ 5 ] )
+        magical[ 10 ] = max( 0, magical[ 10 ] )
+
+        healing[ 1 ] = max( 0, healing[ 1 ] )
+        healing[ 5 ] = max( 0, healing[ 5 ] )
+        healing[ 10 ] = max( 0, healing[ 10 ] )
+    end
 end
+
 
 -- Auditor should clean things up for us.
-Hekili.lastAudit = GetTime()
-Hekili.auditInterval = 0
+do
+    ns.Audit = function( special )
+        -- Don't audit while recommendations are being generated.
+        if HekiliEngine:IsThreadActive() then
+            return
+        end
 
-ns.Audit = function( special )
-    if not special and not Hekili.DB.profile.enabled then
-        C_Timer.After( 1, ns.Audit )
-        return
-    end
+        if special == "combatExit" and InCombatLockdown() then
+            special = nil
+        end
 
-    local now = GetTime()
-    local spec = state.spec.id and rawget( Hekili.DB.profile.specs, state.spec.id )
-    local nodmg = spec and ( spec.damage == false ) or false
-    local grace = spec and spec.damageExpiration or 6
+        if not special and not Hekili.DB.profile.enabled or not Hekili:IsValidSpec() then
+            return
+        end
 
-    Hekili.auditInterval = now - Hekili.lastAudit
-    Hekili.lastAudit = now
+        Hekili:ExpireTTDs()
 
-    for aura, targets in pairs( debuffs ) do
-        local a = class.auras[ aura ]
-        local window = a and a.duration or grace
-        local expires = a and a.no_ticks or false
-        local friendly = a and a.friendly or false
+        local now = GetTime()
+        local spec = state.spec.id and rawget( Hekili.DB.profile.specs, state.spec.id )
+        local grace = spec and spec.damageExpiration or 6
 
-        for unit, entry in pairs( targets ) do
-            -- NYI: Check for dot vs. debuff, since debuffs won't 'tick'
-            if expires and now - entry.last_seen > window then
-                ns.trackDebuff( aura, unit )
-            elseif special == "combatExit" and not friendly then
-                Hekili:Error( format( "Auditor removed an aura %d from %s after exiting combat.", aura, unit ) )
-                ns.trackDebuff( aura, unit )
+        for whom, when in pairs( targets ) do
+            if now - when > grace then
+                ns.eliminateUnit( whom )
             end
         end
-    end
 
-    for whom, when in pairs( targets ) do
-        if nodmg or now - when > grace then
-            ns.eliminateUnit( whom )
+        for aura, targets in pairs( debuffs ) do
+            local a = class.auras[ aura ]
+            local window = a and a.duration or grace
+            local friendly = a and ( a.friendly or a.dot == "buff" ) or false
+
+            for unit, entry in pairs( targets ) do
+                if now - entry.last_seen > window then
+                    ns.trackDebuff( aura, unit )
+                elseif special == "combatExit" and not friendly then
+                    -- Hekili:Error( format( "Auditor removed an aura %d from %s after exiting combat.", aura, unit ) )
+                    ns.trackDebuff( aura, unit )
+                end
+            end
         end
+
+        ns.sanitizeDamageAndHealing()
     end
 
-    local cutoff = now - 15
-    for i = #incomingDamage, 1, -1 do
-        local instance = incomingDamage[ i ]
-
-        if instance.t < cutoff then
-            table.remove( incomingDamage, i )
-        end
-    end
-
-    for i = #incomingHealing, 1, -1 do
-        local instance = incomingHealing[ i ]
-
-        if instance.t < cutoff then
-            table.remove( incomingHealing, i )
-        end
-    end
-
-    Hekili:ExpireTTDs()
-    C_Timer.After( 1, ns.Audit )
+    Hekili.AuditTimer = C_Timer.NewTicker( 1, ns.Audit )
 end
 Hekili:ProfileCPU( "Audit", ns.Audit )
 
+
+local IsAddOnLoaded, LoadAddOn = C_AddOns.IsAddOnLoaded, C_AddOns.LoadAddOn
 
 function Hekili:DumpDotInfo( aura )
     if not IsAddOnLoaded( "Blizzard_DebugTools" ) then
@@ -876,11 +1087,11 @@ do
 
         db[guid] = nil
         wipe(enemy)
-        insert(recycle, enemy)
+        insert( recycle, enemy )
 
-        for k, v in pairs( debuffs ) do
+        --[[ for k, v in pairs( debuffs ) do
             if v[ guid ] then ns.trackDebuff( k, guid ) end
-        end
+        end ]]
     end
 
 
@@ -921,7 +1132,7 @@ do
 
             enemy.npcid = npcid
             enemy.deathPercent = npcid and deathPercent[ npcid ] or 0
-            enemy.deathTime = time + ( ( UnitIsTrivial(unit) and UnitLevel(unit) > -1 ) and TRIVIAL or DEFAULT_TTD )
+            enemy.deathTime = ( UnitIsTrivial(unit) and UnitLevel(unit) > -1 ) and TRIVIAL or DEFAULT_TTD
             enemy.excluded = enemyExclusions[ npcid ]
             return
         end
@@ -943,7 +1154,7 @@ do
                 enemy.rate = newRate / enemy.n
             end
 
-            enemy.deathTime = time + ( healthPct - enemy.deathPercent ) / enemy.rate
+            enemy.deathTime = ( healthPct - enemy.deathPercent ) / enemy.rate
         end
 
         enemy.unit = unit
@@ -966,7 +1177,7 @@ do
         end
 
         if type( enemy.excluded ) == "number" then
-            return FindExclusionAuraByID( enemy.excluded )
+            return FindExclusionAuraByID( enemy.unit, enemy.excluded )
         end
 
         return false
@@ -976,10 +1187,9 @@ do
         local time, validUnit = 0, false
 
         local enemy = db[ guid ]
-        local now = GetTime()
 
         if enemy then
-            time = max( time, max( 0, ceil( enemy.deathTime - now ) ) )
+            time = max( time, enemy.deathTime )
             validUnit = true
         end
 
@@ -1072,7 +1282,7 @@ do
 
         for k, v in pairs( db ) do
             if not CheckEnemyExclusion( k ) then
-                time = max( time, max( 0, ceil( v.deathTime - now ) ) )
+                time = max( time, max( 0, v.deathTime ) )
                 validUnit = true
             end
         end
@@ -1091,7 +1301,7 @@ do
 
         for k, v in pairs(db) do
             if not CheckEnemyExclusion( k ) and v.lastHealth > percent then
-                time = max( time, max( 0, ceil( v.deathTime - now ) ) )
+                time = max( time, max( 0, v.deathTime ) )
                 validUnit = true
             end
         end
@@ -1106,7 +1316,7 @@ do
 
         for k, v in pairs(db) do
             if not CheckEnemyExclusion( k ) then
-                time = min( time, max( 0, ceil( v.deathTime - now ) ) )
+                time = min( time, max( 0, v.deathTime ) )
                 validUnit = true
             end
         end
@@ -1122,7 +1332,7 @@ do
         local count, now = 0, GetTime()
 
         for k, v in pairs(db) do
-            if not CheckEnemyExclusion( k ) and max( 0, ceil( v.deathTime - now ) ) <= x then
+            if not CheckEnemyExclusion( k ) and max( 0, v.deathTime ) <= x then
                 count = count + 1
             end
         end
@@ -1136,7 +1346,7 @@ do
         local now = GetTime()
 
         for k, v in pairs(db) do
-            if CheckEnemyExclusion( k ) and max( 0, ceil( v.deathTime - now ) ) > x then
+            if CheckEnemyExclusion( k ) and max( 0, v.deathTime ) > x then
                 count = count + 1
             end
         end
@@ -1154,11 +1364,11 @@ do
         for k, v in pairs(db) do
             if not CheckEnemyExclusion( k ) then
                 if inclusive then
-                    if v.lastHealth >= amount and max( 0, ceil( v.deathTime - now ) ) >= minTTD then
+                    if v.lastHealth >= amount and max( 0, v.deathTime ) >= minTTD then
                         count = count + 1
                     end
                 else
-                    if v.lastHealth > amount and max( 0, ceil( v.deathTime - now ) ) >= minTTD then
+                    if v.lastHealth > amount and max( 0, v.deathTime ) >= minTTD then
                         count = count + 1
                     end
                 end
@@ -1182,11 +1392,11 @@ do
         for k, v in pairs(db) do
             if not CheckEnemyExclusion( k ) then
                 if inclusive then
-                    if v.lastHealth <= amount and max( 0, ceil( v.deathTime - now ) ) >= minTTD then
+                    if v.lastHealth <= amount and max( 0, v.deathTime ) >= minTTD then
                         count = count + 1
                     end
                 else
-                    if v.lastHealth < amount and max( 0, ceil( v.deathTime - now ) ) >= minTTD then
+                    if v.lastHealth < amount and max( 0, v.deathTime ) >= minTTD then
                         count = count + 1
                     end
                 end
@@ -1214,11 +1424,10 @@ do
         end
 
         local time = 0
-        local now = GetTime()
 
         for k, v in pairs(db) do
             if not CheckEnemyExclusion( k ) and not bosses[ k ] then
-                time = max( time, ceil( v.deathTime - now ) )
+                time = max( time, v.deathTime )
             end
         end
 
@@ -1226,8 +1435,6 @@ do
     end
 
     function Hekili:GetTTDInfo()
-        local now = GetTime()
-
         local output = "targets:"
         local found = false
 
@@ -1236,7 +1443,7 @@ do
             local excluded = CheckEnemyExclusions( k )
 
             if v.n > 3 then
-                output = output .. format( "\n    %-11s: %4ds [%d] #%6s%s %s", unit, ceil( v.deathTime - now ), v.n, v.npcid, excluded and "*" or "", UnitName( v.unit ) or "Unknown" )
+                output = output .. format( "\n    %-11s: %4ds [%d] #%6s%s %s", unit, v.deathTime, v.n, v.npcid, excluded and "*" or "", UnitName( v.unit ) or "Unknown" )
             else
                 output = output .. format( "\n    %-11s: TBD  [%d] #%6s%s %s", unit, v.n, v.npcid, excluded and "*" or "", UnitName(v.unit) or "Unknown" )
             end
@@ -1251,9 +1458,9 @@ do
     function Hekili:ExpireTTDs( all )
         local now = GetTime()
 
-        for k, v in pairs(db) do
+        for k, v in pairs( db ) do
             if all or now - v.lastSeen > 10 then
-                EliminateEnemy(k)
+                EliminateEnemy( k )
             end
         end
     end
@@ -1261,31 +1468,29 @@ do
     local trackedUnits = { "target", "boss1", "boss2", "boss3", "boss4", "boss5", "focus", "arena1", "arena2", "arena3", "arena4", "arena5" }
     local seen = {}
 
-    local UpdateTTDs
+    local UpdateTTDs = function()
+        if not InCombatLockdown() then return end
 
-    UpdateTTDs = function()
         wipe(seen)
 
         local now = GetTime()
 
-        -- local updates, deletions = 0, 0
-
-        for i, unit in ipairs(trackedUnits) do
+        for _, unit in ipairs( trackedUnits ) do
             local guid = UnitGUID(unit)
 
             if guid and not seen[guid] then
                 if db[ guid ] and ( not UnitExists(unit) or UnitIsDead(unit) or not UnitCanAttack("player", unit) or ( UnitHealth(unit) <= 1 and UnitHealthMax(unit) > 1 ) ) then
-                    EliminateEnemy(guid)
+                    EliminateEnemy( guid )
                     -- deletions = deletions + 1
                 else
                     local health, healthMax = UnitHealth(unit), UnitHealthMax(unit)
                     health = health + UnitGetTotalAbsorbs(unit)
                     healthMax = max( 1, healthMax )
 
-                    UpdateEnemy(guid, health / healthMax, unit, now)
+                    UpdateEnemy( guid, health / healthMax, unit, now )
                     -- updates = updates + 1
                 end
-                seen[guid] = true
+                seen[ guid ] = true
             end
         end
 
@@ -1298,13 +1503,10 @@ do
                 UpdateEnemy(guid, health / healthMax, unit, now)
                 -- updates = updates + 1
             end
-            seen[guid] = true
+            seen[ guid ] = true
         end
-
-        C_Timer.After( 0.25, UpdateTTDs )
     end
     Hekili:ProfileCPU( "UpdateTTDs", UpdateTTDs )
 
-
-    C_Timer.After( 0.25, UpdateTTDs )
+    C_Timer.NewTicker( 0.5, UpdateTTDs )
 end

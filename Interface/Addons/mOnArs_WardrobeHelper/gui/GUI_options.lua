@@ -59,6 +59,7 @@ o.GUIfixOptions = function()
 	mOnWD_OptionsFrame.hideCompletedInstances:SetChecked(mOnWDSave.hideCompletedInstances)
 	mOnWD_OptionsFrame.onlyMiniList:SetChecked(mOnWDSave.onlyMiniList)
 	mOnWD_OptionsFrame.reloadOnStart:SetChecked(mOnWDSave.reloadOnStart)
+	mOnWD_OptionsFrame.displayOnlyEquipable:SetChecked(mOnWDSave.displayOnlyEquipable)
 	mOnWD_OptionsFrame.scale:SetText(mOnWDSave.miniListScale)
 	mOnWD_OptionsFrame.rowCount:SetText(mOnWDSave.miniListRowCount)
 	createMenuItems()
@@ -389,6 +390,23 @@ n:SetScript(
 			mOnWDSave.reloadOnStart = true
 		else
 			mOnWDSave.reloadOnStart = false
+		end
+	end
+)
+
+local n =
+	CreateFrame("CheckButton", "mOnWD_OptionsFrame_DisplayOnlyEquipable", fr.panel.border, "ChatConfigCheckButtonTemplate")
+fr.displayOnlyEquipable = n
+table.insert(fr.tabItems[1], n)
+n:SetPoint("TOPLEFT", fr.panel, "TOPLEFT", 10, -230)
+mOnWD_OptionsFrame_DisplayOnlyEquipableText:SetText(o.strings["Display only Equipable"])
+n:SetScript(
+	"OnClick",
+	function()
+		if n:GetChecked() then
+			mOnWDSave.displayOnlyEquipable = true
+		else
+			mOnWDSave.displayOnlyEquipable = false
 		end
 	end
 )

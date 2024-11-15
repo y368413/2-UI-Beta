@@ -1,0 +1,147 @@
+10/22/2024 version 2.2.2
+- toc update for 11.0.5 patch
+
+08/13/2024 version 2.2.1
+- toc update for 11.0.2 patch
+
+07/23/2024 version 2.2.0
+- Updated for The War Within clients
+- Note: While there are subachievements like Aquatic Battle of Khaz Algar in TWW, there is as yet no Family Battler of Khaz Algar for them all. The nature of this addon will change if one is not added before TWW goes live.
+
+05/07/2024 version 2.1.9
+- toc update for 10.2.7 patch
+
+03/19/2024 version 2.1.8
+- toc update for 10.2.6 patch
+
+01/16/2024 version 2.1.7
+- toc update for 10.2.5 patch
+
+11/07/2023 version 2.1.6
+- toc update for 10.2 patch
+
+09/05/2023 version 2.1.5
+- toc update for 10.1.7 patch
+
+07/11/2023 version 2.1.4
+- Due to changes by Blizzard in 10.1.5, while this addon is on screen in combat, hitting any key will act as the ESC key (to dismiss panels/window)
+- toc update for 10.1.5 patch
+
+05/02/2023 version 2.1.3
+- Family Battler of Zaralek Cavern added courtesy of Flohsakk
+- Added compartment launcher support
+- Updated toc for icon and 10.1.0 patch
+
+03/21/2023 version 2.1.2
+- toc update for 10.0.7 patch
+
+01/25/2023 version 2.1.1
+- toc update for 10.0.5 patch
+
+12/03/2022 version 2.1.0
+- Added option 'Show Minimap Button' to options (ESC to Game Menu -> Options -> AddOns) to show/hide this addon from a minimap button.
+- Added a broken button to supporting info bar addons like TitanPanel to show/hide this addon.
+
+11/15/2022 version 2.0.2
+- toc update for 10.0.2 patch
+
+10/25/2022 version 2.0.1
+- Update for Dragonflight clients
+
+10/09/2022 version 2.0.0
+- To allow for future growth and to allow localized names for achievements, the tabs across the bottom are replaced with a separate "home" panel that has a list of family familiar achievements to choose from. Clicking into one of these will bring you to the progress for that achievement. Clicking the Back button in the progress panel will take you back to the list of achievements again.
+- Settings have been moved to their own options panel in the default options interface panel. (Esc to game menu then Interface->AddOns (Shadowlands) or Options->AddOns (Dragonflight))
+- The Lock Window option has been split into two options: 'Don't dismiss window with Escape key' and 'Don't move window unless Shift held'
+- Added option 'Hide achievement list tooltips' to hide the tooltip for the top-level family familiar achievements.
+- When the 'Automatically show on achievement targets' option is enabled, the window will not show if the achievement associated with the target has already been completed or if all criteria that matches the target's name is completed. If a criteria doesn't match a target's name, such as Addius the Tormenter/Tormentor, then this behavior will not kick in for that target and the window will be shown.
+- Criteria tooltips have a solid dark color again so they're easier to read against the busy backgrounds.
+- The tables to update for future expansions' achievements was reorganized and moved to AchievementInfo.lua.
+- Family Familiar of Dragon Isles achievement and criteria added (Thanks Flohsakk!) for Dragonflight clients.
+- Beta/PTR users will need to load out of date addons for this to work until the update for the Dragonflight pre-patch.
+
+08/16/2022 version 1.4.11
+- toc update for 9.2.5 patch
+
+05/31/2022 version 1.4.10
+- toc update for 9.2.5 patch
+
+05/22/2022 version 1.4.9
+- Added wago and curse project IDs to toc
+
+05/12/2022 version 1.4.8
+- Fix to make wowup recognize the wowinterface provider. (May require a rescan of folders in wowup)
+
+02/22/2022 version 1.4.7
+- Updated toc for 9.2 patch
+
+11/02/2021 version 1.4.6
+- Removed attempts to style the tooltip backdrop to fix lua errors relating to backdrop
+
+11/02/2021 version 1.4.5
+- Updated toc for 9.1.5 patch
+
+06/29/2021 version 1.4.4
+- Updated toc for 9.1.0 patch
+
+03/28/2021 version 1.4.3
+- If the window is up when a battle ends, the window will update to reflect any change in criteria achieved.
+
+03/13/2021 version 1.4.2
+- Updated toc for 9.0.5 patch
+
+11/23/2020 version 1.4.1
+- Removed skinning for ElvUI that was failing.
+- The window's title is now the localized name of the achievement.
+- Tab names are now English to prevent localized names running off the edge of the window.
+
+10/13/2020 version 1.4.0
+- Updated for Shadowlands.
+- Added Family Exorcist courtesy of Flohsakk.
+- Due to tabs running off the edge of the window, tab names have "Family " removed. So tabs are: Exorcist, Battler, Brawler, etc. rather than Family Exorcist, Family Battler, etc.
+
+12/24/2018 version 1.3.2
+- Updated toc for 8.1 patch
+
+11/05/2018 version 1.3.1
+- Fix for bringing up empty/"hidden" Family Battler tab on live clients when targeting a BfA tamer
+- If you were on an empty/"hidden" tab, then bringing up the window will switch to the original tab.
+
+10/29/2018 version 1.3.0
+- Added Family Battler for 8.1 patch
+
+07/17/2018 version 1.2.2
+- toc update for 8.0 patch
+
+06/30/2018 version 1.2.1
+- Fix for compatability with addons that remove tooltip backdrops, such as SpartanUI.
+
+12/13/2017 version 1.2.0
+- Updated for 7.3.5 patch and the new Family Brawler achievement.
+- Added LDB button to toggle the window.
+- If ElvUI enabled the window will lightly skin for it.
+
+08/29/2017 version 1.1.1
+- Reversed order of tabs so most recent achievement is on left.
+- toc update for 7.3 patch
+
+08/07/2017 version 1.1.0
+- Updated for 7.3 patch and the new Family Fighter achievement.
+- While on the 7.3 client, two tabs will appear at the bottom of the window to switch between Family Familiar and Family Fighter.
+- The green checks marking an achievement complete is now based on the achievement's completion status and not how many sub-achievements were finished. This should only be noticable by 7.3 PTR users: The PTR character copy seemed to copy the Family Familiar achievement but not the sub-achievements. So you may see green checks for totals while all pet types are blank. This is normal and should not happen on live servers.
+
+03/28/2017 version 1.0.4
+- toc update for 7.2 patch
+
+10/24/2016 version 1.0.3
+- toc update for 7.1 patch
+
+09/30/2016 version 1.0.2
+- The targeted tamer is now outlined in the window to make it easier to see which pet types are left for that tamer.
+
+07/08/2016 version 1.0.1
+- Made tooltip background solid for readability.
+- When 12 of a pet family are completed the number 12+ is replaced with a green check.
+- Raised frame to higher frame strata.
+
+07/06/2016 version 1.0.0
+- Initial release.

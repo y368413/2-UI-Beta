@@ -2,28 +2,13 @@ local _, ns = ...
 local M, R, U, I = unpack(ns)
 local r, g, b = I.r, I.g, I.b
 
-local function scrollOnEnter(self)
-	self.thumbBG:SetBackdropColor(r, g, b, .25)
-	self.thumbBG:SetBackdropBorderColor(r, g, b)
-end
-
-local function scrollOnLeave(self)
-	self.thumbBG:SetBackdropColor(0, 0, 0, 0)
-	self.thumbBG:SetBackdropBorderColor(0, 0, 0)
-end
-
 local function ReskinChatScroll(self)
-	local bu = _G[self:GetName().."ThumbTexture"]
-	bu:SetAlpha(0)
-	bu:SetWidth(16)
-	local bg = M.CreateBDFrame(bu, 0, true)
-	local down = self.ScrollToBottomButton
-	M.ReskinArrow(down, "down")
-	down:SetPoint("BOTTOMRIGHT", _G[self:GetName().."ResizeButton"], "TOPRIGHT", -4, -2)
+	M.ReskinTrimScroll(self.ScrollBar)
 
-	self.ScrollBar.thumbBG = bg
-	self.ScrollBar:HookScript("OnEnter", scrollOnEnter)
-	self.ScrollBar:HookScript("OnLeave", scrollOnLeave)
+	M.StripTextures(self.ScrollToBottomButton)
+	local flash = self.ScrollToBottomButton.Flash
+	M.SetupArrow(flash, "down")
+	flash:SetVertexColor(1, .8, 0)
 end
 
 tinsert(R.defaultThemes, function()
@@ -93,12 +78,8 @@ tinsert(R.defaultThemes, function()
 	M.ReskinPortraitFrame(ChannelFrame)
 	M.Reskin(ChannelFrame.NewButton)
 	M.Reskin(ChannelFrame.SettingsButton)
-	M.ReskinScroll(ChannelFrame.ChannelList.ScrollBar)
-	if I.isNewPatch then
-		M.ReskinTrimScroll(ChannelFrame.ChannelRoster.ScrollBar)
-	else
-		M.ReskinScroll(ChannelFrame.ChannelRoster.ScrollFrame.scrollBar)
-	end
+	M.ReskinTrimScroll(ChannelFrame.ChannelList.ScrollBar)
+	M.ReskinTrimScroll(ChannelFrame.ChannelRoster.ScrollBar)
 
 	hooksecurefunc(ChannelFrame.ChannelList, "Update", function(self)
 		for i = 1, self.Child:GetNumChildren() do
@@ -125,9 +106,6 @@ tinsert(R.defaultThemes, function()
 	M.Reskin(VoiceChatPromptActivateChannel.AcceptButton)
 	VoiceChatChannelActivatedNotification:SetBackdrop(nil)
 	M.SetBD(VoiceChatChannelActivatedNotification)
-
-	M.ReskinSlider(UnitPopupVoiceMicrophoneVolume.Slider)
-	M.ReskinSlider(UnitPopupVoiceSpeakerVolume.Slider)
 
 	-- VoiceActivityManager
 	hooksecurefunc(VoiceActivityManager, "LinkFrameNotificationAndGuid", function(_, _, notification, guid)

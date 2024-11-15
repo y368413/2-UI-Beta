@@ -1,0 +1,45 @@
+## Interface: 110005
+## Title: BattlePetCountNG
+## Version: 11.0.5-20241022-1
+## Notes: Indicate how many and what quality battle pets you have.
+## Author: End,GurliGebis
+## X-Compatible-With: 110005
+## X-Curse-Packaged-Version: 11.0.5-20241022-1
+## X-Curse-Project-Name: BattlePetCount NG
+## X-Curse-Project-ID: 735675
+## OptionalDeps: Ace3, LibPetJournal-2.0, LibQTip-1.0, BattlePetBreedID
+## Dependencies: Blizzard_PetBattleUI
+## SavedVariables: BattlePetCountDB
+## DefaultState: disabled
+
+#@no-lib-strip@ 
+Libs\LibPetJournal-2.0\LibStub.lua
+Libs\LibPetJournal-2.0\CallbackHandler-1.0.lua
+Libs\LibPetJournal-2.0\LibPetJournal-2.0.lua
+Libs\LibQTip-1.0\LibQTip-1.0.lua
+Libs\AceAddon-3.0\AceAddon-3.0.xml
+Libs\AceEvent-3.0\AceEvent-3.0.xml
+Libs\AceGUI-3.0\AceGUI-3.0.xml
+Libs\AceConfig-3.0\AceConfig-3.0.xml
+Libs\AceDB-3.0\AceDB-3.0.xml
+Libs\AceHook-3.0\AceHook-3.0.xml
+Libs\AceLocale-3.0\AceLocale-3.0.xml
+#@end-no-lib-strip@
+
+Locales\enUS.lua
+Locales\ptBR.lua
+Locales\deDE.lua
+Locales\esES.lua
+Locales\esMX.lua
+Locales\frFR.lua
+Locales\itIT.lua
+Locales\koKR.lua
+Locales\ruRU.lua
+Locales\zhCN.lua
+Locales\zhTW.lua
+
+BattlePetCount.lua
+Tooltips.lua
+BattleIndicator.lua
+PetCard.lua
+

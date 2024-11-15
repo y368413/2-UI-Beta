@@ -1,0 +1,20 @@
+## Interface: 110005
+## Title: |cff8332a8Vendor Item Currencies|r
+## Notes: Displays item currency costs beside vendor frames
+## Author: Ghostopheles
+## Version: 2.0.2
+
+## IconTexture: Interface\Buttons\UI-GroupLoot-Coin-Up
+
+## X-Category: Bags & Inventory
+## X-License: GNUGPLv3
+## X-Curse-Project-ID: 877659
+## X-Wago-ID: n6VPL3Gd
+
+## X-Website: https://github.ghst.tools/
+## X-Twitter: @Ghostopheles
+
+VendorItemCurrencies.lua
+MerchantData.lua
+
+Templates/CurrencyFrame.xml

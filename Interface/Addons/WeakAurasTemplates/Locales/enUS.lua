@@ -3,6 +3,12 @@ if not WeakAuras.IsLibsOK() then return end
 local L = WeakAuras.L
 
 -- WeakAuras/Templates
+	L["(Dwarf)"] = "(Dwarf)"
+	L["(Dwarf/Human)"] = "(Dwarf/Human)"
+	L["(Human)"] = "(Human)"
+	L["(Night Elf)"] = "(Night Elf)"
+	L["(Troll)"] = "(Troll)"
+	L["(Undead)"] = "(Undead)"
 	L["Abilities"] = "Abilities"
 	L["Add Triggers"] = "Add Triggers"
 	L["Always Active"] = "Always Active"
@@ -43,6 +49,7 @@ local L = WeakAuras.L
 	L["Create Auras"] = "Create Auras"
 	L["debuff"] = "debuff"
 	L["Debuffs"] = "Debuffs"
+	L["dps buff"] = "dps buff"
 	L["General"] = "General"
 	L["Health"] = "Health"
 	L["Highlight while action is queued."] = "Highlight while action is queued."
@@ -55,6 +62,7 @@ local L = WeakAuras.L
 	L["Highlight while spell is active."] = "Highlight while spell is active."
 	L["Hold CTRL to create multiple auras at once"] = "Hold CTRL to create multiple auras at once"
 	L["Keeps existing triggers intact"] = "Keeps existing triggers intact"
+	L["Master Channeler Rune"] = "Master Channeler Rune"
 	L["Next"] = "Next"
 	L["Only show the aura if the target has the debuff."] = "Only show the aura if the target has the debuff."
 	L["Only show the aura when the item is on cooldown."] = "Only show the aura when the item is on cooldown."
@@ -66,7 +74,7 @@ local L = WeakAuras.L
 	L["Other cooldown"] = "Other cooldown"
 	L["Pet alive"] = "Pet alive"
 	L["Pet Behavior"] = "Pet Behavior"
-	L["PvP Talents"] = "PvP Talents"
+	L["regen buff"] = "regen buff"
 	L["Replace all existing triggers"] = "Replace all existing triggers"
 	L["Replace Triggers"] = "Replace Triggers"
 	L["Resources"] = "Resources"

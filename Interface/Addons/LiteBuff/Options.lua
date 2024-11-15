@@ -146,12 +146,12 @@ addon:RegisterInitCallback(function()
 	end
 
 	-- Disable LiteBless if presents
-	if IsAddOnLoaded("LiteBless") and LiteBlesssFrame then
+	--[[if IsAddOnLoaded("LiteBless") and LiteBlesssFrame then
 		LiteBlesssFrame:UnregisterAllEvents()
 		RegisterStateDriver(LiteBlesssFrame, "visibility", "hide")
 		LiteBlesssFrame:Hide()
 		DisableAddOn("LiteBless")
-	end
+	end]]
 
 	SLASH_LITEBUFF1 = "/lb"
 	SLASH_LITEBUFF2 = "/litebuff"

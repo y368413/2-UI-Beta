@@ -1,5 +1,0 @@
-<Bindings>
-	<Binding category="ADDONS" name="SPELLBINDING_TOGGLE" header="SPELLBINDING">
-		ToggleFrame(SpellBindingFrame)
-	</Binding>
-</Bindings>

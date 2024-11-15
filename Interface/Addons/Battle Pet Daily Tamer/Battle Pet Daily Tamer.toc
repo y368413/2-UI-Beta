@@ -1,0 +1,19 @@
+## Interface: 110005
+## Title: Battle Pet Daily Tamer
+## Notes: This addon marks the world map with battle pet dailies you've not completed for the day
+## Author: Gello
+## Version: 3.3.2
+## X-WoWI-ID: 21993
+## X-Wago-ID: xZKx2ENk
+## X-Curse-Project-ID: 54636
+## SavedVariables: BattlePetDailyTamerSettings
+## IconTexture: Interface\Icons\Tracking_WildPet
+## DefaultState: disabled
+
+Constants.lua
+Frames.xml
+Map.lua
+Main.lua
+Data.lua
+Tooltip.lua
+Options.lua

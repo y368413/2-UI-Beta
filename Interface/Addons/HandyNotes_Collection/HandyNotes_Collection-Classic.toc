@@ -1,8 +1,9 @@
-## Interface: 11403
+## Interface: 11502
 ## Title: HandyNotes: Collection
 ## RequiredDeps: HandyNotes
 ## SavedVariables: HandyNotes_CollectionDB, HandyNotes_CollectionCACHE, HandyNotes_CollectionSTATUS
 ## DefaultState: enabled
+## AddonCompartmentFunc: HandyNotes_Collection_OnAddonCompartmentClick
 
 HandyNotes_Colletion.lua
 Class\Text.lua

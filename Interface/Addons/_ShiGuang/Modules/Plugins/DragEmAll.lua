@@ -12,6 +12,7 @@ local BlzFrames = {
 	["AddonList"] = false,
 	["ChannelFrame"] = false,
 	["ChatConfigFrame"] = false,
+	["CommunitiesFrame"] = false, -- needs review
 	["DressUpFrame"] = false,
 	["FriendsFrame"] = false,
 	["GossipFrame"] = false,
@@ -26,14 +27,11 @@ local BlzFrames = {
 	["OpenMailFrame"] = false,
 	["PaperDollFrame"] = true,
 	["PetitionFrame"] = false,
-	["PetStableFrame"] = false,
-	["ProfessionsFrame"] = false,
 	["PVEFrame"] = false,
 	["QuestFrame"] = false,
 	["RaidParentFrame"] = false,
 	["ReputationFrame"] = true,
 	["SendMailFrame"] = true,
-	["SpellBookFrame"] = false,
 	["SplashFrame"] = false,
 	["StackSplitFrame"] = false,
 	["TabardFrame"] = false,
@@ -46,14 +44,6 @@ local BlzFrames = {
 	["BaudErrorFrame"] = false,
 	--["eCB_OptionFrame"] = false,
 }
-if I.isNewPatch then
-	BlzFrames["SettingsPanel"] = false
-	BlzFrames["ProfessionsFrame"] = false
-else
-	BlzFrames["AudioOptionsFrame"] = false
-	BlzFrames["InterfaceOptionsFrame"] = false
-	BlzFrames["VideoOptionsFrame"] = false
-end
 
 -- Frame Existing Check
 local function IsFrameExists()
@@ -84,7 +74,7 @@ local lodFrames = {
 	Blizzard_Collections		= { ["WardrobeFrame"] = false, ["WardrobeOutfitEditFrame"] = false },
 	Blizzard_CovenantRenown		= { ["CovenantRenownFrame"] = false, },
 	Blizzard_CovenantSanctum	= { ["CovenantSanctumFrame"] = false, },
-	--Blizzard_Communities		= { ["CommunitiesFrame"] = false, ["CommunitiesSettingsDialog"] = false, ["CommunitiesGuildLogFrame"] = false, ["CommunitiesTicketManagerDialog"] = false, ["CommunitiesAvatarPickerDialog"] = false, ["CommunitiesFrame.NotificationSettingsDialog"] = false, ["ClubFinderCommunityAndGuildFinderFrame.RequestToJoinFrame"] = false},
+	Blizzard_EncounterJournal	= { ["EncounterJournal"] = false },
 	Blizzard_FlightMap			= { ["FlightMapFrame"] = false },
 	Blizzard_GenericTraitUI		= { ["GenericTraitFrame"] = false },
 	Blizzard_GMSurveyUI			= { ["GMSurveyFrame"] = false },
@@ -102,6 +92,9 @@ local lodFrames = {
 	Blizzard_ObliterumUI		= { ["ObliterumForgeFrame"] = false },
 	Blizzard_OrderHallUI		= { ["OrderHallTalentFrame"] = false, },
 	Blizzard_ScrappingMachineUI	= { ["ScrappingMachineFrame"] = false },
+	Blizzard_Professions		= { ["InspectRecipeFrame"] = false, ["ProfessionsFrame"] = false },
+	Blizzard_ProfessionsBook	= { ["ProfessionsBookFrame"] = false },
+	Blizzard_ProfessionsCustomerOrders	= { ["ProfessionsCustomerOrdersFrame"] = false },
 	Blizzard_TalentUI			= { ["PlayerTalentFrame"] = false, ["PVPTalentPrestigeLevelDialog"] = false, },
 	Blizzard_TimeManager		= { ["TimeManagerFrame"] = false },
 	Blizzard_TokenUI			= { ["TokenFrame"] = true },

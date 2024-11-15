@@ -1,5 +1,8 @@
 if not WeakAuras.IsLibsOK() then return end
-local AddonName, OptionsPrivate = ...
+---@type string
+local AddonName = ...
+---@class OptionsPrivate
+local OptionsPrivate = select(2, ...)
 
 local L = WeakAuras.L
 
@@ -96,6 +99,35 @@ function OptionsPrivate.GetInformationOptions(data)
       name = isTmpGroup and L["|cFFE0E000Note:|r This sets the URL on all selected auras"]
                          or L["|cFFE0E000Note:|r This sets the URL on this group and all its members."],
       width = WeakAuras.doubleWidth,
+      order = order
+    }
+    order = order + 1
+  end
+  if OptionsPrivate.HasWagoUrl(data.id) then
+    args.ignoreWagoUpdate = {
+      type = "toggle",
+      name = L["Ignore Wago updates"],
+      desc = OptionsPrivate.IsWagoUpdateIgnored(data.id) and L["Do you want to enable updates for this aura"] or L["Do you want to ignore updates for this aura"],
+      width = WeakAuras.doubleWidth,
+      get = function() return OptionsPrivate.IsWagoUpdateIgnored(data.id) end,
+      set = function(info, v)
+          local auraData = WeakAuras.GetData(data.id)
+          if auraData then
+            local ignoreUpdate
+            if OptionsPrivate.IsWagoUpdateIgnored(data.id) then
+              ignoreUpdate = nil
+            else
+              ignoreUpdate = true
+            end
+            for child in OptionsPrivate.Private.TraverseAll(auraData) do
+              child.ignoreWagoUpdate = ignoreUpdate
+              OptionsPrivate.ClearOptions(child.id)
+            end
+            WeakAuras.ClearAndUpdateOptions(data.id)
+          end
+          OptionsPrivate.SortDisplayButtons(nil, true)
+
+      end,
       order = order
     }
     order = order + 1
@@ -332,14 +364,19 @@ function OptionsPrivate.GetInformationOptions(data)
   --- @type string
   local debugLogDesc = ""
 
-  for child in OptionsPrivate.Private.TraverseLeafsOrAura(data) do
-    --- @type boolean
-    local effectiveDebugLog = child.information.debugLog and true or false
-    debugLogDesc = debugLogDesc .. "|cFFE0E000"..child.id..": |r".. (effectiveDebugLog and "true" or "false") .. "\n"
-    if commonDebugLog == nil then
-      commonDebugLog = effectiveDebugLog
-    elseif effectiveDebugLog ~= commonDebugLog then
-      sameDebugLog = false
+  if isGroup and not isTmpGroup then
+    sameDebugLog = true
+    commonDebugLog = data.information.debugLog and true or false
+  else
+    for child in OptionsPrivate.Private.TraverseLeafsOrAura(data) do
+      --- @type boolean
+      local effectiveDebugLog = child.information.debugLog and true or false
+      debugLogDesc = debugLogDesc .. "|cFFE0E000"..child.id..": |r".. (effectiveDebugLog and "true" or "false") .. "\n"
+      if commonDebugLog == nil then
+        commonDebugLog = effectiveDebugLog
+      elseif effectiveDebugLog ~= commonDebugLog then
+        sameDebugLog = false
+      end
     end
   end
 
@@ -353,10 +390,15 @@ function OptionsPrivate.GetInformationOptions(data)
       return sameDebugLog and commonDebugLog
     end,
     set = function(info, v)
-      for child in OptionsPrivate.Private.TraverseLeafsOrAura(data) do
-        child.information.debugLog = v
-        WeakAuras.Add(child)
-        OptionsPrivate.ClearOptions(child.id)
+      if isGroup and not isTmpGroup then
+        data.information.debugLog = v
+        WeakAuras.Add(data)
+      else
+        for child in OptionsPrivate.Private.TraverseLeafsOrAura(data) do
+          child.information.debugLog = v
+          WeakAuras.Add(child)
+          OptionsPrivate.ClearOptions(child.id)
+        end
       end
 
       WeakAuras.ClearAndUpdateOptions(data.id)
@@ -375,18 +417,32 @@ function OptionsPrivate.GetInformationOptions(data)
         local fullMessage = L["WeakAuras %s on WoW %s"]:format(WeakAuras.versionString, WeakAuras.BuildInfo) .. "\n\n"
         --- @type boolean
         local haveLogs = false
-        for child in OptionsPrivate.Private.TraverseLeafsOrAura(data) do
-          --- @type string
-          local auraLog = OptionsPrivate.Private.DebugLog.GetLogs(child.uid)
+        if isGroup and not isTmpGroup then
+          local auraLog = OptionsPrivate.Private.DebugLog.GetLogs(data.uid)
           if auraLog then
             haveLogs = true
-            fullMessage = fullMessage .. L["Aura: '%s'"]:format(child.id)
+            fullMessage = fullMessage .. L["Aura: '%s'"]:format(data.id)
             --- @type string|nil
-            local version = child.semver or child.version
+            local version = data.semver or data.version
             if (version) then
               fullMessage = fullMessage .. "\n" .. L["Version: %s"]:format(version)
             end
             fullMessage = fullMessage .. "\n" .. L["Debug Log:"] .. "\n" .. auraLog .. "\n\n"
+          end
+        else
+          for child in OptionsPrivate.Private.TraverseLeafsOrAura(data) do
+            --- @type string
+            local auraLog = OptionsPrivate.Private.DebugLog.GetLogs(child.uid)
+            if auraLog then
+              haveLogs = true
+              fullMessage = fullMessage .. L["Aura: '%s'"]:format(child.id)
+              --- @type string|nil
+              local version = child.semver or child.version
+              if (version) then
+                fullMessage = fullMessage .. "\n" .. L["Version: %s"]:format(version)
+              end
+              fullMessage = fullMessage .. "\n" .. L["Debug Log:"] .. "\n" .. auraLog .. "\n\n"
+            end
           end
         end
 
@@ -405,8 +461,12 @@ function OptionsPrivate.GetInformationOptions(data)
       width = WeakAuras.normalWidth,
       order = order,
       func = function()
-        for child in OptionsPrivate.Private.TraverseLeafsOrAura(data) do
-          OptionsPrivate.Private.DebugLog.Clear(child.uid)
+        if isGroup and not isTmpGroup then
+          OptionsPrivate.Private.DebugLog.Clear(data.uid)
+        else
+          for child in OptionsPrivate.Private.TraverseLeafsOrAura(data) do
+            OptionsPrivate.Private.DebugLog.Clear(child.uid)
+          end
         end
       end
     }

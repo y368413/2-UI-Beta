@@ -11,8 +11,7 @@ local VERSION = 2
 local Share = Addon:NewShareHandler(VERSION)
 
 local template = [[
-# tdBattlePetScript Share String
-# Url: https://www.curseforge.com/wow/addons/tdbattlepetscript
+# Pet Battle Scripts
 # Version: %s
 # Name: %s
 # Data: %s
@@ -55,7 +54,7 @@ function Share:DecodeData(data)
 end
 
 function Share:Import(code)
-    local name = code:match('# Name: (%S+)')
+    local name = code:match('# Name: ([^\n]+)')
     local data = code:match('# Data: (%S+)')
     local code = code:match('# Code Start(.+)# Code End')
 

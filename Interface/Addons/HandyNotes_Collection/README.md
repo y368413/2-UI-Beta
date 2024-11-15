@@ -7,13 +7,15 @@
 
 This addon will sometime serve as big collection of HandyNotes around the World (of Warcraft).
 
-Currently, this is more like a development project, to learn lua and wow plugin programing.
+Currently, this addon contains all rares from _Warlords of Draenor_, most treasures and some achievements.
 
 If you have any comment, issue or feature request, you can leave me a note on Discord (link in icon), create issue on Gitlab or send a me a message where you see fit.
 
 ## Configuration
 
 Configuration for this addon can be found under HandyNotes (Interface -> Addons -> HandyNotes -> Plugins -> Collection).
+
+Each point has its own contextual menu (right click) with options to navigate and hide.
 
 At current time, you can modify configuration for Collection (tracking).
 
@@ -72,7 +74,8 @@ You can find list of locations and items, that are currently added below.
 - [It's the Stones!](https://www.wowhead.com/achievement=9436/its-the-stones) achievement.
 - [Take From Them Everything](https://www.wowhead.com/achievement=9435/take-from-them-everything) achievement.
 - [You Have Been Rylakinated!](https://www.wowhead.com/achievement=9481/you-have-been-rylakinated) achievement.
-- Toys / Pets / Transmogs (chests missing atm.)
+- Treasures for [Grand Treasure Hunter](https://www.wowhead.com/achievement=9728/grand-treasure-hunter) achievement.
+- Toys / Pets / Transmogs
 
 #### Gorgrond
 

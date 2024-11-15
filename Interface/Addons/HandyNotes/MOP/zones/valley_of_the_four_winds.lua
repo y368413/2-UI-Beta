@@ -12,7 +12,6 @@ local Treasure = MistsOfPandaria.node.Treasure
 local Squirrel = MistsOfPandaria.node.Squirrel
 
 local Achievement = MistsOfPandaria.reward.Achievement
-local Mount = MistsOfPandaria.reward.Mount
 local Toy = MistsOfPandaria.reward.Toy
 local Item = MistsOfPandaria.reward.Item
 local Transmog = MistsOfPandaria.reward.Transmog
@@ -27,49 +26,6 @@ local map = Map({id = 376, settings = true})
 -------------------------------------------------------------------------------
 ------------------------------------ RARES ------------------------------------
 -------------------------------------------------------------------------------
-
-map.nodes[69376366] = Rare({
-    id = 62346,
-    rewards = {
-        Mount({item = 89783, id = 515}),
-        Transmog({item = 90419, slot = L['leather']}), -- Fireproofed Chestguard
-        Transmog({item = 90451, slot = L['leather']}), -- Cannoneer's Gunpowder Carrier
-        Transmog({item = 90442, slot = L['leather']}), -- Flamefoot Tabi
-        Transmog({item = 90449, slot = L['cloth']}), -- Belt of Detonation
-        Transmog({item = 90450, slot = L['leather']}), -- Carrot-Holder Belt
-        Transmog({item = 90421, slot = L['mail']}), -- Chain of Unseized Skies
-        Transmog({item = 90411, slot = L['leather']}), -- Facemask of Unrepentant Banditry
-        Transmog({item = 90454, slot = L['plate']}), -- Girdle of the Galloping Giant
-        Transmog({item = 90412, slot = L['mail']}), -- Helm of Restoring Wind
-        Transmog({item = 90418, slot = L['cloth']}), -- Robes of the Lightning Rider
-        Transmog({item = 90441, slot = L['leather']}), -- Stompdodger Boots
-        Transmog({item = 90443, slot = L['mail']}), -- Burnmender Boots
-        Transmog({item = 90448, slot = L['cloth']}), -- Cannonfire Cord
-        Transmog({item = 90410, slot = L['leather']}), -- Cap of Wandering Pride
-        Transmog({item = 90413, slot = L['mail']}), -- Crest of the Grand Warband
-        Transmog({item = 90445, slot = L['plate']}), -- Firerider Treads
-        Transmog({item = 90420, slot = L['leather']}), -- Flameshot Wrap
-        Transmog({item = 90439, slot = L['cloth']}), -- Open Steppe Sandals
-        Transmog({item = 90409, slot = L['cloth']}), -- Sky-Sear Cowl
-        Transmog({item = 90452, slot = L['mail']}), -- Sparkmaker Girdle
-        Transmog({item = 90447, slot = L['plate']}), -- Stompers of Vigorous Stomping
-        Transmog({item = 90444, slot = L['mail']}), -- Treads of Gentle Nudges
-        Transmog({item = 90422, slot = L['mail']}), -- Armor of the Single Cloud
-        Transmog({item = 90425, slot = L['plate']}), -- Carapace of Crushed Conviction
-        Transmog({item = 90456, slot = L['plate']}), -- Cord of Crazed Strength
-        Transmog({item = 90416, slot = L['plate']}), -- Crown of Ranging Invasion
-        Transmog({item = 90408, slot = L['cloth']}), -- Free Spirit Hood
-        Transmog({item = 90415, slot = L['plate']}), -- Giantfoot Headguard
-        Transmog({item = 90453, slot = L['mail']}), -- Girdle of the Raging Rider
-        Transmog({item = 90455, slot = L['plate']}), -- Greatbelt of Livid Fury
-        Transmog({item = 90424, slot = L['plate']}), -- Ravaging Warrior's Chestplate
-        Transmog({item = 90446, slot = L['plate']}), -- Silverspur Warboots
-        Transmog({item = 90440, slot = L['cloak']}), -- Slippers of Fiery Retribution
-        Transmog({item = 90423, slot = L['plate']}), -- Chestguard of the Unbowed Back
-        Transmog({item = 90414, slot = L['plate']}), -- Greathelm of the Monstrous Mushan
-        Transmog({item = 90417, slot = L['cloth']}) -- Robes of Blue Skies
-    }
-}) -- Galleon
 
 map.nodes[34605960] = Rare({
     id = 51059,
@@ -103,7 +59,7 @@ map.nodes[16803520] = Rare({
         Transmog({item = 87601, slot = L['plate']}), -- Plough Driving Grips
         Transmog({item = 87603, slot = L['plate']}) -- Thunderfall Gauntlets
     },
-    pois = {15603100, 15403260, 14003820, 16604100, 19003580}
+    pois = {POI({15603100, 15403260, 14003820, 16604100, 19003580})}
 }) -- Bonobos
 
 map.nodes[18607760] = Rare({
@@ -286,6 +242,12 @@ map.nodes[92003900] = Treasure({
     icon = 'chest_bn',
     rewards = {Item({item = 87524})}
 }) -- Boat-Building Instructions
+
+map.nodes[52076376] = Treasure({
+    quest = 37246,
+    label = L['mysterious_fruit_pile'],
+    rewards = {Item({item = 110505})} -- Mesmerizing Fruit Hat
+}) -- Mysterious Fruit Pile
 
 -------------------------------------------------------------------------------
 --------------------------------- LOREWALKER ----------------------------------

@@ -1,35 +1,39 @@
-## Interface: 100000
-## Version: 1.15
-## Title: Dark Soil
-## Title-deDE: Dunkle Erde
-## Title-esES: Tierra Oscura
-## Title-esMX: Tierra Oscura
-## Title-frFR: Terre Sombre
-## Title-itIT: Terreno Smosso
-## Title-koKR: 검은 토양
-## Title-ptBR: Solo Negro
-## Title-ptPT: Solo Negro
-## Title-ruRU: Темная земля
-## Title-zhCN: 黑色泥土
-## Title-zhTW: 黑色泥
+## Interface: 110005
+## Version: 4.00
 ## Author: Taraezor
-## Notes: Helps you find the |cFF0070DEDark Soil|r in the Valley of the Four Winds
-## Notes-deDE: Hilft Ihnen, die |cFF0070DEDunkle Erde|r im Tal der Vier Winde zu finden
-## Notes-esES: Te ayuda a encontrar la |cFF0070DETierra Oscura|r en el Valle de los Cuatro Vientos
-## Notes-esMX: Te ayuda a encontrar la |cFF0070DETierra Oscura|r en el Valle de los Cuatro Vientos
-## Notes-frFR: Vous aide à trouver la |cFF0070DETerre Sombre|r dans la Vallée des Quatre vents
-## Notes-itIT: Ti aiuta a trovare la |cFF0070DETerra Oscura|r nella Valle dei Quattro Venti
-## Notes-koKR: 네 바람의 계곡에서 |cFF0070DE검은 토양|r 찾을 수 있도록 도와줍니다.
-## Notes-ptBR: Ajude a encontrar o |cFF0070DESolo Negro|r no Vale dos Quatro Ventos
-## Notes-ptPT: Ajude a encontrar o |cFF0070DESolo Negro|r no Vale dos Quatro Ventos
-## Notes-ruRU: Помогите найти |cFF0070DEТемная земля|r в Долине Четырех Ветров
-## Notes-zhCN: 帮助寻找四风谷的|cFF0070DE黑色泥土
-## Notes-zhTW: 幫助尋找四風谷的|cFF0070DE黑色泥土
-## X-Category: Map & Minimap
-## X-Curse-Project-ID: 491373
-## X-WoWI-ID: 26072
+## IconTexture: Interface\Icons\Achievement_faction_tillers
+## Title: Dark Soil Tillers
+## Title-deDE: Dunkle Erde Die Ackerbauern
+## Title-esES: Los Labradores Tierra Oscura
+## Title-esMX: Los Labradores Tierra Oscura
+## Title-frFR: Laboureurs Terre Sombre
+## Title-itIT: Coltivatori Terreno Smosso
+## Title-koKR: 농사꾼 연합 검은 토양
+## Title-ptBR: Os Lavradores Solo Negro
+## Title-ptPT: Os Lavradores Solo Negro
+## Title-ruRU: Земледельцами Темная Земля
+## Title-zhCN: 阡陌客 黑色泥土
+## Title-zhTW: 阡陌客 黑色泥土
+## Notes: |cFFF4A460Helps you with the |cFFD2691EDark Soil|cFFF4A460 and |cFFD2691EThe Tillers
+## Notes-deDE: |cFFF4A460Hilft dir bei |cFFD2691EDunkle Erde|cFFF4A460 und |cFFD2691EDie Ackerbauern
+## Notes-esES: |cFFF4A460Te ayuda con |cFFD2691ETierra Oscura|cFFF4A460 y |cFFD2691ELos Labradores
+## Notes-esMX: |cFFF4A460Te ayuda con |cFFD2691ETierra Oscura|cFFF4A460 y |cFFD2691ELos Labradores
+## Notes-frFR: |cFFF4A460Vous aide avec |cFFD2691ETerre Sombre|cFFF4A460 et |cFFD2691ELaboureurs
+## Notes-itIT: |cFFF4A460Ti aiuta con |cFFD2691ETerra Oscura|cFFF4A460 e |cFFD2691EColtivatori
+## Notes-koKR: |cFFF4A460네 바람의 계곡에서 |cFFD2691E농사꾼 연합|cFFF4A460 및 |cFFD2691E검은 토양|r에 대한 도움말
+## Notes-ptBR: |cFFF4A460Ajuda você com |cFFD2691ESolo Escuro|cFFF4A460 e |cFFD2691EOs Lavradores
+## Notes-ptPT: |cFFF4A460Ajuda você com |cFFD2691ESolo Escuro|cFFF4A460 e |cFFD2691EOs Lavradores
+## Notes-ruRU: |cFFF4A460Помогает вам с |cFFD2691EТемная Земля|cFFF4A460 и |cFFD2691EЗемледельцами
+## Notes-zhCN: |cFFF4A460四风谷的|cFFD2691E分蘖|cFFF4A460和cFFD2691E黑土
+## Notes-zhTW: |cFFF4A460幫助四風谷的|cFFD2691E分蘗|cFFF4A460和|cFFD2691E黑土
 ## RequiredDeps: HandyNotes
 ## SavedVariables: HandyNotes_DarkSoilDB
+## OptionalDeps: HandyNotes_APathLessTravelled, HandyNotes_EA-Pandaria
+## AddonCompartmentFunc: HandyNotes_DarkSoilTillers_OnAddonCompartmentClick
+## AddonCompartmentFuncOnEnter: HandyNotes_DarkSoilTillers_OnAddonCompartmentEnter
+## AddonCompartmentFuncOnLeave: HandyNotes_DarkSoilTillers_OnAddonCompartmentLeave
+## X-Curse-Project-ID: 491373
+## X-Wago-ID: kRNLl8No
 
 Core.lua
 Data.lua

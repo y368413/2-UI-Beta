@@ -15,6 +15,8 @@ end
 
 -- Warlords of Draenor
 t['in_cave'] = 'In a cave.'
+t['hut_note'] = 'Inside the hut.'
+t['underwater_note'] = 'Underwater.'
 t['multiple_spawn_note'] = 'Can spawn in multiple locations.'
 t['strange_spore_treasure'] = 'Strange Spore'
 t['edge_of_reality'] = 'Edge of Reality'
@@ -41,12 +43,62 @@ To complete this achievement, you need to use 'Supply Crates', 'Draenic Gems' or
 
 Do not leave the quest area, it will remove your buff!
 ]]
+t['stolen_treasure_treasure'] = 'Stolen Treasure'
+t['fantastic_fish_treasure'] = 'Fantastic Fish'
+t['sunken_treasure_treasure'] = 'Sunken Treasure'
+t['bubbling_cauldron_treasure'] = 'Bubbling Cauldron'
+t['sunken_fishing_boat_treasure'] = 'Sunken Fishing boat'
+t['shadowmoon_exile_treasure_treasure'] = 'Shadowmoon Exile Treasure'
+t['mushroom-covered_chest_treasure'] = 'Mushroom-Covered Chest'
+t['orc_skeleton_treasure'] = 'Orc Skeleton'
+t['false-bottomed_jar_treasure'] = 'False-Bottomed Jar'
+t['demonic_cache_treasure'] = 'Demonic Cache'
+t['rotting_basket_treasure'] = 'Rotting Basket'
+t['shadowmoon_treasure_treasure'] = 'Shadowmoon Treasure'
+t['shadowmoon_sacrificial_dagger_treasure'] = 'Shadowmoon Sacrificial Dagger'
+t['hanging_satchel_treasure'] = 'Hanging Satchel'
+t['alchemists_satchel_treasure'] = "Alchemist's Satchel"
+t['kaliri_egg_treasure'] = 'Kaliri Egg'
+t['iron_horde_tribute_treasure'] = 'Iron Horde Tribute'
+t['waterlogged_chest_treasure'] = 'Waterlogged Chest'
+t['vindicators_cache_treasure'] = "Vindicator's Cache"
+t['scaly_rylak_egg_treasure'] = 'Scaly Rylak Egg'
+t['cargo_of_the_raven_queen_treasure'] = 'Cargo of the Raven Queen'
+t['astrologers_box_treasure'] = "Astrologer's Box"
+t['uzkos_knickknacks_treasure'] = "Uzko's Knickknacks"
+t['rovos_dagger_treasure'] = "Rovo's Dagger"
+t['beloveds_offering_treasure'] = "Beloved's Offering"
+t['grekas_urn_treasure'] = "Greka's Urn"
+t['veemas_herb_bag_treasure'] = "Veema's Herb Bag"
+t['ronokks_belongings_treasure'] = "Ronokk's Belongings"
+t['carved_drinking_horn_treasure'] = 'Carved Drinking Horn'
+t['ashes_of_akumbo_treasure'] = "Ashes of A'kumbo"
+t['giant_moonwillow_cone_treasure'] = 'Giant Moonwillow Cone'
+t['swamplighter_hive_treasure'] = 'Swamplighter Hive'
+t['mikkals_chest_treasure'] = "Mikkal's Chest"
+t['armored_elekk_tusk_treasure'] = 'Armored Elekk Tusk'
+t['dusty_lockbox_treasure'] = 'Dusty Lockbox'
+t['glowing_cave_mushroom_treasure'] = 'Glowing Cave Mushroom'
+t['ancestral_greataxe_treasure'] = 'Ancestral Greataxe'
+t['iron_horde_cargo_shipment_treasure'] = 'Iron Horde Cargo Shipment'
+t['crystal_blade_of_torvath_treasure'] = 'Crystal Blade of Torvath'
+t['peaceful_offering_treasure'] = 'Peaceful Offering'
+t['sunken_treasure_note'] = 'Under the ship.'
+t['mushroom-covered_chest_note'] = 'Deep down under mushrooms.'
+t['false-bottomed_jar_note'] = 'Horde characters have to keep an eye on [npc(81313)] alliance guard, that will attack them.'
+t['hanging_satchel_note'] = 'On tree branch hanging above the cave.'
+t['scaly_rylak_egg_note'] = 'Next to [npc(85568)].'
+t['astrologers_box_note'] = 'On the upper floor.'
+t['strange_spore_note'] = 'On top of the mushroom.'
+t['dusty_lockbox_note'] = 'On top of the stone arch. Contains random green items.'
+t['glowing_cave_mushroom_note'] = 'Jump on the boulders on left side to get to the treasure.'
+t['crystal_blade_of_torvath_note'] = 'Interact with sword and kill 3x [npc(79686)] to loot treasure.'
+t['stone_building_note'] = 'Inside stone building.'
 
 -- Gorgrond
 t['poundfist_note'] = 'Has really long respawn between 50 and 90 hours.'
 t['trophy_of_glory_note'] = 'You must finish building up your Gorgrond Garrison Outpost to get quest items to drop.'
 t['roardan_sky_terror_note'] = 'Flies around Tangleheart and Beastwatch and makes 3 stops on the way.'
-
 t['odd_skull_treasure'] = 'Odd Skull'
 t['pile_of_rubble_treasure'] = 'Pile of Rubble'
 t['remains_of_balik_orecrusher_treasure'] = 'Remains of Balik Orecrusher'
@@ -71,8 +123,7 @@ t['ockbars_pack_treasure'] = "Ockbar's Pack"
 t['sashas_secret_stash_treasure'] = "Sasha's Secret Stash"
 t['vindicators_hammer_treasure'] = "Vindicator's Hammer"
 t['brokors_sack_treasure'] = "Brokor's Sack"
-t['snipers_crossbow_trerasure'] = "Sniper's Crossbow"
-
+t['snipers_crossbow_treasure'] = "Sniper's Crossbow"
 t['ninja_pepe_title'] = 'Ninja Pepe'
 t['ninja_pepe_note'] = 'Inside the hut sitting on a chair.'
 t['attack_plans_title'] = 'Iron Horde Attack Orders'
@@ -187,14 +238,13 @@ t['abandoned_mining_pick_title'] = 'Abandoned Mining Pick'
 t['ogron_plunder_title'] = 'Ogron Plunder'
 t['mysterious_mushrooms_title'] = 'Mysterious Mushrooms'
 t['waterlogged_satchel_title'] = 'Waterlogged Satchel'
-t['waterlogged_satchel_note'] = 'Underwater.'
 t['sethekk_idol_title'] = 'Sethekk Idol'
 t['sethekk_ritual_brew_title'] = 'Sethekk Ritual Brew'
 t['spray-o-matic_5000_xt_title'] = 'Spray-O-Matic 5000 XT'
 t['spray-o-matic_5000_xt_note'] = 'In the ships trunk.'
 t['shredder_parts_title'] = 'Shredder Parts'
 t['coinbenders_payment_title'] = "Coinbender's Payment"
-t['coinbenders_payment_note'] = 'Underwater. Marked by the buoy on the water surface.'
+t['coinbenders_payment_note'] = 'Marked by the buoy on the water surface.'
 t['sailor_zazzuks_180-proof_rum_title'] = "Sailor Zazzuk's 180-Proof Rum"
 t['sailor_zazzuks_180-proof_rum_note'] = 'In the small room.'
 t['campaign_contributions_title'] = 'Campaign Contributions'
@@ -395,6 +445,5 @@ t['dead_mans_chest_treasure'] = "Dead Man's Chest"
 t['the_commanders_shield_note'] = 'Inside building.'
 t['the_eye_of_grannok_note'] = 'On the second floor of tower near the stairs.'
 t['tower_chest_note'] = 'At the top of a tower.'
-t['spoils_of_war_note'] = 'Inside the hut.'
 t['strange_fruit_note'] = '[item(127396)] incubates in 14 days into [item(127394)].'
 t['battle_pets_note'] = 'All rewards are contained in [item(127751)] and can be collected daily from each battle. That is 15 [item(127751)] per day per character.'

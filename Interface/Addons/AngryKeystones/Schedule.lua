@@ -6,35 +6,40 @@ local rowCount = 3
 local requestPartyKeystones
 
 -- 1:Overflowing, 2:Skittish, 3:Volcanic, 4:Necrotic, 5:Teeming, 6:Raging, 7:Bolstering, 8:Sanguine, 9:Tyrannical, 10:Fortified, 11:Bursting, 12:Grievous, 13:Explosive, 14:Quaking, 16:Infested, 117: Reaping, 119:Beguiling 120:Awakened, 121:Prideful, 122:Inspiring, 123:Spiteful, 124:Storming
+-- 134:Entangling, 135：Afflicted, 136:Incorporeal
+-- TWW 
+-- 147:Xal’atath’s Guile, 148:Xal’atath’s Bargain: Ascendant,158:Xal'atath's Bargain: Voidbound, 159:Xal'atath's Bargain: Oblivion, 160:Xal’atath’s Bargain: Devour
 local affixSchedule = {
-	-- Shadowlands Season 2
-	[1] =  {[1]=11, [2]=124,[3]=10}, -- 1 Bursting Storming Fortified - march 8,2022
-	[2] =  {[1]=6,  [2]=3,  [3]=9},  -- 2 Raging Volcanic Tyrannical - march 15, 2022
-	[3] =  {[1]=122,[2]=12, [3]=10}, -- 3 Inspiring Grievous Fortified - march 22, 2022
-	[4] =  {[1]=123,[2]=4,  [3]=9},  -- 4 Spiteful Necrotic Tyrannical - march 29, 2022
-	[5] =  {[1]=7,  [2]=14, [3]=10}, -- 5 Bolstering Quaking Fortified - april 5, 2022
-	[6] =  {[1]=8,  [2]=124,[3]=9},  -- 6 Sanguine Storming Tyrannical - april 12, 2022
-	[7] =  {[1]=6,  [2]=13, [3]=10}, -- 7 Raging Explosive Fortified - april 19, 2022
-	[8] =  {[1]=11, [2]=3,  [3]=9},  -- 8 Bursting Volcanic Tyrannical - april 26, 2022
-	[9] =  {[1]=123,[2]=4, [3]=10}, -- 9 Spiteful Necrotic Fortified - may 3, 2022
-	[10] = {[1]=122,[2]=14, [3]=9},  --10 Inspiring Quaking Tyrannical - may 10, 2022
-	[11] = {[1]=8,  [2]=12,  [3]=10}, --11 Sanguine Grievous Fortified - may 17, 2022
-	[12] = {[1]=7,  [2]=13, [3]=9},  --12 Bolstering Explosive Tyrannical - may 24, 2022
+	-- TWW Season 1 (Sort:[1](Level 2+);[2](Level 4+);[3](Level 7+);[4](Level 10+);[5](Level 12+))
+	-- Information from(资料来自)：https://www.wowhead.com/guide/mythic-plus-dungeons/the-war-within-season-1/overview
+	{ [1]=148, [2] =9 , [3]=152, [4]=10, [5]=147, }, -- (1) Xal’atath’s Bargain: Ascendant | Tyrannical | Challenger’s Peril | Fortified  | Xal’atath’s Guile
+	{ [1]=159, [2] =10, [3]=152, [4]=9 , [5]=147, }, -- (2) Xal’atath’s Bargain: Oblivion  | Fortified  | Challenger’s Peril | Tyrannical | Xal’atath’s Guile
+	{ [1]=158, [2] =9 , [3]=152, [4]=10, [5]=147, }, -- (3) Xal’atath’s Bargain: Voidbound | Tyrannical | Challenger’s Peril | Fortified  | Xal’atath’s Guile
+	{ [1]=160, [2] =10, [3]=152, [4]=9 , [5]=147, }, -- (4) Xal’atath’s Bargain: Devour    | Fortified  | Challenger’s Peril | Tyrannical | Xal’atath’s Guile
+	{ [1]=159, [2] =9 , [3]=152, [4]=10, [5]=147, }, -- (5) Xal’atath’s Bargain: Oblivion  | Tyrannical | Challenger’s Peril | Fortified  | Xal’atath’s Guile
+	{ [1]=148, [2] =10, [3]=152, [4]=9 , [5]=147, }, -- (6) Xal’atath’s Bargain: Ascendant | Fortified  | Challenger’s Peril | Tyrannical | Xal’atath’s Guile
+	-- Predicted
+	{ [1]=160, [2] =9 , [3]=152, [4]=10, [5]=147, }, -- (7) Xal’atath’s Bargain: Devour    | Tyrannical | Challenger’s Peril | Fortified  | Xal’atath’s Guile
+	{ [1]=158, [2] =10, [3]=152, [4]=9 , [5]=147, }, -- (8) Xal’atath’s Bargain: Voidbound | Fortified  | Challenger’s Peril | Tyrannical | Xal’atath’s Guile
 }
 
 local scheduleEnabled = true
-local affixScheduleUnknown = false
+local affixScheduleUnknown = true
 local currentWeek
 local currentKeystoneMapID
 local currentKeystoneLevel
 local unitKeystones = {}
+local hookedIconTooltips = false
 
 local function GetNameForKeystone(keystoneMapID, keystoneLevel)
 	local keystoneMapName = keystoneMapID and C_ChallengeMode.GetMapUIInfo(keystoneMapID)
 	if keystoneMapID and keystoneMapName then
+		if Addon.Locale:Local("dungeon_"..keystoneMapName) then
+			keystoneMapName = Addon.Locale:Get("dungeon_"..keystoneMapName)
+		end
 		keystoneMapName = gsub(keystoneMapName, ".-%-", "") -- Mechagon
 		keystoneMapName = gsub(keystoneMapName, ".-"..HEADER_COLON, "") -- Tazavesh
-		return string.format("%s (%d)", keystoneMapName, keystoneLevel)
+		return string.format("(%d) %s", keystoneLevel, keystoneMapName)
 	end
 end
 
@@ -45,7 +50,7 @@ local function UpdatePartyKeystones()
 	end
 
 	if not scheduleEnabled then return end
-	if not IsAddOnLoaded("Blizzard_ChallengesUI") then return end
+	if not C_AddOns.IsAddOnLoaded("Blizzard_ChallengesUI") then return end
 
 	local playerRealm = select(2, UnitFullName("player")) or ""
 
@@ -106,12 +111,12 @@ local function UpdateFrame()
 
 	local weeklyChest = ChallengesFrame.WeeklyInfo.Child.WeeklyChest
 	weeklyChest:ClearAllPoints()
-	weeklyChest:SetPoint("LEFT", 100, -30)
+	weeklyChest:SetPoint("LEFT", 100, 0)
 
-	local description = ChallengesFrame.WeeklyInfo.Child.Description
-	description:SetWidth(240)
-	description:ClearAllPoints()
-	description:SetPoint("TOP", weeklyChest, "TOP", 0, 75)
+	-- Wordwrap and size of the original frame
+	local description = ChallengesFrame.WeeklyInfo.Child.WeeklyChest.RunStatus
+	description:SetWordWrap(true)
+	description:SetSize(200, 90)
 
 	local currentKeystoneName = GetNameForKeystone(C_MythicPlus.GetOwnedKeystoneChallengeMapID(), C_MythicPlus.GetOwnedKeystoneLevel())
 	if currentKeystoneName then
@@ -141,6 +146,19 @@ local function UpdateFrame()
 		Mod.AffixFrame.Label:Show()
 	end
 	UpdatePartyKeystones()
+
+	if not hookedIconTooltips then
+		hookedIconTooltips = true
+		local timeLimitFormat = Addon.Locale:Get("timeLimit")
+		for _, icon in next, ChallengesFrame.DungeonIcons do
+			icon:HookScript("OnEnter", function(self)
+				local _, _, timeLimit = C_ChallengeMode.GetMapUIInfo(self.mapID)
+				GameTooltip_AddBlankLineToTooltip(GameTooltip)
+				GameTooltip_AddColoredLine(GameTooltip, timeLimitFormat:format(SecondsToClock(timeLimit)), HIGHLIGHT_FONT_COLOR)
+				GameTooltip:Show()
+			end)
+		end
+	end
 end
 
 local function makeAffix(parent)
@@ -201,7 +219,7 @@ function Mod:Blizzard_ChallengesUI()
 
 		local affixes = {}
 		local prevAffix
-		for j = 3, 1, -1 do
+		for j = 5, 1, -1 do
 			local affix = makeAffix(entry)
 			if prevAffix then
 				affix:SetPoint("RIGHT", prevAffix, "LEFT", -4, 0)
@@ -232,8 +250,6 @@ function Mod:Blizzard_ChallengesUI()
 	label:SetWordWrap(true)
 	if affixScheduleUnknown then
 		label:SetText(Addon.Locale.scheduleUnknown)
-	else
-		label:SetText(Addon.Locale.scheduleMissingKeystone)
 	end
 	frame.Label = label
 
@@ -270,7 +286,7 @@ function Mod:Blizzard_ChallengesUI()
 		entry.Text = text
 
 		local text2 = entry:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
-		text2:SetWidth(180)
+		text2:SetWidth(140)
 		text2:SetJustifyH("RIGHT")
 		text2:SetWordWrap(false)
 		text2:SetText()
@@ -288,8 +304,8 @@ function Mod:Blizzard_ChallengesUI()
 	frame2.Entries = entries2
 
 	local keystoneText = ChallengesFrame.WeeklyInfo.Child:CreateFontString(nil, "ARTWORK", "GameFontNormalMed2")
-	keystoneText:SetPoint("TOP", ChallengesFrame.WeeklyInfo.Child.WeeklyChest, "BOTTOM", 0, -15)
-	keystoneText:SetWidth(320)
+	keystoneText:SetPoint("TOP", ChallengesFrame.WeeklyInfo.Child.WeeklyChest, "BOTTOM", 0, -80)
+	keystoneText:SetWidth(300)
 	Mod.KeystoneText = keystoneText
 
 	hooksecurefunc(ChallengesFrame, "Update", UpdateFrame)
@@ -297,9 +313,9 @@ end
 
 function Mod:GetInventoryKeystone()
 	for container=BACKPACK_CONTAINER, NUM_BAG_SLOTS do
-		local slots = GetContainerNumSlots(container)
+		local slots = C_Container.GetContainerNumSlots(container)
 		for slot=1, slots do
-			local _, _, _, _, _, _, slotLink = GetContainerItemInfo(container, slot)
+			local _, _, _, _, _, _, slotLink = C_Container.GetContainerItemInfo(container, slot)
 			local itemString = slotLink and slotLink:match("|Hkeystone:([0-9:]+)|h(%b[])|h")
 			if itemString then
 				return slotLink, itemString
@@ -314,14 +330,10 @@ function Mod:CheckAffixes()
 
 	if currentAffixes then
 		for index, affixes in ipairs(affixSchedule) do
-			local matches = 0
-			for _, affix in ipairs(currentAffixes) do
-				if affix.id == affixes[1] or affix.id == affixes[2] or affix.id == affixes[3] then
-					matches = matches + 1
-				end
-			end
-			if matches >= 3 then
+			if affixes[1] == currentAffixes[1].id and affixes[2] == currentAffixes[2].id and affixes[3] == currentAffixes[3].id and affixes[4] == currentAffixes[4].id and affixes[5] == currentAffixes[5].id then
 				currentWeek = index
+				affixScheduleUnknown = false
+				break
 			end
 		end
 	end
@@ -351,7 +363,7 @@ end
 
 function Mod:SetPartyKeystoneRequest()
 	requestPartyKeystones = true
-	if IsAddOnLoaded("Blizzard_ChallengesUI") and ChallengesFrame:IsShown() then
+	if C_AddOns.IsAddOnLoaded("Blizzard_ChallengesUI") and ChallengesFrame:IsShown() then
 		self:SendPartyKeystonesRequest()
 		UpdatePartyKeystones()
 	end

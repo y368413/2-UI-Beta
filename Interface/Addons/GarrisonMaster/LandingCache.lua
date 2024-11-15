@@ -1,8 +1,7 @@
 local _, T = ...
 if T.Mark ~= 50 then return end
 local G, L, E = T.Garrison, T.L, T.Evie
-local Nine = T.Nine or _G
-local C_Garrison = Nine.C_Garrison
+local GameTooltip = T.NotGameTooltip or GameTooltip
 
 local function HookOnShow(self, OnShow)
 	self:HookScript("OnShow", OnShow)
@@ -55,7 +54,7 @@ end
 local function Ship_OnEnter(self, ...)
 	if self.buildingID == -1 and self.plotID == -42 then
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-		T.SetCacheTooltip(GameTooltip, select(2, Nine.GetCurrencyInfo(824)), G.GetResourceCacheInfo())
+		T.SetCacheTooltip(GameTooltip, C_CurrencyInfo.GetCurrencyInfo(824).quantity, G.GetResourceCacheInfo())
 		self.UpdateTooltip = Ship_OnEnter
 	elseif self.buildingID == -1 and self.plotID == -43 then
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
@@ -74,6 +73,7 @@ local function Ship_SetCache(ship)
 	local cv, mv, st, md = G.GetResourceCacheInfo()
 	if not (ship and cv) then return end
 	ship:SetScript("OnEnter", Ship_OnEnter)
+	ship:SetScript("OnLeave", T.HideOwnedGameTooltip)
 	ship.Done:SetShown(cv == mv)
 	ship.Border:SetShown(cv < mv)
 	ship.BG:SetShown(cv < mv)
@@ -94,6 +94,7 @@ local function Ship_SetRecruit(ship)
 	local dt, lim = G.GetRecruitInfo()
 	if not (ship and dt and G.HasLevelTwoInn()) then return end
 	ship:SetScript("OnEnter", Ship_OnEnter)
+	ship:SetScript("OnLeave", T.HideOwnedGameTooltip)
 	local done = dt >= lim
 	ship.Done:SetShown(done)
 	ship.Border:SetShown(not done)
@@ -113,11 +114,11 @@ local function Ship_SetRecruit(ship)
 end
 hooksecurefunc("GarrisonLandingPageReport_GetShipments", function(self)
 	if GarrisonLandingPage.garrTypeID >= 3 then return end
-	local index, ship = self.shipmentsPool.numActiveObjects, self.shipmentsPool:Acquire()
-	ship:SetPoint("TOPLEFT", 60 + mod(index, 3) * 105, -105 - floor(index / 3) * 100)
+	local index, ship = self.shipmentsPool:GetNumActive(), self.shipmentsPool:Acquire()
+	ship:SetPoint("TOPLEFT", 60 + (index % 3) * 105, -105 - math.floor(index / 3) * 100)
 	if Ship_SetRecruit(ship) then
-		index, ship = self.shipmentsPool.numActiveObjects, self.shipmentsPool:Acquire()
-		ship:SetPoint("TOPLEFT", 60 + mod(index, 3) * 105, -105 - floor(index / 3) * 100)
+		index, ship = self.shipmentsPool:GetNumActive(), self.shipmentsPool:Acquire()
+		ship:SetPoint("TOPLEFT", 60 + (index % 3) * 105, -105 - math.floor(index / 3) * 100)
 	end
 	if not Ship_SetCache(ship) then
 		self.shipmentsPool:Release(ship)
@@ -129,8 +130,8 @@ function E:SHOW_LOOT_TOAST(rt, rl, _q, _4, _5, _6, source)
 		GarrisonLandingPageReport_GetShipments(GarrisonLandingPageReport)
 	end
 end
-local function addCacheResources(self, id)
-	if id == 824 then
+local function addCacheResources(self, tooltipData)
+	if tooltipData.id == 824 and tooltipData.type == Enum.TooltipDataType.Currency then
 		local cv, mv = G.GetResourceCacheInfo()
 		if cv and cv > 0 then
 			self:AddLine(GARRISON_CACHE .. ": |cffff" .. (cv < mv and "ffff" or "1010") .. BreakUpLargeNumbers(cv) .. "/" .. BreakUpLargeNumbers(mv))
@@ -138,41 +139,19 @@ local function addCacheResources(self, id)
 		end
 	end
 end
-local function addCacheResourcesByLink(self, idx)
-	addCacheResources(self, tonumber((Nine.GetCurrencyListLink(idx) or ""):match("currency:(%d+)") or 0))
-end
-for i=1,GameTooltip ~= _G.GameTooltip and 2 or 1 do
-	local tip = i == 1 and GameTooltip or _G.GameTooltip
-	hooksecurefunc(tip, "SetCurrencyByID", addCacheResources)
-	hooksecurefunc(tip, "SetCurrencyTokenByID", addCacheResources)
-	hooksecurefunc(tip, "SetCurrencyToken", addCacheResourcesByLink)
-end
-hooksecurefunc(GarrisonLandingPage.Report.shipmentsPool, "ReleaseAll", function(self)
-	local o = self.inactiveObjects
-	for i=1,o and #o or 0 do
-		if o[i].Swipe then
-			-- Subsequent Acquire/Setup might not reset the swipe
-			o[i].Swipe:Hide()
-		end
-	end
-end)
+TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Currency, addCacheResources)
 
-local function ShowReportMissionExpirationTime()
+local function ShowReportMissionExpirationTime(b, item)
 	if GarrisonLandingPage.garrTypeID >= 3 then return end
-	local items, buttons = GarrisonLandingPageReport.List.AvailableItems, GarrisonLandingPageReport.List.listScroll.buttons
-	for i=1,#buttons do
-		local item = buttons[i]:IsShown() and items[buttons[i].id]
-		if item and item.offerTimeRemaining and item.offerEndTime then
-			if item.offerEndTime - 8640000 <= GetTime() then
-				buttons[i].MissionType:SetFormattedText("%s |cffa0a0a0(%s %s)|r",
-					item.durationSeconds >= GARRISON_LONG_MISSION_TIME and (GARRISON_LONG_MISSION_TIME_FORMAT):format(item.duration) or item.duration,
-					L"Expires in:", item.offerTimeRemaining)
-			end
+	if item and item.offerTimeRemaining and item.offerEndTime then
+		if item.offerEndTime - 8640000 <= GetTime() then
+			b.MissionType:SetFormattedText("%s |cffa0a0a0(%s %s)|r",
+				item.durationSeconds >= GARRISON_LONG_MISSION_TIME and (GARRISON_LONG_MISSION_TIME_FORMAT):format(item.duration) or item.duration,
+				L"Expires in:", item.offerTimeRemaining)
 		end
 	end
 end
-hooksecurefunc("GarrisonLandingPageReportList_UpdateAvailable", ShowReportMissionExpirationTime)
-if GarrisonLandingPageReport:IsVisible() then ShowReportMissionExpirationTime() end
+T.RegisterCallback_OnInitializedFrame(GarrisonLandingPageReport.List.ScrollBox, ShowReportMissionExpirationTime)
 
 local hs = T.CreateLazyItemButton(GarrisonLandingPageReport, 110560)
 hs:SetSize(24, 24)

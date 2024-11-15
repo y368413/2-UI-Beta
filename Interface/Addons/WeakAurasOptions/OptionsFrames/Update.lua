@@ -1,8 +1,12 @@
 if not WeakAuras.IsLibsOK() then return end
-local AddonName, OptionsPrivate = ...
+---@type string
+local AddonName = ...
+---@class OptionsPrivate
+local OptionsPrivate = select(2, ...)
 
 local AceGUI = LibStub("AceGUI-3.0")
 
+---@class WeakAuras
 local WeakAuras = WeakAuras
 local L = WeakAuras.L
 
@@ -182,15 +186,15 @@ local function recurseUpdate(data, chunk)
   end
 end
 
-local ignoredForDiffChecking -- Needs to be created lazily
-local function RecurseDiff(ours, theirs)
+local function RecurseDiff(ours, theirs, ignored)
   local diff, seen, same = {}, {}, true
   for key, ourVal in pairs(ours) do
-    if not ignoredForDiffChecking[key] then
+    local ignoredVal = ignored and ignored[key]
+    if not ignoredVal or type(ignoredVal) == "table" then
       seen[key] = true
       local theirVal = theirs[key]
       if type(ourVal) == "table" and type(theirVal) == "table" then
-        local diffVal = RecurseDiff(ourVal, theirVal)
+        local diffVal = RecurseDiff(ourVal, theirVal, type(ignoredVal) == "table" and ignoredVal or nil)
         if diffVal then
           diff[key] = diffVal
           same = false
@@ -207,7 +211,7 @@ local function RecurseDiff(ours, theirs)
     end
   end
   for key, theirVal in pairs(theirs) do
-    if not seen[key] and not ignoredForDiffChecking[key] then
+    if not seen[key] and not (type(ignored) == "table" and ignored[key] == true) then
       diff[key] = theirVal
       same = false
     end
@@ -230,10 +234,10 @@ local function RecurseSerial(lines, depth, chunk)
   end
 end
 
-local function DebugPrintDiff(diff)
+local function DebugPrintDiff(diff, id, uid)
   local lines = {
     "==========================",
-    "Diff detected: ",
+    string.format("Diff detected for %q (%s):", id, uid),
     "{",
   }
   RecurseSerial(lines, 1, diff)
@@ -243,18 +247,18 @@ local function DebugPrintDiff(diff)
 end
 
 local function Diff(ours, theirs)
-  if not ignoredForDiffChecking then
-    ignoredForDiffChecking = CreateFromMixins(OptionsPrivate.Private.internal_fields,
-    OptionsPrivate.Private.non_transmissable_fields)
-  end
+  local ignored = CreateFromMixins(
+    OptionsPrivate.Private.internal_fields,
+    OptionsPrivate.Private.non_transmissable_fields
+  )
 
   -- generates a diff which WeakAuras.Update can use
   local debug = false
   if not ours or not theirs then return end
-  local diff = RecurseDiff(ours, theirs)
+  local diff = RecurseDiff(ours, theirs, ignored)
   if diff then
     if debug then
-      DebugPrintDiff(diff, ours.id, theirs.id)
+      DebugPrintDiff(diff, theirs.id, theirs.uid)
     end
     return diff
   end
@@ -286,29 +290,40 @@ end
 local function BuildUidMap(data, children, type)
   children = children or {}
   -- The eventual result
+
+  --- @class UidMapData
+  --- @field originalName auraId The original id of the aura
+  --- @field id auraId The current id of the aura, might have changed due to ids being unique
+  --- @field data auraData The raw data, is non-authoritative on e.g. id, controlledChildren, parent, sortHybridTable
+  --- @field controlledChildren? uid[] A array of child uids
+  --- @field parent? uid The parent uid
+  --- @field sortHybrid boolean? optional bool !! the parent's sortHybridTable is split up and recorded per aura:
+  ---                            nil, if the parent is not a dynamic group
+  ---                            false/true based on the sortHybridTable of the dynamic group
+  --- @field anchorFrameFrame uid? uid of the anchor iff the aura is anchored to another aura that is part of the same
+  ---                              import, otherwise nil
+  --- @field matchedUid uid? for "update", the matched uid. Is from a different domain!
+  --- @field diff any  for "update", the diff and the categories of that diff between the aura and its match
+  --- @field categories? table the categories
+  --- @field index? number helpers that transport data between phase 1 and 2
+  --- @field total? number helpers that transport data between phase 1 and 2
+  --- @field parentIsDynamicGroup? boolean helpers that transport data between phase 1 and 2
+
+  --- @class UidMap
+  --- @field map table<uid, UidMapData>
+  --- @field type "new"|"old"
+  --- @field root uid uid of the root
+  --- @field totalCount number
+  --- @field idToUid table<auraId, uid> maps from id to uid
   local uidMap = {
-    map = { -- per uid
-      -- originalName: The original id of the aura
-      -- id: The current id of the aura, might have changed due to ids being unique
-      -- data: The raw data, contains non-authoritative information on e.g. id, controlledChildren, parent, sortHybridTable
-      -- controlledChildren: A array of child uids
-      -- parent: The parent uid
-      -- sortHybrid: optional bool !! the parent's sortHybridTable is split up and recorded per aura:
-      --             nil, if the parent is not a dynamic group
-      --             false/true based on the sortHybridTable of the dynamic group
-
-      -- matchedUid: for "update", the matched uid. Is from a different domain!
-      -- diff, categories: for "update", the diff and the categories of that diff between the aura and its match
-
-      -- index, total, parentIsDynamicGroup: helpers that transport data between phase 1 and 2
+    --- @type table<uid, UidMapData>
+    map = {
     },
-    type = type -- Either old or new, only used for error checking
-    -- root: uid of the root
-    -- totalCount: count of members
-    -- idToUid maps from id to uid
+    type = type, -- Either old or new, only used for error checking
+    root = data.uid,
+    totalCount = #children + 1,
+    idToUid = {}
   }
-  uidMap.root = data.uid
-  uidMap.totalCount = #children + 1
 
   -- Build helper map from id to uid
   local idToUid = {}
@@ -343,6 +358,18 @@ local function BuildUidMap(data, children, type)
     if data.parent then
       uidMap.map[data.uid].parent = idToUid[data.parent]
     end
+
+    -- Handle anchorFrameFrame
+    if data.anchorFrameType == "SELECTFRAME"
+     and data.anchorFrameFrame
+     and data.anchorFrameFrame:sub(1, 10) == "WeakAuras:"
+  then
+    local target = data.anchorFrameFrame:sub(11)
+    if idToUid[target] then
+      uidMap.map[data.uid].anchorFrameFrame = idToUid[target]
+    end
+  end
+
   end
 
   local function handleSortHybridTable(data)
@@ -504,6 +531,15 @@ local function BuildUidMap(data, children, type)
       end
     else
       data.controlledChildren = nil
+    end
+
+    if self.map[uid].anchorFrameFrame then
+      data.anchorFrameFrame = nil
+      local anchorUid = self.map[uid].anchorFrameFrame
+      local target = self:Contains(anchorUid) and self:GetIdFor(anchorUid)
+      if target then
+        data.anchorFrameFrame = "WeakAuras:" .. target
+      end
     end
 
     if data.regionType == "dynamicgroup" then
@@ -723,6 +759,7 @@ local function BuildUidMap(data, children, type)
     for _, childUid in ipairs(children) do
       self:EnsureUniqueIdOfUnmatched(childUid, IncProgress)
     end
+    coroutine.yield(0.1, "ensure unique uids")
   end
 
   uidMap.InsertUnmatchedPhase1 = function(self, otherUidMap, otherUid, IncProgress)
@@ -761,10 +798,10 @@ local function BuildUidMap(data, children, type)
           end
         else
           IncProgress()
-          coroutine.yield()
+          coroutine.yield(0.1)
         end
       end
-      coroutine.yield()
+      coroutine.yield(0.1)
     end
 
     for uid, otherList in pairs(matchToInsert) do
@@ -784,8 +821,9 @@ local function BuildUidMap(data, children, type)
             otherUidMap:SetUIDMatch(otherUid, otherUid) -- Uids are the same!
             self:SetUIDMatch(otherUid, otherUid)
             IncProgress()
-            coroutine.yield()
+            coroutine.yield(0.1)
           end
+          coroutine.yield(0.1)
         end
 
         if otherList.after then
@@ -799,11 +837,12 @@ local function BuildUidMap(data, children, type)
             otherUidMap:SetUIDMatch(otherUid, otherUid) -- Uids are the same!
             self:SetUIDMatch(otherUid, otherUid)
             IncProgress()
-            coroutine.yield()
+            coroutine.yield(0.1)
           end
+          coroutine.yield(0.1)
         end
       end
-      coroutine.yield()
+      coroutine.yield(0.1)
     end
 
     for _, otherUid in ipairs(waitingForMatch) do
@@ -823,7 +862,7 @@ local function BuildUidMap(data, children, type)
       otherUidMap:SetUIDMatch(otherUid, otherUid) -- Uids are the same!
       self:SetUIDMatch(otherUid, otherUid)
       IncProgress()
-      coroutine.yield()
+      coroutine.yield(0.1)
     end
 
     return #waitingForMatch > 0
@@ -975,7 +1014,17 @@ local function SetCategories(globalCategories, categories)
   end
 end
 
-
+local function OnlyMetaDataCategory(categories)
+  local metaData = false
+  for category in pairs(categories) do
+    if category == "metadata" then
+      metaData = true
+    else
+      return false
+    end
+  end
+  return metaData
+end
 
 local function GetCategories(diff, isRoot)
   local categories = {}
@@ -985,6 +1034,7 @@ local function GetCategories(diff, isRoot)
       categories[category] = true
     end
   end
+
   return categories
 end
 
@@ -1026,11 +1076,22 @@ local function BuildDiffsHelper(uid, newUidMap, oldUidMap, matchInfo)
       oldUidMap:SetDiff(matchedUid, diff, categories)
       SetCategories(matchInfo.activeCategories, categories)
 
-      matchInfo.diffs[uid] = true
-      if isGroup then
-        matchInfo.modifiedGroupCount = matchInfo.modifiedGroupCount + 1
+      matchInfo.categories[uid] = categories
+
+      if OnlyMetaDataCategory(categories) then
+        matchInfo.onlyMetaDataModified[uid] = true
+        if isGroup then
+          matchInfo.modifiedMetaDataGroupCount = matchInfo.modifiedMetaDataGroupCount + 1
+        else
+          matchInfo.modifiedMetaDataCount = matchInfo.modifiedMetaDataCount + 1
+        end
       else
-        matchInfo.modifiedCount = matchInfo.modifiedCount + 1
+        matchInfo.modified[uid] = true
+        if isGroup then
+          matchInfo.modifiedGroupCount = matchInfo.modifiedGroupCount + 1
+        else
+          matchInfo.modifiedCount = matchInfo.modifiedCount + 1
+        end
       end
     else
       matchInfo.unmodified[uid] = true
@@ -1124,6 +1185,8 @@ end
 local function hasChanges(matchInfo)
   return matchInfo.modifiedCount > 0
          or matchInfo.modifiedGroupCount > 0
+         or matchInfo.modifiedMetaDataCount > 0
+         or matchInfo.modifiedMetaDataGroupCount > 0
          or matchInfo.addedCount > 0
          or matchInfo.addedGroupCount > 0
          or matchInfo.deletedCount > 0
@@ -1135,13 +1198,17 @@ local function BuildDiffs(newUidMap, oldUidMap)
   local matchInfo = {
     modifiedCount = 0,
     modifiedGroupCount = 0,
+    modifiedMetaDataCount = 0,
+    modifiedMetaDataGroupCount = 0,
     unmodifiedCount = 0,
     unmodifiedGroupCount = 0,
     addedCount = 0,
     addedGroupCount = 0,
     deletedCount = 0,
     deletedGroupCount = 0,
-    diffs = {}, -- Contains diffs for new uids
+    modified = {}, -- Contains uids that were modified
+    onlyMetaDataModified = {}, -- Contains uids that are only metadata modified
+    categories = {}, -- Contains categories for uids
     unmodified = {}, -- Contains new uids that had a empty diff
     added = {}, -- Contains new uids that were added
     deleted = {}, -- Contains old uids that were removed
@@ -1212,7 +1279,21 @@ local function MatchInfo(data, children, target)
   return matchInfo
 end
 
-local function AddAuraList(container, uidMap, list, expandText)
+local function CategoriesToDisplayText(categories)
+  local categoriesDisplayTexts = {}
+  for _, category in ipairs(OptionsPrivate.Private.update_categories) do
+    if categories[category.name] then
+      tinsert(categoriesDisplayTexts, category.label)
+    end
+  end
+  if #categoriesDisplayTexts > 0 then
+    return table.concat(categoriesDisplayTexts, ", ")
+  else
+    return nil
+  end
+end
+
+local function AddAuraList(container, uidMap, list, categories, expandText)
   local expand = AceGUI:Create("WeakAurasExpand")
   local collapsed = true
   local image = collapsed and "Interface\\AddOns\\WeakAuras\\Media\\Textures\\expand"
@@ -1231,7 +1312,16 @@ local function AddAuraList(container, uidMap, list, expandText)
 
   local sortedNames = {}
   for uid in pairs(list) do
-    tinsert(sortedNames, uidMap:GetIdFor(uid))
+    if categories[uid] then
+      local categoriesText = CategoriesToDisplayText(categories[uid])
+      if categoriesText then
+        tinsert(sortedNames, L["%s (%s)"]:format(uidMap:GetIdFor(uid), categoriesText))
+      else
+        tinsert(sortedNames, uidMap:GetIdFor(uid))
+      end
+    else
+      tinsert(sortedNames, uidMap:GetIdFor(uid))
+    end
   end
   table.sort(sortedNames)
 
@@ -1261,15 +1351,29 @@ local function AddAuraList(container, uidMap, list, expandText)
 end
 
 local methods = {
-  Open = function(self, data, children, target, sender, callbackFunc)
-    if(self.optionsWindow.window == "importexport") then
-      self.optionsWindow.importexport:Close();
-    elseif(self.optionsWindow.window == "texture") then
-      self.optionsWindow.texturePicker:CancelClose();
-    elseif(self.optionsWindow.window == "icon") then
-      self.optionsWindow.iconPicker:CancelClose();
-    elseif(self.optionsWindow.window == "model") then
-      self.optionsWindow.modelPicker:CancelClose();
+  Open = function(self, data, children, target, linkedAuras, sender, callbackFunc)
+    local optionsWindow =  self.optionsWindow
+    local optionsWindowTitle = self.optionsWindow.window
+    if(optionsWindowTitle == "importexport") then
+      local importexport = OptionsPrivate.ImportExport(optionsWindow, true)
+      if importexport then
+        importexport:Close();
+      end
+    elseif(optionsWindowTitle == "texture") then
+      local texturepicker = OptionsPrivate.TexturePicker(optionsWindow, true)
+      if texturepicker then
+        texturepicker:CancelClose();
+      end
+    elseif(optionsWindowTitle == "icon") then
+      local iconpicker = OptionsPrivate.IconPicker(optionsWindow, true)
+      if iconpicker then
+        iconpicker:CancelClose();
+      end
+    elseif(optionsWindowTitle == "model") then
+      local modelpicker = OptionsPrivate.ModelPicker(optionsWindow, true)
+      if modelpicker then
+        modelpicker:CancelClose();
+      end
     end
     self.optionsWindow.window = "update"
     self.optionsWindow:UpdateFrameVisible()
@@ -1278,6 +1382,7 @@ local methods = {
       data = data,
       children = children or {},
       target = target,
+      linkedAuras = linkedAuras,
       sender = sender
     }
     self.userChoices = {
@@ -1287,6 +1392,30 @@ local methods = {
 
     self:ReleaseChildren()
     self:AddBasicInformationWidgets(data, sender)
+
+    do
+      local highestVersion = data.internalVersion or 0
+      if children then
+        for _, child in ipairs(children) do
+          highestVersion = max(highestVersion, child.internalVersion or 0)
+        end
+      end
+
+      if (highestVersion > WeakAuras.InternalVersion()) then
+        local highestVersionWarning = AceGUI:Create("Label")
+        highestVersionWarning:SetFontObject(GameFontHighlight)
+        highestVersionWarning:SetFullWidth(true)
+        highestVersionWarning:SetText(L["This aura was created with a newer version of WeakAuras.\nUpgrade your version of WeakAuras or wait for next release before installing this aura."])
+        highestVersionWarning:SetColor(1, 0, 0)
+        self:AddChild(highestVersionWarning)
+        self.importButton:Hide()
+        self.viewCodeButton:Hide()
+        self:DoLayout()
+        return
+      else
+        self.importButton:Show()
+      end
+    end
 
     local matchInfoResult = AceGUI:Create("Label")
     matchInfoResult:SetFontObject(GameFontHighlight)
@@ -1313,13 +1442,22 @@ local methods = {
           local matchInfoText = L["This is a modified version of your group: |cff9900FF%s|r"]:format(oldRootId)
           matchInfoResult:SetText(matchInfoText)
           if matchInfo.addedCount ~= 0 then
-            AddAuraList(self, matchInfo.newUidMap, matchInfo.added, L["%d |4aura:auras; added"]:format(matchInfo.addedCount))
+            AddAuraList(self, matchInfo.newUidMap, matchInfo.added, {},
+                        L["%d |4aura:auras; added"]:format(matchInfo.addedCount))
           end
-          if matchInfo.modifiedCount ~= 0 then
-            AddAuraList(self, matchInfo.oldUidMap, matchInfo.diffs, L["%d |4aura:auras; modified"]:format(matchInfo.modifiedCount))
+          local modifiedCount = matchInfo.modifiedCount + matchInfo.modifiedGroupCount
+          if modifiedCount ~= 0  then
+            AddAuraList(self, matchInfo.oldUidMap, matchInfo.modified, matchInfo.categories,
+                        L["%d |4aura:auras; modified"]:format(modifiedCount))
+          end
+          local onlyMetaDataModifiedCount = matchInfo.modifiedMetaDataCount + matchInfo.modifiedMetaDataGroupCount
+          if onlyMetaDataModifiedCount ~= 0 then
+            AddAuraList(self, matchInfo.oldUidMap, matchInfo.onlyMetaDataModified, {},
+                        L["%d |4aura:auras; with meta data modified"]:format(onlyMetaDataModifiedCount))
           end
           if matchInfo.deletedCount ~= 0 then
-            AddAuraList(self, matchInfo.oldUidMap, matchInfo.deleted, L["%d |4aura:auras; deleted"]:format(matchInfo.deletedCount))
+            AddAuraList(self, matchInfo.oldUidMap, matchInfo.deleted, {},
+                        L["%d |4aura:auras; deleted"]:format(matchInfo.deletedCount))
           end
         else
           matchInfoResult:SetText(L["This is a modified version of your aura, |cff9900FF%s.|r"]:format(oldRootId))
@@ -1402,22 +1540,22 @@ local methods = {
       self:AddChild(scamCheckText)
     end
 
-    local highestVersion = data.internalVersion or 0
-    if children then
-      for _, child in ipairs(children) do
-        highestVersion = max(highestVersion, child.internalVersion or 0)
+    if linkedAuras and next(linkedAuras) then
+      self:AddChild(AceGUI:Create("WeakAurasSpacer"))
+
+      local linkedAurasText = AceGUI:Create("Label")
+      linkedAurasText:SetFontObject(GameFontHighlight)
+      linkedAurasText:SetFullWidth(true)
+
+      local auraIdText = table.concat(self.pendingData.linkedAuras, ", ")
+      if #self.pendingData.linkedAuras == 1 then
+        linkedAurasText:SetText(L["This aura is marked as an update to an aura '%s', but cannot be used to update that aura. This usually happens if an aura is moved out of a group."]:format(auraIdText))
+      else
+        linkedAurasText:SetText(L["This aura is marked as an update to auras '%s', but cannot be used to update them. This usually happens if an aura is moved out of a group."]:format(auraIdText))
       end
+      linkedAurasText:SetColor(1, 0, 0)
+      self:AddChild(linkedAurasText)
     end
-
-    if (highestVersion > WeakAuras.InternalVersion()) then
-      local highestVersionWarning = AceGUI:Create("Label")
-      highestVersionWarning:SetFontObject(GameFontHighlight)
-      highestVersionWarning:SetFullWidth(true)
-      highestVersionWarning:SetText(L["This aura was created with a newer version of WeakAuras.\nIt might not work correctly with your version!"])
-      highestVersionWarning:SetColor(1, 0, 0)
-      self:AddChild(highestVersionWarning)
-    end
-
 
     local currentBuild = floor(WeakAuras.BuildInfo / 10000)
     local importBuild = data.tocversion and floor(data.tocversion / 10000)
@@ -1426,7 +1564,7 @@ local methods = {
       local flavorWarning = AceGUI:Create("Label")
       flavorWarning:SetFontObject(GameFontHighlight)
       flavorWarning:SetFullWidth(true)
-      flavorWarning:SetText(L["This aura was created with a different version (%s) of World of Warcraft.\nIt might not work correctly!"]:format(OptionsPrivate.Private.TocToExpansion[importBuild]))
+      flavorWarning:SetText(L["This aura was created with a different version (%s) of World of Warcraft.\nIt might not work correctly!"]:format(OptionsPrivate.Private.TocToExpansion[importBuild] or L["Unknown"]))
       flavorWarning:SetColor(1, 0, 0)
       self:AddChild(flavorWarning)
     end
@@ -1486,7 +1624,7 @@ local methods = {
     end
   end,
   Import = function(self)
-    OptionsPrivate.Private.dynFrame:AddAction("import", coroutine.create(function()
+    OptionsPrivate.Private.Threads:Add("import", coroutine.create(function()
       self:ImportImpl()
     end))
   end,
@@ -1499,27 +1637,35 @@ local methods = {
     self.closeButton:SetEnabled(false)
     self.viewCodeButton:SetEnabled(false)
     OptionsPrivate.Private.SetImporting(true)
-
+    coroutine.yield(10, "init")
     -- Adjust UI
     self:ReleaseChildren()
     self:AddBasicInformationWidgets(pendingData.data, pendingData.sender)
     self:AddProgressWidgets()
 
+    ---@type {uid: uid, data: auraData, source: string}[]
+    local copies = {}
     local pendingPickData
 
     if userChoices.mode == "import" then
+      coroutine.yield(0.1, "start import")
       self:InitializeProgress(2 * (#pendingData.children + 1))
 
       EnsureUniqueUid(pendingData.data)
+      coroutine.yield(0.1, "ensure unique uids")
       for i, child in ipairs(pendingData.children) do
         EnsureUniqueUid(child)
+        coroutine.yield(0.1, "ensure unique uids")
       end
 
+      coroutine.yield(1, "build uid map")
       local uidMap = BuildUidMap(pendingData.data, pendingData.children, "new")
 
       local phase2Order = {}
+      coroutine.yield(1, "start phase 1")
       self:ImportPhase1(uidMap, uidMap:GetRootUID(), phase2Order)
-      self:ImportPhase2(uidMap, phase2Order)
+      coroutine.yield(1, "start phase 2")
+      self:ImportPhase2(uidMap, phase2Order, copies)
 
       pendingPickData = {
         id = uidMap:GetIdFor(uidMap:GetRootUID())
@@ -1527,9 +1673,10 @@ local methods = {
       if #pendingData.children > 0 then
         pendingPickData.tabToShow = "group"
       end
-
+      coroutine.yield(1, "update ui")
       OptionsPrivate.SortDisplayButtons()
     elseif userChoices.mode == "update" then
+      coroutine.yield(0.1, "start update")
       local onePhaseProgress = matchInfo.oldUidMap:GetTotalCount() + matchInfo.newUidMap:GetTotalCount()
       local IncProgress = function() self:IncProgress() end
 
@@ -1542,9 +1689,9 @@ local methods = {
       -- On update, we won't match A_new to A_old, because A_old is outside the matched parent group
       -- Thus on import A_new needs to get its own uid
       -- On next import, the auras uids won't match either, there's not much we can do about that.
+      coroutine.yield(0.1, "ensure unique uids")
       matchInfo.newUidMap:EnsureUniqueIdOfUnmatched(nil, IncProgress)
       self:SetMinimumProgress(1 * onePhaseProgress)
-      coroutine.yield()
 
       local removeOldGroups = matchInfo.activeCategories.arrangement and userChoices.activeCategories.arrangement
       if userChoices.activeCategories.oldchildren or removeOldGroups then
@@ -1574,6 +1721,7 @@ local methods = {
         if not userChoices.activeCategories.oldchildren then
           -- Keep old children
           matchInfo.newUidMap:InsertUnmatchedFrom(matchInfo.oldUidMap, IncProgress)
+          coroutine.yield(0.1, "keep old children done")
         end
 
         self:SetMinimumProgress(4 * onePhaseProgress)
@@ -1610,6 +1758,7 @@ local methods = {
             oldData.sortHybridTable = newData.sortHybridTable
             oldData.uid = uid
             oldData.id = matchInfo.newUidMap:GetIdFor(uid)
+            oldData.anchorFrameFrame = newData.anchorFrameFrame
             return oldData
           else
             return matchInfo.newUidMap:GetPhase2Data(uid)
@@ -1639,17 +1788,26 @@ local methods = {
         end
       end
 
+      coroutine.yield(10, "prep done")
       local phase2Order = {}
       self:UpdatePhase1(structureUidMap, structureUidMap:GetRootUID(), GetPhase1Data, phase2Order)
       self:SetMinimumProgress(16 * onePhaseProgress)
+      coroutine.yield(10, " phase 1 done")
+      self:UpdatePhase2(structureUidMap, GetPhase2Data, phase2Order, copies)
 
-      self:UpdatePhase2(structureUidMap, GetPhase2Data, phase2Order)
       self:SetMinimumProgress(26 * onePhaseProgress)
+      coroutine.yield(10, " phase 2 done")
+
+      local renameTries = 0
       while(self:RenameAuras(targetNames)) do
         -- Try renaming again and again...
+        renameTries = renameTries + 1
+        if renameTries % 10 == 0 then
+          coroutine.yield(0.1, "renaming auras")
+        end
       end
       self:SetMaxProgress()
-      coroutine.yield()
+      coroutine.yield(0.1, "renaming auras done")
 
       pendingPickData = {
         id = OptionsPrivate.Private.GetDataByUID(matchInfo.oldUidMap:GetRootUID()).id
@@ -1660,7 +1818,7 @@ local methods = {
 
       OptionsPrivate.SortDisplayButtons()
     end
-
+    coroutine.yield(0.1, "winding down")
     OptionsPrivate.Private.SetImporting(false)
     self.viewCodeButton:SetEnabled(true)
     self.importButton:SetEnabled(true)
@@ -1673,6 +1831,12 @@ local methods = {
       OptionsPrivate.ClearPicks()
       WeakAuras.PickDisplay(pendingPickData.id, pendingPickData.tabToShow)
     end
+    OptionsPrivate.Private.Threads:Add("history_update", coroutine.create(function()
+      for _, copy in ipairs(copies) do
+        OptionsPrivate.Private.SetHistory(copy.uid, copy.data, copy.source)
+        coroutine.yield()
+      end
+    end), "background")
   end,
   -- This ensures that the id that we are adding is either
   --  same for existing uids
@@ -1796,7 +1960,7 @@ local methods = {
       end
     end
     self:IncProgress()
-    coroutine.yield()
+    coroutine.yield(0.1, "remove unmatched old")
     return false
   end,
   RemoveUnmatchedNew = function(self, uidMap, uid, otherMap, removeAuras, removeGroups)
@@ -1834,7 +1998,7 @@ local methods = {
       end
     end
     self:IncProgress()
-    coroutine.yield()
+    coroutine.yield(0.1, "remove unmatched new")
     return false
   end,
   UpdatePhase1 = function(self, structureUidMap, uid, GetPhase1Data, phase2Order)
@@ -1848,7 +2012,7 @@ local methods = {
     WeakAuras.Add(data)
     WeakAuras.NewDisplayButton(data, true)
     self:IncProgress10()
-    coroutine.yield()
+    coroutine.yield(1, "adding phase 1 data")
 
     local children = structureUidMap:GetChildren(uid)
     local parentIsDynamicGroup = data.regionType == "dynamicgroup"
@@ -1858,14 +2022,14 @@ local methods = {
       structureUidMap:SetParentIsDynamicGroup(childUid, parentIsDynamicGroup)
     end
   end,
-  UpdatePhase2 = function(self, structureUidMap, GetPhase2Data, phase2Order)
+  UpdatePhase2 = function(self, structureUidMap, GetPhase2Data, phase2Order, copies)
     for i = #phase2Order, 1, -1 do
       local uid = phase2Order[i]
       local data = GetPhase2Data(uid)
       data.preferToUpdate = true
       data.authorMode = nil
       WeakAuras.Add(data)
-      OptionsPrivate.Private.SetHistory(data.uid, data, "import")
+      table.insert(copies, {uid = uid, data = CopyTable(data), source = "update"})
       local button = OptionsPrivate.GetDisplayButton(data.id)
       button:SetData(data)
       if (data.parent) then
@@ -1878,6 +2042,7 @@ local methods = {
         button:SetGroupOrder(nil, nil)
       end
       button.callbacks.UpdateExpandButton()
+      button:UpdateParentWarning()
       WeakAuras.UpdateGroupOrders(data)
       WeakAuras.UpdateThumbnail(data)
       WeakAuras.ClearAndUpdateOptions(data.id)
@@ -1918,14 +2083,14 @@ local methods = {
       uidMap:SetParentIsDynamicGroup(childUid, parentIsDynamicGroup)
     end
   end,
-  ImportPhase2 = function(self, uidMap, phase2Order)
+  ImportPhase2 = function(self, uidMap, phase2Order, copies)
     for i = #phase2Order, 1, -1 do
       local uid = phase2Order[i]
       local data = uidMap:GetPhase2Data(uid)
       data.preferToUpdate = false
       data.authorMode = nil
       WeakAuras.Add(data)
-      OptionsPrivate.Private.SetHistory(data.uid, data, "import")
+      table.insert(copies, {uid = uid, data = CopyTable(data), source = "import"})
 
       local button = OptionsPrivate.GetDisplayButton(data.id)
       button:SetData(data)
@@ -1939,6 +2104,7 @@ local methods = {
         button:SetGroupOrder(nil, nil)
       end
       button.callbacks.UpdateExpandButton()
+      button:UpdateParentWarning()
       WeakAuras.UpdateGroupOrders(data)
       WeakAuras.UpdateThumbnail(data)
       WeakAuras.ClearAndUpdateOptions(data.id)
@@ -2042,9 +2208,10 @@ local methods = {
 
 local updateFrame
 local function ConstructUpdateFrame(frame)
+  ---@class GroupUpdateFrame: AceGUIFrame
   local group = AceGUI:Create("ScrollFrame");
   group.frame:SetParent(frame);
-  group.frame:SetPoint("TOPLEFT", frame, "TOPLEFT", 16, -16);
+  group.frame:SetPoint("TOPLEFT", frame, "TOPLEFT", 16, -63);
   group.frame:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -16, 46);
   group.frame:Hide();
   group:SetLayout("flow");
@@ -2087,7 +2254,7 @@ local function ConstructUpdateFrame(frame)
   return group
 end
 
-function OptionsPrivate.UpdateFrame(frame)
-  updateFrame = updateFrame or ConstructUpdateFrame(frame)
+function OptionsPrivate.UpdateFrame(frame, noConstruct)
+  updateFrame = updateFrame or (not noConstruct and ConstructUpdateFrame(frame))
   return updateFrame
 end

@@ -19,7 +19,6 @@ local Transmog = Legion.reward.Transmog
 local POI = Legion.poi.POI
 local Path = Legion.poi.Path
 
-local Orange = Legion.color.Orange
 -------------------------------------------------------------------------------
 
 local map = Map({id = 630, settings = true})
@@ -163,8 +162,7 @@ map.nodes[43152815] = Rare({
     note = L['doomlord_kazrok_note'],
     rewards = {
         Achievement({id = 11261, criteria = 32402}),
-        Achievement({id = 11186, criteria = 1}),
-        Item({item = 129056, note = L['trinket']}) -- Dreadlord's Hamstring
+        Achievement({id = 11186, criteria = 1})
     }
 }) -- Doomlord Kazrok
 
@@ -192,10 +190,7 @@ map.nodes[65164000] = Rare({
     id = 89816,
     quest = 37820,
     note = L['golza_note'],
-    rewards = {
-        Achievement({id = 11261, criteria = 33249}),
-        Item({item = 129091, note = L['trinket']}) -- Golza's Iron Fin
-    }
+    rewards = {Achievement({id = 11261, criteria = 33249})}
 }) -- Golza the Iron Fin
 
 map.nodes[30784800] = Rare({
@@ -232,10 +227,7 @@ map.nodes[28435219] = Rare({
 map.nodes[50043466] = Rare({
     id = 89865,
     quest = 37823,
-    rewards = {
-        Achievement({id = 11261, criteria = 33257}),
-        Item({item = 129072, note = L['neck']}) -- The Violaceous Pearl
-    }
+    rewards = {Achievement({id = 11261, criteria = 33257})}
 }) -- Mrrgrl the Tide Reaver
 
 map.nodes[49500880] = Rare({
@@ -589,7 +581,7 @@ map.nodes[46904143] = Collectible({
     icon = 134915,
     group = Legion.groups.HIGHER_DIMENSIONAL_LEARNING,
     note = L['higher_dimensional_learning_note'] .. '\n\n' ..
-        Orange(L['higher_dimensional_learning_disclaimer']),
+        L['higher_dimensional_learning_disclaimer'],
     rewards = {
         Achievement({id = 11175}), -- Higher Dimensional Learning
         Item({item = 140493}) -- Adept's Guide to Dimensional Rifting
@@ -613,14 +605,14 @@ local Book = Class('Book', Collectible, {
 map.nodes[68105110] = Book({
     sublabel = L['book_1'],
     note = L['higher_dimensional_learning_note'] .. '\n\n' ..
-        Orange(L['higher_dimensional_learning_disclaimer']),
+        L['higher_dimensional_learning_disclaimer'],
     criteriaID = 32196
 }) --  Dimensional Rifting Ch. 1 - Navigating Through Time
 
 map.nodes[55207150] = Book({
     sublabel = L['book_2'],
     note = L['higher_dimensional_learning_note'] .. '\n\n' ..
-        Orange(L['higher_dimensional_learning_disclaimer']) .. '\n\n' ..
+        L['higher_dimensional_learning_disclaimer'] .. '\n\n' ..
         L['higher_dimensional_learning_location'],
     criteriaID = 32197
 }) -- Dimensional Rifting Ch. 2 - Holy Places to Many
@@ -628,14 +620,14 @@ map.nodes[55207150] = Book({
 map.nodes[33301110] = Book({
     sublabel = L['book_3'],
     note = L['higher_dimensional_learning_note'] .. '\n\n' ..
-        Orange(L['higher_dimensional_learning_disclaimer']),
+        L['higher_dimensional_learning_disclaimer'],
     criteriaID = 32198
 }) -- Dimensional Rifting Ch. 3 - Water, Just Water
 
 map.nodes[58301220] = Book({
     sublabel = L['book_4'],
     note = L['higher_dimensional_learning_note'] .. '\n\n' ..
-        Orange(L['higher_dimensional_learning_disclaimer']),
+        L['higher_dimensional_learning_disclaimer'],
     criteriaID = 32199,
     pois = {POI({58701420})}
 }) -- Dimensional Rifting Ch. 4 - Risks and Rewards
@@ -643,21 +635,114 @@ map.nodes[58301220] = Book({
 map.nodes[53102190] = Book({
     sublabel = L['book_5'],
     note = L['higher_dimensional_learning_note'] .. '\n\n' ..
-        Orange(L['higher_dimensional_learning_disclaimer']),
+        L['higher_dimensional_learning_disclaimer'],
     criteriaID = 32200
 }) -- Dimensional Rifting Ch. 5 - Finding Others Along the Way
 
 map.nodes[61104630] = Book({
     sublabel = L['book_6'],
     note = L['higher_dimensional_learning_note'] .. '\n\n' ..
-        Orange(L['higher_dimensional_learning_disclaimer']),
+        L['higher_dimensional_learning_disclaimer'],
     criteriaID = 32201
 }) -- Dimensional Rifting Ch. 6 - Pent Up Energy
 
 map.nodes[55604820] = Book({
     sublabel = L['book_7'],
     note = L['higher_dimensional_learning_note'] .. '\n\n' ..
-        Orange(L['higher_dimensional_learning_disclaimer']) .. '\n\n' ..
+        L['higher_dimensional_learning_disclaimer'] .. '\n\n' ..
         L['higher_dimensional_learning_location'],
     criteriaID = 32202
 }) -- Dimensional Rifting Ch. 7 - Our Legacy
+
+-------------------------------------------------------------------------------
+----------------------------- BROKEN ISLES SAFARI -----------------------------
+-------------------------------------------------------------------------------
+
+map.nodes[43001900] = Legion.node.Safari.AlbatrossChick({
+    pois = {
+        POI({
+            38202420, 39202900, 41401900, 41402280, 41402540, 41602080,
+            41602520, 42602440, 43001900, 43002080, 43202300, 44202340,
+            44402360, 44602180, 44602340, 44802000, 46002140, 46002160
+        })
+    }
+})
+
+map.nodes[60203860] = Legion.node.Safari.CoastalSandpiper({
+    pois = {
+        POI({
+            50004140, 50004160, 51203460, 53004260, 53803220, 54003340,
+            55004180, 55403260, 57403660, 57603660, 57603760, 58203960,
+            58404080, 59003940, 60203860, 60203980, 60404340, 60803800,
+            62403800, 65403980, 65404060
+        })
+    }
+})
+
+map.nodes[56201760] = Legion.node.Safari.EldritchManafiend({
+    pois = {
+        POI({
+            54401780, 54601780, 55001860, 56001240, 56001260, 56001380,
+            56001520, 56201740, 56201760, 56601200, 56601840, 56601860,
+            56801120, 57201700, 58601740, 58601760
+        })
+    }
+})
+
+map.nodes[36805580] = Legion.node.Safari.Felspider({
+    pois = {
+        POI({
+            25605140, 26204600, 26204720, 26204920, 27004740, 29605240,
+            29605480, 30204840, 30405440, 30804660, 30805000, 31204540,
+            32204320, 34804340, 35204960, 35804820, 36005620, 36005740,
+            36005760, 36404920, 36805580, 37204960, 37404900, 37805500,
+            38405200, 39204980, 39605040, 39605080, 39605260, 39805480,
+            40204520, 40604780, 40605320, 40804900
+        })
+    }
+})
+
+map.nodes[42802100] = Legion.node.Safari.FledglingKingfeather({
+    pois = {
+        POI({
+            38202420, 39202900, 41401900, 41402280, 41602080, 41602520,
+            42602440, 42602460, 42802100, 43001880, 43202300, 44202340,
+            44402360, 44602000, 44602160, 46002140
+        })
+    }
+})
+
+map.nodes[43001900] = Legion.node.Safari.FledglingOliveback({
+    pois = {
+        POI({
+            38202420, 39202900, 41401900, 41402280, 41402540, 41602080,
+            41602520, 42602440, 43001900, 43002080, 43202300, 44202340,
+            44402360, 44602180, 44602340, 44802000, 46002140, 46002160
+        })
+    }
+})
+
+map.nodes[59605960] = Legion.node.Safari.JuvenileScuttleback({
+    pois = {
+        POI({
+            31203040, 31203060, 31803440, 32802800, 37001500, 44405000,
+            44406020, 44605520, 48805000, 50806220, 52005940, 54405740,
+            55805900, 57605780, 59006080, 59405700, 59605940, 59605960,
+            60206140, 60206160, 60805840, 61806160, 62205700, 63205940
+        })
+    }
+})
+
+map.nodes[46002980] = Legion.node.Safari.OlivetailHare({
+    pois = {
+        POI({
+            37403000, 39202520, 40602340, 40602440, 40602460, 42002220,
+            44203560, 44802220, 45003120, 46002980, 49802360, 50403120,
+            51002500, 51402620, 52001060, 52002540
+        })
+    }
+})
+
+map.nodes[64404720] = Legion.node.Safari.SlitheringBrownscale({
+    pois = {POI({48807360, 57406480, 64404720, 65604720})}
+})

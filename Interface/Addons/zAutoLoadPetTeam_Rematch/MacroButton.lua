@@ -1,10 +1,8 @@
-﻿local CFG = ALPTRematch.alptconfig
-local rematch = Rematch
-local function GetItemName(itemID)
+﻿local function GetItemName(itemID)
   local itemName = GetItemInfo(itemID)
   return itemName
 end
-
+local utils = ALPTRematch.utils
 local buttonQuitGame
 local buttonHeal
 local macroButtons = {}
@@ -40,11 +38,36 @@ local function DebugPrint(msg)
   end
 end
 
+local function IsNpcIndex(npcName,key)
+  local npcs = utils.alptconfig.gossipOptions[key]
+  if not npcs then
+    return false
+  end
+  return string.find(npcs..",",npcName..",")
+end
+
+local function GetNpcIndex(npcName)
+  if not utils.alptconfig or not utils.alptconfig.gossipOptions then
+    return 1
+  end
+  if IsNpcIndex(npcName,"2") then
+    return 2
+  end
+  if IsNpcIndex(npcName,"3") then
+    return 3
+  end
+  if IsNpcIndex(npcName,"4") then
+    return 4
+  end
+  return 1
+end
+
 local function createMacroText(btn)
   local macro = ""
   repeat
     config = btn.config
     if not C_PetJournal.IsJournalUnlocked() then
+      DebugPrint("宠物面板未解锁")
       break
     end
     if config.autointeract and not C_PetBattles.IsInBattle() then
@@ -55,22 +78,29 @@ local function createMacroText(btn)
       end
     end
     if InCombatLockdown() then
+      DebugPrint("战斗锁定")
       return
     end
 
     if C_PetBattles.IsInBattle() then
       if config.useTdScript then
+        DebugPrint("执行TD脚本")
         macro = macro .. "\n/click tdBattlePetScriptAutoButton"
       end
       break
     end
 
-    --useTdScript
-
+    --法夜竖琴
+    local _,cd = C_Item.GetItemCooldown(184489)
+    if config.userHarp and cd==0 then
+      DebugPrint("使用法夜竖琴")
+      macro = macro .. "\n/use item:184489"
+    end
+ 
     --自定义buff
     if config.checkItemId and config.checkItemId ~= "" and config.customScript and config.customScript ~= "" then
-      local buff = GetItemSpell(config.checkItemId)
-      if buff and not rematch:UnitBuff(buff) then
+      local itemName = C_Item.GetItemSpell(config.checkItemId)
+      if itemName and not utils:GetItemBuff(config.checkItemId) then
         if config.customScript == "use" then
           DebugPrint("使用物品BUFF" .. buff)
           macro = macro .. "\n/use item:" .. config.checkItemId
@@ -83,13 +113,13 @@ local function createMacroText(btn)
     end
 
     --复活
-    local startTime, duration = GetSpellCooldown(125439)
-    if config.healPet and duration == 0 then
+    local cooldown= C_Spell.GetSpellCooldown(125439)
+    if config.healPet and cooldown.duration == 0 then
       DebugPrint("复活战斗宠物")
       macro = macro .. "\n/click ALPTButtonHeal"
     else
       --绷带
-      if config.useBandage and not ALPTRematch:HasValidTeam() and duration > 5 and GetItemCount(86143) > 0 then
+      if config.useBandage and not ALPTRematch:HasValidTeam() and cooldown.duration > 5 and C_Item.GetItemCount(86143) > 0 then
         if not ALPTRematch:IsTeamAvailable() then
           --防止延时误使用，等待1秒
           local timenow = time()
@@ -110,7 +140,7 @@ local function createMacroText(btn)
     local hasNpc = npcWithTeam and npcWithTeam ~= ""
     if hasNpc and config.target then
       if UnitExists("target") then
-        local unit_type, npcid = ALPTRematch:GetTargetNPC()
+        local unit_type, npcid = utils:GetTargetNPC()
         if npcid and npcid ~= npcIdWithTeam then
           DebugPrint("目标错误，清除目标")
           macro = macro .. "\n/cleartarget "
@@ -151,25 +181,33 @@ local function createMacroText(btn)
 
     if config.selectGossip and isTeamOk and UnitExists("target") and GossipFrame and GossipFrame:IsVisible() then
       DebugPrint("执行对话")
-      macro = macro .. "\n/script C_GossipInfo.SelectOption(1)"
+      local npcIndex = GetNpcIndex(npcName)
+      macro = macro .. "\n/script SelectGossipOption("..npcIndex..")"
     end
-    DebugPrint(config.extraScriptCmd)
     if config.extraScript and config.extraScriptCmd and config.extraScriptCmd ~= nil then
       DebugPrint("执行额外命令" .. config.extraScriptCmd)
       macro = macro .. "\n" .. config.extraScriptCmd
     end
   until true
   if macro ~= "" then
-    macro = "/stopmacro [combat]" .. macro
-    DebugPrint(macro)
-  else
-    --DebugPrint("无动作")
+    macro = "/stopmacro [combat] " .. macro
   end
   btn:SetAttribute("macrotext", macro)
+  DebugPrint("设置后的宏文本：" .. btn:GetAttribute("macrotext"))
 end
 
+function ALPTRematch:UpdateMacroButton()
+  for key, cf in pairs(utils.alptconfig.macros) do
+    ClearOverrideBindings(macroButtons[key])
+    if cf.keybinding then
+      SetOverrideBindingClick(macroButtons[key], true, cf.keybinding, macroButtons[key]:GetName())
+    end
+  end
+end
+
+
 local function CreateMacroButtons()
-  for key, cf in pairs(CFG.macros) do
+  for key, cf in pairs(utils.alptconfig.macros) do
     repeat
       local macroButton = CreateFrame("Button", key, UIParent, "SecureActionButtonTemplate")
       macroButton:SetAttribute("macrotext", "")
@@ -177,17 +215,20 @@ local function CreateMacroButtons()
       macroButton:Hide()
       macroButton.config = cf
       macroButton:SetScript("PreClick", createMacroText)
+ 
       macroButtons[key] = macroButton
+      if cf.keybinding then
+        SetOverrideBindingClick(macroButton, true, cf.keybinding, macroButton:GetName())
+      end
     until true
   end
 end
-rematch:InitModule(
-  function()
-    if buttonInited then
-      return
-    end
-    CreateHelpButtons()
-    CreateMacroButtons()
-    buttonInited = true
+
+function ALPTRematch:InitMacroButton()
+  if buttonInited then
+    return
   end
-)
+  CreateHelpButtons()
+  CreateMacroButtons()
+  buttonInited = true
+end

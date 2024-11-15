@@ -5,7 +5,7 @@ local G = M:GetModule("GUI")
 local _G = _G
 local unpack, pairs, ipairs, tinsert = unpack, pairs, ipairs, tinsert
 local min, max, strmatch, strfind, tonumber = min, max, strmatch, strfind, tonumber
-local GetSpellInfo, GetSpellTexture = GetSpellInfo, GetSpellTexture
+local GetSpellName, GetSpellTexture = C_Spell.GetSpellName, C_Spell.GetSpellTexture
 local GetInstanceInfo, EJ_GetInstanceInfo = GetInstanceInfo, EJ_GetInstanceInfo
 local IsControlKeyDown = IsControlKeyDown
 
@@ -71,6 +71,13 @@ local function clearEdit(options)
 	end
 end
 
+local function toggleOptionsPanel(option)
+	local dd = option.__owner
+	for i = 1, #dd.panels do
+		dd.panels[i]:SetShown(i == option.index)
+	end
+end
+
 local function updateRaidDebuffs()
 	M:GetModule("UnitFrames"):UpdateRaidDebuffs()
 end
@@ -116,37 +123,46 @@ function G:SetupRaidDebuffs(parent)
 		end)
 	end
 
-	local maxLevel = UnitLevel("player") > 60
+	local maxLevel = UnitLevel("player") > 70
 	local dungeons = {}
 
 	if maxLevel then
+		for dungeonID = 1267, 1274 do
+			if dungeonID ~= 1273 then
+				AddNewDungeon(dungeons, dungeonID)
+			end
+		end
+		AddNewDungeon(dungeons, 1210) -- 暗焰裂口
+		AddNewDungeon(dungeons, 71) -- 格瑞姆巴托
+		AddNewDungeon(dungeons, 1023) -- 围攻伯拉勒斯
+		AddNewDungeon(dungeons, 1182) -- 通灵战潮
+		AddNewDungeon(dungeons, 1184) -- 塞兹仙林的迷雾
+	else
 		for dungeonID = 1196, 1204 do
 			if dungeonID ~= 1200 then
 				AddNewDungeon(dungeons, dungeonID)
 			end
 		end
-		AddNewDungeon(dungeons, 313)  -- 青龙寺
-		AddNewDungeon(dungeons, 537)  -- 影月墓地
-		AddNewDungeon(dungeons, 721)  -- 英灵殿
-		AddNewDungeon(dungeons, 800)  -- 群星庭院
-	else
-		for dungeonID = 1182, 1189 do
-			AddNewDungeon(dungeons, dungeonID)
-		end
-		AddNewDungeon(dungeons, 1194) -- 集市
-		AddNewDungeon(dungeons, 536)  -- 恐轨车站
-		AddNewDungeon(dungeons, 558)  -- 钢铁码头
-		AddNewDungeon(dungeons, 860)  -- 重返卡拉赞
-		AddNewDungeon(dungeons, 1178) -- 麦卡贡
+		AddNewDungeon(dungeons, 1209)  -- 永恒黎明
+		AddNewDungeon(dungeons, 65)  -- 潮汐王座
+		AddNewDungeon(dungeons, 556)  -- 永茂林地
+		AddNewDungeon(dungeons, 740)  -- 黑鸦堡垒
+		AddNewDungeon(dungeons, 762)  -- 黑心林地
+		AddNewDungeon(dungeons, 968)  -- 阿塔达萨
+		AddNewDungeon(dungeons, 1021)  -- 维克雷斯庄园
 	end
 
-	local raids = {
-		[1] = EJ_GetInstanceInfo(1190),
-		[2] = EJ_GetInstanceInfo(1193),
-		[3] = EJ_GetInstanceInfo(1195),
-	}
+	local raids
 	if maxLevel then
-		raids[4] = EJ_GetInstanceInfo(1200)
+		raids = {
+			[1] = EJ_GetInstanceInfo(1273), -- 尼鲁巴尔王宫
+		}
+	else
+		raids = {
+			[1] = EJ_GetInstanceInfo(1200),
+			[2] = EJ_GetInstanceInfo(1208),
+			[3] = EJ_GetInstanceInfo(1207),
+		}
 	end
 
 	options[1] = G:CreateDropdown(frame, DUNGEONS.."*", 120, -30, dungeons, U["Dungeons Intro"], 130, 30)
@@ -166,7 +182,7 @@ function G:SetupRaidDebuffs(parent)
 
 	local function isAuraExisted(instName, spellID)
 		local localPrio = R.RaidDebuffs[instName][spellID]
-		local savedPrio = MaoRUIDB["RaidDebuffs"][instName] and MaoRUIDB["RaidDebuffs"][instName][spellID]
+		local savedPrio = MaoRUISetDB["RaidDebuffs"][instName] and MaoRUISetDB["RaidDebuffs"][instName][spellID]
 		if (localPrio and savedPrio and savedPrio == 0) or (not localPrio and not savedPrio) then
 			return false
 		end
@@ -177,12 +193,12 @@ function G:SetupRaidDebuffs(parent)
 		local dungeonName, raidName, spellID, priority = options[1].Text:GetText(), options[2].Text:GetText(), tonumber(options[3]:GetText()), tonumber(options[4]:GetText())
 		local instName = dungeonName or raidName or (iType.Text:GetText() == OTHER and 0)
 		if not instName or not spellID then UIErrorsFrame:AddMessage(I.InfoColor..U["Incomplete Input"]) return end
-		if spellID and not GetSpellInfo(spellID) then UIErrorsFrame:AddMessage(I.InfoColor..U["Incorrect SpellID"]) return end
+		if spellID and not GetSpellName(spellID) then UIErrorsFrame:AddMessage(I.InfoColor..U["Incorrect SpellID"]) return end
 		if isAuraExisted(instName, spellID) then UIErrorsFrame:AddMessage(I.InfoColor..U["Existing ID"]) return end
 
 		priority = analyzePrio(priority)
-		if not MaoRUIDB["RaidDebuffs"][instName] then MaoRUIDB["RaidDebuffs"][instName] = {} end
-		MaoRUIDB["RaidDebuffs"][instName][spellID] = priority
+		if not MaoRUISetDB["RaidDebuffs"][instName] then MaoRUISetDB["RaidDebuffs"][instName] = {} end
+		MaoRUISetDB["RaidDebuffs"][instName][spellID] = priority
 		setupBars(instName)
 		G:ClearEdit(options[3])
 		G:ClearEdit(options[4])
@@ -196,7 +212,7 @@ function G:SetupRaidDebuffs(parent)
 		button1 = YES,
 		button2 = NO,
 		OnAccept = function()
-			MaoRUIDB["RaidDebuffs"] = {}
+			MaoRUISetDB["RaidDebuffs"] = {}
 			ReloadUI()
 		end,
 		whileDead = 1,
@@ -238,10 +254,10 @@ function G:SetupRaidDebuffs(parent)
 		close:SetScript("OnClick", function()
 			bar:Hide()
 			if R.RaidDebuffs[bar.instName][bar.spellID] then
-				if not MaoRUIDB["RaidDebuffs"][bar.instName] then MaoRUIDB["RaidDebuffs"][bar.instName] = {} end
-				MaoRUIDB["RaidDebuffs"][bar.instName][bar.spellID] = 0
+				if not MaoRUISetDB["RaidDebuffs"][bar.instName] then MaoRUISetDB["RaidDebuffs"][bar.instName] = {} end
+				MaoRUISetDB["RaidDebuffs"][bar.instName][bar.spellID] = 0
 			else
-				MaoRUIDB["RaidDebuffs"][bar.instName][bar.spellID] = nil
+				MaoRUISetDB["RaidDebuffs"][bar.instName][bar.spellID] = nil
 			end
 			setupBars(bar.instName)
 		end)
@@ -262,8 +278,8 @@ function G:SetupRaidDebuffs(parent)
 		end)
 		prioBox:HookScript("OnEnterPressed", function(self)
 			local prio = analyzePrio(tonumber(self:GetText()))
-			if not MaoRUIDB["RaidDebuffs"][bar.instName] then MaoRUIDB["RaidDebuffs"][bar.instName] = {} end
-			MaoRUIDB["RaidDebuffs"][bar.instName][bar.spellID] = prio
+			if not MaoRUISetDB["RaidDebuffs"][bar.instName] then MaoRUISetDB["RaidDebuffs"][bar.instName] = {} end
+			MaoRUISetDB["RaidDebuffs"][bar.instName][bar.spellID] = prio
 			self:SetText(prio)
 		end)
 		M.AddTooltip(prioBox, "ANCHOR_TOPRIGHT", U["Prio Editbox"], "info", true)
@@ -273,7 +289,7 @@ function G:SetupRaidDebuffs(parent)
 	end
 
 	local function applyData(index, instName, spellID, priority)
-		local name, _, texture = GetSpellInfo(spellID)
+		local name, texture = GetSpellName(spellID), GetSpellTexture(spellID)
 		if not bars[index] then
 			bars[index] = createBar(index, texture)
 		end
@@ -292,15 +308,15 @@ function G:SetupRaidDebuffs(parent)
 
 		if R.RaidDebuffs[instName] then
 			for spellID, priority in pairs(R.RaidDebuffs[instName]) do
-				if not (MaoRUIDB["RaidDebuffs"][instName] and MaoRUIDB["RaidDebuffs"][instName][spellID]) then
+				if not (MaoRUISetDB["RaidDebuffs"][instName] and MaoRUISetDB["RaidDebuffs"][instName][spellID]) then
 					index = index + 1
 					applyData(index, instName, spellID, priority)
 				end
 			end
 		end
 
-		if MaoRUIDB["RaidDebuffs"][instName] then
-			for spellID, priority in pairs(MaoRUIDB["RaidDebuffs"][instName]) do
+		if MaoRUISetDB["RaidDebuffs"][instName] then
+			for spellID, priority in pairs(MaoRUISetDB["RaidDebuffs"][instName]) do
 				if priority > 0 then
 					index = index + 1
 					applyData(index, instName, spellID, priority)
@@ -375,7 +391,7 @@ function G:SetupClickCast(parent)
 			value = textIndex[value] or value
 			local itemID = strmatch(value, "item:(%d+)")
 			if itemID then
-				texture = GetItemIcon(itemID)
+				texture = C_Item.GetItemIconByID(itemID)
 			else
 				texture = 136243
 			end
@@ -390,7 +406,7 @@ function G:SetupClickCast(parent)
 		M.AddTooltip(icon, "ANCHOR_RIGHT", value, "system")
 		close:SetScript("OnClick", function()
 			bar:Hide()
-			MaoRUIDB["ClickSets"][I.MyClass][fullkey] = nil
+			MaoRUISetDB["ClickSets"][I.MyClass][fullkey] = nil
 			barTable[fullkey] = nil
 			sortBars(barTable)
 		end)
@@ -432,7 +448,7 @@ function G:SetupClickCast(parent)
 		button1 = YES,
 		button2 = NO,
 		OnAccept = function()
-			wipe(MaoRUIDB["ClickSets"][I.MyClass])
+			wipe(MaoRUISetDB["ClickSets"][I.MyClass])
 			ReloadUI()
 		end,
 		whileDead = 1,
@@ -443,14 +459,15 @@ function G:SetupClickCast(parent)
 
 	local function addClick(scroll, options)
 		local value, key, modKey = options[1]:GetText(), options[2].Text:GetText(), options[3].Text:GetText()
+		local numValue = tonumber(value)
 		if not value or not key then UIErrorsFrame:AddMessage(I.InfoColor..U["Incomplete Input"]) return end
-		if tonumber(value) and not GetSpellInfo(value) then UIErrorsFrame:AddMessage(I.InfoColor..U["Incorrect SpellID"]) return end
-		if (not tonumber(value)) and (not textIndex[value]) and not strmatch(value, "/") then UIErrorsFrame:AddMessage(I.InfoColor..U["Invalid Input"]) return end
+		if numValue and not GetSpellName(value) then UIErrorsFrame:AddMessage(I.InfoColor..U["Incorrect SpellID"]) return end
+		if (not numValue) and (not textIndex[value]) and not strmatch(value, "/") then UIErrorsFrame:AddMessage(I.InfoColor..U["Invalid Input"]) return end
 		if not modKey or modKey == NONE then modKey = "" end
 		local fullkey = (modKey == "" and key or modKey.."-"..key)
-		if MaoRUIDB["ClickSets"][I.MyClass][fullkey] then UIErrorsFrame:AddMessage(I.InfoColor..U["Existing ClickSet"]) return end
+		if MaoRUISetDB["ClickSets"][I.MyClass][fullkey] then UIErrorsFrame:AddMessage(I.InfoColor..U["Existing ClickSet"]) return end
 
-		MaoRUIDB["ClickSets"][I.MyClass][fullkey] = tonumber(value) or value
+		MaoRUISetDB["ClickSets"][I.MyClass][fullkey] = numValue or value
 		createBar(scroll.child, fullkey, value)
 		clearEdit(options)
 	end
@@ -467,151 +484,8 @@ function G:SetupClickCast(parent)
 		clearEdit(options)
 	end)
 
-	for fullkey, value in pairs(MaoRUIDB["ClickSets"][I.MyClass]) do
+	for fullkey, value in pairs(MaoRUISetDB["ClickSets"][I.MyClass]) do
 		createBar(scroll.child, fullkey, value)
-	end
-end
-
-local function updatePartyWatcherSpells()
-	M:GetModule("UnitFrames"):UpdatePartyWatcherSpells()
-end
-
-function G:SetupPartyWatcher(parent)
-	local guiName = "UIGUI_PartyWatcher"
-	toggleExtraGUI(guiName)
-	if extraGUIs[guiName] then return end
-
-	local panel = createExtraGUI(parent, guiName, U["AddPartyWatcher"].."*", true)
-	panel:SetScript("OnHide", updatePartyWatcherSpells)
-
-	local barTable = {}
-	local ARCANE_TORRENT = GetSpellInfo(25046)
-
-	local function createBar(parent, spellID, duration)
-		local spellName = GetSpellInfo(spellID)
-		if spellName == ARCANE_TORRENT then return end
-		local texture = GetSpellTexture(spellID)
-
-		local bar = CreateFrame("Frame", nil, parent, "BackdropTemplate")
-		bar:SetSize(220, 30)
-		M.CreateBD(bar, .25)
-		barTable[spellID] = bar
-
-		local icon, close = G:CreateBarWidgets(bar, texture)
-		M.AddTooltip(icon, "ANCHOR_RIGHT", spellID, "system")
-		close:SetScript("OnClick", function()
-			bar:Hide()
-			if R.PartySpells[spellID] then
-				MaoRUIDB["PartySpells"][spellID] = 0
-			else
-				MaoRUIDB["PartySpells"][spellID] = nil
-			end
-			barTable[spellID] = nil
-			sortBars(barTable)
-		end)
-
-		local name = M.CreateFS(bar, 14, spellName, false, "LEFT", 30, 0)
-		name:SetWidth(120)
-		name:SetJustifyH("LEFT")
-
-		local timer = M.CreateFS(bar, 14, duration, false, "RIGHT", -30, 0)
-		timer:SetWidth(60)
-		timer:SetJustifyH("RIGHT")
-		timer:SetTextColor(0, 1, 0)
-
-		sortBars(barTable)
-	end
-
-	local frame = panel.bg
-	local options = {}
-
-	options[1] = G:CreateEditbox(frame, "ID*", 10, -30, U["ID Intro"])
-	options[2] = G:CreateEditbox(frame, U["Cooldown*"], 120, -30, U["Cooldown Intro"])
-
-	local scroll = G:CreateScroll(frame, 240, 410)
-	scroll.reset = M.CreateButton(frame, 60, 25, RESET)
-	scroll.reset:SetPoint("TOPLEFT", 10, -80)
-	scroll.reset.text:SetTextColor(1, 0, 0)
-	StaticPopupDialogs["RESET_UI_PARTYWATCHER"] = {
-		text = U["Reset to default list"],
-		button1 = YES,
-		button2 = NO,
-		OnAccept = function()
-			wipe(MaoRUIDB["PartySpells"])
-			ReloadUI()
-		end,
-		whileDead = 1,
-	}
-	scroll.reset:SetScript("OnClick", function()
-		StaticPopup_Show("RESET_UI_PARTYWATCHER")
-	end)
-
-	local function addClick(scroll, options)
-		local spellID, duration = tonumber(options[1]:GetText()), tonumber(options[2]:GetText())
-		if not spellID or not duration then UIErrorsFrame:AddMessage(I.InfoColor..U["Incomplete Input"]) return end
-		if not GetSpellInfo(spellID) then UIErrorsFrame:AddMessage(I.InfoColor..U["Incorrect SpellID"]) return end
-		local modDuration = MaoRUIDB["PartySpells"][spellID]
-		if modDuration and modDuration ~= 0 or R.PartySpells[spellID] and not modDuration then UIErrorsFrame:AddMessage(I.InfoColor..U["Existing ID"]) return end
-
-		MaoRUIDB["PartySpells"][spellID] = duration
-		createBar(scroll.child, spellID, duration)
-		clearEdit(options)
-	end
-
-	scroll.add = M.CreateButton(frame, 60, 25, ADD)
-	scroll.add:SetPoint("TOPRIGHT", -10, -80)
-	scroll.add:SetScript("OnClick", function()
-		addClick(scroll, options)
-	end)
-
-	scroll.clear = M.CreateButton(frame, 60, 25, KEY_NUMLOCK_MAC)
-	scroll.clear:SetPoint("RIGHT", scroll.add, "LEFT", -6, 0)
-	scroll.clear:SetScript("OnClick", function()
-		clearEdit(options)
-	end)
-
-	local menuList = {}
-	local function AddSpellFromPreset(_, spellID, duration)
-		options[1]:SetText(spellID)
-		options[2]:SetText(duration)
-		DropDownList1:Hide()
-	end
-
-	local index = 1
-	for class, value in pairs(R.PartySpellsDB) do
-		local color = M.HexRGB(M.ClassColor(class))
-		local localClassName = LOCALIZED_CLASS_NAMES_MALE[class]
-		menuList[index] = {text = color..localClassName, notCheckable = true, hasArrow = true, menuList = {}}
-
-		for spellID, duration in pairs(value) do
-			local spellName, _, texture = GetSpellInfo(spellID)
-			if spellName then
-				tinsert(menuList[index].menuList, {
-					text = spellName,
-					icon = texture,
-					tCoordLeft = .08,
-					tCoordRight = .92,
-					tCoordTop = .08,
-					tCoordBottom = .92,
-					arg1 = spellID,
-					arg2 = duration,
-					func = AddSpellFromPreset,
-					notCheckable = true,
-				})
-			end
-		end
-		index = index + 1
-	end
-	scroll.preset = M.CreateButton(frame, 60, 25, U["Preset"])
-	scroll.preset:SetPoint("RIGHT", scroll.clear, "LEFT", -6, 0)
-	scroll.preset.text:SetTextColor(1, .8, 0)
-	scroll.preset:SetScript("OnClick", function(self)
-		EasyMenu(menuList, M.EasyMenu, self, -100, 100, "MENU", 1)
-	end)
-
-	local UF = M:GetModule("UnitFrames")
-	for spellID, duration in pairs(UF.PartyWatcherSpells) do
-		createBar(scroll.child, spellID, duration)
 	end
 end
 
@@ -633,7 +507,7 @@ function G:SetupNameplateFilter(parent)
 	}
 
 	local function createBar(parent, index, spellID)
-		local name, _, texture = GetSpellInfo(spellID)
+		local name, texture = GetSpellName(spellID), GetSpellTexture(spellID)
 		local bar = CreateFrame("Frame", nil, parent, "BackdropTemplate")
 		bar:SetSize(220, 30)
 		M.CreateBD(bar, .25)
@@ -645,15 +519,15 @@ function G:SetupNameplateFilter(parent)
 			bar:Hide()
 			if index == 1 then
 				if R.WhiteList[spellID] then
-					MaoRUIDB["NameplateWhite"][spellID] = false
+					MaoRUISetDB["NameplateWhite"][spellID] = false
 				else
-					MaoRUIDB["NameplateWhite"][spellID] = nil
+					MaoRUISetDB["NameplateWhite"][spellID] = nil
 				end
 			elseif index == 2 then
 				if R.BlackList[spellID] then
-					MaoRUIDB["NameplateBlack"][spellID] = false
+					MaoRUISetDB["NameplateBlack"][spellID] = false
 				else
-					MaoRUIDB["NameplateBlack"][spellID] = nil
+					MaoRUISetDB["NameplateBlack"][spellID] = nil
 				end
 			end
 			frameData[index].barList[spellID] = nil
@@ -670,18 +544,18 @@ function G:SetupNameplateFilter(parent)
 
 	local function isAuraExisted(index, spellID)
 		local key = index == 1 and "NameplateWhite" or "NameplateBlack"
-		local modValue = MaoRUIDB[key][spellID]
+		local modValue = MaoRUISetDB[key][spellID]
 		local locValue = (index == 1 and R.WhiteList[spellID]) or (index == 2 and R.BlackList[spellID])
 		return modValue or (modValue == nil and locValue)
 	end
 
 	local function addClick(parent, index)
 		local spellID = tonumber(parent.box:GetText())
-		if not spellID or not GetSpellInfo(spellID) then UIErrorsFrame:AddMessage(I.InfoColor..U["Incorrect SpellID"]) return end
+		if not spellID or not GetSpellName(spellID) then UIErrorsFrame:AddMessage(I.InfoColor..U["Incorrect SpellID"]) return end
 		if isAuraExisted(index, spellID) then UIErrorsFrame:AddMessage(I.InfoColor..U["Existing ID"]) return end
 
 		local key = index == 1 and "NameplateWhite" or "NameplateBlack"
-		MaoRUIDB[key][spellID] = true
+		MaoRUISetDB[key][spellID] = true
 		createBar(parent.child, index, spellID)
 		parent.box:SetText("")
 	end
@@ -695,7 +569,7 @@ function G:SetupNameplateFilter(parent)
 		button2 = NO,
 		OnAccept = function()
 			local key = filterIndex == 1 and "NameplateWhite" or "NameplateBlack"
-			wipe(MaoRUIDB[key])
+			wipe(MaoRUISetDB[key])
 			ReloadUI()
 		end,
 		whileDead = 1,
@@ -761,7 +635,7 @@ function G:SetupSpellsIndicator(parent)
 	local anchors = {"TL", "T", "TR", "U", "R", "BL", "M", "BR"}
 
 	local function createBar(parent, spellID, anchor, r, g, b, showAll)
-		local name, _, texture = GetSpellInfo(spellID)
+		local name, texture = GetSpellName(spellID), GetSpellTexture(spellID)
 		local bar = CreateFrame("Frame", nil, parent, "BackdropTemplate")
 		bar:SetSize(220, 30)
 		M.CreateBD(bar, .25)
@@ -773,9 +647,9 @@ function G:SetupSpellsIndicator(parent)
 			bar:Hide()
 			local value = R.CornerBuffs[I.MyClass][spellID]
 			if value then
-				MaoRUIDB["CornerSpells"][I.MyClass][spellID] = {}
+				MaoRUISetDB["CornerSpells"][I.MyClass][spellID] = {}
 			else
-				MaoRUIDB["CornerSpells"][I.MyClass][spellID] = nil
+				MaoRUISetDB["CornerSpells"][I.MyClass][spellID] = nil
 			end
 			barList[spellID] = nil
 			sortBars(barList)
@@ -793,14 +667,14 @@ function G:SetupSpellsIndicator(parent)
 
 	local function addClick(parent)
 		local spellID = tonumber(parent.box:GetText())
-		if not spellID or not GetSpellInfo(spellID) then UIErrorsFrame:AddMessage(I.InfoColor..U["Incorrect SpellID"]) return end
+		if not spellID or not GetSpellName(spellID) then UIErrorsFrame:AddMessage(I.InfoColor..U["Incorrect SpellID"]) return end
 		local anchor, r, g, b, showAll
 		anchor, r, g, b = parent.dd.Text:GetText(), parent.swatch.tex:GetColor()
 		showAll = parent.showAll:GetChecked() or nil
-		local modValue = MaoRUIDB["CornerSpells"][I.MyClass][spellID]
+		local modValue = MaoRUISetDB["CornerSpells"][I.MyClass][spellID]
 		if (modValue and next(modValue)) or (R.CornerBuffs[I.MyClass][spellID] and not modValue) then UIErrorsFrame:AddMessage(I.InfoColor..U["Existing ID"]) return end
 		anchor = decodeAnchor[anchor]
-		MaoRUIDB["CornerSpells"][I.MyClass][spellID] = {anchor, {r, g, b}, showAll}
+		MaoRUISetDB["CornerSpells"][I.MyClass][spellID] = {anchor, {r, g, b}, showAll}
 		createBar(parent.child, spellID, anchor, r, g, b, showAll)
 		parent.box:SetText("")
 	end
@@ -810,7 +684,7 @@ function G:SetupSpellsIndicator(parent)
 		button1 = YES,
 		button2 = NO,
 		OnAccept = function()
-			wipe(MaoRUIDB["CornerSpells"][I.MyClass])
+			wipe(MaoRUISetDB["CornerSpells"][I.MyClass])
 			ReloadUI()
 		end,
 		whileDead = 1,
@@ -889,7 +763,7 @@ function G:SetupBuffsIndicator(parent)
 	local barList = {}
 
 	local function createBar(parent, spellID, isNew)
-		local name, _, texture = GetSpellInfo(spellID)
+		local name, texture = GetSpellName(spellID), GetSpellTexture(spellID)
 		local bar = CreateFrame("Frame", nil, parent, "BackdropTemplate")
 		bar:SetSize(220, 30)
 		M.CreateBD(bar, .25)
@@ -900,9 +774,9 @@ function G:SetupBuffsIndicator(parent)
 		close:SetScript("OnClick", function()
 			bar:Hide()
 			if R.RaidBuffsWhite[spellID] then
-				MaoRUIDB["RaidBuffsWhite"][spellID] = false
+				MaoRUISetDB["RaidBuffsWhite"][spellID] = false
 			else
-				MaoRUIDB["RaidBuffsWhite"][spellID] = nil
+				MaoRUISetDB["RaidBuffsWhite"][spellID] = nil
 			end
 			barList[spellID] = nil
 			sortBars(barList)
@@ -917,17 +791,17 @@ function G:SetupBuffsIndicator(parent)
 	end
 
 	local function isAuraExisted(spellID)
-		local modValue = MaoRUIDB["RaidBuffsWhite"][spellID]
+		local modValue = MaoRUISetDB["RaidBuffsWhite"][spellID]
 		local locValue = R.RaidBuffsWhite[spellID]
 		return modValue or (modValue == nil and locValue)
 	end
 
 	local function addClick(parent)
 		local spellID = tonumber(parent.box:GetText())
-		if not spellID or not GetSpellInfo(spellID) then UIErrorsFrame:AddMessage(I.InfoColor..U["Incorrect SpellID"]) return end
+		if not spellID or not GetSpellName(spellID) then UIErrorsFrame:AddMessage(I.InfoColor..U["Incorrect SpellID"]) return end
 		if isAuraExisted(spellID) then UIErrorsFrame:AddMessage(I.InfoColor..U["Existing ID"]) return end
 
-		MaoRUIDB["RaidBuffsWhite"][spellID] = true
+		MaoRUISetDB["RaidBuffsWhite"][spellID] = true
 		createBar(parent.child, spellID, true)
 		parent.box:SetText("")
 	end
@@ -937,7 +811,7 @@ function G:SetupBuffsIndicator(parent)
 		button1 = YES,
 		button2 = NO,
 		OnAccept = function()
-			wipe(MaoRUIDB["RaidBuffsWhite"])
+			wipe(MaoRUISetDB["RaidBuffsWhite"])
 			ReloadUI()
 		end,
 		whileDead = 1,
@@ -1000,7 +874,7 @@ function G:SetupDebuffsIndicator(parent)
 	local barList = {}
 
 	local function createBar(parent, spellID, isNew)
-		local name, _, texture = GetSpellInfo(spellID)
+		local name, texture = GetSpellName(spellID), GetSpellTexture(spellID)
 		local bar = CreateFrame("Frame", nil, parent, "BackdropTemplate")
 		bar:SetSize(220, 30)
 		M.CreateBD(bar, .25)
@@ -1011,9 +885,9 @@ function G:SetupDebuffsIndicator(parent)
 		close:SetScript("OnClick", function()
 			bar:Hide()
 			if R.RaidDebuffsBlack[spellID] then
-				MaoRUIDB["RaidDebuffsBlack"][spellID] = false
+				MaoRUISetDB["RaidDebuffsBlack"][spellID] = false
 			else
-				MaoRUIDB["RaidDebuffsBlack"][spellID] = nil
+				MaoRUISetDB["RaidDebuffsBlack"][spellID] = nil
 			end
 			barList[spellID] = nil
 			sortBars(barList)
@@ -1028,17 +902,17 @@ function G:SetupDebuffsIndicator(parent)
 	end
 
 	local function isAuraExisted(spellID)
-		local modValue = MaoRUIDB["RaidDebuffsBlack"][spellID]
+		local modValue = MaoRUISetDB["RaidDebuffsBlack"][spellID]
 		local locValue = R.RaidDebuffsBlack[spellID]
 		return modValue or (modValue == nil and locValue)
 	end
 
 	local function addClick(parent)
 		local spellID = tonumber(parent.box:GetText())
-		if not spellID or not GetSpellInfo(spellID) then UIErrorsFrame:AddMessage(I.InfoColor..U["Incorrect SpellID"]) return end
+		if not spellID or not GetSpellName(spellID) then UIErrorsFrame:AddMessage(I.InfoColor..U["Incorrect SpellID"]) return end
 		if isAuraExisted(spellID) then UIErrorsFrame:AddMessage(I.InfoColor..U["Existing ID"]) return end
 
-		MaoRUIDB["RaidDebuffsBlack"][spellID] = true
+		MaoRUISetDB["RaidDebuffsBlack"][spellID] = true
 		createBar(parent.child, spellID, true)
 		parent.box:SetText("")
 	end
@@ -1048,7 +922,7 @@ function G:SetupDebuffsIndicator(parent)
 		button1 = YES,
 		button2 = NO,
 		OnAccept = function()
-			wipe(MaoRUIDB["RaidDebuffsBlack"])
+			wipe(MaoRUISetDB["RaidDebuffsBlack"])
 			ReloadUI()
 		end,
 		whileDead = 1,
@@ -1224,8 +1098,8 @@ function G:SetupUnitFrame(parent)
 		["Boss"] = {120, 21, 3, 5, 5, 2, 0},
 	}
 
-	local function createOptionGroup(parent, title, offset, value, func)
-		createOptionTitle(parent, title, offset)
+	local function createOptionGroup(parent, offset, value, func)
+		createOptionTitle(parent, "", offset)
 		createOptionDropdown(parent, U["HealthValueType"], offset-50, G.HealthValues, U["100PercentTip"], "UFs", value.."HPTag", defaultValue[value][4], func)
 		local mult = 0
 		if value ~= "Pet" then
@@ -1253,7 +1127,6 @@ function G:SetupUnitFrame(parent)
 		end
 		UF:UpdateUFAuras()
 	end
-	createOptionGroup(scroll.child, U["Player&Target"], -10, "Player", updatePlayerSize)
 
 	local function updateFocusSize()
 		local frame = _G.oUF_Focus
@@ -1263,7 +1136,6 @@ function G:SetupUnitFrame(parent)
 			UF.UpdateFramePowerTag(frame)
 		end
 	end
-	createOptionGroup(scroll.child, U["FocusUF"], -480, "Focus", updateFocusSize)
 
 	local subFrames = {_G.oUF_Pet, _G.oUF_ToT, _G.oUF_FocusTarget}
 	local function updatePetSize()
@@ -1272,7 +1144,6 @@ function G:SetupUnitFrame(parent)
 			UF.UpdateFrameHealthTag(frame)
 		end
 	end
-	createOptionGroup(scroll.child, U["Pet&*Target"], -1090, "Pet", updatePetSize)
 
 	local function updateBossSize()
 		for _, frame in pairs(ns.oUF.objects) do
@@ -1283,7 +1154,37 @@ function G:SetupUnitFrame(parent)
 			end
 		end
 	end
-	createOptionGroup(scroll.child, U["Boss&Arena"], -1500, "Boss", updateBossSize)
+
+	local options = {
+		[1] = U["Player&Target"],
+		[2] = U["FocusUF"],
+		[3] = U["Pet&*Target"],
+		[4] = U["Boss&Arena"],
+	}
+	local data = {
+		[1] = {"Player", updatePlayerSize},
+		[2] = {"Focus", updateFocusSize},
+		[3] = {"Pet", updatePetSize},
+		[4] = {"Boss", updateBossSize},
+	}
+
+	local dd = G:CreateDropdown(scroll.child, "", 40, -15, options, nil, 180, 28)
+	dd:SetFrameLevel(20)
+	dd.Text:SetText(options[1])
+	dd:SetBackdropBorderColor(1, .8, 0, .5)
+	dd.panels = {}
+
+	for i = 1, #options do
+		local panel = CreateFrame("Frame", nil, scroll.child)
+		panel:SetSize(260, 1)
+		panel:SetPoint("TOP", 0, -30)
+		panel:Hide()
+		createOptionGroup(panel, -10, data[i][1], data[i][2])
+
+		dd.panels[i] = panel
+		dd.options[i]:HookScript("OnClick", toggleOptionsPanel)
+	end
+	toggleOptionsPanel(dd.options[1])
 end
 
 function G:SetupRaidFrame(parent)
@@ -1475,9 +1376,9 @@ function G:SetupCastbar(parent)
 	createOptionSwatch(scroll.child, U["NotInterruptible Color"], "UFs", "NotInterruptColor", 40, -100)
 
 	local defaultValue = {
-		["Player"] = {300, 20},
-		["Target"] = {280, 20},
-		["Focus"] = {320, 20},
+		["Player"] = {310, 18},
+		["Target"] = {280, 18},
+		["Focus"] = {320, 18},
 	}
 
 	local UF = M:GetModule("UnitFrames")
@@ -1510,14 +1411,6 @@ function G:SetupCastbar(parent)
 			castbar.Icon:SetSize(height, height)
 			castbar.mover:Show()
 			castbar.mover:SetSize(width+height+5, height+5)
-
-			local quakeTimer = _G.oUF_Player.QuakeTimer
-			if quakeTimer then
-				quakeTimer:SetSize(width, height)
-				quakeTimer.Icon:SetSize(height, height)
-				quakeTimer.mover:Show()
-				quakeTimer.mover:SetSize(width+height+5, height+5)
-			end
 		end
 	end
 	createOptionGroup(scroll.child, U["Player Castbar"], -170, "Player", updatePlayerCastbar)
@@ -1550,10 +1443,6 @@ function G:SetupCastbar(parent)
 		local playerCB = _G.oUF_Player and _G.oUF_Player.Castbar
 		if playerCB then
 			playerCB.mover:Hide()
-			local quakeTimer = _G.oUF_Player.QuakeTimer
-			if quakeTimer then
-				quakeTimer.mover:Hide()
-			end
 		end
 		local targetCB = _G.oUF_Target and _G.oUF_Target.Castbar
 		if targetCB then
@@ -1632,7 +1521,9 @@ function G:SetupBagFilter(parent)
 		[9] = "FilterGoods",
 		[10] = "FilterQuest",
 		[11] = "FilterAnima",
-		[12] = "FilterRelic",
+		[12] = "FilterStone",
+		[13] = "FilterAOE",
+		[14] = "FilterLower",
 	}
 
 	local BAG = M:GetModule("Bags")
@@ -1662,8 +1553,7 @@ function G:PlateCastbarGlow(parent)
 	local barTable = {}
 
 	local function createBar(parent, spellID)
-		local spellName = GetSpellInfo(spellID)
-		local texture = GetSpellTexture(spellID)
+		local spellName, texture = GetSpellName(spellID), GetSpellTexture(spellID)
 
 		local bar = CreateFrame("Frame", nil, parent, "BackdropTemplate")
 		bar:SetSize(220, 30)
@@ -1676,9 +1566,9 @@ function G:PlateCastbarGlow(parent)
 			bar:Hide()
 			barTable[spellID] = nil
 			if R.MajorSpells[spellID] then
-				MaoRUIDB["MajorSpells"][spellID] = false
+				MaoRUISetDB["MajorSpells"][spellID] = false
 			else
-				MaoRUIDB["MajorSpells"][spellID] = nil
+				MaoRUISetDB["MajorSpells"][spellID] = nil
 			end
 			sortBars(barTable)
 		end)
@@ -1699,10 +1589,10 @@ function G:PlateCastbarGlow(parent)
 	local function addClick(button)
 		local parent = button.__owner
 		local spellID = tonumber(parent.box:GetText())
-		if not spellID or not GetSpellInfo(spellID) then UIErrorsFrame:AddMessage(I.InfoColor..U["Incorrect SpellID"]) return end
-		local modValue = MaoRUIDB["MajorSpells"][spellID]
+		if not spellID or not GetSpellName(spellID) then UIErrorsFrame:AddMessage(I.InfoColor..U["Incorrect SpellID"]) return end
+		local modValue = MaoRUISetDB["MajorSpells"][spellID]
 		if modValue or modValue == nil and R.MajorSpells[spellID] then UIErrorsFrame:AddMessage(I.InfoColor..U["Existing ID"]) return end
-		MaoRUIDB["MajorSpells"][spellID] = true
+		MaoRUISetDB["MajorSpells"][spellID] = true
 		createBar(parent.child, spellID)
 		parent.box:SetText("")
 	end
@@ -1718,7 +1608,7 @@ function G:PlateCastbarGlow(parent)
 		button1 = YES,
 		button2 = NO,
 		OnAccept = function()
-			MaoRUIDB["MajorSpells"] = {}
+			MaoRUISetDB["MajorSpells"] = {}
 			ReloadUI()
 		end,
 		whileDead = 1,
@@ -1744,26 +1634,55 @@ function G:SetupNameplateSize(parent)
 	local scroll = G:CreateScroll(panel, 260, 540)
 
 	local optionValues = {
-		["enemy"] = {"PlateWidth", "PlateHeight", "NameTextSize", "HealthTextSize", "HealthTextOffset", "PlateCBHeight", "CBTextSize", "PlateCBOffset", "HarmWidth", "HarmHeight"},
-		["friend"] = {"FriendPlateWidth", "FriendPlateHeight", "FriendNameSize", "FriendHealthSize", "FriendHealthOffset", "FriendPlateCBHeight", "FriendCBTextSize", "FriendPlateCBOffset", "HelpWidth", "HelpHeight"},
+		["enemy"] = {"PlateWidth", "PlateHeight", "NameTextSize","HealthTextSize", "HealthTextOffset", "PlateCBHeight", "CBTextSize", "PlateCBOffset", "HarmWidth", "HarmHeight", "NameTextOffset"},
+		["friend"] = {"FriendPlateWidth", "FriendPlateHeight", "FriendNameSize","FriendHealthSize", "FriendHealthOffset", "FriendPlateCBHeight", "FriendCBTextSize", "FriendPlateCBOffset", "HelpWidth", "HelpHeight", "FriendNameOffset"},
 	}
-	local function createOptionGroup(parent, title, offset, value, func)
-		createOptionTitle(parent, title, offset)
+	local function createOptionGroup(parent, offset, value, func, isEnemy)
+		createOptionTitle(parent, "", offset)
 		createOptionSlider(parent, U["Width"], 50, 500, 190, offset-60, optionValues[value][1], func, "Nameplate")
 		createOptionSlider(parent, U["Height"], 5, 50, 8, offset-130, optionValues[value][2], func, "Nameplate")
 		createOptionSlider(parent, U["InteractWidth"], 50, 500, 190, offset-200, optionValues[value][9], func, "Nameplate")
 		createOptionSlider(parent, U["InteractHeight"], 5, 50, 8, offset-270, optionValues[value][10], func, "Nameplate")
-		createOptionSlider(parent, U["NameTextSize"], 10, 50, 14, offset-200, optionValues[value][3], func, "Nameplate")
-		createOptionSlider(parent, U["HealthTextSize"], 10, 50, 16, offset-270, optionValues[value][4], func, "Nameplate")
-		createOptionSlider(parent, U["Health Offset"], -50, 50, 5, offset-340, optionValues[value][5], func, "Nameplate")
-		createOptionSlider(parent, U["Castbar Height"], 5, 50, 8, offset-410, optionValues[value][6], func, "Nameplate")
-		createOptionSlider(parent, U["CastbarTextSize"], 10, 50, 14, offset-480, optionValues[value][7], func, "Nameplate")
-		createOptionSlider(parent, U["CastbarTextOffset"], -50, 50, -1, offset-550, optionValues[value][8], func, "Nameplate")
+		createOptionSlider(parent, U["NameTextSize"], 10, 50, 14, offset-340, optionValues[value][3], func, "Nameplate")
+		createOptionSlider(parent, U["Name Offset"], -100, 50, 5, offset-410, optionValues[value][11], func, "Nameplate")
+		createOptionSlider(parent, U["HealthTextSize"], 10, 50, 16, offset-480, optionValues[value][4], func, "Nameplate")
+		createOptionSlider(parent, U["Health Offset"], -50, 50, 5, offset-550, optionValues[value][5], func, "Nameplate")
+		createOptionSlider(parent, U["Castbar Height"], 5, 50, 8, offset-620, optionValues[value][6], func, "Nameplate")
+		createOptionSlider(parent, U["CastbarTextSize"], 10, 50, 14, offset-690, optionValues[value][7], func, "Nameplate")
+		createOptionSlider(parent, U["CastbarTextOffset"], -50, 50, -1, offset-760, optionValues[value][8], func, "Nameplate")
+		if isEnemy then
+			createOptionSlider(parent, U["RaidTargetX"], -50, 500, 0, offset-830, "RaidTargetX", func, "Nameplate")
+			createOptionSlider(parent, U["RaidTargetY"], -200, 200, 3, offset-900, "RaidTargetY", func, "Nameplate")
+		end
 	end
 
 	local UF = M:GetModule("UnitFrames")
-	createOptionGroup(scroll.child, U["HostileNameplate"], -10, "enemy", UF.RefreshAllPlates)
-	createOptionGroup(scroll.child, U["FriendlyNameplate"], -650, "friend", UF.RefreshAllPlates)
+	local options = {
+		[1] = U["HostileNameplate"],
+		[2] = U["FriendlyNameplate"],
+	}
+
+	local dd = G:CreateDropdown(scroll.child, "", 40, -15, options, nil, 180, 28)
+	dd:SetFrameLevel(20)
+	dd.Text:SetText(options[1])
+	dd:SetBackdropBorderColor(1, .8, 0, .5)
+	dd.panels = {}
+
+	for i = 1, #options do
+		local panel = CreateFrame("Frame", nil, scroll.child)
+		panel:SetSize(260, 1)
+		panel:SetPoint("TOP", 0, -30)
+		panel:Hide()
+		if i == 1 then
+			createOptionGroup(panel, -10, "enemy", UF.RefreshAllPlates, true)
+		else
+			createOptionGroup(panel, -10, "friend", UF.RefreshAllPlates)
+		end
+
+		dd.panels[i] = panel
+		dd.options[i]:HookScript("OnClick", toggleOptionsPanel)
+	end
+	toggleOptionsPanel(dd.options[1])
 end
 
 function G:SetupNameOnlySize(parent)
@@ -1792,43 +1711,95 @@ function G:SetupActionBar(parent)
 
 	local Bar = M:GetModule("Actionbar")
 	local defaultValues = {
-		-- defaultSize, minButtons, maxButtons, defaultButtons, defaultPerRow
-		["Bar1"] = {34, 6, 12, 12, 12},
-		["Bar2"] = {34, 1, 12, 12, 12},
-		["Bar3"] = {32, 0, 12, 0, 12},
-		["Bar4"] = {32, 1, 12, 12, 1},
-		["Bar5"] = {32, 1, 12, 12, 1},
+		-- defaultSize, minButtons, maxButtons, defaultButtons, defaultPerRow, flyoutDirec
+		["Bar1"] = {35, 6, 12, 12, 12, "UP"},
+		["Bar2"] = {35, 1, 12, 12, 12, "UP"},
+		["Bar3"] = {35, 1, 12, 12, 6, "UP"},
+		["Bar4"] = {35, 1, 12, 12, 6, "UP"},
+		["Bar5"] = {35, 1, 12, 12, 12, "LEFT"},
+		["Bar6"] = {35, 1, 12, 12, 1, "LEFT"},
+		["Bar7"] = {35, 1, 12, 12, 1, "UP"},
+		["Bar8"] = {35, 1, 12, 12, 12, "UP"},
 		["BarPet"] = {26, 1, 10, 10, 10},
-		["Bar6"] = {34, 1, 12, 12, 12},
-		["Bar7"] = {34, 1, 12, 12, 12},
-		["Bar8"] = {34, 1, 12, 12, 12},
 	}
-	local function createOptionGroup(parent, title, offset, value, color)
+	local directions = {U["GO_UP"], U["GO_DOWN"], U["GO_LEFT"], U["GO_RIGHT"]}
+	local function toggleBar(self)
+		R.db["Actionbar"][self.__value] = self:GetChecked()
+		Bar:UpdateVisibility()
+	end
+	local function createOptionGroup(parent, offset, value, color)
+		if value ~= "BarPet" then
+			local box = M.CreateCheckBox(parent)
+			box:SetPoint("TOPLEFT", parent, 10, offset + 25)
+			box:SetChecked(R.db["Actionbar"][value])
+			--box.bg:SetBackdropBorderColor(1, .8, 0, .5)
+			box.__value = value
+			box:SetScript("OnClick", toggleBar)
+			M.AddTooltip(box, "ANCHOR_RIGHT", U["ToggleActionbarTip"], "info", true)
+		end
+
 		color = color or ""
 		local data = defaultValues[value]
 		local function updateBarScale()
 			Bar:UpdateActionSize(value)
 		end
-		createOptionTitle(parent, title, offset)
+		createOptionTitle(parent, "", offset)
 		createOptionSlider(parent, U["ButtonSize"], 20, 80, data[1], offset-60, value.."Size", updateBarScale, "Actionbar")
-		createOptionSlider(parent, color..U["MaxButtons"], data[2], data[3], data[4], offset-130, value.."Num", updateBarScale, "Actionbar")
-		createOptionSlider(parent, U["ButtonsPerRow"], 1, data[3], data[5], offset-200, value.."PerRow", updateBarScale, "Actionbar")
-		createOptionSlider(parent, U["ButtonFontSize"], 8, 20, 12, offset-270, value.."Font", updateBarScale, "Actionbar")
+		createOptionSlider(parent, U["ButtonsPerRow"], 1, data[3], data[5], offset-130, value.."PerRow", updateBarScale, "Actionbar")
+		createOptionSlider(parent, U["ButtonFontSize"], 8, 20, 12, offset-200, value.."Font", updateBarScale, "Actionbar")
+		if value ~= "BarPet" then
+			createOptionSlider(parent, color..U["MaxButtons"], data[2], data[3], data[4], offset-270, value.."Num", updateBarScale, "Actionbar")
+			createOptionDropdown(parent, U["GrowthDirection"], offset-340, directions, nil, "Actionbar", value.."Flyout", data[6], Bar.UpdateBarConfig)
+		end
 	end
 
-	createOptionGroup(scroll.child, U["Actionbar"].."1", -10, "Bar1")
-	createOptionGroup(scroll.child, U["Actionbar"].."2", -370, "Bar2")
-	createOptionGroup(scroll.child, U["Actionbar"].."3", -730, "Bar3", "|cffff0000")
-	createOptionGroup(scroll.child, U["Actionbar"].."4", -1090, "Bar4")
-	createOptionGroup(scroll.child, U["Actionbar"].."5", -1450, "Bar5")
-	createOptionGroup(scroll.child, U["Pet Actionbar"], -1810, "BarPet")
+	local options = {}
+	for i = 1, 8 do
+		tinsert(options, U["Actionbar"]..i)
+	end
+	tinsert(options, U["Pet Actionbar"]) -- 9
+	tinsert(options, U["LeaveVehicle"]) -- 10
 
-	createOptionTitle(scroll.child, U["LeaveVehicle"], -2170)
-	createOptionSlider(scroll.child, U["ButtonSize"], 20, 80, 34, -2230, "VehButtonSize", Bar.UpdateVehicleButton, "Actionbar")
+	local dd = G:CreateDropdown(scroll.child, "", 40, -15, options, nil, 180, 28)
+	dd:SetFrameLevel(20)
+	dd.Text:SetText(options[1])
+	dd:SetBackdropBorderColor(1, .8, 0, .5)
+	dd.panels = {}
 
-	createOptionGroup(scroll.child, U["Actionbar"].."6", -2300, "Bar6")
-	createOptionGroup(scroll.child, U["Actionbar"].."7", -2660, "Bar7")
-	createOptionGroup(scroll.child, U["Actionbar"].."8", -3020, "Bar8")
+	for i = 1, #options do
+		local panel = CreateFrame("Frame", nil, scroll.child)
+		panel:SetSize(260, 1)
+		panel:SetPoint("TOP", 0, -30)
+		panel:Hide()
+		if i == 9 then
+			createOptionGroup(panel, -10, "BarPet")
+		elseif i == 10 then
+			createOptionTitle(panel, "", -10)
+			createOptionSlider(panel, U["ButtonSize"], 20, 80, 34, -70, "VehButtonSize", Bar.UpdateVehicleButton, "Actionbar")
+		else
+			createOptionGroup(panel, -10, "Bar"..i)
+		end
+
+		dd.panels[i] = panel
+		dd.options[i]:HookScript("OnClick", toggleOptionsPanel)
+	end
+	toggleOptionsPanel(dd.options[1])
+end
+
+function G:SetupMicroMenu(parent)
+	local guiName = "UIGUI_MicroMenuSetup"
+	toggleExtraGUI(guiName)
+	if extraGUIs[guiName] then return end
+
+	local panel = createExtraGUI(parent, guiName, U["Menubar"].."*")
+	local scroll = G:CreateScroll(panel, 260, 540)
+
+	local Bar = M:GetModule("Actionbar")
+	local parent, offset = scroll.child, -10
+	createOptionTitle(parent, U["Menubar"], offset)
+	createOptionSlider(parent, U["ButtonSize"], 20, 40, 22, offset-60, "MBSize", Bar.MicroMenu_Setup, "Actionbar")
+	createOptionSlider(parent, U["ButtonsPerRow"], 1, 12, 12, offset-130, "MBPerRow", Bar.MicroMenu_Setup, "Actionbar")
+	createOptionSlider(parent, U["Spacing"], -10, 10, 5, offset-200, "MBSpacing", Bar.MicroMenu_Setup, "Actionbar")
 end
 
 function G:SetupStanceBar(parent)
@@ -1891,19 +1862,29 @@ function G:SetupUFAuras(parent)
 	}
 	local buffOptions = {DISABLE, U["ShowAll"], U["ShowDispell"]}
 	local debuffOptions = {DISABLE, U["ShowAll"], U["BlockOthers"]}
+	local growthOptions = {}
+	for i = 1, 4 do
+		growthOptions[i] = UF.AuraDirections[i].name
+	end
 
-	local function createOptionGroup(parent, title, offset, value, func, isBoss)
+	local function createOptionGroup(parent, offset, value, func, isBoss)
 		local default = defaultData[value]
-		createOptionTitle(parent, title, offset)
-		createOptionDropdown(parent, U["BuffType"], offset-50, buffOptions, nil, "UFs", value.."BuffType", default[1], func)
-		createOptionDropdown(parent, U["DebuffType"], offset-110, debuffOptions, nil, "UFs", value.."DebuffType", default[2], func)
-		createOptionSlider(parent, U["MaxBuffs"], 1, 40, default[4], offset-180, value.."NumBuff", func)
-		createOptionSlider(parent, U["MaxDebuffs"], 1, 40, default[5], offset-250, value.."NumDebuff", func)
+		createOptionTitle(parent, "", offset)
 		if isBoss then
-			createOptionSlider(parent, "Buff "..U["IconsPerRow"], 5, 20, default[3], offset-320, value.."BuffPerRow", func)
-			createOptionSlider(parent, "Debuff "..U["IconsPerRow"], 5, 20, default[3], offset-390, value.."DebuffPerRow", func)
+			offset = offset + 130
 		else
-			createOptionSlider(parent, U["IconsPerRow"], 5, 20, default[3], offset-320, value.."AurasPerRow", func)
+			createOptionDropdown(parent, U["GrowthDirection"], offset-50, growthOptions, "", "UFs", value.."AuraDirec", 1, func)
+			createOptionSlider(parent, U["yOffset"], 0, 200, 10, offset-110, value.."AuraOffset", func)
+		end
+		createOptionDropdown(parent, U["BuffType"], offset-180, buffOptions, nil, "UFs", value.."BuffType", default[1], func)
+		createOptionDropdown(parent, U["DebuffType"], offset-240, debuffOptions, nil, "UFs", value.."DebuffType", default[2], func)
+		createOptionSlider(parent, U["MaxBuffs"], 1, 40, default[4], offset-300, value.."NumBuff", func)
+		createOptionSlider(parent, U["MaxDebuffs"], 1, 40, default[5], offset-370, value.."NumDebuff", func)
+		if isBoss then
+			createOptionSlider(parent, "Buff "..U["IconsPerRow"], 5, 20, default[3], offset-440, value.."BuffPerRow", func)
+			createOptionSlider(parent, "Debuff "..U["IconsPerRow"], 5, 20, default[3], offset-510, value.."DebuffPerRow", func)
+		else
+			createOptionSlider(parent, U["IconsPerRow"], 5, 20, default[3], offset-440, value.."AurasPerRow", func)
 		end
 	end
 
@@ -1911,36 +1892,64 @@ function G:SetupUFAuras(parent)
 	createOptionCheck(parent, offset-35, U["DesaturateIcon"], "UFs", "Desaturate", UF.UpdateUFAuras, U["DesaturateIconTip"])
 	createOptionCheck(parent, offset-70, U["DebuffColor"], "UFs", "DebuffColor", UF.UpdateUFAuras, U["DebuffColorTip"])
 
-	createOptionGroup(parent, U["PlayerUF"], offset-140, "Player", UF.UpdateUFAuras)
-	createOptionGroup(parent, U["TargetUF"], offset-550, "Target", UF.UpdateUFAuras)
-	createOptionGroup(parent, U["TotUF"], offset-960, "ToT", UF.UpdateUFAuras)
-	createOptionGroup(parent, U["PetUF"], offset-1370, "Pet", UF.UpdateUFAuras)
-	createOptionGroup(parent, U["FocusUF"], offset-1780, "Focus", UF.UpdateUFAuras)
-	createOptionGroup(parent, U["BossFrame"], offset-2190, "Boss", UF.UpdateUFAuras, true)
+	local options = {
+		[1] = U["PlayerUF"],
+		[2] = U["TargetUF"],
+		[3] = U["TotUF"],
+		[4] = U["PetUF"],
+		[5] = U["FocusUF"],
+		[6] = U["BossFrame"],
+	}
+	local data = {
+		[1] = "Player",
+		[2] = "Target",
+		[3] = "ToT",
+		[4] = "Pet",
+		[5] = "Focus",
+		[6] = "Boss",
+	}
+
+	local dd = G:CreateDropdown(scroll.child, "", 40, -135, options, nil, 180, 28)
+	dd:SetFrameLevel(20)
+	dd.Text:SetText(options[1])
+	dd:SetBackdropBorderColor(1, .8, 0, .5)
+	dd.panels = {}
+
+	for i = 1, #options do
+		local panel = CreateFrame("Frame", nil, scroll.child)
+		panel:SetSize(260, 1)
+		panel:SetPoint("TOP", 0, -30)
+		panel:Hide()
+		createOptionGroup(panel, -130, data[i], UF.UpdateUFAuras, i == 6)
+
+		dd.panels[i] = panel
+		dd.options[i]:HookScript("OnClick", toggleOptionsPanel)
+	end
+	toggleOptionsPanel(dd.options[1])
 end
 
 function G:SetupActionbarStyle(parent)
 	local maxButtons = 6
-	local size, padding = 26, 1
+	local size, padding = 80, 2
 
 	local frame = CreateFrame("Frame", "UIActionbarStyleFrame", parent.child)
 	frame:SetSize((size+padding)*maxButtons + padding, size + 2*padding)
-	frame:SetPoint("TOPRIGHT", 100, -60)
+	frame:SetPoint("TOP", 160, -10)
 	--M.CreateBDFrame(frame, .25)
 
 	local Bar = M:GetModule("Actionbar")
 
 	local styleString = {
-		[1] = "NAB:34:12:12:12:34:12:12:12:32:12:0:12:32:12:12:1:32:12:12:1:26:12:10:10:30:12:10:0B24:0B60:-271B26:271B26:-1BR336:-35BR336:0B100:-202B100",
-		[2] = "NAB:34:12:12:12:34:12:12:12:34:12:12:12:32:12:12:1:32:12:12:1:26:12:10:10:30:12:10:0B24:0B60:0B96:271B26:-1BR336:-35BR336:0B134:-200B138",
-		[3] = "NAB:34:12:12:12:34:12:12:12:34:12:12:6:32:12:12:1:32:12:12:1:26:12:10:10:30:12:10:-108B24:-108B60:216B24:271B26:-1TR-336:-35TR-336:0B98:-310B100",
-		[4] = "NAB:34:12:12:12:34:12:12:12:32:12:12:6:32:12:12:6:32:12:12:1:26:12:10:10:30:12:10:0B24:0B60:536BL26:271B26:-536BR26:-1TR-336:0B100:-202B100",
+		[1] = "NAB:35:12:12:12:35:12:12:12:35:12:12:6:35:12:12:6:35:12:12:1:35:12:12:1:35:12:4:1:35:12:12:4:26:12:10:30:12:10:0M0:0M37:333M1:-333M1:-1BR318:-38BR318:210T-416:-210T-435",
+		[2] = "NAB:35:12:12:12:35:12:12:12:35:12:12:12:35:12:12:1:35:12:12:1:35:12:12:1:35:12:4:1:35:12:12:4:26:12:10:30:12:10:0M0:0M37:0M75:-36TR-317:-1BR318:-38BR318:210T-416:-210T-435",
+		[3] = "NAB:35:12:12:12:35:12:12:12:35:12:12:4:35:12:12:4:35:12:12:12:35:12:12:1:35:12:12:1:35:12:12:8:26:12:10:30:12:10:0M0:0M37:300M0:-300M0:0M74:-1BR318:-38BR318:0M293",
+		[4] = "NAB:35:12:8:8:40:12:12:12:40:12:12:12:40:12:12:6:40:12:12:6:35:12:12:1:35:12:12:12:35:12:12:12:26:12:10:30:12:10:0M282:0M0:0M42:383M0:-383M0:0BR262:0T-482:0T-442",
 	}
 	local styleName = {
 		[1] = _G.DEFAULT,
 		[2] = "3X12",
-		[3] = "2X18",
-		[4] = "12+24+12",
+		[3] = "12+24+12",
+		[4] = "2UI Style",
 		[5] = U["Export"],
 		[6] = U["Import"],
 	}
@@ -1950,7 +1959,7 @@ function G:SetupActionbarStyle(parent)
 	}
 
 	local function applyBarStyle(self)
-		if not IsControlKeyDown() then return end
+		--if not IsControlKeyDown() then return end
 		local str = styleString[self.index]
 		if not str then return end
 		Bar:ImportActionbarStyle(str)
@@ -2025,16 +2034,16 @@ function G:SetupActionbarStyle(parent)
 
 	local function GetButtonText(i)
 		if i == 5 then
-			return "|T"..I.ArrowUp..":18|t"
+			return "导出布局"--"|T"..I.ArrowUp..":18|t"
 		elseif i == 6 then
-			return "|T"..I.ArrowUp..":18:18:0:0:1:1:0:1:1:0|t"
+			return "导入布局"--"|T"..I.ArrowUp..":18:18:0:0:1:1:0:1:1:0|t"
 		else
-			return i
+			return styleName[i]
 		end
 	end
 
 	for i = 1, maxButtons do
-		local bu = M.CreateButton(frame, size, size, GetButtonText(i))
+		local bu = M.CreateButton(frame, size, 24, GetButtonText(i))
 		bu:SetPoint("LEFT", (i-1)*(size + padding) + padding, 0)
 		bu.index = i
 		bu.title = styleName[i]
@@ -2069,7 +2078,7 @@ function G:SetupBuffFrame(parent)
 		A:UpdateHeader(A.BuffFrame)
 		A.BuffFrame.mover:SetSize(A.BuffFrame:GetSize())
 	end
-	
+
 	local function updateDebuffFrame()
 		if not A.settings then return end
 		A:UpdateOptions()
@@ -2081,11 +2090,14 @@ function G:SetupBuffFrame(parent)
 		createOptionTitle(parent, title, offset)
 		createOptionCheck(parent, offset-35, U["ReverseGrow"], "Auras", "Reverse"..value, func)
 		createOptionSlider(parent, U["Auras Size"], 20, 50, defaultSize, offset-100, value.."Size", func, "Auras")
-		createOptionSlider(parent, U["IconsPerRow"], 10, 40, defaultPerRow, offset-170, value.."sPerRow", func, "Auras")
+		if func then -- no func for private auras
+			createOptionSlider(parent, U["IconsPerRow"], 10, 40, defaultPerRow, offset-170, value.."sPerRow", func, "Auras")
+		end
 	end
 
-	createOptionGroup(parent, "Buffs", offset, "Buff", updateBuffFrame)
-	createOptionGroup(parent, "Debuffs", offset-260, "Debuff", updateDebuffFrame)
+	createOptionGroup(parent, "Buffs*", offset, "Buff", updateBuffFrame)
+	createOptionGroup(parent, "Debuffs*", offset-260, "Debuff", updateDebuffFrame)
+	createOptionGroup(parent, "PrivateAuras", offset-520, "Private")
 end
 
 function G:NameplateColorDots(parent)
@@ -2098,8 +2110,7 @@ function G:NameplateColorDots(parent)
 	local barTable = {}
 
 	local function createBar(parent, spellID, isNew)
-		local spellName = GetSpellInfo(spellID)
-		local texture = GetSpellTexture(spellID)
+		local spellName, texture = GetSpellName(spellID), GetSpellTexture(spellID)
 
 		local bar = CreateFrame("Frame", nil, parent, "BackdropTemplate")
 		bar:SetSize(220, 30)
@@ -2137,7 +2148,7 @@ function G:NameplateColorDots(parent)
 	local function addClick(button)
 		local parent = button.__owner
 		local spellID = tonumber(parent.box:GetText())
-		if not spellID or not GetSpellInfo(spellID) then UIErrorsFrame:AddMessage(I.InfoColor..U["Incorrect SpellID"]) return end
+		if not spellID or not GetSpellName(spellID) then UIErrorsFrame:AddMessage(I.InfoColor..U["Incorrect SpellID"]) return end
 		if R.db["Nameplate"]["DotSpells"][spellID] then UIErrorsFrame:AddMessage(I.InfoColor..U["Existing ID"]) return end
 		R.db["Nameplate"]["DotSpells"][spellID] = true
 		createBar(parent.child, spellID, true)

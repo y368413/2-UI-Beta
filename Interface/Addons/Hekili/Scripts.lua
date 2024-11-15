@@ -16,9 +16,9 @@ local orderedPairs = ns.orderedPairs
 local roundUp = ns.roundUp
 local safeMax = ns.safeMax
 
-local trim = string.trim
+local format, trim = string.format, string.trim
 
-local twipe = table.wipe
+local twipe, insert = table.wipe, table.insert
 
 
 -- Forgive the name, but this should properly replace ! characters with not, accounting for appropriate bracketing.
@@ -221,7 +221,7 @@ local function HandleDeprecatedOperators( str, opStr, prefix  )
                 local char = right:sub(i, i)
 
                 if char == "(" then
-                    i = i + right:sub( i ):match("^(%b())" ):len()
+                    i = i + right:sub( i ):match( "^(%b())" ):len()
                 elseif mathBreak[char] or char == ")" then
                     eos = i - 1
                     break
@@ -294,6 +294,30 @@ local function space_killer(s)
     return s:gsub("%s", "")
 end
 
+local function HandleLanguageIncompatibilities( str )
+    -- Address equipped.number => equipped[number]
+    str = str:gsub("%.(%d+)%.", "[%1].")
+    str = str:gsub("equipped%.(%d+)", "equipped[%1]")
+    str = str:gsub("main_hand%.(%d[a-z0-9_]+)", "main_hand['%1']")
+    str = str:gsub("off_hand%.(%d[a-z0-9_]+)", "off_hand['%1']")
+    str = str:gsub("lowest_vuln_within%.(%d+)", "lowest_vuln_within[%1]")
+    str = str:gsub("%.in([^a-zA-Z0-9_])", "['in']%1" )
+    str = str:gsub("%.in$", "['in']" )
+    str = str:gsub("imps_spawned_during%.([^!=<>&|]+)", "imps_spawned_during['%1'] ")
+    str = str:gsub("time_to_imps%.(%b()).remains", "time_to_imps[%1].remains")
+    str = str:gsub("time_to_imps%.(%d+).remains", "time_to_imps[%1].remains")
+    -- str = str:gsub("incanters_flow_time_to%.(%d+)[.any]?", "incanters_flow_time_to[%1]")
+    str = str:gsub("prev%.(%d+)", "prev[%1]")
+    str = str:gsub("prev_gcd%.(%d+)", "prev_gcd[%1]")
+    str = str:gsub("prev_off_gcd%.(%d+)", "prev_off_gcd[%1]")
+    str = str:gsub("time_to_sht%.(%d+)", "time_to_sht[%1]")
+    str = str:gsub("time_to_sht_plus%.(%d+)", "time_to_sht_plus[%1]")
+    -- str = str:gsub("([a-z0-9_]+)%.(%d+)", "%1[%2]")
+
+    return str
+end
+
+
 -- Convert SimC syntax to Lua conditionals.
 local function SimToLua( str, modifier )
     -- If no conditions were provided, function should return true.
@@ -316,8 +340,8 @@ local function SimToLua( str, modifier )
     if str:find("%^") then str = str:gsub("%^", "~=") end
 
     -- Replace '>?' and '<?' with max/min.
-    if str:find(">%?") then str = HandleDeprecatedOperators( str, ">%?", "max" ) end
-    if str:find("<%?") then str = HandleDeprecatedOperators( str, "<%?", "min" ) end
+    if str:find("<%?") then str = HandleDeprecatedOperators( str, "<%?", "max" ) end
+    if str:find(">%?") then str = HandleDeprecatedOperators( str, ">%?", "min" ) end
 
     str = SimcWithResources( str )
 
@@ -351,32 +375,10 @@ local function SimToLua( str, modifier )
     -- Condense parenthetical spaces.
     str = str:gsub("[(][%s+]", "("):gsub("[%s+][)]", ")")
 
-    -- Address equipped.number => equipped[number]
-    str = str:gsub("%.(%d+)%.", "[%1].")
-    str = str:gsub("equipped%.(%d+)", "equipped[%1]")
-    str = str:gsub("main_hand%.(%d[a-z0-9_]+)", "main_hand['%1']")
-    str = str:gsub("off_hand%.(%d[a-z0-9_]+)", "off_hand['%1']")
-    str = str:gsub("lowest_vuln_within%.(%d+)", "lowest_vuln_within[%1]")
-    str = str:gsub("%.in([^a-zA-Z0-9_])", "['in']%1" )
-    str = str:gsub("%.in$", "['in']" )
-    str = str:gsub("imps_spawned_during%.([^!=<>&|]+)", "imps_spawned_during['%1'] ")
-    str = str:gsub("time_to_imps%.(%b()).remains", "time_to_imps[%1].remains")
-    str = str:gsub("time_to_imps%.(%d+).remains", "time_to_imps[%1].remains")
-    -- str = str:gsub("incanters_flow_time_to%.(%d+)[.any]?", "incanters_flow_time_to[%1]")
-
     -- Condense bracketed expressions.
     str = str:gsub("%b[]", space_killer)
 
-    str = str:gsub("prev%.(%d+)", "prev[%1]")
-    str = str:gsub("prev_gcd%.(%d+)", "prev_gcd[%1]")
-    str = str:gsub("prev_off_gcd%.(%d+)", "prev_off_gcd[%1]")
-    str = str:gsub("time_to_sht%.(%d+)", "time_to_sht[%1]")
-    str = str:gsub("time_to_sht_plus%.(%d+)", "time_to_sht_plus[%1]")
-    -- str = str:gsub("([a-z0-9_]+)%.(%d+)", "%1[%2]")
-
-    --str = SpaceOut( str )
-
-    return str
+    return HandleLanguageIncompatibilities( str )
 end
 scripts.SimToLua = SimToLua
 
@@ -437,108 +439,112 @@ do
     end
 
     local timely = {
-        { "^(d?e?buff%.[a-z0-9_]+)%.down$",         "%1.remains" },
-        { "^(dot%.[a-z0-9_]+)%.down$",              "%1.remains" },
-        { "^!(d?e?buff%.[a-z0-9_]+)%.up$",          "%1.remains" },
-        { "^!(dot%.[a-z0-9_]+)%.up$",               "%1.remains" },
-        { "^!(d?e?buff%.[a-z0-9_]+)%.react$",       "%1.remains" },
-        { "^!(dot%.[a-z0-9_]+)%.react$",            "%1.remains" },
-        { "^!(d?e?buff%.[a-z0-9_]+)%.ticking$",     "%1.remains" },
-        { "^!(dot%.[a-z0-9_]+)%.ticking$",          "%1.remains" },
-        { "^!?(d?e?buff%.[a-z0-9_]+)%.remains$",    "%1.remains" },
-        { "^!ticking",                              "remains" },
-        { "^!?remains$",                            "remains" },
-        { "^refreshable",                           "time_to_refresh" },
-        { "^gcd.remains$",                          "gcd.remains" },
-        { "^gcd.remains<?=(.+)$",                   "gcd.remains-%1" },
+        { "^(d?e?buff%.[a-z0-9_]+)%.down$"          , "%1.remains"                        },
+        { "^(dot%.[a-z0-9_]+)%.down$"               , "%1.remains"                        },
+        { "^!?(d?e?buff%.[a-z0-9_]+)%.up$"          , "%1.remains"                        },
+        { "^!?(dot%.[a-z0-9_]+)%.up$"               , "%1.remains"                        },
+        { "^!?(d?e?buff%.[a-z0-9_]+)%.react$"       , "%1.remains"                        },
+        { "^!?(dot%.[a-z0-9_]+)%.react$"            , "%1.remains"                        },
+        { "^!?(d?e?buff%.[a-z0-9_]+)%.ticking$"     , "%1.remains"                        },
+        { "^!?(dot%.[a-z0-9_]+)%.ticking$"          , "%1.remains"                        },
+        { "^!?(d?e?buff%.[a-z0-9_]+)%.remains$"     , "%1.remains"                        },
+        { "^!?ticking"                              , "remains"                           },
+        { "^!?remains$"                             , "remains"                           },
+        { "^!?up$"                                  , "remains"                           },
+        { "^down$"                                  , "remains"                           },
+        { "^refreshable$"                           , "time_to_refresh"                   },
+        { "^buff%.([a-z0-9_]+)%.refreshable$"       , "buff.%1.time_to_refresh"           },
+        { "^debuff%.([a-z0-9_]+)%.refreshable$"     , "debuff.%1.time_to_refresh"         },
+        { "^dot%.([a-z0-9_]+)%.refreshable$"        , "debuff.%1.time_to_refresh"         },
 
-        { "^swing.([a-z_]+).remains$",              "swing.%1.remains" },
+        { "^time>=?(.-)$"                           , "0.01+%1-time"                      },
+        { "^gcd.remains$"                           , "gcd.remains"                       },
+        { "^gcd.remains<?=(.+)$"                    , "gcd.remains-%1"                    },
+        { "^swing.([a-z_]+).remains$"               , "swing.%1.remains"                  },
+        { "^(.-)%.deficit<=?(.-)$"                  , "0.01+%1.timeTo(%1.max-(%2))"       },
+        { "^(.-)%.deficit>=?(.-)$"                  , "0.01+%1.timeTo(%1.max-(%2))"       },
+        { "^target%.health%.pe?r?ce?n?t[<>=]+(.-)$" , "0.01+target['time_to_pct_' .. %1]" },
 
-        { "^(.-)%.deficit<=?(.-)$",                 "0.01+%1.timeTo(%1.max-(%2))" },
-        { "^(.-)%.deficit>=?(.-)$",                 "0.01+%1.timeTo(%1.max-(%2))" },
+        { "^cooldown%.([a-z0-9_]+)%.ready$"                      , "cooldown.%1.remains"                      },
+        { "^cooldown%.([a-z0-9_]+)%.up$"                         , "cooldown.%1.remains"                      },
+        { "^!?cooldown%.([a-z0-9_]+)%.remains$"                  , "cooldown.%1.remains"                      },
+        { "^charges_fractional=(.-)$"                            , "(%1-charges_fractional)*recharge"         },
+        { "^charges_fractional>=?(.-)$"                          , "0.01+(%1-charges_fractional)*recharge"    },
+        { "^charges=(.-)$"                                       , "(%1-charges_fractional)*recharge"         },
+        { "^charges>=?(.-)$"                                     , "0.01+(%1-charges_fractional)*recharge"    },
+        { "^(cooldown%.[a-z0-9_]+)%.charges_fractional[>=]+(.-)$", "(%2-%1.charges_fractional)*%1.recharge"   },
+        { "^(cooldown%.[a-z0-9_]+)%.charges>=?(.-)$"             , "(1+%2-%1.charges_fractional)*recharge"    },
+        { "^(action%.[a-z0-9_]+)%.charges_fractional[>=]+(.-)$"  , "(%2-%1.charges_fractional)*%1.recharge"   },
+        { "^(action%.[a-z0-9_]+)%.charges>=?(.-)$"               , "(1+%2-%1.charges_fractional)*%1.recharge" },
+        { "^full_recharge_time[<>]=?(.-)$"                       , "0.01+full_recharge_time-%1"               },
+        { "^!(action%.[a-z0-9]+)%.executing$"                    , "%1.execute_remains"                       },
+        { "^!(action%.[a-z0-9]+)%.channeling$"                   , "%1.channel_remains"                       },
+        { "^(.-time_to_die)<=?(.-)$"                             , "%1-%2"                                    },
 
-        { "^cooldown%.([a-z0-9_]+)%.ready$",        "cooldown.%1.remains" },
-        { "^cooldown%.([a-z0-9_]+)%.up$",           "cooldown.%1.remains" },
-        { "^!?cooldown%.([a-z0-9_]+)%.remains$",    "cooldown.%1.remains" },
+        { "^(.-)%.time_to_(.-)<=?(.-)$", "%1.time_to_%2-%3" },
 
-        { "^charges_fractional=(.-)$",              "(%1-charges_fractional)*recharge" },
-        { "^charges_fractional>=?(.-)$",            "0.01+(%1-charges_fractional)*recharge" },
-        { "^charges=(.-)$",                         "(%1-charges_fractional)*recharge" },
-        { "^charges>=?(.-)$",                       "0.01+(%1-charges_fractional)*recharge" },
+        { "^debuff%.festering_wound%.stack[>=]=?(.-)$" , "time_to_wounds(%1)" },
+        { "^dot%.festering_wound%.stack[>=]=?(.-)$"    , "time_to_wounds(%1)" },
+        { "^rune<=?(.-)$"                              , "rune.timeTo(%1)"    },
+        { "^rune>=?(.-)$"                              , "rune.timeTo(1+%1)"  },
+        { "^rune.current<=?(.-)$"                      , "rune.timeTo(%1)"    },
+        { "^rune.current>=?(.-)$"                      , "rune.timeTo(1+%1)"  },
 
-        { "^(cooldown%.[a-z0-9_]+)%.charges_fractional[>=]+(.-)$",
-                                                    "(%2-%1.charges_fractional)*%1.recharge" },
+        { "^master_assassin_remains[<=]+(.-)$"      , "0.01+master_assassin_remains-(%1)"                              },
+        { "^exsanguinated$"                         , "remains"                                                        }, -- Assassination
+        { "^!?(debuff%.[a-z0-9_]+)%.exsanguinated$" , "%1.remains"                                                     }, -- Assassination
+        { "^!?(dot%.[a-z0-9_]+)%.exsanguinated$"    , "%1.remains"                                                     }, -- Assassination
+        { "^ss_buffed$"                             , "remains"                                                        }, -- Assassination
+        { "^!?(debuff%.[a-z0-9_]+)%.ss_buffed$"     , "%1.remains"                                                     }, -- Assassination
+        { "^!?(dot%.[a-z0-9_]+)%.ss_buffed$"        , "%1.remains"                                                     }, -- Assassination
+        { "^dot%.([a-z0-9_]+).haste_pct_next_tick$" , "0.01+query_time+(dot.%1.last_tick+dot.%1.tick_time)-query_time" }, -- Assassination
+        { "^!?stealthed.(.-)_remains<=?(.-)$"       , "stealthed.%1_remains-%2"                                        },
+        { "^!?stealthed%.(normal)$"                 , "stealthed.%1_remains"                                          },
+        { "^!?stealthed%.(vanish)$"                 , "stealthed.%1_remains"                                          },
+        { "^!?stealthed%.(mantle)$"                 , "stealthed.%1_remains"                                          },
+        { "^!?stealthed%.(subterfuge)$"             , "stealthed.%1_remains"                                          },
+        { "^!?stealthed%.(shadow_dance)$"           , "stealthed.%1_remains"                                          },
+        { "^!?stealthed%.(shadowmeld)$"             , "stealthed.%1_remains"                                          },
+        { "^!?stealthed%.(sepsis)$"                 , "stealthed.%1_remains"                                          },
+        { "^!?stealthed%.(improved_garrote)$"       , "stealthed.%1_remains"                                          },
+        { "^!?stealthed%.(basic)$"                  , "stealthed.%1_remains"                                          },
+        { "^!?stealthed%.(mantle)$"                 , "stealthed.%1_remains"                                          },
+        { "^!?stealthed%.(rogue)$"                  , "stealthed.%1_remains"                                          },
+        { "^!?stealthed%.(ambush)$"                 , "stealthed.%1_remains"                                          },
+        { "^!?stealthed%.(all)$"                    , "stealthed.%1_remains"                                          },
 
-        { "^(cooldown%.[a-z0-9_]+)%.charges>=?(.-)$",
-                                                    "(1+%2-%1.charges_fractional)*recharge" },
+        { "^!?death_and_decay.ticking$"             , "death_and_decay.remains"                                       }, -- DKs
 
-        { "^(action%.[a-z0-9_]+)%.charges_fractional[>=]+(.-)$",
-                                                    "(%2-%1.charges_fractional)*%1.recharge" },
+        { "^!?time_to_hpg$"           , "time_to_hpg"          }, -- Retribution Paladin
+        { "^!?time_to_hpg[<=]=?(.-)$" , "time_to_hpg-%1"       }, -- Retribution Paladin
+        { "^!?consecration.up"        , "consecration.remains" }, -- Prot        Paladin
 
-        { "^(action%.[a-z0-9_]+)%.charges>=?(.-)$",
-                                                    "(1+%2-%1.charges_fractional)*%1.recharge" },
+        { "^!?contagion<=?(.-)"  , "contagion-%1"                 }, -- Affliction Warlock
+        { "^time_to_imps%.(.+)$" , "time_to_imps[%1]"             }, -- Demo Warlock
+        { "^!?diabolic_ritual$"  , "buff.diabolic_ritual.remains" }, -- Warlocks
+        { "^!?demonic_art$"      , "buff.demonic_art.remains"     },
 
-        { "^full_recharge_time[<>]=?(.-)$",         "0.01+full_recharge_time-%1" },
+        { "^active_bt_triggers$"       , "time_to_bt_triggers(0)"    }, -- Feral Druid w/ Bloodtalons.
+        { "^active_bt_triggers<?=0$"   , "time_to_bt_triggers(0)"    }, -- Feral Druid w/ Bloodtalons.
+        { "^active_bt_triggers<(%d+)$" , "time_to_bt_triggers(%1-1)" }, -- Feral Druid w/ Bloodtalons.
 
-        { "^!(action%.[a-z0-9]+)%.executing$",      "%1.execute_remains" },
-        { "^!(action%.[a-z0-9]+)%.channeling$",     "%1.channel_remains" },
-        { "^(.-time_to_die)<=?(.-)$",               "%1-%2" },
-        { "^(.-)%.time_to_(.-)<=?(.-)$",            "%1.time_to_%2-%3" },
+        { "^!?action%.([a-z0-9_]+)%.in_flight$"               , "action.%1.in_flight_remains"    }, -- Fire Mage, but others too, potentially.
+        { "^!?action%.([a-z0-9_]+)%.in_flight_remains<=?(.-)$", "action.%1.in_flight_remains-%2" }, -- Fire Mage, but others too, potentially.
+        { "^remaining_winters_chill"                          , "debuff.winters_chill.remains"   }, -- Frost Mage
 
-        { "^debuff%.festering_wound%.stack[>=]=?(.-)$", -- UH DK helper during Unholy Frenzy.
-                                                    "time_to_wounds(%1)" },
+        { "^!?fiery_brand_dot_primary_remains$", "fiery_brand_dot_primary_remains" }, -- Vengeance
+        { "^!?fiery_brand_dot_primary_ticking$", "fiery_brand_dot_primary_remains" }, -- Vengeance
 
-        { "^dot%.festering_wound%.stack[>=]=?(.-)$",    -- UH DK helper during Unholy Frenzy.
-                                                    "time_to_wounds(%1)" },
 
-        { "^master_assassin_remains[<=]+(.-)$",
-                                                    "0.01+master_assassin_remains-(%1)" },
+        { "^!?variable%.([a-z0-9_]+)$", "safenum(variable.%1)"                        },
+        { "^!?variable%.([a-z0-9_]+)<=?(.-)$", "0.01+%2-safenum(variable.%1)"         },
+        { "^raid_events%.([a-z0-9_]+)%.remains$", "raid_events.%1.remains"            },
+        { "^raid_events%.([a-z0-9_]+)%.remains$<=?(.-)$", "raid_events.%1.remains-%2" },
+        { "^!?raid_events%.([a-z0-9_]+)%.up$", "raid_events.%1.up"                    },
+        { "^!?(pet%.[a-z0-9_]+)%.up$", "%1.remains"                                   },
+        { "^!?(pet%.[a-z0-9_]+)%.active$", "%1.remains"                               },
 
-        { "^exsanguinated$",                        "remains" }, -- Assassination
-        { "^!?(debuff%.[a-z0-9_]+)%.exsanguinated$",
-                                                    "%1.remains" }, -- Assassination
-
-        { "^!?(dot%.[a-z0-9_]+)%.exsanguinated$",   "%1.remains" }, -- Assassination
-        { "^ss_buffed$",                            "remains" }, -- Assassination
-        { "^!?(debuff%.[a-z0-9_]+)%.ss_buffed$",    "%1.remains" }, -- Assassination
-        { "^!?(dot%.[a-z0-9_]+)%.ss_buffed$",       "%1.remains" }, -- Assassination
-        { "^dot%.([a-z0-9_]+).haste_pct_next_tick$",
-                                                    "0.01+query_time+(dot.%1.last_tick+dot.%1.tick_time)-query_time" }, -- Assassination
-
-        { "^!?stealthed.all$",                      "stealthed.remains" },
-        { "^!?stealthed.mantle$",                   "stealthed.mantle_remains" },
-        { "^!?stealthed.sepsis$",                   "stealthed.sepsis_remains" },
-        { "^!?stealthed.rogue$",                    "stealthed.rogue_remains" },
-
-        { "^!?time_to_hpg$",                        "time_to_hpg" }, -- Retribution Paladin
-        { "^!?time_to_hpg[<=]=?(.-)$",              "time_to_hpg-%1" }, -- Retribution Paladin
-
-        { "^!?consecration.up",                     "consecration.remains" }, -- Prot Paladin
-        { "^!?contagion<=?(.-)",                    "contagion-%1" }, -- Affliction Warlock
-
-        { "^time_to_imps%.(.+)$",                   "time_to_imps[%1]" }, -- Demo Warlock
-
-        { "^active_bt_triggers$",                   "time_to_bt_triggers(0)" }, -- Feral Druid w/ Bloodtalons.
-        { "^active_bt_triggers<?=0$",               "time_to_bt_triggers(0)" }, -- Feral Druid w/ Bloodtalons.
-        { "^active_bt_triggers<(%d+)$",             "time_to_bt_triggers(%1-1)" }, -- Feral Druid w/ Bloodtalons.
-
-        { "^!?action%.([a-z0-9_]+)%.in_flight$",    "action.%1.in_flight_remains" }, -- Fire Mage, but others too, potentially.
-
-        { "^!?action%.([a-z0-9_]+)%.in_flight_remains<=?(.-)$",
-                                                    "action.%1.in_flight_remains-%2" }, -- Fire Mage, but others too, potentially.
-
-        { "^!?variable%.([a-z0-9_]+)$",             "safenum(variable.%1)" },
-
-        { "^!?variable%.([a-z0-9_]+)<=?(.-)$",
-                                                    "safenum(variable.%1)-%2" },
-
-        { "^raid_events%.([a-z0-9_]+)%.remains$",   "raid_events.%1.remains" },
-        { "^raid_events%.([a-z0-9_]+)%.remains$<=?(.-)$",
-                                                    "raid_events.%1.remains-%2" },
-        { "^!?raid_events%.([a-z0-9_]+)%.up$",      "raid_events.%1.up" },
-
-        { "^!?(pet%.[a-z0-9_]+)%.up$",              "%1.remains" },
-        { "^!?(pet%.[a-z0-9_]+)%.active$",          "%1.remains" },
+        { "^(action%.[a-z0-9_]+)%.ready$", "%1.ready_time" }
     }
 
 
@@ -551,6 +557,7 @@ do
         ["^time_to_hpg$"] = true,
         ["time_to_max$"] = true,
         ["remains_expected$"] = true,
+        ["expiration_delay_remains$"] = true,
         -- ["time_to_%d+$"] = true,
         -- ["deficit$"] = true,
     }
@@ -615,7 +622,7 @@ do
             for key in pairs( increases ) do
                 if lhs:match( key ) then
                     if comp == ">" then
-                        return true, "(" .. rhs .. " + 0.01) - (" .. rhs .. ")"
+                        return true, "(" .. rhs .. " + 0.01) - (" .. lhs .. ")"
                     elseif moreOrEqual[ comp ] then
                         return true, rhs .. " - " .. lhs
                     end
@@ -626,7 +633,7 @@ do
             for key in pairs( GetResourceInfo() ) do
                 if lhs == key then
                     if comp == ">" then
-                        return true, "0.01 + " .. lhs .. ".timeTo( " .. rhs .. " )"
+                        return true, "0.01 + " .. lhs .. ".timeTo( " .. rhs .. " ), " .. lhs .. ".timeTo( 1 + ( " .. rhs .. " ) )"
                     elseif moreOrEqual[ comp ] then
                         return true, lhs .. ".timeTo( " .. rhs .. " )"
                     end
@@ -634,16 +641,32 @@ do
 
                 if rhs == key then
                     if comp == "<" then
-                        return true, "0.01 + " .. rhs .. ".timeTo( " .. rhs .. " )"
+                        return true, "0.01 + " .. rhs .. ".timeTo( " .. lhs .. " ), " .. rhs .. ".timeTo( 1 + ( " .. lhs .. " ) )"
                     elseif lessOrEqual[ comp ] then
                         return true, rhs .. ".timeTo( " .. lhs .. " )"
+                    end
+                end
+
+                if lhs == ( key .. ".percent" ) or lhs == ( key .. ".pct" ) then
+                    if comp == ">" then
+                        return true, "0.01 + " .. key .. ".timeTo( " .. key .. ".max * ( " .. rhs .. " / 100 ) ), " .. key .. ".timeTo( 1 + " .. key .. ".max * ( ( " .. rhs .. " ) / 100 ) )"
+                    elseif moreOrEqual[ comp ] then
+                        return true, key .. ".timeTo( " .. key .. ".max * ( " .. rhs .. " / 100 ) ), " .. key .. ".timeTo( 1 + " .. key .. ".max * ( ( " .. rhs .. " ) / 100 ) )"
+                    end
+                end
+
+                if rhs == ( key .. ".percent" ) or rhs == ( key .. ".pct" ) then
+                    if comp == "<" then
+                        return true, "0.01 + " .. key .. ".timeTo( " .. key .. ".max * ( " .. lhs .. " / 100 ) ), " .. key .. ".timeTo( 1 + " .. key .. ".max * ( ( " .. lhs .. " ) / 100 ) )"
+                    elseif lessOrEqual[ comp ] then
+                        return true, key .. ".timeTo( " .. key .. ".max * ( " .. lhs .. " / 100 ) ), " .. key .. ".timeTo( 1 + " .. key .. ".max * ( ( " .. lhs .. " ) / 100 ) )"
                     end
                 end
             end
 
             if lhs == "rune" then
                 if comp == ">" then
-                    return true, "0.01 + rune.timeTo( " .. rhs .. " )"
+                    return true, "0.01 + rune.timeTo( " .. rhs .. " ), rune.timeTo( 1 + ( " .. rhs .. " ) )"
                 elseif moreOrEqual[ comp ] then
                     return true, "rune.timeTo( " .. rhs .. " )"
                 end
@@ -651,11 +674,19 @@ do
 
             if rhs == "rune" then
                 if comp == "<" then
-                    return true, "0.01 + rune.timeTo( " .. lhs .. " )"
+                    return true, "0.01 + rune.timeTo( " .. lhs .. " ), rune.timeTo( 1 + ( " .. lhs .. " ) )"
                 elseif lessOrEqual[ comp ] then
                     return true, "rune.timeTo( " .. lhs .. " )"
                 end
             end
+
+            --[[ if comp:match( "<=?" ) then
+                return true, lhs .. " - " .. rhs .. " + 0.01"
+            end
+
+            if comp:match( ">=?" ) then
+                return true, rhs .. " - " .. lhs .. " + 0.01"
+            end ]]
         end
 
         -- If we didn't convert a resource.current to resource.timeTo then let's revert our string.
@@ -721,7 +752,7 @@ do
         ["@"] = true
      }
 
-     local math_ops = {
+    local math_ops = {
         ["+"] = true,
         ["-"] = true,
         ["*"] = true,
@@ -736,38 +767,38 @@ do
         [">="] = true,
         [">?"] = true,
         ["<?"] = true,
-     }
+    }
 
-     local equality = {
-         ["="] = true,
-         ["!="] = true,
-         ["~="] = true,
-     }
+    local equality = {
+        ["="] = true,
+        ["!="] = true,
+        ["~="] = true,
+    }
 
-     local comp_ops = {
+    local comp_ops = {
         ["<"] = true,
         [">"] = true,
         ["?"] = true,
-     }
+    }
 
-     local bool_ops = {
-         ["|"] = true,
-         ["&"] = true,
-         ["!"] = true,
-     }
+    local bool_ops = {
+        ["|"] = true,
+        ["&"] = true,
+        ["!"] = true,
+    }
 
-     local funcs = {
-         ["floor"] = true,
-         ["ceil"] = true
-     }
+    local funcs = {
+        ["floor"] = true,
+        ["ceil"] = true
+    }
 
 
-     -- This is hideous.
+    -- This is hideous.
 
-     local esDepth = 0
-     local esString
+    local esDepth = 0
+    local esString
 
-     function scripts:EmulateSyntax( p, numeric )
+    function scripts:EmulateSyntax( p, numeric )
         if not p or type( p ) ~= "string" then return p end
 
         if esDepth == 0 then
@@ -801,67 +832,67 @@ do
         local orig = p
 
         while ( i <= maxlen ) do
-           local c = p:sub( i, i )
+            local c = p:sub( i, i )
 
-           if c == " " or c == "," then -- do nothing
-           elseif c == "(" then depth = depth + 1
-           elseif c == ")" and depth > 0 then
-              depth = depth - 1
+            if c == " " or c == "," then -- do nothing
+            elseif c == "(" then depth = depth + 1
+            elseif c == ")" and depth > 0 then
+                depth = depth - 1
 
-              if depth == 0 then
-                 local expr = p:sub( 1, i )
+                if depth == 0 then
+                    local expr = p:sub( 1, i )
 
-                 table.insert( results, {
-                       s = expr:trim(),
-                       t = "expr"
-                 } )
+                    table.insert( results, {
+                        s = expr:trim(),
+                        t = "expr"
+                    } )
 
-                 if expr:find( "[&%|%-%+/%%%*]" ) ~= nil then results[#results].r = true end
+                    if expr:find( "[&%|%-%+/%%%*]" ) ~= nil then results[#results].r = true end
 
-                 p = p:sub( i + 1 )
-                 i = 0
-                 depth = 0
-                 maxlen = p:len()
-              end
-           elseif depth == 0 and ops[c] then
-              if i > 1 then
-                 local expr = p:sub( 1, i - 1 )
+                    p = p:sub( i + 1 )
+                    i = 0
+                    depth = 0
+                    maxlen = p:len()
+                end
+            elseif depth == 0 and ops[c] then
+                if i > 1 then
+                    local expr = p:sub( 1, i - 1 )
 
-                 table.insert( results, {
-                       s = expr:trim(),
-                       t = "expr"
-                 } )
+                    table.insert( results, {
+                        s = expr:trim(),
+                        t = "expr"
+                    } )
 
-                 if expr:find( "[&$|$-$+/$%%*]" ) ~= nil then results[#results].r = true end
-              end
+                    if expr:find( "[&$|$-$+/$%%*]" ) ~= nil then results[#results].r = true end
+                end
 
-              c = p:sub( i ):match( "^([&%|%-%+*%%/><!%?=%~@][&%|%-%+*/><%?=%~]?)" )
+                c = p:sub( i ):match( "^([&%|%-%+*%%/><!%?=%~@][&%|%-%+*/><%?=%~]?)" )
 
-              table.insert( results, {
+                table.insert( results, {
                     s = c,
                     t = "op",
                     a = c:trim() --sub(1,1)
-              } )
+                } )
 
-              p = p:sub( i + c:len() )
-              i = 0
-              depth = 0
-              maxlen = p:len()
-           end
+                p = p:sub( i + c:len() )
+                i = 0
+                depth = 0
+                maxlen = p:len()
+            end
 
-           i = i + 1
+            i = i + 1
         end
 
         p = p:trim()
 
         if p:len() > 0 then
-           table.insert( results, {
-                 s = p:trim(),
-                 t = "expr",
-                 l = true
-           } )
+            table.insert( results, {
+                    s = p:trim(),
+                    t = "expr",
+                    l = true
+            } )
 
-           if p:find( "[!&%|%-%+/%%%*@]" ) ~= nil then results[#results].r = true end
+            if p:find( "[!&%|%-%+/%%%*@]" ) ~= nil then results[#results].r = true end
         end
 
         local output = ""
@@ -976,11 +1007,12 @@ do
         -- output = output:gsub( "not safebool(", "safebool(not " )
         output = output:gsub( "!safenum(%b())", "safenum(!%1)" )
         output = output:gsub( "@safebool", "@safenum" )
-        output = output:gsub( "!%((%b())%)", "!%1" )
+        output = output:gsub( "!%(%s*(%b())%s*%)", "!%1" )
+        output = output:gsub( "%(%s*(%b())%s*%)", "%1" )
 
         esDepth = esDepth - 1
         return output
-     end
+    end
 end
 
 
@@ -1146,9 +1178,7 @@ scripts.GetScriptElements = GetScriptElements
 -- newModifiers, key is the name of the element, value is whether to babyproof it or not.
 local newModifiers = {
     chain = 'bool',
-    cycle_targets = 'bool',
     early_chain_if = 'bool',
-    for_next = 'bool',
     interrupt = 'bool',
     interrupt_global = 'bool',
     interrupt_if = 'bool',
@@ -1163,7 +1193,11 @@ local newModifiers = {
     wait = 'bool',
 
     -- Not necessarily a number, but not baby-proofed.
+    cycle_targets = 'raw',
     default = 'raw',
+    empower_to = 'raw',
+    for_next = 'raw',
+    extra_amount = 'raw',
     line_cd = 'raw',
     max_cycle_targets = 'raw',
     sec = 'raw',
@@ -1171,10 +1205,10 @@ local newModifiers = {
     value_else = 'raw',
 
     sync = 'string', -- should be an ability's name.
+    action_name = 'string',
     buff_name = 'string',
     list_name = 'string',
     op = 'string',
-    potion = 'string',
     var_name = 'string',
 }
 
@@ -1184,7 +1218,8 @@ local valueModifiers = {
     value = true,
     value_else = true,
     line_cd = true,
-    max_cycle_targets = true
+    max_cycle_targets = true,
+    empower_to = true,
 }
 
 
@@ -1192,7 +1227,6 @@ local valueModifiers = {
     call_action_list = "list_name",
     run_action_list = "list_name",
     variable = "var_name",
-    potion = "potion",
     cancel_buff = "buff_name",
 } ]]
 
@@ -1200,6 +1234,69 @@ local valueModifiers = {
 local isString = {
     op = true,
 }
+
+
+local debugArgTemplate = [[%s
+local arg%d = debugformat( %s )]]
+
+local debugPrintTemplate = [[-- %s %s
+local prev_action = this_action
+this_action = "%s"
+%s
+this_action = prev_action
+return format( "%s", %s )]]
+
+local function generateDebugPrint( node, condition, header, isRecheck )
+    local cleanPrint = SimcWithResources( condition:trim() ):gsub( "%%", "%%%%" ):gsub( "\"", "'" )
+
+    local seen = {}
+    local argn = 0
+    local formatArgs, generateDebug, debugPrint = nil, "", nil
+
+    for token in cleanPrint:gmatch( "[a-zA-Z][A-Za-z0-9_%.]+" ) do
+        if not seen[ token ] then
+            argn = argn + 1
+            seen[ token ] = "arg" .. argn
+
+            generateDebug = format( debugArgTemplate, generateDebug, argn, token )
+        end
+
+        if not formatArgs then
+            formatArgs = "arg1"
+        else
+            formatArgs = format( "%s, %s", formatArgs, seen[ token ] )
+        end
+    end
+
+    if argn > 0 then
+        local replacements = {}
+
+        for k, v in pairs( seen ) do
+            insert( replacements, { k, "{" .. v .. "}" } )
+        end
+
+        sort( replacements, function( a, b ) return a[1]:len() > b[1]:len() end )
+
+        for _, replace in ipairs( replacements ) do
+            cleanPrint = cleanPrint:gsub( replace[1], replace[2] )
+        end
+
+        for _, replace in ipairs( replacements ) do
+            cleanPrint = cleanPrint:gsub( replace[2], replace[1] .. "[%%s]" )
+        end
+
+        generateDebug = format( debugPrintTemplate, header, isRecheck and "recheck debug" or "condition debug", node.action or "wait", generateDebug, cleanPrint, formatArgs )
+        generateDebug = HandleLanguageIncompatibilities( generateDebug )
+        debugPrint, formatArgs = Hekili:Loadstring( generateDebug )
+
+        if formatArgs then
+            Hekili:Error( "Unable to generate debug print for " .. header .. ": " .. formatArgs:gsub( "%%", "%%%%" ) .. "\n" .. generateDebug:gsub( "%%", "%%%%" ) )
+            return
+        end
+
+        return generateDebug, setfenv( debugPrint, state )
+    end
+end
 
 
 -- Need to convert all the appropriate scripts and store them safely...
@@ -1238,18 +1335,29 @@ local function ConvertScript( node, hasModifiers, header )
     local se = clean and GetScriptElements( clean )
 
     local varPool
+    local generateDebug, debugPrint
 
     if se then
+        local hasElements = false
+
         for k, v in pairs( se ) do
+            hasElements = true
+
             if k:sub( 1, 8 ) == "variable" then
                 varPool = varPool or {}
                 table.insert( varPool, k:sub( 10 ) )
             end
         end
+
+        if hasElements then
+            generateDebug, debugPrint = generateDebugPrint( node, node.criteria, header )
+        end
     end
 
     -- autorecheck...
     local rs, rc, erc, rEle
+    local recheckDebug, recheckPrint
+
     if t and t ~= "" then
         rs = scripts:BuildRecheck( node.criteria )
         if rs then
@@ -1258,6 +1366,11 @@ local function ConvertScript( node, hasModifiers, header )
             if rc then setfenv( rc, state ) end
 
             rEle = GetScriptElements( orig )
+
+            --[[ if next( rEle ) ~= nil then
+                recheckDebug, recheckPrint = generateDebugPrint( node, rs, header, true )
+            end ]]
+
             rEle.zzz = orig
 
             if type( rc ) ~= "function" then
@@ -1271,10 +1384,15 @@ local function ConvertScript( node, hasModifiers, header )
         Conditions = sf,
         Error = e,
         Elements = se,
+        Print = debugPrint,
+        Debug = generateDebug,
+
         Recheck = rc,
         RecheckScript = rs,
         RecheckError = erc,
         RecheckElements = rEle,
+        RecheckPrint = recheckPrint,
+        RecheckDebug = recheckDebug,
         Modifiers = {},
         ModElements = {},
         ModEmulates = {},
@@ -1304,7 +1422,11 @@ local function ConvertScript( node, hasModifiers, header )
                     emulated = SimToLua( scripts:EmulateSyntax( node[ m ] ) )
 
                 elseif value == 'raw' then
-                    emulated = SimToLua( scripts:EmulateSyntax( node[ m ], true ) )
+                    if m == "empower_to" and ( o == "max" or o == "maximum" ) then
+                        emulated = SimToLua( scripts:EmulateSyntax( "max_empower", true ) )
+                    else
+                        emulated = SimToLua( scripts:EmulateSyntax( node[ m ], true ) )
+                    end
 
                 else -- string
                     o = "'" .. o .. "'"
@@ -1345,7 +1467,7 @@ local function ConvertScript( node, hasModifiers, header )
                         rEle.zzz = orig ]]
 
                         if type( rc ) ~= "function" then
-                            Hekili:Error( "Variable recheck function for " .. clean .. " ( " .. ( rs or "nil" ) .. ") was unsuccessful somehow." )
+                            Hekili:Error( "Variable recheck function for " .. o .. " ( " .. ( rs or "nil" ) .. ") was unsuccessful somehow." )
                             rc = nil
                         end
 
@@ -1459,7 +1581,7 @@ function scripts:GetModifiers( scriptID, out )
 
     for k, v in pairs( script.Modifiers ) do
         local success, value = pcall(v)
-        if success then out[k] = value end
+        if success then out[ k ] = value end
     end
 
     return out
@@ -1469,7 +1591,7 @@ end
 local scriptsLoaded = false
 
 local function scriptLoader()
-    if not scriptsLoaded then scripts:LoadScripts() end
+    if not Hekili.LoadingScripts and not scriptsLoaded then scripts:LoadScripts() end
 end
 
 function Hekili:ScriptsLoaded()
@@ -1515,7 +1637,9 @@ function scripts:LoadScripts()
         if specData then
             self.PackInfo[ pack ] = {
                 items = {},
-                essences = {}
+                essences = {},
+                auras = {},
+                hasOffGCD = false
             }
 
             for list, lData in pairs( pData.lists ) do
@@ -1527,28 +1651,46 @@ function scripts:LoadScripts()
                     local script = ConvertScript( data, true, scriptID )
 
                     if script.Error then
-                        Hekili:Error( "Error in " .. scriptID .. " conditions:  " .. script.Error )
+                        Hekili:Error( "Error in " .. scriptID .. " conditions:  " .. ( script.rs or "null" ) .. "\n\n" .. script.Error )
+                    end
+
+                    script.action = data.action
+
+                    local lua = script.Lua
+
+                    if lua then
+                        for aura in lua:gmatch( "d?e?buff%.([a-z_0-9]+)" ) do
+                            self.PackInfo[ pack ].auras[ aura ] = true
+                        end
+
+                        for aura in lua:gmatch( "active_dot%.([a-z_0-9]+)" ) do
+                            self.PackInfo[ pack ].auras[ aura ] = true
+                        end
+                    end
+
+                    if data.use_off_gcd and data.use_off_gcd ~= 0 then
+                        self.PackInfo[ pack ].hasOffGCD = true
                     end
 
                     if data.action == "call_action_list" or data.action == "run_action_list" then
                         -- Check for Time Sensitive conditions.
                         script.TimeSensitive = false
 
-                        local lua = script.Lua
-
                         if lua then
                             -- If resources are checked, it's time-sensitive.
                             for k in pairs( GetResourceInfo() ) do
-                                local resource = rawget( state, k )
-                                if lua:find( k ) and resource and ( resource.regenModel or resource.regen ~= 0 ) then script.TimeSensitive = true; break end
-                                -- if lua:find( k ) then script.TimeSensitive = true; break end
-                            end
+                                local resource = specData.resources[ k ]
+                                resource = resource and resource.state
 
-                            if lua:find( "rune" ) then script.TimeSensitive = true end
+                                if resource and lua:find( k ) and ( resource.regenModel or resource.regen ~= 0.001 ) then
+                                    script.TimeSensitive = true
+                                    break
+                                end
+                            end
 
                             if not script.TimeSensitive then
                                 -- Check for other time-sensitive variables.
-                                if lua:find( "time" ) or lua:find( "cooldown" ) or lua:find( "charge" ) or lua:find( "remain" ) or lua:find( "up" ) or lua:find( "down" ) or lua:find( "ticking" ) or lua:find( "refreshable" ) or lua:find( "stealthed" ) then
+                                if lua:find( "time" ) or lua:find( "cooldown" ) or lua:find( "charge" ) or lua:find( "remain" ) or lua:find( "up" ) or lua:find( "down" ) or lua:find( "ticking" ) or lua:find( "refreshable" ) or lua:find( "stealthed" ) or lua:find( "rune" ) then
                                     script.TimeSensitive = true
                                 end
                             end
@@ -1578,25 +1720,29 @@ function scripts:LoadScripts()
 
                             for k in pairs( channelModifiers ) do
                                 if script.Modifiers[ k ] then
-                                    if cInfo[ k ] then
-                                        local oldfunc = cInfo[ k ]
-                                        local newfunc = script.Modifiers[ k ]
+                                    local newfunc = script.Modifiers[ k ]
 
-                                        cInfo[ k ] = setfenv( function() return ( oldfunc() ) or ( newfunc() ) end, state )
-                                        cInfo[ "_" .. k ] = "(" .. cInfo[ "_" .. k ] .. ") or ( " .. script.ModEmulates[k] .. " )"
-                                    else
-                                        cInfo[ "_" .. k ] = script.ModEmulates[ k ]
-                                        cInfo[ k ] = script.Modifiers[ k ]
+                                    if newfunc and type( newfunc ) == "function" then
+                                        local oldfunc = cInfo[ k ]
+
+                                        if oldfunc then
+                                            local oldstr = cInfo[ "_" .. k ]
+                                            cInfo[ k ] = setfenv( function() return ( oldfunc() ) or ( newfunc() ) end, state )
+                                            cInfo[ "_" .. k ] = format( "( %s ) or ( %s )", oldstr or "nil", script.ModEmulates[ k ] )
+                                        else
+                                            cInfo[ "_" .. k ] = script.ModEmulates[ k ]
+                                            cInfo[ k ] = script.Modifiers[ k ]
+                                        end
                                     end
                                 end
                             end
                         end
 
-                        if ( ability.item or data.action == "trinket1" or data.action == "trinket2" ) and data.enabled then
+                        if list ~= "precombat" and ( ability.item or data.action == "trinket1" or data.action == "trinket2" or data.action == "main_hand" ) and data.enabled then
                             self.PackInfo[ pack ].items[ data.action ] = true
                         end
 
-                        if ability.essence and data.enabled then
+                        if list ~= "precombat" and ability.essence and data.enabled then
                             self.PackInfo[ pack ].essences[ data.action ] = true
                         end
                     end
@@ -1725,7 +1871,7 @@ function Hekili:LoadScript( pack, list, id )
     local script = ConvertScript( data, true, scriptID )
 
     if script.Error then
-        Hekili:Error( "Error in " .. scriptID .. " conditions:  " .. script.SimC .. "\n    " .. script.Error )
+        Hekili:Error( "Error in " .. scriptID .. " conditions:  " .. ( script.rs or "null" ) .. "\n\n" .. script.Error )
     end
 
     if data.action == "call_action_list" or data.action == "run_action_list" then
@@ -1854,6 +2000,8 @@ do
         if recheck then
             return embedConditionsAndValues( script.RecheckScript, script.RecheckElements )
         end
+
+        if script.Print then return script.Print() end
 
         return embedConditionsAndValues( script.SimC, script.Elements )
     end

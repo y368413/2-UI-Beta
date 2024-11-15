@@ -77,11 +77,13 @@ function DatabaseMixin:IsCollected(soulshape)
     end
 end
 
+local GetCoinTextureString = C_CurrencyInfo.GetCoinTextureString
+local GetBasicCurrencyInfo = C_CurrencyInfo.GetBasicCurrencyInfo
 local function CostFormatter(cost)
     if not isarray(cost) then
         cost = { cost }
     end
-    rendered = {}
+    local rendered = {}
     for _, currency in ipairs(cost) do
         if currency.custom then
             -- FIXME Find a better way to handle regular items as currencies?
@@ -89,21 +91,20 @@ local function CostFormatter(cost)
         elseif currency.gold then
             tinsert(rendered, GetCoinTextureString(currency.gold * 10000))
         else
-            local info = C_CurrencyInfo.GetBasicCurrencyInfo(currency.id, currency.amount)
+            local info = GetBasicCurrencyInfo(currency.id, currency.amount)
             tinsert(rendered, info.displayAmount .. "|T" .. info.icon .. ":0|t")
         end
     end
     return table.concat(rendered, " ")
 end
 
+local GetFactionDataByID = C_Reputation.GetFactionDataByID
+
 local function FactionFormatter(faction)
-    local name
+    local name = faction.name or ""
     if faction.id then
-        name, _ = GetFactionInfoByID(faction.id)
-    else
-        -- We can't fetch all factions by id because GetFactionInfoByID will return nil
-        -- on convenant-specific factions when the player has currently chosen another covenant
-        name = faction.name
+        local factionData = GetFactionDataByID(faction.id)
+        name = factionData and factionData.name or name
     end
     if faction.level then
         local genderSuffix = UnitSex("player") == 3 and "_FEMALE" or ""
@@ -139,7 +140,7 @@ end
 local function CreateSourceString(soulshape)
     local source = {}
 
-    function addMultiLine(value, renderer)
+    local function addMultiLine(value, renderer)
         if value then
             if isarray(value) then
                 for _, entry in ipairs(value) do
@@ -151,7 +152,7 @@ local function CreateSourceString(soulshape)
         end
     end
 
-    function addLine(label, value, transformation)
+    local function addLine(label, value, transformation)
         if value then
             if transformation then
                 value = transformation(value)
@@ -160,7 +161,7 @@ local function CreateSourceString(soulshape)
         end
     end
 
-    function renderVendor(vendor)
+    local function renderVendor(vendor)
         addLine(L["Vendor"], vendor.name)
         addLine(L["Region"], vendor.region)
         addLine(L["Cost"], vendor.cost, CostFormatter)
@@ -1039,6 +1040,7 @@ local function CreateDatabase()
             questID = 65518,
             icon = 2027853,
             model = 105264,
+            critter = true,
             modelSceneID = 34,
             buildNumber = SJ.BUILD_9_2,
         },
@@ -1102,6 +1104,7 @@ local function CreateDatabase()
             questID = 65513,
             icon = 3931157,
             model = 105259,
+            critter = true,
             buildNumber = SJ.BUILD_9_2,
         },
         {
@@ -1110,12 +1113,13 @@ local function CreateDatabase()
             guide = L["Penguin Soul Guide"],
             zoneID = 1970,
             pinData = {
-                { 1970, 31.48, 50.42, 105263, nil, L["Lost Soul"], nil }
+                { 1970, 34.4, 71.2, 105263, nil, L["Lost Soul"], nil }
             },
-            coordinates = { x = 31.48, y = 50.42 },
+            coordinates = { x = 34.4, y = 71.2 },
             questID = 65517,
             icon = 655866,
             model = 105263,
+            critter = true,
             buildNumber = SJ.BUILD_9_2,
         },
         {
@@ -1172,6 +1176,7 @@ local function CreateDatabase()
             questID = 65516,
             icon = 136071,
             model = 105262,
+            critter = true,
             buildNumber = SJ.BUILD_9_2,
         },
         {

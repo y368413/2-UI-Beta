@@ -132,11 +132,22 @@ local function CreateTableRow(parent, rowHeight, N)
     "OnEnter",
     function()
       if (row.id) then
+        local left = mOnWD_MiniList:GetLeft()
+        local right = mOnWD_MiniList:GetRight()
+        local width = right - left
+        local screenWidth = GetScreenWidth()
+
+        local tooltipOnRight = (left + width / 2) < screenWidth / 2
+
         GameTooltip_SetDefaultAnchor(GameTooltip, row)
         GameTooltip:ClearLines()
         GameTooltip:SetItemByID(row.id)
         GameTooltip:ClearAllPoints()
-        GameTooltip:SetPoint("BOTTOMRIGHT", row, "TOPLEFT")
+        if (tooltipOnRight) then
+          GameTooltip:SetPoint("BOTTOMLEFT", row, "TOPRIGHT")
+        else
+          GameTooltip:SetPoint("BOTTOMRIGHT", row, "TOPLEFT")
+        end
         GameTooltip:Show()
       end
     end

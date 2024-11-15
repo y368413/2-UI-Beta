@@ -6,6 +6,12 @@
 ------------------------------------------------------------
 
 local GetTotemInfo = GetTotemInfo
+local GetSpellInfo = GetSpellInfo or function(id)
+	local info = C_Spell.GetSpellInfo(id)
+	if info then
+		return info.name, nil, info.iconID, info.castTime, info.minRange, info.maxRange, info.spellID, info.originalIconID;
+	end
+end;
 
 local _, addon = ...
 local templates = addon.templates

@@ -1,0 +1,30 @@
+## Interface: 110005, 110007
+## Title: RPG Loot Feed
+## Author: McTalian
+## Version: v1.8.1
+## Notes: A non-intrusive way to see what you just looted.|n|n|cffFFC700Slash command: /rlf, /rpgLootFeed|r
+## SavedVariables: RPGLootFeedDB
+## IconTexture: Interface/AddOns/RPGLootFeed/Icons/logo
+## OptionalDeps: Ace3, Masque
+## X-GitHub: https://github.com/Mctalian/RPGLootFeed
+## X-Curse-Project-ID: 1082791
+## X-WoWI-ID: 26799
+## X-Wago-ID: 56n9R0N9
+
+embeds.xml
+
+Core.lua
+DoubleLinkedList.lua
+Queue.lua
+
+locale/locales.xml
+
+BlizzOverrides/overrides.xml
+
+config/config.xml
+RPGLootFeed.lua
+Logger.lua
+
+Features/features.xml
+TestMode.lua
+LootDisplay/LootDisplay.xml

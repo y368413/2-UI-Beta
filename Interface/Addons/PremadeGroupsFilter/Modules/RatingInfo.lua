@@ -1,7 +1,7 @@
 -------------------------------------------------------------------------------
 -- Premade Groups Filter
 -------------------------------------------------------------------------------
--- Copyright (C) 2022 Elotheon-Arthas-EU
+-- Copyright (C) 2024 Bernhard Saumweber
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -60,6 +60,20 @@ function PGF.AddRatingInfo(self, searchResultInfo)
     local frame = PGF.GetOrCreateRatingInfoFrame(self)
     local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityID)
 
+    -- reset
+    frame:Hide()
+    self.Name:SetWidth(176)
+    self.ActivityName:SetWidth(176)
+
+    if not PremadeGroupsFilterSettings.ratingInfo then
+        return -- stop if feature disabled
+    end
+
+    local appStatus, isApplication, isDeclined = PGF.GetAppStatus(self.resultID, searchResultInfo)
+    if isApplication or isDeclined then
+        return -- stop if special status
+    end
+
     local rightPos = -130
     local rating = 0
     local ratingColor = { r = 1.0, g = 1.0, b = 1.0 }
@@ -68,7 +82,12 @@ function PGF.AddRatingInfo(self, searchResultInfo)
     if activityInfo.isMythicPlusActivity then
         rightPos = -115
         rating = searchResultInfo.leaderOverallDungeonScore or 0
-        ratingColor = C_ChallengeMode.GetDungeonScoreRarityColor(rating)
+        if PremadeGroupsFilterSettings.rioRatingColors and RaiderIO and RaiderIO.GetScoreColor then
+            local r, g, b = RaiderIO.GetScoreColor(rating)
+            ratingColor = { r = r, g = g, b = b }
+        else
+            ratingColor = C_ChallengeMode.GetDungeonScoreRarityColor(rating) or ratingColor
+        end
         if searchResultInfo.leaderDungeonScoreInfo and searchResultInfo.leaderDungeonScoreInfo.bestRunLevel > 0 then
             extraText = "+" .. searchResultInfo.leaderDungeonScoreInfo.bestRunLevel
             if not searchResultInfo.leaderDungeonScoreInfo.finishedSuccess then
@@ -80,28 +99,28 @@ function PGF.AddRatingInfo(self, searchResultInfo)
         rightPos = activityInfo.categoryID == C.CATEGORY_ID.ARENA and -80 or -130
         if searchResultInfo.leaderPvpRatingInfo then
             rating = searchResultInfo.leaderPvpRatingInfo.rating or 0
-            ratingColor = PGF.GetPvPScoreRarityColorByTier(searchResultInfo.leaderPvpRatingInfo.tier or 0)
+            ratingColor = PGF.GetPvPScoreRarityColorByTier(searchResultInfo.leaderPvpRatingInfo.tier or 0) or ratingColor
         end
+    end
+
+    if rating == 0 then
+        return -- stop if no rating
     end
 
     local textWidth = 312 - 10 - 35 + rightPos
     if searchResultInfo.voiceChat and searchResultInfo.voiceChat ~= "" then
         textWidth = textWidth - 20
     end
+
+    local rColor = searchResultInfo.isDelisted and LFG_LIST_DELISTED_FONT_COLOR or ratingColor
+    local eColor = searchResultInfo.isDelisted and LFG_LIST_DELISTED_FONT_COLOR or extraTextColor
+
     self.Name:SetWidth(textWidth)
     self.ActivityName:SetWidth(textWidth)
+    frame:Show()
     frame:SetPoint("RIGHT", rightPos, 0)
-    if PremadeGroupsFilterSettings.ratingInfo and rating > 0 then
-        frame:Show()
-        local rColor = searchResultInfo.isDelisted and LFG_LIST_DELISTED_FONT_COLOR or ratingColor
-        local eColor = searchResultInfo.isDelisted and LFG_LIST_DELISTED_FONT_COLOR or extraTextColor
-        frame.Rating:SetText(rating)
-        frame.Rating:SetTextColor(rColor.r, rColor.g, rColor.b)
-        frame.ExtraText:SetText(extraText)
-        frame.ExtraText:SetTextColor(eColor.r, eColor.g, eColor.b)
-    else
-        frame:Hide()
-        self.Name:SetWidth(176)
-        self.ActivityName:SetWidth(176)
-    end
+    frame.Rating:SetText(rating)
+    frame.Rating:SetTextColor(rColor.r, rColor.g, rColor.b)
+    frame.ExtraText:SetText(extraText)
+    frame.ExtraText:SetTextColor(eColor.r, eColor.g, eColor.b)
 end

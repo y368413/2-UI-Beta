@@ -1,4 +1,28 @@
-﻿== 1.24 ==
+﻿== 1.32 ==
+ * fixes for 11.0.2
+
+== 1.31 ==
+ * correctly filter out shields
+
+== 1.30 ==
+ * added option in setting to only show items for current character
+
+== 1.29 ==
+ * fixes for 11.0.0
+
+== 1.28 ==
+ * fixes for 10.2.5 - updated minilist tooltip position based on where minilist is on screen
+
+== 1.27 ==
+ * fixes for 10.1.0
+
+== 1.26 ==
+ * fixes for Evoker
+
+== 1.25 ==
+ * fixes for 10.0.2
+
+== 1.24 ==
  * proper fixes for 10.0.0 (thanks to Wevah)
 
 == 1.23 ==

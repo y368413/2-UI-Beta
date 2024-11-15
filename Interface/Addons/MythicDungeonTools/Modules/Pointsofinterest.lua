@@ -6,11 +6,10 @@ local tinsert, slen, pairs, tremove, twipe = table.insert, string.len, pairs, ta
 local points = {}
 
 function MDT:POI_CreateFramePools()
-  MDT.poi_framePools = MDT.poi_framePools or CreateFramePoolCollection()
-  MDT.poi_framePools:CreatePool("Button", MDT.main_frame.mapPanelFrame, "MapLinkPinTemplate")
-  MDT.poi_framePools:CreatePool("Button", MDT.main_frame.mapPanelFrame, "DeathReleasePinTemplate")
-  MDT.poi_framePools:CreatePool("Button", MDT.main_frame.mapPanelFrame, "VignettePinTemplate")
-  MDT.poi_framePools:CreatePool("Frame", MDT.main_frame.mapPanelFrame, "MDTAnimatedLineTemplate")
+  MDT.CreateFramePool("Button", MDT.main_frame.mapPanelFrame, "MapLinkPinTemplate")
+  MDT.CreateFramePool("Button", MDT.main_frame.mapPanelFrame, "DeathReleasePinTemplate")
+  MDT.CreateFramePool("Button", MDT.main_frame.mapPanelFrame, "VignettePinTemplate")
+  MDT.CreateFramePool("Frame", MDT.main_frame.mapPanelFrame, "MDTAnimatedLineTemplate")
 end
 
 local function formatPoiString(formattedText)
@@ -66,6 +65,51 @@ local function POI_SetDevOptions(frame, poi)
   frame:SetScript("OnClick", nil)
 end
 
+local createPlayerAssignmentContextMenu = function(frame)
+  MenuUtil.CreateContextMenu(MDT.main_frame, function(ownerRegion, rootDescription)
+    rootDescription:CreateTitle(L["dropdownAssignPlayer"])
+
+    local group = MDT.U.GetGroupMembers()
+    for _, player in pairs(group) do
+      local function IsSelected(p)
+        return frame.playerAssignmentString:GetText() == p
+      end
+      local function SetSelected(p)
+        frame.playerAssignmentString:SetText(p)
+        MDT:POI_SetPOIAssignment(MDT:GetCurrentSubLevel(), frame.poiIdx, p)
+        if frame.setAssigned then
+          frame.setAssigned()
+        end
+      end
+      rootDescription:CreateRadio(player, IsSelected, SetSelected, player)
+    end
+
+    local classStrings = MDT.U.GetClassColoredClassNames()
+
+    for _, classString in pairs(classStrings) do
+      local function IsSelected(p)
+        return frame.playerAssignmentString:GetText() == p
+      end
+      local function SetSelected(p)
+        frame.playerAssignmentString:SetText(p)
+        MDT:POI_SetPOIAssignment(MDT:GetCurrentSubLevel(), frame.poiIdx, p)
+        if frame.setAssigned then
+          frame.setAssigned()
+        end
+      end
+      rootDescription:CreateRadio(classString, IsSelected, SetSelected, classString)
+    end
+
+    rootDescription:CreateButton(L["dropdownClear"], function()
+      frame.playerAssignmentString:SetText()
+      MDT:POI_SetPOIAssignment(MDT:GetCurrentSubLevel(), frame.poiIdx, nil)
+      if frame.setUnassigned then
+        frame.setUnassigned()
+      end
+    end)
+  end)
+end
+
 local function POI_SetOptions(frame, type, poi)
   frame.teeming = nil
   frame.isSpire = nil
@@ -75,6 +119,7 @@ local function POI_SetOptions(frame, type, poi)
   frame:SetMovable(false)
   frame:SetScript("OnMouseDown", nil)
   frame:SetScript("OnMouseUp", nil)
+  frame:SetScript("OnClick", nil)
   frame.weeks = poi.weeks
   frame:SetFrameLevel(4)
   frame.defaultSublevel = nil
@@ -85,6 +130,8 @@ local function POI_SetOptions(frame, type, poi)
     frame.HighlightTexture:Show()
     frame.Texture:SetVertexColor(1, 1, 1, 1)
     frame.HighlightTexture:SetVertexColor(1, 1, 1, 1)
+    frame.Texture:SetDesaturated(false)
+    frame.HighlightTexture:SetDesaturated(false)
   end
   if frame.textString then frame.textString:Hide() end
   if type == "mapLink" then
@@ -107,7 +154,6 @@ local function POI_SetOptions(frame, type, poi)
     frame:SetScript("OnClick", function()
       MDT:SetCurrentSubLevel(poi.target)
       MDT:UpdateMap()
-      MDT:ZoomMapToDefault()
     end)
     frame:SetScript("OnEnter", function()
       GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR")
@@ -198,7 +244,7 @@ local function POI_SetOptions(frame, type, poi)
         end
         local sublevelName = MDT:GetSublevelName(nil, connections[#connections].target)
         local npcName = MDT:GetNPCNameById(frame.npcId)
-        GameTooltip:AddLine("\n" .. string.format(L["%s is in sublevel: %s"], npcName, sublevelName), 1, 1, 1)
+        GameTooltip:AddLine("\n"..string.format(L["%s is in sublevel: %s"], npcName, sublevelName), 1, 1, 1)
         GameTooltip:AddLine(string.format(L["Click to go to %s"], sublevelName), 1, 1, 1)
       end
       GameTooltip:Show()
@@ -244,9 +290,9 @@ local function POI_SetOptions(frame, type, poi)
       if poi.formattedDoorDescription then
         doorDescription = formatPoiString(poi.formattedDoorDescription)
       end
-      GameTooltip:AddLine(doorName ..
-        (slen(doorDescription) > 0 and "\n" .. doorDescription or "") ..
-        (poi.lockpick and "\n|cFF32CD32" .. L["Locked"] or ""), 1, 1, 1, 1)
+      GameTooltip:AddLine(doorName..
+        (slen(doorDescription) > 0 and "\n"..doorDescription or "")..
+        (poi.lockpick and "\n|cFF32CD32"..L["Locked"] or ""), 1, 1, 1, 1)
       GameTooltip:Show()
     end)
     frame:SetScript("OnLeave", function()
@@ -260,9 +306,9 @@ local function POI_SetOptions(frame, type, poi)
     frame:SetScript("OnEnter", function()
       local text = poi.graveyardDescription and L[poi.graveyardDescription] or ""
       GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR")
-      GameTooltip:AddLine(L["Graveyard"] ..
-        (slen(text) > 0 and "\n" .. text or
-            ""), 1, 1, 1, 1)
+      GameTooltip:AddLine(L["Graveyard"]..
+        (slen(text) > 0 and "\n"..text or
+          ""), 1, 1, 1, 1)
       GameTooltip:Show()
     end)
     frame:SetScript("OnLeave", function()
@@ -476,8 +522,8 @@ local function POI_SetOptions(frame, type, poi)
     frame.Texture:SetAtlas("Warfronts-BaseMapIcons-Empty-Workshop-Minimap-small")
     local botOptions = {
       [1] = { text = L["Welding Bot"], color = { r = 0, g = 1, b = 0, a = 0.8 }, spellId = 303952, textureId = 134952 }, --green
-      [2] = { text = L["Grease Bot"], color = { r = 1, g = 0, b = 0, a = 0.8 }, spellId = 303924, textureId = 252178 }, --red
-      [3] = { text = L["Shock Bot"], color = { r = 0, g = .8, b = 1, a = 0.8 }, spellId = 304063, textureId = 136099 }, --blue
+      [2] = { text = L["Grease Bot"], color = { r = 1, g = 0, b = 0, a = 0.8 }, spellId = 303924, textureId = 252178 },  --red
+      [3] = { text = L["Shock Bot"], color = { r = 0, g = .8, b = 1, a = 0.8 }, spellId = 304063, textureId = 136099 },  --blue
     }
     frame.Texture:SetVertexColor(botOptions[poi.botType].color.r, botOptions[poi.botType].color.g,
       botOptions[poi.botType].color.b, botOptions[poi.botType].color.a)
@@ -491,7 +537,7 @@ local function POI_SetOptions(frame, type, poi)
     frame.playerAssignmentString:ClearAllPoints()
     frame.playerAssignmentString:SetFontObject("GameFontNormalSmall")
     frame.playerAssignmentString:SetJustifyH(poi.textAnchor or "LEFT")
-    frame.playerAssignmentString:SetJustifyV("CENTER")
+    frame.playerAssignmentString:SetJustifyV("MIDDLE")
     frame.playerAssignmentString:SetPoint(poi.textAnchor or "LEFT", frame, poi.textAnchorTo or "RIGHT", 0, 0)
     frame.playerAssignmentString:SetTextColor(1, 1, 1, 1)
     frame.playerAssignmentString:SetText(MDT:POI_GetPOIAssignment(MDT:GetCurrentSubLevel(), frame.poiIdx))
@@ -499,28 +545,14 @@ local function POI_SetOptions(frame, type, poi)
     frame.playerAssignmentString:Show()
 
     frame:SetScript("OnClick", function()
-      local menu = {
-        { text = L["dropdownAssignPlayer"], isTitle = true, notCheckable = true },
-      }
-      local group = MDT.U.GetGroupMembers()
-      for _, player in pairs(group) do
-        table.insert(menu, { text = player, func = function()
-          frame.playerAssignmentString:SetText(player)
-          MDT:POI_SetPOIAssignment(MDT:GetCurrentSubLevel(), frame.poiIdx, player)
-        end, checked = player == frame.playerAssignmentString:GetText() })
-      end
-      table.insert(menu, { text = L["dropdownClear"], func = function()
-        frame.playerAssignmentString:SetText()
-        MDT:POI_SetPOIAssignment(MDT:GetCurrentSubLevel(), frame.poiIdx, nil)
-      end, notCheckable = true })
-
-      EasyMenu(menu, MDT.main_frame.poiDropDown, "cursor", 0, -15, "MENU")
+      createPlayerAssignmentContextMenu(frame)
     end)
+
     frame:SetScript("OnEnter", function()
       GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR")
-      GameTooltip_SetTitle(GameTooltip, botOptions[poi.botType].text .. " " .. poi.botTypeIndex)
+      GameTooltip_SetTitle(GameTooltip, botOptions[poi.botType].text.." "..poi.botTypeIndex)
       GameTooltip:AddTexture(botOptions[poi.botType].textureId)
-      GameTooltip:AddSpellByID(botOptions[poi.botType].spellId)
+      GameTooltip:SetSpellByID(botOptions[poi.botType].spellId)
       GameTooltip:Show()
       frame.HighlightTexture:Show()
     end)
@@ -528,7 +560,6 @@ local function POI_SetOptions(frame, type, poi)
       GameTooltip:Hide()
       frame.HighlightTexture:Hide()
     end)
-
   end
   if type == "ironDocksIronStar" then
     frame:SetSize(18, 18)
@@ -543,7 +574,7 @@ local function POI_SetOptions(frame, type, poi)
     frame.playerAssignmentString:ClearAllPoints()
     frame.playerAssignmentString:SetFontObject("GameFontNormalSmall")
     frame.playerAssignmentString:SetJustifyH(poi.textAnchor or "LEFT")
-    frame.playerAssignmentString:SetJustifyV("CENTER")
+    frame.playerAssignmentString:SetJustifyV("MIDDLE")
     frame.playerAssignmentString:SetPoint(poi.textAnchor or "LEFT", frame, poi.textAnchorTo or "RIGHT", 0, 0)
     frame.playerAssignmentString:SetTextColor(1, 1, 1, 1)
     frame.playerAssignmentString:SetText(MDT:POI_GetPOIAssignment(MDT:GetCurrentSubLevel(), frame.poiIdx))
@@ -551,26 +582,11 @@ local function POI_SetOptions(frame, type, poi)
     frame.playerAssignmentString:Show()
 
     frame:SetScript("OnClick", function()
-      local menu = {
-        { text = L["dropdownAssignPlayer"], isTitle = true, notCheckable = true },
-      }
-      local group = MDT.U.GetGroupMembers()
-      for _, player in pairs(group) do
-        table.insert(menu, { text = player, func = function()
-          frame.playerAssignmentString:SetText(player)
-          MDT:POI_SetPOIAssignment(MDT:GetCurrentSubLevel(), frame.poiIdx, player)
-        end, checked = player == frame.playerAssignmentString:GetText() })
-      end
-      table.insert(menu, { text = L["dropdownClear"], func = function()
-        frame.playerAssignmentString:SetText()
-        MDT:POI_SetPOIAssignment(MDT:GetCurrentSubLevel(), frame.poiIdx, nil)
-      end, notCheckable = true })
-
-      EasyMenu(menu, MDT.main_frame.poiDropDown, "cursor", 0, -15, "MENU")
+      createPlayerAssignmentContextMenu(frame)
     end)
     frame:SetScript("OnEnter", function()
       GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR")
-      GameTooltip_SetTitle(GameTooltip, L["ironDocksIronStar"] .. " " .. poi.starIndex)
+      GameTooltip_SetTitle(GameTooltip, L["ironDocksIronStar"].." "..poi.starIndex)
       GameTooltip:AddTexture(450907)
       GameTooltip:SetSpellByID(167299)
       GameTooltip:Show()
@@ -580,7 +596,391 @@ local function POI_SetOptions(frame, type, poi)
       GameTooltip:Hide()
       frame.HighlightTexture:Hide()
     end)
+  end
+  if type == "brackenhideCage" then
+    local assignment = MDT:POI_GetPOIAssignment(MDT:GetCurrentSubLevel(), frame.poiIdx)
+    frame.HighlightTexture:SetAtlas("vignettelootelite-locked")
+    frame.Texture:SetAtlas("vignettelootelite-locked")
 
+    local function setAssigned()
+      frame.Texture:SetDesaturated(false)
+      frame.HighlightTexture:SetDesaturated(false)
+    end
+
+    local function setUnassigned()
+      frame.Texture:SetDesaturated(true)
+      frame.HighlightTexture:SetDesaturated(true)
+    end
+
+    if assignment then
+      setAssigned()
+    else
+      setUnassigned()
+    end
+
+    frame:SetSize(4, 4)
+    frame.Texture:SetSize(8, 8)
+    frame.HighlightTexture:SetSize(8, 8)
+
+    frame.playerAssignmentString = frame.playerAssignmentString or frame:CreateFontString()
+    frame.playerAssignmentString:ClearAllPoints()
+    frame.playerAssignmentString:SetFontObject("GameFontNormalSmall")
+    frame.playerAssignmentString:SetJustifyH(poi.textAnchor or "LEFT")
+    frame.playerAssignmentString:SetJustifyV("MIDDLE")
+    frame.playerAssignmentString:SetFont(frame.playerAssignmentString:GetFont(), 6, "OUTLINE", "")
+    frame.playerAssignmentString:SetPoint(poi.textAnchor or "LEFT", frame, poi.textAnchorTo or "RIGHT", 0, 0)
+    frame.playerAssignmentString:SetTextColor(1, 1, 1, 1)
+    frame.playerAssignmentString:SetText(assignment)
+    frame.playerAssignmentString:SetScale(1)
+    frame.playerAssignmentString:Show()
+
+    frame:SetScript("OnClick", function()
+      createPlayerAssignmentContextMenu(frame)
+    end)
+    frame:SetScript("OnEnter", function()
+      GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR")
+      GameTooltip_SetTitle(GameTooltip, L["brackenhideCage"].." "..poi.cageIndex)
+      GameTooltip:AddLine(L["Click to assign player"], 1, 1, 1)
+      GameTooltip:AddTexture(646379)
+      GameTooltip:Show()
+      frame.HighlightTexture:Show()
+    end)
+    frame:SetScript("OnLeave", function()
+      GameTooltip:Hide()
+      frame.HighlightTexture:Hide()
+    end)
+  end
+  if type == "neltharusChain" then
+    local assignment = MDT:POI_GetPOIAssignment(MDT:GetCurrentSubLevel(), frame.poiIdx)
+    frame.HighlightTexture:SetAtlas("QuestObjective")
+    frame.Texture:SetAtlas("QuestObjective")
+
+    local function setAssigned()
+      frame.Texture:SetDesaturated(false)
+      frame.HighlightTexture:SetDesaturated(false)
+    end
+
+    local function setUnassigned()
+      frame.Texture:SetDesaturated(true)
+      frame.HighlightTexture:SetDesaturated(true)
+    end
+
+    if assignment then
+      setAssigned()
+    else
+      setUnassigned()
+    end
+
+    frame:SetSize(6, 6)
+    frame.Texture:SetSize(12, 12)
+    frame.HighlightTexture:SetSize(12, 12)
+
+    frame.playerAssignmentString = frame.playerAssignmentString or frame:CreateFontString()
+    frame.playerAssignmentString:ClearAllPoints()
+    frame.playerAssignmentString:SetFontObject("GameFontNormalSmall")
+    frame.playerAssignmentString:SetJustifyH(poi.textAnchor or "LEFT")
+    frame.playerAssignmentString:SetJustifyV("MIDDLE")
+    frame.playerAssignmentString:SetFont(frame.playerAssignmentString:GetFont(), 6, "OUTLINE", "")
+    frame.playerAssignmentString:SetPoint(poi.textAnchor or "LEFT", frame, poi.textAnchorTo or "RIGHT", 0, 0)
+    frame.playerAssignmentString:SetTextColor(1, 1, 1, 1)
+    frame.playerAssignmentString:SetText(assignment)
+    frame.playerAssignmentString:SetScale(1)
+    frame.playerAssignmentString:Show()
+
+    frame:SetScript("OnClick", function()
+      createPlayerAssignmentContextMenu(frame)
+    end)
+    frame:SetScript("OnEnter", function()
+      GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR")
+      GameTooltip_SetTitle(GameTooltip, L["neltharusChain"].." "..poi.chainIndex)
+      GameTooltip:AddLine(L["Click to assign player"], 1, 1, 1)
+      GameTooltip:AddTexture(133035)
+      GameTooltip:Show()
+      frame.HighlightTexture:Show()
+    end)
+    frame:SetScript("OnLeave", function()
+      GameTooltip:Hide()
+      frame.HighlightTexture:Hide()
+    end)
+  end
+  if type == "neltharusFood" then
+    frame.HighlightTexture:SetAtlas("MajorFactions_MapIcons_Niffen64")
+    frame.Texture:SetAtlas("MajorFactions_MapIcons_Niffen64")
+
+    frame:SetSize(6, 6)
+    frame.Texture:SetSize(12, 12)
+    frame.HighlightTexture:SetSize(12, 12)
+
+    frame:SetScript("OnEnter", function()
+      GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR")
+      GameTooltip:SetSpellByID(383376)
+      GameTooltip:Show()
+      frame.HighlightTexture:Show()
+    end)
+    frame:SetScript("OnLeave", function()
+      GameTooltip:Hide()
+      frame.HighlightTexture:Hide()
+    end)
+  end
+  if type == "neltharusShield" then
+    frame.HighlightTexture:SetAtlas("Repair")
+    frame.Texture:SetAtlas("Repair")
+
+    frame:SetSize(6, 6)
+    frame.Texture:SetSize(12, 12)
+    frame.HighlightTexture:SetSize(12, 12)
+
+    frame:SetScript("OnEnter", function()
+      GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR")
+      GameTooltip:SetSpellByID(377172)
+      GameTooltip:Show()
+      frame.HighlightTexture:Show()
+    end)
+    frame:SetScript("OnLeave", function()
+      GameTooltip:Hide()
+      frame.HighlightTexture:Hide()
+    end)
+  end
+  if type == "brackenhideCauldron" then
+    frame.HighlightTexture:SetAtlas("MajorFactions_MapIcons_Niffen64")
+    frame.Texture:SetAtlas("MajorFactions_MapIcons_Niffen64")
+
+    frame:SetSize(4, 4)
+    frame.Texture:SetSize(8, 8)
+    frame.HighlightTexture:SetSize(8, 8)
+
+    frame:SetScript("OnEnter", function()
+      GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR")
+      GameTooltip:SetSpellByID(374288)
+      GameTooltip:Show()
+      frame.HighlightTexture:Show()
+    end)
+    frame:SetScript("OnLeave", function()
+      GameTooltip:Hide()
+      frame.HighlightTexture:Hide()
+    end)
+  end
+  if type == "nwItem" then
+    local assignment = MDT:POI_GetPOIAssignment(MDT:GetCurrentSubLevel(), frame.poiIdx)
+    local itemInfo = {
+      [1] = {
+        name = L["Bloody Javelin"],
+        texture = 3054897,
+        spellId = 328351,
+      },
+      [2] = {
+        name = L["Discharged Anima"],
+        texture = 3528288,
+        spellId = 328406,
+      },
+      [3] = {
+        name = L["Discarded Shield"],
+        texture = 3155390,
+        spellId = 325189,
+      }
+    }
+    frame.Texture:SetTexture(itemInfo[poi.itemType].texture)
+    frame.HighlightTexture:SetAtlas("bags-innerglow")
+
+    frame.setAssigned = function()
+      frame.Texture:SetDesaturated(false)
+      frame.HighlightTexture:SetDesaturated(false)
+    end
+
+    frame.setUnassigned = function()
+      frame.Texture:SetDesaturated(true)
+      frame.HighlightTexture:SetDesaturated(true)
+    end
+
+    if assignment then
+      frame.setAssigned()
+    else
+      frame.setUnassigned()
+    end
+
+    frame:SetSize(16, 16)
+    frame.Texture:SetSize(16, 16)
+    frame.HighlightTexture:SetSize(16, 16)
+
+    frame.playerAssignmentString = frame.playerAssignmentString or frame:CreateFontString()
+    frame.playerAssignmentString:ClearAllPoints()
+    frame.playerAssignmentString:SetFontObject("GameFontNormalSmall")
+    frame.playerAssignmentString:SetJustifyH(poi.textAnchor or "LEFT")
+    frame.playerAssignmentString:SetJustifyV("MIDDLE")
+    frame.playerAssignmentString:SetFont(frame.playerAssignmentString:GetFont(), 10, "OUTLINE", "")
+    frame.playerAssignmentString:SetPoint(poi.textAnchor or "LEFT", frame, poi.textAnchorTo or "RIGHT", 0, 0)
+    frame.playerAssignmentString:SetTextColor(1, 1, 1, 1)
+    frame.playerAssignmentString:SetText(assignment)
+    frame.playerAssignmentString:SetScale(1)
+    frame.playerAssignmentString:Show()
+
+    frame:SetScript("OnClick", function()
+      createPlayerAssignmentContextMenu(frame)
+    end)
+    frame:SetScript("OnEnter", function()
+      GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR")
+      GameTooltip:SetSpellByID(itemInfo[poi.itemType].spellId)
+      GameTooltip:AddLine(" ")
+      GameTooltip:AddLine(L["Click to assign player"], 1, 1, 1)
+      GameTooltip:AddTexture(itemInfo[poi.itemType].texture)
+      GameTooltip:Show()
+      frame.HighlightTexture:Show()
+    end)
+    frame:SetScript("OnLeave", function()
+      GameTooltip:Hide()
+      frame.HighlightTexture:Hide()
+    end)
+  end
+  if type == "stonevaultItem" then
+    local itemTexture = 3528441
+    local itemDescription = L["imbuedIronBarDescription"]
+
+    frame.Texture:SetTexture(itemTexture)
+    frame.HighlightTexture:SetAtlas("bags-innerglow")
+
+    frame:SetSize(12, 12)
+    frame.Texture:SetSize(12, 12)
+    frame.HighlightTexture:SetSize(12, 12)
+
+    frame:SetScript("OnEnter", function()
+      GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR")
+      GameTooltip:SetSpellByID(462500)
+      GameTooltip:AddLine(" ")
+      GameTooltip:AddLine(itemDescription, 1, 1, 1)
+      GameTooltip:Show()
+      frame.HighlightTexture:Show()
+    end)
+    frame:SetScript("OnLeave", function()
+      GameTooltip:Hide()
+      frame.HighlightTexture:Hide()
+    end)
+  end
+  if type == "cityOfThreadsItem" then
+    local itemTexture = 135888
+    local itemSpellId = 448305
+    local itemDescription = L["stolenPowerDescription"]
+
+    frame.Texture:SetTexture(itemTexture)
+    frame.HighlightTexture:SetAtlas("bags-innerglow")
+
+    frame:SetSize(12, 12)
+    frame.Texture:SetSize(12, 12)
+    frame.HighlightTexture:SetSize(12, 12)
+
+    frame:SetScript("OnEnter", function()
+      GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR")
+      GameTooltip:SetSpellByID(itemSpellId)
+      GameTooltip:AddLine(" ")
+      GameTooltip:AddLine(itemDescription, 1, 1, 1)
+      GameTooltip:Show()
+      frame.HighlightTexture:Show()
+    end)
+    frame:SetScript("OnLeave", function()
+      GameTooltip:Hide()
+      frame.HighlightTexture:Hide()
+    end)
+  end
+
+  if type == "araKaraItem" then
+    local itemTexture = 237431
+    local itemSpellId = 439208
+    local itemDescription = L["araKaraItemDescription"]
+
+    frame.Texture:SetTexture(itemTexture)
+    frame.HighlightTexture:SetAtlas("bags-innerglow")
+
+    frame:SetSize(12, 12)
+    frame.Texture:SetSize(12, 12)
+    frame.HighlightTexture:SetSize(12, 12)
+
+    frame:SetScript("OnEnter", function()
+      GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR")
+      GameTooltip:SetSpellByID(itemSpellId)
+      GameTooltip:AddLine(" ")
+      GameTooltip:AddLine(itemDescription, 1, 1, 1)
+      GameTooltip:Show()
+      frame.HighlightTexture:Show()
+    end)
+    frame:SetScript("OnLeave", function()
+      GameTooltip:Hide()
+      frame.HighlightTexture:Hide()
+    end)
+  end
+  if type == "mistsItem" then
+    local itemInfo = {
+      [1] = {
+        name = L["Overgrown Roots"],
+        description = L["overgrownRootsDescription"],
+        texture = 134413,
+        size = 10,
+      },
+      [2] = {
+        spellId = 340162,
+        texture = 1029746,
+        size = 10,
+      },
+      [3] = {
+        spellId = 340158,
+        texture = 134527,
+        size = 10,
+      },
+      [4] = {
+        name = L["Depleted Anima Seed"],
+        description = L["depletedAnimaSeedDescription"],
+        texture = 4554354,
+        size = 10,
+      },
+      [5] = {
+        name = L["Depleted Anima Seed"],
+        description = L["depletedAnimaSeedDescription"].."\n\n"..L["overgrownRootsDescription"],
+        texture = 4554354,
+        size = 10,
+      },
+    }
+    local info = itemInfo[poi.itemType]
+
+    frame.Texture:SetTexture(info.texture)
+    frame.HighlightTexture:SetAtlas("bags-innerglow")
+
+    frame:SetSize(info.size, info.size)
+    frame.Texture:SetSize(info.size, info.size)
+    frame.HighlightTexture:SetSize(info.size, info.size)
+
+    frame:SetScript("OnEnter", function()
+      GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR")
+      if info.spellId then
+        GameTooltip:SetSpellByID(info.spellId)
+      else
+        GameTooltip_SetTitle(GameTooltip, info.name)
+        GameTooltip:AddLine(info.description, 1, 1, 1, true)
+        GameTooltip:AddTexture(info.texture)
+      end
+      GameTooltip:Show()
+      frame.HighlightTexture:Show()
+    end)
+    frame:SetScript("OnLeave", function()
+      GameTooltip:Hide()
+      frame.HighlightTexture:Hide()
+    end)
+  end
+  if type == "dungeonEntrance" then
+    frame.HighlightTexture:SetAtlas("Dungeon")
+    frame.Texture:SetAtlas("Dungeon")
+
+    frame:SetSize(32, 32)
+    frame.Texture:SetSize(32, 32)
+    frame.HighlightTexture:SetSize(32, 32)
+
+    frame:SetScript("OnEnter", function()
+      GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR")
+      GameTooltip_SetTitle(GameTooltip, L["Dungeon Entrance"])
+      GameTooltip:Show()
+      frame.HighlightTexture:Show()
+    end)
+    frame:SetScript("OnLeave", function()
+      GameTooltip:Hide()
+      frame.HighlightTexture:Hide()
+    end)
   end
 
   if type == "textFrame" then
@@ -589,9 +989,9 @@ local function POI_SetOptions(frame, type, poi)
     frame.HighlightTexture:SetTexture(nil)
     frame.playerAssignmentString = frame.playerAssignmentString or frame:CreateFontString()
     frame.playerAssignmentString:ClearAllPoints()
-    frame.playerAssignmentString:SetFontObject("GameFontNormalMed3Outline")
+    frame.playerAssignmentString:SetFontObject(GameFontNormalMed3Outline)
     frame.playerAssignmentString:SetJustifyH("CENTER")
-    frame.playerAssignmentString:SetJustifyV("CENTER")
+    frame.playerAssignmentString:SetJustifyV("MIDDLE")
     frame.playerAssignmentString:SetPoint("CENTER", frame, "CENTER", 0, 0)
     frame.playerAssignmentString:SetTextColor(1, 1, 0, 1)
     frame.playerAssignmentString:SetText(poi.text)
@@ -602,9 +1002,9 @@ local function POI_SetOptions(frame, type, poi)
   if type == "worldMarker" then
     frame:SetSize(18, 18)
     frame.Texture:SetSize(18, 18)
-    frame.Texture:SetTexture([[Interface\TARGETINGFRAME\UI-RaidTargetingIcon_]] .. poi.index .. [[.blp]])
+    frame.Texture:SetTexture([[Interface\TARGETINGFRAME\UI-RaidTargetingIcon_]]..poi.index..[[.blp]])
     frame.HighlightTexture:SetSize(18, 18)
-    frame.HighlightTexture:SetTexture([[Interface\TARGETINGFRAME\UI-RaidTargetingIcon_]] .. poi.index .. [[.blp]])
+    frame.HighlightTexture:SetTexture([[Interface\TARGETINGFRAME\UI-RaidTargetingIcon_]]..poi.index..[[.blp]])
   end
 
   if type == "zoom" then
@@ -629,7 +1029,7 @@ local function POI_SetOptions(frame, type, poi)
     end)
     frame:SetScript("OnEnter", function()
       GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR")
-      GameTooltip:AddLine("Zoom " .. (shouldZoomIn() and "in" or "out"), 1, 1, 1, 1)
+      GameTooltip:AddLine(L["Zoom"].." "..(shouldZoomIn() and L["zoomIn"] or L["zoomOut"]), 1, 1, 1, 1)
       GameTooltip:Show()
       frame.HighlightTexture:Show()
     end)
@@ -637,14 +1037,14 @@ local function POI_SetOptions(frame, type, poi)
       GameTooltip:Hide()
       frame.HighlightTexture:Hide()
     end)
-
   end
 
   --fullscreen sizes
   local scale = MDT:GetScale()
   frame:SetSize(frame:GetWidth() * scale, frame:GetHeight() * scale)
   if frame.Texture then frame.Texture:SetSize(frame.Texture:GetWidth() * scale, frame.Texture:GetHeight() * scale) end
-  if frame.HighlightTexture then frame.HighlightTexture:SetSize(frame.HighlightTexture:GetWidth() * scale,
+  if frame.HighlightTexture then
+    frame.HighlightTexture:SetSize(frame.HighlightTexture:GetWidth() * scale,
       frame.HighlightTexture:GetHeight() * scale)
   end
 
@@ -663,10 +1063,9 @@ end
 function MDT:POI_UpdateAll()
   twipe(points)
   db = MDT:GetDB()
-  local framePools = MDT.poi_framePools
-  framePools:GetPool("MapLinkPinTemplate"):ReleaseAll()
-  framePools:GetPool("DeathReleasePinTemplate"):ReleaseAll()
-  framePools:GetPool("VignettePinTemplate"):ReleaseAll()
+  MDT.GetFramePool("MapLinkPinTemplate"):ReleaseAll()
+  MDT.GetFramePool("DeathReleasePinTemplate"):ReleaseAll()
+  MDT.GetFramePool("VignettePinTemplate"):ReleaseAll()
   if not MDT.mapPOIs[db.currentDungeonIdx] then return end
   local currentSublevel = MDT:GetCurrentSubLevel()
   local pois = MDT.mapPOIs[db.currentDungeonIdx][currentSublevel]
@@ -681,7 +1080,7 @@ function MDT:POI_UpdateAll()
         and (not poi.season or poi.season == db.currentSeason)
         and (not poi.difficulty or poi.difficulty <= db.currentDifficulty)
     then
-      local poiFrame = framePools:Acquire(poi.template)
+      local poiFrame = MDT.GetFramePool(poi.template):Acquire()
       if poiFrame.playerAssignmentString then poiFrame.playerAssignmentString:Hide() end
       poiFrame.poiIdx = poiIdx
       POI_SetOptions(poiFrame, poi.type, poi)
@@ -727,7 +1126,6 @@ local function createLineSegment(parent)
 end
 
 local function animateLine(self, elapsed)
-
   local totalDistance = math.sqrt(math.pow(self.frameTwoX - self.frameOneX, 2) +
     math.pow(self.frameTwoY - self.frameOneY, 2))
   local rotation = math.atan2(self.frameTwoY - self.frameOneY, self.frameTwoX - self.frameOneX)
@@ -766,7 +1164,7 @@ local function animateLine(self, elapsed)
 end
 
 local function createAnimatedLine(parent)
-  local animatedLine = MDT.poi_framePools:Acquire("MDTAnimatedLineTemplate")
+  local animatedLine = MDT.GetFramePool("MDTAnimatedLineTemplate"):Acquire()
   animatedLine:Show()
   animatedLine.phase = 0
   animatedLine.frames = {}
@@ -804,9 +1202,9 @@ function MDT:ShowAnimatedLine(parent, frame1, frame2, sizeX, sizeY, gap, color, 
 end
 
 function MDT:KillAllAnimatedLines()
-  local linePool = self.poi_framePools:GetPool("MDTAnimatedLineTemplate")
-  local _, activeLines = linePool:EnumerateActive()
-  for animatedLine, _ in pairs(activeLines) do
+  local linePool = MDT.GetFramePool("MDTAnimatedLineTemplate")
+  local activeLines = linePool.active
+  for _, animatedLine in pairs(activeLines) do
     animatedLine:SetScript("onUpdate", nil)
     for i = 1, #animatedLine.frames do
       animatedLine.frames[i]:ClearAllPoints()
@@ -832,8 +1230,8 @@ function MDT:DrawAllAnimatedLines()
       MDT:HideAnimatedLine(blip.animatedLine)
     elseif blip.data.corrupted and blip.selected then
       local connectedFrame
-      local _, active = MDT.poi_framePools:GetPool("VignettePinTemplate"):EnumerateActive()
-      for poiFrame, _ in pairs(active) do
+      local active = MDT.GetFramePool("VignettePinTemplate").active
+      for _, poiFrame in pairs(active) do
         if poiFrame.spireIndex and poiFrame.npcId and poiFrame.npcId == blip.data.id then
           connectedFrame = poiFrame
           break
@@ -848,13 +1246,13 @@ function MDT:DrawAllAnimatedLines()
     end
   end
   --draw lines from active spires to doors when their associated npc is dragged into other sublevel
-  local _, activeSpires = MDT.poi_framePools:GetPool("VignettePinTemplate"):EnumerateActive()
-  for poiFrame, _ in pairs(activeSpires) do
+  local activeSpires = MDT.GetFramePool("VignettePinTemplate").active
+  for _, poiFrame in pairs(activeSpires) do
     if poiFrame.spireIndex and poiFrame.npcId and not poiFrame.isSpire and not poiFrame.animatedLine then
       local connectedDoor = MDT:FindConnectedDoor(poiFrame.npcId, 1)
       if connectedDoor then
         poiFrame.animatedLine = MDT:ShowAnimatedLine(MDT.main_frame.mapPanelFrame, poiFrame, connectedDoor, nil, nil, nil
-          , nil, nil, not poiFrame.isSpire)
+        , nil, nil, not poiFrame.isSpire)
       end
     end
   end
@@ -874,8 +1272,8 @@ function MDT:FindConnectedDoor(npcId, numConnection)
   local connection = riftOffsets and riftOffsets[npcId] and riftOffsets[npcId].connections and
       riftOffsets[npcId].connections[numConnection or #riftOffsets[npcId].connections] or nil
   if connection then
-    local _, activeDoors = MDT.poi_framePools:GetPool("MapLinkPinTemplate"):EnumerateActive()
-    for poiFrame, _ in pairs(activeDoors) do
+    local activeDoors = MDT.GetFramePool("MapLinkPinTemplate").active
+    for _, poiFrame in pairs(activeDoors) do
       if poiFrame.poi and poiFrame.poi.connectionIndex == connection.connectionIndex then
         return poiFrame, riftOffsets[npcId].connections
       end

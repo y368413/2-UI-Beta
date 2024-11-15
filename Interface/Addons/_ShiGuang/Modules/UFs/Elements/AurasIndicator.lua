@@ -54,6 +54,10 @@ do
 		["MAGE"] = {
 			["Curse"] = true,
 		},
+		["EVOKER"] = {
+			["Magic"] = false,
+			["Poison"] = true,
+		},
 	}
 
 	DispellFilter = dispellClasses[class] or {}
@@ -61,29 +65,15 @@ end
 
 local function checkSpecs()
 	if class == "DRUID" then
-		if GetSpecialization() == 4 then
-			DispellFilter.Magic = true
-		else
-			DispellFilter.Magic = false
-		end
+		DispellFilter.Magic = GetSpecialization() == 4
 	elseif class == "MONK" then
-		if GetSpecialization() == 2 then
-			DispellFilter.Magic = true
-		else
-			DispellFilter.Magic = false
-		end
+		DispellFilter.Magic = GetSpecialization() == 2
 	elseif class == "PALADIN" then
-		if GetSpecialization() == 1 then
-			DispellFilter.Magic = true
-		else
-			DispellFilter.Magic = false
-		end
+		DispellFilter.Magic = GetSpecialization() == 1
 	elseif class == "SHAMAN" then
-		if GetSpecialization() == 3 then
-			DispellFilter.Magic = true
-		else
-			DispellFilter.Magic = false
-		end
+		DispellFilter.Magic = GetSpecialization() == 3
+	elseif class == "EVOKER" then
+		DispellFilter.Magic = GetSpecialization() == 2
 	end
 end
 
@@ -93,13 +83,13 @@ function UF:UpdateRaidDebuffs()
 	wipe(UF.DebuffList)
 	for instName, value in pairs(R.RaidDebuffs) do
 		for spell, priority in pairs(value) do
-			if not (MaoRUIDB["RaidDebuffs"][instName] and MaoRUIDB["RaidDebuffs"][instName][spell]) then
+			if not (MaoRUISetDB["RaidDebuffs"][instName] and MaoRUISetDB["RaidDebuffs"][instName][spell]) then
 				if not UF.DebuffList[instName] then UF.DebuffList[instName] = {} end
 				UF.DebuffList[instName][spell] = priority
 			end
 		end
 	end
-	for instName, value in pairs(MaoRUIDB["RaidDebuffs"]) do
+	for instName, value in pairs(MaoRUISetDB["RaidDebuffs"]) do
 		for spell, priority in pairs(value) do
 			if priority > 0 then
 				if not UF.DebuffList[instName] then UF.DebuffList[instName] = {} end

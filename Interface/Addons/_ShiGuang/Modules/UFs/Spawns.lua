@@ -23,6 +23,12 @@ local function CreatePlayerStyle(self)
 	UF:CreateClassPower(self)
 	UF:StaggerBar(self)
 	UF:CreateSwing(self)
+
+	if R.db["UFs"]["Castbars"] then
+		UF:ReskinMirrorBars()
+		UF:ReskinTimerTrakcer(self)
+	end
+	--if R.db["Map"]["DisableMinimap"] or not R.db["Misc"]["ExpRep"] then UF:CreateExpRepBar(self) end
 end
 
 local function CreateTargetStyle(self)
@@ -39,12 +45,13 @@ local function CreateFocusStyle(self)
 	UF:CreateHealthText(self)
 	UF:CreatePowerBar(self)
 	UF:CreatePowerText(self)
+	UF:CreatePortrait(self)
 	UF:CreateCastBar(self)
 	UF:CreateRaidMark(self)
 	UF:CreateIcons(self)
 	UF:CreatePrediction(self)
 	UF:CreateAuras(self)
-	UF:DemonicGatewayIcon(self)
+	--UF:DemonicGatewayIcon(self)
 end
 
 local function CreateFocusTargetStyle(self)
@@ -120,7 +127,6 @@ end
 local function CreatePartyStyle(self)
 	self.raidType = "party"
 	CreateRaidStyle(self)
-	UF:InterruptIndicator(self)
 	UF:CreatePartyAltPower(self)
 end
 
@@ -254,7 +260,6 @@ function UF:OnLogin()
 		UF:BlockAddons()
 		UF:CreateUnitTable()
 		UF:CreatePowerUnitTable()
-		UF:CheckExplosives()
 		UF:UpdateGroupRoles()
 		UF:QuestIconCheck()
 		UF:RefreshPlateByEvents()
@@ -332,6 +337,7 @@ function UF:OnLogin()
 			end
 		end
 
+		--UF:ToggleAddPower()
 		UF:ToggleSwingBars()
 		UF:ToggleUFClassPower()
 		UF:UpdateTextScale()
@@ -343,7 +349,7 @@ function UF:OnLogin()
 	--end
 
 	if R.db["UFs"]["RaidFrame"] then
-		SetCVar("predictedHealth", 1)
+		M:LockCVar("predictedHealth", "1")
 		UF:AddClickSetsListener()
 		UF:UpdateCornerSpells()
 		UF:UpdateRaidBuffsWhite()
@@ -364,9 +370,6 @@ function UF:OnLogin()
 		-- Group Styles
 		local partyMover
 		if R.db["UFs"]["PartyFrame"] then
-			UF:SyncWithZenTracker()
-			UF:UpdatePartyWatcherSpells()
-
 			local party
 			oUF:RegisterStyle("Party", CreatePartyStyle)
 			oUF:SetActiveStyle("Party")
@@ -683,8 +686,6 @@ function UF:OnLogin()
 			UF:CreateAndUpdateRaidHeader(true)
 			UF:UpdateRaidTeamIndex()
 		end
-
-		UF:UpdateRaidHealthMethod()
 
 		if R.db["UFs"]["SpecRaidPos"] then
 			local function UpdateSpecPos(event, ...)

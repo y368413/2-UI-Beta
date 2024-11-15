@@ -23,14 +23,14 @@ function UF:UpdateCornerSpells()
 	wipe(UF.CornerSpells)
 
 	for spellID, value in pairs(R.CornerBuffs[I.MyClass]) do
-		local modData = MaoRUIDB["CornerSpells"][I.MyClass]
+		local modData = MaoRUISetDB["CornerSpells"][I.MyClass]
 		if not (modData and modData[spellID]) then
 			local r, g, b = unpack(value[2])
 			UF.CornerSpells[spellID] = {value[1], {r, g, b}, value[3]}
 		end
 	end
 
-	for spellID, value in pairs(MaoRUIDB["CornerSpells"][I.MyClass]) do
+	for spellID, value in pairs(MaoRUISetDB["CornerSpells"][I.MyClass]) do
 		if next(value) then
 			local r, g, b = unpack(value[2])
 			UF.CornerSpells[spellID] = {value[1], {r, g, b}, value[3]}

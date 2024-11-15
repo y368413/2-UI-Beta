@@ -31,25 +31,41 @@ local optionValues = {
 	[19] = "Bar5Num",
 	[20] = "Bar5PerRow",
 
-	[21] = "BarPetSize",
-	[22] = "BarPetFont",
-	[23] = "BarPetNum",
-	[24] = "BarPetPerRow",
+	[21] = "Bar6Size",
+	[22] = "Bar6Font",
+	[23] = "Bar6Num",
+	[24] = "Bar6PerRow",
 
-	[25] = "BarStanceSize",
-	[26] = "BarStanceFont",
-	[27] = "BarStancePerRow",
+	[25] = "Bar7Size",
+	[26] = "Bar7Font",
+	[27] = "Bar7Num",
+	[28] = "Bar7PerRow",
+
+	[29] = "Bar8Size",
+	[30] = "Bar8Font",
+	[31] = "Bar8Num",
+	[32] = "Bar8PerRow",
+
+	[33] = "BarPetSize",
+	[34] = "BarPetFont",
+	[35] = "BarPetPerRow",
+
+	[36] = "BarStanceSize",
+	[37] = "BarStanceFont",
+	[38] = "BarStancePerRow",
 }
 
 local moverValues = {
 	[1] = "Bar1",
 	[2] = "Bar2",
-	[3] = "Bar3L",
-	[4] = "Bar3R",
-	[5] = "Bar4",
-	[6] = "Bar5",
-	[7] = "PetBar",
-	[8] = "StanceBar",
+	[3] = "Bar3",
+	[4] = "Bar4",
+	[5] = "Bar5",
+	[6] = "Bar6",
+	[7] = "Bar7",
+	[8] = "Bar8",
+	[9] = "PetBar",
+	[10] = "StanceBar",
 }
 
 local abbrToAnchor = {
@@ -86,7 +102,7 @@ function Bar:ImportActionbarStyle(preset)
 		end
 		R.db["Actionbar"][optionValues[index-1]] = value
 	end
-	Bar:UpdateAllScale()
+	Bar:UpdateAllSize()
 
 	for index = maxOptions+1, numValues do
 		local moverIndex = index - maxOptions
@@ -97,7 +113,7 @@ function Bar:ImportActionbarStyle(preset)
 			point = abbrToAnchor[point]
 			if point and x and y then
 				mover:ClearAllPoints()
-				mover:SetPoint(point, "UIParent", point, x, y)
+				mover:SetPoint(point, UIParent, point, x, y)
 				R.db["Mover"][moverValues[moverIndex]] = {point, "UIParent", point, x, y}
 			else
 				UIErrorsFrame:AddMessage(I.InfoColor..U["StyleStringError"])

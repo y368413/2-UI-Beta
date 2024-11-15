@@ -1,50 +1,15 @@
-﻿local rematch = Rematch
-local saved, settings
-local CFG = ALPTRematch.alptconfig
-
-local alptconfig
+﻿
+local utils = ALPTRematch.utils
 local conf
 local teamKey
 local tdBattlePetScriptAddon = tdBattlePetScript and tdBattlePetScript:GetPlugin("Rematch")
-local settingButtons =
-  setmetatable(
-  {},
-  {
-    __index = function(t, parent)
-      local button = CreateFrame("Button", nil, parent, "RematchFootnoteButtonTemplate")
-      do
-        if parent.slim then
-          button:SetSize(18, 18)
-        end
-        button:SetPoint("CENTER")
-        button:SetNormalTexture("Interface\\AddOns\\zAutoLoadPetTeam_Rematch\\Textures\\setting")
-        button:SetPushedTexture("Interface\\AddOns\\zAutoLoadPetTeam_Rematch\\Textures\\setting")
-        button:SetScript(
-          "OnClick",
-          function(button)
-            ALPTRematch:OpenSetting(button.key)
-          end
-        )
-        button:SetScript(
-          "OnEnter",
-          function(button)
-            GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
-            GameTooltip:SetText("换队参数")
-            GameTooltip:Show()
-          end
-        )
-        button:SetScript("OnLeave", GameTooltip_Hide)
-      end
-      t[parent] = button
-      return button
-    end
-  }
-)
+local PetBattleScriptsAddon = PetBattleScripts and PetBattleScripts:GetPlugin("Rematch")
+local rematch = Rematch
 
 function ALPTRematch:deleteConfig()
-  settings.alpt[teamKey] = nil
-  rematch:HideDialog()
-  rematch:UpdateUI()
+  utils.alpt[teamKey] = nil
+  rematch.dialog:HideDialog()
+  rematch.teamsPanel:Update()
 end
 
 local function ALPT_InitInputValue(key, value)
@@ -53,8 +18,23 @@ local function ALPT_InitInputValue(key, value)
 end
 
 local function InitConfiDialog()
-  RematchDialog:RegisterWidget("ALPTCConfigs")
-  conf = rematch.Dialog.ALPTCConfigs
+  rematch.dialog:Register("ALPTCConfigs",
+  {
+    title = "换队参数设置", -- Saved As, Edit Team, Receiving Team
+    accept = SAVE,
+    cancel = CANCEL,
+    other = DELETE,
+    width = 590,
+    minHeight = 500,
+    stayOnOther = true,
+    layouts = { },
+    refreshFunc = nil,
+    changeFunc = nil,
+    otherFunc =  ALPTRematch.deleteConfig,
+    acceptFunc = ALPTRematch.ConfigSave,
+})
+  conf = rematch.dialog.Canvas.ALPTCConfigs
+  
   conf.Disable.text:SetText("停用队伍")
   for i = 1, 3 do
     conf["HP" .. i].Label:SetText("有效血线")
@@ -82,25 +62,15 @@ end
 
 function ALPTRematch:OpenSetting(key)
   teamKey = key
-  if rematch:IsDialogOpen("ALPTCConfigs") then
-    rematch:HideDialog()
-  end
+  rematch.dialog:HideDialog()
+   
   local dialog =
-    rematch:ShowDialog(
-    "ALPTCConfigs",
-    590,
-    500,
-    "换队参数设置",
-    nil,
-    SAVE,
-    ALPTRematch.ConfigSave,
-    CANCEL,
-    nil,
-    DELETE,
-    ALPTRematch.deleteConfig
+    rematch.dialog:ShowDialog(
+    "ALPTCConfigs"
   )
+  rematch.dialog:Resize()
 
-  local titlename = rematch:GetTeamTitle(key, true)
+  local titlename = utils:getTeamNameByKey(key)
   local alpt = ALPTRematch:FixTeamConfig(teamKey)
   if alpt.avg1 and alpt.avg2 then
     titlename = titlename .."( "..alpt.avg1.." - "..alpt.avg2.." 秒)"
@@ -120,6 +90,11 @@ function ALPTRematch:OpenSetting(key)
     conf["Lowest" .. i]:SetChecked(alpt.lowest[i])
     conf["UseGroup" .. i]:SetChecked(alpt.useGroup[i])
 
+    local groupi = alpt.groups[i]
+    if groupi and groupi.name then
+      groupi = groupi.name
+      alpt.groups[i] = groupi
+    end
     UIDropDownMenu_SetText(conf["Groups" .. i], alpt.groups[i] or "无")
 
     ALPT_InitInputValue("FilterHP" .. i .. "_1", alpt.hp[i][1])
@@ -137,7 +112,7 @@ function ALPTRematch:OpenSetting(key)
 end
 
 function ALPTRematch:ConfigSave()
-  cfg = settings.alpt[teamKey]
+  cfg = utils.alpt[teamKey]
   cfg.disabled = conf["Disable"]:GetChecked()
   for i = 1, 3 do
     cfg.noAlt[i] = conf["NoAlt" .. i]:GetChecked()
@@ -169,11 +144,12 @@ function ALPTRematch:ConfigSave()
       tonumber(conf["FilterAttack" .. i .. "_2"]:GetText()) or 999
     }
   end
-  settings.alpt[teamKey] = cfg
+  utils.alpt[teamKey] = cfg
 
   ALPTRematch:CheckCFG(teamKey)
-  rematch:HideDialog()
-  rematch:UpdateUI()
+  rematch.dialog:HideDialog()
+  rematch.teamsPanel:Update()
+ 
 end
 
 function ALPTRematch_DropDown(func)
@@ -183,11 +159,14 @@ function ALPTRematch_DropDown(func)
   info.func = func
   UIDropDownMenu_AddButton(info)
 
-  if CFG.petGroups then
-    for k, v in pairs(CFG.petGroups) do
+  local petGroups, groupIndexs,groupPetIndexs = ALPTRematch:GetPetGroups()
+
+  if petGroups then
+    for m = 1, #groupIndexs do
+      local groupName = groupIndexs[m]
       local info = UIDropDownMenu_CreateInfo()
-      info.text = k
-      info.value = k
+      info.text = groupName
+      info.value = groupName
       info.func = func
       UIDropDownMenu_AddButton(info)
     end
@@ -224,7 +203,9 @@ function ALPTRematch_OnSelect3(self)
   UIDropDownMenu_SetSelectedValue(conf.Groups3, self.value)
 end
 
-local Org_PetListButtonOnClick = rematch.PetListButtonOnClick
+local Org_PetListButtonOnClick = RematchCommonPetListButtonMixin.OnClick
+local Org_FillTeam1 = RematchNormalTeamListButtonMixin.FillTeam
+local Org_FillTeam2 = RematchCompactTeamListButtonMixin.FillTeam
 
 function ALPTRematch:FindMenuItem(menu, text)
   for i, v in ipairs(menu) do
@@ -241,11 +222,11 @@ local function rename(oldkey, newkey)
   if oldkey == newkey then
     return
   end
-  if settings.alpt[oldkey] then
+  if utils.alpt[oldkey] then
     if newkey then
-      settings.alpt[newkey] = settings.alpt[oldkey]
+      utils.alpt[newkey] = utils.alpt[oldkey]
     end
-    settings.alpt[oldkey] = nil
+    utils.alpt[oldkey] = nil
   end
 end
 
@@ -255,10 +236,10 @@ local teamMenu = {
     ALPTRematch:OpenSetting(key)
   end
 }
-
+ 
 local teamDisableMenu = {
   text = function(self, key)
-    local alpt = settings.alpt[key]
+    local alpt = utils.alpt[key]
     if alpt and alpt.disabled then
       return "启用"
     else
@@ -266,24 +247,20 @@ local teamDisableMenu = {
     end
   end,
   func = function(_, key, ...)
-    local alpt = settings.alpt[key]
+    local alpt = utils.alpt[key]
     if not alpt then
       alpt = {disabled = false}
-      settings.alpt[key] = alpt
+      utils.alpt[key] = alpt
     end
     alpt.disabled = not alpt.disabled
     ALPTRematch:CheckCFG(key)
-    rematch:HideDialog()
-    rematch:UpdateUI()
+    rematch.dialog:HideDialog()
+    rematch.teamsPanel:Update()
   end
 }
 
 local function PetCantBattle(petID)
-  local idType = rematch:GetIDType(petID)
-  if idType == "pet" then
-    return select(15, C_PetJournal.GetPetInfoByPetID(petID))
-  end
-  return false
+  return rematch.petInfo:Fetch(petID).canBattle
 end
 
 local PetGroupMenu = {}
@@ -297,8 +274,10 @@ local addToGroupName = {
 
 function ALPTRematch:InitGroupMenu()
   PetGroupMenu = {}
-  local petGroups = ALPTRematch:GetPeGroups()
-  for groupName, _ in pairs(petGroups) do
+  local petGroups, groupIndexs,groupPetIndexs = ALPTRematch:GetPetGroups()
+
+  for m = 1, #groupIndexs do
+    local groupName = groupIndexs[m]
     tinsert(
       PetGroupMenu,
       {
@@ -311,12 +290,11 @@ function ALPTRematch:InitGroupMenu()
       }
     )
   end
-
-  rematch:RegisterMenu("PetGroupMenu", PetGroupMenu)
+  rematch.menus:Register("PetGroupMenu", PetGroupMenu)
 end
 
 function ALPTRematch:PreferencesOnChar()
-  rematch:HideTooltip()
+  rematch.tooltip:Hide()
   if not tonumber(self:GetText()) then
     self:SetText(self.var or "0")
   end
@@ -327,161 +305,160 @@ function ALPTRematch:PreferencesOnTextChanged()
   self.var = value
 end
 
-rematch:InitModule(
-  function()
-    RematchSettings["AutoLoad"] = false
-    saved = RematchSaved
-    settings = RematchSettings
-    alptconfig =
-      (settings.alptconfig and settings.alptconfig.rematchEx) or
-      {
-        useTeamMenu = true,
-        showSetButton = 1,
-        useGroupMenu = true,
-        fillSaveAsTeamName = true,
-        useRigthCage = true
-      }
-    InitConfiDialog()
-
-    if alptconfig.fillSaveAsTeamName then
-      hooksecurefunc(
-        Rematch,
-        "ShowSaveAsDialog",
-        function()
-          if RematchDialog.SaveAs.Name:GetText() == "新增队伍" then
-            local npcName = rematch:GetTeamTitle(RematchSettings.loadedTeam) or ALPTRematch:getCurrentTarget()
-            if npcName then
-              RematchDialog.SaveAs.Name:SetText(npcName)
-            end
-          end
-        end
-      )
-    end
-    if alptconfig.useRigthCage then
-      rematch.PetListButtonOnClick = function(self, button)
-        if
-          C_PetJournal.IsJournalUnlocked() and IsControlKeyDown() and button == "RightButton" and self and self.petID and
-            C_PetJournal.PetIsTradable(self.petID) and
-            self.Name
-         then
-          local petName = self.Name:GetText()
-          C_PetJournal.CagePetByID(self.petID)
-          print(YELLOW_FONT_COLOR_CODE .. petName .. "已装笼" .. FONT_COLOR_CODE_CLOSE)
-        else
-          Org_PetListButtonOnClick(self, button)
-        end
-      end
-    end
-
-    if alptconfig.useTeamMenu then
-      local menu = Rematch:GetMenu("TeamMenu")
-      if menu then
-        tinsert(menu, 4, teamMenu)
-        tinsert(menu, 4, teamDisableMenu)
-        local deleteItem = ALPTRematch:FindMenuItem(menu, DELETE)
-        hooksecurefunc(
-          deleteItem,
-          "func",
-          function(_, key, ...)
-            local origAccept = RematchDialog.acceptFunc
-            RematchDialog.acceptFunc = function(...)
-              if settings.alpt[key] then
-                settings.alpt[key] = nil
-              end
-              return origAccept(...)
-            end
-          end
-        )
-      end
-
-      if alptconfig.useGroupMenu then
-        local petMenu = Rematch:GetMenu("PetMenu")
-        if petMenu then
-          tinsert(petMenu, 3, addToGroupName)
-          ALPTRematch:InitGroupMenu()
-        end
-      end
-
-      if alptconfig.useTeamMenu or alptconfig.showSetButton > 0 then
-        hooksecurefunc(
-          Rematch,
-          "SaveAsAccept",
-          function(...)
-            local team, key = Rematch:GetSideline()
-            if team and not RematchSaved[key] or not Rematch:SidelinePetsDifferentThan(key) then
-              rename(Rematch:GetSidelineContext("originalKey"), key)
-            end
-          end
-        )
-
-        hooksecurefunc(
-          Rematch,
-          "OverwriteAccept",
-          function(...)
-            rename(Rematch:GetSidelineContext("originalKey"), select(2, Rematch:GetSideline()))
-          end
-        )
-        hooksecurefunc(
-          RematchTeamPanel.List,
-          "callback",
-          function(button, key)
-            local setBtn = settingButtons[button]
-            local aplt = settings.alpt[key]
-
-            if alptconfig.showSetButton == 1 or (aplt and aplt.changed and alptconfig.showSetButton == 2) then
-              setBtn.key = key
-              setBtn:Show()
-              setBtn:ClearAllPoints()
-
-              local relative =
-                button.Preferences:IsShown() and button.Preferences or button.Notes:IsShown() and button.Notes or
-                button.compact and button.WinRecordBack:IsShown() and button.WinRecordBack
-
-              local relative2 = tdBattlePetScriptAddon and tdBattlePetScriptAddon:GetScript(key)
-              if relative then
-                local x = relative == button.WinRecordBack and -3 or 0
-                if relative2 then
-                  x = x - 22
-                end
-                setBtn:SetPoint("RIGHT", relative, "LEFT", x, 0)
-              else
-                local x = -2
-                if relative2 then
-                  x = x - 22
-                end
-                setBtn:SetPoint("TOPRIGHT", x, -3)
-              end
-
-              if aplt and aplt.changed and alptconfig.showSetButton == 1 then
-                setBtn:SetNormalTexture("Interface\\AddOns\\zAutoLoadPetTeam_Rematch\\Textures\\setting_ok")
-                setBtn:SetPushedTexture("Interface\\AddOns\\zAutoLoadPetTeam_Rematch\\Textures\\setting_ok")
-              else
-                setBtn:SetNormalTexture("Interface\\AddOns\\zAutoLoadPetTeam_Rematch\\Textures\\setting")
-                setBtn:SetPushedTexture("Interface\\AddOns\\zAutoLoadPetTeam_Rematch\\Textures\\setting")
-              end
-               
-              button.Name:SetPoint("TOPRIGHT", setBtn:GetLeft() - button:GetRight(), -4)
-            else
-              setBtn:Hide()
-            end
-
-            if aplt and aplt.disabled then
-              button.Name:SetText(GRAY_FONT_COLOR_CODE .. Rematch:GetTeamTitle(button.key) .. FONT_COLOR_CODE_CLOSE)
-            end
-          end
-        )
-      end
-
-      if CFG.useRematchLoadingDone then
-        rematch.UnloadTeam = function()
-        end
-      end
-    end
-    rematch.loadSimilarTeam = function(key)
-      if CFG.debug  then
-        print("loadSimilarTeam已拦截")
-      end
-    end
-
+local function isTeamDisabled(teamKey)
+  if utils.alpt and utils.alpt[teamKey] then
+    return utils.alpt[teamKey].disabled
   end
-)
+  return false
+end
+
+function createSettingButton(parent,teamID)
+  
+  -- if not parent.SettingButton then
+  --   local button = CreateFrame("Button", nil, parent, "RematchNotesButtonTemplate")
+  --   button:SetSize(18, 18)
+  --   button.key = teamID
+  --   button:SetNormalTexture("Interface\\AddOns\\zAutoLoadPetTeam_Rematch\\Textures\\setting")
+  --   button:SetPushedTexture("Interface\\AddOns\\zAutoLoadPetTeam_Rematch\\Textures\\setting")
+  --   button:SetScript(
+  --     "OnClick",
+  --     function(button)
+  --       ALPTRematch:OpenSetting(button.key)
+  --     end
+  --   )
+  --   button:SetScript(
+  --     "OnEnter",
+  --     function(button)
+        
+  --     end
+  --   )
+  --   button:SetScript("OnLeave", function(button)
+        
+  --   end)
+  --   parent.SettingButton = button
+  -- else
+  --   parent.SettingButton.key = teamID
+  -- end
+  -- local setBtn = parent.SettingButton 
+
+  if isTeamDisabled(teamID) then
+    parent.Name:SetText(GRAY_FONT_COLOR_CODE .. utils:getTeamNameByKey(teamID) .. FONT_COLOR_CODE_CLOSE)
+  else
+    parent.Name:SetText(utils:getTeamNameByKey(teamID))
+  end
+
+  -- local aplt = utils.alpt[teamID] or {}
+  -- local alptconfig = utils.alptconfig.rematchEx or {}
+  -- local changed = aplt.changed 
+  -- local noteButton = parent.NotesButton
+ 
+  -- local isShow = alptconfig.showSetButton==1 or (changed and alptconfig.showSetButton==2) 
+  -- if  isShow then
+  --   setBtn:ClearAllPoints()
+  --   if changed then
+  --     setBtn:SetNormalTexture("Interface\\AddOns\\zAutoLoadPetTeam_Rematch\\Textures\\setting_ok")
+  --     setBtn:SetPushedTexture("Interface\\AddOns\\zAutoLoadPetTeam_Rematch\\Textures\\setting_ok")
+  --   else
+  --     setBtn:SetNormalTexture("Interface\\AddOns\\zAutoLoadPetTeam_Rematch\\Textures\\setting")
+  --     setBtn:SetPushedTexture("Interface\\AddOns\\zAutoLoadPetTeam_Rematch\\Textures\\setting")
+  --   end
+
+  --   -- noteButton:ClearAllPoints()
+  --   -- noteButton:SetPoint("RIGHT",-40,0)
+     
+  --   setBtn:SetPoint("LEFT", parent, "RIGHT", 1, 0)
+  --   parent:SetSize(200,44 )
+  --   setBtn:Show();
+  -- else
+  --   setBtn:Hide();
+  -- end
+   
+end
+
+function ALPTRematch:InitRemacthEx()
+  local settings = Rematch5Settings
+  settings["InteractOnTarget"] = 0
+  settings["InteractOnSoftInteract"] = 0
+  settings["InteractOnMouseover"] = 0
+  settings["LoadHealthiest"] = false
+  settings["LoadHealthiestAny"] = false
+  settings["LoadHealthiestAfterBattle"] = false
+
+  local CFG = utils.alptconfig
+ 
+  local  alptconfig =
+    (utils.alptconfig and utils.alptconfig.rematchEx) or
+    {
+      useTeamMenu = true,
+      showSetButton = 1,
+      useGroupMenu = true,
+      fillSaveAsTeamName = true,
+      useRigthCage = true
+    }
+  InitConfiDialog()
+ 
+  if alptconfig.useRigthCage then
+    rematch.PetListButtonOnClick = function(self, button)
+      if
+        C_PetJournal.IsJournalUnlocked() and IsControlKeyDown() and button == "RightButton" and self and self.petID and
+          C_PetJournal.PetIsTradable(self.petID) and
+          self.Name
+       then
+        local petName = self.Name:GetText()
+        C_PetJournal.CagePetByID(self.petID)
+        print(YELLOW_FONT_COLOR_CODE .. petName .. "已装笼" .. FONT_COLOR_CODE_CLOSE)
+      else
+        Org_PetListButtonOnClick(self, button)
+      end
+    end
+  end
+
+  if alptconfig.useRigthCage then
+    RematchCommonPetListButtonMixin.OnClick= function(self, button)
+      if
+        C_PetJournal.IsJournalUnlocked() and IsControlKeyDown() and button == "RightButton" and self and self.petID and
+          C_PetJournal.PetIsTradable(self.petID)
+       then
+        local petName = rematch.petInfo:Fetch(self.petID).formattedName
+        C_PetJournal.CagePetByID(self.petID)
+        print(YELLOW_FONT_COLOR_CODE .. petName .. "已装笼" .. FONT_COLOR_CODE_CLOSE)
+      else
+        Org_PetListButtonOnClick(self, button)
+      end
+    end
+  end
+
+  if alptconfig.useTeamMenu then
+    
+    Rematch.menus:AddToMenu('TeamMenu', teamMenu)
+    Rematch.menus:AddToMenu('TeamMenu', teamDisableMenu)
+
+    if alptconfig.useGroupMenu then
+      ALPTRematch:InitGroupMenu()
+      Rematch.menus:AddToMenu('PetMenu', addToGroupName)
+    end
+
+    if alptconfig.useTeamMenu or alptconfig.showSetButton > 0 then
+      RematchNormalTeamListButtonMixin.FillTeam = function(self,teamID)
+        Org_FillTeam1(self,teamID)
+        createSettingButton(self,teamID)
+      end
+
+      RematchCompactTeamListButtonMixin.FillTeam = function(self,teamID)
+        Org_FillTeam2(self,teamID)
+        createSettingButton(self,teamID)
+      end
+ 
+      Rematch.badges:RegisterBadge('teams', 'ALPTCConfigs1', "Interface\\AddOns\\zAutoLoadPetTeam_Rematch\\Textures\\setting", nil, function(parent, teamID)
+        local aplt = utils.alpt[teamID]
+        return not (aplt and aplt.changed) and alptconfig.showSetButton==1
+      end)
+      Rematch.badges:RegisterBadge('teams', 'ALPTCConfigs2', "Interface\\AddOns\\zAutoLoadPetTeam_Rematch\\Textures\\setting_ok", nil, function(parent, teamID)
+        local aplt = utils.alpt[teamID]
+        return aplt and aplt.changed and alptconfig.showSetButton>=1
+      end)
+    end
+ 
+  end
+ 
+end

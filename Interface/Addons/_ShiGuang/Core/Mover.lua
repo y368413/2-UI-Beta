@@ -384,7 +384,7 @@ function MISC:OnLogin()
 		MISC.UpdateTrimFrame(updater.__owner)
 	end)
 
-	--MISC:DisableBlizzardMover()
+	MISC:DisableBlizzardMover()
 end
 
 -- Disable blizzard edit mode
@@ -416,72 +416,25 @@ local function isArenaEnable()
 	return R.db["UFs"]["Enable"] and R.db["UFs"]["Arena"]
 end
 
-local function isTalkingHeadHidden()
-	return R.db["Misc"]["HideTalking"]
-end
-
-local ignoredFrames = {
-	-- ActionBars
-	["StanceBar"] = isActionbarEnable,
-	["EncounterBar"] = isActionbarEnable,
-	["PetActionBar"] = isActionbarEnable,
-	["PossessActionBar"] = isActionbarEnable,
-	["MainMenuBarVehicleLeaveButton"] = isActionbarEnable,
-	["MultiBarBottomLeft"] = isActionbarEnable,
-	["MultiBarBottomRight"] = isActionbarEnable,
-	["MultiBarLeft"] = isActionbarEnable,
-	["MultiBarRight"] = isActionbarEnable,
-	["MultiBar5"] = isActionbarEnable,
-	["MultiBar6"] = isActionbarEnable,
-	["MultiBar7"] = isActionbarEnable,
-	-- Auras
-	["BuffFrame"] = isBuffEnable,
-	["DebuffFrame"] = isBuffEnable,
-	-- UnitFrames
-	["PlayerFrame"] = isUnitFrameEnable,
-	["PlayerCastingBarFrame"] = isCastbarEnable,
-	["FocusFrame"] = isUnitFrameEnable,
-	["TargetFrame"] = isUnitFrameEnable,
-	["BossTargetFrameContainer"] = isUnitFrameEnable,
-	["PartyFrame"] = isPartyEnable,
-	["CompactRaidFrameContainer"] = isRaidEnable,
-	["ArenaEnemyFramesContainer"] = isArenaEnabled,
-	-- Misc
-	["MinimapCluster"] = function() return not R.db["Map"]["DisableMinimap"] end,
-	["GameTooltipDefaultContainer"] = function() return true end,
-	["TalkingHeadFrame"] = isTalkingHeadHidden,
-}
-
 function MISC:DisableBlizzardMover()
 	local editMode = _G.EditModeManagerFrame
-
-	-- remove the initial registers
-	local registered = editMode.registeredSystemFrames
-	for i = #registered, 1, -1 do
-		local name = registered[i]:GetName()
-		local ignore = ignoredFrames[name]
-
-		if ignore and ignore() then
-			tremove(editMode.registeredSystemFrames, i)
-		end
-	end
 
 	-- account settings will be tainted
 	local mixin = editMode.AccountSettings
 	if isCastbarEnable() then mixin.RefreshCastBar = M.Dummy end
-	if isBuffEnable() then mixin.RefreshAuraFrame = M.Dummy end
+	if isBuffEnable() then mixin.RefreshBuffsAndDebuffs = M.Dummy end
 	if isRaidEnable() then mixin.RefreshRaidFrames = M.Dummy end
 	if isArenaEnable() then mixin.RefreshArenaFrames = M.Dummy end
 	if isPartyEnable() then mixin.RefreshPartyFrames = M.Dummy end
-	if isTalkingHeadHidden() then mixin.RefreshTalkingHeadFrame = M.Dummy end
 	if isUnitFrameEnable() then
-		mixin.ResetTargetAndFocus = M.Dummy
 		mixin.RefreshTargetAndFocus = M.Dummy
 		mixin.RefreshBossFrames = M.Dummy
 	end
 	if isActionbarEnable() then
+		mixin.RefreshPetFrame = M.Dummy
 		mixin.RefreshEncounterBar = M.Dummy
-	--	mixin.RefreshActionBarShown = M.Dummy -- taint, needs review
+		mixin.RefreshActionBarShown = M.Dummy
 		mixin.RefreshVehicleLeaveButton = M.Dummy
+		mixin.ResetActionBarShown = M.Dummy
 	end
 end

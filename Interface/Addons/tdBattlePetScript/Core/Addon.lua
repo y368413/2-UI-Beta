@@ -5,15 +5,15 @@ Addon.lua
 ]]
 
 local ADDON, ns = ...
-local Addon = LibStub('AceAddon-3.0'):NewAddon('tdBattlePetScript', 'AceEvent-3.0', 'LibClass-2.0')
+local Addon = LibStub('AceAddon-3.0'):NewAddon('PetBattleScripts', 'AceEvent-3.0', 'LibClass-2.0')
 local GUI   = LibStub('tdGUI-1.0')
 
 ns.Addon = Addon
 ns.UI    = {}
-ns.L     = LibStub('AceLocale-3.0'):GetLocale('tdBattlePetScript', true)
-ns.ICON  = [[Interface\Icons\INV_Misc_PenguinPet]]
+ns.L     = LibStub('AceLocale-3.0'):GetLocale('PetBattleScripts', true)
+ns.ICON  = [[Interface\Icons\Icon_petfamily_dragon]]
 
-_G.tdBattlePetScript = Addon
+_G.PetBattleScripts = Addon
 
 function Addon:OnInitialize()
     local defaults = {
@@ -29,6 +29,7 @@ function Addon:OnInitialize()
             pluginDisabled = {},
             pluginOrders = {},
             settings = {
+                hideMinimap        = false,
                 autoSelect         = true,
                 hideNoScript       = true,
                 noWaitDeleteScript = false,
@@ -37,6 +38,8 @@ function Addon:OnInitialize()
                 autoButtonHotKey   = 'A',
                 testBreak          = true,
                 lockScriptSelector = false,
+                notifyButtonActive = false,
+                notifyButtonActiveSound = 'None',
             },
             minimap = {
                 minimapPos = 50,
@@ -69,15 +72,15 @@ function Addon:InitSettings()
 end
 
 function Addon:UpdateDatabase()
-    local oldVersion = self.db.global.version or 0
-    local newVersion = tonumber(GetAddOnMetadata(ADDON, 'Version')) or 99999.99
+    local oldVersion = self.db.global.version
+    local newVersion = tostring(ns.Version:Current(ADDON))
 
     if oldVersion ~= newVersion then
         self.db.global.version = newVersion
 
         C_Timer.After(0.9, function()
             GUI:Notify{
-                text = format('%s\n|cff00ffff%s%s|r', ADDON, ns.L['Update to version: '], newVersion),
+                text = format('%s\n|cff00ffff%s: |cffffff00%s|r', ns.L.ADDON_NAME, ns.L.DATABASE_UPDATED_TO, newVersion),
                 icon = ns.ICON,
                 help = ''
             }

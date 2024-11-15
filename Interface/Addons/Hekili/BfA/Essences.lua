@@ -92,7 +92,7 @@ all:RegisterAuras( {
         duration = 15,
         max_stack = 1
     },
-    
+
     will_to_survive_am = {
         id = 312922,
         duration = 15,
@@ -112,7 +112,7 @@ all:RegisterAbility( "vigilant_protector", {
     id = 310592,
     cast = 0,
     cooldown = 120,
-    
+
     startsCombat = true,
     toggle = "essences",
     essence = true,
@@ -151,12 +151,12 @@ all:RegisterAbility( "blood_of_the_enemy", {
     handler = function()
         applyDebuff( "target", "blood_of_the_enemy" )
         active_dot.blood_of_the_enemy = active_enemies
-        if essence.blood_of_the_enemy.rank > 2 then applyBuff( "seething_rage" ) end        
+        if essence.blood_of_the_enemy.rank > 2 then applyBuff( "seething_rage_297126" ) end
     end
 } )
 
 all:RegisterAuras( {
-    seething_rage = {
+    seething_rage_297126 = {
         id = 297126,
         duration = 10,
         max_stack = 1,
@@ -188,10 +188,10 @@ all:RegisterAbility( "guardian_of_azeroth", {
         summonPet( "guardian_of_azeroth", 30 )
     end,
 
-    copy = "condensed_lifeforce"
+    copy = { "condensed_lifeforce", 300091 }
 } )
 
-all:RegisterPet( "guardian_of_azeroth", 152396, 300091, 31 )
+all:RegisterPet( "guardian_of_azeroth", 152396, "guardian_of_azeroth", 31 )
 
 all:RegisterAuras( {
     guardian_of_azeroth = {

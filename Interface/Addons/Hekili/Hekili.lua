@@ -1,25 +1,53 @@
 -- Hekili.lua
--- April 2014
+-- July 2024
 
 local addon, ns = ...
 Hekili = LibStub("AceAddon-3.0"):NewAddon( "Hekili", "AceConsole-3.0", "AceSerializer-3.0" )
-Hekili.Version = GetAddOnMetadata( "Hekili", "Version" )
+Hekili.Version = C_AddOns.GetAddOnMetadata( "Hekili", "Version" )
+Hekili.Flavor = C_AddOns.GetAddOnMetadata( "Hekili", "X-Flavor" ) or "Retail"
 
 local format = string.format
 local insert, concat = table.insert, table.concat
 
+local GetBuffDataByIndex, GetDebuffDataByIndex = C_UnitAuras.GetBuffDataByIndex, C_UnitAuras.GetDebuffDataByIndex
+local UnpackAuraData = AuraUtil.UnpackAuraData
+
+local buildStr, _, _, buildNum = GetBuildInfo()
+
+Hekili.CurrentBuild = buildNum
+
 if Hekili.Version == ( "@" .. "project-version" .. "@" ) then
-    Hekili.Version = format( "Dev-%s (%s)", GetBuildInfo(), date( "%Y%m%d" ) )
+    Hekili.Version = format( "Dev-%s (%s)", buildStr, date( "%Y%m%d" ) )
+    Hekili.IsDev = true
 end
 
 Hekili.AllowSimCImports = true
 
-Hekili.IsClassic = function() return ( WOW_PROJECT_ID == WOW_PROJECT_CLASSIC ) or ( WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC ) end
-ns.PTR = select( 4, GetBuildInfo() ) > 90200
+Hekili.IsRetail = function()
+    return Hekili.Flavor == "Retail"
+end
 
+Hekili.IsWrath = function()
+    return Hekili.Flavor == "Wrath"
+end
 
-ns.Patrons = "Abom, Abra, Abuna, Aern, Aggronaught, akh270, Alasha, alcaras, Amera, ApexPlatypus, aphoenix, Archxlock, Aristocles, aro725, Artoo, Ash, av8ordoc, Battle Hermit VIA, Belatar, Borelia, Brangeddon, Bsirk/Kris, Cele, Chimmi, Coan, Cortland, Daz, DB, Der Baron, Dez, Drako, Enemy, Eryx, fuon, Garumako, Graemec, Grayscale, guhbjs, Hambrick, Hexel, Himea, Hollaputt, Hungrypilot, Ifor, Ingrathis, intheyear, Jacii, jawj, Jenkz, Katurn, Kingreboot, Kittykiller, Lagertha, Leorus, Loraniden, Lord Corn, Lovien, Manni, Mirando, mr. jing0, Mr_Hunter, MrBean73, mrminus, Muffin, Mumrikk, Nelix, neurolawl, Nighteyez, nomiss, nqrse, Orcodamus, Parameshvar, Rage, Ramen, Ramirez (Jon), Rebdull, Ridikulus0510, rockschtar, Roodie, Rusah, Samuraiwillz501, sarrge, Sarthol, Scerick, Sebstar, Seniroth, seriallos, Shakeykev, Shuck, Skeletor, Slem, Spaten, Spy, Srata, Stevi, Strozzy, Tekfire, Tevka, Theda99, Thordros, Tic[Ã ]sentence, Tobi, todd, Torsti, tsukari, Tyazrael, Ulti.DTY, Val (Valdrath), Vaxum, Vsmit, Wargus (Shagus), Weedwalker, WhoaIsJustin, Wonder, zab, Zarggg, and zarrin-zuljin"
+Hekili.IsClassic = function()
+    return Hekili.IsWrath()
+end
 
+Hekili.IsDragonflight = function()
+    return buildNum >= 100000
+end
+
+Hekili.BuiltFor = 110000
+Hekili.GameBuild = buildStr
+
+ns.PTR = buildNum > 110000
+
+ns.Patrons = "|cFFFFD100目前的状态|r\n\n"
+    .. "目前已经支持所有的专精，但治疗专精的优先级是试验性的，只可用于发呆时打DPS。\n\n"
+    .. "如果你发现奇怪的问题或建议，请前往下方的|cFFFFD100问题报告|r链接提交必要的信息，以便你的问题能够尽快修正。\n\n"
+    .. "请不要提交默认优先级的问题（来自于SimulationCraft），它们将在发布后同步更新。谢谢！"
 
 do
     local cpuProfileDB = {}
@@ -63,6 +91,7 @@ Hekili.Class = {
     num = 0,
 
     file = "NONE",
+    initialized = false,
 
 	resources = {},
 	resourceAuras = {},
@@ -202,13 +231,19 @@ function Hekili:Debug( ... )
 
 	local prepend = format( indent > 0 and ( "%" .. ( indent * 4 ) .. "s" ) or "%s", "" )
 	text = text:gsub("\n", "\n" .. prepend )
+    text = format( "%" .. ( indent > 0 and ( 4 * indent ) or "" ) .. "s", "" ) .. text
 
-	active_debug.log[ active_debug.index ] = format( "%" .. ( indent > 0 and ( 4 * indent ) or "" ) .. "s" .. text, "", select( start, ... ) )
+    if select( start, ... ) ~= nil then
+	    active_debug.log[ active_debug.index ] = format( text, select( start, ... ) )
+    else
+        active_debug.log[ active_debug.index ] = text
+    end
     active_debug.index = active_debug.index + 1
 end
 
 
 local snapshots = ns.snapshots
+local hasScreenshotted = false
 
 function Hekili:SaveDebugSnapshot( dispName )
     local snapped = false
@@ -221,6 +256,25 @@ function Hekili:SaveDebugSnapshot( dispName )
 				v.log[ i ] = nil
 			end
 
+            -- Store previous spell data.
+            local prevString = "\nprevious_spells:"
+            -- Skip over the actions in the "prev" table that were added to computed the next recommended ability in the queue.
+            local i, j = ( #state.predictions + 1 ), 1
+            local spell = state.prev[i].spell or "no_action"
+            if spell == "no_action" then
+                prevString = prevString .. "  no history available"
+            else
+                local numHistory = #state.prev.history
+                while i <= numHistory and spell ~= "no_action" do
+                    prevString = format( "%s\n   %d - %s", prevString, j, spell )
+                    i, j = i + 1, j + 1
+                    spell = state.prev[i].spell or "no_action"
+                end
+            end
+            prevString = prevString .. "\n\n"
+
+            insert( v.log, 1, prevString )
+
             -- Store aura data.
             local auraString = "\nplayer_buffs:"
             local now = GetTime()
@@ -228,7 +282,7 @@ function Hekili:SaveDebugSnapshot( dispName )
             local class = Hekili.Class
 
             for i = 1, 40 do
-                local name, _, count, debuffType, duration, expirationTime, source, _, _, spellId, canApplyAura, isBossDebuff, castByPlayer = UnitBuff( "player", i )
+                local name, _, count, debuffType, duration, expirationTime, source, _, _, spellId, canApplyAura, isBossDebuff, castByPlayer = UnpackAuraData( GetBuffDataByIndex( "player", i ) )
 
                 if not name then break end
 
@@ -242,7 +296,7 @@ function Hekili:SaveDebugSnapshot( dispName )
             auraString = auraString .. "\n\nplayer_debuffs:"
 
             for i = 1, 40 do
-                local name, _, count, debuffType, duration, expirationTime, source, _, _, spellId, canApplyAura, isBossDebuff, castByPlayer = UnitDebuff( "player", i )
+                local name, _, count, debuffType, duration, expirationTime, source, _, _, spellId, canApplyAura, isBossDebuff, castByPlayer = UnpackAuraData( GetDebuffDataByIndex( "player", i ) )
 
                 if not name then break end
 
@@ -260,7 +314,7 @@ function Hekili:SaveDebugSnapshot( dispName )
                 auraString = auraString .. "\n\ntarget_buffs:"
 
                 for i = 1, 40 do
-                    local name, _, count, debuffType, duration, expirationTime, source, _, _, spellId, canApplyAura, isBossDebuff, castByPlayer = UnitBuff( "target", i )
+                    local name, _, count, debuffType, duration, expirationTime, source, _, _, spellId, canApplyAura, isBossDebuff, castByPlayer = UnpackAuraData( GetBuffDataByIndex( "target", i ) )
 
                     if not name then break end
 
@@ -274,7 +328,7 @@ function Hekili:SaveDebugSnapshot( dispName )
                 auraString = auraString .. "\n\ntarget_debuffs:"
 
                 for i = 1, 40 do
-                    local name, _, count, debuffType, duration, expirationTime, source, _, _, spellId, canApplyAura, isBossDebuff, castByPlayer = UnitDebuff( "target", i, "PLAYER" )
+                    local name, _, count, debuffType, duration, expirationTime, source, _, _, spellId, canApplyAura, isBossDebuff, castByPlayer = UnpackAuraData( GetDebuffDataByIndex( "target", i, "PLAYER" ) )
 
                     if not name then break end
 
@@ -286,12 +340,8 @@ function Hekili:SaveDebugSnapshot( dispName )
                 end
             end
 
-            auraString = auraString .. "\n\n"
-
             insert( v.log, 1, auraString )
-            if Hekili.TargetDebug and Hekili.TargetDebug:len() > 0 then
-                insert( v.log, 1, "targets:\n" .. Hekili.TargetDebug )
-            end
+            insert( v.log, 1, "targets:  " .. ( Hekili.TargetDebug or "no data" ) )
             insert( v.log, 1, self:GenerateProfile() )
 
             local custom = ""
@@ -301,8 +351,8 @@ function Hekili:SaveDebugSnapshot( dispName )
                 custom = format( " |cFFFFA700(Custom: %s[%d])|r", state.spec.name, state.spec.id )
             end
 
-            local overview = format( "%s%s; %s|r", state.system.packName, custom, dispName )
-            local recs = Hekili.DisplayPool[ dispName ].Recommendations
+            local overview = format( "%s%s; %s|r", state.system.packName, custom, dispName or state.display )
+            local recs = Hekili.DisplayPool[ dispName or state.display ].Recommendations
 
             for i, rec in ipairs( recs ) do
                 if not rec.actionName then
@@ -328,8 +378,12 @@ function Hekili:SaveDebugSnapshot( dispName )
 		end
     end
 
+    -- Limit screenshot to once per login.
     if snapped then
-        if Hekili.DB.profile.screenshot then Screenshot() end
+        if Hekili.DB.profile.screenshot and ( not hasScreenshotted or Hekili.ManualSnapshot ) then
+            Screenshot()
+            hasScreenshotted = true
+        end
         return true
     end
 

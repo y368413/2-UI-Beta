@@ -1,0 +1,38 @@
+## Interface: 30403
+## Version: 2.02
+## Author: Taraezor
+## IconTexture: Interface\Icons\Inv_misc_book_11
+## Title: Higher Learning
+## Title-deDE: Höheres Studium
+## Title-esES: Conocimiento Superior
+## Title-esMX: Conocimiento Superior
+## Title-frFR: Lectures Studieuses
+## Title-itIT: Conoscenza Superiore
+## Title-koKR: 고등 학습
+## Title-ptBR: Letrado nas artes arcanas
+## Title-ptPT: Letrado nas artes arcanas
+## Title-ruRU: ченье – свет!
+## Title-zhCN: 进修
+## Title-zhTW: 進修
+## Notes: |cFFB19EFFHelps you find the |cFF8258FAHigher Learning|cFFB19EFF books in Dalaran
+## Notes-deDE: |cFFB19EFFHilft Ihnen, die Bücher für |cFF8258FAHöheres Studium|cFFB19EFF in Dalaran zu finden
+## Notes-esES: |cFFB19EFFTe ayuda a encontrar los libros de |cFF8258FAConocimiento Superior|cFFB19EFF en Dalaran
+## Notes-esMX: |cFFB19EFFTe ayuda a encontrar los libros de |cFF8258FAConocimiento Superior|cFFB19EFF en Dalaran
+## Notes-frFR: |cFFB19EFFVous aide à trouver les livres d'|cFF8258FALectures Studieuses|cFFB19EFF à Dalaran
+## Notes-itIT: |cFFB19EFFTi aiuta a trovare i libri di |cFF8258FAConoscenza Superiore|cFFB19EFF a Dalaran
+## Notes-koKR: |cFFB19EFF라란에서 |cFF8258FA고등 학습 |cFFB19EFF서적을 찾는 데 도움이 됩니다
+## Notes-ptBR: |cFFB19EFFAjuda você a encontrar os livros de |cFF8258FALetrado nas artes arcanas|cFFB19EFF em Dalaran
+## Notes-ptPT: |cFFB19EFFAjuda você a encontrar os livros de |cFF8258FALetrado nas artes arcanas|cFFB19EFF em Dalaran
+## Notes-ruRU: |cFFB19EFFПомогает найти книги для |cFF8258FAУченье – свет!|cFFB19EFF в Даларане
+## Notes-zhCN: |cFFB19EFF帮助您找到达拉然|cFF8258FA进修|cFFB19EFF书籍
+## Notes-zhTW: |cFFB19EFF幫助您找到達拉然|cFF8258FA進修|cFFB19EFF書籍
+## RequiredDeps: HandyNotes
+## SavedVariables: HandyNotes_HigherLearningDB
+## AddonCompartmentFunc: HandyNotes_HigherLearning_OnAddonCompartmentClick
+## AddonCompartmentFuncOnEnter: HandyNotes_HigherLearning_OnAddonCompartmentEnter
+## AddonCompartmentFuncOnLeave: HandyNotes_HigherLearning_OnAddonCompartmentLeave
+## X-Curse-Project-ID: 490701
+## X-Wago-ID: qv63JpNb
+
+Core.lua
+Data.lua

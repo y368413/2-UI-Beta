@@ -5,7 +5,12 @@
 -- 2011/11/13
 ------------------------------------------------------------
 
-local GetSpellCooldown = GetSpellCooldown
+local GetSpellCooldown = GetSpellCooldown or function(id)
+	local info = C_Spell.GetSpellCooldown(id)
+	if info then
+		return info.startTime, info.duration, info.isEnabled, info.modRate;
+	end
+end
 local type = type
 local CreateFrame = CreateFrame
 
@@ -21,10 +26,14 @@ local function IconFrame_UpdateCooldown(self)
 	local start, duration, enable
 	local spell = self.data and self.data.spell
 	if spell then
-		start, duration, enable = GetSpellCooldown(spell)
+		local spellCooldownInfo  = C_Spell.GetSpellCooldown(spell)
+		if spellCooldownInfo then
+			start, duration, enable = spellCooldownInfo.startTime, spellCooldownInfo.duration, spellCooldownInfo.isEnabled
+		end
 	end
 
-	if start and start > 0 and duration > 0 and enable > 0 then
+
+	if start and start > 0 and duration > 0 and enable then
 		self.cooldown:SetCooldown(start, duration)
 		self.cooldown:Show()
 	else
@@ -77,7 +86,7 @@ end
 function templates.CreateIconFrame(parent)
 --163uiedit
 	-- local frame = CreateFrame("Frame", nil, parent)
-	local frame = CreateFrame('Button', '$parentIcon', parent, 'AuraButtonTemplate')
+	local frame = CreateFrame('Button', '$parentIcon', parent, 'ActionButtonTemplate')   --TODO:abyui10 AuraButtonTemplate
     frame:EnableMouse(false)
 	-- frame:SetSize(22, 22)
 
@@ -103,6 +112,9 @@ function templates.CreateIconFrame(parent)
 	frame.cooldown = CreateFrame("Cooldown", nil, frame, "CooldownFrameTemplate")
 	frame.cooldown:SetAllPoints(frame.icon)
     frame.cooldown.noCooldownCount = true
+    frame.cooldown:SetAlpha(0.8)
+    frame.cooldown:SetDrawEdge(true)
+    frame.cooldown:SetFrameLevel(frame:GetFrameLevel())
     --frame.cooldown:SetReverse(true)
 --163uiedit
 

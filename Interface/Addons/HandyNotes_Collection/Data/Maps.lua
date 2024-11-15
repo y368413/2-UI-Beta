@@ -10,12 +10,16 @@ local points = this.points
 ---
 --- Table with maps names and their respective IDs.
 ---
---- @link https://wow.tools/dbc/?dbc=uimapgroupmember
+--- @link https://wago.tools/db2/UiMap
 ---
 --- @var table maps
 ---   Map definitions for easier finding and loading UiMapIDs in specific maps.
 ---
 local maps = {
+  -- Mists of Pandaria
+  ['pandaria'] = 424,
+  ['timeless_isle'] = 554,
+
   -- Warlords of Draenor
   ['draenor'] = 572,
   ['frostfire_ridge'] = 525,

@@ -1014,7 +1014,7 @@ local points = {
 
   -- Sniper's Crossbow
   [45004260] = {
-    name = t['snipers_crossbow_trerasure'],
+    name = t['snipers_crossbow_treasure'],
     icon = 'chest',
     questId = 36634,
     loot = {

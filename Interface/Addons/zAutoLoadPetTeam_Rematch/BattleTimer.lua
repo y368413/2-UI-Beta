@@ -1,6 +1,4 @@
-﻿local rematch = Rematch
-
-local CFG = ALPTRematch.alptconfig
+﻿local utils = ALPTRematch.utils
 
 local g = {
   timeLastStart = 0,
@@ -30,7 +28,7 @@ frame:SetScript(
       g.lastXp = UnitXP("player")
     elseif event == "PET_BATTLE_CLOSE" then
       if not C_PetBattles.IsInBattle() then
-        if CFG.enableXpLog and ALPTRematch:CanLevelUP() and not g.isForfeit and not g.isLost then
+        if utils.alptconfig.enableXpLog and utils:CanLevelUP() and not g.isForfeit and not g.isLost then
           --推迟到经验获取再输出
         else
           C_Timer.After(
@@ -82,18 +80,10 @@ frame:SetScript(
   end
 )
 
-function ALPTRematch:CanLevelUP()
-  local level = UnitLevel("player")
-  local areaid = C_Map.GetBestMapForUnit("player")
-  if level == 60 or IsXPUserDisabled() or areaid == 590 or areaid == 582 then
-    return false
-  else
-    return true
-  end
-end
+
 
 function ALPTRematch:BattleTimerBegin()
-  if CFG.enableBattleTimer then
+  if utils.alptconfig.enableBattleTimer then
     g.timeLastStart = time()
     g.resetPrint = false
     g.loadingKey = ALPTRematch:GetCurrentKey()
@@ -160,7 +150,7 @@ function ALPTRematch:BattleTimerEnd()
   if g.isLost then
     teamTimer[6] = teamTimer[6] + 1
   end
-  if CFG.enableBattleTimer then
+  if utils.alptconfig.enableBattleTimer then
     msg = "本次用时 " .. usedTime
     if timeFromLastEnd >= usedTime then
       msg = msg .. "/" .. timeFromLastEnd
@@ -180,7 +170,7 @@ function ALPTRematch:BattleTimerEnd()
   end
 
   local levelUpStr
-  if CFG.enableXpLog then
+  if utils.alptconfig.enableXpLog then
     self:CalcXP()
     if g.leftTime and g.leftTime > 0 then
       levelUpStr = "预计 " .. string.format("%.1f", g.leftTime / 60) .. " 分钟升级"
@@ -206,12 +196,12 @@ function ALPTRematch:BattleTimerEnd()
 end
 
 function ALPTRematch:CalcXP()
-  if not CFG.enableXpLog then
+  if not utils.alptconfig.enableXpLog then
     g.leftTime = -1
     return
   end
 
-  if not ALPTRematch:CanLevelUP() then
+  if not utils:CanLevelUP() then
     g.leftTime = -1
     return
   end

@@ -4,8 +4,8 @@
 -- Abin
 -- 2011/11/13
 ------------------------------------------------------------
- --163uiedit
-local ICON_SIZE = 36
+
+local ICON_SIZE = 45
 local BUTTON_GAP = 4
 
 local Masque, MasqueGroup
@@ -14,12 +14,12 @@ local UpdateMasque = function()
         return MasqueGroup
     else
         Masque = LibStub('Masque', true)
-        MasqueGroup = Masque and Masque:Group('职业快捷按鈕')
+        MasqueGroup = Masque and Masque:Group('职业快捷按钮')
 
         return MasqueGroup
     end
 end
- --163uiedit
+
 local floor = floor
 local GetTime = GetTime
 local type = type
@@ -31,6 +31,12 @@ local strupper = strupper
 local CreateFrame = CreateFrame
 local InCombatLockdown = InCombatLockdown
 local tinsert = tinsert
+local GetSpellInfo = GetSpellInfo or function(id)
+	local info = C_Spell.GetSpellInfo(id)
+	if info then
+		return info.name, nil, info.iconID, info.castTime, info.minRange, info.maxRange, info.spellID, info.originalIconID;
+	end
+end;
 
 local _, addon = ...
 local L = addon.L
@@ -180,6 +186,10 @@ end
 
 local function Button_OnUpdateTimer(self, spell)
 	local expires = addon:GetUnitBuffTimer("player", spell)
+    if not expires and self.auraMap and self.auraMap[spell] then
+        --some spell have different BUFF id, see WeaponPoison
+        expires = addon:GetUnitBuffTimer("player", self.auraMap[spell])
+    end
 	return expires and "G" or "NONE", expires
 end
 
@@ -319,7 +329,7 @@ end
 
 local function Button_UpdateButton_163(self)
     local growth = U1GetCfgValue and ( U1GetCfgValue('LiteBuff', 'growh') and 'RIGHT' or 'DOWN' ) or 'RIGHT'
-    local iconsize = U1GetCfgValue and U1GetCfgValue('LiteBuff', 'iconsize') or 32
+    local iconsize = 45 --U1GetCfgValue and U1GetCfgValue('LiteBuff', 'iconsize') or 32 --10.0按钮NormalTexture等都是固定大小的
     local gap = U1GetCfgValue and U1GetCfgValue('LiteBuff', 'gap') or 6
 
     self:SetAttribute('x-growth', growth)
@@ -371,6 +381,7 @@ function templates.CreateActionButton(key, category, title, duration, ...)
 	end
 
 	local button = CreateFrame("Button", addon.frame:GetName().."Button"..key, addon.frame, "SecureActionButtonTemplate,SecureHandlerMouseWheelTemplate,SecureHandlerStateTemplate,SecureHandlerShowHideTemplate,SecureActionButtonTemplate,SecureHandlerMouseUpDownTemplate")
+	button:RegisterForClicks("AnyDown", "AnyUp")
 	button.key, button.category, button.title = key, category, title
 	button.duration = type(duration) == "number" and duration > 0 and duration or nil
 	button.triggerdList = {}
@@ -639,7 +650,7 @@ local function Button_OnTooltipRightText(self, tooltip, _, spell)
 end
 
 templates.RegisterTemplate("DUAL", function(button)
-	button:RegisterForClicks("LeftButtonUp", "RightButtonUp", 'MiddleButtonUp')
+	button:RegisterForClicks("AnyUp", "AnyDown")
 	button.OnTooltipRightText = Button_OnTooltipRightText
 end)
 

@@ -1,11 +1,7 @@
-local ALPTRematch = LibStub("AceAddon-3.0"):NewAddon("ALPTRematch")
-_G.ALPTRematch = ALPTRematch
-
+local AutoTeam = ALPTRematch
 local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 local AceConfigRegistry = LibStub("AceConfigRegistry-3.0")
-local rematch = Rematch
-local saved, settings
-
+local utils = ALPTRematch.utils
 local modeName = {"混合", "练宠", "练级"} --模式名称，只是改文字描述，实际作用不会变，练级模式只会加载有升级位的队伍
 local defaultconfig = {
     enable = true, --是否启用
@@ -26,9 +22,20 @@ local defaultconfig = {
     forceLoadWhenHealOk = true,
     selectWhenTarget = true,
     selectAfterBattle = true,
+
+    gossipOptions = {
+        ["2"] = "巴库歇克",
+        ["3"] = "",
+        ["4"] = ""
+    },
+
+    loadHighest = true,
+    loadHighestIgnoreProp = true,
+
+    monitorShow = 1,
     rematchEx = {
         useTeamMenu = true,
-        showSetButton = 1,
+        showSetButton = 2,
         useGroupMenu = true,
         fillSaveAsTeamName = true,
         useRigthCage = true
@@ -44,6 +51,8 @@ local defaultconfig = {
             waitTeam = true,
             selectGossip = true,
             useTdScript = false,
+            userHarp = false,
+            debug = false,
             waitTimeout = 10
 
         },
@@ -56,6 +65,8 @@ local defaultconfig = {
             waitTeam = true,
             selectGossip = true,
             useTdScript = false,
+            userHarp = false,
+            debug = false,
             waitTimeout = 10
         },
         ["ALPTButton3"] = {
@@ -67,6 +78,8 @@ local defaultconfig = {
             waitTeam = true,
             selectGossip = true,
             useTdScript = false,
+            userHarp = false,
+            debug = false,
             waitTimeout = 10
         },
         ["ALPTButton4"] = {
@@ -78,6 +91,8 @@ local defaultconfig = {
             waitTeam = true,
             selectGossip = true,
             useTdScript = false,
+            userHarp = false,
+            debug = false,
             waitTimeout = 10
         },
         ["ALPTButton5"] = {
@@ -89,6 +104,8 @@ local defaultconfig = {
             waitTeam = true,
             selectGossip = true,
             useTdScript = false,
+            userHarp = false,
+            debug = false,
             waitTimeout = 10
         }
     },
@@ -96,14 +113,13 @@ local defaultconfig = {
 }
 
 local config = {}
-ALPTRematch.alptconfig = config
 
 StaticPopupDialogs["APLT_RELOADUI"] = {
     text = "确定要重置配置么，您以前的设置修改将丢失?",
     button1 = ACCEPT,
     button2 = CANCEL,
     OnAccept = function()
-        settings.alptconfig = defaultconfig
+        utils:SetConfig(defaultconfig)
         C_UI.Reload()
     end,
     hideOnEscape = 1
@@ -139,10 +155,6 @@ function pairsByKeys(t)
     end
 end
 
-local function initConfig()
-    tcopy(config, defaultconfig)
-end
-initConfig()
 local petGroupSize = 0
 local newOrder
 do
@@ -169,7 +181,7 @@ end
 local red = {r = 1.0, g = 0.2, b = 0.2}
 local blue = {r = 0.0, g = 0.44, b = 0.87}
 
-ALPTRematch.options = {
+AutoTeam.options = {
     type = "group",
     childGroups = "tab",
     name = "参数设置",
@@ -190,7 +202,7 @@ ALPTRematch.options = {
                             type = "toggle",
                             name = "启动自动换队",
                             width = "double",
-                            desc = "前缀相同的队伍将按Rematch显示的顺序换队，如野兽1、野兽2、野兽3",
+                            desc = "请在Rematch中维护目标的队伍列表",
                             order = newOrder(),
                             get = function()
                                 return config.enable
@@ -269,7 +281,25 @@ ALPTRematch.options = {
                                 config.useRematchLoadingDone = not config.useRematchLoadingDone
                             end
                         },
-                        
+                        monitorShow = {
+                            type = "select",
+                            name = "显示升级监控面板",
+                            desc = "整合zPetBattleLevelUpMonitor",
+                            style = "radio",
+                            values = {
+                                [0] = "不显示",
+                                [1] = "战斗中显示",
+                                [2] = "一直显示"
+                            },
+                            get = function()
+                                return config.monitorShow
+                            end,
+                            set = function(info, val)
+                                config.monitorShow = val
+                                AutoTeam:toggleMonitor()
+                            end,
+                            order = newOrder()
+                        },            
                     }
                 },
                 timer = {
@@ -385,7 +415,7 @@ ALPTRematch.options = {
                             desc = "练级队列为空时，替补练级宠位置\n让练宠队伍也可以继续练级\n只能一只，推荐毛绒雷象或机械宠",
                             set = function(info, val)
                                 config.alternates = val
-                                ALPTRematch:UpdateAlternates()
+                                AutoTeam:UpdateAlternates()
                             end,
                             get = function()
                                 return config.alternates or ""
@@ -508,7 +538,7 @@ ALPTRematch.options = {
                     end,
                     set = function()
                         config.showOptionButton = not config.showOptionButton
-                        ALPTRematch:ShowOptionButton()
+                        AutoTeam:ShowOptionButton()
                     end
                 },
                 useTeamMenu = {
@@ -552,18 +582,6 @@ ALPTRematch.options = {
                         config.rematchEx.useGroupMenu = not config.rematchEx.useGroupMenu
                     end
                 },
-                fillSaveAsTeamName = {
-                    type = "toggle",
-                    name = "队伍另存为时，自动填入当前队伍名称",
-                    width = "full",
-                    order = newOrder(),
-                    get = function()
-                        return config.rematchEx.fillSaveAsTeamName
-                    end,
-                    set = function()
-                        config.rematchEx.fillSaveAsTeamName = not config.rematchEx.fillSaveAsTeamName
-                    end
-                },
                 useRigthCage = {
                     type = "toggle",
                     name = "宠物列表按Ctrl+右键时直接装笼",
@@ -599,6 +617,66 @@ ALPTRematch.options = {
             childGroups = "tab",
             args = {}
         },
+        gossipOption = {
+            type = "group",
+            name = "目标选项",
+            order = newOrder(),
+            childGroups = "tab",
+            args = {
+                blankline1 = {
+                    type = "description",
+                    name = "\n",
+                    order = newOrder()
+                },
+                gossipOption2 = {
+                    type = "input",
+                    name = "以下目标使用第二个对话选项开始战斗(多个逗号分割开)",
+                    order = newOrder(),
+                    width = "full",
+                    get = function()
+                        return config.gossipOptions["2"] or ""   
+                    end,
+                    set = function(info, val)
+                        config.gossipOptions["2"] = val
+                    end
+                },
+                blankline2 = {
+                    type = "description",
+                    name = "\n",
+                    order = newOrder()
+                },
+                gossipOption3 = {
+                    type = "input",
+                    name = "以下目标使用第三个对话选项开始战斗(多个逗号分割开)",
+                    order = newOrder(),
+                    width = "full",
+                    get = function()
+                        return config.gossipOptions["3"] or ""
+                    end,
+                    set = function(info, val)
+                        config.gossipOptions["3"] = val
+                    end
+                },
+                blankline3 = {
+                    type = "description",
+                    name = "\n",
+                    order = newOrder()
+                },
+                gossipOption4 = {
+                    type = "input",
+                    name = "以下目标使用第四个对话选项开始战斗(多个逗号分割开)",
+                    order = newOrder(),
+                    width = "full",
+                    get = function()
+                        return config.gossipOptions["4"] or ""
+                    end,
+                    set = function(info, val)
+                        config.gossipOptions["4"] = val
+                    end
+                },
+
+            }
+        },
         macrogroup = {
             type = "group",
             name = "宏按钮",
@@ -628,41 +706,52 @@ ALPTRematch.options = {
     }
 }
 
-function ALPTRematch:HasGroup()
+function AutoTeam:HasGroup()
     return petGroupSize > 0
 end
-function ALPTRematch:NotifyChange()
+function AutoTeam:NotifyChange()
     if AceConfigRegistry.NotifyChange then
-        AceConfigRegistry:NotifyChange("ALPTRematch")
+        AceConfigRegistry:NotifyChange("AutoTeam")
     end
+    AutoTeam:updatePetGroup()
 end
 
-function ALPTRematch:NewGroup(name)
+function AutoTeam:NewGroup(name)
     if config.petGroups[name] then
         print(RED_FONT_COLOR_CODE .. "[" .. name .. "] 已存在" .. FONT_COLOR_CODE_CLOSE)
     else
         config.petGroups[name] = {}
-        ALPTRematch:InitGroups()
-        ALPTRematch:InitGroupMenu()
+        config.GroupIndexs[#config.GroupIndexs+1] = name
+        config.GroupPetIndexs[name] = {}
+
+        AutoTeam:InitGroups()
+        AutoTeam:InitGroupMenu()
     end
 end
-function ALPTRematch:RemoveGroup(name)
+function AutoTeam:RemoveGroup(name)
     config.petGroups[name] = nil
-    ALPTRematch:InitGroups()
-    ALPTRematch:InitGroupMenu()
+    config.GroupPetIndexs[name] = nil
+    local indexs = config.GroupIndexs
+    for m = 1, #indexs do
+        if indexs[m] == name then
+            table.remove(indexs,m)
+            break
+        end
+    end
+    AutoTeam:InitGroups()
+    AutoTeam:InitGroupMenu()
 end
-function ALPTRematch:GetPeGroups()
-    return config.petGroups
+function AutoTeam:GetPetGroups()
+    return config.petGroups,config.GroupIndexs,config.GroupPetIndexs
 end
 
-function ALPTRematch:AddGroupPet(group, val, petName)
+function AutoTeam:AddGroupPet(group, val, petName)
     local spId
     if petName then
         spId = val
     else
-        for petID in rematch.Roster:AllOwnedPets() do
-            local speciesID, _, _, _, _, _, _, speciesName, _, _, _, _, _, _, canBattle =
-                C_PetJournal.GetPetInfoByPetID(petID)
+        for petID in utils:AllOwnedPets() do
+            local speciesID,speciesName,canBattle = utils:GetPetSpecInfo(petID)
             if canBattle and speciesName == val then
                 spId = speciesID
                 petName = speciesName
@@ -674,7 +763,10 @@ function ALPTRematch:AddGroupPet(group, val, petName)
         local petGroup = config.petGroups[group]
         if not petGroup[spId] then
             petGroup[spId] = {1, 1, 1}
-            ALPTRematch:InitGroups()
+            local indexs = config.GroupPetIndexs[group]
+            indexs[#indexs+1] = spId
+
+            AutoTeam:InitGroups()
             print(NORMAL_FONT_COLOR_CODE .. "已添加 [" .. petName .. "] 到 [" .. group .. "]" .. FONT_COLOR_CODE_CLOSE)
         else
             print(NORMAL_FONT_COLOR_CODE .. "[" .. petName .. "] 已在组 [" .. group .. "] 中" .. FONT_COLOR_CODE_CLOSE)
@@ -684,13 +776,47 @@ function ALPTRematch:AddGroupPet(group, val, petName)
     print(RED_FONT_COLOR_CODE .. "未找到可用宠物[" .. val .. "]" .. FONT_COLOR_CODE_CLOSE)
 end
 
-function ALPTRematch:RemoveGroupPet(group, speciesID)
+function AutoTeam:RemoveGroupPet(group, speciesID)
     config.petGroups[group][speciesID] = nil
-    ALPTRematch:InitGroups()
+    local indexs = config.GroupPetIndexs[group] 
+    for m = 1, #indexs do
+        if indexs[m] == speciesID then
+            table.remove(indexs,m)
+            break
+        end
+    end
+    AutoTeam:InitGroups()
 end
-
-function ALPTRematch:InitGroups()
-    local options = ALPTRematch.options.args.petgroup
+function AutoTeam:moveGroupUp(group, speciesID)
+    local indexs = config.GroupPetIndexs[group] 
+    for m = 1, #indexs do
+        if indexs[m] == speciesID then
+            if m >1 then
+                local sp = indexs[m-1]
+                indexs[m-1] = speciesID
+                indexs[m] = sp
+            end
+            break
+        end
+    end
+    AutoTeam:InitGroups()
+end
+function AutoTeam:moveGroupDown(group, speciesID)
+    local indexs = config.GroupPetIndexs[group] 
+    for m = 1, #indexs do
+        if indexs[m] == speciesID then
+            if m < #indexs then
+                local sp = indexs[m+1]
+                indexs[m+1] = speciesID
+                indexs[m] = sp
+            end
+            break
+        end
+    end
+    AutoTeam:InitGroups()
+end
+function AutoTeam:InitGroups()
+    local options = AutoTeam.options.args.petgroup
     options.args = {
         create = {
             type = "input",
@@ -698,7 +824,7 @@ function ALPTRematch:InitGroups()
             width = "double",
             order = newOrder(),
             set = function(info, val)
-                ALPTRematch:NewGroup(val)
+                AutoTeam:NewGroup(val)
             end
         },
         desc = {
@@ -709,7 +835,10 @@ function ALPTRematch:InitGroups()
         }
     }
     petGroupSize = 0
-    for groupName, petGroup in pairs(config.petGroups) do
+
+    for m = 1, #config.GroupIndexs do
+        local groupName = config.GroupIndexs[m]
+        local petGroup = config.petGroups[groupName]
         petGroupSize = petGroupSize + 1
         local groupOptionKey = "group" .. petGroupSize
         options.args[groupOptionKey] = {
@@ -723,8 +852,8 @@ function ALPTRematch:InitGroups()
                     width = "double",
                     order = newOrder(),
                     set = function(info, val)
-                        ALPTRematch:AddGroupPet(groupName, val)
-                        ALPTRematch:updatePetGroup()
+                        AutoTeam:AddGroupPet(groupName, val)
+                        AutoTeam:updatePetGroup()
                     end
                 },
                 desc = {
@@ -738,13 +867,16 @@ function ALPTRematch:InitGroups()
                     name = "删除分组",
                     order = newOrder(),
                     func = function()
-                        ALPTRematch:RemoveGroup(groupName)
-                        ALPTRematch:updatePetGroup()
+                        AutoTeam:RemoveGroup(groupName)
+                        AutoTeam:updatePetGroup()
                     end
                 }
             }
         }
-        for speciesID, skills in pairs(petGroup) do
+        local petIndexs = config.GroupPetIndexs[groupName]
+        for n = 1, #petIndexs do
+            local speciesID = petIndexs[n]
+            local skills = petGroup[speciesID]
             local speciesName = C_PetJournal.GetPetInfoBySpeciesID(speciesID)
             local idTable = C_PetJournal.GetPetAbilityList(speciesID)
             local numCollected = C_PetJournal.GetNumCollectedInfo(speciesID)
@@ -766,7 +898,7 @@ function ALPTRematch:InitGroups()
                         end,
                         set = function(info, val)
                             skills[1] = val
-                            ALPTRematch:updatePetGroup()
+                            AutoTeam:updatePetGroup()
                         end,
                         order = newOrder()
                     },
@@ -783,7 +915,7 @@ function ALPTRematch:InitGroups()
                         end,
                         set = function(info, val)
                             skills[2] = val
-                            ALPTRematch:updatePetGroup()
+                            AutoTeam:updatePetGroup()
                         end,
                         order = newOrder()
                     },
@@ -800,7 +932,7 @@ function ALPTRematch:InitGroups()
                         end,
                         set = function(info, val)
                             skills[3] = val
-                            ALPTRematch:updatePetGroup()
+                            AutoTeam:updatePetGroup()
                         end,
                         order = newOrder()
                     },
@@ -813,10 +945,30 @@ function ALPTRematch:InitGroups()
                         type = "execute",
                         name = "从分组中移除",
                         order = newOrder(),
-                        width = "full",
+                        width = 1,
                         func = function()
-                            ALPTRematch:RemoveGroupPet(groupName, speciesID)
-                            ALPTRematch:updatePetGroup()
+                            AutoTeam:RemoveGroupPet(groupName, speciesID)
+                            AutoTeam:updatePetGroup()
+                        end
+                    },
+                    moveUp = {
+                        type = "execute",
+                        name = "上移一位",
+                        order = newOrder(),
+                        width = 1,
+                        func = function()
+                            AutoTeam:moveGroupUp(groupName, speciesID)
+                            AutoTeam:updatePetGroup()
+                        end
+                    },
+                    moveDown = {
+                        type = "execute",
+                        name = "下移一位",
+                        order = newOrder(),
+                        width = 1,
+                        func = function()
+                            AutoTeam:moveGroupDown(groupName, speciesID)
+                            AutoTeam:updatePetGroup()
                         end
                     }
                 }
@@ -825,8 +977,8 @@ function ALPTRematch:InitGroups()
     end
 end
 
-function ALPTRematch:InitMacroOptions()
-    local options = ALPTRematch.options.args.macrogroup
+function AutoTeam:InitMacroOptions()
+    local options = AutoTeam.options.args.macrogroup
     for key, macro in pairsByKeys(config.macros) do
         options.args[key] = {
             type = "group",
@@ -835,7 +987,7 @@ function ALPTRematch:InitMacroOptions()
             args = {
                 desc = {
                     type = "description",
-                    name = "宏按钮可以根据条件执行不同的命令,只能单独使用，不能将两个组合宏再组合\n" ..
+                    name = "宏按钮可以根据条件执行不同的命令,只能绑定快捷键使用，\n" ..
                         RED_FONT_COLOR_CODE .. "所有命令战斗中不会执行" .. FONT_COLOR_CODE_CLOSE,
                     width = "full",
                     order = newOrder()
@@ -850,25 +1002,7 @@ function ALPTRematch:InitMacroOptions()
                     end,
                     set = function(info, val)
                         macro.name = val
-                        ALPTRematch:InitMacroOptions()
-                    end
-                },
-                space1 = {
-                    type = "description",
-                    name = "    ",
-                    width = 0.1,
-                    order = newOrder()
-                },
-                macrocmd = {
-                    type = "input",
-                    name = "宏命令，复制后在宏命令设置里创建宏",
-                    desc = "不支持修改",
-                    width = "double",
-                    order = newOrder(),
-                    get = function()
-                        return "/click " .. key
-                    end,
-                    set = function(info, val)
+                        AutoTeam:InitMacroOptions()
                     end
                 },
                 debug = {
@@ -883,6 +1017,20 @@ function ALPTRematch:InitMacroOptions()
                         macro.debug = not macro.debug
                     end
                 },
+                macrokey = {
+                    type = "keybinding",
+                    name = "绑定快捷键",
+                    width = "2",
+                    order = newOrder(),
+                    get = function()
+                        return macro.keybinding
+                    end,
+                    set = function(info, val)
+                        macro.keybinding = val
+                        AutoTeam:UpdateMacroButton()
+                    end
+                },
+ 
                 info = {
                     type = "description",
                     name = NORMAL_FONT_COLOR_CODE .. "以下条件按顺序判断" .. FONT_COLOR_CODE_CLOSE,
@@ -900,6 +1048,7 @@ function ALPTRematch:InitMacroOptions()
                         macro.autointeract = not macro.autointeract
                     end
                 },
+                
 
                 useTdScript = {
                     type = "toggle",
@@ -914,7 +1063,19 @@ function ALPTRematch:InitMacroOptions()
                     end
                 },
 
-                
+                userHarp = {
+                    type = "toggle",
+                    name = "使用法夜竖琴",
+                    width = "full",
+                    order = newOrder(),
+                    get = function()
+                        return macro.userHarp
+                    end,
+                    set = function()
+                        macro.userHarp = not macro.userHarp
+                    end
+                },
+
                 checkItemId = {
                     type = "input",
                     name = "如果没有此物品BUFF",
@@ -933,7 +1094,7 @@ function ALPTRematch:InitMacroOptions()
                 },
                 customScript = {
                     type = "input",
-                    name = "执行此命令(输入use为使用该物品)",
+                    name = "执行此命令(输入“use”为使用该物品)",
                     desc = "输入完整的宏命令，如果太长请单独建宏来中转",
                     width = 2.5,
                     order = newOrder(),
@@ -1064,18 +1225,18 @@ function ALPTRematch:InitMacroOptions()
     end
 end
 
-function ALPTRematch:OpenOptions(window)
+function AutoTeam:OpenOptions(window)
     if InCombatLockdown() then
         return
     end
-    ALPTRematch:InitGroups()
-    ALPTRematch:InitMacroOptions()
-    AceConfigDialog:SetDefaultSize("ALPTRematch", 900, 600)
-    AceConfigDialog:Open("ALPTRematch")
+    AutoTeam:InitGroups()
+    AutoTeam:InitMacroOptions()
+    AceConfigDialog:SetDefaultSize("AutoTeam", 900, 600)
+    AceConfigDialog:Open("AutoTeam")
 end
 
-local optionButton = CreateFrame("Button", "ALPTRematchOptionButton", RematchToolbar, "SecureActionButtonTemplate")
-function ALPTRematch:ShowOptionButton()
+local optionButton = nil
+function AutoTeam:ShowOptionButton()
     if not config.showOptionButton then
         optionButton:Hide()
     else
@@ -1083,11 +1244,8 @@ function ALPTRematch:ShowOptionButton()
     end
 end
 
-
-
-
-function ALPTRematch:CheckCFG(key)
-    local cfg = settings.alpt[key]
+function AutoTeam:CheckCFG(key)
+    local cfg = utils.alpt[key]
     cfg.changed = true;
     if cfg.disabled then
       return
@@ -1113,7 +1271,7 @@ function ALPTRematch:CheckCFG(key)
     if cfg.minLvl and (cfg.minLvl[1] ~= 25 or cfg.minLvl[2] ~= 25 or cfg.minLvl[3] ~= 25) then
       return
     end
-  
+
     if cfg.useGroup and (cfg.useGroup[1] or cfg.useGroup[2] or cfg.useGroup[3]) then
       return
     end
@@ -1150,12 +1308,8 @@ function ALPTRematch:CheckCFG(key)
     cfg.changed = false;
   end
     
-  function ALPTRematch:FixTeamConfig(teamKey)
-    if not settings.alpt then
-      settings.alpt = {}
-    end
-  
-    local cfg = settings.alpt[teamKey]
+  function AutoTeam:FixTeamConfig(teamKey)
+    local cfg = utils.alpt[teamKey]
     if not cfg then
       cfg = {}
     end
@@ -1214,42 +1368,51 @@ function ALPTRematch:CheckCFG(key)
       cfg.speed[i] = cfg.speed[i] or {0, 999}
       cfg.attack[i] = cfg.attack[i] or {0, 999}
     end
-    settings.alpt[teamKey] = cfg
-    ALPTRematch:CheckCFG(teamKey)
+    utils.alpt[teamKey] = cfg
+    AutoTeam:CheckCFG(teamKey)
     return cfg
   end
+  function AutoTeam:InitOptions()
+    tcopy(config, defaultconfig)
+    tcopy(config, utils.alptconfig or defaultconfig)
+    utils:SetConfig(config)
 
-
-rematch:InitModule(
-    function()
-        saved = RematchSaved
-        settings = RematchSettings
-        tcopy(config, settings.alptconfig or defaultconfig)
-        settings.alptconfig = config
-        if not settings.alpt then
-            settings.alpt = {}
-        end
-
-        for k,v in pairs(settings.alpt) do
-            ALPTRematch:FixTeamConfig(k)
-        end
-        
-        ALPTRematch.alptconfig = config
-        LibStub("AceConfig-3.0"):RegisterOptionsTable("ALPTRematch", ALPTRematch.options)
-
-        local _, _, texture = GetSpellInfo(195112)
-        optionButton:SetPoint("TOPRIGHT", -225, 0)
-        optionButton:SetNormalTexture(texture)
-        optionButton:SetPushedTexture(texture)
-        optionButton:SetWidth(32)
-        optionButton:SetHeight(32)
-        optionButton:SetFrameLevel(1000)
-        optionButton:SetScript(
-            "OnClick",
-            function()
-                ALPTRematch:OpenOptions()
-            end
-        )
-        ALPTRematch:ShowOptionButton()
+    for k,v in pairs(utils.alpt) do
+        AutoTeam:FixTeamConfig(k)
     end
-)
+
+    petGroupSize = 0
+    if not config.GroupIndexs then
+        config.GroupIndexs  = {}
+        config.GroupPetIndexs  = {}
+        for groupName, petGroup in pairs(config.petGroups) do
+            petGroupSize = petGroupSize + 1
+            config.GroupIndexs[petGroupSize] = groupName
+            config.GroupPetIndexs[groupName] = {}
+            local idx = 0;
+            for speciesID, skills in pairs(petGroup) do
+                idx = idx + 1;
+                config.GroupPetIndexs[groupName][idx] = speciesID
+            end
+        end
+    end
+    petGroupSize = #config.GroupIndexs
+    
+    LibStub("AceConfig-3.0"):RegisterOptionsTable("AutoTeam", AutoTeam.options)
+
+    optionButton = CreateFrame("Button", "AutoTeamOptionButton", Rematch.toolbar, "RematchToolbarButtonTemplate")
+    local texture = C_Spell.GetSpellInfo(195112).iconID
+    optionButton:SetPoint("TOPLEFT", 430, 0)
+    optionButton:SetNormalTexture(texture)
+    optionButton:SetPushedTexture(texture)
+    optionButton:SetWidth(32)
+    optionButton:SetHeight(32)
+    optionButton:SetFrameLevel(1000)
+    optionButton:SetScript(
+        "OnClick",
+        function()
+            AutoTeam:OpenOptions()
+        end
+    )
+    AutoTeam:ShowOptionButton()
+  end

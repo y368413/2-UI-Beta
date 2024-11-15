@@ -5,6 +5,7 @@
 ##SavedVariables: Global_KilledList
 ##SavedVariables: Global_AutoQueue
 ##SavedVariables: Global_AutoEnter
+## DefaultState: disabled
 
 DungeonQueueHelperCore.lua
 DungeonQueueHelper.lua

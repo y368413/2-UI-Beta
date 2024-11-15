@@ -1,9 +1,7 @@
 ﻿local _, T = ...
 if T.Mark ~= 50 then return end
-local L, EV, G, api = T.L, T.Evie, T.Garrison, {}
-
-local Nine = T.Nine or _G
-local C_Garrison = Nine.C_Garrison
+local PC, L, EV, G, XU, api = T.PlanCore, T.L, T.Evie, T.Garrison, T.exUI, {}
+local GameTooltip = T.NotGameTooltip or GameTooltip
 
 local function HookOnShow(self, OnShow)
 	self:HookScript("OnShow", OnShow)
@@ -45,15 +43,8 @@ local function oncePerFrame(f)
 		end
 	end
 end
-local function dismissTooltip(self)
-	if GameTooltip:IsOwned(self) then
-		GameTooltip:Hide()
-	end
-end
 local function dismissTooltipAndHighlight(self)
-	if GameTooltip:IsOwned(self) then
-		GameTooltip:Hide()
-	end
+	T.HideOwnedGameTooltip(self)
 	self:GetParent():UnlockHighlight()
 end
 local function OpenToMission(mi, f1, f2, f3, isResume)
@@ -169,7 +160,7 @@ local GetAvailableResources do
 	end
 	function GetAvailableResources(ftID, dropCost, missions)
 		if ftID ~= ctID then
-			local n, _, r = 0, Nine.GetCurrencyInfo(ftID == 1 and GARRISON_CURRENCY or 1101)
+			local n, r = 0, C_CurrencyInfo.GetCurrencyInfo(ftID == 1 and GARRISON_CURRENCY or 1101).quantity
 			for k,v in pairs(G.GetFollowerInfo()) do
 				if v.isCombat and v.followerTypeID == ftID and (v.status == GARRISON_FOLLOWER_IN_PARTY or v.status == nil) and not T.config.ignore[v.followerID] and not G.GetFollowerTentativeMission(v.followerID) then
 					n = n + 1
@@ -307,14 +298,16 @@ local missionList = CreateFrame("Frame", "MasterPlanMissionList", GarrisonMissio
 		missionList:SetScript("OnShow", function()
 			GarrisonMissionFrameMissionsTab1:SetParent(hidden)
 			GarrisonMissionFrameMissionsTab2:SetParent(hidden)
-			GarrisonMissionFrameMissionsListScrollFrame:SetParent(hidden)
+			GarrisonMissionFrameMissions.ScrollBox:SetParent(hidden)
+			GarrisonMissionFrameMissions.ScrollBar:SetParent(hidden)
 			GarrisonMissionFrameMissions.CompleteDialog:SetParent(hidden)
-			MPCompleteAll:Click()
 		end)
 		missionList:SetScript("OnHide", function(self)
-			GarrisonMissionFrameMissionsTab1:SetParent(self:GetParent())
-			GarrisonMissionFrameMissionsTab2:SetParent(self:GetParent())
-			GarrisonMissionFrameMissionsListScrollFrame:SetParent(self:GetParent())
+			local p = self:GetParent()
+			GarrisonMissionFrameMissionsTab1:SetParent(p)
+			GarrisonMissionFrameMissionsTab2:SetParent(p)
+			GarrisonMissionFrameMissions.ScrollBox:SetParent(p)
+			GarrisonMissionFrameMissions.ScrollBar:SetParent(p)
 			GarrisonMissionFrameMissions.CompleteDialog:SetParent(GarrisonMissionFrameMissions)
 		end)
 	end
@@ -486,7 +479,7 @@ local easyDrop = CreateFrame("Frame", "MPDropDown", nil, "UIDropDownMenuTemplate
 		self:Close()
 		hoverFocus:Open(owner, DropDownList1, checkMenu, closeEasyDrop)
 		self.owner, self.closeOwner, self.openOwner, self.closeGrace = owner
-		EasyMenu(menu, self, "cursor", 9000, 9000, "MENU", 4)
+		T.EasyMenu(menu, self, "cursor", 9000, 9000, "MENU", 4)
 		DropDownList1:ClearAllPoints()
 		DropDownList1:SetPoint(...)
 	end
@@ -759,7 +752,7 @@ local activeUI = CreateFrame("Frame", nil, missionList) do
 			for i=1,#self.items do
 				local ii = self.items[i]
 				if ii.itemID and ii:IsShown() then
-					ii:SetIcon(select(10, GetItemInfo(ii.itemID)) or GetItemIcon(ii.itemID) or "Interface\\Icons\\Temp")
+					ii:SetIcon(C_Item.GetItemIconByID(ii.itemID) or "Interface\\Icons\\Temp")
 				end
 			end
 		end)
@@ -896,9 +889,9 @@ local activeUI = CreateFrame("Frame", nil, missionList) do
 				local link
 				if not IsModifiedClick("CHATLINK") then
 				elseif self.itemID then
-					link = select(2, GetItemInfo(self.itemID))
+					link = select(2, C_Item.GetItemInfo(self.itemID))
 				elseif self.currencyID and self.currencyID > 0 then
-					link = Nine.GetCurrencyLink(self.currencyID, tonumber(self.Quantity:GetText() or 1) or 1)
+					link = C_CurrencyInfo.GetCurrencyLink(self.currencyID, tonumber(self.Quantity:GetText() or 1) or 1)
 				end
 				if link then
 					ChatEdit_InsertLink(link)
@@ -914,14 +907,14 @@ local activeUI = CreateFrame("Frame", nil, missionList) do
 				i.Icon = i:CreateTexture(nil, "ARTWORK")
 				i.Icon:SetPoint("TOPLEFT", 3*46/64, -3*46/64)
 				i.Icon:SetPoint("BOTTOMRIGHT", -3*46/64, 3*46/64)
-				i.Border = i:CreateTexture(nil, "ARTWORK", 2)
+				i.Border = i:CreateTexture(nil, "ARTWORK", nil, 2)
 				i.Border:SetAllPoints()
 				i.Border:SetTexture("Interface\\Buttons\\UI-Quickslot2")
 				i.Border:SetTexCoord(12/64,52/64,12/64,52/64)
 				i.Quantity = i:CreateFontString(nil, "OVERLAY", "GameFontHighlightOutline")
 				i.Quantity:SetPoint("BOTTOMRIGHT", -3, 4)
 				i:SetScript("OnEnter", OnEnter)
-				i:SetScript("OnLeave", dismissTooltip)
+				i:SetScript("OnLeave", T.HideOwnedGameTooltip)
 				i:SetScript("OnClick", OnClick)
 				self[k], i.SetIcon = i, SetIcon
 				return i
@@ -951,18 +944,18 @@ local activeUI = CreateFrame("Frame", nil, missionList) do
 		for k,v in pairs(rewards) do
 			local quantity, icon, tooltipHeader, tooltipText, _, tooltipExtra = v.quantity
 			if v.itemID then
-				icon, tooltipExtra = select(10, GetItemInfo(v.itemID)) or GetItemIcon(v.itemID) or "Interface\\Icons\\Temp", v.itemID == 120205 and rewards.xp and rewards.xp.playerXP and XP_GAIN:format(BreakUpLargeNumbers(rewards.xp.playerXP)) or nil
+				icon, tooltipExtra = C_Item.GetItemIconByID(v.itemID) or "Interface\\Icons\\Temp", v.itemID == 120205 and rewards.xp and rewards.xp.playerXP and XP_GAIN:format(BreakUpLargeNumbers(rewards.xp.playerXP)) or nil
 			elseif v.currencyID == 0 then
 				icon, tooltipHeader, tooltipText = "Interface\\Icons\\INV_Misc_Coin_02", GARRISON_REWARD_MONEY, GetMoneyString(v.quantity)
 				quantity = floor(quantity/10000)
 			elseif v.currencyID then
-				_, _, icon = Nine.GetCurrencyInfo(v.currencyID)
+				icon = C_CurrencyInfo.GetBasicCurrencyInfo(v.currencyID).icon
 			end
 			if icon then
 				local ib = lootContainer.items[ni]
 				ib:SetPoint("CENTER", lootContainer.followers[fn], "CENTER", 0, 4)
 				ib:SetIcon(icon)
-				ib.Quantity:SetText(quantity > 1 and quantity)
+				ib.Quantity:SetText(quantity > 1 and quantity or "")
 				ib.itemID, ib.currencyID, ib.tooltipHeader, ib.tooltipText, ib.tooltipExtra = v.itemID, v.currencyID, tooltipHeader, tooltipText, tooltipExtra
 				ib:Show()
 				ni, fn = ni + 1, fn + 1
@@ -990,7 +983,6 @@ local activeUI = CreateFrame("Frame", nil, missionList) do
 		
 		lootContainer.nothing:SetShown(ni == 1 and fn == 1)
 		lootFrame:Show()
-		MPLootSummaryDone:Click()		
 	end
 end
 local availUI = CreateFrame("Frame", nil, missionList) do
@@ -1034,8 +1026,29 @@ local availUI = CreateFrame("Frame", nil, missionList) do
 				local m = menu[i]
 				sortOrders[m.arg1], m.checked, m.func = m.text, isChecked, MasterPlan.SetMissionOrder
 			end
-			
+			local syncExternalPriority do
+				local insertExternalAt = #menu+1
+				function syncExternalPriority()
+					local n = PC:GetNumMissionPriorityOptions()
+					if n == 0 then
+						return
+					end
+					menu[insertExternalAt] = menu[insertExternalAt] or {separator=true}
+					if n > 1 then
+						menu[insertExternalAt+1] = {text=L"Use external order", isTitle=true, notCheckable=true}
+						menu[insertExternalAt+2] = {text=L"None", arg1=false, checked=PC:IsActiveMissionPriorityCallback(false), func=PC.SetMissionPriorityCallback}
+						local ni = insertExternalAt+3
+						for k, n, active in PC.AllMissionPriorityCallbacks do
+							menu[ni], ni = {arg1=k, text=n, checked=active, func=PC.SetMissionPriorityCallback}, ni + 1
+						end
+					else
+						local extActive = PC:IsActiveMissionPriorityCallback()
+						menu[insertExternalAt+1] = {text=L"Use external order", checked=extActive, arg1=not extActive and '', func=PC.SetMissionPriorityCallback, isNotRadio=true}
+					end
+				end
+			end
 			sortIndicator:SetScript("OnClick", function(self)
+				syncExternalPriority()
 				easyDrop:Toggle(self, menu, "TOPLEFT", self, "BOTTOMLEFT", -24, -3)
 			end)
 			sortIndicator:SetScript("OnEnter", function(self)
@@ -1088,7 +1101,7 @@ local availUI = CreateFrame("Frame", nil, missionList) do
 				easyDrop:Toggle(self, menu, "TOPLEFT", self, "BOTTOMLEFT", -24, -3)
 				showHint()
 			end)
-			horizon.OnEasyDropHide = dismissTooltip
+			horizon.OnEasyDropHide = T.HideOwnedGameTooltip
 			horizon:SetScript("OnEnter", function(self)
 				easyDrop:DelayOpenClick(self)
 				showHint()
@@ -1109,7 +1122,7 @@ local availUI = CreateFrame("Frame", nil, missionList) do
 	availUI:SetScript("OnShow", function(self)
 		missionList.ctlContainer:Steal(self, ctl)
 		RefreshAvailMissionsView(true)
-		self.notebook:SetShown(GetItemCount(self.notebook.itemID) > 0)
+		self.notebook:SetShown(C_Item.GetItemCount(self.notebook.itemID) > 0)
 	end)
 	local roamingParty = CreateFrame("Frame", nil, availUI) do
 		roamingParty:SetPoint("BOTTOMRIGHT", availUI, "BOTTOM", 106, -2)
@@ -1204,9 +1217,7 @@ local availUI = CreateFrame("Frame", nil, missionList) do
 		end
 		local function Roamer_OnLeave(self)
 			GarrisonFollowerTooltip:Hide()
-			if GameTooltip:IsOwned(self) then
-				GameTooltip:Hide()
-			end
+			T.HideOwnedGameTooltip(self)
 		end
 		local function RoamerMenu_OnMouse(self, _, id)
 			if self and id then
@@ -1219,9 +1230,7 @@ local availUI = CreateFrame("Frame", nil, missionList) do
 			end
 		end
 		local function Roamer_OnClick(self, button)
-			if GameTooltip:IsOwned(self) then
-				GameTooltip:Hide()
-			end
+			T.HideOwnedGameTooltip(self)
 			if button == "RightButton" then
 				Roamer_SetFollower(nil, self:GetID(), nil)
 				GarrisonFollowerTooltip:Hide()
@@ -1273,7 +1282,7 @@ local availUI = CreateFrame("Frame", nil, missionList) do
 		b:SetPoint("BOTTOM", -64, 5)
 		b:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 		b:Hide()
-		b:SetScript("OnLeave", dismissTooltip)
+		b:SetScript("OnLeave", T.HideOwnedGameTooltip)
 		b:SetScript("OnEnter", function(self)
 			if G.GetNumPendingMissionStarts() > 0 or G.GetTentativePartyCount(1) == 0 then return end
 			GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
@@ -1306,7 +1315,7 @@ local availUI = CreateFrame("Frame", nil, missionList) do
 				end
 				rewards.xp, rewards[0] = nil
 				for cid, cq in pairs(rewards) do
-					rtext = rtext .. "  " .. floor(cq) .. " |T" .. (select(3,Nine.GetCurrencyInfo(cid)) or "Interface/Icons/Temp") .. ":12:12:0:0:64:64:4:60:4:60|t"
+					rtext = rtext .. "  " .. floor(cq) .. " |T" .. (C_CurrencyInfo.GetCurrencyInfo(cid).iconFileID or "Interface/Icons/Temp") .. ":12:12:0:0:64:64:4:60:4:60|t"
 				end
 				if rtext ~= "" then
 					GameTooltip:AddDoubleLine(L"Expected rewards:", rtext, nil, nil, nil, 1,1,1)
@@ -1429,7 +1438,7 @@ local interestUI = CreateFrame("Frame", nil, missionList) do
 				GameTooltip:Show()
 				easyDrop:Close()
 			end)
-			b:SetScript("OnLeave", dismissTooltip)
+			b:SetScript("OnLeave", T.HideOwnedGameTooltip)
 		end
 		interestUI.stackMode = CreateFrame("Button", nil, ctl) do
 			local b = interestUI.stackMode
@@ -1460,7 +1469,7 @@ local interestUI = CreateFrame("Frame", nil, missionList) do
 				GameTooltip:Show()
 				easyDrop:Close()
 			end)
-			b:SetScript("OnLeave", dismissTooltip)
+			b:SetScript("OnLeave", T.HideOwnedGameTooltip)
 		end
 		interestUI.interestSet = CreateFrame("Button", nil, ctl) do
 			local b = interestUI.interestSet
@@ -1520,9 +1529,10 @@ local interestUI = CreateFrame("Frame", nil, missionList) do
 					if (not mi.text or mi.placeholder) then
 						local key, name, ico, _ = mi.arg1
 						if key > 2e3 then
-							name, ico = GetItemInfo(key), GetItemIcon(key)
+							name, ico = C_Item.GetItemNameByID(key), C_Item.GetItemIconByID(key)
 						else
-							name, _, ico = Nine.GetCurrencyInfo(key)
+							local ci = C_CurrencyInfo.GetBasicCurrencyInfo(key)
+							name, ico = ci.name, ci.icon
 						end
 						mi.text, mi.placeholder = "|T" .. (ico or "Interaface\\Icons\\INV_Misc_QuestionMark") .. ":16:16:0:0:64:64:4:60:4:60|t " .. (name or ("#" .. key)), not name or nil
 					end
@@ -1532,7 +1542,7 @@ local interestUI = CreateFrame("Frame", nil, missionList) do
 			b:SetScript("OnEnter", function(self)
 				easyDrop:DelayOpenClick(self)
 			end)
-			b:SetScript("OnLeave", dismissTooltip)
+			b:SetScript("OnLeave", T.HideOwnedGameTooltip)
 		end
 	end
 	interestUI:SetScript("OnShow", function(self)
@@ -1545,19 +1555,19 @@ do -- tabs
 	local availTab, followerTab = GarrisonMissionFrameTab1, GarrisonMissionFrameTab2
 	local interestTab = CreateFrame("Button", "GarrisonMissionFrameTab4", GarrisonMissionFrame, "GarrisonMissionFrameTabTemplate", 1)
 	missionList.activeTab, missionList.availTab, missionList.interestTab, missionList.followerTab = activeTab, availTab, interestTab, followerTab
-	activeTab:SetPoint("LEFT", availTab, "RIGHT", -5, 0)
-	interestTab:SetPoint("LEFT", activeTab, "RIGHT", -5, 0)
+	activeTab:SetPoint("LEFT", availTab, "RIGHT", 5, 0)
+	interestTab:SetPoint("LEFT", activeTab, "RIGHT", 5, 0)
 	activeTab.Pulse = activeTab:CreateAnimationGroup() do
-		local function cloneTexture(parent, key)
+		local function cloneTexture(parent, key, key2)
 			local t, o = parent:CreateTexture(nil, "BORDER"), parent[key]
 			t:SetTexture(o:GetTexture())
 			t:SetTexCoord(o:GetTexCoord())
-			t:SetAllPoints(o)
+			t:SetAllPoints(parent[key2] or o)
 			t:SetBlendMode(o:GetBlendMode())
 			return t
 		end
-		activeTab.p1, activeTab.p2 = cloneTexture(activeTab, "LeftHighlight"), cloneTexture(activeTab, "RightHighlight")
-		activeTab.p3, activeTab.p4 = cloneTexture(activeTab, "MiddleHighlight"), activeTab:CreateTexture(nil, "BACKGROUND", nil, 1)
+		activeTab.p1, activeTab.p2 = cloneTexture(activeTab, "LeftHighlight", "Left"), cloneTexture(activeTab, "RightHighlight", "Right")
+		activeTab.p3, activeTab.p4 = cloneTexture(activeTab, "MiddleHighlight", "Middle"), activeTab:CreateTexture(nil, "BACKGROUND", nil, 1)
 		activeTab.p4:SetPoint("TOPLEFT", activeTab.p3, "TOPLEFT", -16, -1)
 		activeTab.p4:SetPoint("BOTTOMRIGHT", activeTab.p3, "BOTTOMRIGHT", 6, 12)
 		activeTab.p4:SetTexture("Interface\\Buttons\\UI-ListBox-Highlight")
@@ -1570,7 +1580,7 @@ do -- tabs
 			local ap = ag:CreateAnimation("Alpha")
 			ap:SetDuration(1.25)
 			ap:SetFromAlpha(0)
-			ap:SetToAlpha(i < 4 and 0.5 or 0.2)
+			ap:SetToAlpha(i < 4 and 0.35 or 0.2)
 			ap:SetChildKey("p" .. i)
 		end
 		ag:Play()
@@ -1601,6 +1611,8 @@ do -- tabs
 		end
 	end
 	local updateMissionTabs = oncePerFrame(function()
+		GarrisonMissionFrameTab2:ClearAllPoints()
+		GarrisonMissionFrameTab2:SetPoint("LEFT", interestTab, "RIGHT", 5, 0)
 		local cm = GarrisonMissionFrame.MissionComplete.completeMissions
 		activeTab:SetFormattedText(L"Active Missions (%d)", math.max(#GarrisonMissionFrameMissions.inProgressMissions, cm and #cm or 0))
 		availTab:SetFormattedText(L"Available Missions (%d)", #GarrisonMissionFrameMissions.availableMissions)
@@ -1778,61 +1790,34 @@ activeUI.CompleteAll:SetScript("OnClick", function(_, button)
 end)
 
 local core do
+	local function isMouseFocusableDescendent(self, ctx)
+		local p = self.GetScript and self.IsMouseMotionEnabled and self:IsMouseMotionEnabled()
+		      and (self.IsEnabled == nil or self:IsEnabled() or self.GetMotionScriptsWhileDisabled and self:GetMotionScriptsWhileDisabled())
+		      and self:GetScript("OnEnter") and self
+		while p and p ~= ctx and not (p.IsForbidden and p:IsForbidden()) and p.GetParent do
+			p = p:GetParent()
+		end
+		return ctx and p == ctx
+	end
 	function api.createScrollList(parent, w, h)
 		local core, int, h = {}, {view={}}, h or 541
 		local sf, sc, bar = CreateFrame("ScrollFrame", nil, parent) do
 			sf:SetSize(w, h)
 			sf:SetPoint("CENTER")
-			bar = CreateFrame("Slider", nil, sf) do
-				bar:SetWidth(19)
-				bar:SetPoint("TOPRIGHT", 0, -6)
-				bar:SetPoint("BOTTOMRIGHT", 0, 8)
-				bar:SetThumbTexture("Interface\\Buttons\\UI-ScrollBar-Knob")
-				bar:GetThumbTexture():SetSize(18, 24)
-				bar:GetThumbTexture():SetTexCoord(0.20, 0.80, 0.125, 0.875)
+			bar = XU:Create("ScrollBar", nil, sf) do
+				bar:SetStyle("common")
+				bar:SetPoint("TOPRIGHT", 0, 6)
+				bar:SetPoint("BOTTOMRIGHT", 0, -8)
+				bar:SetWindowRange(h)
 				bar:SetMinMaxValues(0, 100)
 				bar:SetValue(0)
-				local bg = bar:CreateTexture(nil, "BACKGROUND")
-				bg:SetPoint("TOPLEFT", 0, 16)
-				bg:SetPoint("BOTTOMRIGHT", 0, -14)
-				bg:SetColorTexture(0,0,0)
-				bg:SetAlpha(0.85)
-				local top = bar:CreateTexture(nil, "ARTWORK")
-				top:SetSize(24, 48)
-				top:SetPoint("TOPLEFT", -4, 17)
-				top:SetTexture("Interface\\PaperDollInfoFrame\\UI-Character-ScrollBar")
-				top:SetTexCoord(0, 0.45, 0, 0.20)
-				local bot = bar:CreateTexture(nil, "ARTWORK")
-				bot:SetSize(24, 64)
-				bot:SetPoint("BOTTOMLEFT", -4, -15)
-				bot:SetTexture("Interface\\PaperDollInfoFrame\\UI-Character-ScrollBar")
-				bot:SetTexCoord(0.515625, 0.97, 0.1440625, 0.4140625)
-				local mid = bar:CreateTexture(nil, "ARTWORK")
-				mid:SetPoint("TOPLEFT", top, "BOTTOMLEFT")
-				mid:SetPoint("BOTTOMRIGHT", bot, "TOPRIGHT")
-				mid:SetTexture("Interface\\PaperDollInfoFrame\\UI-Character-ScrollBar")
-				mid:SetTexCoord(0, 0.45, 0.1640625, 1)
-				local function Move(self)
-					if int.props then
-						bar:SetValue(bar:GetValue() - (2-self:GetID()) * int.props.entryHeight)
-					end
-				end
-				local up = CreateFrame("Button", nil, bar, "UIPanelScrollUpButtonTemplate", 1)
-				up:SetPoint("BOTTOM", bar, "TOP", 0, -2)
-				local down = CreateFrame("Button", nil, bar, "UIPanelScrollDownButtonTemplate", 3)
-				down:SetPoint("TOP", bar, "BOTTOM", 0, 2)
-				up:SetScript("OnClick", Move)
-				down:SetScript("OnClick", Move)
-				sf:SetScript("OnMouseWheel", function(_, direction)
-					(direction == 1 and up or down):Click()
-				end)
-				bar:SetScript("OnValueChanged", function(self, v, _isUserInteraction)
-					local _, x = self:GetMinMaxValues()
+				bar:SetCoverTarget(sf, 0, 30, 0, 0)
+				bar:SetStepsPerPage(4)
+				bar:SetWheelScrollTarget(sf)
+				bar:SetScript("OnValueChanged", function(_self, v, _isUserInteraction)
 					int:Update(v, true)
-					up:SetEnabled(v > 0)
-					down:SetEnabled(v < x)
 				end)
-				sf.Bar, bar.Up, bar.Down = bar, up, down
+				sf.Bar = bar
 			end
 			sc = CreateFrame("Frame", nil, sf) do
 				sc:SetSize(w-2, h+10)
@@ -1853,7 +1838,7 @@ local core do
 					if timeLeft < 0 then
 						fadeInFinish()
 					else
-						sc:SetAlpha(cos(timeLeft*360))
+						sc:SetAlpha(math.max(0, cos(timeLeft*360)))
 					end
 				end
 				function missionList.FadeIn.Play()
@@ -1878,9 +1863,7 @@ local core do
 			if not self.props then return end
 			if bar:GetValue() ~= ofs then return bar:SetValue(ofs) end
 			local entryHeight, bot, w = self.props.entryHeight, ofs + sf:GetHeight(), self.props.widgets
-			local baseIndex = (ofs - ofs % entryHeight) / entryHeight
-			local maxIndex = (bot + entryHeight - bot % entryHeight) / entryHeight
-
+			local baseIndex, maxIndex = math.floor(ofs/entryHeight), math.floor(bot/entryHeight) + 1
 			local minIndex, maxIndex, childLevel = max(1, baseIndex), min(#self.data, maxIndex), sc:GetFrameLevel()+1
 			Release(minIndex, maxIndex)
 			for i=minIndex,maxIndex do
@@ -1898,10 +1881,10 @@ local core do
 					f:Show()
 				end
 			end
-			local mf = T.GetMouseFocus()
-			local oe = mf and T.IsDescendantOf(mf, sc) and mf:GetScript("OnEnter")
-			if mf and oe and mf.IsEnabled and mf:IsEnabled() then
-				oe(mf)
+			local mfd = T.GetMouseFocus(isMouseFocusableDescendent, sc, false)
+			local oe = mfd and mfd.GetScript and mfd:GetScript("OnEnter")
+			if oe then
+				securecall(oe, mfd)
 			end
 		end
 
@@ -1914,7 +1897,8 @@ local core do
 			if data and propsHandle then
 				local mv = max(0, 3 + propsHandle.entryHeight * #data - sf:GetHeight())
 				bar:SetMinMaxValues(0, mv > 10 and mv or 0)
-				bar:GetScript("OnValueChanged")(bar, reset and 0 or bar:GetValue(), false)
+				bar:SetValueStep(propsHandle.entryHeight)
+				bar:SetValue(reset and 0 or bar:GetValue(), true)
 			else
 				bar:SetMinMaxValues(0, 0)
 			end
@@ -1953,21 +1937,21 @@ do -- CreateMissionButton
 	local CreateRewards do
 		local function Reward_OnEnter(self)
 			if self.itemID then
-				GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+				GameTooltip:SetOwner(self, "ANCHOR_LEFT")
 				G.SetItemTooltip(GameTooltip, self.itemID)
 			elseif self.tooltipTitle and self.tooltipText then
-				GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+				GameTooltip:SetOwner(self, "ANCHOR_LEFT")
 				GameTooltip:AddLine(self.tooltipTitle)
 				GameTooltip:AddLine(self.tooltipText, 1,1,1,1)
 				if self.tooltipTitle == GARRISON_REWARD_MONEY then
 					G.SetCurrencyTraitTip(GameTooltip, 0, self.followerType)
 				end
 			elseif self.currencyID then
-				GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+				GameTooltip:SetOwner(self, "ANCHOR_LEFT")
 				GameTooltip:SetCurrencyByID(self.currencyID)
 				G.SetCurrencyTraitTip(GameTooltip, self.currencyID, self.followerType)
 			elseif self.bonusAbilityID and self.bonusInfo then
-				GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+				GameTooltip:SetOwner(self, "ANCHOR_LEFT")
 				GameTooltip:SetText(self.bonusInfo.name)
 				GameTooltip:AddLine(self.bonusInfo.description, 1,1,1,1)
 				GameTooltip:AddLine(" ")
@@ -1988,15 +1972,15 @@ do -- CreateMissionButton
 			if self.canIgnore and button == "RightButton" then
 				local wasIgnored = self.isIgnored
 				MasterPlan:SetRewardIgnore(self.canIgnore, not wasIgnored or nil, IsAltKeyDown())
-				if wasIgnored and MasterPlan:IsRewardIgnored(self.canIgnore) then
+				if wasIgnored and PC:IsRewardIgnored(self.canIgnore) then
 					MasterPlan:SetRewardIgnore(self.canIgnore, false, IsAltKeyDown())
 				end
 			elseif IsModifiedClick("CHATLINK") then
 				local qt, text, _ = self.quantity:GetText()
 				if self.itemID then
-					_, text = GetItemInfo(self.itemID)
+					_, text = C_Item.GetItemInfo(self.itemID)
 				elseif self.currencyID and self.currencyID ~= 0 then
-					text = Nine.GetCurrencyLink(self.currencyID, qt or 0)
+					text = C_CurrencyInfo.GetCurrencyLink(self.currencyID, qt or 0)
 				elseif self.tooltipTitle then
 					text = self.tooltipTitle
 				end
@@ -2131,7 +2115,7 @@ do -- CreateMissionButton
 		t:SetTexCoord(1,0, 1,0)
 		t = b:CreateTexture(nil, "HIGHLIGHT", nil, 1)
 		t:SetAtlas("GarrMission_ListGlow-Highlight")
-		t:SetGradient("VERTICAL", 0.5, 0.5, 0.5, 1,1,1)
+		t:SetGradient("VERTICAL", {r=0.5,g=0.5,b=0.5,a=1}, {r=1,g=1,b=1,a=1})
 		t:SetPoint("TOPLEFT") t:SetPoint("TOPRIGHT")
 		t:SetHeight(30/44*h) -- SCALE
 		t = b:CreateTexture(nil, "BACKGROUND", nil, 5)
@@ -2157,7 +2141,7 @@ do -- CreateMissionButton
 		t, b.veil = t:CreateTexture(nil, "OVERLAY", nil, -1), t
 		t:SetAllPoints(b)
 		t:SetColorTexture(1,1,1)
-		t:SetGradient("VERTICAL", 0.8, 0.8, 0.8, 0.6, 0.6, 0.6)
+		t:SetGradient("VERTICAL", {r=0.8,g=0.8,b=0.8,a=1}, {r=0.6,g=0.6,b=0.6,a=1})
 		t:SetBlendMode("MOD")
 		
 		b.veil.tex, b.rewards = t, CreateRewards(b, 32/44*h)
@@ -2292,6 +2276,9 @@ local GroupButtonBase = {} do
 			if g then
 				G.SetGroupTooltip(GameTooltip, g, mi)
 				if canSetTentative then
+					if C_Garrison.IsAboveFollowerSoftCap(1) then
+						GameTooltip:AddLine(GARRISON_MAX_FOLLOWERS_MISSION_TOOLTIP, 1, 0, 0, 1)
+					end
 					GameTooltip:AddLine("|TInterface\\TUTORIALFRAME\\UI-TUTORIAL-FRAME:14:12:0:-1:512:512:10:70:330:410|t " .. L"Set tentative party", 0.5, 0.8, 1)
 				end
 			else
@@ -2308,7 +2295,7 @@ local GroupButtonBase = {} do
 		elseif ec > 0 and et == 1101 then
 			text = ("%d|TInterface\\Garrison\\GarrisonCurrencyIcons:0:0:0:2:128:128:70:104:68:104|t"):format(ec)
 		elseif ec > 0 and et == 823 then
-			text = ec .. " |T" .. select(3,Nine.GetCurrencyInfo(et)) .. ":0:0:0:1:64:64:4:60:4:60|t"
+			text = ec .. " |T" .. C_CurrencyInfo.GetBasicCurrencyInfo(et).icon .. ":0:0:0:1:64:64:4:60:4:60|t"
 		elseif ec >= 1e4 and et == 0 and G.HasSignificantRewards(mi) == "gold" then
 			text = GetMoneyString(ec - ec % 1e4)
 		else
@@ -2417,7 +2404,7 @@ do -- activeMissionsHandle
 			t:SetDuration(0.2)
 			t = g:CreateAnimation("Scale")
 			t:SetChildKey("banner")
-			t:SetFromScale(0.3, 1) t:SetToScale(1, 1)
+			t:SetScaleFrom(0.3, 1) t:SetScaleTo(1, 1)
 			t:SetDuration(0.4)
 			t = g:CreateAnimation("Alpha")
 			t:SetChildKey("banner")
@@ -2524,8 +2511,8 @@ do -- activeMissionsHandle
 						quant = abridge(quant)
 					end
 				elseif v.itemID then
-					local _, _, q, l, _, _, _, _, _, tex = GetItemInfo(v.itemID)
-					l, icon = T.CrateLevels[v.itemID] or l, tex or GetItemIcon(v.itemID)
+					local _, _, q, l, _, _, _, _, _, tex = C_Item.GetItemInfo(v.itemID)
+					l, icon = T.CrateLevels[v.itemID] or l, tex or C_Item.GetItemIconByID(v.itemID)
 					if v.quantity == 1 and q and l and l > 500 then
 						quant = ITEM_QUALITY_COLORS[q].hex .. l
 					end
@@ -2747,8 +2734,8 @@ do -- availMissionsHandle
 				elseif v.currencyID then
 					r.canIgnore = "c:" .. v.currencyID
 				elseif v.itemID then
-					local _, _, q, l, _, _, _, _, _, tex = GetItemInfo(v.itemID)
-					r.canIgnore, icon, l = "i:" .. v.itemID, tex or GetItemIcon(v.itemID), T.CrateLevels[v.itemID] or l
+					local _, _, q, l, _, _, _, _, _, tex = C_Item.GetItemInfo(v.itemID)
+					r.canIgnore, icon, l = "i:" .. v.itemID, tex or C_Item.GetItemIconByID(v.itemID), T.CrateLevels[v.itemID] or l
 					if v.quantity == 1 and q and l and l > 40 then
 						quant = ITEM_QUALITY_COLORS[q].hex .. l
 						if G.IsLevelAppropriateToken(v.itemID) then
@@ -2758,7 +2745,7 @@ do -- availMissionsHandle
 						end
 					end
 				end
-				if r.canIgnore and not isIgnored and MasterPlan:IsRewardIgnored(r.canIgnore) then
+				if r.canIgnore and not isIgnored and PC:IsRewardIgnored(r.canIgnore) then
 					r.isIgnored = true
 				end
 				r.quantity:SetText(quant or "")
@@ -2779,10 +2766,11 @@ do -- availMissionsHandle
 		end
 		
 		local cinfo, finfo, mlvl = G.GetCounterInfo(), G.GetFollowerInfo(), G.GetFMLevel(d)
-		local enemies, ename, edesc, etex, _ = d.enemies, d.envName, d.envDescription, d.envTexture
+		local enemies, ename, edesc, etex = d.enemies, d.envName, d.envDescription, d.envTexture
 		if not (enemies and ename and edesc and etex) then
-			_, _, ename, edesc, etex, _, _, enemies = C_Garrison.GetMissionInfo(d.missionID)
-			d.enemies, d.envName, d.envDescription, d.envTexture = enemies, ename, edesc, etex
+			local mdi = C_Garrison.GetMissionDeploymentInfo(d.missionID)
+			d.enemies, d.envName, d.envDescription, d.envTexture = mdi.enemies, mdi.environment, mdi.environmentDesc, mdi.environmentTexture
+			enemies, ename, edesc, etex = d.enemies, d.envName, d.envDescription, d.envTexture
 		end
 		local nt, tt, used = 1, self.threats, wipe(used) or used
 		for i=1,#enemies do
@@ -2842,7 +2830,7 @@ do -- availMissionsHandle
 			local order, horizon = T.config.availableMissionSort, T.config.timeHorizon
 			local field = fields[order] or 1
 			local naf = C_Garrison.GetNumActiveFollowers(1)
-			local groupCache = naf <= 25 and G.GetSuggestedGroupsForAllMissions(1, order, roamingParty:GetFollowers()) or {}
+			local groupCache = naf <= 27 and G.GetSuggestedGroupsForAllMissions(1, order, roamingParty:GetFollowers()) or {}
 			local checkReq = (nf < 3 or nr < 100) and T.config.availableMissionSort ~= "expire"
 			local p1, p2, p3 = api.roamingParty:GetFollowers()
 			p1 = not (p2 and p3) and p1
@@ -2853,9 +2841,9 @@ do -- availMissionsHandle
 				end
 			end
 			
-			local _, resq = Nine.GetCurrencyInfo(824)
+			local resq = C_CurrencyInfo.GetCurrencyInfo(824).quantity
 			cw[824] = resq < 3e3 and 10 or (resq < 7e3 and 6 or 3)
-			local _, oilq = Nine.GetCurrencyInfo(1101)
+			local oilq = C_CurrencyInfo.GetCurrencyInfo(1101).quantity
 			cw[1101] = C_Garrison.HasShipyard() and (oilq < 1e3 and 11 or 2) or 1
 			cw[823], cw[0], cw.minor = 4, 5, 1.5
 			
@@ -2887,10 +2875,10 @@ do -- availMissionsHandle
 					mi.ord0 = -2
 				elseif checkReq and mi.numFollowers > (nf + tc) or (mi.cost > nr) then
 					mi.ord0 = -3
-				elseif MasterPlan:IsMissionIgnored(mi) then
+				elseif PC:IsMissionIgnored(mi) then
 					mi.ord0 = -1
 				else
-					mi.ord0 = 0
+					mi.ord0 = PC:GetMissionPriority(mid)
 				end
 			end
 			table.sort(missions, cmp)
@@ -2961,7 +2949,7 @@ do -- availMissionsHandle
 		end
 	end
 	function EV:MP_SETTINGS_CHANGED(s)
-		if s == "availableMissionSort" or s == "timeHorizon" or s == "missionIgnore" then
+		if s == "availableMissionSort" or s == "timeHorizon" or s == "missionIgnore" or s == "extPriorityKey" then
 			availMissionsHandle:Refresh(true)
 		end
 	end
@@ -2989,7 +2977,7 @@ do -- interestMissionsHandle
 		t:SetPoint("CENTER")
 		b.Border, b.info = t, {}
 		b:SetScript("OnEnter", Threat_OnEnter)
-		b:SetScript("OnLeave", dismissTooltip)
+		b:SetScript("OnLeave", T.HideOwnedGameTooltip)
 		return b
 	end
 	local function SetThreat(self, level, tid, _, icon)
@@ -3003,35 +2991,11 @@ do -- interestMissionsHandle
 			GarrisonMissionFrame.FollowerTab.followerList:ShowFollower(fid)
 			GarrisonMissionFrameTab2:Click()
 			EV("MP_FORCE_FOLLOWER_TAB", fid)
-			local fl, idx, btn = GarrisonMissionFrameFollowers.followers do
-				for i=1,#fl do
-					if fl[i].followerID == fid then
-						idx = i
-						break
+			GarrisonMissionFrameFollowers.ScrollBox:ScrollToElementDataByPredicate(function(a)
+					if a.follower.followerID == fid then
+						return true
 					end
-				end
-				if idx then
-					local fl = GarrisonMissionFrameFollowers.followersList
-					for j=1,2 do
-						for i=1,#fl do
-							if fl[i] == idx then
-								btn = i
-								break
-							end
-						end
-						if btn then
-							break
-						else
-							GarrisonMissionFrameFollowers.SearchBox:SetText("")
-						end
-					end
-				end
-			end
-			if btn then
-				local v = 62*btn - 62
-				GarrisonMissionFrameFollowersListScrollFrameScrollBar:SetValue(v)
-				HybridScrollFrame_SetOffset(GarrisonMissionFrameFollowersListScrollFrame, v)
-			end
+				end, 0.05)
 		end
 	end
 	local function InterestFollower_OnEnter(self, info)
@@ -3298,11 +3262,11 @@ do -- interestMissionsHandle
 			local rq = d[3] * (1 + (best and best[4] or 0))
 			r.currencyID, r.itemID, r.tooltipTitle, r.tooltipText = rt
 			r.quantity:SetText(rq > 1 and rq or "")
-			r.icon:SetTexture((select(3,Nine.GetCurrencyInfo(rt))))
+			r.icon:SetTexture(C_CurrencyInfo.GetBasicCurrencyInfo(rt).icon)
 		else
 			r.itemID, r.currencyID, r.tooltipTitle, r.tooltipText = rt
 			r.quantity:SetText(d[3] > 1 and d[3] or "")
-			r.icon:SetTexture(select(10, GetItemInfo(r.itemID)) or GetItemIcon(r.itemID) or "Interface/Icons/Temp")
+			r.icon:SetTexture(C_Item.GetItemIconByID(r.itemID) or "Interface/Icons/Temp")
 		end
 		r:Show()
 	end
@@ -3461,8 +3425,11 @@ do -- Ships
 	end
 	local ShipMission_OnEnter do
 		local tipGroup = GarrisonShipyardMapMissionTooltip:CreateFontString(nil, "ARTWORK", "GameFontHighlightLeft")
+		tipGroup.yspacing = 10
 		tipGroup:SetTextColor(0.5, 0.8, 1)
-		hooksecurefunc("GarrisonShipyardMapMission_SetTooltip", function() tipGroup:Hide() end)
+		GarrisonShipyardMapMissionTooltip.Lines[#GarrisonShipyardMapMissionTooltip.Lines+1] = tipGroup
+		tipGroup:Hide()
+		GarrisonShipyardMapMissionTooltip:HookScript("OnHide", function() tipGroup:Hide() end)
 		local function describeGroup(sg, mi)
 			local exp, sp = G.GetMissionGroupXP(sg, mi), sg[1]/100
 			local ex, ce, ct = exp >= 1 and ("; " .. (L"%s XP"):format(BreakUpLargeNumbers(floor(exp)))) or "", sg[3]*sp, sg[9]
@@ -3487,17 +3454,45 @@ do -- Ships
 					tipGroup:Show()
 					GarrisonShipyardMapMission_AnchorToBottomWidget(tipGroup, 0, -12)
 					GarrisonShipyardMapMission_SetBottomWidget(tipGroup)
-					tipGroup:SetWidth(math.max(180, (GarrisonShipyardMapMissionTooltip:GetWidth() or 16) - 12))
-					GarrisonShipyardMapMissionTooltip:SetHeight(GarrisonShipyardMapMissionTooltip:GetHeight() + tipGroup:GetHeight()+12)
-					return
+					GarrisonShipyardMapMission_UpdateTooltipSize(GarrisonShipyardMapMissionTooltip)
 				end
 			end
 		end
-		hooksecurefunc("GarrisonShipyardMapMission_UpdateTooltipSize", function(self)
-			if tipGroup:IsVisible() then
-				GarrisonShipyardMapMissionTooltip:SetHeight(self:GetHeight() + tipGroup:GetHeight()+12)
+	end
+	do -- Adjust naval map mission tooltips with item rewards to fail less at layout
+		local anchoredTo = {}
+		local function FixShipMissionTooltipLayout()
+			local tip = GarrisonShipyardMapMissionTooltip
+			if not (tip and tip.ItemTooltip:IsShown()) then return end
+			tip:Show()
+			wipe(anchoredTo)
+			for i=0,#tip.Lines do
+				i = tip.Lines[i] or tip.BonusEffect
+				anchoredTo[i:IsShown() and select(2, i:GetPoint()) or 0] = i
+			end
+			local it, eh = anchoredTo[tip.ItemTooltip], 0
+			while it do
+				eh, it = eh + it:GetHeight() + (it.yspacing or 0), anchoredTo[it]
+			end
+			if eh > 0 then
+				local tp, at, ap, ox = tip.ItemTooltip:GetPoint()
+				if tp == "BOTTOMLEFT" and ap == "BOTTOMLEFT" and at == tip then
+					tip.ItemTooltip:SetPoint("BOTTOMLEFT", ox, 13 + eh)
+				end
+			end
+		end
+		hooksecurefunc("GarrisonShipyardMapMission_SetBottomWidget", function(w, x, y)
+			if w == GarrisonShipyardMapMissionTooltip.ItemTooltip and x == -6 then
+				GarrisonShipyardMapMission_SetBottomWidget(w, 0, y)
 			end
 		end)
+		hooksecurefunc(GarrisonShipyardMapMissionTooltip.ItemTooltip, "SetPoint", function(_, a,b,c,x,y)
+			if a == "BOTTOMLEFT" and b == 10 and c == 13 and x == nil and y == nil then
+				-- Hello, GameTooltip_CalculatePadding, anchoring things to silly places.
+				FixShipMissionTooltipLayout()
+			end
+		end)
+		hooksecurefunc("GarrisonShipyardMapMission_UpdateTooltipSize", FixShipMissionTooltipLayout)
 	end
 	local function getGroupColor(s)
 		local c = T.config
@@ -3518,7 +3513,7 @@ do -- Ships
 	local function UpdateShipMissionMap()
 		local self = GarrisonShipyardFrame.MissionTab.MissionList
 		local sg = G.GetSuggestedGroupsForAllMissions(2)
-		local oil = select(2, Nine.GetCurrencyInfo(1101)) or 0
+		local oil = C_CurrencyInfo.GetCurrencyInfo(1101).quantity or 0
 		for i=1, #self.missions do
 			local mission, frame = self.missions[i], self.missionFrames[i]
 			if frame:IsShown() and not mission.inProgress then
@@ -3575,7 +3570,7 @@ do -- Ships
 		function CreateGroupButton(...)
 			local b = GroupButtonBase:New(...)
 			b:SetScript("OnEnter", ShipGroupButton_OnEnter)
-			b:SetScript("OnLeave", dismissTooltip)
+			b:SetScript("OnLeave", T.HideOwnedGameTooltip)
 			b:SetScript("OnClick", ShipGroupButton_OnClick)
 			return b
 		end
@@ -3622,7 +3617,7 @@ do -- RefreshActiveMissionsView
 		if force or core:IsOwned(activeMissionsHandle) then
 			activeMissionsHandle:Activate(force)
 		end
-		activeUI.orders:SetShown(GetItemCount(activeUI.orders.itemID) > 0)
+		activeUI.orders:SetShown(C_Item.GetItemCount(activeUI.orders.itemID) > 0)
 	end
 	function RefreshActiveMissionsView(force)
 		if core:IsShown() and (force or core:IsOwned(activeMissionsHandle)) then

@@ -4,8 +4,8 @@ local M, R, U, I = unpack(ns)
 local _G = _G
 local next, type, sqrt, GetTime, format = next, type, sqrt, GetTime, format
 local RegisterStateDriver, InCombatLockdown = RegisterStateDriver, InCombatLockdown
-local IsItemInRange, ItemHasRange, HasExtraActionBar = IsItemInRange, ItemHasRange, HasExtraActionBar
-local GetItemCooldown, GetItemCount, GetItemIcon, GetItemInfoFromHyperlink = GetItemCooldown, GetItemCount, GetItemIcon, GetItemInfoFromHyperlink
+local HasExtraActionBar = HasExtraActionBar
+local GetItemInfoFromHyperlink = GetItemInfoFromHyperlink
 local GetBindingKey, GetBindingText, GetQuestLogSpecialItemInfo, QuestHasPOIInfo = GetBindingKey, GetBindingText, GetQuestLogSpecialItemInfo, QuestHasPOIInfo
 local C_Map_GetBestMapForUnit = C_Map.GetBestMapForUnit
 local C_QuestLog_GetInfo = C_QuestLog.GetInfo
@@ -19,7 +19,7 @@ local C_QuestLog_GetLogIndexForQuestID = C_QuestLog.GetLogIndexForQuestID
 local C_QuestLog_GetNumWorldQuestWatches = C_QuestLog.GetNumWorldQuestWatches
 local C_QuestLog_GetQuestIDForQuestWatchIndex = C_QuestLog.GetQuestIDForQuestWatchIndex
 local C_QuestLog_GetQuestIDForWorldQuestWatchIndex = C_QuestLog.GetQuestIDForWorldQuestWatchIndex
-local MAX_DISTANCE_YARDS = 1e4 -- needs review
+local MAX_DISTANCE_YARDS = 1e3 -- needs review
 local onlyCurrentZone = true
 
 -- Warlords of Draenor intro quest items which inspired this addon
@@ -27,6 +27,7 @@ local blacklist = {
 	[113191] = true,
 	[110799] = true,
 	[109164] = true,
+	[191729] = true,
 }
 
 -- quests that doesn't have a defined area on the map (questID = bool/mapID/{mapID,...})
@@ -44,21 +45,30 @@ local inaccurateQuestAreas = {
 	[24524] = 7, -- Mulgore
 	[24629] = {84, 85, 87, 88, 103, 110}, -- major capitals (missing Darnassus & Undercity)
 	[25577] = 198, -- Mount Hyjal
+	[25798] = 64, -- Thousand Needles (TODO: test if we need to associate the item with the zone instead)
+	[25799] = 64, -- Thousand Needles (TODO: test if we need to associate the item with the zone instead)
 	[29506] = 407, -- Darkmoon Island
 	[29510] = 407, -- Darkmoon Island
 	[29515] = 407, -- Darkmoon Island
 	[29516] = 407, -- Darkmoon Island
 	[29517] = 407, -- Darkmoon Island
+	[34461] = 590, -- Horde Garrison
+	[34587] = 582, -- Alliance Garrison
 	[49813] = true, -- anywhere
 	[49846] = true, -- anywhere
 	[49860] = true, -- anywhere
 	[49864] = true, -- anywhere
-	[25798] = 64, -- Thousand Needles
-	[25799] = 64, -- Thousand Needles
-	[34461] = 590, -- Horde Garrison
+	[53476] = true,
 	[59809] = true,
-	[60004] = 118, -- 前夕任务：英勇之举
-	[63971] = 1543, -- 法夜突袭，蜗牛践踏
+	[63892] = {1961, 2006, 2007}, -- Korthia and sub-zones
+	[75923] = 2023, -- Ohn'ahran Plains
+	[66439] = 2022, -- The Waking Shores
+	[77891] = 2200, -- Emerald Dream
+	[78068] = true, -- anywhere
+	[78070] = true, -- anywhere
+	[78075] = true, -- anywhere
+	[78081] = true, -- anywhere
+	[79960] = 2255,
 }
 
 -- items that should be used for a quest but aren't (questID = itemID)
@@ -76,16 +86,28 @@ local questItems = {
 	[11982] = 35734, -- Grizzly Hills
 	[11986] = 35739, -- Grizzly Hills
 	[11989] = 38083, -- Grizzly Hills
+	[12007] = 35797, -- Grizzly Hills
+	[12066] = 36751, -- Dragonblight
 	[12026] = 35739, -- Grizzly Hills
 	[12415] = 37716, -- Grizzly Hills
-	[12007] = 35797, -- Grizzly Hills
 	[12456] = 37881, -- Dragonblight
 	[12470] = 37923, -- Dragonblight
 	[12484] = 38149, -- Grizzly Hills
 	[12661] = 41390, -- Zul'Drak
 	[12713] = 38699, -- Zul'Drak
 	[12861] = 41161, -- Zul'Drak
+	[12925] = 41612, -- Storm Peaks
 	[13343] = 44450, -- Dragonblight
+	[13425] = 41612, -- Storm Peaks
+	[13542] = 44868, -- Darkshore
+	[26868] = 60681, -- Loch Modan
+	[27384] = 12888, -- Eastern Plaguelands
+	[28317] = 63357, -- Burning Steppes
+	[28318] = 63357, -- Burning Steppes
+	[28319] = 63357, -- Burning Steppes
+	[28450] = 63357, -- Burning Steppes
+	[28451] = 63357, -- Burning Steppes
+	[28452] = 63357, -- Burning Steppes
 	[29821] = 84157, -- Jade Forest
 	[31112] = 84157, -- Jade Forest
 	[31769] = 89769, -- Jade Forest
@@ -100,20 +122,39 @@ local questItems = {
 	[49402] = 154878, -- Tiragarde Sound
 	[50164] = 154878, -- Tiragarde Sound
 	[51646] = 154878, -- Tiragarde Sound
+	[53476] = 163852, -- Zandalar/Kul Tiras
 	[58586] = 174465, -- Venthyr Covenant
 	[59063] = 175137, -- Night Fae Covenant
 	[59809] = 177904, -- Night Fae Covenant
 	[60188] = 178464, -- Night Fae Covenant
+	[60609] = {180008, 180009}, -- Ardenweald
 	[60649] = 180170, -- Ardenweald
-	[60609] = 180008, -- Ardenweald
+	[61708] = 174043, -- Maldraxxus, untested
+	[63892] = 185963, -- Korthia
+	[12022] = 169219, -- Brewfest
+	[12191] = 169219, -- Brewfest
+	[66439] = 192545, -- The Waking Shores
+	[77891] = 209017, -- Emerald Dream
+	[77483] = 202247, -- Technoscrying
+	[77484] = 202247, -- Technoscrying
+	[77434] = 202247, -- Technoscrying
+	[78931] = 202247, -- Technoscrying
+	[78820] = 202247, -- Technoscrying
+	[78616] = 202247, -- Technoscrying
+	[78755] = 211483, -- Khaz Algar
+	[79960] = 216664, -- Azj-Kahet
 }
 
 -- items that need to be shown, but not. (itemID = bool/mapID)
 local completeShownItems = {
 	[35797] = 116, -- Grizzly Hills
-	[60273] = 50, -- Northern Stranglethorn Vale
-	[52853] = true, -- Mount Hyjal
 	[41058] = 120, -- Storm Peaks
+	[52853] = true, -- Mount Hyjal
+	[57412] = 205, -- Shimmering Expanse
+	[60273] = 50, -- Northern Stranglethorn Vale
+	[62508] = 241, -- Twilight Highlands
+	[63357] = 36, -- Burning Steppes
+	[64660] = 241, -- Twilight Highlands
 	[177904] = true,
 }
 
@@ -124,12 +165,14 @@ local completeHiddenItems = {
 	[186199] = true, -- Lady Moonberry's Wand
 	[187012] = true, -- Unbalanced Riftstone
 	[187516] = true, -- 菲历姆的锻炉阀门
+	[112681] = true, -- 古怪的水晶碎片，questID 34938
+	[193915] = true, -- 黑龙军团的旗帜，questID 66633
 }
 
 local ExtraQuestButton = CreateFrame("Button", "ExtraQuestButton", UIParent, "SecureActionButtonTemplate, SecureHandlerStateTemplate, SecureHandlerAttributeTemplate")
 ExtraQuestButton:SetMovable(true)
 ExtraQuestButton:RegisterEvent("PLAYER_LOGIN")
-ExtraQuestButton:RegisterForClicks("AnyDown")
+ExtraQuestButton:RegisterForClicks("AnyUp", "AnyDown")
 ExtraQuestButton:Hide()
 ExtraQuestButton:SetScript("OnEvent", function(self, event, ...)
 	if self[event] then
@@ -173,7 +216,7 @@ local onAttributeChanged = [[
 
 function ExtraQuestButton:BAG_UPDATE_COOLDOWN()
 	if self:IsShown() and self.itemID then
-		local start, duration = GetItemCooldown(self.itemID)
+		local start, duration = C_Item.GetItemCooldown(self.itemID)
 		if duration > 0 then
 			self.Cooldown:SetCooldown(start, duration)
 			self.Cooldown:Show()
@@ -184,8 +227,8 @@ function ExtraQuestButton:BAG_UPDATE_COOLDOWN()
 end
 
 function ExtraQuestButton:UpdateCount()
-	if self:IsShown() then
-		local count = GetItemCount(self.itemLink)
+	if self:IsShown() and self.itemLink then
+		local count = C_Item.GetItemCount(self.itemLink)
 		self.Count:SetText(count and count > 1 and count or "")
 	end
 end
@@ -248,7 +291,7 @@ function ExtraQuestButton:PLAYER_LOGIN()
 	self.updateTimer = 0
 	self.rangeTimer = 0
 
-	self:SetPushedTexture(I.textures.pushed)
+	self:SetPushedTexture(I.pushedTex)
 	local push = self:GetPushedTexture()
 	push:SetBlendMode("ADD")
 	push:SetInside()
@@ -300,12 +343,12 @@ end)
 
 ExtraQuestButton:SetScript("OnUpdate", function(self, elapsed)
 	if self.updateRange then
-		if (self.rangeTimer or 0) > TOOLTIP_UPDATE_TIME then
+		if not InCombatLockdown() and ((self.rangeTimer or 0) > TOOLTIP_UPDATE_TIME) then
 			local HotKey = self.HotKey
 			local Icon = self.Icon
 
-			-- BUG: IsItemInRange() is broken versus friendly npcs (and possibly others)
-			local inRange = IsItemInRange(self.itemLink, "target")
+			-- BUG: C_Item.IsItemInRange() is broken versus friendly npcs (and possibly others)
+			local inRange = C_Item.IsItemInRange(self.itemLink, "target")
 			if HotKey:GetText() == RANGE_INDICATOR then
 				if inRange == false then
 					HotKey:SetTextColor(1, .1, .1)
@@ -364,7 +407,7 @@ function ExtraQuestButton:SetItem(itemLink)
 	if HasExtraActionBar() then return end
 
 	if itemLink then
-		self.Icon:SetTexture(GetItemIcon(itemLink))
+		self.Icon:SetTexture(C_Item.GetItemIconByID(itemLink))
 		local itemID = GetItemInfoFromHyperlink(itemLink)
 		self.itemID = itemID
 		self.itemLink = itemLink
@@ -375,7 +418,7 @@ function ExtraQuestButton:SetItem(itemLink)
 	if self.itemID then
 		local HotKey = self.HotKey
 		local key = GetBindingKey("EXTRAACTIONBUTTON1")
-		local hasRange = ItemHasRange(itemLink)
+		local hasRange = C_Item.ItemHasRange(self.itemID)
 		if key then
 			HotKey:SetText(GetBindingText(key, 1))
 			HotKey:Show()
@@ -385,7 +428,7 @@ function ExtraQuestButton:SetItem(itemLink)
 		else
 			HotKey:Hide()
 		end
-		M:GetModule("Actionbar").UpdateHotKey(self)
+		M:GetModule("Actionbar").UpdateHotKey(HotKey)
 
 		self:UpdateAttributes()
 		self:UpdateCount()
@@ -415,7 +458,7 @@ local function GetQuestDistanceWithItem(questID)
 		end
 	end
 	if not itemLink then return end
-	if GetItemCount(itemLink) == 0 then return end
+	if C_Item.GetItemCount(itemLink) == 0 then return end
 
 	local itemID = GetItemInfoFromHyperlink(itemLink)
 	if blacklist[itemID] then return end
@@ -490,6 +533,18 @@ local function GetClosestQuestItem()
 					closestDistance = distance
 					closestQuestItemLink = itemLink
 				end
+			end
+		end
+	end
+
+	local tasksTable = GetTasksTable() -- bonus tracker, needs review
+	for i = 1, #tasksTable do
+		local questID = tasksTable[i]
+		if questID and not C_QuestLog_IsWorldQuest(questID) and not QuestUtils_IsQuestWatched(questID) and GetTaskInfo(questID) then
+			local distance, itemLink = GetQuestDistanceWithItem(questID)
+			if distance and distance <= closestDistance then
+				closestDistance = distance
+				closestQuestItemLink = itemLink
 			end
 		end
 	end

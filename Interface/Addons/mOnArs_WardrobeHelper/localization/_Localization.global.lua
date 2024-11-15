@@ -2,6 +2,12 @@ local o = mOnWardrobe
 if o.strings == nil then o.strings = {} end
 local s = o.strings
 
+local LE_ITEM_ARMOR_CLOTH = 1
+local LE_ITEM_ARMOR_LEATHER = 2
+local LE_ITEM_ARMOR_MAIL = 3
+local LE_ITEM_ARMOR_PLATE = 4
+local LE_ITEM_CLASS_ARMOR = 4
+
 for k,v in pairs({["Cloth"]=LE_ITEM_ARMOR_CLOTH,["Leather"]=LE_ITEM_ARMOR_LEATHER,["Mail"]=LE_ITEM_ARMOR_MAIL,["Plate"]=LE_ITEM_ARMOR_PLATE}) do
 	s[k] = GetItemSubClassInfo(LE_ITEM_CLASS_ARMOR,v);
 end

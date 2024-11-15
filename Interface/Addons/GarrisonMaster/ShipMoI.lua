@@ -1,15 +1,7 @@
 local _, T = ...
 if T.Mark ~= 50 then return end
 local L, G, EV, api = T.L, T.Garrison, T.Evie, T.MissionsUI
-
-local Nine = T.Nine or _G
-local C_Garrison = Nine.C_Garrison
-
-local function dismissTooltip(self)
-	if GameTooltip:IsOwned(self) then
-		GameTooltip:Hide()
-	end
-end
+local GameTooltip = T.NotGameTooltip or GameTooltip
 
 local moiContainer, core, loader = CreateFrame("Frame", "MPShipMoI", GarrisonShipyardFrame, "GarrisonBaseInfoBoxTemplate") do
 	moiContainer:SetPoint("TOPLEFT", 33, -64)
@@ -63,7 +55,7 @@ local moiHandle do
 		t:SetPoint("CENTER")
 		b.Border, b.info = t, {}
 		b:SetScript("OnEnter", Threat_OnEnter)
-		b:SetScript("OnLeave", dismissTooltip)
+		b:SetScript("OnLeave", T.HideOwnedGameTooltip)
 		return b
 	end
 	local function SetThreat(self, level, tid, _, icon)
@@ -177,11 +169,11 @@ local moiHandle do
 			local rq = d[3] * (1 + (best and best[4] or 0))
 			r.currencyID, r.itemID, r.tooltipTitle, r.tooltipText = rt
 			r.quantity:SetText(rq > 1 and rq or "")
-			r.icon:SetTexture((select(3,Nine.GetCurrencyInfo(rt))))
+			r.icon:SetTexture(C_CurrencyInfo.GetBasicCurrencyInfo(rt).icon)
 		else
 			r.itemID, r.currencyID, r.tooltipTitle, r.tooltipText = rt
 			r.quantity:SetText(d[3] > 1 and d[3] or "")
-			r.icon:SetTexture(select(10, GetItemInfo(r.itemID)) or GetItemIcon(r.itemID) or "Interface/Icons/Temp")
+			r.icon:SetTexture(C_Item.GetItemIconByID(r.itemID) or "Interface/Icons/Temp")
 		end
 		r:Show()
 	end
@@ -190,6 +182,7 @@ local moiHandle do
 		GarrisonShipyardFrame.MissionTab:Hide()
 		GarrisonShipyardFrame.FollowerTab:Hide()
 		GarrisonShipyardFrame.FollowerList:Hide()
+		GarrisonShipyardFrame.BorderFrame.TitleText:SetText(L"Missions of Interest")
 		local info, job = G.GetBestGroupInfo(2, false, true)
 		if info then
 			-- This part is actually cheating.
@@ -212,8 +205,8 @@ end
 
 local moiTab = CreateFrame("Button", "GarrisonShipyardFrameTab3", GarrisonShipyardFrame, "GarrisonMissionFrameTabTemplate", 3) do
 	local availTab, followerTab = GarrisonShipyardFrameTab1, GarrisonShipyardFrameTab2
-	moiTab:SetPoint("LEFT", availTab, "RIGHT", -5, 0)
-	followerTab:SetPoint("LEFT", moiTab, "RIGHT", -5, 0)
+	moiTab:SetPoint("TOPLEFT", availTab, "TOPRIGHT", 5, 0)
+	followerTab:SetPoint("TOPLEFT", moiTab, "TOPRIGHT", 5, 0)
 	moiTab:SetText(L"Missions of Interest")
 	PanelTemplates_DeselectTab(moiTab)
 	PanelTemplates_TabResize(moiTab, 10)

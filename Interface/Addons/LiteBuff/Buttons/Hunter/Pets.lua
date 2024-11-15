@@ -69,7 +69,7 @@ function button:PET_STABLE_UPDATE()
 		local icon, name --= GetStablePetInfo(i)
         local spellID, isKnown = GetFlyoutSlotInfo(9, i);
         if spellID and isKnown then
-            icon = GetSpellTexture(spellID)
+            icon = C_Spell.GetSpellTexture(spellID)
             local petIndex, petName = GetCallPetSpellInfo(spellID);
             if petIndex and petName and petName~="" then
                 name = petName
@@ -105,9 +105,6 @@ function button:OnUpdateTimer()
     end
 end
 
--- I have no idea, at the moment when UNIT_PET event fires UnitName("pet") often returns nil, so the only solution is
--- to check pet name frequently, update the button only when pet name changes, aweful but fotunately UnitName isn't
--- a heavy call that causes serious performance impact
 function button:OnTick()
 	local name = UnitName("pet")
 	local icon = GetPetIcon()

@@ -1,0 +1,111 @@
+<Ui>
+    <Script file="OptionsPanel.lua"/>
+
+    <CheckButton name="FamilyFamiliarHelpCheckButtonTemplate" mixin="FamilyFamiliarHelperCheckButtonMixin" virtual="true">
+        <Size x="24" y="24"/>
+        <Layers>
+            <Layer level="ARTWORK">
+                <FontString parentKey="Text" inherits="GameFontNormal">
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="RIGHT" x="0" y="0"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+		<NormalTexture file="Interface\Buttons\UI-CheckBox-Up"/>
+		<PushedTexture file="Interface\Buttons\UI-CheckBox-Down"/>
+		<HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD"/>
+		<CheckedTexture file="Interface\Buttons\UI-CheckBox-Check"/>
+		<DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled"/>        
+        <Scripts>
+            <OnLoad method="OnLoad"/>
+            <OnEnter method="OnEnter"/>
+            <OnLeave method="OnLeave"/>
+            <OnClick method="OnClick"/>
+        </Scripts>
+    </CheckButton>
+
+    <Frame name="FamilyFamiliarHelperOptionsPanel" mixin="FamilyFamiliarHelperOptionsMixin" hidden="true">
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString parentKey="Title" inherits="GameFontNormalLarge" text="Family Familiar Helper">
+					<Anchors>
+						<Anchor point="TOPLEFT" x="16" y="-16"/>
+					</Anchors>
+				</FontString>
+				<FontString parentKey="Version" inherits="GameFontNormalSmall" text="2.0.0">
+					<Anchors>
+						<Anchor point="BOTTOMLEFT" relativeKey="$parent.Title" relativePoint="BOTTOMRIGHT" x="4" y="0"/>
+					</Anchors>
+				</FontString>
+				<FontString inherits="GameFontHighlight" justifyH="LEFT" justifyV="TOP" text="This addon helps you track the progress of the Family Familiar and related battle pet achievements">
+					<Size x="590" y="0"/>
+					<Anchors>
+						<Anchor point="TOPLEFT" x="16" y="-40"/>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+        <Frames>
+            <CheckButton parentKey="NoEscape" inherits="FamilyFamiliarHelpCheckButtonTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="32" y="-80"/>
+                </Anchors>
+                <KeyValues>
+                    <KeyValue key="label" value="Don't dismiss window with Escape key"/>
+                    <KeyValue key="var" value="NoEscape"/>
+                </KeyValues>
+            </CheckButton>
+            <CheckButton parentKey="NoMove" inherits="FamilyFamiliarHelpCheckButtonTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="32" y="-110"/>
+                </Anchors>
+                <KeyValues>
+                    <KeyValue key="label" value="Don't move window unless Shift key held"/>
+                    <KeyValue key="var" value="NoMove"/>
+                </KeyValues>
+            </CheckButton>
+            <CheckButton parentKey="AutoShow" inherits="FamilyFamiliarHelpCheckButtonTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="32" y="-140"/>
+                </Anchors>
+                <KeyValues>
+                    <KeyValue key="label" value="Automatically show window on achievement targets"/>
+                    <KeyValue key="var" value="AutoShow"/>
+                </KeyValues>
+            </CheckButton>
+            <CheckButton parentKey="JustOnce" inherits="FamilyFamiliarHelpCheckButtonTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="50" y="-170"/>
+                </Anchors>
+                <KeyValues>
+                    <KeyValue key="label" value="Only automatically show for first interaction"/>
+                    <KeyValue key="var" value="JustOnce"/>
+                </KeyValues>
+            </CheckButton>        
+            <CheckButton parentKey="NoAchievementTooltip" inherits="FamilyFamiliarHelpCheckButtonTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="32" y="-200"/>
+                </Anchors>
+                <KeyValues>
+                    <KeyValue key="label" value="Hide achievement list tooltips"/>
+                    <KeyValue key="var" value="NoAchievementTooltip"/>
+                </KeyValues>
+            </CheckButton>
+            <CheckButton parentKey="ShowMinimapButton" inherits="FamilyFamiliarHelpCheckButtonTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="32" y="-230"/>
+                </Anchors>
+                <KeyValues>
+                    <KeyValue key="label" value="Show Minimap button to show/hide window"/>
+                    <KeyValue key="var" value="ShowMinimapButton"/>
+                </KeyValues>
+            </CheckButton>            
+        </Frames>
+        <Scripts>
+            <OnLoad method="OnLoad"/>
+            <OnShow method="Update"/>
+        </Scripts>
+    </Frame>
+
+</Ui>

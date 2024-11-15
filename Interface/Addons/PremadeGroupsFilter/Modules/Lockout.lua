@@ -1,7 +1,7 @@
 -------------------------------------------------------------------------------
 -- Premade Groups Filter
 -------------------------------------------------------------------------------
--- Copyright (C) 2022 Elotheon-Arthas-EU
+-- Copyright (C) 2024 Bernhard Saumweber
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,24 +22,15 @@ local PGF = select(2, ...)
 local L = PGF.L
 local C = PGF.C
 
-local LOCKOUT_D = {
-    [1]  = C.NORMAL, -- normal dungeon
-    [2]  = C.HEROIC, -- heroic dungeon
-    [23] = C.MYTHIC, -- mythic dungeon
-    [14] = C.NORMAL, -- normal raid
-    [15] = C.HEROIC, -- heroic raid
-    [16] = C.MYTHIC, -- mythic raid
-}
-
 function PGF.IsMatchingInstance(lockoutName, activityName, lockoutDifficulty, activityDifficulty)
     -- no match if difficulty does not match
-    if not (LOCKOUT_D[lockoutDifficulty] == activityDifficulty) then return false end
+    if not (C.DIFFICULTY_MAP[lockoutDifficulty] == activityDifficulty) then return false end
     return PGF.IsMostLikelySameInstance(lockoutName, activityName)
 end
 
 function PGF.GetLockoutInfo(activity, resultID)
     local activityInfo = C_LFGList.GetActivityInfoTable(activity)
-    local difficulty = PGF.GetDifficulty(activity, activityInfo.fullName, activityInfo.shortName)
+    local difficulty = C.ACTIVITY[activity].difficulty
     local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(resultID)
     local groupDefeatedBossNames = PGF.Table_ValuesAsKeys(encounterInfo)
     local numGroupDefeated = PGF.Table_Count(encounterInfo)
@@ -54,7 +45,7 @@ function PGF.GetLockoutInfo(activity, resultID)
         local instanceName, instanceID, instanceReset, instanceDifficulty,
             locked, extended, instanceIDMostSig, isRaid, maxPlayers,
             difficultyName, maxBosses, defeatedBosses = GetSavedInstanceInfo(index)
-        if activity == 449 then maxBosses = 3 end -- Violet Hold has fixed 3 bosses during the weekly lockout
+        if C.ACTIVITY[activity].mapID == 608 then maxBosses = 3 end -- Violet Hold has fixed 3 bosses
         if (extended or locked) and PGF.IsMatchingInstance(instanceName, activityInfo.fullName, instanceDifficulty, difficulty) then
             local playerDefeatedBossNames = PGF.GetPlayerDefeatedBossNames(index, maxBosses)
             local numPlayerDefeated = PGF.Table_Count(playerDefeatedBossNames)
@@ -62,7 +53,9 @@ function PGF.GetLockoutInfo(activity, resultID)
             return numGroupDefeated, numPlayerDefeated, maxBosses, matching, groupAhead, groupBehind
         end
     end
-    return numGroupDefeated, 0, 0, 0, 0, 0
+    -- if there is no matching player lockout, groupAhead should be equal numGroupDefeated (#268)
+    -- return numGroupDefeated, numPlayerDefeated, maxBosses, matching, groupAhead, groupBehind
+    return numGroupDefeated, 0, 0, 0, numGroupDefeated, 0
 end
 
 function PGF.GetMatchingBossInfo(groupDefeatedBossNames, playerDefeatedBossesNames)

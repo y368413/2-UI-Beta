@@ -85,7 +85,7 @@ local function CreateScrollFrame(panel)
 
     function ScrollFrameMixin:ResetButton(button)
         button.name:SetText("")
-        button.icon:SetTexture(GetSpellTexture(310143))
+        button.icon:SetTexture(C_Spell.GetSpellTexture(310143))
         button.critterIcon:Hide()
         button.untrackableAddButton:Hide()
         button.selectedTexture:Hide()
@@ -182,17 +182,17 @@ local function CreateModelView(panel)
     soulshapeInfo:SetPoint("BOTTOMRIGHT", -20, 20)
 
     -- FIXME: extract this
-    local bannerLeft = soulshapeInfo:CreateTexture(nil, "LOW")
+    local bannerLeft = soulshapeInfo:CreateTexture(nil, "ARTWORK")
     bannerLeft:SetPoint("TOPLEFT", 0, 5)
     bannerLeft:SetAtlas("UI-Frame-NightFae-TitleLeft", false)
     bannerLeft:SetSize(100, 42)
 
-    local bannerRight = soulshapeInfo:CreateTexture(nil, "LOW")
+    local bannerRight = soulshapeInfo:CreateTexture(nil, "ARTWORK")
     bannerRight:SetPoint("TOPRIGHT", soulshapeInfo, "TOPRIGHT", 0, 5)
     bannerRight:SetAtlas("UI-Frame-NightFae-TitleRight", false)
     bannerRight:SetSize(100, 42)
 
-    local bannerMid = soulshapeInfo:CreateTexture(nil, "LOW")
+    local bannerMid = soulshapeInfo:CreateTexture(nil, "ARTWORK")
     bannerMid:SetPoint("TOPLEFT", bannerLeft, "TOPRIGHT")
     bannerMid:SetPoint("BOTTOMRIGHT", bannerRight, "BOTTOMLEFT")
     bannerMid:SetAtlas("_UI-Frame-NightFae-TitleMiddle", false)
@@ -374,7 +374,7 @@ function SJ:CreateCollectionPanel()
     local panel = Mixin(CreateFrame("Frame", "SoulshapeCollectionPanel", CollectionsJournal, "PortraitFrameTemplate"), CollectionPanelMixin)
     panel:Hide()
     panel:SetAllPoints()
-    panel:SetPortraitToAsset(GetSpellTexture(310143))
+    panel:SetPortraitToAsset(C_Spell.GetSpellTexture(310143))
     panel:SetTitle(L["TAB_TITLE"])
 
     SJ.Panel = panel

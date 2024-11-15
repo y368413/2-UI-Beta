@@ -34,7 +34,7 @@ function HandyNotesPlugin:OnEnter(uiMapId, coord)
   GameTooltip:SetOwner(self, tooltipPosition)
 
   -- Pass GameTooltip object and point data to another function, that will render tooltip.
-  Point:prepareTooltip(GameTooltip, this.points[uiMapId][coord], uiMapId)
+  Point:prepareTooltip(GameTooltip, this.points[uiMapId][coord])
   -- Display tooltip.
   GameTooltip:Show()
 
@@ -84,10 +84,19 @@ function HandyNotesPlugin:OnClick(button, down, uiMapId, coord)
       end
       this.points[uiMapId][coord]['active'] = active
     end
+  -- Right button actions.
+  elseif (button == 'RightButton' and down == true) then
+    -- Each menu rewrites the previous one. If this would be an issue, we can create menu
+    -- for each separate point and store it into some variable.
+    local menu = Point:createContextualMenu(uiMapId, coord, this.points[uiMapId][coord])
+    API:openMenu(menu, self)
   end
 end
 
 do
+  -- Assign variable for map ID we are cycling.
+  local mapId = nil
+
   ---
   --- This is an iterator that is used by HandyNotes to iterate over every node in given zone.
   ---
@@ -122,8 +131,8 @@ do
         -- Completion status for point.
         local completed = Point:isCompleted(point)
 
-        -- Check, whether point should be shown.
-        local show = Map:showPoint(completed)
+        -- Check, whether we should display point on map.
+        local show = Map:showPoint(completed, mapId, coordinates)
 
         if (show == true) then
           -- Create icon for to display on map.
@@ -166,6 +175,7 @@ do
   ---   Our points table for given map.
   ---
   function HandyNotesPlugin:GetNodes2(uiMapId, _)
+    mapId = uiMapId
     -- @todo Handle minimap (second param).
     return iter, this.points[uiMapId], nil
   end
@@ -217,4 +227,14 @@ end
 ---
 function Addon:Refresh()
   self:SendMessage('HandyNotes_NotifyUpdate', NAME)
+end
+
+---
+--- Handles button click in Addon Compartment.
+---
+--- @link https://wowpedia.fandom.com/wiki/Addon_compartment
+---
+function HandyNotes_Collection_OnAddonCompartmentClick()
+  API.Settings.OpenToCategory('HandyNotes')
+  LibStub('AceConfigDialog-3.0'):SelectGroup('HandyNotes', 'plugins', NAME)
 end

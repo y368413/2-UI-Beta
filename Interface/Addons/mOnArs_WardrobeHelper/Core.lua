@@ -14,6 +14,7 @@ o.defaultSettings.hideCompletedInstances = false
 o.defaultSettings.onlyMiniList = false
 o.defaultSettings.blacklist = {}
 o.defaultSettings.reloadOnStart = false
+o.defaultSettings.displayOnlyEquipable = false
 o.defaultSettings.miniListScale = 1
 o.defaultSettings.miniListRowCount = 16
 o.defaultSettings.favoriteInstances = {}
@@ -25,7 +26,7 @@ o.defaultSettings.sortDirection = 1
 ---------------------------------------------------------------
 
 o.instances = {}
-o.version = GetAddOnMetadata("mOnArs_WardrobeHelper", "Version")
+o.version = C_AddOns.GetAddOnMetadata("mOnArs_WardrobeHelper", "Version")
 
 local TYPES = {
 	_G["TRANSMOG_SOURCE_1"],
@@ -111,19 +112,6 @@ o.LDB =
 o.LDBI = LibStub("LibDBIcon-1.0")
 
 ---------------------------------------------------------------
---  Debug Methods
----------------------------------------------------------------
-
-o.debug = {}
-o.debug.printInstances = function()
-	local text = ""
-	for k, v in orderedPairs(o.instances) do
-		text = text .. "~" .. k
-	end
-	print(text)
-end
-
----------------------------------------------------------------
 --  Methods
 ---------------------------------------------------------------
 
@@ -161,7 +149,107 @@ o.isBlacklisted = function(id)
 	return false
 end
 
+-----------------------------------------------------------------------------------------------------
+
+o.tooltipScanning = {}
+
+o.tooltipScanning.GetItemClassName = function(itemLink)
+    return select(2, C_Item.GetItemClassInfo(C_Item.GetItemInfoInstant(itemLink)))
+end
+
+ o.tooltipScanning.GetItemSubClassName = function(itemLink)
+    return select(3, C_Item.GetItemInfoInstant(itemLink))
+end
+
+o.tooltipScanning.IsItemArmor = function(itemLink)
+    local itemClass = o.tooltipScanning.GetItemClassName(itemLink)
+    if itemClass == nil then return end
+    return C_Item.GetItemClassInfo(4) == itemClass
+end
+
+o.tooltipScanning.IsArmorSubClassID = function(subClassID, itemLink)
+    local itemSubClass = o.tooltipScanning.GetItemSubClassName(itemLink)
+    if itemSubClass == nil then return end
+    return select(1, C_Item.GetItemSubClassInfo(4, subClassID)) == itemSubClass
+end
+
+o.tooltipScanning.IsArmorCosmetic = function(itemLink)
+    return o.tooltipScanning.IsArmorSubClassID(5, itemLink)
+end
+
+o.tooltipScanning.GetItemID = function(itemLink)
+    return tonumber(string.match(itemLink, "item:(%d+)"))
+end
+
+o.tooltipScanning.IsHeirloomRedText = function(redText, itemLink)
+    local itemID = o.tooltipScanning.GetItemID(itemLink)
+    if redText == _G["ITEM_SPELL_KNOWN"] and C_Heirloom.IsItemHeirloom(itemID) then
+        return true
+    end
+end
+
+o.tooltipScanning.IsLevelRequirementRedText = function(redText)
+    if string.match(redText, _G["ITEM_MIN_LEVEL"]) then
+        return true
+    end
+end
+
+o.tooltipScanning.IsColorValRed = function(colorVal)
+	return colorVal.r == 1 and colorVal.g < 0.126 and colorVal.b < 0.126
+end
+
+o.tooltipScanning.GetRedText = function(itemLink)
+	-- Returns all of the red text as space separated string.
+	local redTexts = {}
+	local tooltipData = C_TooltipInfo.GetItemByID(o.tooltipScanning.GetItemID(itemLink))
+	for i, line in pairs(tooltipData.lines) do
+		local leftColorRed, rightColorRed;
+		if line.leftColor then
+			leftColorRed = o.tooltipScanning.IsColorValRed(line.leftColor)
+		end
+		if line.rightColor then
+			rightColorRed = o.tooltipScanning.IsColorValRed(line.rightColor)
+		end
+
+		if leftColorRed then
+			table.insert(redTexts, line.leftText)
+		end
+		if rightColorRed then
+			table.insert(redTexts, line.rightText)
+		end
+	end
+	return string.sub(table.concat(redTexts, " "), 1, 80)
+end
+
+o.tooltipScanning.CharacterCanEquipItem = function(itemLink)
+    -- Can the character equip this item eventually? (excluding level)
+    if o.tooltipScanning.IsItemArmor(itemLink) and o.tooltipScanning.IsArmorCosmetic(itemLink) then
+        return true
+    end
+    local redText = o.tooltipScanning.GetRedText(itemLink)
+    if redText == "" or redText == nil then
+        return true
+    end
+    if o.tooltipScanning.IsHeirloomRedText(redText, itemLink) then
+        -- Special case for heirloom items. They always have red text if it was learned.
+        return true
+    end
+    if o.tooltipScanning.IsLevelRequirementRedText(redText) then
+        -- We ignore the level, since it will be equipable eventually.
+        return true
+    end
+    return false
+end
+
+-----------------------------------------------------------------------------------------------------
+
+
+
+-----------------------------------------------------------------------------------------------------
+
+
 local function getUpdateHelper()
+	o.createCategories()
 	return coroutine.create(
 		function()
 			local newInstances = {}
@@ -181,90 +269,94 @@ local function getUpdateHelper()
 									local i1, i2, b1, i3, b2, itemString, visualString, sourceType =
 										C_TransmogCollection.GetAppearanceSourceInfo(sources[m].sourceID)
 									local itemID = tonumber(string.match(itemString, "item:([^:]*):"))
-									collected = (mOnWDSave.completionistMode == false) and (o.isCollected(sources) == true)
-									collected = collected or (mOnWDSave.completionistMode and o.isCollected(sources, itemID))
-									if o.isBlacklisted(itemID) == false then
-										-- 1 = Boss Raid Drops
-										if sourceType == 1 then
-											local drops = C_TransmogCollection.GetAppearanceSourceDrops(sources[m].sourceID, transmogLocation)
-											for k = 1, #drops do
-												local inst = drops[k]
-												if newInstances[inst.instance] == nil then
-													newInstances[inst.instance] = {}
-													newInstances[inst.instance]["collected"] = 0
-													newInstances[inst.instance]["total"] = 0
-													newInstances[inst.instance]["difficulties"] = {}
-												end
-												if #inst.difficulties == 0 then
-													inst.difficulties[1] = "Normal"
-												end
-												for l = 1, #inst.difficulties do
-													local dif = inst.difficulties[l]
-													if newInstances[inst.instance]["difficulties"][dif] == nil then
-														newInstances[inst.instance]["difficulties"][dif] = {}
-														newInstances[inst.instance]["difficulties"][dif]["collected"] = 0
-														newInstances[inst.instance]["difficulties"][dif]["total"] = 0
-														newInstances[inst.instance]["difficulties"][dif]["bosses"] = {}
+									if mOnWDSave.displayOnlyEquipable == true and o.isArmorAppropriateForPlayer(itemString) == false then
+									else
+										collected = (mOnWDSave.completionistMode == false) and (o.isCollected(sources) == true)
+										collected = collected or (mOnWDSave.completionistMode and o.isCollected(sources, itemID))
+										if o.isBlacklisted(itemID) == false then
+											-- 1 = Boss Raid Drops
+											if sourceType == 1 then
+												local drops = C_TransmogCollection.GetAppearanceSourceDrops(sources[m].sourceID, transmogLocation)
+												for k = 1, #drops do
+													local inst = drops[k]
+													if newInstances[inst.instance] == nil then
+														newInstances[inst.instance] = {}
+														newInstances[inst.instance]["collected"] = 0
+														newInstances[inst.instance]["total"] = 0
+														newInstances[inst.instance]["difficulties"] = {}
 													end
-													if newInstances[inst.instance]["difficulties"][dif]["bosses"][inst.encounter] == nil then
-														newInstances[inst.instance]["difficulties"][dif]["bosses"][inst.encounter] = {}
-														newInstances[inst.instance]["difficulties"][dif]["bosses"][inst.encounter]["items"] = {}
+													if #inst.difficulties == 0 then
+														inst.difficulties[1] = "Normal"
 													end
-													if collected then
-														newInstances[inst.instance]["collected"] = newInstances[inst.instance]["collected"] + 1
-														newInstances[inst.instance]["difficulties"][dif]["collected"] =
-															newInstances[inst.instance]["difficulties"][dif]["collected"] + 1
-													else
-														table.insert(
-															newInstances[inst.instance]["difficulties"][dif]["bosses"][inst.encounter]["items"],
-															{
-																link = itemString,
-																id = itemID,
-																visualID = appearances[j].visualID,
-																sourceID = sources[m].sourceID
-															}
-														)
+													for l = 1, #inst.difficulties do
+														local dif = inst.difficulties[l]
+														if newInstances[inst.instance]["difficulties"][dif] == nil then
+															newInstances[inst.instance]["difficulties"][dif] = {}
+															newInstances[inst.instance]["difficulties"][dif]["collected"] = 0
+															newInstances[inst.instance]["difficulties"][dif]["total"] = 0
+															newInstances[inst.instance]["difficulties"][dif]["bosses"] = {}
+														end
+														if newInstances[inst.instance]["difficulties"][dif]["bosses"][inst.encounter] == nil then
+															newInstances[inst.instance]["difficulties"][dif]["bosses"][inst.encounter] = {}
+															newInstances[inst.instance]["difficulties"][dif]["bosses"][inst.encounter]["items"] = {}
+														end
+														if collected then
+															newInstances[inst.instance]["collected"] = newInstances[inst.instance]["collected"] + 1
+															newInstances[inst.instance]["difficulties"][dif]["collected"] =
+																newInstances[inst.instance]["difficulties"][dif]["collected"] + 1
+														else
+															table.insert(
+																newInstances[inst.instance]["difficulties"][dif]["bosses"][inst.encounter]["items"],
+																{
+																	link = itemString,
+																	id = itemID,
+																	visualID = appearances[j].visualID,
+																	sourceID = sources[m].sourceID
+																}
+															)
+														end
+														newInstances[inst.instance]["total"] = newInstances[inst.instance]["total"] + 1
+														newInstances[inst.instance]["difficulties"][dif]["total"] =
+															newInstances[inst.instance]["difficulties"][dif]["total"] + 1
 													end
-													newInstances[inst.instance]["total"] = newInstances[inst.instance]["total"] + 1
-													newInstances[inst.instance]["difficulties"][dif]["total"] =
-														newInstances[inst.instance]["difficulties"][dif]["total"] + 1
 												end
-											end
-										else
-											local type = TYPES[sourceType]
-											if type == nil then type = "UNKNOWN" end
-											local name, isWeapon, canEnchant, canMainHand, canOffHand = C_TransmogCollection.GetCategoryInfo(i, transmogLocation)
-											if i < 10 then
-												name = '0' .. i .. ' - ' .. name
 											else
-												name = i .. ' - ' .. name
+												local type = TYPES[sourceType]
+												if type == nil then type = "UNKNOWN" end
+												local name, isWeapon, canEnchant, canMainHand, canOffHand = C_TransmogCollection.GetCategoryInfo(i, transmogLocation)
+												if name == nil then name = "" end
+												if i < 10 then
+													name = '0' .. i .. ' - ' .. name
+												else
+													name = i .. ' - ' .. name
+												end
+												if newInstances[type] == nil then
+													newInstances[type] = {}
+													newInstances[type]["difficulties"] = {}
+													newInstances[type]["difficulties"]["Normal"] = {}
+													newInstances[type]["difficulties"]["Normal"]["bosses"] = {}
+													newInstances[type]["collected"] = 0
+													newInstances[type]["total"] = 0
+												end
+												if newInstances[type]["difficulties"]["Normal"]["bosses"][name] == nil then
+													newInstances[type]["difficulties"]["Normal"]["bosses"][name] = {}
+													newInstances[type]["difficulties"]["Normal"]["bosses"][name]["items"] = {}
+												end
+												if collected then
+													newInstances[type]["collected"] = newInstances[type]["collected"] + 1
+												else
+													table.insert(
+														newInstances[type]["difficulties"]["Normal"]["bosses"][name]["items"],
+														{
+															link = itemString,
+															id = itemID,
+															visualID = appearances[j].visualID,
+															sourceID = sources[m].sourceID
+														}
+													)
+												end
+												newInstances[type]["total"] = newInstances[type]["total"] + 1
 											end
-											if newInstances[type] == nil then
-												newInstances[type] = {}
-												newInstances[type]["difficulties"] = {}
-												newInstances[type]["difficulties"]["Normal"] = {}
-												newInstances[type]["difficulties"]["Normal"]["bosses"] = {}
-												newInstances[type]["collected"] = 0
-												newInstances[type]["total"] = 0
-											end
-											if newInstances[type]["difficulties"]["Normal"]["bosses"][name] == nil then
-												newInstances[type]["difficulties"]["Normal"]["bosses"][name] = {}
-												newInstances[type]["difficulties"]["Normal"]["bosses"][name]["items"] = {}
-											end
-											if collected then
-												newInstances[type]["collected"] = newInstances[type]["collected"] + 1
-											else
-												table.insert(
-													newInstances[type]["difficulties"]["Normal"]["bosses"][name]["items"],
-													{
-														link = itemString,
-														id = itemID,
-														visualID = appearances[j].visualID,
-														sourceID = sources[m].sourceID
-													}
-												)
-											end
-											newInstances[type]["total"] = newInstances[type]["total"] + 1
 										end
 									end
 								end
@@ -710,3 +802,20 @@ end
 
 f:SetScript("OnUpdate", f.OnUpdate)
 f:SetScript("OnEvent", f.OnEvent)
+
+---------------------------------------------------------------
+--  Debug Methods
+---------------------------------------------------------------
+
+o.debug = {}
+o.debug.printInstances = function()
+	local text = ""
+	for k, v in orderedPairs(o.instances) do
+		text = text .. "~" .. k
+	end
+	print(text)
+end
+
+o.debug.getRedText = function(x)
+	print(o.tooltipScanning.GetRedText(x))
+end

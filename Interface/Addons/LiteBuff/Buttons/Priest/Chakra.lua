@@ -5,6 +5,12 @@
 -- 2011/11/13
 ------------------------------------------------------------
 if select(2, UnitClass("player")) ~= "PRIEST" then return end
+local GetSpellInfo = GetSpellInfo or function(id)
+	local info = C_Spell.GetSpellInfo(id)
+	if info then
+		return info.name, nil, info.iconID, info.castTime, info.minRange, info.maxRange, info.spellID, info.originalIconID;
+	end
+end;
 
 local _, addon = ...
 local L = addon.L

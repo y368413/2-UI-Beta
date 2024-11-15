@@ -31,8 +31,13 @@ A default texture will be applied to the StatusBar and Texture widgets if they d
 .castID           - A globally unique identifier of the currently cast spell (string?)
 .casting          - Indicates whether the current spell is an ordinary cast (boolean)
 .channeling       - Indicates whether the current spell is a channeled cast (boolean)
+.empowering       - Indicates whether the current spell is an empowering cast (boolean)
 .notInterruptible - Indicates whether the current spell is interruptible (boolean)
-.spellID          - The spell identifier of the currently cast/channeled spell (number)
+.spellID          - The spell identifier of the currently cast/channeled/empowering spell (number)
+.numStages        - The number of empowerment stages of the current spell (number?)
+.curStage         - The current empowerment stage of the spell. It updates only if the PostUpdateStage callback is
+                    defined (number?)
+.stagePoints      - The timestamps (in seconds) for each empowerment stage (table)
 
 ## Examples
 
@@ -46,7 +51,7 @@ A default texture will be applied to the StatusBar and Texture widgets if they d
     -- Add a background
     local Background = Castbar:CreateTexture(nil, 'BACKGROUND')
     Background:SetAllPoints(Castbar)
-    Background:SetTexture(1, 1, 1, .5)
+    Background:SetColorTexture(1, 1, 1, .5)
 
     -- Add a spark
     local Spark = Castbar:CreateTexture(nil, 'OVERLAY')
@@ -92,6 +97,7 @@ local oUF = ns.oUF
 local FALLBACK_ICON = 136243 -- Interface\ICONS\Trade_Engineering
 local FAILED = _G.FAILED or 'Failed'
 local INTERRUPTED = _G.INTERRUPTED or 'Interrupted'
+local CASTBAR_STAGE_DURATION_INVALID = -1 -- defined in FrameXML/CastingBarFrame.lua
 
 local function resetAttributes(self)
 	self.castID = nil
@@ -100,12 +106,116 @@ local function resetAttributes(self)
 	self.empowering = nil
 	self.notInterruptible = nil
 	self.spellID = nil
+	self.numStages = nil
+	self.curStage = nil
+
+	table.wipe(self.stagePoints)
+
+	for _, pip in next, self.Pips do
+		pip:Hide()
+	end
+end
+
+local function CreatePip(element)
+	return CreateFrame('Frame', nil, element, 'CastingBarFrameStagePipTemplate')
+end
+
+local function UpdatePips(element, numStages)
+	local stageTotalDuration = 0
+	local stageMaxValue = element.max * 1000
+	local isHoriz = element:GetOrientation() == 'HORIZONTAL'
+	local elementSize = isHoriz and element:GetWidth() or element:GetHeight()
+	element.numStages = numStages
+	element.curStage = 0 -- NOTE: Updates only if the PostUpdateStage callback is present
+
+	for stage = 1, numStages do
+		local duration
+		if(stage > numStages) then
+			duration = GetUnitEmpowerHoldAtMaxTime(element.__owner.unit)
+		else
+			duration = GetUnitEmpowerStageDuration(element.__owner.unit, stage - 1)
+		end
+
+		if(duration > CASTBAR_STAGE_DURATION_INVALID) then
+			stageTotalDuration = stageTotalDuration + duration
+			element.stagePoints[stage] = stageTotalDuration / 1000
+
+			local portion = stageTotalDuration / stageMaxValue
+			local offset = elementSize * portion
+
+			local pip = element.Pips[stage]
+			if(not pip) then
+				--[[ Override: Castbar:CreatePip(stage)
+				Creates a "pip" for the given stage, used for empowered casts.
+
+				* self - the Castbar widget
+
+				## Returns
+
+				* pip - a frame used to depict an empowered stage boundary, typically with a line texture (frame)
+				--]]
+				pip = (element.CreatePip or CreatePip) (element, stage)
+				element.Pips[stage] = pip
+			end
+
+			pip:ClearAllPoints()
+			pip:Show()
+
+			if(isHoriz) then
+				if(pip.RotateTextures) then
+					pip:RotateTextures(0)
+				end
+
+				if(element:GetReverseFill()) then
+					pip:SetPoint('TOP', element, 'TOPRIGHT', -offset, 0)
+					pip:SetPoint('BOTTOM', element, 'BOTTOMRIGHT', -offset, 0)
+				else
+					pip:SetPoint('TOP', element, 'TOPLEFT', offset, 0)
+					pip:SetPoint('BOTTOM', element, 'BOTTOMLEFT', offset, 0)
+				end
+			else
+				if(pip.RotateTextures) then
+					pip:RotateTextures(1.5708)
+				end
+
+				if(element:GetReverseFill()) then
+					pip:SetPoint('LEFT', element, 'TOPLEFT', 0, -offset)
+					pip:SetPoint('RIGHT', element, 'TOPRIGHT', 0, -offset)
+				else
+					pip:SetPoint('LEFT', element, 'BOTTOMLEFT', 0, offset)
+					pip:SetPoint('RIGHT', element, 'BOTTOMRIGHT', 0, offset)
+				end
+			end
+		end
+	end
+
+	--[[ Callback: Castbar:PostUpdatePips(numStages)
+	Called after the element has updated stage separators (pips) in an empowered cast.
+
+	* self - the Castbar widget
+	* numStages - the number of stages in the current cast (number)
+	--]]
+	if(element.PostUpdatePips) then
+		element:PostUpdatePips(numStages)
+	end
+end
+
+--[[ Override: Castbar:ShouldShow(unit)
+Handles check for which unit the castbar should show for. 
+Defaults to the object unit.
+
+* self - the Castbar widget
+* unit - the unit for which the update has been triggered (string)
+--]]
+local function ShouldShow(element, unit)
+	return element.__owner.unit == unit
 end
 
 local function CastStart(self, event, unit)
-	if(self.unit ~= unit) then return end
-
 	local element = self.Castbar
+	if(not (element.ShouldShow or ShouldShow) (element, unit)) then
+		return
+	end
 
 	local numStages, _
 	local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible, spellID = UnitCastingInfo(unit)
@@ -140,7 +250,6 @@ local function CastStart(self, event, unit)
 	element.holdTime = 0
 	element.castID = castID
 	element.spellID = spellID
-	element.numStages = numStages -- isNewPatch
 
 	if(element.channeling) then
 		element.duration = endTime - GetTime()
@@ -179,6 +288,16 @@ local function CastStart(self, event, unit)
 		safeZone[isHoriz and 'SetWidth' or 'SetHeight'](safeZone, element[isHoriz and 'GetWidth' or 'GetHeight'](element) * ratio)
 	end
 
+	if(element.empowering) then
+		--[[ Override: Castbar:UpdatePips(numStages)
+		Handles updates for stage separators (pips) in an empowered cast.
+
+		* self      - the Castbar widget
+		* numStages - the number of stages in the current cast (number)
+		--]]
+		(element.UpdatePips or UpdatePips) (element, numStages)
+	end
+
 	--[[ Callback: Castbar:PostCastStart(unit)
 	Called after the element has been updated upon a spell cast or channel start.
 
@@ -193,9 +312,11 @@ local function CastStart(self, event, unit)
 end
 
 local function CastUpdate(self, event, unit, castID, spellID)
-	if(self.unit ~= unit) then return end
-
 	local element = self.Castbar
+	if(not (element.ShouldShow or ShouldShow) (element, unit)) then
+		return
+	end
+
 	if(not element:IsShown() or element.castID ~= castID or element.spellID ~= spellID) then
 		return
 	end
@@ -250,9 +371,11 @@ local function CastUpdate(self, event, unit, castID, spellID)
 end
 
 local function CastStop(self, event, unit, castID, spellID)
-	if(self.unit ~= unit) then return end
-
 	local element = self.Castbar
+	if(not (element.ShouldShow or ShouldShow) (element, unit)) then
+		return
+	end
+
 	if(not element:IsShown() or element.castID ~= castID or element.spellID ~= spellID) then
 		return
 	end
@@ -272,9 +395,11 @@ local function CastStop(self, event, unit, castID, spellID)
 end
 
 local function CastFail(self, event, unit, castID, spellID)
-	if(self.unit ~= unit) then return end
-
 	local element = self.Castbar
+	if(not (element.ShouldShow or ShouldShow) (element, unit)) then
+		return
+	end
+
 	if(not element:IsShown() or element.castID ~= castID or element.spellID ~= spellID) then
 		return
 	end
@@ -303,9 +428,11 @@ local function CastFail(self, event, unit, castID, spellID)
 end
 
 local function CastInterruptible(self, event, unit)
-	if(self.unit ~= unit) then return end
-
 	local element = self.Castbar
+	if(not (element.ShouldShow or ShouldShow) (element, unit)) then
+		return
+	end
+
 	if(not element:IsShown()) then return end
 
 	element.notInterruptible = event == 'UNIT_SPELLCAST_NOT_INTERRUPTIBLE'
@@ -372,6 +499,29 @@ local function onUpdate(self, elapsed)
 			end
 		end
 
+		--[[ Callback: Castbar:PostUpdateStage(stage)
+		Called after the current stage changes.
+
+		* self - the Castbar widget
+		* stage - the stage of the empowered cast (number)
+		--]]
+		if(self.empowering and self.PostUpdateStage) then
+			local old = self.curStage
+			for i = old + 1, self.numStages do
+				if(self.stagePoints[i]) then
+					if(self.duration > self.stagePoints[i]) then
+						self.curStage = i
+
+						if(self.curStage ~= old) then
+							self:PostUpdateStage(i)
+						end
+					else
+						break
+					end
+				end
+			end
+		end
+
 		self:SetValue(self.duration)
 	elseif(self.holdTime > 0) then
 		self.holdTime = self.holdTime - elapsed
@@ -410,6 +560,8 @@ local function Enable(self, unit)
 		self:RegisterEvent('UNIT_SPELLCAST_NOT_INTERRUPTIBLE', CastInterruptible)
 
 		element.holdTime = 0
+		element.stagePoints = {}
+		element.Pips = element.Pips or {}
 
 		element:SetScript('OnUpdate', element.OnUpdate or onUpdate)
 
@@ -467,7 +619,7 @@ local function Disable(self)
 
 		if(self.unit == 'player' and not (self.hasChildren or self.isChild or self.isNamePlate)) then
 			PlayerCastingBarFrame:OnLoad()
-			PetCastingBarFrame:OnLoad()
+			PetCastingBarFrame:PetCastingBar_OnLoad()
 		end
 	end
 end

@@ -1,12 +1,7 @@
----------------------
--- TODO: Tabard takes precedence over zone/rep change
-
--- TODO: Handle zones with multiple factions (random/highest rep)
----------------------
 --## Author: phistoh  ## Version: 1.1.3
-
+local  phis = {}
 -- table of [tabard id] = reputation id pairs
-local phis_tabards = {
+phis.tabards = {
 	-- main alliance factions
 	[45574] = 72,   -- Stormwind
 	[45577] = 47,   -- Ironforge
@@ -42,7 +37,7 @@ local phis_tabards = {
 
 
 -- table of [reputation id] = true pairs to check if the corresponding faction offers Paragon rewards
-local phis_paragons = {
+phis.paragons = {
 	-- Legion
 	[1828]=true, -- Highmountain Tribe
 	[1859]=true, -- The Nightfallen
@@ -52,7 +47,7 @@ local phis_paragons = {
 	[1894]=true, -- The Wardens
 	[2045]=true, -- Armies of the Legionfall
 	
-	-- Battles for Azeroth
+	-- Battle for Azeroth
 	[2160]=true, -- Proudmoore Admirality
 	[2162]=true, -- Storm's Wake
 	[2161]=true, -- Order of Embers
@@ -63,11 +58,26 @@ local phis_paragons = {
 	[2159]=true, -- 7th Legion
 	[2157]=true, -- Honorbound
 	[2163]=true, -- Tortollan Seekers
+	
+	-- Shadowlands
+	[2407]=true, -- The Ascended
+	[2413]=true, -- Court of Harvesters
+	[2410]=true, -- The Undying Army
+	[2465]=true, -- The Wild Hunt
+	
+	-- Dragonflight
+	[2575]=true, -- Dream Wardens
+	[2552]=true, -- Valdrakken Accord
+	[2508]=true, -- Dragonscale Expedition
+	[2521]=true, -- Clan Nokhud
+	[2551]=true, -- Iskaara Tuskarr
+	[2565]=true, -- Loamm Niffen
+	[2504]=true, -- Maruuk Centaur
 }
 
 -- table of ["zone name"] = reputation id pairs
 -- or ["zone name"] = {["A"] = rep id, ["H"] = rep id} pairs for zones with different reputations for Alliance/Horde
-local phis_zones = {
+phis.zones = {
 	-- Kalimdor
 	["Mount Hyjal"] = 1158,									-- Guardians of Hyjal
 	["Uldum"] = 1173,										-- Ramkahen
@@ -151,10 +161,23 @@ local phis_zones = {
 	["Zuldazar"] = 2103,									-- Zandalari Empire
 	["Vol\'dun"] = 2158,									-- Voldunai
 	
+	-- Shadowlands
+	["Bastion"] = 2407,										-- The Ascended
+	["Maldraxxus"] = 2410,									-- The Undying Army
+	["Ardenweald"] = 2422,									-- The Wild Hunt
+	["Revendreth"] = 2413,									-- Court of Harvesters
+	["The Maw"] = 2432,										-- Ve'nari
+	["Korthia"] = 2470,										-- Death's Advance
+	
+	-- Dragonflight
+	["Zaralek Cavern"] = 2565,								-- Loamm Niffen
+	["The Azure Span"] = 2526,								-- Winterpelt Furbolg
+	
 	-- Other
 	["Deepholm"] = 1171,									-- Therazane
 	["Darkmoon Island"] = 909,								-- Darkmoon Faire
 	["Nazjatar"] = {["A"] = 2400, ["H"] = 2373},			-- Waveblade Ankoan / The Unshackled
+	["Emerald Dream"] = 2574,								-- Dream Wardens
 	
 	-- Dungeons
 	["Old Hillsbrad Foothills"] = 989,						-- Keepers of Time
@@ -178,12 +201,22 @@ local phis_zones = {
 	["Black Temple"] = 1012,								-- Ashtongue Deathsworn
 	["Temple of Ahn\'Qiraj"] = 910,							-- Brood of Nozdormu
 	["Ruins of Ahn\'Qiraj"] = 609,							-- Cenarion Circle
-	["The Molten Core"] = 749,									-- Hydraxian Waterlords
+	["The Molten Core"] = 749,								-- Hydraxian Waterlords
 	["Throne of Tunder"] = 1435,							-- Shado-Pan Assault
 	["Hyjal Summit"] = 990,									-- The Scale of Sands
 	["Icecrown Citadel"] = 1156,							-- The Ashen Verdict
 	["Karazhan"] = 967										-- The Violet Eye
 }
+
+local phis_f = CreateFrame("Frame")
+
+phis_f:RegisterEvent("PLAYER_ENTERING_WORLD")
+phis_f:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+phis_f:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+phis_f:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+phis_f:RegisterEvent("ADDON_LOADED")
+
+local DESCRIPTION_LONG = "The addon changes the 'watched faction' in the reputation pane depending on different conditions:|n|n    - Equipping a tabard which provides reputation (e.g. equipping |cFF1EFF00[Tabard of Therazane]|r -> Therazane)|n    - Entering a zone which has a correspoding faction (e.g. entering the Dread Wastes -> The Klaxxi)|n    - Gaining reputation for a faction (e.g. killing a Blackfang Shaman -> The Saberstalkers)|n|nThe addon doesn't switch to a faction if it is already exalted. (Except to the paragonable factions.)|n|nUsage: The addon automatically switches the watched faction so there is nothing you have to do. You can temporarily toggle the automatic switching with '|cFF2EE6E6/pfs toggle|r'. The following options disable (and enable) the conditions for changing the watched faction."
 
 -- slash commands
 SLASH_PFS1 = "/phisfactionswitcher"
@@ -205,15 +238,25 @@ local faction_standing_msg = {
 	string.gsub(FACTION_STANDING_INCREASED_DOUBLE_BONUS, "%%s", "(.+)")
 }
 
+-------------------------
+--   AUXILIARY STUFF   --
+-------------------------
+
+local function addonPrint(str)
+	print('|cFF2EE6E6[0.0]:|r '..str)
+end
+
+
+
 SlashCmdList["PFS"] = function(args)
 	-- generic help message
 	if args:lower() ~= "toggle" then
-		print("phisFactionSwitcher v"..GetAddOnMetadata("phisFactionSwitcher","Version"))
-		print("Toggle the automatic switching of reputations with /pfs toggle")
+		addonPrint("Version v".."1.1.13")
+		addonPrint("Temporarily toggle the automatic switching of reputations with /pfs toggle")
 	else	
 		-- toggle the value of disabled
 		enabled = not enabled
-		print("phisFactionSwitcher is now "..(enabled and "enabled" or "disabled")..".")
+		addonPrint("phisFactionSwitcher is now "..(enabled and "enabled" or "disabled")..".")
 	end
 	
 end
@@ -255,7 +298,7 @@ local function set_faction_index_by_id(rep_id)
 	
 	-- if already exalted, don't switch
 	-- except when it is a "paragonable" reputation
-	if standing == 8 and not phis_paragons[rep_id] then
+	if standing == 8 and not phis.paragons[rep_id] then
 		return
 	end
 	
@@ -308,20 +351,39 @@ local function set_faction_index_by_name(faction_name)
 end
 
 local function main_eventhandler(self, event, ...)
+	-- initializes the saved variable table if not present
+	if (event == "ADDON_LOADED") then
+		if phisFactionSwitcherSavedVars == nil then
+			phisFactionSwitcherSavedVars = {
+				tabard = true,
+				zone_change = true,
+				combat_text = true
+			}
+			addonPrint("Addon loaded for the first time.")
+		end
+		phis_f:UnregisterEvent("ADDON_LOADED")
+	end
+
 	-- do nothing if the addon is currently disabled
 	if not enabled then
 		return
 	end
+	
+	-- only change watched faction if there is a watched faction
+	watched_faction = GetWatchedFactionInfo()
+	if not watched_faction then
+		return
+	end
 
 	-- check if the player equipped/unequipped something
-	if (event == "PLAYER_EQUIPMENT_CHANGED") then
+	if (phisFactionSwitcherSavedVars.tabard and event == "PLAYER_EQUIPMENT_CHANGED") then
 		local arg1, arg2 = ...
 		-- if no tabard was equipped do nothing
 		if (arg1 ~= INVSLOT_TABARD) or (arg2 == true) then
 			return
 		end
 		item_id = GetInventoryItemID("player", INVSLOT_TABARD)
-		rep_id = phis_tabards[item_id]
+		rep_id = phis.tabards[item_id]
 		if rep_id ~= nil then
 			set_faction_index_by_id(rep_id)
 		end
@@ -330,7 +392,7 @@ local function main_eventhandler(self, event, ...)
 	
 	-- check if the player entered a zone with a corresponding reputation
 	-- (will also get fired if the player enters the world)
-	if (event == "ZONE_CHANGED_NEW_AREA") or (event == "PLAYER_ENTERING_WORLD") then
+	if (phisFactionSwitcherSavedVars.zone_change and ((event == "ZONE_CHANGED_NEW_AREA") or (event == "PLAYER_ENTERING_WORLD"))) then
 		zone_name = GetRealZoneText()
 		
 		-- workaround for zones existing in both Outland and Draenor
@@ -341,7 +403,7 @@ local function main_eventhandler(self, event, ...)
 			end
 		end
 		
-		rep_id = phis_zones[zone_name]
+		rep_id = phis.zones[zone_name]
 		
 		-- check if the zone has different factions dependent on Alliance/Horde
 		if type(rep_id) == "table" then
@@ -355,7 +417,7 @@ local function main_eventhandler(self, event, ...)
 	end
 	
 	-- check the player's combat text
-	if (event == "CHAT_MSG_COMBAT_FACTION_CHANGE") then
+	if (phisFactionSwitcherSavedVars.combat_text and event == "CHAT_MSG_COMBAT_FACTION_CHANGE") then
 		local arg1 = ...
 
 		local faction_name = nil
@@ -375,12 +437,57 @@ local function main_eventhandler(self, event, ...)
 	
 end
 
-local phis_f = CreateFrame("Frame")
+-------------------------
+--    OPTIONS PANEL    --
+-------------------------
 
-phis_f:RegisterEvent("PLAYER_ENTERING_WORLD")
-phis_f:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-phis_f:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
-phis_f:RegisterEvent("CHAT_MSG_COMBAT_FACTION_CHANGE")
+-- creates a checkbox 10 px below 'anchor' and stores its state in phisFactionSwitcherSavedVars[k]
+local function create_checkbox(k, parent, anchor, text)
+	local checkbox = CreateFrame('CheckButton', k..'CheckButton', parent, 'UICheckButtonTemplate')
+	checkbox:SetPoint('TOPLEFT', anchor, 'BOTTOMLEFT', 0, -10)
+	checkbox:SetChecked(phisFactionSwitcherSavedVars[k])
+	_G[k..'CheckButtonText']:SetText(' '..text)
+	_G[k..'CheckButtonText']:SetFontObject('GameFontNormal')
+	checkbox:SetScript('OnClick', function()
+		-- when 'OnClick' runs, GetChecked() already returns the new status
+		checked = checkbox:GetChecked()
+		PlaySound(checked and SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON or SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
+		phisFactionSwitcherSavedVars[k] = checked
+	end)
+	
+	return checkbox
+end
 
+local options = CreateFrame('Frame', 'phisFactionSwitcherOptionsFrame', SettingsPanel.Container)
+options.name = "phisFactionSwitcher"
+--InterfaceOptions_AddCategory(options)
+local Category = Settings.RegisterCanvasLayoutCategory(self, options.name)
+		Settings.RegisterAddOnCategory(Category)
+options:SetScript('OnShow', function()
+
+	--- HEADER --
+	local title_string = options:CreateFontString(nil, 'ARTWORK', 'GameFontNormalLarge')
+	title_string:SetPoint('TOPLEFT', 10, -10)
+	title_string:SetText('phisFactionSwitcher')
+	
+	local version_string = options:CreateFontString(nil, 'ARTWORK', 'GameFontNormalSmall')
+	version_string:SetPoint('BOTTOMLEFT', title_string, 'BOTTOMRIGHT', 4, 0)
+	version_string:SetText('v'..'1.1.13')
+	
+	local description_string = options:CreateFontString(nil, 'ARTWORK', 'GameFontHighlight')
+	description_string:SetPoint('TOPLEFT', title_string, 'BOTTOMLEFT', 0, -10)
+	description_string:SetJustifyH('LEFT')
+	description_string:SetWidth(SettingsPanel.Container:GetWidth() - 40)
+	description_string:SetNonSpaceWrap(true)
+	description_string:SetText(DESCRIPTION_LONG)
+	
+	--- CHECKBOXES ---
+	local checkboxes = {}
+	checkboxes.tabard = create_checkbox('tabard', options, description_string, 'Change faction bar on equipping champion tabard')
+	checkboxes.zone_change = create_checkbox('zone_change', options, checkboxes.tabard, 'Change faction bar dependent on current zone')
+	checkboxes.combat_text = create_checkbox('combat_text', options, checkboxes.zone_change, 'Change faction bar to last reputation gain')
+	
+	options:SetScript('OnShow', nil)
+end)
 
 phis_f:SetScript("OnEvent", main_eventhandler)

@@ -3,5 +3,6 @@
 ## Author: DengSir
 ## Version: 90100.01
 ## Dependencies: tdBattlePetScript, Rematch
+## DefaultState: disabled
 
 Load.xml

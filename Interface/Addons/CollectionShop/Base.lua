@@ -3,7 +3,7 @@
 --------------------------------------------------------------------------------------------------------------------------------------------
 local NS = select( 2, ... );
 NS.addon = ...;
-NS.title = GetAddOnMetadata( NS.addon, "Title" );
+NS.title = C_AddOns.GetAddOnMetadata( NS.addon, "Title" );
 NS.patch = GetBuildInfo();
 NS.UI = {};
 --------------------------------------------------------------------------------------------------------------------------------------------
@@ -65,7 +65,7 @@ NS.TextFrame = function( name, parent, text, set )
 	end
 	-- Text alignment
 	fs:SetJustifyH( set.justifyH or "LEFT" );
-	fs:SetJustifyV( set.justifyV or "CENTER" );
+	fs:SetJustifyV( set.justifyV or "MIDDLE" );
 	-- Stretch Fontstring to fill container frame or, if no size is set, stretch container frame to fit Fontstring
 	fs:SetPoint( "TOPLEFT" );
 	if not set.size then
@@ -219,7 +219,7 @@ NS.Button = function( name, parent, text, set )
 end
 --
 NS.CheckButton = function( name, parent, text, set )
-	local f = CreateFrame( "CheckButton", "$parent" .. name, parent, set.template or "InterfaceOptionsCheckButtonTemplate" );
+	local f = CreateFrame( "CheckButton", "$parent" .. name, parent, set.template or "UICheckButtonTemplate" );
 	--
 	_G[f:GetName() .. 'Text']:SetText( text );
 	--
@@ -864,18 +864,19 @@ NS.BatchDataLoop = function( set )
 	NextData();
 end
 --
-NS.GetAtlasInlineTexture = function( name, size1, size2 )
-	local filename, width, height, left, right, top, bottom, tilesHoriz, tilesVert = GetAtlasInfo( name );
-	size1, size2 = ( size1 or 0 ), ( size2 or 0 );
-	local width = width / ( right - left ); -- Width of actual texture (e.g. width = 64, texture = 256)
-	local height = height / ( bottom - top ); -- Height ^
-	local left = width * left;
-	local right = width * right;
-	local top = height * top;
-	local bottom = height * bottom;
-	-- https://wow.gamepedia.com/UI_escape_sequences#Textures
-	-- |TTexturePath:size1:size2:xoffset:yoffset:dimx:dimy:coordx1:coordx2:coordy1:coordy2:red:green:blue|t
-	return string.format( "|T%s:%d:%d:0:0:%d:%d:%d:%d:%d:%d|t", filename, size1, size2, width, height, left, right, top, bottom );
+NS.GetAtlasInlineTexture = function( name, height, width )
+	-- https://wowpedia.fandom.com/wiki/API_C_Texture.GetAtlasInfo
+	-- info: width, height, leftTexCoord, rightTexCoord, topTexCoord, bottomTexCoord, tilesHorizontally, titlesVertically, file, filename
+	height, width = ( height or 0 ), ( width or 0 );
+	local info = C_Texture.GetAtlasInfo( name );
+	if height == 0 and width > 0 then
+		height = ( info.height / info.width ) * width;
+	elseif width == 0 and height > 0 then
+		width = ( info.width / info.height ) * height;
+	end
+	-- https://wowpedia.fandom.com/wiki/UI_escape_sequences#Texture_atlas
+	-- |A:atlas:height:width[:offsetX:offsetY[:rVertexColor:gVertexColor:bVertexColor]]|a
+	return string.format( "|A:%s:%d:%d|a", name, height, width );
 end
 --
 NS.AddLinesToTooltip = function( lines, double, tooltip )

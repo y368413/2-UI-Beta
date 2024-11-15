@@ -1,10 +1,8 @@
 ﻿local AutoTeam = ALPTRematch
-local rematch = Rematch
-local saved, settings
-local CFG = ALPTRematch.alptconfig
 local AutoTeamData = {}
-
 local enableTeamLoad = true
+local utils = ALPTRematch.utils
+
 local g = {
   npcName = "",
   npcId = 0,
@@ -17,6 +15,7 @@ local g = {
   isLoading = false,
   isDefault = false,
   isCaching = false,
+  waiting = false,
   isPetsReplaced = {false, false, false}
 }
 
@@ -35,7 +34,8 @@ local current = {
   data = nil,
   pets = {{}, {}, {}},
   health = {0, 0, 0},
-  healthCheck = nil
+  healthCheck = nil,
+  levelUp = false
 }
 
 local PetListCache = {}
@@ -45,15 +45,9 @@ local isInited = false
 local hasValidTeam = false
 local resurPrinted = false
 local isResurable = false
-function AutoTeam:DebugFunc()
-end
+local lastTeamLoad = time()
+local  CFG = utils.alptconfig
 
-rematch:InitModule(
-  function()
-    saved = RematchSaved
-    settings = RematchSettings
-  end
-)
 local function PrintMessage(msg)
   if CFG.debug or CFG.showTeamMessage or CFG.enableBattleTimer or CFG.enableXpLog then
     print(msg)
@@ -88,8 +82,8 @@ end
 
 
 local function isResurCooldown()
-  local start, duration, enabled = GetSpellCooldown(125439)
-  return duration == 0
+  local cd = C_Spell.GetSpellCooldown(125439)
+  return cd.duration == 0
 end
 
 local defaultHealthCheck = {100, 100, 100}
@@ -114,9 +108,13 @@ local function getTeamConfig(teamKey)
   
 end
 
+local function getTeam(teamKey)
+  return utils:getTeamByKey(teamKey)
+end
+
 local function isTeamDisabled(teamKey)
-  if settings.alpt and settings.alpt[teamKey] then
-    return settings.alpt[teamKey].disabled
+  if utils.alpt and utils.alpt[teamKey] then
+    return utils.alpt[teamKey].disabled
   end
   return false
 end
@@ -125,87 +123,84 @@ function AutoTeam:findTeamsFromRematch(npcId, npcName)
   local teamName
   local teams = {}
   local index = 1
-
-  if saved[npcId] then
-    teamName = saved[npcId].teamName or npcId .. ""
+  local targetTeam = utils:GetTargetTeams(npcId)
+  local useNameRule = false
+  if  targetTeam and #targetTeam==1 then
+    local team = getTeam(targetTeam[1])
+    if team then
+      teamName = team.name or teamName
+    end
   else
     teamName = npcName
   end
-
-  local matchName = teamName:match("([^%d%p%c]+)")
-  if CFG.debug then
-    print("解析到队伍名称：" .. (matchName or "无"))
+  local matchName = teamName and teamName:match("([^%d%p%c]+)")
+ 
+  if not targetTeam or #targetTeam<=1 then
+ 
+    targetTeam = {}
+    for teamID,team in utils:AllTeams() do
+      if team.name:match(matchName) then
+        targetTeam[index] = teamID
+        index = index + 1
+      end
+    end
+    useNameRule = true
   end
-  if matchName and matchName ~= "" then
-    teamName = matchName
-  end
-
+  index = 1
   local isfind = false
   local teamList = {}
   local name
-  for k, v in pairs(saved) do
-    local isMatch = false
-    if type(k) == "number" and k == npcId then
-      isfind = true
-      isMatch = true
-      name = v.teamName or (k .. "")
-    elseif type(k) ~= "number" and k:match(teamName) then
-      isfind = true
-      isMatch = true
-      name = k
-    end
-    if isMatch then
+  for i=1,#targetTeam do
+    local team = getTeam(targetTeam[i])
+    if team then
+      local isMatch = true
       local hasUpSlot = false
       for i = 1, 3 do
-        local petID = v[i][1]
+        local petID = team.pets[i]
         if petID == 0 then
           hasUpSlot = true
-          break
-        end
+           break
+         end
       end
       if CFG.mode == 2 and hasUpSlot == false then
         isMatch = false
       elseif CFG.mode == 3 and hasUpSlot == true then
-        isMatch = false
+         isMatch = false
+      end
+      if isMatch then
+        teamList[index] = {["key"] = team.teamID, ["name"] = team.name}
+        index = index + 1
+        if CFG.debug then
+          print("解析到队伍：" .. (team.name))
+        end
       end
     end
-    if isMatch then
-      teamList[index] = {["key"] = k, ["name"] = name}
-      index = index + 1
-    end
+  end
+  if useNameRule then
+    table.sort(
+      teamList,
+      function(a, b)
+        return (a.name < b.name)
+      end
+    )
   end
 
-  if not isfind then
-    return nil
-  end
-  table.sort(
-    teamList,
-    function(a, b)
-      return (a.name < b.name)
-    end
-  )
   for i = 1, #teamList do
     teams[i] = teamList[i].key
   end
-  return teams
-end
 
-function AutoTeam:getTeamFromRematch(teamName)
-  for k, v in pairs(saved) do
-    if type(k) == "number" and v.teamName == teamName then
-      return v
-    elseif k == teamName then
-      return v
-    end
+  if #teams<1 then
+    return nil
   end
-  return nil
+
+  return teams
 end
 
 --是否预设的npc
 function AutoTeam:GetNpcData()
   local npcData = AutoTeamData[g.npcId]
   if npcData == nil then
-    if saved[g.npcId] then
+    if utils:GetTargetTeams(g.npcId) then
       npcData = {}
     end
   end
@@ -216,13 +211,14 @@ end
 function AutoTeam:PrintTeams(teamArray)
   PrintMessage("可用队伍")
   for i = 1, #teamArray do
-    if type(teamArray[i]) == "number" then
-      local tm = saved[teamArray[i]]
-      if tm and tm.teamName then
-        PrintMessage("队伍" .. i .. ":" .. tm.teamName)
+    local tm = getTeam(teamArray[i])
+    if tm and tm.name then
+      local status = isTeamDisabled(teamArray[i])
+      if not status then
+        PrintMessage("队伍" .. i .. ":" .. tm.name)
+      else
+        PrintMessage(_clError("队伍" .. i .. ":" .. tm.name .. "(停用)"))
       end
-    else
-      PrintMessage("队伍" .. i .. ":" .. teamArray[i])
     end
   end
 end
@@ -243,16 +239,36 @@ function AutoTeam:FillTeamData(team)
   loadin = {{}, {}, {}}
   pickIndex = 1
   petInTeam = {}
+  local hasLevelUp = false
+
   for i = 1, 3 do
-    local petID = team[i][1]
+    local petID = team.pets[i]
+    if petID == 0 then
+      if CFG.debug then
+        print("更新下Rematch队列参数：" .. team.name)
+      end
+      utils:updateQueue(team.teamID)
+      hasLevelUp = true 
+      break
+    end
+  end
+
+  for i = 1, 3 do
+    local petID = team.pets[i]
 
     if petID and petID ~= 0 then
       loadin[i][0] = false
       loadin[i][1] = petID
       petInTeam[petID] = true
-      local speciesAbilities = rematch:GetAbilities(team[i][5])
+      local abilitys = {}
+
+      local petInfo = utils:getPetInfo(petID)
+      local speciesID = petInfo.speciesID
+
+      local speciesAbilities = petInfo.abilityList
+      abilitys[1],abilitys[2],abilitys[3] = utils:GetAbilities(team,i)
       for j = 1, 3 do
-        local abilityID = team[i][j + 1]
+        local abilityID = abilitys[j]
         if abilityID and abilityID ~= 0 then
           if not speciesAbilities[j] or speciesAbilities[j] == abilityID or speciesAbilities[j + 3] == abilityID then
             loadin[i][j + 1] = abilityID
@@ -262,9 +278,9 @@ function AutoTeam:FillTeamData(team)
     elseif petID == 0 then
       loadin[i][0] = true
 
-      local levelUpPet = rematch.topPicks[pickIndex]
+      local levelUpPet = utils:getQueuePet(pickIndex)
       pickIndex = pickIndex + 1
-      if not levelUpPet or not rematch:IsPetPickable(levelUpPet) then
+      if not levelUpPet or not utils:getQueuePetCanLevel(levelUpPet) then
         loadin[i][1] = Alternates or 0
         if loadin[i][1] ~= 0 then
           petInTeam[loadin[i][1]] = true
@@ -275,6 +291,7 @@ function AutoTeam:FillTeamData(team)
       end
     end
   end
+  return hasLevelUp
 end
 
 function AutoTeam:LoadFromGroup(tcfg, m)
@@ -309,7 +326,7 @@ function AutoTeam:LoadFromGroup(tcfg, m)
         success = true
         replaced = true
         for tt = 1, 3 do
-          loadin[m][tt + 1] = pt.abilityID[tt]
+          loadin[m][tt + 1] = pt.abilityID[groupName][tt]
         end
         break
       end
@@ -322,6 +339,7 @@ end
 function AutoTeam:LoadHighest(tcfg, petId, m)
   if CFG.debug then
     print(m .. "号宠尝试加载最高血量>" .. healthCur)
+    print("缓存长度"..#PetListCache)
   end
   local samepets = PetListCache[speciesIDCur]
   if samepets == nil or #samepets <= 1 then
@@ -423,6 +441,9 @@ function AutoTeam:LoadSame(tcfg, m)
   local replaced = false
   local samepets = PetListCache[speciesIDCur]
   if samepets == nil or #samepets <= 1 then
+    if CFG.debug then
+      print(m .. "号宠物替补失败")
+    end
     return success, replaced
   end
   for n = 1, #samepets do
@@ -497,15 +518,7 @@ function AutoTeam:LoadTeam()
     g.isLoading = false
 
     if CFG.useRematchLoadingDone then
-      settings.AutoLoad = true
-      rematch:LoadingDone(true)
-      settings.AutoLoad = false
-      if settings.AutoLoadShow and (not rematch.LoadoutPanel:IsVisible() and not rematch.MiniPanel:IsVisible()) then
-        rematch:AutoShow()
-      end
-    else
-      rematch:AssignSpecialSlots()
-      rematch:UpdateQueue()
+      utils:ShowRematchDone()
     end
 
     g.loadTimes = 0
@@ -531,7 +544,7 @@ function AutoTeam:LoadTeam()
 end
 
 function AutoTeam:PreLoadTeam(teamKey, isForce)
-  local team = saved[teamKey]
+  local team = getTeam(teamKey)
   if not team then
     if not g.useDefault then
       local msg = "队伍[" .. teamKey .. "]缺失"
@@ -541,11 +554,15 @@ function AutoTeam:PreLoadTeam(teamKey, isForce)
     return false
   end
 
-  if settings.loadedTeam == teamKey and isForce then
+  if utils:getCurrentTeamId() == teamKey and isForce then
     return true
   end
 
-  self:FillTeamData(team)
+  if CFG.debug then
+    print("尝试加载队伍"..team.name)
+  end
+ 
+  current.levelUp = self:FillTeamData(team)
 
   local tcfg = getTeamConfig(teamKey)
 
@@ -560,8 +577,15 @@ function AutoTeam:PreLoadTeam(teamKey, isForce)
         if not pid then
           return false
         end
-        speciesIDCur, customNameCur, levelCur = C_PetJournal.GetPetInfoByPetID(pid)
-        healthCur, maxHealthCur, attackCur, speedCur = C_PetJournal.GetPetStats(pid)
+        local petInfo = utils:getPetInfo(pid)
+        speciesIDCur = petInfo.speciesID
+        customNameCur = petInfo.customName
+        levelCur = petInfo.level
+        healthCur = petInfo.health
+        maxHealthCur= petInfo.maxHealth
+        attackCur= petInfo.power
+        speedCur= petInfo.speed
+        -- healthCur, maxHealthCur, attackCur, speedCur = C_PetJournal.GetPetStats(pid)
         if not speciesIDCur then --宠物丢失的情况
           speciesIDCur = team[m][5]
           levelCur = 0
@@ -641,7 +665,7 @@ function AutoTeam:PreLoadTeam(teamKey, isForce)
   end
 
   current.key = teamKey
-  current.name = team.teamName or teamKey
+  current.name = team.name or teamKey
   current.pets = loadin
   current.tcfg = tcfg
   self:LoadTeam()
@@ -650,19 +674,19 @@ function AutoTeam:PreLoadTeam(teamKey, isForce)
 end
 
 function AutoTeam:ActiveTeam()
-  local loadin = current.pets
-  local loadout = rematch.info
+  local pets = current.pets
+  local loadout = {}
   wipe(loadout)
   local done = {{}, {}, {}}
 
   for slot = 1, 3 do
-    if loadin[slot][1] and loadin[slot][1] ~= 0 then
+    if pets[slot][1] and pets[slot][1] ~= 0 then
       loadout[1], loadout[2], loadout[3], loadout[4] = C_PetJournal.GetPetLoadOutInfo(slot)
-      if loadin[slot][1] ~= loadout[1] then
-        rematch:SlotPet(slot, loadin[slot][1])
+      if pets[slot][1] ~= loadout[1] then
+        utils:SlotPet(slot, pets[slot][1])
       end
       for i = 1, 3 do
-        local abilityID = loadin[slot][i + 1]
+        local abilityID = pets[slot][i + 1]
         if abilityID and loadout[i + 1] ~= abilityID then
           C_PetJournal.SetAbility(slot, i, abilityID)
         end
@@ -670,10 +694,11 @@ function AutoTeam:ActiveTeam()
     end
   end
   for slot = 1, 3 do
-    if loadin[slot][1] and loadin[slot][1] ~= 0 then
+    if pets[slot][1] and pets[slot][1] ~= 0 then
       loadout[1], loadout[2], loadout[3], loadout[4] = C_PetJournal.GetPetLoadOutInfo(slot)
+ 
       for i = 1, 4 do
-        if loadin[slot][i] == loadout[i] or not loadin[slot][i] then
+        if pets[slot][i] == loadout[i] or not pets[slot][i] then
           --loadin[slot][i] = nil
           done[slot][i] = true
         end
@@ -692,12 +717,20 @@ function AutoTeam:ActiveTeam()
       end
     end
   end
-  settings.loadedTeam = current.key
+  utils:setCurrentTeamId(current.key)
   return true
 end
 
+function AutoTeam:AssertHealthiestPet()
+  if CFG.debug then
+    print("尝试按参数更新当前队伍")
+  end
+  self:PreLoadTeam(utils:getCurrentTeamId(), false)
+end
+ 
 function AutoTeam:SelectTeam()
   hasValidTeam = true
+  lastTeamLoad = time()
   if not self:GetNpcData() then
     return
   end
@@ -707,18 +740,20 @@ function AutoTeam:SelectTeam()
 
   g.isDefault = false
   local teamArray = self:findTeamsFromRematch(g.npcId, g.npcName)
-  if not teamArray then
+  if (not teamArray) and CFG.defaultTeam and #CFG.defaultTeam>=1 and CFG.defaultTeam[1] ~="" then
     if CFG.debug then
-      print("未找预设队伍，使用默认队伍")
+      print("未找预设队伍，使用默认队伍["..CFG.defaultTeam[1].."]")
     end
-    teamArray = CFG.defaultTeam
+    teamArray = {utils:getTeamByName(CFG.defaultTeam[1])}
     g.isDefault = true
   end
 
   local teamCount = 0
-  for i = 1, #teamArray do
-    if not isTeamDisabled(teamArray[i]) then
-      teamCount = teamCount + 1
+  if teamArray then
+    for i = 1, #teamArray do
+      if not isTeamDisabled(teamArray[i]) then
+        teamCount = teamCount + 1
+      end
     end
   end
 
@@ -726,6 +761,7 @@ function AutoTeam:SelectTeam()
     if not g.isDefault then
       PrintMessage(_clError("未找到队伍"))
       WriteLogToFile("未找到队伍")
+      self:AssertHealthiestPet()
     end
     g.isDefault = false
     g.isLoading = false
@@ -763,6 +799,12 @@ function AutoTeam:SelectTeam()
 end
 
 function AutoTeam:SelectTeamWhenTarget()
+  if g.waiting then
+    if CFG.debug then
+      print("数据未更新，暂时跳过目标加载")
+    end
+    return 
+  end
   isResurable = isResurCooldown()
   local hasData = self:GetNpcData()
   if not resurPrinted and hasData and isResurable then
@@ -774,15 +816,19 @@ function AutoTeam:SelectTeamWhenTarget()
     if not hasData then
       return
     end
-    current.key = settings.loadedTeam
-    current.name = rematch:GetTeamTitle(RematchSettings.loadedTeam)
+    current.key = utils:getCurrentTeamId()
+    current.name = utils:getCurrentTeamName()
     current.tcfg = nil
     current.pets = nil
     self:PrintCurrentTeam()
     return
   end
   g.isAuto = false
-  if settings.loadedTeam == current.key and (g.isSkip or g.isLoading) then
+
+  local currentTime = time()
+  local canLoad = (currentTime - lastTeamLoad>3)
+  local changed = not (utils:getCurrentTeamId() == current.key)
+  if not canLoad and not changed and (g.isSkip or g.isLoading) then
     if not g.isLoading and current.pets[1][1] then
       if CFG.debug then
         print("尝试激活队伍")
@@ -793,11 +839,15 @@ function AutoTeam:SelectTeamWhenTarget()
   end
 
   if C_PetJournal.IsJournalUnlocked() and CFG.selectWhenTarget then
+    if CFG.debug and changed then
+      print("目标变化")
+    end
     AutoTeam:SelectTeam()
   end
 end
 
 function AutoTeam:SelectTeamAfterBattle()
+
   isResurable = isResurCooldown()
   if not resurPrinted and isResurable then
     PrintMessage(_clSign("复活可用"))
@@ -821,7 +871,7 @@ function AutoTeam:SelectTeamAfterBattle()
     return
   end
 
-  local changed = (settings.loadedTeam ~= current.key)
+  local changed = (utils:getCurrentTeamId() ~= current.key)
   if not changed then
     local health = AutoTeam:getTeamHealth()
     for slot = 1, 3 do
@@ -831,24 +881,33 @@ function AutoTeam:SelectTeamAfterBattle()
       end
     end
   end
-
-  if changed then
-    AutoTeam:SelectTeam()
-  else
-    if rematch.queueNeedsProcessed  then
-      C_Timer.After(
+ 
+  if (not changed) and g.delayCount >= 50 then
+    --等久了直接强制加载
+    g.delayCount = 0
+    C_Timer.After(
         0.01,
         function()
-          AutoTeam:SelectTeamAfterBattle()
+          AutoTeam:SelectTeam()
         end
       )
       return;
+  end
+  if CFG.debug and not changed then
+    print("尝试战斗后选择队伍但属性无变化，等待一次"..( g.delayCount+1))
+  end
+
+  if changed then
+    if CFG.debug then
+      print("状态发生变化，尝试选择队伍")
     end
-
-
+    AutoTeam:SelectTeam()
+  else
     g.delayCount = g.delayCount + 1
-    if g.delayCount > 50 then
+    if g.delayCount >= 100 then
+      print("尝试次数过多，停止")
       g.delayCount = 0
+      g.waiting = false
     else
       C_Timer.After(
         0.01,
@@ -856,7 +915,7 @@ function AutoTeam:SelectTeamAfterBattle()
           AutoTeam:SelectTeamAfterBattle()
         end
       )
-    end
+    end    
   end
 end
 function AutoTeam:LogTeamTime(avg1, avg2)
@@ -872,17 +931,10 @@ function ALPTRematch:GetCurrentTeamAvg()
   return nil
 end
 
-function AutoTeam:GetTargetNPC()
-  local GUID = UnitGUID("target")
-  if not GUID then
-    return nil, nil
-  end
-  local unit_type, npcid = GUID:match("(%a+)-%d+-%d+-%d+-%d+-(%d+)-.+")
-  return unit_type, tonumber(npcid)
-end
+ 
 function AutoTeam:PLAYER_TARGET_CHANGED()
-  if CFG.debug then
-    AutoTeam:DebugFunc()
+  if not CFG then
+    return
   end
   if UnitExists("target") then
     local name = UnitName("target")
@@ -894,18 +946,11 @@ function AutoTeam:PLAYER_TARGET_CHANGED()
       not UnitIsPlayer("target") and not UnitIsEnemy("player", "target") and
         not (InCombatLockdown() or C_PetBattles.IsInBattle() or C_PetBattles.GetPVPMatchmakingInfo())
      then
-      local unit_type, npcid = AutoTeam:GetTargetNPC()
+      local unit_type, npcid = utils:GetTargetNPC()
       if unit_type == "Creature" or unit_type == "BattlePet" then
         g.npcName = name
         g.npcId = tonumber(npcid)
         local npcStr = g.npcId .. ""
-
-        local redirectMap = rematch.targetRedirects or rematch.notableRedirects or {}
-
-        if redirectMap[g.npcId] then
-          g.npcId = redirectMap[g.npcId]
-          npcStr = npcStr .. "=>" .. g.npcId
-        end
         if CFG.debug then
           print("目标[ " .. npcStr .. " ][ " .. g.npcName .. " ]")
         end
@@ -957,25 +1002,7 @@ function AutoTeam:PrintCurrentTeam()
       local health, maxHealth, attack, speed, rarity = C_PetJournal.GetPetStats(petId)
       local percent = math.floor((health * 100) / maxHealth)
 
-      local breadStr = ""
-      if BPBID_Internal then
-        local breedNum =
-          BPBID_Internal.CalculateBreedID(
-          tonumber(speciesID),
-          tonumber(rarity),
-          tonumber(level),
-          tonumber(maxHealth),
-          tonumber(attack),
-          tonumber(speed),
-          false,
-          false
-        )
-        local breed = BPBID_Internal.RetrieveBreedName(breedNum)
-        if breed and breed ~= "NEW" then
-          breadStr = breed
-        end
-      end
-
+      local breadStr = utils:CalcBread(speciesID,rarity,level,maxHealth,attack,speed)
       if level < 25 then
         msg =
           msg ..
@@ -1025,6 +1052,10 @@ function AutoTeam:PET_BATTLE_OPENING_START()
 end
 function AutoTeam:PET_BATTLE_CLOSE()
   if not C_PetBattles.IsInBattle() then
+    if CFG.debug then
+      print("战斗结束")
+    end
+    g.waiting = true
     if CFG.loadAfterBattle >= 0 then
       C_Timer.After(
         CFG.loadAfterBattle,
@@ -1047,7 +1078,7 @@ function AutoTeam:UpdateAlternates()
     Alternates = nil
     return
   end
-  for petID in rematch.Roster:AllOwnedPets() do
+  for petID in utils:AllOwnedPets() do
     local speciesID, _, _, _, _, _, _, speciesName, _, _, _, _, _, _, canBattle = C_PetJournal.GetPetInfoByPetID(petID)
     if canBattle and speciesName == CFG.alternates then
       Alternates = petID
@@ -1059,27 +1090,27 @@ end
 
 --缓存宠物数据
 function AutoTeam:updatePetListCache()
-  if not settings then
-    return
+
+  if CFG.debug then
+    print("updatePetListCache")
   end
+
+  if not utils.inited then
+    g.isCaching = false
+    g.waiting = false
+    return 
+  end
+
+
   if not isInited then
     --从rematch导入数据
-    local npcs = rematch.targetData
-    local idxcheck = 7
-    local idxid  = 3
-    if not npcs then
-      npcs = rematch.notableNPCs or {}
-      idxcheck = 3
-      idxid = 1
-    end
-    for x = 1, #npcs do
-      if npcs[x] and npcs[x][idxcheck] then
-        if not AutoTeamData[npcs[x][idxid]] then
-          AutoTeamData[npcs[x][idxid]] = {}
-        end
+    local npcs = utils:AllTargets()
+    for npcId in npcs
+    do
+      if not AutoTeamData[npcId] then
+        AutoTeamData[npcId] = {}
       end
     end
- 
     BattleLog = {logs = {}, starttime = nil, endtime = date("%Y-%m-%d %H:%M:%S")}
     isInited = true
   end
@@ -1087,16 +1118,16 @@ function AutoTeam:updatePetListCache()
   local petlist = {}
   local alternates = nil
   local idTable
-  local petGroup = {}
+  local petGroupFix = {}
 
   local highestHPPet = nil
   local highestHP = 0
  
-  for petID in rematch.Roster:AllOwnedPets() do
+  for petID in utils:AllOwnedPets() do
     local speciesID, customName, level, _, _, _, _, speciesName, _, _, _, _, _, _, canBattle =
       C_PetJournal.GetPetInfoByPetID(petID)
     if speciesID and canBattle then
-      local health, maxHealth, attack, speed = rematch:GetPetStats(petID)
+      local health, maxHealth, attack, speed = C_PetJournal.GetPetStats(petID)
       if not petlist[speciesID] then
         petlist[speciesID] = {}
       end
@@ -1115,46 +1146,60 @@ function AutoTeam:updatePetListCache()
         highestHPPet = petID
       end
 
-      if maxHealth > 0 and speciesName == CFG.alternates then
+      if maxHealth > 0 and speciesName == utils.alptconfig.alternates then
         alternates = petID
       end
+    end
+  end
 
-      if CFG.petGroups then
-        for k, v in pairs(CFG.petGroups) do
-          for kk, vv in pairs(v) do
-            if kk == speciesID then
-              if not petGroup[k] then
-                petGroup[k] = {}
-              end
-              idTable = rematch:GetAbilities(speciesID)
+  if CFG.petGroups then
+    for m = 1, #CFG.GroupIndexs do
+      local groupName = CFG.GroupIndexs[m]
+      local petGroup = CFG.petGroups[groupName]
+      local indexs = CFG.GroupPetIndexs[groupName]
+      for n = 1, #indexs do
+        local speciesID = indexs[n]
+        local skills = petGroup[speciesID]
+        if not petGroupFix[groupName] then
+          petGroupFix[groupName] = {}
+        end
+        idTable = C_PetJournal.GetPetAbilityList(speciesID)
+        local pets = petlist[speciesID]
+        if pets then
+          for n = 1, #pets do
+            local petInfo = pets[n]
+            if not petInfo.abilityID then
               petInfo.abilityID = {}
-              for yy = 1, 3 do
-                local idxy
-                if vv[yy] == 1 then
-                  idxy = yy
-                else
-                  idxy = yy + 3
-                end
-                petInfo.abilityID[yy] = idTable[idxy]
-              end
-              tinsert(petGroup[k], petInfo)
-              break
             end
+            if not petInfo.abilityID[groupName] then
+              petInfo.abilityID[groupName] = {}
+            end
+            for yy = 1, 3 do
+              local idxy
+              if skills[yy] == 1 then
+                idxy = yy
+              else
+                idxy = yy + 3
+              end
+              petInfo.abilityID[groupName][yy] = idTable[idxy]
+            end
+            tinsert(petGroupFix[groupName], petInfo)
           end
         end
       end
-    --PetGroup
     end
   end
+  --petGroupFix
   
   if not alternates then
     alternates = highestHPPet
   end
 
-  PetGroup = petGroup
+  PetGroup = petGroupFix
   Alternates = alternates
   PetListCache = petlist
   g.isCaching = false
+  g.waiting = false
 end
 
 function AutoTeam:updatePetGroup()
@@ -1174,10 +1219,10 @@ local function OnEvent(self, event, ...)
   elseif event == "PET_BATTLE_CLOSE" then
     AutoTeam:PET_BATTLE_CLOSE()
   elseif event == "PET_JOURNAL_LIST_UPDATE" then
-    if not g.isCaching then
+    if not g.isCaching and CFG then
       g.isCaching = true
       C_Timer.After(
-        0.005,
+        0.03,
         function()
           AutoTeam:updatePetListCache()
         end
@@ -1186,6 +1231,8 @@ local function OnEvent(self, event, ...)
   elseif event == "ADDON_LOADED" then
   end
 end
+ 
+
 
 function AutoTeam:getCurrentTarget()
   return g.npcName
@@ -1227,6 +1274,11 @@ function AutoTeam:IsTeamAvailable()
     end
   end
   return true
+end
+
+function AutoTeam:InitCore()
+  CFG = utils.alptconfig
+  AutoTeam:updatePetGroup()
 end
 
 function ALPTRematchEnable()

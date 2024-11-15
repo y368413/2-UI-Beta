@@ -5,9 +5,9 @@ local UF = M:GetModule("UnitFrames")
 
 local strmatch, format, wipe = strmatch, format, wipe
 local pairs, ipairs, next, tonumber, unpack, gsub = pairs, ipairs, next, tonumber, unpack, gsub
-local UnitAura, GetSpellInfo = UnitAura, GetSpellInfo
+local GetSpellName = C_Spell.GetSpellName
 local InCombatLockdown = InCombatLockdown
-local GetTime, GetSpellCooldown, IsInRaid, IsInGroup = GetTime, GetSpellCooldown, IsInRaid, IsInGroup
+local GetTime, IsInRaid, IsInGroup = GetTime, IsInRaid, IsInGroup
 local C_ChatInfo_SendAddonMessage = C_ChatInfo.SendAddonMessage
 local LE_PARTY_CATEGORY_HOME = LE_PARTY_CATEGORY_HOME
 local LE_PARTY_CATEGORY_INSTANCE = LE_PARTY_CATEGORY_INSTANCE
@@ -107,10 +107,10 @@ for keyIndex, keyString in pairs(wheelGroupIndex) do
 end
 
 function UF:DefaultClickSets()
-	if not MaoRUIDB["ClickSets"][I.MyClass] then MaoRUIDB["ClickSets"][I.MyClass] = {} end
-	if not next(MaoRUIDB["ClickSets"][I.MyClass]) then
+	if not MaoRUISetDB["ClickSets"][I.MyClass] then MaoRUISetDB["ClickSets"][I.MyClass] = {} end
+	if not next(MaoRUISetDB["ClickSets"][I.MyClass]) then
 		for fullkey, spellID in pairs(R.ClickCastList[I.MyClass]) do
-			MaoRUIDB["ClickSets"][I.MyClass][fullkey] = spellID
+			MaoRUISetDB["ClickSets"][I.MyClass][fullkey] = spellID
 		end
 	end
 end
@@ -124,7 +124,7 @@ local onMouseString = "if not self:IsUnderMouse(false) then self:ClearBindings()
 
 local function setupMouseWheelCast(self)
 	local found
-	for fullkey in pairs(MaoRUIDB["ClickSets"][I.MyClass]) do
+	for fullkey in pairs(MaoRUISetDB["ClickSets"][I.MyClass]) do
 		if strmatch(fullkey, "MW%w") then
 			found = true
 			break
@@ -140,17 +140,27 @@ local function setupMouseWheelCast(self)
 	end
 end
 
+local fixedSpells = {
+	[360823] = 365585, -- incorrect spellID for Evoker
+}
+
 local function setupClickSets(self)
 	if self.clickCastRegistered then return end
 
-	for fullkey, value in pairs(MaoRUIDB["ClickSets"][I.MyClass]) do
+	for fullkey, value in pairs(MaoRUISetDB["ClickSets"][I.MyClass]) do
 		if fullkey == "SHIFT-LMB" then self.focuser = true end
 
 		local keyIndex = keyList[fullkey]
 		if keyIndex then
 			if tonumber(value) then
-				self:SetAttribute(format(keyIndex, "type"), "spell")
-				self:SetAttribute(format(keyIndex, "spell"), value)
+				value = fixedSpells[value] or value
+				--self:SetAttribute(format(keyIndex, "type"), "spell")
+				--self:SetAttribute(format(keyIndex, "spell"), value)
+				local spellName = GetSpellName(value)
+				if spellName then
+					self:SetAttribute(format(keyIndex, "type"), "macro")
+					self:SetAttribute(format(keyIndex, "macrotext"), "/cast [@mouseover]"..spellName)
+				end
 			elseif value == "target" then
 				self:SetAttribute(format(keyIndex, "type"), "target")
 			elseif value == "focus" then
@@ -197,168 +207,6 @@ function UF:AddClickSetsListener()
 	M:RegisterEvent("PLAYER_REGEN_ENABLED", UF.DelayClickSets)
 end
 
--- Partywatcher
-UF.PartyWatcherSpells = {}
-function UF:UpdatePartyWatcherSpells()
-	wipe(UF.PartyWatcherSpells)
-
-	for spellID, duration in pairs(R.PartySpells) do
-		local name = GetSpellInfo(spellID)
-		if name then
-			local modDuration = MaoRUIDB["PartySpells"][spellID]
-			if not modDuration or modDuration > 0 then
-				UF.PartyWatcherSpells[spellID] = duration
-			end
-		end
-	end
-
-	for spellID, duration in pairs(MaoRUIDB["PartySpells"]) do
-		if duration > 0 then
-			UF.PartyWatcherSpells[spellID] = duration
-		end
-	end
-end
-
-local watchingList = {}
-function UF:PartyWatcherPostUpdate(button, unit, spellID)
-	local guid = UnitGUID(unit)
-	if not watchingList[guid] then watchingList[guid] = {} end
-	watchingList[guid][spellID] = button
-end
-
-function UF:HandleCDMessage(...)
-	local prefix, msg = ...
-	if prefix ~= "ZenTracker" then return end
-
-	local _, msgType, guid, spellID, duration, remaining = strsplit(":", msg)
-	if msgType == "U" then
-		spellID = tonumber(spellID)
-		duration = tonumber(duration)
-		remaining = tonumber(remaining)
-		local button = watchingList[guid] and watchingList[guid][spellID]
-		if button then
-			local start = GetTime() + remaining - duration
-			if start > 0 and duration > 1.5 then
-				button.CD:SetCooldown(start, duration)
-			end
-		end
-	end
-end
-
-local function SendPartySyncMsg(text)
-	if IsInRaid() or not IsInGroup() then return end
-	if not IsInGroup(LE_PARTY_CATEGORY_HOME) and IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
-		C_ChatInfo_SendAddonMessage("ZenTracker", text, "INSTANCE_CHAT")
-	else
-		C_ChatInfo_SendAddonMessage("ZenTracker", text, "PARTY")
-	end
-end
-
-local lastUpdate = 0
-function UF:SendCDMessage()
-	local thisTime = GetTime()
-	if thisTime - lastUpdate >= 5 then
-		local value = watchingList[UF.myGUID]
-		if value then
-			for spellID in pairs(value) do
-				local start, duration, enabled = GetSpellCooldown(spellID)
-				if enabled ~= 0 and start ~= 0 then
-					local remaining = start + duration - thisTime
-					if remaining < 0 then remaining = 0 end
-					SendPartySyncMsg(format("3:U:%s:%d:%.2f:%.2f:%s", UF.myGUID, spellID, duration, remaining, "-")) -- sync to others
-				end
-			end
-		end
-		lastUpdate = thisTime
-	end
-end
-
-local lastSyncTime = 0
-function UF:UpdateSyncStatus()
-	if IsInGroup() and not IsInRaid() and R.db["UFs"]["PartyFrame"] then
-		local thisTime = GetTime()
-		if thisTime - lastSyncTime > 5 then
-			SendPartySyncMsg(format("3:H:%s:0::0:1", UF.myGUID)) -- handshake to ZenTracker
-			lastSyncTime = thisTime
-		end
-		M:RegisterEvent("SPELL_UPDATE_COOLDOWN", UF.SendCDMessage)
-	else
-		M:UnregisterEvent("SPELL_UPDATE_COOLDOWN", UF.SendCDMessage)
-	end
-end
-
-function UF:SyncWithZenTracker()
-	if not R.db["UFs"]["PartyWatcherSync"] then return end
-
-	UF.myGUID = UnitGUID("player")
-	C_ChatInfo.RegisterAddonMessagePrefix("ZenTracker")
-	M:RegisterEvent("CHAT_MSG_ADDON", UF.HandleCDMessage)
-
-	UF:UpdateSyncStatus()
-	M:RegisterEvent("GROUP_ROSTER_UPDATE", UF.UpdateSyncStatus)
-end
-
-local function UpdateWatcherAnchor(element)
-	local self = element.__owner
-	local horizon = R.db["UFs"]["PartyDirec"] > 2
-	local otherSide = R.db["UFs"]["PWOnRight"]
-	local relF = horizon and "BOTTOMLEFT" or "TOPRIGHT"
-	local relT = "TOPLEFT"
-	local xOffset = horizon and 0 or -5
-	local yOffset = horizon and 5 or 0
-	local margin = horizon and 2 or -2
-	if otherSide then
-		relF = "TOPLEFT"
-		relT = horizon and "BOTTOMLEFT" or "TOPRIGHT"
-		xOffset = horizon and 0 or 5
-		yOffset = horizon and -5 or 0
-		margin = 2
-	end
-	local rel1 = not horizon and not otherSide and "RIGHT" or "LEFT"
-	local rel2 = not horizon and not otherSide and "LEFT" or "RIGHT"
-	local iconSize = horizon and (self:GetWidth()-2*abs(margin))/3 or self:GetHeight()
-	if iconSize > 36 then iconSize = 36 end
-
-	for i = 1, element.__max do
-		local bu = element[i]
-		bu:SetSize(iconSize, iconSize)
-		bu:ClearAllPoints()
-		if i == 1 then
-			bu:SetPoint(relF, self, relT, xOffset, yOffset)
-		elseif i == 4 and horizon then
-			bu:SetPoint(relF, element[i-3], relT, 0, margin)
-		else
-			bu:SetPoint(rel1, element[i-1], rel2, margin, 0)
-		end
-	end
-end
-
-function UF:InterruptIndicator(self)
-	if not R.db["UFs"]["PartyWatcher"] then return end
-
-	local buttons = {}
-	local maxIcons = 6
-	for i = 1, maxIcons do
-		local bu = CreateFrame("Frame", nil, self)
-		M.AuraIcon(bu)
-		bu.CD:SetReverse(false)
-		bu:Hide()
-
-		buttons[i] = bu
-	end
-
-	buttons.__owner = self
-	buttons.__max = maxIcons
-	UpdateWatcherAnchor(buttons)
-	buttons.UpdateAnchor = UpdateWatcherAnchor
-	buttons.PartySpells = UF.PartyWatcherSpells
-	buttons.TalentCDFix = R.TalentCDFix
-	self.PartyWatcher = buttons
-	if R.db["UFs"]["PartyWatcherSync"] then
-		self.PartyWatcher.PostUpdate = UF.PartyWatcherPostUpdate
-	end
-end
-
 local function UpdateAltPowerAnchor(element)
 	if R.db["UFs"]["PartyAltPower"] then
 		local self = element.__owner
@@ -401,9 +249,6 @@ function UF:UpdatePartyElements()
 		if frame.raidType == "party" then
 			if frame.altPower then
 				frame.altPower:UpdateAnchor()
-			end
-			if frame.PartyWatcher then
-				frame.PartyWatcher:UpdateAnchor()
 			end
 		end
 	end

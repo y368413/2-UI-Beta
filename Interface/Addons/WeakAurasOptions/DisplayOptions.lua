@@ -1,5 +1,8 @@
 if not WeakAuras.IsLibsOK() then return end
-local AddonName, OptionsPrivate = ...
+---@type string
+local AddonName = ...
+---@class OptionsPrivate
+local OptionsPrivate = select(2, ...)
 local L = WeakAuras.L
 
 local flattenRegionOptions = OptionsPrivate.commonOptions.flattenRegionOptions
@@ -101,6 +104,7 @@ function OptionsPrivate.GetDisplayOptions(data)
             subIndex[subRegionType] = subIndex[subRegionType] and subIndex[subRegionType] + 1 or 1
             local options, common = OptionsPrivate.Private.subRegionOptions[subRegionType].create(data, subRegionData, index, subIndex[subRegionType])
             options.__order = 200 + index
+            options.__collapsed = true
             regionOption["sub." .. index .. "." .. subRegionType] = options
             commonOption[subRegionType] = common
           end
@@ -148,6 +152,12 @@ function OptionsPrivate.GetDisplayOptions(data)
     end
 
     local options = flattenRegionOptions(regionOption, true)
+
+    for _, option in pairs(options) do
+      if option.type == "range" then
+        option.control = "WeakAurasSpinBox"
+      end
+    end
 
     local region = {
       type = "group",

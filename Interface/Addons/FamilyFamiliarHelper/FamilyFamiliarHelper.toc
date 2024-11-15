@@ -1,0 +1,19 @@
+## Interface: 110005
+## Title: Family Familiar Helper
+## Notes: Displays progress on the Family Familiar battle pet achievement.
+## Author: Gello
+## Version: 2.2.2
+## X-WoWI-ID: 24028
+## X-Wago-ID: baND4pNo
+## X-Curse-Project-ID: 100906
+## SavedVariables: FamilyFamiliarHelperSettings
+## IconTexture: Interface\Icons\icon_hippogold
+## AddonCompartmentFunc: FamilyFamiliarHelperToggleWindow
+## DefaultState: disabled
+
+AchievementInfo.lua
+Main.xml
+AchievementsPanel.xml
+ProgressPanel.xml
+OptionsPanel.xml
+MinimapButton.xml

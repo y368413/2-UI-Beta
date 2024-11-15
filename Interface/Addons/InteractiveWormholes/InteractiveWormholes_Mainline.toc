@@ -1,0 +1,50 @@
+## Interface: 110005
+## Author: p3lim
+## Version: 110000.50-Release
+## Title: Interactive Wormholes
+## Notes: Shows clickable locations on the World Map when interacting with gossip windows that offer teleportation
+## IconTexture: Interface\Icons\inv_misc_shadowegg
+## SavedVariables: InteractiveWormholesDB
+
+## X-Curse-Project-ID: 101522
+## X-WoWI-ID: 24119
+## X-Wago-ID: RqGYQOGg
+
+libs\Dashi\embed.xml
+
+locale\deDE.lua
+locale\esES.lua
+locale\esMX.lua
+locale\frFR.lua
+locale\itIT.lua
+locale\koKR.lua
+locale\ptBR.lua
+locale\ruRU.lua
+locale\zhCN.lua
+locale\zhTW.lua
+
+data.lua
+data\animaflow.lua
+data\footholds.lua
+data\getaway.lua
+data\manapoof.lua
+data\molemachine.lua
+data\rocketway.lua
+data\silas.lua
+data\stormflight.lua
+data\underbelly.lua
+data\vethir.lua
+data\warfront.lua
+data\wormholes.lua
+
+pools\line.lua
+pools\arrow.lua
+pools\pin.lua
+pools\provider.lua
+
+providers\gossip.lua
+providers\taxi.lua
+providers\cosmic.lua
+
+utils.lua
+settings.lua

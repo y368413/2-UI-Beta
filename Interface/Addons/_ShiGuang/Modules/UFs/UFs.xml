@@ -13,7 +13,5 @@
 	<Script file="Elements\DebuffsIndicator.lua"/>
 	
 	<Script file="BlinkHealthText.lua"/>
-	<!--Script file="WhoaThickFrames.lua"/-->
 	<Script file="UnitFramesStyle.lua"/>
-	<!--Script file="PartyFramesStyle.lua"/-->
 </Ui>

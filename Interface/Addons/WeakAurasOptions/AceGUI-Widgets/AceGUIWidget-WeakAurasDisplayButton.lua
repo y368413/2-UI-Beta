@@ -1,13 +1,17 @@
 if not WeakAuras.IsLibsOK() then return end
-local AddonName, OptionsPrivate = ...
+---@type string
+local AddonName = ...
+---@class OptionsPrivate
+local OptionsPrivate = select(2, ...)
 
 local tinsert, tremove = table.insert, table.remove
 local select, pairs, type, unpack = select, pairs, type, unpack
 local error = error
 
-local Type, Version = "WeakAurasDisplayButton", 59
+local Type, Version = "WeakAurasDisplayButton", 60
 local AceGUI = LibStub and LibStub("AceGUI-3.0", true)
 if not AceGUI or (AceGUI:GetWidgetVersion(Type) or 0) >= Version then return end
+local LibDD = LibStub:GetLibrary("LibUIDropDownMenu-4.0")
 
 local L = WeakAuras.L;
 local fullName;
@@ -109,7 +113,7 @@ clipboard.copyEverythingEntry = {
   text = L["Everything"],
   notCheckable = true,
   func = function()
-    WeakAuras_DropDownMenu:Hide();
+    LibDD:CloseDropDownMenus()
     CopyToClipboard("all", L["Paste Settings"])
   end
 };
@@ -118,7 +122,7 @@ clipboard.copyGroupEntry = {
   text = L["Group"],
   notCheckable = true,
   func = function()
-    WeakAuras_DropDownMenu:Hide();
+    LibDD:CloseDropDownMenus()
     CopyToClipboard("display", L["Paste Group Settings"])
   end
 };
@@ -127,7 +131,7 @@ clipboard.copyDisplayEntry = {
   text = L["Display"],
   notCheckable = true,
   func = function()
-    WeakAuras_DropDownMenu:Hide();
+    LibDD:CloseDropDownMenus()
     CopyToClipboard("display", L["Paste Display Settings"])
   end
 };
@@ -136,7 +140,7 @@ clipboard.copyTriggerEntry = {
   text = L["Trigger"],
   notCheckable = true,
   func = function()
-    WeakAuras_DropDownMenu:Hide();
+    LibDD:CloseDropDownMenus()
     CopyToClipboard("trigger", L["Paste Trigger Settings"])
   end
 };
@@ -145,7 +149,7 @@ clipboard.copyConditionsEntry = {
   text = L["Conditions"],
   notCheckable = true,
   func = function()
-    WeakAuras_DropDownMenu:Hide();
+    LibDD:CloseDropDownMenus()
     CopyToClipboard("condition", L["Paste Condition Settings"])
   end
 };
@@ -154,7 +158,7 @@ clipboard.copyLoadEntry = {
   text = L["Load"],
   notCheckable = true,
   func = function()
-    WeakAuras_DropDownMenu:Hide();
+    LibDD:CloseDropDownMenus()
     CopyToClipboard("load", L["Paste Load Settings"])
   end
 };
@@ -163,7 +167,7 @@ clipboard.copyActionsEntry = {
   text = L["Actions"],
   notCheckable = true,
   func = function()
-    WeakAuras_DropDownMenu:Hide();
+    LibDD:CloseDropDownMenus()
     CopyToClipboard("action", L["Paste Action Settings"])
   end
 };
@@ -172,7 +176,7 @@ clipboard.copyAnimationsEntry = {
   text = L["Animations"],
   notCheckable = true,
   func = function()
-    WeakAuras_DropDownMenu:Hide();
+    LibDD:CloseDropDownMenus()
     CopyToClipboard("animation", L["Paste Animations Settings"])
   end
 };
@@ -181,7 +185,7 @@ clipboard.copyAuthorOptionsEntry = {
   text = L["Author Options"],
   notCheckable = true,
   func = function()
-    WeakAuras_DropDownMenu:Hide();
+    LibDD:CloseDropDownMenus()
     CopyToClipboard("authorOptions", L["Paste Author Options Settings"])
   end
 };
@@ -190,7 +194,7 @@ clipboard.copyUserConfigEntry = {
   text = L["Custom Configuration"],
   notCheckable = true,
   func = function()
-    WeakAuras_DropDownMenu:Hide();
+    LibDD:CloseDropDownMenus()
     CopyToClipboard("config", L["Paste Custom Configuration"])
   end
 };
@@ -236,6 +240,7 @@ end
 
 local function Show_Tooltip(owner, line1, line2)
   GameTooltip:SetOwner(owner, "ANCHOR_NONE");
+  GameTooltip:ClearAllPoints()
   GameTooltip:SetPoint("LEFT", owner, "RIGHT");
   GameTooltip:ClearLines();
   GameTooltip:AddLine(line1);
@@ -245,6 +250,7 @@ end
 
 local function Show_Long_Tooltip(owner, description)
   GameTooltip:SetOwner(owner, "ANCHOR_NONE");
+  GameTooltip:ClearAllPoints()
   GameTooltip:SetPoint("LEFT", owner, "RIGHT");
   GameTooltip:ClearLines();
   local line = 1;
@@ -271,6 +277,8 @@ end
 local function ensure(t, k, v)
   return t and k and v and t[k] == v
 end
+
+local statusIconPool = CreateFramePool("Button")
 
 --[[     Actions     ]]--
 
@@ -303,19 +311,17 @@ local Actions = {
           WeakAuras.UpdateGroupOrders(group.data)
           WeakAuras.ClearAndUpdateOptions(group.data.id)
           WeakAuras.ClearAndUpdateOptions(source.data.id)
-          WeakAuras.FillOptions()
           group.callbacks.UpdateExpandButton();
+          group:UpdateParentWarning()
           group:ReloadTooltip()
         else
           WeakAuras.Add(source.data)
           WeakAuras.ClearAndUpdateOptions(source.data.id)
-          WeakAuras.FillOptions()
         end
       else
         -- move source into the top-level list
         WeakAuras.Add(source.data)
         WeakAuras.ClearAndUpdateOptions(source.data.id)
-        WeakAuras.FillOptions()
       end
     else
       error("Calling 'Group' with invalid source. Reload your UI to fix the display list.")
@@ -337,6 +343,7 @@ local Actions = {
         WeakAuras.ClearAndUpdateOptions(parent.id);
         local group = OptionsPrivate.GetDisplayButton(parent.id)
         group.callbacks.UpdateExpandButton();
+        group:UpdateParentWarning()
         group:ReloadTooltip()
       else
         error("Display thinks it is a member of a group which does not control it")
@@ -346,6 +353,7 @@ local Actions = {
     end
   end
 }
+
 
 local function GetAction(target, area)
   if target and area then
@@ -447,6 +455,14 @@ local function IsParentRecursive(needle, parent)
   end
 end
 
+local tabsForWarning = {
+  tts_condition = "conditions",
+  sound_condition = "conditions",
+  tts_action = "action",
+  sound_action = "action",
+  spammy_event_warning = "trigger"
+}
+
 --[[-----------------------------------------------------------------------------
 Methods
 -------------------------------------------------------------------------------]]
@@ -480,7 +496,17 @@ local methods = {
               fullName = name
             end
           end
-          editbox:Insert("[WeakAuras: "..fullName.." - "..self.data.id.."]");
+
+          if not (GetCurrentRegion() == 5 or GetLocale() == "zhCN") then -- China region (5), and chinese locale profanity filter doesn't allow links in chat
+            local url = ""
+            if self.data.url then
+              url = " ".. self.data.url
+            end
+            editbox:Insert("[WeakAuras: "..fullName.." - "..self.data.id.."]"..url)
+          else
+            editbox:Insert("[WeakAuras: "..fullName.." - "..self.data.id.."]")
+          end
+
           OptionsPrivate.Private.linked = OptionsPrivate.Private.linked or {}
           OptionsPrivate.Private.linked[self.data.id] = GetTime()
         elseif not self.data.controlledChildren then
@@ -491,10 +517,10 @@ local methods = {
         if(mouseButton == "RightButton") then
           Hide_Tooltip();
           if(OptionsPrivate.IsDisplayPicked(self.data.id) and OptionsPrivate.IsPickedMultiple()) then
-            EasyMenu(OptionsPrivate.MultipleDisplayTooltipMenu(), WeakAuras_DropDownMenu, self.frame, 0, 0, "MENU");
+            LibDD:EasyMenu(OptionsPrivate.MultipleDisplayTooltipMenu(), WeakAuras_DropDownMenu, self.frame, 0, 0, "MENU");
           else
             UpdateClipboardMenuEntry(self.data);
-            EasyMenu(self.menu, WeakAuras_DropDownMenu, self.frame, 0, 0, "MENU");
+            LibDD:EasyMenu(self.menu, WeakAuras_DropDownMenu, self.frame, 0, 0, "MENU");
             if not(OptionsPrivate.IsDisplayPicked(self.data.id)) then
               if self.data.controlledChildren then
                 WeakAuras.PickDisplay(self.data.id, "group")
@@ -557,6 +583,7 @@ local methods = {
       WeakAuras.Add(self.data);
       OptionsPrivate.Private.AddParents(self.data)
       self.callbacks.UpdateExpandButton();
+      self:UpdateParentWarning();
       OptionsPrivate.StopGrouping();
       OptionsPrivate.ClearOptions(self.data.id);
       WeakAuras.FillOptions();
@@ -632,10 +659,12 @@ local methods = {
 
         local button = OptionsPrivate.GetDisplayButton(newGroup.id)
         button.callbacks.UpdateExpandButton()
+        button:UpdateParentWarning()
 
         for old, new in pairs(mapping) do
           local button = OptionsPrivate.GetDisplayButton(new.id)
           button.callbacks.UpdateExpandButton()
+          button:UpdateParentWarning()
         end
 
         OptionsPrivate.SortDisplayButtons(nil, true)
@@ -780,6 +809,7 @@ local methods = {
       if not(newid == oldid) then
         WeakAuras.Rename(self.data, newid);
       end
+      self:UpdateParentWarning()
     end
 
     function self.callbacks.OnDragStart()
@@ -853,7 +883,7 @@ local methods = {
             notCheckable = true,
             func = function()
               OptionsPrivate.ConvertDisplay(self.data, regionType);
-              WeakAuras_DropDownMenu:Hide();
+              LibDD:CloseDropDownMenus()
             end
           });
         end
@@ -911,15 +941,13 @@ local methods = {
     tinsert(self.menu, {
       text = L["Close"],
       notCheckable = true,
-      func = function() WeakAuras_DropDownMenu:Hide() end
+      func = function() LibDD:CloseDropDownMenus() end
     });
     if(self.data.controlledChildren) then
-      self.loaded:Hide();
       self.expand:Show();
       self.callbacks.UpdateExpandButton();
       self:SetOnExpandCollapse(function() OptionsPrivate.SortDisplayButtons(nil, true) end);
     else
-      self.loaded:Show();
       self.expand:Hide();
     end
     self.group:Show();
@@ -969,6 +997,9 @@ local methods = {
         for index, childId in pairs(data.controlledChildren) do
           tinsert(namestable, indent .. childId);
           local childData = WeakAuras.GetData(childId)
+          if not childData then
+            return
+          end
           if (childData.controlledChildren) then
             addChildrenNames(childData, indent .. "  ")
           end
@@ -992,9 +1023,6 @@ local methods = {
       end
     else
       OptionsPrivate.Private.GetTriggerDescription(data, -1, namestable)
-    end
-    if(OptionsPrivate.Private.CanHaveClones(data)) then
-      tinsert(namestable, {" ", "|cFF00FF00"..L["Auto-cloning enabled"]})
     end
 
     local hasDescription = data.desc and data.desc ~= "";
@@ -1035,13 +1063,13 @@ local methods = {
       Show_Long_Tooltip(self.frame, self.frame.description);
     end
   end,
-  ["StartGrouping"] = function(self, groupingData, selected, groupingGroup, childOfGrouing)
+  ["StartGrouping"] = function(self, groupingData, selected, groupingGroup, childOfGrouping)
     self.grouping = groupingData;
     self:UpdateIconsVisible()
     if(selected) then
       self.frame:SetScript("OnClick", self.callbacks.OnClickGroupingSelf);
       self:SetDescription(L["Cancel"], L["Do not group this display"]);
-    elseif (childOfGrouing) then
+    elseif (childOfGrouping) then
       self:Disable();
     else
       if(self.data.regionType == "dynamicgroup" and groupingGroup) then
@@ -1055,11 +1083,13 @@ local methods = {
     end
   end,
   ["StopGrouping"] = function(self)
-    self.grouping = nil;
-    self:UpdateIconsVisible()
-    self:SetNormalTooltip();
-    self.frame:SetScript("OnClick", self.callbacks.OnClickNormal);
-    self:Enable();
+    if self.grouping then
+      self.grouping = nil
+      self:UpdateIconsVisible()
+      self:SetNormalTooltip()
+      self.frame:SetScript("OnClick", self.callbacks.OnClickNormal)
+      self:Enable()
+    end
   end,
   ["Ungroup"] = function(self)
     if (WeakAuras.IsImporting()) then return end;
@@ -1097,10 +1127,11 @@ local methods = {
     end
     WeakAuras.ClearAndUpdateOptions(self.data.id);
     WeakAuras.UpdateGroupOrders(parentData);
+    local parentButton = OptionsPrivate.GetDisplayButton(parentData.id)
     if(#parentData.controlledChildren == 0) then
-      local parentButton = OptionsPrivate.GetDisplayButton(parentData.id)
       parentButton:DisableExpand()
     end
+    parentButton:UpdateParentWarning()
 
     for child in OptionsPrivate.Private.TraverseAllChildren(self.data) do
       local button = OptionsPrivate.GetDisplayButton(child.id)
@@ -1132,7 +1163,7 @@ local methods = {
     self.frame:SetScript("OnClick", nil)
     self.view:Hide()
     self.expand:Hide()
-    self.loaded:Hide()
+    self.statusIcons:Hide()
     Hide_Tooltip()
     if picked then
       self.frame:EnableKeyboard(true)
@@ -1224,10 +1255,9 @@ local methods = {
     self.frame:SetScript("OnClick", self.callbacks.OnClickNormal)
     self.frame:EnableKeyboard(false); -- disables self.callbacks.OnKeyDown
     self.view:Show()
+    self.statusIcons:Show()
     if self.data.controlledChildren then
       self.expand:Show()
-    else
-      self.loaded:Show()
     end
     self:Enable()
 
@@ -1349,12 +1379,18 @@ local methods = {
     return not OptionsPrivate.IsCollapsed(self.data.id, "displayButton", "", true)
   end,
   ["DisableExpand"] = function(self)
+    if self.expand.disabled then
+      return
+    end
     self.expand:Disable();
     self.expand.disabled = true;
     self.expand.expanded = false;
     self.expand:SetNormalTexture("Interface\\BUTTONS\\UI-PlusButton-Disabled.blp");
   end,
   ["EnableExpand"] = function(self)
+    if not self.expand.disabled then
+      return
+    end
     self.expand.disabled = false;
     if(self:GetExpanded()) then
       self:Expand();
@@ -1362,27 +1398,117 @@ local methods = {
       self:Collapse();
     end
   end,
-  ["UpdateWarning"] = function(self)
-    local icon, title, warningText = OptionsPrivate.Private.AuraWarnings.FormatWarnings(self.data.uid)
-    if warningText then
-      self.warning:Show()
-      if C_Texture.GetAtlasInfo(icon) then
-        self.warning:SetNormalAtlas(icon)
-      else
-        self.warning:SetNormalTexture(icon)
+  ["UpdateStatusIcon"] = function(self, key, prio, icon, title, tooltip, onClick, color)
+    local iconButton
+    for _, button in ipairs(self.statusIcons.buttons) do
+      if button.key == key then
+        iconButton = button
+        break
       end
-      self.warning:SetScript("OnEnter", function()
+    end
+    if not iconButton then
+      iconButton = statusIconPool:Acquire()
+      iconButton:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+      tinsert(self.statusIcons.buttons, iconButton)
+      iconButton:SetParent(self.statusIcons)
+      iconButton.key = key
+      iconButton:SetSize(16, 16)
+    end
+    iconButton.prio = prio
+    if C_Texture.GetAtlasInfo(icon) then
+      iconButton:SetNormalAtlas(icon)
+    else
+      iconButton:SetNormalTexture(icon)
+    end
+    if title then
+      iconButton:SetScript("OnEnter", function()
         Show_Tooltip(
           self.frame,
           title,
-          warningText
+          tooltip
         )
       end)
-      self.warning:SetScript("OnClick", function()
-        WeakAuras.PickDisplay(self.data.id, "information")
-      end)
+      iconButton:SetScript("OnLeave", Hide_Tooltip)
     else
-      self.warning:Hide()
+      iconButton:SetScript("OnEnter", nil)
+    end
+    if color then
+      iconButton:GetNormalTexture():SetVertexColor(unpack(color))
+    else
+      iconButton:GetNormalTexture():SetVertexColor(1, 1, 1, 1)
+    end
+    iconButton:SetScript("OnClick", onClick)
+    iconButton:Show()
+  end,
+  ["ClearStatusIcon"] = function(self, key)
+    for index, button in ipairs(self.statusIcons.buttons) do
+      if button.key == key then
+        statusIconPool:Release(button)
+        table.remove(self.statusIcons.buttons, index)
+        return
+      end
+    end
+  end,
+  ["SortStatusIcons"] = function(self)
+    table.sort(self.statusIcons.buttons, function(a, b)
+      return a.prio < b.prio
+    end)
+    local lastAnchor = self.statusIcons
+    if self:IsGroup() then
+      self.statusIcons:SetWidth(17)
+    else
+      self.statusIcons:SetWidth(1)
+    end
+    for _, button in ipairs(self.statusIcons.buttons) do
+      button:ClearAllPoints()
+      button:SetPoint("BOTTOMLEFT", lastAnchor, "BOTTOMRIGHT", 4, 0)
+      lastAnchor = button
+    end
+  end,
+  ["UpdateWarning"] = function(self)
+    local warnings = OptionsPrivate.Private.AuraWarnings.GetAllWarnings(self.data.uid)
+    local warningTypes = {"info", "sound", "tts", "warning", "error"}
+    for _, key in ipairs(warningTypes) do
+      self:ClearStatusIcon(key)
+    end
+    if warnings then
+      for severity, warning in pairs(warnings) do
+        local onClick
+        if severity == "sound" or severity == "tts" then
+          local soundText = L["Show Sound Setting"]
+          local removeText = L["Remove All Sounds"]
+          if severity == "tts" then
+            soundText = L["Show Text To Speech Setting"]
+            removeText = L["Remove All Text To Speech"]
+          end
+          onClick = function()
+            MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, root)
+              root:CreateButton(soundText, function()
+                WeakAuras.PickDisplay(warning.auraId, tabsForWarning[warning.key] or "information")
+              end)
+              root:CreateButton(removeText, function()
+                OptionsPrivate.Private.ClearSounds(self.data.uid, severity)
+              end)
+            end)
+          end
+        else
+          onClick = function()
+            WeakAuras.PickDisplay(warning.auraId, tabsForWarning[warning.key] or "information")
+          end
+        end
+
+        self:UpdateStatusIcon(severity, warning.prio, warning.icon, warning.title, warning.message, onClick)
+      end
+    end
+    self:SortStatusIcons()
+  end,
+  ["UpdateParentWarning"] = function(self)
+    self:UpdateWarning()
+    for parent in OptionsPrivate.Private.TraverseParents(self.data) do
+      local parentButton = OptionsPrivate.GetDisplayButton(parent.id)
+      if parentButton then
+        parentButton:UpdateWarning()
+      end
     end
   end,
   ["SetGroupOrder"] = function(self, order, max)
@@ -1411,15 +1537,22 @@ local methods = {
   ["GetGroupOrder"] = function(self)
     return self.frame.dgrouporder;
   end,
-  ["DisableLoaded"] = function(self)
-    self.loaded.title = L["Not Loaded"];
-    self.loaded.desc = L["This display is not currently loaded"];
-    self.loaded:SetNormalTexture("Interface\\BUTTONS\\UI-GuildButton-OfficerNote-Disabled.blp");
+  ["ClearLoaded"] = function(self)
+    self:ClearStatusIcon("load")
+    self:SortStatusIcons()
   end,
-  ["EnableLoaded"] = function(self)
-    self.loaded.title = L["Loaded"];
-    self.loaded.desc = L["This display is currently loaded"];
-    self.loaded:SetNormalTexture("Interface\\BUTTONS\\UI-GuildButton-OfficerNote-Up.blp");
+  ["SetLoaded"] = function(self, prio, color, title, description)
+    self:UpdateStatusIcon("load", prio, "Interface\\AddOns\\WeakAuras\\Media\\Textures\\loaded", title, description, nil, color)
+    self:SortStatusIcons()
+  end,
+  ["IsLoaded"] = function(self)
+    return OptionsPrivate.Private.loaded[self.data.id] == true
+  end,
+  ["IsStandby"] = function(self)
+    return OptionsPrivate.Private.loaded[self.data.id] == false
+  end,
+  ["IsUnloaded"] = function(self)
+    return OptionsPrivate.Private.loaded[self.data.id] == nil
   end,
   ["Pick"] = function(self)
     self.frame:LockHighlight();
@@ -1539,8 +1672,10 @@ local methods = {
     self.view:Disable();
     self.group:Disable();
     self.ungroup:Disable();
-    self.loaded:Disable();
     self.expand:Disable();
+    for _, button in ipairs(self.statusIcons.buttons) do
+      button:Disable();
+    end
     self:UpdateUpDownButtons()
   end,
   ["Enable"] = function(self)
@@ -1549,7 +1684,9 @@ local methods = {
     self.view:Enable();
     self.group:Enable();
     self.ungroup:Enable();
-    self.loaded:Enable();
+    for _, button in ipairs(self.statusIcons.buttons) do
+      button:Enable();
+    end
     self:UpdateUpDownButtons()
     if not(self.expand.disabled) then
       self.expand:Enable();
@@ -1573,6 +1710,10 @@ local methods = {
     --self.frame:EnableMouse(false);
     self.frame:ClearAllPoints();
     self.frame:Hide();
+    for _, button in ipairs(self.statusIcons.buttons) do
+      statusIconPool:Release(button)
+    end
+    wipe(self.statusIcons.buttons)
     self.frame = nil;
     self.data = nil;
   end,
@@ -1662,6 +1803,7 @@ Constructor
 
 local function Constructor()
   local name = "WeakAurasDisplayButton"..AceGUI:GetNextWidgetNum(Type);
+  ---@class Button
   local button = CreateFrame("Button", name, UIParent, "OptionsListButtonTemplate");
   button:SetHeight(32);
   button:SetWidth(1000);
@@ -1701,6 +1843,7 @@ local function Constructor()
 
   button.description = {};
 
+  ---@class Button
   local view = CreateFrame("Button", nil, button);
   button.view = view;
   view:SetWidth(16);
@@ -1717,20 +1860,6 @@ local function Constructor()
   view:SetScript("OnLeave", Hide_Tooltip);
 
   view.visibility = 0;
-
-  local loaded = CreateFrame("Button", nil, button);
-  button.loaded = loaded;
-  loaded:SetWidth(16);
-  loaded:SetHeight(16);
-  loaded:SetPoint("BOTTOM", button, "BOTTOM");
-  loaded:SetPoint("LEFT", icon, "RIGHT", 0, 0);
-  loaded:SetNormalTexture("Interface\\BUTTONS\\UI-GuildButton-OfficerNote-Up.blp");
-  loaded:SetDisabledTexture("Interface\\BUTTONS\\UI-GuildButton-OfficerNote-Disabled.blp");
-  --loaded:SetHighlightTexture("Interface\\BUTTONS\\UI-Panel-MinimizeButton-Highlight.blp");
-  loaded.title = L["Loaded"];
-  loaded.desc = L["This display is currently loaded"];
-  loaded:SetScript("OnEnter", function() Show_Tooltip(button, loaded.title, loaded.desc) end);
-  loaded:SetScript("OnLeave", Hide_Tooltip);
 
   local renamebox = CreateFrame("EditBox", nil, button, "InputBoxTemplate");
   renamebox:SetHeight(14);
@@ -1818,10 +1947,13 @@ local function Constructor()
   downgrouptexture:SetAllPoints(downgroup);
   downgroup:SetNormalTexture(downgrouptexture);
   downgroup:SetHighlightTexture("Interface\\BUTTONS\\UI-Panel-MinimizeButton-Highlight.blp");
-  downgroup:SetScript("OnEnter", function() Show_Tooltip(button, L["Move Down"], L["Move this display down in its group's order"]) end);
+  downgroup:SetScript("OnEnter", function()
+    Show_Tooltip(button, L["Move Down"], L["Move this display down in its group's order"])
+  end)
   downgroup:SetScript("OnLeave", Hide_Tooltip);
   downgroup:Hide();
 
+  ---@class Button
   local expand = CreateFrame("Button", nil, button);
   button.expand = expand;
   expand.expanded = true;
@@ -1839,13 +1971,12 @@ local function Constructor()
   expand:SetScript("OnEnter", function() Show_Tooltip(button, expand.title, expand.desc) end);
   expand:SetScript("OnLeave", Hide_Tooltip);
 
-  local warning = CreateFrame("Button", nil, button);
-  button.warning = warning
-  warning:SetWidth(16)
-  warning:SetHeight(16)
-  warning:SetPoint("RIGHT", button, "RIGHT", -60, 0)
-  warning:SetScript("OnLeave", Hide_Tooltip)
-  warning:Hide()
+  local statusIcons = CreateFrame("Frame", nil, button);
+  button.statusIcons = statusIcons
+  statusIcons:SetPoint("BOTTOM", button, "BOTTOM", 0, 1);
+  statusIcons:SetPoint("LEFT", icon, "RIGHT");
+  statusIcons:SetSize(1,1)
+  statusIcons.buttons = {}
 
   local widget = {
     frame = button,
@@ -1857,10 +1988,9 @@ local function Constructor()
     ungroup = ungroup,
     upgroup = upgroup,
     downgroup = downgroup,
-    loaded = loaded,
     background = background,
     expand = expand,
-    warning = warning,
+    statusIcons = statusIcons,
     type = Type,
     offset = offset
   }

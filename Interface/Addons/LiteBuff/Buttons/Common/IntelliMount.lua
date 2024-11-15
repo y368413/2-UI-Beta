@@ -1,5 +1,12 @@
 local _, LiteBuff = ...
 local L = LiteBuff.L
+local GetSpellInfo = GetSpellInfo or function(id)
+	local info = C_Spell.GetSpellInfo(id)
+	if info then
+		return info.name, nil, info.iconID, info.castTime, info.minRange, info.maxRange, info.spellID, info.originalIconID;
+	end
+end;
+local IsUsableSpell = IsUsableSpell or C_Spell.IsSpellUsable
 
 local _, _, icon = GetSpellInfo(150544)
 
@@ -17,6 +24,7 @@ button.OnTooltipText =function(self, tooltip)
     GameTooltip:AddLine("SHT-"..L["left click"]..'拍卖坐骑', 1, 1, 1, 1)
     GameTooltip:AddLine("SHT-"..L["right click"]..'幻化坐骑', 1, 1, 1, 1)
     GameTooltip:AddLine("CTL-"..L["left click"]..'地面坐骑', 1, 1, 1, 1)
+    GameTooltip:AddLine("CTL-"..L["right click"]..'邮箱坐骑', 1, 1, 1, 1)
 end
 
 button:SetAttribute('type1', 'macro')
@@ -28,6 +36,7 @@ button:SetAttribute('alt-type3', 'macro')
 button:SetAttribute('shift-type1', 'macro')
 button:SetAttribute('shift-type2', 'macro')
 button:SetAttribute('ctrl-type1', 'macro')
+button:SetAttribute('ctrl-type2', 'macro')
 button:SetAttribute('macrotext1', '/run LBIntelliMountSummon("normal")')
 button:SetAttribute('macrotext2', '/run LBIntelliMountSummon("passenger")')
 button:SetAttribute('macrotext3', '/run LBIntelliMountSummon("surface")')
@@ -37,6 +46,7 @@ button:SetAttribute('alt-macrotext3', select(2, UnitClass'player') == 'DRUID' an
 button:SetAttribute('shift-macrotext1', '/run LBIntelliMountSummon("auction")')
 button:SetAttribute('shift-macrotext2', '/run LBIntelliMountSummon("transmog")')
 button:SetAttribute('ctrl-macrotext1', '/run LBIntelliMountSummon("nofly")')
+button:SetAttribute('ctrl-macrotext2', '/run LBIntelliMountSummon("mail")')
 
 button:SetAttribute('dark_when_combat', "1")
 
@@ -68,10 +78,11 @@ local utilityMounts = {
    	{ id =  75973, passenger = 1 }, --火箭
    	{ id =  93326, passenger = 1 },  --砂石幼龙
    	{ id =  98718, underwater = 1 }, --驯服的海马
-   	{ id = 118089, surface = 1 },  --天蓝水黾
+   	-- { id = 118089, surface = 1 },  --天蓝水黾
    	{ id = 121820, passenger = 1 }, --黑曜夜之翼
    	{ id = 122708, passenger = 1, vendor = 1, transmog = 1, }, --雄壮远足牦牛
-   	{ id = 127271, surface = 1 }, --猩红水黾
+   	{ id = 457485, passenger = 1, vendor = 1, transmog = 1, }, --灰熊丘陵魁熊
+   	-- { id = 127271, surface = 1 }, --猩红水黾
    	--{ id = 179244, passenger = 1 }, --代驾型机械路霸，只能自己坐
     { id = 214791, underwater = 1 },  --深海喂食者
     { id = 223018, underwater = 1 },  --深海水母
@@ -83,22 +94,12 @@ local utilityMounts = {
     { id = 278803, underwater = 1 },  --无尽之海鳐鱼
     { id = 245725, passenger = 1 }, --奥格瑞玛拦截飞艇
     { id = 245723, passenger = 1 }, --暴风城逐天战机
-    { id = 264058, auction = 1, vendor = 1, passenger = 1, } --雷龙
+    { id = 264058, auction = 1, vendor = 1, passenger = 1, }, --雷龙
+    { id = 465235, auction = 1, mail = 1, passenger = 1, }, --鎏金雷龙
 }
---[[获取方式
---/print MountJournal.selectedSpellID
-for i=1,C_MountJournal.GetNumMounts() do
-  local n,sId,_,_,_,_,_,_,_,_,_,mId=C_MountJournal.GetDisplayedMountInfo(i)
-  if sId then
-    local _,_,_,self,t = C_MountJournal.GetMountInfoExtraByID(mId)
-    if(t~=230 and t~=248) or self then print(n, GetSpellLink(sId), t, self) end
-  end
-end]]
 
 -- 早已失效
 if select(2, UnitClass("player")) == "WARLOCK" then
-	--tinsert(utilityMounts, { id = 5784, surface = 1 })
-	--tinsert(utilityMounts, { id = 23161, surface = 1 })
 end
 
 local gotMountsData = false
@@ -109,8 +110,10 @@ for _, v in ipairs(utilityMounts) do
 end
 
 --登入及关闭坐骑收藏时触发
+local maw = {}
 local function UpdateMountsData()
     local count = C_MountJournal.GetNumMounts()
+    table.wipe(maw)
     if count > 0 then gotMountsData = true end
     for i = 1, count do
         local creatureName, spellId, icon, active, summonable, source, isFavorite, isFactionSpecific, faction, hideOnChar, isCollected, mountID = C_MountJournal.GetDisplayedMountInfo(i)
@@ -124,40 +127,43 @@ local function UpdateMountsData()
                 mountsData[spellId].index = i
                 mountsData[spellId].mountID = mountID
                 local creatureDisplayID, descriptionText, sourceText, isSelfMount, mountType = C_MountJournal.GetMountInfoExtraByID(mountID)
-                --[[
-                http://wow.gamepedia.com/API_C_MountJournal.GetMountInfoExtra
-                230 for most ground mounts
-                231 for  [Riding Turtle] and Sea Turtle
-                232 for  [Vashj'ir Seahorse] (was named Abyssal Seahorse prior to Warlords of Draenor)
-                241 for Blue, Green, Red, and Yellow Qiraji Battle Tank (restricted to use inside Temple of Ahn'Qiraj)
-                242 for Swift Spectral Gryphon (hidden in the mount journal, used while dead in certain zones)
-                247 for Red Flying Cloud
-                248 for most flying mounts, including those that change capability based on riding skill
-                254 for Subdued Seahorse
-                269 for Azure and Crimson Water Strider 水黾
-                284 for Chauffeured Mekgineer's Chopper and Chauffeured Mechano-Hog 机械路霸
-                --]]
-                --if(creatureName=="代驾型机械路霸")then print(creatureName, mountType, isFactionSpecific) end
                 if(mountType==230 or mountType==269 or mountType==284)then
                     mountsData[spellId].groundOnly = 1
                 end
             end
+            if mountID == 1304 or mountID == 1442 or mountID == 1441 then table.insert(maw, (isFavorite and -1 or 1) * mountID) end --渊誓猎魂犬 1304 --回廊潜行猎犬 1442 --被缚的影犬 1441
         end
+    end
+    --tricky if any < 0, remove x>0 and revert x<0, else all > 0, no proc
+    for i, v in ipairs(maw) do
+        if v < 0 then
+            for j=#maw, 1 do if maw[j] < 0 then maw[j] = -maw[j] else table.remove(maw, j) end end
+            break
+        end
+    end
+    if SPELL_FAILED_CUSTOM_ERROR_511 and #maw > 0 and not LB_MOUNT_MAW_FRAME then
+        local f = CreateFrame("Frame", "LB_MOUNT_MAW_FRAME")
+        f:RegisterEvent("UI_ERROR_MESSAGE")
+        f:SetScript("OnEvent", function(self, event, arg1, arg2)
+            if arg2 == SPELL_FAILED_CUSTOM_ERROR_511 then
+                C_MountJournal.SummonByID(maw[random(1, #maw)])
+            end
+        end)
     end
 end
 
-CoreDependCall("Blizzard_Collections", function()
+--[[U1CoreAPI.DependCall("Blizzard_Collections", function()
     if CollectionsJournal then
         CollectionsJournal:HookScript("OnHide", UpdateMountsData)
     end
 end)
 
-CoreOnEvent("PLAYER_ENTERING_WORLD", function()
+U1CoreAPI.EventCall("PLAYER_ENTERING_WORLD", function()
     button.status = IsMounted() and "Y" or nil
     button:UpdateStatus()
     UpdateMountsData()
     return "REMOVE"
-end)
+end)]]
 
 local chosen = {}
 local delay_timer
@@ -172,14 +178,14 @@ function LBIntelliMountSummon(utility, delay)
     end
 
     --游泳时自动判断是否使用飞行坐骑还是水面坐骑
-    if not delay and IsSwimming() and utility=="normal" then
+    --[[if not delay and IsSwimming() and utility=="normal" then
         if GetTime() - (delay_timer or 0) < 0.25 then
             CoreCancelBucket("IntelliMountDelay")
             utility = "surface"
         else
             utility = IsFlyableArea() and "normal" or "surface"
             delay_timer = GetTime()
-            return CoreScheduleBucket("IntelliMountDelay", 0.25, function() LBIntelliMountSummon(utility, "delay") end)
+            return U1CoreAPI.ScheduleOnceBucket("IntelliMountDelay", 0.25, function() LBIntelliMountSummon(utility, "delay") end)
         end
     elseif not delay and not IsSwimming() and utility=="normal" then
         if GetTime() - (delay_timer or 0) < 0.2 then
@@ -187,9 +193,9 @@ function LBIntelliMountSummon(utility, delay)
             utility = "surface"
         else
             delay_timer = GetTime()
-            return CoreScheduleBucket("IntelliMountDelay", 0.2, function() LBIntelliMountSummon("normal", "delay") end)
+            return U1CoreAPI.ScheduleOnceBucket("IntelliMountDelay", 0.2, function() LBIntelliMountSummon("normal", "delay") end)
         end
-    end
+    end]]
 
     delay_timer = nil
     wipe(chosen);

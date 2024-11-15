@@ -10,15 +10,15 @@ function UF:UpdateRaidDebuffsBlack()
 	wipe(UF.RaidDebuffsBlack)
 
 	for spellID in pairs(R.RaidDebuffsBlack) do
-		local name = GetSpellInfo(spellID)
+		local name = C_Spell.GetSpellName(spellID)
 		if name then
-			if MaoRUIDB["RaidDebuffsBlack"][spellID] == nil then
+			if MaoRUISetDB["RaidDebuffsBlack"][spellID] == nil then
 				UF.RaidDebuffsBlack[spellID] = true
 			end
 		end
 	end
 
-	for spellID, value in pairs(MaoRUIDB["RaidDebuffsBlack"]) do
+	for spellID, value in pairs(MaoRUISetDB["RaidDebuffsBlack"]) do
 		if value then
 			UF.RaidDebuffsBlack[spellID] = true
 		end

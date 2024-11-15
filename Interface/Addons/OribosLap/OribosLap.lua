@@ -157,7 +157,11 @@ end
 local frameDummy = CreateFrame("Frame", "OribosLapDummy", UIParent);
 local frame = CreateFrame("Frame", "OribosLapOptionsFrame", UIParent);
 frame.name = "Oribos Lap";
-InterfaceOptions_AddCategory(frame);
+--InterfaceOptions_AddCategory(frame);
+
+local cat = Settings.RegisterCanvasLayoutCategory(frame, "Oribos Lap");
+cat.ID = "Oribos Lap";
+Settings.RegisterAddOnCategory(cat);
 
 local function OriLap_SetupOptionsMenu()
   ----Announce Lap

@@ -1,0 +1,41 @@
+## Interface: 110002
+## Title: PetBattleTeams
+## Author: Nullberri/datagutten
+## Version: v3.6
+## Notes: Create unlimited teams of pets and quickly switch between them in the Pet Journal
+## X-Category: Pet Battles
+## X-Localizations: enUS
+## SavedVariables: PetBattleTeamsDB, PetBattleTeamsSettings
+## X-WoWI-ID: 26141
+## X-Wago-ID: j6jzyM6R
+## X-Curse-Project-ID: 839077
+## DefaultState: disabled
+
+#@no-lib-strip@
+libs.xml
+libs\BM-utils\compat\EasyMenu.lua
+#@end-no-lib-strip@
+
+libs\EmbedHandler-1.0\EmbedHandler-1.0.xml
+
+PetBattleTeams.lua
+
+modules\TeamManager.lua
+modules\TeamManagerUnitTests.lua
+modules\Tooltip.lua
+modules\Cursor.lua
+modules\GUI\GUI.lua
+modules\Config.lua
+
+classes\PetUnitFrame.lua
+classes\TeamFrame.lua
+
+modules\GUI\LockTeamsButton.lua
+modules\GUI\AddTeamButton.lua
+modules\GUI\ReviveButton.lua
+modules\GUI\PetBandageButton.lua
+modules\GUI\ScrollFrame.lua
+modules\GUI\resizer.lua
+modules\GUI\MenuButton.lua
+modules\GUI\Checkbox.lua
+modules\GUI\MainFrame.lua

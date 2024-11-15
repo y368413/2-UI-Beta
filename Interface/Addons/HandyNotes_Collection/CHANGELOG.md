@@ -7,6 +7,75 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.15.3] 2024-08-14
+
+### Fixed
+
+- Fixed issue with calling _GetSpellInfo_ (moved to _C_Spell_).
+
+### Changed
+
+- Updated TOC for The War Within (11.0.2)
+
+## [0.15.2] 2024-07-24
+
+### Fixed
+
+- Fixed issue with getting reputation info.
+
+## [0.15.1] 2024-07-24
+
+### Added
+
+- Added _Rattleskew_ (MoP) and _Timeless Isle_ summary point.
+
+### Fixed
+
+- Fixed issue with calling _PlayerCanCollectSource_ method from _CollectionWardrobeUtil_ (moved to _C_TransmogCollection_).
+
+### Changed
+
+- Updated TOC for The War Within (11.0.0)
+
+## [0.15.0] 2024-05-02
+
+### Added
+
+- Addon Compartment (little addon button) support added.
+- Added support for Cataclysm Classic (4.4.0)
+- Started working on _Timeless Isle_ (MoP) _Going to need a Bigger Bag_ achievement.
+
+### Changed
+
+- Updated TOC for Dragonflight (10.2.6)
+- Updated TOC for Classic (1.15.2)
+- Updated TOC for WotlK Classic (3.4.3)
+
+## [0.14.0]  2023-05-03
+
+### Added
+
+- Added treasures for _Grand Treasure Hunter_ to _Shadowmoon Valley_ (WoD).
+- Added contextual menu on right click. Options are: navigate to point, hide point for character, hide point for whole account.
+- Added reset points to addon configuration (reset personally/globally hidden points).
+
+### Changed
+
+- Moved navigation info in tooltip to contextual menu.
+- Updated Avalanche coordinates in _Shadowmoon Valley_ (WoD)
+- Updated TOC for Dragonflight (10.1.0)
+- Updated TOC for WotlK Classic (3.4.1)
+
+## [0.13.1] 2022-11-27
+
+### Fixed
+
+- Fixed issue with point requirements using containers.
+
+### Changed
+
+- Updated TOC for Dragonflight (10.0.2)
+
 ## [0.13.0] 2022-10-26
 
 ### Added
@@ -263,7 +332,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Basic module configuration and documentation.
 - [I Found Pepe!](https://www.wowhead.com/achievement=10053/i-found-pepe) achievement.
 
-[Unreleased]: https://gitlab.com/mulambo/HandyNotes_Collection/-/compare/v0.13.0...master
+[Unreleased]: https://gitlab.com/mulambo/HandyNotes_Collection/-/compare/v0.15.3...master
+[0.15.3]: https://gitlab.com/mulambo/HandyNotes_Collection/-/releases/v0.15.3
+[0.15.2]: https://gitlab.com/mulambo/HandyNotes_Collection/-/releases/v0.15.2
+[0.15.1]: https://gitlab.com/mulambo/HandyNotes_Collection/-/releases/v0.15.1
+[0.15.0]: https://gitlab.com/mulambo/HandyNotes_Collection/-/releases/v0.15.0
+[0.14.0]: https://gitlab.com/mulambo/HandyNotes_Collection/-/releases/v0.14.0
+[0.13.1]: https://gitlab.com/mulambo/HandyNotes_Collection/-/releases/v0.13.1
 [0.13.0]: https://gitlab.com/mulambo/HandyNotes_Collection/-/releases/v0.13.0
 [0.12.0]: https://gitlab.com/mulambo/HandyNotes_Collection/-/releases/v0.12.0
 [0.11.1]: https://gitlab.com/mulambo/HandyNotes_Collection/-/releases/v0.11.1

@@ -871,7 +871,7 @@ local points = {
     name = t['waterlogged_satchel_title'],
     questId = 36455,
     icon = 'chest',
-    note = t['waterlogged_satchel_note'],
+    note = t['underwater_note'],
     loot = {
       achievement = {
         -- Grand Treasure Hunter
@@ -938,7 +938,7 @@ local points = {
     name = t['coinbenders_payment_title'],
     questId = 36453,
     icon = 'chest',
-    note = t['coinbenders_payment_note'],
+    note = t['underwater_note'] .. t['coinbenders_payment_note'],
     loot = {
       achievement = {
         -- Grand Treasure Hunter

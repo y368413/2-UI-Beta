@@ -1,7 +1,10 @@
 if not WeakAuras.IsLibsOK() then return end
---- @type string, Private
-local AddonName, Private = ...
+---@type string
+local AddonName = ...
+---@class Private
+local Private = select(2, ...)
 
+---@class WeakAuras
 local WeakAuras = WeakAuras
 local L = WeakAuras.L
 
@@ -19,6 +22,11 @@ local enabled = {}
 
 --- @type debugLog
 Private.DebugLog = {
+  Print = function(uid, text, ...) end,
+  Clear = function(uid) end,
+  SetEnabled = function(uid, enabled) end,
+  IsEnabled = function(uid) end,
+  GetLogs = function(uid) end
 }
 
 local function serialize(log, input)
@@ -67,7 +75,9 @@ function Private.DebugLog.Print(uid, text, ...)
     end
 
     if #log > 1000 then
-      Private.AuraWarnings.UpdateWarning(uid, "Debug Log", "warning", L["Debug Log contains more than 1000 entries"], true)
+      Private.AuraWarnings.UpdateWarning(uid, "Debug Log", "warning",
+                                         L["Debug Log contains more than 1000 entries"],
+                                         true)
     end
   end
 end

@@ -1,7 +1,7 @@
 -------------------------------------------------------------------------------
 -- Premade Groups Filter
 -------------------------------------------------------------------------------
--- Copyright (C) 2022 Elotheon-Arthas-EU
+-- Copyright (C) 2024 Bernhard Saumweber
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -122,6 +122,14 @@ function PGF.Table_Median(tbl)
     else
         return tbl[keys[(count + 1) / 2]]
     end
+end
+
+function PGF.Table_Invert(tbl)
+    local inverted = {}
+    for key, value in pairs(tbl) do
+        inverted[value] = key
+    end
+    return inverted
 end
 
 function PGF.IsMostLikelySameInstance(instanceName, activityName)

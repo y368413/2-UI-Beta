@@ -1,0 +1,15 @@
+## Interface: 40400
+## Title: HandyNotes: Collection
+## RequiredDeps: HandyNotes
+## SavedVariables: HandyNotes_CollectionDB, HandyNotes_CollectionCACHE, HandyNotes_CollectionSTATUS
+## DefaultState: enabled
+## AddonCompartmentFunc: HandyNotes_Collection_OnAddonCompartmentClick
+
+HandyNotes_Colletion.lua
+Class\Text.lua
+
+Translation\translations.xml
+Class.xml
+
+Data\Maps.lua
+Data\maps.xml

@@ -1,6 +1,15 @@
 # HandyNotes: Secret Fish
 
-## [v2](https://github.com/kemayo/wow-handynotes-secretfish/tree/v2) (2022-09-04)
-[Full Changelog](https://github.com/kemayo/wow-handynotes-secretfish/compare/v1...v2) [Previous Releases](https://github.com/kemayo/wow-handynotes-secretfish/releases)
+## [v6](https://github.com/kemayo/wow-handynotes-secretfish/tree/v6) (2024-07-26)
+[Full Changelog](https://github.com/kemayo/wow-handynotes-secretfish/compare/v5...v6) [Previous Releases](https://github.com/kemayo/wow-handynotes-secretfish/releases)
 
-- TOC for 9.2.7  
+- TOC for 11.0.0  
+- Update handler submodule to main (d8d98d1)  
+    New changes:  
+    239bd22 New render\_string variant: zone  
+    56d83d2 Clean up some deprecated wow-api calls  
+    0e7448c Update Krowi\_WorldMapButtons-1.4 to v6  
+    3b9bf3c Clean up another call to TooltipUtil.SurfaceArgs  
+    7b05a00 Remove reference to GetFactionInfoByID in 11.0  
+    d8d98d1 Update Krowi\_WorldMapButtons-1.4 to v7, fixing overlap of Legend button  
+- Remove reference to deprecated function  

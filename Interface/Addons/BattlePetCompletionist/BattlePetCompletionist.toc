@@ -1,0 +1,26 @@
+## Interface: 110005
+## Title: Battle Pet Completionist
+## Version: 11.0.5-20241023-1
+## Notes: Let's go catch them all!
+## IconTexture: Interface\Icons\Inv_Pet_Achievement_CaptureAWildPet
+## Author: GurliGebis
+## AddonCompartmentFunc: BattlePetCompletionist_OnAddonCompartmentClick
+## AddonCompartmentFuncOnEnter: BattlePetCompletionist_OnAddonCompartmentEnter
+## AddonCompartmentFuncOnLeave: BattlePetCompletionist_OnAddonCompartmentLeave
+## X-Category: Battle Pets
+## X-Compatible-With: 110005
+## X-Curse-Packaged-Version: 11.0.5-20241023-1
+## X-Curse-Project-Name: Battle Pet Completionist
+## X-Curse-Project-ID: 873861
+## SavedVariables: BattlePetCompletionistDB
+## DefaultState: disabled
+
+# Libs
+embeds.xml
+
+# Core
+Main.lua
+
+# Modules
+Common\common.xml
+Modules\modules.xml

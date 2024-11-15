@@ -18,13 +18,12 @@ function Import:OnInitialize()
         Frame:SetSize(350, 280)
         Frame:SetPoint('CENTER')
         Frame:SetFrameStrata('DIALOG')
-        Frame:SetText(L['Import'])
+        Frame:SetText(L.SHARE_IMPORT_SCRIPT)
         Frame:SetCallback('OnShow', function()
             self.script = nil
             self.data = nil
             self.EditBox:SetText('')
             self.EditBox:SetFocus()
-            self.ExtraCheck:SetChecked(true)
             self.PluginDropdown:SetValue(nil)
             self.KeyDropdown:SetValue(nil)
             self.PageFrame:SetPage(1, true)
@@ -136,7 +135,7 @@ function Import:InitPageWelcome(frame)
             Text:SetPoint('TOP', 0, -30)
             Text:SetPoint('LEFT', 60, 0)
             Text:SetPoint('RIGHT', -20, 0)
-            Text:SetText(L.IMPORT_SCRIPT_WELCOME)
+            Text:SetText(L.SHARE_IMPORT_SCRIPT_WELCOME)
         end
 
         local Icon = frame:CreateTexture(nil, 'OVERLAY') do
@@ -193,7 +192,7 @@ function Import:InitPageWelcome(frame)
     local ReinputButton = CreateFrame('Button', nil, WelcomeWarning, 'UIPanelButtonTemplate') do
         ReinputButton:SetPoint('BOTTOM')
         ReinputButton:SetSize(120, 26)
-        ReinputButton:SetText(L.IMPORT_REINPUT_TEXT)
+        ReinputButton:SetText(L.SHARE_IMPORT_REINPUT_TEXT)
         ReinputButton:SetScript('OnClick', function()
             self.WelcomeWarning:Hide()
             self.EditBox:SetText('')
@@ -211,9 +210,9 @@ function Import:InitPageSelector(frame)
         PluginDropdown:SetPoint('TOP', 0, -58)
         PluginDropdown:SetSize(200, 26)
         PluginDropdown:SetMaxItem(20)
-        PluginDropdown:SetDefaultText(L.IMPORT_CHOOSE_PLUGIN)
+        PluginDropdown:SetDefaultText(L.SHARE_IMPORT_CHOOSE_SELECTOR)
         PluginDropdown:SetMenuTable(function(list)
-            for _, plugin in Addon:IteratePlugins() do
+            for _, plugin in Addon:IterateEnabledPlugins() do
                 if type(plugin.IterateKeys) == 'function' then
                     tinsert(list, {
                         text = plugin:GetPluginTitle(),
@@ -232,7 +231,7 @@ function Import:InitPageSelector(frame)
         KeyDropdown:SetPoint('TOP', PluginDropdown, 'BOTTOM', 0, -30)
         KeyDropdown:SetSize(200, 26)
         KeyDropdown:SetMaxItem(20)
-        KeyDropdown:SetDefaultText(L.IMPORT_CHOOSE_KEY)
+        KeyDropdown:SetDefaultText(L.SHARE_IMPORT_CHOOSE_KEY)
 
         local function tooltipMore(tip, item)
             local plugin = item.plugin
@@ -250,7 +249,7 @@ function Import:InitPageSelector(frame)
 
             if plugin:GetScript(key) then
                 tip:AddLine(' ')
-                tip:AddLine(L.IMPORT_SCRIPT_EXISTS, RED_FONT_COLOR:GetRGB())
+                tip:AddLine(L.SHARE_IMPORT_SCRIPT_EXISTS, RED_FONT_COLOR:GetRGB())
             end
         end
 
@@ -367,7 +366,7 @@ function Import:InitPageImport(frame)
             Text:SetPoint('TOP', ScriptInfo, 'BOTTOM', 0, -20)
             Text:SetPoint('LEFT', 60, 0)
             Text:SetPoint('RIGHT', -20, 0)
-            Text:SetText(L.SCRIPT_IMPORT_LABEL_COVER)
+            Text:SetText(L.SHARE_IMPORT_LABEL_ALREADY_EXISTS_WARNING)
         end
 
         local Icon = WarningHelp:CreateTexture(nil, 'OVERLAY') do
@@ -382,18 +381,17 @@ function Import:InitPageImport(frame)
         CoverCheck:SetSize(26, 26)
         CoverCheck:SetHitRectInsets(0, -100, 0, 0)
         CoverCheck:SetFontString(CoverCheck.text)
-        CoverCheck:SetText(L.SCRIPT_IMPORT_LABEL_GOON)
+        CoverCheck:SetText(L.SHARE_IMPORT_LABEL_ALREADY_EXISTS_CHECKBOX)
         CoverCheck:SetScript('OnClick', function()
             self:UpdateControl()
         end)
     end
 
-    local ExtraCheck = CreateFrame('CheckButton', nil, frame, 'UICheckButtonTemplate') do
-        ExtraCheck:SetPoint('BOTTOM', CoverCheck, 'TOP', 0, -3)
-        ExtraCheck:SetSize(26, 26)
-        ExtraCheck:SetHitRectInsets(0, -100, 0, 0)
-        ExtraCheck:SetFontString(ExtraCheck.text)
-        ExtraCheck:SetText(L.SCRIPT_IMPORT_LABEL_EXTRA)
+    local ExtraHint = frame:CreateFontString(nil, 'OVERLAY', 'GameFontNormalSmall') do
+        ExtraHint:SetPoint('BOTTOM', CoverCheck, 'TOP', 0, -3)
+        ExtraHint:SetPoint('LEFT', 20, 0)
+        ExtraHint:SetPoint('RIGHT', -20, 0)
+        ExtraHint:SetText(L.SHARE_IMPORT_LABEL_HAS_EXTRA)
     end
 
     local SaveButton = CreateFrame('Button', nil, frame, 'UIPanelButtonTemplate') do
@@ -406,7 +404,7 @@ function Import:InitPageImport(frame)
     end
 
     self.CoverCheck = CoverCheck
-    self.ExtraCheck = ExtraCheck
+    self.ExtraHint = ExtraHint
     self.SaveButton = SaveButton
     self.WarningHelp = WarningHelp
     self.ScriptInfo = ScriptInfo
@@ -425,15 +423,15 @@ function Import:OnSaveButtonClick()
     self.Frame:Hide()
     self.script:GetPlugin():AddScript(self.script:GetKey(), self.script)
 
-    if self.extra and self.ExtraCheck:GetChecked() then
-        self.script:GetPlugin():OnImport(self.extra)
+    if self.extra then
+        self.script:GetPlugin():OnImport(self.script, self.extra)
     end
 end
 
 function Import:SetScript(script, extra)
     self.script = script
     self.extra  = extra
-    self.ExtraCheck:SetShown(extra)
+    self.ExtraHint:SetShown(extra)
 
     if script then
         self.ScriptInfo.Icon:SetTexture(script:GetPlugin():GetPluginIcon())
@@ -453,13 +451,13 @@ function Import:SetScript(script, extra)
 
     if extra then
         if not self.CoverCheck:IsShown() then
-            self.ExtraCheck:SetPoint('BOTTOM', self.CoverCheck, 'BOTTOM')
+            self.ExtraHint:SetPoint('BOTTOM', self.CoverCheck, 'BOTTOM')
         else
-            self.ExtraCheck:SetPoint('BOTTOM', self.CoverCheck, 'TOP', 0, -3)
+            self.ExtraHint:SetPoint('BOTTOM', self.CoverCheck, 'TOP', 0, -3)
         end
-        self.ExtraCheck:Show()
+        self.ExtraHint:Show()
     else
-        self.ExtraCheck:Hide()
+        self.ExtraHint:Hide()
     end
 
     self:UpdateControl()
@@ -491,7 +489,11 @@ function Import:UpdateData()
 
     local plugin = data.plugin and Addon:GetPlugin(data.plugin)
     if not plugin or not data.key then
-        return self:ShowWarning(L.IMPORT_SHARED_STRING_WARNING)
+        return self:ShowWarning(L.SHARE_IMPORT_STRING_INCOMPLETE)
+    end
+
+    if not plugin:IsEnabled() then
+        return self:ShowWarning(L.SHARE_IMPORT_PLUGIN_NOT_ENABLED)
     end
 
     local script = Addon:GetClass('Script'):New(data.db, plugin, data.key)

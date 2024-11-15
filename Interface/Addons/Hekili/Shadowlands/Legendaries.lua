@@ -7,9 +7,13 @@ local addon, ns = ...
 local Hekili = _G[ addon ]
 
 local class = Hekili.Class
+local state = Hekili.State
+
 local all = Hekili.Class.specs[ 0 ]
 
-local state = Hekili.State
+
+local IsInventoryItemDisabled = ns.IsInventoryItemDisabled
+
 
 local legendaries = {
     -- Death Knight/Blood
@@ -386,8 +390,9 @@ end
 local function UpdateLegendary( slot, item )
     local link = GetInventoryItemLink( "player", slot )
     local numBonuses = select( 14, string.split( ":", link ) )
-
     local covenant = GetActiveCovenantID()
+
+    local disable = IsInventoryItemDisabled( slot )
 
     numBonuses = tonumber( numBonuses )
     if numBonuses and numBonuses > 0 then
@@ -400,14 +405,14 @@ local function UpdateLegendary( slot, item )
                 local name, rank = legendaries[ bonusID ][ 1 ], legendaries[ bonusID ][ entries - 1 ]
 
                 state.legendary[ name ] = rawget( state.legendary, name ) or { rank = 0 }
-                state.legendary[ name ].rank = rank
+                state.legendary[ name ].rank = disable and 0 or rank
 
                 -- Multiple names, likely to accommodate a SimC typo.
                 if entries > 3 then
                     for j = 2, entries - 2 do
                         local n = legendaries[ bonusID ][ j ]
                         state.legendary[ n ] = rawget( state.legendary, n ) or { rank = 0 }
-                        state.legendary[ n ].rank = rank
+                        state.legendary[ n ].rank = disable and 0 or rank
                     end
                 end
             end
@@ -418,7 +423,7 @@ local function UpdateLegendary( slot, item )
 
                 if runeforge then
                     local legendary = rawget( state.legendary, runeforge ) or { rank = 0 }
-                    legendary.rank = 1
+                    legendary.rank = disable and 0 or 1
                     state.legendary[ runeforge ] = legendary
                 end
             end
@@ -432,11 +437,9 @@ local function UpdateLegendary( slot, item )
         local runeforge = unity and unity[ covenant ]
 
         if runeforge then
-            if runeforge then
-                local legendary = rawget( state.legendary, runeforge ) or { rank = 0 }
-                legendary.rank = 1
-                state.legendary[ runeforge ] = legendary
-            end
+            local legendary = rawget( state.legendary, runeforge ) or { rank = 0 }
+            legendary.rank = disable and 0 or 1
+            state.legendary[ runeforge ] = legendary
         end
     end
 end

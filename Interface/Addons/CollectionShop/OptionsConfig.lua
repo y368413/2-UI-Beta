@@ -15,7 +15,7 @@ NS.options.cfg = {
 		frameStrata	= "MEDIUM",
 		frameLevel	= "TOP",
 		Init		= function( MainFrame )
-			SetPortraitToTexture( MainFrame.portrait, "Interface\\Icons\\MountJournalPortrait" );
+			SetPortraitToTexture( _G[MainFrame:GetName() .. 'Portrait'], "Interface\\Icons\\MountJournalPortrait" );
 		end,
 		OnShow		= function( MainFrame )
 			MainFrame:ClearAllPoints();

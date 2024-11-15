@@ -5,9 +5,6 @@
 -- 2012/1/26
 ------------------------------------------------------------
 
-local GetItemInfo = GetItemInfo
-local GetItemCount = GetItemCount
-local GetItemCooldown = GetItemCooldown
 local wipe = wipe
 local select = select
 local type = type
@@ -21,7 +18,7 @@ local function FindItem(itemList)
 	local i
 	for i = 1, #itemList do
 		local data = itemList[i]
-		local count = GetItemCount(data.id, false, data.asCharges)
+		local count = C_Item.GetItemCount(data.id, false, data.asCharges)
 		if count and count > 0 then
 			return data, count
 		end
@@ -34,8 +31,8 @@ local function Button_OnBagUpdate(self)
 	self.icon:SetText(count, r, g, b)
 
 	if data then
-		local start, duration, enable = GetItemCooldown(data.id)
-		if start and start > 0 and duration > 0 and enable > 0 then
+		local start, duration, enable = C_Container.GetItemCooldown(data.id)
+		if start and start > 0 and duration > 0 and ((type(enable) == "number" and enable > 0) or (type(enable) == "boolean" and enable)) then
 			self.icon.cooldown:SetCooldown(start, duration)
 			self.icon.cooldown:Show()
 			self.itemCooldownExpires = start + duration
@@ -46,7 +43,7 @@ local function Button_OnBagUpdate(self)
 
 		self.itemId = data.id
 		self.itemCount = count
-		local name, _, _, _, _, _, _, _, _, icon = GetItemInfo(data.id)
+		local name, _, _, _, _, _, _, _, _, icon = C_Item.GetItemInfo(data.id)
 		self.itemName, self.itemIcon = name, icon
 	else
 		self.itemId, self.itemName, self.itemIcon = nil

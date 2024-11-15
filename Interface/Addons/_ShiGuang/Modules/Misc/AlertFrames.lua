@@ -109,8 +109,12 @@ function MISC:AlertFrame_Setup()
 	GroupLootContainer:EnableMouse(false)
 	GroupLootContainer.ignoreFramePositionManager = true
 
-	for _, alertFrameSubSystem in ipairs(AlertFrame.alertFrameSubSystems) do
-		MISC.AlertFrame_AdjustPosition(alertFrameSubSystem)
+	for index, alertFrameSubSystem in ipairs(AlertFrame.alertFrameSubSystems) do
+		if alertFrameSubSystem.anchorFrame and alertFrameSubSystem.anchorFrame == _G.TalkingHeadFrame then
+			tremove(_G.AlertFrame.alertFrameSubSystems, index)
+		else
+			MISC.AlertFrame_AdjustPosition(alertFrameSubSystem)
+		end
 	end
 
 	hooksecurefunc(AlertFrame, "AddAlertFrameSubSystem", function(_, alertFrameSubSystem)

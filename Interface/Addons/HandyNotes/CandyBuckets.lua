@@ -1,24 +1,73 @@
-﻿--## Author: Vladinator  ## Version: 10.0.0.221028
-
+﻿--## Author: Vladinator  ## Version: 11.0.5.241103
 local CandyBuckets = {}
 CandyBuckets.modules = CandyBuckets.modules or {}
+CandyBuckets.modules["brewfest"] = {
+	event = "brewfest",
+	texture = {
+		[1] = "Interface\\Icons\\INV_Cask_04",
+	},
+	title = {
+		[1] = "Bar Tab Barrel",
+	},
+	quests = {
+		{ quest = 76531, side = 3, extra = 1, [2022] = {58.30, 67.60} },
+		{ quest = 77095, side = 3, extra = 1, [2022] = {76.30, 35.40} },
+		{ quest = 77096, side = 3, extra = 1, [2024] = {46.90, 40.20} },
+		{ quest = 77097, side = 3, extra = 1, [2024] = {12.40, 49.30} },
+		{ quest = 77099, side = 3, extra = 1, [2023] = {28.60, 60.40} },
+		{ quest = 77152, side = 3, extra = 1, [2023] = {59.80, 38.80} },
+		{ quest = 77153, side = 3, extra = 1, [2112] = {47.80, 46.90} },
+		{ quest = 77155, side = 3, extra = 1, [2025] = {52.20, 81.50} },
+		{ quest = 77744, side = 3, extra = 1, [2022] = {47.70, 83.30} },
+		{ quest = 77745, side = 3, extra = 1, [2023] = {85.80, 35.40} },
+		{ quest = 77746, side = 3, extra = 1, [2024] = {62.80, 57.80} },
+		{ quest = 77747, side = 3, extra = 1, [2025] = {50.10, 42.70} },
+		{ quest = 84305, side = 3, extra = 1, [2339] = {44.10, 46.07} },
+		{ quest = 84306, side = 3, extra = 1, [2248] = {41.86, 74.24} },
+		{ quest = 84307, side = 3, extra = 1, [2214] = {48.26, 32.19} },
+		{ quest = 84308, side = 3, extra = 1, [2214] = {63.36, 78.81} },
+		{ quest = 84310, side = 3, extra = 1, [2215] = {49.23, 39.51} },
+		{ quest = 84311, side = 3, extra = 1, [2215] = {42.78, 55.80} },
+		{ quest = 84313, side = 3, extra = 1, [2216] = {57.79, 39.85} },
+		{ quest = 84314, side = 3, extra = 1, [2213] = {49.80, 21.59} },
+		{ quest = 84315, side = 3, extra = 1, [2255] = {77.81, 62.73} },
+		{ quest = 84316, side = 3, extra = 1, [2255] = {56.70, 38.68} },
+	},
+	patterns = {
+		"^%s*[Bb][Aa][Rr]%s+[Tt][Aa][Bb]%s+[Bb][Aa][Rr][Rr][Ee][Ll]%s*$",
+		"^%s*[Ss][Cc][Hh][Aa][Nn][Kk][Ff][Aa][Ss][Ss]%s*$",
+		"^%s*[Bb][Aa][Rr][Rr][Ii][Ll][Ee][Ss]%s+[Pp][Oo][Rr]%s+[Dd][Oo][Qq][Uu][Ii][Ee][Rr]%s*$",
+		"^%s*[Tt][Oo][Nn][Nn][Ee][Aa][Uu]%s+[Dd][’'][Aa][Rr][Dd][Oo][Ii][Ss][Ee]%s+[Dd][Ee]%s+[Bb][Aa][Rr]%s*$",
+		"^%s*[B][Aa][Rr][Ii][Ll][Oo][Tt][Tt][Oo]%s*$",
+		"^%s*[B][Aa][Rr][Rr][Ii][Ll]%s+[Nn][Aa]%s+[Cc][Oo][Nn][Tt][Aa]%s*$",
+		"^%s*[П][Оо][Лл][Нн][Аа][Яя]%s+[Бб][Оо][Чч][Кк][Аа]%s*$",
+		"^%s*술집%s+외상%s+통%s*$",
+		"^%s*熟客酒桶%s*$",
+	}
+}
+
 CandyBuckets.modules["hallow"] = {
 	event = "hallow",
 	texture = {
 		[1] = "Interface\\Icons\\Achievement_Halloween_Candy_01",
 		[2] = "Interface\\Icons\\Spell_Shadow_Teleport",
-		[3] = "Interface\\Icons\\Achievement_Halloween_Candy_01"
+		[3] = "Interface\\Icons\\Achievement_Halloween_Candy_01",
+		[4] = "Interface\\GossipFrame\\GossipGossipIcon"
 	},
 	title = {
 		[1] = "Candy Bucket",
 		[2] = "Candy Bucket (Phased)",
-		[3] = "Candy Bucket (Requires Reputation)"
+		[3] = "Candy Bucket (Requires Reputation)",
+		[4] = "Zidormi (Change Phase)"
 	},
 	quests = {
 		{ quest = 12349, side = 1, [70] = {66.60, 45.30} },
 		{ quest = 28960, side = 1, [17] = {60.70, 14.20} },
 		{ quest = 28961, side = 1, [17] = {44.40, 87.70} },
+		{ quest = 28960, side = 1, extra = 4, style = 2, waypoint = false, [17] = {48.16, 7.28} },
+		{ quest = 28961, side = 1, extra = 4, style = 2, waypoint = false, [17] = {48.16, 7.28} },
 		{ quest = 28959, side = 2, [17] = {40.50, 11.40} },
+		{ quest = 28959, side = 2, extra = 4, style = 2, waypoint = false, [17] = {48.16, 7.28} },
 		{ quest = 12404, side = 3, extra = 3, [111] = {56.20, 81.80} },
 		{ quest = 12409, side = 3, extra = 3, [104] = {56.30, 59.80} },
 		{ quest = 12340, side = 1, extra = 2, [52] = {56.76, 47.31} },
@@ -42,7 +91,11 @@ CandyBuckets.modules["hallow"] = {
 		{ quest = 29000, side = 3, [198] = {18.70, 37.30} },
 		{ quest = 29001, side = 3, [198] = {42.70, 45.60} },
 		{ quest = 29016, side = 3, [249] = {26.60, 7.30} },
+		{ quest = 29016, side = 3, extra = 2, [1527] = {26.60, 7.30} },
+		{ quest = 29016, side = 3, extra = 4, style = 2, waypoint = false, [1527] = {56.02, 35.14} },
 		{ quest = 29017, side = 3, [249] = {54.70, 33.00} },
+		{ quest = 29017, side = 3, extra = 2, [1527] = {54.70, 33.00} },
+		{ quest = 29017, side = 3, extra = 4, style = 2, waypoint = false, [1527] = {56.02, 35.14} },
 		{ quest = 32020, side = 2, [418] = {28.25, 50.74} },
 		{ quest = 32022, side = 2, [392] = {58.30, 76.90} },
 		{ quest = 32034, side = 3, [418] = {51.45, 77.33} },
@@ -61,16 +114,20 @@ CandyBuckets.modules["hallow"] = {
 		{ quest = 12344, side = 1, [47] = {73.90, 44.40} },
 		{ quest = 12351, side = 1, [26] = {14.20, 44.70} },
 		{ quest = 12363, side = 2, [18] = {60.90, 51.50} },
+		{ quest = 12363, side = 2, extra = 2, [2070] = {60.90, 51.50} },
+		{ quest = 12363, side = 2, extra = 4, style = 2, waypoint = false, [2070] = {69.45, 62.80} },
 		{ quest = 12368, side = 2, [90] = {67.70, 37.90} },
 		{ quest = 12371, side = 2, [21] = {46.40, 42.80} },
 		{ quest = 12376, side = 2, [25] = {57.90, 47.30} },
 		{ quest = 12380, side = 2, [14] = {69.00, 33.40} },
+		{ quest = 12380, side = 2, extra = 4, style = 2, waypoint = false, [14] = {38.25, 90.09} },
 		{ quest = 12382, side = 2, [50] = {37.30, 51.70} },
 		{ quest = 12384, side = 2, [51] = {46.90, 56.70} },
 		{ quest = 12387, side = 2, [26] = {78.20, 81.40} },
 		{ quest = 12397, side = 3, [210] = {40.90, 73.80} },
 		{ quest = 12402, side = 3, [24] = {41.02, 90.77} },
 		{ quest = 28954, side = 1, [14] = {40.10, 49.00} },
+		{ quest = 28954, side = 1, extra = 4, style = 2, waypoint = false, [14] = {38.25, 90.09} },
 		{ quest = 28955, side = 3, [15] = {65.90, 35.80} },
 		{ quest = 28956, side = 1, [15] = {20.90, 56.20} },
 		{ quest = 28957, side = 2, [15] = {18.30, 42.80} },
@@ -85,6 +142,8 @@ CandyBuckets.modules["hallow"] = {
 		{ quest = 28970, side = 1, [26] = {66.20, 44.40} },
 		{ quest = 28971, side = 2, [26] = {31.90, 57.90} },
 		{ quest = 28972, side = 2, [18] = {83.00, 72.00} },
+		{ quest = 28972, side = 2, extra = 2, [2070] = {83.00, 72.00} },
+		{ quest = 28972, side = 2, extra = 4, style = 2, waypoint = false, [2070] = {69.45, 62.80} },
 		{ quest = 28981, side = 3, [201] = {63.40, 60.20} },
 		{ quest = 28982, side = 3, [205] = {49.20, 41.90} },
 		{ quest = 28983, side = 1, [205] = {49.70, 57.40} },
@@ -220,7 +279,8 @@ CandyBuckets.modules["hallow"] = {
 		{ quest = 32049, side = 1, [371] = {44.80, 84.40} },
 		{ quest = 32050, side = 2, [371] = {28.50, 13.30} },
 		{ quest = 32051, side = 3, [379] = {62.30, 29.00} },
-		{ quest = 39657, side = 3, [582] = {44.00, 52.00}, [590] = {47.50, 37.80} },
+		{ quest = 39657, side = 1, [582] = {44.00, 52.00} },
+		{ quest = 39657, side = 2, [590] = {47.50, 37.80} },
 		{ quest = 43055, side = 3, [627] = {48.10, 41.30} },
 		{ quest = 43056, side = 1, [627] = {41.80, 64.20} },
 		{ quest = 43057, side = 2, [627] = {66.80, 30.00} },
@@ -228,6 +288,61 @@ CandyBuckets.modules["hallow"] = {
 		{ quest = 12404, side = 3, extra = 3, [111] = {28.10, 49.00} },
 		{ quest = 54709, side = 2, [1163] = {50.71, 82.30} },
 		{ quest = 54710, side = 1, [1161] = {73.66, 12.59} },
+		{ quest = 75684, side = 3, [2023] = {46.22, 40.60} },
+		{ quest = 75693, side = 3, [2023] = {66.25, 24.53} },
+		{ quest = 75692, side = 3, [2023] = {72.14, 80.39} },
+		{ quest = 75685, side = 3, [2023] = {62.94, 40.57} },
+		{ quest = 75687, side = 3, [2023] = {57.14, 76.72} },
+		{ quest = 75688, side = 3, [2023] = {81.29, 59.20} },
+		{ quest = 75689, side = 3, [2023] = {85.84, 35.36} },
+		{ quest = 75686, side = 3, [2023] = {28.64, 60.57} },
+		{ quest = 75691, side = 3, [2023] = {41.91, 60.43} },
+		{ quest = 75690, side = 3, [2023] = {85.04, 26.03} },
+		{ quest = 75698, side = 3, [2025] = {50.08, 42.73} },
+		{ quest = 75696, side = 3, [2025] = {35.08, 79.21} },
+		{ quest = 75697, side = 3, [2025] = {52.40, 69.82} },
+		{ quest = 75695, side = 3, [2025] = {59.85, 82.69} },
+		{ quest = 75700, side = 3, [2112] = {72.35, 46.66} },
+		{ quest = 75699, side = 3, [2112] = {47.13, 45.42} },
+		{ quest = 75701, side = 3, [2112] = {22.36, 30.84} },
+		{ quest = 75667, side = 3, [2024] = {47.03, 40.26} },
+		{ quest = 75668, side = 3, [2024] = {62.78, 57.73} },
+		{ quest = 75669, side = 3, [2024] = {12.38, 49.34} },
+		{ quest = 75670, side = 3, [2024] = {65.50, 16.25} },
+		{ quest = 75671, side = 3, [2024] = {18.81, 24.55} },
+		{ quest = 75702, side = 3, [2151] = {33.84, 58.80} },
+		{ quest = 75672, side = 3, [2022] = {24.46, 82.09} },
+		{ quest = 75673, side = 3, [2022] = {47.67, 83.31} },
+		{ quest = 75675, side = 3, [2022] = {65.22, 57.93} },
+		{ quest = 77698, side = 3, [2022] = {43.11, 66.66} },
+		{ quest = 75676, side = 3, [2022] = {25.76, 55.18} },
+		{ quest = 75674, side = 3, [2022] = {58.03, 67.31} },
+		{ quest = 75677, side = 3, [2022] = {76.07, 54.75} },
+		{ quest = 75678, side = 3, [2022] = {53.91, 39.05} },
+		{ quest = 75679, side = 3, [2022] = {46.43, 27.41} },
+		{ quest = 75681, side = 1, [2022] = {81.31, 31.96} },
+		{ quest = 75682, side = 2, [2022] = {80.42, 27.89} },
+		{ quest = 75683, side = 3, [2022] = {76.21, 35.41} },
+		{ quest = 75704, side = 3, [2133] = {56.37, 56.36} },
+		{ quest = 75703, side = 3, [2133] = {52.11, 26.47} },
+		{ quest = 84579, side = 3, [2255] = {58.96, 18.62} },
+		{ quest = 84580, side = 3, [2255] = {77.95, 62.78} },
+		{ quest = 84582, side = 3, [2255] = {56.86, 38.97} },
+		{ quest = 84581, side = 3, [2255] = {44.85, 66.27} },
+		{ quest = 84576, side = 3, [2213] = {62.05, 41.37} },
+		{ quest = 84578, side = 3, [2213] = {49.73, 22.24} },
+		{ quest = 84577, side = 3, [2216] = {57.43, 38.49} },
+		{ quest = 84572, side = 3, [2215] = {69.07, 45.71} },
+		{ quest = 84574, side = 3, [2215] = {40.58, 68.00} },
+		{ quest = 84573, side = 3, [2215] = {49.13, 39.53} },
+		{ quest = 84575, side = 3, [2215] = {42.76, 55.71} },
+		{ quest = 84564, side = 3, [2339] = {45.01, 47.31} },
+		{ quest = 84566, side = 3, [2248] = {41.99, 74.37} },
+		{ quest = 84567, side = 3, [2248] = {58.17, 27.12} },
+		{ quest = 84568, side = 3, [2214] = {59.46, 64.08} },
+		{ quest = 84569, side = 3, [2214] = {47.89, 32.09} },
+		{ quest = 84570, side = 3, [2214] = {63.41, 78.98} },
+		{ quest = 84571, side = 3, [2214] = {61.87, 46.27} },
 	},
 	patterns = {
 		"^%s*[Cc][Aa][Nn][Dd][Yy]%s+[Bb][Uu][Cc][Kk][Ee][Tt]%s*$",
@@ -244,7 +359,6 @@ CandyBuckets.modules["hallow"] = {
 	}
 }
 
-CandyBuckets.modules = CandyBuckets.modules or {}
 
 CandyBuckets.modules["lunar"] = {
 	event = "lunar",
@@ -341,6 +455,14 @@ CandyBuckets.modules["lunar"] = {
 		{ quest = 13027, side = 3, [121] = {58.80, 56.00} },
 		{ quest = 13023, side = 3, [160] = {68.20, 78.80} },
 		{ quest = 13026, side = 3, [123] = {49.00, 14.00} },
+		{ quest = 73172, side = 3, [2023] = {83.89, 48.02} },
+		{ quest = 73716, side = 3, [2022] = {44.30, 63.79} },
+		{ quest = 73717, side = 3, [2023] = {58.41, 31.46} },
+		{ quest = 73848, side = 3, [2022] = {46.66, 31.31} },
+		{ quest = 73858, side = 3, [2024] = {12.89, 49.05} },
+		{ quest = 73859, side = 3, [2025] = {54.86, 43.47} },
+		{ quest = 73860, side = 3, [2024] = {67.41, 49.47} },
+		{ quest = 73861, side = 3, [2025] = {50.06, 66.51} },
 		{ quest = 8676, side = 3, extra = 2, [71] = {39.60, 21.10} },
 		{ quest = 8635, side = 3, extra = 2, [66] = {30.10, 62.70} },
 		{ quest = 8619, side = 3, extra = 2, [32] = {35.30, 85.20}, [36] = {20.50, 35.60} },
@@ -356,6 +478,7 @@ CandyBuckets.modules["lunar"] = {
 		{ quest = 13066, side = 3, extra = 2, [120] = {37.50, 24.20} },
 	},
 	patterns = {
+		"%s*[Ee][Ll][Dd][Ee][Rr]%s*",
 		"%s+[Tt][Hh][Ee]%s+[Ee][Ll][Dd][Ee][Rr]%s*$",
 		"^%s*[Uu][Rr][Aa][Hh][Nn][Ee]%s+",
 		"%s+[Ee][Ll]%s+[Aa][Nn][Cc][Ee][Ss][Tt][Rr][Oo]%s*$",
@@ -380,15 +503,20 @@ CandyBuckets.modules["midsummer"] = {
 	},
 	quests = {
 		{ quest = 11737, side = 2, extra = 1, [17] = {55.20, 15.30} },
+		{ quest = 11737, side = 2, extra = 3, [17] = {48.16, 7.29} },
 		{ quest = 11808, side = 1, extra = 2, [17] = {55.54, 14.89} },
+		{ quest = 11808, side = 1, extra = 3, [17] = {48.16, 7.29} },
 		{ quest = 28917, side = 1, extra = 1, [17] = {46.29, 14.02} },
+		{ quest = 28917, side = 1, extra = 3, [17] = {48.16, 7.29} },
 		{ quest = 28930, side = 2, extra = 2, [17] = {46.00, 14.00} },
+		{ quest = 28930, side = 2, extra = 3, [17] = {48.16, 7.29} },
 		{ quest = 29036, side = 3, extra = 2, [207] = {49.40, 51.40} },
 		{ quest = 11580, side = 1, extra = 1, [21] = {49.60, 38.70} },
 		{ quest = 11581, side = 2, extra = 1, [52] = {45.20, 62.30} },
 		{ quest = 11583, side = 1, extra = 2, [52] = {45.00, 62.00} },
 		{ quest = 11584, side = 2, extra = 2, [21] = {50.00, 38.00} },
 		{ quest = 11732, side = 2, extra = 1, [14] = {44.58, 46.05} },
+		{ quest = 11732, side = 2, extra = 3, [14] = {38.24, 90.10} },
 		{ quest = 11739, side = 2, extra = 1, [36] = {68.60, 59.90} },
 		{ quest = 11742, side = 2, extra = 1, [27] = {53.80, 44.70} },
 		{ quest = 11743, side = 2, extra = 1, [47] = {73.20, 54.90} },
@@ -400,14 +528,17 @@ CandyBuckets.modules["midsummer"] = {
 		{ quest = 11757, side = 2, extra = 1, [56] = {13.30, 47.30} },
 		{ quest = 11761, side = 2, extra = 1, [210] = {51.70, 67.30} },
 		{ quest = 11764, side = 1, extra = 1, [14] = {69.23, 42.89} },
+		{ quest = 11764, side = 1, extra = 3, [14] = {38.24, 90.10} },
 		{ quest = 11766, side = 1, extra = 1, [15] = {24.20, 37.30} },
 		{ quest = 11768, side = 1, extra = 1, [36] = {51.50, 29.30} },
 		{ quest = 11776, side = 1, extra = 1, [25] = {54.50, 50.00} },
 		{ quest = 11781, side = 1, extra = 1, [51] = {76.62, 14.14} },
 		{ quest = 11784, side = 1, extra = 1, [26] = {76.63, 74.63} },
 		{ quest = 11786, side = 1, extra = 1, [18] = {56.90, 51.80} },
+		{ quest = 11786, side = 1, extra = 3, [18] = {69.46, 62.80} },
 		{ quest = 11801, side = 1, extra = 1, [210] = {50.60, 70.70} },
 		{ quest = 11804, side = 1, extra = 2, [14] = {44.30, 46.02} },
+		{ quest = 11804, side = 1, extra = 3, [14] = {38.24, 90.10} },
 		{ quest = 11810, side = 1, extra = 2, [36] = {68.00, 60.00} },
 		{ quest = 11813, side = 1, extra = 2, [27] = {54.00, 45.00} },
 		{ quest = 11814, side = 1, extra = 2, [47] = {73.00, 55.00} },
@@ -420,12 +551,14 @@ CandyBuckets.modules["midsummer"] = {
 		{ quest = 11832, side = 1, extra = 2, [210] = {51.00, 67.00} },
 		{ quest = 11837, side = 2, extra = 2, [210] = {50.00, 70.00} },
 		{ quest = 11840, side = 2, extra = 2, [14] = {69.36, 42.58} },
+		{ quest = 11840, side = 2, extra = 3, [14] = {38.24, 90.10} },
 		{ quest = 11842, side = 2, extra = 2, [15] = {23.17, 37.58} },
 		{ quest = 11844, side = 2, extra = 2, [36] = {51.00, 29.00} },
 		{ quest = 11853, side = 2, extra = 2, [25] = {55.00, 50.00} },
 		{ quest = 11857, side = 2, extra = 2, [51] = {76.00, 14.00} },
 		{ quest = 11860, side = 2, extra = 2, [26] = {76.63, 74.95} },
 		{ quest = 11862, side = 2, extra = 2, [18] = {57.00, 52.00} },
+		{ quest = 11862, side = 2, extra = 3, [18] = {69.46, 62.80} },
 		{ quest = 28910, side = 2, extra = 1, [50] = {51.60, 63.30} },
 		{ quest = 28911, side = 1, extra = 1, [50] = {40.70, 52.00} },
 		{ quest = 28912, side = 2, extra = 1, [15] = {18.50, 56.10} },
@@ -443,11 +576,13 @@ CandyBuckets.modules["midsummer"] = {
 		{ quest = 29031, side = 3, extra = 2, [205] = {49.30, 42.00} },
 		{ quest = 11734, side = 2, extra = 1, [63] = {86.70, 41.40} },
 		{ quest = 11740, side = 2, extra = 1, [62] = {49.00, 22.50} },
+		{ quest = 11740, side = 2, extra = 3, [62] = {48.86, 24.46} },
 		{ quest = 11741, side = 2, extra = 1, [66] = {65.80, 17.00} },
 		{ quest = 11744, side = 2, extra = 1, [70] = {62.10, 40.30} },
 		{ quest = 11746, side = 2, extra = 1, [69] = {46.60, 43.80} },
 		{ quest = 11753, side = 2, extra = 1, [57] = {54.70, 52.70} },
 		{ quest = 11760, side = 2, extra = 1, [81] = {60.50, 33.40} },
+		{ quest = 11760, side = 2, extra = 3, [81] = {78.93, 21.97} },
 		{ quest = 11762, side = 2, extra = 1, [71] = {52.70, 30.00} },
 		{ quest = 11763, side = 2, extra = 1, [83] = {61.30, 47.10} },
 		{ quest = 11765, side = 1, extra = 1, [63] = {51.60, 66.80} },
@@ -459,18 +594,22 @@ CandyBuckets.modules["midsummer"] = {
 		{ quest = 11780, side = 1, extra = 1, [65] = {53.00, 62.40} },
 		{ quest = 11783, side = 1, extra = 1, [10] = {49.90, 54.20} },
 		{ quest = 11800, side = 1, extra = 1, [81] = {50.80, 41.60} },
+		{ quest = 11800, side = 1, extra = 3, [81] = {78.93, 21.97} },
 		{ quest = 11802, side = 1, extra = 1, [71] = {49.80, 28.07} },
 		{ quest = 11803, side = 1, extra = 1, [83] = {58.13, 47.29} },
 		{ quest = 11805, side = 1, extra = 2, [63] = {87.00, 42.00} },
 		{ quest = 11811, side = 1, extra = 2, [62] = {49.00, 23.00} },
+		{ quest = 11811, side = 1, extra = 3, [62] = {48.86, 24.46} },
 		{ quest = 11812, side = 1, extra = 2, [66] = {65.00, 17.00} },
 		{ quest = 11815, side = 1, extra = 2, [70] = {62.00, 40.00} },
 		{ quest = 11817, side = 1, extra = 2, [69] = {47.00, 44.00} },
 		{ quest = 11824, side = 1, extra = 2, [57] = {54.80, 52.90} },
 		{ quest = 11831, side = 1, extra = 2, [81] = {60.30, 33.50} },
+		{ quest = 11831, side = 1, extra = 3, [81] = {78.93, 21.97} },
 		{ quest = 11833, side = 1, extra = 2, [71] = {52.64, 30.26} },
 		{ quest = 11834, side = 1, extra = 2, [83] = {61.24, 47.25} },
 		{ quest = 11836, side = 2, extra = 2, [81] = {51.00, 41.00} },
+		{ quest = 11836, side = 2, extra = 3, [81] = {78.93, 21.97} },
 		{ quest = 11838, side = 2, extra = 2, [71] = {49.00, 27.00} },
 		{ quest = 11839, side = 2, extra = 2, [83] = {58.22, 47.53} },
 		{ quest = 11841, side = 2, extra = 2, [63] = {51.00, 66.00} },
@@ -494,9 +633,13 @@ CandyBuckets.modules["midsummer"] = {
 		{ quest = 28932, side = 1, extra = 2, [78] = {60.00, 63.00} },
 		{ quest = 28933, side = 2, extra = 2, [78] = {56.00, 66.00} },
 		{ quest = 28947, side = 2, extra = 1, [249] = {53.40, 32.00} },
+		{ quest = 28947, side = 2, extra = 3, [249] = {56.02, 35.14} },
 		{ quest = 28948, side = 1, extra = 1, [249] = {53.00, 34.40} },
+		{ quest = 28948, side = 1, extra = 3, [249] = {56.02, 35.14} },
 		{ quest = 28949, side = 2, extra = 2, [249] = {53.00, 34.00} },
+		{ quest = 28949, side = 2, extra = 3, [249] = {56.02, 35.14} },
 		{ quest = 28950, side = 1, extra = 2, [249] = {53.00, 32.00} },
+		{ quest = 28950, side = 1, extra = 3, [249] = {56.02, 35.14} },
 		{ quest = 29030, side = 3, extra = 2, [198] = {62.84, 22.69} },
 		{ quest = 11735, side = 2, extra = 1, [97] = {44.70, 52.50} },
 		{ quest = 11736, side = 2, extra = 1, [105] = {41.80, 65.90} },
@@ -604,6 +747,15 @@ CandyBuckets.modules["midsummer"] = {
 		{ quest = 54747, side = 2, extra = 2, [863] = {40.03, 74.30} },
 		{ quest = 54750, side = 2, extra = 2, [864] = {56.01, 47.76} },
 		{ quest = 54745, side = 2, extra = 2, [862] = {53.31, 48.11} },
+		{ quest = 75398, side = 3, extra = 2, [2022] = {45.99, 82.88} },
+		{ quest = 75617, side = 3, extra = 2, [2023] = {63.86, 35.00} },
+		{ quest = 75640, side = 3, extra = 2, [2024] = {12.21, 47.57} },
+		{ quest = 75645, side = 3, extra = 2, [2112] = {53.38, 62.32} },
+		{ quest = 75647, side = 3, extra = 2, [2151] = {34.98, 60.89} },
+		{ quest = 75650, side = 3, extra = 2, [2133] = {55.17, 55.42} },
+		{ quest = 75650, side = 3, extra = 3, [2023] = {88.25, 28.85} },
+		{ quest = 75650, side = 3, extra = 3, [2023] = {36.27, 59.01} },
+		{ quest = 75650, side = 3, extra = 3, [2024] = {18.91, 22.87} },
 	},
 	patterns = {
 		"^%s*[Hh][Oo][Nn][Oo][Rr]%s+[Tt][Hh][Ee]%s+[Ff][Ll][Aa][Mm][Ee]%s*$",
@@ -631,10 +783,14 @@ CandyBuckets.modules["midsummer"] = {
 if WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE then
 	return
 end
+local function Output(fmt, ...)
+	local text = format(fmt, ...)
+	DEFAULT_CHAT_FRAME:AddMessage(text, 1, 1, 0)
+end
 ---- Session--
-CandyBuckets.FACTION = 0
-CandyBuckets.QUESTS = {}
-CandyBuckets.PROVIDERS = {}
+CandyBuckets.FACTION = 0 --- `1` = Alliance, `2` = Horde, `3` = Neutral
+CandyBuckets.QUESTS = {} ---@type CandyBucketsQuest[]
+CandyBuckets.PROVIDERS = {} ---@type table<CandyBucketsDataProvider, true?>
 
 CandyBuckets.COMPLETED_QUESTS = setmetatable({}, {
 	__index = function(self, questID)
@@ -709,12 +865,18 @@ do
 		948, -- The Maelstrom
 		1165, -- Dazar'alor
 		1550, -- The Shadowlands
+		1978, -- Dragon Isles
+		2274, -- Khaz Algar
 	}) do
 		CheckMapRecursively(uiMapID, GetChildren, 10)
 		CheckMapRecursively(uiMapID, GetChildrenNS, 10)
 	end
 
 	AddParentChildMapIDs(108, 111) -- Terokkar Forest -> Shattrath City
+	AddParentChildMapIDs(539, 582) -- Shadowmoon Valley -> Lunarfall
+	AddParentChildMapIDs(525, 590) -- Frostfire Ridge -> Frostwall
+	AddParentChildMapIDs(1978, 2151) -- Dragon Isles -> The Forbidden Reach
+	AddParentChildMapIDs(947, 2151) -- Azeroth -> The Forbidden Reach
 
 end
 
@@ -765,7 +927,7 @@ do
 	local waypointAddons = {}
 
 	-- TomTom (v80001-1.0.2)
-	table.insert(waypointAddons, {
+	local tomtomWaypointAddon = {
 		name = "TomTom",
 		func = function(self, poi, wholeModule)
 			if wholeModule then
@@ -776,42 +938,76 @@ do
 				local x, y = poi:GetPosition()
 				local childUiMapID, childX, childY = GetLowestLevelMapFromMapID(uiMapID, x, y)
 				local mapInfo = C_Map.GetMapInfo(childUiMapID)
-				TomTom:AddWaypoint(childUiMapID, childX, childY, {
-					title = string.format("%s (%s, %d)", poi.name, mapInfo.name or "Map " .. childUiMapID, poi.quest.quest),
+				local options = {
+					from = addonName,
+					quest = poi.quest,
+					title = string.format("%s (%s, %d)", poi.name, mapInfo.name or ("Map " .. childUiMapID), poi.quest.quest),
 					minimap = true,
 					crazy = true,
-				})
+				}
+				TomTom:AddWaypoint(childUiMapID, childX, childY, options)
 			end
 			return true
 		end,
 		funcAll = function(self, module)
 			for i = 1, #CandyBuckets.QUESTS do
 				local quest = CandyBuckets.QUESTS[i]
-				if quest.module == module then
+				if quest.module == module and quest.waypoint ~= false then
 					for uiMapID, coords in pairs(quest) do
 						if type(uiMapID) == "number" and type(coords) == "table" then
 							local name = module.title[quest.extra or 1]
 							local mapInfo = C_Map.GetMapInfo(uiMapID)
-							TomTom:AddWaypoint(uiMapID, coords[1]/100, coords[2]/100, {
-								title = string.format("%s (%s, %d)", name, mapInfo.name or "Map " .. uiMapID, quest.quest),
+							local options = {
+								from = addonName,
+								quest = quest,
+								title = string.format("%s (%s, %d)", name, mapInfo.name or ("Map " .. uiMapID), quest.quest),
 								minimap = true,
 								crazy = true,
-							})
+							}
+							TomTom:AddWaypoint(uiMapID, coords[1]/100, coords[2]/100, options)
 						end
 					end
 				end
 			end
 			return true
 		end,
-	})
+		funcRemove = function(self, questID)
+			local remove ---@type table<TomTomWaypointOptionsPolyfill, true>?
+			for _, mapWaypoints in pairs(TomTom.waypoints) do
+				for _, mapWaypoint in pairs(mapWaypoints) do
+					---@type TomTomWaypointOptionsPolyfill
+					local waypoint = mapWaypoint
+					if waypoint.from == addonName and type(waypoint.quest) == "table" and waypoint.quest.quest == questID then
+						if not remove then
+							remove = {}
+						end
+						remove[waypoint] = true
+					end
+				end
+			end
+			if not remove then
+				return false
+			end
+			for waypoint, _ in pairs(remove) do
+				TomTom:RemoveWaypoint(waypoint)
+			end
+			return true
+		end,
+		funcClosest = function(self)
+			---@type TomTomWaypointOptionsPolyfill?
+			local waypoint = TomTom:GetClosestWaypoint()
+			if not waypoint then
+				return false
+			end
+			TomTom:SetCrazyArrow(waypoint, TomTom.profile.arrow.arrival, waypoint.title)
+			return true
+		end,
+	}
 
 	-- C_Map.SetUserWaypoint (9.0.1)
-	table.insert(waypointAddons, {
+	local standardWaypointAddon = {
 		name = "Waypoint",
 		standard = true,
-		---@param self CandyBucketsWaypointAddOn
-		---@param poi CandyBucketsMapPosition
-		---@param wholeModule? boolean
 		func = function(self, poi, wholeModule)
 			if wholeModule then
 				self:funcAll(poi.quest.module)
@@ -827,12 +1023,10 @@ do
 			end
 			return true
 		end,
-		---@param self CandyBucketsWaypointAddOn
-		---@param module CandyBucketsModule
 		funcAll = function(self, module)
 			for i = 1, #CandyBuckets.QUESTS do
 				local quest = CandyBuckets.QUESTS[i]
-				if quest.module == module then
+				if quest.module == module and quest.waypoint ~= false then
 					for uiMapID, coords in pairs(quest) do
 						if type(uiMapID) == "number" and type(coords) == "table" then
 							if C_Map.CanSetUserWaypointOnMap(uiMapID) then
@@ -845,7 +1039,32 @@ do
 			end
 			return "Can't make a waypoint to any destination."
 		end,
-	})
+		funcRemove = function(self, questID)
+			local waypoint = C_Map.GetUserWaypoint()
+			if not waypoint then
+				return false
+			end
+			for i = 1, #CandyBuckets.QUESTS do
+				local quest = CandyBuckets.QUESTS[i]
+				if quest.quest == questID then
+					for uiMapID, coords in pairs(quest) do
+						if type(uiMapID) == "number" and type(coords) == "table" then
+							if waypoint.uiMapID == uiMapID and waypoint.position.x == coords[1] and waypoint.position.y == coords[2] then
+								C_Map.ClearUserWaypoint()
+								return true
+							end
+						end
+					end
+				end
+			end
+			return false
+		end,
+	}
+
+	local waypointAddons = {
+		tomtomWaypointAddon,
+		standardWaypointAddon
+	}
 
 	local supportedAddons = {} ---@type string[]
 	local supportedAddonsWarned = false
@@ -855,7 +1074,7 @@ do
 	function CandyBuckets:GetWaypointAddon()
 		for i = 1, #waypointAddons do
 			local waypoint = waypointAddons[i]
-			if waypoint.standard or IsAddOnLoaded(waypoint.name) then
+			if waypoint.standard or C_AddOns.IsAddOnLoaded(waypoint.name) then
 				return waypoint
 			end
 		end
@@ -867,7 +1086,7 @@ do
 			if not silent then
 				if not supportedAddonsWarned and supportedAddons ~= "" then
 					supportedAddonsWarned = true
-					DEFAULT_CHAT_FRAME:AddMessage("You need to install one of these supported waypoint addons: " .. supportedAddons, 1, 1, 0)
+					Output("You need to install one of these supported waypoint addons: %s", supportedAddons)
 				end
 			end
 			return false
@@ -875,12 +1094,43 @@ do
 		local status, err = pcall(function() return waypoint:func(poi, wholeModule) end)
 		if not status or err ~= true then
 			if not silent then
-				DEFAULT_CHAT_FRAME:AddMessage(format("Unable to set waypoint%s%s", waypoint.standard and "" or format(" using %s", waypoint.name), type(err) == "string" and format(": %s", err) or "."), 1, 1, 0)
+				Output("Unable to set waypoint%s%s", waypoint.standard and "" or format(" using %s", waypoint.name), type(err) == "string" and format(": %s", err) or ".")
 			end
 			return false
 		end
 		return true
 	end
+	function CandyBuckets:RemoveQuestWaypoint(questID)
+		local waypoint = CandyBuckets:GetWaypointAddon()
+		if not waypoint then
+			return false
+		end
+		if not waypoint.funcRemove then
+			return false
+		end
+		local status, err = pcall(function() return waypoint:funcRemove(questID) end)
+		if not status or err ~= true then
+			return false
+		end
+		return true
+	end
+
+	---@return boolean success
+	function CandyBuckets:AutoWaypointClosest()
+		local waypoint = CandyBuckets:GetWaypointAddon()
+		if not waypoint then
+			return false
+		end
+		if not waypoint.funcClosest then
+			return false
+		end
+		local status, err = pcall(function() return waypoint:funcClosest() end)
+		if not status or err ~= true then
+			return false
+		end
+		return true
+	end
+
 end
 
 ---- Mixin--
@@ -975,6 +1225,8 @@ end
 -- Pin
 --
 
+local PIN_BORDER_TRANSPARENT = 918860
+
 local PIN_BORDER_COLOR = {
 	[0] = "Interface\\Buttons\\GREYSCALERAMP64",
 	[1] = "Interface\\Buttons\\BLUEGRAD64",
@@ -987,21 +1239,36 @@ CandyBucketsPinMixin = CreateFromMixins(MapCanvasPinMixin)
 function CandyBucketsPinMixin:OnLoad()
 	self:SetScalingLimits(1.2, 1.0, 1.6)  --1, 1.0, 1.2
 	self.HighlightTexture:Hide()
-	--self.hasTooltip = true
-	--self:EnableMouse(self.hasTooltip)
-	self.Texture:SetMask("Interface\\CharacterFrame\\TempPortraitAlphaMask")
+	self.hasTooltip = true
+	self:EnableMouse(self.hasTooltip)
+	--self.Texture:SetMask("Interface\\CharacterFrame\\TempPortraitAlphaMask")
 	self.Texture:ClearAllPoints()
 	self.Texture:SetAllPoints()
-	self.Border:SetMask("Interface\\CharacterFrame\\TempPortraitAlphaMask")
-	self.Border:SetTexture(PIN_BORDER_COLOR[0])
+end
+function CandyBucketsPinMixin:SetTextureAndBorder(texture, border, noBorderPlainIcon)
+	if noBorderPlainIcon then
+		self.Texture:SetMask("")
+		self.Border:SetMask("")
+		self.Border:Hide()
+	else
+		self.Texture:SetMask("Interface\\CharacterFrame\\TempPortraitAlphaMask")
+		self.Border:SetMask("Interface\\CharacterFrame\\TempPortraitAlphaMask")
+		self.Border:Show()
+	end
+	self.Texture:SetTexture(texture)
+	self.Border:SetTexture(border)
 end
 
 function CandyBucketsPinMixin:OnAcquired(quest, poi)
 	self.quest = quest
 	self:UseFrameLevelType("PIN_FRAME_LEVEL_AREA_POI", self:GetMap():GetNumActivePinsByTemplate("CandyBucketsPinTemplate"))
 	self:SetSize(12, 12)
-	self.Texture:SetTexture(quest.module.texture[quest.extra or 1])
-	self.Border:SetTexture(PIN_BORDER_COLOR[quest.side or 0])
+	local texture = quest.module.texture[quest.extra or 1]
+	if quest.style == 2 then
+		self:SetTextureAndBorder(texture, PIN_BORDER_TRANSPARENT, true)
+	else
+		self:SetTextureAndBorder(texture, PIN_BORDER_COLOR[quest.side or 0])
+	end
 	self.name = quest.module.title[quest.extra or 1]
 	if poi.GetXY then
 		self:SetPosition(poi:GetXY())
@@ -1020,28 +1287,30 @@ function CandyBucketsPinMixin:OnAcquired(quest, poi)
 end
 
 function CandyBucketsPinMixin:OnReleased()
-	self.quest, self.name, self.description = nil
+	self.quest = nil
+	self.name = nil
+	self.description = nil
 end
 
---[[function CandyBucketsPinMixin:OnMouseEnter()
+function CandyBucketsPinMixin:OnMouseEnter()
 	if not self.hasTooltip then return end
 	GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 	self.UpdateTooltip = self.OnMouseEnter
-	GameTooltip_SetTitle(GameTooltip, self.name)
+	--GameTooltip_SetTitle(GameTooltip, self.name)
 	if self.description and self.description ~= "" then
 		GameTooltip_AddNormalLine(GameTooltip, self.description, true)
 	end
-	GameTooltip_AddNormalLine(GameTooltip, "Quest ID: " .. self.quest.quest, false)
-	if CandyBuckets:GetWaypointAddon() then
-		GameTooltip_AddNormalLine(GameTooltip, "<Click to show waypoint.>", false)
-	end
+	--GameTooltip_AddNormalLine(GameTooltip, "Quest ID: " .. self.quest.quest, false)
+	--if CandyBuckets:GetWaypointAddon() then
+		--GameTooltip_AddNormalLine(GameTooltip, "<Click to show waypoint.>", false)
+	--end
 	GameTooltip:Show()
 end
 
 function CandyBucketsPinMixin:OnMouseLeave()
 	if not self.hasTooltip then return end
 	GameTooltip:Hide()
-end]]
+end
 
 function CandyBucketsPinMixin:OnClick(button)
 	if button ~= "LeftButton" then return end
@@ -1099,10 +1368,11 @@ function CandyBucketsStatsMixin:OnAcquired(questPOIs)
 end
 
 function CandyBucketsStatsMixin:OnReleased()
-	self.name, self.description = nil -- TODO: ?
+	self.name = nil
+	self.description = nil
 end
 
---[[function CandyBucketsStatsMixin:OnMouseEnter()
+function CandyBucketsStatsMixin:OnMouseEnter()
 	if not self.hasTooltip then return end
 	GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 	self.UpdateTooltip = self.OnMouseEnter
@@ -1116,7 +1386,7 @@ end
 function CandyBucketsStatsMixin:OnMouseLeave()
 	if not self.hasTooltip then return end
 	GameTooltip:Hide()
-end]]
+end
 
 function CandyBucketsStatsMixin:OnClick(button)
 	if button ~= "LeftButton" then return end
@@ -1125,7 +1395,6 @@ end
 
 ---- Modules--
 
-CandyBuckets.modules = CandyBuckets.modules or {}
 
 local MODULE_FROM_TEXTURE = {
 	[235461] = "hallow",
@@ -1137,6 +1406,9 @@ local MODULE_FROM_TEXTURE = {
 	[235473] = "midsummer",
 	[235474] = "midsummer",
 	[235472] = "midsummer",
+	[235442] = "brewfest",
+	[235441] = "brewfest",
+	[235440] = "brewfest",
 }
 
 ---- Addon--
@@ -1436,6 +1708,100 @@ function addon:IsDeliveryLocationExpected(questID)
 	return true, nil, returnCount
 end
 
+function addon:CanUseAddonLinks()
+	local _, _, _, build = GetBuildInfo()
+	return build >= 100100
+end
+
+function addon:CreateAddonCopyLink(entry)
+	return format("|cFFFF5555|H[CandyBuckets]:%s:%s|h[Click here to copy this message]|h|r", addonName, entry)
+end
+
+function addon:ShowCopyDialog(text)
+	local key = format("%s Copy Dialog", addonName)
+
+	if not StaticPopupDialogs[key] then
+		StaticPopupDialogs[key] = {
+			text = "",
+			button1 = "",
+			-- button2 = "",
+			hasEditBox = 1,
+			OnShow = function(self, data)
+				if data.text_arg1 ~= nil then
+					self.text:SetFormattedText(data.text, data.text_arg1, data.text_arg2)
+				else
+					self.text:SetText(data.text)
+				end
+				if data.acceptText ~= false then
+					self.button1:SetText(data.acceptText or DONE)
+				else
+					self.button1:Hide()
+				end
+				if data.cancelText ~= false then
+					self.button2:SetText(data.cancelText or CANCEL)
+				else
+					self.button2:Hide()
+				end
+				self.editBox:SetMaxLetters(data.maxLetters or 255)
+				self.editBox:SetCountInvisibleLetters(not not data.countInvisibleLetters)
+				if data.editBox then
+					self.editBox:SetText(data.editBox)
+					self.editBox:HighlightText()
+				end
+			end,
+			OnAccept = function(self, data)
+				if data.callback then
+					data.callback(self.editBox:GetText())
+				end
+			end,
+			OnCancel = function(self, data)
+				if data.cancelCallback then
+					data.cancelCallback()
+				end
+			end,
+			EditBoxOnEnterPressed = function(self, data)
+				local parent = self:GetParent();
+				if parent.button1:IsEnabled() then
+					if data.callback then
+						data.callback(parent.editBox:GetText())
+					end
+					parent:Hide()
+				end
+			end,
+			EditBoxOnTextChanged = function(self)
+				-- local parent = self:GetParent()
+				-- parent.button1:SetEnabled(parent.editBox:GetText():trim() ~= "")
+			end,
+			EditBoxOnEscapePressed = function(self)
+				self:GetParent():Hide()
+			end,
+			hideOnEscape = 1,
+			timeout = 0,
+			exclusive = 1,
+			whileDead = 1,
+		}
+	end
+
+	return StaticPopup_Show(key, nil, nil, {
+		text = "The contents below contain the required information to update the quest with a more accurate location.",
+		editBox = text,
+		acceptText = CLOSE,
+	})
+end
+
+-- hook `SetItemRef` if addon links are supported (and call `ShowCopyDialog` when the links are clicked)
+if addon:CanUseAddonLinks() then
+	local function HandleAddonLinkClick(link)
+		local linkType, prefix, param1 = strsplit(":", link, 3)
+		if linkType ~= "addon" or prefix ~= addonName then
+			return
+		end
+		addon:ShowCopyDialog(param1)
+	end
+
+	hooksecurefunc("SetItemRef", HandleAddonLinkClick)
+end
+
 --
 -- Events
 --
@@ -1494,9 +1860,18 @@ function addon:QUEST_TURNED_IN(event, questID)
 	CandyBuckets.COMPLETED_QUESTS[questID] = true
 	local success, info, checkedNumQuestPOIs = addon:IsDeliveryLocationExpected(questID)
 	if success == false and info then
-		DEFAULT_CHAT_FRAME:AddMessage(format("|cffFFFFFF%s|r quest |cffFFFFFF%s#%d|r turned in at the wrong location. You were at |cffFFFFFF%d/%d/%.2f/%.2f|r roughly |cffFFFFFF%.2f|r units away from the expected %s. Please screenshot/copy this message and report it to the author. Thanks!", addonName, info.quest.module.event, questID, CandyBuckets.FACTION, info.uiMapID, info.x * 100, info.y * 100, info.distance * 100, checkedNumQuestPOIs and checkedNumQuestPOIs > 1 and checkedNumQuestPOIs .. " locations" or "location"), 1, 1, 0)
+		local suffix = "Please screenshot this message and report it to the author."
+		if addon:CanUseAddonLinks() then
+			local entry = format("{ quest = %d, side = %d, [%d] = {%.2f, %.2f} }, -- %.2f, %s", questID, CandyBuckets.FACTION, info.uiMapID, info.x * 100, info.y * 100, info.distance * 100, GetMinimapZoneText() or "N/A")
+			local link = addon:CreateAddonCopyLink(entry)
+			suffix = format("%s, then report it to the author.", link)
+		end
+		DEFAULT_CHAT_FRAME:AddMessage(format("|cffFFFFFF%s|r quest |cffFFFFFF%s#%d|r turned in at the wrong location. You were at |cffFFFFFF%d/%d/%.2f/%.2f|r roughly |cffFFFFFF%.2f|r units away from the expected %s. %s Thanks!", addonName, info.quest.module.event, questID, CandyBuckets.FACTION, info.uiMapID, info.x * 100, info.y * 100, info.distance * 100, checkedNumQuestPOIs and checkedNumQuestPOIs > 1 and checkedNumQuestPOIs .. " locations" or "location", suffix), 1, 1, 0)
 	end
 	if addon:RemoveQuestPois(questID) then
+		if CandyBuckets:RemoveQuestWaypoint(questID) then
+			CandyBuckets:AutoWaypointClosest()
+		end
 		addon:RefreshAllWorldMaps(true)
 	end
 end

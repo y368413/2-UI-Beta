@@ -4,7 +4,6 @@ local TT = M:GetModule("Tooltip")
 
 local _G = getfenv(0)
 local format, tinsert, ipairs, select = string.format, table.insert, ipairs, select
-local GetSpellInfo = GetSpellInfo
 local C_AzeriteEmpoweredItem_GetPowerInfo = C_AzeriteEmpoweredItem.GetPowerInfo
 local C_AzeriteEmpoweredItem_IsAzeriteEmpoweredItemByID = C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID
 local C_AzeriteEmpoweredItem_GetAllTierInfoByItemID = C_AzeriteEmpoweredItem.GetAllTierInfoByItemID
@@ -58,9 +57,9 @@ function TT:Azerite_UpdateTier(link)
 end
 
 function TT:Azerite_UpdateItem()
-	if not self.GetItem then return end
-
-	local link = select(2, self:GetItem())
+	local data = self:GetTooltipData()
+	local guid = data and data.guid
+	local link = guid and C_Item.GetItemLinkByGUID(guid)
 	if not link then return end
 
 	local allTierInfo = TT:Azerite_UpdateTier(link)
@@ -82,7 +81,7 @@ function TT:Azerite_UpdateItem()
 			local spellID = TT:Azerite_PowerToSpell(id)
 			if not spellID then break end
 
-			local name, _, icon = GetSpellInfo(spellID)
+			local name, icon = C_Spell.GetSpellName(spellID), C_Spell.GetSpellTexture(spellID)
 			local found = name == powerList[lineIndex]
 			if found then
 				tooltipText = tooltipText.." "..getIconString(icon, true)
@@ -107,16 +106,7 @@ end
 
 function TT:AzeriteArmor()
 	if not R.db["Tooltip"]["AzeriteArmor"] then return end
-	if IsAddOnLoaded("AzeriteTooltip") then return end
+	if C_AddOns.IsAddOnLoaded("AzeriteTooltip") then return end
 
-	if I.isBeta then
-		-- todo: update via C_TooltipInfo, requires on shopping tooltip
-		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, TT.Azerite_UpdateItem)
-	else
-		GameTooltip:HookScript("OnTooltipSetItem", TT.Azerite_UpdateItem)
-		ItemRefTooltip:HookScript("OnTooltipSetItem", TT.Azerite_UpdateItem)
-		ShoppingTooltip1:HookScript("OnTooltipSetItem", TT.Azerite_UpdateItem)
-		EmbeddedItemTooltip:HookScript("OnTooltipSetItem", TT.Azerite_UpdateItem)
-		GameTooltipTooltip:HookScript("OnTooltipSetItem", TT.Azerite_UpdateItem)
-	end
+	TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, TT.Azerite_UpdateItem)
 end

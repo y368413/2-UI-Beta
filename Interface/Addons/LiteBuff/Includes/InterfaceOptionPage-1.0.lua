@@ -1,75 +1,3 @@
------------------------------------------------------------
--- InterfaceOptionPage-1.0.lua
------------------------------------------------------------
--- A simple function set for implementing Blizzard Interface Option style option
--- pages and common GUI option elements.
---
------------------------------------------------------------
--- Sample Usage:
------------------------------------------------------------
---
--- page = UICreateInterfaceOptionPage("name", "title" [, "subTitle" [, "categoryParent" [, parentFrame]]])
--- page:AnchorToTopLeft(control [, xOffset, yOffset])
--- page:AddCombatDisableItem(control)
--- page:Open() -- Show the frame
-
--- page:SetDialogStyle("style" [, hideOnEscape]) -- Set dialog style for stand-alone option frames, style must be one of "TITLE_DIALOG", "DIALOG", "TOOLTIP", "THIN", "NONE", default is "NONE" which removes existing dialog style
--- page:Toggle() -- Show/hide the frame, only for stand-alone option frames
-
--- slider = page:CreateSlider("text", minVal, maxVal [, step [, "valueFormat" [, disableInCombat]]])
--- slider = page:CreateSmallSlider("text", minVal, maxVal [, step [, "valueFormat" [, disableInCombat]]]) -- The slider is smaller
--- slider.OnSliderInit = function(self) return someValue end
--- slider.OnSliderChanged = function(self, value) end
-
--- combo = page:CreateComboBox("text" [, horizontal [, disableInCombat]])
--- combo:AddLine(text, value [, icon [, flag [, r, g, b [, position]]]]) -- flag: 1-isTitle, 2-disabled, 3-notClickable, 4-notCheckable
--- combo:OnMenuRequest() -- Callback, if this function exists, "AddLine" will have no effect outside of "OnMenuRequest"
--- combo:DeleteLine(value [, noNotify])
--- combo:NumLines()
--- combo:GetSelection()
--- combo:SetSelection(value [, noNotify])
--- combo:SetSelectionByPosition(position [, noNotify])
--- combo:GetValueByPosition(position)
--- combo.OnComboInit = function(self) return someValue end
--- combo.OnComboChanged = function(self, value) end
-
--- editbox = page:CreateEditBox("text" [, horizontal [, disableInCombat]])
--- editbox:CommitText() -- Commit the text and clear focus if succeeds
--- cancel, newText = editbox:OnTextValidate(text) -- called when ENTER key is pressed
--- editbox:OnTextCommit(text) -- called after editbox:OnTextValidate succeeds
--- newText = editbox:OnTextCancel() -- called when ESC key is pressed
-
--- pressButton = page:CreatePressButton("text" [, disableInCombat])
-
--- multiGroup = page:CreateMultiSelectionGroup("title" [, horizontal])
--- multiGroup:AddButton("text", value [, disableInCombat [, key1, value1 [, ...]])
--- multiGroup.OnCheckInit = function(self, value) return someValue end
--- multiGroup.OnCheckChanged = function(self, value, checked) end
-
--- multiGroup:SetChecked(value, checked [, noNotify])
--- multiGroup:GetChecked(value)
-
--- singleGroup = page:CreateSingleSelectionGroup("title" [, horizontal])
--- singleGroup:AddButton("text", value [, disableInCombat [, key1, value1 [, ...]])
--- singleGroup.OnCheckInit = function(self, value) return value == someValue end
--- singleGroup.OnSelectionChanged = function(self, value) end
-
--- singleGroup:SetSelection(value [, noNotify])
--- singleGroup:GetSelection()
-
--- page:CreatePanel(frame [, noBkgnd [, noBorder]]) -- Creates or decorates a panel with backgroud and border
-
--- control.tooltipTitle -- string, tooltip title to display
--- control.tooltipText -- string, tooltip text to display
-
--- or
-
--- control:OnTooltipRequest(tooltip)
-
--- frame:CreateRoundButton("name", parent, "icon" [, "text" [, disableInCombat]])
-
------------------------------------------------------------
-
 local pcall = pcall
 local type = type
 local error = error
@@ -78,6 +6,8 @@ local max = max
 local CreateFrame = CreateFrame
 local ipairs = ipairs
 local pairs = pairs
+local IsShiftKeyDown = IsShiftKeyDown
+local IsControlKeyDown = IsControlKeyDown
 local tinsert = tinsert
 local tremove = tremove
 local format = format
@@ -86,17 +16,18 @@ local strupper = strupper
 local getglobal = getglobal
 local hooksecurefunc = hooksecurefunc
 local CloseDropDownMenus = CloseDropDownMenus
-local InterfaceOptions_AddCategory = InterfaceOptions_AddCategory
-local InterfaceOptionsFrame_OpenToCategory = InterfaceOptionsFrame_OpenToCategory
+local GetCurrentKeyBoardFocus = GetCurrentKeyBoardFocus
+local strmatch = strmatch
 local _G = _G
 local UISpecialFrames = UISpecialFrames
-local _
 
 local MAJOR_VERSION = 1
-local MINOR_VERSION = 65
+local MINOR_VERSION = 85
 
 -- To prevent older libraries from over-riding newer ones...
 if type(UICreateInterfaceOptionPage_IsNewerVersion) == "function" and not UICreateInterfaceOptionPage_IsNewerVersion(MAJOR_VERSION, MINOR_VERSION) then return end
+
+local function NOOP() end
 
 local GUID = "{FF87CB54-703B-432B-A8E3-1DF612BFC3D0}"
 local frame = _G[GUID]
@@ -189,7 +120,7 @@ local function SubControl_OnLeave(self)
 end
 
 local function CreateSubControl(self, frameType, text, template, disableInCombat)
-	local frame = CreateFrame(frameType, self:GetNextControlName(frameType), self, template)
+	local frame = CreateFrame(frameType, self:GetNextControlName(frameType), self, template == nil and "BackdropTemplate" or template .. ",BackdropTemplate")
 	frame.text = getglobal(frame:GetName().."Text")
 
 	if text then
@@ -211,8 +142,9 @@ local function CreateSubControl(self, frameType, text, template, disableInCombat
 end
 
 local function CreatePanel(self, frame, noBackground, noEdge)
-	if type(frame) ~= "table" or type(frame.SetBackdrop) ~= "function" then
-		frame = CreateSubControl(self, "Frame")
+	if type(frame) ~= "table" then
+		local _
+		frame = CreateSubControl(self, "Frame", _, "BackdropTemplate")
 	end
 
 	local backdrop = {}
@@ -236,11 +168,10 @@ local function CreatePanel(self, frame, noBackground, noEdge)
 	return frame
 end
 
-local function CreatePressButton(self, text, disableInCombat)
-	local button = CreateSubControl(self, "Button", text, "UIPanelButtonTemplate", disableInCombat)
-	button:SetSize(96, 24)
-	button:SetMotionScriptsWhileDisabled(true)
-	return button
+local function CheckButton_GetChecked(self)
+	if self:GetChecked() then
+		return 1
+	end
 end
 
 local function CheckButton_Text_OnSetText(self)
@@ -256,7 +187,7 @@ local function CheckButton_OnDisable(self)
 end
 
 local function CheckButton_OnClick(self)
-	pcall(self.OnClick, self, self:GetChecked())
+	pcall(self.OnClick, self, CheckButton_GetChecked(self))
 end
 
 local function CreateCheckButton(self, text, disableInCombat)
@@ -281,7 +212,7 @@ local function CheckGroup_OnShow(self)
 end
 
 local function CheckGroup_OnClick(self)
-	pcall(self.group.OnCheckChanged, self.group, self.value, self:GetChecked(), self)
+	pcall(self.group.OnCheckChanged, self.group, self.value, CheckButton_GetChecked(self), self)
 end
 
 local function CheckGroup_GetButton(self, idx)
@@ -291,25 +222,10 @@ local function CheckGroup_GetButton(self, idx)
 	return self.buttons[idx] or self[-1]
 end
 
-
-local function CheckGroup_AddButton(self, text, value, disableInCombat, ...)
+local function CheckGroup_AddBasicButton(self, text, disableInCombat)
 	local button = CreateCheckButton(self:GetParent(), text, disableInCombat)
 	button.group = self
-	button.value = value
-
-	local pairCount = select("#", ...)
-	local i
-	for i = 1, pairCount, 2 do
-		local key = select(i, ...)
-		local value = select(i + 1, ...)
-		if type(key) == "string" then
-			button[key] = value
-		end
-	end
-
 	tinsert(self.buttons, button)
-	button.OnShow = CheckGroup_OnShow
-	button:HookScript("OnClick", CheckGroup_OnClick)
 
 	local anchor = self[-1]
 	if anchor and self.horiz then
@@ -327,12 +243,39 @@ local function CheckGroup_AddButton(self, text, value, disableInCombat, ...)
 	return button
 end
 
+local function CheckGroup_AddButton(self, text, value, disableInCombat, ...)
+	local button = CheckGroup_AddBasicButton(self, text, disableInCombat)
+	button.value = value
+
+	local pairCount = select("#", ...)
+	for i = 1, pairCount, 2 do
+		local key = select(i, ...)
+		local val = select(i + 1, ...)
+		if type(key) == "string" then
+			button[key] = val
+		end
+	end
+
+	button.OnShow = CheckGroup_OnShow
+	button:HookScript("OnClick", CheckGroup_OnClick)
+	return button
+end
+
+local function CheckGroup_AddDummy(self, text, checked)
+	local button = CheckGroup_AddBasicButton(self, text)
+	button:SetChecked(checked)
+	button:Disable()
+	button.text:SetTextColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b)
+	button.SetChecked = NOOP
+	button.Enable = NOOP
+	return button
+end
+
 local function MultiGroup_SetChecked(self, value, checked, noNotify)
 	checked = checked and 1 or nil
-	local button
 	for _, button in ipairs(self.buttons) do
 		if button.value == value then
-			if button:GetChecked() ~= checked then
+			if CheckButton_GetChecked(button) ~= checked then
 				button:SetChecked(checked)
 				if not noNotify then
 					pcall(self.OnCheckChanged, self, value, checked, button)
@@ -344,10 +287,9 @@ local function MultiGroup_SetChecked(self, value, checked, noNotify)
 end
 
 local function MultiGroup_GetChecked(self, value)
-	local button
 	for _, button in ipairs(self.buttons) do
 		if button.value == value then
-			return button:GetChecked()
+			return CheckButton_GetChecked(button)
 		end
 	end
 end
@@ -358,6 +300,7 @@ local function CreateMultiSelectionGroup(self, title, horizontal)
 	group.buttons = {}
 	group.horiz = horizontal
 	group.AddButton = CheckGroup_AddButton
+	group.AddDummy = CheckGroup_AddDummy
 	group.GetButton = CheckGroup_GetButton
 	group.SetChecked = MultiGroup_SetChecked
 	group.GetChecked = MultiGroup_GetChecked
@@ -366,9 +309,9 @@ end
 
 local function SingleGroup_OnCheckChanged(self, value, checked, button)
 	if checked then
-		local other, changed
+		local changed
 		for _, other in ipairs(self.buttons) do
-			if other ~= button and other:GetChecked() then
+			if other ~= button and CheckButton_GetChecked(other) then
 				other:SetChecked(nil)
 				changed = 1
 			end
@@ -384,7 +327,7 @@ local function SingleGroup_OnCheckChanged(self, value, checked, button)
 end
 
 local function SingleGroup_SetSelection(self, value, noNotify)
-	local button, found
+	local found
 	for _, button in ipairs(self.buttons) do
 		if button.value == value then
 			found = button
@@ -448,6 +391,7 @@ local function CreateSlider(self, text, minVal, maxVal, step, valueFormat, disab
 	slider:SetWidth(200)
 	slider:SetMinMaxValues(minVal or 0, maxVal or 1)
 	slider:SetValueStep(step or 1)
+	slider:SetObeyStepOnDrag(true)
 	slider.valueFormat = type(valueFormat) == "string" and valueFormat or "%d"
 
 	if type(textColor) == "table" then
@@ -488,6 +432,18 @@ local function CreateSmallSlider(self, text, minVal, maxVal, step, valueFormat, 
 	return slider
 end
 
+local function ComboBox_SetText(self, text)
+	self.dropdown.text:SetText(text)
+end
+
+local function ComboBox_SetTextColor(self, r, g, b)
+	if type(r) == "table" then
+		self.dropdown.text:SetTextColor(r.r, r.g, r.b)
+	else
+		self.dropdown.text:SetTextColor(r, g, b)
+	end
+end
+
 local VOID_LINE = {}
 local function ComboBox_UpdateSelection(self, line, noNotify)
 	if not line then
@@ -495,11 +451,11 @@ local function ComboBox_UpdateSelection(self, line, noNotify)
 	end
 
 	if not line.notCheckable then
-		self.dropdown.text:SetText(line.text)
+		ComboBox_SetText(self, line.text)
 		if self:IsEnabled() then
-			self.dropdown.text:SetTextColor(line.r or HIGHLIGHT_FONT_COLOR.r, line.g or HIGHLIGHT_FONT_COLOR.g, line.b or HIGHLIGHT_FONT_COLOR.b)
+			ComboBox_SetTextColor(self, line.r or HIGHLIGHT_FONT_COLOR.r, line.g or HIGHLIGHT_FONT_COLOR.g, line.b or HIGHLIGHT_FONT_COLOR.b)
 		else
-			self.dropdown.text:SetTextColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b)
+			ComboBox_SetTextColor(self, GRAY_FONT_COLOR)
 		end
 
 		self.value = line.value
@@ -520,7 +476,7 @@ local function ComboBox_GetSelection(self)
 end
 
 local function ComboBox_SetSelection(self, value, noNotify)
-	local line, found
+	local found
 	for _, line in ipairs(self.dropdown.lines) do
 		if line.value == value then
 			found = line
@@ -539,33 +495,49 @@ local function ComboBox_SetSelectionByPosition(self, position, noNotify)
 	return ComboBox_UpdateSelection(self, self.dropdown.lines[position], noNotify)
 end
 
+local function ComboBox_GetLineData(self, position)
+	return self.dropdown.lines[position]
+end
+
+local function ComboBox_FindLineData(self, value)
+	for i, line in ipairs(self.dropdown.lines) do
+		if line.value == value then
+			return i, line
+		end
+	end
+end
+
 local function ComboBox_AddLine(self, text, value, icon, flags, r, g, b, position)
-	local line = { text = text, value = value, icon = icon }
-	if type(flags) == "string" then
-		local symbols = { strsplit(",", flags) }
-		local flag
-		for _, flag in ipairs(symbols) do
-			flag = strtrim(flag)
-			if flag ~= "" then
-				line[flag] = 1
+	local line
+	if type(text) == "table" then
+		line = text
+	else
+		line = { text = text, value = value, icon = icon }
+		if type(flags) == "string" then
+			local symbols = { strsplit(",", flags) }
+			for _, flag in ipairs(symbols) do
+				flag = strtrim(flag)
+				if flag ~= "" then
+					line[flag] = 1
+				end
+			end
+
+		elseif type(flags) == "number" then
+			if flags == 1 then
+				line.isTitle = 1
+			elseif flags == 2 then
+				line.disabled = 1
+			elseif flags == 3 then
+				line.notClickable = 1
+			elseif flags == 4 then
+				line.notCheckable = 1
 			end
 		end
 
-	elseif type(flags) == "number" then
-		if flags == 1 then
-			line.isTitle = 1
-		elseif flags == 2 then
-			line.disabled = 1
-		elseif flags == 3 then
-			line.notClickable = 1
-		elseif flags == 4 then
-			line.notCheckable = 1
+		if type(r) == "number" and type(g) == "number" and type(b) == "number" then
+			line.r, line.g, line.b = r, g, b
+			line.colorCode = format("|cff%02x%02x%02x", r * 255, g * 255, b * 255)
 		end
-	end
-
-	if type(r) == "number" and type(g) == "number" and type(b) == "number" then
-		line.r, line.g, line.b = r, g, b
-		line.colorCode = format("|cff%02x%02x%02x", r * 255, g * 255, b * 255)
 	end
 
 	if type(position) == "number" then
@@ -578,26 +550,24 @@ local function ComboBox_AddLine(self, text, value, icon, flags, r, g, b, positio
 end
 
 local function ComboBox_DeleteLine(self, value, noNotify)
-	local i, line
-	for i, line in ipairs(self.dropdown.lines) do
-		if line.value == value then
-			tremove(self.dropdown.lines, i)
-			if self.value == value then
-				self.value = nil
-				self.dropdown.text:SetText()
-				if not noNotify then
-					pcall(self.OnComboChanged, self)
-				end
-			end
-			return 1
-		end
+	local i, line = ComboBox_FindLineData(self, value)
+	if not i then
+		return
 	end
+
+	tremove(self.dropdown.lines, i)
+	self.value = nil
+	ComboBox_SetText(self)
+	if not noNotify then
+		pcall(self.OnComboChanged, self)
+	end
+	return i
 end
 
 local function ComboBox_ClearLines(self, noNotify)
 	wipe(self.dropdown.lines)
 	self.value = nil
-	self.dropdown.text:SetText()
+	ComboBox_SetText(self)
 	if not noNotify then
 		pcall(self.OnComboChanged, self)
 	end
@@ -621,11 +591,9 @@ local function Dropdown_InitFunc(self)
 		parent:OnMenuRequest()
 	end
 
-	local i
 	for i = 1, #(self.lines) do
 		local line = self.lines[i]
 		local data = {}
-		local k, v
 		for k, v in pairs(line) do
 			data[k] = v
 		end
@@ -650,14 +618,13 @@ end
 
 local function ComboBox_OnEnable(self)
 	self.toggleButton:Enable()
-	local textColor = self.defaultColor or NORMAL_FONT_COLOR
-	self.text:SetTextColor(textColor.r, textColor.g, textColor.b)
+	ComboBox_SetTextColor(self, self.defaultColor or NORMAL_FONT_COLOR)
 	ComboBox_SetSelection(self, self.value, 1)
 end
 
 local function ComboBox_OnDisable(self)
 	self.toggleButton:Disable()
-	self.text:SetTextColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b)
+	ComboBox_SetTextColor(self, GRAY_FONT_COLOR)
 	ComboBox_SetSelection(self, self.value, 1)
 end
 
@@ -717,9 +684,13 @@ local function CreateComboBox(self, text, horizontal, disableInCombat, textColor
 	hooksecurefunc(frame, "Disable", ComboBox_OnDisable)
 
 	frame.OnShow = ComboBox_OnShow
+	frame.SetText = ComboBox_SetText
+	frame.SetTextColor = ComboBox_SetTextColor
 	frame.ClearLines = ComboBox_ClearLines
 	frame.AddLine = ComboBox_AddLine
 	frame.NumLines = ComboBox_NumLines
+	frame.GetLineData = ComboBox_GetLineData
+	frame.FindLineData = ComboBox_FindLineData
 	frame.DeleteLine = ComboBox_DeleteLine
 	frame.SetSelection = ComboBox_SetSelection
 	frame.SetSelectionByPosition = ComboBox_SetSelectionByPosition
@@ -750,29 +721,15 @@ local function EditBox_Disable(self)
 	self.isEnabled = nil
 end
 
-local function EditBox_OnEditFocusGained(self)
-	self:HighlightText()
-	self.__contentsNeedCommit = 1
+local function EditBox_GetText(self)
+	local text = self:__OrigGetText()
+	if self.autoTrim then
+		text = strtrim(text)
+	end
+	return text
 end
 
-local function EditBox_OnEditFocusLost(self)
-	self:HighlightText(0, 0)
-	if self.__contentsNeedCommit and type(self.OnTextCancel) == "function" then
-		local newText = self:OnTextCancel()
-		if newText then
-			self:SetText(newText)
-		end
-	end
-end
-
-local function EditBox_OnEnterPressed(self)
-	if self:IsMultiLine() then
-		if IsShiftKeyDown() or IsControlKeyDown() or IsAltKeyDown() then
-			self:Insert("\n")
-			return
-		end
-	end
-
+local function EditBox_CommitText(self)
 	local text = self:GetText()
 
 	local abort, newText
@@ -793,18 +750,110 @@ local function EditBox_OnEnterPressed(self)
 	end
 end
 
+local function EditBox_CommitText(self)
+	local text = self:GetText()
+	local abort, newText
+	if type(self.OnTextValidate) == "function" then
+		abort, newText = self:OnTextValidate(text)
+		if newText then
+			text = newText
+			self:SetText(text)
+		end
+	end
+
+	if abort then
+		self:HighlightText()
+	elseif type(self.OnTextCommit) == "function" then
+		self:OnTextCommit(text)
+	end
+end
+
+local function EditBox_CancelText(self)
+	if type(self.OnTextCancel) == "function" then
+		local newText = self:OnTextCancel()
+		if newText then
+			self:SetText(newText)
+		end
+	end
+end
+
+local function EditBox_OnEditFocusGained(self)
+	self:HighlightText()
+	self.__contentsNeedCommit = 1
+	self.__escPressed = nil
+end
+
+local function EditBox_OnEditFocusLost(self)
+	self:HighlightText(0, 0)
+	if not self.__contentsNeedCommit then
+		return
+	end
+
+	self.__contentsNeedCommit = nil
+
+	if self.autoCommit and not self.__escPressed then
+		EditBox_CommitText(self)
+	else
+		self.__escPressed = nil
+		EditBox_CancelText(self)
+	end
+end
+
+local function EditBox_OnEnterPressed(self)
+	self.__escPressed = nil
+	if self:IsMultiLine() and (IsShiftKeyDown() or IsControlKeyDown()) then
+		self:Insert("\n")
+	else
+		EditBox_CommitText(self)
+		self.__contentsNeedCommit = nil
+		self:ClearFocus()
+	end
+end
+
 local function EditBox_OnEscapePressed(self)
+	self.__escPressed = 1
+	EditBox_CancelText(self)
 	self:ClearFocus()
 end
 
+hooksecurefunc("ChatEdit_InsertLink", function(link)
+	if type(link) ~= "string" then
+		return
+	end
+
+	local editBox = GetCurrentKeyBoardFocus()
+	if not editBox then
+		return
+	end
+
+	local handleClick = editBox.handleClick
+	if type(handleClick) ~= "string" then
+		return
+	end
+
+	handleClick = strlower(handleClick)
+
+	if handleClick == "link" then
+		editBox:SetText(link)
+	elseif handleClick == "name" then
+		local name = strmatch(link, "%[(.+)%]")
+		editBox:SetText(name or link)
+	end
+end)
+
 local function CreateEditBox(self, text, horizontal, disableInCombat, textColor)
-	local editbox = CreateSubControl(self, "EditBox", nil, nil, disableInCombat)
+	local editbox = CreateSubControl(self, "EditBox", nil, "BackdropTemplate", disableInCombat)
 	editbox:SetAutoFocus(false)
+	editbox.autoTrim = 1
+	editbox.handleClick = "link"
 	editbox:SetWidth(144)
 	editbox:SetHeight(26)
 	editbox:SetTextInsets(6, 6, 7, 7)
 	editbox:SetFontObject("GameFontHighlight")
 	editbox.borderFrame = CreatePanel(self, editbox)
+
+	editbox.__OrigGetText = editbox.GetText
+	editbox.GetText = EditBox_GetText
 
 	if type(textColor) == "table" then
 		editbox.defaultColor = textColor
@@ -837,14 +886,28 @@ local function CreateEditBox(self, text, horizontal, disableInCombat, textColor)
 	editbox.IsEnabled = EditBox_IsEnabled
 	editbox.Enable = EditBox_Enable
 	editbox.Disable = EditBox_Disable
-	editbox.CommitText = EditBox_OnEnterPressed
+	editbox.CommitText = EditBox_CommitText
+	editbox.CancelText = EditBox_CancelText
 
 	return editbox
+end
+
+local function PressButton_OnClick(self, ...)
+	pcall(self.OnClick, self, ...)
+end
+
+local function CreatePressButton(self, text, disableInCombat)
+	local button = CreateSubControl(self, "Button", text, "UIPanelButtonTemplate", disableInCombat)
+	button:SetSize(96, 24)
+	button:SetMotionScriptsWhileDisabled(true)
+	button:SetScript("OnClick", PressButton_OnClick)
+	return button
 end
 
 local function CreateRoundButton(self, name, parent, icon, text, disableInCombat)
 	local button = CreateFrame("Button", name, parent)
 	button:SetSize(31, 31)
+	button:SetMotionScriptsWhileDisabled(true)
 	button:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
 
 	button:SetScript("OnEnter", SubControl_OnEnter)
@@ -863,12 +926,14 @@ local function CreateRoundButton(self, name, parent, icon, text, disableInCombat
 
 	button.text = button:CreateFontString(name and name.."Text", "ARTWORK", "GameFontHighlight")
 	button.text:SetPoint("LEFT", button, "RIGHT", 1, 0)
-	button.text:SetFont(STANDARD_TEXT_FONT, 13)
+	button.text:SetFont(STANDARD_TEXT_FONT, 13, "")
 	button.text:SetText(text)
 
 	if disableInCombat then
 		AddCombatDisableItem(self, button)
 	end
+
+	button:SetScript("OnClick", PressButton_OnClick)
 
 	return button
 end
@@ -889,8 +954,7 @@ local function Toggle(self)
 end
 
 local function OpenInterfaceOptionPage(self)
-	InterfaceOptionsFrame_OpenToCategory(self)
-	InterfaceOptionsFrame_OpenToCategory(self)
+    Settings.OpenToCategory(self.settingsCategory.ID)
 end
 
 local DIALOG_STYLES = {
@@ -898,14 +962,11 @@ local DIALOG_STYLES = {
 		self:SetBackdrop({ bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background", tile = true, tileSize = 32, edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", edgeSize = 32, insets = {left = 11, right = 12, top = 12, bottom = 11 }, })
 		self.title:SetPoint("TOP", 0, 1)
 
-		-- this style needs a dialog header
 		if not self.headerTexture then
 			self.headerTexture = self:CreateTexture(nil, "ARTWORK")
 			self.headerTexture:SetTexture("Interface\\DialogFrame\\UI-DialogBox-Header")
 			self.headerTexture:SetHeight(62)
 			self.headerTexture:SetPoint("TOP", 1, 13)
-
-			-- Set text will also need to resize header texture
 			self.title.parent = self
 			hooksecurefunc(self.title, "SetText", function(self)
 				self.parent.headerTexture:SetWidth(self:GetWidth() + 200)
@@ -939,7 +1000,6 @@ local DIALOG_STYLES = {
 }
 
 local function IsHideOnEscape(self)
-	local k, v
 	for k, v in ipairs(UISpecialFrames) do
 		if v == self or v == self:GetName() then
 			return k
@@ -1034,7 +1094,7 @@ function UICreateInterfaceOptionPage(name, title, subTitle, categoryParent, pare
 		return
 	end
 
-	local page = CreateFrame("Frame", name, parentFrame)
+	local page = CreateFrame("Frame", name, parentFrame, "BackdropTemplate")
 	page:Hide()
 
 	page.title = page:CreateFontString(name.."Title", "ARTWORK", "GameFontNormal")
@@ -1053,10 +1113,19 @@ function UICreateInterfaceOptionPage(name, title, subTitle, categoryParent, pare
 		page.Open = page.Show
 		page.Toggle = Toggle
 	else
-		-- Inject to Blizzard UI option
+
 		page.name = title
 		page.parent = categoryParent
-		InterfaceOptions_AddCategory(page)
+		-- InterfaceOptions_AddCategory(page)，--lnui，11.0修正设置无法打开问退
+        if categoryParent then
+            local category = Settings.GetCategory(categoryParent);
+            local subcategory, _ = Settings.RegisterCanvasLayoutSubcategory(categoryParent, page, page.name, page.name);
+            page.settingsCategory = subcategory;
+        else
+            local category, _ = Settings.RegisterCanvasLayoutCategory(page, page.name, page.name);
+            Settings.RegisterAddOnCategory(category);
+            page.settingsCategory = category;
+        end
 		page.Open = OpenInterfaceOptionPage
 	end
 
