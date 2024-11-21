@@ -427,7 +427,7 @@ function funcs:Breed()
     local idType = self.idType
     if source and self.isValid and self.canBattle and (idType=="pet" or idType=="link" or idType=="battle") then
         local breedID,breedName
-        if source=="HPetBattleAny" then
+        if source=="BattlePetBreedID" then
             if idType=="pet" or idType=="link" then
                 breedID = BPBID_Internal.CalculateBreedID(self.speciesID,self.rarity,self.level,self.maxHealth,self.power,self.speed,false,false)
             elseif idType=="battle" then
@@ -464,7 +464,7 @@ function funcs:PossibleBreeds()
     local speciesID = self.speciesID
     if source and type(speciesID)=="number" and self.canBattle then
         local data -- table to contain possible breeds
-        if source=="HPetBattleAny" then
+        if source=="BattlePetBreedID" then
             if not BPBID_Arrays.BreedsPerSpecies then
                 BPBID_Arrays.InitializeArrays()
             end

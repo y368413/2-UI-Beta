@@ -1,0 +1,63 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+	<Button name="ATTButtonTemplateClassic" hidden="true" virtual="true">
+		<Animations>
+			<AnimationGroup parentKey="flashAnim"  setToFinalAlpha="true">
+				<Alpha childKey="flash" smoothing="OUT" duration="1" order="1" fromAlpha="1" toAlpha="0" />
+			</AnimationGroup>
+		</Animations>
+		<Layers>
+			<Layer level="OVERLAY" >
+			<Texture parentKey="flash" alpha="0" name="overlayflash" alphaMode="ADD" >
+                    <Color r="1.0" g="1.0" b="1.0" a="0.5"/>
+				</Texture>
+			</Layer>
+		</Layers>
+	</Button>
+
+	<Frame name="ATTButtonTemplate" virtual="true" mixin="BaseActionButtonMixin">
+			<Layers>
+				<Layer level="ARTWORK">
+					<Texture parentKey="Flash" atlas="UI-HUD-ActionBar-IconFrame-Mouseover" alphaMode="ADD" alpha="0" useAtlasSize="true"  />
+				</Layer>
+			</Layers>
+			<Animations>
+			<AnimationGroup parentKey="FlashAnim" mixin="ActionButtonCastingFinishAnimMixin">
+				<Alpha childKey="Flash" smoothing="OUT" duration=".10" order="1" fromAlpha="0" toAlpha="1"/>
+				<Alpha childKey="Flash" smoothing="IN" duration=".35" order="2" fromAlpha="1" toAlpha="0"/>
+			</AnimationGroup>
+			</Animations>
+	</Frame>
+
+	<Frame name="ATTActivationAlert" virtual="true" mixin="ActionBarButtonSpellActivationAlertMixin">
+			<Layers>
+				<Layer level="ARTWORK">
+					<Texture parentKey="ProcStartFlipbook" alpha="1">
+						<Size x="150" y="150"/>
+						<Anchors>
+							<Anchor point="CENTER"/>
+						</Anchors>
+					</Texture>
+					<Texture parentKey="ProcLoopFlipbook" atlas="UI-HUD-ActionBar-Proc-Loop-Flipbook" setAllPoints="true" alpha="0"/>
+				</Layer>
+			</Layers>
+			<Animations>
+				<AnimationGroup parentKey="ProcLoop" looping="REPEAT">
+					<Alpha childKey="ProcLoopFlipbook" duration=".001" order="0" fromAlpha="1" toAlpha="1"/>
+					<FlipBook parentKey="FlipAnim" childKey="ProcLoopFlipbook" duration="1" order="0" flipBookRows="6" flipBookColumns="5" flipBookFrames="30" flipBookFrameWidth="0" flipBookFrameHeight="0"/>
+				</AnimationGroup>
+					
+				<AnimationGroup parentKey="ProcStartAnim" setToFinalAlpha="true" mixin="ActionBarButtonSpellActivationAlertProcStartAnimMixin">
+					<Alpha childKey="ProcStartFlipbook" duration=".001" order="0" fromAlpha="1" toAlpha="1"/>
+					<Alpha childKey="ProcStartFlipbook" duration=".001" order="1" fromAlpha="1" toAlpha="0"/>
+					<Scripts>
+						<OnFinished method="OnFinished"/>
+					</Scripts>
+				</AnimationGroup>
+			</Animations>
+		<Scripts>
+			<OnHide method="OnHide"/>
+		</Scripts>
+	</Frame>
+
+</Ui>

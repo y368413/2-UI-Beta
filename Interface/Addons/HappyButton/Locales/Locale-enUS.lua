@@ -22,9 +22,7 @@ L["New"] = true
 L["Delete"] = true
 L["Mode"] = true
 L["Select items to display"] = true
-L["Items Source"] = true
-L["Items Group"] = true
-L["New Items Group"] = true
+L["Macro"] = true
 L["Export"] = true
 L["Import Configuration"] = true
 L["Configuration string"] = true
@@ -51,7 +49,8 @@ L["Window Position Y"] = true
 L["Display one item, randomly selected."] = true
 L["Display one item, selected sequentially."] = true
 L["Item"] = true
-L["Equipment"]=true
+L["Equipment"] = true
+L["Toy"] = true
 L["Spell"] = true
 L["Mount"] = true
 L["Pet"] = true
@@ -76,6 +75,7 @@ L["New Bar"] = true
 L["New ItemGroup"] = true
 L["New Item"] = true
 L["New Script"] = true
+L["New Macro"] = true
 L["Select type"] = true
 L["Element Title"] = true
 L["Element Icon ID or Path"] = true
@@ -92,6 +92,12 @@ L["Load Rule"] = true
 L["Add Child Elements"] = true
 L["Edit Child Elements"] = true
 L["Select Item"] = true
+
+-- 宏设置
+L["Macro Statement Settings"] = true
+L["Temporary Targeting"] = true
+L["Boolean Conditions"] = true
+
 -- 位置
 L["TOPLEFT"] = true
 L["TOPRIGHT"] = true
@@ -143,10 +149,6 @@ L["Select Trigger"] = true
 L["Select Target"] = true
 L["Select Trigger Type"] = true
 
-L["Self Trigger"] = true
-L["Count/Charge"] = true
-L["Is Learned"] = true
-
 L["Aura Trigger"] = true
 L["Aura ID"] = true
 L["Aura Remaining Time"] = true
@@ -155,6 +157,9 @@ L["Player"] = true
 L["Target"] = true
 L["Buff"] = true
 L["Debuff"] = true
+
+L["Item Trigger"] = true
+L["Select Item"] = true
 
 L["Condition Group Settings"] = true
 L["Condition Settings"] = true
@@ -187,12 +192,14 @@ L["isLearned"] = "Is Learned"
 L["isUsable"] = "Is Usable"
 L["remainingTime"] = "Remaining Time"
 L["targetIsEnemy"] = "Target Is Enemy"
+L["exist"] = true
 
 -- 触发器效果
 L["Border Glow"] = true
 L["Btn Hide"] = true
 L["Btn Desaturate"] = true
 L["Btn Vertex Red Color"] = true
+L["Btn Alpha"] = true
 
 L["Open"] = true
 L["Close"] = true

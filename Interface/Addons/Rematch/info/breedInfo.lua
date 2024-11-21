@@ -25,14 +25,14 @@ local breedNames = {nil,nil,"B/B","P/P","S/S","H/H","H/P","P/S","H/S","P/B","S/B
 -- addons are used in this priority: BattlePetBreedID, PetTracker_Breeds then LibPetBreedInfo-1.0
 function rematch.breedInfo:GetBreedSource()
     if breedSource==nil then -- can be false if a prior search for a source didn't find any
-        if settings.BreedSource=="HPetBattleAny" and C_AddOns.IsAddOnLoaded("HPetBattleAny") then
-            breedSource = "HPetBattleAny"
+        if settings.BreedSource=="BattlePetBreedID" and C_AddOns.IsAddOnLoaded("BattlePetBreedID") then
+            breedSource = "BattlePetBreedID"
         elseif settings.BreedSource=="PetTracker" and C_AddOns.IsAddOnLoaded("PetTracker") and C_AddOns.GetAddOnMetadata("PetTracker","Version")~="10.2.7" then
             breedSource = "PetTracker"
         elseif settings.BreedSource=="None" then
             breedSource = false
-        elseif C_AddOns.IsAddOnLoaded("HPetBattleAny") then
-            breedSource = "HPetBattleAny"
+        elseif C_AddOns.IsAddOnLoaded("BattlePetBreedID") then
+            breedSource = "BattlePetBreedID"
             settings.BreedSource = breedSource
         elseif C_AddOns.IsAddOnLoaded("PetTracker") and PetTracker and PetTracker.Pet and PetTracker.Pet.GetBreed and C_AddOns.GetAddOnMetadata("PetTracker","Version")~="10.2.7" then
             breedSource = "PetTracker"
@@ -52,7 +52,7 @@ end
 
 -- returns true if any breed addon is loaded
 function rematch.breedInfo:IsAnyBreedAddOnLoaded(addon)
-    return C_AddOns.IsAddOnLoaded("HPetBattleAny") or C_AddOns.IsAddOnLoaded("PetTracker")
+    return C_AddOns.IsAddOnLoaded("BattlePetBreedID") or C_AddOns.IsAddOnLoaded("PetTracker")
 end
 
 function rematch.breedInfo:ResetBreedSource()
@@ -91,7 +91,7 @@ function rematch.breedInfo:GetBreedTable(speciesID)
     wipe(breedTable)
     local petInfo = rematch.altInfo:Fetch(speciesID) -- to get possible breeds
     if petInfo.numPossibleBreeds then
-        if breedSource=="HPetBattleAny" then
+        if breedSource=="BattlePetBreedID" then
             local data = BPBID_Arrays
             for _,breed in ipairs(petInfo.possibleBreedIDs) do
                 local health = ceil((data.BasePetStats[speciesID][1] + data.BreedStats[breed][1]) * 25 * ((data.RealRarityValues[4] - 0.5) * 2 + 1) * 5 + 100 - 0.5)

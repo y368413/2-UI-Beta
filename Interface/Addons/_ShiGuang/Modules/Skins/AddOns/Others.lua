@@ -8,7 +8,7 @@ local IsAddOnLoaded = C_AddOns.IsAddOnLoaded
 local cr, cg, cb = I.r, I.g, I.b
 
 function S:FriendGroups()
-	if not IsAddOnLoaded("FriendGroups") then return end
+	--if not IsAddOnLoaded("FriendGroups") then return end
 
 	if FriendGroups_UpdateFriendButton then
 		local function replaceButtonStatus(self, texture)

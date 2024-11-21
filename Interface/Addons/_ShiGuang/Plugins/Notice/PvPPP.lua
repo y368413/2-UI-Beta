@@ -5,14 +5,13 @@ local drinkSpell = {
 	[C_Spell.GetSpellInfo(167268)] = true,	-- Ba'ruun's Bountiful Bloom
 }
 
-local frame = CreateFrame("Frame")
-frame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
-frame:SetScript("OnEvent", function(self, event, ...)
+local AnenemyDrink = CreateFrame("Frame")
+AnenemyDrink:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+AnenemyDrink:SetScript("OnEvent", function(self, event, ...)
 	if not (event == "UNIT_SPELLCAST_SUCCEEDED" and GetZonePVPInfo() == "arena") then return end
-
 	local unit, _, spellID = ...
 	if UnitIsEnemy("player", unit) and drinkSpell[C_Spell.GetSpellInfo(spellID)] then
-		SendChatMessage(UnitClass(unit).." "..UnitName(unit)..TUTORIAL_TITLE11, CheckChat(true))
+		SendChatMessage(UnitClass(unit).." "..UnitName(unit)..TUTORIAL_TITLE11, "YELL")
 	end
 end)
 
@@ -41,7 +40,7 @@ UIErrorsFrame:SetScript("OnUpdate",function(self,elapsed)
 	end
 end)
 
------------------------------------------------------------ KillingBlows---------------------------------------------------------
+--[[--------------------------------------------------------- KillingBlows---------------------------------------------------------
 local KB_FILTER_ENEMY = bit.bor(
 	COMBATLOG_OBJECT_AFFILIATION_PARTY,
 	COMBATLOG_OBJECT_AFFILIATION_RAID,
@@ -79,7 +78,7 @@ KillingBlows:SetScript("OnEvent", function(self, event, ...)
 	end
 end)
 
---[[--------------------------------------------------------- DuelCountdown------------## Author: meribold   ## Version: 1.0.3
+----------------------------------------------------------- DuelCountdown------------## Author: meribold   ## Version: 1.0.3
 DuelCountdown = {_G = _G}
 setfenv(1, DuelCountdown)
 

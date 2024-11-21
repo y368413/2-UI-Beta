@@ -17,14 +17,14 @@
 	<Script file="OneClickDisenchanting.lua"/>
 	<Script file="PlayerFrame_Experience.lua"/>
 	<Script file="SimpleUnfoldingCurrency.lua"/>
-    <!--Script file="ExtMerchant.lua"/>
+    <Script file="ExtMerchant.lua"/>
     <Frame name="ExtMerchant">
         <Scripts>
             <OnLoad>
                 ExtMerchant_OnLoad(self)
             </OnLoad>
         </Scripts>
-    </Frame-->
+    </Frame>
 	<Script file="FriendGroups.lua"/>
 	<Button name="FriendGroupsFrameFriendDividerTemplate" registerForClicks="LeftButtonUp, RightButtonUp" virtual="true">
 		<Size x="298" y="16"/>

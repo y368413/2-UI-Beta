@@ -621,7 +621,6 @@ local function CreateSettings(panel)
 
     local p = nil
 
-
 	p = AddCheckOption("所有契约炉石", "allCovenants",         scrollChild, p)
     p = AddCheckOption("隐藏物品",                "hideItems",            scrollChild, p)
     p = AddCheckOption("隐藏地下城法术",       "hideChallenge",        scrollChild, p)
@@ -1157,8 +1156,8 @@ local icon = LibStub("LibDBIcon-1.0")
 local dataobj = ldb:NewDataObject("TomeTele", {
 	label = TOMEOFTELEPORTATIONTITLE, 
 	type = "data source", 
-	icon = "Interface\\Icons\\Spell_arcane_portalshattrath",  --Interface\\Icons\\Spell_Arcane_TeleportDalaran
-	text = "Teleport"
+	icon = "Interface\\Addons\\_ShiGuang\\Media\\2UI",  --Interface\\Icons\\Spell_Arcane_TeleportDalaran  --Icons\\Spell_arcane_portalshattrath
+	--text = "Teleport"
 })
 
 local TeleporterParentFrame = nil
@@ -2759,7 +2758,6 @@ function Teleporter_OnAddonLoaded()
 	--if TomeOfTele_Icon == nil then
 		--TomeOfTele_Icon = {}
 	--end
-	
 	icon:Register("TomeTele", dataobj)		--, TomeOfTele_Icon
 	RebuildSpellList()
 	for index, spell in ipairs(TeleporterSpells) do		
@@ -3074,10 +3072,409 @@ local SetMrbarMicromenu = {
     --{ text = LOGOUT, func = function() Logout() end, notCheckable = true},
     --{ text = QUIT, func = function() ForceQuit() end, notCheckable = true},
 }
+--WeekyDungeons
+--## Author: Kimpa ## Version: 1.92
+local rewardsTable = {
+   {10, 623},
+   {8, 619},
+   {7, 616},
+   {5, 613},
+   {3, 610},
+   {2, 606}
+}
+
+if WeeklyDungeonsMapIcon == nil then WeeklyDungeonsMapIcon = {} end
+local resolution = GetCurrentScaledResolution()
+if resolution >= 2560 then res = true end
+local a = CreateFrame("Frame", "WeeklyDungeonsFrame", UIParent, "BasicFrameTemplate")
+tinsert(UISpecialFrames, a:GetName())
+if res then a:SetSize(520, 283) else a:SetSize(520 * 0.75 + 3, 283 * 0.75 + 6) end
+local infoButton = CreateFrame("Frame", nil, a)
+infoButton:SetPoint("RIGHT", a.CloseButton, "LEFT", 5.93, -0.089)
+infoButton:SetSize(33 * 0.7079, 33 * 0.7079)
+infoButton:SetFrameLevel(2)
+infoButton.tex = infoButton:CreateTexture(nil, "ARTWORK")
+infoButton.tex:SetAtlas("worldquest-questmarker-questionmark")
+infoButton.tex:SetSize(13 * 0.8, 17 * 0.8)
+infoButton.tex:SetPoint("CENTER")
+infoButton.tex.highlight = infoButton:CreateTexture(nil, "OVERLAY")
+infoButton.tex.highlight:SetAllPoints()
+infoButton.tex.highlight:SetTexture("Interface/Buttons/UI-Common-MouseHilight")
+infoButton.tex.highlight:SetBlendMode("ADD") 
+infoButton.tex.highlight:Hide()
+infoButton:SetScript('OnEnter', function(self)
+      infoButton.tex.highlight:Show()
+      GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+      GameTooltip:AddLine('Weekly Reward Colors:')
+      GameTooltip:AddDoubleLine('\124cFFFF8000Orange:', '\124rItem Level ' .. rewardsTable[1][2])
+      GameTooltip:AddDoubleLine('\124cFFA335EEPurple:', '\124rItem Level ' .. rewardsTable[2][2])
+      GameTooltip:AddDoubleLine('\124cFF007ADDBlue:', '\124rItem Level ' .. rewardsTable[3][2])
+      GameTooltip:AddDoubleLine('\124cFF1EFF00Green:', '\124rItem Level ' .. rewardsTable[4][2])
+      GameTooltip:AddDoubleLine('\124cFFFFFFFFWhite:', '\124rItem Level ' .. rewardsTable[5][2])
+      --GameTooltip:AddDoubleLine('\124cFF9D9D9DGray:', '\124rItem Level =< ' .. rewardsTable[6][2])
+      GameTooltip:Show()
+end)
+infoButton:SetScript('OnLeave', function()
+      infoButton.tex.highlight:Hide()
+      GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
+end)
+
+a.TopLeftButtonBorder = a:CreateTexture()
+a.TopLeftButtonBorder:SetSize(33, 21)
+a.TopLeftButtonBorder:SetAtlas("UI-Frame-TopCornerRight")
+a.TopLeftButtonBorder:SetTexCoord(1, 0, 0, 0.68)
+a.TopLeftButtonBorder:SetPoint("TOPLEFT", a, -2, 0)
+a.TopLeftButtonBorder:SetDrawLayer("OVERLAY", 0)
+a.TopLeftButton = CreateFrame("Button", nil, a)
+a.TopLeftButton.tex = a.TopLeftButton:CreateTexture(nil, "ARTWORK")
+a.TopLeftButton.tex:SetAtlas("greatvault-dragonflight-32x32")
+a.TopLeftButton.tex:SetSize(23, 23)
+a.TopLeftButton.tex:SetPoint("CENTER")
+a.TopLeftButton.tex.highlight = a.TopLeftButton:CreateTexture(nil, "OVERLAY")
+a.TopLeftButton.tex.highlight:SetAllPoints()
+a.TopLeftButton.tex.highlight:SetTexture("Interface/Buttons/UI-Common-MouseHilight")
+a.TopLeftButton.tex.highlight:SetBlendMode("ADD") 
+a.TopLeftButton.tex.highlight:Hide()
+a.TopLeftButton:SetPoint("TOPLEFT", a, "TOPLEFT", -1, 1)
+a.TopLeftButton:SetSize(23, 23)
+a.TopLeftButton:SetScript("OnEnter", function(self)
+   a.TopLeftButton.tex.highlight:Show()
+ end)
+ a.TopLeftButton:SetScript("OnLeave", function(self)
+   a.TopLeftButton.tex.highlight:Hide()
+ end)
+a.TopLeftButton:SetScript("OnClick", function(self, button)
+   C_AddOns.LoadAddOn("Blizzard_WeeklyRewards")
+   WeeklyRewardsFrame:Show()
+ end)
+a:SetPoint("CENTER")
+a:Hide()
+local frame = CreateFrame("Frame", nil, UIParent)
+a:SetMovable(true)
+a:SetClampedToScreen(true)
+a.LeftBorder:SetDrawLayer("OVERLAY", 1)
+a.RightBorder:SetDrawLayer("OVERLAY")
+a.BotLeftCorner:SetDrawLayer("OVERLAY")
+frame:EnableMouse(true)
+frame:SetScript("OnMouseDown", function(self, button)
+      if button == "LeftButton" and not self.isMoving then
+         a:StartMoving();
+         self.isMoving = true;
+      end
+end)
+frame:SetScript("OnMouseUp", function(self, button)
+      if button == "LeftButton" and self.isMoving then
+         a:StopMovingOrSizing();
+         self.isMoving = false;
+      end
+end)
+frame:SetScript("OnHide", function(self)
+      if ( self.isMoving ) then
+         self:StopMovingOrSizing();
+         self.isMoving = false;
+      end
+end)
+frame:SetAllPoints(a.TitleBg)
+local bg = CreateFrame("frame", nil, a)
+bg:SetFrameLevel(1)
+bg:SetAllPoints(a.Bg)
+bg.HorizBord = CreateFrame("frame", nil, bg)
+bg.HorizBord:CreateTexture(nil, "ARTWORK", "_Talent-Inner-TopTile")
+bg.HorizBord:SetPoint("CENTER", bg, "CENTER", -1, -1)
+if res then bg.HorizBord:SetSize(516, 14) else bg.HorizBord:SetSize(516 * 0.75, 14 * 0.75) end
+bg.HorizBord:SetFrameLevel(1)
+bg.VertBord1 = CreateFrame("frame", nil, bg)
+bg.VertBord1:CreateTexture(nil, "ARTWORK", "!Talent-Inner-RightTile")
+bg.VertBord1:SetPoint("LEFT", bg, "LEFT", res and 120 or 120 * 0.75, 0)
+if res then bg.VertBord1:SetSize(14, 258) else bg.VertBord1:SetSize(14 * 0.75, 258 * 0.75) end --258
+bg.VertBord1:SetFrameLevel(1)
+bg.VertBord2 = CreateFrame("frame", nil, bg)
+bg.VertBord2:CreateTexture(nil, "ARTWORK", "!Talent-Inner-RightTile")
+bg.VertBord2:SetPoint("LEFT", bg, "LEFT", res and 249 or 249 * 0.75, 0)
+if res then bg.VertBord2:SetSize(14, 258) else bg.VertBord2:SetSize(14 * 0.75, 258 * 0.75) end
+bg.VertBord2:SetFrameLevel(1)
+bg.VertBord3 = CreateFrame("frame", nil, bg)
+bg.VertBord3:CreateTexture(nil, "ARTWORK", "!Talent-Inner-RightTile")
+bg.VertBord3:SetPoint("LEFT", bg, "LEFT", res and 378 or 378 * 0.75, 0)
+if res then bg.VertBord3:SetSize(14, 258) else bg.VertBord3:SetSize(14 * 0.75, 258 * 0.75) end
+bg.VertBord3:SetFrameLevel(1)
+--Create Textures/Fonstrings
+bg.tex = {}
+bg.numfont = {}
+bg.levelfont = {}
+bg.Rewardframe = {}
+for i = 1, 8 do 
+   bg.tex[i] = bg:CreateTexture("weeklyDungText" .. i, "BORDER")
+   local relative
+   local anchor
+   if i == 1 then bg.tex[i]:SetPoint("TOPLEFT", bg, "TOPLEFT", 0, -1)
+   elseif (i > 1 and i < 5) or (i > 5) then bg.tex[i]:SetPoint("TOPLEFT", bg.tex[i - 1], "TOPRIGHT", 1, 0)
+   elseif i == 5 then bg.tex[i]:SetPoint("TOPLEFT", bg.tex[1], "BOTTOMLEFT", 0, -1)end
+   if res then bg.tex[i]:SetSize(128, 128) else bg.tex[i]:SetSize(128 * 0.75, 128 * 0.75) end
+   bg.numfont[i] = bg:CreateFontString()
+   bg.numfont[i]:SetPoint("BOTTOMRIGHT", bg.tex[i], "BOTTOMRIGHT", -3, i < 6 and 3 or -1)
+   bg.numfont[i]:SetFont(STANDARD_TEXT_FONT, 20, "OUTLINE")
+   if(i == 1 or i == 4 or i == 8) then
+      bg.numfont[i]:SetTextColor(1, 0.82, 0)
+   end
+   bg.levelfont[i] = bg:CreateFontString()
+   bg.levelfont[i]:SetPoint("CENTER", bg.tex[i], "CENTER")
+   bg.levelfont[i]:SetFont(STANDARD_TEXT_FONT, 72, "OUTLINE")
+   if i == 1 or i == 4 or i == 8 then
+      bg.Rewardframe[i] = CreateFrame("frame", nil, bg)
+      bg.Rewardframe[i]:SetSize(212 * 0.23, 119 * 0.23)
+      
+      bg.Rewardframe[i]:SetFrameLevel(1)
+      bg.Rewardframe[i].tex = bg.Rewardframe[i]:CreateTexture("ARTWORK")
+      bg.Rewardframe[i].tex:SetAllPoints()
+      bg.Rewardframe[i].tex:SetAtlas("weeklyrewards-orb-unlocked")
+      if i == 1 then
+         bg.Rewardframe[i]:SetPoint("CENTER", bg.numfont[i], "CENTER", -4, 3)
+      elseif i == 4 then
+         bg.Rewardframe[i]:SetPoint("CENTER", bg.numfont[i], "CENTER", -7, 3)
+      elseif i == 8 then
+         bg.Rewardframe[i]:SetPoint("CENTER", bg.numfont[i], "CENTER", -10, 2)
+      end
+      bg.Rewardframe[i]:SetScript('OnLeave', function()
+         GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
+      end)
+  end
+end
+--Set Textures/Fontstrings
+local texNum
+InsertKey = function(texture, level, timed)
+   if texNum < 9 then
+bg.tex[texNum]:SetTexture(texture)
+      if texture == "Interface/LFGFrame/GroupFinder" then
+         bg.tex[texNum]:SetTexCoord(0.00048828125, 0.16064453125, 0.0009765625, 0.3291015625)
+      else
+         bg.tex[texNum]:SetTexCoord(0,1,0,1)
+      end
+      if timed then 
+         bg.tex[texNum]:SetDesaturated(false)
+      else
+         bg.tex[texNum]:SetDesaturated(true)
+      end
+      bg.numfont[texNum]:SetText(texNum)
+      if level then
+         bg.levelfont[texNum]:SetText(level)
+         if level >= rewardsTable[1][1] then
+            local color = ITEM_QUALITY_COLORS[5]
+            bg.levelfont[texNum]:SetTextColor(color.r, color.g, color.b)
+            if texNum == 1 or texNum == 4 or texNum == 8 then 
+               bg.Rewardframe[texNum].tex:SetDesaturated(false)
+               bg.Rewardframe[texNum]:SetScript('OnEnter', function(self)
+                  GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+                  GameTooltip:AddLine('Item Level: \124cFFFF8000' .. rewardsTable[1][2])
+                  GameTooltip:Show()
+               end)
+            end
+         elseif level >= rewardsTable[2][1] then
+            local color = ITEM_QUALITY_COLORS[4]
+            bg.levelfont[texNum]:SetTextColor(color.r, color.g, color.b)
+            if texNum == 1 or texNum == 4 or texNum == 8 then 
+               bg.Rewardframe[texNum].tex:SetDesaturated(false) 
+               bg.Rewardframe[texNum]:SetScript('OnEnter', function(self)
+                  GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+                  GameTooltip:AddLine('Item Level: \124cFFA335EE' .. rewardsTable[2][2])
+                  GameTooltip:Show()
+               end)
+            end
+         elseif level >= rewardsTable[3][1] then
+            local color = ITEM_QUALITY_COLORS[3]
+            bg.levelfont[texNum]:SetTextColor(color.r, color.g, color.b)
+            if texNum == 1 or texNum == 4 or texNum == 8 then 
+               bg.Rewardframe[texNum].tex:SetDesaturated(false) 
+               bg.Rewardframe[texNum]:SetScript('OnEnter', function(self)
+                  GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+                  GameTooltip:AddLine('Item Level: \124cFF007ADD' .. rewardsTable[3][2])
+                  GameTooltip:Show()
+               end)
+            end
+         elseif level >= rewardsTable[4][1] then
+            local color = ITEM_QUALITY_COLORS[2]
+            bg.levelfont[texNum]:SetTextColor(color.r, color.g, color.b)
+            if texNum == 1 or texNum == 4 or texNum == 8 then 
+               bg.Rewardframe[texNum].tex:SetDesaturated(false) 
+               bg.Rewardframe[texNum]:SetScript('OnEnter', function(self)
+                  GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+                  GameTooltip:AddLine('Item Level: \124cFF1EFF00' .. rewardsTable[4][2])
+                  GameTooltip:Show()
+               end)
+            end
+         elseif level >= rewardsTable[5][1] then
+            local color = ITEM_QUALITY_COLORS[1]
+            bg.levelfont[texNum]:SetTextColor(color.r, color.g, color.b)
+            if texNum == 1 or texNum == 4 or texNum == 8 then 
+               bg.Rewardframe[texNum].tex:SetDesaturated(false) 
+               bg.Rewardframe[texNum]:SetScript('OnEnter', function(self)
+                  GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+                  GameTooltip:AddLine('Item Level: \124cFF9D9D9D' .. rewardsTable[5][2])
+                  GameTooltip:Show()
+               end)
+            end
+         elseif level >= rewardsTable[6][1] then
+            local color = ITEM_QUALITY_COLORS[0]
+            bg.levelfont[texNum]:SetTextColor(color.r, color.g, color.b)
+            if texNum == 1 or texNum == 4 or texNum == 8 then 
+               bg.Rewardframe[texNum].tex:SetDesaturated(false) 
+               bg.Rewardframe[texNum]:SetScript('OnEnter', function(self)
+                  GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+                  GameTooltip:AddLine('Item Level: \124cFF9D9D9D' .. rewardsTable[6][2])
+                  GameTooltip:Show()
+               end)
+            end
+         elseif level >= rewardsTable[7][1] then
+            local color = ITEM_QUALITY_COLORS[0]
+            bg.levelfont[texNum]:SetTextColor(color.r, color.g, color.b)
+            if texNum == 1 or texNum == 4 or texNum == 8 then 
+               bg.Rewardframe[texNum].tex:SetDesaturated(false) 
+               bg.Rewardframe[texNum]:SetScript('OnEnter', function(self)
+                  GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+                  GameTooltip:AddLine('Item Level: \124cFF9D9D9D' .. rewardsTable[7][2])
+                  GameTooltip:Show()
+               end)
+            end
+         elseif level >= rewardsTable[8][1] then
+            local color = ITEM_QUALITY_COLORS[0]
+            bg.levelfont[texNum]:SetTextColor(color.r, color.g, color.b)
+            if texNum == 1 or texNum == 4 or texNum == 8 then 
+               bg.Rewardframe[texNum].tex:SetDesaturated(false) 
+               bg.Rewardframe[texNum]:SetScript('OnEnter', function(self)
+                  GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+                  GameTooltip:AddLine('Item Level: \124cFF9D9D9D' .. rewardsTable[8][2])
+                  GameTooltip:Show()
+               end)
+            end
+         elseif level >= rewardsTable[9][1] then
+            local color = ITEM_QUALITY_COLORS[0]
+            bg.levelfont[texNum]:SetTextColor(color.r, color.g, color.b)
+            if texNum == 1 or texNum == 4 or texNum == 8 then 
+               bg.Rewardframe[texNum].tex:SetDesaturated(false) 
+               bg.Rewardframe[texNum]:SetScript('OnEnter', function(self)
+                  GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+                  GameTooltip:AddLine('Item Level: \124cFF9D9D9D' .. rewardsTable[9][2])
+                  GameTooltip:Show()
+               end)
+            end
+         elseif level >= rewardsTable[10][1] then
+            local color = ITEM_QUALITY_COLORS[0]
+            bg.levelfont[texNum]:SetTextColor(color.r, color.g, color.b)
+            if texNum == 1 or texNum == 4 or texNum == 8 then 
+               bg.Rewardframe[texNum].tex:SetDesaturated(false) 
+               bg.Rewardframe[texNum]:SetScript('OnEnter', function(self)
+                  GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+                  GameTooltip:AddLine('Item Level: \124cFF9D9D9D' .. rewardsTable[10][2])
+                  GameTooltip:Show()
+               end)
+            end
+         elseif level >= rewardsTable[11][1] then
+            local color = ITEM_QUALITY_COLORS[0]
+            bg.levelfont[texNum]:SetTextColor(color.r, color.g, color.b)
+            if texNum == 1 or texNum == 4 or texNum == 8 then 
+               bg.Rewardframe[texNum].tex:SetDesaturated(false) 
+               bg.Rewardframe[texNum]:SetScript('OnEnter', function(self)
+                  GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+                  GameTooltip:AddLine('Item Level: \124cFF9D9D9D' .. rewardsTable[11][2])
+                  GameTooltip:Show()
+               end)
+            end
+         end
+         
+      else 
+         bg.levelfont[texNum]:SetText("")
+         if texNum == 1 or texNum == 4 or texNum == 8 then
+            bg.Rewardframe[texNum].tex:SetDesaturated(true) 
+            bg.Rewardframe[texNum]:SetScript('OnEnter', function(self) end)
+         end
+      end
+      texNum = texNum + 1
+  end
+end
+--Populate frames
+local PopulateFrame = function()
+   local runs = C_MythicPlus.GetRunHistory(false, true)
+   local levelList = {}
+   for key in pairs(runs)do
+      if levelList[runs[key].level] == nil then levelList[runs[key].level] = {} end
+      local name, id, timeLimit, dungTexture = C_ChallengeMode.GetMapUIInfo(runs[key].mapChallengeModeID)
+      local payload = {dungTexture = dungTexture, level = runs[key].level, timed = runs[key].completed}
+      table.insert(levelList[runs[key].level], payload)
+   end
+   local success = false
+   repeat
+      success = false
+      for level in pairs(levelList) do
+         if level - 1 > 0 and levelList[level - 1] == nil then
+            levelList[level - 1] = levelList[level]
+            levelList[level] = nil
+            success = true
+         end
+      end
+   until success == false
+   success = false
+   repeat
+      success = false
+      for level in pairs(levelList) do
+         for key in pairs(levelList[level]) do
+            if levelList[level][key].timed == false and levelList[level][key + 1] and levelList[level][key + 1].timed then
+               local swap1 = levelList[level][key]
+               local swap2 = levelList[level][key + 1]
+               levelList[level][key] = swap2
+               levelList[level][key + 1] = swap1
+               success = true
+            end
+         end
+      end
+   until success == false
+   local levelCount = 0
+   for level in pairs(levelList) do
+      levelCount = levelCount + 1
+   end
+   levelList.length = levelCount
+   for i = levelList.length, 1, -1 do
+      for key in pairs(levelList[i]) do
+         InsertKey(levelList[i][key].dungTexture, levelList[i][key].level, levelList[i][key].timed)
+      end
+   end
+   for i = 1, 10 do
+      InsertKey("Interface/LFGFrame/GroupFinder")
+   end
+end
+--Events
+local f = CreateFrame("Frame")
+function f:CHALLENGE_MODE_COMPLETED()
+   C_MythicPlus.RequestMapInfo()
+end
+function f:CHALLENGE_MODE_MAPS_UPDATE()
+   texNum = 1
+   PopulateFrame()
+end
+function f:OnEvent(event, ...)
+   self[event](self, event, ...)
+end
+f:RegisterEvent("CHALLENGE_MODE_MAPS_UPDATE")
+f:RegisterEvent("CHALLENGE_MODE_COMPLETED")
+f:SetScript("OnEvent", f.OnEvent)
 
 
 function dataobj:OnClick(button)
-	if button == "RightButton" then EasyMenu(SetMrbarMicromenu, SetMrbarMenuFrame, "cursor", 0, 0, "MENU", 2) else TeleporterFunction() end
+	--if button == "RightButton" then EasyMenu(SetMrbarMicromenu, SetMrbarMenuFrame, "cursor", 0, 0, "MENU", 2) else TeleporterFunction() end
+      if button == "RightButton" then
+         if a:IsShown() then a:Hide()
+         else 
+            texNum = 1
+            PopulateFrame()
+            C_MythicPlus.RequestMapInfo()
+            a:Show()
+         end
+      elseif button == "LeftButton" then
+         --InterfaceOptionsFrame_Show()
+         --InterfaceOptionsFrame_OpenToCategory("WeeklyDungeons")
+         TeleporterFunction()
+      else
+         EasyMenu(SetMrbarMicromenu, SetMrbarMenuFrame, "cursor", 0, 0, "MENU", 2) 
+      end
 end
 
 function TeleporterIsUnsupportedItem(spell)

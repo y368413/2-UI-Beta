@@ -1,5 +1,7 @@
 --[[
-Written by: Hugh@Burning Blade-US and Simca@Malfurion-US
+Written by: Simca@Malfurion-US
+
+Thanks to Hugh@Burning-Blade, a co-author for the first few versions of the AddOn.
 
 Special thanks to Nullberri, Ro, and Warla for helping at various points throughout the addon's development.
 ]]--
@@ -638,17 +640,7 @@ AddonCompartmentFrame:RegisterAddon({
 		MenuUtil.HideTooltip(button)
 	end,
 })
---[[
-BattlePetBreedID: Pet Data Module
-Last Update: Patch 11.0.5 Live; 2024-10-28T17:27:03Z
 
-If you would like a copy of this data in a different format for your own purposes or to be informed of future updates:
-Contact MMOSimca / Simca@Malfurion-US - either through MMO-Champion, through CurseForge, or in-game
-
-You may use this compiled data in any form for any purpose without my permission (though it'd be cool if you gave a shoutout somewhere). Ultimately, it's all property of Blizzard Entertainment anyway.
-]]--
-
--- GLOBALS: BPBID_Arrays
 
 --[[
 Written by: Simca@Malfurion-US

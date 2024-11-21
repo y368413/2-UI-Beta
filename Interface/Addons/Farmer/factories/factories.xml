@@ -1,0 +1,4 @@
+<UI>
+  <script file="Maps.lua"/>
+  <script file="Tooltip.lua"/>
+</UI>

@@ -564,7 +564,7 @@ function rematch.optionsPanel.funcs:NotesFont()
 end
 
 function rematch.optionsPanel.funcs:BreedSource(value)
-    if value=="HPetBattleAny" and settings.BreedFormat==C.BREED_FORMAT_ICONS then
+    if value=="BattlePetBreedID" and settings.BreedFormat==C.BREED_FORMAT_ICONS then
         settings.BreedFormat = C.BREED_FORMAT_LETTERS -- if changing to BattlePetBreedID and format is icons, change format to letters
     end
     rematch.breedInfo:ResetBreedSource()
@@ -574,7 +574,7 @@ function rematch.optionsPanel.funcs:BreedSource(value)
 end
 
 function rematch.optionsPanel.funcs:BreedFormat(value)
-    if value==C.BREED_FORMAT_ICONS and settings.BreedSource=="HPetBattleAny" then
+    if value==C.BREED_FORMAT_ICONS and settings.BreedSource=="BattlePetBreedID" then
         settings.BreedSource = "PetTracker" -- if changing to Icons and source isn't PetTracker, change source to PetTracker
         rematch.breedInfo:ResetBreedSource()
     end

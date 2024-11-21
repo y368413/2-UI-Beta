@@ -38,6 +38,7 @@ local defaultconfig = {
         showSetButton = 2,
         useGroupMenu = true,
         fillSaveAsTeamName = true,
+        keepRematchConfig = false,
         useRigthCage = true
     },
     macros = {
@@ -592,6 +593,18 @@ AutoTeam.options = {
                     end,
                     set = function()
                         config.rematchEx.useRigthCage = not config.rematchEx.useRigthCage
+                    end
+                },
+                keepRematchConfig = {
+                    type = "toggle",
+                    name = "保留Rematch配置,自行控制换队冲突",
+                    width = "full",
+                    order = newOrder(),
+                    get = function()
+                        return config.rematchEx.keepRematchConfig
+                    end,
+                    set = function()
+                        config.rematchEx.keepRematchConfig = not config.rematchEx.keepRematchConfig
                     end
                 },
                 blankline = {

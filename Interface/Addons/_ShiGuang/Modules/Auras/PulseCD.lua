@@ -10,7 +10,7 @@ local GetTime, cooldowns, animating, watching = GetTime, {}, {}, {}
 function CDS:PulseCD()
   if not R.db["Misc"]["PulseCD"] then return end
 
-    local PulseCDAnchor = CreateFrame("Frame", "PulseCDAnchor", UIParent, "BackdropTemplate")
+    local PulseCDAnchor = CreateFrame("Frame", "PulseCDAnchor", UIParent)
     PulseCDAnchor:SetSize(43, 43)
     M.Mover(PulseCDAnchor, U["Pulse CD"], "PulseCD", {"CENTER", UIParent, "CENTER", 0, -120})
 

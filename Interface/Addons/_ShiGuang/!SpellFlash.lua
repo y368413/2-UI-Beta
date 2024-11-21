@@ -521,7 +521,7 @@ local cpIcon = CreateFrame('Frame', 'cpIcon', UIParent)
 --texture:SetAllPoints(cpIcon)
 local cptext = cpIcon:CreateFontString()
 cptext:SetFont(STANDARD_TEXT_FONT, 15, "OUTLINE")
-cptext:SetText("Hekili")
+cptext:SetText("2-UI")
 cptext:SetPoint("TOPLEFT", cpIcon, "TOPLEFT", 3, -3)
 thj.debugger = text;
 cpIcon:SetSize( 50, 20 )

@@ -563,6 +563,7 @@ G.DefaultSettings = {
 		HunterPetHelp = true,
 		CtrlIndicator = true,
 		BlinkRogueHelper = false,
+		QuestAutoCollapse = "SCENARIO",
 	},
 	Tutorial = {
 		Complete = false,

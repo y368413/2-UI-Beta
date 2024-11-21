@@ -1,9 +1,9 @@
-## Interface: 110002
+## Interface: 110005
 ## Title: AutoLoadPetTeam For Rematch
 ## Title-zhCN: AutoLoadPetTeam For Rematch
 ## Notes: 宠物自动换队-适配Rematch版
 ## Author: scdhao
-## Version: 3.0.9
+## Version: 3.0.12
 ## Dependencie: Rematch
 ## SavedVariables: BattleLog,PBLMData
 ## DefaultState: disabled

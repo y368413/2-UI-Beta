@@ -6,7 +6,7 @@ local _expacText = {[0]='经典旧世(或未分类)',[1]='燃烧的远征',[2]='
 local _expacColor = {[0]='ffffff66',[1]='ffccef66',[2]='ffccdf66',[3]='ffcccf66',[4]='ffccbf66',[5]='ffccaf66',[6]='ffcc9f66',[7]='ffcc8f66',[8]='ffcc7f66',[9]='ffcc6f66',[10]='ffccff66'}
 -- 在ItemBtn上写个字 ，空值表示没有字
 local _expacNumber={[0]='①',[1]='②',[2]='③',[3]='④',[4]='⑤',[5]='⑥',[6]='⑦',[7]='⑧',[8]='⑨',[9]='⑩',[10]='#'}    
-local _Unknow_Text ='Expansion'
+local _Unknow_Text ='???'
 local _Unknow_Color = 'ffff0000'
 -- -- GetServerExpansionLevel() 取得当前服务的版本等级号，例如，巨龙时代，这个值就是9 
 -- -- 但是 这个方法并不会第一时间返回有效值，故下面这行被注释掉
@@ -110,7 +110,7 @@ local function Item_Info(tooltip)
   if (link) then                    
     local id = string.match(link, "item:(%d*)")
     if (id) then        
-      local _, _, _, _, _, itemType, itemSubType, _, _, _, _, _, _, _, expacID = GetItemInfo(id)
+      local _, _, _, _, _, itemType, itemSubType, _, _, _, _, _, _, _, expacID = C_Item.GetItemInfo(id)
       Item_Expansons_Info(tooltip,expacID,itemType,itemSubType) -- 调用 CCC
     end
   end
@@ -180,7 +180,7 @@ local function OnSetItemExpansions(self, quality, itemIDOrLink, suppressOverlays
         -- -- itemEquipLoc, itemTexture, sellPrice, classID, subclassID, bindType,expacID, setID, isCraftingReagent  -- 9 -17 
         -- -- = GetItemInfo(item)
         -- --  itemType = classID , itemSubType = subclassID
-        local _, _, _, _, _, itemType, itemSubType, _, _, _, _, _classID, _subclassID, _, expacID = GetItemInfo(itemIDOrLink)
+        local _, _, _, _, _, itemType, itemSubType, _, _, _, _, _classID, _subclassID, _, expacID = C_Item.GetItemInfo(itemIDOrLink)
         if (expacID) then
           local _number=tonumber(expacID)
           --if (_SrvExp ~=_number ) then -- 如果服务器的版本号和expacID不等，则显示，否则不显示，注释掉的原因见开头

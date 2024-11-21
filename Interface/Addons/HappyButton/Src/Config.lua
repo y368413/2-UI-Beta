@@ -38,6 +38,9 @@ local Client = addon:GetModule("Client")
 ---@class Api: AceModule
 local Api = addon:GetModule("Api")
 
+---@class Macro: AceModule
+local Macro = addon:GetModule("Macro")
+
 local AceConfig = LibStub("AceConfig-3.0")
 local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 local AceSerializer = LibStub("AceSerializer-3.0")
@@ -317,6 +320,7 @@ local ConfigOptions = {}
 ---@param topEleConfig ElementConfig | nil 顶层的菜单，当为nil的时候，表示当前elements参数本身是顶层菜单
 ---@param selectGroups table  配置界面选项卡位置
 local function GetElementOptions(elements, topEleConfig, selectGroups)
+    local settingOrder = 1
     local isRoot = topEleConfig == nil
     local eleArgs = {}
     for i, ele in ipairs(elements) do
@@ -358,9 +362,10 @@ local function GetElementOptions(elements, topEleConfig, selectGroups)
             type = "group",
             name = L["General Settings"],
             inline = true,
-            order = 2,
+            order = settingOrder,
             args = baseSettingArgs
         }
+        settingOrder = settingOrder + 1
         args.baseSetting = baseSettingOptions
         baseSettingArgs.moveUp = {
             order = baseSettingOrder,
@@ -435,6 +440,12 @@ local function GetElementOptions(elements, topEleConfig, selectGroups)
                 table.insert(moveToSelectGroups, "elementMenu" .. val)
                 table.insert(moveToSelectGroups, "elementMenu" .. #(elements[val].elements))
                 table.remove(elements, i)
+                if topEleConfig == nil then
+                    HbFrame:DeleteEframe(ele)
+                    HbFrame:ReloadEframeUI(elements[val])
+                else
+                    HbFrame:ReloadEframeUI(topEleConfig)
+                end
                 AceConfigDialog:SelectGroup(addonName, unpack(moveToSelectGroups))
             end
         }
@@ -476,9 +487,10 @@ local function GetElementOptions(elements, topEleConfig, selectGroups)
             type = "group",
             name = L["Element Settings"],
             inline = true,
-            order = 3,
+            order = settingOrder,
             args = elementSettingArgs
         }
+        settingOrder = settingOrder + 1
         args.elementSetting = elementSettingOptions
         if ele.type ~= const.ELEMENT_TYPE.ITEM then
             elementSettingArgs.title = {
@@ -696,6 +708,220 @@ local function GetElementOptions(elements, topEleConfig, selectGroups)
             }
             elementSettingOrder = elementSettingOrder + 1
         end
+        -----------------------------------------
+        --- 宏条件设置
+        -----------------------------------------
+        if ele.type == const.ELEMENT_TYPE.MACRO then
+            local macro = E:ToMacro(ele)
+            local macroSettingOrder = 1
+            local macroSettingArgs = {}
+            local macroSettingOptions = {
+                type = "group",
+                name = L["Macro Statement Settings"],
+                inline = true,
+                order = settingOrder,
+                args = macroSettingArgs
+            }
+            settingOrder = settingOrder + 1
+            args.macroSetting = macroSettingOptions
+            local statOptions = {}
+            if macro.extraAttr.stats and #macro.extraAttr.stats > 0 then
+                for statIndex, stat in ipairs(macro.extraAttr.stats) do
+                    table.insert(statOptions, statIndex .. ": "  .. Macro:BuildMacroString(stat))
+                end
+            end
+            if macro.extraAttr.stats and #macro.extraAttr.stats > 0 then
+                macroSettingArgs.selectStat = {
+                    order = macroSettingOrder,
+                    width = 1,
+                    type = "select",
+                    name = "",
+                    values = statOptions,
+                    set = function(_, val)
+                        addon.G.tmpMacroSelectIndex = val
+                    end,
+                    get = function() return addon.G.tmpMacroSelectIndex end
+                }
+                macroSettingOrder = macroSettingOrder + 1
+                macroSettingArgs.deleteStat = {
+                    order = macroSettingOrder,
+                    width = 0.5,
+                    type = "execute",
+                    name = L["Delete"],
+                    confirm = true,
+                    func = function()
+                        if addon.G.tmpMacroSelectIndex then
+                            table.remove(macro.extraAttr.stats, addon.G.tmpMacroSelectIndex)
+                            if addon.G.tmpMacroSelectIndex > #macro.extraAttr.stats then
+                                addon.G.tmpMacroSelectIndex = #macro.extraAttr.stats
+                            end
+                            HbFrame:UpdateEframe(updateFrameConfig)
+                            addon:UpdateOptions()
+                        end
+                    end
+                }
+                macroSettingOrder = macroSettingOrder + 1
+            end
+            macroSettingArgs.addStat = {
+                order = macroSettingOrder,
+                width = 0.5,
+                type = "execute",
+                name = L["New"],
+                func = function()
+                    local stat = Macro:NewStat()
+                    if macro.extraAttr.stats == nil then
+                        macro.extraAttr.stats = {}
+                    end
+                    table.insert(macro.extraAttr.stats, stat)
+                    addon.G.tmpMacroSelectIndex = #macro.extraAttr.stats
+                    HbFrame:UpdateEframe(updateFrameConfig)
+                    addon:UpdateOptions()
+                end
+            }
+            macroSettingOrder = macroSettingOrder + 1
+            if macro.extraAttr.stats and macro.extraAttr.stats[addon.G.tmpMacroSelectIndex] then
+                local condSettingOrder = 1
+                local condSettingArgs = {}
+                local condSettingOptions = {
+                    type = "group",
+                    name = L["Condition Settings"],
+                    inline = true,
+                    order = macroSettingOrder,
+                    args = condSettingArgs
+                }
+                macroSettingArgs.condSetting = condSettingOptions
+                macroSettingOrder = macroSettingOrder + 1
+                local statCondOptions = {}
+                local stat = macro.extraAttr.stats[addon.G.tmpMacroSelectIndex]
+                if stat.conds and #stat.conds > 0 then
+                    for _, cond in ipairs(stat.conds) do
+                        table.insert(statCondOptions, Macro:BuildMacroCondString(cond))
+                    end
+                end
+                if #statCondOptions > 0 then
+                    condSettingArgs.selectCond = {
+                        order = condSettingOrder,
+                        width = 1,
+                        type = "select",
+                        name = "",
+                        values = statCondOptions,
+                        set = function(_, val)
+                            addon.G.tmpMacroCondSelectIndex = val
+                        end,
+                        get = function() return addon.G.tmpMacroCondSelectIndex end
+                    }
+                    condSettingOrder = condSettingOrder + 1
+                    condSettingArgs.deleteCond = {
+                        order = condSettingOrder,
+                        width = 0.5,
+                        type = "execute",
+                        name = L["Delete"],
+                        confirm = true,
+                        func = function()
+                            if addon.G.tmpMacroCondSelectIndex then
+                                table.remove(stat.conds, addon.G.tmpMacroCondSelectIndex)
+                                if addon.G.tmpMacroCondSelectIndex > #stat.conds then
+                                    addon.G.tmpMacroCondSelectIndex = #stat.conds
+                                end
+                                HbFrame:UpdateEframe(updateFrameConfig)
+                                addon:UpdateOptions()
+                            end
+                        end
+                    }
+                    macroSettingOrder = condSettingOrder + 1
+                end
+                condSettingArgs.addCond = {
+                    order = condSettingOrder,
+                    width = 0.5,
+                    type = "execute",
+                    name = L["New"],
+                    func = function()
+                        local cond = Macro:NewCond()
+                        if stat.conds == nil then
+                            stat.conds = {}
+                        end
+                        table.insert(stat.conds, cond)
+                        addon.G.tmpMacroCondSelectIndex = #stat.conds
+                        HbFrame:UpdateEframe(updateFrameConfig)
+                        addon:UpdateOptions()
+                    end
+                }
+                condSettingOrder = condSettingOrder + 1
+                local statCond
+                if stat.conds and stat.conds[addon.G.tmpMacroCondSelectIndex] then
+                    statCond = stat.conds[addon.G.tmpMacroCondSelectIndex]
+                end
+                if statCond then
+                    condSettingArgs.targetToggle = {
+                        order = condSettingOrder,
+                        type = "toggle",
+                        name = L["Temporary Targeting"],
+                        width = 1,
+                        set = function(_, val)
+                            if val == true then
+                                if statCond.targets == nil then
+                                    statCond.targets = {}
+                                end
+                            else
+                                statCond.targets = nil
+                            end
+                            HbFrame:ReloadEframeUI(updateFrameConfig)
+                        end,
+                        get = function(_)
+                            if statCond.targets == nil then
+                                return false
+                            else
+                                return true
+                            end
+                        end
+                    }
+                    condSettingOrder = condSettingOrder + 1
+                    if statCond.targets ~= nil then
+                        condSettingArgs.selectTarget = {
+                            order = condSettingOrder,
+                            width = 1,
+                            type = "select",
+                            name = "",
+                            values = const.MacroTargetOptions,
+                            set = function(_, val)
+                                statCond.targets = {val, }
+                            end,
+                            get = function()
+                                if statCond.targets == nil then
+                                    return nil
+                                end
+                                return statCond.targets[1]
+                            end
+                        }
+                        condSettingOrder = condSettingOrder + 1
+                    end
+                    condSettingArgs.condToggle = {
+                        order = condSettingOrder,
+                        type = "toggle",
+                        name = L["Boolean Conditions"],
+                        width = 1,
+                        set = function(_, val)
+                            if val == true then
+                                if statCond.conds == nil then
+                                    statCond.conds = {}
+                                end
+                            else
+                                statCond.conds = nil
+                            end
+                            HbFrame:ReloadEframeUI(updateFrameConfig)
+                        end,
+                        get = function(_)
+                            if statCond.conds == nil then
+                                return false
+                            else
+                                return true
+                            end
+                        end
+                    }
+                    condSettingOrder = condSettingOrder + 1
+                end
+            end
+        end
         if isRoot then
             local positionSettingOrder = 1
             local positionSettingArgs = {}
@@ -703,9 +929,10 @@ local function GetElementOptions(elements, topEleConfig, selectGroups)
                 type = "group",
                 name = L["Position Settings"],
                 inline = true,
-                order = 3,
+                order = settingOrder,
                 args = positionSettingArgs
             }
+            settingOrder = settingOrder + 1
             args.positionSetting = positionSettingOptions
             positionSettingArgs.attachFrame = {
                 order = positionSettingOrder,
@@ -807,9 +1034,10 @@ local function GetElementOptions(elements, topEleConfig, selectGroups)
                 type = "group",
                 name = L["Bindkey Settings"],
                 inline = true,
-                order = 4,
+                order = settingOrder,
                 args = bindkeySettingArgs
             }
+            settingOrder = settingOrder + 1
             args.bindkeySetting = bindkeySettingOptions
             bindkeySettingArgs.bindKey = {
                 order = bindkeySettingOrder,
@@ -934,9 +1162,10 @@ local function GetElementOptions(elements, topEleConfig, selectGroups)
             type = "group",
             name = L["Display Rule"],
             inline = true,
-            order = 5,
+            order = settingOrder,
             args = displaySettingArgs
         }
+        settingOrder = settingOrder + 1
         args.displaySetting = displaySettingOptions
         displaySettingOrder = displaySettingOrder + 1
         if isRoot then
@@ -1082,9 +1311,10 @@ local function GetElementOptions(elements, topEleConfig, selectGroups)
                 type = "group",
                 name = L["Text Settings"],
                 inline = true,
-                order = 6,
+                order = settingOrder,
                 args = textSettingArgs
             }
+            settingOrder = settingOrder + 1
             args.textSetting = textSettingOptions
             if (not isRoot) and E:IsLeaf(ele) then
                 textSettingArgs.useParentSettingToggle = {
@@ -1172,9 +1402,10 @@ local function GetElementOptions(elements, topEleConfig, selectGroups)
                 type = "group",
                 name = L["Add Child Elements"],
                 inline = true,
-                order = 7,
+                order = settingOrder,
                 args = addChildrenSettingArgs
             }
+            settingOrder = settingOrder + 1
             args.addChildrenSetting = addChildrenSettingOptions
             if ele.type == const.ELEMENT_TYPE.BAR then
                 addChildrenSettingArgs.addBar = {
@@ -1297,9 +1528,10 @@ local function GetElementOptions(elements, topEleConfig, selectGroups)
                 type = "group",
                 name = L["Edit Child Elements"],
                 inline = true,
-                order = 8,
+                order = settingOrder,
                 args = editChildrenSettingArgs
             }
+            settingOrder = settingOrder + 1
             args.editChildrenSetting = editChildrenSettingOptions
             local itemsOptions = {} ---@type table<number, ItemConfig>
             if ele.elements then
@@ -1377,9 +1609,10 @@ local function GetElementOptions(elements, topEleConfig, selectGroups)
                 type = "group",
                 name = L["Trigger Settings"],
                 inline = true,
-                order = 9,
+                order = settingOrder,
                 args = triggerSettingArgs
             }
+            settingOrder = settingOrder + 1
             args.triggerSetting = triggerSettingOptions
             local triggerOptions = {}
             if ele.triggers then
@@ -1425,7 +1658,7 @@ local function GetElementOptions(elements, topEleConfig, selectGroups)
                 type = "execute",
                 name = L["New"],
                 func = function()
-                    local trigger = Trigger:NewSelfTriggerConfig()
+                    local trigger = Trigger:NewItemTriggerConfig()
                     if ele.triggers == nil then
                         ele.triggers = {}
                     end
@@ -1525,8 +1758,37 @@ local function GetElementOptions(elements, topEleConfig, selectGroups)
                 }
                 triggerSettingOrder = triggerSettingOrder + 1
             end
-            if editTrigger and editTrigger.type == "self" then
-                local trigger = Trigger:ToSelfTriggerConfig(editTrigger)
+            if editTrigger and editTrigger.type == "item" then
+                local trigger = Trigger:ToItemTriggerConfig(editTrigger)
+                local itemOptions = {}  ---@type string[]
+                local items = {} ---@type ItemAttr[]
+                if ele.type == const.ELEMENT_TYPE.ITEM then
+                    local item = E:ToItem(ele)
+                    table.insert(itemOptions, item.extraAttr.name)
+                    table.insert(items, item.extraAttr)
+                end
+                triggerSettingArgs.selectItem = {
+                    order = triggerSettingOrder,
+                    width = 1,
+                    type = "select",
+                    name = L["Select Item"],
+                    values = itemOptions,
+                    set = function(_, val)
+                        trigger.confine.item = items[val]
+                    end,
+                    get = function()
+                        if trigger.confine.item == nil then
+                            return nil
+                        end
+                        for v_index, v in ipairs(items) do
+                            if trigger.confine.item.id == v.id and trigger.confine.item.name == v.name then
+                                return v_index
+                            end
+                        end
+                        return nil
+                    end
+                }
+                triggerSettingOrder = triggerSettingOrder + 1
             end
         end
 
@@ -1538,9 +1800,10 @@ local function GetElementOptions(elements, topEleConfig, selectGroups)
                 type = "group",
                 name = L["Condition Group Settings"],
                 inline = true,
-                order = 10,
+                order = settingOrder,
                 args = condGroupSettingArgs
             }
+            settingOrder = settingOrder + 1
             args.condGroupSetting = condGroupSettingOptions
             local triggerOptions = {}
             if ele.triggers and #ele.triggers > 0 then
@@ -2016,6 +2279,57 @@ local function GetElementOptions(elements, topEleConfig, selectGroups)
                 end
                 effectSettingOrder = effectSettingOrder + 1
 
+                -- 设置图标透明
+                local btnAlpha = GetEffect("btnAlpha")
+                effectSettingArgs.btnAlphaStatus = {
+                    order = effectSettingOrder,
+                    width = GetWidth("btnAlpha"),
+                    type = 'toggle',
+                    name = L["Btn Alpha"],
+                    set = function(_, val)
+                        if btnAlpha == nil then
+                            btnAlpha = Effect:NewBtnAlphaEffect()
+                            if val == true then
+                                btnAlpha.status = true
+                            else
+                                btnAlpha.status = nil
+                            end
+                            table.insert(editCondGroup.effects, btnAlpha)
+                        else
+                            if val == true then
+                                btnAlpha.status = true
+                            else
+                                btnAlpha.status = nil
+                            end
+                        end
+                        HbFrame:ReloadEframeUI(updateFrameConfig)
+                    end,
+                    get = function(_)
+                        if btnAlpha and btnAlpha.status ~= nil then
+                            return true
+                        end
+                        return false
+                    end
+                }
+                effectSettingOrder = effectSettingOrder + 1
+                if btnAlpha and btnAlpha.status ~= nil then
+                    effectSettingArgs.btnAlpha = {
+                        order = effectSettingOrder,
+                        width = 1,
+                        type = "select",
+                        name = "",
+                        values = const.OpenEffectOptions,
+                        set = function(_, val)
+                            btnAlpha.status = val
+                            HbFrame:ReloadEframeUI(updateFrameConfig)
+                        end,
+                        get = function()
+                            return btnAlpha.status
+                        end
+                    }
+                end
+                effectSettingOrder = effectSettingOrder + 1
+
 
                 local btnVertexColor = GetEffect("btnVertexColor")
                 effectSettingArgs.btnVertexColorStatus = {
@@ -2087,9 +2401,10 @@ local function GetElementOptions(elements, topEleConfig, selectGroups)
                 type = "group",
                 name = L["Event Settings"],
                 inline = true,
-                order = 11,
+                order = settingOrder,
                 args = eventSettingArgs
             }
+            settingOrder = settingOrder + 1
             args.eventSetting = eventSettingOptions
             eventSettingArgs.borderGlowStatus = {
                 order = eventSettingOrder,
@@ -2232,15 +2547,33 @@ function ConfigOptions.ElementsOptions()
                         #addon.db.profile.elements)
                 end
             },
+            -- addMacro = {
+            --     order = 6,
+            --     width = 1,
+            --     type = 'execute',
+            --     name = L["New Macro"],
+            --     func = function()
+            --         local item = E:New(Config.GetNewElementTitle(L["Macro"],
+            --                 addon.db
+            --                 .profile
+            --                 .elements),
+            --             const.ELEMENT_TYPE.MACRO)
+            --         table.insert(addon.db.profile.elements, item)
+            --         HbFrame:AddEframe(item)
+            --         AceConfigDialog:SelectGroup(addonName, "element",
+            --             "elementMenu" ..
+            --             #addon.db.profile.elements)
+            --     end
+            -- },
 
-            sapce1 = { order = 6, type = 'description', name = "\n\n\n" },
+            sapce1 = { order = 7, type = 'description', name = "\n\n\n" },
             itemHeading = {
-                order = 7,
+                order = 8,
                 type = 'header',
                 name = L["Import Configuration"]
             },
             keyBindToggle = {
-                order = 8,
+                order = 9,
                 width = 2,
                 type = 'toggle',
                 name = L["Whether to import keybind settings."],
@@ -2250,7 +2583,7 @@ function ConfigOptions.ElementsOptions()
                 get = function(_) return addon.G.tmpImportKeybind end
             },
             coverToggle = {
-                order = 9,
+                order = 10,
                 width = 2,
                 type = 'toggle',
                 name = L["Whether to overwrite the existing configuration."],
@@ -2260,7 +2593,7 @@ function ConfigOptions.ElementsOptions()
                 get = function(_) return addon.G.tmpCoverConfig end
             },
             importEditBox = {
-                order = 10,
+                order = 11,
                 type = 'input',
                 name = L["Configuration string"],
                 multiline = 20,
@@ -2401,7 +2734,7 @@ function ConfigOptions.Options()
                         order = 4,
                         width = 2,
                         type = "description",
-                        name = L["Version"] .. ": " .. "Beta-0.1.0"
+                        name = L["Version"] .. ": " .. "Beta-0.1.4"
                     }
                 }
             },
@@ -2440,6 +2773,8 @@ function addon:OnInitialize()
         tmpNewItemVal = nil,
         tmpNewItem = { type = nil, id = nil, icon = nil, name = nil }, ---@type ItemAttr
         tmpNewText = nil, -- 添加文本
+        tmpMacroSelectIndex = 1,
+        tmpMacroCondSelectIndex = 1,
     }
     -- 注册数据库，添加分类设置
     self.db = LibStub("AceDB-3.0"):New("HappyButtonDB", {
@@ -2447,6 +2782,12 @@ function addon:OnInitialize()
             elements = {} ---@type ElementConfig[]
         }
     }, true)
+    -- 对配置文件进行兼容性处理
+    if self.db.profile.elements then
+        for _, element in ipairs(self.db.profile.elements) do
+            self:compatibilizeConfig(element)
+        end 
+    end
     -- 注册选项表
     AceConfig:RegisterOptionsTable(addonName, ConfigOptions.Options)
     -- 在Blizzard界面选项中添加一个子选项
@@ -2472,4 +2813,29 @@ end
 function addon:UpdateOptions()
     -- 重新注册配置表来更新菜单栏
     -- LibStub("AceConfigRegistry-3.0"):NotifyChange(addonName)
+end
+
+---@param element ElementConfig
+function addon:compatibilizeConfig(element)
+    if element == nil then
+        return
+    end
+    if element.elements and #element.elements then
+        for _, child in ipairs(element.elements) do
+            addon:compatibilizeConfig(child)
+        end
+    end
+    if element.triggers then
+        for i = #element.triggers, 1, -1 do
+            local trigger = element.triggers[i]
+            if element.type == const.ELEMENT_TYPE.ITEM then
+                element = E:ToItem(element)
+                if trigger.type == "self" then
+                    trigger.type = "item"
+                    trigger = Trigger:ToItemTriggerConfig(trigger)
+                    trigger.confine.item = U.Table.DeepCopyDict(element.extraAttr)
+                end
+            end
+        end
+    end
 end

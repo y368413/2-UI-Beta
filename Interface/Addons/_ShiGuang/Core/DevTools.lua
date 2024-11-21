@@ -25,6 +25,7 @@ I.Devs = {
 	["Yichen-贫瘠之地"] = true,
 	["Helements-贫瘠之地"] = true,
 	["浩劫复仇-鬼雾峰"] = true,
+	["胡里糊涂-烈焰峰"] = true,
 }
 local function isDeveloper()
 	local rawName = gsub(I.MyFullName, "%s", "")

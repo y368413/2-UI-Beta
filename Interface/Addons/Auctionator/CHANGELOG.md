@@ -1,6 +1,7 @@
 # Auctionator
 
-## [11.0.14](https://github.com/Auctionator/Auctionator/tree/11.0.14) (2024-10-30)
-[Full Changelog](https://github.com/Auctionator/Auctionator/compare/11.0.13...11.0.14) 
+## [11.0.16](https://github.com/Auctionator/Auctionator/tree/11.0.16) (2024-11-20)
+[Full Changelog](https://github.com/Auctionator/Auctionator/compare/11.0.15...11.0.16) 
 
-- Classic: Update toc for 4.4.1  
+- Vanilla: Update toc for 1.15.5  
+- [Fixes #1603, Fixes #1604] Vanilla: Bugfixes for 1.15.5  

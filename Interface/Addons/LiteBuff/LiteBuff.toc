@@ -1,7 +1,7 @@
 ## Interface: 110000, 110002, 110005
 ## Title: LiteBuff
-## Title-zhTW: |cffff0000[必备]|rBuff监视
-## Title-zhCN: |cffff0000[必备]|rBuff监视
+## Title-zhTW: |cffeda55f[职业]|rBuff监视
+## Title-zhCN: |cffeda55f[职业]|rBuff监视
 ## Notes: Help you more quickly to the blessings of the team the small card.
 ## Notes-zhTW: 幫你更快速的給團隊上祝福的小插件。
 ## Notes-zhCN: 帮你更快速的给团队上Buff。
@@ -15,6 +15,7 @@
 ## X-Curse-Project-Name: LiteBuff
 ## X-Curse-Project-ID: LiteBuff
 ## X-Curse-Repository-ID: wow/litebuff/mainline
+## IconTexture: Interface\AddOns\HandyNotes\Icons\greatvault.blp
 
 Includes\InterfaceOptionPage-1.0.lua
 Includes\LibScanTip.lua

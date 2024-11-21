@@ -99,28 +99,14 @@ do
 	M:RegisterEvent("ADDON_LOADED", fixGuildNews)
 end
 
--- Fix achievement date missing in zhTW
-if GetLocale() == "zhTW" then
-	local function fixAchievementData(event, addon)
-		if addon ~= "Blizzard_AchievementUI" then return end
-
-		hooksecurefunc("AchievementButton_Localize", function(button)
-			button.DateCompleted:SetPoint("TOP", button.Shield, "BOTTOM", -2, 6)
-		end)
-
-		M:UnregisterEvent(event, fixAchievementData)
-	end
-	M:RegisterEvent("ADDON_LOADED", fixAchievementData)
-end
-
 function MISC:HandleUITitle()
 	-- Square NDui logo texture
 	local function replaceIconString(self, text)
 		if not text then text = self:GetText() end
 		if not text or text == "" then return end
 
-		if strfind(text, "_ShiGuang") or strfind(text, "BaudErrorFrame") then
-			local newText, count = gsub(text, "|T([^:]-):[%d+:]+|t", "|T"..I.chatLogo..":12:24|t")
+		if strfind(text, "_ShiGuang") or strfind(text, "AngryKeystones") or strfind(text, "Baganator") or strfind(text, "CanIMogIt") or strfind(text, "CollectionShop") or strfind(text, "HandyNotes") or strfind(text, "HPetBattleAny") or strfind(text, "LiteBuff") or strfind(text, "Skada") or strfind(text, "Syndicator") or strfind(text, "GarrisonMaster") or strfind(text, "GladiatorlosSACN") then
+			local newText, count = gsub(text, "|T([^:]-):[%d+:]+|t", "|T"..I.chatLogo..":16:16|t")
 			if count > 0 then self:SetFormattedText("%s", newText) end
 		end
 	end
@@ -135,32 +121,71 @@ function MISC:HandleUITitle()
 	end)
 end
 
--- Fix missing localization file
-if not GuildControlUIRankSettingsFrameRosterLabel then
-	GuildControlUIRankSettingsFrameRosterLabel = CreateFrame("Frame")
+-- Fix guild news jam
+do
+	local lastTime, timeGap = 0, 1.5
+	local function updateGuildNews(self, event)
+		if event == "PLAYER_ENTERING_WORLD" then
+			QueryGuildNews()
+		else
+			if self:IsVisible() then
+				local nowTime = GetTime()
+				if nowTime - lastTime > timeGap then
+					CommunitiesGuildNews_Update(self)
+					lastTime = nowTime
+				end
+			end
+		end
+	end
+	CommunitiesFrameGuildDetailsFrameNews:SetScript("OnEvent", updateGuildNews)
 end
 
---https://ngabbs.com/read.php?&tid=42399961
-local BLZCommunitiesGuildNewsFrame_OnEvent = CommunitiesGuildNewsFrame_OnEvent
-local newsRequireUpdate, newsTimer
-CommunitiesFrameGuildDetailsFrameNews:SetScript("OnEvent", function(frame, event)
-    if event == "GUILD_NEWS_UPDATE" then
-        if CommunitiesFrame:IsShown() then
-            return
-        elseif newsTimer then
-            newsRequireUpdate = true
-        else
-            BLZCommunitiesGuildNewsFrame_OnEvent(frame, event)
-            
-            -- 1秒后, 如果还需要更新公会新闻, 再次更新
-            newsTimer = C_Timer.NewTimer(1, function()
-                if newsRequireUpdate then
-                    BLZCommunitiesGuildNewsFrame_OnEvent(frame, event)
-                end
-                newsTimer = nil
-            end)
-        end
-    else
-        BLZCommunitiesGuildNewsFrame_OnEvent(frame, event)
-    end
+----------------------------------------------------------------------------------------
+--	Fix blank tooltip
+----------------------------------------------------------------------------------------
+local bug = nil
+local FixTooltip = CreateFrame("Frame")
+FixTooltip:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
+FixTooltip:RegisterEvent("ACTIONBAR_PAGE_CHANGED")
+FixTooltip:SetScript("OnEvent", function()
+	if GameTooltip:IsShown() then
+		bug = true
+	end
+end)
+
+local FixTooltipBags = CreateFrame("Frame")
+FixTooltipBags:RegisterEvent("BAG_UPDATE_DELAYED")
+FixTooltipBags:SetScript("OnEvent", function()
+	if StuffingFrameBags and StuffingFrameBags:IsShown() then
+		if GameTooltip:IsShown() then
+			bug = true
+		end
+	end
+end)
+
+GameTooltip:HookScript("OnTooltipCleared", function(self)
+	if self:IsForbidden() then return end
+	if bug and self:NumLines() == 0 then
+		self:Hide()
+		bug = false
+	end
+end)
+
+----------------------------------------------------------------------------------------
+--	Fix RemoveTalent() taint
+----------------------------------------------------------------------------------------
+FCF_StartAlertFlash = M.dummy
+
+----------------------------------------------------------------------------------------
+--	Fix Keybind taint
+----------------------------------------------------------------------------------------
+_G.SettingsPanel.TransitionBackOpeningPanel = _G.HideUIPanel
+
+----------------------------------------------------------------------------------------
+--	Fix LFG FilterButton width
+----------------------------------------------------------------------------------------
+hooksecurefunc(LFGListFrame.SearchPanel.FilterButton, "SetWidth", function(self, width)	-- FIXME check after while for possible Blizzard fix
+	if width ~= 94 then
+		self:SetWidth(94)
+	end
 end)

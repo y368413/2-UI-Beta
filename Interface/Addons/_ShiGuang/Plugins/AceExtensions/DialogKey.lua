@@ -1,4 +1,4 @@
---- @class DialogKeyNS ## Version: v1.2.7 ## Author: Numy (previous verions by: Foxthorn, N01ch, FuriousProgrammer)
+--- @class DialogKeyNS ## Version: v1.2.8 ## Author: Numy (previous verions by: Foxthorn, N01ch, FuriousProgrammer)
 local DialogKeyNS = {}
 
 if GetLocale() == "zhCN" then
@@ -31,6 +31,7 @@ DialogKeyNS.defaultOptions = {
     handlePlayerChoice = true,
     numKeysForPlayerChoice = true,
     postAuctions = false,
+    ignoreInProgressQuests = true,
 }
 
 --- @param dialogKey DialogKey
@@ -230,6 +231,12 @@ function DialogKeyNS:GetOptionsTable()
                         order = increment(),
                         name = wrapName("忽略禁用的按钮"),
                         desc = "不允许快捷点击禁用的（灰色的）按钮。",
+                        descStyle = "inline", width = "full", type = "toggle",
+                    },
+                    ignoreInProgressQuests = {
+                        order = increment(),
+                        name = wrapName("Ignore In-Progress Quests"),
+                        desc = "Gossip options for in-progress quests are ignored, and only completed or unaccepted quests are clicked",
                         descStyle = "inline", width = "full", type = "toggle",
                     },
                     numKeysForGossip = {
@@ -710,9 +717,11 @@ function DialogKey:OnGossipFrameUpdate(gossipFrame)
     for _, frame in scrollbox:EnumerateFrames() do
         local data = frame.GetElementData and frame:GetElementData()
         local tag
-        if data.buttonType == GOSSIP_BUTTON_TYPE_OPTION then
+        if GOSSIP_BUTTON_TYPE_OPTION == data.buttonType then
             tag = "name"
-        elseif data.buttonType == GOSSIP_BUTTON_TYPE_ACTIVE_QUEST or data.buttonType == GOSSIP_BUTTON_TYPE_AVAILABLE_QUEST then
+        elseif GOSSIP_BUTTON_TYPE_AVAILABLE_QUEST == data.buttonType then
+            tag = "title"
+        elseif GOSSIP_BUTTON_TYPE_ACTIVE_QUEST == data.buttonType and (data.info.isComplete or not self.db.ignoreInProgressQuests) then
             tag = "title"
         end
         if tag then

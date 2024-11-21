@@ -186,7 +186,7 @@ rematch.optionsList = {
 	{type="header", group=18, text=L["Breed Options"]},
 	{type="dropdown", group=18, text=L["Breed Source"], var="BreedSource", func="BreedSource", tooltip=L["Which enabled addon you want to use to supply breed data."],
 		menu = {{text=L["None"], value="None", tooltipTitle=L["None"], tooltipBody=L["No breed information will be shown if this is selected. Rematch does not maintain its own breed data."]},
-				{text=L["Battle Pet Breed ID"], value="HPetBattleAny", hidden=function() return not C_AddOns.IsAddOnLoaded("HPetBattleAny") end},
+				{text=L["Battle Pet Breed ID"], value="BattlePetBreedID", hidden=function() return not C_AddOns.IsAddOnLoaded("BattlePetBreedID") end},
 				{text=L["PetTracker"], value="PetTracker", hidden=function() return not C_AddOns.IsAddOnLoaded("PetTracker") end}}
 	},
 	{type="dropdown", group=18, text=L["Breed Format"], var="BreedFormat", func="BreedFormat", tooltip=L["How breeds should display."],

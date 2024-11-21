@@ -53,13 +53,6 @@ local specTemplate = {
     damageRange = 0,
     damagePets = false,
 
-    throttleRefresh = false,
-    regularRefresh = 0.5,
-    combatRefresh = 0.25,
-
-    throttleTime = false,
-    maxTime = 20,
-
     -- Toggles
     custom1Name = "自定义 1",
     custom2Name = "自定义 2",
@@ -86,6 +79,8 @@ local specTemplate = {
             criteria = nil
         }
     },
+
+    placeboBar = 3,
 
     ranges = {},
     settings = {},
@@ -756,7 +751,7 @@ local HekiliSpecMixin = {
                     if name then
                         if not a.name or a.name == a.key then a.name = name end
                         if not a.link or a.link == a.key then a.link = link end
-                        a.texture = a.texture or texture
+                        if not a.funcs.texture then a.texture = a.texture or texture end
 
                         if a.suffix then
                             a.actualName = name
@@ -1757,7 +1752,7 @@ all:RegisterAuras( {
                     t.v3 = 0
                     t.caster = unit
 
-                    if unit == "target" and Hekili.DB.profile.filterCasts then
+                    if unit == "target" and Hekili.DB.profile.toggles.interrupts.filterCasts then
                         local filters = Hekili.DB.profile.castFilters
                         local npcid = state.target.npcid
 
@@ -2456,7 +2451,7 @@ do
         startsCombat = false,
         toggle = "potions",
 
-        consumable = function() return state.args.potion or settings.potion or first_potion_key or "elemental_potion_of_power" end,
+        consumable = function() return state.args.potion or settings.potion or first_potion_key or "tempered_potion" end,
         item = function()
             if state.args.potion and class.abilities[ state.args.potion ] then return class.abilities[ state.args.potion ].item end
             if spec.potion and class.abilities[ spec.potion ] then return class.abilities[ spec.potion ].item end

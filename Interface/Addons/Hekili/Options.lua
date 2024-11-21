@@ -86,7 +86,7 @@ local oneTimeFixes = {
         if s then s.enhancedRecheck = true end
     end, ]]
 
-    updateMaxRefreshToNewSpecOptions_20220222 = function( p )
+    --[[ updateMaxRefreshToNewSpecOptions_20220222 = function( p )
         for id, spec in pairs( p.specs ) do
             if spec.settings.maxRefresh then
                 spec.settings.combatRefresh = 1 / spec.settings.maxRefresh
@@ -94,7 +94,7 @@ local oneTimeFixes = {
                 spec.settings.maxRefresh = nil
             end
         end
-    end,
+    end, ]]
 
     forceEnableAllClassesOnceDueToBug_20220225 = function( p )
         for id, spec in pairs( p.specs ) do
@@ -156,7 +156,18 @@ local oneTimeFixes = {
             havoc.date = 20240727
             havoc.version = 20240727
         end
-    end
+    end,
+
+    removeOldThrottles_20241115 = function( p )
+        for id, spec in pairs( p.specs ) do
+            spec.throttleRefresh = nil
+            spec.combatRefresh   = nil
+            spec.regularRefresh  = nil
+
+            spec.throttleTime    = nil
+            spec.maxTime         = nil
+        end
+    end,
 }
 
 
@@ -5852,92 +5863,196 @@ found = true end
                             name = "性能",
                             order = 10,
                             args = {
-                                throttleRefresh = {
-                                    type = "toggle",
-                                    name = "设置刷新频率",
-                                    desc = "如果勾选，则可以指定在战斗内和战斗外生成新推荐的频率。\n\n"
-                                        .. "更频繁的更新会占用更多的 CPU，但会提高响应速度。"
-                                        .. "在某些关键战斗事件发生后，无论此处设置如何，推荐技能总会刷新。",
-                                    order = 1,
+                                --[[ forecastingSection = {
+                                    type = "header",
+                                    name = "Forecasting",
+                                    order = 0.1,
                                     width = "full",
                                 },
 
-                                regularRefresh = {
-                                    type = "range",
-                                    name = "常规刷新频率",
-                                    desc = "在没有进入战斗时，插件将根据该处设置的时间间隔进行刷新。设置更高的频率能够降低CPU占用，但也会导致技能推荐的速度下降，" 
-                                        .."不过进入战斗会强制插件更快的刷新。\n\n如果设置为|cffffd1001.0秒|r，插件将在1秒内将不会推荐新的技能（除非进入战斗）。\n\n" 
-                                        .."默认值为：|cffffd1000.5|r秒。",
-                                    order = 1.1,
-                                    width = 1.5,
-                                    min = 0.05,
-                                    max = 1,
-                                    step = 0.05,
-                                    hidden = function () return self.DB.profile.specs[ id ].throttleRefresh == false end,
-                                },
+                                forecastingDescription = {
+                                    type = "description",
+                                    name = function ()
+                                        local flame_shock = Hekili:GetSpellLinkWithTexture( 470411 )
 
-                                combatRefresh = {
-                                    type = "range",
-                                    name = "战斗刷新频率",
-                                    desc = "当进入战斗后，插件将比常规刷新频率更加频繁地刷新推荐技能。设置更高的频率能够降低CPU占用，但也会导致技能推荐的速度下降，" 
-                                        .."不过进入关键战斗会强制插件更快的刷新。\n\n如果设置为|cffffd1000.2秒|r，插件将在0.2秒内不会推荐新的技能（除非进入关键战斗）。\n\n" 
-                                        .."默认值为：|cffffd1000.25|r秒。",
-                                    order = 1.2,
-                                    width = 1.5,
-                                    min = 0.05,
-                                    max = 0.5,
-                                    step = 0.05,
-                                    hidden = function () return self.DB.profile.specs[ id ].throttleRefresh == false end,
-                                },
-
-                                throttleTime = {
-                                    type = "toggle",
-                                    name = "调整刷新时间",
-                                    desc = "默认情况下，当插件需要刷新推荐技能时，它将使用|cffffd10010毫秒|r到最多半帧的时间，以最低者为准。如果你拥有每秒60帧的游戏刷新率，那么则等于16.67毫秒。" 
-                                        .."16.67毫秒的一半约等于|cffffd1008毫秒|r，因此插件在计算推荐技能时最多占用8毫秒。如果需要更多的时间，计算工作将分散在多个帧中。\n\n" 
-                                        .."如果勾选了|cffffd100调整刷新时间|r，你可以设置插件每帧可以占用的|cffffd100最大计算时间|r。",
-                                    order = 2.1,
-                                    width = "full",
-                                },
-
-                                maxTime = {
-                                    type = "range",
-                                    name = "最大更新时间（毫秒）",
-                                    desc = "指定|cffffd100每一帧|r可使用的最大计算时间（以毫秒为单位）。" ..
-                                        "如果设置为|cffffd1000|r，那么无论你的帧率如何，都没有最大值。\n\n" ..
-                                        "|cffffd100示例|r\n" ..
-                                        "|W- 60 FPS: 1 秒 / 60 帧 = |cffffd10016.7|r毫秒|w\n" ..
-                                        "|W- 100 FPS: 1 秒 / 100 帧 = |cffffd10010|r毫秒|w\n\n" ..
-                                        "如果你把这个值设置得太低，它可能需要更长的时间来更新，而且可能感觉反应慢半拍。\n\n" ..
-                                        "如果设置得太高（或0），技能更新可能会很快搞定，但可能会影响你的FPS。\n\n" ..
-                                        "默认值是|cffffd10020|r毫秒。",
-                                    order = 2.2,
-                                    min = 0,
-                                    max = 100,
-                                    step = 1,
-                                    width = 1.5,
-                                    hidden = function ()
-                                        return not self.DB.profile.specs[ id ].throttleTime
+                                    return format( "%sForecasting|r enables recommendations that are timed more precisely, when the conditions for using an ability are not immediately met.\n\n"
+                                    .. "For example, if %s is used when %s is not active on your target, but your target has 1 second remaining, forecasting allows a recommendation of %s with a 1 second delay.\n\n"
+                                    .. "If a lower priority ability is available sooner, it will be recommended instead.\n\n", BlizzBlue, flame_shock, flame_shock, flame_shock )
                                     end,
+                                    order = 0.11,
+                                    width = "full",
+                                    fontSize = "small"
                                 },
 
-                                --[[ gcdSync = {
-                                    type = "toggle",
-                                    name = "GCD之后开始",
-                                    desc = "如果勾选，插件推荐的第一个技能将会延迟到主显示和AOE显示框架的GCD之后显示。这样做能够减少饰品和无GCD技能在GCD时闪现。" ..
-                                        "但这样做也会导致原本在GCD时使用的技能（如鲁莽）被延迟一点推荐。",
+                                throttleForecastingCount = {
+                                    type = "range",
+                                    name = NewFeature .. " 最大预测步数",
+                                    desc = function () return format( "当生成技能推荐时，未满足标准的优先级项目可能会根据计算出的延迟重新进行测试。\n\n"
+                                    .. "这种预测能够更精确地进行定时型技能的推荐，例如等待资源积累或光环可刷新，但可能会增加处理时间。\n\n"
+                                    .. "如果设置为大于0，预测窗口期将被限定在指定的步数内，这可能能减少处理时间，但也可能生成的|cffff0000推荐技能比较少甚至没有|r。\n\n"
+                                    .. "默认情况下，这个值被|cFFFFD100禁用(0)|r，允许进行任意步数的预测。\n\n"
+                                    .. "%s推荐值：0(禁用)|r\n\n", BlizzBlue )
+                                    end,
+                                    order = 0.12,
                                     width = "full",
-                                    order = 4,
+                                    min = 0,
+                                    max = 10,
+                                    step = 1
+                                },
+
+                                throttleForecastingTime = {
+                                    type = "range",
+                                    name = NewFeature .. " 最大预测时间（秒）",
+                                    desc = function () return format( "当生成技能推荐时，未满足标准的优先级项目可能会根据计算出的延迟重新进行测试。\n\n"
+                                    .. "这种预测能够更精确地进行定时型技能的推荐，例如等待资源积累或光环可刷新，但可能会增加处理时间。\n\n"
+                                    .. "如果设置为大于0，预测窗口期将被限定在指定的时间内，这可能能减少处理时间，但也可能生成的|cffff0000推荐技能比较少甚至没有|r。\n\n"
+                                    .. "默认情况下，这个值被|cFFFFD100禁用(0)|r，允许预测未来最多10秒的情况。\n\n"
+                                    .. "%s推荐值：0(禁用)|r", BlizzBlue )
+                                    end,
+                                    order = 0.13,
+                                    width = "full",
+                                    min = 0,
+                                    max = 10,
+                                    step = 0.1
+                                },
+
+                                throttleForecastingAuto = {
+                                    type = "toggle",
+                                    name = NewFeature .. " 自动优化预测",
+                                    desc = "启用时，引擎将根据预测是否成功改进了推荐技能，来调整其预测步数和预测时间。",
+                                    order = 0.14,
+                                    width = "full",
+                                },
+
+                                throttlingSection = {
+                                    type = "header",
+                                    name = "节流",
+                                    order = 0.2,
+                                    width = "full",
+                                },
+
+                                throttlingDescription = {
+                                    type = "description",
+                                    name = function () return format( "%s节流|r 限制了生成推荐所用的处理时间。\n\n"
+                                    .. "这些限制可以帮助加快推荐技能的速度或减少对CPU的使用或对FPS的影响。\n\n", BlizzBlue )
+                                    end,
+                                    order = 0.21,
+                                    width = "full",
+                                    fontSize = "small"
+                                },
+
+                                throttleFrames = {
+                                    type = "range",
+                                    name = function () return format( "%s 最低目标FPS（实际FPS：%d）", NewFeature, GetFramerate() ) end,
+                                    desc = function () return format( "默认情况下，每帧最多可以使用|cffffd10015毫秒|r 来生成推荐技能。\n\n"
+                                    .. "这个值大致对应的最低目标FPS值为|cffffd10060|r。\n\n"
+                                    .. "降低此设置值将允许每帧使用|cffffd100更多|r的处理时间，提高响应性，但可能会降低FPS。\n\n"
+                                    .. "提高此设置值将允许每帧使用|cffffd100更少|r的处理时间，可能会提高FPS，但降低响应性。\n\n"
+                                    .. "%s推荐值：0 或 60 (默认)|r", BlizzBlue )
+                                    end,
+                                    order = 0.22,
+                                    width = "full",
+                                    min = 0,
+                                    max = 200,
+                                    step = 1
+                                },
+
+                                throttleMinimum = {
+                                    type = "range",
+                                    name = NewFeature .. " 最小时间配额（毫秒）",
+                                    desc = function ()
+                                        local fps = GetFramerate()
+                                        local currentFrameTime = fps > 0 and ( 1000 / fps ) or 0
+                                        local warning = currentFrameTime > 0 and format( "根据你当前的FPS(%d)，高于|cffffd100%d|r的值可能会影响你的帧率。\n\n", fps, currentFrameTime ) or ""
+
+                                        return format( "默认情况下，至少会使用|cffffd1005毫秒|r来生成推荐技能。\n\n" .. warning
+                                    .. "提高此设置值可能会在消耗更少的帧数来生成推荐，提高响应性，但可能减低FPS。\n\n"
+                                    .. "降低此设置值可能会消耗更多的帧数，可能会提高FPS，但降低响应性。\n\n"
+                                    .. "%s推荐值： 5毫秒（默认）|r", BlizzBlue )
+                                    end,
+                                    order = 0.23,
+                                    width = "full",
+                                    min = 5,
+                                    max = 200,
+                                    step = 1
+                                },
+
+                                throttleMaximum = {
+                                    type = "range",
+                                    name = NewFeature .. " 最大时间配额（毫秒）",
+                                    desc = function ()
+                                        local fps = GetFramerate()
+                                        local currentFrameTime = fps > 0 and ( 1000 / fps ) or 0
+                                        local warning = currentFrameTime > 0 and format( "根据你当前的FPS(%d)，高于|cffffd100%d|r的值可能会影响你的帧率。\n\n", fps, currentFrameTime ) or ""
+
+                                        return format( "默认情况下，最多会使用|cffffd1005毫秒|r来生成推荐技能。\\n\n" .. warning
+                                    .. "提高此设置值可能会在消耗更少的帧数来生成推荐，提高响应性，但可能减低FPS。\n\n"
+                                    .. "降低此设置值可能会消耗更多的帧数，降低响应性，但减少对FPS的影响。\n\n"
+                                    .. "%s推荐值： 15毫秒（默认）|r", BlizzBlue )
+                                    end,
+                                    order = 0.24,
+                                    width = "full",
+                                    min = 5,
+                                    max = 200,
+                                    step = 1
+                                },
+
+                                throttlePercent = {
+                                    type = "range",
+                                    name = NewFeature .. " 最大帧时间百分比",
+                                    desc = function ()
+                                        local fps = GetFramerate()
+                                        local currentFrameTime = fps > 0 and ( 1000 / fps ) or 0
+                                        local cap = self.DB.profile.specs[ id ].throttleMaximum or 0
+                                        local warning = ""
+
+
+                                        if cap > 0 then
+                                            warning = format( "根据你当前的|cFFFFD100最大时间配额|r的值，每帧的处理时间将被限制在 %d 毫秒。\n\n", fps, cap )
+                                        elseif currentFrameTime > 0 then
+                                            warning = format( "根据你当前的FPS(%d)，每帧的处理时间将被限制为 %d 毫秒。\n\n", fps, currentFrameTime )
+                                        end
+
+                                        return format( "默认情况下，最多可以使用|cffffd10090%%|r的时间来生成推荐技能。\n\n" .. warning
+                                    .. "提高此设置值可能会在消耗更少的帧数来生成推荐，提高响应性，但可能减低FPS。\n\n"
+                                    .. "降低此设置值可能会消耗更多的帧数，降低响应性，但减少对FPS的影响。\n\n"
+                                    .. "%s推荐值： 90%%（默认）|r", BlizzBlue )
+                                    end,
+                                    order = 0.25,
+                                    width = "full",
+                                    min = 0,
+                                    max = 1,
+                                    step = 0.01,
+                                    isPercent = true
                                 }, ]]
 
-                                --[[ enhancedRecheck = {
-                                    type = "toggle",
-                                    name = "额外复检",
-                                    desc = "当插件无法推荐某个技能时，则会在未来重新检查是否满足推荐条件。如果勾选，此项会在插件将对拥有变量的技能进行额外推荐检查。" 
-                                    .."这可能会使用更多的CPU，但可以降低插件无法给出技能推荐的概率。",
+                                placeboBar = {
+                                    type = "range",
+                                    name = "这不是安慰剂",
+                                    desc = "这些设置确实地调整了你当前专精的硬件消耗。",
+                                    order = 100,
                                     width = "full",
-                                    order = 5,
-                                }, ]]
+                                    min = 3,
+                                    max = 20,
+                                    step = 1
+                                },
+
+                                vroom = {
+                                    type = "header",
+                                    name = function()
+                                        local amount = self.DB.profile.specs[ id ].placeboBar or 5
+
+                                        if amount > 19 then
+                                            return "|cFFFF0000最大VROOM|r - 隐藏优化模式已解锁"
+                                        elseif amount > 14 then
+                                            return "|cFFFF0000危险|r - 接近最大VROOOM"
+                                        end
+
+                                        return format( "VR%sM!（CPU风扇的哀嚎声）", string.rep( "O", amount ) )
+                                    end,
+                                    order = 101,
+                                    width = "full"
+                                },
                             }
                         }
                     },
@@ -7700,6 +7815,8 @@ n = tonumber( n ) + 1
 
                                                         -- Let's load variables, just in case.
                                                         for name, alist in pairs( apack.lists ) do
+                                                            state.this_list = name
+
                                                             for i, entry in ipairs( alist ) do
                                                                 if name ~= list or i ~= action then
                                                                     if entry.action == "variable" and entry.var_name then
@@ -7713,6 +7830,7 @@ n = tonumber( n ) + 1
                                                         entry = entry and entry[ action ]
 
                                                         state.this_action = entry.action
+                                                        state.this_list = list
 
                                                         local scriptID = pack .. ":" .. list .. ":" .. action
                                                         state.scriptID = scriptID
@@ -7740,6 +7858,7 @@ n = tonumber( n ) + 1
 
                                                         -- Let's load variables, just in case.
                                                         for name, alist in pairs( apack.lists ) do
+                                                            state.this_list = name
                                                             for i, entry in ipairs( alist ) do
                                                                 if name ~= list or i ~= action then
                                                                     if entry.action == "variable" and entry.var_name then
@@ -7753,6 +7872,7 @@ n = tonumber( n ) + 1
                                                         entry = entry and entry[ action ]
 
                                                         state.this_action = entry.action
+                                                        state.this_list = list
 
                                                         local scriptID = pack .. ":" .. list .. ":" .. action
                                                         state.scriptID = scriptID
@@ -7784,6 +7904,7 @@ n = tonumber( n ) + 1
 
                                                         -- Let's load variables, just in case.
                                                         for name, alist in pairs( apack.lists ) do
+                                                            state.this_list = name
                                                             for i, entry in ipairs( alist ) do
                                                                 if name ~= list or i ~= action then
                                                                     if entry.action == "variable" and entry.var_name then
@@ -7797,6 +7918,7 @@ n = tonumber( n ) + 1
                                                         entry = entry and entry[ action ]
 
                                                         state.this_action = entry.action
+                                                        state.this_list = list
 
                                                         local scriptID = pack .. ":" .. list .. ":" .. action
                                                         state.scriptID = scriptID
@@ -10045,7 +10167,7 @@ do
                         name = "新手盒子",
                         order = 15,
                         get = function () return "https://www.wclbox.com/" end,
-			set = function () end,
+                        set = function () end,
                         width = "full",
                         dialogControl = "SFX-Info-URL",
                     }
