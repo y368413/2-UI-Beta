@@ -4039,7 +4039,7 @@ do
                 end
             end
 
-            local list, action = line:match( "^actions%.(%S-)%+?=/?([^\n^$]*)" )
+            local list, action = line:match( "^[ +]?actions%.(%S-)%+?=/?([^\n^$]*)" )
 
             if list and action then
                 lists[ list ] = lists[ list ] or ""

@@ -1,7 +1,7 @@
 ﻿<Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="Mingy.lua"/>
 	<Script file="QuestMods.lua"/>
-	<Script file="QuestLevelPatch.lua"/>
+	<!--Script file="QuestLevelPatch.lua"/-->
 	<Script file="QuestLogCounter.lua" />
 	<Script file="CollapseQuestLog.lua" />
 	<Frame mixin='ShowQuestCountMixin' hidden='false'>

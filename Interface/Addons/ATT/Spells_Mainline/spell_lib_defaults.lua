@@ -1,21 +1,18 @@
 local addon, ATTdbs = ...
 
 ATTdbs.Defaults = {
-   ["scale"] = 0.8,
-   ["showSelf"] = false,
-   ["attach"] = 1,
+   ["scale"] = 1,
+   ["showSelf"] = true,
+   ["attach"] = 0,
    ["offsetX"] = 0,
-   ["iconOffsetX"] = 0,
+   ["iconOffsetX"] = 5,
    ["offsetY"] = 0,
    ["glow"] = true,
    ["dampening"] = false,
    ["cooldownsSync"] = true,
    ["IconRows"] = 1,
    ["raidGroupSize"] = 5,
-   ["showIconBorders"] = true,
-   ["iconAlpha"] = 0.85,
-   ["bgMode"] = false,
-   ["lock"] = true,
+   ["iconAlpha"] = 1,
    ["isEnabledTrinkets"] = {
    },
    ["customSpells"] = {
@@ -24,7 +21,7 @@ ATTdbs.Defaults = {
    },
    ["alertCDtext"] = {
    },
-   ["iconOffsetY"] = 0,
+   ["iconOffsetY"] = 2,
    ["positions"] = {
    },
    ["iconOrder"] = {

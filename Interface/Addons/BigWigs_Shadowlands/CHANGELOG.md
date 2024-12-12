@@ -1,10 +1,6 @@
 # BigWigs [Shadowlands]
 
-## [v11.0.0](https://github.com/BigWigsMods/BigWigs_Shadowlands/tree/v11.0.0) (2024-09-21)
-[Full Changelog](https://github.com/BigWigsMods/BigWigs_Shadowlands/compare/v10.2.2...v11.0.0) [Previous Releases](https://github.com/BigWigsMods/BigWigs_Shadowlands/releases)
+## [v11.0.2](https://github.com/BigWigsMods/BigWigs_Shadowlands/tree/v11.0.2) (2024-11-26)
+[Full Changelog](https://github.com/BigWigsMods/BigWigs_Shadowlands/compare/v11.0.1...v11.0.2) [Previous Releases](https://github.com/BigWigsMods/BigWigs_Shadowlands/releases)
 
-- Cleanups  
-- Cleanups  
-- bump toc  
-- Define X-BigWigs-Minimum  
-- bump toc  
+- SanctumOfDomination/GuardianOfTheFirstOnes: Remove old code remnant, closes #2  

@@ -218,7 +218,7 @@ function RSWorldMapButtonMixin:SetupMenu()
 		npcsOthers:SetEnabled(function() return RSConfigDB.IsShowingNpcs() end)
 		
 		-- Filter NPCs		
-		local npcIDsWithNames = RSNpcDB.GetActiveNpcIDsWithNamesByMapID(mapID, false)
+		local npcIDsWithNames = RSNpcDB.GetActiveNpcIDsWithNamesByMapID(mapID)
 		if (RSUtils.GetTableLength(npcIDsWithNames) > 0) then
 			npcsSubmenu:CreateDivider()
 			npcsSubmenu:CreateTitle(AL["MAP_MENU_FILTER"])

@@ -15,7 +15,7 @@ AnenemyDrink:SetScript("OnEvent", function(self, event, ...)
 	end
 end)
 
---------------------------------	Kill count ----------------------------------
+--[[------------------------------	Kill count ----------------------------------
 local NextLimit = { 100, 500, 1000, 5000, 10000, 25000, 50000, 100000,250000,500000,1000000 }
 local GetNextLimit = function(kills)
 	for i =1, #NextLimit do
@@ -38,7 +38,7 @@ UIErrorsFrame:SetScript("OnUpdate",function(self,elapsed)
 		end
 		self.nextUpdate = 0
 	end
-end)
+end)]]
 
 --[[--------------------------------------------------------- KillingBlows---------------------------------------------------------
 local KB_FILTER_ENEMY = bit.bor(

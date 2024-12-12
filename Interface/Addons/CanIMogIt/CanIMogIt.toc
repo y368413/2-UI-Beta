@@ -26,9 +26,9 @@ Overlay\_overlays.xml
 
 Libs\LibArmorToken-1.0.lua
 Libs\LibAppropriateItems-1.0.lua
-AppearanceTooltip.lua
+## AppearanceTooltip.lua
 
-## TransmogTokens.lua
+## TokenTransmogs.lua
 TransmogCleanup.lua
 
 MogPartialSets.xml

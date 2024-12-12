@@ -3,7 +3,6 @@
 	<Script file="PremadeSort.lua"/>
 	<Script file="BossesKilled.lua"/>
 	<Script file="ElitismHelper.lua"/>
-	<!--Script file="SpamageMeters.lua"/-->
 	<Script file="LFR_of_the_past.lua"/>
 	<Script file="AdventureGuideLockouts.lua"/>
 </Ui>

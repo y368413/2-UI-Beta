@@ -27,7 +27,7 @@ RSConstants.LOOT_ITEM_ID = nil
 -- Current versions
 ---============================================================================
 
-RSConstants.CURRENT_DB_VERSION = 158
+RSConstants.CURRENT_DB_VERSION = 161
 RSConstants.CURRENT_LOOT_DB_VERSION = 157
 
 ---============================================================================
@@ -141,6 +141,7 @@ RSConstants.CHECK_RESPAWN_TIMER = 60 --1 minute
 RSConstants.CHECK_RESET_NOTIFICATIONS_TIMER = 10 --10 seconds
 RSConstants.CHECK_TARGETS_TIMER = 1 --1 seconds
 RSConstants.BUTTON_TIMER = 1 --1 seconds
+RSConstants.PREFOUND_TIMER = 1 --5 seconds
 
 ---============================================================================
 -- Collections enumerators
@@ -176,6 +177,17 @@ RSConstants.ENTITY_FILTER_ALERTS = 3
 RSConstants.MAP_ANIMATIONS_ON_FOUND = 1
 RSConstants.MAP_ANIMATIONS_ON_CLICK = 2
 RSConstants.MAP_ANIMATIONS_ON_BOTH = 3
+
+---============================================================================
+-- Tracking systems
+---============================================================================
+
+RSConstants.TRACKING_SYSTEM = {
+	VIGNETTE = 1,
+	NAMEPLATE_MOUSE = 2,
+	UNIT_TARGET = 3,
+	CHAT_EMOTE = 4
+}
 
 ---============================================================================
 -- Addons default settings
@@ -350,6 +362,7 @@ RSConstants.PROFILE_DEFAULTS = {
 			numItemsPerRow = 10,
 			tooltipsCommands = true,
 			tooltipsCanImogit = false,
+			tooltipsTSM = true,
 			covenantRequirement = true
 		},
 		chat = {
@@ -724,6 +737,8 @@ RSConstants.NPCS_WITH_PRE_EVENT = {
 	[98754] = 98311;
 	--Hallowfall
 	[225404] = 207802;
+	--Valley of the Four Winds
+	[334785] = 157468;
 }
 
 -- Contains that spawn after completing an event
@@ -816,9 +831,9 @@ RSConstants.NPCS_WITH_PRE_NPCS = {
 	
 -- 156480 Next door entity inside Torghast
 -- 155660 Summons from the Depths
-RSConstants.IGNORED_VIGNETTES = { 156480, 155660, 163373, 370467, 370466, 182160, 182668, 182667, 185261, 376210, 200002, 190034, 191125, 210081, 210084, 210544, 210550, 226647, 226657, 226528, 221630, 206978, 206980, 206981, 209780, 209781, 127025, 136466, 136472, 136144, 136109, 128660, 128661, 128662, 128665, 98141, 92600 }
+RSConstants.IGNORED_VIGNETTES = { 156480, 155660, 163373, 370467, 370466, 182160, 182668, 182667, 185261, 376210, 200002, 190034, 191125, 210081, 210084, 210544, 210550, 226647, 226657, 226528, 221630, 206978, 206980, 206981, 209780, 209781, 127025, 136466, 136472, 136144, 136109, 128660, 128661, 128662, 128665, 98141, 92600, 147188 }
 RSConstants.IGNORED_FRIENDLY_NPCS = { 227984 }
-RSConstants.NPCS_WITH_EVENT_VIGNETTE = { 72156, 154154, 154330, 164547, 164477, 160629, 175012, 157833, 166398, 164064, 162829, 157964, 162844, 171317, 170774, 162849, 170301, 170302, 170711, 170634, 170731, 172862, 172577, 158025, 158278, 170303, 179684, 179791, 179805, 177444, 180246, 179108, 179853, 179755, 179768, 179779, 179460, 179851, 179735, 169827, 203280, 213665, 129904, 90217, 91579, 91892, 96072, 97653, 95872, 98299 }
+RSConstants.NPCS_WITH_EVENT_VIGNETTE = { 72156, 154154, 154330, 164547, 164477, 160629, 175012, 157833, 166398, 164064, 162829, 157964, 162844, 171317, 170774, 162849, 170301, 170302, 170711, 170634, 170731, 172862, 172577, 158025, 158278, 170303, 179684, 179791, 179805, 177444, 180246, 179108, 179853, 179755, 179768, 179779, 179460, 179851, 179735, 169827, 203280, 213665, 129904, 90217, 91579, 91892, 96072, 97653, 95872, 98299, 150191, 153898, 149653, 150468, 154148 }
 RSConstants.NPCS_WITH_CONTAINER_VIGNETTE = { 179883 }
 RSConstants.CONTAINERS_WITH_NPC_VIGNETTE = { 369435, 398828 }
 RSConstants.CONTAINERS_WITH_EVENT_VIGNETTE = { 453374 }
@@ -853,6 +868,12 @@ RSConstants.TALES_OF_EXILE_ACHIEVEMENT_ID = 15509
 ---============================================================================
 
 RSConstants.GARRISON_CACHE_IDS = { 236916, 237191, 237724, 237722, 237723, 237720 }
+
+---============================================================================
+-- TSM
+---============================================================================
+
+RSConstants.TSM_SOURCES = { "DBMinBuyout", "DBMarket", "DBRegionMarketAvg" }
 
 ---============================================================================
 -- Eternal states

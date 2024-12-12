@@ -142,6 +142,12 @@ points[ 1527 ] = {
 	[61807760] = { gersahlGreens=true },
 	[65907600] = { gersahlGreens=true },
 }
+points[ 12 ] = { -- Kalimdor
+	[46009300] = { alpaca=true },
+}
+points[ 947 ] = { -- Azeroth
+	[16007460] = { alpaca=true },
+}
 
 -- Choice of texture
 -- Note that these textures are all repurposed and as such have non-uniform sizing. I've copied my scaling factors from my old AddOn
@@ -167,22 +173,22 @@ texturesSpecial[7] = "Interface\\PlayerFrame\\UI-PlayerFrame-DeathKnight-Frost"
 texturesSpecial[8] = "Interface\\HelpFrame\\HelpIcon-CharacterStuck"	
 texturesSpecial[9] = "Interface\\Vehicles\\UI-Vehicles-Raid-Icon"
 
-scaling[1] = 0.55
-scaling[2] = 0.55
-scaling[3] = 0.55
-scaling[4] = 0.55
-scaling[5] = 0.55
-scaling[6] = 0.55
-scaling[7] = 0.65
-scaling[8] = 0.62
-scaling[9] = 0.75
-scaling[10] = 0.75
-scalingSpecial[1] = 0.37
-scalingSpecial[2] = 0.49
-scalingSpecial[3] = 0.49
-scalingSpecial[4] = 0.49
-scalingSpecial[5] = 0.43
-scalingSpecial[6] = 0.41
-scalingSpecial[7] = 0.395
-scalingSpecial[8] = 0.57
-scalingSpecial[9] = 0.43
+scaling[1] = 0.413
+scaling[2] = 0.413
+scaling[3] = 0.413
+scaling[4] = 0.413
+scaling[5] = 0.413
+scaling[6] = 0.413
+scaling[7] = 0.489
+scaling[8] = 0.465
+scaling[9] = 0.563
+scaling[10] = 0.563
+scalingSpecial[1] = 0.278
+scalingSpecial[2] = 0.368
+scalingSpecial[3] = 0.368
+scalingSpecial[4] = 0.368
+scalingSpecial[5] = 0.323
+scalingSpecial[6] = 0.308
+scalingSpecial[7] = 0.296
+scalingSpecial[8] = 0.428
+scalingSpecial[9] = 0.323

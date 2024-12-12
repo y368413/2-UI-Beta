@@ -27,8 +27,8 @@ local QuestLabelPrepend = Enum.GossipOptionRecFlags.QuestLabelPrepend
 
 local choiceQueue
 
-local QuickQuestCheckButton = CreateFrame("CheckButton", nil, ObjectiveTrackerFrame.Header, "OptionsBaseCheckButtonTemplate")
-QuickQuestCheckButton:SetPoint("TOPLEFT", ObjectiveTrackerFrame.Header, -15, -5)
+local QuickQuestCheckButton = CreateFrame("CheckButton", nil, QuestObjectiveTracker.Header, "OptionsBaseCheckButtonTemplate")  --ObjectiveTrackerFrame.Header
+QuickQuestCheckButton:SetPoint("TOPRIGHT", QuestObjectiveTracker.Header, -20, -5)
 QuickQuestCheckButton:SetSize(21, 21)
 QuickQuestCheckButton:SetHitRectInsets(0, -10, 0, 0)
 QuickQuestCheckButton:RegisterEvent("PLAYER_LOGIN")

@@ -1,4 +1,4 @@
-## Interface: 11504, 11503, 20504, 30403, 40400, 40401, 110005, 110000, 110002
+## Interface: 11504, 11505, 20504, 30403, 40400, 40401, 110005, 110007, 110002
 ## Title: Capping_Options
 ## Author: Funkydude
 ## Notes: Capping Configuration Options.
@@ -12,7 +12,7 @@
 ## Notes-koKR: Capping|1을;를; 설정하는 옵션입니다.
 ## Notes-ptBR: Capping Opções de Configuração.
 ## Notes-ruRU: Capping параметры настроек.
-## Version: v11.0.1
+## Version: v11.0.2
 ## LoadOnDemand: 1
 ## Dependencies: Capping
 

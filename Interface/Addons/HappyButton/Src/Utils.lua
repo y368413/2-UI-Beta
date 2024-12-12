@@ -13,6 +13,8 @@ local const = addon:GetModule('CONST')
 ---@field IsInArray fun(array: table, element: any): boolean
 ---@field GetArrayIndex fun(table: table, element: any): number
 ---@field DeepCopy fun(original: table): table
+---@field SafeGet fun(table: table, ...: string|number): any?
+---@field Equal fun(t1: table, t2: table): boolean
 local UtilsTable = {}
 
 ---@class UtilsPrint
@@ -26,9 +28,11 @@ local UtilsTable = {}
 local UtilsPrint = {}
 
 ---@class UtilsString
----@field Utf8ToTable fun(str: string): table 将字符串转为字符列表
+---@field Utf8ToTable fun(str: string): string[] 将字符串转为字符列表
 ---@field ToVertical fun(text: string | nil): string 将字符串转为竖形结构
 ---@field GenerateID fun(): string 返回随机ID
+---@field Trim fun(str: string): string
+---@field Split fun(str: string, delimiter: string): string[]
 local UtilsString = {}
 
 ---@class Utils: AceModule
@@ -88,6 +92,25 @@ function UtilsTable.GetArrayIndex(array, target)
     return 0
 end
 
+
+-- 深度复制
+---@param orig any
+---@return any
+function UtilsTable.DeepCopy(orig)
+    local orig_type = type(orig)
+    local copy
+    if orig_type == 'table' then
+        copy = {}
+        for orig_key, orig_value in next, orig, nil do
+            copy[UtilsTable.DeepCopy(orig_key)] = UtilsTable.DeepCopy(orig_value)
+        end
+        setmetatable(copy, UtilsTable.DeepCopy(getmetatable(orig)))
+    else -- 基本数据类型直接赋值
+        copy = orig
+    end
+    return copy
+end
+
 -- 深度复制字典
 function UtilsTable.DeepCopyDict(original)
     local copy = {}
@@ -112,6 +135,52 @@ function UtilsTable.DeepCopyList(original)
         end
     end
     return copy
+end
+
+-- 安全的get语法
+function UtilsTable.SafeGet(t, ...)
+    local v = t
+    for _, key in ipairs({...}) do
+        if v then
+            v = v[key]
+        else
+            return nil  -- 如果中间有任何一部分为 nil，直接返回 nil
+        end
+    end
+    return v
+end
+
+-- 比较两个table是否相等
+---@param t1 table
+---@param t2 table
+---@return boolean
+function UtilsTable.Equal(t1, t2)
+    -- 如果两个表引用的是同一个表
+    if t1 == t2 then
+        return true
+    end
+
+    -- 如果两个表不是表类型，直接返回 false
+    if type(t1) ~= "table" or type(t2) ~= "table" then
+        return false
+    end
+
+    -- 检查 t1 中的每个键值对是否都在 t2 中
+    for key, value in pairs(t1) do
+        -- 如果 t2 中没有该键，或者该键的值不相等
+        if t2[key] == nil or not UtilsTable.Equal(value, t2[key]) then
+            return false
+        end
+    end
+
+    -- 检查 t2 中的每个键值对是否都在 t1 中
+    for key, _ in pairs(t2) do
+        -- 如果 t1 中没有该键，说明 t1 和 t2 不相等
+        if t1[key] == nil then
+            return false
+        end
+    end
+    return true
 end
 
 -- 修改全局打印方法，在打印信息前加上插件名称
@@ -196,9 +265,9 @@ end
 
 -- 函数：将 UTF-8 字符串拆分为单个字符表
 ---@param str string
----@return table
+---@return string[]
 function UtilsString.Utf8ToTable(str)
-    local charTable = {}
+    local charTable = {} ---@type string[]
     local i = 1
     local length = #str
 
@@ -238,9 +307,7 @@ function UtilsString.ToVertical(str)
 end
 
 
---[[
-生成时间戳+8位随机字符串来标识配置的唯一性
-]]
+-- 生成时间戳+8位随机字符串来标识配置的唯一性
 ---@return string
 function UtilsString.GenerateID()
     local chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
@@ -254,4 +321,25 @@ function UtilsString.GenerateID()
     local timestamp = time()
     -- 拼接随机字符串和时间戳
     return timestamp .. '_' .. table.concat(result)
+end
+
+
+-- 去除首尾空格
+---@param str string
+---@return string
+function UtilsString.Trim(str)
+    return string.match(str, "^%s*(.-)%s*$")
+end
+
+
+-- 按特殊字符拆分字符串
+---@param str string 需要拆分的字符串
+---@param delimiter string 分隔符
+---@return string[]
+function UtilsString.Split(str, delimiter)
+    local result = {}
+    for part in string.gmatch(str, "([^" .. delimiter .. "]+)") do
+        table.insert(result, part)
+    end
+    return result
 end

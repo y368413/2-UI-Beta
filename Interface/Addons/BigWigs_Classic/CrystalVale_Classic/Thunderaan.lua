@@ -24,7 +24,7 @@ end
 
 function mod:GetOptions()
 	return {
-		{465700, "CASTBAR", "SAY", "SAY_COUNTDOWN", "ICON", "ME_ONLY_EMPHASIZE"}, -- Chain Lightning
+		{465700, "CASTBAR", "SAY", "ICON", "ME_ONLY_EMPHASIZE"}, -- Chain Lightning
 		466211, -- Tendrils of Air
 		466774, -- Cyclonic Winds
 		470866, -- Lightning Cloud
@@ -58,18 +58,19 @@ end
 --
 
 do
-	local function printTarget(self, name, guid, elapsed)
+	local function printTarget(self, name, guid)
 		self:PrimaryIcon(465700, name)
 		self:TargetMessage(465700, "red", name)
 		if self:Me(guid) then
 			self:Say(465700, nil, nil, "Chain Lightning")
-			self:SayCountdown(465700, 3-elapsed, nil, 2)
 			self:PlaySound(465700, "warning", nil, name)
 		end
 	end
 
 	function mod:ChainLightningStart(args)
-		self:GetUnitTarget(printTarget, 0.5, args.sourceGUID)
+		local sourceGUID = args.sourceGUID -- Store the GUID as the values on the args table may have changed after the delay
+		self:SimpleTimer(function() self:GetUnitTarget(printTarget, 0.2, sourceGUID) end, 1.7) -- He doesn't pick a target until about 1.3s left on the cast
+		self:Message(args.spellId, "red")
 		self:CastBar(args.spellId, 3)
 	end
 end

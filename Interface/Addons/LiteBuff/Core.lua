@@ -169,9 +169,25 @@ function addon:UpdateSpellListIcons(spellList)
 	end
 end
 
+function Aby_UnitAura_Proxy(UnitAuraFunc, unit, indexOrName, filterOrNil, filter, ...)
+
+	for i = 1, 40 do
+		local name, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, v1, nameplateShowAll, timeMod, value1, value2, value3, v3, v4, v5 = UnitAuraFunc(unit, i, filterOrNil, filter, ...)
+		if not name then return end
+		if name == indexOrName then return name, nil, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, v1, nameplateShowAll, timeMod, value1, value2, value3, v3, v4, v5 end
+	end
+	--end
+end
+
+function Aby_UnitBuff(unit, indexOrName, filterOrNil, filter, ...) return Aby_UnitAura_Proxy(UnitBuff, unit, indexOrName, filterOrNil, filter, ...) end
+
 -- Retrieves buff remain time
 function addon:GetUnitBuffTimer(unit, buff, mine)
 	if unit and buff then
+		--local name, _, _, count, _, _, expires, caster = Aby_UnitBuff(unit, buff)
+		--if name and (not mine or caster == "player") then
+			--return expires or 0, count or 1
+		--end
 		for i = 1, 40 do
 			local name, _, count, _, _, expires, caster = UnitBuff(unit, i)
 			if not name then return end

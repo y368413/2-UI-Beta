@@ -11,6 +11,5 @@
 ## X-Curse-Project-ID: 699660
 ## X-Wago-ID: WYK9036L
 ## X-WoWI-ID: 26435
-## DefaultState: disabled
 
 Load.xml

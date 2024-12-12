@@ -43,7 +43,7 @@ ATTdbs.customframes = {
     [26] = { ctype = "Lime_Party", cname = "Lime" , cframe = "LimeGroup0UnitButton%d",},
     [27] = { ctype = "Cell", cname = "Cell" , cframe = "CellPartyFrameMember%d", cunitid = "unitid",},
     [28] = { ctype = "CellRaid", cname = "Cell" , cframe = "CellRaidFrameMember%d", cunitid = "unitid",},
-    [29] = { ctype = "Grid2_Group", cname = "Cell" , cframe = "Grid2LayoutHeader1RGUnitButton%d",},
+    [29] = { ctype = "Grid2_Group", cname = "Grid2" , cframe = "Grid2LayoutHeader1RGUnitButton%d",},
     [30] = { ctype = "AshToAsh", cname = "AshToAsh" , cframe = "AshToAshUnit1RGUnit%d",},
     [31] = { ctype = "NDui-RaidGR", cname = "NDui" , cframe = "oUF_Raid1GRUnitButton%d",},
     [32] = { ctype = "AltzUI", cname = "AltzUI" , cframe = "Altz_PartyUnitButton%d",},

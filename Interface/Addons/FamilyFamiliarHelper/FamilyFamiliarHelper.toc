@@ -9,8 +9,6 @@
 ## SavedVariables: FamilyFamiliarHelperSettings
 ## IconTexture: Interface\Icons\icon_hippogold
 ## AddonCompartmentFunc: FamilyFamiliarHelperToggleWindow
-## DefaultState: disabled
-
 AchievementInfo.lua
 Main.xml
 AchievementsPanel.xml

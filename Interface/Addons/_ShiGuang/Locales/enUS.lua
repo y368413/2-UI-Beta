@@ -313,6 +313,9 @@ DEX_FontList = {
 	"Fonts\\ARIALN.TTF",
 	"Fonts\\FRIZQT__.ttf",
 	"Fonts\\skurri.ttf",
+	"Fonts\\skurri.TTF",
+	"Fonts\\skurri.TTF",
+	"Fonts\\Damage.TTF",
 };
 DEX_TXT_CRUSH = "Crush!";
 DEX_TXT_DISPELLED = "Dispel! ";
@@ -338,23 +341,31 @@ DEXOptionsFrameCheckButtons = {
 	["DEX_ShowDamageHealth"] = { title = "Healing", tooltipText = "Display healing texts"},
 	["DEX_ShowDamagePet"] = { title = "Pet", tooltipText = "Display damages from your pets"},
 	["DEX_ShowBlockNumber"] = { title = "Blocked", tooltipText = "Display blocked/resisted damages"},
-	["DEX_ShowDamageWoW"] = { title = "Enable system combat texts", tooltipText = "Enable system default floating combat texts"},
+	["DEX_ShowDamageWoW"] = { title = "Enable Player BeAttack", tooltipText = "Enable Player BeAttack"},
 	["DEX_ShowOwnHealth"] = { title = "Self healing", tooltipText = "Display healings apply to yourself"},
 	["DEX_UniteSpell"] = { title = "Combine damages", tooltipText = "Combine simutaneous damages against same target"},
-	--["DEX_NumberFormat"] = { title = "Display digit separator", tooltipText = "Display the number of sub digital separation"},	
-	["DEX_NumberFormat"] = { title = "W/Y", tooltipText = "Shot number style"},
+	["DEX_NumberFormat"] = { title = "Display digit separator", tooltipText = "Display the number of sub digital separation"},	
 	["DEX_ShowSpellIcon"] = { title = "Show Spell Icon", tooltipText = "Display Spell Icon,Choosen to replace the spell name"},
 	["DEX_ShowInterrupt"] = { title = "Show Interrupt", tooltipText = "Display Interrupt texts"},	
+	["DEX_ShowBuffDebuff"] = { title = "Show Buff/Debuff", tooltipText = "Check Buff and Debuff"},	
 	["DEX_ShowOverHeal"] = { title = "Show Overheal", tooltipText = "Display Overhealing apply to all target"},		
+	["DEX_ShowDebug"] = { title = "Show Spell Debug", tooltipText = "Display Spell Debug Message"},		
+	["DEX_ShowLeftRight"] = { title = "Show Health and BeAttack Positiom Left or Right", tooltipText = "Show Health and BeAttack Left or Right"},	
+	["DEX_ShowRightLeft"] = { title = "Show Health and BeAttack Positiom Left or Right", tooltipText = "Show Health and BeAttack Left or Right"},	
+	["DEX_ShowHit"] = { title = "Show Hit/Infuriating Number", tooltipText = "Display ROGUE/MONK Hit/Infuriating Number"},		
 };
+
 DEXOptionsFrameSliders = {
-	["DEX_Font"] = {  title = "Font ", minText="Font1", maxText="Font3", tooltipText = "Reset font"},
+	["DEX_Font"] = {  title = "Font ", minText="Font1", maxText="Font3", tooltipText = "Reset font\n1=ARIALN\n2=FRIZQT__\n3=skurri\n4=skurri\n5=skurri\n6=Damage"},
 	["DEX_FontSize"] = {  title = "Font size ", minText="Small", maxText="Large", tooltipText = "Config font size"},
 	["DEX_OutLine"] = {  title = "Font outline ", minText="None", maxText="Thick", tooltipText = "Config font outline"},
 	["DEX_Speed"] = {  title = "Text floating speed ", minText="Slow", maxText="Fast", tooltipText = "Config text floating speed"},
 	["DEX_LOGLINE"] = {  title = "Max lines ", minText="5", maxText="20", tooltipText = "Config max text lines"},
 	["DEX_LOGTIME"] = {  title = "Fade duration (sec) ", minText="5", maxText="60", tooltipText = "Config line fade duration"},
+	["DEX_ShowHitX"] = {  title = "PosX For  Hit/Infuriating", minText="-300", maxText="300", tooltipText = "Set PosX For ROGUE/MONK Hit/Infuriating Number"},
+	["DEX_ShowHitY"] = {  title = "PosY For  Hit/Infuriating", minText="-300", maxText="300", tooltipText = "Set PosY For ROGUE/MONK Hit/Infuriating Number"},
 };
+
 DEXOptionsColorPickerEx = {
 	["DEX_ColorNormal"] = { title = "Physical color"},
 	["DEX_ColorSkill"] = { title = "Spell color"},
@@ -363,6 +374,7 @@ DEXOptionsColorPickerEx = {
 	["DEX_ColorPet"] = { title = "Pet color"},
 	["DEX_ColorSpec"] = { title = "Interrupt/dispel color"},
 	["DEX_ColorMana"] = { title = "Mana burn color"},
+	["DEX_ColorAttack"] = { title = "BeAttack color"},
 };
 
 	

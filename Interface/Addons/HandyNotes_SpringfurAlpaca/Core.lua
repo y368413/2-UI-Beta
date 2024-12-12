@@ -3,7 +3,7 @@
 
                                           Springfur Alpaca
 
-                                     v2.01 - 12th November 2024
+                                      v2.03 - 4th December 2024
                                 Copyright (C) Taraezor / Chris Birch
                                          All Rights Reserved
 								
@@ -398,115 +398,133 @@ if ns.locale == "deDE" then
 		.."Frühlingsfell-Alpaka" ..ns.colour.highlight .." in Uldum zu erhalten"
 	L["Alpaca It In"] = "Wir alpaken's dann mal"
 	L["Alpaca It Up"] = "Rackern fürs Alpaka"
+	L["Correct Map"] = "Sie sehen die richtige Karte"
 	L["Daily Quest"] = "Tägliche Aufgabe"
 	L["Gersahl Greens"] = "Gersahlblätter"
+	L["Incorrect Map"] = "Sie sehen die falsche Karte"
 	L["of"] = "@ von #"
 	L["Speak to Zidormi"] = "Sprich mit Zidormi"
 	L["Springfur Alpaca"] = "Frühlingsfellalpaka"
 	L["Uldum Map"] = "Uldum-Karte"
-	L["Wrong version of Uldum"] = "Falsche Version von Uldum"
+	L["Wrong version of Uldum"] = "@ ist in der falschen Version von Uldum"
 	
 elseif ns.locale == "esES" or ns.locale == "esMX" then
 	L["AddOn Description"] = ns.colour.highlight .."Te ayuda a obtener " ..ns.colour.prefix
 		.."el Alpaca de pelaje primaveral" ..ns.colour.highlight .." en Uldum"
 	L["Alpaca It In"] = "Hay una alpaca en ti"
 	L["Alpaca It Up"] = "Una alpaca de traca"
+	L["Correct Map"] = "Estás mirando el mapa correcto."
 	L["Daily Quest"] = "Búsqueda Diaria"
 	L["Gersahl Greens"] = "Verduras Gersahl"
+	L["Incorrect Map"] = "Estás mirando el mapa incorrecto."
 	L["of"] = "@ de #"
 	L["Speak to Zidormi"] = "Hablar con Zidormi"
 	L["Springfur Alpaca"] = "Alpaca de pelaje primaveral"
 	L["Uldum Map"] = "Mapa de Uldum"
-	L["Wrong version of Uldum"] = "Versión incorrecta de Uldum"
+	L["Wrong version of Uldum"] = "@ está en la versión incorrecta de Uldum"
 
 elseif ns.locale == "frFR" then
 	L["AddOn Description"] = ns.colour.highlight .."Vous aide à obtenir " ..ns.colour.prefix
 		.."l'alpaga toison-vernale" ..ns.colour.highlight .." à Uldum"
 	L["Alpaca It In"] = "Alpaga alpagué"
 	L["Alpaca It Up"] = "Alpaga gavé"
+	L["Correct Map"] = "Vous regardez la bonne carte"
 	L["Daily Quest"] = "Quêtes Journalières"
 	L["Gersahl Greens"] = "Légume de Gersahl"
+	L["Incorrect Map"] = "Vous regardez la mauvaise carte"
 	L["of"] = "@ sur #"
 	L["Speak to Zidormi"] = "Parlez à Zidormi"
 	L["Springfur Alpaca"] = "Alpaga toison-vernale"
 	L["Uldum Map"] = "Carte de Uldum"
-	L["Wrong version of Uldum"] = "Mauvaise version de Uldum"
+	L["Wrong version of Uldum"] = "@ est dans la mauvaise version d'Uldum"
 
 elseif ns.locale == "itIT" then
 	L["AddOn Description"] = ns.colour.highlight .."Ti aiuta a ottenere " ..ns.colour.prefix
 		.."Alpaca Primopelo" ..ns.colour.highlight .." a Uldum"
 	L["Alpaca It In"] = "Alpaca 1, Alpaca 2"
 	L["Alpaca It Up"] = "Io sono Alpaca"
+	L["Correct Map"] = "Stai guardando la mappa corretta"
 	L["Daily Quest"] = "Missione Giornaliera"
 	L["Gersahl Greens"] = "Insalata di Gersahl"
+	L["Incorrect Map"] = "Stai guardando la mappa sbagliata"
 	L["of"] = "@ di #"
 	L["Speak to Zidormi"] = "Parla con Zidormi"
 	L["Springfur Alpaca"] = "Alpaca Primopelo"
 	L["Uldum Map"] = "Mappa di Uldum"
-	L["Wrong version of Uldum"] = "Versione errata di Uldum"
+	L["Wrong version of Uldum"] = "@ è nella versione sbagliata di Uldum"
 
 elseif ns.locale == "koKR" then
 	L["AddOn Description"] = ns.colour.highlight .."울둠에서 " ..ns.colour.prefix .."봄털 알파카"
 		..ns.colour.highlight .."를 얻는 데 도움이 됩니다."
 	L["Alpaca It In"] = "알파카 출동!"
 	L["Alpaca It Up"] = "알파카만 믿으라고"
+	L["Correct Map"] = "당신은 올바른 지도를 보고 있습니다."
 	L["Daily Quest"] = "일일 퀘스트"
 	L["Gersahl Greens"] = "게샬 채소"
+	L["Incorrect Map"] = "당신은 잘못된 지도를 보고 있습니다."
 	L["of"] = "#개 중 @개"
 	L["Speak to Zidormi"] = "지도르미님과 대화"
 	L["Springfur Alpaca"] = "봄털 알파카"
 	L["Uldum Map"] = "울둠 지도"
-	L["Wrong version of Uldum"] = "잘못된 버전의 울둠"
+	L["Wrong version of Uldum"] = "@는 잘못된 버전의 Uldum을 사용하고 있습니다."
 
 elseif ns.locale == "ptBR" or ns.locale == "ptPT" then
 	L["AddOn Description"] = ns.colour.highlight .."Ajuda você a obter o " ..ns.colour.prefix
 		.."Alpaca Lã de Primavera" ..ns.colour.highlight .." em Uldum"
 	L["Alpaca It In"] = "Alpaca pacas"
 	L["Alpaca It Up"] = "Alpaca papa"
+	L["Correct Map"] = "Você está olhando para o mapa correto"
 	L["Daily Quest"] = "Missão Diária"
 	L["Gersahl Greens"] = "Folhas de Gersahl"
+	L["Incorrect Map"] = "Você está olhando para o mapa incorreto"
 	L["of"] = "@ de #"
 	L["Speak to Zidormi"] = "Fale com Zidormi"
 	L["Springfur Alpaca"] = "Alpaca Lã de Primavera"
 	L["Uldum Map"] = "Mapa de Uldum"
-	L["Wrong version of Uldum"] = "Versão incorreta de Uldum"
+	L["Wrong version of Uldum"] = "@ está na versão errada do Uldum"
 
 elseif ns.locale == "ruRU" then
 	L["AddOn Description"] = ns.colour.highlight .."Помогает вам получить " ..ns.colour.prefix
 		.."Курчавая альпака" ..ns.colour.highlight .." в Ульдум"
 	L["Alpaca It In"] = "Альпачиный взгляд"
 	L["Alpaca It Up"] = "Добряк среди альпак"
+	L["Correct Map"] = "Вы смотрите на правильную карту"
 	L["Daily Quest"] = "Ежедневный Квест"
 	L["Gersahl Greens"] = "Побеги герсали"
+	L["Incorrect Map"] = "Вы смотрите на неправильную карту"
 	L["of"] = "@ из #"
 	L["Speak to Zidormi"] = "Поговори с Зидорми"
 	L["Springfur Alpaca"] = "Курчавая альпака"
 	L["Uldum Map"] = "Карта Ульдума"
-	L["Wrong version of Uldum"] = "Неправильная версия Ульдум"
+	L["Wrong version of Uldum"] = "@ находится в неправильной версии Ульдума"
 
 elseif ns.locale == "zhCN" then
 	L["AddOn Description"] = ns.colour.highlight .."帮助您获取奥丹姆中的" ..ns.colour.prefix .."春裘羊驼"
 	L["Alpaca It In"] = "Alpaca It In" -- No Translation available at Wowhead
 	L["Alpaca It Up"] = "羊驼要吃饱"
+	L["Correct Map"] = "您正在查看正确的地图"
 	L["Daily Quest"] = "日常"
 	L["Gersahl Greens"] = "基萨尔野菜"
+	L["Incorrect Map"] = "您正在查看错误的地图"
 	L["of"] = "@ 共 # 个"
 	L["Speak to Zidormi"] = "与 希多尔米 通话"
 	L["Springfur Alpaca"] = "春裘羊驼"
 	L["Uldum Map"] = "奥丹姆地图"
-	L["Wrong version of Uldum"] = "奥丹姆 版本错误"
+	L["Wrong version of Uldum"] = "@在奥丹姆的版本错误"
 
 elseif ns.locale == "zhTW" then
 	L["AddOn Description"] = ns.colour.highlight .."幫助您獲取奧丹姆中的" ..ns.colour.prefix .."春裘羊駝"
 	L["Alpaca It In"] = "Alpaca It In" -- See for simplified. Traditional is a direct translation of that
 	L["Alpaca It Up"] = "羊駝要吃飽"
+	L["Correct Map"] = "您正在查看正確的地圖"
 	L["Daily Quest"] = "每日"
 	L["Gersahl Greens"] = "肉荳蔻蔬菜"
+	L["Incorrect Map"] = "您正在查看不正確的地圖"
 	L["of"] = "@ 共 # 個"
 	L["Speak to Zidormi"] = "與 希多爾米 通話"
 	L["Springfur Alpaca"] = "春裘羊駝"
 	L["Uldum Map"] = "奧丹姆地圖"
-	L["Wrong version of Uldum"] = "奧丹姆 版本錯誤"
+	L["Wrong version of Uldum"] = "@在奧丹姆的版本錯誤"
 	
 else
 	L["AddOn Description"] = ns.colour.highlight .."Helps you to obtain the " ..ns.colour.prefix
@@ -548,7 +566,11 @@ function pluginHandler:OnEnter( mapFile, coord )
 	
 	if pin.alpaca then
 		GameTooltip:SetText( ns.colour.prefix ..L["Springfur Alpaca"] )
-
+		
+		if ( ns.mapID == 12 ) or ( ns.mapID == 947 ) then
+			GameTooltip:AddLine( L["Go to Uldum"] .."\n\n" )
+		end
+		
 		local completed = C_QuestLog.IsQuestFlaggedCompleted( 58887 )
 		GameTooltip:AddDoubleLine( ns.colour.highlight ..L["Alpaca It In"],
 			( completed == true ) and ( "\124cFF00FF00" ..L["Completed"] .." (" ..ns.name ..")" ) 
@@ -599,7 +621,7 @@ function pluginHandler:OnEnter( mapFile, coord )
 		end
 	end
 
-	if ns.db.showCoords == true then
+	if ( ns.db.showCoords == true ) and ( ns.mapID ~= 12 ) and ( ns.mapID ~= 947 ) then
 		GameTooltip:AddLine( " " )
 		local mX, mY = HandyNotes:getXY(coord)
 		mX, mY = mX*100, mY*100
@@ -619,7 +641,7 @@ do
 		local coord, pin = next(t, prev)
 		while coord do
 			if pin then
-				if pin.alpaca then
+				if pin.alpaca or ( ns.mapID == 12 ) or ( ns.mapID == 947 ) then
 					return coord, nil, ns.textures[ns.db.iconChoice],
 							ns.db.iconScale * ns.scaling[ns.db.iconChoice], ns.db.iconAlpha
 				elseif pin.gersahlGreens then

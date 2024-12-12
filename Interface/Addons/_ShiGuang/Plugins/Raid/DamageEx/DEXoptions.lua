@@ -6,12 +6,14 @@ local function SetSliderData(key, minValue, maxValue, valueStep)
 	end
 end
 
-SetSliderData("DEX_Font", 1, 3)
-SetSliderData("DEX_FontSize", 12, 42)
+SetSliderData("DEX_Font", 1, 6)
+SetSliderData("DEX_FontSize", 12, 80)
 SetSliderData("DEX_OutLine", 1, 5)
 SetSliderData("DEX_Speed", 30, 300, 5)
 SetSliderData("DEX_LOGLINE", 5, 20)
 SetSliderData("DEX_LOGTIME", 5, 60)
+SetSliderData("DEX_ShowHitX", -300, 300, 5)
+SetSliderData("DEX_ShowHitY", -300, 300, 5)
 
 DEXOptionsColorPickerEx["DEX_ColorNormalSe"] = {}
 DEXOptionsColorPickerEx["DEX_ColorSkillSe"] = {}
@@ -19,6 +21,7 @@ DEXOptionsColorPickerEx["DEX_ColorPeriodicSe"] = {}
 DEXOptionsColorPickerEx["DEX_ColorHealthSe"] = {}
 DEXOptionsColorPickerEx["DEX_ColorSpecSe"] = {}
 DEXOptionsColorPickerEx["DEX_ColorManaSe"] = {}
+DEXOptionsColorPickerEx["DEX_ColorAttackSe"] = {}
 
 
 --Set color functions
@@ -30,6 +33,7 @@ local DEXOptionsFrame_SetColorFunc = {
 	["DEX_ColorPet"] = function(x) DEXOptionsFrame_SetColor("DEX_ColorPet") end,
 	["DEX_ColorSpec"] = function(x) DEXOptionsFrame_SetColor("DEX_ColorSpec") end,
 	["DEX_ColorMana"] = function(x) DEXOptionsFrame_SetColor("DEX_ColorMana") end,
+	["DEX_ColorAttack"] = function(x) DEXOptionsFrame_SetColor("DEX_ColorAttack") end,
 
 	["DEX_ColorNormalSe"] = function(x) DEXOptionsFrame_SetColor("DEX_ColorNormalSe") end,
 	["DEX_ColorSkillSe"] = function(x) DEXOptionsFrame_SetColor("DEX_ColorSkillSe") end,
@@ -37,6 +41,7 @@ local DEXOptionsFrame_SetColorFunc = {
 	["DEX_ColorHealthSe"] = function(x) DEXOptionsFrame_SetColor("DEX_ColorHealthSe") end,
 	["DEX_ColorSpecSe"] = function(x) DEXOptionsFrame_SetColor("DEX_ColorSpecSe") end,
 	["DEX_ColorManaSe"] = function(x) DEXOptionsFrame_SetColor("DEX_ColorManaSe") end,
+	["DEX_ColorAttackSe"] = function(x) DEXOptionsFrame_SetColor("DEX_ColorAttackSe") end,
 };
 
 local DEXOptionsFrame_CancelColorFunc = {
@@ -47,6 +52,7 @@ local DEXOptionsFrame_CancelColorFunc = {
 	["DEX_ColorPet"] = function(x) DEXOptionsFrame_CancelColor("DEX_ColorPet",x) end,
 	["DEX_ColorSpec"] = function(x) DEXOptionsFrame_CancelColor("DEX_ColorSpec",x) end,
 	["DEX_ColorMana"] = function(x) DEXOptionsFrame_CancelColor("DEX_ColorMana",x) end,
+	["DEX_ColorAttack"] = function(x) DEXOptionsFrame_CancelColor("DEX_ColorAttack",x) end,
 
 	["DEX_ColorNormalSe"] = function(x) DEXOptionsFrame_CancelColor("DEX_ColorNormalSe",x) end,
 	["DEX_ColorSkillSe"] = function(x) DEXOptionsFrame_CancelColor("DEX_ColorSkillSe",x) end,
@@ -54,6 +60,7 @@ local DEXOptionsFrame_CancelColorFunc = {
 	["DEX_ColorHealthSe"] = function(x) DEXOptionsFrame_CancelColor("DEX_ColorHealthSe",x) end,
 	["DEX_ColorSpecSe"] = function(x) DEXOptionsFrame_CancelColor("DEX_ColorSpecSe",x) end,
 	["DEX_ColorManaSe"] = function(x) DEXOptionsFrame_CancelColor("DEX_ColorManaSe",x) end,
+	["DEX_ColorAttackSe"] = function(x) DEXOptionsFrame_CancelColor("DEX_ColorAttackSe",x) end,
 };
 
 
@@ -81,12 +88,116 @@ function DEX_CheckButtonLink(name)
 			DEX_RefreshCheckButton("DEX_ShowNameOnCrit");
 			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowNameOnMiss"));
 			DEX_RefreshCheckButton("DEX_ShowNameOnMiss");
-			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowSpellIcon"));
-			DEX_RefreshCheckButton("DEX_ShowSpellIcon");						
 		else
 			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowNameOnCrit"));
 			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowNameOnMiss"));
+		end
+	end
+	if name == "DEX_ShowRightLeft" then
+		if DEX_Get(name) == 1 then
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowLeftRight"));
+		else
+--			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowLeftRight"));
+--			DEX_RefreshCheckButton("DEX_ShowLeftRight");						
+		end
+	end
+	if name == "DEX_ShowLeftRight" then
+		if DEX_Get(name) == 1 then
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowRightLeft"));
+		else
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowRightLeft"));
+			DEX_RefreshCheckButton("DEX_ShowRightLeft");	
+		end
+	end
+	if name == "DEX_Enable" then
+		if DEX_Get(name) == 1 then
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowNameOnCrit"));
+			DEX_RefreshCheckButton("DEX_ShowNameOnCrit");
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowNameOnMiss"));
+			DEX_RefreshCheckButton("DEX_ShowNameOnMiss");
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowRightLeft"));
+			DEX_RefreshCheckButton("DEX_ShowRightLeft");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowLeftRight"));
+			DEX_RefreshCheckButton("DEX_ShowLeftRight");						
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowDebug"));
+			DEX_RefreshCheckButton("DEX_ShowDebug");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowSpellIcon"));
+			DEX_RefreshCheckButton("DEX_ShowSpellIcon");						
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowHit"));
+			DEX_RefreshCheckButton("DEX_ShowHit");	
+			OptionsFrame_EnableSlider(getglobal("DEX_ShowHitX"));
+			DEX_RefreshFrameSliders("DEX_ShowHitX");
+			OptionsFrame_EnableSlider(getglobal("DEX_ShowHitY"));
+			DEX_RefreshFrameSliders("DEX_ShowHitY");
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowDamageWoW"));
+			DEX_RefreshCheckButton("DEX_ShowDamageWoW");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowSpellName"));
+			DEX_RefreshCheckButton("DEX_ShowSpellName");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowDamagePeriodic"));
+			DEX_RefreshCheckButton("DEX_ShowDamagePeriodic");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowDamageShield"));
+			DEX_RefreshCheckButton("DEX_ShowDamageShield");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowDamageHealth"));
+			DEX_RefreshCheckButton("DEX_ShowDamageHealth");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowDamagePet"));
+			DEX_RefreshCheckButton("DEX_ShowDamagePet");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowBlockNumber"));
+			DEX_RefreshCheckButton("DEX_ShowBlockNumber");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowOwnHealth"));
+			DEX_RefreshCheckButton("DEX_ShowOwnHealth");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowBuffDebuff"));
+			DEX_RefreshCheckButton("DEX_ShowBuffDebuff");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowOverHeal"));
+			DEX_RefreshCheckButton("DEX_ShowOverHeal");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_UniteSpell"));
+			DEX_RefreshCheckButton("DEX_UniteSpell");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_NumberFormat"));
+			DEX_RefreshCheckButton("DEX_NumberFormat");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowCurrentOnly"));
+			DEX_RefreshCheckButton("DEX_ShowCurrentOnly");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowInterrupt"));
+			DEX_RefreshCheckButton("DEX_ShowInterrupt");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowWithMess"));
+			DEX_RefreshCheckButton("DEX_ShowInterrupt");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowInterruptCrit"));
+			DEX_RefreshCheckButton("DEX_ShowInterrupt");	
+		else
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowNameOnCrit"));
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowNameOnMiss"));
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowLeftRight"));			
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowRightLeft"));	
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowDebug"));	
 			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowSpellIcon"));			
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowHit"));	
+			OptionsFrame_DisableSlider(getglobal("DEX_ShowHitX"));
+			OptionsFrame_DisableSlider(getglobal("DEX_ShowHitY"));
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowDamageWoW"));	
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowSpellName"));	
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowDamagePeriodic"));	
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowDamageShield"));	
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowDamageHealth"));	
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowDamagePet"));	
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowBlockNumber"));	
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowOwnHealth"));	
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowBuffDebuff"));	
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowOverHeal"));	
+			OptionsFrame_DisableCheckBox(getglobal("DEX_UniteSpell"));	
+			OptionsFrame_DisableCheckBox(getglobal("DEX_NumberFormat"));	
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowCurrentOnly"));	
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowInterrupt"));	
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowWithMess"));	
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowInterruptCrit"));	
+		end
+	end
+	if name == "DEX_ShowHit" then
+		if DEX_Get(name) == 1 then
+			OptionsFrame_EnableSlider(getglobal("DEX_ShowHitX"));
+			DEX_RefreshFrameSliders("DEX_ShowHitX");
+			OptionsFrame_EnableSlider(getglobal("DEX_ShowHitY"));
+			DEX_RefreshFrameSliders("DEX_ShowHitY");
+		else
+			OptionsFrame_DisableSlider(getglobal("DEX_ShowHitX"));
+			OptionsFrame_DisableSlider(getglobal("DEX_ShowHitY"));
 		end
 	end
 	if name == "DEX_ShowWithMess" then
@@ -96,11 +207,14 @@ function DEX_CheckButtonLink(name)
 			OptionsFrame_EnableSlider(getglobal("DEX_LOGTIME"));
 			DEX_RefreshFrameSliders("DEX_LOGLINE");
 			OptionsFrame_DisableSlider(getglobal("DEX_Speed"));
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowBuffDebuff"));			
 		else
 			OptionsFrame_DisableSlider(getglobal("DEX_LOGLINE"));
 			OptionsFrame_DisableSlider(getglobal("DEX_LOGTIME"));
 			OptionsFrame_EnableSlider(getglobal("DEX_Speed"));
 			DEX_RefreshFrameSliders("DEX_Speed");
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowBuffDebuff"));
+			DEX_RefreshCheckButton("DEX_ShowBuffDebuff");						
 		end
 	end		
 	if name == "DEX_ShowInterrupt" then
@@ -234,7 +348,6 @@ function DEX_OptionsSliderOnValueChanged(self, name)
    local svalue = floor(value/valStep)*valStep
 --   slider:SetValue(svalue)
    DEX_Set(name,svalue);
---http://bbs.ngacn.cc/read.php?&tid=6548794&pid=119427727&to=1
 --	DEX_Set(name,slider:GetValue());
 
 	DEX_OptionsSliderRefreshTitle(name);
@@ -258,11 +371,14 @@ function DEX_OpenColorPicker(self, button)
 	if ( not button ) then
 		button = self;
 	end
-	ColorPickerFrame.func = button.swatchFunc;
-	ColorPickerFrame:SetColorRGB(button.r, button.g, button.b);
-	ColorPickerFrame.previousValues = {r = button.r, g = button.g, b = button.b, opacity = button.opacity};
-	ColorPickerFrame.cancelFunc = button.cancelFunc;
-	ColorPickerFrame:Show();
+	local info = {
+		swatchFunc = button.swatchFunc,
+		cancelFunc = button.cancelFunc,
+		opacityFunc = nil,
+		r = button.r, g = button.g, b = button.b, opacity = button.opacity,
+		hasOpacity = false,
+	}
+	ColorPickerFrame:SetupColorPickerAndShow(info)
 end
 
 function DEX_preSavePosition(self)
@@ -282,6 +398,10 @@ function DEX_showMenu()
 	pre:Show();
 	DEX_CheckButtonLink("DEX_ShowSpellName");
 	DEX_CheckButtonLink("DEX_ShowWithMess");
+	DEX_CheckButtonLink("DEX_ShowLeftRight");
+	DEX_CheckButtonLink("DEX_ShowRightLeft");
+	DEX_CheckButtonLink("DEX_Enable");
+	DEX_CheckButtonLink("DEX_ShowHit");
 end
 
 --Hide the Option Menu

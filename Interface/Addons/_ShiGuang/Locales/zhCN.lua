@@ -287,6 +287,9 @@ DEX_FontList = {
 	"Fonts\\ARHei.TTF",
 	"Fonts\\ARKai_C.TTF",
 	"Fonts\\ARKai_T.TTF",
+	"Fonts\\ARIALN.TTF",
+	"Fonts\\FRIZQT__.TTF",
+	"Fonts\\Damage.TTF",
 };
 DEX_TXT_CRUSH = "碾压!";
 DEX_TXT_DISPELLED = "驱散! ";
@@ -312,23 +315,33 @@ DEXOptionsFrameCheckButtons = {
 	["DEX_ShowDamageHealth"] = { title = "显示治疗量", tooltipText = "显示对目标的实际治疗和过量治疗"},
 	["DEX_ShowDamagePet"] = { title = "显示宠物伤害", tooltipText = "显示宠物对目标的伤害，含图腾"},
 	["DEX_ShowBlockNumber"] = { title = "显示被格挡的伤害", tooltipText = "以xxx-xx方式显示对目标的伤害被格挡、抵抗等的数值"},
-	["DEX_ShowDamageWoW"] = { title = "显示系统默认伤害", tooltipText = "显示系统原有的伤害"},
+	["DEX_ShowDamageWoW"] = { title = "系统默认伤害", tooltipText = "显示系统原有的伤害"},
 	["DEX_ShowOwnHealth"] = { title = "显示自身治疗", tooltipText = "等目标为自己时也显示治疗量"},
 	["DEX_UniteSpell"] = { title = "合并瞬间多次同技能伤害", tooltipText = "如风怒武器、毁伤等瞬间对同一目标造成多次伤害的技能将被合并为一个伤害显示"},
 	--["DEX_NumberFormat"] = { title = "显示分隔符", tooltipText = "是否显示千分位伤害数字分隔符"},	
 	["DEX_NumberFormat"] = { title = "万进制显示", tooltipText = "是否以万为单位显示"},	
 	["DEX_ShowSpellIcon"] = { title = "显示技能图标", tooltipText = "是否显示技能图标，选中则替换显示技能名称"},
+	--["DEX_ShowSpellIconWithName"] = { title = "同时显示名称图标", tooltipText = "选中则同时显示技能名称和图标"},
 	["DEX_ShowInterrupt"] = { title = "是否显示中断", tooltipText = "是否显示中断提示"},	
+	["DEX_ShowBuffDebuff"] = { title = "监控增减益", tooltipText = "是否监控增减益"},	
 	["DEX_ShowOverHeal"] = { title = "是否显示过量治疗", tooltipText = "是否显示过量治疗，关闭则不提示"},		
+	["DEX_ShowDebug"] = { title = "是否显示技能调试", tooltipText = "是否显示技能调试信息，用于记录技能ID，关闭则不提示"},		
+	["DEX_ShowLeftRight"] = { title = "提示治疗及受到伤害的位置", tooltipText = "治疗在左，受伤害在右"},		
+	["DEX_ShowRightLeft"] = { title = "提示治疗及受到伤害的位置", tooltipText = "受伤害在左，治疗在右"},		
+	["DEX_ShowHit"] = { title = "是否显示连击点/真气", tooltipText = "是否显示盗贼/野德连击点\武僧真气，关闭则不提示"},		
 };
+
 DEXOptionsFrameSliders = {
-	["DEX_Font"] = {  title = "字型 ", minText="字型1", maxText="字型3", tooltipText = "设置文字字型"},
+	["DEX_Font"] = {  title = "字型 ", minText="字型1", maxText="字型6", tooltipText = "设置文字字型\n1=ARHei\n2=ARKai_C\n3=ARKai_T\n4=ARIALN\n5=FRIZQT__\n6=Damage"},
 	["DEX_FontSize"] = {  title = "文字大小 ", minText="小", maxText="大", tooltipText = "设置文字的大小"},
 	["DEX_OutLine"] = {  title = "字型描边 ", minText="无", maxText="粗", tooltipText = "设置文字的描边效果"},
 	["DEX_Speed"] = {  title = "文字移动速度 ", minText="慢", maxText="快", tooltipText = "设置文字的移动速度"},
 	["DEX_LOGLINE"] = {  title = "讯息最大条目 ", minText="5", maxText="20", tooltipText = "设置讯息最大显示条目数"},
 	["DEX_LOGTIME"] = {  title = "讯息停留时间 ", minText="5秒", maxText="1分钟", tooltipText = "设置讯息文字停留时间"},
+	["DEX_ShowHitX"] = {  title = "显示连击点/真气X坐标 ", minText="-300", maxText="300", tooltipText = "显示盗贼/野德连击点\武僧真气X坐标"},
+	["DEX_ShowHitY"] = {  title = "显示连击点/真气Y坐标 ", minText="-300", maxText="300", tooltipText = "显示盗贼/野德连击点\武僧真气Y坐标"},
 };
+
 DEXOptionsColorPickerEx = {
 	["DEX_ColorNormal"] = { title = "物理伤害颜色"},
 	["DEX_ColorSkill"] = { title = "技能伤害颜色"},
@@ -337,6 +350,7 @@ DEXOptionsColorPickerEx = {
 	["DEX_ColorPet"] = { title = "宠物伤害颜色"},
 	["DEX_ColorSpec"] = { title = "打断、驱散等颜色"},
 	["DEX_ColorMana"] = { title = "法力伤害颜色"},
+	["DEX_ColorAttack"] = { title = "受到伤害颜色"},
 };
 
 
@@ -492,7 +506,7 @@ U["FotUF"] = "焦点目标框体"
 U["BossFrame"] = "Boss/竞技场框体"
 U["UFs RaidFrame"] = "启用团队框体"
 U["RaidFrameTip"] = "|n禁用后，简易模式、小队和宠物框体也会同时禁用。"
-U["RaidFrame"] = "团队框体"
+U["RaidFrame"] = "队伍框体"
 U["Num Groups"] = "显示队伍数量"
 U["UFs AutoRes"] = "鼠标中键点击战复/复活"
 U["RaidFrame TeamIndex"] = "显示队伍编号"

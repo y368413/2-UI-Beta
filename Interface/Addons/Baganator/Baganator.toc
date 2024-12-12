@@ -2,7 +2,7 @@
 ## Title: Baganator
 ## Title-zhCN: |cff00ff00[背包]|r背包整合
 ## Title-zhTW: |cff00ff00[背包]|r背包整合
-## Version: 509
+## Version: 544
 ## Author: plusmouse
 ## OptionalDeps: Syndicator, Masque
 ## SavedVariables: BAGANATOR_CONFIG, BAGANATOR_DATA
@@ -26,7 +26,9 @@ Core\Welcome.lua
 Core\Analytics.lua
 Core\Main.lua
 
-Skins.lua
+Skins\Main.lua
+Skins\Blizzard.lua
+Skins\Dark.lua
 
 Sorting\BagUsageChecks.lua
 Sorting\ItemFields.lua

@@ -3,17 +3,23 @@
 	<Script file="AlertFrames.lua"/-->
 	<Script file="CharacterFrame.lua"/>
 	<Script file="ChatBubbles.lua"/>
-	<!--Script file="ChatFrame.lua"/-->
+	<Script file="ChatConfigFrame.lua"/>
+	<Script file="ChatFrame.lua"/>
 	<!--Script file="DressUpFrames.lua"/-->
+	<Script file="EditModeManager.lua"/>
 	<Script file="EquipmentFlyout.lua"/>
 	<Script file="Fonts.lua"/>
 	<!--Script file="GameMenuFrame.lua"/-->
 	<Script file="GarrisonFollowerTooltip.lua"/>
+	<!--Script file="GhostFrame.lua"/-->
 	<Script file="GossipFrame.lua"/>
-	<!--Script file="ItemTextFrame.lua"/>
-	<Script file="Menu.lua"/>
-	<Script file="ObjectiveTracker.lua"/-->
+	<Script file="ItemTextFrame.lua"/>
+	<Script file="LootFrame.lua"/>
+	<!--Script file="Menu.lua"/-->
+	<Script file="ObjectiveTracker.lua"/>
 	<Script file="PetBattleUI.lua"/>
+	<!--Script file="PVEFrame.lua"/-->
+	<Script file="PVPMatch.lua"/>
 	<Script file="TimeManager.lua"/>
 	<Script file="UIWidgets.lua"/>
 </Ui>

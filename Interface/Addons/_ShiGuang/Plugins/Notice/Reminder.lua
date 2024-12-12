@@ -309,7 +309,7 @@ end
 hooksecurefunc("SpellActivationOverlay_ShowOverlay", SAO_ShowTimer)
 hooksecurefunc("SpellActivationOverlay_HideOverlays", SAO_HideTimer)]]
 
--- adjust LossOfControlFrame by nj55top
+--[[ adjust LossOfControlFrame by nj55top
 hooksecurefunc("LossOfControlFrame_SetUpDisplay", function(self)
 	self.blackBg:SetAlpha(0)
 	self.RedLineTop:SetAlpha(0)
@@ -331,7 +331,7 @@ hooksecurefunc("LossOfControlFrame_SetUpDisplay", function(self)
 	self.AbilityName:ClearAllPoints()
 	self.AbilityName:SetPoint("RIGHT", self.Icon, "LEFT")
 	--self.AbilityName:SetText("")
-end)
+end)]]
 
 
 ------------------------------BattleResAlert---------------------------
@@ -342,6 +342,19 @@ BattleResAlert:SetScript("OnEvent",function(a,b,c,event, d,e,sourceName, f,g,h,d
 		DEFAULT_CHAT_FRAME:AddMessage("战复 "..sourceName..".")
 		PlaySound(SOUNDKIT.READY_CHECK, "Master")
 	end
+end)
+
+--## Author: V4M0N0S
+local AutoThanks = CreateFrame("Frame")
+AutoThanks:RegisterEvent("RESURRECT_REQUEST")
+AutoThanks:SetScript("OnEvent", function(self, event, reviver)
+    if IsInRaid() then
+        SendChatMessage("Thanks for rezzing me!", "RAID")
+    elseif IsInGroup() then
+        SendChatMessage("Thanks for rezzing me!", "PARTY")
+    else
+        SendChatMessage("Thanks for rezzing me!", "SAY")
+    end
 end)
 
 --------------------------     HideFishingBobberTooltip     -----------------------------------
@@ -383,25 +396,25 @@ Echof:SetScript("OnEvent", function(self, event, ...)
 	end
 end)
 
----------------------[[ Bag Space Checker Created by BrknSoul on 17th January 2014 --]]
+--------------------- Bag Space Checker Created by BrknSoul on 17th January 2014 --
 --Frame creation and event registration
 local frameBSC=CreateFrame("FRAME")
 --frameBSC:RegisterEvent("BAG_UPDATE_DELAYED")
 frameBSC:RegisterEvent("BAG_UPDATE")
-frameBSC:SetScript("OnEvent",function(event,arg1)  --Event Handlers
-  if event == "BAG_UPDATE" then
+frameBSC:SetScript("OnEvent",function(self)  --Event Handlers
     local BSCSpace = 0
     for i=0,NUM_BAG_SLOTS do 
       BSCSpace = BSCSpace + C_Container.GetContainerNumFreeSlots(i)
     end
     if BSCSpace <= 8 then
-      UIErrorsFrame:AddMessage(REMINDER_BAGS_SPACE..BSCSpace,1,0,0,5)
+      --SendChatMessage(REMINDER_BAGS_SPACE..BSCSpace,"SAY")
+      RaidNotice_AddMessage(RaidWarningFrame, REMINDER_BAGS_SPACE..BSCSpace, ChatTypeInfo["RAID_WARNING"])
+      elseif BSCSpace <= 8 then
       PlaySoundFile(540594, "Master")  --"Sound\\SPELLS\\SPELL_Treasure_Goblin_Coin_Toss_09.OGG"
     end
-  end
 end)
 
-------------------------------------------------------------------------------AltTabLfgNotification
+--[[----------------------------------------------------------------------------AltTabLfgNotification
 local AltTabLfgNotification, Flashevents = CreateFrame("Frame", "AltTabLfgNotification"), {};
 ------------------------------------------------------- start of events
 -- party invite
@@ -443,7 +456,7 @@ AltTabLfgNotification:SetScript("OnEvent", function(self, event, ...)
  if not R.db["Misc"]["AltTabLfgNotification"] then return end
  Flashevents[event](self, ...);
 end);
-for k, v in pairs(Flashevents) do AltTabLfgNotification:RegisterEvent(k);  end
+for k, v in pairs(Flashevents) do AltTabLfgNotification:RegisterEvent(k);  end]]
 
 --  CtrlIndicator    Author: 图图   --检测Ctrl是否卡住,Ctrl按下4.5秒之后就会提示
 local ctrlCnt, AltCnt, ShiftCnt = 0, 0, 0;
@@ -544,28 +557,15 @@ CombatNotificationAlertFrame:SetScript("OnEvent", function(self, event)
     CombatNotificationAlertFrame:Show()
 end)
 
---## Author: V4M0N0S
-local AutoThanks = CreateFrame("Frame")
-AutoThanks:RegisterEvent("RESURRECT_REQUEST")
-AutoThanks:SetScript("OnEvent", function(self, event, reviver)
-    if IsInRaid() then
-        SendChatMessage("Thanks for rezzing me!", "RAID")
-    elseif IsInGroup() then
-        SendChatMessage("Thanks for rezzing me!", "PARTY")
-    else
-        SendChatMessage("Thanks for rezzing me!", "SAY")
-    end
-end)
-
---PetHealthAlarm------------------## Version: 1.2 ## Author: Dephotian
+--[[PetHealthAlarm------------------## Version: 1.2 ## Author: Dephotian
 local PetHealthAlert = {}
 local PetHealthAlarmFrame=CreateFrame("ScrollingMessageFrame","PetHealthAlarm",UIParent)
 PetHealthAlarmFrame.Threshold=35
 PetHealthAlarmFrame.Warned=false
 -- Initialize
 function PetHealthAlert:Initialize()
-	PetHealthAlarmFrame:SetWidth(450)
-	PetHealthAlarmFrame:SetHeight(200)
+	--PetHealthAlarmFrame:SetWidth(450)
+	--PetHealthAlarmFrame:SetHeight(200)
 	PetHealthAlarmFrame:SetPoint("CENTER",UIParent,"CENTER",0,80)
 	--PetHealthAlarmFrame:SetPoint("CENTER",UIParent,"CENTER",0,360)
 	--PetHealthAlarmFrame:SetFont("Interface\\AddOns\\PetHealthAlarm\\ComicSansMS3.ttf",25,"THICKOUTLINE")
@@ -610,4 +610,25 @@ function PetHealthAlert:OnEvent(Event,Arg1,...)
 end
 PetHealthAlarmFrame:SetScript("OnEvent",PetHealthAlert.OnEvent)
 PetHealthAlarmFrame:RegisterEvent("PLAYER_LOGIN")
-PetHealthAlarmFrame:RegisterEvent("UNIT_HEALTH")
+PetHealthAlarmFrame:RegisterEvent("UNIT_HEALTH")]]
+
+local PetHealthAlert = CreateFrame("Frame")
+PetHealthAlert:RegisterEvent("UNIT_HEALTH")
+PetHealthAlert.Threshold=35
+PetHealthAlert.Warned=false
+PetHealthAlert:SetScript("OnEvent", function(Event,Arg1,...)
+	if(Event=="UNIT_HEALTH" and Arg1=="pet")then
+	  if(floor((UnitHealth("pet")/UnitHealthMax("pet"))*100)<=PetHealthAlert.Threshold and PetHealthAlert.Warned==false)then
+			PlaySoundFile("Interface\\AddOns\\_ShiGuang\\Media\\Sounds\\Beep.ogg")	
+			--UIErrorsFrame:AddMessage("|cFFFF0000".."- CRITICAL PET HEALTH -")
+			RaidNotice_AddMessage(RaidWarningFrame, "|cFFFF0000".."- CRITICAL PET HEALTH -", ChatTypeInfo["RAID_WARNING"])
+		PetHealthAlert.Warned=true
+		return
+	  end
+	  if(floor((UnitHealth("pet")/UnitHealthMax("pet"))*100)>PetHealthAlert.Threshold)then
+		PetHealthAlert.Warned=false
+		return
+	  end
+		return
+	end
+end)

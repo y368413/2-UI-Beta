@@ -3072,6 +3072,7 @@ local SetMrbarMicromenu = {
     --{ text = LOGOUT, func = function() Logout() end, notCheckable = true},
     --{ text = QUIT, func = function() ForceQuit() end, notCheckable = true},
 }
+
 --WeekyDungeons
 --## Author: Kimpa ## Version: 1.92
 local rewardsTable = {
@@ -3082,7 +3083,6 @@ local rewardsTable = {
    {3, 610},
    {2, 606}
 }
-
 if WeeklyDungeonsMapIcon == nil then WeeklyDungeonsMapIcon = {} end
 local resolution = GetCurrentScaledResolution()
 if resolution >= 2560 then res = true end
@@ -3105,12 +3105,12 @@ infoButton.tex.highlight:Hide()
 infoButton:SetScript('OnEnter', function(self)
       infoButton.tex.highlight:Show()
       GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
-      GameTooltip:AddLine('Weekly Reward Colors:')
-      GameTooltip:AddDoubleLine('\124cFFFF8000Orange:', '\124rItem Level ' .. rewardsTable[1][2])
-      GameTooltip:AddDoubleLine('\124cFFA335EEPurple:', '\124rItem Level ' .. rewardsTable[2][2])
-      GameTooltip:AddDoubleLine('\124cFF007ADDBlue:', '\124rItem Level ' .. rewardsTable[3][2])
-      GameTooltip:AddDoubleLine('\124cFF1EFF00Green:', '\124rItem Level ' .. rewardsTable[4][2])
-      GameTooltip:AddDoubleLine('\124cFFFFFFFFWhite:', '\124rItem Level ' .. rewardsTable[5][2])
+      GameTooltip:AddLine('每周奖励染色：')
+      GameTooltip:AddDoubleLine('\124cFFFF8000橙色：', '\124r装备等级 ' .. rewardsTable[1][2])
+      GameTooltip:AddDoubleLine('\124cFFA335EE紫色：', '\124r装备等级 ' .. rewardsTable[2][2])
+      GameTooltip:AddDoubleLine('\124cFF007ADD蓝色：', '\124r装备等级 ' .. rewardsTable[3][2])
+      GameTooltip:AddDoubleLine('\124cFF1EFF00绿色：', '\124r装备等级 ' .. rewardsTable[4][2])
+      GameTooltip:AddDoubleLine('\124cFFFFFFFF白色：', '\124r装备等级 ' .. rewardsTable[5][2])
       --GameTooltip:AddDoubleLine('\124cFF9D9D9DGray:', '\124rItem Level =< ' .. rewardsTable[6][2])
       GameTooltip:Show()
 end)
@@ -3174,7 +3174,7 @@ frame:SetScript("OnHide", function(self)
          self.isMoving = false;
       end
 end)
-frame:SetAllPoints(a.TitleBg)
+--frame:SetAllPoints(a.TitleBg)
 local bg = CreateFrame("frame", nil, a)
 bg:SetFrameLevel(1)
 bg:SetAllPoints(a.Bg)

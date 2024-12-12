@@ -15,6 +15,7 @@
 	<Script file="RandomHearthToy.lua"/>
 	<Script file="Killauctionlowprice.lua"/>
 	<Script file="OneClickDisenchanting.lua"/>
+	<Script file="AchievementsBackButton.lua"/>
 	<Script file="PlayerFrame_Experience.lua"/>
 	<Script file="SimpleUnfoldingCurrency.lua"/>
     <Script file="ExtMerchant.lua"/>

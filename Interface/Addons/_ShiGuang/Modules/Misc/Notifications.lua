@@ -232,7 +232,7 @@ function MISC:IsAllyPet(sourceFlags)
 end
 
 function MISC:InterruptAlert_Update(...)
-	if R.db["Misc"]["LeaderOnly"] and not (UnitIsGroupAssistant("player") or UnitIsGroupLeader("player")) then return end -- only alert for leader, needs review
+	--if R.db["Misc"]["LeaderOnly"] and not (UnitIsGroupAssistant("player") or UnitIsGroupLeader("player")) then return end -- only alert for leader, needs review
 
 	local _, eventType, _, sourceGUID, sourceName, sourceFlags, _, _, destName, _, _, spellID, _, _, extraskillID, _, _, auraType = ...
 	if not sourceGUID or sourceName == destName then return end
@@ -512,10 +512,39 @@ local IncompatibleAddOns = {
 	["BigFoot"] = true,
 	["NDui"] = true,
 	["!!!163UI!!!"] = true,
-	["Aurora"] = true,
-	["AuroraClassic"] = true, -- my own addon
-	["DomiRank"] = true, -- my own addon
-	["MDGuildBest"] = true, -- my own addon
+	["DomiRank"] = true, -- NDui Core addon
+	["MDGuildBest"] = true, -- NDui Core addon
+	["MountCollectionLog"] = true,
+	["Simulationcraft"] = true,
+	["TomeOfTeleportation"] = true,
+	["SocketHelper"] = true,
+	["DialogKey"] = true,
+	["CanOpener"] = true,
+	["LootSpecSwapper"] = true,
+	["AutoPotion"] = true,
+	["FriendGroups"] = true,
+	["ParagonRewards"] = true,
+	["RandomHearthToy"] = true,
+	["RandomPoly"] = true,
+	["DoomCooldownPulse"] = true,
+	["IncentiveProgram"] = true,
+	["Paragon"] = true,
+	["ParagonReputation"] = true,
+	["SpellActivationText"] = true,
+	["BattlePetBinds"] = true,
+	["CollapseQuestLog"] = true,
+	["QuestLevelPatch"] = true,
+	["WorldMapQuestRewardIcon"] = true,
+	["DamageEx"] = true,
+	["AdventureGuideLockouts"] = true,
+	["BossesKilled"] = true,
+	["ElitismHelper"] = true,
+	["LFR_of_the_past"] = true,
+	["PremadeSort"] = true,
+	["AlreadyKnown"] = true,
+	["DragEmAll"] = true,
+	["QuickQuest"] = true,
+	["ExtraQuestButton"] = true,
 }
 local AddonDependency = {
 	["BigFoot"] = "!!!Libs",

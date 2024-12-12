@@ -91,6 +91,15 @@ AdventureGuideLockouts.worldBosses = {
             { encounterID = 2531, questID = 74892 }, -- The Zaqali Elders
             { encounterID = 2562, questID = 76367 }  -- Aurostor, The Hibernator
         }
+    },
+    {
+        instanceID = 1278,                           -- Khaz Algar
+        encounters = {
+            { encounterID = 2625, questID = 81624 }, -- Orta, the Broken Mountain
+            { encounterID = 2635, questID = 82653 }, -- Aggregation of Horrors
+            { encounterID = 2636, questID = 81653 }, -- Shurrai, Atrocity of the Undersea
+            { encounterID = 2637, questID = 81630 }, -- Kordac, the Dormant Protector
+        }
     }
 }
 

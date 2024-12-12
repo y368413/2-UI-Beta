@@ -2296,6 +2296,7 @@ addon.FilePaths = {
 	[256616] = "BattleForAzeroth\\Dungeon\\SiegeOfBoralus\\",  --  碎牙者
 	[256627] = "BattleForAzeroth\\Dungeon\\SiegeOfBoralus\\",  --  抽脸者
 	[256640] = "BattleForAzeroth\\Dungeon\\SiegeOfBoralus\\",  --  燃烧沥青
+	[256709] = "BattleForAzeroth\\Dungeon\\SiegeOfBoralus\\",  --  钢刃之歌
 	[256957] = "BattleForAzeroth\\Dungeon\\SiegeOfBoralus\\",  --  防水甲壳
 	[257168] = "BattleForAzeroth\\Dungeon\\SiegeOfBoralus\\",  --  诅咒挥砍
 	[257169] = "BattleForAzeroth\\Dungeon\\SiegeOfBoralus\\",  --  恐惧咆哮
@@ -2306,6 +2307,7 @@ addon.FilePaths = {
 	[272421] = "BattleForAzeroth\\Dungeon\\SiegeOfBoralus\\",  --  瞄准火炮
 	[272546] = "BattleForAzeroth\\Dungeon\\SiegeOfBoralus\\",  --  香蕉狂怒
 	[272571] = "BattleForAzeroth\\Dungeon\\SiegeOfBoralus\\",  --  窒息之水
+	[272588] = "BattleForAzeroth\\Dungeon\\SiegeOfBoralus\\",  --  腐烂伤口
 	[272662] = "BattleForAzeroth\\Dungeon\\SiegeOfBoralus\\",  --  铁钩
 	[272711] = "BattleForAzeroth\\Dungeon\\SiegeOfBoralus\\",  --  碾压重击
 	[275826] = "BattleForAzeroth\\Dungeon\\SiegeOfBoralus\\",  --  强化怒吼
@@ -4844,8 +4846,10 @@ addon.FilePaths = {
 	[463052] = "TheWarWithin\\Scenarios\\AwakeningTheMachine\\",  -- 地鸣猛击
 	[463081] = "TheWarWithin\\Scenarios\\AwakeningTheMachine\\",  -- 撼地冲撞	
 		-- Delves  地下堡
+	[359016] = "TheWarWithin\\Delves\\",  -- 身手矫健		
 	[372529] = "TheWarWithin\\Delves\\",  -- 狰狞笑声
 	[398749] = "TheWarWithin\\Delves\\",  -- 碎颅者
+	[390943] = "TheWarWithin\\Delves\\",  -- 电能灾变	
 	[400335] = "TheWarWithin\\Delves\\",  -- 尖刺陷阱
 	[414944] = "TheWarWithin\\Delves\\",  -- 战斗咆哮
 	[415250] = "TheWarWithin\\Delves\\",  -- 真菌绽放
@@ -4957,7 +4961,8 @@ addon.FilePaths = {
 	[459421] = "TheWarWithin\\Delves\\",  -- 圣光术
 	[461741] = "TheWarWithin\\Delves\\",  -- 奉献
 	--[463408] = "TheWarWithin\\Delves\\",  -- 冰霜灌注
-	[470582] = "TheWarWithin\\Delves\\",  -- 沼泽箭		
+	[470582] = "TheWarWithin\\Delves\\",  -- 沼泽箭
+	[470612] = "TheWarWithin\\Delves\\",  -- 腐蚀胆汁	
 		-- Dungeon 地下城
 	--  Ara-Kara, City of Echoes   艾拉-卡拉，回响之城
 	  --  Avanoxx  阿瓦诺克斯
@@ -5103,6 +5108,7 @@ addon.FilePaths = {
 	[427157] = "TheWarWithin\\Dungeon\\DarkflameCleft\\",  -- 召唤暗嗣
 	[427176] = "TheWarWithin\\Dungeon\\DarkflameCleft\\",  -- 吸取光明
 	  --  Trash
+	[422393] = "TheWarWithin\\Dungeon\\DarkflameCleft\\",  -- 窒息黑暗
 	[422414] = "TheWarWithin\\Dungeon\\DarkflameCleft\\",  -- 暗影碎击
 	[422541] = "TheWarWithin\\Dungeon\\DarkflameCleft\\",  -- 吸取光明
 	[423501] = "TheWarWithin\\Dungeon\\DarkflameCleft\\",  -- 狂野抽打
@@ -5112,6 +5118,11 @@ addon.FilePaths = {
 	[426261] = "TheWarWithin\\Dungeon\\DarkflameCleft\\",  -- 不息烈焰
 	[426295] = "TheWarWithin\\Dungeon\\DarkflameCleft\\",  -- 烈焰系链
 	[426619] = "TheWarWithin\\Dungeon\\DarkflameCleft\\",  -- 只手擒拿
+	[426883] = "TheWarWithin\\Dungeon\\DarkflameCleft\\",  -- 梆！
+	[428019] = "TheWarWithin\\Dungeon\\DarkflameCleft\\",  -- 闪点
+	[428066] = "TheWarWithin\\Dungeon\\DarkflameCleft\\",  -- 压制咆哮
+	[428650] = "TheWarWithin\\Dungeon\\DarkflameCleft\\",  -- 燃烧反冲
+	[430171] = "TheWarWithin\\Dungeon\\DarkflameCleft\\",  -- 镇火冲击
 	[440652] = "TheWarWithin\\Dungeon\\DarkflameCleft\\",  -- 激涌之蜡
 	--  Priory of the Sacred Flame   圣焰隐修院 
 	  --  Captain Dailcry  戴尔克莱上尉
@@ -5136,6 +5147,7 @@ addon.FilePaths = {
 	[424431] = "TheWarWithin\\Dungeon\\PrioryOfTheSacredFlame\\",  -- 圣光烁辉
 	[424462] = "TheWarWithin\\Dungeon\\PrioryOfTheSacredFlame\\",  -- 余烬风暴
 	[424621] = "TheWarWithin\\Dungeon\\PrioryOfTheSacredFlame\\",  -- 蛮力重击
+	[426964] = "TheWarWithin\\Dungeon\\PrioryOfTheSacredFlame\\",  -- 致死打击
 	[427342] = "TheWarWithin\\Dungeon\\PrioryOfTheSacredFlame\\",  -- 防御
 	[427346] = "TheWarWithin\\Dungeon\\PrioryOfTheSacredFlame\\",  -- 心灵之光
 	[427356] = "TheWarWithin\\Dungeon\\PrioryOfTheSacredFlame\\",  -- 强效治疗术
@@ -5151,7 +5163,8 @@ addon.FilePaths = {
 	[444743] = "TheWarWithin\\Dungeon\\PrioryOfTheSacredFlame\\",  -- 连珠火球
 	[448485] = "TheWarWithin\\Dungeon\\PrioryOfTheSacredFlame\\",  -- 盾牌猛击
 	[448492] = "TheWarWithin\\Dungeon\\PrioryOfTheSacredFlame\\",  -- 雷霆一击
-	[448515] = "TheWarWithin\\Dungeon\\PrioryOfTheSacredFlame\\",  -- 神圣审判	
+	[448515] = "TheWarWithin\\Dungeon\\PrioryOfTheSacredFlame\\",  -- 神圣审判
+	[453458] = "TheWarWithin\\Dungeon\\PrioryOfTheSacredFlame\\",  -- 铁蒺藜
 	--  The Dawnbreaker   破晨号 
 	  --  Shadowcrown  夏多克朗
 	[425264] = "TheWarWithin\\Dungeon\\TheDawnbreaker\\",  -- 黑曜冲击
@@ -5381,6 +5394,8 @@ addon.FilePaths = {
 	[438355] = "TheWarWithin\\Raid\\Nerub'arPalace\\",  -- 灾变熵能
 	[438656] = "TheWarWithin\\Raid\\Nerub'arPalace\\",  -- 剧毒之雨
 	[438677] = "TheWarWithin\\Raid\\Nerub'arPalace\\",  -- 针刺虫群
+	[438218] = "TheWarWithin\\Raid\\Nerub'arPalace\\",  -- 穿刺打击
+	[438749] = "TheWarWithin\\Raid\\Nerub'arPalace\\",  -- 甲虫锁定
 	[438801] = "TheWarWithin\\Raid\\Nerub'arPalace\\",  -- 虫群的召唤
 	[440001] = "TheWarWithin\\Raid\\Nerub'arPalace\\",  -- 束缚之网
 	[440178] = "TheWarWithin\\Raid\\Nerub'arPalace\\",  -- 鲁莽撞击

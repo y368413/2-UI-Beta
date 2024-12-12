@@ -12,7 +12,7 @@ function a.print(...)
     print("|cFF0099FF["..PlainAddonTitle.."]|r", ...)
 end
 if SpellFlashCore and not SpellFlashCore.LS then
-    --a.print(L["Old uncompletable version of SFC detected, shuttingdown. \r\n Please update other copies of SFC before use."])
+    a.print(L["Old uncompletable version of SFC detected, shuttingdown. \r\n Please update other copies of SFC before use."])
     return
 end
 SpellFlashCore = LibStub:NewLibrary("SpellFlashCore", tonumber("20240915150302") or tonumber(date("%Y%m%d%H%M%S")))

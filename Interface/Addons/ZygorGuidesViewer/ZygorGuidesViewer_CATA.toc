@@ -1,0 +1,15 @@
+## Interface: 40400
+## Title: |cffff0000Zygor Guide Viewer (Retail)|r
+## Notes: This version of Zygor is not correct for this server.
+## Author: Zygor Guides
+## DefaultState: enabled
+## LoadOnDemand: 0
+## X-Category: 
+## X-Credits: 
+## X-eMail: zygor@zygorguides.com
+## X-Website: http://zygorguides.com/
+## X-License: GPL
+## IconTexture: Interface\Addons\ZygorGuidesViewer\Skins\addon-icon
+## Version: 1.1
+
+Flavour.lua

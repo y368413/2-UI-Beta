@@ -1,10 +1,17 @@
-== v2.01 12th November 2024
+== v2.03 - 4th December 2024
+* Added Kalimdor and Azeroth pins
+* More appropriate pin sizing
+
+== v2.02 - 26th November 2024
+* Translations added for the new map checks
+
+== v2.01 - 12th November 2024
 * Removed (69.95,57.96) - I found it online but it was bad data.
   No space at that location for the Friendly Alpaca to roam so always unlikely
 * Improved map "X" message - makes it really clear which version of Uldum you are
   in and which version of Uldum you are looking at
 
-== v2.00 5th November 2024
+== v2.00 - 5th November 2024
 * Curse and Wago Project IDs added
 * Fix for missing AddOn Compartment popup Tooltip
 * Improved translations / partial translations

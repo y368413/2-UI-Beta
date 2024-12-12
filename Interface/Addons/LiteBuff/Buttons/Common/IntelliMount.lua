@@ -152,13 +152,98 @@ local function UpdateMountsData()
     end
 end
 
---[[U1CoreAPI.DependCall("Blizzard_Collections", function()
+local core = {}
+local allTimers = {}
+LibStub("AceTimer-3.0"):Embed(core)
+function CoreScheduleTimer(repeating, delay, callback, arg)
+    if(repeating)then
+        return core:ScheduleRepeatingTimer(callback, delay, arg)
+    else
+        return core:ScheduleTimer(callback, delay, arg)
+    end
+end
+function CoreCancelTimer(handle, silent)
+    return core:CancelTimer(handle, silent);
+end
+function CoreScheduleBucket(timerName, delay, callback, arg)
+    if allTimers[timerName] then
+        CoreCancelTimer(allTimers[timerName])
+    end
+    local timer = CoreScheduleTimer(false, delay, function(...) allTimers[timerName] = nil callback(...) end, arg)
+    allTimers[timerName] = timer
+    return timer
+end
+function CoreCancelBucket(timerName)
+    if allTimers[timerName] then
+        CoreCancelTimer(allTimers[timerName])
+    end
+end
+
+--[[
+--@param addon 具有addon:EVENT的对象.
+local CoreDispatchEventFunc;
+function CoreDispatchEvent(frame, addon)
+    frame.addon = addon or frame;
+    CoreDispatchEventFunc = CoreDispatchEventFunc or function(self, event, ...)
+        local func = self.addon[event];
+        if(type(func)=="function")then
+            func(self.addon, event, ...);
+        else
+            func = self.addon.DEFAULT_EVENT;
+            --assert(type(func)=="function", "没有事件["..event.."]的处理函数.");
+            if(type(func)~="function") then
+                print("No function for ["..event.."]");
+                return
+            end
+            func(self.addon, event, ...);
+        end
+    end
+    frame:SetScript("OnEvent", CoreDispatchEventFunc);
+end
+local eventFuncs = {}
+--第三个参数是为了利用模拟事件机制，在!!!163UI!!!以外调用时需添加
+function CoreOnEvent(event, func, frame)
+    if frame then
+        if type(frame)=="table" then
+            frame:RegisterEvent(event);
+            frame[event] = func;
+        else
+            local f = CreateFrame("Frame");
+            CoreDispatchEvent(f)
+            f:RegisterEvent(event);
+            f[event] = func;
+            return f;
+        end
+    end
+    local eventTable = eventFuncs[event];
+    if(eventTable==nil)then eventTable={} eventFuncs[event]=eventTable end
+    tinsert(eventTable, func);
+end
+local IsAddOnLoaded = C_AddOns.IsAddOnLoaded or IsAddOnLoaded
+--在某个插件存在时调用，如果不存在，则等其加载
+function CoreDependCall(addon, func, ...)
+    local func = type(func) == "function" and func or _G[func];
+    local func = type(func) == "function" and func or _G[func];
+    if(IsAddOnLoaded(addon) and type(func)=="function") then
+        func(...)
+    else
+        local params = {...}
+        CoreOnEvent("ADDON_LOADED", function(event, name)
+            if(name:lower() == addon:lower())then
+                func(unpack(params));
+                return true;
+            end
+        end)
+    end
+end]]
+
+--[[CoreDependCall("Blizzard_Collections", function()
     if CollectionsJournal then
         CollectionsJournal:HookScript("OnHide", UpdateMountsData)
     end
 end)
 
-U1CoreAPI.EventCall("PLAYER_ENTERING_WORLD", function()
+CoreOnEvent("PLAYER_ENTERING_WORLD", function()
     button.status = IsMounted() and "Y" or nil
     button:UpdateStatus()
     UpdateMountsData()
@@ -169,7 +254,7 @@ local chosen = {}
 local delay_timer
 function LBIntelliMountSummon(utility, delay)
     if not gotMountsData then UpdateMountsData() end
-    if IsFlying() then U1Message("正在飞行, 请珍惜生命……") return end
+    if IsFlying() then print("正在飞行, 请珍惜生命……") return end
     --if IsMounted() then Dismount() return end
     local nofly = false
     if utility == "nofly" then
@@ -178,14 +263,14 @@ function LBIntelliMountSummon(utility, delay)
     end
 
     --游泳时自动判断是否使用飞行坐骑还是水面坐骑
-    --[[if not delay and IsSwimming() and utility=="normal" then
+    if not delay and IsSwimming() and utility=="normal" then
         if GetTime() - (delay_timer or 0) < 0.25 then
             CoreCancelBucket("IntelliMountDelay")
             utility = "surface"
         else
             utility = IsFlyableArea() and "normal" or "surface"
             delay_timer = GetTime()
-            return U1CoreAPI.ScheduleOnceBucket("IntelliMountDelay", 0.25, function() LBIntelliMountSummon(utility, "delay") end)
+            return CoreScheduleBucket("IntelliMountDelay", 0.25, function() LBIntelliMountSummon(utility, "delay") end)
         end
     elseif not delay and not IsSwimming() and utility=="normal" then
         if GetTime() - (delay_timer or 0) < 0.2 then
@@ -193,9 +278,9 @@ function LBIntelliMountSummon(utility, delay)
             utility = "surface"
         else
             delay_timer = GetTime()
-            return U1CoreAPI.ScheduleOnceBucket("IntelliMountDelay", 0.2, function() LBIntelliMountSummon("normal", "delay") end)
+            return CoreScheduleBucket("IntelliMountDelay", 0.2, function() LBIntelliMountSummon("normal", "delay") end)
         end
-    end]]
+    end
 
     delay_timer = nil
     wipe(chosen);

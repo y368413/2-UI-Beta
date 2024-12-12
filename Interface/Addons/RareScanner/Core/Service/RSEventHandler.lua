@@ -73,7 +73,7 @@ local function HandleEntityWithoutVignette(rareScannerButton, unitID)
 			end
 			
 			local x, y = RSNpcDB.GetBestInternalNpcCoordinates(npcID, mapID)
-			rareScannerButton:SimulateRareFound(npcID, unitGuid, nameplateUnitName, x, y, RSConstants.NPC_VIGNETTE)
+			rareScannerButton:SimulateRareFound(npcID, unitGuid, nameplateUnitName, x, y, RSConstants.NPC_VIGNETTE, RSConstants.TRACKING_SYSTEM.NAMEPLATE_MOUSE)
 		end
 	elseif (unitType == "Object") then
 		local containerID = entityID and tonumber(entityID) or nil
@@ -343,7 +343,7 @@ end
 local function SimulateRareFound(rareScannerButton, npcID, mapID, name)
 	if (RSNpcDB.GetInternalNpcInfo(npcID)) then
 		local x, y = RSNpcDB.GetInternalNpcCoordinates(npcID, mapID)
-		rareScannerButton:SimulateRareFound(npcID, nil, name, x, y, RSConstants.NPC_VIGNETTE)
+		rareScannerButton:SimulateRareFound(npcID, nil, name, x, y, RSConstants.NPC_VIGNETTE, RSConstants.TRACKING_SYSTEM.CHAT_EMOTE)
 	end
 end
 

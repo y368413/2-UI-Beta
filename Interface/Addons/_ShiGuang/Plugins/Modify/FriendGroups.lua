@@ -232,7 +232,7 @@ function FriendGroups_AddDropDownNew(ownerRegion, rootDescription, contextData)
 			end
 		end
 
-		local remove = rootDescription:CreateButton("[DEL]⬅")
+		local remove = rootDescription:CreateButton("[DEL]x")
 
 		for _, group in ipairs(groupsSorted) do
 			if FriendGroups_HasValue(groups, group) then

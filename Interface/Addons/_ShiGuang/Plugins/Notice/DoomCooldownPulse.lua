@@ -32,7 +32,7 @@ DCP:SetScript("OnDragStop", function(self)
     DCP_Saved.x = self:GetLeft()+self:GetWidth()/2
     DCP_Saved.y = self:GetBottom()+self:GetHeight()/2
     self:ClearAllPoints()
-    self:SetPoint("CENTER",UIParent,"BOTTOMLEFT",DCP_Saved.x,-DCP_Saved.y)
+    self:SetPoint("CENTER",UIParent,"BOTTOMLEFT",DCP_Saved.x,DCP_Saved.y)
 end)
 DCP.TextFrame = DCP:CreateFontString(nil, "ARTWORK")
 DCP.TextFrame:SetFont(STANDARD_TEXT_FONT, 16, "OUTLINE")
@@ -268,7 +268,7 @@ end
 function DCP:ADDON_LOADED()
     InitializeSavedVariables()
     RefreshLocals()
-    self:SetPoint("CENTER",UIParent,"BOTTOMLEFT",DCP_Saved.x,-DCP_Saved.y)
+    self:SetPoint("CENTER",UIParent,"BOTTOMLEFT",DCP_Saved.x,DCP_Saved.y)
     self:UnregisterEvent("ADDON_LOADED")
 end
 DCP:RegisterEvent("ADDON_LOADED")
@@ -355,13 +355,13 @@ hooksecurefunc("UseInventoryItem", function(slot)
     end
 end)
 
---[[hooksecurefunc(C_Container, "UseContainerItem", function(bag,slot)
+hooksecurefunc(C_Container, "UseContainerItem", function(bag,slot)
     local itemID = C_Container.GetContainerItemID(bag, slot)
     if (itemID and not TrackItemSpell(itemID)) then
         local texture = select(10, GetItemInfo(itemID))
         watching[itemID] = {GetTime(),"item",texture}
     end
-end)]]
+end)
 
 -------------------
 -- Options Frame --
@@ -422,7 +422,7 @@ function DCP:CreateOptionsFrame()
             DCP_OptionsFrameIgnoreTypeButtonBlacklist:SetChecked(true)
             DCP_OptionsFrameIgnoreBox:SetText("")
             DCP:ClearAllPoints()
-            DCP:SetPoint("CENTER",UIParent,"BOTTOMLEFT",DCP_Saved.x,-DCP_Saved.y)
+            DCP:SetPoint("CENTER",UIParent,"BOTTOMLEFT",DCP_Saved.x,DCP_Saved.y)
             end },
     }
 

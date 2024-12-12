@@ -4,6 +4,7 @@ L["Version"] = true
 L["Welcome to use HappyButton."] = true
 L["Can not register Bar: must be a callback function."] = true
 L["You cannot use this in combat."] = true
+L["Settings"] = true
 L["Teleport"] = true
 L["Class"] = true
 L["Profession"] = true
@@ -149,6 +150,11 @@ L["Select Trigger"] = true
 L["Select Target"] = true
 L["Select Trigger Type"] = true
 
+L["Self Trigger"] = true
+L["Count/Charge"] = true
+L["Is Learned"] = true
+L["Is Cooldown"] = true
+
 L["Aura Trigger"] = true
 L["Aura ID"] = true
 L["Aura Remaining Time"] = true
@@ -190,6 +196,7 @@ L["(Cond1 or Cond2) and Cond3"] = true
 L["count"] = "Count"
 L["isLearned"] = "Is Learned"
 L["isUsable"] = "Is Usable"
+L["isCooldown"] = "Is Cooldown"
 L["remainingTime"] = "Remaining Time"
 L["targetIsEnemy"] = "Target Is Enemy"
 L["exist"] = true
@@ -235,3 +242,8 @@ L["Bindkey"] = true
 L["Bind For Account"] = true
 L["Bind For Current Character"] = true
 L["Bind For Current Class"] = true
+
+-- 宏错误提示
+L["Macro Error"] = true
+L["Macro Error: Invalid equipment slot: %s"] = true
+L["Macro Error: Can not find this identifier: %s"] = true

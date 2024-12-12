@@ -1,10 +1,8 @@
 ## Interface: 110005
 ## Title: HappyButton
-## Notes: |cffbc8f8fHappyButton |r
-## Notes-zhCN: |cffbc8f8f工具包|r
-## Notes-zhTW: |cffbc8f8f工具包|r
+## Notes: Manage items, equip items, skills, mounts, toys, and pets.
 ## Author: CN Cryy
-## Version: 1.0.0
+## Version: Beta-0.1.5
 ## IconTexture: 1418621
 ## IconTexture: Interface\AddOns\HappyButton\Media\Logo64.blp
 ## SavedVariables: HappyButtonDB
@@ -30,6 +28,7 @@ Src\Trigger\EffectConfig.lua
 Src\Trigger\Effect.lua
 Src\Trigger\ConditionConfig.lua
 Src\Trigger\Condition.lua
+Src\Element\ListenEvent.lua
 Src\Element\LoadCondition.lua
 Src\Element\TextConfig.lua
 Src\Element\Text.lua
@@ -37,7 +36,6 @@ Src\Element\Element.lua
 Src\Element\ItemGroup.lua
 Src\Element\Script.lua
 Src\Element\Macro.lua
-Src\Element\Bar.lua
 Src\Frame\ElementCallback.lua
 Src\Frame\Btn.lua
 Src\Frame\ElementFrame.lua

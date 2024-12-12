@@ -18,7 +18,7 @@ local checkButton = CreateFrame("CheckButton", "PremadeSortSkipCheckButton", LFG
 
 checkButton:SetPoint("RIGHT", LFGListFrame.SearchPanel.SignUpButton, "RIGHT")
 checkButton:SetHitRectInsets(0,-1,0,0)
-checkButton.tooltip = "Skip role selection unless previously not selected.\n\nDouble-click on a group will always skip role unless previously not selected.\n\nSettings:\n/ps, /premadesort";
+checkButton.tooltip = "跳过职责选择，除非当前未选择职责。\n\n双击跳过全队的职责选择，除非当前未选择职责。\n\n设置：\n/ps, /premadesort";
 checkButton:SetScript("OnClick", nop)
 
 if ElvUI then

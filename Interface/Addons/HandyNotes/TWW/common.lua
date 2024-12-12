@@ -33,6 +33,11 @@ TheWarWithin.groups.PROFESSION_TREASURES = Group('profession_treasures', 4620676
     type = TheWarWithin.group_types.EXPANSION
 })
 
+TheWarWithin.groups.RATTS_REVENGE = Group('ratts_revenge', 5370377, {
+    defaults = TheWarWithin.GROUP_HIDDEN,
+    type = TheWarWithin.group_types.EXPANSION
+})
+
 TheWarWithin.groups.SKYRIDING_GLYPH = Group('skyriding_glyph', 4728198, {
     defaults = TheWarWithin.GROUP_HIDDEN,
     type = TheWarWithin.group_types.EXPANSION

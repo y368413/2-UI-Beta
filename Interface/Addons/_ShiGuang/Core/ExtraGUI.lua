@@ -1232,7 +1232,7 @@ function G:SetupRaidFrame(parent)
 	createOptionDropdown(scroll.child, U["GrowthDirection"], -30, options, U["RaidDirectionTip"], "UFs", "RaidDirec", 1, updateRaidDirection)
 	createOptionSlider(scroll.child, U["Width"], 60, 200, defaultValue[1], -100, "RaidWidth", resizeRaidFrame)
 	createOptionSlider(scroll.child, U["Height"], 25, 60, defaultValue[2], -180, "RaidHeight", resizeRaidFrame)
-	createOptionSlider(scroll.child, U["Power Height"], 2, 30, defaultValue[3], -260, "RaidPowerHeight", resizeRaidFrame)
+	createOptionSlider(scroll.child, U["Power Height"], 0, 30, defaultValue[3], -260, "RaidPowerHeight", resizeRaidFrame)
 	createOptionSlider(scroll.child, U["Num Groups"], 2, 8, defaultValue[4], -340, "NumGroups", updateNumGroups)
 	createOptionSlider(scroll.child, U["RaidRows"], 1, 8, defaultValue[5], -420, "RaidRows", updateNumGroups)
 end
@@ -1312,7 +1312,7 @@ function G:SetupPartyFrame(parent)
 	createOptionDropdown(scroll.child, U["GrowthDirection"], -100, options, nil, "UFs", "PartyDirec", 1, resizePartyFrame)
 	createOptionSlider(scroll.child, U["Width"], 80, 200, defaultValue[1], -180, "PartyWidth", resizePartyFrame)
 	createOptionSlider(scroll.child, U["Height"], 25, 60, defaultValue[2], -260, "PartyHeight", resizePartyFrame)
-	createOptionSlider(scroll.child, U["Power Height"], 2, 30, defaultValue[3], -340, "PartyPowerHeight", resizePartyFrame)
+	createOptionSlider(scroll.child, U["Power Height"], 0, 30, defaultValue[3], -340, "PartyPowerHeight", resizePartyFrame)
 end
 
 function G:SetupPartyPetFrame(parent)
@@ -1351,7 +1351,7 @@ function G:SetupPartyPetFrame(parent)
 	createOptionDropdown(scroll.child, U["Visibility"], -90, {U["ShowInParty"], U["ShowInRaid"], U["ShowInGroup"]}, nil, "UFs", "PartyPetVsby", 1, UF.UpdateAllHeaders)
 	createOptionSlider(scroll.child, U["Width"], 60, 200, 100, -150, "PartyPetWidth", resizePartyPetFrame)
 	createOptionSlider(scroll.child, U["Height"], 20, 60, 22, -220, "PartyPetHeight", resizePartyPetFrame)
-	createOptionSlider(scroll.child, U["Power Height"], 2, 30, 2, -290, "PartyPetPowerHeight", resizePartyPetFrame)
+	createOptionSlider(scroll.child, U["Power Height"], 0, 30, 2, -290, "PartyPetPowerHeight", resizePartyPetFrame)
 	createOptionSlider(scroll.child, U["UnitsPerColumn"], 5, 40, 5, -360, "PartyPetPerCol", updatePartyPetHeader)
 	createOptionSlider(scroll.child, U["MaxColumns"], 1, 5, 1, -430, "PartyPetMaxCol", updatePartyPetHeader)
 end
@@ -1929,12 +1929,12 @@ function G:SetupUFAuras(parent)
 end
 
 function G:SetupActionbarStyle(parent)
-	local maxButtons = 6
+	local maxButtons = 7
 	local size, padding = 80, 2
 
 	local frame = CreateFrame("Frame", "UIActionbarStyleFrame", parent.child)
 	frame:SetSize((size+padding)*maxButtons + padding, size + 2*padding)
-	frame:SetPoint("TOP", 160, -10)
+	frame:SetPoint("TOP", 180, -10)
 	--M.CreateBDFrame(frame, .25)
 
 	local Bar = M:GetModule("Actionbar")
@@ -1943,19 +1943,21 @@ function G:SetupActionbarStyle(parent)
 		[1] = "NAB:35:12:12:12:35:12:12:12:35:12:12:6:35:12:12:6:35:12:12:1:35:12:12:1:35:12:4:1:35:12:12:4:26:12:10:30:12:10:0M0:0M37:333M1:-333M1:-1BR318:-38BR318:210T-416:-210T-435",
 		[2] = "NAB:35:12:12:12:35:12:12:12:35:12:12:12:35:12:12:1:35:12:12:1:35:12:12:1:35:12:4:1:35:12:12:4:26:12:10:30:12:10:0M0:0M37:0M75:-36TR-317:-1BR318:-38BR318:210T-416:-210T-435",
 		[3] = "NAB:35:12:12:12:35:12:12:12:35:12:12:4:35:12:12:4:35:12:12:12:35:12:12:1:35:12:12:1:35:12:12:8:26:12:10:30:12:10:0M0:0M37:300M0:-300M0:0M74:-1BR318:-38BR318:0M293",
-		[4] = "NAB:35:12:8:8:40:12:12:12:40:12:12:12:40:12:12:6:40:12:12:6:35:12:12:1:35:12:12:12:35:12:12:12:26:12:10:30:12:10:0M282:0M0:0M42:383M0:-383M0:0BR262:0T-482:0T-442",
+		[4] = "NAB:36:12:12:12:36:12:12:12:36:12:12:12:55:12:12:12:55:12:12:12:35:12:12:1:35:12:4:1:35:12:12:4:26:12:10:30:12:10:0M0:663BL0:-663BR0:-344M39:344M39:0BR280:210T-416:-210T-435",
+		[5] = "NAB:35:12:8:8:40:12:12:12:40:12:12:12:40:12:12:6:40:12:12:6:35:12:12:1:35:12:12:12:35:12:12:12:26:12:10:30:12:10:0M282:0M0:0M42:383M0:-383M0:0BR262:0T-482:0T-442",
 	}
 	local styleName = {
 		[1] = _G.DEFAULT,
 		[2] = "3X12",
 		[3] = "12+24+12",
-		[4] = "2UI Style",
-		[5] = U["Export"],
-		[6] = U["Import"],
+		[4] = "Wide",
+		[5] = "2UI Style",
+		[6] = U["Export"],
+		[7] = U["Import"],
 	}
 	local tooltips = {
-		[5] = U["ExportActionbarStyle"],
-		[6] = U["ImportActionbarStyle"],
+		[6] = U["ExportActionbarStyle"],
+		[7] = U["ImportActionbarStyle"],
 	}
 
 	local function applyBarStyle(self)
@@ -2033,9 +2035,9 @@ function G:SetupActionbarStyle(parent)
 	end
 
 	local function GetButtonText(i)
-		if i == 5 then
+		if i == 6 then
 			return "导出布局"--"|T"..I.ArrowUp..":18|t"
-		elseif i == 6 then
+		elseif i == 7 then
 			return "导入布局"--"|T"..I.ArrowUp..":18:18:0:0:1:1:0:1:1:0|t"
 		else
 			return styleName[i]
@@ -2048,9 +2050,9 @@ function G:SetupActionbarStyle(parent)
 		bu.index = i
 		bu.title = styleName[i]
 		bu.tip = tooltips[i] or U["ApplyBarStyle"]
-		if i == 5 then
+		if i == 6 then
 			bu:SetScript("OnClick", exportBarStyle)
-		elseif i == 6 then
+		elseif i == 7 then
 			bu:SetScript("OnClick", importBarStyle)
 		else
 			bu:SetScript("OnClick", applyBarStyle)

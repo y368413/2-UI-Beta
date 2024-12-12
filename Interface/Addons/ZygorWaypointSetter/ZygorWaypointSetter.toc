@@ -1,0 +1,7 @@
+## Interface: 110005
+## Title: Zygor Waypoint Setter
+## Notes: Allows setting waypoints using Zygor via chat commands.
+## Author: Baz4k
+## Version: 1.0
+
+ZygorWaypointSetter.lua

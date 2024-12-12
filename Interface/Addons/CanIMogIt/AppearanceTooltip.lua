@@ -23,7 +23,8 @@ tooltip:RegisterEvent("PLAYER_LOGIN")
 tooltip:RegisterEvent("PLAYER_REGEN_DISABLED")
 tooltip:RegisterEvent("PLAYER_REGEN_ENABLED")
 
-function tooltip:ADDON_LOADED()
+function tooltip:ADDON_LOADED(addon)
+    if addon ~= "CanIMogIt" then return end
 
     _G["AppearanceTooltipDB"] = setDefaults(_G["AppearanceTooltipDB"] or {}, {
         modifier = "None", -- or "Alt", "Ctrl", "Shift"
@@ -2118,21 +2119,6 @@ f:RegisterAddonHook("Blizzard_Collections", function()
 end)
 
 
--- SilverDragon
-f:RegisterAddonHook("SilverDragon", function()
-    if not (SilverDragon and SilverDragon.RegisterCallback) then
-        -- Geniunely unsure what'd cause this, but see #11 on github
-        return
-    end
-    SilverDragon.RegisterCallback("AppearanceTooltip", "LootWindowOpened", function(_, window)
-        AppearanceTooltip.RegisterTooltip(_G["SilverDragonLootTooltip"])
-        if window and window.buttons and #window.buttons then
-            for i, button in ipairs(window.buttons) do
-                UpdateOverlay(button, button:GetItem())
-            end
-        end
-    end)
-end)
 
 -- Baganator
 f:RegisterAddonHook("Baganator", function()

@@ -3,7 +3,7 @@
 
                                      Adorable Raptor Hatchlings
 
-                                     v2.02 - 12th November 2024
+                                     v2.05 - 11th December 2024
                                 Copyright (C) Taraezor / Chris Birch
                                          All Rights Reserved
 								
@@ -37,7 +37,7 @@ local next = _G.next
 
 local HandyNotes = _G.HandyNotes
 
-local _, _, _, version = GetBuildInfo()
+_, _, _, ns.version = GetBuildInfo()
 
 -- Map IDs. The nests were added in WotLK, even though the locations are original zones
 -- The Barrens (W) coordinates are different to Northern Barrens (R)
@@ -45,13 +45,13 @@ local _, _, _, version = GetBuildInfo()
 -- With Classic Cata Pre-Launch 4.4.0 the maps IDs are the 14xx series but locations match Retail
 -- 		thus elsewhere in the code I test for < 50000 rather than 40000
 --		The Azeroth map did not populate correctly when testing 4.4.0
-ns.kalimdor = (version < 50000) and 1414 or 12
-ns.easternKingdom = (version < 50000) and 1415 or 13
-ns.dalaran = (version < 50000) and 125 or 125
-ns.dustwallowMarsh = (version < 50000) and 1445 or 70
-ns.barrens = (version < 50000) and 1413 or 10
-ns.unGoroCrater = (version < 50000) and 1449 or 78
-ns.wetlands = (version < 50000) and 1437 or 56
+ns.kalimdor = (ns.version < 50000) and 1414 or 12
+ns.easternKingdom = (ns.version < 50000) and 1415 or 13
+ns.dalaran = (ns.version < 50000) and 125 or 125
+ns.dustwallowMarsh = (ns.version < 50000) and 1445 or 70
+ns.barrens = (ns.version < 50000) and 1413 or 10
+ns.unGoroCrater = (ns.version < 50000) and 1449 or 78
+ns.wetlands = (ns.version < 50000) and 1437 or 56
 continents[ns.kalimdor] = true
 continents[ns.easternKingdom] = true
 continents[ 947 ] = true -- Azeroth
@@ -100,6 +100,7 @@ if ns.locale == "deDE" then
 	L["Raptor egg"] = "Raptor-Ei"
 	L["Stars"] = "Sternen"
 	L["Screw"] = "Schraube"
+	L["Notes"] = "Notizen"
 	L["Left"] = "Links"
 	L["Right"] = "Rechts"
 	L["Try later"] = "Derzeit nicht möglich. Versuche es späte"
@@ -138,6 +139,7 @@ elseif ns.locale == "esES" or ns.locale == "esMX" then
 	L["Raptor egg"] = "Huevo de raptor"	
 	L["Stars"] = "Estrellas"
 	L["Screw"] = "Tornillo"
+	L["Notes"] = "Notas"
 	L["Left"] = "Izquierda"
 	L["Right"] = "Derecha"
 	L["Try later"] = "No es posible en este momento. Intenta más tarde"
@@ -174,6 +176,7 @@ elseif ns.locale == "frFR" then
 	L["Raptor egg"] = "Œuf de Rapace"
 	L["Stars"] = "Étoiles"
 	L["Screw"] = "Vis"
+	L["Notes"] = "Remarques"
 	L["Left"] = "Gauche"
 	L["Right"] = "Droite"
 	L["Try later"] = "Pas possible pour le moment. Essayer plus tard"
@@ -209,6 +212,7 @@ elseif ns.locale == "itIT" then
 	L["Raptor egg"] = "Raptor Uovo"
 	L["Stars"] = "Stelle"
 	L["Screw"] = "Vite"
+	L["Notes"] = "Note"
 	L["Left"] = "Sinistra"
 	L["Right"] = "Destra"
 	L["Try later"] = "Non è possibile in questo momento. Prova più tardi"
@@ -244,6 +248,7 @@ elseif ns.locale == "koKR" then
 	L["Raptor egg"] = "랩터의 알"
 	L["Stars"] = "별"
 	L["Screw"] = "나사"
+	L["Notes"] = "메모"
 	L["Left"] = "왼쪽"
 	L["Right"] = "오른쪽"
 	L["Try later"] = "지금은 불가능합니다. 나중에 시도하세요"
@@ -280,6 +285,7 @@ elseif ns.locale == "ptBR" or ns.locale == "ptPT" then
 	L["Raptor egg"] = "Ovo de raptor"
 	L["Stars"] = "Estrelas"
 	L["Screw"] = "Parafuso"
+	L["Notes"] = "Notas"
 	L["Left"] = "Esquerda"
 	L["Right"] = "Direita"
 	L["Try later"] = "Não é possível neste momento. Tente depois"
@@ -316,6 +322,7 @@ elseif ns.locale == "ruRU" then
 	L["Raptor egg"] = "Яйцо ящера"
 	L["Stars"] = "Звезды"
 	L["Screw"] = "Винт"
+	L["Notes"] = "Примечания"
 	L["Left"] = "Налево"
 	L["Right"] = "Направо"
 	L["Try later"] = "В настоящее время это невозможно. Попробуй позже"
@@ -351,6 +358,7 @@ elseif ns.locale == "zhCN" then
 	L["Raptor egg"] = "迅猛龙蛋"
 	L["Stars"] = "星星"
 	L["Screw"] = "拧"
+	L["Notes"] = "笔记"
 	L["Left"] = "左"
 	L["Right"] = "右"
 	L["Try later"] = "目前不可能。稍后再试"
@@ -386,6 +394,7 @@ elseif ns.locale == "zhTW" then
 	L["Raptor egg"] = "迅猛龍蛋"
 	L["Stars"] = "星星"
 	L["Screw"] = "擰"
+	L["Notes"] = "筆記"
 	L["Left"] = "左"
 	L["Right"] = "右"
 	L["Try later"] = "目前不可能。稍後再試"
@@ -707,7 +716,7 @@ do
 				-- Wetlands special: Show the cave entrance if outside the cave, otherwise show the actual location once inside the cave
 				if v.title == L[ "Razormaw Matriarch's Nest" ] then
 					if ns.insideCave == true then
-						if (version < 40000) then
+						if (ns.version < 40000) then
 							if (v.version == "W") then
 								return coord, nil, ns.textures[ns.db.iconChoice], ns.db.iconScale * ns.scaling[ns.db.iconChoice], ns.db.iconAlpha
 							end
@@ -718,7 +727,7 @@ do
 						return coord, nil, ns.textures[ns.db.iconChoice], ns.db.iconScale * ns.scaling[ns.db.iconChoice], ns.db.iconAlpha
 					end
 				elseif ( (v.version == "R") or (v.version == "W") ) then
-					if (version < 40000) then
+					if (ns.version < 40000) then
 						if (v.version == "W") then
 							return coord, nil, ns.textures[ns.db.iconChoice], ns.db.iconScale * ns.scaling[ns.db.iconChoice], ns.db.iconAlpha
 						end
@@ -803,8 +812,21 @@ ns.options = {
 							.."\n8 = " ..L["Phasing"] .."\n9 = " ..L["Raptor egg"] .."\n10 = " ..L["Stars"],
 					min = 1, max = 10, step = 1,
 					arg = "iconChoice",
-					order = 6,
+					order = 10,
 				},
+			},
+		},
+		notes = {
+			type = "group",
+			name = L["Notes"],
+			inline = true,
+			args = {
+				noteMenu = { type = "description", name = "A shortcut to open this panel is via the Minimap AddOn"
+					.." menu, which is immediately below the Calendar icon. Just click your mouse\n\n", order = 20, },
+				separator1 = { type = "header", name = "", order = 21, },
+				noteChat = { type = "description", name = "Chat command shortcuts are also supported.\n\n"
+					..NORMAL_FONT_COLOR_CODE .."/arh" ..HIGHLIGHT_FONT_COLOR_CODE .." - Show this panel\n",
+					order = 22, },
 			},
 		},
 	},
@@ -814,6 +836,18 @@ function HandyNotes_AdorableRaptorHatchlings_OnAddonCompartmentClick( addonName,
 	Settings.OpenToCategory( "HandyNotes" )
 	LibStub( "AceConfigDialog-3.0" ):SelectGroup( "HandyNotes", "plugins", "AdorableRaptorHatchlings" )
  end
+
+function HandyNotes_AdorableRaptorHatchlings_OnAddonCompartmentEnter( ... )
+	GameTooltip:SetOwner( MinimapCluster or AddonCompartmentFrame, "ANCHOR_LEFT" )	
+	GameTooltip:AddLine( ns.colour.prefix ..L["Adorable Raptor Hatchlings"] )
+	GameTooltip:AddLine( ns.colour.highlight .." " )
+	GameTooltip:AddDoubleLine( ns.colour.highlight ..L["Left"] .."/" ..L["Right"], ns.colour.plaintext ..L["Options"] )
+	GameTooltip:Show()
+end
+
+function HandyNotes_AdorableRaptorHatchlings_OnAddonCompartmentLeave( ... )
+	GameTooltip:Hide()
+end
 
 function pluginHandler:OnEnable()
 	local HereBeDragons = LibStub("HereBeDragons-2.0", true)
@@ -849,20 +883,13 @@ end
 
 LibStub("AceAddon-3.0"):NewAddon(pluginHandler, "HandyNotes_AdorableRaptorHatchlingsDB", "AceEvent-3.0")
 
---=======================================================================================================
---
---		SLASH CHAT COMMANDS  -- All game versions
---		===================
---
---=======================================================================================================
-
 SLASH_AdorableRaptorHatchlings1 = "/arh"
 
 local function Slash( options )
 
 	Settings.OpenToCategory( "HandyNotes" )
 	LibStub( "AceConfigDialog-3.0" ):SelectGroup( "HandyNotes", "plugins", "AdorableRaptorHatchlings" )
-	if ( version >= 100000 ) then
+	if ( ns.version >= 100000 ) then
 		print( ns.colour.prefix .."ARH: " ..ns.colour.highlight .."Try the Minimap AddOn Menu (below the Calendar)" )
 	end
 end

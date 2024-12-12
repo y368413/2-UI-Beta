@@ -1379,4 +1379,10 @@ private.CONTAINER_INFO = {
 	[244628] = { zoneID = 650, artID = { 674 }, x = 5380, y = 5120, overlay = { "5380-5120" }, reset = false, questID = { 39872 } }; --Taurson's Prize
 	[244473] = { zoneID = 650, artID = { 674 }, x = 4924, y = 4989, overlay = { "4924-4989" }, reset = false, questID = { 39784 } }; --Thunder Totem Stolen Goods
 	[245479] = { zoneID = 650, artID = { 674 }, x = 4356, y = 4720, overlay = { "4356-4720" }, reset = false, questID = { 40413 } }; --Battered Chest
+	[441108] = { zoneID = {
+				[2213] = { x = 4474, y = 8516, artID = { 1816 }, overlay = { "4470-8530" } };
+				[2214] = { x = 6670, y = 4870, artID = { 1817 }, overlay = { "6670-4870" } };
+				[2215] = { x = 3840, y = 3510, artID = { 1818 }, overlay = { "3840-3510" } };
+				[2248] = { x = 6240, y = 2030, artID = { 1833 }, overlay = { "6240-2030" } };
+			  } }; --Unbound Spoils
 }

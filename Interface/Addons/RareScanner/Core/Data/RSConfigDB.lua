@@ -1530,6 +1530,14 @@ function RSConfigDB.SetShowingLootCanimogitTooltip(value)
 	private.db.loot.tooltipsCanImogit = value
 end
 
+function RSConfigDB.IsShowingLootTSMTooltip()
+	return private.db.loot.tooltipsTSM
+end
+
+function RSConfigDB.SetShowingLootTSMTooltip(value)
+	private.db.loot.tooltipsTSM = value
+end
+
 function RSConfigDB.IsShowingCovenantRequirement()
 	return private.db.loot.covenantRequirement
 end

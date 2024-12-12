@@ -103,10 +103,10 @@ end)
 
 --ObjectiveTrackerFrame.Header.Background:SetTexture(nil)
 ----------------------------------------------------------------------------------------
---	Auto collapse Objective Tracker
+--[[	Auto collapse Objective Tracker
 ----------------------------------------------------------------------------------------
 -- NOTE: SetCollapsed() cause UseQuestLogSpecialItem() taint
-local QuestAutoCollapse = "SCENARIO"
+local QuestAutoCollapse = "RAID"
 local headers = {
 	ScenarioObjectiveTracker,
 	BonusObjectiveTracker,
@@ -121,7 +121,9 @@ local headers = {
 }
 if QuestAutoCollapse ~= "NONE" then
 	local collapse = CreateFrame("Frame")
-	collapse:RegisterEvent("PLAYER_ENTERING_WORLD")
+	--collapse:RegisterEvent("PLAYER_ENTERING_WORLD")
+	collapse:RegisterEvent("PLAYER_REGEN_ENABLED")
+	collapse:RegisterEvent("PLAYER_REGEN_DISABLED")
 	collapse:SetScript("OnEvent", function()
 		if QuestAutoCollapse == "RAID" then
 			if IsInInstance() then
@@ -130,6 +132,7 @@ if QuestAutoCollapse ~= "NONE" then
 					if QuestObjectiveTracker and QuestObjectiveTracker.ContentsFrame then
     if QuestObjectiveTracker.ContentsFrame:IsShown() and QuestObjectiveTracker.Header and QuestObjectiveTracker.Header.MinimizeButton then
         QuestObjectiveTracker.Header.MinimizeButton:Click()
+        --print("任务列表")
     end
 end
 				end)
@@ -154,7 +157,7 @@ end
 						--end
 						if QuestObjectiveTracker and QuestObjectiveTracker.ContentsFrame then
     if QuestObjectiveTracker.ContentsFrame:IsShown() and QuestObjectiveTracker.Header and QuestObjectiveTracker.Header.MinimizeButton then
-        QuestObjectiveTracker.Header.MinimizeButton:Click()
+        QuestObjectiveTracker.Header.MinimizeButton:Click() --print("任务列表")
     end
 end
 					end)
@@ -164,7 +167,7 @@ end
 					--end)
 					if QuestObjectiveTracker and QuestObjectiveTracker.ContentsFrame then
     if QuestObjectiveTracker.ContentsFrame:IsShown() and QuestObjectiveTracker.Header and QuestObjectiveTracker.Header.MinimizeButton then
-        QuestObjectiveTracker.Header.MinimizeButton:Click()
+        QuestObjectiveTracker.Header.MinimizeButton:Click() --print("任务列表")
     end
 end
 				end
@@ -197,24 +200,23 @@ end
 				--ObjectiveTrackerFrame:SetCollapsed(true)
 				if QuestObjectiveTracker and QuestObjectiveTracker.ContentsFrame then
     if QuestObjectiveTracker.ContentsFrame:IsShown() and QuestObjectiveTracker.Header and QuestObjectiveTracker.Header.MinimizeButton then
-        QuestObjectiveTracker.Header.MinimizeButton:Click()
+        QuestObjectiveTracker.Header.MinimizeButton:Click() print("任务列表")
     end
 end
 			end)
 		end
 	end)
-end
-
+end]]
+	
 ----------------------------------------------------------------------------------------
 --	Ctrl+Click to abandon a quest or Alt+Click to share a quest(by Suicidal Katt)
 ----------------------------------------------------------------------------------------
-local function onClick(questID)
+hooksecurefunc("QuestMapLogTitleButton_OnClick", function(self) 
 	if IsControlKeyDown() then
 		Menu.GetManager():HandleESC()
-		QuestMapQuestOptions_AbandonQuest(questID)
-	elseif IsAltKeyDown() and C_QuestLog.IsPushableQuest(questID) then
+		QuestMapQuestOptions_AbandonQuest(self.questID)
+	elseif IsAltKeyDown() and C_QuestLog.IsPushableQuest(self.questID) then
 		Menu.GetManager():HandleESC()
-		QuestMapQuestOptions_ShareQuest(questID)
+		QuestMapQuestOptions_ShareQuest(self.questID)
 	end
-end
-hooksecurefunc("QuestMapLogTitleButton_OnClick", function(self) onClick(self.questID) end)
+end)

@@ -1,4 +1,4 @@
---## Version: 3.7.6 ## Author: ollidiemaus
+--## Version: 3.8.4 ## Author: ollidiemaus
 local ham = {}
 local isRetail = (WOW_PROJECT_ID == WOW_PROJECT_MAINLINE)
 
@@ -7,10 +7,13 @@ ham.crimsonVialSpell = 185311
 ham.renewal = 108238
 ham.exhilaration = 109304
 ham.fortitudeOfTheBear = 388035
+ham.lastStand = 12975
 ham.bitterImmunity = 383762
 ham.desperatePrayer = 19236
 ham.expelHarm = 322101
 ham.healingElixir = 122281
+ham.darkPact = 108416
+ham.vampiricBlood = 55233
 
 --Racials WTF These are all seperate Spells
 ham.giftOfTheNaaruDK = 59545
@@ -29,10 +32,13 @@ table.insert(ham.supportedSpells, ham.crimsonVialSpell)
 table.insert(ham.supportedSpells, ham.renewal)
 table.insert(ham.supportedSpells, ham.exhilaration)
 table.insert(ham.supportedSpells, ham.fortitudeOfTheBear)
+table.insert(ham.supportedSpells, ham.lastStand)
 table.insert(ham.supportedSpells, ham.bitterImmunity)
 table.insert(ham.supportedSpells, ham.desperatePrayer)
 table.insert(ham.supportedSpells, ham.expelHarm)
 table.insert(ham.supportedSpells, ham.healingElixir)
+table.insert(ham.supportedSpells, ham.darkPact)
+table.insert(ham.supportedSpells, ham.vampiricBlood)
 table.insert(ham.supportedSpells, ham.giftOfTheNaaruDK)
 table.insert(ham.supportedSpells, ham.giftOfTheNaaruHunter)
 table.insert(ham.supportedSpells, ham.giftOfTheNaaruMage)
@@ -109,8 +115,10 @@ ham.defaults = {
     witheringDreamsPotion = false,
     cavedwellerDelight = true,
     heartseekingInjector = false,
-    activatedSpells = { ham.crimsonVialSpell, ham.renewal, ham.exhilaration, ham.fortitudeOfTheBear, ham.bitterImmunity,
-        ham.desperatePrayer, ham.healingElixir, ham.giftOfTheNaaruDK, ham.giftOfTheNaaruHunter, ham.giftOfTheNaaruMage,
+    activatedSpells = { ham.crimsonVialSpell, ham.renewal, ham.exhilaration, ham.fortitudeOfTheBear, ham.lastStand, ham
+        .bitterImmunity,
+        ham.desperatePrayer, ham.healingElixir, ham.darkPact, ham.giftOfTheNaaruDK, ham.giftOfTheNaaruHunter, ham
+        .giftOfTheNaaruMage,
         ham.giftOfTheNaaruMageWarlock, ham.giftOfTheNaaruMonk, ham.giftOfTheNaaruPaladin, ham.giftOfTheNaaruPriest, ham
         .giftOfTheNaaruRogue, ham.giftOfTheNaaruShaman, ham.giftOfTheNaaruWarrior }
 }
@@ -214,9 +222,12 @@ ham.minor2 = ham.Item.new(19005, "Minor Healthstone")
 ham.lesser0 = ham.Item.new(5511, "Lesser Healthstone")
 ham.lesser1 = ham.Item.new(19006, "Lesser Healthstone")
 ham.lesser2 = ham.Item.new(19007, "Lesser Healthstone")
+ham.crystalFlakeThroatLozenge = ham.Item.new(23683, "Crystal Flake Throat Lozenge")
 ham.healtsthone0 = ham.Item.new(5509, "Healthstone")
+ham.lilyRoot = ham.Item.new(14894, "Lily Root")
 ham.healtsthone1 = ham.Item.new(19008, "Healthstone")
 ham.healtsthone2 = ham.Item.new(19009, "Healthstone")
+ham.wipperRootTuber = ham.Item.new(11951, "Whipper Root Tuber")
 ham.greater0 = ham.Item.new(5510, "Greater Healthstone")
 ham.greater1 = ham.Item.new(19010, "Greater Healthstone")
 ham.greater2 = ham.Item.new(19011, "Greater Healthstone")
@@ -260,12 +271,12 @@ end
 function ham.getPots()
   if isRetail then
     local pots = {
-      ham.algariHealingPotionR3,
-      ham.algariHealingPotionR2,
-      ham.algariHealingPotionR1,
       ham.fleetingAlgariHealingPotionR3,
+      ham.algariHealingPotionR3,
       ham.fleetingAlgariHealingPotionR2,
+      ham.algariHealingPotionR2,
       ham.fleetingAlgariHealingPotionR1,
+      ham.algariHealingPotionR1,
       ham.thirdWind,
       ham.witheringDreamsR3,
       ham.witheringDreamsR2,
@@ -388,9 +399,12 @@ function ham.getHealthstonesClassic()
       ham.greater2,
       ham.greater1,
       ham.greater0,
+      ham.wipperRootTuber,
       ham.healtsthone2,
       ham.healtsthone1,
+      ham.lilyRoot,
       ham.healtsthone0,
+      ham.crystalFlakeThroatLozenge,
       ham.lesser2,
       ham.lesser1,
       ham.lesser0,
@@ -996,7 +1010,7 @@ function ham.settingsFrame:createPrioFrame(id, iconTexture, positionx, isSpell, 
 		if isSpell == true then
 			GameTooltip:SetSpellByID(id)
 		elseif isTinker then
-            GameTooltip:SetInventoryItem("player", id)
+			GameTooltip:SetInventoryItem("player", id)
 		else
 			GameTooltip:SetItemByID(id)
 		end
@@ -1078,9 +1092,9 @@ function ham.settingsFrame:updatePrio()
 			if type(id) == "string" and id:match("^slot:") then
 				local slot = assert(tonumber(id:sub(6)), "Invalid slot number")
 				entry = GetInventoryItemID("player", slot)
-        		iconTexture = GetInventoryItemTexture("player", slot)
+				iconTexture = GetInventoryItemTexture("player", slot)
 				isTinker = true
-			-- otherwise its a normal item id
+				-- otherwise its a normal item id
 			else
 				local _, _, _, _, _, _, _, _, _, tmpTexture = C_Item.GetItemInfo(id)
 				entry = id
@@ -1133,13 +1147,13 @@ function ham.settingsFrame:InitializeOptions()
 	self.panel.name = AutoPotionLocal
 
 	-- Register with Interface Options
-    if InterfaceOptions_AddCategory then
-        InterfaceOptions_AddCategory(self.panel)
-    else
+	if InterfaceOptions_AddCategory then
+		InterfaceOptions_AddCategory(self.panel)
+	else
         local category = Settings.RegisterCanvasLayoutCategory(self.panel, AutoPotionLocal)
-        Settings.RegisterAddOnCategory(category)
-        self.panel.categoryID = category:GetID() -- for OpenToCategory use
-    end
+		Settings.RegisterAddOnCategory(category)
+		self.panel.categoryID = category:GetID() -- for OpenToCategory use
+	end
 
 	-- inset frame to provide some padding
 	self.content = CreateFrame("Frame", nil, self.panel)

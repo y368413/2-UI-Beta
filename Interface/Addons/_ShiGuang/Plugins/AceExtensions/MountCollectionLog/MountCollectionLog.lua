@@ -1,5 +1,5 @@
 --------------------------------------------------------
--- Namespaces## Version: 2.3.8 ## Author: Discord: Cam#7332
+-- Namespaces## Version: 2.4.0 ## Author: Discord: Cam#7332
 --------------------------------------------------------
 local MountCollectionlog = {}
 
@@ -786,7 +786,7 @@ MountCollectionlog.mountList[15] = {
 	categories = {	
 		BlizzardStore = {
 			name = "游戏商城",
-			mounts = {54811, 69846, 78924, 95341, 97989, 107951, 112326, 122469, 147901, 156564, 160589, 166775, 166774, 166776, "m1266", "m1267", "m1290", "m1346", "m1291", "m1456", "m1330", "m1531", "m1581", "m1312", "m1662", 76755, "m1594", "m1583", "m1797", 203727, "m1795", "m1692", 212229, 228751, 229128, 219450, 224574, "m2237", 229418},
+			mounts = {54811, 69846, 78924, 95341, 97989, 107951, 112326, 122469, 147901, 156564, 160589, 166775, 166774, 166776, "m1266", "m1267", "m1290", "m1346", "m1291", "m1456", "m1330", "m1531", "m1581", "m1312", "m1662", 76755, "m1594", "m1583", "m1797", 203727, "m1795", "m1692", 212229, 228751, 229128, 219450, 224574, "m2237", 229418, 230184, 230200, 230201, 230185},
 			mountID = {1266, 1267, 1290, 1346, 1291, 1456, 1330, 1531, 1581}
 		},
 		CollectorsEdition = {
@@ -1471,9 +1471,9 @@ function MCL_functions:initSections()
             end
         end)
         
-        if not success then
+        --if not success then
             --print("迭代错误 "..i..": "..err)
-        end
+        --end
     end    
 
     OverviewStats(MountCollectionlog.overview)
@@ -2957,9 +2957,9 @@ function CountMounts()
 end
 
 -- Global for Addon Compartment
-MCL_OnAddonCompartmentClick = function()
-    MCL_Load:Toggle()
-end
+--MCL_OnAddonCompartmentClick = function()
+    --MCL_Load:Toggle()
+--end
 
 -- Save total mount count
 local totalMountCount = CountMounts()

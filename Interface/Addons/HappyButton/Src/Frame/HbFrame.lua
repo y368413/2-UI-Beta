@@ -37,6 +37,7 @@ end
 ---@param eleConfig ElementConfig
 function HbFrame:AddEframe(eleConfig)
     if self.EFrames[eleConfig.id] ~= nil then
+        self.EFrames[eleConfig.id]:Update("PLAYER_ENTERING_WORLD", {})
         return
     end
     self.EFrames[eleConfig.id] = ElementFrame:New(eleConfig)
@@ -85,23 +86,51 @@ end
 
 -- 更新
 ---@param eleConfig ElementConfig
----@param event string | nil
+---@param event EventString | nil
 function HbFrame:UpdateEframe(eleConfig, event)
     if self.EFrames[eleConfig.id] == nil then
         return
     end
     local eFrame = self.EFrames[eleConfig.id]
-    eFrame:Update(event)
+    eFrame:Update(event or "PLAYER_ENTERING_WORLD", {})
 end
 
 -- 全部更新
----@param event string | nil
-function HbFrame:UpdateAllEframes(event)
+---@param event EventString -- 事件名称
+---@param eventArgs any[] -- 事件参数
+function HbFrame:UpdateAllEframes(event, eventArgs)
     if not self.EFrames then
         return
     end
     for _, eFrame in pairs(self.EFrames) do
-        eFrame:Update(event)
+        eFrame:Update(event, eventArgs)
+    end
+end
+
+function HbFrame:CompleteItemAttr()
+    if not self.EFrames then
+        return
+    end
+    for _, eFrame in pairs(self.EFrames) do
+        eFrame:CompleteItemAttr()
+    end
+end
+
+-- 更新按键设置
+function HbFrame:UpdateRegisterForClicks()
+    if not self.EFrames then
+        return
+    end
+    for _, eFrame in pairs(self.EFrames) do
+        if eFrame and eFrame.Cbs then
+            for _, cb in ipairs(eFrame.Cbs) do
+                if cb.btns then
+                    for _, btn in ipairs(cb.btns) do
+                        btn:UpdateRegisterForClicks()
+                    end
+                end
+            end
+        end
     end
 end
 

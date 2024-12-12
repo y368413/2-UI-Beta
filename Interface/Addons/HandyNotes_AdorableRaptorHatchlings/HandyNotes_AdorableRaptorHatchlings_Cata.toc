@@ -1,5 +1,5 @@
 ## Interface: 40401
-## Version: 2.02
+## Version: 2.04
 ## Author: Taraezor
 ## IconTexture: Interface\Icons\Ability_mount_raptor
 ## Title: Adorable Raptor Hatchlings
@@ -29,6 +29,8 @@
 ## RequiredDeps: HandyNotes
 ## SavedVariables: HandyNotes_AdorableRaptorHatchlingsDB
 ## AddonCompartmentFunc: HandyNotes_AdorableRaptorHatchlings_OnAddonCompartmentClick
+## AddonCompartmentFuncOnEnter: HandyNotes_AdorableRaptorHatchlings_OnAddonCompartmentEnter
+## AddonCompartmentFuncOnLeave: HandyNotes_AdorableRaptorHatchlings_OnAddonCompartmentLeave
 ## X-Curse-Project-ID: 487934
 ## X-Wago-ID: anKWrW6E
 

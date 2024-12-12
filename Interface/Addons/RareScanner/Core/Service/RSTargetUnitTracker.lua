@@ -57,9 +57,9 @@ local function GetMapNpcs()
 	-- Gets NPCs in the map
 	RSLogger:PrintDebugMessage(string.format("TargetUnit refrescando lista para mapa [%s]", mapID))
 	if (RSMapDB.IsZoneWithoutVignette(mapID)) then
-		cachedNpcIDs = RSNpcDB.GetNpcIDsByMapID(mapID, false)
+		cachedNpcIDs = RSNpcDB.GetNpcIDsByMapID(mapID, false, true)
 	else
-		cachedNpcIDs = RSNpcDB.GetNpcIDsByMapID(mapID, true)
+		cachedNpcIDs = RSNpcDB.GetNpcIDsByMapID(mapID, true, true)
 	end
 	
 	return cachedNpcIDs, mapID, true
@@ -172,7 +172,7 @@ local function TargetUnits(rareScannerButton, mapID, npcIDs)
 					CloseErrorPopUp()
 					
 					local x, y = RSNpcDB.GetBestInternalNpcCoordinates(npcID, mapID)
-					rareScannerButton:SimulateRareFound(npcID, nil, RSNpcDB.GetNpcName(npcID), x, y, RSConstants.NPC_VIGNETTE)
+					rareScannerButton:SimulateRareFound(npcID, nil, RSNpcDB.GetNpcName(npcID), x, y, RSConstants.NPC_VIGNETTE, RSConstants.TRACKING_SYSTEM.UNIT_TARGET)
 					recentlySeen[npcID] = time() + RSConstants.RECENTLY_SEEN_RESET_TIMER
 					npcFound = false
 				end

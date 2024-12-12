@@ -1,5 +1,5 @@
-## Interface: 11504, 11503
-## Version: v11.0.1
+## Interface: 11504, 11505
+## Version: v11.0.2
 ## Title: Capping
 ## Author: Funkydude
 ## Notes: Battleground timers and other PvP features.

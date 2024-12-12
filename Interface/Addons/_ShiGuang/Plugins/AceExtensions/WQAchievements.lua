@@ -4359,7 +4359,7 @@ local anchor
 function dataobj:OnEnter()
 	anchor = self
 	if not PopUpIsShown() then
-		WQA:Show("LDB")
+		--WQA:Show("LDB")
 	end
 end
 

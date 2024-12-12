@@ -285,6 +285,9 @@ DEX_FontList = {
 	"Fonts\\bLEI00D.TTF",
 	"Fonts\\bKAI00M.TTF",
 	"Fonts\\bHEI00M.TTF",
+	"Fonts\\bHEI01B.TTF",
+	"Fonts\\bHEI01B.TTF",
+	"Fonts\\Damage.TTF",
 };
 DEX_TXT_CRUSH = "碾壓!";
 DEX_TXT_DISPELLED = "驅散! ";
@@ -310,23 +313,33 @@ DEXOptionsFrameCheckButtons = {
 	["DEX_ShowDamageHealth"] = { title = "顯示治療量", tooltipText = "顯示對目標的實際治療量和過量治療"},
 	["DEX_ShowDamagePet"] = { title = "顯示寵物傷害", tooltipText = "顯示寵物對目標的傷害，含圖騰"},
 	["DEX_ShowBlockNumber"] = { title = "顯示被格檔的傷害", tooltipText = "以xxx-xx方式顯示對目標的傷害被格檔、抵抗的數值"},
-	["DEX_ShowDamageWoW"] = { title = "顯示系統默認傷害", tooltipText = "顯示系統原有的傷害"},
+	["DEX_ShowDamageWoW"] = { title = "顯示受到傷害", tooltipText = "顯示玩家受到的傷害"},
 	["DEX_ShowOwnHealth"] = { title = "顯示自身治療", tooltipText = "當目標為自己的時候也顯示治療量"},
-	["DEX_UniteSpell"] = { title = "合併瞬間多次同技能傷害", tooltipText = "如風怒武器,毀傷等瞬間對同一目標造成多次傷害的技能將被合併為一個傷害顯示"},
-	--["DEX_NumberFormat"] = { title = "顯示分隔符號", tooltipText = "是否顯示千分位傷害數字分隔符號"},
+	["DEX_UniteSpell"] = { title = "合併瞬間的多次同技能傷害", tooltipText = "如風怒武器,毀傷等瞬間對同一目標造成多次傷害的技能將被合併為一個傷害顯示"},
+	["DEX_NumberFormat"] = { title = "顯示數字分隔符", tooltipText = "是否顯示千分位傷害數字分隔符"},
 	["DEX_NumberFormat"] = { title = "萬進制顯示", tooltipText = "是否以萬為單位顯示"},	
 	["DEX_ShowSpellIcon"] = { title = "顯示技能圖標", tooltipText = "是否顯示技能圖標，選中則替換顯示技能名稱"},		
+	--["DEX_ShowSpellIconWithName"] = { title = "同时显示名称图标", tooltipText = "选中则同时显示技能名称和图标"},		
 	["DEX_ShowInterrupt"] = { title = "是否顯示中斷", tooltipText = "是否顯示中斷提示"},	
+	["DEX_ShowBuffDebuff"] = { title = "監控增減益", tooltipText = "是否監控增減益"},	
 	["DEX_ShowOverHeal"] = { title = "是否顯示過量治療", tooltipText = "是否顯示過量治療，關閉則不顯示"},				
-};
+	["DEX_ShowDebug"] = { title = "是否顯示技能調試", tooltipText = "是否顯示技能調試信息，用于記錄技能ID，關閉則不顯示"},		
+	["DEX_ShowLeftRight"] = { title = "提示治療及受到傷害的位置", tooltipText = "治療在左，受傷害在右"},		
+	["DEX_ShowRightLeft"] = { title = "提示治療及受到傷害的位置", tooltipText = "受傷害在左，治療在右"},		
+	["DEX_ShowHit"] = { title = "是否顯示連擊點/真氣", tooltipText = "是否顯示盜賊/野德連擊點\武僧真氣，關閉則不顯示"},		
+}
+
 DEXOptionsFrameSliders = {
-	["DEX_Font"] = {  title = "字型 ", minText="字型1", maxText="字型3", tooltipText = "設置文字字型"},
+	["DEX_Font"] = {  title = "字型 ", minText="字型1", maxText="字型3", tooltipText = "設置文字字型\n1=bLEI00D\n2=bKAI00M\n3=bHEI00M\n4=bHEI01B\n5=bHEI01B\n6=Damage"},
 	["DEX_FontSize"] = {  title = "文字大小 ", minText="小", maxText="大", tooltipText = "設置文字的大小"},
 	["DEX_OutLine"] = {  title = "字型描邊 ", minText="無", maxText="粗", tooltipText = "設置文字的描邊效果"},
 	["DEX_Speed"] = {  title = "文字移動速度 ", minText="慢", maxText="快", tooltipText = "設置文字的移動速度"},
 	["DEX_LOGLINE"] = {  title = "訊息最大條目 ", minText="5條", maxText="20條", tooltipText = "設置訊息最大顯示條目數"},
 	["DEX_LOGTIME"] = {  title = "訊息停留時間 ", minText="5秒", maxText="1分鐘", tooltipText = "設置訊息文字停留時間"},
-};
+	["DEX_ShowHitX"] = {  title = "是否顯示連擊點/真氣X坐標 ", minText="-300", maxText="300", tooltipText = "顯示盜賊/野德連擊點\武僧真氣X坐標"},
+	["DEX_ShowHitY"] = {  title = "是否顯示連擊點/真氣Y坐標 ", minText="-300", maxText="300", tooltipText = "顯示盜賊/野德連擊點\武僧真氣Y坐標"},
+}
+
 DEXOptionsColorPickerEx = {
 	["DEX_ColorNormal"] = { title = "物理傷害顏色"},
 	["DEX_ColorSkill"] = { title = "技能傷害顏色"},
@@ -335,6 +348,7 @@ DEXOptionsColorPickerEx = {
 	["DEX_ColorPet"] = { title = "寵物傷害顏色"},
 	["DEX_ColorSpec"] = { title = "中斷,驅散等顏色"},
 	["DEX_ColorMana"] = { title = "法力傷害顏色"},
+	["DEX_ColorAttack"] = { title = "受到傷害顏色"},
 };
 
 

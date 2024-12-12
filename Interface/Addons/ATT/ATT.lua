@@ -67,6 +67,9 @@ local L = ATTdbs.enUS
 local ATT = CreateFrame("Frame", "ATT", UIParent)
 local ATTIcons = CreateFrame("Frame", nil, UIParent)
 local ATTAnchor = CreateFrame("Frame", nil, UIParent)
+ATTAnchor:SetFrameLevel(ATTAnchor:GetFrameLevel() + 5)
+ATTIcons:SetFrameLevel(ATTIcons:GetFrameLevel() + 5)
+
 local ATTOnUpdateFrame = CreateFrame("Frame")
 local NotifyInspect = NotifyInspect
 
@@ -798,7 +801,6 @@ local function CreateIcon(anchor)
              starttime = icon.starttime - ((icon.starttime - starttime) * rate)
           end
              cooldown = icon.cooldown * rate
-             --print(cooldown .. " - " ..(cooldown * rate) .. " - "..icon.cdrecovery )
         end
 
         if icon.inUse then
@@ -897,8 +899,6 @@ local function CreateIcon(anchor)
     end)
 
     icon.cd:SetScript("OnCooldownDone", function()
-        --local chargesText = icon.chargesText:GetText() and icon.chargesText:GetText():match("^[0-9]+$")
-        --local charges = chargesText and tonumber(chargesText)
         local charges = icon.maxcharges and getIconCharges(icon)
         if icon.active and icon.cooldown then
             if activeGUIDS[icon.GUID] and activeGUIDS[icon.GUID][icon.abilityID] then
@@ -3414,7 +3414,7 @@ end
 
 if (class == "MAGE") and (event == "SPELL_CAST_SUCCESS") and dbInspect[guid][438600] and (SentID == 257541) then --- Excess Frost
     local hasStacks = select(3, AuraUtil.FindAuraByName(GetSpellInfo(438611), unit))
-    local reducecd = 5
+    local reducecd = 10
 
     for k, icon in ipairs(anchor.icons) do
         if icon.inUse and icon.active and icon.cooldown > 0 and icon.starttime > 0 and hasStacks and (icon.abilityID == 153561)  then 
@@ -3427,7 +3427,7 @@ end
 
 if (class == "MAGE") and (event == "SPELL_CAST_SUCCESS") and dbInspect[guid][438600] and (SentID == 44614) then --- Excess Frost
     local hasStacks = select(3, AuraUtil.FindAuraByName(GetSpellInfo(438611), unit))
-    local reducecd = 5
+    local reducecd = 10
 
     for k, icon in ipairs(anchor.icons) do
         if icon.inUse and icon.active and icon.cooldown > 0 and icon.starttime > 0 and hasStacks and (icon.abilityID == 153595)  then 

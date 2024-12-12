@@ -1,7 +1,7 @@
 local L = LibStub('AceLocale-3.0'):NewLocale('PetBattleScripts', 'zhCN')
 if not L then return end
 
-L["ADDON_NAME"] = "|cFFBF00FF[宠物]|r对战脚本"
+L["ADDON_NAME"] = "宠物对战脚本"
 L["DATABASE_UPDATE_BASE_TO_FIRSTENEMY_NOTIFICATION"] = "发现你之前使用过修改版的tdBattlePetScript，已将修改版的Base选择器的部分脚本迁移到FirstEnemy选择器。"
 L["DATABASE_UPDATED_TO"] = "更新到版本："
 L["DEFAULT_NEW_SCRIPT_NAME"] = "新建脚本"

@@ -520,7 +520,7 @@ local function BPBID_Events_OnEvent(self, event, name, ...)
         end
         
         -- Disable option unless user has manually changed it
-        if (not BPBID_Options.ManualChange) or (BPBID_Options.ManualChange ~= "v1.31.1") then
+        if (not BPBID_Options.ManualChange) or (BPBID_Options.ManualChange ~= "v1.31.2") then
             BPBID_Options.BattleFontFix = false
         end
         
@@ -748,7 +748,10 @@ function BPBID_SetBreedTooltip(parent, speciesID, tblBreedID, rareness, tooltipD
 
 	-- Set line for "Collected"
     if (BPBID_Options.Breedtip.Collected) then
-        C_PetJournal.ClearSearchFilter()
+		if (not PetJournalPetCardPetInfo) or (not PetJournalPetCardPetInfo:IsVisible()) or (parent == FloatingBattlePetTooltip) then
+			C_PetJournal.ClearSearchFilter()
+		end
+
         numPets, numOwned = C_PetJournal.GetNumPets()
         local collectedPets = {}
         for i = 1, numPets do
@@ -1331,7 +1334,7 @@ end
 -- Create title, version, author, and description fields
 local title = CreateFont("GameFontNormalLarge", properName)
 title:SetPoint("TOPLEFT", 16, -16)
-local ver = CreateFont("GameFontNormalSmall", "v1.31.1")
+local ver = CreateFont("GameFontNormalSmall", "v1.31.2")
 ver:SetPoint("BOTTOMLEFT", title, "BOTTOMRIGHT", 4, 0)
 local auth = CreateFont("GameFontNormalSmall", "by Simca@Malfurion")
 auth:SetPoint("BOTTOMLEFT", ver, "BOTTOMRIGHT", 3, 0)
@@ -1555,7 +1558,7 @@ local function BPBID_OptNamesHSFUpdate_OnClick(self, button, down)
     end
     
     -- A manual change has occurred (added in v1.0.8 to help update values added in new versions)
-    BPBID_Options.ManualChange = "v1.31.1"
+    BPBID_Options.ManualChange = "v1.31.2"
     
     -- Refresh the options page to display the new values
     BPBID_Options_Refresh()
@@ -1572,7 +1575,7 @@ local function BPBID_OptNamesPJT_OnClick(self, button, down)
     end
     
     -- A manual change has occurred (added in v1.0.8 to help update values added in new versions)
-    BPBID_Options.ManualChange = "v1.31.1"
+    BPBID_Options.ManualChange = "v1.31.2"
     
     -- Refresh the options page to display the new values
     BPBID_Options_Refresh()
@@ -1589,7 +1592,7 @@ local function BPBID_OptBreedtipCurrentStats25_OnClick(self, button, down)
     end
     
     -- A manual change has occurred (added in v1.0.8 to help update values added in new versions)
-    BPBID_Options.ManualChange = "v1.31.1"
+    BPBID_Options.ManualChange = "v1.31.2"
     
     -- Refresh the options page to display the new values
     BPBID_Options_Refresh()
@@ -1606,7 +1609,7 @@ local function BPBID_OptBreedtipAllStats25_OnClick(self, button, down)
     end
     
     -- A manual change has occurred (added in v1.0.8 to help update values added in new versions)
-    BPBID_Options.ManualChange = "v1.31.1"
+    BPBID_Options.ManualChange = "v1.31.2"
     
     -- Refresh the options page to display the new values
     BPBID_Options_Refresh()
@@ -1686,7 +1689,7 @@ local function BPBID_OptTooltipsEnabled_OnClick(self, button, down)
     end
     
     -- A manual change has occurred (added in v1.0.8 to help update values added in new versions)
-    BPBID_Options.ManualChange = "v1.31.1"
+    BPBID_Options.ManualChange = "v1.31.2"
     
     -- Refresh the options page to display the new values
     BPBID_Options_Refresh()
@@ -1806,7 +1809,7 @@ local function BPBID_GeneralCheckbox_OnClick(self, button, down)
     end
     
     -- A manual change has occurred (added in v1.0.8 to help update values added in new versions)
-    BPBID_Options.ManualChange = "v1.31.1"
+    BPBID_Options.ManualChange = "v1.31.2"
     
     -- Refresh the options page to display the new defaults
     BPBID_Options_Refresh()

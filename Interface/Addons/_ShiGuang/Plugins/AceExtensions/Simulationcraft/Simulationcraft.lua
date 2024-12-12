@@ -1048,7 +1048,7 @@ end --adler32()
 
 function Simulationcraft:GetSimcProfile(debugOutput, noBags, showMerchant, links)
   -- addon metadata
-  local versionComment = '# SimC Addon ' .. '11.0.5-01'
+  local versionComment = '# SimC Addon ' .. '11.0.5-02'
   local wowVersion, wowBuild, _, wowToc = GetBuildInfo()
   local wowVersionComment = '# WoW ' .. wowVersion .. '.' .. wowBuild .. ', TOC ' .. wowToc
   local simcVersionWarning = '# Requires SimulationCraft 1000-01 or newer'
@@ -1312,6 +1312,10 @@ function Simulationcraft:GetSimcProfile(debugOutput, noBags, showMerchant, links
     simulationcraftProfile = simulationcraftProfile .. '#\n'
     simulationcraftProfile = simulationcraftProfile .. '# slot_high_watermarks=' .. highWatermarksStr .. '\n'
   end
+
+  local upgradeAchievementsStr = Simulationcraft:GetItemUpgradeAchievements()
+  simulationcraftProfile = simulationcraftProfile .. '#\n'
+  simulationcraftProfile = simulationcraftProfile .. '# upgrade_achievements=' .. upgradeAchievementsStr .. '\n'
 
   -- sanity checks - if there's anything that makes the output completely invalid, punt!
   if specId==nil then

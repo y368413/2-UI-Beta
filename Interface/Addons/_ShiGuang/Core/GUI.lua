@@ -549,7 +549,7 @@ G.DefaultSettings = {
 		--AltTabLfgNotification = false,
 		--CrazyCatLady = true,
 		WallpaperKit = true,
-		AutoReagentInBank = false,
+		AutoReagentInBank = true,
 		kAutoOpen = true,
 		AutoConfirmRoll = false,
 		AutoMark = true,
@@ -1159,6 +1159,7 @@ G.OptionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{3, "Map", "MinimapScale", U["Minimap Scale"].."*", true, true, {1, 2, .1}, updateMinimapScale},
 		{4, "Map", "zrMMbuttonpos", "小地图图标收纳位置".."*", nil, nil, {U["TOP"], U["BOTTOM"], U["LEFT"], U["RIGHT"]}, updateMinimapScale, "更改后RL生效"},
 		{3, "Map", "zrMMbuttonsize", "小地图收纳图标大小".."*", true, nil, {10, 40, 1}, nil, updateMinimapScale},
+		{3, "Misc", "MarkerSize", U["MarkerSize"].."*", true, true, {20, 50, 1}, updateMarkerGrid},
 	},
 	[2] = {
 		{1, "UFs", "RaidFrame", HeaderTag..U["UFs RaidFrame"], nil, nil, setupRaidFrame, nil, U["RaidFrameTip"]},
@@ -1181,6 +1182,7 @@ G.OptionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		--{3, "UFs", "HealthFrequency", U["HealthFrequency"].."*", true, true, {.1, .5, .05}, updateRaidHealthMethod, U["HealthFrequencyTip"]},
 		{},--blank		
 		{1, "UFs", "InstanceAuras", HeaderTag..U["Instance Auras"], nil, nil, setupRaidDebuffs, nil, U["InstanceAurasTip"]},
+		{1, "UFs", "SpecRaidPos", U["Spec RaidPos"], true, nil, nil, nil, U["SpecRaidPosTip"]},
 		{1, "UFs", "AurasClickThrough", U["RaidAuras ClickThrough"], true, true, nil, nil, U["ClickThroughTip"]},
 		{1, "UFs", "RaidClickSets", HeaderTag..U["Enable ClickSets"], nil, nil, setupClickCast},
 		{1, "UFs", "AutoRes", HeaderTag..U["UFs AutoRes"], true},
@@ -1191,7 +1193,9 @@ G.OptionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		--{1, "UFs", "RCCName", U["ClassColor Name"].."*", nil, nil, nil, updateRaidTextScale},
 		--{1, "UFs", "FrequentHealth", HeaderTag..U["FrequentHealth"].."*", true, nil, nil, updateRaidHealthMethod, U["FrequentHealthTip"]},
 		--{1, "UFs", "HideTip", U["HideTooltip"].."*", true, true, nil, updateRaidTextScale, U["HideTooltipTip"]},
-		{1, "UFs", "SpecRaidPos", U["Spec RaidPos"], nil, nil, nil, nil, U["SpecRaidPosTip"]},
+		{},--blank	
+		{1, "UFs", "UFFade", U["UFFade"]},
+		{1, "UFs", "UFPctText", U["UFPctText"], true},
 	},
 	[3] = {
 		{1, "Nameplate", "Enable", HeaderTag..U["Enable Nameplate"], nil, nil, setupNameplateSize, refreshNameplates},
@@ -1270,10 +1274,6 @@ G.OptionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 	[5] = {
 	},
 	[6] = {
-		{1, "UFs", "UFFade", U["UFFade"]},
-		{1, "UFs", "UFClassIcon", U["UFClassIcon"], true},
-		{1, "UFs", "UFPctText", U["UFPctText"], true, true},
-		--{1, "Misc", "xMerchant", U["xMerchant"]},
 		{1, "Misc", "WallpaperKit", U["WallpaperKit"]},
 		{1, "Skins", "FlatMode", U["FlatMode"], true},
 		{},--blank
@@ -1335,7 +1335,6 @@ G.OptionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		--{1, "Misc", "EasyMarking", U["Easy Mark"].."*"},
 		{2, "Misc", "DBMCount", U["DBMCount"].."*"},
 		{4, "Misc", "ShowMarkerBar", U["ShowMarkerBar"].."*", true, nil, {U["Grids"], U["Horizontal"], U["Vertical"], DISABLE}, updateMarkerGrid, U["ShowMarkerBarTip"]},
-		{3, "Misc", "MarkerSize", U["MarkerSize"].."*", true, true, {20, 50, 1}, updateMarkerGrid},
 		{1, "Misc", "QuestNotification", "|cff00cc4c"..U["QuestNotification"].."*", false, false, nil, nil, updateQuestNotifier},
 		{1, "Misc", "QuestProgress", U["QuestProgress"].."*", true},
 		{1, "Misc", "OnlyCompleteRing", U["OnlyCompleteRing"].."*", true, true},
@@ -1366,8 +1365,7 @@ G.OptionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		--{3, "Tooltip", "Scale", U["Tooltip Scale"].."*", nil, nil, {.5, 1.5, .1}},
 		{4, "Tooltip", "TipAnchor", U["TipAnchor"].."*", nil, nil, {U["TOPLEFT"], U["TOPRIGHT"], U["BOTTOMLEFT"], U["BOTTOMRIGHT"]}, nil, U["TipAnchorTip"]},
 		{4, "Tooltip", "CursorMode", U["Follow Cursor"].."*", true, nil, {DISABLE, U["LEFT"], U["TOP"], U["RIGHT"]}},
-		--{1, "Tooltip", "CombatHide", U["Hide Tooltip"].."*"},
-		{1, "Tooltip", "HideTitle", U["Hide Title"].."*", true, true},
+		{4, "Tooltip", "HideInCombat", IsNew..U["HideInCombat"].."*", true, true, {DISABLE, "ALT", "SHIFT", "CTRL", ALWAYS}, nil, U["HideInCombatTip"]},
 		{1, "Tooltip", "HideRank", U["Hide Rank"].."*"},
 		{1, "Tooltip", "FactionIcon", U["FactionIcon"].."*", true},
 		{1, "Tooltip", "HideJunkGuild", U["HideJunkGuild"].."*", true, true},
@@ -1378,6 +1376,7 @@ G.OptionList = {		-- type, key, value, name, horizon, horizon2, doubleline
 		{1, "Tooltip", "MythicScore", U["MDScore"].."*", true, nil, nil, nil, U["MDScoreTip"]},
 		{1, "Tooltip", "HideAllID", "|cffff0000"..U["HideAllID"], true, true},
 		{1, "Tooltip", "ItemQuality", U["ShowItemQuality"].."*"},
+		{1, "Tooltip", "HideTitle", U["Hide Title"].."*", true},
 		{1, "Tooltip", "AzeriteArmor", HeaderTag..U["Show AzeriteArmor"]},
 		{1, "Tooltip", "OnlyArmorIcons", U["Armor icons only"].."*", true},
 		{1, "Misc", "ItemLevel", HeaderTag..U["Show ItemLevel"], true, true, nil, nil, U["ItemLevelTip"]},

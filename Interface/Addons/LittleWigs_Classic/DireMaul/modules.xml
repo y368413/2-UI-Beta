@@ -8,12 +8,16 @@
 <Script file="PrinceTortheldrin.lua"/>
 <Script file="GuardMoldar.lua"/>
 <Script file="StomperKreeg.lua"/>
-<Script file="ChoRushTheObserver.lua"/>
+<!--<Script file="GuardFengus.lua"/>-->
+<!--<Script file="GuardSlipkik.lua"/>-->
+<!--<Script file="CaptainKromcrush.lua"/>-->
+<!--<Script file="ChoRushTheObserver.lua"/>-->
 <Script file="KingGordok.lua"/>
 <Script file="Lethtendris.lua"/>
 <Script file="Hydrospawn.lua"/>
 <Script file="ZevrimThornhoof.lua"/>
 <Script file="AlzzinTheWildshaper.lua"/>
+<Script file="Trash.lua"/>
 
 <Include file="Options\options.xml"/>
 

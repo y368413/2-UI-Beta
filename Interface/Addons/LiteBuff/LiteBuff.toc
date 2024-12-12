@@ -1,4 +1,4 @@
-## Interface: 110000, 110002, 110005
+## Interface: 110005, 110007
 ## Title: LiteBuff
 ## Title-zhTW: |cffeda55f[职业]|rBuff监视
 ## Title-zhCN: |cffeda55f[职业]|rBuff监视

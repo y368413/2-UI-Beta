@@ -9,6 +9,9 @@ local const = addon:GetModule('CONST')
 ---@class Utils: AceModule
 local U = addon:GetModule('Utils')
 
+---@class E: AceModule
+local E = addon:GetModule("Element")
+
 ---@class Item: AceModule
 local Item = addon:GetModule("Item")
 
@@ -56,11 +59,10 @@ function Btn:New(eFrame, cbInfo, cbIndex)
     obj.effects = {}
     Btn.CreateIcon(obj)
     Btn.CreateBorder(obj)
-
-    obj.Button:RegisterForClicks("AnyUp")
+    Btn.UpdateRegisterForClicks(obj)
+    Btn.SetMouseEvent(obj)
     obj.Button:SetAttribute("type", "macro")
     obj.Button:SetAttribute("macrotext", "")
-
     if addon.G.ElvUI then
         obj.Button:SetHighlightTexture(addon.G.ElvUI.Media.Textures.White8x8)
         obj.Button:GetHighlightTexture():SetVertexColor(1, 1, 1, 0.3)
@@ -82,8 +84,9 @@ end
 --- 按钮🔘从Frame中获取CbResult并更新
 --- @param cbIndex number 当前callback的下标
 --- @param btnIndex number 当前按钮下标，用来更新位置
---- @param event string | nil
-function Btn:UpdateByElementFrame(cbIndex, btnIndex, event)
+---@param event EventString
+---@param eventArgs any[]
+function Btn:UpdateByElementFrame(cbIndex, btnIndex, event, eventArgs)
     self.CbResult = self.CbInfo.r[cbIndex]
     local bar = self.EFrame.Bar
     if self.EFrame.Config.elesGrowth == const.GROWTH.LEFTTOP or self.EFrame.Config.elesGrowth == const.GROWTH.LEFTBOTTOM then
@@ -98,22 +101,28 @@ function Btn:UpdateByElementFrame(cbIndex, btnIndex, event)
         -- 默认右下
         self.Button:SetPoint("LEFT", bar.BarFrame, "LEFT", self.EFrame.IconWidth * (btnIndex - 1), 0)
     end
-    if event and self.CbInfo.e[event] == nil then
+    if self.CbInfo.e[event] == nil or not E:CompareEventParam(self.CbInfo.e[event], eventArgs) then
         return
     end
     self:Update()
 end
 
 -- 按钮自身更新CbResult
----@param event string | nil
-function Btn:UpdateBySelf(event)
-    if event and self.CbInfo.e[event] == nil then
+---@param event EventString
+---@param eventArgs any[]
+function Btn:UpdateBySelf(event, eventArgs)
+    if self.CbInfo.e[event] == nil or not E:CompareEventParam(self.CbInfo.e[event], eventArgs) then
         return
     end
-    ECB:UpdateSelfTrigger(self.CbResult)
-    self.CbResult.effects = ECB:UseTrigger(self.CbInfo.p, self.CbResult)
+    -- 宏在更新的时候需要改变宏图标
+    if self.CbInfo.p.type == const.ELEMENT_TYPE.MACRO then
+        self.CbResult.item = ECB.UpdateMacroItemInfo(self.CbInfo.p)
+    end
+    ECB:UpdateSelfTrigger(self.CbResult, event, eventArgs)
+    ECB:UseTrigger(self.CbInfo.p, self.CbResult)
     self:Update()
 end
+
 
 function Btn:Update()
     if not InCombatLockdown() then
@@ -125,7 +134,6 @@ function Btn:Update()
     if self.CbResult.item ~= nil then
         self:SetIcon()
         self:SetCooldown()
-        self:SetMouseEvent()
         -- ⚠️ 非战斗状态才能更新macro
         if not InCombatLockdown() then
             self:SetMacro()
@@ -135,6 +143,17 @@ function Btn:Update()
     end
     self:UpdateTexts()
     self:UpdateEffects()
+end
+
+-- 当修改Cvar的时候改变绑定事件
+function Btn:UpdateRegisterForClicks()
+    if (C_CVar.GetCVar("ActionButtonUseKeyDown") == "1") then
+        -- 鼠标点击执行
+        self.Button:RegisterForClicks("AnyDown")
+    else
+        -- 鼠标弹起执行
+        self.Button:RegisterForClicks("AnyUp")
+    end
 end
 
 -- 按键绑定
@@ -241,11 +260,12 @@ function Btn:UpdateTexts()
             else
                 tString:SetPoint("LEFT", self.Button, "RIGHT", 5, 0)
             end
-            if self.CbResult.text then
+            local t = self.CbResult.text or (self.CbResult.item and self.CbResult.item.name)
+            if t then
                 if self.EFrame:IsHorizontal() then
-                    tString:SetText(U.String.ToVertical(self.CbResult.text))
+                    tString:SetText(U.String.ToVertical(t))
                 else
-                    tString:SetText(self.CbResult.text)
+                    tString:SetText(t)
                 end
             end
             -- 如果没有学习这个技能，则将文字改成灰色半透明
@@ -372,11 +392,7 @@ function Btn:SetIcon()
     if self.Icon == nil then
         self:CreateIcon()
     end
-    if r.icon then
-        self.Icon:SetTexture(r.icon)
-    else
-        self.Icon:SetTexture(134400)
-    end
+    self.Icon:SetTexture(r.icon or r.item.icon or 134400)
     -- 设置物品边框
     if self.CbResult.borderColor then
         self.Border:SetBackdropBorderColor(unpack(self.CbResult.borderColor))
@@ -393,6 +409,10 @@ function Btn:SetMacro()
     end
     -- 设置宏命令
     self.Button:SetAttribute("type", "macro")
+    if r.macro then
+        self.Button:SetAttribute("macrotext", r.macro)
+        return
+    end
     local macroText = ""
     if r.item.type == const.ITEM_TYPE.ITEM then
         macroText = "/use item:" .. r.item.id
@@ -428,31 +448,10 @@ function Btn:SetCooldown()
     if self.Cooldown == nil then
         self:CreateCoolDown()
     end
-    self.Button:SetScript("OnUpdate", function(_)
-        -- 更新冷却倒计时
-        if item.type == const.ITEM_TYPE.ITEM then
-            local startTimeSeconds, durationSeconds, enableCooldownTimer = Api.GetItemCooldown(item.id)
-            CooldownFrame_Set(self.Cooldown, startTimeSeconds, durationSeconds, enableCooldownTimer)
-        elseif item.type == const.ITEM_TYPE.EQUIPMENT then
-            local startTimeSeconds, durationSeconds, enableCooldownTimer = Api.GetItemCooldown(item.id)
-            CooldownFrame_Set(self.Cooldown, startTimeSeconds, durationSeconds, enableCooldownTimer)
-        elseif item.type == const.ITEM_TYPE.TOY then
-            local startTimeSeconds, durationSeconds, enableCooldownTimer = Api.GetItemCooldown(item.id)
-            CooldownFrame_Set(self.Cooldown, startTimeSeconds, durationSeconds, enableCooldownTimer)
-        elseif item.type == const.ITEM_TYPE.SPELL then
-            local spellCooldownInfo = Api.GetSpellCooldown(item.id)
-            if spellCooldownInfo then
-                CooldownFrame_Set(self.Cooldown, spellCooldownInfo.startTime, spellCooldownInfo.duration,
-                    spellCooldownInfo.isEnabled)
-            end
-        elseif item.type == const.ITEM_TYPE.PET then
-            local speciesId, petGUID = C_PetJournal.FindPetIDByName(item.name)
-            if petGUID then
-                local start, duration, isEnabled = C_PetJournal.GetPetCooldownByGUID(petGUID)
-                CooldownFrame_Set(self.Cooldown, start, duration, isEnabled)
-            end
-        end
-    end)
+    -- 更新冷却倒计时
+    if r.itemCooldown then
+        CooldownFrame_Set(self.Cooldown, r.itemCooldown.startTime, r.itemCooldown.duration, r.itemCooldown.enable)
+    end
 end
 
 -- 设置脚本模式的点击事件

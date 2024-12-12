@@ -810,6 +810,15 @@ private.NPC_GUIDE = {
 		[RSConstants.ENTRANCE..1] = { x = 0.5158, y = 0.3746 };
 		[RSConstants.ENTRANCE..2] = { x = 0.4806, y = 0.3380 };
 	}; --Luggut the Eggeater
+	["1527121355"] = {
+		[RSConstants.ENTRANCE] = { x = 0.3969, y = 0.7726 };
+	}; --Blindlight <Necrofin Chieftain>
+	["1524641355"] = {
+		[RSConstants.ENTRANCE] = { x = 0.4239, y = 0.1315 };
+	}; --Caverndark Terror
+	["1525561355"] = {
+		[RSConstants.ENTRANCE] = { x = 0.4744, y = 0.8514 };
+	}; --Chasm-Haunter
 }
 
 ---============================================================================

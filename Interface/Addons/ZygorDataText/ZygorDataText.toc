@@ -1,0 +1,9 @@
+## Title: Zygor DataText
+## Author: Christoph Mett
+## Version: 1.1.5
+## Dependencies: ZygorGuidesViewer
+## Interface: 110005
+## X-Interface: 110005
+## X-Curse-Project-ID: 351942
+
+ZygorDataText.lua

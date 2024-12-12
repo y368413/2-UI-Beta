@@ -98,6 +98,7 @@ end
 function mod:OnEngage()
 	self:Bar(98237, 25, L["hand_bar"])
 	self:Bar(98710, 30, lavaWaves)
+	self:CDBar(98164, 15) -- Magma Trap
 	self:OpenProximity("proximity", 6)
 	self:Berserk(1080)
 	lavaWavesCD, dreadflameCD = 30, 40
@@ -135,7 +136,8 @@ function mod:Phase4()
 end
 
 function mod:Dreadflame()
-	if not self:UnitDebuff("player", self:SpellName(100757)) then return end -- No Deluge on you = you don't care
+	-- 100713 on difficulty 5
+	if not self:UnitDebuff("player", self:SpellName(100757), 100713) then return end -- No Deluge on you = you don't care
 	self:MessageOld(100675, "red", "alarm")
 	self:Bar(100675, dreadflameCD)
 	if dreadflameCD > 10 then
@@ -251,6 +253,7 @@ function mod:SplittingBlow(args)
 	self:StopBar(lavaWaves)
 	self:StopBar(98263) -- Wrath of Ragnaros
 	self:StopBar(98498) -- Molten Seed
+	self:StopBar(98164) -- Magma Trap
 end
 
 function mod:SulfurasSmash(args)

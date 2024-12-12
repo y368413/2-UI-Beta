@@ -23,7 +23,7 @@
 ## Notes-zhCN: BigWigs 卡兹阿加模块。
 ## Notes-zhTW: BigWigs 卡兹阿爾加模組。
 ## IconTexture: Interface\AddOns\BigWigs\Media\Icons\minimap_raid.tga
-## Version: v368
+## Version: v370
 
 ## LoadOnDemand: 1
 ## Dependencies: BigWigs

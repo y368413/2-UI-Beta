@@ -51,10 +51,10 @@ local function BaseInfo()  -- 基础属性
 		--BaseStat = BaseStat..("%s "):format(UnitClass("player"))
 		BaseStat = BaseStat..("< %.1f/%.1f > "):format(GetAverageItemLevel())
 		BaseStat = BaseStat..("血量:%s "):format(HealText())
-		BaseStat = BaseStat .. ("项链:%s "):format(ArtifactLevel())-- 项链等级
-    BaseStat = BaseStat .. ("头部:%s "):format(AzeriteItemLevel(1))-- 头部特质装等级
-    BaseStat = BaseStat .. ("肩部:%s "):format(AzeriteItemLevel(3))-- 肩部特质装等级
-    BaseStat = BaseStat .. ("胸部:%s "):format(AzeriteItemLevel(5))-- 胸部特质装等级
+		--BaseStat = BaseStat .. ("项链:%s "):format(ArtifactLevel())-- 项链等级
+    --BaseStat = BaseStat .. ("头部:%s "):format(AzeriteItemLevel(1))-- 头部特质装等级
+    --BaseStat = BaseStat .. ("肩部:%s "):format(AzeriteItemLevel(3))-- 肩部特质装等级
+    --BaseStat = BaseStat .. ("胸部:%s "):format(AzeriteItemLevel(5))-- 胸部特质装等级
 	return BaseStat
 end
 
@@ -77,16 +77,16 @@ local function DpsInfo()  -- 输出属性 by 图图  (9 = 暴击 12 = 溅射 17 
         DEMONHUNTER={2,1}
     }
 	local classCN,classEnName = UnitClass("player")
-    	DpsStat[1] = (STAT_STRENGTH..":%s "):format(UnitStat("player", 1))
-    	DpsStat[2] = (STAT_AGILITY..":%s "):format(UnitStat("player", 2))
-    	DpsStat[3] = (STAT_INTELLECT..":%s "):format(UnitStat("player", 4))
+    	DpsStat[1] = (SPEC_FRAME_PRIMARY_STAT_STRENGTH  ..":%s "):format(UnitStat("player", 1))
+    	DpsStat[2] = (SPEC_FRAME_PRIMARY_STAT_AGILITY  ..":%s "):format(UnitStat("player", 2))
+    	DpsStat[3] = (SPEC_FRAME_PRIMARY_STAT_INTELLECT  ..":%s "):format(UnitStat("player", 4))
 	return DpsStat[specAttr[classEnName][GetSpecialization()]]
 end
 
 local function TankInfo() -- 坦克属性
 	local TankStat = ""
-		TankStat = TankStat..(STAT_STAMINA..":%s "):format(UnitStat("player", 3))
-		TankStat = TankStat..(STAT_ARMOR..":%s "):format(UnitArmor("player"))
+		TankStat = TankStat..(STAT_STAMINA ..":%s "):format(UnitStat("player", 3))
+		TankStat = TankStat..(STAT_ARMOR ..":%s "):format(UnitArmor("player"))
 		TankStat = TankStat..("闪避:%.2f%% "):format(GetDodgeChance())
 		TankStat = TankStat..("招架:%.2f%% "):format(GetParryChance())
 		TankStat = TankStat..("格挡:%.2f%% "):format(GetBlockChance())
@@ -102,13 +102,13 @@ end
 
 local function MoreInfo()  -- 增强属性
 	local MoreStat = ""
-		MoreStat = MoreStat..(STAT_HASTE..":%.2f%% "):format(GetHaste())  --GetMeleeHaste
-		MoreStat = MoreStat..(STAT_CRITICALSTRIKE..":%.2f%% "):format(GetCritChance())
-		MoreStat = MoreStat..(STAT_MASTERY..":%.2f%% "):format(GetMasteryEffect())
+		MoreStat = MoreStat..(STAT_HASTE ..":%.2f%% "):format(GetHaste())  --GetMeleeHaste
+		MoreStat = MoreStat..(STAT_CRITICAL_STRIKE  ..":%.2f%% "):format(GetCritChance())
+		MoreStat = MoreStat..(STAT_MASTERY ..":%.2f%% "):format(GetMasteryEffect())
 		--MoreStat = MoreStat..("溅射:%.2f%% "):format(GetMultistrike()) -- GetCombatRating(12)
 		--MoreStat = MoreStat..(STAT_LIFESTEAL..":%.2f%% "):format(GetLifesteal())
 		-- MoreStat = MoreStat .. ("吸血:%.0f%% "):format(GetCombatRating(17) / 230)
-		MoreStat = MoreStat..(STAT_VERSATILITY..":%.2f%% "):format(GetCombatRatingBonus(CR_VERSATILITY_DAMAGE_DONE) + GetVersatilityBonus(CR_VERSATILITY_DAMAGE_DONE))  --GetVersatility()
+		MoreStat = MoreStat..(STAT_VERSATILITY ..":%.2f%% "):format(GetCombatRatingBonus(CR_VERSATILITY_DAMAGE_DONE) + GetVersatilityBonus(CR_VERSATILITY_DAMAGE_DONE))  --GetVersatility()
 	return MoreStat
 end
 
@@ -553,6 +553,12 @@ function module:Chatbar()
 		end
 	end)
 	bubbleHook:Hide()
+	-- Mover
+	local width = (#buttonList-1)*(padding+width) + width
+	local mover = M.Mover(Chatbar, U["Chatbar"], "Chatbar", {"BOTTOMLEFT", UIParent, "BOTTOMLEFT", 0, 2}, width, 20)
+	Chatbar:ClearAllPoints()
+	Chatbar:SetPoint("BOTTOMLEFT", mover, 0, 0)
+
 end
 
 ----------------------------------------------------------------------------------------

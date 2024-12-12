@@ -13,6 +13,9 @@ local U = addon:GetModule('Utils')
 ---@class E: AceModule
 local E = addon:NewModule("Element")
 
+---@class Item: AceModule
+local Item = addon:GetModule("Item")
+
 ---@class Trigger: AceModule
 local Trigger = addon:GetModule("Trigger")
 
@@ -98,6 +101,7 @@ function E:ToBar(config)
     return E:InitExtraAttr(config) ---@type BarConfig
 end
 
+-- 是否是叶子节点
 ---@param config ElementConfig
 ---@return boolean
 function E:IsLeaf(config)
@@ -106,6 +110,18 @@ function E:IsLeaf(config)
     end
     return false
 end
+
+-- 是否是单一图标
+---@param config ElementConfig
+---@return boolean
+function E:IsSingleIconConfig(config)
+    if config.type == const.ELEMENT_TYPE.BAR or config.type == const.ELEMENT_TYPE.SCRIPT then
+        return false
+    else
+        return true
+    end
+end
+
 
 --- 获取config带图标的标题，使用在配置功能中
 ---@param config ElementConfig
@@ -116,74 +132,243 @@ function E:GetTitleWithIcon(config)
     return iconPath .. config.title
 end
 
---- 获取config的监听事件
---- @param config ElementConfig
---- @return table<string, boolean>
-function E:GetEvents(config)
-    ---@type table<string, boolean>
-    local events = {
-        ["PLAYER_REGEN_DISABLED"] = true,  -- 进入战斗
-        ["PLAYER_REGEN_ENABLED"] = true, -- 退出战斗
-        ["PLAYER_TARGET_CHANGED"] = true,
-        ["SPELL_UPDATE_COOLDOWN"] = true, -- 触发冷却/gcd
-    }
-    if config.listenEvents ~= nil then
-        for event, _ in pairs(config.listenEvents) do
-            events[event] = true
-        end
+--- 获取ItemAttr的Event列表
+---@param itemAttr ItemAttr
+---@return table<EventString, any[][]>
+function E:GetItemAttrEvents(itemAttr)
+    ---@type table<string, any[]>
+    local events = {}
+    if itemAttr == nil then
+        return events
     end
-    local hasItem = false
-    local hasEquipment = false
-    local hasSpell = false
-    local hasToy = false
-    local hasMount = false
-    local hasPet = false
-    if config.type == const.ELEMENT_TYPE.ITEM then
-        local item = E:ToItem(config)
-        if item.extraAttr.type == const.ITEM_TYPE.ITEM then
-            hasItem = true
-        end
-        if item.extraAttr.type == const.ITEM_TYPE.EQUIPMENT then
-            hasEquipment = true
-        end
-        if item.extraAttr.type == const.ITEM_TYPE.TOY then
-            hasToy = true
-        end
-        if item.extraAttr.type == const.ITEM_TYPE.SPELL then
-            hasSpell = true
-        end
-        if item.extraAttr.type == const.ITEM_TYPE.MOUNT then
-            hasMount = true
-        end
-        if item.extraAttr.type == const.ITEM_TYPE.PET then
-            hasPet = true
-        end
+    if itemAttr.type == const.ITEM_TYPE.ITEM then
+        events["BAG_UPDATE"] = {}
+        events["UNIT_SPELLCAST_SUCCEEDED"] = {{"player"}, }
+        return events
     end
-    if hasItem or hasEquipment then
-        events["BAG_UPDATE"] = true
+    if itemAttr.type == const.ITEM_TYPE.EQUIPMENT then
+        events["BAG_UPDATE"] = {}
+        events["PLAYER_EQUIPMENT_CHANGED"] = {}
+        events["UNIT_SPELLCAST_SUCCEEDED"] = {{"player"}, }
+        return events
     end
-    if hasEquipment then
-        events["PLAYER_EQUIPMENT_CHANGED"] = true
+    if itemAttr.type == const.ITEM_TYPE.TOY then
+        events["NEW_TOY_ADDED"] = {}
+        events["UNIT_SPELLCAST_SUCCEEDED"] = {{"player"}, }
+        return events
     end
-    if hasSpell then
-        events["SPELLS_CHANGED"] = true
-        events["PLAYER_TALENT_UPDATE"] = true
+    if itemAttr.type == const.ITEM_TYPE.SPELL then
+        events["SPELLS_CHANGED"] = {}
+        events["UNIT_SPELLCAST_SUCCEEDED"] = {{"player"}, }
+        events["SPELL_UPDATE_COOLDOWN"] = {}
+        return events
     end
-    if config.triggers and #config.triggers > 0 then
-        for _, trigger in ipairs(config.triggers) do
-            if trigger.type == "aura" then
-                events["UNIT_AURA"] = true
+    if itemAttr.type == const.ITEM_TYPE.MOUNT then
+        events["MOUNT_JOURNAL_USABILITY_CHANGED"] = {}
+        events["NEW_MOUNT_ADDED"] = {}
+        return events
+    end
+    if itemAttr.type == const.ITEM_TYPE.PET then
+        events["PET_BAR_UPDATE_COOLDOWN"] = {}
+        events["NEW_PET_ADDED"] = {}
+        events["UNIT_SPELLCAST_SUCCEEDED"] = {{"player"}, }
+        return events
+    end
+    return events
+end
+
+--- 获取Macro的event列表
+---@param macroAttr MacroAttr
+---@return table<EventString, any[][]>
+function E:GetMacroEvents(macroAttr)
+    local events = {}
+    if macroAttr.ast == nil then
+        return events
+    end
+    if macroAttr.ast.tooltip ~= nil then
+        E:MergeEvents(events, E:GetItemAttrEvents(macroAttr.ast.tooltip))
+    end
+    if macroAttr.ast.commands == nil then
+        return events
+    end
+    for _, command in ipairs(macroAttr.ast.commands) do
+        if command.conds then
+            for _, cond in ipairs(command.conds) do
+                if cond and cond.booleanConds then
+                    for _, booleanCond in ipairs(cond.booleanConds) do
+                        if booleanCond.type == "mod" then
+                            E:MergeEvents(events, {["MODIFIER_STATE_CHANGED"] = {}})
+                        end
+                        if booleanCond.isTarget == true then
+                            E:MergeEvents(events, {["PLAYER_TARGET_CHANGED"] = {}})
+                        end
+                    end
+                end
+                if cond and cond.targetConds then
+                    for _, targetCond in ipairs(cond.targetConds) do
+                        if targetCond.type == "mouseover" then
+                            E:MergeEvents(events, {["UPDATE_MOUSEOVER_UNIT"] = {}})
+                        end
+                    end
+                end
             end
         end
-    end
-    -- 递归查找
-    if config.elements and #config.elements then
-        for _, childEle in ipairs(config.elements) do
-            local childEvents = E:GetEvents(childEle)
-            for k, v in pairs(childEvents) do
-                events[k] = true
+        if command.cmd == "use" then
+            if command.param and command.param.items then
+                for _, item in ipairs(command.param.items) do
+                    if item then
+                        E:MergeEvents(events, E:GetItemAttrEvents(item))
+                    end
+                end
             end
         end
     end
     return events
+end
+
+--- 合并events列表
+---@param events table<EventString, any[][]> 合并后的events列表
+---@param mergedEvents table<EventString, any[][]>  被合并的events列表
+function E:MergeEvents(events, mergedEvents)
+    for k, tt in pairs(mergedEvents) do
+        if events[k] == nil then
+            events[k] = U.Table.DeepCopy(tt)
+        else
+            for _, t in ipairs(tt) do
+                local hasSame = false
+                for _, _t in ipairs(events[k]) do
+                    if U.Table.Equal(t, _t) then
+                        hasSame = true
+                        break
+                    end
+                end
+                if hasSame == false then
+                    table.insert(events[k], t)
+                end
+                hasSame = false
+            end
+        end
+    end
+    
+end
+
+--- 获取config的监听事件
+--- @param config ElementConfig
+--- @return table<EventString, any[][]> -- key为事件名称，value为一个二维数组，每一个数组表示一组事件参数。当数组为空的时候表示不限制
+function E:GetEvents(config)
+    ---@type table<string, any[]>
+    local events = {
+        ["PLAYER_ENTERING_WORLD"] = {},  -- 读蓝条
+        ["PLAYER_REGEN_DISABLED"] = {},  -- 进入战斗
+        ["PLAYER_REGEN_ENABLED"] = {}, -- 退出战斗
+    }
+    if config.listenEvents ~= nil then
+        for event, _ in pairs(config.listenEvents) do
+            events[event] = {}
+        end
+    end
+    if config.type == const.ELEMENT_TYPE.ITEM then
+        local item = E:ToItem(config)
+        if item.extraAttr then
+            E:MergeEvents(events, E:GetItemAttrEvents(item.extraAttr))
+        end
+    end
+    if config.type == const.ELEMENT_TYPE.MACRO then
+        local macro = E:ToMacro(config)
+        E:MergeEvents(events, E:GetMacroEvents(macro.extraAttr))
+    end
+    if config.triggers and #config.triggers > 0 then
+        for _, trigger in ipairs(config.triggers) do
+            if trigger.type == "aura" then
+                events["UNIT_AURA"] = {}
+            end
+            if trigger.type == "item" then
+                local confine = Trigger:ToItemConfine(trigger.confine)
+                local item = confine.item
+                E:MergeEvents(events, E:GetItemAttrEvents(item))
+            end
+        end
+    end
+    -- 递归查找，并且合并去除重复的参数列表
+    if config.elements and #config.elements then
+        for _, childEle in ipairs(config.elements) do
+            E:MergeEvents(events, E:GetEvents(childEle))
+        end
+    end
+    return events
+end
+
+
+--- 获取config的是否加载监听事件
+--- @param config ElementConfig
+--- @return table<EventString, any[][]> -- key为事件名称，value为一个二维数组，每一个数组表示一组事件参数。当数组为空的时候表示不限制
+function E:GetLoadCondEvents(config)
+    ---@type table<string, any[]>
+    local events = {
+        ["HB_UPDATE_CONFIG"] = {},  -- 自定义事件
+        ["PLAYER_ENTERING_WORLD"] = {},  -- 读蓝条
+    }
+    if config.loadCond == nil then
+        return events
+    end
+    -- 开启战斗检查
+    if config.loadCond.CombatCond ~= nil then
+        events["PLAYER_REGEN_DISABLED"] = {}
+        events["PLAYER_REGEN_ENABLED"] = {}
+    end
+    return events
+end
+
+
+--- 比较元素的events对象参数和事件参数，如果能够匹配返回true
+---@param elementEventParams any[][]
+---@param eventParam any[]
+---@return boolean
+function E:CompareEventParam(elementEventParams, eventParam)
+    -- 如果元素参数二维数据为空，表示不设置条件
+    if #elementEventParams == 0 then
+        return true
+    end
+    for _, elementEventParam in ipairs(elementEventParams) do
+        local met = true
+        for k, param in ipairs(elementEventParam) do
+            -- 当元素参数为-1的时候，表示这个参数不比较
+            if param ~= -1 and param ~= eventParam[k] then
+                met = false
+                break
+            end
+        end
+        if met == true then
+            return true
+        end
+    end
+    return false
+end
+
+-- 更新config的ItemAttr
+function E:CompleteItemAttr(config)
+    if config.type == const.ELEMENT_TYPE.BAR then
+        if config.elements then
+            for _, ele in ipairs(config.elements) do
+                E:CompleteItemAttr(ele)
+            end
+        end
+    end
+    if config.type == const.ELEMENT_TYPE.MACRO then
+        local macro = E:ToMacro(config)
+        if macro.extraAttr.ast then
+            if macro.extraAttr.ast.tooltip then
+                Item:CompleteItemAttr(macro.extraAttr.ast.tooltip)
+            end
+            if macro.extraAttr.ast.commands then
+                for _, command in ipairs(macro.extraAttr.ast.commands) do
+                    if command.param and command.param.items then
+                        for _, item in ipairs(command.param.items) do
+                            Item:CompleteItemAttr(item)
+                        end
+                    end
+                end
+            end
+        end
+    end
 end

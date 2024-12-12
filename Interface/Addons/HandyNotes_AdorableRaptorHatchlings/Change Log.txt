@@ -1,3 +1,10 @@
+== v2.04 - 4th December 2024
+* Visual improvement to the AddOn compartment popup for retail
+
+== v2.03 - 26th November 2024
+* Helpful text added to the options panel
+* Version tweak to standardise between my AddOns
+
 == v2.02 - 12th November 2024
 * TOC update to 4.4.1
 

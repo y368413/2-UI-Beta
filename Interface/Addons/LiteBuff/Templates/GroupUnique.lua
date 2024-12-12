@@ -11,7 +11,9 @@ local NONE = "|cff808080"..NONE.."|r"
 local _, addon = ...
 local L = addon.L
 local templates = addon.templates
+	
 local GetSpellInfo = GetSpellInfo or function(id)
+	if not id then return nil; end
 	local info = C_Spell.GetSpellInfo(id)
 	if info then
 		return info.name, nil, info.iconID, info.castTime, info.minRange, info.maxRange, info.spellID, info.originalIconID;

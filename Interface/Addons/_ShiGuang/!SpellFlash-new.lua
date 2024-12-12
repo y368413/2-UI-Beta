@@ -1,5 +1,6 @@
 
 local thj = {}
+-- _G["SpellFlashCore"] = thj
 _G["SFC"] = thj
 thj.info = {
     key = nil,
@@ -11,55 +12,76 @@ thj.info = {
 }
 thj.items = {}
 thj.keyMapping = {}
+local _, clzName = UnitClass('player');
+-- thj.LS={}
+thj.meta = {
+    clzName = clzName
+}
+local LoggerFormat = function(fmt, ...)
+    local args = {...}
+    local rv = fmt
+    for i = 0, #args do
+        rv = string.gsub(rv, "{" .. i .. "}", tostring(args[i]))
+    end
+    return rv
+end
+thj.LogLevel = 5
+thj.logger = {
+    Debug = function(fmt, ...)
+        if thj.LogLevel > 0 then
+            return
+        end
+        print("|cff808080[DEBUG]|r " .. LoggerFormat(fmt, ...))
+    end,
+    Trace = function(fmt, ...)
+        if thj.LogLevel > 1 then
+            return
+        end
+        print("|cff808080[TRACE]|r " .. LoggerFormat(fmt, ...))
+    end,
+    Info = function(fmt, ...)
+        if thj.LogLevel > 2 then
+            return
+        end
+        print("|cff00ff00[INFO]|r " .. LoggerFormat(fmt, ...))
+    end,
+    Warn = function(fmt, ...)
+        if thj.LogLevel > 3 then
+            return
+        end
+        print("|cffffff00[WARN]|r " .. LoggerFormat(fmt, ...))
+    end,
+    Error = function(fmt, ...)
+        if thj.LogLevel > 4 then
+            return
+        end
+        print("|cffff0000[ERROR]|r " .. LoggerFormat(fmt, ...))
+    end
+}
+
 thj.createFrame = function(opt)
     local name, parent = opt.name, opt.parent or UIParent
-    local monitorEvents = opt.monitorEvents
-    -- name, parent, monitorEvents, withBorder
     local width, height = opt.width or 300, opt.height or 200
     local f = CreateFrame("Frame", name, parent or UIParent);
     f:SetWidth(width)
     f:SetHeight(height)
-    f:SetPoint(unpack(opt.anchor or {"CENTER", 0, 0}))
+    f:SetPoint(unpack(opt.anchor or {"TOPLEFT", 0, 0}))
     -- 配置事件监控
-    if monitorEvents then
-        f:SetScript("OnEvent", function(self, evtName, ...)
-            if self[evtName] then
-                if evtName == "COMBAT_LOG_EVENT_UNFILTERED" then
-                    local timestamp, subEvt, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, extraArg1, extraArg2, extraArg3, extraArg4, extraArg5, extraArg6, extraArg7, extraArg8, extraArg9, extraArg10 = CombatLogGetCurrentEventInfo()
-                    if self[subEvt] then
-                        self[subEvt](self, sourceGUID, sourceName, destGUID, destName, extraArg1, extraArg2, extraArg3, extraArg4, extraArg5, extraArg6, extraArg7, extraArg8, extraArg9, extraArg10);
-                    end
-                else
-                    self[evtName](self, evtName, ...);
+    f:SetScript("OnEvent", function(self, evtName, ...)
+        if self[evtName] then
+            if evtName == "COMBAT_LOG_EVENT_UNFILTERED" then
+                local timestamp, subEvt, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, extraArg1, extraArg2, extraArg3, extraArg4, extraArg5, extraArg6, extraArg7, extraArg8, extraArg9, extraArg10 = CombatLogGetCurrentEventInfo()
+                if self[subEvt] then
+                    self[subEvt](self, sourceGUID, sourceName, destGUID, destName, extraArg1, extraArg2, extraArg3, extraArg4, extraArg5, extraArg6, extraArg7, extraArg8, extraArg9, extraArg10);
                 end
+            else
+                self[evtName](self, evtName, ...);
             end
-        end)
-    end
+        end
+    end)
     return f;
 end
-local sfo = thj.createFrame({
-    name = "SFOFrame",
-    monitorEvents = true
-})
-local lastUpdate = 0;
-sfo:SetScript("OnUpdate", function(self, elapsed)
-    lastUpdate = lastUpdate + elapsed;
-    -- 每秒更新坐骑状态，当在坐骑上时不释放技能，否则马上进入战斗，放个技能又下马了
-    if lastUpdate > 0.1 then
-        -- print("OnUpdate.elapsed = ", lastUpdate)
-        lastUpdate = 0;
-        thj.info.isMounted = IsMounted("player");
-        thj.UpdateState();
-        thj.Repaint();
-    end
-end)
--- sfo:SetPoint("TOPLEFT", 0, 0);
-sfo:SetPoint("CENTER", 0, 0);
-sfo:SetFrameStrata("HIGH")
-sfo:SetFrameLevel(10000)
-sfo:SetSize(200, 10);
 
-thj.frame = sfo;
 
 
 local keyMapping = {
@@ -181,6 +203,9 @@ for k, v in pairs(keyMapping) do
         key = v
     }
 end
+--[[
+高四位 XX10 后2位固定10，前2为数据位
+]]
 local pxMappings = {
     [0] = {8, 8, 8, 8},
     [1] = {8, 8, 8, 24},
@@ -440,9 +465,20 @@ local pxMappings = {
     [255] = {56, 56, 56, 56}
 }
 thj.pxMappings = pxMappings;
+local cdSpells = {
+    [1719] = "鲁莽",
+    [107574] = "天神下凡"
+}
+thj.cdSpells = cdSpells;
+local counterSpells = {
+    SpellReflection = 10000,
+    Berserk = 10001
+}
+thj.counterSpells = counterSpells;
 
+local log = thj.logger;
 --[[ 创建UI ]]
-local sfo = thj.frame
+local log = thj.logger;
 
 local SIZE = 1;
 local BLOCK_COUNT = 24;
@@ -454,6 +490,16 @@ local C = {
     COUNTER_SPELL_INDEX = 5,
     END_TAG_INDEX = 6
 }
+local sfo = thj.createFrame({
+    name = "SFOFrame",
+    width = 200,
+    height = 10
+})
+sfo:SetPoint("TOPLEFT", 0, 0);
+sfo:SetFrameStrata("HIGH")
+sfo:SetFrameLevel(10000)
+
+thj.frame = sfo;
 --[[
 UI规划
 [1.定位点][2.版本][3.状态][4.主技能][5.无CD爆发][6.Counter技能][7.地图][8.坐标][9.目标][10.背包][-][-][-][-][-][-][-][-][-][20.定位点]
@@ -524,8 +570,9 @@ thj.UpdateSpell = function(key, keyState, keyIndex)
 end
 
 thj.UpdateState = function()
-    local info = thj.info; 
+    local info = thj.info;
     local b = ((info.isCombat and not info.isMounted) and 1 or 0) * 0xC0 + (info.isChanneling and 1 or 0) * 0x30;
+    -- log.Debug("    b={1}", b)
     updatePx(C.STATE_INDEX, 0, 0, b)
 end
 thj.Repaint = function()
@@ -560,33 +607,36 @@ sfo:RegisterEvent("ADDON_LOADED")
 function sfo:ADDON_LOADED(evt, name)
     if (name == "Hekili") then
         Hekili = _G["Hekili"]
-        C_Timer.After(1, function()
+        --[[C_Timer.After(1, function()
             -- print("Hekili_Primary_B1 = ", Hekili_Primary_B1)
+            log.Debug("Hekili loaded!")
             sfo:SetParent(Hekili_Primary_B1)
             sfo:SetPoint("TOPLEFT", Hekili_Primary_B1, 54, 1)
-        end)
+        end)]]
     end
 end
 
 -- 战斗状态指示
 sfo:RegisterEvent("PLAYER_REGEN_ENABLED")
 function sfo:PLAYER_REGEN_ENABLED()
+    -- print("PLAYER_REGEN_ENABLED  ")
     thj.SetCombat(false)
 end
 sfo:RegisterEvent("PLAYER_REGEN_DISABLED")
 function sfo:PLAYER_REGEN_DISABLED()
+    -- print("PLAYER_REGEN_DISABLED  ")
     thj.SetCombat(true)
 end
 -- Chennel状态指示 
 sfo:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", "player")
 function sfo:UNIT_SPELLCAST_CHANNEL_START()
-    thj.info.isChanneling = true;
-    thj.Repaint();
+    -- print("UNIT_SPELLCAST_CHANNEL_START  ")
+    thj.SetChanneling(true);
 end
 sfo:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", "player")
 function sfo:UNIT_SPELLCAST_CHANNEL_STOP()
-    thj.info.isChanneling = false;
-    thj.Repaint();
+    -- print("UNIT_SPELLCAST_CHANNEL_STOP  ")
+    thj.SetChanneling(false);
 end
 local cache = {}
 sfo:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_START", "player")
@@ -600,24 +650,45 @@ function sfo:UNIT_SPELLCAST_EMPOWER_START(unitTarget, castGUID, spellID)
         totalTime = totalTime + duration;
     end
     totalTime = totalTime / 1000
+    log.Warn("Empower spell should stop in {1} seconds!!!", totalTime)
     C_Timer.After(totalTime, function()
+        log.Debug("Delay done! Set state = UP")
         thj.info.keyState = "up"
-        thj.Repaint(); 
+        thj.Repaint();
     end)
 end
+-- UI update interval
 local INTERVAL = 0.2
 local lastKey = nil
 local empowering = false
+-- local lastUpdate = 0;
+-- sfo:SetScript("OnUpdate", function(self, elapsed)
+--     log.Debug("OnUpdate.elapsed = ", elapsed)
+--     lastUpdate = lastUpdate + elapsed;
+--     -- 每秒更新坐骑状态，当在坐骑上时不释放技能，否则马上进入战斗，放个技能又下马了
+--     if lastUpdate > 0.1 then
+--         lastUpdate = 0;
+--         thj.info.isMounted = IsMounted("player");
+--         thj.UpdateState();
+--     end
+-- end)
 C_Timer.NewTicker(INTERVAL, function()
+    if not Hekili then
+        return
+    end
+    thj.info.isMounted = IsMounted("player");
+    thj.UpdateState();
     local recommends = Hekili.DisplayPool["Primary"].Recommendations
     local firstKeybind = nil
 
     local curSequence = recommends[1]
     local curSpellName, curSpellId, curKey, empowerTo = curSequence.actionName, curSequence.actionID,
         curSequence.keybind, curSequence.empower_to or 0
-    if not curSpellId then return end
+    if not curSpellId then
+        return
+    end
     if not curKey then
-        --print("Unknown spell {1}, id = {2}", curSpellName, curSpellId)
+        log.Warn("Unknown spell {1}, id = {2}", curSpellName, curSpellId)
         return
     end
 
@@ -625,12 +696,15 @@ C_Timer.NewTicker(INTERVAL, function()
         lastKey = curKey
         if empowerTo > 1 and not empowering then
             empowering = true
-            thj.info.keyState = "down"
+            log.Debug("Enpower spell detected! Level = {1}", empowerTo)
+            -- thj.info.keyState = "down"
         end
         thj.FlashKey(curKey)
     else
         return
     end
+    thj.UpdateState();
+    thj.Repaint();
 end)
 --[[
     SFO API
@@ -650,6 +724,9 @@ thj.FlashKey = function(key, slot)
     if not key then
         return
     end
+    if thj.cdSpells[key] then
+        return
+    end
     thj.info["key" .. slot] = key;
     thj.info.keyState = ""
     local curSpell = Hekili.DisplayPool["Primary"].Recommendations[1]
@@ -657,6 +734,7 @@ thj.FlashKey = function(key, slot)
     if empLvl > 1 then
         thj.info.keyState = "down"
         empowering = false
+        log.Debug("Enpower spell dected! Set state = DOWN")
     end
     thj.UpdateSpell()
     thj.Repaint();
@@ -670,23 +748,20 @@ end
 -- /dump Hekili.KeybindInfo[Hekili.Class.abilities["奥术智慧"].key]
 thj.SpellName = function(id)
     if not id or id < 0 then
-        print("|cffff2020 Spell: ID must NOT EMPTY!|r")
+        log.Error("|cffff2020 Spell: ID must NOT EMPTY!|r")
         return nil
     end
     local hekiliDef = Hekili.Class.abilities[id]
     if not hekiliDef then
-        print("|cffff2020 Spell: {1} not found in HEKILI!|r", id)
+        log.Error("|cffff2020 Spell: {1} not found in HEKILI!|r", id)
         return nil
     end
     return hekiliDef.name;
 end
-thj.Flashable = function(spell)
-    return true
-end;
 local function GetSpellMeta(spellIdOrName)
     local hekiliDef = Hekili.Class.abilities[spellIdOrName]
     if not hekiliDef then
-        print("|cffff2020 Spell: {1} not found in HEKILI!|r", spellIdOrName)
+        log.Error("|cffff2020 Spell: {1} not found in HEKILI!|r", spellIdOrName)
         return nil
     end
     local id, name, simcName = hekiliDef.id, hekiliDef.name, hekiliDef.key;
@@ -732,39 +807,6 @@ thj.FlashAction3 = function(spellName)
         return nil
     end
     thj.FlashKey(key, "Counter")
-end
---[[
-    API: 根据物品ID获取物品名称
-    @param id: 物品ID
-    @returns 物品名称
-]]
-thj.ItemName = function(id)
-    if not id then
-        return nil
-    end
-    -- print("ItemName->"..id)
-    local name = thj.items[id];
-    if not name then
-        name = GetItemInfo(id);
-        thj.items[id] = name;
-    end
-    local hd = Hekili.Class.abilities[name]
-    if not hd then
-        return nil
-    end
-    return hd.name;
-end
---[[
-    API: 根据物品名称提示物品使用
-    @param spellName: 物品名称
-    @param color: 忽视
-]]
-thj.FlashItem = function(itemName, color)
-    local id, name, key = GetSpellMeta(itemName);
-    if not id or not key then
-        return nil
-    end
-    thj.FlashKey(key)
 end
 thj.StartQuesting = function()
     thj.info.isQuesting = true;
