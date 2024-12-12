@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream:Interface/Addons/Rematch/docs/changelog.txt
 10/22/2024 version 5.2.5
 - toc update for 11.0.5 patch
 - (I still don't know how to get to Ziriak to get his stats. They'll get added to an upcoming update when I can get to Ziriak.)
@@ -547,8 +546,6 @@ Notes:
 03/13/2021 version 4.11.12
 - toc updated for 9.0.5
 
-=======
->>>>>>> Stashed changes:Interface/Addons/Rematch/Changelog.txt
 02/20/2021 version 4.11.11
 - Potential fix for wrapped model remaining after unwrapping a pet.
 - The message sent to chat about pets added to the leveling queue will now go to chat frames registered for System Messages.

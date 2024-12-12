@@ -2,15 +2,10 @@
 ## Title: Rematch
 ## Notes: A pet journal alternative for managing pets and teams
 ## Author: Gello
-<<<<<<< Updated upstream
 ## Version: 5.2.5
 ## SavedVariables: Rematch5Settings, Rematch5SavedTeams, Rematch5SavedGroups, Rematch5SavedTargets, Rematch4Saved, Rematch4Settings, RematchSaved, RematchSettings
 ## IconTexture: Interface\AddOns\Rematch\textures\icon
 ## AddonCompartmentFunc: RematchToggleWindow
-=======
-## Version: 4.11.11
-## SavedVariables: RematchSaved, RematchSettings
->>>>>>> Stashed changes
 
 localization\localization.lua
 localization\localization-zhTW.lua

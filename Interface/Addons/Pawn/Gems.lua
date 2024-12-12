@@ -1,10 +1,6 @@
 ﻿-- Pawn by Vger-Azjol-Nerub
 -- www.vgermods.com
-<<<<<<< Updated upstream
 -- © 2006-2024 Travis Spomer.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
-=======
--- © 2006-2021 Green Eclipse.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
->>>>>>> Stashed changes
 -- See Readme.htm for more information.
 --
 -- Gem information
@@ -346,12 +342,9 @@ local PawnGemData196 =
 
 PawnGemQualityLevels =
 {
-<<<<<<< Updated upstream
 	{ 584, PawnGemData196 }, -- The War Within raid finder (593 for mythic dungeons)
 	{ 398, PawnGemData102 }, -- Vault of the Incarnates
 	{ 315, PawnGemData52 }, -- Mythic Fated Shadowlands epics are 311; tier-1 green Dragonflight gems are 385
-=======
->>>>>>> Stashed changes
 	{ 175, PawnGemData16 }, -- Rank 1 crafted Shadowlands legendaries (177 is rank 4 covenant armor)
 	{ 144, PawnGemData12 }, -- Mythic Ny'alotha is 140
 	{ 115, PawnGemData7 }, -- Azshara's Eternal Palace heroic
@@ -361,13 +354,9 @@ PawnGemQualityLevels =
 	{ 0, PawnGemData1 },
 }
 
-<<<<<<< Updated upstream
 PawnMetaGemQualityLevels = nil
 PawnCogwheelQualityLevels = nil
 
 PawnMinimumItemLevelToConsiderGems = 571 -- Sockets on items below this ilvl are ignored by default
 
 end -- if VgerCore.IsMainline
-=======
-PawnMinimumItemLevelToConsiderGems = 144 -- Sockets on items below this ilvl are ignored by default
->>>>>>> Stashed changes

@@ -408,9 +408,10 @@ frameBSC:SetScript("OnEvent",function(self)  --Event Handlers
     end
     if BSCSpace <= 8 then
       --SendChatMessage(REMINDER_BAGS_SPACE..BSCSpace,"SAY")
-      RaidNotice_AddMessage(RaidWarningFrame, REMINDER_BAGS_SPACE..BSCSpace, ChatTypeInfo["RAID_WARNING"])
+      --RaidNotice_AddMessage(RaidWarningFrame, REMINDER_BAGS_SPACE..BSCSpace, ChatTypeInfo["RAID_WARNING"])
+      UIErrorsFrame:AddMessage(REMINDER_BAGS_SPACE..BSCSpace)
       elseif BSCSpace <= 8 then
-      PlaySoundFile(540594, "Master")  --"Sound\\SPELLS\\SPELL_Treasure_Goblin_Coin_Toss_09.OGG"
+      --PlaySoundFile(540594, "Master")  --"Sound\\SPELLS\\SPELL_Treasure_Goblin_Coin_Toss_09.OGG"
     end
 end)
 

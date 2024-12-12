@@ -1048,15 +1048,10 @@ end --adler32()
 
 function Simulationcraft:GetSimcProfile(debugOutput, noBags, showMerchant, links)
   -- addon metadata
-<<<<<<< Updated upstream
   local versionComment = '# SimC Addon ' .. '11.0.5-02'
   local wowVersion, wowBuild, _, wowToc = GetBuildInfo()
   local wowVersionComment = '# WoW ' .. wowVersion .. '.' .. wowBuild .. ', TOC ' .. wowToc
   local simcVersionWarning = '# Requires SimulationCraft 1000-01 or newer'
-=======
-  local versionComment = '# SimC Addon ' .. '9.0.5-01'
-  local simcVersionWarning = '# Requires SimulationCraft 901-01 or newer'
->>>>>>> Stashed changes
 
   -- Basic player info
   local _, realmName, _, _, _, _, region, _, _, realmLatinName, _ = LibRealmInfo:GetRealmInfoByUnit('player')
