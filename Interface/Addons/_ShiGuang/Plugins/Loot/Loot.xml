@@ -1,8 +1,22 @@
 ﻿<Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="CanOpener.lua"/>
 	<Script file="MasterGypsy.lua"/>
+<<<<<<< Updated upstream
 	<!--Script file="RollHistory.lua"/>
 	<Script file="ToggleLootSpec.lua"/-->
 	<Script file="LootSpecSwapper.lua"/>
   <!--Include file="AtlasLootReverse\AtlasLootReverse.xml"/-->
+=======
+	<Script file="RollHistory.lua"/>
+	<Script file="SoulAshTooltip.lua"/>
+	<Script file="ToggleLootSpec.lua"/>
+	<Script file="EncounterJournalPlusInstanceInfo.lua"/>
+	<Frame name="EncounterJournalPlus_InstanceInfo">
+    <Scripts>
+      <OnLoad function="EncounterJournalPlus_InstanceInfo_OnLoad"></OnLoad>
+      <OnEvent function="EncounterJournalPlus_InstanceInfo_OnEvent"></OnEvent>
+    </Scripts>
+  </Frame>
+  <Include file="AtlasLootReverse\AtlasLootReverse.xml"/>
+>>>>>>> Stashed changes
 </Ui>

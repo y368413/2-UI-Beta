@@ -622,6 +622,7 @@ local function ImmersionFrame_OnHide()
 	end
 end
 
+<<<<<<< Updated upstream
 ----------------------------------------------------
 -- create into tooltip for raids
 local function GetEncounterInfo(instanceID,encounters,encounterIndex)
@@ -686,6 +687,9 @@ QueueStatusFrame:HookScript("OnShow",function(parent)
 	--end
 end);
 
+=======
+GossipFrame:HookScript("OnHide",OnGossipHide);
+>>>>>>> Stashed changes
 QueueStatusFrame:HookScript("OnHide",function(parent)
 	GameTooltip:Hide();
 end);

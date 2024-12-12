@@ -9,10 +9,14 @@
 ## Author: Ermad
 ## SavedVariables: AngryKeystones_Config, AngryKeystones_Data
 ## SavedVariablesPerCharacter: AngryKeystones_CharacterConfig
+<<<<<<< Updated upstream
 ## OptionalDeps: !KalielsTracker
 ## X-Packaged-Version: v0.31.8
 ## IconTexture: Interface\AddOns\HandyNotes\Icons\weaponsmith.blp
 ## RequiredDeps: _ShiGuang
+=======
+## X-Packaged-Version: v0.19.9
+>>>>>>> Stashed changes
 
 ## X-Repple: 2 UI
 

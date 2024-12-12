@@ -1,6 +1,10 @@
 ﻿-- Pawn by Vger-Azjol-Nerub
 -- www.vgermods.com
+<<<<<<< Updated upstream
 -- © 2006-2024 Travis Spomer.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
+=======
+-- © 2006-2021 Green Eclipse.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
+>>>>>>> Stashed changes
 -- See Readme.htm for more information.
 --
 -- WoW Classic Era, Burning Crusade Classic, and Wrath Classic scales sourced from HawsJon

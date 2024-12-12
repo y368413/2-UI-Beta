@@ -263,8 +263,13 @@ langs.zhCN = {
 	scheduleWeek2 = "下周",
 	scheduleWeek3 = "两周后",
 	scheduleWeek4 = "三周后",
+<<<<<<< Updated upstream
 	scheduleMissingKeystone = "你需要一把7级以上的钥石才可激活此项功能。",
 	scheduleUnknown = "新的词缀时间表目前未知。",
+=======
+	scheduleUnknown = "暂时没有新词缀信息。",
+	cheduleMissingKeystone = "你需要一把7级以上的钥石才可激活此项功能。",
+>>>>>>> Stashed changes
 	config_exclusiveTracker = "在副本中隐藏任务和成就追踪（重载插件后生效）",
 	config_hideTalkingHead = "在史诗钥石副本中隐藏NPC情景对话窗口",
 	config_resetPopup = "离开已完成的副本后提示是否重置",
@@ -305,6 +310,10 @@ langs.zhTW = {
 	scheduleWeek2 = "下周",
 	scheduleWeek3 = "兩周後",
 	scheduleWeek4 = "三周後",
+<<<<<<< Updated upstream
+=======
+	scheduleUnknown = "暫時沒有新詞綴訊息。",
+>>>>>>> Stashed changes
 	scheduleMissingKeystone = "你需要一把7級以上的鑰石來激活此項功能。",
 	config_exclusiveTracker = "在副本中隱藏成就和任務追蹤（重裝插件後生效）",
 	config_hideTalkingHead = "在傳奇鑰石副本中隱藏NPC情景對話窗口",
