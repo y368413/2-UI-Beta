@@ -1,0 +1,12 @@
+tag eb55b446e746955f16db1615e266c8c03dd6a2c9 1.1.11
+Author:	Peter Wooley <peterwooley@gmail.com>
+Date:	Tue Dec 17 12:58:45 2024 -0800
+
+Bump version: 1.1.10 → 1.1.11
+
+commit e112d39d46cf71c4a5a20b398dfdec2859ef1a28
+Author: Peter Wooley <peterwooley@gmail.com>
+Date:   Tue Dec 17 12:58:45 2024 -0800
+
+    Bump version: 1.1.10 → 1.1.11
+

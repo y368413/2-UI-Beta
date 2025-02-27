@@ -78,8 +78,7 @@ function addon:GetOptions()
 				end,
 				}, 
 			hide = {
-				name = "来源",
-				desc = "显示/隐藏 来源",
+				name = "Show/Hide Sources",
 				type = "group",
 				args = {
 					dungeon = {
@@ -283,8 +282,7 @@ function addon:GetOptions()
 				},
 			},
 			exp = {
-				name = "资料片",
-				desc = "显示/隐藏 资料片",
+				name = "Show/Hide Expansions",
 				type = "group",
 				args = {
 					classic = {

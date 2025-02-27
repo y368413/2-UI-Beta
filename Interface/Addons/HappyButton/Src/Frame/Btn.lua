@@ -42,6 +42,7 @@ local LCG = LibStub("LibCustomGlow-1.0")
 ---@field CbInfo ElementCbInfo
 ---@field effects table<EffectType, boolean>
 ---@field BindkeyString FontString | nil  -- 显示绑定快捷键信息
+---@field BindKey string | nil
 local Btn = addon:NewModule("Btn")
 
 ---@param eFrame ElementFrame
@@ -53,7 +54,8 @@ function Btn:New(eFrame, cbInfo, cbIndex)
     obj.EFrame = eFrame
     obj.CbInfo = cbInfo
     obj.CbResult = cbInfo.r[cbIndex]
-    obj.Button = CreateFrame("Button", ("Button-%s-%s-%s"):format(eFrame.Config.id, cbInfo.p.id, cbIndex), eFrame.Bar.BarFrame,
+    obj.Button = CreateFrame("Button", ("HB-%s-%s-%s"):format(eFrame.Config.id, cbInfo.p.id, cbIndex),
+        eFrame.Bar.BarFrame,
         "SecureActionButtonTemplate")
     obj.Button:SetSize(eFrame.IconWidth, eFrame.IconHeight)
     obj.effects = {}
@@ -104,7 +106,7 @@ function Btn:UpdateByElementFrame(cbIndex, btnIndex, event, eventArgs)
     if self.CbInfo.e[event] == nil or not E:CompareEventParam(self.CbInfo.e[event], eventArgs) then
         return
     end
-    self:Update()
+    self:Update(event, eventArgs)
 end
 
 -- 按钮自身更新CbResult
@@ -120,26 +122,29 @@ function Btn:UpdateBySelf(event, eventArgs)
     end
     ECB:UpdateSelfTrigger(self.CbResult, event, eventArgs)
     ECB:UseTrigger(self.CbInfo.p, self.CbResult)
-    self:Update()
+    self:Update(event, eventArgs)
 end
 
-
-function Btn:Update()
+---@param event EventString
+---@param eventArgs any[]
+function Btn:Update(event, eventArgs)
     if not InCombatLockdown() then
-        self:UpdateBindkey()
+        self:UpdateBindkey(event)
     end
     if self.CbResult == nil then
         return
     end
+    self:SetIcon()
     if self.CbResult.item ~= nil then
-        self:SetIcon()
         self:SetCooldown()
         -- ⚠️ 非战斗状态才能更新macro
         if not InCombatLockdown() then
             self:SetMacro()
         end
     else
-        self:SetScriptEvent()
+        if not InCombatLockdown() then
+            self:SetScriptEvent()
+        end
     end
     self:UpdateTexts()
     self:UpdateEffects()
@@ -157,40 +162,82 @@ function Btn:UpdateRegisterForClicks()
 end
 
 -- 按键绑定
-function Btn:UpdateBindkey()
+---@param event EventString
+function Btn:UpdateBindkey(event)
     local bindKey = self.CbInfo.p.bindKey
-    if bindKey == nil or bindKey.key == nil or bindKey.key == "" then
-        if self.BindkeyString then
-            self.BindkeyString:SetText("")
-        end
+    if not bindKey then
+        self:ClearOverrideBinding()
         return
     end
-    if (bindKey.characters == nil or bindKey.classes == nil) or
-        (bindKey.characters ~= nil and bindKey.characters[UnitGUID("player")] ~= nil) or
-        (bindKey.characters ~= nil and bindKey.classes[select(2, UnitClassBase("player"))] ~= nil)
-    then
+    if self:PassBindKeyCond(event) then
         if self.BindkeyString == nil then
             self.BindkeyString = self.Button:CreateFontString(nil, "OVERLAY", "GameFontNormal")
             self.BindkeyString:SetTextColor(1, 1, 1)
-            local fontSize = self.EFrame.IconWidth / 4
+            local fontSize = self.EFrame.IconWidth / 3
             self.BindkeyString:SetFont("Fonts\\FRIZQT__.TTF", fontSize, "OUTLINE")
             self.BindkeyString:SetPoint("TOPRIGHT", self.Button, "TOPRIGHT", -2, -2)
         end
-        local key = GetBindingKey("CLICK " .. self.Button:GetName() .. ":LeftButton")     -- 获取当前绑定的快捷键
-        if key ~= bindKey.key then
-            -- local result = SetBindingClick(bindKey.key, self.Button:GetName(), "LeftButton")
-            local result = SetBinding(bindKey.key, "CLICK " .. self.Button:GetName() .. ":LeftButton")
-            if result ~= nil then
-                self.BindkeyString:SetText(self:GetBindKeyShort(bindKey.key))
-            end
+        if self.BindKey ~= bindKey.key then
+            self:SetOverrideBinding(bindKey.key)
+            self.BindkeyString:SetText(self:GetBindKeyShort(bindKey.key))
         else
-            self.BindkeyString:SetText(self:GetBindKeyShort(key))
+            self.BindkeyString:SetText(self:GetBindKeyShort(bindKey.key))
         end
     else
-        if self.BindkeyString ~= nil then
-            self.BindkeyString:SetText("")
+        self:ClearOverrideBinding()
+    end
+end
+
+-- 判断是否满足按键绑定条件
+---@param event EventString
+function Btn:PassBindKeyCond(event)
+    local bindKey = self.CbInfo.p.bindKey
+    -- 是否设置了绑定按键
+    if bindKey == nil or bindKey.key == nil or bindKey.key == "" then
+        return false
+    end
+    -- 如果设置了绑定角色，但是当前角色不在绑定角色中，职业也不再绑定职业中
+    if bindKey.characters ~= nil and (bindKey.characters[UnitGUID("player")] == nil and bindKey.classes[select(2, UnitClassBase("player"))] == nil) then
+        return false
+    end
+    -- 战斗中加载条件不满足
+    if bindKey.combat ~= nil then
+        if event == "PLAYER_REGEN_DISABLED" then
+            if bindKey.combat == false then
+                return false
+            end
+        else
+            if bindKey.combat ~= InCombatLockdown() then
+                return false
+            end
         end
-        return
+    end
+    -- 依附框体显示条件不满足
+    if bindKey.attachFrame ~= nil then
+        if bindKey.attachFrame ~= self.EFrame.attachFrame:IsShown() then
+            return false
+        end
+    end
+    return true
+end
+
+-- 设置绑定按键
+---@param key string 绑定按键
+function Btn:SetOverrideBinding(key)
+    ---@diagnostic disable-next-line: param-type-mismatch
+    SetOverrideBinding(self.Button, true, key, "CLICK " .. self.Button:GetName() .. ":LeftButton")
+    self.BindKey = key
+end
+
+-- 取消绑定按键
+function Btn:ClearOverrideBinding()
+    if self.BindKey ~= nil then
+        ---@diagnostic disable-next-line: param-type-mismatch
+        SetOverrideBinding(self.Button, true, self.BindKey, nil)
+        self.BindKey = nil
+    end
+    if self.BindkeyString ~= nil then
+        self.BindkeyString:SetText("")
     end
 end
 
@@ -327,9 +374,9 @@ function Btn:UpdateEffects()
         self.Icon:SetDesaturated(false)
     end
     if btnVertexColor and btnVertexColor.status == true then
-        self.Icon:SetVertexColor(1, 0, 0, 1)  -- 红色背景
+        self.Icon:SetVertexColor(1, 0, 0, 1) -- 红色背景
     else
-        self.Icon:SetVertexColor(1, 1, 1, 1)  -- 清除效果
+        self.Icon:SetVertexColor(1, 1, 1, 1) -- 清除效果
     end
     if borderGlow and borderGlow.status == true then
         if Client:IsRetail() then
@@ -392,9 +439,9 @@ function Btn:SetIcon()
     if self.Icon == nil then
         self:CreateIcon()
     end
-    self.Icon:SetTexture(r.icon or r.item.icon or 134400)
+    self.Icon:SetTexture(r.icon or (r.item and r.item.icon) or 134400)
     -- 设置物品边框
-    if self.CbResult.borderColor then
+    if self.CbInfo.p.isShowQualityBorder == true and self.CbResult.borderColor then
         self.Border:SetBackdropBorderColor(unpack(self.CbResult.borderColor))
     else
         self.Border:SetBackdropBorderColor(unpack(const.DefaultItemColor))
@@ -514,6 +561,7 @@ function Btn:SetMouseEvent()
 end
 
 function Btn:Delete()
+    self:ClearOverrideBinding()
     self.Button:Hide()
     self.Button:ClearAllPoints()
     self.Border:Hide()

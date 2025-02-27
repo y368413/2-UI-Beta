@@ -95,6 +95,7 @@ local ignoreQuestNPC = {
 	[162804] = true,	-- 威娜莉
 	[168430] = true,	-- 戴克泰丽丝，格里恩挑战
 	[326027] = true,	-- 运输站回收生成器DX-82	
+	[195935] = true,	-- 塔薇欧，海象人钓鱼道具
 }
 
 R.IgnoreQuestNPC = {}

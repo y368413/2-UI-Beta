@@ -89,6 +89,7 @@ L["Horizontal"] = "水平方向"
 L["Vertical"] = "垂直方向"
 L["Icon Width"] = "图标宽度"
 L["Icon Height"] = "图标高度"
+L["Show Item Quality Color"] = "物品边框染色"
 L["Display Rule"] = "展示规则"
 L["Load"] = "启用"
 L["Load Rule"] = "载入规则"
@@ -125,11 +126,17 @@ L["ProfessionsBookFrame"] = "专业"
 L["WorldMapFrame"] = "世界地图"
 L["CollectionsJournal"] = "收集箱"
 L["PVEFrame"] = "地下城和团队副本"
+L["CharacterFrame"] = "角色面板"
 
 
 L["Combat Load Condition"] = "战斗状态加载条件"
 L["Load when out of combat"] = "战斗外加载"
 L["Load when in combat"] = "战斗中加载"
+
+L["AttachFrame Load Condition"] = "依附框体加载条件"
+L["Load when attach frame hide"] = "依附框体隐藏时加载"
+L["Load when attach frame show"] = "依附框体显示时加载"
+L["Not working when in combat"] = "战斗中此设置无效"
 
 L["Position Settings"] = "位置设置"
 L["Element Anchor Position"] = "元素锚点"
@@ -200,6 +207,7 @@ L["isUsable"] = "可用"
 L["isCooldown"] = "冷却完毕"
 L["remainingTime"] = "剩余时间"
 L["targetIsEnemy"] = "目标是否敌对"
+L["targetCanAttack"] = "目标是否可攻击"
 L["exist"] = "存在"
 
 -- 触发器效果
@@ -243,6 +251,7 @@ L["Bindkey"] = "绑定按键"
 L["Bind For Account"] = "为所有角色绑定"
 L["Bind For Current Character"] = "为当前角色绑定"
 L["Bind For Current Class"] = "为当前职业绑定"
+L["The newly created button do not immediately respond to key bindings and require executing the /reload command."] = "新创建的按钮无法立即响应按键绑定，需要执行/reload命令。"
 
 -- 宏错误提示
 L["Macro Error"] = "宏错误"

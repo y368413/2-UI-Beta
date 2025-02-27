@@ -1,0 +1,829 @@
+--生存运行库
+function WR_HunterSurvival()
+	if GetSpecialization()~=3 then	--如果不是生存(3)专精，则不执行该运行库
+		return
+	end
+	
+
+	ShiFaSuDu=0.2	--初始化施法速度
+	WR_Initialize()	--初始化
+	WR_Hunter_ErrorMessage() --战斗错误事件
+	
+	GCD=WR_GetGCD("鹰眼术")	--获得公共冷却剩余时间或者当前施法剩余时间
+	MaxGCD=WR_GetMaxGCD(1.5)	--获得最大的公共冷却时间
+	Latency=WR_GetMaxLatency()	--获得当前最大网络延时
+	NextGCD=GCD+Latency
+	
+	PlayerHP=WR_GetUnitHP("player")	--获得自身真实带护盾的血量比例
+	FocusPower=UnitPower("player",2)	--获取当前集中值
+	HunterFPS=10+GetHaste()/10	--获得每秒恢复集中值
+	TargetRange=WR_GetUnitRange("target")	--获取目标距离
+	
+	
+	if IsPlayerSpell(187707) then	--已学习 压制
+		TargetCloseRange=C_Spell.IsSpellInRange("压制","target")
+	elseif not IsPlayerSpell(5116) then	--没学习 震荡射击
+		TargetCloseRange=C_Spell.IsSpellInRange("摔绊","target")
+	else
+		TargetCloseRange=TargetRange<=4
+	end
+	
+	HUCountRange5=math.max(WR_GetRangeHarmUnitCount(5),WR_GetSpellRangeHarmUnitCount("压制"))
+
+	
+	TargetInCombat=WR_TargetInCombat("target")	--单位可攻击
+	
+	--HUCountRange6=WR_GetRangeHarmUnitCount(6,false)	--获得6码内的敌人数量
+
+	
+	BuffTime_LMZR , BuffCount_LMZR = WR_GetUnitBuffInfo("player","利矛之刃")
+	BuffTime_TDS = WR_GetUnitBuffTime("player",459859)	--投弹手BUFF时间
+	
+	WR_HunterSurvival_GetTime_AURA_APPLIED()	--记录上一次法术施法时间
+	
+--[[
+	MYSY_Damage=WR_GetSpellValue("猫鼬撕咬","造成","点")
+	if WR_GetUnitBuffTime("player",459870)>NextGCD then
+	--猫鼬撕咬可攻击3个单位的BUFF
+		if HUCountRange5<=3 then
+			MYSY_Damage=MYSY_Damage*HUCountRange5
+		else
+			MYSY_Damage=MYSY_Damage*3
+		end
+	end
+	TL_Damage=WR_GetSpellValue("屠戮","造成","点")
+	TL_Damage=WR_DamageMitigation(TL_Damage, HUCountRange5, 6)
+--]]
+
+	
+	--优先检查
+	if WR_PriorityCheck() then return end
+	
+	if WR_ZNJD(WRSet.SC_ZNJD) then return end	--智能焦点
+	
+	--施法过程 假死
+	if WR_Hunter_Function_JS() then return end
+	
+	--施法过程 意气风发
+	if WR_Hunter_Function_YQFF() then return end
+	
+	if WRSet.SC_SP1>=3 then
+		if WR_ShiPin(1,WRSet.SC_SP1) then return true end	--饰品 自保/协助
+	end
+	if WRSet.SC_SP2>=3 then
+		if WR_ShiPin(2,WRSet.SC_SP2) then return true end	--饰品 自保/协助
+	end
+	
+	--施法过程 治疗石
+	if WR_Hunter_Function_ZLS() then return end
+	
+	--施法过程 治疗药水
+	if WR_Hunter_Function_ZLYS() then return end
+	
+	--施法过程 唤醒
+	if WR_Hunter_Function_HX() then return end
+	
+	--施法过程 复活宠物
+	if WR_Hunter_Function_FHCW() then return end
+	
+	--生命值过低 治疗宠物
+	if WR_Hunter_Function_ZLCW("20%") then return end
+	
+	--施法过程 召唤宠物
+	if WR_Hunter_Function_ZHCW() then return end
+	
+	--施法过程 误导
+	if WR_Hunter_Function_WD() then return end
+	
+	--施法过程 猎人印记
+	if WR_Hunter_Function_LRYJ() then return end
+	
+	--施法过程 压制
+	if WR_HunterSurvival_Function_YZ() then return end
+	
+	--施法过程 宁神射击
+	if WR_Hunter_Function_NSSJ() then return end
+	
+	--施法过程 胁迫
+	if WR_Hunter_Function_XP() then return end
+
+	--施法过程 战斗
+	if WR_HunterSurvival_Function_Combat() then return end
+	
+	--治疗宠物
+	if WR_Hunter_Function_ZLCW() then return end
+	
+	if WR_Function_ZNMB(4,WRSet.SC_ZNMB) then return end
+	if WR_Function_ZNMB(30,WRSet.SC_ZNMB) then return end	--仅副本中
+	
+	WR_HideColorFrame(zhandoumoshi) --隐藏指定色块窗体
+	
+end
+
+--施法过程 战斗
+function WR_HunterSurvival_Function_Combat()
+	if GCD>ShiFaSuDu then return false end	--GCD>施法时间
+	if not TargetInCombat then return false end	--目标不可战斗
+
+	if TargetCloseRange then	--目标在近战
+		if WRSet.SC_SP1==1 then
+			if WR_ShiPin(1,WRSet.SC_SP1) then return true end	--饰品 常驻
+		end
+		if WRSet.SC_SP2==1 then
+			if WR_ShiPin(2,WRSet.SC_SP2) then return true end	--饰品 常驻
+		end
+	end
+
+	if HUCountRange5>=3 then
+		if WR_HunterSurvival_RMZF() then return true end	--锐矛之锋
+		if WR_HunterSurvival_Function_SLML("利矛") then return true end	--杀戮命令 无利矛之刃BUFF
+		if WR_HunterSurvival_Function_BZSJ("投弹手") then return true end	--爆炸射击 投弹手
+		if WR_HunterSurvival_Function_YHZD("满层") then return true end	--野火炸弹 满层
+		if WR_HunterSurvival_Function_XTJG() then return true end	--协同进攻
+		if WR_HunterSurvival_Function_CYDJ() then return true end	--侧翼打击
+		if WR_HunterSurvival_Function_BZSJ("AOE") then return true end	--爆炸射击
+		if WR_HunterSurvival_Function_XYZN() then return true end	--雄鹰之怒
+		if WR_HunterSurvival_Function_SLML("满能") then return true end	--杀戮命令 AOE
+		if WR_HunterSurvival_Function_YHZD("AOE") then return true end	--野火炸弹 AOE
+		if WR_HunterSurvival_Function_TL() then return true end	--屠戮
+		if WR_Hunter_Function_DMSJ() then return true end	--夺命射击
+		if WR_HunterSurvival_Function_MYSY() then return true end	--猫鼬撕咬
+	else
+		if WR_HunterSurvival_Function_SLML("利矛") then return true end	--杀戮命令 无利矛之刃BUFF
+		if WR_HunterSurvival_RMZF() then return true end	--锐矛之锋
+		if WR_HunterSurvival_Function_MYSY("钉刺") then return true end	--猫鼬撕咬
+		if WR_HunterSurvival_Function_CYDJ() then return true end	--侧翼打击
+		if WR_HunterSurvival_Function_YHZD("单满") then return true end	--野火炸弹 单体满层
+		if WR_HunterSurvival_Function_XTJG() then return true end	--施法过程 协同进攻
+		if WR_HunterSurvival_Function_BZSJ("单体") then return true end	--爆炸射击
+		if WR_Hunter_Function_DMSJ("单体") then return true end	--夺命射击
+		if WR_HunterSurvival_Function_SLML("单体") then return true end	--杀戮命令 单体
+		if WR_HunterSurvival_Function_YHZD("单体") then return true end	--野火炸弹 单体满层
+		if WR_HunterSurvival_Function_XYZN() then return true end	--雄鹰之怒
+		if WR_HunterSurvival_Function_MYSY("单体") then return true end	--猫鼬撕咬
+	end
+
+--[[
+	--施法过程 协同进攻
+	if WR_HunterSurvival_Function_XTJG() then return true end
+	
+	--施法过程 侧翼打击
+	if WR_HunterSurvival_Function_CYDJ() then return true end
+	
+	--施法过程 雄鹰之怒
+	if WR_HunterSurvival_Function_XYZN() then return true end
+
+	--野火炸弹 2层
+	if WR_GetSpellCharges("野火炸弹")==2
+	--野火炸弹 1层 并且 即将 2层
+	or (WR_GetSpellCharges("野火炸弹")==1 and WR_GetSpellNextCharge("野火炸弹")<NextGCD)
+	then
+		if WR_SpellUsable("野火炸弹")	--技能可用 资源可用
+		and TargetRange<=40 --目标距离
+		and TargetInCombat --目标战斗中
+		then
+			if WR_ColorFrame_Show("CF1","满层炸弹") then return true end
+		end
+	end
+
+	--免费 爆炸射击
+	if WR_GetUnitBuffTime("player",459859)>NextGCD	--投弹手
+	--协同进攻结束给的免费爆炸射击的BUFF
+	then
+		--施法过程 爆炸射击
+		if WR_HunterSurvival_Function_BZSJ("免费爆炸") then return true end
+	end
+	
+	--野火炸弹 Debuff
+	if WR_GetUnitDebuffTime("target","野火炸弹",true)==0 then
+	--目标身上没有我的 野火炸弹 Debuff
+		--施法过程 野火炸弹
+		if WR_HunterSurvival_Function_YHZD("炸弹Debuff") then return true end
+	end
+	
+	--施法过程 爆炸射击
+	if WR_HunterSurvival_Function_BZSJ() then return true end
+	
+	--施法过程 野火炸弹
+	if WR_HunterSurvival_Function_YHZD() then return true end
+	
+	--施法过程 屠戮
+	if WR_HunterSurvival_Function_TL() then return true end	
+	
+	--猫鼬撕咬 3目标
+	if WR_GetUnitBuffTime("player",459870)>NextGCD then	--无情重击 BUFF 猫鼬撕咬可攻击3个单位的BUFF
+		if WR_HunterSurvival_Function_MYSY("3目标猫鼬") then return true end	--施法过程 猫鼬撕咬
+	end
+	
+	--施法过程 夺命射击
+	if WR_Hunter_Function_DMSJ() then return true end
+	
+	--施法过程 猫鼬撕咬
+	if IsPlayerSpell(268501)	--已学[蝰蛇毒液]
+	and WR_GetUnitDebuffTime("target","毒蛇钉刺",true)<=3.6 then	--目标 毒蛇钉刺 DEBUFF时间<=3.6秒
+		if WR_HunterSurvival_Function_MYSY() then return true end
+	end
+	
+	--施法过程 杀戮命令
+	if WR_HunterSurvival_Function_SLML() then return true end
+	
+	--施法过程 猫鼬撕咬
+	if WR_HunterSurvival_Function_MYSY() then return true end
+--]]
+end
+
+--获取光环触发时间
+function WR_HunterSurvival_GetTime_AURA_APPLIED()
+	if WR_HunterSurvival_GetTime_AURA_APPLIED_Open~=true then
+		local frame = CreateFrame("Frame")
+		frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+		frame:SetScript("OnEvent", function(self, event)
+			local _, subEvent, _, _, sourceName, _, _, _, destName, _, _, spellId = CombatLogGetCurrentEventInfo()
+			if subEvent == "SPELL_AURA_APPLIED" and sourceName == UnitName("player") then
+				if spellId == 450884 then
+					WR_AURA_APPLIED_TIME_450884=GetTime()
+				end
+			end
+		end)
+	end
+	WR_HunterSurvival_GetTime_AURA_APPLIED_Open=true
+end
+
+--锐矛之锋
+function WR_HunterSurvival_RMZF()
+	if GCD<=ShiFaSuDu
+	and TargetRange<=40	--目标在40码内
+	and zhandoumoshi==1
+	and WR_GetGCD("协同进攻")>GCD	--协同进攻 冷却中
+	and WR_SpellUsable("锐矛之锋") --技能可用 资源可用
+	then
+		if WR_ColorFrame_Show("CSF9","锐矛之锋") then return true end
+	end
+	return false
+end
+
+--施法过程 压制
+function WR_HunterSurvival_YZ(Unit)
+	if C_Spell.IsSpellInRange("压制",Unit)	--当前技能范围内
+	and WR_GetCastInterruptible(Unit,InterruptTime)	--指定"单位"施法剩余时间小于设定
+	then
+		if Unit=="target" then
+			if WR_ColorFrame_Show("CF5","压制T") then return true end
+		elseif Unit=="mouseover" then
+			if WR_ColorFrame_Show("CN0","压制M") then return true end
+		elseif Unit=="focus" then
+			if WR_ColorFrame_Show("CSF8","压制F") then return true end
+		elseif Unit=="party1target" then
+			if WR_ColorFrame_Show("SF8","压制P1T") then return true end
+		elseif Unit=="party2target" then
+			if WR_ColorFrame_Show("SF9","压制P2T") then return true end
+		elseif Unit=="party3target" then
+			if WR_ColorFrame_Show("SF10","压制P3T") then return true end
+		elseif Unit=="party4target" then
+			if WR_ColorFrame_Show("SF11","压制P4T") then return true end
+		end
+	end
+end
+
+--施法过程 压制
+function WR_HunterSurvival_Function_YZ()
+	if not WR_SpellUsable("压制") then return false end	--压制 不可使用
+	
+	if WRSet.SC_YZ==5 then	--禁用
+		return false
+	elseif WRSet.SC_YZ==1	--智能
+	or
+	(
+		WRSet.SC_YZ==4	--焦点
+		and
+		(
+			not UnitExists("focus")	--焦点不存在
+			or
+			UnitIsDead("focus")	--焦点死亡
+			or
+			not UnitCanAttack("player","focus")	--焦点不可攻击
+		)
+	)
+	then
+		if WR_HunterSurvival_YZ("focus") then return true end	--焦点
+		if WR_HunterSurvival_YZ("target") then return true end	--目标
+		if WR_HunterSurvival_YZ("mouseover") then return true end	--指向
+		for i= 1,4,1 do
+			if WR_HunterSurvival_YZ("party"..i.."target") then return true end
+		end
+	elseif WRSet.SC_YZ==2 then	--目标
+		if WR_HunterSurvival_YZ("target") then return true end
+	elseif WRSet.SC_YZ==3 then	--指向
+		if WR_HunterSurvival_YZ("mouseover") then return true end
+	elseif WRSet.SC_YZ==4 then	--焦点
+		if WR_HunterSurvival_YZ("focus") then return true end
+	end
+	
+	return false
+end
+
+
+--获得最佳单位 爆炸射击
+function WR_HunterSurvival_GetBeatUnit_BZSJ()
+	local BestS=0
+	local BeatUnit=""
+	
+	if WR_GetUnitRange("target")<=5	--AOE范围内
+	and WR_TargetInCombat("target")	--单位战斗
+	then
+		local TempS = 8 - WR_GetUnitDebuffTime("target","爆炸射击",true)
+		if TempS==8 then
+			return "target"
+		elseif TempS > BestS then
+			BestS = TempS
+			BeatUnit = "target"
+		end
+	end
+	
+	if WR_GetUnitRange("mouseover")<=5	--AOE范围内
+	and WR_TargetInCombat("mouseover")	--单位战斗
+	then
+		local TempS = 8 - WR_GetUnitDebuffTime("mouseover","爆炸射击",true)
+		if TempS==8 then
+			return "mouseover"
+		elseif TempS > BestS then
+			BestS = TempS
+			BeatUnit = "mouseover"
+		end
+	end
+	
+	for i=1,4 do
+	local TempUnit="party"..i.."target"
+		if WR_GetUnitRange(TempUnit)<=5	--AOE范围内
+		and WR_TargetInCombat(TempUnit)	--单位战斗
+		then
+			local TempS = 8 - WR_GetUnitDebuffTime(TempUnit,"爆炸射击",true)
+			if TempS==8 then
+				return TempUnit
+			elseif TempS > BestS then
+				BestS = TempS
+				BeatUnit = TempUnit
+			end
+		end
+	end
+	
+	if BeatUnit=="" then return "target" end
+	return BeatUnit
+end
+
+--施法过程 爆炸射击
+function WR_HunterSurvival_BZSJ(Text)
+	local BeatUnit_BZSJ = WR_HunterSurvival_GetBeatUnit_BZSJ()	--获得最佳爆炸射击单位
+	
+	if WR_GetUnitRange(BeatUnit_BZSJ)<=40	--单位距离
+	and WR_TargetInCombat(BeatUnit_BZSJ)	--单位战斗中
+	then
+		if BeatUnit_BZSJ=="target" then
+			if WR_ColorFrame_Show("CF2",(Text or "") .. "爆炸T") then return true end
+		elseif BeatUnit_BZSJ=="mouseover" then
+			if WR_ColorFrame_Show("ASF7",(Text or "") .. "爆炸M") then return true end
+		elseif BeatUnit_BZSJ=="party1target" then
+			if WR_ColorFrame_Show("ASF8",(Text or "") .. "爆炸P1T") then return true end
+		elseif BeatUnit_BZSJ=="party2target" then
+			if WR_ColorFrame_Show("ASF9",(Text or "") .. "爆炸P2T") then return true end
+		elseif BeatUnit_BZSJ=="party3target" then
+			if WR_ColorFrame_Show("ASF11",(Text or "") .. "爆炸P3T") then return true end
+		elseif BeatUnit_BZSJ=="party4target" then
+			if WR_ColorFrame_Show("ASF12",(Text or "") .. "爆炸P4T") then return true end
+		end
+	end
+	return false
+end
+
+
+--施法过程 爆炸射击
+function WR_HunterSurvival_Function_BZSJ(Text)
+	if GCD>ShiFaSuDu then return false end
+	if not WR_SpellUsable("爆炸射击") then return false end	--技能不可用
+
+	if
+	Text==nil
+	or
+	(
+		Text=="投弹手"
+		and
+		BuffTime_TDS>NextGCD	--投弹手 BUFF存在 (协同进攻结束给的免费爆炸射击的BUFF)
+	)
+	or
+	(
+		Text=="AOE"
+		and
+		zhandoumoshi==1	--爆发 开启
+		and
+		(
+			(
+				(
+					BuffTime_LMZR>GCD	--利矛之刃 BUFF存在
+					or
+					BuffTime_TDS>NextGCD	--投弹手 BUFF存在 (协同进攻结束给的免费爆炸射击的BUFF)
+				)
+				and
+				(
+					(
+						WR_GetGCD("协同进攻")>20	--协同进攻 冷却时间>20
+						and
+						(
+							WR_GetGCD("协同进攻")<80	--协同进攻 冷却时间<80
+							or
+							WR_GetUnitBuffTime("player","协同进攻")>NextGCD	--协同进攻 BUFF存在
+						)
+					)
+					or
+					(
+						WR_GetGCD("协同进攻")>12	--协同进攻 冷却时间>12
+						and
+						WR_GetGCD("协同进攻")<20	--协同进攻 冷却时间<20
+					)
+				)
+			)
+			or
+			WR_GetGCD("协同进攻")<2	--协同进攻 冷却时间<2
+		)
+	)
+	or
+	(
+		Text=="单体"
+		and
+		zhandoumoshi==1	--爆发 开启
+		and
+		(
+			(
+				IsPlayerSpell(360966)	--已学 锐矛之锋
+				and
+				(
+					(
+						not IsPlayerSpell(459875)	--没学 共生激素
+						and
+						(
+							BuffTime_LMZR>GCD	--利矛之刃 BUFF存在
+							or
+							BuffTime_TDS>NextGCD	--投弹手 BUFF存在 (协同进攻结束给的免费爆炸射击的BUFF)
+						)
+						and
+						WR_GetGCD("锐矛之锋")>20	--协同进攻 冷却时间>20
+					)
+					or
+					WR_GetGCD("锐矛之锋")<2	--协同进攻 冷却时间<2
+				)
+			)
+			or
+			(
+				(
+					(
+						IsPlayerSpell(459875)	--已学 共生激素
+						or
+						not IsPlayerSpell(360966)	--没学 锐矛之锋
+					)
+					and
+					(
+						BuffTime_LMZR>GCD	--利矛之刃 BUFF存在
+						or
+						BuffTime_TDS>NextGCD	--投弹手 BUFF存在 (协同进攻结束给的免费爆炸射击的BUFF)
+					)
+					and
+					WR_GetGCD("协同进攻")>20	--协同进攻 冷却时间>20
+				)
+				or
+				WR_GetGCD("协同进攻")<2	--协同进攻 冷却时间<2
+			)
+		)
+	)
+	then
+		if WR_HunterSurvival_BZSJ(Text) then return true end
+	end
+
+	return false
+end
+
+--施法过程 野火炸弹
+function WR_HunterSurvival_Function_YHZD(Text)
+	if GCD>ShiFaSuDu then return false end
+
+	if WR_SpellUsable("野火炸弹") --技能可用 资源可用
+	and TargetRange<=40 --目标距离
+	and TargetInCombat --目标战斗中
+	then
+		if Text==nil
+		or
+		(
+			Text=="满层"
+			and
+			(
+				(
+					BuffTime_LMZR>GCD	--利矛之刃 BUFF存在
+					and
+					WR_GetSpellNextCharge("野火炸弹")<C_Spell.GetSpellCharges(259495).cooldownDuration*0.3	--野火炸弹 充能时间 < 最大充能时间*30% (充能时间已经过去70%)
+				)
+				or
+				WR_GetSpellNextCharge("野火炸弹")<C_Spell.GetSpellCharges(259495).cooldownDuration*0.1	--野火炸弹 充能时间 < 最大充能时间*10% (充能时间已经过去90%)
+				or
+				(
+					zhandoumoshi==1	--爆发 开启
+					and
+					WR_GetGCD("协同进攻")<GCD+MaxGCD*2	--技能冷却.协同进攻.剩余时间<2*gcd
+				)
+			)
+		)
+		or
+		(
+			Text=="AOE"
+			and
+			BuffTime_LMZR>GCD	--利矛之刃 BUFF存在
+		)
+		or
+		(
+			Text=="单满"
+			and
+			(
+				(
+					BuffTime_LMZR>GCD	--利矛之刃 BUFF存在
+					and
+					WR_GetSpellNextCharge("野火炸弹")<C_Spell.GetSpellCharges(259495).cooldownDuration*0.3	--野火炸弹 充能时间 < 最大充能时间*30% (充能时间已经过去70%)
+				)
+				or
+				WR_GetSpellNextCharge("野火炸弹")<C_Spell.GetSpellCharges(259495).cooldownDuration*0.1	--野火炸弹 充能时间 < 最大充能时间*10% (充能时间已经过去90%)
+				or
+				(
+					zhandoumoshi==1	--爆发 开启
+					and
+					WR_GetGCD("协同进攻")<GCD+MaxGCD*2	--技能冷却.协同进攻.剩余时间<2*gcd
+				)
+				or
+				(
+					IsPlayerSpell(450385)	--已学 皎月风暴
+					and
+					(
+						WR_AURA_APPLIED_TIME_450884==nil	--皎月风暴 没有触发过
+						or
+						GetTime()-WR_AURA_APPLIED_TIME_450884>15	--皎月风暴 触发时间过去15秒 可以再次触发
+					)
+				)
+			)
+		)
+		or
+		(
+			Text=="单体"
+			and
+			BuffTime_LMZR>GCD	--利矛之刃 BUFF存在
+			and
+			WR_AURA_APPLIED_TIME_450884~=nil
+			and
+			GetTime()-WR_AURA_APPLIED_TIME_450884>13.5
+			--皎月风暴 冷却时间>13.5秒
+		)
+		then
+			if WR_ColorFrame_Show("CF1",(Text or "") .. "炸弹") then return true end
+		end
+	end
+	return false
+end
+
+--施法过程 雄鹰之怒
+function WR_HunterSurvival_Function_XYZN()
+	if GCD>ShiFaSuDu then return false end
+	if zhandoumoshi~=1 then return false end
+	
+	if WR_SpellUsable("雄鹰之怒") --技能可用 资源可用
+	and TargetCloseRange	--目标在近战距离
+	and TargetInCombat --目标战斗中
+	and BuffTime_LMZR>GCD	--利矛之刃 BUFF 存在
+--[[
+	and
+	(
+		WR_GetUnitBuffTime("player","协同进攻")>NextGCD	--协同进攻 BUFF存在
+		or
+		WR_GetGCD("协同进攻")>NextGCD	--协同进攻冷却中
+	)
+--]]
+	then
+--[[
+		if WR_SpellUsable("野火炸弹") then	--技能可用 资源可用
+			if WR_ColorFrame_Show("CF1","清炸 鹰") then return true end
+		end
+--]]
+		if WR_ColorFrame_Show("CF6","雄鹰之怒") then return true end
+	end
+	return false
+end
+
+--施法过程 协同进攻
+function WR_HunterSurvival_Function_XTJG()
+	if GCD>ShiFaSuDu then return false end
+	if zhandoumoshi~=1 then return false end
+
+	if WR_SpellUsable("协同进攻") --技能可用 资源可用
+	and TargetInCombat --目标战斗中
+	and TargetCloseRange	--目标在近战距离
+	and
+	(
+		not IsPlayerSpell(389880)	--没学 投弹手
+		or
+		WR_GetSpellCharges("野火炸弹")==0	--野火炸弹 可用次数==0
+	)
+	then
+		if WRSet.SC_SP1==2 then
+			if WR_ShiPin(1,WRSet.SC_SP1) then return true end	--饰品 爆发
+		end
+		if WRSet.SC_SP2==2 then
+			if WR_ShiPin(2,WRSet.SC_SP2) then return true end	--饰品 爆发
+		end
+		
+		if WR_ColorFrame_Show("CF9","协同进攻") then return true end
+	end
+	return false
+end
+
+--施法过程 侧翼打击
+function WR_HunterSurvival_Function_CYDJ()
+	if GCD<=ShiFaSuDu
+	and zhandoumoshi==1	--爆发开启
+	and WR_SpellUsable("侧翼打击") --技能可用 资源可用
+	and TargetCloseRange --目标在近战距离
+	and TargetInCombat --目标战斗中
+	and BuffTime_LMZR>GCD --利矛之刃BUFF存在
+	then
+		if WR_ColorFrame_Show("CF8","侧翼打击") then return true end
+	end
+	return false
+end
+
+--施法过程 屠戮
+function WR_HunterSurvival_Function_TL(Text)
+	if GCD>ShiFaSuDu then return false end
+	
+	if WR_SpellUsable("屠戮") --技能可用 资源可用
+--[[
+	and HUCountRange5>=2  --6码单位数量
+
+		if ( HUCountRange5<=5 and WR_GetSpellNextCharge("野火炸弹")<=NextGCD+HUCountRange5+MaxGCD )
+		or ( HUCountRange5>5 and WR_GetSpellNextCharge("野火炸弹")<=NextGCD+5+MaxGCD )
+		then
+		--技能充能剩余时间<下一个GCD+单位数量+最大GCD
+			if WR_HunterSurvival_Function_YHZD("屠前炸弹") then return end
+		end
+--]]
+	then
+		if WR_ColorFrame_Show("CF3","屠戮") then return true end
+	end
+	return false
+end
+
+--施法过程 猫鼬撕咬 猛禽一击
+function WR_HunterSurvival_Function_MYSY(Text)
+	if GCD>ShiFaSuDu then return false end
+
+	if ( WR_SpellUsable("猫鼬撕咬") or WR_SpellUsable("猛禽一击") ) --技能可用 资源可用
+	and TargetInCombat --目标战斗中
+	and TargetCloseRange or (TargetRange<=40 and WR_GetUnitBuffTime("player","雄鹰守护")>GCD)
+	then
+		if
+		Text==nil
+		or
+		(
+			Text=="钉刺"
+			and
+			WR_GetUnitDebuffTime("target","毒蛇钉刺",true)==0	--毒蛇钉刺 DEBUFF不存在
+			and
+			WR_GetUnitDeathTime("target")>12	--目标存活时间>12
+		)
+		or
+		(
+			Text=="单体"
+			and
+			not IsPlayerSpell(459741)	--没学 传染毒剂
+		)
+		then
+			if WR_ColorFrame_Show("CF4",(Text or "") .. "撕咬") then return true end
+		end
+	end
+	return false
+end
+
+--获得最佳单位 杀戮命令
+function WR_HunterSurvival_GetBeatUnit_SLML()
+	if not IsPlayerSpell(260248) then return "target" end	--没有学习 觅血者
+	
+	local BestS=0
+	local BeatUnit=""
+	
+	if WR_GetUnitRange("target")<=5	--AOE范围内
+	and WR_TargetInCombat("target")	--单位战斗
+	then
+		local TempS = 8 - WR_GetUnitDebuffTime("target","杀戮命令")
+		if TempS==8 then
+			return "target"
+		elseif TempS > BestS then
+			BestS = TempS
+			BeatUnit = "target"
+		end
+	end
+	
+	if WR_GetUnitRange("mouseover")<=5	--AOE范围内
+	and WR_TargetInCombat("mouseover")	--单位战斗
+	then
+		local TempS = 8 - WR_GetUnitDebuffTime("mouseover","杀戮命令")
+		if TempS==8 then
+			return "mouseover"
+		elseif TempS > BestS then
+			BestS = TempS
+			BeatUnit = "mouseover"
+		end
+	end
+	
+	for i=1,4 do
+	local TempUnit="party"..i.."target"
+		if WR_GetUnitRange(TempUnit)<=5	--AOE范围内
+		and WR_TargetInCombat(TempUnit)	--单位战斗
+		then
+			local TempS = 8 - WR_GetUnitDebuffTime(TempUnit,"杀戮命令")
+			if TempS==8 then
+				return TempUnit
+			elseif TempS > BestS then
+				BestS = TempS
+				BeatUnit = TempUnit
+			end
+		end
+	end
+	
+	if BeatUnit=="" then return "target" end
+	return BeatUnit
+end
+
+--施法过程 杀戮命令
+function WR_HunterSurvival_SLML(Text)
+	local BeatUnit_SLML = WR_HunterSurvival_GetBeatUnit_SLML()	--获得最佳杀戮命令单位
+	
+	if WR_GetUnitRange(BeatUnit_SLML)<=50	--单位距离
+	and WR_TargetInCombat(BeatUnit_SLML)	--单位战斗中
+	then
+		if BeatUnit_SLML=="target" then
+			if WR_ColorFrame_Show("CF7",(Text or "") .. "杀戮T") then return true end
+		elseif BeatUnit_SLML=="mouseover" then
+			if WR_ColorFrame_Show("ASF6",(Text or "") .. "杀戮M") then return true end
+		elseif BeatUnit_SLML=="party1target" then
+			if WR_ColorFrame_Show("ASF1",(Text or "") .. "杀戮P1T") then return true end
+		elseif BeatUnit_SLML=="party2target" then
+			if WR_ColorFrame_Show("ASF2",(Text or "") .. "杀戮P2T") then return true end
+		elseif BeatUnit_SLML=="party3target" then
+			if WR_ColorFrame_Show("ASF3",(Text or "") .. "杀戮P3T") then return true end
+		elseif BeatUnit_SLML=="party4target" then
+			if WR_ColorFrame_Show("ASF5",(Text or "") .. "杀戮P4T") then return true end
+		end
+	end
+	return false
+end
+
+--施法过程 杀戮命令
+function WR_HunterSurvival_Function_SLML(Text)
+	if GCD>ShiFaSuDu then return false end
+	if not WR_SpellUsable("杀戮命令") then return false end --技能不可用
+
+	if
+	Text==nil
+	or
+	(
+		Text=="利矛"
+		and
+		IsPlayerSpell(459922)	--已学 无情原始狂野
+		and
+		WR_GetUnitBuffTime("player","协同进攻")>GCD	--协同进攻 BUFF存在
+		and
+		BuffCount_LMZR==0	--利矛之刃 层数==0
+	)
+	or
+	(
+		Text=="满能"
+		and
+		FocusPower+HunterFPS*(GCD+MaxGCD)<100	--当前集中值+每秒回能*一个技能GCD的时间<100
+	)
+	or
+	(
+		Text=="单体"
+		and
+		FocusPower+HunterFPS*(GCD+MaxGCD)<100	--当前集中值+每秒回能*一个技能GCD的时间<100
+		and
+		(
+			not IsPlayerSpell(459922)	--没学 无情原始狂野
+			or
+			WR_GetUnitBuffTime("player","协同进攻")<=GCD	--协同进攻 BUFF不存在
+			or
+			(
+				IsPlayerSpell(459922)	--已学 无情原始狂野
+				and
+				WR_GetUnitBuffTime("player","协同进攻")>GCD	--协同进攻 BUFF存在
+				and
+				BuffCount_LMZR==0	--利矛之刃 层数<=1
+			)
+		)
+	)
+	then
+		if WR_HunterSurvival_SLML(Text) then return true end
+	end
+
+	return false
+end

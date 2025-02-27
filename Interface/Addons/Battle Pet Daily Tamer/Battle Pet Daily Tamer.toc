@@ -1,5 +1,6 @@
-## Interface: 110005
+## Interface: 110007
 ## Title: Battle Pet Daily Tamer
+## Title-zhCN: |cFFBF00FF[宠物]|rBattle Pet Daily Tamer
 ## Notes: This addon marks the world map with battle pet dailies you've not completed for the day
 ## Author: Gello
 ## Version: 3.3.2

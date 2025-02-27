@@ -34,9 +34,13 @@ addonTable.Constants.Events = {
   "GuildShow",
   "GuildHide",
   "CurrencyPanelToggle",
+  "RefreshStateChange",
 
   "ViewComplete",
   "BagCacheAfterNewItemsUpdate",
+  "SearchMonitorComplete",
+
+  "NewItemsAcquired",
 
   -- Single view only events
   "SpecialBagToggled",
@@ -65,15 +69,21 @@ addonTable.Constants.Events = {
   "HighlightBagItems",
   "ClearHighlightBag",
 
-  "ContentRefreshRequired",
-  "LayoutUpdateRequired",
+  "HighlightGuildTabItems",
+  "ClearHighlightGuildTab",
+
   "PluginsUpdated",
 
   "TransferCancel",
 
   "PropagateAlt",
+  "SetButtonsShown",
 
   "FrameGroupSwapped",
+
+  "BankViewChanged",
+
+  "ItemContextChanged", -- Baganator specific context highlighting
 }
 
 addonTable.Constants.SortStatus = {
@@ -87,7 +97,8 @@ if not Syndicator then
   return
 end
 
-addonTable.Constants.KeywordGroupOrder = {
+addonTable.Constants.KeywordGroupOrder = Syndicator.Search.Constants.KeywordGroupOrder or {
+-- Stored here temporarily, true list is in Syndicator now
   SYNDICATOR_L_GROUP_ITEM_TYPE,
   SYNDICATOR_L_GROUP_ITEM_DETAIL,
   SYNDICATOR_L_GROUP_QUALITY,
@@ -132,7 +143,6 @@ addonTable.Constants.SampleSearchTerms = {
   ITEM_QUALITY3_DESC:lower(),
   ITEM_QUALITY2_DESC:lower(),
   SYNDICATOR_L_KEYWORD_BOA,
-  SYNDICATOR_L_KEYWORD_REPUTATION,
   SYNDICATOR_L_KEYWORD_AXE,
   SYNDICATOR_L_KEYWORD_SWORD,
   MOUNT:lower(),
@@ -164,6 +174,7 @@ end
 addonTable.Constants.KeyItemFamily = 256
 
 addonTable.Constants.ContainerKeyToInfo = {
+  ["?"] = {type = "atlas", value="QuestTurnin", tooltipHeader=AMMOSLOT},
   quiver = {type = "atlas", value="Ammunition", tooltipHeader=AMMOSLOT},
   reagentBag = {type = "atlas", value="Professions_Tracking_Herb", tooltipHeader = BAGANATOR_L_REAGENTS},
   keyring = {type = "file", value="interface\\addons\\baganator\\assets\\bag_keys", tooltipHeader = BAGANATOR_L_KEYS},
@@ -184,4 +195,29 @@ addonTable.Constants.ContainerTypes = 13
 addonTable.Constants.BankTabType = {
   Character = 0,
   Warband = 1,
+}
+
+addonTable.Constants.RefreshReason = {
+  ItemData = 2,
+  ItemWidgets = 4,
+  ItemTextures = 8,
+  Searches = 16,
+  Layout = 32,
+  Buttons = 64,
+  Sorts = 128,
+  Flow = 256,
+  Cosmetic = 512,
+  Character = 1024,
+}
+
+Baganator.Constants.RefreshReason = {
+  ItemWidgets = addonTable.Constants.RefreshReason.ItemWidgets,
+  Searches = addonTable.Constants.RefreshReason.Searches,
+}
+
+addonTable.Constants.RefreshZone = {
+  Bags = 2,
+  CharacterBank = 4,
+  WarbandBank = 8,
+  GuildBank = 16,
 }

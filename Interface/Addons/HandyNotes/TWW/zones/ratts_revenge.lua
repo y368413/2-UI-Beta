@@ -1,80 +1,83 @@
 -------------------------------------------------------------------------------
 ---------------------------------- NAMESPACE ----------------------------------
 -------------------------------------------------------------------------------
-local _, TheWarWithin = ...
-local Class = TheWarWithin.Class
-local L = TheWarWithin.locale
-local Map = TheWarWithin.Map
+local _, ns = ...
+local Class = ns.Class
+local L = ns.locale
+local Map = ns.Map
 
-local Node = TheWarWithin.node.Node
+local Node = ns.node.Node
 
-local Buff = TheWarWithin.reward.Buff
-local Item = TheWarWithin.reward.Item
-local Pet = TheWarWithin.reward.Pet
+local Achievement = ns.reward.Achievement
+local Buff = ns.reward.Buff
+local Item = ns.reward.Item
+local Mount = ns.reward.Mount
+local Pet = ns.reward.Pet
+local Toy = ns.reward.Toy
 
-local Entrance = TheWarWithin.poi.Entrance
+local Entrance = ns.poi.Entrance
 
-local Gray = TheWarWithin.status.Gray
-local Green = TheWarWithin.status.Green
-local Red = TheWarWithin.status.Red
+local Gray = ns.status.Gray
+local Green = ns.status.Green
+local Red = ns.status.Red
 
-local Circle = TheWarWithin.poi.Circle
-local Path = TheWarWithin.poi.Path
-local POI = TheWarWithin.poi.POI
+local Circle = ns.poi.Circle
+local Path = ns.poi.Path
+local POI = ns.poi.POI
 
-local ItemStatus = TheWarWithin.tooltip.ItemStatus
-local PetStatus = TheWarWithin.tooltip.PetStatus
+local ItemStatus = ns.tooltip.ItemStatus
+local PetStatus = ns.tooltip.PetStatus
 
 -------------------------------------------------------------------------------
 
 -- INERT PECULIAR KEY
-local ungoroCrater = TheWarWithin.maps[78] or Map({id = 78, settings = false})
+local ungoroCrater = ns.maps[78] or Map({id = 78, settings = false})
 
 -- PECULIAR GEM
-local dornogal = TheWarWithin.maps[2339] or Map({id = 2339, settings = false})
-local azjKahet = TheWarWithin.maps[2255] or Map({id = 2255, settings = false})
-local cityOfThreads = TheWarWithin.maps[2213] or Map({id = 2213, settings = false})
-local hallowfall = TheWarWithin.maps[2215] or Map({id = 2215, settings = false})
+local dornogal = ns.maps[2339] or Map({id = 2339, settings = false})
+local azjKahet = ns.maps[2255] or Map({id = 2255, settings = false})
+local cityOfThreads = ns.maps[2213] or Map({id = 2213, settings = false})
+local hallowfall = ns.maps[2215] or Map({id = 2215, settings = false})
 
 -- KARAZHAN CATACOMBS
-local deadwindPass = TheWarWithin.maps[42] or Map({id = 42, settings = false})
-local karazhanCatacombs = TheWarWithin.maps[46] or Map({id = 46, settings = false})
+local deadwindPass = ns.maps[42] or Map({id = 42, settings = false})
+local karazhanCatacombs = ns.maps[46] or Map({id = 46, settings = false})
 
 -- 1 O'CLOCK ORB
-local northernBarrens = TheWarWithin.maps[10] or Map({id = 10, settings = false})
-local draenorNagrand = TheWarWithin.maps[550] or Map({id = 550, settings = false})
-local maldraxxus = TheWarWithin.maps[1536] or Map({id = 1536, settings = false})
+local northernBarrens = ns.maps[10] or Map({id = 10, settings = false})
+local draenorNagrand = ns.maps[550] or Map({id = 550, settings = false})
+local maldraxxus = ns.maps[1536] or Map({id = 1536, settings = false})
 
 -- 2 O'CLOCK ORB
-local valeOfEternalBlossoms = TheWarWithin.maps[390] or Map({id = 390, settings = false})
+local valeOfEternalBlossoms = ns.maps[390] or Map({id = 390, settings = false})
 
 -- 3 O'CLOCK ORB
-local stormwind = TheWarWithin.maps[84] or Map({id = 84, settings = false})
-local ohn = TheWarWithin.maps[2023] or Map({id = 2023, settings = false})
+local stormwind = ns.maps[84] or Map({id = 84, settings = false})
+local ohn = ns.maps[2023] or Map({id = 2023, settings = false})
 
 -- 4 O'CLOCK ORB
-local azsuna = TheWarWithin.maps[630] or Map({id = 630, settings = false})
-local westernPlaguelands = TheWarWithin.maps[22] or Map({id = 22, settings = false})
+local azsuna = ns.maps[630] or Map({id = 630, settings = false})
+local westernPlaguelands = ns.maps[22] or Map({id = 22, settings = false})
 
 -- 5 O'CLOCK ORB
-local timelessIsle = TheWarWithin.maps[555] or Map({id = 555, settings = false})
-local capeOfStranglethorn = TheWarWithin.maps[210] or Map({id = 210, settings = false})
+local timelessIsle = ns.maps[555] or Map({id = 555, settings = false})
+local capeOfStranglethorn = ns.maps[210] or Map({id = 210, settings = false})
 
 -- 6 O'CLOCK ORB
-local northernStranglethorn = TheWarWithin.maps[50] or Map({id = 50, settings = false})
+local northernStranglethorn = ns.maps[50] or Map({id = 50, settings = false})
 
 -- 7 O'CLOCK ORB
-local theWardensCourt = TheWarWithin.maps[710] or Map({id = 710, settings = false})
-local vaultOfTheWardens = TheWarWithin.maps[711] or Map({id = 711, settings = false})
+local theWardensCourt = ns.maps[710] or Map({id = 710, settings = false})
+local vaultOfTheWardens = ns.maps[711] or Map({id = 711, settings = false})
 
 -------------------------------------------------------------------------------
 
-local TORCH = TheWarWithin.requirement.Toy(208092) -- Torch of Pyrreth
+local TORCH = ns.requirement.Toy(208092) -- Torch of Pyrreth
 
 local RattsRevenge = Class('RattsRevenge', Node, {
     icon = 'peg_rd',
     scale = 2,
-    group = TheWarWithin.groups.RATTS_REVENGE
+    group = ns.groups.RATTS_REVENGE
 })
 
 -------------------------------------------------------------------------------
@@ -146,7 +149,7 @@ deadwindPass.nodes[46766907] = RattsRevenge({
     OnClick = function() WorldMapFrame:SetMapID(karazhanCatacombs.id) end,
     requires = {
         TORCH, -- Torch of Pyrreth
-        TheWarWithin.requirement.Item(44124) -- Peculiar Key
+        ns.requirement.Item(44124) -- Peculiar Key
     },
     clabel = L['change_map']
 }) -- Karazhan Catacombs
@@ -273,8 +276,8 @@ karazhanCatacombs.nodes[48187996] = RattsRevenge({
     label = L['astral_chest_label'],
     note = L['astral_rewards_note'],
     quest = HATE_QUESTS, -- hidden
-    rewards = {Item({item = 228966, bag = true})}, -- Starry-Eyed Goggles
-    requires = TheWarWithin.requirement.Item(228965), -- Astral Key
+    rewards = {Toy({item = 228966})}, -- Starry-Eyed Goggles
+    requires = ns.requirement.Item(228965), -- Astral Key
     rlabel = Gray('2/2')
 }) -- Astral Chest
 
@@ -291,7 +294,7 @@ for num, machine in ipairs(CODE_MACHINES) do
         label = machine.label,
         note = machine.note,
         quest = machine.quest,
-        requires = TheWarWithin.requirement.Spell(463749), -- Starry-Eyed Goggles
+        requires = ns.requirement.Spell(463749), -- Starry-Eyed Goggles
         rewards = {PieceOfHate()},
         rlabel = Gray(num .. '/9')
     })
@@ -301,7 +304,7 @@ local SlotMachine = Class('SlotMachine', RattsRevenge, {
     icon = 'peg_yw',
     label = L['slot_machine_label'],
     quest = 84786, -- hidden
-    requires = TheWarWithin.requirement.Spell(463749), -- Starry-Eyed Goggles
+    requires = ns.requirement.Spell(463749), -- Starry-Eyed Goggles
     rewards = {PieceOfHate()}, -- Piece of Hate
     rlabel = Gray('9/9')
 }) -- Slot Machine
@@ -423,7 +426,7 @@ local PointlessTreasureSalesman = Class('PointlessTreasureSalesman',
     RattsRevenge, {
         label = '{npc:230310}',
         location = L['pointless_treasure_salesman_location'],
-        rewards = {Item({item = 228996, bag = true})}
+        rewards = {Item({item = 228996, bag = true})} -- Relic of Crystal Connections
     }) -- Pointless Treasure Salesman
 
 function PointlessTreasureSalesman.getters:note()
@@ -489,7 +492,7 @@ northernStranglethorn.nodes[78104770] = RattsRevenge({
     label = L['chest_of_acquisitions_label'],
     note = L['chest_of_acquisitions_note'],
     quest = 84811, -- hidden
-    requires = TheWarWithin.requirement.Spell(463749), -- Starry-Eyed Goggles
+    requires = ns.requirement.Spell(463749), -- Starry-Eyed Goggles
     rewards = {Item({item = 229007, bag = true})} -- Ancient Shaman Blood
 }) -- Chest of Acquisitions
 
@@ -501,7 +504,7 @@ azsuna.nodes[48207380] = RattsRevenge({
     label = '{npc:107379}',
     note = format(L['marin_bladewing_note'],
         C_CurrencyInfo.GetCoinTextureString(5000000),
-        TheWarWithin.color.Green(L['rep_revered'])),
+        ns.color.Green(L['rep_revered'])),
     quest = 84823, -- hidden
     rewards = {Pet({item = 136898, id = 1716})} -- Fledgling Warden Owl
 }) -- Marin Bladewing
@@ -511,7 +514,7 @@ local OwlOfTheWatchers = Class('OwlOfTheWatchers', RattsRevenge, {
     label = L['owl_of_the_watchers_label'],
     note = L['owl_of_the_watchers_note'],
     quest = 84823, -- hidden
-    requires = TheWarWithin.requirement.Pet(1716) -- Fledgling Warden Owl
+    requires = ns.requirement.Pet(1716) -- Fledgling Warden Owl
 }) -- Owl of the Watchers
 
 azsuna.nodes[44187241] = OwlOfTheWatchers()
@@ -600,53 +603,29 @@ local RATS_TO_STATUES = {
         {label = L['rats_label'], icon = 'peg_rd'},
         {label = format(L['lock_label'], 1), icon = 'peg_bl'},
         {label = format(L['lock_label'], 2), icon = 'peg_bl'},
-        {label = format(L['lock_label'], 3), icon = 'peg_bl'},
-        {label = format(L['lock_label'], 4), icon = 'peg_bl'},
-        {label = format(L['lock_label'], 5), icon = 'peg_bl'},
-        {label = format(L['lock_label'], 6), icon = 'peg_bl'},
-        {label = format(L['lock_label'], 7), icon = 'peg_bl'}
+        {label = format(L['lock_label'], 3), icon = 'peg_bl'}
     }, {
         {label = '1', icon = 'peg_yw'},
         {label = format(L['code_label'], 1, L['platform_1_label']), icon = 'peg_bk'},
         {label = format(L['code_label'], 1, L['platform_2_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 1, L['platform_3_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 1, L['platform_4_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 1, L['platform_5_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 1, L['platform_6_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 1, L['platform_7_label']), icon = 'peg_bk'}
+        {label = format(L['code_label'], 1, L['platform_3_label']), icon = 'peg_bk'}
     }, {
         {label = '2', icon = 'peg_yw'},
         {label = format(L['code_label'], 1, L['platform_2_label']), icon = 'peg_bk'},
         {label = format(L['code_label'], 1, L['platform_4_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 1, L['platform_6_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 2, L['platform_1_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 2, L['platform_3_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 2, L['platform_5_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 2, L['platform_7_label']), icon = 'peg_bk'}
+        {label = format(L['code_label'], 1, L['platform_6_label']), icon = 'peg_bk'}
     }, {
         {label = '3', icon = 'peg_yw'},
         {label = format(L['code_label'], 1, L['platform_3_label']), icon = 'peg_bk'},
         {label = format(L['code_label'], 1, L['platform_6_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 2, L['platform_2_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 2, L['platform_5_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 3, L['platform_1_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 3, L['platform_4_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 1, L['platform_1_label']), icon = 'peg_bk'}
+        {label = format(L['code_label'], 2, L['platform_2_label']), icon = 'peg_bk'}
     }, {
         {label = '4', icon = 'peg_yw'},
         {label = format(L['code_label'], 1, L['platform_4_label']), icon = 'peg_bk'},
         {label = format(L['code_label'], 2, L['platform_1_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 2, L['platform_5_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 3, L['platform_2_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 3, L['platform_6_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 1, L['platform_4_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 2, L['platform_1_label']), icon = 'peg_bk'}
+        {label = format(L['code_label'], 2, L['platform_5_label']), icon = 'peg_bk'}
     }, {
         {label = '5', icon = 'peg_yw'},
-        {label = format(L['code_label'], 1, L['platform_5_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 2, L['platform_3_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 3, L['platform_1_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 3, L['platform_6_label']), icon = 'peg_bk'},
         {label = format(L['code_label'], 1, L['platform_5_label']), icon = 'peg_bk'},
         {label = format(L['code_label'], 2, L['platform_3_label']), icon = 'peg_bk'},
         {label = format(L['code_label'], 3, L['platform_1_label']), icon = 'peg_bk'}
@@ -654,44 +633,24 @@ local RATS_TO_STATUES = {
         {label = '6', icon = 'peg_yw'},
         {label = format(L['code_label'], 1, L['platform_6_label']), icon = 'peg_bk'},
         {label = format(L['code_label'], 2, L['platform_5_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 3, L['platform_4_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 1, L['platform_4_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 2, L['platform_3_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 3, L['platform_2_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 1, L['platform_1_label']), icon = 'peg_bk'}
+        {label = format(L['code_label'], 3, L['platform_4_label']), icon = 'peg_bk'}
     }, {
         {label = '7', icon = 'peg_yw'},
         {label = format(L['code_label'], 1, L['platform_7_label']), icon = 'peg_bk'},
         {label = format(L['code_label'], 2, L['platform_7_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 1, L['platform_1_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 2, L['platform_1_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 3, L['platform_1_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 1, L['platform_2_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 2, L['platform_2_label']), icon = 'peg_bk'}
+        {label = format(L['code_label'], 1, L['platform_1_label']), icon = 'peg_bk'}
     }, {
         {label = '8', icon = 'peg_yw'},
         {label = format(L['code_label'], 2, L['platform_1_label']), icon = 'peg_bk'},
         {label = format(L['code_label'], 3, L['platform_2_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 1, L['platform_4_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 2, L['platform_5_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 3, L['platform_6_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 2, L['platform_1_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 3, L['platform_2_label']), icon = 'peg_bk'}
+        {label = format(L['code_label'], 1, L['platform_4_label']), icon = 'peg_bk'}
     }, {
         {label = '9', icon = 'peg_yw'},
         {label = format(L['code_label'], 2, L['platform_2_label']), icon = 'peg_bk'},
         {label = format(L['code_label'], 3, L['platform_4_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 1, L['platform_7_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 3, L['platform_2_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 1, L['platform_5_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 2, L['platform_7_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 1, L['platform_3_label']), icon = 'peg_bk'}
+        {label = format(L['code_label'], 1, L['platform_7_label']), icon = 'peg_bk'}
     }, {
         {label = '10', icon = 'peg_yw'},
-        {label = format(L['code_label'], 2, L['platform_3_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 3, L['platform_6_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 2, L['platform_3_label']), icon = 'peg_bk'},
-        {label = format(L['code_label'], 3, L['platform_6_label']), icon = 'peg_bk'},
         {label = format(L['code_label'], 2, L['platform_3_label']), icon = 'peg_bk'},
         {label = format(L['code_label'], 3, L['platform_6_label']), icon = 'peg_bk'},
         {label = format(L['code_label'], 2, L['platform_3_label']), icon = 'peg_bk'}
@@ -699,14 +658,11 @@ local RATS_TO_STATUES = {
 }
 -- LuaFormatter on
 
-local xStart = 2600
-local yStart = 1500
-
-for x = 1, 8 do
+for x = 1, 4 do
     for y = 1, 11 do
         local nodeInfo = RATS_TO_STATUES[y][x]
-        local newX = tostring(xStart + ((x - 1) * 300))
-        local newY = tostring(yStart + ((y - 1) * 400))
+        local newX = tostring(2600 + ((x - 1) * 300))
+        local newY = tostring(1500 + ((y - 1) * 400))
         local coordinates = tonumber(newX .. newY)
         karazhanCatacombs.nodes[coordinates] = RattsRevenge({
             icon = nodeInfo.icon,
@@ -725,15 +681,20 @@ end
 -------------------------------- 9 O'CLOCK ORB --------------------------------
 -------------------------------------------------------------------------------
 
-L['ak_decryption_console_note'] =
-    'Equip your {item:228966} to reveal a hidden platform.\n\nTarget the {npc:230383} and use the {item:228996} to reach it.' -- LEAVING THIS HERE FOR NOW
-
 azjKahet.nodes[56151797] = RattsRevenge({
     label = L['decryption_console_label'],
     note = L['ak_decryption_console_note'],
     pois = {Entrance({55121888})},
+    quest = 84854, -- hidden
     questDeps = 84837, -- hidden
-    requires = TheWarWithin.requirement.Spell(463749) -- Starry-Eyed Goggles
+    requires = {
+        ns.requirement.Spell(463749), -- Starry-Eyed Goggles
+        ns.requirement.Item(228996) -- Relic of Crystal Connections
+    },
+    rewards = {
+        Achievement({id = 40967, oneline = true}), -- Ratts' Revenge
+        Mount({item = 229348, id = 1943}) -- Incognitro
+    }
 }) -- Decryption Console
 
 -------------------------------------------------------------------------------
@@ -793,12 +754,14 @@ local ORBS = {
     [5] = {
         label = L['orb_2_label'],
         note = L['orb_2_note'],
-        quest = 84677 -- hidden
+        quest = 84677, -- hidden
+        rewards = {Item({item = 53156, bag = true})} -- Key of Shadows
     },
     [4] = {
         label = L['orb_3_label'],
         note = L['astral_rewards_note'],
-        quest = HATE_QUESTS -- hidden
+        quest = HATE_QUESTS, -- hidden
+        rewards = {Toy({item = 228966})} -- Starry-Eyed Goggles
     },
     [3] = {
         label = L['orb_4_label'],
@@ -808,17 +771,20 @@ local ORBS = {
     [2] = {
         label = L['orb_5_label'],
         note = format(L['jeremy_feasel_note'], ''),
-        quest = 84781 -- ![Master of Secrets]
+        quest = 84781, -- ![Master of Secrets]
+        rewards = {Item({item = 228996, bag = true})} -- Relic of Crystal Connections
     },
     [1] = {
         label = L['orb_6_label'],
         note = L['chest_of_acquisitions_note'],
-        quest = 84811 -- hidden
+        quest = 84811, -- hidden
+        rewards = {Item({item = 229007, quest = 84811})} -- Ancient Shaman Blood
     },
     [12] = {
         label = L['orb_7_label'],
         note = L['orb_7_summary'],
-        quest = 84823 -- hidden
+        quest = 84823, -- hidden
+        rewards = {Item({item = 229054, quest = 84823})} -- Warden's Mirror
     },
     [11] = {
         label = L['orb_8_label'],
@@ -827,35 +793,27 @@ local ORBS = {
     },
     [10] = {
         label = L['orb_9_label'],
-        note = UNKNOWN,
-        quest = 99999 -- hidden
-    },
-    [9] = {
-        label = L['orb_10_label'],
-        note = UNKNOWN,
-        quest = 99999 -- hidden
-    },
-    [8] = {
-        label = L['orb_11_label'],
-        note = UNKNOWN,
-        quest = 99999 -- hidden
-    },
-    [7] = {
-        label = L['orb_12_label'],
-        note = UNKNOWN,
-        quest = 99999 -- hidden
+        note = L['ak_decryption_console_note'],
+        quest = 84854, -- hidden
+        rewards = {
+            Achievement({id = 40967, oneline = true}), -- Ratts' Revenge
+            Mount({item = 229348, id = 1943}) -- Incognitro
+        }
     }
 }
 
 for i = 1, 12 do
     local orb = ORBS[i]
-    local coordinates = select(i, getOrbCoordinates())
-    local poi = select(i, getPoiCoordinates())
-    karazhanCatacombs.nodes[coordinates] = OrbNode({
-        label = orb.label,
-        minimap = false,
-        note = orb.note,
-        quest = orb.quest,
-        pois = {POI({poi}), Path({coordinates, poi})}
-    })
+    if orb then
+        local coordinates = select(i, getOrbCoordinates())
+        local poi = select(i, getPoiCoordinates())
+        karazhanCatacombs.nodes[coordinates] = OrbNode({
+            label = orb.label,
+            minimap = false,
+            note = orb.note,
+            pois = {POI({poi}), Path({coordinates, poi})},
+            quest = orb.quest,
+            rewards = orb.rewards or nil
+        })
+    end
 end

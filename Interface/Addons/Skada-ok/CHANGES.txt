@@ -1,0 +1,48 @@
+tag 2b88cd27d6af255ba98c56983392090b3074d839 1.8.4
+Author:	Kyle Buller <bullerk@gmail.com>
+Date:	Thu Nov 17 22:12:16 2022 -0600
+
+Tagging as 1.8.4
+
+commit ac776cec0292b8242c75fcf000b4b470153fc087
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Thu Nov 17 22:09:24 2022 -0600
+
+    Update TOC for 10.0.2
+
+commit b23a9329145b1f89aabb66f12f582b6c77dfc602
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Thu Nov 17 22:00:50 2022 -0600
+
+    Update pet owner detection
+
+commit 23461677c45fc6ba0be552f806b093a48d1a8874
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Thu Nov 17 22:00:03 2022 -0600
+
+    Fix SpecializedLibBars-1.0 for 10.0
+
+commit 94d7e7a974c4e9205b2d4afb130c7d107bcb5039
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Thu Nov 17 19:39:25 2022 -0600
+
+    Revert "Fixes ordering of return vars."
+    
+    This reverts commit f00d9e2e6aa98c77a7c001226f9f23c7f62a780d.
+    
+    Revert "Fixes issue #616 - UnitClass() returns 3 variables now."
+    
+    This reverts commit 5fb6766d0dbb485411198dbf1a4948f0dbba1498.
+
+commit f00d9e2e6aa98c77a7c001226f9f23c7f62a780d
+Author: krstcs <30695451+krstcs@users.noreply.github.com>
+Date:   Sun Feb 28 11:30:41 2021 -0600
+
+    Fixes ordering of return vars.
+
+commit 5fb6766d0dbb485411198dbf1a4948f0dbba1498
+Author: krstcs <30695451+krstcs@users.noreply.github.com>
+Date:   Sun Feb 28 11:00:07 2021 -0600
+
+    Fixes issue #616 - UnitClass() returns 3 variables now.
+

@@ -158,7 +158,7 @@ function internal.CalculateBreedID(nSpeciesID, nQuality, nLevel, nMaxHP, nPower,
         
         -- Lowbie pets go here, the bane of my existence. Calculations must be intense and logic loops numerous.
         else
-            -- Calculate diffs much more intensely. Round calculations with 10^-2 and math.floor. Also, properly devalue HP by dividing its absolute value by 5
+            -- Calculate diffs much more intensely. Round calculations with 10^-2 and by using math.floor after adding 0.5. Also, properly devalue HP by dividing its absolute value by 5.
             local diff3 = (abs((floor(((ihp + 5) * nQL * 5 + 10000) / wildHPFactor * 0.01 + 0.5) / 0.01) - thp) / 5) + abs((floor( ((ipower + 5) * nQL) / wildPowerFactor * 0.01 + 0.5) / 0.01) - tpower) + abs((floor( ((ispeed + 5) * nQL) * 0.01 + 0.5) / 0.01) - tspeed)
             local diff4 = (abs((floor((ihp * nQL * 5 + 10000) / wildHPFactor * 0.01 + 0.5) / 0.01) - thp) / 5) + abs((floor( ((ipower + 20) * nQL) / wildPowerFactor * 0.01 + 0.5) / 0.01) - tpower) + abs((floor( (ispeed * nQL) * 0.01 + 0.5) / 0.01) - tspeed)
             local diff5 = (abs((floor((ihp * nQL * 5 + 10000) / wildHPFactor * 0.01 + 0.5) / 0.01) - thp) / 5) + abs((floor( (ipower * nQL) / wildPowerFactor * 0.01 + 0.5) / 0.01) - tpower) + abs((floor( ((ispeed + 20) * nQL) * 0.01 + 0.5) / 0.01) - tspeed)
@@ -520,7 +520,7 @@ local function BPBID_Events_OnEvent(self, event, name, ...)
         end
         
         -- Disable option unless user has manually changed it
-        if (not BPBID_Options.ManualChange) or (BPBID_Options.ManualChange ~= "v1.31.2") then
+        if (not BPBID_Options.ManualChange) or (BPBID_Options.ManualChange ~= "v1.32.3") then
             BPBID_Options.BattleFontFix = false
         end
         
@@ -1334,7 +1334,7 @@ end
 -- Create title, version, author, and description fields
 local title = CreateFont("GameFontNormalLarge", properName)
 title:SetPoint("TOPLEFT", 16, -16)
-local ver = CreateFont("GameFontNormalSmall", "v1.31.2")
+local ver = CreateFont("GameFontNormalSmall", "v1.32.3")
 ver:SetPoint("BOTTOMLEFT", title, "BOTTOMRIGHT", 4, 0)
 local auth = CreateFont("GameFontNormalSmall", "by Simca@Malfurion")
 auth:SetPoint("BOTTOMLEFT", ver, "BOTTOMRIGHT", 3, 0)
@@ -1558,7 +1558,7 @@ local function BPBID_OptNamesHSFUpdate_OnClick(self, button, down)
     end
     
     -- A manual change has occurred (added in v1.0.8 to help update values added in new versions)
-    BPBID_Options.ManualChange = "v1.31.2"
+    BPBID_Options.ManualChange = "v1.32.3"
     
     -- Refresh the options page to display the new values
     BPBID_Options_Refresh()
@@ -1575,7 +1575,7 @@ local function BPBID_OptNamesPJT_OnClick(self, button, down)
     end
     
     -- A manual change has occurred (added in v1.0.8 to help update values added in new versions)
-    BPBID_Options.ManualChange = "v1.31.2"
+    BPBID_Options.ManualChange = "v1.32.3"
     
     -- Refresh the options page to display the new values
     BPBID_Options_Refresh()
@@ -1592,7 +1592,7 @@ local function BPBID_OptBreedtipCurrentStats25_OnClick(self, button, down)
     end
     
     -- A manual change has occurred (added in v1.0.8 to help update values added in new versions)
-    BPBID_Options.ManualChange = "v1.31.2"
+    BPBID_Options.ManualChange = "v1.32.3"
     
     -- Refresh the options page to display the new values
     BPBID_Options_Refresh()
@@ -1609,7 +1609,7 @@ local function BPBID_OptBreedtipAllStats25_OnClick(self, button, down)
     end
     
     -- A manual change has occurred (added in v1.0.8 to help update values added in new versions)
-    BPBID_Options.ManualChange = "v1.31.2"
+    BPBID_Options.ManualChange = "v1.32.3"
     
     -- Refresh the options page to display the new values
     BPBID_Options_Refresh()
@@ -1689,7 +1689,7 @@ local function BPBID_OptTooltipsEnabled_OnClick(self, button, down)
     end
     
     -- A manual change has occurred (added in v1.0.8 to help update values added in new versions)
-    BPBID_Options.ManualChange = "v1.31.2"
+    BPBID_Options.ManualChange = "v1.32.3"
     
     -- Refresh the options page to display the new values
     BPBID_Options_Refresh()
@@ -1809,7 +1809,7 @@ local function BPBID_GeneralCheckbox_OnClick(self, button, down)
     end
     
     -- A manual change has occurred (added in v1.0.8 to help update values added in new versions)
-    BPBID_Options.ManualChange = "v1.31.2"
+    BPBID_Options.ManualChange = "v1.32.3"
     
     -- Refresh the options page to display the new defaults
     BPBID_Options_Refresh()

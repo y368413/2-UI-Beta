@@ -1,13 +1,12 @@
 local PetBattleTeams = LibStub("AceAddon-3.0"):GetAddon("PetBattleTeams")
----@type PetBattleTeamsGUI
 local GUI = PetBattleTeams:GetModule("GUI")
----@type PetBattleTeamsTeamManager
 local TeamManager =  PetBattleTeams:GetModule("TeamManager")
 local ROW_HEIGHT = 55
----@type PetBattleTeamsCursor
 local Cursor = PetBattleTeams:GetModule("Cursor")
 local PetBattleTeamsFrame = PetBattleTeams.PetBattleTeamsFrame
 
+local _, addon = ...
+local L = addon.L
 -- luacheck: globals PetJournal
 
 local function OnDragStart(self)
@@ -74,7 +73,8 @@ local function SetComponentPoints(self, showSelectedTeam, showControls, showRost
 
     local minSize = (showSelectedTeam and 70 or 0) + (showControls and 45 or 0) + (showRoster and ROW_HEIGHT*2 + 30 or 0)
     minSize = (minSize == 0) and 50 or (minSize + self.resizer:GetHeight())
-    self:SetResizeBounds(self:GetWidth(), minSize, self:GetWidth(), ROW_HEIGHT * 11 + 150)
+    -- self:SetMinResize(self:GetWidth(), minSize)
+    self:SetResizeBounds(self:GetWidth(), minSize)
     if self:GetHeight() < minSize then
         self:SetHeight(minSize)
     end
@@ -144,6 +144,8 @@ function GUI:CreateMainFrame()
     widget:SetToplevel(true)
     widget:RegisterForDrag("LeftButton")
     widget:SetSize(165, ROW_HEIGHT * 8 + 166)
+    -- widget:SetMaxResize(widget:GetWidth(), ROW_HEIGHT * 11 + 150)
+    -- widget:SetMinResize(widget:GetWidth(), ROW_HEIGHT * 2 + 150)
     widget:SetResizeBounds(widget:GetWidth(), ROW_HEIGHT * 2 + 150, widget:GetWidth(), ROW_HEIGHT * 11 + 150)
     widget:SetMovable(true)
     widget:EnableMouse(true)
@@ -164,7 +166,7 @@ function GUI:CreateMainFrame()
 
     local selectedTeamText = widget:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     widget.selectedTeamText = selectedTeamText
-    selectedTeamText:SetText("Selected Team")
+    selectedTeamText:SetText(L["Selected Team"])
     selectedTeamText:SetPoint("TOP", widget, "TOP", -5, -10)
     selectedTeamText:SetJustifyH("CENTER")
     selectedTeamText:Show()

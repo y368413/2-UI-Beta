@@ -1,26 +1,20 @@
-﻿--********************************************************
---  感謝MOP的 magicdragoon 和 frankcg 為DEX做的部分改進
---  Amount-pro add by Farever
---********************************************************
-
+﻿--**********************************
+-- *2025.02.25日更新春节特别版  *
+--**********************************
 local dex_lastani = 1;
 local dex_bottom = 0;
 local dex_petbottom = 0
-local DEX_MAXANI = 25;
+local DEX_MAXANI = 30;
 local DEX_TEXTSIZE = 22;
 local DEX_OUTLINE = "";
 local DEX_FONTNAME = DEX_FontList[1];
 local DEX_SHADOW = 2;
-local DEX_aoeNew = 1;
-local AOE_SPELL = nil;
-local DEX_aoeId = 1;
-local DEX_aoeDct = 0;
 local DEX_logLine = 10;
 local DEX_logTime = 10;
 
 local AniRunTime = 1.5
 local EndTime, EndTime1 = 0, 0
-local LastHealthLen, LastAttackLen = 0, 0
+local AOEEnd = 0.7
 
 local ISTARGETPLAYER;
 local ISVEHICLE
@@ -44,6 +38,10 @@ DEX_ReflectTimer = 0
 
 DEX_ANI_UID = -9999999
 
+DEX_DAMAGE_TYPE_AOESPELL = -1
+DEX_DAMAGE_TYPE_AOEDOT = -2
+DEX_DAMAGE_TYPE_AOESHIELD = -3
+DEX_DAMAGE_TYPE_AOEHEALTH = -4
 DEX_DAMAGE_TYPE_HIT = 0
 DEX_DAMAGE_TYPE_SPELL = 1
 DEX_DAMAGE_TYPE_PERIODIC = 2
@@ -52,7 +50,6 @@ DEX_DAMAGE_TYPE_PET = 4096
 DEX_DAMAGE_TYPE_HONOR = 5
 DEX_DAMAGE_TYPE_MANA = 6
 DEX_DAMAGE_TYPE_BEATTACK = 4
-
 
 DEX_MOVTYP_NORMAL = 0;
 DEX_MOVTYP_AOE = 1;
@@ -70,8 +67,6 @@ local DEX_logFlag = 1;
 local amount, school, resisted, blocked, absorbed, critical, glancing, crushing
 local spellId, spellName, spellSchool, missType, powerType, extraAmount, environmentalType, extraSpellId, extraSpellName, extraSpellSchool, auraType
 local missType
---DEX_AOE_LIST = {} -- AOE spells definition through calls of DEX_RegisterAOE
-local aoeList = {}
 
 local dexType,dexText,dexSpell,dexCrit
 local playerGUID, petGUID, targetGUID
@@ -82,6 +77,65 @@ local DEX_CritFix = {
 }
 
 local DEX_MovTypOther_TimerSlot = {0,0,0,0,0}
+
+local TimeTmp = {
+		["NT"] = 0,
+		["AT"] = 0,
+		["HT"] = 0,
+		["PT"] = 0,
+	}
+local DataTmpHealth = {
+		["damage"] = 0,
+		["spell"] = "",
+		["damagetype"] = 0,
+		["crit"] = 0,
+		["iscurTarget"] = false,
+		["coerciveShowSpell"] = false,
+		["TargetGUID"] = "",
+		["TargetName"] = "",
+		["HitType"] = 0,
+		["spellid"] = 0,
+		["StartTime"] = 0,
+	}
+local DataTmpSpell = {
+		["damage"] = 0,
+		["spell"] = "",
+		["damagetype"] = 0,
+		["crit"] = 0,
+		["iscurTarget"] = false,
+		["coerciveShowSpell"] = false,
+		["TargetGUID"] = "",
+		["TargetName"] = "",
+		["HitType"] = 0,
+		["spellid"] = 0,
+		["StartTime"] = 0,
+	}
+local DataTmpDot = {
+		["damage"] = 0,
+		["spell"] = "",
+		["damagetype"] = 0,
+		["crit"] = 0,
+		["iscurTarget"] = false,
+		["coerciveShowSpell"] = false,
+		["TargetGUID"] = "",
+		["TargetName"] = "",
+		["HitType"] = 0,
+		["spellid"] = 0,
+		["StartTime"] = 0,
+	}
+local DataTmpShield = {
+		["damage"] = 0,
+		["spell"] = "",
+		["damagetype"] = 0,
+		["crit"] = 0,
+		["iscurTarget"] = false,
+		["coerciveShowSpell"] = false,
+		["TargetGUID"] = "",
+		["TargetName"] = "",
+		["HitType"] = 0,
+		["spellid"] = 0,
+		["StartTime"] = 0,
+	}
 
 local DEX_PREFIXES = {
 		["SWING"] = 1,
@@ -126,24 +180,58 @@ local dex_AniData = {
 		["aniText23"] = {},
 		["aniText24"] = {},
 		["aniText25"] = {},
+		["aniText26"] = {},
+		["aniText27"] = {},
+		["aniText28"] = {},
+		["aniText29"] = {},
+		["aniText30"] = {},
 }
 
 DEXPlayer = nil;
 DEX_DEFAULT_CFG = {
 	["DEX_Enable"] = 1,
 	["DEX_ShowWithMess"] = 0,
+	["DEX_ShowDamagePet"] = 1,
+	["DEX_PetPosX"] = 0,
+	["DEX_PetPosY"] = 0,
+	["DEX_NumberFormat"] = 1,
+	["DEX_ShowHit"] = 0,
+	["DEX_ShowHitX"] = 0,
+	["DEX_ShowHitY"] = 0,
+	["DEX_ShowInterrupt"] = 1,
+	["DEX_ShowInterruptCrit"] = 1,
+	["DEX_ShowCurrentOnly"] = 0,
+	["DEX_ShowDamage"] = 1,
+	["DEX_ShowDamagePeriodic"] = 1,
+	["DEX_ShowDamageShield"] = 1,
+	["DEX_ShowBlockNumber"] = 0,
 	["DEX_ShowSpellName"] = 1,
 	["DEX_ShowNameOnCrit"] = 1,
 	["DEX_ShowNameOnMiss"] = 1,
-	["DEX_ShowCurrentOnly"] = 0,
-	["DEX_ShowDamagePeriodic"] = 1,
-	["DEX_ShowDamageShield"] = 1,
-	["DEX_ShowDamageHealth"] = 1,
-	["DEX_ShowDamagePet"] = 1,
-	["DEX_ShowBlockNumber"] = 0,
+	["DEX_ShowSpellIcon"] = 0,
+	["DEX_ShowSpellIconOnCrit"] = 1,
+	["DEX_UniteSpell"] = 1,
 	["DEX_ShowDamageWoW"] = 0,
-	["DEX_ShowMaxDamage"] = 0,
-	["DEX_ShowOwnHealth"] = 0,
+	["DEX_ShowDamageSpellName"] = 1,
+	["DEX_ShowDamageNameOnCrit"] = 1,
+	["DEX_ShowDamageIconOnCrit"] = 1,
+	["DEX_ShowDamageSpellIcon"] = 1,
+	["DEX_ShowDamageSpellIconOnCrit"] = 1,
+	["DEX_ShowDebuff"] = 1,	
+	["DEX_BeAttackPosX"] = 0,
+	["DEX_BeAttackPosY"] = 0,
+	["DEX_ShowDamageType"] = 1,
+	["DEX_ShowDamageHealth"] = 1,
+	["DEX_ShowOwnHealth"] = 1,
+	["DEX_ShowOverHeal"] = 0,
+	["DEX_ShowBuff"] = 1,	
+	["DEX_ShowHealthSpellName"] = 1,
+	["DEX_ShowHealthNameOnCrit"] = 1,
+	["DEX_ShowHealthSpellIcon"] = 1,
+	["DEX_ShowHealthSpellIconOnCrit"] = 1,
+	["DEX_HealthPosX"] = 0,
+	["DEX_HealthPosY"] = 0,
+	["DEX_ShowHealthType"] = 1,
 	["DEX_Speed"] = 120,
 	["DEX_PosX"] = 280,
 	["DEX_PosY"] = 230,
@@ -166,21 +254,14 @@ DEX_DEFAULT_CFG = {
 	["DEX_ColorAttack"] = {1,0.3,1},
 	["DEX_ColorAttackSe"] = {1,0,1},
 	["DEX_ColorMode"] = 3,
-	["DEX_ShowInterruptCrit"] = 1,
 	["DEX_LOGLINE"] = 10,
 	["DEX_LOGTIME"] = 10,
-	["DEX_UniteSpell"] = 0,
-	["DEX_NumberFormat"] = 1,
-	["DEX_ShowSpellIcon"] = 0,
-	["DEX_ShowInterrupt"] = 1,
-	["DEX_ShowBuffDebuff"] = 1,	
-	["DEX_ShowOverHeal"] = 0,
-	["DEX_ShowLeftRight"] = 1,
-	["DEX_ShowRightLeft"] = 0,
-	["DEX_ShowDebug"] = 0,
-	["DEX_ShowHit"] = 0,
-	["DEX_ShowHitX"] = 0,
-	["DEX_ShowHitY"] = 0,
+	["DEX_FrameLevel"] = 2,
+	["DEX_AOETime"] = 7,
+	["DEX_IconSize"] = 3,
+	["DEX_State"] = 0,
+	["DEX_NoCombatHeal"] = 0,
+	["DEX_AdjustTime"] = 0,
 }
 
 local GetSpellInfo = GetSpellInfo or function(spellID)
@@ -205,34 +286,7 @@ local GetSpellInfo = GetSpellInfo or function(spellID)
 	end
 end
 
-local function RegisterSpells(list, ...)
-	local i
-	aoeList = {}
-	for i = 1, select("#", ...) do
-		local id = select(i, ...)
-		if type(id) == "number" then
-			local spell = GetSpellInfo(tostring(id))
-			if not spell then
-				DEX_Debug("技能ID不存在："..id)
-			else
-				table.insert(aoeList, id)
-			end
-		end
-	end
-end
-
 DEX_DISPELLED_FILTER = {}
-
-function DEX_RegisterAOE(class, ...)
-	local list = loadstring("return " .. ...)()
-	if not list then
-		list = {}
-	end
-	local _,PlayerID,_ = UnitClass("player")
-	if PlayerID == class then
-		RegisterSpells(list, ...)
-	end
-end
 
 --野德和盗贼连击点信息框
 local function CreateHitFrame(name, justify, fontType,fontSize, framesize, point)
@@ -251,26 +305,16 @@ local function CreateHitFrame(name, justify, fontType,fontSize, framesize, point
 	return frame
 end
 
-
-function RegisterAOE()
-	DEX_RegisterAOE("WARRIOR", 6343, 384318, 46968, 446035, 1680, 6544, 436358, 190411, 199851, 199852) -- 雷霆一擊, 雷鸣之吼, 震荡波, 剑刃风暴, 旋风斩, 英勇飞跃, 崩摧
-	DEX_RegisterAOE("ROGUE", 51723, 197835, 319175, 121411, 271877, 51690) -- 刀扇, 袖剑风暴, 黑火药, 猩红风暴, 刀锋冲刺, 剑刃乱舞, 影舞步
-	DEX_RegisterAOE("PALADIN", 26573, 53595, 53385, 431377, 184575, 375576, 31935, 85222, 204242) -- 奉獻, 公正之錘, 神性風暴, 英雄天赋晨光, 公正之剑, 圣洁鸣钟, 复仇者之盾, 黎明之光
-	DEX_RegisterAOE("HUNTER", 2643, 214579, 120360, 191433) -- 多重射擊, 響尾蛇射擊, 彈幕, 爆炸陷阱
-	DEX_RegisterAOE("WARLOCK", 27243, 105174, 193440, 5740) -- 腐蝕種子, 古爾丹之手, 惡魔怒火, 火焰之雨
-	DEX_RegisterAOE("MAGE", 120, 1449, 190356, 122, 2120, 31661) -- 冰錐術, 魔爆術, 暴風雪, 冰霜新星, 烈焰風暴, 龍之吐息
---	DEX_RegisterAOE("PRIEST", 48045) -- 心靈烙印（牧师检测不存在的技能）
---	DEX_RegisterAOE("EVOKER", ) -- （龙希尔需补充技能）
-	DEX_RegisterAOE("DRUID", 740, 132469, 77758, 106830, 213771, 106785, 441583, 400222, 194153, 48438, 202770, 383410, 145205, 93402, 192090, 191034) -- 寧靜, 颶風, 痛擊（熊形態）, 痛擊（獵豹形態）,揮擊(熊形态), 揮擊(獵豹形态), 英雄天赋毁灭, 英雄天赋铁刺, 星火术, 野性成长, 艾露恩之怒, 超凡之盟, 百花齐放, 阳炎术, 痛擊（熊形態DOT）
-	DEX_RegisterAOE("SHAMAN", 187874, 51490) -- 閃電轟擊, 雷霆風暴
-	DEX_RegisterAOE("DEATHKNIGHT", 49184, 43265, 274156, 206930, 207230, 279302, 196770,207317, 63560, 50842, 52212, 433895) -- 凜風衝擊, 死亡凋零, 吞噬, 心脏打击, 冰霜之镰, 冰霜巨龙之怒, 冷酷严冬, 扩散, 黑暗突变
-	DEX_RegisterAOE("MONK", 101546, 115181, 152175, 113656, 392983, 123986, 121253) -- 鶴旋踢, 火焰吐息, 升龙霸, 怒雷破, 风领主之击, 真气爆烈, 醉酿投
-	DEX_RegisterAOE("DEMONHUNTER", 191427, 370965, 185123, 179057, 258920, 188499, 389810, 198013, 195072, 189110, 247454, 228477, 212084) -- 恶魔变形, 恶魔追击, 投掷利刃, 混乱新星, 献祭光环, 刃舞, 烈焰咒符, 眼棱, 邪能冲撞, 地狱火撞击, 幽魂炸弹, 灵魂裂劈, 邪能毁灭
+local function TimeTmpReset()
+	TimeTmp.NT = 0
+	TimeTmp.AT = 0
+	TimeTmp.HT = 0
+	TimeTmp.PT = 0
 end
 
-function DEX_Debug(msg)
-	DEFAULT_CHAT_FRAME:AddMessage("|cff10ff00"..msg.."|r");
-end
+--function DEX_Debug(msg)
+	--DEFAULT_CHAT_FRAME:AddMessage("|cff10ff00"..msg.."|r");
+--end
 
 function DEX_OnLoad(self)
 	self:RegisterEvent("VARIABLES_LOADED");
@@ -284,20 +328,21 @@ end
 
 function DEX_Init(self)
 	DEXPlayer = DEX_Config_GetPlayer();
+	--DEX_Debug(DEX_Version);
 
 	SlashCmdList["DEX"] = DEX_showMenu;
 	SLASH_DEX1 = "/dex";
 
-	--[[if(myAddOnsList) then
+	if(myAddOnsList) then
 		myAddOnsList.DEX = {
 			name = "Damage Text",
 			description = "DamageEx",
-			version = "|r|cffff8800DamageEx|r Damage displayer   Type /dex for options",
+			version = DEX_Version,
 			frame = "DEX_TEXT",
 			optionsframe = "DEXOptions",
 			category = MYADDONS_CATEGORY_COMBAT
 		};
-	end]]
+	end
 
 	-- Add my options frame to the global UI panel list
 	UIPanelWindows["DEXOptions"] = {area = "center", pushable = 0};
@@ -305,6 +350,7 @@ function DEX_Init(self)
 	DEX_aniInit();
 	DEX_staticInit();
 	DEX_OnOptionCheck("DEX_Enable", DEX_Get("DEX_Enable") == 1)
+
 end
 
 function DEX_OnOptionCheck(name, checked)
@@ -369,21 +415,23 @@ end
 function DEX_ProcBlock(thetype)
 	if DEX_Get("DEX_ShowBlockNumber") ~= 1 then return;end
 --修正格档、吸收、减伤等
-	if tonumber(dexText) or string.find(dexText,"-") then
+	if not tonumber(dexText) or string.find(dexText,"-") then
 		if DEX_Get("DEX_NumberFormat") == 1 then
 			if string.find(dexText,"-") then
 				local healstart = string.sub(dexText, 1 , string.find(dexText,"-") - 1)
-				if AOE_CHECK(spellId) and thetype == "DAMAGE" then
+				if thetype == "DAMAGE" or thetype == "SHIELD" then
 					dexText = healstart
 				else
 					dexText = amount_format(healstart)
 				end
+				return
 			else
-				if AOE_CHECK(spellId) and thetype == "DAMAGE" then
-					return
+				if thetype == "DAMAGE" or thetype == "SHIELD" then
+					dexText = "0"
 				else
 					dexText = amount_format(dexText)
 				end
+				return
 			end
 			local healend = ""
 			if resisted then								--抵抗
@@ -397,7 +445,7 @@ function DEX_ProcBlock(thetype)
 			elseif crushing then								--碾压
 				healend = "(碾压)"
 			end
-			if AOE_CHECK(spellId) and thetype == "DAMAGE" then
+			if thetype == "DAMAGE" or thetype == "SHIELD" then
 				if resisted then
 					dexText = tonumber(dexText) - tonumber(resisted)
 				end
@@ -405,9 +453,11 @@ function DEX_ProcBlock(thetype)
 				dexText = dexText..healend
 			end
 		else
-			if AOE_CHECK(spellId) and thetype == "DAMAGE" then
+			if thetype == "DAMAGE" or thetype == "SHIELD" then
 				if resisted then
-					dexText = tonumber(dexText) - tonumber(resisted)	
+					dexText = tonumber(dexText) - tonumber(resisted)
+				else
+					return
 				end
 			else
 				if resisted then								--抵抗
@@ -433,17 +483,33 @@ function DEX_OnEvent(self, event, ...)
 
 		playerGUID = UnitGUID("player")
 		petGUID = UnitGUID("pet")
-		RegisterAOE()
 	elseif event == "UNIT_PET" then
 		if "player" == ... then
 			petGUID = UnitGUID("pet")
 		end
-		if DEX_Get("DEX_ShowLeftRight") == 1 and DEX_Get("DEX_ShowRightLeft") == 1 then
-			DEX_Debug("治疗及受到伤害的提示设置有误！恢复默认设置")
-			DEX_SAVE = nil
-			DEX_SAVE = DEX_clone(DEX_DEFAULT_CFG);
-		end
 	elseif event == "PLAYER_REGEN_DISABLED" then
+		local Framelevel = DEX_Get("DEX_FrameLevel")
+		if Framelevel == 1 then
+			DEX_TEXT:SetFrameStrata("WORLD")
+		elseif Framelevel == 2 then
+			DEX_TEXT:SetFrameStrata("BACKGROUND")
+		elseif Framelevel == 3 then
+			DEX_TEXT:SetFrameStrata("LOW")
+		elseif Framelevel == 4 then
+			DEX_TEXT:SetFrameStrata("MEDIUM")
+		elseif Framelevel == 5 then
+			DEX_TEXT:SetFrameStrata("HIGH")
+		elseif Framelevel == 6 then
+			DEX_TEXT:SetFrameStrata("DIALOG")
+		elseif Framelevel == 7 then
+			DEX_TEXT:SetFrameStrata("FULLSCREEN")
+		elseif Framelevel == 8 then
+			DEX_TEXT:SetFrameStrata("FULLSCREEN_DIALOG")
+		elseif Framelevel == 9 then
+			DEX_TEXT:SetFrameStrata("TOOLTIP")
+		else
+			DEX_TEXT:SetFrameStrata("BACKGROUND")
+		end
 		DEX_aniInit()
 		DEX_staticInit()
 		PlayerW = select(1, UnitClass("player"));                --检测玩家职业
@@ -451,15 +517,29 @@ function DEX_OnEvent(self, event, ...)
 		if currentSpec ~= nil then
 			 _,PlayerTelenid, _, _, _, _ = GetSpecializationInfo(currentSpec)
 		end
-		LastHealthLen = 0
-		LastAttackLen = 0
+		TimeTmpReset()
 		EndTime = 0
 		EndTime1 = 0
+		DataTmpSpell.StartTime = 0
+		DataTmpDot.StartTime = 0
+		DataTmpShield.StartTime = 0
+		DataTmpSpell.spellid = 0
+		DataTmpShield.spellid = 0
+		DataTmpDot.spellid = 0
+		DataTmpHealth.spellid = 0
+		DataTmpHealth.StartTime = 0
+		AOEEnd = DEX_Get("DEX_AOETime") / 10
 		infoFontHit = DEX_Get("DEX_FontSize")
 		infoP1 = {"BOTTOM", UIParent, "CENTER", DEX_Get("DEX_PosX") + DEX_Get("DEX_ShowHitX"), DEX_Get("DEX_PosY") + DEX_Get("DEX_ShowHitY")}
 		frames["HitInformation"] = CreateHitFrame("HitInformation", "CENTER", DEX_FontList[DEX_Get("DEX_Font")], DEX_Get("DEX_FontSize"), ifSize, infoP1)
+		if DEX_Get("DEX_State") == 1 then
+			DEX_AddText("进入战斗","",DEX_DAMAGE_TYPE_HONOR,1,true,false,"","","Begin",0,0)
+		end
 	elseif event == "PLAYER_REGEN_ENABLED" then
 		EndTime = GetTime()
+		if DEX_Get("DEX_State") == 1 then
+			DEX_AddText("离开战斗","",DEX_DAMAGE_TYPE_HONOR,1,true,false,"","","End",0,0)
+		end
 	elseif event == "PLAYER_TARGET_CHANGED" then
 		targetGUID = UnitGUID("target")
 	elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
@@ -467,22 +547,20 @@ function DEX_OnEvent(self, event, ...)
 	end
 end
 
-function AOE_CHECK(spellid)
-	for key, value in pairs(aoeList) do
-		if value == spellid then
-			return true
-		end
-	end
-	return false
-end
-
 function DEX_ProcessCombatLog(timeStamp, flag, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlag, destRaidFlags, ...)
 	if not DEX_Get("DEX_Enable")  then
 		return				--没有打开战斗显示
 	end
-	if not UnitAffectingCombat("player") then
+	if not UnitAffectingCombat("player") and DEX_Get("DEX_NoCombatHeal") ~= 1 then
 		if EndTime > 0 then
 			if EndTime1 - EndTime > AniRunTime then
+				DEX_aniInit()
+				EndTime = 0
+				EneTime1 = 0
+				DataTmpSpell.StartTime = 0
+				DataTmpDot.StartTime = 0
+				DataTmpShield.StartTime = 0
+				DataTmpHealth.StartTime = 0
 				return
 			else
 				EndTime1 = GetTime()
@@ -495,15 +573,17 @@ function DEX_ProcessCombatLog(timeStamp, flag, hideCaster, sourceGUID, sourceNam
 	if type(flag) ~= "string" then
 		return -- should never happen but just in case..
 	end
-
 	local prefixes, suffixes = strmatch(flag, "(.-)_(.+)")
 	if not prefixes or not suffixes then
 		return -- should never happen either, who knows..
 	end
-
 	if strsub(suffixes,1,8) == "PERIODIC" then
 		prefixes = prefixes.."_PERIODIC"
 		suffixes = strsub(suffixes,10)
+	end
+
+	if not UnitAffectingCombat("player") and DEX_Get("DEX_NoCombatHeal") == 1 and suffixes ~= "HEAL" then
+		return
 	end
 
 	local ISPLAYER = sourceGUID == playerGUID
@@ -513,25 +593,8 @@ function DEX_ProcessCombatLog(timeStamp, flag, hideCaster, sourceGUID, sourceNam
 	ISVEHICLE = isVehicle									--判断载具伤害
 	local ISPET = sourceGUID == petGUID or CombatLog_Object_IsA(sourceFlags, COMBATLOG_FILTER_MY_PET)
 	-- or CombatLog_Object_IsA(sourceFlags, COMBATLOG_FILTER_MINE)			--Modify big bug
-	
-	if DEX_Get("DEX_ShowHit") == 1 then
-		if PlayerW == "潜行者" or (PlayerW == "德鲁伊" and PlayerTelenid == "野性") then
-			HitPoints = UnitPower("player", 4);    --野德和盗贼连击点
-		elseif PlayerW == "武僧" and PlayerTelenid == "踏风" then	--武僧真气提示
-			HitPoints = UnitPower("player", 12);    --武僧真气
-		else
-			HitPoints = 0
-		end
-		if HitPoints > 0 then
-			if PlayerW == "武僧" then
-				frames["HitInformation"]:AddMessage(HitPoints.."真气", 1, 1, 0)
-			else
-				frames["HitInformation"]:AddMessage(HitPoints.."连击", 1, 1, 0)
-			end
-		else
-			frames["HitInformation"]:AddMessage("", 1, 1, 0)
-		end
-	end
+
+	local CombatTime = GetTime()
 
 	if DEX_Get("DEX_ShowDamageWoW") == 0 and ISTARGETPLAYER then
 			return -- 不处理受到的伤害
@@ -549,301 +612,181 @@ function DEX_ProcessCombatLog(timeStamp, flag, hideCaster, sourceGUID, sourceNam
 		return
 	end
 
-	if (suffixes == "HEAL" or suffixes == "AURA_APPLIED") and destGUID == playerGUID and DEX_Get("DEX_ShowOwnHealth") ~= 1 then
+	if suffixes == "HEAL" and destGUID == playerGUID and DEX_Get("DEX_ShowOwnHealth") ~= 1 then
+		return
+	end
+	if suffixes == "HEAL" and DEX_Get("DEX_ShowDamageHealth") ~= 1 then
+		return
+	end
+	if suffixes == "AURA_APPLIED" and destGUID == playerGUID and (DEX_Get("DEX_ShowBuff") ~= 1 and DEX_Get("DEX_ShowDeBuff") ~= 1) then
 		return
 	end
 	
---数据开始处理
-spellName = ""
-spellId = ""
-spellScholl = ""
-amount = 0
-
-if DEX_Get("DEX_ShowDebug") == 1 then
-	spellId, spellName, spellSchool = ...
-	if  spellId and spellName then
-		if tonumber(spellId) then
-			local DebugMsg = string.format("%s    %s",spellName, spellId)
-			DEX_Debug(DebugMsg);
+	if UnitAffectingCombat("player") then
+		if DEX_Get("DEX_ShowHit") == 1 then
+			if PlayerW == "潜行者" or (PlayerW == "德鲁伊" and PlayerTelenid == "野性") then
+				HitPoints = UnitPower("player", 4);    --野德和盗贼连击点
+			elseif PlayerW == "武僧" and PlayerTelenid == "踏风" then	--武僧真气提示
+				HitPoints = UnitPower("player", 12);    --武僧真气
+			else
+				HitPoints = 0
+			end
+			if HitPoints > 0 then
+				if PlayerW == "武僧" then
+					frames["HitInformation"]:AddMessage(HitPoints.."真气", 1, 1, 0)
+				else
+					frames["HitInformation"]:AddMessage(HitPoints.."连击", 1, 1, 0)
+				end
+			else
+				frames["HitInformation"]:AddMessage("", 1, 1, 0)
+			end
 		end
 	end
-end
 
-if  (ISPLAYER or ISVEHICLE or ISPET) and not ISTARGETPLAYER then
-	if flag == "SPELL_EXTRA_ATTACKS" then
-		spellId, spellName, spellSchool,amount = select(1,...)
-		if ISPLAYER then
-			dexText = tostring(amount)
-			dexType = DEX_DAMAGE_TYPE_HIT
-			DEX_AddText(dexText,"",dexType,0,true,false,destGUID,destName,suffixes)
+--数据开始处理
+	spellName = ""
+	spellId = nil
+	spellScholl = ""
+	amount = 0
+	spellId, spellName, spellSchool = ...
+	if type(spellId) == "string" then
+		spellId = nil
+	end
+	if select(1,GetSpellInfo(spellId))~=nil then 
+		spellName = select(1,GetSpellInfo(spellId))
+	end
+
+	if  (ISPLAYER or ISVEHICLE or ISPET) and not ISTARGETPLAYER then
+		if DEX_Get("DEX_ShowDamage") ~= 1 and suffixes ~= "INTERRUPT" then
 			return
 		end
-	end
-	if flag == "SPELL_MISSED" then
-		missType = select(4,...);
-		dexText = getglobal(missType)
-		if missType == "REFLECT" then
-			if spellId then
-				DEX_ReflectSpellID = select(1,...)
-				DEX_ReflectFromID = sourceGUID
-				DEX_ReflectTimer = GetTime()
-			else
+		if suffixes == "INTERRUPT" and DEX_Get("DEX_ShowInterrupt") ~= 1 then
+			return
+		end
+		if flag == "SPELL_EXTRA_ATTACKS" then
+			spellId, spellName, spellSchool,amount = select(1,...)
+			if type(spellId) == "string" then
+				spellId = nil
+			end
+			if select(1,GetSpellInfo(spellId))~=nil then 
+				spellName = select(1,GetSpellInfo(spellId))
+			end
+			if ISPLAYER then
+				dexText = tostring(amount)
 				dexType = DEX_DAMAGE_TYPE_HIT
-				DEX_AddText(dexText,"",dexType,0,true,false,destGUID,destName,suffixes)
+				DEX_AddText(dexText,"",dexType,0,true,false,destGUID,destName,suffixes,spellId,CombatTime)
 				return
 			end
 		end
-	end
-
-	if DEX_ReflectSpellID ~= 0 then
-		if GetTime() - DEX_ReflectTimer < 1 then
-			if destGUID == sourceGUID and sourceGUID == DEX_ReflectFromID then
-				spellId, spellName, spellSchool = select(1,...)
-				if spellId and DEX_ReflectSpellID == spellId then
-					local fromTarget = false
-					if destGUID == UnitGUID("target") then fromTarget = true;end
-					if flag == "SPELL_DAMAGE" then
-						amount,overDamage, school, resisted, blocked, absorbed, critical, glancing, crushing = select(4,...);
-						DEX_AddText(amount..DEX_TXT_REFLECT,spellName,DEX_DAMAGE_TYPE_SPELL,critical,true,destGUID,destName,suffixes)
-						DEX_ReflectSpellID = 0
-						return
-					end
-					if flag == "SPELL_MISSED" then
-						missType = select(4,...)
-						DEX_AddText(getglobal(missType)..DEX_TXT_REFLECT,spellName,DEX_DAMAGE_TYPE_SPELL,0,true,destGUID,destName,suffixes)
-						DEX_ReflectSpellID = 0
-						return
-					end
+		if flag == "SPELL_MISSED" then
+			missType = select(4,...);
+			dexText = getglobal(missType)
+			if missType == "REFLECT" then
+				if spellId then
+					DEX_ReflectSpellID = select(1,...)
+					DEX_ReflectFromID = sourceGUID
+					DEX_ReflectTimer = GetTime()
+				else
+					dexType = DEX_DAMAGE_TYPE_HIT
+					DEX_AddText(dexText,"",dexType,0,true,false,destGUID,destName,suffixes,spellId,CombatTime)
+					return
 				end
 			end
-		else
-			DEX_ReflectSpellID = 0
-		end
-	end
-
-	dexType = nil
-	dexText = "0"
-	dexSpell = ""
-	dexCrit = 0
-
-	--DEX_Debug(flag);
-	spellId, spellName, spellSchool = ...
-
-	if suffixes == "DAMAGE" then
-
-		amount, overDamage, school, resisted, blocked, absorbed, critical, glancing, crushing = select(DEX_PREFIXES[prefixes],...);
-		dexText = tostring(amount)
-		if critical then dexCrit = 1;end
-
-		if prefixes == "SWING" then
-			dexType = DEX_DAMAGE_TYPE_HIT
-		elseif prefixes == "RANGE" then
-			dexType = DEX_DAMAGE_TYPE_HIT
-		elseif prefixes == "SPELL"then
-			dexType = DEX_DAMAGE_TYPE_SPELL
-			dexSpell = spellName
-		elseif prefixes == "SPELL_PERIODIC" then
-			dexType = DEX_DAMAGE_TYPE_PERIODIC
-			dexSpell = spellName
-		end
-		DEX_ProcBlock(suffixes)
-
-	elseif suffixes == "MISSED" then
-		missType = select(DEX_PREFIXES[prefixes],...);
-		dexText = getglobal(missType)
-		if prefixes == "SWING" then
-			dexType = DEX_DAMAGE_TYPE_HIT
-		elseif prefixes == "RANGE" then
-			dexType = DEX_DAMAGE_TYPE_HIT
-		elseif prefixes == "SPELL"then
-			dexType = DEX_DAMAGE_TYPE_SPELL
-			dexSpell = spellName
-		elseif prefixes == "SPELL_PERIODIC" then
-			dexType = DEX_DAMAGE_TYPE_PERIODIC
-			dexSpell = spellName
 		end
 
-	elseif suffixes == "SHIELD_MISSED" then
-		missType = select(4,...);
-		dexText = getglobal(missType)
-		if prefixes == "DAMAGE" then
-			dexType = DEX_DAMAGE_TYPE_SPELL
-			dexSpell = spellName
-		end
-
-	elseif suffixes == "HEAL"  then
-			amount, overDamage, _, critical = select(DEX_PREFIXES[prefixes],...);
-			dexText = amount
-			DEX_OverHeal = overDamage
-			if critical and prefixes == "SPELL" and spellId ~= 143924 then dexCrit = 1;end		--Modify Heal Spell Critical,排除汲取效果
-			--dexCrit = critical
-			dexType = DEX_DAMAGE_TYPE_HEALTH
-			if prefixes ~= "SWING" then
-				dexSpell = spellName
+		if DEX_ReflectSpellID ~= 0 then
+			if GetTime() - DEX_ReflectTimer < 1 then
+				if destGUID == sourceGUID and sourceGUID == DEX_ReflectFromID then
+					spellId, spellName, spellSchool = select(1,...)
+					if type(spellId) == "string" then
+						spellId = nil
+					end
+					if select(1,GetSpellInfo(spellId))~=nil then 
+						spellName = select(1,GetSpellInfo(spellId))
+					end
+					if spellId and DEX_ReflectSpellID == spellId then
+						local fromTarget = false
+						if destGUID == UnitGUID("target") then fromTarget = true;end
+						dexType = DEX_DAMAGE_TYPE_HIT
+						if flag == "SPELL_DAMAGE" then
+							amount,overDamage, school, resisted, blocked, absorbed, critical, glancing, crushing = select(4,...);
+							DEX_AddText(amount..DEX_TXT_REFLECT,spellName,DEX_DAMAGE_TYPE_SPELL,critical,true,destGUID,destName,suffixes, spellId,CombatTime)
+							DEX_ReflectSpellID = 0
+							return
+						end
+						if flag == "SPELL_MISSED" then
+							missType = select(4,...)
+							DEX_AddText(getglobal(missType)..DEX_TXT_REFLECT,spellName,DEX_DAMAGE_TYPE_SPELL,0,true,destGUID,destName,suffixes,spellId,CombatTime)
+							DEX_ReflectSpellID = 0
+							return
+						end
+					end
+				end
+			else
+				DEX_ReflectSpellID = 0
 			end
-
-	elseif suffixes == "INTERRUPT" then 
-		if DEX_Get("DEX_ShowInterrupt") == 1 then			-- Add Show Interupt Switch
-			extraSpellId, extraSpellName, extraSpellSchool = select(DEX_PREFIXES[prefixes],...);
-			dexText = DEX_TXT_INTERUPT
-			dexSpell = extraSpellName
-			if GetNumSubgroupMembers() > 0 then
-				SendChatMessage("打断了"..destName.."的"..dexSpell,"EMOTE")
-			end
-			if DEX_Get("DEX_ShowInterruptCrit") == 1 then dexCrit = 1;end
-			dexType = DEX_DAMAGE_TYPE_HONOR
-		else
-			return
-		end  
-	elseif suffixes == "DRAIN" or suffixes == "LEECH" then
-		amount,powerType,extraAmount = select(DEX_PREFIXES[prefixes],...)
-		dexText = amount
-		dexSpell = spellName
-		if extraAmount ~= -2 then
-			dexType = DEX_DAMAGE_TYPE_MANA
-		else
-			dexType = DEX_DAMAGE_TYPE_SPELL
 		end
 
-	elseif suffixes == "SHIELD" and DEX_Get("DEX_ShowDamageShield") == 1 then
-		amount, overDamage, school, resisted, blocked, absorbed, critical, glancing, crushing = select(4,...)
-		if prefixes == "DAMAGE" then
-			dexType = DEX_DAMAGE_TYPE_SPELL
-			dexText = amount
-			dexSpell = spellName
-			DEX_ProcBlock(suffixes)
-		else
-			return
+		dexType = nil
+		dexText = "0"
+		dexSpell = ""
+		dexCrit = 0
+		spellId = nil
+
+		--DEX_Debug(flag);
+		spellId, spellName, spellSchool = ...
+		if type(spellId) == "string" then
+			spellId = nil
 		end
-	elseif suffixes == "SPLIT" then
-		if prefixes == "DAMAGE" then
-			amount, overDamage, school, resisted, blocked, absorbed, critical, glancing, crushing = select(DEX_PREFIXES[prefixes],...)
+		if select(1,GetSpellInfo(spellId))~=nil then 
+			spellName = select(1,GetSpellInfo(spellId))
+		end
+
+		if suffixes == "DAMAGE" then
+
+			amount, overDamage, school, resisted, blocked, absorbed, critical, glancing, crushing = select(DEX_PREFIXES[prefixes],...);
 			dexText = tostring(amount)
 			if critical then dexCrit = 1;end
-			dexType = DEX_DAMAGE_TYPE_SPELL
-			dexSpell = spellName
+			if prefixes == "SWING" then
+				dexType = DEX_DAMAGE_TYPE_HIT
+			elseif prefixes == "RANGE" then
+				dexType = DEX_DAMAGE_TYPE_HIT
+			elseif prefixes == "SPELL"then
+				dexType = DEX_DAMAGE_TYPE_SPELL
+				dexSpell = spellName
+			elseif prefixes == "SPELL_PERIODIC" then
+				dexType = DEX_DAMAGE_TYPE_PERIODIC
+				dexSpell = spellName
+			end
 			DEX_ProcBlock(suffixes)
-		else
-			return
-		end
-	--驅散
-	elseif suffixes == "DISPEL" then
-		extraSpellID,extraSpellName,extraSpellSchool,auraType = select(DEX_PREFIXES[prefixes],...)
-		if DEX_DISPELLED_FILTER[extraSpellName] then
-			return
-		end
 
-		dexType = DEX_DAMAGE_TYPE_HONOR
-		dexText = DEX_TXT_DISPELLED
+		elseif suffixes == "MISSED" then
+			missType = select(DEX_PREFIXES[prefixes],...);
+			dexText = getglobal(missType)
+			if prefixes == "SWING" then
+				dexType = DEX_DAMAGE_TYPE_HIT
+			elseif prefixes == "RANGE" then
+				dexType = DEX_DAMAGE_TYPE_HIT
+			elseif prefixes == "SPELL"then
+				dexType = DEX_DAMAGE_TYPE_SPELL
+				dexSpell = spellName
+			elseif prefixes == "SPELL_PERIODIC" then
+				dexType = DEX_DAMAGE_TYPE_PERIODIC
+				dexSpell = spellName
+			end
 
-	--偷取
-	elseif suffixes == "STOLEN" then
-		extraSpellID,extraSpellName,extraSpellSchool = select(DEX_PREFIXES[prefixes],...)
-		dexType = DEX_DAMAGE_TYPE_HONOR
-		dexText = DEX_TXT_STOLEN
-	else
-		return
-	end
+		elseif suffixes == "SHIELD_MISSED" then
+			missType = select(4,...);
+			dexText = getglobal(missType)
+			if prefixes == "DAMAGE" then
+				dexType = DEX_DAMAGE_TYPE_SPELL
+				dexSpell = spellName
+			end
 
-
-	if dexType then
-		if ISPET then
-			if dexType == DEX_DAMAGE_TYPE_HEALTH then
+		elseif suffixes == "HEAL"  then
+			if not UnitAffectingCombat("player") and spellId == nil then
 				return
 			end
-
-			dexType = DEX_DAMAGE_TYPE_PET
-		end
-	end
-
-	if  dexType ~= DEX_DAMAGE_TYPE_PET then
-		DEX_AddText(dexText,dexSpell,dexType,dexCrit,true,false,destGUID,destName,suffixes)
-	end
-
-elseif ISTARGETPLAYER and not ISPET then
-	dexType = DEX_DAMAGE_TYPE_BEATTACK
-	if flag == "SPELL_EXTRA_ATTACKS" then
-		spellId, spellName, spellSchool,amount = select(1,...)
-		dexText = tostring(amount)
-		DEX_AddText(dexText,"",dexType,0,true,false,destGUID,destName,suffixes)
-		return
-	end
-	if flag == "SPELL_MISSED" then
-		missType = select(4,...);
-		dexText = getglobal(missType)
-		if missType == "REFLECT" then
-			if spellId then
-				DEX_ReflectSpellID = select(1,...)
-				DEX_ReflectFromID = sourceGUID
-				DEX_ReflectTimer = GetTime()
-			else
-				DEX_AddText(dexText,"",dexType,0,true,false,destGUID,destName,suffixes)
-				return
-			end
-		end
-	end
-
-	if DEX_ReflectSpellID ~= 0 then
-		if GetTime() - DEX_ReflectTimer < 1 then
-			if sourceGUID == DEX_ReflectFromID then
-				spellId, spellName, spellSchool = select(1,...)
-				if spellId and DEX_ReflectSpellID == spellId then
-					local fromTarget = false
-					if destGUID == playerGUID then fromTarget = true;end
-					if flag == "SPELL_DAMAGE" then
-						amount,overDamage, school, resisted, blocked, absorbed, critical, glancing, crushing = select(4,...);
-						DEX_AddText(amount..DEX_TXT_REFLECT,dexType,0,true,destGUID,destName,suffixes)
-						DEX_ReflectSpellID = 0
-						return
-					end
-					if flag == "SPELL_MISSED"  then
-						missType = select(4,...)
-						DEX_AddText(getglobal(missType)..DEX_TXT_REFLECT,spellName,dexType,0,true,destGUID,destName,suffixes)
-						DEX_ReflectSpellID = 0
-						return
-					end
-				end
-			end
-		else
-			DEX_ReflectSpellID = 0
-		end
-	end
-
-	dexText = "0"
-	dexSpell = ""
-	dexCrit = 0
-
-	--DEX_Debug(flag);
-	spellId, spellName, spellSchool = ...
-
-	if suffixes == "DAMAGE" then
-
-		amount, overDamage, school, resisted, blocked, absorbed, critical, glancing, crushing = select(DEX_PREFIXES[prefixes],...);
-		dexText = tostring(amount)
-		if critical then dexCrit = 1;end
-
-		if prefixes == "SPELL" or prefixes == "SPELL_PERIODIC" or prefixes == "RANGE" then
-			dexSpell = spellName
-		elseif prefixes == "SWING"  then
-			dexSpell = ""
-		else
-			return
-		end
-		DEX_ProcBlock("")
-
-	elseif suffixes == "MISSED" then
-		missType = select(DEX_PREFIXES[prefixes],...);
-		dexText = getglobal(missType)
-		if prefixes == "SPELL" or prefixes == "SPELL_PERIODIC" then
-			dexSpell = spellName
-		end
-
-	elseif suffixes == "SHIELD_MISSED" then
-		missType = select(4,...);
-		dexText = getglobal(missType)
-		dexSpell = spellName
-
-	elseif suffixes == "HEAL"  then
 			amount, overDamage, _, critical = select(DEX_PREFIXES[prefixes],...);
 			dexText = amount
 			DEX_OverHeal = overDamage
@@ -854,83 +797,297 @@ elseif ISTARGETPLAYER and not ISPET then
 				dexSpell = spellName
 			end
 
-	elseif suffixes == "INTERRUPT" then 
-		if DEX_Get("DEX_ShowInterrupt") == 1 then			-- Add Show Interupt Switch
-			extraSpellId, extraSpellName, extraSpellSchool = select(DEX_PREFIXES[prefixes],...);
-			dexSpell = extraSpellName
-			dexText = DEX_TXT_INTERUPT
-		else
-			dexText = ""
-		end  
-	elseif suffixes == "DRAIN" or suffixes == "LEECH" then
-		amount,powerType,extraAmount = select(DEX_PREFIXES[prefixes],...)
-		dexText = amount
-		dexSpell = spellName
-
-	elseif suffixes == "SHIELD" and DEX_Get("DEX_ShowDamageShield") == 1 then
-		amount, overDamage, school, resisted, blocked, absorbed, critical, glancing, crushing = select(4,...)
-		if prefixes == "DAMAGE" then
+		elseif suffixes == "INTERRUPT" then 
+			if DEX_Get("DEX_ShowInterrupt") == 1 then			-- Add Show Interupt Switch
+				extraSpellId, extraSpellName, extraSpellSchool = select(DEX_PREFIXES[prefixes],...);
+				dexText = DEX_TXT_INTERUPT
+				dexSpell = extraSpellName
+				if GetNumSubgroupMembers() > 0 then
+					SendChatMessage("打断了"..destName.."的"..dexSpell,"EMOTE")
+				end
+				if DEX_Get("DEX_ShowInterruptCrit") == 1 then dexCrit = 1;end
+				dexType = DEX_DAMAGE_TYPE_HONOR
+			else
+				return
+			end  
+		elseif suffixes == "DRAIN" or suffixes == "LEECH" then
+			amount,powerType,extraAmount = select(DEX_PREFIXES[prefixes],...)
 			dexText = amount
 			dexSpell = spellName
-			DEX_ProcBlock(suffixes)
+			if extraAmount ~= -2 then
+				dexType = DEX_DAMAGE_TYPE_MANA
+			else
+				dexType = DEX_DAMAGE_TYPE_SPELL
+			end
+
+		elseif suffixes == "SHIELD" and DEX_Get("DEX_ShowDamageShield") == 1 then
+			amount, overDamage, school, resisted, blocked, absorbed, critical, glancing, crushing = select(4,...)
+			if prefixes == "DAMAGE" then
+				dexType = DEX_DAMAGE_TYPE_SPELL
+				dexText = amount
+				dexSpell = spellName
+				DEX_ProcBlock(suffixes)
+			else
+				return
+			end
+		elseif suffixes == "SPLIT" then
+			if prefixes == "DAMAGE" then
+				amount, overDamage, school, resisted, blocked, absorbed, critical, glancing, crushing = select(DEX_PREFIXES[prefixes],...)
+				dexText = tostring(amount)
+				if critical then dexCrit = 1;end
+				dexType = DEX_DAMAGE_TYPE_SPELL
+				dexSpell = spellName
+				DEX_ProcBlock(suffixes)
+			else
+				return
+			end
+		--驅散
+		elseif suffixes == "DISPEL" then
+			extraSpellID,extraSpellName,extraSpellSchool,auraType = select(DEX_PREFIXES[prefixes],...)
+			if DEX_DISPELLED_FILTER[extraSpellName] then
+				return
+			end
+
+			dexType = DEX_DAMAGE_TYPE_HONOR
+			dexText = DEX_TXT_DISPELLED
+
+		--偷取
+		elseif suffixes == "STOLEN" then
+			extraSpellID,extraSpellName,extraSpellSchool = select(DEX_PREFIXES[prefixes],...)
+			dexType = DEX_DAMAGE_TYPE_HONOR
+			dexText = DEX_TXT_STOLEN
 		else
 			return
 		end
 
-	elseif suffixes == "SPLIT" then
-		if prefixes == "DAMAGE" then
-			amount, overDamage, school, resisted, blocked, absorbed, critical, glancing, crushing = select(DEX_PREFIXES[prefixes],...)
+
+		if dexType then
+			if ISPET then
+				if dexType == DEX_DAMAGE_TYPE_HEALTH then
+					return
+				end
+
+				dexType = DEX_DAMAGE_TYPE_PET
+			end
+		end
+
+		if  dexType ~= DEX_DAMAGE_TYPE_PET then
+			DEX_AddText(dexText,dexSpell,dexType,dexCrit,true,false,destGUID,destName,suffixes,spellId,CombatTime)
+		end
+
+	elseif ISTARGETPLAYER and not ISPET then
+		if DEX_Get("DEX_ShowDamageWoW") ~= 1 and suffixes ~= "AURA_APPLIED" and suffixes ~= "HEAL" then
+			return
+		end
+		dexType = DEX_DAMAGE_TYPE_BEATTACK
+		if flag == "SPELL_EXTRA_ATTACKS" then
+			spellId, spellName, spellSchool,amount = select(1,...)
+			if type(spellId) == "string" then
+				spellId = nil
+			end
+			if select(1,GetSpellInfo(spellId))~=nil then 
+				spellName = select(1,GetSpellInfo(spellId))
+			end
 			dexText = tostring(amount)
-			if critical then dexCrit = 0;end
-			dexSpell = spellName
-			DEX_ProcBlock(suffixes)
-		else
+			DEX_AddText(dexText,"",dexType,0,true,false,destGUID,destName,suffixes,spellId,CombatTime)
 			return
 		end
-	--驅散
-	elseif suffixes == "DISPEL" then
-		extraSpellID,extraSpellName,extraSpellSchool,auraType = select(DEX_PREFIXES[prefixes],...)
-		if DEX_DISPELLED_FILTER[extraSpellName] then
-			return
+		if flag == "SPELL_MISSED" then
+			missType = select(4,...);
+			dexText = getglobal(missType)
+			if missType == "REFLECT" then
+				if spellId then
+					DEX_ReflectSpellID = select(1,...)
+					DEX_ReflectFromID = sourceGUID
+					DEX_ReflectTimer = GetTime()
+				else
+					DEX_AddText(dexText,"",dexType,0,true,false,destGUID,destName,suffixes,spellId,CombatTime)
+					return
+				end
+			end
 		end
-		dexText = DEX_TXT_DISPELLED
 
-	--偷取
-	elseif suffixes == "STOLEN" then
-		extraSpellID,extraSpellName,extraSpellSchool = select(DEX_PREFIXES[prefixes],...)
-		dexText = DEX_TXT_STOLEN
-
-	elseif suffixes == "AURA_APPLIED" then
-		if DEX_Get("DEX_ShowBuffDebuff") == 0 then
-			return
+		if DEX_ReflectSpellID ~= 0 then
+			if GetTime() - DEX_ReflectTimer < 1 then
+				if sourceGUID == DEX_ReflectFromID then
+					spellId, spellName, spellSchool = select(1,...)
+					if type(spellId) == "string" then
+						spellId = nil
+					end
+					if select(1,GetSpellInfo(spellId))~=nil then 
+						spellName = select(1,GetSpellInfo(spellId))
+					end
+					if spellId and DEX_ReflectSpellID == spellId then
+						local fromTarget = false
+						if destGUID == playerGUID then fromTarget = true;end
+						if flag == "SPELL_DAMAGE" then
+							amount,overDamage, school, resisted, blocked, absorbed, critical, glancing, crushing = select(4,...);
+							DEX_AddText(amount..DEX_TXT_REFLECT,dexType,0,true,destGUID,destName,suffixes,spellId,CombatTime)
+							DEX_ReflectSpellID = 0
+							return
+						end
+						if flag == "SPELL_MISSED"  then
+							missType = select(4,...)
+							DEX_AddText(getglobal(missType)..DEX_TXT_REFLECT,spellName,dexType,0,true,destGUID,destName,suffixes,spellId,CombatTime)
+							DEX_ReflectSpellID = 0
+							return
+						end
+					end
+				end
+			else
+				DEX_ReflectSpellID = 0
+			end
 		end
-		spellId, spellName, spellSchool,amount = select(1,...)
-		if ISPLAYER and amount == "BUFF" then
+
+		dexText = "0"
+		dexSpell = ""
+		dexCrit = 0
+		spellId = nil
+
+		--DEX_Debug(flag);
+		spellId, spellName, spellSchool = ...
+		if type(spellId) == "string" then
+			spellId = nil
+		end
+
+		if suffixes == "DAMAGE" then
+
+			amount, overDamage, school, resisted, blocked, absorbed, critical, glancing, crushing = select(DEX_PREFIXES[prefixes],...);
+			dexText = tostring(amount)
+			if critical then dexCrit = 1;end
+
+			if prefixes == "SPELL" or prefixes == "SPELL_PERIODIC" then
+				dexSpell = spellName
+			elseif prefixes == "SWING" or prefixes == "RANGE" then
+				spellId = nil
+				dexSpell = ""
+			else
+				return
+			end
+			DEX_ProcBlock("")
+
+		elseif suffixes == "MISSED" then
+			missType = select(DEX_PREFIXES[prefixes],...);
+			dexText = getglobal(missType)
+			if prefixes == "SPELL" or prefixes == "SPELL_PERIODIC" then
+				dexSpell = spellName
+			end
+
+		elseif suffixes == "SHIELD_MISSED" then
+			missType = select(4,...);
+			dexText = getglobal(missType)
 			dexSpell = spellName
+
+		elseif suffixes == "HEAL"  then
+			if not UnitAffectingCombat("player") and spellId == nil then
+				return
+			end
+			amount, overDamage, _, critical = select(DEX_PREFIXES[prefixes],...);
+			dexText = amount
+			DEX_OverHeal = overDamage
+			if critical and prefixes == "SPELL" and spellId ~= 143924 then dexCrit = 1;end		--Modify Heal Spell Critical,排除汲取效果
+			--dexCrit = critical
 			dexType = DEX_DAMAGE_TYPE_HEALTH
-		elseif sourceGUID == targetGUID and amount == "DEBUFF" then
+			if prefixes ~= "SWING" then
+				dexSpell = spellName
+			end
+
+		elseif suffixes == "INTERRUPT" then 
+			if DEX_Get("DEX_ShowInterrupt") == 1 then			-- Add Show Interupt Switch
+				extraSpellId, extraSpellName, extraSpellSchool = select(DEX_PREFIXES[prefixes],...);
+				dexSpell = extraSpellName
+				dexText = DEX_TXT_INTERUPT
+			else
+				dexText = ""
+			end  
+		elseif suffixes == "DRAIN" or suffixes == "LEECH" then
+			amount,powerType,extraAmount = select(DEX_PREFIXES[prefixes],...)
+			dexText = amount
 			dexSpell = spellName
+
+		elseif suffixes == "SHIELD" and DEX_Get("DEX_ShowDamageShield") == 1 then
+			amount, overDamage, school, resisted, blocked, absorbed, critical, glancing, crushing = select(4,...)
+			if prefixes == "DAMAGE" then
+				dexText = amount
+				dexSpell = spellName
+				DEX_ProcBlock(suffixes)
+			else
+				return
+			end
+
+		elseif suffixes == "SPLIT" then
+			if prefixes == "DAMAGE" then
+				amount, overDamage, school, resisted, blocked, absorbed, critical, glancing, crushing = select(DEX_PREFIXES[prefixes],...)
+				dexText = tostring(amount)
+				if critical then dexCrit = 0;end
+				dexSpell = spellName
+				DEX_ProcBlock(suffixes)
+			else
+				return
+			end
+		--驅散
+		elseif suffixes == "DISPEL" then
+			extraSpellID,extraSpellName,extraSpellSchool,auraType = select(DEX_PREFIXES[prefixes],...)
+			if DEX_DISPELLED_FILTER[extraSpellName] then
+				return
+			end
+			dexText = DEX_TXT_DISPELLED
+
+		--偷取
+		elseif suffixes == "STOLEN" then
+			extraSpellID,extraSpellName,extraSpellSchool = select(DEX_PREFIXES[prefixes],...)
+			dexText = DEX_TXT_STOLEN
+
+		elseif suffixes == "AURA_APPLIED" then
+			if DEX_Get("DEX_ShowBuff") ~= 1 and DEX_Get("DEX_ShowDeBuff") ~=1 then
+				return
+			end
+			spellId, spellName, spellSchool,amount = select(1,...)
+			if type(spellId) == "string" then
+				spellId = nil
+			end
+			if ISPLAYER and amount == "BUFF" and DEX_Get("DEX_ShowBuff") == 1 then
+				dexSpell = spellName
+				dexType = DEX_DAMAGE_TYPE_HEALTH
+			elseif sourceGUID == targetGUID and amount == "DEBUFF" and DEX_Get("DEX_ShowDeBuff") ==1 then
+				dexSpell = spellName
+			else
+				return
+			end 
 		else
 			return
-		end 
-	else
-		return
+		end
+
+		if  dexType ~= DEX_DAMAGE_TYPE_PET then
+			DEX_AddText(dexText,dexSpell,dexType,dexCrit,true,false,destGUID,destName,suffixes,spellId,CombatTime)
+		end
+
 	end
 
-	if  dexType ~= DEX_DAMAGE_TYPE_PET then
-		DEX_AddText(dexText,dexSpell,dexType,dexCrit,true,false,destGUID,destName,suffixes)
+	if  dexType == DEX_DAMAGE_TYPE_PET then
+		DEX_AddText(dexText,dexSpell,dexType,dexCrit,false,false,destGUID,destName,suffixes,spellId,CombatTime)
 	end
-
-end
-
-if  dexType == DEX_DAMAGE_TYPE_PET then
-	DEX_AddText(dexText,dexSpell,dexType,dexCrit,false,false,destGUID,destName,suffixes)
-end
 end
 
 function DEX_GameUpdate(self)
 	dex_bottom = 99999;
 	dex_petbottom = 99999;
+	if DataTmpHealth.StartTime > 0 and GetTime() - DataTmpHealth.StartTime > AOEEnd then
+		DEX_AddText("","",DEX_DAMAGE_TYPE_AOEHEALTH,0,true,false,"","","DAMAGE",0,0)
+	elseif not UnitAffectingCombat("player") and DEX_Get("DEX_NoCombatHeal") == 1 then
+		if DataTmpHealth.StartTime == 0 then
+			DataTmpHealth.StartTime = GetTime()
+		end
+	end
+	if DataTmpSpell.StartTime > 0 and GetTime() - DataTmpSpell.StartTime > AOEEnd then
+		DEX_AddText("","",DEX_DAMAGE_TYPE_AOESPELL,0,true,false,"","","DAMAGE",0,0)
+	end
+	if DataTmpDot.StartTime > 0 and GetTime() - DataTmpDot.StartTime > AOEEnd then
+		DEX_AddText("","",DEX_DAMAGE_TYPE_AOEDOT,0,true,false,"","","DAMAGE",0,0)
+	end
+	if DataTmpShield.StartTime > 0 and GetTime() - DataTmpShield.StartTime > AOEEnd then
+		DEX_AddText("","",DEX_DAMAGE_TYPE_AOESHIELD,0,true,false,"","","DAMAGE",0,0)
+	end
 	if DEX_Get("DEX_ShowWithMess") == 0 then
 		for key, value in pairs(dex_AniData) do
 			if (value.Active == true) then
@@ -989,107 +1146,112 @@ function DEX_GetMovTypOtherPosY()
 	return -20
 end
 
-function DEX_doAni(ani)
+function DEX_SetColor(HitType)
 	local color = {1,1,1};
 	local colorSe = {1,1,1};
-	if ani.lastupdate == DEX_DAMAGE_TYPE_BEATTACK then
+	if HitType == DEX_DAMAGE_TYPE_BEATTACK then
 		color = DEX_Get("DEX_ColorAttack");
 		colorSe = DEX_Get("DEX_ColorAttackSe");
-	elseif ani.lastupdate == DEX_DAMAGE_TYPE_HIT then
+	elseif HitType == DEX_DAMAGE_TYPE_HIT then
 		color = DEX_Get("DEX_ColorNormal");
 		colorSe = DEX_Get("DEX_ColorNormalSe");
-	elseif ani.lastupdate == DEX_DAMAGE_TYPE_SPELL then
+	elseif HitType == DEX_DAMAGE_TYPE_SPELL then
 		color = DEX_Get("DEX_ColorSkill");
 		colorSe = DEX_Get("DEX_ColorSkillSe");
-	elseif ani.lastupdate == DEX_DAMAGE_TYPE_PERIODIC then
+	elseif HitType == DEX_DAMAGE_TYPE_PERIODIC then
 		if DEX_Get("DEX_ShowDamagePeriodic") ~= 1 then return;end
 		color = DEX_Get("DEX_ColorPeriodic");
 		colorSe = DEX_Get("DEX_ColorPeriodicSe");
-	elseif ani.lastupdate == DEX_DAMAGE_TYPE_HEALTH then
+	elseif HitType == DEX_DAMAGE_TYPE_HEALTH then
 		if DEX_Get("DEX_ShowDamageHealth") ~= 1 then return;end
 		color = DEX_Get("DEX_ColorHealth");
 		colorSe = DEX_Get("DEX_ColorHealthSe");
-	elseif ani.lastupdate == DEX_DAMAGE_TYPE_PET then
+	elseif HitType == DEX_DAMAGE_TYPE_PET then
 		if DEX_Get("DEX_ShowDamagePet") ~= 1 then return;end
 		color = DEX_Get("DEX_ColorPet");
 		colorSe = color;
-	elseif ani.lastupdate == DEX_DAMAGE_TYPE_HONOR then
+	elseif HitType == DEX_DAMAGE_TYPE_HONOR then
 		color = DEX_Get("DEX_ColorSpec");
 		colorSe = DEX_Get("DEX_ColorSpecSe");
-	elseif ani.lastupdate == DEX_DAMAGE_TYPE_MANA then
+	elseif HitType == DEX_DAMAGE_TYPE_MANA then
 		color = DEX_Get("DEX_ColorMana");
 		colorSe = DEX_Get("DEX_ColorManaSe");
 	end
+	return color,colorSe
+end
+
+function DEX_doAni(ani)
 	if DEX_Get("DEX_ShowWithMess") == 1 then
-		local Maxline = DEX_logLine;
-		local anitmp;
-		if ani.crit == 1 then ani.delay = DEX_TXT_CRIT..ani.delay; end
-		for i = 1,10 do
-			anitmp = dex_AniData["aniText"..i];
-			anitmp.posY = anitmp.posY + DEX_Get("DEX_FontSize");
-			anitmp.FObject:SetPoint("CENTER", "UIParent", "CENTER", anitmp.posX + DEX_Get("DEX_PosX"), anitmp.posY + DEX_Get("DEX_PosY"));
-		end
-		anitmp = dex_AniData["aniText"..dex_lastani];
-		DEX_aniReset(anitmp);
-		anitmp.starttime = GetTime();
-		anitmp.Active = true;
-		anitmp.posY = 0;
-		anitmp.posX = 0;
-		anitmp.FObject:SetText(ani.delay.." "..ani.spellbak);
-		anitmp.FObject:SetAlpha(1);
-		anitmp.FObject:SetTextColor(color[1], color[2], color[3]);
-		anitmp.FObject:SetPoint("CENTER", "UIParent", "CENTER", anitmp.posX + DEX_Get("DEX_PosX"), anitmp.posY + DEX_Get("DEX_PosY"));
-		dex_lastani = dex_lastani + 1;
-		if dex_lastani > DEX_logLine then dex_lastani = 1;end
-		return;
+		return
 	end
+	local Showicon,Showiconcrit,Showname,Shownamecrit,Shownamemiss,Showcriticon = 0, 0, 0, 0, 0,0
+	local SetPos = "CENTER"
+	local color,colorSe = DEX_SetColor(ani.lastupdate)
 	local thetime = GetTime() - ani.starttime;
-	if thetime < AniRunTime and thetime > 0 then
+	local setalpha = 0
+	if thetime <= AniRunTime and thetime > 0 then
 
 		DEX_SetFontSize(ani,DEX_Get("DEX_FontSize"));
 
 		if thetime < 0.1 then
-			ani.alpha = thetime * 10;
+			setalpha = thetime * 10;
 		elseif thetime < 1 then
-			ani.alpha = 1;
+			setalpha = 1;
 		else
-			ani.alpha = 1 - (thetime - 1) * 2;
-		end
-		if ani.moveTyp == DEX_MOVTYP_ATTACK or ani.moveTyp == DEX_MOVTYP_HEALTH then
-			if DEX_Get("DEX_ShowLeftRight") ~= 1 and DEX_Get("DEX_ShowRightLeft") ~= 1 then
-				ani.moveTyp = DEX_MOVTYP_NORMAL
-			end
+			setalpha = 1 - (thetime - 1) * 2;
 		end
 		if ani.moveTyp == DEX_MOVTYP_NORMAL then
-			ani.posY = thetime * DEX_Get("DEX_Speed") * 2+ ani.baseY;
-			ani.posYbak	= ani.posY;
+			ani.posY = thetime * DEX_Get("DEX_Speed") * 2.5 * ani.Extra + ani.baseY;
+			ani.posYbak = ani.posY;
 			DEX_RefressBottom(ani);
 		elseif ani.moveTyp == DEX_MOVTYP_AOE then
-			ani.posY = thetime * DEX_Get("DEX_Speed") * 2+ ani.baseY;
-			ani.posYbak	= ani.posY;
 			ani.posX = ani.Extra
+			ani.posY = thetime * DEX_Get("DEX_Speed") * 2.5 * ani.Extra + ani.baseY;
+			ani.posYbak = ani.posY;
 			DEX_RefressBottom(ani);
 		elseif ani.moveTyp == DEX_MOVTYP_OTHER then
 			ani.posX = sin(thetime / 2.1 * 180) * 30 + 75;
-			if ani.spellbak ~= "" then
-				ani.posX = ani.Extra
-			end
 		elseif ani.moveTyp == DEX_MOVTYP_ATTACK then
-			ani.posX = DEX_TEXTSIZE * 4.5 * cos(thetime / 1.5 * DEX_Get("DEX_Speed")) + ani.Extra;
-			ani.posY = DEX_TEXTSIZE * 5 * sin(thetime / 1.5 * DEX_Get("DEX_Speed")) + ani.baseY;
-			ani.posYbak	= ani.posY;
+			ani.posY = thetime * DEX_Get("DEX_Speed") * 2.5 * ani.Extra + ani.baseY + DEX_Get("DEX_BeAttackPosY");
+			if DEX_Get("DEX_ShowDamageType") == 1 then
+				SetPos = "LEFT"
+				ani.posX = (acos((AniRunTime - thetime)/2) / 30) * DEX_Get("DEX_Speed")+ DEX_Get("DEX_BeAttackPosX");
+			else
+				if DEX_Get("DEX_BeAttackPosX") > 0 then
+					ani.posX = DEX_Get("DEX_Speed") * cos(thetime / 2 * DEX_Get("DEX_Speed")) + DEX_Get("DEX_BeAttackPosX");
+				else
+					ani.posX = DEX_Get("DEX_BeAttackPosX") - DEX_Get("DEX_Speed") * cos(thetime / 2 * DEX_Get("DEX_Speed"));
+				end
+			end
+			ani.posYbak = ani.posY;
 			DEX_RefressBottom(ani);
 		elseif ani.moveTyp == DEX_MOVTYP_HEALTH then
-			ani.posX = DEX_TEXTSIZE * 4.5 * cos(thetime / 1.5 * DEX_Get("DEX_Speed"))  + ani.Extra;
-			ani.posY = DEX_TEXTSIZE * 5 * sin(thetime / 1.5 * DEX_Get("DEX_Speed")) + ani.baseY;
-			ani.posYbak	= ani.posY;
+			ani.posY = thetime * DEX_Get("DEX_Speed") * 2.5 * ani.Extra + ani.baseY + DEX_Get("DEX_HealthPosY");
+			if DEX_Get("DEX_ShowHealthType") == 1 then
+				SetPos = "RIGHT"
+				ani.posX = DEX_Get("DEX_HealthPosX") - (acos((AniRunTime - thetime)/2) / 35) * DEX_Get("DEX_Speed");
+			else
+				if DEX_Get("DEX_HealthPosX") > 0 then
+					ani.posX = DEX_Get("DEX_Speed") * cos(thetime / 2 * DEX_Get("DEX_Speed")) + DEX_Get("DEX_HealthPosX");
+				else
+					ani.posX = DEX_Get("DEX_HealthPosX") - DEX_Get("DEX_Speed") * cos(thetime / 2 * DEX_Get("DEX_Speed"));
+				end
+			end
+			ani.posYbak = ani.posY;
 			DEX_RefressBottom(ani);
 		elseif ani.moveTyp == DEX_MOVTYP_PET then
-			ani.posY = thetime * DEX_Get("DEX_Speed") * 2 + ani.baseY;
-			ani.posYbak	= ani.posY;
-			ani.posX = DEX_Get("DEX_PosX") - DEX_TEXTSIZE * 3;
+			ani.posY = thetime * DEX_Get("DEX_Speed") * 2.5 * ani.Extra + ani.baseY + DEX_Get("DEX_PetPosY");
+			ani.posYbak = ani.posY;
+			ani.posX = DEX_Get("DEX_PetPosX");
 			DEX_RefressBottom(ani);
+		elseif ani.moveTyp == DEX_MOVTYP_NONE then
+			if ani.HitType == "Begin" then
+				ani.posY = DEX_TEXTSIZE * 5;
+			elseif ani.HitType == "End" then
+				ani.posY = DEX_TEXTSIZE * 4;
+			end
 		end
+
 		if ani.crit == 1 then
 			local baseSize = DEX_TEXTSIZE + 4 + ani.critId * 2;
 			if ani.critTyp == 0 then
@@ -1112,38 +1274,81 @@ function DEX_doAni(ani)
 				end
 			end
 			if thetime < 0.2 then
-				ani.alpha = thetime * 2.5 + 0.5
+				setalpha = thetime * 2.5 + 0.5
 			end
 		end
 
-		if ani.alpha < 0 then
-			ani.alpha = 0
+		if setalpha < 0 then
+			setalpha = 0
 		end
-		if ani.alpha > 1 then
-			ani.alpha = 1
+		if setalpha > 1 then
+			setalpha = 1
+		end
+
+		if ani.lastupdate == DEX_DAMAGE_TYPE_BEATTACK then
+			Showicon = DEX_Get("DEX_ShowDamageSpellIcon")
+			if Showicon == 1 then
+				Showiconcrit = DEX_Get("DEX_ShowDamageSpellIconOnCrit")
+			else
+				Showiconcrit = 0
+			end
+			Showname = DEX_Get("DEX_ShowDamageSpellName")
+			if Showname == 1 then
+				Shownamecrit = DEX_Get("DEX_ShowDamageNameOnCrit")
+			else
+				Shownamecrit = 0
+			end
+			Shownamemiss = 0
+			Showcriticon = 0
+		elseif ani.lastupdate == DEX_DAMAGE_TYPE_HEALTH then
+			Showicon = DEX_Get("DEX_ShowHealthSpellIcon")
+			if Showicon == 1 then
+				Showiconcrit = DEX_Get("DEX_ShowHealthSpellIconOnCrit")
+			else
+				Showiconcrit = 0
+			end
+			Showname = DEX_Get("DEX_ShowHealthSpellName")
+			if Showname == 1 then
+				Shownamecrit = DEX_Get("DEX_ShowHealthNameOnCrit")
+			else
+				Shownamecrit = 0
+			end
+			Shownamemiss = 0
+			Showcriticon = 0
+		elseif ani.lastupdate == DEX_DAMAGE_TYPE_PET then
+			Showicon = 0
+			Showiconcrit = 0
+			Showname = 0
+			Shownamecrit = 0
+			Shownamemiss = 0
+			Showcriticon = 0
+		else
+			Showicon = DEX_Get("DEX_ShowSpellIcon")
+			if Showicon == 1 then
+				Showiconcrit = DEX_Get("DEX_ShowSpellIconOnCrit")
+			else
+				Showiconcrit = 0
+			end
+			Showname = DEX_Get("DEX_ShowSpellName")
+			if Showname == 1 then
+				Shownamecrit = DEX_Get("DEX_ShowNameOnCrit")
+				Shownamemiss = DEX_Get("DEX_ShowNameOnMiss")
+				Showcriticon = DEX_Get("DEX_ShowDamageIconOnCrit")
+			else
+				Shownamecrit = 0
+				Shownamemiss = 0
+				Showcriticon = 0
+			end
 		end
 		ani.FObject:ClearAllPoints()
-		if ani.moveTyp == DEX_MOVTYP_ATTACK then
-			if DEX_Get("DEX_ShowLeftRight") == 1 then
-				ani.FObject:SetPoint("BOTTOMLEFT", "UIParent", "CENTER", ani.posX + DEX_Get("DEX_PosX"), ani.posY + DEX_Get("DEX_PosY"));
-			elseif DEX_Get("DEX_ShowRightLeft") == 1 then
-				ani.FObject:SetPoint("BOTTOMRIGHT", "UIParent", "CENTER", DEX_Get("DEX_PosX") - ani.posX , ani.posY + DEX_Get("DEX_PosY"));
-			end
-		elseif ani.moveTyp == DEX_MOVTYP_HEALTH then
-			if DEX_Get("DEX_ShowLeftRight") == 1 then
-				ani.FObject:SetPoint("BOTTOMRIGHT", "UIParent", "CENTER", DEX_Get("DEX_PosX") - ani.posX, ani.posY + 
-DEX_Get("DEX_PosY"));
-			elseif DEX_Get("DEX_ShowRightLeft") == 1 then
-				ani.FObject:SetPoint("BOTTOMLEFT", "UIParent", "CENTER", DEX_Get("DEX_PosX") + ani.posX, ani.posY + 
-DEX_Get("DEX_PosY"));
-			end
-		else
-			ani.FObject:SetPoint("CENTER", "UIParent", "CENTER", ani.posX + DEX_Get("DEX_PosX"), ani.posY + DEX_Get("DEX_PosY"));
-		end
+		ani.FObject:SetPoint(SetPos, "UIParent", "CENTER", ani.posX + DEX_Get("DEX_PosX"), ani.posY + DEX_Get("DEX_PosY"));
 		ani.FObject:SetTextHeight(ani.height);
 		ani.FObject:SetTextColor(color[1], color[2], color[3]);
-		ani.FObject:SetAlpha(ani.alpha);
-		ani.FObject:SetText(DEX_BuildText(ani.delay,ani.destbak,ani.crit,ani.HitType,ani.lastupdate,color,colorSe))
+		if ani.setalpha == 1 then
+			setalpha = 0
+		end
+		ani.FObject:SetAlpha(setalpha);
+		ani.FObject:SetText(DEX_BuildText(ani.delay,ani.destbak,ani.crit,ani.HitType,ani.lastupdate,color,colorSe,Showicon,Showiconcrit,Showname,Shownamecrit,Shownamemiss,Showcriticon))
 	else
 		if thetime >= AniRunTime then DEX_aniClear(ani);end
 	end
@@ -1156,7 +1361,7 @@ function DEX_aniClear(ani)
 	DEX_aniReset(ani);
 end
 
-function DEX_BuildText(damage,spell,IsCrit,HitType,IsdexType,color,colorSe)
+function DEX_BuildText(damage,spell,IsCrit,HitType,IsdexType,color,colorSe,showicon,showiconcrit,showname,shownamecrit,shownamemiss,showcriticon)
 	if DEX_Get("DEX_NumberFormat") == 1 and (tonumber(damage) or string.find(damage,"-")) then
 		if string.find(damage,"-") then
 			local healstart = string.sub(damage, 1 , string.find(damage,"-") - 1)
@@ -1179,14 +1384,18 @@ function DEX_BuildText(damage,spell,IsCrit,HitType,IsdexType,color,colorSe)
 	else
 		SpellName = ""
 	end
-	if damage == "" and DEX_Get("DEX_ShowSpellName") ~= 1 then 
+	if damage == "" and showname ~= 1 then 
 		if SpellName then
 			damage = SpellName
 		else
 			damage = " "
 		end
 	end
-	if DEX_Get("DEX_ShowSpellName") ~= 1 and DEX_Get("DEX_ShowSpellIcon") ~= 1 then 
+	if HitType == "AURA_APPLIED" and showname ~=1 then
+		showicon = 1
+		showiconcrit = 0
+	end
+	if showname ~= 1 and showicon ~= 1 then 
 		if HitType == "INTERRUPT" then
 			if DEX_Get("DEX_ShowInterruptCrit") == 1 then
 				if DEX_Get("DEX_ColorMode") == 1 then
@@ -1207,21 +1416,24 @@ function DEX_BuildText(damage,spell,IsCrit,HitType,IsdexType,color,colorSe)
 			end
 		end
 	end
-	if DEX_Get("DEX_ShowSpellIcon") == 1 then				--Show Icons instead of Spell Name
+	if showicon == 1 then
+		if showiconcrit == 1 and IsCrit ~=1 then
+			return damage
+		end
 		local icons = ""
-		local iconsize = DEX_TEXTSIZE;
+		local iconsize = DEX_TEXTSIZE/(DEX_Get("DEX_IconSize")/6);
 		if select(3,GetSpellInfo(spell))~=nil then 
 			icons ="|T"..select(3,GetSpellInfo(spell))..":"..(iconsize / 2.5).."|t";
 		else
 			if DEX_Get("DEX_ColorMode") == 1 then
-				if DEX_Get("DEX_ShowSpellName") == 1 then 
-					if DEX_Get("DEX_ShowNameOnCrit") == 1 then
+				if showname == 1 then 
+					if shownamecrit == 1 then
 						if IsCrit == 1 then
 							return damage..SpellName
 						else
 							return damage
 						end
-					elseif DEX_Get("DEX_ShowNameOnMiss") == 1 then
+					elseif shownamemiss == 1 then
 						if HitType == "SHIELD_MISSED" or HitType == "MISSED" then
 							return damage..SpellName
 						else
@@ -1234,14 +1446,14 @@ function DEX_BuildText(damage,spell,IsCrit,HitType,IsdexType,color,colorSe)
 					return damage
 				end
 			elseif DEX_Get("DEX_ColorMode") == 3 then
-				if DEX_Get("DEX_ShowSpellName") == 1 then 
-					if DEX_Get("DEX_ShowNameOnCrit") == 1 then
+				if showname == 1 then 
+					if shownamecrit == 1 then
 						if IsCrit == 1 then
 							return DEX_TranTxt(damage,color,colorSe)..SpellName
 						else
 							return DEX_TranTxt(damage,color,colorSe)
 						end
-					elseif DEX_Get("DEX_ShowNameOnMiss") == 1 then
+					elseif shownamemiss == 1 then
 						if HitType == "SHIELD_MISSED" or HitType == "MISSED" then
 							return DEX_TranTxt(damage,color,colorSe)..SpellName
 						else
@@ -1254,14 +1466,14 @@ function DEX_BuildText(damage,spell,IsCrit,HitType,IsdexType,color,colorSe)
 					return DEX_TranTxt(damage,color,colorSe)
 				end
 			else
-				if DEX_Get("DEX_ShowSpellName") == 1 then 
-					if DEX_Get("DEX_ShowNameOnCrit") == 1 then
+				if showname == 1 then 
+					if shownamecrit == 1 then
 						if IsCrit == 1 then
 							return damage..DEX_ColorFlip(colorSe[1],colorSe[2],colorSe[3])..SpellName.."|r"
 						else
 							return damage..DEX_ColorFlip(colorSe[1],colorSe[2],colorSe[3]).."|r"
 						end
-					elseif DEX_Get("DEX_ShowNameOnMiss") == 1 then
+					elseif shownamemiss == 1 then
 						if HitType == "SHIELD_MISSED" or HitType == "MISSED" then
 							return damage..DEX_ColorFlip(colorSe[1],colorSe[2],colorSe[3])..SpellName.."|r"
 						else
@@ -1281,14 +1493,18 @@ function DEX_BuildText(damage,spell,IsCrit,HitType,IsdexType,color,colorSe)
 					return damage.." "..icons..SpellName
 				end
 			end
-			if DEX_Get("DEX_ShowSpellName") == 1 then 
-				if DEX_Get("DEX_ShowNameOnCrit") == 1 then
+			if showname == 1 then 
+				if shownamecrit == 1 then
 					if IsCrit == 1 then
-						return damage.." "..icons..SpellName
+						if showcriticon == 1 then
+							return damage.." "..icons
+						else
+							return damage.." "..icons..SpellName
+						end
 					else
 						return damage.." "..icons
 					end
-				elseif DEX_Get("DEX_ShowNameOnMiss") == 1 then
+				elseif shownamemiss == 1 then
 					if HitType == "SHIELD_MISSED" or HitType == "MISSED" then
 						return damage.." "..icons..SpellName
 					else
@@ -1298,7 +1514,11 @@ function DEX_BuildText(damage,spell,IsCrit,HitType,IsdexType,color,colorSe)
 					return damage.." "..icons..SpellName
 				end
 			else
-				return damage.." "..icons
+				if HitType == "AURA_APPLIED" then
+					return icons
+				else
+					return damage.." "..icons
+				end
 			end
 		elseif DEX_Get("DEX_ColorMode") == 3 then
 			if HitType == "INTERRUPT" then
@@ -1306,14 +1526,18 @@ function DEX_BuildText(damage,spell,IsCrit,HitType,IsdexType,color,colorSe)
 					return DEX_TranTxt(damage.." ",color,colorSe)..icons..SpellName
 				end
 			end
-			if DEX_Get("DEX_ShowSpellName") == 1 then 
-				if DEX_Get("DEX_ShowNameOnCrit") == 1 then
+			if showname == 1 then 
+				if shownamecrit == 1 then
 					if IsCrit == 1 then
-						return DEX_TranTxt(damage.." ",color,colorSe)..icons..SpellName
+						if showcriticon ==1 then
+							return DEX_TranTxt(damage.." ",color,colorSe)..icons
+						else
+							return DEX_TranTxt(damage.." ",color,colorSe)..icons..SpellName
+						end
 					else
 						return DEX_TranTxt(damage.." ",color,colorSe)..icons
 					end
-				elseif DEX_Get("DEX_ShowNameOnMiss") == 1 then
+				elseif shownamemiss == 1 then
 					if HitType == "SHIELD_MISSED" or HitType == "MISSED" then
 						return DEX_TranTxt(damage.." ",color,colorSe)..icons..SpellName
 					else
@@ -1323,7 +1547,11 @@ function DEX_BuildText(damage,spell,IsCrit,HitType,IsdexType,color,colorSe)
 					return DEX_TranTxt(damage.." ",color,colorSe)..icons..SpellName
 				end
 			else
-				return DEX_TranTxt(damage.." ",color,colorSe)..icons
+				if HitType == "AURA_APPLIED" then
+					return icons
+				else
+					return DEX_TranTxt(damage.." ",color,colorSe)..icons
+				end
 			end
 		else
 			if HitType == "INTERRUPT" then
@@ -1331,14 +1559,18 @@ function DEX_BuildText(damage,spell,IsCrit,HitType,IsdexType,color,colorSe)
 					return damage.." "..DEX_ColorFlip(colorSe[1],colorSe[2],colorSe[3])..icons..SpellName.."|r"
 				end
 			end
-			if DEX_Get("DEX_ShowSpellName") == 1 then 
-				if DEX_Get("DEX_ShowNameOnCrit") == 1 then
+			if showname == 1 then 
+				if shownamecrit == 1 then
 					if IsCrit == 1 then
-						return damage.." "..DEX_ColorFlip(colorSe[1],colorSe[2],colorSe[3])..icons..SpellName.."|r"
+						if showcriticon ==1 then
+							return damage.." "..DEX_ColorFlip(colorSe[1],colorSe[2],colorSe[3])..icons.."|r"
+						else
+							return damage.." "..DEX_ColorFlip(colorSe[1],colorSe[2],colorSe[3])..icons..SpellName.."|r"
+						end
 					else
 						return damage.." "..DEX_ColorFlip(colorSe[1],colorSe[2],colorSe[3])..icons.."|r"
 					end
-				elseif DEX_Get("DEX_ShowNameOnMiss") == 1 then
+				elseif shownamemiss == 1 then
 					if HitType == "SHIELD_MISSED" or HitType == "MISSED" then
 						return damage.." "..DEX_ColorFlip(colorSe[1],colorSe[2],colorSe[3])..icons..SpellName.."|r"
 					else
@@ -1348,11 +1580,15 @@ function DEX_BuildText(damage,spell,IsCrit,HitType,IsdexType,color,colorSe)
 					return damage.." "..DEX_ColorFlip(colorSe[1],colorSe[2],colorSe[3])..icons..SpellName.."|r"
 				end
 			else
-				return damage.." "..DEX_ColorFlip(colorSe[1],colorSe[2],colorSe[3])..icons.."|r"
+				if HitType == "AURA_APPLIED" then
+					return DEX_ColorFlip(colorSe[1],colorSe[2],colorSe[3])..icons.."|r"
+				else
+					return damage.." "..DEX_ColorFlip(colorSe[1],colorSe[2],colorSe[3])..icons.."|r"
+				end
 			end
 		end
 	end
-	if DEX_Get("DEX_ShowSpellName") ~= 1 then 
+	if showname ~= 1 then 
 		if DEX_Get("DEX_ColorMode") == 1 then
 			if HitType == "INTERRUPT" then
 				if DEX_Get("DEX_ShowInterruptCrit") == 1 then
@@ -1376,6 +1612,11 @@ function DEX_BuildText(damage,spell,IsCrit,HitType,IsdexType,color,colorSe)
 			return damage..DEX_ColorFlip(colorSe[1],colorSe[2],colorSe[3]).."|r"
 		end	
 	else
+		local icons = ""
+		local iconsize = DEX_TEXTSIZE/(DEX_Get("DEX_IconSize")/5);
+		if select(3,GetSpellInfo(spell))~=nil then 
+			icons ="|T"..select(3,GetSpellInfo(spell))..":"..(iconsize / 2.5).."|t";
+		end
 		if HitType == "INTERRUPT" then
 			if DEX_Get("DEX_ShowInterruptCrit") == 1 then
 				if DEX_Get("DEX_ColorMode") == 1 then
@@ -1387,15 +1628,25 @@ function DEX_BuildText(damage,spell,IsCrit,HitType,IsdexType,color,colorSe)
 				end	
 			end
 		end
-		if DEX_Get("DEX_ShowNameOnCrit") == 1 then
+		if shownamecrit == 1 then
 			if IsCrit == 1 then
-				if DEX_Get("DEX_ColorMode") == 1 then
-					return damage.." "..SpellName
-				elseif DEX_Get("DEX_ColorMode") == 3 then
-					return DEX_TranTxt(damage.." "..SpellName,color,colorSe)
+				if showcriticon == 1 then
+					if DEX_Get("DEX_ColorMode") == 1 then
+						return damage.." "..icons
+					elseif DEX_Get("DEX_ColorMode") == 3 then
+						return DEX_TranTxt(damage.." "..icons,color,colorSe)
+					else
+						return damage.." "..DEX_ColorFlip(colorSe[1],colorSe[2],colorSe[3])..icons.."|r"
+					end	
 				else
-					return damage.." "..DEX_ColorFlip(colorSe[1],colorSe[2],colorSe[3])..SpellName.."|r"
-				end	
+					if DEX_Get("DEX_ColorMode") == 1 then
+						return damage.." "..SpellName
+					elseif DEX_Get("DEX_ColorMode") == 3 then
+						return DEX_TranTxt(damage.." "..SpellName,color,colorSe)
+					else
+						return damage.." "..DEX_ColorFlip(colorSe[1],colorSe[2],colorSe[3])..SpellName.."|r"
+					end	
+				end
 			else
 				if DEX_Get("DEX_ColorMode") == 1 then
 					return damage
@@ -1405,7 +1656,7 @@ function DEX_BuildText(damage,spell,IsCrit,HitType,IsdexType,color,colorSe)
 					return damage..DEX_ColorFlip(colorSe[1],colorSe[2],colorSe[3]).."|r"
 				end	
 			end
-		elseif DEX_Get("DEX_ShowNameOnMiss") == 1 then
+		elseif shownamemiss == 1 then
 			if HitType == "SHIELD_MISSED" or HitType == "MISSED" then
 				if DEX_Get("DEX_ColorMode") == 1 then
 					return damage.." "..SpellName
@@ -1435,7 +1686,352 @@ function DEX_BuildText(damage,spell,IsCrit,HitType,IsdexType,color,colorSe)
 	end
 end
 
-function DEX_AddText(damage,spell,damagetype,crit,iscurTarget,coerciveShowSpell,TargetGUID,TargetName,HitType,...)
+local function DiffSpell(spell1,spell2)
+	local name1, name2 = nil
+	if select(1,GetSpellInfo(spell1))~=nil then 
+		name1 = select(1,GetSpellInfo(spell1))
+		if select(1,GetSpellInfo(spell2))~=nil then 
+			name2 = select(1,GetSpellInfo(spell2))
+			if name1 == name2 then
+				return true
+			else
+				return false
+			end
+		else
+			return false
+		end
+	else
+		return false
+	end
+end
+
+function DEX_AddText(damage,spell,damagetype,crit,iscurTarget,coerciveShowSpell,TargetGUID,TargetName,HitType,SpellID,combattime,...)
+	if ((HitType == "DAMAGE" and (damagetype == DEX_DAMAGE_TYPE_SPELL or damagetype == DEX_DAMAGE_TYPE_PERIODIC or damagetype == DEX_DAMAGE_TYPE_AOESPELL or damagetype == DEX_DAMAGE_TYPE_AOEDOT or damagetype == DEX_DAMAGE_TYPE_AOESHIELD  or damagetype == DEX_DAMAGE_TYPE_AOEHEALTH))  or (HitType == "SHIELD" and damagetype == DEX_DAMAGE_TYPE_SPELL)) and SpellID ~= nil and DEX_Get("DEX_UniteSpell") == 1 then
+		if damagetype == DEX_DAMAGE_TYPE_AOESPELL then
+			if DataTmpSpell.spellid ~= 0 then
+				DEX_AddTextDo(DataTmpSpell.damage,DataTmpSpell.spell,DataTmpSpell.damagetype,DataTmpSpell.crit,DataTmpSpell.iscurTarget,DataTmpSpell.coerciveShowSpell,DataTmpSpell.TargetGUID,DataTmpSpell.TargetName,DataTmpSpell.HitType,DataTmpSpell.spellid,DataTmpSpell.StartTime)
+				DataTmpSpell.damage = 0
+				DataTmpSpell.spell = ""
+				DataTmpSpell.damagetype = 0
+				DataTmpSpell.crit = 0
+				DataTmpSpell.iscurTarget = false
+				DataTmpSpell.coerciveShowSpell = false
+				DataTmpSpell.TargetGUID = ""
+				DataTmpSpell.TargetName = ""
+				DataTmpSpell.HitType = ""
+				DataTmpSpell.spellid = 0
+				DataTmpSpell.StartTime = 0
+			end
+			return
+		elseif damagetype == DEX_DAMAGE_TYPE_AOEDOT then
+			if DataTmpDot.spellid ~= 0 then
+				DEX_AddTextDo(DataTmpDot.damage,DataTmpDot.spell,DataTmpDot.damagetype,DataTmpDot.crit,DataTmpDot.iscurTarget,DataTmpDot.coerciveShowSpell,DataTmpDot.TargetGUID,DataTmpDot.TargetName,DataTmpDot.HitType,DataTmpDot.spellid,DataTmpDot.StartTime)
+				DataTmpDot.damage = 0
+				DataTmpDot.spell = ""
+				DataTmpDot.damagetype = 0
+				DataTmpDot.crit = 0
+				DataTmpDot.iscurTarget = false
+				DataTmpDot.coerciveShowSpell = false
+				DataTmpDot.TargetGUID = ""
+				DataTmpDot.TargetName = ""
+				DataTmpDot.HitType = ""
+				DataTmpDot.spellid = 0
+				DataTmpDot.StartTime = 0
+			end
+			return
+		elseif damagetype == DEX_DAMAGE_TYPE_AOEShield then
+			if DataTmpShield.spellid ~= 0 then
+				DEX_AddTextDo(DataTmpShield.damage,DataTmpShield.spell,DataTmpShield.damagetype,DataTmpShield.crit,DataTmpShield.iscurTarget,DataTmpShield.coerciveShowSpell,DataTmpShield.TargetGUID,DataTmpShield.TargetName,DataTmpShield.HitType,DataTmpShield.spellid,DataTmpShield.StartTime)
+				DataTmpShield.damage = 0
+				DataTmpShield.spell = ""
+				DataTmpShield.damagetype = 0
+				DataTmpShield.crit = 0
+				DataTmpShield.iscurTarget = false
+				DataTmpShield.coerciveShowSpell = false
+				DataTmpShield.TargetGUID = ""
+				DataTmpShield.TargetName = ""
+				DataTmpShield.HitType = ""
+				DataTmpShield.spellid = 0
+				DataTmpShield.StartTime = 0
+			end
+			return
+		elseif damagetype == DEX_DAMAGE_TYPE_AOEHEALTH then
+			if DataTmpHealth.spellid ~= 0 then
+				DEX_AddTextDo(DataTmpHealth.damage,DataTmpHealth.spell,DataTmpHealth.damagetype,DataTmpHealth.crit,DataTmpHealth.iscurTarget,DataTmpHealth.coerciveShowSpell,DataTmpHealth.TargetGUID,DataTmpHealth.TargetName,DataTmpHealth.HitType,DataTmpHealth.spellid,DataTmpHealth.StartTime)
+				DataTmpHealth.damage = 0
+				DataTmpHealth.spell = ""
+				DataTmpHealth.damagetype = 0
+				DataTmpHealth.crit = 0
+				DataTmpHealth.iscurTarget = false
+				DataTmpHealth.coerciveShowSpell = false
+				DataTmpHealth.TargetGUID = ""
+				DataTmpHealth.TargetName = ""
+				DataTmpHealth.HitType = ""
+				DataTmpHealth.spellid = 0
+				DataTmpHealth.StartTime = 0
+			end
+			return
+		end
+		if damagetype == DEX_DAMAGE_TYPE_SPELL then
+			if DataTmpSpell.spellid == 0 then
+				DataTmpSpell.damage = tonumber(damage)
+				DataTmpSpell.spell = spell
+				DataTmpSpell.damagetype =damagetype
+				if crit == 1 then
+					DataTmpSpell.crit = crit
+				end
+				DataTmpSpell.iscurTarget = iscurTarget
+				DataTmpSpell.coerciveShowSpell = coerciveShowSpell
+				DataTmpSpell.TargetGUID = TargetGUID
+				DataTmpSpell.TargetName = TargetName
+				DataTmpSpell.HitType = HitType
+				DataTmpSpell.spellid = SpellID
+				DataTmpSpell.StartTime = combattime
+			else
+				if DiffSpell(DataTmpSpell.spellid,SpellID) then
+					DataTmpSpell.damage = DataTmpSpell.damage + tonumber(damage)
+					if crit == 1 then
+						DataTmpSpell.crit = crit
+					end
+					return
+				else
+					DataTmpSpell.StartTime = GetTime()
+	DEX_AddTextDo(DataTmpSpell.damage,DataTmpSpell.spell,DataTmpSpell.damagetype,DataTmpSpell.crit,DataTmpSpell.iscurTarget,DataTmpSpell.coerciveShowSpell,DataTmpSpell.TargetGUID,DataTmpSpell.TargetName,DataTmpSpell.HitType,DataTmpSpell.spellid,DataTmpSpell.StartTime)
+					DataTmpSpell.damage = tonumber(damage)
+					DataTmpSpell.spell = spell
+					DataTmpSpell.damagetype = damagetype
+					DataTmpSpell.crit = 0
+					if crit == 1 then
+						DataTmpSpell.crit = crit
+					end
+					DataTmpSpell.iscurTarget = iscurTarget
+					DataTmpSpell.coerciveShowSpell = coerciveShowSpell
+					DataTmpSpell.TargetGUID = TargetGUID
+					DataTmpSpell.TargetName = TargetName
+					DataTmpSpell.HitType = HitType
+					DataTmpSpell.spellid = SpellID
+					DataTmpSpell.StartTime = combattime
+				end
+			end
+		elseif damagetype == DEX_DAMAGE_TYPE_PERIODIC then
+			if DataTmpDot.spellid == 0 then
+				DataTmpDot.damage = tonumber(damage)
+				DataTmpDot.spell = spell
+				DataTmpDot.damagetype =damagetype
+				if crit == 1 then
+					DataTmpDot.crit = crit
+				end
+				DataTmpDot.iscurTarget = iscurTarget
+				DataTmpDot.coerciveShowSpell = coerciveShowSpell
+				DataTmpDot.TargetGUID = TargetGUID
+				DataTmpDot.TargetName = TargetName
+				DataTmpDot.HitType = HitType
+				DataTmpDot.spellid = SpellID
+				DataTmpDot.StartTime = combattime
+			else
+				if DiffSpell(DataTmpDot.spellid,SpellID) then
+					DataTmpDot.damage = DataTmpDot.damage + tonumber(damage)
+					if crit == 1 then
+						DataTmpDot.crit = crit
+					end
+					return
+				else
+					DataTmpDot.StartTime = GetTime()
+					DEX_AddTextDo(DataTmpDot.damage,DataTmpDot.spell,DataTmpDot.damagetype,DataTmpDot.crit,DataTmpDot.iscurTarget,DataTmpDot.coerciveShowSpell,DataTmpDot.TargetGUID,DataTmpDot.TargetName,DataTmpDot.HitType,DataTmpDot.spellid,DataTmpDot.StartTime)
+					DataTmpDot.damage = tonumber(damage)
+					DataTmpDot.spell = spell
+					DataTmpDot.damagetype = damagetype
+					DataTmpDot.crit = 0
+					if crit == 1 then
+						DataTmpDot.crit = crit
+					end
+					DataTmpDot.iscurTarget = iscurTarget
+					DataTmpDot.coerciveShowSpell = coerciveShowSpell
+					DataTmpDot.TargetGUID = TargetGUID
+					DataTmpDot.TargetName = TargetName
+					DataTmpDot.HitType = HitType
+					DataTmpDot.spellid = SpellID
+					DataTmpDot.StartTime = combattime
+				end
+			end
+		elseif damagetype == DEX_DAMAGE_TYPE_HEALTH then
+			if DataTmpHealth.spellid == 0 then
+				DataTmpHealth.damage = tonumber(damage)
+				DataTmpHealth.spell = spell
+				DataTmpHealth.damagetype =damagetype
+				if crit == 1 then
+					DataTmpHealth.crit = crit
+				end
+				DataTmpHealth.iscurTarget = iscurTarget
+				DataTmpHealth.coerciveShowSpell = coerciveShowSpell
+				DataTmpHealth.TargetGUID = TargetGUID
+				DataTmpHealth.TargetName = TargetName
+				DataTmpHealth.HitType = HitType
+				DataTmpHealth.spellid = SpellID
+				DataTmpHealth.StartTime = combattime
+			else
+				if DiffSpell(DataTmpHealth.spellid,SpellID) then
+					DataTmpHealth.damage = DataTmpHealth.damage + tonumber(damage)
+					if crit == 1 then
+						DataTmpHealth.crit = crit
+					end
+					return
+				else
+					DataTmpHealth.StartTime = GetTime()
+					DEX_AddTextDo(DataTmpHealth.damage,DataTmpHealth.spell,DataTmpHealth.damagetype,DataTmpHealth.crit,DataTmpHealth.iscurTarget,DataTmpHealth.coerciveShowSpell,DataTmpHealth.TargetGUID,DataTmpHealth.TargetName,DataTmpHealth.HitType,DataTmpHealth.spellid,DataTmpHealth.StartTime)
+					DataTmpHealth.damage = tonumber(damage)
+					DataTmpHealth.spell = spell
+					DataTmpHealth.damagetype = damagetype
+					DataTmpHealth.crit = 0
+					if crit == 1 then
+						DataTmpHealth.crit = crit
+					end
+					DataTmpHealth.iscurTarget = iscurTarget
+					DataTmpHealth.coerciveShowSpell = coerciveShowSpell
+					DataTmpHealth.TargetGUID = TargetGUID
+					DataTmpHealth.TargetName = TargetName
+					DataTmpHealth.HitType = HitType
+					DataTmpHealth.spellid = SpellID
+					DataTmpHealth.StartTime = combattime
+				end
+			end
+		else
+			if DataTmpShield.spellid == 0 then
+				DataTmpShield.damage = tonumber(damage)
+				DataTmpShield.spell = spell
+				DataTmpShield.damagetype =damagetype
+				if crit == 1 then
+					DataTmpShield.crit = crit
+				end
+				DataTmpShield.iscurTarget = iscurTarget
+				DataTmpShield.coerciveShowSpell = coerciveShowSpell
+				DataTmpShield.TargetGUID = TargetGUID
+				DataTmpShield.TargetName = TargetName
+				DataTmpShield.HitType = HitType
+				DataTmpShield.spellid = SpellID
+				DataTmpShield.StartTime = combattime
+			else
+				if DiffSpell(DataTmpShield.spellid,SpellID) then
+					DataTmpShield.damage = DataTmpShield.damage + tonumber(damage)
+					if crit == 1 then
+						DataTmpShield.crit = crit
+					end
+					return
+				else
+					DataTmpShield.StartTime = GetTime()
+					DEX_AddTextDo(DataTmpShield.damage,DataTmpShield.spell,DataTmpShield.damagetype,DataTmpShield.crit,DataTmpShield.iscurTarget,DataTmpShield.coerciveShowSpell,DataTmpShield.TargetGUID,DataTmpShield.TargetName,DataTmpShield.HitType,DataTmpShield.spellid,DataTmpShield.StartTime)
+					DataTmpShield.damage = tonumber(damage)
+					DataTmpShield.spell = spell
+					DataTmpShield.damagetype = damagetype
+					DataTmpShield.crit = 0
+					if crit == 1 then
+						DataTmpShield.crit = crit
+					end
+					DataTmpShield.iscurTarget = iscurTarget
+					DataTmpShield.coerciveShowSpell = coerciveShowSpell
+					DataTmpShield.TargetGUID = TargetGUID
+					DataTmpShield.TargetName = TargetName
+					DataTmpShield.HitType = HitType
+					DataTmpShield.spellid = SpellID
+					DataTmpShield.StartTime = combattime
+				end
+			end
+		end
+	else
+		DEX_AddTextDo(damage,spell,damagetype,crit,iscurTarget,coerciveShowSpell,TargetGUID,TargetName,HitType,SpellID,combattime)
+	end
+end
+
+function TimeCheck(time1,time2,movetype)
+	if time1 == 0 or DEX_Get("DEX_ShowWithMess") == 1 or DEX_Get("DEX_UniteSpell") ~= 1 or DEX_Get("DEX_AdjustTime") ~= 1 then
+		return time2
+	end
+	local time3 = 0
+	if movetype == DEX_MOVTYP_ATTACK then
+		if DEX_Get("DEX_ShowDamageType") == 1 then
+			if (time2 - time1) < (DEX_TEXTSIZE + 2)/(2.5 * DEX_Get("DEX_Speed")) then
+				time3 = time1 + (DEX_TEXTSIZE + 2)/(2.5 * DEX_Get("DEX_Speed"))
+			else
+				time3 = time2
+			end
+		else
+			if (time2 - time1) < (DEX_TEXTSIZE + 2)/(2.5 * DEX_Get("DEX_Speed")) then
+				time3 = time1 + (DEX_TEXTSIZE + 2)/(2.5 * DEX_Get("DEX_Speed"))
+			else
+				time3 = time2
+			end
+		end
+	elseif movetype == DEX_MOVTYP_HEALTH then
+		if DEX_Get("DEX_ShowHealthType") == 1 then
+			if (time2 - time1) < (DEX_TEXTSIZE + 2)/(2.5 * DEX_Get("DEX_Speed")) then
+				time3 = time1 + (DEX_TEXTSIZE + 2)/(2.5 * DEX_Get("DEX_Speed"))
+			else
+				time3 = time2
+			end
+		else
+			if (time2 - time1) < (DEX_TEXTSIZE + 2)/(2.5 * DEX_Get("DEX_Speed")) then
+				time3 = time1 + (DEX_TEXTSIZE + 2)/(2.5 * DEX_Get("DEX_Speed"))
+			else
+				time3 = time2
+			end
+		end
+	elseif movetype == DEX_MOVTYP_PET then
+		if (time2 - time1) < (DEX_TEXTSIZE + 2)/(2.5 * DEX_Get("DEX_Speed")) then
+			time3 = time1 + (DEX_TEXTSIZE + 2)/(2.5 * DEX_Get("DEX_Speed"))
+		else
+			time3 = time2
+		end
+	else
+		if (time2 - time1) < (DEX_TEXTSIZE + 2)/(2.5 * DEX_Get("DEX_Speed")) then
+			time3 = time1 + (DEX_TEXTSIZE + 2)/(2.5 * DEX_Get("DEX_Speed"))
+		else
+			time3 = time2
+		end
+	end
+	if (GetTime() - time3) <0 and abs(GetTime() - time3) >= AniRunTime * 2 and DEX_Get("DEX_AdjustTime") == 1 then
+		if movetype == DEX_MOVTYP_ATTACK then
+			for key, value in pairs(dex_AniData) do
+				if value.Active and value.starttime>0 and GetTime() - value.starttime < AniRunTime * 2 and value.moveTyp == DEX_MOVTYP_ATTACK then
+					dex_AniData[key].starttime = value.starttime + (GetTime() - time3);
+					if GetTime() - value.starttime < AniRunTime then
+						dex_AniData[key].alpha = 1;
+					end
+				end
+			end
+		elseif movetype == DEX_MOVTYP_HEALTH then
+			for key, value in pairs(dex_AniData) do
+				if value.Active and value.starttime>0 and GetTime() - value.starttime < AniRunTime * 2 and value.moveTyp == DEX_MOVTYP_HEALTH then
+					dex_AniData[key].starttime = value.starttime + (GetTime() - time3);
+					if GetTime() - value.starttime < AniRunTime then
+						dex_AniData[key].alpha = 1;
+					end
+				end
+			end
+		elseif movetype == DEX_MOVTYP_PET then
+			for key, value in pairs(dex_AniData) do
+				if value.Active and value.starttime>0 and GetTime() - value.starttime < AniRunTime * 2 and value.moveTyp == DEX_MOVTYP_PET then
+					dex_AniData[key].starttime = value.starttime + (GetTime() - time3);
+					if GetTime() - value.starttime < AniRunTime then
+						dex_AniData[key].alpha = 1;
+					end
+				end
+			end
+		else
+			for key, value in pairs(dex_AniData) do
+				if value.Active and value.starttime>0 and GetTime() - value.starttime < AniRunTime * 2 and value.moveTyp == DEX_MOVTYP_NORMAL then
+					dex_AniData[key].starttime = value.starttime + (GetTime() - time3);
+					if GetTime() - value.starttime < AniRunTime then
+						dex_AniData[key].alpha = 1;
+					end
+				end
+			end
+		end
+		return time2
+	end
+	return time3
+end
+
+function DEX_AddTextDo(damage,spell,damagetype,crit,iscurTarget,coerciveShowSpell,TargetGUID,TargetName,HitType,SpellID,combattime,...)
 	if spell and (damage == "0" or (tonumber(damage) and tonumber(damage) == 0)) then
 		damage = ""
 	end
@@ -1444,100 +2040,70 @@ function DEX_AddText(damage,spell,damagetype,crit,iscurTarget,coerciveShowSpell,
 	end
 	if spell == nil then spell = "";end
 	if damage == nil then damage = "";end
-	local isNumber = false
-	if tonumber(damage) then isNumber = true;end
 
---统计AOE技能汇总并生成记录
-if (not AOE_CHECK(spellId) or EndTime > 0) and  DEX_Get("DEX_UniteSpell") == 1 then
-	for key, value in pairs(aoeList) do
-		local tmpcrit = 0
-		local tmpdamage = 0
-		local tmpstarttime = 0
-		local tmpspellbak = ""
-		local tmplastupdate = ""
-		local tmpdestbak = 0
-		local tmpHitType = ""
-		local tmpheight = DEX_TEXTSIZE
-		for key1, value1 in pairs(dex_AniData) do
-			if (value1.destbak == value) and (not value1.Active) and value1.starttime ~= 0 then
-				if tonumber( value1.delay) then
-					tmpdamage = tmpdamage +tonumber( value1.delay)
-				end
-				if value1.crit == 1 then
-					tmpcrit = 1
-				end
-				if tmpstarttime == 0 then
-					tmpstarttime = value1.starttime
-				elseif tmpstarttime > value1.starttime then
-					tmpstarttime = value1.starttime
-				end
-				tmpHitType = value1.HitType					
-				tmpspellbak = value1.spellbak
-				tmplastupdate = value1.lastupdate
-				tmpdestbak = value1.destbak
-				tmpheight = value1.height
-				DEX_aniClear(dex_AniData[key1])	--清理旧数组
-			end
+	if DEX_Get("DEX_ShowWithMess") == 1 then
+		local Maxline = DEX_logLine;
+		local anitmp;
+		local color,colorSe = DEX_SetColor(damagetype)
+		for i = 1,10 do
+			anitmp = dex_AniData["aniText"..i];
+			anitmp.posY = anitmp.posY + DEX_Get("DEX_FontSize");
+			anitmp.FObject:SetPoint("CENTER", "UIParent", "CENTER", anitmp.posX + DEX_Get("DEX_PosX"), anitmp.posY + DEX_Get("DEX_PosY"));
 		end
-		if tmpdamage > 0 then
-			local ani = dex_AniData["aniText"..dex_lastani]
-			DEX_aniReset(ani)
-			ani.Active = true
-			ani.starttime = tmpstarttime
-			ani.spellbak = tmpspellbak
-			ani.crit = tmpcrit
-			if ani.crit == 1 then
-				ani.zoom = 0.6;
-				if DEX_Get("DEX_ShowSpellName") == 1 and DEX_Get("DEX_ShowNameOnCrit") == 1 and ani.spellbak ~= "" then
-					ani.zoom = 0.8;
+		anitmp = dex_AniData["aniText"..dex_lastani];
+		DEX_aniReset(anitmp);
+		anitmp.starttime = GetTime();
+		anitmp.Active = true;
+		anitmp.posY = 0;
+		anitmp.posX = 0;
+		anitmp.FObject:ClearAllPoints()
+		if DEX_Get("DEX_NumberFormat") == 1 and (tonumber(damage) or string.find(damage,"-")) then
+			if string.find(damage,"-") then
+				local healstart = string.sub(damage, 1 , string.find(damage,"-") - 1)
+				local healend = string.sub(damage, string.find(damage,"-") + 1, string.len(damage))
+				if damagetype == DEX_DAMAGE_TYPE_HEALTH then
+					damage = amount_format(healstart).."("..amount_format(healend)..")"
+				elseif damagetype == DEX_DAMAGE_TYPE_BEATTACK  then
+					damage = amount_format(healstart).."("..amount_format(healend)..")"
 				else
-					ani.critTyp = 1;
+					damage = amount_format(healstart).."("..amount_format(healend)..")"
 				end
 			else
-				if DEX_aoeNew == 1 then	DEX_AoeReset();end
-
-				if GetTime() - ani.starttime >= 0.7 then DEX_AoeReset(); end
-				DEX_aoeDct = DEX_aoeDct + 1;
-				if DEX_aoeDct >= 2 then
-					DEX_aoeId = DEX_aoeId + 1;
-					DEX_aoeDct = 0;
-				end
-			end
-
-			ani.height = tmpheight;
-			ani.lastupdate = tmplastupdate
-			ani.destbak = tmpdestbak
-			ani.HitType = tmpHitType
-			ani.uid = DEX_ANI_UID
-			ani.delay = tostring(tmpdamage)
-			if ani.lastupdate == DEX_DAMAGE_TYPE_PERIODIC then
-				ani.moveTyp = DEX_MOVTYP_NORMAL
-			elseif ani.lastupdate == DEX_DAMAGE_TYPE_HEALTH then
-				ani.moveTyp = DEX_MOVTYP_HEALTH
-			elseif ani.lastupdate == DEX_DAMAGE_TYPE_BEATTACK then
-				ani.moveTyp = DEX_MOVTYP_ATTACK
-			else
-				ani.moveTyp = DEX_MOVTYP_AOE
-			end
-			 ani.Extra = random(DEX_TEXTSIZE * 3, DEX_TEXTSIZE * 5)
-			DEX_RefressBottom(ani);
-			DEX_ANI_UID = DEX_ANI_UID + 1
-			dex_lastani = dex_lastani + 1;
-			DEX_aoeNew = 1
-			if dex_lastani > DEX_MAXANI then
-				dex_lastani = tonumber(DEX_Get("DEX_LOGLINE")) * tonumber(DEX_Get("DEX_ShowWithMess")) + 1;
+				damage = amount_format(damage)
 			end
 		end
+		if crit == 1 then damage = DEX_TXT_CRIT..damage; end
+		anitmp.FObject:SetText(damage.." "..spell);
+		anitmp.FObject:SetAlpha(1);
+		anitmp.FObject:SetTextColor(color[1], color[2], color[3]);
+		anitmp.FObject:SetPoint("CENTER", "UIParent", "CENTER", anitmp.posX + DEX_Get("DEX_PosX"), anitmp.posY + DEX_Get("DEX_PosY"));
+		dex_lastani = dex_lastani + 1;
+		if dex_lastani > DEX_logLine then
+			dex_lastani = 1
+		end
+		return
 	end
-end
+
 	local ani = dex_AniData["aniText"..dex_lastani]
 	DEX_aniReset(ani)
 	ani.Active = true
 	ani.height = DEX_TEXTSIZE;
 	ani.crit = crit;
 	ani.uid = DEX_ANI_UID
-	ani.starttime = GetTime()
-	ani.Extra = 0
+	ani.starttime = combattime
+	ani.Extra = 1
+
+	if not iscurTarget and  damagetype ~= DEX_DAMAGE_TYPE_PET and ani.moveTyp ~= DEX_MOVTYP_AOE then
+		ani.moveTyp = DEX_MOVTYP_OTHER
+		ani.posY = DEX_GetMovTypOtherPosY()
+		ani.posYbak = ani.posY
+	end
+
+	if (HitType == "DAMAGE" or HitType == "SHIELD" or HitType == "DISPEL" or HitType == "STOLEN" or HitType == "MISSED" or HitType == "SPELL_MISSED") and (damagetype ~= DEX_DAMAGE_TYPE_PET and damagetype ~= DEX_DAMAGE_TYPE_BEATTACK and damagetype ~= DEX_DAMAGE_TYPE_HEALTH) then
+		ani.moveTyp = DEX_MOVTYP_NORMAL
+		ani.starttime = TimeCheck(TimeTmp.NT,ani.starttime,DEX_MOVTYP_NORMAL)
+		TimeTmp.NT = ani.starttime
+	end
 
 	if damagetype == DEX_DAMAGE_TYPE_PET then
 		ani.moveTyp = DEX_MOVTYP_PET;
@@ -1551,21 +2117,10 @@ end
 				end
 			end
 		end
+		ani.starttime = TimeCheck(TimeTmp.PT,ani.starttime,DEX_MOVTYP_PET)
+		TimeTmp.PT = ani.starttime
 	end
 
-	if ani.moveTyp == DEX_MOVTYP_NORMAL then
-		if dex_bottom - ani.baseY < ani.height + 2 then
-			local fixY = ani.height + 2 + ani.baseY - dex_bottom;
-			local anitmp;
-			for i = 1,DEX_MAXANI do
-				anitmp = dex_AniData["aniText"..i];
-				if i ~= dex_lastani and anitmp.Active and anitmp.moveTyp == DEX_MOVTYP_NORMAL then
-					anitmp.baseY = anitmp.baseY + fixY;
-				end
-			end
-		end
-		ani.Extra = 0
-	end
 	if damagetype == DEX_DAMAGE_TYPE_HONOR then
 		ani.critTyp = 1
 		ani.zoom = 1.35;
@@ -1573,77 +2128,27 @@ end
 	end
 
 	if damagetype == DEX_DAMAGE_TYPE_BEATTACK then
-		ani.moveTyp = DEX_MOVTYP_ATTACK
-		if dex_bottom - ani.baseY < ani.height + 2 then
-			local fixY = ani.height + 2 + ani.baseY - dex_bottom;
-			local anitmp;
-			for i = 1,DEX_MAXANI do
-				anitmp = dex_AniData["aniText"..i];
-				if i ~= dex_lastani and anitmp.Active and anitmp.moveTyp == DEX_MOVTYP_ATTACK then
-					anitmp.baseY = anitmp.baseY + fixY;
-				end
-			end
-		end
-		if LastAttackLen > 0 then
-			ani.Extra = LastAttackLen
-			LastAttackLen = 0
+		if DEX_Get("DEX_BeAttackPosY") == 0 and DEX_Get("DEX_BeAttackPosX") == 0 then
+			ani.moveTyp = DEX_MOVTYP_NORMAL
+			ani.starttime = TimeCheck(TimeTmp.NT,ani.starttime,DEX_MOVTYP_NORMAL)
+			TimeTmp.NT = ani.starttime
 		else
-			ani.Extra = 0
-			if tonumber(damage) then
-				LastAttackLen = (string.len(trim(damage)) / 1.7) * DEX_TEXTSIZE
-			else
-				LastAttackLen = (string.len(trim(damage)) / 4.5) * DEX_TEXTSIZE
-			end
-			if LastAttackLen > (DEX_TEXTSIZE * 10) then
-				LastAttackLen = DEX_TEXTSIZE * 10
-			end
+			ani.moveTyp = DEX_MOVTYP_ATTACK
+			ani.starttime = TimeCheck(TimeTmp.AT,ani.starttime,DEX_MOVTYP_ATTACK)
+			TimeTmp.AT = ani.starttime
 		end
 	end
 	if damagetype == DEX_DAMAGE_TYPE_HEALTH then
-		ani.moveTyp = DEX_MOVTYP_HEALTH
-		if dex_bottom - ani.baseY < ani.height + 2 then
-			local fixY = ani.height + 2 + ani.baseY - dex_bottom;
-			local anitmp;
-			for i = 1,DEX_MAXANI do
-				anitmp = dex_AniData["aniText"..i];
-				if i ~= dex_lastani and anitmp.Active and anitmp.moveTyp == DEX_MOVTYP_HEALTH then
-					anitmp.baseY = anitmp.baseY + fixY;
-				end
-			end
-		end
-		if LastHealthLen > 0 then
-			ani.Extra = LastHealthLen
-			LastHealthLen = 0
+		if DEX_Get("DEX_HealthPosY") == 0 and DEX_Get("DEX_HealthPosX") == 0 then
+			ani.moveTyp = DEX_MOVTYP_NORMAL
+			ani.starttime = TimeCheck(TimeTmp.NT,ani.starttime,DEX_MOVTYP_NORMAL)
+			TimeTmp.NT = ani.starttime
 		else
-			ani.Extra = 0
-			if tonumber(damage) then
-				LastHealthLen = (string.len(trim(damage)) / 1.7) * DEX_TEXTSIZE
-			else
-				LastHealthLen = (string.len(trim(damage)) / 4.5) * DEX_TEXTSIZE
-			end
-			if LastHealthLen > (DEX_TEXTSIZE * 10) then
-				LastHealthLen = DEX_TEXTSIZE * 10
-			end
+			ani.moveTyp = DEX_MOVTYP_HEALTH
+			ani.starttime = TimeCheck(TimeTmp.HT,ani.starttime,DEX_MOVTYP_HEALTH)
+			TimeTmp.HT = ani.starttime
 		end
 	end
-
-	if not iscurTarget and  damagetype ~= DEX_DAMAGE_TYPE_PET and ani.moveTyp ~= DEX_MOVTYP_AOE then
-		ani.moveTyp = DEX_MOVTYP_OTHER
-		ani.posY = DEX_GetMovTypOtherPosY()
-		ani.posYbak = ani.posY
-		if LastOtherLen > 0 then
-			ani.Extra = LastOtherLen
-			LastOtherLen = 0
-		else
-			ani.Extra = 0
-			if tonumber(damage) then
-				LastOtherLen = (string.len(trim(damage)) / 1.7) * DEX_TEXTSIZE
-			else
-				LastOtherLen = (string.len(trim(damage)) / 4.5) * DEX_TEXTSIZE
-			end
-		end
-	end
-	
 	if ani.crit == 1 then
 		if damagetype ~= DEX_DAMAGE_TYPE_PET then
 			if spell == "" then
@@ -1669,40 +2174,37 @@ end
 	end
 
 	ani.delay = damage
-	if AOE_CHECK(spellId) and HitType == "DAMAGE" and DEX_Get("DEX_UniteSpell") == 1 then
-		ani.Active = false
-		ani.Extra = 0
-	end
 	ani.spellbak = spell
 	ani.lastupdate = damagetype
 	if HitType == "INTERRUPT" or HitType == "DISPEL" or HitType == "STOLEN" then
 		if tonumber(extraSpellId) then
 			ani.destbak = tonumber(extraSpellId)
 		else
-			ani.destbak = 0
+			ani.destbak = nil
 		end
 		ani.spellbak = extraSpellName
 	else
-		if tonumber(spellId) then
-			ani.destbak = tonumber(spellId)
+		if tonumber(SpellID) then
+			ani.destbak = tonumber(SpellID)
 		else
-			ani.destbak = 0
+			ani.destbak = nil
 		end
 	end
+	if (HitType == "DAMAGE" and damagetype == DEX_DAMAGE_TYPE_HIT)  or (damagetype == DEX_DAMAGE_TYPE_BEATTACK and SpellID == nil) or SpellID == nil then
+		ani.destbak = nil
+		ani.spellbak = ""
+	end
+
 	ani.HitType = HitType
+	if damagetype == DEX_DAMAGE_TYPE_HIT and SpellID ~= 0 then
+		ani.moveTyp = DEX_MOVTYP_NORMAL
+	end
 	DEX_RefressBottom(ani);
 	DEX_ANI_UID = DEX_ANI_UID + 1
 	dex_lastani = dex_lastani + 1;
 	if dex_lastani > DEX_MAXANI then
 		dex_lastani = tonumber(DEX_Get("DEX_LOGLINE")) * tonumber(DEX_Get("DEX_ShowWithMess")) + 1;
 	end
-end
-
-function DEX_AoeReset()
-	DEX_aoeNew = 0;
-	DEX_aoeId = 1;
-	DEX_aoeDct = 0;
-	DEX_aoeStartTimer = GetTime();
 end
 
 function DEX_aniInit()
@@ -1742,11 +2244,11 @@ function DEX_aniReset(aniData)
 	aniData.height = DEX_TEXTSIZE;
 	aniData.delay = "";
 	aniData.lastupdate = "";
-	aniData.Extra = 0
-	aniData.spellbak = ""
-	aniData.damagebak = 0
-	aniData.destbak = 0
-	aniData.HitType = ""
+	aniData.Extra = 0;
+	aniData.spellbak = "";
+	aniData.damagebak = 0;
+	aniData.destbak = 0;
+	aniData.HitType = "";
 
 	DEX_SetFontSize(aniData,DEX_TEXTSIZE)
 	aniData.FObject:SetText("");
@@ -1761,7 +2263,7 @@ function DEX_SetFontSize(ani,size)
 end
 
 function DEX_Set_WOWDamage()
-	if (DEX_Get("DEX_ShowDamageWoW") == 0) then  --DEX_Enable
+	if DEX_Get("DEX_Enable") == 1 then
 		SetCVar("floatingCombatTextCombatDamage", 0);
 		SetCVar("floatingCombatTextCombatHealing", 0);
 		SetCVar("floatingCombatTextPetMeleeDamage", 0)   	 --寵物對目標傷害

@@ -1,0 +1,550 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+  <!-- /*******************/ CUSTOM TEMPLATES /*************************/ -->
+
+  <!-- nice icon button template -->
+  <Button name="Todo_IconButtonTemplate" virtual="true">
+    <NormalTexture file="Interface\Buttons\UI-SquareButton-Up" desaturated="true">
+      <Color r="0.75" g="0.75" b="0.75"/>
+    </NormalTexture>
+    <PushedTexture file="Interface\Buttons\UI-SquareButton-Down" desaturated="true">
+      <Color r="0.75" g="0.75" b="0.75"/>
+    </PushedTexture>
+    <HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD" alpha="0.75">
+      <Anchors>
+        <Anchor point="TOPLEFT" x="2" y="-2"/>
+        <Anchor point="BOTTOMRIGHT" x="-2" y="2"/>
+      </Anchors>
+    </HighlightTexture>
+  </Button>
+
+  <Frame name="Todo_IconButtonPositionScripts" virtual="true">
+    <!-- icon position adaptation scripts -->
+    <Scripts>
+      <OnMouseDown>
+        <!-- nudge and dim the icon down a little -->
+        local xOffset = -1;
+        if (self.name == "UndoButton") then xOffset = -2; end
+
+        local yOffset = -2;
+        if (self.name == "UndoButton") then yOffset = -3; end
+        if (self.name == "CategoryButton") then yOffset = -3; end
+
+        self.Icon:SetPoint("CENTER", xOffset, yOffset) self.Icon:SetAlpha(0.5)
+      </OnMouseDown>
+      <OnMouseUp>
+        <!-- reset the icon's position and opacity -->
+        local xOffset = 0;
+        if (self.name == "UndoButton") then xOffset = -0.5; end
+        if (self.name == "CategoryButton") then xOffset = 0.5; end
+
+        local yOffset = 0;
+        if (self.name == "UndoButton") then yOffset = -0.5; end
+        if (self.name == "CategoryButton") then yOffset = -1; end
+
+        self.Icon:SetPoint("CENTER", xOffset, yOffset) self.Icon:SetAlpha(1)
+      </OnMouseUp>
+      <OnShow>
+        <!-- reset the icon's position and opacity -->
+        local xOffset = 0;
+        if (self.name == "UndoButton") then xOffset = -0.5; end
+        if (self.name == "CategoryButton") then xOffset = 0.5; end
+
+        local yOffset = 0;
+        if (self.name == "UndoButton") then yOffset = -0.5; end
+        if (self.name == "CategoryButton") then yOffset = -1; end
+
+        self.Icon:SetPoint("CENTER", xOffset, yOffset) self.Icon:SetAlpha(1)
+      </OnShow>
+    </Scripts>
+  </Frame>
+
+  <Frame name="Todo_IconButtonTooltipScripts" virtual="true">
+    <Frames>
+      <!-- small tooltip frame to describe use of the buttons -->
+      <Frame parentKey="MiniTooltip" frameStrata="TOOLTIP" hidden="true">
+        <Size x="0" y="26"/>
+        <Layers>
+          <Layer>
+            <FontString parentKey="Text" inherits="GameFontNormalSmall"/>
+          </Layer>
+        </Layers>
+      </Frame>
+    </Frames>
+
+    <!-- Tooltip associated scripts -->
+    <Scripts>
+      <OnLoad>
+        if BackdropTemplateMixin then -- SL / 9.0
+            self.MiniTooltip.Backdrop = CreateFrame("Frame", nil, self.MiniTooltip, "BackdropTemplate")
+            self.MiniTooltip.Backdrop:SetAllPoints()
+            self.MiniTooltip.Backdrop.backdropInfo = {
+            	bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
+            	edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+            	tile = true,
+            	tileSize = 16,
+            	edgeSize = 16,
+            	insets = { left = 2, right = 2, top = 2, bottom = 2, },
+            }
+            self.MiniTooltip.Backdrop:ApplyBackdrop()
+            self.MiniTooltip.Backdrop:SetBackdropColor(0.05, 0.05, 0.05, 1)
+            self.MiniTooltip.Backdrop:SetBackdropBorderColor(0.5, 0.5, 0.5, 1)
+            self.MiniTooltip.Backdrop:SetFrameStrata("DIALOG") -- lower strata than the text, so that is acts as a background (but over the other elements of the frame)
+        else -- BFA
+            self.MiniTooltip.Backdrop = CreateFrame("Frame", nil, self.MiniTooltip)
+            self.MiniTooltip.Backdrop:SetAllPoints()
+            self.MiniTooltip.Backdrop:SetBackdrop({
+              bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
+              edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+              tile = true,
+              tileSize = 16,
+              edgeSize = 16,
+              insets = { left = 2, right = 2, top = 2, bottom = 2, },
+            })
+            self.MiniTooltip.Backdrop:SetBackdropColor(0.05, 0.05, 0.05, 1)
+            self.MiniTooltip.Backdrop:SetBackdropBorderColor(0.5, 0.5, 0.5, 1)
+            self.MiniTooltip.Backdrop:SetFrameStrata("DIALOG") -- lower strata than the text, so that is acts as a background (but over the other elements of the frame)
+        end
+      </OnLoad>
+      <OnEnter>
+        <!-- Show and reposition the tooltip -->
+        self.MiniTooltip.Text:SetText(self.tooltip)
+        self.MiniTooltip:SetWidth(self.MiniTooltip.Text:GetStringWidth()+16)
+        local _, n = string.gsub(self.tooltip, "\n", "")
+        if (n > 0) then
+          self.MiniTooltip:SetHeight(26 + n*10)
+        else
+          self.MiniTooltip:SetHeight(26)
+        end
+        if (self.name == "AddButton") then
+          self.MiniTooltip:SetPoint("BOTTOMRIGHT", self, "TOPRIGHT", 4, 7)
+        elseif (self.name == "TooltipResizeButton") then
+          self.MiniTooltip:SetPoint("BOTTOMRIGHT", self, "BOTTOMLEFT", -5, 0)
+        elseif (self.name == "ClearButton") then
+          self.MiniTooltip:SetPoint("BOTTOM", self, "TOP", 0, 0)
+        else
+          self.MiniTooltip:SetPoint("RIGHT", self, "LEFT", 0, 0)
+        end
+        self.MiniTooltip:Show()
+      </OnEnter>
+      <OnLeave>
+        <!-- Hide the tooltip -->
+        self.MiniTooltip:Hide()
+      </OnLeave>
+    </Scripts>
+  </Frame>
+
+  <!-- Category button -->
+  <Button name="Todo_CategoryButton" inherits="Todo_IconButtonTemplate, Todo_IconButtonTooltipScripts, Todo_IconButtonPositionScripts" virtual="true">
+    <Size x="25" y="25"/>
+    <KeyValues>
+      <KeyValue key="tooltip" value="locale"/>
+      <KeyValue key="name" value="CategoryButton"/>
+    </KeyValues>
+    <Layers>
+      <Layer level="OVERLAY">
+        <Texture parentKey="Icon" file="Interface\BUTTONS\UI-PlusMinus-Buttons">
+          <TexCoords left="0" right="0.5" top="0" bottom="0.5"/>
+          <Size x="12.5" y="12.5"/>
+          <Color r="0.85" g="1" b="1"/> <!-- a bit less red -->
+          <Anchors>
+            <Anchor point="CENTER"/>
+          </Anchors>
+        </Texture>
+      </Layer>
+    </Layers>
+  </Button>
+
+  <!-- Undo button -->
+  <Button name="Todo_UndoButton" inherits="Todo_IconButtonTemplate, Todo_IconButtonTooltipScripts, Todo_IconButtonPositionScripts" virtual="true">
+    <Size x="25" y="25"/>
+    <KeyValues>
+      <KeyValue key="tooltip" value="locale"/>
+      <KeyValue key="name" value="UndoButton"/>
+    </KeyValues>
+    <Layers>
+      <Layer level="OVERLAY">
+        <Texture parentKey="Icon" file="Interface\Buttons\UI-RefreshButton">
+          <Size x="14" y="14"/>
+          <Anchors>
+            <Anchor point="CENTER"/>
+          </Anchors>
+        </Texture>
+      </Layer>
+    </Layers>
+  </Button>
+
+  <!-- Tab Actions button -->
+  <Button name="Todo_TabActionsButton" inherits="Todo_IconButtonTemplate, Todo_IconButtonTooltipScripts, Todo_IconButtonPositionScripts" virtual="true">
+    <Size x="25" y="25"/>
+    <KeyValues>
+      <KeyValue key="tooltip" value="locale"/>
+      <KeyValue key="name" value="TabActionsButton"/>
+    </KeyValues>
+    <Layers>
+      <Layer level="OVERLAY">
+        <Texture parentKey="Icon" file="Interface\BUTTONS\UI-GuildButton-MOTD-Up">
+          <Size x="14" y="14"/>
+          <Anchors>
+            <Anchor point="CENTER"/>
+          </Anchors>
+        </Texture>
+      </Layer>
+    </Layers>
+  </Button>
+
+  <!-- Frame Options button -->
+  <Button name="Todo_FrameOptionsButton" inherits="Todo_IconButtonTemplate, Todo_IconButtonTooltipScripts, Todo_IconButtonPositionScripts" virtual="true">
+    <Size x="25" y="25"/>
+    <KeyValues>
+      <KeyValue key="tooltip" value="locale"/>
+      <KeyValue key="name" value="FrameOptionsButton"/>
+    </KeyValues>
+    <Layers>
+      <Layer level="OVERLAY">
+        <Texture parentKey="Icon" file="Interface\BUTTONS\UI-GuildButton-OfficerNote-Up">
+          <Size x="15" y="15"/>
+          <Anchors>
+            <Anchor point="CENTER"/>
+          </Anchors>
+        </Texture>
+      </Layer>
+    </Layers>
+  </Button>
+
+  <!-- Help button -->
+  <Button name="Todo_HelpButton" inherits="InlineHyperlinkFrameTemplate, Todo_IconButtonTooltipScripts, Todo_IconButtonPositionScripts" virtual="true">
+    <Size x="25" y="25"/>
+    <KeyValues>
+      <KeyValue key="tooltip" value="locale"/>
+      <KeyValue key="name" value="HelpButton"/>
+    </KeyValues>
+    <Layers>
+      <Layer level="OVERLAY">
+        <Texture parentKey="Icon" file="Interface\COMMON\help-i">
+          <Size x="32" y="32"/>
+          <Anchors>
+            <Anchor point="CENTER"/>
+          </Anchors>
+        </Texture>
+      </Layer>
+    </Layers>
+  </Button>
+
+  <!-- Close button -->
+  <Button name="Todo_CloseButton" inherits="Todo_IconButtonTemplate, Todo_IconButtonPositionScripts" virtual="true">
+    <Size x="25" y="25"/>
+    <KeyValues>
+      <KeyValue key="name" value="CloseButton"/>
+    </KeyValues>
+    <Layers>
+      <Layer level="OVERLAY">
+        <Texture parentKey="Icon" file="Interface\Buttons\UI-StopButton">
+          <Size x="14" y="14"/>
+          <Anchors>
+            <Anchor point="CENTER"/>
+          </Anchors>
+        </Texture>
+      </Layer>
+    </Layers>
+  </Button>
+
+  <!-- Clear button -->
+  <Button name="Todo_ClearButton" inherits="Todo_IconButtonTemplate, Todo_IconButtonPositionScripts, Todo_IconButtonTooltipScripts" virtual="true">
+    <Size x="25" y="25"/>
+    <KeyValues>
+      <KeyValue key="tooltip" value="locale"/>
+      <KeyValue key="name" value="ClearButton"/>
+    </KeyValues>
+    <Layers>
+      <Layer level="OVERLAY">
+        <Texture parentKey="Icon" file="Interface\FriendsFrame\StatusIcon-DnD">
+          <Size x="17" y="17"/>
+          <Anchors>
+            <Anchor point="CENTER"/>
+          </Anchors>
+        </Texture>
+      </Layer>
+    </Layers>
+  </Button>
+
+  <!-- Remove button -->
+  <Button name="Todo_RemoveButton" inherits="InlineHyperlinkFrameTemplate, Todo_IconButtonPositionScripts" virtual="true">
+    <Size x="13" y="13"/>
+    <KeyValues>
+      <KeyValue key="name" value="RemoveButton"/>
+    </KeyValues>
+    <Layers>
+      <Layer level="OVERLAY">
+        <Texture parentKey="Icon" file="Interface\Buttons\UI-StopButton">
+          <Size x="14" y="14"/>
+          <Anchors>
+            <Anchor point="CENTER"/>
+          </Anchors>
+        </Texture>
+      </Layer>
+    </Layers>
+  </Button>
+
+  <!-- Favorite button -->
+  <Button name="Todo_FavoriteButton" inherits="InlineHyperlinkFrameTemplate, Todo_IconButtonPositionScripts" virtual="true">
+    <Size x="16" y="16"/> <!-- Size of interactable zone -->
+    <KeyValues>
+      <KeyValue key="name" value="FavoriteButton"/>
+    </KeyValues>
+    <Layers>
+      <Layer level="BACKGROUND">
+        <Texture parentKey="Icon" file="Interface\COMMON\FavoritesIcon">
+          <Size x="26" y="26"/> <!-- Size of the texture -->
+          <Anchors>
+            <Anchor point="CENTER"/>
+          </Anchors>
+        </Texture>
+      </Layer>
+    </Layers>
+  </Button>
+
+  <!-- Dropdown button -->
+  <Button name="Todo_DropdownButton" virtual="true">
+    <Size x="25" y="25"/> <!-- Size of interactable zone -->
+    <KeyValues>
+      <KeyValue key="name" value="DropdownButton"/>
+    </KeyValues>
+		<NormalTexture file="Interface\ChatFrame\UI-ChatIcon-ScrollDown-Up"/>
+		<PushedTexture file="Interface\ChatFrame\UI-ChatIcon-ScrollDown-Down"/>
+		<DisabledTexture file="Interface\ChatFrame\UI-ChatIcon-ScrollDown-Disabled"/>
+    <HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD" alpha="0.75">
+      <Anchors>
+        <Anchor point="TOPLEFT" x="2" y="-2"/>
+        <Anchor point="BOTTOMRIGHT" x="-2" y="2"/>
+      </Anchors>
+    </HighlightTexture>
+  </Button>
+
+  <!-- Description button -->
+  <Button name="Todo_DescButton" inherits="InlineHyperlinkFrameTemplate, Todo_IconButtonPositionScripts" virtual="true">
+    <Size x="13" y="13"/> <!-- Size of interactable zone -->
+    <KeyValues>
+      <KeyValue key="name" value="DescButton"/>
+    </KeyValues>
+    <Layers>
+      <Layer level="OVERLAY">
+        <Texture parentKey="Icon" file="Interface\BUTTONS\UI-GuildButton-PublicNote-Up">
+          <Size x="13" y="13"/> <!-- Size of the texture -->
+          <Anchors>
+            <Anchor point="CENTER"/>
+          </Anchors>
+        </Texture>
+      </Layer>
+    </Layers>
+  </Button>
+
+  <!-- resize button -->
+  <Button name="Todo_ResizeButton" virtual="true">
+    <Size x="16" y="16"/> <!-- Size of interactable zone -->
+    <NormalTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Up"/>
+    <PushedTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Down"/>
+    <HighlightTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Highlight" alphaMode="ADD"/>
+  </Button>
+
+  <!-- resize button with tooltip -->
+  <Button name="Todo_TooltipResizeButton" inherits="Todo_IconButtonTooltipScripts" virtual="true">
+    <Size x="16" y="16"/> <!-- Size of interactable zone -->
+    <KeyValues>
+      <KeyValue key="tooltip" value="locale"/>
+      <KeyValue key="name" value="TooltipResizeButton"/>
+    </KeyValues>
+    <NormalTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Up"/>
+    <PushedTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Down"/>
+    <HighlightTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Highlight" alphaMode="ADD"/>
+  </Button>
+
+  <!-- Normal button with nice highlight -->
+  <Button name="Todo_NormalButton" virtual="true">
+    <Size>
+      <AbsDimension x="96" y="22"/>
+  	</Size>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="$parentLeft" file="Interface\Buttons\UI-SilverButtonLG-Left-Up">
+					<Size>
+						<AbsDimension x="16" y="32"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT" x="0" y="0"/>
+					</Anchors>
+				</Texture>
+				<Texture name="$parentRight" file="Interface\Buttons\UI-SilverButtonLG-Right-Up">
+					<Size>
+						<AbsDimension x="16" y="32"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPRIGHT" x="0" y="0"/>
+					</Anchors>
+				</Texture>
+				<Texture name="$parentMiddle" file="Interface\Buttons\UI-SilverButtonLG-Mid-Up">
+					<Size>
+						<AbsDimension x="16" y="32"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentLeft" relativePoint="TOPRIGHT" x="0" y="0"/>
+						<Anchor point="TOPRIGHT" relativeTo="$parentRight" relativePoint="TOPLEFT" x="0" y="0"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="HIGHLIGHT">
+				<Texture name="$parentLeft" file="Interface\Buttons\UI-SilverButtonLG-Left-Hi">
+					<Size>
+						<AbsDimension x="16" y="32"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT" x="0" y="0"/>
+					</Anchors>
+				</Texture>
+				<Texture name="$parentRight" file="Interface\Buttons\UI-SilverButtonLG-Right-Hi">
+					<Size>
+						<AbsDimension x="16" y="32"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPRIGHT" x="0" y="0"/>
+					</Anchors>
+				</Texture>
+				<Texture name="$parentMiddle" file="Interface\Buttons\UI-SilverButtonLG-Mid-Hi">
+					<Size>
+						<AbsDimension x="16" y="32"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentLeft" relativePoint="TOPRIGHT" x="0" y="0"/>
+						<Anchor point="TOPRIGHT" relativeTo="$parentRight" relativePoint="TOPLEFT" x="0" y="0"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+    </Layers>
+		<Scripts>
+			<OnMouseDown>
+				if ( self:IsEnabled() ) then
+					local name = self:GetName();
+					_G[name.."Left"]:SetTexture("Interface\\Buttons\\UI-SilverButtonLG-Left-Down");
+					_G[name.."Middle"]:SetTexture("Interface\\Buttons\\UI-SilverButtonLG-Mid-Down");
+					_G[name.."Right"]:SetTexture("Interface\\Buttons\\UI-SilverButtonLG-Right-Down");
+					local contentsFrame = _G[name.."ContentsFrame"];
+					if ( contentsFrame ) then
+						contentsFrame:SetPoint("TOPLEFT", -2, -1);
+					end
+				end
+			</OnMouseDown>
+			<OnMouseUp>
+				if ( self:IsEnabled() ) then
+					local name = self:GetName();
+					_G[name.."Left"]:SetTexture("Interface\\Buttons\\UI-SilverButtonLG-Left-Up");
+					_G[name.."Middle"]:SetTexture("Interface\\Buttons\\UI-SilverButtonLG-Mid-Up");
+					_G[name.."Right"]:SetTexture("Interface\\Buttons\\UI-SilverButtonLG-Right-Up");
+					local contentsFrame = _G[name.."ContentsFrame"];
+					if ( contentsFrame ) then
+						contentsFrame:SetPoint("TOPLEFT", 0, 0);
+					end
+				end
+			</OnMouseUp>
+		</Scripts>
+	</Button>
+
+  <Frame name="Todo_HelpPlateTooltip" inherits="GlowBoxTemplate" frameStrata="FULLSCREEN_DIALOG" frameLevel="2" virtual="true">
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString parentKey="Text" inherits="GameFontHighlightLeft">
+					<Size x="200" y="0"/>
+					<Anchors>
+						<Anchor point="TOPLEFT" x="15" y="-15"/>
+					</Anchors>
+				</FontString>
+			</Layer>
+			<Layer level="ARTWORK">
+				<Texture parentKey="ArrowUP" inherits="HelpPlateArrowDOWN" hidden="true">
+					<Size x="53" y="21"/>
+					<Anchors>
+						<Anchor point="TOP" relativePoint="BOTTOM" x="0" y="3"/>
+					</Anchors>
+				</Texture>
+				<Texture parentKey="ArrowDOWN" inherits="HelpPlateArrowUP" hidden="true">
+					<Size x="53" y="21"/>
+					<Anchors>
+						<Anchor point="BOTTOM" relativePoint="TOP" x="0" y="-3"/>
+					</Anchors>
+				</Texture>
+				<Texture parentKey="ArrowRIGHT" inherits="HelpPlateArrowDOWN" hidden="true">
+					<Size x="44" y="21"/>
+					<Anchors>
+						<Anchor point="RIGHT" relativePoint="LEFT" x="3" y="0"/>
+					</Anchors>
+				</Texture>
+				<Texture parentKey="ArrowLEFT" inherits="HelpPlateArrowDOWN" hidden="true">
+					<Size x="44" y="21"/>
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="RIGHT" x="-3" y="0"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="BORDER">
+				<Texture parentKey="ArrowGlowUP" inherits="HelpPlateArrow-GlowDOWN" hidden="true" alphaMode="ADD" alpha="0.5">
+					<Size x="53" y="21"/>
+					<Anchors>
+						<Anchor point="TOP" relativePoint="BOTTOM" x="0" y="3"/>
+					</Anchors>
+				</Texture>
+				<Texture parentKey="ArrowGlowDOWN" inherits="HelpPlateArrow-GlowUP" hidden="true" alphaMode="ADD" alpha="0.5">
+					<Size x="53" y="21"/>
+					<Anchors>
+						<Anchor point="BOTTOM" relativePoint="TOP" x="0" y="-3"/>
+					</Anchors>
+				</Texture>
+				<Texture parentKey="ArrowGlowRIGHT" inherits="HelpPlateArrow-GlowDOWN" hidden="true" alphaMode="ADD" alpha="0.5">
+					<Size x="53" y="21"/>
+					<Anchors>
+						<Anchor point="RIGHT" relativePoint="LEFT" x="3" y="0"/>
+					</Anchors>
+				</Texture>
+				<Texture parentKey="ArrowGlowLEFT" inherits="HelpPlateArrow-GlowDOWN" hidden="true" alphaMode="ADD" alpha="0.5">
+					<Size x="53" y="21"/>
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="RIGHT" x="-3" y="0"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				self.Text:SetSpacing(4);
+				SetClampedTextureRotation(self.ArrowLEFT, 270);
+				SetClampedTextureRotation(self.ArrowRIGHT, 90);
+				SetClampedTextureRotation(self.ArrowGlowLEFT, 270);
+				SetClampedTextureRotation(self.ArrowGlowRIGHT, 90);
+			</OnLoad>
+			<OnShow>
+				self:SetHeight(self.Text:GetHeight()+30);
+			</OnShow>
+		</Scripts>
+	</Frame>
+
+  <Frame name="Todo_InteractiveLabel" virtual="true">
+    <!-- the size is set everytime the text changes, see the config file (func: CreateNoPointsInteractiveLabel) -->
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString name="$parentText" parentKey="Text">
+					<Anchors>
+						<Anchor point="TOPLEFT"/>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button name="$parentButton" parentKey="Button" registerForClicks="LeftButtonUp, RightButtonUp">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent.Text"/>
+					<Anchor point="BOTTOMRIGHT" relativeKey="$parent.Text"/>
+				</Anchors>
+			</Button>
+		</Frames>
+	</Frame>
+
+</Ui>

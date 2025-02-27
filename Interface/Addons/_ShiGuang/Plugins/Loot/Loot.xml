@@ -1,8 +1,10 @@
 ﻿<Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="CanOpener.lua"/>
+	<Script file="cupcko_mca.lua"/>
 	<Script file="MasterGypsy.lua"/>
-	<!--Script file="RollHistory.lua"/>
-	<Script file="ToggleLootSpec.lua"/-->
+	<!--Script file="ImprovedLootFrame.lua"/-->
+	<Script file="LightLoot.lua"/>
+	<!--Script file="ToggleLootSpec.lua"/-->
 	<Script file="LootSpecSwapper.lua"/>
   <!--Include file="AtlasLootReverse\AtlasLootReverse.xml"/-->
 </Ui>

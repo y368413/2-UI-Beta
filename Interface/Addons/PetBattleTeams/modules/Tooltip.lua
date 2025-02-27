@@ -1,7 +1,5 @@
 local PetBattleTeams = LibStub("AceAddon-3.0"):GetAddon("PetBattleTeams")
----@class PetBattleTeamsTooltip
 local Tooltip = PetBattleTeams:NewModule("Tooltip")
----@type PetBattleTeamsTeamManager
 local teamManager = PetBattleTeams:GetModule("TeamManager")
 local libPetBreedInfo = LibStub("LibPetBreedInfo-1.0")
 
@@ -133,7 +131,7 @@ function Tooltip:SetUnit(petID,abilities,teamName)
     if petID == 0 then return false end
     if not rarity then return false end
 
-    local r, g, b,hex = GetItemQualityColor(rarity-1)
+    local r, g, b,hex = C_Item.GetItemQualityColor(rarity-1)
 
     local tooltip = self.tooltip
     tooltip.rarityGlow:SetVertexColor(r, g, b)

@@ -14,6 +14,15 @@ SetSliderData("DEX_LOGLINE", 5, 20)
 SetSliderData("DEX_LOGTIME", 5, 60)
 SetSliderData("DEX_ShowHitX", -300, 300, 5)
 SetSliderData("DEX_ShowHitY", -300, 300, 5)
+SetSliderData("DEX_FrameLevel", 1, 9, 1)
+SetSliderData("DEX_BeAttackPosX", -800, 800, 10)
+SetSliderData("DEX_BeAttackPosY", -800, 800, 10)
+SetSliderData("DEX_HealthPosX", -800, 800, 10)
+SetSliderData("DEX_HealthPosY", -800, 800, 10)
+SetSliderData("DEX_PetPosX", -800, 800, 10)
+SetSliderData("DEX_PetPosY", -800, 800, 10)
+SetSliderData("DEX_AOETime", 1, 9, 1)
+SetSliderData("DEX_IconSize", 1, 10, 1)
 
 DEXOptionsColorPickerEx["DEX_ColorNormalSe"] = {}
 DEXOptionsColorPickerEx["DEX_ColorSkillSe"] = {}
@@ -88,7 +97,10 @@ function DEX_CheckButtonLink(name)
 			DEX_RefreshCheckButton("DEX_ShowNameOnCrit");
 			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowNameOnMiss"));
 			DEX_RefreshCheckButton("DEX_ShowNameOnMiss");
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowDamageIconOnCrit"));
+			DEX_RefreshCheckButton("DEX_ShowDamageIconOnCrit");	
 		else
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowDamageIconOnCrit"));
 			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowNameOnCrit"));
 			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowNameOnMiss"));
 		end
@@ -101,26 +113,14 @@ function DEX_CheckButtonLink(name)
 --			DEX_RefreshCheckButton("DEX_ShowLeftRight");						
 		end
 	end
-	if name == "DEX_ShowLeftRight" then
-		if DEX_Get(name) == 1 then
-			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowRightLeft"));
-		else
-			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowRightLeft"));
-			DEX_RefreshCheckButton("DEX_ShowRightLeft");	
-		end
-	end
 	if name == "DEX_Enable" then
 		if DEX_Get(name) == 1 then
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowDamage"));
+			DEX_RefreshCheckButton("DEX_ShowDamage");
 			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowNameOnCrit"));
 			DEX_RefreshCheckButton("DEX_ShowNameOnCrit");
 			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowNameOnMiss"));
 			DEX_RefreshCheckButton("DEX_ShowNameOnMiss");
-			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowRightLeft"));
-			DEX_RefreshCheckButton("DEX_ShowRightLeft");	
-			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowLeftRight"));
-			DEX_RefreshCheckButton("DEX_ShowLeftRight");						
-			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowDebug"));
-			DEX_RefreshCheckButton("DEX_ShowDebug");	
 			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowSpellIcon"));
 			DEX_RefreshCheckButton("DEX_ShowSpellIcon");						
 			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowHit"));
@@ -129,8 +129,6 @@ function DEX_CheckButtonLink(name)
 			DEX_RefreshFrameSliders("DEX_ShowHitX");
 			OptionsFrame_EnableSlider(getglobal("DEX_ShowHitY"));
 			DEX_RefreshFrameSliders("DEX_ShowHitY");
-			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowDamageWoW"));
-			DEX_RefreshCheckButton("DEX_ShowDamageWoW");	
 			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowSpellName"));
 			DEX_RefreshCheckButton("DEX_ShowSpellName");	
 			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowDamagePeriodic"));
@@ -145,8 +143,6 @@ function DEX_CheckButtonLink(name)
 			DEX_RefreshCheckButton("DEX_ShowBlockNumber");	
 			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowOwnHealth"));
 			DEX_RefreshCheckButton("DEX_ShowOwnHealth");	
-			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowBuffDebuff"));
-			DEX_RefreshCheckButton("DEX_ShowBuffDebuff");	
 			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowOverHeal"));
 			DEX_RefreshCheckButton("DEX_ShowOverHeal");	
 			OptionsFrame_EnableCheckBox(getglobal("DEX_UniteSpell"));
@@ -161,17 +157,84 @@ function DEX_CheckButtonLink(name)
 			DEX_RefreshCheckButton("DEX_ShowInterrupt");	
 			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowInterruptCrit"));
 			DEX_RefreshCheckButton("DEX_ShowInterrupt");	
+			OptionsFrame_EnableSlider(getglobal("DEX_FrameLevel"));
+			DEX_RefreshFrameSliders("DEX_FrameLevel");
+			OptionsFrame_EnableSlider(getglobal("DEX_HealthPosX"));
+			DEX_RefreshFrameSliders("DEX_HealthPosX");
+			OptionsFrame_EnableSlider(getglobal("DEX_HealthPosY"));
+			DEX_RefreshFrameSliders("DEX_HealthPosY");
+			OptionsFrame_EnableSlider(getglobal("DEX_BeAttackPosX"));
+			DEX_RefreshFrameSliders("DEX_BeAttackPosX");
+			OptionsFrame_EnableSlider(getglobal("DEX_BeAttackPosY"));
+			DEX_RefreshFrameSliders("DEX_BeAttackPosY");
+			OptionsFrame_EnableSlider(getglobal("DEX_PetPosX"));
+			DEX_RefreshFrameSliders("DEX_PetPosX");
+			OptionsFrame_EnableSlider(getglobal("DEX_PetPosY"));
+			DEX_RefreshFrameSliders("DEX_PetPosY");
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowDamageWoW"));
+			DEX_RefreshCheckButton("DEX_ShowDamageWoW");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowDamageSpellName"));
+			DEX_RefreshCheckButton("DEX_ShowDamageSpellName");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowDamageNameOnCrit"));
+			DEX_RefreshCheckButton("DEX_ShowDamageNameOnCrit");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowDamageSpellIcon"));
+			DEX_RefreshCheckButton("DEX_ShowDamageSpellIcon");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowDamageSpellIconOnCrit"));
+			DEX_RefreshCheckButton("DEX_ShowDamageSpellIconOnCrit");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowDebuff"));
+			DEX_RefreshCheckButton("DEX_ShowDebuff");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowDamageType"));
+			DEX_RefreshCheckButton("DEX_ShowDamageType");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowBuff"));
+			DEX_RefreshCheckButton("DEX_ShowBuff");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowHealthSpellName"));
+			DEX_RefreshCheckButton("DEX_ShowHealthSpellName");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowHealthNameOnCrit"));
+			DEX_RefreshCheckButton("DEX_ShowHealthNameOnCrit");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowHealthSpellIcon"));
+			DEX_RefreshCheckButton("DEX_ShowHealthSpellIcon");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowHealthSpellIconOnCrit"));
+			DEX_RefreshCheckButton("DEX_ShowHealthSpellIconOnCrit");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowHealthType"));
+			DEX_RefreshCheckButton("DEX_ShowHealthType");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowSpellIconOnCrit"));
+			DEX_RefreshCheckButton("DEX_ShowSpellIconOnCrit");	
+			OptionsFrame_EnableSlider(getglobal("DEX_AOETime"));
+			DEX_RefreshFrameSliders("DEX_AOETime");
+			OptionsFrame_EnableSlider(getglobal("DEX_IconSize"));
+			DEX_RefreshFrameSliders("DEX_IconSize");
+			OptionsFrame_EnableCheckBox(getglobal("DEX_State"));
+			DEX_RefreshCheckButton("DEX_State");
+			OptionsFrame_EnableCheckBox(getglobal("DEX_NoCombatHeal"));
+			DEX_RefreshCheckButton("DEX_NoCombatHeal");
+			OptionsFrame_EnableCheckBox(getglobal("DEX_AdjustTime"));
+			DEX_RefreshCheckButton("DEX_AdjustTime");
 		else
+			OptionsFrame_DisableCheckBox(getglobal("DEX_AdjustTime"));
+			OptionsFrame_DisableCheckBox(getglobal("DEX_NoCombatHeal"));
+			OptionsFrame_DisableCheckBox(getglobal("DEX_State"));
+			OptionsFrame_DisableSlider(getglobal("DEX_IconSize"));
+			OptionsFrame_DisableSlider(getglobal("DEX_AOETime"));
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowSpellIconOnCrit"));
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowHealthType"));
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowHealthSpellIconOnCrit"));
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowHealthSpellIcon"));
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowHealthNameOnCrit"));
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowHealthSpellName"));
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowBuff"));
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowDamageType"));
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowDebuff"));
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowDamageSpellIconOnCrit"));
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowDamageSpellIcon"));
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowDamageNameOnCrit"));
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowDamageSpellName"));
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowDamage"));
 			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowNameOnCrit"));
 			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowNameOnMiss"));
-			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowLeftRight"));			
-			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowRightLeft"));	
-			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowDebug"));	
 			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowSpellIcon"));			
 			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowHit"));	
 			OptionsFrame_DisableSlider(getglobal("DEX_ShowHitX"));
 			OptionsFrame_DisableSlider(getglobal("DEX_ShowHitY"));
-			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowDamageWoW"));	
 			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowSpellName"));	
 			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowDamagePeriodic"));	
 			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowDamageShield"));	
@@ -179,7 +242,6 @@ function DEX_CheckButtonLink(name)
 			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowDamagePet"));	
 			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowBlockNumber"));	
 			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowOwnHealth"));	
-			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowBuffDebuff"));	
 			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowOverHeal"));	
 			OptionsFrame_DisableCheckBox(getglobal("DEX_UniteSpell"));	
 			OptionsFrame_DisableCheckBox(getglobal("DEX_NumberFormat"));	
@@ -187,6 +249,73 @@ function DEX_CheckButtonLink(name)
 			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowInterrupt"));	
 			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowWithMess"));	
 			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowInterruptCrit"));	
+			OptionsFrame_DisableSlider(getglobal("DEX_FrameLevel"));
+			OptionsFrame_DisableSlider(getglobal("DEX_HealthPosX"));
+			OptionsFrame_DisableSlider(getglobal("DEX_HealthPosY"));
+			OptionsFrame_DisableSlider(getglobal("DEX_BeAttackPosX"));
+			OptionsFrame_DisableSlider(getglobal("DEX_BeAttackPosY"));
+			OptionsFrame_DisableSlider(getglobal("DEX_PetPosX"));
+			OptionsFrame_DisableSlider(getglobal("DEX_PetPosY"));
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowDamageWoW"));	
+		end
+	end
+	if name == "DEX_ShowDamageHealth" then
+		if DEX_Get(name) == 1 then
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowOwnHealth"));
+			DEX_RefreshCheckButton("DEX_ShowOwnHealth");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowOverHeal"));
+			DEX_RefreshCheckButton("DEX_ShowOverHeal");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowBuff"));
+			DEX_RefreshCheckButton("DEX_ShowBuff");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowHealthSpellName"));
+			DEX_RefreshCheckButton("DEX_ShowHealthSpellName");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowHealthNameOnCrit"));
+			DEX_RefreshCheckButton("DEX_ShowHealthNameOnCrit");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowHealthSpellIcon"));
+			DEX_RefreshCheckButton("DEX_ShowHealthSpellIcon");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowHealthSpellIconOnCrit"));
+			DEX_RefreshCheckButton("DEX_ShowHealthSpellIconOnCrit");	
+			OptionsFrame_EnableSlider(getglobal("DEX_HealthPosX"));
+			DEX_RefreshFrameSliders("DEX_HealthPosX");
+			OptionsFrame_EnableSlider(getglobal("DEX_HealthPosY"));
+			DEX_RefreshFrameSliders("DEX_HealthPosY");
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowHealthType"));
+			DEX_RefreshCheckButton("DEX_ShowHealthType");	
+		else
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowOwnHealth"));	
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowOverHeal"));	
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowBuff"));
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowHealthSpellName"));
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowHealthNameOnCrit"));
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowHealthSpellIcon"));
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowHealthSpellIconOnCrit"));
+			OptionsFrame_DisableSlider(getglobal("DEX_HealthPosX"));
+			OptionsFrame_DisableSlider(getglobal("DEX_HealthPosY"));
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowHealthType"));
+		end
+	end
+	if name == "DEX_UniteSpell" then
+		if DEX_Get(name) == 1 then
+			OptionsFrame_EnableSlider(getglobal("DEX_AOETime"));
+			DEX_RefreshFrameSliders("DEX_AOETime");
+		else
+			OptionsFrame_DisableSlider(getglobal("DEX_AOETime"));
+		end
+	end
+	if name == "DEX_ShowHealthSpellIcon" then
+		if DEX_Get(name) == 1 then
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowHealthSpellIconOnCrit"));
+			DEX_RefreshCheckButton("DEX_ShowHealthSpellIconOnCrit");	
+		else
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowHealthSpellIconOnCrit"));
+		end
+	end
+	if name == "DEX_ShowHealthSpellName" then
+		if DEX_Get(name) == 1 then
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowHealthNameOnCrit"));
+			DEX_RefreshCheckButton("DEX_ShowHealthNameOnCrit");	
+		else
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowHealthNameOnCrit"));
 		end
 	end
 	if name == "DEX_ShowHit" then
@@ -200,6 +329,100 @@ function DEX_CheckButtonLink(name)
 			OptionsFrame_DisableSlider(getglobal("DEX_ShowHitY"));
 		end
 	end
+	if name == "DEX_ShowDamage" then
+		if DEX_Get(name) == 1 then
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowSpellIconOnCrit"));
+			DEX_RefreshCheckButton("DEX_ShowSpellIconOnCrit");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowBlockNumber"));
+			DEX_RefreshCheckButton("DEX_ShowBlockNumber");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowSpellName"));
+			DEX_RefreshCheckButton("DEX_ShowSpellName");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowDamagePeriodic"));
+			DEX_RefreshCheckButton("DEX_ShowDamagePeriodic");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowDamageShield"));
+			DEX_RefreshCheckButton("DEX_ShowDamageShield");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowSpellIcon"));
+			DEX_RefreshCheckButton("DEX_ShowSpellIcon");						
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowNameOnCrit"));
+			DEX_RefreshCheckButton("DEX_ShowNameOnCrit");
+			OptionsFrame_EnableCheckBox(getglobal("DEX_UniteSpell"));
+			DEX_RefreshCheckButton("DEX_UniteSpell");	
+		else
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowSpellIconOnCrit"));
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowSpellIcon"));			
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowSpellName"));	
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowNameOnCrit"));
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowNameOnMiss"));
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowDamagePeriodic"));	
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowDamageShield"));	
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowBlockNumber"));	
+			OptionsFrame_DisableCheckBox(getglobal("DEX_UniteSpell"));	
+		end
+	end
+	if name == "DEX_ShowDamageWoW" then
+		if DEX_Get(name) == 1 then
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowDamageSpellName"));
+			DEX_RefreshCheckButton("DEX_ShowDamageSpellName");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowDamageNameOnCrit"));
+			DEX_RefreshCheckButton("DEX_ShowDamageNameOnCrit");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowDamageSpellIcon"));
+			DEX_RefreshCheckButton("DEX_ShowDamageSpellIcon");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowDamageSpellIconOnCrit"));
+			DEX_RefreshCheckButton("DEX_ShowDamageSpellIconOnCrit");	
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowDebuff"));
+			DEX_RefreshCheckButton("DEX_ShowDebuff");	
+			OptionsFrame_EnableSlider(getglobal("DEX_BeAttackPosX"));
+			DEX_RefreshFrameSliders("DEX_BeAttackPosX");
+			OptionsFrame_EnableSlider(getglobal("DEX_BeAttackPosY"));
+			DEX_RefreshFrameSliders("DEX_BeAttackPosY");
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowDamageType"));
+			DEX_RefreshCheckButton("DEX_ShowDamageType");	
+		else
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowDamageSpellName"));
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowDamageNameOnCrit"));
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowDamageSpellIcon"));
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowDamageSpellIconOnCrit"));
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowDebuff"));
+			OptionsFrame_DisableSlider(getglobal("DEX_BeAttackPosX"));
+			OptionsFrame_DisableSlider(getglobal("DEX_BeAttackPosY"));
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowDamageType"));
+		end
+	end
+	if name == "DEX_ShowDamageSpellIcon" then
+		if DEX_Get(name) == 1 then
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowDamageSpellIconOnCrit"));
+			DEX_RefreshCheckButton("DEX_ShowDamageSpellIconOnCrit");	
+		else
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowDamageSpellIconOnCrit"));
+		end
+	end
+	if name == "DEX_ShowSpellIcon" then
+		if DEX_Get(name) == 1 then
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowSpellIconOnCrit"));
+			DEX_RefreshCheckButton("DEX_ShowSpellIconOnCrit");	
+		else
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowSpellIconOnCrit"));	
+		end
+	end
+	if name == "DEX_ShowDamageSpellName" then
+		if DEX_Get(name) == 1 then
+			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowDamageNameOnCrit"));
+			DEX_RefreshCheckButton("DEX_ShowDamageNameOnCrit");	
+		else
+			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowDamageNameOnCrit"));
+		end
+	end
+	if name == "DEX_ShowDamagePet" then
+		if DEX_Get(name) == 1 then
+			OptionsFrame_EnableSlider(getglobal("DEX_PetPosX"));
+			DEX_RefreshFrameSliders("DEX_PetPosX");
+			OptionsFrame_EnableSlider(getglobal("DEX_PetPosY"));
+			DEX_RefreshFrameSliders("DEX_PetPosY");
+		else
+			OptionsFrame_DisableSlider(getglobal("DEX_PetPosX"));
+			OptionsFrame_DisableSlider(getglobal("DEX_PetPosY"));
+		end
+	end
 	if name == "DEX_ShowWithMess" then
 		if DEX_Get(name) == 1 then
 			OptionsFrame_EnableSlider(getglobal("DEX_LOGLINE"));
@@ -207,14 +430,11 @@ function DEX_CheckButtonLink(name)
 			OptionsFrame_EnableSlider(getglobal("DEX_LOGTIME"));
 			DEX_RefreshFrameSliders("DEX_LOGLINE");
 			OptionsFrame_DisableSlider(getglobal("DEX_Speed"));
-			OptionsFrame_DisableCheckBox(getglobal("DEX_ShowBuffDebuff"));			
 		else
 			OptionsFrame_DisableSlider(getglobal("DEX_LOGLINE"));
 			OptionsFrame_DisableSlider(getglobal("DEX_LOGTIME"));
 			OptionsFrame_EnableSlider(getglobal("DEX_Speed"));
 			DEX_RefreshFrameSliders("DEX_Speed");
-			OptionsFrame_EnableCheckBox(getglobal("DEX_ShowBuffDebuff"));
-			DEX_RefreshCheckButton("DEX_ShowBuffDebuff");						
 		end
 	end		
 	if name == "DEX_ShowInterrupt" then
@@ -398,10 +618,16 @@ function DEX_showMenu()
 	pre:Show();
 	DEX_CheckButtonLink("DEX_ShowSpellName");
 	DEX_CheckButtonLink("DEX_ShowWithMess");
-	DEX_CheckButtonLink("DEX_ShowLeftRight");
-	DEX_CheckButtonLink("DEX_ShowRightLeft");
 	DEX_CheckButtonLink("DEX_Enable");
 	DEX_CheckButtonLink("DEX_ShowHit");
+	DEX_CheckButtonLink("DEX_ShowDamage");
+	DEX_CheckButtonLink("DEX_ShowSpellIcon");
+	DEX_CheckButtonLink("DEX_ShowDamagePet");
+	DEX_CheckButtonLink("DEX_ShowDamageWoW");
+	DEX_CheckButtonLink("DEX_ShowDamageSpellName");
+	DEX_CheckButtonLink("DEX_ShowDamageSpellIcon");
+	DEX_CheckButtonLink("DEX_ShowHealthSpellIcon");
+	DEX_CheckButtonLink("DEX_ShowHealthSpellName");
 end
 
 --Hide the Option Menu
@@ -429,13 +655,11 @@ function DEXOptionsFrameDropDownCats_Initialize()
 	end
 end
 
-
 function DEXOptionsFrameDropDownCats_OnShow()
 	UIDropDownMenu_Initialize(DEXOptionsDropDownCats, DEXOptionsFrameDropDownCats_Initialize)
 	UIDropDownMenu_SetSelectedID(DEXOptionsDropDownCats, DEX_Get("DEX_ColorMode"))
 	UIDropDownMenu_SetWidth(DEXOptionsDropDownCats,100)
 end
-
 
 function DEXOptionsFrameDropDownCats_OnClick(self)
 	local thisID = self:GetID()

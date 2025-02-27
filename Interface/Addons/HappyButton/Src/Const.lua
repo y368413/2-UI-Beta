@@ -201,6 +201,12 @@ const.LoadCondCombatOptions = {
     [true] = L["Load when in combat"],
 }
 
+---@class LoadCondAttachFrameOptions
+const.LoadCondAttachFrameOptions = {
+    [false] = L["Load when attach frame hide"],
+    [true] = L["Load when attach frame show"],
+}
+
 ---@enum AttachFrame
 const.ATTACH_FRAME = {
     UIParent = "UIParent"
@@ -211,6 +217,7 @@ const.ATTACH_FRAME = {
 ---@type table<number, string>
 const.AttachFrameOptions = {
     ["UIParent"] = L["UIParent"],
+    ["CharacterFrame"] = L["CharacterFrame"],
     ["GameMenuFrame"] = L["GameMenuFrame"],
     ["Minimap"] = L["Minimap"],
     ["ProfessionsBookFrame"] = L["ProfessionsBookFrame"],
@@ -382,4 +389,8 @@ end
 ]]
 const.EVENT = {
     EXIT_EDIT_MODE = "EXIT_EDIT_MODE", -- 退出编辑模式
+    HB_UNIT_AURA = "HB_UNIT_AURA",  -- 自定义光环通知
+    HB_GCD_UPDATE = "HB_GCD_UPDATE",  -- GCD更新
+    HB_UPDATE_CONFIG = "HB_UPDATE_CONFIG",  -- 自定义更新配置事件
+    HB_FRAME_CHANGE = "HB_FRAME_CHANGE"  -- 框体改变状态
 }

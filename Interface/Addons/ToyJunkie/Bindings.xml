@@ -1,0 +1,4 @@
+<Bindings>
+    <Binding name="CLICK ToyJunkie_ToyboxFrame_RandomHearthstoneButton:LeftButton" category="ToyJunkie Keybindings" default="CTRL-R"/>
+    <Binding name="CLICK ToyJunkie_ToyboxFrame_RandomToyButton:LeftButton" category="ToyJunkie Keybindings" default="CTRL-T"/>  
+</Bindings>

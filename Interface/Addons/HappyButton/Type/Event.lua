@@ -1,5 +1,6 @@
 -- 事件名称
 ---@alias EventString
+--- | "PLAYER_REGEN_DISABLED" -- 进入战斗
 --- | "PLAYER_ENTERING_WORLD" reload/切换地图/加载地图
 --- | "BAG_UPDATE" -- 背包物品改变(物品、装备)
 --- | "BAG_UPDATE_COOLDOWN"
@@ -17,3 +18,6 @@
 --- | "NEW_PET_ADDED"
 --- | "PET_BAR_UPDATE_COOLDOWN"
 --- | "NEW_TOY_ADDED"
+--- | "HB_UNIT_AURA"  -- 自定义事件（光环改变）
+--- | "HB_GCD_UPDATE"  -- 自定义事件（GCD更新）
+--- | "HB_FRAME_CHANGE" -- 自定义事件（框体状态变化：监听框体是否显示）

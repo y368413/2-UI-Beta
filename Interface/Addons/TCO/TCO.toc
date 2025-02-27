@@ -1,0 +1,9 @@
+## Interface: 110007, 110100
+## Title: TCO - Transferable Currency Overview
+## Author: Riasta-Draenor EU
+## DefaultState: enabled
+## RequiredDeps: Blizzard_TokenUI
+## Version: 1.1.4
+## Notes: Overview for all Warband transferable currency
+
+core.lua

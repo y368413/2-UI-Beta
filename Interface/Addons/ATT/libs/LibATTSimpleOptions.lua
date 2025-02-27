@@ -1990,6 +1990,10 @@ do
 			panel = CreateFrame("Frame", parentName .. "_Panel_" .. name, UIParent, "PortraitFrameTemplate")
 		end
 
+		--local xmas = panel:CreateFontString(nil, "ARTWORK", "GameFontGreen")
+		--xmas:SetText("|T133203:16|t Merry Xmas and a Happy New Year to Everyone! |T133203:16|t") 
+		--xmas:SetPoint("TOP", 0, -40)
+
 		tinsert(UISpecialFrames, panel:GetName())
 		panel:SetFrameLevel(panel:GetFrameLevel() + 3)
 		panel:EnableMouse(true)
@@ -1997,9 +2001,6 @@ do
 		panel:SetClampedToScreen(true)
 
 		panel:SetFrameStrata("DIALOG")
-		--panel:SetPortraitTextureRaw("Interface\\AddOns\\ATT\\libs\\icon2")
-		--panel:GetPortrait():SetTexture("Interface\\AddOns\\ATT\\libs\\icon2")
-		--panel.Bg:SetTexture("")
 		panel.Bg:SetAlpha(0.7)
 		panel.noBG = panel:CreateTexture("noBG", "BACKGROUND", nil, -8)
         panel.noBG:SetTexture("Interface\\DialogFrame\\UI-DialogBox-Background")  
@@ -2058,6 +2059,7 @@ do
 		backPanel.name = name
 		backPanel.parent = parentName
 
+
 		local title = backPanel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
 		title:SetText(name)
 		title:SetJustifyH("LEFT")
@@ -2079,6 +2081,7 @@ do
 		button:SetScript("OnClick", function(self)
 			panel:Show()
 		end)
+
 
 		if InterfaceOptions_AddCategory then
 			InterfaceOptions_AddCategory(backPanel)

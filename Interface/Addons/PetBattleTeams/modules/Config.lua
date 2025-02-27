@@ -1,26 +1,28 @@
 local PetBattleTeams = LibStub("AceAddon-3.0"):GetAddon("PetBattleTeams")
----@class PetBattleTeamsConfig
 local Config = PetBattleTeams:NewModule("Config","AceConsole-3.0")
----@type PetBattleTeamsTeamManager
 local TeamManager = PetBattleTeams:GetModule("TeamManager")
----@type PetBattleTeamsGUI
 local GUI = PetBattleTeams:GetModule("GUI")
----@type PetBattleTeamsTooltip
 local Tooltip = PetBattleTeams:GetModule("Tooltip")
 
+
+local _, addon = ...
+local L = addon.L
+local devVer = "";
+
+
 Config.options = {
-    name = "PetBattle Teams",
+    name = L["PetBattle Teams"]..devVer,
     type = 'group',
     args = {
         TeamFrameHeading = {
             order = 1,
-            name = "Teams and Pets",
+            name = L["Teams and Pets"],
             width = "double",
             type = "header",
         },
         showXpInLevel = {
             order = 2,
-            name = "Display pets xp as part of the pets level",
+            name = L["Display pets xp as part of the pets level"],
             width = "double",
             type = "toggle",
             set = function(info,val)
@@ -30,7 +32,7 @@ Config.options = {
         },
         showXpInHealth = {
             order = 3,
-            name = "Display pets xp instead of the health bar ",
+            name = L["Display pets xp instead of the health bar"],
             type = "toggle",
             width = "double",
             set = function(info,val)
@@ -40,7 +42,7 @@ Config.options = {
         },
         ShowTeamName = {
             order = 4,
-            name = "Display team name above the team",
+            name = L["Display team name above the team"],
             type = "toggle",
             width = "double",
             set = function(info,val)
@@ -50,10 +52,10 @@ Config.options = {
         },
         SelectedTeamScrolling = {
             order = 5,
-            name = "Enable mouse wheel scrolling for the selected team",
+            name = L["Enable mouse wheel scrolling for the selected team"],
             type = "toggle",
             width = "double",
-            desc = "When enabled allows you to change the selected team by using the mouse wheel on the selected team (above the roster)",
+            desc = L["When enabled allows you to change the selected team by using the mouse wheel on the selected team (above the roster)"],
             set = function(info,val)
                 GUI:SetSelectedTeamScrolling(val)
             end,
@@ -61,14 +63,14 @@ Config.options = {
         },
         MainFrameHeading = {
             order = 50,
-            name = "Main",
+            name = L["Main"],
             width = "double",
             type = "header",
         },
         AttachToPetJournal = {
             order = 51,
-            name = "Attach PetBattle Teams to Pet Journal",
-            desc = "When attached, PetBattle Teams will only be usable from the Pet Journal.",
+            name = L["Attach PetBattle Teams to Pet Journal"],
+            desc = L["When attached, PetBattle Teams will only be usable from the Pet Journal."],
             type = "toggle",
             width = "double",
             set = function(info,val)
@@ -78,8 +80,8 @@ Config.options = {
         },
         HideInCombat = {
             order = 52,
-            name = "Hide PetBattle Teams while in combat or in a Pet Battle",
-            desc = "Hides PetBattle Teams while in combat or in a Pet Battle.",
+            name = L["Hide PetBattle Teams while in combat or in a Pet Battle"],
+            desc = L["Hides PetBattle Teams while in combat or in a Pet Battle."],
             type = "toggle",
             width = "double",
             set = function(info,val)
@@ -89,10 +91,10 @@ Config.options = {
         },
         LockPosition = {
             order = 53,
-            name = "Lock PetBattle Teams Position",
+            name = L["Lock PetBattle Teams Position"],
             type = "toggle",
             width = "double",
-            desc = "When the team frame is not attached to the Pet Journal then if the frame is locked it cannot be moved.",
+            desc = L["When the team frame is not attached to the Pet Journal then if the frame is locked it cannot be moved."],
             set = function(info,val)
                 GUI:SetLocked(val)
             end,
@@ -100,7 +102,7 @@ Config.options = {
         },
         showSelectedTeam = {
             order = 60,
-            name = "Show the selected team indicator",
+            name = L["Show the selected team indicator"],
             type = "toggle",
             width = "double",
             desc = "",
@@ -111,7 +113,7 @@ Config.options = {
         },
         showControls = {
             order = 61,
-            name = "Show control buttons",
+            name = L["Show control buttons"],
             type = "toggle",
             width = "double",
             desc = "",
@@ -122,7 +124,7 @@ Config.options = {
         },
         showRoster = {
             order = 62,
-            name = "Show the team roster",
+            name = L["Show the team roster"],
             type = "toggle",
             width = "double",
             desc = "",
@@ -133,13 +135,13 @@ Config.options = {
         },
         TooltipHeading = {
             order = 75,
-            name = "Tooltip",
+            name = L["Tooltip"],
             width = "double",
             type = "header",
         },
         ShowHelperText = {
             order = 80,
-            name = "Show keybinding helper text in tooltip",
+            name = L["Show keybinding helper text in tooltip"],
             type = "toggle",
             width = "double",
             set = function(info,val)
@@ -149,7 +151,7 @@ Config.options = {
         },
         ShowBreedInfo = {
             order = 81,
-            name = "Show breed information in tooltip",
+            name = L["Show breed information in tooltip"],
             type = "toggle",
             width = "double",
             set = function(info,val)
@@ -159,14 +161,14 @@ Config.options = {
         },
         TeamFunctionsHeading = {
             order = 98,
-            name = "Team Management",
+            name = L["Team Management"],
             width = "double",
             type = "header",
         },
         SaveTeams = {
             order = 100,
-            name = "Automatically Save Teams",
-            desc = "When enabled:|nThe currently selected team will have its pets updated to match the pet journal at all times unless the selected team is locked.|n|nNewly created teams will be created using the currently selected pets.",
+            name = L["Automatically Save Teams"],
+            desc = L["When enabled:|nThe currently selected team will have its pets updated to match the pet journal at all times unless the selected team is locked.|n|nNewly created teams will be created using the currently selected pets."],
             type = "toggle",
             width = "double",
             set = function(info,val)
@@ -176,8 +178,8 @@ Config.options = {
         },
         DismissPet = {
             order = 101,
-            name = "Automatically Dismiss pet after team changes",
-            desc = "When enabled, Your active pet will be dismissed when switching teams",
+            name = L["Automatically Dismiss pet after team changes"],
+            desc = L["When enabled, Your active pet will be dismissed when switching teams"],
             type = "toggle",
             width = "double",
             set = function(info,val)
@@ -187,20 +189,20 @@ Config.options = {
         },
         ImportTeams = {
             order = 102,
-            name = "Reconstruct teams",
+            name = L["Reconstruct teams"],
             width = "double",
             type = "execute",
-            desc = "Attempts to reconstuct teams with invalid pets",
+            desc = L["Attempts to reconstuct teams with invalid pets"],
             func = function()
                 TeamManager:ReconstructTeams()
             end,
         },
         UnlockTeams = {
             order = 103,
-            name = "Unlock all existing teams",
+            name = L["Unlock all existing teams"],
             width = "double",
             type = "execute",
-            desc = "This does not prevent you from locking individual teams.",
+            desc = L["This does not prevent you from locking individual teams."],
             func = function()
                 TeamManager:SetLockStateAllTeams(false)
                 print("PetBattle Teams: Teams Unlocked")
@@ -208,10 +210,10 @@ Config.options = {
         },
         LockAllTeams = {
             order = 103,
-            name = "Lock all existing teams",
+            name = L["Lock all existing teams"],
             width = "double",
             type = "execute",
-            desc = "This does not lock newly created teams or prevent you from unlocking individual teams.",
+            desc = L["This does not lock newly created teams or prevent you from unlocking individual teams."],
             func = function()
                 TeamManager:SetLockStateAllTeams(true)
                 print("PetBattle Teams: Teams locked")
@@ -219,10 +221,10 @@ Config.options = {
         },
         ResetTeams = {
             order = 110,
-            name = "Delete all teams",
+            name = L["Delete all teams"],
             type = "execute",
             width = "double",
-            desc= "Permanently deletes all teams. There is no confirmation for this action.",
+            desc= L["Permanently deletes all teams. There is no confirmation for this action."],
             func = function()
                 TeamManager:ResetTeams()
                 GUI:ResetScrollBar()
@@ -231,10 +233,10 @@ Config.options = {
         },
         ResetUI = {
             order = 120,
-            name = "Reset UI",
+            name = L["Reset UI"],
             type = "execute",
             width = "double",
-            desc= "Resets the UI to its default settings. There is no confirmation for this action.",
+            desc= L["Resets the UI to its default settings. There is no confirmation for this action."],
             func = function()
                 GUI:ResetUI()
                 TeamManager:ResetUI()
@@ -246,7 +248,7 @@ Config.options = {
 
 function Config:OnInitialize()
     LibStub("AceConfig-3.0"):RegisterOptionsTable("PetBattleTeams", Config.options,"/pbt")
-    LibStub("AceConfigDialog-3.0"):AddToBlizOptions("PetBattleTeams","PetBattle Teams")
+    LibStub("AceConfigDialog-3.0"):AddToBlizOptions("PetBattleTeams","PetBattle Teams"..devVer)
 end
 
 function Config:GetEasyMenu()

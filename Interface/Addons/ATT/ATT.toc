@@ -1,9 +1,9 @@
-## Interface: 110005
+## Interface: 110007
 ## Author: Izy
 ## URL: http://www.curseforge.com/wow/addons/att
 ## Contact: mediaizy@gmail.com
 ## Title: Ability Team Tracker
-## Version: 160
+## Version: 165
 ## Notes: Track cooldowns of your party members.
 ## SavedVariables: ATTDB
 ## SavedVariablesPerCharacter: ATTCharDB

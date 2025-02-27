@@ -1,0 +1,14 @@
+## Interface: 110007, 110100
+## Title: Skada
+## Notes-deDE: Modulares Damage Meter
+## Notes-enUS: Modular Damage Meter
+## Author: Zarnivoop (Basis 10.0.2, thx) / Baltha (Revision +11.0.0)
+## Version: 11.0.7
+## SavedVariables: SkadaDB
+## SavedVariablesPerCharacter: SkadaPerCharDB
+
+## X-Curse-Project-ID: 1188318
+## X-License: MIT/X
+## X-Category: Combat
+
+embeds.xml

@@ -1,4 +1,4 @@
---## Version: 2.1.2 ## Author: romdeau23
+--## Version: 2.1.3 ## Author: romdeau23
 local MogPartialSets = {}
 MogPartialSetsAddon = MogPartialSets
 

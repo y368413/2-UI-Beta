@@ -428,7 +428,7 @@ function ATT:EnqueueInspect(isUpdate)
 end
 
 function ATT:ProcessInspectQueue()
-    if UnitIsDead("player") then return end
+    if UnitIsDead("player") or (InspectFrame and InspectFrame:IsShown()) then return end
 
     local cTime = GetTime()
     self.insTime = self.insTime or {}
@@ -712,7 +712,6 @@ local function CreateIcon(anchor)
 
        -- local chargesText = icon.chargesText:GetText() and icon.chargesText:GetText():match("^[0-9]+$")
        -- local charges = chargesText and tonumber(chargesText)
-       -- getIconCharges
         local charges = icon.maxcharges and getIconCharges(icon)
         if icon.maxcharges and charges then
             if charges == icon.maxcharges or nextcharge == icon.maxcharges then
@@ -1810,8 +1809,6 @@ function ATT:ReduceCD(unit, SentID, event, timer, hit, crit, unitDest, destGUID,
     if (class == "MAGE") and (SentID == 342246 or SentID == 382445) then
         for k, icon in ipairs(anchor.icons) do
             if icon.inUse and SentID == 342246 and (icon.abilityID == 1953 or icon.abilityID == 212653) and dbInspect[guid][342249] and (event == "SPELL_AURA_REMOVED") then
-                --local chargesText = icon.chargesText:GetText() and icon.chargesText:GetText():match("^[0-9]+$")
-               -- local charges = chargesText and tonumber(chargesText)
                 local charges = icon.maxcharges and getIconCharges(icon)
                 if icon.maxcharges and charges  then
                 local chargesUpdate = math.min(icon.maxcharges, charges + 1) --update
@@ -3952,9 +3949,6 @@ function ATT:HasForbearance(unit, event, dest, SentID)
     end
 end
 
-function ATT:UNIT_POWER()
-
-end
 
 function ATT:COMBAT_LOG_EVENT_UNFILTERED()
     if not ATTIcons:IsShown() then return end

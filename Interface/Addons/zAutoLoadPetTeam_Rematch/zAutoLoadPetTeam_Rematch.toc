@@ -1,6 +1,6 @@
-## Interface: 110005
+## Interface: 110007
 ## Title: AutoLoadPetTeam For Rematch
-## Title-zhCN: AutoLoadPetTeam For Rematch
+## Title-zhCN: |cFFBF00FF[宠物]|rAutoLoadPetTeam For Rematch
 ## Notes: 宠物自动换队-适配Rematch版
 ## Author: scdhao
 ## Version: 3.0.12

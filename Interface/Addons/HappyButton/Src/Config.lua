@@ -385,6 +385,9 @@ local function GetElementOptions(elements, topEleConfig, selectGroups)
                 end,
                 get = function() return ele.title end,
                 set = function(_, val)
+                    if val == "" or val == " " then
+                        val = nil
+                    end
                     ele.title = val
                     HbFrame:ReloadEframeUI(updateFrameConfig)
                     addon:UpdateOptions()
@@ -398,6 +401,9 @@ local function GetElementOptions(elements, topEleConfig, selectGroups)
                 name = L["Element Icon ID or Path"],
                 get = function() return ele.icon end,
                 set = function(_, val)
+                    if val == "" or val == " " then
+                        val = nil
+                    end
                     ele.icon = val
                     HbFrame:ReloadEframeUI(updateFrameConfig)
                     addon:UpdateOptions()
@@ -436,6 +442,22 @@ local function GetElementOptions(elements, topEleConfig, selectGroups)
                 end,
                 set = function(_, value)
                     ele.iconHeight = value
+                    HbFrame:ReloadEframeUI(updateFrameConfig)
+                end
+            }
+            elementSettingOrder = elementSettingOrder + 1
+        end
+        if ele.type ~= const.ELEMENT_TYPE.BAR then
+            elementSettingArgs.isShowQualityBorder = {
+                order = elementSettingOrder,
+                type = 'toggle',
+                name = L["Show Item Quality Color"],
+                width = 2,
+                get = function(_)
+                    return ele.isShowQualityBorder
+                end,
+                set = function(_, val)
+                    ele.isShowQualityBorder = val
                     HbFrame:ReloadEframeUI(updateFrameConfig)
                 end
             }
@@ -1083,6 +1105,93 @@ local function GetElementOptions(elements, topEleConfig, selectGroups)
                 }
                 bindkeySettingOrder = bindkeySettingOrder + 1
             end
+            if ele.bindKey then
+                bindkeySettingArgs.loadCondCombat = {
+                    order = bindkeySettingOrder,
+                    width = ele.bindKey.combat and 1 or "full",
+                    type = 'toggle',
+                    name = L["Combat Load Condition"],
+                    set = function(_, val)
+                        if val == true then
+                            ele.bindKey.combat = true
+                        else
+                            ele.bindKey.combat = nil
+                        end
+                        HbFrame:UpdateEframe(updateFrameConfig)
+                    end,
+                    get = function(_)
+                        return ele.bindKey.combat ~= nil
+                    end
+                }
+                bindkeySettingOrder = bindkeySettingOrder + 1
+                if ele.bindKey.combat ~= nil then
+                    bindkeySettingArgs.loadCondCombatOptions = {
+                        order = bindkeySettingOrder,
+                        width = 1,
+                        type = 'select',
+                        values = const.LoadCondCombatOptions,
+                        name = "",
+                        set = function(_, val)
+                            ele.bindKey.combat = val
+                            HbFrame:UpdateEframe(updateFrameConfig)
+                        end,
+                        get = function(_)
+                            return ele.bindKey.combat
+                        end
+                    }
+                    bindkeySettingOrder = bindkeySettingOrder + 1
+                end
+                bindkeySettingArgs.loadAttachFrameShow = {
+                    order = bindkeySettingOrder,
+                    width = ele.bindKey.attachFrame and 1 or "full",
+                    type = 'toggle',
+                    name = L["AttachFrame Load Condition"],
+                    desc = L["Not working when in combat"],
+                    set = function(_, val)
+                        if val == true then
+                            ele.bindKey.attachFrame = true
+                        else
+                            ele.bindKey.attachFrame = nil
+                        end
+                        HbFrame:UpdateEframe(updateFrameConfig)
+                    end,
+                    get = function(_)
+                        return ele.bindKey.attachFrame ~= nil
+                    end
+                }
+                bindkeySettingOrder = bindkeySettingOrder + 1
+                if ele.bindKey.attachFrame ~= nil then
+                    bindkeySettingArgs.loadCondAttachFrameOptions = {
+                        order = bindkeySettingOrder,
+                        width = 1,
+                        type = 'select',
+                        values = const.LoadCondAttachFrameOptions,
+                        name = "",
+                        set = function(_, val)
+                            ele.bindKey.attachFrame = val
+                            HbFrame:UpdateEframe(updateFrameConfig)
+                        end,
+                        get = function(_)
+                            return ele.bindKey.attachFrame
+                        end
+                    }
+                    bindkeySettingOrder = bindkeySettingOrder + 1
+                end
+            end
+            bindkeySettingArgs.reloadDesc1 = {
+                order = bindkeySettingOrder,
+                width = "full",
+                type = "description",
+                name = "\n",
+            }
+            bindkeySettingOrder = bindkeySettingOrder + 1
+            bindkeySettingArgs.reloadDesc2 = {
+                order = bindkeySettingOrder,
+                width = "full",
+                type = "description",
+                name = L["The newly created button do not immediately respond to key bindings and require executing the /reload command."],
+            }
+            bindkeySettingOrder = bindkeySettingOrder + 1
         end
         local displaySettingOrder = 1
         local displaySettingArgs = {}
@@ -2574,7 +2683,7 @@ function ConfigOptions.Options()
                         order = 4,
                         width = 2,
                         type = "description",
-                        name = L["Version"] .. ": " .. "Beta-0.2.3"
+                        name = L["Version"] .. ": " .. "Beta-0.2.7"
                     }
                 }
             },

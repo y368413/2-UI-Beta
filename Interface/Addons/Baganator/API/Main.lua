@@ -16,11 +16,15 @@ local function ReportPluginAdded()
 end
 
 local queuedRefresh = false
-function Baganator.API.RequestItemButtonsRefresh()
-  if not queuedRefresh then
+local queuedReason = {}
+function Baganator.API.RequestItemButtonsRefresh(reason)
+  for _, entry in ipairs(reason or {Baganator.Constants.RefreshReason.ItemWidgets, Baganator.Constants.RefreshReason.Searches}) do
+    queuedReason[entry] = true
+  end
+  if not queuedRefresh and next(queuedReason) ~= nil then
     queuedRefresh = true
     C_Timer.After(0, function()
-      addonTable.CallbackRegistry:TriggerEvent("ContentRefreshRequired")
+      addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", queuedReason)
       queuedRefresh = false
     end)
   end
@@ -211,9 +215,9 @@ do
   --  corner: string (top_left, top_right, bottom_left, bottom_right)
   --  priority: number (priority for the corner to be placed at in the corner sort
   --    order)
-  function Baganator.API.RegisterCornerWidget(label, id, onUpdate, onInit, defaultPosition)
+  function Baganator.API.RegisterCornerWidget(label, id, onUpdate, onInit, defaultPosition, isFast)
     assert(id and label and onUpdate and onInit and not addonTable.API.IconCornerPlugins[id])
-    addonTable.API.IconCornerPlugins[id] = {label = label, onUpdate = onUpdate, onInit = onInit}
+    addonTable.API.IconCornerPlugins[id] = {label = label, onUpdate = onUpdate, onInit = onInit, isFast = isFast or false}
 
     if defaultPosition and cornersMap[defaultPosition.corner] and type(defaultPosition.priority) == "number" then
       if not addonLoaded then
@@ -330,7 +334,7 @@ function Baganator.API.RequestLayoutUpdate()
   if not queuedLayoutUpdate then
     queuedLayoutUpdate = true
     C_Timer.After(0, function()
-      addonTable.CallbackRegistry:TriggerEvent("LayoutUpdateRequired")
+      addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Layout] = true})
       queuedLayoutUpdate = false
     end)
   end

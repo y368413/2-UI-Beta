@@ -22,6 +22,8 @@ Syndicator.Constants = {
   IsClassic = WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE,
   IsEra = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC,
 
+  IsLegacyAH = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC or IsUsingLegacyAuctionClient ~= nil and IsUsingLegacyAuctionClient(),
+
   BattlePetCageID = 82800,
 
   BankBagSlotsCount = 7,
@@ -31,6 +33,8 @@ Syndicator.Constants = {
   EquippedInventorySlotOffset = 1,
 
   WarbandBankActive = false,
+
+  MailExpiryDuration = 30 * 24 * 60 * 60,
 }
 
 if Syndicator.Constants.IsRetail then

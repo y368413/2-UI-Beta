@@ -1,0 +1,18 @@
+tag 4d634d7846685f20cb903675cb8de17c5451cbc2 v1.22-release
+Author:	DragonFlyy <dragonflyysoftware@gmail.com>
+Date:	Wed Jan 1 22:38:13 2025 -0500
+
+Updated frame strata to work with DeModal and added custom Hearthstone cooldown timer.
+
+commit 0ed9b6da9026018310585eed525e14c2a546277e
+Author: DragonFlyy <dragonflyysoftware@gmail.com>
+Date:   Wed Jan 1 22:37:50 2025 -0500
+
+    Updated TOC
+
+commit 31f7a3031aba8d5176f8dfc825c0e67e5a54f078
+Author: DragonFlyy <dragonflyysoftware@gmail.com>
+Date:   Wed Jan 1 22:35:09 2025 -0500
+
+    Updated frame strata to work with DeModal and added custom Hearthstone cooldown timer.
+

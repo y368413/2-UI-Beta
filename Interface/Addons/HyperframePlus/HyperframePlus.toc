@@ -1,0 +1,12 @@
+## Interface: 11506, 20504, 30403, 40402, 110100
+## Title: Hyperframe+
+## SavedVariables: HFP_SETTINGS, HFP_SAVEDCVARS
+## IconTexture: Interface\Icons\Ability_Druid_Dash_Orange
+## Notes: Dynamically adjust graphics settings to enhance FPS, frame rate, performance, and visual quality based on the type of content you're engaged in.
+
+HyperframePlus_Config.lua
+InterfaceSettingsLib-1.0.lua
+HyperframePlus_Functions.lua
+HyperframePlus_Core.lua
+HyperframePlus_Viewer.lua
+HyperframePlus_ConsoleListener.lua

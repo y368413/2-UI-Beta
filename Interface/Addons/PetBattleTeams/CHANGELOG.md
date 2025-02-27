@@ -1,6 +1,6 @@
-# PetBattleTeams
+# PetBattleTeams Reloaded by Kallye
 
-## [v3.6](https://github.com/Beast-Masters-addons/pet-battle-teams/tree/v3.6) (2024-08-17)
-[Full Changelog](https://github.com/Beast-Masters-addons/pet-battle-teams/commits/v3.6) [Previous Releases](https://github.com/Beast-Masters-addons/pet-battle-teams/releases)
+## [11.1.001](https://github.com/KaspOu/KPetBattle-Teams/tree/11.1.001) (2025-02-24)
+[Full Changelog](https://github.com/KaspOu/KPetBattle-Teams/compare/11.0.702...11.1.001) 
 
-- Add compatibility module for EasyMenu  
+- 📦 Ready 11.1.0  

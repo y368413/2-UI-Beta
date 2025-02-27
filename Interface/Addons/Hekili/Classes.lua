@@ -1,5 +1,5 @@
 -- Classes.lua
--- July 2024
+-- January 2025
 
 local addon, ns = ...
 local Hekili = _G[ addon ]
@@ -721,7 +721,7 @@ local HekiliSpecMixin = {
             end
         end
 
-        if ( a.velocity or a.flightTime ) and a.impact then
+        if ( a.velocity or a.flightTime ) and a.impact and a.isProjectile == nil then
             a.isProjectile = true
         end
 
@@ -1464,7 +1464,7 @@ all:RegisterAuras( {
     },
 
     bloodlust = {
-        alias = { "ancient_hysteria", "bloodlust_actual", "drums_of_deathly_ferocity", "fury_of_the_aspects", "heroism", "netherwinds", "primal_rage", "time_warp" },
+        alias = { "ancient_hysteria", "bloodlust_actual", "drums_of_deathly_ferocity", "fury_of_the_aspects", "heroism", "netherwinds", "primal_rage", "time_warp", "harriers_cry" },
         aliasMode = "first",
         aliasType = "buff",
         duration = 3600,
@@ -1504,6 +1504,13 @@ all:RegisterAuras( {
         duration = 40,
         max_stack = 1,
         shared = "player",
+    },
+
+    harriers_cry = {
+        id = 466904,
+        duration = 40,
+        max_stack = 1,
+        shared = "player"
     },
 
     mark_of_the_wild = {
@@ -1668,7 +1675,7 @@ all:RegisterAuras( {
     -- Mastery increased by $w1% and auto attacks have a $h% chance to instantly strike again.
     skyfury = {
         id = 462854,
-        duration = 3600.0,
+        duration = 3600,
         max_stack = 1,
         shared = "player",
         dot = "buff"
@@ -2382,20 +2389,20 @@ do
             items = { 212968, 212967, 212966, 212262, 212261, 212260 }
         },
         {
-            name = "algari_healing_potion",
-            items = { 211878, 211879, 211880 }
-        },
-        {
-            name = "cavedweller's_delight",
-            items = { 212242, 212243, 212244 }
-        },
-        {
             name = "elemental_potion_of_ultimate_power",
             items = { 191914, 191913, 191912, 191383, 191382, 191381 }
         },
         {
             name = "elemental_potion_of_power",
             items = { 191907, 191906, 191905, 191389, 191388, 191387 }
+        },
+        {
+            name = "algari_healing_potion",
+            items = { 211878, 211879, 211880 }
+        },
+        {
+            name = "cavedwellers_delight",
+            items = { 212242, 212243, 212244 }
         }
     }
 
@@ -2490,7 +2497,9 @@ do
 
                             class.auras[ spell ] = all.auras[ potion.name ]
                         else
-                            insert( all.auras[ potion.name ].copy, spell )
+                            local existing = all.auras[ potion.name ]
+                            if not existing.copy then existing.copy = {} end
+                            insert( existing.copy, spell )
                             all.auras[ spell ] = all.auras[ potion.name ]
                             class.auras[ spell ] = all.auras[ potion.name ]
                         end

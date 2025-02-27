@@ -1,4 +1,4 @@
-## Interface: 110005
+## Interface: 110007
 ## Title: SimpleMinimapBlip
 ## Author: cc27
 ## Notes: Modify the appearance of tracking icons on the minimap.  Enable command: /smb on, Disable command: /smb off 

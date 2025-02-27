@@ -50,12 +50,10 @@ ATTdbs.customframes = {
     [33] = { ctype = "AltzUI-Healer", cname = "AltzUI" , cframe = "Altz_HealerRaidUnitButton%d",},
     [34] = { ctype = "AltzUI-DPS", cname = "AltzUI" , cframe = "Altz_DpsRaidUnitButton%d",},
     [35] = { ctype = "ShestakUI_Heal", cname = "ShestakUI" , cframe = "oUF_RaidHeal1RGUnitButton%d",},
-
     [36] = { ctype = "GW2", cname = "GW2" , cframe = "GwCompactPartyFrame%d",},
     [37] = { ctype = "Gw2_Raid", cname = "GW2" , cframe = "GwCompactRaidFrame%d", },
     [38] = { ctype = "Gw2_Party", cname = "GW2" , cframe = "GwPartyFrame%d", },
     [39] = { ctype = "GW2_UI-Party-Grid", cname = "GW2" , cframe = "GW2_PartyGroup1UnitButton%d", },
-
     [40] = { ctype = "Cell-Spotlight", cname = "Cell" , cframe = "CellSpotlightFrameUnitButton%d", },
     [41] = { ctype = "Cell-QuickCast", cname = "Cell" , cframe = "CellQuickCastButton%d", },
     [42] = { ctype = "Cell-QuickAssist", cname = "Cell" , cframe = "Cell-QuickAssist%d", },

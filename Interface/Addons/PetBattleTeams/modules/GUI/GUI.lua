@@ -9,18 +9,16 @@ Fired when ever the GUI options are changed
 ]]
 
 local PetBattleTeams = LibStub("AceAddon-3.0"):GetAddon("PetBattleTeams")
----@class PetBattleTeamsGUI
 local GUI = PetBattleTeams:NewModule("GUI")
 local LibPetJournal = LibStub("LibPetJournal-2.0")
 local eventFrame = CreateFrame("frame")
-local IsAddOnLoaded = _G.C_AddOns.IsAddOnLoaded
 
 -- luacheck: globals PetJournal
 
 local function OnEvent(self,event,...)
     if event == "ADDON_LOADED" then
         local name = ...
-        if (IsAddOnLoaded("Blizzard_Collections") or name == "Blizzard_Collections") and not GUI.delayedInit then
+        if (C_AddOns.IsAddOnLoaded("Blizzard_Collections") or name == "Blizzard_Collections") and not GUI.delayedInit then
             GUI:InitializeGUI()
             self:UnregisterEvent("ADDON_LOADED")
         end
@@ -28,7 +26,7 @@ local function OnEvent(self,event,...)
     end
 
     if event == "PLAYER_REGEN_ENABLED" or event == "PET_BATTLE_CLOSE"  then
-        if GUI.delayedInit and IsAddOnLoaded("Blizzard_Collections")  then
+        if GUI.delayedInit and C_AddOns.IsAddOnLoaded("Blizzard_Collections")  then
             GUI:InitializeGUI()
             self:UnregisterEvent("PLAYER_REGEN_ENABLED")
             self:UnregisterEvent("PET_BATTLE_CLOSE")
@@ -70,7 +68,7 @@ function GUI:OnInitialize()
         self.delayedInit = true
     end
 
-    if IsAddOnLoaded("Blizzard_Collections") then
+    if C_AddOns.IsAddOnLoaded("Blizzard_Collections") then
         eventFrame:UnregisterEvent("ADDON_LOADED")
         if not GUI.delayedInit then
             GUI:InitializeGUI()
@@ -79,7 +77,7 @@ function GUI:OnInitialize()
 end
 
 function GUI:PetJournalReady()
-    if IsAddOnLoaded("Blizzard_Collections") then
+    if C_AddOns.IsAddOnLoaded("Blizzard_Collections") then
         eventFrame:UnregisterEvent("ADDON_LOADED")
         LibPetJournal.UnregisterCallback(self,"PostPetListUpdated", "PetJournalReady")
     end
@@ -91,10 +89,6 @@ function GUI:InitializeGUI()
 
         local menuButton = GUI:CreateMenuButton()
         self.menuButton =  menuButton
-
-        ---@type PetBattleTeamsCheckbox
-        self.checkbox = PetBattleTeams:GetModule('Checkbox')
-        self.checkbox:Create()
 
         self:ToggleMinimize(self:GetIsMinimized())
 
@@ -116,6 +110,9 @@ function GUI:SetAttached(enabled)
     self.db.global.attached = enabled
     if self.mainFrame then
         self.mainFrame:SetAttached(enabled)
+		if enabled then
+			GUI:ToggleMinimize(false);
+		end
     end
 end
 
@@ -190,15 +187,12 @@ end
 
 function GUI:ToggleMinimize(enabled)
     if enabled then
-        self.menuButton:ClearAllPoints()
-        self.menuButton:SetPoint("TOPLEFT", CollectionsJournal, "TOPRIGHT")
-        self.menuButton:SetParent(CollectionsJournal)
-        self.checkbox:uncheck()
+        self.menuButton:SetPoint("CENTER",PetJournal,"TOPRIGHT",-40,-10)
+        self.menuButton:SetParent(PetJournal)
+		self.menuButton:SetFrameStrata("DIALOG")
     else
-        self.menuButton:ClearAllPoints()
         self.menuButton:SetPoint("CENTER",self.mainFrame,"TOPRIGHT",-10,-10)
         self.menuButton:SetParent(self.mainFrame)
-        self.checkbox:check()
     end
     self.mainFrame:SetShown(not enabled)
     self.db.global.minimized = enabled

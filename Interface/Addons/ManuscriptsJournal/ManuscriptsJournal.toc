@@ -1,0 +1,68 @@
+## Interface: 110007
+## Title: Manuscripts Journal
+## Title-ruRU: Журнал Манускриптов
+## Title-zhCN: 观龙者手稿大全
+## Title-zhTW: 飛龍觀察者手稿大全
+## Version: 11.0-015
+## Notes: Adds a Manuscripts tab to the Collections Journal
+## Notes-ruRU: Манускрипты наблюдения за драконами
+## Notes-zhCN: 在藏品中添加观龙者手稿的标签页。
+## Notes-zhTW: 在收藏中添加飛龍觀察者手稿的標簽頁面。
+## Author: Teelo
+## X-Curse-Project-ID: 850505
+## LoadOnDemand: 1
+## LoadWith: Blizzard_Collections
+## IconTexture: 254291
+## SavedVariables: ManuscriptsJournalExportDB, ManuscriptsJournalFiltersDB, SoulshapesJournalFiltersDB, ShapeshiftsJournalAccountWideDB, ShapeshiftsJournalFiltersDB
+
+libs\LibStub\LibStub.lua
+libs\AceLocale-3.0\AceLocale-3.0.xml
+libs\LibUIDropDownMenu\LibUIDropDownMenu.xml
+libs\SecureTabs-2.0\SecureTabs-2.0.lua
+
+Locales\enus.lua
+Locales\esES.lua
+Locales\ruRU.lua
+Locales\zhCN.lua
+Locales\zhTW.lua
+
+Locales\Soulshapes\enUS.lua
+Locales\Soulshapes\deDE.lua
+Locales\Soulshapes\frFR.lua
+Locales\Soulshapes\koKR.lua
+Locales\Soulshapes\ruRU.lua
+Locales\Soulshapes\zhCN.lua
+Locales\Soulshapes\zhTW.lua
+
+FilterDropDown.lua
+
+enums.lua
+
+SpellIDs.lua
+
+db\init.lua
+db\RenewedProtoDrake.lua
+db\CliffsideWylderdrake.lua
+db\Dirigible.lua
+db\FlourishingWhimsydrake.lua
+db\GrottoNetherwingDrake.lua
+db\HighlandDrake.lua
+db\WindborneVelocidrake.lua
+db\WindingSlitherdrake.lua
+db\10-1.lua
+db\10-2.lua
+db\Shapeshifts.lua
+db\Soulshapes.lua
+db\HexTomes.lua
+db\PolymorphTomes.lua
+db\TameTomes.lua
+db\WarlockDemonTomes.lua
+db\final.lua
+
+Templates.xml
+
+bindings.lua
+
+gametooltiphooks.lua
+
+export.lua

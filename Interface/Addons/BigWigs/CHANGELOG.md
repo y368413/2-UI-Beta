@@ -1,7 +1,8 @@
 # BigWigs
 
-## [v370](https://github.com/BigWigsMods/BigWigs/tree/v370) (2024-12-07)
-[Full Changelog](https://github.com/BigWigsMods/BigWigs/compare/v369...v370) [Previous Releases](https://github.com/BigWigsMods/BigWigs/releases)
+## [v372](https://github.com/BigWigsMods/BigWigs/tree/v372) (2025-02-08)
+[Full Changelog](https://github.com/BigWigsMods/BigWigs/compare/v371.2...v372) [Previous Releases](https://github.com/BigWigsMods/BigWigs/releases)
 
 - bump version  
-- Loader: Add Nightmare Grove ID  
+- Loader: Add War Within season 2 delves (#1914)  
+- Loader: Add Karazhan Crypts (#1913)  

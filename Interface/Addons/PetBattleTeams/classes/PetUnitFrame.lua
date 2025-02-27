@@ -1,9 +1,6 @@
 local PetBattleTeams =  LibStub("AceAddon-3.0"):GetAddon("PetBattleTeams")
----@type PetBattleTeamsTooltip
 local Tooltip = PetBattleTeams:GetModule("Tooltip")
----@type PetBattleTeamsTeamManager
 local TeamManager = PetBattleTeams:GetModule("TeamManager")
----@type PetBattleTeamsCursor
 local Cursor = PetBattleTeams:GetModule("Cursor")
 local Embed = PetBattleTeams.Embed
 local PETS_PER_TEAM = 3
@@ -11,7 +8,8 @@ local PETS_PER_TEAM = 3
 PetBattleTeams.PetBattleTeamsUnitFrame = {}
 local PetBattleTeamsUnitFrame = PetBattleTeams.PetBattleTeamsUnitFrame
 
-local menuFrame = CreateFrame("frame", "PetBattleTeamsUnitFrameMenu", UIParent, "UIDropDownMenuTemplate")
+local lib = LibStub("LibDropDownMenu");
+local menuFrame = lib.Create_DropDownMenu("PetBattleTeamsUnitFrameMenu", UIParent)
 menuFrame.menu = {
     { text = "Team Options", notCheckable = true, isTitle = true },
 
@@ -111,7 +109,7 @@ function PetBattleTeamsUnitFrame:ShowTeamOptionsMenu()
     local menu = menuFrame.menu
     menuFrame.teamIndex = self.teamIndex
     menuFrame.petIndex = self.petIndex
-    EasyMenu(menu, menuFrame, "cursor", 0 , 0, "MENU");
+    lib.EasyMenu(menu, menuFrame, "cursor", 0 , 0, "MENU");
 end
 
 function PetBattleTeamsUnitFrame:New()
@@ -212,7 +210,7 @@ function PetBattleTeamsUnitFrame:UpdateWidget()
     if not speciesID then self:SetDefaultPet() return end
 
     if rarity then
-        local r, g, b = GetItemQualityColor(rarity-1)
+        local r, g, b = C_Item.GetItemQualityColor(rarity-1)
         self.rarityGlow:SetVertexColor(r, g, b)
         self.rarityGlow:SetHeight(self:GetHeight() * 1.3)
         self.rarityGlow:SetPoint("CENTER", self.Icon, "CENTER", 0, 4)

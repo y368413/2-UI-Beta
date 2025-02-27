@@ -1,8 +1,9 @@
-## Interface: 110005
+## Interface: 110007
 ## Title: War Plan
+## Title-zhCN: |cff00ff00[收菜]|rWar Plan
 ## Notes: Interface replacement for War Campaign missions.
 ## Author: foxlit
-## Version: 3.27a
+## Version: 3.28
 ## X-Website: https://www.townlong-yak.com/addons/war-plan/
 ## Notes-deDE: Schnittstellenersatz für Kriegskampagne Missionen.
 ## Notes-esES: Reemplazo de Interfaz para las misiones de Campaña de Guerra
@@ -15,8 +16,6 @@
 ## SavedVariables: WarPlanData
 ## SavedVariablesPerCharacter: WarPlanDataPC
 ## IconTexture: Interface/Icons/Icon_TreasureMap
-## DefaultState: disabled
-
 Libs/Evie.lua
 Libs/Ten.lua
 Libs/NotGameTooltip.lua

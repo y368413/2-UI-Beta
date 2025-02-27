@@ -1,0 +1,39 @@
+## Interface: 110007
+
+## Title: ToyJunkie
+## Notes: Shows a small window with you favorite toys
+## Author: dragonflyy
+## Version: 1.22
+## SavedVariables: ToyJunkieDB
+
+## DefaultState: Enabled
+## LoadOnDemand: 0
+## RequiredDeps: Blizzard_Collections
+
+Libs\LibStub\LibStub.lua
+Libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
+Libs\AceAddon-3.0\AceAddon-3.0.xml
+Libs\AceEvent-3.0\AceEvent-3.0.xml
+Libs\AceDB-3.0\AceDB-3.0.xml
+Libs\AceDBOptions-3.0\AceDBOptions-3.0.xml
+Libs\AceConsole-3.0\AceConsole-3.0.xml
+Libs\AceGUI-3.0\AceGUI-3.0.xml
+Libs\AceConfig-3.0\AceConfig-3.0.xml
+Libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
+Libs\LibDBIcon-1.0\lib.xml
+Libs\AceHook-3.0\AceHook-3.0.xml
+
+Config.lua
+Functions.lua
+Data\Icons.lua
+Data\Hearthstones.lua
+Core.lua
+utils\DragFrame.lua
+
+ScrollTemplate\AttachedFrameScroll.lua
+ScrollTemplate\IconScrollFrame.lua
+ScrollTemplate\ToyboxScrollFrame.lua
+ScrollTemplate\templates.xml
+
+Windows\CollectionAttachedWindow.lua
+Windows\ToyboxWindow.lua

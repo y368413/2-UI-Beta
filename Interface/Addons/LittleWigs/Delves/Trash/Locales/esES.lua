@@ -1,4 +1,4 @@
-local L = BigWigs:NewBossLocale("Fungarian Delve Trash", "esES") or BigWigs:NewBossLocale("Fungarian Delve Trash", "esMX")
+local L = BigWigs:NewBossLocale("Fungarian Delve Trash", "esES")
 if not L then return end
 if L then
 	L.fungarian_trash = "Fúngicos Trash"
@@ -13,7 +13,7 @@ if L then
 	L.particularly_bad_guy = "Tipa especialmente mala"
 end
 
-L = BigWigs:NewBossLocale("Kobold Delve Trash", "esES") or BigWigs:NewBossLocale("Kobold Delve Trash", "esMX")
+L = BigWigs:NewBossLocale("Kobold Delve Trash", "esES")
 if L then
 	L.kobold_trash = "Kobold Trash"
 
@@ -22,7 +22,7 @@ if L then
 	L.spitfire_fusetender = "Cuidamechas escupefuego"
 end
 
-L = BigWigs:NewBossLocale("Kobyss Delve Trash", "esES") or BigWigs:NewBossLocale("Kobyss Delve Trash", "esMX")
+L = BigWigs:NewBossLocale("Kobyss Delve Trash", "esES")
 if L then
 	L.kobyss_trash = "Kobyss Trash"
 
@@ -34,7 +34,7 @@ if L then
 	L.deepwater_makura = "Makrura aguahonda"
 end
 
-L = BigWigs:NewBossLocale("Nerubian Delve Trash", "esES") or BigWigs:NewBossLocale("Nerubian Delve Trash", "esMX")
+L = BigWigs:NewBossLocale("Nerubian Delve Trash", "esES")
 if L then
 	L.nerubian_trash = "Nerubian Trash"
 
@@ -46,7 +46,7 @@ if L then
 	L.nerubian_webspinner = "Tejerred nerubiano"
 end
 
-L = BigWigs:NewBossLocale("Nightfall Delve Trash", "esES") or BigWigs:NewBossLocale("Nightfall Delve Trash", "esMX")
+L = BigWigs:NewBossLocale("Nightfall Delve Trash", "esES")
 if L then
 	L.nightfall_trash = "Nightfall Trash"
 
@@ -58,7 +58,7 @@ if L then
 	L.shadow_elemental = "Elemental de sombra"
 end
 
-L = BigWigs:NewBossLocale("The Underkeep Trash", "esES") or BigWigs:NewBossLocale("The Underkeep Trash", "esMX")
+L = BigWigs:NewBossLocale("The Underkeep Trash", "esES")
 if L then
 	L.ascended_webfriar = "Fraitelaraña ascendido"
 	L.deepwalker_guardian = "Guardián Andahondo"
@@ -66,7 +66,7 @@ if L then
 	L.web_marauder = "Maleante de telaraña"
 end
 
-L = BigWigs:NewBossLocale("Delve Rares", "esES") or BigWigs:NewBossLocale("Delve Rares", "esMX")
+L = BigWigs:NewBossLocale("Zekvir Rares", "esES")
 if L then
 	L.rares = "Rares"
 

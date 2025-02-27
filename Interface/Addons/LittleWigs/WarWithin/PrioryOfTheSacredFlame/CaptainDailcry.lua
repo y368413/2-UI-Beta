@@ -49,6 +49,20 @@ function mod:OnEngage()
 	self:CDBar(447439, 13.0) -- Savage Mauling
 end
 
+function mod:OnWipe()
+	local trashMod = BigWigs:GetBossModule("Priory of the Sacred Flame Trash", true)
+	if trashMod then
+		trashMod:CaptainDailcryDespawn()
+	end
+end
+
+function mod:OnWin()
+	local trashMod = BigWigs:GetBossModule("Priory of the Sacred Flame Trash", true)
+	if trashMod then
+		trashMod:CaptainDailcryDespawn()
+	end
+end
+
 --------------------------------------------------------------------------------
 -- Event Handlers
 --
@@ -77,7 +91,6 @@ function mod:BattleCrySuccess()
 		-- gains 50 energy if successful despite his energy gain still being paused.
 		energyGainedDuringSavageMauling = energyGainedDuringSavageMauling + 50
 	end
-	-- TODO the mini-bosses also get cooldown reduced on one of their abilities
 end
 
 function mod:HurlSpear(args)

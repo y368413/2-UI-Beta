@@ -154,6 +154,8 @@ local keyMapping = {
     ["SPACE"] = 32,
     ["MOUSEWHEELDOWN"] = 174,
     ["MOUSEWHEELUP"] = 175,
+    ["MwD"] = 174,
+    ["MwU"] = 175,
     ["F1"] = 112,
     ["F2"] = 113,
     ["F3"] = 114,
@@ -475,7 +477,7 @@ thj.ItemName = function(id)
     -- print("ItemName->"..id)
     local name = thj.items[id];
     if not name then
-        name = GetItemInfo(id);
+        name = C_Item.GetItemInfo(id);
         thj.items[id] = name;
     end
     local hd = Hekili.Class.abilities[name]

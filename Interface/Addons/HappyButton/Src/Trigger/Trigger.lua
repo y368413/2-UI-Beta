@@ -19,6 +19,9 @@ local Item = addon:GetModule("Item")
 ---@class Trigger: AceModule
 local Trigger = addon:NewModule("Trigger")
 
+---@class AuraCache: AceModule
+local AuraCache = addon:GetModule("AuraCache")
+
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName, false)
 
 -- 创建自身触发器
@@ -99,6 +102,7 @@ function Trigger:GetConditions(triggerType)
         return {
             remainingTime = "number",
             targetIsEnemy = "boolean",
+            targetCanAttack = "boolean",
             exist = "boolean"
         } ---@type table<AuraTriggerCond, type>
     end
@@ -126,45 +130,11 @@ function Trigger:GetConditionsOptions(triggerType)
 end
 
 
----@param triggerConfig TriggerConfig
----@return table<AuraTriggerCond, any>
-function Trigger:GetAuraTriggerCond(triggerConfig)
-    ---@type table<AuraTriggerCond, any>
-    local result = {}
-    local trigger = Trigger:ToAuraTriggerConfig(triggerConfig)
-    if not trigger.confine then
-        return result
-    end
-    local target = trigger.confine.target or "player"
-    local auraId = trigger.confine.spellId
-    if not auraId then
-        return result
-    end
-    local filter
-    if trigger.confine.type == "buff" then
-        filter = "HELPFUL"
-    end
-    if trigger.confine.type == "defbuff" then
-        filter = "HARMFUL"
-    end
-    if UnitExists(target) and UnitIsEnemy("player", target) then
-        result.targetIsEnemy = true
-    else
-        result.targetIsEnemy = false
-    end
-    result.exist = false
-    result.remainingTime = 0
-    if UnitExists(target) then
-        for i = 1, 100 do
-            local aura = Api.GetBuffDataByIndex(target, i, filter)
-            if aura and aura.spellId == auraId then
-                result.exist = true
-                result.remainingTime = aura.expirationTime - GetTime()
-                break
-            end
-        end
-    end
-    return result
+---@param confine TriggerConfine
+---@return AuraTriggerConfine
+function Trigger:ToAuraConfine(confine)
+    ---@type AuraTriggerConfine
+    return confine
 end
 
 ---@param triggerConfig TriggerConfig
@@ -181,7 +151,7 @@ function Trigger:GetItemTriggerCond(triggerConfig)
         return result
     end
     result.isLearned = Item:IsLearned(item.id, item.type)
-    result.isUsable = Item:IsLearnedAndUsable(item.id, item.type)
+    result.isUsable = Item:IsUsable(item.id, item.type)
     result.isCooldown = Item:IsCooldown(Item:GetCooldown(item))
     if item.type == const.ITEM_TYPE.ITEM then
         result.count = Api.GetItemCount(item.id, false)

@@ -1,5 +1,6 @@
-## Interface: 110005
+## Interface: 110007
 ## Title: Family Familiar Helper
+## Title-zhCN: |cFFBF00FF[宠物]|rFamily Familiar Helper
 ## Notes: Displays progress on the Family Familiar battle pet achievement.
 ## Author: Gello
 ## Version: 2.2.2

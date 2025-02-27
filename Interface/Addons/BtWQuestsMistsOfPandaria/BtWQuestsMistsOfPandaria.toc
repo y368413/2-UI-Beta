@@ -1,6 +1,6 @@
-## Interface: 110005
+## Interface: 110007, 110100
 ## Title: BtWQuests: Mists of Pandaria
-## Version: 4.13
+## Version: 4.14
 ## Notes: Mists of Pandaria quest data for BtWQuests
 ## Author: Breen
 ## Dependencies: BtWQuests

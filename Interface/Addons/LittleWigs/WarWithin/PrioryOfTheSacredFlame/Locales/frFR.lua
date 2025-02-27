@@ -11,6 +11,7 @@ if L then
 	L.arathi_knight = "Chevalier arathi"
 	L.arathi_footman = "Fantassin arathi"
 	L.fervent_sharpshooter = "Tireuse de précision fervente"
+	L.war_lynx = "Lynx de guerre"
 	L.devout_priest = "Prêtre fervent"
 	L.fanatical_conjuror = "Conjuratrice fanatique"
 	L.lightspawn = "Rejeton de Lumière"
@@ -20,4 +21,9 @@ if L then
 
 	L.baron_braunpyke_warmup_trigger = "Leur mission est remplie. Baron, montrez votre valeur."
 	L.custom_on_autotalk_desc = "|cFFFF0000Nécessite Prêtre ou Paladin.|r Sélectionne automatiquement le dialogue avec le PNJ qui octroie à votre groupe l'amélioration 'Bénédiction de la Flamme sacrée'."
+end
+
+L = BigWigs:NewBossLocale("Baron Braunpyke", "frFR")
+if L then
+	--L.charges = "%d charges"
 end

@@ -1,0 +1,334 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.blizzard.com/wow/ui/ UI_shared.xsd">
+
+    <Button name="TJ_ToyBoxHeaderTemplate" virtual="true" inherits="BackdropTemplate">
+        <Size y="30" />
+        <KeyValues>
+            <KeyValue key="backdropInfo" value="BACKDROP_TOAST_12_12" type="global" />
+        </KeyValues>
+        <Layers>
+            <Layer level="ARTWORK">
+                <FontString parentKey="Text" inherits="GameFontWhite" justifyH="LEFT"
+                    wordwrap="false">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="50" y="0" />
+                        <Anchor point="BOTTOMRIGHT" x="-4" y="0" />
+                    </Anchors>
+                </FontString>
+            </Layer>
+            <Layer level="BORDER">
+                <Texture parentKey="expandIcon" file="Interface/Buttons/UI-MinusButton-Up">
+                    <Size x="18" y="18" />
+                    <Anchors>
+                        <Anchor point="LEFT" x="7" y="0.5" />
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="icon"
+                    file="Interface/Icons/TRADE_ARCHAEOLOGY_CHESTOFTINYGLASSANIMALS">
+                    <Size x="20" y="20" />
+                    <Anchors>
+                        <Anchor point="LEFT" x="25" y="0.5" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="HIGH">
+                <Texture parentKey="highlightLeft" file="Interface/Buttons/WHITE8X8">
+                    <Size y="27" />
+                    <Anchors>
+                        <Anchor point="LEFT" />
+                    </Anchors>
+                    <Gradient orientation="HORIZONTAL">
+                        <MinColor a="0" r="1" g="1" b="1" />
+                        <MaxColor a=".25" r="1" g="1" b="1" />
+                    </Gradient>
+                </Texture>
+            </Layer>
+            <Layer level="HIGH">
+                <Texture parentKey="highlightRight" file="Interface/Buttons/WHITE8X8">
+                    <Size y="27" />
+                    <Anchors>
+                        <Anchor point="RIGHT" />
+                    </Anchors>
+                    <Gradient orientation="HORIZONTAL">
+                        <MinColor a=".25" r="1" g="1" b="1" />
+                        <MaxColor a="0" r="1" g="1" b="1" />
+                    </Gradient>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+            <EditBox parentKey="RenameBox" inherits="InputBoxTemplate" autoFocus="false">
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="54" y="0" />
+                    <Anchor point="BOTTOMRIGHT" x="-8" y="0" />
+                </Anchors>
+                <Scripts>
+                    <OnLoad>
+                        self:Hide()
+                    </OnLoad>
+                </Scripts>
+                <Frames>
+                    <Button parentKey="Cancel">
+                        <Size x="14" y="14" />
+                        <NormalTexture atlas="Radial_Wheel_Icon_Close" />
+                        <Anchors>
+                            <Anchor Point="RIGHT" x="-4" y="0" />
+                        </Anchors>
+                        <Scripts>
+                            <OnEnter>
+                                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                                GameTooltip:AddLine("Cancel")
+                                GameTooltip:Show()
+                            </OnEnter>
+                            <OnLeave>
+                                GameTooltip:Hide()
+                            </OnLeave>
+                        </Scripts>
+                    </Button>
+                    <Button parentKey="Submit">
+                        <Size x="14" y="14" />
+                        <Layers>
+                            <Layer level="ARTWORK">
+                                <Texture parentKey="Texture" atlas="orderhalltalents-done-checkmark">
+                                    <Size x="16" y="16" />
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                        <Anchors>
+                            <Anchor Point="RIGHT" x="-22" y="0" />
+                        </Anchors>
+                        <Scripts>
+                            <OnEnter>
+                                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                                GameTooltip:AddLine("Okay")
+                                GameTooltip:Show()
+                            </OnEnter>
+                            <OnLeave>
+                                GameTooltip:Hide()
+                            </OnLeave>
+                            <OnDisable>
+                                self.Texture:SetVertexColor(.2,.2,.2,1)
+                            </OnDisable>
+                            <OnEnable>
+                                self.Texture:SetVertexColor(1,1,1,1)
+                            </OnEnable>
+                        </Scripts>
+                    </Button>
+                </Frames>
+            </EditBox>
+        </Frames>
+    </Button>
+
+    <Button name="TJ_ToyTemplate" virtual="true">
+        <Size y="42" />
+        <Frames>
+            <Frame parentKey="icon">
+                <Size x="35" y="35" />
+                <Anchors>
+                    <Anchor point="LEFT" x="0" />
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="texture">
+                            <Size x="32" y="32" />
+                            <Anchors>
+                                <Anchor point="LEFT" x="10" y="0.5" />
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Frame>
+            <Frame parentKey="toyCard" inherits="BackdropTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="21" y="0" />
+                    <Anchor point="BOTTOMRIGHT" x="0" y="0" />
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <FontString parentKey="Text" inherits="GameFontNormal" justifyH="CENTER"
+                            wordwrap="true">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" x="27" y="0" />
+                                <Anchor point="BOTTOMRIGHT" x="-10" y="0" />
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>
+        </Frames>
+    </Button>
+
+    <Button name="TJ_IconSelector" virtual="true">
+        <Size y="36" />
+        <Frames>
+            <Button parentKey="icon1">
+                <Size x="32" y="32" />
+                <Anchors>
+                    <Anchor point="LEFT" x="0" />
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="texture" setAllPoints="true">
+                            <Size x="32" y="32" />
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Button>
+            <Button parentKey="icon2">
+                <Size x="32" y="32" />
+                <Anchors>
+                    <Anchor point="LEFT" x="34" />
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="texture" setAllPoints="true">
+                            <Size x="32" y="32" />
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Button>
+            <Button parentKey="icon3">
+                <Size x="32" y="32" />
+                <Anchors>
+                    <Anchor point="LEFT" x="68" />
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="texture" setAllPoints="true">
+                            <Size x="32" y="32" />
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Button>
+            <Button parentKey="icon4">
+                <Size x="32" y="32" />
+                <Anchors>
+                    <Anchor point="LEFT" x="102" />
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="texture" setAllPoints="true">
+                            <Size x="32" y="32" />
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Button>
+            <Button parentKey="icon5">
+                <Size x="32" y="32" />
+                <Anchors>
+                    <Anchor point="LEFT" x="136" />
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="texture" setAllPoints="true">
+                            <Size x="32" y="32" />
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Button>
+            <Button parentKey="icon6">
+                <Size x="32" y="32" />
+                <Anchors>
+                    <Anchor point="LEFT" x="170" />
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="texture" setAllPoints="true">
+                            <Size x="32" y="32" />
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Button>
+            <Button parentKey="icon7">
+                <Size x="32" y="32" />
+                <Anchors>
+                    <Anchor point="LEFT" x="204" />
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="texture" setAllPoints="true">
+                            <Size x="32" y="32" />
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Button>
+        </Frames>
+    </Button>
+
+    <Button name="TJ_ToyboxSelectorTemplate" virtual="true" inherits="BackdropTemplate">
+        <Size y="20" />
+        <KeyValues>
+            <KeyValue key="backdropInfo" value="BACKDROP_TOAST_12_12" type="global" />
+        </KeyValues>
+        <Layers>
+            <Layer level="ARTWORK">
+                <FontString parentKey="Text" inherits="GameFontNormalSmall" justifyH="LEFT"
+                    wordwrap="false">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="8" y="1" />
+                        <Anchor point="BOTTOMRIGHT" x="-4" y="0" />
+                    </Anchors>
+                </FontString>
+            </Layer>
+            <Layer level="BORDER">
+                <Texture parentKey="Icon"
+                    file="Interface/Icons/TRADE_ARCHAEOLOGY_CHESTOFTINYGLASSANIMALS">
+                    <Size x="10" y="10" />
+                    <Anchors>
+                        <Anchor point="LEFT" x="7" y="0.5" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="HIGH">
+                <Texture parentKey="highlightLeft" file="Interface/Buttons/WHITE8X8">
+                    <Size y="17" />
+                    <Anchors>
+                        <Anchor point="LEFT" />
+                    </Anchors>
+                    <Gradient orientation="HORIZONTAL">
+                        <MinColor a="0" r="1" g="1" b="1" />
+                        <MaxColor a=".25" r="1" g="1" b="1" />
+                    </Gradient>
+                </Texture>
+            </Layer>
+            <Layer level="HIGH">
+                <Texture parentKey="highlightRight" file="Interface/Buttons/WHITE8X8">
+                    <Size y="17" />
+                    <Anchors>
+                        <Anchor point="RIGHT" />
+                    </Anchors>
+                    <Gradient orientation="HORIZONTAL">
+                        <MinColor a=".25" r="1" g="1" b="1" />
+                        <MaxColor a="0" r="1" g="1" b="1" />
+                    </Gradient>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnShow>
+                self.Icon:Hide()
+
+                self.highlightLeft:SetWidth(self:GetWidth() / 2)
+                self.highlightRight:SetWidth(self:GetWidth() / 2)
+                self.highlightLeft:Hide()
+                self.highlightRight:Hide()
+            </OnShow>
+            <OnEnter>
+                if(not self.disabled) then
+                    self.highlightLeft:Show()
+                    self.highlightRight:Show()
+                end
+                GameTooltip:SetOwner(self, "ANCHOR_LEFT")
+                GameTooltip:AddLine(self.Text:GetText())
+                GameTooltip:Show()
+            </OnEnter>
+            <OnLeave>
+                if(not self.disabled) then
+                    self.highlightLeft:Hide()
+                    self.highlightRight:Hide()
+                end
+                GameTooltip:Hide()
+            </OnLeave>
+        </Scripts>
+    </Button>
+</Ui>

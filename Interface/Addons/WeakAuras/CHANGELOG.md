@@ -1,40 +1,54 @@
-# [5.18.0](https://github.com/WeakAuras/WeakAuras2/tree/5.18.0) (2024-11-21)
+# [5.19.4](https://github.com/WeakAuras/WeakAuras2/tree/5.19.4) (2025-02-26)
 
-[Full Changelog](https://github.com/WeakAuras/WeakAuras2/compare/5.17.5...5.18.0)
+[Full Changelog](https://github.com/WeakAuras/WeakAuras2/compare/5.19.3...5.19.4)
 
 ## Highlights
 
-- Updated Currency trigger to support Warband currencies (thanks @Boneshock!!!)
-- Bump ToC for classic 1.15.5
-- Add some new filtering options in spell cast succeeded & buff triggers
+Update for The War Within 11.1
+
+New in this version:
+
+- models now have an alpha slider to set transparency
+- TSU-type custom triggers have some new convenience functions available. Documentation is avaliable at https://github.com/WeakAuras/WeakAuras2/wiki/Trigger-State-Updater-(TSU)#all-states-
+helper-methods
+  - this is unlikely to matter, but note that the choice of plumbing used means this is techni
+cally a breaking change if you ever created a state with the "__changed" key.
+
+Fixes:
+
+- x-realm transfer of auras should fail less often
+- improve performance
+cally a breaking change if you ever created a state with the "__changed" key.
+
+Fixes:
+
+- x-realm transfer of auras should fail less often
+- improve performance
+- large, deply nested groups should load significantly faster (i.e. https://wago.io/twwdungeons should be less prone to throw errors when you start an encounter)
+- "Hide Cooldown Text" condition property remembered how to function
+- x-realm data transfer (for sharing auras) should be more likely to actually succeed now
 
 ## Commits
 
-Boneshock (1):
+InfusOnWoW (6):
 
-- Add warband currency support (#5229)
-
-InfusOnWoW (2):
-
-- Fix check
-- Update Discord List
+- Use Chomp for cross-realm transfer
+- Fix EnsureRegion repeately creating parents
+- Group: Don't calculate group size if not needed
+- Fix Hide Cooldown Text condition
+- Models: Fix Alpha animations
+- Be extra picky on noValidation spell inputs
 
 Stanzilla (1):
 
-- Update WeakAurasModelPaths from wago.tools
+- chore(toc): bump version for retail
 
-github-actions[bot] (4):
+emptyrivers (1):
 
-- Update Discord List (#5534)
-- Update WeakAurasModelPaths from wago.tools (#5528)
-- Update Atlas File List from wago.tools (#5529)
-- Update Discord List (#5527)
+- put the mixins in private exec_env too
 
-mrbuds (5):
+mrbuds (2):
 
-- Remove unused code in ConstructFunction
-- Aura trigger: add npc id filter for boss unit
-- Spell Cast Succeeded: add filter by spell name
-- Fix error when converting a Combat Log trigger to Spell Cooldown trigger
-- Toc update for Classic Era 1.15.5
+- cache buildup optimization for 11.1
+- Add alpha setting for model region
 

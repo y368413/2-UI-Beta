@@ -1,6 +1,6 @@
 ﻿-- Pawn by Vger-Azjol-Nerub
 -- www.vgermods.com
--- © 2006-2024 Travis Spomer.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
+-- © 2006-2025 Travis Spomer.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
 -- See Readme.htm for more information.
 --
 -- WoW Classic Era, Burning Crusade Classic, and Wrath Classic scales sourced from HawsJon
@@ -762,7 +762,7 @@ function PawnClassicScaleProvider_AddScales()
 			ScaleProviderName,
 			2, -- Paladin
 			3, -- Retribution
-			{ Strength=2.28, Agility=0, Intellect=0, Stamina=0.01, Spirit=0, Armor=0.005, HitRating=2.32, CritRating=1.1, HasteRating=1.05, MasteryRating=1.23, ExpertiseRating=1.89, SpellPenetration=0, Ap=1, SpellPower=0, DodgeRating=0, ParryRating=0, BlockRating=0, ResilienceRating=0, Mp5=0, Hp5=0, ArcaneResist=0, FireResist=0, ShadowResist=0, NatureResist=0, FrostResist=0, FireSpellDamage=0, ShadowSpellDamage=0, NatureSpellDamage=0, ArcaneSpellDamage=0, FrostSpellDamage=0, Dps=0, MetaSocketEffect=72, MainHandDps=8.15, OneHandDps=8.15, }
+			{ Strength=2.28, Agility=0, Intellect=0, Stamina=0.01, Spirit=0, Armor=0.005, HitRating=2.33, CritRating=1.1, HasteRating=1, MasteryRating=1.23, ExpertiseRating=1.88, SpellPenetration=0, Ap=1, SpellPower=0, DodgeRating=0, ParryRating=0, BlockRating=0, ResilienceRating=0, Mp5=0, Hp5=0, ArcaneResist=0, FireResist=0, ShadowResist=0, NatureResist=0, FrostResist=0, FireSpellDamage=0, ShadowSpellDamage=0, NatureSpellDamage=0, ArcaneSpellDamage=0, FrostSpellDamage=0, Dps=0, MetaSocketEffect=72, MainHandDps=8.14, OneHandDps=8.14, }
 		)
 
 		PawnAddPluginScaleFromTemplate(

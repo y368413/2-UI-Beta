@@ -1,0 +1,20 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Script file="Core/Global.lua"/>	
+	<Script file="Core/DB/Data.lua"/>
+	<Script file="Core/DB/NewsData.lua"/>
+	<Script file="Core/Init/Init.lua"/>
+
+	<Script file="Core/UI/Merchant/Helper/SourceItemHelper.lua"/>
+	<Script file="Core/UI/Merchant/ItemOwnedCheck.lua"/>
+	<Script file="Core/UI/Merchant/MainMerchant.lua"/>
+	<Script file="Core/UI/Init.lua"/>
+	<Script file="Core/UI/MerchantUI.lua"/>
+	<Script file="Core/UI/AhUI.lua"/>
+	<Script file="Core/UI/RecipeUI.lua"/>
+	<Script file="Core/UI/GossipLFR/MainGossip.lua"/>
+	<Script file="Core/UI/NewsUI.lua"/>
+
+	<Script file="Core/UI/OptionsPanel/OptionsPanel.lua"/>
+	<Script file="Core/UI/OptionsPanel/Panels/MainPanelUI.lua"/>
+	<Script file="Core/UI/OptionsPanel/Panels/CreateRecipeOptions.lua"/>
+</Ui>

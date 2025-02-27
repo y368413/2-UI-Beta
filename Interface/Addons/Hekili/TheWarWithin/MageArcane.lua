@@ -1,5 +1,5 @@
 -- MageArcane.lua
--- July 2024
+-- January 2025
 
 if UnitClassBase( "player" ) ~= "MAGE" then return end
 
@@ -9,7 +9,6 @@ local class, state = Hekili.Class, Hekili.State
 
 local FindUnitBuffByID, FindUnitDebuffByID = ns.FindUnitBuffByID, ns.FindUnitDebuffByID
 
-local GetItemCooldown = GetItemCooldown
 local strformat = string.format
 
 local spec = Hekili:NewSpecialization( 62 )
@@ -39,93 +38,108 @@ spec:RegisterTalents( {
     alter_time                 = {  62115, 342245, 1 }, -- Alters the fabric of time, returning you to your current location and health when cast a second time, or after 10 sec. Effect negated by long distance or death.
     arcane_warding             = {  62114, 383092, 2 }, -- Reduces magic damage taken by 3%.
     barrier_diffusion          = {  62091, 455428, 1 }, -- Whenever one of your Barriers is removed, reduce its cooldown by 4 sec.
-    blast_wave                 = {  62103, 157981, 1 }, -- Causes an explosion around yourself, dealing 6,152 Fire damage to all enemies within 8 yds, knocking them back, and reducing movement speed by 80% for 6 sec.
+    blast_wave                 = {  62103, 157981, 1 }, -- Causes an explosion around yourself, dealing 42,073 Fire damage to all enemies within 8 yds, knocking them back, and reducing movement speed by 80% for 6 sec.
     cryofreeze                 = {  62107, 382292, 2 }, -- While inside Ice Block, you heal for 40% of your maximum health over the duration.
-    displacement               = {  62095, 389713, 1 }, -- Teleports you back to where you last Blinked and heals you for 119,072 health. Only usable within 8 sec of Blinking.
+    displacement               = {  62095, 389713, 1 }, -- Teleports you back to where you last Blinked and heals you for 1.4 million health. Only usable within 12 sec of Blinking.
     diverted_energy            = {  62101, 382270, 2 }, -- Your Barriers heal you for 10% of the damage absorbed.
-    dragons_breath             = { 101883,  31661, 1 }, -- Enemies in a cone in front of you take 7,585 Fire damage and are disoriented for 4 sec. Damage will cancel the effect.
+    dragons_breath             = { 101883,  31661, 1 }, -- Enemies in a cone in front of you take 51,870 Fire damage and are disoriented for 4 sec. Damage will cancel the effect.
+    elemental_affinity         = {  94633, 431067, 1 }, -- 
     energized_barriers         = {  62100, 386828, 1 }, -- When your barrier receives melee attacks, you have a 10% chance to be granted Clearcasting. Casting your barrier removes all snare effects.
+    excess_fire                = {  94637, 438595, 1 }, -- Casting Comet Storm causes your next to explode in a Frostfire Burst, dealing 205,655 Frostfire damage to nearby enemies. Damage reduced beyond 8 targets. Frostfire Burst, .
+    excess_frost               = {  94639, 438600, 1 }, -- Consuming Excess Fire causes your next to also cast Ice Nova at 200% effectiveness. Ice Novas cast this way do not freeze enemies in place. When you consume Excess Frost, the cooldown of is reduced by 5 sec.
+    flame_and_frost            = {  94633, 431112, 1 }, -- 
+    flash_freezeburn           = {  94635, 431178, 1 }, -- Frostfire Empowerment grants you maximum benefit of Frostfire Mastery, refreshes its duration, and grants you Excess Frost and Excess Fire. Activating Combustion or Icy Veins grants you Frostfire Empowerment.
     flow_of_time               = {  62096, 382268, 2 }, -- The cooldowns of Blink and Shimmer are reduced by 2 sec.
     freezing_cold              = {  62087, 386763, 1 }, -- Enemies hit by Cone of Cold are frozen in place for 5 sec instead of snared. When your roots expire or are dispelled, your target is snared by 90%, decaying over 3 sec.
     frigid_winds               = {  62128, 235224, 2 }, -- All of your snare effects reduce the target's movement speed by an additional 10%.
+    frostfire_bolt             = {  94641, 431044, 1 }, -- Launches a bolt of frostfire at the enemy, causing 97,949 Frostfire damage, slowing movement speed by 60%, and causing an additional 42,758 Frostfire damage over 8 sec. Frostfire Bolt generates stacks for both Fire Mastery and Frost Mastery.
+    frostfire_empowerment      = {  94632, 431176, 1 }, -- Your Frost and Fire spells have a chance to activate Frostfire Empowerment, causing your next Frostfire Bolt to be instant cast, deal 60% increased damage, explode for 80% of its damage to nearby enemies.
+    frostfire_infusion         = {  94634, 431166, 1 }, -- Your Frost and Fire spells have a chance to trigger an additional bolt of Frostfire, dealing 52,265 damage. This effect generates Frostfire Mastery when activated.
+    frostfire_mastery          = {  94636, 431038, 1 }, -- Your damaging Fire spells generate 1 stack of Fire Mastery and Frost spells generate 1 stack of Frost Mastery. Fire Mastery increases your haste by 2%, and Frost Mastery increases your Mastery by 2% for 14 sec, stacking up to 6 times each. Adding stacks does not refresh duration.
     greater_invisibility       = {  93524, 110959, 1 }, -- Makes you invisible and untargetable for 20 sec, removing all threat. Any action taken cancels this effect. You take 60% reduced damage while invisible and for 3 sec after reappearing.
     ice_block                  = {  62122,  45438, 1 }, -- Encases you in a block of ice, protecting you from all attacks and damage for 10 sec, but during that time you cannot attack, move, or cast spells. While inside Ice Block, you heal for 40% of your maximum health over the duration. Causes Hypothermia, preventing you from recasting Ice Block for 30 sec.
     ice_cold                   = {  62085, 414659, 1 }, -- Ice Block now reduces all damage taken by 70% for 6 sec but no longer grants Immunity, prevents movement, attacks, or casting spells. Does not incur the Global Cooldown.
     ice_floes                  = {  62105, 108839, 1 }, -- Makes your next Mage spell with a cast time shorter than 10 sec castable while moving. Unaffected by the global cooldown and castable while casting.
-    ice_nova                   = {  62088, 157997, 1 }, -- Causes a whirl of icy wind around the enemy, dealing 15,625 Frost damage to the target and all other enemies within 8 yds, freezing them in place for 2 sec. Damage reduced beyond 8 targets.
+    ice_nova                   = {  62088, 157997, 1 }, -- Causes a whirl of icy wind around the enemy, dealing 106,854 Frost damage to the target and all other enemies within 8 yds, freezing them in place for 2 sec. Damage reduced beyond 8 targets.
     ice_ward                   = {  62086, 205036, 1 }, -- Frost Nova now has 2 charges.
+    imbued_warding             = {  94642, 431066, 1 }, -- 
     improved_frost_nova        = {  62108, 343183, 1 }, -- Frost Nova duration is increased by 2 sec.
     incantation_of_swiftness   = {  62112, 382293, 2 }, -- Greater Invisibility increases your movement speed by 40% for 6 sec.
     incanters_flow             = {  62118,   1463, 1 }, -- Magical energy flows through you while in combat, building up to 10% increased damage and then diminishing down to 2% increased damage, cycling every 10 sec.
     inspired_intellect         = {  62094, 458437, 1 }, -- Arcane Intellect grants you an additional 3% Intellect.
+    isothermic_core            = {  94638, 431095, 1 }, -- Comet Storm now also calls down a Meteor at 150% effectiveness onto your target's location. Meteor now also calls down a Comet Storm at 200% effectiveness onto your target location.
     mass_barrier               = {  62092, 414660, 1 }, -- Cast Prismatic Barrier on yourself and 4 allies within 40 yds.
     mass_invisibility          = {  62092, 414664, 1 }, -- You and your allies within 40 yards instantly become invisible for 12 sec. Taking any action will cancel the effect. Does not affect allies in combat.
     mass_polymorph             = {  62106, 383121, 1 }, -- Transforms all enemies within 10 yards into sheep, wandering around incapacitated for 15 sec. While affected, the victims cannot take actions but will regenerate health very quickly. Damage will cancel the effect. Only works on Beasts, Humanoids and Critters.
     master_of_time             = {  62102, 342249, 1 }, -- Reduces the cooldown of Alter Time by 10 sec. Alter Time resets the cooldown of Blink and Shimmer when you return to your original location.
-    mirror_image               = {  62124,  55342, 1 }, -- Creates 3 copies of you nearby for 40 sec, which cast spells and attack your enemies. While your images are active damage taken is reduced by 20%. Taking direct damage will cause one of your images to dissipate.
+    meltdown                   = {  94642, 431131, 1 }, -- You melt slightly out of your Ice Block and Ice Cold, allowing you to move slowly during Ice Block and increasing your movement speed over time. Ice Block and Ice Cold trigger a Blazing Barrier when they end.
+    mirror_image               = {  62124,  55342, 1 }, -- Creates 4 copies of you nearby for 40 sec, which cast spells and attack your enemies. While your images are active damage taken is reduced by 25%. Taking direct damage will cause one of your images to dissipate.
     overflowing_energy         = {  62120, 390218, 1 }, -- Your spell critical strike damage is increased by 10%. When your direct damage spells fail to critically strike a target, your spell critical strike chance is increased by 2%, up to 10% for 8 sec. When your spells critically strike Overflowing Energy is reset.
-    prismatic_barrier          = {  62121, 235450, 1 }, -- Shields you with an arcane force, absorbing 127,971 damage and reducing magic damage taken by 25% for 1 min. The duration of harmful Magic effects against you is reduced by 40%.
+    prismatic_barrier          = {  62121, 235450, 1 }, -- Shields you with an arcane force, absorbing 1.5 million damage and reducing magic damage taken by 25% for 1 min. The duration of harmful Magic effects against you is reduced by 40%.
     quick_witted               = {  62104, 382297, 1 }, -- Successfully interrupting an enemy with Counterspell reduces its cooldown by 4 sec.
     reabsorption               = {  62125, 382820, 1 }, -- You are healed for 3% of your maximum health whenever a Mirror Image dissipates due to direct damage.
     reduplication              = {  62125, 382569, 1 }, -- Mirror Image's cooldown is reduced by 10 sec whenever a Mirror Image dissipates due to direct damage.
-    remove_curse               = {  62116,    475, 1 }, -- Removes all Curses from a friendly target.
+    remove_curse               = {  62116,    475, 1 }, -- Removes all Curses from a friendly target. 
     rigid_ice                  = {  62110, 382481, 1 }, -- Frost Nova can withstand 80% more damage before breaking.
     ring_of_frost              = {  62088, 113724, 1 }, -- Summons a Ring of Frost for 10 sec at the target location. Enemies entering the ring are incapacitated for 10 sec. Limit 10 targets. When the incapacitate expires, enemies are slowed by 75% for 4 sec.
-    shifting_power             = {  62113, 382440, 1 }, -- Draw power from within, dealing 27,624 Arcane damage over 3.4 sec to enemies within 18 yds. While channeling, your Mage ability cooldowns are reduced by 12 sec over 3.4 sec.
-    shimmer                    = {  62105, 212653, 1 }, -- Teleports you 20 yds forward, unless something is in the way. Unaffected by the global cooldown and castable while casting.
-    slow                       = {  62097,  31589, 1 }, -- Reduces the target's movement speed by 60% for 15 sec.
-    spellsteal                 = {  62084,  30449, 1 }, -- Steals a beneficial magic effect from the target. This effect lasts a maximum of 2 min.
-    supernova                  = { 101883, 157980, 1 }, -- Pulses arcane energy around the target enemy or ally, dealing 4,752 Arcane damage to all enemies within 8 yds, and knocking them upward. A primary enemy target will take 100% increased damage.
+    severe_temperatures        = {  94640, 431189, 1 }, -- Casting damaging Frost or Fire spells has a high chance to increase the damage of your next Frostfire Bolt by 10%, stacking up to 5 times.
+    shifting_power             = {  62113, 382440, 1 }, -- Draw power from within, dealing 200,132 Arcane damage over 3.3 sec to enemies within 18 yds. While channeling, your Mage ability cooldowns are reduced by 12 sec over 3.3 sec.
+    shimmer                    = {  62105, 212653, 1 }, -- Teleports you 20 yds forward, unless something is in the way. Unaffected by the global cooldown and castable while casting. Gain a shield that absorbs 3% of your maximum health for 15 sec after you Shimmer.
+    slow                       = {  62097,  31589, 1 }, -- Reduces the target's movement speed by 60% for 15 sec. 
+    spellsteal                 = {  62084,  30449, 1 }, -- Steals a beneficial magic effect from the target. This effect lasts a maximum of 2 min. 
+    supernova                  = { 101883, 157980, 1 }, -- Pulses arcane energy around the target enemy or ally, dealing 35,243 Arcane damage to all enemies within 8 yds, and knocking them upward. A primary enemy target will take 100% increased damage.
     tempest_barrier            = {  62111, 382289, 2 }, -- Gain a shield that absorbs 3% of your maximum health for 15 sec after you Blink.
     temporal_velocity          = {  62099, 382826, 2 }, -- Increases your movement speed by 5% for 3 sec after casting Blink and 20% for 6 sec after returning from Alter Time.
+    thermal_conditioning       = {  94640, 431117, 1 }, -- Frostfire Bolt's cast time is reduced by 10%.
     time_anomaly               = {  62094, 383243, 1 }, -- At any moment, you have a chance to gain Arcane Surge for 4 sec, Clearcasting, or Time Warp for 6 sec.
     time_manipulation          = {  62129, 387807, 1 }, -- Casting Clearcasting Arcane Missiles reduces the cooldown of your loss of control abilities by 2 sec.
-    tome_of_antonidas          = {  62098, 382490, 1 }, -- Increases Haste by 2%.
+    tome_of_antonidas          = {  62098, 382490, 1 }, -- Increases Haste by 2%. 
     tome_of_rhonin             = {  62127, 382493, 1 }, -- Increases Critical Strike chance by 2%.
     volatile_detonation        = {  62089, 389627, 1 }, -- Greatly increases the effect of Blast Wave's knockback. Blast Wave's cooldown is reduced by 5 sec
     winters_protection         = {  62123, 382424, 2 }, -- The cooldown of Ice Block is reduced by 30 sec.
 
     -- Arcane
     aether_attunement          = { 102476, 453600, 1 }, -- Every 3 times you consume Clearcasting, gain Aether Attunement. Aether Attunement: Your next Arcane Missiles deals 100% increased damage to your primary target and fires at up to 4 nearby enemies dealing 50% increased damage.
-    aethervision               = { 102448, 467633, 1 }, -- Consuming Nether Precision with Arcane Blast increases the damage of your next Arcane Barrage by 10% and causes it to generate 2 Arcane Charges. Stacks up to 2 times.
-    amplification              = { 102445, 236628, 1 }, -- Arcane Missiles fires 3 additional missiles.
+    aether_fragment            = { 102477, 1222947, 1 }, -- Intuition's damage bonus increased by 20%.
+    amplification              = { 102448, 236628, 1 }, -- Arcane Missiles fires 3 additional missiles.
     arcane_bombardment         = { 102465, 384581, 1 }, -- Arcane Barrage deals an additional 100% damage against targets below 35% health.
     arcane_debilitation        = { 102463, 453598, 2 }, -- Damaging a target with Arcane Missiles increases the damage they take from Arcane Missiles, Arcane Barrage, and Arcane Blast by 0.0% for 6 sec. Multiple instances may overlap.
-    arcane_echo                = { 102457, 342231, 1 }, -- Direct damage you deal to enemies affected by Touch of the Magi, causes an explosion that deals 1,377 Arcane damage to all nearby enemies. Deals reduced damage beyond 8 targets.
+    arcane_echo                = { 102457, 342231, 1 }, -- Direct damage you deal to enemies affected by Touch of the Magi, causes an explosion that deals 10,215 Arcane damage to all nearby enemies. Deals reduced damage beyond 8 targets.
     arcane_familiar            = { 102439, 205022, 1 }, -- Casting Arcane Intellect summons a Familiar that attacks your enemies and increases your maximum mana by 10% for 1 |4hour:hrs;.
     arcane_harmony             = { 102447, 384452, 1 }, -- Each time Arcane Missiles hits an enemy, the damage of your next Arcane Barrage is increased by 5%. This effect stacks up to 20 times.
-    arcane_missiles            = { 102467,   5143, 1 }, -- Only castable when you have Clearcasting. Launches five waves of Arcane Missiles at the enemy over 2.1 sec, causing a total of 39,851 Arcane damage.
-    arcane_surge               = { 102449, 365350, 1 }, -- Expend all of your current mana to annihilate your enemy target and nearby enemies for up to 59,436 Arcane damage based on Mana spent. Deals reduced damage beyond 5 targets. Generates Clearcasting. For the next 15 sec, your Mana regeneration is increased by 425% and spell damage is increased by 35%.
-    arcane_tempo               = { 102436, 383980, 1 }, -- Consuming Arcane Charges increases your Haste by 2% for 12 sec, stacks up to 5 times.
+    arcane_missiles            = { 102467,   5143, 1 }, -- Only castable when you have Clearcasting. Launches five waves of Arcane Missiles at the enemy over 2.1 sec, causing a total of 295,535 Arcane damage.
+    arcane_rebound             = { 102438, 1223800, 1 }, -- When Arcane Barrage hits more than 2 targets, it explodes for 80,441 additional Arcane damage to all enemies within 10 yds of the primary target.
+    arcane_surge               = { 102449, 365350, 1 }, -- Expend all of your current mana to annihilate your enemy target and nearby enemies for up to 440,780 Arcane damage based on Mana spent. Deals reduced damage beyond 5 targets. Generates Clearcasting. For the next 15 sec, your Mana regeneration is increased by 425% and spell damage is increased by 35%.
+    arcane_tempo               = { 102446, 383980, 1 }, -- Consuming Arcane Charges increases your Haste by 2% for 12 sec, stacks up to 5 times.
     arcing_cleave              = { 102458, 231564, 1 }, -- For each Arcane Charge, Arcane Barrage hits 1 additional nearby target for 40% damage.
     big_brained                = { 102446, 461261, 1 }, -- Gaining Clearcasting increases your Intellect by 1% for 8 sec. Multiple instances may overlap.
-    charged_orb                = { 102466, 384651, 1 }, -- Arcane Orb gains 1 additional charge. Arcane Orb damage increased by 15%.
-    concentrated_power         = { 102461, 414379, 1 }, -- Arcane Missiles channels 20% faster. Clearcasting makes Arcane Explosion echo for 40% damage.
-    concentration              = { 102438, 384374, 1 }, -- Arcane Blast has a small chance to make your next cast of Arcane Blast free.
-    consortiums_bauble         = { 102475, 461260, 1 }, -- Reduces Arcane Blast's mana cost by 5% and increases its damage by 8%.
+    charged_orb                = { 102475, 384651, 1 }, -- Arcane Orb gains 1 additional charge. Arcane Orb damage increased by 15%.
+    concentrated_power         = { 104113, 414379, 1 }, -- Arcane Missiles channels 20% faster. Clearcasting makes Arcane Explosion echo for 40% damage.
+    consortiums_bauble         = { 102453, 461260, 1 }, -- Reduces Arcane Blast's mana cost by 5% and increases its damage by 8%.
     dematerialize              = { 102456, 461456, 1 }, -- Spells empowered by Nether Precision cause their target to suffer an additional 8% of the damage dealt over 6 sec.
     energized_familiar         = { 102462, 452997, 1 }, -- During Arcane Surge, your Familiar fires 4 bolts instead of 1. Damage from your Arcane Familiar has a small chance to grant you up to 2% of your maximum mana.
     energy_reconstitution      = { 102454, 461457, 1 }, -- Damage from Dematerialize has a small chance to summon an Arcane Explosion at its target's location at 50% effectiveness. Arcane Explosions summoned from Energy Reconstitution do not generate Arcane Charges.
-    enlightened                = { 102470, 321387, 1 }, -- Arcane damage dealt while above 70% mana is increased by 6%, Mana Regen while below 70% is increased by 20%.
+    enlightened                = { 102470, 321387, 1 }, -- Arcane damage dealt is increased based on your current mana, up to 6% at full mana. Mana Regen is increased based on your current mana, up to 20% when out of mana.
     eureka                     = { 102455, 452198, 1 }, -- When a spell consumes Clearcasting, its damage is increased by 10%.
-    evocation                  = { 102459,  12051, 1 }, -- Increases your mana regeneration by 1,500% for 2.6 sec and grants Clearcasting. While channeling Evocation, your Intellect is increased by 2% every 0.4 sec. Lasts 20 sec.
-    high_voltage               = { 102472, 461248, 1 }, -- Damage from Arcane Missiles has a 10% chance to grant you 1 Arcane Charge. Chance is increased by 10% every time your Arcane Missiles fails to grant you an Arcane Charge.
+    evocation                  = { 102459,  12051, 1 }, -- Increases your mana regeneration by 1,500% for 2.5 sec and grants Clearcasting. While channeling Evocation, your Intellect is increased by 2% every 0.4 sec. Lasts 20 sec.
+    high_voltage               = { 102472, 461248, 1 }, -- Damage from Arcane Missiles has a 10% chance to grant you 1 Arcane Charge. Chance is increased by 15% every time your Arcane Missiles fails to grant you an Arcane Charge.
     illuminated_thoughts       = { 102444, 384060, 1 }, -- Clearcasting has a 5% increased chance to proc.
-    impetus                    = { 102480, 383676, 1 }, -- Arcane Blast has a 10% chance to generate an additional Arcane Charge. If you were to gain an Arcane Charge while at maximum charges instead gain 10% Arcane damage for 10 sec.
-    improved_clearcasting      = { 102471, 321420, 1 }, -- Clearcasting can stack up to 2 additional times.
+    impetus                    = { 102480, 383676, 1 }, -- Arcane Blast has a 10% chance to generate an additional Arcane Charge. If you were to gain an Arcane Charge while at maximum charges instead gain 10% Arcane damage for 10 sec. 
+    improved_clearcasting      = { 102445, 321420, 1 }, -- Clearcasting can stack up to 2 additional times.
     improved_touch_of_the_magi = { 102452, 453002, 1 }, -- Your Touch of the Magi now accumulates 25% of the damage you deal.
-    leydrinker                 = { 102474, 452196, 1 }, -- Consuming Nether Precision has a 25% chance to make your next Arcane Blast echo, repeating its damage at 60% effectiveness to the primary target and up to four nearby enemies. Casting Touch of the Magi grants Leydrinker.
-    leysight                   = { 102477, 452187, 1 }, -- Nether Precision damage bonus increased to 30%.
-    magis_spark                = { 102435, 454016, 1 }, -- Your Touch of the Magi now also conjures a spark, causing the damage from your next Arcane Barrage, Arcane Blast, and Arcane Missiles to echo for 100% of their damage. Upon receiving damage from all three spells, the spark explodes, dealing 45,289 Arcane damage to all nearby enemies.
+    intuition                  = { 102471, 1223798, 1 }, -- Casting a damaging spell has a 5% chance to make your next Arcane Barrage deal 20% increased damage and generate 4 Arcane Charges.
+    leydrinker                 = { 102474, 452196, 1 }, -- Consuming Clearcasting has a 40% chance to make your next Arcane Blast echo, repeating its damage at 70% effectiveness to the primary target and up to 4 nearby enemies. Casting Touch of the Magi grants Leydrinker.
+    leysight                   = { 102477, 452187, 1 }, -- Nether Precision damage bonus increased by 10%.
+    magis_spark                = { 102435, 454016, 1 }, -- Your Touch of the Magi now also conjures a spark, causing the damage from your next Arcane Barrage, Arcane Blast, and Arcane Missiles to echo for 100% of their damage. Upon receiving damage from all three spells, the spark explodes, dealing 328,304 Arcane damage to all nearby enemies.
     nether_munitions           = { 102435, 450206, 1 }, -- When your Touch of the Magi detonates, it increases the damage all affected targets take from you by 8% for 12 sec.
-    nether_precision           = { 102473, 383782, 1 }, -- Consuming Clearcasting increases the damage of your next 2 Arcane Blasts or Arcane Barrages by 20%.
+    nether_precision           = { 102473, 383782, 1 }, -- Consuming Clearcasting increases the damage of your next 2 Arcane Blasts or Arcane Barrages by 30%.
     orb_barrage                = { 102443, 384858, 1 }, -- Arcane Barrage has a 10% chance per Arcane Charge consumed to launch an Arcane Orb in front of you at 100% effectiveness.
     presence_of_mind           = { 102460, 205025, 1 }, -- Causes your next 2 Arcane Blasts to be instant cast.
     prodigious_savant          = { 102450, 384612, 2 }, -- Arcane Charges further increase Mastery effectiveness of Arcane Blast and Arcane Barrage by 20%.
-    resonance                  = { 102437, 205028, 1 }, -- Arcane Barrage deals 10% increased damage per target it hits.
-    reverberate                = { 102441, 281482, 1 }, -- If Arcane Explosion hits at least 3 targets, it has a 50% chance to generate an extra Arcane Charge.
+    resonance                  = { 102437, 205028, 1 }, -- Arcane Barrage deals 15% increased damage per target it hits beyond the first.
+    reverberate                = { 102448, 281482, 1 }, -- If Arcane Explosion hits at least 3 targets, it has a 50% chance to generate an extra Arcane Charge.
     slipstream                 = { 102469, 236457, 1 }, -- Arcane Missiles can now be channeled while moving. Evocation can be channeled while moving.
-    static_cloud               = { 102453, 461257, 1 }, -- Each time you cast Arcane Explosion, its damage increases by 25%. Bonus resets after reaching 100% damage.
+    static_cloud               = { 102441, 461257, 1 }, -- Each time you cast Arcane Explosion, its damage increases by 25%. Bonus resets after reaching 100% damage.
     surging_urge               = { 102440, 457521, 1 }, -- Arcane Surge damage increased by 5% per Arcane Charge.
     time_loop                  = { 102451, 452924, 1 }, -- Arcane Debilitation's duration is increased by 2 sec. When you apply a stack of Arcane Debilitation, you have a 25% chance to apply another stack of Arcane Debilitation. This effect can trigger off of itself.
     touch_of_the_magi          = { 102468, 321507, 1 }, -- Applies Touch of the Magi to your current target, accumulating 25% of the damage you deal to the target for 12 sec, and then exploding for that amount of Arcane damage to the target and reduced damage to all nearby enemies. Generates 4 Arcane Charges.
@@ -139,46 +153,44 @@ spec:RegisterTalents( {
     reactive_barrier           = {  94660, 444827, 1 }, -- Your Prismatic Barrier can absorb up to 50% more damage based on your missing Health. Max effectiveness when under 50% health.
     shifting_shards            = {  94657, 444675, 1 }, -- Shifting Power fires a barrage of 8 Arcane Splinters at random enemies within 40 yds over its duration.
     signature_spell            = {  94657, 470021, 1 }, -- When your Magi's Spark explodes, you conjure 6 Arcane Splinters.
-    slippery_slinging          = {  94659, 444752, 1 }, -- You have 40% increased movement speed during Alter Time and Evocation.
-    spellfrost_teachings       = {  94655, 444986, 1 }, -- Direct damage from Arcane Splinters has a small chance to launch an Arcane Orb at 50% effectiveness and increase all damage dealt by Arcane Orb by 10% for 10 sec.
+    slippery_slinging          = {  94659, 444752, 1 }, -- You have 40% increased movement speed during Alter Time. 
+    spellfrost_teachings       = {  94655, 444986, 1 }, -- Direct damage from Arcane Splinters has a 2.0% chance to launch an Arcane Orb at 50% effectiveness and increase all damage dealt by Arcane Orb by 10% for 10 sec.
     splintering_orbs           = {  94661, 444256, 1 }, -- Enemies damaged by your Arcane Orb conjure 2 Arcane Splinters, up to 4. Arcane Orb damage is increased by 10%.
-    splintering_sorcery        = {  94664, 443739, 1, "spellslinger" }, -- When you consume Nether Precision, conjure 2 Arcane Splinters that fire at your target. Arcane Splinter:
-    splinterstorm              = {  94654, 443742, 1 }, -- Whenever you have 8 or more active Embedded Arcane Splinters, you automatically cast a Splinterstorm at your target. Splinterstorm: Shatter all Embedded Arcane Splinters, dealing their remaining periodic damage instantly. Conjure an Arcane Splinter for each Splinter shattered, then unleash them all in a devastating barrage, dealing 3,967 Arcane damage to your target for each Splinter in the Splinterstorm. Splinterstorm has a 5% chance to grant Clearcasting.
+    splintering_sorcery        = {  94664, 443739, 1, "spellslinger" }, -- When you consume Nether Precision, conjure 2 Arcane Splinters that fire at your target. Arcane Splinter: 
+    splinterstorm              = {  94654, 443742, 1 }, -- Whenever you have 8 or more active Embedded Arcane Splinters, you automatically cast a Splinterstorm at your target. Splinterstorm: Shatter all Embedded Arcane Splinters, dealing their remaining periodic damage instantly. Conjure an Arcane Splinter for each Splinter shattered, then unleash them all in a devastating barrage, dealing 29,420 Arcane damage to your target for each Splinter in the Splinterstorm. Splinterstorm has a 5% chance to grant Clearcasting.
     unerring_proficiency       = {  94658, 444974, 1 }, -- Each time you conjure an Arcane Splinter, increase the damage of your next Supernova by 20%. Stacks up to 30 times.
-    volatile_magic             = {  94658, 444968, 1 }, -- Whenever an Embedded Arcane Splinter is removed, it explodes, dealing 1,132 Arcane damage to nearby enemies. Deals reduced damage beyond 5 targets.
+    volatile_magic             = {  94658, 444968, 1 }, -- Whenever an Embedded Arcane Splinter is removed, it explodes, dealing 8,207 Arcane damage to nearby enemies. Deals reduced damage beyond 5 targets.
 
     -- Sunfury
-    burden_of_power            = {  94644, 451035, 1 }, -- Conjuring a Spellfire Sphere increases the damage of your next Arcane Blast by 20%.
-    codex_of_the_sunstriders   = {  94643, 449382, 1 }, -- Over its duration, your Arcane Phoenix will consume each of your Spellfire Spheres to cast an exceptional spell. Upon consuming a Spellfire Sphere, your Arcane Phoenix will grant you Lingering Embers.  Lingering Embers
-    glorious_incandescence     = {  94645, 449394, 1 }, -- Consuming Burden of Power causes your next cast of Arcane Barrage to deal 20% increased damage, grant 4 Arcane Charges, and call down a storm of 4 Meteorites on its target.
-    gravity_lapse              = {  94651, 458513, 1 }, -- Your Supernova becomes Gravity Lapse. Gravity Lapse The snap of your fingers warps the gravity around your target and 4 other nearby enemies, suspending them in the air for until canceled. Upon landing, nearby enemies take 6,887 Arcane damage.
+    burden_of_power            = {  94644, 451035, 1 }, -- Conjuring a Spellfire Sphere increases the damage of your next Arcane Blast by 20% or Arcane Barrage by 20%.
+    codex_of_the_sunstriders   = {  94643, 449382, 1 }, -- Over its duration, your Arcane Phoenix will consume each of your Spellfire Spheres to cast an exceptional spell. Upon consuming a Spellfire Sphere, your Arcane Phoenix will grant you Lingering Embers.  Lingering Embers Increases your spell damage by 1%.
+    glorious_incandescence     = {  94645, 449394, 1 }, -- Consuming Burden of Power causes your next Arcane Barrage to deal 20% increased damage, grant 4 Arcane Charges, and call down a storm of 4 Meteorites at your target.
+    gravity_lapse              = {  94651, 458513, 1 }, -- Your Supernova becomes Gravity Lapse. Gravity Lapse The snap of your fingers warps the gravity around your target and 4 other nearby enemies, suspending them in the air for 3 sec. Upon landing, nearby enemies take 51,077 Arcane damage.
     ignite_the_future          = {  94648, 449558, 1 }, -- Generating a Spellfire Sphere while your Phoenix is active causes it to cast an exceptional spell. Mana Cascade can now stack up to 15 times.
     invocation_arcane_phoenix  = {  94652, 448658, 1 }, -- When you cast Arcane Surge, summon an Arcane Phoenix to aid you in battle.  Arcane Phoenix Your Arcane Phoenix aids you for the duration of your Arcane Surge, casting random Arcane and Fire spells.
     lessons_in_debilitation    = {  94651, 449627, 1 }, -- Your Arcane Phoenix will Spellsteal when it is summoned and when it expires.
     mana_cascade               = {  94653, 449293, 1 }, -- Casting Arcane Blast or Arcane Barrage grants you 0.5% Haste for 10 sec. Stacks up to 10 times. Multiple instances may overlap.
-    memory_of_alar             = {  94646, 449619, 1 }, -- While under the effects of a casted Arcane Surge, you gain twice as many stacks of Mana Cascade. When your Arcane Phoenix expires, it empowers you, granting Arcane Soul for 2 sec, plus an additional 1.0 sec for each exceptional spell it had cast. Arcane Soul: Arcane Barrage grants Clearcasting and generates 4 Arcane Charges.
+    memory_of_alar             = {  94646, 449619, 1 }, -- While under the effects of a casted Arcane Surge, you gain twice as many stacks of Mana Cascade. When your Arcane Phoenix expires, it empowers you, granting Arcane Soul for 2 sec, plus an additional 1.0 sec for each exceptional spell it had cast. Arcane Soul: Arcane Barrage grants Clearcasting and generates 4 Arcane Charges. Each cast of Arcane Barrage increases the damage of Arcane Barrage by 15%.
     merely_a_setback           = {  94649, 449330, 1 }, -- Your Prismatic Barrier now grants 5% avoidance while active and 3% leech for 5 sec when it breaks or expires.
     rondurmancy                = {  94648, 449596, 1 }, -- Spellfire Spheres can now stack up to 5 times.
     savor_the_moment           = {  94650, 449412, 1 }, -- When you cast Arcane Surge, its duration is extended by 0.5 sec for each Spellfire Sphere you have, up to 2.5 sec.
-    spellfire_spheres          = {  94647, 448601, 1, "sunfury" }, -- Every 6 times you cast Arcane Blast or Arcane Barrage, conjure a Spellfire Sphere. While you're out of combat, you will slowly conjure Spellfire Spheres over time.  Spellfire Sphere
+    spellfire_spheres          = {  94647, 448601, 1, "sunfury" }, -- Every 6 times you cast Arcane Blast or Arcane Barrage, conjure a Spellfire Sphere. While you're out of combat, you will slowly conjure Spellfire Spheres over time.  Spellfire Sphere Increases your spell damage by 1%. Stacks up to 5 times.
     sunfury_execution          = {  94650, 449349, 1 }, -- Arcane Bombardment damage bonus increased to 130%.  Arcane Bombardment Arcane Barrage deals an additional 100% damage against targets below 35% health.
 } )
 
-
 -- PvP Talents
-spec:RegisterPvpTalents( {
-    arcanosphere               = 5397, -- (353128) Builds a sphere of Arcane energy, gaining power over 4 sec. Upon release, the sphere passes through any barriers, knocking enemies back and dealing up to 95,047 Arcane damage.
-    chrono_shift               = 5661, -- (235711)
-    ethereal_blink             = 5601, -- (410939)
+spec:RegisterPvpTalents( { 
+    arcanosphere               = 5397, -- (353128) Builds a sphere of Arcane energy, gaining power over 4 sec. Upon release, the sphere passes through any barriers, knocking enemies back and dealing up to 1 million Arcane damage.
+    chrono_shift               = 5661, -- (235711) 
+    ethereal_blink             = 5601, -- (410939) 
     ice_wall                   = 5488, -- (352278) Conjures an Ice Wall 30 yards long that obstructs line of sight. The wall has 40% of your maximum health and lasts up to 15 sec.
-    improved_mass_invisibility =  637, -- (415945)
-    kleptomania                = 3529, -- (198100) Unleash a flurry of disruptive magic onto your target, stealing a beneficial magic effect every 0.4 sec for 3.4 sec. Castable while moving, but movement speed is reduced by 40% while channeling.
-    master_of_escape           =  635, -- (210476)
-    master_shepherd            = 5589, -- (410248)
-    ring_of_fire               = 5491, -- (353082) Summons a Ring of Fire for 8 sec at the target location. Enemies entering the ring burn for 18% of their total health over 6 sec.
-    temporal_shield            = 3517, -- (198111) Envelops you in a temporal shield for 4 sec. 60% of all damage taken while shielded will be instantly restored when the shield ends.
+    improved_mass_invisibility =  637, -- (415945) 
+    kleptomania                = 3529, -- (198100) Unleash a flurry of disruptive magic onto your target, stealing a beneficial magic effect every 0.4 sec for 3.3 sec. Castable while moving, but movement speed is reduced by 40% while channeling.
+    master_of_escape           =  635, -- (210476) 
+    master_shepherd            = 5589, -- (410248) 
+    overpowered_barrier        = 5707, -- (1220739) 
+    ring_of_fire               = 5491, -- (353082) Summons a Ring of Fire for 8 sec at the target location. Enemies entering the ring are disoriented and burn for 3% of their total health over 3 sec.
 } )
-
 
 -- Auras
 spec:RegisterAuras( {
@@ -192,11 +204,11 @@ spec:RegisterAuras( {
         duration = 180,
         max_stack = 3
     },
-    aethervision = {
+    --[[aethervision = {
         id = 467634,
         duration = 10,
         max_stack = 2
-    },
+    },--]]
     -- Talent: Altering Time. Returning to past location and health when duration expires.
     -- https://wowhead.com/beta/spell=342246
     alter_time = {
@@ -285,6 +297,13 @@ spec:RegisterAuras( {
         duration = function () return 2 + ( buff.lingering_embers.stacks * 1 ) end,
         max_stack = 1
     },
+    -- https://www.wowhead.com/spell=1223522
+    -- Arcane Soul Arcane Barrage deals 90% increased damage.  
+    arcane_soul_damage_buff = {
+        id = 1223522,
+        duration = 5,
+        max_stack = 10,
+    },
     -- Talent: Spell damage increased by $w1% and Mana Regeneration increase $w3%.
     -- https://wowhead.com/beta/spell=365362
     arcane_surge = {
@@ -363,11 +382,11 @@ spec:RegisterAuras( {
     },
     -- Talent: Your next Clearcasting will not be consumed.
     -- https://wowhead.com/beta/spell=384379
-    concentration = {
+    --[[concentration = {
         id = 384379,
         duration = 30,
         max_stack = 1
-    },
+    },--]]
     dematerialize = {
         id = 461498,
         duration = 6,
@@ -377,6 +396,11 @@ spec:RegisterAuras( {
         id = 444735,
         duration = 18,
         max_stack = 99
+    },
+    enlightened = {
+        id = 1217242,
+        duration = 3600,
+        max_stack = 1
     },
     expanded_potential = {
         id = 327495,
@@ -469,7 +493,7 @@ spec:RegisterAuras( {
     },
     intuition = {
         id = 455681,
-        duration = 10,
+        duration = 3,
         max_stack = 1
     },
     leydrinker = {
@@ -877,6 +901,19 @@ do
 end
 
 
+-- The War Within
+spec:RegisterGear( "tww2", 229346, 229344, 229342, 229343, 229341 )
+spec:RegisterAuras( {
+   -- 2-set
+   clarity = {
+    id = 1216178,
+    duration = 12,
+    max_stack = 1
+    },
+} )
+
+
+-- Dragonflight
 spec:RegisterGear( "tier31", 207288, 207289, 207290, 207291, 207293, 217232, 217234, 217235, 217231, 217233 )
 spec:RegisterAuras( {
     forethought = {
@@ -1229,7 +1266,10 @@ spec:RegisterAbilities( {
                 end
             end
 
-            if buff.glorious_incandescence.up then
+            if buff.burden_of_power.up then
+                removeBuff( "burden_of_power" )
+                applyBuff( "glorious_incandescence" )
+            elseif buff.glorious_incandescence.up then
                 gain( 4, "arcane_charges")
                 removeBuff( "glorious_incandescence" )
             end
@@ -1237,6 +1277,7 @@ spec:RegisterAbilities( {
             if buff.arcane_soul.up then
                 addStack( "clearcasting" )
                 gain( 4, "arcane_charges" )
+                addStack( "arcane_soul_damage_buff" )
             end
 
             if buff.intuition.up then
@@ -1244,10 +1285,10 @@ spec:RegisterAbilities( {
                 removeBuff( "intuition" )
             end
 
-            if buff.aethervision.up then
+            --[[if buff.aethervision.up then
                 gain( 2*buff.aethervision.stacks, "arcane_charges" )
                 removeBuff( "aethervision" )
-            end
+            end--]]
 
             if buff.nether_precision.up then
                 removeStack( "nether_precision" )
@@ -1273,7 +1314,7 @@ spec:RegisterAbilities( {
 
         spend = function ()
             -- More mana trickery to achieve the correct rotation
-           if buff.concentration.up then return 0 end
+           -- if buff.concentration.up then return 0 end
             local mult = 0.0275 * ( 1 + arcane_charges.current ) * ( talent.consortiums_bauble.enabled and 0.95 or 1 )
             -- if azerite.equipoise.enabled and mana.pct < 70 then return ( mana.modmax * mult ) - 190 end
             return mana.modmax * mult, "mana"
@@ -1288,7 +1329,7 @@ spec:RegisterAbilities( {
                 if buff.presence_of_mind.down then setCooldown( "presence_of_mind", 60 ) end
             end
 
-            removeBuff( "concentration" )
+            -- removeBuff( "concentration" )
             removeBuff( "leydrinker" )
 
             if talent.spellfire_spheres.enabled then
@@ -1308,7 +1349,7 @@ spec:RegisterAbilities( {
             if buff.nether_precision.up then
                 removeStack( "nether_precision" )
                 if talent.dematerialize.enabled then applyDebuff( "target", "dematerialize" ) end
-                if talent.aethervision.enabled then addStack( "aethervision" ) end
+                -- if talent.aethervision.enabled then addStack( "aethervision" ) end
             end
 
             if debuff.magis_spark_arcane_blast.up then
@@ -1848,7 +1889,7 @@ spec:RegisterAbilities( {
         cooldown = 180,
         gcd = "spell",
 
-        spend = 0.120,
+        spend = 0.08,
         spendType = 'mana',
 
         talent = "mass_barrier",
@@ -2233,4 +2274,4 @@ spec:RegisterSetting( "cancel_pom", false, {
     width = "full"
 } )
 
-spec:RegisterPack( "奥术Simc", 20241125, [[Hekili:T3v6YnUrs6NLoCeOjSvlZZ(WHiD4PxV7yhR9mriV78pbccckIrKa04qQ1gk4Z(MzDau3a8qYTpMyc3scfQkRSYJVmRSkCZGB(LBUEzyz8n)8W(dhpyWWjx2)dJF)O3DZ1LpUl(MR3fgDx4TWpKgUf(VFxEuyk5p)4MSWL4RxKvLhb)P1LL7k(MV(RVnPCD1IlJY2(1fjBR2ewMKLgLhUQe)9OV(MRxuLSP8hsVzH5XEc0N7IJU5NF7qOxtwUmM204IOBUgB6Bgm4n9hDX(5W)oCY3SF(1jB)4(5v7WEB)pU)hPnQ)Bg(oxpC43G9WL9VCc0vRs(uCr9J7)b4XWFf)33BRpGhoOp8WF5H4W72ppBxCACU4t7pG2feAf)x7D17FZWpy9HVJse)Y649Z)xH5W)byXjP3C9MKIYcCniAzaD4HF5NjlQXPHl2eV8M)g8W8KY48Kqyvlp((GBJwE5GldjlKblcZZHL39Z92pV3(5Hr4ILYdVmjny1MKBxxgKhVnmjTy)8RMcZOlNSF(tpTFo2J6pXN3PlQwTI3Lfv5qhwTJ(IrzzBwM9qQ8tR7Qz7NpQpPJWgd9Ko9tEdYajokrRdXoQOeeEbkA)8XqVCZ1vfXbzRwH9aYLUMoBbj9SQO1WtckxhhSn82eQWwEYo6Z)f85Wc8Q9ZlX1GFcAcSkveVC)8hwhNUFovTy)8)gNDMaK)2KLVHY3G3fw1sG3)XSQ9Z)3vfL83N)MxtNiHPlznAzw6RHwTo8(yc9ZB4hjZTIly0YdHjqRykAGem9VwMSfjc4jLH3r(Rz7N)RvXvKHidAdqpGs2MnWVVQe)n2KKoFiuaJKssXxM84BkbDvRsxKvayjQioncz0bBtsxcR1nmAUC1MWIsSVgP0xkTllFHYkX)tbqq)J8fG(kYrz8cG9MYM4mLWgEnL)93HvH9Z)FZ2uswDc58PFkPOizd2dpKG8IBX3g19OpMkjMKElFOyDAAmqVcZ8YWnXPLxUggLG7PdYL8Pfmnh7EAYuZuMQ1IslIH5k8VF)9zreBP0z3VeVDxgNUJ)0UK8yTfd2auInLO05jOZfZ7pqHlC5JAkr03QrVMQNVn8t7N)L7NpbNytSkl0IM9ve1zX(Be3Gr9BQPv661NquW5m26PgsKV1n3FlteaO51HOr1bODv0icSepQ)nxdY)X55v7kdswbl1jr3fGQxZeS65r5BXOEvqyzzvA8wuGaNhsDW2TXltqxE4O0WT6PADlUzTgn9z1UhZ049Hq3aZVl5I)(nRMPuQc6IOKcC1gjkHf7wj6B3KTiCdsXaZ8DTVI366MStgQKr8NIJQkJdOgU(kT13EUmWpLAGN()1wGjdWnO9gqbBvy1MYANK8wgLvHtxIbrXPh3ChVDKguughQ2kvdznSLxbkN)AvYUDXlVSy3JBblFWaf8q8cj3Jfj7wNLguuMLVT29i8WxHwWjgxAuxzJJS2IIEgrH2VwaPtKG0JejIvY((r3YOFzpB0U8YWUmUMOQDqjfaDuc1cQlJjpuxWQUf4yDFCai8VnbTMpdejgkrfe)Wfb)7QL3Is5UTE1cudtQBmwvlVPoZeujEFF6RxIY0Gxeq8QC9L7IkjpDedKvJKa3Tr2wWZXsIoBTib2sBRM(DfkLlzw512fWFpo)oWdPjlT)fd9WzOBYYwgSQk)r3wB)lgAhzORaCreMkYpF)FXppv(ziGTVOmpCtqui4SeyQFWc(kmAlG9UTqnAQ8K07IljXFeLSkjIeke4klSanDdS6hVaT5tCvtJKIgW0dquVnE8kChylBUPGEsbxL(kZW(18(61CKxKLSmOKs4bCofo5h03YSVe8bhbiRYQkGxmmTyBsj0pAq0f425X7YYlfJATppTl26nKcud3VbSI46Ot4MDLN5)YjsBavIm)bb9rbHOdpz44(Ic)MxM95mxfgfYtvdYLZtjr4bYTqq1qRdJIYJzii7KLe3sJwXc6WaKXO5AMNJz2hYkkmXQ4CcB4a1KihnrGVzJzGmqBr2NSDxC(Q4OYGWIO40LG5KhdaievBnglHwmQsZztyETTEZjAheas32cvVdQZ9AD14D2daN1iFr75IIbIs3dM0(00LbdvCV1M2b0CqtldiH5SkddBsosMwnjAJ8Pa1zc5UcgXG5JzkIDMitCAzlo)THld(1Q440ciOHuscNpJZkovzyuqIsfbxnSK4W8f5mvN4O1zph0K(GGKKkiOA(uCE8MLHqtlZWWGp)0JYiGeJk4HSDG944YgQIpW4pTPc(N(IuM1idnB2K0DbuIH9xWq8v9H30)guXSM(oSNu9flb857XCmiaGHMc3uEcr2phtNpI8bOSLKKoMrtfl8sOQm33j0fRZsIWuwvNadalwa9xcWErCoOXdWgWycn7Bas92tTlZPnvJdqud6EaffxuNLZRbmHjrLsPvxNOeg5IQuEuodDM9KNHHMKfNnahMnVhlMJhLvvP88usqAgHyw0tIe7fXeNTzd4GXuIKuK0XCLBrwNlMgMfhqnkgqYsvtsSUEOPmp1Uc0hmZGbYh4ibrBIdVVj71UOedz0P9rVxhZW7068ekK4lsscX1uAAcRXT0w2M7sNHMVynsQxWNguKaH9q0)N4gdISxADcSz855xtJWAzanGAGpAMnVP6UV91inWMEAjG9309XRzwsLGiq)mLaQ2NQ1yrUDtiMz(mW50IWLCW6nqvsUnfe8zYQ7YtYYFuPjwGdR2rkyEKEOfuBkTYoewLgc)B0DpGBybWnxUbIBh(zr2NRiBvrU0oVueA3NfSZtJrXvFBB1rsES5phSmRc4obGbMQIytzFQDokeBVuNBC8dQDjbupDFvvrv5oMGwdYPoph1qftYZZYds2Q5HupDeTg2vxIn0um5MCIPTjj6(1579SwiQAODC0zIBWyznyMaWf5ngkadBqlKtl2AmtxuiG4pLLU5X6ImGK5RWg8SS9)o(tWYeUd9WVTLqpxq31FSdsZkjVtDM0O9ncnc7tsLgGTJUN3BWr7bqFng7pORVpgvjFi8rx7ttw1gou7En(iqme5OSiaOqm5bYX3k2hg3LzsIhnGCQzFAvySnBL7lWE2AGpyDxtTlQz0TQ8o0Aiq6oTNyDaXGx3aJzfndJQZYx00ypvyu4tJ4fQbwCq8EspVDGvMM0xUozfkafSl7bQni7BFOtmdd5KDJzctfQbvY8vMeHjPsxtAdRofdWRutZkBHc5OfG)SW87cenfvJHI0Qfv5lJtXvbYSw(HBIFCjXrDop5(0m3BOQUWE2enxB9Z5w1zNDoTjLIyBaHCW1n4TaqRc2tIrZ2rXYunvd7EATh00ndfAcO1uLudkwoBKALVGuNlTmrL8nmPBcqxBd1(8XuIMeNiOBTUMZfKZMoSwTnl9XgrAFRMKSVvyox9hPBaxRncPirTAWmborZVBo67zbPoSmSnx2uZ1xdJ)0UnzfuN0kayKuhmbGPJzdGNfdho9vSJj70))e9IFnTtax3xZA7(5)tSXCqa11K3RX6aJ4xVc02YzvPw8ke0eT(edtF0YwK1ZsmCFo6SXPlc(Z0Catu3mGxGVseH7D5Ma890Rf0w2ahMfv(WQvLJns)dQr5GJRyrPGXVsvVya6nPDyhQG1fbP8CuJEYZLbupBuNlf3JQmg)U)X3RuwSzWt2M8)Hk1eqSRQstJ3GjdnpHxQQBHO(2pheqJLkJZpkyJSTA8e76Wuw1IgXQEtsMcGHQaIycX)I)xINh8hbRoWW)DX0QJ97Qn2wtYe56coCCPXd6tQeIqpMWMm1ZEq5KMRjbQoejQvm1zcM8WCoeCAnXr)fGpE5b6M2ZcOczn(UkFmtajvVoTnUM3oh(UiAwhzgVu(8CNysDkXmMopR45QtgLt0SIXJONHqjOTZ4qBLQ6ch(V9owA3Z1A)mIjOwwapx7sV1LVggGlYORae7coZJcePtwHxNydgxLyqrBIH16EU2elHSDtIzRAlCshga1IzNy0qZ4i1Mr3a2vhLKrFQhs8t2rLBiOdPj81WWrmuNs0MyaWrFXjWIF5JK54cm5g0j8MnzpuWCHeTjz3oY0w36TdO9kSMwQuANa0fyzg0qLZXXmTsBg0zEJPrHT84RaK3AGioc2OoqNowy3DY5ETNnHtnse60fqpuso0cr1Nwf096MWD0Pzb9mySLCKtWFAxgSOaJ9fAU1tZizHI6kT58z8ZSf6)jF1sC4d3uKHo5jP4AvnA5VpLufWqFSeHode5AW0pfQWYQCIaeZPRjxTYwyoKaCDy)YxWt2zWAuJD3THPH1DW76l2bXn8bD7yMdoWaAXrIg67800T9yhws9KDw7ocI3w7iREVSe2QiD)Z6QV9EwsNPXH1c2nluUPG3LukfotteTs0K5du)hjB3fIseyxdRtcqtRHTIQQ1MiybyIgLbi647ZSPGrLYo3yKw8F9X)djVvSOuPAWNInzlgDTkirfxmlkPLfJUcE0MpZrnU47I15JmnrTz52E(uAtoRtjZHR8PHJd7a3bmAT4yzdwtcAukug(FNA0hpUWlzcARsYjrzXINtZxrQQL7tlNsUM8JTNTitPvA4HKwjHkuPTnvQOAxCEA29Hg3pjiq3MGrPztIVbqg2ujKBhE7TWszbmDXgtcFhKDlbRp0mmTklcTCqJANF6qZWtMk13f)GPI(7dXZM4YDf0HVG41b7vuDdTiSOIBIPbLxDZPGd2Krkthv7cGUtEojRA5zRsIsarVhfLS7BCJJ(9DYWAlwvVtANxe9ozi)xYNtCDoh3dUZkYdBql1iBt9iZl8lE(tlGzYYcPCBBjhRotJMBl6gJmZ5EprfLoOD55CUroTeyPzC7kHkwGWEJ2uXv6bZpKSEL2CQZBavWcSSommaBEHaKbYwllGmG6QQzzhgQ0L0bmgbyqIFZecb1vSx4uOyCtY(SF3IovenJLX0AbEL9DvYwuKAOdus2bVwhiXZrAj1zZpLqeYWIxi7bXOjjTfiUIyEGHL0FySWTcaPSEm484KWdDcBE2yRQNTbJ7KrX4a71Z3MJjwNTh7oK9ViOuA2ySRjEba0lXSy9jscABCgg6dYSawtyrseT8wwfEFgnk)6DiRbvYfuerziKeYfNb8JyE2Wb6HWuM4fz0WhdTRizjtm1XgUv))D7AMTat)tljpwmMEVwC97R4B19zWFy9LTWZoci3yBa2YGHKJ7)BjPcZCSYUrJ0gmHxial(UXwPtfkxVgkjfCi)U1r)vesO6jUtNN02CQON(dP4Tqt6TBedeWPfDc8aAvMrsuh(ut30o1htc6SkScl5nYtrAKQwc0vED2kyRxxWVCC47dh)sYH1ULqF9iDSwNuYSEyIwPOzuV2Ci1A5NZ7MBD(JulCFoCtMMJXqP408bTHWN8SR9O6me27zSgS6zgGUtutIx(iTaJ35I4buSwDcJFZEUlNJeMkgFNWzxJqOos4cIZpuvHEFcrZmU8Mv)X6DsNVP108iyiF80kuLKoD22Jt8YQqpHKwkSh9K4kK2Wll9TyumkR5o9)4idWs3usoSwRKxxwpv3zTVJan7LawZ1L7pdjixIo68MARJdWvPeyjFQ9DiBxJjGzUbOK6lworN0DeYGOtY3YCdEu7Dfjg2M0EZIeTPwn2qI4G8hj7flrTiLMNmL99YG8jQpvT7cZLtIH6hXDYPCTK0vpc11fWHiDGcuoaUotiNsh563HSJiUIcY8mEO(iC(YJatZ1P6JixV3E3BVNk9pvK(To58vYxwOXZXx330iXAoWLfyP0)GBapIzAfBRGQsH(QqYoVUIawhwKhTTEW531DcXNzOR2sAt5A01Xac4pKvJi2KDjynlnUsMIYQQD7zkgA7UyVY1aGuujoEhFBEayumvuJjR3fY6k5HqWMI5Ktj6Lr)Grp55m5xh)EGzx18k(s4es1xOQGbt0R(wljpHLuyT9368MZgZg1mMhj5S58CSNuW7I1hj2s211B)r3C9dH541JzbUDtXK9xolNNu3xxF4YFncx8xRaeLWuVidRaYWQYSTHKSfhrl5Nl3)J)3jyQMh9nGECwkmAKh)AdgMFn1DSPhX5Xqt6n4t(xI3IUgOn2HI6Sqz15fqHS0o)yn0eT)MyU)4len13HshR3aBJWBF2hH39SpcV)zFegm4zFiix20ggcTR1aLrW61EG2ayr48mmagvGQp0PNfvijql6mzDanAlHw4VhTU5GZNYUr(NWrg9W4GJpZMh7IA8A65kYS0)A5dDKAp)bZ9SGBrLU1GdZUXlpl8XZOoV9r40K1FEKaEr71xeU85AeS4M(e5mp)ooTmccv)PQnm96cvTpT4m(e5fKpJcp3gjuQPQdZAHn33Y76KcrAzpPEzKVSa97e71xcR5cluh2IKfyCcBQQcXzy7w1enFgx4TaXW0UGOmaU2ZMokiiKhwLo3qgA7OPLJumWzFEIcS2nZEAoHp7MS(bIsa2vVBV0nchkFdrNxvUol)MRVU(tQZhXpPo4gZbsa4Dgd9DkUSgz(xn9RzolQVtY2)JMAfFNcVa3iZPQBx4fz7MsUOYUGf080HhB3GDc5QTz6hUiz10xzIHV)h)I)Ey0DpkCQpUloE3E6M2IjxKFRuLNvYU9uH5xy3MC03vMw61EYYUAkll42U)W8965mHET2bp9KCE2vV8XUAYtp5CeMnyIiriErJv33MUKXK6yTsCa71UWxfoJcYmxL7smVEIP9IxjgTn1g13)PN6PVVQKw5zlrAxngi9V4l4AtUiFHOXi3xG1I69RL(7cxW29PLmlX6LK1tp58cYs4XwUCSe7aPlglHhy5sEsOf2VhMeAK5RmRoWJSEfzPOu(Blx645b(ETXQ7gxQl31xmE1GbM7s(nWUZU08RkEdF1Lo3XvTMX3ouiR0IUcAUsSn(A1pgFh9xP(LGMk(nDr8V38nCr8Vs)iLqOelchmlxkxo3Gzjns3ZMXmW4OVVvPp(aOEn(ddH0UTmB0O(EMOfFFXzKYh8eCQzW2lsMEoRNpp5DGy20HsdtZxaeYiyZgTIBa0CU12kpDV699F6jT9n9QrGBlb8dkHe)0tM5L(U8JyBLxMV28f64pjt46VGg)jz(k)fU4p0t6Varh9dP3NH32kF)NGhLgUPq7lTrZP147QkR2MI19scwezfRZQWJMxejYC6xPdw5s28YWO0WCtidwqmBSiLOk1dcP4VHivwvvWSe3ZQPylZvKn0HxP2qTFxPTfyjiGHOaghlQ2UfIGaOpluXX0PHe(k2PThlYSjWiSF(56ZOIOOF9NSfhtVNEYeR8PNKfVhcI3V6(wV04nm2obRG0LQoG4hPIRg33EFklrqKWSP1yEs6FEuI18ZlodMoUVNS7(HJ7Jk4Q8xF7tul4EDzkZ2QQrqpgS7zpcYRgdMTYkk80Ma6aEKwkhnXXu0oEtjLirQbqFzpotYdvPWJs80ui48U8DE2FOp36UHp7hqu4MOoHyBbkCzwGTOgkdlU7cHZbW0bnksQ4z11JPltr5pUdIVbSqdohRyyZ5n7BjnbgDa1jwqibPXFcOHis(XULu34lt4)OYBX(AEG3xfKpMhbXKc1sGZC1i7Reg(AGqqX3QThtSBCLXHpenv9zoLr1)KGCAuM9rs7d9XZ1aj)f848nkUsshmiooJoQ2IyHelP7YnctZPn2Hkc5ehQN9pphsrJQ8bPGorRRqkKMuMiQQ3M7bHexjesSwrD4jDyqitKU19kBAMyO6DAqADay39L0VHhu7s26)o0BcKRuxALMTlMGzt4lmFIK(t53(7MeYul1c8mnvsD3m6ioyCyVE0Eu5pR)5M)QP9VeCakugPK)I)Vbjt2epaxgUOiocOP(tCGC2dxzEdBoRBldtfgMh0Lxb9ZGjxW(iupDWeZSEoxJNcncLVt)ZVorm(ZOpC6oNnz5lembiUbFKPXr8rr3nZRXLG4cp)yazgUgGv0tV1Cjtwjv)Lww1KYGP7TmQhVRg571EyHnnxChBmmN5LbVwaqcW(ThGTk0FkNWyvY7QwVVqSwXNEWLk(fgQuC0AJs1Hd)jsPJd)lxBAuFNmhY0SBXHFLI5l6IN4hY8VQEjPNnZkth7JjIH5S53xh29ggPOFxGxkFG(PYzW)tMDjCqIMQxog(Ajrx4mkjgVP9LNHJ89SKWBZasBjp4TpKZ6ny4x92VKTOBjRCCNFMlveBU0CGa2zW3qy2((kjuyqF5rrY(1mUi7q0LREZWXXNiS(NYt8Tvz(OMJCplFMkEI7eWi0xUNzh5uZfdSsaAJNR4MQHrXwTTyfh8aIJwZU)CL1dvU3RCuAsYBdVcHRbFseMKgBOlOKunhXpQ4hblX(jsxYtIYiQcnRxV2pb688SiD2ZTchf9B49kNsqgwn9Lbr9NItgERlsnqaDxiq4U3YxKuXj2kCqYwdjaOr8WHpDiZqRYHcNhFJHfs2lODqWj(C0QejbxN10Jdjlp9(M(K(Ua7Px8GDXJj3BZBPIMFEDOSperhhi86QX1zd0lImdlDQvkMaqQz97sKccmDf5zf6wVWfvP4Hn9GHZvTNHW4miCre2TkpICLEM2KffAzkslAKhyL0srgkDN29hLZ8CBsSIX(5CHWSoEVouQK1sxVZADWO0oFtwZi0YSbG4v7dzDm3JDfZO(MOn5Lok02wEyz)WMQWv96n5nYI4(x9Td8BRBRpDWelv6A1Y48LgXb(A1)Z42go6TDtBnsolR)r6YQ18uhtFUky0JfIjVVmeNT4k5zlIxtLfCxC0mOVH6IwWLMN9uc0xpQv3XtF(dC2si6wu3yRjDutEux6Kdm(bslKcFWEicu4wF(FpW2j2KAsCpEOioI4AMfR3Y0IBhSq33RNvkXKCYyUZrJoK9F5DGbsnpV3wRo5YMsYHvaSJS7xt8iSCacwg6ilEdL7OtYbCxgahUCnoLyUDFM)8dkqq0X43l(S088iNi56pmsgMFrhEEan5uR9ebQfTZvJnrpVmPfCS4EJ2m4NVu7XZnWF9LeKMiKt8ljOjjfDJETMtdtFzb7QmZSHn(c5dDtvsQxRvy9aQfG)yZH37YlRIdzFXimfWHEqjDX)CKgeNypmW8o8cpvJ5HKTEhlmrmMMsRFMN0sJjIa1romnNwh7Ye68mAC9uWSNPVyEounAdu)qZUj8QpIqIsawtHlzY8C91WZXStd6QJn1xdvR2exrAw8ZIvDMF6n(n69gHv63fKThh61)4(nR7qmQlQJYrFEeA8G6TLKZAvlgT5W)20D176ZBOWDpINf8Gkyog573bYZU1hlQFEDiHJZER4PBq4SpRMqDUQadJRUGomlKb)lQOCLyLe4WxSrkrjf3F2(TG7qSiPhmTDdvMwGRJl8WcchK06I9OZCK2DdlVD5cNH)QNw3r0IG(u(0R5yP8KIa2zkO1m1PekSftHsjEMwz3nzDMvEV65CEfDNRlXcsjjf(TT0A5JQzHDarwpu4Gxr7BEESjERX2r9kqQuRhYYl4a1Pvhd67qDgyn1eplgCAz410mLh(FZvwSNGCl(wi)5x(Cnm5CMF8wwZAh9QfCQVYKT32KqoMCxRgo5rKu7JsPr2DABGkAhUuNdaYceKdv5ZcACdHIIhxrrCzRP3DJ)27D75m)UM4Hs(Jom3rTjKz0)JrbrY1Q8n))d]] )
+spec:RegisterPack( "奥术Simc", 20241222, [[Hekili:T3v6UrUrs6NLggGUOTA56SpmKKHNE9UJBS2ZaiV78pXIIflvCelYY8qQ1cH6zFJipiZBY6sU9XGbULetMzKrghFrezM8Mr38l3C9IWQ4B(5XdhpD04XJpF00jdho6MRREAt8nxVjm6(W7GFilCn8F)(IOWmYF(P08Wf4RxMxxeb)PvvvBk)2V5BUlPAv9TNhLV(BktwxNgwLKNfveUSc)9OV5MRVTojT6hZU5wdJ943p7TqFUjo6MF(nJHEnzXIyAtJlJU5ASPVE04xpE83UD(1jR)W251BWEz7h3(r6dh96HtoB7C4FhpZAJg(6XV11dXUF0OZhE(mORwM8P4YMhp89WJH)k(VVZwFapC0q4H)YJXH3VDE(M4S4cXNoCeTli0k(V27Q396XV36dFlLi(LvXBN)VclG)dW)tYU560KYQsCbkAraD4HF5NjR4XzH3MgV4M)g8WIKQ4IKqyjTi(HG7IwC(OZdjRYb3gwuaR9BN7TD(GTZdJWvsLhEEswWY0K7wvfueVomjRC78lUeMrNpB78NFE7CSh1FIpVtVTE5sExwwxaDy9g6lgLNNUi)Xm5N20vxTD(KHKocBm0t60p5nidK4OeTke7OYkqYgOOTZNc9YnxxxghKVCj2dix6A6SfudYRJwbpjOAvCW6W7sOsIfjBOp)xWNdlWl3oVcxd(jOjWQuz8ITZFCvC225uDMTZ)BC2zcq(Rtw8AkFdExyvlbE)NYR3o)FxxwXFF(BEnDIeMTG1Of5zFj0QvHpetOFEd)azUvEgJwEmmbAftleKGP)1QK1irapPk8EYFnF78FToUMme5qBa6b0attHFFzf(BSjjD(qOagjLKHVm5X3ubkYwLUiRaWsuzCweYOdwNKTawRBz0C5Q0WYkSVMO0xkTlV4wLvI)NsGG(hf3c6RihLXla2BgBIZucB51u(3Fhwf2o))npTIS6eY5t)uszzsk2dpMG8I7W3g19OpMkjMKDhFOyDAwmqVcZ8QW04SQZxbJsWd0b5C(0cMMtDpnzQzkt1grPBJH5k8V)Wd5redT0z3VeVEtoNUJ)0MKIyTfd2auHnLO05jOZfZ7pqHlCXtAkr03QvVMQNVo8tBN)vBNpdNyZSkl0HM9fe1zX(Bc3GrZBQPv661NruW5m2MPgsKVXn3FnteaO5vHOr1rODv0icSepz4nxdY)Xff1BQcswcl1jr3hGQxxjy1ZJY3Ir9QGWQQ6S41OabopK6G1RJxKG(dXrPLBnq16wC7AnA6ZQDpMPXhcHUbMFNZf)9BxnZOuf0frjL4Qnsucl2Ds03LMFByksXaZ8TDVI356MStgQKr8NIJQRIdOgU(AT13bUmWFj1ap9)RTatgGBq7nGc2YW60QgNK8wgLxJtxIbrXPh3ChVDKguwfhQ2kvdzTSLxbkN)ADYMnXloVCZtRblFWaf8y8TsUhlt2SkplOSkVyDJ7r4HVcTGtmU0QUYghzTff9mIcTFJasVibPhjselL99JULr)YE2OD5LHn5Cnrv7Gska6OeAeuxetEOUGvtlWX6H4aq4FDcAn)kqKySevq8dxg8VRxChkL726vhqnmPUXyvD8M6mtqL4DdPVEfktdEraXRQvNVjQI80jmqwTscC3g5Rbphli6SnIeylTTA63xOuUKzLxBVf(7Xf3dEinzP9VyO7odnnpFrWY6INCBT9VyO9KHUeWfryQi)8D)f)8q5NHa2(YQIW0GOqWzjWuFVf8vy0wa7DDPA0ufjz3hxrI)ikzzsejuiWvwyjA6gy1pDgAZN4QMgjfnGPhHOEB94v6oWw2Ctb9KcUk9vMXdB49nR5iVipzrqfLWd4CkCYpAOLzFf4docqwLxxcVyyw56KkOF0GOlWTlI3Kxujg16qEozS1BifOgUFlyfX1rNWn7lpZ)LtK2aQez(dc6JccrhEY4Pdff(nVm7ZzUkmkKNQgKlNNsIWdKBHGQHwhgfveZqq2lljULgTIf0HbiJrZ1opNYSpKxwAIvX5e2WbQjrozMaFZgZazG2ISpz9M4ILXrvbHLrXzlaZjpfaqiQxBmwcTyuLMZMW8AB9Mt0oiaKUTfQEpuNh05QXBThaoRr(I2ZffdeLUhnR7PPldgQ4EBmTdO5GMwfqcZzzog2KCKmDAs0g5tbQZeYDfmIbZhxPi2zImXPLT48xhUi4xRJJZkHGgYizJ(ioR4uLHrbjkveCnWsIdlUTGP6ehTk)uqt6dcssQGGA4tXfXPlcHMwLJHbF8PhLrajgvWd5Ba7XXvTufFGXFkTg(NHIuM1idnB2K0DbuIH9xWq8v9H32)guXSM(oSNu9flb85hWCmiaGHMc3mEcr2ohtNpI8bOSfKKoMttfl8sOQm33j0fRYtIWuw1Kadalwa9xcWErCoOXdWgWycT1naPE7P2L50MQXbiQbDpGIIlBYY51aMWKOkP0QRtucJCzDgpkNXoZEYjyOjzXjf4WS59uXC8OSQkLNNkcsZieZIEsKyViM4S0uWbJPejPiPJ5k3ISoxmnmpoGAumGKLQ2KyD9ytzEQBfO3BMbdKpWrcIsJdFOn71UOedz0P7rFqpZW7Ln5juiXxKKeIRP00e2GBPRSn3NodnFXAKuVGpnOmbc7HO)pZngezV06ey74ZZVMgH1XaAa1aF0mBEt1DF3RrAGn90sa7VP1XRDwsLGiq)mLaQUNQnyrUlneZmFo4C62WfCW6TqvsUlde8zYQBksYlEsPjwGdR2rkyEKEOfuBkTYoewLgc)B09pIfSa4MlsH42HFwK95kYwvKlDZlfH29zb78WyuC13UwDKKhB)ZblYRbUtayGPUm2u2N6MJcX2l15gh)Ggxsa1tRRQkQk3Xe0zqon55ObQysrrErqYAnpK6PJOZWU6tSHMIj3KtmTIKO7xNx7zTqu1q74OZelWyvdyMaWf5ng2ag2GwiNwSvyMUOqaXFkpl9PMnzajZxHT4zz1)o(tWYewHE43wtONZOv9h7GS8kY70KjnAFJqJW(KStdW2rR5DkoApc6RXy)bD9dXOk5JHp5Qon51PCO2dA9rGyikqzraqHyYdKJVvSpmwLzsIhnGCQToTkm22s5(cuZwd8bRvn1UOMr3QYvO1qG09QMy9aXGx)aJzfndJQZlUTTXEQWOWNgX3Og4MdI3t65TdSY0M(YvjlrbOGn5psTbzV8HoXmmMt2TMjmTrnOsMVYKimjv6AsB4UtXa8k10SYwOqoAj4plS4(artrnyOiT626IfXz4Qazwl)W04NwqCuxWtUpnZ9g2vxypBIMBS(5SuD2zNx2MsrSnGqo46g8waOvb7jXOz7OyzQMQH9aDVh02nJfAcO1uN0akwoBKABFbPoxAzIk5Bys3gGUwb1(8XuIMeNiOBTUMZfKZMoSwTop7PwrAFRMKSxkmNR(t0nGR1gHuKOUBWmborZVBb675wY(WYqzUSPMRVgg)PnP5LuN0kayKuhmbGPNzdGNfdho9vSJj70))e9IFnTtax3xZA725)tSXCqan7jVVe3hye)61G2wbBxQfVebnr3FIHzpzPezdSed3NJoBC6IG)mnhWe1nd4f4ReryTltdW3tFVG2rbCywu5dR2UCSv6FudkhCCf3uky8Ru1lgGEtAh2HkyDrqkphnON8Cza1Zg15sXDV2gJF))4hu2wS5WtwN8)Hk1eqSlRZYItXKHwKW3QQRHO(2oheqJL2gNFqWgzx7XtSRdZy7w0i2U3KKPayOkHiMq8V4)L45b)rWQdm8FFmD3X(9ngBBizICDjhoU04b9jvcrOhtytMMzpOCsZ1KavhIe1sM6mbtEybhcoDpXr)fGpE(o6M2ZcOczn((kFCLasQb9QmUMlNdVkIM1rUIVv(8CNysDkXmMopR45AsgLt0SIXJONHqjOTxXH2kTRlC4)2BFPDpxR9xrmb1Xc4XQk9wx(AzaUiJ(cqSp4m3lqKozfE9InyCvIbfTngwR1CTnwcz7MeZwnw4KomaQBMDIrdnJJuBg9dyxtusg9PUlXpzhvUHGoKMWxddhXqDgrBIbah9fNal(vprMJ3Ij3GoHttZFSK5cjknzZgY0w36TdO9kSMo2P0obOlWYmOHkNJJR02AZGoZRnnkSLhFfG8wdeXrWgnb60Zn2DVCU34zt4uJeHoDb0dvKdTquZPvbDVMgUHonlPNbJ1KJCc(tBYHffySptZTEwojluuxPTNpJFMTq)p5RwIdFyAzo6KNKIRLnOL)HmYUag6Jfi0zGixbM(PqfwuxqeGyoDn5Qv2cZUeGRd7x(cEYocwJAT7UomlSPdE7qXoiULpOBhZCWbgqlor0qFVNMUTh7WsQNSZA3rq8Mghzn1YsOur6(N1vFhCssNPXH1c2nluUPG3LukfotteTs0K5Ju)hjR3eIseyxdRtcqtBGTIQQnMiybyIgLbi647ZSPGrLYo3yKw8F9H)djVvSOuPAWhInzlgDTkirfxmlkPLfJ(cE0MpZjTU47J159mnrDz52E(u6soRxjZHR8PHJd7a3bmADZXYgS2e0OSrz4)DQrF8SeVGjOTmPGeLflEonFfzQwUpSCk5AYp1E2ImLwPX7sALe2HkDvuPY6nXfz5peASEsqGUTbJsZMeVaqgkQeYTdV7oyPSeMUyJjHVdYUvG1hAgMwMhHwoOrTZpDO54jtL67IFWur)9H4ztCXMs6Wxs86G9kQUHweUTMBIPfLxtZPGdsZjBthv7cGUtrbjRAf5ltIsarVNeLShASWr)(ozyDfRQ3bv5frVtgY)L85exNZX9G7Ch5HnOJ9iB7(rMVXV45pTeMjlkLYTTLCS6mnAUTOBmYmN1EIkkTtv55ywiNocS0mUDLqflryVrP1CLEW8djRxzTN68wqfSalBcddWMxkazGuAzbKbuxvTl7WqLTGoGXiads8BMqiOUI9cNcfJfj7Z(QfDOiAMkJP1c8k7vvYwuKAOdus2bFVoqINJ0sQZMFkHiKHBEH8hfJMK0wG4kJ5bgwr)HPc3kaKT1JbNhheEOdO4ztTQE2fmUdgfJdSxNUIJjUpB33kK9ViOuAlm21eVaa6LywS(ejbTcNHH(GmlG1ewMer3ElldFiNgLFtfYArLCgfruocjHCXza)iMNnCGEmmJjErgn8Xq7ktwWetDuWTM)VBxZSfy6FAb5XIX071HRFFfFRUpd(JBUSfo5iGCJTbylJgtoU)VHKkmZXk7gnsxWeEHaS47gBLovOC9AOKuWX87wh9xriHQhyLopOYCQON(Jz4Tqt2DPIbc40IobEaDxMrsuh(ut30onhtc6SkSg3YBKNI0ivTeORIMSvWwVoJF54WRdh)sYH1UfqF9eDSwLuXSEyIwPOzuV2Ci71YpNRMBt(Ju34(C4MmnhJHsXP5DQGWh8SR7O6me27rCpynWmaDNOMeV8r6agVZfXDyZA1lm(T1CxohjmvmELWzxJqOos4TeNFOQc9(eIMzC5Iv)HMkPZlAnnpcgYhpDhQssNoR84eVSk0tiPLc1ONexHubVS03IrXOSM70)JJmalDtj5WATsEDz9utN1Dfb2RQvQJ8xSoJTerVROToiax7JaljtDOdb7gabmBnaL0CRYj6HUN4fe9q(gMpW9QWvKayBZ5nlm02nQrkjCdYFKuiwIorgnjzkf9YGWjQmvV5mZ7LedBEe3zMY1ssFDh0SPa2fPduGYbQ1ResO0EU(TlLdXviqMNXJ1hHx4KiWz5d26UWEQe)LIeV1zMVsMYcnEc(6F5Ie3TbUS9kL4hS07iAPLSIavNb9vPKfEDTaChyrE06MbNFl3jezMHUAnPnvRqNgJiW(qwnIvt2zG18Z0J0O0HLmftS9xGx50)lfmIJ3XVJYzrLZys59HSUqEieSMyoNuI(x0pp0ZoL58A)l9LD9Yl4lHZiB6cvTlyIEX3zjNjSCbRvwRJBQAmBoZy6JKtIJ9791EzE1H9PdZ5Ep22cDyeZQfExjuZCf3mLuRj9pPwW7IBtuSL0R04rJbnGhdlWBj0sSQBXKYSNxWZT9x2Cg7)se18VwdaRHjuzoUrqdRRYxhssAEeDNpD(2p(FNGzCFY3cg1YZGrJ84V0GlQVKcmX0J4CoOjdg9j)ZXltyd0g7SHDuOSM0JOqwAhJUwAI2FZm3F6YlkDSDbk1r4nN8r4TN8r4DN8ry0Ot(qqUZTnmeA3UdkJG1B)bTbWIW5ryamQa1C2BpkQqsg)0zY6gg1wcTWF3BDZrhpLDJ8pHto7UXbNEKnp2h14v0JxLzP)vYN9k1E(9M7zbyckDRbae9JxEu4JhrDE7JWHjRFAKaEr71xeU8XAeS4M(a5mNEhNwgbHnbRQnm9ThRAFAXz8bYliFnjo1gju2Az7M1cBUVLl(McrAP0CVmYxwG(DG96lH1CHfQDBrYcmoHAlRqCgQ6SMO5jCH3cedtfdszaCv6QEkiie0QsNBiC2EAAzpfdC2NhOaRDZShMt4JSjl3bICqRvVar34yi2xU82p(JeRcy392Ts3uGOc)nxd2bwLxCZ1x38Dy6d43HjSGTGkbExcrFNYZBcv5RV8ByZPM7QUTF0uR4vq(mSa3xQwg5ZY3Cj5cS7mwweUC8(2nyNqUYJU89NLS8YxzI3S9JFXFpm6(Neonq3hhVzlTy(yQN53wzf5vSBvxy(f2Vjh9DLPLbDNn1lUKvGeB3RC(EdCMX3o7GNFwUemQxkDxm75NDocxnAMiriEb0103MU85K6yTT(c2R9HVkC2vKzUk3XCEdeZrjFh601uBYq)NFEGE92jTYZwwpVykq6FXxW1MCr(cHNsUhjBe1h2i93hUGT7znzwI1lpTNF25fNMWJTCPPj2bsxyAcpWYL)LqlSF)Cj0iZxLA9Ghz9QttrP83wU0(Zd896Iv3pUuFUd4y8QrJm3L8BMFNDP5xv8MFRpDUJRGpJVDOqA6fDf0EvPB81AEm(o6VsZlbnv8B9J4FV9B7J4FL(XRHqjweoywUuU02bZsAKUNnJzGXrFFRsF8bq9Z7amesLJ7Qjtg6zIw89fNrkFiCWPMbBViz65CFE6jxpMRUCS0W0(LHHmc2SrR4ganNBTTYt3lE3WNFwRQvxmbCB9kRi3E(zZ8sFx(rSTYlZxB)YT8NKjCZxwL)KmFL)YN8h6j9xGOJ(XShYXBHNF4tWJYctl1(cS0EkE((6Q61z4wIkb3CHLRYRXJSzejvf0VElSTrB7ldJslZnHmybXSXIS1LPEqihkaisLL1LmlXdSAk2YCfzd94vAmu73xA7wCdQGHOaghlRxVgIGaOpluX(0PHe(k2PDhlYvZGry78J1Nxhrr)MpLpoMEp)Sjw5ZpllEpgeVF1dD(XeWWy7eScsxQ6aIF8sUy6q79PSebrcZMwJ5jP)XrjwZpV4m4YPd9KD3pE6qubxL)6BFIAb3Rltz2wvnc6XGDp7rqEXuWSvEzPN2eqhWJ0s5KzoMI2XBkPejsna6l7XzsEOkfUxINMcbN3LV1Z(d95w3n85GbIc3e1jeBlqHlYdSf1qvy59NjC(qUCuRIKkEwD9y6YuuXtBG4Bal0GZXAg2CEZ(ostGrhqDI7qMGS4pb0qejhz3ropbls4)OYBX(kVG3JjKpYlbXKTXNaN5Ij2xjm8vIHGIVtBpMy34kJdFiAQ6x5ugv)tfZHrz2hjTpamNQbs(l7YXBuCLKoyqCC2TuTfXcjws3LBeMM4ySdveYjoup6F2wKIgv5dvcDI2SLXqAszIOQEBUhesCLqiXA7YfpPdjezI0VUxPkIIHQ3RbPZbGDNOs)2UqTlzR)7rVjqUsDPvA2UycMnHVW8jv7pLFt4BtitJulWZ0uj1DZOJ4GXH9gq7rL)85jzbuwxJc6LdphCakSpJj)f)FdsMSjEaUmCwzCeqtdN5a5ShUY8A2Cw3wgMkmmpOlUa6NrZoJ9Xj)YrZmZ65CnEk0iu(g9pl)eX4pJ(G67C2KxCRGjaXkEsMg7XhlF3mVwxcIl88JhMz4Aawrp9wZLmz75(VYYQMugmDxYOb8UAIVx3Hf22CXk2yyoZpKeAbaja73Ea2Qq)PCcJ7zCxhgGZepmbxUZNLGZmCucqRnkhFa4proBbW)Y1MMm0jZHmn7xC4xOy(IU4j(bU)RBwsgyZSYLt9XeXWC287RlbHwgPOFxGxkFrpqLZG)Nm7s4mMXv3f2Fk(Ajrx44RjgVP9LNXt89SKWBZas7ip4DpKxny04V(nFfBr3sw54o)4isK37m2CP5abSZGVHWS99vsOWOHYJIK9RR4ISJrxU6ndhhFIW6FkVjaSkZh1EvmWYNPIN4Ebmc9L7z2ro1CXiReG245kUPgyuSvBlwXbpG4O1w9NlSEzd4XHyBAVAjxgEfcxd(Kimjn2qFqjPAoIFfcShSe73ubsEsugrvOzdg09ntappls3jbwHJI(n8ELtjidRM(YGO(tXngqNlsTqaDVrGWQ3YxKuXj2jCqsPHea0iEPbC5yMHwXllaEWngwfzTw7ccG4WrBBij43SHyCiw5P330Nm0fsp9TNxFCxYD18gQC5Nxhw)DrUXb8U(Az9Qr67GmdlDQBtmbuuxnSpHjiW0veMvOB9TXPkfpUThmCE79medNbHlh24qwYatLxrHqUejenAdSpAz7fkDlh(hLZcFxIRIr9zFvWS29GESdjBKRER1T)Is78nzhJTWdcwDpKnHAp1vOI61oB2lDWNDT2Ws6Hn9Glgmy2RLLV9V47g53v32CQXj2O01NLH3lnIJ8122pt7A4SKlfnZkg0N3nplwlTQrfEnRwDopsDHZxEYYts8FKUdMnp1XS)RILEFriZ7ldPjquY5OfWUPD1CFCvoAOHT1TGtzp7z0yOEq3UthWXpUFlzyWIzd2AspTinPpDYog(dPfsr)ypchkGXp)VEJ7fBs1U5jcmvFOLorjmyGvkXKCYuUtEJg39F5DedsnN2lHyNCzt5OXQVYj29pFPfNyDiyzYHCF6OdcirFgahUCnoLyUDpXFvnfii6y87fFwAEEKZdEZ37ldZVODpnMMCQ1DEm1cz7IPMONxMSAovS0UTd(XlZK8SB8xFGmPPY5a)azAssr3OxNzLX0hmZ(kZC14wFH8Hwkse9WC0ZsXuZ5OWLxwfhY(IrklGdDNsBK)Ppro6mVDFFZQX8qYwVJfMigZYQ1VEz7AwynNBk7Ye68mA(jOGzpsFiiDOA0fO(XMDt41CcNeLaSMeAYK5u9rE0XStd6QJ9KGgQwTjUI0S4x7TMmyny6R17ncR0VpiB3p0R)X9tX4UyuxuhLJ(Cp04b1Blzy2QwmAZH)jx8I3oK3qH7sgpl4bvWCmX3VhKNDRpwu)86rItV6nIhodHJUTAjb4QcmmU6c6WSqg8VOIYfIBech(Insjk5P)Z2pXH7Ifj9GPTBOYAYXX4c3TGWbjT(yp6ihPD)WYBxUWz4V6PNEcDpCFiFrbDSuEqra7mv6AM6ucf2IPqPept3y6TzDMT7K1Z58sAH3RW9ttsg8BRPBfrQMf2bez9qHZngTV55XM4TgBh1RazJM9yErjhOoDZ9G(ouNbwtnXjXGthdVMMP8W)BUYI9eKBX3c5p)YNRHzhZ8J3XAw3OxTGt9vMS92LeY(K7A1Wj3JKAVxknYUt7cur3WL6DaqwGGSRkFwqJBiuu80wkIlBf9U483EVBNY87AIhk5pA3Ch1LqMr)pgfejxt238)d]] )

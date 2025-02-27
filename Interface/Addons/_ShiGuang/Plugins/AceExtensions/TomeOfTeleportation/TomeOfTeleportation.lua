@@ -258,11 +258,19 @@ function TeleporterSpell:Equals(other)
 	return ""..self.spellId == ""..other.spellId and self.spellType == other.spellType
 end
 
+local ExpansionNames = { EXPANSION_NAME0, EXPANSION_NAME1, EXPANSION_NAME2, EXPANSION_NAME3, EXPANSION_NAME4, EXPANSION_NAME5, EXPANSION_NAME6, EXPANSION_NAME7, EXPANSION_NAME8, EXPANSION_NAME9, EXPANSION_NAME10 }
+
 function TeleporterSpell:MatchesSearch(searchString)
 	local searchLower = string.lower(searchString)
 
 	if self.dungeon then
 		if string.find(string.lower(self.dungeon), searchLower) then
+			return true
+		end
+	end
+
+	if self.expansion then
+		if string.find(string.lower(ExpansionNames[self.expansion]), searchLower) then
 			return true
 		end
 	end
@@ -600,7 +608,6 @@ end
 
 local function RefreshSettings()
     TeleporterSettings.settingsPanel.scrollChild:SetWidth(TeleporterSettings.settingsPanel:GetWidth() - 18)
-    TeleporterSettings.spellsPanel.scrollChild:SetWidth(TeleporterSettings.settingsPanel:GetWidth() - 18)
 
     for i,c in pairs(SettingControls) do
         c.loadValue()
@@ -635,6 +642,7 @@ local function CreateSettings(panel)
     p = AddCheckOption("简洁地下城法术",    "conciseDungeonSpells", scrollChild, p)
     p = AddCheckOption("使用旧版试衣间",        "oldCustomizer",        scrollChild, p)
     p = AddCheckOption("显示搜索框",           "showSearch",        scrollChild, p)
+    p = AddCheckOption("Search Hidden Items",       "searchHidden",         scrollChild, p)
 
 	p = AddSliderOption("按钮宽度",         "buttonWidth", 20, 400, 1,              scrollChild, p)
     p = AddSliderOption("按钮高度",        "buttonHeight", 20, 200, 1,             scrollChild, p)
@@ -662,6 +670,7 @@ local function CreateSettings(panel)
     p = AddColourOption("未装备颜色",     "unequipedColour",                      scrollChild, false, p)
     p = AddColourOption("冷却颜色",      "cooldownColour",                       scrollChild, false, p)
     p = AddColourOption("禁用颜色",      "disabledColour",                       scrollChild, false, p)
+    p = AddColourOption("Druid Form Colour",    "druidFormColour",                      scrollChild, false, p)
 
 end
 
@@ -793,6 +802,8 @@ local LoadSpells = false
 local function RefreshSpells(panel)
     if not LoadSpells then return end
 
+    TeleporterSettings.spellsPanel.scrollChild:SetWidth(TeleporterSettings.spellsPanel:GetWidth() - 18)
+
     for i,label in ipairs(ZoneLabels) do
         label:Hide()
     end
@@ -893,7 +904,7 @@ local function CreateSpell(spellType, id, zone)
 end
 
 local function CreateSpellCustomiser(panel)
-    local scrollFrame = CreateFrame("ScrollFrame", nil, panel, "UIPanelScrollFrameTemplate")
+    local scrollFrame = CreateFrame("ScrollFrame", "TeleporterSpellsScrollFrame", panel, "UIPanelScrollFrameTemplate")
     scrollFrame:SetPoint("TOPLEFT", 3, -80)
     scrollFrame:SetPoint("RIGHT", -27, 4)
 
@@ -1182,9 +1193,10 @@ local AddItemButton = nil
 local AddSpellButton = nil
 local ChosenHearth = nil
 local IsRefreshing = nil
+local StartSearch = false
 
 BINDING_NAME_TOMEOFTELEPORTATION = TOMEOFTELEPORTATIONTITLE
-_G["BINDING_NAME_TOMEOFTELEPORTATIONSHOW"] = TOMEOFTELEPORTATIONTITLE
+BINDING_NAME_TOMEOFTELEPORTATIONSEARCH = TOMEOFTELEPORTATIONTITLE
 
 local InvTypeToSlot = 
 {	
@@ -1210,6 +1222,7 @@ local InvTypeToSlot =
 local SortByDestination = 1
 local SortByType = 2
 local SortCustom = 3
+local SortByExpansion = 4
 
 local DefaultOptions = 
 {
@@ -1246,6 +1259,9 @@ local DefaultOptions =
 	["unequipedColourR"] = 1,
 	["unequipedColourG"] = 0,
 	["unequipedColourB"] = 0,
+	["druidFormColourR"] = 1,
+	["druidFormColourG"] = 0.49,
+	["druidFormColourB"] = 0.04,
 	["cooldownColourR"] = 1,
 	["cooldownColourG"] = 0.7,
 	["cooldownColourB"] = 0,
@@ -1356,10 +1372,12 @@ function Teleporter_OnEvent(self, event, ...)
 		if player == "player" then
 			if C_Spell and C_Spell.GetSpellInfo then
 				if C_Spell.GetSpellInfo(spell).name == CastSpell then
+					if TeleporterSearchBox then TeleporterSearchBox:SetText("") end
 					TeleporterClose()
 				end
 			else
 				if GetSpellInfo(spell) == CastSpell then
+					if TeleporterSearchBox then TeleporterSearchBox:SetText("") end
 					TeleporterClose()
 				end
 			end
@@ -1402,25 +1420,32 @@ local function RebuildSpellList()
 		tinsert(TeleporterSpells, spell)
 	end
 
+	if not GetOption("extraSpellsAndItems") then
+		SetOption("extraSpellsAndItems", {})
+	end
+
+	local extraSpellsAndItems = GetOption("extraSpellsAndItems")
+
 	local extraSpells = GetOption("extraSpells")
 	if extraSpells then
 		for id,dest in pairs(extraSpells) do
 			local spell = TeleporterCreateSpell(id,dest)
 			spell.isCustom = true
-			tinsert(TeleporterSpells, spell)
+			tinsert(extraSpellsAndItems, spell)
 		end
 	end
+	SetOption("extraSpells", nil)
 
 	local extraItems = GetOption("extraItems")
 	if extraItems then
 		for id,dest in pairs(extraItems) do
 			local spell = TeleporterCreateItem(id,dest)
 			spell.isCustom = true
-			tinsert(TeleporterSpells, spell)
+			tinsert(extraSpellsAndItems, spell)
 		end
 	end
+	SetOption("extraItems", nil)
 
-	local extraSpellsAndItems = GetOption("extraSpellsAndItems")
 	if extraSpellsAndItems then
 		for index = #extraSpellsAndItems,1,-1 do
 			local spell = extraSpellsAndItems[index]
@@ -1443,7 +1468,7 @@ function TeleporterRebuildSpellList()
 	RebuildSpellList()
 end
 
-function Teleporter_OnLoad() 
+function Teleporter_OnLoad()
 	SlashCmdList["TELEPORTER"] = TeleporterFunction
 	SLASH_TELEPORTER1 = "/tomeofteleport"
 	SLASH_TELEPORTER2 = "/tele"
@@ -1487,12 +1512,14 @@ local TeleporterMenu = nil
 local TeleporterOptionsMenu = nil
 
 local function SortSpells(spell1, spell2, sortType)
-	local spellId1 = spell1.spellId
-	local spellId2 = spell2.spellId
+	local spellId1 = tonumber(spell1.spellId)
+	local spellId2 = tonumber(spell2.spellId)
 	local spellName1 = spell1.spellName
 	local spellName2 = spell2.spellName
 	local spellType1 = spell1.spellType
 	local spellType2 = spell2.spellType
+	local spellExpansion1 = spell1.expansion or -1
+	local spellExpansion2 = spell2.expansion or -1
 	local zone1 = spell1:GetZone()
 	local zone2 = spell2:GetZone()
 
@@ -1518,17 +1545,25 @@ local function SortSpells(spell1, spell2, sortType)
 		if spellType1 ~= spellType2 then
 			return spellType1 < spellType2
 		end
+	elseif sortType == SortByExpansion then
+		if spellExpansion1 ~= spellExpansion2 then
+			return spellExpansion1 < spellExpansion2
+		end
 	end
 
 	if zone1 ~= zone2 then
 		return zone1 < zone2
 	end
-	
-	return spellName1 < spellName2
+
+	if spellName1 ~= spellName2 then
+		return spellName1 < spellName2
+	end
+
+	return spellId1 < spellId2
 end
 
 function TeleporterGetSearchString()
-	if GetOption("showSearch") then
+	if GetOption("showSearch") and TeleporterSearchBox then
 		local searchString = TeleporterSearchBox:GetText()
 		if searchString == "" then
 			return nil
@@ -1620,7 +1655,14 @@ function TeleporterUpdateButton(button)
 	local spell = settings.spell
 	local onCooldown = false
 	local buttonInset = GetScaledOption("buttonInset")
-	
+
+	-- Detect druid flight form - only check if player is a druid
+	local isFlyingDruid = false;
+	local _, playerClass = UnitClass("player");
+	if playerClass == "DRUID" then
+		_, isFlyingDruid, _, _ = GetShapeshiftFormInfo(3);
+	end
+
 	if item then
 		local cooldownStart, cooldownDuration
 		if isItem then
@@ -1685,7 +1727,7 @@ function TeleporterUpdateButton(button)
 			end
 			button.backdrop:SetBackdropColor(GetOption("disabledColourR"), GetOption("disabledColourG"), GetOption("disabledColourB"), alpha)
 			button:SetAttribute("macrotext", nil)
-		elseif isItem and TeleporterItemMustBeEquipped( item ) then 
+		elseif isItem and TeleporterItemMustBeEquipped( item ) then
 			button.backdrop:SetBackdropColor(GetOption("unequipedColourR"), GetOption("unequipedColourG"), GetOption("unequipedColourB"), 1)
 
 			button:SetAttribute(
@@ -1694,16 +1736,24 @@ function TeleporterUpdateButton(button)
 		elseif onCooldown then
 			if cooldownDuration >2 then
 				button.backdrop:SetBackdropColor(GetOption("cooldownColourR"), GetOption("cooldownColourG"), GetOption("cooldownColourB"), 1)
+			elseif isFlyingDruid then
+				button.backdrop:SetBackdropColor(GetOption("druidFormColourR"), GetOption("druidFormColourG"), GetOption("druidFormColourB"), 1)
 			else
 				button.backdrop:SetBackdropColor(GetOption("readyColourR"), GetOption("readyColourG"), GetOption("readyColourB"), 1)
 			end
 			button:SetAttribute(
 				"macrotext",
 				"/script print( \"" .. item .. " is currently on cooldown.\")")
+		elseif isFlyingDruid then
+			button.backdrop:SetBackdropColor(GetOption("druidFormColourR"), GetOption("druidFormColourG"), GetOption("druidFormColourB"), 1)
+
+			button:SetAttribute(
+				"macrotext",
+				"/cancelform")
 		else
 			button.backdrop:SetBackdropColor(GetOption("readyColourR"), GetOption("readyColourG"), GetOption("readyColourB"), 1)
-			
-			if toySpell then		
+
+			if toySpell then
 				button:SetAttribute(
 					"macrotext",
 					"/teleportercastspell " .. toySpell .. "\n" ..
@@ -2771,21 +2821,25 @@ function Teleporter_OnAddonLoaded()
 	end
 end
 
-function Teleporter_OnUpdate()	
-	if IsVisible then		
+function Teleporter_OnUpdate()
+	if IsVisible then
+		if StartSearch and GetTime() > OpenTime + 0.1 then
+			TeleporterSearchBox:SetFocus()
+			StartSearch = false
+		end
 		-- The first time the UI is opened toy ownership may be incorrect. Reopen once it's correct.
-		if NeedUpdate then		
+		if NeedUpdate then
 			-- If it's still wrong then will try again later.
 			if GetTime() > OpenTime + 0.5 then
 				NeedUpdate = false
-				Refresh()			
+				Refresh()
 			end
 		end
-		TeleporterUpdateAllButtons()		
-		
-		--if not TeleporterParentFrame:IsVisible() then			
+		TeleporterUpdateAllButtons()
+
+		--if not TeleporterParentFrame:IsVisible() then
 		--	TeleporterHideCreatedUI()
-		--	IsVisible = false			
+		--	IsVisible = false
 		--	TeleporterRestoreEquipment()
 		--end
 	end
@@ -2823,8 +2877,8 @@ function TeleporterFindOrAddUIElement( prefix, parentFrame )
 	tinsert(uiElements, frameName)
 
 	numElementsWithPrefix = numElementsWithPrefix + 1
-	numUIElements[ fullPrefix ] = numElementsWithPrefix	
-	
+	numUIElements[ fullPrefix ] = numElementsWithPrefix
+
 	return oldFrame, frameName
 end
 
@@ -2850,7 +2904,7 @@ function TeleporterCreateReusableFontString( prefix, parentFrame, font )
 end
 
 function TeleporterHideCreatedUI()
-	for index, itemName in pairs( uiElements ) do		
+	for index, itemName in pairs( uiElements ) do
 		local item = getglobal(itemName)
 		if item then
 			item:Hide()

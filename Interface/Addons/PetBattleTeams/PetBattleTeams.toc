@@ -1,24 +1,38 @@
-## Interface: 110002
-## Title: PetBattleTeams
-## Author: Nullberri/datagutten
-## Version: v3.6
+## Interface: 110007, 110100
+## Title: PetBattleTeams Reloaded by |cff00ff00Kallye|r
+## Title-zhCN: |cFFBF00FF[宠物]|rPetBattleTeams
+## Title-frFR: PetBattleTeams Reloaded, par |cff00ff00Kallye|r
+## Version: 11.1.001
+## Author: |cff00ff00Kallye|r (EU-Elune)
 ## Notes: Create unlimited teams of pets and quickly switch between them in the Pet Journal
+## Notes-frFR: Créez des équipes de mascottes illimitées et passez rapidement de l'une à l'autre dans le Journal des Mascottes
+## DefaultState: Enabled
+## LoadOnDemand: 0
 ## X-Category: Pet Battles
-## X-Localizations: enUS
+## X-Localizations: enUS, frFR
 ## SavedVariables: PetBattleTeamsDB, PetBattleTeamsSettings
-## X-WoWI-ID: 26141
-## X-Wago-ID: j6jzyM6R
-## X-Curse-Project-ID: 839077
-## DefaultState: disabled
 
-#@no-lib-strip@
-libs.xml
-libs\BM-utils\compat\EasyMenu.lua
-#@end-no-lib-strip@
 
+## X-Credits: Nullberri, 3.3.11 fixed by Marcio Wesley Borges (marciowb)
+## X-Category: Buffs & Debuffs
+## X-License: All Rights Reserved: You are free to fork and modify on Github, please ask about anything else.
+## X-Website: https://github.com/KaspOu/KPetBattle-Teams
+## X-Curse-Project-ID: 1031871
+
+libs\LibStub\LibStub.lua
+libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
+libs\AceGUI-3.0\AceGUI-3.0.xml
+libs\AceAddon-3.0\AceAddon-3.0.xml
+libs\AceConfig-3.0\AceConfig-3.0.xml
+libs\AceDB-3.0\AceDB-3.0.xml
+libs\AceConsole-3.0\AceConsole-3.0.xml
+libs\LibPetBreedInfo-1.0\LibPetBreedInfo-1.0.lua
 libs\EmbedHandler-1.0\EmbedHandler-1.0.xml
+libs\LibPetJournal-2.0\LibPetJournal-2.0.lua
+libs\LibDropDownMenu\LibDropDownMenu.xml
 
 PetBattleTeams.lua
+i18n\locales.xml
 
 modules\TeamManager.lua
 modules\TeamManagerUnitTests.lua
@@ -37,5 +51,4 @@ modules\GUI\PetBandageButton.lua
 modules\GUI\ScrollFrame.lua
 modules\GUI\resizer.lua
 modules\GUI\MenuButton.lua
-modules\GUI\Checkbox.lua
 modules\GUI\MainFrame.lua

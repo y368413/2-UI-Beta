@@ -1,6 +1,6 @@
-## Interface: 110005
+## Interface: 110007, 110100
 ## Title: BtWQuests: Warlords of Draenor
-## Version: 3.12
+## Version: 3.13
 ## Notes: Warlords of Draenor quest data for BtWQuests
 ## Author: Breen
 ## Dependencies: BtWQuests

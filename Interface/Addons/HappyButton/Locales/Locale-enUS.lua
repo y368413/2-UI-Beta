@@ -87,6 +87,7 @@ L["Horizontal"] = true
 L["Vertical"] = true
 L["Icon Width"] = true
 L["Icon Height"] = true
+L["Show Item Quality Color"] = true
 L["Display Rule"] = true
 L["Load"] = true
 L["Load Rule"] = true
@@ -123,6 +124,7 @@ L["ProfessionsBookFrame"] = true  -- 专业
 L["WorldMapFrame"] = true  -- 世界地图
 L["CollectionsJournal"] = true  -- 收集箱
 L["PVEFrame"] = true -- 地下城和团队副本
+L["CharacterFrame"] = true -- 角色框体
 
 
 L["Position Settings"] = true
@@ -134,6 +136,11 @@ L["AttachFrame Anchor Position"] = true
 L["Combat Load Condition"] = true
 L["Load when out of combat"] = true
 L["Load when in combat"] = true
+
+L["AttachFrame Load Condition"] = true
+L["Load when attach frame hide"] = true
+L["Load when attach frame show"] = true
+L["Not working when in combat"] = true
 
 L["Text Settings"] = true
 L["Use root element settings"] = true
@@ -199,6 +206,7 @@ L["isUsable"] = "Is Usable"
 L["isCooldown"] = "Is Cooldown"
 L["remainingTime"] = "Remaining Time"
 L["targetIsEnemy"] = "Target Is Enemy"
+L["targetCanAttack"] = "target Can Attack"
 L["exist"] = true
 
 -- 触发器效果
@@ -242,6 +250,7 @@ L["Bindkey"] = true
 L["Bind For Account"] = true
 L["Bind For Current Character"] = true
 L["Bind For Current Class"] = true
+L["The newly created button do not immediately respond to key bindings and require executing the /reload command."] = true
 
 -- 宏错误提示
 L["Macro Error"] = true

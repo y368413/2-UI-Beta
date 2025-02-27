@@ -1,0 +1,21 @@
+## Interface: 110007
+## Author: Parnic
+## Name: Breakables
+## Title: Breakables |cff7fff7f-Ace3-|r
+## Notes: Tracks herbs/ore/items that can be broken into component pieces
+## Version: v1.10.6
+## SavedVariables: BreakablesDB
+## IconTexture: Interface\Icons\ability_warrior_sunder
+## OptionalDeps: Ace3, LibBabble-Inventory-3.0, Masque
+## X-Curse-Project-ID: 16629
+## X-WoWI-ID: 17929
+## X-Wago-ID: rkGrlA6y
+
+#@no-lib-strip@
+embeds.xml
+#@end-no-lib-strip@
+# LDB is hard-embedded so don't skip it if packaging no-lib
+LibDataBroker-1.1.lua
+loc\loc.xml
+
+Breakables.lua

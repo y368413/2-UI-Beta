@@ -105,20 +105,31 @@ function MISC:HandleUITitle()
 		if not text then text = self:GetText() end
 		if not text or text == "" then return end
 
-		if strfind(text, "_ShiGuang") or strfind(text, "AngryKeystones") or strfind(text, "Baganator") or strfind(text, "CanIMogIt") or strfind(text, "CollectionShop") or strfind(text, "HandyNotes") or strfind(text, "HPetBattleAny") or strfind(text, "LiteBuff") or strfind(text, "Skada") or strfind(text, "Syndicator") or strfind(text, "GarrisonMaster") or strfind(text, "GladiatorlosSACN") then
+		if strfind(text, "_ShiGuang") or strfind(text, "AngryKeystones") or strfind(text, "Baganator") or strfind(text, "CanIMogIt") or strfind(text, "CollectionShop") or strfind(text, "HandyNotes") or strfind(text, "HPetBattleAny") or strfind(text, "LiteBuff") or strfind(text, "HappyButton") or strfind(text, "Skada") or strfind(text, "Syndicator") or strfind(text, "GarrisonMaster") or strfind(text, "GladiatorlosSACN") then
 			local newText, count = gsub(text, "|T([^:]-):[%d+:]+|t", "|T"..I.chatLogo..":16:16|t")
 			if count > 0 then self:SetFormattedText("%s", newText) end
 		end
 	end
 
-	hooksecurefunc("AddonList_InitButton", function(entry)
-		if not entry.logoHooked then
-			replaceIconString(entry.Title)
-			hooksecurefunc(entry.Title, "SetText", replaceIconString)
-
-			entry.logoHooked = true
-		end
-	end)
+	if I.isNewPatch then
+		hooksecurefunc("AddonList_InitAddon", function(entry)
+			if not entry.logoHooked then
+				replaceIconString(entry.Title)
+				hooksecurefunc(entry.Title, "SetText", replaceIconString)
+	
+				entry.logoHooked = true
+			end
+		end)
+	else
+		hooksecurefunc("AddonList_InitButton", function(entry)
+			if not entry.logoHooked then
+				replaceIconString(entry.Title)
+				hooksecurefunc(entry.Title, "SetText", replaceIconString)
+	
+				entry.logoHooked = true
+			end
+		end)
+	end
 end
 
 --[[ Fix guild news jam

@@ -1,31 +1,5 @@
 local eventFrame = CreateFrame("Frame")
 
-local b = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-local function encode(data)
-    return ((data:gsub('.', function(x)
-        local r, b = '', x:byte()
-        for i = 8, 1, -1 do
-            r = r .. (b % 2 ^ i - b % 2 ^ (i - 1) > 0 and '1' or '0')
-        end
-        return r;
-    end) .. '0000'):gsub('%d%d%d?%d?%d?%d?', function(x)
-        if (#x < 6) then return '' end
-        local c = 0
-        for i = 1, 6 do c = c + (x:sub(i, i) == '1' and 2 ^ (6 - i) or 0) end
-        return b:sub(c + 1, c + 1)
-    end) .. ({'', '==', '='})[#data % 3 + 1])
-end
-
-local function saveDetails()
-    if _detalhes_database then
-        WclBoxCharacter.Details = _detalhes_database
-        WclBoxCharacter.DetailsTime = GetServerTime()
-        WclBoxCharacter.DetailsAuthor = encode(UnitGUID("player"))
-        WclBoxCharacter.DetailsAuthorName = encode(UnitName("player"))
-        WclBoxCharacter.DetailsRealmName = encode(GetRealmName())
-    end
-end
-
 eventFrame:RegisterEvent("PLAYER_LOGIN")
 eventFrame:RegisterEvent("PLAYER_LOGOUT")
 eventFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
@@ -73,7 +47,5 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
 
         -- Unregister the PLAYER_LOGIN event after handling it
         eventFrame:UnregisterEvent("PLAYER_LOGIN")
-    elseif event == "PLAYER_LOGOUT" or event == "ZONE_CHANGED_NEW_AREA" or event == "PLAYER_ENTERING_WORLD" then
-        saveDetails()
     end
 end)

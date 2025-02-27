@@ -293,72 +293,72 @@ function addon:GetItemSourceInfo(itemSource)
     local npcName
     if itemSource.type == 'korthiaassault' then
 		if itemSource.npc_id == 0 then
-			npcName = "盟约突袭"
+			npcName = "Covenant Assaults"
 		elseif itemSource.npc_id == -1 then
-			npcName = "格里恩突袭"
+			npcName = "Kyrian Assault"
 		elseif itemSource.npc_id == -2 then
-			npcName = "温西尔突袭"
+			npcName = "Venthyr Assault"
 		elseif itemSource.npc_id == -3 then
-			npcName = "法夜突袭"
+			npcName = "Night Fae Assault"
 		elseif itemSource.npc_id == -4 then
-			npcName = "通灵领主突袭"
+			npcName = "Necrolords Assault"
 		else 
 			npcName = self:GetNpcName(itemSource.npc_id)
 		end
 	elseif itemSource.type == 'profession' then
 		if itemSource.npc_id == 0 then
-			npcName = "考古学"
+			npcName = "Archaeology"
 		else 
-			npcName = "未知"
+			npcName = "Unknown"
 		end
 	elseif itemSource.type == 'zone' then
-        npcName = "随机"
+        npcName = "Random"
 	elseif itemSource.type == 'slprotoformsynthesis' then
-        npcName = "原生体合成"
+        npcName = "Protoform Synthesis"
 	elseif itemSource.type == 'expeditions' then
-        npcName = "奖励"
+        npcName = "Reward"
 	elseif itemSource.type == 'slcovenant' then
         if itemSource.npc_id == -1 then
-			npcName = "盟约冒险"
+			npcName = "Covenant Adventures"
         elseif itemSource.npc_id == -2 then
-			npcName = "盟约宝箱"
+			npcName = "Covenant Cache"
         elseif itemSource.npc_id == -3 then
-			npcName = "战役任务"
+			npcName = "Campaign Quest"
         elseif itemSource.npc_id == -4 then
 			if covenant == 1 then
-				npcName = "晋升之路"
+				npcName = "Path of Ascension"
 			elseif covenant == 2 then
-				npcName = "堕罪堡"
+				npcName = "Ember Court"
 			elseif covenant == 3 then
-				npcName = "女王的温室"
+				npcName = "Queen's Conservatory"
 			elseif covenant == 4 then
-				npcName = "憎恶工厂"
+				npcName = "Abomination Factory"
 			else 
-				npcName = "选择盟约前不可用"
+				npcName = "Unavailable until a covenant is picked"
 			end
         elseif itemSource.npc_id == -5 then
-			npcName = "名望商人"
+			npcName = "Renown Vendor"
         elseif itemSource.npc_id == -6 then
-			npcName = "镜子旅行网络"
+			npcName = "Blood Mirror Network"
 		else
-			npcName = "未知"
+			npcName = "Unknown"
 		end
 	elseif itemSource.subtype == 'timewalking' then
-        npcName = "时空漫游首领"
+        npcName = "Timewalking Bosses"
     elseif itemSource.encounter_id then
 		local name, description, bossID, rootSectionID, link, journalInstanceID, dungeonEncounterID, instanceID = EJ_GetEncounterInfo(itemSource.encounter_id)
 		npcName = name
 	elseif itemSource.type == 'quest' then
-        npcName = "任务"
+        npcName = "Quest"
 	elseif itemSource.customnpcName then
 		npcName = itemSource.customnpcName
 	elseif itemSource.type == 'special' and itemSource.subtype ~= 'summoned' and itemSource.subtype ~= 'warfront' and itemSource.subtype ~= 'bfaassault' and itemSource.subtype ~= 'horrificvision' then
         npcName = L['special_' .. itemSource.subtype]
 	elseif itemSource.type == 'event' then
         if itemSource.npc_id == -1 then
-			npcName = "散布圣光"
+			npcName = "Spreading the Light"
         elseif itemSource.npc_id == -2 then
-			npcName = "主机觉醒"
+			npcName = "Awakening the Machine"
 		end
 	else
         npcName = self:GetNpcName(itemSource.npc_id)
@@ -1282,7 +1282,7 @@ function addon:UpdateTooltip(tooltip)
 
                             if itemData.comment then
                                 if itemData.killed == 1 then
-									tooltip:SetCell(lineNo, 3, string.format("%-40s", displayname .. " 击杀"))
+									tooltip:SetCell(lineNo, 3, string.format("%-40s", displayname .. " KILLED"))
 									tooltip:SetCellTextColor(lineNo, 3, unpack(COLOR_KILLED))
 								else
 									tooltip:SetCell(lineNo, 3, string.format("%-40s", displayname))
@@ -1292,7 +1292,7 @@ function addon:UpdateTooltip(tooltip)
 								tooltip:SetCellTextColor(lineNo, 4, unpack(COLOR_COMMENT))
                             else
 								if itemData.killed == 1 then
-									tooltip:SetCell(lineNo, 3, string.format("%-40s", displayname .. " 击杀"), nil, nil, 2)
+									tooltip:SetCell(lineNo, 3, string.format("%-40s", displayname .. " KILLED"), nil, nil, 2)
 									tooltip:SetCellTextColor(lineNo, 3, unpack(COLOR_KILLED))
 								else
 									tooltip:SetCell(lineNo, 3, string.format("%-40s", displayname), nil, nil, 2)

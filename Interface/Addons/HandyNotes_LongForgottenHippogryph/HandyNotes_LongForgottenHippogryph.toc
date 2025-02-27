@@ -1,4 +1,4 @@
-## Interface: 110002, 110000
+## Interface: 110007
 ## Title: HandyNotes: Long-Forgotten Hippogryph
 ## Notes: Find those Ephemeral Crystals!
 ## Author: Kemayo

@@ -67,6 +67,7 @@ function MISC:OnLogin()
 	MISC:UpdateMaxZoomLevel()
 	MISC:MoveBlizzFrames()
 	MISC:HandleUITitle()
+	MISC:MDEnhance()
 
 	--MISC:CreateRM()
 	--MISC:FreeMountCD()

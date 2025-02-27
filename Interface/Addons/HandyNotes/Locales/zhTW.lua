@@ -3404,6 +3404,9 @@ L['options_icons_khaz_algar_lore_hunter_desc'] = '顯示成就 {achievement:4076
 L['options_icons_flight_master'] = '{achievement:40430}'
 L['options_icons_flight_master_desc'] = nil
 
+L['options_icons_worldsoul_memories'] = nil
+L['options_icons_worldsoul_memories_desc'] = nil
+
 -------------------------------------------------------------------------------
 -------------------------------- ISLE OF DORN ---------------------------------
 -------------------------------------------------------------------------------
@@ -3667,8 +3670,18 @@ L['skittershaw_spin_note'] = '在這區搭乘 {npc:224973} 一整圈.\n\n{npc:22
 
 L['options_icons_no_harm_from_reading'] = '{achievement:40632}'
 L['options_icons_no_harm_from_reading_desc'] = '顯示成就 {achievement:40632} 所需的 {npc:227421} 位置.'
-L['no_harm_from_reading_note'] = nil
-L['another_you_4_note'] = nil
+L['no_harm_from_reading_note'] = [[
+進入洞窟 ({dot:Yellow}), 往 ({dot:Red}) 移動並爬上有三隻蜘蛛所在的牆上後跳下最上方蜘蛛後方的洞口.
+
+當你掉下來後, 和附近的 {object:血腥魔典} 互動來召喚4個 {npc:227421}.
+
+{npc:227421} 會消失並重新出現在地圖上.
+
+追蹤每個 {npc:227421} 並和他們互動來讓它們回到 {object:血腥魔典}.
+
+當你找到所有4個 {npc:227421} 後, 回到 {object:血腥魔典} 並和 {npc:227421} 交談.
+]]
+L['another_you_4_note'] = '在標記的路徑上巡邏.'
 
 L['concealed_contraband_note'] = nil
 L['memory_cache_note'] = '從附近的 ({dot:Red}) {object:吸取器儲藏室} 獲得 {spell:420847}. 殺掉 {npc:223908} 後取得 {item:223870} 來開啟 {object:記憶寶箱}.'
@@ -3689,9 +3702,9 @@ L['you_cant_hang_with_us_note'] = nil
 L['kej_pet_vendor_note'] = nil
 
 L['options_icons_back_to_the_wall'] = '{achievement:40620}'
-L['options_icons_back_to_the_wall_desc'] = nil
-L['arathi_prisoner_suffix'] = nil
-L['arathi_prisoner_note'] = nil
+L['options_icons_back_to_the_wall_desc'] = '顯示成就 {achievement:40620} 所需的 {npc:222119} 的位置.'
+L['arathi_prisoner_suffix'] = '阿拉希俘虜已拯救'
+L['arathi_prisoner_note'] = '在 {wq:特殊任務: A Pound of Cure} 中釋放被網包住的 {npc:222119}.'
 
 -------------------------------------------------------------------------------
 ----------------------------------- DELVES ------------------------------------
@@ -3717,18 +3730,267 @@ L['tsw_chest_4_location'] = '在橫樑上. 從有其他箱子的柱子往下.'
 L['tuk_chest_1_note'] = '在雕像後方.'
 L['tuk_chest_2_note'] = '{note:只能在 "逃跑者進化" 和 "折磨受害者" 故事劇情取得.}'
 L['tuk_chest_3_note'] = '{note:只能在 "逃跑者進化" 和 "織絲者救援" 故事劇情取得.}'
+L['sss_chest_2_location'] = nil
+
+-------------------------------------------------------------------------------
+--------------------------------- SIREN ISLE ----------------------------------
+-------------------------------------------------------------------------------
+
+L['the_drowned_lair_note'] = '在 {object:海妖島指揮圖} 捐獻 {currency:3090} 給 {location:沉溺巢穴} 來開啟這個洞窟並刷新稀有.'
+L['the_drain_note'] = '在 {object:海妖島指揮圖} 捐獻 {currency:3090} 給 {location:排水之地} 來開啟這個洞窟並刷新稀有.'
+L['shuddering_hollow_note'] = '在 {object:海妖島指揮圖} 捐獻 {currency:3090} 給 {location:震顫窪地} 來開啟這個洞窟並刷新稀有.'
+
+L['vrykul_sublabel'] = '{note:只有在 {npc:血喚維酷人} 在島上時會出現.}'
+L['naga_sublabel'] = '{note:只有在 {npc:納迦} 在島上時會出現.}'
+L['pirate_sublabel'] = '{note:只有在 {npc:海盜} 在島上時會出現.}'
+
+L['storm_required'] = '需要 %s 在 {location:海妖島} 上作用時.'
+L['slaughtershell_location'] = '在整個 {location:海妖島} 上閒逛.'
+
+L['within_the_forgotten_vault'] = '使用在 {location:聖谷} 內的 {object:歌唱石板} 來進入保險庫.\n\n保險庫內有寶藏,一個玩具, 一隻坐騎和 {npc:231368}.'
+
+L['options_icons_runed_storm_chest'] = '{achievement:41131}'
+L['options_icons_runed_storm_chest_desc'] = '顯示成就 {achievement:41131} 所需的 {object:符文風暴儲藏箱} 位置.'
+
+L['runed_storm_chest_label'] = '符文風暴儲藏箱'
+L['runed_storm_chest_suffix'] = '箱子已開啟'
+L['runed_storm_chest_note'] = '跟著風來找到隱藏的 {object:符文風暴儲藏箱} 並使用 {spell:472051} 來揭示他.'
+
+L['flame_blessed_iron_item'] = '繳回這個物品來取得獎勵的 {currency:3090}.'
+
+L['barnacle_encrusted_chest'] = '嵌滿藤壺的箱子'
+L['pilfered_earthen_chest'] = nil
+
+L['soweezi_note'] = '使用 {currency:3090} 交換1個坐騎, 玩具, 戰寵和塑形.'
+
+L['thrayir_note_start'] = '從 {location:海妖島} 收集5個符文鑰匙並在 {location:遺忘保險庫} 內完成儀式來取得 {item:232639}.'
+
+L['whirling_runekey_note'] = '在風暴時從 {location:遺忘保險庫} 內的 {npc:231368} 掉落.'
+L['torrential_runekey_note'] = '需要在 {location:海妖島} 在 {spell:458069} 時由 {note:任何} 怪物 (普通, 菁英或稀有) 掉落的7個 {item:234328}.'
+L['thunderous_runekey_note'] = '需要在 {location:海妖島} 由 {note:任何} 箱子找到的5個 {item:232605}. {note:不需要 {spell:458069}}.'
+L['cyclonic_runekey_note'] = '在風暴時由 {location:海妖島} 上的 {location:亡鰭爛泥} 的 {npc:231357} 掉落. 或是從附近釣魚得到.'
+L['turbulent_runekey_note'] = '需要3個在風暴時散佈在 {location:海妖島} 上的 {item:234327}.'
+
+L['turbulent_fragment_a'] = '藏在 {location:鹽與船歌小屋} 旅館後方的 {npc:235134} 內, 靠近正在挖掘的 {npc:庫爾提拉斯人} 鬼魂.'
+L['turbulent_fragment_b'] = '在 {location:腐臭坑洞} 的山洞內蹲著的 {npc:庫爾提拉斯人} 鬼魂前拾取 {npc:234934}.'
+L['turbulent_fragment_c'] = '拾取在 {location:靈痕洞穴} 內的 {npc:庫爾提拉斯人} 鬼魂握著的 {npc:234934}.'
+
+L['prismatic_snapdragon_note_start'] = '在10天的過程中, 幫助拯救在 {location:漂流物淺灘} 的 {npc:235216} 來取得  {item:233489}.\n\n{note:你可以錯過天數但是沒有追趕機制}.'
+L['prismatic_day'] = '第 %d 天'
+
+L['pris_quest_1'] = '生命線' -- https://www.wowhead.com/quest=86482/a-lifeline
+L['pris_quest_2'] = nil -- https://www.wowhead.com/ptr/quest=86483/snap-to-it
+L['pris_quest_3'] = '暴風壞脾氣' -- https://www.wowhead.com/ptr/quest=86484/temper-like-a-tempest
+L['pris_quest_4'] = '忠誠的朋友' -- https://www.wowhead.com/ptr/quest=86485/a-loyal-friend
+
+L['unsolved_amethyst_runelock'] = '未解的紫晶符文鎖'
+L['bilge_rat_supply_chest'] = '污鼠會補給箱'
+L['bilge_rat_supply_chest_note'] = '從附近的 {npc:228582} 收集 {item:228621} 來打開箱子.'
+
+L['stone_carvers_scamseax_note'] = '收集一個 {object:璀璨黃水晶} ({dot:Yellow}) 來獲得2分鐘的增益 {spell:1216785} 以允許你拾取 {item:233834}.'
+
+L['marmaduke_note'] = '1.從 {location:鹽與船歌小屋} 旅館二樓收集 {item:233027} 並帶給 {npc:234365}.\n\n{note:{npc:234365}會在懸崖和 {location:漂流物淺灘} 之間巡邏.}\n\n2.在給他玩具後, 回到 {location:漂流物淺灘} 並完成 {quest:86261} 後取得 {item:233056}.'
 
 -------------------------------------------------------------------------------
 ----------------------------- SECRETS OF AZEROTH ------------------------------
 -------------------------------------------------------------------------------
 
-L['options_icons_secrets_of_azeroth'] = '艾泽拉斯之秘'
-L['options_icons_secrets_of_azeroth_desc'] = '显示 {location:艾泽拉斯之秘} 线索的位置。'
+L['options_icons_secrets_of_azeroth'] = '艾澤拉斯祕聞'
+L['options_icons_secrets_of_azeroth_desc'] = '顯示 {location:艾澤拉斯祕聞} 的位置.'
 
-L['alyx_kickoff_note'] = '与 {npc:226683} 交谈以启用新的艾泽拉斯之秘谜题。'
+L['alyx_kickoff_note'] = '和 {npc:226683} 說話來啟動新的艾澤拉斯祕聞謎題.'
 
-L['celebration_crates_label'] = '庆典箱子'
-L['celebration_crates_note'] = '找到并交还隐藏在 {location:艾泽拉斯} 中的所有 {object:庆典箱子}。'
+-- L['celebration_crates_label'] = '節慶木箱'
+L['celebration_crates_note'] = '在 {location:艾澤拉斯} 找到並返還所有的 {object:節慶木箱}.'
+
+L['1_soggy_celebration_crate_note'] = nil
+L['2_hazy_celebration_crate_note'] = nil
+L['3_dirt_caked_celebration_crate_note'] = nil
+L['4_sandy_celebration_crate'] = nil
+L['5_battered_celebration_crate'] = nil
+L['6_waterlogged_celebration_crate'] = nil
+L['7_charred_celebration_crate'] = nil
+L['8_mildewed_celebration_crate'] = nil
+L['9_crystalized_celebration_crate'] = nil
+L['10_surprisingly_pristine_celebration_crate'] = nil
+L['11_ghostly_celebration_crate'] = nil
+
+L['water_resistant_receipt_note'] = nil
+L['mysterious_bones_note'] = nil
+
+L['crates_found'] = nil
+
+-------------------------------------------------------------------------------
+------------------------------- RATT'S REVENGE --------------------------------
+-------------------------------------------------------------------------------
+
+L['options_icons_ratts_revenge'] = nil
+L['options_icons_ratts_revenge_desc'] = nil
+
+-- INERT PECULIAR KEY
+L['inert_peculiar_key_note'] = nil
+
+-- PECULIAR GEM
+L['carefully_penned_note'] = nil
+L['unfinished_note'] = nil
+L['hastily_scrawled_note'] = nil
+L['water_resistant_note'] = nil
+L['peculiar_gem_note'] = nil
+
+-- KARAZHAN CATACOMBS
+L['karazhan_catacombs_label'] = nil
+L['karazhan_catacombs_entrance_note'] = nil
+
+-- ORB 1
+L['orb_1_label'] = nil
+L['orb_1_note'] = nil
+L['orb_1_locations'] = nil
+L['humble_monument'] = nil
+L['olgra_location'] = nil
+
+-- ORB 2
+L['orb_2_label'] = nil
+L['orb_2_note'] = nil
+
+-- ORB 3
+L['orb_3_label'] = nil
+
+L['astral_soup_label'] = nil
+L['astral_chest_label'] = nil
+L['astral_rewards_note'] = nil
+
+L['decryption_machine_label'] = nil
+L['decryption_console_label'] = nil
+L['rubensteins_console'] = nil
+
+L['code_machine_note_1'] = nil
+L['code_machine_note_2'] = nil
+L['code_machine_note_3'] = nil
+L['code_machine_note_4'] = nil
+L['code_machine_note_5'] = nil
+L['code_machine_note_6'] = nil
+L['code_machine_note_7'] = nil
+L['code_machine_note_8'] = nil
+
+L['slot_machine_label'] = nil
+L['slot_machine_note_a'] = nil
+L['slot_machine_note_b'] = nil
+L['slot_machine_note_c'] = nil
+L['slot_machine_note_d'] = nil
+L['slot_machine_note_e'] = nil
+L['slot_machine_vendor_note'] = nil
+
+-- ORB 4
+L['orb_4_label'] = nil
+L['vashti_note'] = nil
+L['uthers_tomb_label'] = nil
+L['uthers_tomb_note'] = nil
+
+-- ORB 5
+L['orb_5_label'] = nil
+L['jeremy_feasel_note'] = nil
+L['zarhym_note'] = nil
+L['pointless_treasure_salesman_location'] = nil
+L['pointless_treasure_salesman_note'] = nil
+
+-- ORB 6
+L['orb_6_label'] = nil
+L['blood_altar_label'] = nil
+L['corrupt_altar_label'] = nil
+L['lust_altar_label'] = nil
+L['sin_altar_label'] = nil
+L['void_altar_label'] = nil
+
+L['altar_note'] = nil
+L['blood_altar_note'] = nil
+L['corrupt_altar_note'] = nil
+L['lust_altar_note'] = nil
+L['sin_altar_note'] = nil
+L['void_altar_note'] = nil
+
+L['chest_of_acquisitions_label'] = nil
+L['chest_of_acquisitions_note'] = nil
+
+-- Orb 7
+L['orb_7_label'] = nil
+L['orb_7_summary'] = nil
+
+L['marin_bladewing_note'] = nil
+L['owl_of_the_watchers_label'] = nil
+L['owl_of_the_watchers_note'] = nil
+
+L['sentry_statue_note'] = nil
+L['sentry_note'] = nil
+
+-- Orb 8
+L['orb_8_label'] = nil
+
+L['enigma_machine_label'] = nil
+L['enigma_machine_note'] = nil
+
+L['lock_statue_note'] = nil
+L['lock_platform_note'] = nil
+
+L['platform_1_label'] = nil
+L['platform_2_label'] = nil
+L['platform_3_label'] = nil
+L['platform_4_label'] = nil
+L['platform_5_label'] = nil
+L['platform_6_label'] = nil
+L['platform_7_label'] = nil
+
+L['rats_label'] = nil
+L['lock_label'] = nil
+L['code_label'] = nil
+
+-- Orb 9
+L['orb_9_label'] = nil
+
+L['ak_decryption_console_note'] = nil
+-------------------------------------------------------------------------------
+---------------------------------- UNDERMINE ----------------------------------
+-------------------------------------------------------------------------------
+
+L['requires_ally'] = nil
+L['complete_event'] = nil
+L['in_sewer'] = nil
+L['and_slimesby'] = nil
+
+L['inert_plunger_label'] = nil
+L['exploded_plunger_label'] = nil
+
+L['unexploded_fireworks_location'] = nil
+L['suspicious_book_note'] = nil
+L['fireworks_hat_note'] = nil
+L['blackened_dice_note'] = nil
+L['lonely_tub_note'] = nil
+L['impotent_potable_location'] = nil
+L['abandoned_toolbox_location'] = nil
+L['trick_deck_of_cards_location'] = nil
+
+L['ditty_fuzeboy_note'] = nil
+L['angelo_rustbin_note'] = nil
+
+L['options_icons_nine_tenths'] = '{achievement:40948}'
+L['options_icons_nine_tenths_desc'] = nil
+L['muffs_auto_locker_label'] = nil
+L['muffs_auto_locker_note'] = nil
+L['muffs_auto_locker_suffix'] = nil
+
+L['options_icons_between_the_lines'] = '{achievement:41588}'
+L['options_icons_between_the_lines_desc'] = nil
+L['a_threatening_letter_location'] = nil
+L['gallywixs_notes_location'] = nil
+
+L['options_icons_can_do_attitude'] = '{achievement:41589}'
+L['options_icons_can_do_attitude_desc'] = nil
+L['discarded_can_label'] = '{npc:237103}'
+L['discarded_can_note'] = nil
+L['discarded_can_suffix'] = nil
+
+L['options_icons_scrap_rewards'] = nil
+L['options_icons_scrap_rewards_desc'] = nil
+L['scrap_heap_suffix'] = nil
 
 
 L['1_soggy_celebration_crate_note'] = '从 {location:深潜酒吧} 的 {npc:143029}（{dot:Blue}）购买 {item:225996} 并将其交给 {npc:189119} 以揭示 {item:226200}。'
@@ -4322,6 +4584,8 @@ L["Return to Zuldazar"] = "返回祖達薩"
 L["Speak with Zephyr"] = "與賽佛對話"
 L["Submarine to Mechagon"] = "到機械岡的潛艇"
 L["Teleport to Seat of the Aspects"] = "傳送至守護巨龍之座"
+L["Teleporter to Dornogal"] = "多恩諾加傳送器"
+L["Teleporter to Undermine"] = "幽坑城傳送器"
 L["The Masonary"] = "石匠區"
 L["To Keeper's Respite"] = "到守衛者歇息地"
 L["To Ring of Fates"] = "到命運之環"

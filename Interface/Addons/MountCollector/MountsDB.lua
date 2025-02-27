@@ -4112,7 +4112,7 @@ MDL_DB_MOUNTS = {
         spell_id = 332252,
         from = {
             {
-                itemname = 'Shimmermist Runner', type = 'treasure', customnpcName = '纱雾迷结',
+                itemname = 'Shimmermist Runner', type = 'treasure', customnpcName = 'Mistveil Tangle Area',
                 continent = 'shadowlands', for_sort = 14, zone_id = 1565, expansion = 'sl',
                 coordzone = 1565, coordx = 26.56, coordy = 59.22, level = 60, 
             },
@@ -4162,7 +4162,7 @@ MDL_DB_MOUNTS = {
         spell_id = 334352,
         from = {
             {
-                itemname = "Wildseed Cradle", type = 'treasure', customnpcName = '月亮宝箱',
+                itemname = "Wildseed Cradle", type = 'treasure', customnpcName = 'Cache of the Moon',
                 continent = "shadowlands", for_sort = 14, zone_id = 1565, expansion = "sl",
                 coordzone = 1565, coordx = 63.9, coordy = 37.7, level = 60, 
             },
@@ -4172,7 +4172,7 @@ MDL_DB_MOUNTS = {
         spell_id = 342335,
         from = {
             {
-                itemname = 'Ascended Skymane', type = 'treasure', customnpcName = '晋升宝箱', cond = 'ascendedskymane',
+                itemname = 'Ascended Skymane', type = 'treasure', customnpcName = 'Cache of the Ascended', cond = 'ascendedskymane',
                 continent = 'shadowlands', for_sort = 14, zone_id = 1533, expansion = 'sl',
                 coordzone = 1533, coordx = 53.5, coordy = 88.2, level = 60, 
             },
@@ -4182,7 +4182,7 @@ MDL_DB_MOUNTS = {
         spell_id = 334386,
         from = {
             {
-                itemname = "Phalynx of Humility", type = 'treasure', customnpcName = '纯洁试炼宝箱', covenant = 1,
+                itemname = "Phalynx of Humility", type = 'treasure', customnpcName = 'Temple of Purity Treasure Chest', covenant = 1,
                 continent = "shadowlands", for_sort = 14, zone_id = 1533, expansion = "sl",
                 coordzone = 1533, coordx = 54, coordy = 73.6, level = 60, 
             },
@@ -4192,7 +4192,7 @@ MDL_DB_MOUNTS = {
         spell_id = 334433,
         from = {
             {
-                itemname = "Silverwind Larion", type = 'treasure', customnpcName = '银风暮钟',
+                itemname = "Silverwind Larion", type = 'treasure', customnpcName = 'Vesper of the Silver Wind',
                 continent = "shadowlands", for_sort = 14, zone_id = 1533, expansion = "sl",
                 coordzone = 1533, coordx = 36.1, coordy = 26.6, level = 60, 
             },
@@ -4272,7 +4272,7 @@ MDL_DB_MOUNTS = {
         spell_id = 339588,
         from = {
             {
-                itemname = "Blanchy's Reins", type = 'treasure', customnpcName = '死掉的布兰契', cond = 'blanchy',
+                itemname = "Blanchy's Reins", type = 'treasure', customnpcName = 'Dead Blanchy', cond = 'blanchy',
                 continent = 'shadowlands', for_sort = 14, zone_id = 1525, expansion = 'sl',
                 coordzone = 1525, coordx = 63.3, coordy = 42.9, level = 60, 
             },
@@ -5072,7 +5072,7 @@ MDL_DB_MOUNTS = {
         spell_id = 352309,
         from = {
             {
-                itemname = 'Chain of Bahmethra', type = 'treasure', customnpcName = '巴麦赫特之环', cond = 'handofbahmethra',
+                itemname = 'Chain of Bahmethra', type = 'treasure', customnpcName = 'Bahmeht Chain Links', cond = 'handofbahmethra',
                 continent = 'shadowlands', for_sort = 15, zone_id = 1543, expansion = 'sl',
                 level = 60, 
             },
@@ -5082,7 +5082,7 @@ MDL_DB_MOUNTS = {
         spell_id = 354361,
         from = {
             {
-                itemname = 'Dusklight Razorwing', type = 'treasure', customnpcName = '失落的刀翼兽之卵', cond = 'lostrazorwingeggs',
+                itemname = 'Dusklight Razorwing', type = 'treasure', customnpcName = 'Lost Razorwing Eggs', cond = 'lostrazorwingeggs',
                 continent = 'shadowlands', for_sort = 15, zone_id = 1961, expansion = 'sl',
                 level = 60, 
             },
@@ -5203,7 +5203,7 @@ MDL_DB_MOUNTS = {
         spell_id = 354361,
         from = {
             {
-                itemname = "Summer Wilderling's Harness", type = 'treasure', customnpcName = '被利爪刺穿的渊誓保险箱',
+                itemname = "Summer Wilderling's Harness", type = 'treasure', customnpcName = 'Talon-Pierced Mawsworn Lockbox',
                 continent = 'shadowlands', for_sort = 15, zone_id = 1961, expansion = 'sl',
                 level = 60, 
             },
@@ -5213,7 +5213,7 @@ MDL_DB_MOUNTS = {
         spell_id = 359401,
         from = {
             {
-                itemname = "Genesis Crawler", type = 'treasure', customnpcName = '原生体合成',
+                itemname = "Genesis Crawler", type = 'treasure', customnpcName = 'Protoform Synthesis',
                 continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
                 coordzone = 1970, coordx = 31.5, coordy = 50.3, level = 60, 
             },
@@ -5223,7 +5223,7 @@ MDL_DB_MOUNTS = {
         spell_id = 359403,
         from = {
             {
-                itemname = "Ineffable Skitterer", type = 'treasure', customnpcName = '原生体合成',
+                itemname = "Ineffable Skitterer", type = 'treasure', customnpcName = 'Protoform Synthesis',
                 continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
                 coordzone = 1970, coordx = 34.6, coordy = 48.8, level = 60, 
             },
@@ -5233,7 +5233,7 @@ MDL_DB_MOUNTS = {
         spell_id = 359402,
         from = {
             {
-                itemname = "Tarachnid Creeper", type = 'treasure', customnpcName = '原生体合成',
+                itemname = "Tarachnid Creeper", type = 'treasure', customnpcName = 'Protoform Synthesis',
                 continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
                 coordzone = 1970, level = 60, 
             },
@@ -5243,7 +5243,7 @@ MDL_DB_MOUNTS = {
         spell_id = 359364,
         from = {
             {
-                itemname = "Bronzewing Vespoid", type = 'treasure', customnpcName = '原生体合成',
+                itemname = "Bronzewing Vespoid", type = 'treasure', customnpcName = 'Protoform Synthesis',
                 continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
                 coordzone = 1970, level = 60, 
             },
@@ -5253,7 +5253,7 @@ MDL_DB_MOUNTS = {
         spell_id = 359366,
         from = {
             {
-                itemname = "Buzz", type = 'treasure', customnpcName = '原生体合成',
+                itemname = "Buzz", type = 'treasure', customnpcName = 'Protoform Synthesis',
                 continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
                 coordzone = 1970, level = 60, 
             },
@@ -5263,7 +5263,7 @@ MDL_DB_MOUNTS = {
         spell_id = 359367,
         from = {
             {
-                itemname = "Forged Spiteflyer", type = 'treasure', customnpcName = '原生体合成',
+                itemname = "Forged Spiteflyer", type = 'treasure', customnpcName = 'Protoform Synthesis',
                 continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
                 coordzone = 1970, level = 60, 
             },
@@ -5273,7 +5273,7 @@ MDL_DB_MOUNTS = {
         spell_id = 342678,
         from = {
             {
-                itemname = "Vespoid Flutterer", type = 'treasure', customnpcName = '原生体合成',
+                itemname = "Vespoid Flutterer", type = 'treasure', customnpcName = 'Protoform Synthesis',
                 continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
                 coordzone = 1970, level = 60, 
             },
@@ -5283,7 +5283,7 @@ MDL_DB_MOUNTS = {
         spell_id = 342668,
         from = {
             {
-                itemname = "Desertwing Hunter", type = 'treasure', customnpcName = '原生体合成',
+                itemname = "Desertwing Hunter", type = 'treasure', customnpcName = 'Protoform Synthesis',
                 continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
                 coordzone = 1970, level = 60, 
             },
@@ -5293,7 +5293,7 @@ MDL_DB_MOUNTS = {
         spell_id = 359372,
         from = {
             {
-                itemname = "Mawdapted Raptora", type = 'treasure', customnpcName = '原生体合成',
+                itemname = "Mawdapted Raptora", type = 'treasure', customnpcName = 'Protoform Synthesis',
                 continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
                 coordzone = 1970, level = 60, 
             },
@@ -5303,7 +5303,7 @@ MDL_DB_MOUNTS = {
         spell_id = 359373,
         from = {
             {
-                itemname = "Raptora Swooper", type = 'treasure', customnpcName = '原生体合成',
+                itemname = "Raptora Swooper", type = 'treasure', customnpcName = 'Protoform Synthesis',
                 continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
                 coordzone = 1970, level = 60, 
             },
@@ -5313,7 +5313,7 @@ MDL_DB_MOUNTS = {
         spell_id = 367673,
         from = {
             {
-                itemname = "Heartbond Lupine", type = 'treasure', customnpcName = '原生体合成',
+                itemname = "Heartbond Lupine", type = 'treasure', customnpcName = 'Protoform Synthesis',
                 continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
                 coordzone = 1970, level = 60, 
             },
@@ -5333,7 +5333,7 @@ MDL_DB_MOUNTS = {
         spell_id = 359376,
         from = {
             {
-                itemname = "Bronze Helicid", type = 'treasure', customnpcName = '原生体合成',
+                itemname = "Bronze Helicid", type = 'treasure', customnpcName = 'Protoform Synthesis',
                 continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
                 coordzone = 1970, level = 60, 
             },
@@ -5343,7 +5343,7 @@ MDL_DB_MOUNTS = {
         spell_id = 359378,
         from = {
             {
-                itemname = "Scarlet Helicid", type = 'treasure', customnpcName = '原生体合成',
+                itemname = "Scarlet Helicid", type = 'treasure', customnpcName = 'Protoform Synthesis',
                 continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
                 coordzone = 1970, level = 60, 
             },
@@ -5353,7 +5353,7 @@ MDL_DB_MOUNTS = {
         spell_id = 346719,
         from = {
             {
-                itemname = "Serenade", type = 'treasure', customnpcName = '原生体合成',
+                itemname = "Serenade", type = 'treasure', customnpcName = 'Protoform Synthesis',
                 continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
                 coordzone = 1970, level = 60, 
             },
@@ -5363,7 +5363,7 @@ MDL_DB_MOUNTS = {
         spell_id = 359377,
         from = {
             {
-                itemname = "Unsuccessful Prototype Fleetpod", type = 'treasure', customnpcName = '原生体合成',
+                itemname = "Unsuccessful Prototype Fleetpod", type = 'treasure', customnpcName = 'Protoform Synthesis',
                 continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
                 coordzone = 1970, level = 60, 
             },
@@ -5373,7 +5373,7 @@ MDL_DB_MOUNTS = {
         spell_id = 359232,
         from = {
             {
-                itemname = "Adorned Vombata", type = 'treasure', customnpcName = '原生体合成',
+                itemname = "Adorned Vombata", type = 'treasure', customnpcName = 'Protoform Synthesis',
                 continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
                 coordzone = 1970, level = 60, 
             },
@@ -5383,7 +5383,7 @@ MDL_DB_MOUNTS = {
         spell_id = 359230,
         from = {
             {
-                itemname = "Curious Crystalsniffer", type = 'treasure', customnpcName = '原生体合成',
+                itemname = "Curious Crystalsniffer", type = 'treasure', customnpcName = 'Protoform Synthesis',
                 continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
                 coordzone = 1970, level = 60, 
             },
@@ -5393,7 +5393,7 @@ MDL_DB_MOUNTS = {
         spell_id = 359231,
         from = {
             {
-                itemname = "Darkened Vombata", type = 'treasure', customnpcName = '原生体合成',
+                itemname = "Darkened Vombata", type = 'treasure', customnpcName = 'Protoform Synthesis',
                 continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
                 coordzone = 1970, level = 60, 
             },
@@ -5454,7 +5454,7 @@ MDL_DB_MOUNTS = {
         spell_id = 368128,
         from = {
             {
-                itemname = "Spectral Mawrat's Tail", type = 'treasure', customnpcName = '渊誓补给宝箱',
+                itemname = "Spectral Mawrat's Tail", type = 'treasure', customnpcName = 'Mawsworn Supply Chest',
                 continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
                 coordzone = 1970, level = 60, 
             },
@@ -5464,7 +5464,7 @@ MDL_DB_MOUNTS = {
         spell_id = 359278,
         from = {
             {
-                itemname = "Deathrunner", type = 'treasure', customnpcName = '原生体合成',
+                itemname = "Deathrunner", type = 'treasure', customnpcName = 'Protoform Synthesis',
                 continent = 'shadowlands', for_sort = 16, zone_id = 1970, expansion = 'sl',
                 coordzone = 1970, level = 60, 
             },
@@ -5797,7 +5797,7 @@ MDL_DB_MOUNTS = {
         spell_id = 374048,
         from = {
             {
-                itemname = 'Verdant Skitterfly', type = 'treasure', customnpcName = '探险队斥候的背包', cond = 'DFExpeditionScoutsPacks', mount_id = 1617,
+                itemname = 'Verdant Skitterfly', type = 'treasure', customnpcName = 'Expedition Scouts Packs', cond = 'DFExpeditionScoutsPacks', mount_id = 1617,
                 continent = 'dragonisles', for_sort = 17, zone_id = 2022, expansion = 'df',
                 level = 70, 
             },
@@ -5901,7 +5901,7 @@ MDL_DB_MOUNTS = {
         spell_id = 374196,
         from = {
             {
-                itemname = 'Plainswalker Bearer', type = 'treasure', customnpcName = '马鲁克狩猎奖赏', cond = 'MaruukHuntSpoils', mount_id = 1635,
+                itemname = 'Plainswalker Bearer', type = 'treasure', customnpcName = 'Expedition Scouts Packs', cond = 'MaruukHuntSpoils', mount_id = 1635,
                 continent = "dragonisles", for_sort = 17, zone_id = 2023, expansion = 'df',
                 level = 70, 
             },
@@ -6151,7 +6151,7 @@ MDL_DB_MOUNTS = {
         spell_id = 424476,
         from = {
             {
-                itemname = 'Reins of the Winter Night Dreamsaber', type = 'treasure', customnpcName = '梦境之种秘宝', cond = 'EmeraldBounties',
+                itemname = 'Reins of the Winter Night Dreamsaber', type = 'treasure', customnpcName = 'Emerald Bounties', cond = 'EmeraldBounties',
                 continent = "dragonisles", for_sort = 20, zone_id = 2200, expansion = 'df',
                 level = 70, 
             },

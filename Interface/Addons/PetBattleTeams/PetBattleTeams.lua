@@ -1,4 +1,5 @@
 local PetBattleTeams = LibStub("AceAddon-3.0"):NewAddon("PetBattleTeams")
+local _, addon = ...
 
 -- luacheck: globals StaticPopup_OnClick
 
@@ -18,7 +19,6 @@ SLASH_PETBATTLETEAMS1, SLASH_PETBATTLETEAMS2 = '/pbt', '/PetBattleTeams';
 function PetBattleTeams.slashHandler(msg, chatPromptFrame)
     local self = PetBattleTeams
     local GUI = self:GetModule("GUI")
-    ---@type PetBattleTeamsTeamManager
     local TeamManager = self:GetModule("TeamManager")
     msg = string.lower(msg)
     if msg == "lock frame" then
@@ -40,6 +40,12 @@ function PetBattleTeams.slashHandler(msg, chatPromptFrame)
     elseif msg == "detach" then
         GUI:SetAttached(false)
         print("PetBattleTeams: Frame Detached")
+    elseif msg == "max" then
+        GUI:ToggleMinimize(false)
+        print("PetBattleTeams: Frame Maximized")
+    elseif msg == "min" then
+        GUI:ToggleMinimize(true)
+        print("PetBattleTeams: Frame Minimized")
     elseif msg == "lock teams" then
         TeamManager:SetLockStateAllTeams(true)
         print("PetBattleTeams: Teams Locked")
@@ -60,6 +66,8 @@ function PetBattleTeams.slashHandler(msg, chatPromptFrame)
         print("/pbt", "detach", ": Detaches PetBattleTeams from the Pet Journal")
         print("/pbt","lock teams", ": Locks all existing teams, preventing changes to those teams. Does not effect new teams")
         print("/pbt","unlock teams", ": Unlocks all existing Teams, allowing changes to be made")
+        print("/pbt","max", ": Maximize PetBattleTeams frame (if hidden)")
+        print("/pbt","min", ": Minimize PetBattleTeams frame")
         print("/pbt","reset teams" , ": Deletes all teams, Warning no confirmation is given")
         print("/pbt","reset ui", ": Resets the UI to its defualt configuration")
     end
@@ -98,12 +106,10 @@ StaticPopupDialogs["PBT_TEAM_RENAME"] = {
     end,
     OnAccept = function(self)
         local text = self.editBox:GetText()
-        ---@type PetBattleTeamsTeamManager
         local teamManager = PetBattleTeams:GetModule("TeamManager")
         teamManager:SetTeamName(self.data, text)
     end,
     OnCancel = function(self)
-        ---@type PetBattleTeamsTeamManager
         local teamManager = PetBattleTeams:GetModule("TeamManager")
         teamManager:SetTeamName(self.data, nil)
     end,
@@ -131,3 +137,35 @@ StaticPopupDialogs["PBT_IMPORT_TEAMS"] = {
     exclusive = 1,
     hideOnEscape = 1,
 }
+
+--[[-------------------------------------------------------------------------
+--  Localization
+-------------------------------------------------------------------------]]--
+
+addon.L = addon.L or setmetatable({}, {
+    __index = function(t, k)
+        rawset(t, k, k)
+        return k
+    end,
+    __newindex = function(t, k, v)
+        if v == true then
+            rawset(t, k, k)
+        else
+            rawset(t, k, v)
+        end
+    end,
+})
+
+function addon:RegisterLocale(locale, tbl)
+    if locale == "enUS" or locale == GetLocale() then
+        for k,v in pairs(tbl) do
+            if v == true then
+                self.L[k] = k
+            elseif type(v) == "string" then
+                self.L[k] = v
+            else
+                self.L[k] = k
+            end
+        end
+    end
+end

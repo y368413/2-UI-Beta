@@ -30,6 +30,9 @@ local Api = addon:GetModule("Api")
 ---@class Macro: AceModule
 local Macro = addon:GetModule("Macro")
 
+---@class AuraCache: AceModule
+local AuraCache = addon:GetModule("AuraCache")
+
 ---@class ElementCallback: AceModule
 local ECB = addon:NewModule("ElementCallback")
 
@@ -59,9 +62,7 @@ function ECB.CallbackOfRandomMode(element, lastCbResults)
     if lastCbResults and #lastCbResults then
         local r = lastCbResults[1]
         if r and r.item then
-            local isUsable = Item:IsLearnedAndUsable(r.item.id, r.item.type)
-            local isCooldown = Item:IsCooldown(Item:GetCooldown(r.item))
-            if isUsable and isCooldown then
+            if Item:IsLearned(r.item.id, r.item.type) and Item:IsUsable(r.item.id, r.item.type) and Item:IsCooldown(Item:GetCooldown(r.item)) then
                 return lastCbResults
             end
         end
@@ -70,12 +71,13 @@ function ECB.CallbackOfRandomMode(element, lastCbResults)
     local cooldownItemList = {} ---@type ItemConfig[]
     for _, ele in ipairs(element.elements) do
         local item = E:ToItem(ele)
-        local isUsable = Item:IsLearnedAndUsable(item.extraAttr.id, item.extraAttr.type)
+        local isLearned = Item:IsLearned(item.extraAttr.id, item.extraAttr.type)
+        local isUsable = Item:IsUsable(item.extraAttr.id, item.extraAttr.type)
         local isCooldown = Item:IsCooldown(Item:GetCooldown(item.extraAttr))
-        if isUsable then
+        if isLearned and isUsable then
             table.insert(usableItemList, item)
         end
-        if isUsable and isCooldown then
+        if isLearned and isUsable and isCooldown then
             table.insert(cooldownItemList, item)
         end
     end
@@ -111,9 +113,7 @@ function ECB.CallbackOfSeqMode(element, lastCbResults)
     if lastCbResults and #lastCbResults then
         local r = lastCbResults[1]
         if r and r.item then
-            local isUsable = Item:IsLearnedAndUsable(r.item.id, r.item.type)
-            local isCooldown = Item:IsCooldown(Item:GetCooldown(r.item))
-            if isUsable and isCooldown then
+            if Item:IsLearned(r.item.id, r.item.type) and Item:IsUsable(r.item.id, r.item.type) and Item:IsCooldown(Item:GetCooldown(r.item)) then
                 return lastCbResults
             end
         end
@@ -122,8 +122,9 @@ function ECB.CallbackOfSeqMode(element, lastCbResults)
     local cb
     for _, ele in ipairs(element.elements) do
         local item = E:ToItem(ele)
-        local isUsable = Item:IsLearnedAndUsable(item.extraAttr.id, item.extraAttr.type)
-        if isUsable == true then
+        local isLearned = Item:IsLearned(item.extraAttr.id, item.extraAttr.type)
+        local isUsable = Item:IsUsable(item.extraAttr.id, item.extraAttr.type)
+        if isLearned and isUsable then
             local isCooldown = Item:IsCooldown(Item:GetCooldown(item.extraAttr))
             if isCooldown then
                 cb = ECB:CallbackByItemConfig(item)
@@ -152,8 +153,10 @@ function ECB.CallbackOfMacroMode(element, lastCbResults)
     ---@type CbResult
     local cb = {}
     local ast = element.extraAttr.ast
+    if element.icon then
+        cb.icon = element.icon
+    end
     if ast == nil then
-        cb = ECB:NilCallback()
         return { cb, }
     end
     if ast.tooltip ~= nil then
@@ -364,9 +367,9 @@ function ECB:UpdateSelfTrigger(cbResult, event, eventArgs)
                 end
             end
             if cbResult.isUsable == nil or U.Table.IsInArray({ "PLAYER_ENTERING_WORLD", "BAG_UPDATE_COOLDOWN", "UNIT_SPELLCAST_SUCCEEDED", "PLAYER_EQUIPMENT_CHANGED" }, event) then
-                cbResult.isUsable = Item:IsLearnedAndUsable(cbResult.item.id, cbResult.item.type)
+                cbResult.isUsable = Item:IsUsable(cbResult.item.id, cbResult.item.type)
             end
-            if cbResult.isCooldown == nil or U.Table.IsInArray({ "PLAYER_ENTERING_WORLD", "BAG_UPDATE_COOLDOWN", "UNIT_SPELLCAST_SUCCEEDED", "PLAYER_EQUIPMENT_CHANGED" }, event) then
+            if cbResult.isCooldown == nil or U.Table.IsInArray({ "PLAYER_ENTERING_WORLD", "BAG_UPDATE_COOLDOWN", "UNIT_SPELLCAST_SUCCEEDED", "PLAYER_EQUIPMENT_CHANGED", "MODIFIER_STATE_CHANGED"}, event) then
                 cbResult.itemCooldown = Item:GetCooldown(cbResult.item)
                 cbResult.isCooldown = Item:IsCooldown(cbResult.itemCooldown)
             end
@@ -380,14 +383,14 @@ function ECB:UpdateSelfTrigger(cbResult, event, eventArgs)
                     return
                 end
             end
-            if cbResult.isUsable == nil or U.Table.IsInArray({ "PLAYER_ENTERING_WORLD", "SPELL_UPDATE_COOLDOWN" }, event) then
-                cbResult.isUsable = Item:IsLearnedAndUsable(cbResult.item.id, cbResult.item.type)
+            if cbResult.isUsable == nil or U.Table.IsInArray({ "PLAYER_ENTERING_WORLD", "UNIT_SPELLCAST_SUCCEEDED" }, event) then
+                cbResult.isUsable = Item:IsUsable(cbResult.item.id, cbResult.item.type)
             end
-            if cbResult.isCooldown == nil or U.Table.IsInArray({ "PLAYER_ENTERING_WORLD", "SPELL_UPDATE_COOLDOWN" }, event) then
+            if cbResult.isCooldown == nil or U.Table.IsInArray({ "PLAYER_ENTERING_WORLD", "UNIT_SPELLCAST_SUCCEEDED", "MODIFIER_STATE_CHANGED", "HB_GCD_UPDATE" }, event) then
                 cbResult.itemCooldown = Item:GetCooldown(cbResult.item)
                 cbResult.isCooldown = Item:IsCooldown(cbResult.itemCooldown)
             end
-            if cbResult.count == nil or U.Table.IsInArray({ "PLAYER_ENTERING_WORLD", "SPELL_UPDATE_COOLDOWN" }, event) then
+            if cbResult.count == nil or U.Table.IsInArray({ "PLAYER_ENTERING_WORLD", "SPELL_UPDATE_CHARGES" }, event) then
                 local chargeInfo = Api.GetSpellCharges(cbResult.item.id)
                 if chargeInfo then
                     cbResult.count = chargeInfo.currentCharges
@@ -402,10 +405,10 @@ function ECB:UpdateSelfTrigger(cbResult, event, eventArgs)
                     return
                 end
             end
-            if cbResult.isUsable == nil or U.Table.IsInArray({ "PLAYER_ENTERING_WORLD", "SPELL_UPDATE_COOLDOWN" }, event) then
-                cbResult.isUsable = Item:IsLearnedAndUsable(cbResult.item.id, cbResult.item.type)
+            if cbResult.isUsable == nil or U.Table.IsInArray({ "PLAYER_ENTERING_WORLD", }, event) then
+                cbResult.isUsable = Item:IsUsable(cbResult.item.id, cbResult.item.type)
             end
-            if cbResult.isCooldown == nil or U.Table.IsInArray({ "PLAYER_ENTERING_WORLD", "UNIT_SPELLCAST_SUCCEEDED", "SPELL_UPDATE_COOLDOWN" }, event) then
+            if cbResult.isCooldown == nil or U.Table.IsInArray({ "PLAYER_ENTERING_WORLD", "UNIT_SPELLCAST_SUCCEEDED", "MODIFIER_STATE_CHANGED"}, event) then
                 cbResult.itemCooldown = Item:GetCooldown(cbResult.item)
                 cbResult.isCooldown = Item:IsCooldown(cbResult.itemCooldown)
             end
@@ -420,7 +423,7 @@ function ECB:UpdateSelfTrigger(cbResult, event, eventArgs)
                 end
             end
             if cbResult.isUsable == nil or U.Table.IsInArray({ "PLAYER_ENTERING_WORLD", "MOUNT_JOURNAL_USABILITY_CHANGED" }, event) then
-                cbResult.isUsable = Item:IsLearnedAndUsable(cbResult.item.id, cbResult.item.type)
+                cbResult.isUsable = Item:IsUsable(cbResult.item.id, cbResult.item.type)
             end
             cbResult.count = nil
         end
@@ -433,9 +436,9 @@ function ECB:UpdateSelfTrigger(cbResult, event, eventArgs)
                 end
             end
             if cbResult.isUsable == nil or U.Table.IsInArray({ "PLAYER_ENTERING_WORLD", "PET_BAR_UPDATE_COOLDOWN" }, event) then
-                cbResult.isUsable = Item:IsLearnedAndUsable(cbResult.item.id, cbResult.item.type)
+                cbResult.isUsable = Item:IsUsable(cbResult.item.id, cbResult.item.type)
             end
-            if cbResult.isCooldown == nil or U.Table.IsInArray({ "PLAYER_ENTERING_WORLD", "UNIT_SPELLCAST_SUCCEEDED", "PET_BAR_UPDATE_COOLDOWN" }, event) then
+            if cbResult.isCooldown == nil or U.Table.IsInArray({ "PLAYER_ENTERING_WORLD", "UNIT_SPELLCAST_SUCCEEDED", "PET_BAR_UPDATE_COOLDOWN", "MODIFIER_STATE_CHANGED" }, event) then
                 cbResult.itemCooldown = Item:GetCooldown(cbResult.item)
                 cbResult.isCooldown = Item:IsCooldown(cbResult.itemCooldown)
             end
@@ -496,12 +499,55 @@ function ECB:UseTrigger(eleConfig, cbResult)
                         end
                     end
                     if leftTrigger.type == "aura" then
-                        local auraTriggerCond = Trigger:GetAuraTriggerCond(leftTrigger)
-                        local leftValue = auraTriggerCond[cond.leftVal]
-                        ---@diagnostic disable-next-line: param-type-mismatch
-                        local r = Condition:ExecOperator(leftValue, cond.operator, cond.rightValue)
-                        if r:is_ok() then
-                            condResult = r:unwrap()
+                        ---@type table<AuraTriggerCond, any>
+                        local auraTriggerCond = {}
+                        local trigger = Trigger:ToAuraTriggerConfig(leftTrigger)
+                        if trigger.confine then
+                            auraTriggerCond.targetIsEnemy = false
+                            auraTriggerCond.targetCanAttack = false
+                            local target = trigger.confine.target
+                            if target ~= nil or target ~= "player" then
+                                if UnitIsEnemy("player", target) then
+                                    auraTriggerCond.targetIsEnemy = true
+                                end
+                                if UnitCanAttack("player", "target") then
+                                    auraTriggerCond.targetCanAttack = true
+                                end
+                            end
+                            if UnitExists(target) and UnitIsEnemy("player", target) then
+                                auraTriggerCond.targetIsEnemy = true
+                            else
+                                auraTriggerCond.targetIsEnemy = false
+                            end
+                            local spellId = trigger.confine.spellId
+                            if spellId then
+                                -- 追加需要处理的缓存
+                                if cond.leftVal == "exist" then
+                                    AuraCache:PutTask(target, spellId, nil, true)
+                                end
+                                if cond.leftVal == "remainingTime" then
+                                    AuraCache:PutTask(target, spellId, tonumber(cond.rightValue), true)
+                                end
+                                auraTriggerCond.exist = false
+                                auraTriggerCond.remainingTime = 0
+                                local aura = AuraCache:Get(target, spellId)
+                                if aura then
+                                    if aura.isHelpful and trigger.confine.type == "buff" then
+                                        auraTriggerCond.exist = true
+                                        auraTriggerCond.remainingTime = aura.expirationTime - GetTime()
+                                    end
+                                    if aura.isHarmful and trigger.confine.type == "defbuff" then
+                                        auraTriggerCond.exist = true
+                                        auraTriggerCond.remainingTime = aura.expirationTime - GetTime()
+                                    end
+                                end
+                                local leftValue = auraTriggerCond[cond.leftVal]
+                                ---@diagnostic disable-next-line: param-type-mismatch
+                                local r = Condition:ExecOperator(leftValue, cond.operator, cond.rightValue)
+                                if r:is_ok() then
+                                    condResult = r:unwrap()
+                                end
+                            end
                         end
                     end
                     if leftTrigger.type == "item" then

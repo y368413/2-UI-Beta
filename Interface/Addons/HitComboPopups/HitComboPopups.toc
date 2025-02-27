@@ -1,0 +1,9 @@
+## Interface: 110007
+## Title: Hit Combo Popups
+## Version: 1.1.4
+## Notes: Displays fighting game-style hit combo popups for Windwalker Monk's Hit Combo talent
+## Author: Yakkers
+## DefaultState: enabled
+## SavedVariables: hitComboPopupsVariables
+
+HitComboPopups.lua

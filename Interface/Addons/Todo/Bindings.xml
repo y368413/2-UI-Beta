@@ -1,0 +1,8 @@
+<!-- *******************/ BINDINGS FILE /********************** -->
+
+<!-- Show/Hide the list binding -->
+<Bindings>
+  <Binding name="Todo" header="Todo" category="ADDONS">
+    Todo:ToggleFrame();
+  </Binding>
+</Bindings>

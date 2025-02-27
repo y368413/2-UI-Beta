@@ -1,6 +1,6 @@
-## Interface: 110005
+## Interface: 110007, 110100
 ## Title: BtWQuests: Shadowlands Prologue
-## Version: 1.14
+## Version: 1.15
 ## Notes: Shadowlands Prologue quest data for BtWQuests
 ## Author: Breen
 ## Dependencies: BtWQuests

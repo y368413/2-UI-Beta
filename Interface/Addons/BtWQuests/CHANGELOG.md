@@ -1,3 +1,22 @@
+# v2.51.0
+
+- Updated for 11.1
+- Added Underline questlines
+- Fixed some questlines in the Isle Of Dorn not showing as active correctly
+- Fixed the breadcrumbs for All Good Things in Azj-Kahet
+- Updated prerequisites and active status for a number of quests in The Ringing Deeps and Hallowfall
+- Fixed some errors with map pins in 11.1
+- Added Quest category for 11.1 addon list
+
+# v2.50.2
+
+- Added Lingering Shadows questline
+- Added A Song of Secrets questline
+
+# v2.50.1
+
+- Updated for 11.0.7
+
 # v2.50.0
 
 - Fixed an issue handling player auras

@@ -130,7 +130,7 @@
 			<KeyValue key="backdropInfo" value="BACKDROP_DIALOG_32_32" type="global" />
 		</KeyValues>
 		<Size>
-			<AbsDimension x="560" y="550"/>
+			<AbsDimension x="640" y="800"/>
 		</Size>
 		<Anchors>
 			<Anchor point="CENTER" />
@@ -181,11 +181,11 @@
 					</Anchor>
 				</Anchors>
 			</CheckButton>
-			<CheckButton name="DEX_ShowDamageWoW" inherits="DEXCheckTemplate">
+			<CheckButton name="DEX_ShowDamagePet" inherits="DEXCheckTemplate">
 				<Anchors>
-					<Anchor point="LEFT" relativeTo="DEX_ShowWithMessText" relativePoint="RIGHT">
+					<Anchor point="LEFT" relativeTo="DEX_ShowWithMessText" relativePoint="LEFT">
 						<Offset>
-							<AbsDimension x="0" y="0" />
+							<AbsDimension x="160" y="0" />
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -194,43 +194,88 @@
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="DEX_ShowWithMessText" relativePoint="RIGHT">
 						<Offset>
-							<AbsDimension x="165" y="0" />
+							<AbsDimension x="200" y="0" />
 						</Offset>
 					</Anchor>
 				</Anchors>
 			</CheckButton>
-			<CheckButton name="DEX_ShowSpellName" inherits="DEXCheckTemplate">
+			<CheckButton name="DEX_ShowHit" inherits="DEXCheckTemplate">
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="DEX_Enable" relativePoint="LEFT">
-						<Offset>
-							<AbsDimension x="0" y="-36" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</CheckButton>
-			<CheckButton name="DEX_ShowNameOnCrit" inherits="DEXCheckTemplate">
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="DEX_ShowSpellName" relativePoint="LEFT">
-						<Offset>
-							<AbsDimension x="20" y="-30" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</CheckButton>
-			<CheckButton name="DEX_ShowNameOnMiss" inherits="DEXCheckTemplate">
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="DEX_ShowNameOnCrit" relativePoint="LEFT">
 						<Offset>
 							<AbsDimension x="0" y="-30" />
 						</Offset>
 					</Anchor>
 				</Anchors>
-			</CheckButton>			
-			<CheckButton name="DEX_ShowDamagePeriodic" inherits="DEXCheckTemplate">
+			</CheckButton>
+			<CheckButton name="DEX_ShowInterrupt" inherits="DEXCheckTemplate">
 				<Anchors>
-					<Anchor point="LEFT" relativeTo="DEX_ShowNameOnMiss" relativePoint="LEFT">
+					<Anchor point="LEFT" relativeTo="DEX_ShowHit" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="0" y="-205" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>		
+			<CheckButton name="DEX_ShowInterruptCrit" inherits="DEXCheckTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="DEX_ShowInterrupt" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="20" y="-30" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>		
+			<CheckButton name="DEX_ShowCurrentOnly" inherits="DEXCheckTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="DEX_ShowInterruptCrit" relativePoint="LEFT">
 						<Offset>
 							<AbsDimension x="-20" y="-30" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>		
+			<CheckButton name="DEX_State" inherits="DEXCheckTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="DEX_ShowCurrentOnly" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="0" y="-30" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>		
+			<CheckButton name="DEX_AdjustTime" inherits="DEXCheckTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="DEX_State" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="110" y="0" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>		
+			<CheckButton name="DEX_NoCombatHeal" inherits="DEXCheckTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="DEX_State" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="0" y="-30" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>				
+			<CheckButton name="DEX_ShowDamage" inherits="DEXCheckTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="DEX_ShowCurrentOnly" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="0" y="-105" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>				
+			<CheckButton name="DEX_ShowDamagePeriodic" inherits="DEXCheckTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="DEX_ShowDamage" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="20" y="-30" />
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -244,7 +289,7 @@
 					</Anchor>
 				</Anchors>
 			</CheckButton>
-			<CheckButton name="DEX_ShowDamageHealth" inherits="DEXCheckTemplate">
+			<CheckButton name="DEX_ShowBlockNumber" inherits="DEXCheckTemplate">
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="DEX_ShowDamageShield" relativePoint="LEFT">
 						<Offset>
@@ -252,26 +297,8 @@
 						</Offset>
 					</Anchor>
 				</Anchors>
-			</CheckButton>
-			<CheckButton name="DEX_ShowDamagePet" inherits="DEXCheckTemplate">
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="DEX_ShowDamageHealth" relativePoint="LEFT">
-						<Offset>
-							<AbsDimension x="0" y="-30" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</CheckButton>
-			<CheckButton name="DEX_ShowBlockNumber" inherits="DEXCheckTemplate">
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="DEX_ShowDamagePet" relativePoint="LEFT">
-						<Offset>
-							<AbsDimension x="0" y="-30" />
-						</Offset>
-					</Anchor>
-				</Anchors>
 			</CheckButton>		
-			<CheckButton name="DEX_ShowOwnHealth" inherits="DEXCheckTemplate">
+			<CheckButton name="DEX_ShowSpellName" inherits="DEXCheckTemplate">
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="DEX_ShowBlockNumber" relativePoint="LEFT">
 						<Offset>
@@ -280,7 +307,142 @@
 					</Anchor>
 				</Anchors>
 			</CheckButton>
-			<CheckButton name="DEX_ShowInterruptCrit" inherits="DEXCheckTemplate">
+			<CheckButton name="DEX_ShowNameOnCrit" inherits="DEXCheckTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="DEX_ShowSpellName" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="20" y="-30" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="DEX_ShowDamageIconOnCrit" inherits="DEXCheckTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="DEX_ShowNameOnCrit" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="130" y="0" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="DEX_ShowNameOnMiss" inherits="DEXCheckTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="DEX_ShowNameOnCrit" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="0" y="-30" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>			
+			<CheckButton name="DEX_ShowSpellIcon" inherits="DEXCheckTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="DEX_ShowNameOnMiss" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="-20" y="-30" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>		
+			<CheckButton name="DEX_ShowSpellIconOnCrit" inherits="DEXCheckTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="DEX_ShowSpellIcon" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="20" y="-30" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>		
+			<CheckButton name="DEX_UniteSpell" inherits="DEXCheckTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="DEX_ShowSpellIconOnCrit" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="-20" y="-30" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>				
+			<CheckButton name="DEX_ShowDamageWoW" inherits="DEXCheckTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="DEX_ShowDamage" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="220" y="0" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="DEX_ShowDamageSpellName" inherits="DEXCheckTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="DEX_ShowDamageWoW" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="20" y="-30" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="DEX_ShowDamageNameOnCrit" inherits="DEXCheckTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="DEX_ShowDamageSpellName" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="20" y="-30" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="DEX_ShowDamageSpellIcon" inherits="DEXCheckTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="DEX_ShowDamageNameOnCrit" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="-20" y="-30" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="DEX_ShowDamageSpellIconOnCrit" inherits="DEXCheckTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="DEX_ShowDamageSpellIcon" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="20" y="-30" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="DEX_ShowDebuff" inherits="DEXCheckTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="DEX_ShowDamageSpellIconOnCrit" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="-20" y="-30" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="DEX_ShowDamageType" inherits="DEXCheckTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="DEX_ShowDebuff" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="0" y="-140" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="DEX_ShowDamageHealth" inherits="DEXCheckTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="DEX_ShowDamageWoW" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="200" y="50" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="DEX_ShowOwnHealth" inherits="DEXCheckTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="DEX_ShowDamageHealth" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="20" y="-30" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="DEX_ShowOverHeal" inherits="DEXCheckTemplate">
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="DEX_ShowOwnHealth" relativePoint="LEFT">
 						<Offset>
@@ -289,102 +451,66 @@
 					</Anchor>
 				</Anchors>
 			</CheckButton>		
-			<CheckButton name="DEX_ShowInterrupt" inherits="DEXCheckTemplate">
+			<CheckButton name="DEX_ShowBuff" inherits="DEXCheckTemplate">
 				<Anchors>
-					<Anchor point="RIGHT" relativeTo="DEX_ShowInterruptCrit" relativePoint="RIGHT">
-						<Offset>
-							<AbsDimension x="220" y="0" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</CheckButton>		
-			<CheckButton name="DEX_ShowSpellIcon" inherits="DEXCheckTemplate">
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="DEX_ShowInterrupt" relativePoint="LEFT">
+					<Anchor point="LEFT" relativeTo="DEX_ShowOverHeal" relativePoint="LEFT">
 						<Offset>
 							<AbsDimension x="0" y="-30" />
 						</Offset>
 					</Anchor>
 				</Anchors>
 			</CheckButton>		
-			<CheckButton name="DEX_ShowOverHeal" inherits="DEXCheckTemplate">
+			<CheckButton name="DEX_ShowHealthSpellName" inherits="DEXCheckTemplate">
 				<Anchors>
-					<Anchor point="RIGHT" relativeTo="DEX_ShowSpellIcon" relativePoint="RIGHT">
-						<Offset>
-							<AbsDimension x="130" y="0" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</CheckButton>		
-			<CheckButton name="DEX_ShowDebug" inherits="DEXCheckTemplate">
-				<Anchors>
-					<Anchor point="RIGHT" relativeTo="DEX_ShowOverHeal" relativePoint="RIGHT">
+					<Anchor point="LEFT" relativeTo="DEX_ShowBuff" relativePoint="LEFT">
 						<Offset>
 							<AbsDimension x="0" y="-30" />
 						</Offset>
 					</Anchor>
 				</Anchors>
 			</CheckButton>		
-			<CheckButton name="DEX_ShowCurrentOnly" inherits="DEXCheckTemplate">
+			<CheckButton name="DEX_ShowHealthNameOnCrit" inherits="DEXCheckTemplate">
 				<Anchors>
-					<Anchor point="LEFT" relativeTo="DEX_ShowInterruptCrit" relativePoint="LEFT">
+					<Anchor point="LEFT" relativeTo="DEX_ShowHealthSpellName" relativePoint="LEFT">
 						<Offset>
-							<AbsDimension x="0" y="-30" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</CheckButton>				
-			<CheckButton name="DEX_ShowBuffDebuff" inherits="DEXCheckTemplate">
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="DEX_ShowSpellIcon" relativePoint="LEFT">
-						<Offset>
-							<AbsDimension x="0" y="-30" />
+							<AbsDimension x="20" y="-30" />
 						</Offset>
 					</Anchor>
 				</Anchors>
 			</CheckButton>		
-			<CheckButton name="DEX_UniteSpell" inherits="DEXCheckTemplate">
+			<CheckButton name="DEX_ShowHealthSpellIcon" inherits="DEXCheckTemplate">
 				<Anchors>
-					<Anchor point="LEFT" relativeTo="DEX_ShowCurrentOnly" relativePoint="LEFT">
+					<Anchor point="LEFT" relativeTo="DEX_ShowHealthNameOnCrit" relativePoint="LEFT">
 						<Offset>
-							<AbsDimension x="0" y="-30" />
+							<AbsDimension x="-20" y="-30" />
 						</Offset>
 					</Anchor>
 				</Anchors>
-			</CheckButton>				
-			<CheckButton name="DEX_ShowLeftRight" inherits="DEXCheckTemplate">
+			</CheckButton>		
+			<CheckButton name="DEX_ShowHealthSpellIconOnCrit" inherits="DEXCheckTemplate">
 				<Anchors>
-					<Anchor point="LEFT" relativeTo="DEX_UniteSpell" relativePoint="LEFT">
+					<Anchor point="LEFT" relativeTo="DEX_ShowHealthSpellIcon" relativePoint="LEFT">
 						<Offset>
-							<AbsDimension x="0" y="-30" />
+							<AbsDimension x="20" y="-30" />
 						</Offset>
 					</Anchor>
 				</Anchors>
-			</CheckButton>				
-			<CheckButton name="DEX_ShowRightLeft" inherits="DEXCheckTemplate">
+			</CheckButton>		
+			<CheckButton name="DEX_ShowHealthType" inherits="DEXCheckTemplate">
 				<Anchors>
-					<Anchor point="LEFT" relativeTo="DEX_ShowBuffDebuff" relativePoint="LEFT">
+					<Anchor point="LEFT" relativeTo="DEX_ShowHealthSpellIconOnCrit" relativePoint="LEFT">
 						<Offset>
-							<AbsDimension x="0" y="-30" />
+							<AbsDimension x="-20" y="-130" />
 						</Offset>
 					</Anchor>
 				</Anchors>
-			</CheckButton>				
-			<CheckButton name="DEX_ShowHit" inherits="DEXCheckTemplate">
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="DEX_ShowLeftRight" relativePoint="LEFT">
-						<Offset>
-							<AbsDimension x="0" y="-30" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</CheckButton>
+			</CheckButton>		
 			
 			<Frame name="DEX_ColorNormal" inherits="DEXColorPickerExTemplate">
 				<Anchors>
-					<Anchor point="LEFT" relativeTo="DEX_ShowSpellName" relativePoint="LEFT">
+					<Anchor point="LEFT" relativeTo="DEX_ShowDamagePet" relativePoint="LEFT">
 						<Offset>
-							<AbsDimension x="185" y="0" />
+							<AbsDimension x="0" y="-165" />
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -530,9 +656,9 @@
 					</Layer>
 				</Layers>
 				<Anchors>
-					<Anchor point="LEFT" relativeTo="DEX_ColorSpec" relativePoint="LEFT">
+					<Anchor point="LEFT" relativeTo="DEX_ShowDamagePet" relativePoint="LEFT">
 						<Offset>
-							<AbsDimension x="-20" y="-65"/>
+							<AbsDimension x="0" y="-140"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -542,12 +668,21 @@
 					</OnShow>
 				</Scripts>
 			</Button>
-			
+
+			<Slider name="DEX_FrameLevel" inherits="DEXSliderTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="DEX_NumberFormat" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="00" y="-40" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Slider>
 			<Slider name="DEX_Font" inherits="DEXSliderTemplate">
 				<Anchors>
-					<Anchor point="LEFT" relativeTo="DEX_ColorNormal" relativePoint="LEFT">
+					<Anchor point="LEFT" relativeTo="DEX_FrameLevel" relativePoint="LEFT">
 						<Offset>
-							<AbsDimension x="180" y="-10" />
+							<AbsDimension x="0" y="-30" />
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -556,7 +691,7 @@
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="DEX_Font" relativePoint="LEFT">
 						<Offset>
-							<AbsDimension x="0" y="-50" />
+							<AbsDimension x="0" y="-45" />
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -565,7 +700,7 @@
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="DEX_FontSize" relativePoint="LEFT">
 						<Offset>
-							<AbsDimension x="0" y="-50" />
+							<AbsDimension x="0" y="-45" />
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -574,7 +709,7 @@
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="DEX_OutLine" relativePoint="LEFT">
 						<Offset>
-							<AbsDimension x="0" y="-50" />
+							<AbsDimension x="0" y="-45" />
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -583,7 +718,7 @@
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="DEX_Speed" relativePoint="LEFT">
 						<Offset>
-							<AbsDimension x="0" y="-50" />
+							<AbsDimension x="0" y="-45" />
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -592,16 +727,16 @@
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="DEX_LOGLINE" relativePoint="LEFT">
 						<Offset>
-							<AbsDimension x="0" y="-50" />
+							<AbsDimension x="0" y="-45" />
 						</Offset>
 					</Anchor>
 				</Anchors>
 			</Slider>
 			<Slider name="DEX_ShowHitX" inherits="DEXSliderTemplate">
 				<Anchors>
-					<Anchor point="LEFT" relativeTo="DEX_ShowLeftRight" relativePoint="LEFT">
+					<Anchor point="LEFT" relativeTo="DEX_ShowHit" relativePoint="LEFT">
 						<Offset>
-							<AbsDimension x="20" y="-70" />
+							<AbsDimension x="40" y="-60" />
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -610,7 +745,79 @@
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="DEX_ShowHitX" relativePoint="LEFT">
 						<Offset>
-							<AbsDimension x="220" y="0" />
+							<AbsDimension x="0" y="-60" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Slider>
+			<Slider name="DEX_HealthPosX" inherits="DEXSliderTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="DEX_ShowHealthSpellIconOnCrit" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="-20" y="-40" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Slider>
+			<Slider name="DEX_HealthPosY" inherits="DEXSliderTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="DEX_HealthPosX" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="0" y="-50" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Slider>
+			<Slider name="DEX_BeAttackPosX" inherits="DEXSliderTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="DEX_ShowDebuff" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="0" y="-40" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Slider>
+			<Slider name="DEX_BeAttackPosY" inherits="DEXSliderTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="DEX_BeAttackPosX" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="0" y="-50" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Slider>
+			<Slider name="DEX_PetPosX" inherits="DEXSliderTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="DEX_ShowHit" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="240" y="-10" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Slider>
+			<Slider name="DEX_PetPosY" inherits="DEXSliderTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="DEX_PetPosX" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="0" y="-50" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Slider>
+			<Slider name="DEX_AOETime" inherits="DEXSliderTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="DEX_UniteSpell" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="0" y="-35" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Slider>
+			<Slider name="DEX_IconSize" inherits="DEXSliderTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="DEX_ShowHitY" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="0" y="-50" />
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -638,7 +845,7 @@
 				<Anchors>					
 					<Anchor point="BOTTOMRIGHT">
 						<Offset>
-							<AbsDimension x="-24" y="24"/>
+							<AbsDimension x="-84" y="14"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -656,7 +863,7 @@
 				<Anchors>					
 					<Anchor point="RIGHT" relativeTo="DEXOptionsClose" relativePoint="LEFT">
 						<Offset>
-							<AbsDimension x="90" y="40"/>
+							<AbsDimension x="-300" y="0"/>
 						</Offset>
 					</Anchor>
 				</Anchors>

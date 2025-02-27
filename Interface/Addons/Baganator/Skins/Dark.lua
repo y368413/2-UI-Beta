@@ -30,26 +30,6 @@ local function ToHSL(r, g, b)
   return h, s, l
 end
 
-local function FromHSL_Prev(h, s, l)
-  c = (1 - math.abs(2 * l - 1)) * s
-  h_dash = h / 60
-  x = c * ( 1 - math.abs(h_dash % 2 - 1))
-  m = l - c / 2
-  if h < 1 then
-    return c + m, x + m, 0 + m
-  elseif h < 2 then
-    return x + m, c + m, 0 + m
-  elseif h < 3 then
-    return 0 + m, c + m, x + m
-  elseif h < 4 then
-    return 0 + m, x + m, c + m
-  elseif h < 5 then
-    return x + m, 0 + m, c + m
-  else
-    return c + m, 0 + m, x + m
-  end
-end
-
 local function FromHSL(h, s, l)
   local function f(n)
     local k = (n + h/30) % 12
@@ -96,11 +76,6 @@ local frameBackdropInfo = {
 --local color = CreateColor(65/255, 138/255, 180/255) -- blue
 local color = CreateColor(0.05, 0.05, 0.05) -- black
 
-local toColor = {
-  backdrops = {},
-  textures = {},
-}
-
 local possibleVisuals = {
   "BotLeftCorner", "BotRightCorner", "BottomBorder", "LeftBorder", "RightBorder",
   "TopRightCorner", "TopLeftCorner", "TopBorder", "TitleBg", "Bg",
@@ -111,6 +86,7 @@ local function RemoveFrameTextures(frame)
     if frame[key] then
       frame[key]:Hide()
       frame[key]:SetTexture()
+      frame[key] = nil -- Necessary as classic NineSlice pieces have names which clash
     end
   end
   if frame.NineSlice then
@@ -128,6 +104,9 @@ local function ItemButtonQualityHook(frame, quality)
     local c = ITEM_QUALITY_COLORS[quality]
     if c then
       frame.IconBorder:SetVertexColor(c.r, c.g, c.b)
+      frame.IconBorder:Show()
+    else
+      frame.IconBorder:SetVertexColor(color.r, color.g, color.b, 1)
       frame.IconBorder:Show()
     end
   end
@@ -149,7 +128,6 @@ local function StyleButton(button)
   local color = CreateColor(Lighten(color.r, color.g, color.b, -0.20))
   button:SetBackdropColor(color.r, color.g, color.b, 0.5)
   button:SetBackdropBorderColor(color.r, color.g, color.b, 1)
-  table.insert(toColor.backdrops, {backdrop = button, bgAlpha = 0.5, borderAlpha = 1, lightened = -0.20})
   button:HookScript("OnEnter", function()
     if button:IsEnabled() then
       local r, g, b = Lighten(color.r, color.g, color.b, 0.3)
@@ -183,16 +161,29 @@ local function StyleButton(button)
   end)
 end
 
+local function StyleButtonFrameBorder(frame)
+  if addonTable.Config.Get("skins.dark.no_frame_borders") then
+    frame:SetBackdropBorderColor(1, 1, 1, 0)
+  else
+    local r, g, b = Lighten(color.r, color.g, color.b, 0.3)
+    frame:SetBackdropBorderColor(r, g, b, 1)
+  end
+end
+
+local showSlots = true
+local allItemButtons = {}
+
 local skinners = {
   ItemButton = function(frame, tags)
     frame.bgrSimpleHooked = true
     local r, g, b = Lighten(color.r, color.g, color.b, -0.2)
-    if not tags.containerbag then
+    if not tags.containerBag then
+      table.insert(allItemButtons, frame)
       frame.SlotBackground:SetColorTexture(r, g, b, 0.3)
       frame.SlotBackground:SetPoint("CENTER")
       frame.SlotBackground:SetSize(35, 35)
-      table.insert(toColor.textures, {texture = frame.SlotBackground, alpha = 0.3, lightened = -0.2})
     end
+    frame.SlotBackground:SetShown(showSlots)
     if frame.SetItemButtonQuality then
       hooksecurefunc(frame, "SetItemButtonQuality", ItemButtonQualityHook)
     end
@@ -211,14 +202,14 @@ local skinners = {
     Mixin(frame, BackdropTemplateMixin)
     frame:SetBackdrop(frameBackdropInfo)
     frame:SetBackdropColor(color.r, color.g, color.b, 1 - addonTable.Config.Get("skins.dark.view_transparency"))
+    StyleButtonFrameBorder(frame)
     addonTable.CallbackRegistry:RegisterCallback("SettingChanged", function(_, settingName)
       if settingName == "skins.dark.view_transparency" then
         frame:SetBackdropColor(color.r, color.g, color.b, 1 - addonTable.Config.Get("skins.dark.view_transparency"))
+      elseif settingName == "skins.dark.no_frame_borders" then
+        StyleButtonFrameBorder(frame)
       end
     end, frame)
-    local r, g, b = Lighten(color.r, color.g, color.b, 0.3)
-    frame:SetBackdropBorderColor(r, g, b, 1)
-    table.insert(toColor.backdrops, {backdrop = frame, bgAlpha = 0.7, borderAlpha = 1, borderLightened = 0.3})
 
     if tags.backpack then
       frame.TopButtons[1]:SetPoint("TOPLEFT", 1.5, -1)
@@ -264,12 +255,27 @@ local function SetConstants()
 end
 
 local function LoadSkin()
+  showSlots = not addonTable.Config.Get("skins.dark.empty_slot_background")
   if addonTable.Utilities.IsMasqueApplying() or not addonTable.Config.Get("skins.dark.square_icons") then
-    skinners.ItemButton = nil
+    skinners.ItemButton = function(frame, tags)
+      if not tags.containerBag then
+        table.insert(allItemButtons, frame)
+        frame.SlotBackground:SetShown(showSlots)
+      end
+    end
   else
     hooksecurefunc("SetItemButtonQuality", ItemButtonQualityHook)
     hooksecurefunc("SetItemButtonTexture", ItemButtonTextureHook)
   end
+
+  addonTable.CallbackRegistry:RegisterCallback("SettingChanged", function(_, settingName)
+    if settingName == "skins.dark.empty_slot_background" then
+      showSlots = not addonTable.Config.Get("skins.dark.empty_slot_background")
+      for _, button in ipairs(allItemButtons) do
+        button.SlotBackground:SetShown(showSlots)
+      end
+    end
+  end)
 end
 
 addonTable.Skins.RegisterSkin(BAGANATOR_L_DARK, "dark", LoadSkin, SkinFrame, SetConstants, {
@@ -284,6 +290,18 @@ addonTable.Skins.RegisterSkin(BAGANATOR_L_DARK, "dark", LoadSkin, SkinFrame, Set
     valuePattern = BAGANATOR_L_PERCENTAGE_PATTERN,
     option = "view_transparency",
     default = 0.3,
+  },
+  {
+    type = "checkbox",
+    text = BAGANATOR_L_REMOVE_BORDERS,
+    option = "no_frame_borders",
+    default = false,
+  },
+  {
+    type = "checkbox",
+    text = BAGANATOR_L_HIDE_ICON_BACKGROUNDS,
+    option = "empty_slot_background",
+    default = false,
   },
   {
     type = "checkbox",

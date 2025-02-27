@@ -40,6 +40,3 @@ BigWigsAPI:RegisterCountdown("中文语音：VV（女）", {
 	"Interface\\AddOns\\BigWigs_Voice_VV\\Media\\Sounds\\9.ogg",
 	"Interface\\AddOns\\BigWigs_Voice_VV\\Media\\Sounds\\10.ogg",
 })
-
-	--local SharedMedia = LibStub:GetLibrary ("LibSharedMedia-3.0")
-	--SharedMedia:Register("sound", "VVvvv", "Interface\\AddOns\\BigWigs_Voice_VV\\Media\\Sounds\\咦鸭子.ogg")

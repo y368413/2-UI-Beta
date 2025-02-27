@@ -8,6 +8,15 @@ local Client = addon:GetModule("Client")
 ---@class Api: AceModule
 local Api = addon:NewModule("Api")
 
+local C_Spell = C_Spell
+local C_Item = C_Item
+local C_Container = C_Container
+local C_UnitAuras = C_UnitAuras
+---@diagnostic disable-next-line: deprecated
+local UnitAura = UnitAura
+---@diagnostic disable-next-line: deprecated
+local GetSpellCooldown = GetSpellCooldown
+
 ---@diagnostic disable-next-line: deprecated
 Api.GetItemInfoInstant = (C_Item and C_Item.GetItemInfoInstant) and C_Item.GetItemInfoInstant or GetItemInfoInstant
 ---@diagnostic disable-next-line: deprecated
@@ -113,9 +122,9 @@ end
 ---@param index number UnitAura 支持index和name，C_UnitAuras.GetBuffDataByIndex只支持number，
 ---@param filter string? UnitAura 支持“|”和“空格”拆分，C_UnitAuras.GetBuffDataByIndex支持管道符和空格
 ---@return {expirationTime: number, spellId: number}?
-Api.GetBuffDataByIndex = function (unitId, index, filter)
-    if C_UnitAuras and C_UnitAuras.GetBuffDataByIndex then
-        local auraData = C_UnitAuras.GetBuffDataByIndex(unitId, index, filter)
+Api.GetAuraDataByIndex = function (unitId, index, filter)
+    if C_UnitAuras and C_UnitAuras.GetAuraDataByIndex then
+        local auraData = C_UnitAuras.GetAuraDataByIndex(unitId, index, filter)
         if auraData == nil then
             return nil
         end

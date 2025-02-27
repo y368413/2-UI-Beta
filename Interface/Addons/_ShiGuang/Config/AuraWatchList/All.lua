@@ -94,6 +94,9 @@ local list = {
 		{AuraID = 269279, UnitID = "player", Value = true},                 --回声防护
 	},
 	["Enchant Aura"] = {	-- 附魔及饰品组
+		--增辉
+		{AuraID = 410089, UnitID = "player", Flash = true},	-- 威力感知
+		{AuraID = 395152, UnitID = "player", Flash = true},	-- 黑谭之力
 		--DK
 		{AuraID = 101568, UnitID = "player", Flash = true},	-- 灵界打击
 		--XD

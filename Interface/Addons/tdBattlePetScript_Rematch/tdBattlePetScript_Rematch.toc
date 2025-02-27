@@ -1,5 +1,6 @@
-## Interface: 90207
+## Interface: 110007
 ## Title: tdBattlePetScript Rematch
+## Title-zhCN: |cFFBF00FF[宠物]|rtdBattlePetScript Rematch
 ## Author: DengSir
 ## Version: 90100.01
 ## Dependencies: tdBattlePetScript, Rematch

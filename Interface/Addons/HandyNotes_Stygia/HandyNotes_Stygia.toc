@@ -1,5 +1,6 @@
-## Interface: 110002, 110000
+## Interface: 110007
 ## Title: HandyNotes: Stygia
+## Title-zhCN: HandyNotes: 狂野的影犬
 ## Notes: Where are the Stygia gathering nodes in the Maw?
 ## Author: Kemayo
 ## Version: v110000.0

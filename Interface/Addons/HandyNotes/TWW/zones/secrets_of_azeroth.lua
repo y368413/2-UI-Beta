@@ -1,62 +1,53 @@
 -------------------------------------------------------------------------------
 ---------------------------------- NAMESPACE ----------------------------------
 -------------------------------------------------------------------------------
-local _, TheWarWithin = ...
-local Class = TheWarWithin.Class
-local L = TheWarWithin.locale
-local Map = TheWarWithin.Map
+local _, ns = ...
+local Class = ns.Class
+local L = ns.locale
+local Map = ns.Map
 
-local Node = TheWarWithin.node.Node
+local Collectible = ns.node.Collectible
 
-local Achievement = TheWarWithin.reward.Achievement
-local Buff = TheWarWithin.reward.Buff
-local Item = TheWarWithin.reward.Item
+local Achievement = ns.reward.Achievement
+local Buff = ns.reward.Buff
+local Item = ns.reward.Item
 
-local Entrance = TheWarWithin.poi.Entrance
-local POI = TheWarWithin.poi.POI
-local Path = TheWarWithin.poi.Path
+local Entrance = ns.poi.Entrance
+local POI = ns.poi.POI
+local Path = ns.poi.Path
 
-local QuestStatus = TheWarWithin.tooltip.QuestStatus
+local QuestStatus = ns.tooltip.QuestStatus
 
 -------------------------------------------------------------------------------
 
-local tanaris = TheWarWithin.maps[71] or Map({id = 71, settings = false})
-local zuldazar = TheWarWithin.maps[862] or Map({id = 862, settings = false})
-local desolace = TheWarWithin.maps[66] or Map({id = 66, settings = false})
-local deadwindPass = TheWarWithin.maps[42] or Map({id = 42, settings = false})
-local thousandNeedles = TheWarWithin.maps[64] or Map({id = 64, settings = false})
-local azsuna = TheWarWithin.maps[630] or Map({id = 630, settings = false})
-local howlingFjord = TheWarWithin.maps[117] or Map({id = 117, settings = false})
-local mountHyjal = TheWarWithin.maps[198] or Map({id = 198, settings = false})
-local feralas = TheWarWithin.maps[69] or Map({id = 69, settings = false})
-local ashenvale = TheWarWithin.maps[63] or Map({id = 63, settings = false})
-local nagrand = TheWarWithin.maps[107] or Map({id = 107, settings = false})
-local ahnQiraj = TheWarWithin.maps[327] or Map({id = 327, settings = false})
-local stormheim = TheWarWithin.maps[634] or Map({id = 634, settings = false})
-local maldraxxus = TheWarWithin.maps[1536] or Map({id = 1536, settings = false})
+local tanaris = ns.maps[71] or Map({id = 71, settings = false})
+local zuldazar = ns.maps[862] or Map({id = 862, settings = false})
+local desolace = ns.maps[66] or Map({id = 66, settings = false})
+local deadwindPass = ns.maps[42] or Map({id = 42, settings = false})
+local thousandNeedles = ns.maps[64] or Map({id = 64, settings = false})
+local azsuna = ns.maps[630] or Map({id = 630, settings = false})
+local howlingFjord = ns.maps[117] or Map({id = 117, settings = false})
+local mountHyjal = ns.maps[198] or Map({id = 198, settings = false})
+local feralas = ns.maps[69] or Map({id = 69, settings = false})
+local ashenvale = ns.maps[63] or Map({id = 63, settings = false})
+local nagrand = ns.maps[107] or Map({id = 107, settings = false})
+local ahnQiraj = ns.maps[327] or Map({id = 327, settings = false})
+local stormheim = ns.maps[634] or Map({id = 634, settings = false})
+local maldraxxus = ns.maps[1536] or Map({id = 1536, settings = false})
+
+local dornogal = ns.maps[2339] or Map({id = 2339, settings = true})
 
 -------------------------------------------------------------------------------
 --------------------------- SECRETS OF AZEROTH NODE ---------------------------
 -------------------------------------------------------------------------------
 
-local SecretOfAzeroth = Class('SecretOfAzeroth', Node, {
+local SecretOfAzeroth = Class('SecretOfAzeroth', Collectible, {
     icon = 'peg_gn',
     scale = 2,
-    group = TheWarWithin.groups.SECRETS_OF_AZEROTH
+    group = ns.groups.SECRETS_OF_AZEROTH
 }) -- Secret of Azeroth
 
--------------------------------------------------------------------------------
-------------------------------- ALYX START NODE -------------------------------
--------------------------------------------------------------------------------
-
 local START_QUEST = 84617
-
-tanaris.nodes[63025024] = SecretOfAzeroth({
-    label = '{npc:226683}',
-    note = L['alyx_kickoff_note'],
-    quest = START_QUEST,
-    requires = TheWarWithin.requirement.Quest(84521) -- ![Thoughtful Pursuits]
-}) -- Alyx
 
 -------------------------------------------------------------------------------
 ----------------------------- CELEBRATION CRATES ------------------------------
@@ -113,7 +104,7 @@ local CELEBRATION_CRATES = {
         },
         parentMapID = 619, -- Broken Isles
         quest = 84624, -- ![Sandy Celebration Crate]
-        requires = TheWarWithin.requirement.Item(228768) -- Water-Resistant Receipt
+        requires = ns.requirement.Item(228768) -- Water-Resistant Receipt
     },
     [5] = {
         coordinates = 29400636,
@@ -146,7 +137,7 @@ local CELEBRATION_CRATES = {
         note = L['8_mildewed_celebration_crate'],
         parentMapID = 12, -- Kalimdor
         quest = 85523, -- ![Mildewed Celebration Crate]
-        requires = TheWarWithin.requirement.Spell(463368) -- Potion of Truth
+        requires = ns.requirement.Spell(463368) -- Potion of Truth
     },
     [9] = {
         coordinates = 35277473,
@@ -184,7 +175,7 @@ for num, crate in ipairs(CELEBRATION_CRATES) do
         questDeps = START_QUEST,
         requires = crate.requires or nil,
         rewards = {Item({item = crate.item, quest = crate.quest})},
-        rlabel = TheWarWithin.status.Gray(format('#%d', num))
+        rlabel = ns.status.Gray(format('#%d', num))
     })
 end
 
@@ -233,19 +224,22 @@ ahnQiraj.nodes[44559008] = SecretOfAzeroth({
 }) -- Mysterious Bones
 
 -------------------------------------------------------------------------------
---------------------------- CELEBRATION CRATE LIST ----------------------------
+------------------------ ALYX - CELEBRATION CRATE LIST ------------------------
 -------------------------------------------------------------------------------
 
-local CrateList = Class('CrateList', SecretOfAzeroth, {
-    label = L['celebration_crates_label'],
-    questDeps = START_QUEST,
+local Alyx = Class('Alyx', SecretOfAzeroth, {
+    label = '{npc:226683}',
     rewards = {
-        Achievement({id = 40979, criteria = {qty = true, id = 1}}) -- No Crate Left Behind
+        Achievement({
+            id = 40979,
+            criteria = {qty = true, id = 1, suffix = L['crates_found']}
+        }) -- No Crate Left Behind
     }
-})
+}) -- Alyx
 
-function CrateList.getters:note()
-    local note = L['celebration_crates_note'] .. '\n'
+function Alyx.getters:note()
+    local note = L['alyx_kickoff_note'] .. '\n\n'
+    note = note .. L['celebration_crates_note'] .. '\n'
     for num, crate in ipairs(CELEBRATION_CRATES) do
         local mName = C_Map.GetMapInfo(crate.map.id).name
         local pName = C_Map.GetMapInfo(crate.parentMapID).name
@@ -255,4 +249,4 @@ function CrateList.getters:note()
     return note
 end
 
-tanaris.nodes[66644537] = CrateList()
+dornogal.nodes[50343870] = Alyx()

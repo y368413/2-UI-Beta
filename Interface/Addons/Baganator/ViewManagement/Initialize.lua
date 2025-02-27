@@ -22,9 +22,14 @@ local function RegisterForScaling(frame)
 end
 
 local backpackView, UpdateBackpackButtons
+local bankView
 
 function addonTable.ViewManagement.GetBackpackFrame()
   return backpackView
+end
+
+function addonTable.ViewManagement.GetBankFrame()
+  return bankView
 end
 
 local function SetupBackpackHooks()
@@ -97,7 +102,7 @@ local function SetupBackpackHooks()
     b:HookScript("OnClick", ToggleBackpackView)
   end
 
-  hooksecurefunc("ToggleBackpack", function()
+  local function DirectToggleOnly()
     local stack = debugstack()
     -- Check to ensure we're not opening when OpenClose.lua will handle the
     -- auto-open and auto-close
@@ -105,7 +110,11 @@ local function SetupBackpackHooks()
       return
     end
     ToggleBackpackView()
-  end)
+  end
+
+  hooksecurefunc("ToggleBackpack", DirectToggleOnly)
+
+  hooksecurefunc("ToggleBag", DirectToggleOnly)
 
   ToggleAllBags = ToggleBackpackView
 
@@ -194,7 +203,6 @@ local function SetupBackpackView(frameGroup)
 end
 
 local function SetupBankView(frameGroup)
-  local bankView
   local allBankViews = {
     single = CreateFrame("Frame", "Baganator_SingleViewBankViewFrame" .. frameGroup, UIParent, "BaganatorSingleViewBankViewTemplate"),
     category = CreateFrame("Frame", "Baganator_CategoryViewBankViewFrame" .. frameGroup, UIParent, "BaganatorCategoryViewBankViewTemplate"),
@@ -304,6 +312,7 @@ local function SetupBankView(frameGroup)
 
   addonTable.CallbackRegistry:RegisterCallback("FrameGroupSwapped", function()
     if currentFrameGroup == frameGroup then
+      bankView = allBankViews[GetViewType("bank")] or bankView
       FrameUtil.RegisterFrameForEvents(bankView, {
         "BANKFRAME_OPENED",
         "BANKFRAME_CLOSED",
@@ -562,14 +571,7 @@ function addonTable.ViewManagement.Initialize()
   xpcall(function()
     local info = C_XMLUtil.GetTemplateInfo("BackpackTokenTemplate")
     local tokenWidth = info and info.width or 50
-    -- Reverts token frame width change after using the character frame to avoid
-    -- unexpected freezes.
-    TokenFramePopup:HookScript("OnShow", function()
-      BackpackTokenFrame:SetWidth(tokenWidth * addonTable.Constants.MaxPinnedCurrencies + 1) -- Support tracking up to 100 currencies
-    end)
-    TokenFramePopup:HookScript("OnHide", function()
-      BackpackTokenFrame:SetWidth(tokenWidth * 3 + 1)
-    end)
+    BackpackTokenFrame:SetWidth(tokenWidth * 7 + 1)
   end, CallErrorHandler)
 end
 

@@ -1,4 +1,4 @@
-## Interface:  110002
+## Interface: 110007
 ## Title: mOnAr's WardrobeHelper
 ## Version: 1.32
 ## Author: mOnAr

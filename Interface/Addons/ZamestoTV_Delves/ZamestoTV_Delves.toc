@@ -1,11 +1,11 @@
-## Interface: 110000
-## Title: ZamestoTV Delves
-## Title-ruRU: ZamestoTV Вылазки
-## Notes: Chests and Power-ups
-## Notes-ruRU: Сундуки и усиления
+## Interface: 110007
+## Title: ZamestoTV Delves helper
+## Title-ruRU: ZamestoTV Помощник по Вылазкам
+## Notes: Useful functionality for Delves
+## Notes-ruRU: Полезный функционал для Вылазок
 ## Author: ZamestoTV
 ## IconTexture: Interface\AddOns\ZamestoTV_Delves\Icons\goblin
-## Version: 1.4.1
+## Version: 2.4.0
 ## DefaultState: enabled
 ## X-Category: Map
 ## SavedVariables: HandyNotes_DelvesDB
@@ -24,3 +24,12 @@ Localization/deDE.lua
 handler.lua
 config.lua
 Delves.lua
+story.lua
+Quest.lua
+Coffer.lua
+Bountiful.lua
+BountyReminder.lua
+zdh.lua
+dmt.lua
+
+

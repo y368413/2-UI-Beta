@@ -1,6 +1,7 @@
-## Interface: 110005
+## Interface: 110007
 ## Title: Venture Plan
-## Version: 4.42b
+## Title-zhCN: |cff00ff00[收菜]|rVenture Plan
+## Version: 4.42c
 ## Author: foxlit
 ## Notes: Interface improvements for Adventures.
 ## X-Website: https://www.townlong-yak.com/addons/venture-plan
@@ -17,8 +18,6 @@
 ## Notes-ptBR: Melhorias na interface de Aventuras.
 ## IconTexture: Interface/Icons/Sanctum_Features_MissionTable
 ## SavedVariablesPerCharacter: VP_SPC
-## DefaultState: disabled
-
 Libs/Evie.lua
 Libs/NotGameTooltip.lua
 Locale.lua

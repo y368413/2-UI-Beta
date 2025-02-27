@@ -1,0 +1,64 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
+
+<!--				Libs [ Include ]				-->
+	<Include file="Libs\AceGUI-3.0\AceGUI-3.0.xml"/>
+	<Include file="Libs\AceGUI-3.0-SharedMediaWidgets\widget.xml"/>
+
+
+<!--				Libs [ Script ]					-->
+	<Script file="Libs\LibStub\LibStub.lua"/>
+	<Script file="Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua"/>
+	<Script file="Libs\LibDataBroker-1.1\LibDataBroker-1.1.lua"/>
+	<Script file="Libs\SpecializedLibBars-1.0\SpecializedLibBars-1.0.lua"/>
+	<Script file="Libs\AceAddon-3.0\AceAddon-3.0.lua"/>
+	<Script file="Libs\AceDB-3.0\AceDB-3.0.lua"/>
+	<Script file="Libs\AceDBOptions-3.0\AceDBOptions-3.0.lua"/>
+	<Script file="Libs\AceLocale-3.0\AceLocale-3.0.lua"/>
+	<Script file="Libs\AceTimer-3.0\AceTimer-3.0.lua"/>
+	<Script file="Libs\AceConfigRegistry-3.0\AceConfigRegistry-3.0.lua"/>
+	<Script file="Libs\AceConfigDialog-3.0\AceConfigDialog-3.0.lua"/>
+	<Script file="Libs\LibDBIcon-1.0\LibDBIcon-1.0.lua"/>
+	<Script file="Libs\LibWindow-1.1\LibWindow-1.1.lua"/>
+	<Script file="Libs\LibSharedMedia-3.0\LibSharedMedia-3.0.lua"/>
+
+
+<!--				Libs [ Script ]					-->
+	<Script file="Libs\LibBossIDs-1.0\LibBossIDs-1.0.lua"/>
+	<Script file="Libs\LibNotify-1.0\LibNotify-1.0.lua"/>
+
+
+<!--				Localization [ Include ]			-->
+	<Include file="Locale\deDE.lua"/>
+	<Include file="Locale\enUS.lua"/>
+
+
+<!--				Program [ Include Main]				-->
+	<Include file="Main\Skada.lua"/>
+	<Include file="Main\Menus.lua"/>
+	<Include file="Main\Options.lua"/>
+	<Include file="Main\BarDisplay.lua"/>
+	<Include file="Main\InlineDisplay.lua"/>
+	<Include file="Main\BrokerDisplay.lua"/>
+	<Include file="Main\Version.lua"/>
+
+
+<!--				Program [ Script Modules]			-->
+	<!-- Script file="Modules\Explosives.lua"/ 2025-01-07 -->
+	<Script file="Modules\Damage.lua"/>
+	<Script file="Modules\Threat.lua"/>
+	<Script file="Modules\Healing.lua"/>
+	<Script file="Modules\Overhealing.lua"/>
+	<Script file="Modules\TotalHealing.lua"/>
+	<Script file="Modules\DamageTaken.lua"/>
+	<Script file="Modules\Deaths.lua"/>
+	<Script file="Modules\Debuffs.lua"/>
+	<Script file="Modules\Dispels.lua"/>
+	<Script file="Modules\Interrupts.lua"/>
+	<Script file="Modules\Enemies.lua"/>
+	<Script file="Modules\Power.lua"/>
+	<Script file="Modules\CC.lua"/>
+	<Script file="Modules\Tweaks.lua"/>
+	<Script file="Modules\Themes.lua"/>
+	<Script file="Modules\FriendlyFire.lua"/>
+
+</Ui>

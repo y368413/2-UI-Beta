@@ -1,0 +1,269 @@
+-- ============================================================================================================================================================ --
+
+	Skada Revision TWW
+	-------------------------
+	Curse-Project-ID: 1188318
+
+
+	API Change Summaries / API Blizzard_Menu
+	----------------------------------------------------------------
+	https://warcraft.wiki.gg/wiki/API_change_summaries
+	https://warcraft.wiki.gg/wiki/Blizzard_Menu_implementation_guide
+
+
+	Program Paths
+	---------------------------------------------------------------------------------
+	..\World of Warcraft\_retail_\Interface\AddOns\Skada\Libs\..
+	..\World of Warcraft\_retail_\Interface\AddOns\Skada\Locale\*.lua
+	..\World of Warcraft\_retail_\Interface\AddOns\Skada\Main\*.lua
+	..\World of Warcraft\_retail_\Interface\AddOns\Skada\Media\..
+	..\World of Warcraft\_retail_\Interface\AddOns\Skada\Modules\*.lua
+
+
+	Misc(ellaneous)
+	---------------------------------------------------------------------------------
+	..\World of Warcraft\_retail_\Interface\AddOns\Skada\Misc\ChangeLog\ChangeLog.txt
+	..\World of Warcraft\_retail_\Interface\AddOns\Skada\Misc\License\License.txt
+
+
+	Used Abbreviations
+	------------------
+
+	Reason(s)					Typ
+
+	[ADD]	Additions				[I]   Initial Version
+	[API]	Application Programming Interface	[R]   Release Version
+	[DSC]	Description				[T]   Test Version
+	[REV]   Revision				[W]   Internal Work Version (Developer)
+	[RDA]	Readability
+	[STR]	Stucture
+
+
+	Author			Version		Date		Typ	Curse-Project-ID	License
+	----------------        -------		----------	--- 	----------------	-------
+	Zarnivoop		10.0.2		2022-18-11	[R]	694380			MIT/X
+	(Basis, thx)
+
+
+	Baltha			11.0.7		2025-01-27	[W]	xxx			MIT/X
+	(Revision)		11.1.0
+
+
+-- ============================================================================================================================================================ --
+
+
+
+-- ============================================================================================================================================================ --
+
+
+______________________
+
+Version 11.0.7, 11.1.0
+______________________
+
+
+	_________________________
+
+	Changelog (Modifikations)
+	_________________________
+
+
+	===  [ 001 ]  ===
+
+	Date		Reason(s)			Typ	Reference		Changelog
+	----------	--------------------		---	---------------		--------------------------------------------------------------------------
+	2024-11-18					[I]	All			copy of the last version by Zarnivoop (10.0.2)
+
+			[RDA, REV, STR]			[W]	TOC			now Version(s) 11.0.7 (, 11.1.0)
+
+								Folders			new folders ChangeLog, License and Main			
+											all folders starts now with a capital letter
+
+								Files			ChangeLog.txt	(new document)
+											Licence.txt	(new document)
+											embeds.xml	(completly modifikated)
+
+
+
+	===  [ 003 ]  ===
+
+	Date		Reason(s)			Typ	Reference		Changelog					done
+	----------	--------------------		---	---------------		--------------------------------------------------------------------------
+	2024-11-21	[API]				[W]	Files / Modules		[1]
+												Damage.lua				[x]
+
+											[2]
+												Deaths.lua				[x]	
+												Debuffs.lua				[x]
+												Damage.lua				[x]
+												DamageTaken.lua				[x]
+												FriendlyFire.lua			[x]
+												Healing.lua				[x]
+												Overhealing.lua				[x]
+												Power.lua				[x]
+												TotalHealing.lua			[x]
+
+											[3]
+												Power.lua				[x]
+
+											[4]
+												Deaths.lua				[x]
+												CC.lua					[x]
+
+								Files / Main		[4]
+												BarDisplay.lua				[x]
+
+												
+
+											[ + 10.2.6/ 4.4.0/ 1.15.2 ]	    		deprecated
+											--------------------------------------------------------------------------
+											[1] C_Spell.GetSchoolString			GetSchoolString
+
+
+
+											[ + 11.0.0/ 4.4.1/ 1.15.4 ]   			deprecated
+											--------------------------------------------------------------------------
+											[2] C_Spell.GetSpellInfo			GetSpellInfo
+											[3] C_Spell.GetSpellPowerCost			GetSpellPowerCost
+											[4] C_Spell.GetSpellLink			GetSpellLink
+
+
+
+	===  [ 003 ]  ===
+
+	Date		Reason(s)			Typ	Reference		Changelog
+	----------	--------------------		---	---------------		--------------------------------------------------------------------------
+	2024-11-24					[W]				last [W] Version, works correct
+			[REV]					Folders			unnecessary files (*.xml, *.toc) in LIBS subfolders have been deleted
+			[ADD, DSC]				Power.lua		PowerTypes "https://warcraft.wiki.gg/wiki/Enum.PowerType"
+
+											necessary changes in file at	--  [ PowerTypes and Description]
+															--  [ local variables PowerTypes ]
+															function mod:OnEnable()
+															function mod:OnDisable()
+
+			[ADD, STR, REV, RDA]			CC.lua			CCId's revisted
+
+			[ADD, STR, REV, RDA]			enDE.lua		PowerTypes revisted, compare	--  [ local variables PowerTypes ]
+								enUS.lua		Powertypes revisted, compare	--  [ local variables PowerTypes ]
+
+
+	===  [ 004 ]  ===
+
+	Date		Reason(s)			Typ	Reference		Changelog
+	----------	--------------------		---	---------------		--------------------------------------------------------------------------
+	2024-11-28	[STR, REV, RDA]				Folder			Module
+	    ->							Files			*.lua
+	2024-12-05					[W]
+
+
+
+	===  [ 005 ]  ===
+
+	Date		Reason(s)			Typ	Reference		Changelog
+	----------	--------------------		---	---------------		--------------------------------------------------------------------------
+	2024-12-14	[STR, REV, RDA]			[T]	Folders			Main, Modules
+	    ->							Files			*.lua
+	2024-12-30					[T]
+
+
+
+	===  [ 006 ]  ===
+
+	Date		Reason(s)			Typ	Reference		Changelog	[ +11.0.0 ]   			deprecated
+	----------	--------------------		---	---------------		--------------------------------------------------------------------------
+	2025-01-10	Release				[T]	Folder			Main
+	    ->							Files			Menu.lua	Blizzard_Menu (new framework)	UIDropDownMenu
+	2025-01-27					[R]						
+
+
+
+	===  [ 007 ]  ===
+
+	Date		Reason(s)			Typ	Reference		Dokumentation (concise)
+	----------	--------------------		---	---------------		--------------------------------------------------------------------------
+	2025-01-29	Documentation			[W]	Folders			Locale, Main, Modules
+	    ->							Files			Header *.lua
+	2025-01-31
+											Curse-Project-ID :	xxxxxx			->
+											Curse-Project-ID :	1188318
+
+											Path | Revision 
+										|	"..\Skada\Changelog\ChangeLog.txt"		->
+											"..\Skada\Misc\Changelog\ChangeLog.txt"
+
+								Folder			Main
+								File			Versions.lua
+
+
+								Folder			Modules
+								File			*.lua
+											
+									
+
+	===  [ 008 ]  ===
+
+	Date		Reason(s)			Typ	Reference		Changelog					done
+	----------	--------------------		---	---------------		--------------------------------------------------------------------------
+	2025-02-01	[REV]				[W]	Folders			Modules
+
+
+								Files			API function	| C_Spell.GetSpellInfo |	catch nil
+
+											Deaths.lua					
+											Debuffs.lua					[x]
+											Damage.lua					[x]
+											DamageTaken.lua					[x]
+											FriendlyFire.lua				[x]
+											Healing.lua					[x]
+											Overhealing.lua					[x]
+											Power.lua					[x]
+											TotalHealing.lua				[x]
+
+
+								Files			API function	| C_Spell.GetSpellPowerCost |	catch nil
+
+											Power.lua					[x]
+
+
+								Files			API function	| C_Spell.GetSpellLink |	catch nil
+
+											Deaths.lua					[x]
+											CC.lua						[x]
+
+
+
+							[W]	Folders			Main
+
+
+								Files			API function	| C_Spell.GetSpellLink |	catch nil
+
+											BarDisplay.lua					[x]
+
+
+
+
+-- ============================================================================================================================================================ --
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,6 +1,8 @@
 # BigWigs [Cataclysm]
 
-## [v11.0.10](https://github.com/BigWigsMods/BigWigs_Cataclysm/tree/v11.0.10) (2024-11-26)
-[Full Changelog](https://github.com/BigWigsMods/BigWigs_Cataclysm/compare/v11.0.9...v11.0.10) [Previous Releases](https://github.com/BigWigsMods/BigWigs_Cataclysm/releases)
+## [v11.0.14](https://github.com/BigWigsMods/BigWigs_Cataclysm/tree/v11.0.14) (2025-02-20)
+[Full Changelog](https://github.com/BigWigsMods/BigWigs_Cataclysm/compare/v11.0.13...v11.0.14) [Previous Releases](https://github.com/BigWigsMods/BigWigs_Cataclysm/releases)
 
-- Firelands/Ragnaros: Improve Magma Trap bars (#27)  
+- DragonSoul/Morchok: Fix stuck bars  
+- DragonSoul/Zonozz: Fix spell icon  
+- Firelands/Alysrazor: Add an aura ID  

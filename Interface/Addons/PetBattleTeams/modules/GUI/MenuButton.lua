@@ -1,12 +1,12 @@
 local PetBattleTeams = LibStub("AceAddon-3.0"):GetAddon("PetBattleTeams")
 local Config = PetBattleTeams:GetModule("Config","AceConsole-3.0")
----@type PetBattleTeamsGUI
 local GUI = PetBattleTeams:GetModule("GUI")
 local AUTO_HIDE_DELAY = 12
 
 function GUI:CreateMenuButton()
-    local button = CreateFrame("BUTTON", "PetBattleTeamsButton")
-    local menuFrame = CreateFrame("frame", "PetBattleTeamsMenu", UIParent, "UIDropDownMenuTemplate")
+    local button = CreateFrame("BUTTON")
+    local lib = LibStub("LibDropDownMenu");
+    local menuFrame = lib.Create_DropDownMenu("PetBattleTeamsMenu", UIParent)
 
 
     local options = Config:GetEasyMenu()
@@ -34,7 +34,7 @@ function GUI:CreateMenuButton()
         if mouseButton == "LeftButton" then
             GUI:ToggleMinimize(not GUI:GetIsMinimized())
         else
-            EasyMenu(options, menuFrame, button, 0 , 0, "MENU",AUTO_HIDE_DELAY);
+            lib.EasyMenu(options, menuFrame, button, 0 , 0, "MENU",AUTO_HIDE_DELAY);
         end
     end)
     return button

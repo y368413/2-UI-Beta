@@ -4,7 +4,6 @@
 	<Script file="TinyDPS.lua"/>
 	<Script file="WhoPulled.lua"/>
 	<Script file="ShowChanceBar.lua"/-->
-	<Script file="RepSwitch.lua"/>
 	<Script file="kAutoOpen.lua"/>
 	<Script file="Asentenceintroduction.lua"/>
 	<!--Script file="phisFactionSwitcher.lua"/-->

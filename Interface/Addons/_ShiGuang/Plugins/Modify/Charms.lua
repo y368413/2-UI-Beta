@@ -18,7 +18,7 @@ end)]]
 --MainMenuBarArtFrame.LeftEndCap:Hide()  MainMenuBarArtFrame.RightEndCap:Hide()   
 --------------------------------------NoHelpTips------------------------
 function HelpTip:AreHelpTipsEnabled() return false end
------------------------------------------	     随机队列倒计时    -----------------------------------------
+--[[---------------------------------------	     随机队列倒计时    -----------------------------------------
 local timerBar = CreateFrame("StatusBar", nil, LFGDungeonReadyPopup, "BackdropTemplate")
 local timeLeft = 0
 timerBar:SetPoint("BOTTOM", LFGDungeonReadyPopup, "TOP", 0, 0)
@@ -57,7 +57,7 @@ LFGDungeonReadyTimeFrame:SetScript("OnEvent", function(self, event, ...)
 	timerBar:SetMinMaxValues(0, 40)
 	timeLeft = 40
 	timerBar:Show()
-end)
+end)]]
 ----------------EventBossAutoSelect----------------------
 LFDParentFrame:HookScript("OnShow",function()
   for i=1,GetNumRandomDungeons() do
@@ -773,7 +773,11 @@ function ResizeTransmogrify(frameWidth, frameHeight)
     -- WardrobeFrame:SetUserPlaced(true);
 end]]
 
---	KayrWiderTransmogUI
+--	KayrWiderTransmogUI ## Version: 0.2.1 ## Author: Kvalyr
+local function Round(number, decimals)
+    local power = 10 ^ decimals
+    return math.floor(number * power) / power
+end
 KayrWiderTransmogUI = _G["CreateFrame"]("Frame", "KayrWiderTransmogUI", UIParent)
 KayrWiderTransmogUI.initDone = false
 function KayrWiderTransmogUI:ADDON_LOADED(event, addon)
@@ -792,8 +796,7 @@ function KayrWiderTransmogUI.Adjust()
     local desiredTransmogFrameWidth = initialTransmogFrameWidth + parentFrameWidthIncrease
     WardrobeTransmogFrame:SetWidth(desiredTransmogFrameWidth)
     -- These frames are built using absolute sizes instead of relative points for some reason. Let's stick with that..
-    local power = 10 ^ 0
-    local insetWidth = math.floor(initialTransmogFrameWidth - WardrobeTransmogFrame.ModelScene:GetWidth() * power) / power
+    local insetWidth = Round(initialTransmogFrameWidth - WardrobeTransmogFrame.ModelScene:GetWidth(), 0)
     WardrobeTransmogFrame.Inset.BG:SetWidth(WardrobeTransmogFrame.Inset.Bg:GetWidth() - insetWidth)
     WardrobeTransmogFrame.ModelScene:SetWidth(WardrobeTransmogFrame:GetWidth() - insetWidth)
     -- Move HEADSLOT -- Other slots in the left column are attached relative to it
@@ -836,3 +839,20 @@ AutoViewDistance:SetScript("OnEvent", function(self, event, arg1, arg2, ...)
 		if GetCVar("graphicsViewDistance") ~= 1 then SetCVar("graphicsViewDistance", 1) end
 	end
 end)]]
+
+--## Author: Rubio ## Version: 11.0.7a
+local UntrackCompletedAchieves = CreateFrame("Frame")
+UntrackCompletedAchieves:RegisterEvent("PLAYER_ENTERING_WORLD") 
+UntrackCompletedAchieves:SetScript("OnEvent", function(self, event, arg1, arg2, ...)
+	local banner = false
+	if event == "PLAYER_ENTERING_WORLD" then
+    if not banner then banner = true end
+    local tracked = C_ContentTracking.GetTrackedIDs(Enum.ContentTrackingType.Achievement) or {}
+    for _, achievementID in ipairs(tracked) do
+	local _, _, _, completed = GetAchievementInfo(achievementID)
+	if completed then
+	    C_ContentTracking.StopTracking(Enum.ContentTrackingType.Achievement, achievementID, Enum.ContentTrackingStopType.Collected)
+	end
+    end
+	end
+end)

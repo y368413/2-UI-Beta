@@ -1,9 +1,8 @@
 local PetBattleTeams = LibStub("AceAddon-3.0"):GetAddon("PetBattleTeams")
----@type PetBattleTeamsGUI
 local GUI = PetBattleTeams:GetModule("GUI")
 
 local function OnEvent(self,event)
-    local itemCount = GetItemCount(86143)
+    local itemCount = C_Item.GetItemCount(86143)
     self.QuantityOwned:SetText(itemCount)
     self.Icon:SetDesaturated(itemCount <= 0 )
 end
@@ -27,16 +26,16 @@ end
 
 function GUI:CreateBandageButton(name,parent)
     local itemName = "Battle Pet Bandage"
-    local icon = GetItemIcon(86143)
-    local itemCount = GetItemCount(86143)
-
+    local icon = C_Item.GetItemIconByID(86143)
+    local itemCount = C_Item.GetItemCount(86143)
     local button = CreateFrame("Button",parent:GetName()..name,UIParent,"secureactionbuttontemplate")
+    button:EnableMouse(true);
+    button:RegisterForClicks("AnyUp", "AnyDown");
     button:SetAttribute("unit", "player")
     button:SetAttribute("type", "macro")
     button:SetAttribute("macrotext","/use item:86143" )
 
     button:SetSize(38,38)
-    button:RegisterForClicks("AnyDown", "AnyUp")
 
     button.Icon = button:CreateTexture(name.."Icon","ARTWORK")
     button.Icon:SetTexture(icon)

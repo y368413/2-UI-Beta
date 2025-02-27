@@ -11,6 +11,7 @@ if L then
 	L.arathi_knight = "Ritter der Arathi"
 	L.arathi_footman = "Fußsoldat der Arathi"
 	L.fervent_sharpshooter = "Feurige Scharfschützin"
+	L.war_lynx = "Kriegsluchs"
 	L.devout_priest = "Frommer Priester"
 	L.fanatical_conjuror = "Fanatische Herbeizauberin"
 	L.lightspawn = "Lichtbrut"
@@ -20,4 +21,9 @@ if L then
 
 	L.baron_braunpyke_warmup_trigger = "Sie haben ihren Zweck erfüllt. Baron, zeigt, was Ihr wert seid."
 	L.custom_on_autotalk_desc = "|cFFFF0000Benötigt Priester oder Paladin.|rWählt automatisch die NPC Dialogoption, welche Euch die Aura 'Segen der Heiligen Flamme' gewährt."
+end
+
+L = BigWigs:NewBossLocale("Baron Braunpyke", "deDE")
+if L then
+	--L.charges = "%d charges"
 end

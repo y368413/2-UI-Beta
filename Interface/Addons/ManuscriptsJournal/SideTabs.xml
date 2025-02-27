@@ -1,0 +1,52 @@
+<Ui>
+	<!-- adapted from FrameXML\SpellBookFrame.xml -->
+    
+    <Frame name="ManuscriptsSideTabsFrame" hidden="true" parent="CollectionsJournal">
+		<Anchors>
+			<Anchor point="TOPLEFT" relativeTo="CollectionsJournal" relativePoint="TOPLEFT"/>
+			<Anchor point="BOTTOMRIGHT" relativeTo="CollectionsJournal" relativePoint="BOTTOMRIGHT"/>
+		</Anchors>
+		<Frames>
+			<CheckButton name="ManuscriptsSkillLineManuscriptsTab" inherits="ManuscriptSkillLineTabTemplate" id="1">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="0" y="-36"/>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="ManuscriptsSkillLineDruidTab" inherits="ManuscriptSkillLineTabTemplate" id="2">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="ManuscriptsSkillLineManuscriptsTab" relativePoint="BOTTOMLEFT" x="0" y="-17"/>
+				</Anchors>
+			</CheckButton>
+            <CheckButton name="ManuscriptsSkillLineSoulshapesTab" inherits="ManuscriptSkillLineTabTemplate" id="3">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="ManuscriptsSkillLineManuscriptsTab" relativePoint="BOTTOMLEFT" x="0" y="-17"/>
+				</Anchors>
+			</CheckButton>
+            <CheckButton name="ManuscriptsSkillLineShamanTab" inherits="ManuscriptSkillLineTabTemplate" id="4">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="ManuscriptsSkillLineManuscriptsTab" relativePoint="BOTTOMLEFT" x="0" y="-17"/>
+                </Anchors>
+            </CheckButton>
+            <CheckButton name="ManuscriptsSkillLineMageTab" inherits="ManuscriptSkillLineTabTemplate" id="5">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="ManuscriptsSkillLineManuscriptsTab" relativePoint="BOTTOMLEFT" x="0" y="-17"/>
+                </Anchors>
+            </CheckButton>
+            <CheckButton name="ManuscriptsSkillLineWarlockTab" inherits="ManuscriptSkillLineTabTemplate" id="6">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="ManuscriptsSkillLineManuscriptsTab" relativePoint="BOTTOMLEFT" x="0" y="-17"/>
+                </Anchors>
+            </CheckButton>
+            <CheckButton name="ManuscriptsSkillLineHunterTab" inherits="ManuscriptSkillLineTabTemplate" id="7">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="ManuscriptsSkillLineManuscriptsTab" relativePoint="BOTTOMLEFT" x="0" y="-17"/>
+                </Anchors>
+            </CheckButton>
+            <CheckButton name="ManuscriptsSkillLineDirigibleTab" inherits="ManuscriptSkillLineTabTemplate" id="8">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="ManuscriptsSkillLineManuscriptsTab" relativePoint="BOTTOMLEFT" x="0" y="-17"/>
+                </Anchors>
+            </CheckButton>
+        </Frames>
+    </Frame>
+</Ui>

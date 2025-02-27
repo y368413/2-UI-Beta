@@ -122,7 +122,7 @@ psfj.settingsList = {
     {text=L["To resize this window, drag the resize grip in the lower right corner of this window."]},
     {text=L["A \124TInterface\\AddOns\\ProtoformSynthesisFieldJournal\\textures\\owned-known:0\124t beside a pet or mount name means it's been collected in the journal."]},
     {text=L["A number like [1] beside a pet or mount name is how many of those you can make."]},
-    {text=GAME_VERSION_LABEL.." "..(GetAddOnMetadata("ProtoformSynthesisFieldJournal","Version") or "")},
+    {text=GAME_VERSION_LABEL.." ".."1.3.11" or ""},
 }
 
 psfj.list = {} -- ordered list of itemIDs for display in the autoscrollframe

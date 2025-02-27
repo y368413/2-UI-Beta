@@ -1,0 +1,15 @@
+## Interface: 110007
+## Version: 1.1.11
+
+## Author: Peter Wooley <peterwooley@gmail.com>
+## Title: Todo
+## Notes: Track your daily, midweek, weekly, and long-term goals using categories and profiles
+## IconTexture: Interface\AddOns\Todo\icon.png
+
+## DefaultState: enabled
+## SavedVariables: TodoDB
+
+## OptionalDeps: Ace3, LibDBIcon-1.0, !LibUIDropDownMenu
+## X-Embeds: Ace3, LibDBIcon-1.0, !LibUIDropDownMenu
+
+Main.xml

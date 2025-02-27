@@ -93,7 +93,6 @@ local isIgnoredZone = {
 	[2111] = true,	-- 黑海岸前线
 }
 local defaultList = {
-	[5485] = true, -- 海象人工具盒
 	[6149] = true, -- 奥妮克希亚龙蛋
 }
 local isIgnoredIDs = {}
@@ -178,6 +177,21 @@ function MISC:GetMsgChannel()
 	return IsRandomGroup() and "INSTANCE_CHAT" or IsInRaid() and "RAID" or "PARTY"
 end
 
+local function msgChannel()
+	if IsRandomGroup() then
+		return "INSTANCE_CHAT"
+	elseif IsInRaid() then
+		--if warning and (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player") or IsEveryoneAssistant()) then
+			--return "RAID_WARNING"
+		--else
+			return "RAID"
+		--end
+	elseif IsInGroup(LE_PARTY_CATEGORY_HOME) then
+		return "PARTY"
+	end
+	return "SAY"
+end
+
 local infoType = {}
 
 function MISC:InterruptAlert_Toggle()
@@ -244,20 +258,25 @@ function MISC:InterruptAlert_Update(...)
 			if infoText == U["BrokenSpell"] then
 				if auraType and auraType == AURA_TYPE_BUFF or blackList[spellID] then return end
 				sourceSpellID, destSpellID = extraskillID, spellID
+			    if sourceSpellID and destSpellID then
+				    SendChatMessage(format(infoText, sourceName..GetSpellLink(sourceSpellID), destName..GetSpellLink(destSpellID)), msgChannel())  --MISC:GetMsgChannel()
+			    end
 			elseif infoText == U["Interrupt"] then
 				if R.db["Misc"]["OwnInterrupt"] and sourceName ~= I.MyName and not I:IsMyPet(sourceFlags) then return end
 				sourceSpellID, destSpellID = spellID, extraskillID
+				if sourceSpellID and destSpellID then
+					SendChatMessage(format(infoText, GetSpellLink(destSpellID)), msgChannel())
+				end
 			else
 				if R.db["Misc"]["OwnDispell"] and sourceName ~= I.MyName and not I:IsMyPet(sourceFlags) then return end
 				sourceSpellID, destSpellID = spellID, extraskillID
-			end
-
-			if sourceSpellID and destSpellID then
-				SendChatMessage(format(infoText, sourceName..GetSpellLink(sourceSpellID), destName..GetSpellLink(destSpellID)), MISC:GetMsgChannel())
-			end
-				if R.db["Misc"]["InterruptSound"] then
-				    PlaySoundFile("Interface\\Addons\\_ShiGuang\\Media\\Sounds\\ShutupFool.ogg", "Master")
+				if sourceSpellID and destSpellID then
+					SendChatMessage(format(infoText, GetSpellLink(destSpellID)), msgChannel())
 				end
+			end
+			if R.db["Misc"]["InterruptSound"] then
+				PlaySoundFile("Interface\\Addons\\_ShiGuang\\Media\\Sounds\\ShutupFool.ogg", "Master")
+			end
 		end
 	end
 end
@@ -544,6 +563,8 @@ local IncompatibleAddOns = {
 	["AlreadyKnown"] = true,
 	["DragEmAll"] = true,
 	["QuickQuest"] = true,
+	["Quester"] = true,
+	["SmartQuestTracker"] = true,
 	["ExtraQuestButton"] = true,
 }
 local AddonDependency = {

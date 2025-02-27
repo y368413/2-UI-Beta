@@ -1,0 +1,9 @@
+## Interface: 110007
+## Title: MiniHUD - Currency
+## Version: 11.00.02.00
+## Author: CrusaderHeimdall
+## Notes: HUD mini frame for currency tracking
+## SavedVariablesPerCharacter: MiniHudCurrencySVPC
+## Dependencies:
+MiniHudCurrency.lua
+MiniHudCurrency.xml

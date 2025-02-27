@@ -39,12 +39,35 @@ function BaganatorItemViewCommonBackpackViewMixin:OnLoad()
 
   self.tabsPool = addonTable.ItemViewCommon.GetTabButtonPool(self)
 
+  self.refreshState = {}
+  for _, value in pairs(addonTable.Constants.RefreshReason) do
+    self.refreshState[value] = true
+  end
+
   addonTable.CallbackRegistry:RegisterCallback("BagCacheAfterNewItemsUpdate",  function(_, character, updatedBags)
     self:SetLiveCharacter(character)
-    self.searchToApply = true
+    if next(updatedBags.bags) ~= nil then
+      self.refreshState[addonTable.Constants.RefreshReason.ItemData] = true
+    end
+    if updatedBags.containerBags.bags then
+      self.refreshState[addonTable.Constants.RefreshReason.ItemData] = true
+      self.refreshState[addonTable.Constants.RefreshReason.Layout] = true
+    end
     self:NotifyBagUpdate(updatedBags)
-    if self:IsVisible() then
+    if self:IsVisible() and next(self.refreshState) ~= nil then
       self:UpdateForCharacter(character, true)
+    end
+  end)
+
+  addonTable.CallbackRegistry:RegisterCallback("RefreshStateChange",  function(_, refreshState)
+    self.refreshState = Mixin(self.refreshState, refreshState)
+
+    for _, layout in ipairs(self.Container.Layouts) do
+      layout:UpdateRefreshState(refreshState)
+    end
+
+    if self:IsVisible() then
+      self:UpdateForCharacter(self.lastCharacter, self.isLive)
     end
   end)
 
@@ -52,14 +75,7 @@ function BaganatorItemViewCommonBackpackViewMixin:OnLoad()
     if not self.lastCharacter then
       return
     end
-    if tIndexOf(addonTable.Config.ItemButtonsRelayoutSettings, settingName) ~= nil then
-      for _, layout in ipairs(self.Container.Layouts) do
-        layout:InformSettingChanged(settingName)
-      end
-      if self:IsVisible() then
-        self:UpdateForCharacter(self.lastCharacter, self.isLive)
-      end
-    elseif settingName == addonTable.Config.Options.SHOW_RECENTS_TABS and self.Tabs ~= nil then
+    if settingName == addonTable.Config.Options.SHOW_RECENTS_TABS and self.Tabs ~= nil then
       local isShown = addonTable.Config.Get(addonTable.Config.Options.SHOW_RECENTS_TABS)
       for index, tab in ipairs(self.Tabs) do
         tab:SetShown(isShown)
@@ -67,7 +83,9 @@ function BaganatorItemViewCommonBackpackViewMixin:OnLoad()
           PanelTemplates_SetTab(self, index)
         end
       end
-      self:OnFinished()
+      if self:IsVisible() then
+        self:OnFinished()
+      end
     elseif settingName == addonTable.Config.Options.MAIN_VIEW_SHOW_BAG_SLOTS and self:IsVisible() then
       self.BagSlots:Update(self.lastCharacter, self.isLive)
       self:OnFinished()
@@ -82,15 +100,13 @@ function BaganatorItemViewCommonBackpackViewMixin:OnLoad()
   addonTable.CallbackRegistry:RegisterCallback("CharacterSelect", function(_, character)
     if character ~= self.lastCharacter then
       self:AddNewRecent(character)
+      self.refreshState[addonTable.Constants.RefreshReason.ItemData] = true
+      self.refreshState[addonTable.Constants.RefreshReason.Layout] = true
       if self:IsVisible() then
         self:UpdateForCharacter(character, self.liveCharacter == character)
+      else
+        self.lastCharacter = character
       end
-    end
-  end)
-
-  addonTable.CallbackRegistry:RegisterCallback("LayoutUpdateRequired", function()
-    if self:IsVisible() and self.lastCharacter ~= nil then
-      self:UpdateForCharacter(self.lastCharacter, self.isLive)
     end
   end)
 
@@ -146,9 +162,6 @@ end
 
 function BaganatorItemViewCommonBackpackViewMixin:SetLiveCharacter(character)
   self.liveCharacter = character
-  if self.lastCharacter == nil then
-    self.lastCharacter = self.liveCharacter
-  end
 end
 
 function BaganatorItemViewCommonBackpackViewMixin:OnDragStart()
@@ -299,13 +312,17 @@ function BaganatorItemViewCommonBackpackViewMixin:HideExtraTabs()
 end
 
 function BaganatorItemViewCommonBackpackViewMixin:UpdateForCharacter(character, isLive)
+  addonTable.ReportEntry()
+
+  self.searchToApply = self.searchToApply or self.refreshState[addonTable.Constants.RefreshReason.Searches] or self.refreshState[addonTable.Constants.RefreshReason.ItemData] or self.refreshState[addonTable.Constants.RefreshReason.ItemWidgets]
+
   local start = debugprofilestop()
 
   local characterData = Syndicator.API.GetCharacter(character)
 
   if not characterData then
     self:SetTitle("")
-    return true
+    return
   else
     self:SetTitle(BAGANATOR_L_XS_BAGS:format(characterData.details.character))
   end
@@ -315,19 +332,28 @@ function BaganatorItemViewCommonBackpackViewMixin:UpdateForCharacter(character, 
 
   local oldLast = self.lastCharacter
   self.lastCharacter = character
+  if oldLast ~= character then
+    self.refreshState[addonTable.Constants.RefreshReason.ItemData] = true
+    self.refreshState[addonTable.Constants.RefreshReason.Layout] = true
+    self.refreshState[addonTable.Constants.RefreshReason.Character] = true
+    addonTable.CallbackRegistry:TriggerEvent("CharacterSelect", character)
+  end
+
+  if isLive ~= self.isLive then
+    self.refreshState[addonTable.Constants.RefreshReason.ItemData] = true
+  end
+
   self.isLive = isLive
 
   addonTable.Utilities.AddGeneralDropSlot(self, function()
     return Syndicator.API.GetCharacter(Syndicator.API.GetCurrentCharacter()).bags
   end, Syndicator.Constants.AllBagIndexes)
 
-  self.BagSlots:Update(self.lastCharacter, self.isLive)
+  if self.refreshState[addonTable.Constants.RefreshReason.ItemData] then
+    self.BagSlots:Update(self.lastCharacter, self.isLive)
+  end
   local containerInfo = characterData.containerInfo
   self.ToggleBagSlotsButton:SetShown(self.isLive or (containerInfo and containerInfo.bags))
-
-  if oldLast ~= character then
-    addonTable.CallbackRegistry:TriggerEvent("CharacterSelect", character)
-  end
 
   self.SortButton:SetShown(addonTable.Utilities.ShouldShowSortButton() and isLive)
   self:UpdateTransferButton()
@@ -336,11 +362,15 @@ function BaganatorItemViewCommonBackpackViewMixin:UpdateForCharacter(character, 
 
   if self.tabsSetup then -- Not ready immediately on PLAYER_ENTERING_WORLD
     self.Tabs[1]:SetPoint("LEFT", self, "LEFT", sideSpacing + addonTable.Constants.ButtonFrameOffset, 0)
+  else
+    self.Tabs = {}
   end
 
   self.BagSlots:SetPoint("BOTTOMLEFT", self, "TOPLEFT", addonTable.Constants.ButtonFrameOffset, 0)
 
-  self.SearchWidget:SetSpacing(sideSpacing)
+  if self.refreshState[addonTable.Constants.RefreshReason.Layout] then
+    self.SearchWidget:SetSpacing(sideSpacing)
+  end
 
   if self.CurrencyWidget.lastCharacter ~= self.lastCharacter then
     self.CurrencyWidget:UpdateCurrencies(character)
@@ -348,21 +378,23 @@ function BaganatorItemViewCommonBackpackViewMixin:UpdateForCharacter(character, 
 end
 
 function BaganatorItemViewCommonBackpackViewMixin:OnFinished(character, isLive)
-  local sideSpacing, topSpacing = addonTable.Utilities.GetSpacing()
+  if self.refreshState[addonTable.Constants.RefreshReason.Layout] then
+    local sideSpacing, topSpacing, searchSpacing = addonTable.Utilities.GetSpacing()
 
-  local externalVerticalSpacing = (self.BagSlots:GetHeight() > 0 and (self.BagSlots:GetTop() - self:GetTop()) or 0) + (self.Tabs[1] and self.Tabs[1]:IsShown() and (self:GetBottom() - self.Tabs[1]:GetBottom() + 5) or 0)
+    local externalVerticalSpacing = (self.BagSlots:GetHeight() > 0 and (self.BagSlots:GetTop() - self:GetTop()) or 0) + (self.Tabs[1] and self.Tabs[1]:IsShown() and (self:GetBottom() - self.Tabs[1]:GetBottom() + 5) or 0)
 
-  local additionalPadding = 0
-  if addonTable.Config.Get(addonTable.Config.Options.REDUCE_SPACING) then
-    additionalPadding = 1
+    local additionalPadding = 0
+    if addonTable.Config.Get(addonTable.Config.Options.REDUCE_SPACING) then
+      additionalPadding = 1
+    end
+
+    self:SetSize(
+      self.Container:GetWidth() + sideSpacing * 2 + addonTable.Constants.ButtonFrameOffset - 2,
+      math.min(self.Container:GetHeight() + 49 + searchSpacing + additionalPadding + topSpacing / 2 + self.CurrencyWidget:GetExtraHeight(), UIParent:GetHeight() / self:GetScale() - externalVerticalSpacing)
+    )
+
+    self:UpdateScroll(74 + additionalPadding + topSpacing / 2 + externalVerticalSpacing, self:GetScale())
   end
-
-  self:SetSize(
-    self.Container:GetWidth() + sideSpacing * 2 + addonTable.Constants.ButtonFrameOffset - 2,
-    math.min(self.Container:GetHeight() + 74 + additionalPadding + topSpacing / 2 + self.CurrencyWidget:GetExtraHeight(), UIParent:GetHeight() / self:GetScale() - externalVerticalSpacing)
-  )
-
-  self:UpdateScroll(74 + additionalPadding + topSpacing / 2 + externalVerticalSpacing, self:GetScale())
 
   self:HideExtraTabs()
 

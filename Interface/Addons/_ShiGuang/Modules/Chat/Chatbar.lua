@@ -85,7 +85,7 @@ end
 
 local function TankInfo() -- 坦克属性
 	local TankStat = ""
-		TankStat = TankStat..(STAT_STAMINA ..":%s "):format(UnitStat("player", 3))
+		TankStat = TankStat..(STA_LCD ..":%s "):format(UnitStat("player", 3))
 		TankStat = TankStat..(STAT_ARMOR ..":%s "):format(UnitArmor("player"))
 		TankStat = TankStat..("闪避:%.2f%% "):format(GetDodgeChance())
 		TankStat = TankStat..("招架:%.2f%% "):format(GetParryChance())
@@ -174,6 +174,7 @@ local emotes = {
 	{ key = "tear",     zhTW="流淚",      zhCN="流泪" },
 	{ key = "tears",    zhTW="悲劇",      zhCN="悲剧" },
 	{ key = "think",    zhTW="想",        zhCN="想" },
+	{ key = "Bloodtrail",    zhTW="布拉德特羅爾",    zhCN="布拉德特羅爾" },
 	{ key = "titter",   zhTW="偷笑",      zhCN="偷笑" },
 	{ key = "ugly",     zhTW="猥瑣",      zhCN="猥琐" },
 	{ key = "victory",  zhTW="勝利",      zhCN="胜利" },
@@ -258,8 +259,7 @@ local function Chatemotefilter(self, event, msg, ...)
 end
 
 local chatEvents = {
-	"CHAT_MSG_BATTLEGROUND",
-	"CHAT_MSG_BATTLEGROUND_LEADER",
+	"CHAT_MSG_BN",
 	"CHAT_MSG_BN_CONVERSATION",
 	"CHAT_MSG_BN_WHISPER",
 	"CHAT_MSG_BN_WHISPER_INFORM",
@@ -269,6 +269,7 @@ local chatEvents = {
 	"CHAT_MSG_INSTANCE_CHAT_LEADER",
 	"CHAT_MSG_OFFICER",
 	"CHAT_MSG_PARTY",
+	"CHAT_MSG_PARTY_GUIDE",
 	"CHAT_MSG_PARTY_LEADER",
 	"CHAT_MSG_RAID",
 	"CHAT_MSG_RAID_LEADER",
@@ -277,6 +278,8 @@ local chatEvents = {
 	"CHAT_MSG_WHISPER",
 	"CHAT_MSG_WHISPER_INFORM",
 	"CHAT_MSG_YELL",
+	"CHAT_MSG_BATTLEGROUND",
+	"CHAT_MSG_BATTLEGROUND_LEADER"	
 }
 
   local function EmoteButton_OnClick(self, button)
@@ -308,7 +311,7 @@ end
 function module:Chatbar()
 	if not R.db["Chat"]["Chatbar"] then return end
 
-	for _, event in pairs(chatEvents) do
+	for _, event in ipairs(chatEvents) do
 		ChatFrame_AddMessageEventFilter(event, Chatemotefilter)
 	end
 	local chatFrame = SELECTED_DOCK_FRAME
@@ -436,7 +439,7 @@ function module:Chatbar()
 		{255/255, 127/255, 0, Chatbar_ChannelRaid, function() ChatFrame_OpenChat("/raid ", chatFrame) end},
 		{255/255, 69/255, 0, Chatbar_ChannelRaidWarns, function() ChatFrame_OpenChat("/rw ", chatFrame) end},
 		{64/255, 255/255, 64/255, Chatbar_ChannelGuild, function() ChatFrame_OpenChat("/g ", chatFrame) end},    --GUILD.."/"..OFFICER
-		{170/255, 170/255, 255/255, Chatbar_ChannelOfficer, function() ChatFrame_OpenChat("/o ", chatFrame) end},
+		--{170/255, 170/255, 255/255, Chatbar_ChannelOfficer, function() ChatFrame_OpenChat("/o ", chatFrame) end},
 		--{0.8, 255/255, 0.6, Chatbar_rollText, function() ChatFrame_OpenChat("/roll", chatFrame) end},
 		{0.1, 0.6, 255/255, Chatbar_StatReport, function() ChatFrame_OpenChat(StatReport(), chatFrame) end},
 	}
@@ -562,7 +565,7 @@ function module:Chatbar()
 end
 
 ----------------------------------------------------------------------------------------
---	Play sound files system(by Tukz)
+--[[	Play sound files system(by Tukz)
 ----------------------------------------------------------------------------------------
 local SoundSys = CreateFrame("Frame")
 SoundSys:RegisterEvent("CHAT_MSG_WHISPER")
@@ -571,4 +574,4 @@ SoundSys:HookScript("OnEvent", function(_, event)
 	if event == "CHAT_MSG_WHISPER" or event == "CHAT_MSG_BN_WHISPER" then
 		PlaySoundFile("Interface\\AddOns\\_ShiGuang\\Media\\Sounds\\Whisper.ogg", "Master")
 	end
-end)
+end)]]

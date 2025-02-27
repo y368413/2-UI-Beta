@@ -1,4 +1,4 @@
-## Interface: 40400, 40401
+## Interface: 40402, 40401
 
 ## Title: LittleWigs
 ## Notes: Boss warnings for 5-man dungeons & scenarios.
@@ -23,6 +23,6 @@
 
 ## Dependencies: BigWigs
 ## LoadOnDemand: 1
-## Version: v11.0.56
+## Version: v11.0.74
 
-## X-BigWigs-Minimum: 367
+## X-BigWigs-Minimum: 372

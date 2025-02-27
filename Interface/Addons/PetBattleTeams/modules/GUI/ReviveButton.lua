@@ -1,13 +1,13 @@
 local PetBattleTeams = LibStub("AceAddon-3.0"):GetAddon("PetBattleTeams")
----@type PetBattleTeamsGUI
 local GUI = PetBattleTeams:GetModule("GUI")
 
 -- luacheck: globals PetJournalHealPetButton_OnEnter
 
 local function OnEvent(self,event)
     if event == "SPELL_UPDATE_COOLDOWN"  then
-        local spellCooldownInfo = _G.C_Spell.GetSpellCooldown(self.spellID)
-        CooldownFrame_Set(self.Cooldown, spellCooldownInfo['startTime'], spellCooldownInfo['duration'], spellCooldownInfo['isEnabled'])
+        local spellCD = C_Spell.GetSpellCooldown(self.spellID)
+        local startTime, duration, isEnabled = spellCD.startTime, spellCD.duration, spellCD.isEnabled;
+        CooldownFrame_Set(self.Cooldown, startTime, duration, isEnabled)
         if ( GameTooltip:GetOwner() == self ) then
             --cheat and use blizzards tooltip setup
             PetJournalHealPetButton_OnEnter(self)
@@ -29,19 +29,21 @@ end
 
 function GUI:CreateReviveButton(name,parent)
     local HEAL_PET_SPELL = 125439
-    local spellInfo = _G.C_Spell.GetSpellInfo(HEAL_PET_SPELL)
-    local spellCooldownInfo = _G.C_Spell.GetSpellCooldown(HEAL_PET_SPELL)
+    local spellInfo = C_Spell.GetSpellInfo(HEAL_PET_SPELL)
+    local spellName, spellIcon = spellInfo.name, spellInfo.iconID;
+    local spellCD = C_Spell.GetSpellCooldown(HEAL_PET_SPELL);
+    local startTime, duration, isEnabled = spellCD.startTime, spellCD.duration, spellCD.isEnabled;
 
     local button = CreateFrame("Button",parent:GetName()..name,UIParent,"secureactionbuttontemplate")
+    button:EnableMouse(true);
+    button:RegisterForClicks("AnyUp", "AnyDown");
     button:SetAttribute("type", "spell")
     button.spellID = HEAL_PET_SPELL
-    button:SetAttribute("spell", spellInfo['name'])
-
+    button:SetAttribute("spell",spellName)
     button:SetSize(38,38)
-    button:RegisterForClicks("AnyDown", "AnyUp")
 
     button.Icon = button:CreateTexture(name.."Icon","ARTWORK")
-    button.Icon:SetTexture(spellInfo['iconID'])
+    button.Icon:SetTexture(spellIcon)
     button.Icon:SetAllPoints()
 
     button.Border = button:CreateTexture(name.."Border","OVERLAY","ActionBarFlyoutButton-IconFrame")
@@ -49,7 +51,7 @@ function GUI:CreateReviveButton(name,parent)
     button:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square","ADD")
 
     button.Cooldown = CreateFrame("Cooldown", name.."Cooldown",button, "CooldownFrameTemplate")
-    CooldownFrame_Set(button.Cooldown, spellCooldownInfo['startTime'], spellCooldownInfo['duration'], spellCooldownInfo['isEnabled'])
+    CooldownFrame_Set(button.Cooldown, startTime, duration, isEnabled)
 
     button:RegisterEvent("SPELL_UPDATE_COOLDOWN")
     button:RegisterEvent("PLAYER_REGEN_DISABLED")
